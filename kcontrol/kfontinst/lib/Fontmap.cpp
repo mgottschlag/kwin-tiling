@@ -365,15 +365,19 @@ void CFontmap::createTopLevel()
 
         if(CMisc::root() && !CGlobal::cfg().getGhostscriptFile().isNull())  // Now ensure GS's Fontmap file .runlibfile's our Fontmap file!
         {
+            const int constMaxLineLen=1024;
+            const char *constRLF=".runlibfile";
+
+            char     line[constMaxLineLen];
             ifstream in(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()));
 
             if(in)
             {
-                const int constMaxLineLen=1024;
-
-                char     line[constMaxLineLen];
                 QCString fmap(QFile::encodeName(CGlobal::cfg().getFontmapDir()+"Fontmap"));
-                bool     found=false;
+                int      lineNum=0,
+                         kfiLine=-1,
+                         gsLine=-1,
+                         ncLine=-1;
 
                 do
                 {
@@ -383,24 +387,70 @@ void CFontmap::createTopLevel()
                     {
                         line[constMaxLineLen-1]='\0';
 
-                        if(strstr(line, fmap.data())!=NULL && strstr(line, ".runlibfile")!=NULL)
-                            found=true;
+                        if(strstr(line, fmap.data())!=NULL && strstr(line, constRLF)!=NULL)
+                            kfiLine=lineNum;
+                        else if(strstr(line, "Fontmap.GS")!=NULL && strstr(line, constRLF)!=NULL)
+                            gsLine=lineNum;
+                        if(-1==ncLine && '%'!=line[0])
+                            ncLine=lineNum;
+                        lineNum++;
                     }
                 }
-                while(!in.eof() && !found);
-
-                in.close();
+                while(!in.eof() && (-1==kfiLine || -1==gsLine));
 
                 //
                 // If the file doesn't already say to use our Fontmap file, then tell it to!
-                if(!found)
+                // Also, ensure ours is .runlibfile'd before the main GS one - else problems can occur
+                if(-1==kfiLine || kfiLine>gsLine)
                 {
-                    fstream out(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()), ios::out|ios::app);
+                    in.seekg(0, ios::end);
+                    int size=in.tellg();
+                    in.seekg(0, ios::beg);
 
-                    if(out)
+                    char *buffer=new char[size+strlen(fmap)+strlen(constRLF)+5];
+
+                    if(buffer)
                     {
-                        out << '(' << fmap << ") .runlibfile" << endl;
-                        out.close();
+                        bool added=false;
+
+                        buffer[0]='\0';
+                        lineNum=0;
+
+                        do
+                        {
+                            in.getline(line, constMaxLineLen);
+
+                            if(in.good())
+                            {
+                                line[constMaxLineLen-1]='\0';
+
+                                if(lineNum>=ncLine && !added)
+                                {
+                                    strcat(buffer, "(");
+                                    strcat(buffer, fmap);
+                                    strcat(buffer, ") ");
+                                    strcat(buffer, constRLF);
+                                    strcat(buffer, "\n");
+                                    added=true;
+                                }
+
+                                if(lineNum!=kfiLine)
+                                {
+                                    strcat(buffer, line);
+                                    strcat(buffer, "\n");
+                                }
+                                lineNum++;
+                            }
+                        }
+                        while(!in.eof());
+
+                        in.close();
+
+                        ofstream out(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()));
+
+                        if(out)
+                            out << buffer;
+                        delete [] buffer;
                     }
                 }
             }
