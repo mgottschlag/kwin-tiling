@@ -67,5 +67,5 @@ void KCGlobal::init()
 void KCGlobal::setType(const QCString& s)
 {
   QString string = s;
-  splitString(string, '|', _types);
+  splitString(string, ',', _types);
 }
