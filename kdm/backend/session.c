@@ -453,11 +453,7 @@ ManageSession (struct display *d)
     (void)XSetIOErrorHandler (IOErrorHandler);
     (void)XSetErrorHandler (ErrorHandler);
     (void)Signal (SIGTERM, catchTerm);
-#ifndef HAS_SETPROCTITLE
-    SetTitle(d->name, (char *) 0);
-#else
-    setproctitle("-%s", d->name);
-#endif
+    SetTitle(d->name);
 
     if (Setjmp (grttalk.errjmp))
 	Longjmp (abortSession, EX_RESERVER_DPY);	/* EX_RETRY_ONCE */

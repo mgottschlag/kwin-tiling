@@ -369,9 +369,7 @@ extern void BecomeDaemon (void);
 extern char *prog, *progpath;
 extern void StartDisplay (struct display *d);
 extern void StopDisplay (struct display *d);
-#ifndef HAS_SETPROCTITLE
-extern void SetTitle (const char *name, ...);
-#endif
+extern void SetTitle (const char *name);
 
 /* in dpylist.c */
 extern struct display *displays;	/* that's ugly ... */

@@ -119,7 +119,7 @@ int	Rescan;
 int	StopAll;
 int	ChkUtmp;
 
-#ifndef NOXDMTITLE
+#if !defined(HAS_SETPROCTITLE) && !defined(NOXDMTITLE)
 static char *Title;
 static int TitleLen;
 #endif
@@ -155,6 +155,7 @@ main (int argc, char **argv)
     } else
 #ifdef linux
     {
+	/* note that this will resolve symlinks ... */
 	int len;
 	char fullpath[PATH_MAX];
 	if ((len = readlink ("/proc/self/exe", fullpath, sizeof(fullpath))) < 0)
@@ -216,7 +217,7 @@ main (int argc, char **argv)
 #endif
     prog = strrchr(progpath, '/') + 1;
 
-#ifndef NOXDMTITLE
+#if !defined(HAS_SETPROCTITLE) && !defined(NOXDMTITLE)
     Title = argv[0];
     TitleLen = (argv[argc - 1] + strlen(argv[argc - 1])) - Title;
 #endif
@@ -1618,34 +1619,27 @@ UnlockPidFile (void)
 }
 #endif
 
-#ifndef HAS_SETPROCTITLE
-void SetTitle (const char *name, ...)
+void SetTitle (const char *name)
 {
-#ifndef NOXDMTITLE
-    char	*p = Title;
-    int	left = TitleLen;
-    const char	*s;
-    va_list	args;
+    ASPrintf (&prog, "%s: %s", prog, name);
+    ReInitErrorLog();
+#ifdef HAS_SETPROCTITLE
+    setproctitle ("%s", name);
+#elif !defined(NOXDMTITLE)
+    char *p = Title;
+    int left = TitleLen;
 
-    va_start(args, name);
     *p++ = '-';
     --left;
-    s = name;
-    while (s)
+    while (*name && left > 0)
     {
-	while (*s && left > 0)
-	{
-	    *p++ = *s++;
-	    left--;
-	}
-	s = va_arg (args, const char *);
+	*p++ = *name++;
+	--left;
     }
     while (left > 0)
     {
 	*p++ = '\0';
 	--left;
     }
-    va_end(args);
-#endif	
-}
 #endif
+}
