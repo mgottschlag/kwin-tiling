@@ -7,6 +7,8 @@
  * Public License. See the file "COPYING.LIB" for the exact licensing terms.
  */
 
+#include <config.h>
+
 #include <time.h>
 #include <stdlib.h>
 
@@ -23,7 +25,10 @@
 #include <kpixmapio.h>
 #include <ktempfile.h>
 #include <kcursor.h>
+
+#ifdef HAVE_LIBART
 #include <ksvgiconengine.h>
+#endif
 
 #include "bgrender.h"
 
