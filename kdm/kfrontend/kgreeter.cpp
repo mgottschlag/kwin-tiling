@@ -170,7 +170,7 @@ KGreeter::KGreeter()
     // start login timeout after entered login
     connect( loginEdit, SIGNAL(lost_focus()), SLOT(SetTimer()) );
 
-    passwdEdit = new KPasswordEdit( (QLineEdit::EchoMode)kdmcfg->_echoMode, winFrame, 0 );
+    passwdEdit = new KPasswordEdit( (KPasswordEdit::EchoModes)kdmcfg->_echoMode, winFrame, 0 );
     passwdLabel = new QLabel( passwdEdit, i18n("&Password:"), winFrame );
 
     main_grid->addItem( hbox1, 1, 1 );
