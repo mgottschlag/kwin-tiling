@@ -248,6 +248,7 @@ void AppletTab::available_selection_changed(QListViewItem * item)
 void AppletTab::add_clicked()
 {
   QListViewItem *item = lb_available->selectedItem();
+  if (!item) return;
   l_available.remove(item->text(0));
   l_trusted.append(item->text(0));
 
@@ -258,6 +259,7 @@ void AppletTab::add_clicked()
 void AppletTab::remove_clicked()
 {
   QListViewItem *item = lb_trusted->selectedItem();
+  if (!item) return;
   l_trusted.remove(item->text(0));
   l_available.append(item->text(0));
 
