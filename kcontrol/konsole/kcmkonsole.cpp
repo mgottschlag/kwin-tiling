@@ -44,7 +44,7 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     QVBoxLayout *topLayout = new QVBoxLayout(this);
     dialog = new KCMKonsoleDialog(this);
     dialog->line_spacingSB->setRange(0, 8, 1, false);
-    dialog->line_spacingSB->setSpecialValueText(i18n("Normal"));
+    dialog->line_spacingSB->setSpecialValueText(i18n("normal line spacing", "Normal"));
     dialog->show();
     topLayout->add(dialog);
     load();
