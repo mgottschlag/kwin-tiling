@@ -47,6 +47,9 @@
 
 #include <X11/Xlib.h>
 #ifdef HAVE_X11_XKBLIB_H
+// note: some XKBlib.h versions contain a global variable definition
+// called "explicit". This keyword is not allowed on some C++ compilers so ->
+#define explicit myexplicit
 #include <X11/XKBlib.h>
 #endif
 
