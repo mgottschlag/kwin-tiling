@@ -254,7 +254,7 @@ main(int argc, char **argv)
     }
   }
   if (passwd == 0) {
-    message("Can't read password: %s\n", strerror(errno));
+    message("Can't read password: %100s\n", strerror(errno));
     exit(10);
   }
 
@@ -263,6 +263,8 @@ main(int argc, char **argv)
 
   /* Clear password buffer */
   memset(passbuffer, 0, sizeof(passbuffer));
+  (void) passbuffer[0]; /* read passbuffer to avoid the memset being
+                           optimized away */
 
   if ( status == 0 ) {
     /* failure */
@@ -270,7 +272,7 @@ main(int argc, char **argv)
       /* Only write to logfile, if a password was entered. Otherwise
          the logfile will clutter up with irrelevant messages. */
       time_t	now = time(NULL);
-      message("authentication failure for user %s [uid %d]\n",
+      message("authentication failure for user %100s [uid %d]\n",
 	      login, uid);
 
       do {
