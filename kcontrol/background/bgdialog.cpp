@@ -501,7 +501,7 @@ void BGDialog::slotWallpaperSelection()
    QString pattern = KImageIO::pattern();
 #ifdef HAVE_LIBART
    pattern = "*.svg *.svgz " + pattern;
-   pattern += "\n*.svg *.SVG *.svgz *.SVGZ|Scalable Vector Graphics";
+   pattern += i18n("\n*.svg *.SVG *.svgz *.SVGZ|Scalable Vector Graphics");
 #endif
    dlg.setFilter(pattern);
    dlg.setMode( KFile::File | KFile::ExistingOnly | KFile::LocalOnly );

@@ -147,7 +147,7 @@ void BGMultiWallpaperDialog::slotAdd()
     QString pattern = KImageIO::pattern();
 #ifdef HAVE_LIBART
     pattern = "*.svg *.svgz " + pattern;
-    pattern += "\n*.svg *.SVG *.svgz *.SVGZ|Scalable Vector Graphics";
+    pattern += i18n("\n*.svg *.SVG *.svgz *.SVGZ|Scalable Vector Graphics");
 #endif
 
     KFileDialog fileDialog(KGlobal::dirs()->findDirs("wallpaper", "").first(),
