@@ -108,6 +108,7 @@ Backgnd::Backgnd( QWidget* parent,  const char* name, WFlags fl )
  */
 Backgnd::~Backgnd()
 {
+    m_Renderer.setAutoDelete(true);
     delete m_pGlobals;
 
     // no need to delete child widgets, Qt does it all for us
