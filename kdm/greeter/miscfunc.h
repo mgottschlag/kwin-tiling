@@ -16,8 +16,8 @@ int setegid (gid_t egid);
 
 #ifndef HAVE_SETEUID
 # undef seteuid		/* from config.h */
-# define seteuid(euid) setreuid(-1, euid);
-# define setegid(egid) setregid(-1, egid);
+# define seteuid(euid) setreuid(-1, euid)
+# define setegid(egid) setregid(-1, egid)
 #endif /* HAVE_SETEUID */
 
 #define F_LEN 50	/* user, password, session string len */
