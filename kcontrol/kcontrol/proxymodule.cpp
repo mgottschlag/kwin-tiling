@@ -19,7 +19,6 @@
 */                                                                            
 
 
-
 #include <unistd.h>
 #include <sys/types.h>
 #include <stdlib.h> 
@@ -33,6 +32,7 @@
 #include <kprocess.h>
 #include <kapp.h>
 #include <dcopclient.h>
+#include <kstddirs.h>
 
 
 #include "proxymodule.h"
@@ -60,7 +60,7 @@ ProcessProxy::ProcessProxy(QString exec, bool onlyRoot)
 
   // find out if we have to call kdesu
   if (onlyRoot && (getuid() != 0))
-    *_process << "kdesu" << "root" << "-c";
+    *_process << locate("exe", "kdesu") << "root" << "-c";
 
   // feed the arguments to the process.
   // TODO: This ignores escaping!!!
@@ -93,7 +93,7 @@ void ProcessProxy::processTerminated(KProcess *proc)
 
 
 bool ChangeNotifier::process(const QCString &fun, const QByteArray &data,
-			     QCString& replyType, QByteArray &replyData)
+			     QCString& replyType, QByteArray &)
 {
   if (fun == "changed(int)")
     {
@@ -140,7 +140,7 @@ DCOPProxy::DCOPProxy(QWidget *parent, const ModuleInfo &mod)
   _process = new KProcess;
   connect(_process, SIGNAL(processExited(KProcess*)), 
 	  this, SLOT(processTerminated(KProcess*)));
-  *_process << "kdesu" << "root" << "-c" << "kcmroot" << mod.fileName();
+  *_process << locate("exe", "kdesu") << "root" << "-c" << locate("exe", "kcmroot") << mod.fileName();
   if (!server.isEmpty())
     *_process << "-dcopserver" << server;
   if (!_process->start())
