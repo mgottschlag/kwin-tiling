@@ -16,6 +16,7 @@
 #include <qtooltip.h>
 #include <qframe.h>
 #include <qcheckbox.h>
+#include <qsettings.h>
 
 // X11 headers
 #undef Bool
@@ -46,27 +47,10 @@
 
 /**** DLL Interface ****/
 
-void applyQtXFT(bool active)
-{
-   // Pass env. var to kdeinit.
-   QCString name = "QT_XFT";
-   QCString value = active ? "1" : "0";
-   QByteArray params;
-   QDataStream stream(params, IO_WriteOnly);
-   stream << name << value;
-   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
-}
-
 extern "C" {
   KCModule *create_fonts(QWidget *parent, const char *name) {
     KGlobal::locale()->insertCatalogue("kcmfonts");
     return new KFonts(parent, name);
-  }
-
-  void init_fonts() {
-    KConfig aacfg("kdeglobals");
-    aacfg.setGroup("KDE");
-    applyQtXFT(aacfg.readBoolEntry( "AntiAliasing", false ));
   }
 }
 
@@ -324,9 +308,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
 
    connect(cbAA, SIGNAL(clicked()), SLOT(slotUseAntiAliasing()));
 
-   KConfig aacfg("kdeglobals", true, true);
-   aacfg.setGroup("KDE");
-   useAA = aacfg.readBoolEntry( "AntiAliasing", true);
+   useAA = QSettings().readBoolEntry("/qt/useXft");
    useAA_original = useAA;
 
    cbAA->setChecked(useAA);
@@ -381,8 +363,7 @@ void KFonts::load()
     fontUseList.at( i )->readFont();
 
   KConfig aacfg("kdeglobals", true, true);
-  aacfg.setGroup("KDE");
-  useAA = aacfg.readBoolEntry( "AntiAliasing", false);
+  useAA = QSettings().readBoolEntry("/qt/useXft");
   useAA_original = useAA;
   kdDebug() << "AA:" << useAA << endl;
   cbAA->setChecked(useAA);
@@ -415,12 +396,7 @@ void KFonts::save()
   config->sync();
   delete config;
 
-  applyQtXFT(useAA); // Apply config now
-
-  KConfig aacfg("kdeglobals");
-  aacfg.setGroup("KDE");
-  aacfg.writeEntry( "AntiAliasing", useAA);
-  aacfg.sync();
+  QSettings().writeEntry("/qt/useXft", useAA);
 
   KConfig displaycfg("kcmdisplayrc", true, false);
   displaycfg.setGroup("X11");
@@ -435,7 +411,7 @@ void KFonts::save()
   KIPC::sendMessageAll(KIPC::FontChanged);
 
   if(useAA != useAA_original) {
-    KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change won't take effect until you restart KDE."), i18n("Anti-aliasing settings changed"), "AAsettingsChanged", false);
+    KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change will only affect newly started applications."), i18n("Anti-aliasing settings changed"), "AAsettingsChanged", false);
     useAA_original = useAA;
   }
   _changed = false;
