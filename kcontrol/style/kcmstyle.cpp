@@ -604,7 +604,7 @@ const KAboutData* KCMStyle::aboutData() const
 		new KAboutData( I18N_NOOP("kcmstyle"),
 						I18N_NOOP("KDE Style Module"),
 						0, 0, KAboutData::License_GPL,
-						I18N_NOOP("(C) 2002 Karol Szwed, Daniel Molkentin"));
+						I18N_NOOP("(c) 2002 Karol Szwed, Daniel Molkentin"));
 
 	about->addAuthor("Karol Szwed", 0, "gallium@kde.org");
 	about->addAuthor("Daniel Molkentin", 0, "molkentin@kde.org");

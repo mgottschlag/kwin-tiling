@@ -89,7 +89,7 @@ const KAboutData * CKfiCmModule::aboutData() const
                                           I18N_NOOP("KDE Font Installer"),
                                           0, 0,
                                           KAboutData::License_GPL,
-                                          I18N_NOOP("(C) Craig Drummond, 2000 - 2002"),
+                                          I18N_NOOP("(c) Craig Drummond, 2000 - 2002"),
                                           I18N_NOOP("(TQMM, PS - MBFM y CGD)"));
 
         that->itsAboutData->addAuthor("Craig Drummond", "Developer and maintainer", "craig@kde.org");
