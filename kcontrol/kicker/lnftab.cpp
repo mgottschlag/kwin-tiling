@@ -59,7 +59,7 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  hide_cb = new QCheckBox(i18n("Enable Animation"), hide_group);
+  hide_cb = new QCheckBox(i18n("Enable animation"), hide_group);
   connect(hide_cb, SIGNAL(clicked()), SLOT(hide_clicked()));
   vbox->addWidget(hide_cb);
   QWhatsThis::add( hide_cb, i18n("If hide buttons are enabled, check this option to make the"
@@ -82,7 +82,7 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  autohide_cb = new QCheckBox(i18n("Enable Animation"), autohide_group);
+  autohide_cb = new QCheckBox(i18n("Enable animation"), autohide_group);
   connect(autohide_cb, SIGNAL(clicked()), SLOT(autohide_clicked()));
   vbox->addWidget(autohide_cb);
   QWhatsThis::add( autohide_cb, i18n("If auto-hide panel is enabled, check this option to make"

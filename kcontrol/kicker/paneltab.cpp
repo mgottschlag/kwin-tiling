@@ -98,7 +98,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   layout->addWidget(size_group, 1, 0);
 
   // hidebutton group
-  hb_group = new QGroupBox(i18n("&Hide Buttons"), this);
+  hb_group = new QGroupBox(i18n("&Manual Hide Buttons"), this);
 
   vbox = new QVBoxLayout(hb_group,KDialog::marginHint(),
 			 KDialog::spacingHint());
@@ -108,7 +108,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   QVBox *vbox2 = new QVBox(hbox2);
 
 
-  show_hbs = new QCheckBox(i18n("&Enabled"), vbox2);
+  show_hbs = new QCheckBox(i18n("&Enable hide buttons"), vbox2);
   connect(show_hbs, SIGNAL(clicked()), SLOT(show_hbs_clicked()));
   QWhatsThis::add( show_hbs, i18n("If this option is enabled, the panel"
     " will have buttons on both ends that can be used to hide it. The"
@@ -144,7 +144,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
                          KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  ah_cb = new QCheckBox(i18n("En&abled"), ah_group);
+  ah_cb = new QCheckBox(i18n("En&able automatic hide"), ah_group);
   connect(ah_cb, SIGNAL(clicked()), SLOT(ah_clicked()));
   vbox->addWidget(ah_cb);
   QWhatsThis::add( ah_cb, i18n("If this option is enabled the panel will automatically hide"
