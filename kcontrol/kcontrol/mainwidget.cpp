@@ -18,13 +18,12 @@
 mainWidget::mainWidget(QWidget *parent , const char *name)
   : QWidget(parent, name)
 {
-  KIconLoader iconLoader;
 
   QLabel *heading = new QLabel(i18n("KDE Control Center"),this);
   // FIXME: should use KDE fonts
   QFont font("times",18,QFont::Bold);
   KGlobal::charsets()->setQFont(font);
-  pmap = iconLoader.loadIcon("kdekcc.xpm");
+  pmap = BarIcon("kdekcc");
   heading->setFont(font);
   heading->adjustSize();
   heading->move(120,10);

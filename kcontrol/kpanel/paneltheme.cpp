@@ -209,8 +209,8 @@ KPanelTheme::KPanelTheme(QWidget *parent, const char *name)
     
     QGroupBox *canvasBox = new QGroupBox(i18n("KPanel Preview"), this);
     canvas = new WidgetCanvas(canvasBox);
-    canvas->goPix = BarIcon("go.xpm");
-    canvas->appPix = BarIcon("mini-go.xpm");
+    canvas->goPix = BarIcon("go");
+    canvas->appPix = BarIcon("mini-go");
     loadSettings();
     canvas->drawSampleWidgets();
     canvas->setMinimumSize(canvas->sizeHint());
