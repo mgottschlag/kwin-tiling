@@ -33,6 +33,8 @@
 #include <klibloader.h>
 #include <kpushbutton.h>
 #include <kstdguiitem.h>
+#include <kpixmapeffect.h>
+#include <kpixmap.h>
 
 #include <qframe.h>
 #include <qlabel.h>
@@ -727,11 +729,18 @@ bool LockProcess::startLock()
     return false;
 }
 
-
 //---------------------------------------------------------------------------
 //
 bool LockProcess::startHack()
 {
+    mOriginal = QPixmap::grabWindow(winId());
+
+    for (double i = 0; i < 1.0; i = i + 0.08)
+    {    
+        KPixmap pixmap = mOriginal;
+        KPixmapEffect::fade(pixmap, i, Qt::black);
+        bitBlt(this, 0, 0, &pixmap);
+    }
     if (mSaverExec.isEmpty())
     {
         return false;
@@ -767,12 +776,14 @@ bool LockProcess::startHack()
 
 	if (!mForbidden)
 	{
+
 		if (mHackProc.start() == true)
 		{
 #ifdef HAVE_SETPRIORITY
 			setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
 #endif
- 			return true;
+ 		        //bitBlt(this, 0, 0, &mOriginal);
+	                return true;
 		}
 	}
 	else // we aren't allowed to start the specified screensaver according to the kiosk restrictions

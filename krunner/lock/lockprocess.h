@@ -12,6 +12,7 @@
 #include <kgreeterplugin.h>
 
 #include <kprocess.h>
+#include <kpixmap.h>
 
 #include <qwidget.h>
 #include <qtimer.h>
@@ -124,6 +125,7 @@ private:
     int         mAutoLogoutTimerId;
     int         mAutoLogoutTimeout;
     bool        mAutoLogout;
+    KPixmap	mOriginal;
 };
 
 #endif
