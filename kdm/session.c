@@ -283,7 +283,7 @@ static	struct dlfuncs	dlfuncs = {
 #endif /* QNX4 doesn't use endspent */
 #endif
 	getpwnam,
-#ifdef linux
+#ifdef __linux__
 	endpwent,
 #endif
 	crypt,
