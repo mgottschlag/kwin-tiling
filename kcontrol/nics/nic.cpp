@@ -100,9 +100,7 @@ const KAboutData* KCMNic::aboutData() const
 KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
    :KCModule(KCMNicFactory::instance(), parent,name)
 {
-   QVBoxLayout *box=new QVBoxLayout(this);
-   box->setMargin(KDialog::marginHint());
-   box->setSpacing(KDialog::spacingHint());
+   QVBoxLayout *box=new QVBoxLayout(this, 0, KDialog::spacingHint());
    m_list=new QListView(this);
    box->addWidget(m_list);
    m_list->addColumn(i18n("Name"));
