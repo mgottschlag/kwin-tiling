@@ -25,9 +25,6 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include <qtabwidget.h>
-#include <qlayout.h>
-
 #include <kcmodule.h>
 
 class KURIFilter;
@@ -42,13 +39,10 @@ public:
     void save();
     void defaults();
 
-protected:
-    void resizeEvent(QResizeEvent *);
-
 private:
     KURIFilter *filter;
 
-    QTabWidget *tab;
+    QWidget *widget;
     FilterOptions *opts;
     QPtrList<KCModule> modules;
 };
