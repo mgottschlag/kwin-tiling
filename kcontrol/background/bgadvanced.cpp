@@ -181,12 +181,18 @@ void BGAdvancedDialog::updateUI()
     {
         dlg->m_cbProgram->setChecked(true);
         dlg->m_listPrograms->setEnabled(true);
+        dlg->m_buttonAdd->setEnabled(true);
+        dlg->m_buttonRemove->setEnabled(true);
+        dlg->m_buttonModify->setEnabled(true);
         selectProgram(prog);
     }
     else
     {
         dlg->m_cbProgram->setChecked(false);
         dlg->m_listPrograms->setEnabled(false);
+        dlg->m_buttonAdd->setEnabled(false);
+        dlg->m_buttonRemove->setEnabled(false);
+        dlg->m_buttonModify->setEnabled(false);
     }
     dlg->m_cbProgram->blockSignals(false);
 }
