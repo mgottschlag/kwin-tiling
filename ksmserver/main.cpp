@@ -24,6 +24,9 @@ static const KCmdLineOptions options[] =
    { "restore", I18N_NOOP("Restores the previous session if available"), 0},
    { "w", 0, 0 },
    { "windowmanager <wm>", I18N_NOOP("Starts 'wm' in case no other window manager is \nparticipating in the session. Default is 'kwin'"), 0},
+   //{ "nolocal", I18N_NOOP("Allow remote connections."), 0},
+   // change the default to above, if its stable
+   { "local", I18N_NOOP("Allow only local connections from the user \nstarting the DCOP server."), 0},
    { 0, 0, 0 }
 };
 
@@ -54,7 +57,8 @@ int main( int argc, char* argv[] )
     if ( wm.isEmpty() )
 	wm = "kwin";
 
-    KSMServer *server = new KSMServer( QString::fromLatin1(wm) );
+    bool only_local = args->isSet("local");
+    KSMServer *server = new KSMServer( QString::fromLatin1(wm), only_local);
     IceSetIOErrorHandler (IoErrorHandler );
 
     if ( args->isSet("restore") )

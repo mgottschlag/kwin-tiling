@@ -231,10 +231,15 @@ static char *remAuthFile = 0;
 
 static IceListenObj *listenObjs = 0;
 int numTransports = 0;
+static bool only_local = 0;
 
-static Bool HostBasedAuthProc ( char* /*hostname*/)
+static Bool HostBasedAuthProc ( char* hostname)
 {
-    return FALSE; // no host based authentication
+    qDebug("KSMServer: HBAP: hostname=%s", hostname);
+    if (only_local)
+	return TRUE;
+    else
+	return FALSE;
 }
 
 
@@ -464,6 +469,34 @@ static char *unique_filename (const char *path, const char *prefix, int *pFd)
 
 #define MAGIC_COOKIE_LEN 16
 
+Status SetAuthentication_local (int count, IceListenObj *listenObjs)
+{
+    int i;
+    for (i = 0; i < count; i ++) {
+	char *prot = IceGetListenConnectionString(listenObjs[i]);
+	if (!prot) continue;
+	char *host = strchr(prot, '/');
+	char *sock = 0;
+	if (host) {
+	    *host=0;
+	    host++;
+	    sock = strchr(host, ':');
+	    if (sock) {
+	        *sock = 0;
+		sock++;
+	    }
+	}
+	qDebug("KSMServer: SetAProc_loc: conn %d, prot=%s, file=%s",
+		(unsigned)i, prot, sock);
+	if (sock && !strcmp(prot, "local")) {
+	    chmod(sock, 0700);
+	}
+	IceSetHostBasedAuthProc (listenObjs[i], HostBasedAuthProc);
+	free(prot);
+    }
+    return 1;
+}
+
 Status SetAuthentication (int count, IceListenObj *listenObjs,
 			  IceAuthDataEntry **authDataEntries)
 {
@@ -581,6 +614,9 @@ void FreeAuthenticationData(int count, IceAuthDataEntry *authDataEntries)
     char command[256];
     int i;
 
+    if (only_local)
+	return;
+
     for (i = 0; i < count * 2; i++) {
 	free (authDataEntries[i].network_id);
 	free (authDataEntries[i].auth_data);
@@ -669,7 +705,9 @@ static Status KSMNewClientProc ( SmsConn conn, SmPointer manager_data,
 };
 
 
-KSMServer::KSMServer( const QString& windowManager )
+extern "C" int _IceTransNoListen(const char * protocol);
+
+KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 {
     the_server = this;
     clean = false;
@@ -682,6 +720,10 @@ KSMServer::KSMServer( const QString& windowManager )
     config->setGroup("General" );
     saveSession = config->readBoolEntry( "saveSession", FALSE );
     clientInteracting = 0;
+
+    only_local = _only_local;
+    if (only_local)
+	_IceTransNoListen("tcp");
 
     kapp->dcopClient()->attach();
     launcher = KApplication::launcher();
@@ -722,9 +764,13 @@ KSMServer::KSMServer( const QString& windowManager )
        kapp->dcopClient()->send(launcher, launcher, "setLaunchEnv(QCString,QCString)", params);
     }
 
-    if (!SetAuthentication(numTransports, listenObjs, &authDataEntries))
-	qFatal("KSMSERVER: authentication setup failed.");
-
+    if (only_local) {
+	if (!SetAuthentication_local(numTransports, listenObjs))
+	    qFatal("KSMSERVER: authentication setup failed.");
+    } else {
+	if (!SetAuthentication(numTransports, listenObjs, &authDataEntries))
+	    qFatal("KSMSERVER: authentication setup failed.");
+    }
 
     IceAddConnectionWatch (KSMWatchProc, (IcePointer) this);
 

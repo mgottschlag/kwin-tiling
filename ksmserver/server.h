@@ -67,7 +67,7 @@ class KSMServer : public QObject
 {
 Q_OBJECT
 public:
-    KSMServer( const QString& windowManager );
+    KSMServer( const QString& windowManager, bool only_local );
     ~KSMServer();
 
     void* watchConnection( IceConn iceConn );
