@@ -614,7 +614,7 @@ KGreeter::slotLoadPrevWM()
 void // private
 KGreeter::pluginSetup()
 {
-    int field;
+    int field = 0;
     QString ent;
 
     if (verify->isPluginLocal()) {
