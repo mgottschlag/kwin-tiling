@@ -1,5 +1,5 @@
 
-SUBDIRS = kurifilter plugins
+SUBDIRS = plugins
 
 INCLUDES = -I$(srcdir)/kurifilter -I$(srcdir)/plugins/ikws $(all_includes) 
 LDFLAGS =  $(all_libraries)
