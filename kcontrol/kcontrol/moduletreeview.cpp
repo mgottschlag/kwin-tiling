@@ -73,8 +73,7 @@ void ModuleTreeView::fill()
       new ModuleTreeItem(parent, module);
     }
   
-  //  setOpen(root, true);
-  setMinimumWidth(columnWidth(0)+22);
+  setMinimumWidth(columnWidth(0));
 }
 
 void ModuleTreeView::makeSelected(ConfigModule *module)
