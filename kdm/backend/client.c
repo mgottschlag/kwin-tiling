@@ -31,7 +31,7 @@ from The Open Group.
  *
  * verify.c
  *
- * typical unix verification routine.
+ * user verification and session initiation.
  */
 
 #include "dm.h"
@@ -183,7 +183,7 @@ static pam_handle_t *pamh;
 
 # ifdef KERBEROS
 static char krbtkfile[MAXPATHLEN];
-static int krb4_authed = 0;
+static int krb4_authed;
 
 static int
 krb4_auth(struct passwd *p, const char *password)
@@ -193,6 +193,7 @@ krb4_auth(struct passwd *p, const char *password)
 
     if (krb4_authed)
 	return 1;
+    krb4_authed = 1;
 
     if (!p->pw_uid)
 	return 0;
@@ -567,14 +568,18 @@ Restrict (struct display *d)
     Debug("Restrict %s ...\n", name);
 
     if ((pretc = init_vrf(d, name, "")) != V_OK) {
+	free (name);
 	GSendInt (pretc);
 	return;
     }
 
     if (!init_pwd(name YSHADOW)) {
+	free (name);
 	GSendInt (V_AUTH);
 	return;
     }
+
+    free (name);
 
     if (!p->pw_uid) {
 	if (!d->allowRootLogin)
@@ -602,12 +607,12 @@ Restrict (struct display *d)
 #elif defined(AIXV3)	/* USE_PAM */
 
     msg = NULL;
-    if (loginrestrictions(name,
-		d->displayType & location == Foreign ? S_RLOGIN : S_LOGIN,
+    if (loginrestrictions(p->pw_name,
+		((d->displayType & location) == Foreign) ? S_RLOGIN : S_LOGIN,
 		tty, &msg) == -1)
     {
 	Debug("loginrestrictions() - %s\n", msg ? msg : "Error\n");
-	loginfailed(name, hostname, tty);
+	loginfailed(p->pw_name, hostname, tty);
 	if (msg) {
 	    GSendInt (V_MSGERR);
 	    GSendStr (msg);
