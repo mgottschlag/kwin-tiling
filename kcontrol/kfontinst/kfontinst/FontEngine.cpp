@@ -340,8 +340,6 @@ CFontEngine::~CFontEngine()
 
 bool CFontEngine::openFont(const QString &file, unsigned short mask)
 {
-    bool ok;
-
     closeFont();
 
     itsType=getType(QFile::encodeName(file));
@@ -850,7 +848,6 @@ static QString createNames(const QString &familyName, QString &fullName)
     // Replace any non-alphanumeric or space characters...
     family.replace(QRegExp("&"), "And");
     family=CMisc::removeSymbols(family);
-
     family=family.simplifyWhiteSpace();
     family=family.stripWhiteSpace();
 
@@ -1555,10 +1552,12 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
     const unsigned char constWeightMask=0xf0;
     const int           constWeightShift=4;
     const int           constItalicOffset=328;
+#ifndef KFI_THUMBNAIL
     const int           constSpacingOffset=264;
     const int           constMonospaced=3;
     const int           constNoticeOffset=174;
     const int           constNoticeNumBytes=78;
+#endif
 
     enum ESpeedoWidth
     {

@@ -290,7 +290,9 @@ QString CMisc::removeSymbols(const QString &str)
                 offset++;
             else
                 modified[i-offset]=QChar(' ');  // Else replace with a space
- 
+
+    if(modified[modified.length()-1].isNull())
+        modified.truncate(modified.length()-1);
     return modified;
 }
 

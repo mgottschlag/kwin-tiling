@@ -1306,7 +1306,7 @@ void CFontListWidget::applyChanges()
 
         //
         // Do actual work...
-        EStatus     status;
+        EStatus     status=SUCCESS;
         int         successes=0;
 
         // ...adds
