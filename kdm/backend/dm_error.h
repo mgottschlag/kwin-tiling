@@ -38,20 +38,20 @@ authorization.
 
 #include <stdarg.h>
 
-extern void GDebug	(const char *fmt, ...);
-extern void Debug	(const char *fmt, ...);
-extern void LogInfo	(const char *fmt, ...);
-extern void LogError	(const char *fmt, ...);
-extern void LogPanic	(const char *fmt, ...) ATTR_NORETURN;
-extern void LogOutOfMem	(void);
-extern void Panic	(const char *mesg) ATTR_NORETURN;
-extern void InitErrorLog(const char *errorLogFile);
+void GDebug	(const char *fmt, ...);
+void Debug	(const char *fmt, ...);
+void LogInfo	(const char *fmt, ...);
+void LogError	(const char *fmt, ...);
+void LogPanic	(const char *fmt, ...) ATTR_NORETURN;
+void LogOutOfMem	(void);
+void Panic	(const char *mesg) ATTR_NORETURN;
+void InitErrorLog(const char *errorLogFile);
 #ifdef USE_SYSLOG
-extern void ReInitErrorLog(void);
+void ReInitErrorLog(void);
 #else
 # define ReInitErrorLog() while(0)
 #endif
-extern int ASPrintf (char **strp, const char *fmt, ...);
-extern int VASPrintf (char **strp, const char *fmt, va_list args);
+int ASPrintf (char **strp, const char *fmt, ...);
+int VASPrintf (char **strp, const char *fmt, va_list args);
 
 #endif /* _DM_ERROR_H_ */

@@ -310,24 +310,24 @@ extern int	debugLevel;
 CONF_CORE_GLOBAL_DECLS
 
 /* in daemon.c */
-extern void BecomeDaemon (void);
+void BecomeDaemon (void);
 
 /* in dm.c */
-extern char *prog, *progpath;
-extern void StartDisplay (struct display *d);
-extern void StartDisplayP2 (struct display *d);
-extern void StopDisplay (struct display *d);
-extern void SetTitle (const char *name);
+char *prog, *progpath;
+void StartDisplay (struct display *d);
+void StartDisplayP2 (struct display *d);
+void StopDisplay (struct display *d);
+void SetTitle (const char *name);
 
 /* in dpylist.c */
 extern struct display *displays;	/* that's ugly ... */
-extern int AnyDisplaysLeft (void);
-extern void ForEachDisplay (void (*f)(struct display *));
+int AnyDisplaysLeft (void);
+void ForEachDisplay (void (*f)(struct display *));
 #ifdef HAVE_VTS
-extern void ForEachDisplayRev (void (*f)(struct display *));
+void ForEachDisplayRev (void (*f)(struct display *));
 #endif
-extern void RemoveDisplay (struct display *old);
-extern struct display
+void RemoveDisplay (struct display *old);
+struct display
 	*FindDisplayByName (const char *name),
 #ifdef XDMCP
 	*FindDisplayBySessionID (CARD32 sessionID),
@@ -336,46 +336,46 @@ extern struct display
 	*FindDisplayByPid (int pid),
 	*FindDisplayByServerPid (int serverPid),
 	*NewDisplay (const char *name);
-extern int AnyActiveDisplays (void);
-extern int AnyRunningDisplays (void);
-extern int AnyReserveDisplays (void);
-extern int AllLocalDisplaysLocked (struct display *dp);
-extern void StartReserveDisplay (int lt);
-extern void ReapReserveDisplays (void);
+int AnyActiveDisplays (void);
+int AnyRunningDisplays (void);
+int AnyReserveDisplays (void);
+int AllLocalDisplaysLocked (struct display *dp);
+void StartReserveDisplay (int lt);
+void ReapReserveDisplays (void);
 
 /* in reset.c */
-extern void pseudoReset (void);
+void pseudoReset (void);
 
 /* in resource.c */
-extern char **FindCfgEnt (struct display *d, int id);
-extern int InitResources (char **argv);
-extern int LoadDMResources (int force);
-extern int LoadDisplayResources (struct display *d);
-extern void ScanServers (int force);
-extern void CloseGetter (void);
-extern int startConfig (int what, CfgDep *dep, int force);
-extern RcStr *newStr (char *str);
-extern void delStr (RcStr *str);
+char **FindCfgEnt (struct display *d, int id);
+int InitResources (char **argv);
+int LoadDMResources (int force);
+int LoadDisplayResources (struct display *d);
+void ScanServers (int force);
+void CloseGetter (void);
+int startConfig (int what, CfgDep *dep, int force);
+RcStr *newStr (char *str);
+void delStr (RcStr *str);
 extern GTalk cnftalk;
 
 /* in session.c */
 extern struct display *td;
-extern char **baseEnv (const char *user);
-extern char **inheritEnv (char **env, const char **what);
-extern char **systemEnv (const char *user);
-extern int source (char **env, char *file);
-extern void DeleteXloginResources (void);
-extern void LoadXloginResources (void);
-extern void ManageSession (struct display *d);
-extern void SetupDisplay (void);
+char **baseEnv (const char *user);
+char **inheritEnv (char **env, const char **what);
+char **systemEnv (const char *user);
+int source (char **env, char *file);
+void DeleteXloginResources (void);
+void LoadXloginResources (void);
+void ManageSession (struct display *d);
+void SetupDisplay (void);
 
 extern GTalk mstrtalk, grttalk;
 extern GProc grtproc;
-extern void OpenGreeter (void);
-extern int CloseGreeter (int force);
-extern int CtrlGreeterWait (int wreply);
-extern void PrepErrorGreet (void);
-extern char *conv_interact (int what, const char *prompt);
+void OpenGreeter (void);
+int CloseGreeter (int force);
+int CtrlGreeterWait (int wreply);
+void PrepErrorGreet (void);
+char *conv_interact (int what, const char *prompt);
 
 /* process.c */
 #include <stdlib.h>
@@ -386,39 +386,39 @@ typedef SIGVAL (*SIGFUNC)(int);
 SIGVAL (*Signal(int, SIGFUNC Handler))(int);
 #endif
 
-extern void RegisterInput (int fd);
-extern void UnregisterInput (int fd);
-extern void RegisterCloseOnFork (int fd);
-extern void CloseNClearCloseOnFork (int fd);
-extern int Fork (void);
-extern int Wait4 (int pid);
-extern void execute (char **argv, char **env);
-extern int runAndWait (char **args, char **env);
-extern void TerminateProcess (int pid, int sig);
+void RegisterInput (int fd);
+void UnregisterInput (int fd);
+void RegisterCloseOnFork (int fd);
+void CloseNClearCloseOnFork (int fd);
+int Fork (void);
+int Wait4 (int pid);
+void execute (char **argv, char **env);
+int runAndWait (char **args, char **env);
+void TerminateProcess (int pid, int sig);
 
-extern void GSet (GTalk *talk);	/* call before GOpen! */
-extern int GFork (GPipe *pajp, const char *pname, char *cname,
-		  GPipe *ogp, char *cgname);
-extern void GClosen (GPipe *pajp);
-extern int GOpen (GProc *proc,
-		  char **argv, const char *what, char **env, char *cname,
-		  GPipe *gp);
-extern int GClose (GProc *proc, GPipe *gp, int force);
+void GSet (GTalk *talk);	/* call before GOpen! */
+int GFork (GPipe *pajp, const char *pname, char *cname,
+	   GPipe *ogp, char *cgname);
+void GClosen (GPipe *pajp);
+int GOpen (GProc *proc,
+	   char **argv, const char *what, char **env, char *cname,
+	   GPipe *gp);
+int GClose (GProc *proc, GPipe *gp, int force);
 
-extern void GSendInt (int val);
-extern int GRecvInt (void);
-extern int GRecvCmd (int *cmd);
-extern void GSendArr (int len, const char *data);
-extern char *GRecvArr (int *len);
-extern int GRecvStrBuf (char *buf);
-extern int GRecvArrBuf (char *buf);
-extern void GSendStr (const char *buf);
-extern void GSendNStr (const char *buf, int len);
-extern char *GRecvStr (void);
-extern void GSendArgv (char **argv);
-extern void GSendStrArr (int len, char **data);
-extern char **GRecvStrArr (int *len);
-extern char **GRecvArgv (void);
+void GSendInt (int val);
+int GRecvInt (void);
+int GRecvCmd (int *cmd);
+void GSendArr (int len, const char *data);
+char *GRecvArr (int *len);
+int GRecvStrBuf (char *buf);
+int GRecvArrBuf (char *buf);
+void GSendStr (const char *buf);
+void GSendNStr (const char *buf, int len);
+char *GRecvStr (void);
+void GSendArgv (char **argv);
+void GSendStrArr (int len, char **data);
+char **GRecvStrArr (int *len);
+char **GRecvArgv (void);
 
 /* client.c */
 #define GCONV_NORMAL	0
@@ -428,91 +428,91 @@ extern char **GRecvArgv (void);
 #define GCONV_PASS_ND	4
 #define GCONV_BINARY	5
 typedef char * (*GConvFunc) (int what, const char *prompt);
-extern int Verify (GConvFunc gconv, int rootok);
-extern int StartClient (void);
-extern void SessionExit (int status) ATTR_NORETURN;
-extern int ReadDmrc (void);
+int Verify (GConvFunc gconv, int rootok);
+int StartClient (void);
+void SessionExit (int status) ATTR_NORETURN;
+int ReadDmrc (void);
 extern char **userEnviron, **systemEnviron;
 extern char *curuser, *curpass, *curtype, *newpass,
 	*dmrcuser, *curdmrc, *newdmrc;
 
 /* server.c */
-extern void StartServer (struct display *d);
-extern void AbortStartServer (struct display *d);
-extern void StartServerSuccess (void);
-extern void StartServerFailed (void);
-extern void StartServerTimeout (void);
+void StartServer (struct display *d);
+void AbortStartServer (struct display *d);
+void StartServerSuccess (void);
+void StartServerFailed (void);
+void StartServerTimeout (void);
 struct display *startingServer;
 
-extern void WaitForServer (struct display *d);
-extern void ResetServer (struct display *d);
-extern int PingServer(struct display *d);
+void WaitForServer (struct display *d);
+void ResetServer (struct display *d);
+int PingServer(struct display *d);
 extern Display *dpy;
 
 /* in util.c */
-extern void *Calloc (size_t nmemb, size_t size);
-extern void *Malloc (size_t size);
-extern void *Realloc (void *ptr, size_t size);
-extern void WipeStr (char *str);
-extern int StrCmp (const char *s1, const char *s2);
-extern int StrNDup (char **dst, const char *src, int len);
-extern int StrDup (char **dst, const char *src);
-extern int arrLen (char **arr);
-extern void freeStrArr (char **arr);
-extern char **initStrArr (char **arr);
-extern char **xCopyStrArr (int rn, char **arr);
+void *Calloc (size_t nmemb, size_t size);
+void *Malloc (size_t size);
+void *Realloc (void *ptr, size_t size);
+void WipeStr (char *str);
+int StrCmp (const char *s1, const char *s2);
+int StrNDup (char **dst, const char *src, int len);
+int StrDup (char **dst, const char *src);
+int arrLen (char **arr);
+void freeStrArr (char **arr);
+char **initStrArr (char **arr);
+char **xCopyStrArr (int rn, char **arr);
 /* Note: the following functions free the old data even in case of failure */
-extern int ReStrN (char **dst, const char *src, int len);
-extern int ReStr (char **dst, const char *src);
-extern int StrApp (char **dst, ...);
-extern char **addStrArr (char **arr, const char *str, int len);
-extern char **parseArgs (char **argv, const char *string);
+int ReStrN (char **dst, const char *src, int len);
+int ReStr (char **dst, const char *src);
+int StrApp (char **dst, ...);
+char **addStrArr (char **arr, const char *str, int len);
+char **parseArgs (char **argv, const char *string);
 /* End note */
-extern char **setEnv (char **e, const char *name, const char *value);
-extern char **putEnv (const char *string, char **env);
-extern const char *getEnv (char **e, const char *name);
-extern const char *localHostname (void);
-extern int Reader (int fd, void *buf, int len);
-extern int Writer (int fd, const void *buf, int len);
-extern void FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr);
+char **setEnv (char **e, const char *name, const char *value);
+char **putEnv (const char *string, char **env);
+const char *getEnv (char **e, const char *name);
+const char *localHostname (void);
+int Reader (int fd, void *buf, int len);
+int Writer (int fd, const void *buf, int len);
+void FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr);
 
 /* in inifile.c */
-extern char *iniLoad (const char *fname);
-extern int iniSave (const char *data, const char *fname);
-extern char *iniEntry (char *data, const char *section, const char *key, const char *value);
-extern char *iniMerge (char *data, const char *newdata);
+char *iniLoad (const char *fname);
+int iniSave (const char *data, const char *fname);
+char *iniEntry (char *data, const char *section, const char *key, const char *value);
+char *iniMerge (char *data, const char *newdata);
 
 #ifdef XDMCP
 
 /* in xdmcp.c */
-extern char *NetworkAddressToHostname (CARD16 connectionType, ARRAY8Ptr connectionAddress);
-extern void SendFailed (struct display *d, const char *reason);
-extern void init_session_id(void);
+char *NetworkAddressToHostname (CARD16 connectionType, ARRAY8Ptr connectionAddress);
+void SendFailed (struct display *d, const char *reason);
+void init_session_id(void);
 
 /* in netaddr.c */
-extern char *NetaddrAddress(XdmcpNetaddr netaddrp, int *lenp);
-extern char *NetaddrPort(XdmcpNetaddr netaddrp, int *lenp);
-extern int ConvertAddr (XdmcpNetaddr saddr, int *len, char **addr);
-extern int NetaddrFamily (XdmcpNetaddr netaddrp);
-extern int addressEqual (XdmcpNetaddr a1, int len1, XdmcpNetaddr a2, int len2);
+char *NetaddrAddress(XdmcpNetaddr netaddrp, int *lenp);
+char *NetaddrPort(XdmcpNetaddr netaddrp, int *lenp);
+int ConvertAddr (XdmcpNetaddr saddr, int *len, char **addr);
+int NetaddrFamily (XdmcpNetaddr netaddrp);
+int addressEqual (XdmcpNetaddr a1, int len1, XdmcpNetaddr a2, int len2);
 
 /* in policy.c */
 struct sockaddr;
-extern ARRAY8Ptr Accept (struct sockaddr *from, int fromlen, CARD16 displayNumber);
-extern ARRAY8Ptr ChooseAuthentication (ARRAYofARRAY8Ptr authenticationNames);
-extern int CheckAuthentication (struct protoDisplay *pdpy, ARRAY8Ptr displayID, ARRAY8Ptr name, ARRAY8Ptr data);
-extern int SelectAuthorizationTypeIndex (ARRAY8Ptr authenticationName, ARRAYofARRAY8Ptr authorizationNames);
-extern int SelectConnectionTypeIndex (ARRAY16Ptr connectionTypes, ARRAYofARRAY8Ptr connectionAddresses);
-extern int Willing (ARRAY8Ptr addr, CARD16 connectionType, ARRAY8Ptr authenticationName, ARRAY8Ptr status, xdmOpCode type);
+ARRAY8Ptr Accept (struct sockaddr *from, int fromlen, CARD16 displayNumber);
+ARRAY8Ptr ChooseAuthentication (ARRAYofARRAY8Ptr authenticationNames);
+int CheckAuthentication (struct protoDisplay *pdpy, ARRAY8Ptr displayID, ARRAY8Ptr name, ARRAY8Ptr data);
+int SelectAuthorizationTypeIndex (ARRAY8Ptr authenticationName, ARRAYofARRAY8Ptr authorizationNames);
+int SelectConnectionTypeIndex (ARRAY16Ptr connectionTypes, ARRAYofARRAY8Ptr connectionAddresses);
+int Willing (ARRAY8Ptr addr, CARD16 connectionType, ARRAY8Ptr authenticationName, ARRAY8Ptr status, xdmOpCode type);
 
 /* in protodpy.c */
-extern void DisposeProtoDisplay(struct protoDisplay *pdpy);
+void DisposeProtoDisplay(struct protoDisplay *pdpy);
 
-extern struct protoDisplay	*FindProtoDisplay (
+struct protoDisplay	*FindProtoDisplay (
 					XdmcpNetaddr address,
 					int          addrlen,
 					CARD16       displayNumber);
-extern struct protoDisplay	*NewProtoDisplay (
+struct protoDisplay	*NewProtoDisplay (
 					XdmcpNetaddr address,
 					int	     addrlen,
 					CARD16	     displayNumber,
@@ -525,29 +525,29 @@ typedef void (*ChooserFunc)(CARD16 connectionType, ARRAY8Ptr addr, char *closure
 typedef void (*ListenFunc)(ARRAY8Ptr addr, void **closure);
 
 /* in access.c */
-extern ARRAY8Ptr getLocalAddress (void);
-extern int AcceptableDisplayAddress (ARRAY8Ptr clientAddress, CARD16 connectionType, xdmOpCode type);
-extern int ForEachMatchingIndirectHost (ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure);
-extern void ScanAccessDatabase (int force);
-extern int UseChooser (ARRAY8Ptr clientAddress, CARD16 connectionType);
-extern void ForEachChooserHost (ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure);
-extern void ForEachListenAddr (ListenFunc listenfunction, ListenFunc mcastfcuntion, void **closure);
+ARRAY8Ptr getLocalAddress (void);
+int AcceptableDisplayAddress (ARRAY8Ptr clientAddress, CARD16 connectionType, xdmOpCode type);
+int ForEachMatchingIndirectHost (ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure);
+void ScanAccessDatabase (int force);
+int UseChooser (ARRAY8Ptr clientAddress, CARD16 connectionType);
+void ForEachChooserHost (ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure);
+void ForEachListenAddr (ListenFunc listenfunction, ListenFunc mcastfcuntion, void **closure);
 
 /* in choose.c */
-extern ARRAY8Ptr IndirectChoice (ARRAY8Ptr clientAddress, CARD16 connectionType);
-extern int IsIndirectClient (ARRAY8Ptr clientAddress, CARD16 connectionType);
-extern int RememberIndirectClient (ARRAY8Ptr clientAddress, CARD16 connectionType);
-extern void ForgetIndirectClient ( ARRAY8Ptr clientAddress, CARD16 connectionType);
-extern int RegisterIndirectChoice (ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice);
-extern int DoChoose (void);
+ARRAY8Ptr IndirectChoice (ARRAY8Ptr clientAddress, CARD16 connectionType);
+int IsIndirectClient (ARRAY8Ptr clientAddress, CARD16 connectionType);
+int RememberIndirectClient (ARRAY8Ptr clientAddress, CARD16 connectionType);
+void ForgetIndirectClient ( ARRAY8Ptr clientAddress, CARD16 connectionType);
+int RegisterIndirectChoice (ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice);
+int DoChoose (void);
 
 /* socket.c or streams.c */
-extern void UpdateListenSockets (void);
-extern int AnyListenSockets (void);
-extern int ProcessListenSockets (FD_TYPE *reads);
+void UpdateListenSockets (void);
+int AnyListenSockets (void);
+int ProcessListenSockets (FD_TYPE *reads);
 
 /* in xdmcp.c */
-extern void ProcessRequestSocket (int fd);
+void ProcessRequestSocket (int fd);
 
 #endif /* XDMCP */
 

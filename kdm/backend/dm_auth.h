@@ -35,18 +35,18 @@ authorization.
 
 #include "dm.h"
 
-extern void	MitInitAuth (unsigned short name_len, const char *name);
-extern Xauth	*MitGetAuth (unsigned short namelen, const char *name);
+void	MitInitAuth (unsigned short name_len, const char *name);
+Xauth	*MitGetAuth (unsigned short namelen, const char *name);
 
 #ifdef HASXDMAUTH
-extern void	XdmInitAuth (unsigned short name_len, const char *name);
-extern Xauth	*XdmGetAuth (unsigned short namelen, const char *name);
+void	XdmInitAuth (unsigned short name_len, const char *name);
+Xauth	*XdmGetAuth (unsigned short namelen, const char *name);
 # ifdef XDMCP
-extern void	XdmGetXdmcpAuth (
+void	XdmGetXdmcpAuth (
     struct protoDisplay	*pdpy,
     unsigned short	authorizationNameLen,
     const char		*authorizationName);
-extern int	XdmCheckAuthentication (
+int	XdmCheckAuthentication (
     struct protoDisplay	*pdpy,
     ARRAY8Ptr		displayID, 
     ARRAY8Ptr		authenticationName, 
@@ -57,26 +57,26 @@ extern int	XdmCheckAuthentication (
 #endif
 
 #ifdef SECURE_RPC
-extern void	SecureRPCInitAuth (unsigned short name_len, const char *name);
-extern Xauth	*SecureRPCGetAuth (unsigned short name_len, const char *name);
+void	SecureRPCInitAuth (unsigned short name_len, const char *name);
+Xauth	*SecureRPCGetAuth (unsigned short name_len, const char *name);
 #endif
 
 #ifdef K5AUTH
-extern void	Krb5InitAuth (unsigned short name_len, const char *name);
-extern Xauth	*Krb5GetAuth (unsigned short name_len, const char *name);
+void	Krb5InitAuth (unsigned short name_len, const char *name);
+Xauth	*Krb5GetAuth (unsigned short name_len, const char *name);
 
-extern Xauth	*Krb5GetAuthFor (unsigned short name_len, const char *name, const char *dname);
-extern char *Krb5Init (const char *user, const char *passwd, const char *dname);
-extern void Krb5Destroy (const char *dname);
+Xauth	*Krb5GetAuthFor (unsigned short name_len, const char *name, const char *dname);
+char	*Krb5Init (const char *user, const char *passwd, const char *dname);
+void	Krb5Destroy (const char *dname);
 #endif
 
 /* auth.c */
-extern int ValidAuthorization (unsigned short name_length, const char *name);
+int ValidAuthorization (unsigned short name_length, const char *name);
 
 
 #ifdef XDMCP
 
-extern void
+void
 SetProtoDisplayAuthorization (
     struct protoDisplay	*pdpy,
     unsigned short	authorizationNameLen,
@@ -84,19 +84,19 @@ SetProtoDisplayAuthorization (
 
 #endif /* XDMCP */
 
-extern int SaveServerAuthorizations (struct display *d, Xauth **auths, int count);
-extern void CleanUpFileName (const char *src, char *dst, int len);
-extern void RemoveUserAuthorization (struct display *d);
-extern void SetAuthorization (struct display *d);
-extern void SetLocalAuthorization (struct display *d);
-extern void SetUserAuthorization (struct display *d);
+int SaveServerAuthorizations (struct display *d, Xauth **auths, int count);
+void CleanUpFileName (const char *src, char *dst, int len);
+void RemoveUserAuthorization (struct display *d);
+void SetAuthorization (struct display *d);
+void SetLocalAuthorization (struct display *d);
+void SetUserAuthorization (struct display *d);
 
 /* genauth.c */
-extern int GenerateAuthData (char *auth, int len);
+int GenerateAuthData (char *auth, int len);
 #if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
-extern void AddPreGetEntropy (void);
-extern void AddOtherEntropy (void);
-extern void AddTimerEntropy (void);
+void AddPreGetEntropy (void);
+void AddOtherEntropy (void);
+void AddTimerEntropy (void);
 #endif
 
 #endif /* _DM_AUTH_H_ */
