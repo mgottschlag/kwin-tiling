@@ -170,15 +170,20 @@ class KStyleListView: public KListView
 KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	: KCModule( parent, name ), appliedStyle(NULL)
 {
+	m_bMacDirty = false;
+	m_bEffectsDirty = false;
+	m_bStyleDirty= false;
+	m_bToolbarsDirty = false;
+
 	KGlobal::dirs()->addResourceType("themes",
 		KStandardDirs::kde_default("data") + "kstyle/themes");
 
 	// Setup pages and mainLayout
-    mainLayout = new QVBoxLayout( this );
-    tabWidget  = new QTabWidget( this );
+	mainLayout = new QVBoxLayout( this );
+	tabWidget  = new QTabWidget( this );
 	mainLayout->addWidget( tabWidget );
 
-    page1 = new QWidget( tabWidget );
+	page1 = new QWidget( tabWidget );
 	page1Layout = new QVBoxLayout( page1, KDialog::marginHint(), KDialog::spacingHint() );
 	page2 = new QWidget( tabWidget );
 	page2Layout = new QVBoxLayout( page2, KDialog::marginHint(), KDialog::spacingHint() );
@@ -382,6 +387,11 @@ void KCMStyle::load()
 
 	// Page3 - Misc.
 	loadMisc( config );
+
+	m_bMacDirty = false;
+	m_bEffectsDirty = false;
+	m_bStyleDirty= false;
+	m_bToolbarsDirty = false;
 }
 
 
@@ -479,7 +489,6 @@ void KCMStyle::save()
 		KIPC::sendMessageAll(KIPC::StyleChanged);
 	else if (m_bMacDirty)
 		kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", QByteArray());
-
 	if ( m_bToolbarsDirty || m_bMacDirty )
 		// ##### FIXME - Doesn't apply all settings correctly due to bugs in
 		// KApplication/KToolbar
@@ -605,7 +614,7 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 
 	QString strWidgetStyle;
 	QStringList list = KGlobal::dirs()->findAllResources("themes", "*.themerc", true, true);
-    for (QStringList::iterator it = list.begin(); it != list.end(); it++)
+	for (QStringList::iterator it = list.begin(); it != list.end(); it++)
 	{
 		KSimpleConfig config( *it, true );
 		if ( !(config.hasGroup("KDE") && config.hasGroup("Misc")) )
@@ -629,7 +638,7 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 
 	QStringList styles = QStyleFactory::keys();
 	StyleEntry* entry;
-    for (QStringList::iterator it = styles.begin(); it != styles.end(); it++)
+	for (QStringList::iterator it = styles.begin(); it != styles.end(); it++)
 	{
 		// Find a match for the key in the dictionary
 		if ((entry = styleEntries.find(*it)) != 0) {
@@ -883,18 +892,18 @@ void KCMStyle::addWhatsThis()
 	// Page2
 	QWhatsThis::add( gbEffects, i18n("This page allows you to enable various widget style effects. "
 							"For best performance, it is advisable to disable all effects.") );
-    QWhatsThis::add( cbEnableEffects, i18n( "If you check this box, you can select several effects "
+	QWhatsThis::add( cbEnableEffects, i18n( "If you check this box, you can select several effects "
 							"for different widgets like combo boxes, menus or tooltips.") );
-    QWhatsThis::add( comboComboEffect, i18n( "<p><b>Disable: </b>Don't use any combo box effects.</p>\n"
+	QWhatsThis::add( comboComboEffect, i18n( "<p><b>Disable: </b>Don't use any combo box effects.</p>\n"
 							"<b>Animate: </b>Do some animation.") );
-    QWhatsThis::add( comboTooltipEffect, i18n( "<p><b>Disable: </b>Don't use any tooltip effects.</p>\n"
+	QWhatsThis::add( comboTooltipEffect, i18n( "<p><b>Disable: </b>Don't use any tooltip effects.</p>\n"
 							"<p><b>Animate: </b>Do some animation.</p>\n"
 							"<b>Fade: </b>Fade in tooltips using alpha-blending.") );
-    QWhatsThis::add( comboMenuEffect, i18n( "<p><b>Disable: </b>Don't use any menu effects.</p>\n"
+	QWhatsThis::add( comboMenuEffect, i18n( "<p><b>Disable: </b>Don't use any menu effects.</p>\n"
 							"<p><b>Animate: </b>Do some animation.</p>\n"
 							"<p><b>Fade: </b>Fade in menus using alpha-blending.</p>\n"
 							"<b>Make Translucent: </b>Alpha-blend menus for a see-through effect. (KDE styles only)") );
-    QWhatsThis::add( comboMenuEffectType, i18n( "<p><b>Software Tint: </b>Alpha-blend using a flat color.</p>\n"
+	QWhatsThis::add( comboMenuEffectType, i18n( "<p><b>Software Tint: </b>Alpha-blend using a flat color.</p>\n"
 							"<p><b>Software Blend: </b>Alpha-blend using an image.</p>\n"
 							"<b>XRender Blend: </b>Use the XFree RENDER extension for image blending (if available). "
 							"This method may be slower than the Software routines on non-accelerated displays, "
@@ -910,7 +919,7 @@ void KCMStyle::addWhatsThis()
 							"transparent when moving them around.") );
 	QWhatsThis::add( cbEnableTooltips, i18n( "If you check this option, the KDE application "
 							"will offer tooltips when the cursor remains over items in the toolbar." ) );
-    QWhatsThis::add( comboToolbarIcons, i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
+	QWhatsThis::add( comboToolbarIcons, i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
 							"Best option for low resolutions.</p>"
 							"<p><b>Text only: </b>Shows only text on toolbar buttons.</p>"
 							"<p><b>Text alongside icons: </b> Shows icons and text on toolbar buttons. "
