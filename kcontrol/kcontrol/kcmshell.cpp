@@ -134,15 +134,16 @@ int main(int _argc, char *_argv[])
 
     if (module) {
 	// create the dialog
-	KCDialog dlg(module, module->buttons(), info.docPath(), 0, 0, true);
-	dlg.setCaption(info.name());
+	KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true);
+	dlg->setCaption(info.name());
 	
 	// Needed for modules that use d'n'd (not really the right
 	// solution for this though, I guess)
-	dlg.setAcceptDrops(true);
+	dlg->setAcceptDrops(true);
 
 	// run the dialog
-	int ret = dlg.exec();
+	int ret = dlg->exec();
+        delete dlg;
 	ModuleLoader::unloadModule(info);
 	return ret;
     }
