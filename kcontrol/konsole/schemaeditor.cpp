@@ -19,6 +19,7 @@
 
 
 #include "schemaeditor.h"
+#include "schemaeditor.moc"
 
 #include <dcopclient.h>
 
