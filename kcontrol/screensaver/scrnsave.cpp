@@ -249,7 +249,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     hbox->addStretch(1);
     QString wtstr = i18n("Choose the period of inactivity (from 1"
       " to 120 minutes) after which the screen saver should start."
-      " To prevent the screen saver from automatically starting, choose zero minutes.");
+      " To prevent the screen saver from automatically starting, uncheck the above option.");
     QWhatsThis::add( mActivateLbl, wtstr );
     QWhatsThis::add( mWaitEdit, wtstr );
     
