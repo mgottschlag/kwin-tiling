@@ -1,5 +1,4 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
-<include>kcombobox.h</include>
 <class>ComponentConfig_UI</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>412</width>
-            <height>209</height>
+            <width>218</width>
+            <height>51</height>
         </rect>
     </property>
     <property name="caption">
@@ -21,7 +20,7 @@
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>11</number>
+            <number>0</number>
         </property>
         <property name="spacing">
             <number>6</number>
@@ -61,5 +60,8 @@
         </spacer>
     </vbox>
 </widget>
+<includes>
+    <include location="global" impldecl="in declaration">kcombobox.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

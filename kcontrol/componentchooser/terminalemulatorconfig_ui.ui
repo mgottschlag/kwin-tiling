@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>420</width>
-            <height>135</height>
+            <width>250</width>
+            <height>105</height>
         </rect>
     </property>
     <property name="caption">
@@ -20,24 +20,22 @@
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>11</number>
+            <number>0</number>
         </property>
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QRadioButton">
+        <widget class="QButtonGroup">
             <property name="name">
-                <cstring>terminalCB</cstring>
+                <cstring>ButtonGroup1</cstring>
             </property>
-            <property name="text">
-                <string>&amp;Use Konsole as terminal application</string>
+            <property name="lineWidth">
+                <number>0</number>
             </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>Layout3</cstring>
+            <property name="title">
+                <string></string>
             </property>
-            <hbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
@@ -47,45 +45,145 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QRadioButton">
+                <spacer row="3" column="1">
+                    <property name="name">
+                        <cstring>Spacer4</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>0</width>
+                            <height>87</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QRadioButton" row="1" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>otherCB</cstring>
                     </property>
                     <property name="text">
-                        <string>Other &amp;terminal</string>
+                        <string>Use a different &amp;terminal program:</string>
                     </property>
                 </widget>
-                <widget class="KLineEdit">
+                <spacer row="2" column="0">
                     <property name="name">
-                        <cstring>terminalLE</cstring>
+                        <cstring>Spacer15</cstring>
                     </property>
-                    <property name="minimumSize">
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
                         <size>
-                            <width>250</width>
-                            <height>0</height>
+                            <width>31</width>
+                            <height>20</height>
                         </size>
                     </property>
+                </spacer>
+                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>terminalCB</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Use Konsole as terminal application</string>
+                    </property>
                 </widget>
-            </hbox>
+                <widget class="QLayoutWidget" row="2" column="1">
+                    <property name="name">
+                        <cstring>Layout4</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>terminalLE</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>1</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>1</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>0</width>
+                                    <height>0</height>
+                                </size>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>&lt;ul&gt; &lt;li&gt;%t: Recipient's address&lt;/li&gt; &lt;li&gt;%s: Subject&lt;/li&gt; &lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt; &lt;li&gt;%b: Blind Carbon Copy (BCC)&lt;/li&gt; &lt;li&gt;%B: Template body text&lt;/li&gt; &lt;li&gt;%A: Attachment &lt;/li&gt; &lt;/ul&gt;</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Press this button to select your favorite email client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br&gt; You can also use several placeholders which will be replaced with the actual values when the email client is called:&lt;ul&gt; &lt;li&gt;%t: Recipient's address&lt;/li&gt; &lt;li&gt;%s: Subject&lt;/li&gt; &lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt; &lt;li&gt;%b: Blind Carbon Copy (BCC)&lt;/li&gt; &lt;li&gt;%B: Template body text&lt;/li&gt; &lt;li&gt;%A: Attachment &lt;/li&gt; &lt;/ul&gt;</string>
+                            </property>
+                        </widget>
+                        <widget class="QToolButton">
+                            <property name="name">
+                                <cstring>btnSelectTerminal</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>1</hsizetype>
+                                    <vsizetype>1</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="text">
+                                <string>...</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+            </grid>
         </widget>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer4</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>0</width>
-                    <height>41</height>
-                </size>
-            </property>
-        </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>otherCB</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>terminalLE</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>otherCB</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>btnSelectTerminal</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>btnSelectTerminal</sender>
+        <signal>clicked()</signal>
+        <receiver>TerminalEmulatorConfig_UI</receiver>
+        <slot>selectTerminalApp()</slot>
+    </connection>
+</connections>
+<slots>
+    <slot access="protected">selectTerminalApp()</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

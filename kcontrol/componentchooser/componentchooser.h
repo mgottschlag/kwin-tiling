@@ -71,6 +71,7 @@ public:
 	virtual void save(KConfig *cfg);
 
 protected slots:
+	void selectTerminalApp();
 	void configChanged();
 
 signals:

@@ -22,6 +22,7 @@
 #include <qtoolbutton.h>
 #include <qfile.h>
 #include <kurl.h>
+#include <kurlrequester.h>
 #include <kopenwith.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
@@ -104,10 +105,9 @@ void CfgComponent::load(KConfig *cfg) {
 CfgEmailClient::CfgEmailClient(QWidget *parent):EmailClientConfig_UI(parent),CfgPlugin(){
 	pSettings = new KEMailSettings();
 
+	connect(kmailCB, SIGNAL(toggled(bool)), SLOT(configChanged()) );
 	connect(txtEMailClient, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
 	connect(chkRunTerminal, SIGNAL(clicked()), SLOT(configChanged()) );
-	connect(btnSelectEmail, SIGNAL(clicked()), SLOT(selectEmailClient()) );
-
 }
 
 CfgEmailClient::~CfgEmailClient() {
@@ -117,7 +117,12 @@ CfgEmailClient::~CfgEmailClient() {
 
 void CfgEmailClient::load(KConfig *)
 {
-	txtEMailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
+	QString emailClient = pSettings->getSetting(KEMailSettings::ClientProgram);
+	bool useKMail = (emailClient == QString::null);
+    
+	kmailCB->setChecked(useKMail);
+	otherCB->setChecked(!useKMail);
+	txtEMailClient->setText(emailClient);
 	chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
 
 	emit changed(false);
@@ -148,8 +153,16 @@ void CfgEmailClient::selectEmailClient()
 
 void CfgEmailClient::save(KConfig *)
 {
-	pSettings->setSetting(KEMailSettings::ClientProgram, txtEMailClient->text());
-	pSettings->setSetting(KEMailSettings::ClientTerminal, (chkRunTerminal->isChecked()) ? "true" : "false");
+	if (kmailCB->isChecked())
+	{
+		pSettings->setSetting(KEMailSettings::ClientProgram, QString::null);
+		pSettings->setSetting(KEMailSettings::ClientTerminal, "false");
+	}
+	else
+	{
+		pSettings->setSetting(KEMailSettings::ClientProgram, txtEMailClient->text());
+		pSettings->setSetting(KEMailSettings::ClientTerminal, (chkRunTerminal->isChecked()) ? "true" : "false");
+	}
 
 	// insure proper permissions -- contains sensitive data
 	QString cfgName(KGlobal::dirs()->findResource("config", "emails"));
@@ -169,10 +182,9 @@ void CfgEmailClient::save(KConfig *)
 //BEGIN Terminal Emulator Configuration
 
 CfgTerminalEmulator::CfgTerminalEmulator(QWidget *parent):TerminalEmulatorConfig_UI(parent),CfgPlugin(){
-	connect(terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
+	connect(terminalLE,SIGNAL(textChanged(const QString &)), this, SLOT(configChanged()));
 	connect(terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 	connect(otherCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
-
 }
 
 CfgTerminalEmulator::~CfgTerminalEmulator() {
@@ -180,26 +192,6 @@ CfgTerminalEmulator::~CfgTerminalEmulator() {
 
 void CfgTerminalEmulator::configChanged()
 {
-	if (sender()==terminalCB)
-	{
-		terminalCB->blockSignals(true);
-		otherCB->blockSignals(true);
-			terminalCB->setChecked(true);
-			otherCB->setChecked(false);
-			terminalLE->setEnabled(false);
-		terminalCB->blockSignals(false);
-		otherCB->blockSignals(false);
-	} else
-	if (sender()==otherCB)
-	{
-		terminalCB->blockSignals(true);
-		otherCB->blockSignals(true);
-	                terminalCB->setChecked(false);
-        	        otherCB->setChecked(true);
-			terminalLE->setEnabled(true);
-		terminalCB->blockSignals(false);
-		otherCB->blockSignals(false);		
-	}
 	emit changed(true);
 }
 
@@ -231,9 +223,22 @@ void CfgTerminalEmulator::save(KConfig *) {
 	config->sync();
 	delete config;
 
-        kapp->dcopClient()->send("klauncher", "klauncher","reparseConfiguration()", QString::null);
+	kapp->dcopClient()->send("klauncher", "klauncher","reparseConfiguration()", QString::null);
 
 	emit changed(false);
+}
+
+void CfgTerminalEmulator::selectTerminalApp()
+{
+	KURL::List urlList;
+	KOpenWithDlg dlg(urlList, i18n("Select preferred email client:"), QString::null, this);
+	if (dlg.exec() != QDialog::Accepted) return;
+	QString client = dlg.text();
+
+	if (!client.isEmpty())
+	{
+		terminalLE->setText(client);
+	}
 }
 
 //END Terminal Emulator Configuration
@@ -323,7 +328,6 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	emitChanged(false);
 	delete cfg;
 	latestEditedService=static_cast<MyListBoxItem*>(it)->File;
-
 }
 
 
