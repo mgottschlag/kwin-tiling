@@ -41,6 +41,7 @@ Name[pt]=Notícias Google
 Name[pt_BR]=Notícias do Google
 Name[ro]=Ştiri Google
 Name[ru]=Новости Google
+Name[se]=Google ođđasat
 Name[sk]=Google správy
 Name[sr]=Google новости
 Name[sr@Latn]=Google novosti
@@ -59,10 +60,14 @@ ServiceTypes=SearchProvider
 Keys=ggn,googlenews
 Query=http://news.google.com/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[en_GB]=http://news.google.co.uk/news?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[fi]=http://news.google.fi/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[fr]=http://news.google.fr/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[fy]=http://news.google.nl/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[he]=http://news.google.co.il/news?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[it]=http://news.google.it/news?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[nb]=http://news.google.no/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[nl]=http://news.google.nl/news?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[pl]=http://news.google.pl/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[pt]=http://news.google.pt/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[xx]=xxhttp://news.google.com/news?q=\\{@}&ie=UTF-8&oe=UTF-8xx
 Charset=utf8
