@@ -25,6 +25,7 @@
 #include <kopenwith.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
+#include <qradiobutton.h>
 
 class MyListBoxItem: public QListBoxText
 {
@@ -170,6 +171,7 @@ void CfgEmailClient::save(KConfig *)
 CfgTerminalEmulator::CfgTerminalEmulator(QWidget *parent):TerminalEmulatorConfig_UI(parent),CfgPlugin(){
 	connect(terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
 	connect(terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+	connect(otherCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 
 }
 
@@ -178,6 +180,26 @@ CfgTerminalEmulator::~CfgTerminalEmulator() {
 
 void CfgTerminalEmulator::configChanged()
 {
+	if (sender()==terminalCB)
+	{
+		terminalCB->blockSignals(true);
+		otherCB->blockSignals(true);
+			terminalCB->setChecked(true);
+			otherCB->setChecked(false);
+			terminalLE->setEnabled(false);
+		terminalCB->blockSignals(false);
+		otherCB->blockSignals(false);
+	} else
+	if (sender()==otherCB)
+	{
+		terminalCB->blockSignals(true);
+		otherCB->blockSignals(true);
+	                terminalCB->setChecked(false);
+        	        otherCB->setChecked(true);
+			terminalLE->setEnabled(true);
+		terminalCB->blockSignals(false);
+		otherCB->blockSignals(false);		
+	}
 	emit changed(true);
 }
 
@@ -194,7 +216,7 @@ void CfgTerminalEmulator::load(KConfig *) {
 	else
 	{
 	  terminalLE->setText(terminal);
-	  terminalCB->setChecked(false);
+	  otherCB->setChecked(true);
 	}
 	delete config;
 
@@ -206,7 +228,10 @@ void CfgTerminalEmulator::save(KConfig *) {
 	KConfig *config = new KConfig("kdeglobals");
 	config->setGroup("General");
 	config->writeEntry("TerminalApplication",terminalCB->isChecked()?"konsole":terminalLE->text(), true, true);
+	config->sync();
 	delete config;
+
+        kapp->dcopClient()->send("klauncher", "klauncher","reparseConfiguration()", QString::null);
 
 	emit changed(false);
 }

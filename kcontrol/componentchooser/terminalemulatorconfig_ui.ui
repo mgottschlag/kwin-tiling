@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>411</width>
+            <width>420</width>
             <height>135</height>
         </rect>
     </property>
@@ -25,7 +25,7 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QCheckBox">
+        <widget class="QRadioButton">
             <property name="name">
                 <cstring>terminalCB</cstring>
             </property>
@@ -35,7 +35,7 @@
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>Layout4</cstring>
+                <cstring>Layout3</cstring>
             </property>
             <hbox>
                 <property name="name">
@@ -47,32 +47,12 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <spacer>
+                <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>Spacer2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>40</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>terminalLabel</cstring>
+                        <cstring>otherCB</cstring>
                     </property>
                     <property name="text">
-                        <string>Other &amp;terminal:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>terminalLE</cstring>
+                        <string>Other &amp;terminal</string>
                     </property>
                 </widget>
                 <widget class="KLineEdit">
@@ -101,7 +81,7 @@
             <property name="sizeHint">
                 <size>
                     <width>0</width>
-                    <height>181</height>
+                    <height>41</height>
                 </size>
             </property>
         </spacer>
