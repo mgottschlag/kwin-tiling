@@ -197,7 +197,7 @@ int kSlideShowSaver::effectMultiCircleOut(bool aInit)
     my = mh>>1;
     pa.setPoint(0, mw>>1, mh>>1);
     pa.setPoint(3, mw>>1, mh>>1);
-    mfy = sqrt(mw*mw + mh*mh) / 2;
+    mfy = sqrt((double)mw*mw + mh*mh) / 2;
     mi  = rand()%15 + 2;
     mfd = M_PI*2/mi;
     mAlpha = mfd;
@@ -358,7 +358,7 @@ int kSlideShowSaver::effectCircleOut(bool aInit)
     pa.setPoint(0, mw>>1, mh>>1);
     pa.setPoint(3, mw>>1, mh>>1);
     mfx = M_PI/16;  // divisor must be powers of 8
-    mfy = sqrt(mw*mw + mh*mh) / 2;
+    mfy = sqrt((double)mw*mw + mh*mh) / 2;
   }
 
   if (mAlpha < 0)
