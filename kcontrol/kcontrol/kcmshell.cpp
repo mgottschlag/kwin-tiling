@@ -188,9 +188,6 @@ int main(int _argc, char *_argv[])
 		    (*descriptions.at(i)).local8Bit().data());
         }
 
-#if defined(QT_THREAD_SUPPORT)
-	app.unlock();
-#endif
         return 0;
     }
 
@@ -209,12 +206,7 @@ int main(int _argc, char *_argv[])
 
         QString path = locateModule(args->arg(0));
         if (path.isEmpty())
-	{
-#if defined(QT_THREAD_SUPPORT)
-	   app.unlock();
-#endif
            return 0;
-	}
 
         // load the module
         KCModuleInfo info(path, KCGlobal::baseGroup());
