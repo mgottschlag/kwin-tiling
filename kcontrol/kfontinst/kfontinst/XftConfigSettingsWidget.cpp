@@ -116,16 +116,33 @@ void CXftConfigSettingsWidget::fileButtonPressed()
 
 void CXftConfigSettingsWidget::excludeRangeChecked(bool on)
 {
+    bool   changed=false;
+    double from,
+           to;
+
     itsFromText->setEnabled(on && itsExcludeRangeCheck->isChecked());
     itsToText->setEnabled(on && itsExcludeRangeCheck->isChecked());
 
     if(on)
-        CKfiGlobal::xft().setExcludeRange(itsFromText->text().toDouble(), itsToText->text().toDouble());
+    {
+        if(!CKfiGlobal::xft().getExcludeRange(from, to) || from!=itsFromText->text().toDouble() || to!=itsToText->text().toDouble())
+        {
+            CKfiGlobal::xft().setExcludeRange(itsFromText->text().toDouble(), itsToText->text().toDouble());
+            changed=true;
+        }
+    }
     else
-        CKfiGlobal::xft().removeExcludeRange();
+        if(CKfiGlobal::xft().getExcludeRange(from, to))
+        {
+            CKfiGlobal::xft().removeExcludeRange();
+            changed=true;
+        }
 
-    itsSaveButton->setEnabled(true);
-    emit madeChanges();
+    if(changed)
+    {
+        itsSaveButton->setEnabled(true);
+        emit madeChanges();
+    }
 }
 
 void CXftConfigSettingsWidget::setWidgets()
@@ -136,7 +153,6 @@ void CXftConfigSettingsWidget::setWidgets()
            enableConfig = ( (fExists && CMisc::fWritable(CKfiGlobal::cfg().getXftConfigFile())) ||
                             (!fExists && CMisc::dWritable(CMisc::getDir(CKfiGlobal::cfg().getXftConfigFile()))));
  
-    itsExcludeRangeCheck->setEnabled(enableConfig);
     itsUseSubPixelHintingCheck->setEnabled(enableConfig);
     itsAdvancedButton->setEnabled(fExists);
     itsFromText->setEnabled(enableConfig && itsExcludeRangeCheck->isChecked());
@@ -155,6 +171,8 @@ void CXftConfigSettingsWidget::setWidgets()
     else
         itsExcludeRangeCheck->setChecked(false);
 
+    itsExcludeRangeCheck->setEnabled(enableConfig);
+
     itsUseSubPixelHintingCheck->setChecked(CKfiGlobal::xft().getUseSubPixelHinting());
 }
 
@@ -162,9 +180,15 @@ void CXftConfigSettingsWidget::fromChanged(const QString &str)
 {
     if(itsExcludeRangeCheck->isChecked())
     {
-        CKfiGlobal::xft().setExcludeRange(str.toDouble(), itsToText->text().toDouble());
-        itsSaveButton->setEnabled(true);
-        emit madeChanges();
+        double from,
+               to;
+
+        if(!CKfiGlobal::xft().getExcludeRange(from, to) || from!=str.toDouble())
+        {
+            CKfiGlobal::xft().setExcludeRange(str.toDouble(), itsToText->text().toDouble());
+            itsSaveButton->setEnabled(true);
+            emit madeChanges();
+        }
     }
 }
 
@@ -172,17 +196,28 @@ void CXftConfigSettingsWidget::toChanged(const QString &str)
 {
     if(itsExcludeRangeCheck->isChecked())
     {
-        CKfiGlobal::xft().setExcludeRange(itsFromText->text().toDouble(), str.toDouble());
-        itsSaveButton->setEnabled(true);
-        emit madeChanges();
+        double from,
+               to;
+
+        if(!CKfiGlobal::xft().getExcludeRange(from, to) || to!=str.toDouble())
+        {
+            CKfiGlobal::xft().setExcludeRange(itsFromText->text().toDouble(), str.toDouble());
+            itsSaveButton->setEnabled(true);
+            emit madeChanges();
+        }
     }
 }
 
 void CXftConfigSettingsWidget::useSubPixelChecked(bool on)
 {
-    CKfiGlobal::xft().setUseSubPixelHinting(on);
-    itsSaveButton->setEnabled(true);
-    emit madeChanges();
+    bool set=CKfiGlobal::xft().getUseSubPixelHinting();
+
+    if((on && !set) || (!on && set))
+    {
+        CKfiGlobal::xft().setUseSubPixelHinting(on);
+        itsSaveButton->setEnabled(true);
+        emit madeChanges();
+    }
 }
 
 void CXftConfigSettingsWidget::advancedButtonPressed()
