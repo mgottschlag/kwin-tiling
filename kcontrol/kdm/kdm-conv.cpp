@@ -75,7 +75,11 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     connect(puGroup, SIGNAL(clicked(int)), SLOT(slotChanged()));
     npRadio = new QRadioButton(i18n("&None"), puGroup);
     ppRadio = new QRadioButton(i18n("Prev&ious"), puGroup);
+    QWhatsThis::add( ppRadio, i18n("Preselect the user that logged in previously. "
+	"Use this if this computer is usually used several consecutive times by one user.") );
     spRadio = new QRadioButton(i18n("Specif&y"), puGroup);
+    QWhatsThis::add( spRadio, i18n("Preselect the user specified in the combo box below. "
+	"Use this if this computer is predominantly used by a certain user.") );
     hlpw = new QWidget(puGroup);
     puserlb = new KComboBox(true, hlpw);
     pu_label = new QLabel(puserlb, i18n("Us&er:"), hlpw);
@@ -92,8 +96,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     cbjumppw = new QCheckBox(i18n("Focus pass&word"), puGroup);
     QWhatsThis::add( cbjumppw, i18n("When this option is on, KDM will place the cursor "
 	"in the password field instead of the user field after preselecting a user. "
-	"This will save one key press per login, if the user logging on is usually the "
-	"same one.") );
+	"Use this to save one key press per login, if the preselection usually does not need to "
+	"be changed.") );
     connect(cbjumppw, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     npGroup = new QVGroupBox(i18n("Password-less Login"), this );
