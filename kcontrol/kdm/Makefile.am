@@ -1,8 +1,10 @@
 lib_LTLIBRARIES = libkcm_kdm.la
 
-libkcm_kdm_la_SOURCES = kdm-appear.cpp kdm-font.cpp kdm-sess.cpp \
+# ktagcombobox is first for --enable-final
+libkcm_kdm_la_SOURCES = ktagcombobox.cpp \
+	kdm-appear.cpp kdm-font.cpp kdm-sess.cpp \
 	kdropsite.cpp utils.cpp backgnd.cpp kdm-lilo.cpp kdm-users.cpp \
- 	klangcombo.cpp ktagcombobox.cpp main.cpp bgdialogs.cpp
+ 	klangcombo.cpp main.cpp bgdialogs.cpp
 
 libkcm_kdm_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_kdm_la_LIBADD = -lkdeui -lkio -lkfile $(top_builddir)/kcontrol/display/libbgnd.la -lkimgio

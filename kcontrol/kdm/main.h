@@ -21,6 +21,8 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#ifndef __kdm_main_h
+#define __kdm_main_h
 
 #include <qtabwidget.h>
 
@@ -71,4 +73,6 @@ private:
   KDMUsersWidget      *users;
 
 };
+
+#endif
 
