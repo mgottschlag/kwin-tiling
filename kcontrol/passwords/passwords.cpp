@@ -43,7 +43,7 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStrin
     QVBoxLayout *top = new QVBoxLayout(this, 10, 10);
 
     // Echo mode
-    m_EMGroup = new QVButtonGroup(i18n("Echo Characters As"), this);
+    m_EMGroup = new QVButtonGroup(i18n("Echo Characters as"), this);
     m_EMGroup->layout()->setSpacing( KDialog::spacingHint() );
     QWhatsThis::add( m_EMGroup,  i18n("You can select the type of visual feedback given"
       " when you enter a password in kdesu. Choose one of the following options:<p>"
@@ -52,9 +52,9 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStrin
       " <li><em>no echo:</em> there is no visual feedback at all, so nothing on your screen"
       " shows how many characters are in your password.</li></ul>"));
     top->addWidget(m_EMGroup);
-    new QRadioButton(i18n("1 star"), m_EMGroup);
-    new QRadioButton(i18n("3 stars"), m_EMGroup);
-    new QRadioButton(i18n("No echo"), m_EMGroup);
+    new QRadioButton(i18n("&1 star"), m_EMGroup);
+    new QRadioButton(i18n("&3 stars"), m_EMGroup);
+    new QRadioButton(i18n("&No echo"), m_EMGroup);
     connect(m_EMGroup, SIGNAL(clicked(int)), SLOT(slotEchoMode(int)));
 
     // Keep password
@@ -71,16 +71,16 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStrin
     top->addWidget(m_KeepBut);
     QHBoxLayout *hbox = new QHBoxLayout();
     top->addLayout(hbox);
-    QLabel *lbl = new QLabel(i18n("&Timeout"), this);
-    lbl->setFixedSize(lbl->sizeHint());
+    m_lblTimeout = new QLabel(i18n("&Timeout:"), this);
+    m_lblTimeout->setFixedSize(m_lblTimeout->sizeHint());
     hbox->addSpacing(20);
-    hbox->addWidget(lbl);
+    hbox->addWidget(m_lblTimeout);
     m_TimeoutEdit = new QSpinBox(this);
     QString wtstr = i18n("You can specify how long kdesu will remember your"
        " passwords. A short timeout is more secure than a long timeout.");
-    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( m_lblTimeout, wtstr );
     QWhatsThis::add( m_TimeoutEdit, wtstr );
-    lbl->setBuddy(m_TimeoutEdit);
+    m_lblTimeout->setBuddy(m_TimeoutEdit);
     m_TimeoutEdit->setRange(5, 1200);
     m_TimeoutEdit->setSteps(5, 10);
     m_TimeoutEdit->setSuffix(i18n(" minutes"));
@@ -119,6 +119,7 @@ void KPasswordConfig::load()
 
     m_bKeep = m_pConfig->readBoolEntry("Keep", defKeep);
     m_Timeout = m_pConfig->readNumEntry("Timeout", defTimeout);
+    slotKeep(m_bKeep);
 
     apply();
     emit changed(false);
@@ -185,7 +186,8 @@ void KPasswordConfig::slotEchoMode(int i)
 void KPasswordConfig::slotKeep(bool keep)
 {
     m_bKeep = keep;
-    m_TimeoutEdit->setEnabled(m_bKeep);
+    m_lblTimeout->setEnabled(keep);
+    m_TimeoutEdit->setEnabled(keep);
     emit changed(true);
 }
 
