@@ -17,6 +17,7 @@
 
 #include <qgroupbox.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
 #include <qlabel.h>
@@ -60,21 +61,14 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     GroupBox1Layout->setMargin( 11 );
     GroupBox1Layout->setColStretch( 1, 1 );
 
-    cb_busyCursor = new QCheckBox( GroupBox1, "cb_busyCursor" );
-    cb_busyCursor->setText( i18n( "&Enable busy cursor" ) );
+    cb_busyCursor = new QComboBox( GroupBox1, "cb_busyCursor" );
+    cb_busyCursor->insertItem( i18n( "No Busy Cursor" ), 0 );
+    cb_busyCursor->insertItem( i18n( "Blinking Cursor" ), 1 );
+    cb_busyCursor->insertItem( i18n( "Bouncing Cursor" ), 2 );
     GroupBox1Layout->addWidget( cb_busyCursor, 0, 0 );
-    connect( cb_busyCursor, SIGNAL( toggled(bool) ), 
-            SLOT ( slotBusyCursor(bool)));
-    connect( cb_busyCursor, SIGNAL( toggled(bool) ), SLOT( checkChanged() ) );
-
-    QHBoxLayout *hbox = new QHBoxLayout();
-    GroupBox1Layout->addMultiCellLayout( hbox, 1, 1, 0, 1 );
-    hbox->addSpacing( 20 );
-    cb_busyBlinking = new QCheckBox( GroupBox1, "cb_busyBlinking" );
-    cb_busyBlinking->setText( i18n( "Enable &blinking" ) );
-    hbox->addWidget( cb_busyBlinking );
-    hbox->addStretch();
-    connect( cb_busyBlinking, SIGNAL( toggled(bool) ), SLOT( checkChanged() ) );
+    connect( cb_busyCursor, SIGNAL( activated(int) ),
+            SLOT ( slotBusyCursor(int)));
+    connect( cb_busyCursor, SIGNAL( activated(int) ), SLOT( checkChanged() ) );
 
     lbl_cursorTimeout = new QLabel( GroupBox1, "TextLabel1" );
     lbl_cursorTimeout->setText( i18n( "&Startup indication timeout:" ) );
@@ -134,11 +128,10 @@ LaunchConfig::~LaunchConfig()
 }
 
   void 
-LaunchConfig::slotBusyCursor(bool b)
+LaunchConfig::slotBusyCursor(int i)
 {
-    cb_busyBlinking->setEnabled( b );
-    lbl_cursorTimeout->setEnabled( b );
-    sb_cursorTimeout->setEnabled( b );
+    lbl_cursorTimeout->setEnabled( i != 0 );
+    sb_cursorTimeout->setEnabled( i != 0 );
 }
 
   void 
@@ -158,24 +151,26 @@ LaunchConfig::load()
   bool busyCursor =
     c.readBoolEntry("BusyCursor", Default & BusyCursor);
 
-
   bool taskbarButton =
     c.readBoolEntry("TaskbarButton", Default & TaskbarButton);
 
-  cb_busyCursor->setChecked(busyCursor);
   cb_taskbarButton->setChecked(taskbarButton);
-  
-  cb_busyBlinking->setEnabled( busyCursor );
 
   c.setGroup( "BusyCursorSettings" );
   sb_cursorTimeout->setValue( c.readUnsignedNumEntry( "Timeout", 30 ));
   bool busyBlinking =c.readBoolEntry("Blinking", true);
-  cb_busyBlinking->setChecked(busyBlinking);
+  bool busyBouncing =c.readBoolEntry("Bouncing", false);
+  if ( !busyCursor )
+     cb_busyCursor->setCurrentItem(0);
+  else if ( busyBlinking )
+     cb_busyCursor->setCurrentItem(1);
+  else if ( busyBouncing )
+     cb_busyCursor->setCurrentItem(2);
 
   c.setGroup( "TaskbarButtonSettings" );
   sb_taskbarTimeout->setValue( c.readUnsignedNumEntry( "Timeout", 30 ));
 
-  slotBusyCursor( busyCursor );
+  slotBusyCursor( cb_busyCursor->currentItem() );
   slotTaskbarButton( taskbarButton );
 
   emit(changed(false));
@@ -187,12 +182,13 @@ LaunchConfig::save()
   KConfig c("klaunchrc", false, false);
 
   c.setGroup("FeedbackStyle");
-  c.writeEntry("BusyCursor",    cb_busyCursor->isChecked());
+  c.writeEntry("BusyCursor",    cb_busyCursor->currentItem() != 0);
   c.writeEntry("TaskbarButton", cb_taskbarButton->isChecked());
 
   c.setGroup( "BusyCursorSettings" );
   c.writeEntry( "Timeout", sb_cursorTimeout->value());
-  c.writeEntry("Blinking", cb_busyBlinking->isChecked());
+  c.writeEntry("Blinking", cb_busyCursor->currentItem() == 1);
+  c.writeEntry("Bouncing", cb_busyCursor->currentItem() == 2);
 
   c.setGroup( "TaskbarButtonSettings" );
   c.writeEntry( "Timeout", sb_taskbarTimeout->value());
@@ -211,14 +207,13 @@ LaunchConfig::save()
   void
 LaunchConfig::defaults()
 {
-  cb_busyCursor->setChecked(Default & BusyCursor);
-  cb_busyBlinking->setChecked(Default & BusyCursor);
+  cb_busyCursor->setCurrentItem(1);
   cb_taskbarButton->setChecked(Default & TaskbarButton);
 
   sb_cursorTimeout->setValue( 30 );
   sb_taskbarTimeout->setValue( 30 );
 
-  slotBusyCursor( Default & BusyCursor );
+  slotBusyCursor( 1 );
   slotTaskbarButton( Default & TaskbarButton );
  
   checkChanged();
@@ -240,15 +235,17 @@ LaunchConfig::checkChanged()
   c.setGroup( "BusyCursorSettings" );
   unsigned int savedCursorTimeout = c.readUnsignedNumEntry( "Timeout", 30 );
   bool savedBusyBlinking =c.readBoolEntry("Blinking", true);
+  bool savedBusyBouncing =c.readBoolEntry("Bouncing", false);
 
   c.setGroup( "TaskbarButtonSettings" );
   unsigned int savedTaskbarTimeout = c.readUnsignedNumEntry( "Timeout", 30 );
 
-  bool newBusyCursor =cb_busyCursor->isChecked();
+  bool newBusyCursor =cb_busyCursor->currentItem()!=0;
 
   bool newTaskbarButton =cb_taskbarButton->isChecked();
 
-  bool newBusyBlinking= cb_busyBlinking->isChecked();
+  bool newBusyBlinking= cb_busyCursor->currentItem()==1;
+  bool newBusyBouncing= cb_busyCursor->currentItem()==2;
 
   unsigned int newCursorTimeout = sb_cursorTimeout->value();
   
@@ -267,6 +264,8 @@ LaunchConfig::checkChanged()
       savedTaskbarTimeout != newTaskbarTimeout
       ||
       savedBusyBlinking != newBusyBlinking
+      ||
+      savedBusyBouncing != newBusyBouncing
      )
     );
 }
