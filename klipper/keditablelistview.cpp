@@ -25,7 +25,7 @@ KEditableListView::KEditableListView( QWidget *parent, const char *name )
     myUnEditableDict.setAutoDelete( true );
 
     connect( this, SIGNAL( selectionChanged() ), SLOT( slotDestroyEdit() ));
-    connect( this, SIGNAL( mouseButtonClicked( int, QListViewItem *, 
+    connect( this, SIGNAL( mouseButtonClicked( int, QListViewItem *,
 					       const QPoint&, int ) ),
 	     SLOT( slotItemClicked(int, QListViewItem *, const QPoint&, int)));
 }
@@ -54,7 +54,7 @@ void KEditableListView::setEditable( QListViewItem *item, int col, bool enable)
 }
 
 
-void KEditableListView::slotItemClicked( int button, QListViewItem *item, 
+void KEditableListView::slotItemClicked( int button, QListViewItem *item,
 					 const QPoint&, int col )
 {
     QRect r = itemRect( item );
@@ -95,7 +95,7 @@ void KEditableListView::slotItemClicked( int button, QListViewItem *item,
 
     if ( button != LeftButton )
 	return;
-    
+
     // is the item editable?
     ColumnList *eList = myUnEditableDict.find( item );
     if ( eList && eList->find( col ) != eList->end() )
@@ -146,6 +146,7 @@ void KEditableListView::slotDestroyEdit()
     myEdit = 0L;
 
     myCurrentItemIsOpen = currentItem()->isOpen();
+    viewport()->setFocus();
 }
 
 
@@ -153,8 +154,9 @@ void KEditableListView::keyPressEvent( QKeyEvent *e )
 {
     if ( myEdit && myEdit->hasFocus() && e->key() == Key_Escape ) {
 	slotDestroyEdit();
-	e->accept();
+	return;
     }
+    QListView::keyPressEvent( e );
 }
 
 
