@@ -5,5 +5,8 @@ EXTRA_DIST = misc
 
 PAM = @KDM_PAM_SERVICE@
 
+kdmdocdir = $(datadir)/doc/kdm
+kdmdoc_DATA = README
+
 install-data-local:
 	-@test -n "$(DESTDIR)" || test -z "$(PAM)" || { $(top_srcdir)/mkpamserv $(PAM) && $(top_srcdir)/mkpamserv -P $(PAM)-np; }
