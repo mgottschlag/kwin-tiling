@@ -55,22 +55,20 @@ signals:
   void translate();
   void resample();
   void countryChanged();
-  void moneyChanged();
-  void numberChanged();
-  void timeChanged();
   void chsetChanged();
 
 private:
-  KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, 
-    *comboDate, *comboChset;
-  QLabel *labCountry, *labLang, *labNumber, *labMoney, *labDate, *labChset;
+  KLanguageCombo *comboCountry,
+    *comboLang,
+    *comboChset;
+
+  QLabel *labCountry,
+    *labLang,
+    *labChset;
 
 private slots:
   void changedCountry(int);
   void changedLanguage(int);
-  void changedNumber(int);
-  void changedMoney(int);
-  void changedTime(int);
   void changedCharset(int);
   void readLocale(const QString &path, QString &name, const QString &sub) const;
 };

@@ -71,9 +71,11 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   connect(localemon,  SIGNAL(resample()),                  SLOT(update()));
   connect(localetime, SIGNAL(resample()),                  SLOT(update()));
   connect(localemain, SIGNAL(countryChanged()),            SLOT(reset()) );
+#ifdef BLOAT
   connect(localemain, SIGNAL(moneyChanged()),  localemon,  SLOT(reset()) );
   connect(localemain, SIGNAL(numberChanged()), localenum,  SLOT(reset()) );
   connect(localemain, SIGNAL(timeChanged()),   localetime, SLOT(reset()) );
+#endif
   connect(localemain, SIGNAL(chsetChanged()),              SLOT(newChset()) );
 
   // Examples

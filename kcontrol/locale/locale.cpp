@@ -70,6 +70,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     connect( comboLang, SIGNAL(activated(int)),
 	     this, SLOT(changedLanguage(int)) );
 
+#ifdef BLOAT
     labNumber = new QLabel(this, I18N_NOOP("Numbers:"));
     comboNumber = new KLanguageCombo(this);
     comboNumber->setFixedHeight(comboNumber->sizeHint().height());
@@ -90,6 +91,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     //labDate->setBuddy(comboDate);
     connect( comboDate, SIGNAL(activated(int)),
 	     this, SLOT(changedTime(int)) );
+#endif
 
     labChset = new QLabel(this, I18N_NOOP("Charset:"));
     comboChset = new KLanguageCombo(this);
@@ -191,15 +193,19 @@ void KLocaleConfig::load()
   // load lists into widgets
   loadLocaleList(comboLang, QString::null, langs);
   loadLocaleList(comboCountry, QString::fromLatin1("l10n/"), QStringList());
+#ifdef BLOAT
   loadLocaleList(comboNumber, QString::fromLatin1("l10n/"), QStringList());
   loadLocaleList(comboMoney, QString::fromLatin1("l10n/"), QStringList());
   loadLocaleList(comboDate, QString::fromLatin1("l10n/"), QStringList());  
+#endif
 
   // update widgets
   comboLang->setCurrentItem(locale->language());
+#ifdef BLOAT
   comboNumber->setCurrentItem(number);
   comboMoney->setCurrentItem(money);
   comboDate->setCurrentItem(time);
+#endif
   comboCountry->setCurrentItem(country);
   comboChset->setCurrentItem(charset);
 }
@@ -227,9 +233,11 @@ void KLocaleConfig::save()
 
   config->writeEntry(QString::fromLatin1("Country"), comboCountry->currentTag(), true, true);
   config->writeEntry(QString::fromLatin1("Language"), comboLang->currentTag(), true, true);
+#ifdef BLOAT
   config->writeEntry(QString::fromLatin1("Numeric"), comboNumber->currentTag(), true, true);
   config->writeEntry(QString::fromLatin1("Monetary"), comboMoney->currentTag(), true, true);
   config->writeEntry(QString::fromLatin1("Time"), comboDate->currentTag(), true, true);
+#endif
   config->writeEntry(QString::fromLatin1("Charset"), comboChset->currentTag(), true, true);
 
   config->sync();
@@ -246,9 +254,11 @@ void KLocaleConfig::defaults()
 
   comboCountry->setCurrentItem(C);
   comboLang->setCurrentItem(C);
+#ifdef BLOAT
   comboNumber->setCurrentItem(C);
   comboMoney->setCurrentItem(C);
   comboDate->setCurrentItem(C);
+#endif
   comboChset->setCurrentItem(QString::fromLatin1("iso-8859-1"));
 
   emit resample();
@@ -294,9 +304,11 @@ void KLocaleConfig::changedCountry(int i)
   loadLocaleList(comboLang, QString::null, langs);
 
   comboLang->setCurrentItem(lang);
+#ifdef BLOAT
   comboNumber->setCurrentItem(country);
   comboMoney->setCurrentItem(country);
   comboDate->setCurrentItem(country);
+#endif
 
   emit countryChanged();
   emit resample();
@@ -311,6 +323,7 @@ void KLocaleConfig::changedLanguage(int i)
   emit resample();
 }
 
+#ifdef BLOAT
 void KLocaleConfig::changedNumber(int i)
 {
   locale->setCountry(comboNumber->tag(i),
@@ -340,6 +353,7 @@ void KLocaleConfig::changedTime(int i)
   emit timeChanged();
   emit resample();
 }
+#endif
 
 void KLocaleConfig::changedCharset(int)
 {
@@ -356,9 +370,11 @@ void KLocaleConfig::reTranslateLists()
   {
     readLocale(comboCountry->tag(j), name, QString::fromLatin1("l10n/"));
     comboCountry->changeLanguage(name, j);
+#ifdef BLOAT
     comboNumber->changeLanguage(name, j);
     comboMoney->changeLanguage(name, j);
     comboDate->changeLanguage(name, j);
+#endif
   }
 
   for (j = 0; j < comboLang->count(); j++)
@@ -381,6 +397,7 @@ void KLocaleConfig::reTranslate()
   QToolTip::add(comboLang, locale->translate
 		( "All KDE programs will be displayed in this language (if "
 		  "available).") );
+#ifdef BLOAT
   QToolTip::add(comboNumber, locale->translate
 		( "The rules of this country will be used to localize "
 		  "numbers.") );
@@ -390,6 +407,7 @@ void KLocaleConfig::reTranslate()
   QToolTip::add(comboDate, locale->translate
 		( "The rules of this country will be used to display time "
 		  "and dates.") );
+#endif
   QToolTip::add(comboChset, locale->translate
 		( "The prefered charset for fonts.") );
 
@@ -412,6 +430,7 @@ void KLocaleConfig::reTranslate()
   QWhatsThis::add( labLang, str );
   QWhatsThis::add( comboLang, str );            
 
+#ifdef BLOAT
   str = locale->translate
     ( "Here you can choose a national setting to display "
       "numbers. You can also customize this using the 'Numbers' tab." );
@@ -430,6 +449,7 @@ void KLocaleConfig::reTranslate()
       "can also customize this using the 'Time & dates' tab." );
   QWhatsThis::add( labDate, str );
   QWhatsThis::add( comboDate, str );          
+#endif
 
   str = locale->translate
     ( "Here you can choose the charset KDE uses to display "
