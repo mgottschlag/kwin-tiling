@@ -3,8 +3,10 @@ dnl this is for kdm:
 
 KDE_CONFDIR=`eval echo $kde_confdir`
 AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$KDE_CONFDIR", [KDE's configuration directory])
+AC_SUBST(KDE_CONFDIR)
 KDE_BINDIR=`eval echo $kde_bindir`
 AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
+AC_SUBST(KDE_BINDIR)
 
 dnl checks for X server
 AC_PATH_PROG(X_SERVER, X)
