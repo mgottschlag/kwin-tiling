@@ -28,3 +28,12 @@ QuickHelp::QuickHelp(QWidget *parent , const char *name)
   setHScrollBarMode( QScrollView::AlwaysOff );
   setNotifyClick(true);
 }
+
+void QuickHelp::setText(const QString &text)
+{
+  QString s(text);
+  s.replace(QRegExp("<[Hh]1>"),"<font face=utopia><h1>");
+  s.replace(QRegExp("</[Hh]1>"),"</h1></font>");
+  KTextBrowser::setText(s);
+}
+

@@ -29,6 +29,7 @@ class QuickHelp : public KTextBrowser
 public:   
   QuickHelp(QWidget *parent, const char *name=0);
 
+  virtual void setText(const QString &text);
 };
 
 #endif
