@@ -71,7 +71,7 @@ static const char*mouse[]={
 "..################.."};
 
 TopLevel::TopLevel()
-  : KTMainWindow()
+  : KMainWindow(0)
 {
     toggleURLGrabAction = new KToggleAction( this );
     toggleURLGrabAction->setEnabled( true );

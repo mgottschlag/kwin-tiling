@@ -14,7 +14,7 @@
 
 #include <kapp.h>
 #include <kglobalaccel.h>
-#include <ktmainwindow.h>
+#include <kmainwindow.h>
 #include <kpopupmenu.h>
 #include <qclipboard.h>
 #include <qintdict.h>
@@ -24,7 +24,7 @@
 class KToggleAction;
 class URLGrabber;
 
-class TopLevel : public KTMainWindow
+class TopLevel : public KMainWindow
 {
   Q_OBJECT
 
