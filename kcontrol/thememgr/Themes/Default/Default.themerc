@@ -60,4 +60,6 @@ author=Stefan Taferner
 email=taferner@kde.org
 info=
 Comment=Reset to default theme-less KDE desktop
+Comment[es]=Restablece el escritorio KDE al predeterminado sin tema.
+Comment[sv]=Återställ till KDE:s förinställda temalösa skrivbord
 version=0.2
