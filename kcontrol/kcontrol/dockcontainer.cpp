@@ -67,9 +67,9 @@ void DockContainer::setBaseWidget(QWidget *widget)
   emit newModule(widget->caption(), "", "");
 }
 
-void DockContainer::dockModule(ConfigModule *module)
+bool DockContainer::dockModule(ConfigModule *module)
 {
-  if (module == _module) return;
+  if (module == _module) return true;
 
   if (_module && _module->isChanged())
     {
@@ -88,11 +88,11 @@ i18n("There are unsaved changes in the active module.\n"
       if (res == KMessageBox::Yes)
         _module->module()->applyClicked();
       if (res == KMessageBox::Cancel)
-        return;
+        return false;
     }
 
   deleteModule();
-  if (!module) return;
+  if (!module) return true;
 
   _busy->raise();
   _busy->show();
@@ -130,6 +130,7 @@ i18n("There are unsaved changes in the active module.\n"
   _busy->hide();
 
   KCGlobal::repairAccels( topLevelWidget() );
+  return true;
 }
 
 void DockContainer::removeModule()

@@ -36,7 +36,7 @@ public:
   void setBaseWidget(QWidget *widget);
   QWidget *baseWidget() { return _basew; }
   
-  void dockModule(ConfigModule *module);
+  bool dockModule(ConfigModule *module);
 
 public slots:
   void removeModule();

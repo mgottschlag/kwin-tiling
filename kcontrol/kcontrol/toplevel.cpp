@@ -121,7 +121,7 @@ TopLevel::TopLevel(const char* name)
   _tab->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
 
   // That one does the trick ..,
-  _splitter->setResizeMode( _tab, QSplitter::FollowSizeHint );
+//  _splitter->setResizeMode( _tab, QSplitter::FollowSizeHint );
 
   // set up the right hand side (the docking area)
   _dock = new DockContainer( _splitter );
@@ -191,8 +191,7 @@ TopLevel::~TopLevel()
 
 bool TopLevel::queryClose()
 {
-  _dock->dockModule(0);
-  return true;
+  return _dock->dockModule(0);
 }
 
 void TopLevel::setupActions()
@@ -312,7 +311,6 @@ void TopLevel::changedModule(ConfigModule *changed)
 void TopLevel::moduleActivated(ConfigModule *module)
 {
     if (!module) return;
-    _active=module;
     activateModule(module->fileName());
 }
 
@@ -367,54 +365,71 @@ void TopLevel::showModule(QString desktopFile)
   // show all matches
   QStringList::Iterator it;
   for (it = files.begin(); it != files.end(); ++it)
-    {
-      for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
-                if (mod->fileName() == *it && mod != _active)
-                  {
-                        // tell the index to display the module
-                        _indextab->makeVisible(mod);
+  {
+     for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
+     {
+        if (mod->fileName() == *it && mod != _active)
+        {
+           // tell the index to display the module
+           _indextab->makeVisible(mod);
 
-                        // tell the index to mark this module as loaded
-                        _indextab->makeSelected(mod);
+           // tell the index to mark this module as loaded
+           _indextab->makeSelected(mod);
 
-                        // dock it
-            _dock->dockModule(mod);
-            mod->module()->show();
-            break;
-          }
-    }
+           // dock it
+           if (_dock->dockModule(mod))
+           {
+              mod->module()->show();
+           }
+           else
+           {
+              _indextab->makeVisible(_active);
+              _indextab->makeSelected(_active);
+           }
+           break;
+        }
+     }
+  }
 }
 
 void TopLevel::activateModule(const QString& name)
 {
   kdDebug(1208) << "activate: " << name << endl;
   for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
+  {
+     if (mod->fileName() == name)
+     {
+        // tell the index to display the module
+        _indextab->makeVisible(mod);
+
+        // tell the index to mark this module as loaded
+        _indextab->makeSelected(mod);
+
+        // dock it
+        if (!_dock->dockModule(mod))
         {
-          if (mod->fileName() == name)
-                {
-                  // tell the index to display the module
-                  _indextab->makeVisible(mod);
-
-                  // tell the index to mark this module as loaded
-                  _indextab->makeSelected(mod);
-
-                  // dock it
-                  _dock->dockModule(mod);
-                  if (mod->aboutData())
-                  {
-                      about_module->setText(i18n("Help menu->about <modulename>", "About %1").arg(mod->name()));
-                      about_module->setIcon(mod->icon());
-                      about_module->setEnabled(true);
-                  }
-                  else
-                  {
-                      about_module->setText(i18n("About the current Module"));
-                      about_module->setIconSet(QIconSet());
-                      about_module->setEnabled(false);
-                  }
-                  break;
-                }
+           _indextab->makeVisible(_active);
+           _indextab->makeSelected(_active);
+           break;
         }
+        
+        _active=mod;
+
+        if (mod->aboutData())
+        {
+           about_module->setText(i18n("Help menu->about <modulename>", "About %1").arg(mod->name()));
+           about_module->setIcon(mod->icon());
+           about_module->setEnabled(true);
+        }
+        else
+        {
+           about_module->setText(i18n("About the current Module"));
+           about_module->setIconSet(QIconSet());
+           about_module->setEnabled(false);
+        }
+        break;
+     }
+  }
 }
 
 void TopLevel::deleteDummyAbout()
