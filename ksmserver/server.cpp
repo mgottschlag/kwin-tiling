@@ -1831,9 +1831,11 @@ QString KSMServer::windowWmClientMachine(WId w)
             hostnamebuf[sizeof(hostnamebuf)-1] = 0;
             if (result == hostnamebuf)
                 result = "localhost";
-            char *dot = strchr(hostnamebuf, '.');
-            if (dot && !(*dot = 0) && result == hostnamebuf)
-                result = "localhost";
+            if(char *dot = strchr(hostnamebuf, '.')) {
+                *dot = '\0';
+                if(result == hostnamebuf)
+                    result = "localhost";
+            }
         }
     }
     return QString::fromLatin1(result);
