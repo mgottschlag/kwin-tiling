@@ -1,12 +1,9 @@
 //-----------------------------------------------------------------------------
 //
-// kblankscrn - Basic screen saver for KDE
+// kfountain - Partical Fountain Screen Saver for KDE 2
 //
-// Copyright (c)  Martin R. Jones 1996
+// Copyright (c)  Ian Reinhart Geiser 2001
 //
-// 1998/04/19 Layout management added by Mario Weilguni <mweilguni@kde.org>
-// 2001/03/04 Converted to use libkscreensaver by Martin R. Jones
-
 #include <stdlib.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -56,7 +53,7 @@ KFountainSetup::KFountainSetup( QWidget *parent, const char *name )
 	QLabel *label;
 	QPushButton *button;
 
-	setCaption( i18n("Setup Blank Screen Saver") );
+	setCaption( i18n("Setup The Particle Fountain") );
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -65,15 +62,8 @@ KFountainSetup::KFountainSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);
 
-	label = new QLabel( i18n("Color:"), this );
-	tl11->addWidget(label);
-
-//	colorPush = new KColorButton( color, this );
-//	colorPush->setMinimumWidth(80);
-//	connect( colorPush, SIGNAL( changed(const QColor &) ),
-//		SLOT( slotColor(const QColor &) ) );
-//	tl11->addWidget(colorPush);
-//	tl11->addStretch(1);
+	label = new QLabel( i18n("No options here yet...:"), this );
+	tl11->addWidget(label);;
 
 	preview = new QWidget( this );
 	preview->setFixedSize( 220, 170 );
@@ -265,6 +255,7 @@ void Fountain::initializeGL ()
 			particle[loop].xg=0.0f;					// Set Horizontal Pull To Zero
 			particle[loop].yg=-0.8f;				// Set Vertical Pull Downward
 			particle[loop].zg=0.0f;					// Set Pull On Z Axis To Zero
+			particle[loop].size=0.75f;				// Set particle size.
 		}
 	}
 	else
@@ -332,16 +323,16 @@ void Fountain::paintGL ()
                     glBegin( GL_TRIANGLE_FAN );
                       /* Top Right */
                       glTexCoord2d( 1, 1 );
-                      glVertex3f( x + 0.5f, y + 0.5f, z );
+                      glVertex3f( x + particle[loop].size, y + particle[loop].size, z );
                       /* Top Left */
                       glTexCoord2d( 0, 1 );
-                      glVertex3f( x - 0.5f, y + 0.5f, z );
+                      glVertex3f( x - particle[loop].size, y + particle[loop].size, z );
                       /* Bottom Right */
                       glTexCoord2d( 1, 0 );
-                      glVertex3f( x + 0.5f, y - 0.5f, z );
+                      glVertex3f( x + particle[loop].size, y - particle[loop].size, z );
                       /* Bottom Left */
                       glTexCoord2d( 0, 0 );
-                      glVertex3f( x - 0.5f, y - 0.5f, z );
+                      glVertex3f( x - particle[loop].size, y - particle[loop].size, z );
                     glEnd( );
 
 			particle[loop].x+=particle[loop].xi/(slowdown*1000);// Move On The X Axis By X Speed
@@ -366,6 +357,7 @@ void Fountain::paintGL ()
 				particle[loop].r=colors[col][0];			// Select Red From Color Table
 				particle[loop].g=colors[col][1];			// Select Green From Color Table
 				particle[loop].b=colors[col][2];			// Select Blue From Color Table
+				particle[loop].size=0.75f;
 			}
 			// Lets stir some things up
 			index += 0.001;

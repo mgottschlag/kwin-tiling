@@ -4,6 +4,12 @@
 //
 // Copyright (c)  Ian Reinhart Geiser 2001
 //
+/////
+//NOTE:
+// The base particle engine did not come from me, it was designed by Jeff Molofee <nehe@connect.ab.ca>
+// I did some extensive modifications to make it work with QT's OpenGL but the base principal is about
+// the same.
+////
 
 #ifndef __FOUNTAIN_H__
 #define __FOUNTAIN_H__
@@ -40,6 +46,7 @@ Q_OBJECT
 		float	xg;					// X Gravity
 		float	yg;					// Y Gravity
 		float	zg;					// Z Gravity
+		float	size;					// Particle Size
 	};
 
 public:
