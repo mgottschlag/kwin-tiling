@@ -40,7 +40,7 @@ public:
     QString name() const { return m_Name; }
     void load(QString name);
 
-    void setComment(QString comment);
+    void setComment(const QString &comment);
     QString comment() const {return m_Comment; }
 
     void setPattern(QString file);
@@ -50,7 +50,7 @@ public:
     void writeSettings();
 
     bool isAvailable();
-    bool isGlobal() { return m_bReadOnly; }
+    bool isGlobal()const { return m_bReadOnly; }
     bool remove();
 
     int hash();

@@ -110,7 +110,7 @@ void KBackgroundPattern::init(bool force_rw)
 }
 
 
-void KBackgroundPattern::setComment(QString comment)
+void KBackgroundPattern::setComment(const QString &comment)
 {
     if (m_Comment == comment)
         return;
@@ -531,13 +531,13 @@ void KBackgroundSettings::copyConfig(const KBackgroundSettings *settings)
 {
     dirty = true;
     hashdirty = true;
-    
+
     m_ColorA = settings->m_ColorA;
     m_ColorB = settings->m_ColorB;
     m_Wallpaper = settings->m_Wallpaper;
     m_WallpaperList = settings->m_WallpaperList;
     m_WallpaperFiles = settings->m_WallpaperFiles;
-    
+
     m_BackgroundMode = settings->m_BackgroundMode;
     m_WallpaperMode = settings->m_WallpaperMode;
     m_BlendMode = settings->m_BlendMode;
@@ -550,9 +550,9 @@ void KBackgroundSettings::copyConfig(const KBackgroundSettings *settings)
     m_MultiMode = settings->m_MultiMode;
     m_Interval = settings->m_Interval;
     m_CurrentWallpaper = settings->m_CurrentWallpaper;
-    
+
     KBackgroundPattern::copyConfig(settings);
-    KBackgroundProgram::copyConfig(settings);    
+    KBackgroundProgram::copyConfig(settings);
 }
 
 

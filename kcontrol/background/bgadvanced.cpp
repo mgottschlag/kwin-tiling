@@ -4,16 +4,16 @@
 
    Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
    Copyright (C) 2003 Waldo Bastian <bastian@kde.org>
-  
+
    This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License 
+   modify it under the terms of the GNU General Public License
    version 2 as published by the Free Software Foundation.
-   
+
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Library General Public License for more details.
-   
+
    You should have received a copy of the GNU Library General Public License
    along with this library; see the file COPYING.LIB.  If not, write to
    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -60,7 +60,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
             SLOT(slotProgramItemClicked(QListViewItem *)));
       connect(dlg->m_listPrograms, SIGNAL(doubleClicked(QListViewItem *)),
             SLOT(slotProgramItemDoubleClicked(QListViewItem *)));
-	    
+
       connect(dlg->m_buttonAdd, SIGNAL(clicked()),
             SLOT(slotAdd()));
       connect(dlg->m_buttonRemove, SIGNAL(clicked()),
@@ -103,9 +103,9 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
 
    connect( dlg->m_cbBlendReverse, SIGNAL(toggled(bool)), SLOT(slotBlendReverse(bool)));
 
-   connect( dlg->m_cbProgram, SIGNAL(toggled(bool)), 
+   connect( dlg->m_cbProgram, SIGNAL(toggled(bool)),
             dlg->m_listPrograms, SLOT(setEnabled(bool)));
-   connect( dlg->m_cbProgram, SIGNAL(toggled(bool)), 
+   connect( dlg->m_cbProgram, SIGNAL(toggled(bool)),
             SLOT(slotProgramChanged()));
 
    dlg->m_monitorImage->setText(QString::null);
@@ -136,7 +136,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    QWhatsThis::add( dlg->m_lblBlendBalance, wtstr );
    QWhatsThis::add( dlg->m_sliderBlend, wtstr );
 
-   QWhatsThis::add( dlg->m_cbBlendReverse, 
+   QWhatsThis::add( dlg->m_cbBlendReverse,
            i18n("For some types of blending, you can reverse the role"
 	        " of the background and the picture by checking this option.") );
 
@@ -176,7 +176,7 @@ void BGAdvancedDialog::updateUI()
 
    dlg->m_cbBlendReverse->setChecked(r->reverseBlending());
 
-   dlg->m_sliderBlend->setValue( r->blendBalance() / 10 );   
+   dlg->m_sliderBlend->setValue( r->blendBalance() / 10 );
 
    dlg->m_comboBlend->blockSignals(false);
    dlg->m_sliderBlend->blockSignals(false);
@@ -211,7 +211,7 @@ void BGAdvancedDialog::slotBlendMode(int mode)
 
    r->stop();
    r->setBlendMode(mode);
-   r->start();   
+   r->start();
 }
 
 void BGAdvancedDialog::slotBlendBalance(int value)
@@ -222,14 +222,14 @@ void BGAdvancedDialog::slotBlendBalance(int value)
 
    r->stop();
    r->setBlendBalance(value);
-   r->start();   
+   r->start();
 }
 
 void BGAdvancedDialog::slotBlendReverse(bool b)
 {
    if (b == r->reverseBlending())
       return;
-   
+
    r->stop();
    r->setReverseBlending(b);
    r->start();
@@ -237,7 +237,7 @@ void BGAdvancedDialog::slotBlendReverse(bool b)
 
 void BGAdvancedDialog::removeProgram(const QString &name)
 {
-   if (m_programItems.find(name)) 
+   if (m_programItems.find(name))
    {
       delete m_programItems[name];
       m_programItems.remove(name);
@@ -247,7 +247,7 @@ void BGAdvancedDialog::removeProgram(const QString &name)
 void BGAdvancedDialog::addProgram(const QString &name)
 {
    removeProgram(name);
-   
+
    KBackgroundProgram prog(name);
    if (prog.command().isEmpty() || (prog.isGlobal() && !prog.isAvailable()))
       return;
@@ -263,7 +263,7 @@ void BGAdvancedDialog::addProgram(const QString &name)
 void BGAdvancedDialog::selectProgram(const QString &name)
 {
 qWarning("BGAdvancedDialog::selectProgram(%s)", name.latin1());
-   if (m_programItems.find(name)) 
+   if (m_programItems.find(name))
    {
       QListViewItem *item = m_programItems[name];
       dlg->m_listPrograms->ensureItemVisible(item);
@@ -276,7 +276,7 @@ void BGAdvancedDialog::slotAdd()
 {
    KProgramEditDialog dlg;
    dlg.exec();
-   if (dlg.result() == QDialog::Accepted) 
+   if (dlg.result() == QDialog::Accepted)
    {
       QString program = dlg.program();
       addProgram(program);
@@ -290,7 +290,7 @@ void BGAdvancedDialog::slotRemove()
       return;
 
    KBackgroundProgram prog(m_selectedProgram);
-   if (prog.isGlobal()) 
+   if (prog.isGlobal())
    {
       KMessageBox::sorry(this,
 		i18n("Unable to remove the program! The program is global "
@@ -320,10 +320,10 @@ void BGAdvancedDialog::slotModify()
 
    KProgramEditDialog dlg(m_selectedProgram);
    dlg.exec();
-   if (dlg.result() == QDialog::Accepted) 
+   if (dlg.result() == QDialog::Accepted)
    {
       QString program = dlg.program();
-      if (program != m_selectedProgram) 
+      if (program != m_selectedProgram)
       {
          KBackgroundProgram prog(m_selectedProgram);
          prog.remove();
@@ -356,8 +356,8 @@ void BGAdvancedDialog::slotProgramChanged()
       r->setBackgroundMode(KBackgroundSettings::Program);
    else
       r->setBackgroundMode(m_oldBackgroundMode);
-   
-   r->start();   
+
+   r->start();
 }
 
 void BGAdvancedDialog::slotPreviewDone()
@@ -446,7 +446,7 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
 }
 
 
-QString KProgramEditDialog::program()
+QString KProgramEditDialog::program()const
 {
     return m_NameEdit->text();
 }

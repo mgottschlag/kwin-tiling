@@ -4,16 +4,16 @@
 
    Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
    Copyright (C) 2003 Waldo Bastian <bastian@kde.org>
-  
+
    This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License 
+   modify it under the terms of the GNU General Public License
    version 2 as published by the Free Software Foundation.
-   
+
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Library General Public License for more details.
-   
+
    You should have received a copy of the GNU Library General Public License
    along with this library; see the file COPYING.LIB.  If not, write to
    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -70,7 +70,7 @@ private:
    KBackgroundRenderer *r;
 
    BGAdvancedBase *dlg;
-   
+
    QWidget *m_pMonitor;
    QDict<QListViewItem> m_programItems;
    QString m_selectedProgram;
@@ -85,11 +85,11 @@ class KProgramEditDialog: public KDialogBase
     Q_OBJECT
 
 public:
-    KProgramEditDialog(QString program=QString::null, QWidget *parent=0L, 
+    KProgramEditDialog(QString program=QString::null, QWidget *parent=0L,
 	    char *name=0L);
 
     /** The program name is here in case the user changed it */
-    QString program();
+    QString program()const;
 
 public slots:
     void slotOk();
@@ -98,7 +98,7 @@ private:
     QString m_Program;
     QLineEdit *m_NameEdit, *m_CommentEdit;
     QLineEdit *m_ExecEdit, *m_CommandEdit;
-    QLineEdit *m_PreviewEdit; 
+    QLineEdit *m_PreviewEdit;
     QSpinBox *m_RefreshEdit;
     KBackgroundProgram *m_Prog;
 };
