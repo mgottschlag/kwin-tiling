@@ -305,8 +305,7 @@ void KColorScheme::defaults()
     sList->setCurrentItem(1);
 
     cs->drawSampleWidgets();
-    wcCombo->setCurrentItem(0);
-    colorButton->setColor(cs->iaTitle);
+    slotWidgetColor(0);
     sb->setValue(cs->contrast);
 
     m_bChanged = true;
@@ -443,7 +442,7 @@ void KColorScheme::slotAdd()
     sList->setFocus();
     sList->setCurrentItem(sList->count() - 1);
 
-    sFile = KGlobal::dirs()->saveLocation("data", "kdisplay/color-schemes/" + sFile + ".kcsrc");
+    sFile = KGlobal::dirs()->saveLocation("data", "kdisplay/color-schemes/") + sFile + ".kcsrc";
     sFileList.append(sFile);
 
     KSimpleConfig *config = new KSimpleConfig(sFile);
