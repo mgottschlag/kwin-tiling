@@ -1,65 +1,70 @@
-//-----------------------------------------------------------------------------
-//
-// KDE display energy saving setup module
-//
-// Written by:	Tom Vijlbrief 1999
-//
+/* vi: ts=8 sts=4 sw=4
+ *
+ * $Id: $
+ *
+ * This file is part of the KDE project, module kcontrol.
+ * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
+ * 
+ * You can Freely distribute this program under the GNU General Public
+ * License. See the file "COPYING" for the exact licensing terms.
+ *
+ * Based on kcontrol1 energy.h, Copyright (c) 1999 Tom Vijlbrief.
+ */
 
-#ifndef __ENERGY_H__
-#define __ENERGY_H__
+#ifndef __Energy_h_Included__
+#define __Energy_h_Included__
 
-#include <qwidget.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qtimer.h>
-#include <qpainter.h>
-#include <kcontrol.h>
+#include <qobject.h>
+#include <kcmodule.h>
 
-#include "display.h"
-
-class QPushButton;
 class QCheckBox;
-
 class KIntNumInput;
+class KConfig;
 
-class KEnergy : public KDisplayModule
+extern "C" void init_energy();
+
+/**
+ * The Desktop/Energy tab in kcontrol.
+ */
+class KEnergy: public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 	
 public:
-	KEnergy(QWidget *parent, Mode m);
-	~KEnergy();
+    KEnergy(QWidget *parent, const char *name);
+    ~KEnergy();
 
-	virtual void readSettings( int deskNum = 0 );
-	virtual void apply( bool Force = FALSE);
-	virtual void loadSettings() {};
-	virtual void applySettings();
-	virtual void defaultSettings();
+    int buttons();
+
+    virtual void load();
+    virtual void save();
+    virtual void defaults();
+
+signals:
+    void changed(bool);
+
+private slots:
+    void slotChangeEnable(bool);
+    void slotChangeStandby(int);
+    void slotChangeSuspend(int);
+    void slotChangeOff(int);
+
+private:
+    void readSettings();
+    void writeSettings();
+    void showSettings();
+
+    static void applySettings(bool, int, int, int);
+    friend void init_energy();
 	
-	Display *kde_display;
+    bool m_bChanged, m_bEnabled, m_bDPMS;
+    int m_Standby, m_Suspend, m_Off;
 
-protected slots:
-	void slotChangeEnable();
-	void slotChangeStandby();
-	void slotChangeSuspend();
-	void slotChangeOff();
-
-protected:
-	void writeSettings();
-	void setDefaults();
-	
-protected:
-	QCheckBox *cbEnable;
-	KIntNumInput *standbySlider;
-	KIntNumInput *suspendSlider;
-	KIntNumInput *offSlider;
-	bool changed;
-	int standby;
-	int suspend;
-	int off;
-	bool enabled;
-	bool hasDPMS;
+    QCheckBox *m_pCBEnable;
+    KIntNumInput *m_pStandbySlider;
+    KIntNumInput *m_pSuspendSlider;
+    KIntNumInput *m_pOffSlider;
+    KConfig *m_pConfig;
 };
 
-#endif
-
+#endif // __Energy_h_Included__

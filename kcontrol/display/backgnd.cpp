@@ -36,7 +36,6 @@
 
 #include <kapp.h>
 #include <kconfig.h>
-#include <kwm.h>
 #include <kwin.h>
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -45,6 +44,7 @@
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kpixmap.h>
+#include <dcopclient.h>
 
 #include <bgdefaults.h>
 #include <bgsettings.h>
@@ -369,12 +369,15 @@ void KBackground::load()
 
 void KBackground::save()
 {
+    qDebug("Saving stuff...");
     m_pGlobals->writeSettings();
     for (int i=0; i<m_Max; i++)
 	m_Renderer[i]->writeSettings();
 
-    // notify kdesktop. kdesktop will notify all clients
-    KWM::sendKWMCommand("kbgwm_reconfigure");
+    // reconfigure kdesktop. kdesktop will notify all clients
+    DCOPClient *client = kapp->dcopClient();
+    client->send("kdesktop", "KBackgroundIface", "configure()", "");
+
     emit changed(false);
 }
 

@@ -27,7 +27,6 @@
 #include "display.h"
 #include "colorscm.h"
 #include "general.h"
-#include "energy.h"
 #include <qfont.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -53,14 +52,13 @@ private:
 
   KColorScheme *colors;
   KGeneral *general;
-  KEnergy *energy;
 };
 
 
 KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *name)
   : KControlApplication(argc, argv, name)
 {
-  colors = 0; general = 0; energy = 0;
+  colors = 0; general = 0; 
 
   if (runGUI())
     {
@@ -70,15 +68,12 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
       if (!pages || pages->contains("style"))
 	addPage(general = new KGeneral(dialog, KDisplayModule::Setup),
 		i18n("&Style"), "kdisplay-7.html");
-      if (!pages || pages->contains("energy"))
-	addPage(energy = new KEnergy(dialog, KDisplayModule::Setup),
-		i18n("&Energy"), "kdisplay-8.html");
 
-      if (colors || general || energy)
+      if (colors || general)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmdisplay [-init | {colors,style,energy}]\n").ascii());
+          fprintf(stderr, i18n("usage: kcmdisplay [-init | {colors,style]\n").ascii());
           justInit = TRUE;
         }
 
@@ -90,8 +85,6 @@ void KDisplayApplication::init()
 {
   KColorScheme *colors = new KColorScheme(0, KDisplayModule::Init);
   delete colors;
-  KEnergy *energy = new KEnergy(0, KDisplayModule::Init);
-  delete energy;
   
   writeQDesktopProperties( colors->createPalette(), KGlobal::generalFont() );
   
@@ -113,8 +106,6 @@ void KDisplayApplication::apply()
 {
   if (colors)
     colors->applySettings();
-  if (energy)
-    energy->applySettings();
   if (general)
     general->applySettings();
 
@@ -147,8 +138,6 @@ void KDisplayApplication::defaultValues()
 {
   if (colors)
     colors->defaultSettings();
-  if (energy)
-    energy->defaultSettings();
   if (general)
     general->defaultSettings();
 }
