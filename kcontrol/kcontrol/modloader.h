@@ -16,20 +16,25 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 */
-
-#ifndef __modloader_h__
-#define __modloader_h__
-
-#include <qwidget.h>
+#ifndef MODLOADER_H
+#define MODLOADER_H
 
 #include <kcmodule.h>
 #include "moduleinfo.h"
 
-class ModuleLoader
+class QWidget;
+class KLibLoader;
+
+class KCModuleLoader
 {
 public:
   static KCModule *loadModule(const ModuleInfo &mod, bool withfallback=true);
   static void unloadModule(const ModuleInfo &mod);
+  static void showLastLoaderError(QWidget *parent);
+private:
+  static KCModule* load(const ModuleInfo &mod, const QString &libname, KLibLoader *loader);
+
 };
 
-#endif
+#endif // MODLOADER_H
+

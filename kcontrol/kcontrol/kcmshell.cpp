@@ -224,7 +224,7 @@ int main(int _argc, char *_argv[])
         // load the module
         ModuleInfo info(path);
 
-        KCModule *module = ModuleLoader::loadModule(info, false);
+        KCModule *module = KCModuleLoader::loadModule(info, false);
 
         if (module) {
             // create the dialog
@@ -263,19 +263,12 @@ int main(int _argc, char *_argv[])
              //Silent
              kapp->exec();
             }
-            ModuleLoader::unloadModule(info);
+            KCModuleLoader::unloadModule(info);
             return 0;
         }
 
-        KMessageBox::detailedError(0,
-                           i18n("There was an error loading the module."),i18n("<qt><p>The diagnostics is:<br>%1"
-                                "<p>Possible reasons:</p><ul><li>An error occurred during your last "
-                                "KDE upgrade leaving an orphaned control module<li>You have old third party "
-                                "modules lying around.</ul><p>Check these points carefully and try to remove "
-                                "the module mentioned in the error message. If this fails, consider contacting "
-                                "your distributor or packager.</p></qt>")
-                                   .arg(KLibLoader::self()->lastErrorMessage()));
-        return 0;
+       KCModuleLoader::showLastLoaderError(0L);
+       return 0;
     }
 
     // multiple control modules

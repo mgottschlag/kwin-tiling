@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kiconloader.h>
+
 #include <kmessagebox.h>
 #include <klibloader.h>
 #include <krun.h>
@@ -117,7 +118,7 @@ void KCMultiDialog::addModule(const QString& path, bool withfallback)
     QHBox* page = addHBoxPage(info.name(), info.comment(),
                               KGlobal::iconLoader()->loadIcon(info.icon(), KIcon::Desktop, KIcon::SizeMedium));
     if(!page) {
-        ModuleLoader::unloadModule(info);
+        KCModuleLoader::unloadModule(info);
         return;
     }
     moduleDict.insert(page, new LoadInfo(path, withfallback));
@@ -137,13 +138,12 @@ void KCMultiDialog::slotAboutToShow(QWidget *page)
 
     ModuleInfo info(loadInfo->path);
 
-    KCModule *module = ModuleLoader::loadModule(info, loadInfo->withfallback);
+    KCModule *module = KCModuleLoader::loadModule(info, loadInfo->withfallback);
 
     if (!module)
     {
         QApplication::restoreOverrideCursor();
-        KMessageBox::error(this, i18n("There was an error loading module\n'%1'\nThe diagnostics is:\n%2")
-                           .arg(loadInfo->path).arg(KLibLoader::self()->lastErrorMessage()));
+        KCModuleLoader::showLastLoaderError(this);
         delete loadInfo;
         return;
     }

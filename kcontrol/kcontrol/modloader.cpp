@@ -26,13 +26,15 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <klibloader.h>
+#include <kmessagebox.h>
+#include <klocale.h>
 #include <kparts/componentfactory.h>
 
 #include "config.h"
 #include "global.h"
 #include "modloader.h"
 
-static KCModule *load(const ModuleInfo &mod, const QString &libname, KLibLoader *loader)
+KCModule* KCModuleLoader::load(const ModuleInfo &mod, const QString &libname, KLibLoader *loader)
 {
     // attempt to load modules with ComponentFactory, only if the symbol init_<lib> exists
     // (this is because some modules, e.g. kcmkio with multiple modules in the library,
@@ -75,7 +77,7 @@ static KCModule *load(const ModuleInfo &mod, const QString &libname, KLibLoader 
 }
 
 
-KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
+KCModule* KCModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
 {
   /*
    * Simple libraries as modules are the easiest case:
@@ -111,7 +113,7 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
   return 0;
 }
 
-void ModuleLoader::unloadModule(const ModuleInfo &mod)
+void KCModuleLoader::unloadModule(const ModuleInfo &mod)
 {
 	// get the library loader instance
   KLibLoader *loader = KLibLoader::self();
@@ -123,3 +125,18 @@ void ModuleLoader::unloadModule(const ModuleInfo &mod)
   libname = "kcm_%1";
   loader->unloadLibrary(QFile::encodeName(libname.arg(mod.library())));
 }
+
+void KCModuleLoader::showLastLoaderError(QWidget *parent)
+{
+  KMessageBox::detailedError(parent,
+      i18n("There was an error loading the module."),i18n("<qt><p>The diagnostics is:<br>%1"
+        "<p>Possible reasons:</p><ul><li>An error occurred during your last "
+        "KDE upgrade leaving an orphaned control module<li>You have old third party "
+        "modules lying around.</ul><p>Check these points carefully and try to remove "
+        "the module mentioned in the error message. If this fails, consider contacting "
+        "your distributor or packager.</p></qt>")
+      .arg(KLibLoader::self()->lastErrorMessage()));
+
+}
+
+// vim: ts=2 sw=2 et
