@@ -26,24 +26,25 @@
 #include <qlayout.h>
 #include <qvbox.h>
 #include <qlabel.h>
-#include <klineedit.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qwhatsthis.h>
+
+#include <klineedit.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klocale.h>
+#include <kdialog.h>
 
 #include "email.h"
-
-#define SPACE 6
 
 KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
   QString wtstr;
-  QVBoxLayout *topLayout = new QVBoxLayout(this, SPACE);
+  QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
+					   KDialog::spacingHint());
   QGroupBox *uBox = new QGroupBox(2, Qt::Horizontal, i18n("User information"),
 				  this);
   topLayout->addWidget(uBox);
@@ -57,7 +58,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   wtstr = i18n("Enter your full name here, e.g. \"John Doe\" (but without the quotation"
      " marks).  Some people like to provide a nick name only.<br> You can leave this field"
      " blank and still use email. However, providing your full name is <em>recommended</em> as"
-     " this makes it much easier for your recipient to browse his or hers email.");
+     " this makes it much easier for your recipient to browse his or her email.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( fullName, wtstr );
 
@@ -80,10 +81,10 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(emailAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(emailAddr);
 
-  wtstr = i18n("Enter your email address here, e.g. \"john@doe.com\" (without"
-     " the quotation marks). This information is <em>mandatory</em> if you want to use email.<p>"
-     " Do <em>not</em> enter something like \"John Doe &lt;john@doe.com&gt;\", just a plain email address."
-     " You're email address must not contain any blank spaces.");
+  wtstr = i18n("Enter your email address here, e.g. \"john@doe.com\" (without "
+     "the quotation marks). This information is <em>mandatory</em> if you want to use email.<p>"
+     "Do <em>not</em> enter something like \"John Doe &lt;john@doe.com&gt;\", just a plain email address. "
+     "Your email address may not contain any blank spaces.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( emailAddr, wtstr );
 
@@ -112,9 +113,9 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(userName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(userName);
 
-  wtstr = i18n("The user name you use to login to your mail server (sometimes just called 'login')."
+  wtstr = i18n("The user name you use to login to your mail server (sometimes just called \"login\")."
      " Your mail provider should have supplied this information. Your login name is often (but"
-     " not always) identical to the part of your email address that comes before the '@'.");
+     " not always) identical to the part of your email address that comes before the \"@\".");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( userName, wtstr );
 
@@ -127,7 +128,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
 
   wtstr = i18n("Your password for the mail server. Your mail provider should have supplied"
      " this information together with your user name. <br>Your password will not"
-     " appear on screen.");
+     " appear on screen and will not be readable by other users on the system.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( password, wtstr );
 
@@ -138,8 +139,8 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   label->setBuddy(inServer);
 
   wtstr = i18n("The server you get incoming mail from (this <em>may</em> be identical to your outgoing host)."
-     " Your mail provider should have supplied this information. It may have been called 'POP3 server/host' or"
-     " 'IMAP server/host' as well.");
+     " Your mail provider should have supplied this information. It may have been called \"POP3 server/host\" or"
+     " \"IMAP server/host\" as well.  If you are using a local mailbox, you may leave this blank.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( inServer, wtstr );
 
@@ -151,8 +152,8 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   label->setBuddy(outServer);
 
   wtstr = i18n("The server you use for sending mail (this <em>may</em> be identical to your incoming host)."
-     " Your mail provider should have supplied this information. It may have been called 'SMTP server' or"
-     " 'SMTP host' as well.");
+     " Your mail provider should have supplied this information. It may have been called \"SMTP server\" or"
+     " \"SMTP host\" as well.  If you are using a local mailbox, you may leave this blank.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( outServer, wtstr );
 
@@ -167,14 +168,14 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   localButton = new QRadioButton(i18n("&Local mailbox"), bGrp);
 
   wtstr = i18n("The type of your Incoming mail server. Your mail provider should have supplied"
-     " this information. If you only use dialup networking (e.g. from home), you are most likely"
+     " this information. If you only use dialup networking (i.e. you log in from home), you are most likely"
      " using a POP3 server.");
   QWhatsThis::add( bGrp, wtstr );
   QWhatsThis::add( imapButton, wtstr );
   QWhatsThis::add( pop3Button, wtstr );
   QWhatsThis::add( localButton, wtstr );
 
-  topLayout->addSpacing(SPACE);
+  topLayout->addSpacing(KDialog::spacingHint());
 
   load();
 }
@@ -203,7 +204,7 @@ void KEmailConfig::load()
   QString tmp = p->pw_name;
   tmp += "@"; tmp += hostname;
   emailAddr->setText(config->readEntry("EmailAddress", tmp));
-  organization->setText(config->readEntry("Organization"));
+  organization->setText(config->readEntry("Organization", "None"));
   replyAddr->setText(config->readEntry("ReplyAddr"));
 
   config->setGroup("ServerInfo");
