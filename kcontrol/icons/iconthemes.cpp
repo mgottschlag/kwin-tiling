@@ -261,7 +261,7 @@ QStringList IconThemesConfig::findThemeDirs(QString archiveName)
   KArchiveEntry* possibleDir = 0L;
   KArchiveDirectory* subDir = 0L;
 
-  // iterate all the dirs looking for an index.desktop file
+  // iterate all the dirs looking for an index.theme or index.desktop file
   QStringList entries = themeDir->entries();
   for (QStringList::Iterator it = entries.begin();
        it != entries.end();
@@ -269,7 +269,8 @@ QStringList IconThemesConfig::findThemeDirs(QString archiveName)
     possibleDir = const_cast<KArchiveEntry*>(themeDir->entry(*it));
     if (possibleDir->isDirectory()) {
       subDir = dynamic_cast<KArchiveDirectory*>( possibleDir );
-      if (subDir->entry("index.desktop") != NULL)
+      if (subDir->entry("index.theme") != NULL ||
+          subDir->entry("index.desktop") != NULL)
         foundThemes.append(subDir->name());
     }
   }
@@ -299,6 +300,7 @@ void IconThemesConfig::removeSelectedTheme()
 
   // delete the index file before the async KIO::del so loadThemes() will
   // ignore that dir.
+  unlink(QFile::encodeName(icontheme.dir()+"/index.theme").data());
   unlink(QFile::encodeName(icontheme.dir()+"/index.desktop").data());
   KIO::del(icontheme.dir());
 
