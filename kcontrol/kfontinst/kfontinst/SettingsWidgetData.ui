@@ -167,7 +167,7 @@ For normal (non-root) users, this file will usually be:
                         <cstring>itsGenAfmsCheck</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Generate, with</string>
+                        <string>&amp;Generate with</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>AFMs (Adobe Font Metrics) are files that

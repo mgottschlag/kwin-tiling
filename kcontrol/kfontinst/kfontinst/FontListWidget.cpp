@@ -635,7 +635,7 @@ CFontListWidget::CFontListWidget(QWidget *parent)
 
     itsFontsPopup=new QPopupMenu(this);
     itsFontsPopup->insertItem(i18n("Show Meta Data..."), this, SLOT(showMeta()));
-    itsFixTtfPsNamesME=itsFontsPopup->insertItem(i18n("Fix TTF postscript names..."), this, SLOT(fixTtfPsNames()));
+    itsFixTtfPsNamesME=itsFontsPopup->insertItem(i18n("Fix TTF PostScript names..."), this, SLOT(fixTtfPsNames()));
 
     itsDirsPopup=new QPopupMenu(this);
     itsCreateDirME=itsDirsPopup->insertItem(i18n("Create new sub-folder..."), this, SLOT(createDir()));
@@ -1675,7 +1675,7 @@ void CFontListWidget::fixTtfPsNames()
     if(KMessageBox::questionYesNo(this, i18n("This will *permanently* alter the TrueType font file(s),"
                                              "\nand cannot be undone."
                                              "\n"
-                                             "\nAre you sure?"), i18n("Fix TTF postscript names"))==KMessageBox::Yes)
+                                             "\nAre you sure?"), i18n("Fix TTF PostScript names"))==KMessageBox::Yes)
     {
         CListViewItem *item=(CListViewItem *)firstChild();
         int           failures=0,
