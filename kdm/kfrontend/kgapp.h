@@ -39,8 +39,6 @@ protected:
     virtual void timerEvent( QTimerEvent * );
 
 private:
-    static void sigAlarm( int );
-
     int pingInterval;
 };
 

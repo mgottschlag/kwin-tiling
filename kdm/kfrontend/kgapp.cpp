@@ -42,6 +42,16 @@
 #include <X11/Xlib.h>
 #include <X11/cursorfont.h>
 
+extern "C" {
+
+static void
+sigAlarm( int )
+{
+    exit( EX_RESERVER_DPY );
+}
+
+}
+
 GreeterApp::GreeterApp()
 {
     pingInterval = ((GetCfgInt( C_displayType ) & d_location) == dLocal) ?
@@ -63,12 +73,6 @@ GreeterApp::timerEvent( QTimerEvent * )
     if (!PingServer( qt_xdisplay() ))
 	SessionExit( EX_RESERVER_DPY );
     alarm( pingInterval * 70 );	// sic! give the "proper" pinger enough time
-}
-
-void
-GreeterApp::sigAlarm( int )
-{
-    exit( 1 );
 }
 
 bool
