@@ -656,8 +656,8 @@ static Ent entsCore[] = {
 "# Who is allowed to abort all still running sessions when shutting down.\n"
 "# Same options as for AllowShutdown. Default is All\n" },
 { "DefaultSdMode",	0, 0, 
-"# The shutdown condition/timing choosen by default. Default is Schedule\n"
-"# \"Schedule\" - shutdown after all sessions exit (possibly at once)\n"
+"# The default choice for the shutdown condition/timing.\n"
+"# \"Schedule\" - shutdown after all sessions exit (possibly at once) (Default)\n"
 "# \"TryNow\" - shutdown, if no sessions are open, otherwise do nothing\n"
 "# \"ForceNow\" - shutdown unconditionally\n" }, 
 { "SessSaveFile",	0, 0, 
@@ -839,7 +839,7 @@ DEnt dEntsXdmcp[] = {
 { "Enable",		"false", 1 },
 { "Port",		"177", 0 },
 { "KeyFile",		"", 0 },
-{ "Xaccess",		"", 0 },
+{ "Xaccess",		KDMCONF "/Xaccess", 1 }, /* b/c of inadequate def handling */
 { "ChoiceTimeout",	"10", 0 },
 { "RemoveDomainname",	"false", 0 },
 { "SourceAddress",	"true", 0 },
@@ -1738,6 +1738,7 @@ static struct {
 } chgdef[] = {
 { "General",	"Xservers",	"%s/kdm/Xservers"	},
 { "General",	"PidFile",	"/var/run/xdm.pid"	},
+{ "Xdmcp",	"Xaccess",	"%s/kdm/Xaccess"	}, /* b/c of inadequate def handling */
 { "X-*-Core",	"Setup",	"%s/kdm/Xsetup"		},
 { "X-*-Core",	"Startup",	"%s/kdm/Xstartup"	},
 { "X-*-Core",	"Reset",	"%s/kdm/Xreset"		},
