@@ -217,17 +217,17 @@ drawswarm(Window win)
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
+#include <qlayout.h>
+
+#include <kapp.h>
+#include <kbuttonbox.h>
+#include <kconfig.h>
+#include <klocale.h>
+#include <kmessagebox.h>
 
 #include "swarm.h"
-
 #include "swarm.moc"
-#include <qlayout.h>
-#include <kbuttonbox.h>
 #include "helpers.h"
-#include <kapp.h>
-#include <klocale.h>
-#include <kconfig.h>
 
 #undef Below
 
@@ -452,8 +452,7 @@ void kSwarmSetup::slotOkPressed()
 
 void kSwarmSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Swarm"),
+	KMessageBox::information(this,
 			     glocale->translate("Swarm\n\nCopyright (c) 1991 by Patrick J. Naughton\n\nPorted to kscreensave by Emanuel Pirker."),
-			     glocale->translate("OK"));
+			     glocale->translate("About Swarm"));
 }

@@ -37,7 +37,6 @@
 #endif
 
 #include <qbitmap.h>
-#include <qmessagebox.h>
 #include <qtextstream.h>
 #include <qpopupmenu.h>
 
@@ -45,6 +44,7 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kmessagebox.h>
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
@@ -504,9 +504,7 @@ KGreeter::restrict_time()
      if (!pwd->pw_uid) return false;
 
      if(!auth_timeok(lc, time(NULL))) {
-         QMessageBox::critical(this, QString::null,
-			       i18n("Logins not available right now."),
-			       i18n("&OK"));
+         KMessageBox::sorry(this, i18n("Logins not available right now."));
          return true;
      }
 
@@ -546,8 +544,7 @@ KGreeter::restrict_nologin()
      QString file;
      /* Note that <file> will be "" if there is no nologin capability */
      if ((file = login_getcapstr(lc, "nologin", "", NULL)) == NULL) {
-       QMessageBox::critical(this, QString::null, i18n("login_getcapstr() failed."),
-	 i18n("&OK"));
+       KMessageBox::error(this, i18n("Could not access the login capabilities database or out of memory."));
        return true;
      }
 #endif
@@ -573,7 +570,7 @@ KGreeter::restrict_nologin()
        while ( !t.eof() )
          s += t.readLine() + "\n";  
        f.close();
-       QMessageBox::critical(this, QString::null, s, i18n("&OK"));
+       KMessageBox::sorry(this, s);
 
        return true;
      }
@@ -599,18 +596,14 @@ KGreeter::restrict_expired(){
 #endif
      if (pwd->pw_expire)
 	  if (pwd->pw_expire <= time(NULL)) {
-	       QMessageBox::critical(this, QString::null,
-				     i18n("Sorry -- your account has expired."), 
-				     i18n("&OK"));
+	       KMessageBox::sorry(this, i18n("Your account has expired."));
 	       return true;
 	  } else if (pwd->pw_expire - time(NULL) < warntime && !quietlog) {
 	       QDateTime dat;
 	       dat.setTime_t(pwd->pw_expire);
-	       QString str = i18n("Warning: your account expires on %1.").
-			   arg(KGlobal::locale()->formatDateTime(dat));
-	       QMessageBox::critical(this, QString::null,
-				     str,
-				     i18n("&OK"));
+	       QString str = i18n("Your account expires on %1.")
+			   .arg(KGlobal::locale()->formatDateTime(dat));
+	       KMessageBox::sorry(this, str);
 	  }
 
      return false;
@@ -627,18 +620,14 @@ KGreeter::restrict_expired(){
      
      if (swd->sp_expire != -1)
 	 if (expiresec <= time(NULL)) {
-	     QMessageBox::critical(this, QString::null,
-				   i18n("Sorry -- your account has expired."),
-				   i18n("&OK"));
+	     KMessageBox::sorry(this, i18n("Your account has expired."));
 	     return true;
 	 } else if (expiresec - time(NULL) < warntime) {
 	     QDateTime dat;
 	     dat.setTime_t(expiresec);
-             QString str = i18n("Warning: your account expires on %1.").
-			 arg(KGlobal::locale()->formatDateTime(dat));
-	     QMessageBox::critical(this, QString::null,
-				   str,
-				   i18n("&OK"));
+             QString str = i18n("Your account expires on %1.")
+			 .arg(KGlobal::locale()->formatDateTime(dat));
+	     KMessageBox::sorry(this, str);
 	 }
 
      return false;
@@ -660,9 +649,7 @@ KGreeter::restrict_nohome(){
      my_seteuid(pwd->pw_uid);
      if (!*pwd->pw_dir || chdir(pwd->pw_dir) < 0) {
 	  if (login_getcapbool(lc, "requirehome", 0)) {
-	       QMessageBox::critical(this, QString::null, 
-				     i18n("Home directory not available"), 
-				     i18n("&OK"));
+	       KMessageBox::sorry(this, i18n("Home directory not available"));
 	       return true;
 	  }
      }
@@ -825,9 +812,9 @@ GreetUser(
      if (source (verify->systemEnviron, d->startup) != 0)
      {
           QString buf = i18n("Startup program %1 exited with non-zero status.\n"
-		  "Please contact your system administrator.\n").arg(d->startup);
+		  "Please contact your system administrator.\nPlease press OK to retry.").arg(d->startup);
 	  qApp->restoreOverrideCursor();
-	  QMessageBox::critical(0, i18n("Login aborted"), buf, i18n("Retry"));
+	  KMessageBox::error(0, buf, i18n("Login aborted"));
 	  SessionExit (d, OBEYSESS_DISPLAY, FALSE);
      }
 

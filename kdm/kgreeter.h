@@ -47,7 +47,6 @@
 #include <qlineedit.h>
 #include <qcombobox.h>
 #include <qlayout.h>
-#include <qmessagebox.h>
 #include <kapp.h>
 #include <kconfig.h>
 
