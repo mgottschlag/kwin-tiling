@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>535</width>
-            <height>404</height>
+            <width>555</width>
+            <height>502</height>
         </rect>
     </property>
     <property stdset="1">
@@ -60,10 +60,25 @@
             </property>
         </widget>
         <widget>
-            <class>QLayoutWidget</class>
+            <class>QFrame</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>Layout21</cstring>
+                <cstring>m_mainFrame</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>true</bool>
+            </property>
+            <property stdset="1">
+                <name>frameShape</name>
+                <enum>NoFrame</enum>
+            </property>
+            <property stdset="1">
+                <name>frameShadow</name>
+                <enum>Plain</enum>
+            </property>
+            <property>
+                <name>layoutSpacing</name>
             </property>
             <vbox>
                 <property stdset="1">
@@ -209,6 +224,10 @@
                             <property stdset="1">
                                 <name>name</name>
                                 <cstring>Layout30</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>enabled</name>
+                                <bool>true</bool>
                             </property>
                             <hbox>
                                 <property stdset="1">

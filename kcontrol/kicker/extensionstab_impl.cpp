@@ -119,6 +119,11 @@ void ExtensionsTab::load()
         (void) new ExtensionInfo( df, cf, m_extensionsListView );
     }
 
+    QListViewItem* item = m_extensionsListView->firstChild();
+    if( item ) {
+        m_extensionsListView->setSelected( item, true );
+    }
+
     loadConfig( m_extensionsListView->selectedItem() );
 
     delete c;
@@ -127,6 +132,8 @@ void ExtensionsTab::load()
 void ExtensionsTab::loadConfig( QListViewItem* item )
 {
     ExtensionInfo* info = (ExtensionInfo*)item;
+
+    m_mainFrame->setEnabled( info != 0 );
 
     if( info ) {
 	m_locationGroup->setButton(info->_position);
