@@ -96,7 +96,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   hbox->addStretch();
     
   label = new QLabel(this);  
-  label->setPixmap(KGlobal::iconLoader()->loadIcon("kdekcc"));
+  label->setPixmap(BarIcon("kdekcc"));
   label->setAlignment(AlignCenter);
   top->addWidget( label );
 }

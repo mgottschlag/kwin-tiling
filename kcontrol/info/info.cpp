@@ -247,7 +247,7 @@ bool GetInfo_XServer_Generic( QListView *lBox )
     sorting_allowed = false;
 			
     next = new QListViewItem(lBox, i18n("Server Information"));
-    next->setPixmap(0, KGlobal::iconLoader()->loadApplicationIcon(
+    next->setPixmap(0, KGlobal::iconLoader()->loadIcon(
     		    "kcmx", KIconLoader::Small));
     next->setOpen(true);
     next->setSelectable(false);

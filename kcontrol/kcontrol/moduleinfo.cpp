@@ -81,7 +81,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 
 QPixmap ModuleInfo::icon()
 {
-  return KGlobal::iconLoader()->loadApplicationIcon(_icon, KIconLoader::Small);
+  return KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Small);
 }
 
 

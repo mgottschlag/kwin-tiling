@@ -180,7 +180,7 @@ KDockWidget::KDockWidget(QString caption, QPixmap icon, KDockContainer *parent, 
   // create the close button
   _closeButton = new QPushButton(this);
   _closeButton->setFocusPolicy(QWidget::ClickFocus);
-  _closeButton->setPixmap( KGlobal::iconLoader()->loadIcon( "close", false ) );
+  _closeButton->setPixmap(BarIcon("close"));
 
   connect(_closeButton, SIGNAL(clicked()), this, SLOT(slotCloseClicked()));
 

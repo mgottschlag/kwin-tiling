@@ -79,10 +79,10 @@ void IndexPane::fillIndex(ConfigModuleList &list)
   if (!user) username = ""; else username = QString("(%1)").arg(user);
   // add the top level nodes
   localUser = new QListViewItem(_tree, i18n("Local User %1").arg(username));
-  localUser->setPixmap(0, KGlobal::iconLoader()->loadApplicationIcon(
+  localUser->setPixmap(0, KGlobal::iconLoader()->loadIcon(
         	ICON_LOCALUSER, KIconLoader::Small));
   localMachine = new QListViewItem(_tree, i18n("Local Computer"));
-  localMachine->setPixmap(0, KGlobal::iconLoader()->loadApplicationIcon(
+  localMachine->setPixmap(0, KGlobal::iconLoader()->loadIcon(
         	ICON_LOCALMACHINE, KIconLoader::Small));
 
   ConfigModule *module;
@@ -132,7 +132,7 @@ QListViewItem *IndexPane::getGroupItem(QListViewItem *parent, const QStringList&
 	  KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
 	  
 	  iitem->setText(0, directory.readEntry("Name", *it));
-	  iitem->setPixmap(0, KGlobal::iconLoader()->loadApplicationIcon(
+	  iitem->setPixmap(0, KGlobal::iconLoader()->loadIcon(
             directory.readEntry("Icon"), KIconLoader::Small));
 
 	  return iitem;

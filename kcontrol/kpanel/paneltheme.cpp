@@ -43,13 +43,13 @@ void KPanelTheme::loadSettings()
         config->readEntry("TaskbarTexture", QString::null);
 
     canvas->pixmaps[WidgetCanvas::C_Panel] =
-        ldr->loadIcon(pixNames[WidgetCanvas::C_Panel]);
+        BarIcon(pixNames[WidgetCanvas::C_Panel]);
     canvas->pixmaps[WidgetCanvas::C_Icon] =
-        ldr->loadIcon(pixNames[WidgetCanvas::C_Icon]);
+        BarIcon(pixNames[WidgetCanvas::C_Icon]);
     canvas->pixmaps[WidgetCanvas::C_TBar] =
-        ldr->loadIcon(pixNames[WidgetCanvas::C_TBar]);
+        BarIcon(pixNames[WidgetCanvas::C_TBar]);
     canvas->pixmaps[WidgetCanvas::C_TBtn] =
-        ldr->loadIcon(pixNames[WidgetCanvas::C_TBtn]);
+        BarIcon(pixNames[WidgetCanvas::C_TBtn]);
 
     canvas->boxSize = config->readNumEntry("BoxWidth", 45);
 }
@@ -101,10 +101,10 @@ void KPanelTheme::slotPixmap(const QString &p)
     if(wCombo->currentItem() == WidgetCanvas::C_TText)
         return;
     pixNames[wCombo->currentItem()] = p;
-    canvas->pixmaps[wCombo->currentItem()] = ldr->loadIcon(p);
+    canvas->pixmaps[wCombo->currentItem()] = BarIcon(p);
 
     pixBtn->setIcon(p);
-    pixBtn->setPixmap(ldr->loadIcon(p)); // hack
+    pixBtn->setPixmap(BarIcon(p)); // hack
     canvas->drawSampleWidgets();
     canvas->repaint();
 }
