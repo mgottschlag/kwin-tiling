@@ -6,10 +6,10 @@
 # in later versions of the theme manager.
 # Name of the theme
 Name=MGBreizh
-Name[af]=mgbreizh
-Name[fr]=MG Breizh
-Name[sv]=Mgbreizh
-Name[xx]=xx
+Name[af/messages/kdebase/desktop_kdebase.po]=mgbreizh
+Name[fr/messages/kdebase/desktop_kdebase.po]=MG Breizh
+Name[sv/messages/kdebase/desktop_kdebase.po]=Mgbreizh
+Name[xx/messages/kdebase/desktop_kdebase.po]=xx
 # Name of the author
 author=Mikael GEORGES
 # Email address of the author
@@ -18,14 +18,14 @@ email=admin@mgbreizh.com
 info=http://www.mgbreizh.com/
 # Short description
 Comment=Mikael GEORGES <admin@mgbreizh.com>
-Comment[af]=mikael georges <admin@mgbreizh.com>
-Comment[ar]=مايكل جورجس <admin@mgbreizh.com>
-Comment[de]=Mikael Georges <admin@mgbreizh.com>
-Comment[he]=מיכאל ג'ורג'ס <admin@mgbreizh.com>
-Comment[hu]=Mikael Georges <admin@mgbreizh.com>
-Comment[sl]=Mikael Georges <admin@mgbreizh.com>
-Comment[sv]=Mikael Georges <admin@mgbreizh.com>
-Comment[xx]=xx
+Comment[af/messages/kdebase/desktop_kdebase.po]=mikael georges <admin@mgbreizh.com>
+Comment[ar/messages/kdebase/desktop_kdebase.po]=مايكل جورجس <admin@mgbreizh.com>
+Comment[de/messages/kdebase/desktop_kdebase.po]=Mikael Georges <admin@mgbreizh.com>
+Comment[he/messages/kdebase/desktop_kdebase.po]=מיכאל ג'ורג'ס <admin@mgbreizh.com>
+Comment[hu/messages/kdebase/desktop_kdebase.po]=Mikael Georges <admin@mgbreizh.com>
+Comment[sl/messages/kdebase/desktop_kdebase.po]=Mikael Georges <admin@mgbreizh.com>
+Comment[sv/messages/kdebase/desktop_kdebase.po]=Mikael Georges <admin@mgbreizh.com>
+Comment[xx/messages/kdebase/desktop_kdebase.po]=xx
 # Version of the theme
 version=1.0
 #

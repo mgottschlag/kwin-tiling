@@ -1,18 +1,17 @@
 # KDE Config File
 [Color Scheme]
 Name=Desert Red
-Name[af]=woestyn rooi
-Name[cs]=Pouštní červená
-Name[da]=Ørkenrød
-Name[eo]=Dezerta ruĝo
-Name[es]=Rojo desierto
-Name[fi]=Aavikon punainen
-Name[he]=אדום מדברי
-Name[hu]=Téglavörös
-Name[ja]=砂漠の赤
-Name[pt_BR]=Vermelho
-Name[sv]=Ökenröd
-Name[tr]=Çöl Kırmızısı
+Name[af/messages/kdebase/desktop_kdebase.po]=woestyn rooi
+Name[cs/messages/kdebase/desktop_kdebase.po]=Pouštní červená
+Name[da/messages/kdebase/desktop_kdebase.po]=Ørkenrød
+Name[eo/messages/kdebase/desktop_kdebase.po]=Dezerta ruĝo
+Name[es/messages/kdebase/desktop_kdebase.po]=Rojo desierto
+Name[fi/messages/kdebase/desktop_kdebase.po]=Aavikon punainen
+Name[he/messages/kdebase/desktop_kdebase.po]=אדום מדברי
+Name[hu/messages/kdebase/desktop_kdebase.po]=Téglavörös
+Name[ja/messages/kdebase/desktop_kdebase.po]=砂漠の赤
+Name[sv/messages/kdebase/desktop_kdebase.po]=Ökenröd
+Name[tr/messages/kdebase/desktop_kdebase.po]=Çöl Kırmızısı
 background=214,205,187
 buttonBackground=214,205,187
 buttonForeground=0,0,0

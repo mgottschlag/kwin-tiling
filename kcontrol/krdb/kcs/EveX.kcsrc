@@ -1,11 +1,11 @@
 [Color Scheme]
 Name=EveX
-Name[af]=evex
-Name[az]=Qeyd Et
-Name[ko]=이브X
-Name[pl]=WigiliaX
-Name[th]=แบบ EveX
-Name[xx]=xx
+Name[af/messages/kdebase/desktop_kdebase.po]=evex
+Name[az/messages/kdebase/desktop_kdebase.po]=Qeyd Et
+Name[ko/messages/kdebase/desktop_kdebase.po]=이브X
+Name[pl/messages/kdebase/desktop_kdebase.po]=WigiliaX
+Name[th/messages/kdebase/desktop_kdebase.po]=แบบ EveX
+Name[xx/messages/kdebase/desktop_kdebase.po]=xx
 activeBackground=233,233,233
 activeBlend=233,233,233
 activeForeground=2,2,2
