@@ -212,7 +212,7 @@ files. Usually this will be (for Linux):
                     </item>
                     <item>
                         <property name="text">
-                            <string>/etc/rc.d/init.d/xfs restart (Font Server)</string>
+                            <string>/etc/init.d/xfs restart (Font Server)</string>
                         </property>
                     </item>
                     <item>

@@ -318,7 +318,7 @@ void CSysConfigurer::status(const QString &str, const QString &errorMsg, bool er
                         ok=CMisc::doCmd("xset", "fp", "rehash");
                         break;
                     case CConfig::XREFRESH_XFS_RESTART:
-                        ok=CMisc::doCmd("/etc/rc.d/init.d/xfs", "restart");
+                        ok=CMisc::doCmd("/etc/init.d/xfs", "restart");
                         break;
                     case CConfig::XREFRESH_CUSTOM:
                         ok=CMisc::doCmdStr(CKfiGlobal::cfg().getCustomXRefreshCmd());
