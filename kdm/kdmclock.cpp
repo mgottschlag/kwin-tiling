@@ -36,7 +36,7 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
     timer->start( 1000 );
 
     // reading rc file	
-    KConfig *config = kapp->config();
+    //KConfig *config = kapp->config();
 
     //config->setGroup("Option");
     mDate    = false;//config->readNumEntry("date", FALSE);
@@ -44,11 +44,8 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
     mDigital = false;//config->readNumEntry("digital", FALSE);
     mBorder  = false;//config->readNumEntry("border", FALSE);
 
-    QString s;
-    s.sprintf("%s", "Utopia");
-
     //config->setGroup( "Font" );
-    mFont.setFamily(s/*config->readEntry( "Family", "Utopia")*/);
+    mFont.setFamily(QString::fromLatin1("Utopia")/*config->readEntry( "Family", "Utopia")*/);
     mFont.setPointSize(51/*config->readNumEntry( "Point Size", 51)*/);
     mFont.setWeight(75/*config->readNumEntry( "Weight", 75)*/);
     mFont.setItalic(TRUE/*config->readNumEntry( "Italic",TRUE )*/);

@@ -812,9 +812,7 @@ int main(int argc, char **argv)
 
      QString path = KStandardDirs::kde_default("data");
      //??????
-     QString s;
-     s.sprintf("%s", "kdm/pics/users/" );
-     path += s;
+     path += QString::fromLatin1("kdm/pics/users/");
    
 
      MyApp app;
