@@ -951,7 +951,7 @@ mergeSessionArgs (int cansave)
     mfname = 0;
     fname = ".dmrc";
     if ((!curdmrc || newdmrc) && *dmrcDir)
-	if (StrApp (&mfname, dmrcDir, "/", curuser, fname, 0))
+	if (StrApp (&mfname, dmrcDir, "/", curuser, fname, (char *)0))
 	    fname = mfname;
     needsave = 0;
     if (!curdmrc) {
@@ -1333,7 +1333,7 @@ StartClient ()
 	userEnviron = setEnv (userEnviron, "DESKTOP_SESSION", desksess);
 	for (i = 0; td->sessionsDirs[i]; i++) {
 	    fname = 0;
-	    if (StrApp (&fname, td->sessionsDirs[i], "/", desksess, ".desktop", 0)) {
+	    if (StrApp (&fname, td->sessionsDirs[i], "/", desksess, ".desktop", (char *)0)) {
 		if ((str = iniLoad (fname))) {
 		    if (!StrCmp (iniEntry (str, "Desktop Entry", "Hidden", 0), "true") ||
 			!(sessargs = iniEntry (str, "Desktop Entry", "Exec", 0)))
@@ -1463,7 +1463,7 @@ ReadDmrc ()
 	return GE_NoUser;
 
     if (*dmrcDir) {
-	if (!StrApp (&fname, dmrcDir, "/", dmrcuser, ".dmrc", 0))
+	if (!StrApp (&fname, dmrcDir, "/", dmrcuser, ".dmrc", (char *)0))
 	    return GE_Error;
 	if (!(curdmrc = iniLoad (fname))) {
 	    free (fname);
@@ -1473,7 +1473,7 @@ ReadDmrc ()
 	return GE_NoFile;
     }
 
-    if (!StrApp (&fname, p->pw_dir, "/.dmrc", 0))
+    if (!StrApp (&fname, p->pw_dir, "/.dmrc", (char *)0))
 	return GE_Error;
     if ((curdmrc = iniLoad (fname))) {
 	free (fname);

@@ -105,7 +105,7 @@ Krb5GetAuthFor (unsigned short namelen, const char *name, const char *dname)
 	    return (Xauth *) 0;
 	}
 	new->data = 0;
-	if (!StrApp (&new->data, "UU:", filename, 0))
+	if (!StrApp (&new->data, "UU:", filename, (char *)0))
 	{
 	    free (filename);
 	    free ((char *) new);
