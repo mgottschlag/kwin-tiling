@@ -107,7 +107,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   connect(background, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
 
   sessions = new KDMSessionsWidget(this);
-  tab->addTab(sessions, i18n("&Sessions"));
+  tab->addTab(sessions, i18n("&Shutdown"));
   connect(sessions, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
 
   users = new KDMUsersWidget(this, 0);
@@ -160,9 +160,8 @@ QString KDModule::quickHelp() const
                     "for various purposes like greetings and user names. "
                     "<h2>Background</h2>If you want to set a special background for the login "
                     "screen, this is where to do it."
-                    "<h2>Sessions</h2> Here you can specify which types of sessions the Login "
-                    "Manager should offer you for logging in and who is allowed to "
-                    "shutdown/reboot the machine."
+                    "<h2>Shutdown</h2> Here you can specify who is allowed to shutdown/reboot the machine "
+                    "and whether a boot manager should be used."
                     "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
                     "will offer you for logging in."
                     "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "

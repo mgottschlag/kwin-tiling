@@ -21,23 +21,10 @@
 #define __KDMSESS_H__
 
 
-#include <qptrlist.h>
 #include <qstring.h>
-#include <qlistbox.h>
 
-class KArrowButton;
-class QLineEdit;
-class KURLRequester;
 class QComboBox;
 class QCheckBox;
-
-class MyListBox : public QListBox
-{
-
-public:
-	MyListBox(QWidget *parent) : QListBox(parent) {}
-	bool isItemVisible(int id) { return itemVisible(id); }
-};
 
 class KDMSessionsWidget : public QWidget
 {
@@ -56,29 +43,15 @@ public:
 signals:
 	void changed( bool state );
 	
-protected:
-	void moveSession(int);
-
 protected slots:
-	void slotAddSessionType();
-	void slotRemoveSessionType();
-	void slotSessionHighlighted(int);
-	void slotCheckNewSession(const QString&);
-	void slotSessionUp();
-	void slotSessionDown();
 	void changed();
 
 private:
 	void readSD (QComboBox *, QString);
 	void writeSD (QComboBox *);
 
-	KIconLoader	*iconloader;
 	QComboBox	*sdlcombo, *sdrcombo;
 	QLabel		*sdllabel, *sdrlabel;
-	QLineEdit	*session_lined;
-	MyListBox	*sessionslb;
-	KArrowButton	*btnup, *btndown;
-	QButton		*btnrm, *btnadd;
 #ifdef __linux__
 	QCheckBox	*lilo_check;
 #endif
