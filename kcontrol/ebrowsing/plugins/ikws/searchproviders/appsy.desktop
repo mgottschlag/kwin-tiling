@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=KDE App Search
+ServiceTypes=SearchProvider
+Keys=apps,appsy
+Query=http://apps.kde.com/uk/0/search?query=\\{@}

@@ -2,6 +2,7 @@
 services_DATA =	acronym.desktop \
 		alltheweb.desktop \
 		altavista.desktop \
+		appsy.desktop \
 		austronaut.desktop \
 		bugft.desktop \
 		bugno.desktop \
