@@ -152,7 +152,10 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     QString relPath="System/ScreenSavers/";
     KServiceGroup::Ptr servGroup = KServiceGroup::baseGroup( "screensavers" );
     if (servGroup)
+    {
       relPath=servGroup->relPath();
+      kdDebug() << "relPath=" << relPath << endl;
+    }
 
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
