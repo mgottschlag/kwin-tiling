@@ -166,6 +166,8 @@ void topKCMEmail::load(const QString &s)
 		m_sOGMHost = pSettings->getSetting(KEMailSettings::OutServer);
 		m_sOGMCommand = pSettings->getSetting(KEMailSettings::OutServerCommand);
 
+		m_uICMPort = m_uOGMPort = 0;
+
 		configChanged(false);
 	}
 
@@ -413,7 +415,10 @@ void topKCMEmail::slotICMSettings()
 		ud->txtUsername->setText(m_sICMUsername);
 		ud->txtPass->setText(m_sICMPassword);
 		ud->txtHost->setText(m_sICMHost);
-		long_num.setNum(m_uICMPort);
+		if (m_uICMPort)
+			long_num.setNum(m_uICMPort);
+		else
+			long_num = QString::null;
 		ud->txtPort->setText(long_num);
 		ud->chkTLS->setChecked(m_bICMSecure);
 		if (ud->exec() == QDialog::Accepted) {
@@ -449,7 +454,10 @@ void topKCMEmail::slotOGMSettings()
 		ud->txtUsername->setText(m_sOGMUsername);
 		ud->txtPass->setText(m_sOGMPassword);
 		ud->txtHost->setText(m_sOGMHost);
-		long_num.setNum(m_uOGMPort);
+		if (m_uOGMPort)
+			long_num.setNum(m_uOGMPort);
+		else
+			long_num = QString::null;
 		ud->txtPort->setText(long_num);
 		ud->chkTLS->setChecked(m_bOGMSecure);
 		if (ud->exec() == QDialog::Accepted) {
