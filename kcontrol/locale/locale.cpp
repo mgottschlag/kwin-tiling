@@ -124,7 +124,7 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo)
 
 void KLocaleConfig::loadSettings()
 {
-  KSimpleConfig config(QDir::homeDirPath()+"/.kderc");
+  KSimpleConfig config(QDir::homeDirPath()+"/.kde/share/config/kdeglobals");
 
   loadLanguageList(combo1);
   loadLanguageList(combo2);
@@ -166,7 +166,7 @@ void KLocaleConfig::loadSettings()
 
 void KLocaleConfig::applySettings()
 {
-  KSimpleConfig config(QDir::homeDirPath()+"/.kderc");
+  KSimpleConfig config(QDir::homeDirPath()+"/.kde/share/config/kdeglobals");
   QString value;
 
   value.sprintf("%s:%s:%s", tags.at(combo1->currentItem()),

@@ -289,7 +289,7 @@ void KIconStyle::writeSettings()
     {
         QString s = m_dictCBNormal[ appName[i] ] -> isChecked() ? "Normal" : "Large";
         cfg->writeEntry( QString(appName[i])+"IconStyle", s, 
-                            true, true /* global setting (.kderc) */ );
+                            true, true /* global setting (share/config/kdeglobals) */ );
         if (!strcmp(appName[i], "kpanel"))
         {
           KConfig * config = new KConfig(KApplication::kde_configdir() + "/kpanelrc",
