@@ -14,6 +14,9 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.23  2002/04/23 00:21:33  cumming
+    GUI: Capitalization
+
     Revision 1.22  2002/01/27 04:36:22  mueller
     ugly hack to make it compile - linux/raw.h requites __u64 which is only
     defined if not STRICT_ANSI is used.
@@ -88,7 +91,7 @@
 #define INFO_SOUND_AVAILABLE
 #define INFO_DEV_SNDSTAT "/dev/sndstat"
 #define INFO_SOUND "/proc/sound"
-#define INFO_ASOUND "/proc/asound/sndstat"
+#define INFO_ASOUND "/proc/asound/oss/sndstat"
 
 #define INFO_DEVICES_AVAILABLE
 #define INFO_DEVICES "/proc/devices"
