@@ -61,9 +61,11 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 
     QHBox *hbox = new QHBox( box );
     hbox->setSpacing( KDialog::spacingHint() );
-    (void) new QLabel( i18n("Filename: "), hbox );
+    QLabel *l = new QLabel( i18n("&Filename: "), hbox );
     requester = new KURLRequester( hbox );
     requester->setEnabled( false );
+    l->setBuddy( requester );
+    
     playButton = new QPushButton(  hbox );
     playButton->setFixedSize( requester->button()->size() );
     playButton->setPixmap( UserIcon("play") );
@@ -102,7 +104,7 @@ void KNotifyWidget::updateView()
     KNApplicationListIterator it( m_events->apps() );
     while ( it.current() ) {
 	appItem = new QListViewItem( view, appItem, (*it)->text() );
-	appItem->setPixmap( 0, SmallIcon( (*it)->name() ));
+	appItem->setPixmap( 0, SmallIcon( (*it)->icon() ));
 	
 	// FIXME: delay that?
 	KNEventListIterator it2( *(*it)->eventList() );
@@ -151,12 +153,12 @@ void KNotifyWidget::slotFileChanged( const QString& text )
 	itemText = &(event->soundfile);
     else if ( currentItem->type == KNotifyClient::Logfile )
 	itemText = &(event->logfile);
-    
+
     if ( itemText && *itemText != text ) {
 	*itemText = text;
 	emit changed();
     }
-    
+
     currentItem->setText( COL_FILENAME, text );
 }
 
@@ -167,7 +169,7 @@ void KNotifyWidget::playSound()
 
 void KNotifyWidget::loadAll()
 {
-    view->clear();
+    m_events->load();
     updateView();
 }
 

@@ -57,14 +57,14 @@ public:
     ~KNApplication();
 
     const QString& text() const { return m_description; }
-    const QString& name() const { return m_name; }
+    const QString& icon() const { return m_icon; }
     EventList * eventList();
     void save();
 
 private:
     void loadEvents();
 
-    QString m_name;
+    QString m_icon;
     QString m_description;
     EventList *m_events;
 

@@ -70,7 +70,8 @@ KNApplication::KNApplication( const QString& file )
 		     (file == "eventsrc") ? "config" : "data");
 
     kc->setGroup( QString::fromLatin1("!Global!") );
-    m_name = kc->readEntry(QString::fromLatin1("Name"), i18n("Unknown Title"));
+    m_icon = kc->readEntry(QString::fromLatin1("IconName"), 
+                           QString::fromLatin1("misc")); 
     m_description = kc->readEntry( QString::fromLatin1("Comment"),
 				   i18n("No description available") );
 }
