@@ -1,0 +1,20 @@
+[Color Scheme]
+activeBackground=0,0,128
+activeBlend=0,0,0
+activeForeground=255,255,255
+activeTitleBtnBg=192,192,192
+background=220,220,220
+buttonBackground=228,228,228
+buttonForeground=0,0,0
+contrast=7
+foreground=0,0,0
+inactiveBackground=220,220,220
+inactiveBlend=220,220,220
+inactiveForeground=0,0,0
+linkColor=0,0,192
+Name=KDE 2
+selectBackground=10,95,137
+selectForeground=255,255,255
+visitedLinkColor=128,0,128
+windowBackground=255,255,255
+windowForeground=0,0,0
