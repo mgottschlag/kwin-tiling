@@ -2,7 +2,7 @@
 
     Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
     Based on several other files.
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public
     License as published by the Free Software Foundation; either
@@ -169,7 +169,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     main->setColStretch(1, 2);
     main->setRowStretch(2, 1);
 
-
+    updateButton();
     load(show_users);
 
     // read only mode
@@ -186,6 +186,12 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
 	cbarlen->setEnabled(false);
 	cbjumppw->setEnabled(false);
       }
+}
+
+void KDMConvenienceWidget::updateButton()
+{
+    wp_to_np->setEnabled( wpuserlb->count()>0);
+    np_to_wp->setEnabled( npuserlb->count()>0);
 }
 
 void KDMConvenienceWidget::removeText(QListBox *lb, const QString &user)
@@ -224,6 +230,7 @@ void KDMConvenienceWidget::slotWpToNp()
     npuserlb->sort();
     wpuserlb->removeItem(id);
     slotChanged();
+    updateButton();
 }
 
 void KDMConvenienceWidget::slotNpToWp()
@@ -236,6 +243,7 @@ void KDMConvenienceWidget::slotNpToWp()
     wpuserlb->sort();
     npuserlb->removeItem(id);
     slotChanged();
+    updateButton();
 }
 
 
@@ -264,8 +272,8 @@ void KDMConvenienceWidget::slotEnPLChanged()
     wpuserlb->setEnabled(en);
     n_label->setEnabled(en);
     npuserlb->setEnabled(en);
-    wp_to_np->setEnabled(en);
-    np_to_wp->setEnabled(en);
+    wp_to_np->setEnabled(en && wpuserlb->count()>0 );
+    np_to_wp->setEnabled(en && npuserlb->count()>0 );
 }
 
 
@@ -289,7 +297,7 @@ void KDMConvenienceWidget::save()
     c->writeEntry( "AutoReLogin", cbarlen->isChecked() );
 
     c->setGroup("X-*-Greeter");
-    c->writeEntry( "PreselectUser", npRadio->isChecked() ? "None" : 
+    c->writeEntry( "PreselectUser", npRadio->isChecked() ? "None" :
 				    ppRadio->isChecked() ? "Previous" :
 							   "Default" );
     c->writeEntry( "DefaultUser", puserlb->currentText() );
@@ -316,7 +324,7 @@ void KDMConvenienceWidget::load(QStringList *show_users)
     cbplen->setChecked(c->readBoolEntry( "NoPassEnable", false) );
     QStringList npusers = c->readListEntry( "NoPassUsers");
     QStringList wpusers;
-    for (QStringList::ConstIterator it = show_users->begin(), 
+    for (QStringList::ConstIterator it = show_users->begin(),
 	    et = show_users->end(); it != et; ++it)
 	if (npusers.contains(*it) == 0)
 	    wpusers.append(*it);

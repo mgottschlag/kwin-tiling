@@ -63,6 +63,7 @@ private slots:
 
 private:
 	void removeText(QListBox *lb, const QString &user);
+	void updateButton();
 
 	QGroupBox	*alGroup, *puGroup, *npGroup, *btGroup;
 	QCheckBox	*cbalen, *cbal1st, *cbplen, *cbarlen, *cbjumppw;
