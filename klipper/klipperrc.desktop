@@ -93,7 +93,7 @@ Description[th]=เรียกทำงาน K&View
 Description[tr]=K&View Çalıştır
 Description[uk]=Запустити K&View
 Description[ven]=Thoma K&Vhona
-Description[zh_CN]=启动 KView(&K)
+Description[zh_CN]=启动 K&View
 Description[zh_TW]=啟動 K&View
 Description[zu]=Qalisa i-K&View
 Enabled=true
@@ -435,7 +435,7 @@ Number of commands=2
 Regexp=^mailto:.
 
 [Action_2/Command_0]
-Commandline=kmail --composer %s
+Commandline=kmail --composer `echo %s | sed 's/mailto://g'`
 Description=Launch &Kmail
 Description[af]=Lanseer Kpos
 Description[az]=&Kmail-i Başlat
@@ -688,7 +688,7 @@ Description[tr]=K&Write Çalıştır
 Description[uk]=Запустити K&Write
 Description[ven]=Thoma K&Nwala
 Description[vi]=Khởi động K&Write
-Description[zh_CN]=启动 KWrite(&K)
+Description[zh_CN]=启动 K&Write
 Description[zh_TW]=啟動 K&Write
 Description[zu]=Qalisa K&Write
 Enabled=true
