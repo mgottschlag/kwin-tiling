@@ -390,7 +390,9 @@ KGreeter::shutdown_button_clicked()
 		 this, "Shutdown",
 		 kdmcfg->shutdown()->ascii(), 
 		 kdmcfg->restart()->ascii(),
+#ifndef BSD
 		 kdmcfg->consoleMode()->ascii(),
+#endif
 		 kdmcfg->useLilo(),
 		 kdmcfg->liloCmd().ascii(),
 		 kdmcfg->liloMap().ascii());
