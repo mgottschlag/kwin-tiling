@@ -87,7 +87,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     tabwidget = new QTabWidget(this);
     top->addWidget(tabwidget);
 
-	tab1 = new KMouseDlg(this);
+    tab1 = new KMouseDlg(this);
     QButtonGroup *group = new QButtonGroup( tab1 );
     group->setExclusive( true );
     group->hide();
@@ -166,6 +166,10 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect( tab1->doubleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
     connect( tab1->cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
 
+    // Cursor theme tab
+    themetab = new ThemePage(this);
+    connect(themetab, SIGNAL(changed(bool)), SLOT(changed()));
+    tabwidget->addTab(themetab, i18n("&Cursor theme"));
 
     // Advanced tab
     tab2 = new QWidget(0, "Advanced Tab");
@@ -442,6 +446,8 @@ void MouseConfig::load()
   mk_max_speed->setValue(ac.readNumEntry("MKMaxSpeed", 500));
   mk_curve->setValue(ac.readNumEntry("MKCurve", 0));
 
+  themetab->load();
+
   checkAccess();
   changed();
 }
@@ -490,6 +496,9 @@ void MouseConfig::save()
   ac.writeEntry("MKCurve", mk_curve->value());
 
   config->sync();
+
+  themetab->save();
+
   // restart kaccess
   kapp->startServiceByDesktopName("kaccess");
 

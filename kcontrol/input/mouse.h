@@ -45,6 +45,7 @@
 #include <kcmodule.h>
 
 #include "kmousedlg.h"
+#include "themepage.h"
 
 #define RIGHT_HANDED 0
 #define LEFT_HANDED  1
@@ -132,6 +133,7 @@ private:
   QTabWidget *tabwidget;
   QWidget *tab2;
   KMouseDlg* tab1;
+  ThemePage* themetab;
   MouseSettings *settings;
 
   KConfig *config;

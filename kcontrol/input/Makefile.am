@@ -1,19 +1,27 @@
-SUBDIRS= pics
+if have_xcursor
+THEMEPAGE_SUBDIR = xcursor
+THEMEPAGE_INCLUDES = -I$(srcdir)/xcursor
+THEMEPAGE_LIB = xcursor/libthemepage.la
+else
+THEMEPAGE_SUBDIR = core
+THEMEPAGE_INCLUDES = -I$(srcdir)/core
+THEMEPAGE_LIB = core/libthemepage.la
+endif
+
+SUBDIRS = $(THEMEPAGE_SUBDIR) pics
+
+INCLUDES = $(THEMEPAGE_INCLUDES) $(all_includes)
 
 kde_module_LTLIBRARIES = kcm_input.la
 
-# Put main.cc last for --enable-final, it contains ugly X includes.
-kcm_input_la_SOURCES = kmousedlg.ui mouse.cpp main.cpp
-
-kcm_input_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-kcm_input_la_LIBADD = $(XTESTLIB) $(LIB_KIO)
-
-INCLUDES= $(all_includes)
+kcm_input_la_SOURCES = mouse.cpp kmousedlg.ui main.cpp
+kcm_input_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
+kcm_input_la_LIBADD = $(THEMEPAGE_LIB) $(XTESTLIB) $(LIB_KIO) $(LIB_KDEUI) $(LIB_XCURSOR)
 
 kcm_input_la_METASOURCES = AUTO
 
 messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcminput.pot
+	$(XGETTEXT) *.cpp */*.cpp -o $(podir)/kcminput.pot
 
 xdg_apps_DATA = mouse.desktop
 

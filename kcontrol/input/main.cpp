@@ -21,12 +21,21 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 
+#include <klocale.h>
+#include <kglobal.h>
 #include <kconfig.h>
-
+#include <dcopref.h>
+#include <qfile.h>
 
 #include <X11/Xlib.h>
 
+#ifdef HAVE_XCURSOR
+#  include <X11/Xcursor/Xcursor.h>
+#endif
 
 #include "mouse.h"
 
@@ -44,8 +53,31 @@ extern "C"
     settings.load(config);
     settings.apply();
     delete config;
-  }
 
+#ifdef HAVE_XCURSOR
+    config = KGlobal::config();
+    config->setGroup("KDE");
+    QCString theme = QFile::encodeName(config->readEntry("cursorTheme", QString("default")));
+    QCString size = config->readEntry("cursorSize", QString()).local8Bit();
+
+     // Apply the KDE cursor theme to ourselves
+    XcursorSetTheme(qt_xdisplay(), theme.data());
+
+    if (!size.isEmpty())
+    	XcursorSetDefaultSize(qt_xdisplay(), size.toUInt());
+
+    // Load the default cursor from the theme and apply it to the root window.
+    Cursor handle = XcursorLibraryLoadCursor(qt_xdisplay(), "left_ptr");
+    XDefineCursor(qt_xdisplay(), qt_xrootwin(), handle);
+    XFreeCursor(qt_xdisplay(), handle); // Don't leak the cursor
+
+    // Tell klauncher to set the XCURSOR_THEME and XCURSOR_SIZE environment
+    // variables when launching applications.
+    DCOPRef klauncher("klauncher");
+    klauncher.send("setLaunchEnv", QCString("XCURSOR_THEME"), theme);
+    klauncher.send("setLaunchEnv", QCString("XCURSOR_SIZE"), size);
+#endif
+  }
 }
 
 
