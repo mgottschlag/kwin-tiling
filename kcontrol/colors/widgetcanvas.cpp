@@ -9,6 +9,7 @@
 #include <kpixmapeffect.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
+#include <kconfig.h>
 #include <qbitmap.h>
 #include <qtooltip.h>
 
@@ -270,6 +271,23 @@ void WidgetCanvas::drawSampleWidgets()
     int textLen, tmp;
     int highlightVal, lowlightVal;
 
+    KConfig * c = new KConfig("kcmfonts");
+
+    // Keep in sync with kglobalsettings.
+
+    QFont windowFontGuess("helvetica", 12, QFont::SansSerif, true);
+    windowFontGuess.setPixelSize(12);
+
+    c->setGroup("WM");
+    QFont windowFont = c->readFontEntry("activeFont", &windowFontGuess);
+
+    c->setGroup("General");
+    QFont defaultMenuFont = KGlobalSettings::menuFont();
+    QFont menuFont = c->readFontEntry("menuFont", &defaultMenuFont);
+
+    delete c;
+    c = 0;
+
     // Calculate the highlight and lowloght from contrast value and create
     // color group from color scheme.
 
@@ -328,12 +346,15 @@ void WidgetCanvas::drawSampleWidgets()
 
     KPixmap pmTitle;
     pmTitle.resize( width()-160, 20 );
+
+    // Switched to vertical gradient because those kwin styles that
+    // use the gradient have it vertical.
     KPixmapEffect::gradient(pmTitle, iaTitle, iaBlend,
                             KPixmapEffect::HorizontalGradient);
     paint.drawPixmap( 60, 10, pmTitle );
 
-    QFont fnt = KGlobalSettings::generalFont();
-    paint.setFont( fnt );
+
+    paint.setFont( windowFont );
     paint.setPen( iaTxt );
     paint.drawText( 65, 25, i18n("Inactive window") );
     textLen = paint.fontMetrics().width(  i18n("Inactive window") );
@@ -370,12 +391,14 @@ void WidgetCanvas::drawSampleWidgets()
     paint.setBrush( aTitle );paint.setPen( aTitle );
     paint.drawRect( 65, 30+5, width()-152, 20 );
 
+    // Switched to vertical gradient because those kwin styles that
+    // use the gradient have it vertical.
     pmTitle.resize( width()-152, 20 );
     KPixmapEffect::gradient(pmTitle, aTitle, aBlend,
                             KPixmapEffect::HorizontalGradient);
     paint.drawPixmap( 65, 35, pmTitle );
 
-    paint.setFont( fnt );
+    paint.setFont( windowFont );
     paint.setPen( aTxt );
     paint.drawText( 75, 50,  i18n("Active window") );
     textLen = paint.fontMetrics().width(  i18n("Active window" ));
@@ -404,8 +427,7 @@ void WidgetCanvas::drawSampleWidgets()
 
     qDrawShadePanel ( &paint, 25, 55, width()-52, 28, cg, FALSE, 2, &brush);
 
-    fnt.setBold(FALSE);
-    paint.setFont( fnt );
+    paint.setFont( menuFont );
     paint.setPen(txt );
     textLen = paint.fontMetrics().width( i18n("File") );
     qDrawShadePanel ( &paint, 30, 59, textLen + 10, 21, cg, FALSE, 2, &brush);
@@ -416,7 +438,7 @@ void WidgetCanvas::drawSampleWidgets()
     hotspots[ spot++ ] =
         HotSpot( QRect( 27, 57, 33, 21 ), CSM_Background );
 
-    paint.setFont( fnt );
+    paint.setFont( menuFont );
     paint.setPen( txt );
     paint.drawText( 35 + textLen + 20, 74, i18n("Edit") );
     textLen = paint.fontMetrics().width( i18n("Edit") );
@@ -432,7 +454,7 @@ void WidgetCanvas::drawSampleWidgets()
                       height(), cg, TRUE, 2, &brush);
 
     // Standard text
-    fnt.setPointSize(12);
+    QFont fnt = KGlobalSettings::generalFont();
     paint.setFont( fnt );
     paint.setPen( windowTxt );
     paint.drawText( 140, 127-20, i18n( "Standard text") );
@@ -450,7 +472,6 @@ void WidgetCanvas::drawSampleWidgets()
     paint.setBrush( select );paint.setPen( select );
     paint.drawRect ( 120, 115, textLen+40, 32);
 
-    fnt.setPointSize(12);
     paint.setFont( fnt );
     paint.setPen( selectTxt );
     paint.drawText( 140, 135, i18n( "Selected text") );
@@ -502,8 +523,7 @@ void WidgetCanvas::drawSampleWidgets()
     brush.setColor( back );
     qDrawShadePanel ( &paint, 30, 80, 84, 73, cg, FALSE, 2, &brush);
 
-    fnt.setPointSize(12);
-    paint.setFont( fnt );
+    paint.setFont( menuFont );
     paint.setPen( txt );
     paint.drawText( 38, 97, i18n("New") );
     textLen = paint.fontMetrics().width( i18n("New") );
@@ -511,14 +531,14 @@ void WidgetCanvas::drawSampleWidgets()
     hotspots[ spot++ ] =
         HotSpot( QRect( 38, 83, textLen, 14 ), CSM_Text );
 
-    paint.setFont( fnt );
+    paint.setFont( menuFont );
     paint.drawText( 38, 119, i18n("Open") );
     textLen = paint.fontMetrics().width( i18n("Open") );
 
     hotspots[ spot++ ] =
         HotSpot( QRect( 38, 105, textLen, 14 ), CSM_Text );
 
-    paint.setFont( fnt );
+    paint.setFont( menuFont );
     paint.setPen( lightGray.dark() );
     paint.drawText( 38, 141, i18n("Save") );
     textLen = paint.fontMetrics().width( i18n("Save") );
