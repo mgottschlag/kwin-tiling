@@ -38,17 +38,17 @@ void KLocaleAdvanced::setChset(const QString &chrset)
 
 void KLocaleAdvanced::setDateFormat(const QString &fmt)
 {
-  _datefmt = fmt;
+  _datefmt = fmt.stripWhiteSpace();
 }
 
 void KLocaleAdvanced::setDateFormatShort(const QString &fmt)
 {
-  _datefmtshort = fmt;
+  _datefmtshort = fmt.stripWhiteSpace();
 }
 
 void KLocaleAdvanced::setTimeFormat(const QString &fmt)
 {
-  _timefmt = fmt;
+  _timefmt = fmt.stripWhiteSpace();
 }
 
 void KLocaleAdvanced::setWeekStartsMonday(bool start)
@@ -78,22 +78,23 @@ QString KLocaleAdvanced::country() const
 
 void KLocaleAdvanced::setDecimalSymbol(const QString &symb)
 {
-  _decimalSymbol = symb;
+  _decimalSymbol = symb.stripWhiteSpace();
 }
 
 void KLocaleAdvanced::setThousandsSeparator(const QString &sep)
 {
+  // allow spaces here
   _thousandsSeparator = sep;
 }
 
 void KLocaleAdvanced::setPositiveSign(const QString &sign)
 {
-  _positiveSign = sign;
+  _positiveSign = sign.stripWhiteSpace();
 }
 
 void KLocaleAdvanced::setNegativeSign(const QString &sign)
 {
-  _negativeSign = sign;
+  _negativeSign = sign.stripWhiteSpace();
 }
 
 void KLocaleAdvanced::setPositiveMonetarySignPosition(SignPosition signpos)
@@ -123,21 +124,21 @@ void KLocaleAdvanced::setFracDigits(int digits)
 
 void KLocaleAdvanced::setMonetaryThousandsSeparator(const QString &sep)
 {
+  // allow spaces here
   _monetaryThousandsSeparator = sep;
 }
 
 void KLocaleAdvanced::setMonetaryDecimalSymbol(const QString &symbol)
 {
-  _monetaryDecimalSymbol = symbol;
+  _monetaryDecimalSymbol = symbol.stripWhiteSpace();
 }
 
 void KLocaleAdvanced::setCurrencySymbol(const QString &symbol)
 {
-  _currencySymbol = symbol;
+  _currencySymbol = symbol.stripWhiteSpace();
 }
 
 void KLocaleAdvanced::setCountry(const QString &country)
 {
-  _country = country;
+  _country = country.stripWhiteSpace();
 }
-
