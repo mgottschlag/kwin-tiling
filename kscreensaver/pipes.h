@@ -13,7 +13,7 @@
 // Copyright (c) 1998 by Lars Doelle <lars.doelle@on-line.de>
 // GPL Version 2 applies.
 
-#include <qgl.h>
+#include <GL/gl.h>
 
 // basic parameters
 
