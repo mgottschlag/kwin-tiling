@@ -35,9 +35,11 @@
 #include <dcopclient.h>
 
 
+#include "config.h"		/* needed by HP-UX */
 #include "proxymodule.h"
 #include "proxymodule.moc"
 #include "utils.h"
+#include "config.h"
 
 
 #include <X11/Xlib.h>

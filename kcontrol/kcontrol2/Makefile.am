@@ -1,3 +1,4 @@
+
 bin_PROGRAMS = kcontrol2 kcmshell kcmroot
 
 kcontrol2_SOURCES = main.cpp toplevel.cpp modules.cpp index.cpp utils.cpp \
@@ -5,7 +6,7 @@ kcontrol2_SOURCES = main.cpp toplevel.cpp modules.cpp index.cpp utils.cpp \
 			proxywidget.cpp moduleinfo.cpp modloader.cpp \
 			closedlg.cpp proxymodule.cpp KCModuleIface.stub
 
-kcontrol2_LDADD   = $(LIB_KDEUI)
+kcontrol2_LDADD   = $(LIB_KDEUI) $(LIB_KDECORE)
 
 
 kcmshell_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp \
