@@ -23,13 +23,11 @@
 #include <kcmdlineargs.h>
 #include <kapplication.h>
 
-#include "krandrmodule.h"
-
 extern "C"
 int kdemain( int argc, char* argv[] )
 {
 	KCmdLineArgs::init( argc, argv, "krandrinithack", "RANDR hack", "0.1" );
-	    { // avoid creating KApplication is case it won't be needed
+	    { // avoid creating KApplication in case it won't be needed
 	    KInstance inst( "krandrinithack" );
 	    KConfig config( "kcmrandrrc", true );
 	    if( !RandRDisplay::applyOnStartup( config ))
