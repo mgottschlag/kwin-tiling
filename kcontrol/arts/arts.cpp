@@ -44,6 +44,7 @@
 #include <qwhatsthis.h>
 
 #include <kconfig.h>
+#include <ksimpleconfig.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
@@ -239,7 +240,7 @@ extern "C"
 
     void init_arts()
     {
-        KConfig *config = new KConfig("kcmartsrc");
+        KConfig *config = new KConfig("kcmartsrc", true, false);
         QCString cmdline;
 
         config->setGroup("Arts");
@@ -250,8 +251,10 @@ extern "C"
         bool fullDuplex = config->readBoolEntry("FullDuplex",false);
         int responseTime = config->readNumEntry("ResponseTime",2);
 
+        delete config;
+
         /* put the value of x11Comm into .mcoprc */
-        KConfig *X11CommConfig = new KConfig(QDir::homeDirPath()+"/.mcoprc");
+        KConfig *X11CommConfig = new KSimpleConfig(QDir::homeDirPath()+"/.mcoprc");
 
         if(x11Comm)
             X11CommConfig->writeEntry("GlobalComm","Arts::X11GlobalComm");
