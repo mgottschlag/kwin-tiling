@@ -508,22 +508,24 @@ void kBatSaver::setLevels( int l )
 
 void kBatSaver::readSettings()
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
-	QString str;
+    QString str;
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = MAXSPEED - atoi( str );
-	else
-		speed = DEFSPEED;
+    str = config->readEntry( "Speed" );
+    if ( !str.isNull() )
+	speed = MAXSPEED - atoi( str );
+    else
+	speed = DEFSPEED;
 
-	str = config->readEntry( "MaxLevels" );
-	if ( !str.isNull() )
-		maxLevels = atoi( str );
-	else
-		maxLevels = DEFBATCH;
+    str = config->readEntry( "MaxLevels" );
+    if ( !str.isNull() )
+	maxLevels = atoi( str );
+    else
+	maxLevels = DEFBATCH;
+
+    delete config;
 
 }
 
@@ -608,26 +610,27 @@ kBatSetup::kBatSetup( QWidget *parent, const char *name )
 
 void kBatSetup::readSettings()
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
-	QString str;
+    QString str;
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
+    str = config->readEntry( "Speed" );
+    if ( !str.isNull() )
+	speed = atoi( str );
 
-	if ( speed > MAXSPEED )
-		speed = MAXSPEED;
-	else if ( speed < MINSPEED )
-		speed = MINSPEED;
+    if ( speed > MAXSPEED )
+	speed = MAXSPEED;
+    else if ( speed < MINSPEED )
+	speed = MINSPEED;
 
-	str = config->readEntry( "MaxLevels" );
-	if ( !str.isNull() )
-		maxLevels = atoi( str );
-	else
-		maxLevels = DEFBATCH;
+    str = config->readEntry( "MaxLevels" );
+    if ( !str.isNull() )
+	maxLevels = atoi( str );
+    else
+	maxLevels = DEFBATCH;
 
+    delete config;
 }
 
 void kBatSetup::slotSpeed( int num )
@@ -648,19 +651,20 @@ void kBatSetup::slotLevels( int num )
 
 void kBatSetup::slotOkPressed()
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
-	QString sspeed;
-	sspeed.setNum( speed );
-	config->writeEntry( "Speed", sspeed );
+    QString sspeed;
+    sspeed.setNum( speed );
+    config->writeEntry( "Speed", sspeed );
 
-	QString slevels;
-	slevels.setNum( maxLevels );
-	config->writeEntry( "MaxLevels", slevels );
+    QString slevels;
+    slevels.setNum( maxLevels );
+    config->writeEntry( "MaxLevels", slevels );
 
-	config->sync();
-	accept();
+    config->sync();
+    delete config;
+    accept();
 }
 
 void kBatSetup::slotAbout()

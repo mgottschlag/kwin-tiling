@@ -309,7 +309,7 @@ void kVmSaver::setRefreshTimeout( const int refreshTimeout )
 
 void kVmSaver::readSettings()
 {
-	KConfig *config = kapp->sessionConfig();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -324,6 +324,7 @@ void kVmSaver::readSettings()
 		refreshTimeout = atoi( str );
 	else
 		refreshTimeout = 0;
+	delete config;
 }
 int kVmSaver::getRandom( const int max_value ) {
  return (int)( vm_random(&(pool_state->pool->vm_random_data))*1.0*(max_value + 1.0)/
@@ -445,7 +446,7 @@ fprintf( stderr, "kVmSetup: read timeout = %i\n", refreshTimeout );
 void kVmSetup::readSettings()
 {
 	//KConfig *config = KApplication::getKApplication()->getConfig();
-	KConfig *config = kapp->sessionConfig();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -469,6 +470,7 @@ fprintf( stderr, "setup: read speed = %i\n", speed );
 		refreshTimeout = MAX_REFRESH_TIMEOUT;
 	else if ( refreshTimeout < 0 )
 		refreshTimeout = 0;
+	delete config;
 }
 
 void kVmSetup::slotSpeed( int num )
@@ -487,7 +489,7 @@ fprintf( stderr, "slotRefreshTimeout: timeout = %i\n", refreshTimeout );
 
 void kVmSetup::slotOkPressed()
 {
-	KConfig *config = kapp->sessionConfig();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;
@@ -499,6 +501,7 @@ fprintf( stderr, "setup: write speed = %i\n", speed );
 fprintf( stderr, "setup: write timeout = %i\n", refreshTimeout );
 
 	config->sync();
+	delete config;
 	accept();
 }
 

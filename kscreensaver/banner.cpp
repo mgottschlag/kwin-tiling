@@ -18,16 +18,17 @@
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <qdatetime.h>
+#include <qpushbutton.h>
 
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kbuttonbox.h>
 #include <kmessagebox.h>
+#include <kcolorbutton.h>
 
 #include "helpers.h"
 
-#include "kcolordlg.h"
 #include "banner.h"
 #include <iostream.h>
 
@@ -143,13 +144,10 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	label = new QLabel( i18n("Color:"), group );
 	gl->addWidget(label, 4, 0);
 
-	colorPush = new QPushButton( group );
-	colorPush->setFixedHeight(20);
+	colorPush = new KColorButton( fontColor, group );
 	gl->addWidget(colorPush, 4, 1);
-   QColorGroup colgrp( black, fontColor, fontColor.light(),
-			fontColor.dark(), fontColor.dark(120), black, white );
-	colorPush->setPalette( QPalette( colgrp, colgrp, colgrp ) );
-	connect( colorPush, SIGNAL( clicked() ), SLOT( slotColor() ) );
+	connect( colorPush, SIGNAL( changed(const QColor &) ),
+		 SLOT( slotColor(const QColor &) ) );
 
    QCheckBox *cyclingColorCb=new QCheckBox(i18n("Cycling color"),group);
    cyclingColorCb->setMinimumSize(cyclingColorCb->sizeHint());
@@ -216,8 +214,8 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 // read settings from config file
 void KBannerSetup::readSettings()
 {
-	KConfig *config = KApplication::kApplication()->config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
    speed=config->readNumEntry("Speed",50);
 /*	if ( speed > 100 )
@@ -240,6 +238,8 @@ void KBannerSetup::readSettings()
    bold=config->readBoolEntry("FontBold",FALSE);
 
    italic=config->readBoolEntry("FontItalic",FALSE);
+
+   delete config;
 }
 
 void KBannerSetup::slotFamily( const QString& fam )
@@ -256,17 +256,11 @@ void KBannerSetup::slotSize( int indx )
 		saver->setFont( fontFamily, fontSize, fontColor, bold, italic );
 }
 
-void KBannerSetup::slotColor()
+void KBannerSetup::slotColor( const QColor &col )
 {
-	if ( KColorDialog::getColor( fontColor ) == QDialog::Rejected )
-		return;
-
-	QColorGroup colgrp( black, fontColor, fontColor.light(),
-		fontColor.dark(), fontColor.dark(120), black, white );
-	colorPush->setPalette( QPalette( colgrp, colgrp, colgrp ) );
-
-	if ( saver )
-		saver->setColor(fontColor);
+    fontColor = col;
+    if ( saver )
+	saver->setColor(fontColor);
 }
 
 void KBannerSetup::slotCyclingColor(bool on)
@@ -275,19 +269,6 @@ void KBannerSetup::slotCyclingColor(bool on)
    cyclingColor=on;
    
    if (saver) saver->setCyclingColor( cyclingColor );
-   if (!cyclingColor)
-   {
-      if (saver) saver->setColor( fontColor );
-      QColorGroup colgrp( black, fontColor, fontColor.light(),
-                          fontColor.dark(), fontColor.dark(120), black, white );
-      colorPush->setPalette( QPalette( colgrp, colgrp, colgrp ) );
-   }
-   else
-   {
-      QColorGroup colgrp( black, fontColor.dark(150), fontColor,
-                          fontColor.dark(300), fontColor.dark(200), black, white );
-      colorPush->setPalette( QPalette( colgrp, colgrp, colgrp ) );
-   };
 }
 
 void KBannerSetup::slotBold( bool state )
@@ -337,7 +318,7 @@ void KBannerSetup::slotTimeToggled( bool on )
 // Ok pressed - save settings and exit
 void KBannerSetup::slotOkPressed()
 {
-    KConfig *config = KApplication::kApplication()->config();
+    KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	config->writeEntry( "Speed", speed );
@@ -361,6 +342,7 @@ void KBannerSetup::slotOkPressed()
 	config->writeEntry( "FontItalic", italic );
 
 	config->sync();
+	delete config;
 
 	accept();
 }
@@ -368,7 +350,7 @@ void KBannerSetup::slotOkPressed()
 void KBannerSetup::slotAbout()
 {
 	KMessageBox::about(this,
-			     i18n("Banner Version 0.1.1\n\nwritten by Martin R. Jones 1996\nmjones@kde.org\nextended by Alexander Neundorf 2000\nalexander.neundorf@rz.tu-ilmenau.de\n"));
+			     i18n("Banner Version 0.1.2\n\nwritten by Martin R. Jones 1996\nmjones@kde.org\nextended by Alexander Neundorf 2000\nalexander.neundorf@rz.tu-ilmenau.de\n"));
 }
 
 //-----------------------------------------------------------------------------
@@ -446,8 +428,8 @@ void KBannerSaver::setTimeDisplay()
 // read settings from config file
 void KBannerSaver::readSettings()
 {
-	KConfig *config = KApplication::kApplication()->config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
 /*	str = config->readEntry( "Speed" );
 	if ( !str.isNull() )
@@ -472,11 +454,13 @@ void KBannerSaver::readSettings()
    bold=config->readBoolEntry("FontBold",FALSE);
    italic=config->readBoolEntry("FontItalic",FALSE);
    
-	if ( cyclingColor )
+    if ( cyclingColor )
    {
       currentHue=0;
       fontColor.setHsv(0,SATURATION,VALUE);
    };
+
+   delete config;
 }
 
 // initialize font

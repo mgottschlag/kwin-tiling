@@ -489,7 +489,7 @@ void kPyroSaver::setCloud( bool c )
 
 void kPyroSaver::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -505,6 +505,7 @@ void kPyroSaver::readSettings()
 		cloud = TRUE;
 	else
 		cloud = FALSE;
+	delete config;
 }
 
 void kPyroSaver::slotTimeout()
@@ -579,7 +580,7 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 
 void kPyroSetup::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -598,6 +599,7 @@ void kPyroSetup::readSettings()
 		cloud = TRUE;
 	else
 		cloud = FALSE;
+	delete config;
 }
 
 void kPyroSetup::slotNumber( int num )
@@ -617,7 +619,7 @@ void kPyroSetup::slotCloud( bool c )
 
 void kPyroSetup::slotOkPressed()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString snumber;
@@ -627,6 +629,7 @@ void kPyroSetup::slotOkPressed()
 	config->writeEntry( "Cloud", cloud ? "yes" : "no");
 
 	config->sync();
+	delete config;
 
 	accept();
 }

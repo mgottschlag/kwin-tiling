@@ -655,7 +655,7 @@ void KScienceSaver::setHideBG( bool b )
 
 void KScienceSaver::readSettings()
 {
-    KConfig *config = KApplication::kApplication()->config();
+    KConfig *config = klock_config();
         QString sMode;
   
 	config->setGroup( "Settings" );
@@ -677,6 +677,7 @@ void KScienceSaver::readSettings()
 
 	vx = copysign( moveX[mode], vx );
 	vy = copysign( moveY[mode], vy );
+	delete config;
 }              
 
 void KScienceSaver::do_refresh( const QRect & rect )
@@ -1162,7 +1163,7 @@ void KScienceSetup::updateSettings()
 // read settings from config file
 void KScienceSetup::readSettings()
 {
-    KConfig *config = KApplication::kApplication()->config();
+    KConfig *config = klock_config();
         QString sMode;
   
 	config->setGroup( "Settings" );
@@ -1181,6 +1182,7 @@ void KScienceSetup::readSettings()
 		gravity[i]   = config->readBoolEntry( "Gravity",   SCI_DEFAULT_GRAVITY);
 		hideBG[i]    = config->readBoolEntry( "HideBG",    SCI_DEFAULT_HIDE);
 	}
+	delete config;
 }  
 
 void KScienceSetup::slotMode( int m )
@@ -1273,7 +1275,7 @@ void KScienceSetup::slotSliderReleased()
 // Ok pressed - save settings and exit
 void KScienceSetup::slotOkPressed()
 {
-    KConfig *config = KApplication::kApplication()->config();
+    KConfig *config = klock_config();
 	QString sSize, sSpeed, sIntensity, sMode;
 
 	config->setGroup( "Settings" );
@@ -1294,6 +1296,7 @@ void KScienceSetup::slotOkPressed()
 	}
 
 	config->sync();
+	delete config;
 
 	accept();
 }

@@ -298,7 +298,7 @@ void kSwarmSaver::setLevels( int l )
 
 void kSwarmSaver::readSettings()
 {
-    KConfig *config = KGlobal::config();
+    KConfig *config = klock_config();
     config->setGroup( "Settings" );
 
 	QString str;
@@ -314,6 +314,7 @@ void kSwarmSaver::readSettings()
 		maxLevels = atoi( str );
 	else
 		maxLevels = DEFBATCH;
+	delete config;
 }
 
 void kSwarmSaver::slotTimeout()
@@ -393,7 +394,7 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 
 void kSwarmSetup::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -412,6 +413,7 @@ void kSwarmSetup::readSettings()
 		maxLevels = atoi( str );
 	else
 		maxLevels = DEFBATCH;
+	delete config;
 }
 
 void kSwarmSetup::slotSpeed( int num )
@@ -432,7 +434,7 @@ void kSwarmSetup::slotLevels( int num )
 
 void kSwarmSetup::slotOkPressed()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;
@@ -444,6 +446,7 @@ void kSwarmSetup::slotOkPressed()
 	config->writeEntry( "MaxLevels", slevels );
 
 	config->sync();
+	delete config;
 	accept();
 }
 

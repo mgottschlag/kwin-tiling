@@ -54,7 +54,7 @@ static const QString inserts[] = { "top", "bottom", "both" };
 void KMatrixSaverCfg::readSettings() {
   QString str;
 
-  KConfig *config = KGlobal::config();
+  KConfig *config = klock_config();
   config->setGroup("Settings");
 
   str = config->readEntry("BackgroundColor");
@@ -84,10 +84,11 @@ void KMatrixSaverCfg::readSettings() {
     insert = str;
   else
     insert = "bottom";
+  delete config;
 }
 
 void KMatrixSaverCfg::writeSettings() {
-  KConfig *config = KGlobal::config();
+  KConfig *config = klock_config();
   config->setGroup( "Settings" );
 
   QString str;
@@ -105,6 +106,7 @@ void KMatrixSaverCfg::writeSettings() {
   config->writeEntry("Speed", str);
   config->writeEntry("Insert", insert);
   config->sync();
+  delete config;
 }
 
 //--------------------------------------------------------------------

@@ -1,5 +1,7 @@
 #include "helpers.h"
 
+#include <kapp.h>
+
 void min_width(QWidget *w) {
   w->setMinimumWidth(w->sizeHint().width());
 }
@@ -24,5 +26,13 @@ void fixed_size(QWidget *w) {
   w->setFixedSize(w->sizeHint());
 }
 
+KConfig *klock_config()
+{
+    QString name( kapp->argv()[0] );
+    int slash = name.findRev( '/' );
+    if ( slash )
+	name = name.mid( slash+1 );
 
+    return new KConfig( name + "rc" );
+}
 

@@ -18,6 +18,7 @@
 #include <kconfig.h>
 #include <kapp.h>
 #include <kmessagebox.h>
+#include <kcolorbutton.h>
 
 #include "kcolordlg.h"
 #include "lines.h"
@@ -163,13 +164,10 @@ kLinesSetup::kLinesSetup(QWidget *parent, const char *name):QDialog(parent, name
 	min_size(label);
 	tl11->addWidget(label);
 
-        colorPush0=new QPushButton(this);
-        QColorGroup colgrp0(black, colstart, colstart.light(), colstart.dark(),
-			   colstart.dark(120), black, white);
-        colorPush0->setPalette(QPalette(colgrp0, colgrp0, colgrp0));
-        connect(colorPush0, SIGNAL(clicked()), SLOT(slotColstart()));
+        colorPush0=new KColorButton(colstart, this);
+        connect(colorPush0, SIGNAL(changed(const QColor &)),
+		SLOT(slotColstart(const QColor &)));
 	min_width(colorPush0);
-	colorPush0->setFixedHeight(20);
 	tl11->addWidget(colorPush0);
 	tl11->addSpacing(5);
 
@@ -177,12 +175,9 @@ kLinesSetup::kLinesSetup(QWidget *parent, const char *name):QDialog(parent, name
 	min_size(label);
 	tl11->addWidget(label);
 
-        colorPush1=new QPushButton(this);
-        QColorGroup colgrp1(black, colmid, colmid.light(), colmid.dark(),
-                           colmid.dark(120), black, white);
-        colorPush1->setPalette(QPalette(colgrp1, colgrp1, colgrp1));
-        connect(colorPush1, SIGNAL(clicked()), SLOT(slotColmid()));
-	colorPush1->setFixedHeight(20);
+        colorPush1=new KColorButton(colmid, this);
+        connect(colorPush1, SIGNAL(changed(const QColor &)),
+		SLOT(slotColmid(const QColor &)));
 	tl11->addWidget(colorPush1);
 	tl11->addSpacing(5);
 
@@ -190,12 +185,9 @@ kLinesSetup::kLinesSetup(QWidget *parent, const char *name):QDialog(parent, name
 	min_size(label);
 	tl11->addWidget(label);
 
-        colorPush2=new QPushButton(this);
-        QColorGroup colgrp2(black, colend, colend.light(), colend.dark(),
-                           colend.dark(120), black, white);
-        colorPush2->setPalette(QPalette(colgrp2, colgrp2, colgrp2));
-        connect(colorPush2, SIGNAL(clicked()), SLOT(slotColend()));
-	colorPush2->setFixedHeight(20);
+        colorPush2=new KColorButton(colend, this);
+        connect(colorPush2, SIGNAL(changed(const QColor &)),
+		SLOT(slotColend(const QColor &)));
 	tl11->addWidget(colorPush2);
 	tl11->addStretch(1);
 
@@ -229,30 +221,31 @@ kLinesSetup::~kLinesSetup()
 
 // read settings from config file
 void kLinesSetup::readSettings(){
-    KConfig *config = KApplication::kApplication()->config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
-	QString str;
+    QString str;
 
-	str = config->readEntry("Length");
-	if(!str.isNull()) length=atoi(str);
-	if(length>MAXLENGTH) length=MAXLENGTH;
-	else if(length<1) length=1;
+    str = config->readEntry("Length");
+    if(!str.isNull()) length=atoi(str);
+    if(length>MAXLENGTH) length=MAXLENGTH;
+    else if(length<1) length=1;
 
-	str=config->readEntry("Speed");
-	if(!str.isNull()) speed=atoi(str);
-	if(speed>100) speed=100;
-	else if(speed<50) speed=50;
+    str=config->readEntry("Speed");
+    if(!str.isNull()) speed=atoi(str);
+    if(speed>100) speed=100;
+    else if(speed<50) speed=50;
 
-        str=config->readEntry("StartColor");
-        if(!str.isNull()) colstart.setNamedColor(str);
-        else colstart=white;
-        str=config->readEntry("MidColor");
-        if(!str.isNull()) colmid.setNamedColor(str);
-        else colmid=blue;
-        str=config->readEntry("EndColor");
-        if(!str.isNull()) colend.setNamedColor(str);
-        else colend=black;
+    str=config->readEntry("StartColor");
+    if(!str.isNull()) colstart.setNamedColor(str);
+    else colstart=white;
+    str=config->readEntry("MidColor");
+    if(!str.isNull()) colmid.setNamedColor(str);
+    else colmid=blue;
+    str=config->readEntry("EndColor");
+    if(!str.isNull()) colend.setNamedColor(str);
+    else colend=black;
+    delete config;
 }
 
 void kLinesSetup::slotLength(int len){
@@ -265,65 +258,57 @@ void kLinesSetup::slotSpeed(int num){
 	if(saver) saver->setSpeed(speed);
 }
 
-void kLinesSetup::slotColstart(){
-        if(KColorDialog::getColor(colstart)==QDialog::Rejected) return;
-        QColorGroup colgrp(black, colstart, colstart.light(), colstart.dark(),
-                           colstart.dark(120), black, white);
-        colorPush0->setPalette(QPalette(colgrp, colgrp, colgrp));
-        if(saver) saver->setColor(colstart, colmid, colend);
+void kLinesSetup::slotColstart(const QColor &col){
+    colstart = col;
+    if(saver) saver->setColor(colstart, colmid, colend);
 }
 
-void kLinesSetup::slotColmid(){
-        if(KColorDialog::getColor(colmid)==QDialog::Rejected) return;
-        QColorGroup colgrp(black, colmid, colmid.light(), colmid.dark(),
-                           colmid.dark(120), black, white);
-        colorPush1->setPalette(QPalette(colgrp, colgrp, colgrp));
-        if(saver) saver->setColor(colstart, colmid, colend);
+void kLinesSetup::slotColmid(const QColor &col){
+    colmid = col;
+    if(saver) saver->setColor(colstart, colmid, colend);
 }
 
-void kLinesSetup::slotColend(){
-        if(KColorDialog::getColor(colend)==QDialog::Rejected) return;
-        QColorGroup colgrp(black, colend, colend.light(), colend.dark(),
-                           colend.dark(120), black, white);
-        colorPush2->setPalette(QPalette(colgrp, colgrp, colgrp));
-        if(saver) saver->setColor(colstart, colmid, colend);
+void kLinesSetup::slotColend(const QColor &col){
+    colend = col;
+    if(saver) saver->setColor(colstart, colmid, colend);
 }
 
 void kLinesSetup::slotAbout(){
 	KMessageBox::about(this,
-		i18n("Lines Version 0.1.1\n\n"
+		i18n("Lines Version 0.1.2\n\n"
 				   "written by Dirk Staneker 1997\n"
 				   "dirk.stanerker@student.uni-tuebingen.de"));
 }
 
 // Ok pressed - save settings and exit
 void kLinesSetup::slotOkPressed(){
-	KConfig *config = KApplication::kApplication()->config();
-	config->setGroup("Settings");
+    KConfig *config = klock_config();
+    config->setGroup("Settings");
 
-	QString slength;
-	slength.setNum(length);
-	config->writeEntry("Length", slength);
+    QString slength;
+    slength.setNum(length);
+    config->writeEntry("Length", slength);
 
-	QString sspeed;
-	sspeed.setNum( speed );
-	config->writeEntry( "Speed", sspeed );
+    QString sspeed;
+    sspeed.setNum( speed );
+    config->writeEntry( "Speed", sspeed );
 
-        QString colName0, colName1, colName2;
-        colName0.sprintf("#%02x%02x%02x", colstart.red(),
-		         colstart.green(), colstart.blue() );
-        config->writeEntry( "StartColor", colName0 );
+    QString colName0, colName1, colName2;
+    colName0.sprintf("#%02x%02x%02x", colstart.red(),
+		     colstart.green(), colstart.blue() );
+    config->writeEntry( "StartColor", colName0 );
 
-        colName1.sprintf("#%02x%02x%02x", colmid.red(),
-                         colmid.green(), colmid.blue() );
-        config->writeEntry( "MidColor", colName1 );
+    colName1.sprintf("#%02x%02x%02x", colmid.red(),
+		     colmid.green(), colmid.blue() );
+    config->writeEntry( "MidColor", colName1 );
 
-        colName2.sprintf("#%02x%02x%02x", colend.red(),
-                         colend.green(), colend.blue() );
-        config->writeEntry( "EndColor", colName2 );
+    colName2.sprintf("#%02x%02x%02x", colend.red(),
+		     colend.green(), colend.blue() );
+    config->writeEntry( "EndColor", colName2 );
 
-	config->sync();
-	accept();
+    config->sync();
+    delete config;
+    accept();
 }
 
 //-----------------------------------------------------------------------------
@@ -373,29 +358,30 @@ void kLinesSaver::setColor(const QColor& cs, const QColor& cm, const QColor& ce)
 
 // read configuration settings from config file
 void kLinesSaver::readSettings(){
-	QString str;
+    QString str;
 
-	KConfig *config=KApplication::kApplication()->config();
-	config->setGroup("Settings");
+    KConfig *config=klock_config();
+    config->setGroup("Settings");
 
-	str=config->readEntry("Length");
-	if(!str.isNull()) numLines=atoi(str);
-	else numLines=10;
-	str = config->readEntry("Speed");
-	if(!str.isNull()) speed=100-atoi(str);
-	else speed=50;
-	if(numLines>MAXLENGTH) numLines=MAXLENGTH;
-	else if(numLines<1) numLines = 1;
+    str=config->readEntry("Length");
+    if(!str.isNull()) numLines=atoi(str);
+    else numLines=10;
+    str = config->readEntry("Speed");
+    if(!str.isNull()) speed=100-atoi(str);
+    else speed=50;
+    if(numLines>MAXLENGTH) numLines=MAXLENGTH;
+    else if(numLines<1) numLines = 1;
 
-        str=config->readEntry("StartColor");
-        if(!str.isNull()) colstart.setNamedColor(str);
-        else colstart=white;
-        str=config->readEntry("MidColor");
-        if(!str.isNull()) colmid.setNamedColor(str);
-        else colmid=blue;
-        str=config->readEntry("EndColor");
-        if(!str.isNull()) colend.setNamedColor(str);
-        else colend=black;
+    str=config->readEntry("StartColor");
+    if(!str.isNull()) colstart.setNamedColor(str);
+    else colstart=white;
+    str=config->readEntry("MidColor");
+    if(!str.isNull()) colmid.setNamedColor(str);
+    else colmid=blue;
+    str=config->readEntry("EndColor");
+    if(!str.isNull()) colend.setNamedColor(str);
+    else colend=black;
+    delete config;
 }
 
 // draw next lines and erase tail

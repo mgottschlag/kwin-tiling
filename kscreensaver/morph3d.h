@@ -8,7 +8,7 @@
 
 #include <qtimer.h>
 #include <qlist.h>
-#include <qdialog.h>
+#include <kdialogbase.h>
 #include <qlineedit.h>
 #include "saver.h"
 
@@ -38,7 +38,7 @@ protected:
 	int			numPoints;
 };
 
-class kMorph3dSetup : public QDialog
+class kMorph3dSetup : public KDialogBase
 {
 	Q_OBJECT
 public:
@@ -50,15 +50,14 @@ protected:
 private slots:
 	void slotSpeed( int );
 	void slotLevels( int );
-	void slotOkPressed();
+	void slotOk();
 	void slotAbout();
 
 private:
 	QWidget *preview;
 	kMorph3dSaver *saver;
-
-	int			speed;
-	int			maxLevels;
+	int	speed;
+	int	maxLevels;
 };
 
 #endif

@@ -36,6 +36,7 @@
 #include <math.h>
 #include <time.h>
 
+#include "helpers.h"
 #include "slideshow.h"
 
 static kSlideShowSaver *sSaver = NULL;
@@ -143,7 +144,7 @@ void kSlideShowSaver::initNextScreen()
 //-----------------------------------------------------------------------------
 void kSlideShowSaver::readConfig()
 {
-  KConfig *config = KGlobal::config();
+  KConfig *config = klock_config();
   config->setGroup("Settings");
   mShowRandom = config->readBoolEntry("ShowRandom", true);
   mZoomImages = config->readBoolEntry("ZoomImages", false);
@@ -153,6 +154,7 @@ void kSlideShowSaver::readConfig()
 
   loadDirectory();
   // loadFileList("slideshow.list");
+  delete config;
 }
 
 
@@ -793,7 +795,7 @@ void kSlideShowSetup::readSettings()
 {
   int i, num, cur;
   QString key, value, curDir;
-  KConfig *config = KGlobal::config();
+  KConfig *config = klock_config();
 
   config->setGroup("Settings");
   mCbxRandom->setChecked(config->readBoolEntry("ShowRandom", true));
@@ -825,6 +827,7 @@ void kSlideShowSetup::readSettings()
     mCboDir->setCurrentItem(mCboDir->count());
   }
   else mCboDir->setCurrentItem(cur+1);
+  delete config;
 }
 
 
@@ -833,7 +836,7 @@ void kSlideShowSetup::writeSettings()
 {
   int i, num;
   QString key, value;
-  KConfig *config = KGlobal::config();
+  KConfig *config = klock_config();
 
   config->setGroup("Settings");
   config->writeEntry("ShowRandom", mCbxRandom->isChecked());
@@ -857,6 +860,7 @@ void kSlideShowSetup::writeSettings()
   }
 
   config->sync();
+  delete config;
 
   if (mSaver)
   {

@@ -278,28 +278,29 @@ void kHopSaver::setPoints( int p )
 
 void kHopSaver::readSettings()
 {
-    KConfig *config = KGlobal::config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
-	QString str;
+    QString str;
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = MAXSPEED - atoi( str );
-	else
-		speed = (MAXSPEED-MINSPEED)/2;
+    str = config->readEntry( "Speed" );
+    if ( !str.isNull() )
+	speed = MAXSPEED - atoi( str );
+    else
+	speed = (MAXSPEED-MINSPEED)/2;
 
-	str = config->readEntry( "MaxLevels" );
-	if ( !str.isNull() )
-		maxLevels = atoi( str );
-	else
-		maxLevels = DEFBATCH;
+    str = config->readEntry( "MaxLevels" );
+    if ( !str.isNull() )
+	maxLevels = atoi( str );
+    else
+	maxLevels = DEFBATCH;
 
-	str = config->readEntry( "NumPoints" );
-	if ( !str.isNull() )
-		numPoints = atoi( str );
-	else
-		numPoints = DEFCYCLES;
+    str = config->readEntry( "NumPoints" );
+    if ( !str.isNull() )
+	numPoints = atoi( str );
+    else
+	numPoints = DEFCYCLES;
+    delete config;
 }
 
 void kHopSaver::slotTimeout()
@@ -394,31 +395,32 @@ kHopSetup::kHopSetup( QWidget *parent, const char *name )
 
 void kHopSetup::readSettings()
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
-	QString str;
+    QString str;
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
+    str = config->readEntry( "Speed" );
+    if ( !str.isNull() )
+	speed = atoi( str );
 
-	if ( speed > MAXSPEED )
-		speed = MAXSPEED;
-	else if ( speed < MINSPEED )
-		speed = MINSPEED;
+    if ( speed > MAXSPEED )
+	speed = MAXSPEED;
+    else if ( speed < MINSPEED )
+	speed = MINSPEED;
 
-	str = config->readEntry( "MaxLevels" );
-	if ( !str.isNull() )
-		maxLevels = atoi( str );
-	else
-		maxLevels = DEFBATCH;
+    str = config->readEntry( "MaxLevels" );
+    if ( !str.isNull() )
+	maxLevels = atoi( str );
+    else
+	maxLevels = DEFBATCH;
 
-	str = config->readEntry( "NumPoints" );
-	if ( !str.isNull() )
-		numPoints = atoi( str );
-	else
-		numPoints = DEFCYCLES;
+    str = config->readEntry( "NumPoints" );
+    if ( !str.isNull() )
+	numPoints = atoi( str );
+    else
+	numPoints = DEFCYCLES;
+    delete config;
 }
 
 void kHopSetup::slotSpeed( int num )
@@ -447,23 +449,24 @@ void kHopSetup::slotPoints( int num )
 
 void kHopSetup::slotOkPressed()
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
-	QString sspeed;
-	sspeed.setNum( speed );
-	config->writeEntry( "Speed", sspeed );
+    QString sspeed;
+    sspeed.setNum( speed );
+    config->writeEntry( "Speed", sspeed );
 
-	QString slevels;
-	slevels.setNum( maxLevels );
-	config->writeEntry( "MaxLevels", slevels );
+    QString slevels;
+    slevels.setNum( maxLevels );
+    config->writeEntry( "MaxLevels", slevels );
 
-	QString spoints;
-	spoints.setNum( numPoints );
-	config->writeEntry( "NumPoints", spoints );
+    QString spoints;
+    spoints.setNum( numPoints );
+    config->writeEntry( "NumPoints", spoints );
 
-	config->sync();
-	accept();
+    config->sync();
+    delete config;
+    accept();
 }
 
 void kHopSetup::slotAbout()

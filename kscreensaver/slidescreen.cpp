@@ -439,8 +439,9 @@ kSlideScreenSaver::~kSlideScreenSaver()
 
 void kSlideScreenSaver::readSettings()
 {
-    KConfig *config = KApplication::kApplication()->config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
+    delete config;
 }
 
 void kSlideScreenSaver::slotTimeout()
@@ -539,12 +540,12 @@ kSlideScreenSetup::kSlideScreenSetup( QWidget *parent, const char *name )
 
 void kSlideScreenSetup::slotOkPressed()
 {
-    KConfig *config = KApplication::kApplication()->config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
+    config->sync();
+    delete config;
 
-	config->sync();
-
-	accept();
+    accept();
 }
 
 void kSlideScreenSetup::slotAbout()

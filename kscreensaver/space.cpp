@@ -54,6 +54,7 @@
 #include <kconfig.h>
 #include <krandomsequence.h>
 #include "xlock.h"
+#include "helpers.h"
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
 #endif
@@ -537,7 +538,7 @@ void kSpaceSaver::setWarp( int  w )
 
 void kSpaceSaver::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -554,7 +555,7 @@ void kSpaceSaver::readSettings()
 		warpinterval = atoi( str );
 	else
 	  warpinterval = 15.0;
-
+	delete config;
 }
 
 void kSpaceSaver::slotTimeout()
@@ -629,7 +630,7 @@ kSpaceSetup::kSpaceSetup( QWidget *parent, const char *name )
 
 void kSpaceSetup::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -649,7 +650,7 @@ void kSpaceSetup::readSettings()
 		warpinterval = atoi( str );
 	else
 	  warpinterval = 15; 
-
+	delete config;
 }
 
 void kSpaceSetup::slotSpeed( int num )
@@ -669,7 +670,7 @@ void kSpaceSetup::slotWarp( int num )
 
 void kSpaceSetup::slotOkPressed()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;
@@ -681,6 +682,7 @@ void kSpaceSetup::slotOkPressed()
 	config->writeEntry( "WarpInterval", interval );
 
 	config->sync();
+	delete config;
 	accept();
 }
 

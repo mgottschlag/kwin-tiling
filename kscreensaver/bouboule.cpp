@@ -956,7 +956,7 @@ void kBoubouleSaver::set3DMode( bool mode3d )
 
 void kBoubouleSaver::readSettings()
 {
-    KConfig *config = KGlobal::config();
+    KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -991,6 +991,7 @@ void kBoubouleSaver::readSettings()
 	else
 		flag_3dmode = FALSE;
 
+	delete config;
 }
 
 void kBoubouleSaver::slotTimeout()
@@ -1108,7 +1109,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 
 void kBoubouleSetup::readSettings()
 {
-    KConfig *config = KGlobal::config();
+    KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1149,6 +1150,7 @@ void kBoubouleSetup::readSettings()
 	else
 		flag_3dmode = FALSE;
 
+	delete config;
 }
 
 void kBoubouleSetup::slotSpeed( int num )
@@ -1195,29 +1197,30 @@ void kBoubouleSetup::slot3DMode( bool mode )
 
 void kBoubouleSetup::slotOkPressed()
 {
-    KConfig *config = KGlobal::config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
-	QString sspeed;
-	sspeed.setNum( speed );
-	config->writeEntry( "Speed", sspeed );
+    QString sspeed;
+    sspeed.setNum( speed );
+    config->writeEntry( "Speed", sspeed );
 
-	QString spoints;
-	spoints.setNum( numPoints );
-	config->writeEntry( "NumPoints", spoints );
+    QString spoints;
+    spoints.setNum( numPoints );
+    config->writeEntry( "NumPoints", spoints );
 
-	QString ssize;
-	ssize.setNum( pointSize );
-	config->writeEntry( "PointSize", ssize );
+    QString ssize;
+    ssize.setNum( pointSize );
+    config->writeEntry( "PointSize", ssize );
 
-	QString scolorcycle;
-	scolorcycle.setNum( colorCycleDelay );
-	config->writeEntry( "ColorCycleDelay", scolorcycle );
+    QString scolorcycle;
+    scolorcycle.setNum( colorCycleDelay );
+    config->writeEntry( "ColorCycleDelay", scolorcycle );
 
-	config->writeEntry( "3DMode", flag_3dmode ? QString( "yes" ) : QString( "no" ) );
+    config->writeEntry( "3DMode", flag_3dmode ? QString( "yes" ) : QString( "no" ) );
 
-	config->sync();
-	accept();
+    config->sync();
+    delete config;
+    accept();
 }
 
 void kBoubouleSetup::slotAbout()

@@ -413,27 +413,29 @@ void KBlobSaver::blank()
 void KBlobSaver::readSettings()
 {
     QString str;
-    KConfig *config = KApplication::kApplication()->config();
-	config->setGroup("Settings");
+    KConfig *config = klock_config();
+    config->setGroup("Settings");
 
-	// number of seconds to spend on a frame
-	str = config->readEntry("Showtime");
-	if (!str.isNull())
-		showlen = atoi(str);
-	else
-		showlen = 3*60;
+    // number of seconds to spend on a frame
+    str = config->readEntry("Showtime");
+    if (!str.isNull())
+	showlen = atoi(str);
+    else
+	showlen = 3*60;
 
-	// algorithm to use. if not set then use random
-	str = config->readEntry("Algorithm");
-	if (!str.isNull())
-		alg = atoi(str);
-	else
-		alg = ALG_RANDOM;
-	if (alg == ALG_RANDOM)	
-		newalg = 1;
-	else
-		newalg = 2;
-	newalgp = newalg;
+    // algorithm to use. if not set then use random
+    str = config->readEntry("Algorithm");
+    if (!str.isNull())
+	alg = atoi(str);
+    else
+	alg = ALG_RANDOM;
+    if (alg == ALG_RANDOM)	
+	newalg = 1;
+    else
+	newalg = 2;
+    newalgp = newalg;
+
+    delete config;
 }
 
 //-----------------------------------------------------------------------------
@@ -531,41 +533,44 @@ KBlobSetup::KBlobSetup
 void KBlobSetup::readSettings()
 {
     QString str;
-    KConfig *config = KApplication::kApplication()->config();
-	config->setGroup("Settings");
+    KConfig *config = klock_config();
+    config->setGroup("Settings");
 
-	// number of seconds to spend on a frame
-	str = config->readEntry("Showtime");
-	if (!str.isNull())
-		showtime = atoi(str);
-	else
-		showtime = 3*60;
+    // number of seconds to spend on a frame
+    str = config->readEntry("Showtime");
+    if (!str.isNull())
+	showtime = atoi(str);
+    else
+	showtime = 3*60;
 
-	// algorithm to use. if not set then use random
-	str = config->readEntry("Algorithm");
-	if (!str.isNull())
-		alg = atoi(str);
-	else
-		alg = ALG_LAST;
+    // algorithm to use. if not set then use random
+    str = config->readEntry("Algorithm");
+    if (!str.isNull())
+	alg = atoi(str);
+    else
+	alg = ALG_LAST;
+
+    delete config;
 }
 
 // Ok pressed - save settings and exit
 void KBlobSetup::slotOkPressed()
 {
-    KConfig *config = KApplication::kApplication()->config();
-	QString str;
+    KConfig *config = klock_config();
+    QString str;
 
-	config->setGroup("Settings");
+    config->setGroup("Settings");
 
-	str = stime->text();
-	config->writeEntry("Showtime", str);
+    str = stime->text();
+    config->writeEntry("Showtime", str);
 
-	str.setNum(algs->currentItem());
-	config->writeEntry("Algorithm", str);
+    str.setNum(algs->currentItem());
+    config->writeEntry("Algorithm", str);
 
-	config->sync();
+    config->sync();
+    delete config;
 
-	accept();
+    accept();
 }
 
 void KBlobSetup::slotAbout()
@@ -579,10 +584,7 @@ void KBlobSetup::slotAbout()
 //-----------------------------------------------------------------------------
 // standard screen saver interface functions
 //
-void startScreenSaver
-(
-	Drawable d
-)
+void startScreenSaver( Drawable d )
 {
 	if ( saver )
 		return;

@@ -120,6 +120,7 @@ FIXME: this could be clearer done by a calculation on the position.
 
 #define QT_CLEAN_NAMESPACE
 #include <qslider.h>
+#include <qlayout.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <krandomsequence.h>
@@ -132,6 +133,9 @@ FIXME: this could be clearer done by a calculation on the position.
 #include <klocale.h>
 #include <kconfig.h>
 
+#include "helpers.h"
+
+#undef index
 #include "pipes.h"
 #include <X11/Intrinsic.h>
 
@@ -725,7 +729,7 @@ void kPipesSaver::setPipes( int n )
 
 void kPipesSaver::readSettings()
 {
-  KConfig *config = KGlobal::config();
+  KConfig *config = klock_config();
   config->setGroup( "Settings" );
 
   QString str;
@@ -737,52 +741,50 @@ void kPipesSaver::readSettings()
     pipes = DEFPIPES;
   if (pipes < 2) pipes = 2;
   if (pipes > MAXPIPES) pipes = MAXPIPES;
+  delete config;
 }
 
 // Setup //////////////////////////////////////////////////////////////////////
 
 kPipesSetup::kPipesSetup( QWidget *parent, const char *name )
-  : QDialog( parent, name, TRUE )
+  : KDialogBase( parent, name, true, i18n("Setup KPipes"), Ok|Cancel|User1,
+		Ok, false, i18n("About") )
 {
   readSettings();
 
-  setCaption( i18n("Setup KPipes") );
+  QWidget *page = new QWidget(this);
+  setMainWidget( page );
+  QHBoxLayout *hb = new QHBoxLayout( page );
+  QVBoxLayout *vb = new QVBoxLayout( hb );
 
   QLabel *label;
-  QPushButton *button;
   QSlider *slider;
 
-  label = new QLabel( i18n("Number of Pipes"), this );
-  label->setGeometry( 15, 15, 100, 20 );
+  label = new QLabel( i18n("Number of Pipes"), page );
+  vb->addWidget( label );
 
-  slider = new QSlider(2, MAXPIPES, 1, pipes, QSlider::Horizontal, this );
-  slider->setGeometry( 15, 35, 100, 20 );
+  slider = new QSlider(2, MAXPIPES, 1, pipes, QSlider::Horizontal, page );
+  vb->addWidget( slider );
   slider->setTickmarks(QSlider::Below);
   slider->setTickInterval(1);
   connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotPipes( int ) ) );
 
-  preview = new QWidget( this );
-  preview->setGeometry( 130, 15, 220, 170 );
+  vb->addStrut( 150 );
+  vb->addStretch( 1 );
+
+  preview = new QWidget( page );
+  hb->addWidget( preview );
+  preview->setFixedSize( 220, 170 );
   preview->setBackgroundColor( black );
   preview->show();    // otherwise saver does not get correct size
   saver = new kPipesSaver( preview->winId() );
 
-  button = new QPushButton( i18n("About"), this );
-  button->setGeometry( 130, 210, 50, 25 );
-  connect( button, SIGNAL( clicked() ), SLOT( slotAbout() ) );
-
-  button = new QPushButton( i18n("OK"), this );
-  button->setGeometry( 235, 210, 50, 25 );
-  connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
-
-  button = new QPushButton( i18n("Cancel"), this );
-  button->setGeometry( 300, 210, 50, 25 );
-  connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
+  connect( this, SIGNAL( user1Clicked() ), SLOT( slotAbout() ) );
 }
 
 void kPipesSetup::readSettings()
 {
-  KConfig *config = KGlobal::config();
+  KConfig *config = klock_config();
   config->setGroup( "Settings" );
 
   QString str;
@@ -790,7 +792,7 @@ void kPipesSetup::readSettings()
   str = config->readEntry( "Pipes" );
   if ( !str.isNull() )
     pipes = atoi( str );
-
+  delete config;
 }
 
 void kPipesSetup::slotPipes( int num )
@@ -801,9 +803,9 @@ void kPipesSetup::slotPipes( int num )
     saver->setPipes( pipes );
 }
 
-void kPipesSetup::slotOkPressed()
+void kPipesSetup::slotOk()
 {
-  KConfig *config = KGlobal::config();
+  KConfig *config = klock_config();
   config->setGroup( "Settings" );
 
   QString spipes;
@@ -811,6 +813,7 @@ void kPipesSetup::slotOkPressed()
   config->writeEntry( "Pipes", spipes );
 
   config->sync();
+  delete config;
   accept();
 }
 

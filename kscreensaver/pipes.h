@@ -5,7 +5,7 @@
 
 #include <qtimer.h>
 #include <qlist.h>
-#include <qdialog.h>
+#include <kdialogbase.h>
 #include <qlineedit.h>
 #include "saver.h"
 
@@ -114,7 +114,7 @@ protected:
   QTimer      timer;
 };
 
-class kPipesSetup : public QDialog
+class kPipesSetup : public KDialogBase
 {
 	Q_OBJECT
 public:
@@ -125,13 +125,13 @@ protected:
 
 private slots:
 	void slotPipes( int );
-	void slotOkPressed();
+	void slotOk();
 	void slotAbout();
 
 private:
 	QWidget *preview;
 	kPipesSaver *saver;
-	int			pipes;
+	int	pipes;
 };
 
 #endif

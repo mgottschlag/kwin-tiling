@@ -15,6 +15,7 @@
 #include <krandomsequence.h>
 #include "saver.h"
 
+class KColorButton;
 
 class Lines{
 	private:
@@ -78,13 +79,13 @@ class kLinesSetup:public QDialog{
 	void slotLength(int);
 	void slotSpeed(int);
 	void slotOkPressed();
-	void slotColstart();
-	void slotColmid();
-	void slotColend();
+	void slotColstart(const QColor &);
+	void slotColmid(const QColor &);
+	void slotColend(const QColor &);
 	void slotAbout();
 
 	private:
-	QPushButton *colorPush0, *colorPush1, *colorPush2;
+	KColorButton *colorPush0, *colorPush1, *colorPush2;
 	QWidget *preview;
 	kLinesSaver *saver;
 	int length, speed;

@@ -39,10 +39,12 @@
 #define QT_CLEAN_NAMESPACE
 
 #include <qslider.h>
+#include <qlayout.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <krandomsequence.h>
 #include "xlock.h"
+#include "helpers.h"
 #include "../config.h"
 
 #ifdef HAVE_GL
@@ -915,6 +917,8 @@ release_morph3d()
 
 //-----------------------------------------------------------------------------
 
+#undef index
+
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
@@ -995,7 +999,7 @@ void kMorph3dSaver::setLevels( int l )
 
 void kMorph3dSaver::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1013,6 +1017,7 @@ void kMorph3dSaver::readSettings()
 	else
 		maxLevels = DEFBATCH;
 
+	delete config;
 }
 
 void kMorph3dSaver::slotTimeout()
@@ -1023,58 +1028,58 @@ void kMorph3dSaver::slotTimeout()
 //-----------------------------------------------------------------------------
 
 kMorph3dSetup::kMorph3dSetup( QWidget *parent, const char *name )
-	: QDialog( parent, name, TRUE )
+	: KDialogBase( parent, name, true, i18n("Setup KMorph3d"),
+			Ok|Cancel|User1, Ok, false, i18n("About") )
 {
-	readSettings();
+    readSettings();
 
-	setCaption( i18n("Setup KMorph3d") );
+    showButton( User1, true );
 
-	QLabel *label;
-	QPushButton *button;
-	QSlider *slider;
+    QWidget *page = new QWidget( this );
+    setMainWidget( page );
+    QHBoxLayout *hl = new QHBoxLayout( page, spacingHint() );
 
-	label = new QLabel( i18n("Speed:"), this );
-	label->setGeometry( 15, 15, 60, 20 );
+    QVBoxLayout *vb = new QVBoxLayout( hl );
 
-	slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
-                        this);
-	slider->setGeometry( 15, 35, 90, 20 );
+    QLabel *label;
+    QSlider *slider;
+
+    label = new QLabel( i18n("Speed:"), page );
+    vb->addWidget( label );
+
+    slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
+                        page);
+    vb->addWidget( slider );
     slider->setTickmarks(QSlider::Below);
     slider->setTickInterval(10);
-	connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
+    connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
 
-	label = new QLabel( i18n("Object Type:"), this );
-	label->setGeometry( 15, 65, 90, 20 );
+    label = new QLabel( i18n("Object Type:"), page );
+    vb->addWidget( label );
 
-	slider = new QSlider(MINBATCH, MAXBATCH, 1, maxLevels,
-                        QSlider::Horizontal, this);
-	slider->setGeometry( 15, 85, 90, 20 );
+    slider = new QSlider(MINBATCH, MAXBATCH, 1, maxLevels,
+			QSlider::Horizontal, page);
+    vb->addWidget( slider );
     slider->setTickmarks(QSlider::Below);
     slider->setTickInterval(1);
-	connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotLevels( int ) ) );
+    connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotLevels( int ) ) );
 
-	preview = new QWidget( this );
-	preview->setGeometry( 130, 15, 220, 170 );
-	preview->setBackgroundColor( black );
-	preview->show();    // otherwise saver does not get correct size
-	saver = new kMorph3dSaver( preview->winId() );
+    vb->addStrut( 150 );
+    vb->addStretch( 1 );
 
-	button = new QPushButton( i18n("About"), this );
-	button->setGeometry( 130, 210, 50, 25 );
-	connect( button, SIGNAL( clicked() ), SLOT( slotAbout() ) );
+    preview = new QWidget( page );
+    hl->addWidget( preview );
+    preview->setFixedSize( 220, 170 );
+    preview->setBackgroundColor( black );
+    preview->show();    // otherwise saver does not get correct size
+    saver = new kMorph3dSaver( preview->winId() );
 
-	button = new QPushButton( i18n("OK"), this );
-	button->setGeometry( 235, 210, 50, 25 );
-	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
-
-	button = new QPushButton( i18n("Cancel"), this );
-	button->setGeometry( 300, 210, 50, 25 );
-	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
+    connect( this, SIGNAL( user1Clicked() ), SLOT( slotAbout() ) );
 }
 
 void kMorph3dSetup::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1095,6 +1100,7 @@ void kMorph3dSetup::readSettings()
 	else
 		maxLevels = DEFBATCH;
 
+	delete config;
 }
 
 void kMorph3dSetup::slotSpeed( int num )
@@ -1113,9 +1119,9 @@ void kMorph3dSetup::slotLevels( int num )
 		saver->setLevels( maxLevels );
 }
 
-void kMorph3dSetup::slotOkPressed()
+void kMorph3dSetup::slotOk()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;
@@ -1127,6 +1133,7 @@ void kMorph3dSetup::slotOkPressed()
 	config->writeEntry( "MaxLevels", slevels );
 
 	config->sync();
+	delete config;
 	accept();
 }
 

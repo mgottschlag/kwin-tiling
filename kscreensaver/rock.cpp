@@ -505,7 +505,7 @@ void kRockSaver::setRotate( bool r )
 
 void kRockSaver::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -533,6 +533,7 @@ void kRockSaver::readSettings()
 		rotate = TRUE;
 	else
 		rotate = FALSE;
+	delete config;
 }
 
 void kRockSaver::slotTimeout()
@@ -627,7 +628,7 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 
 void kRockSetup::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -661,6 +662,7 @@ void kRockSetup::readSettings()
 		rotate = TRUE;
 	else
 		rotate = FALSE;
+	delete config;
 }
 
 void kRockSetup::slotSpeed( int num )
@@ -698,7 +700,7 @@ void kRockSetup::slotRotate( bool r )
 // Ok pressed - save settings and exit
 void kRockSetup::slotOkPressed()
 {
-	KConfig *config = KGlobal::config();
+	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;
@@ -713,6 +715,7 @@ void kRockSetup::slotOkPressed()
 	config->writeEntry( "Rotate", rotate ? QString("yes") : QString("no") );
 
 	config->sync();
+	delete config;
 
 	accept();
 }

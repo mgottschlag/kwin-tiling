@@ -159,7 +159,7 @@ kPolygonSetup::~kPolygonSetup()
 // read settings from config file
 void kPolygonSetup::readSettings()
 {
-    KConfig *config = KApplication::kApplication()->config();
+    KConfig *config = klock_config();
     config->setGroup( "Settings" );
     
     QString str;
@@ -187,6 +187,7 @@ void kPolygonSetup::readSettings()
         speed = 100;
     else if ( speed < 50 )
         speed = 50;
+    delete config;
 }
 
 void kPolygonSetup::slotLength( int len )
@@ -213,7 +214,7 @@ void kPolygonSetup::slotSpeed( int num )
 // Ok pressed - save settings and exit
 void kPolygonSetup::slotOkPressed()
 {
-    KConfig *config = KApplication::kApplication()->config();
+    KConfig *config = klock_config();
     config->setGroup( "Settings" );
     
     QString slength;
@@ -229,6 +230,7 @@ void kPolygonSetup::slotOkPressed()
     config->writeEntry( "Speed", sspeed );
     
     config->sync();
+    delete config;
     
     accept();
 }
@@ -297,36 +299,37 @@ void kPolygonSaver::readSettings()
 {
     QString str;
     
-    KConfig *config = KApplication::kApplication()->config();
-	config->setGroup( "Settings" );
+    KConfig *config = klock_config();
+    config->setGroup( "Settings" );
 
-	str = config->readEntry( "Length" );
-	if ( !str.isNull() )
-		numLines = atoi( str );
-	else
-		numLines = 10;
+    str = config->readEntry( "Length" );
+    if ( !str.isNull() )
+	    numLines = atoi( str );
+    else
+	    numLines = 10;
 
-	str = config->readEntry( "Vertices" );
-	if ( !str.isNull() )
-		numVertices = atoi( str );
-	else
-		numVertices = 3;
+    str = config->readEntry( "Vertices" );
+    if ( !str.isNull() )
+	    numVertices = atoi( str );
+    else
+	    numVertices = 3;
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = 100 - atoi( str );
-	else
-		speed = 50;
+    str = config->readEntry( "Speed" );
+    if ( !str.isNull() )
+	    speed = 100 - atoi( str );
+    else
+	    speed = 50;
 
-	if ( numLines > 50 )
-		numLines = 50;
-	else if ( numLines < 1 )
-		numLines = 1;
-	
-	if ( numVertices > 20 )
-		numVertices = 20;
-	else if ( numVertices < 3 )
-		numVertices = 3;
+    if ( numLines > 50 )
+	    numLines = 50;
+    else if ( numLines < 1 )
+	    numLines = 1;
+    
+    if ( numVertices > 20 )
+	    numVertices = 20;
+    else if ( numVertices < 3 )
+	    numVertices = 3;
+    delete config;
 }
 
 // draw next polygon and erase tail
