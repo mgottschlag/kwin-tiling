@@ -16,10 +16,12 @@
 #include <qspinbox.h>
 #include <qcheckbox.h>
 
+#include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kwm.h>
 #include <kcmodule.h>
+#include <dcopclient.h>
 
 #include <bgdefaults.h>
 #include <bgsettings.h>
@@ -101,7 +103,8 @@ void KAdvanced::load()
 void KAdvanced::save()
 {
     m_pSettings->writeSettings();
-    KWM::sendKWMCommand("kbgwm_reconfigure");
+    DCOPClient *client = kapp->dcopClient();
+    client->send("kdesktop", "KBackgroundIface", "configure()", "");
     emit changed(false);
 }
 

@@ -27,4 +27,5 @@ libkcm_display_la_LIBADD = $(LIB_KDEUI) $(LIB_KIMGIO) $(LIB_KFILE) $(DPMSLIB) \
 	$(top_builddir)/kdesktop/libbgnd.la
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -kni18n -x $(includedir)/kde.pot $(kcmdisplay_SOURCES) && mv messages.po ../../po/kcmdisplay.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -kni18n -x $(includedir)/kde.pot \
+	$(libkcm_display_la_SOURCES) && mv messages.po ../../po/kcmdisplay.pot
