@@ -281,7 +281,7 @@ bool GetInfo_PCI (QListView *lbox)
 	if (!lbox->childCount()) {
 		s = i18n("The PCI subsystem could not be queried, this may need root privileges.");
 		olditem = new QListViewItem(lbox, olditem, s);
-		return false;
+		return true;
 	}
 
 	return true;
