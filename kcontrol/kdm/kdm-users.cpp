@@ -131,6 +131,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     wstack->addWidget( optinlv );
     connect( optinlv, SIGNAL(clicked( QListViewItem * )),
 	     SLOT(slotUpdateOptIn( QListViewItem * )) );
+    connect( optinlv, SIGNAL(clicked( QListViewItem * )),
+	     SLOT(slotChanged()) );
     optoutlv = new KListView( this );
     optoutlv->addColumn( i18n("Hidden Users") );
     optoutlv->setResizeMode( QListView::LastColumn );
