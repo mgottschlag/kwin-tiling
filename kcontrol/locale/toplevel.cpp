@@ -133,15 +133,15 @@ void KLocaleApplication::moduleChanged(bool state)
 QString KLocaleApplication::quickHelp()
 {
   return i18n("<h1>Locale</h1>\n"
-	      "<p>From here you can configure language, numberic, and time "
-	      "settings for your particular region. In most cases it will be "
-	      "suffient to choose the country you live in. For instance KDE "
-	      "will automatically choose \"German\" as language if you choose "
-	      "\"Germany\" from the list. It will also change the time format "
-	      "to use 24 hours and and use comma as decimal separator.</p>"
-	      "<p><b>Note:</b> The default charset is ISO 8859-1. That "
-	      "charset is used when choosing fonts. You will have to change "
-	      "it if you are using a non-Western European language.");
+	      "<p>From here you can configure language, numberic, and time \n"
+	      "settings for your particular region. In most cases it will be \n"
+	      "suffient to choose the country you live in. For instance KDE \n"
+	      "will automatically choose \"German\" as language if you choose \n"
+	      "\"Germany\" from the list. It will also change the time format \n"
+	      "to use 24 hours and and use comma as decimal separator.</p>\n"
+	      "<p><b>Note:</b> The default charset is ISO 8859-1. That \n"
+	      "charset is used when choosing fonts. You will have to change \n"
+	      "it if you are using a non-Western European language.\n");
 }
 
 void KLocaleApplication::updateSample()
