@@ -14,6 +14,12 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.18  2001/03/05 15:02:21  faure
+    Many fixes like
+    -      new QListViewItem(lBox, QString(buf));
+    +      new QListViewItem(lBox, QString::fromLocal8Bit(buf));
+    from "Sergey A. Sukiyazov" <corwin@micom.don.ru>
+
     Revision 1.17  2001/01/31 20:26:44  deller
     fixed bug #15517,
     cleaned up comments and indenting.
@@ -177,7 +183,17 @@ bool GetInfo_DMA(QListView * lBox)
 
 bool GetInfo_PCI(QListView * lBox)
 {
+    int num;
     sorting_allowed = false;	/* no sorting by user */
+
+    /* ry to get the output of the lspci package first */
+    if ((num = GetInfo_ReadfromPipe(lBox, "lspci -v", true)) ||
+        (num = GetInfo_ReadfromPipe(lBox, "/sbin/lspci -v", true)) ||
+        (num = GetInfo_ReadfromPipe(lBox, "/usr/sbin/lspci -v", true)) ||
+        (num = GetInfo_ReadfromPipe(lBox, "/usr/local/sbin/lspci -v", true)))
+	    return num;
+
+    /* if lspci failed, read the contents of /proc/pci */
     return GetInfo_ReadfromFile(lBox, INFO_PCI, 0);
 }
 

@@ -32,6 +32,7 @@
 #include <qheader.h>
 #include <qwhatsthis.h>
 #include <qlayout.h>
+#include <qtextstream.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -402,6 +403,35 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
     NoInfoText->setAlignment(AlignCenter); //  | WordBreak);
     widgetStack->raiseWidget(NoInfoText);
     load();
+}
+
+
+/* Helper-function to read output from an external program */
+static int GetInfo_ReadfromPipe( QListView *lBox, const char *FileName, bool WithEmptyLines = true )
+{
+    FILE *pipe;
+    QTextStream *t;
+    QListViewItem* olditem = 0;
+    QString s;
+  
+    if ((pipe = popen(FileName, "r")) == NULL) {
+	pclose(pipe);
+	return 0;
+    }
+
+    t = new QTextStream(pipe, IO_ReadOnly);
+
+    while (!t->eof()) {
+	s = t->readLine();
+	if (!WithEmptyLines && s.length()==0)
+		continue;
+       	olditem = new QListViewItem(lBox, olditem, s);
+    }
+  
+    delete t; 
+    pclose(pipe);
+  
+    return (lBox->childCount());
 }
 
 /*

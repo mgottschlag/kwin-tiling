@@ -470,39 +470,6 @@ bool GetInfo_ReadfromFile( QListView *lBox, const char *Name )
 }
 
 
-static bool GetInfo_ReadfromPipe( QListView *lBox, const char *FileName )
-{
-    FILE *pipe;
-    QFile *devices = new QFile(FileName);
-    QTextStream *t;
-    QListViewItem* olditem = 0;
-    QString s;
-  
-    if (!devices->exists()) 
-    {	delete devices;
-	return false;
-    }
-  
-    if ((pipe = popen(FileName, "r")) == NULL) 
-    {   delete devices;
-	pclose(pipe);
-	return false;
-    }
-
-    t = new QTextStream(pipe, IO_ReadOnly);
-
-    while (!t->eof())
-	if ((s=t->readLine())!="")
-        olditem = new QListViewItem(lBox, olditem, s);
-  
-    delete t; 
-    delete devices; 
-    pclose(pipe);
-  
-    return (lBox->childCount());
-}
-
-
 bool GetInfo_IRQ( QListView * )
 {
 	return false;
@@ -521,16 +488,16 @@ bool GetInfo_PCI( QListView *lBox )
 
 bool GetInfo_IO_Ports( QListView *lBox )
 {
-	if (GetInfo_ReadfromPipe( lBox, INFO_IOPORTS_1 ))
+	if (GetInfo_ReadfromPipe( lBox, INFO_IOPORTS_1, false ))
 	    return true;
 	else
-	    return GetInfo_ReadfromPipe( lBox, INFO_IOPORTS_2 );
+	    return GetInfo_ReadfromPipe( lBox, INFO_IOPORTS_2, false );
 }
 
 
 bool GetInfo_Devices( QListView *lBox )
 {
-	return GetInfo_ReadfromPipe( lBox, INFO_DEVICES );
+	return GetInfo_ReadfromPipe( lBox, INFO_DEVICES, false );
 }
 
 bool GetInfo_SCSI( QListView *lBox )
