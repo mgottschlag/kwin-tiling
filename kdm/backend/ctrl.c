@@ -400,6 +400,9 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    if (fifoAllowNuke)
 			Reply ("nuke\t");
 		}
+		if (AnyReserveDisplays ())
+		    Writer (fd, cbuf, sprintf (cbuf, "reserve %d\t",
+					       idleReserveDisplays ()));
 		Reply ("login\n");
 	    }
 	    goto bust;
