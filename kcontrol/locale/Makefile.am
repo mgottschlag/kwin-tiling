@@ -1,7 +1,7 @@
 
 INCLUDES = $(all_includes) -I..
 LDFLAGS  = $(all_libraries) $(KDE_RPATH)
-LDADD    = $(LIB_KFM) $(LIB_KDEUI) 
+LDADD    = $(LIB_KDEUI) 
 
 SUBDIRS = pics
 
