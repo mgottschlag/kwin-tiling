@@ -196,8 +196,7 @@ void NetMon::update()
    process=0;
 
    readingpart=nfs;
-   if (showmountProc!=0)
-      delete showmountProc;
+   delete showmountProc;
    showmountProc=new KProcess();
    showmountProc->setEnvironment("PATH", path);
    *showmountProc<<"showmount"<<"-a"<<"localhost";
@@ -220,10 +219,7 @@ void NetMon::update()
 void NetMon::killShowmount()
 {
    //kdDebug()<<"killShowmount()"<<endl;
-   if (showmountProc!=0)
-   {
-      delete showmountProc;
-      showmountProc=0;
-   }
+    delete showmountProc;
+    showmountProc=0;
 }
 
