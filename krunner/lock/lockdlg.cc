@@ -5,8 +5,11 @@
 // Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
 // Copyright (c) 2003 Chris Howells <howells@kde.org>
 
+#include <config.h>
+
 #include <ctype.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <pwd.h>
 #include <sys/types.h>
 #include <qlayout.h>
