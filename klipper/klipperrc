@@ -14,7 +14,7 @@ Number of commands=5
 Regexp=^https?:\\/\\/
 
 [Action_1/Command_0]
-Commandline=kfmclient exec '%s'
+Commandline=dcop konqueror default 'createNewWindow(QString)' '%s' || kfmclient exec '%s'
 Description=Open with &Konqueror
 Enabled=true
 
@@ -69,7 +69,7 @@ Description=Launch K&Write
 Enabled=true
 
 [Action_4]
-Description=URI
+Description=Local file URL
 Number of commands=2
 Regexp=^file:.
 
@@ -84,7 +84,7 @@ Description=Send &File
 Enabled=true
 
 [Action_5]
-Description=URI
+Description=Gopher URL
 Number of commands=2
 Regexp=^gopher:.
 
@@ -99,12 +99,12 @@ Description=Send &File
 Enabled=true
 
 [Action_6]
-Description=URI
+Description=ftp URL
 Number of commands=5
 Regexp=^ftp:\\/\\/
 
 [Action_6/Command_0]
-Commandline=kfmclient exec '%s'
+Commandline=dcop konqueror default 'createNewWindow(QString)' '%s' || kfmclient exec '%s'
 Description=Open with &Konqueror
 Enabled=true
 
