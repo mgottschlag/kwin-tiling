@@ -422,7 +422,7 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
 	if (strcmp (crypt (greet->password, user_pass), user_pass))
 #endif
 	{
-	    if(!greet->allow_null_passwd || strlen(p->pw_passwd) > 0) {
+	    if(!d->allowNullPasswd || p->pw_passwd[0]) {
 		Debug ("password verify failed\n");
 		UFAILV;
 	    } /* else: null passwd okay */
@@ -433,7 +433,7 @@ done:
     bzero(user_pass, strlen(user_pass)); /* in case shadow password */
 
     if (!p->pw_uid) {
-	if (!greet->allow_root_login)
+	if (!d->allowRootLogin)
 	    FAILVV(V_NOROOT);
 	else
 	    goto norestr;	/* don't deny root to log in */

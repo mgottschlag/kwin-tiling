@@ -357,6 +357,10 @@ struct displayResource sessionResources[] = {
 				"true" },
 { "autoReLogin", "AutoReLogin",	DM_BOOL,	boffset(autoReLogin),
 				"false" },
+{ "allowNullPasswd", "AllowNullPasswd", DM_BOOL,boffset(allowNullPasswd),
+				"true" },
+{ "allowRootLogin", "AllowRootLogin", DM_BOOL,	boffset(allowRootLogin),
+				"true" },
 };
 
 # define NUM_SESSION_RESOURCES	(sizeof sessionResources/\

@@ -255,6 +255,9 @@ struct display {
 	char		*autoString;	/* xsession arguments. */
 	char		*noPassUsers;	/* users allowed in without a password */
 
+	int		allowNullPasswd;/* allow null password on login */
+	int		allowRootLogin;	/* allow direct root login */
+
 	/* belongs to server management resources */
 	int		fifoCreate;	/* do we want a login data fifo? */
 	int		fifoGroup;	/* who should own it? */
@@ -305,8 +308,6 @@ struct greet_info {
 	char            *passwd;        /* binary compat with DEC */
 	int		version;	/* for dynamic greeter to see */
 	/* add new fields below this line, and preferably at the end */
-	Boolean		allow_null_passwd; /* allow null password on login */
-	Boolean		allow_root_login; /* allow direct root login */
 };
 
 /* setgroups is not covered by POSIX, arg type varies */

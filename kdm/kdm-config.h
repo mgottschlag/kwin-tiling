@@ -26,7 +26,7 @@
 #define KDM_CONFIG_H_
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include <config.h>
 #endif
 
 /* to avoid INT32 conflict between <qglobal.h> and <X/Xmd.h>. */ 
@@ -75,10 +75,6 @@
 
 #ifndef _PATH_MEM
 # define _PATH_MEM "/dev/mem"
-#endif
-
-#ifdef sun
-# define SVR4
 #endif
 
 /*
