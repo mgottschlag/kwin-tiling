@@ -21,6 +21,7 @@
 #undef Unsorted
 #include <qbuffer.h>
 #include <qdir.h>
+#include <qmap.h>
 #include <qpixmap.h>
 #include <qsettings.h>
 
@@ -222,29 +223,59 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
 static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
 {
   /* export kde's plugin library path to qtrc */
+  
+  QMap <QString, bool> pathDb;
+    // OK, this isn't fun at all. 
+    // KApp adds paths ending with /, QApp those without slash, and if
+    // one gives it something that is other way around, it will complain and scare
+    // users. So we need to know whether a path being added is from KApp, and in this case
+    // end it with.. So keep a QMap to bool, specifying whether the path is KDE-specified..
+  
+  
   //Read qt library path..
   QStringList plugins = QApplication::libraryPaths();
-  //and merge in KDE one..
-  plugins += KGlobal::dirs()->resourceDirs( "qtplugins" );
-
-  QStringList paths;
-  QStringList::Iterator it = plugins.begin();
-  while (it != plugins.end()) {
+  for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
+  {
     QString path = *it;
     if (path.endsWith("/"))
-      path.truncate(path.length()-1);
-
+      path.truncate(path.length()-1);  
+    
+    pathDb[path]=false;  
+  }
+  
+  //Merge in KDE ones..
+  plugins = KGlobal::dirs()->resourceDirs( "qtplugins" );
+  
+  for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
+  {
+    QString path = *it;
+    if (path.endsWith("/"))
+      path.truncate(path.length()-1);  
+  
+    pathDb[path]=true;  
+  }
+  
+  QStringList paths;
+  
+  for (QMap <QString, bool>::ConstIterator it = pathDb.begin();
+         it != pathDb.end(); it++)
+  {
+    QString path = it.key();
+    bool      fromKDE = it.data();
+    
     char new_path[PATH_MAX+1];
     if (realpath(QFile::encodeName(path), new_path))
       path = QFile::decodeName(new_path);
 
-    //Check whether *it is already there... Sigh, this is quadratic..
-    //But the paths are short enough to make a faster datastructure
-    //a waste..
-    if (paths.contains( path ) == 0)
-        paths.append( path );
-    ++it;
+    if (fromKDE)
+    {
+        if (!path.endsWith("/"))
+            path += "/";
+    }
+    
+    paths.append(path);
   }
+  
   settings.writeEntry("/qt/libraryPath", paths, ':');
 
   /* export widget style */
@@ -484,7 +515,7 @@ void runRdb( uint flags )
 
     if ( exportQtSettings )
       applyQtSettings( kglobals, *settings );  // For kcmstyle
-
+    
     delete settings;
     QApplication::flushX();
 
