@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+ *  Copyright (c) 2002 Aaron Seigo <aseigo@olympusproject.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -35,11 +36,15 @@ signals:
     void changed();
 
 protected slots:
-    void hideButtonsClicked();
+    void backgroundModeClicked();
 
 private:
     enum Trigger { None = 0, Top, TopRight, Right, BottomRight, Bottom, BottomLeft, Left, TopLeft };
-    KickerConfig* kconf;
+
+    // these convert between the combobox and the config file for trigger
+    // this is why storing enums vs strings can be a BAD thing
+    int triggerComboToConfig(int trigger);
+    int triggerConfigToCombo(int trigger);
 };
 
 #endif

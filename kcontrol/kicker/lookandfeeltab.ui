@@ -1,6 +1,5 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>LookAndFeelTabBase</class>
-<include location="global">kurlrequester.h</include>
 <widget class="QWidget">
     <property name="name">
         <cstring>LookAndFeelTabBase</cstring>
@@ -9,14 +8,17 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>600</width>
-            <height>543</height>
+            <width>441</width>
+            <height>360</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form1</string>
     </property>
-    <grid>
+    <property name="whatsThis" stdset="0">
+        <string>If this option is selected, informational tooltips will will appear when the mouse cursor moves over the icons, buttons and applets in the panel.</string>
+    </property>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -26,7 +28,7 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="2">
+        <widget class="QGroupBox">
             <property name="name">
                 <cstring>general_group</cstring>
             </property>
@@ -45,18 +47,13 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>tiles_cb</cstring>
+                        <cstring>m_zoom_cb</cstring>
                     </property>
                     <property name="text">
-                        <string>Enable bac&amp;kground tiles</string>
+                        <string>Enable icon &amp;zooming</string>
                     </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>zoom_cb</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Enable &amp;icon zooming</string>
+                    <property name="whatsThis" stdset="0">
+                        <string>When this option is selected the button icons are zoomed when the mouse cursor is moved over them.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -64,19 +61,22 @@
                         <cstring>m_showToolTips</cstring>
                     </property>
                     <property name="text">
-                        <string>S&amp;how tooltips</string>
+                        <string>Sh&amp;ow tooltips</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>When this option is selected informational tooltips will appear when the mouse cursor moves over the icons, buttons and applets in the panel.</string>
                     </property>
                 </widget>
             </hbox>
         </widget>
-        <widget class="QGroupBox" row="1" column="1">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>browser_group</cstring>
+                <cstring>GroupBox9</cstring>
             </property>
             <property name="title">
-                <string>Quickbrowser Tiles</string>
+                <string>Button Backgrounds</string>
             </property>
-            <hbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
@@ -86,565 +86,253 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QLayoutWidget">
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
-                        <cstring>Layout2</cstring>
+                        <cstring>TextLabel6</cstring>
                     </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>browser_cb</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Enabled</string>
-                            </property>
-                        </widget>
-                        <widget class="KComboBox">
-                            <property name="name">
-                                <cstring>browser_input</cstring>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property name="name" stdset="0">
-                                <cstring>Spacer7</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Vertical</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </vbox>
+                    <property name="text">
+                        <string>De&amp;sktop access:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_desktopTile</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for desktop access buttons.</string>
+                    </property>
                 </widget>
-                <widget class="QLabel">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>browser_label</cstring>
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;K menu:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_kmenuTile</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for the K menu.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Legacy applications:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_exeTile</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for legacy application buttons.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;QuickBrowser menus:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_browserTile</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for Quick Browser buttons.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="5" column="0">
+                    <property name="name">
+                        <cstring>TextLabel5</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Window list:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_wlTile</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for window list buttons.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Applicatio&amp;ns:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_urlTile</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for buttons that launch applications.</string>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="2" column="1">
+                    <item>
+                        <property name="text">
+                            <string>No Tile</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>m_exeTile</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>1</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>56</width>
-                            <height>56</height>
-                        </size>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
                     </property>
-                    <property name="frameShape">
-                        <enum>Panel</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
-                    </property>
-                    <property name="scaledContents">
-                        <bool>false</bool>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for legacy application buttons.</string>
                     </property>
                 </widget>
-            </hbox>
-        </widget>
-        <widget class="QGroupBox" row="1" column="0">
-            <property name="name">
-                <cstring>kmenu_group</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="title">
-                <string>K-Menu Tiles</string>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLayoutWidget">
+                <widget class="KComboBox" row="3" column="1">
+                    <item>
+                        <property name="text">
+                            <string>No Tile</string>
+                        </property>
+                    </item>
                     <property name="name">
-                        <cstring>Layout1</cstring>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>kmenu_cb</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Enabled</string>
-                            </property>
-                        </widget>
-                        <widget class="KComboBox">
-                            <property name="name">
-                                <cstring>kmenu_input</cstring>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property name="name" stdset="0">
-                                <cstring>Spacer15</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Vertical</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </vbox>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>kmenu_label</cstring>
+                        <cstring>m_browserTile</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>1</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>56</width>
-                            <height>56</height>
-                        </size>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
                     </property>
-                    <property name="frameShape">
-                        <enum>Panel</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
-                    </property>
-                    <property name="scaledContents">
-                        <bool>false</bool>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for Quick Browser buttons.</string>
                     </property>
                 </widget>
-            </hbox>
-        </widget>
-        <widget class="QGroupBox" row="2" column="0">
-            <property name="name">
-                <cstring>url_group</cstring>
-            </property>
-            <property name="title">
-                <string>Application Launcher Tiles</string>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLayoutWidget">
+                <widget class="KComboBox" row="4" column="1">
+                    <item>
+                        <property name="text">
+                            <string>No Tile</string>
+                        </property>
+                    </item>
                     <property name="name">
-                        <cstring>Layout3</cstring>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>url_cb</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Enabled</string>
-                            </property>
-                        </widget>
-                        <widget class="KComboBox">
-                            <property name="name">
-                                <cstring>url_input</cstring>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property name="name" stdset="0">
-                                <cstring>Spacer6</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Vertical</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </vbox>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>url_label</cstring>
+                        <cstring>m_urlTile</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>1</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>56</width>
-                            <height>56</height>
-                        </size>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
                     </property>
-                    <property name="frameShape">
-                        <enum>Panel</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
-                    </property>
-                    <property name="scaledContents">
-                        <bool>false</bool>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for buttons that launch applications.</string>
                     </property>
                 </widget>
-            </hbox>
-        </widget>
-        <widget class="QGroupBox" row="3" column="0">
-            <property name="name">
-                <cstring>wl_group</cstring>
-            </property>
-            <property name="title">
-                <string>Window List Tiles</string>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLayoutWidget">
+                <widget class="KComboBox" row="5" column="1">
+                    <item>
+                        <property name="text">
+                            <string>No Tile</string>
+                        </property>
+                    </item>
                     <property name="name">
-                        <cstring>Layout5</cstring>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>wl_cb</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Enabled</string>
-                            </property>
-                        </widget>
-                        <widget class="KComboBox">
-                            <property name="name">
-                                <cstring>wl_input</cstring>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property name="name" stdset="0">
-                                <cstring>Spacer4</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Vertical</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </vbox>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>wl_label</cstring>
+                        <cstring>m_wlTile</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>1</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>56</width>
-                            <height>56</height>
-                        </size>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
                     </property>
-                    <property name="frameShape">
-                        <enum>Panel</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for window list buttons.</string>
                     </property>
                 </widget>
-            </hbox>
-        </widget>
-        <widget class="QGroupBox" row="2" column="1">
-            <property name="name">
-                <cstring>exe_group</cstring>
-            </property>
-            <property name="title">
-                <string>Legacy Application Launcher Tiles</string>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLayoutWidget">
+                <widget class="KComboBox" row="1" column="1">
+                    <item>
+                        <property name="text">
+                            <string>No Tile</string>
+                        </property>
+                    </item>
                     <property name="name">
-                        <cstring>Layout4</cstring>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>exe_cb</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Enabled</string>
-                            </property>
-                        </widget>
-                        <widget class="KComboBox">
-                            <property name="name">
-                                <cstring>exe_input</cstring>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property name="name" stdset="0">
-                                <cstring>Spacer8</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Vertical</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </vbox>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>exe_label</cstring>
+                        <cstring>m_desktopTile</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>1</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>56</width>
-                            <height>56</height>
-                        </size>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
                     </property>
-                    <property name="frameShape">
-                        <enum>Panel</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for desktop access buttons.</string>
                     </property>
                 </widget>
-            </hbox>
-        </widget>
-        <widget class="QGroupBox" row="3" column="1">
-            <property name="name">
-                <cstring>desktop_group</cstring>
-            </property>
-            <property name="title">
-                <string>Desktop Access Tiles</string>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLayoutWidget">
+                <widget class="KComboBox" row="0" column="1">
+                    <item>
+                        <property name="text">
+                            <string>No Tile</string>
+                        </property>
+                    </item>
                     <property name="name">
-                        <cstring>Layout6</cstring>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>desktop_cb</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Enabled</string>
-                            </property>
-                        </widget>
-                        <widget class="KComboBox">
-                            <property name="name">
-                                <cstring>desktop_input</cstring>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property name="name" stdset="0">
-                                <cstring>Spacer9</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Vertical</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </vbox>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>desktop_label</cstring>
+                        <cstring>m_kmenuTile</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>3</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>56</width>
-                            <height>56</height>
-                        </size>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
                     </property>
-                    <property name="frameShape">
-                        <enum>Panel</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for the K menu.</string>
                     </property>
                 </widget>
-            </hbox>
+                <spacer row="2" column="2">
+                    <property name="name">
+                        <cstring>Spacer48</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                </spacer>
+            </grid>
         </widget>
-        <widget class="QGroupBox" row="4" column="0" rowspan="1" colspan="2">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>m_backgroundGroup</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>4</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
+                <cstring>GroupBox10</cstring>
             </property>
             <property name="title">
-                <string>Background &amp;Image</string>
-            </property>
-            <property name="alignment">
-                <set>AlignBottom|AlignLeft</set>
-            </property>
-            <property name="vAlign" stdset="0">
+                <string>Panel Background</string>
             </property>
             <grid>
                 <property name="name">
@@ -699,13 +387,19 @@
                     </property>
                     <property name="vAlign" stdset="0">
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This is a preview for the selected background image.</string>
+                    </property>
                 </widget>
                 <widget class="QCheckBox" row="0" column="0">
                     <property name="name">
                         <cstring>m_backgroundImage</cstring>
                     </property>
                     <property name="text">
-                        <string>Enab&amp;le background image</string>
+                        <string>Enable &amp;background image</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If this option is selected, you can choose a background image that will be displayed on the panel. If it is not selected, the default colors will be used, see the 'Colors' control module.</string>
                     </property>
                 </widget>
                 <widget class="KURLRequester" row="1" column="0">
@@ -715,45 +409,33 @@
                     <property name="enabled">
                         <bool>false</bool>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Here you can choose a theme to be displayed by the panel. Press the 'Browse' button to choose a theme using the file dialog.&lt;p&gt; This option is only active if 'Enable background image' is selected.</string>
+                    </property>
                 </widget>
             </grid>
         </widget>
-    </grid>
+        <spacer>
+            <property name="name">
+                <cstring>Spacer9_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
-<customwidgets>
-    <customwidget>
-        <class>QWidget</class>
-        <header location="global">qwidget.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>1</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-        <pixmap>image1</pixmap>
-    </customwidget>
-    <customwidget>
-        <class>KComboBox</class>
-        <header location="global">kcombobox.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>0</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-        <pixmap>image1</pixmap>
-    </customwidget>
-</customwidgets>
 <connections>
     <connection>
         <sender>m_backgroundImage</sender>
@@ -763,10 +445,31 @@
     </connection>
     <connection>
         <sender>m_backgroundImage</sender>
+        <signal>clicked()</signal>
+        <receiver>m_backgroundInput</receiver>
+        <slot>setFocus()</slot>
+    </connection>
+    <connection>
+        <sender>m_backgroundImage</sender>
         <signal>toggled(bool)</signal>
         <receiver>m_backgroundInput</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>m_zoom_cb</tabstop>
+    <tabstop>m_showToolTips</tabstop>
+    <tabstop>m_kmenuTile</tabstop>
+    <tabstop>m_desktopTile</tabstop>
+    <tabstop>m_exeTile</tabstop>
+    <tabstop>m_browserTile</tabstop>
+    <tabstop>m_urlTile</tabstop>
+    <tabstop>m_wlTile</tabstop>
+    <tabstop>m_backgroundImage</tabstop>
+    <tabstop>m_backgroundInput</tabstop>
+</tabstops>
+<includes>
+    <include location="global" impldecl="in declaration">kurlrequester.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

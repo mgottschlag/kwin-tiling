@@ -17,20 +17,21 @@
 
 #include <qcheckbox.h>
 #include <qslider.h>
-#include <qspinbox.h>
 #include <qwhatsthis.h>
 #include <qlineedit.h>
+#include <qlistview.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qvalidator.h>
 #include <qtoolbutton.h>
 #include <qdir.h>
-#include <qlistview.h>
 #include <qtooltip.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
+#include <knuminput.h>
 #include <klocale.h>
+#include <klistview.h>
 #include <kdesktopfile.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
@@ -41,70 +42,46 @@
 
 extern int kickerconfig_screen_number;
 
+kSubMenuItem::kSubMenuItem(QListView* parent, 
+                           const QString& visibleName,
+                           const QString& desktopFile,
+                           const QPixmap& icon,
+                           bool checked)
+    : QCheckListItem(parent, visibleName, QCheckListItem::CheckBox),
+      m_desktopFile(desktopFile)
+{
+    setPixmap(0, icon);
+    setOn(checked);
+}
+
+QString kSubMenuItem::desktopFile() 
+{ 
+    return m_desktopFile; 
+}
+
+void kSubMenuItem::stateChange(bool state)
+{
+    emit toggled(state);
+}
 
 MenuTab::MenuTab( QWidget *parent, const char* name )
-  : MenuTabBase (parent, name)
+  : MenuTabBase (parent, name),
+    m_bookmarkMenu(0),
+    m_quickBrowserMenu(0),
+    m_recentDocumentsMenu(0)
 {
     // connections
-    connect(m_showPixmap, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_formatSimple, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_formatNameDesc, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_formDescName, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_showPixmap, SIGNAL(clicked()), SIGNAL(changed()));  
     connect(m_hiddenFiles, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_maxSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_maxSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_detailedEntries, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_showBookmarks, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_maxQuickBrowserItems, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_showRecent, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_showQuickBrowser, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_num2ShowSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-
-    m_pRecentOrderGroup->setRadioButtonExclusive(true);
-    connect(m_pRecentOrderGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
-
-    connect(m_addMenuBtn, SIGNAL(clicked()), SLOT(slotAddMenuClicked()));
-    connect(m_removeMenuBtn, SIGNAL(clicked()), SLOT(slotRemoveMenuClicked()));\
-    connect(m_availableMenus,SIGNAL(selectionChanged ()),SLOT(slotSelectionChanged()));
-
-    connect(m_selectedMenus,SIGNAL(selectionChanged ()),SLOT(slotSelectionChanged()));
-
-    // whats this help
-    QWhatsThis::add(m_hiddenFiles, i18n("If this option is enabled, hidden files (i.e. files beginning "
-                                        "with a dot) will be shown in the QuickBrowser menus."));
-
-    QString maxstr = i18n("When browsing directories that contain a lot of files, the QuickBrowser "
-                          "can sometimes hide your whole desktop. Here you can limit the number of "
-                          "entries shown at a time in the QuickBrowser. "
-                          "This is particularly useful for low screen resolutions.");
-
-    QWhatsThis::add(m_maxSlider, maxstr);
-    QWhatsThis::add(m_maxSpinBox, maxstr);
-
-    QWhatsThis::add(m_detailedEntries, i18n("Toggle menu entry details."));
-
-    QWhatsThis::add(m_showBookmarks, i18n("Enabling this option will make the panel show "
-                                          "a bookmarks menu in your KDE menu"));
-
-    QWhatsThis::add(m_showRecent, i18n("Enabling this option will make the panel show "
-                                       "a recent documents menu in your KDE menu, containing shortcuts to "
-                                       "your most recently edited documents. This assumes you've been "
-                                       "using KDE applications to edit those documents, as other "
-                                       "applications will not be able to take advantage of this feature."));
-
-    QWhatsThis::add(m_showQuickBrowser, i18n("Enabling this option will show the 'Quick Browser' in your "
-                                             "KDE menu, a fast way of accessing your files via submenus. "
-                                             "You can also add a Quick Browser "
-                                             "as a panel button, using the panel context menu."));
-
-    QToolTip::add(m_addMenuBtn, i18n("Add selected item"));
-    QToolTip::add(m_removeMenuBtn, i18n("Remove selected item"));
-    QWhatsThis::add(m_availableMenus, i18n("The list of available dynamic menus that can be "
-                                           "plugged into the KDE menu. Use the buttons to add "
-                                           "or remove items."));
-    QWhatsThis::add(m_selectedMenus, i18n("The list of selected dynamic menus that will be added "
-                                          "to the KDE menu. Use the buttons to add or remove items. "));
+    connect(m_showFrequent, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_maxQuickStartItems, SIGNAL(valueChanged(int)), SIGNAL(changed()));
 
     load();
-    //at the beginning we didn't select a item
-    m_addMenuBtn->setEnabled(false);
-    m_removeMenuBtn->setEnabled(false);
 }
 
 void MenuTab::load()
@@ -114,55 +91,84 @@ void MenuTab::load()
         configname = "kickerrc";
     else
         configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-    KConfig *c = new KConfig(configname, false, false);
+    KConfig c(configname, false, false);
 
-    c->setGroup("KMenu");
+    c.setGroup("KMenu");
 
-    m_showPixmap->setChecked(c->readBoolEntry("UseSidePixmap", true));
+    m_showPixmap->setChecked(c.readBoolEntry("UseSidePixmap", true));
 
-    c->setGroup("menus");
+    c.setGroup("menus");
+ 
+    m_hiddenFiles->setChecked(c.readBoolEntry("ShowHiddenFiles", false));
+    m_maxQuickBrowserItems->setValue(c.readNumEntry("MaxEntries2", 30));
 
-    m_maxSlider->setValue(c->readNumEntry("MaxEntries2", 30));
-    m_maxSpinBox->setValue(c->readNumEntry("MaxEntries2", 30));
-
-    m_detailedEntries->setChecked(c->readBoolEntry("DetailedMenuEntries", true));
-    m_showBookmarks->setChecked(c->readBoolEntry("UseBookmarks", true));
-    m_showRecent->setChecked(c->readBoolEntry("UseRecent", true));
-    m_showQuickBrowser->setChecked(c->readBoolEntry("UseBrowser", true));
-
-    m_hiddenFiles->setChecked(c->readBoolEntry("ShowHiddenFiles", false));
-
-    m_num2ShowSpinBox->setValue(c->readNumEntry("NumVisibleEntries", 5));
-
-    bool bRecentVsOften = c->readBoolEntry("RecentVsOften", false);
-    if (bRecentVsOften)
-        m_pRecent->setChecked(true);
+    if (c.readBoolEntry("DetailedMenuEntries", true))
+    {
+        if (c.readBoolEntry("DetailedEntriesNamesFirst", true))
+        {
+            m_formatNameDesc->setChecked(true);
+        }
+        else
+        {
+            m_formDescName->setChecked(true);
+        }
+    }
     else
-        m_pOften->setChecked(true);
+    {
+        m_formatSimple->setChecked(true);
+    }
 
-    m_availableMenus->clear();
-    m_selectedMenus->clear();
-    QStringList ext = c->readListEntry("Extensions");
-    QListView *lv(0);
+    m_subMenus->clear();
+
+    // show the bookmark menu?
+    m_bookmarkMenu = new kSubMenuItem(m_subMenus, 
+                                      i18n("Bookmarks"),
+                                      QString::null,
+                                      SmallIcon("bookmark"),
+                                      c.readBoolEntry("UseBookmarks", true));
+    connect(m_bookmarkMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    
+    // show the quick menus menu?
+    m_quickBrowserMenu = new kSubMenuItem(m_subMenus,
+                                          i18n("Quick Browser"),
+                                          QString::null,
+                                          SmallIcon("kdisknav"),
+                                          c.readBoolEntry("UseBrowser", true));
+    connect(m_quickBrowserMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    
+    // show the recent documents menu?
+    m_recentDocumentsMenu = new kSubMenuItem(m_subMenus, 
+                                             i18n("Recent Documents"),
+                                              QString::null,
+                                              SmallIcon("document"),
+                                              c.readBoolEntry("UseRecent", true));
+    connect(m_recentDocumentsMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
+
+    QStringList ext = c.readListEntry("Extensions");
     QStringList dirs = KGlobal::dirs()->findDirs("data", "kicker/menuext");
+    kSubMenuItem* menuItem(0);
     for (QStringList::ConstIterator dit=dirs.begin(); dit!=dirs.end(); ++dit)
     {
         QDir d(*dit, "*.desktop");
         QStringList av = d.entryList();
-        QListViewItem *item(0);
         for (QStringList::ConstIterator it=av.begin(); it!=av.end(); ++it)
         {
             KDesktopFile df(d.absFilePath(*it), true);
-            if (qFind(ext.begin(), ext.end(), *it) == ext.end())
-                lv = m_availableMenus;
-            else
-                lv = m_selectedMenus;
-            item = new QListViewItem(lv, item, df.readName(), *it);
-            item->setPixmap(0, SmallIcon(df.readIcon()));
+            menuItem = new kSubMenuItem(m_subMenus, 
+                                        df.readName(),
+                                        *it,
+                                        SmallIcon(df.readIcon()),
+                                        qFind(ext.begin(), ext.end(), *it) != ext.end());
+            connect(menuItem, SIGNAL(toggled(bool)), SIGNAL(changed()));
         }
     }
 
-    delete c;
+    if (c.readBoolEntry("RecentVsOften", false))
+        m_showRecent->setChecked(true);
+    else
+        m_showFrequent->setChecked(true);
+
+    m_maxQuickStartItems->setValue(c.readNumEntry("NumVisibleEntries", 5));
 }
 
 void MenuTab::save()
@@ -172,88 +178,61 @@ void MenuTab::save()
         configname = "kickerrc";
     else
         configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-    KConfig *c = new KConfig(configname, false, false);
+    KConfig c(configname, false, false);
 
 
-    c->setGroup("KMenu");
+    c.setGroup("KMenu");
 
-    c->writeEntry("UseSidePixmap", m_showPixmap->isChecked());
+    c.writeEntry("UseSidePixmap", m_showPixmap->isChecked());
 
-    c->setGroup("menus");
+    c.setGroup("menus");
 
-    c->writeEntry("MaxEntries2", m_maxSlider->value());
-    c->writeEntry("DetailedMenuEntries", m_detailedEntries->isChecked());
-    c->writeEntry("UseBookmarks", m_showBookmarks->isChecked());
-    c->writeEntry("UseRecent", m_showRecent->isChecked());
-    c->writeEntry("UseBrowser", m_showQuickBrowser->isChecked());
-    c->writeEntry("ShowHiddenFiles", m_hiddenFiles->isChecked());
-    c->writeEntry("NumVisibleEntries", m_num2ShowSpinBox->value());
+    c.writeEntry("MaxEntries2", m_maxQuickBrowserItems->value());
 
-    bool bRecentVsOften = m_pRecent->isChecked();
-    c->writeEntry("RecentVsOften", bRecentVsOften);
+    c.writeEntry("DetailedMenuEntries", !m_formatSimple->isChecked());
+    c.writeEntry("DetailedEntriesNamesFirst", m_formatNameDesc->isChecked());
+    c.writeEntry("ShowHiddenFiles", m_hiddenFiles->isChecked());
+    c.writeEntry("NumVisibleEntries", m_maxQuickStartItems->value());
+    c.writeEntry("RecentVsOften", m_showRecent->isChecked());
 
     QStringList ext;
-    QListViewItem *item = m_selectedMenus->firstChild();
-    while (item)
+    QListViewItem *item(0);
+    for (item = m_subMenus->firstChild(); item; item = item->nextSibling())
     {
-        ext << item->text(1);
-        item = item->nextSibling();
+        bool isOn = static_cast<kSubMenuItem*>(item)->isOn();
+        if (item == m_bookmarkMenu)
+        {
+            c.writeEntry("UseBookmarks", isOn);
+        }
+        else if (item == m_quickBrowserMenu)
+        {
+            c.writeEntry("UseBrowser", isOn);
+        }
+        else if (item == m_recentDocumentsMenu)
+        {
+            c.writeEntry("UseRecent", isOn);
+        }
+        else if (isOn)
+        {
+            ext << static_cast<kSubMenuItem*>(item)->desktopFile();
+        }
     }
-    c->writeEntry("Extensions", ext);
+    c.writeEntry("Extensions", ext);
 
-    c->sync();
-
-    delete c;
+    c.sync();
 }
 
 void MenuTab::defaults()
 {
   m_showPixmap->setChecked(true);
-  m_maxSlider->setValue(30);
-  m_maxSpinBox->setValue(30);
-  m_detailedEntries->setChecked(true);
+  m_maxQuickBrowserItems->setValue(30);
+  m_formatNameDesc->setChecked(true);
   m_showRecent->setChecked(true);
-  m_showQuickBrowser->setChecked(true);
   m_hiddenFiles->setChecked(false);
-  m_showBookmarks->setChecked(true);
+  m_bookmarkMenu->setOn(true);
+  m_quickBrowserMenu->setOn(true);
+  m_recentDocumentsMenu->setOn(true);
 
-  m_pOften->setChecked(true);
-  m_num2ShowSpinBox->setValue(5);
-}
-
-void MenuTab::slotAddMenuClicked()
-{
-    QListViewItem *item = m_availableMenus->currentItem();
-    if (item)
-    {
-        QListViewItem *newItem = new QListViewItem(m_selectedMenus, m_selectedMenus->lastItem(), item->text(0), item->text(1));
-        if (item->pixmap(0))
-            newItem->setPixmap(0, *(item->pixmap(0)));
-        delete item;
-
-        emit changed();
-    }
-}
-
-void MenuTab::slotRemoveMenuClicked()
-{
-    QListViewItem *item = m_selectedMenus->currentItem();
-    if (item)
-    {
-        QListViewItem *newItem = new QListViewItem(m_availableMenus, m_availableMenus->lastItem(), item->text(0), item->text(1));
-        if (item->pixmap(0))
-            newItem->setPixmap(0, *(item->pixmap(0)));
-        delete item;
-
-        emit changed();
-    }
-}
-
-void MenuTab::slotSelectionChanged()
-{
-    QListViewItem *item = m_selectedMenus->currentItem();
-    m_removeMenuBtn->setEnabled(item);
-
-    item=m_availableMenus->currentItem();
-    m_addMenuBtn->setEnabled(item);
+  m_showFrequent->setChecked(true);
+  m_maxQuickStartItems->setValue(5);
 }

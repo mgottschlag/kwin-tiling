@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+ *  Copyright (c) 2002 Aaron Seigo <aseigo@olympusproject.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,6 +22,8 @@
 
 #include "positiontab.h"
 
+class QFrame;
+
 class PositionTab : public PositionTabBase
 {
     Q_OBJECT
@@ -35,8 +38,30 @@ public:
 signals:
     void changed();
 
-private slots:
-    void locationChanged();
+protected slots:
+    void movePanel(int);
+    void lengthenPanel(int);
+    void panelDimensionsChanged();
+
+private:
+    enum positions { PosLeft = 0, PosRight, PosTop, PosBottom };
+    enum allignments { AlignLeft = 0, AlignCenter, AlignRight };
+    enum posButtons { posTopLeft = 0,
+                      posTop,
+                      posTopRight,
+                      posLeftTop,
+                      posLeft,
+                      posLeftBottom,
+                      posBottomLeft,
+                      posBottom,
+                      posBottomRight,
+                      posRightTop,
+                      posRight,
+                      posRightBottom };
+    
+    QFrame* m_pretendPanel;
+    unsigned int m_panelPos;
+    unsigned int m_panelAlign;
 };
 
 #endif

@@ -18,7 +18,32 @@
 #ifndef __menutab_impl_h__
 #define __menutab_impl_h__
 
+#include <qlistview.h>
+
 #include "menutab.h"
+
+class kSubMenuItem : public QObject, public QCheckListItem
+{
+    Q_OBJECT
+
+    public:
+        kSubMenuItem(QListView* parent, 
+                     const QString& visibleName,
+                     const QString& desktopFile,
+                     const QPixmap& icon,
+                     bool checked);
+        ~kSubMenuItem() {}
+   
+        QString desktopFile();
+
+    signals:
+        void toggled(bool);
+
+    protected:
+        void stateChange(bool state);
+
+        QString m_desktopFile;
+};
 
 class MenuTab : public MenuTabBase
 {
@@ -34,10 +59,10 @@ public:
 signals:
     void changed();
 
-protected slots:
-    void slotAddMenuClicked();
-    void slotRemoveMenuClicked();
-    void slotSelectionChanged();
+protected:
+    kSubMenuItem *m_bookmarkMenu;
+    kSubMenuItem *m_quickBrowserMenu;
+    kSubMenuItem *m_recentDocumentsMenu;
 };
 
 #endif

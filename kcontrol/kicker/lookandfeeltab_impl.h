@@ -2,6 +2,7 @@
  *  lookandfeeltab.h
  *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+ *  Copyright (c) 2000 Aaron J. Seigo <aseigo@olympusproject.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,31 +44,15 @@ class LookAndFeelTab : public LookAndFeelTabBase
   void changed();
 
  protected:
-  void setLabel( QLabel *label, const QString &t );
-  void fill_tile_input();
-  QStringList queryAvailableTiles();
-
+  void fillTileCombos();
+  int findComboEntry(QComboBox* combo, const QString& searchFor);
+ 
  protected slots:
   void browse_theme(const QString&);
-  void tiles_clicked();
-  void kmenu_clicked();
-  void kmenu_changed(const QString&);
-  void url_clicked();
-  void url_changed(const QString&);
-  void browser_clicked();
-  void browser_changed(const QString&);
-  void exe_clicked();
-  void exe_changed(const QString&);
-  void desktop_clicked();
-  void desktop_changed(const QString&);
-  void wl_clicked();
-  void wl_changed(const QString&);
-
 
  private:
   QString theme;
   QPixmap theme_preview;
-  QStringList tiles;
 };
 
 #endif

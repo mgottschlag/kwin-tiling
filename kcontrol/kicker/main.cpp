@@ -158,12 +158,6 @@ const KAboutData* KickerConfig::aboutData() const
     return about;
 }
 
-bool KickerConfig::horizontal()
-{
-    return (positiontab->m_topButton->isChecked() ||
-            positiontab->m_bottomButton->isChecked());
-}
-
 extern "C"
 {
     KCModule *create_kicker(QWidget *parent, const char *)
