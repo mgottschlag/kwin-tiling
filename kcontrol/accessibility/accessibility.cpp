@@ -22,7 +22,6 @@
 
 #include <stdlib.h>
 
-
 #include <dcopref.h>
 
 #include <qtabwidget.h>
@@ -36,7 +35,6 @@
 #include <qslider.h>
 #include <qwhatsthis.h>
 
-
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
@@ -49,6 +47,7 @@
 #include <knuminput.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
+#include <kdebug.h>
 
 #include "accessibility.moc"
 
@@ -436,16 +435,19 @@ void KAccessConfig::checkAccess()
   bounceKeysDelay->setEnabled(bounceKeys->isChecked());
 }
 
-const KAboutData* KAccessConfig::aboutData() const
-{
+QString KAccessConfig::quickHelp() const{
+   kdDebug() << "Running: KAccessConfig::quickHelp()"<< endl;
+   return i18n("<h1>Accessibility</h1>");
+}
+
+const KAboutData* KAccessConfig::aboutData() const{
    KAboutData *about =
    new KAboutData(I18N_NOOP("kaccess"), I18N_NOOP("KDE Accessibility Tool"),
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
 
    about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
-
-
+   about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
 
    return about;
 }
