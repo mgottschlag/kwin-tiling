@@ -66,7 +66,6 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   
   m_labCountry = new QLabel(this, I18N_NOOP("Country:"));
   m_comboCountry = new KLanguageButton( this );
-  m_comboCountry->setFixedHeight(m_comboCountry->sizeHint().height());
   m_labCountry->setBuddy(m_comboCountry);
   connect( m_comboCountry, SIGNAL(activated(int)),
 	   this, SLOT(changedCountry(int)) );
