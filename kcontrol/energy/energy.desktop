@@ -7,7 +7,7 @@ Type=Application
 X-KDE-Library=energy
 X-KDE-Init=energy
 X-KDE-ParentApp=kcontrol
-Categories=Qt;KDE;X-KDE-settings-hardware
+Categories=Qt;KDE;X-KDE-settings-energy
 
 Name=Display Power Control
 Name[af]=Vertoon Elektrisiteit Kontrole
@@ -54,7 +54,7 @@ Name[sl]=Nadzor energije zaslona
 Name[sr]=Контрола енергије екрана
 Name[ss]=Bonisa emandla yekulawula
 Name[sv]=Strömsparfunktion för skärmen
-Name[ta]=மின்வலுக
+Name[ta]=மின் கட்டுப்பாட்டை காட்டு
 Name[tg]=Роҳбарии намоиши барқӣ
 Name[th]=ควบคุมการใช้พลังงาน
 Name[tr]=Ekran Güç Denetimi
