@@ -734,8 +734,16 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
         if(err)
             error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
     }
-    else if(putReal(destOrig, destOrigC, EXISTS_NO!=origExists, mode, resume))
-        modifiedDir(CMisc::getDir(destOrig));
+    else
+    {
+        QString dir(CMisc::getDir(destOrig));
+
+        if(!CMisc::dExists(dir))
+            CMisc::createDir(dir);
+
+        if(putReal(destOrig, destOrigC, EXISTS_NO!=origExists, mode, resume))
+            modifiedDir(CMisc::getDir(destOrig));
+    }
 
     if(++itsNewFonts>MAX_NEW_FONTS)
     {
@@ -938,6 +946,11 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
             error(KIO::ERR_CANNOT_OPEN_FOR_READING, src.path());
             return;
         }
+
+        QString destDir(CMisc::getDir(realDest));
+
+        if(!CMisc::dExists(destDir))
+            CMisc::createDir(destDir);
 
         // WABA: Make sure that we keep writing permissions ourselves,
         // otherwise we can be in for a surprise on NFS.
@@ -1187,12 +1200,8 @@ void CKioFonts::mkdir(const KURL &url, int)
                     error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
             }
             else
-                if (EXISTS_NO==exists && 0!=::mkdir(realPath.data(), 0777 /*umask will be applied*/ ))
-                    error(EACCES==errno
-                                  ? KIO::ERR_ACCESS_DENIED
-                                  : ENOSPC==errno
-                                        ? KIO::ERR_DISK_FULL
-                                        : KIO::ERR_COULD_NOT_MKDIR, url.path() );
+                if(!CMisc::createDir(realPath))
+                    error(KIO::ERR_COULD_NOT_MKDIR, url.path());
                 else
                 {
                     addedDir(realPath);
