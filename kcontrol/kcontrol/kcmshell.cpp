@@ -147,6 +147,8 @@ int main(int _argc, char *_argv[])
     if (args->count() == 1) {
 
         QString path = locateModule(args->arg(0));
+        if (path.isEmpty()) 
+           return 0;
 
         // load the module
         ModuleInfo info(path);
