@@ -11,9 +11,9 @@ bin_PROGRAMS = kpolygon.kss kswarm.kss kbanner.kss \
 	kpyro.kss khop.kss $(XPM_SAVERS) $(GL_SAVERS) \
 	kblob.kss kbouboule.kss kscience.kss \
 	kslidescreen.kss krandom.kss \
-	kslideshow.kss kbsod.kss kvm.kss
+	kslideshow.kss kbsod.kss
 
-EXTRA_PROGRAMS = kbat.kss kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss
+EXTRA_PROGRAMS = kbat.kss kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss kvm.kss
 
 KDE_ICON = kscreensaver
 
