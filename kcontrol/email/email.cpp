@@ -44,7 +44,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 
 	lblCurrentProfile = new QLabel( this, "lblCurrentProfile" );
 	lblCurrentProfile->setGeometry( QRect( 6, 6, 83, 22 ) ); 
-	lblCurrentProfile->setText( i18n("Current Profile:" ) );
+	lblCurrentProfile->setText( i18n("Cu&rrent Profile:" ) );
 	lblCurrentProfile->setMinimumSize( QSize( 0, 0 ) );
 	layCurProfile->addWidget(lblCurrentProfile);
 
@@ -53,6 +53,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	cmbCurProfile->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, cmbCurProfile->sizePolicy().hasHeightForWidth() ) );
 	layCurProfile->addWidget(cmbCurProfile);
 	connect(cmbCurProfile, SIGNAL(activated(const QString &)), this, SLOT(slotComboChanged(const QString &)));
+	lblCurrentProfile->setBuddy(cmbCurProfile);
 
 	QHBoxLayout *layCurProfile2 = new QHBoxLayout(topLayout);
 	btnNewProfile = new QPushButton( this, "btnNewProfile" );
@@ -97,7 +98,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 
 	lblReplyTo = new QLabel( grpUserInfo, "lblReplyTo" );
 	lblReplyTo->setGeometry( QRect( 7, 106, 107, 22 ) ); 
-	lblReplyTo->setText( i18n( "&Reply-To Address:" ) );
+	lblReplyTo->setText( i18n( "Reply-&To Address:" ) );
 	txtReplyTo = new QLineEdit( grpUserInfo, "txtReplyTo" );
 	txtReplyTo->setGeometry( QRect( 122, 106, 406, 22 ) ); 
 	connect(txtReplyTo, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
@@ -136,7 +137,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 
 	radIMAP = new QRadioButton( grpICM, "radIMAP" );
 	radIMAP->setGeometry( QRect( 10, 20, 52, 19 ) ); 
-	radIMAP->setText(i18n( "&IMAP" ) );
+	radIMAP->setText(i18n( "I&MAP" ) );
 	connect(radIMAP, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	radPOP = new QRadioButton( grpICM, "radPOP" );
@@ -146,12 +147,12 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 
 	radICMLocal = new QRadioButton( grpICM, "radICMLocal" );
 	radICMLocal->setGeometry( QRect( 120, 20, 98, 19 ) ); 
-	radICMLocal->setText(i18n( "Local &Mailbox" ) );
+	radICMLocal->setText(i18n( "Local M&ailbox" ) );
 	connect(radICMLocal, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	btnICMSettings = new QPushButton( grpIncoming, "btnICMRemoteSettings" );
 	btnICMSettings->setGeometry( QRect( 245, 45, 175, 26 ) ); 
-	btnICMSettings->setText(i18n( "Incoming mailbox settings..." ) );
+	btnICMSettings->setText(i18n( "&Incoming mailbox settings..." ) );
 	btnICMSettings->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	connect(btnICMSettings, SIGNAL(clicked()), this, SLOT(slotICMSettings()));
 
@@ -178,7 +179,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 
 	btnOGMSettings = new QPushButton( grpOutgoing, "btnOGMSMTPSettings" );
 	btnOGMSettings->setGeometry( QRect( 245, 15, 175, 26 ) ); 
-	btnOGMSettings->setText(i18n( "Outgoing mailbox settings..." ));
+	btnOGMSettings->setText(i18n( "&Outgoing mailbox settings..." ));
 	btnOGMSettings->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
 	connect(btnOGMSettings, SIGNAL(clicked()), this, SLOT(slotOGMSettings()));
 
