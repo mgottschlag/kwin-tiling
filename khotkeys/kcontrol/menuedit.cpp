@@ -34,12 +34,22 @@
 namespace KHotKeys
 {
 
+static QObject* owner = NULL;
+
 void khotkeys_init()
     {
     // I hope this works
     KGlobal::locale()->insertCatalogue("khotkeys");
     // CHECKME hack
-    init_global_data( false, new QObject );
+    assert( owner == NULL );
+    owner = new QObject;
+    init_global_data( false, owner );
+    }
+
+void khotkeys_cleanup()
+    {
+    delete owner;
+    owner = NULL;
     }
 
 Menuentry_shortcut_action_data* khotkeys_get_menu_entry_internal2( 
@@ -309,6 +319,11 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
 void khotkeys_init()
     {
     KHotKeys::khotkeys_init();
+    }
+    
+void khotkeys_cleanup()
+    {
+    KHotKeys::khotkeys_cleanup();
     }
     
 QString khotkeys_get_menu_entry_shortcut( const QString& entry_P )

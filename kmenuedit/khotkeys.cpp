@@ -24,6 +24,7 @@
 extern "C"
 {
     static void (*khotkeys_init_2)( void );
+    static void (*khotkeys_cleanup_2)( void );
     static QString (*khotkeys_get_menu_entry_shortcut_2)( const QString& entry_P );
     static QString (*khotkeys_change_menu_entry_shortcut_2)( const QString& entry_P,
                                                              const QString& shortcut_P );
@@ -43,6 +44,7 @@ bool KHotKeys::init()
     if( lib == NULL ) return false;
 
     khotkeys_init_2 = ( void (*)(void)) ( lib->symbol( "khotkeys_init" ));
+    khotkeys_cleanup_2 = ( void (*)(void)) ( lib->symbol( "khotkeys_cleanup" ));
     khotkeys_get_menu_entry_shortcut_2 =
         ( QString (*)( const QString& ))
         ( lib->symbol( "khotkeys_get_menu_entry_shortcut" ));
@@ -63,6 +65,7 @@ bool KHotKeys::init()
         ( lib->symbol( "khotkeys_find_menu_entry" ));
         
     if( khotkeys_init_2
+        && khotkeys_cleanup_2
         && khotkeys_get_menu_entry_shortcut_2
         && khotkeys_change_menu_entry_shortcut_2
         && khotkeys_menu_entry_moved_2
@@ -73,6 +76,12 @@ bool KHotKeys::init()
         return true;
     }
     return false;
+}
+
+void KHotKeys::cleanup()
+{
+    if( khotkeys_present )
+        khotkeys_cleanup_2();
 }
 
 bool KHotKeys::present()

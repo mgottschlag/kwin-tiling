@@ -22,6 +22,9 @@ extern "C"
 // initializes khotkeys DSO - loads i18n catalogue
 // handled automatically by KHotKeys wrapper class in kmenuedit
 KDE_EXPORT void khotkeys_init( void );
+// clean up khotkeys DSO
+// handled automatically by KHotKeys wrapper class in kmenuedit
+KDE_EXPORT void khotkeys_cleanup( void );
 // return keyboard shortcut ( e.g. "ALT+T" ) for given menu entry ( e.g.
 // "System/Konsole.desktop"
 KDE_EXPORT QString khotkeys_get_menu_entry_shortcut( const QString& entry_P );

@@ -31,6 +31,7 @@
 #include "main.h"
 #include "modifiers.h"
 #include "shortcuts.h"
+#include "khotkeys.h"
 
 /*
 | Shortcut Schemes | Modifier Keys |
@@ -59,6 +60,11 @@ KeyModule::KeyModule( QWidget *parent, const char *name )
     " you will find bindings typically used in applications, such as copy and paste."));
 
 	initGUI();
+}
+
+KeyModule::~KeyModule()
+{
+    KHotKeys::cleanup();
 }
 
 void KeyModule::initGUI()

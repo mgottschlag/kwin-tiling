@@ -30,6 +30,7 @@ class KHotKeys
 {
 public:
     static bool init();
+    static void cleanup();
     static bool present();
     static QString getMenuEntryShortcut( const QString& entry_P );
     static QString changeMenuEntryShortcut( const QString& entry_P,

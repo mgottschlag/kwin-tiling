@@ -26,6 +26,7 @@
 #include <kaboutdata.h>
 
 #include "kmenuedit.h"
+#include "khotkeys.h"
 
 static const char description[] = I18N_NOOP("KDE menu editor");
 static const char version[] = "0.7";
@@ -43,6 +44,7 @@ class KMenuApplication : public KUniqueApplication
 {
 public:
    KMenuApplication() { }
+   virtual ~KMenuApplication() { KHotKeys::cleanup(); }
    
    virtual int newInstance()
    {
