@@ -57,7 +57,7 @@ void kForceLocker()
 			root = 0;
 
 		// either no saver is running or an old pidFile was not removed
-		QString buffer = QString(KApplication::kde_bindir().data());
+		QString buffer = KApplication::kde_bindir();
 		buffer.append("/kblankscrn.kss");
 	    
 		if ( fork() == 0 )
