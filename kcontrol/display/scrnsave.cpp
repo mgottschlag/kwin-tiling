@@ -37,7 +37,7 @@
 #include <knuminput.h>
 #include <kstddirs.h>
 #include <klocale.h>
-#include <kconfig.h>
+#include <kdesktopfile.h>
 #include <kcolordlg.h>
 #include <kiconloader.h>
 #include <kcmodule.h>
@@ -47,9 +47,6 @@
 #include <X11/Xlib.h>
 
 #include "scrnsave.h"
-
-
-#define CORNER_SIZE		15
 
 
 //===========================================================================
@@ -71,13 +68,21 @@ SaverConfig::SaverConfig()
 
 bool SaverConfig::read(QString file)
 {
-    KSimpleConfig config(file, true);
-    
-    config.setDesktopGroup();
+    KDesktopFile config(file, true);
     mExec = config.readEntry("Exec");
-    mSetup = config.readEntry("Exec-setup");
-    mSaver = config.readEntry("Exec-kss");
     mName = config.readEntry("Name");
+
+    if (config.hasActionGroup("Setup"))
+    {
+      config.setActionGroup("Setup");
+      mSetup = config.readEntry("Exec");
+    }
+
+    if (config.hasActionGroup("InWindow"))
+    {
+      config.setActionGroup("InWindow");
+      mSaver = config.readEntry("Exec");
+    }
     
     int indx = file.findRev('/');
     if (indx >= 0) {
