@@ -410,7 +410,7 @@ const char* const Tab_widget::tab_labels[ Tab_widget::TAB_END ] = {
     I18N_NOOP( "Gestures" ), // TAB_GESTURE_TRIGGER
     I18N_NOOP( "Actions" ), // TAB_ACTIONS
     I18N_NOOP( "Command/URL settings" ), // TAB_COMMAND_URL
-    I18N_NOOP( "Menuentry settings" ), // TAB_MENUENTRY
+    I18N_NOOP( "Menu entry settings" ), // TAB_MENUENTRY
     I18N_NOOP( "DCOP call settings" ), // TAB_DCOP
     I18N_NOOP( "Keyboard input settings" ), // TAB_KEYBOARD_INPUT
     I18N_NOOP( "Window" ), // TAB_WINDOW

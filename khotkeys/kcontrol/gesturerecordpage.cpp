@@ -101,7 +101,7 @@ void GestureRecordPage::slotRecorded(const QString &data)
                 }
             else
                 {
-                KMessageBox::sorry(this, i18n("Sorry, your gestures didn't match."));
+                KMessageBox::sorry(this, i18n("Your gestures didn't match."));
                 slotResetClicked();
                 }
             break;
@@ -117,7 +117,7 @@ void GestureRecordPage::slotRecorded(const QString &data)
                 }
             else
                 {
-                KMessageBox::sorry(this, i18n("Sorry, your gestures didn't match."));
+                KMessageBox::sorry(this, i18n("Your gestures didn't match."));
                 slotResetClicked();
                 }
             break;
