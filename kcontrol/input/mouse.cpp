@@ -161,8 +161,8 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   connect(dragStartDist, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
   wtstr = i18n("If you click with the mouse and begin to move the"
-               "mouse at least the drag start distance, a drag"
-               "operation will be initiated.");
+               " mouse at least the drag start distance, a drag"
+               " operation will be initiated.");
   QWhatsThis::add( dragStartDist, wtstr);
 
   handedBox = new QHButtonGroup(i18n("Button Mapping"), this, "handed");
