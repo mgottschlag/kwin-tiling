@@ -211,7 +211,7 @@ int main( int argc, char* argv[] )
     bool screenCountChanged =
          ( config->readNumEntry( "screenCount", realScreenCount ) != realScreenCount );
 
-    QString loginMode = config->readEntry( "loginMode", "default" );
+    QString loginMode = config->readEntry( "loginMode", "restorePreviousLogout" );
 
     if ( loginMode == "default" || screenCountChanged )
 	server->startDefaultSession();
