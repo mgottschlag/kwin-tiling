@@ -21,12 +21,10 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
-#warning TODO: Fill in this description
 static const char *description = 
-	I18N_NOOP("What does this do?.");
+	I18N_NOOP("Login chooser for Xdmcp");
 
 static const char *version = "v0.0.1";
-
 
 static ChooserDlg *kchooser = 0;
 
