@@ -69,13 +69,14 @@ void FontUseItem::readFont()
     KConfigBase *config;
     
     if (_rcfile.isEmpty())
-	config = KGlobal::config();
+	config = new KConfig(QString::fromLatin1("kcontrolrc"));
     else
 	 config = new KSimpleConfig(locate("config", _rcfile), true);
 
     config->setGroup(_rcgroup);
     QFont tmpFnt(_font);
     _font = config->readFontEntry(_rckey, &tmpFnt);
+    delete config;
 }
 
 void FontUseItem::writeFont()
@@ -83,16 +84,16 @@ void FontUseItem::writeFont()
     KConfigBase *config;
     
     if (_rcfile.isEmpty()) {
-	config = KGlobal::config();
+	config = new KConfig(QString::fromLatin1("kcontrolrc"));
 	config->setGroup(_rcgroup);
-	config->writeEntry(_rckey, _font, true, true);
+	config->writeEntry(_rckey, _font, false, true);
     } else {
 	config = new KSimpleConfig(locate("config", _rcfile));
 	config->setGroup(_rcgroup);
 	config->writeEntry(_rckey, _font);
 	config->sync();
-	delete config;
     }
+    delete config;
 }
 
 
@@ -122,7 +123,12 @@ KFonts::KFonts(QWidget *parent, const char *name)
 			    QFont( "fixed", 12 ), true );
     item->setRC( "General", "fixedFont" );
     fontUseList.append( item );
-    
+
+    item = new FontUseItem( i18n("Toolbar font"),
+			    QFont( "helvetica", 10 ) );
+    item->setRC( "General", "buttonFont" );
+    fontUseList.append( item );
+   
     item = new FontUseItem( i18n("Window title font"),
 			    QFont( "helvetica", 12, QFont::Bold ) );
     item->setRC( "WM", "titleFont" );
