@@ -23,10 +23,7 @@
 #include "knotify.h"
 #include "knotify.moc"
 
-#include <qlabel.h>
 #include <qlayout.h>
-#include <X11/Xlib.h>
-#include <config.h>
 
 KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	KCModule(parent, name)
