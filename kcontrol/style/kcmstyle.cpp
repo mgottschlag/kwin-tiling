@@ -243,7 +243,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	comboMenuHandle = new QComboBox( FALSE, containerFrame );
 	comboMenuHandle->insertItem( i18n("Disable") );
 	comboMenuHandle->insertItem( i18n("Application level") );
-	comboMenuHandle->insertItem( i18n("Enable") );
+//	comboMenuHandle->insertItem( i18n("Enable") );
 	lblMenuHandle = new QLabel( i18n("Me&nu tear-off handles:"), containerFrame );
 	lblMenuHandle->setBuddy( comboMenuHandle );
 	containerLayout->addWidget( lblMenuHandle, 3, 0 );
