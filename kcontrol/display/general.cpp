@@ -104,15 +104,23 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     KConfig kconfig("kstylerc");
     kconfig.setGroup("KDE");
     defName = QString::fromLatin1("KDE default");
-    curTheme = kconfig.readEntry("currentTheme");
+    QString file = kconfig.readEntry("currentTheme");
 
     addColumn(i18n("Name"));
     addColumn(i18n("Description"));
     setAllColumnsShowFocus(true);
     KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + "kstyle/themes");
 
-    if (curTheme.isEmpty())
-       curTheme = locate("themes", "default.themerc");
+    if (file.isEmpty())
+        file = locate("themes", "default.themerc");
+    
+    if ( !file.isEmpty() ) {
+        KConfig config( file );
+        config.setGroup("KDE");
+        curTheme = config.readEntry("WidgetStyle");
+    }
+    else
+        curTheme = "HighColor"; //### or maybe try one of QStyleFactory::keys()
 
     connect(KDirWatch::self(), SIGNAL(dirty(const QString&)),
             this, SLOT(rescan()));
@@ -151,8 +159,8 @@ void KThemeListBox::readTheme(const QString &file)
     config.setGroup( "KDE" );
 
     QString style = config.readEntry( "WidgetStyle" );
-    QListViewItem *item = new QListViewItem(this, name, desc, file);
-    if (file == curTheme) {
+    QListViewItem *item = new QListViewItem(this, name, desc, style);
+    if (style == curTheme) {
         curItem = item;
         setSelected(item, true);
         ensureItemVisible(item);
@@ -224,6 +232,10 @@ void KThemeListBox::save()
 
     curItem = currentItem();
     curTheme = curItem->text(2);
+    
+    KSimpleConfig config("kstylerc");
+    config.setGroup("KDE");
+    config.writeEntry("WidgetStyle", curTheme);
 }
 
 
@@ -516,11 +528,11 @@ void KGeneral::readSettings()
     config->setGroup("KDE");
     QString str = config->readEntry( "WidgetStyle", "Platinum" );
     if ( str == "Platinum" )
-    applicationStyle = WindowsStyle;
+        applicationStyle = WindowsStyle; // ### huh? Platinum -> Windows?
     else if ( str == "Windows 95" )
-    applicationStyle = WindowsStyle;
+        applicationStyle = WindowsStyle;
     else
-    applicationStyle = MotifStyle;
+        applicationStyle = MotifStyle;
     macStyle = config->readBoolEntry( "macStyle", false);
     effectAnimateMenu = config->readBoolEntry( "EffectAnimateMenu", false );
     effectFadeMenu = config->readBoolEntry( "EffectFadeMenu", false );
@@ -635,7 +647,7 @@ void KGeneral::save()
     themeList->save();
 
     if (!m_bChanged)
-    return;
+        return;
 
     config->setGroup("KDE");
     config->writeEntry("macStyle", macStyle, true, true);
@@ -643,8 +655,8 @@ void KGeneral::save()
     config->writeEntry("EffectFadeMenu", effectFadeMenu, true, true);
     config->writeEntry("EffectAnimateCombo", effectAnimateCombo, true, true);
     config->writeEntry("EffectFadeTooltip", effectFadeTooltip, true, true);
-	config->writeEntry("EffectAnimateTooltip", effectAnimateTooltip, true, true);
-	config->writeEntry("EffectNoTooltip", effectNoTooltip, true, true);
+    config->writeEntry("EffectAnimateTooltip", effectAnimateTooltip, true, true);
+    config->writeEntry("EffectNoTooltip", effectNoTooltip, true, true);
 
     config->setGroup("Toolbar style");
     config->writeEntry("IconText", tbUseText, true, true);
