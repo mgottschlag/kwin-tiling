@@ -332,12 +332,15 @@ void KArtsModule::save()
 	configChanged = false;
 	saveParams();
 
+    QString dialogText;
+    if(artsConfig->startServer->isChecked()) {
+        dialogText = i18n("Restart sound-server now?\nThis is needed for your changes to take effect\n\nRestarting the sound server might confuse or\neven crash applications using the sound server.");
+    } else {
+        dialogText = i18n("Shut down sound-server now?\nThis might confuse or even crash applications\nusing the sound server.");
+    }
+        
 	if(KMessageBox::warningYesNo(this,
-				     i18n("If you say 'no', your changes will become active the\n"
-					  "next time you log in.\n\n"
-					  "If you say 'yes', I will restart the sound server now.\n"
-					  "However, applications using sound right now might get\n"
-					  "confused or crash."),
+                     dialogText,
 				     i18n("Restart sound server now?")) == KMessageBox::Yes)
 	{
 		system("artsshell terminate");
