@@ -154,7 +154,8 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     maxItems = new KIntNumInput( this );
     maxItems->setLabel(  i18n( "C&lipboard history size:" ) );
     maxItems->setRange( 2, 25, 1, true );
-    maxItems->setSuffix( i18n( " items" ) );
+    connect( maxItems, SIGNAL( valueChanged( int )), 
+             SLOT( historySizeChanged( int ) ));
 
     // Add some spacing at the end
     QLabel *dummy = new QLabel( this );
@@ -165,6 +166,12 @@ GeneralWidget::~GeneralWidget()
 {
 }
 
+void GeneralWidget::historySizeChanged( int value )
+{
+    // Note there is no %n in this string, because value is not supposed
+    // to be put into the suffix of the spinbox.
+    maxItems->setSuffix( i18n( " entry", " entries", value ) );
+}
 
 /////////////////////////////////////////
 ////

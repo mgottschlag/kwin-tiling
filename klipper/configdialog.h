@@ -45,6 +45,9 @@ public:
     GeneralWidget( QWidget *parent, const char *name );
     ~GeneralWidget();
 
+private slots:
+    void historySizeChanged( int value );
+
 private:
     QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH, *cbNoNull;
     QRadioButton *cbSynchronize, *cbImplicitSelection, *cbSeparate;
