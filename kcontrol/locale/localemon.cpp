@@ -190,7 +190,7 @@ void KLocaleConfigMoney::save()
 
   i = ent.readNumEntry("NegativePrefixCurrencySymbol", true);
   str = i==locale->_negativePrefixCurrencySymbol?QString::null:QString::number(locale->_negativePrefixCurrencySymbol);
-  config->writeEntry("negativePrefixCurrencySymbol", str, true, true);
+  config->writeEntry("NegativePrefixCurrencySymbol", str, true, true);
 
   i = ent.readNumEntry("PositiveMonetarySignPosition", KLocale::BeforeQuantityMoney);
   str = i==locale->_positiveMonetarySignPosition?QString::null:QString::number(locale->_positiveMonetarySignPosition);
