@@ -54,8 +54,8 @@ void DockContainer::setBaseWidget(QWidget *widget)
 
 void DockContainer::dockModule(ConfigModule *module)
 {
-  if (_module == module)
-    return;
+  if (!module) return;
+  if (_module == module) return;
 
   if (_module && _module->isChanged())
     {	  	  
@@ -69,40 +69,37 @@ void DockContainer::dockModule(ConfigModule *module)
                                           i18n("&Forget"));
       if (res == KMessageBox::Yes)
         _module->module()->applyClicked();
-      
-      _module->deleteClient();
     }
-  else if (_module)
-    _module->deleteClient();
   
   _busy->raise();
   _busy->show();
   _busy->repaint();
   QApplication::setOverrideCursor( waitCursor );
   ProxyWidget *widget = module->module();
-  QApplication::restoreOverrideCursor();
-  
+
   if (widget)
     {
+      if (_module)
+        _module->deleteClient();
+
       _module = module;
       connect(_module, SIGNAL(childClosed()),
               this, SLOT(removeModule()));
       
       widget->reparent(this, 0 , QPoint(0,0), false);
-      widget->resize(width(), height());
-      //updateGeometry();
+      widget->resize(size());
       
-      QString quickhelp = "";
-      if (_module && _module->module())
-        quickhelp = _module->module()->quickHelp();
-      
-      emit newModule(widget->caption(), quickhelp);
+      emit newModule(widget->caption(), widget->quickHelp());
+      QApplication::restoreOverrideCursor();
     }
   else
-    KMessageBox::sorry(0, i18n("Sorry, the control module \"%1\" could not be loaded.\n"
-                               "Perhaps it is not installed.").arg(module->name())
-                       , i18n("Could not load control module."));
-  _busy->raise();
+    {
+      QApplication::restoreOverrideCursor();
+      KMessageBox::sorry(0, i18n("Sorry, the control module \"%1\" could not be loaded.\n"
+                                 "Perhaps it is not installed.").arg(module->name())
+                         , i18n("Could not load control module."));
+    }
+
   if (widget) widget->show();
   _busy->hide();
 }
