@@ -410,7 +410,10 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     // Default values.
     defColorA = _defColorA;
     defColorB = _defColorB;
-    defBackgroundMode = _defBackgroundMode;
+    if (QPixmap::defaultDepth() > 8)
+        defBackgroundMode = _defBackgroundMode;
+    else
+        defBackgroundMode = Flat;
     defWallpaperMode = _defWallpaperMode;
     defMultiMode = _defMultiMode;
     defBlendMode = _defBlendMode;
