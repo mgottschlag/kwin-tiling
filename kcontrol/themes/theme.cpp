@@ -31,6 +31,7 @@
 #include <qbitmap.h>
 #include <qpainter.h>
 #include <qmessagebox.h>
+#include <qwindowdefs.h>
 
 #include <string.h>
 #include <errno.h>
@@ -40,7 +41,12 @@
 
 #include <kconfigbackend.h>
 #include <kwm.h>
-#include <qwindowdefs.h>
+#include <klocale.h>
+#include <kconfig.h>
+#include <kglobal.h>
+#include <kstddirs.h>
+#include <kdesktopfile.h>
+
 #include <sys/stat.h>
 #include <assert.h>
 
@@ -52,10 +58,6 @@
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
-#include <klocale.h>
-#include <kconfig.h>
-#include <kglobal.h>
-#include <kstddirs.h>
 
 extern int dropError(Display *, XErrorEvent *);
 
@@ -727,13 +729,10 @@ bool Theme::backupFile(const QString fname) const
 //-----------------------------------------------------------------------------
 int Theme::installIcons(void)
 {
-  KSimpleConfig* cfg = NULL;
   QString key, value, mapval, fname, fpath, destName, icon, miniIcon;
   QString iconDir, miniIconDir, cmd, destNameMini, localShareDir;
-  QStrList pathList(true);
   QStrList extraIcons;
   QFileInfo finfo;
-  const char* path;
   int i, installed = 0;
   const char* groupName = "Icons";
   const char* groupNameExtra = "Extra Icons";
@@ -751,12 +750,6 @@ int Theme::installIcons(void)
 
   setGroup(groupName);
   mMappings->setGroup(groupName);
-
-  // Construct search path for kdelnk files
-  pathList.append((kapp->localkdedir() + "/share/applnk").ascii());
-  pathList.append((kapp->localkdedir() + "/share/mimelnk").ascii());
-  pathList.append(kapp->kde_appsdir().ascii());
-  pathList.append(kapp->kde_mimedir().ascii());
 
   mkdirhier("share/icons/mini");
   iconDir = kapp->localkdedir() + "/share/icons/";
@@ -797,19 +790,13 @@ int Theme::installIcons(void)
     if (destName.isEmpty())
     {
       fname = "/" + key + ".kdelnk";
-      for (fpath=QString::null, path=pathList.first(); path; path=pathList.next())
-      {
-	fpath = path + fname;
-	finfo.setFile(fpath);
-	if (finfo.exists()) break;
-	fpath = QString::null;
-      }
-      if (!fpath.isEmpty())
-      {
-	cfg = new KSimpleConfig(fpath, true);
-	cfg->setGroup("KDE Desktop Entry");
-	destName = cfg->readEntry("Icon", QString::null);
-	delete cfg;
+      fpath = locate("apps", fname);
+      if (fpath.isNull())
+	fpath = locate("mime", fname);
+      
+      if (!fpath.isEmpty()) {
+	KDesktopFile cfg(fpath, true);
+	destName = cfg.readIcon();
       }
     }
     else
