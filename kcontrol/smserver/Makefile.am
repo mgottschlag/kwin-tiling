@@ -11,8 +11,8 @@ noinst_HEADERS = kcmsmserver.h smserverconfigimpl.h
 
 KDE_ICON = go
 
-messages:
-	$(XGETTEXT) $(libkcm_smserver_la_SOURCES) -o $(podir)/kcmsmserver.pot
+messages: rc.cpp
+	$(XGETTEXT) *.cpp -o $(podir)/kcmsmserver.pot
 
 data_DATA = kcmsmserver.desktop
 datadir = $(kde_appsdir)/Settings/System/
