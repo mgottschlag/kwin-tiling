@@ -181,8 +181,10 @@ NICList* findNICs()
             tmp->type=i18n("Broadcast");
          else if ((flags & IFF_POINTOPOINT) == IFF_POINTOPOINT)
             tmp->type=i18n("Point to Point");
+#ifndef _AIX
          else if ((flags & IFF_MULTICAST) == IFF_MULTICAST)
             tmp->type=i18n("Multicast");
+#endif
          else if ((flags & IFF_LOOPBACK) == IFF_LOOPBACK)
             tmp->type=i18n("Loopback");
          else
