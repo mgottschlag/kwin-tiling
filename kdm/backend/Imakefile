@@ -124,11 +124,18 @@ SOCK_DEFINES = -DBSD44SOCKETS
 FRAGILE_DEFINES = -DFRAGILE_DEV_MEM
 #endif
 
-#ifdef OpenBSDArchitecture
+#ifdef RandomDefines
+RANDOM_DEFINES = RandomDefines
+#elif defined(OpenBSDArchitecture)
 RANDOM_DEFINES = -DARC4_RANDOM
 #elif defined(LinuxArchitecture)
-RANDOM_DEFINES = -DDEV_RANDOM
+RANDOM_DEFINES = -DDEV_RANDOM=\"/dev/urandom\"
+#elif defined(NetBSDArchitecture) && \
+  ((OSMajorVersion > 1) || \
+   (OSMajorVersion == 1 && OSMinorVersion > 3))
+RANDOM_DEFINES = -DDEV_RANDOM=\"/dev/urandom\"
 #endif
+
 
 #if HasSetUserContext
 USER_CONTEXT_DEFINES = -DHAS_SETUSERCONTEXT
