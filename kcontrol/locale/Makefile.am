@@ -4,10 +4,10 @@ INCLUDES = $(all_includes)
 SUBDIRS = default pics
 
 kde_module_LTLIBRARIES = libkcm_locale.la
-libkcm_locale_la_SOURCES = ktagcombobox.cpp klocaleadv.cpp main.cpp toplevel.cpp locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp 
+libkcm_locale_la_SOURCES = klocaleadv.cpp main.cpp toplevel.cpp locale.cpp klanguagebutton.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp 
 
 METASOURCES = AUTO
-noinst_HEADERS = ktagcombobox.h klocaleadv.h toplevel.h locale.h klangcombo.h klocalesample.h localenum.h localemon.h localetime.h
+noinst_HEADERS = klocaleadv.h toplevel.h locale.h klanguagebutton.h klocalesample.h localenum.h localemon.h localetime.h menuitem.h
 
 libkcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_locale_la_LIBADD = $(LIB_KDEUI)

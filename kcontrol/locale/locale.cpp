@@ -41,7 +41,7 @@
 #include <kdialog.h>
 
 #include "klocaleadv.h"
-#include "klangcombo.h"
+#include "klanguagebutton.h"
 #include "klocalesample.h"
 #include "locale.h"
 #include "locale.moc"
@@ -58,20 +58,20 @@ KLocaleConfig::KLocaleConfig(KLocaleAdvanced *_locale,
     lay->setAutoAdd(TRUE);
 
     labCountry = new QLabel(this, I18N_NOOP("Country:"));
-    comboCountry = new KLanguageCombo(this);
+    comboCountry = new KLanguageButton( this );
     comboCountry->setFixedHeight(comboCountry->sizeHint().height());
     labCountry->setBuddy(comboCountry);
     connect( comboCountry, SIGNAL(activated(int)),
          this, SLOT(changedCountry(int)) );
 
     labLang = new QLabel(this, I18N_NOOP("Language:"));
-    comboLang = new KLanguageCombo(this);
+    comboLang = new KLanguageButton( this );
     comboLang->setFixedHeight(comboLang->sizeHint().height());
     connect( comboLang, SIGNAL(activated(int)),
          this, SLOT(changedLanguage(int)) );
 
     labChset = new QLabel(this, I18N_NOOP("Charset:"));
-    comboChset = new KLanguageCombo(this);
+    comboChset = new KLanguageButton( this );
     comboChset->setFixedHeight(comboChset->sizeHint().height());
     connect( comboChset, SIGNAL(activated(int)),
          this, SLOT(changedCharset(int)) );
@@ -87,7 +87,7 @@ KLocaleConfig::~KLocaleConfig ()
 {
 }
 
-void KLocaleConfig::loadLanguageList(KLanguageCombo *combo, const QStringList &first)
+void KLocaleConfig::loadLanguageList(KLanguageButton *combo, const QStringList &first)
 {
   // temperary use of our locale as the global locale
   KLocale *lsave = KGlobal::_locale;
@@ -142,7 +142,7 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo, const QStringList &f
   KGlobal::_locale = lsave;
 }
 
-void KLocaleConfig::loadCountryList(KLanguageCombo *combo)
+void KLocaleConfig::loadCountryList(KLanguageButton *combo)
 {
   // temperary use of our locale as the global locale
   KLocale *lsave = KGlobal::_locale;
@@ -324,9 +324,6 @@ void KLocaleConfig::changedCountry(int i)
   locale->setLanguage(lang);
   locale->setCountry(country);
 
-  loadLanguageList(comboLang, langs);
-  loadCountryList(comboCountry);
-
   comboLang->setCurrentItem(lang);
 
   emit countryChanged();
@@ -336,9 +333,6 @@ void KLocaleConfig::changedCountry(int i)
 void KLocaleConfig::changedLanguage(int i)
 {
   locale->setLanguage(comboLang->tag(i));
-
-  loadLanguageList(comboLang, langs);
-  loadCountryList(comboCountry);
 
   emit languageChanged();
   emit resample();
