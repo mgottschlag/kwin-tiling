@@ -245,7 +245,7 @@ void KLocaleConfigMoney::save()
   str = config->readEntry(QString::fromLatin1("MonetaryThousandsSeparator"), str);
   str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
   if (str != locale->monetaryThousandsSeparator())
-    config->writeEntry(QString::fromLatin1("MonetaryThousandsSeparator"), QString::fromLatin1("$0")+locale->monetaryThousandsSeparator()+QString::fromLatin1("$0"), true, true);
+    config->writeEntry(QString::fromLatin1("MonetaryThousandsSeparator"), QString::fromLatin1("$0%1$0").arg(locale->monetaryThousandsSeparator()), true, true);
 
   str = ent.readEntry(QString::fromLatin1("PositiveSign"));
   str = config->readEntry(QString::fromLatin1("PositiveSign"), str);

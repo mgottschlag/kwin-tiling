@@ -152,7 +152,7 @@ void KLocaleConfigNumber::save()
   str = config->readEntry(QString::fromLatin1("ThousandsSeparator"), str);
   str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
   if (str != locale->thousandsSeparator())
-    config->writeEntry(QString::fromLatin1("ThousandsSeparator"), locale->thousandsSeparator(), true, true);
+    config->writeEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1("$0%1$0").arg(locale->thousandsSeparator()), true, true);
 
   delete config;
 }
