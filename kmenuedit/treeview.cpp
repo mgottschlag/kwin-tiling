@@ -649,9 +649,6 @@ void TreeView::paste()
 	    copyFile(QString(clipboard_prefix) + _clipboard, dest + '/' + _clipboard);
 	}
 
-    fill();
-    return;
-
     // create the TreeItems:
 
     // file or dir?
@@ -665,8 +662,7 @@ void TreeView::paste()
 		    item = 0;
 		}
 		else
-		    parent = item->parent();
-			
+		    parent = item->parent();	
 	    }
 	
 	    TreeItem* newitem;
@@ -678,13 +674,13 @@ void TreeView::paste()
 	    KDesktopFile df(locateLocal("apps", dest + '/' + _clipboard));
 	
 	    newitem->setText(0, df.readName());
-	    if(dest != "")
+	    if(!dest.isEmpty())
 		newitem->setFile(dest + '/' + _clipboard);
 	    else
 		newitem->setFile(_clipboard);
-	    newitem->setPixmap(0, KGlobal::iconLoader()->
-			    loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+	    newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
 	}
+#if 0
     else
 	{
 	    TreeItem* parent = 0;
@@ -697,6 +693,7 @@ void TreeView::paste()
 	    }
 	    fillBranch(dest + '/' + _clipboard, parent);
 	}
+#endif
 }
 
 void TreeView::del()
