@@ -21,24 +21,28 @@
 #ifndef _EMAIL_H
 #define _EMAIL_H
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 class QLineEdit;
 class QRadioButton;
 class QButtonGroup;
 
-class KEmailConfig : public KConfigWidget
+class KEmailConfig : public KCModule
 {
   Q_OBJECT
 public:
   KEmailConfig(QWidget *parent = 0L, const char *name = 0L);
   virtual ~KEmailConfig();
 
-  void loadSettings();
-  void applySettings();
-
+  void load();
+  void save();
+  void defaults();
+  
+  int buttons();
+  
 public slots:
-
+  void configChanged();
+      
 private:
  QLineEdit *fullName, *organization;
  QLineEdit *emailAddr, *replyAddr;
@@ -46,7 +50,7 @@ private:
  QLineEdit *userName, *password, *inServer, *outServer;
  QButtonGroup *bGrp;
  QRadioButton *pop3Button, *imapButton, *localButton;
- 
+
 };
 
 #endif

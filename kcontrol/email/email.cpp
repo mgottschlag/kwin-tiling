@@ -26,20 +26,20 @@
 #include <qlayout.h>
 #include <qvbox.h>
 #include <qlabel.h>
+#include <klined.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
-#include <klined.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klocale.h>
 
-#include "email.moc"
+#include "email.h"
 
 #define SPACE 6
 
 KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
-  : KConfigWidget(parent, name)
+  : KCModule(parent, name)
 {
   QVBoxLayout *topLayout = new QVBoxLayout(this, SPACE);
   QGroupBox *uBox = new QGroupBox(2, Qt::Horizontal, i18n("User information"),
@@ -47,23 +47,27 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   topLayout->addWidget(uBox);
 
   QLabel *label = new QLabel(i18n("&Full Name:"), uBox);
- 
+
   fullName = new KLineEdit(uBox);
+  connect(fullName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(fullName);
 
   label = new QLabel(i18n("Or&ganization:"), uBox);
 
   organization = new KLineEdit(uBox);
+  connect(organization, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(organization);
 
   label = new QLabel(i18n("E-mail &Address:"), uBox);
 
   emailAddr = new KLineEdit(uBox);
+  connect(emailAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(emailAddr);
 
   label = new QLabel(i18n("&Reply Address:"), uBox);
 
   replyAddr = new KLineEdit(uBox);
+  connect(replyAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(replyAddr);
 
   uBox = new QGroupBox(2, Qt::Horizontal, i18n("Server information"),
@@ -73,42 +77,54 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   label = new QLabel(i18n("User &name:"), uBox);
 
   userName = new KLineEdit(uBox);
+  connect(userName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(userName);
-
   label = new QLabel(i18n("&Password:"), uBox);
 
   password = new KLineEdit(uBox);
   password->setEchoMode(QLineEdit::Password);
+  connect(password, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(password);
 
   label = new QLabel(i18n("&Incoming host:"), uBox);
 
   inServer = new KLineEdit(uBox);
+  connect(inServer, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(inServer);
 
   label = new QLabel(i18n("O&utgoing host:"), uBox);
-  
+
   outServer = new KLineEdit(uBox);
+  connect(outServer, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
+
   label->setBuddy(outServer);
 
-  bGrp = new QButtonGroup(1, Qt::Vertical, 
+  bGrp = new QButtonGroup(1, Qt::Vertical,
 			   i18n("Incoming mail server type"), this);
-  topLayout->addWidget(bGrp);
+  connect(bGrp, SIGNAL(clicked(int)), this, SLOT(configChanged()));
   
+  topLayout->addWidget(bGrp);
+
   imapButton = new QRadioButton(i18n("&IMAP"), bGrp);
   pop3Button = new QRadioButton(i18n("P&OP3"), bGrp);
   localButton = new QRadioButton(i18n("&Local mailbox"), bGrp);
 
   topLayout->addSpacing(SPACE);
 
-  loadSettings();
+  load();
 }
 
 KEmailConfig::~KEmailConfig()
 {
 }
 
-void KEmailConfig::loadSettings()
+void KEmailConfig::configChanged()
+{
+    emit changed(true);
+}
+
+
+void KEmailConfig::load()
 {
   KConfig *config = KGlobal::config();
   char hostname[80];
@@ -130,12 +146,16 @@ void KEmailConfig::loadSettings()
   password->setText(config->readEntry("Password"));
   inServer->setText(config->readEntry("Incoming"));
   outServer->setText(config->readEntry("Outgoing", hostname));
-  
+
   bGrp->setButton(config->readNumEntry("ServerType", 0));
+
+  emit changed(false);
 }
 
-void KEmailConfig::applySettings()
+void KEmailConfig::save()
 {
+    debug("KEmailConfig save called");
+    
   KConfig *config = KGlobal::config();
 
   config->setGroup("UserInfo");
@@ -164,5 +184,22 @@ void KEmailConfig::applySettings()
   QString cfgName(KGlobal::dirs()->findResource("config", "kcmemailrc"));
   if (!cfgName.isEmpty())
     ::chmod(cfgName.utf8(), 0600);
+
+  emit changed(false);
 }
 
+void KEmailConfig::defaults()
+{
+    // as there is nothing really reset, we shouldn't call this yet
+    //emit changed(false);
+}
+
+
+
+extern "C"
+{
+  KCModule *create_email(QWidget *parent, const char *name)
+  {
+    return new KEmailConfig(parent, name);
+  };
+}

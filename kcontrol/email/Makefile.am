@@ -1,13 +1,17 @@
+lib_LTLIBRARIES = libkcm_email.la
 
-INCLUDES = $(all_includes) 
-LDFLAGS =  $(all_libraries) $(KDE_RPATH)
-LDADD =    $(LIB_KDEUI)
+libkcm_email_la_SOURCES = email.cpp 
 
-bin_PROGRAMS = kcmemail
+libkcm_email_la_LDFLAGS  = $(all_libraries) -module -avoid-version
+libkcm_email_la_LIBADD = -lkdeui  
+INCLUDES= $(all_includes) 
 
-kcmemail_SOURCES = main.cpp email.cpp
-METASOURCES = AUTO
+libkcm_email_la_METASOURCES = AUTO
+
 noinst_HEADERS = email.h
+
+datadir   = $(kde_appsdir)/Settings/System
+data_DATA = email.desktop           
 
 KDE_ICON = email
 
