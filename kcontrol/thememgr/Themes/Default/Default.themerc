@@ -60,6 +60,7 @@ author=Stefan Taferner
 email=taferner@kde.org
 info=
 Comment=Reset to default theme-less KDE desktop
+Comment[bs]=Vraća na osnovnu KDE radnu površinu bez teme
 Comment[cs]=Obnovit na výchozí vzhled KDE bez motivu
 Comment[es]=Restablece el escritorio KDE al predeterminado sin tema.
 Comment[he]=חזרה לשולחן עבודה נטול ערכת נושא
