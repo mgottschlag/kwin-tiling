@@ -103,6 +103,7 @@ GSendStr (const char *buf)
     GWrite (buf, len);
 }
 
+/*
 static void
 GSendNStr (const char *buf, int len)
 {
@@ -111,6 +112,7 @@ GSendNStr (const char *buf, int len)
     GWrite (buf, len);
     GWrite ("", 1);
 }
+*/
 
 int
 GRecvInt ()
