@@ -158,6 +158,13 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     //lay->addLayout( grid );
     //----------
 
+
+    cbVisualActivate = new QCheckBox(i18n("&Visual feedback on activation"), tab1);
+    lay->addWidget(cbVisualActivate,Qt::AlignLeft);
+    connect(cbVisualActivate, SIGNAL(clicked()), this, SLOT(changed()));
+    wtstr = i18n("Show feedback when clicking an icon");
+    QWhatsThis::add( cbVisualActivate, wtstr );
+
     cbCursor = new QCheckBox(i18n("&Pointer shape changes when over an icon"), tab1);
     lay->addWidget(cbCursor,Qt::AlignLeft);
     connect(cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
@@ -169,11 +176,6 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " changes whenever it is over an icon.");
     QWhatsThis::add( cbCursor, wtstr );
 
-    cbVisualActivate = new QCheckBox(i18n("&Visual feedback on activation"), tab1);
-    lay->addWidget(cbVisualActivate,Qt::AlignLeft);
-    connect(cbVisualActivate, SIGNAL(clicked()), this, SLOT(changed()));
-    wtstr = i18n("Show feedback when clicking an icon");
-    QWhatsThis::add( cbVisualActivate, wtstr );
 
     cbLargeCursor = new QCheckBox(i18n("&Large cursor"), tab1);
     lay->addWidget(cbLargeCursor,Qt::AlignLeft);
