@@ -31,7 +31,8 @@
  * This class should be just like qcombobox, but it should be possible
  * to have have a QIconSet for each entry, and each entry should have a tag.
  *
- * Support for sub menues should be added in the future.
+ * It has also support for sub menues, but some of the code should be
+ * rewritten (it's a hack).
  */
 class KLanguageCombo : public QWidget
 {

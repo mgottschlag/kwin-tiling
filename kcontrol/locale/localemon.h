@@ -22,10 +22,10 @@
  */
 
 
-#ifndef __KLOCALECONFIGADV_H__
-#define __KLOCALECONFIGADV_H__
+#ifndef __KLOCALECONFIGMON_H__
+#define __KLOCALECONFIGMON_H__
 
-#include <kcmodule.h>
+#include <qwidget.h>
 
 class QCheckBox;
 class QComboBox;

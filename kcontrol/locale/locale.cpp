@@ -22,11 +22,13 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
 #include <qdir.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
 #include <qtooltip.h>
+#include <qiconset.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
@@ -44,7 +46,7 @@
 #include "klocalesample.h"
 #include "locale.h"
 #include "locale.moc"
-#include "main.h"
+#include "toplevel.h"
 
 extern KLocale *locale;
 

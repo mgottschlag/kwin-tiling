@@ -38,44 +38,37 @@
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 
-#include "main.h"
+#include "toplevel.h"
 #include "localenum.h"
 #include "localenum.moc"
 
 extern KLocale *locale;
 
-#ifndef LAT
-#define LAT QString::fromLatin1("1")
-#endif
-
 KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
-  QLabel *label;
-
-  // Numbers
   QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
   tl1->setColStretch(2, 1); 
 
-  label = new QLabel(LAT, this, I18N_NOOP("Decimal symbol"));
+  QLabel *label = new QLabel(this, I18N_NOOP("Decimal symbol"));
   edDecSym = new QLineEdit(this);
   connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
   tl1->addWidget(label, 0, 1);
   tl1->addWidget(edDecSym, 0, 2);
 
-  label = new QLabel(LAT, this, I18N_NOOP("Thousands separator"));
+  label = new QLabel(this, I18N_NOOP("Thousands separator"));
   edThoSep = new QLineEdit(this);
   connect( edThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotThoSepChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edThoSep, 1, 2);
 
-  label = new QLabel(LAT, this, I18N_NOOP("Positive sign"));
+  label = new QLabel(this, I18N_NOOP("Positive sign"));
   edMonPosSign = new QLineEdit(this);
   connect( edMonPosSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonPosSignChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);
   tl1->addWidget(edMonPosSign, 2, 2);
 
-  label = new QLabel(LAT, this, I18N_NOOP("Negative sign"));
+  label = new QLabel(this, I18N_NOOP("Negative sign"));
   edMonNegSign = new QLineEdit(this);
   connect( edMonNegSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonNegSignChanged(const QString &) ) );
   tl1->addWidget(label, 3, 1);

@@ -39,15 +39,11 @@
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 
-#include "main.h"
+#include "toplevel.h"
 #include "localetime.h"
 #include "localetime.moc"
 
 extern KLocale *locale;
-
-#ifndef LAT
-#define LAT QString::fromLatin1("1")
-#endif
 
 KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
  : QWidget(parent, name)
@@ -58,19 +54,19 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
   tl1->setColStretch(2, 1); 
 
-  label = new QLabel(LAT, this, I18N_NOOP("Time format"));
+  label = new QLabel(this, I18N_NOOP("Time format"));
   edTimeFmt = new QLineEdit(this);
   connect( edTimeFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotTimeFmtChanged(const QString &) ) );
   tl1->addWidget(label, 0, 1);
   tl1->addWidget(edTimeFmt, 0, 2);
 
-  label = new QLabel(LAT, this, I18N_NOOP("Date format"));
+  label = new QLabel(this, I18N_NOOP("Date format"));
   edDateFmt = new QLineEdit(this);
   connect( edDateFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edDateFmt, 1, 2);
 
-  label = new QLabel(LAT, this, I18N_NOOP("Short date format"));
+  label = new QLabel(this, I18N_NOOP("Short date format"));
   edDateFmtShort = new QLineEdit(this);
   connect( edDateFmtShort, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtShortChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);
@@ -174,67 +170,35 @@ void KLocaleConfigTime::reTranslate()
    "%H The hour as a decimal number using a 24-hour clock\n"
    "   (range 00 to 23).\n"
    "%k The hour (24-hour clock) as a decimal number (range\n"
-   "   0 to 23); single digits are preceded by a blank.\n"
+   "   0 to 23).\n"
    "%I The  hour as a decimal number using a 12-hour clock\n"
    "   (range 01 to 12).\n"
    "%l The hour (12-hour clock) as a decimal number (range\n"
-   "   1 to 12); single digits are preceded by a blank.\n"
+   "   1 to 12).\n"
    "%M The minute as a decimal number (range 00 to 59).\n"
    "%S The second as a decimal number (range 00 to 61).\n"
    "%p Either AM or PM according to the given time\n"
    "   value. Noon is treated as Pm and midnight as Am."));
 
+  QString datecodes = locale->translate(
+    "\n"
+    "%Y\tThe year with century as a decimal number.\n"
+    "%y\tThe year without century as a decimal number (00-99).\n"
+    "%m\tThe month as a decimal number (01-12).\n"
+    "%n\tThe month as a decimal number (1-12).\n"
+    "%b\tThe first three characters of the month name.\n"
+    "%B\tThe full month name.\n"
+    "%d\tThe day of month as a decimal number (01-31).\n"
+    "%e\tThe day of month as a decimal number (1-31).\n"
+    "%a\tThe first three characters of the week name.\n"
+    "%A\tThe full weekday name.");
+
   QToolTip::add(edDateFmt, locale->translate(
     "The text in this textbox will be used to format long\n"
-    "dates. The sequences below will be replaced:\n"
-    "\n"
-    "%Y The year with century as a decimal number.\n"
-    "%y The year without century as a decimal number (00-99).\n"
-    "%C The century as decimal number; single digits are\n"
-    "   preceded by a zero.\n"
-    "%m The month as a decimal number (01-12).\n"
-    "%n The month as a decimal number (1-12); single digits are\n"
-    "   preceded by a blank.\n"
-    "%b The national representation of the abbreviated month\n"
-    "   name, where the abbreviation is the first three characters.\n"
-    "%B The national representation of the full month name.\n"
-    "%d The day of month as a decimal number (01-31).\n"
-    "%e The day of month as a decimal number (1-31); single\n"
-    "   digits are preceded by a blank.\n"
-    "%j The day of the year as a decimal number (001-366).\n"
-    "%a The national representation of the abbreviated weekday\n"
-    "   name, where the abbreviation is the first three characters.\n"
-    "%A The national representation of the full weekday name.\n"
-    "%u The weekday (Monday as the first day of the week) as\n"
-    "   a decimal number (1-7).\n"
-    "%w The weekday (Sunday as the first day of the week) as\n"
-    "   a decimal number (0-6)."));
+    "dates. The sequences below will be replaced:\n") + datecodes);
 
   QToolTip::add(edDateFmtShort, locale->translate(
     "The text in this textbox will be used to format short\n"
     "dates. Short dates can not be longer than 12 charaters.\n"
-    "The sequences below will be replaced:\n"
-    "\n"
-    "%Y The year with century as a decimal number.\n"
-    "%y The year without century as a decimal number (00-99).\n"
-    "%C The century as decimal number; single digits are\n"
-    "   preceded by a zero.\n"
-    "%m The month as a decimal number (01-12).\n"
-    "%n The month as a decimal number (1-12); single digits are\n"
-    "   preceded by a blank.\n"
-    "%b The national representation of the abbreviated month\n"
-    "   name, where the abbreviation is the first three characters.\n"
-    "%B The national representation of the full month name.\n"
-    "%d The day of month as a decimal number (01-31).\n"
-    "%e The day of month as a decimal number (1-31); single\n"
-    "   digits are preceded by a blank.\n"
-    "%j The day of the year as a decimal number (001-366).\n"
-    "%a The national representation of the abbreviated weekday\n"
-    "   name, where the abbreviation is the first three characters.\n"
-    "%A The national representation of the full weekday name.\n"
-    "%u The weekday (Monday as the first day of the week) as\n"
-    "   a decimal number (1-7).\n"
-    "%w The weekday (Sunday as the first day of the week) as\n"
-    "   a decimal number (0-6)."));
-
+    "The sequences below will be replaced:\n") + datecodes);
 }

@@ -1,7 +1,8 @@
 /*
  * locale.h
  *
- * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
+ * Copyright (c) 1998 Matthias Hoelzer <hoelzer@physik.uni-wuerzburg.de>
+ * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -22,13 +23,11 @@
  */
 
 
-#ifndef __KLOCALECONFIG_H__
-#define __KLOCALECONFIG_H__
-
+#ifndef __LOCALE_H__
+#define __LOCALE_H__
 
 #include <qwidget.h>
 
-class QLabel;
 class KLocale;
 class KLanguageCombo;
 class KLocaleSample;
@@ -59,7 +58,6 @@ signals:
 
 private:
   KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate, *comboChset;
-
   bool changedFlag;
 
 private slots:

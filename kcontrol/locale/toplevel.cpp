@@ -1,0 +1,169 @@
+/*
+  toplevel.cpp - A KControl Application
+
+  Copyright 1998 Matthias Hoelzer
+  Copyright 1999-2000 Hans Petter Bieker <bieker@kde.org>
+  
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+   
+  */
+
+#include <qcombobox.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qobjectlist.h>
+#include <qtabwidget.h>
+
+#include <kcharsets.h>
+#include <kconfig.h>
+#include <kcmodule.h>
+#include <kglobal.h>
+#include <klocale.h>
+
+#include "locale.h"
+#include "localenum.h"
+#include "localemon.h"
+#include "localetime.h"
+#include "klocalesample.h"
+#include "toplevel.h"
+#include "toplevel.moc"
+
+KLocale *locale = new KLocale(QString::fromLatin1("kcmlocale"));
+
+KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
+  : KCModule(parent, name)
+{
+  QVBoxLayout *l = new QVBoxLayout(this, 5);
+
+  tab = new QTabWidget(this);
+  l->addWidget(tab);
+
+  localemain = new KLocaleConfig(this);
+  tab->addTab( localemain, QString::null);
+  localenum = new KLocaleConfigNumber(this);
+  tab->addTab( localenum, QString::null);
+  localemon = new KLocaleConfigMoney(this);
+  tab->addTab( localemon, QString::null);
+  localetime = new KLocaleConfigTime(this);
+  tab->addTab( localetime, QString::null);
+
+  connect(localemain, SIGNAL(resample()),       SLOT(update()));
+  connect(localenum,  SIGNAL(resample()),       SLOT(update()));
+  connect(localemon,  SIGNAL(resample()),       SLOT(update()));
+  connect(localetime, SIGNAL(resample()),       SLOT(update()));
+  connect(localemain, SIGNAL(countryChanged()), SLOT(reset()) );
+  connect(localemain, SIGNAL(chsetChanged()),   SLOT(newChset()) );
+
+  // Examples
+  gbox = new QGroupBox(this);
+  l->addWidget(gbox);
+  sample = new KLocaleSample(gbox);
+
+  update();
+}
+
+KLocaleApplication::~KLocaleApplication()
+{
+    delete locale;
+}
+
+void KLocaleApplication::load()
+{
+    localemain->load();
+    localenum->load();
+    localemon->load();
+    localetime->load();
+}
+
+void KLocaleApplication::save()
+{
+    localemain->save();
+    localenum->save();
+    localemon->save();
+    localetime->save();
+}
+
+void KLocaleApplication::defaults()
+{
+    localemain->defaults();
+    localenum->defaults();
+    localemon->defaults();
+    localetime->defaults();
+}
+
+void KLocaleApplication::moduleChanged(bool state)
+{
+  emit changed(state);
+}
+
+void KLocaleApplication::updateSample()
+{
+    sample->update();
+    //CT is this the right place?
+    emit moduleChanged(true);
+}
+
+void KLocaleApplication::reTranslate()
+{
+    QObjectList it;
+    it.append( this );
+    reTranslate(it);
+
+    gbox->setCaption(i18n("Examples"));
+    tab->changeTab(localemain, locale->translate("&Locale"));
+    tab->changeTab(localenum, locale->translate("&Numbers"));
+    tab->changeTab(localemon, locale->translate("&Money"));
+    tab->changeTab(localetime, locale->translate("&Time && dates"));
+
+    // retranslate some other widgets
+    localemain->reTranslate();
+    localenum->reTranslate();
+    localemon->reTranslate();
+    localetime->reTranslate();
+}
+
+void KLocaleApplication::reTranslate(QObjectListIt it)
+{
+    QObject *wc;
+    while( (wc = it.current()) != 0 ) {
+      ++it;
+      if (wc->children())
+        reTranslate(QObjectListIt(*wc->children()));
+
+      if ( !qstrcmp(wc->name(), "unnamed") )
+         continue;
+      if ( !wc->isWidgetType() )
+         continue;
+
+      if ( !qstrcmp(wc->className(), "QLabel"))
+        ((QLabel *)wc)->setText(locale->translate(wc->name()));
+    }
+}
+
+void KLocaleApplication::reset()
+{
+  localenum->reset();
+  localemon->reset();
+  localetime->reset();
+}
+
+void KLocaleApplication::newChset()
+{
+  QFont *font = new QFont(QString::fromLatin1("helvetica"), 12, QFont::Normal);
+  KGlobal::charsets()->setQFont(*font, locale->charset());
+  KConfig *c = KGlobal::config();
+  c->setGroup( QString::fromLatin1("General") );
+  setFont(c->readFontEntry(QString::fromLatin1("font"), font));
+}
