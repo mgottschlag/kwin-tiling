@@ -69,7 +69,6 @@ void DockContainer::setBaseWidget(QWidget *widget)
 void DockContainer::dockModule(ConfigModule *module)
 {
   if (!module) return;
-  if (_module == module) return;
 
   if (_module && _module->isChanged())
     {	  	

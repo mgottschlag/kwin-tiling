@@ -126,6 +126,7 @@ void ConfigModule::runAsRoot()
 
   delete _rootProcess;
   delete _embedWidget;
+  delete _embedLayout;
 
   // create an embed widget that will embed the 
   // kcmshell running as root  
@@ -186,7 +187,8 @@ void ConfigModule::rootExited(KProcess *)
   _rootProcess = 0;
   delete _embedLayout;
   _embedLayout = 0;
-  _module->show();
+  delete _module;
+  _module=0;
 }
 
 

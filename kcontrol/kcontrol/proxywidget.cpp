@@ -69,6 +69,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 
   (void) new WhatsThis( this );
 
+  client->resize(client->minimumSize());
   client->reparent(this,0,QPoint(0,0),true);
   connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
 
@@ -110,7 +111,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   else
     connect(_ok, SIGNAL(clicked()), this, SLOT(okClicked()));
 
-  QGridLayout *top = new QGridLayout(this, 4, 6, 5);
+  QGridLayout *top = new QGridLayout(this, 4, 6, 2, 4);
   top->addMultiCellWidget(client, 1, 1, 0, 6);
   top->addMultiCellWidget(_sep, 2, 2, 0, 6);
   top->addWidget(_help, 3, 0);

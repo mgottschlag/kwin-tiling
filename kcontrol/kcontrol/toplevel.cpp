@@ -319,6 +319,7 @@ void TopLevel::showModule(QString desktopFile)
 
 			// dock it
             _dock->dockModule(mod);
+            mod->module()->show();
             break;
 	  }
     }
