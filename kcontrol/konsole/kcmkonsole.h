@@ -39,11 +39,9 @@ public:
 	QString quickHelp() const;
 	virtual const KAboutData * aboutData() const;
 public slots:
-	void setupFont();
 	void configChanged();
 private:
 	KCMKonsoleDialog *dialog;
-	QFont currentFont;
 };
 
 #endif
