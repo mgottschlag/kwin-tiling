@@ -23,7 +23,11 @@
 
 
 #include <kcmodule.h>
+#include <kglobal.h>
+#include <klocale.h>
+
 #include "memory.h"
+
  
 /* we have to include the info.cpp-file, to get the DEFINES about possible properties.
    example: we need the "define INFO_CPU_AVAILABLE" */
@@ -37,6 +41,7 @@ extern "C"
   KCModule *create_cpu(QWidget *parent, const char *name)
   { 
 #ifdef INFO_CPU_AVAILABLE
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KInfoListWidget(parent, name, GetInfo_CPU);
 #else
     return 0;
@@ -46,6 +51,7 @@ extern "C"
   KCModule *create_irq(QWidget *parent, const char *name)
   { 
 #ifdef INFO_IRQ_AVAILABLE
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KInfoListWidget(parent, name, GetInfo_IRQ);
 #else
     return 0;
@@ -55,6 +61,7 @@ extern "C"
   KCModule *create_pci(QWidget *parent, const char *name)
   { 
 #ifdef INFO_PCI_AVAILABLE
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KInfoListWidget(parent, name, GetInfo_PCI);
 #else
     return 0;
@@ -64,6 +71,7 @@ extern "C"
   KCModule *create_dma(QWidget *parent, const char *name)
   { 
 #ifdef INFO_DMA_AVAILABLE
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KInfoListWidget(parent, name, GetInfo_DMA);
 #else
     return 0;
@@ -73,6 +81,7 @@ extern "C"
   KCModule *create_ioports(QWidget *parent, const char *name)
   { 
 #ifdef INFO_IOPORTS_AVAILABLE
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KInfoListWidget(parent, name, GetInfo_IO_Ports);
 #else
     return 0;
@@ -82,6 +91,7 @@ extern "C"
   KCModule *create_sound(QWidget *parent, const char *name)
   { 
 #ifdef INFO_SOUND_AVAILABLE
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KInfoListWidget(parent, name, GetInfo_Sound);
 #else
     return 0;
@@ -91,6 +101,7 @@ extern "C"
   KCModule *create_scsi(QWidget *parent, const char *name)
   { 
 #ifdef INFO_SCSI_AVAILABLE
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KInfoListWidget(parent, name, GetInfo_SCSI);
 #else
     return 0;
@@ -100,6 +111,7 @@ extern "C"
   KCModule *create_devices(QWidget *parent, const char *name)
   { 
 #ifdef INFO_DEVICES_AVAILABLE
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KInfoListWidget(parent, name, GetInfo_Devices);
 #else
     return 0;
@@ -109,6 +121,7 @@ extern "C"
   KCModule *create_partitions(QWidget *parent, const char *name)
   { 
 #ifdef INFO_PARTITIONS_AVAILABLE
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KInfoListWidget(parent, name, GetInfo_Partitions);
 #else
     return 0;
@@ -118,6 +131,7 @@ extern "C"
   KCModule *create_xserver(QWidget *parent, const char *name)
   { 
 #ifdef INFO_XSERVER_AVAILABLE
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KInfoListWidget(parent, name, GetInfo_XServer_and_Video);
 #else
     return 0;
@@ -126,6 +140,7 @@ extern "C"
 
   KCModule *create_memory(QWidget *parent, const char *name)
   { 
+    KGlobal::locale()->insertCatalogue("kcminfo");
     return new KMemoryWidget(parent, name);
   }
 
