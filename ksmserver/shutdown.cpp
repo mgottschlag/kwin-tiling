@@ -79,14 +79,11 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     vbox->addWidget( frame );
     vbox = new QVBoxLayout( frame, 15, 11 );
 
-    QString username;
-    char buf[128];
     char *user = getlogin();
-    struct utsname info; 
-    gethostname(buf, 128);
     if (!user) user = getenv("LOGNAME");
-    if (!user) username = ""; else username = QString("%1").arg(user);
-    QLabel* label = new QLabel( i18n("End session for %1").arg(username), frame );
+    QLabel* label = new QLabel( 
+      i18n("End session for %1").arg(QString::fromLatin1(user ? user : "<?""?""?>")),
+      frame );
     QFont fnt = label->font();
     fnt.setBold( true );
     fnt.setPixelSize( fnt.pixelSize() * 3 / 2 );
@@ -110,13 +107,13 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 	grid->setAlignment( Qt::AlignTop );
 
 	QLabel* whatNext = new QLabel( i18n("What do you want to do next?"), tgrp );
+        rLogout = new QRadioButton( i18n("&Login as different user"), tgrp );
         rHalt = new QRadioButton( i18n("&Turn off computer"), tgrp );
         rReboot = new QRadioButton( i18n("&Restart computer"), tgrp );
-        rLogout = new QRadioButton( i18n("&Login as different user"), tgrp );
 
-	grid->addWidget( rReboot, 2, 1 );
-	grid->addWidget( rLogout, 3, 1 );
-	grid->addWidget( rHalt, 1, 1 );
+	grid->addWidget( rLogout, 1, 1 );
+	grid->addWidget( rHalt, 2, 1 );
+	grid->addWidget( rReboot, 3, 1 );
 	grid->addMultiCellWidget( whatNext, 0, 0, 0, 1 );
 	QSpacerItem* spacer = new QSpacerItem( 20, 0, QSizePolicy::Expanding, QSizePolicy::Minimum );
 	grid->addItem( spacer, 1, 0 );
@@ -137,13 +134,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     checkbox = new QCheckBox( i18n("&Save session for future logins"), frame );
     vbox->addWidget( checkbox, 0, AlignCenter  );
     vbox->addStretch();
-
-#if 0
-    QFrame *line = new QFrame( frame );
-    line->setFrameShape( QFrame::HLine );
-    line->setFrameShadow( QFrame::Sunken );
-    vbox->addWidget( line );
-#endif
 
     QHBoxLayout* hbox = new QHBoxLayout( vbox );
     hbox->addStretch();
@@ -175,8 +165,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         }
         else
         {
-            rHalt->setChecked( true );
-            rHalt->setFocus();
+            rLogout->setChecked( true );
+            rLogout->setFocus();
         }
 	slotSdMode(0);
 
