@@ -323,16 +323,12 @@ void TopLevel::categorySelected(QListViewItem *category)
     if (_active->isChanged())
       {
         int res = KMessageBox::warningYesNo(this, _active ?
-                            i18n("There are unsaved changes in the "
-                                 "active module.\n"
-                                 "Do you want to apply the changes "
-                                 "before running\n"
-                                 "the new module or forget the changes?") :
-                            i18n("There are unsaved changes in the "
-                                 "active module.\n"
-                                 "Do you want to apply the changes "
-                                 "before exiting\n"
-                                 "the Control Center or forget the changes?"),
+             i18n("There are unsaved changes in the active module.\n"
+                  "Do you want to apply the changes before running "
+                  "the new module or forget the changes?") :
+             i18n("There are unsaved changes in the active module.\n"
+                  "Do you want to apply the changes before exiting "
+                  "the Control Center or forget the changes?"),
                             i18n("Unsaved changes"),
                             i18n("&Apply"),
                             i18n("&Forget"));
