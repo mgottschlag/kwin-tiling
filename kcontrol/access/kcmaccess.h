@@ -1,7 +1,7 @@
 /**
  * kcmaccess.h
  *
- * Copyright (c) 2000 Matthias Hölzer-Klüpfel <hoelzer@kde.org>
+ * Copyright (c) 2000 Matthias Hï¿½zer-Klpfel <hoelzer@kde.org>
  *
  */
 
@@ -61,6 +61,7 @@ private:
   KIntNumInput *slowKeysDelay, *bounceKeysDelay;
   
   QCheckBox *gestures;
+  QCheckBox *gestureConfirmation;
 };
 
 

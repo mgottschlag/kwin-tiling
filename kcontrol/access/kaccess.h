@@ -15,6 +15,9 @@
 #include <X11/XKBlib.h>
 #undef explicit
 
+class KDialogBase;
+class QLabel;
+class KComboBox;
 
 class KAccessApp : public KUniqueApplication
 {
@@ -41,18 +44,26 @@ private slots:
 
   void activeWindowChanged(WId wid);
   void slotArtsBellTimeout();
+  void applyChanges();
+  void yesClicked();
+  void noClicked();
+  void dialogClosed();
 
 
 private:
+   void  createDialogContents();
 
   int xkb_opcode;
   unsigned int features;
+  unsigned int requestedFeatures;
 
   bool    _systemBell, _artsBell, _visibleBell, _visibleBellInvert;
   bool    _artsBellBlocked;
   QString _artsBellFile;
   QColor  _visibleBellColor;
   int     _visibleBellPause;
+
+  bool    _gestures, _gestureConfirmation;
 
   QWidget *overlay;
 
@@ -61,6 +72,10 @@ private:
   KWinModule wm;
 
   WId _activeWindow;
+
+  KDialogBase *dialog;
+  QLabel *featuresLabel;
+  KComboBox *showModeCombobox;
 };
 
 

@@ -3,8 +3,14 @@
 
 #include <qtimer.h>
 #include <qpainter.h>
+#include <qvbox.h>
+#include <qlayout.h>
+#include <qlabel.h>
 
+#include <kdialogbase.h>
 #include <kmessagebox.h>
+#include <kcombobox.h>
+#include <kiconloader.h>
 #include <kdebug.h>
 #include <kaudioplayer.h>
 #include <kconfig.h>
@@ -56,6 +62,8 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   connect( artsBellTimer, SIGNAL( timeout() ), SLOT( slotArtsBellTimeout() ));
 
   features = 0;
+  requestedFeatures = 0;
+  dialog = 0;
 }
 
 int KAccessApp::newInstance()
@@ -135,7 +143,9 @@ void KAccessApp::readSettings()
   xkb->ctrls->debounce_delay = config->readNumEntry("BounceKeysDelay", 500);
 
   // gestures for enabling the other features
-  if (config->readBoolEntry("Gestures", true))
+  _gestures = config->readBoolEntry("Gestures", true);
+  _gestureConfirmation = config->readBoolEntry("GestureConfirmation", true);
+  if (_gestures)
       xkb->ctrls->enabled_ctrls |= XkbAccessXKeysMask;
   else
       xkb->ctrls->enabled_ctrls &= ~XkbAccessXKeysMask;
@@ -159,13 +169,13 @@ void KAccessApp::readSettings()
     xkb->ctrls->enabled_ctrls &= ~XkbMouseKeysMask;
 
    features = xkb->ctrls->enabled_ctrls & (XkbSlowKeysMask | XkbBounceKeysMask | XkbStickyKeysMask | XkbMouseKeysMask);
+   if (dialog == 0)
+      requestedFeatures = features;
   // set state
   XkbSetControls(qt_xdisplay(), XkbControlsEnabledMask | XkbMouseKeysAccelMask | XkbStickyKeysMask | XkbAccessXKeysMask, xkb);
 
   // select AccessX events if we need them
-  config->setGroup("Keyboard");
-  bool gestures = config->readBoolEntry("Gestures", true);
-  state = gestures ? XkbControlsNotifyMask : 0;
+  state = _gestures && _gestureConfirmation ? XkbControlsNotifyMask : 0;
   XkbSelectEvents(qt_xdisplay(), XkbUseCoreKbd, XkbControlsNotifyMask, state);
 
   // reset them after program exit
@@ -353,154 +363,297 @@ QString mouseKeysShortcut (Display *display) {
   return keyname;
 }
 
+void KAccessApp::createDialogContents() {
+   if (dialog == 0) {
+      dialog = new KDialogBase(
+            i18n("Warning"),
+            KDialogBase::Yes | KDialogBase::No,
+            KDialogBase::Yes, KDialogBase::Close,
+            0, "AccessXWarning", true, true,
+            KStdGuiItem::yes(), KStdGuiItem::no());
+
+      QVBox *topcontents = new QVBox (dialog);
+      topcontents->setSpacing(KDialog::spacingHint()*2);
+      topcontents->setMargin(KDialog::marginHint());
+
+      QWidget *contents = new QWidget(topcontents);
+      QHBoxLayout * lay = new QHBoxLayout(contents);
+      lay->setSpacing(KDialog::spacingHint());
+
+      QLabel *label1 = new QLabel( contents);
+      QPixmap pixmap = KApplication::kApplication()->iconLoader()->loadIcon("messagebox_warning", KIcon::NoGroup, KIcon::SizeMedium, KIcon::DefaultState, 0, true);
+      if (pixmap.isNull())
+         pixmap = QMessageBox::standardIcon(QMessageBox::Warning);
+      label1->setPixmap(pixmap);
+
+      lay->addWidget( label1, 0, Qt::AlignCenter );
+      lay->addSpacing(KDialog::spacingHint());
+
+      QVBoxLayout * vlay = new QVBoxLayout(lay);
+
+      featuresLabel = new QLabel( "", contents );
+      featuresLabel->setAlignment( WordBreak|AlignVCenter );
+      vlay->addWidget( featuresLabel );
+      vlay->addStretch();
+
+      QHBoxLayout * hlay = new QHBoxLayout(vlay);
+
+      QLabel *showModeLabel = new QLabel( i18n("&When a gesture was used:"), contents );
+      hlay->addWidget( showModeLabel );
+
+      showModeCombobox = new KComboBox (contents);
+      hlay->addWidget( showModeCombobox );
+      showModeLabel->setBuddy(showModeCombobox);
+      showModeCombobox->insertItem ( i18n("Change settings without asking"), 0);
+      showModeCombobox->insertItem ( i18n("Show this confirmation dialog"), 1);
+      showModeCombobox->insertItem ( i18n("Deactivate all AccessX features and gestures"), 2);
+      showModeCombobox->setCurrentItem (1);
+
+      dialog->setMainWidget(topcontents);
+      dialog->enableButtonSeparator(false);
+
+      connect (dialog, SIGNAL(yesClicked()), this, SLOT(yesClicked()));
+      connect (dialog, SIGNAL(noClicked()), this, SLOT(noClicked()));
+      connect (dialog, SIGNAL(closeClicked()), this, SLOT(dialogClosed()));
+   }
+}
+
 void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
 {
    unsigned int newFeatures = event->enabled_ctrls & (XkbSlowKeysMask | XkbBounceKeysMask | XkbStickyKeysMask | XkbMouseKeysMask);
    if (newFeatures != features) {
      unsigned int enabled  = newFeatures & ~features;
      unsigned int disabled = features & ~newFeatures;
-     features = newFeatures;
 
-     QString message;
-     QString explanation;
-     if (disabled == 0) {
-        switch (enabled) {
-        case 0:
-           return;
-        case XkbSlowKeysMask:
-           message = i18n("\"Slow keys \"is now enabled.");
-           explanation = i18n("This may be because you held down the Shift key for 8 seconds "
-           "or because an application has enabled this feature.\n"
-           "You can configure \"slow keys\" and other accessibility features in the "
-           "Regional & Accessibility->Accessibility module of the "
-           "KDE Control Center.\n"
-           "To quickly disable slow keys, press the Shift key for another 8 seconds.");
-           break;
-        case XkbBounceKeysMask:
-           message = i18n("\"Bounce keys\" is now enabled.");
-           explanation = i18n("This may be because an application has enabled this feature.\n"
-           "You can configure \"bounce keys\" and other accessibility features in the "
-           "Regional & Accessibility->Accessibility module of the "
-           "KDE Control Center.");
-           break;
-        case XkbStickyKeysMask:
-           message = i18n("\"Sticky keys\" is now enabled.");
-           explanation = i18n("This may be because you pressed the Shift key 5 consecutive "
-           "times or because an application has enabled this feature.\n"
-           "You can configure \"sticky keys\" and other accessibility features in the "
-           "Regional & Accessibility->Accessibility module of the "
-           "KDE Control Center.\n"
-           "To quickly disable sticky keys, press the Shift key for another 5 times.");
-           break;
-        case XkbMouseKeysMask: {
-           message = i18n("\"Mouse keys\" is now enabled.");
-           QString shortcut = mouseKeysShortcut(qt_xdisplay());
-           if (shortcut.isEmpty())
-              explanation = i18n("This may be because an application has enabled this feature.\n"
-              "You can configure \"mouse keys\" in the Peripherals->Mouse "
-              "module of the KDE Control Center.");
-           else
-              explanation = i18n("This may be because you pressed %1 "
-              "or because an application has enabled this feature.\n"
-              "You can configure \"mouse keys\" in the Peripherals->Mouse "
-              "module of the KDE Control Center.\n"
-              "To quickly disable mouse keys, press %2 again.")
-              .arg(shortcut).arg(shortcut);
-           }
-           break;
-        default:
-           message = i18n("Multiple AccessX features have been enabled.");
-           explanation = i18n("This may be because an application has enabled these features.\n"
-           "You can configure them in the "
-           "Regional & Accessibility->Accessibility module of the "
-           "KDE Control Center.");
-        }
-     }
-     else if (enabled == 0) {
-        switch (disabled) {
-        case XkbSlowKeysMask:
-           message = i18n("\"Slow keys\" is now disabled.");
-           explanation = i18n("This may be because you held down the Shift key for 8 seconds "
-           "or because an application has disabled this feature.\n"
-           "You can configure \"slow keys\" and other accessibility features in the "
-           "Regional & Accessibility->Accessibility module of the "
-           "KDE Control Center.");
-           break;
-        case XkbBounceKeysMask:
-           message = i18n("\"Bounce keys\" is now disabled.");
-           explanation = i18n("This may be because an application has disabled this feature.\n"
-           "You can configure bounce keys and other accessibility features in the "
-           "Regional & Accessibility->Accessibility module of the "
-           "KDE Control Center.");
-           break;
-        case XkbStickyKeysMask:
-           message = i18n("\"Sticky keys\" is now disabled.");
-           explanation = i18n("This may be because you pressed the Shift key 5 consecutive "
-           "times or because an application has disabled this feature.\n"
-           "You can configure sticky keys and other accessibility features in the "
-           "Regional & Accessibility->Accessibility module of the "
-           "KDE Control Center.");
-           break;
-        case XkbMouseKeysMask: {
-           message = i18n("\"Mouse keys\" is now disabled.");
-           QString shortcut = mouseKeysShortcut(qt_xdisplay());
-           if (shortcut.isEmpty())
-              explanation = i18n("This may be because an application has disabled this feature.\n"
-              "You can configure \"mouse keys\" in the Peripherals->Mouse "
-              "module of the KDE Control Center.");
-           else
-              explanation = i18n("This may be because you pressed %1 "
-              "or because an application has disabled this feature.\n"
-              "You can configure \"mouse keys\" in the Peripherals->Mouse "
-              "module of the KDE Control Center.").arg(shortcut);
-           }
-           break;
-        default:
-           message = i18n("Multiple AccessX features have been disabled.");
-           explanation = i18n("This may be because an application has disabled these features.\n"
-           "You can configure them in the "
-           "Regional & Accessibility->Accessibility module of the "
-           "KDE Control Center.");
-        }
-     }
+     // set the AccessX features back to what they were. We will
+     // apply the changes later if the user allows us to do that.
+     readSettings();
+
+     requestedFeatures = enabled | (requestedFeatures & ~disabled);
+
+     enabled  = requestedFeatures & ~features;
+     disabled = features & ~requestedFeatures;
+
+     if (!_gestureConfirmation)
+        applyChanges();
      else {
-        message = i18n("Multiple AccessX features have been changed.");
-        explanation = i18n("This may be because an application has changed these features.\n"
-        "You can configure them in the "
-        "Regional & Accessibility->Accessibility module of the "
-        "KDE Control Center.");
+        QStringList enabledFeatures;
+        QStringList disabledFeatures;
+
+        if (enabled & XkbStickyKeysMask)
+           enabledFeatures << i18n("Sticky keys");
+        else if (disabled & XkbStickyKeysMask)
+           disabledFeatures << i18n("Sticky keys");
+
+        if (enabled & XkbSlowKeysMask)
+           enabledFeatures << i18n("Slow keys");
+        else if (disabled & XkbSlowKeysMask)
+           disabledFeatures << i18n("Slow keys");
+
+        if (enabled & XkbBounceKeysMask)
+           enabledFeatures << i18n("Bounce keys");
+        else if (disabled & XkbBounceKeysMask)
+           disabledFeatures << i18n("Bounce keys");
+
+        if (enabled & XkbMouseKeysMask)
+           enabledFeatures << i18n("Mouse keys");
+        else if (disabled & XkbMouseKeysMask)
+           disabledFeatures << i18n("Mouse keys");
+
+        QString question;
+        switch (enabledFeatures.count()) {
+           case 0: switch (disabledFeatures.count()) {
+              case 1: question = i18n("Do you really want to deactivate \"%1\"?")
+                    .arg(disabledFeatures[0]);
+              break;
+              case 2: question = i18n("Do you really want to deactivate \"%1\" and \"%2\"?")
+                    .arg(disabledFeatures[0]).arg(disabledFeatures[1]);
+              break;
+              case  3: question = i18n("Do you really want to deactivate \"%1\", \"%2\" and \"%3\"?")
+                    .arg(disabledFeatures[0]).arg(disabledFeatures[1])
+                    .arg(disabledFeatures[2]);
+              break;
+              case 4: question = i18n("Do you really want to deactivate \"%1\", \"%2\", \"%3\" and \"%4\"?")
+                    .arg(disabledFeatures[0]).arg(disabledFeatures[1])
+                    .arg(disabledFeatures[2]).arg(disabledFeatures[3]);
+              break;
+           }
+           break;
+           case 1: switch (disabledFeatures.count()) {
+              case 0: question = i18n("Do you really want to activate \"%1\"?")
+                    .arg(enabledFeatures[0]);
+              break;
+              case 1: question = i18n("Do you really want to activate \"%1\" and to deactivate \"%2\"?")
+                    .arg(enabledFeatures[0]).arg(disabledFeatures[0]);
+              break;
+              case 2: question = i18n("Do you really want to activate \"%1\" and to deactivate \"%2\" and \"%3\"?")
+                    .arg(enabledFeatures[0]).arg(disabledFeatures[0])
+                    .arg(disabledFeatures[1]);
+              break;
+              case 3: question = i18n("Do you really want to activate \"%1\" and to deactivate \"%2\", \"%3\" and \"%4\"?")
+                    .arg(enabledFeatures[0]).arg(disabledFeatures[0])
+                    .arg(disabledFeatures[1]).arg(disabledFeatures[2]);
+              break;
+           }
+           break;
+           case 2: switch (disabledFeatures.count()) {
+              case 0: question = i18n("Do you really want to activate \"%1\" and \"%2\"?")
+                    .arg(enabledFeatures[0]).arg(enabledFeatures[1]);
+              break;
+              case 1: question = i18n("Do you really want to activate \"%1\" and \"%2\" and to deactivate \"%3\"?")
+                    .arg(enabledFeatures[0]).arg(enabledFeatures[1])
+                    .arg(disabledFeatures[0]);
+              break;
+              case 2: question = i18n("Do you really want to activate \"%1\", and \"%2\" and to deactivate \"%3\" and \"%4\"?")
+                    .arg(enabledFeatures[0]).arg(enabledFeatures[1])
+                    .arg(enabledFeatures[0]).arg(disabledFeatures[1]);
+              break;
+           }
+           break;
+           case 3: switch (disabledFeatures.count()) {
+              case 0: question = i18n("Do you really want to activate \"%1\", \"%2\" and \"%3\"?")
+                    .arg(enabledFeatures[0]).arg(enabledFeatures[1])
+                    .arg(enabledFeatures[2]);
+              break;
+              case 1: question = i18n("Do you really want to activate \"%1\", \"%2\" and \"%3\" and to deactivate \"%4\"?")
+                    .arg(enabledFeatures[0]).arg(enabledFeatures[1])
+                    .arg(enabledFeatures[2]).arg(disabledFeatures[0]);
+              break;
+           }
+           break;
+           case 4: question = i18n("Do you really want to activate \"%1\", \"%2\", \"%3\" and \"%4\"?")
+                 .arg(enabledFeatures[0]).arg(enabledFeatures[1])
+                 .arg(enabledFeatures[2]).arg(enabledFeatures[3]);
+           break;
+        }
+        QString explanation;
+        if (enabledFeatures.count()+disabledFeatures.count() == 1) {
+           explanation = i18n("An application has requested to change this setting.");
+
+           if (_gestures) {
+              if ((enabled | disabled) == XkbSlowKeysMask)
+                 explanation = i18n("You held down the Shift key for 8 seconds or an application has requested to change this setting.");
+              else if ((enabled | disabled) == XkbStickyKeysMask)
+                 explanation = i18n("You pressed the Shift key 5 consecutive times or an application has requested to change this setting.");
+              else if ((enabled | disabled) == XkbMouseKeysMask) {
+                 QString shortcut = mouseKeysShortcut(qt_xdisplay());
+                 if (!shortcut.isEmpty() && !shortcut.isNull())
+                    explanation = i18n("You pressed %1 or an application has requested to change this setting.").arg(shortcut);
+              }
+           }
+        }
+        else {
+           if (_gestures)
+              explanation = i18n("An application has requested to change these settings, or you used a combination of several keyboard gestures.");
+           else
+              explanation = i18n("An application has requested to change these settings.");
+        }
+
+        createDialogContents();
+        featuresLabel->setText ( question+"\n\n"+explanation
+              +" "+i18n("These AccessX settings are needed for some users with motion impairments and can be configured in the KDE Control Center. You can also turn them on and off with standardized keyboard gestures.\n\nIf you do not need them, you can select \"Deactivate all AccessX features and gestures\".") );
+
+        dialog->show();
+        dialog->setActiveWindow();
+        dialog->raise();
      }
-
-     KMessageBox::information (0, message+"\n"+explanation);
-     
-     KConfig *config = KGlobal::config();
-
-     config->setGroup("Keyboard");
-
-     if (enabled & XkbSlowKeysMask)
-        config->writeEntry("SlowKeys", true);
-     else if (disabled & XkbSlowKeysMask)
-        config->writeEntry("SlowKeys", false);
-
-     if (enabled & XkbBounceKeysMask)
-        config->writeEntry("BounceKeys", true);
-     else if (disabled & XkbBounceKeysMask)
-        config->writeEntry("BounceKeys", false);
-
-     if (enabled & XkbStickyKeysMask)
-        config->writeEntry("StickyKeys", true);
-     else if (disabled & XkbStickyKeysMask)
-        config->writeEntry("StickyKeys", false);
-
-     config->setGroup("Mouse");
-
-     if (enabled & XkbMouseKeysMask)
-        config->writeEntry("MouseKeys", true);
-     else if (disabled & XkbMouseKeysMask)
-        config->writeEntry("MouseKeys", false);
-
-     config->sync();
   }
+}
+
+void KAccessApp::applyChanges() {
+   unsigned int enabled  = requestedFeatures & ~features;
+   unsigned int disabled = features & ~requestedFeatures;
+
+   KConfig *config = KGlobal::config();
+   config->setGroup("Keyboard");
+
+   if (enabled & XkbSlowKeysMask)
+      config->writeEntry("SlowKeys", true);
+   else if (disabled & XkbSlowKeysMask)
+      config->writeEntry("SlowKeys", false);
+
+   if (enabled & XkbBounceKeysMask)
+      config->writeEntry("BounceKeys", true);
+   else if (disabled & XkbBounceKeysMask)
+      config->writeEntry("BounceKeys", false);
+
+   if (enabled & XkbStickyKeysMask)
+      config->writeEntry("StickyKeys", true);
+   else if (disabled & XkbStickyKeysMask)
+      config->writeEntry("StickyKeys", false);
+
+   config->setGroup("Mouse");
+
+   if (enabled & XkbMouseKeysMask)
+      config->writeEntry("MouseKeys", true);
+   else if (disabled & XkbMouseKeysMask)
+      config->writeEntry("MouseKeys", false);
+
+   config->sync();
+   readSettings();
+}
+
+void KAccessApp::yesClicked() {
+   if (dialog != 0)
+      dialog->deleteLater();
+   dialog = 0;
+
+   KConfig *config = KGlobal::config();
+   config->setGroup("Keyboard");
+   switch (showModeCombobox->currentItem()) {
+      case 0:
+         config->writeEntry("Gestures", true);
+         config->writeEntry("GestureConfirmation", false);
+         break;
+      default:
+         config->writeEntry("Gestures", true);
+         config->writeEntry("GestureConfirmation", true);
+         break;
+      case 2:
+         requestedFeatures = 0;
+         config->writeEntry("Gestures", false);
+         config->writeEntry("GestureConfirmation", true);
+   }
+   config->sync();
+
+   if (features != requestedFeatures)
+      applyChanges();
+}
+
+void KAccessApp::noClicked() {
+   if (dialog != 0)
+      dialog->deleteLater();
+   dialog = 0;
+   requestedFeatures = features;
+
+   KConfig *config = KGlobal::config();
+   config->setGroup("Keyboard");
+   switch (showModeCombobox->currentItem()) {
+      case 0:
+         config->writeEntry("Gestures", true);
+         config->writeEntry("GestureConfirmation", false);
+         break;
+      default:
+         config->writeEntry("Gestures", true);
+         config->writeEntry("GestureConfirmation", true);
+         break;
+      case 2:
+         requestedFeatures = 0;
+         config->writeEntry("Gestures", false);
+         config->writeEntry("GestureConfirmation", true);
+   }
+   config->sync();
+
+   if (features != requestedFeatures)
+      applyChanges();
+}
+
+void KAccessApp::dialogClosed() {
+   if (dialog != 0)
+      dialog->deleteLater();
+   dialog = 0;
+
+   requestedFeatures = features;
 }
 
 void KAccessApp::slotArtsBellTimeout()

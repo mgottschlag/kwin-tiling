@@ -1,7 +1,7 @@
 /**
  *  kcmaccess.cpp
  *
- *  Copyright (c) 2000 Matthias Hölzer-Klüpfel
+ *  Copyright (c) 2000 Matthias Hï¿½zer-Klpfel
  *
  */
 
@@ -374,6 +374,12 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
     "Sticky keys: Press Shift key 5 consecutive times\n"
     "Slow keys: Hold down Shift for 8 seconds").arg(shortcut));
 
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox->addSpacing(24);
+  gestureConfirmation = new QCheckBox(i18n("Show a confirmation dialog whenever a gesture is used"), grp);
+  hbox->addWidget(gestureConfirmation);
+  QWhatsThis::add (gestureConfirmation, i18n("KDE will show a confirmation dialog whenever a gesture is used if this option is checked.\nBe carefull do know what yo do if you uncheck it as then the AccessX settings will always be applied without confirmation.") );
+
 //XK_MouseKeys_Enable,XK_Pointer_EnableKeys
   connect(stickyKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(stickyKeysLock, SIGNAL(clicked()), this, SLOT(configChanged()));
@@ -387,6 +393,8 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   connect(bounceKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
 
   connect(gestures, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(gestures, SIGNAL(clicked()), this, SLOT(checkAccess()));
+  connect(gestureConfirmation, SIGNAL(clicked()), this, SLOT(configChanged()));
 
   vbox->addStretch();
 
@@ -454,6 +462,7 @@ void KAccessConfig::load()
   bounceKeys->setChecked(config->readBoolEntry("BounceKeys", false));
   bounceKeysDelay->setValue(config->readNumEntry("BounceKeysDelay", 500));
   gestures->setChecked(config->readBoolEntry("Gestures", true));
+  gestureConfirmation->setChecked(config->readBoolEntry("GestureConfirmation", true));
 
 
   delete config;
@@ -493,6 +502,7 @@ void KAccessConfig::save()
   config->writeEntry("BounceKeysDelay", bounceKeysDelay->value());
   
   config->writeEntry("Gestures", gestures->isChecked());
+  config->writeEntry("GestureConfirmation", gestureConfirmation->isChecked());
 
 
   config->sync();
@@ -546,6 +556,7 @@ void KAccessConfig::defaults()
   stickyKeysLock->setChecked(true);
 
   gestures->setChecked(true);
+  gestureConfirmation->setChecked(true);
 
   checkAccess();
 
@@ -584,6 +595,8 @@ void KAccessConfig::checkAccess()
   slowKeysDelay->setEnabled(slowKeys->isChecked());
 
   bounceKeysDelay->setEnabled(bounceKeys->isChecked());
+
+  gestureConfirmation->setEnabled(gestures->isChecked());
 }
 
 extern "C"
