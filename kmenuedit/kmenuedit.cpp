@@ -18,26 +18,30 @@
  *
  */
 
-#include <kglobal.h>
-#include <kconfig.h>
-#include <klocale.h>
+#include <qsplitter.h>
+
 #include <kaction.h>
+#include <kapplication.h>
+#include <kconfig.h>
+#include <kdebug.h>
+#include <kglobal.h>
+#include <kkeydialog.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kservice.h>
 #include <kstdaction.h>
 #include <kstdaccel.h>
-#include <kdebug.h>
-#include <dcopclient.h>
-#include <kapplication.h>
-#include <kkeydialog.h>
 
-#include "menueditview.h"
+#include "treeview.h"
+#include "basictab.h"
 #include "kmenuedit.h"
 #include "kmenuedit.moc"
 
 KMenuEdit::KMenuEdit (QWidget *, const char *name)
-  : KMainWindow (0, name)
+  : KMainWindow (0, name), m_tree(0), m_basicTab(0), m_splitter(0)
 {
     setCaption(i18n("Edit K Menu"));
-    m_view = 0;
+
     // restore size
     KConfig *config = KGlobal::config();
     config->setGroup("General");
@@ -63,23 +67,20 @@ KMenuEdit::~KMenuEdit()
     config->setGroup("General");
     config->writeEntry("Width", width());
     config->writeEntry("Height", height());
+    config->writeEntry("SplitterSizes", m_splitter->sizes());
+
     config->sync();
 }
 
 void KMenuEdit::setupActions()
 {
     (void)new KAction(i18n("&New Submenu..."), "menu_new", 0, actionCollection(), "newsubmenu");
-    (void)new KAction(i18n("New &Item..."), "filenew", KStdAccel::key(KStdAccel::New), actionCollection(), "newitem");
+    (void)new KAction(i18n("New &Item..."), "filenew", KStdAccel::openNew(), actionCollection(), "newitem");
 
     m_actionDelete = 0;
-    m_actionUndelete = 0;
 
-#if 0
-    m_actionShowHidden = new KToggleAction(i18n("Show &Hidden Items"), KShortcut(), this, SLOT( slotChangeView()), actionCollection(), "show_hidden");
-    m_actionShowHidden->setChecked(m_showHidden);
-#endif
-
-    KStdAction::quit(this, SLOT( slotClose() ), actionCollection());
+    KStdAction::save(this, SLOT( slotSave() ), actionCollection());
+    KStdAction::quit(this, SLOT( close() ), actionCollection());
     KStdAction::cut(0, 0, actionCollection());
     KStdAction::copy(0, 0, actionCollection());
     KStdAction::paste(0, 0, actionCollection());
@@ -93,8 +94,30 @@ void KMenuEdit::slotConfigureKeys()
 
 void KMenuEdit::setupView()
 {
-    m_view = new MenuEditView(actionCollection(), this);
-    setCentralWidget(m_view);
+    m_splitter = new QSplitter(Horizontal, this);
+    m_tree = new TreeView(actionCollection(), m_splitter);
+    m_basicTab = new BasicTab(m_splitter);
+
+    connect(m_tree, SIGNAL(entrySelected(MenuFolderInfo *)),
+            m_basicTab, SLOT(setFolderInfo(MenuFolderInfo *)));
+    connect(m_tree, SIGNAL(entrySelected(MenuEntryInfo *)),
+            m_basicTab, SLOT(setEntryInfo(MenuEntryInfo *)));
+
+    connect(m_basicTab, SIGNAL(changed(MenuFolderInfo *)), 
+            m_tree, SLOT(currentChanged(MenuFolderInfo *)));
+    connect(m_basicTab, SIGNAL(changed(MenuEntryInfo *)), 
+            m_tree, SLOT(currentChanged(MenuEntryInfo *)));
+
+    // restore splitter sizes
+    KConfig* config = KGlobal::config();
+    QValueList<int> sizes = config->readIntListEntry("SplitterSizes");
+
+    if (sizes.isEmpty())
+	sizes << 1 << 3;
+    m_splitter->setSizes(sizes);
+    m_tree->setFocus();
+
+    setCentralWidget(m_splitter);
 }
 
 void KMenuEdit::slotChangeView()
@@ -113,28 +136,43 @@ void KMenuEdit::slotChangeView()
 
     m_actionDelete = new KAction(i18n("&Delete"), "editdelete", Key_Delete, actionCollection(), "delete");
 
-    delete m_actionUndelete;
-    m_actionUndelete = 0;
-    if (m_showHidden)
-    {
-       m_actionUndelete = new KAction(i18n("&Re-add"), "undo", KStdAccel::key(KStdAccel::Undo), actionCollection(), "undelete");
-    }
-
-    if (!m_view)
+    if (!m_splitter)
        setupView();
     createGUI("kmenueditui.rc");
 
     // make it look nice
     toolBar(0)->setIconText(KToolBar::IconTextBottom);
 
-    m_view->setViewMode(m_showHidden);
+    m_tree->setViewMode(m_showHidden);
 }
 
-void KMenuEdit::slotClose()
+void KMenuEdit::slotSave()
 {
-    DCOPClient *dcc = kapp->dcopClient();
-    if ( !dcc->isAttached() )
-        dcc->attach();
-    dcc->send("kded", "kbuildsycoca", "recreate()", QByteArray());
-    close();
+    m_tree->save();
 }
+
+bool KMenuEdit::queryClose()
+{
+    if (!m_tree->dirty()) return true;
+    
+    int result = KMessageBox::warningYesNoCancel(this, 
+                    i18n("You have made changes to the menu.\n"
+                         "Do you want to save the changes or discard them?"),
+                    i18n("Save Menu Changes?"),
+                    KStdGuiItem::save(), KStdGuiItem::discard() );
+                    
+    switch(result)
+    {
+      case KMessageBox::Yes:
+         m_tree->save();
+         return true;
+      
+      case KMessageBox::No:
+         return true;
+         
+      default:
+         break;
+    }
+    return false;
+}
+

@@ -38,6 +38,7 @@
 #include <kcombobox.h>
 #include "khotkeys.h"
 
+#include "menuinfo.h"
 
 #include "basictab.h"
 #include "basictab.moc"
@@ -45,18 +46,20 @@
 BasicTab::BasicTab( QWidget *parent, const char *name )
   : QWidget(parent, name)
 {
+    _menuFolderInfo = 0;
+    _menuEntryInfo = 0;
+
     QGridLayout *layout = new QGridLayout(this, 6, 2,
                                           KDialog::marginHint(),
                                           KDialog::spacingHint());
 
     // general group
     QGroupBox *general_group = new QGroupBox(this);
-    QGridLayout *grid = new QGridLayout(general_group, 5, 2,
+    QGridLayout *grid = new QGridLayout(general_group, 4, 2,
                                         KDialog::marginHint(),
                                         KDialog::spacingHint());
-    _isDeleted = true;
 
-	general_group->setAcceptDrops(false);
+    general_group->setAcceptDrops(false);
 	
     // setup line inputs
     _nameEdit = new KLineEdit(general_group);
@@ -65,45 +68,35 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 	_commentEdit->setAcceptDrops(false);
     _execEdit = new KURLRequester(general_group);
 	_execEdit->lineEdit()->setAcceptDrops(false);
-    _typeEdit = new KComboBox(general_group);
     _launchCB = new QCheckBox(i18n("Enable &launch feedback"), general_group);
 
     // setup labels
     _nameLabel = new QLabel(_nameEdit, i18n("&Name:"), general_group);
     _commentLabel = new QLabel(_commentEdit, i18n("&Comment:"), general_group);
     _execLabel = new QLabel(_execEdit, i18n("Co&mmand:"), general_group);
-    _typeLabel = new QLabel(_typeEdit, i18n("&Type:"), general_group);
     grid->addWidget(_nameLabel, 0, 0);
     grid->addWidget(_commentLabel, 1, 0);
     grid->addWidget(_execLabel, 2, 0);
-    grid->addWidget(_typeLabel, 3, 0);
 
     // connect line inputs
     connect(_nameEdit, SIGNAL(textChanged(const QString&)),
-            SLOT(slotChanged(const QString&)));
+            SLOT(slotChanged()));
     connect(_commentEdit, SIGNAL(textChanged(const QString&)),
-            SLOT(slotChanged(const QString&)));
+            SLOT(slotChanged()));
     connect(_execEdit, SIGNAL(textChanged(const QString&)),
-            SLOT(slotChanged(const QString&)));
-    connect(_typeEdit, SIGNAL(activated(const QString&)),
-            SLOT(slotChanged(const QString&)));
+            SLOT(slotChanged()));
     connect(_launchCB, SIGNAL(clicked()), SLOT(launchcb_clicked()));
 
     // add line inputs to the grid
     grid->addMultiCellWidget(_nameEdit, 0, 0, 1, 1);
     grid->addMultiCellWidget(_commentEdit, 1, 1, 1, 1);
     grid->addMultiCellWidget(_execEdit, 2, 2, 1, 1);
-    grid->addMultiCellWidget(_typeEdit, 3, 3, 1, 1);
-    grid->addMultiCellWidget(_launchCB, 4, 4, 0, 1);
-
-	// add values to the Type Combobox
-	_typeEdit->insertItem(i18n("Application")); //has to match the DesktopType enum!
-	_typeEdit->insertItem(i18n("Link"));
+    grid->addMultiCellWidget(_launchCB, 3, 3, 0, 1);
 
     // setup icon button
     _iconButton = new KIconButton(general_group);
     _iconButton->setFixedSize(52,52);
-    connect(_iconButton, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(_iconButton, SIGNAL(clicked()), SLOT(slotChanged()));
     grid->addMultiCellWidget(_iconButton, 0, 1, 2, 2);
 
     // add the general group to the main layout
@@ -126,7 +119,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _pathLabel->setBuddy(_pathEdit);
 
     connect(_pathEdit, SIGNAL(textChanged(const QString&)),
-            SLOT(slotChanged(const QString&)));
+            SLOT(slotChanged()));
     vbox->addWidget(hbox);
     layout->addMultiCellWidget(_path_group, 1, 1, 0, 1);
 
@@ -147,7 +140,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _termOptLabel->setBuddy(_termOptEdit);
 
     connect(_termOptEdit, SIGNAL(textChanged(const QString&)),
-            SLOT(slotChanged(const QString&)));
+            SLOT(slotChanged()));
     vbox->addWidget(hbox);
     layout->addMultiCellWidget(_term_group, 2, 2, 0, 1);
 
@@ -170,7 +163,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _uidLabel->setBuddy(_uidEdit);
 
     connect(_uidEdit, SIGNAL(textChanged(const QString&)),
-	    SLOT(slotChanged(const QString&)));
+	    SLOT(slotChanged()));
     vbox->addWidget(hbox);
     layout->addMultiCellWidget(_uid_group, 3, 3, 0, 1);
 
@@ -200,152 +193,121 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
              this, SLOT(slotCapturedShortcut(const KShortcut&)));
     grid_keybind->addWidget(_keyEdit, 0, 1);
     //grid_keybind->addWidget(_keyButton, 0, 2 );
-    _khotkeysNeedsSave = false;
 
+    if (!KHotKeys::present())
+       general_group_keybind->hide();
 
     //disable all group at the begining.
     //because there is not file selected.
     _nameEdit->setEnabled(false);
     _commentEdit->setEnabled(false);
     _execEdit->setEnabled(false);
-    _typeEdit->setEnabled(false);
     _launchCB->setEnabled(false);
     _nameLabel->setEnabled(false);
     _commentLabel->setEnabled(false);
     _execLabel->setEnabled(false);
-    _typeLabel->setEnabled(false);
     _path_group->setEnabled(false);
     _term_group->setEnabled(false);
     _uid_group->setEnabled(false);
     // key binding part
     general_group_keybind->setEnabled( false );
-
-    connect( this, SIGNAL( changed()), SLOT( slotChanged()));
 }
 
-void BasicTab::setDesktopFile(const QString& desktopFile, const QString &menuId, const QString &name, bool isDeleted)
+void BasicTab::enableWidgets(bool isDF, bool isDeleted)
 {
-    _desktopFile = desktopFile;
-    _menuId = menuId;
-    _name = name;
-    _isDeleted = isDeleted;
-    // key binding part
-    _khotkeysNeedsSave = false;
-
-    KDesktopFile df(desktopFile);
-
-    _nameEdit->setText(name.isEmpty() ? df.readName() : name);
-    _commentEdit->setText(df.readComment());
-    _iconButton->setIcon(df.readIcon());
-
-    // is desktopFile a .desktop file?
-    // (It's a .desktopfile if it's no .directory file)
-    bool isDF = _isDesktopFile = (desktopFile.find(".directory") == -1);
-
     // set only basic attributes if it is not a .desktop file
     _nameEdit->setEnabled(!isDeleted);
     _commentEdit->setEnabled(!isDeleted);
     _iconButton->setEnabled(!isDeleted);
     _execEdit->setEnabled(isDF && !isDeleted);
-    _typeEdit->setEnabled(isDF && !isDeleted);
     _launchCB->setEnabled(isDF && !isDeleted);
     _nameLabel->setEnabled(!isDeleted);
     _commentLabel->setEnabled(!isDeleted);
     _execLabel->setEnabled(isDF && !isDeleted);
-    _typeLabel->setEnabled(isDF && !isDeleted);
 
     _path_group->setEnabled(isDF && !isDeleted);
     _term_group->setEnabled(isDF && !isDeleted);
     _uid_group->setEnabled(isDF && !isDeleted);
-    _keyEdit->setEnabled(!isDeleted);
+    general_group_keybind->setEnabled( isDF && !isDeleted );
+
+    _termOptEdit->setEnabled(isDF && !isDeleted && _terminalCB->isChecked());
+    _termOptLabel->setEnabled(isDF && !isDeleted && _terminalCB->isChecked());
+
+    _uidEdit->setEnabled(isDF && !isDeleted && _uidCB->isChecked());
+    _uidLabel->setEnabled(isDF && !isDeleted && _uidCB->isChecked());
+}
+
+void BasicTab::setFolderInfo(MenuFolderInfo *folderInfo)
+{
+    blockSignals(true);
+    _menuFolderInfo = folderInfo;
+    _menuEntryInfo = 0;
+
+    _nameEdit->setText(folderInfo->caption);
+    _commentEdit->setText(folderInfo->comment);
+    _iconButton->setIcon(folderInfo->icon);
+
+    // clean all disabled fields and return 
+    _execEdit->lineEdit()->setText("");
+    _pathEdit->lineEdit()->setText("");
+    _termOptEdit->setText("");
+    _uidEdit->setText("");
+    _launchCB->setChecked(false);
+    _terminalCB->setChecked(false);
+    _uidCB->setChecked(false);
+    _keyEdit->setShortcut(0);
+
+    enableWidgets(false, folderInfo->hidden);
+    blockSignals(false);
+}
+
+void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
+{
+    blockSignals(true);
+    _menuFolderInfo = 0;
+    _menuEntryInfo = entryInfo;
+
+    KDesktopFile *df = entryInfo->desktopFile();
+
+    _nameEdit->setText(df->readName());
+    _commentEdit->setText(df->readComment());
+    _iconButton->setIcon(df->readIcon());
 
     // key binding part
-    if( isDF )
+    if( KHotKeys::present())
     {
-        if( KHotKeys::present())
-        {
-            general_group_keybind->setEnabled( true );
-            _keyEdit->setShortcut( KHotKeys::getMenuEntryShortcut(
-                                       _desktopFile ));
-        }
-    }
-    else
-    {
-        general_group_keybind->setEnabled( false ); // not a menu entry - no shortcut
-        _keyEdit->setShortcut(0);
-    }
-   // clean all disabled fields and return if it is not a .desktop file
-    if (!isDF) {
-        _execEdit->lineEdit()->setText("");
-        _typeEdit->setCurrentText("");
-        _pathEdit->lineEdit()->setText("");
-        _termOptEdit->setText("");
-        _uidEdit->setText("");
-        _launchCB->setChecked(false);
-        _terminalCB->setChecked(false);
-        _uidCB->setChecked(false);
-        return;
+        _keyEdit->setShortcut( entryInfo->shortcut() );
     }
 
-    _execEdit->lineEdit()->setText(df.readPathEntry("Exec"));
-	_typeEdit->setCurrentText(i18n(df.readType().utf8()));
-    _pathEdit->lineEdit()->setText(df.readPath());
-    _termOptEdit->setText(df.readEntry("TerminalOptions"));
-    _uidEdit->setText(df.readEntry("X-KDE-Username"));
+    _execEdit->lineEdit()->setText(df->readPathEntry("Exec"));
+    _pathEdit->lineEdit()->setText(df->readPath());
+    _termOptEdit->setText(df->readEntry("TerminalOptions"));
+    _uidEdit->setText(df->readEntry("X-KDE-Username"));
 
-    _launchCB->setChecked(df.readBoolEntry("X-KDE-StartupNotify", true));
+    _launchCB->setChecked(df->readBoolEntry("X-KDE-StartupNotify", true));
       
-    if(df.readNumEntry("Terminal", 0) == 1)
+    if(df->readNumEntry("Terminal", 0) == 1)
         _terminalCB->setChecked(true);
     else
         _terminalCB->setChecked(false);
 
-    _uidCB->setChecked(df.readBoolEntry("X-KDE-SubstituteUID", false));
+    _uidCB->setChecked(df->readBoolEntry("X-KDE-SubstituteUID", false));
 
-    _termOptEdit->setEnabled(!isDeleted && _terminalCB->isChecked());
-    _termOptLabel->setEnabled(!isDeleted && _terminalCB->isChecked());
-
-    _uidEdit->setEnabled(!isDeleted && _uidCB->isChecked());
-    _uidLabel->setEnabled(!isDeleted && _uidCB->isChecked());
+    enableWidgets(true, entryInfo->hidden);
+    blockSignals(false);
 }
 
-void BasicTab::apply( bool desktopFileNeedsSave )
+void BasicTab::apply()
 {
-    // key binding part
-    if( KHotKeys::present() && _khotkeysNeedsSave )
-        KHotKeys::changeMenuEntryShortcut( _desktopFile, _keyEdit->shortcut().toStringInternal());
-    _khotkeysNeedsSave = false;
-
-    if( !desktopFileNeedsSave )
-        return;
-
-    //
-    QString local;
-    if (_menuId.isEmpty())
-       local = KDesktopFile::locateLocal(_desktopFile);
-    else
-       local = locateLocal("xdgdata-apps", _menuId);
-
-    KConfig *df = 0;
-    if (_desktopFile != local)
+    if (_menuEntryInfo)
     {
-       KConfig orig(_desktopFile, true, false, "apps");
-       df = orig.copyTo(local);
-    }
-    else
-    {
-       df = new KConfig(_desktopFile, false, false, "apps");
-    }
-
-    df->setDesktopGroup();
-    df->writeEntry("Name", _nameEdit->text());
-    df->writeEntry("Comment", _commentEdit->text());
-    df->writeEntry("Icon", _iconButton->icon());
-
-    if(_isDesktopFile)
-    {
+        _menuEntryInfo->setDirty();
+        _menuEntryInfo->setCaption(_nameEdit->text());
+        _menuEntryInfo->setIcon(_iconButton->icon());
+        
+        KDesktopFile *df = _menuEntryInfo->desktopFile();
+        df->writeEntry("Comment", _commentEdit->text());
         df->writePathEntry("Exec", _execEdit->lineEdit()->text());
-        df->writeEntry("Type", desktopTypeToString((DesktopType)_typeEdit->currentItem()));
         df->writePathEntry("Path", _pathEdit->lineEdit()->text());
 
         if (_terminalCB->isChecked())
@@ -358,75 +320,56 @@ void BasicTab::apply( bool desktopFileNeedsSave )
         df->writeEntry("X-KDE-Username", _uidEdit->text());
         df->writeEntry("X-KDE-StartupNotify", _launchCB->isChecked());
     }
-
-    df->sync();
-    delete df;
-    _desktopFile = local;
-}
-
-void BasicTab::reset()
-{
-    if(!_desktopFile.isEmpty())
-        setDesktopFile(_desktopFile, _menuId, _name, _isDeleted);
-
-    // key binding part
-    _khotkeysNeedsSave = false;
-}
-
-void BasicTab::slotChanged(const QString&)
-{
-    emit changed();
+    else
+    {
+        _menuFolderInfo->setCaption(_nameEdit->text());
+        _menuFolderInfo->setComment(_commentEdit->text());
+        _menuFolderInfo->setIcon(_iconButton->icon());
+    }
 }
 
 void BasicTab::slotChanged()
 {
-    emit changed( true );
+    if (signalsBlocked())
+       return;
+    apply();
+    if (_menuEntryInfo)
+       emit changed( _menuEntryInfo );
+    else
+       emit changed( _menuFolderInfo );
 }
 
 void BasicTab::launchcb_clicked()
 {
-    emit changed();
+    slotChanged();
 }
 
 void BasicTab::termcb_clicked()
 {
     _termOptEdit->setEnabled(_terminalCB->isChecked());
     _termOptLabel->setEnabled(_terminalCB->isChecked());
-    emit changed();
+    slotChanged();
 }
 
 void BasicTab::uidcb_clicked()
 {
     _uidEdit->setEnabled(_uidCB->isChecked());
     _uidLabel->setEnabled(_uidCB->isChecked());
-    emit changed();
+    slotChanged();
 }
-
-// key bindign method
-/*void BasicTab::keyButtonPressed()
-{
-    if( !KHotKeys::present())
-        return;
-    QString new_shortcut = KHotKeys::editMenuEntryShortcut( _desktopFile,
-        _keyEdit->text(), false );
-    if( new_shortcut == _keyEdit->text())
-        return;
-    _keyEdit->setText( new_shortcut );
-    emit changed( false );
-    _khotkeysNeedsSave = true;
-}*/
 
 void BasicTab::slotCapturedShortcut(const KShortcut& cut)
 {
+    if (signalsBlocked())
+       return;
+
     _keyEdit->setShortcut(cut);
-    emit changed( false );
-    _khotkeysNeedsSave = true;
+
+    if ( KHotKeys::present() )
+    {
+       _menuEntryInfo->setShortcut( _keyEdit->shortcut() );
+    }
+    if (_menuEntryInfo)
+       emit changed( _menuEntryInfo );
 }
 
-QString BasicTab::desktopTypeToString(DesktopType type) const
-{
-    if (type==Application)
-        return "Application"; //no i18n() here!!!
-    else
-        return "Link";
-}

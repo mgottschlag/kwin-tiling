@@ -31,65 +31,25 @@ class QPopupMenu;
 class KActionCollection;
 class KDesktopFile;
 class MenuFile;
-
-class FolderInfo 
-{
-public:
-    FolderInfo() : hidden(false) { subFolders.setAutoDelete(true); }
-
-    // Add sub menu
-    void add(FolderInfo *);
-
-    // Remove sub menu (without deleting it)
-    void take(FolderInfo *);
-
-    // Remove sub menu (without deleting it)
-    // @return true if found
-    bool takeRecursive(FolderInfo *info);
-    
-    // Add entry
-    void add(KService *);
-    
-    // Remove entry
-    void take(const QString &file);
-
-    // Return a unique sub-menu caption inspired by @p caption
-    QString uniqueMenuCaption(const QString &caption);
-
-    // Return a unique item caption inspired by @p caption but different
-    // from @p exclude
-    QString uniqueItemCaption(const QString &caption, const QString &exclude = QString::null);
-
-    // Return a list of existing submenu ids
-    QStringList existingMenuIds();
-    
-public:
-    QString id; // Relative to parent
-    QString fullId; // Name in tree
-    QString caption; // Visible name
-    QString directoryFile; // File describing this folder.
-    QString icon; // Icon
-    QPtrList<FolderInfo> subFolders; // Sub menus in this folder
-    KService::List entries; // Menu entries in this folder
-    bool hidden;
-};
+class MenuFolderInfo;
+class MenuEntryInfo;
 
 class TreeItem : public QListViewItem
 {
 public:
-    TreeItem(QListViewItem *parent, QListViewItem *after, const QString& file, const QString &menuId);
-    TreeItem(QListView *parent, QListViewItem* after, const QString& file, const QString &menuId);
-
-    QString file() const { return _file; }
-    void setFile(const QString& file) { _file = file; }
+    TreeItem(QListViewItem *parent, QListViewItem *after, const QString &menuId);
+    TreeItem(QListView *parent, QListViewItem* after, const QString &menuId);
 
     QString menuId() const { return _menuId; }
 
     QString directory() const { return _directoryPath; }
     void setDirectoryPath(const QString& path) { _directoryPath = path; }
 
-    FolderInfo *folderInfo() { return m_folderInfo; }
-    void setFolderInfo(FolderInfo *folderInfo) { m_folderInfo = folderInfo; }
+    MenuFolderInfo *folderInfo() { return m_folderInfo; }
+    void setMenuFolderInfo(MenuFolderInfo *folderInfo) { m_folderInfo = folderInfo; }
+
+    MenuEntryInfo *entryInfo() { return m_entryInfo; }
+    void setMenuEntryInfo(MenuEntryInfo *entryInfo) { m_entryInfo = entryInfo; }
 
     QString name() const { return _name; }
     void setName(const QString &name);
@@ -107,11 +67,11 @@ private:
 
     bool _hidden : 1;
     bool _init : 1;
-    QString _file;
     QString _menuId;
     QString _name;
     QString _directoryPath;
-    FolderInfo *m_folderInfo;
+    MenuFolderInfo *m_folderInfo;
+    MenuEntryInfo *m_entryInfo;
 };
 
 class TreeView : public KListView
@@ -122,14 +82,19 @@ public:
     TreeView(KActionCollection *ac, QWidget *parent=0, const char *name=0);
     ~TreeView();
 
-    void readFolderInfo(FolderInfo *folderInfo=0, KServiceGroup::Ptr folder=0, const QString &prefix=QString::null);
+    void readMenuFolderInfo(MenuFolderInfo *folderInfo=0, KServiceGroup::Ptr folder=0, const QString &prefix=QString::null);
     void setViewMode(bool showHidden);
+    void save();
+    
+    bool dirty();
 
 public slots:
-    void currentChanged(const QString& desktopFile);
+    void currentChanged(MenuFolderInfo *folderInfo);
+    void currentChanged(MenuEntryInfo *entryInfo);
 
 signals:
-    void entrySelected(const QString&, const QString &, const QString &, bool);
+    void entrySelected(MenuFolderInfo *folderInfo);
+    void entrySelected(MenuEntryInfo *entryInfo);
 
 protected slots:
     void itemSelected(QListViewItem *);
@@ -143,16 +108,14 @@ protected slots:
     void copy();
     void paste();
     void del();
-    void undel();
 
 protected:
-    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, FolderInfo *folderInfo);
-    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, KService *s);
+    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuFolderInfo *folderInfo);
+    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuEntryInfo *entryInfo);
 
     void del(TreeItem *, bool deleteInfo);
-    void undel(TreeItem *);
     void fill();
-    void fillBranch(FolderInfo *folderInfo, TreeItem *parent);
+    void fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent);
     QString findName(KDesktopFile *df, bool deleted);
 
     // moving = src will be removed later
@@ -170,15 +133,17 @@ protected:
 private:
     KActionCollection *m_ac;
     QPopupMenu        *m_rmb;
-    QString            m_clipboard;
-    FolderInfo        *m_clipboardInfo;
-    QString            m_clipboardMenuId;
-    QString            m_drag;
-    FolderInfo        *m_dragInfo;
+    int                m_clipboard;
+    MenuFolderInfo    *m_clipboardFolderInfo;
+    MenuEntryInfo     *m_clipboardEntryInfo;
+    int                m_drag;
+    MenuFolderInfo    *m_dragInfo;
     TreeItem          *m_dragItem;
     bool               m_showHidden;
     MenuFile          *m_menuFile;
-    FolderInfo         m_rootFolder;
+    MenuFolderInfo    *m_rootFolder;
+    QStringList        m_newMenuIds;
+    QStringList        m_newDirectoryList;
 };
 
 

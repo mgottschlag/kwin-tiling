@@ -6,12 +6,14 @@ kdeinit_LTLIBRARIES = kmenuedit.la
 
 CLEANFILES = dummy.cpp
 
-kmenuedit_la_SOURCES = basictab.cpp treeview.cpp desktopfileeditor.cpp menueditview.cpp kmenuedit.cpp main.cpp khotkeys.cpp menufile.cpp
+kmenuedit_la_SOURCES = basictab.cpp treeview.cpp kmenuedit.cpp \
+	main.cpp khotkeys.cpp menufile.cpp menuinfo.cpp
 
 kmenuedit_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO)
 kmenuedit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
-noinst_HEADERS = kmenuedit.h menueditview.h treeview.h desktopfileeditor.h basictab.h khotkeys.h
+noinst_HEADERS = kmenuedit.h treeview.h basictab.h khotkeys.h \
+	menufile.h menuinfo.h
 
 METASOURCES = AUTO
 

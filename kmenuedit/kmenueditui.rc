@@ -1,11 +1,13 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="kmenuedit" version="3">
+<kpartgui name="kmenuedit" version="4">
 
 <MenuBar>
 
 <Menu name="file" noMerge="1"><text>&amp;File</text>
  <Action name="newitem"/>
  <Action name="newsubmenu" />
+ <Separator/>
+ <Action name="file_save"/>
  <Separator/>
  <Action name="file_quit"/>
 </Menu>
@@ -16,9 +18,6 @@
  <Action name="edit_paste"/>
  <Separator/>
  <Action name="delete"/>
- <Action name="undelete"/>
- <Action name="hide"/>
- <Action name="unhide"/>
 </Menu>
 
 <Menu name="settings">
@@ -36,9 +35,6 @@
  <Action name="edit_paste"/>
  <Separator/>
  <Action name="delete"/>
- <Action name="undelete"/>
- <Action name="hide"/>
- <Action name="unhide"/>
 </ToolBar>
 
 </kpartgui>

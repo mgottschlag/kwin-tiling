@@ -31,6 +31,47 @@ public:
    bool load();
    bool save();
    void create();
+
+   enum ActionType {
+       ADD_ENTRY = 0,
+       REMOVE_ENTRY,
+       ADD_MENU,
+       REMOVE_MENU,
+       MOVE_MENU
+   };
+
+   struct ActionAtom
+   {
+      ActionType action;
+      QString arg1;
+      QString arg2;
+   };
+
+   /**
+    * Create action atom and push it on the stack
+    */
+   ActionAtom *pushAction(ActionType action, const QString &arg1, const QString &arg2);
+
+   /**
+    * Pop @p atom from the stack.
+    * @p atom must be last item on the stack
+    */
+   void popAction(ActionAtom *atom);
+
+   /**
+    * Perform the specified action
+    */  
+   void performAction(const ActionAtom *);
+   
+   /**
+    * Perform all actions currently on the stack and remove them from the stack
+    */
+   void performAllActions();
+   
+   /**
+    * Returns whether the stack contains any actions
+    */
+   bool dirty();
    
    void addEntry(const QString &menuName, const QString &menuId);
    void removeEntry(const QString &menuName, const QString &menuId);
@@ -58,6 +99,8 @@ private:
 
    QDomDocument m_doc;
    bool m_bDirty;
+   
+   QPtrList<ActionAtom> m_actionList;
 };
 
 

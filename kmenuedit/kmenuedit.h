@@ -22,7 +22,9 @@
 
 #include <kmainwindow.h>
 
-class MenuEditView;
+class TreeView;
+class BasicTab;
+class QSplitter;
 class KAction;
 class KToggleAction;
 
@@ -37,15 +39,18 @@ public:
 protected:
     void setupView();
     void setupActions();
+    bool queryClose();
 
 protected slots:
-    void slotClose();
+    void slotSave();
     void slotChangeView();
     void slotConfigureKeys();
 protected:
-    MenuEditView *m_view;
+    TreeView           *m_tree;
+    BasicTab           *m_basicTab;
+    QSplitter          *m_splitter;
+
     KAction *m_actionDelete;
-    KAction *m_actionUndelete;
     KToggleAction *m_actionShowHidden;
     bool m_showHidden;
 };

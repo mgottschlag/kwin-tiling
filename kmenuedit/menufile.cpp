@@ -18,6 +18,7 @@
 
 #include <qfile.h>
 #include <qtextstream.h>
+#include <qregexp.h>
 
 #include <kdebug.h>
 #include <kglobal.h>
@@ -44,13 +45,10 @@ MenuFile::MenuFile(const QString &file)
  : m_fileName(file), m_bDirty(false)
 {
    load();
-   save();
 }
 
 MenuFile::~MenuFile()
 {
-   if (m_bDirty)
-      save();
 }
 
 bool MenuFile::load()
@@ -58,8 +56,6 @@ bool MenuFile::load()
    if (m_fileName.isEmpty())
       return false;
 
-qWarning("m_fileName = %s", m_fileName.latin1());
-   
    QFile file( m_fileName );
    if (!file.open( IO_ReadOnly ))
    {
@@ -78,30 +74,6 @@ qWarning("m_fileName = %s", m_fileName.latin1());
       return false;
    }
    file.close();
-
-   QDomDocumentType docType = m_doc.doctype();
-   qWarning("DocType name = %s", docType.name().latin1());
-   qWarning("DocType publicId = %s", docType.publicId().latin1());
-   qWarning("DocType systemId = %s", docType.systemId().latin1());
-   qWarning("DocType internalSubset = %s", docType.internalSubset().latin1());
-
-   QDomElement docElem = m_doc.documentElement();
-   QDomNode n = docElem.firstChild();
-   while( !n.isNull() )
-   {
-      QDomElement e = n.toElement(); // try to convert the node to an element.
-      QDomNode next = n.nextSibling();
-   
-      if (e.isNull())
-      {
-         qWarning("isNull()");
-      }
-      else
-      {
-         qWarning("Tag = %s", e.tagName().latin1());
-      }
-      n = next;
-   }
 
    return true;
 }
@@ -172,7 +144,6 @@ QDomElement MenuFile::findMenu(QDomElement elem, const QString &menuName, bool c
             }
             n2 = n2.nextSibling();
          }
-qWarning("Found menu %s, checking with %s", name.latin1(), menuNodeName.latin1());
          
          if (name == menuNodeName)
          {
@@ -217,7 +188,6 @@ static QString entryToDirId(const QString &path)
       // What now? Use filename only and hope for the best.
       local = path.mid(path.findRev('/')+1);
    }
-qWarning("entryToDirId: %s --> %s", path.latin1(), local.latin1());   
    return local;                                                                                           
 }
 
@@ -293,8 +263,6 @@ void MenuFile::addEntry(const QString &menuName, const QString &menuId)
    QDomElement fileNode = m_doc.createElement(MF_FILENAME);
    fileNode.appendChild(m_doc.createTextNode(menuId));
    includeNode.appendChild(fileNode);
-   
-   save();
 }
 
 
@@ -318,13 +286,10 @@ void MenuFile::removeEntry(const QString &menuName, const QString &menuId)
    QDomElement fileNode = m_doc.createElement(MF_FILENAME);
    fileNode.appendChild(m_doc.createTextNode(menuId));
    excludeNode.appendChild(fileNode);
-   
-   save();
 }
 
 void MenuFile::addMenu(const QString &menuName, const QString &menuFile)
 {
-qWarning("MenuFile::addMenu( %s, %s )", menuName.latin1(), menuFile.latin1());
    m_bDirty = true;
 
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
@@ -332,13 +297,10 @@ qWarning("MenuFile::addMenu( %s, %s )", menuName.latin1(), menuFile.latin1());
    QDomElement dirElem = m_doc.createElement(MF_DIRECTORY);
    dirElem.appendChild(m_doc.createTextNode(entryToDirId(menuFile)));
    elem.appendChild(dirElem);
-   
-   save();
 }
 
 void MenuFile::moveMenu(const QString &oldMenu, const QString &newMenu)
 {
-qWarning("MenuFile::moveMenu(%s, %s)", oldMenu.latin1(), newMenu.latin1());
    m_bDirty = true;
 
    // Undelete the new menu
@@ -373,7 +335,6 @@ qWarning("MenuFile::moveMenu(%s, %s)", oldMenu.latin1(), newMenu.latin1());
       newMenuName += newMenuParts[j];
    }
 
-qWarning("commonMenuName = %s", commonMenuName.latin1());
    elem = findMenu(m_doc.documentElement(), commonMenuName, true);
 
    // Add instructions for moving
@@ -385,21 +346,16 @@ qWarning("commonMenuName = %s", commonMenuName.latin1());
    node.appendChild(m_doc.createTextNode(newMenuName));
    moveNode.appendChild(node);
    elem.appendChild(moveNode);
- 
-   save();
 }
 
 void MenuFile::removeMenu(const QString &menuName)
 {
-qWarning("MenuFile::removeMenu( %s )", menuName.latin1());
    m_bDirty = true;
 
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
 
    purgeDeleted(elem);
    elem.appendChild(m_doc.createElement(MF_DELETED));
-   
-   save();
 }
 
    /**
@@ -411,9 +367,16 @@ QString MenuFile::uniqueMenuName(const QString &menuName, const QString &newMenu
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, false);
       
    QString result = newMenu;
-   if (!result.endsWith("/"))
-       result += "/";
-   int trunc = result.length()-1; // Position of trailing '/'
+   if (result.endsWith("/"))
+       result.truncate(result.length()-1);
+       
+   QRegExp r("(.*)(?=-\\d+)");
+   result = (r.search(result) > -1) ? r.cap(1) : result;
+     
+   int trunc = result.length(); // Position of trailing '/'
+   
+   result.append("/");
+   
    for(int n = 1; ++n; )
    {
       if (findMenu(elem, result, false).isNull() && !excludeList.contains(result))
@@ -423,4 +386,63 @@ QString MenuFile::uniqueMenuName(const QString &menuName, const QString &newMenu
       result.append(QString("-%1/").arg(n));
    }
    return QString::null; // Never reached
+}
+
+void MenuFile::performAction(const ActionAtom *atom)
+{
+   switch(atom->action)
+   {
+     case ADD_ENTRY: 
+        addEntry(atom->arg1, atom->arg2);
+        return;
+     case REMOVE_ENTRY:
+        removeEntry(atom->arg1, atom->arg2);
+        return;
+     case ADD_MENU:
+        addMenu(atom->arg1, atom->arg2);
+        return;
+     case REMOVE_MENU:
+        removeMenu(atom->arg1);
+        return;
+     case MOVE_MENU:
+        moveMenu(atom->arg1, atom->arg2);
+        return;
+   }
+}
+
+MenuFile::ActionAtom *MenuFile::pushAction(MenuFile::ActionType action, const QString &arg1, const QString &arg2)
+{
+   ActionAtom *atom = new ActionAtom;
+   atom->action = action;
+   atom->arg1 = arg1;
+   atom->arg2 = arg2;
+   m_actionList.append(atom);
+   return atom;
+}
+
+void MenuFile::popAction(ActionAtom *atom)
+{
+   if (m_actionList.getLast() != atom)
+   {
+      qWarning("MenuFile::popAction Error, action not last in list.");
+      return;
+   }
+   m_actionList.removeLast();
+   delete atom;
+}
+
+void MenuFile::performAllActions()
+{
+   for(ActionAtom *atom; (atom = m_actionList.getFirst()); m_actionList.removeFirst())
+   {
+      performAction(atom);
+      delete atom;
+   }
+   if (m_bDirty)
+      save();
+}
+
+bool MenuFile::dirty()
+{
+   return (m_actionList.count() != 0);
 }

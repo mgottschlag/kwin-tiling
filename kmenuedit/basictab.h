@@ -34,6 +34,9 @@ class QLabel;
 class KURLRequester;
 class KComboBox;
 
+class MenuFolderInfo;
+class MenuEntryInfo;
+
 class BasicTab : public QWidget
 {
     Q_OBJECT
@@ -41,48 +44,39 @@ class BasicTab : public QWidget
 public:
     BasicTab( QWidget *parent=0, const char *name=0 );
 
-    void apply( bool desktopFileNeedsSave );
-    void reset();
-
-    QString desktopFile() { return _desktopFile; }
-    QString menuId() { return _menuId; }
+    void apply();
 
 signals:
-    void changed();
-    void changed( bool desktopFileNeedsSave );
+    void changed( MenuFolderInfo * );
+    void changed( MenuEntryInfo * );
 
 public slots:
-    void setDesktopFile(const QString& desktopFile, const QString &menuId, const QString &name, bool isDeleted);
+    void setFolderInfo(MenuFolderInfo *folderInfo);
+    void setEntryInfo(MenuEntryInfo *entryInfo);
 
 protected slots:
-    void slotChanged(const QString&);
     void slotChanged();
     void launchcb_clicked();
     void termcb_clicked();
     void uidcb_clicked();
-    //void keyButtonPressed();
     void slotCapturedShortcut(const KShortcut&);
 
 protected:
+    void enableWidgets(bool isDF, bool isDeleted);
+
+protected:
     KLineEdit    *_nameEdit, *_commentEdit;
-	KComboBox *_typeEdit;
     KKeyButton   *_keyEdit;
     KURLRequester *_execEdit, *_pathEdit;
     KLineEdit    *_termOptEdit, *_uidEdit;
     QCheckBox    *_terminalCB, *_uidCB, *_launchCB;
     KIconButton  *_iconButton;
     QGroupBox    *_path_group, *_term_group, *_uid_group, *general_group_keybind;
-    QLabel *_termOptLabel, *_uidLabel, *_pathLabel, *_nameLabel, *_commentLabel, *_execLabel, *_typeLabel;
+    QLabel *_termOptLabel, *_uidLabel, *_pathLabel, *_nameLabel, *_commentLabel, *_execLabel;
 
-    QString       _desktopFile;
-    QString       _name;
-    QString       _menuId;
-    bool _khotkeysNeedsSave;
+    MenuFolderInfo *_menuFolderInfo;
+    MenuEntryInfo  *_menuEntryInfo;
     bool _isDeleted;
-    bool _isDesktopFile;
-private:
-    enum DesktopType {Application=0, Link=1};
-    QString desktopTypeToString(DesktopType type) const;
 };
 
 #endif
