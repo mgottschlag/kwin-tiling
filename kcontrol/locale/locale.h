@@ -26,14 +26,14 @@
 #define __KLOCALECONFIG_H__
 
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 class QLabel;
 class KLocale;
 class KLanguageCombo;
 class KLocaleSample;
 
-class KLocaleConfig : public KConfigWidget
+class KLocaleConfig : public KCModule
 {
   Q_OBJECT
 
@@ -43,10 +43,11 @@ public:
 
   void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
 
+  void load();
+  void save();
+  void defaults();
+
 public slots:
-  void loadSettings();
-  void applySettings();
-  void defaultSettings();
   void updateSample();
   void reTranslateLists();
     

@@ -44,8 +44,14 @@
 
 #define i18n(a) (a)
 
+extern "C" {
+  KCModule *create_localemon(QWidget *parent, const char *name) {
+    return new KLocaleConfigMoney(parent, name);
+  }
+}
+
 KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
- : KConfigWidget(parent, name)
+ : KCModule(parent, name)
 {
   QLabel *label;
   QGroupBox *gbox;
@@ -131,7 +137,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
   tl->addStretch(1);
   tl->activate();
 
-  loadSettings();
+  load();
 }
 
 KLocaleConfigMoney::~KLocaleConfigMoney()
@@ -139,7 +145,7 @@ KLocaleConfigMoney::~KLocaleConfigMoney()
 }
 
 
-void KLocaleConfigMoney::loadSettings()
+void KLocaleConfigMoney::load()
 {
   KLocale *locale = KGlobal::locale();
 
@@ -153,7 +159,7 @@ void KLocaleConfigMoney::loadSettings()
   cmbMonNegMonSignPos->setCurrentItem(locale->_negativeMonetarySignPosition);
 }
 
-void KLocaleConfigMoney::applySettings()
+void KLocaleConfigMoney::save()
 {
   KLocale *locale = KGlobal::locale();
   KConfigBase *config = KGlobal::config();
@@ -208,7 +214,7 @@ void KLocaleConfigMoney::applySettings()
   config->sync();
 }
 
-void KLocaleConfigMoney::defaultSettings()
+void KLocaleConfigMoney::defaults()
 {
 }
 
@@ -281,5 +287,5 @@ void KLocaleConfigMoney::reset()
   locale->_positiveMonetarySignPosition = (KLocale::SignPosition)ent.readNumEntry("PositiveMonetarySignPosition", KLocale::BeforeQuantityMoney);
   locale->_negativeMonetarySignPosition = (KLocale::SignPosition)ent.readNumEntry("NegativeMonetarySignPosition", KLocale::ParensAround);
 
-  loadSettings();
+  load();
 }

@@ -74,7 +74,7 @@ the user interface, which is often not needed in this case.
 
 int buttons();
 
-The control center calles this function to decide which buttons should
+The control center calls this function to decide which buttons should
 be displayed. For example, it does not make sense to display an "Apply"
 button for one of the information modules. The value returned can
 be set by modules using setButtons. E.g.
@@ -208,7 +208,7 @@ Don't forget the usual entries :
 
 Type=Application
 Icon=...
-Exec=kcontrol2 dir/file
+Exec=kcontrol dir/file
 
 (or should that be kcmshell ?)
 

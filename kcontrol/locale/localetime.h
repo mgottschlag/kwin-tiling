@@ -25,7 +25,7 @@
 #ifndef __KLOCALECONFIGTIME_H__
 #define __KLOCALECONFIGTIME_H__
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 class QCheckBox;
 class QComboBox;
@@ -34,7 +34,7 @@ class QLineEdit;
 class KLanguageCombo;
 class KLocaleSample;
 
-class KLocaleConfigTime : public KConfigWidget
+class KLocaleConfigTime : public KCModule
 {
   Q_OBJECT
 
@@ -42,10 +42,11 @@ public:
   KLocaleConfigTime( QWidget *parent=0, const char *name=0);
   ~KLocaleConfigTime( );
 
+  void load();
+  void save();
+  void defaults();
+
 public slots:
-  void loadSettings();
-  void applySettings();
-  void defaultSettings();
   void reset();
   void updateSample();
 

@@ -27,7 +27,7 @@
 #include <qobjectlist.h>
 #include <qtabwidget.h>
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 #include <klocale.h>
 #include <kglobal.h>
 
@@ -84,25 +84,25 @@ void KLocaleApplication::init()
 void KLocaleApplication::apply()
 {
   if (locale)
-    locale->applySettings();
+    locale->save();
   if (localenum)
-    localenum->applySettings();
+    localenum->save();
   if (localemon)
-    localemon->applySettings();
+    localemon->save();
   if (localetime)
-    localetime->applySettings();
+    localetime->save();
 }
 
 void KLocaleApplication::defaultValues()
 {
   if (locale)
-    locale->defaultSettings();
+    locale->defaults();
   if (localenum)
-    localemon->defaultSettings();
+    localenum->defaults();
   if (localemon)
-    localemon->defaultSettings();
+    localemon->defaults();
   if (localetime)
-    localetime->defaultSettings();
+    localetime->defaults();
 }
 
 void KLocaleApplication::updateSample()

@@ -44,8 +44,14 @@
 
 #define i18n(a) (a)
 
+extern "C" {
+  KCModule *create_localetime(QWidget *parent, const char *name) {
+    return new KLocaleConfigTime(parent, name);
+  }
+}
+
 KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
- : KConfigWidget(parent, name)
+ : KCModule(parent, name)
 {
   QLabel *label;
   QGroupBox *gbox;
@@ -91,14 +97,14 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   tl->addStretch(1);
   tl->activate();
 
-  loadSettings();
+  load();
 }
 
 KLocaleConfigTime::~KLocaleConfigTime()
 {
 }
 
-void KLocaleConfigTime::loadSettings()
+void KLocaleConfigTime::load()
 {
   KLocale *locale = KGlobal::locale();
 
@@ -107,7 +113,7 @@ void KLocaleConfigTime::loadSettings()
   edDateFmtShort->setText(locale->_datefmtshort);
 }
 
-void KLocaleConfigTime::applySettings()
+void KLocaleConfigTime::save()
 {
   KSimpleConfig a(0, false);
   KLocale *locale = KGlobal::locale();
@@ -134,7 +140,7 @@ void KLocaleConfigTime::applySettings()
   config->sync();
 }
 
-void KLocaleConfigTime::defaultSettings()
+void KLocaleConfigTime::defaults()
 {
 }
 
@@ -173,5 +179,5 @@ void KLocaleConfigTime::reset()
   locale->_datefmt = ent.readEntry("DateFormat", "%m/%d/%y");
   locale->_datefmt = ent.readEntry("DateFormatShort", "%m/%d/%y");
 
-  loadSettings();
+  load();
 }

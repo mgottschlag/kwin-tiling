@@ -47,8 +47,14 @@
 
 #define i18n(a) (a)
 
+extern "C" {
+  KCModule *create_locale(QWidget *parent, const char *name) {
+    return new KLocaleConfig(parent, name);
+  }
+}
+
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
-  : KConfigWidget (parent, name)
+  : KCModule (parent, name)
 {
     locale =  KGlobal::locale();
 
@@ -114,7 +120,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl->addStretch(1);
     tl->activate();
 
-    loadSettings();
+    load();
 }
 
 KLocaleConfig::~KLocaleConfig ()
@@ -168,7 +174,7 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
     }
 }
 
-void KLocaleConfig::loadSettings()
+void KLocaleConfig::load()
 {
   loadLocaleList(comboCountry, "l10n/", QStringList());
   loadLocaleList(comboNumber, "l10n/", QStringList());
@@ -213,7 +219,7 @@ void KLocaleConfig::readLocale(const QString &path, QString &name, const QString
   name = entry.readEntry("Name", i18n("without name"));
 }
 
-void KLocaleConfig::applySettings()
+void KLocaleConfig::save()
 {
   KConfigBase *config = KGlobal::config();
 
@@ -237,7 +243,7 @@ void KLocaleConfig::applySettings()
   changedFlag = FALSE;
 }
 
-void KLocaleConfig::defaultSettings()
+void KLocaleConfig::defaults()
 {
   changedFlag = FALSE;
 

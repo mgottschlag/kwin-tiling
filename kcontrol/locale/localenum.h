@@ -25,7 +25,7 @@
 #ifndef __KLOCALECONFIGNUM_H__
 #define __KLOCALECONFIGNUM_H__
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 class QCheckBox;
 class QComboBox;
@@ -34,7 +34,7 @@ class QLineEdit;
 class KLanguageCombo;
 class KLocaleSample;
 
-class KLocaleConfigNumber : public KConfigWidget
+class KLocaleConfigNumber : public KCModule
 {
   Q_OBJECT
 
@@ -42,10 +42,11 @@ public:
   KLocaleConfigNumber( QWidget *parent=0, const char *name=0);
   ~KLocaleConfigNumber( );
 
+  void load();
+  void save();
+  void defaults();
+
 public slots:
-  void loadSettings();
-  void applySettings();
-  void defaultSettings();
   void reset();
   void updateSample();
 

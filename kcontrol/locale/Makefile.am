@@ -12,6 +12,9 @@ METASOURCES = locale.moc klangcombo.moc localenum.moc localemon.moc localetime.m
 noinst_HEADERS = locale.h klangcombo.h klocalesample.h localenum.h localemon.h localetime.h
 EXTRA_DIST = kcmlocalerc 
 
+lib_LTLIBRARIES = libkcm_locale.la
+libkcm_locale_la_SOURCES = locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp
+libkcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) $(KDE_RPATH)
 KDE_ICON = locale
 
 messages:

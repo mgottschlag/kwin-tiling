@@ -44,8 +44,14 @@
 
 #define i18n(a) (a)
 
+extern "C" {
+  KCModule *create_localenum(QWidget *parent, const char *name) {
+    return new KLocaleConfigNumber(parent, name);
+  }
+}
+
 KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
- : KConfigWidget(parent, name)
+ : KCModule(parent, name)
 {
   QLabel *label;
   QGroupBox *gbox;
@@ -97,14 +103,14 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   tl->addStretch(1);
   tl->activate();
 
-  loadSettings();
+  load();
 }
 
 KLocaleConfigNumber::~KLocaleConfigNumber()
 {
 }
 
-void KLocaleConfigNumber::loadSettings()
+void KLocaleConfigNumber::load()
 {
   KLocale *locale = KGlobal::locale();
 
@@ -114,7 +120,7 @@ void KLocaleConfigNumber::loadSettings()
   edMonNegSign->setText(locale->_negativeSign);
 }
 
-void KLocaleConfigNumber::applySettings()
+void KLocaleConfigNumber::save()
 {
   KLocale *locale = KGlobal::locale();
   KConfigBase *config = KGlobal::config();
@@ -136,7 +142,7 @@ void KLocaleConfigNumber::applySettings()
   config->sync();
 }
 
-void KLocaleConfigNumber::defaultSettings()
+void KLocaleConfigNumber::defaults()
 {
 }
 
@@ -186,5 +192,5 @@ void KLocaleConfigNumber::reset()
   locale->_positiveSign = ent.readEntry("PositiveSign");
   locale->_negativeSign = ent.readEntry("NegativeSign", "-");
 
-  loadSettings();
+  load();
 }
