@@ -317,7 +317,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   hbox = new QHBoxLayout(vvbox, 6);
   hbox->addSpacing(24);
   mk_max_speed = new KIntNumInput(mk_time_to_max, 0, grp);
-  mk_max_speed->setLabel(i18n("&Maximum speed:"), AlignVCenter);
+  mk_max_speed->setLabel(i18n("Ma&ximum speed:"), AlignVCenter);
   mk_max_speed->setRange(1, 1000, 10);
   hbox->addWidget(mk_max_speed);
 
