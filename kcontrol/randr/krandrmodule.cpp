@@ -253,6 +253,9 @@ void KRandRModule::defaults()
 
 void KRandRModule::load()
 {
+	if (!isValid())
+		return;
+
 	// Don't load screen configurations:
 	// It will be correct already if they wanted to retain their settings over KDE restarts,
 	// and if it isn't correct they have changed a) their X configuration, b) the screen
@@ -269,6 +272,9 @@ void KRandRModule::load()
 
 void KRandRModule::save()
 {
+	if (!isValid())
+		return;
+
 	apply();
 
 	m_oldApply = m_applyOnStartup->isChecked();
