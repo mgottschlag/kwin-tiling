@@ -1,7 +1,7 @@
 /*
 
 Copyright 1988, 1998  The Open Group
-Copyright 2000-2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2000-2005 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -143,7 +143,6 @@ static int cfgMapT[] = {
 #ifdef XDMCP
 	GC_gXaccess,
 #endif
-	GC_gXservers
 };
 static int cfgMap[as(cfgMapT)];
 
@@ -435,67 +434,62 @@ InitResources( char **argv )
 	return GetDeps();
 }
 
-void
-ScanServers( int force )
+static void
+addServers( char **srv, int bType )
 {
-#ifndef HAVE_VTS
-	char *console;
-#endif
-	char *name, *class2, **argv;
-	const char *dtx;
+	char *name, *class2;
+	const char *dtx, *cls;
 	struct display *d;
-	int nserv, type;
-	static CfgDep xsDep;
 
-	Debug( "ScanServers\n" );
-	if (Setjmp( cnftalk.errjmp ))
-		return; /* may memleak */
-	if (!startConfig( GC_gXservers, &xsDep, force ))
-		return;
-	nserv = GRecvInt();
-	while (nserv--) {
-		name = GRecvStr();
-		class2 = GRecvStr();
-#ifndef HAVE_VTS
-		console = GRecvStr();
-#endif
-		type = GRecvInt();
-		argv = GRecvArgv();
+	for (; *srv; srv++) {
+		if ((cls = strchr( *srv, '_' ))) {
+			if (!StrNDup( &name, *srv, cls - *srv ))
+				return;
+			if (!StrDup( &class2, cls )) {
+				free( name );
+				return;
+			}
+		} else {
+			if (!StrDup( &name, *srv ))
+				return;
+			class2 = 0;
+		}
 		if ((d = FindDisplayByName( name ))) {
 			if (d->class2)
 				free( d->class2 );
-#ifndef HAVE_VTS
-			if (d->console)
-				free( d->console );
-#endif
-			freeStrArr( d->serverArgv );
 			dtx = "existing";
 		} else {
-			d = NewDisplay( name );
+			if (!(d = NewDisplay( name ))) {
+				free( name );
+				if (class2)
+					free( class2 );
+				return;
+			}
 			dtx = "new";
 		}
 		d->stillThere = 1;
-		Debug( "found %s display: %s %s %s%s %[s\n",
-		       dtx, d->name, d->class2,
-		       ((type & d_location) == dLocal) ? "local" : "foreign",
-		       ((type & d_lifetime) == dReserve) ? " reserve" : "", argv );
 		d->class2 = class2;
-		d->serverArgv = argv;
-#ifndef HAVE_VTS
-		d->console = console;
-#else
-		d->reqSrvVT = 0;
-		if (argv)
-			for (; argv[0]; argv++)
-				if (argv[0][0] == 'v' && argv[0][1] == 't')
-					d->reqSrvVT = atoi( argv[0] + 2 );
-#endif
-		d->displayType = type;
-		if ((type & d_lifetime) == dReserve && d->status == notRunning)
-			d->status = reserve;
-		else if ((type & d_lifetime) != dReserve && d->status == reserve)
-			d->status = notRunning;
+		d->displayType = (*name == ':' ? dLocal : dForeign) | bType;
+		if ((bType & d_lifetime) == dReserve) {
+			if (d->status == notRunning)
+				d->status = reserve;
+		} else {
+			if (d->status == reserve)
+				d->status = notRunning;
+		}
+		Debug( "found %s %s%s display: %s %s\n", dtx,
+		       ((d->displayType & d_location) == dLocal) ? "local" : "foreign",
+		       ((d->displayType & d_lifetime) == dReserve) ? " reserve" : "",
+		       d->name, d->class2 );
 		free( name );
 	}
+}
+
+void
+ScanServers( void )
+{
+	Debug( "ScanServers\n" );
+	addServers( staticServers, dFromFile | dPermanent );
+	addServers( reserveServers, dFromFile | dReserve );
 }
 

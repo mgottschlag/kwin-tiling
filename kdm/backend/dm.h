@@ -284,7 +284,6 @@ struct display {
 	int pid;                    /* process id of child */
 	int serverPid;              /* process id of server (-1 if none) */
 #ifdef HAVE_VTS
-	int reqSrvVT;               /* requested server VT (0 = none) */
 	int serverVT;               /* server VT (0 = none, -1 = pending) */
 	struct display *follower;   /* on exit, hand VT to this display */
 #endif
@@ -314,10 +313,6 @@ struct display {
 	CONF_CORE_LOCAL_DEFS
 
 	int idleTimeout;            /* abort login after that time */
-	char **serverArgv;          /* server program and arguments */
-#ifndef HAVE_VTS
-	char *console;              /* the tty line hidden by the server */
-#endif
 
 	unsigned short *authNameLens;  /* authorization protocol name lens */
 
@@ -444,7 +439,7 @@ char **FindCfgEnt( struct display *d, int id );
 int InitResources( char **argv );
 int LoadDMResources( int force );
 int LoadDisplayResources( struct display *d );
-void ScanServers( int force );
+void ScanServers( void );
 void CloseGetter( void );
 int startConfig( int what, CfgDep *dep, int force );
 RcStr *newStr( char *str );
@@ -532,6 +527,7 @@ extern char *curuser, *curpass, *curtype, *newpass,
             *dmrcuser, *curdmrc, *newdmrc;
 
 /* server.c */
+char **PrepServerArgv( struct display *d, const char *args );
 void StartServer( struct display *d );
 void AbortStartServer( struct display *d );
 void StartServerSuccess( void );

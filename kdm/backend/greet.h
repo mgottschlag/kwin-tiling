@@ -1,6 +1,6 @@
 /*
 
-Copyright 2001-2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2001-2005 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -158,7 +158,6 @@ from the copyright holder.
 #define GC_Files        1	/* get file list */
 #define GC_GetConf      2	/* get a config group */
 # define GC_gGlobal       1	/* get global config array */
-# define GC_gXservers     2	/* get Xservers equivalent */
 #ifdef XDMCP
 # define GC_gXaccess      3	/* get Xaccess equivalent */
 #endif

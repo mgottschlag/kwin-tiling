@@ -205,7 +205,7 @@ StrCat( char **strp, const char *fmt, ... )
 #define WANT_CLOSE 1
 
 typedef struct File {
-	char *buf, *eof;
+	char *buf, *eof, *cur;
 #if defined(HAVE_MMAP) && defined(WANT_CLOSE)
 	int ismapped;
 #endif
@@ -522,27 +522,6 @@ static const char def_xaccess[] =
 "\n"
 "#*		CHOOSER %hostlist	#\n";
 #endif
-
-#define XSERVERS_MAJOR 2
-#define XSERVERS_MINOR 0
-
-#define VERSION_WARNING "### Don't change these two lines; they are hints for genkdmconf. ###\n"
-#define XSERVERS_VERSION VERSION_WARNING "### Version " stringify(XSERVERS_MAJOR) "." stringify(XSERVERS_MINOR) " ###\n"
-
-static const char def_xservers[] =
-"# Xservers - local X-server list\n"
-"#\n"
-"# This file should contain an entry to start the server on the\n"
-"# local display; if you have more than one display (not screen),\n"
-"# you can add entries to the list (one per line).\n"
-"# If you also have some X terminals connected which do not support XDMCP,\n"
-"# you can add them here as well; you will want to leave those terminals\n"
-"# on and connected to the network, else kdm will have a tougher time\n"
-"# managing them. Each X terminal line should look like:\n"
-"#	 XTerminalName:0 foreign\n"
-"#\n"
-"\n" DEF_SERVER_LINES "\n"
-"\n" XSERVERS_VERSION;
 
 #ifdef XDMCP
 static const char def_willing[] =
@@ -989,340 +968,318 @@ getInitTab( void )
 
 /* TODO: handle solaris' local_uid specs */
 
-#ifdef HAVE_VTS
-# define RDPYS
-#endif
+static char *
+ReadWord( File *file, int EOFatEOL )
+{
+	char *wordp, *wordBuffer;
+	int quoted;
+	char c;
 
-#if defined(__linux__) || defined(__sun__)
-# define CONS
-#endif
+  rest:
+	wordp = wordBuffer = file->cur;
+  mloop:
+	quoted = 0;
+  qloop:
+	if (file->cur == file->eof) {
+	  doeow:
+		if (wordp == wordBuffer)
+			return 0;
+	  retw:
+		*wordp = '\0';
+		return wordBuffer;
+	}
+	c = *file->cur++;
+	switch (c) {
+	case '#':
+		if (quoted)
+			break;
+		do {
+			if (file->cur == file->eof)
+				goto doeow;
+			c = *file->cur++;
+		} while (c != '\n');
+	case '\0':
+	case '\n':
+		if (EOFatEOL && !quoted) {
+			file->cur--;
+			goto doeow;
+		}
+		if (wordp != wordBuffer) {
+			file->cur--;
+			goto retw;
+		}
+		goto rest;
+	case ' ':
+	case '\t':
+		if (wordp != wordBuffer)
+			goto retw;
+		goto rest;
+	case '\\':
+		if (!quoted) {
+			quoted = 1;
+			goto qloop;
+		}
+		break;
+	}
+	*wordp++ = c;
+	goto mloop;
+}
 
-#if defined(RDPYS) || defined(CONS)
+/* backslashes are double-escaped - for KConfig and for parseArgs */
+static const char *
+joinArgs( StrList *argv )
+{
+	StrList *av;
+	const char *s, *rs;
+	char *str;
+	int slen;
 
-# define dLocal		0
-# define dForeign	1
+	if (!argv)
+		return "";
+	for (slen = 0, av = argv; slen++, av; av = av->next) {
+		int nq = 0;
+		for (s = av->str; *s; s++, slen++)
+			if (isspace( *s ) || *s == '\'')
+				nq = 2;
+			else if (*s == '"')
+				slen += 2;
+			else if (*s == '\\')
+				slen += 3;
+		slen += nq;
+	}
+	rs = str = mmalloc( slen );
+	for (av = argv; av; av = av->next) {
+		int nq = 0;
+		for (s = av->str; *s; s++)
+			if (isspace( *s ) || *s == '\'')
+				nq = 2;
+		if (av != argv)
+			*str++ = ' ';
+		if (nq)
+			*str++ = '"';
+		for (s = av->str; *s; s++) {
+			if (*s == '\\')
+				*str++ = '\\';
+			if (*s == '"' || *s == '\\') {
+				*str++ = '\\';
+				*str++ = '\\';
+			}
+			*str++ = *s;
+		}
+		if (nq)
+			*str++ = '"';
+	}
+	*str = 0;
+	return rs;
+}
+
+# define dLocation  1
+# define dLocal     0
+# define dForeign   1
 
 static struct displayMatch {
-		const char *name;
-		int len, type;
+	const char *name;
+	int len, type;
 } displayTypes[] = {
-		{ "local", 5, dLocal },
-		{ "foreign", 7, dForeign },
+	{ "local", 5, dLocal },
+	{ "foreign", 7, dForeign },
 };
 
 static int
-parseDisplayType( const char *string
-#ifdef CONS
-                  , const char **atPos
-#endif
-                )
+parseDisplayType( const char *string, const char **atPos )
 {
 	struct displayMatch *d;
 
-#ifdef CONS
 	*atPos = 0;
-#endif
 	for (d = displayTypes; d < displayTypes + as(displayTypes); d++) {
-#ifdef CONS
 		if (!memcmp( d->name, string, d->len ) &&
-		    (!string[d->len] || string[d->len] == '@')) {
-			if (string[d->len] == '@')
+		    (!string[d->len] || string[d->len] == '@'))
+		{
+			if (string[d->len] == '@' && string[d->len + 1])
 				*atPos = string + d->len + 1;
-#else
-		if (!memcmp( d->name, string, d->len + 1 )) {
-#endif
 			return d->type;
 		}
 	}
 	return -1;
 }
 
-typedef struct Line {
-	struct Line *next;
-	StrList *words;
-	char *comment;
-} Line;
-#endif /* RDPYS || CONS */
-
-static int
-edit_xservers( File *file, char **nbuf, int *nlen )
-{
-#if defined(RDPYS) || defined(CONS)
-	char *cur, *nword, *wordp, *lstrt, *buf, *p, *rp;
-	const char *word, *dname, *dclass, *dclassp, *atPos;
-	Line *lin, *lines = 0, **lptr = &lines;
-	StrList *wrd, **wptr, *xswords = 0, **xswordp;
-	int ndpys = 0, nldpys = 0, nrdpys = 0, dpymask = 0;
-	int ttymask = 0;
-	int type, tty, dn, maj, min;
-	int quoted, i;
-	char c;
-
-	/* parse it */
-	*file->eof = 0;
-	cur = file->buf;
-  nline:
-	if (cur >= file->eof)
-		goto done;
-	if (!memcmp( cur, VERSION_WARNING, sizeof(VERSION_WARNING) - 1 )) {
-		cur += sizeof(VERSION_WARNING) - 1;
-		goto nline; /* *chomp* */
-	}
-	i = 0;
-	sscanf( cur, "### Version %d.%d ###\n%n", &maj, &min, &i );
-	if (i) {
-		if (maj > XSERVERS_MAJOR ||
-		    (maj == XSERVERS_MAJOR && min >= XSERVERS_MINOR))
-			return 0; /* up to date */
-		cur += i;
-		goto nline; /* *chomp* */
-	}
-	*lptr = lin = mcalloc( sizeof(*lin) );
-	lptr = &(*lptr)->next;
-	wptr = &lin->words;
-  nword:
-	lstrt = cur;
-	do {
-		c = *cur++;
-	} while (c == ' ' || c == '\t');
-	if (!c || c == '\n')
-		goto nline;
-	if (c == '#') {
-		do {
-			c = *cur++;
-		} while (c && c != '\n');
-		lin->comment = nword = mmalloc( cur - lstrt );
-		memcpy( nword, lstrt, cur - lstrt - 1 );
-		nword[cur - lstrt - 1] = 0;
-		goto nline;
-	}
-	wordp = cur - 1;
-  mloop:
-	quoted = 0;
-  qloop:
-	switch (c) {
-	case '#':
-		if (quoted)
-			break;
-		cur--;
-		goto deol;
-	case '\n':
-		if (quoted)
-			break;
-	  deol:
-	case ' ':
-	case '\t':
-	case 0:
-		*wptr = wrd = mcalloc( sizeof(*wrd) );
-		wptr = &(*wptr)->next;
-		wrd->str = nword = mmalloc( cur - wordp );
-		cur--;
-		memcpy( nword, wordp, cur - wordp );
-		nword[cur - wordp] = 0;
-		goto nword;
-	case '\\':
-		if (!quoted) {
-			quoted = 1;
-			c = *cur++;
-			goto qloop;
-		}
-		break;
-	}
-	c = *cur++;
-	goto mloop;
-  done:
-
-	/* analyze it */
-	for (lin = lines; lin; lin = lin->next) {
-		if (!(wrd = lin->words))
-			continue; /* no display */
-		dname = wrd->str;
-		if (!(wrd = wrd->next))
-			continue; /* no type */
-		type = parseDisplayType( wrd->str
-#ifdef CONS
-		                         , &atPos
-#endif
-				 );
-		if (type < 0) {
-			if (!(wrd = wrd->next))
-				continue; /* no type */
-			type = parseDisplayType( wrd->str
-#ifdef CONS
-			                         , &atPos
-#endif
-			                       );
-			if (type < 0) /* invalid type */
-				continue;
-		}
-		if (!(p = strchr( dname, ':' )))
-			continue; /* invalid display name */
-		dn = strtol( ++p, &rp, 10 );
-		if (*rp)
-			continue; /* same here ... */
-#ifdef RDPYS
-		ndpys++;
-#endif
-		if (type != dLocal)
-			continue; /* foreign doesn't count */
-#ifdef RDPYS
-		nldpys++;
-		dpymask |= 1 << dn;
-#endif
-#ifdef CONS
-		if (atPos) {
-#ifdef __linux__
-			if (!memcmp( atPos, "tty", 3 ) && (tty = atoi( atPos + 3 )))
-				ttymask |= 1 << (tty - 1);
-#elif defined(__sun__)
-			if (!memcmp( atPos, "console", 8 ))
-				ttymask |= 1;
-#endif
-		}
-#endif
-#ifdef RDPYS
-		wrd = wrd->next;
-		if (wrd && !strcmp( wrd->str, "reserve" )) {
-			nrdpys++;
-			wrd = wrd->next;
-		}
-		xswordp = 0;
-		if (!xswords)
-			xswordp = &xswords;
-		while (wrd) {
-			word = wrd->str;
-			/* this will break on -display :<n>, but in such a situation
-			   (Xnest) we have already lost anyway */
-			if (xswordp && word[0] != ':' &&
-			    (word[0] != 'v' || word[1] != 't' || !isdigit( word[2] )))
-			{
-				*xswordp = mcalloc( sizeof(*xswordp) );
-				(*xswordp)->str = word;
-				xswordp = &(*xswordp)->next;
-			}
-			wrd = wrd->next;
-		}
-#endif
-	}
-
-	/* edit it */
-	buf = 0;
-	for (lin = lines; lin; lin = lin->next) {
-		if (lin->words) {
-			/* NOTE: we throw away b0rked display specs */
-			wrd = lin->words;
-			dname = wrd->str;
-			if (!(wrd = wrd->next))
-				continue; /* no type */
-			type = parseDisplayType( wrd->str
-#ifdef CONS
-			                         , &atPos
-#endif
-			                       );
-			if (type < 0) {
-				dclass = wrd->str;
-				dclassp = " ";
-				if (!(wrd = wrd->next))
-					continue; /* no type */
-				type = parseDisplayType( wrd->str
-#ifdef CONS
-				                         , &atPos
-#endif
-				                       );
-				if (type < 0) /* invalid type */
-					continue;
-			} else
-				dclass = dclassp = "";
-			if (!(p = strchr( dname, ':' )))
-				continue; /* invalid display name */
-			dn = strtol( ++p, &rp, 10 );
-			if (*rp)
-				continue; /* same here ... */
-			if (type != dLocal) {
-				StrCat( &buf, "%s%s%s foreign", dname, dclassp, dclass ); /* foreign doesn't count */
-				goto elin;
-			}
-#ifdef CONS
-			if (!atPos) {
-# ifdef __linux__
-				for (tty = 0; ttymask & (1 << tty); tty++);
-				ttymask |= (1 << tty);
-				StrCat( &buf, "%s%s%s local@tty%d", dname, dclassp, dclass, tty + 1 );
-# elif defined(__sun__)
-				if (!(ttymask & 1)) {
-					ttymask |= 1;
-					StrCat( &buf, "%s%s%s local@console", dname, dclassp, dclass );
-				} else
-					StrCat( &buf, "%s%s%s local", dname, dclassp, dclass );
-# endif
-			} else
-				StrCat( &buf, "%s%s%s local@%s", dname, dclassp, dclass, atPos );
-#else
-			StrCat( &buf, "%s%s%s local", dname, dclassp, dclass );
-#endif
-			while ((wrd = wrd->next)) {
-				word = wrd->str;
-				StrCat( &buf, " %s", word );
-			}
-		}
-	  elin:
-		if (lin->comment)
-			StrCat( &buf, "%s\n", lin->comment );
-		else
-			StrCat( &buf, "\n" );
-	}
-
-#ifdef RDPYS
-	/* add reserve dpys */
-	if (nldpys < 3 && nldpys && !nrdpys) {
-		for (; nldpys < 3; nldpys++) {
-			for (dn = 0; dpymask & (1 << dn); dn++);
-			dpymask |= (1 << dn);
-# ifdef CONS
-#  ifdef __linux__
-			for (tty = 0; ttymask & (1 << tty); tty++);
-			ttymask |= (1 << tty);
-			StrCat( &buf, ":%d local@tty%d reserve", dn, tty + 1 );
-#  elif defined(__sun__)
-			if (!(ttymask & 1)) {
-				ttymask |= 1;
-				StrCat( &buf, "%s local@console", dname );
-			} else
-				StrCat( &buf, "%s local", dname );
-#  endif
-# else
-			StrCat( &buf, ":%d local reserve", dn );
-# endif
-			for (wrd = xswords; wrd; wrd = wrd->next)
-				StrCat( &buf, " %s", wrd->str );
-			StrCat( &buf, " :%d\n", dn );
-		}
-	}
-#endif
-
-	StrCat( &buf, "\n" XSERVERS_VERSION, 0 );
-
-	*nbuf = buf;
-	*nlen = strlen( buf );
-	return 1;
-#else /* RDPYS || CONS */
-	return 0;
-#endif
-}
+typedef struct serverEntry {
+	struct serverEntry *next;
+	const char *name, *class2, *console, *argvs, *arglvs;
+	StrList *argv, *arglv;
+	int type, reserve, vt;
+} ServerEntry;
 
 static void
-mk_xservers( Entry *ce, Section *cs ATTR_UNUSED )
+absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 {
-	if (!ce->active) { /* there is only the Global one */
-	  mkdef:
-		ce->value = KDMCONF "/Xservers";
-		ce->active = ce->written = 1;
-		writefile( ce->value, 0644, def_xservers );
-	} else if (old_confs)
-		linkfile( ce );
-	else
-		if (!copyfile( ce, "Xservers", 0644, edit_xservers ))
-			goto mkdef;
+	ServerEntry *se, *se1, *serverList, **serverPtr;
+	const char *word, *word2;
+	char *sdpys, *rdpys;
+	StrList **argp, **arglp, *ap, *ap2;
+	File file;
+	int nldpys = 0, nrdpys = 0, dpymask = 0;
+	int cpcmd, cpcmdl;
+#ifdef HAVE_VTS
+	int dn, cpvt, mtty;
+#endif
+
+	if (**value == '/') {
+		if (!readFile( &file, *value ))
+			return;
+	} else {
+		file.buf = *value;
+		file.eof = *value + strlen( *value );
+	}
+	file.cur = file.buf;
+
+	serverPtr = &serverList;
+#ifdef HAVE_VTS
+  bustd:
+#endif
+	while ((word = ReadWord( &file, 0 ))) {
+		se = mcalloc( sizeof(*se) );
+		se->name = word;
+		if (!(word = ReadWord( &file, 1 )))
+			continue;
+		se->type = parseDisplayType( word, &se->console );
+		if (se->type < 0) {
+			se->class2 = word;
+			if (!(word = ReadWord( &file, 1 )))
+				continue;
+			se->type = parseDisplayType( word, &se->console );
+			if (se->type < 0) {
+				while (ReadWord( &file, 1 ));
+				continue;
+			}
+		}
+		word = ReadWord( &file, 1 );
+		if (word && !strcmp( word, "reserve" )) {
+			se->reserve = 1;
+			word = ReadWord( &file, 1 );
+		}
+		if (((se->type & dLocation) == dLocal) != (word != 0))
+			continue;
+		argp = &se->argv;
+		arglp = &se->arglv;
+		while (word) {
+#ifdef HAVE_VTS
+			if (word[0] == 'v' && word[1] == 't')
+				se->vt = atoi( word + 2 );
+			else if (!strcmp( word, "-crt" )) { /* SCO style */
+				if (!(word = ReadWord( &file, 1 )) ||
+				    memcmp( word, "/dev/tty", 8 ))
+					goto bustd;
+				se->vt = atoi( word + 8 );
+			} else
+#endif
+			if (strcmp( word, se->name )) {
+				ap = mmalloc( sizeof(*ap) );
+				ap->str = word;
+				if (!strcmp( word, "-nolisten" )) {
+					if (!(word2 = ReadWord( &file, 1 )))
+						break;
+					ap2 = mmalloc( sizeof(*ap2) );
+					ap2->str = word2;
+					ap->next = ap2;
+					if (!strcmp( word2, "unix" )) {
+						*argp = ap;
+						argp = &ap2->next;
+					} else {
+						*arglp = ap;
+						arglp = &ap2->next;
+					}
+				} else {
+					*argp = ap;
+					argp = &ap->next;
+				}
+			}
+			word = ReadWord( &file, 1 );
+		}
+		*argp = *arglp = 0;
+		if ((se->type & dLocation) == dLocal) {
+			nldpys++;
+			dpymask |= 1 << atoi( se->name + 1 );
+			if (se->reserve)
+				nrdpys++;
+		}
+		*serverPtr = se;
+		serverPtr = &se->next;
+	}
+	*serverPtr = 0;
+
+#ifdef HAVE_VTS
+	/* don't copy only if all local displays are ordered and have a vt */
+	cpvt = 0;
+	getInitTab();
+	for (se = serverList, mtty = maxTTY; se; se = se->next)
+		if ((se->type & dLocation) == dLocal) {
+			mtty++;
+			if (se->vt != mtty) {
+				cpvt = 1;
+				break;
+			}
+		}
+#endif
+
+	for (se = serverList; se; se = se->next) {
+		se->argvs = joinArgs( se->argv );
+		se->arglvs = joinArgs( se->arglv );
+	}
+
+	se1 = 0, cpcmd = cpcmdl = 0;
+	for (se = serverList; se; se = se->next)
+		if ((se->type & dLocation) == dLocal) {
+			if (!se1)
+				se1 = se;
+			else {
+				if (strcmp( se1->argvs, se->argvs ))
+					cpcmd = 1;
+				if (strcmp( se1->arglvs, se->arglvs ))
+					cpcmdl = 1;
+			}
+		}
+	if (se1) {
+		putfqval( "X-:*-Core", "ServerCmd", se1->argvs );
+		putfqval( "X-:*-Core", "ServerArgsLocal", se1->arglvs );
+		for (se = serverList; se; se = se->next)
+			if ((se->type & dLocation) == dLocal) {
+				char sec[32];
+				sprintf( sec, "X-%s-Core", se->name );
+				if (cpcmd)
+					putfqval( sec, "ServerCmd", se->argvs );
+				if (cpcmdl)
+					putfqval( sec, "ServerArgsLocal", se->arglvs );
+#ifdef HAVE_VTS
+				if (cpvt && se->vt) {
+					char vt[8];
+					sprintf( vt, "%d", se->vt );
+					putfqval( sec, "ServerVT", vt );
+				}
+#else
+				if (se->console)
+					putfqval( sec, "ServerTTY", se->console );
+#endif
+			}
+	}
+
+	sdpys = rdpys = 0;
+	for (se = serverList; se; se = se->next)
+		StrCat( se->reserve ? &rdpys : &sdpys,
+		        se->class2 ? ",%s_%s" : ",%s", se->name, se->class2 );
+
+#ifdef HAVE_VTS
+	/* add reserve dpys */
+	if (nldpys < 4 && nldpys && !nrdpys)
+		for (; nldpys < 4; nldpys++) {
+			for (dn = 0; dpymask & (1 << dn); dn++);
+			dpymask |= (1 << dn);
+			StrCat( &rdpys, ",:%d", dn );
+		}
+#endif
+
+	putfqval( "General", "StaticServers", sdpys ? sdpys + 1 : "" );
+	putfqval( "General", "ReserveServers", rdpys ? rdpys + 1 : "" );
 }
 
 #ifdef HAVE_VTS
@@ -2132,7 +2089,6 @@ static FDefs kdmdefs_all[] = {
 #endif
 
 static FDefs kdmdefs_eq_22[] = {
-{ "General", "Xservers", "%s/kdm/Xservers",  0 },
 { "General", "PidFile", "/var/run/xdm.pid",  0 },
 { "X-*-Core", "Setup", "%s/kdm/Xsetup",  0 },
 { "X-*-Core", "Startup", "%s/kdm/Xstartup",  0 },

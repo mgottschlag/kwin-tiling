@@ -568,24 +568,16 @@ StartRemoteLogin( struct display *d )
 	int pid;
 
 	Debug( "StartRemoteLogin for %s\n", d->name );
-	/* HACK: omitting LoadDisplayResources (d) here! */
+	/* HACK: omitting LoadDisplayResources( d ) here! */
 	if (d->authorize)
 		SetLocalAuthorization( d );
 	switch (pid = Fork()) {
 	case 0:
-		argv = d->serverArgv;
+		argv = PrepServerArgv( d, d->serverArgsRemote );
 		if (!(argv = addStrArr( argv, "-once", 5 )) ||
 		    !(argv = addStrArr( argv, "-query", 6 )) ||
 		    !(argv = addStrArr( argv, d->remoteHost, -1 )))
 			exit( 1 );
-#ifdef HAVE_VTS
-		if (d->serverVT && !d->reqSrvVT) {
-			char vtstr[8];
-			if (!(argv = addStrArr( argv, vtstr, sprintf( vtstr, "vt%d",
-			                                              d->serverVT ) )))
-				exit( 1 );
-		}
-#endif
 		Debug( "exec %\"[s\n", argv );
 		(void)execv( argv[0], argv );
 		LogError( "X server %\"s cannot be executed\n", argv[0] );
@@ -765,7 +757,7 @@ processGPipe( struct display *d )
 			CheckTTYMode();
 		}
 #else
-		if (d->console && *d->console) /* sanity check against greeter */
+		if (*d->console) /* sanity check against greeter */
 			rStopDisplay( d, DS_TEXTMODE );
 #endif
 		break;
@@ -782,7 +774,7 @@ ScanConfigs( int force )
 {
 	if (!LoadDMResources( force ))
 		return FALSE;
-	ScanServers( force );
+	ScanServers();
 #ifdef XDMCP
 	ScanAccessDatabase( force );
 #endif

@@ -6,6 +6,8 @@ if they affect the configuration.
 
 	* Made the word splitter more sh-like. Affects HaltCmd, RebootCmd,
 	  Setup, Startup, Reset, Session and Xrdb.
+	* Replaced option Xservers with StaticServers, ReserveServers,
+	  ServerCmd, ServerArgsLocal, ServerArgsRemote, ServerVT and ServerTTY.
 
 2005-01-31  Oswald Buddenhagen <ossi@kde.org>
 

@@ -1,7 +1,7 @@
 /*
 
 Copyright 1988, 1998  The Open Group
-Copyright 2001,2003 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2001,2003,2005 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -48,8 +48,29 @@ from the copyright holder.
 struct display *startingServer;
 time_t serverTimeout = TO_INF;
 
+char **
+PrepServerArgv( struct display *d, const char *args )
+{
+	char **argv;
+#ifdef HAVE_VTS
+	char vtstr[8];
+#endif
+
+	if (!(argv = parseArgs( 0, d->serverCmd )) ||
+	    !(argv = parseArgs( argv, args )) ||
+	    !(argv = addStrArr( argv, d->name, -1 )))
+		exit( 47 );
+#ifdef HAVE_VTS
+	if (d->serverVT &&
+	    !(argv = addStrArr( argv, vtstr,
+	                        sprintf( vtstr, "vt%d", d->serverVT ) )))
+		exit( 47 );
+#endif
+	return argv;
+}
+
 static void
-StartServerOnce()
+StartServerOnce( void )
 {
 	struct display *d = startingServer;
 	char **argv;
@@ -59,20 +80,12 @@ StartServerOnce()
 	d->serverStatus = starting;
 	switch (pid = Fork()) {
 	case 0:
-		argv = d->serverArgv;
+		argv = PrepServerArgv( d, d->serverArgsLocal );
 		if (d->authFile) {
 			if (!(argv = addStrArr( argv, "-auth", 5 )) ||
 			    !(argv = addStrArr( argv, d->authFile, -1 )))
 				exit( 47 );
 		}
-#ifdef HAVE_VTS
-		if (d->serverVT && !d->reqSrvVT) {
-			char vtstr[8];
-			if (!(argv = addStrArr( argv, vtstr, sprintf( vtstr, "vt%d",
-			                                              d->serverVT ) )))
-				exit( 47 );
-		}
-#endif
 		Debug( "exec %\"[s\n", argv );
 		/*
 		 * give the server SIGUSR1 ignored,

@@ -1,4 +1,4 @@
-This is the K Display Manager (KDM) v0.96 for KDE 3.3,
+This is the K Display Manager (KDM) for KDE 3.4,
 the KDE replacement for the X Display Manager (XDM).
 
 Semi-official home page: http://devel-home.kde.org/~ossi/sw/kdm.html
@@ -81,38 +81,6 @@ find the "Login Manager" module in the "System Administration" group.
 Have a look at README.pam in the kdebase top level directory if your
 system uses PAM.
 
-
-The Xservers file
------------------
-
-This file tells KDM which/when/how X-Servers ("desktop sessions",
-"login screens") should be started. The file is backwards compatible with
-XDM's Xservers file, but it contains some extensions:
-* @tty. The idea for this is stolen from Solaris (TM). You can specifiy here,
-  which text console an X-Server is "covering", so KDM knows which virtual
-  terminal to switch to when you select "Console login" and it knows which
-  console it should monitor for activity to find out when you're done with
-  your console work.
-  This is not perfectly suited for Linux, as there X-Servers don't actually
-  cover consoles (gettys), but hey, it works. :-)
-* reserve. A server marked as reserve is not started at KDM's startup time,
-  but when the user explicitly requests it. If there is a reserve 
-  specification, the KDE Menu will have a "Start New Session" item
-  near the bottom; use that to start KDM's greeter on one of the
-  reserved screens. The display will switch to the new screen, and
-  you will have a minute to login. If there are no more available
-  reserved screens, selecting the menu item will have no effect. For
-  finer control, see "Command FiFos" below. 
-
-Example:
-
-:0 local@tty1 /usr/bin/X11/X vt7
-:1 local reserve /usr/bin/X11/X :1 vt8
-
-Note that changes to Xservers will not take effect until you do a kdm
-reload, and your KDE menu won't change until you start a new session.
-Be careful: if you restart rather than reload kdm you will terminate
-your own session.
 
 Configuring session types
 -------------------------

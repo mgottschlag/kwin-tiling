@@ -1,7 +1,7 @@
 /*
 
 Copyright 1988, 1998  The Open Group
-Copyright 2000-2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2000-2005 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -220,7 +220,6 @@ RemoveDisplay( struct display *old )
 			IfFree( d->class2 );
 			IfFree( d->cfg.data );
 			delStr( d->cfg.dep.name );
-			freeStrArr( d->serverArgv );
 #ifdef XDMCP
 			IfFree( d->remoteHost );
 #endif

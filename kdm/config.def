@@ -61,22 +61,19 @@
 #endif
 
 #ifdef __linux__
-# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X -nolisten tcp"
-# define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
-			 ":1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1\n" \
-			 ":2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2\n" \
-			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3\n" \
-			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4\n"
 # define HAVE_VTS
 #elif defined(__sun__)
-# define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X -nolisten tcp"
+# define DEF_SERVER_TTY "console"
 #elif defined(_AIX)
-# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X -T -force -nolisten tcp"
+# define DEF_SERVER_TTY "lft0"
 #else
-# define DEF_SERVER_LINE ":0 local " XBINDIR "/X -nolisten tcp"
+# define DEF_SERVER_TTY ""
 #endif
-#ifndef DEF_SERVER_LINES
-# define DEF_SERVER_LINES DEF_SERVER_LINE "\n"
+
+#ifdef _AIX
+# define DEF_SERVER_CMD XBINDIR "/X -T -force"
+#else
+# define DEF_SERVER_CMD XBINDIR "/X"
 #endif
 </code>
 
@@ -96,7 +93,7 @@
  _
  You can configure every X-display individually.
  Every display has a display name, which consists of a host name
- (which is empty for local displays specified in the Xservers file),
+ (which is empty for local displays specified in {Static|Reserve}Servers),
  a colon, and a display number. Additionally, a display belongs to a
  display class (which can be ignored in most cases; the control center
  does not support this feature at all).
@@ -203,8 +200,9 @@ are ignored as well.</para>
 
 <para>You can configure every X-display individually.</para>
 <para>Every display has a display name, which consists of a host name
-(which is empty for local displays specified in the Xservers file), a
-colon, and a display number. Additionally, a display belongs to a
+(which is empty for local displays specified in <option>StaticServers</option>
+or <option>ReserveServers</option>), a colon, and a display number.
+Additionally, a display belongs to a
 display class (which can be ignored in most cases).</para>
 
 <para>Sections with display-specific settings have the formal syntax
@@ -312,7 +310,8 @@ kcontrol frontend.</para></note>
 <sect1 id="kdmrc-xservers">
 <title>Specifying permanent &X-Server;s</title>
 
-<para>Each specification indicates a display which should constantly be
+<para>Each entry in the <option>StaticServers</option> list indicates a
+display which should constantly be
 managed and which is not using &XDMCP;. This method is typically used only for
 local &X-Server;s that are started by &kdm;, but &kdm; can manage externally
 started (<quote>foreign</quote>) &X-Server;s as well, may they run on the 
@@ -320,13 +319,10 @@ local machine or rather remotely.</para>
 
 <para>The formal syntax of a specification is
 <screen>
-<userinput><replaceable>display&nbsp;name</replaceable>&nbsp;[<replaceable>display&nbsp;class</replaceable>]&nbsp;<literal>local</literal>[<literal>@</literal><replaceable>tty</replaceable>]&nbsp;[<literal>reserve</literal>]&nbsp;<replaceable>server&nbsp;command</replaceable></userinput>
+<userinput><replaceable>display&nbsp;name</replaceable>&nbsp;[<literal>_</literal><replaceable>display&nbsp;class</replaceable>]</userinput>
 </screen>
-for own &X-Server;s and
-<screen>
-<userinput><replaceable>display&nbsp;name</replaceable>&nbsp;[<replaceable>display&nbsp;class</replaceable>]&nbsp;<literal>foreign</literal></userinput>
-</screen>
-for foreign &X-Server;s.</para>
+for all &X-Server;s. <quote>Foreign</quote> displays differ in having
+a host name in the display name, may it be <literal>localhost</literal>.</para>
 
 <para>The <replaceable>display name</replaceable> must be something that can
 be passed in the <option>-display</option> option to an X program. This string
@@ -347,27 +343,16 @@ so the manual for your particular X terminal should document the display
 class string for your device. If it does not, you can run &kdm; in debug
 mode and <command>grep</command> the log for <quote>class</quote>.</para>
 
-<para>The <replaceable>tty</replaceable> specifies which text console an
-&X-Server; is <quote>covering</quote>, so &kdm; knows which console it should
-monitor for activity after switching to <guilabel>Console login</guilabel> to
-find out when the console session ends.
-Note that this concept (originating from Solaris) is not perfectly
-suited for Linux, as there &X-Server;s run on separate virtual terminals
-and consequently do not actually cover consoles (<command>getty</command>s).
-</para>
-
-<para>The <literal>reserve</literal> keyword instructs &kdm; to start the
-display not when &kdm; starts up, but when it is explicitly requested via
-the command <acronym>FiFo</acronym>.
+<para>The displays specified in <option>ReserveServers</option> will not be
+started when &kdm; starts up, but when it is explicitly requested via
+the command socket (or <acronym>FiFo</acronym>).
 If reserve displays are specified, the &kde; menu will have a
 <guilabel>Start New Session</guilabel> item near the bottom; use that to
 activate a reserve display with a new login session. The monitor will switch
 to the new display, and you will have a minute to login. If there are no more
-reserve displays available, selecting the menu item will have no effect.</para>
+reserve displays available, the menu item will be disabled.</para>
 
-<para>The <replaceable>server command</replaceable> specifies the complete
-&X-Server; command line, including a display number for secondary displays.
-When &kdm; starts a session, it sets up authorization data for the
+<para>When &kdm; starts a session, it sets up authorization data for the
 &X-Server;. For local servers, &kdm; passes
 <command><option>-auth</option>&nbsp;<filename><replaceable>filename</replaceable></filename></command>
 on the &X-Server;'s command line to point it at its authorization data.
@@ -689,6 +674,14 @@ or unmounting directories from file servers.</para>
 </docu>
 
 
+<legacy>
+Proc: absorb_xservers
+# note: this can miss Xservers from kdm for kde 2.2 because of stupid default.
+Source: kdm:General/Xservers
+Source: xdm:servers
+</legacy>
+
+
 # The rest of this file are section and key definitions for the options.
 # The order of the keywords is fixed and everything is case sensitive.
 # A keyword may expect supplementary data in the form of space-indented
@@ -813,27 +806,30 @@ Instance: -
 Comment: -
 Description: -
 
-Key: Xservers
-Type: string
-Default: DEF_SERVER_LINE
-DDefault: -
-User: config(Xservers)
-# will be overwritten
-Instance: #""
-Update: mk_xservers
-Merge: xdm:servers
+Key: StaticServers
+Type: list
+Default: ":0"
+User: core
+Instance: ":0"
 Comment:
- If the value starts with a slash (/), it specifies the file, where X-servers
- to be used by KDM are listed; the file is in the usual XDM-Xservers format.
- Otherwise, it is interpreted like one line of the Xservers file, i.e. it
- specifies exactly one X-server.
+ List of permanent displays. Displays with a hostname are foreign. A display
+ class may be specified separated by an underscore.
 Description:
- If the value starts with a slash (/), it specifies a file to read &X-Server;
- definitions from; otherwise, it is an &X-Server; definition by itself. See
- <xref linkend="kdmrc-xservers"/> for the details.
- </para><para>
- The default is an &X-Server; definition that is usually reasonable
- for the system on which &kdm; was built.
+ List of displays (&X-Server;s) permanently managed by &kdm;. Displays with a
+ hostname are foreign displays which are expected to be already running,
+ the others are local displays for which &kdm; starts an own &X-Server;;
+ see <option>ServerCmd</option>. Each display may belong to a display class;
+ append it to the display name separated by an underscore.
+ See <xref linkend="kdmrc-xservers"/> for the details.
+
+Key: ReserveServers
+Type: list
+Default: ""
+User: core
+Instance: ":1,:2,:3"
+Comment: &
+Description:
+ List of on-demand displays. See <option>StaticServers</option> for syntax.
 
 Key: ServerVTs
 If: defined(HAVE_VTS)
@@ -852,6 +848,7 @@ Description:
  if the kernel says it is free. If &kdm; exhausts this list, it will allocate
  free <acronym>VT</acronym>s greater than the absolute value of the last entry
  in this list.
+ Currently Linux only.
 
 Key: ConsoleTTYs
 If: defined(HAVE_VTS)
@@ -861,11 +858,17 @@ User: core
 Instance: #"tty1,tty2,tty3,tty4,tty5,tty6"
 Update: upd_consolettys
 Comment:
- TTYs to monitor for activity while in console mode.
+ TTYs (without /dev/) to monitor for activity while in console mode.
 Description:
- When &kdm; switches to console mode, it starts monitoring all TTYs (consoles)
- listed here. If none of them is active for some time, &kdm; switches back to
- the X login.
+ This option is for operating systems (<acronym>OS</acronym>s) with support
+ for virtual terminals (<acronym>VT</acronym>s), by both &kdm; and the
+ <acronym>OS</acronym>s itself.
+ Currently this applies only to Linux.
+ </para><para>
+ When &kdm; switches to console mode, it starts monitoring all
+ <acronym>TTY</acronym> lines listed here (without the leading
+ <literal>/dev/</literal>).
+ If none of them is active for some time, &kdm; switches back to the X login.
 
 Key: PidFile
 Type: string
@@ -1306,7 +1309,7 @@ Comment:
  is disabled.
 Description:
  How many times &kdm; should attempt to start a <literal>foreign</literal>
- display listed in the <filename>Xservers</filename> file before giving up
+ display listed in <option>StaticServers</option> before giving up
  and disabling it.
  Local displays are attempted only once, and &XDMCP; displays are retried
  indefinitely by the client (unless the option <option>-once</option>
@@ -1334,6 +1337,67 @@ Comment:
  How long to wait for a local &X-Server; to come up.
 Description:
  How many seconds &kdm; should wait for a local &X-Server; to come up.
+
+Key: ServerCmd
+Type: string
+Default: DEF_SERVER_CMD
+User: core
+Instance: :*/DEF_SERVER_CMD
+Comment: &
+Description:
+ The command line to start the &X-Server;, without display number and VT spec.
+ This string is subject to word splitting.
+
+Key: ServerArgsLocal
+Type: string
+Default: ""
+User: core
+Instance: :*/"-nolisten tcp"
+Comment: &
+Description:
+ Additional arguments for the &X-Server;s for local sessions.
+ This string is subject to word splitting.
+
+Key: ServerArgsRemote
+Type: string
+Default: ""
+User: core
+Instance: #:*/""
+Comment: &
+Description:
+ Additional arguments for the &X-Server;s for remote sessions.
+ This string is subject to word splitting.
+
+Key: ServerVT
+If: defined(HAVE_VTS)
+Type: int
+Default: 0
+User: core(reqSrvVT)
+Instance: #:0/7
+Comment:
+ The VT the &X-Server; should run on. Better use ServerVTs.
+Description:
+ The VT the &X-Server; should run on.
+ <option>ServerVTs</option> should be used instead of this option.
+ Currently Linux only.
+
+Key: ServerTTY
+If: !defined(HAVE_VTS)
+Type: string
+Default: ""
+User: core(console)
+Instance: :0/DEF_SERVER_TTY
+Comment:
+ The TTY line (without /dev/) the &X-Server; covers physically.
+Description:
+ This option is for <acronym>OS</acronym>s without support for
+ <acronym>VT</acronym>s, either by &kdm; or the <acronym>OS</acronym> itself.
+ Currently this applies to all <acronym>OS</acronym>s but Linux.
+ </para><para>
+ When &kdm; switches to console mode, it starts monitoring this
+ <acronym>TTY</acronym> line (specified without the leading
+ <literal>/dev/</literal>) for activity. If the line is not used for some time,
+ &kdm; switches back to the X login.
 
 Key: PingInterval
 Type: int
@@ -2316,7 +2380,7 @@ Instance: #*/!
 Merge: xdm
 Comment:
  Warn, if display has no X-authorization (local auth cannot be created,
- &XDMCP; display wants no auth, or display is foreign from file).
+ &XDMCP; display wants no auth, or display is foreign from StaticServers).
 Description:
  Warn, if a display has no X-authorization. This will be the case if
  <itemizedlist>
@@ -2327,8 +2391,8 @@ Description:
    a remote display from &XDMCP; did not request any authorization or
   </para></listitem>
   <listitem><para>
-   the display is a <literal>foreign</literal> display from the
-   <filename>Xservers</filename> file.
+   the display is a <quote>foreign</quote> display specified in
+   <option>StaticServers</option>.
   </para></listitem>
  </itemizedlist>
 
@@ -2458,13 +2522,10 @@ Type: bool
 Default: true
 User: greeter(hasConsole)
 Instance: #*/!
-Comment:
- Show the "Console Login" action in the greeter (when the respective @tty
- entry exists in Xservers).
+Comment: &
 Description:
- Show the <guilabel>Console Login</guilabel> action in the greeter. For this
- to work, a console must be configured for this particular display, see
- <xref linkend="kdmrc-xservers"/>.
+ Show the <guilabel>Console Login</guilabel> action in the greeter (if <option>ServerTTY</option>/<option>ConsoleTTYs</option>
+ is configured).
 
 Key: AllowClose
 Type: bool

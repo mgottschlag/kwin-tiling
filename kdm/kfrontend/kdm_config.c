@@ -2,7 +2,7 @@
 
 Read options from kdmrc
 
-Copyright (C) 2001-2003 Oswald Buddenhagen <ossi@kde.org>
+Copyright (C) 2001-2005 Oswald Buddenhagen <ossi@kde.org>
 
 
 This program is free software; you can redistribute it and/or modify
@@ -310,19 +310,6 @@ readFile( File *file, const char *fn, const char *what )
 	}
 	file->eof = (file->cur = file->buf) + flen;
 	close( fd );
-	return 1;
-}
-
-static int
-copyBuf( File *file, const char *buf, int len )
-{
-	if (!(file->buf = Malloc( len + 1 )))
-		return 0;
-	memcpy( file->buf, buf, len );
-	file->eof = (file->cur = file->buf) + len;
-#if defined(HAVE_MMAP) && defined(WANT_CLOSE)
-	file->ismapped = 0;
-#endif
 	return 1;
 }
 
@@ -1244,147 +1231,6 @@ ReadAccessFile( const char *fname )
 #endif
 
 
-static struct displayMatch {
-	const char *name;
-	int len, type;
-} displayTypes[] = {
-	{ "local", 5, dLocal | dPermanent | dFromFile },
-	{ "foreign", 7, dForeign | dPermanent | dFromFile },
-};
-
-static int
-parseDisplayType( const char *string, const char **atPos )
-{
-	struct displayMatch *d;
-
-	*atPos = 0;
-	for (d = displayTypes; d < displayTypes + as(displayTypes); d++) {
-		if (!memcmp( d->name, string, d->len ) &&
-		    (!string[d->len] || string[d->len] == '@')) {
-			if (string[d->len] == '@' && string[d->len + 1])
-				*atPos = string + d->len + 1;
-			return d->type;
-		}
-	}
-	return -1;
-}
-
-typedef struct argV {
-	struct argV *next;
-	const char *str;
-} ArgV;
-
-typedef struct serverEntry {
-	struct serverEntry *next;
-	const char *name, *class2, *console;
-	ArgV *argv;
-	int type, argc;
-} ServerEntry;
-
-static void
-ReadServersFile( const char *fname )
-{
-	const char *word, *atPos;
-	ServerEntry *serverList, **serverPtr = &serverList;
-	ArgV *argv, **argp;
-	File file;
-	int i, j, len, nserv;
-
-	nserv = 0;
-	if (strcmp( fname, kdmrc )) {
-		if (readFile( &file, fname, "X-Server specification" ))
-			goto haveit;
-	} else {
-		ReadConf();
-		CopyValues( 0, &secGeneral, 0, C_CONFIG );
-		if (copyBuf( &file, VXservers.ptr, VXservers.len - 1 ))
-			goto haveit;
-	}
-	if (!copyBuf( &file, DEF_SERVER_LINE, sizeof(DEF_SERVER_LINE) - 1 )) {
-		LogInfo( "No X-Servers will be started\n" );
-		goto sendxs;
-	}
-  haveit:
-	while ((word = ReadWord( &file, &len, FALSE ))) {
-		if (!(*serverPtr = (ServerEntry *)Malloc( sizeof(ServerEntry))))
-			break;
-		(*serverPtr)->name = word;
-		/*
-		 * extended syntax; if the second argument doesn't
-		 * exactly match a legal display type and the third
-		 * argument does, use the second argument as the
-		 * display class string
-		 */
-		if (!(word = ReadWord( &file, &len, TRUE ))) {
-		  notype:
-			LogError( "Missing display type for %s in file %s\n",
-			          (*serverPtr)->name, fname );
-			continue;
-		}
-		(*serverPtr)->class2 = 0;
-		(*serverPtr)->type = parseDisplayType( word, &atPos );
-		if ((*serverPtr)->type < 0) {
-			(*serverPtr)->class2 = word;
-			if (!(word = ReadWord( &file, &len, TRUE )))
-				goto notype;
-			(*serverPtr)->type = parseDisplayType( word, &atPos );
-			if ((*serverPtr)->type < 0) {
-				while (ReadWord( &file, &len, TRUE ));
-				goto notype;
-			}
-		}
-		(*serverPtr)->console = atPos;
-		word = ReadWord( &file, &len, TRUE );
-		if (word && !strcmp( word, "reserve" )) {
-			(*serverPtr)->type = ((*serverPtr)->type & ~d_lifetime) | dReserve;
-			word = ReadWord( &file, &len, TRUE );
-		}
-		(*serverPtr)->argc = 0;
-		argp = &(*serverPtr)->argv;
-		while (word) {
-			if (!(*argp = (ArgV *)Malloc( sizeof(ArgV))))
-				goto sendxs;
-			(*argp)->str = word;
-			argp = &(*argp)->next;
-			(*serverPtr)->argc++;
-			word = ReadWord( &file, &len, TRUE );
-		}
-		if (((*serverPtr)->type & d_location) == dLocal) {
-			if (!(*serverPtr)->argc) {
-				LogError( "Missing arguments to local server %s in file %s\n",
-				          (*serverPtr)->name, fname );
-				continue;
-			}
-		} else {
-			if ((*serverPtr)->argc) {
-				LogError( "Superflous arguments to foreign server %s in file %s\n",
-				          (*serverPtr)->name, fname );
-				continue;
-			}
-		}
-		serverPtr = &(*serverPtr)->next;
-		nserv++;
-	}
-  sendxs:
-	GSendInt( nserv );
-	for (i = 0; i < nserv; i++, serverList = serverList->next) {
-		GSendStr( serverList->name );
-		GSendStr( serverList->class2 );
-#ifndef HAVE_VTS
-		GSendStr( serverList->console );
-#endif
-		GSendInt( serverList->type );
-		j = serverList->argc;
-		if (j) {
-			GSendInt( j + 1 );
-			for (argv = serverList->argv; j; j--, argv = argv->next)
-				GSendStr( argv->str );
-		}
-		GSendInt( 0 );
-	}
-}
-
-
 int main( int argc ATTR_UNUSED, char **argv )
 {
 	DSpec dspec;
@@ -1423,9 +1269,9 @@ int main( int argc ATTR_UNUSED, char **argv )
 			CopyValues( 0, &secGeneral, 0, C_CONFIG );
 #ifdef XDMCP
 			CopyValues( 0, &secXdmcp, 0, C_CONFIG );
-			GSendInt( (VXservers.ptr[0] == '/') ? 3 : 2 );
+			GSendInt( 2 );
 #else
-			GSendInt( (VXservers.ptr[0] == '/') ? 2 : 1 );
+			GSendInt( 1 );
 #endif
 			GSendStr( kdmrc );
 				GSendInt( -1 );
@@ -1433,10 +1279,6 @@ int main( int argc ATTR_UNUSED, char **argv )
 			GSendNStr( VXaccess.ptr, VXaccess.len - 1 );
 				GSendInt( 0 );
 #endif
-			if (VXservers.ptr[0] == '/') {
-				GSendNStr( VXservers.ptr, VXservers.len - 1 );
-					GSendInt( 0 );
-			}
 			for (; (what = GRecvInt()) != -1; )
 				switch (what) {
 				case GC_gGlobal:
@@ -1448,13 +1290,6 @@ int main( int argc ATTR_UNUSED, char **argv )
 					GSendInt( 1 );
 					break;
 #endif
-				case GC_gXservers:
-#ifdef XDMCP
-					GSendInt( (VXservers.ptr[0] == '/') ? 2 : 0 );
-#else
-					GSendInt( (VXservers.ptr[0] == '/') ? 1 : 0 );
-#endif
-					break;
 				default:
 					GSendInt( -1 );
 					break;
@@ -1490,9 +1325,6 @@ int main( int argc ATTR_UNUSED, char **argv )
 				if (dcls)
 					free( dcls );
 				SendValues( &va );
-				break;
-			case GC_gXservers:
-				ReadServersFile( cfgfile );
 				break;
 #ifdef XDMCP
 			case GC_gXaccess:
