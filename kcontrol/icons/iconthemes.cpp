@@ -29,6 +29,7 @@
 #include <kdebug.h>
 #include <kapplication.h>
 #include <kstandarddirs.h>
+#include <kservice.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
 #undef Unsorted
@@ -43,7 +44,6 @@
 #include <kio/job.h>
 #include <kio/netaccess.h>
 #include <ktar.h>
-#include <dcopclient.h>
 
 #ifdef HAVE_LIBART
 #include <ksvgiconengine.h>
@@ -418,10 +418,7 @@ void IconThemesConfig::save()
     KIPC::sendMessageAll(KIPC::IconChanged, i);
   }
 
-  DCOPClient *dcc = kapp->dcopClient();
-  if ( !dcc->isAttached() )
-      dcc->attach();
-  dcc->send("kded", "kbuildsycoca", "recreate()", QByteArray());
+  KService::rebuildKSycoca(this);
 
   m_bChanged = false;
   m_removeButton->setEnabled(false);

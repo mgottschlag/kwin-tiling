@@ -86,7 +86,7 @@ kthememanager::kthememanager( QWidget *parent, const char *name )
     connect( ( QObject * )dlg->lvThemes, SIGNAL( clicked( QListViewItem * ) ),
              this, SLOT( updateButton() ) );
 
-    m_origTheme = new KTheme( true ); // stores the defaults to get back to
+    m_origTheme = new KTheme( this, true ); // stores the defaults to get back to
     m_origTheme->setName( ORIGINAL_THEME );
     m_origTheme->createYourself();
 
@@ -144,7 +144,7 @@ void kthememanager::save()
     {
         QString themeName = cur->text( 0 );
 
-        m_theme = new KTheme( KGlobal::dirs()->saveLocation( "themes", themeName + "/" )
+        m_theme = new KTheme( this, KGlobal::dirs()->saveLocation( "themes", themeName + "/" )
                               + themeName + ".xml" );
         m_theme->apply();
 
@@ -171,7 +171,7 @@ void kthememanager::listThemes()
 
     for ( it = themes.begin(); it != themes.end(); ++it )
     {
-        KTheme theme( ( *it ) );
+        KTheme theme( this, ( *it ) );
         QString name = theme.name();
         if ( name != ORIGINAL_THEME ) // skip the "original" theme
             ( void ) new QListViewItem( dlg->lvThemes, name, theme.comment() );
@@ -188,7 +188,7 @@ float kthememanager::getThemeVersion( const QString & themeName )
 
     for ( it = themes.begin(); it != themes.end(); ++it )
     {
-        KTheme theme( ( *it ) );
+        KTheme theme( 0L, ( *it ) );
         QString name = theme.name();
         bool ok = false;
         float version = theme.version().toFloat( &ok );
@@ -215,7 +215,7 @@ void kthememanager::addNewTheme( const KURL & url )
             KTheme::remove( themeName  ); // remove first
         }
 
-        m_theme = new KTheme();
+        m_theme = new KTheme(this);
         if ( m_theme->load( url ) )
         {
             listThemes();
@@ -278,7 +278,7 @@ void kthememanager::slotCreateTheme()
             {
                 KTheme::remove( themeName );
             }
-            m_theme = new KTheme( true );
+            m_theme = new KTheme( this, true );
             m_theme->setName( dlg.getName() );
             m_theme->setAuthor( dlg.getAuthor() );
             m_theme->setEmail( dlg.getEmail() );
@@ -324,7 +324,7 @@ void kthememanager::slotThemeChanged( QListViewItem * item )
             dlg->lbPreview->setText( i18n( "This theme does not contain a preview." ) );
         }
 
-        KTheme theme( themeDir + themeName + ".xml" );
+        KTheme theme( this, themeDir + themeName + ".xml" );
         QToolTip::remove( dlg->lbPreview );
         QToolTip::add( dlg->lbPreview, "<qt>" + i18n( "Author: %1<br>Email: %2<br>Version: %3<br>Homepage: %4" )
                        .arg( theme.author() ).arg( theme.email() )

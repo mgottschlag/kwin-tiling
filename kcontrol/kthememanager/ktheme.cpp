@@ -18,29 +18,31 @@
 
 #include "ktheme.h"
 
-#include <qfileinfo.h>
-#include <qtextstream.h>
 #include <qfile.h>
+#include <qfileinfo.h>
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qregexp.h>
+#include <qtextstream.h>
 
-#include <kglobal.h>
-#include <kdebug.h>
-#include <klocale.h>
-#include <kio/netaccess.h>
-#include <kio/job.h>
-#include <ktar.h>
-#include <kipc.h>
-#include <kiconloader.h>
-#include <kdatastream.h>
 #include <dcopclient.h>
 #include <kapplication.h>
+#include <kconfig.h>
+#include <kdatastream.h>
+#include <kdebug.h>
+#include <kglobal.h>
+#include <kiconloader.h>
+#include <kio/job.h>
+#include <kio/netaccess.h>
+#include <kipc.h>
+#include <klocale.h>
+#include <kservice.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
-#include <kconfig.h>
+#include <ktar.h>
 
-KTheme::KTheme( const QString & xmlFile )
+KTheme::KTheme( QWidget *parent, const QString & xmlFile )
+: m_parent(parent)
 {
     QFile file( xmlFile );
     file.open( IO_ReadOnly );
@@ -53,7 +55,8 @@ KTheme::KTheme( const QString & xmlFile )
     m_kgd = KGlobal::dirs();
 }
 
-KTheme::KTheme( bool create )
+KTheme::KTheme( QWidget *parent, bool create )
+: m_parent(parent)
 {
     if ( create )
     {
@@ -395,7 +398,7 @@ void KTheme::apply()
 
         for (int i = 0; i < KIcon::LastGroup; i++)
             KIPC::sendMessageAll(KIPC::IconChanged, i);
-        client->send("kded", "kbuildsycoca", "recreate()", "");
+	KService::rebuildKSycoca(m_parent);
     }
 
     // 4. Sounds

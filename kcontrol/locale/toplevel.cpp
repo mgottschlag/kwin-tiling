@@ -20,19 +20,21 @@
 
   */
 
-#include <qlabel.h>
-#include <qvgroupbox.h>
-#include <qobjectlist.h>
-#include <qtabwidget.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qobjectlist.h>
+#include <qpushbutton.h>
+#include <qtabwidget.h>
+#include <qvgroupbox.h>
 
+#include <kaboutdata.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kdialog.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
-#include <kdialog.h>
+#include <kservice.h>
 
 #include "localenum.h"
 #include "localemon.h"
@@ -41,7 +43,6 @@
 #include "klocalesample.h"
 #include "toplevel.h"
 #include "kcmlocale.h"
-#include <kaboutdata.h>
 #include "toplevel.moc"
 
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/, 
@@ -193,9 +194,7 @@ void KLocaleApplication::save()
   // rebuild the date base if language was changed
   if (langChanged)
   {
-    KProcess proc;
-    proc << QString::fromLatin1("kbuildsycoca");
-    proc.start(KProcess::DontCare);
+    KService::rebuildKSycoca(this);
   }
 
   emit changed(false);

@@ -10,7 +10,7 @@ METASOURCES = AUTO
 noinst_HEADERS = toplevel.h kcmlocale.h klocalesample.h localenum.h localemon.h localetime.h localeother.h 
 
 kcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-kcm_locale_la_LIBADD = $(LIB_KDEUI)
+kcm_locale_la_LIBADD = $(LIB_KIO)
 
 timezones:
 	grep -v '^#' /usr/share/zoneinfo/zone.tab | tr '	' ' ' | sed -e "s#  *# #" | cut -d' ' -f3 | sed -e 's,^,i18n(",; s,$$,");,' >> $(srcdir)/TIMEZONES

@@ -19,9 +19,11 @@
 #ifndef KTHEME_H
 #define KTHEME_H
 
-#include <qstring.h>
 #include <qdom.h>
+#include <qguardedptr.h>
+#include <qstring.h>
 #include <qstringlist.h>
+#include <qwidget.h>
 
 #include <kurl.h>
 
@@ -45,14 +47,14 @@ public:
      * Constructs KTheme using an installed theme
      * @param xmlFile The theme's XML file
      */
-    KTheme( const QString & xmlFile );
+    KTheme( QWidget *parent, const QString & xmlFile );
 
     /**
      * Constructs an empty theme, to be used with
      * #createYourself()
      * @param create Whether to start the DOM tree
      */
-    KTheme( bool create = false );
+    KTheme( QWidget *parent, bool create = false );
 
     /**
      * Destructor
@@ -205,6 +207,8 @@ private:
     QDomElement m_general;
 
     KStandardDirs * m_kgd;
+
+    QGuardedPtr<QWidget> m_parent;
 };
 
 #endif
