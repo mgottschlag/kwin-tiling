@@ -285,7 +285,7 @@ void kthememanager::slotCreateTheme()
                 KMessageBox::information( this, i18n( "Your theme has been successfully created in %1." ).arg( result ),
                                           i18n( "Theme Created" ), "theme_created_ok" );
             else
-                KMessageBox::error( this, i18n( "An error occured while creating your theme." ),
+                KMessageBox::error( this, i18n( "An error occurred while creating your theme." ),
                                     i18n( "Theme Not Created" ) );
             delete m_theme;
             m_theme = 0;
@@ -313,7 +313,7 @@ void kthememanager::slotThemeChanged( QListViewItem * item )
         else
         {
             dlg->lbPreview->setPixmap( QPixmap() );
-            dlg->lbPreview->setText( i18n( "This theme doesn't contain a preview." ) );
+            dlg->lbPreview->setText( i18n( "This theme does not contain a preview." ) );
         }
 
         KTheme theme( themeDir + themeName + ".xml" );

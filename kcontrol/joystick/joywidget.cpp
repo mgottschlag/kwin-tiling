@@ -176,8 +176,8 @@ void JoyWidget::init()
   {
     KMessageBox::sorry(this,
       i18n("No Joystick device automatically found on this computer.\n"
-           "Check was done in /dev/js[0-4] and /dev/input/js[0-4]\n"
-           "If you know that there is one attached, enter the correct devicefile, please."), i18n("No Device"));
+           "Checks were done in /dev/js[0-4] and /dev/input/js[0-4]\n"
+           "If you know that there is one attached, please enter the correct device file."), i18n("No Device"));
   }
 }
 
@@ -221,9 +221,9 @@ void JoyWidget::deviceChanged(const QString &dev)
   if ( (start = dev.find("/dev")) == -1 )
   {
     KMessageBox::sorry(this,
-      i18n("The given devicename is invalid (does not contain /dev).\n"
+      i18n("The given device name is invalid (does not contain /dev).\n"
            "Please select a device from the list or\n"
-           "enter a devicefile like /dev/js0"), i18n("Unknown Device"));
+           "enter a device file, like /dev/js0"), i18n("Unknown Device"));
 
     restoreCurrDev();
     return;
@@ -324,7 +324,7 @@ void JoyWidget::calibrateDevice()
   if ( KMessageBox::messageBox(this, KMessageBox::Information,
         i18n("<qt>Calibration is about to check the precision.<br><br>"
              "<b>Please move all axes to their center position and then "
-             "don't touch the joystick anymore.</b><br><br>"
+             "do not touch the joystick anymore.</b><br><br>"
              "Click OK to start the calibration.</qt>"),
         i18n("Calibration"),
         KStdGuiItem::ok(), KStdGuiItem::cancel()) != KMessageBox::Ok )
