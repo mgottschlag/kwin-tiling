@@ -26,7 +26,7 @@ static const KCmdLineOptions options[] =
    { "restore", I18N_NOOP("Restores the previous session if available"), 0},
    { "w", 0, 0 },
    { "windowmanager <wm>", I18N_NOOP("Starts 'wm' in case no other window manager is \nparticipating in the session. Default is 'kwin'"), 0},
-   { "nolocal", I18N_NOOP("Allow also remote connections."), 0},
+   { "nolocal", I18N_NOOP("Also allow remote connections."), 0},
    { 0, 0, 0 }
 };
 
