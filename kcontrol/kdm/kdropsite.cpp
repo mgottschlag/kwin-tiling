@@ -1,5 +1,5 @@
 
-#include "kdropsite.moc"
+#include "kdropsite.h"
 
 
 KDropSite::KDropSite( QWidget * parent ) : QObject( parent ), QDropSite( parent )
@@ -31,4 +31,6 @@ void KDropSite::dropEvent( QDropEvent *e )
   emit dropAction(e);
 }
 
+
+#include "kdropsite.moc"
 

@@ -71,7 +71,7 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
 	    SLOT(slotItemDoubleClicked(QListViewItem *)));
 
     connect(m_ListView, SIGNAL(selectionChanged()),
-            this,SLOT(slotSelectionChanged()));
+            SLOT(slotSelectionChanged()));
 
     // Add/Remove/Modify buttons
     QVBoxLayout *vbox = new QVBoxLayout(spacingHint());

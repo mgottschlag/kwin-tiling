@@ -32,7 +32,8 @@
 #include <kdialog.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
-#include "kdm-conv.moc"
+
+#include "kdm-conv.h"
 
 
 extern KSimpleConfig *c;
@@ -49,20 +50,20 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     QWhatsThis::add( cbalen, i18n("Turn on the auto-login feature."
 	" This applies only to KDM's graphical login."
 	" Think twice before enabling this!") );
-    connect(cbalen, SIGNAL(toggled(bool)), this, SLOT(slotEnALChanged()));
-    connect(cbalen, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    connect(cbalen, SIGNAL(toggled(bool)), SLOT(slotEnALChanged()));
+    connect(cbalen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     cbal1st = new QCheckBox(i18n("Truly automatic lo&gin"), alGroup);
     QWhatsThis::add( cbal1st, i18n("When this option is on, the auto-login"
 	" will be carried out immediately when KDM starts (i.e., when your computer"
 	" comes up). When this is off, you will need to initiate the auto-login"
 	" by crashing the X server (by pressing alt-ctrl-backspace).") );
-    connect(cbal1st, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    connect(cbal1st, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     QWidget *hlpw = new QWidget(alGroup);
     userlb = new KComboBox(hlpw);
     u_label = new QLabel(userlb, i18n("Use&r:"), hlpw);
-    connect(userlb, SIGNAL(highlighted(int)), this, SLOT(slotChanged()));
+    connect(userlb, SIGNAL(highlighted(int)), SLOT(slotChanged()));
     wtstr = i18n("Select the user to be logged in automatically from this list.");
     QWhatsThis::add( u_label, wtstr );
     QWhatsThis::add( userlb, wtstr );
@@ -73,15 +74,15 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
 
 
     puGroup = new QVButtonGroup(i18n("Preselect User"), this );
-    connect(puGroup, SIGNAL(clicked(int)), this, SLOT(slotPresChanged()));
-    connect(puGroup, SIGNAL(clicked(int)), this, SLOT(slotChanged()));
+    connect(puGroup, SIGNAL(clicked(int)), SLOT(slotPresChanged()));
+    connect(puGroup, SIGNAL(clicked(int)), SLOT(slotChanged()));
     npRadio = new QRadioButton(i18n("&None"), puGroup);
     ppRadio = new QRadioButton(i18n("Prev&ious"), puGroup);
     spRadio = new QRadioButton(i18n("Specif&y"), puGroup);
     hlpw = new QWidget(puGroup);
     puserlb = new KComboBox(hlpw);
     pu_label = new QLabel(puserlb, i18n("Us&er:"), hlpw);
-    connect(puserlb, SIGNAL(highlighted(int)), this, SLOT(slotChanged()));
+    connect(puserlb, SIGNAL(highlighted(int)), SLOT(slotChanged()));
     wtstr = i18n("Select the user to be preselected for login from this list.");
     QWhatsThis::add( pu_label, wtstr );
     QWhatsThis::add( puserlb, wtstr );
@@ -93,7 +94,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     QWhatsThis::add( cbjumppw, i18n("When this option is on, KDM will place the cursor "
 	"in the password field instead of the login field after preselecting a user. "
 	"This will save one key press per login, if the user name is very seldom changed.") );
-    connect(cbjumppw, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    connect(cbjumppw, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
 
     npGroup = new QGroupBox(i18n("Password-less login"), this );
@@ -106,8 +107,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
 	" password. This applies only to KDM's graphical login."
 	" Think twice before enabling this!") );
     rLayout->addMultiCellWidget(cbplen, 1, 1, 0, 2);
-    connect(cbplen, SIGNAL(toggled(bool)), this, SLOT(slotEnPLChanged()));
-    connect(cbplen, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    connect(cbplen, SIGNAL(toggled(bool)), SLOT(slotEnPLChanged()));
+    connect(cbplen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     w_label = new QLabel(i18n("Password re&quired"), npGroup);
     rLayout->addWidget(w_label, 2, 0);
@@ -153,7 +154,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     QWhatsThis::add( cbarlen, i18n("When this option is on, a user will be"
 	" logged in again automatically, when his session is interrupted by an"
 	" X server crash.") );
-    connect(cbarlen, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    connect(cbarlen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     QGridLayout *main = new QGridLayout(this, 4, 2, 10);
     main->addWidget(alGroup, 0, 0);
@@ -376,3 +377,5 @@ void KDMConvenienceWidget::slotChanged()
 {
   emit KCModule::changed(true);
 }
+
+#include "kdm-conv.moc"

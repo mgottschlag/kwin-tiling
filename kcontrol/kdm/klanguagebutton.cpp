@@ -26,7 +26,6 @@
 #include <kstandarddirs.h>
 
 #include "klanguagebutton.h"
-#include "klanguagebutton.moc"
 
 #include <kdebug.h>
 
@@ -231,3 +230,4 @@ void KLanguageButton::setCurrentItem( const QString &code )
     setCurrentItem( i );
 }
 
+#include "klanguagebutton.moc"
