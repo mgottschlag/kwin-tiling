@@ -44,9 +44,11 @@ void KBGMonitor::setAllowDrop(bool a)
 
 // Destructor
 KDMBackgroundWidget::~KDMBackgroundWidget()
-{
-  if(gui)
+{ 
+  if(gui) 
   {
+    delete cGroup;
+    delete wpGroup;
   }
 }
 
@@ -65,7 +67,8 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       QLabel *label;
       QGroupBox *tGroup, *lGroup, *rGroup;
       QRadioButton *rb;
-
+      QGridLayout *topLayout = new QGridLayout(this, 2, 2, 10);
+      
       QPixmap p = BarIcon("monitor");
 
       tGroup = new QGroupBox( i18n("Preview"), this );
@@ -73,16 +76,15 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       label = new QLabel( tGroup );
       label->setAlignment( AlignCenter );
       label->setPixmap( p );
-      label->setFixedSize(label->sizeHint());
 
       monitor = new KBGMonitor( label );
       monitor->setGeometry( 20, 10, 157, 111 );
-
       QBoxLayout *tLayout = new QVBoxLayout(tGroup, 10, 10, "tLayout");
       tLayout->addSpacing(tGroup->fontMetrics().height()/2);
       tLayout->addWidget(label, 1, AlignCenter);
-      tLayout->activate();
-
+      
+      topLayout->addMultiCellWidget(tGroup, 0, 0, 0, 1);
+      
       KDropSite *dropsite = new KDropSite( monitor );
       connect( dropsite, SIGNAL( dropAction( QDropEvent*) ), 
         this, SLOT( slotQDrop( QDropEvent*) ) );
@@ -94,48 +96,52 @@ void KDMBackgroundWidget::setupPage(QWidget *)
         this, SLOT( slotQDragEnter( QDragEnterEvent*) ) );
 
       lGroup = new QGroupBox( i18n("Color"), this );
-      cGroup = new QButtonGroup( lGroup );
+      cGroup = new QButtonGroup();
       cGroup->setFrameStyle(QFrame::NoFrame);
       cGroup->setExclusive( TRUE );
-      QBoxLayout *cl = new QVBoxLayout(cGroup, 10, 10, "cl");
-
-      QRadioButton *crb1 = new QRadioButton( i18n("Solid Color"), cGroup );
-      crb1->setFixedSize( crb1->sizeHint());
+      QBoxLayout *lLayout = new QVBoxLayout(lGroup, 10, 10);
+      lLayout->addSpacing(lGroup->fontMetrics().height()/2);
+ 
+      QRadioButton *crb1 = new QRadioButton( i18n("Solid Color"), lGroup );
       cGroup->insert( crb1, Plain );
-      cl->addWidget(crb1, 0, AlignLeft);
+      lLayout->addWidget(crb1);
 
-      QRadioButton *crb2 = new QRadioButton( i18n("Horizontal Blend"), cGroup );
-      crb2->setFixedSize( crb2->sizeHint());
+      QRadioButton *crb2 = new QRadioButton( i18n("Horizontal Blend"), lGroup );
       cGroup->insert( crb2, Horizontal );
-      cl->addWidget(crb2, 0, AlignLeft);
+      lLayout->addWidget(crb2);
 
-      QRadioButton *crb3 = new QRadioButton( i18n("Vertical Blend"), cGroup );
-      crb3->setFixedSize( crb3->sizeHint());
+      QRadioButton *crb3 = new QRadioButton( i18n("Vertical Blend"), lGroup );
       cGroup->insert( crb3, Vertical );
-      cl->addWidget(crb3, 0, AlignLeft);
+      lLayout->addWidget(crb3);
 
       connect( cGroup, SIGNAL( clicked( int ) ), 
 	       SLOT( slotColorMode( int ) ) );
-
-      cl->activate();
-
+      
       colButton1 = new KColorButton( color1, lGroup );
       colButton1->setFixedSize( colButton1->sizeHint());
       connect( colButton1, SIGNAL( changed( const QColor & ) ),
-		SLOT( slotSelectColor1( const QColor & ) ) );
-
+               SLOT( slotSelectColor1( const QColor & ) ) );
+      lLayout->addWidget(colButton1);
+      
       colButton2 = new KColorButton( color1, lGroup );
       colButton2->setFixedSize( colButton2->sizeHint());
       connect( colButton2, SIGNAL( changed( const QColor & ) ),
-		SLOT( slotSelectColor2( const QColor & ) ) );
-
+               SLOT( slotSelectColor2( const QColor & ) ) );
+      lLayout->addWidget(colButton2);
+      
+      topLayout->addWidget(lGroup, 1, 0);
+      
       rGroup = new QGroupBox( i18n("Wallpaper"), this );
-
+      QGridLayout *rLayout = new QGridLayout(rGroup, 6, 5, 10);
+      rLayout->addRowSpacing(0, rGroup->fontMetrics().height()/2);
+      rLayout->setRowStretch(5, 1);
+      rLayout->setColStretch(3, 1);
+        
       QStringList list = KGlobal::dirs()->findAllResources("wallpaper");
       if(!wallpaper.isEmpty())
         list.append( wallpaper );
 
-      wpCombo = new QComboBox( false, rGroup );
+      wpCombo = new QComboBox( FALSE, rGroup );
 
       for ( uint i = 0; i < list.count(); i++ )
       {
@@ -149,112 +155,61 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 	wpCombo->insertItem( wallpaper );
 	wpCombo->setCurrentItem( wpCombo->count()-1 );
       }
+
+      wpCombo->setMinimumSize(1, 1);
+      rLayout->addMultiCellWidget(wpCombo, 1, 1, 0, 3);
+      
+      rLayout->addWidget(wpCombo, 1, 0);
       connect( wpCombo, SIGNAL( activated( const QString& ) ),
 		SLOT( slotWallpaper( const QString& )  )  );
-      wpCombo->setFixedHeight(wpCombo->sizeHint().height());
 
       button = new QPushButton( i18n("Browse..."), rGroup );
-      button->setFixedSize( button->sizeHint() );
+      rLayout->addWidget(button, 1, 4);
+
       connect( button, SIGNAL( clicked() ), SLOT( slotBrowse() ) );
 
-      wpGroup = new QButtonGroup( rGroup );
+      wpGroup = new QButtonGroup();
       wpGroup->setFrameStyle(QFrame::NoFrame);
       wpGroup->setExclusive( TRUE );
-      QBoxLayout *wpl = new QHBoxLayout(wpGroup, 10, 10, "wpl");
-      QBoxLayout *wpl1 = new QVBoxLayout(-1, "wpl1");
-      QBoxLayout *wpl2 = new QVBoxLayout(-1, "wpl2");
-      QBoxLayout *wpl3 = new QVBoxLayout(-1, "wpl3");
-      wpl->addLayout(wpl1);
-      wpl->addLayout(wpl2);
-      wpl->addLayout(wpl3);
 
-      rb = new QRadioButton( i18n("None"), wpGroup );
-      rb->setFixedSize( rb->sizeHint());
+      rb = new QRadioButton( i18n("None"), rGroup );
       wpGroup->insert( rb, NoPic );
-      wpl1->addWidget(rb, 0, AlignLeft);
-
-      rb = new QRadioButton( i18n("Tile"), wpGroup );
-      rb->setFixedSize( rb->sizeHint());
+      rLayout->addWidget(rb, 2, 0);
+      rb = new QRadioButton( i18n("Tile"), rGroup );
       wpGroup->insert( rb, Tile );
-      wpl1->addWidget(rb, 0, AlignLeft);
-
-      rb = new QRadioButton( i18n("Center"), wpGroup );
-      rb->setFixedSize( rb->sizeHint() );
+      rLayout->addWidget(rb, 3, 0);
+      rb = new QRadioButton( i18n("Center"), rGroup );
       wpGroup->insert( rb, Center );
-      wpl1->addWidget(rb, 0, AlignLeft);
-
-      rb = new QRadioButton( i18n("Scale"), wpGroup );
-      rb->setFixedSize( rb->sizeHint() );
+      rLayout->addWidget(rb, 4, 0);
+      
+      rb = new QRadioButton( i18n("Scale"), rGroup );
       wpGroup->insert( rb, Scale );
-      wpl2->addWidget(rb, 0, AlignLeft);
-
-      rb = new QRadioButton( i18n("TopLeft"), wpGroup );
-      rb->setFixedSize( rb->sizeHint());
+      rLayout->addWidget(rb, 2, 1);
+      rb = new QRadioButton( i18n("TopLeft"), rGroup );
       wpGroup->insert( rb, TopLeft );
-      wpl2->addWidget(rb, 0, AlignLeft);
-
-      rb = new QRadioButton( i18n("TopRight"), wpGroup );
-      rb->setFixedSize( rb->sizeHint());
+      rLayout->addWidget(rb, 3, 1);
+      rb = new QRadioButton( i18n("TopRight"), rGroup );
       wpGroup->insert( rb, TopRight );
-      wpl2->addWidget(rb, 0, AlignLeft);
-
-      rb = new QRadioButton( i18n("BottomLeft"), wpGroup );
-      rb->setFixedSize( rb->sizeHint());
+      rLayout->addWidget(rb, 4, 1);
+      
+      rb = new QRadioButton( i18n("BottomLeft"), rGroup );
       wpGroup->insert( rb, BottomLeft );
-      wpl3->addWidget(rb, 0, AlignLeft);
-
-      rb = new QRadioButton( i18n("BottomRight"), wpGroup );
-      rb->setFixedSize( rb->sizeHint());
+      rLayout->addWidget(rb, 2, 2);
+      rb = new QRadioButton( i18n("BottomRight"), rGroup );
       wpGroup->insert( rb, BottomRight );
-      wpl3->addWidget(rb, 0, AlignLeft);
-
-      rb = new QRadioButton( i18n("Fancy"), wpGroup );
-      rb->setFixedSize( rb->sizeHint());
+      rLayout->addWidget(rb, 3, 2);
+      rb = new QRadioButton( i18n("Fancy"), rGroup );
       wpGroup->insert( rb, Fancy );
-      wpl3->addWidget(rb, 0, AlignLeft);
-
-      wpl->activate();
-
+      rLayout->addWidget(rb, 4, 2);
+            
       connect( wpGroup, SIGNAL( clicked( int ) ), 
 	       SLOT( slotWallpaperMode( int ) ) );
 
-      // Layouts
-
-      // Bottom left (Color group)
-      QBoxLayout *lLayout = new QVBoxLayout(lGroup, 10);
-      lLayout->addSpacing(lGroup->fontMetrics().height()/2);
-      lLayout->addWidget(cGroup, 0, AlignLeft);
-      lLayout->addWidget(colButton1);
-      lLayout->addWidget(colButton2);
-      lLayout->addStretch(1);
+      topLayout->addWidget(rGroup, 1, 1);
+      
       lLayout->activate();
-
-      // Bottom right (Wallpaper group)
-      QBoxLayout *rLayout = new QVBoxLayout(rGroup, 10);
-      rLayout->addSpacing(rGroup->fontMetrics().height()/2);
-
-      QBoxLayout *r1Layout = new QHBoxLayout(-1, "r1Layout");
-      rLayout->addLayout(r1Layout);
-      r1Layout->addWidget(wpCombo);
-      r1Layout->addWidget(button);
-
-      rLayout->addWidget(wpGroup,2);
-      rLayout->addStretch(1);
-
       rLayout->activate();
-
-      QBoxLayout *ml = new QVBoxLayout(this, 10, 10, "il");
-      QBoxLayout *tl = new QVBoxLayout(-1, "tl");
-      QBoxLayout *bl = new QHBoxLayout(-1, "bl");
-
-      ml->addLayout(tl);
-      tl->addWidget(tGroup);
-
-      ml->addLayout(bl);
-      bl->addWidget(lGroup);
-      bl->addWidget(rGroup);
-
-      ml->activate();
+      topLayout->activate();
 
       showSettings();
 }

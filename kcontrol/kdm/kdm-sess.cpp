@@ -20,27 +20,19 @@
 #include <qdir.h>
 #include <qcombobox.h>
 #include <kdbtn.h>
-#include "utils.h"
 #include <klined.h>
 #include <klocale.h>
 #include <kstddirs.h>
+
+#include "utils.h"
+
 #include "kdm-sess.moc"
-
-
 
 // Destructor
 KDMSessionsWidget::~KDMSessionsWidget()
 {
-  if(gui)
-  {
-    delete restart_lined;
-    delete shutdown_lined;
-    delete session_lined;
-    delete sdcombo;
-    delete sessionslb;
-  }
+  // All widgets are destroyed by their layouts
 }
-
 
 KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name, bool init)
   : KConfigWidget(parent, name)
@@ -62,116 +54,88 @@ void KDMSessionsWidget::setupPage(QWidget *)
       sdcombo->insertItem(i18n("Root Only"), 2);
       sdcombo->insertItem(i18n("Console Only"), 3);
       sdcombo->setCurrentItem(sdMode);
-      sdcombo->setFixedSize(sdcombo->sizeHint());
 
       QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
+
       QLabel *shutdown_label = new QLabel(i18n("Shutdown"), group1);
-      shutdown_label->setFixedSize(shutdown_label->sizeHint());
       shutdown_lined = new KLineEdit(group1);
-      shutdown_lined->setFixedHeight(shutdown_lined->sizeHint().height());
       shutdown_lined->setText(shutdownstr);
 
       QLabel *restart_label = new QLabel(i18n("Restart"), group1);
-      restart_label->setFixedSize(restart_label->sizeHint());
-
       restart_lined = new KLineEdit(group1);
-      restart_lined->setFixedHeight(shutdown_lined->height());
       restart_lined->setText(restartstr);
 
       QLabel *console_label = new QLabel(i18n("Console mode"), group1);
-      console_label->setFixedSize(console_label->sizeHint());
-
-      console_lined = new KLineEdit(group1);
-      console_lined->setFixedHeight(console_lined->height());
+      console_lined = new QLineEdit(group1);
       console_lined->setText(consolestr);
 
       QGroupBox *group2 = new QGroupBox( i18n("Session types"), this );
       
       QLabel *type_label = new QLabel(i18n("New type"), group2);
-      type_label->setFixedSize(type_label->sizeHint());
-
-      session_lined = new KLineEdit(group2);
-      session_lined->setFixedHeight(session_lined->sizeHint().height());
+      session_lined = new QLineEdit(group2);
       connect(session_lined, SIGNAL(textChanged(const QString&)),
               SLOT(slotCheckNewSession(const QString&)));
       connect(session_lined, SIGNAL(returnPressed()),
               SLOT(slotAddSessionType()));
 
       QLabel *types_label = new QLabel(i18n("Available types"), group2);
-      types_label->setFixedSize(types_label->sizeHint());
 
       sessionslb = new MyListBox(group2);
-      connect(sessionslb, SIGNAL(highlighted(int)), SLOT(slotSessionHighlighted(int)));
+      connect(sessionslb, SIGNAL(highlighted(int)), 
+              SLOT(slotSessionHighlighted(int)));
       sessionslb->insertStrList(&sessions);
 
       btnrm = new QPushButton( i18n("Remove"), group2 );
-      btnrm->setFixedSize(btnrm->sizeHint());
       btnrm->setEnabled(false);
       connect( btnrm, SIGNAL( clicked() ), SLOT( slotRemoveSessionType() ) );
 
       btnadd = new QPushButton( i18n("Add"), group2 );
-      btnadd->setFixedSize(btnadd->sizeHint());
       btnadd->setEnabled(false);
       connect( btnadd, SIGNAL( clicked() ), SLOT( slotAddSessionType() ) );
 
       btnup = new KDirectionButton(UpArrow, group2);
-      btnup->setFixedSize(20, 20);
       btnup->setEnabled(false);
       connect(btnup, SIGNAL( clicked() ), SLOT( slotSessionUp() ));
       btndown = new KDirectionButton(DownArrow, group2);
-      btndown->setFixedSize(20, 20);
       btndown->setEnabled(false);
+      btndown->setFixedSize(20, 20);
       connect(btndown,SIGNAL( clicked() ), SLOT( slotSessionDown() ));
 
       QBoxLayout *main = new QVBoxLayout( this, 10 );
       QBoxLayout *lgroup0 = new QVBoxLayout( group0, 10 );
 
-      QBoxLayout *lgroup1 = new QVBoxLayout( group1, 10 );
-      QBoxLayout *lgroup1a = new QHBoxLayout();
-      QBoxLayout *lgroup1b = new QHBoxLayout();
-      QBoxLayout *lgroup1c = new QHBoxLayout();
-      QBoxLayout *lgroup2 = new QVBoxLayout( group2, 10 );
-      QBoxLayout *lgroup2sub = new QHBoxLayout();
-      QBoxLayout *lgroup2a = new QVBoxLayout();
-      QBoxLayout *lgroup2b = new QVBoxLayout();
-      QBoxLayout *lgroup2c = new QVBoxLayout();
-
+      QGridLayout *lgroup1 = new QGridLayout( group1, 4, 2, 10);
+      QGridLayout *lgroup2 = new QGridLayout( group2, 6, 4, 10);
+                                              
       main->addWidget(group0);
       main->addWidget(group1);
-      main->addWidget(group2, 2);
-
+      main->addWidget(group2);
+      
       lgroup0->addSpacing(10);
       lgroup0->addWidget(sdcombo);
-
-      lgroup1->addSpacing(group1->fontMetrics().height()/2);
-      lgroup1->addLayout(lgroup1a);
-      lgroup1->addLayout(lgroup1b);
-      lgroup1->addLayout(lgroup1c);
-      lgroup1a->addWidget(shutdown_label);
-      lgroup1a->addWidget(shutdown_lined);
-      lgroup1b->addWidget(restart_label);
-      lgroup1b->addWidget(restart_lined);
-      lgroup1c->addWidget(console_label);
-      lgroup1c->addWidget(console_lined);
-      lgroup1->activate();
-
-      lgroup2->addSpacing(group2->fontMetrics().height()/2);
-      lgroup2->addLayout(lgroup2sub);
-      lgroup2sub->addLayout(lgroup2a, 2);
-      lgroup2sub->addLayout(lgroup2b, 2);
-      lgroup2sub->addLayout(lgroup2c);
-      lgroup2a->addWidget(type_label, 10, AlignLeft);
-      lgroup2a->addWidget(session_lined);
-      lgroup2a->addWidget(btnrm, 10, AlignRight);
-      lgroup2a->addWidget(btnadd, 10, AlignRight);
-      lgroup2b->addWidget(types_label, 10, AlignLeft);
-      lgroup2b->addWidget(sessionslb);
-      lgroup2c->addStretch(1);
-      lgroup2c->addWidget(btnup);
-      lgroup2c->addWidget(btndown);
-      lgroup2c->addStretch(1);
-      lgroup2->activate();
-
+      
+      lgroup1->addRowSpacing(0, group1->fontMetrics().height()/2);
+      lgroup1->addWidget(shutdown_label, 1, 0);
+      lgroup1->addWidget(shutdown_lined, 1, 1);
+      lgroup1->addWidget(restart_label, 2, 0);
+      lgroup1->addWidget(restart_lined, 2, 1);
+      lgroup1->addWidget(console_label, 3, 0);
+      lgroup1->addWidget(console_lined, 3, 1);
+      lgroup1->setColStretch(1, 1);
+      
+      lgroup2->addRowSpacing(0, group2->fontMetrics().height()/2);
+      lgroup2->addWidget(type_label, 1, 0);
+      lgroup2->addMultiCellWidget(session_lined, 2, 2, 0, 1);
+      lgroup2->addWidget(types_label, 1, 2);
+      lgroup2->addMultiCellWidget(sessionslb, 2, 5, 2, 2);
+      lgroup2->addWidget(btnrm, 3, 1);
+      lgroup2->addWidget(btnadd, 4, 1);
+      lgroup2->addWidget(btnup, 2, 3);
+      lgroup2->addWidget(btndown, 3, 3);
+      lgroup2->setColStretch(0, 1);
+      lgroup2->setColStretch(2, 1);
+      lgroup2->setRowStretch(5, 1);
+        
       main->activate();
 }
 
