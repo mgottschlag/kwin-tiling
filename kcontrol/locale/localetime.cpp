@@ -145,8 +145,8 @@ void KLocaleConfigTime::save()
   c->deleteEntry(QString::fromLatin1("WeekStartsMonday"), false);
   delete c;
 
-  KConfigBase *config = new KConfig;
-  config->setGroup(QString::fromLatin1("Locale"));
+  KConfig *config = KGlobal::config();
+  KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
 
   KSimpleConfig ent(locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
@@ -176,8 +176,6 @@ void KLocaleConfigTime::save()
   if (b != locale->weekStartsMonday())
     config->writeEntry(QString::fromLatin1("WeekStartsMonday"),
 		       locale->weekStartsMonday(), true, true);
-
-  delete config;
 
   // restore the old global locale
   KGlobal::_locale = lsave;

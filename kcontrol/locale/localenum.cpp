@@ -79,6 +79,10 @@ KLocaleConfigNumber::~KLocaleConfigNumber()
  */
 void KLocaleConfigNumber::load()
 {
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
   KConfig *config = KGlobal::config();
   KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
 
@@ -95,6 +99,7 @@ void KLocaleConfigNumber::load()
   if (str.isNull())
     str = ent.readEntry(QString::fromLatin1("DecimalSymbol"), QString::fromLatin1("."));
   locale->setDecimalSymbol(str);
+qDebug("Deciaml: %s", str.latin1());
 
   // ThousandsSeparator
   str = config->readEntry(QString::fromLatin1("ThousandsSeparator"));
@@ -120,10 +125,17 @@ void KLocaleConfigNumber::load()
   edThoSep->setText(locale->thousandsSeparator());
   edMonPosSign->setText(locale->positiveSign());
   edMonNegSign->setText(locale->negativeSign());
+
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 }
 
 void KLocaleConfigNumber::save()
 {
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
   KSimpleConfig *c = new KSimpleConfig(QString::fromLatin1("kdeglobals"), false);
   c->setGroup(QString::fromLatin1("Locale"));
   // Write something to the file to make it dirty
@@ -133,8 +145,8 @@ void KLocaleConfigNumber::save()
   c->deleteEntry(QString::fromLatin1("ThousandsSeparator"), false);
   delete c;
 
-  KConfigBase *config = new KConfig;
-  config->setGroup(QString::fromLatin1("Locale"));
+  KConfig *config = KGlobal::config();
+  KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
 
   KSimpleConfig ent(locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
@@ -154,7 +166,8 @@ void KLocaleConfigNumber::save()
   if (str != locale->thousandsSeparator())
     config->writeEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1("$0%1$0").arg(locale->thousandsSeparator()), true, true);
 
-  delete config;
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 }
 
 void KLocaleConfigNumber::defaults()
@@ -188,6 +201,10 @@ void KLocaleConfigNumber::slotMonNegSignChanged(const QString &t)
 
 void KLocaleConfigNumber::reset()
 {
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
   KSimpleConfig ent(locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
 			   .arg(locale->country())), true);
@@ -209,6 +226,9 @@ void KLocaleConfigNumber::reset()
   edThoSep->setText(locale->thousandsSeparator());
   edMonPosSign->setText(locale->positiveSign());
   edMonNegSign->setText(locale->negativeSign());
+
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 }
 
 void KLocaleConfigNumber::reTranslate()

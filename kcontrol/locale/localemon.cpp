@@ -129,6 +129,10 @@ KLocaleConfigMoney::~KLocaleConfigMoney()
  */
 void KLocaleConfigMoney::load()
 {
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
   KConfig *config = KGlobal::config();
   KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
 
@@ -198,6 +202,9 @@ void KLocaleConfigMoney::load()
   chMonNegPreCurSym->setChecked(locale->negativePrefixCurrencySymbol());
   cmbMonPosMonSignPos->setCurrentItem(locale->positiveMonetarySignPosition());
   cmbMonNegMonSignPos->setCurrentItem(locale->negativeMonetarySignPosition());
+
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 }
 
 void KLocaleConfigMoney::save()
@@ -219,8 +226,8 @@ void KLocaleConfigMoney::save()
   c->deleteEntry(QString::fromLatin1("NegativeMonetarySignPosition"), false);
   delete c;
 
-  KConfigBase *config = new KConfig;
-  config->setGroup(QString::fromLatin1("Locale"));
+  KConfig *config = KGlobal::config();
+  KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
 
   KSimpleConfig ent(locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
@@ -281,8 +288,6 @@ void KLocaleConfigMoney::save()
   i = config->readNumEntry(QString::fromLatin1("NegativeMonetarySignPosition"), i);
   if (i != locale->negativeMonetarySignPosition())
     config->writeEntry(QString::fromLatin1("NegativeMonetarySignPosition"), (int)locale->negativeMonetarySignPosition(), true, true);
-
-  delete config;
 }
 
 void KLocaleConfigMoney::defaults()
@@ -343,6 +348,10 @@ void KLocaleConfigMoney::slotMonNegMonSignPosChanged(int i)
  */
 void KLocaleConfigMoney::reset()
 {
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
   KSimpleConfig ent(locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
 			   .arg(locale->country())), true);
@@ -367,6 +376,9 @@ void KLocaleConfigMoney::reset()
   chMonNegPreCurSym->setChecked(locale->negativePrefixCurrencySymbol());
   cmbMonPosMonSignPos->setCurrentItem(locale->positiveMonetarySignPosition());
   cmbMonNegMonSignPos->setCurrentItem(locale->negativeMonetarySignPosition());
+
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 }
 
 void KLocaleConfigMoney::reTranslate()
