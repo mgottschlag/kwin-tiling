@@ -1801,7 +1801,7 @@ void CFontListWidget::createDir()
     CListViewItem *item=getFirstSelectedItem();
 
     if(!item || !CMisc::dWritable(item->dir()))
-        KMessageBox::error(this, i18n("Folder is not writable!"), i18n("Error"));
+        KMessageBox::error(this, i18n("Folder %1 is not writable!").arg(item->dir()), i18n("Error"));
     else
     {
         CCreateDirDialog *dlg=new CCreateDirDialog(this);
