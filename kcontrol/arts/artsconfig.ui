@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>414</width>
+            <width>410</width>
             <height>465</height>
         </rect>
     </property>
@@ -89,7 +89,7 @@
                             <string>The sound server will suspend itself if idle for this period of time.</string>
                         </property>
                     </widget>
-                    <widget row="7"  column="3" >
+                    <widget row="8"  column="3" >
                         <class>QPushButton</class>
                         <property stdset="1">
                             <name>name</name>
@@ -100,7 +100,7 @@
                             <string>&amp;Test sound</string>
                         </property>
                     </widget>
-                    <spacer row="7"  column="0"  rowspan="1"  colspan="3" >
+                    <spacer row="8"  column="0"  rowspan="1"  colspan="3" >
                         <property>
                             <name>name</name>
                             <cstring>Spacer1</cstring>
@@ -162,42 +162,6 @@
                             <number>60</number>
                         </property>
                     </widget>
-                    <spacer row="6"  column="3" >
-                        <property>
-                            <name>name</name>
-                            <cstring>Spacer2</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>orientation</name>
-                            <enum>Vertical</enum>
-                        </property>
-                        <property stdset="1">
-                            <name>sizeType</name>
-                            <enum>Expanding</enum>
-                        </property>
-                        <property>
-                            <name>sizeHint</name>
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget row="3"  column="0"  rowspan="1"  colspan="4" >
-                        <class>QCheckBox</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>x11Comm</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>text</name>
-                            <string>Exchange security and reference info over the &amp;X11 server</string>
-                        </property>
-                        <property>
-                            <name>whatsThis</name>
-                            <string>If you want network transparency or if you use the soundserver only when you use X11, enable this option.</string>
-                        </property>
-                    </widget>
                     <widget row="4"  column="0"  rowspan="1"  colspan="4" >
                         <class>QCheckBox</class>
                         <property stdset="1">
@@ -224,6 +188,64 @@
                             <string>seconds</string>
                         </property>
                     </widget>
+                    <widget row="3"  column="0"  rowspan="1"  colspan="4" >
+                        <class>QCheckBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>x11Comm</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>Exchange security and reference info over the &amp;X11 server</string>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>If you want network transparency or if you use the soundserver only when you use X11, enable this option.</string>
+                        </property>
+                    </widget>
+                    <widget row="6"  column="0" >
+                        <class>QCheckBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>displayMessage</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>Display &amp;messages using:</string>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>When enabled, server error, warning, and informational messages will be displayed using this external program.</string>
+                        </property>
+                    </widget>
+                    <widget row="6"  column="1"  rowspan="1"  colspan="3" >
+                        <class>QLineEdit</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>messageApplication</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="7"  column="3" >
+                        <property>
+                            <name>name</name>
+                            <cstring>Spacer2</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>orientation</name>
+                            <enum>Vertical</enum>
+                        </property>
+                        <property stdset="1">
+                            <name>sizeType</name>
+                            <enum>Expanding</enum>
+                        </property>
+                        <property>
+                            <name>sizeHint</name>
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
                 </grid>
             </widget>
             <widget>

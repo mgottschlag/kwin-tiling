@@ -66,7 +66,8 @@ extern "C" {
 
 QString createArgs(bool netTrans, bool duplex, int fragmentCount, int fragmentSize,
 					QString deviceName, int rate, int bits, QString audioIO,
-					QString addOptions, bool autoSuspend, int suspendTime)
+					QString addOptions, bool autoSuspend, int suspendTime,
+					QString messageApplication)
 {
     QString args;
 
@@ -96,6 +97,9 @@ QString createArgs(bool netTrans, bool duplex, int fragmentCount, int fragmentSi
 
 	if (autoSuspend)
 		args += QString(" -s %1").arg(suspendTime);
+
+	if (messageApplication.length() > 0)
+	  args += " -m " + messageApplication;
 
 	if (addOptions.length() > 0)
       args += " " + addOptions;
@@ -174,6 +178,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	samplingRate = artsConfig->samplingRate;
 	autoSuspend = artsConfig->autoSuspend;
 	suspendTime = artsConfig->suspendTime;
+	displayMessage = artsConfig->displayMessage;
+	messageApplication = artsConfig->messageApplication;
 
    	QString deviceHint = i18n("Normally, the sound server defaults to using the device called <b>/dev/dsp</b> for sound output. That should work in most cases. An exception is for instance if you are using devfs, then you should use <b>/dev/sound/dsp</b> instead. Other alternatives are things like <b>/dev/dsp0</b> or <b>/dev/dsp1</b> if you have a soundcard that supports multiple outputs, or you have multiple soundcards.");
 
@@ -211,6 +217,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	connect(artsConfig->latencySlider,SIGNAL(sliderMoved(int)),SLOT(slotChanged()));
 	connect(artsConfig->autoSuspend,SIGNAL(clicked()),SLOT(slotChanged()));
 	connect(artsConfig->suspendTime,SIGNAL(valueChanged(const QString &)),SLOT(slotChanged()));
+	connect(displayMessage, SIGNAL(clicked()), SLOT(slotChanged()));
+	connect(messageApplication, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
 
 	connect(artsConfig->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
 }
@@ -230,6 +238,8 @@ void KArtsModule::GetSettings( void )
 	artsConfig->addOptions->setText(config->readEntry("AddOptions",""));
 	artsConfig->customOptions->setChecked(artsConfig->addOptions->text() != "");
 	artsConfig->latencySlider->setValue(config->readNumEntry("Latency",250));
+	messageApplication->setText(config->readEntry("MessageApplication","artsmessage"));
+	displayMessage->setChecked(messageApplication->text() != "");
 
 	int rate = config->readNumEntry("SamplingRate",0);
 	if(rate)
@@ -268,6 +278,7 @@ void KArtsModule::saveParams( void )
 		audioIO = audioIOList.at(item)->name;
 
 	QString dev = customDevice->isChecked()?deviceName->text():QString::fromLatin1("");
+	QString app = displayMessage->isChecked()?messageApplication->text():QString::fromLatin1("");
 	int rate = customRate->isChecked()?samplingRate->text().toLong():0;
 	QString addOptions;
 	if(artsConfig->customOptions->isChecked())
@@ -295,6 +306,7 @@ void KArtsModule::saveParams( void )
 	config->writeEntry("Bits",bits);
 	config->writeEntry("AutoSuspend", autoSuspend->isChecked());
 	config->writeEntry("SuspendTime", suspendTime->value());
+    config->writeEntry("MessageApplication",app);
 
 	calculateLatency();
 	// Save arguments string in case any other process wants to restart artsd.
@@ -302,7 +314,8 @@ void KArtsModule::saveParams( void )
 	config->writeEntry("Arguments",
 		createArgs(networkTransparent->isChecked(), fullDuplex->isChecked(),
 					fragmentCount, fragmentSize, dev, rate, bits,
-					audioIO, addOptions, autoSuspend->isChecked(), suspendTime->value()));
+					audioIO, addOptions, autoSuspend->isChecked(),
+					suspendTime->value(), app));
 
 	config->sync();
 }
@@ -378,6 +391,8 @@ void KArtsModule::defaults()
 	artsConfig->audioIO->setCurrentItem(0);
 	artsConfig->soundQuality->setCurrentItem(0);
 	artsConfig->latencySlider->setValue(250);
+	displayMessage->setChecked(true);
+	messageApplication->setText("artsmessage");
 	slotChanged();
 }
 
@@ -441,6 +456,9 @@ void KArtsModule::updateWidgets()
 	artsConfig->soundIO->setEnabled(startServer->isChecked());
 	artsConfig->testSound->setEnabled(startServer->isChecked());
     autoSuspend->setEnabled(startServer->isChecked());
+    displayMessage->setEnabled(startServer->isChecked());
+    messageApplication->setEnabled(startServer->isChecked()
+							&& displayMessage->isChecked());
 
 	calculateLatency();
 }

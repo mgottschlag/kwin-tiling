@@ -68,9 +68,10 @@ private:
   void GetSettings( void );
 
   QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
-  			*fullDuplex, *customDevice, *customRate, *autoSuspend;
+  			*fullDuplex, *customDevice, *customRate, *autoSuspend, *displayMessage;
   QLineEdit *deviceName;
   QLineEdit *samplingRate;
+  QLineEdit *messageApplication;
   QSpinBox *suspendTime;
   ArtsConfig *artsConfig;
   KConfig *config;
