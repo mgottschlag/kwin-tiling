@@ -88,16 +88,21 @@ void KFileShareConfig::load()
     }
     else
     {
-        QCString str=QCString(file.readAll());
+        QString str(QCString(file.readAll()));
         if ( str=="RESTRICT=yes")
         {
-            noSharing->setChecked( false );
+            sharing->setChecked( false );
+            noSharing->setChecked( true );
+        }
+        else if( str=="RESTRICT=no")
+        {
             sharing->setChecked( true );
+            noSharing->setChecked( false );
         }
         else
         {
-            noSharing->setChecked( true );
             sharing->setChecked( false );
+            noSharing->setChecked( true );
         }
     }
 
@@ -127,7 +132,8 @@ void KFileShareConfig::save()
 
 void KFileShareConfig::defaults()
 {
-    //todo
+    noSharing->setChecked( true );
+    sharing->setChecked( false );
 }
 
 QString KFileShareConfig::quickHelp() const
