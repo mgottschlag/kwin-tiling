@@ -85,7 +85,6 @@ protected slots:
 private:
     bool _changed;
     bool useAA, useAA_original;
-    void applyQtXFT(bool active);
     bool defaultCharset;
     QCheckBox *cbAA;
     QList <FontUseItem> fontUseList;

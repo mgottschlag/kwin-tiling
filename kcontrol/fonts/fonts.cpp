@@ -44,11 +44,28 @@
 
 /**** DLL Interface ****/
 
+void applyQtXFT(bool active)
+{
+   // Pass env. var to kdeinit.
+   QCString name = "QT_XFT";
+   QCString value = active ? "1" : "0";
+   QByteArray params;
+   QDataStream stream(params, IO_WriteOnly);
+   stream << name << value;
+   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
+}
+
 extern "C" {
   KCModule *create_fonts(QWidget *parent, const char *name) {
     KGlobal::locale()->insertCatalogue("kcmfonts");
     return new KFonts(parent, name);
   }
+
+  void init_fonts() {
+		KConfig aacfg("kdeglobals");
+ 		aacfg.setGroup("KDE");
+		applyQtXFT(aacfg.readBoolEntry( "AntiAliasing", false ));
+	}
 }
 
 
@@ -410,17 +427,6 @@ void KFonts::slotUseAntiAliasing()
     useAA = cbAA->isChecked();
     _changed = true;
     emit changed(true);
-}
-
-void KFonts::applyQtXFT(bool active)
-{
-   // Pass env. var to kdeinit.
-   QCString name = "QT_XFT";
-   QCString value = active ? "1" : "0";
-   QByteArray params;
-   QDataStream stream(params, IO_WriteOnly);
-   stream << name << value;
-   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
 }
 
 // vim:ts=2:sw=2:tw=78
