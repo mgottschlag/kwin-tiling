@@ -36,7 +36,6 @@ public:
 	void configChanged();
 
 protected slots:
-	void slotDisplayInformation();
 	void slotSwitchScreen();
 	void slotResolutionChanged(int parameter);
 	void slotOrientationChanged(int parameter);
@@ -45,10 +44,7 @@ protected slots:
 private:
 	void populateMenu(KPopupMenu* menu);
 	
-	bool eventFilter(QObject* watched, QEvent* e);
-	
 	bool m_popupUp;
-	int m_resizeCount;
 };
 
 #endif

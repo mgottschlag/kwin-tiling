@@ -33,9 +33,7 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 	: KSystemTray(parent, name)
 	, RandRDisplay(true)
 	, m_popupUp(false)
-	, m_resizeCount(-1)
 {
-	installEventFilter(this);
 	setPixmap(SmallIcon("kscreensaver"));
 	connect(contextMenu(), SIGNAL(activated(int)), SLOT(slotSwitchScreen()));
 }
@@ -90,12 +88,6 @@ void KRandRSystemTray::configChanged()
 {
 	refresh();
 	
-	// A bit of a hack.. kicker gets restarted, we get resized twice, we wait a bit for kicker to be ready, and after that we're ready to display the change info.
-	m_resizeCount = 2;
-}
-
-void KRandRSystemTray::slotDisplayInformation()
-{
 	KPassivePopup::message(i18n("Screen configuration has changed"), m_currentScreen->changedMessage(), SmallIcon("window_fullscreen"), this, "ScreenChangeNotification");
 }
 
@@ -196,16 +188,4 @@ void KRandRSystemTray::slotRefreshRateChanged(int parameter)
 	m_currentScreen->proposedRefreshRate = parameter;
 	
 	m_currentScreen->applyProposedAndConfirm();
-}
-
-bool KRandRSystemTray::eventFilter(QObject* /*watched*/, QEvent* e)
-{
-	if (e->type() == 14 && m_resizeCount > 0) {
-		m_resizeCount--;
-		if (!m_resizeCount) {
-			QTimer::singleShot(1000, this, SLOT(slotDisplayInformation()));
-			m_resizeCount = -1;
-		}
-	}
-	return false;
 }
