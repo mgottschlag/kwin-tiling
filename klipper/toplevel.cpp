@@ -186,7 +186,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
              this, SLOT( setURLGrabberEnabled( bool )));
 
     KlipperPopup* popup = history()->popup();
-    connect ( history(),  SIGNAL( changed() ), SLOT( slotHistoryChanged() ) );
+    connect ( history(),  SIGNAL( topChanged() ), SLOT( slotHistoryTopChanged() ) );
     popup->plugAction( toggleURLGrabAction );
     popup->plugAction( clearHistoryAction );
     popup->plugAction( configureAction );
@@ -584,7 +584,7 @@ void KlipperWidget::toggleURLGrabber()
     setURLGrabberEnabled( !bURLGrabber );
 }
 
-void KlipperWidget::slotHistoryChanged() {
+void KlipperWidget::slotHistoryTopChanged() {
     if ( locklevel ) {
         return;
     }
@@ -592,6 +592,9 @@ void KlipperWidget::slotHistoryChanged() {
     const HistoryItem* topitem = history()->first();
     if ( topitem ) {
         setClipboard( *topitem, Clipboard | Selection );
+    }
+    if ( bReplayActionInHistory && bURLGrabber ) {
+        slotRepeatAction();
     }
 
 }

@@ -73,7 +73,7 @@ public:
 public slots:
     void saveSession();
     void slotSettingsChanged( int category );
-    void slotHistoryChanged();
+    void slotHistoryTopChanged();
     void slotConfigure();
 
 protected:

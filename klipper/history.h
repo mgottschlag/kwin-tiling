@@ -125,6 +125,11 @@ public slots:
 signals:
     void changed();
 
+    /**
+     * Emitted when the first history item has changed.
+     */
+    void topChanged();
+
 private:
 
     /**

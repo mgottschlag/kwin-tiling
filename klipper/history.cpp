@@ -58,6 +58,8 @@ void History::insert( const HistoryItem* item ) {
     remove( item );
     forceInsert( item );
 
+    emit topChanged();
+
 }
 
 void History::forceInsert( const HistoryItem* item ) {
@@ -114,6 +116,7 @@ void History::slotMoveToTop(int pos ) {
     HistoryItem* item = itemList.take();
     itemList.prepend( item );
     emit changed();
+    emit topChanged();
 }
 
 void History::max_size( unsigned max_size ) {
