@@ -720,8 +720,9 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
                     cmd+=("kfontinst install ");
                     cmd+=tmpFileC;
                     cmd+=" ";
-                    cmd+=destOrigC;
                 }
+
+                cmd+=destOrigC;
 
                 // Get root to move this to fonts folder...
                 if(doRootCmd(cmd, passwd))
