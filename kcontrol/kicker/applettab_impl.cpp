@@ -58,9 +58,9 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
 
   QWhatsThis::add( level_group, i18n("Panel applets can be started in two different ways:"
     " internally or externally. While 'internally' is the preferred way to load applets, this can"
-    " raise stability or security problems when you are using poorly programmed third-party applets."
+    " raise stability or security problems when you are using poorly-programmed third-party applets."
     " To address these problems, applets can be marked 'trusted'. You might want to configure"
-    " Kicker to treat trusted applets different from untrusted ones. Your options are:"
+    " Kicker to treat trusted applets differently to untrusted ones; your options are:"
     " <ul><li><em>Load only trusted applets internally:</em> All applets but the ones marked 'trusted'"
     " will be loaded using an external wrapper application.</li>"
     " <li><em>Load startup config applets internally:</em> The applets shown on KDE startup"
@@ -69,7 +69,7 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
 
   QWhatsThis::add( lb_trusted, i18n("Here you can see a list of applets that are marked"
     " 'trusted', i.e. will be loaded internally by Kicker in any case. To move an applet"
-    " from the list of available applets to the trusted ones or vice versa, select it and"
+    " from the list of available applets to the trusted ones, or vice versa, select it and"
     " press the left or right buttons.") );
 
   QWhatsThis::add( pb_add, i18n("Click here to add the selected applet from the list of available,"
@@ -79,7 +79,7 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
     " applets to the list of available, untrusted applets.") );
 
   QWhatsThis::add( lb_available, i18n("Here you can see a list of available applets that you"
-    " currently don't trust. This doesn't mean you can't use those applets, but rather that"
+    " currently do not trust. This does not mean you cannot use those applets, but rather that"
     " the panel's policy using them depends on your applet security level. To move an applet"
     " from the list of available applets to the trusted ones or vice versa, select it and"
     " press the left or right buttons.") );

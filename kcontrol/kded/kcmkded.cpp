@@ -257,7 +257,7 @@ void KDEDConfig::getServiceStatus()
 
 		_lvLoD->setEnabled( false );
 		_lvStartup->setEnabled( false );
-		KMessageBox::error(this, i18n("Unable to contact KDED!"));
+		KMessageBox::error(this, i18n("Unable to contact KDED."));
 		return;
 	}
 	else {
@@ -353,7 +353,7 @@ void KDEDConfig::slotStartService()
 		slotServiceRunningToggled();
 	}
 	else {
-		KMessageBox::error(this, i18n("Unable to start service!"));
+		KMessageBox::error(this, i18n("Unable to start service."));
 	}
 }
 
@@ -377,7 +377,7 @@ void KDEDConfig::slotStopService()
 		slotServiceRunningToggled();
 	}
 	else {
-		KMessageBox::error(this, i18n("Unable to stop service!"));
+		KMessageBox::error(this, i18n("Unable to stop service."));
 	}
 
 }
@@ -405,8 +405,8 @@ QString KDEDConfig::quickHelp() const
 			"<ul><li>Services invoked at startup</li><li>Services called on demand</li></ul>"
 			"<p>The latter are only listed for convenience. The startup services can be started and stopped. "
 			"In Administrator mode, you can also define whether services should be loaded at startup.</p>"
-			"<p><b> Use this with care. Some services are vital for KDE. Don't deactivate services if you"
-			" don't know what you are doing!</b></p>");
+			"<p><b> Use this with care: some services are vital for KDE; do not deactivate services if you"
+			" do not know what you are doing.</b></p>");
 }
 
 

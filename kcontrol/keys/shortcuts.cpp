@@ -146,8 +146,8 @@ void ShortcutsModule::initGUI()
 	m_pbtnRemove = new QPushButton( i18n("&Remove"), this );
 	m_pbtnRemove->setEnabled( false );
 	connect( m_pbtnRemove, SIGNAL(clicked()), SLOT(slotRemoveScheme()) );
-	QWhatsThis::add( m_pbtnRemove, i18n("Click here to remove the selected key bindings scheme. You can not"
-		" remove the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
+	QWhatsThis::add( m_pbtnRemove, i18n("Click here to remove the selected key bindings scheme. You cannot"
+		" remove the standard system-wide schemes 'Current scheme' and 'KDE default'.") );
 	pHLayout->addWidget( m_pbtnRemove );
 
 	pHLayout->addSpacing( KDialog::marginHint() * 3 );
@@ -366,8 +366,8 @@ void ShortcutsModule::slotSaveSchemeAs()
 					iScheme = i;
 
 					int result = KMessageBox::warningContinueCancel( 0,
-					i18n("A key scheme with the name '%1' already exists.\n"
-						"Do you want to overwrite it?\n").arg(sName),
+					i18n("A key scheme with the name '%1' already exists;\n"
+						"do you want to overwrite it?\n").arg(sName),
 					i18n("Save key scheme"),
 					i18n("Overwrite"));
 					bNameValid = (result == KMessageBox::Continue);
