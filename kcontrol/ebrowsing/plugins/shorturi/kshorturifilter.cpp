@@ -50,7 +50,6 @@ KShortURIFilter::KShortURIFilter( QObject *parent, const char *name,
                  DCOPObject("KShortURIFilterIface")
 {
     configure();
-    m_strDefaultProtocol = QFL1("http://");
 }
 
 bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
@@ -381,6 +380,7 @@ QString KShortURIFilter::configName() const
 void KShortURIFilter::configure()
 {
   KConfig config( name() + QFL1("rc"), false, false );
+  m_strDefaultProtocol = config.readEntry( "DefaultProtocol", QFL1("http://") );
   QChar sep = config.readNumEntry( "PatternSeparator", ' ' );
   EntryMap patterns = config.entryMap( QFL1("Pattern") );
   const EntryMap protocols = config.entryMap( QFL1("Protocol") );
@@ -394,10 +394,7 @@ void KShortURIFilter::configure()
       {
         QString protocol = protocols[it.key()];
         if (!protocol.isEmpty())
-        {
-          // kdDebug() << "Protocol: " << protocol << endl << "Expression: " << *exp << endl;
           m_urlHints.append( URLHint(*exp, protocol) );
-        }
       }
     }
   }

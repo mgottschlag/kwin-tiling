@@ -1,9 +1,9 @@
 [Pattern]
-http=^www ^localhost ^(\w+)@localhost
-ftp=^ftp
-mailto=(\w+)@(\w+)\.(\w+)
+kdehttp=^www ^localhost ^(\w+)@localhost
+kdeftp=^ftp
+kdemailto=(\w+)@(\w+)\.(\w+)
 
 [Protocol]
-http=http://
-ftp=ftp://
-mailto=mailto:
+kdehttp=http://
+kdeftp=ftp://
+kdemailto=mailto:
