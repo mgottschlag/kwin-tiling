@@ -23,9 +23,6 @@ METASOURCES = blankscrn.moc
 
 ########## Meta objects ##########
 
-data_DATA = 
-datadir = $(kde_datadir)/kscreensaver
-
 desktop_DATA = KRandom.desktop KBlankscreen.desktop
 desktopdir = $(kde_appsdir)/System/ScreenSavers
 

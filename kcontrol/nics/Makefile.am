@@ -7,8 +7,6 @@ kcm_nic_la_LIBADD = -lkdeui $(LIB_KFILE) $(LIBSOCKET)
 
 INCLUDES= $(all_includes)
 
-SUBDIRS = 
-
 kcm_nic_la_METASOURCES = AUTO
 
 messages:

@@ -7,8 +7,6 @@ kcm_samba_la_LIBADD = $(LIB_KFILE)
 
 INCLUDES= $(all_includes)
 
-SUBDIRS = 
-
 kcm_samba_la_METASOURCES = AUTO
 
 messages:

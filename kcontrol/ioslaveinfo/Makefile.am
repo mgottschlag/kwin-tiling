@@ -7,8 +7,6 @@ kcm_ioslaveinfo_la_LIBADD = -lkdeui $(LIB_KIO)
 
 INCLUDES= $(all_includes)
 
-SUBDIRS = 
-
 kcm_ioslaveinfo_la_METASOURCES = AUTO
 
 messages:
