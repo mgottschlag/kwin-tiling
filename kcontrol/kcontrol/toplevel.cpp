@@ -63,6 +63,10 @@ TopLevel::TopLevel(const char* name)
 
   // search tab
   _searchtab = new SearchWidget(_tab);
+  _searchtab->populateKeywordList(_modules);
+  connect(_searchtab, SIGNAL(moduleSelected(const QString&)),
+		  this, SLOT(activateModule(const QString&)));
+
   _tab->addTab(_searchtab, "S&earch");
 
   // help tab
@@ -141,5 +145,23 @@ void TopLevel::showModule(QString desktopFile)
 			_indextab->moduleChanged(mod);
 	  }
     }
+}
+
+void TopLevel::activateModule(const QString& name)
+{
+  qDebug("activate: %s", name.latin1());
+  for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
+	{
+	  if (mod->name() == name)
+		{
+		  // tell the index to display the module
+		  _indextab->makeVisible(mod);
+			
+		  // tell the index to mark this module as loaded
+		  _indextab->moduleChanged(mod);
+
+		  break;
+		}
+	}
 }
 

@@ -21,9 +21,29 @@
 #define __searchwidget_h__
 
 #include <qwidget.h>
+#include <qlist.h>
+#include <qstring.h>
+
+#include "modules.h"
 
 class QListBox;
 class QLineEdit;
+
+class KeywordListEntry
+{
+ public:
+  KeywordListEntry(const QString& name, ConfigModule* module);
+  
+  void addModule(ConfigModule* module);
+
+  QString name() { return _name; }
+  QList<ConfigModule> modules() { return _modules; }
+  
+ private:
+  QString _name;
+  QList<ConfigModule> _modules;
+  
+};
 
 class SearchWidget : public QWidget
 {  
@@ -32,9 +52,24 @@ class SearchWidget : public QWidget
 public:   
   SearchWidget(QWidget *parent, const char *name=0);
 
+  void populateKeywordList(ConfigModuleList *list);
+
+signals:
+  void moduleSelected(const QString&);
+
+protected:
+  void populateKeyListBox(const QString& regexp);
+  void populateResultListBox(const QString& keyword);
+
+protected slots:
+  void slotSearchTextChanged(const QString &);
+  void slotKeywordSelected(const QString &);
+  void slotModuleSelected(const QString &);
+
 private:
   QListBox  *_keyList, *_resultList;
-  QLineEdit *_input;  
+  QLineEdit *_input; 
+  QList<KeywordListEntry> _keywords;
 };
 
 #endif

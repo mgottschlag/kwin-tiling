@@ -18,8 +18,6 @@
  
 */                                                                            
 
-
-
 #include <kiconloader.h>
 #include <kdesktopfile.h>
 
@@ -47,6 +45,10 @@ ModuleInfo::ModuleInfo(QString desktopFile)
   // get the documentation path
   setDocPath(desktop.readEntry("DocPath"));
 
+  // get the keyword list
+  QStringList kw = desktop.readListEntry("Keywords");
+  setKeywords(kw);
+ 
   // try to find out the modules' groups
   QString group = desktop.readEntry("X-KDE-Group");
   if (group.isEmpty())

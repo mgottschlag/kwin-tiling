@@ -83,26 +83,26 @@ void IndexWidget::fillIndex(ConfigModuleList *list)
   ConfigModule *module;
   for (module=list->first(); module != 0; module=list->next())
     {
-	  if (module->library().isEmpty())
-		continue;
-
-	  if (KCGlobal::system())
-		{
-		  if (!module->onlyRoot())
-			continue;
-		}
-	  else
-		{
-		  if (module->onlyRoot() && !KCGlobal::root())
-			continue;
-		}
-
+      if (module->library().isEmpty())
+	continue;
+      
+      if (KCGlobal::system())
+	{
+	  if (!module->onlyRoot())
+	    continue;
+	}
+      else
+	{
+	  if (module->onlyRoot() && !KCGlobal::root())
+	    continue;
+	}
+      
       QListViewItem *parent;
-	  parent = _root;
+      parent = _root;
       parent = getGroupItem(parent, module->groups());
       new IndexListItem(parent, module);
     }
-
+  
   _tree->setOpen(_root, true);
   setMinimumWidth(_tree->columnWidth(0)+22);
 }

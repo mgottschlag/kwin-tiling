@@ -40,6 +40,7 @@ public:
 
   const QString fileName() const { return _fileName; };
   const QStringList &groups() const { return _groups; };
+  const QStringList &keywords() const { return _keywords; };
   QString name() const { return _name; };
   QPixmap icon();
   bool isDirectory() const { return _directory; };
@@ -52,6 +53,7 @@ public:
 protected:
 
   void setGroups(QStringList &groups) { _groups = groups; };
+  void setKeywords(QStringList &k) { _keywords = k; };
   void setName(QString name) { _name = name; };
   void setIcon(QString icon) { _icon = icon; };
   void setDirectory(bool dir) { _directory = dir; };
@@ -59,9 +61,10 @@ protected:
   void setHandle(QString handle) { _handle = handle; };
   void setOnlyRoot(bool only) { _root = only; };
   void setDocPath(QString p) { _doc = p; };
+
 private:
   
-  QStringList _groups;
+  QStringList _groups, _keywords;
   QString     _name, _icon, _lib, _handle, _fileName, _doc;
   bool        _directory, _root;
 };

@@ -47,6 +47,7 @@ protected:
   void setupActions(); 
 
 protected slots:
+  void activateModule(const QString& name);
   void moduleActivated(ConfigModule *module);
   void newModule(const QString &name, const QString &quickhelp);
 
