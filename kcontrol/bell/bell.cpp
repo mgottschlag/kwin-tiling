@@ -249,7 +249,7 @@ const KAboutData* KBellConfig::aboutData() const
     about->addAuthor("Christian Czezatke", I18N_NOOP("Original author"), "e9025461@student.tuwien.ac.at");
     about->addAuthor("Bernd Wuebben", 0, "wuebben@kde.org");
     about->addAuthor("Matthias Elter", I18N_NOOP("Current maintainer"), "elter@kde.org");
-    about->addAuthor("Carsten PFeiffer", 0, "pfeiffer@kde.org");
+    about->addAuthor("Carsten Pfeiffer", 0, "pfeiffer@kde.org");
 
     return about;
 }
