@@ -174,6 +174,7 @@ bool LiloInfo::getOptionsFromLilo()
 	// Create the process handle. The command line will be something like
 	// "/sbin/lilo -q -m /boot/map".
 	liloproc << liloloc;
+	liloproc << QString::fromLatin1("-w"); 
 	liloproc << QString::fromLatin1("-q"); 
         liloproc << QString::fromLatin1("-m") << bootmaploc;
 
