@@ -123,6 +123,10 @@ are installed or use --without-xdmcp to disable XDMCP support!])
 fi
 AC_SUBST(LIBXDMCP)
 
+KRB4_INCS=
+KRB4_LIBS=
+KRB4_RPATH=
+
 AC_MSG_CHECKING(whether to use Kerberos v4)
 AC_ARG_WITH(krb4,
 [  --with-krb4[=PATH]      Compile in Kerberos v4 support.],
@@ -136,27 +140,12 @@ no)
 *)
   AC_MSG_RESULT(yes)
   AC_DEFINE_UNQUOTED(KRB4, 1, [define if you have Kerberos IV])
-  KERBEROS_ROOT="$with_krb4"
-  KERBEROS_INCS="-I${KERBEROS_ROOT}/include"
-  KERBEROS_LIBS="-L${KERBEROS_ROOT}/lib -lkrb -ldes"
-  KRB_RPATH=
+  KRB4_INCS="-I$with_krb4/include"
+  KRB4_LIBS="-L$with_krb4/lib -lkrb -ldes"
   if test "$USE_RPATH" = "yes" ; then
-    KRB_RPATH="-R ${KERBEROS_ROOT}/lib"
+    KRB4_RPATH="-R $with_krb4/lib"
   fi
-  AC_CHECK_LIB(resolv, dn_expand, KERBEROS_LIBS="$KERBEROS_LIBS -lresolv")
-  dnl Check whether or not the AFS lifetime conversion routines exist.
-  AC_MSG_CHECKING(whether AFS lifetime conversion routines are present)
-  keeplibs="$LIBS"
-  keepcflags="$CFLAGS"
-  LIBS="-L${KERBEROS_ROOT}/lib -lkrb -ldes $LIBS"
-  CFLAGS="-I${KERBEROS_ROOT}/include $CFLAGS"
-  AC_TRY_LINK([#include <krb.h>], [ krb_life_to_time(10, 10);],
-              [AC_MSG_RESULT(yes)
-               AC_DEFINE_UNQUOTED(HAVE_KRB_LIFE_TO_TIME, 1, 
-	         [define if libkrb has krb_life_to_time()])],
-              [AC_MSG_RESULT(no)])
-  LIBS="$keeplibs"
-  CFLAGS="$keepcflags"
+  AC_CHECK_LIB(resolv, dn_expand, KRB4_LIBS="$KRB4_LIBS -lresolv")
   ;;
 esac
 
@@ -174,33 +163,53 @@ else
   else
     AC_MSG_RESULT(yes)
     AC_DEFINE_UNQUOTED(AFS, 1, [define if you have KTH Kerberos IV and AFS])
-    KERBEROS_LIBS="${KERBEROS_LIBS} -lkafs"
+    KRB4_LIBS="$KRB4_LIBS -lkafs"
     if test -n "$os_aix"; then
-      KERBEROS_LIBS="${KERBEROS_LIBS} -lld"
+      KRB4_LIBS="$KRB4_LIBS -lld"
     fi
   fi
 fi
 
-AC_SUBST(KERBEROS_ROOT)dnl
-AC_SUBST(KERBEROS_INCS)dnl
-AC_SUBST(KERBEROS_LIBS)dnl
-AC_SUBST(KRB_RPATH)
+AC_SUBST(KRB4_INCS)
+AC_SUBST(KRB4_LIBS)
+AC_SUBST(KRB4_RPATH)
 
 AC_CHECK_LIB(s, main, [LIB_LIBS="-ls"]) dnl for AIX
 AC_SUBST(LIB_LIBS)
 
+KRB5_INCS=
+KRB5_LIBS=
+KRB5_RPATH=
+
 AC_MSG_CHECKING([whether to use Kerberos5 for Xauth cookies in kdm])
 AC_ARG_WITH(krb5auth,
-  [  --with-krb5auth         Use Kerberos5 for Xauth cookies in kdm.], , 
+  [  --with-krb5auth[=PATH]  Use Kerberos5 for Xauth cookies in kdm.], ,
   [ with_krb5auth=no ])
 if test "x$with_krb5auth" = xno; then
   AC_MSG_RESULT(no)
 else
   AC_MSG_RESULT(yes)
+  if test "x$with_krb5auth" != xyes; then
+    KRB5_INCS="-I$with_krb5auth/include"
+    KRB5_LIBS="-L$with_krb5auth/lib"
+    if test "$USE_RPATH" = "yes" ; then
+      KRB5_RPATH="-R $with_krb5auth/lib"
+    fi
+  fi
+  KRB5_LIBS="$KRB5_LIBS -lkrb5" dnl -lk5crypto -lcom_err -lresolv
+  keepcflags=$CFLAGS
+  CFLAGS="$KRB5_INCS $CFLAGS"
   AC_CHECK_HEADER(krb5/krb5.h, 
     [ XDM_CFLAGS="$XDM_CFLAGS -DK5AUTH" ],
-    [ AC_MSG_ERROR([--with-krb5auth requires Kerberos5 header files.])])
+    [ AC_MSG_ERROR([--with-krb5auth requires Kerberos5 header files.
+Due to a problem with X includes you probably have to run "ln -s . krb5"
+in the directory where the krb5.h include resides to make things actually work.])])
+  CFLAGS="$keepcflags"
 fi
+
+AC_SUBST(KRB5_INCS)
+AC_SUBST(KRB5_LIBS)
+AC_SUBST(KRB5_RPATH)
 
 AC_MSG_CHECKING([whether to use Sun's secure RPC for Xauth cookies in kdm])
 AC_ARG_WITH(rpcauth,
@@ -215,21 +224,21 @@ else
     [ AC_MSG_ERROR([--with-rpcauth requires Sun RPC header files.])])
 fi
 
-  AC_CHECK_MEMBER([struct passwd.pw_expire], [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE" ], , [#include <pwd.h>])
+AC_CHECK_MEMBER([struct passwd.pw_expire], [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE" ], , [#include <pwd.h>])
 
-  ac_save_libs=$LIBS
-  LIBS="$LIBS $LIBUTIL"
-  AC_CHECK_FUNC(setusercontext, [ XDM_CFLAGS="$XDM_CFLAGS -DHAS_SETUSERCONTEXT" ])
-  KDE_CHECK_FUNC_EXT(getusershell, [
+ac_save_libs=$LIBS
+LIBS="$LIBS $LIBUTIL"
+AC_CHECK_FUNC(setusercontext, [ XDM_CFLAGS="$XDM_CFLAGS -DHAS_SETUSERCONTEXT" ])
+KDE_CHECK_FUNC_EXT(getusershell, [
 #include <unistd.h>
 ], 
 		[getusershell();],
 	        [char *getusershell()],
 		[GETUSERSHELL],
 	[ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_GETUSERSHELL" ])
-  AC_CHECK_FUNC(login_getclass, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_LOGIN_GETCLASS" ])
-  AC_CHECK_FUNC(auth_timeok, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_AUTH_TIMEOK" ])
-  LIBS=$ac_save_libs
+AC_CHECK_FUNC(login_getclass, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_LOGIN_GETCLASS" ])
+AC_CHECK_FUNC(auth_timeok, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_AUTH_TIMEOK" ])
+LIBS=$ac_save_libs
 
 AC_CHECK_FUNC(vsyslog, [ XDM_CFLAGS="$XDM_CFLAGS -DUSE_SYSLOG" ])
 if test "x$use_pam" = xyes; then
