@@ -15,4 +15,4 @@ messages:
 	$(XGETTEXT) $(libkcm_samba_la_SOURCES) -o $(podir)/kcmsamba.pot
 
 data_DATA = smb.desktop
-datadir = $(kde_appsdir)/Settings/Browsing/Neighbourhood
+datadir = $(kde_appsdir)/Settings/Browsing/Neighborhood
