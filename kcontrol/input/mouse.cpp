@@ -600,7 +600,7 @@ void MouseSettings::apply()
   else if (!!font)
     KIO::NetAccess::copy(font, installedFont);
 
-  system(QString("mkfontdir " + overrideDir).ascii());
+  system(QFile::encodeName("mkfontdir " + overrideDir));
 }
 
 void MouseSettings::save(KConfig *config)
