@@ -12,19 +12,23 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>453</width>
+            <width>449</width>
             <height>446</height>
         </rect>
     </property>
     <property stdset="1">
         <name>caption</name>
-        <string>Form1</string>
+        <string>Stylesheets</string>
     </property>
     <property>
         <name>layoutMargin</name>
     </property>
     <property>
         <name>layoutSpacing</name>
+    </property>
+    <property>
+        <name>whatsThis</name>
+        <string>&lt;b&gt;Stylesheets&lt;/b&gt;&lt;p&gt;See http://www.w3.org/Style/CSS for further information on cascading style sheets.&lt;/p&gt;</string>
     </property>
     <vbox>
         <property stdset="1">
@@ -44,6 +48,10 @@
             <property stdset="1">
                 <name>enabled</name>
                 <bool>true</bool>
+            </property>
+            <property>
+                <name>whatsThis</name>
+                <string>&lt;b&gt;Stylesheets&lt;/b&gt;&lt;p&gt;See http://www.w3.org/Style/CSS for further information on cascading style sheets.&lt;/p&gt;</string>
             </property>
             <widget>
                 <class>QWidget</class>
@@ -86,26 +94,10 @@
                             <name>exclusive</name>
                             <bool>true</bool>
                         </property>
-                        <widget>
-                            <class>QLineEdit</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>sheetName</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>false</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>geometry</name>
-                                <rect>
-                                    <x>38</x>
-                                    <y>66</y>
-                                    <width>332</width>
-                                    <height>22</height>
-                                </rect>
-                            </property>
-                        </widget>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>&lt;b&gt;Stylesheets&lt;/b&gt;&lt;p&gt;Use this groupbox to determine how Konqueror will render style sheets.&lt;/p&gt;</string>
+                        </property>
                         <widget>
                             <class>QPushButton</class>
                             <property stdset="1">
@@ -138,30 +130,6 @@
                             <class>QRadioButton</class>
                             <property stdset="1">
                                 <name>name</name>
-                                <cstring>useUser</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>geometry</name>
-                                <rect>
-                                    <x>11</x>
-                                    <y>42</y>
-                                    <width>359</width>
-                                    <height>18</height>
-                                </rect>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Use &amp;user-defined stylesheet</string>
-                            </property>
-                            <property>
-                                <name>whatsThis</name>
-                                <string>If this box is checked, konqueror will try to load a user defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QRadioButton</class>
-                            <property stdset="1">
-                                <name>name</name>
                                 <cstring>useDefault</cstring>
                             </property>
                             <property stdset="1">
@@ -180,6 +148,10 @@
                             <property stdset="1">
                                 <name>checked</name>
                                 <bool>true</bool>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use default stylesheet&lt;/b&gt;&lt;p&gt;Select this option to use the default styleshee.t&lt;/p&gt;</string>
                             </property>
                         </widget>
                         <widget>
@@ -200,6 +172,58 @@
                             <property stdset="1">
                                 <name>text</name>
                                 <string>Use &amp;accessiblity stylesheet defined in "Customize"-tab</string>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse.  Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QRadioButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>useUser</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>11</x>
+                                    <y>42</y>
+                                    <width>359</width>
+                                    <height>18</height>
+                                </rect>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use &amp;user-defined stylesheet</string>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QLineEdit</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>sheetName</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>enabled</name>
+                                <bool>false</bool>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>38</x>
+                                    <y>66</y>
+                                    <width>332</width>
+                                    <height>22</height>
+                                </rect>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
                             </property>
                         </widget>
                     </widget>
@@ -277,6 +301,10 @@
                                 <property stdset="1">
                                     <name>text</name>
                                     <string>&amp;Use same size for all elements</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Use same size for all elements&lt;/b&gt;&lt;p&gt;Select this option to override custom font sizes in favor of the base font size.  All fonts will be displayed in the same size.&lt;/p&gt;</string>
                                 </property>
                             </widget>
                             <widget row="0"  column="0"  rowspan="2"  colspan="2" >
@@ -440,6 +468,10 @@
                                     <name>text</name>
                                     <string>Use same family for all text</string>
                                 </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Use same family for all text&lt;/b&gt;&lt;p&gt;Select this option to override custom fonts everywhere in favor of the base font.&lt;/p&gt;</string>
+                                </property>
                             </widget>
                         </grid>
                     </widget>
@@ -490,6 +522,10 @@
                                 <property stdset="1">
                                     <name>checked</name>
                                     <bool>true</bool>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Supress background images&lt;/b&gt;&lt;p&gt;Selecting this option will prevent Konqueror from loading background images.&lt;/p&gt;</string>
                                 </property>
                             </widget>
                         </grid>
@@ -592,6 +628,10 @@
                                     <name>text</name>
                                     <string>Use same color for all text</string>
                                 </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Use same color for all text&lt;/b&gt;&lt;p&gt;Select this option to apply your chosen color to the default font as well as any custom fonts as specified in a stylesheet.&lt;/p&gt;</string>
+                                </property>
                             </widget>
                             <widget row="2"  column="0"  rowspan="1"  colspan="3" >
                                 <class>QRadioButton</class>
@@ -602,6 +642,10 @@
                                 <property stdset="1">
                                     <name>text</name>
                                     <string>&amp;Custom</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Custom&lt;/b&gt;&lt;p&gt;Select this option to define a custom color for the default font.&lt;/p&gt;</string>
                                 </property>
                             </widget>
                             <widget row="3"  column="2" >
