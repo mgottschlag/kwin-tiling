@@ -37,6 +37,7 @@
 #include <qlayout.h>
 #include <kmessagebox.h>
 #include <kaboutdata.h>
+#include <kapplication.h>
 
 static bool firstTime=true;
 
@@ -53,7 +54,9 @@ CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name)
     itsMainWidget=CKfi::create(this);
     topLayout->addWidget(itsMainWidget, 0, 0);
     setButtons(0);
+#if KDE_VERSION >= 291
     setUseRootOnlyMsg(false);
+#endif
     firstTime=true;
     theirInstance=this;
 }
