@@ -341,7 +341,7 @@ void ButtonTab::load()
   
   c->setGroup("buttons");
 
-  highlight_cb->setChecked(c->readBoolEntry("HighlightOnMouseOver", true));
+  highlight_cb->setChecked(c->readBoolEntry("HighlightOnMouseOver", false));
   bool tiles = c->readBoolEntry("EnableTileBackground", false);
   tiles_cb->setChecked(tiles);
 
