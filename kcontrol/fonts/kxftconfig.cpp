@@ -38,6 +38,32 @@
 
 using namespace std;
 
+static QString contractHome(QString path)
+{
+    if (!path.isEmpty() && '/'==path[0])
+    {
+        QString home(QDir::homeDirPath());
+
+        if(path.startsWith(home))
+        {
+            unsigned int len = home.length();
+
+            if(path.length() == len || path[len] == '/')
+                return path.replace(0, len, QString::fromLatin1("~"));
+        }
+    }
+
+    return path;
+}
+
+static QString expandHome(QString path)
+{
+    if(!path.isEmpty() && '~'==path[0])
+        return 1==path.length() ? QDir::homeDirPath() : path.replace(0, 1, QDir::homeDirPath());
+
+    return path;
+}
+
 static int point2Pixel(double point)
 {
     return (int)(((point*QPaintDevice::x11AppDpiY())/72.0)+0.5);
@@ -825,7 +851,7 @@ void KXftConfig::readContents()
             if("dir"==e.tagName())
             {
                 if(m_required&Dirs)
-                    m_dirs.append(new ListItem(dirSyntax(e.text()), n));
+                    m_dirs.append(new ListItem(expandHome(dirSyntax(e.text())), n));
             }
             else if("match"==e.tagName())
             {
@@ -959,7 +985,7 @@ void KXftConfig::readContents()
 
                         while(*ptr!='\n' && *ptr!='\0' && isWhiteSpace(*ptr))
                             ptr++;
-                        m_dirs.append(new ListItem(dirSyntax(data), from, ptr));
+                        m_dirs.append(new ListItem(expandHome(dirSyntax(data)), from, ptr));
                     }
                }
             }
@@ -1066,7 +1092,7 @@ void KXftConfig::applyDirs()
         if(!item->toBeRemoved && item->node.isNull())
         {
             QDomElement newNode = m_doc.createElement("dir");
-            QDomText    text    = m_doc.createTextNode(xDirSyntax(item->str));
+            QDomText    text    = m_doc.createTextNode(contractHome(xDirSyntax(item->str)));
 
             newNode.appendChild(text);
 
@@ -1213,7 +1239,7 @@ void KXftConfig::removeItems(QPtrList<ListItem> &list)
 #else
 void KXftConfig::outputDir(std::ofstream &f, const QString &str)
 {
-    f << "dir \"" << xDirSyntax(str).local8Bit() << "\"" << endl;
+    f << "dir \"" << contractHome(xDirSyntax(str)).local8Bit() << "\"" << endl;
 }
 
 void KXftConfig::outputNewDirs(std::ofstream &f)
