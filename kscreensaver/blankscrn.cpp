@@ -23,16 +23,16 @@
 // libkscreensaver interface
 extern "C"
 {
-    const char *kss_applicationName = "kblankscrn.kss";
-    const char *kss_description = I18N_NOOP( "KBlankScreen" );
-    const char *kss_version = "2.2.0";
+    KDE_EXPORT const char *kss_applicationName = "kblankscrn.kss";
+    KDE_EXPORT const char *kss_description = I18N_NOOP( "KBlankScreen" );
+    KDE_EXPORT const char *kss_version = "2.2.0";
 
-    KScreenSaver *kss_create( WId id )
+    KDE_EXPORT KScreenSaver* kss_create( WId id )
     {
         return new KBlankSaver( id );
     }
 
-    QDialog *kss_setup()
+    KDE_EXPORT QDialog* kss_setup()
     {
         return new KBlankSetup();
     }
