@@ -1,6 +1,6 @@
 /* vi: ts=8 sts=4 sw=4
  *
- * $Id: $
+ * $Id$
  *
  * This file is part of the KDE project, module kcontrol.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
@@ -263,6 +263,10 @@ void KEnergy::applySettings(bool enable, int standby, int suspend, int off)
 	
     XFlush(dpy);
     XSetErrorHandler(defaultHandler);
+#else
+    /* keep gcc silent */
+    if (enable | standby | suspend | off)
+	/* nothing */ ;
 #endif
 }
 
