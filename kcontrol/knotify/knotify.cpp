@@ -1,7 +1,7 @@
 /*
     $Id$
 
-    Copyright (C) 2000 Carsten Pfeiffer <pfeiffer@kde.org>
+    Copyright (C) 2000,2002 Carsten Pfeiffer <pfeiffer@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public
@@ -20,165 +20,107 @@
 
 */
 
+#include <qcheckbox.h>
+#include <qhbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qslider.h>
-#include <qtimer.h>
-#include <qvgroupbox.h>
+#include <qvbox.h>
 
-#include <kaboutdata.h>
+#include <dcopclient.h>
+
 #include <kapplication.h>
-#include <kaudioplayer.h>
+#include <kcombobox.h>
+#include <kconfig.h>
 #include <kcursor.h>
-#include <kdebug.h>
-#include <kfiledialog.h>
-#include <kiconloader.h>
-#include <klineedit.h>
-#include <klocale.h>
+#include <kglobal.h>
 #include <kmessagebox.h>
-#include <knotifyclient.h>
+#include <knotifydialog.h>
+#include <kparts/genericfactory.h>
 #include <kstandarddirs.h>
 #include <kurlcompletion.h>
 #include <kurlrequester.h>
-#include <kgenericfactory.h>
+
 
 #include "knotify.h"
-#include <dcopclient.h>
-#include "knotify.moc"
 
 static const int COL_FILENAME = 1;
 
-typedef KGenericFactory<KNotifyWidget, QWidget> NotifyFactory;
+typedef KGenericFactory<KCMKNotify, QWidget> NotifyFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_knotify, NotifyFactory("kcmnotify") );
 
-KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringList & ):
-    KCModule(NotifyFactory::instance(), parent, name)
+using namespace KNotify;
+
+KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
+    : KCModule(NotifyFactory::instance(), parent, name),
+      m_playerSettings( 0L )
 {
-    updating = true;
-    currentItem = 0L;
-    setButtons( Help | Apply );
+    setButtons( Help | Default | Apply );
 
-    QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(),
-                                        KDialog::spacingHint() );
-    QVGroupBox *box = new QVGroupBox( i18n("System Notification Settings"),
-                                      this );
-    lay->addWidget( box );
-    view =  new QListView( box );
-    view->addColumn(i18n("Application/Events"));
-    view->addColumn(i18n("Filename"));
-    view->setSelectionMode( QListView::Single );
-    view->setRootIsDecorated( true );
-    view->setSorting( -1 );
+    QVBoxLayout *layout = new QVBoxLayout( this );
+    // layout->setMargin( KDialog::marginHint() );
+    layout->setSpacing( KDialog::spacingHint() );
 
-    QHBox *hbox = new QHBox( box );
-    hbox->setSpacing( KDialog::spacingHint() );
-    lblFilename = new QLabel( i18n("&Filename: "), hbox );
-    requester = new KURLRequester( hbox );
-    lblFilename->setBuddy( requester );
-    connect( requester, SIGNAL( openFileDialog( KURLRequester * )),
-             SLOT( slotRequesterClicked( KURLRequester * )));
+    m_appCombo = new KComboBox( false, this, "app combo" );
+    
+    m_notifyWidget = new KNotifyWidget( this, "knotify widget" );
+    connect( m_notifyWidget, SIGNAL( changed( bool )), SIGNAL( changed(bool)));
+    
+    layout->addWidget( m_appCombo );
+    layout->addWidget( m_notifyWidget );
+    
+    connect( m_appCombo, SIGNAL( activated( const QString& ) ),
+             SLOT( slotAppActivated( const QString& )) );
 
-    playButton = new QPushButton(  hbox );
-    playButton->setFixedSize( requester->button()->size() );
-    playButton->setPixmap( UserIcon("play") );
-    QToolTip::add( playButton, i18n("Play the given sound") );
-    playButton->hide();
+    connect( m_notifyWidget->m_playerButton, SIGNAL( clicked() ), 
+             SLOT( slotPlayerSettings()));
+    
+    load();
 
-    connect( playButton, SIGNAL( clicked() ), SLOT( playSound() ));
-    connect(requester, SIGNAL( textChanged( const QString& )),
-            SLOT( slotFileChanged( const QString& )) );
-    connect( view, SIGNAL( currentChanged( QListViewItem * )),
-             SLOT( slotItemActivated( QListViewItem * )));
-
-
-    hbox = new QHBox( box );
-    hbox->setSpacing( KDialog::spacingHint() );
-    cbExternal = new QCheckBox( i18n("Use e&xternal player: "), hbox );
-    reqExternal = new KURLRequester( hbox );
-    reqExternal->completionObject()->setMode( KURLCompletion::ExeCompletion );
-    connect( cbExternal, SIGNAL( toggled( bool )),
-             SLOT( externalClicked( bool )));
-    connect( reqExternal, SIGNAL( textChanged( const QString& )),
-             SLOT( changed() ));
-
-    hbox = new QHBox( box );
-    hbox->setSpacing( KDialog::spacingHint() );
-    QLabel *l = new QLabel( i18n( "&Volume: " ), hbox );
-    volumeSlider = new QSlider( hbox );
-    volumeSlider->setOrientation( Horizontal );
-    volumeSlider->setRange( 0, 100 );
-    connect( volumeSlider, SIGNAL( valueChanged( int ) ), SLOT( changed() ) );
-    l->setBuddy( volumeSlider );
-
-    soundButton = new QPushButton( box );
-    // this is configured in updateView
-
-    m_events = new Events();
-    qApp->processEvents(); // let's show up
-
-    // reading can take some time
-    QTimer::singleShot( 0, this, SLOT( load() ));
-    updating = false;
 };
 
-KNotifyWidget::~KNotifyWidget()
+KCMKNotify::~KCMKNotify()
 {
-    delete m_events;
+    KConfig config( "knotifyrc", false, false );
+    config.setGroup( "Misc" );
+    config.writeEntry( "LastConfiguredApp", m_appCombo->currentText() );
+    config.sync();
 }
 
-
-/**
- * Clears the view and iterates over all apps, creating listview-items
- */
-void KNotifyWidget::updateView()
+Application * KCMKNotify::applicationByDescription( const QString& text )
 {
-    bool save_updating = updating;
-    updating = true;
-    view->clear();
-    QListViewItem *appItem = 0L;
-    KNListViewItem *eItem  = 0L;
-    KNEvent *e;
-    bool soundsDisabled = true;
-
-    QPixmap icon = SmallIcon("idea");
-
-    // using the last appItem and eItem as "after-item" to get proper sorting
-    KNApplicationListIterator it( m_events->apps() );
-    while ( it.current() ) {
-        appItem = new QListViewItem( view, appItem, (*it)->text() );
-        appItem->setPixmap( 0, SmallIcon( (*it)->icon() ));
-
-        KNEventListIterator it2( *(*it)->eventList() );
-        while( (e = it2.current()) ) {
-            if(e->presentation & KNotifyClient::Sound) soundsDisabled = false;
-
-            eItem = new KNListViewItem( appItem, eItem, e );
-            eItem->setPixmap( 0, icon );
-
-            connect( eItem, SIGNAL( changed() ), SLOT( changed() ));
-            ++it2;
-        }
-
-        ++it;
-    }
-    updating = save_updating;
-
-    soundButton->disconnect(this);
-    if(soundsDisabled)
+    // not really efficient, but this is not really time-critical
+    ApplicationList apps = m_notifyWidget->apps();
+    ApplicationListIterator it ( apps );
+    for ( ; it.current(); ++it )
     {
-        soundButton->setText( i18n("&Enable All Sounds") );
-        connect(soundButton, SIGNAL(clicked()), this, SLOT(enableAllSounds()));
+        if ( it.current()->text() == text )
+            return it.current();
     }
-    else
-    {
-        soundButton->setText( i18n("&Disable All Sounds") );
-        connect(soundButton, SIGNAL(clicked()), this, SLOT(disableAllSounds()));
-    }
+    
+    return 0L;
+}
+
+void KCMKNotify::slotAppActivated( const QString& text )
+{
+    Application *app = applicationByDescription( text );
+    if ( app )
+        m_notifyWidget->setCurrentApplication( app );
+}
+
+void KCMKNotify::slotPlayerSettings()
+{
+    // kcmshell is a modal dialog, and apparently, we can't put a non-modal
+    // dialog besides a modal dialog. sigh.
+    if ( !m_playerSettings )
+        m_playerSettings = new PlayerSettingsDialog( this, true );
+    
+    m_playerSettings->exec();
 }
 
 
 // FIXME: this doesn't work, it's a Reset, not a Defaults.
-void KNotifyWidget::defaults()
+void KCMKNotify::defaults()
 {
     if (KMessageBox::warningContinueCancel(this,
         i18n("This will cause the notifications for *All Applications* "
@@ -186,140 +128,58 @@ void KNotifyWidget::defaults()
         != KMessageBox::Continue)
         return;
 
-    load();
+    m_notifyWidget->reload( true );
 }
 
-void KNotifyWidget::changed()
+void KCMKNotify::load()
 {
-    if (!updating)
-       emit KCModule::changed(true);
-}
-
-/**
- * Someone typing in the url-requester -> update the listview item and its
- * event.
- */
-void KNotifyWidget::slotFileChanged( const QString& text )
-{
-    playButton->setEnabled( !text.isEmpty() );
-
-    if ( !currentItem )
-        return;
-
-    KNEvent *event = currentItem->event;
-    QString *itemText = 0L;
-
-    if ( currentItem->eventType() == KNotifyClient::Sound )
-        itemText = &(event->soundfile);
-    else if ( currentItem->eventType() == KNotifyClient::Logfile )
-        itemText = &(event->logfile);
-
-    if ( itemText && *itemText != text ) {
-        *itemText = text;
-        changed();
-    }
-
-    currentItem->setText( COL_FILENAME, text );
-}
-
-void KNotifyWidget::playSound()
-{
-    KAudioPlayer::play( requester->url() );
-}
-
-void KNotifyWidget::load()
-{
-    bool save_updating = updating;
-    updating = true;
-
     setEnabled( false );
-    setCursor( KCursor::waitCursor() );
-    currentItem = 0L;
+    // setCursor( KCursor::waitCursor() );
 
-    KConfig *kc = new KConfig( "knotifyrc", true, false );
-    kc->setGroup( "Misc" );
-    cbExternal->setChecked( kc->readBoolEntry( "Use external player", false ));
-    reqExternal->setURL( kc->readEntry( "External player" ));
-    reqExternal->setEnabled( cbExternal->isChecked() );
-    volumeSlider->setValue( kc->readNumEntry( "Volume", 100 ) );
-    static_cast<QHBox *>( volumeSlider->parent() )->setEnabled( !cbExternal->isChecked() );
-    delete kc;
+    m_appCombo->clear();
+    m_notifyWidget->clear();
+    
+    m_fullpaths =
+        KGlobal::dirs()->findAllResources("data", "*/eventsrc", false, true );
 
-    requester->clear();
-    requester->setEnabled( false );
-    lblFilename->setEnabled( false );
-    playButton->hide();
+    QStringList::ConstIterator it = m_fullpaths.begin();
+    for ( ; it != m_fullpaths.end(); ++it) {
+        m_notifyWidget->addApplicationEvents( *it );
+    }
 
-    view->clear();
-    m_events->load();
-    updateView();
+    ApplicationList apps = m_notifyWidget->apps();
+    apps.sort();
+    m_notifyWidget->setEnabled( !apps.isEmpty() );
+    
+    ApplicationListIterator appIt( apps );
+    for ( ; appIt.current(); ++appIt ) 
+        m_appCombo->insertItem( appIt.current()->text() );
+    
+    
+    KConfig config( "knotifyrc", true, false );
+    config.setGroup( "Misc" );
+    QString appDesc = config.readEntry( "LastConfiguredApp" );
+    if ( !appDesc.isEmpty() )
+        m_appCombo->setCurrentItem( appDesc );
+    
+    slotAppActivated( m_appCombo->currentText() );
+
+    
+    // unsetCursor(); // unsetting doesn't work. sigh.
     setEnabled( true );
-    unsetCursor();
-
-    updating = save_updating;
 }
 
-void KNotifyWidget::save()
+void KCMKNotify::save()
 {
-    // see kdelibs/arts/knotify/knotify.cpp
-    KConfig *kc = new KConfig( "knotifyrc", false, false );
-    kc->setGroup( "Misc" );
-    kc->writeEntry( "External player", reqExternal->url() );
-    kc->writeEntry( "Use external player", cbExternal->isChecked() );
-    kc->writeEntry( "Volume", volumeSlider->value() );
-    kc->sync();
-    delete kc;
-        
-    m_events->save();
-    if ( !kapp->dcopClient()->isAttached() )
-        kapp->dcopClient()->attach();
-    kapp->dcopClient()->send("knotify", "", "reconfigure()", "");
+    if ( m_playerSettings )
+        m_playerSettings->save();
+    
+    m_notifyWidget->save(); // will dcop knotify about its new config
 
-    emit KCModule::changed( false );
+    emit changed( false );
 }
 
-void KNotifyWidget::slotItemActivated( QListViewItem *i )
-{
-    bool enableButton = false;
-    currentItem = dynamic_cast<KNCheckListItem *>( i );
-    if ( currentItem ) {
-        const KNEvent *event = currentItem->event;
-
-        if ( currentItem->eventType() == KNotifyClient::Sound ) {
-            requester->setURL( event->soundfile );
-            enableButton = true;
-            playButton->show();
-            playButton->setEnabled( !event->soundfile.isEmpty() );
-        }
-        else if ( currentItem->eventType() == KNotifyClient::Logfile ) {
-            requester->setURL( event->logfile );
-            enableButton = true;
-            playButton->hide();
-        }
-        else {
-            requester->lineEdit()->clear();
-            playButton->hide();
-        }
-    }
-    else {
-        requester->lineEdit()->clear();
-        playButton->hide();
-    }
-
-    requester->setEnabled( enableButton );
-    lblFilename->setEnabled( enableButton );
-}
-
-void KNotifyWidget::externalClicked( bool on )
-{
-    if ( on )
-        reqExternal->setFocus();
-    reqExternal->setEnabled( on );
-    static_cast<QHBox *>( volumeSlider->parent() )->setEnabled( !on );
-    changed();
-}
-
-QString KNotifyWidget::quickHelp() const
+QString KCMKNotify::quickHelp() const
 {
     return i18n("<h1>System Notifications</h1>"
                 "KDE allows for a great deal of control over how you "
@@ -333,16 +193,16 @@ QString KNotifyWidget::quickHelp() const
                 "</ul>");
 }
 
-const KAboutData *KNotifyWidget::aboutData() const
+const KAboutData *KCMKNotify::aboutData() const
 {
     static KAboutData* ab = 0;
 
     if(!ab)
     {
         ab = new KAboutData(
-            "kcmnotify", I18N_NOOP("KNotify"), "2.0",
+            "kcmnotify", I18N_NOOP("KNotify"), "3.0",
             I18N_NOOP("System Notification Control Panel Module"),
-            KAboutData::License_GPL, 0, 0, 0 );
+            KAboutData::License_GPL, "(c) 2002 Carsten Pfeiffer", 0, 0 );
         ab->addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org" );
         ab->addCredit( "Charles Samuels", I18N_NOOP("Original implementation"),
                        "charles@altair.dhs.org" );
@@ -351,133 +211,81 @@ const KAboutData *KNotifyWidget::aboutData() const
     return ab;
 }
 
-void KNotifyWidget::slotRequesterClicked( KURLRequester *requester )
-{
-    static bool init = true;
-    if ( !init )
-        return;
-
-    init = false;
-    
-    // find the first "sound"-resource that contains files
-    QStringList soundDirs = KGlobal::dirs()->resourceDirs( "sound" );
-    if ( !soundDirs.isEmpty() ) {
-        KURL soundURL;
-        QDir dir;
-        dir.setFilter( QDir::Files | QDir::Readable );
-        QStringList::Iterator it = soundDirs.begin();
-        while ( it != soundDirs.end() ) {
-            dir = *it;
-            if ( dir.isReadable() && dir.count() > 2 ) {
-                soundURL.setPath( *it );
-                requester->fileDialog()->setURL( soundURL );
-                break;
-            }
-            ++it;
-        }
-    }
-}
-
-void KNotifyWidget::disableAllSounds()
-{
-    for(KNApplicationListIterator app(m_events->apps()); app.current(); ++app)
-    {
-        for(KNEventListIterator event(*(*app)->eventList()); event.current(); ++event)
-        {
-            (*event)->presentation &= ~KNotifyClient::Sound;
-        }
-    }
-    updateView();
-    changed();
-}
-
-void KNotifyWidget::enableAllSounds()
-{
-        for(KNApplicationListIterator app(m_events->apps()); app.current(); ++app)
-        {
-                for(KNEventListIterator event(*(*app)->eventList()); event.current(); ++event)
-                {
-                        if(!(*event)->soundfile.isNull())
-                                (*event)->presentation |= KNotifyClient::Sound;
-                }
-        }
-        updateView();
-        changed();
-}
+///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-/**
- * Custom item that represents a KNotify-event
- * creates and handles checkable child-items
- */
-KNListViewItem::KNListViewItem( QListViewItem *parent,
-                                QListViewItem *afterItem, KNEvent *e )
-    : QListViewItem( parent, afterItem, e->text() )
+PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
+    : KDialogBase( parent, "player settings dialog", modal,
+                   i18n("Player Settings"), Ok|Apply|Cancel, Ok, true )
 {
-    event = e;
+    QVBox *box = new QVBox( this );
+    setMainWidget( box );
+    
+    QHBox *hbox = new QHBox( box );
+    hbox->setSpacing( KDialog::spacingHint() );
+    cbExternal = new QCheckBox( i18n("Use e&xternal player: "), hbox );
+    reqExternal = new KURLRequester( hbox );
+    reqExternal->completionObject()->setMode( KURLCompletion::ExeCompletion );
+    connect( cbExternal, SIGNAL( toggled( bool )),
+             SLOT( externalToggled( bool )));
 
-    if ( (e->dontShow & KNotifyClient::Stderr) == 0 ) {
-        stderrItem = new KNCheckListItem( this, event, KNotifyClient::Stderr,
-                                          i18n("Standard error output"));
-        stderrItem->setOn( e->presentation & KNotifyClient::Stderr );
-    }
-
-    if ( (e->dontShow & KNotifyClient::Messagebox) == 0 ) {
-        msgboxItem = new KNCheckListItem(this, event,KNotifyClient::Messagebox,
-                                          i18n("Show messagebox"));
-        msgboxItem->setOn( e->presentation & KNotifyClient::Messagebox );
-    }
-
-    if ( (e->dontShow & KNotifyClient::Sound) == 0 ) {
-        soundItem = new KNCheckListItem( this, event, KNotifyClient::Sound,
-                                         i18n("Play sound"));
-
-        soundItem->setOn( e->presentation & KNotifyClient::Sound );
-//        kdDebug() << "******* soundfile: " << e->soundfile << " " << bool(e->presentation & KNotifyClient::Sound) << " " << soundItem->isOn() << endl;
-        soundItem->setText( COL_FILENAME, e->soundfile );
-    }
-
-    if ( (e->dontShow & KNotifyClient::Logfile) == 0 ) {
-        logItem = new KNCheckListItem( this, event, KNotifyClient::Logfile,
-                                       i18n("Log to file"));
-        logItem->setOn( e->presentation & KNotifyClient::Logfile  );
-        //        kdDebug() << "******** logfile: " << e->logfile << endl;
-        logItem->setText( COL_FILENAME, e->logfile );
-    }
+    hbox = new QHBox( box );
+    hbox->setSpacing( KDialog::spacingHint() );
+    QLabel *l = new QLabel( i18n( "&Volume: " ), hbox );
+    volumeSlider = new QSlider( hbox );
+    volumeSlider->setOrientation( Horizontal );
+    volumeSlider->setRange( 0, 100 );
+    l->setBuddy( volumeSlider );
+    
+    load();
 }
 
-/**
- * a child has changed -> update the KNEvent
- * not implemented as signal/slot to avoid lots of QObjects and connects
- */
-void KNListViewItem::itemChanged( KNCheckListItem *item )
+void PlayerSettingsDialog::load()
 {
-    if ( item->isOn() )
-        event->presentation |= item->eventType();
-    else
-        event->presentation &= ~item->eventType();
-
-    changed();
+    KConfig config( "knotifyrc", true, false );
+    config.setGroup( "Misc" );
+    cbExternal->setChecked( config.readBoolEntry( "Use external player", 
+                                                  false ));
+    reqExternal->setURL( config.readEntry( "External player" ));
+    reqExternal->setEnabled( cbExternal->isChecked() );
+    volumeSlider->setValue( config.readNumEntry( "Volume", 100 ) );
+    volumeSlider->parentWidget()->setEnabled( !cbExternal->isChecked() );
 }
 
-
-
-//////////////////////////////////////////////////////////////////////
-
-/**
- * custom checkable item telling its parent when it was clicked
- */
-KNCheckListItem::KNCheckListItem( QListViewItem *parent, KNEvent *e, int t,
-                                  const QString& text )
-    : QCheckListItem( parent, text, QCheckListItem::CheckBox ),
-      event( e ),
-      _eventType( t )
-
+void PlayerSettingsDialog::save()
 {
+    // see kdelibs/arts/knotify/knotify.cpp
+    KConfig config( "knotifyrc", false, false );
+    config.setGroup( "Misc" );
+    config.writeEntry( "External player", reqExternal->url() );
+    config.writeEntry( "Use external player", cbExternal->isChecked() );
+    config.writeEntry( "Volume", volumeSlider->value() );
+    config.sync();
 }
 
-void KNCheckListItem::stateChange( bool b )
+// reimplements KDialogBase::slotApply()
+void PlayerSettingsDialog::slotApply()
 {
-    ((KNListViewItem *) parent())->itemChanged( this );
-    QCheckListItem::stateChange(b);
+    save();
+    kapp->dcopClient()->send("knotify", "", "reconfigure()", ""); 
+    
+    KDialogBase::slotApply();
 }
+
+// reimplements KDialogBase::slotOk()
+void PlayerSettingsDialog::slotOk()
+{
+    slotApply();
+    KDialogBase::slotOk();
+}
+
+void PlayerSettingsDialog::externalToggled( bool on )
+{
+    reqExternal->setEnabled( on );
+    volumeSlider->parentWidget()->setEnabled( !on );
+
+    if ( on )
+        reqExternal->setFocus();
+}
+
+#include "knotify.moc"

@@ -1,8 +1,8 @@
 /*
     $Id$
 
-    Copyright (C) Charles Samuels <charles@altair.dhs.org>
-                  2000 Carsten Pfeiffer <pfeiffer@kde.org>
+    Copyright (C) 2000,2002 Carsten Pfeiffer <pfeiffer@kde.org>
+
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public
@@ -25,94 +25,77 @@
 #ifndef _KNOTIFY_H
 #define _KNOTIFY_H
 
-#include <qcheckbox.h>
-#include <qlistview.h>
 #include <qstring.h>
-#include <qtooltip.h>
-#include <qpushbutton.h>
 
 #include <kcmodule.h>
+#include <kdialogbase.h>
 
-#include "events.h"
-
+class QCheckBox;
+class QLabel;
 class QSlider;
-class KAboutData;
-class KNCheckListItem;
-class KURLRequester;
 
-class KNotifyWidget : public KCModule
+class KAboutData;
+class KComboBox;
+class KURLRequester;
+class PlayerSettingsDialog;
+
+namespace KNotify
+{
+    class KNotifyWidget;
+    class Application;
+};
+
+class KCMKNotify : public KCModule
 {
     Q_OBJECT
 
 public:
-    KNotifyWidget(QWidget *parent, const char *name, const QStringList &);
-    virtual ~KNotifyWidget();
+    KCMKNotify(QWidget *parent, const char *name, const QStringList &);
+    virtual ~KCMKNotify();
 
-    void defaults();
+    virtual void defaults();
     virtual void save();
-    virtual QString quickHelp() const;
     virtual const KAboutData *aboutData() const;
+    virtual QString quickHelp() const;
 
 public slots:
     virtual void load();
-    void disableAllSounds();
-    void enableAllSounds();
 
 private slots:
-    void slotRequesterClicked( KURLRequester * );
-    void externalClicked( bool on );
-    void changed();
-
-    void slotItemActivated( QListViewItem * );
-    void slotFileChanged( const QString& text );
-    void playSound();
+    void slotAppActivated( const QString& app );
+    void slotPlayerSettings();
 
 private:
-    void updateView();
+    KNotify::Application *applicationByDescription( const QString& text );
 
-    QCheckBox *cbExternal;
-    QListView *view;
-    QLabel *lblFilename;
-    KURLRequester *requester, *reqExternal;
-    QPushButton *playButton, *soundButton;
-    QSlider *volumeSlider;
-    Events *m_events;
-    KNCheckListItem *currentItem;
-    bool updating;
+    // the paths to all application's eventsrcs
+    QStringList m_fullpaths;
+
+    KComboBox *m_appCombo;
+    KNotify::KNotifyWidget *m_notifyWidget;
+    PlayerSettingsDialog *m_playerSettings;
+
 };
 
-class KNListViewItem : public QObject, public QListViewItem
+class PlayerSettingsDialog : public KDialogBase
 {
     Q_OBJECT
 
 public:
-    KNListViewItem( QListViewItem *parent, QListViewItem *after, KNEvent *e );
-    void itemChanged( KNCheckListItem * );
+    PlayerSettingsDialog( QWidget *parent, bool modal );
+    void load();
+    void save();
 
-signals:
-    void changed();
-    void soundActivated( KNEvent * );
-    void logActivated( KNEvent * );
-    void otherActivated( KNEvent * );
+protected slots:
+    virtual void slotApply();
+    virtual void slotOk();
+    void externalToggled( bool on );
 
 private:
-    KNEvent *event;
-    KNCheckListItem *stderrItem, *msgboxItem, *soundItem, *logItem;
+    QCheckBox *cbExternal;
+    KURLRequester *reqExternal;
+    QSlider *volumeSlider;
 
-};
-
-
-class KNCheckListItem : public QCheckListItem
-{
-public:
-    KNCheckListItem( QListViewItem *parent, KNEvent *e, int type,
-                     const QString& text );
-    int eventType() const { return _eventType; }
-    KNEvent *event;
-
-protected:
-    virtual void stateChange( bool on );
-    const int _eventType;
 };
 
 

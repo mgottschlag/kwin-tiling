@@ -2,7 +2,7 @@ SUBDIRS= . sounds
 
 kde_module_LTLIBRARIES = kcm_knotify.la
 
-kcm_knotify_la_SOURCES = knotify.cpp events.cpp
+kcm_knotify_la_SOURCES = knotify.cpp
 
 kcm_knotify_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
 kcm_knotify_la_LIBADD = $(LIB_KIO)
