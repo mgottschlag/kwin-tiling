@@ -252,6 +252,11 @@ public slots:
     void raise();
 
     /**
+     * Lower the task's window.
+     */
+    void lower();
+
+   /**
      * Activate the task's window.
      */
     void activate();

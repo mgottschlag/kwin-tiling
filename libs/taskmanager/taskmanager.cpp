@@ -582,6 +582,12 @@ void Task::raise()
     XRaiseWindow( qt_xdisplay(), _win );
 }
 
+void Task::lower()
+{
+//    kdDebug(1210) << "Task::lower(): " << name() << endl;
+    XLowerWindow( qt_xdisplay(), _win );
+}
+
 void Task::activate()
 {
 //    kdDebug(1210) << "Task::activate():" << name() << endl;
