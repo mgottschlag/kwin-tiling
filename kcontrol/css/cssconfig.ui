@@ -155,7 +155,7 @@
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>Use &amp;accessiblity stylesheet defined in "Customize"-tab</string>
+                                    <string>U&amp;se accessiblity stylesheet defined in "Customize"-tab</string>
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
@@ -170,7 +170,7 @@
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>Use &amp;default stylesheet</string>
+                                    <string>Us&amp;e default stylesheet</string>
                                 </property>
                                 <property stdset="1">
                                     <name>checked</name>
@@ -214,7 +214,7 @@
                 </property>
                 <attribute>
                     <name>title</name>
-                    <string>&amp;Customize</string>
+                    <string>Custom&amp;ize</string>
                 </attribute>
                 <grid>
                     <property stdset="1">
@@ -469,7 +469,7 @@
                                         </property>
                                         <property stdset="1">
                                             <name>text</name>
-                                            <string>B&amp;ackground:</string>
+                                            <string>Bac&amp;kground:</string>
                                         </property>
                                         <property>
                                             <name>buddy</name>
