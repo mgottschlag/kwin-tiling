@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>376</width>
+            <width>339</width>
             <height>181</height>
         </rect>
     </property>
@@ -39,15 +39,7 @@
                 <property name="spacing">
                     <number>4</number>
                 </property>
-                <widget class="QLabel" row="0" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&lt;b&gt;Screen is locked&lt;/b&gt;</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget" row="3" column="1" rowspan="1" colspan="2">
+                <widget class="QLayoutWidget" row="3" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>layout5</cstring>
                     </property>
@@ -108,7 +100,7 @@
                         </spacer>
                     </hbox>
                 </widget>
-                <spacer row="4" column="1">
+                <spacer row="4" column="0">
                     <property name="name">
                         <cstring>spacer9</cstring>
                     </property>
@@ -125,24 +117,7 @@
                         </size>
                     </property>
                 </spacer>
-                <spacer row="1" column="2">
-                    <property name="name">
-                        <cstring>spacer6</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="Line" row="5" column="1" rowspan="1" colspan="2">
+                <widget class="Line" row="5" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>line1</cstring>
                     </property>
@@ -156,7 +131,7 @@
                         <enum>Horizontal</enum>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget" row="6" column="1" rowspan="1" colspan="2">
+                <widget class="QLayoutWidget" row="6" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>layout2</cstring>
                     </property>
@@ -207,7 +182,7 @@
                         </widget>
                     </hbox>
                 </widget>
-                <widget class="QLabel" row="2" column="1" rowspan="1" colspan="2">
+                <widget class="QLabel" row="1" column="0" rowspan="2" colspan="2">
                     <property name="name">
                         <cstring>mLabel</cstring>
                     </property>
@@ -215,11 +190,28 @@
                         <string></string>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget" row="0" column="0" rowspan="5" colspan="1">
+                <spacer row="2" column="1">
                     <property name="name">
-                        <cstring>layout6</cstring>
+                        <cstring>spacer6</cstring>
                     </property>
-                    <vbox>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>layout5</cstring>
+                    </property>
+                    <hbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
@@ -239,24 +231,15 @@
                                 <bool>true</bool>
                             </property>
                         </widget>
-                        <spacer>
+                        <widget class="QLabel">
                             <property name="name">
-                                <cstring>spacer5</cstring>
+                                <cstring>textLabel1</cstring>
                             </property>
-                            <property name="orientation">
-                                <enum>Vertical</enum>
+                            <property name="text">
+                                <string>&lt;b&gt;Screen is locked&lt;/b&gt;</string>
                             </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>51</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </vbox>
+                        </widget>
+                    </hbox>
                 </widget>
             </grid>
         </widget>
