@@ -12,67 +12,6 @@
     - more & better sound-information
 
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
-    
-    $Log$
-    Revision 1.27  2002/10/30 09:14:22  hausmann
-    -#if defined(HAVE_LINUX_RAW_H) && defined(HAVE_SYS_IOCTL_H) && <more stuff>
-    +#if ( defined(HAVE_LINUX_RAW_H) || defined(HAVE_SYS_RAW_H) ) && <more stuff>
-     #include <sys/ioctl.h>
-     #include <fcntl.h>
-    +
-    +#if defined(HAVE_LINUX_RAW_H)
-     #include <linux/raw.h>
-    +#elif defined(HAVE_SYS_RAW_H)
-    +#include <sys/raw.h>
-    +#endif
-    (plus check for sys/raw.h in configure.in.in)
-    CCMAIL: 49695-done@bugs.kde.org
-
-    Revision 1.26  2002/08/12 08:58:59  binner
-    CVS_SILENT scheck'ed GUI, use "cvslastchange" or X-WebCVS header line to view
-
-    Revision 1.25  2002/07/09 05:21:13  rikkus
-    Adding a fallback to the alsa 0.9 sndstat, which is in a different location
-    to the code expected.
-
-    Revision 1.24  2002/06/07 07:47:40  adrian
-    fix Alsa sndstat /proc path for current alsa versions.
-    (reported by Florian Schebelle)
-
-    Revision 1.23  2002/04/23 00:21:33  cumming
-    GUI: Capitalization
-
-    Revision 1.22  2002/01/27 04:36:22  mueller
-    ugly hack to make it compile - linux/raw.h requites __u64 which is only
-    defined if not STRICT_ANSI is used.
-
-    Revision 1.21  2002/01/26 19:22:12  deller
-    display raw device information correctly, closes #29258
-
-    Revision 1.20  2001/10/23 22:48:49  mueller
-    CVS_SILENT: fixincludes -e
-
-    Revision 1.19  2001/06/21 10:20:04  deller
-    - use lspci (if available) for "PCI Information" instead of directly
-      reading from /proc/pci (closes bug #12906)
-
-    Revision 1.18  2001/03/05 15:02:21  faure
-    Many fixes like
-    -      new QListViewItem(lBox, QString(buf));
-    +      new QListViewItem(lBox, QString::fromLocal8Bit(buf));
-    from "Sergey A. Sukiyazov" <corwin@micom.don.ru>
-
-    Revision 1.17  2001/01/31 20:26:44  deller
-    fixed bug #15517,
-    cleaned up comments and indenting.
-
-    Revision 1.16  2000/09/07 19:12:42  faure
-    Patch from FX to remove hardcoded sizes for some columns, since
-    it breaks with translations. Besides, only the linux version had
-    those....
-
-    Revision 1.15  2000/07/16 21:01:58  hoelzer
-    Show partition information on linux.
 
 */
 
@@ -281,12 +220,12 @@ static void cleanPassword(QString & str)
     int index = 0;
     QString passwd("password=");
 
-    while (index >= 0) 
+    while (index >= 0)
     {
 	index = str.find(passwd, index, FALSE);
 	if (index >= 0) {
 	    index += passwd.length();
-	    while (index < (int) str.length() && 
+	    while (index < (int) str.length() &&
 		   str[index] != ' ' && str[index] != ',')
 		str[index++] = '*';
 	}
@@ -328,7 +267,7 @@ bool GetInfo_Partitions(QListView * lBox)
 #include <linux/raw.h>
 #endif
 
-/* 
+/*
  * get raw device bindings and information
  */
 void Get_LinuxRawDevices(QListView *lbox)
@@ -374,7 +313,7 @@ void Get_LinuxRawDevices(QListView *lbox)
 		case 89:first_letter = 'o';	goto set_ide_name;
 		case 90:first_letter = 'q';	goto set_ide_name;
 		case 91:first_letter = 's';	goto set_ide_name;
-			
+
 		/* SCSI drives */
 		case 8: first_letter = 'a';
 			set_scsi_name:
@@ -393,13 +332,13 @@ void Get_LinuxRawDevices(QListView *lbox)
 			break;
 
 		/* Compaq Intelligent Drive Array (ida) */
-		case 72: case 73: case 74: case 75: 
+		case 72: case 73: case 74: case 75:
 		case 76: case 77: case 78: case 79:
 			devname = QString("/dev/ida/c%1d%2")
 				.arg((int)rq.block_major-72)
 				.arg(minor&15);
 			break;
-		
+
 		default: devname = QString("%1/%2")
 			 	.arg((int)rq.block_major)
 				.arg(minor);
@@ -408,7 +347,7 @@ void Get_LinuxRawDevices(QListView *lbox)
 
 	/* TODO: get device size */
 	QString size = "";
-	
+
 	new QListViewItem(lbox, devname,
 		QString(new_raw_devs ? "/dev/raw/raw%1" : "/dev/raw%1").arg(i),
 		"raw", size, " ", "");
@@ -528,7 +467,7 @@ bool GetInfo_Partitions(QListView * lbox)
 
     /* get raw device entires if available... */
     Get_LinuxRawDevices(lbox);
-    
+
     sorting_allowed = true;	/* sorting by user allowed ! */
     lbox->setSorting(1);
 
