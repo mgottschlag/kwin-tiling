@@ -35,7 +35,8 @@
 
 #include "klangcombo.h"
 
-
+class QLabel;
+class QRadioButton;
 class KLineEdit;
 
 
@@ -59,17 +60,23 @@ protected:
 	void setLogo(QString logo);
 
 private slots:
+	void slotRadioClicked(int id);
         void slotLogoPixChanged(QString);
         void changed();
         void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
  
 private:
+	enum { KdmLogo=0, KdmClock=1 };
+	QLabel      *logoLabel;
         KIconButton *logobutton;
         KLineEdit    *greetstr_lined;
 	QString      logopath;
+	QRadioButton *logoRadio;
+	QRadioButton *clockRadio;
 	QComboBox    *guicombo;
         KLanguageCombo *langcombo;
         KLanguageCombo *countrycombo;
+
 };
 
 #endif
