@@ -8,7 +8,7 @@ kde_module_LTLIBRARIES = kcm_style.la
 
 kcm_style_la_SOURCES = kcmstyle.cpp stylepreview.ui menupreview.cpp
 kcm_style_la_LDFLAGS = $(KDE_RPATH) -module -avoid-version $(all_libraries) -no-undefined
-kcm_style_la_LIBADD = $(LIB_KFILE) $(top_builddir)/kcontrol/krdb/libkrdb.la
+kcm_style_la_LIBADD = $(LIB_KIO) $(top_builddir)/kcontrol/krdb/libkrdb.la
 kcm_style_la_METASOURCES = AUTO
 
 noinst_HEADERS = kcmstyle.h stylepreview.h menupreview.h

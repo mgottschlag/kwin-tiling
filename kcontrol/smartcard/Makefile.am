@@ -5,7 +5,7 @@ kcm_smartcard_la_SOURCES = smartcard.cpp smartcardbase.ui nosmartcardbase.ui sma
 
 kcm_smartcard_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 
-kcm_smartcard_la_LIBADD = -lkdeui -lksmartcard $(LIB_KFILE)
+kcm_smartcard_la_LIBADD = -lkdeui -lksmartcard $(LIB_KIO)
 
 kcm_smartcard_la_METASOURCES = AUTO
 

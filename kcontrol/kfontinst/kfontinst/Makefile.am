@@ -1,7 +1,7 @@
 kcmSUBDIRS = docs
 
 kde_module_LTLIBRARIES = kcm_fontinst.la
-kcm_fontinst_la_LIBADD  = $(FREETYPE_LIB) $(LIB_KFILE)
+kcm_fontinst_la_LIBADD  = $(FREETYPE_LIB) $(LIB_KIO)
 kcm_fontinst_la_METASOURCES = AUTO
 kcm_fontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH) -module -avoid-version -no-undefined
  

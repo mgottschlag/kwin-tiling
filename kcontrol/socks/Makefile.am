@@ -4,7 +4,7 @@ kde_module_LTLIBRARIES = kcm_socks.la
 kcm_socks_la_SOURCES = socks.cpp socksbase.ui 
 
 kcm_socks_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-kcm_socks_la_LIBADD = -lkdeui $(LIB_KFILE)
+kcm_socks_la_LIBADD = -lkdeui $(LIB_KIO)
 
 kcm_socks_la_METASOURCES = AUTO
 

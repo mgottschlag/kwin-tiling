@@ -6,7 +6,7 @@ kde_module_LTLIBRARIES = kcm_icons.la
 
 kcm_icons_la_SOURCES = iconthemes.cpp icons.cpp main.cpp
 kcm_icons_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-kcm_icons_la_LIBADD = $(LIB_KFILE)
+kcm_icons_la_LIBADD = $(LIB_KIO)
 kcm_icons_la_METASOURCES = icons.moc iconthemes.moc main.moc
 
 

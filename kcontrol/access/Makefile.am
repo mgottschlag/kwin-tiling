@@ -17,7 +17,7 @@ kaccess_la_LIBADD = $(LIB_KDEUI)
 
 kcm_access_la_SOURCES = kcmaccess.cpp 
 kcm_access_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-kcm_access_la_LIBADD = $(LIB_KFILE)
+kcm_access_la_LIBADD = $(LIB_KIO)
 
 noinst_HEADERS = kcmaccess.h
 

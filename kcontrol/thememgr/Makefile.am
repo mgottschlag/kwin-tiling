@@ -13,7 +13,7 @@ noinst_HEADERS = theme.h installer.h \
 	options.h version.h groupdetails.h \
 	themecreator.h newthemedlg.h
 
-kcm_themes_la_LIBADD = $(LIB_KFILE) 
+kcm_themes_la_LIBADD = $(LIB_KIO) 
 kcm_themes_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 
 apps_DATA = kthememgr.desktop

@@ -6,7 +6,7 @@ kcm_konsole_la_SOURCES =  schemaeditor.cpp sessioneditor.cpp kcmkonsole.cpp \
 	schemadialog.ui sessiondialog.ui kcmkonsoledialog.ui
 
 kcm_konsole_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-kcm_konsole_la_LIBADD = -lkdeui $(LIB_KFILE)
+kcm_konsole_la_LIBADD = -lkdeui $(LIB_KIO)
 INCLUDES= $(all_includes) 
 
 kcm_konsole_la_METASOURCES = AUTO
