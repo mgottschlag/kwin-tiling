@@ -95,12 +95,12 @@ messages:
 data_DATA = kscience.gif kscience-small.gif
 datadir = $(kde_datadir)/kscreensaver
 
-desktop_DATA = KAttration.desktop KBanner.desktop KBlankscreen.desktop \
-	KBlob.desktop KBouboule.desktop KBsod.desktop KFlame.desktop \
-	KForest.desktop KHop.desktop KLaser.desktop KLines.desktop \
-	KLissie.desktop KMatrix.desktop KMorph3D.desktop KPipes.desktop \
+desktop_DATA = KBanner.desktop KBlankscreen.desktop \
+	KBlob.desktop KBouboule.desktop KBsod.desktop \
+	KHop.desktop KLines.desktop \
+	KMatrix.desktop KMorph3D.desktop KPipes.desktop \
 	KPolygon.desktop KPyro.desktop KRandom.desktop KRock.desktop \
-	KScience.desktop KSlidescreen.desktop KSlideshow.desktop KSlip.desktop \
+	KScience.desktop KSlidescreen.desktop KSlideshow.desktop \
 	KSpace.desktop KSwarm.desktop KVm.desktop KLorenz.desktop
 desktopdir = $(kde_appsdir)/System/ScreenSavers
 
