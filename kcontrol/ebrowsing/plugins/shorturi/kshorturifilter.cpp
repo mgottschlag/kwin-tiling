@@ -103,11 +103,15 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   * lookups the URL in the user-defined list and returns without filtering
   * if it is not found. TODO: the user-defined table is currently only manually
   * hackable and is missing a config dialog.
+  *
+  * IMPORTANT: if you change anything here, please run the regression test
+  * kdelibs/kio/tests/kurifiltertest
   */
 
   KURL url = data.uri();
   QString cmd = data.typedString();
   bool isMalformed = !url.isValid();
+  //kdDebug() << "url=" << url.url() << " cmd=" << cmd << " isMalformed=" << isMalformed << endl;
 
   // TODO: Make this a bit more intelligent for Minicli! There
   // is no need to make comparisons if the supplied data is a local
@@ -193,16 +197,30 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   else if ( path[0] == '$' ) {
     // Environment variable expansion.
     QRegExp r (QFL1(ENV_VAR_PATTERN));
-    if ( r.search( path ) == 0 ) 
+    if ( r.search( path ) == 0 )
     {
       const char* exp = getenv( path.mid( 1, r.matchedLength() - 1 ).local8Bit().data() );
-      if(exp) 
+      if(exp)
       {
         path.replace( 0, r.matchedLength(), QString::fromLocal8Bit(exp) );
         expanded = true;
       }
     }
   }
+
+  if ( expanded )
+  {
+    // Look for #ref again, after $ and ~ expansion (testcase: $QTDIR/doc/html/functions.html#s)
+    // Can't use KURL here, setPath would escape it...
+    int pos = path.find('#');
+    if ( pos > -1 )
+    {
+      ref = path.mid( pos + 1 );
+      path = path.left( pos );
+      //kdDebug() << "Extracted ref: path=" << path << " ref=" << ref << endl;
+    }
+  }
+
 
   bool isLocalFullPath = !path.isEmpty() && (path[0] == '/');
 
@@ -230,7 +248,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     abs = QDir::cleanDirPath(abs + '/' + path);
     //kdDebug() << "checking whether " << abs << " exists." << endl;
     // Check if it exists
-    if( stat( QFile::encodeName(abs).data(), &buff ) == 0 ) 
+    if( stat( QFile::encodeName(abs).data(), &buff ) == 0 )
     {
         path = abs; // yes -> store as the new cmd
         exists = true;
@@ -243,14 +261,14 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     exists = ( stat( QFile::encodeName(path).data() , &buff ) == 0 );
   }
 
-  kdDebug() << "path =" << path << " isLocalFullPath=" << isLocalFullPath << " exists=" << exists << endl;
+  //kdDebug() << "path =" << path << " isLocalFullPath=" << isLocalFullPath << " exists=" << exists << endl;
   if( exists )
   {
     // Can be abs path to file or directory, or to executable with args
     bool isDir = S_ISDIR( buff.st_mode );
     if( !isDir && access ( QFile::encodeName(path).data(), X_OK) == 0 )
     {
-      kdDebug() << "Abs path to EXECUTABLE" << endl;
+      //kdDebug() << "Abs path to EXECUTABLE" << endl;
       KURL u;
       u.setPath(path);
       u.setRef(ref);
@@ -261,7 +279,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     // Open "uri" as file:/xxx if it is a non-executable local resource.
     if( isDir || S_ISREG( buff.st_mode ) )
     {
-      kdDebug() << "Abs path as local file" << endl;
+      //kdDebug() << "Abs path as local file" << endl;
       KURL u;
       u.setPath(path);
       u.setRef(ref);
