@@ -40,12 +40,6 @@
 KMenuEdit::KMenuEdit (bool controlCenter, QWidget *, const char *name)
   : KMainWindow (0, name), m_tree(0), m_basicTab(0), m_splitter(0), m_controlCenter(controlCenter)
 {
-    // restore size
-    KConfig *config = KGlobal::config();
-    config->setGroup("General");
-    int w = config->readNumEntry("Width",640);
-    int h = config->readNumEntry("Height", 480);
-    resize(w, h);
 #if 0
     m_showHidden = config->readBoolEntry("ShowHidden");
 #else
@@ -55,16 +49,12 @@ KMenuEdit::KMenuEdit (bool controlCenter, QWidget *, const char *name)
     // setup GUI
     setupActions();
     slotChangeView();
-    setAutoSaveSettings();
 }
 
 KMenuEdit::~KMenuEdit()
 {
-    // save size
     KConfig *config = KGlobal::config();
     config->setGroup("General");
-    config->writeEntry("Width", width());
-    config->writeEntry("Height", height());
     config->writeEntry("SplitterSizes", m_splitter->sizes());
 
     config->sync();
@@ -84,8 +74,6 @@ void KMenuEdit::setupActions()
     KStdAction::cut(0, 0, actionCollection());
     KStdAction::copy(0, 0, actionCollection());
     KStdAction::paste(0, 0, actionCollection());
-    KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
-    KStdAction::configureToolbars(this, SLOT(slotConfigureToolbars()), actionCollection());
 }
 
 void KMenuEdit::setupView()
@@ -115,7 +103,7 @@ void KMenuEdit::setupView()
     QValueList<int> sizes = config->readIntListEntry("SplitterSizes");
 
     if (sizes.isEmpty())
-	sizes << 1 << 3;
+        sizes << 1 << 3;
     m_splitter->setSizes(sizes);
     m_tree->setFocus();
 
@@ -141,9 +129,9 @@ void KMenuEdit::slotChangeView()
     if (!m_splitter)
        setupView();
     if (m_controlCenter)
-       createGUI("kcontroleditui.rc");
+       setupGUI(KMainWindow::ToolBar|Keys|Save|Create, "kcontroleditui.rc");
     else
-       createGUI("kmenueditui.rc");
+       setupGUI(KMainWindow::ToolBar|Keys|Save|Create, "kmenueditui.rc");
 
     m_tree->setViewMode(m_showHidden);
 }
