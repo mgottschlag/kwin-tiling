@@ -9,13 +9,13 @@
             <x>0</x>
             <y>0</y>
             <width>496</width>
-            <height>466</height>
+            <height>462</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form1</string>
     </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -25,232 +25,85 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QLayoutWidget" row="0" column="0">
+        <widget class="QSplitter">
             <property name="name">
-                <cstring>Layout3</cstring>
+                <cstring>Splitter1</cstring>
             </property>
-            <grid>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <widget class="QListBox">
                 <property name="name">
-                    <cstring>unnamed</cstring>
+                    <cstring>ServiceChooser</cstring>
                 </property>
-                <property name="margin">
-                    <number>0</number>
+                <property name="currentItem">
+                    <number>-1</number>
                 </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QGroupBox" row="1" column="1">
-                    <property name="name">
-                        <cstring>GroupBox3</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>1</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="title">
-                        <string>Default Component</string>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>11</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>ChooserDocu</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Choose from the list below which component should be used by default for the %1 service.</string>
-                            </property>
-                            <property name="alignment">
-                                <set>WordBreak|AlignVCenter</set>
-                            </property>
-                        </widget>
-                        <widget class="QComboBox">
-                            <property name="name">
-                                <cstring>ComponentSelector</cstring>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-                <widget class="QListBox" row="0" column="0" rowspan="2" colspan="1">
-                    <property name="name">
-                        <cstring>ServiceChooser</cstring>
-                    </property>
-                    <property name="currentItem">
-                        <number>-1</number>
-                    </property>
-                </widget>
-                <widget class="QGroupBox" row="0" column="1">
-                    <property name="name">
-                        <cstring>GroupBox2</cstring>
-                    </property>
-                    <property name="title">
-                        <string>Component Description</string>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>11</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>ComponentDescription</cstring>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="alignment">
-                                <set>WordBreak|AlignVCenter</set>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QGroupBox" row="1" column="0">
-            <property name="name">
-                <cstring>grpPrefEmailClient</cstring>
-            </property>
-            <property name="title">
-                <string>Preferred Email Client</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Enter the path to your preferred email client (KMail, Mutt, etc.) here or choose it with the &lt;em&gt;Browse...&lt;/em&gt; button. If no client is specified here, KMail will be used (if available) instead.&lt;p/&gt; You can also use several placeholders which will be replaced with the following values:&lt;p/&gt;&lt;ul&gt;&lt;li&gt;%s: Subject&lt;/li&gt;&lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt;&lt;li&gt;%b: Blind Carbon Copy&lt;/li&gt;&lt;li&gt;%B: Body template&lt;/li&gt;&lt;li&gt;%t: Recipient's address&lt;/li&gt;&lt;/ul&gt;</string>
-            </property>
-            <grid>
+            </widget>
+            <widget class="QLayoutWidget">
                 <property name="name">
-                    <cstring>unnamed</cstring>
+                    <cstring>Layout3</cstring>
                 </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLineEdit" row="0" column="0">
+                <vbox>
                     <property name="name">
-                        <cstring>txtEMailClient</cstring>
+                        <cstring>unnamed</cstring>
                     </property>
-                    <property name="toolTip" stdset="0">
-                        <string>&lt;ul&gt; &lt;li&gt;%t: Recipient's address&lt;/li&gt; &lt;li&gt;%s: Subject&lt;/li&gt; &lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt; &lt;li&gt;%b: Blind Carbon Copy (BCC)&lt;/li&gt; &lt;li&gt;%B: Template body text&lt;/li&gt; &lt;li&gt;%A: Attachment &lt;/li&gt; &lt;/ul&gt;</string>
+                    <property name="margin">
+                        <number>0</number>
                     </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Press this button to select your favorite email client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br&gt; You can also use several placeholders which will be replaced with the actual values when the email client is called:&lt;ul&gt; &lt;li&gt;%t: Recipient's address&lt;/li&gt; &lt;li&gt;%s: Subject&lt;/li&gt; &lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt; &lt;li&gt;%b: Blind Carbon Copy (BCC)&lt;/li&gt; &lt;li&gt;%B: Template body text&lt;/li&gt; &lt;li&gt;%A: Attachment &lt;/li&gt; &lt;/ul&gt;</string>
+                    <property name="spacing">
+                        <number>6</number>
                     </property>
-                </widget>
-                <widget class="QToolButton" row="0" column="1">
-                    <property name="name">
-                        <cstring>btnSelectEmail</cstring>
-                    </property>
-                    <property name="text">
-                        <string>...</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>chkRunTerminal</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Run in terminal</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Activate this option if you want the selected email client to be executed in a terminal (e.g. &lt;em&gt;Konsole&lt;/em&gt;).</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QGroupBox" row="2" column="0">
-            <property name="name">
-                <cstring>grpPrefTerminal</cstring>
-            </property>
-            <property name="title">
-                <string>Preferred Terminal Application</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QCheckBox" row="0" column="0">
-                    <property name="name">
-                        <cstring>terminalCB</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Use Konsole as terminal application</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget" row="1" column="0">
-                    <property name="name">
-                        <cstring>Layout4</cstring>
-                    </property>
-                    <hbox>
+                    <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>unnamed</cstring>
+                            <cstring>GroupBox2</cstring>
                         </property>
-                        <property name="margin">
-                            <number>0</number>
+                        <property name="title">
+                            <string>Component Description</string>
                         </property>
-                        <property name="spacing">
-                            <number>6</number>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>ComponentDescription</cstring>
+                                </property>
+                                <property name="text">
+                                    <string></string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignVCenter</set>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>configContainer</cstring>
                         </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>Spacer2</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>40</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>terminalLabel</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Other &amp;terminal:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>terminalLE</cstring>
-                            </property>
-                        </widget>
-                        <widget class="KLineEdit">
-                            <property name="name">
-                                <cstring>terminalLE</cstring>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-            </grid>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>1</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="title">
+                            <string>Default Component</string>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
         </widget>
-    </grid>
+    </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

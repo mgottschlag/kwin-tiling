@@ -1,7 +1,24 @@
 Name=A nice name you have chosen for your interface
-Name[sv]=Ett bra namn som du har valt för gränssnittet
+Name[af/messages/kdebase/desktop_kdebase.po]='n oulike naam jy het gekies vir jou koppelvlak
+Name[bs/messages/kdebase/desktop_kdebase.po]=Lijepo ime koje ste odabrali za vaš interfejs
+Name[da/messages/kdebase/desktop_kdebase.po]=Et godt navn som du har valgt for din grænseflade
+Name[es/messages/kdebase/desktop_kdebase.po]=Un bonito nombre de su elección para su interfaz
+Name[fi/messages/kdebase/desktop_kdebase.po]=Kiva nimi rajapinnallesi
+Name[hu/messages/kdebase/desktop_kdebase.po]=Egy Ön által választott név a felülethez
+Name[ja/messages/kdebase/desktop_kdebase.po]=インターフェースにいい名前を付けてください
+Name[sv/messages/kdebase/desktop_kdebase.po]=Ett bra namn som du har valt för gränssnittet
 Comment=A helpful description of the interface for the top right info box
-Comment[sv]=En hjälpsam beskrivning av gränssnittet för informationsrutan uppe till höger
+Comment[af/messages/kdebase/desktop_kdebase.po]='n hulpvaardig beskrywing van die koppelvlak vir die bo regterkant inligting boks
+Comment[bs/messages/kdebase/desktop_kdebase.po]=Koristan opis interfejsa za info kocku gore-desno
+Comment[da/messages/kdebase/desktop_kdebase.po]=En nyttig beskrivelse af grænsefladen for infoboksen øverst til højre
+Comment[es/messages/kdebase/desktop_kdebase.po]=Una descripción útil del interfaz para el cuadro de información superior derecho
+Comment[fi/messages/kdebase/desktop_kdebase.po]=Tässä pitäisi olla pieni kuvaus rajapinnasta oikean yläkulman laatikkoon
+Comment[hu/messages/kdebase/desktop_kdebase.po]=A felület leírása a jobb felső sarokban található tájékoztató ablakhoz
+Comment[ja/messages/kdebase/desktop_kdebase.po]=上右の情報ボックスに出るインターフェースの説明
+Comment[sv/messages/kdebase/desktop_kdebase.po]=En hjälpsam beskrivning av gränssnittet för informationsrutan uppe till höger
+Comment[th/messages/kdebase/desktop_kdebase.po]=นี่เป็นรายละเอียดเล็กน้อยเกี่ยวกับรูปแบบส่วนติดต่อสำหรับกล่องข้อมูลด้านขวาบน
+
+configurationType=Possible values are component and application. Only component is handled at the moment though
 ServiceTypeToConfigure=The service type, which should be  configured. If this line is empty you have to provide a plugin (not supported yet)
 MimeTypeOfInterest=A mimetype which should be used in conjunction with ServiceTypeToConfigure
 defaultImplementation=The name of the default implementation as it would be returned by KService::desktopEntryName()

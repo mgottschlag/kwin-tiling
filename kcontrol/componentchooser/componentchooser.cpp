@@ -23,6 +23,8 @@
 #include <qfile.h>
 #include <kurl.h>
 #include <kopenwith.h>
+#include <qgroupbox.h>
+#include <qlayout.h>
 
 class MyListBoxItem: public QListBoxText
 {
@@ -32,171 +34,101 @@ public:
 	QString File;
 };
 
-ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
-	ComponentChooser_UI(parent,name) {
 
-	somethingChanged=false;
+//BEGIN  General kpart based Component selection
+
+CfgComponent::CfgComponent(QWidget *parent):ComponentConfig_UI(parent),CfgPlugin(){
 	m_lookupDict.setAutoDelete(true);
 	m_revLookupDict.setAutoDelete(true);
-	latestEditedService="";
-
-	QStringList dummy;
-	QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",false,true,dummy);
-	for (QStringList::Iterator it=services.begin();it!=services.end();++it)
-	{
-		KSimpleConfig *cfg=new KSimpleConfig((*it));
-		ServiceChooser->insertItem(new MyListBoxItem(cfg->readEntry("Name",i18n("Unknown")),(*it)));
-		delete cfg;
-
-	}
-	connect(ServiceChooser,SIGNAL(selected(QListBoxItem*)),this,SLOT(slotServiceSelected(QListBoxItem*)));
-	ServiceChooser->setSelected(0,true);
-	slotServiceSelected(ServiceChooser->item(0));
 	connect(ComponentSelector,SIGNAL(activated(const QString&)),this,SLOT(slotComponentChanged(const QString&)));
-
-	pSettings = new KEMailSettings();
-	load();
-
-	connect(txtEMailClient, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
-	connect(chkRunTerminal, SIGNAL(clicked()), SLOT(configChanged()) );
-	connect(btnSelectEmail, SIGNAL(clicked()), SLOT(selectEmailClient()) );
-
-	connect(terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
-	connect(terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 }
 
-void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
-	if (!it) return;
-	if (somethingChanged) {
-		if (KMessageBox::questionYesNo(this,"<qt>You changed the default component of your choice, do want to save that change now ?<BR><BR>Selecting <B>No</B> will discard your changes</qt>")==KMessageBox::Yes) save();
-	}
-	ComponentSelector->clear();
-	m_lookupDict.clear();
-	m_revLookupDict.clear();
-	KSimpleConfig *cfg=new KSimpleConfig(static_cast<MyListBoxItem*>(it)->File);
-	QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure","");
-	ComponentDescription->setText(cfg->readEntry("Comment",i18n("No description available")));
-	if (ServiceTypeToConfigure.isEmpty()) {
-		// This will be handled by a plugin later
-	}
-	else
-	{
-		QString MimeTypeOfInterest=cfg->readEntry("MimeTypeOfInterest","");
-		KTrader::OfferList offers = KTrader::self()->query(MimeTypeOfInterest, "'"+ServiceTypeToConfigure+"' in ServiceTypes");
+CfgComponent::~CfgComponent(){}
 
-	        for (KTrader::OfferList::Iterator tit = offers.begin(); tit != offers.end(); ++tit)
-        	{
-	                ComponentSelector->insertItem((*tit)->name());
-			m_lookupDict.insert((*tit)->name(),new QString((*tit)->desktopEntryName()));
-			m_revLookupDict.insert((*tit)->desktopEntryName(),new QString((*tit)->name()));;
-	        }
-                KConfig *store = new KConfig(cfg->readEntry("storeInFile","null"));
-                store->setGroup(cfg->readEntry("valueSection",""));               
-		QString setting=store->readEntry(cfg->readEntry("valueName","kcm_componenchooser_null"),"");
-                delete store;
-		if (setting.isEmpty()) setting=cfg->readEntry("defaultImplementation","");
-		QString *tmp=m_revLookupDict[setting];
-		if (tmp)
-			for (int i=0;i<ComponentSelector->count();i++)
-				if ((*tmp)==ComponentSelector->text(i))
-				{
-					ComponentSelector->setCurrentItem(i);
-					break;
-				}
-	}
-	latestEditedService=static_cast<MyListBoxItem*>(it)->File;
-	emitChanged(false);
-	delete cfg;
+void CfgComponent::slotComponentChanged(const QString&) {
+	emit changed(true);
 }
 
-
-void ComponentChooser::emitChanged(bool val) {
-	somethingChanged=val;
-	emit changed(val);
-}
-
-void ComponentChooser::slotComponentChanged(const QString& str) {
-	emitChanged(true);
-}
-
-ComponentChooser::~ComponentChooser()
-{
-	delete pSettings;
-}
-
-void ComponentChooser::load() {
-	txtEMailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
-	chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
-
-	KConfig *config = new KConfig("kdeglobals", true);
-	config->setGroup("General");
-	QString terminal = config->readEntry("TerminalApplication","konsole");
-	if (terminal == "konsole")
-	{
-	   terminalLE->setText("xterm");
-	   terminalCB->setChecked(true);
-	}
-	else
-	{
-	  terminalLE->setText(terminal);
-	  terminalCB->setChecked(false);
-	}
-	delete config;
-}
-
-void ComponentChooser::save() {
-	KSimpleConfig *cfg=new KSimpleConfig(latestEditedService);
-
-	QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure","");
-	if (ServiceTypeToConfigure.isEmpty())
-	{
-		//plugin
-	}
-	else
-	{
+void CfgComponent::save(KConfig *cfg) {
+  		QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure","");
 		KConfig *store = new KConfig(cfg->readEntry("storeInFile","null"));
 		store->setGroup(cfg->readEntry("valueSection",""));
 		store->writeEntry(cfg->readEntry("valueName","kcm_componenchooser_null"),*m_lookupDict[ComponentSelector->currentText()]);
 		store->sync();
 		delete store;
+}
+
+void CfgComponent::load(KConfig *cfg) {
+
+	ComponentSelector->clear();
+	m_lookupDict.clear();
+	m_revLookupDict.clear();
+
+	QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure","");
+
+	QString MimeTypeOfInterest=cfg->readEntry("MimeTypeOfInterest","");
+	KTrader::OfferList offers = KTrader::self()->query(MimeTypeOfInterest, "'"+ServiceTypeToConfigure+"' in ServiceTypes");
+
+	for (KTrader::OfferList::Iterator tit = offers.begin(); tit != offers.end(); ++tit)
+        {
+		ComponentSelector->insertItem((*tit)->name());
+		m_lookupDict.insert((*tit)->name(),new QString((*tit)->desktopEntryName()));
+		m_revLookupDict.insert((*tit)->desktopEntryName(),new QString((*tit)->name()));;
 	}
-	delete cfg;
-
-	pSettings->setSetting(KEMailSettings::ClientProgram, txtEMailClient->text());
-	pSettings->setSetting(KEMailSettings::ClientTerminal, (chkRunTerminal->isChecked()) ? "true" : "false");
-
-	// insure proper permissions -- contains sensitive data
-	QString cfgName(KGlobal::dirs()->findResource("config", "emails"));
-	if (!cfgName.isEmpty())
-		::chmod(QFile::encodeName(cfgName), 0600);
-
-	kapp->dcopClient()->emitDCOPSignal("KDE_emailSettingsChanged()", QByteArray());
-
-
-	KConfig *config = new KConfig("kdeglobals");
-	config->setGroup("General");
-	config->writeEntry("TerminalApplication",terminalCB->isChecked()?"konsole":terminalLE->text(), true, true);
-	delete config;
-
-	emitChanged(false);
+        
+	KConfig *store = new KConfig(cfg->readEntry("storeInFile","null"));
+        store->setGroup(cfg->readEntry("valueSection",""));               
+	QString setting=store->readEntry(cfg->readEntry("valueName","kcm_componenchooser_null"),"");
+        delete store;
+	if (setting.isEmpty()) setting=cfg->readEntry("defaultImplementation","");
+	QString *tmp=m_revLookupDict[setting];
+	if (tmp)
+		for (int i=0;i<ComponentSelector->count();i++)
+			if ((*tmp)==ComponentSelector->text(i))
+			{
+				ComponentSelector->setCurrentItem(i);
+				break;
+			}
+	emit changed(false);
 }
 
-void ComponentChooser::restoreDefault() {
-	txtEMailClient->setText("kmail");
-	chkRunTerminal->setChecked(false);
+//END  General kpart based Component selection
 
-	// Check if -e is needed, I do not think so
-	terminalLE->setText("xterm");  //No need for i18n
-	terminalCB->setChecked(true);
-	emitChanged(false);
+
+
+
+
+
+//BEGIN Email client config
+CfgEmailClient::CfgEmailClient(QWidget *parent):EmailClientConfig_UI(parent),CfgPlugin(){
+	pSettings = new KEMailSettings();
+
+	connect(txtEMailClient, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
+	connect(chkRunTerminal, SIGNAL(clicked()), SLOT(configChanged()) );
+	connect(btnSelectEmail, SIGNAL(clicked()), SLOT(selectEmailClient()) );
+
 }
 
-void ComponentChooser::configChanged()
+CfgEmailClient::~CfgEmailClient() {
+	delete pSettings;
+}
+
+
+void CfgEmailClient::load(KConfig *)
 {
-	emitChanged(true);
+	txtEMailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
+	chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
+
+	emit changed(false);
+
 }
 
-void ComponentChooser::selectEmailClient()
+void CfgEmailClient::configChanged()
+{
+	emit changed(true);
+}
+
+void CfgEmailClient::selectEmailClient()
 {
 	KURL::List urlList;
 	KOpenWithDlg dlg(urlList, i18n("Select preferred email client:"), QString::null, this);
@@ -211,3 +143,192 @@ void ComponentChooser::selectEmailClient()
 		txtEMailClient->setText(client);
 	}
 }
+
+
+void CfgEmailClient::save(KConfig *)
+{
+	pSettings->setSetting(KEMailSettings::ClientProgram, txtEMailClient->text());
+	pSettings->setSetting(KEMailSettings::ClientTerminal, (chkRunTerminal->isChecked()) ? "true" : "false");
+
+	// insure proper permissions -- contains sensitive data
+	QString cfgName(KGlobal::dirs()->findResource("config", "emails"));
+	if (!cfgName.isEmpty())
+		::chmod(QFile::encodeName(cfgName), 0600);
+
+	kapp->dcopClient()->emitDCOPSignal("KDE_emailSettingsChanged()", QByteArray());
+
+	emit changed(false);
+}
+
+
+//END Email client config
+
+
+
+//BEGIN Terminal Emulator Configuration
+
+CfgTerminalEmulator::CfgTerminalEmulator(QWidget *parent):TerminalEmulatorConfig_UI(parent),CfgPlugin(){
+	connect(terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
+	connect(terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+
+}
+
+CfgTerminalEmulator::~CfgTerminalEmulator() {
+}
+
+void CfgTerminalEmulator::configChanged()
+{
+	emit changed(true);
+}
+
+
+void CfgTerminalEmulator::load(KConfig *) {
+	KConfig *config = new KConfig("kdeglobals", true);
+	config->setGroup("General");
+	QString terminal = config->readEntry("TerminalApplication","konsole");
+	if (terminal == "konsole")
+	{
+	   terminalLE->setText("xterm");
+	   terminalCB->setChecked(true);
+	}
+	else
+	{
+	  terminalLE->setText(terminal);
+	  terminalCB->setChecked(false);
+	}
+	delete config;
+
+	emit changed(false);
+}
+
+void CfgTerminalEmulator::save(KConfig *) {
+
+	KConfig *config = new KConfig("kdeglobals");
+	config->setGroup("General");
+	config->writeEntry("TerminalApplication",terminalCB->isChecked()?"konsole":terminalLE->text(), true, true);
+	delete config;
+
+	emit changed(false);
+}
+
+//END Terminal Emulator Configuration
+
+
+
+
+
+
+
+
+
+ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
+	ComponentChooser_UI(parent,name), configWidget(0) {
+
+	somethingChanged=false;
+	latestEditedService="";
+
+        configContainer->setColumnLayout(0, Qt::Vertical );
+   	myLayout = new QVBoxLayout( configContainer->layout() );
+        myLayout->setAlignment( Qt::AlignTop );
+	QStringList dummy;
+	QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",false,true,dummy);
+	for (QStringList::Iterator it=services.begin();it!=services.end();++it)
+	{
+		KSimpleConfig *cfg=new KSimpleConfig((*it));
+		ServiceChooser->insertItem(new MyListBoxItem(cfg->readEntry("Name",i18n("Unknown")),(*it)));
+		delete cfg;
+
+	}
+	ServiceChooser->sort();
+	connect(ServiceChooser,SIGNAL(selected(QListBoxItem*)),this,SLOT(slotServiceSelected(QListBoxItem*)));
+	ServiceChooser->setSelected(0,true);
+	slotServiceSelected(ServiceChooser->item(0));
+
+}
+
+void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
+	if (!it) return;
+	if (somethingChanged) {
+		if (KMessageBox::questionYesNo(this,"<qt>You changed the default component of your choice, do want to save that change now ?<BR><BR>Selecting <B>No</B> will discard your changes</qt>")==KMessageBox::Yes) save();
+	}
+	KSimpleConfig *cfg=new KSimpleConfig(static_cast<MyListBoxItem*>(it)->File);
+
+	ComponentDescription->setText(cfg->readEntry("Comment",i18n("No description available")));
+
+	QString cfgType=cfg->readEntry("configurationType");
+	if (cfgType.isEmpty() || (cfgType=="component"))
+	{
+		if (!(configWidget && configWidget->qt_cast("CfgComponent")))
+		{
+			delete configWidget;
+			configWidget=new CfgComponent(configContainer);
+			configWidget->show();
+			myLayout->addWidget(configWidget);
+			connect(configWidget,SIGNAL(changed(bool)),this,SLOT(emitChanged(bool)));
+		}
+	}
+	else if (cfgType=="internal_email")
+	{
+		if (!(configWidget && configWidget->qt_cast("CfgEmailClient")))
+		{
+			delete configWidget;
+			configWidget=new CfgEmailClient(configContainer);
+			configWidget->show();
+			myLayout->addWidget(configWidget);
+			connect(configWidget,SIGNAL(changed(bool)),this,SLOT(emitChanged(bool)));
+		}
+
+	}
+	else if (cfgType=="internal_terminal")
+	{
+		if (!(configWidget && configWidget->qt_cast("CfgTerminalEmulator")))
+		{
+			delete configWidget;
+			configWidget=new CfgTerminalEmulator(configContainer);
+			configWidget->show();
+			myLayout->addWidget(configWidget);
+			connect(configWidget,SIGNAL(changed(bool)),this,SLOT(emitChanged(bool)));
+		}
+
+	}
+
+	if (configWidget) static_cast<CfgPlugin*>(configWidget->qt_cast("CfgPlugin"))->load(cfg);
+	emitChanged(false);
+	delete cfg;
+	latestEditedService=static_cast<MyListBoxItem*>(it)->File;
+
+}
+
+
+void ComponentChooser::emitChanged(bool val) {
+	somethingChanged=val;
+	emit changed(val);
+}
+
+
+ComponentChooser::~ComponentChooser()
+{
+	delete configWidget;
+}
+
+void ComponentChooser::load() {
+}
+
+void ComponentChooser::save() {
+	KSimpleConfig *cfg=new KSimpleConfig(latestEditedService);
+		if (configWidget) static_cast<CfgPlugin*>(configWidget->qt_cast("CfgPlugin"))->save(cfg);
+	delete cfg;
+}
+
+void ComponentChooser::restoreDefault() {
+/*
+	txtEMailClient->setText("kmail");
+	chkRunTerminal->setChecked(false);
+
+	// Check if -e is needed, I do not think so
+	terminalLE->setText("xterm");  //No need for i18n
+	terminalCB->setChecked(true);
+	emitChanged(false);
+*/
+}
+
