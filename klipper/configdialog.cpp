@@ -66,18 +66,21 @@ ConfigDialog::~ConfigDialog()
 // prevent huge size due to long regexps in the action-widget
 void ConfigDialog::show()
 {
-    static KWinModule module;
-    QSize s1 = sizeHint();
-    QSize s2 = module.workArea().size();
-    int w = isVisible() ? width() : s1.width();
-    int h = isVisible() ? height() : s1.height();
+    if ( !isVisible() ) {
+	static KWinModule module;
+	QSize s1 = sizeHint();
+	QSize s2 = module.workArea().size();
+	int w = s1.width();
+	int h = s1.height();
 
-    if ( s1.width() >= s2.width() )
-	w = s2.width();
-    if ( s1.height() >= s2.height() )
-	h = s2.height();
+	if ( s1.width() >= s2.width() )
+	    w = s2.width();
+	if ( s1.height() >= s2.height() )
+	    h = s2.height();
 
-    resize( w, h );
+	resize( w, h );
+    }
+    
     KDialogBase::show();
 }
 
