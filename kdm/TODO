@@ -9,6 +9,7 @@ Must:
 - Move clock from greeter dialog to desktop
 - Add XDMCP _client_ to core (for remote login like in dtlogin)
 - Add language selection
+- Messages after switching to text mode
 
 Should:
 
@@ -23,6 +24,8 @@ Could:
 - enable font AA support in greeter
 - session name aliasing
 - password change dialog for aged passwords
+- starting kdm while a kdm is running in the background in "console mode"
+  would reactivate the greeter. this would require lots of magic.
 
 - Make remembering user's last session more portable (standard??)
 - Animated logo
