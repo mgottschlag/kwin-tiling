@@ -2,6 +2,7 @@
   Copyright (c) 1997 Christian Czezatke (e9025461@student.tuwien.ac.at)
                 1998 Bernd Wuebben <wuebben@kde.org>
                 2000 Matthias Elter <elter@kde.org>
+                2001 Carsten PFeiffer <pfeiffer@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,15 +19,18 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
+#include <qgroupbox.h>
 
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kapp.h>
 #include <kdialog.h>
+#include <knotifyclient.h>
 #include <knuminput.h>
 
 #include "bell.h"
@@ -65,47 +69,69 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
     KCModule(parent, name)
 {
   QBoxLayout *layout = new QVBoxLayout(this,
-                                       KDialog::marginHint(),
-                                       KDialog::spacingHint());
+				       KDialog::marginHint(),
+				       KDialog::spacingHint());
 
-  m_volume = new KIntNumInput(50, this);
+  int row = 0;
+  QGroupBox *box = new QGroupBox( i18n("Bell Settings"), this );
+  layout->addWidget(box);
+  QGridLayout *grid = new QGridLayout(box, 8, 2);
+  grid->setSpacing(KDialog::spacingHint());
+  grid->setMargin(KDialog::marginHint());
+  grid->addRowSpacing(row, fontMetrics().height() + 5); // QGroupBox sucks
+  grid->setColStretch(0, 0);
+  grid->setColStretch(1, 1);
+  grid->addColSpacing(0, 30);
+  
+  m_useBell = new QCheckBox( i18n("&Use System Bell instead of System Notification" ), box );
+  QWhatsThis::add(m_useBell, i18n("You can use the standard system bell (PC-speaker) or a "
+				  "more sophisticated System notification, see the "
+				  "\"System Notifications\" control module for the "
+				  "\"Something Special Happened in the Program\" event."));
+  connect(m_useBell, SIGNAL( toggled( bool )), SLOT( useBell( bool )));
+  row++;
+  grid->addMultiCellWidget(m_useBell, row, row, 0, 1);
+  
+  m_volume = new KIntNumInput(50, box);
   m_volume->setLabel(i18n("Volume:"));
   m_volume->setRange(0, 100, 5);
   m_volume->setSuffix("%");
   m_volume->setSteps(5,25);
-  layout->addWidget(m_volume);
+  grid->addWidget(m_volume, ++row, 1);
   QWhatsThis::add( m_volume, i18n("Here you can customize the volume of the system bell. For further"
     " customization of the bell, see the \"Accessibility\" control module.") );
 
-  m_pitch = new KIntNumInput(m_volume, 800, this);
+  m_pitch = new KIntNumInput(m_volume, 800, box);
   m_pitch->setLabel(i18n("Pitch:"));
   m_pitch->setRange(20, 2000, 20);
   m_pitch->setSuffix(i18n("Hz"));
   m_pitch->setSteps(40,200);
-  layout->addWidget(m_pitch);
+  grid->addWidget(m_pitch, ++row, 1);
   QWhatsThis::add( m_pitch, i18n("Here you can customize the pitch of the system bell. For further"
     " customization of the bell, see the \"Accessibility\" control module.") );
 
-  m_duration = new KIntNumInput(m_pitch, 100, this);
+  m_duration = new KIntNumInput(m_pitch, 100, box);
   m_duration->setLabel(i18n("Duration:"));
   m_duration->setRange(1, 1000, 50);
   m_duration->setSuffix(i18n("ms"));
   m_duration->setSteps(20,100);
-  layout->addWidget(m_duration);
+  grid->addWidget(m_duration, ++row, 1);
   QWhatsThis::add( m_duration, i18n("Here you can customize the duration of the system bell. For further"
     " customization of the bell, see the \"Accessibility\" control module.") );
 
-  QFrame *hLine = new QFrame(this);
+  QFrame *hLine = new QFrame(box);
   hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
+  row++;
+  grid->addMultiCellWidget(hLine, row, row, 0, 1);
 
-  layout->addWidget(hLine);
-
-  QPushButton *test = new QPushButton(i18n("&Test"), this, "test");
-  layout->addWidget(test, 0, AlignRight);
+  QBoxLayout *boxLayout = new QHBoxLayout();
+  QPushButton *test = new QPushButton(i18n("&Test"), box, "test");
+  boxLayout->addWidget(test, 0, AlignRight);
+  grid->addLayout( boxLayout, ++row, 1 );
   connect( test, SIGNAL(clicked()), SLOT(ringBell()));
   QWhatsThis::add( test, i18n("Click \"Test\" to hear how the system bell will sound using your changed settings.") );
 
-  layout->addStretch(1);
+  grid->setRowStretch(++row, 10);
 
   // watch for changes
   connect(m_volume, SIGNAL(valueChanged(int)), SLOT(configChanged()));
@@ -123,6 +149,11 @@ void KBellConfig::load()
   m_volume->setValue(kbd.bell_percent);
   m_pitch->setValue(kbd.bell_pitch);
   m_duration->setValue(kbd.bell_duration);
+  
+  KConfig cfg("kdeglobals", false, false);
+  cfg.setGroup("General");
+  m_useBell->setChecked(cfg.readBoolEntry("UseSystemBell", false));
+  useBell(m_useBell->isChecked());
 }
 
 void KBellConfig::save()
@@ -147,10 +178,20 @@ void KBellConfig::save()
   config.writeEntry("Duration",bellDuration);
 
   config.sync();
+
+  KConfig cfg("kdeglobals", false, false);
+  cfg.setGroup("General");
+  cfg.writeEntry("UseSystemBell", m_useBell->isChecked());
+  cfg.sync();
 }
 
 void KBellConfig::ringBell()
 {
+  if (!m_useBell->isChecked()) {
+    KNotifyClient::beep();
+    return;
+  }
+    
   // store the old state
   XKeyboardState old_state;
   XGetKeyboardControl(kapp->getDisplay(), &old_state);
@@ -183,6 +224,8 @@ void KBellConfig::defaults()
   m_volume->setValue(100);
   m_pitch->setValue(800);
   m_duration->setValue(100);
+  m_useBell->setChecked( false );
+  useBell( false );
 }
 
 QString KBellConfig::quickHelp() const
@@ -191,4 +234,12 @@ QString KBellConfig::quickHelp() const
     " i.e. the \"beeep\" you always hear when there's something wrong. Note that you can further"
     " customize this sound using the \"Accessibility\" control module: for example you can choose"
     " a sound file to be played instead of the standard bell.");
+}
+
+void KBellConfig::useBell( bool on )
+{
+  m_volume->setEnabled( on );
+  m_pitch->setEnabled( on );
+  m_duration->setEnabled( on );
+  configChanged();
 }

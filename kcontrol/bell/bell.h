@@ -23,6 +23,7 @@
 
 #include "kcmodule.h"
 
+class QCheckBox;
 class KIntNumInput;
 class QPushButton;
 
@@ -40,6 +41,7 @@ class KBellConfig : public KCModule
 
  protected slots:
   void ringBell();
+  void useBell( bool );
   void configChanged() { emit changed( true ); };
 
  private:
@@ -47,6 +49,7 @@ class KBellConfig : public KCModule
   KIntNumInput *m_volume;
   KIntNumInput *m_pitch;
   KIntNumInput *m_duration;
+  QCheckBox    *m_useBell;
 };
 
 #endif
