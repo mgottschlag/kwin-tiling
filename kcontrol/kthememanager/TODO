@@ -1,0 +1,9 @@
+- custom pixmap kwin themes (requires kwmtheme to be ported first)
+- write user and theme developer documentation
+
+Handle:
+- widget style
+- splash screen (+ copying?)
+- screensaver
+- cursor themes (+ copying?)
+- K Menu sidebar pixmap

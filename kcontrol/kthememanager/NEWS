@@ -1,0 +1,15 @@
+Version 0.3
+===========
+- the theme manager now correctly handles installing and creating
+  new themes over existing ones
+
+Version 0.2
+===========
+- support for colorizing the Kicker background
+- support for relative URLs, as the README states
+- installing themes via DnD, even remote ones
+- installing themes via context (service) menu from Konqueror
+
+Version 0.1
+===========
+- first release 
