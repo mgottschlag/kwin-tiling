@@ -1,0 +1,121 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>KCMPrivacyDialog</class>
+<author>Ralf Hoelzer</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>KCMPrivacyDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>439</width>
+            <height>509</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>7</hsizetype>
+            <vsizetype>7</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="sizeIncrement">
+        <size>
+            <width>0</width>
+            <height>0</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>Privacy</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QSplitter">
+            <property name="name">
+                <cstring>splitter1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <widget class="KListView">
+                <property name="name">
+                    <cstring>privacyListView</cstring>
+                </property>
+                <property name="showSortIndicator">
+                    <bool>false</bool>
+                </property>
+                <property name="resizeMode">
+                    <enum>AllColumns</enum>
+                </property>
+                <property name="itemsMovable">
+                    <bool>false</bool>
+                </property>
+                <property name="autoOpen">
+                    <bool>false</bool>
+                </property>
+            </widget>
+            <widget class="KTextEdit">
+                <property name="name">
+                    <cstring>statusTextEdit</cstring>
+                </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>1</hsizetype>
+                        <vsizetype>7</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                    <size>
+                        <width>0</width>
+                        <height>100</height>
+                    </size>
+                </property>
+                <property name="maximumSize">
+                    <size>
+                        <width>32767</width>
+                        <height>200</height>
+                    </size>
+                </property>
+                <property name="resizePolicy">
+                    <enum>Manual</enum>
+                </property>
+                <property name="text">
+                    <string></string>
+                </property>
+                <property name="readOnly">
+                    <bool>true</bool>
+                </property>
+            </widget>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>cleanupButton</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32767</width>
+                    <height>50</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>Clean Up</string>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Comment=Privacy - a kcontrol module to clean unwanted traces the user leaves on the system
+Exec=kcmshell privacy
+Keywords=Privacy,privacy
+Name=Privacy
+Terminal=false
+Type=Application
+X-KDE-FactoryName=privacy
+X-KDE-Library=privacy
+X-KDE-ModuleType=Library
