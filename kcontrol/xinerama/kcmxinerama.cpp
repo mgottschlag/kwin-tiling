@@ -115,6 +115,7 @@ void KCMXinerama::configChanged() {
 #define KWIN_XINERAMA_MOVEMENT     "XineramaMovementEnabled"
 #define KWIN_XINERAMA_PLACEMENT    "XineramaPlacementEnabled"
 #define KWIN_XINERAMA_MAXIMIZE     "XineramaMaximizeEnabled"
+#define KWIN_XINERAMA_FULLSCREEN   "XineramaFullscreenEnabled"
 
 void KCMXinerama::load() {
 	if (QApplication::desktop()->isVirtualDesktop()) {
@@ -124,6 +125,7 @@ void KCMXinerama::load() {
 		xw->_enableResistance->setChecked(config->readBoolEntry(KWIN_XINERAMA_MOVEMENT, true));
 		xw->_enablePlacement->setChecked(config->readBoolEntry(KWIN_XINERAMA_PLACEMENT, true));
 		xw->_enableMaximize->setChecked(config->readBoolEntry(KWIN_XINERAMA_MAXIMIZE, true));
+		xw->_enableFullscreen->setChecked(config->readBoolEntry(KWIN_XINERAMA_FULLSCREEN, true));
 		item = config->readNumEntry("Unmanaged", QApplication::desktop()->primaryScreen());
 		if ((item < 0 || item >= _displays) && (item != -3))
 			xw->_unmanagedDisplay->setCurrentItem(QApplication::desktop()->primaryScreen());
@@ -153,6 +155,8 @@ void KCMXinerama::save() {
 					xw->_enablePlacement->isChecked());
 		config->writeEntry(KWIN_XINERAMA_MAXIMIZE,
 					xw->_enableMaximize->isChecked());
+		config->writeEntry(KWIN_XINERAMA_FULLSCREEN,
+					xw->_enableFullscreen->isChecked());
 		int item = xw->_unmanagedDisplay->currentItem();
 		config->writeEntry("Unmanaged", item == _displays ? -3 : item);
 		config->sync();
@@ -177,6 +181,7 @@ void KCMXinerama::defaults() {
 		xw->_enableResistance->setChecked(true);
 		xw->_enablePlacement->setChecked(true);
 		xw->_enableMaximize->setChecked(true);
+		xw->_enableFullscreen->setChecked(true);
 		xw->_unmanagedDisplay->setCurrentItem(
 				QApplication::desktop()->primaryScreen());
 		xw->_ksplashDisplay->setCurrentItem(
