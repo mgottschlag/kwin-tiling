@@ -34,6 +34,7 @@ class KMenuButton;
 class KLocaleSample;
 class KAddButton;
 
+class QLabel;
 class QListBox;
 class QPushButton;
 

@@ -32,6 +32,7 @@ class KKeyChooser;
 class KListView;
 class QPushButton;
 class QDialog;
+class ConfigDialog;
 
 class GeneralWidget : public QVBox
 {

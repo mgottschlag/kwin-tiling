@@ -34,6 +34,7 @@
 
 #include "klanguagebutton.h"
 
+class QComboBox;
 class QLabel;
 class QRadioButton;
 class QLineEdit;
