@@ -164,8 +164,20 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
     _path_group->setEnabled(isDF);
     _term_group->setEnabled(isDF);
     _uid_group->setEnabled(isDF);
+    
+    // clean all disabled fields and return if it is not a .desktop file
+    if (!isDF) {
 
-    if (!isDF) return;
+          _execEdit->setText("");
+	  _typeEdit->setText("");
+	  _pathEdit->setText("");
+	  _termOptEdit->setText("");
+	  _uidEdit->setText("");
+	  _terminalCB->setChecked(false);
+	  _uidCB->setChecked(false);
+
+	  return;
+    }
 
     _execEdit->setText(df.readEntry("Exec"));
     _typeEdit->setText(df.readType());
