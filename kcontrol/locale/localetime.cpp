@@ -224,6 +224,6 @@ void KLocaleConfigTime::reTranslate()
 
   QToolTip::add(edDateFmtShort, locale->translate(
     "The text in this textbox will be used to format short\n"
-    "dates. Short dates can not be longer than 12 charaters.\n"
+    "dates. This is for instance used when listing files.\n"
     "The sequences below will be replaced:\n") + datecodes);
 }
