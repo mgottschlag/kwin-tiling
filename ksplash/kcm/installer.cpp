@@ -222,6 +222,7 @@ void SplashInstaller::readThemesList()
 void SplashInstaller::defaults()
 {
   mThemesList->setCurrentItem(findTheme("Default"));
+  emit changed( true );
 }
 
 void SplashInstaller::load()
@@ -230,6 +231,7 @@ void SplashInstaller::load()
   cnf.setGroup("KSplash");
   QString curTheme = cnf.readEntry("Theme","Default");
   mThemesList->setCurrentItem(findTheme(curTheme));
+  emit changed( false );
 }
 
 //-----------------------------------------------------------------------------
@@ -246,6 +248,7 @@ void SplashInstaller::save()
   cur = path.findRev('/');
   cnf.writeEntry("Theme", path.mid(cur+1) );
   cnf.sync();
+  emit changed( false );
 }
 
 //-----------------------------------------------------------------------------
