@@ -54,8 +54,6 @@ public slots:
   void update() { reTranslate(); updateSample(); };
 
 private:
-  void reTranslate(QObjectListIt it);
-
   QTabWidget          *tab;
   KLocaleConfig       *localemain;
   KLocaleConfigNumber *localenum;

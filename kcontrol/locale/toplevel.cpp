@@ -25,6 +25,8 @@
 #include <qlabel.h>
 #include <qobjectlist.h>
 #include <qtabwidget.h>
+#include <qevent.h>
+#include <qwidgetintdict.h>
 
 #include <kcharsets.h>
 #include <kconfig.h>
@@ -32,6 +34,7 @@
 #include <kmessagebox.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kapp.h>
 
 #include "klocaleadv.h"
 #include "locale.h"
@@ -135,39 +138,39 @@ void KLocaleApplication::updateSample()
 
 void KLocaleApplication::reTranslate()
 {
-    QObjectList it;
-    it.append( this );
-    reTranslate(it);
+  // The untranslated string for QLabel are stored in 
+  // the name() so we use that when retranslating
+  QObjectList *list = queryList("QLabel");
+  QObjectListIt it(*list);
+  QObject *wc;
+  while ( (wc = it.current()) != 0 ) {
+    ++it;
+    
+    // unnamed labels will cause errors and should not be 
+    // retranslated. E.g. the example box should not be
+    // retranslated from here.
+    if (strcmp(wc->name(), "unnamed") == 0) continue;
+    
+    ((QLabel *)wc)->setText( locale->translate( wc->name() ) );
+  }
+  delete list;
 
-    gbox->setCaption(i18n("Examples"));
-    tab->changeTab(localemain, locale->translate("&Locale"));
-    tab->changeTab(localenum, locale->translate("&Numbers"));
-    tab->changeTab(localemon, locale->translate("&Money"));
-    tab->changeTab(localetime, locale->translate("&Time && dates"));
+  // Here we have the pointer
+  gbox->setCaption(i18n("Examples"));
+  tab->changeTab(localemain, locale->translate("&Locale"));
+  tab->changeTab(localenum, locale->translate("&Numbers"));
+  tab->changeTab(localemon, locale->translate("&Money"));
+  tab->changeTab(localetime, locale->translate("&Time && dates"));
 
-    // retranslate some other widgets
-    localemain->reTranslate();
-    localenum->reTranslate();
-    localemon->reTranslate();
-    localetime->reTranslate();
-}
+  // retranslate some other widgets
+  localemain->reTranslate();
+  localenum->reTranslate();
+  localemon->reTranslate();
+  localetime->reTranslate();
 
-void KLocaleApplication::reTranslate(QObjectListIt it)
-{
-    QObject *wc;
-    while( (wc = it.current()) != 0 ) {
-      ++it;
-      if (wc->children())
-        reTranslate(QObjectListIt(*wc->children()));
-
-      if ( !qstrcmp(wc->name(), "unnamed") )
-         continue;
-      if ( !wc->isWidgetType() )
-         continue;
-
-      if ( !qstrcmp(wc->className(), "QLabel"))
-        ((QLabel *)wc)->setText(locale->translate(wc->name()));
-    }
+  // FIXME: All widgets are done now. However, there are 
+  // still some problems. Popup menus from the QLabel are 
+  // not retranslated.
 }
 
 void KLocaleApplication::reset()
@@ -179,11 +182,26 @@ void KLocaleApplication::reset()
 
 void KLocaleApplication::newChset()
 {
-  QFont *font = new QFont(QString::fromLatin1("helvetica"), 12, QFont::Normal);
-  KGlobal::charsets()->setQFont(*font, locale->charset());
+  // figure out which font to use
   KConfig *c = KGlobal::config();
   c->setGroup( QString::fromLatin1("General") );
-  setFont(c->readFontEntry(QString::fromLatin1("font"), font));
+
+  QFont font(QString::fromLatin1("helvetica"), 12, QFont::Normal);
+  KGlobal::charsets()->setQFont(font, locale->charset());
+  font = c->readFontEntry(QString::fromLatin1("font"), &font);
+
+  // set the font for all subwidgets
+  QObjectList *list = queryList("QWidget");
+  QObjectListIt it(*list);
+
+  QObject *w;
+  while ( (w = it.current()) != 0 ) {
+    ++it;
+    ((QWidget *)w)->setFont(font);
+  }
+  delete list;
+
+  // FIXME: the context help are still using the old charset
 
   moduleChanged(true);
 }
