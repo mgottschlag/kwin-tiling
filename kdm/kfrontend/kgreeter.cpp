@@ -109,6 +109,10 @@ KGreeter::KGreeter()
 	user_view->header()->hide();
 	insertUsers( user_view );
 	main_grid->addMultiCellWidget(user_view, 0, 3, 0, 0);
+	connect( user_view, SIGNAL(clicked( QListViewItem * )),
+		 SLOT(slot_user_name( QListViewItem * )) );
+	connect( user_view, SIGNAL(doubleClicked( QListViewItem * )),
+		 SLOT(slot_user_doubleclicked()) );
     }
 
     switch (kdmcfg->_logoArea) {
@@ -132,6 +136,10 @@ KGreeter::KGreeter()
 
     loginEdit = new KLoginLineEdit( winFrame );
     loginLabel = new QLabel( loginEdit, i18n("&Login:"), winFrame );
+    // update session type
+    connect( loginEdit, SIGNAL(lost_focus()), SLOT(sel_user()) );
+    // start login timeout after entered login
+    connect( loginEdit, SIGNAL(lost_focus()), SLOT(SetTimer()) );
 
     passwdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode );
     passwdLabel = new QLabel( passwdEdit, i18n("&Password:"), winFrame );
@@ -139,6 +147,9 @@ KGreeter::KGreeter()
     sessargBox = new QComboBox( false, winFrame );
     sessargLabel = new QLabel( sessargBox, i18n("Session &type:"), winFrame );
     sessargBox->insertStringList( kdmcfg->_sessionTypes );
+    // update sessargStat
+    connect( sessargBox, SIGNAL(activated(int)),
+	     SLOT(slot_session_selected()) );
     sessargStat = new QWidget( winFrame );
     sasPrev = new QLabel( i18n("session type", "(previous)"), sessargStat );
     sasSel = new QLabel( i18n("session type", "(selected)"), sessargStat );
@@ -242,19 +253,6 @@ KGreeter::KGreeter()
     timer = new QTimer( this );
     // clear fields
     connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
-    // update session type
-    connect( loginEdit, SIGNAL(lost_focus()), SLOT(sel_user()) );
-    // start login timeout after entered login
-    connect( loginEdit, SIGNAL(lost_focus()), SLOT(SetTimer()) );
-    // update sessargStat
-    connect( sessargBox, SIGNAL(activated(int)),
-	     SLOT(slot_session_selected()) );
-    if (user_view) {
-	connect( user_view, SIGNAL(returnPressed( QListViewItem * )),
-		 SLOT(slot_user_name( QListViewItem * )) );
-	connect( user_view, SIGNAL(clicked( QListViewItem * )),
-		 SLOT(slot_user_name( QListViewItem * )) );
-    }
 
     reject();
 
@@ -266,9 +264,9 @@ KGreeter::KGreeter()
     if (kdmcfg->_preselUser != PRESEL_PREV)
 	stsfile->deleteEntry( enam, false );
     if (kdmcfg->_preselUser != PRESEL_NONE) {
-	if (kdmcfg->_preselUser == PRESEL_PREV) {
+	if (kdmcfg->_preselUser == PRESEL_PREV)
 	    loginEdit->setText( stsfile->readEntry( enam ) );
-	} else
+	else
 	    loginEdit->setText( kdmcfg->_defaultUser );
 	if (kdmcfg->_focusPasswd && !loginEdit->text().isEmpty())
 	    passwdEdit->setFocus();
@@ -398,6 +396,12 @@ KGreeter::slot_user_name( QListViewItem *item )
 	load_wm();
 	SetTimer();
     }
+}
+
+void
+KGreeter::slot_user_doubleclicked()
+{
+    verifyUser( true );
 }
 
 void
@@ -701,7 +705,9 @@ KGreeter::accept()
 	load_wm();
 //	if (!verifyUser(false))
 	    passwdEdit->setFocus();
-    } else
+    } else if (user_view && user_view->hasFocus())
+	slot_user_name( user_view->currentItem() );
+    else
 	verifyUser(true);
 }
 

@@ -100,6 +100,7 @@ public slots:
     void quit_button_clicked();
     void shutdown_button_clicked();
     void slot_user_name( QListViewItem * );
+    void slot_user_doubleclicked();
     void slot_session_selected();
     void SetTimer();
     void timerDone();
