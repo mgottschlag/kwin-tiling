@@ -28,6 +28,7 @@
 #include <qlayout.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <kdialog.h>
 #include <kinstance.h>
 #include "eventconfig.h"
 
@@ -36,7 +37,9 @@
 EventView::EventView(QWidget *parent, const char *name):
 	QWidget(parent, name), event(0), oldListItem(-1)
 {
-	QGridLayout *layout=new QGridLayout(this,2,8);
+	QGridLayout *layout=new QGridLayout(this,4, 2, 
+					    KDialog::marginHint(),
+					    KDialog::spacingHint());
 	
 	static QStringList presentation;
 	presentation << i18n("Sound")
@@ -47,11 +50,11 @@ EventView::EventView(QWidget *parent, const char *name):
 	eventslist=new QListBox(this);
 	eventslist->insertStringList(presentation);
 	
-	layout->addMultiCellWidget(eventslist, 0,7, 0,0);
+	layout->addMultiCellWidget(eventslist, 0,3, 0,0);
 	layout->addWidget(enabled=new QCheckBox(i18n("&Enabled"),this), 0,1);
 	layout->addWidget(file=new KLineEdit(this), 2,1);
 	layout->addWidget(new QLabel(file, i18n("&File:"), this), 1,1);
-	layout->addWidget(todefault=new QPushButton(i18n("&Default Event"), this), 3,1);
+	layout->addWidget(todefault=new QPushButton(i18n("&Default Event"), this), 3,1, Qt::AlignRight);
 	
 	file->setEnabled(false);
 	connect(eventslist, SIGNAL(highlighted(int)), SLOT(itemSelected(int)));
