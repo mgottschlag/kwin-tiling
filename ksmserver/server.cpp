@@ -686,6 +686,22 @@ void FreeAuthenticationData(int count, IceAuthDataEntry *authDataEntries)
     free(remAuthFile);
 }
 
+static int Xio_ErrorHandler( Display * )
+{
+    qWarning("ksmserver: Fatal IO error: client killed");
+
+    // Don't do anything that might require the X connection
+    if (the_server)
+    {
+       KSMServer *server = the_server;
+       the_server = 0;
+       server->cleanUp();
+       // Don't delete server!!
+    }
+    
+    exit(0); // Don't report error, it's not our fault.
+}
+
 static void sighandler(int sig)
 {
     if (sig == SIGHUP) {
@@ -695,11 +711,14 @@ static void sighandler(int sig)
 
     if (the_server)
     {
-       the_server->cleanUp();
-       delete the_server;
+       KSMServer *server = the_server;
        the_server = 0;
+       server->cleanUp();
+       delete server;
     }
-    kapp->quit();
+
+    if (kapp)
+        kapp->quit();
     //::exit(0);
 }
 
@@ -1503,6 +1522,9 @@ void KSMServer::restoreSessionDoneInternal()
     disconnectDCOPSignal( launcher, launcher, "autoStart2Done()",
                           "restoreSessionDoneInternal()");
     upAndRunning( "session ready" );
+    
+    // From now on handle X errors as normal shutdown.
+    XSetIOErrorHandler(Xio_ErrorHandler);
 }
 
 void KSMServer::publishProgress( int progress, bool max  )
