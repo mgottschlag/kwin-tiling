@@ -44,7 +44,7 @@ DockContainer::DockContainer(QWidget *parent, const char *name)
   _busy->setGeometry(0,0, width(), height());
   _busy->hide();
   _rootOnly = new QLabel(i18n("<big>You need super user privileges to run this control module.</big><br>"
-							  "Click on the \"Run as root\" button below."), this);
+							  "Click on the \"Modify\" button below."), this);
   _rootOnly->setAlignment(AlignCenter);
   _rootOnly->setTextFormat(RichText);
   _rootOnly->setGeometry(0,0, width(), height());

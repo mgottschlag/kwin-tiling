@@ -83,7 +83,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   _cancel = new QPushButton(i18n("&Cancel"), this);
   _ok = new QPushButton(i18n("&OK"), this);
   _apply = new QPushButton(i18n("&Apply"), this);
-  _root = new QPushButton(i18n("R&un as root"), this);
+  _root = new QPushButton(i18n("&Modify"), this);
 
   // only enable the requested buttons
   int b = _client->buttons();
