@@ -336,7 +336,7 @@ void KEmailConfig::selectEmailClient()
   QString client = KFileDialog::getOpenFileName(QString::null, "*", this);
 
   QFileInfo *clientInfo = new QFileInfo(client);
-  if ((clientInfo->exists()) && (clientInfo->isExecutable()))
+  if (clientInfo->exists() && clientInfo->isExecutable() && clientInfo->filePath().contains(' ') == 0)
     emailClient->setText(client);
 }
 
