@@ -568,7 +568,7 @@ bool
 KDMSlimShutdown::checkShutdown( int type, const char *os )
 {
 	reject();
-	dpySpec *sess = fetchSessions( lstRemote );
+	dpySpec *sess = fetchSessions( lstRemote | lstTTY );
 	if (!sess && _allowShutdown != SHUT_ROOT)
 		return true;
 	int ret = KDMConfShutdown( -1, sess, type, os ).exec();
@@ -583,7 +583,7 @@ KDMSlimShutdown::checkShutdown( int type, const char *os )
 void
 KDMSlimShutdown::externShutdown( int type, const char *os, int uid )
 {
-	dpySpec *sess = fetchSessions( lstRemote );
+	dpySpec *sess = fetchSessions( lstRemote | lstTTY );
 	int ret = KDMConfShutdown( uid, sess, type, os ).exec();
 	disposeSessions( sess );
 	if (ret == Schedule)

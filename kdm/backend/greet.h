@@ -144,6 +144,7 @@ from the copyright holder.
 #define G_List          111 /* int flags; ?*(str,str,[int,]str,str,int), int 0 */
 # define lstRemote        1
 # define lstPassive       2
+# define lstTTY           4
 # define isSelf           1
 # define isTTY            2
 #define G_QueryShutdown 112 /* ; 5*int; string */

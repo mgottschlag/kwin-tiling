@@ -505,12 +505,12 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			}
 			goto bust;
 		} else if (fd >= 0 && !strcmp( ar[0], "list" )) {
-			int flags = lstRemote;
+			int flags = lstRemote | lstTTY;
 			if (ar[1]) {
 				if (!strcmp( ar[1], "all" ))
-					flags = lstRemote | lstPassive;
+					flags = lstRemote | lstPassive | lstTTY;
 				else if (!strcmp( ar[1], "alllocal" ))
-					flags = lstPassive;
+					flags = lstPassive | lstTTY;
 				else {
 					fLog( d, fd, "bad", "invalid list scope %\"s", ar[1] );
 					goto bust;

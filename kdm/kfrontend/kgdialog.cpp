@@ -219,7 +219,7 @@ KGDialog::slotPopulateDisplays()
 {
 #ifdef HAVE_VTS
 	dpyMenu->clear();
-	dpySpec *sessions = fetchSessions( lstPassive );
+	dpySpec *sessions = fetchSessions( lstPassive | lstTTY );
 	QString user, loc;
 	for (dpySpec *sess = sessions; sess; sess = sess->next) {
 		decodeSess( sess, user, loc );

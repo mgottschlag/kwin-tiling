@@ -555,6 +555,9 @@ ListSessions( int flags, struct display *d, void *ctx,
 		     ((flags & lstPassive) ? di->status == running : di->userSess >= 0)))
 			emitXSess( di, d, ctx );
 
+	if (!(flags & lstTTY))
+		return;
+
 #ifdef BSD_UTMP
 	if ((fd = open( UTMP_FILE, O_RDONLY )) < 0)
 		return;
