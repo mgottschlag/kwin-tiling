@@ -36,8 +36,6 @@ public:
   virtual void load();
   virtual void defaults();
 
-  const KAboutData *aboutData() const;
-
 private:
   SplashInstaller *mInstaller;
 };
@@ -62,6 +60,18 @@ KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const char *name, const QStri
   box->addWidget(mInstaller);
 #endif
   connect( mInstaller, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
+  KAboutData *about = new KAboutData( "kcmksplash"
+                                      ,I18N_NOOP("KDE splash screen theme manager")
+                                      ,"0.1"
+                                      ,0
+                                      ,KAboutData::License_GPL
+                                      ,I18N_NOOP("(c) 2003 KDE developers") );
+  about->addAuthor("Ravikiran Rajagopal", 0, "ravi@ee.eng.ohio-state.edu");
+  about->addCredit("Brian Ledbetter", I18N_NOOP("Original KSplash/ML author"), "brian@shadowcom.net");
+  about->addCredit(I18N_NOOP("KDE Theme Manager authors" ), I18N_NOOP("Original installer code") );
+  // Once string freeze is over, replace second argument with "Icon"
+  about->addCredit("Hans Karlsson", 0, "karlsson.h@home.se" );
+  setAboutData(about);
 }
 
 KSplashThemeMgr::~KSplashThemeMgr()
@@ -92,20 +102,4 @@ void KSplashThemeMgr::load()
 void KSplashThemeMgr::defaults()
 {
   mInstaller->defaults();
-}
-
-const KAboutData* KSplashThemeMgr::aboutData() const
-{
-  KAboutData *about = new KAboutData( "kcmksplash"
-                                      ,I18N_NOOP("KDE splash screen theme manager")
-                                      ,"0.1"
-                                      ,0
-                                      ,KAboutData::License_GPL
-                                      ,I18N_NOOP("(c) 2003 KDE developers") );
-  about->addAuthor("Ravikiran Rajagopal", 0, "ravi@ee.eng.ohio-state.edu");
-  about->addCredit("Brian Ledbetter", I18N_NOOP("Original KSplash/ML author"), "brian@shadowcom.net");
-  about->addCredit(I18N_NOOP("KDE Theme Manager authors" ), I18N_NOOP("Original installer code") );
-  // Once string freeze is over, replace second argument with "Icon"
-  about->addCredit("Hans Karlsson", 0, "karlsson.h@home.se" );
-  return about;
 }
