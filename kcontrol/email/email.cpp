@@ -72,7 +72,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 
 	lblFullName = new QLabel( grpUserInfo, "lblFullName" );
 	lblFullName->setGeometry( QRect( 7, 22, 107, 22 ) ); 
-	lblFullName->setText("&Full Name:");
+	lblFullName->setText(i18n("&Full Name:"));
 	lblFullName->setTextFormat( QLabel::PlainText );
 	txtFullName = new QLineEdit( grpUserInfo, "txtFullName" );
 	txtFullName->setGeometry( QRect( 122, 22, 406, 22 ) ); 
