@@ -20,6 +20,14 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.1  2000/04/08 22:50:45  charles
+    Totally broken for a change in design.
+    I'll start doing some "object oriented programming" now! Who would've
+    thought? :)
+
+    eventconfig.h will load up everything into memory, and then put it into
+    the lists box, and even do the rest of the goop.  ohh yeah.
+
 */
 
 
@@ -67,7 +75,7 @@ public:
 
 class Programs
 {
-	Programs();
+	Programs() {};
 	
 	static EventView *eventview;
 	static QListView *programs;
