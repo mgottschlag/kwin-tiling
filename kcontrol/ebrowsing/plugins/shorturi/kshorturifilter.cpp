@@ -150,7 +150,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   {
     bool hasEndSlash = ( cmd[cmd.length()-1] == '/' );
     cmd = QDir::cleanDirPath( url.path() );
-    if ( hasEndSlash )
+    if ( hasEndSlash && cmd.right(1) != QFL1("/") )
       cmd += '/';
   }
 
