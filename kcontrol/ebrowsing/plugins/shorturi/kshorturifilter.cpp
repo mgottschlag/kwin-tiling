@@ -105,28 +105,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   * hackable and is missing a config dialog.
   */
 
-  QString ref;
   KURL url = data.uri();
-  QString cmd = url.url();
+  QString cmd = data.typedString();
   bool isMalformed = url.isMalformed();
-
-  // Extract path if URL is local
-  // (this removes "file:" but also decodes back %20 etc.)
-  if( url.isLocalFile() && !isMalformed )
-  {
-    cmd = url.path();
-
-    // Filter file://localhost as well...
-    if (url.hasHost() && cmd.isEmpty())
-      cmd = "/";
-
-    if ( url.hasRef() )
-        ref = QFL1("#") + url.ref();
-  }
-
-  // Note: do NOT use "url" below this point
-
-  //kdDebug() << "KShortURIFilter::filterURI cmd=" << cmd << endl;
 
   // TODO: Make this a bit more intelligent for Minicli! There
   // is no need to make comparisons if the supplied data is a local
@@ -155,24 +136,40 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
   bool expanded = false;
   // Expanding shortcut to HOME URL...
-  if( cmd[0] == '~' )
+  QString path;
+  QString ref;
+  if (KURL::isRelativeURL(cmd))
   {
-    int slashPos = cmd.find('/');
+     path = cmd;
+  }
+  else
+  {
+     path = url.path();
+     ref = url.ref();
+     if (url.isLocalFile())
+     {
+        path += KURL::decode_string(url.query());
+        if (path.isEmpty() && url.hasHost())
+           path = "/";
+     }
+  }
+
+  if( path[0] == '~' )
+  {
+    int slashPos = path.find('/');
     if( slashPos == -1 )
-      slashPos = cmd.length();
+      slashPos = path.length();
     if( slashPos == 1 )   // ~/
     {
-      cmd.replace ( 0, 1, QDir::homeDirPath() );
-      //url = cmd;
+      path.replace ( 0, 1, QDir::homeDirPath() );
     }
     else // ~username/
     {
-      QString user = cmd.mid( 1, slashPos-1 );
+      QString user = path.mid( 1, slashPos-1 );
       struct passwd *dir = getpwnam(user.local8Bit().data());
       if( dir && strlen(dir->pw_dir) )
       {
-        cmd.replace (0, slashPos, QString::fromLocal8Bit(dir->pw_dir));
-        //url = cmd;          // update the URL...
+        path.replace (0, slashPos, QString::fromLocal8Bit(dir->pw_dir));
       }
       else
       {
@@ -187,35 +184,21 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
     expanded = true;
   }
-  else if ( cmd[0] == '$' )
-  {
+  else if ( path[0] == '$' ) {
     // Environment variable expansion.
     QRegExp r (QFL1(ENV_VAR_PATTERN));
-    if ( r.search( cmd ) == 0 )
+    if ( r.search( path ) == 0 ) 
     {
-      const char* exp = getenv( cmd.mid( 1, r.matchedLength() - 1 ).local8Bit().data() );
-      if(exp)
+      const char* exp = getenv( path.mid( 1, r.matchedLength() - 1 ).local8Bit().data() );
+      if(exp) 
       {
-        cmd.replace( 0, r.matchedLength(), QString::fromLocal8Bit(exp) );
+        path.replace( 0, r.matchedLength(), QString::fromLocal8Bit(exp) );
         expanded = true;
       }
     }
   }
 
-  if ( expanded )
-  {
-    // Look for #ref again, after $ and ~ expansion
-    // Can't use KURL here, setPath would escape it...
-    int pos = cmd.find('#');
-    if ( pos > -1 )
-    {
-      ref = cmd.mid( pos );
-      cmd = cmd.left( pos );
-      //kdDebug() << "cmd=" << cmd << " ref=" << ref << endl;
-    }
-  }
-
-  bool isLocalFullPath = cmd[0] == '/';
+  bool isLocalFullPath = !path.isEmpty() && (path[0] == '/');
 
   // Checking for local resource match...
   // Determine if "uri" is an absolute path to a local resource  OR
@@ -234,41 +217,49 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   {
     QString abs = QDir::cleanDirPath( abs_path );
     // combine absolute path (abs_path) and relative path (cmd) into abs_path
-    int len = abs.length();
-    if( (len==1 && cmd[0]=='.') || (len==2 && cmd[0]=='.' && cmd[1]=='.') )
-        cmd += '/';
-    //kdDebug() << "adding " << abs << " and " << cmd << endl;
-    abs = QDir::cleanDirPath(abs + '/' + cmd);
+    int len = path.length();
+    if( (len==1 && path[0]=='.') || (len==2 && path[0]=='.' && path[1]=='.') )
+        path += '/';
+    //kdDebug() << "adding " << abs << " and " << path << endl;
+    abs = QDir::cleanDirPath(abs + '/' + path);
     //kdDebug() << "checking whether " << abs << " exists." << endl;
     // Check if it exists
-    if( stat( abs.local8Bit().data(), &buff ) == 0 )
+    if( stat( QFile::encodeName(abs).data(), &buff ) == 0 ) 
     {
-        cmd = abs; // yes -> store as the new cmd
+        path = abs; // yes -> store as the new cmd
         exists = true;
         isLocalFullPath = true;
     }
   }
 
   if( isLocalFullPath && !exists )
-    exists = ( stat( cmd.local8Bit().data() , &buff ) == 0 );
+  {
+    exists = ( stat( QFile::encodeName(path).data() , &buff ) == 0 );
+  }
 
-  //kdDebug() << "cmd=" << cmd << " isLocalFullPath=" << isLocalFullPath << " exists=" << exists << endl;
+  kdDebug() << "path =" << path << " isLocalFullPath=" << isLocalFullPath << " exists=" << exists << endl;
   if( exists )
   {
     // Can be abs path to file or directory, or to executable with args
     bool isDir = S_ISDIR( buff.st_mode );
-    if( !isDir && access (cmd.local8Bit().data(), X_OK) == 0 )
+    if( !isDir && access ( QFile::encodeName(path).data(), X_OK) == 0 )
     {
-      //kdDebug() << "Abs path to EXECUTABLE" << endl;
-      setFilteredURI( data, cmd );
+      kdDebug() << "Abs path to EXECUTABLE" << endl;
+      KURL u;
+      u.setPath(path);
+      u.setRef(ref);
+      setFilteredURI( data, u );
       setURIType( data, KURIFilterData::EXECUTABLE );
       return true;
     }
     // Open "uri" as file:/xxx if it is a non-executable local resource.
     if( isDir || S_ISREG( buff.st_mode ) )
     {
-      cmd += ref;
-      setFilteredURI( data, cmd );
+      kdDebug() << "Abs path as local file" << endl;
+      KURL u;
+      u.setPath(path);
+      u.setRef(ref);
+      setFilteredURI( data, u );
       setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
       return true;
     }
@@ -301,9 +292,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     QStringList protocols = KProtocolInfo::protocols();
     for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); it++ )
     {
-      if( (cmd.left((*it).length()).lower() == *it) )
+      if( (url.protocol() == *it) )
       {
-        setFilteredURI( data, cmd );
+        setFilteredURI( data, url );
         if ( *it == QFL1("man") || *it == QFL1("help") )
           setURIType( data, KURIFilterData::HELP );
         else
