@@ -164,6 +164,8 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     listView->setMultiSelection( false );
     listView->setAllColumnsShowFocus( true );
     listView->setSelectionMode( QListView::Single );
+    connect( listView, SIGNAL( selectionChanged ( QListViewItem * )),
+             SLOT(selectionChanged ( QListViewItem * )));
     connect( listView, SIGNAL( rightButtonPressed( QListViewItem *,
                                                    const QPoint&, int) ),
              SLOT( slotRightPressed( QListViewItem *, const QPoint&, int )));
@@ -205,8 +207,8 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     QPushButton *button = new QPushButton( i18n("&Add Action"), box );
     connect( button, SIGNAL( clicked() ), SLOT( slotAddAction() ));
 
-    button = new QPushButton( i18n("&Delete Action"), box );
-    connect( button, SIGNAL( clicked() ), SLOT( slotDeleteAction() ));
+    delActionButton = new QPushButton( i18n("&Delete Action"), box );
+    connect( delActionButton, SIGNAL( clicked() ), SLOT( slotDeleteAction() ));
 
     QLabel *label = new QLabel(i18n("Click on a highlighted item's column to change it. \"%s\" in a command will be replaced with the clipboard contents."), box);
     label->setAlignment( WordBreak | AlignLeft | AlignVCenter );
@@ -218,7 +220,9 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     advanced->setFixedSize( advanced->sizeHint() );
     connect( advanced, SIGNAL( clicked() ), SLOT( slotAdvanced() ));
     (void) new QWidget( box ); // spacer
-    
+
+    delActionButton->setEnabled(listView->currentItem () !=0);
+
     setOrientation( Horizontal );
 }
 
@@ -226,6 +230,10 @@ ActionWidget::~ActionWidget()
 {
 }
 
+void ActionWidget::selectionChanged ( QListViewItem * item)
+{
+    delActionButton->setEnabled(item!=0);
+}
 
 void ActionWidget::slotRightPressed( QListViewItem *item, const QPoint&, int )
 {
@@ -308,16 +316,16 @@ ActionList * ActionWidget::actionList()
 
 void ActionWidget::slotAdvanced()
 {
-    KDialogBase dlg( 0L, "advanced dlg", true, 
+    KDialogBase dlg( 0L, "advanced dlg", true,
                      i18n("Advanced Settings"),
                      KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok );
     QVBox *box = dlg.makeVBoxMainWidget();
     AdvancedWidget *widget = new AdvancedWidget( box );
     widget->setWMClasses( m_wmClasses );
 
-    dlg.resize( dlg.sizeHint().width(), 
+    dlg.resize( dlg.sizeHint().width(),
                 dlg.sizeHint().height() +40); // or we get an ugly scrollbar :(
-    
+
     if ( dlg.exec() == QDialog::Accepted ) {
         m_wmClasses = widget->wmClasses();
     }
@@ -336,7 +344,7 @@ AdvancedWidget::AdvancedWidget( QWidget *parent, const char *name )
 	       "Next, click on the window you want to examine. The<br>"
 	       "first string it outputs after the equal sign is the one<br>"
 	       "you need to enter here.</qt>"));
-    
+
     editListBox->setFocus();
 }
 

@@ -30,6 +30,7 @@
 
 class KGlobalAccel;
 class KListView;
+class QPushButton;
 
 class GeneralWidget : public QVGroupBox
 {
@@ -90,11 +91,12 @@ private slots:
     void slotRightPressed( QListViewItem *, const QPoint&, int col );
     void slotItemChanged( QListViewItem *, const QPoint& , int );
     void slotAdvanced();
-
+    void selectionChanged ( QListViewItem *);
 private:
     KListView *listView;
     QStringList m_wmClasses;
     AdvancedWidget *advancedWidget;
+    QPushButton *delActionButton;
 };
 
 class KeysWidget : public QVGroupBox
