@@ -245,8 +245,6 @@ KClassicGreeter::start()
 void // virtual
 KClassicGreeter::suspend()
 {
-    // assert( running && !cont );
-    abort();
 }
 
 void // virtual
@@ -280,7 +278,7 @@ KClassicGreeter::next()
 	returnData();
 }
 
-void
+void // virtual
 KClassicGreeter::abort()
 {
     if (exp >= 0) {
@@ -327,25 +325,23 @@ KClassicGreeter::revive()
     } else {
 	setActive( true );
 	passwdEdit->erase();
-	passwdEdit->setFocus();
+	if (loginEdit->text().isEmpty())
+	    loginEdit->setFocus();
+	else
+	    passwdEdit->setFocus();
     }
 }
 
 void // virtual
 KClassicGreeter::clear()
 {
-    // in fixedUser mode this is only called after errors, not during auth.
-    // won't be called during password change.
-    abort();
-    if (loginEdit)
-	loginEdit->clear();
+    // assert( !running && !passwd1Edit );
     passwdEdit->erase();
-    if (running) {
-	if (loginEdit)
-	    loginEdit->setFocus();
-	else
-	    passwdEdit->setFocus();
-    }
+    if (loginEdit) {
+	loginEdit->clear();
+	loginEdit->setFocus();
+    } else
+	passwdEdit->setFocus();
 }
 
 

@@ -189,15 +189,16 @@ public:
     virtual void start() = 0;
 
     /**
-     * Request to interrupt the auth.
-     * This must bring the core into a serving state.
-     * Will be called only if running within Login context.
+     * Request to suspend the auth. Make sure that a second talker of any
+     * type will be able to operate while this one is suspended (no busy
+     * device nodes, etc.).
+     * Will be called only if running within Login context. (Actually it
+     * won't be called at all, but be prepared.)
      */
     virtual void suspend() = 0;
 
     /**
-     * Request to continue the auth, if possible from the point it was
-     * interrupted at.
+     * Request to resume the auth from the point it was suspended at.
      * Will be called only when suspended.
      */
     virtual void resume() = 0;
@@ -210,7 +211,8 @@ public:
     virtual void next() = 0;
 
     /**
-     * Abort auth cycle.
+     * Abort auth cycle. Note that this should _not_ clear out already
+     * entered auth tokens if they are still on the screen.
      * Will be called only when running and stops it.
      */
     virtual void abort() = 0;
@@ -236,14 +238,15 @@ public:
     /**
      * Prepare retrying the previously failed phase.
      * This is mostly a request to re-enable all editable widgets failed()
-     * disabled previously, and to set the input focus.
-     * Will be called only when not running and failed() was called before.
+     * disabled previously, clear the probably incorrect authentication tokens
+     * and to set the input focus appropriately.
+     * Will be called only after failed() (possibly with clear() in between).
      */
     virtual void revive() = 0;
 
     /**
      * Clear any edit widgets, particularily anything set by setUser.
-     * Can be called at any time, particularily even while suspended.
+     * Will be called only when not running.
      */
     virtual void clear() = 0;
 

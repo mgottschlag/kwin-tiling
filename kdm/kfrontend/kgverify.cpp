@@ -214,8 +214,8 @@ KGVerify::suspend()
 {
     // assert( !cont );
     if (running) {
-	Debug( "greet->suspend()\n" );
-	greet->suspend();
+	Debug( "greet->abort()\n" );
+	greet->abort();
     }
     suspended = true;
     updateStatus();
@@ -227,10 +227,9 @@ KGVerify::resume()
     suspended = false;
     updateLockStatus();
     if (running) {
-	Debug( "greet->resume()\n" );
-	greet->resume();
-    }
-    if (delayed) {
+	Debug( "greet->start()\n" );
+	greet->start();
+    } else if (delayed) {
 	delayed = false;
 	running = true;
 	Debug( "greet->start()\n" );
@@ -251,8 +250,16 @@ KGVerify::reject()
 {
     // assert( !cont );
     curUser = QString::null;
+    if (running) {
+	Debug( "greet->abort()\n" );
+	greet->abort();
+    }
     Debug( "greet->clear()\n" );
     greet->clear();
+    if (running) {
+	Debug( "greet->start()\n" );
+	greet->start();
+    }
     hasBegun = false;
     if (!failed)
 	timer.stop();
