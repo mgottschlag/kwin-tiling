@@ -1,6 +1,10 @@
 /* $Id$ 
  *
  * $Log$
+ * Revision 1.14  1999/07/27 21:35:09  deller
+ *
+ * info-widgets use now the user-defined font from kcmdisplay.
+ *
  * Revision 1.13  1999/07/26 11:12:59  deller
  *
  * memory-info is now displayed again; it seemed to be a bug in qt20, where
@@ -145,13 +149,15 @@ void KMemoryWidget::resizeEvent( QResizeEvent *re )
     int addy;
     int maxx = Width_Info + OFFSET_DX + Width_Value;
     int left = (size.width()-maxx) / 2;
-    for (int i=TOTAL_MEM; i<MEM_LAST_ENTRY; ++i) {
+    int i;
+    for (i=TOTAL_MEM; i<MEM_LAST_ENTRY; ++i) {
 	addy = (i>=SWAP_MEM) ? DY : 0;
 	MemSizeLabel[i][0]->move(left,
 				    addy + STARTY + i*DY);
 	MemSizeLabel[i][1]->move(left+Width_Info+OFFSET_DX,
 				    addy + STARTY + i*DY + 1);
     }
+    setMinimumHeight(addy + STARTY + i*DY);
 }
 
 

@@ -127,6 +127,7 @@ KInfoApplication::KInfoApplication(int &argc, char **argv, const char *name)
         }
 
     }
+    mainWidget()->setMinimumHeight(memory->minimumHeight()+100);
 }
 
 
