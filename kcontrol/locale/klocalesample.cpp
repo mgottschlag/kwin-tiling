@@ -3,7 +3,7 @@
  *
  * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
  * Copyright (c) 1999 Preston Brown <pbrown@kde.org>
- * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2001 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/

@@ -27,6 +27,7 @@
 #include <qevent.h>
 #include <qwidgetintdict.h>
 #include <qlayout.h>
+#include <qpushbutton.h>
 
 #include <kconfig.h>
 #include <kcmodule.h>
@@ -101,6 +102,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   // make sure we always have translated interface
   connect(this, SIGNAL(languageChanged()),
 	  this, SLOT(slotTranslate()));
+  connect(this, SIGNAL(languageChanged()),
+	  m_localemain, SLOT(slotTranslate()));
   connect(this, SIGNAL(languageChanged()),
 	  m_localenum, SLOT(slotTranslate()));
   connect(this, SIGNAL(languageChanged()),
@@ -181,8 +184,9 @@ void KLocaleApplication::save()
 void KLocaleApplication::defaults()
 {
   // #### HPB: Do not use user config here..
-  m_locale->setLanguage(QString::fromLatin1("en_US"));
-  m_locale->setCountry(QString::fromLatin1("C"));
+  QStringList languageList(KLocale::defaultLanguage());
+  m_locale->setLanguage(languageList);
+  m_locale->setCountry(KLocale::defaultCountry());
   m_locale->setDefaultsOnly( true );
 
   emit localeChanged();
@@ -220,6 +224,9 @@ void KLocaleApplication::slotTranslate()
       ((QLabel *)wc)->setText( m_locale->translate( wc->name() ) );
     else if (strcmp(wc->className(), "QGroupBox") == 0)
       ((QGroupBox *)wc)->setTitle( m_locale->translate( wc->name() ) );
+    else if (strcmp(wc->className(), "QPushButton") == 0 ||
+	     strcmp(wc->className(), "KMenuButton") == 0)
+      ((QPushButton *)wc)->setText( m_locale->translate( wc->name() ) );
   }
   delete list;
 

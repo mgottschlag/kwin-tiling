@@ -32,6 +32,9 @@
 #include <qwhatsthis.h>
 #include <qcombobox.h>
 
+#include <qhbox.h>
+
+#include <kdialog.h>
 #include <kcharsets.h>
 #include <kapp.h>
 #include <kdebug.h>
@@ -41,8 +44,12 @@
 #include <ksimpleconfig.h>
 #include <kdialog.h>
 #include <klocale.h>
+#include <kmessagebox.h>
+
+#include <qlistbox.h>
 
 #include "klanguagebutton.h"
+#include "kmenubutton.h"
 #include "klocalesample.h"
 #include "locale.h"
 #include "locale.moc"
@@ -65,15 +72,30 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   connect( m_comboCountry, SIGNAL(activated(int)),
 	   this, SLOT(changedCountry(int)) );
 
-  m_labLang = new QLabel(this, I18N_NOOP("Language:"));
-  m_comboLanguage = new KLanguageButton( this );
-  m_comboLanguage->setFixedHeight(m_comboLanguage->sizeHint().height());
-  connect( m_comboLanguage, SIGNAL(activated(int)),
-	   this, SLOT(changedLanguage(int)) );
+  m_labLang = new QLabel(this, I18N_NOOP("Languages:"));
+  m_labLang->setAlignment( AlignTop );
+  QHBox *hb = new QHBox(this);
+  hb->setSpacing(KDialog::spacingHint());
+  m_languages = new QListBox(hb);
+  connect(m_languages, SIGNAL(selectionChanged()),
+	  SLOT(slotCheckButtons()));
 
-  new QLabel(this, I18N_NOOP("Encoding:"));
-  QComboBox * cb = new QComboBox( this );
-  cb->insertStringList( KGlobal::charsets()->descriptiveEncodingNames() );
+  QWidget * vb = new QWidget(hb);
+  QVBoxLayout * boxlay = new QVBoxLayout(vb, 0, KDialog::spacingHint());
+  m_addLanguage = new KMenuButton(vb, I18N_NOOP("Add..."));
+  boxlay->add(m_addLanguage);
+  connect(m_addLanguage, SIGNAL(activated(int)),
+	  SLOT(slotAddLanguage(int)));
+  m_removeLanguage = new QPushButton(vb, I18N_NOOP("Remove"));
+  boxlay->add(m_removeLanguage);
+  connect(m_removeLanguage, SIGNAL(clicked()),
+	  SLOT(slotRemoveLanguage()));
+  boxlay->insertStretch(-1);
+
+  // #### HPB: This should be implemented for KDE 3
+  //  new QLabel(this, I18N_NOOP("Encoding:"));
+  //QComboBox * cb = new QComboBox( this );
+  //cb->insertStringList( KGlobal::charsets()->descriptiveEncodingNames() );
 
   lay->setColStretch(1, 1);
 }
@@ -82,6 +104,49 @@ KLocaleConfig::~KLocaleConfig()
 {
 }
 
+void KLocaleConfig::slotAddLanguage(int i)
+{
+  QString code = m_addLanguage->tag(i);
+  QStringList languageList = m_locale->languageList();
+
+  int pos = m_languages->currentItem();
+  if ( pos < 0 ) pos = 0;
+  QStringList::Iterator it = languageList.at( pos );
+
+  // If it's already in list, just move it (delete the old, then insert a new)
+  QStringList::Iterator oldIt = languageList.find( code );
+  if ( oldIt != languageList.end() )
+    languageList.remove( oldIt );
+ 
+  languageList.insert( it, code );
+
+  m_locale->setLanguage( languageList );
+
+  emit localeChanged();
+  if ( pos == 0 )
+    emit languageChanged();
+}
+
+void KLocaleConfig::slotRemoveLanguage()
+{
+  QStringList languageList = m_locale->languageList();
+  int pos = m_languages->currentItem();
+
+  QStringList::Iterator it = languageList.at( pos );
+
+  if ( it != languageList.end() )
+    {
+      languageList.remove( it );
+
+      m_locale->setLanguage( languageList );
+
+      emit localeChanged();
+      if ( pos == 0 )
+	emit languageChanged();
+    }
+}
+
+
 void KLocaleConfig::loadLanguageList()
 {
   // temperary use of our locale as the global locale
@@ -89,15 +154,18 @@ void KLocaleConfig::loadLanguageList()
   KGlobal::_locale = m_locale;
 
   // clear the list
-  m_comboLanguage->clear();
+  m_addLanguage->clear();
 
   QStringList first = languageList();
 
   QStringList prilang;
   // add the primary languages for the country to the list
-  for ( QStringList::ConstIterator it = first.begin(); it != first.end(); ++it )
+  for ( QStringList::ConstIterator it = first.begin();
+	it != first.end();
+	++it )
     {
-      QString str = locate("locale", *it + QString::fromLatin1("/entry.desktop"));
+      QString str = locate("locale", QString::fromLatin1("%1/entry.desktop")
+			   .arg(*it));
       if (!str.isNull())
 	prilang << str;
     }
@@ -105,7 +173,6 @@ void KLocaleConfig::loadLanguageList()
   // add all languages to the list
   QStringList alllang = KGlobal::dirs()->findAllResources("locale",
                                QString::fromLatin1("*/entry.desktop"));
-  alllang.sort();
   QStringList langlist = prilang;
   if (langlist.count() > 0)
     langlist << QString::null; // separator
@@ -118,9 +185,9 @@ void KLocaleConfig::loadLanguageList()
     {
       if ((*it).isNull())
         {
-	  m_comboLanguage->insertSeparator();
+	  m_addLanguage->insertSeparator();
 	  submenu = QString::fromLatin1("other");
-	  m_comboLanguage->insertSubmenu(m_locale->translate("Other"),
+	  m_addLanguage->insertSubmenu(m_locale->translate("Other"),
 					 submenu, QString::null, -1);
           menu_index = -2; // first entries should _not_ be sorted
           continue;
@@ -135,7 +202,7 @@ void KLocaleConfig::loadLanguageList()
       tag = tag.left(index);
       index = tag.findRev('/');
       tag = tag.mid(index+1);
-      m_comboLanguage->insertItem(name, tag, submenu, menu_index);
+      m_addLanguage->insertItem(name, tag, submenu, menu_index);
     }
 
   // restore the old global locale
@@ -155,7 +222,6 @@ void KLocaleConfig::loadCountryList()
 
   QStringList regionlist = KGlobal::dirs()->findAllResources("locale",
                                  sub + QString::fromLatin1("*.desktop"));
-  regionlist.sort();
 
   for ( QStringList::ConstIterator it = regionlist.begin();
     it != regionlist.end();
@@ -181,7 +247,6 @@ void KLocaleConfig::loadCountryList()
   // add all languages to the list
   QStringList countrylist = KGlobal::dirs()->findAllResources
     ("locale", sub + QString::fromLatin1("*/entry.desktop"));
-  countrylist.sort();
 
   for ( QStringList::ConstIterator it = countrylist.begin();
 	it != countrylist.end(); ++it )
@@ -218,12 +283,13 @@ void KLocaleConfig::readLocale(const QString &path, QString &name,
   KGlobal::_locale = m_locale;
 
   // read the name
-  QString filepath = sub + path + QString::fromLatin1(".desktop");
+  QString filepath = QString::fromLatin1("%1%2/entry.desktop")
+    .arg(sub)
+    .arg(path);
 
   KSimpleConfig entry(locate("locale", filepath));
   entry.setGroup(QString::fromLatin1("KCM Locale"));
-  name = entry.readEntry(QString::fromLatin1("Name"),
-			 m_locale->translate("without name"));
+  name = entry.readEntry(QString::fromLatin1("Name"));
 
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -236,9 +302,15 @@ void KLocaleConfig::save()
   config->setGroup(QString::fromLatin1("Locale"));
 
   config->writeEntry(QString::fromLatin1("Country"), m_locale->country());
-  config->writeEntry(QString::fromLatin1("Language"), m_locale->language());
+  config->writeEntry(QString::fromLatin1("Language"),
+		     m_locale->languageList(), ':');
 
   config->sync();
+}
+
+void KLocaleConfig::slotCheckButtons()
+{
+  m_removeLanguage->setEnabled( m_languages->currentItem() != -1 );
 }
 
 void KLocaleConfig::slotLocaleChanged()
@@ -246,16 +318,32 @@ void KLocaleConfig::slotLocaleChanged()
   loadLanguageList();
   loadCountryList();
 
-  m_comboLanguage->setCurrentItem( m_locale->language() );
+  // update language widget
+  m_languages->clear();
+  QStringList languageList = m_locale->languageList();
+  for ( QStringList::Iterator it = languageList.begin();
+	it != languageList.end();
+	++it )
+    {
+      QString name;
+      readLocale(*it, name, QString::null);
+
+      if ( !name.isEmpty() )
+	m_languages->insertItem(name);
+    }
+  slotCheckButtons();
+
   m_comboCountry->setCurrentItem( m_locale->country() );
 }
 
 void KLocaleConfig::slotTranslate()
 {
+  kdDebug() << "slotTranslate()" << endl;
+
   QToolTip::add(m_comboCountry, m_locale->translate
         ( "This is were you live. KDE will use the defaults for "
           "this country.") );
-  QToolTip::add(m_comboLanguage, m_locale->translate
+  QToolTip::add(m_languages, m_locale->translate
         ( "All KDE programs will be displayed in this language (if "
           "available).") );
 
@@ -276,7 +364,8 @@ void KLocaleConfig::slotTranslate()
       "be translated to your language; in this case, they will automatically "
       "fall back to the default language, i.e. US English." );
   QWhatsThis::add( m_labLang, str );
-  QWhatsThis::add( m_comboLanguage, str );
+  QWhatsThis::add( m_languages, str );
+  QWhatsThis::add( m_addLanguage, str );
 }
 
 QStringList KLocaleConfig::languageList() const
@@ -295,25 +384,10 @@ void KLocaleConfig::changedCountry(int i)
 {
   m_locale->setCountry(m_comboCountry->tag(i));
 
-  // change to the first language in the list
-  QStringList langList = languageList();
-  langList += QString::fromLatin1("C"); // always exists
-  for ( QStringList::Iterator it = langList.begin();
-	it != langList.end();
-	++it)
-    {
-      if ( m_locale->setLanguage( *it ) )
-	break;
-    }
+  // change to the prefered languages in that country
+  m_locale->setLanguage( languageList() );
 
   emit languageChanged();
   emit localeChanged();
 }
 
-void KLocaleConfig::changedLanguage(int i)
-{
-  m_locale->setLanguage(m_comboLanguage->tag(i));
-
-  emit languageChanged();
-  emit localeChanged();
-}

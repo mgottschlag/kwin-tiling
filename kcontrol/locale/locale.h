@@ -30,7 +30,12 @@
 
 class KLocale;
 class KLanguageButton;
+class KMenuButton;
 class KLocaleSample;
+class KAddButton;
+
+class QListBox;
+class QPushButton;
 
 #include <qstringlist.h>
 
@@ -59,24 +64,31 @@ signals:
   void localeChanged();
   void languageChanged();
 
-private:
-  QStringList languageList() const;
-
-  KLocale *m_locale;
-
-  KLanguageButton *m_comboCountry,
-    *m_comboLanguage;
-
-  QLabel *m_labCountry,
-    *m_labLang;
-
 private slots:
   void loadLanguageList();
   void loadCountryList();
 
   void changedCountry(int);
-  void changedLanguage(int);
-  void readLocale(const QString &path, QString &name, const QString &sub) const;
+  void readLocale(const QString &path, QString &name,
+		  const QString &sub) const;
+
+  void slotAddLanguage(int);
+  void slotRemoveLanguage();
+  void slotCheckButtons();
+
+private:
+  QStringList languageList() const;
+
+  KLocale *m_locale;
+
+  KLanguageButton *m_comboCountry;
+
+  QLabel *m_labCountry,
+    *m_labLang;
+
+  QListBox * m_languages;
+  KMenuButton * m_addLanguage;
+  QPushButton * m_removeLanguage;
 };
 
 #endif
