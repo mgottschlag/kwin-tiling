@@ -5,7 +5,7 @@
 AM_CPPFLAGS = -UQT_NO_ASCII_CAST
 
 INCLUDES = $(all_includes)
-LDFLAGS = $(all_libraries) $(KDE_RPATH)
+AM_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD = $(LIB_KDEUI) -lm
 
 bin_PROGRAMS = krandom.kss kblankscrn.kss
