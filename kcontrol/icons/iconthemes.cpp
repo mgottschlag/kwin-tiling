@@ -21,7 +21,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <qfile.h>
 #include <qfileinfo.h>
 #include <qlayout.h>
 #include <qlabel.h>
@@ -43,7 +42,6 @@
 
 #include <kio/job.h>
 #include <kio/netaccess.h>
-#include <karchive.h>
 #include <ktar.h>
 
 #include "iconthemes.h"

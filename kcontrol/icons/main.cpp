@@ -23,10 +23,8 @@
 
 #include <qlayout.h>
 
-#include <kaboutdata.h>
-#include <kglobal.h>
-#include <klocale.h>
 #include <kgenericfactory.h>
+#include <kaboutdata.h>
 
 #include "icons.h"
 #include "iconthemes.h"

@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qlistview.h>
 #include <qgroupbox.h>
 #include <qcombobox.h>
 #include <qslider.h>
@@ -29,7 +28,7 @@
 #include <kcolorbutton.h>
 #include <kseparator.h>
 
-#include <icons.h>
+#include "icons.h"
 
 /**** KIconConfig ****/
 
