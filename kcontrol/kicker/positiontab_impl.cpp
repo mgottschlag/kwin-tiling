@@ -27,7 +27,7 @@
 #include <qslider.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
-#include <qtimer.h>
+#include <qtooltip.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
@@ -76,6 +76,40 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     m_panelList->setSorting(-1);
     m_panelList->header()->hide();
 
+    /*
+     * set the tooltips on the buttons properly for RTL langs
+     */
+    if (kapp->reverseLayout())
+    {
+        QToolTip::add(locationTopRight,     i18n("Top left"));
+        QToolTip::add(locationTop,          i18n("Top center"));
+        QToolTip::add(locationTopLeft,      i18n("Top right" ) );
+        QToolTip::add(locationRightTop,     i18n("Left top"));
+        QToolTip::add(locationRight,        i18n("Left center"));
+        QToolTip::add(locationRightBottom,  i18n("Left bottom"));
+        QToolTip::add(locationBottomRight,  i18n("Bottom left"));
+        QToolTip::add(locationBottom,       i18n("Bottom center"));
+        QToolTip::add(locationBottomLeft,   i18n("Bottom right"));
+        QToolTip::add(locationLeftTop,      i18n("Right top"));
+        QToolTip::add(locationLeft,         i18n("Right center"));
+        QToolTip::add(locationLeftBottom,   i18n("Right bottom"));
+    }
+    else
+    {
+        QToolTip::add(locationTopLeft,      i18n("Top left"));
+        QToolTip::add(locationTop,          i18n("Top center"));
+        QToolTip::add(locationTopRight,     i18n("Top right" ) );
+        QToolTip::add(locationLeftTop,      i18n("Left top"));
+        QToolTip::add(locationLeft,         i18n("Left center"));
+        QToolTip::add(locationLeftBottom,   i18n("Left bottom"));
+        QToolTip::add(locationBottomLeft,   i18n("Bottom left"));
+        QToolTip::add(locationBottom,       i18n("Bottom center"));
+        QToolTip::add(locationBottomRight,  i18n("Bottom right"));
+        QToolTip::add(locationRightTop,     i18n("Right top"));
+        QToolTip::add(locationRight,        i18n("Right center"));
+        QToolTip::add(locationRightBottom,  i18n("Right bottom"));
+    }
+    
     // connections
     connect(m_locationGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
     connect(m_xineramaScreenComboBox, SIGNAL(highlighted(int)), SIGNAL(changed()));
@@ -87,7 +121,15 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     {   /* populate the combobox for the available screens */
         m_xineramaScreenComboBox->insertItem(QString::number(s));
     }
-
+    
+    // hide the xinerama chooser widgets if there is no need for them
+    if (QApplication::desktop()->numScreens() < 2)
+    {
+        m_identifyButton->hide();
+        m_xineramaScreenComboBox->hide();
+        m_xineramaScreenLabel->hide();
+    }
+    
     connect(m_percentSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_percentSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_expandCheckBox, SIGNAL(clicked()), SIGNAL(changed()));

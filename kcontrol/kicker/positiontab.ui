@@ -162,9 +162,6 @@
                                             <property name="toggleButton">
                                                 <bool>true</bool>
                                             </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Top left</string>
-                                            </property>
                                         </widget>
                                         <widget class="QPushButton">
                                             <property name="name">
@@ -199,9 +196,6 @@
                                             <property name="toggleButton">
                                                 <bool>true</bool>
                                             </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Top center</string>
-                                            </property>
                                         </widget>
                                         <widget class="QPushButton">
                                             <property name="name">
@@ -235,9 +229,6 @@
                                             </property>
                                             <property name="toggleButton">
                                                 <bool>true</bool>
-                                            </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Top right</string>
                                             </property>
                                         </widget>
                                     </hbox>
@@ -289,9 +280,6 @@
                                             <property name="toggleButton">
                                                 <bool>true</bool>
                                             </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Left top</string>
-                                            </property>
                                         </widget>
                                         <widget class="QPushButton">
                                             <property name="name">
@@ -326,9 +314,6 @@
                                             <property name="toggleButton">
                                                 <bool>true</bool>
                                             </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Left center</string>
-                                            </property>
                                         </widget>
                                         <widget class="QPushButton">
                                             <property name="name">
@@ -362,9 +347,6 @@
                                             </property>
                                             <property name="toggleButton">
                                                 <bool>true</bool>
-                                            </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Left bottom</string>
                                             </property>
                                         </widget>
                                     </vbox>
@@ -416,9 +398,6 @@
                                             <property name="toggleButton">
                                                 <bool>true</bool>
                                             </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Bottom left</string>
-                                            </property>
                                         </widget>
                                         <widget class="QPushButton">
                                             <property name="name">
@@ -453,9 +432,6 @@
                                             <property name="toggleButton">
                                                 <bool>true</bool>
                                             </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Bottom center</string>
-                                            </property>
                                         </widget>
                                         <widget class="QPushButton">
                                             <property name="name">
@@ -489,9 +465,6 @@
                                             </property>
                                             <property name="toggleButton">
                                                 <bool>true</bool>
-                                            </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Bottom right</string>
                                             </property>
                                         </widget>
                                     </hbox>
@@ -543,9 +516,6 @@
                                             <property name="toggleButton">
                                                 <bool>true</bool>
                                             </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Right top</string>
-                                            </property>
                                         </widget>
                                         <widget class="QPushButton">
                                             <property name="name">
@@ -580,9 +550,6 @@
                                             <property name="toggleButton">
                                                 <bool>true</bool>
                                             </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Right center</string>
-                                            </property>
                                         </widget>
                                         <widget class="QPushButton">
                                             <property name="name">
@@ -616,9 +583,6 @@
                                             </property>
                                             <property name="toggleButton">
                                                 <bool>true</bool>
-                                            </property>
-                                            <property name="toolTip" stdset="0">
-                                                <string>Right bottom</string>
                                             </property>
                                         </widget>
                                     </vbox>
@@ -1107,7 +1071,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
                                 </property>
                                 <widget class="QLabel">
                                     <property name="name">
-                                        <cstring>TextLabel1</cstring>
+                                        <cstring>m_xineramaScreenLabel</cstring>
                                     </property>
                                     <property name="text">
                                         <string>Xinerama Screen</string>
