@@ -98,23 +98,34 @@ void KLocaleConfigNumber::load()
 
 void KLocaleConfigNumber::save()
 {
-  KConfigBase *config = KGlobal::config();
+  KSimpleConfig *c = new KSimpleConfig("kdeglobals", false);
+  c->setGroup("Locale");
+  // Write something to the file to make it dirty
+  c->writeEntry("DecimalSymbol", QString::null);
 
+  c->deleteEntry("DecimalSymbol", false);
+  c->deleteEntry("ThousandsSeparator", false);
+  delete c;
+
+  KConfigBase *config = new KConfig;
   config->setGroup("Locale");
-  KSimpleConfig ent(locate("locale", "l10n/" + locale->number + "/entry.desktop"), true);
+
+  KSimpleConfig ent(locate("locale", "l10n/" + locale->time + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   QString str;
 
   str = ent.readEntry("DecimalSymbol", ".");
-  str = str==locale->_decimalSymbol?QString::null:locale->_decimalSymbol;
-  config->writeEntry("DecimalSymbol", str, true, true);
+  str = config->readEntry("DecimalSymbol", str);
+  if (str != locale->_decimalSymbol)
+    config->writeEntry("DecimalSymbol", locale->_decimalSymbol, true, true);
 
   str = ent.readEntry("ThousandsSeparator", ",");
-  str = str==locale->_thousandsSeparator?QString::null:"$0"+locale->_thousandsSeparator+"$0";
-  config->writeEntry("ThousandsSeparator", str, true, true);
+  str = config->readEntry("ThousandsSeparator", str);
+  if (str != locale->_thousandsSeparator)
+    config->writeEntry("ThousandsSeparator", locale->_thousandsSeparator, true, true);
 
-  config->sync();
+  delete config;
 }
 
 void KLocaleConfigNumber::defaults()

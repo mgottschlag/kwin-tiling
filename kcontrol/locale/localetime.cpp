@@ -91,28 +91,40 @@ void KLocaleConfigTime::load()
 
 void KLocaleConfigTime::save()
 {
-  KSimpleConfig a(0, false);
-  KConfigBase *config = KGlobal::config();
+  KSimpleConfig *c = new KSimpleConfig("kdeglobals", false);
+  c->setGroup("Locale");
+  // Write something to the file to make it dirty
+  c->writeEntry("TimeFormat", QString::null);
 
+  c->deleteEntry("TimeFormat", false);
+  c->deleteEntry("DateFormat", false);
+  c->deleteEntry("DateFormatShort", false);
+  delete c;
+
+  KConfigBase *config = new KConfig;
   config->setGroup("Locale");
+
   KSimpleConfig ent(locate("locale", "l10n/" + locale->time + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   QString str;
 
   str = ent.readEntry("TimeFormat", "%I:%M:%S %p");
-  str = str==locale->_timefmt?QString::null:locale->_timefmt;
-  config->writeEntry("TimeFormat", str, true, true);
+  str = config->readEntry("TimeFormat", str);
+  if (str != locale->_timefmt)
+    config->writeEntry("TimeFormat", locale->_timefmt, true, true);
 
   str = ent.readEntry("DateFormat", "%A %d %B %Y");
-  str = str==locale->_datefmt?QString::null:locale->_datefmt;
-  config->writeEntry("DateFormat", str, true, true);
+  str = config->readEntry("DateFormat", str);
+  if (str != locale->_datefmt)
+    config->writeEntry("DateFormat", locale->_datefmt, true, true);
 
   str = ent.readEntry("DateFormatShort", "%m/%d/%y");
-  str = str==locale->_datefmtshort?QString::null:locale->_datefmtshort;
-  config->writeEntry("DateFormatShort", str, true, true);
+  str = config->readEntry("DateFormatShort", str);
+  if (str != locale->_datefmtshort)
+    config->writeEntry("DateFormatShort", locale->_datefmtshort, true, true);
 
-  config->sync();
+  delete config;
 }
 
 void KLocaleConfigTime::defaults()
