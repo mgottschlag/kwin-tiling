@@ -39,7 +39,7 @@
 
 // DLL Interface for kcontrol
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_randr, KSSFactory("randr") );
+K_EXPORT_COMPONENT_FACTORY (libkcm_randr, KSSFactory("krandr") );
 
 extern "C"
 {
@@ -114,12 +114,12 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 
 	topLayout->addStretch(1);
 
+	// just set the "apply settings on startup" box
+	load();
+
 	slotScreenChanged(QApplication::desktop()->primaryScreen());
 
 	setButtons(KCModule::Apply);
-
-	// just set the "apply settings on startup" box
-	load();
 }
 
 void KRandRModule::addRotationButton(int thisRotation, bool checkbox)
@@ -153,18 +153,17 @@ void KRandRModule::slotScreenChanged(int screen)
 	}
 
 	// Clear rotations
-	for (int i = m_rotationGroup->count() - 1; i >= 0; i--) {
+	for (int i = m_rotationGroup->count() - 1; i >= 0; i--)
 		m_rotationGroup->remove(m_rotationGroup->find(i));
-	}
 
 	// Create rotations
-	for (int i = 0; i < 6; i++)
-		addRotationButton(1 << i, i > 3);
+	for (int i = 0; i < RandRScreen::OrientationCount; i++)
+		addRotationButton(1 << i, i > RandRScreen::RotationCount - 1);
 
 	populateRefreshRates();
-	
+
 	update();
-	
+
 	setChanged();
 }
 
@@ -220,14 +219,8 @@ void KRandRModule::populateRefreshRates()
 
 	QStringList rr = currentScreen()->refreshRates(currentScreen()->proposedSize());
 
-	for (QStringList::Iterator it = rr.begin(); it != rr.end(); it++) {
+	for (QStringList::Iterator it = rr.begin(); it != rr.end(); it++)
 		m_refreshRates->insertItem(*it);
-	}
-
-	if (rr.count() < 2)
-		m_refreshRates->setEnabled(false);
-	else
-		m_refreshRates->setEnabled(true);
 }
 
 
@@ -249,8 +242,8 @@ void KRandRModule::load()
 
 	// Don't load screen configurations:
 	// It will be correct already if they wanted to retain their settings over KDE restarts,
-	// and if it isn't correct they have changed a) their X configuration or b) the screen
-	// with another program.
+	// and if it isn't correct they have changed a) their X configuration, b) the screen
+	// with another program, or c) their hardware.
 	m_oldApply = loadDisplay(config, false);
 	m_applyOnStartup->setChecked(m_oldApply);
 
@@ -301,6 +294,7 @@ void KRandRModule::update()
 	m_sizeCombo->blockSignals(false);
 
 	m_rotationGroup->blockSignals(true);
+	kdDebug() << k_funcinfo << currentScreen()->proposedRotation() << " " << (currentScreen()->proposedRotation() & RandRScreen::RotateMask) << " " << RandRScreen::Rotate0 << endl;
 	switch (currentScreen()->proposedRotation() & RandRScreen::RotateMask) {
 		case RandRScreen::Rotate0:
 			m_rotationGroup->setButton(0);

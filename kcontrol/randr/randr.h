@@ -34,15 +34,18 @@ class RandRScreen : public QObject
 	Q_OBJECT
 
 public:
-	enum rotations {
-		Rotate0		= 0x1,
-		Rotate90	= 0x2,
-		Rotate180	= 0x3,
-		Rotate270	= 0x4,
-		RotateMask	= 0x5 - 1,
-		ReflectX	= 0x5,
-		ReflectY	= 0x6,
-		RotationMask = 0x7 - 1
+	enum orientations {
+		Rotate0			= 0x1,
+		Rotate90		= 0x2,
+		Rotate180		= 0x3,
+		Rotate270		= 0x4,
+		RotateMask		= 15,
+		RotationCount	= 4,
+		ReflectX		= 0x5,
+		ReflectY		= 0x6,
+		ReflectMask		= 48,
+		OrientationMask	= 64,
+		OrientationCount = 6
 	};
 
 	RandRScreen(int screenIndex);

@@ -447,7 +447,7 @@ int RandRScreen::proposedRotation() const
 
 void RandRScreen::proposeRotation(int newRotation)
 {
-	m_proposedRotation = newRotation & RotationMask;
+	m_proposedRotation = newRotation & OrientationMask;
 }
 
 int RandRScreen::proposedSize() const
@@ -470,9 +470,9 @@ void RandRScreen::load(KConfig& config)
 	config.setGroup(QString("Screen%1").arg(m_screen));
 
 	if (proposeSize(sizeIndex(QSize(config.readNumEntry("width", currentPixelWidth()), config.readNumEntry("height", currentPixelHeight())))))
-		proposeRefreshRate(config.readNumEntry("refresh", refreshRateIndexToHz(currentSize(), currentRefreshRate())));
+		proposeRefreshRate(config.readNumEntry("refresh", refreshRateHzToIndex(currentSize(), currentRefreshRate())));
 
-	proposeRotation(config.readNumEntry("rotation", currentRotation()));
+	proposeRotation((config.readNumEntry("rotation", currentRotation()) / 90) + 1 + (config.readBoolEntry("reflectX") ? ReflectX : 0) + (config.readBoolEntry("reflectY") ? ReflectY : 0));
 }
 
 void RandRScreen::save(KConfig& config) const
@@ -480,8 +480,10 @@ void RandRScreen::save(KConfig& config) const
 	config.setGroup(QString("Screen%1").arg(m_screen));
 	config.writeEntry("width", currentPixelWidth());
 	config.writeEntry("height", currentPixelHeight());
-	config.writeEntry("refresh", refreshRateHzToIndex(currentSize(), currentRefreshRate()));
-	config.writeEntry("rotation", currentRotation());
+	config.writeEntry("refresh", refreshRateIndexToHz(currentSize(), currentRefreshRate()));
+	config.writeEntry("rotation", ((currentRotation() & RotateMask) - 1) * 90);
+	config.writeEntry("reflectX", (bool)(currentRotation() & ReflectMask == ReflectX));
+	config.writeEntry("reflectY", (bool)(currentRotation() & ReflectMask == ReflectY));
 }
 
 RandRDisplay::RandRDisplay()
