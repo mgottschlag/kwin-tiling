@@ -72,7 +72,7 @@ int main( int argc, char **argv )
   */
   // check for existance of PersonalPath
   temp1 = KApplication::localkdedir() +"/share/applnk";
-  temp2 = config->readEntry("PersonalPath", temp1.data());
+  temp2 = config->readEntry("PersonalPath", temp1);
   QFileInfo fi(temp2);
   bool error = FALSE;
   if( !(fi.exists() && fi.isDir()) )

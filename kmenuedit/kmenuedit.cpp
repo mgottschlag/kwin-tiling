@@ -255,7 +255,7 @@ void KMenuEdit::loadMenus()
   KConfig *config = KApplication::getKApplication()->getConfig();
   config->setGroup("KDE Desktop Entries");
   QString temp = KApplication::localkdedir() +"/share/applnk";
-  dir_name = config->readEntry("PersonalPath", temp.data());
+  dir_name = config->readEntry("PersonalPath", temp);
   dir_name = dir_name.stripWhiteSpace();
   QDir dir(dir_name);
   if( pers_menu_data )
@@ -273,7 +273,7 @@ void KMenuEdit::loadMenus()
     }
   // default menu
   temp = KApplication::kde_appsdir();
-  dir_name = config->readEntry("Path", temp.data());
+  dir_name = config->readEntry("Path", temp);
   dir_name = dir_name.stripWhiteSpace();
   dir = dir_name;
   if( glob_menu_data )
@@ -304,7 +304,7 @@ void KMenuEdit::saveMenus()
   KConfig *config = KApplication::getKApplication()->getConfig();
   config->setGroup("KDE Desktop Entries");
   QString temp = KApplication::localkdedir() + "/share/applnk";
-  dir_name = config->readEntry("PersonalPath", temp.data());
+  dir_name = config->readEntry("PersonalPath", temp);
   dir_name = dir_name.stripWhiteSpace();
   QDir dir(dir_name);
   pers_menu_data->copyLnkFiles(dir);
@@ -319,7 +319,7 @@ void KMenuEdit::saveMenus()
     }
   // default menu
   temp = KApplication::kde_appsdir();
-  dir_name = config->readEntry("Path", temp.data());
+  dir_name = config->readEntry("Path", temp);
   dir_name = dir_name.stripWhiteSpace();
   dir.setPath(dir_name);
   glob_menu_data->copyLnkFiles(dir);
