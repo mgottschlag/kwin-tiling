@@ -381,7 +381,7 @@ static int
 #if defined(USE_PAM) || defined(AIXV3)
 AccNoPass (const char *un)
 {
-    struct passwd *pw;
+    struct passwd *pw = 0;
 #else
 AccNoPass (const char *un, struct passwd *pw)
 {
@@ -399,11 +399,19 @@ AccNoPass (const char *un, struct passwd *pw)
     for (hg = 0, fp = td->noPassUsers; *fp; fp++)
 	if (**fp == '@')
 	    hg = 1;
-	else if (!strcmp (un, *fp) || !strcmp ("*", *fp))
+	else if (!strcmp (un, *fp))
 	    return 1;
+	else if (!strcmp ("*", *fp)) {
+#if defined(USE_PAM) || defined(AIXV3)
+	    if (!(pw = getpwnam (un)))
+		return 0;
+#endif
+	    if (pw->pw_uid)
+		return 1;
+	}
 
 #if defined(USE_PAM) || defined(AIXV3)
-    if (hg && (pw = getpwnam (un))) {
+    if (hg && (pw || (pw = getpwnam (un)))) {
 #else
     if (hg) {
 #endif
