@@ -242,7 +242,9 @@ void ThemePage::removeClicked()
 		return;
 
 	// Delete the theme from the harddrive
-	KIO::del( themeInfo[ selectedTheme ]->path );
+        KURL u;
+        u.setPath( themeInfo[  selectedTheme ]->path );
+	KIO::del( u );
 
 	// Remove the theme from the listview and from the themeinfo dict
 	delete listview->findItem( selectedTheme, DirColumn );
