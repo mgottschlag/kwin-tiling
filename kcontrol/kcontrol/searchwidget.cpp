@@ -172,10 +172,10 @@ void SearchWidget::populateKeyListBox(const QString& s)
         matches.append(k->moduleName().stripWhiteSpace());
     }
 
-  matches.sort();
-
   for(QStringList::ConstIterator it = matches.begin(); it != matches.end(); it++)
     _keyList->insertItem(*it);
+
+  _keyList->sort();
 }
 
 void SearchWidget::populateResultListBox(const QString& s)
@@ -197,14 +197,14 @@ void SearchWidget::populateResultListBox(const QString& s)
         }
     }
 
-  results.sort();
-
   for(ModuleName *it = results.first(); it != 0L; it=results.next())
   {
     _resultList->insertItem(KGlobal::iconLoader()->loadIcon(
 	  it->module()->icon(), KIcon::Desktop, KIcon::SizeSmall), it->moduleName());
     _results.append(it->module());
   }
+  
+  _resultList->sort();
 }
 
 void SearchWidget::slotSearchTextChanged(const QString & s)
