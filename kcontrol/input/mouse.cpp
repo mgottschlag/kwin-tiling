@@ -40,6 +40,8 @@
 #include <qmessagebox.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
+#undef Below
+#undef Above
 #include <qslider.h>
 
 #include <klocale.h>
