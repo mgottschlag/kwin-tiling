@@ -44,7 +44,7 @@ Example:
 Running KDM from init
 ---------------------
 
-NOTE, that this description applies to RedHat and must be adapted for
+NOTE, that this description applies to RedHat 5.x and must be adapted for
 other distributions/systems.
 
    Edit (as root) /etc/inittab.
@@ -157,19 +157,21 @@ KDM accepts two command line options related to logging:
     Logs from "-debug 7" are usually a good start.
 
   -logfile <file>
-    <file> is the file to log various messages to.
-    For internal reasons there is no option in kdmrc to permanently specify
-    another log file location. If you redirect KDM's standard error output
-    to a file, KDM will log there.
-    If KDM is configured to use syslog, all internally generated messages
-    are logged to the "daemon" facility. The log usually can be found in
-    /var/log/debug.log and /var/log/daemon.log; make sure, that daemon.*
-    is logged (look at /etc/syslog.conf).
-    If you have problems logging in and your system uses PAM, the "auth"
-    and "authpriv" syslog facilities are interesting, too.
+    <file> is the file to log various messages to. The default log file is
+    /var/log/kdm.log. For internal reasons there is no option in kdmrc to
+    permanently specify the log file location. If you redirect KDM's
+    standard error output to a file, KDM will log there.
+    If KDM is configured to use syslog (and it _very_ probably is on any
+    modern system), all internally generated messages are logged to the
+    "daemon" facility. The log usually can be found in /var/log/debug.log
+    and /var/log/daemon.log; make sure, that daemon.* is logged (look at
+    /etc/syslog.conf).
+    If you have problems logging in and your system uses PAM (also quite
+    probable on modern systems), the "auth" and "authpriv" syslog facilities
+    are interesting, too.
 
-Send me the logs together with a detailed description of what you did and
-what happened. If your problem is related to a specific configuration,
+Send me all the logs together with a detailed description of what you did
+and what happened. If your problem is related to a specific configuration,
 you should also attach a tar.gz archive of your kdm config directory.
 
 
