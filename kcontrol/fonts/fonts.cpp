@@ -244,7 +244,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
   while (it != nameGroupKeyRc.end()) {
 
     QLabel * preview = new QLabel(this);
-    preview->setFrameStyle(QFrame::Box | QFrame::Plain);
+    preview->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     // preview->setMaximumWidth(200);
 
     FontUseItem * i =
