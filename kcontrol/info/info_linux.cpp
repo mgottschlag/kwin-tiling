@@ -13,6 +13,9 @@
 
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     $Log$
+    Revision 1.14  2000/06/22 19:01:28  bieker
+    Removing some spaces.
+
     Revision 1.13  2000/06/03 12:28:35  hausmann
     - KGlobalSettings
 
@@ -287,8 +290,8 @@ bool GetInfo_Partitions (QListView *lbox)
 	QString 	MB(i18n("MB"));	// "MB" = "Mega-Byte"
 	
 
-#ifdef HAVE_FSTAB_H	
-	if (setfsent() != 0) // Try to open fstab
+#ifdef HAVE_FSTAB_H
+	if (setfsent() == 0) // Try to open fstab
 	    return false;
 #else
 	if (!(fp=setmntent("/etc/fstab","r")))
