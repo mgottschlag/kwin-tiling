@@ -423,7 +423,7 @@
                             <string>Enable full &amp;duplex operation</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>This enables the soundserver to record and play sound at the same time. If you use applications like internet telephony, voice recognition or similar, you probably want this.</string>
+                            <string>This enables the soundserver to record and play sound at the same time. If you use applications like Internet telephony, voice recognition or similar, you probably want this.</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
