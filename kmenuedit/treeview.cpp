@@ -220,7 +220,7 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 		if(df.readBoolEntry("Hidden") == true)
 		continue;
 		
-                if(df.readBoolEntry("Hidden") == true) {
+                if(df.readBoolEntry("NoDisplay") == true) {
 	                if (parent == 0)
 	                    item = new TreeItem(this,  *it + "/.directory");
 	                else
@@ -255,7 +255,7 @@ void TreeView::itemSelected(QListViewItem *item)
     if (item) {
 	selected = true;
 	QString name(item->text(0));
-	if (!(name.find("[Hidden]") > 0)) {
+	if (!(name.find(i18n(" [Hidden]")) > 0)) {
 		hselected = true;
 	}
     // Check if the file is Writeable for us
@@ -485,7 +485,7 @@ void TreeView::hideDir(const QString& d, const QString name, bool hide, QString 
 	KSimpleConfig c(locateLocal("apps", directory + "/.directory"));
 	c.setDesktopGroup();
 	c.writeEntry("Name", name);
-	c.writeEntry("Hidden", hide);
+	c.writeEntry("NoDisplay", hide);
 	c.writeEntry("Icon", icon);
 	c.sync();
 }
