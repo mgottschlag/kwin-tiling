@@ -14,23 +14,33 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+#include    <config.h>
+
 #include    <sys/types.h>
 #include    <stdio.h>
 #include    <ctype.h>
-#include <stdlib.h>
+#include    <stdlib.h>
 
-#if defined(SVR4) && !defined(SCO325)
+#ifdef HAVE_SYS_SOCKIO_H
 #include    <sys/sockio.h>
 #endif
-#if defined(SVR4) && defined(PowerMAX_OS)
+
+#ifdef HAVE_SYS_STROPTS_H
 #include    <sys/stropts.h>
 #endif
-#if defined(SYSV) && defined(i386)
+
+#ifdef HAVE_SYS_SOCKET_H
+#include    <sys/socket.h>
+#endif
+
+#ifdef HAVE_SYS_STREAM_H
 #include    <sys/stream.h>
+#endif
+
 #ifdef ISC
 #include    <sys/sioctl.h>
 #include    <sys/stropts.h>
-#endif
 #endif
 
 #ifndef MINIX
@@ -103,20 +113,33 @@ extern "C" {
 #define offset(field) XtOffsetOf(struct _app_resources, field)
 
 static XtResource  resources[] = {
-  {"xdmAddress",	"XdmAddress",  XtRARRAY8,	sizeof (ARRAY8Ptr),
+  {const_cast<char*>("xdmAddress"),	
+   const_cast<char*>("XdmAddress"),  
+   XtRARRAY8,	sizeof (ARRAY8Ptr),
    offset (xdmAddress),	    XtRString,	NULL },
-  {"clientAddress",	"ClientAddress",  XtRARRAY8,	sizeof (ARRAY8Ptr),
+  
+  {const_cast<char*>("clientAddress"),	
+   const_cast<char*>("ClientAddress"),  
+   XtRARRAY8,	sizeof (ARRAY8Ptr),
    offset (clientAddress),	    XtRString,	NULL },
-  {"connectionType",	"ConnectionType",   XtRInt,	sizeof (int),
+  {const_cast<char*>("connectionType"),	
+   const_cast<char*>("ConnectionType"),   
+   XtRInt,	sizeof (int),
    offset (connectionType),    XtRImmediate,	(XtPointer) 0 }
 };
 
 #undef offset
 
 static XrmOptionDescRec options[] = {
-  { "-xdmaddress",	"*xdmAddress",	    XrmoptionSepArg,	NULL },
-  { "-clientaddress",	"*clientAddress",   XrmoptionSepArg,	NULL },
-  { "-connectionType","*connectionType",  XrmoptionSepArg,	NULL },
+  { const_cast<char*>("-xdmaddress"),  
+      const_cast<char*>("*xdmAddress"),	    
+      XrmoptionSepArg,	NULL },
+  { const_cast<char*>("-clientaddress"),  
+      const_cast<char*>("*clientAddress"),   
+      XrmoptionSepArg,	NULL },
+  { const_cast<char*>("-connectionType"),
+      const_cast<char*>("*connectionType"),  
+      XrmoptionSepArg,	NULL },
 };
 
 /* Converts the hex string s of length len into the byte array d.
@@ -324,7 +347,7 @@ CXdmcp::addHostname (ARRAY8Ptr hostname, ARRAY8Ptr status,
 
   if (!newname->fullname)
   {
-  	newname->fullname = "Unknown";
+  	newname->fullname = const_cast<char*>("Unknown");
   }
   else
   {
