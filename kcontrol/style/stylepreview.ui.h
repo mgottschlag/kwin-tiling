@@ -44,6 +44,7 @@ void StylePreview::init()
         obj->installEventFilter(this);
         ((QWidget*)obj)->setFocusPolicy(NoFocus);
     }
+    delete l;
 };
 
 bool StylePreview::eventFilter( QObject* /* obj */, QEvent* ev )
