@@ -244,9 +244,9 @@ CtrlGreeterWait (int wreply)
 	    Debug ("G_Ready\n");
 	    return 0;
 	case G_GetCfg:
-	    Debug ("G_GetCfg\n");
+	    /*Debug ("G_GetCfg\n");*/
 	    type = GRecvInt ();
-	    Debug (" index %#x\n", type);
+	    /*Debug (" index %#x\n", type);*/
 	    if (type == C_isLocal)
 		i = (td->displayType & d_location) == dLocal;
 	    else if (type == C_hasConsole)
@@ -256,19 +256,19 @@ CtrlGreeterWait (int wreply)
 	    else
 		goto normal;
 	    GSendInt (GE_Ok);
-	    Debug (" -> bool %d\n", i);
+	    /*Debug (" -> bool %d\n", i);*/
 	    GSendInt (i);
 	    break;
 	  normal:
 	    if (!(avptr = FindCfgEnt (td, type))) {
-		Debug (" -> not found\n");
+		/*Debug (" -> not found\n");*/
 		GSendInt (GE_NoEnt);
 		break;
 	    }
 	    switch (type & C_TYPE_MASK)
 	    {
 	    default:
-		Debug (" -> unknown type\n");
+		/*Debug (" -> unknown type\n");*/
 		GSendInt (GE_BadType);
 		break;
 	    case C_TYPE_INT:
@@ -281,22 +281,22 @@ CtrlGreeterWait (int wreply)
 		switch (type & C_TYPE_MASK)
 		{
 		case C_TYPE_INT:
-		    Debug (" -> int %#x (%d)\n", *(int *)avptr, *(int *)avptr);
+		    /*Debug (" -> int %#x (%d)\n", *(int *)avptr, *(int *)avptr);*/
 		    GSendInt (*(long *)avptr);
 		    break;
 		case C_TYPE_STR:
-		    Debug (" -> string %\"s\n", *avptr);
+		    /*Debug (" -> string %\"s\n", *avptr);*/
 		    GSendStr (*avptr);
 		    break;
 		case C_TYPE_ARGV:
-		    Debug (" -> sending argv %\"[{s\n", *(char ***)avptr);
+		    /*Debug (" -> sending argv %\"[{s\n", *(char ***)avptr);*/
 		    GSendArgv (*(char ***)avptr);
 		    break;
 #ifdef XDMCP
 		case C_TYPE_ARR:
 		    aptr = *(ARRAY8Ptr *)avptr;
-		    Debug (" -> sending array %02[*:hhx\n", 
-			   aptr->length, aptr->data);
+		    /*Debug (" -> sending array %02[*:hhx\n",
+			   aptr->length, aptr->data);*/
 		    GSendArr (aptr->length, (char *)aptr->data);
 		    break;
 #endif
