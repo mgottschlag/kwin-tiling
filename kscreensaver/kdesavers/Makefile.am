@@ -4,7 +4,7 @@
 
 AM_CPPFLAGS = -UQT_NO_ASCII_CAST
 
-INCLUDES = $(all_includes) $(GLINC) -I$(top_srcdir)/kscreensaver/libkscreensaver
+INCLUDES = -I$(top_srcdir)/kscreensaver/libkscreensaver $(all_includes) $(GLINC)
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD = $(LIB_KDEUI) ../libkscreensaver/libkscreensaver.la -lm
 
