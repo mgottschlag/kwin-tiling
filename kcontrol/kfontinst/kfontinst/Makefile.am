@@ -1,9 +1,9 @@
 kcmSUBDIRS = docs
 
 kde_module_LTLIBRARIES = kcm_fontinst.la
-kcm_fontinst_la_LIBADD  = $(FREETYPE_LIB) $(LIB_KIO)
+kcm_fontinst_la_LIBADD  = $(LIBFREETYPE_LIBS) $(LIB_KIO)
 kcm_fontinst_la_METASOURCES = AUTO
-kcm_fontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH) -module -avoid-version -no-undefined
+kcm_fontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH) $(LIBFREETYPE_RPATH) -module -avoid-version -no-undefined
  
 desktop_DATA = kcmfontinst.desktop
 desktopdir = $(kde_appsdir)/Settings/System/
@@ -54,7 +54,7 @@ EXTRA_DIST = \
 
 noinst_HEADERS = $(EXTRA_DIST)
 
-INCLUDES= $(FREETYPE_INC) $(all_includes) -I$(srcdir)/../../fonts/
+INCLUDES= $(LIBFREETYPE_CFLAGS) $(all_includes) -I$(srcdir)/../../fonts/
 KDE_ICON = kcmfontinst
 
 pics_DATA = kcmfontinst_star_office.png

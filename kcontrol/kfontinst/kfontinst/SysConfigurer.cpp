@@ -26,6 +26,9 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "SysConfigurer.h"
 #include "Misc.h"
 #include "KfiGlobal.h"
@@ -185,7 +188,7 @@ void CSysConfigurer::go()
             return;
         }
         else
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
             CMisc::doCmd("fc-cache", CKfiGlobal::cfg().getModifiedDirs()[d]);
 #else
             CMisc::doCmd("xftcache", CKfiGlobal::cfg().getModifiedDirs()[d]);
