@@ -247,13 +247,13 @@ int main(int _argc, char *_argv[])
         }
 
         KMessageBox::detailedError(0,
-                           i18n("There was an error loading the module.\nThe diagnostics is:\n%1")
-                           .arg(KLibLoader::self()->lastErrorMessage()),
-                           i18n("<qt><p>Possible reasons:</p><ul><li>An error occurred during your last "
+                           i18n("There was an error loading the module."),i18n("<qt><p>The diagnostics is:<br>%1"
+                                "<p>Possible reasons:</p><ul><li>An error occurred during your last "
                                 "KDE upgrade leaving an orphaned control module<li>You have old third party "
                                 "modules lying around.</ul><p>Check these points carefully and try to remove "
                                 "the module mentioned in the error message. If this fails, consider contacting "
-                                "your distributor or packager.</p></qt>"));
+                                "your distributor or packager.</p></qt>")
+                                   .arg(KLibLoader::self()->lastErrorMessage()));
         return 0;
     }
 
