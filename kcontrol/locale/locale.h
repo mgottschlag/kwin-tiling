@@ -45,6 +45,7 @@ public:
   void load();
   void save();
   void defaults();
+  QString quickHelp();
 
 public slots:
   void reTranslateLists();

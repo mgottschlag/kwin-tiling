@@ -27,6 +27,7 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qobjectlist.h>
+#include <qwhatsthis.h>
 
 #include <kglobal.h>
 
@@ -46,58 +47,94 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
   QLabel *label;
+  QString wtstr;
 
   // Money
   QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
-  tl1->setColStretch(2, 1); 
+  tl1->setColStretch(2, 1);
 
   label = new QLabel(this, I18N_NOOP("Currency symbol"));
   edMonCurSym = new QLineEdit(this);
   connect( edMonCurSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonCurSymChanged(const QString &) ) );
   tl1->addWidget(label, 0, 1);
   tl1->addWidget(edMonCurSym, 0, 2);
+  wtstr = i18n( "Here you can enter your normally used currency symbol,"
+    " e.g. $ or DM. <p>Please note that the Euro symbol may not be available"
+    " on your system, depending on the distribution you use." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( edMonCurSym, wtstr );
 
   label = new QLabel(this, I18N_NOOP("Decimal symbol"));
   edMonDecSym = new QLineEdit(this);
   connect( edMonDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonDecSymChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edMonDecSym, 1, 2);
+  wtstr = i18n( "Here you can define the decimal separator used to display monetary values."
+    " <p>Note that the decimal separator used to display other numbers has to be defined"
+    " separately (see the 'Numbers' tab)." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( edMonDecSym, wtstr );
 
   label = new QLabel(this, I18N_NOOP("Thousands separator"));
   edMonThoSep = new QLineEdit(this);
   connect( edMonThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonThoSepChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);
   tl1->addWidget(edMonThoSep, 2, 2);
+  wtstr = i18n( "Here you can define the thousands separator used to display monetary values."
+    " <p>Note that the thousands separator used to display other numbers has to be defined"
+    " separately (see the 'Numbers' tab)." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( edMonThoSep, wtstr );
 
   label = new QLabel(this, I18N_NOOP("Fract digits"));
   edMonFraDig = new QLineEdit(this);
   connect( edMonFraDig, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonFraDigChanged(const QString &) ) );
   tl1->addWidget(label, 3, 1);
   tl1->addWidget(edMonFraDig, 3, 2);
+  wtstr = i18n( "This determines the number of fract digits for monetary values, i.e. the number"
+    " of digits you find <em>behind</em> the decimal separator. Correct value is 2 for almost all people." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( edMonFraDig, wtstr );
 
   label = new QLabel(this, I18N_NOOP("Positive currency prefix"));
   chMonPosPreCurSym = new QCheckBox(this);
   connect( chMonPosPreCurSym, SIGNAL( clicked() ), this, SLOT( slotMonPosPreCurSymChanged() ) );
   tl1->addWidget(label, 4, 1);
   tl1->addWidget(chMonPosPreCurSym, 4, 2);
+  wtstr = i18n( "If this option is checked, the currency sign will be prefixed (i.e. to the left"
+    " of the value) for all positive monetary values. If not, it will be postfixed (i.e. to the right)." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( chMonPosPreCurSym, wtstr );
 
   label = new QLabel(this, I18N_NOOP("Negative currency prefix"));
   chMonNegPreCurSym = new QCheckBox(this);
   connect( chMonNegPreCurSym, SIGNAL( clicked() ), this, SLOT( slotMonNegPreCurSymChanged() ) );
   tl1->addWidget(label, 5, 1);
   tl1->addWidget(chMonNegPreCurSym, 5, 2);
+  wtstr = i18n( "If this option is checked, the currency sign will be prefixed (i.e. to the left"
+    " of the value) for all negative monetary values. If not, it will be postfixed (i.e. to the right)." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( chMonNegPreCurSym, wtstr );
 
   label = new QLabel(this, I18N_NOOP("Sign position, positive"));
   cmbMonPosMonSignPos = new QComboBox(this, "signpos");
   connect( cmbMonPosMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonPosMonSignPosChanged(int) ) );
   tl1->addWidget(label, 6, 1);
   tl1->addWidget(cmbMonPosMonSignPos, 6, 2);
+  wtstr = i18n( "Here you can select how a positive sign will be positioned. This"
+    " only affects monetary values." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( cmbMonPosMonSignPos, wtstr );
 
   label = new QLabel(this, I18N_NOOP("Sign position, negative"));
   cmbMonNegMonSignPos = new QComboBox(this, "signpos");
   connect( cmbMonNegMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonNegMonSignPosChanged(int) ) );
   tl1->addWidget(label, 7, 1);
   tl1->addWidget(cmbMonNegMonSignPos, 7, 2);
+  wtstr = i18n( "Here you can select how a negative sign will be positioned. This"
+    " only affects monetary values." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( cmbMonNegMonSignPos, wtstr );
 
   // insert some items
   int i = 5;

@@ -27,6 +27,7 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qlayout.h>
+#include <qwhatsthis.h>
 
 #include <kglobal.h>
 
@@ -44,32 +45,53 @@ extern KLocaleAdvanced *locale;
 KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
+  QString wtstr;
   QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
-  tl1->setColStretch(2, 1); 
+  tl1->setColStretch(2, 1);
 
   QLabel *label = new QLabel(this, I18N_NOOP("Decimal symbol"));
   edDecSym = new QLineEdit(this);
   connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
   tl1->addWidget(label, 0, 1);
   tl1->addWidget(edDecSym, 0, 2);
+  wtstr = i18n( "Here you can define the decimal separator used to display numbers (i.e. a dot or a comma in most countries).<p>"
+    " Note that the decimal separator used to display monetary values has to be set"
+    " separately (see the 'Money' tab)." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( edDecSym, wtstr );
 
   label = new QLabel(this, I18N_NOOP("Thousands separator"));
   edThoSep = new QLineEdit(this);
   connect( edThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotThoSepChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edThoSep, 1, 2);
+  wtstr = i18n( "Here you can define the thousands separator used to display numbers.<p>"
+    " Note that the thousands separator used to display monetary values has to be set"
+    " separately (see the 'Money' tab)." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( edThoSep, wtstr );
 
   label = new QLabel(this, I18N_NOOP("Positive sign"));
   edMonPosSign = new QLineEdit(this);
   connect( edMonPosSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonPosSignChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);
   tl1->addWidget(edMonPosSign, 2, 2);
+  wtstr = i18n( "Here you can specify text used to prefix positive numbers."
+    " Most people leave this blank." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( edMonPosSign, wtstr );
 
   label = new QLabel(this, I18N_NOOP("Negative sign"));
   edMonNegSign = new QLineEdit(this);
   connect( edMonNegSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonNegSignChanged(const QString &) ) );
   tl1->addWidget(label, 3, 1);
   tl1->addWidget(edMonNegSign, 3, 2);
+  wtstr = i18n( "Here you can specify text used to prefix negative numbers."
+    " This shouldn't be empty, so you can distinguis positive and negative numbers."
+    " It's normally set to minus (-)." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( edMonNegSign, wtstr );
+
 
   tl1->setRowStretch(4, 1);
 }
