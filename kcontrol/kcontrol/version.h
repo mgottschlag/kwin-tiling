@@ -1,1 +1,2 @@
-#define KCONTROL_VERSION "v3.0 Beta 1"
+#include <kapplication.h>
+#define KCONTROL_VERSION KDE_VERSION_STRING
