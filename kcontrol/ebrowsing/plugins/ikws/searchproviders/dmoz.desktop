@@ -14,4 +14,4 @@ Name[vi]=MềEthư mục
 Name[wa]=Drovî ridant
 ServiceTypes=SearchProvider
 Keys=dmoz,odp
-Query=http://search.dmoz.org/cgi-bin/search?search=\\1
+Query=http://search.dmoz.org/cgi-bin/search?search=\\{@}

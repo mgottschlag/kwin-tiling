@@ -6,4 +6,4 @@ Name[eo]=Realnomoj
 Name[zh_TW.Big5]=真實姓名
 ServiceTypes=SearchProvider
 Keys=rn,realnames
-Query=http://navigation.us.realnames.com/resolver.dll?realname=\\1
+Query=http://navigation.us.realnames.com/resolver.dll?realname=\\{@}

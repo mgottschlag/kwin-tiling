@@ -39,6 +39,6 @@ Name[uk]=Пошук у базі даних помилок KDE по номеру
 Name[vi]=Tìm kiếm theo sềEcủa cơ sềEdữ liệu KDE bug 
 Name[zh_CN.GB2312]=KDE 错误数据库按错误编号搜索
 Name[zh_TW.Big5]=KDE 程式臭蟲資料庫臭蟲序號搜尋
-Query=http://bugs.kde.org/cgi-bin/Bugs/bugs-fetch2.pl?type=ref&ref=\\1&base=http%3A%2F%2Fwww.kde.org
+Query=http://bugs.kde.org/cgi-bin/Bugs/bugs-fetch2.pl?type=ref&ref=\\{@}&base=http%3A%2F%2Fwww.kde.org
 ServiceTypes=SearchProvider
 Type=Service

@@ -34,4 +34,4 @@ Name[vi]=Câu hỏi 'Whatis'
 Name[zh_CN.GB2312]=Whatis 查询
 ServiceTypes=SearchProvider
 Keys=wi,whatis
-Query= http://whatis.techtarget.com/definitionsSearchResults/1,289878,sid9,00.html?query=\\1
+Query= http://whatis.techtarget.com/definitionsSearchResults/1,289878,sid9,00.html?query=\\{@}

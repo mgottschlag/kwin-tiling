@@ -11,4 +11,4 @@ Name[pl]=Szukanie RPM-ów
 Name[zh_TW.Big5]=RPM 搜尋
 ServiceTypes=SearchProvider
 Keys=rf,rpmfind
-Query=http://rpmfind.net/linux/rpm2html/search.php?query=\1
+Query=http://rpmfind.net/linux/rpm2html/search.php?query=\{@}

@@ -39,5 +39,5 @@ Name[zh_CN.GB2312]=首字母缩写数据库
 Name[zh_TW.Big5]=Acronym 資料庫
 ServiceTypes=SearchProvider
 Keys=ad,acro,acronym
-Query=http://www.chemie.de/tools/acronym.php3?language=e&acronym=\\1
-Query[de]=http://www.chemie.de/tools/acronym.php3?language=d&acronym=\\1
+Query=http://www.chemie.de/tools/acronym.php3?language=e&acronym=\\{@}
+Query[de]=http://www.chemie.de/tools/acronym.php3?language=d&acronym=\\{@}

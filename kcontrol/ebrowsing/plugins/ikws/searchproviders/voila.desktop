@@ -6,4 +6,4 @@ Name[ko]=보일라
 Name[wa]=Voilà
 ServiceTypes=SearchProvider
 Keys=voila
-Query=http://www.voila.com/S/www?an=1&kw=\\1&dt=*
+Query=http://www.voila.com/S/www?an=1&kw=\\{@}&dt=*

@@ -38,6 +38,6 @@ Name[uk]=Повнотекстовий пошук у базі даних KDE
 Name[vi]=Tìm kiếm fulltext trên cơ sềEdữ liệu của KDE bug 
 Name[zh_CN.GB2312]=KDE 错误数据库全文检索
 Name[zh_TW.Big5]=KDE 程式臭蟲資料庫全文搜尋
-Query=http://bugs.kde.org/cgi-bin/Bugs/htsearch-bugs?exclude=%2Fix%2Ffull.html&words=\\1
+Query=http://bugs.kde.org/cgi-bin/Bugs/htsearch-bugs?exclude=%2Fix%2Ffull.html&words=\\{@}
 ServiceTypes=SearchProvider
 Type=Service

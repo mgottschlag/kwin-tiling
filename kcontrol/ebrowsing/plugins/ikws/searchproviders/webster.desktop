@@ -31,4 +31,4 @@ Name[uk]=Словник Merriam-Webster
 Name[vi]=Từ điển Merriam-Webster 
 ServiceTypes=SearchProvider
 Keys=dict,webster
-Query=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\1
+Query=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\{@}

@@ -10,4 +10,4 @@ Name[no]=LEO-oversetter
 Name[pl]=LEO-Tłumacz
 ServiceTypes=SearchProvider
 Keys=leo
-Query=http://dict.leo.org/?search=\\1
+Query=http://dict.leo.org/?search=\\{@}

@@ -25,4 +25,4 @@ Name[uk]=Словник синонімів Merriam-Webster
 Name[vi]=Từ điển đồng nghĩa Merriam-Webster 
 ServiceTypes=SearchProvider
 Keys=ths,thesaurus
-Query=http://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=\\1
+Query=http://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=\\{@}

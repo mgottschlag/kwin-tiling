@@ -3,4 +3,4 @@ Type=Service
 Name=Google Groups
 ServiceTypes=SearchProvider
 Keys=ggg,groups,dj,deja
-Query=http://groups.google.com/groups?oi=djq&as_q=\\1
+Query=http://groups.google.com/groups?oi=djq&as_q=\\{@}

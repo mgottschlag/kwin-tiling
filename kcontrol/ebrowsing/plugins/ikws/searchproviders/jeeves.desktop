@@ -9,4 +9,4 @@ Name[ko]=지브에게 묻기
 Name[lv]=Jautāt Džīvam
 ServiceTypes=SearchProvider
 Keys=ask,jeeves
-Query=http://www.ask.com/main/askJeeves.asp?origin=0&qSource=4&site_name=Jeeves&metasearch=yes&ask=\\1
+Query=http://www.ask.com/main/askJeeves.asp?origin=0&qSource=4&site_name=Jeeves&metasearch=yes&ask=\\{@}

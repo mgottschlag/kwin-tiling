@@ -8,4 +8,4 @@ Name[lv]=Astronauts
 Name[sv]=Astronaut
 ServiceTypes=SearchProvider
 Keys=austro,austronaut
-Query=http://AustroNaut.at/query.ims?wo=at&suche=\\1
+Query=http://AustroNaut.at/query.ims?wo=at&suche=\\{@}
