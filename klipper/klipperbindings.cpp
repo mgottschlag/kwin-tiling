@@ -1,9 +1,9 @@
 #ifndef NOSLOTS
 # define DEF( name, key3, key4, fnSlot ) \
-   keys->insertAction( name, i18n(name), KShortcuts(key3), KShortcuts(key4), this, SLOT(fnSlot) )
+   keys->insertAction( name, i18n(name), key3, key4, this, SLOT(fnSlot) )
 #else
 # define DEF( name, key3, key4, fnSlot ) \
-   keys->insertAction( name, i18n(name), KShortcuts(key3), KShortcuts(key4) )
+   keys->insertAction( name, i18n(name), key3, key4 )
 #endif
 
 	keys->insertLabel( "Program:klipper", i18n("Clipboard") );
