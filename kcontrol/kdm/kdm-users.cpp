@@ -69,7 +69,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     m_notFirst = false;
     QDir testDir( m_userPixDir );
     if ( !testDir.exists() && !testDir.mkdir( testDir.absPath() ))
-        KMessageBox::sorry( this, i18n("Couldn't create directory %1").arg( testDir.absPath() ) );
+        KMessageBox::sorry( this, i18n("Couldn't create folder %1").arg( testDir.absPath() ) );
 
     m_defaultText = i18n("<default>");
 
@@ -137,7 +137,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 
     faceGroup = new QButtonGroup( 5, Qt::Vertical, i18n("User Image Source"), this );
     QWhatsThis::add( faceGroup, i18n("Here you can specify where KDM will obtain the images that represent users."
-      " \"Admin\" represents the global directory; these are the pictures you can set below."
+      " \"Admin\" represents the global folder; these are the pictures you can set below."
       " \"User\" means that KDM should read the user's $HOME/.face.icon file."
       " The two selections in the middle define the order of preference if both sources are available.") );
     connect( faceGroup, SIGNAL(clicked( int )), SLOT(slotFaceOpts()) );

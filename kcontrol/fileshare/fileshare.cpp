@@ -41,7 +41,7 @@ KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStr
   connect( box, SIGNAL( clicked( int )), this, SLOT(configChanged()));
   layout->addWidget(box);
   noSharing=new QRadioButton( i18n("Do &not allow users to share files"), box );
-  sharing=new QRadioButton( i18n("&Allow users to share files from their HOME directory"),  box);
+  sharing=new QRadioButton( i18n("&Allow users to share files from their HOME folder"),  box);
   info = new QLabel( this );
   layout->addWidget(info);
   layout->addStretch();
