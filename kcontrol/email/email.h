@@ -26,7 +26,8 @@ public:
 	topKCMEmail (QWidget* parent = 0, const char* name = 0);
 	~topKCMEmail ();
 
-	void load(const QString & = QString::null);
+        void load();
+	void load(const QString &);
 	void save();
 	void defaults();
 	//int buttons();
