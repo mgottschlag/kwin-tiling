@@ -320,7 +320,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     QPushButton *btnImport = new QPushButton(i18n("&Import GTK themes..."), dummy);
     btnImport->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum));
     QWhatsThis::add(btnImport, i18n("This launches KDE GTK style importer "
-        "which allows you to convert i.e. GTK themes to KDE widget styles."));
+        "which allows you to convert legacy GTK pixmap themes to KDE widget styles."));
 
     QSpacerItem *spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
 
@@ -531,7 +531,7 @@ void KGeneral::readSettings()
 void KGeneral::slotRunImporter()
 {
     KProcess *themeImporter = new KProcess();
-    themeImporter->setExecutable("kgtkimport");
+    themeImporter->setExecutable("klecacyimport");
     connect(themeImporter, SIGNAL(processExited(KProcess *)), themeList,SLOT(rescan()));
     themeImporter->start();
 }
