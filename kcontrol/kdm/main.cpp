@@ -115,8 +115,6 @@ KDModule::KDModule(QWidget *parent, const char *name)
 KDModule::~KDModule()
 {
   delete c;
-  chmod(QFile::encodeName(KGlobal::dirs()->resourceDirs("config").last() + 
-			  "kdmrc").data(), 0644);
 }
 
 QString KDModule::quickHelp() const
@@ -170,6 +168,8 @@ void KDModule::save()
   sessions->save();
   convenience->save();
   c->sync();
+  chmod(QFile::encodeName(KGlobal::dirs()->resourceDirs("config").last() + 
+			  "kdmrc").data(), 0644);
 }
 
 

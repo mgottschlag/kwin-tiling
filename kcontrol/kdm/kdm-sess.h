@@ -57,7 +57,6 @@ protected:
 	void moveSession(int);
 
 protected slots:
-	void slotConsoleCheckToggled(bool);
 	void slotLiloCheckToggled(bool);
 	void slotAddSessionType();
 	void slotRemoveSessionType();
@@ -70,9 +69,7 @@ protected slots:
 private:
 	KIconLoader	*iconloader;
 	QComboBox	*sdcombo;
-	QCheckBox	*console_check;
-	QLabel		*console_label;
-	QLineEdit	*restart_lined, *shutdown_lined, *session_lined, *console_lined;
+	QLineEdit	*restart_lined, *shutdown_lined, *session_lined;
 	MyListBox	*sessionslb;
 	KDirectionButton	*btnup, *btndown;
 	QButton		*btnrm, *btnadd;

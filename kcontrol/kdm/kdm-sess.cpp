@@ -65,66 +65,45 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
 
-      QLabel *shutdown_label = new QLabel(i18n("S&hutdown"), group1);
       shutdown_lined = new KLineEdit(group1);
-      shutdown_label->setBuddy( shutdown_lined );
+      QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("S&hutdown"), group1);
       connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
-          this, SLOT(changed()));
+	      this, SLOT(changed()));
       wtstr = i18n("Command to initiate the shutdown sequence. Typical value: /sbin/halt");
       QWhatsThis::add( shutdown_label, wtstr );
       QWhatsThis::add( shutdown_lined, wtstr );
 
-      QLabel *restart_label = new QLabel(i18n("&Restart"), group1);
       restart_lined = new KLineEdit(group1);
-      restart_label->setBuddy( restart_lined );
+      QLabel *restart_label = new QLabel(restart_lined, i18n("&Restart"), group1);
       connect(restart_lined, SIGNAL(textChanged(const QString&)),
-          this, SLOT(changed()));
+	      this, SLOT(changed()));
       wtstr = i18n("Command to initiate the restart sequence. Typical value: /sbin/reboot");
       QWhatsThis::add( restart_label, wtstr );
       QWhatsThis::add( restart_lined, wtstr );
-
-      console_check = new QCheckBox(i18n("A&llow console mode"), group1);
-      connect(console_check, SIGNAL(toggled(bool)),
-          this, SLOT(slotConsoleCheckToggled(bool)));
-      connect(console_check, SIGNAL(toggled(bool)),
-          this, SLOT(changed()));
-      wtstr = i18n("When this is checked, KDM shows the option to switch to console mode.");
-      QWhatsThis::add( console_check, wtstr );
-
-      console_label = new QLabel(i18n("Console &mode"), group1);
-      console_lined = new QLineEdit(group1);
-      console_label->setBuddy( console_lined );
-      connect(console_lined, SIGNAL(textChanged(const QString&)),
-          this, SLOT(changed()));
-      wtstr = i18n("Command to enter console mode. Typical value: /sbin/init 3");
-      QWhatsThis::add( console_label, wtstr );
-      QWhatsThis::add( console_lined, wtstr );
 
 #ifdef __linux__
       QGroupBox *group4 = new QGroupBox( i18n("Lilo"), this );
 
       lilo_check = new QCheckBox(i18n("Show boot options"), group4);
       connect(lilo_check, SIGNAL(toggled(bool)),
-          this, SLOT(slotLiloCheckToggled(bool)));
+	      this, SLOT(slotLiloCheckToggled(bool)));
       connect(lilo_check, SIGNAL(toggled(bool)),
-          this, SLOT(changed()));
+	      this, SLOT(changed()));
       wtstr = i18n("");
       QWhatsThis::add( lilo_check, wtstr );
 
-      lilocmd_label = new QLabel(i18n("Lilo command"), group4);
       lilocmd_lined = new KLineEdit(group4);
-      lilocmd_label->setBuddy( lilocmd_lined );
+      lilocmd_label = new QLabel(lilocmd_lined , i18n("Lilo command"), group4);
       connect(lilocmd_lined, SIGNAL(textChanged(const QString&)),
           this, SLOT(changed()));
       wtstr = i18n("Command to run Lilo. Typical value: /sbin/lilo");
       QWhatsThis::add( lilocmd_label, wtstr );
       QWhatsThis::add( lilocmd_lined, wtstr );
 
-      lilomap_label = new QLabel(i18n("Lilo map file"), group4);
       lilomap_lined = new KLineEdit(group4);
-      lilomap_label->setBuddy( lilomap_lined );
+      lilomap_label = new QLabel(lilomap_lined, i18n("Lilo map file"), group4);
       connect(lilomap_lined, SIGNAL(textChanged(const QString&)),
-          this, SLOT(changed()));
+	      this, SLOT(changed()));
       wtstr = i18n("Position of Lilo's map file. Typical value: /boot/map");
       QWhatsThis::add( lilomap_label, wtstr );
       QWhatsThis::add( lilomap_lined, wtstr );
@@ -132,15 +111,14 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       QGroupBox *group2 = new QGroupBox( i18n("Session types"), this );
 
-      QLabel *type_label = new QLabel(i18n("New t&ype"), group2);
       session_lined = new QLineEdit(group2);
-      type_label->setBuddy( session_lined );
+      QLabel *type_label = new QLabel(session_lined, i18n("New t&ype"), group2);
       connect(session_lined, SIGNAL(textChanged(const QString&)),
-              SLOT(slotCheckNewSession(const QString&)));
+	      SLOT(slotCheckNewSession(const QString&)));
       connect(session_lined, SIGNAL(returnPressed()),
-              SLOT(slotAddSessionType()));
+	      SLOT(slotAddSessionType()));
       connect(session_lined, SIGNAL(returnPressed()),
-          this, SLOT(changed()));
+	      this, SLOT(changed()));
       wtstr = i18n( "To create a new session type, enter its name here and click on <em>Add new</em>" );
       QWhatsThis::add( type_label, wtstr );
       QWhatsThis::add( session_lined, wtstr );
@@ -151,11 +129,10 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       connect( btnadd, SIGNAL( clicked() ), SLOT( slotAddSessionType() ) );
       QWhatsThis::add( btnadd, i18n( "Click here to add the new session type entered in the <em>New type</em> field to the list of available sessions." ) );
 
-      QLabel *types_label = new QLabel(i18n("Available &types"), group2);
       sessionslb = new MyListBox(group2);
-      types_label->setBuddy( sessionslb );
+      QLabel *types_label = new QLabel(sessionslb, i18n("Available &types"), group2);
       connect(sessionslb, SIGNAL(highlighted(int)),
-              SLOT(slotSessionHighlighted(int)));
+	      SLOT(slotSessionHighlighted(int)));
       wtstr = i18n( "This box lists the available session types that will be presented to the user."
 		    " Names other than \"default\" and \"failsafe\" are usually treated as program names,"
 		    " but it depends on your Xsession script what the session type means." );
@@ -205,11 +182,8 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       lgroup1->setColStretch(4, 1);
       lgroup1->addWidget(shutdown_label, 1, 0);
       lgroup1->addWidget(shutdown_lined, 1, 1);
-      lgroup1->addWidget(restart_label, 2, 0);
-      lgroup1->addWidget(restart_lined, 2, 1);
-      lgroup1->addMultiCellWidget(console_check, 1,1, 3,4);
-      lgroup1->addWidget(console_label, 2, 3);
-      lgroup1->addWidget(console_lined, 2, 4);
+      lgroup1->addWidget(restart_label, 1, 3);
+      lgroup1->addWidget(restart_lined, 1, 4);
 
 #ifdef __linux__
       lgroup4->addRowSpacing(0, group4->fontMetrics().height()/2);
@@ -239,15 +213,13 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       load();
 
-      // read only mode
-      if (getuid() != 0)
+    // read only mode
+    if (getuid() != 0)
     {
       sdcombo->setEnabled(false);
 
       restart_lined->setReadOnly(true);
       shutdown_lined->setReadOnly(true);
-      console_check->setEnabled(false);
-      console_lined->setReadOnly(true);
 #ifdef __linux__
       lilo_check->setEnabled(false);
       lilocmd_lined->setReadOnly(true);
@@ -260,12 +232,6 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       btnrm->setEnabled(false);
       btnadd->setEnabled(false);
     }
-}
-
-void KDMSessionsWidget::slotConsoleCheckToggled(bool on)
-{
-    console_label->setEnabled(on);
-    console_lined->setEnabled(on);
 }
 
 void KDMSessionsWidget::slotLiloCheckToggled(bool on)
@@ -336,8 +302,6 @@ void KDMSessionsWidget::save()
 
     c->writeEntry("Shutdown", shutdown_lined->text(), true);
     c->writeEntry("Restart", restart_lined->text(), true);
-    c->writeEntry("ConsoleMode", console_lined->text(), true);
-    c->writeEntry("AllowConsoleMode", console_check->isChecked());
 
   // write shutdown auth
   switch ( sdcombo->currentItem() )
@@ -385,10 +349,6 @@ void KDMSessionsWidget::load()
   // read restart and shutdown cmds
   restart_lined->setText(c->readEntry("Restart", "/sbin/reboot"));
   shutdown_lined->setText(c->readEntry("Shutdown", "/sbin/halt"));
-  console_lined->setText(c->readEntry("ConsoleMode", "/sbin/init 3"));
-  bool cmon = c->readBoolEntry("AllowConsoleMode", true);
-  console_check->setChecked(cmon);
-  slotConsoleCheckToggled(cmon);
 
   str = c->readEntry("ShutdownButton", "All");
   SdModes sdMode;
@@ -424,9 +384,6 @@ void KDMSessionsWidget::defaults()
 {
   restart_lined->setText("/sbin/reboot");
   shutdown_lined->setText("/sbin/halt");
-  console_check->setChecked(true);
-  slotConsoleCheckToggled(true);
-  console_lined->setText("/sbin/init 3");
 
   sdcombo->setCurrentItem(SdAll);
 
