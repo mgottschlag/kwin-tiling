@@ -57,7 +57,7 @@ private:
     void apply();
     void preview();
 
-    bool mbDP[4];
+    bool mbDP[4], mbChanged[4];
     int mSizes[4];
     QValueList<int> mAvSizes[4];
     int mEffects[4][3];

@@ -33,6 +33,7 @@
 #include <kicontheme.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kipc.h>
 
 #include <icons.h>
 
@@ -129,6 +130,8 @@ void KIconConfig::init()
     mpEffect = new KIconEffect;
     mpTheme = mpLoader->theme();
     mUsage = 0; mState = 0;
+    for (int i=0; i<KIcon::LastGroup; i++)
+	mbChanged[i] = false;
 
     // Fill list/checkboxen
     mpUsageList->insertItem(i18n("Desktop"));
@@ -155,8 +158,6 @@ void KIconConfig::init()
     mStates += "Default";
     mStates += "Active";
     mStates += "Disabled";
-
-
 }
 
 void KIconConfig::read()
@@ -258,6 +259,8 @@ void KIconConfig::load()
     read();
     apply();
     emit changed(false);
+    for (int i=0; i<KIcon::LastGroup; i++)
+	mbChanged[i] = false;
 }
 
 
@@ -296,22 +299,32 @@ void KIconConfig::save()
 	}
     }
     mpConfig->sync();
-    emit changed(false);
-}
 
+    emit changed(false);
+    for (int i=0; i<KIcon::LastGroup; i++)
+    {
+	if (mbChanged[i])
+	{
+	    KIPC::sendMessageAll(KIPC::IconChanged, i);
+	    mbChanged[i] = false;   
+	}
+    }
+}
 
 void KIconConfig::defaults()
 {
     for (int i=0; i<KIcon::LastGroup; i++)
     {
-	mSizes[i] = mpTheme->defaultSize(i);
 	mbDP[i] = false;
+	mbChanged[i] = true;
+	mSizes[i] = mpTheme->defaultSize(i);
 	mEffects[i][0] = KIconEffect::NoEffect;
 	mEffects[i][1] = KIconEffect::NoEffect;
 	mEffects[i][2] = KIconEffect::SemiTransparent;
     }
     apply();
     preview();
+
     emit changed(true);
 }
 
@@ -321,7 +334,6 @@ void KIconConfig::slotUsage(int index)
     mState = 0;
     apply();
     preview();
-    emit changed(true);
 }
 
 void KIconConfig::slotState(int index)
@@ -330,7 +342,6 @@ void KIconConfig::slotState(int index)
     mpEffectBox->setCurrentItem(mEffects[mUsage][mState]);
     mpEffectSlider->setValue((int) (100.0 * mEffectValues[mUsage][mState] + 0.5));
     preview();
-    emit changed(true);
 }
 
 void KIconConfig::slotEffect(int index)
@@ -347,6 +358,7 @@ void KIconConfig::slotEffect(int index)
     }
     preview();
     emit changed(true);
+    mbChanged[mUsage] = true;
 }
 
 void KIconConfig::slotEffectValue(int value)
@@ -354,6 +366,7 @@ void KIconConfig::slotEffectValue(int value)
     mEffectValues[mUsage][mState] = 0.01 * value;
     preview();
     emit changed(true);
+    mbChanged[mUsage] = true;
 }
 
 void KIconConfig::slotSize(int index)
@@ -362,6 +375,7 @@ void KIconConfig::slotSize(int index)
     mSizes[mUsage] = mAvSizes[mUsage][index];
     preview();
     emit changed(true);
+    mbChanged[mUsage] = true;
 }
 
 void KIconConfig::slotDPCheck(bool check)
@@ -369,6 +383,7 @@ void KIconConfig::slotDPCheck(bool check)
     mbDP[mUsage] = check;
     preview();
     emit changed(true);
+    mbChanged[mUsage] = true;
 }
 
 #include "icons.moc"
