@@ -132,9 +132,11 @@ FIXME: this could be clearer done by a calculation on the position.
 
 #ifdef HAVE_GL
 
+#ifdef HAVE_GL_XMESA_H
 #include <GL/xmesa.h>
+#endif
 #include <GL/gl.h>
-#include <GL/glut.h>
+#include <GL/glu.h>
 #include <GL/glx.h>
 
 // GL related helper routines /////////////////////////////////////////////////
