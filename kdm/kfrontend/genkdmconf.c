@@ -204,35 +204,6 @@ StrCat (char **strp, const char *fmt, ...)
 	*strp = str;
 }
 
-/*
-static char *
-sed (const char *text, const char *alt, const char *neu)
-{
-    const char *cptr, *ncptr;
-    char *ntext, *dptr;
-    int alen, nlen, tlen, ntlen, nma;
-
-    alen = strlen(alt);
-    nlen = strlen(neu);
-    tlen = strlen(text);
-    for (cptr = text, nma = 0; 
-	 (cptr = strstr (cptr, alt)); 
-	 cptr += alen, nma++);
-    ntlen = tlen + (nlen - alen) * nma;
-    if ((ntext = malloc (ntlen))) {
-	for (cptr = text, dptr = ntext; 
-	     (ncptr = strstr (cptr, alt)); 
-	     cptr = ncptr + alen, dptr += nlen)
-	{
-	    memcpy (dptr, cptr, (ncptr - cptr));
-	    memcpy ((dptr += (ncptr - cptr)), neu, nlen);    
-	}
-	memcpy (dptr, cptr, (text + tlen - cptr) + 1);
-    }
-    return ntext;
-}
-*/
-
 
 #define WANT_CLOSE 1
 
