@@ -29,5 +29,5 @@ METASOURCES = AUTO
 LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot *.cpp -o ../po/kcontrol2.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot *.cpp -o ../../po/kcontrol2.pot
 
