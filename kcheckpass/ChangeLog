@@ -1,3 +1,8 @@
+2001-10-02  Roberto Teixeira <maragato@kde.org>
+
+	* Adding a new option: with -U it is now possible to specify a username in
+	the command line.
+
 1998-12-13  Christian Esken  <esken@kde.org>
 
 	* Adding another return code: 2=Cannot read shadow database. This return code

@@ -36,8 +36,9 @@
  *	Copyright (C) 1998, Caldera, Inc.
  *	Released under the GNU General Public License
  *
- *	Olaf Kirch <okir@caldera.de>      General Framework and PAM support
- *	Christian Esken <esken@kde.org>   Shadow and /etc/passwd support
+ *	Olaf Kirch <okir@caldera.de>         General Framework and PAM support
+ *	Christian Esken <esken@kde.org>      Shadow and /etc/passwd support
+ *	Roberto Teixeira <maragato@kde.org>  other user (-U) support
  *
  *      Other parts were taken from kscreensaver's passwd.cpp.
  *
@@ -62,7 +63,7 @@
 #define ACCEPT_ENV
 /* Define this if you want kcheckpass to accept options
  * (They don't do anything useful right now) */
-#undef ACCEPT_OPTIONS
+#define ACCEPT_OPTIONS
 
 /* This will disable environment vars when options are enabled.
    (there would be a preference clash otherwise) */
@@ -126,7 +127,7 @@ usage(int exitval)
           "        2 cannot read password database\n"
 	  "    Anything else tells you something's badly hosed.\n",
 #ifdef ACCEPT_OPTIONS
-	" [-dh] [-c caller]"
+	" [-dh] [-c caller] [-U username]"
 #else
 	""
 #endif
@@ -140,7 +141,8 @@ usage(int exitval)
 int
 main(int argc, char **argv)
 {
-  char		*login, passbuffer[1024], *passwd,*ca;
+  char		*login, passbuffer[1024], *passwd,*ca,username[128];
+  int		with_U;
   struct passwd	*pw;
   int		status, c;
   uid_t		uid;
@@ -170,21 +172,30 @@ main(int argc, char **argv)
 
   havetty = isatty(0);
 
+  /* did the user provided the -U option? */
+  with_U = 0;
+  
 #ifndef ACCEPT_OPTIONS
   if (argc != 1)
     usage(10);
 #else
-  while ((c = getopt(argc, argv, "dc:")) != -1) {
+  while ((c = getopt(argc, argv, "hdc:U:")) != -1) {
     switch (c) {
     case 'd':
       debug = 1;
       break;
-case 'c':
+    case 'c':
       strncpy(caller,optarg,19);  
       caller[19] = '\000';  /* Make sure caller can never be longer than 19 characters */
       break;
+    case 'U':
+      strncpy(username,optarg,128);
+      with_U = 1;
+      username[127] = '\000';
+      break;
     case 'h':
       usage(0);
+      break;
     default:
       message("Unknown option %c\n", c);
       usage(10);
@@ -199,11 +210,20 @@ case 'c':
   unsetenv("KDE_PAM_ACTION");
 #endif  
 
-  uid = getuid();
-  if (!(pw = getpwuid(uid))) {
-    message("Unknown user (uid %d)\n", uid);
-    exit(10);
+  if (with_U) {
+    if (!(pw = getpwnam(username))) {
+      message("Unknown user (%s)\n", username);
+      exit(10);
+    }
+    uid = pw->pw_uid;
+  } else {
+    uid = getuid();
+    if (!(pw = getpwuid(uid))) {
+      message("Unknown user (uid %d)\n", uid);
+      exit(10);
+    }
   }
+  
   if ((login = strdup(pw->pw_name)) == NULL) {
     message("Out of memory on strdup'ing user name \"%.100s\"\n", pw->pw_name);
     exit(10);
