@@ -74,7 +74,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
    m_ioslavesLb->sort();
    m_ioslavesLb->setSelected(0, true);
 
-   setButtons(KCModule::Help);
+   setButtons(buttons ());
    load();
 }
 
@@ -110,7 +110,7 @@ void KCMIOSlaveInfo::save() {
 }
 
 int KCMIOSlaveInfo::buttons () {
-   return KCModule::Default|KCModule::Apply|KCModule::Help;
+   return KCModule::Help;
 }
 
 void KCMIOSlaveInfo::configChanged() {
