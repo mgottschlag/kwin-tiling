@@ -53,8 +53,8 @@
 //#include "config-kfile.h"
 
 #define COL_NAME    0
-#define COL_FONT    1
-#define COL_ENABLED 2
+#define COL_ENABLED 1
+#define COL_FONT    2
 
 class CKFileFontView::CKFileFontViewPrivate
 {
@@ -76,8 +76,8 @@ CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
     setViewName(i18n("Detailed View"));
 
     addColumn(i18n("Name"));
+    addColumn("", 24);
     addColumn(i18n("Font"));
-    addColumn(i18n("Enabled"));
     setShowSortIndicator(true);
     setAllColumnsShowFocus(true);
     setDragEnabled(true);
@@ -91,9 +91,7 @@ CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
 
     // DND
     connect(&(d->itsAutoOpenTimer), SIGNAL(timeout()), this, SLOT(slotAutoOpen()));
-
     setSelectionMode(KFileView::selectionMode());
-
     itsResolver = new KMimeTypeResolver<CFontListViewItem, CKFileFontView>(this);
 }
 
@@ -599,6 +597,16 @@ void CKFileFontView::contentsDropEvent(QDropEvent *e)
             sig->dropURLs(fileItem, e, urls);
         }
     }
+}
+
+void CKFileFontView::readConfig(KConfig *kc, const QString &group)
+{
+    restoreLayout(kc, group.isEmpty() ? QString("CFileFontView") : group);
+}
+
+void CKFileFontView::writeConfig(KConfig *kc, const QString &group)
+{
+    saveLayout(kc, group.isEmpty() ? QString("CFileFontView") : group);
 }
 
 /////////////////////////////////////////////////////////////////
