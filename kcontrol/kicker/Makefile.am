@@ -21,7 +21,7 @@ KDE_ICON = kmenu
 messages: rc.cpp
 	(cd ../../kicker/data/tiles ; ls *_tiny_up.png) | perl -p -e \
 	  's/(.*)_tiny_up\.png/i18n\(\"\u$$1\"\)\;/; s/[_ ]+(.)/ \u$$1/g' >> rc.cpp
-	$(XGETTEXT) rc.cpp $(kcm_kicker_la_SOURCES) -o $(podir)/kcmkicker.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmkicker.pot
 
 kcmkicker_data_DATA = panel.desktop 
 kcmkicker_datadir = $(kde_appsdir)/Settings/Desktop/
