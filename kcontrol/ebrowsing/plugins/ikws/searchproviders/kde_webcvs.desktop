@@ -2,6 +2,8 @@
 Encoding=UTF-8
 Type=Service
 Name=KDE WebCVS
+Name[ar]=كيدي WebCVS
+Name[bn]=কে.ডি.ই. ওয়েব-সি.ভি.এস
 Name[ca]=WebCVS de KDE
 Name[cy]=WebCVS KDE
 Name[de]=KDE-WebCVS
@@ -18,6 +20,8 @@ Name[pt]=WebCVS do KDE
 Name[pt_BR]=WebCVS do KDE
 Name[ro]=Web CVS KDE
 Name[sv]=KDE-webbcvs
+Name[tg]=KDE ВэбCVS
+Name[wa]=WebCVS di KDE
 Name[xx]=xxKDE WebCVSxx
 ServiceTypes=SearchProvider
 Keys=webcvs,kdecvs,kcvs,kvs

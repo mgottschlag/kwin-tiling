@@ -2,12 +2,14 @@
 Encoding=UTF-8
 Type=Service
 Name=Google
+Name[bn]=গুগল্
 Name[fa]=گوگل
 Name[hi]=गूगल
 Name[ko]=구글
 Name[mn]=Гооглэ
 Name[pl]=Google - wyszukiwarka stron WWW
 Name[ta]=கூகுல்
+Name[th]=กูเกิ้ล
 Name[xx]=xxGooglexx
 ServiceTypes=SearchProvider
 Keys=gg,google
