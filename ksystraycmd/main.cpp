@@ -35,7 +35,7 @@ static KCmdLineOptions options[] =
   { "tooltip <text>", I18N_NOOP( "Sets the initial tooltip for the tray icon" ), 0 },
   { "keeprunning", I18N_NOOP( "Keep the tray icon even if the client exits. This option\n"
 			 "has no effect unless startonshow is specified." ), 0 },
-  { "quitonhide", I18N_NOOP( "Quit the client when we are told to hide the window\n"
+  { "quitonhide", I18N_NOOP( "Quit the client when we are told to hide the window.\n"
              "This has no effect unless startonshow is specified and implies keeprunning." ), 0 },
   /*  { "menuitem <item>", I18N_NOOP( "Adds a custom entry to the tray icon menu\n"
       "The item should have the form text:command." ), 0 },*/
