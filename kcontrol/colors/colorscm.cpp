@@ -675,15 +675,17 @@ void KColorScheme::readScheme( int index )
     cs->buttonTxt = config->readColorEntry( "buttonForeground", &black );
     cs->link = config->readColorEntry( "linkColor", &link );
     cs->visitedLink = config->readColorEntry( "visitedLinkColor", &visitedLink );
-    alternate = cs->window.dark(106);
     int h, s, v;
-    cs->window.hsv( &h, &s, &v );
-    if (v > 128)
-        alternate = cs->window.dark(106);
-    else if (cs->window != black)
-        alternate = cs->window.light(106);
-    else
-        alternate = Qt::darkGray;
+    if (cs->window != Qt::white)
+    {
+        cs->window.hsv( &h, &s, &v );
+        if (v > 128)
+            alternate = cs->window.dark(106);
+        else if (cs->window != black)
+            alternate = cs->window.light(106);
+        else
+            alternate = Qt::darkGray;
+    }
 
     cs->alternateBackground = config->readColorEntry( "alternateBackground", &alternate );
 
