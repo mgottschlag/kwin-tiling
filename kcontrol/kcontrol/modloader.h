@@ -27,6 +27,12 @@ class KLibLoader;
 
 class KCModuleLoader
 {
+  /**
+   * @description loads a KControl Module
+   * @author Matthias Hoelzer-Kluepfel <mhk@kde.org>
+   * @since 3.2
+   * @internal
+   **/
 public:
   static KCModule *loadModule(const KCModuleInfo &mod, bool withfallback=true);
   static void unloadModule(const KCModuleInfo &mod);

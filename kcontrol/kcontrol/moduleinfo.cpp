@@ -26,7 +26,7 @@
 #include "moduleinfo.h"
 
 KCModuleInfo::KCModuleInfo(const QString& desktopFile, const QString& baseGroup)
-  : _fileName(desktopFile)
+  : _fileName(desktopFile), d(0L)
 {
   _allLoaded = false;
 

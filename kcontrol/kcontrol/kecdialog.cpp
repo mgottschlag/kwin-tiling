@@ -37,9 +37,8 @@
 
 KCMultiDialog::KCMultiDialog(QWidget *parent, const QString& baseGroup, const char *name, bool modal)
   : KDialogBase(IconList, i18n("Settings"), Help | Default |Cancel | Apply | Ok, Ok,
-                parent, name, modal, true)
+                parent, name, modal, true), d(0L)
 {
-    d = 0L;
     enableButton(Apply, false);
     connect(this, SIGNAL(aboutToShowPage(QWidget *)), this, SLOT(slotAboutToShow(QWidget *)));
     setInitialSize(QSize(640,480));
