@@ -384,11 +384,13 @@ void KickerConfig::jumpToPanel(const QString& panelConfig)
     if (positiontab)
     {
         positiontab->m_panelList->setCurrentItem(index);
+        positiontab->switchPanel(index);
     }
 
     if (hidingtab)
     {
         hidingtab->m_panelList->setCurrentItem(index);
+        hidingtab->switchPanel(index);
     }
 }
 
