@@ -379,7 +379,7 @@ void AboutWidget::updatePixmap()
         p.setFont(headingFont);
         if (!_caption.isEmpty())
         {
-           p.drawText(xoffset, yoffset, alxadd, fheight+10, hAlign, _caption );
+           p.drawText(xoffset, yoffset, p.fontMetrics().width(_caption), fheight+10, hAlign, _caption );
            yoffset += fheight + 15;
         }
 
