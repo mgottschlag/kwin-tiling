@@ -888,6 +888,7 @@ void Theme::install(void)
   if (instColors) installGroup("Colors");
   if (instSounds) installGroup("Sounds");
   if (instIcons) installGroup("Icons");
+  if (instWM) installGroup("WM");
 
   kdDebug() << "*** executing command list" << endl;
 

@@ -59,6 +59,7 @@ Options::Options (QWidget * aParent, const char *aName, bool aInit)
   mCbxWallpapers = newLine("Display", i18n("Wallpapers"), &mStatWallpapers);
   mCbxSounds = newLine("Sounds", i18n("Sound effects"), &mStatSounds);
   mCbxIcons = newLine("Icons", i18n("Icons"), &mStatIcons);
+  mCbxWM = newLine("WM", i18n("Window Decorations"), &mStatWM);
 
   btn = new QPushButton(i18n("Clear"), this);
   btn->setFixedSize(btn->sizeHint());
@@ -135,6 +136,7 @@ void Options::save()
   theme->instWallpapers = mCbxWallpapers->isChecked();
   theme->instSounds = mCbxSounds->isChecked();
   theme->instIcons = mCbxIcons->isChecked();
+  theme->instWM = mCbxWM->isChecked();
   theme->instOverwrite = !mCbxOverwrite->isChecked();
 }
 
@@ -146,6 +148,7 @@ void Options::slotInvert()
   mCbxWallpapers->setChecked(!mCbxWallpapers->isChecked());
   mCbxSounds->setChecked(!mCbxSounds->isChecked());
   mCbxIcons->setChecked(!mCbxIcons->isChecked());
+  mCbxWM->setChecked(!mCbxWM->isChecked());
   save();
 }
 
@@ -157,6 +160,7 @@ void Options::slotClear()
   mCbxWallpapers->setChecked(false);
   mCbxSounds->setChecked(false);
   mCbxIcons->setChecked(false);
+  mCbxWM->setChecked(false);
   save();
 }
 
@@ -226,6 +230,7 @@ void Options::updateStatus(void)
   updateStatus("Display", mStatWallpapers);
   updateStatus("Sounds", mStatSounds);
   updateStatus("Icons", mStatIcons);
+  updateStatus("WM", mStatWM);
 }
 
 
@@ -240,6 +245,7 @@ void Options::writeConfig()
   cfg->writeEntry("wallpapers", mCbxWallpapers->isChecked());
   cfg->writeEntry("sounds", mCbxSounds->isChecked());
   cfg->writeEntry("icons", mCbxIcons->isChecked());
+  cfg->writeEntry("wm", mCbxWM->isChecked());
 }
 
 
@@ -254,6 +260,7 @@ void Options::readConfig()
   mCbxWallpapers->setChecked(cfg->readBoolEntry("wallpapers", true));
   mCbxSounds->setChecked(cfg->readBoolEntry("sounds", true));
   mCbxIcons->setChecked(cfg->readBoolEntry("icons", true));
+  mCbxWM->setChecked(cfg->readBoolEntry("wm", true));
   save();
 }
 
