@@ -308,7 +308,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 
    cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ), aaBox);
    QWhatsThis::add(cbAA, i18n("If this option is selected, KDE will smooth the edges of curves in "
-                              "fonts and some images."));
+                              "fonts."));
 
    QHBox *hbox =  new QHBox(aaBox);
    spacer = new QSpacerItem( 20, 0, QSizePolicy::Fixed, QSizePolicy::Minimum );
