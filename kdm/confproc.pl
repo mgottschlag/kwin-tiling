@@ -234,7 +234,7 @@ while (<INFILE>) {
     next if (/^($|#)/);
     if (/^Key: (.+)$/) {
       my $key = $1;
-      $sect || pegout("definining key ".$key." outside any section");
+      $sect || pegout("defining key ".$key." outside any section");
       defined($key_names{$key}) &&
         pegout("redefinition of key ".$key." in section [".$sect."]");
       $key_names{$key} = "";
@@ -324,7 +324,7 @@ while (<INFILE>) {
       }
       my $nusers = 0;
       my ($vname, $kid, $xkid, $ctype, $cpptype, $cget, $cppget);
-      while(/^User: (.+)$/) {
+      while (/^User: (.+)$/) {
         my $user = $1;
         if ($user eq "dummy") {
           $vname = "dummy";
@@ -396,7 +396,7 @@ while (<INFILE>) {
       }
       $nusers || pegout("expecting User for key ".$key." in section [".$sect."]");
       my $ninsts = 0;
-      while(/^Instance: ?(.*)$/) {
+      while (/^Instance: ?(.*)$/) {
         my $inst = $1;
         if ($inst ne "-") {
           my $on = 1 - ($inst =~ s/^#//);
@@ -437,7 +437,7 @@ while (<INFILE>) {
         $prio = 0;
       }
       my $mcnt = 0;
-      while(/^Merge: (.+)$/) {
+      while (/^Merge: (.+)$/) {
         my $merge = $1;
         if ($merge =~ /^xdm(:([^\(]+))?(\((.+)\))?$/) {
           my ($what, $proc) = ($2, $4);
