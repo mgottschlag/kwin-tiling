@@ -67,6 +67,7 @@ protected slots:
 protected:
  void updateItem(ModuleTreeItem *item, ConfigModule* module); 
  ModuleTreeItem *getGroupItem(ModuleTreeItem *parent, const QStringList& groups);
+ void keyPressEvent(QKeyEvent *);
   
 private:
   ConfigModuleList *_modules;

@@ -46,9 +46,7 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const c
   setItemTextPos(Right);
   setResizeMode(Adjust);
 
-  connect(this, SIGNAL(clicked(QIconViewItem*)), 
-		  this, SLOT(slotItemSelected(QIconViewItem*)));
-  connect(this, SIGNAL(returnPressed(QIconViewItem*)), 
+  connect(this, SIGNAL(executed(QIconViewItem*)), 
 		  this, SLOT(slotItemSelected(QIconViewItem*)));
 }
   
@@ -172,6 +170,7 @@ void ModuleIconView::slotItemSelected(QIconViewItem* item)
 	{
 	  _path = static_cast<ModuleIconItem*>(item)->tag();
 	  fill();
+      setCurrentItem(firstItem());
 	}
 }
 
@@ -214,4 +213,16 @@ QDragObject *ModuleIconView::dragObject()
     return 0;
 
   return drag;
+}
+
+void ModuleIconView::keyPressEvent(QKeyEvent *e)
+{
+  if (!currentItem()) return;
+  
+  if(   e->key() == Key_Return
+     || e->key() == Key_Enter
+     || e->key() == Key_Space)
+      slotItemSelected(currentItem());
+  else
+    KIconView::keyPressEvent(e);
 }

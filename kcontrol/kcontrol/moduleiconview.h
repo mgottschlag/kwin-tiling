@@ -66,6 +66,7 @@ protected slots:
 
 protected:
  QDragObject *dragObject(); 
+ void keyPressEvent(QKeyEvent *);
   
 private:
   QString           _path; 

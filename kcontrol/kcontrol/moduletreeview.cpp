@@ -42,8 +42,6 @@ ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const c
 
   connect(this, SIGNAL(clicked(QListViewItem*)), 
 		  this, SLOT(slotItemSelected(QListViewItem*)));
-  connect(this, SIGNAL(returnPressed(QListViewItem*)), 
-		  this, SLOT(slotItemSelected(QListViewItem*)));
 }
 
 void ModuleTreeView::fill()
@@ -194,6 +192,18 @@ void ModuleTreeView::slotItemSelected(QListViewItem* item)
     setOpen(item, false);
   else
     setOpen(item, true);
+}
+
+void ModuleTreeView::keyPressEvent(QKeyEvent *e)
+{
+  if (!currentItem()) return;
+  
+  if(e->key() == Key_Return
+     || e->key() == Key_Enter
+        || e->key() == Key_Space)
+    slotItemSelected(currentItem());
+  else
+    KListView::keyPressEvent(e);
 }
 
 ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
