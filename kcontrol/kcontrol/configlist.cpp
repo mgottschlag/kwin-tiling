@@ -26,22 +26,23 @@
 
 #include <stdlib.h>
 
+#include <qfileinfo.h>
 #include <qobject.h>
 #include <qdir.h>
+
 #include <kmsgbox.h>
 #include <kiconloader.h>
 #include <kapp.h>
-#include <qfileinfo.h>
+#include <ksimpleconfig.h>
+#include <klocale.h>
+#include <kglobal.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <kwm.h>
 
-#include "kdelnk.h"
 #include "configlist.moc"
 #include "configlist.h"
-#include <klocale.h>
-#include <kglobal.h>
 
 static QListView* listview = 0;
 
@@ -114,7 +115,7 @@ KModuleListEntry::~KModuleListEntry()
 
 void KModuleListEntry::parseKdelnkFile(const QString &fn)
 {
-  KKdelnk config(fn);
+  KSimpleConfig config(fn, true);
 
   exec =     config.readEntry("Exec");
   icon =     config.readEntry("Icon");
