@@ -392,7 +392,10 @@ void KBackground::init()
     // I would have prefered to use setMinimumWidth here, but it seems to
     // have no effect. The default width is too large because of the long
     // filenames that are inserted.
-    m_pWallpaperBox->setFixedWidth(width);
+    // Yeah but truncating filenames is even more ugly (David)
+    //m_pWallpaperBox->setFixedWidth(width);
+    // Better set a _max_ size that doesn't truncate the names.
+    m_pWallpaperBox->setMaximumWidth(m_pWallpaperBox->sizeHint().width());
 
     // Wallpaper tilings: again they must match the ones from bgrender.cc
     m_pArrangementBox->insertItem(i18n("No Wallpaper"));
