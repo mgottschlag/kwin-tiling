@@ -36,34 +36,12 @@
 
 #include "kcmaccess.moc"
 
-static bool needToRunKAccessDaemon( KConfig *config )
+static bool needToRunKAccessDaemon( KConfig * )
 {
-    KConfigGroup bell( config, "Bell" );
-    
-    if (!bell.readBoolEntry("SystemBell", true))
-        return true;
-    if (bell.readBoolEntry("ArtsBell", false))
-        return true;
-    if (bell.readBoolEntry("VisibleBell", false))
-        return true;
-    
-  KConfigGroup keyboard( config, "Keyboard" );
-
-  if (keyboard.readBoolEntry("StickyKeys", false))
-        return true;
-  if (keyboard.readBoolEntry("SlowKeys", false))
-        return true;
-  if (keyboard.readBoolEntry("BounceKeys", false))
-        return true;
-  if (keyboard.readBoolEntry("Gestures", true))
-        return true;
-
-  KConfigGroup mouse( config, "Mouse" );
-  
-  if (mouse.readBoolEntry("MouseKeys", false))
-        return true;
-
-    return false; // don't need it
+   // Since we have the gesture settings we always have to start
+   // the KAccess daemon as we do not know whether the gestures
+   // are activated by default in the X configuration or not.
+   return true;
 }
 
 QString mouseKeysShortcut (Display *display) {

@@ -591,7 +591,6 @@ void KAccessApp::applyChanges() {
       config->writeEntry("MouseKeys", false);
 
    config->sync();
-   readSettings();
 }
 
 void KAccessApp::yesClicked() {
@@ -619,6 +618,7 @@ void KAccessApp::yesClicked() {
 
    if (features != requestedFeatures)
       applyChanges();
+   readSettings();
 }
 
 void KAccessApp::noClicked() {
@@ -647,6 +647,7 @@ void KAccessApp::noClicked() {
 
    if (features != requestedFeatures)
       applyChanges();
+   readSettings();
 }
 
 void KAccessApp::dialogClosed() {
