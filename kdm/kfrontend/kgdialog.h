@@ -1,6 +1,6 @@
     /*
 
-    Dialog class that handles input focus in absence of a wm
+    Base class for various kdm greeter dialogs
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
     Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
@@ -21,39 +21,49 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
     */
- 
 
-#ifndef FDIALOG_H
-#define FDIALOG_H
 
-#include <qdialog.h>
-#include <qmessagebox.h>
+#ifndef KGDIALOG_H
+#define KGDIALOG_H
 
-class QFrame;
+#include <config.h> // for WITH_KDM_XCONSOLE
 
-class FDialog : public QDialog {
-    typedef QDialog inherited;
+#include "kfdialog.h"
 
-public:
-    FDialog( QWidget *parent = 0, const char* name = 0, bool modal = true );
-    virtual int exec();
+class QPopupMenu;
+class KConsole;
 
-    static void box( QWidget *parent, QMessageBox::Icon type, 
-		     const QString &text );
-#define errorbox QMessageBox::Critical
-#define sorrybox QMessageBox::Warning
-#define infobox QMessageBox::Information
-    void MsgBox( QMessageBox::Icon typ, const QString &msg ) { box( this, typ, msg ); }
+#define ex_exit		1
+#define ex_greet	2
+#define ex_choose	3
 
-protected:
-    QFrame *winFrame;
-};
-
-class KFMsgBox : public FDialog {
+class KGDialog : public FDialog {
+    Q_OBJECT
     typedef FDialog inherited;
 
-public:
-    KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text );
+  public:
+    KGDialog();
+
+  public slots:
+    void slotActivateMenu( int id );
+    void slotExit();
+    void slotSwitch();
+    void slotConsole();
+    void slotShutdown();
+
+  protected:
+    void completeMenu( int _switchIf, int _switchCode, const QString &_switchMsg, int _switchAccel );
+    void adjustGeometry();
+    void Inserten( const QString& txt, int accel, const char *member );
+    void Inserten( const QString& txt, int accel, QPopupMenu *cmnu );
+
+    QPopupMenu *optMenu;
+#ifdef WITH_KDM_XCONSOLE
+    KConsole *consoleView;
+#endif
+
+  private:
+    int switchCode;
 };
 
-#endif /* FDIALOG_H */
+#endif /* KGDIALOG_H */

@@ -24,12 +24,7 @@
 #ifndef KCHOOSER_H
 #define KCHOOSER_H
 
-#include "kfdialog.h"
-
-/* should be in kgreet_local.h */
-#define ex_exit		1
-#define ex_greet	2
-#define ex_choose	3
+#include "kgdialog.h"
 
 class QSocketNotifier;
 class QPopupMenu;
@@ -37,12 +32,12 @@ class QLineEdit;
 class QListView;
 class QListViewItem;
 
-class ChooserDlg : public FDialog {
+class ChooserDlg : public KGDialog {
     Q_OBJECT
-    typedef FDialog inherited;
+    typedef KGDialog inherited;
 
   public:
-    ChooserDlg(QWidget * parent = 0, const char *name = 0);
+    ChooserDlg();
 
   public slots:
     void slotReadPipe();
@@ -51,14 +46,8 @@ class ChooserDlg : public FDialog {
     void pingHosts();
     void accept();
     void reject();
-    void quit_button_clicked();
-    void local_button_clicked();
-    void console_button_clicked();
-    void shutdown_button_clicked();
 
   private:
-    void Inserten( QPopupMenu *mnu, const QString& txt, const char *member );
-
     QString recvStr ();
     QListViewItem *findItem (int id);
 

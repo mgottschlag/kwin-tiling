@@ -22,13 +22,11 @@
     */
 
 #include "kchooser.h"
-#include "kdmshutdown.h"
 #include "kdmconfig.h"
 #include "kdm_greet.h"
 
 #include <klocale.h>
 
-#include <qaccel.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -37,7 +35,7 @@
 #include <qlistview.h>
 #include <qlineedit.h>
 
-#include <stdlib.h>
+#include <stdlib.h> // for free()
 
 class ChooserListViewItem : public QListViewItem {
 public:
@@ -48,9 +46,11 @@ public:
 };
 
 
-ChooserDlg::ChooserDlg(QWidget * parent, const char *name)
-    : inherited(parent, name)
+ChooserDlg::ChooserDlg()
+    : inherited()
 {
+    completeMenu( LOGIN_REMOTE_ONLY, ex_greet, i18n("&Local Login"), ALT+Key_L );
+
     QBoxLayout *vbox = new QVBoxLayout(winFrame, 10, 10);
 
     QLabel *title = new QLabel(i18n("XDMCP Host Menu"), winFrame);
@@ -80,26 +80,6 @@ ChooserDlg::ChooserDlg(QWidget * parent, const char *name)
     acceptButton->setDefault(true);
     QPushButton *pingButton = new QPushButton(i18n("&Refresh"), winFrame);
 
-    QPopupMenu *optMenu = new QPopupMenu( winFrame );
-    optMenu->setCheckable( false );
-
-    Inserten( optMenu, disLocal ?
-		       i18n("R&estart X Server") :
-		       i18n("Clos&e Connection"),
-	      SLOT(quit_button_clicked()) );
-
-    if (disLocal && kdmcfg->_loginMode != LOGIN_REMOTE_ONLY)
-	Inserten( optMenu, i18n("&Local Login"),
-		  SLOT( local_button_clicked() ) );
-
-    if (dhasConsole)
-	Inserten( optMenu, i18n("Co&nsole Login"),
-		  SLOT( console_button_clicked() ) );
-
-    if (kdmcfg->_allowShutdown != SHUT_NONE)
-	Inserten( optMenu, i18n("&Shutdown..."),
-		  SLOT(shutdown_button_clicked()) );
-
     QPushButton *menuButton = new QPushButton( i18n("&Menu"), winFrame );
     menuButton->setPopup( optMenu );
 
@@ -121,12 +101,7 @@ ChooserDlg::ChooserDlg(QWidget * parent, const char *name)
 //    connect(helpButton, SIGNAL(clicked()), SLOT(slotHelp()));
     connect(host_view, SIGNAL(doubleClicked(QListViewItem *)), SLOT(accept()));
 
-}
-
-void
-ChooserDlg::Inserten( QPopupMenu *mnu, const QString& txt, const char *member )
-{
-    mnu->insertItem( txt, this, member, QAccel::shortcutKey(txt) );
+    adjustGeometry();
 }
 
 /*
@@ -176,27 +151,6 @@ void ChooserDlg::accept()
 
 void ChooserDlg::reject()
 {
-}
-
-void ChooserDlg::quit_button_clicked()
-{
-    SessionExit(disLocal ? EX_RESERVER_DPY : EX_NORMAL);	/* XXX */
-}
-
-void ChooserDlg::local_button_clicked()
-{
-    done( ex_greet );
-}
-
-void ChooserDlg::console_button_clicked()
-{
-    SessionExit( EX_TEXTLOGIN );
-}
-
-void ChooserDlg::shutdown_button_clicked()
-{
-    KDMShutdown k( winFrame );
-    k.exec();
 }
 
 QString ChooserDlg::recvStr()

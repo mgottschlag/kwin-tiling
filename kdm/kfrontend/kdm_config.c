@@ -544,6 +544,8 @@ Ent entsGreeter[] = {
 { "ShowLog",		C_ShowLog | C_BOOL,	0,	"false" },
 { "LogSource",		C_LogSource,		0,	"" },
 #endif
+{ "PluginsLogin",	C_PluginsLogin,		0,	"classic" },
+{ "PluginsShutdown",	C_PluginsShutdown,	0,	"classic" },
 };
 
 Sect

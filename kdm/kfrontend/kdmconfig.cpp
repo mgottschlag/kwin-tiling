@@ -122,6 +122,12 @@ KDMConfig::KDMConfig()
     } else
 	_greeterPosX = -1;
     _greeterScreen = GetCfgInt (C_GreeterScreen);
+    if (_greeterScreen < 0) {
+	QDesktopWidget *dsk = kapp->desktop();
+	_greeterScreen = _greeterScreen == -2 ?
+		dsk->screenNumber( QPoint( dsk->width() - 1, 0 ) ) :
+		dsk->screenNumber( QPoint( 0, 0 ) );
+    }
 
     QString tmp = GetCfgStr (C_GUIStyle);
     if (!tmp.isEmpty())
@@ -208,4 +214,7 @@ KDMConfig::KDMConfig()
     _showLog = GetCfgInt (C_ShowLog);
     _logSource = GetCfgStr (C_LogSource);
 #endif
+
+    _pluginsLogin = GetCfgQStrList(C_PluginsLogin);
+    _pluginsShutdown = GetCfgQStrList(C_PluginsShutdown);
 }

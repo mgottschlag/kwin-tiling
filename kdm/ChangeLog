@@ -1,3 +1,10 @@
+2003-10-27  Oswald Buddenhagen <ossi@kde.org>
+	* KDM now complies the input model of PAM. The greeter has an 
+	  interface for conversation plugins, so alternative authentication
+	  mechanisms can be handled; options PluginsLogin & PluginsShutdown.
+	* Password-less and automatic logins now use a separate PAM service
+	  (${KDM_PAM_SERVICE}-np).
+
 2003-09-22  Oswald Buddenhagen <ossi@kde.org>
 	* Session types are now defined with .desktop files; consequently the
 	  SessionTypes option is gone and we got SessionsDirs instead.

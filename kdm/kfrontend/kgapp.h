@@ -1,6 +1,6 @@
     /*
 
-    Dialog class that handles input focus in absence of a wm
+    Greeter module for xdm
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
     Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
@@ -21,39 +21,27 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
     */
- 
 
-#ifndef FDIALOG_H
-#define FDIALOG_H
 
-#include <qdialog.h>
-#include <qmessagebox.h>
+#ifndef KGAPP_H
+#define KGAPP_H
 
-class QFrame;
+#include <kapplication.h>
 
-class FDialog : public QDialog {
-    typedef QDialog inherited;
+class GreeterApp : public KApplication {
+    typedef KApplication inherited;
 
 public:
-    FDialog( QWidget *parent = 0, const char* name = 0, bool modal = true );
-    virtual int exec();
-
-    static void box( QWidget *parent, QMessageBox::Icon type, 
-		     const QString &text );
-#define errorbox QMessageBox::Critical
-#define sorrybox QMessageBox::Warning
-#define infobox QMessageBox::Information
-    void MsgBox( QMessageBox::Icon typ, const QString &msg ) { box( this, typ, msg ); }
+    GreeterApp();
+    virtual bool x11EventFilter( XEvent * );
 
 protected:
-    QFrame *winFrame;
+    virtual void timerEvent( QTimerEvent * );
+
+private:
+    static void sigAlarm( int );
+
+    int pingInterval;
 };
 
-class KFMsgBox : public FDialog {
-    typedef FDialog inherited;
-
-public:
-    KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text );
-};
-
-#endif /* FDIALOG_H */
+#endif /* KGAPP_H */

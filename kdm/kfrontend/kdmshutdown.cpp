@@ -28,26 +28,33 @@
 #include "kdm_greet.h"
 
 #include <kapplication.h>
+#include <kseparator.h>
 #include <klocale.h>
-#include <kpassdlg.h>
+#include <kpushbutton.h>
 #include <kstdguiitem.h>
 
 #include <qcombobox.h>
 #include <qvbuttongroup.h>
 #include <qstyle.h>
 #include <qlayout.h>
-#include <qlabel.h>
-#include <qtimer.h>
-#include <kpushbutton.h>
+#include <qaccel.h>
+#include <qpopupmenu.h>
 
-#include <stdlib.h>
+int KDMShutdown::curPlugin = -1;
+PluginList KDMShutdown::pluginList;
 
 KDMShutdown::KDMShutdown( QWidget *_parent )
-    : inherited( _parent, "Shutdown" )
+    : inherited( _parent )
+    , whenGroup( 0 )
+    , verify( 0 )
+    , needRoot( -1 )
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
+    , liloInfo( 0 )
+#endif
 {
     QSizePolicy fp( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
-    QVBoxLayout *box = new QVBoxLayout( winFrame, KDialog::spacingHint() * 2 );
+    QVBoxLayout *box = new QVBoxLayout( winFrame, 10 );
 
     QHBoxLayout *hlay = new QHBoxLayout( box );
 
@@ -62,8 +69,8 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 
     restart_rb = new KDMRadioButton( i18n("&Restart computer"), howGroup );
 
-    connect( rb, SIGNAL(doubleClicked()), SLOT(bye_bye()) );
-    connect( restart_rb, SIGNAL(doubleClicked()), SLOT(bye_bye()) );
+    connect( rb, SIGNAL(doubleClicked()), SLOT(accept()) );
+    connect( restart_rb, SIGNAL(doubleClicked()), SLOT(accept()) );
 
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
     if (kdmcfg->_useLilo) {
@@ -96,10 +103,9 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 	    }
 	    targets->setCurrentItem( oldLiloTarget );
 	    connect( targets, SIGNAL(activated(int)),
-		     SLOT(target_changed()) );
+		     SLOT(slotTargetChanged()) );
 	}
-    } else
-	liloInfo = 0;
+    }
 #endif
 
     howGroup->setSizePolicy( fp );
@@ -117,36 +123,37 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 	if (kdmcfg->_defSdMode == SHUT_FORCENOW)
 	    force_rb->setChecked( true );
 
-	try_rb = new QRadioButton( i18n("&Try now"), whenGroup );
+	try_rb = new QRadioButton( i18n("Try &now"), whenGroup );
 	if (kdmcfg->_defSdMode == SHUT_TRYNOW)
 	    try_rb->setChecked( true );
 
 	if (kdmcfg->_allowNuke == SHUT_NONE)
 	    force_rb->setEnabled( false );
 
-	connect( whenGroup, SIGNAL(clicked(int)), SLOT(when_changed(int)) );
+	connect( whenGroup, SIGNAL(clicked(int)), SLOT(slotWhenChanged()) );
 
 	whenGroup->setSizePolicy( fp );
     }
 
     if (kdmcfg->_allowShutdown == SHUT_ROOT ||
-	(!kdmcfg->_interactiveSd && kdmcfg->_allowNuke == SHUT_ROOT)) {
+	(!kdmcfg->_interactiveSd && kdmcfg->_allowNuke == SHUT_ROOT))
+    {
+	if (curPlugin < 0) {
+	    curPlugin = 0;
+	    pluginList = KGVerify::init( kdmcfg->_pluginsShutdown );
+	}
+	verify = new KGVerify( this, winFrame,
+			       whenGroup ? whenGroup : howGroup, "root",
+			       pluginList, KGreeterPlugin::Authenticate,
+			       KGreeterPlugin::Shutdown );
+	verify->selectPlugin( curPlugin );
+	box->addLayout( verify->getLayout() );
+	QAccel *accel = new QAccel( winFrame );
+	accel->insertItem( ALT+Key_A, 0 );
+	connect( accel, SIGNAL(activated(int)), SLOT(slotActivatePlugMenu()) );
+    }
 
-	pswdEdit = new KPasswordEdit( (KPasswordEdit::EchoModes)kdmcfg->_echoMode, winFrame, 0 );
-	pswdEdit->setSizePolicy( QSizePolicy( QSizePolicy::Ignored,
-					      QSizePolicy::Preferred ) );
-
-	QLabel *plb = new QLabel( pswdEdit, i18n("Root &password:"), winFrame );
-	plb->setSizePolicy( fp );
-
-	QHBoxLayout *qhb = new QHBoxLayout( box, 10 );
-	qhb->addWidget( plb );
-	qhb->addWidget( pswdEdit );
-	pswdEdit->setSizePolicy( fp );
-	timer = new QTimer( this );
-	connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
-    } else
-	pswdEdit = 0;
+    box->addWidget( new KSeparator( KSeparator::HLine, winFrame ) );
 
     okButton = new KPushButton( KStdGuiItem::ok(), winFrame );
     okButton->setSizePolicy( fp );
@@ -161,29 +168,42 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
     hlay->addWidget( cancelButton );
     hlay->addStretch( 1 );
 
-    connect( okButton, SIGNAL(clicked()), SLOT(bye_bye()) );
+    connect( okButton, SIGNAL(clicked()), SLOT(accept()) );
     connect( cancelButton, SIGNAL(clicked()), SLOT(reject()) );
 
-    when_changed( 0 );
+    slotWhenChanged();
 }
 
-#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
 KDMShutdown::~KDMShutdown()
 {
+#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
     delete liloInfo;
-}
 #endif
-
-void
-KDMShutdown::timerDone()
-{
-    okButton->setEnabled( true );
-    cancelButton->setEnabled( true );
-    when_changed( 0 );
+    hide();
+    delete verify;
 }
 
 void
-KDMShutdown::target_changed()
+KDMShutdown::slotActivatePlugMenu()
+{
+    if (needRoot) {
+	QPopupMenu *cmnu = verify->getPlugMenu();
+	QSize sh( cmnu->sizeHint() / 2 );
+	cmnu->exec( geometry().center() - QPoint( sh.width(), sh.height() ) );
+    }
+}
+
+void
+KDMShutdown::accept()
+{
+    if (needRoot == 1)
+	verify->accept();
+    else
+	bye_bye();
+}
+
+void
+KDMShutdown::slotTargetChanged()
 {
 #if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
     restart_rb->setChecked( true );
@@ -191,34 +211,23 @@ KDMShutdown::target_changed()
 }
 
 void
-KDMShutdown::when_changed( int )
+KDMShutdown::slotWhenChanged()
 {
-    needRoot = kdmcfg->_allowShutdown == SHUT_ROOT ||
-	       (kdmcfg->_allowNuke == SHUT_ROOT && force_rb->isChecked());
-    if (pswdEdit) {
-	bool can = needRoot && !timer->isActive();
-	pswdEdit->setEnabled( can );
-	if (can)
-	    pswdEdit->setFocus();
+    int nNeedRoot = kdmcfg->_allowShutdown == SHUT_ROOT ||
+		    (kdmcfg->_allowNuke == SHUT_ROOT && force_rb->isChecked());
+    if (verify && nNeedRoot != needRoot) {
+	if (needRoot == 1)
+	    verify->abort();
+	needRoot = nNeedRoot;
+	verify->setEnabled( needRoot );
+	if (needRoot)
+	    verify->start();
     }
 }
 
 void
 KDMShutdown::bye_bye()
 {
-    if (needRoot) {
-	GSendInt( G_Verify );
-	GSendStr( "root" );
-	GSendStr( pswdEdit->password() );
-	if (GRecvInt() < V_OK) {
-	    pswdEdit->erase();
-	    pswdEdit->setEnabled( false );
-	    okButton->setEnabled( false );
-	    cancelButton->setEnabled( false );
-	    timer->start( 1500 + kapp->random()/(RAND_MAX/1000), true );
-	    return;
-	}
-    }
 #if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
     if (kdmcfg->_useLilo && restart_rb->isChecked()) {
 	if (targets->currentItem() != oldLiloTarget) {
@@ -234,8 +243,41 @@ KDMShutdown::bye_bye()
     GSendInt( kdmcfg->_interactiveSd ? SHUT_INTERACT :
 	      force_rb->isChecked() ? SHUT_FORCENOW :
 	      try_rb->isChecked() ? SHUT_TRYNOW : SHUT_SCHEDULE );
-    accept();
+    inherited::accept();
 }
+
+void
+KDMShutdown::verifyPluginChanged( int id )
+{
+    curPlugin = id;
+    adjustSize();
+}
+
+void
+KDMShutdown::verifyOk()
+{
+    bye_bye();
+}
+
+void
+KDMShutdown::verifyFailed()
+{
+    okButton->setEnabled( false );
+    cancelButton->setEnabled( false );
+}
+
+void
+KDMShutdown::verifyRetry()
+{
+    okButton->setEnabled( true );
+    cancelButton->setEnabled( true );
+}
+
+void
+KDMShutdown::verifySetUser( const QString & )
+{
+}
+
 
 KDMRadioButton::KDMRadioButton( const QString &label, QWidget *parent )
     : inherited( label, parent )

@@ -422,7 +422,8 @@ extern GProc grtproc;
 extern void OpenGreeter (void);
 extern void CloseGreeter (int force);
 extern int CtrlGreeterWait (int wreply);
-
+extern void PrepErrorGreet (void);
+extern char *conv_interact (int what, const char *prompt);
 
 /* process.c */
 #include <stdlib.h>
@@ -463,13 +464,19 @@ extern char **GRecvStrArr (int *len);
 extern char **GRecvArgv (void);
 
 /* client.c */
-extern int Verify (const char *name, const char *pass);
-extern void Restrict (void);
+#define GCONV_NORMAL	0
+#define GCONV_HIDDEN	1
+#define GCONV_USER	2
+#define GCONV_PASS	3
+#define GCONV_PASS_ND	4
+#define GCONV_BINARY	5
+typedef char * (*GConvFunc) (int what, const char *prompt);
+extern int Verify (const char *type, GConvFunc gconv);
 extern int StartClient (void);
 extern void SessionExit (int status) ATTR_NORETURN;
 extern int ReadDmrc (void);
 extern char **userEnviron, **systemEnviron;
-extern char *curuser, *curpass, *curdmrc, *newdmrc;
+extern char *curuser, *curpass, *dmrcuser, *curdmrc, *newdmrc;
 
 /* server.c */
 extern int StartServer (struct display *d);

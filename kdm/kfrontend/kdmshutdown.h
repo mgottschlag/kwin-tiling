@@ -26,7 +26,7 @@
 #ifndef KDMSHUTDOWN_H
 #define KDMSHUTDOWN_H
 
-#include "kfdialog.h"
+#include "kgverify.h"
 
 #include <qradiobutton.h>
 
@@ -34,41 +34,45 @@ class LiloInfo;
 class QLabel;
 class KPushButton;
 class QButtonGroup;
-class KPasswordEdit;
 class QComboBox;
-class QTimer;
 
-class KDMShutdown : public FDialog {
+class KDMShutdown : public FDialog, public KGVerifyHandler {
     Q_OBJECT
     typedef FDialog inherited;
 
 public:
     KDMShutdown( QWidget *_parent = 0 );
-#if defined(__linux__) && (defined(__i386__) || defined(__amd64__) )
     ~KDMShutdown();
-#endif
 
-private slots:
-    void bye_bye();
-    void target_changed();
-    void when_changed( int );
-    void timerDone();
+public slots:
+    void accept();
+    void slotTargetChanged();
+    void slotWhenChanged();
+    void slotActivatePlugMenu();
 
 private:
-    QLabel		*label;
+    void bye_bye();
+    
     QButtonGroup	*howGroup, *whenGroup;
-    KPushButton		*okButton;
-    KPushButton		*cancelButton;
-    KPasswordEdit	*pswdEdit;
+    KPushButton		*okButton, *cancelButton;
     QRadioButton	*restart_rb, *force_rb, *try_rb;
-    QTimer		*timer;
-    bool		needRoot;
+    KGVerify		*verify;
+    int 		needRoot;
 #if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
     LiloInfo		*liloInfo;
     QComboBox		*targets;
     int			defaultLiloTarget, oldLiloTarget;
 #endif
 
+    static int		curPlugin;
+    static PluginList	pluginList;
+
+public: // from KGVerifyHandler
+    virtual void verifyPluginChanged( int id );
+    virtual void verifyOk();
+    virtual void verifyFailed();
+    virtual void verifyRetry();
+    virtual void verifySetUser( const QString &user );
 };
 
 class KDMRadioButton : public QRadioButton

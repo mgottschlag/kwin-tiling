@@ -2,7 +2,7 @@
 
     KDE Greeter module for xdm
 
-    Copyright (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2001-2003 Oswald Buddenhagen <ossi@kde.org>
 
     This file contains code from the old xdm core,
     Copyright 1988, 1998  Keith Packard, MIT X Consortium/The Open Group
@@ -58,6 +58,7 @@
 #endif
 
 #define PRINT_QUOTES
+#define PRINT_ARRAYS
 #define LOG_NAME "kdm_greet"
 #define LOG_DEBUG_MASK DEBUG_GREET
 #define LOG_PANIC_EXIT EX_UNMANAGE_DPY
@@ -149,6 +150,14 @@ GSendNStr (const char *buf, int len)
 }
 */
 
+void
+GSendArr (int len, const char *buf)
+{
+    GDebug ("Sending array %02[:*hhx to core\n", len, buf);
+    GWrite (&len, sizeof(len));
+    GWrite (buf, len);
+}
+
 int
 GRecvInt ()
 {
@@ -208,7 +217,6 @@ GRecvStrArr (int *rnum)
     return argv;
 }
 
-/*
 char *
 GRecvArr (int *num)
 {
@@ -220,9 +228,9 @@ GRecvArr (int *num)
     if (!(arr = malloc (*num)))
 	LogPanic ("No memory for read buffer\n");
     GRead (arr, *num);
+    GDebug (" -> %02[:*hhx\n", *num, arr);
     return arr;
 }
-*/
 
 static void
 ReqCfg (int id)
@@ -621,6 +629,18 @@ restore_modifiers( void )
     if (numstat == newnumstate && newnumstate != oldnumstate)
 	xtest_fake_keypress( dpy, XK_Num_Lock );
 #endif
+}
+
+void
+setCursor( Display *mdpy, int window, int shape )
+{
+    Cursor	xcursor;
+
+    if ((xcursor = XCreateFontCursor( mdpy, shape ))) {
+	XDefineCursor( mdpy, window, xcursor );
+	XFreeCursor( mdpy, xcursor );
+	XFlush( mdpy );
+    }
 }
 
 extern void kg_main(const char *argv0);

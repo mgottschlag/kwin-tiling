@@ -2207,6 +2207,12 @@ static Ent entsGreeter[] = {
 "# The data source for KDM's built-in xconsole. The default \"\" means that\n"
 "# a console log redirection should be requested from /dev/console.\n" },
 #endif
+{ "PluginsLogin",	0, 0,
+"# Specify greeter plugins that can be used to obtain authentication data.\n"
+"# This can be a plugin's base name (expands to $kde_modulesdir/kgreet_$base)\n"
+"# or a full pathname. Default is classic\n" },
+{ "PluginsShutdown",	0, 0,
+"# Same as PluginsLogin, but for the shutdown dialog.\n" },
 };
 
 static Sect
@@ -2370,6 +2376,8 @@ static DEnt dEntsAnyGreeter[] = {
 { "GrabServer",		"true", 0 },
 { "GrabTimeout",	"", 0 },
 { "ForgingSeed",	"", 0 },
+{ "PluginsLogin",	"sign", 0 },
+{ "PluginsShutdown",	"modern", 0 },
 };
 
 static DEnt dEntsLocalCore[] = {

@@ -91,6 +91,9 @@ public:
     bool	_showLog;
     QString	_logSource;
 #endif
+
+    QStringList	_pluginsLogin;
+    QStringList	_pluginsShutdown;
 };
 
 extern KDMConfig *kdmcfg;

@@ -102,62 +102,112 @@ AbortClient (int pid)
 }
 
 
-static void
-ResetUser(void)
+static char *
+conv_auto (int what, const char *prompt ATTR_UNUSED)
 {
-    if (curuser) {
-	free (curuser);
-	curuser = 0;
-    }
-    if (curdmrc) {
-	free (curdmrc);
-	curdmrc = 0;
-    }
-    if (newdmrc) {
-	free (newdmrc);
-	newdmrc = 0;
+    switch (what) {
+    case GCONV_USER:
+	return curuser;
+    case GCONV_PASS:
+    case GCONV_PASS_ND:
+	return curpass;
+    default:
+	LogError ("Unknown authentication data type requested for autologin.\n");
+	return 0;
     }
 }
-
-static int clientPid;
 
 static int
 AutoLogon ()
 {
-    const char	*name, *pass;
     Time_t	tdiff;
 
-    ResetUser();
     tdiff = time (0) - td->hstent->lastExit - td->openDelay;
-Debug ("autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, user = %s\n", 
+    Debug ("autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, nuser = %s\n", 
 	tdiff, td->hstent->rLogin, td->hstent->goodExit, td->hstent->nuser);
-    if (td->hstent->rLogin >= 1) {
-	if (td->hstent->rLogin == 1 &&
-	    (td->hstent->goodExit || td->hstent->lock || 
-	     !td->hstent->nuser[0] || tdiff > 0))
-	    return 0;
-	name = td->hstent->nuser;
-	pass = td->hstent->npass;
-	StrDup (&newdmrc, td->hstent->nargs);
-    } else if (td->autoUser[0] != '\0') {
-	if (tdiff <= 0 && td->hstent->goodExit)
-	    return 0;
-	name = td->autoUser;
-	pass = td->autoPass;
+    if (td->hstent->rLogin == 2 ||
+	(td->hstent->rLogin == 1 &&
+	 tdiff <= 0 && !td->hstent->goodExit && !td->hstent->lock))
+    {
+	curuser = td->hstent->nuser;
+	td->hstent->nuser = 0;
+	curpass = td->hstent->npass;
+	td->hstent->npass = 0;
+	newdmrc = td->hstent->nargs;
+	td->hstent->nargs = 0;
+    } else if (*td->autoUser && !(tdiff <= 0 && td->hstent->goodExit)) {
+	StrDup (&curuser, td->autoUser);
+	StrDup (&curpass, td->autoPass);
     } else
 	return 0;
+    return 1;
+}
 
-    if (Verify (name, pass) != V_OK)
-	return 0;
-    clientPid = StartClient ();
-    if (!clientPid)
-	LogError ("Session start failed\n");
-    return clientPid;
+
+static const struct {
+  int vcode, echo, ndelay;
+} grqs[] = {
+    { V_GET_TEXT, TRUE, FALSE },
+    { V_GET_TEXT, FALSE, FALSE },
+    { V_GET_TEXT, TRUE, FALSE },
+    { V_GET_TEXT, FALSE, FALSE },
+    { V_GET_TEXT, FALSE, TRUE },
+    { V_GET_BINARY, 0, 0 }
+};
+
+char *
+conv_interact (int what, const char *prompt)
+{
+    char *ret;
+    int tag;
+
+    GSendInt (grqs[what].vcode);
+    if (what == GCONV_BINARY) {
+	unsigned const char *up = (unsigned const char *)prompt;
+	int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
+	GSendArr (len, prompt);
+	GSendInt (FALSE); /* ndelay */
+	return GRecvArr (&len);
+    } else {
+	GSendStr (prompt);
+	GSendInt (grqs[what].echo);
+	GSendInt (grqs[what].ndelay);
+	ret = GRecvStr ();
+	if (ret) {
+	    tag = GRecvInt();
+	    switch (what) {
+	    case GCONV_USER:
+		/* assert(tag == V_IS_USER); */
+		if (curuser)
+		    free (curuser);
+		curuser = ret;
+		break;
+	    case GCONV_PASS:
+	    case GCONV_PASS_ND:
+		/* assert(tag == V_IS_PASSWORD); */
+		if (curpass)
+		    free (curpass);
+		curpass = ret;
+		break;
+	    default:
+		switch (tag) {
+		case V_IS_USER:
+		    ReStr (&curuser, ret);
+		    break;
+		case V_IS_PASSWORD:
+		    ReStr (&curpass, ret);
+		    break;
+		}
+	    }
+	}
+	return ret;
+    }
 }
 
 static int greeter;
 GProc grtproc;
 GTalk grttalk;
+
 GTalk mstrtalk;	/* make static; see dm.c */
 
 int
@@ -169,7 +219,7 @@ CtrlGreeterWait (int wreply)
     ARRAY8Ptr	aptr;
 #endif
 
-    if (Setjmp (mstrtalk.errjmp) || Setjmp (grttalk.errjmp)) {
+    if (Setjmp (mstrtalk.errjmp)) {
 	CloseGreeter (TRUE);
 	SessionExit (EX_RESERVER_DPY);
     }
@@ -178,9 +228,6 @@ CtrlGreeterWait (int wreply)
 	{
 	case G_Ready:
 	    Debug ("G_Ready\n");
-	    return 0;
-	case G_Login:	    /* XXX HACK! */
-	    Debug ("G_Login\n");
 	    return 0;
 	case G_GetCfg:
 	    Debug ("G_GetCfg\n");
@@ -234,15 +281,18 @@ CtrlGreeterWait (int wreply)
 	    Debug ("G_ReadDmrc\n");
 	    name = GRecvStr ();
 	    Debug (" user %\"s\n", name);
-	    if (StrCmp (curuser, name)) {
-		ResetUser();
-		curuser = name;
+	    if (StrCmp (dmrcuser, name)) {
+		if (curdmrc) { free (curdmrc); curdmrc = 0; }
+		if (dmrcuser)
+		    free (dmrcuser);
+		dmrcuser = name;
 		i = ReadDmrc ();
 		Debug (" -> status %d\n", i);
 		GSendInt (i);
 		Debug (" => %\"s\n", curdmrc);
 	    } else {
-		free (name);
+		if (name)
+		    free (name);
 		Debug (" -> status " stringify(GE_Ok) "\n");
 		GSendInt (GE_Ok);
 		Debug (" => keeping old\n");
@@ -259,6 +309,10 @@ CtrlGreeterWait (int wreply)
 		free (pass);
 	    free (name);
 	    break;
+/*	case G_ResetDmrc:
+	    Debug ("G_ResetDmrc\n");
+	    if (newdmrc) { free (newdmrc); newdmrc = 0; }
+	    break; */
 	case G_PutDmrc:
 	    Debug ("G_PutDmrc\n");
 	    name = GRecvStr ();
@@ -278,18 +332,16 @@ CtrlGreeterWait (int wreply)
 	    break;
 	case G_Verify:
 	    Debug ("G_Verify\n");
+	    if (curuser) { free (curuser); curuser = 0; }
+	    if (curpass) { free (curpass); curpass = 0; }
 	    name = GRecvStr ();
-	    Debug (" user %\"s\n", name);
-	    pass = GRecvStr ();
-	    Debug (pass[0] ? " password\n" : " no password\n");
-	    GSendInt (i = Verify (name, pass));
-	    Debug (" -> return %d\n", i);
-	    WipeStr (pass);
+	    Debug (" type %\"s\n", name);
+	    if (Verify (name, conv_interact)) {
+		Debug (" -> return success\n");
+		GSendInt (V_OK);
+	    } else
+		Debug (" -> failure returned\n");
 	    free (name);
-	    break;
-	case G_Restrict:
-	    Debug ("G_Restrict(...)\n");
-	    Restrict ();
 	    break;
 	case G_Shutdown:
 	    i = GRecvInt ();
@@ -364,7 +416,15 @@ CloseGreeter (int force)
     Debug ("greeter for %s stopped\n", td->name);
 }
 
-/* XXX all extremely hacky */
+void
+PrepErrorGreet ()
+{
+    if (!greeter) {
+	OpenGreeter ();
+	GSendInt (G_ErrorGreet);
+	GSendStr (curuser);
+    }
+}
 
 static Jmp_buf	idleTOJmp;
 
@@ -373,34 +433,6 @@ static SIGVAL
 IdleTOJmp (int n ATTR_UNUSED)
 {
     Longjmp (idleTOJmp, 1);
-}
-
-static int
-DoGreet ()
-{
-    int		cmd;
-
-    if (Setjmp (idleTOJmp)) {
-	CloseGreeter (TRUE);
-	SessionExit (EX_RESERVE);
-    }
-    Signal (SIGALRM, IdleTOJmp);
-    alarm (td->idleTimeout);
-
-    OpenGreeter ();
-    GSendInt (G_Greet);
-    cmd = CtrlGreeterWait (TRUE);
-
-    alarm (0);
-
-    if (cmd == G_Ready) {
-	CloseGreeter (FALSE);
-	clientPid = StartClient ();
-	if (!clientPid)
-	    LogError ("Session start failed\n");
-    }
-
-    return cmd;
 }
 
 
@@ -445,6 +477,7 @@ void
 ManageSession (struct display *d)
 {
     int ex, cmd;
+    volatile int clientPid = 0;
 
     td = d;
     Debug ("ManageSession %s\n", d->name);
@@ -469,12 +502,24 @@ ManageSession (struct display *d)
 	/* NOTREACHED */
 #endif
 
-    if (!AutoLogon ()) {
+    if (AutoLogon ()) {
+	if (!Verify ("classic", conv_auto))
+	    goto gcont;
+    } else {
+	OpenGreeter ();
+	if (Setjmp (idleTOJmp)) {
+	    CloseGreeter (TRUE);
+	    SessionExit (EX_RESERVE);
+	}
+	Signal (SIGALRM, IdleTOJmp);
+	alarm (td->idleTimeout);
 	if (((d->displayType & d_location) == dLocal) &&
 	    d->loginMode >= LOGIN_DEFAULT_REMOTE)
 	    goto choose;
 	for (;;) {
-	    cmd = DoGreet ();
+	    GSendInt (G_Greet);
+	  gcont:
+	    cmd = CtrlGreeterWait (TRUE);
 	  recmd:
 	    if (cmd == G_DChoose) {
 	      choose:
@@ -489,10 +534,17 @@ ManageSession (struct display *d)
 	    CloseGreeter (TRUE);
 	    SessionExit (EX_RESERVER_DPY);	/* XXX hmpf ... EX_DELAYED_RETRY_ONCE */
 	}
-
+	alarm (0);
     }
 
+    CloseGreeter (FALSE);
+
+    if (!(clientPid = StartClient ())) {
+	LogError ("Client start failed\n");
+	SessionExit (EX_NORMAL); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
+    }
     Debug ("client Started\n");
+
     /*
      * Wait for session to end,
      */

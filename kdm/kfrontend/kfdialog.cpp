@@ -25,11 +25,11 @@
 #include "kfdialog.h"
 
 #include <klocale.h>
+#include <kpushbutton.h>
+#include <kstdguiitem.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
-#include <kpushbutton.h>
-#include <kstdguiitem.h>
 
 #include <X11/Xlib.h>
 
@@ -54,6 +54,13 @@ FDialog::exec()
     return result();
 }
 
+void
+FDialog::box( QWidget *parent, QMessageBox::Icon type, const QString &text )
+{
+    KFMsgBox dlg( parent, type, text.stripWhiteSpace() );
+    dlg.exec();
+}
+
 KFMsgBox::KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text )
    : inherited( parent )
 {
@@ -69,11 +76,4 @@ KFMsgBox::KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
     grid->addMultiCellWidget( button, 1,1, 0,1, Qt::AlignCenter );
-}
-
-void
-KFMsgBox::box( QWidget *parent, QMessageBox::Icon type, const QString &text )
-{
-    KFMsgBox dlg( parent, type, text.stripWhiteSpace() );
-    dlg.exec();
 }

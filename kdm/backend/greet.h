@@ -82,7 +82,7 @@ from The Open Group.
  * Command codes core -> greeter
  */
 #define G_Greet		1	/* get login; bidi */
-#define G_GreetErr	2	/* print failed auto-login */
+#define G_ErrorGreet	2	/* print failed auto-login */
 #define G_Choose	3	/* run chooser; bidi */
 # define G_Ch_AddHost		301
 # define G_Ch_ChangeHost	302
@@ -91,7 +91,7 @@ from The Open Group.
 # define G_Ch_Exit		305
 #define G_SessMan	4	/* start "session manager" */
 
-#define G_Ch_Refresh	10	/* XXX change */
+#define G_Ch_Refresh		10	/* XXX change */
 #define G_Ch_RegisterHost	11	/* str name  XXX change */
 #define G_Ch_DirectChoice	12	/* str name  XXX change */
 
@@ -112,14 +112,13 @@ from The Open Group.
 # define SHUT_FORCENOW	2
 # define SHUT_INTERACT	10
 #define G_SessionExit	102	/* int code; async */
-#define G_Verify	103	/* str name, str pass; int V_ret */
-#define G_Restrict	104	/* str name; int V_ret, <variable> */
-#define G_Login		105	/* ; async */
-#define G_GetCfg	106	/* int what; int sts, <variable>  */
-#define G_SetupDpy	108	/* ; int <syncer> */
-#define G_ReadDmrc	110	/* str user; int sts */
-#define G_GetDmrc	111	/* str key; str value */
-#define G_PutDmrc	112	/* str key, str value */
+#define G_GetCfg	103	/* int what; int sts, <variable>  */
+#define G_SetupDpy	104	/* ; int <syncer> */
+#define G_ReadDmrc	105	/* str user; int sts - curdmrc */
+#define G_GetDmrc	106	/* str key; str value - curdmrc */
+/*#define G_ResetDmrc	107*/	/* ; async - newdmrc */
+#define G_PutDmrc	108	/* str key, str value; async - newdmrc */
+#define G_Verify	109	/* str type; ..., int V_ret */
 
 /*
  * Command codes core -> config reader
@@ -155,22 +154,36 @@ from The Open Group.
 #define DM_PANIC	3
 
 /*
- * Return codes of Verify, Restrict and StartSession
+ * Status codes from Verify
  */
-#define V_ERROR		0
-#define V_AUTH		1
-#define V_NOHOME	2
-#define V_NOLOGIN	3
-#define V_NOROOT	4
-#define V_BADSHELL	5
-#define V_BADTIME	6
-#define V_AEXPIRED	7
-#define V_PEXPIRED	8
-#define V_MSGERR	9
-#define V_OK		100
-#define V_AWEXPIRE	101
-#define V_PWEXPIRE	102
-#define V_MSGINFO	103
+/* terminal status codes */
+#define V_OK		0
+#define V_ERROR		10	/* problem with authentication system */
+#define V_RETRY		11	/* whatever, already reported with V_MSG_* */
+#define V_AUTH		12	/* authentication failed */
+#define V_NOHOME	20	/* $HOME invalid */
+#define V_NOLOGIN	21	/* /etc/nologin present; file name attached */
+#define V_NOROOT	22	/* root logins forbidden */
+#define V_BADSHELL	23	/* $SHELL invalid */
+#define V_BADTIME	24	/* login not permitted at this time */
+#define V_AEXPIRED	25	/* account expired (aged) */
+#define V_APEXPIRED	26	/* account expired (failed to change password) */
+/* non-terminal status codes */
+#define V_MSG_INFO	110	/* info message attached */
+#define V_MSG_ERR	111	/* error message attached */
+#define V_PUT_USER	112	/* user name attached; only with pam & no user send */
+#define V_CHTOK 	113	/* password expired; change now */
+#define V_CHTOK_AUTH	114	/* password expired; change now, but authenticate first */
+#define V_PRE_OK	115	/* authentication succeeded, continue with password change */
+#define V_AWEXPIRE	120	/* account will expire; number attached */
+#define V_PWEXPIRE	121	/* password will expire; number attached */
+#define V_PEXPIRED	122	/* password expired (aged) */
+#define V_PFEXPIRED	123	/* password expired (root enforced) */
+/* queries */
+#define V_GET_TEXT	200	/* str prompt, int echo, int ndelay; str return, int tag */
+# define V_IS_USER	1
+# define V_IS_PASSWORD	2
+#define V_GET_BINARY	201	/* array prompt, int ndelay; array return */
 
 /*
  * Config/Runtime data keys

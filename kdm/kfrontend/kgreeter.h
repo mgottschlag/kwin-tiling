@@ -1,6 +1,6 @@
     /*
 
-    Greeter module for xdm
+    Greeter widget for kdm
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
     Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
@@ -26,15 +26,8 @@
 #ifndef KGREETER_H
 #define KGREETER_H
 
-#include <config.h>
-
-#include "kfdialog.h"
-
-#include <kapplication.h>
-
-#include <qvaluevector.h>
-#include <qlineedit.h>
-#include <qmessagebox.h>
+#include "kgverify.h"
+#include "kgdialog.h"
 
 class KdmClock;
 class KConsole;
@@ -42,47 +35,12 @@ class UserListView;
 
 class KListView;
 class KSimpleConfig;
-class KPasswordEdit;
 
-class QTimer;
 class QLabel;
-class QFrame;
 class QPushButton;
 class QPopupMenu;
-class QComboBox;
 class QListViewItem;
-
-class GreeterApp : public KApplication {
-    typedef KApplication inherited;
-
-public:
-    GreeterApp();
-    virtual bool x11EventFilter( XEvent * );
-
-protected:
-    virtual void timerEvent( QTimerEvent * );
-
-private:
-    static void sigAlarm( int );
-
-    int pingInterval;
-};
-
-
-class KLoginLineEdit : public QLineEdit {
-    Q_OBJECT
-    typedef QLineEdit inherited;
-
-public:
-    KLoginLineEdit( QWidget *parent = 0 ) : inherited( parent ) { setMaxLength( 100 ); }
-
-signals:
-    void lost_focus();
-
-protected:
-    void focusOutEvent( QFocusEvent *e );
-};
-
+class QGridLayout;
 
 struct SessType {
     QString name, type;
@@ -99,77 +57,57 @@ struct SessType {
     }
 };
 
-
-class KGreeter : public FDialog {
+class KGreeter : public KGDialog, public KGVerifyHandler {
     Q_OBJECT
-    typedef FDialog inherited;
+    typedef KGDialog inherited;
 
 public:
     KGreeter();
     ~KGreeter();
-    void UpdateLock();
  
 public slots:
     void accept();
     void reject();
-    void chooser_button_clicked();
-    void console_button_clicked();
-    void quit_button_clicked();
-    void shutdown_button_clicked();
-    void slot_user_name( QListViewItem * );
-    void slot_user_doubleclicked();
-    void slot_session_selected( int );
-    void SetTimer();
-    void timerDone();
-    void sel_user();
-    void load_wm();
-    void slotActivateMenu( int id );
-
-protected:
-    void timerEvent( QTimerEvent * ) {};
-    void keyPressEvent( QKeyEvent * );
-    void keyReleaseEvent( QKeyEvent * );
+    void slotUserClicked( QListViewItem * );
+    void slotSessionSelected( int );
+    void slotUserEntered();
+    void slotShutdown();
 
 private:
-    void set_wm( int );
-    void insertUsers( UserListView * );
     void insertUser( UserListView *, const QImage &, const QString &, struct passwd * );
-    void putSession(const QString &, const QString &, bool, const char *);
+    void insertUsers( UserListView * );
+    void putSession( const QString &, const QString &, bool, const char * );
     void insertSessions();
-#define errorbox QMessageBox::Critical
-#define sorrybox QMessageBox::Warning
-#define infobox QMessageBox::Information
-    void MsgBox( QMessageBox::Icon typ, QString msg ) { KFMsgBox::box( this, typ, msg ); }
-    void Inserten( const QString& txt, const char *member );
-    void Inserten( const QString& txt, QPopupMenu *cmnu );
-    bool verifyUser( bool );
-    void updateStatus();
+    void pluginSetup();
+    void setPrevWM( int );
 
-    QString		enam, user_pic_dir;
-    KSimpleConfig	*stsfile;
-    UserListView	*user_view;
+    QString		curUser, dName;
+    KSimpleConfig	*stsFile;
+    UserListView	*userView;
     KdmClock		*clock;
     QLabel		*pixLabel;
-    QLabel		*loginLabel, *passwdLabel;
-    KLoginLineEdit	*loginEdit;
-    KPasswordEdit	*passwdEdit; 
-    QFrame		*separator;
-    QTimer		*timer;
-    QLabel		*failedLabel;
+    QGridLayout		*grid;
+    KGVerify    	*verify;
     QPushButton		*goButton, *clearButton;
-    QPushButton		*menuButton;
-    QPopupMenu		*optMenu, *sessMenu;
-    QPushButton		*quitButton;
-    QPushButton		*shutdownButton;
+    QPopupMenu		*sessMenu;
     QValueVector<SessType> sessionTypes;
-    int			nnormals, nspecials;
-    int			curprev, cursel;
-    bool		prevvalid;
-    int			capslocked;
-    bool		loginfailed;
-#ifdef WITH_KDM_XCONSOLE
-    KConsole		*consoleView;
-#endif
+    int			nNormals, nSpecials;
+    int			curPrev, curSel;
+    bool		prevValid;
+    bool		needLoad;
+
+    static int		curPlugin;
+    static PluginList	pluginList;
+
+private slots:
+    void slotLoadPrevWM();
+
+public: // from KGVerifyHandler
+    virtual void verifyPluginChanged( int id );
+    virtual void verifyOk();
+    virtual void verifyFailed();
+    virtual void verifyRetry();
+    virtual void verifySetUser( const QString &user );
 };
 
 

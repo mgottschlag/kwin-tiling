@@ -14,18 +14,27 @@ kdm_greet_SOURCES = \
     kdm_greet.c \
     liloinfo.cpp \
     kdmconfig.cpp \
-    kdmshutdown.cpp \
-    kfdialog.cpp \
     kdmclock.cpp \
     kconsole.cpp \
+    kfdialog.cpp \
+    kgdialog.cpp \
     kchooser.cpp \
-    kgreeter.cpp
+    kgverify.cpp \
+    kdmshutdown.cpp \
+    kgreeter.cpp \
+    kgapp.cpp
 kdm_greet_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kdm_greet_LDADD = $(LIB_KDEUI) $(XTESTLIB)
 
 krootimage_SOURCES = krootimage.cpp
 krootimage_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 krootimage_LDADD = $(top_builddir)/kcontrol/background/libbgnd.la $(LIB_KIO)
+
+kde_module_LTLIBRARIES = kgreet_classic.la
+
+kgreet_classic_la_SOURCES = kgreet_classic.cpp
+kgreet_classic_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
+kgreet_classic_la_LIBADD = $(LIB_KDEUI)
 
 METASOURCES = AUTO
 
@@ -39,5 +48,23 @@ install-data-local: genkdmconf
 messages:
 	$(XGETTEXT) $(kdm_greet_SOURCES) -o $(podir)/kdmgreet.pot
 
-noinst_HEADERS = kdm_greet.h kdm_config.h kdmshutdown.h kdmclock.h kgreeter.h liloinfo.h kfdialog.h kdmconfig.h krootimage.h kconsole.h kchooser.h
+noinst_HEADERS = \
+    kdm_config.h \
+    kdm_greet.h \
+    liloinfo.h \
+    kdmconfig.h \
+    kdmclock.h \
+    kconsole.h \
+    kfdialog.h \
+    kgdialog.h \
+    kchooser.h \
+    kgverify.h \
+    kdmshutdown.h \
+    kgreeter.h \
+    kgapp.h \
+    \
+    kgreet_classic.h \
+    \
+    krootimage.h 
 
+include_HEADERS = kgreeterplugin.h

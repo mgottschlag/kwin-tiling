@@ -1,6 +1,6 @@
     /*
 
-    Greeter module for xdm
+    Greeter widget for kdm
 
     Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
     Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
@@ -23,22 +23,17 @@
     */
 
 #include "kgreeter.h"
-#include "kdmshutdown.h"
 #include "kdmconfig.h"
 #include "kdmclock.h"
-#include "kconsole.h"
-#include "kchooser.h"
 #include "kdm_greet.h"
 #include "kdm_config.h"
 
+#include <kapplication.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kseparator.h>
-#include <kprocess.h>
-#include <kpassdlg.h>
 #include <klistview.h>
 #include <ksimpleconfig.h>
-#include <kcmdlineargs.h>
 
 #undef Unsorted // x headers suck - make qdir.h work with --enable-final
 #include <qdir.h>
@@ -46,32 +41,18 @@
 #include <qimage.h>
 #include <qpopupmenu.h>
 #include <qtimer.h>
-#include <qcombobox.h>
-#include <qaccel.h>
-#include <qcursor.h>
 #include <qheader.h>
 #include <qstyle.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 
-#include <sys/param.h>
-#include <sys/stat.h>
 #include <pwd.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <strings.h>
+#include <sys/types.h>
 
 #include <X11/Xlib.h>
-
-void
-KLoginLineEdit::focusOutEvent( QFocusEvent *e )
-{
-    emit lost_focus();
-    inherited::focusOutEvent( e );
-}
-
 
 class UserListView : public KListView {
 public:
@@ -108,24 +89,30 @@ protected:
 };
 
 
+int KGreeter::curPlugin = -1;
+PluginList KGreeter::pluginList;
+
 KGreeter::KGreeter()
-  : inherited( 0, 0, true )
-  , user_view( 0 )
+  : inherited()
+  , dName( dname )
+  , userView( 0 )
   , clock( 0 )
   , pixLabel( 0 )
-  , nnormals( 0 )
-  , nspecials( 0 )
-  , curprev( -1 )
-  , cursel( -1 )
-  , prevvalid( true )
-  , capslocked( -1 )
-  , loginfailed( false )
+  , nNormals( 0 )
+  , nSpecials( 0 )
+  , curPrev( -1 )
+  , curSel( -1 )
+  , prevValid( true )
+  , needLoad( false )
 {
+    stsFile = new KSimpleConfig( kdmcfg->_stsFile );
+    stsFile->setGroup( "PrevUser" );
+
     QGridLayout* main_grid = new QGridLayout( winFrame, 4, 2, 10 );
     QBoxLayout* hbox1 = new QHBoxLayout( 10 );
     QBoxLayout* hbox2 = new QHBoxLayout( 10 );
 
-    QGridLayout* grid = new QGridLayout( 5, 4, 5 );
+    grid = new QGridLayout( 5, 4, 5 );
 
     if (!kdmcfg->_greetString.isEmpty()) {
 	QLabel* welcomeLabel = new QLabel( kdmcfg->_greetString, winFrame );
@@ -134,13 +121,13 @@ KGreeter::KGreeter()
 	main_grid->addWidget( welcomeLabel, 0, 1 );
     }
     if (kdmcfg->_showUsers != SHOW_NONE) {
-	user_view = new UserListView( winFrame );
-	insertUsers( user_view );
-	main_grid->addMultiCellWidget(user_view, 0, 3, 0, 0);
-	connect( user_view, SIGNAL(clicked( QListViewItem * )),
-		 SLOT(slot_user_name( QListViewItem * )) );
-	connect( user_view, SIGNAL(doubleClicked( QListViewItem * )),
-		 SLOT(slot_user_doubleclicked()) );
+	userView = new UserListView( winFrame );
+	insertUsers( userView );
+	main_grid->addMultiCellWidget(userView, 0, 3, 0, 0);
+	connect( userView, SIGNAL(clicked( QListViewItem * )),
+		 SLOT(slotUserClicked( QListViewItem * )) );
+	connect( userView, SIGNAL(doubleClicked( QListViewItem * )),
+		 SLOT(accept()) );
     }
 
     switch (kdmcfg->_logoArea) {
@@ -161,16 +148,6 @@ KGreeter::KGreeter()
 	    }
 	    break;
     }
-
-    loginEdit = new KLoginLineEdit( winFrame );
-    loginLabel = new QLabel( loginEdit, i18n("&Username:"), winFrame );
-    // update session type
-    connect( loginEdit, SIGNAL(lost_focus()), SLOT(sel_user()) );
-    // start login timeout after entered login
-    connect( loginEdit, SIGNAL(lost_focus()), SLOT(SetTimer()) );
-
-    passwdEdit = new KPasswordEdit( (KPasswordEdit::EchoModes)kdmcfg->_echoMode, winFrame, 0 );
-    passwdLabel = new QLabel( passwdEdit, i18n("&Password:"), winFrame );
 
     main_grid->addItem( hbox1, 1, 1 );
     main_grid->addItem( grid, 2, 1 );
@@ -195,15 +172,6 @@ KGreeter::KGreeter()
     }
 
     KSeparator* sep = new KSeparator( KSeparator::HLine, winFrame );
-
-    failedLabel = new QLabel( winFrame );
-    failedLabel->setFont( kdmcfg->_failFont );
-
-    grid->addWidget( loginLabel, 0, 0 );
-    grid->addMultiCellWidget( loginEdit, 0,0, 1,3 );
-    grid->addWidget( passwdLabel, 1, 0 );
-    grid->addMultiCellWidget( passwdEdit, 1,1, 1,3 );
-    grid->addMultiCellWidget( failedLabel, 3,3, 0,3, AlignCenter );
 #if 0
     grid->addMultiCellWidget( sep, 4,4, 0,3 );
 #else
@@ -225,77 +193,70 @@ KGreeter::KGreeter()
 
     hbox2->addStretch( 1 );
 
-    sessMenu = new QPopupMenu( winFrame );
-    connect( sessMenu, SIGNAL(activated(int)),
-	     SLOT(slot_session_selected(int)) );
-    insertSessions();
+    QPushButton *menuButton = new QPushButton( i18n("&Menu"), winFrame );
 
-    optMenu = new QPopupMenu( winFrame );
-    optMenu->setCheckable( false );
-
-    Inserten( i18n("Session &Type"), sessMenu );
-
-    optMenu->insertSeparator();
-
-    Inserten( disLocal ? i18n("R&estart X Server") : i18n("Clos&e Connection"),
-	      SLOT(quit_button_clicked()) );
-
-    if (disLocal && kdmcfg->_loginMode != LOGIN_LOCAL_ONLY)
-	Inserten( i18n("&Remote Login"),
-		  SLOT( chooser_button_clicked() ) );
-
-    if (dhasConsole)
-	Inserten( i18n("Co&nsole Login"),
-		  SLOT( console_button_clicked() ) );
-
-    if (kdmcfg->_allowShutdown != SHUT_NONE)
-	Inserten( i18n("&Shutdown..."),
-		  SLOT(shutdown_button_clicked()) );
-
-    menuButton = new QPushButton( i18n("&Menu"), winFrame );
-    menuButton->setPopup( optMenu );
     hbox2->addWidget( menuButton );
 
     hbox2->addStretch( 1 );
 
 //helpButton
 
+    QWidget *prec;
+    if (userView)
+	prec = userView;
+#ifdef WITH_KDM_XCONSOLE // XXX won't work when moved to kgdialog
+    else if (consoleView)
+	prec = consoleView;
+#endif
+    else
+	prec = menuButton;
+    if (curPlugin < 0) {
+	curPlugin = 0;
+	pluginList = KGVerify::init( kdmcfg->_pluginsLogin );
+    }
+    verify = new KGVerify( this, winFrame, prec, QString::null,
+			   pluginList, KGreeterPlugin::Authenticate,
+			   KGreeterPlugin::Login );
+    grid->addMultiCellLayout( verify->getLayout(), 0,3, 0,3, AlignCenter );
+    verify->selectPlugin( curPlugin );
+
+    sessMenu = new QPopupMenu( winFrame );
+    connect( sessMenu, SIGNAL(activated(int)),
+	     SLOT(slotSessionSelected(int)) );
+    insertSessions();
+
+    Inserten( i18n("Session &Type"), ALT+Key_T, sessMenu );
+
+    optMenu->insertSeparator();
+
+    QPopupMenu *plugMenu = verify->getPlugMenu();
+    if (plugMenu) {
+	Inserten( i18n("&Authentication Method"), ALT+Key_A, plugMenu );
+	optMenu->insertSeparator();
+    }
+
+    completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18n("&Remote Login"), ALT+Key_R );
+
+    menuButton->setPopup( optMenu );
+
 #ifdef WITH_KDM_XCONSOLE
+    move to kgdialog
     if (kdmcfg->_showLog) {
 	consoleView = new KConsole( this, kdmcfg->_logSource );
 	main_grid->addMultiCellWidget( consoleView, 4,4, 0,1 );
     }
 #endif
 
-    timer = new QTimer( this );
-    // clear fields
-    connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
+    pluginSetup();
 
-    loginEdit->setFocus();
-
-    UpdateLock();
-
-    stsfile = new KSimpleConfig( kdmcfg->_stsFile );
-    stsfile->setGroup( "PrevUser" );
-    enam = QString::fromLocal8Bit( dname );
-    if (kdmcfg->_preselUser != PRESEL_PREV)
-	stsfile->deleteEntry( enam, false );
-    if (kdmcfg->_preselUser != PRESEL_NONE) {
-	if (kdmcfg->_preselUser == PRESEL_PREV)
-	    loginEdit->setText( stsfile->readEntry( enam ) );
-	else
-	    loginEdit->setText( kdmcfg->_defaultUser );
-	if (kdmcfg->_focusPasswd && !loginEdit->text().isEmpty())
-	    passwdEdit->setFocus();
-	else
-	    loginEdit->selectAll();
-	QTimer::singleShot( 0, this, SLOT(sel_user()) );
-    }
+    verify->start();
 }
 
 KGreeter::~KGreeter()
 {
-    delete stsfile;
+    hide();
+    delete verify;
+    delete stsFile;
 }
 
 class UserListViewItem : public KListViewItem {
@@ -410,8 +371,6 @@ KGreeter::putSession(const QString &type, const QString &name, bool hid, const c
 void
 KGreeter::insertSessions()
 {
-    QString defsess = i18n("Default"), custsess = i18n("Custom"),
-	    safesess = i18n("Failsafe");
     for (QStringList::ConstIterator dit = kdmcfg->_sessionsDirs.begin();
 	 dit != kdmcfg->_sessionsDirs.end(); ++dit)
     {
@@ -435,213 +394,103 @@ KGreeter::insertSessions()
     for (uint i = 0; i < sessionTypes.size() && !sessionTypes[i].hid; i++) {
 	sessMenu->insertItem( sessionTypes[i].name, i );
 	switch (sessionTypes[i].prio) {
-	case 0: case 1: nspecials++; break;
-	case 2: nnormals++; break;
+	case 0: case 1: nSpecials++; break;
+	case 2: nNormals++; break;
 	}
     }
 }
 
 void
-KGreeter::Inserten( const QString& txt, const char *member )
+KGreeter::slotShutdown()
 {
-    optMenu->insertItem( txt, this, member, QAccel::shortcutKey( txt ) );
+    verify->suspend();
+    inherited::slotShutdown();
+    verify->resume();
 }
 
 void
-KGreeter::Inserten( const QString& txt, QPopupMenu *cmnu )
+KGreeter::slotUserEntered()
 {
-    int id = optMenu->insertItem( txt, cmnu );
-    optMenu->setAccel( QAccel::shortcutKey( txt ), id );
-    optMenu->connectItem( id, this, SLOT(slotActivateMenu( int )) );
-    optMenu->setItemParameter( id, id );
-}
-
-void
-KGreeter::slotActivateMenu( int id )
-{
-    QPopupMenu *cmnu = optMenu->findItem( id )->popup();
-    QSize sh( cmnu->sizeHint() / 2 );
-    cmnu->exec( geometry().center() - QPoint( sh.width(), sh.height() ) );
-}
-
-void KGreeter::keyPressEvent( QKeyEvent *e )
-{
-    if (!(~e->state() & (AltButton | ControlButton)) &&
-	e->key() == Key_Delete && kdmcfg->_allowShutdown != SHUT_NONE) {
-	shutdown_button_clicked();
-	return;
-    }
-    inherited::keyPressEvent( e );
-    UpdateLock();
-}
-
-void KGreeter::keyReleaseEvent( QKeyEvent *e )
-{
-    inherited::keyReleaseEvent( e );
-    UpdateLock();
-}
-
-void
-KGreeter::sel_user()
-{
-    if (user_view) {
-	QString login = loginEdit->text();
+    if (userView) {
 	QListViewItem *item;
-	for (item = user_view->firstChild(); item; item = item->nextSibling())
-	    if (((UserListViewItem *)item)->login == login) {
-		user_view->setCurrentItem( item );
-		user_view->ensureItemVisible( item );
-		break;
+	for (item = userView->firstChild(); item; item = item->nextSibling())
+	    if (((UserListViewItem *)item)->login == curUser) {
+		userView->setCurrentItem( item );
+		userView->ensureItemVisible( item );
+		goto oke;
 	    }
+	userView->clearSelection();
     }
-    load_wm();
+  oke:
+    QTimer::singleShot( 0, this, SLOT(slotLoadPrevWM()) );
 }
 
 void
-KGreeter::slot_user_name( QListViewItem *item )
+KGreeter::slotUserClicked( QListViewItem *item )
 {
     if (item) {
-	loginEdit->setText( ((UserListViewItem *)item)->login );
-	passwdEdit->erase();
-	passwdEdit->setFocus();
-	load_wm();
-	SetTimer();
+	curUser = ((UserListViewItem *)item)->login;
+	verify->setUser( curUser );
+	slotLoadPrevWM();
     }
 }
 
 void
-KGreeter::slot_user_doubleclicked()
+KGreeter::slotSessionSelected( int id )
 {
-    verifyUser( true );
-}
-
-void
-KGreeter::slot_session_selected( int id )
-{
-    if (id != cursel) {
-	sessMenu->setItemChecked( cursel, false );
+    if (id != curSel) {
+	sessMenu->setItemChecked( curSel, false );
 	sessMenu->setItemChecked( id, true );
-	cursel = id;
+	curSel = id;
     }
-}
-
-void
-KGreeter::UpdateLock()
-{
-    unsigned int lmask;
-    Window dummy1, dummy2;
-    int dummy3, dummy4, dummy5, dummy6;
-    XQueryPointer( qt_xdisplay(), DefaultRootWindow( qt_xdisplay() ),
-		   &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6,
-		   &lmask );
-    int nlock = lmask & LockMask;
-    if (nlock != capslocked) {
-	capslocked = nlock;
-	if (!loginfailed)
-	    updateStatus();
-    }
-}
-
-void
-KGreeter::updateStatus()
-{
-    if (loginfailed) {
-	failedLabel->setPaletteForegroundColor( Qt::black );
-	failedLabel->setText( i18n("Login failed") );
-    } else if (capslocked) {
-	failedLabel->setPaletteForegroundColor( Qt::red );
-	failedLabel->setText( i18n("Warning: Caps Lock on") );
-    } else
-	failedLabel->clear();
-}
-
-void
-KGreeter::SetTimer()
-{
-    if (!loginfailed && !loginEdit->text().isEmpty())
-	timer->start( 40000, TRUE );
-}
-
-void
-KGreeter::timerDone()
-{
-    if (loginfailed) {
-	loginfailed = false;
-	updateStatus();
-	goButton->setEnabled( true );
-	loginEdit->setEnabled( true );
-	passwdEdit->setEnabled( true );
-	if (!loginEdit->text().isEmpty()) {
-	    passwdEdit->erase();
-	    passwdEdit->setFocus();
-	    SetTimer();
-	    return;
-	}
-    }
-    reject();
 }
 
 void
 KGreeter::reject()
 {
-    if (!loginfailed) {
-	timer->stop();
-	loginEdit->setFocus();
-    }
-    loginEdit->clear();
-    passwdEdit->erase();
-    load_wm();
-    slot_session_selected( -1 );
+    verify->reject();
+    curUser = QString::null;
+    slotUserEntered();
+    slotSessionSelected( -1 );
 }
 
 void
-KGreeter::quit_button_clicked()
+KGreeter::accept()
 {
-    SessionExit( EX_RESERVER_DPY );
+    if (userView && userView->hasFocus())
+	slotUserClicked( userView->currentItem() );
+    else
+	verify->accept();
 }
 
-void
-KGreeter::chooser_button_clicked()
+void // private
+KGreeter::setPrevWM( int wm )
 {
-    done( ex_choose );
-}
-
-void
-KGreeter::console_button_clicked()
-{
-    SessionExit( EX_TEXTLOGIN );
-}
-
-void
-KGreeter::shutdown_button_clicked()
-{
-    KDMShutdown k( winFrame );
-    k.exec();
-    UpdateLock();
-}
-
-void
-KGreeter::set_wm( int wm )
-{
-    if (curprev != wm) {
-	if (curprev != -1)
-	    sessMenu->changeItem( curprev, sessionTypes[curprev].name );
+    if (curPrev != wm) {
+	if (curPrev != -1)
+	    sessMenu->changeItem( curPrev, sessionTypes[curPrev].name );
 	if (wm != -1)
 	    sessMenu->changeItem( wm, sessionTypes[wm].name + i18n(" (previous)") );
-	curprev = wm;
+	curPrev = wm;
     }
 }
 
 void
-KGreeter::load_wm()
+KGreeter::slotLoadPrevWM()
 {
     int len, i, b;
     unsigned long crc, by;
     QCString name;
     char *sess;
 
-    prevvalid = true;
-    name = loginEdit->text().local8Bit();
+    if (verify->coreLock) {
+	needLoad = true;
+	return;
+    }
+    needLoad = false;
+
+    prevValid = true;
+    name = curUser.local8Bit();
     GSendInt( G_ReadDmrc );
     GSendStr( name.data() );
     GRecvInt(); // ignore status code ...
@@ -661,13 +510,13 @@ KGreeter::load_wm()
 		/* forge a session with this hash - default & custom more probable */
 		/* XXX - this should do a statistical analysis of the real users */
 #if 1
-		set_wm( crc % (nspecials * 2 + nnormals) % (nspecials + nnormals) );
+		setPrevWM( crc % (nSpecials * 2 + nNormals) % (nSpecials + nNormals) );
 #else
-		i = crc % (nspecials * 2 + nnormals);
-		if (i < nnormals)
-		    set_wm( i + nspecials );
+		i = crc % (nSpecials * 2 + nNormals);
+		if (i < nNormals)
+		    setPrevWM( i + nSpecials );
 		else
-		    set_wm( (i - nnormals) / 2 );
+		    setPrevWM( (i - nNormals) / 2 );
 #endif
 		return;
 	    }
@@ -675,318 +524,83 @@ KGreeter::load_wm()
 	    for (uint i = 0; i < sessionTypes.count(); i++)
 		if (sessionTypes[i].type == sess) {
 		    free( sess );
-		    set_wm( i );
+		    setPrevWM( i );
 		    return;
 		}
-	    if (cursel == -1)
+	    if (curSel == -1)
 		MsgBox( sorrybox, i18n("Your saved session type '%1' is not valid any more.\n"
 		    "Please select a new one, otherwise 'default' will be used.").arg(sess) );
 	    free( sess );
-	    prevvalid = false;
+	    prevValid = false;
 	}
     }
-    set_wm( -1 );
+    setPrevWM( -1 );
 }
 
-
-bool
-KGreeter::verifyUser(bool haveto)
+void // private
+KGreeter::pluginSetup()
 {
-    int ret, expire;
-    char *msg;
-
-    GSendInt (G_Verify);
-    GSendStr (loginEdit->text().local8Bit());
-    GSendStr (passwdEdit->password());
-    ret = GRecvInt ();
-    if (ret == V_OK) {
-	GSendInt (G_Restrict);
-	ret = GRecvInt ();
+    if (kdmcfg->_preselUser != PRESEL_PREV)
+	stsFile->deleteEntry( dName, false );
+    if (kdmcfg->_preselUser != PRESEL_NONE)
+	verify->presetEntity(
+		kdmcfg->_preselUser == PRESEL_PREV ?
+		    stsFile->readEntry( dName ) : kdmcfg->_defaultUser,
+		kdmcfg->_focusPasswd );
+    if (userView) {
+	if (verify->isPluginLocal())
+	    userView->show();
+	else
+	    userView->hide();
     }
-    switch (ret) {
-	case V_ERROR:
-	    MsgBox (errorbox, i18n("A critical error occurred.\n"
-			"Please look at KDM's logfile for more information\n"
-			"or contact your system administrator."));
-	    break;
-	case V_NOHOME:
-	    MsgBox (sorrybox, i18n("Home folder not available."));
-	    break;
-	case V_NOROOT:
-	    MsgBox (sorrybox, i18n("Root logins are not allowed."));
-	    break;
-	case V_BADSHELL:
-	    MsgBox (sorrybox, 
-		    i18n("Your login shell is not listed in /etc/shells."));
-	    break;
-	case V_AEXPIRED:
-	    MsgBox (sorrybox, i18n("Your account has expired."));
-	    break;
-	case V_PEXPIRED:
-	    MsgBox (sorrybox, i18n("Your password has expired."));
-	    break;
-	case V_BADTIME:
-	    MsgBox (sorrybox, i18n("You are not allowed to login\n"
-					"at the moment."));
-	    break;
-	case V_NOLOGIN:
-	    msg = GRecvStr();
-	    {
-		QFile f;
-		f.setName(QString::fromLocal8Bit(msg));
-		f.open(IO_ReadOnly);
-		QTextStream t( &f );
-		QString mesg;
-		while ( !t.eof() )
-		    mesg += t.readLine() + '\n';
-		f.close();
-
-		if (mesg.isEmpty())
-		    MsgBox( sorrybox, 
-			    i18n("Logins are not allowed at the moment.\n"
-					"Try again later.") );
-		else
-		    MsgBox( sorrybox, mesg );
-	    }
-	    free (msg);
-	    break;
-	case V_MSGERR:
-	    msg = GRecvStr ();
-	    MsgBox (sorrybox, QString::fromLocal8Bit (msg));
-	    free (msg);
-	    break;
-	case V_AUTH:
-	    if (!haveto)
-		return false;
-	    loginfailed = true;
-	    updateStatus();
-	    goButton->setEnabled( false );
-	    loginEdit->setEnabled( false );
-	    passwdEdit->setEnabled( false );
-	    timer->start( 1500 + kapp->random()/(RAND_MAX/1000), true );
-	    return true;
-	default:
-	    switch (ret) {
-	    default:
-		LogPanic ("Unknown V_xxx code %d from core\n", ret);
-	    case V_MSGINFO:
-		msg = GRecvStr ();
-		MsgBox (infobox, QString::fromLocal8Bit (msg));
-		free (msg);
-		break;
-	    case V_AWEXPIRE:
-		expire = GRecvInt ();
-		if (!expire)
-		    MsgBox (infobox, i18n("Your account expires today."));
-		else
-		    MsgBox (infobox, 
-			i18n("Your account expires tomorrow.", "Your account expires in %n days.", expire));
-		break;
-	    case V_PWEXPIRE:
-		expire = GRecvInt ();
-		if (!expire)
-		    MsgBox (infobox, i18n("Your password expires today."));
-		else
-		    MsgBox (infobox, 
-			i18n("Your password expires tomorrow.", "Your password expires in %n days.", expire));
-		break;
-	    case V_OK:
-		break;
-	    }
-	    hide();
-	    if (cursel != -1) {
-		GSendInt (G_PutDmrc);
-		GSendStr ("Session");
-		GSendStr (sessionTypes[cursel].type.utf8());
-	    } else if (!prevvalid) {
-		GSendInt (G_PutDmrc);
-		GSendStr ("Session");
-		GSendStr ("default");
-	    }
-	    GSendInt (G_Login);
-	    if (kdmcfg->_preselUser == PRESEL_PREV)
-		stsfile->writeEntry (enam, loginEdit->text());
-	    done( ex_exit );
-	    return true;
-    }
-    reject();
-    return true;
+    adjustGeometry();
 }
 
 void
-KGreeter::accept()
+KGreeter::verifyPluginChanged( int id )
 {
-    if (loginEdit->hasFocus()) {
-	load_wm();
-//	if (!verifyUser(false))
-	    passwdEdit->setFocus();
-    } else if (user_view && user_view->hasFocus())
-	slot_user_name( user_view->currentItem() );
-    else
-	verifyUser(true);
-}
-
-GreeterApp::GreeterApp()
-{
-    pingInterval = GetCfgInt( C_pingInterval );
-    if (pingInterval) {
-	struct sigaction sa;
-	sigemptyset( &sa.sa_mask );
-	sa.sa_flags = 0;
-	sa.sa_handler = sigAlarm;
-	sigaction( SIGALRM, &sa, 0 );
-	alarm( pingInterval * 70 );	// sic! give the "proper" pinger enough time
-	startTimer( pingInterval * 60000 );
-    }
+    curPlugin = id;
+    pluginSetup();
 }
 
 void
-GreeterApp::timerEvent( QTimerEvent * )
+KGreeter::verifyOk()
 {
-    if (!PingServer( qt_xdisplay() ))
-	SessionExit( EX_RESERVER_DPY );
-    alarm( pingInterval * 70 );	// sic! give the "proper" pinger enough time
-}
-
-void
-GreeterApp::sigAlarm( int )
-{
-    ExitGreeter( 1 );
-}
-
-bool
-GreeterApp::x11EventFilter( XEvent * ev )
-{
-    switch (ev->type) {
-    case FocusIn:
-    case FocusOut:
-	// Hack to tell dialogs to take focus when the keyboard is grabbed
-	ev->xfocus.mode = NotifyNormal;
-	break;
-    case ButtonPress:
-    case ButtonRelease:
-	// Hack to let the RMB work as LMB
-	if (ev->xbutton.button == 3)
-	    ev->xbutton.button = 1;
-	/* fall through */
-    case MotionNotify:
-	if (ev->xbutton.state & Button3Mask)
-	    ev->xbutton.state = (ev->xbutton.state & ~Button3Mask) | Button1Mask;
-	break;
+    if (kdmcfg->_preselUser == PRESEL_PREV)
+	stsFile->writeEntry( dName, verify->getEntity() );
+    hide();
+    if (curSel != -1) {
+	GSendInt( G_PutDmrc );
+	GSendStr( "Session" );
+	GSendStr( sessionTypes[curSel].type.utf8() );
+    } else if (!prevValid) {
+	GSendInt( G_PutDmrc );
+	GSendStr( "Session" );
+	GSendStr( "default" );
     }
-    return false;
-}
-
-static void 
-moveInto (QRect &what, const QRect &where)
-{
-    int di;
-
-    if ((di = where.right() - what.right()) < 0)
-	what.moveBy( di, 0);
-    if ((di = where.left() - what.left()) > 0)
-	what.moveBy( di, 0);
-    if ((di = where.bottom() - what.bottom()) < 0)
-	what.moveBy( 0, di);
-    if ((di = where.top() - what.top()) > 0)
-	what.moveBy( 0, di);
-}
-
-extern bool kde_have_kipc;
-
-extern "C" void
-kg_main( const char *argv0 )
-{
-    KProcess *proc = 0;
-
-    static char *argv[] = { (char *)"kdm_greet", 0 };
-    KCmdLineArgs::init( 1, argv, 0, 0, 0, 0, true );
-
-    kde_have_kipc = false;
-    KApplication::disableAutoDcopRegistration();
-    setenv( "KDE_DEBUG", "1", 1 );	// prevent KCrash installation
-    GreeterApp app;
-
-    Display *dpy = qt_xdisplay();
-
-    kdmcfg = new KDMConfig();
-
-    app.setFont( kdmcfg->_normalFont );
-
-    setup_modifiers( dpy, kdmcfg->_numLockStatus );
-    SecureDisplay( dpy );
-    if (!dgrabServer) {
-	if (GetCfgInt( C_UseBackground )) {
-	    proc = new KProcess;
-	    *proc << QCString( argv0, strrchr( argv0, '/' ) - argv0 + 2 ) + "krootimage";
-	    char *conf = GetCfgStr( C_BackgroundCfg );
-	    *proc << conf;
-	    free( conf );
-	    proc->start();
-	}
-	GSendInt( G_SetupDpy );
-	GRecvInt();
-    }
-
     GSendInt( G_Ready );
-
-    QDesktopWidget *dsk = kapp->desktop();
-    dsk->setCursor( Qt::ArrowCursor );
-
-  redo:
-    app.setOverrideCursor( Qt::WaitCursor );
-    bool greet = GRecvInt() == G_Greet;	// alt: G_Choose
-
-    QRect scr = dsk->screenGeometry(
-	kdmcfg->_greeterScreen == -1 ?
-	    dsk->screenNumber( QPoint( 0, 0 ) ) :
-	    kdmcfg->_greeterScreen == -2 ?
-		dsk->screenNumber( QPoint( dsk->width() - 1, 0 ) ) :
-		kdmcfg->_greeterScreen );
-    FDialog *dialog;
-    if (greet)
-	dialog = new KGreeter;
-    else
-	dialog = new ChooserDlg;
-    dialog->setMaximumSize( scr.size() * .9 );
-    dialog->adjustSize();
-    QRect grt( dialog->rect() );
-    if (kdmcfg->_greeterPosX >= 0) {
-	grt.moveCenter( QPoint( kdmcfg->_greeterPosX, kdmcfg->_greeterPosY ) );
-	moveInto( grt, scr );
-    } else {
-	grt.moveCenter( scr.center() );
-    }
-    dialog->setGeometry( grt );
-    if (dsk->screenNumber( QCursor::pos() ) !=
-	dsk->screenNumber( grt.center() ))
-	QCursor::setPos( grt.center() );
-    if (!greet) {
-	GSendInt (G_Ready);	/* tell chooser to go into async mode */
-	GRecvInt ();		/* ack */
-    }
-    app.restoreOverrideCursor();
-    Debug ("entering event loop\n");
-    int rslt = dialog->exec();
-    Debug ("left event loop\n");
-    delete dialog;
-    switch (rslt) {
-    case ex_greet:
-	GSendInt (G_DGreet);
-	goto redo;
-    case ex_choose:
-	GSendInt (G_DChoose);
-	goto redo;
-    default:
-	break;
-    }
-
-    delete proc;
-    UnsecureDisplay( dpy );
-    restore_modifiers();
-
-    delete kdmcfg;
+    done( ex_exit );
 }
 
+void
+KGreeter::verifyFailed()
+{
+    goButton->setEnabled( false );
+    if (needLoad)
+	slotLoadPrevWM();
+}
+
+void
+KGreeter::verifyRetry()
+{
+    goButton->setEnabled( true );
+}
+
+void
+KGreeter::verifySetUser( const QString &user )
+{
+    curUser = user;
+    slotUserEntered();
+}
 
 #include "kgreeter.moc"

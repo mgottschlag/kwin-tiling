@@ -2,7 +2,7 @@
 
     KDE Greeter module for xdm
 
-    Copyright (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2001-2003 Oswald Buddenhagen <ossi@kde.org>
 
     This file contains code from the old xdm core,
     Copyright 1988, 1998  Keith Packard, MIT X Consortium/The Open Group
@@ -34,6 +34,8 @@ extern "C" {
 
 void GSendInt (int val);
 void GSendStr (const char *buf);
+/*void GSendNStr (const char *buf, int len);*/
+void GSendArr (int len, const char *buf);
 int GRecvInt (void);
 char *GRecvStr (void);
 char **GRecvStrArr (int *len);
@@ -46,10 +48,10 @@ char **GetCfgStrArr (int id, int *len);
 void SessionExit (int ret) ATTR_NORETURN;
 void ExitGreeter (int code) ATTR_NORETURN;
 
-void Debug (const char *fmt, ...) ATTR_PRINTFLIKE(1,2);
-void LogInfo (const char *fmt, ...) ATTR_PRINTFLIKE(1,2);
-void LogError (const char *fmt, ...) ATTR_PRINTFLIKE(1,2);
-void LogPanic (const char *fmt, ...) ATTR_PRINTFLIKE(1,2) ATTR_NORETURN;
+void Debug (const char *fmt, ...);
+void LogInfo (const char *fmt, ...);
+void LogError (const char *fmt, ...);
+void LogPanic (const char *fmt, ...) ATTR_NORETURN;
 void LogOutOfMem (const char *fkt);
 
 struct _XDisplay;
@@ -60,6 +62,9 @@ int PingServer (struct _XDisplay *dpy);
 
 void setup_modifiers (struct _XDisplay *mdpy, int numlock);
 void restore_modifiers (void);
+
+void setCursor( struct _XDisplay *mdpy, int window, int shape );
+
 
 extern int rfd;			/* for select() loops */
 

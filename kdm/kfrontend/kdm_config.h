@@ -82,6 +82,8 @@
 #define C_FaceDir		(C_TYPE_STR | 0x102c)
 #define C_ColorScheme		(C_TYPE_STR | 0x102d)
 #define C_ForgingSeed		(C_TYPE_INT | 0x102e)
+#define C_PluginsLogin		(C_TYPE_ARGV| 0x102f)
+#define C_PluginsShutdown	(C_TYPE_ARGV| 0x1030)
 
 #ifdef WITH_KDM_XCONSOLE
 # define C_ShowLog		(C_TYPE_INT | 0x2000)
