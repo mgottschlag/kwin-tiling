@@ -48,6 +48,7 @@ Name[pt]=Pesquisa de Imagens do Google
 Name[pt_BR]=Busca de Imagens do Google
 Name[ro]=Căutare de imagini Google
 Name[ru]=Google - поиск изображений
+Name[se]=Oza govaid Google báikkis
 Name[sk]=Hľadanie obrázkov Google
 Name[sl]=Iskanje slik z Google
 Name[sr]=Google претраживање слика
@@ -71,6 +72,7 @@ ServiceTypes=SearchProvider
 Keys=ggi,images
 Query=http://images.google.com/images?q=\\{@}
 Query[en_GB]=http://images.google.co.uk/images?q=\\{@}
+Query[et]=http://images.google.com/images?hl=et&q=\\{@}
 Query[fr]=http://images.google.fr/images?q=\\{@}
 Query[fy]=http://images.google.nl/images?q=\\{@}
 Query[he]=http://images.google.co.il/images?q=\\{@}
