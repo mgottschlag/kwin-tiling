@@ -27,7 +27,7 @@
 #include "kdmclock.h"
 
 KdmClock::KdmClock( QWidget *parent, const char *name )
-  : QFrame( parent, name )
+  : inherited( parent, name )
 {
     // start timer
     QTimer *timer = new QTimer( this );

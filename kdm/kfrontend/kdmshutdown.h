@@ -43,6 +43,7 @@
 
 class KDMShutdown : public FDialog {
     Q_OBJECT
+    typedef FDialog inherited;
 
 public:
     KDMShutdown( QWidget* _parent=0);

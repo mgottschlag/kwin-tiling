@@ -27,7 +27,8 @@
 
 class KdmClock : public QFrame
 {
-  Q_OBJECT
+    Q_OBJECT
+    typedef QFrame inherited;
 
   public:
     KdmClock( QWidget *parent=0, const char *name=0 );

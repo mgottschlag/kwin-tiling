@@ -39,7 +39,7 @@
 
 
 KDMShutdown::KDMShutdown( QWidget* _parent )
-    : FDialog( _parent, "Shutdown" )
+    : inherited( _parent, "Shutdown" )
 {
     QComboBox *targets = 0;
     QVBoxLayout *box = new QVBoxLayout( winFrame, KDialog::spacingHint() * 2 );
