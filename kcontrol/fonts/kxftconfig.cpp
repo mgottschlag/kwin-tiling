@@ -130,15 +130,15 @@ KXftConfig::SubPixel::Type strToType(const char *str)
 #else
 static bool strToType(const char *str, KXftConfig::SubPixel::Type &type)
 {   
-    if(NULL!=strstr(str, "rgb"))
+    if(0==memcmp(str, "rgb", 3))
         type=KXftConfig::SubPixel::Rgb;
-    else if(NULL!=strstr(str, "bgr"))
+    else if(0==memcmp(str, "bgr", 3))
         type=KXftConfig::SubPixel::Bgr;
-    else if(NULL!=strstr(str, "vrgb"))
+    else if(0==memcmp(str, "vrgb", 4))
         type=KXftConfig::SubPixel::Vrgb;
-    else if(NULL!=strstr(str, "vbgr"))
+    else if(0==memcmp(str, "vbgr", 4))
         type=KXftConfig::SubPixel::Vbgr;
-    else if(NULL!=strstr(str, "none"))
+    else if(0==memcmp(str, "none", 4))
         type=KXftConfig::SubPixel::None;
     else
         return false;
