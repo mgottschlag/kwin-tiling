@@ -1,6 +1,8 @@
 #ifndef KODBCCONFIG_H
 #define KODBCCONFIG_H
 
+#include <qdir.h>
+#include <qvariant.h>
 #include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
