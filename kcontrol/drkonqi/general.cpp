@@ -40,7 +40,8 @@ KDrKonqiGeneral::KDrKonqiGeneral(KConfig *config, QString group, QWidget *parent
 
 
 
-   lb_Presets = new QListBox(layout, "Preset list",0);
+   lb_Presets = new QListBox(this, "Preset list",0);
+   layout->addWidget(lb_Presets, 0, 0);
 
 
 QStringList qldd = KGlobal::dirs()->findAllResources("data","drkonqi/presets/*rc",false, true);
