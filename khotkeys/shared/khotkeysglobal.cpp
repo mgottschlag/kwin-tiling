@@ -40,7 +40,7 @@ bool KHotData_dict::read_config( KConfigBase& cfg_P )
         QString shortcut = cfg_P.readEntry( "Shortcut" );
         if( shortcut.isNull() )
             continue;
-        QString run = cfg_P.readEntry( "Run" );
+        QString run = cfg_P.readPathEntry( "Run" );
         if( run.isNull() )
             continue;
         bool menuentry = cfg_P.readBoolEntry( "MenuEntry", false );
@@ -62,7 +62,7 @@ void KHotData_dict::write_config( KSimpleConfig& cfg_P ) const
         cfg_P.setGroup( QString( "Section%1" ).arg( sect ));
         cfg_P.writeEntry( "Name", it.currentKey());
         cfg_P.writeEntry( "Shortcut", it.current()->shortcut );
-        cfg_P.writeEntry( "Run", it.current()->run );
+        cfg_P.writePathEntry( "Run", it.current()->run );
         cfg_P.writeEntry( "MenuEntry", it.current()->menuentry );
         }
     while( cfg_P.hasGroup( QString( "Section%1" ).arg( sect ))

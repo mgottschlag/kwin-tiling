@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
     {
         config.setActionGroup("Root");
     }
-    cmd = config.readEntry("Exec");
+    cmd = config.readPathEntry("Exec");
 
     QTextStream ts(&cmd, IO_ReadOnly);
     QString word;

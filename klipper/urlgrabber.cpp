@@ -425,7 +425,7 @@ ClipAction::ClipAction( KConfig *kc )
         QString group = actionGroup + "/Command_%1";
         kc->setGroup( group.arg( i ) );
 
-        addCommand( kc->readEntry( "Commandline" ),
+        addCommand( kc->readPathEntry( "Commandline" ),
                     kc->readEntry( "Description" ), // i18n'ed
                     kc->readBoolEntry( "Enabled" ) );
     }
@@ -466,7 +466,7 @@ void ClipAction::save( KConfig *kc ) const
         QString group = actionGroup + "/Command_%1";
         kc->setGroup( group.arg( i ) );
 
-        kc->writeEntry( "Commandline", cmd->command );
+        kc->writePathEntry( "Commandline", cmd->command );
         kc->writeEntry( "Description", cmd->description );
         kc->writeEntry( "Enabled", cmd->isEnabled );
 
