@@ -288,13 +288,13 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
           }
           
           v = v.stripWhiteSpace();
-          if (v != "") 
+          if (!v.isEmpty()) 
             found = true;
           
           PDVAR ("    range", QString::number(first) + "-" + QString::number(last) + " => '" + v + "'");
           v = KURL::encode_string(v, encodingMib);
         } 
-        else if ((rlitem.left(1) == "\"") && (rlitem.right(1) == "\"")) 
+        else if ( rlitem.startsWith("\"") && rlitem.endsWith("\"") ) 
         {
           // Use default string from query definition:
           found = true;
