@@ -198,6 +198,10 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     setColorName(i18n("Button Text"), CSM_Button_text);
     setColorName(i18n("Active Title Button"), CSM_Active_title_button);
     setColorName(i18n("Inactive Title Button"), CSM_Inactive_title_button);
+    setColorName(i18n("Active Window Frame"), CSM_Active_frame);
+    setColorName(i18n("Active Window Handle"), CSM_Active_handle);
+    setColorName(i18n("Inactive Window Frame"), CSM_Inactive_frame);
+    setColorName(i18n("Inactive Window Handle"), CSM_Inactive_handle);
     setColorName(i18n("Link"), CSM_Link);
     setColorName(i18n("Followed Link"), CSM_Followed_Link);
     setColorName(i18n("Alternate Background in Lists"), CSM_Alternate_background);
@@ -326,6 +330,10 @@ void KColorScheme::save()
     cfg->writeEntry("inactiveForeground", cs->iaTxt, true, true);
     cfg->writeEntry("activeTitleBtnBg", cs->aTitleBtn, true, true);
     cfg->writeEntry("inactiveTitleBtnBg", cs->iTitleBtn, true, true);
+    cfg->writeEntry("frame", cs->aFrame, true, true);
+    cfg->writeEntry("inactiveFrame", cs->iaFrame, true, true);
+    cfg->writeEntry("handle", cs->aHandle, true, true);
+    cfg->writeEntry("inactiveHandle", cs->iaHandle, true, true);
 
     cfg->setGroup( "KDE" );
     cfg->writeEntry("contrast", cs->contrast, true, true);
@@ -457,6 +465,10 @@ void KColorScheme::slotSave( )
     config->writeEntry("buttonBackground", cs->button );
     config->writeEntry("activeTitleBtnBg", cs->aTitleBtn);
     config->writeEntry("inactiveTitleBtnBg", cs->iTitleBtn);
+    config->writeEntry("frame", cs->aFrame);
+    config->writeEntry("inactiveFrame", cs->iaFrame);
+    config->writeEntry("handle", cs->aHandle);
+    config->writeEntry("inactiveHandle", cs->iaHandle);
     config->writeEntry("linkColor", cs->link);
     config->writeEntry("visitedLinkColor", cs->visitedLink);
     config->writeEntry("alternateBackground", cs->alternateBackground);
@@ -631,6 +643,14 @@ QColor &KColorScheme::color(int index)
     return cs->aTitleBtn;
     case CSM_Inactive_title_button:
     return cs->iTitleBtn;
+    case CSM_Active_frame:
+    return cs->aFrame;
+    case CSM_Active_handle:
+    return cs->aHandle;
+    case CSM_Inactive_frame:
+    return cs->iaFrame;
+    case CSM_Inactive_handle:
+    return cs->iaHandle;
     case CSM_Link:
     return cs->link;
     case CSM_Followed_Link:
@@ -741,6 +761,10 @@ void KColorScheme::readScheme( int index )
       cs->buttonTxt   = black;
       cs->aTitleBtn   = cs->back;
       cs->iTitleBtn   = cs->back;
+      cs->aFrame      = cs->back;
+      cs->aHandle     = cs->back;
+      cs->iaFrame     = cs->back;
+      cs->iaHandle    = cs->back;
       cs->link        = link;
       cs->visitedLink = visitedLink;
       cs->alternateBackground = KGlobalSettings::calculateAlternateBackgroundColor(cs->window);
@@ -786,9 +810,13 @@ void KColorScheme::readScheme( int index )
     cs->iaTitle = config->readColorEntry("inactiveBackground", &emerald1);
     cs->iaTxt = config->readColorEntry("inactiveForeground", &white);
     cs->iaBlend = config->readColorEntry("inactiveBlend", &emerald1);
+    cs->iaFrame = config->readColorEntry("inactiveFrame", &cs->back);
+    cs->iaHandle = config->readColorEntry("inactiveHandle", &cs->back);
     cs->aTitle = config->readColorEntry("activeBackground", &emerald2);
     cs->aTxt = config->readColorEntry("activeForeground", &white);
     cs->aBlend = config->readColorEntry("activeBlend", &emerald2);
+    cs->aFrame = config->readColorEntry("frame", &cs->back);
+    cs->aHandle = config->readColorEntry("handle", &cs->back);
     // hack - this is all going away. For now just set all to button bg
     cs->aTitleBtn = config->readColorEntry("activeTitleBtnBg", &cs->back);
     cs->iTitleBtn = config->readColorEntry("inactiveTitleBtnBg", &cs->back);

@@ -33,8 +33,12 @@
 #define CSM_Inactive_title_text		15
 #define CSM_Inactive_title_blend	16
 #define CSM_Inactive_title_button	17
-#define CSM_Alternate_background    18
-#define CSM_LAST			19
+#define CSM_Active_frame		18
+#define CSM_Active_handle		19
+#define CSM_Inactive_frame		20
+#define CSM_Inactive_handle		21
+#define CSM_Alternate_background        22
+#define CSM_LAST			23
 
 class QPixmap;
 class QColor;
@@ -69,9 +73,13 @@ public:
     QColor iaTitle;
     QColor iaTxt;
     QColor iaBlend;
+    QColor iaFrame;
+    QColor iaHandle;
     QColor aTitle;
     QColor aTxt;
     QColor aBlend;
+    QColor aFrame;
+    QColor aHandle;
     QColor back;
     QColor txt;
     QColor select;
@@ -84,7 +92,7 @@ public:
     QColor iTitleBtn;
     QColor link;
     QColor visitedLink;
-	QColor alternateBackground;
+    QColor alternateBackground;
 
     int contrast;
 
