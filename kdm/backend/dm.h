@@ -476,7 +476,7 @@ extern char **GRecvArgv (void);
 #define GCONV_PASS_ND	4
 #define GCONV_BINARY	5
 typedef char * (*GConvFunc) (int what, const char *prompt);
-extern int Verify (GConvFunc gconv);
+extern int Verify (GConvFunc gconv, int rootok);
 extern int StartClient (void);
 extern void SessionExit (int status) ATTR_NORETURN;
 extern int ReadDmrc (void);

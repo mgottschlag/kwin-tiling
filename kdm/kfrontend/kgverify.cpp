@@ -733,7 +733,7 @@ KGVerify::gplugStart()
 {
     // XXX handle func != Authenticate
     Debug( "gplugStart()\n" );
-    GSendInt( G_Verify );
+    GSendInt( ctx == KGreeterPlugin::Shutdown ? G_VerifyRootOK : G_Verify );
     GSendStr( greetPlugins[pluginList[curPlugin]].info->method );
     handleVerify();
 }

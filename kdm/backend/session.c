@@ -213,7 +213,7 @@ GTalk mstrtalk;	/* make static; see dm.c */
 int
 CtrlGreeterWait (int wreply)
 {
-    int		i, j, cmd, type;
+    int		i, j, cmd, type, rootok;
     char	*name, *pass, **avptr;
 #ifdef XDMCP
     ARRAY8Ptr	aptr;
@@ -324,14 +324,20 @@ CtrlGreeterWait (int wreply)
 	    free (pass);
 	    free (name);
 	    break;
+	case G_VerifyRootOK:
+	    Debug ("G_VerifyRootOK\n");
+	    rootok = TRUE;
+	    goto doverify;
 	case G_Verify:
 	    Debug ("G_Verify\n");
+	    rootok = FALSE;
+	  doverify:
 	    if (curuser) { free (curuser); curuser = 0; }
 	    if (curpass) { free (curpass); curpass = 0; }
 	    if (curtype) { free (curtype); curtype = 0; }
 	    curtype = GRecvStr ();
 	    Debug (" type %\"s\n", curtype);
-	    if (Verify (conv_interact)) {
+	    if (Verify (conv_interact, rootok)) {
 		Debug (" -> return success\n");
 		GSendInt (V_OK);
 	    } else
@@ -513,7 +519,7 @@ ManageSession (struct display *d)
 #endif
 
     if (AutoLogon ()) {
-	if (!StrDup (&curtype, "classic") || !Verify (conv_auto))
+	if (!StrDup (&curtype, "classic") || !Verify (conv_auto, FALSE))
 	    goto gcont;
 	if (greeter)
 	    GSendInt (V_OK);

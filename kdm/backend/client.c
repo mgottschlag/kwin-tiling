@@ -425,7 +425,7 @@ AccNoPass (const char *un, struct passwd *pw)
 #endif
 
 int
-Verify (GConvFunc gconv)
+Verify (GConvFunc gconv, int rootok)
 {
 #ifdef USE_PAM
     const char		*psrv;
@@ -672,7 +672,7 @@ Verify (GConvFunc gconv)
     }
 #endif
     if (!p->pw_uid) {
-	if (!td->allowRootLogin) /* handle non-sessions differently? */
+	if (!rootok && !td->allowRootLogin)
 	    V_RET (V_NOROOT);
 	return 1;	/* don't deny root to log in */
     }

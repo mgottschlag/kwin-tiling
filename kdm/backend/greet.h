@@ -120,6 +120,7 @@ from The Open Group.
 /*#define G_ResetDmrc	107*/	/* ; async - newdmrc */
 #define G_PutDmrc	108	/* str key, str value; async - newdmrc */
 #define G_Verify	109	/* str type; ..., int V_ret */
+#define G_VerifyRootOK	110	/* str type; ..., int V_ret */
 
 /*
  * Command codes core -> config reader
