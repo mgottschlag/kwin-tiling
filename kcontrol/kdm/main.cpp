@@ -228,12 +228,6 @@ void KDModule::moduleChanged(bool state)
   setChanged(state);
 }
 
-
-void KDModule::resizeEvent(QResizeEvent *)
-{
-  tab->setGeometry(0,0,width(),height());
-}
-
 void KDModule::propagateUsers()
 {
   emit clearUsers();

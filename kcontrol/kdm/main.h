@@ -62,11 +62,6 @@ signals:
   void addUsers(const QMap<QString,int> &);
   void delUsers(const QMap<QString,int> &);
 
-protected:
-
-  void resizeEvent(QResizeEvent *e);
-
-
 protected slots:
 
   void moduleChanged(bool state);
