@@ -18,7 +18,6 @@
 */                                                                            
 
 #include <qlayout.h>
-#include <qlistview.h>
 
 #include <kglobal.h>
 #include <klocale.h>
@@ -40,8 +39,6 @@ IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char 
   _tree->fill();
   connect(_tree, SIGNAL(moduleSelected(ConfigModule*)), 
 		  this, SLOT(moduleSelected(ConfigModule*)));
-  connect(_tree, SIGNAL(categorySelected(QListViewItem*)), 
-		  this, SIGNAL(categorySelected(QListViewItem*)));
 
   // iconview
   _icon = new ModuleIconView(_modules, this);

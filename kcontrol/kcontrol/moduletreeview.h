@@ -41,16 +41,13 @@ public:
  
 
   void setTag(const QString& tag) { _tag = tag; }
-  void setCaption(const QString& caption) { _caption = caption; }
   void setModule(ConfigModule *m) { _module = m; }
   QString tag() const { return _tag; };
-  QString caption() const { return _caption; };
   ConfigModule *module() { return _module; };
 
 private:
   ConfigModule *_module;
   QString       _tag;
-  QString       _caption;
 
 };
 
@@ -67,7 +64,6 @@ public:
 
 signals:
   void moduleSelected(ConfigModule*);
-  void categorySelected(QListViewItem*);
 
 protected slots:
   void slotItemSelected(QListViewItem*);

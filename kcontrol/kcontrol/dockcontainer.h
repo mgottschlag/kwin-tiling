@@ -36,10 +36,8 @@ public:
   void setBaseWidget(QWidget *widget);
   void dockModule(ConfigModule *module);
 
-public slots:
-  void removeModule();
-
 protected slots:
+  void removeModule();
   void quickHelpChanged();
 
 protected:

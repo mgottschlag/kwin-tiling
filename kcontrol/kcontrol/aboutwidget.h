@@ -22,14 +22,13 @@
 
 #include <qwidget.h>
 #include <qpixmap.h>
-#include <qlistview.h>
 
 class AboutWidget : public QWidget
 {  
   Q_OBJECT    
   
 public:   
-  AboutWidget(QWidget *parent, const char *name=0, QListViewItem* category=0);	
+  AboutWidget(QWidget *parent, const char *name=0);	
   
 protected:
     void paintEvent(QPaintEvent*);
@@ -38,8 +37,6 @@ protected:
 private:
     QPixmap _part1, _part2, _part3;
     QPixmap _buffer;
-    bool    _moduleList;
-    QListViewItem* _category;
 };
 
 #endif

@@ -31,8 +31,6 @@
 #include "global.h"
 #include "aboutwidget.h"
 #include "aboutwidget.moc"
-#include "modules.h"
-#include "moduletreeview.h"
 
 const char * title_text = I18N_NOOP("Configure your desktop environment.");
 
@@ -55,16 +53,9 @@ const char * system_text = I18N_NOOP("System:");
 const char * release_text = I18N_NOOP("Release:");
 const char * machine_text = I18N_NOOP("Machine:");
 
-AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* category)
-   : QWidget(parent, name),
-      _moduleList(false),
-      _category(category)
+AboutWidget::AboutWidget(QWidget *parent , const char *name)
+   : QWidget(parent, name)
 {
-    if (_category)
-    {
-      _moduleList = true;
-    }
-    
     setMinimumSize(400, 400);
 
     // load images
@@ -96,7 +87,7 @@ void AboutWidget::paintEvent(QPaintEvent* e)
 
 void AboutWidget::resizeEvent(QResizeEvent*)
 {
-   if(_part1.isNull() || _part2.isNull() || _part3.isNull())
+    if(_part1.isNull() || _part2.isNull() || _part3.isNull())
         return;
 
     _buffer.resize(width(), height());
@@ -175,109 +166,67 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     QFont f2 = f1;
     f2.setBold(true);
 
-    
-    if (!_moduleList)
-    {
-      // kde version
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(version_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::kdeVersion());
-      yoffset += fheight + 5;
-      if(yoffset > bheight) return;
+    // kde version
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, i18n(version_text));
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::kdeVersion());
+    yoffset += fheight + 5;
+    if(yoffset > bheight) return;
 
-      // user name
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(user_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::userName());
-      yoffset += fheight + 5;
-      if(yoffset > bheight) return;
+    // user name
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, i18n(user_text));
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::userName());
+    yoffset += fheight + 5;
+    if(yoffset > bheight) return;
 
-      // host name
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(host_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::hostName());
-      yoffset += fheight + 5;
-      if(yoffset > bheight) return;
+    // host name
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, i18n(host_text));
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::hostName());
+    yoffset += fheight + 5;
+    if(yoffset > bheight) return;
 
-      // system
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(system_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::systemName());
-      yoffset += fheight + 5;
-      if(yoffset > bheight) return;
+    // system
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, i18n(system_text));
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::systemName());
+    yoffset += fheight + 5;
+    if(yoffset > bheight) return;
 
-      // release
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(release_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::systemRelease());
-      yoffset += fheight + 5;
-      if(yoffset > bheight) return;
+    // release
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, i18n(release_text));
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::systemRelease());
+    yoffset += fheight + 5;
+    if(yoffset > bheight) return;
 
-      // machine
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(machine_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::systemMachine());
-      if(yoffset > bheight) return;
+    // machine
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, i18n(machine_text));
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::systemMachine());
+    if(yoffset > bheight) return;
 
-      yoffset += 10;
+    yoffset += 10;
 
-      if(width() < 450 || height() < 450) return;
+    if(width() < 450 || height() < 450) return;
 
-      // draw use text
-      bheight = bheight - yoffset - 10;
-      bwidth = bwidth - xoffset - 10;
+    // draw use text
+    bheight = bheight - yoffset - 10;
+    bwidth = bwidth - xoffset - 10;
 
-      p.setFont(f1);
+    p.setFont(f1);
 
-      QString ut = i18n(use_text);
-      // do not break message freeze
-      ut.replace(QRegExp("<b>"), "");
-      ut.replace(QRegExp("</b>"), "");
+    QString ut = i18n(use_text);
+    // do not break message freeze
+    ut.replace(QRegExp("<b>"), "");
+    ut.replace(QRegExp("</b>"), "");
 
-      p.drawText(xoffset, yoffset, bwidth, bheight, AlignLeft | AlignVCenter | WordBreak, ut);
-    }
-    else
-    {
-      QFont headingFont = f2;
-      headingFont.setPointSize(headingFont.pointSize()+5);
-      headingFont.setUnderline(true);
-
-      p.setFont(headingFont);
-      p.drawText(xoffset, yoffset, i18n(static_cast<ModuleTreeItem*>(_category)->caption().latin1()));
-      yoffset += fheight + 10;
-
-      // traverse the list
-      QListViewItem* pEntry = _category->firstChild();
-      while (pEntry != NULL)
-        {
-          QString szName;
-          QString szComment;
-          if (static_cast<ModuleTreeItem*>(pEntry)->module())
-            {
-              szName = static_cast<ModuleTreeItem*>(pEntry)->module()->name();
-              szComment = static_cast<ModuleTreeItem*>(pEntry)->module()->comment();
-              p.setFont(f2);
-              p.drawText(xoffset, yoffset, i18n(szName.latin1()));
-              p.setFont(f1);
-              p.drawText(xoffset + xadd, yoffset, i18n(szComment.latin1()));
-            }
-          else
-            {
-              szName = static_cast<ModuleTreeItem*>(pEntry)->caption();
-              p.setFont(f2);
-              p.drawText(xoffset, yoffset, i18n(szName.latin1()));
-            }
-
-          yoffset += fheight + 5;
-          if(yoffset > bheight) return;
-          
-          pEntry = pEntry->nextSibling();
-        }
-      }
+    p.drawText(xoffset, yoffset, bwidth, bheight, AlignLeft | AlignVCenter | WordBreak, ut);
 }

@@ -73,20 +73,20 @@ void DockContainer::dockModule(ConfigModule *module)
     {
 
       int res = KMessageBox::warningYesNo(this,
-                            module ?
-                            i18n("There are unsaved changes in the "
-                                 "active module.\n"
-                                 "Do you want to apply the changes "
-                                 "before running\n"
-                                 "the new module or forget the changes?") :
-                            i18n("There are unsaved changes in the "
-                                 "active module.\n"
-                                 "Do you want to apply the changes "
-                                 "before exiting\n"
-                                 "the Control Center or forget the changes?"),
-                            i18n("Unsaved changes"),
-                            i18n("&Apply"),
-                            i18n("&Forget"));
+module ?
+i18n("There are unsaved changes in the "
+     "active module.\n"
+     "Do you want to apply the changes "
+     "before running\n"
+     "the new module or forget the changes?") :
+i18n("There are unsaved changes in the "
+     "active module.\n"
+     "Do you want to apply the changes "
+     "before exiting\n"
+     "the Control Center or forget the changes?"),
+                                          i18n("Unsaved changes"),
+                                          i18n("&Apply"),
+                                          i18n("&Forget"));
       if (res == KMessageBox::Yes)
         _module->module()->applyClicked();
     }

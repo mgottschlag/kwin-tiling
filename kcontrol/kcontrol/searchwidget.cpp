@@ -78,7 +78,7 @@ void KeywordListEntry::addModule(ConfigModule* module)
 }
 
 SearchWidget::SearchWidget(QWidget *parent , const char *name)
-  : QDialog(parent, name)
+  : QWidget(parent, name)
 {
   _keywords.setAutoDelete(true);
 
