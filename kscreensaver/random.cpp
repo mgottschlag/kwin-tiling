@@ -54,8 +54,11 @@ int main(int argc, char *argv[])
         }
     }
 
-    QStringList saverFileList = KGlobal::dirs()->findAllResources("apps",
-                                    "ScreenSavers/*.desktop", true);
+    KGlobal::dirs()->addResourceType("scrsav",
+                                     KGlobal::dirs()->kde_default("apps") +
+                                     "ScreenSavers/");
+    QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav",
+                                                                  "*.desktop");
 
     int indx = random()%saverFileList.count();
     QString filename = *(saverFileList.at(indx));
