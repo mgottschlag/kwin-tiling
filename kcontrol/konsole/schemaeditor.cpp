@@ -327,7 +327,7 @@ void SchemaEditor::removeCurrent()
 
     if (!QFile::remove(base))
 	KMessageBox::error(this,
-			   i18n("Cannot remove the schema.\nMaybe it is a system schema\n"),
+			   i18n("Cannot remove the schema.\nMaybe it is a system schema.\n"),
 			   i18n("Error Removing Schema"));
 
     loadAllSchema();
@@ -432,7 +432,7 @@ void SchemaEditor::saveCurrent()
 
 	f.close();
     } else
-	KMessageBox::error(this, i18n("Cannot save the schema.\nMaybe permission denied\n"),
+	KMessageBox::error(this, i18n("Cannot save the schema.\nMaybe permission denied.\n"),
 			   i18n("Error Saving Schema"));
 
     schMod=false;

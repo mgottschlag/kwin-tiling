@@ -55,7 +55,7 @@ KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const char *name, const QStri
   QHBoxLayout *box = new QHBoxLayout(this);
   QTabWidget *tab = new QTabWidget(this); // There will be more tabs in the future.
   box->addWidget(tab);
-  tab->addTab( mInstaller, i18n("&Theme installer") );
+  tab->addTab( mInstaller, i18n("&Theme Installer") );
   connect( mInstaller, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
 }
 

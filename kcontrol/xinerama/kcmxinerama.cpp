@@ -75,7 +75,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 			xw->headTable->setText(i, 3, QString::number(geom.height()));
 		}
 
-		xw->_unmanagedDisplay->insertItem(i18n("Display Containing The Pointer"));
+		xw->_unmanagedDisplay->insertItem(i18n("Display Containing the Pointer"));
 
 		xw->headTable->setRowLabels(dpyList);
 

@@ -104,7 +104,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     connect( toggleURLGrabAction, SIGNAL( toggled( bool )),
              this, SLOT( setURLGrabberEnabled( bool )));
 
-    QToolTip::add( this, i18n("Klipper - Clipboard Tool") );
+    QToolTip::add( this, i18n("Klipper - clipboard tool") );
 }
 
 KlipperWidget::~KlipperWidget()

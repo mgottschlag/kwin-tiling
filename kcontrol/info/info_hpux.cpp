@@ -393,7 +393,7 @@ bool GetInfo_CPU( QListView *lBox )
   if (psd.psd_proc_cnt<=0)
       psd.psd_proc_cnt=1; // Minimum one CPU !
   
-  olditem = new QListViewItem(lBox, olditem, i18n("Number of active Processors"),
+  olditem = new QListViewItem(lBox, olditem, i18n("Number of Active Processors"),
                               Value(psd.psd_proc_cnt));
   
   pstat_getprocessor( &pro, sizeof(pro), 1, 0 );
@@ -442,7 +442,7 @@ bool GetInfo_CPU( QListView *lBox )
   olditem = new QListViewItem(lBox, olditem, i18n("Total Physical Memory"), str);
 
   str = Value(pst.page_size) + QString(" ") + i18n("Bytes");
-  olditem = new QListViewItem(lBox, olditem, i18n("Size of one Page"), str);
+  olditem = new QListViewItem(lBox, olditem, i18n("Size of One Page"), str);
   
   return true;
 }

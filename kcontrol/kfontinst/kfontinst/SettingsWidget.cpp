@@ -126,10 +126,10 @@ void CSettingsWidget::gsFontmapChanged(const QString &file)
     if(!(CMisc::fExists(file)))
        if(CMisc::dWritable(CMisc::getDir(file)))
           ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
-                                                   "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
+                                                   "Create new file?"), i18n("File Error"))==KMessageBox::Yes ? true : false;
        else
           KMessageBox::error(this, i18n("File does not exist "
-                                        "and folder is not writable."), i18n("File error"));
+                                        "and folder is not writable."), i18n("File Error"));
     else
        ok=true;
 
@@ -171,7 +171,7 @@ void CSettingsWidget::xConfigButtonPressed()
 {
     KFileDialog *dlg = itsXConfigFileReq->fileDialog();
     dlg->setMode(KFile::File | KFile::LocalOnly);
-    dlg->setCaption(i18n("Select X config file"));
+    dlg->setCaption(i18n("Select X Config File"));
 }
 
 void CSettingsWidget::xConfigChanged(const QString &file)
@@ -181,10 +181,10 @@ void CSettingsWidget::xConfigChanged(const QString &file)
     if(!(CMisc::fExists(file)))
         if(CMisc::dWritable(CMisc::getDir(file)))
             ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
-                                                     "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
+                                                     "Create new file?"), i18n("File Error"))==KMessageBox::Yes ? true : false;
         else
             KMessageBox::error(this, i18n("File does not exist "
-                                          "and folder is not writable."), i18n("File error"));
+                                          "and folder is not writable."), i18n("File Error"));
     else
         ok=true;
 

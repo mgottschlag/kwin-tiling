@@ -255,7 +255,7 @@ void BGAdvancedDialog::slotRemove()
    {
       KMessageBox::sorry(this,
 		i18n("Unable to remove the program! The program is global "
-		"and can only be removed by the System Administrator."),
+		"and can only be removed by the system administrator."),
 		i18n("Cannot Remove Program"));
       return;
    }

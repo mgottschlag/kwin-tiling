@@ -36,7 +36,7 @@ FilterOptions::FilterOptions(QWidget *parent, const char *name)
     QGridLayout *lay = new QGridLayout(this, 1, 1, 10, 5);
     //QGroupBox =
 
-    lay->addWidget(new QLabel(i18n("Under Construction..."), this), 0, 0);
+    lay->addWidget(new QLabel(i18n("Under construction..."), this), 0, 0);
     lay->activate();
 
     // load();

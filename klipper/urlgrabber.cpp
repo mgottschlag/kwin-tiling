@@ -160,7 +160,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
             QPtrListIterator<ClipCommand> it2( action->commands() );
             if ( it2.count() > 0 )
                 myMenu->insertTitle( SmallIcon( "klipper" ), action->description() +
-				     i18n(" -  Actions for: ") +
+				     i18n(" - Actions For: ") +
 				     KStringHandler::csqueeze(myClipData, 45));
             for ( command = it2.current(); command; command = ++it2 ) {
                 item = command->description;

@@ -50,13 +50,13 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       sdlcombo = new QComboBox( FALSE, group0 );
       sdllabel = new QLabel (sdlcombo, i18n ("Co&nsole:"), group0);
       sdlcombo->insertItem(i18n("Everybody"), SdAll);
-      sdlcombo->insertItem(i18n("Only root"), SdRoot);
+      sdlcombo->insertItem(i18n("Only Root"), SdRoot);
       sdlcombo->insertItem(i18n("Nobody"), SdNone);
       connect(sdlcombo, SIGNAL(activated(int)), SLOT(changed()));
       sdrcombo = new QComboBox( FALSE, group0 );
       sdrlabel = new QLabel (sdrcombo, i18n ("Re&mote:"), group0);
       sdrcombo->insertItem(i18n("Everybody"), SdAll);
-      sdrcombo->insertItem(i18n("Only root"), SdRoot);
+      sdrcombo->insertItem(i18n("Only Root"), SdRoot);
       sdrcombo->insertItem(i18n("Nobody"), SdNone);
       connect(sdrcombo, SIGNAL(activated(int)), SLOT(changed()));
       QWhatsThis::add( group0, i18n("Here you can select who is allowed to shutdown"

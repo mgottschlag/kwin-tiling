@@ -224,7 +224,7 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
 
 
     (void) new KListViewItem(base->_readerHostsListView,
-			     i18n("No readers found.Check 'pcscd' is running"));
+			     i18n("No readers found. Check 'pcscd' is running"));
     return;
   }
 

@@ -333,7 +333,7 @@ void SessionEditor::removeCurrent()
 
   if (!QFile::remove(base)) {
     KMessageBox::error(this,
-      i18n("Cannot remove the session.\nMaybe it is a system session\n"),
+      i18n("Cannot remove the session.\nMaybe it is a system session.\n"),
       i18n("Error Removing Session"));
     return;
   }

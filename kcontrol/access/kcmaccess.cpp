@@ -249,7 +249,7 @@ void KAccessConfig::selectSound()
   if (list.count()>0)
     start = list[0];
   // TODO: Why only wav's? How can I find out what artsd supports?
-  QString fname = KFileDialog::getOpenFileName(start, i18n("*.wav|WAV files"));
+  QString fname = KFileDialog::getOpenFileName(start, i18n("*.wav|WAV Files"));
   if (!fname.isEmpty())
     soundEdit->setText(fname);
 }

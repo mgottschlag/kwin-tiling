@@ -52,7 +52,7 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   connect(m_transparent, SIGNAL(clicked()), SIGNAL(changed()));
 
   m_backgroundInput->fileDialog()->setFilter(KImageIO::pattern(KImageIO::Reading));
-  m_backgroundInput->fileDialog()->setCaption(i18n("Select an Image File"));
+  m_backgroundInput->fileDialog()->setCaption(i18n("Select Image File"));
 
   connect(m_showToolTips, SIGNAL(clicked()), SIGNAL(changed()));
 
