@@ -54,6 +54,11 @@ int main( int argc, char* argv[] )
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     kapp->dcopClient()->registerAs("ksmserver", false);
+    if (!kapp->dcopClient()->isRegistered())
+    {
+       qWarning("Could not register with DCOPServer. Aborting.");
+       return 1;
+    }
 
     QCString wm = args->getOption("windowmanager");
     if ( wm.isEmpty() )
