@@ -802,8 +802,6 @@ ReapChildren (void)
     {
 	Debug ("manager wait returns  pid %d  sig %d  core %d  code %d\n",
 	       pid, waitSig(status), waitCore(status), waitCode(status));
-	if (autoRescan)
-	    RescanConfigs (FALSE);
 	/* SUPPRESS 560 */
 	if ((d = FindDisplayByPid (pid))) {
 	    d->pid = -1;
@@ -1143,6 +1141,8 @@ MainLoop (void)
 		    break;
 		case SIGCHLD:
 		    ReapChildren ();
+		    if (!Stopping && autoRescan)
+			RescanConfigs (FALSE);
 		    break;
 		case SIGUSR1:
 		    if (startingServer && startingServer->serverStatus == starting)
