@@ -34,10 +34,10 @@
 #include <klocale.h>
 #include <klistview.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
 #include <kdesktopfile.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
+#include <kapplication.h>
 
 #include "menutab_impl.h"
 #include "menutab_impl.moc"
@@ -259,14 +259,13 @@ void MenuTab::defaults()
 
 void MenuTab::launchMenuEditor()
 {
-    QString strAppPath(locate("exe", "kmenuedit"));
-    if (!strAppPath.isEmpty())
-    {
-        KProcess process;
-        process << strAppPath;
-        process.start(KProcess::DontCare);
-    }
-    else
+    if ( KApplication::startServiceByDesktopName( "kmenuedit", 
+                                                  QString::null /*url*/, 
+                                                  0 /*error*/, 
+                                                  0 /*dcopservice*/,
+                                                  0 /*pid*/,
+                                                  "" /*startup_id*/,
+                                                  true /*nowait*/ ) != 0 )
     {
         KMessageBox::error(this,
                            "The KDE menu editor (kmenuedit) could not be launched.\n"
