@@ -82,14 +82,14 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   eLay->setColStretch(1,1);
 
   enable= new
-    QCheckBox(i18n("Enable active desktop borders"),
+    QCheckBox(i18n("Enable &active desktop borders"),
           ElectricBox);
   eLay->addMultiCellWidget(enable,1,1,0,1);
   QWhatsThis::add( enable, i18n("If this option is enabled, moving the mouse to a screen border"
     " will change your desktop. This is e.g. useful if you want to drag windows from one desktop"
     " to the other.") );
 
-  movepointer = new QCheckBox(i18n("Move pointer towards center after switch"),
+  movepointer = new QCheckBox(i18n("&Move pointer towards center after switch"),
                               ElectricBox);
   eLay->addMultiCellWidget(movepointer,2,2,0,1);
   QWhatsThis::add( movepointer, i18n("If this option is enabled, after switching desktops using"
@@ -99,7 +99,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   delays = new KIntNumInput(10, ElectricBox);
   delays->setRange(0, MAX_EDGE_RES/10, 10, true);
-  delays->setLabel(i18n("Desktop switch delay:"));
+  delays->setLabel(i18n("&Desktop switch delay:"));
   eLay->addMultiCellWidget(delays,4,4,1,2);
   QWhatsThis::add( delays, i18n("Here you can set a delay for switching desktops using the active"
     " borders feature. Desktops will be switched after the mouse has been touching a screen border"
@@ -129,7 +129,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   BrdrSnap = new KIntNumInput(10, MagicBox);
   BrdrSnap->setRange( 0, MAX_BRDR_SNAP);
-  BrdrSnap->setLabel(i18n("Border snap zone:"));
+  BrdrSnap->setLabel(i18n("&Border snap zone:"));
   BrdrSnap->setSuffix(i18n(" pixels"));
   BrdrSnap->setSteps(1,1);
   eLay->addWidget(BrdrSnap,1,2);
@@ -140,7 +140,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   WndwSnap = new KIntNumInput(10, MagicBox);
   WndwSnap->setRange( 0, MAX_WNDW_SNAP);
-  WndwSnap->setLabel(i18n("Window snap zone:"));
+  WndwSnap->setLabel(i18n("&Window snap zone:"));
   WndwSnap->setSuffix( i18n(" pixels"));
   BrdrSnap->setSteps(1,1);
   eLay->addWidget(WndwSnap,3,2);
