@@ -148,7 +148,7 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
   vbox->addSpacing(fontMetrics().lineSpacing());
 
 
-  fade_out_cb = new QCheckBox(i18n("Fade out applet handels"), misc_group);
+  fade_out_cb = new QCheckBox(i18n("Fade out applet handles"), misc_group);
   connect(fade_out_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(fade_out_cb);
   QWhatsThis::add( fade_out_cb, i18n("If this option is enabled, the handle on the left"
