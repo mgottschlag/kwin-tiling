@@ -248,16 +248,7 @@ void KlipperWidget::showPopupMenu( QPopupMenu *menu )
     } else {
         KWin::Info i = KWin::info( winId() );
         QRect g = i.geometry;
-        KConfig gc("kdeglobals", false, false);
-        gc.setGroup("Windows");
-	QRect screen;
-        if (QApplication::desktop()->isVirtualDesktop() &&
-            gc.readBoolEntry("XineramaEnabled", true) &&
-            gc.readBoolEntry("XineramaPlacementEnabled", true)) {
-            screen = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(g.center()));
-        } else {
-            screen = QApplication::desktop()->geometry();
-        }
+	QRect screen = KGlobalSettings::desktopGeometry(g.center());
 
         if ( g.x()-screen.x() > screen.width()/2 &&
              g.y()-screen.y() + menu->height() > screen.height() )

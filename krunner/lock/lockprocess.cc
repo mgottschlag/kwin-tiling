@@ -32,6 +32,7 @@
 #include <kservicegroup.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <kglobalsettings.h>
 #include <klocale.h>
 #include <kwin.h>
 #include <qtimer.h>
@@ -661,16 +662,7 @@ bool LockProcess::checkPass()
     QDesktopWidget *desktop = KApplication::desktop();
     QRect rect = passDlg.geometry();
     if (child_sockets.isEmpty()) {
-        KConfig gc("kdeglobals", false, false);
-        gc.setGroup("Windows");
-        QRect desk;
-        if (QApplication::desktop()->isVirtualDesktop() &&
-            gc.readBoolEntry("XineramaEnabled", true) &&
-            gc.readBoolEntry("XineramaPlacementEnabled", true)) {
-            desk = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
-        } else {
-            desk = desktop->geometry();
-        }
+        QRect desk = KGlobalSettings::desktopGeometry(QCursor::pos());
         rect.moveCenter(desk.center());
     } else {
         rect.moveCenter(desktop->screenGeometry(qt_xscreen()).center());

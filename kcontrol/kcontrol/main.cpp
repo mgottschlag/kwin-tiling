@@ -35,6 +35,7 @@
 #include <kcmdlineargs.h>
 #include <dcopclient.h>
 #include <kaboutdata.h>
+#include <kglobalsettings.h>
 #include <kconfig.h>
 #include <kdebug.h>
 
@@ -60,17 +61,7 @@ KControlApp::KControlApp()
 
   connect (modIface, SIGNAL(helpClicked()), toplevel, SLOT(slotHelpRequest()));
 
-  QRect desk;
-  KConfig gc("kdeglobals", false, false);
-  gc.setGroup("Windows");
-  if (QApplication::desktop()->isVirtualDesktop() &&
-      gc.readBoolEntry("XineramaEnabled", true) &&
-      gc.readBoolEntry("XineramaPlacementEnabled", true)) {
-    desk = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(toplevel));
-  } else {
-    desk = QApplication::desktop()->geometry();
-  }
-
+  QRect desk = KGlobalSettings::desktopGeometry(toplevel);
   KConfig *config = KGlobal::config();
   config->setGroup("General");
   int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk.width()), 

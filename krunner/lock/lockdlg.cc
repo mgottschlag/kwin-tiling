@@ -329,17 +329,7 @@ void PasswordDlg::slotStartNewSession()
     // Calculate a proper size for the text.
     {
        QSimpleRichText rt(qt_text, dialog->font());
-       int scr = QApplication::desktop()->screenNumber(dialog);
-       KConfig gc("kdeglobals", false, false);
-       gc.setGroup("Windows");
-       QRect rect;
-       if (QApplication::desktop()->isVirtualDesktop() &&
-           gc.readBoolEntry("XineramaEnabled", true) &&
-           gc.readBoolEntry("XineramaPlacementEnabled", true)) {
-          rect = QApplication::desktop()->screenGeometry(scr);
-       } else {
-          rect = QApplication::desktop()->geometry();
-       }
+       QRect rect = KGlobalSettings::desktopGeometry(dialog);
 
        pref_width = rect.width() / 3;
        rt.setWidth(pref_width);
