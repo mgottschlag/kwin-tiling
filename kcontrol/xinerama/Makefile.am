@@ -16,4 +16,5 @@ KDE_ICON = xinerama
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmxinerama.pot
 
-xdg_apps_DATA = xinerama.desktop
+xinerama_datadir = $(kde_appsdir)/.hidden
+xinerama_data_DATA = xinerama.desktop

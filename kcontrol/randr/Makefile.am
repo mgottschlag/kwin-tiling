@@ -20,7 +20,11 @@ krandrinithack_la_LIBADD = librandrinternal.la $(LIB_KDEUI) $(LIB_XRANDR)
 noinst_HEADERS = randr.h krandrmodule.h krandrtray.h krandrapp.h ktimerdialog.h \
     krandrpassivepopup.h
 
-xdg_apps_DATA = randr.desktop krandrtray.desktop
+xdg_apps_DATA = krandrtray.desktop
+
+krandr_data_DATA = randr.desktop
+krandr_datadir = $(kde_appsdir)/.hidden
+
 
 #install-data-local: uninstall.desktop
 #	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/Desktop
