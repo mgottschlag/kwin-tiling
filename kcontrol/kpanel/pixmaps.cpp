@@ -33,7 +33,7 @@ extern KConfigBase *config;
 KPixmapConfig::KPixmapConfig(QWidget *parent, const char* name)
     : KConfigWidget(parent, name)
 {
-    ldr.getDirList()->clear();
+    ldr.getDirList().clear();
     ldr.insertDirectory(0, kapp->localkdedir()+"/share/apps/kpanel/pics");
     ldr.insertDirectory(1, kapp->kde_datadir()+"/kpanel/pics");
     
