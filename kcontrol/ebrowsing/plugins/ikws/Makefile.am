@@ -5,7 +5,7 @@ SUBDIRS = searchproviders
 INCLUDES  = $(all_includes)
 LDFLAGS   = $(all_libraries)
 
-lib_LTLIBRARIES = libkuriikwsfilter.la libkurisearchfilter.la
+kde_module_LTLIBRARIES = libkuriikwsfilter.la libkurisearchfilter.la
 
 libkuriikwsfilter_la_LDFLAGS = -version-info 1:0:0 -module -no-undefined 
 libkuriikwsfilter_la_LIBADD = $(LIB_KSYCOCA) $(LIB_KDEUI)
