@@ -505,8 +505,13 @@ void KDMAppearanceWidget::defaults()
   posCenterRadio->setChecked( true );
   slotPosRadioClicked( 0 );
   setLogo( "" );
-  guicombo->setCurrentItem( QString::fromLatin1("Default"), true, 0 );
+  guicombo->setCurrentItem (QString::fromLatin1("Default"), true, 0);
+
+  colcombo->setCurrentItem( QString::fromLatin1("Default"), true, 0 );
   echocombo->setCurrentItem( 1 );
+
+  xLineEdit->setText( "100");
+  yLineEdit->setText( "100");
 
   langcombo->setCurrentItem( "en_US" );
 }
