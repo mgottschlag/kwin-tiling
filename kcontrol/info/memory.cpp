@@ -27,6 +27,7 @@
 
 #include <qlayout.h>
 #include <qpainter.h>
+#include <qpixmap.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -273,7 +274,11 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
     QWidget *graph = Graph[widgetindex];
     int width = graph->width();
     int height = graph->height();
-    QPainter paint(graph);
+    QPixmap pm(width, height);
+    QPainter paint;
+
+    paint.begin(&pm, this);
+
     QPen pen(QColor(0, 0, 0));
 
     if (! ZERO_IF_NO_INFO(total)) {
@@ -282,6 +287,8 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
 	paint.setPen(pen);
 	paint.drawRect(graph->rect());
 	GraphLabel[widgetindex]->setText(Not_Available_Text);
+	paint.end();
+	bitBlt(graph, 0, 0, &pm);
 	return false;
     }
 
@@ -325,6 +332,9 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
     paint.setPen(pen);
     paint.drawRect(graph->rect());
     
+    paint.end();
+    bitBlt(graph, 0, 0, &pm);
+
     GraphLabel[widgetindex]->setText(i18n("%1 free").arg(format_MB(last_used)));
  
     return true;
