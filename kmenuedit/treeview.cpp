@@ -144,8 +144,7 @@ TreeView::~TreeView() {
 }
 
 void TreeView::fill()
-{    //QString name(item->text(0));
-    //if (!(name.find("[Hidden]") > 0))
+{
     clear();
     fillBranch("", 0);
 }
@@ -161,9 +160,6 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
     // and therefore I already have to iterate by hand to get the subdir list.
     QStringList dirlist = dirList(relPath);
     QStringList filelist = fileList(relPath);
-
-    //for (QStringList::ConstIterator it = dirlist.begin(); it != dirlist.end(); ++it)
-    //  kdDebug() << (*it).local8Bit() << endl;
 
     // first add tree items for the desktop files in this directory
     if (!filelist.isEmpty()) {
@@ -181,7 +177,6 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 	    	else item = new TreeItem(parent, *it);
 
 		    item->setText(0, df.readName() + i18n(" [Hidden]"));
-		    //item->setPixmap(0, KGlobal::iconLoader()->loadIcon("no",KIcon::Desktop, KIcon::SizeSmall));
 	    	    item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
 	    }
 	    else {
@@ -227,8 +222,7 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 	                    item = new TreeItem(parent, *it + "/.directory");
 
 	                item->setText(0, df.readName() + i18n(" [Hidden]"));
-	                //item->setPixmap(0, KGlobal::iconLoader()->loadIcon("no",KIcon::Desktop, KIcon::SizeSmall));
-			item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+	                item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
 	                item->setExpandable(true);
 		}
 		else {
@@ -954,14 +948,14 @@ void TreeView::del()
     if(file.find(".directory") > 0)
     {
         if (!(deleteDir(file.mid(0, file.find("/.directory")))))
-		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission Denied"));
+		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission denied"));
 	else
         	delete item;
     }
     else if (file.find(".desktop"))
     {
         if (!(deleteFile(file)))
-		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission Denied"));
+		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission denied"));
 	else
 		delete item;
     }
