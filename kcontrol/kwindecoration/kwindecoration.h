@@ -61,6 +61,7 @@ class KWinDecorationModule : public KCModule, virtual public KWinDecorationIface
 	protected slots:
 		// Allows us to turn "save" on
 		void slotSelectionChanged();
+		void slotEnableButtonTab(bool on);
 
 	private:
 		void readConfig( KConfig* conf );
@@ -90,6 +91,7 @@ class KWinDecorationModule : public KCModule, virtual public KWinDecorationIface
 		QString  currentLibraryName;
 		QString  oldLibraryName;
 		QVBox*   pluginPage;
+		QVBox*	 buttonPage;
 		QObject* (*allocatePlugin)( KConfig* conf, QWidget* parent );
 };
 

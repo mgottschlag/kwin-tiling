@@ -52,7 +52,7 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	: KCModule(parent, name), DCOPObject("KWinClientDecoration")
 {
 	KConfig kwinConfig("kwinrc");
-    kwinConfig.setGroup("Style");
+	kwinConfig.setGroup("Style");
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	tabWidget = new QTabWidget( this );
@@ -64,30 +64,36 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	page1->setMargin( KDialog::marginHint() );
 
 	QGroupBox* btnGroup = new QGroupBox( 1, Qt::Horizontal, i18n("Window Decoration"), page1 );
-	QWhatsThis::add( btnGroup, i18n("Select the window decoration. This is the look and feel of both the window borders "
-	                                "and the window handle.") );
+	QWhatsThis::add( btnGroup, 
+			i18n("Select the window decoration. This is the look and feel of both "
+			"the window borders and the window handle.") );
 	decorationListBox = new QListBox( btnGroup );
 
-	QGroupBox* checkGroup = new QGroupBox( 1, Qt::Horizontal, i18n("General options (if available)"), page1 );
-	cbUseCustomButtonPositions = new QCheckBox( i18n("Use custom titlebar button &positions"), checkGroup );
-	QWhatsThis::add( cbUseCustomButtonPositions, i18n(  "The appropriate settings can be found in the \"Buttons\"-Tab. "
-                                                        "Please note that this option is not available on all styles yet!" ) );
+	QGroupBox* checkGroup = new QGroupBox( 1, Qt::Horizontal, 
+			i18n("General options (if available)"), page1 );
+	cbUseCustomButtonPositions = new QCheckBox( 
+			i18n("Use custom titlebar button &positions"), checkGroup );
+	QWhatsThis::add( cbUseCustomButtonPositions, 
+			i18n(  "The appropriate settings can be found in the \"Buttons\" Tab. "
+                        "Please note that this option is not available on all styles yet!" ) );
 // Save this for later...
 //	cbUseMiniWindows = new QCheckBox( i18n( "Render mini &titlebars for all windows"), checkGroup );
 //	QWhatsThis::add( cbUseMiniWindows, i18n( "Note that this option is not available on all styles yet!" ) );
 
 	// Page 2 (Button Selector)
-	QVBox* page2 = new QVBox( tabWidget );
-	page2->setSpacing( KDialog::spacingHint() );
-	page2->setMargin( KDialog::marginHint() );
+	buttonPage = new QVBox( tabWidget );
+	buttonPage->setSpacing( KDialog::spacingHint() );
+	buttonPage->setMargin( KDialog::marginHint() );
 
-	QGroupBox* buttonBox = new QGroupBox( 1, Qt::Horizontal, i18n("Titlebar Button Position"), page2 );
+	QGroupBox* buttonBox = new QGroupBox( 1, Qt::Horizontal, 
+			i18n("Titlebar Button Position"), buttonPage );
+
 	// Add nifty dnd button modification widgets    
-	dropSite = new ButtonDropSite( buttonBox );
 	QLabel* label = new QLabel( buttonBox );
+	dropSite = new ButtonDropSite( buttonBox );
 	label->setText( i18n( "To add or remove titlebar buttons, simply <i>drag</i> items "
-	"between the available item list and the titlebar preview. Similarly, drag items within the "
-	"titlebar preview to re-position them.") );
+		"between the available item list and the titlebar preview. Similarly, "
+		"drag items within the titlebar preview to re-position them.") );
 	buttonSource = new ButtonSource( buttonBox );
 
 	// Page 3 (Configure decoration via client plugin page)
@@ -104,8 +110,10 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	resetPlugin( &kwinConfig );
 
 	tabWidget->insertTab( page1, i18n("&General") );
-	tabWidget->insertTab( page2, i18n("&Buttons") );
+	tabWidget->insertTab( buttonPage, i18n("&Buttons") );
 	tabWidget->insertTab( pluginPage, i18n("&Configure") );
+
+	tabWidget->setTabEnabled( buttonPage, cbUseCustomButtonPositions->isChecked() );
 
 	connect( dropSite, SIGNAL(buttonAdded(char)), buttonSource, SLOT(hideButton(char)) );
 	connect( dropSite, SIGNAL(buttonRemoved(char)), buttonSource, SLOT(showButton(char)) );
@@ -114,6 +122,7 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	connect( buttonSource, SIGNAL(selectionChanged()), this, SLOT(slotSelectionChanged()) );
 	connect( decorationListBox, SIGNAL(selectionChanged()), SLOT(slotSelectionChanged()) );
 	connect( cbUseCustomButtonPositions, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
+	connect( cbUseCustomButtonPositions, SIGNAL(toggled(bool)), SLOT(slotEnableButtonTab(bool)) );
 //	connect( cbUseMiniWindows, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
 
 	// Allow kwin dcop signal to update our selection list
@@ -150,7 +159,7 @@ void KWinDecorationModule::findDecorations()
 						DecorationInfo di;
 						di.name = desktopFile.readName();
 						di.libraryName = libName;
-	    	        	decorations.append( di );
+						decorations.append( di );
 					}
 				}
 			}
@@ -178,6 +187,12 @@ void KWinDecorationModule::createDecorationList()
 void KWinDecorationModule::slotSelectionChanged()
 {
 	emit changed(true);
+}
+
+
+void KWinDecorationModule::slotEnableButtonTab(bool on)
+{
+	tabWidget->setTabEnabled( buttonPage, on );
 }
 
 
@@ -264,8 +279,10 @@ void KWinDecorationModule::resetPlugin( KConfig* conf )
 	// Display a message telling the user that the current decoration
 	// does not have any configurable options (extended plugin interface not found)
 	QWidget* plugin = new QGroupBox( 1, Qt::Horizontal, "", pluginPage );
-	(void) new QLabel( i18n("<H3>No Configurable Options Available</H3>"
-	                "Sorry, no configurable options are available for the current decoration."), plugin );
+	(void) new QLabel( 
+		i18n("<H3>No Configurable Options Available</H3>"
+	        "Sorry, no configurable options are available for the current decoration."), plugin );
+
 	plugin->show();
 	pluginObject = plugin;
 }
@@ -279,6 +296,7 @@ void KWinDecorationModule::readConfig( KConfig* conf )
 	// General tab
 	// ============
 	cbUseCustomButtonPositions->setChecked( conf->readBoolEntry("CustomButtonPositions", false));
+	tabWidget->setTabEnabled( buttonPage, cbUseCustomButtonPositions->isChecked() );
 //	cbUseMiniWindows->setChecked( conf->readBoolEntry("MiniWindowBorders", false));
 
 	// Find the corresponding decoration name to that of
@@ -322,8 +340,8 @@ void KWinDecorationModule::writeConfig( KConfig* conf )
 	QString name = decorationListBox->currentText();
 	QString libName = decorationLibName( name );
 
-    KConfig kwinConfig("kwinrc");
-    kwinConfig.setGroup("Style");
+	KConfig kwinConfig("kwinrc");
+	kwinConfig.setGroup("Style");
     
 	// General settings
 	conf->writeEntry("PluginLib", libName);
@@ -375,8 +393,8 @@ void KWinDecorationModule::save()
 	writeConfig( &kwinConfig );
 	emit pluginSave( &kwinConfig );
 
-    kwinConfig.sync();
-    resetKWin();
+	kwinConfig.sync();
+	resetKWin();
 	// resetPlugin() will get called via the above DCOP function
 }
 
@@ -407,7 +425,7 @@ void KWinDecorationModule::defaults()
 
 QString KWinDecorationModule::quickHelp() const
 {
-    return i18n( "<h1>Window Manager Decoration</h1>"
+	return i18n( "<h1>Window Manager Decoration</h1>"
                  "This module allows you to choose the window border decorations, "
                 "as well as titlebar button positions and custom decoration options.");
 }
@@ -415,6 +433,7 @@ QString KWinDecorationModule::quickHelp() const
 
 void KWinDecorationModule::resetKWin()
 {
+	qWarning("kwindecoration: Sending a re-configure request to kwin via dcop....");
 	bool ok = kapp->dcopClient()->send("kwin", "KWinInterface",
                         "reconfigure()", QByteArray());
 	if (!ok) 
