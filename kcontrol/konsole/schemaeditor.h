@@ -60,7 +60,7 @@ class SchemaEditor : public SchemaDialog
   private slots:
 	void show();
 	void schemaModified();
-	void loadAllSchema();
+	void loadAllSchema(QString currentFile="");
 	void updatePreview();
   private:
 	bool schMod;

@@ -128,11 +128,7 @@ QString SchemaEditor::schema()
     if (defaultSchemaCB->isChecked() && i>=0)
       filename = ((SchemaListBoxText *) schemaList->item(i))->filename();
 
-	    int j = filename.findRev('/');
-	    if (j > -1)
-	        filename = filename.mid(j+1);
-
-    return filename;
+    return filename.section('/',-1);
 }
 
 
@@ -229,13 +225,14 @@ void SchemaEditor::show()
 }
 
 
-void SchemaEditor::loadAllSchema()
+void SchemaEditor::loadAllSchema(QString currentFile)
 {
     QStringList list = KGlobal::dirs()->findAllResources("data", "konsole/*.schema");
     QStringList::ConstIterator it;
+    disconnect(schemaList, SIGNAL(highlighted(int)), this, SLOT(readSchema(int)));
     schemaList->clear();
 
-//    schemaList->setCurrentItem(0);
+    QListBoxItem* currentItem = 0;
     for (it = list.begin(); it != list.end(); ++it) {
 
 	QString name = (*it);
@@ -245,12 +242,17 @@ void SchemaEditor::loadAllSchema()
 	// Only insert new items so that local items override global
 	if (schemaList->findItem(title, ExactMatch) == 0) {
 	    if (title.isNull() || title.isEmpty())
-		schemaList->insertItem(new SchemaListBoxText(i18n("untitled"), name));
-	    else
+		title=i18n("untitled");
+
 		schemaList->insertItem(new SchemaListBoxText(title, name));
+	    if (currentFile==name.section('/',-1))
+                currentItem = schemaList->item( schemaList->count()-1 );
 	}
     }
     schemaList->sort();
+    schemaList->setCurrentItem(0);   // select the first added item correctly too
+    schemaList->setCurrentItem(currentItem);
+    connect(schemaList, SIGNAL(highlighted(int)), this, SLOT(readSchema(int)));
     schemaListChanged();
 }
 
@@ -318,10 +320,7 @@ void SchemaEditor::removeCurrent()
 	    return;
     }
 
-    QString base_filename = base;
-    int j = base_filename.findRev('/');
-    if (j > -1)
-        base_filename = base_filename.mid(j+1);
+    QString base_filename = base.section('/',-1);
 
     if(base_filename==schema())
      setSchema("");
@@ -347,10 +346,7 @@ void SchemaEditor::saveCurrent()
     QString fullpath;
     if (schemaList->currentText() == titleLine->text()) {
 	int i = schemaList->currentItem();
-	fullpath = ((SchemaListBoxText *) schemaList->item(i))->filename();
-	int j = fullpath.findRev('/');
-	if (j > -1)
-	    fullpath = fullpath.mid(j+1);
+	fullpath = ((SchemaListBoxText *) schemaList->item(i))->filename().section('/',-1);
     }
     else {
 	// Only ask for a name for changed titleLine, considered a "save as"
@@ -440,9 +436,7 @@ void SchemaEditor::saveCurrent()
 			   i18n("Error Saving Schema"));
 
     schMod=false;
-    loadAllSchema();
-    setSchema(fullpath);
-
+    loadAllSchema(fullpath.section('/',-1));
 }
 
 void SchemaEditor::schemaModified()
@@ -556,7 +550,7 @@ void SchemaEditor::readSchema(int num)
 	return;
     }
     removeButton->setEnabled( QFileInfo (fPath).isWritable () );
-    defaultSchemaCB->setChecked(fPath == defaultSchema);
+    defaultSchemaCB->setChecked(fPath.section('/',-1) == defaultSchema.section('/',-1));
 
     FILE *sysin = fopen(QFile::encodeName(fPath), "r");
     if (!sysin) {
