@@ -156,7 +156,7 @@ void CommandShortcutsModule::shortcutRadioToggled(bool remove)
 
     if (remove)
     {
-        m_shortcutButton->setShortcut(QString::null);
+        m_shortcutButton->setShortcut(QString::null, false);
         item->setAccel(QString::null);
         if (m_changedItems.findRef(item) == -1)
         {
@@ -183,7 +183,7 @@ void CommandShortcutsModule::shortcutChanged(const KShortcut& shortcut)
     m_noneRadio->blockSignals(true);
     m_noneRadio->setChecked(!hasAccel);
     m_customRadio->setChecked(hasAccel);
-    m_shortcutButton->setShortcut(accel);
+    m_shortcutButton->setShortcut(accel, false);
     item->setAccel(accel);
     m_noneRadio->blockSignals(false);
     if (m_changedItems.findRef(item) == -1)
@@ -222,7 +222,7 @@ void CommandShortcutsModule::commandSelected(const QString& /* path */, const QS
         bool hasAccel = !accel.isEmpty();
         m_noneRadio->setChecked(!hasAccel);
         m_customRadio->setChecked(hasAccel);
-        m_shortcutButton->setShortcut(accel);
+        m_shortcutButton->setShortcut(accel, false);
     }
     m_noneRadio->blockSignals(false);
 }
