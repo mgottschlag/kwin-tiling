@@ -1,4 +1,3 @@
-nedit*fontList: FONTLIST
 nedit*XmText.background: BACKGROUND
 nedit*XmText.foreground: FOREGROUND
 nedit*XmTextField.background: BACKGROUND
@@ -19,6 +18,5 @@ nedit*text.cursorForeground: WINDOW_FOREGROUND
 nedit*remapDeleteKey: False
 !nedit*text.heavyCursor: True
 !nedit*BlinkRate: 0
-nedit*shell: /bin/sh
 nedit*statsLine.background: BACKGROUND
 nedit*statsLine.foreground: FOREGROUND
