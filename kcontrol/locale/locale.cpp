@@ -81,7 +81,7 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
 
   QWidget * vb = new QWidget(hb);
   QVBoxLayout * boxlay = new QVBoxLayout(vb, 0, KDialog::spacingHint());
-  m_addLanguage = new KMenuButton(vb, I18N_NOOP("Add language..."));
+  m_addLanguage = new KMenuButton(vb, I18N_NOOP("Add language"));
   boxlay->add(m_addLanguage);
   connect(m_addLanguage, SIGNAL(activated(int)),
 	  SLOT(slotAddLanguage(int)));
@@ -348,7 +348,7 @@ void KLocaleConfig::slotTranslate()
   kdDebug() << "slotTranslate()" << endl;
 
   QToolTip::add(m_comboCountry, m_locale->translate
-        ( "This is were you live. KDE will use the defaults for "
+        ( "This is where you live. KDE will use the defaults for "
           "this country.") );
   QToolTip::add(m_addLanguage, m_locale->translate
 	( "This will a language to the list. If the language is already "
@@ -359,7 +359,7 @@ void KLocaleConfig::slotTranslate()
 
   QToolTip::add(m_languages, m_locale->translate
         ( "KDE program will be displayed in the first available language in "
-	  "this list. If non of the languages were available, English US "
+	  "this list. If none of the languages were available, English US "
 	  "will be used.") );
 
   QString str;
