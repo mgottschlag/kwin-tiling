@@ -42,6 +42,15 @@
 #include "tzone.h"
 #include "tzone.moc"
 
+#if defined(USE_SOLARIS)
+#include <sys/param.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#define ZONEINFODIR	"/usr/share/lib/zoneinfo"
+#define INITFILE	"/etc/default/init"
+#endif
+
 Tzone::Tzone(QWidget * parent, const char *name)
   : QWidget (parent, name)
 {
@@ -83,6 +92,26 @@ void Tzone::fillTimeZones()
 
     tzonelist->insertItem(i18n("[No selection]"));
 
+#if defined(USE_SOLARIS)	// MARCO
+
+    FILE *fp;
+    char buf[MAXPATHLEN];
+    
+    snprintf(buf, MAXPATHLEN,
+	    "/bin/find %s \\( -name src -prune \\) -o -type f -print | /bin/cut -b %d-",
+	    ZONEINFODIR, strlen(ZONEINFODIR) + 2);
+    
+    if (fp = popen(buf, "r"))
+      {
+	while(fgets(buf, MAXPATHLEN - 1, fp) != NULL)
+	  {
+	    buf[strlen(buf) - 1] = '\0';
+	    list << buf;
+	  }
+	pclose(fp);
+      }
+    
+#else
     QFile f("/usr/share/zoneinfo/zone.tab");
     if (f.open(IO_ReadOnly))
     {
@@ -97,6 +126,8 @@ void Tzone::fillTimeZones()
                 list << fields[2];
         }
     }
+#endif // !USE_SOLARIS
+
     list.sort();
 
     tzonelist->insertStringList(list);
@@ -118,12 +149,32 @@ void Tzone::load()
     currentzone->setText(currentZone());
 
     // read the currently set time zone
+
+#if defined(USE_SOLARIS)	// MARCO
+    FILE *fp;
+    char buf[MAXPATHLEN];
+
+    snprintf(buf, MAXPATHLEN,
+	     "/bin/fgrep 'TZ=' %s | /bin/head -n 1 | /bin/cut -b 4-",
+	     INITFILE);
+    
+    if (fp = popen(buf, "r"))
+      {
+	if (fgets(buf, MAXPATHLEN - 1, fp) != NULL)
+	  {
+	    buf[strlen(buf) - 1] = '\0';
+	    sCurrentlySet = QString(buf);
+	  }
+	pclose(fp);
+      }
+#else    
     QFile f("/etc/timezone");
     if(f.open(IO_ReadOnly))
     {
         QTextStream ts(&f);
         ts >> sCurrentlySet;
     }
+#endif // !USE_SOLARIS
 
     // find the currently set time zone and select it
     for (int i = 0; i < tzonelist->count(); i++)
@@ -144,6 +195,82 @@ void Tzone::save()
 
     if( selectedzone != i18n("[No selection]"))
     {
+
+#if defined(USE_SOLARIS)	// MARCO
+      char buf[MAXPATHLEN];
+      
+      strcpy(buf, "/tmp/kde-tzone-XXXXXX");
+      mktemp(buf);
+      
+      if (*buf == '\0')
+	{
+				// Could not create a temporary file
+				// name.
+	  return;
+	}
+
+      QFile tf(buf);
+      QFile fTimezoneFile(INITFILE);
+      bool updatedFile = false;
+      
+      if (tf.open(IO_WriteOnly | IO_Truncate) &&
+	  fTimezoneFile.open(IO_ReadOnly))
+	{
+	  bool found = false;
+	  QTextStream ts(&tf);
+	  QTextStream is(&fTimezoneFile);
+	  
+	  for (QString line = is.readLine(); !line.isNull();
+	       line = is.readLine())
+	    {
+	      if (line.find("TZ=") == 0)
+		{
+		  ts << "TZ=" << selectedzone << endl;
+		  found = true;
+		}
+	      else
+		{
+		  ts << line << endl;
+		}
+	    }
+	  
+	  if (!found)
+	    {
+	      ts << "TZ=" << selectedzone << endl;
+	    }
+	
+	  updatedFile = true;
+	  tf.close();
+	  fTimezoneFile.close();
+        }
+
+      if (updatedFile)
+	{
+	  fTimezoneFile.remove();
+
+	  if (tf.open(IO_ReadOnly) &&
+	      fTimezoneFile.open(IO_WriteOnly | IO_Truncate))
+	    {
+	      QTextStream ts(&tf);
+	      QTextStream os(&fTimezoneFile);
+
+	      for (QString line = ts.readLine(); !line.isNull();
+		   line = ts.readLine())
+		{
+		  os << line << endl;
+		}
+
+	      fchmod(fTimezoneFile.handle(),
+		     S_IXUSR | S_IRUSR | S_IRGRP | S_IXGRP |
+		     S_IROTH | S_IXOTH);
+	      fTimezoneFile.close();
+	      tf.remove();
+	    }
+	}
+
+
+      QString val = selectedzone;
+#else
         QFile fTimezoneFile("/etc/timezone");
 
         if (fTimezoneFile.open(IO_WriteOnly | IO_Truncate) )
@@ -164,15 +291,19 @@ void Tzone::save()
                                 i18n("Timezone Error"));
 
         QString val = ":" + tz;
+#endif // !USE_SOLARIS
+
         setenv("TZ", val.ascii(), 1);
         tzset();
 
     } else {
+#if !defined(USE_SOLARIS) // Do not update the System!
         unlink( "/etc/timezone" );
         unlink( "/etc/localtime" );
-
+		
         setenv("TZ", "", 1);
         tzset();
+#endif // !USE SOLARIS		
     }
     
     currentzone->setText(currentZone());
