@@ -489,6 +489,8 @@ static int GetInfo_ReadfromPipe( QListView *lBox, const char *FileName, bool Wit
 #include "info_svr4.cpp"
 #elif _AIX
 #include "info_aix.cpp"
+#elif defined(__APPLE__)
+#include "info_osx.cpp"
 #else
 #include "info_generic.cpp"	/* Default for unsupportet systems.... */
 #endif
