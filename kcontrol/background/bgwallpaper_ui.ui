@@ -32,7 +32,7 @@
                 <cstring>m_cbRandom</cstring>
             </property>
             <property name="text">
-                <string>Show pictures in &amp;random order</string>
+                <string>&amp;Show pictures in random order</string>
             </property>
         </widget>
         <widget class="QLayoutWidget" row="0" column="0">
@@ -48,7 +48,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Change picture after:</string>
+                        <string>Change &amp;picture after:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_spinInterval</cstring>
@@ -86,7 +86,7 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="BGMultiWallpaperList" row="0" column="0" rowspan="3" colspan="1">
+                <widget class="BGMultiWallpaperList" row="0" column="0" rowspan="5" colspan="1">
                     <property name="name">
                         <cstring>m_listImages</cstring>
                     </property>
@@ -113,7 +113,7 @@
                         <string>&amp;Add...</string>
                     </property>
                 </widget>
-                <spacer row="2" column="1">
+                <spacer row="4" column="1">
                     <property name="name">
                         <cstring>spacer5</cstring>
                     </property>
@@ -136,6 +136,22 @@
                     </property>
                     <property name="text">
                         <string>&amp;Remove</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="3" column="1">
+                    <property name="name">
+                        <cstring>m_buttonMoveDown</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Move &amp;Down</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="2" column="1">
+                    <property name="name">
+                        <cstring>m_buttonMoveUp</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Move &amp;Up</string>
                     </property>
                 </widget>
             </grid>

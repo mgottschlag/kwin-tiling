@@ -58,6 +58,30 @@ void BGMultiWallpaperList::dropEvent(QDropEvent *ev)
    insertStringList(files);
 }
 
+bool BGMultiWallpaperList::hasSelection()
+{
+    for ( unsigned i = 0; i < count(); i++)
+    {
+        if ( item( i ) && item( i )->isSelected() )
+            return true;
+    }
+    return false;
+}
+
+void BGMultiWallpaperList::ensureSelectionVisible()
+{
+    for ( int i = topItem(); i < topItem() + numItemsVisible() - 1; i++)
+        if ( item( i ) && item( i )->isSelected() )
+            return;
+
+    for ( unsigned i = 0; i < count(); i++)
+        if ( item( i ) && item( i )->isSelected() )
+        {
+            setTopItem( i );
+            return;
+        }
+}
+
 /**** BGMultiWallpaperDialog ****/
 
 BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
@@ -82,14 +106,30 @@ BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
 
    connect(dlg->m_buttonAdd, SIGNAL(clicked()), SLOT(slotAdd()));
    connect(dlg->m_buttonRemove, SIGNAL(clicked()), SLOT(slotRemove()));
+   connect(dlg->m_buttonMoveUp, SIGNAL(clicked()), SLOT(slotMoveUp()));
+   connect(dlg->m_buttonMoveDown, SIGNAL(clicked()), SLOT(slotMoveDown()));
    connect(dlg->m_listImages,  SIGNAL(clicked ( QListBoxItem * )), SLOT(slotItemSelected( QListBoxItem *)));
    dlg->m_buttonRemove->setEnabled( false );
+   dlg->m_buttonMoveUp->setEnabled( false );
+   dlg->m_buttonMoveDown->setEnabled( false );
 
 }
 
-void BGMultiWallpaperDialog::slotItemSelected( QListBoxItem * item)
+void BGMultiWallpaperDialog::slotItemSelected( QListBoxItem * )
 {
-    dlg->m_buttonRemove->setEnabled( item );
+    dlg->m_buttonRemove->setEnabled( dlg->m_listImages->hasSelection() );
+    setEnabledMoveButtons();
+}
+
+void BGMultiWallpaperDialog::setEnabledMoveButtons()
+{
+    bool hasSelection = dlg->m_listImages->hasSelection();
+    QListBoxItem * item;
+
+    item = dlg->m_listImages->firstItem();
+    dlg->m_buttonMoveUp->setEnabled( hasSelection && item && !item->isSelected() );
+    item  = dlg->m_listImages->item( dlg->m_listImages->count() - 1 );
+    dlg->m_buttonMoveDown->setEnabled( hasSelection && item && !item->isSelected() );
 }
 
 void BGMultiWallpaperDialog::slotAdd()
@@ -125,6 +165,37 @@ void BGMultiWallpaperDialog::slotRemove()
             i++;
     }
     dlg->m_buttonRemove->setEnabled( dlg->m_listImages->selectedItem () );
+    setEnabledMoveButtons();
+}
+
+void BGMultiWallpaperDialog::slotMoveUp()
+{
+    for ( unsigned i = 1; i < dlg->m_listImages->count(); i++)
+    {
+        QListBoxItem * item = dlg->m_listImages->item( i );
+        if ( item && item->isSelected() )
+        {
+            dlg->m_listImages->takeItem( item );
+            dlg->m_listImages->insertItem( item, i - 1 );
+        }
+    }
+    dlg->m_listImages->ensureSelectionVisible();
+    setEnabledMoveButtons();
+}
+
+void BGMultiWallpaperDialog::slotMoveDown()
+{
+    for ( unsigned i = dlg->m_listImages->count() - 1; i > 0; i--)
+    {
+        QListBoxItem * item = dlg->m_listImages->item( i - 1 );
+        if ( item && item->isSelected())
+        {
+            dlg->m_listImages->takeItem( item );
+            dlg->m_listImages->insertItem( item, i );
+        }
+    }
+    dlg->m_listImages->ensureSelectionVisible();
+    setEnabledMoveButtons();
 }
 
 void BGMultiWallpaperDialog::slotOk()

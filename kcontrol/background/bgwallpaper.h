@@ -38,6 +38,8 @@ public:
 
    void dragEnterEvent(QDragEnterEvent *ev);
    void dropEvent(QDropEvent *ev);
+   bool hasSelection();
+   void ensureSelectionVisible();
 };
 
 class BGMultiWallpaperDialog : public KDialogBase
@@ -49,9 +51,13 @@ public:
 public slots:
    void slotAdd();
    void slotRemove();
+   void slotMoveUp();
+   void slotMoveDown();
    void slotOk();
-    void slotItemSelected( QListBoxItem * );
+   void slotItemSelected( QListBoxItem * );
 private:
+   void setEnabledMoveButtons();
+
    KBackgroundSettings *m_pSettings;
 
    BGMultiWallpaperBase *dlg;
