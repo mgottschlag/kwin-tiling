@@ -381,28 +381,17 @@ void KBackground::resizeEvent( QResizeEvent * )
 
 void KBackground::readSettings( int num )
 {
-    QString group = QString("desktop%1rc").arg(num);
+  QString group = QString("desktop%1rc").arg(num);
 
-  bool first_time = false;
-
-  if ( locate("config", group).isNull() ){
-      first_time = true;
-      group = "kcmdisplayrc";
-  }
-  
   KConfig config(group, true, false);
   
-  if ( !first_time ) {
-      config.setGroup( "Common" );
-      randomMode = config.readBoolEntry( "RandomMode", DEFAULT_ENABLE_RANDOM_MODE);
-      
-      if ( randomMode || !interactive )
-          group = QString( "Desktop%1").arg( random );
-      else
-          group = QString( "Desktop%1").arg(DEFAULT_DESKTOP);
-  }
+  config.setGroup( "Common" );
+  randomMode = config.readBoolEntry( "RandomMode", DEFAULT_ENABLE_RANDOM_MODE);
+    
+  if ( randomMode || !interactive )
+      group = QString( "Desktop%1").arg( random );
   else
-      group = QString( "Desktop%1").arg(num + 1);
+      group = QString( "Desktop%1").arg(DEFAULT_DESKTOP);
   
   config.setGroup( group );
   
