@@ -545,6 +545,7 @@ registerBroadcastForPing (void)
 {
     struct sockaddr_in in_addr;
 
+    Debug("registering broadcast\n");
 #ifdef __GNU__
     in_addr.sin_addr.s_addr = htonl(0xFFFFFFFF);
     in_addr.sin_port = htons(XDM_UDP_PORT);
@@ -585,7 +586,6 @@ registerBroadcastForPing (void)
 	for (ifr = ifcp->ifc_req, n = ifcp->ifc_len / sizeof(struct ifreq);
 	     --n >= 0; ifr++)
 # else				/* WINTCP */
-Debug("registering broadcast\n");
 	ifc.ifc_len = sizeof(buf);
 	ifc.ifc_buf = buf;
 	if (ifioctl(socketFD, (int) SIOCGIFCONF, (char *) &ifc) < 0)
@@ -707,11 +707,13 @@ AddChooserHost (
     ARRAY8Ptr	addr,
     char	*closure ATTR_UNUSED)
 {
+    if (connectionType == FamilyBroadcast) {
+	registerBroadcastForPing();
+	return;
+    }
     Debug ("internal host registration: %[*hhu, family %hx\n",
 	   addr->length, addr->data, connectionType);
-    if (connectionType == FamilyBroadcast)
-	registerBroadcastForPing();
-    else if (connectionType == FamilyInternet) {
+    if (connectionType == FamilyInternet) {
 	struct sockaddr_in in_addr;
 	in_addr.sin_family = AF_INET;
 	memmove(&in_addr.sin_addr, addr->data, 4);
