@@ -29,21 +29,19 @@
 class QWidget;
 class QLayoutItem;
 
-class KSimpleConfig;
-
 class KGreeterPluginHandler {
 public:
     /* keep in sync with V_IS_* */
     enum { IsUser = 1, IsPassword = 2 };
     /**
-     * reply to textPrompt
-     * text: text to return to core; null to abort auth cycle
-     * tag: 0 or one of Is*
+     * Reply to textPrompt().
+     * @param text text to return to core; null to abort auth cycle
+     * @param tag zero or one of Is*
      */
     virtual void gplugReturnText( const char *text, int tag ) = 0;
     /**
-     * reply to binaryPrompt
-     * data: data in pam_client format to return to the core;
+     * Reply to binaryPrompt().
+     * @param data data in pam_client format to return to the core;
      *  null to abort auth cycle
      */
     virtual void gplugReturnBinary( const char *data ) = 0;
@@ -52,16 +50,24 @@ public:
      * Call this preferably before gplugStart, as otherwise the .dmrc
      * load will be delayed. Don't call at all if your plugin doesn't
      * have the Local flag set.
+     * @param user the user logging in
      */
     virtual void gplugSetUser( const QString &user ) = 0;
     /**
-     * start processing. the handler has to know the mode itself.
+     * Start processing. The handler has to know the mode itself.
+     * @param method the authentication method to use - the meaning is
+     *  up to the backend, but will usually be related to the PAM service.
      */
     virtual void gplugStart( const char *method ) = 0;
 };
 
 /**
- * Abstract base class for any authentication frontend modules to be used with KDM.
+ * Abstract base class for any authentication frontend modules to be used
+ * with KDM, kdesktop_lock, etc.
+ * The authentication method used by a particular instance of a plugin
+ * may be configurable, but the instance must handle exactly one method,
+ * i.e., the parameter it passes to gplugStart() must be determined already
+ * at init() time.
  */
 class KGreeterPlugin {
 public:
@@ -76,106 +82,125 @@ public:
      */
     enum Function { Authenticate, AuthChAuthTok, ChAuthTok };
     /**
-     * The Ex* functions will be called from within a running session;
-     * they must know how to obtain the currently logged in user
-     * (+ domain/realm, etc.) themselves. The non-Ex variants will have a
-     * fixedEntity passed in the right contexts.
-     * TODO: Unlock and ChangeTok are currently not used in kdm. ExChangeTok
-     * should be used by kdepasswd.
+     * Contexts the widget can be used in:
+     * - Login: kdm login dialog
+     * - Shutdown: kdm shutdown dialog
+     * - Unlock: kdm unlock dialog (TODO)
+     * - ChangeTok: kdm password change dialog (TODO)
+     * - ExUnlock: kdesktop_lock unlock dialog
+     * - ExChangeTok: kdepasswd password change dialog (TODO)
+     *
+     * The Ex* contexts exist within a running session; they must know how to
+     * obtain the currently logged in user (+ domain/realm, etc.) themselves
+     * (i.e., fixedEntity will be null). The non-Ex variants will have a
+     * fixedEntity passed in.
      */
     enum Context { Login, Shutdown, Unlock, ChangeTok,
 		   ExUnlock, ExChangeTok };
 
     /**
-     * Preload the widget with an (opaque to the greeter) entity. That
-     * will usually be something like "user" or "user@domain".
-     * Can be called only when not running.
+     * Preload the widget with an (opaque to the greeter) entity.
+     * Will be called only when not running.
+     * @param entity the entity to preload the widget with. That
+     *  will usually be something like "user" or "user@domain".
+     * @param field the sub-widget (probably line edit) to put the cursor into
      */
     virtual void presetEntity( const QString &entity, int field ) = 0;
 
     /**
      * Obtain the actually logged in entity.
-     * Can be called only after succeeded() was called.
+     * Will be called only after succeeded() was called.
      */
     virtual QString getEntity() const = 0;
 
     /**
-     * A user was selected in the greeter outside the conversation widget
-     * (clicking into the user list or successful authentication without
-     * prior gplugSetUser call).
-     * Can be called only when running.
+     * "Push" a user into the conversation widget. That can be a click into
+     * the user list or successful authentication without the plugin calling
+     * gplugSetUser.
+     * Will be called only when running.
+     * @param user the user to set. Note that this is a UNIX login, not a
+     *  canonical entity
      */
     virtual void setUser( const QString &user ) = 0;
 
     /**
      * En-/disable any widgets.
-     * Can be called only when not running.
+     * Will be called only when not running.
+     * @param on the state to set
      */
     virtual void setEnabled( bool on ) = 0;
 
     /**
-     * Called when a message from the authentication backend arrives. The
-     * plugin may handle it and return true, otherwise return false and let
-     * the greeter display it in a message box.
-     * If error is true, the message is an error message, otherwise it's an
-     * informational message.
+     * Called when a message from the authentication backend arrives.
+     * @param message the message received from the backend
+     * @param error if true, @p message is an error message, otherwise it's
+     *  an informational message
+     * @return true means that the plugin already handled the message, false
+     *  that the greeter should display it in a message box
      */
     virtual bool textMessage( const char *message, bool error ) = 0;
 
     /**
      * Prompt the user for data. Reply by calling handler->gplugReturnText().
-     * If nonBlocking is true report whatever is already available,
-     * otherwise wait for user input.
-     * Prompt may be null, in which case "Username"/"Password" should
-     * be shown and the replies should be tagged with the respective Is*.
+     * @param propmt the prompt to display. It may be null, in which case
+     *  "Username"/"Password" should be shown and the replies should be tagged
+     *  with the respective Is* flag.
+     * @param echo if true, a normal input widget can be used, otherwise one that
+     *  visually obscures the user's input.
+     * @param nonBlocking if true, report whatever is already available,
+     *  otherwise wait for user input.
      */
     virtual void textPrompt( const char *prompt, bool echo, bool nonBlocking ) = 0;
 
     /**
-     * Request binary authentication data from the plugin.<br>
-     * Reply by calling handler->gplugReturnBinary().
-     * If nonBlocking is true report whatever is already available,
-     * otherwise wait for user input.<br>
-     * Both the input and the output are expected to be in pam_client format.<br>
-     * TODO:<br>
+     * Request binary authentication data from the plugin. Reply by calling
+     * handler->gplugReturnBinary().
+     * @param prompt prompt in pam_client format
+     * @param nonBlocking if true, report whatever is already available,
+     *  otherwise wait for user input.
+     *
+     * TODO:
      * The plugin may choose to direct actually obtaining the authentication
      * data to the backend (which will use libpam_client); in this case the
-     * returned array must consist of four zeros.
+     * returned array must consist of four zeros. The backend will issue
+     * another binaryPrompt with a null prompt when it finishes obtaining
+     * the data.
      */
     virtual void binaryPrompt( const char *prompt, bool nonBlocking ) = 0;
 
     /**
      * This can either
-     *  - Start a processing cycle. Can be called only when not running.
+     *  - Start a processing cycle. Will be called only when not running.
      *  - Restart authTok cycle - will be called while running and implies
-     *    revive. PAM is a bit too clever, so we need this.
+     *    revive(). PAM is a bit too clever, so we need this.
+     * In any case the plugins is running afterwards.
      */
     virtual void start() = 0;
 
     /**
      * Request to interrupt the auth.
      * This must bring the core into a serving state.
-     * Can be called only if running within Login context.
+     * Will be called only if running within Login context.
      */
     virtual void suspend() = 0;
 
     /**
      * Request to continue the auth, if possible from the point it was
      * interrupted at.
-     * Can be called only when suspended.
+     * Will be called only when suspended.
      */
     virtual void resume() = 0;
 
     /**
      * The "login" button was pressed in the greeter.
      * This might call gplugReturn* or gplugStart.
-     * Can be called only when running.
+     * Will be called only when running.
      */
     virtual void next() = 0;
 
     /**
      * Abort auth cycle.
-     * Can be called only when running.
+     * Will be called only when running and stops it.
      */
     virtual void abort() = 0;
 
@@ -185,7 +210,7 @@ public:
      * responsible for the that phase.
      * There will be no further attempt to enter that phase until the
      * widget is destroyed.
-     * Can be called only when running.
+     * Will be called only when running and stops it.
      */
     virtual void succeeded() = 0;
 
@@ -193,7 +218,7 @@ public:
      * Indicate unsuccessful end of the current phase.
      * This is mostly a request to disable all editable widgets.
      * The widget will be treated as dead until revive() is called.
-     * Can be called only when running.
+     * Will be called only when running and stops it.
      */
     virtual void failed() = 0;
 
@@ -201,7 +226,7 @@ public:
      * Prepare retrying the previously failed phase.
      * This is mostly a request to re-enable all editable widgets failed()
      * disabled previously, and to set the input focus.
-     * Can be called only when not running and failed() was called before.
+     * Will be called only when not running and failed() was called before.
      */
     virtual void revive() = 0;
 
@@ -213,7 +238,7 @@ public:
 
     /**
      * Obtain the QLayoutItem containg the widget(s) to actually handle the
-     * greeting. See QLayout and QWidgetItem for possible implementations.
+     * conversation. See QLayout and QWidgetItem for possible implementations.
      */
     QLayoutItem *getLayoutItem() const { return layoutItem; }
 
@@ -221,8 +246,6 @@ protected:
     KGreeterPluginHandler *handler;
     QLayoutItem *layoutItem;
 };
-
-extern "C" {
 
 struct kgreeterplugin_info {
     /**
@@ -239,7 +262,7 @@ struct kgreeterplugin_info {
 	 * All users exist on the local system permanently (will be listed
 	 * by getpwent()); no domain/realm needs to be set interactively.
 	 * Effectively means that setUser/gplugSetUser can be used and a
-	 * userlist should be shown at all.
+	 * userlist can be shown at all.
 	 */
 	Local = 1
     };
@@ -250,19 +273,25 @@ struct kgreeterplugin_info {
     
     /**
      * Call after loading the plugin.
-     * If it returns false, unload the plugin again (don't call done() first).
      *
-     * getConf can be used to obtain configuration items from the greeter;
-     * you have to pass it the ctx pointer.
-     * The only predefined key is "EchoMode", which is an int (in fact,
-     * KPasswordEdit::EchoModes).
-     * Other keys are obtained from the PluginOptions option; see kdmrc
-     * for details.
-     * If the key is unknown, dflt is returned.
+     * @param method if non-empty and the plugin is unable to handle that
+     *  method, return false.
+     * @param getConf can be used to obtain configuration items from the
+     *  greeter; you have to pass it the @p ctx pointer.
+     *   The only predefined key (in KDM) is "EchoMode", which is an int
+     *   (in fact, KPasswordEdit::EchoModes).
+     *   Other keys are obtained from the PluginOptions option; see kdmrc
+     *   for details.
+     *   If the key is unknown, dflt is returned.
+     * @param ctx context pointer for @p getConf
+     * @return if false, unload the plugin again (don't call done() first)
      */
-    bool (*init)( QVariant (*getConf)( void *ctx, const char *key, const QVariant &dflt ), void *ctx = 0 );
+    bool (*init)( const QString &method,
+		  QVariant (*getConf)( void *ctx, const char *key, const QVariant &dflt ),
+		  void *ctx = 0 );
     /**
      * Call before unloading the plugin.
+     * This pointer can be null.
      */
     void (*done)( void );
 
@@ -271,25 +300,40 @@ struct kgreeterplugin_info {
      * Note that multiple instances can exist at one time, but only
      * one of them is active at any moment (the others would be suspended
      * or not running at all).
-     * If fixedEntity is non-null, the plugin must present this information
-     * somehow; possibly by keeping the normal layout but replacing line edits
-     * with labels.
+     * @param handler the object offering the necessary callbacks
+     * @param parent parent widget
+     * @param predecessor the focus widget before the conversation widget
+     * @param fixedEntity see below
+     * @param func see below
+     * @param ctx see below
+     * @return an instance of this conversation plugin
+     *
+     * Valid combinations of Function and Context:
+     * - Authenticate:Login - init
+     * - Authenticate:Shutdown - init, for now "root" is passed as fixedEntitiy
+     *  and it is not supposed to be displayed. Plugins with Local not set
+     *  might have to conjure something up to make getEntity() return a
+     *  canonical entitiy. FIXME: don't restrict shutdown to root.
+     * - AuthChAuthTok:Login, AuthChAuthTok:Shutdown - cont/cont,
+     *  only relevant for classic method (as it is relevant only for password-
+     *  less logins, which always use classic). The login should not be shown -
+     *  it is known to the user already; the backend won't ask for it, either.
+     * - ChAuthTok:Login & ChAuthTok:Shutdown - cont
+     * - Authenticate:Unlock & Authenticate:ExUnlock - init,
+     *   AuthChAuthTok:ChangeTok & AuthChAuthTok:ExChangeTok - init/cont,
+     *  display fixedEntity as labels. The backend does not ask for the UNIX
+     *  login, as it already knows it - but it will ask for all components of
+     *  the entity if it is no UNIX login.
+     *
+     * "init" means that the plugin is supposed to call gplugStart, "cont"
+     * that the backend is already in a cycle of the method the plugin was
+     * initialized with.
      */
     KGreeterPlugin *(*create)( KGreeterPluginHandler *handler,
 			       QWidget *parent, QWidget *predecessor,
 			       const QString &fixedEntity,
 			       KGreeterPlugin::Function func,
 			       KGreeterPlugin::Context ctx );
-
-    /**
-     * Determine whether this plugin is capable of handling the authentication
-     * method. If method is null, it must be determined heuristically from the
-     * environment. The return value is a certainity factor in percent -
-     * effectively a priority.
-     */
-    int (*capable)( const char *method );
 };
-
-}
 
 #endif

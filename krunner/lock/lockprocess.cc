@@ -651,9 +651,6 @@ i18n("<i>kcheckpass</i> is unable to operate. Possibly it is not SetUID root.");
 //
 bool LockProcess::startLock()
 {
-    QValueVector<GreeterPluginHandle> greetPlugins;
-    int best = 0, bestidx = -1;
-
     for (QStringList::ConstIterator it = mPlugins.begin(); it != mPlugins.end(); ++it) {
         GreeterPluginHandle plugin;
         QString path = KLibLoader::self()->findLibrary(
@@ -672,36 +669,20 @@ bool LockProcess::startLock()
             continue;
         }
         plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
-        if (plugin.info->init && !plugin.info->init( getConf, this )) {
-            kdWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve" << endl;
+        if (!plugin.info->init( mMethod, getConf, this )) {
+            kdDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve " << mMethod << endl;
             plugin.library->unload();
             continue;
         }
         kdDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->name << ") loaded" << endl;
-        int score = plugin.info->capable( mMethod.latin1() );
-        if (score > best) {
-            best = score;
-            bestidx = greetPlugins.size();
-        }
-        greetPlugins.append( plugin );
-        if (score == 100)
-            break;
+        greetPlugin = plugin;
+	KGlobal::locale()->insertCatalogue( "kdmgreet" );
+	mLocked = true;
+	xdmFifoLockCmd("lock\n");
+	return true;
     }
-    for (int i = 0; i < (int)greetPlugins.size(); i++)
-        if (i != bestidx) {
-            if (greetPlugins[i].info->done)
-                greetPlugins[i].info->done();
-            greetPlugins[i].library->unload();
-        }
-    if (bestidx == -1) {
-        cantLock( i18n("No appropriate greeter plugin configured.") );
-        return false;
-    }
-    greetPlugin = greetPlugins[bestidx];
-    KGlobal::locale()->insertCatalogue( "kdmgreet" );
-    mLocked = true;
-    xdmFifoLockCmd("lock\n");
-    return true;
+    cantLock( i18n("No appropriate greeter plugin configured.") );
+    return false;
 }
 
 

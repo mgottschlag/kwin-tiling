@@ -828,7 +828,7 @@ KGVerify::init( const QStringList &plugins )
 	    continue;
 	}
 	plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
-	if (plugin.info->init && !plugin.info->init( getConf )) {
+	if (!plugin.info->init( QString::null, getConf )) {
 	    LogError( "GreeterPlugin %s (%s) refuses to serve\n",
 		     (*it).latin1(), path.latin1() );
 	    plugin.library->unload();

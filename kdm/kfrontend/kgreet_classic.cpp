@@ -390,8 +390,13 @@ KClassicGreeter::slotLoginLostFocus()
 
 // factory
 
-static bool init( QVariant (*getConf)( void *, const char *, const QVariant & ), void *ctx )
+static bool init(
+	const QString &method,
+	QVariant (*getConf)( void *, const char *, const QVariant & ),
+	void *ctx )
 {
+    if (!method.isEmpty() && method != "classic")
+	return false;
     echoMode = getConf( ctx, "EchoMode", QVariant() ).toInt();
     return true;
 }
@@ -406,14 +411,8 @@ create(
     return new KClassicGreeter( handler, parent, predecessor, fixedEntity, func, ctx );
 }
 
-static int
-capable( const char *method )
-{
-    return method ? strcmp( method, "classic" ) ? 0 : 100 : 10;
-}
-
 kgreeterplugin_info kgreeterplugin_info = {
-    I18N_NOOP("Username + password (classic)"), kgreeterplugin_info::Local, init, 0, create, capable
+    I18N_NOOP("Username + password (classic)"), kgreeterplugin_info::Local, init, 0, create
 };
 
 #include "kgreet_classic.moc"
