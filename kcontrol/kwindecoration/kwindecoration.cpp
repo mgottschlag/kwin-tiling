@@ -24,6 +24,7 @@
 #include <qtabwidget.h>
 #include <qvbox.h>
 #include <qlabel.h>
+#include <qfile.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -43,16 +44,6 @@
 // =========================
 typedef KGenericFactory<KWinDecorationModule, QWidget> KWinDecoFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_kwindecoration, KWinDecoFactory );
-/*
-extern "C"
-{
-	KCModule* create_kwindecoration(QWidget* parent, const char* name)
-	{
-		KGlobal::locale()->insertCatalogue("kcmkwindecoration");
-		return new KWinDecorationModule(parent, name);
-	}
-}
-*/
 
 KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name, const QStringList &)
 	: KCModule(parent, name), DCOPObject("KWinClientDecoration")
@@ -288,9 +279,9 @@ void KWinDecorationModule::resetPlugin( KConfig* conf, const QString* currentDec
 
 	// Free the old library if possible
 	if (!oldLibraryName.isNull())
-		loader->unloadLibrary( oldName.latin1() );
+		loader->unloadLibrary( QFile::encodeName(oldName) );
 
-	KLibrary* library = loader->library( currentName.latin1() );
+	KLibrary* library = loader->library( QFile::encodeName(currentName) );
 	if (library != NULL)
 	{		
 		void* alloc_ptr = library->symbol("allocate_config");
