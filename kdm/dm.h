@@ -292,7 +292,7 @@ struct greet_info {
 /* Well, then assume it follows getgroups and let autoconf do it: /stefh */
 /* #define GID_T GETGROUPS_T */
 
-#if defined(SYSV) || defined(SVR4) || defined(__osf__) || defined(linux)
+#if defined(SYSV) || defined(SVR4) || defined(__osf__) || defined(__linux__)
 #define GID_T gid_t
 #else
 #define GID_T int
