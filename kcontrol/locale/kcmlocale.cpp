@@ -50,8 +50,8 @@
 #include "klanguagebutton.h"
 #include "kmenubutton.h"
 #include "klocalesample.h"
-#include "locale.h"
-#include "locale.moc"
+#include "kcmlocale.h"
+#include "kcmlocale.moc"
 #include "toplevel.h"
 
 KLocaleConfig::KLocaleConfig(KLocale *locale,
