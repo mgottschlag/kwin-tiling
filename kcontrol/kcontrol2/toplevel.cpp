@@ -69,7 +69,7 @@ TopLevel::TopLevel(const char* name)
   
   
   // insert the about widget
-  QPixmap about = BarIcon("kcontrol");
+  QPixmap about = kapp->miniIcon();
   _container->addWidget(new AboutWidget(this), about);
 
 
