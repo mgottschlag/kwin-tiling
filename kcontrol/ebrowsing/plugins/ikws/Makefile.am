@@ -19,5 +19,5 @@ rcdir = $(kde_confdir)
 METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT)  -kaliasLocal *.h *.cc -o $(podir)/kuriikwsfilter.pot
+	$(XGETTEXT) *.h *.cc -o $(podir)/kuriikwsfilter.pot
 
