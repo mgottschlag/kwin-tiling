@@ -318,7 +318,8 @@ void KDMUsersWidget::slotAllToNo()
     QString user = alluserlb->currentText();
     if (user == m_defaultText)
        return;
-    nouserlb->inSort(user);
+    nouserlb->insertItem(user);
+    nouserlb->sort();
     alluserlb->removeItem(id);
 }
 
@@ -329,7 +330,8 @@ void KDMUsersWidget::slotNoToAll()
     if (id < 0)
        return;
     QString user = nouserlb->currentText();
-    alluserlb->inSort(user);
+    alluserlb->insertItem(user);
+    alluserlb->sort();
     nouserlb->removeItem(id);
 }
 
@@ -342,7 +344,8 @@ void KDMUsersWidget::slotAllToUsr()
     QString user = alluserlb->currentText();
     if (user == m_defaultText)
        return;
-    userlb->inSort(user);
+    userlb->insertItem(user);
+    userlb->sort();
     alluserlb->removeItem(id);
 }
 
@@ -353,7 +356,8 @@ void KDMUsersWidget::slotUsrToAll()
     if (id < 0)
        return;
     QString user = userlb->currentText();
-    alluserlb->inSort(user);
+    alluserlb->insertItem(user);
+    alluserlb->sort();
     nouserlb->removeItem(id);
 }
 
