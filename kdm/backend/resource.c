@@ -266,7 +266,7 @@ LoadResources (CfgArr *conf)
 	conf->idx[i] = id;
 	switch (id & C_TYPE_MASK) {
 	case C_TYPE_INT:
-	    vptr[i] = (char *)GRecvInt ();
+	    vptr[i] = (char *)((unsigned long)GRecvInt ());
 	    break;
 	case C_TYPE_STR:
 	    vptr[i] = cptr;
@@ -475,9 +475,11 @@ ScanServers (int force)
 	d->class2 = class2;
 	d->console = console;
 	d->serverArgv = argv;
+#ifdef HAVE_VTS
 	for (; argv[0]; argv++)
 	    if (argv[0][0] == 'v' && argv[0][1] == 't')
 		d->reqSrvVT = atoi (argv[0] + 2);
+#endif
 	d->displayType = type;
 	if ((type & d_lifetime) == dReserve && d->status == notRunning)
 	    d->status = reserve;
