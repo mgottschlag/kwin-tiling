@@ -17,7 +17,7 @@ messages:
 	$(XGETTEXT) $(kcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
 
 data_DATA = language.desktop
-datadir = $(kde_appsdir)/Settings
+datadir = $(kde_appsdir)/Settings/Accessibility
 
 EXTRA_DIST = $(data_DATA)
 
