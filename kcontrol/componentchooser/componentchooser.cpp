@@ -58,7 +58,11 @@ void CfgComponent::slotComponentChanged(const QString&) {
 }
 
 void CfgComponent::save(KConfig *cfg) {
-  		QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure");
+		// yes, this can happen if there are NO KTrader offers for this component
+		if (!m_lookupDict[ComponentSelector->currentText()])
+			return;
+
+		QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure");
 		KConfig *store = new KConfig(cfg->readPathEntry("storeInFile","null"));
 		store->setGroup(cfg->readEntry("valueSection"));
 		store->writePathEntry(cfg->readEntry("valueName","kcm_componenchooser_null"),*m_lookupDict[ComponentSelector->currentText()]);
