@@ -1287,7 +1287,7 @@ void CKioFonts::mkdir(const KURL &url, int)
                              "system folders (\"CID\" is for \"CID\" fonts - these are <b>not</b> handled - and "
                              "\"encodings\" and \"util\" are for X11 encoding files").arg(i18n(KIO_FONTS_USER))
                              .arg(i18n(KIO_FONTS_SYS))
-                      : i18n("You cannot create a folder named \"kde-override\", \"%1\", or \"%2\", as these a special"
+                      : i18n("You cannot create a folder named \"kde-override\", \"%1\", or \"%2\", as these are special"
                              " KDE folders.").arg(i18n(KIO_FONTS_USER)).arg(i18n(KIO_FONTS_SYS)));
     else
     {
