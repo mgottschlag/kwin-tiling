@@ -1213,7 +1213,7 @@ void KSMServer::storeSesssion()
         QStringList restartCommand = c->restartCommand();
         if (program.isEmpty() && restartCommand.isEmpty())
            continue;
-       
+
         count++;
         QString n = QString::number(count);
         config->writeEntry( QString("program")+n, program );
@@ -1237,40 +1237,35 @@ void KSMServer::restoreSession()
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
     int count =  config->readNumEntry( "count" );
-    bool wmFound = false;
     appsToStart = count;
 
     QStringList wmCommand;
     if ( !wm.isEmpty() ) {
-	// when we have a window manager, we start it first and give
-	// it some time before launching other processes. Results in a
-	// visually more appealing startup.
 	for ( int i = 1; i <= count; i++ ) {
 	    QString n = QString::number(i);
 	    if ( wm == config->readEntry( QString("program")+n ) ) {
-		wmFound = true;
 		appsToStart--;
 		wmCommand = config->readListEntry( QString("restartCommand")+n );
-	        startApplication( wmCommand );
 	    }
 	}
     }
+    if ( wmCommand.isEmpty() )
+	wmCommand = wm;
 
     publishProgress( appsToStart, true );
 
-    connectDCOPSignal( "klauncher", "klauncher", "autoStartDone()", 
+    connectDCOPSignal( "klauncher", "klauncher", "autoStartDone()",
                        "restoreSessionInternal()", true);
 
-    if (wmFound) {
+    if ( !wmCommand.isEmpty() ) {
+	// when we have a window manager, we start it first and give
+	// it some time before launching other processes. Results in a
+	// visually more appealing startup.
+	startApplication( wmCommand );
 	QTimer::singleShot( 2000, this, SLOT( autoStart() ) );
-    } else if (! wm.isEmpty()) {
-	// window manager not found, but we have a default window manager...
-	// run it and restore the session
-	wmCommand = wm;
-	startApplication(wmCommand);
-        autoStart();
-    } else
+    } else {
 	autoStart();
+    }
 }
 
 /*!
@@ -1287,7 +1282,7 @@ void KSMServer::startDefaultSession()
     autoStart();
 }
 
-bool KSMServer::process(const QCString &fun, const QByteArray &data, 
+bool KSMServer::process(const QCString &fun, const QByteArray &data,
                         QCString& replyType, QByteArray &replyData)
 {
     if (fun == "restoreSessionInternal()")
@@ -1296,7 +1291,7 @@ bool KSMServer::process(const QCString &fun, const QByteArray &data,
        replyType = "void";
        return true;
     }
-    return DCOPObject::process(fun, data, replyType, replyData);    
+    return DCOPObject::process(fun, data, replyType, replyData);
 }
 
 void KSMServer::autoStart()
@@ -1306,7 +1301,7 @@ void KSMServer::autoStart()
 
 void KSMServer::restoreSessionInternal()
 {
-    disconnectDCOPSignal( "klauncher", "klauncher", "autoStartDone()", 
+    disconnectDCOPSignal( "klauncher", "klauncher", "autoStartDone()",
                           "restoreSessionInternal()");
     progress = appsToStart;
     KConfig* config = KGlobal::config();
@@ -1323,7 +1318,7 @@ void KSMServer::restoreSessionInternal()
         }
 	if ( wm == config->readEntry( QString("program")+n ) )
            continue;
-     
+
         startApplication( restartCommand );
     }
     if (progress == 0)
