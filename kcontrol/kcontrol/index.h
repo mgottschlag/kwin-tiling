@@ -51,7 +51,7 @@ public slots:
 
 protected:
 
-  void resizeEvent(QResizeEvent *event);
+//  void resizeEvent(QResizeEvent *event);
   void updateItem(QListViewItem *item, ConfigModule *module);
 
 

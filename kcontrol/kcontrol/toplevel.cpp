@@ -54,9 +54,8 @@ TopLevel::TopLevel(const char* name)
 
   // create the left hand side (the tree view)
   _index = new IndexPane(splitter);
-  _index->setMinimumWidth(200);
-  splitter->setResizeMode(_index,QSplitter::KeepSize);
   _index->fillIndex(_modules);
+  splitter->setResizeMode(_index,QSplitter::KeepSize);
   connect(_index, SIGNAL(moduleActivated(ConfigModule*)),
 	  this, SLOT(moduleActivated(ConfigModule*)));
 

@@ -25,6 +25,7 @@
 
 #include <qheader.h>
 #include <qcolor.h>
+#include <qlayout.h>
 
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -41,11 +42,13 @@
 IndexPane::IndexPane(QWidget *parent, const char *name)
   : QWidget(parent, name)
 {
-  _tree = new QListView(this);   
+  QVBoxLayout *layout = new QVBoxLayout(this);
+  _tree = new QListView(this);
+  layout->add(_tree);
   _tree->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);   
-  _tree->addColumn("",0);   
-  _tree->addColumn("",22);
-  _tree->setColumnAlignment(1, AlignRight);
+  _tree->addColumn("");   
+//  _tree->addColumn("",22);
+//  _tree->setColumnAlignment(1, AlignRight);
   _tree->setAllColumnsShowFocus(true);
   _tree->header()->hide();
 
@@ -53,6 +56,7 @@ IndexPane::IndexPane(QWidget *parent, const char *name)
 	  this, SLOT(currentChanged(QListViewItem*)));
 }
 
+/*
 void IndexPane::resizeEvent(QResizeEvent *)
 {
   if (_tree)
@@ -66,6 +70,7 @@ void IndexPane::resizeEvent(QResizeEvent *)
     }
 }
 
+*/
 
 /* ICON FILENAMES */
 #define ICON_LOCALUSER    "kcontrol_user"
@@ -99,6 +104,7 @@ void IndexPane::fillIndex(ConfigModuleList &list)
 
   // _tree->setOpen(localMachine, true);
   _tree->setOpen(localUser, true);
+  setMinimumWidth(_tree->columnWidth(0)+22);
 }
 
 
