@@ -156,7 +156,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pMonitor = new KBGMonitor(lbl, "preview monitor");
     m_pMonitor->setGeometry(20, 10, 157, 111);
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
-    QWhatsThis::add( m_pMonitor, "In this monitor, you can preview how your settings will look like on a \"real\" desktop." );
+    QWhatsThis::add( m_pMonitor, i18n("In this monitor, you can preview how your settings will look like on a \"real\" desktop.") );
 
     // Tabwidget at (1,0) - (1,1)
     m_pTabWidget = new QTabWidget(this);

@@ -75,7 +75,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addMultiCellWidget(combo, 0, 0, 2, 3);
   coTiDbl = combo;
-  QWhatsThis::add(combo, "Behavior on <em>double</em> click into the titlebar.");
+  QWhatsThis::add(combo, i18n("Behavior on <em>double</em> click into the titlebar."));
 
   label = new QLabel(i18n("Active"), this);
   layout->addWidget(label, 2,2, AlignHCenter);
@@ -172,7 +172,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 3,2);
   coTiAct1 = combo;
-  QWhatsThis::add(combo, "Behavior on <em>left</em> click into the titlebar or frame of an <em>active</em> window.");
+  QWhatsThis::add(combo, i18n("Behavior on <em>left</em> click into the titlebar or frame of an <em>active</em> window."));
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Raise"));
@@ -183,7 +183,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 4,2);
   coTiAct2 = combo;
-  QWhatsThis::add(combo, "Behavior on <em>middle</em> click into the titlebar or frame of an <em>active</em> window.");
+  QWhatsThis::add(combo, i18n("Behavior on <em>middle</em> click into the titlebar or frame of an <em>active</em> window."));
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Raise"));
@@ -194,7 +194,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 5,2);
   coTiAct3 =  combo;
-  QWhatsThis::add(combo, "Behavior on <em>right</em> click into the titlebar or frame of an <em>active</em> window.");
+  QWhatsThis::add(combo, i18n("Behavior on <em>right</em> click into the titlebar or frame of an <em>active</em> window."));
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate and raise"));
@@ -203,7 +203,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 3,3);
   coTiInAct1 = combo;
-  QWhatsThis::add(combo, "Behavior on <em>left</em> click into the titlebar or frame of an <em>inactive</em> window.");
+  QWhatsThis::add(combo, i18n("Behavior on <em>left</em> click into the titlebar or frame of an <em>inactive</em> window."));
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate and raise"));
@@ -212,7 +212,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 4,3);
   coTiInAct2 = combo;
-  QWhatsThis::add(combo, "Behavior on <em>middle</em> click into the titlebar or frame of an <em>inactive</em> window.");
+  QWhatsThis::add(combo, i18n("Behavior on <em>middle</em> click into the titlebar or frame of an <em>inactive</em> window."));
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate and raise"));
@@ -221,7 +221,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 5,3);
   coTiInAct3 = combo;
-  QWhatsThis::add(combo, "Behavior on <em>right</em> click into the titlebar or frame of an <em>inactive</em> window.");
+  QWhatsThis::add(combo, i18n("Behavior on <em>right</em> click into the titlebar or frame of an <em>inactive</em> window."));
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate, raise and pass click"));
