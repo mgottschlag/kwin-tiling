@@ -704,6 +704,7 @@ StartClient (verify, d, pidp, name, passwd)
 	/* Do system-dependent login setup here */
 
 #ifdef HAVE_PAM_MISC
+#ifdef USE_PAM
 	/* if we have a pam_misc library on this system, pass in environment
 	   variables set by libpam and modules it called */
 	if(pamh != NULL)
@@ -716,6 +717,7 @@ StartClient (verify, d, pidp, name, passwd)
 		verify->userEnviron = putEnv(pam_env[i], verify->userEnviron);
 	    }
 	}
+#endif
 #endif /* HAVE_PAM_MISC */
 
 #ifdef HAVE_SETUSERCONTEXT
