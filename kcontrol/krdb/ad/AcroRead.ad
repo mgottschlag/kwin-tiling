@@ -1,1 +1,3 @@
 acroread*lprCommand: kprinter
+acroread*Foreground:               WINDOW_FOREGROUND
+acroread*Background:               WINDOW_BACKGROUND
