@@ -104,6 +104,12 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
                           "application exits, the clipboard would usually be "
                           "emptied.") );
 
+    cbIgnoreSelection = new QCheckBox( i18n("&Ignore selection"), this );
+    QWhatsThis::add( cbIgnoreSelection,
+                     i18n("This options prevents the selection being recorded "
+                          "in the clipboard history. Only explicit clipboard "
+                          "changes are recorded.") );
+
     QVButtonGroup *group = new QVButtonGroup( i18n("Clipboard/Selection Behavior"), this );
     group->setExclusive( true );
 
@@ -154,11 +160,15 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     maxItems = new KIntNumInput( this );
     maxItems->setLabel(  i18n( "C&lipboard history size:" ) );
     maxItems->setRange( 2, 25, 1, true );
-    connect( maxItems, SIGNAL( valueChanged( int )), 
+    connect( maxItems, SIGNAL( valueChanged( int )),
              SLOT( historySizeChanged( int ) ));
 
+    connect( group, SIGNAL( clicked( int )), 
+             SLOT( slotClipConfigChanged() ));
+    slotClipConfigChanged(); 
+    
     // Add some spacing at the end
-    QLabel *dummy = new QLabel( this );
+    QWidget *dummy = new QWidget( this );
     setStretchFactor( dummy, 1 );
 }
 
@@ -171,6 +181,11 @@ void GeneralWidget::historySizeChanged( int value )
     // Note there is no %n in this string, because value is not supposed
     // to be put into the suffix of the spinbox.
     maxItems->setSuffix( i18n( " entry", " entries", value ) );
+}
+
+void GeneralWidget::slotClipConfigChanged()
+{
+    cbIgnoreSelection->setEnabled( !cbSynchronize->isChecked() );
 }
 
 /////////////////////////////////////////

@@ -361,6 +361,7 @@ void Klipper::readConfiguration( KConfig *kc )
     bNoNullClipboard = kc->readBoolEntry("NoEmptyClipboard", true);
     bUseGUIRegExpEditor = kc->readBoolEntry("UseGUIRegExpEditor", true );
     maxClipItems = kc->readNumEntry("MaxClipItems", 7);
+    bIgnoreSelection = kc->readBoolEntry("IgnoreSelection", false);
 }
 
 void Klipper::writeConfiguration( KConfig *kc )
@@ -372,6 +373,7 @@ void Klipper::writeConfiguration( KConfig *kc )
     kc->writeEntry("NoEmptyClipboard", bNoNullClipboard);
     kc->writeEntry("UseGUIRegExpEditor", bUseGUIRegExpEditor);
     kc->writeEntry("MaxClipItems", maxClipItems);
+    kc->writeEntry("IgnoreSelection", bIgnoreSelection);
     kc->writeEntry("Version", klipper_version );
 
     if ( myURLGrabber )
@@ -407,9 +409,9 @@ void Klipper::saveSession()
 
 void Klipper::disableURLGrabber()
 {
-   KMessageBox:KMessageBox::information( 0L,
-                   i18n( "You can enable URL actions later by right-clicking on the \
-                         Klipper icon and selecting 'Enable Actions'" ) );
+   KMessageBox::information( 0L,
+            i18n( "You can enable URL actions later by right-clicking on the "
+                  "Klipper icon and selecting 'Enable Actions'" ) );
 
    setURLGrabberEnabled( false );
 }
@@ -431,6 +433,7 @@ void Klipper::slotConfigure()
     dlg->setUseGUIRegExpEditor( bUseGUIRegExpEditor );
     dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
     dlg->setMaxItems( maxClipItems );
+    dlg->setIgnoreSelection( bIgnoreSelection );
     dlg->setNoActionsFor( myURLGrabber->avoidWindows() );
 //    dlg->setEnableActions( haveURLGrabber );
 
@@ -439,6 +442,7 @@ void Klipper::slotConfigure()
         bPopupAtMouse = dlg->popupAtMousePos();
         bReplayActionInHistory = dlg->replayActionInHistory();
         bNoNullClipboard = dlg->noNullClipboard();
+        bIgnoreSelection = dlg->ignoreSelection();
         bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         dlg->commitShortcuts();
         globalKeys->writeSettings(m_config);
@@ -650,6 +654,9 @@ void Klipper::clipboardSignalArrived( bool selectionMode )
 
 void Klipper::checkClipData( const QString& text, bool selectionMode )
 {
+    if ( selectionMode && bIgnoreSelection )
+        return;
+    
     clip->setSelectionMode( selectionMode );
 
     if ( ignoreClipboardChanges() )

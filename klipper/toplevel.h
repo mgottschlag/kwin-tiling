@@ -112,9 +112,15 @@ private:
     QMap<long,QString> m_clipDict;
     QTimer *m_checkTimer;
     QPixmap m_pixmap;
-    bool bPopupAtMouse, bClipEmpty, bKeepContents, bURLGrabber;
-    bool bReplayActionInHistory, bUseGUIRegExpEditor;
-    bool bNoNullClipboard;
+    bool bPopupAtMouse :1;
+    bool bClipEmpty    :1;
+    bool bKeepContents :1;
+    bool bURLGrabber   :1;
+    bool bReplayActionInHistory :1; 
+    bool bUseGUIRegExpEditor    :1;
+    bool bNoNullClipboard       :1;
+    bool bTearOffHandle         :1;
+    bool bIgnoreSelection       :1;
     QString QSempty;
     URLGrabber *myURLGrabber;
     int m_selectedItem;
@@ -123,7 +129,6 @@ private:
     bool isApplet() const { return m_config != kapp->config(); }
     KConfig* m_config;
     DCOPClient* m_dcop;
-    bool bTearOffHandle;
 
     void trimClipHistory(int);
 };

@@ -47,9 +47,11 @@ public:
 
 private slots:
     void historySizeChanged( int value );
+    void slotClipConfigChanged();
 
 private:
     QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH, *cbNoNull;
+    QCheckBox *cbIgnoreSelection;
     QRadioButton *cbSynchronize, *cbImplicitSelection, *cbSeparate;
     KIntNumInput *popupTimeout, *maxItems;
 
@@ -152,6 +154,10 @@ public:
     int maxItems() const {
 	return generalWidget->maxItems->value();
     }
+    bool ignoreSelection() const
+    {
+        return generalWidget->cbIgnoreSelection->isChecked();
+    }
     QStringList noActionsFor() const {
 	return actionWidget->wmClasses();
     }
@@ -159,6 +165,7 @@ public:
     {
       return actionWidget->cbUseGUIRegExpEditor->isChecked();
     }
+
 
     // KClipboard configuration
     bool synchronize() const {
@@ -186,6 +193,9 @@ public:
     }
     void setMaxItems( int items ) {
 	generalWidget->maxItems->setValue( items );
+    }
+    void setIgnoreSelection( bool ignore ) {
+        generalWidget->cbIgnoreSelection->setChecked( ignore );
     }
     void setNoActionsFor( const QStringList& items ) {
 	actionWidget->setWMClasses( items );
