@@ -69,6 +69,8 @@ extern "C" {
  * # artsd -A
  * possible choices for the audio i/o method:
  *
+ *   toss      Threaded Open Sound System
+ *   esd       Enlightened Sound Daemon
  *   null      No audio input/output
  *   alsa      Advanced Linux Sound Architecture
  *   oss       Open Sound System
@@ -122,6 +124,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 {
 	setButtons(Default|Apply);
 
+	audioIOList.append(new AudioIOElement("", i18n( "Autodetect" ) ));
+
 	initAudioIOList();
 
 	QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
@@ -164,7 +168,6 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	QWhatsThis::add(hardware->customOptions, optionsHint);
 	QWhatsThis::add(hardware->addOptions, optionsHint);
 
-	hardware->audioIO->insertItem( i18n( "Autodetect" ) );
 	for (AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())
 		hardware->audioIO->insertItem(i18n(a->fullName.utf8()));
 
@@ -294,7 +297,7 @@ void KArtsModule::saveParams( void )
 {
 	QString audioIO;
 
-	int item = hardware->audioIO->currentItem() - 1;	// first item: "default"
+	int item = hardware->audioIO->currentItem(); // first item: "default"
 
 	if (item >= 0) {
 		audioIO = audioIOList.at(item)->name;
@@ -666,6 +669,7 @@ QString KArtsModule::createArgs(bool netTrans,
 	I18N_NOOP("SGI dmedia Audio I/O");
 	I18N_NOOP("Sun Audio Input/Output");
 	I18N_NOOP("Portable Audio Library");
+	I18N_NOOP("Enlightened Sound Daemon");
 #endif
 
 #include "arts.moc"
