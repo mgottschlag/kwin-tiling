@@ -72,7 +72,7 @@ public:
      
     QStringList	_sessionTypes;
 
-    bool	_allowShutdown;
+    int		_allowShutdown;
 
     bool	_useLilo;
     QString	_liloCmd;
