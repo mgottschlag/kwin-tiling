@@ -207,7 +207,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   view = new ProxyView(client, title, this, run_as_root, "proxyview");
   (void) new WhatsThis( this );
 
-  connect(_client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
+  connect(_client, SIGNAL(changed(bool)), SLOT(clientChanged(bool)));
 
   _sep = new KSeparator(KSeparator::HLine, this);
 
@@ -229,11 +229,11 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 //  _apply->setEnabled(false);
   _reset->setEnabled(false);
 
-  connect(_help, SIGNAL(clicked()), this, SLOT(helpClicked()));
-  connect(_default, SIGNAL(clicked()), this, SLOT(defaultClicked()));
-  connect(_apply, SIGNAL(clicked()), this, SLOT(applyClicked()));
-  connect(_reset, SIGNAL(clicked()), this, SLOT(resetClicked()));
-  connect(_root, SIGNAL(clicked()), this, SLOT(rootClicked()));
+  connect(_help, SIGNAL(clicked()), SLOT(helpClicked()));
+  connect(_default, SIGNAL(clicked()), SLOT(defaultClicked()));
+  connect(_apply, SIGNAL(clicked()), SLOT(applyClicked()));
+  connect(_reset, SIGNAL(clicked()), SLOT(resetClicked()));
+  connect(_root, SIGNAL(clicked()), SLOT(rootClicked()));
 
   QVBoxLayout *top = new QVBoxLayout(this, 2, 4);
   top->addWidget(view);
