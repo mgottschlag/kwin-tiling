@@ -728,7 +728,7 @@ GreeterApp::timerEvent( QTimerEvent * )
 void
 GreeterApp::sigAlarm( int )
 {
-    close( XConnectionNumber( qt_xdisplay() ) );
+    ExitGreeter( 1 );
 }
 
 bool

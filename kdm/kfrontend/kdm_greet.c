@@ -209,8 +209,8 @@ GetCfgStrArr (int id, int *len)
 
 static char *savhome;
 
-static void ATTR_NORETURN
-exitGreeter (void)
+void
+ExitGreeter (int code)
 {
     char buf[128];
 
@@ -218,7 +218,7 @@ exitGreeter (void)
 	LogPanic ("Internal error: memory corruption detected\n");
     sprintf (buf, "rm -rf %s", savhome);
     system (buf);
-    exit (0);
+    exit (code);
 }
 
 void
@@ -226,7 +226,7 @@ SessionExit (int ret)
 {
     GSendInt (G_SessionExit);
     GSendInt (ret);
-    exitGreeter();
+    ExitGreeter (0);
 }
 
 
@@ -616,7 +616,7 @@ main (int argc, char **argv)
 
     kg_main(argc, argv);
 
-    exitGreeter();
+    ExitGreeter (0);
 
     return 0;
 }
