@@ -283,6 +283,17 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " operation will be initiated.");
     QWhatsThis::add( dragStartDist, wtstr);
 
+    wheelScrollLines = new KIntNumInput(dragStartDist, 3, tab2);
+    wheelScrollLines->setLabel(i18n("Mouse Wheel Scrolls By"));
+    wheelScrollLines->setRange(1, 12, 2);
+    wheelScrollLines->setSuffix(i18n(" lines"));
+    wheelScrollLines->setSteps(1,1);
+    lay->addWidget(wheelScrollLines);
+    connect(wheelScrollLines, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+    wtstr = i18n("If you use the wheel of a mouse, this value determines the number of lines to scroll for each wheel movement. Note that if this number exceeds the number of visible lines, it will be ignored and the wheel movement will be handled as a page up/down movement.");
+    QWhatsThis::add( wheelScrollLines, wtstr);
+
     lay->addStretch(1);
 
     config = new KConfig("kcminputrc");
@@ -347,6 +358,7 @@ void MouseConfig::load()
   doubleClickInterval->setValue(settings->doubleClickInterval);
   dragStartTime->setValue(settings->dragStartTime);
   dragStartDist->setValue(settings->dragStartDist);
+  wheelScrollLines->setValue(settings->wheelScrollLines);
 
   doubleClick->setChecked(!settings->singleClick);
 
@@ -370,6 +382,7 @@ void MouseConfig::save()
   settings->doubleClickInterval = doubleClickInterval->value();
   settings->dragStartTime = dragStartTime->value();
   settings->dragStartDist = dragStartDist->value();
+  settings->wheelScrollLines = wheelScrollLines->value();
   settings->singleClick = !doubleClick->isChecked();
   settings->autoSelectDelay = cbAutoSelect->isChecked()?slAutoSelect->value():-1;
   settings->visualActivate = cbVisualActivate->isChecked();
@@ -398,6 +411,7 @@ void MouseConfig::defaults()
     doubleClickInterval->setValue(400);
     dragStartTime->setValue(500);
     dragStartDist->setValue(4);
+    wheelScrollLines->setValue(3);
     doubleClick->setChecked( !KDE_DEFAULT_SINGLECLICK );
     cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
     slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
@@ -506,6 +520,7 @@ void MouseSettings::load(KConfig *config)
   doubleClickInterval = config->readNumEntry("DoubleClickInterval", 400);
   dragStartTime = config->readNumEntry("StartDragTime", 500);
   dragStartDist = config->readNumEntry("StartDragDist", 4);
+  wheelScrollLines = config->readNumEntry("WheelScrollLines", 3);
 
   singleClick = config->readBoolEntry(QString::fromLatin1("SingleClick"), KDE_DEFAULT_SINGLECLICK);
   autoSelectDelay = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
@@ -619,6 +634,7 @@ void MouseSettings::save(KConfig *config)
   config->writeEntry("DoubleClickInterval", doubleClickInterval, true, true);
   config->writeEntry("StartDragTime", dragStartTime, true, true);
   config->writeEntry("StartDragDist", dragStartDist, true, true);
+  config->writeEntry("WheelScrollLines", wheelScrollLines, true, true);
   config->writeEntry(QString::fromLatin1("SingleClick"), singleClick, true, true);
   config->writeEntry( "AutoSelectDelay", autoSelectDelay, true, true );
   config->writeEntry("VisualActivate", visualActivate, true, true);

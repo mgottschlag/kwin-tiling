@@ -72,6 +72,7 @@ public:
  int visualActivate;
  bool changeCursor;
  bool largeCursor;
+ int wheelScrollLines;
 };
 
 class MouseConfig : public KCModule
@@ -107,6 +108,7 @@ private:
   KIntNumInput *doubleClickInterval;
   KIntNumInput *dragStartTime;
   KIntNumInput *dragStartDist;
+  KIntNumInput *wheelScrollLines;
 
   QButtonGroup *handedBox;
   QRadioButton *leftHanded, *rightHanded;
