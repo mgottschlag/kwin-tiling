@@ -32,6 +32,9 @@
 #include "klocalesample.h"
 
 #define i18n(a) (a)
+
+extern KLocale *locale;
+
 KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
   : QGridLayout(parent, 6, 4, 5, -1, name)
 {
@@ -80,8 +83,6 @@ KLocaleSample::~KLocaleSample()
 
 void KLocaleSample::update()
 {
-  KLocale *locale = KGlobal::locale();
-
   numberSample->setText(locale->formatNumber(1234567.89) +
 			" / " +
 			locale->formatNumber(-1234567.89));

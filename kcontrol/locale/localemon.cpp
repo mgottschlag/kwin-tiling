@@ -44,6 +44,8 @@
 
 #define i18n(a) (a)
 
+extern KLocale *locale;
+
 KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
@@ -123,8 +125,6 @@ KLocaleConfigMoney::~KLocaleConfigMoney()
 
 void KLocaleConfigMoney::load()
 {
-  KLocale *locale = KGlobal::locale();
-
   edMonCurSym->setText(locale->_currencySymbol);
   edMonDecSym->setText(locale->_monetaryDecimalSymbol);
   edMonThoSep->setText(locale->_monetaryThousandsSeparator);
@@ -137,11 +137,10 @@ void KLocaleConfigMoney::load()
 
 void KLocaleConfigMoney::save()
 {
-  KLocale *locale = KGlobal::locale();
   KConfigBase *config = KGlobal::config();
 
   config->setGroup("Locale");
-  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->money + "/entry.desktop"), true);
+  KSimpleConfig ent(locate("locale", "l10n/" + locale->money + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   QString str;
@@ -197,57 +196,55 @@ void KLocaleConfigMoney::defaults()
 
 void KLocaleConfigMoney::slotMonCurSymChanged(const QString &t)
 {
-  KGlobal::locale()->_currencySymbol = t;
+  locale->_currencySymbol = t;
   emit resample();
 }
 
 void KLocaleConfigMoney::slotMonDecSymChanged(const QString &t)
 {
-  KGlobal::locale()->_monetaryDecimalSymbol = t;
+  locale->_monetaryDecimalSymbol = t;
   emit resample();
 }
 
 void KLocaleConfigMoney::slotMonThoSepChanged(const QString &t)
 {
-  KGlobal::locale()->_monetaryThousandsSeparator = t;
+  locale->_monetaryThousandsSeparator = t;
   emit resample();
 }
 
 void KLocaleConfigMoney::slotMonFraDigChanged(const QString &t)
 {
-  KGlobal::locale()->_fracDigits = (int)KGlobal::locale()->readNumber(t);
+  locale->_fracDigits = (int)locale->readNumber(t);
   emit resample();
 }
 
 void KLocaleConfigMoney::slotMonPosPreCurSymChanged()
 {
-  KGlobal::locale()->_positivePrefixCurrencySymbol = chMonPosPreCurSym->isChecked();
+  locale->_positivePrefixCurrencySymbol = chMonPosPreCurSym->isChecked();
   emit resample();
 }
 
 void KLocaleConfigMoney::slotMonNegPreCurSymChanged()
 {
-  KGlobal::locale()->_negativePrefixCurrencySymbol = chMonNegPreCurSym->isChecked();
+  locale->_negativePrefixCurrencySymbol = chMonNegPreCurSym->isChecked();
   emit resample();
 }
 
 void KLocaleConfigMoney::slotMonPosMonSignPosChanged(int i)
 {
-  KGlobal::locale()->_positiveMonetarySignPosition = (KLocale::SignPosition)i;
+  locale->_positiveMonetarySignPosition = (KLocale::SignPosition)i;
   emit resample();
 }
 
 void KLocaleConfigMoney::slotMonNegMonSignPosChanged(int i)
 {
-  KGlobal::locale()->_negativeMonetarySignPosition = (KLocale::SignPosition)i;
+  locale->_negativeMonetarySignPosition = (KLocale::SignPosition)i;
   emit resample();
 }
 
 void KLocaleConfigMoney::reset()
 {
-  KLocale *locale = KGlobal::locale();
-
-  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->money + "/entry.desktop"), true);
+  KSimpleConfig ent(locate("locale", "l10n/" + locale->money + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   locale->_currencySymbol = ent.readEntry("CurrencySymbol", "$");

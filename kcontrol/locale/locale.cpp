@@ -47,11 +47,11 @@
 
 #define i18n(a) (a)
 
+extern KLocale *locale;
+
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   : QWidget (parent, name)
 {
-    locale =  KGlobal::locale();
-
     QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
     tl1->setRowStretch( 0, 1);
     tl1->setColStretch( 2, 1);
@@ -343,7 +343,7 @@ void KLocaleConfig::reTranslateLists()
   for (j = 0; j < comboLang->count(); j++)
   {
     if (comboLang->tag(j) == "other")
-      name = i18n("Other");
+      name = locale->translate("Other");
     else
       readLocale(comboLang->tag(j), name, 0);
     comboLang->changeLanguage(name, j);

@@ -44,6 +44,8 @@
 
 #define i18n(a) (a)
 
+extern KLocale *locale;
+
 KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
@@ -88,8 +90,6 @@ KLocaleConfigNumber::~KLocaleConfigNumber()
 
 void KLocaleConfigNumber::load()
 {
-  KLocale *locale = KGlobal::locale();
-
   edDecSym->setText(locale->_decimalSymbol);
   edThoSep->setText(locale->_thousandsSeparator);
   edMonPosSign->setText(locale->_positiveSign);
@@ -98,11 +98,10 @@ void KLocaleConfigNumber::load()
 
 void KLocaleConfigNumber::save()
 {
-  KLocale *locale = KGlobal::locale();
   KConfigBase *config = KGlobal::config();
 
   config->setGroup("Locale");
-  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->number + "/entry.desktop"), true);
+  KSimpleConfig ent(locate("locale", "l10n/" + locale->number + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   QString str;
@@ -125,35 +124,31 @@ void KLocaleConfigNumber::defaults()
 
 void KLocaleConfigNumber::slotDecSymChanged(const QString &t)
 {
-  KGlobal::locale()->_decimalSymbol = t;
+  locale->_decimalSymbol = t;
   emit resample();
 }
 
 void KLocaleConfigNumber::slotThoSepChanged(const QString &t)
 {
-  KGlobal::locale()->_thousandsSeparator = t;
+  locale->_thousandsSeparator = t;
   emit resample();
 }
 
 void KLocaleConfigNumber::slotMonPosSignChanged(const QString &t)
 {
-  KGlobal::locale()->_positiveSign = t;
+  locale->_positiveSign = t;
   emit resample();
 }
 
 void KLocaleConfigNumber::slotMonNegSignChanged(const QString &t)
 {
-  KGlobal::locale()->_negativeSign = t;
+  locale->_negativeSign = t;
   emit resample();
 }
 
-
-
 void KLocaleConfigNumber::reset()
 {
-  KLocale *locale = KGlobal::locale();
-
-  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->number + "/entry.desktop"), true);
+  KSimpleConfig ent(locate("locale", "l10n/" + locale->number + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   QString str;

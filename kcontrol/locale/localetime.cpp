@@ -44,6 +44,8 @@
 
 #define i18n(a) (a)
 
+extern KLocale *locale;
+
 KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
@@ -82,8 +84,6 @@ KLocaleConfigTime::~KLocaleConfigTime()
 
 void KLocaleConfigTime::load()
 {
-  KLocale *locale = KGlobal::locale();
-
   edTimeFmt->setText(locale->_timefmt);
   edDateFmt->setText(locale->_datefmt);
   edDateFmtShort->setText(locale->_datefmtshort);
@@ -92,11 +92,10 @@ void KLocaleConfigTime::load()
 void KLocaleConfigTime::save()
 {
   KSimpleConfig a(0, false);
-  KLocale *locale = KGlobal::locale();
   KConfigBase *config = KGlobal::config();
 
   config->setGroup("Locale");
-  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->time + "/entry.desktop"), true);
+  KSimpleConfig ent(locate("locale", "l10n/" + locale->time + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   QString str;
@@ -123,27 +122,25 @@ void KLocaleConfigTime::defaults()
 
 void KLocaleConfigTime::slotTimeFmtChanged(const QString &t)
 {
-  KGlobal::locale()->_timefmt = t;
+  locale->_timefmt = t;
   emit resample();
 }
 
 void KLocaleConfigTime::slotDateFmtChanged(const QString &t)
 {
-  KGlobal::locale()->_datefmt = t;
+  locale->_datefmt = t;
   emit resample();
 }
 
 void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 {
-  KGlobal::locale()->_datefmtshort = t;
+  locale->_datefmtshort = t;
   emit resample();
 }
 
 void KLocaleConfigTime::reset()
 {
-  KLocale *locale = KGlobal::locale();
-
-  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->time + "/entry.desktop"), true);
+  KSimpleConfig ent(locate("locale", "l10n/" + locale->time + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   locale->_timefmt = ent.readEntry("TimeFormat", "%I:%M:%S %p");

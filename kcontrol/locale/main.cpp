@@ -38,17 +38,20 @@
 #include "main.h"
 #include "main.moc"
 
+#define i18n(a) (a)
+
+KLocale *locale;
 
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
+  locale = new KLocale("kcmlocale");
 
   QVBoxLayout *l = new QVBoxLayout(this, 5);
 
   tab = new QTabWidget( this, "section" );
   l->addWidget(tab);
 
-#define i18n(a) (a)
   localemain = new KLocaleConfig( this, i18n("&Locale") );
   tab->addTab( localemain, "1");
   localenum = new KLocaleConfigNumber( this, i18n("&Numbers") );
@@ -68,11 +71,14 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   gbox = new QGroupBox("1", this, i18n("Examples"));
   l->addWidget(gbox);
   sample = new KLocaleSample(gbox);
-#undef i18n
 
   update();
 }
 
+KLocaleApplication::~KLocaleApplication()
+{
+  delete locale;
+}
 
 void KLocaleApplication::load()
 {
@@ -120,8 +126,6 @@ void KLocaleApplication::reTranslate()
 
 void KLocaleApplication::reTranslate(QObjectListIt it)
 {
-    KLocale *locale = KGlobal::locale();
-
     QObject *wc;
     while( (wc = it.current()) != 0 ) {
       ++it;
@@ -173,7 +177,7 @@ void KLocaleApplication::reset()
 
 extern "C" {
   KCModule *create_locale(QWidget *parent, const char* name) {
-    KGlobal::locale()->insertCatalogue("kcmlocale");
+//    KGlobal::locale()->insertCatalogue("kcmlocale");
     return new KLocaleApplication(parent, name);
   }
 }

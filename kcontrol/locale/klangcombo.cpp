@@ -38,6 +38,8 @@
 #include "klangcombo.h"
 #include "klangcombo.moc"
 
+extern KLocale *locale;
+
 KLanguageCombo::~KLanguageCombo ()
 {
   delete popup;
@@ -202,7 +204,7 @@ void KLanguageCombo::insertSeparator(int index)
 void KLanguageCombo::insertOther()
 {
   QPopupMenu *p = new QPopupMenu;
-  popup->insertItem(i18n("Other"), p);
+  popup->insertItem(locale->translate("Other"), p);
   tags->append("other");
   connect( p, SIGNAL(activated(int)),
                         SLOT(internalActivate(int)) );

@@ -59,7 +59,6 @@ private:
   KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate;
 
   bool changedFlag;
-  KLocale *locale;
 
 private slots:
   void changedCountry(int);

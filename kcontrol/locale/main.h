@@ -40,6 +40,7 @@ class KLocaleApplication : public KCModule
 
 public:
   KLocaleApplication(QWidget *parent, const char *name);
+  ~KLocaleApplication();
 
   void load();
   void save();
