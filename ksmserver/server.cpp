@@ -1,5 +1,4 @@
-/*****************************************************************
-ksmserver - the KDE session management server
+/*ksmserver - the KDE session management server
 
 Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
@@ -100,6 +99,7 @@ KSMServer* the_server = 0;
 
 KSMClient::KSMClient( SmsConn conn)
 {
+  kdDebug(0) << "KSMClient::KSMClient" << endl;
     smsConn = conn;
     clientId = 0;
     resetState();
@@ -107,6 +107,7 @@ KSMClient::KSMClient( SmsConn conn)
 
 KSMClient::~KSMClient()
 {
+  kdDebug(0) << "KSMClient::~KSMClient" << endl;
     for ( SmProp* prop = properties.first(); prop; prop = properties.next() )
 	SmFreeProperty( prop );
     if (clientId) free((void*)clientId);
@@ -118,11 +119,13 @@ SmProp* KSMClient::property( const char* name ) const
 	if ( !qstrcmp( it.current()->name, name ) )
 	    return it.current();
     }
+   kdDebug(0) << "KSMClient::property not found " << " name=" << name << endl;
     return 0;
 }
 
 void KSMClient::resetState()
 {
+  kdDebug(0) << "KSMClient::resetState" << endl;
     saveYourselfDone = FALSE;
     pendingInteraction = FALSE;
     waitForPhase2 = FALSE;
@@ -159,6 +162,7 @@ char * safeSmsGenerateClientID( SmsConn c )
 
 void KSMClient::registerClient( const char* previousId )
 {
+  kdDebug(0) << "KSMClient::registerClient " << program() << " previousId=" << previousId << endl;
     clientId = previousId;
     if ( !clientId )
 	clientId = safeSmsGenerateClientID( smsConn );
@@ -172,12 +176,17 @@ QString KSMClient::program() const
 {
     SmProp* p = property( SmProgram );
     if ( !p || qstrcmp( p->type, SmARRAY8) || p->num_vals < 1)
+    {
+        kdDebug(0) << "KSMClient::program -> not found. p=" << p << endl;
 	return QString::null;
+    }
+    //kdDebug(0) << "KSMClient::program=" << p->vals[0].value << endl;
     return QString::fromLatin1( (const char*) p->vals[0].value );
 }
 
 QStringList KSMClient::restartCommand() const
 {
+  kdDebug(0) << "KSMClient::restartCommand" << endl;
     QStringList result;
     SmProp* p = property( SmRestartCommand );
     if ( !p || qstrcmp( p->type, SmLISTofARRAY8) || p->num_vals < 1)
@@ -189,6 +198,7 @@ QStringList KSMClient::restartCommand() const
 
 QStringList KSMClient::discardCommand() const
 {
+  kdDebug(0) << "KSMClient::discardCommand" << endl;
     QStringList result;
     SmProp* p = property( SmDiscardCommand );
     if ( !p || qstrcmp( p->type, SmLISTofARRAY8) || p->num_vals < 1)
@@ -200,6 +210,7 @@ QStringList KSMClient::discardCommand() const
 
 int KSMClient::restartStyleHint() const
 {
+  kdDebug(0) << "KSMClient::restartStyleHint" << endl;
     SmProp* p = property( SmRestartStyleHint );
     if ( !p || qstrcmp( p->type, SmCARD8) || p->num_vals < 1)
 	return SmRestartIfRunning;
@@ -208,6 +219,7 @@ int KSMClient::restartStyleHint() const
 
 QString KSMClient::userId() const
 {
+  kdDebug(0) << "KSMClient::userId" << endl;
     SmProp* p = property( SmUserID );
     if ( !p || qstrcmp( p->type, SmARRAY8) || p->num_vals < 1)
 	return QString::null;
@@ -220,6 +232,7 @@ QString KSMClient::userId() const
  */
 void KSMServer::startApplication( const QStringList& command )
 {
+  kdDebug(0) << "KSMServer::startApplication" << endl;
     if ( command.isEmpty() )
 	return;
     int n = command.count();
@@ -239,6 +252,7 @@ void KSMServer::startApplication( const QStringList& command )
  */
 void KSMServer::executeCommand( const QStringList& command )
 {
+  kdDebug(0) << "KSMServer::executeCommand" << endl;
     if ( command.isEmpty() )
 	return;
     int n = command.count();
@@ -687,6 +701,7 @@ static void sighandler(int sig)
 
 void KSMWatchProc ( IceConn iceConn, IcePointer client_data, Bool opening, IcePointer* watch_data)
 {
+    qDebug("KSMWatchProc");
     KSMServer* ds = ( KSMServer*) client_data;
 
     if (opening) {
@@ -700,6 +715,7 @@ void KSMWatchProc ( IceConn iceConn, IcePointer client_data, Bool opening, IcePo
 static Status KSMNewClientProc ( SmsConn conn, SmPointer manager_data,
 				 unsigned long* mask_ret, SmsCallbacks* cb, char** failure_reason_ret)
 {
+    qDebug("KSMNewClientProc");
     *failure_reason_ret = 0;
 
     void* client =  ((KSMServer*) manager_data )->newClient( conn );
@@ -745,6 +761,7 @@ extern "C" int _IceTransNoListen(const char * protocol);
 
 KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 {
+  kdDebug(0) << "KSMServer::KSMServer" << " windowManager=" << windowManager << " _only_local=" << (_only_local ? "true" : "false" ) << endl;
     the_server = this;
     clean = false;
     wm = windowManager;
@@ -844,12 +861,14 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
 KSMServer::~KSMServer()
 {
+  qDebug("KSMServer::~KSMServer");
     the_server = 0;
     cleanUp();
 }
 
 void KSMServer::cleanUp()
 {
+  qDebug("KSMServer::cleanUp");
     if (clean) return;
     clean = true;
     IceFreeListenObjs (numTransports, listenObjs);
@@ -869,6 +888,7 @@ void KSMServer::cleanUp()
 
 void* KSMServer::watchConnection( IceConn iceConn )
 {
+  kdDebug(0) << "KSMServer::watchConnection" << endl;
     KSMConnection* conn = new KSMConnection( iceConn );
     connect( conn, SIGNAL( activated(int) ), this, SLOT( processData(int) ) );
     return (void*) conn;
@@ -876,6 +896,7 @@ void* KSMServer::watchConnection( IceConn iceConn )
 
 void KSMServer::removeConnection( KSMConnection* conn )
 {
+  qDebug("KSMServer::removeConnection conn=%p",   conn  );
     delete conn;
 }
 
@@ -885,10 +906,12 @@ void KSMServer::removeConnection( KSMConnection* conn )
  */
 void KSMServer::ioError( IceConn /* iceConn */ )
 {
+  qDebug("KSMServer::ioError");
 }
 
 void KSMServer::processData( int /*socket*/ )
 {
+  kdDebug(0) << "KSMServer::processData" << endl;
     IceConn iceConn = ((KSMConnection*)sender())->iceConn;
     IceProcessMessagesStatus status = IceProcessMessages( iceConn, 0, 0 );
     if ( status == IceProcessMessagesIOError ) {
@@ -898,6 +921,7 @@ void KSMServer::processData( int /*socket*/ )
 	    ++it;
 
 	if ( it.current() ) {
+            kdDebug(0) << "KSMServer::processData for client " << it.current()->program() << endl;
 	    SmsConn smsConn = it.current()->connection();
 	    deleteClient( it.current() );
 	    SmsCleanUp( smsConn );
@@ -909,10 +933,12 @@ void KSMServer::processData( int /*socket*/ )
 KSMClient* KSMServer::newClient( SmsConn conn )
 {
     KSMClient* client = new KSMClient( conn );
+  kdDebug(0) << "KSMServer::newClient " << client << " " << client->program() << endl;
     clients.append( client );
     if ( progress ) {
 	progress--;
 	publishProgress( progress );
+        kdDebug(0) << "progress is now " << progress << endl;
 	if ( progress == 0 )
 	    upAndRunning( "session ready" );
     }
@@ -921,6 +947,7 @@ KSMClient* KSMServer::newClient( SmsConn conn )
 
 void KSMServer::deleteClient( KSMClient* client )
 {
+  kdDebug(0) << "KSMServer::deleteClient" << " client=" << client->program() << endl;
     if ( clients.findRef( client ) == -1 ) // paranoia
 	return;
     clients.removeRef( client );
@@ -937,6 +964,7 @@ void KSMServer::deleteClient( KSMClient* client )
 
 void KSMServer::newConnection( int /*socket*/ )
 {
+  kdDebug(0) << "KSMServer::newConnection" << endl;
     IceAcceptStatus status;
     IceConn iceConn = IceAcceptConnection( ((KSMListener*)sender())->listenObj, &status);
     IceSetShutdownNegotiation( iceConn, False );
@@ -957,6 +985,7 @@ void KSMServer::newConnection( int /*socket*/ )
 
 void KSMServer::shutdown()
 {
+  kdDebug(0) << "KSMServer::shutdown" << endl;
     if ( state != Idle )
 	return;
     if ( dialogActive )
@@ -992,7 +1021,11 @@ void KSMServer::shutdown()
 	if ( clients.isEmpty() )
 	    completeShutdown();
     }
-    else
+    // ###### We can't make the screen remain gray while talking to the apps,
+    // because this prevents interaction ("do you want to save", etc.)
+    // TODO: turn the feedback widget into a list of apps to be closed,
+    // with an indicator of the current status for each.
+    //else
         KSMShutdownFeedback::stop(); // so that the screen becomes normal again
     dialogActive = false;
 }
@@ -1001,6 +1034,7 @@ void KSMServer::shutdown()
 // callbacks
 void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 {
+  kdDebug(0) << "KSMServer::saveYourselfDone" << " client=" << client << " " << client->program() << " success=" << (success ? "true" : "false" ) << endl;
     if ( state == Idle )
 	return;
     if ( success ) {
@@ -1014,6 +1048,7 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 
 void KSMServer::interactRequest( KSMClient* client, int /*dialogType*/ )
 {
+  kdDebug(0) << "KSMServer::interactRequest" << " client=" << client << " " << client->program() << endl;
     if ( state == Shutdown )
 	client->pendingInteraction = TRUE;
     else
@@ -1025,6 +1060,7 @@ void KSMServer::interactRequest( KSMClient* client, int /*dialogType*/ )
 
 void KSMServer::interactDone( KSMClient* client, bool cancelShutdown_ )
 {
+  kdDebug(0) << "KSMServer::interactDone" << " client=" << client << " " << client->program() << " cancelShutdown_=" << (cancelShutdown_ ? "true" : "false" ) << endl;
     if ( client != clientInteracting )
 	return; // should not happen
     clientInteracting = 0;
@@ -1037,12 +1073,14 @@ void KSMServer::interactDone( KSMClient* client, bool cancelShutdown_ )
 
 void KSMServer::phase2Request( KSMClient* client )
 {
+  kdDebug(0) << "KSMServer::phase2Request" << " client=" << client << endl;
     client->waitForPhase2 = TRUE;
     completeShutdown();
 }
 
 void KSMServer::handlePendingInteractions()
 {
+  kdDebug(0) << "KSMServer::handlePendingInteractions" << endl;
     if ( clientInteracting )
 	return;
 
@@ -1078,6 +1116,7 @@ void KSMServer::cancelShutdown()
  */
 void KSMServer::protectionTimeout()
 {
+  kdDebug(0) << "KSMServer::protectionTimeout" << endl;
     endProtection();
     if ( state != Shutdown || clientInteracting )
 	return;
@@ -1092,32 +1131,43 @@ void KSMServer::protectionTimeout()
 
 void KSMServer::startProtection()
 {
+  kdDebug(0) << "KSMServer::startProtection" << endl;
     protection.start( 8000 );
 }
 
 void KSMServer::endProtection()
 {
+  kdDebug(0) << "KSMServer::endProtection" << endl;
     protection.stop();
 }
 
 
 void KSMServer::completeShutdown()
 {
+  kdDebug(0) << "KSMServer::completeShutdown" << endl;
     if ( state != Shutdown )
 	return;
 
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	if ( !c->saveYourselfDone && !c->waitForPhase2 )
+        {
+            if ( !c->saveYourselfDone )
+                kdDebug(0) << "client " << c << " " << c->program() << " still has saveYourselfDone=false" << endl;
+            else
+                kdDebug(0) << "client " << c << " " << c->program() << " is still waiting for phase2" << endl;
 	    return; // not done yet
+        }
     }
 
     // do phase 2
     bool waitForPhase2 = FALSE;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	if ( !c->saveYourselfDone && c->waitForPhase2 ) {
+            kdDebug(0) << "completeShutdown (phase 2): client=" << c->program() << " has saveYourselfDone=false and waitForPhase2=true" << endl;
 	    c->waitForPhase2 = FALSE;
 	    SmsSaveYourselfPhase2( c->connection() );
 	    waitForPhase2 = TRUE;
+            kdDebug(0) << "wait for phase 2" << endl;
 	}
     }
     if ( waitForPhase2 )
@@ -1129,39 +1179,55 @@ void KSMServer::completeShutdown()
     // kill all clients
     state = Killing;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+        kdDebug() << "completeShutdown: client " << c->program() << endl;
 	// do not kill the wm yet, we do that in completeKilling()
 	// below.
 	if ( !wm.isEmpty() && c->program() == wm )
+        {
+            kdDebug() << "This is the WM, skipping" << endl;
 	    continue;
+        }
 	SmsDie( c->connection() );
     }
-    if ( clients.isEmpty() )
+    kdDebug() << " We killed all clients. We have now clients.count()=" << clients.count() << endl;
+    if ( clients.count() <= 1 ) // No client or only one (the WM)
 	completeKilling();
-    else
-	QTimer::singleShot( 4000, this, SLOT( timeoutQuit() ) );
+
+    QTimer::singleShot( 4000, this, SLOT( timeoutQuit() ) );
 }
 
 void KSMServer::completeKilling()
 {
+  kdDebug(0) << "KSMServer::completeKilling clients.count()=" << clients.count() << endl;
     if ( state != Killing )
+    {
+        kdWarning() << "Not Killing !!! state=" << state << endl;
 	return;
+    }
     if ( !wm.isEmpty() && clients.count() == 1 && clients.first()->program() == wm ) {
 	// the wm was not killed yet, do it
+  kdDebug(0) << "the wm was not killed yet, do it -> SmsDie" << endl;
 	SmsDie( clients.first()->connection() );
 	return;
     }
 
     if ( clients.isEmpty() )
+    {
+        kdDebug(0) << "Calling qApp->quit()" << endl;
 	qApp->quit();
+    }
+    kdDebug(0) << "CompleteKilling done, returning" << endl;
 }
 
 void KSMServer::timeoutQuit()
 {
+  kdDebug(0) << "KSMServer::timeoutQuit" << endl;
     qApp->quit();
 }
 
 void KSMServer::discardSession()
 {
+  kdDebug(0) << "KSMServer::discardSession" << endl;
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
     int count =  config->readNumEntry( "count" );
@@ -1174,6 +1240,7 @@ void KSMServer::discardSession()
 
 void KSMServer::storeSesssion()
 {
+  kdDebug(0) << "KSMServer::storeSesssion" << endl;
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
     int count =  0;
@@ -1200,6 +1267,7 @@ void KSMServer::storeSesssion()
  */
 void KSMServer::restoreSession()
 {
+  kdDebug(0) << "KSMServer::restoreSession" << endl;
     upAndRunning( "restore session");
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
@@ -1239,6 +1307,7 @@ void KSMServer::restoreSession()
  */
 void KSMServer::startDefaultSession()
 {
+  kdDebug(0) << "KSMServer::startDefaultSession" << endl;
     upAndRunning( "start session" );
     progress = 1;
     publishProgress( progress, true );
@@ -1248,6 +1317,7 @@ void KSMServer::startDefaultSession()
 
 void KSMServer::restoreSessionInternal()
 {
+  kdDebug(0) << "KSMServer::restoreSessionInternal" << endl;
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
     int count =  config->readNumEntry( "count" );
@@ -1266,6 +1336,7 @@ void KSMServer::restoreSessionInternal()
 
 void KSMServer::publishProgress( int progress, bool max  )
 {
+  kdDebug(0) << "KSMServer::publishProgress" << " progress=" << progress << " max=" << (max ? "true" : "false" ) << endl;
     QByteArray data;
     QDataStream arg(data, IO_WriteOnly);
     arg << progress;
@@ -1275,5 +1346,6 @@ void KSMServer::publishProgress( int progress, bool max  )
 
 void KSMServer::upAndRunning( const QString& msg )
 {
+  kdDebug(0) << "KSMServer::upAndRunning" << " msg=" << msg << endl;
     kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)", msg );
 }
