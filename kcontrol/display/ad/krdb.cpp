@@ -99,7 +99,7 @@ void copyFile(QFile& tmp, QString const& filename)
 
 int main( int argc, char ** argv )
 {
-  KApplication a( argc, argv );
+  KApplication a( argc, argv, "krdb" );
   KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
   QColorGroup cg = a.palette().normal();
   
