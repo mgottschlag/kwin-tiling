@@ -10,6 +10,7 @@
 ** Copyright (C) 1999 by Dirk A. Mueller (reworked for KDE 2.0)
 ** Copyright (C) 2001 by Matthias Ettrich (add support for GTK applications )
 ** Copyright (C) 2001 by Waldo Bastian <bastian@kde.org>
+** Copyright (C) 2002 by Karol Szwed <gallium@kde.org>
 ** This application is freely distributable under the GNU Public License.
 **
 *****************************************************************************/
@@ -65,22 +66,88 @@ static void applyGtkStyles(bool active)
 
 static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
 {
-  bool found;
   QStringList actcg, inactcg, discg;
 
+  kglobals.setGroup("KDE");
+  int contrast = kglobals.readNumEntry("contrast", 7);
+
+  /* build up the KDE palette, and save it to qtrc. */
+
+  /* --- this code is from kapplication.cpp --- */
+  QColor kde2Gray(220, 220, 220);
+  QColor kde2Blue;
+  if (QPixmap::defaultDepth() > 8)
+    kde2Blue.setRgb(84, 112, 152);
+  else
+    kde2Blue.setRgb(0, 0, 192);
+
+  kglobals.setGroup("General");
+  QColor background = kglobals.readColorEntry( "background", &kde2Gray );
+  QColor foreground = kglobals.readColorEntry( "foreground", &Qt::black );
+  QColor button = kglobals.readColorEntry( "buttonBackground", &background );
+  QColor buttonText = kglobals.readColorEntry( "buttonForeground", &foreground );
+  QColor highlight = kglobals.readColorEntry( "selectBackground", &kde2Blue);
+  QColor highlightedText = kglobals.readColorEntry( "selectForeground", &Qt::white );
+  QColor base = kglobals.readColorEntry( "windowBackground", &Qt::white );
+  QColor baseText = kglobals.readColorEntry( "windowForeground", &Qt::black );
+
+  int highlightVal, lowlightVal;
+  highlightVal = 100 + (2*contrast+4)*16/10;
+  lowlightVal = 100 + (2*contrast+4)*10;
+
+  QColor disfg = foreground;
+
+  int h, s, v;
+  disfg.hsv( &h, &s, &v );
+  if (v > 128)
+    // dark bg, light fg - need a darker disabled fg
+    disfg = disfg.dark(lowlightVal);
+  else if (disfg != Qt::black)
+    // light bg, dark fg - need a lighter disabled fg - but only if !black
+    disfg = disfg.light(highlightVal);
+  else
+    // black fg - use darkgrey disabled fg
+    disfg = Qt::darkGray;
+
+  QColorGroup disabledgrp(disfg, background,
+                          background.light(highlightVal),
+                          background.dark(lowlightVal),
+                          background.dark(120),
+                          background.dark(120), base);
+  QColorGroup colgrp(foreground, background, background.light(highlightVal),
+                     background.dark(lowlightVal),
+                     background.dark(120),
+                     baseText, base);
+
+  int inlowlightVal = lowlightVal-25;
+  if(inlowlightVal < 120)
+    inlowlightVal = 120;
+
+  colgrp.setColor(QColorGroup::Highlight, highlight);
+  colgrp.setColor(QColorGroup::HighlightedText, highlightedText);
+  colgrp.setColor(QColorGroup::Button, button);
+  colgrp.setColor(QColorGroup::ButtonText, buttonText);
+  colgrp.setColor(QColorGroup::Midlight, background.light(110));
+
+  disabledgrp.setColor(QColorGroup::Button, button);
+  disabledgrp.setColor(QColorGroup::ButtonText, buttonText);
+  disabledgrp.setColor(QColorGroup::Midlight, background.light(110));
+  QPalette newPal(colgrp, disabledgrp, colgrp);
+  /* --- end of kapplication.cpp palette code --- */
+  
   /* export kde color settings */
   int i;
   for (i = 0; i < QColorGroup::NColorRoles; i++)
-     actcg   << kapp->palette().color(QPalette::Active,
+     actcg   << newPal.color(QPalette::Active,
                 (QColorGroup::ColorRole) i).name();
   for (i = 0; i < QColorGroup::NColorRoles; i++)
-     inactcg << kapp->palette().color(QPalette::Inactive,
+     inactcg << newPal.color(QPalette::Inactive,
                 (QColorGroup::ColorRole) i).name();
   for (i = 0; i < QColorGroup::NColorRoles; i++)
-     discg   << kapp->palette().color(QPalette::Disabled,
+     discg   << newPal.color(QPalette::Disabled,
                 (QColorGroup::ColorRole) i).name();
 
-  settings.writeEntry("/qt/Palette/active", actcg);
+  while (!settings.writeEntry("/qt/Palette/active", actcg)) ;
   settings.writeEntry("/qt/Palette/inactive", inactcg);
   settings.writeEntry("/qt/Palette/disabled", discg);
 
@@ -88,42 +155,39 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
   kglobals.setGroup("WM");
 
   // active colors
-  QPalette pal = QApplication::palette();
-  QColor clr = pal.active().background();
+  QColor clr = newPal.active().background();
   clr = kglobals.readColorEntry("activeBackground", &clr);
   settings.writeEntry("/qt/KWinPalette/activeBackground", clr.name());
   if (QPixmap::defaultDepth() > 8)
     clr = clr.dark(110);
   clr = kglobals.readColorEntry("activeBlend", &clr);
   settings.writeEntry("/qt/KWinPalette/activeBlend", clr.name());
-  clr = pal.active().highlightedText();
+  clr = newPal.active().highlightedText();
   clr = kglobals.readColorEntry("activeForeground", &clr);
   settings.writeEntry("/qt/KWinPalette/activeForeground", clr.name());
-  clr = pal.active().background();
+  clr = newPal.active().background();
   clr = kglobals.readColorEntry("frame", &clr);
   settings.writeEntry("/qt/KWinPalette/frame", clr.name());
   clr = kglobals.readColorEntry("activeTitleBtnBg", &clr);
   settings.writeEntry("/qt/KWinPalette/activeTitleBtnBg", clr.name());
   
   // inactive colors
-  clr = pal.inactive().background();
+  clr = newPal.inactive().background();
   clr = kglobals.readColorEntry("inactiveBackground", &clr);
   settings.writeEntry("/qt/KWinPalette/inactiveBackground", clr.name());
   if (QPixmap::defaultDepth() > 8)
     clr = clr.dark(110);
   clr = kglobals.readColorEntry("inactiveBlend", &clr);
   settings.writeEntry("/qt/KWinPalette/inactiveBlend", clr.name());
-  clr = pal.inactive().background().dark();
+  clr = newPal.inactive().background().dark();
   clr = kglobals.readColorEntry("inactiveForeground", &clr);
   settings.writeEntry("/qt/KWinPalette/inactiveForeground", clr.name());
-  clr = pal.inactive().background();
+  clr = newPal.inactive().background();
   clr = kglobals.readColorEntry("inactiveFrame", &clr);
   settings.writeEntry("/qt/KWinPalette/inactiveFrame", clr.name());
   clr = kglobals.readColorEntry("inactiveTitleBtnBg", &clr);
   settings.writeEntry("/qt/KWinPalette/inactiveTitleBtnBg", clr.name());
 
-  kglobals.setGroup("KDE");
-  int contrast = kglobals.readNumEntry("contrast", 7);
   settings.writeEntry("/qt/KDE/contrast", contrast);
 }
 
@@ -348,8 +412,22 @@ void runRdb( uint flags )
 
     applyGtkStyles(true);
 
-  } else
+  } else {
     applyGtkStyles(false);
+
+    // Undo the property xrdb has placed on the root window (if any).
+    Atom resource_manager;
+    resource_manager = XInternAtom( qt_xdisplay(), "RESOURCE_MANAGER", True);
+    if (resource_manager != None)
+      XDeleteProperty( qt_xdisplay(), qt_xrootwin(), resource_manager);
+
+    // Undo Qt's _qt_desktop_properties (do we need to do this?)
+    // (we prefer x11_apply_settings as its more featureful)
+/*    Atom qt_desktop_properties;
+    qt_desktop_properties = XInternAtom( qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", True);
+    if (qt_desktop_properties != None)
+      XDeleteProperty( qt_xdisplay(), qt_xrootwin(), resouce_manager);	*/
+  }
 
   /* Qt exports */
   bool exportQtColors   = flags & KRdbExportQtColors;
@@ -366,6 +444,7 @@ void runRdb( uint flags )
       applyQtSettings( kglobals, *settings );  // For kcmstyle
 
     delete settings;
+    QApplication::flushX();
 
     // We let KIPC take care of ourselves, as we are in a KDE app with
     // QApp::setDesktopSettingsAware(false);
@@ -390,6 +469,7 @@ void runRdb( uint flags )
 		     qt_settings_timestamp, 8, PropModeReplace,
 		     (unsigned char*) stamp.buffer().data(),
 		     stamp.buffer().size() );
+    QApplication::flushX();
   }
 }
 
