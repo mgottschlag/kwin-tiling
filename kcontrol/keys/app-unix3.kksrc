@@ -1,6 +1,7 @@
 [Standard Key Scheme]
 Name=Unix Default
 Name[af]=unix verstek
+Name[ar]=الإعداد الإفتراضي ليونكس
 Name[az]=Unix Əsas
 Name[bg]=По подразбиране на Unix
 Name[bs]=Unix uobičajeno
@@ -32,6 +33,7 @@ Name[pt_BR]=Unix por Omissão
 Name[ru]=Как в обычном Unix
 Name[sk]=Unix štandardná
 Name[sl]=Privzeto za Unix
+Name[sr]=Predefinisano na UNIX-u
 Name[sv]=Unix-förinställt
 Name[ta]=Unix ¦¸¡¼¡¿¢¨Ä
 Name[tr]=Unix Öntanımlı

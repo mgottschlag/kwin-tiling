@@ -1,6 +1,7 @@
 [Global Key Scheme]
 Name=Mac Default
 Name[af]=mac verstek
+Name[ar]=الإعداد الإفتراضي للماكينتوش
 Name[az]=Mac Əsas
 Name[bg]=По подразбиране Макинтош
 Name[bs]=Mac uobičajeno
@@ -32,6 +33,7 @@ Name[pt_BR]=Mac por Omissão
 Name[ru]=Как в Mac
 Name[sk]=Mac štandardná
 Name[sl]=Privzeto za Mac
+Name[sr]=Predefinisano na Mac-u
 Name[sv]=Mac-förinställt
 Name[ta]=Mac ¦¸¡¼¡¿¢¨Ä
 Name[tr]=Mac Öntanımlı
