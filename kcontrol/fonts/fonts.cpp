@@ -87,6 +87,7 @@ QString FontUseItem::fontString(QFont rFont)
 void FontUseItem::setDefault()
 {
   _font = _default;
+  _charset = _defaultCharset;
   updateLabel();
 }
 
