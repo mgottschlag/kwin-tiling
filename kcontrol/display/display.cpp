@@ -31,16 +31,18 @@ typedef KGenericFactory<KCMDisplay, QWidget> DisplayFactory;
 K_EXPORT_COMPONENT_FACTORY ( kcm_display, DisplayFactory( "display" ) )
 
 KCMDisplay::KCMDisplay( QWidget *parent, const char *name, const QStringList& )
-    : KCModule( parent, name ),
-      m_randr( 0 ), m_gamma( 0 ), m_xiner( 0 ), m_energy( 0 )
+    : KCModule( parent, name )
+    , m_changed(false)
 {
   m_tabs = new QTabWidget( this );
 
-  m_randr = addTab( "randr", i18n( "Size && Orientation" ) );
-  m_gamma = addTab( "kgamma", i18n( "Monitor Gamma" ) );
+  addTab( "randr", i18n( "Size && Orientation" ) );
+  addTab( "nvidiadisplay", i18n( "Graphics Adaptor" ) );
+  addTab( "nvidia3d", i18n( "3D Options" ) );
+  addTab( "kgamma", i18n( "Monitor Gamma" ) );
   if ( QApplication::desktop()->isVirtualDesktop() )
-    m_xiner = addTab( "xinerama", i18n( "Multiple Monitors" ) );
-  m_energy = addTab( "energy", i18n( "Power Control" ) );
+    addTab( "xinerama", i18n( "Multiple Monitors" ) );
+  addTab( "energy", i18n( "Power Control" ) );
 
   QVBoxLayout *top = new QVBoxLayout( this, 0, KDialog::spacingHint() );
   top->addWidget( m_tabs );
@@ -49,7 +51,7 @@ KCMDisplay::KCMDisplay( QWidget *parent, const char *name, const QStringList& )
   load();
 }
 
-KCModule* KCMDisplay::addTab( const QString &name, const QString &label )
+void KCMDisplay::addTab( const QString &name, const QString &label )
 {
   QWidget *page = new QWidget( m_tabs, name.latin1() );
   QVBoxLayout *top = new QVBoxLayout( page, KDialog::marginHint() );
@@ -61,36 +63,48 @@ KCModule* KCMDisplay::addTab( const QString &name, const QString &label )
     top->addWidget( kcm );
     m_tabs->addTab( page, label );
 
-    connect( kcm, SIGNAL( changed(bool) ), SIGNAL( changed(bool) ) );
+    connect( kcm, SIGNAL( changed(bool) ), SLOT( moduleChanged(bool) ) );
+    m_modules.insert(kcm, false);
   }
   else
     delete page;
-
-  return kcm;
 }
 
 void KCMDisplay::load()
 {
-  if ( m_randr )
-    m_randr->load();
-  if ( m_gamma )
-    m_gamma->load();
-  if ( m_xiner )
-    m_xiner->load();
-  if ( m_energy )
-    m_energy->load();
+  for (QMap<KCModule*, bool>::ConstIterator it = m_modules.begin(); it != m_modules.end(); ++it)
+    it.key()->load();
 }
 
 void KCMDisplay::save()
 {
-  if ( m_randr )
-    m_randr->save();
-  if ( m_gamma )
-    m_gamma->save();
-  if ( m_xiner )
-    m_xiner->save();
-  if ( m_energy )
-    m_energy->save();
+  for (QMap<KCModule*, bool>::Iterator it = m_modules.begin(); it != m_modules.end(); ++it)
+    if (it.data())
+      it.key()->save();
+}
+
+void KCMDisplay::moduleChanged( bool isChanged )
+{
+  QMap<KCModule*, bool>::Iterator currentModule = m_modules.find(static_cast<KCModule*>(const_cast<QObject*>(sender())));
+  Q_ASSERT(currentModule != m_modules.end());
+  if (currentModule.data() == isChanged)
+    return;
+    
+  currentModule.data() = isChanged;
+
+  bool c = false;
+  
+  for (QMap<KCModule*, bool>::ConstIterator it = m_modules.begin(); it != m_modules.end(); ++it) {
+    if (it.data()) {
+      c = true;
+      break;
+    }
+  }
+    
+  if (m_changed != c) {
+    m_changed = c;
+    emit changed(c);
+  }
 }
 
 #include "display.moc"

@@ -33,15 +33,15 @@ class KCMDisplay : public KCModule
     void load();
     void save();
 
-  protected:
-    KCModule* addTab( const QString &name, const QString &label );
+  private slots:
+    void moduleChanged(bool isChanged);
 
   private:
+    void addTab( const QString &name, const QString &label );
+    
     QTabWidget *m_tabs;
-    KCModule *m_randr;
-    KCModule *m_gamma;
-    KCModule *m_xiner;
-    KCModule *m_energy;
+    QMap<KCModule*, bool> m_modules;
+    bool m_changed;
 };
 
 #endif // DISPLAY_H
