@@ -14,7 +14,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <iostream.h>
 
 
 #include <qfile.h>
