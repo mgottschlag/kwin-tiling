@@ -1,6 +1,6 @@
 /*
  *  kcmsmserver.cpp
- *  Copyright (c) 2000 Oswald Buddenhagen <ob6@inf.tu-dresden.de>
+ *  Copyright (c) 2000,2002 Oswald Buddenhagen <ossi@kde.org>
  *
  *  based on kcmtaskbar.cpp
  *  Copyright (c) 2000 Kurt Granroth <granroth@kde.org>
@@ -27,6 +27,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <qcheckbox.h>
+#include <qradiobutton.h>
 #include <kgenericfactory.h>
 
 #include "kcmsmserver.h"
@@ -63,6 +64,17 @@ void SMServerConfig::load()
   c->setGroup("General");
   dialog->confirmLogoutCheck->setChecked(c->readBoolEntry("confirmLogout", true));
   dialog->saveSessionCheck->setChecked(c->readBoolEntry("saveSession", true));
+  switch (c->readNumEntry("shutdownType", int(KApplication::ShutdownTypeNone))) {
+  case int(KApplication::ShutdownTypeHalt):
+    dialog->haltRadio->setChecked(true);
+    break;
+  case int(KApplication::ShutdownTypeReboot):
+    dialog->rebootRadio->setChecked(true);
+    break;
+  default:
+    dialog->logoutRadio->setChecked(true);
+    break;
+  }
   delete c;
 
   emit changed(false);
@@ -74,6 +86,12 @@ void SMServerConfig::save()
   c->setGroup("General");
   c->writeEntry( "saveSession", dialog->saveSessionCheck->isChecked());
   c->writeEntry( "confirmLogout", dialog->confirmLogoutCheck->isChecked());
+  c->writeEntry( "shutdownType",
+                 dialog->haltRadio->isChecked() ?
+                   int(KApplication::ShutdownTypeHalt) :
+                   dialog->rebootRadio->isChecked() ?
+                     int(KApplication::ShutdownTypeReboot) :
+                     int(KApplication::ShutdownTypeNone));
   c->sync();
   delete c;
 
@@ -84,6 +102,7 @@ void SMServerConfig::defaults()
 {
   dialog->saveSessionCheck->setChecked(true);
   dialog->confirmLogoutCheck->setChecked(true);
+  dialog->logoutRadio->setChecked(true);
 
   emit changed(true);
 }
@@ -93,8 +112,9 @@ QString SMServerConfig::quickHelp() const
   return i18n("<h1>Session Manager</h1>"
     " You can configure the session manager here."
     " This includes options such as whether or not the session exit (logout)"
-    " should be confirmed and if the previous session should be restored"
-    " when logging in.");
+    " should be confirmed, whether the session should be saved when exitting"
+    " and whether the computer should be automatically shut down after session"
+    " exit by default.");
 }
 
 #include "kcmsmserver.moc"

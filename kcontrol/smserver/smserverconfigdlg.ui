@@ -1,119 +1,145 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>SMServerConfigDlg</class>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>SMServerConfigDlg</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>270</width>
-            <height>115</height>
+            <width>285</width>
+            <height>309</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Session Manager</string>
     </property>
-    <property>
-        <name>layoutMargin</name>
+    <property name="layoutMargin" stdset="0">
     </property>
     <vbox>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget>
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>GroupBox5</cstring>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>topBox</cstring>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>5</hsizetype>
                     <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>Session Manager</string>
+            <property name="title">
+                <string>General</string>
             </property>
-            <property stdset="1">
-                <name>alignment</name>
+            <property name="alignment">
                 <set>AlignTop|AlignLeft</set>
             </property>
-            <property>
-                <name>layoutMargin</name>
+            <property name="layoutMargin" stdset="0">
             </property>
-            <property>
-                <name>vAlign</name>
+            <property name="vAlign" stdset="0">
             </property>
             <vbox>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget>
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox">
+                    <property name="name">
                         <cstring>confirmLogoutCheck</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Confirm &amp;logout</string>
+                    <property name="text">
+                        <string>Conf&amp;irm logout</string>
                     </property>
-                    <property>
-                        <name>whatsThis</name>
+                    <property name="whatsThis" stdset="0">
                         <string>Check this option if you want the session manager to display a logout confirmation dialog box.</string>
                     </property>
                 </widget>
-                <widget>
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox">
+                    <property name="name">
                         <cstring>saveSessionCheck</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Restore previous session when logging in</string>
+                    <property name="text">
+                        <string>&amp;Save session for future logins</string>
                     </property>
-                    <property>
-                        <name>whatsThis</name>
-                        <string>Check this option if you want the session manager to save the running session when logging out and restore it on the next login.</string>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check this option if you want the session manager to save the running session when logging out. At login time the last saved session will be restored.</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>sdGroup</cstring>
+            </property>
+            <property name="title">
+                <string>Default action after logout</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Here you can choose what should happen by default when you log out. This only has meaning, if you logged in through KDM.</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>logoutRadio</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Login as different user</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>haltRadio</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Turn off computer</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>rebootRadio</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Restart computer</string>
                     </property>
                 </widget>
             </vbox>
         </widget>
         <spacer>
-            <property>
-                <name>name</name>
-                <cstring>Spacer5</cstring>
+            <property name="name" stdset="0">
+                <cstring>bottomSpacer</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Vertical</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>MinimumExpanding</enum>
+            <property name="sizeType">
+                <enum>Expanding</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>20</width>
                     <height>20</height>
@@ -124,17 +150,38 @@
 </widget>
 <connections>
     <connection>
-        <sender>confirmLogoutCheck</sender>
-        <signal>clicked()</signal>
+        <sender>saveSessionCheck</sender>
+        <signal>toggled(bool)</signal>
         <receiver>SMServerConfigDlg</receiver>
         <slot>configChanged()</slot>
     </connection>
     <connection>
-        <sender>saveSessionCheck</sender>
-        <signal>clicked()</signal>
+        <sender>confirmLogoutCheck</sender>
+        <signal>toggled(bool)</signal>
         <receiver>SMServerConfigDlg</receiver>
         <slot>configChanged()</slot>
     </connection>
-    <slot access="public">configChanged()</slot>
+    <connection>
+        <sender>haltRadio</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>SMServerConfigDlg</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>rebootRadio</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>SMServerConfigDlg</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>logoutRadio</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>SMServerConfigDlg</receiver>
+        <slot>configChanged()</slot>
+    </connection>
 </connections>
+<slots>
+    <slot>configChanged()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>
