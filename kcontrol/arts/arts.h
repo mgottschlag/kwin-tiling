@@ -58,18 +58,25 @@ public:
 
   QString quickHelp() const;
   const KAboutData* aboutData() const;
+
 private slots:
 
   void slotChanged();
   void slotTestSound();
   void slotArtsdExited(KProcess* proc);
   void slotProcessArtsdOutput(KProcess* p, char* buf, int len);
- 
 
 private:
 
   void updateWidgets ();
   void calculateLatency();
+  QString createArgs(bool netTrans,bool duplex, int fragmentCount,
+                     int fragmentSize,
+                     const QString &deviceName,
+                     int rate, int bits, const QString &audioIO,
+                     const QString &addOptions, bool autoSuspend,
+                     int suspendTime,
+                     const QString &messageApplication, int loggingLevel);
   void GetSettings ();
 
   QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
@@ -80,6 +87,7 @@ private:
   KIntNumInput *suspendTime;
   ArtsConfig *artsConfig;
   KConfig *config;
+  int latestProcessStatus;
   int fragmentCount;
   int fragmentSize;
   bool configChanged;
@@ -94,6 +102,9 @@ private:
 
   void initAudioIOList();
   QPtrList<AudioIOElement> audioIOList;
+
+  void restartServer();
+  bool realtimeIsPossible();
 };
 
 

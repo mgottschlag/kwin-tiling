@@ -25,10 +25,6 @@
 
 */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <stdlib.h>
 #include <unistd.h>
 
 #include <qlayout.h>
@@ -45,27 +41,12 @@
 #include <kstandarddirs.h>
 #include <kgenericfactory.h>
 #include <kprocess.h>
-#include <kdebug.h>
 
 #include "arts.h"
 #include <kaboutdata.h>
 
-/* check if starting realtime would be possible */
-
-bool artswrapper_check()
-{
-	if (system("artswrapper check") == 0)
-		return true;
-	return false;
-}
 
 extern "C" {
-	QString createArgs (bool netTrans, bool duplex, int fragmentCount, int fragmentSize,
-			    const QString &deviceName,
-			    int rate, int bits, const QString &audioIO,
-			    const QString &addOptions, bool autoSuspend,
-			    int suspendTime,
-			    const QString &messageApplication, int loggingLevel);
 	void init_arts();
 }
 
@@ -97,24 +78,27 @@ void KArtsModule::initAudioIOList()
 	        this, SLOT(slotProcessArtsdOutput(KProcess*, char*, int)));
 
 	if (!artsd->start(KProcess::Block, KProcess::Stderr)) {
-		KMessageBox::error(0, i18n("Unable to start aRts sound server to retrieve "
-		                           "possible sound I/O methods"));
+		KMessageBox::error(0, i18n("Unable to start aRts sound server to "
+		                           "retrive possible sound I/O methods.\n"
+		                           "Only automatic detection will be "
+		                           "available"));
 	}
 }
 
 void KArtsModule::slotArtsdExited(KProcess* proc)
 {
+	latestProcessStatus = proc->exitStatus();
 	delete proc;
 }
 
 void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
 {
-	// XXX(gioele): I suppose this will be called just once, am I wrong?
+	// XXX(gioele): I suppose this will be called with full lines, am I wrong?
 
 	QStringList availableIOs = QStringList::split("\n", QCString(buf, len));
 	// valid entries have two leading spaces
 	availableIOs = availableIOs.grep(QRegExp("^ {2}"));
-	availableIOs.sort(); // FIXME(gioele): null method should be the last one
+	availableIOs.sort();
 
 	QString name, fullName;
 	QStringList::Iterator it;
@@ -201,7 +185,8 @@ void KArtsModule::GetSettings( void )
 {
 	config->setGroup("Arts");
 	startServer->setChecked(config->readBoolEntry("StartServer",true));
-	startRealtime->setChecked(config->readBoolEntry("StartRealtime",true));
+	startRealtime->setChecked(config->readBoolEntry("StartRealtime",true) &&
+	                          realtimeIsPossible());
 	networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
 	x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
 	fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
@@ -326,7 +311,8 @@ void KArtsModule::save()
 	if (!configChanged)
 		return;
 
-	if (startRealtime->isChecked() && !artswrapper_check()) {
+/* FIXME(gioele): This is no more usefull here, shuld be put in updateWidgets()
+	if (startRealtime->isChecked() && !realtimeIsPossible()) {
 		FILE *why = popen("artswrapper check 2>&1","r");
 
 		QString thereason;
@@ -349,6 +335,7 @@ void KArtsModule::save()
 					 "starting the aRts server with realtime priority. \n"
 					 "The following problem occured:\n")+thereason);
 	}
+*/
 
 	configChanged = false;
 	saveParams();
@@ -364,28 +351,26 @@ void KArtsModule::save()
                      dialogText,
 				     i18n("Restart Sound Server Now?")) == KMessageBox::Yes)
 	{
-		system("artsshell terminate");
-		sleep(1);				// leave artsd some time to go away
-		init_arts();
+		restartServer();
 	}
 }
 
 void KArtsModule::slotTestSound()
 {
-	if(configChanged) {
+	if(configChanged)
 		save();
-		sleep(1);
-	}
 
-	QCString playCmd = "artsplay ";
-	playCmd += locate( "sound", "KDE_Startup.wav" ).ascii();
-	system(playCmd);
+	KProcess test;
+	test << "artsplay";
+	test << locate("sound", "KDE_Startup.wav");
+	test.start(KProcess::DontCare);
 }
 
 void KArtsModule::defaults()
 {
 	startServer->setChecked(true);
-	startRealtime->setChecked(true);
+	startRealtime->setChecked(startRealtime->isEnabled() &&
+	                          realtimeIsPossible());
 	networkTransparent->setChecked(false);
 	x11Comm->setChecked(false);
 	fullDuplex->setChecked(false);
@@ -465,6 +450,12 @@ void KArtsModule::calculateLatency()
 void KArtsModule::updateWidgets()
 {
 	startRealtime->setEnabled(startServer->isChecked());
+	if (startRealtime->isChecked() && !realtimeIsPossible()) {
+		startRealtime->setChecked(false);
+		KMessageBox::error(this, i18n("Impossible to start aRts with realtime "
+		                              "priority because artswrapper is "
+		                              "missing or disabled"));
+	}
 	networkTransparent->setEnabled(startServer->isChecked());
 	x11Comm->setEnabled(startServer->isChecked());
 	fullDuplex->setEnabled(startServer->isChecked());
@@ -488,6 +479,37 @@ void KArtsModule::slotChanged()
 	updateWidgets();
 	configChanged = true;
 	emit changed(true);
+}
+
+/* check if starting realtime would be possible */
+bool KArtsModule::realtimeIsPossible()
+{
+	KProcess* checkProcess = new KProcess();
+	*checkProcess << "artswrapper";
+	*checkProcess << "check";
+
+	connect(checkProcess, SIGNAL(processExited(KProcess*)),
+	        this, SLOT(slotArtsdExited(KProcess*)));
+	checkProcess->start(KProcess::Block);
+
+	if (latestProcessStatus == 0)
+		return true;
+	return false;
+}
+
+void KArtsModule::restartServer() 
+{
+	KProcess terminateArts;
+	terminateArts << "artsshell";
+	terminateArts << "terminate";
+	terminateArts.start(KProcess::Block);
+	// leave artsd some time to go away
+	sleep(1);
+
+	init_arts();
+	// FIXME(gioele): loop until artsshell status returns ok
+	//                and add a KProgressDialog
+	sleep(1);
 }
 
 void init_arts()
@@ -515,16 +537,18 @@ void init_arts()
 
 	if (startServer)
 		kapp->kdeinitExec(startRealtime?"artswrapper":"artsd",
-				  QStringList::split(" ",args));
+		                  QStringList::split(" ",args));
 }
 
-QString createArgs(bool netTrans,
-		   bool duplex, int fragmentCount, int fragmentSize,
-		   const QString &deviceName,
-		   int rate, int bits, const QString &audioIO,
-		   const QString &addOptions, bool autoSuspend,
-		   int suspendTime,
-		   const QString &messageApplication, int loggingLevel)
+QString KArtsModule::createArgs(bool netTrans,
+                                bool duplex, int fragmentCount,
+                                int fragmentSize,
+                                const QString &deviceName,
+                                int rate, int bits, const QString &audioIO,
+                                const QString &addOptions, bool autoSuspend,
+                                int suspendTime,
+                                const QString &messageApplication,
+                                int loggingLevel)
 {
 	QString args;
 
@@ -534,7 +558,7 @@ QString createArgs(bool netTrans,
 	if(fragmentSize)
 		args += QString::fromLatin1(" -S %1").arg(fragmentSize);
 
-	if (audioIO.length() > 0)
+	if (!audioIO.isEmpty())
 		args += QString::fromLatin1(" -a %1").arg(audioIO);
 
 	if (duplex)
@@ -543,7 +567,7 @@ QString createArgs(bool netTrans,
 	if (netTrans)
 		args += QString::fromLatin1(" -n");
 
-	if (deviceName.length() > 0)
+	if (!deviceName.isEmpty())
 		args += QString::fromLatin1(" -D ") + deviceName;
 
 	if (rate)
@@ -555,10 +579,10 @@ QString createArgs(bool netTrans,
 	if (autoSuspend)
 		args += QString::fromLatin1(" -s %1").arg(suspendTime);
 
-	if (messageApplication.length() > 0)
+	if (!messageApplication.isEmpty())
 		args += QString::fromLatin1(" -m ") + messageApplication;
 
-	if (addOptions.length() > 0)
+	if (!addOptions.isEmpty())
 		args += QChar(' ') + addOptions;
 
 	args += QString::fromLatin1(" -l %1").arg(loggingLevel);
