@@ -194,6 +194,18 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     return true;
   }
 
+  // Detect UNC style (aka windows SMB) URLs
+  if ( cmd.startsWith( QString::fromLatin1( "\\\\") ) )
+  {
+    cmd.remove(0, 2);
+    // make sure path is unix style
+    cmd.replace('\\', '/');
+    cmd.prepend( QString::fromLatin1( "smb://" ) );
+    setFilteredURI( data, KURL( cmd ));
+    setURIType( data, KURIFilterData::NET_PROTOCOL );
+    return true;
+  }
+
   bool expanded = false;
   
   // Expanding shortcut to HOME URL...
