@@ -182,6 +182,7 @@ const QString CConfig::constTTSubDirs[]=
 {
     constDefaultTTSubDir,
     "truetype/",
+    "Truetype/",
     "ttf/",
     "TTF/",
     "Ttf/",
@@ -189,6 +190,7 @@ const QString CConfig::constTTSubDirs[]=
     "TT",
     "True_Type/",
     "true_type/",
+    "True_type/",
     QString::null
 };
 const QString CConfig::constT1SubDirs[]=
@@ -200,6 +202,8 @@ const QString CConfig::constT1SubDirs[]=
     "Postscript/",
     "PSType1/",
     "pstype1/",
+    "PsType1/",
+    "Pstype1/",
     QString::null
 };
 const QString CConfig::constEncodingsSubDirs[]=
