@@ -427,7 +427,7 @@ bool ThemePage::isCursorTheme( const QString &theme, const int depth ) const
 				if ( *it2 == theme ) // Avoid possible DoS
 					continue;
 
-				if ( isCursorTheme( *it2, depth + 1 ) );
+				if ( isCursorTheme( *it2, depth + 1 ) )
 					return true;
 			}
 		}

@@ -300,7 +300,7 @@ static bool readNum(char **ptr, double *num)
     while(isWhiteSpace(**ptr))
         (*ptr)++;
 
-    while(numChars<=constMaxNumLen && (isdigit(**ptr) ||
+    while(numChars<constMaxNumLen && (isdigit(**ptr) ||
           ('.'==**ptr && foundNum && !foundPoint && !foundE) || ('e'==**ptr && foundNum && !foundE)))
     {
         n[numChars++]=**ptr;
