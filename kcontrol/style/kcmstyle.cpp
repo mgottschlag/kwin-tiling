@@ -66,6 +66,7 @@ extern "C"
 {
 	KCModule *create_style(QWidget *parent, const char*) 
 	{
+		KGlobal::locale()->insertCatalogue("kcmstyle");
 		return new KCMStyle(parent, "kcmstyle");
 	}
 }
