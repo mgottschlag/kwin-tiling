@@ -247,10 +247,11 @@ void topKCMEmail::defaults()
 
 	m_email->txtEMailAddr->setText(tmp);
 
-	QString client = KGlobal::dirs()->findResource("exe", "kmail");
+/*	QString client = KGlobal::dirs()->findResource("exe", "kmail");
 
 	if (client.isEmpty())
-		client = "kmail";
+		client = "kmail"; */
+	QString client = "kmail";
 
 	m_email->txtEMailClient->setURL(client);
 
