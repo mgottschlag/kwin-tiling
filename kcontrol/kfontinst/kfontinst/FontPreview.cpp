@@ -39,7 +39,7 @@ CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str
               itsLastWidth(0),
               itsLastHeight(0),
               itsJob(NULL),
-              itsString(QString::null==str ? i18n(" No preview available") : str)
+              itsString(str.isNull() ? i18n(" No preview available") : str)
 {
 }
 

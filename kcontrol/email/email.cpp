@@ -147,9 +147,9 @@ void topKCMEmail::load()
 
 void topKCMEmail::load(const QString &s)
 {
-	if (s == QString::null) {
+	if (s.isNull()) {
 		m_email->cmbCurProfile->insertStringList(pSettings->profiles());
-		if (pSettings->defaultProfileName() != QString::null) {
+		if (!pSettings->defaultProfileName().isNull()) {
 			kdDebug() << "prfile is: " << pSettings->defaultProfileName()<< "line is " << __LINE__ << endl;
 			load(pSettings->defaultProfileName());
 		} else {

@@ -58,11 +58,11 @@ static QString getDir(const QString &entry, const QString *posibilities, const Q
     {
         int d;
 
-        for(d=0; QString::null!=posibilities[d]; ++d)
+        for(d=0; !posibilities[d].isNull(); ++d)
             if(CMisc::dExists(base+posibilities[d]))
                 break;
 
-        return QString::null==posibilities[d] ? QString::null : base+posibilities[d];
+        return posibilities[d].isNull() ? QString::null : base+posibilities[d];
     }
 }
 
@@ -101,7 +101,7 @@ static const QString & getFile(const QString &entry, const QString *posibilities
     {
         int f;
 
-        for(f=0; QString::null!=posibilities[f]; ++f)
+        for(f=0; !posibilities[f].isNull(); ++f)
             if(CMisc::fExists(posibilities[f]))
                 break;
 
@@ -129,14 +129,14 @@ static QString locateFile(const QString &dir, const QString *files, int level=0)
                     if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                         if(fInfo->isDir())
                         {
-                            if(QString::null!=(str=locateFile(fInfo->filePath()+"/", files, level+1)))
+                            if(!(str=locateFile(fInfo->filePath()+"/", files, level+1)).isNull())
                                 return str;
                         }
                         else
                         {
                             int f;
 
-                            for(f=0; QString::null!=files[f]; ++f)
+                            for(f=0; !files[f].isNull(); ++f)
                                 if(fInfo->fileName()==files[f])
                                     return fInfo->filePath();
                         }
@@ -156,8 +156,8 @@ static QString getFile(const QString &entry, const QString *dirs, const QString 
         int     d;
         QString str;
 
-        for(d=0; QString::null!=dirs[d]; ++d)
-            if(QString::null!=(str=locateFile(dirs[d], files)))
+        for(d=0; !dirs[d].isNull(); ++d)
+            if(!(str=locateFile(dirs[d], files)).isNull())
                 return str;
 
         return QString::null;
@@ -318,7 +318,7 @@ void CConfig::load()
     intVal=readNumEntry("XRefreshCmd", XREFRESH_XSET_FP_REHASH);
     itsXRefreshCmd=intVal>=0 && intVal <=XREFRESH_CUSTOM ? (EXFontListRefresh)intVal : XREFRESH_XSET_FP_REHASH;
     itsCustomXRefreshCmd=readEntry("CustomXRefreshCmd");
-    if(QString::null==itsCustomXRefreshCmd && itsXRefreshCmd==XREFRESH_CUSTOM)
+    if(itsCustomXRefreshCmd.isNull() && itsXRefreshCmd==XREFRESH_CUSTOM)
         itsXRefreshCmd=XREFRESH_XSET_FP_REHASH;
     //
     // Check data read from config file is valid...
@@ -339,7 +339,7 @@ void CConfig::load()
                         CMisc::createDir(defaultFontsDir);
             }
 
-    if(QString::null==(itsFontsDir=getDir(itsFontsDir, constFontsDirs)))
+    if((itsFontsDir=getDir(itsFontsDir, constFontsDirs)).isNull())
         itsFontsDir=i18n(constNotFound.utf8());
 
     //
@@ -362,18 +362,18 @@ void CConfig::load()
     itsTTSubDir=getDir(itsTTSubDir, constTTSubDirs, itsFontsDir);
     itsT1SubDir=getDir(itsT1SubDir, constT1SubDirs, itsFontsDir);
 
-    if(QString::null==itsTTSubDir || QString::null==itsT1SubDir)
-        if(QString::null==itsTTSubDir && QString::null!=itsT1SubDir)
+    if(itsTTSubDir.isNull() || itsT1SubDir.isNull())
+        if(itsTTSubDir.isNull() && !itsT1SubDir.isNull())
             itsTTSubDir=itsT1SubDir;
         else
-            if(QString::null!=itsTTSubDir && QString::null==itsT1SubDir)
+            if(!itsTTSubDir.isNull() && itsT1SubDir.isNull())
                 itsT1SubDir=itsTTSubDir;
             else // Bugger, they're both NULL!!
                 itsT1SubDir=itsTTSubDir=getFirstSubDir(itsFontsDir);
 
     if(CMisc::root())
-        if(QString::null==(itsXConfigFile=getFile(itsXConfigFile, constXConfigFiles)))
-            if(QString::null==(itsXConfigFile=getFile(itsXConfigFile, constXfsConfigFiles)))
+        if((itsXConfigFile=getFile(itsXConfigFile, constXConfigFiles)).isNull())
+            if((itsXConfigFile=getFile(itsXConfigFile, constXfsConfigFiles)).isNull())
                 itsXConfigFile=i18n(constNotFound.utf8());
 
     if(!CMisc::dExists(itsEncodingsDir))
@@ -383,8 +383,8 @@ void CConfig::load()
         int     t,
                 s;
 
-        for(t=0; top[t]!=QString::null && !found; ++t)
-            for(s=0; constEncodingsSubDirs[s]!=QString::null && !found; ++s)
+        for(t=0; !top[t].isNull() && !found; ++t)
+            for(s=0; !constEncodingsSubDirs[s].isNull() && !found; ++s)
                 if(CMisc::dExists(top[t]+constEncodingsSubDirs[s]))
                 {
                     itsEncodingsDir=top[t]+constEncodingsSubDirs[s];
@@ -397,13 +397,13 @@ void CConfig::load()
 
     if(CMisc::root())
     {
-        if(QString::null==(itsGhostscriptFile=getFile(itsGhostscriptFile, constGhostscriptDirs, constGhostscriptFiles)))
+        if((itsGhostscriptFile=getFile(itsGhostscriptFile, constGhostscriptDirs, constGhostscriptFiles)).isNull())
         {
             itsGhostscriptFile=i18n(constNotFound.utf8());
             itsDoGhostscript=false;
         }
 
-        if(QString::null==(itsCupsDir=getDir(itsCupsDir, constCupsDirs)))
+        if((itsCupsDir=getDir(itsCupsDir, constCupsDirs)).isNull())
         {
             itsCupsDir=i18n(constNotFound.utf8());
             itsDoCups=false;
@@ -416,7 +416,7 @@ void CConfig::load()
         }
     }
 
-    if(QString::null==(itsSODir=getDir(itsSODir, constSODirs)))
+    if((itsSODir=getDir(itsSODir, constSODirs)).isNull())
         itsSODir="/";
 
     // Can only configure StarOffice if AFM generation has been selected...
@@ -643,7 +643,7 @@ void CConfig::checkAndModifyXConfigFile()
                     {
                         int i;
 
-                        for(i=0; QString::null!=CConfig::constXfsConfigFiles[i]; ++i)
+                        for(i=0; !CConfig::constXfsConfigFiles[i].isNull(); ++i)
                             if(CMisc::fExists(CConfig::constXfsConfigFiles[i]))
                             {
                                 itsXRefreshCmd=XREFRESH_XFS_RESTART;

@@ -106,7 +106,7 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName)
                     else
                         enc=encs.first();  // Hmmm... just use the first available...
 
-            if(QString::null!=enc)
+            if(!enc.isNull())
                 status=create(fName, enc, CEncodings::constT1Symbol==enc || CEncodings::constTTSymbol==enc ? true : false);
             else
                 status=COULD_NOT_FIND_ENCODING;
@@ -224,7 +224,7 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName, const QString &en
                 << "Version 001.00" << endl
                 << "EncodingScheme ";
 
-            if(CFontEngine::isAType1(fName.local8Bit()) && QString::null!=CKfiGlobal::fe().getAfmEncodingT1())
+            if(CFontEngine::isAType1(fName.local8Bit()) && !CKfiGlobal::fe().getAfmEncodingT1().isNull())
                 afm << CKfiGlobal::fe().getAfmEncodingT1().latin1();
             else
                 afm << "FontSpecific";

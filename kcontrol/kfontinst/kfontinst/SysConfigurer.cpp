@@ -294,7 +294,7 @@ void CSysConfigurer::status(const QString &str, const QString &errorMsg, bool er
     {
         emit stopProgress();
 
-        KMessageBox::error(itsParent, str+ (QString::null==errorMsg ? QString::null : "\n("+errorMsg+")"), i18n("Error"));
+        KMessageBox::error(itsParent, str+ (errorMsg.isNull() ? QString::null : "\n("+errorMsg+")"), i18n("Error"));
     }
     else
         if(QString(constFinishedStr)!=str)

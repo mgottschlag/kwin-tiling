@@ -39,7 +39,7 @@ void extensionInfo::load()
 {
     setDefaults();
 
-    if (_desktopFile == QString::null)
+    if (_desktopFile.isNull())
     {
         _name = i18n("Main Panel");
         _resizeable = true;

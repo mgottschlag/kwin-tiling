@@ -172,7 +172,7 @@ bool GetInfo_Sound (QListView *lbox)
 		olditem = new QListViewItem(lbox, olditem, s);
 	} else {
 		t = new QTextStream(sndstat);
-		while ((s=t->readLine()) != QString::null) {
+		while (!(s=t->readLine()).isNull()) {
 			olditem = new QListViewItem(lbox, olditem, s);
 		}
 
@@ -333,9 +333,9 @@ bool GetInfo_Devices (QListView *lbox)
 		lbox->setRootIsDecorated(true);
 		lbox->addColumn("Device");
 		lbox->addColumn("Description");
-		while ( (line=qts.readLine()) != QString::null) {
+		while ( !(line=qts.readLine()).isNull() ) {
 			controller = GetController(line);
-			if (controller == QString::null)
+			if (controller.isNull())
 				continue;
 			dev=GetDevice(line);
 			if (!dev)
@@ -368,7 +368,7 @@ QString GetController(const QString &line)
 				controller.remove(controller.find("-master"), controller.length());
 			} else
 				controller=QString::null;
-			if (controller != QString::null)
+			if (!controller.isNull())
 				return controller;
 		}
 		if (line.find(" on ") != -1) {

@@ -518,7 +518,7 @@ CFontEngine::EWeight CFontEngine::strToWeight(const char *str)
 
 CFontEngine::EWidth CFontEngine::strToWidth(const QString &str)
 {
-    if(QString::null==str)
+    if(str.isNull())
         return WIDTH_UNKNOWN;
     else if(str.contains("UltraCondensed", false))
         return WIDTH_ULTRA_CONDENSED;
@@ -698,7 +698,7 @@ static QString createNames(const QString &familyName, QString &fullName)
 
     //
     // Remove family name...
-    if(QString::null!=familyName)
+    if(!familyName.isNull())
         if(0==family.find(familyName))    // This removes "Times New Roman" from "Times New Roman Bold" -- this is the gneral case...
             family.remove(0, familyName.length());
         else
@@ -781,7 +781,7 @@ static QString createNames(const QString &familyName, QString &fullName)
 
     //
     // Add the family name back on...
-    if(removedFamily && QString::null!=familyName)
+    if(removedFamily && !familyName.isNull())
         family=familyName+family;
 
     //
@@ -1107,7 +1107,7 @@ QStringList CFontEngine::getEncodingsT1()
 
     if(getIsArrayEncodingT1())
     {
-        if(QString::null!=itsAfmEncoding && NULL!=CKfiGlobal::enc().get8Bit(itsAfmEncoding))
+        if(!itsAfmEncoding.isNull() && NULL!=CKfiGlobal::enc().get8Bit(itsAfmEncoding))
             enc.append(itsAfmEncoding);
 
         enc.append(CEncodings::constT1Symbol);
@@ -1163,13 +1163,13 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
                 //
                 QString psName=lookupNameTT(TT_NAME_ID_PS_NAME);
 
-                if(QString::null==psName)
+                if(psName.isNull())
                     psName=itsFullName;
 
                 itsPsName=psName;
 
                 // Must not start with a digit
-                if(QString::null!=itsPsName)
+                if(!itsPsName.isNull())
                 {
                     unsigned int ch,
                                  ch2;

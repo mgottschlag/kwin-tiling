@@ -119,7 +119,7 @@ bool CMisc::dContainsTTorT1Fonts(const QString &d)
 
 QString CMisc::dirSyntax(const QString &d)
 {
-    if(QString::null!=d)
+    if(!d.isNull())
     {
         QString ds(d);
 
@@ -202,11 +202,11 @@ bool CMisc::doCmd(const QString &cmd, const QString &p1, const QString &p2, cons
 
     proc << cmd;
 
-    if(QString::null!=p1)
+    if(!p1.isNull())
         proc << p1;
-    if(QString::null!=p2)
+    if(!p2.isNull())
         proc << p2;
-    if(QString::null!=p3)
+    if(!p3.isNull())
         proc << p3;
 
     proc.start(KProcess::Block);

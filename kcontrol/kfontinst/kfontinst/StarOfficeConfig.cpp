@@ -131,7 +131,7 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::go(const QString &path)
 
                 QString encFile(CMisc::locate("StarOffice/"+CKfiGlobal::cfg().getAfmEncoding()+".xpp"));
 
-                if(QString::null!=encFile && CMisc::fExists(encFile))
+                if(!encFile.isNull() && CMisc::fExists(encFile))
                 {
                     // Remove existing xprinter.prolog, or move to back-up
                     status= (backupExists ? CMisc::removeFile(xp3Dir+"xprinter.prolog") : CMisc::moveFile(xp3Dir+"xprinter.prolog", xp3Dir+backupProlog))

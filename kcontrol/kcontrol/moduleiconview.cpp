@@ -90,7 +90,7 @@ void ModuleIconView::fill()
   {
     QString path = module->groups().join("/");
     // get the top level subdirs
-    if (_path == QString::null)
+    if (_path.isNull())
     {
       QString top_level(module->groups()[0]);
       if (!subdirs.contains(top_level))
@@ -111,7 +111,7 @@ void ModuleIconView::fill()
 
   QPixmap icon;
   // add our "up" icon if we aren't top level
-  if (_path != QString::null)
+  if (!_path.isNull())
   {
     if (KCGlobal::iconSize() == Small)
     {
@@ -175,7 +175,7 @@ void ModuleIconView::fill()
   }
 
   // we don't ever have any modules on the top level
-  //if (_path == QString::null)
+  //if (_path.isNull())
   //  return;
 
   for (module=_modules->first(); module != 0; module=_modules->next())

@@ -95,7 +95,7 @@ QString CFontSelectorWidget::CListViewItem::fullName() const
 {
     QString name;
 
-    if(QString::null==itsBase)
+    if(itsBase.isNull())
     {
         name=((CListViewItem *)parent())->fullName();
         if("/"!=name)
@@ -142,7 +142,7 @@ void CFontSelectorWidget::CListViewItem::setOpen(bool open)
     QString dName(CMisc::dirSyntax(fullName()));
 
 
-    if(QString::null==itsBase) // Then it's not a top level folder
+    if(itsBase.isNull()) // Then it's not a top level folder
         setPixmap(0, KGlobal::iconLoader()->loadIcon(open ? "folder_open" : "folder", KIcon::Small));
 
     if(open)

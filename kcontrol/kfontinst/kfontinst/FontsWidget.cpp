@@ -198,7 +198,7 @@ void CFontsWidget::initProgress(const QString &title, int numSteps)
 
 void CFontsWidget::progress(const QString &str)
 {
-    if(QString::null!=str)
+    if(!str.isNull())
         itsLabel->setText(" "+str);
 
     if(itsProgress->totalSteps()>0)

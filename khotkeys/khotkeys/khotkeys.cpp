@@ -103,8 +103,7 @@ QString KHotKeysApp::get_desktop_file( const QString& action_P )
     if( current->run.right( 8 ) != ".desktop" )
         return QString::null;
     bool needs_search = false;
-    if( KGlobal::dirs()->findResource( "apps", current->run )
-        == QString::null )
+    if( KGlobal::dirs()->findResource( "apps", current->run ).isNull() )
         needs_search = true; // menu entry no loger exists
     else
         {

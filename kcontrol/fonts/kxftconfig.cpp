@@ -43,7 +43,7 @@ static bool equal(double d1, double d2)
 
 static QString dirSyntax(const QString &d)
 {
-    if(QString::null!=d)
+    if(!d.isNull())
     {
         QString ds(d);
 
@@ -290,11 +290,11 @@ KXftConfig::KXftConfig(int required, bool system)
     {
         int f;
 
-        for(f=0; QString::null!=constConfigFiles[f]; ++f)
+        for(f=0; !constConfigFiles[f].isNull(); ++f)
             if(fExists(constConfigFiles[f]))
                 m_file=constConfigFiles[f];
 
-        if(QString::null==m_file)
+        if(m_file.isNull())
             m_file=defaultPath;
     }
     else
@@ -732,7 +732,7 @@ void KXftConfig::readContents()
                             QDomElement ene=e.firstChild().toElement();
 
                             if(!ene.isNull() && "edit"==ene.tagName() && 
-                               QString::null!=(str=getEntry(ene, "const", 2, "name", "rgba", "mode", "assign")))
+                               !(str=getEntry(ene, "const", 2, "name", "rgba", "mode", "assign")).isNull())
                             {
                                 m_subPixel.node=n;
                                 m_subPixel.type=strToType(str.latin1());
@@ -753,8 +753,8 @@ void KXftConfig::readContents()
                                 if(!ene.isNull())
                                     if("test"==ene.tagName())
                                     {
-                                        if(QString::null!=(str=getEntry(ene, "string", 3, "qual", "any", "name", "family", "compare", "eq"))
-                                           || QString::null!=(str=getEntry(ene, "string", 2, "qual", "any", "name", "family")))
+                                        if(!(str=getEntry(ene, "string", 3, "qual", "any", "name", "family", "compare", "eq")).isNull()
+                                           || !(str=getEntry(ene, "string", 2, "qual", "any", "name", "family")).isNull())
                                             family=str;
                                     }
                                     else if("edit"==ene.tagName())
@@ -764,7 +764,7 @@ void KXftConfig::readContents()
                                 en=en.nextSibling();
                             }
 
-                            if(QString::null!=family && foundEnc)
+                            if(!family.isNull() && foundEnc)
                                 m_symbolFamilies.append(new ListItem(family, n));
                         }
                         break;
@@ -784,10 +784,10 @@ void KXftConfig::readContents()
                                 if(!ene.isNull())
                                     if("test"==ene.tagName())
                                     {
-                                        if(QString::null!=(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "more")))
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "more")).isNull())
                                             from=str.toDouble();
-                                        else if(QString::null!=(str=getEntry(ene, "double", 3, "qual", "any", 
-                                                                                               "name", "size", "compare", "less")))
+                                        else if(!(str=getEntry(ene, "double", 3, "qual", "any",
+                                                                                               "name", "size", "compare", "less")).isNull())
                                             to=str.toDouble();
                                     }
                                     else if("edit"==ene.tagName() && "false"==getEntry(ene, "bool", 2, "name", "antialias", "mode", "assign"))

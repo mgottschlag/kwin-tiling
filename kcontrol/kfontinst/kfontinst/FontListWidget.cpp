@@ -210,7 +210,7 @@ class CDirectoryItem : public CFontListWidget::CListViewItem
     {
         itsEnabled=itsEnabledOrig=CKfiGlobal::xcfg().inPath(fullName());
 
-        if(QString::null!=icon)
+        if(!icon.isNull())
             setPixmap(0, KGlobal::iconLoader()->loadIcon(icon, KIcon::Small));
 
         listView()->setUpdatesEnabled(false);
@@ -309,10 +309,10 @@ class CFontItem : public CFontListWidget::CListViewItem
     QString fullName() const
     {
         if (!itsAvailableOrig)
-           return QString::null!=itsData ? itsData+itsFileName : itsFileName;
+           return !itsData.isNull() ? itsData+itsFileName : itsFileName;
         if (!itsEnabledOrig)
-           return QString::null!=itsPath ? itsPath+constDisabledSubDir+"/"+itsFileName : constDisabledSubDir+"/"+itsFileName;
-        return QString::null!=itsPath ? itsPath+itsFileName : itsFileName;
+           return !itsPath.isNull() ? itsPath+constDisabledSubDir+"/"+itsFileName : constDisabledSubDir+"/"+itsFileName;
+        return !itsPath.isNull() ? itsPath+itsFileName : itsFileName;
     }
 
     private:
@@ -685,13 +685,13 @@ void CFontListWidget::restore(QListViewItem *item, bool checkOpen)
     for(addItem=itsAddItems.first(); addItem; addItem=itsAddItems.next())
         if(itsAdvancedMode)
         {
-            if(QString::null!=addItem->file)
+            if(!addItem->file.isNull())
                 addFont(addItem->source, addItem->dest, addItem->file, checkOpen);
             else
                 addSubDir(addItem->source, addItem->dest, checkOpen);
         }
         else
-            if(QString::null!=addItem->file &&
+            if(!addItem->file.isNull() &&
                (CFontEngine::isAType1(QFile::encodeName(addItem->file)) || CFontEngine::isATtf(QFile::encodeName(addItem->file))))
             {
                 CFontItem *fI=new CFontItem(this, addItem->file, addItem->dest, true, true);
@@ -1019,7 +1019,7 @@ static void addFontToList(KURL::List &list, const QString &str, int from, int to
 {
     QString font(str.mid(from, to-from));
 
-    if(QString::null!=font)
+    if(!font.isNull())
     {
         KURL    url;
 
@@ -1125,7 +1125,7 @@ void CFontListWidget::installFonts(const KURL::List &suppliedList, bool dcop)
     CListViewItem *citem=NULL;
     QString       selectedDir=!dcop && itsAdvancedMode && (NULL!=(citem=getFirstSelectedItem())) ? citem->dir() : QString::null;
 
-    if(!dcop && itsAdvancedMode && (QString::null==selectedDir || CKfiGlobal::cfg().getFontsDir()==selectedDir))
+    if(!dcop && itsAdvancedMode && (selectedDir.isNull() || CKfiGlobal::cfg().getFontsDir()==selectedDir))
         KMessageBox::error(this, i18n("Please select destination folder first!"), i18n("Error"));
     else
     {
@@ -1344,7 +1344,7 @@ void CFontListWidget::applyChanges()
     CFontListWidget::TItem *addItem;
 
     for(addItem=itsAddItems.first(); addItem; addItem=itsAddItems.next())
-        if(QString::null!=addItem->file)
+        if(!addItem->file.isNull())
         {
             QString src(addItem->source+"/"+addItem->file);
 
@@ -1373,7 +1373,7 @@ void CFontListWidget::applyChanges()
 
         // ...adds
         for(addItem=itsAddItems.first(); addItem; addItem=itsAddItems.next())
-            if(QString::null==addItem->file)
+            if(addItem->file.isNull())
                 if(SUCCESS==(status=CMisc::createDir(addItem->source+"/"+addItem->dest) ? SUCCESS : COULD_NOT_CREATE_DIR))
                     successes++;
                 else
@@ -1384,7 +1384,7 @@ void CFontListWidget::applyChanges()
                     CKfiGlobal::cfg().removeModifiedDir(addItem->source+addItem->dest+"/");
                 }
         for(addItem=itsAddItems.first(); addItem; addItem=itsAddItems.next())
-            if(QString::null!=addItem->file)
+            if(!addItem->file.isNull())
                 if(SUCCESS==(status=install(addItem->source, addItem->dest, addItem->file)))
                     successes++;
                 else

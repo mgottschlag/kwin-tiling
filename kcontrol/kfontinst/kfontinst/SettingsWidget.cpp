@@ -247,7 +247,7 @@ void CSettingsWidget::setupSubDirCombos()
                     if(itsTTCombo->text(d)==CKfiGlobal::cfg().getTTSubDir())
                         tt=d;
                     else
-                        for(sub=0; QString::null!=CConfig::constTTSubDirs[sub]; ++sub)
+                        for(sub=0; !CConfig::constTTSubDirs[sub].isNull(); ++sub)
                             if(itsTTCombo->text(d)==CConfig::constTTSubDirs[sub])
                                 tt=d;
                 }
@@ -256,7 +256,7 @@ void CSettingsWidget::setupSubDirCombos()
                     if(itsT1Combo->text(d)==CKfiGlobal::cfg().getT1SubDir())
                         t1=d;
                     else
-                        for(sub=0; QString::null!=CConfig::constT1SubDirs[sub]; ++sub)
+                        for(sub=0; !CConfig::constT1SubDirs[sub].isNull(); ++sub)
                             if(itsT1Combo->text(d)==CConfig::constT1SubDirs[sub])
                                 t1=d;
                 }

@@ -126,7 +126,7 @@ bool CFontmapCreator::insertNames(TFontEntry **entry, const QString &filename)
         {
             TSlant &slant=CFontEngine::ITALIC_NONE!=CKfiGlobal::fe().getItalic() ? (*entry)->italic : (*entry)->roman;
             
-            if(QString::null==slant.filename)
+            if(slant.filename.isNull())
             {
                 slant.filename=filename;
                 slant.psname=CKfiGlobal::fe().getPsName();
@@ -276,7 +276,7 @@ void CFontmapCreator::outputAlias(CBufferedFile &file, const QString &family, co
 
 void CFontmapCreator::outputPsEntry(CBufferedFile &file, const TSlant &slant)
 {
-    if(QString::null!=slant.psname)
+    if(!slant.psname.isNull())
     {
         outputReal(file, slant.psname, slant.filename);
  
@@ -293,9 +293,9 @@ void CFontmapCreator::outputPsEntry(CBufferedFile &file, const TFontEntry *entry
 {
     if(NULL!=entry)
     {
-        if(QString::null!=entry->roman.psname)
+        if(!entry->roman.psname.isNull())
             outputPsEntry(file, entry->roman);
-        if(QString::null!=entry->italic.psname)
+        if(!entry->italic.psname.isNull())
             outputPsEntry(file, entry->italic);
     }
 }
@@ -321,7 +321,7 @@ void CFontmapCreator::outputPsEntry(CBufferedFile &file, const TListEntry &entry
 
 // Hmm... horrible macro time
 #define FIND_FONT_ENTRY(WEIGHT, SLANT) \
-    if(NULL!=family.WEIGHT && QString::null!=family.WEIGHT->SLANT.psname) \
+    if(NULL!=family.WEIGHT && !family.WEIGHT->SLANT.psname.isNull()) \
         return &(family.WEIGHT->SLANT);
 
 const CFontmapCreator::TSlant * CFontmapCreator::findNormal(const TFontFamily &family)
@@ -476,9 +476,9 @@ void CFontmapCreator::outputAliasEntry(CBufferedFile &file, const TFontEntry *en
 {
     if(NULL!=entry)
     {
-        if(QString::null!=entry->roman.psname)
+        if(!entry->roman.psname.isNull())
             outputAlias(file, familyname, style, entry->roman.psname);
-        if(QString::null!=entry->italic.psname)
+        if(!entry->italic.psname.isNull())
             outputAlias(file, familyname, style+"Italic", entry->italic.psname);
     }
 }

@@ -3,7 +3,7 @@
  KHotKeys -  (C) 2000 Lubos Lunak <l.lunak@email.cz>
 
  khotkeysglobal.cpp  - things shared by khotkeys daemon and cfg. module
- 
+
  $Id$
 
 ****************************************************************************/
@@ -35,13 +35,13 @@ bool KHotData_dict::read_config( KConfigBase& cfg_P )
             continue;
         cfg_P.setGroup( group );
         QString name = cfg_P.readEntry( "Name" );
-        if( name == QString::null )
+        if( name.isNull() )
             continue;
         QString shortcut = cfg_P.readEntry( "Shortcut" );
-        if( shortcut == QString::null )
+        if( shortcut.isNull() )
             continue;
         QString run = cfg_P.readEntry( "Run" );
-        if( run == QString::null )
+        if( run.isNull() )
             continue;
         bool menuentry = cfg_P.readBoolEntry( "MenuEntry", false );
         replace( name, new KHotData( shortcut, run, menuentry ));
