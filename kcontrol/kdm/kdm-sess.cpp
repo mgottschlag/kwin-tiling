@@ -20,7 +20,7 @@
 #include <qdir.h>
 #include <qcombobox.h>
 #include <kdbtn.h>
-#include <klined.h>
+#include <klineedit.h>
 #include <klocale.h>
 #include <kstddirs.h>
 

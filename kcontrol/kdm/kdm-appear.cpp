@@ -26,7 +26,7 @@
 #include <kio/job.h>
 #include <klocale.h>
 #include <kglobal.h>
-#include <klined.h>
+#include <klineedit.h>
 #include <kmessagebox.h>
 #include <kstddirs.h>
 
