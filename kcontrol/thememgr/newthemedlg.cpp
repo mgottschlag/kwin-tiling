@@ -106,11 +106,11 @@ void NewThemeDlg::setValues(void)
 //-----------------------------------------------------------------------------
 QLineEdit* NewThemeDlg::newLine(const QString& aLabelText, int cols)
 {
-  QLineEdit *edt = new QLineEdit(getMainWidget());
+  QLineEdit *edt = new QLineEdit(mainWidget());
   edt->setMinimumSize(edt->sizeHint());
   mGrid->addMultiCellWidget(edt, mGridRow, mGridRow, 1, 0+cols);
 
-  QLabel *lbl = new QLabel(aLabelText, getMainWidget());
+  QLabel *lbl = new QLabel(aLabelText, mainWidget());
   lbl->setMinimumSize(lbl->sizeHint());
   lbl->setBuddy(edt);
   mGrid->addWidget(lbl, mGridRow, 0);
