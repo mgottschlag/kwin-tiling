@@ -204,7 +204,7 @@ void KLocaleConfig::load()
   loadLocaleList(comboDate, QString::fromLatin1("l10n/"), QStringList());  
 
   // update widgets
-  comboLang->setCurrentItem(lang);
+  comboLang->setCurrentItem(locale->language());
   comboNumber->setCurrentItem(number);
   comboMoney->setCurrentItem(money);
   comboDate->setCurrentItem(time);
