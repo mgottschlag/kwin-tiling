@@ -531,7 +531,7 @@ KGreeter::restrict_nologin()
      if (login_getcapbool(lc, "ignorenologin", 0))
        return false;
 
-     char *file;
+     QString file;
      /* Note that <file> will be "" if there is no nologin capability */
      if ((file = login_getcapstr(lc, "nologin", "", NULL)) == NULL) {
        QMessageBox::critical(this, QString::null, i18n("login_getcapstr() failed."),
@@ -543,7 +543,7 @@ KGreeter::restrict_nologin()
      QFile f;
 
 #ifdef HAVE_LOGIN_CAP_H
-     if (*file) {
+     if (!file.isNull()) {
        f.setName(file);
        f.open(IO_ReadOnly);
      }
@@ -594,8 +594,8 @@ KGreeter::restrict_expired(){
 	  } else if (pwd->pw_expire - time(NULL) < warntime && !quietlog) {
 	       QDateTime dat;
 	       dat.setTime_t(pwd->pw_expire);
-	       QString str = i18n("Warning: your account expires on %1").
-			   arg(KGlobal::locale()->formatDateTime(dat));  // use locales
+	       QString str = i18n("Warning: your account expires on %1.").
+			   arg(KGlobal::locale()->formatDateTime(dat));
 	       QMessageBox::critical(this, QString::null,
 				     str,
 				     i18n("&OK"));
@@ -622,8 +622,8 @@ KGreeter::restrict_expired(){
 	 } else if (expiresec - time(NULL) < warntime) {
 	     QDateTime dat;
 	     dat.setTime_t(pwd->pw_expire);
-             QString str = i18n("Warning: your account expires on %1").
-			 arg(KGlobal::locale()->formatDateTime(dat));  // use locales
+             QString str = i18n("Warning: your account expires on %1.").
+			 arg(KGlobal::locale()->formatDateTime(dat));
 	     QMessageBox::critical(this, QString::null,
 				   str,
 				   i18n("&OK"));
