@@ -93,7 +93,7 @@ class BootHandler {
   public:
 	BootHandler() {}
 	bool setupTargets( QWidget *parent );
-	void applyTarget();
+	QCString obtainTarget();
 
 	QComboBox *targets;
 	int defaultTarget, oldTarget;
@@ -148,7 +148,7 @@ class KDMSlimShutdown : public FDialog, public BootHandler {
 
   public:
 	KDMSlimShutdown( QWidget *_parent = 0 );
-	static void externShutdown( int type, int uid );
+	static void externShutdown( int type, const char *os, int uid );
 
   private slots:
 	void slotHalt();
@@ -156,7 +156,7 @@ class KDMSlimShutdown : public FDialog, public BootHandler {
 	void slotSched();
 
   private:
-	bool checkShutdown( int type );
+	bool checkShutdown( int type, const char *os );
 
 };
 
@@ -165,7 +165,7 @@ class KDMConfShutdown : public KDMShutdownBase {
 	typedef KDMShutdownBase inherited;
 
   public:
-	KDMConfShutdown( int _uid, struct dpySpec *sess, int type,
+	KDMConfShutdown( int _uid, struct dpySpec *sess, int type, const char *os,
 	                 QWidget *_parent = 0 );
 };
 
@@ -175,7 +175,7 @@ class KDMCancelShutdown : public KDMShutdownBase {
 
   public:
 	KDMCancelShutdown( int how, int start, int timeout, int force, int uid,
-	                   QWidget *_parent );
+	                   const char *os, QWidget *_parent );
 };
 
 #endif /* KDMSHUTDOWN_H */

@@ -162,7 +162,10 @@ kg_main( const char *argv0 )
 
 		if (cmd == G_ConfShutdown) {
 			int how = GRecvInt(), uid = GRecvInt();
-			KDMSlimShutdown::externShutdown( how, uid );
+			char *os = GRecvStr();
+			KDMSlimShutdown::externShutdown( how, os, uid );
+			if (os)
+				free( os );
 			GSendInt( G_Ready );
 			continue;
 		}

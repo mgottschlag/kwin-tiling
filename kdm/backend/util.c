@@ -496,3 +496,15 @@ fGets( char *buf, int max, FILE *f )
 		buf[--len] = 0;
 	return len;
 }
+
+time_t
+mTime( const char *fn )
+{
+	struct stat st;
+
+	if (stat( fn, &st ))
+		return -1;
+	else
+		return st.st_mtime;
+}
+

@@ -376,6 +376,8 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			if (ar[1])
 				goto exce;
 			Reply( "ok\tkdm\tlist\t" );
+			if (bootManager != BO_NONE)
+				Reply( "bootoptions\t" );
 			if (d) {
 				if ((d->displayType & d_location) == dLocal)
 					Reply( "local\t" );
@@ -704,15 +706,12 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				goto miss;
 			if (ar[2])
 				goto exce;
-
-			if (d ? (d->allowShutdown == SHUT_NONE ||
-			         (d->allowShutdown == SHUT_ROOT && d->userSess >= 0)) :
-			        !fifoAllowShutdown)
-			{
-				fLog( d, fd, "perm", "setting boot option forbidden" );
+			if (d && sdRec.how && sdRec.uid != -1) {
+				fLog( d, fd, "perm", "overriding boot option forbidden" );
 				goto bust;
 			}
-			switch (setBootOption( ar[1] )) {
+			/* no permission checks - it depends on shutdown anyway */
+			switch (setBootOption( ar[1], d ? &d->hstent->boRec : &boRec )) {
 			case BO_NOMAN:
 				fLog( d, fd, "notsup", "boot options unavailable" );
 				goto bust;

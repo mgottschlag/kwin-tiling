@@ -52,6 +52,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define KDmh KDialog::marginHint()
 #define KDsh KDialog::spacingHint()
 
+#include <stdlib.h>
+
 int KDMShutdownBase::curPlugin = -1;
 PluginList KDMShutdownBase::pluginList;
 
@@ -221,12 +223,16 @@ KDMShutdownBase::verifySetUser( const QString & )
 bool
 BootHandler::setupTargets( QWidget *parent )
 {
+	GSet( 1 );
 	GSendInt( G_ListBootOpts );
-	if (GRecvInt() != BO_OK)
+	if (GRecvInt() != BO_OK) {
+		GSet( 0 );
 		return false; /* XXX needs somewhat more handling */
+	}
 	char **tlist = GRecvStrArr( 0 );
 	defaultTarget = GRecvInt();
 	oldTarget = GRecvInt();
+	GSet( 0 );
 	targets = new QComboBox( parent );
 	for (int i = 0; tlist[i]; i++)
 		targets->insertItem( QString::fromLocal8Bit( tlist[i] ) );
@@ -235,19 +241,17 @@ BootHandler::setupTargets( QWidget *parent )
 	return true;
 }
 
-void
-BootHandler::applyTarget()
+QCString
+BootHandler::obtainTarget()
 {
-	if (targets->currentItem() != oldTarget) {
-		GSendInt( G_SetBootOpt );
-		GSendStr( targets->currentText().local8Bit() );
-		GRecvInt(); /* XXX handle this */
-	}
+	if (_bootManager != BO_NONE && targets->currentItem() != oldTarget)
+		return targets->currentText().local8Bit();
+	return QCString();
 }
 
 
 static void
-doShutdown( int type )
+doShutdown( int type, const char *os )
 {
 	GSet( 1 );
 	GSendInt( G_Shutdown );
@@ -256,6 +260,7 @@ doShutdown( int type )
 	GSendInt( 0 );
 	GSendInt( SHUT_FORCE );
 	GSendInt( 0 ); /* irrelevant, will timeout immediately anyway */
+	GSendStr( os );
 	GSet( 0 );
 }
 
@@ -387,8 +392,6 @@ KDMShutdown::slotWhenChanged()
 void
 KDMShutdown::accepted()
 {
-	if (_bootManager != BO_NONE && restart_rb->isChecked())
-		applyTarget();
 	GSet( 1 );
 	GSendInt( G_Shutdown );
 	GSendInt( restart_rb->isChecked() ? SHUT_REBOOT : SHUT_HALT );
@@ -396,6 +399,7 @@ KDMShutdown::accepted()
 	GSendInt( sch_to );
 	GSendInt( cb_force->isChecked() ? SHUT_FORCE : SHUT_CANCEL );
 	GSendInt( _allowShutdown == SHUT_ROOT ? 0 : -2 );
+	GSendStr( restart_rb->isChecked() ? obtainTarget().data() : 0 );
 	GSet( 0 );
 	inherited::accepted();
 }
@@ -410,16 +414,20 @@ KDMShutdown::scheduleShutdown( QWidget *_parent )
 	int timeout = GRecvInt();
 	int force = GRecvInt();
 	int uid = GRecvInt();
+	char *os = GRecvStr();
 	GSet( 0 );
 	if (how) {
 		int ret =
-			KDMCancelShutdown( how, start, timeout, force, uid, _parent ).exec();
+			KDMCancelShutdown( how, start, timeout, force, uid, os,
+			                   _parent ).exec();
 		if (!ret)
 			return;
-		doShutdown( 0 );
+		doShutdown( 0, 0 );
 		uid = ret == Authed ? 0 : -1;
 	} else
 		uid = -1;
+	if (os)
+		free( os );
 	KDMShutdown( uid, _parent ).exec();
 }
 
@@ -504,27 +512,27 @@ KDMSlimShutdown::slotSched()
 void
 KDMSlimShutdown::slotHalt()
 {
-	if (checkShutdown( SHUT_HALT ))
-		doShutdown( SHUT_HALT );
+	if (checkShutdown( SHUT_HALT, 0 ))
+		doShutdown( SHUT_HALT, 0 );
 }
 
 void
 KDMSlimShutdown::slotReboot()
 {
-	if (checkShutdown( SHUT_REBOOT )) {
-		applyTarget();
-		doShutdown( SHUT_REBOOT );
-	}
+	QCString target( obtainTarget() );
+
+	if (checkShutdown( SHUT_REBOOT, target.data() ))
+		doShutdown( SHUT_REBOOT, target.data() );
 }
 
 bool
-KDMSlimShutdown::checkShutdown( int type )
+KDMSlimShutdown::checkShutdown( int type, const char *os )
 {
 	reject();
 	dpySpec *sess = fetchSessions( lstRemote );
 	if (!sess && _allowShutdown != SHUT_ROOT)
 		return true;
-	int ret = KDMConfShutdown( -1, sess, type ).exec();
+	int ret = KDMConfShutdown( -1, sess, type, os ).exec();
 	disposeSessions( sess );
 	if (ret == Schedule) {
 		KDMShutdown::scheduleShutdown();
@@ -534,19 +542,20 @@ KDMSlimShutdown::checkShutdown( int type )
 }
 
 void
-KDMSlimShutdown::externShutdown( int type, int uid )
+KDMSlimShutdown::externShutdown( int type, const char *os, int uid )
 {
 	dpySpec *sess = fetchSessions( lstRemote );
-	int ret = KDMConfShutdown( uid, sess, type ).exec();
+	int ret = KDMConfShutdown( uid, sess, type, os ).exec();
 	disposeSessions( sess );
 	if (ret == Schedule)
 		KDMShutdown( uid ).exec();
 	else if (ret)
-		doShutdown( type );
+		doShutdown( type, os );
 }
 
 
-KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, QWidget *_parent )
+KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char *os,
+                                  QWidget *_parent )
 	: inherited( _uid, _parent )
 {
 #ifdef HAVE_VTS
@@ -554,7 +563,7 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, QWidget *_p
 		willShut = false;
 #endif
 	box->addWidget( new QLabel( QString( "<qt><center><b><nobr>"
-	                                     "%1"
+	                                     "%1%2"
 	                                     "</nobr></b></center><br></qt>" )
 	                            .arg( (type == SHUT_HALT) ?
 	                                  i18n("Turn Off Computer") :
@@ -562,7 +571,12 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, QWidget *_p
 	                                  (type == SHUT_CONSOLE) ?
 	                                  i18n("Switch to Console") :
 #endif
-	                                  i18n("Restart Computer") ), this ) );
+	                                  i18n("Restart Computer") )
+	                            .arg( os ?
+	                                  i18n("<br>(Next boot: %1)")
+	                                  .arg( QString::fromLocal8Bit( os ) ) :
+	                                  QString::null ),
+	                            this ) );
 
 	if (sess) {
 		if (willShut && _scheduledSd != SHUT_NEVER)
@@ -572,7 +586,8 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, QWidget *_p
 			mayOk = false;
 		QLabel *lab = new QLabel( mayOk ?
 		                          i18n("Abort active sessions:") :
-		                          i18n("No permission to abort active sessions:"), this );
+		                          i18n("No permission to abort active sessions:"),
+		                          this );
 		box->addWidget( lab );
 		QListView *lv = new QListView( this );
 		lv->setSelectionMode( QListView::NoSelection );
@@ -611,7 +626,8 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, QWidget *_p
 
 
 KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
-                                      int force, int uid, QWidget *_parent )
+                                      int force, int uid, const char *os,
+                                      QWidget *_parent )
 	: inherited( -1, _parent )
 {
 	if (force == SHUT_FORCE) {
@@ -622,7 +638,8 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 	}
 	QLabel *lab = new QLabel( mayOk ?
 	                          i18n("Abort pending shutdown:") :
-	                          i18n("No permission to abort pending shutdown:"), this );
+	                          i18n("No permission to abort pending shutdown:"),
+	                          this );
 	box->addWidget( lab );
 	QDateTime qdt;
 	QString strt, end;
@@ -640,7 +657,7 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 	}
 	QString trg =
 		i18n("Owner: %1"
-		     "\nType: %2"
+		     "\nType: %2%5"
 		     "\nStart: %3"
 		     "\nTimeout: %4")
 		.arg( uid == -2 ?
@@ -651,7 +668,10 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 		.arg( how == SHUT_HALT ?
 		      i18n("turn off computer") :
 		      i18n("restart computer") )
-		.arg( strt ).arg( end );
+		.arg( strt ).arg( end )
+		.arg( os ?
+		      i18n("\nNext boot: %1").arg( QString::fromLocal8Bit( os ) ) :
+		      QString::null );
 	if (timeout != TO_INF)
 		trg += i18n("\nAfter timeout: %1")
 		       .arg( force == SHUT_FORCE ?

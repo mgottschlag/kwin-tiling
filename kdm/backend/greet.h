@@ -118,7 +118,7 @@ from the copyright holder.
 #define G_DChoose  3	/* run chooser */
 #endif
 
-#define G_Shutdown      101 /* 5*int; async */
+#define G_Shutdown      101 /* 5*int, string; async */
 # define SHUT_REBOOT      1	/* how */
 # define SHUT_HALT        2
 # define SHUT_CONSOLE     -1 /* pseudo-code */
@@ -142,10 +142,9 @@ from the copyright holder.
 #define G_List          111 /* int flags; ?*(str,int,str,str,int), int 0 */
 # define lstRemote        1
 # define lstPassive       2
-#define G_QueryShutdown 112 /* ; 5*int */
+#define G_QueryShutdown 112 /* ; 5*int; string */
 #define G_Activate      113 /* int vt; async */
 #define G_ListBootOpts  114 /* ; int sts, [argv opts, int dflt, int cur] */
-#define G_SetBootOpt    115 /* str opt; int sts */
 # define BO_OK      0
 # define BO_NOMAN  -1
 # define BO_NOENT  -2

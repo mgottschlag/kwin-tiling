@@ -55,7 +55,7 @@ getNull( char ***opts ATTR_UNUSED, int *def ATTR_UNUSED, int *cur ATTR_UNUSED )
 }
 
 static int
-setNull( const char *opt ATTR_UNUSED )
+setNull( const char *opt ATTR_UNUSED, BoRec *bo ATTR_UNUSED )
 {
 	return BO_NOMAN;
 }
@@ -108,12 +108,11 @@ getGrub( char ***opts, int *def, int *cur )
 }
 
 static int
-setGrub( const char *opt )
+setGrub( const char *opt, BoRec *bo )
 {
 	FILE *f;
 	char *ptr;
-	int len, i, pid;
-	static const char *args[] = { 0, "--batch", 0 };
+	int len, i;
 	char line[1000];
 
 	if (!(f = fopen( GRUB_MENU, "r" )))
@@ -122,16 +121,32 @@ setGrub( const char *opt )
 		if ((ptr = match( line, &len, "title", 5 ))) {
 			if (!strcmp( ptr, opt )) {
 				fclose( f );
-				args[0] = grub;
-				if (!(f = pOpen( (char **)args, 'w', &pid )))
-					return BO_IO;
-				fprintf( f, "savedefault --default=%d --once\n", i );
-				return pClose( f, pid ) ? BO_IO : BO_OK;
+				bo->index = i;
+				bo->stamp = mTime( GRUB_MENU );
+				return BO_OK;
 			}
 			i++;
 		}
 	fclose( f );
 	return BO_NOENT;
+}
+
+static void
+commitGrub( void )
+{
+	FILE *f;
+	int pid;
+	static const char *args[] = { 0, "--batch", 0 };
+
+	if (boRec.stamp != mTime( GRUB_MENU ) &&
+	    setGrub( boRec.name, &boRec ) != BO_OK)
+		return;
+
+	args[0] = grub;
+	if ((f = pOpen( (char **)args, 'w', &pid ))) {
+		fprintf( f, "savedefault --default=%d --once\n", boRec.index );
+		pClose( f, pid );
+	}
 }
 
 static char *lilo;
@@ -190,9 +205,8 @@ getLilo( char ***opts, int *def, int *cur )
 }
 
 static int
-setLilo( const char *opt )
+setLilo( const char *opt, BoRec *bo ATTR_UNUSED )
 {
-	static const char *args[5] = { 0, "-w", "-R", 0, 0 };
 	char **opts;
 	int def, cur, ret, i;
 
@@ -209,18 +223,27 @@ setLilo( const char *opt )
 	}
   oke:
 	freeStrArr( opts );
+	return BO_OK;
+}
+
+static void
+commitLilo( void )
+{
+	static const char *args[5] = { 0, "-w", "-R", 0, 0 };
+
 	args[0] = lilo;
-	args[3] = opt;
-	return runAndWait( (char **)args, environ ) ? BO_IO : BO_OK;
+	args[3] = boRec.name;
+	runAndWait( (char **)args, environ );
 }
 
 static struct {
 	int (*get)( char ***, int *, int * );
-	int (*set)( const char * );
+	int (*set)( const char *, BoRec * );
+	void (*commit)( void );
 } bootOpts[] = {
-  { getNull, setNull },
-  { getGrub, setGrub },
-  { getLilo, setLilo },
+  { getNull, setNull, 0 },
+  { getGrub, setGrub, commitGrub },
+  { getLilo, setLilo, commitLilo },
 };
 
 int
@@ -230,7 +253,32 @@ getBootOptions( char ***opts, int *def, int *cur )
 }
 
 int
-setBootOption( const char *opt )
+setBootOption( const char *opt, BoRec *bo )
 {
-	return bootOpts[bootManager].set( opt );
+	int ret;
+
+	if (bo->name) {
+		free( bo->name );
+		bo->name = 0;
+	}
+	if (opt) {
+		if ((ret = bootOpts[bootManager].set( opt, bo )) != BO_OK)
+			return ret;
+		if (!StrDup( &bo->name, opt ))
+			return BO_IO; /* BO_NOMEM */
+	}
+	return BO_OK;
 }
+
+void
+commitBootOption( void )
+{
+	if (boRec.name) {
+		bootOpts[bootManager].commit();
+/*
+		free( boRec->name );
+		boRec->name = 0;
+*/
+	}
+}
+

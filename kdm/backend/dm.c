@@ -100,6 +100,7 @@ static int StorePid( void );
 
 static int Stopping;
 SdRec sdRec = { 0, 0, 0, TO_INF, TO_INF };
+BoRec boRec;
 
 time_t now;
 
@@ -301,6 +302,7 @@ main( int argc, char **argv )
 	MainLoop();
 	closeCtrl( 0 );
 	if (sdRec.how) {
+		commitBootOption();
 		if (Fork() <= 0) {
 			char *cmd = sdRec.how == SHUT_HALT ? cmdHalt : cmdReboot;
 			execute( parseArgs( (char **)0, cmd ), (char **)0 );
@@ -697,7 +699,8 @@ static void
 processGPipe( struct display *d )
 {
 	struct display *di;
-	int cmd, flags;
+	char **opts, *option;
+	int cmd, flags, ret, dflt, curr;
 	GTalk dpytalk;
 
 	dpytalk.pipe = &d->gpipe;
@@ -712,12 +715,26 @@ processGPipe( struct display *d )
 		return;
 	}
 	switch (cmd) {
+	case G_ListBootOpts:
+		ret = getBootOptions( &opts, &dflt, &curr );
+		GSendInt( ret );
+		if (ret == BO_OK) {
+			GSendArgv( opts );
+			freeStrArr( opts );
+			GSendInt( dflt );
+			GSendInt( curr );
+		}
+		break;
 	case G_Shutdown:
 		sdRec.how = GRecvInt();
 		sdRec.start = GRecvInt();
 		sdRec.timeout = GRecvInt();
 		sdRec.force = GRecvInt();
 		sdRec.uid = GRecvInt();
+		option = GRecvStr();
+		setBootOption( option, &boRec );
+		if (option)
+			free( option );
 		break;
 	case G_QueryShutdown:
 		GSendInt( sdRec.how );
@@ -725,6 +742,7 @@ processGPipe( struct display *d )
 		GSendInt( sdRec.timeout );
 		GSendInt( sdRec.force );
 		GSendInt( sdRec.uid );
+		GSendStr( boRec.name );
 		break;
 	case G_List:
 		flags = GRecvInt();
@@ -1459,11 +1477,19 @@ ExitDisplay(
 			      (d->allowNuke == SHUT_ROOT && he->sdRec.uid)))
 			{
 				sdRec = he->sdRec;
+				if (boRec.name)
+					free( boRec.name );
+				boRec = he->boRec;
 				if (now < sdRec.timeout || wouldShutdown())
 					endState = DS_REMOVE;
-			}
+			} else if (he->boRec.name)
+				free( he->boRec.name );
 			he->sdRec.how = 0;
+			he->boRec.name = 0;
 		}
+	} else if (he->boRec.name) {
+		free( he->boRec.name );
+		he->boRec.name = 0;
 	}
 	if (d->status == zombie)
 		rStopDisplay( d, d->zstatus );

@@ -153,7 +153,7 @@ KGDialog::slotConsole()
 #ifdef HAVE_VTS
 	dpySpec *sess = fetchSessions( 0 );
 	if (sess) {
-		int ret = KDMConfShutdown( -1, sess, SHUT_CONSOLE ).exec();
+		int ret = KDMConfShutdown( -1, sess, SHUT_CONSOLE, 0 ).exec();
 		disposeSessions( sess );
 		if (!ret)
 			return;

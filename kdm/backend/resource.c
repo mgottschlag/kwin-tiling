@@ -117,17 +117,6 @@ delStr( RcStr *str )
 }
 
 
-static long
-mTime( const char *fn )
-{
-	struct stat st;
-
-	if (stat( fn, &st ))
-		return -1;
-	else
-		return st.st_mtime;
-}
-
 typedef struct CfgFile {
 	RcStr *name;
 	int depidx;
