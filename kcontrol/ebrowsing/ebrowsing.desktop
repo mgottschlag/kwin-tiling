@@ -1,0 +1,53 @@
+[Desktop Entry]
+Type=Application
+DocPath=kcontrol/kcmebrowsing/kcmebrowsing-1.html
+Icon=konqueror
+Exec=kcmshell Browsing/Web/ebrowsing
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=kurifilt
+X-KDE-FactoryName=kurifilt
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Enhanced Browsing
+Name[ca]=Navegació millorada
+Name[cs]=Rozšířené prohledávání
+Name[de]=Erweiterte Ansicht
+Name[fi]=Edistynyt selailu
+Name[fr]=Navigation avancée
+Name[he]=רפושמ ףודפד
+Name[hu]=Fejlett böngészés
+Name[it]=Browsing avanzato
+Name[ja]=拡張ブラウズ
+Name[no]=Utvidet losing
+Name[no_NY]=Utvida surfing
+Name[pt]=Navegação Melhorada
+Name[ro]=Navigare avansată
+Name[sl]=Izbolj�ano brkljanje
+
+Comment=You can configure Enhanced Browsing here
+Comment[ca]=Aquí podeu configurar la navegació millorada
+Comment[cs]=Zde je možné nastavit rozšířené prohledávání
+Comment[de]=Hier können Sie die weitere Ansichtsmöglichkeiten einstellen
+Comment[fi]=Voit muokata edistyneitä selainasetuksia täältä
+Comment[fr]=Vous pouvez configurer ici la Navigation Avancée
+Comment[he]=ןאכ רפושמ ףודפדה תא רידגהל ךתורשפאב
+Comment[hu]=Itt lehet beállítani a fejlett böngészés tulajdonságait
+Comment[it]=Qui puoi configurare il browsing avanzato
+Comment[ja]=ここで拡張ブラウズを設定します
+Comment[no]=Her kan du konfigurere Utvidet losing
+Comment[no_NY]=Du kan setja opp utvida surfing her
+Comment[pt]=Configuração da navegação avançada
+Comment[ro]=Configurează navigarea de web avansată
+Comment[sl]=Tu lahko nastavite izbolj�ano brkljanje
+
+Keywords=Enhanced Browsing,Browsing,WWW,Internet,Internet Keywords,Internet Filters,Network
+Keywords[ca]=Navegació millorada,navegació,WWW,Internet,paraules clau d'Internet,filtres d'Internet,Xarxa
+Keywords[de]=erweitertes browsen,browsen,www,internet,stichwörter,filter netz
+Keywords[hu]=fejlett böngészés,böngészés,WWW,internet,internet szűrők,hálózat
+Keywords[no]=Utvidet los,Nettlosing,WWW,vev,Internet,Internett,Internet-nøkkelord,Internett-nøkkelord,Internet-filtre,Internett-filtre,Nettverk
+Keywords[no_NY]=Utvida surfing,surfing,WWW,Internett,Internett-nøkkelord,Internett-filter,nettverk
+Keywords[pt]=navegação melhorada,navegação,WWW,internet,palavras chave internet,filtros internet,rede
+Keywords[ro]=navigare avansată,navigare,WWW,Internet,cuvinte cheie Internet,filtre Internet,reţea
+Keywords[sl]=izbolj�ano brkljanje,brkljanje,WWW,splet,internet,klju�ne besede interneta,filtri interneta,omre�je
