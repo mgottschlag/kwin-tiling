@@ -35,17 +35,21 @@
 
 KInstance *KURISearchFilterFactory::s_instance = 0L;
 
-KURISearchFilter::KURISearchFilter(QObject *parent, const char *name) : KURIFilterPlugin(parent, name ? name : "KURISearchFilter", "ikws", 1.0), DCOPObject("KURISearchFilterIface") {
-}
+KURISearchFilter::KURISearchFilter(QObject *parent, const char *name)
+                 :KURIFilterPlugin(parent, name ? name : "ikws", 1.0),
+                  DCOPObject("KURISearchFilterIface")
+{}
 
-KURISearchFilter::~KURISearchFilter() {
-}
+KURISearchFilter::~KURISearchFilter() {}
 
 void KURISearchFilter::configure() {
     KURISearchFilterEngine::self()->loadConfig();
 }
 
-bool KURISearchFilter::filterURI(KURL &kurl){
+bool KURISearchFilter::filterURI( KURIFilterData &data ) const
+{
+
+    KURL kurl = data.uri();
     QString url = kurl.url();
 
     if (KURISearchFilterEngine::self()->verbose()) {
@@ -100,14 +104,12 @@ bool KURISearchFilter::filterURI(KURL &kurl){
 	
 	    if (KURISearchFilterEngine::self()->verbose()) {
 		kDebugInfo("filtered %s to %s\n", url.ascii(), newurl.ascii());
-	    }
-	
-	    kurl = newurl;
-	
+	    }	
+        setFilteredURI( data, newurl );
+        setURIType( data, KURIFilterData::NET_PROTOCOL );
 	    return true;
 	}
     }
-
     return false;
 }
 
@@ -127,9 +129,9 @@ KURISearchFilterFactory::~KURISearchFilterFactory() {
     delete s_instance;
 }
 
-QObject *KURISearchFilterFactory::create( QObject *parent, const char *, const char*, const QStringList & )
+QObject *KURISearchFilterFactory::create( QObject *parent, const char *name, const char*, const QStringList & )
 {
-    QObject *obj = new KURISearchFilter( parent );
+    QObject *obj = new KURISearchFilter( parent, name );
     emit objectCreated( obj );
     return obj;
 }

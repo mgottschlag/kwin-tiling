@@ -34,7 +34,7 @@ public:
     KURISearchFilter(QObject *parent = 0, const char *name = 0);
     ~KURISearchFilter();
 
-    virtual bool filterURI(KURL &uri);
+    virtual bool filterURI( KURIFilterData& ) const;
 
     virtual KCModule *configModule(QWidget *parent = 0, const char *name = 0) const;
     virtual QString configName() const;
