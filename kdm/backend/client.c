@@ -135,10 +135,10 @@ static char krbtkfile[MAXPATHLEN];
 
 # if defined(sun) || defined(AIXV3)
 typedef struct pam_message pam_message_type;
-typedef void ** pam_gi_type;
+typedef void *pam_gi_type;
 # else
 typedef const struct pam_message pam_message_type;
-typedef const void ** pam_gi_type;
+typedef const void *pam_gi_type;
 # endif
 
 struct pam_data {
@@ -284,7 +284,7 @@ fail_delay(int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED,
 static int
 doPAMAuth (const char *psrv, struct pam_data *pdata)
 {
-    const char		*pitem;
+    pam_gi_type		pitem;
     struct pam_conv	pconv;
     int			pretc;
 
@@ -293,9 +293,9 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
     pconv.appdata_ptr = (void *)pdata;
     Debug (" PAM service %s\n", psrv);
     if (pamh) {
-	pam_get_item (pamh, PAM_SERVICE, (pam_gi_type)&pitem);
+	pam_get_item (pamh, PAM_SERVICE, &pitem);
 	ReInitErrorLog ();
-	if (strcmp (pitem, psrv)) {
+	if (strcmp ((const char *)pitem, psrv)) {
 	    Debug ("closing old PAM handle\n");
 	    pam_end (pamh, PAM_SUCCESS);
 	    ReInitErrorLog ();
@@ -347,9 +347,9 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
 	return 0;
     if (!curuser) {
 	Debug (" asking PAM for user ...\n");
-	pam_get_item (pamh, PAM_USER, (pam_gi_type)&pitem);
+	pam_get_item (pamh, PAM_USER, &pitem);
 	ReInitErrorLog ();
-	StrDup (&curuser, pitem);
+	StrDup (&curuser, (const char *)pitem);
 	GSendInt (V_PUT_USER);
 	GSendStr (curuser);
     }
