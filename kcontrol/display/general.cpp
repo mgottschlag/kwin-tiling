@@ -25,6 +25,7 @@
 #include <qsizepolicy.h>
 #include <qwhatsthis.h>
 #include <qtextstream.h>
+#include <qframe.h>
 
 #include <dcopclient.h>
 
@@ -400,38 +401,79 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     grid->addWidget(tbHilite, 0, 1);
     grid->addWidget(tbTransp, 1, 1);
 
-    effectStyle = new QButtonGroup( i18n( "Effect options" ), this);
-    topLayout->addWidget(effectStyle, 10);
+    QBoxLayout *hlay = new QHBoxLayout;
+    topLayout->addLayout(hlay);
 
-    vlay = new QVBoxLayout( effectStyle, 10 );
-    vlay->addSpacing( effectStyle->fontMetrics().lineSpacing() );
+    effectStyleMenu = new QButtonGroup( i18n( "Effect options" ), this);
+    hlay->addWidget(effectStyleMenu, 10);
+//	effectStyle->setExclusive(false);
+	
+    vlay = new QVBoxLayout( effectStyleMenu, 10 );
+    vlay->addSpacing( effectStyleMenu->fontMetrics().lineSpacing() );
 
-    grid = new QGridLayout(3, 2);
-    vlay->addLayout( grid );
+//    grid = new QGridLayout(5, 2);
+//    vlay->addLayout( grid );
 
-    effPlainMenu = new QRadioButton( i18n( "No m&enu effect" ), effectStyle );
-    effFadeMenu = new QRadioButton( i18n( "&Fade menus" ), effectStyle );
-    effAnimateMenu = new QRadioButton( i18n( "Anima&te menus"), effectStyle );
-    effAnimateCombo = new QCheckBox( i18n( "Animate &combo boxes"), effectStyle );
-    effFadeTooltip = new QCheckBox( i18n( "Fade tool t&ips"), effectStyle );
+    effPlainMenu = new QRadioButton( i18n( "No m&enu effect" ), effectStyleMenu );
+    effFadeMenu = new QRadioButton( i18n( "&Fade menus" ), effectStyleMenu );
+    effAnimateMenu = new QRadioButton( i18n( "Anima&te menus"), effectStyleMenu );
+    QFrame* Line1 = new QFrame( effectStyleMenu, "Line1" );
+    Line1->setFrameStyle( QFrame::HLine | QFrame::Sunken );
+
+    effAnimateCombo = new QCheckBox( i18n( "Animate &combo boxes"), effectStyleMenu );
 
     QWhatsThis::add( effFadeMenu, i18n( "If this option is selected, menus open immediately." ) );
     QWhatsThis::add( effFadeMenu, i18n( "If this option is selected, menus fade in slowly." ) );
     QWhatsThis::add( effAnimateMenu, i18n( "If this option is selected, menus are animated to grow to their full size." ) );
     QWhatsThis::add( effAnimateCombo, i18n( "If this option is selected, combo boxes are animated to grow to their full size.") );
-    QWhatsThis::add( effFadeTooltip, i18n( "If this option is selected, tooltips fade in slowly." ) );
 
     connect( effPlainMenu, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) ) ;
+    connect( effPlainMenu, SIGNAL( toggled(bool) ), SLOT( toggleButtonState(bool) ) );
     connect( effFadeMenu, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) ) ;
+    connect(effFadeMenu , SIGNAL( toggled(bool) ), SLOT( toggleButtonState(bool) ) );
     connect( effAnimateMenu, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
-    connect( effAnimateCombo, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
-    connect( effFadeTooltip, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
+    connect(effAnimateMenu , SIGNAL( toggled(bool) ), SLOT( toggleButtonState(bool) ) );
 
-    grid->addWidget( effPlainMenu, 0, 0 );
-    grid->addWidget( effFadeMenu, 1, 0 );
-    grid->addWidget( effAnimateMenu, 2, 0 );
-    grid->addWidget( effAnimateCombo, 0, 1 );
-    grid->addWidget( effFadeTooltip, 1, 1 );
+
+
+    connect( effAnimateCombo, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
+    vlay->addWidget( effPlainMenu );
+    vlay->addWidget( effFadeMenu );
+    vlay->addWidget( effAnimateMenu );
+    vlay->addWidget( Line1);
+    vlay->addWidget( effAnimateCombo );
+
+
+    effectStyleTooltip = new QButtonGroup( i18n( "Tooltips" ), this);
+    hlay->addWidget(effectStyleTooltip, 10);
+   QVBoxLayout*  vlay1 = new QVBoxLayout( effectStyleTooltip, 10 );
+    vlay1->addSpacing( effectStyleTooltip->fontMetrics().lineSpacing() );
+
+    effNoTooltip = new QCheckBox( effectStyleTooltip);
+    effNoTooltip->setChecked(effectNoTooltip);
+    effNoTooltip->setText( i18n( "&Disable tool tips"));
+    effPlainTooltip = new QRadioButton( i18n( "&Plain tool tips"), effectStyleTooltip );
+    effFadeTooltip = new QRadioButton( i18n( "Fade tool t&ips"), effectStyleTooltip );
+    effAnimateTooltip = new QRadioButton( i18n( "&Rollout tool t&ips"), effectStyleTooltip );
+    QWhatsThis::add( effNoTooltip, i18n( "If this option is selected, tooltips are disabled in all applications." ) );
+    QWhatsThis::add( effPlainTooltip, i18n( "If this option is selected, tooltips appear with no effect." ) );
+    QWhatsThis::add( effFadeTooltip, i18n( "If this option is selected, tooltips fade in slowly." ) );
+    QWhatsThis::add( effAnimateTooltip, i18n( "If this option is selected, tooltips roll out slowly." ) );
+    connect( effNoTooltip, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
+    connect( effPlainTooltip, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
+    connect( effFadeTooltip, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
+    connect( effAnimateTooltip, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
+    vlay1->addWidget( effNoTooltip );
+    vlay1->addWidget( effPlainTooltip );
+    vlay1->addWidget( effFadeTooltip );
+    vlay1->addWidget( effAnimateTooltip );
+	vlay1->addStretch();
+
+    if(effectNoTooltip){
+    	effFadeTooltip->setEnabled(false);
+    	effPlainTooltip->setEnabled(false);
+    	effAnimateTooltip->setEnabled(false);
+    }
 
     topLayout->addStretch( 100 );
     load();
@@ -473,12 +515,27 @@ void KGeneral::slotChangeTbStyle()
     emit changed(true);
 }
 
+
 void KGeneral::slotChangeEffectStyle()
 {
-    effectAnimateMenu = effAnimateMenu->isChecked();
     effectFadeMenu = effFadeMenu->isChecked();
-    effectAnimateCombo = effAnimateCombo->isChecked();
+    effectAnimateMenu = effAnimateMenu->isChecked();
+
     effectFadeTooltip = effFadeTooltip->isChecked();
+    effectAnimateTooltip = effAnimateTooltip->isChecked();
+    effectNoTooltip = effNoTooltip->isChecked();
+    effectAnimateCombo = effAnimateCombo->isChecked();
+
+    if(effectNoTooltip){
+    	effFadeTooltip->setEnabled(false);
+    	effPlainTooltip->setEnabled(false);
+    	effAnimateTooltip->setEnabled(false);
+    }
+    else{
+    	effFadeTooltip->setEnabled(true);
+    	effPlainTooltip->setEnabled(true);
+    	effAnimateTooltip->setEnabled(true);
+    }
 
     m_bEffectsDirty = true;
     m_bChanged = true;
@@ -517,6 +574,8 @@ void KGeneral::readSettings()
     effectFadeMenu = config->readBoolEntry( "EffectFadeMenu", false );
     effectAnimateCombo = config->readBoolEntry( "EffectAnimateCombo", false );
     effectFadeTooltip = config->readBoolEntry( "EffectFadeTooltip", false );
+    effectAnimateTooltip = config->readBoolEntry("EffectAnimateTooltip",false);
+    effectNoTooltip = config->readBoolEntry("EffectNoTooltip",false);
 
     config->setGroup( "Toolbar style" );
     tbUseText = config->readEntry( "IconText", "IconOnly");
@@ -554,7 +613,20 @@ void KGeneral::showSettings()
     effAnimateMenu->setChecked( effectAnimateMenu );
     effFadeMenu->setChecked( effectFadeMenu );
     effAnimateCombo->setChecked( effectAnimateCombo );
+    effPlainTooltip->setChecked(!effectAnimateTooltip && !effectFadeTooltip);
     effFadeTooltip->setChecked( effectFadeTooltip );
+    effAnimateTooltip->setChecked( effectAnimateTooltip );
+    effNoTooltip->setChecked( effectNoTooltip );
+    if(effectNoTooltip){
+    	effFadeTooltip->setEnabled(false);
+    	effPlainTooltip->setEnabled(false);
+    	effAnimateTooltip->setEnabled(false);
+    }
+    else{
+    	effFadeTooltip->setEnabled(true);
+    	effPlainTooltip->setEnabled(true);
+    	effAnimateTooltip->setEnabled(true);
+    }
 }
 
 
@@ -570,7 +642,8 @@ void KGeneral::defaults()
     effectFadeMenu = false;
     effectAnimateCombo = false;
     effectFadeTooltip = false;
-
+	effectNoTooltip = false;
+	
     themeList->defaults();
     showSettings();
 
@@ -617,7 +690,9 @@ void KGeneral::save()
     config->writeEntry("EffectFadeMenu", effectFadeMenu, true, true);
     config->writeEntry("EffectAnimateCombo", effectAnimateCombo, true, true);
     config->writeEntry("EffectFadeTooltip", effectFadeTooltip, true, true);
-
+	config->writeEntry("EffectAnimateTooltip", effectAnimateTooltip, true, true);
+	config->writeEntry("EffectNoTooltip", effectNoTooltip, true, true);
+	
     config->setGroup("Toolbar style");
     config->writeEntry("IconText", tbUseText, true, true);
     config->writeEntry("Highlighting", (int) tbUseHilite, true, true);
@@ -641,9 +716,10 @@ void KGeneral::save()
         kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", QByteArray());
     if ( m_bToolbarsDirty )
         KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0 /* we could use later for finer granularity */);
-    if ( m_bEffectsDirty )
+    if ( m_bEffectsDirty ){
         KIPC::sendMessageAll(KIPC::SettingsChanged);
-
+		kapp->dcopClient()->send("kwin*", "", "reconfigure()", "");
+	}
     QApplication::syncX();
 
     m_bChanged = false;

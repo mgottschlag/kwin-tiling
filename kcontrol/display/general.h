@@ -78,6 +78,7 @@ private slots:
     void slotMacStyle();
     void slotRunImporter();
 
+
 private:
     void readSettings();
     void showSettings();
@@ -86,17 +87,17 @@ private:
     bool m_bEffectsDirty, m_bMacStyleDirty;
     bool useRM, macStyle;
     bool tbUseHilite, tbMoveTransparent;
-    bool effectFadeMenu, effectAnimateMenu, effectAnimateCombo, effectFadeTooltip;
-
+    bool effectFadeMenu, effectAnimateMenu, effectAnimateCombo, effectFadeTooltip, effectAnimateTooltip, effectNoTooltip;
     QString tbUseText;
 
-    QGroupBox *styles, *tbStyle, *effectStyle;
+    QGroupBox *styles, *tbStyle;
+    QGroupBox *effectStyleMenu, *effectStyleTooltip;
     QRadioButton *tbIcon, *tbText, *tbAside, *tbUnder;
     QCheckBox *tbHilite, *tbTransp;
     QCheckBox *cbRes;
     QCheckBox *cbMac;
-    QRadioButton *effPlainMenu, *effFadeMenu, *effAnimateMenu;
-    QCheckBox *effAnimateCombo, *effFadeTooltip;
+    QRadioButton *effPlainMenu, *effFadeMenu, *effAnimateMenu, *effPlainTooltip, *effFadeTooltip, *effAnimateTooltip;
+    QCheckBox *effAnimateCombo, *effNoTooltip;
 
     GUIStyle applicationStyle;
 

@@ -78,6 +78,11 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	QWhatsThis::add( cbUseCustomButtonPositions, 
 			i18n(  "The appropriate settings can be found in the \"Buttons\" Tab. "
 				   "Please note that this option is not available on all styles yet!" ) );
+	cbShowToolTips = new QCheckBox( 
+			i18n("&Show window button tooltips"), checkGroup );
+	QWhatsThis::add( cbShowToolTips, 
+			i18n(  "Enabling this checkbox will show window button tooltips. "
+				   "If this checkbox is off, no window button tooltips will be shown."));
 // Save this for later...
 //	cbUseMiniWindows = new QCheckBox( i18n( "Render mini &titlebars for all windows"), checkGroup );
 //	QWhatsThis::add( cbUseMiniWindows, i18n( "Note that this option is not available on all styles yet!" ) );
@@ -128,6 +133,7 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 								SLOT(slotDecorationHighlighted(const QString&)) );
 	connect( cbUseCustomButtonPositions, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
 	connect( cbUseCustomButtonPositions, SIGNAL(toggled(bool)), SLOT(slotEnableButtonTab(bool)) );
+	connect( cbShowToolTips, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
 //	connect( cbUseMiniWindows, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
 
 	// Allow kwin dcop signal to update our selection list
@@ -322,13 +328,14 @@ void KWinDecorationModule::readConfig( KConfig* conf )
 	// ============
 	cbUseCustomButtonPositions->setChecked( conf->readBoolEntry("CustomButtonPositions", false));
 	tabWidget->setTabEnabled( buttonPage, cbUseCustomButtonPositions->isChecked() );
+	cbShowToolTips->setChecked( conf->readBoolEntry("ShowToolTips", true ));
 //	cbUseMiniWindows->setChecked( conf->readBoolEntry("MiniWindowBorders", false));
 
 	// Find the corresponding decoration name to that of
 	// the current plugin library name
 
 	oldLibraryName = currentLibraryName;
-	currentLibraryName = conf->readEntry("PluginLib", "kwindefault");
+	currentLibraryName = conf->readEntry("PluginLib", "libkwindefault");
 	QString decoName = decorationName( currentLibraryName );
 
 	// If we are using the "default" kde client, use the "default" entry.
@@ -371,6 +378,7 @@ void KWinDecorationModule::writeConfig( KConfig* conf )
 	// General settings
 	conf->writeEntry("PluginLib", libName);
 	conf->writeEntry("CustomButtonPositions", cbUseCustomButtonPositions->isChecked());
+	conf->writeEntry("ShowToolTips", cbShowToolTips->isChecked());
 //	conf->writeEntry("MiniWindowBorders", cbUseMiniWindows->isChecked());
 
 	// Button settings
@@ -428,8 +436,10 @@ void KWinDecorationModule::defaults()
 {
 	// Set the KDE defaults
 	cbUseCustomButtonPositions->setChecked( false );
+	cbShowToolTips->setChecked( true );
 //	cbUseMiniWindows->setChecked( false);
-	decorationListBox->setSelected( 0, true );  // KDE2 default client
+// Don't set default for now
+//	decorationListBox->setSelected( 0, true );  // KDE2 default client
 
 	dropSite->buttonsLeft = "MS";
 	dropSite->buttonsRight= "HIAX";
