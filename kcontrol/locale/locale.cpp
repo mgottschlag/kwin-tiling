@@ -38,6 +38,7 @@
 #include <kmessagebox.h>
 #include <kstddirs.h>
 #include <ksimpleconfig.h>
+#include <kcharsets.h>
 
 #include "klangcombo.h"
 #include "klocalesample.h"
@@ -100,6 +101,20 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 	     this, SLOT(changedTime(int)) );
     tl1->addWidget(label, 5, 1);
     tl1->addWidget(comboDate, 5, 2);
+
+    label = new QLabel(this, I18N_NOOP("&Charset"));
+    comboChset = new KLanguageCombo(this);
+    comboChset->setFixedHeight(comboChset->sizeHint().height());
+    label->setBuddy(comboChset);
+    tl1->addWidget(label, 6, 1);
+    tl1->addWidget(comboChset, 6, 2);
+
+    QStringList list = KGlobal::charsets()->availableCharsetNames();
+    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+    {
+       comboChset->insertItem(QIconSet(), *it, *it);
+    }
+
 
     tl1->setRowStretch(6,1);
     load();
@@ -198,13 +213,15 @@ void KLocaleConfig::load()
   // Date and time
   str = config->readEntry("Time");
   comboDate->setCurrentItem(str);
+
+  // Charset
+  str = config->readEntry(QString::fromLatin1("Charset"), QString::fromLatin1("unicode"));
+  comboChset->setCurrentItem(str);
 }
 
 void KLocaleConfig::readLocale(const QString &path, QString &name, const QString &sub) const
 {
   // temperary use of our locale as the global locale
-  // temperary use of our locale as the global locale
-  // restore the old global locale
   KLocale *lsave = KGlobal::_locale;
   KGlobal::_locale = locale;
 
@@ -228,6 +245,7 @@ void KLocaleConfig::save()
   config->writeEntry("Numeric", comboNumber->currentTag(), true, true);
   config->writeEntry("Monetary", comboMoney->currentTag(), true, true);
   config->writeEntry("Time", comboDate->currentTag(), true, true);
+  config->writeEntry("Charset", comboChset->currentTag(), true, true);
 
   config->sync();
 

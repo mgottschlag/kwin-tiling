@@ -56,7 +56,7 @@ signals:
   void countryChanged();
 
 private:
-  KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate;
+  KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate, *comboChset;
 
   bool changedFlag;
 
