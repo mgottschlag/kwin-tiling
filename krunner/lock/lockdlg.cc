@@ -330,8 +330,17 @@ void PasswordDlg::slotStartNewSession()
     {
        QSimpleRichText rt(qt_text, dialog->font());
        int scr = QApplication::desktop()->screenNumber(dialog);
+       KConfig gc("kdeglobals", false, false);
+       gc.setGroup("Windows");
+       QRect rect;
+       if (gc.readBoolEntry("XineramaEnabled", true) &&
+           gc.readBoolEntry("XineramaPlacementEnabled", true)) {
+          rect = QApplication::desktop()->screenGeometry(scr);
+       } else {
+          rect = QApplication::desktop()->geometry();
+       }
 
-       pref_width = QApplication::desktop()->screenGeometry(scr).width() / 3;
+       pref_width = rect.width() / 3;
        rt.setWidth(pref_width);
        int used_width = rt.widthUsed();
        pref_height = rt.height();

@@ -30,6 +30,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kstdguiitem.h>
 #include <kiconloader.h>
 #include <kwin.h>
+#include <kconfig.h>
 
 #include <sys/types.h>
 #include <sys/utsname.h>
@@ -200,7 +201,16 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, bool maynuke,
     // Show dialog (will save the background in showEvent)
     QSize sh = l->sizeHint();
     QDesktopWidget *desktop = KApplication::desktop();
-    QRect rect = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
+    KConfig gc("kdeglobals", false, false);
+    gc.setGroup("Windows");
+    QRect rect;
+    if (gc.readBoolEntry("XineramaEnabled", true) &&
+        gc.readBoolEntry("XineramaPlacementEnabled", true)) {
+        rect = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
+    } else {
+        rect = desktop->geometry();
+    }
+
     l->move(rect.x() + (rect.width() - sh.width())/2,
     	    rect.y() + (rect.height() - sh.height())/2);
     bool result = l->exec();

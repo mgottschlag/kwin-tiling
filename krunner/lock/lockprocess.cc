@@ -660,10 +660,21 @@ bool LockProcess::checkPass()
 
     QDesktopWidget *desktop = KApplication::desktop();
     QRect rect = passDlg.geometry();
-    if (child_sockets.isEmpty())
-        rect.moveCenter( desktop->screenGeometry(desktop->screenNumber(QCursor::pos())).center());
-    else
-        rect.moveCenter( desktop->screenGeometry(qt_xscreen()).center());
+    if (child_sockets.isEmpty()) {
+        KConfig gc("kdeglobals", false, false);
+        gc.setGroup("Windows");
+        QRect desk;
+        if (gc.readBoolEntry("XineramaEnabled", true) &&
+            gc.readBoolEntry("XineramaPlacementEnabled", true)) {
+            desk = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
+        } else {
+            desk = desktop->geometry();
+        }
+        rect.moveCenter(desk.center());
+    } else {
+        rect.moveCenter(desktop->screenGeometry(qt_xscreen()).center());
+    }
+
     passDlg.move(rect.topLeft() );
 
     XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,

@@ -60,9 +60,18 @@ KControlApp::KControlApp()
 
   connect (modIface, SIGNAL(helpClicked()), toplevel, SLOT(slotHelpRequest()));
 
+  QRect desk;
+  KConfig gc("kdeglobals", false, false);
+  gc.setGroup("Windows");
+  if (gc.readBoolEntry("XineramaEnabled", true) &&
+      gc.readBoolEntry("XineramaPlacementEnabled", true)) {
+    desk = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(toplevel));
+  } else {
+    desk = QApplication::desktop()->geometry();
+  }
+
   KConfig *config = KGlobal::config();
   config->setGroup("General");
-  QRect desk = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(toplevel));
   int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk.width()), 
 			       QMIN( desk.width() * 3/4 , 800 ) );
   int y = config->readNumEntry(QString::fromLatin1("InitialHeight %1").arg(desk.height()), 
