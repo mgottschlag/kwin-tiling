@@ -16,6 +16,7 @@ Name[eo]=Google Novaĵoj
 Name[es]=Noticias de Google
 Name[fa]=اخبار گوگل
 Name[fr]=Google Informations
+Name[ga]=Nuacht Google
 Name[gl]=Novas de Google
 Name[he]=חדשות Google
 Name[hi]=गूगल समाचार
@@ -57,5 +58,6 @@ Keys=ggn,googlenews
 Query=http://news.google.com/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[en_GB]=http://news.google.co.uk/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[fr]=http://news.google.fr/news?q=\\{@}&ie=UTF-8&oe=UTF-8
-Query[sv]=http://news.google.se/news?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[nl]=http://news.google.nl/news?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[pt]=http://news.google.pt/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Charset=utf8

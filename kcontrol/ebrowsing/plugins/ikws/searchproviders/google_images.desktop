@@ -36,7 +36,7 @@ Name[mk]=Google пребарување на слики
 Name[mn]=Гооглэ-Зураг хайлт
 Name[mt]=Fittex stampi fuq Google
 Name[nb]=Bildesøk i Google
-Name[nds]=Google (Biller söken)
+Name[nds]=Google sien Biller-Söök
 Name[nl]=Google afbeeldingen zoeken
 Name[nn]=Google biletsøk
 Name[nso]=Nyako ya Ponagalo ya Google
@@ -72,4 +72,5 @@ Query=http://images.google.com/images?q=\\{@}
 Query[en_GB]=http://images.google.co.uk/images?q=\\{@}
 Query[fi]=http://images.google.fi/images?q=\\{@}
 Query[fr]=http://images.google.fr/images?q=\\{@}
-Query[sv]=http://images.google.se/images?q=\\{@}
+Query[nl]=http://images.google.nl/images?q=\\{@}
+Query[pt]=http://images.google.pt/images?q=\\{@}

@@ -63,6 +63,7 @@ Name[zu]=Incwadi yokuqondiwe ye-Python
 Query=http://www.google.com/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[en_GB]=http://www.google.co.uk/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[fr]=http://www.google.fr/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
-Query[sv]=http://www.google.se/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
+Query[nl]=http://www.google.nl/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
+Query[pt]=http://www.google.pt/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 ServiceTypes=SearchProvider
 Type=Service

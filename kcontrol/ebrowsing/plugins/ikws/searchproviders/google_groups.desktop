@@ -22,6 +22,7 @@ Name[eu]=Google taldeak
 Name[fa]=گروه‌های گوگل
 Name[fi]=Google ryhmät
 Name[fr]=Groupes Google
+Name[ga]=Grúpaí Google
 Name[gl]=Grupos de Google
 Name[hi]=गूगल समूह
 Name[hr]=Google Grupe
@@ -66,4 +67,5 @@ Query=http://groups.google.com/groups?oi=djq&as_q=\\{@}
 Query[en_GB]=http://groups.google.co.uk/groups?oi=djq&as_q=\\{@}
 Query[fi]=http://groups.google.fi/groups?oi=djq&as_q=\\{@}
 Query[fr]=http://groups.google.fr/groups?oi=djq&as_q=\\{@}
-Query[sv]=http://groups.google.se/groups?oi=djq&as_q=\\{@}
+Query[nl]=http://groups.google.nl/groups?oi=djq&as_q=\\{@}
+Query[pt]=http://groups.google.pt/groups?oi=djq&as_q=\\{@}
