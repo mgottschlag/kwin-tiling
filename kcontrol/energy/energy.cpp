@@ -49,14 +49,14 @@ extern "C" {
 int __kde_do_not_unload = 1;
 }
 
-#ifdef XIMStringConversionRetrival
+#if defined(XIMStringConversionRetrival) || defined (__sun)
 extern "C" {
 #endif
     Bool DPMSQueryExtension(Display *, int *, int *);
     Status DPMSEnable(Display *);
     Status DPMSDisable(Display *);
     Bool DPMSSetTimeouts(Display *, CARD16, CARD16, CARD16);
-#ifdef XIMStringConversionRetrival
+#if defined(XIMStringConversionRetrival) || defined (__sun)
 }
 #endif
 #endif
@@ -264,6 +264,11 @@ void KEnergy::showSettings()
 }
 
 
+extern "C" {
+  int dropError(Display *, XErrorEvent *);
+  typedef int (*XErrFunc) (Display *, XErrorEvent *);
+}
+
 int dropError(Display *, XErrorEvent *)
 {
     return 0;
@@ -273,7 +278,7 @@ int dropError(Display *, XErrorEvent *)
 void KEnergy::applySettings(bool enable, int standby, int suspend, int off)
 {
 #ifdef HAVE_DPMS
-    int (*defaultHandler)(Display *, XErrorEvent *);
+    XErrFunc defaultHandler;
     defaultHandler = XSetErrorHandler(dropError);
 
     Display *dpy = qt_xdisplay();
