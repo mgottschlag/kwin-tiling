@@ -2497,37 +2497,39 @@ void CFontEngine::parseXlfdBmp()
 
 static const char * getTokenBdf(const char *str, const char *key, bool noquotes=false)
 {
-    char         *s=NULL;
+    const char   *s=NULL;
     unsigned int keyLen=strlen(key),
                  sLen=strlen(str);
 
     if(keyLen+1<sLen && NULL!=(s=strstr(str, key)) && (s==str || (!isalnum(s[-1]) && '_'!=s[-1])) && (!noquotes || (noquotes && s[keyLen+1]=='-')))
     {
         const int   constMaxTokenSize=256;
-        static char token[constMaxTokenSize];
+        static char tokenBuffer[constMaxTokenSize];
 
-        char        *end=NULL;
+        char        *end=NULL,
+                    *token;
 
-        strncpy(token, s, constMaxTokenSize);
-        token[constMaxTokenSize-1]='\0';
+        strncpy(tokenBuffer, s, constMaxTokenSize);
+        tokenBuffer[constMaxTokenSize-1]='\0';
+        token=tokenBuffer;
 
         if(noquotes)
         {
-            s+=strlen(key)+1;
-            if(NULL!=(end=strchr(s, '\n')))
+            token+=strlen(key)+1;
+            if(NULL!=(end=strchr(token, '\n')))
             {
                 *end='\0';
-                return s;
+                return token;
             }
         }
         else
-            if(NULL!=(s=strchr(token, '\"')))
+            if(NULL!=(token=strchr(token, '\"')))
             {
-                s++;
-                if(NULL!=(end=strchr(s, '\"')))
+                token++;
+                if(NULL!=(end=strchr(token, '\"')))
                 {
                     *end='\0';
-                    return s;
+                    return token;
                 }
             }
     }
