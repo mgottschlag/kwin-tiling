@@ -29,6 +29,7 @@
 #include <kglobal.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
+#include <qhbuttongroup.h>
 #include "keyconfig.h"
 /*
 New Scheme
@@ -53,27 +54,24 @@ Global Shortcuts
 KeyModule::KeyModule( QWidget *parent, const char *name )
 : KCModule( parent, name )
 {
-	QGridLayout* pLayout = new QGridLayout( this, 6, 3, KDialog::marginHint(), KDialog::spacingHint() );
+	QVBoxLayout* pLayout = new QVBoxLayout( this, KDialog::marginHint(), KDialog::spacingHint() );
 
-	// What's QButtonGroup for?
-	QButtonGroup* pGroup = new QButtonGroup( this );
-	m_prbCur = new QRadioButton( i18n("Current scheme"), this );
-	m_prbNew = new QRadioButton( i18n("New scheme"), this );
-	m_prbPre = new QRadioButton( i18n("Preset scheme"), this );
+	QButtonGroup* pGroup = new QHButtonGroup( this );
+	m_prbCur = new QRadioButton( i18n("Current scheme"), pGroup );
+	m_prbNew = new QRadioButton( i18n("New scheme"), pGroup );
+	m_prbPre = new QRadioButton( i18n("Preset scheme"), pGroup );
 	pGroup->setExclusive( true );
 	pGroup->insert( m_prbCur );
 	pGroup->insert( m_prbNew );
 	pGroup->insert( m_prbPre );
-	pLayout->addWidget( m_prbCur, 1, 0 );
-	pLayout->addWidget( m_prbNew, 2, 0 );
-	pLayout->addWidget( m_prbPre, 3, 0 );
+	pLayout->addWidget( pGroup); 
 
 	m_pcbSchemes = new KComboBox( this );
-	pLayout->addMultiCellWidget( m_pcbSchemes, 4, 4, 0, 2 );
+	pLayout->addWidget( m_pcbSchemes );
 	//QWhatsThis::add( rb, i18n("The selected action will not be associated with any key.") );
 
 	m_pTab = new QTabWidget( this );
-	pLayout->addMultiCellWidget( m_pTab, 5, 5, 0, 2 );
+	pLayout->addWidget( m_pTab );
 	connect(m_pTab, SIGNAL(currentChanged(QWidget*)), SLOT(tabChanged(QWidget*)));
 
 	global = new KKeyModule(this, true, false, true);
