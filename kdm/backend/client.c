@@ -779,6 +779,7 @@ userEnv (struct display *d, int useSystemPath, char *user, char *home, char *she
     char	**env;
 
     env = defaultEnv (user);
+    env = setEnv (env, "XDM_MANAGED", "true");
     env = setEnv (env, "DISPLAY", d->name);
     env = setEnv (env, "HOME", home);
     env = setEnv (env, "PATH", useSystemPath ? d->systemPath : d->userPath);
