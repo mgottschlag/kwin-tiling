@@ -460,6 +460,8 @@ void KBackground::save()
 
     // reconfigure kdesktop. kdesktop will notify all clients
     DCOPClient *client = kapp->dcopClient();
+    if (!client->isAttached())
+	client->attach();
     client->send("kdesktop", "KBackgroundIface", "configure()", "");
 
     emit changed(false);
