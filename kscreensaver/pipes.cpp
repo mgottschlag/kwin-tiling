@@ -128,10 +128,6 @@ FIXME: this could be clearer done by a calculation on the position.
 #endif
 
 #include <klocale.h>
-// this refers to klock.po. If you want an extra dictionary, 
-// create an extra KLocale instance here.
-//extern KLocale *glocale;
-#include <kapp.h>
 #include <kconfig.h>
 
 #include "pipes.h"
@@ -732,7 +728,7 @@ void kPipesSaver::setPipes( int n )
 
 void kPipesSaver::readSettings()
 {
-  KConfig *config = kapp->config();
+  KConfig *config = KGlobal::config();
   config->setGroup( "Settings" );
 
   QString str;
@@ -789,7 +785,7 @@ kPipesSetup::kPipesSetup( QWidget *parent, const char *name )
 
 void kPipesSetup::readSettings()
 {
-  KConfig *config = KApplication::kApplication()->config();
+  KConfig *config = KGlobal::config();
   config->setGroup( "Settings" );
 
   QString str;
@@ -810,7 +806,7 @@ void kPipesSetup::slotPipes( int num )
 
 void kPipesSetup::slotOkPressed()
 {
-  KConfig *config = KApplication::kApplication()->config();
+  KConfig *config = KGlobal::config();
   config->setGroup( "Settings" );
 
   QString spipes;

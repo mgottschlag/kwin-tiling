@@ -39,6 +39,7 @@ class SambaContainer:public KCModule
       virtual void load();
       virtual void save();
       virtual void defaults() {};
+
    private:
       QVBoxLayout layout;
       KConfig config;

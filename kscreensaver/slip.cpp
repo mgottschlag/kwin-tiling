@@ -255,7 +255,6 @@ drawslip(Window win)
 #include <qcolor.h>
 #include <qlayout.h>
 
-#include <kapp.h>
 #include <kmessagebox.h>
 #include <kbuttonbox.h>
 #include <klocale.h>
@@ -337,7 +336,7 @@ void kSlipSaver::setLevels( int l )
 
 void kSlipSaver::readSettings()
 {
-    KConfig *config = kapp->config();
+    KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -433,7 +432,7 @@ kSlipSetup::kSlipSetup( QWidget *parent, const char *name )
 
 void kSlipSetup::readSettings()
 {
-    KConfig *config = KApplication::kApplication()->config();
+    KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -473,7 +472,7 @@ void kSlipSetup::slotLevels( int num )
 
 void kSlipSetup::slotOkPressed()
 {
-    KConfig *config = KApplication::kApplication()->config();
+    KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

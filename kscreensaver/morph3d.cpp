@@ -920,7 +920,6 @@ release_morph3d()
 #include <qlabel.h>
 #include <qcolor.h>
 
-#include <kapp.h>
 #include <kconfig.h>
 #include <kmessagebox.h>
 
@@ -996,7 +995,7 @@ void kMorph3dSaver::setLevels( int l )
 
 void kMorph3dSaver::readSettings()
 {
-	KConfig *config = kapp->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1075,7 +1074,7 @@ kMorph3dSetup::kMorph3dSetup( QWidget *parent, const char *name )
 
 void kMorph3dSetup::readSettings()
 {
-	KConfig *config = kapp->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1116,7 +1115,7 @@ void kMorph3dSetup::slotLevels( int num )
 
 void kMorph3dSetup::slotOkPressed()
 {
-	KConfig *config = kapp->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

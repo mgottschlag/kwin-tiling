@@ -22,7 +22,6 @@
 #include <qfileinfo.h>
 #include <qwhatsthis.h>
 
-#include <kapp.h>
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kmessagebox.h>
@@ -636,7 +635,7 @@ void KColorScheme::readScheme( int index )
 
     if (index == 0) {
 	// Current scheme
-	config = kapp->config();
+	config = KGlobal::config();
 	config->setGroup("General");
     } else {
 	// Open scheme file

@@ -219,7 +219,6 @@ drawswarm(Window win)
 #include <qcolor.h>
 #include <qlayout.h>
 
-#include <kapp.h>
 #include <kbuttonbox.h>
 #include <kconfig.h>
 #include <klocale.h>
@@ -301,7 +300,7 @@ void kSwarmSaver::setLevels( int l )
 
 void kSwarmSaver::readSettings()
 {
-    KConfig *config = kapp->config();
+    KConfig *config = KGlobal::config();
     config->setGroup( "Settings" );
 
 	QString str;
@@ -396,7 +395,7 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 
 void kSwarmSetup::readSettings()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -435,7 +434,7 @@ void kSwarmSetup::slotLevels( int num )
 
 void kSwarmSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

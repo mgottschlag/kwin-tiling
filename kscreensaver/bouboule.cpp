@@ -819,7 +819,6 @@ release_bouboule()
 #include <qlayout.h>
 
 #include <kbuttonbox.h>
-#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kmessagebox.h>
@@ -955,7 +954,7 @@ void kBoubouleSaver::set3DMode( bool mode3d )
 
 void kBoubouleSaver::readSettings()
 {
-    KConfig *config = kapp->config();
+    KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1107,7 +1106,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 
 void kBoubouleSetup::readSettings()
 {
-    KConfig *config = KApplication::kApplication()->config();
+    KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1194,7 +1193,7 @@ void kBoubouleSetup::slot3DMode( bool mode )
 
 void kBoubouleSetup::slotOkPressed()
 {
-    KConfig *config = KApplication::kApplication()->config();
+    KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

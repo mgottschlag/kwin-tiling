@@ -408,7 +408,6 @@ void pyro_setCloud( int c )
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
-#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kmessagebox.h>
@@ -488,7 +487,7 @@ void kPyroSaver::setCloud( bool c )
 
 void kPyroSaver::readSettings()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -578,7 +577,7 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 
 void kPyroSetup::readSettings()
 {
-	KConfig *config = kapp->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -616,7 +615,7 @@ void kPyroSetup::slotCloud( bool c )
 
 void kPyroSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString snumber;

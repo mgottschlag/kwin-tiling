@@ -430,7 +430,6 @@ XEraseImage(Display * display, Window win, GC gc, int x, int y, int xlast, int y
 #include "helpers.h"
 
 #include "bat.h"
-#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kmessagebox.h>
@@ -508,7 +507,7 @@ void kBatSaver::setLevels( int l )
 
 void kBatSaver::readSettings()
 {
-	KConfig *config = kapp->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -608,7 +607,7 @@ kBatSetup::kBatSetup( QWidget *parent, const char *name )
 
 void kBatSetup::readSettings()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -648,7 +647,7 @@ void kBatSetup::slotLevels( int num )
 
 void kBatSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

@@ -194,7 +194,6 @@ drawhop(Window win)
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
-#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kmessagebox.h>
@@ -278,7 +277,7 @@ void kHopSaver::setPoints( int p )
 
 void kHopSaver::readSettings()
 {
-    KConfig *config = kapp->config();
+    KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -394,7 +393,7 @@ kHopSetup::kHopSetup( QWidget *parent, const char *name )
 
 void kHopSetup::readSettings()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -447,7 +446,7 @@ void kHopSetup::slotPoints( int num )
 
 void kHopSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

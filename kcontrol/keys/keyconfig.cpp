@@ -17,7 +17,6 @@
 #include <qlayout.h>
 #include <qtabwidget.h>
 
-#include <kapp.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -208,7 +207,7 @@ void KKeyModule::readScheme( int index )
     kc->allDefault();
     return;
   } if ( index == 0 ) {
-    config  = kapp->config();
+    config  = KGlobal::config();
   } else {
     config =
       new KSimpleConfig( *sFileList->at( index ), true );

@@ -409,7 +409,6 @@ void rock_setRotate( bool rotate )
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
-#include <kapp.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -505,7 +504,7 @@ void kRockSaver::setRotate( bool r )
 
 void kRockSaver::readSettings()
 {
-	KConfig *config = kapp->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -627,7 +626,7 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 
 void kRockSetup::readSettings()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -698,7 +697,7 @@ void kRockSetup::slotRotate( bool r )
 // Ok pressed - save settings and exit
 void kRockSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

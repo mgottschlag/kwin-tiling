@@ -465,7 +465,6 @@ initSpace(Window window)
 #include <qlabel.h>
 #include <qcolor.h>
 
-#include <kapp.h>
 #include <kconfig.h>
 #include <kmessagebox.h>
 
@@ -538,7 +537,7 @@ void kSpaceSaver::setWarp( int  w )
 
 void kSpaceSaver::readSettings()
 {
-	KConfig *config = kapp->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -630,7 +629,7 @@ kSpaceSetup::kSpaceSetup( QWidget *parent, const char *name )
 
 void kSpaceSetup::readSettings()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -670,7 +669,7 @@ void kSpaceSetup::slotWarp( int num )
 
 void kSpaceSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;
