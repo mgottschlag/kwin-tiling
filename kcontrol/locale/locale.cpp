@@ -53,9 +53,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   : QWidget (parent, name)
 {
     QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
-    tl1->setRowStretch( 0, 1);
     tl1->setColStretch( 2, 1);
-
     changedFlag = FALSE;
 
     QLabel *label = new QLabel(this, I18N_NOOP("&Country"));
@@ -121,8 +119,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
        comboChset->insertItem(QIconSet(), *it, *it);
 
-
-    tl1->setRowStretch(6,1);
+    tl1->setRowStretch(7, 1);
     load();
 }
 
