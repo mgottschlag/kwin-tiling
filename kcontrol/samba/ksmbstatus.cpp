@@ -41,7 +41,7 @@
 #include <qregexp.h>
 
 #define Before(ttf,in) in.left(in.find(ttf))
-#define After(ttf,in)  (in.contains(ttf)?in.mid(in.find(ttf)+QString(ttf).length()):QString(""))
+#define After(ttf,in)  (in.contains(ttf)?QString(in.mid(in.find(ttf)+QString(ttf).length())):QString(""))
 
 NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
    : QWidget(parent, name)
