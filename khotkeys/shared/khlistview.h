@@ -32,6 +32,8 @@ class KHListView
         void setForceSelect( bool force_P );
     signals:
         void current_changed( QListViewItem* item_P );
+    protected:
+        virtual void contentsDropEvent (QDropEvent*);
     private slots:
         void slot_selection_changed( QListViewItem* item_P );
         void slot_selection_changed();
@@ -40,6 +42,7 @@ class KHListView
     private:
         QListViewItem* saved_current_item;
         bool in_clear;
+        bool ignore;
         bool force_select;
         QTimer insert_select_timer;
     };

@@ -23,7 +23,7 @@ namespace KHotKeys
 
 KHListView::KHListView( QWidget* parent_P, const char* name_P )
     : KListView( parent_P, name_P ), saved_current_item( NULL ),
-        in_clear( false ), force_select( false )
+        in_clear( false ), ignore( false ), force_select( false )
     {
     connect( this, SIGNAL( selectionChanged( QListViewItem* )),
         SLOT( slot_selection_changed( QListViewItem* )));
@@ -38,6 +38,8 @@ KHListView::KHListView( QWidget* parent_P, const char* name_P )
 
 void KHListView::slot_selection_changed()
     {
+    if( ignore )
+        return;
     if( saved_current_item == NULL )
         slot_selection_changed( NULL );
     else if( !saved_current_item->isSelected()) // no way
@@ -46,6 +48,8 @@ void KHListView::slot_selection_changed()
     
 void KHListView::slot_selection_changed( QListViewItem* item_P )
     {
+    if( ignore )
+        return;
     if( item_P == saved_current_item )
         return;
     saved_current_item = item_P;
@@ -55,6 +59,8 @@ void KHListView::slot_selection_changed( QListViewItem* item_P )
     
 void KHListView::slot_current_changed( QListViewItem* item_P )
     {
+    if( ignore )
+        return;
     insert_select_timer.stop();
     if( item_P == saved_current_item )
         return;
@@ -98,9 +104,19 @@ void KHListView::clearSelection()
 // which means that a derived class are not yet fully created
 void KHListView::slot_insert_select()
     {
+    if( ignore )
+        return;
     slot_current_changed( currentItem());
     }
-    
+
+void KHListView::contentsDropEvent( QDropEvent* e )
+    {
+    bool save_ignore = ignore;
+    ignore = true;
+    KListView::contentsDropEvent( e );
+    ignore = save_ignore;
+    }
+
 } // namespace KHotKeys
 
 #include "khlistview.moc"
