@@ -37,8 +37,8 @@
 #include "kuriikwsfiltereng.h"
 #include "searchprovider.h"
 
-KStaticDeleter<KURISearchFilterEngine> kurisearchfilterengsd;
-KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0L;
+KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0;
+static KStaticDeleter<KURISearchFilterEngine> kurisearchfilterengsd;
 
 #define IKW_KEY         "Internet Keywords"
 #define IKW_SUFFIX      " " IKW_KEY
