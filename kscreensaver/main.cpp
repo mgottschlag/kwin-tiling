@@ -325,7 +325,7 @@ int main( int argc, char *argv[] )
 	    unknown
 	} parameter;
 	
-	char *strings[] = { 
+	const char *strings[] = { 
 	    "-install", "-setup", "-preview", "-inroot", "-test", "-delay", 
 	    "-lock", "-corners", "-desc", "-nice", "--help", "-allow-root",
 	    0

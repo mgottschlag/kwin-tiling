@@ -1,5 +1,5 @@
 /* XPM */
-static char * bat4[] = {
+static const char * bat4[] = {
 "147 108 54 1",
 " 	c #010101010101",
 ".	c #AEAEAEAEAEAE",

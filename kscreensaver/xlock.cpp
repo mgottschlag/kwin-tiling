@@ -43,7 +43,7 @@ long LongRNG()
 }
 
 unsigned long
-allocpixel(Colormap cmap, char *name, char *def)
+allocpixel(Colormap cmap, const char *name, const char *def)
 {
 	XColor      col;
 	XColor      tmp;
