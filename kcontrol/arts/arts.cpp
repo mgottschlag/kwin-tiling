@@ -116,10 +116,9 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     responseButton[0] = new QRadioButton( i18n("&Fast (10ms)"), responseGroup );
     responseButton[1] = new QRadioButton( i18n("&Standard (50ms)"), responseGroup );
     responseButton[2] = new QRadioButton( i18n("&Comfortable (250ms)"), responseGroup);
-    responseButton[3] = new QRadioButton( i18n("&Playback (1000ms)"), responseGroup);
     //connect(style_group, SIGNAL(clicked(int)), SLOT(style_clicked(int)));
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 3; i++)
     vbox->addWidget(responseButton[i]);
     layout->addWidget(responseGroup);
 
@@ -148,9 +147,9 @@ void KArtsModule::GetSettings( void )
     networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
     x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
     fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
-    for(int i=0;i<4;i++)
+    for(int i=0;i<3;i++)
     {
-        if(config->readNumEntry("ResponseTime",3) == i)
+        if(config->readNumEntry("ResponseTime",2) == i)
             responseButton[i]->setChecked(true);
     }
     updateWidgets();
@@ -164,7 +163,7 @@ void KArtsModule::saveParams( void )
     config->writeEntry("NetworkTransparent",networkTransparent->isChecked());
     config->writeEntry("X11GlobalComm",x11Comm->isChecked());
     config->writeEntry("FullDuplex",fullDuplex->isChecked());
-    for(int i=0;i<4;i++)
+    for(int i=0;i<3;i++)
     {
         if(responseButton[i]->isChecked())
             config->writeEntry("ResponseTime",i);
@@ -249,7 +248,7 @@ extern "C"
         bool networkTransparent = config->readBoolEntry("NetworkTransparent",false);
         bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
         bool fullDuplex = config->readBoolEntry("FullDuplex",false);
-        int responseTime = config->readNumEntry("ResponseTime",3);
+        int responseTime = config->readNumEntry("ResponseTime",2);
 
         /* put the value of x11Comm into .mcoprc */
         KConfig *X11CommConfig = new KConfig(QDir::homeDirPath()+"/.mcoprc");
@@ -279,21 +278,14 @@ extern "C"
             switch(responseTime)
             {
                 /* 8.7 ms */
-                case 0: 
-		  cmdline += " -F 3 -S 512";
-		  break;
+                case 0: cmdline += " -F 3 -S 512";
+                    break;
                 /* 40 ms */
-                case 1: 
-		  cmdline += " -F 7 -S 1024";
-		  break;
+                case 1: cmdline += " -F 7 -S 1024";
+                    break;
                 /* 255 ms */
-                case 2: 
-		  cmdline += " -F 11 -S 4096";
-		  break;
-                case 3: 
-		  cmdline += " -F 5 -S 8192";
-		  break;
-		  
+                case 2: cmdline += " -F 5 -S 8192";
+                    break;
             }
             system(cmdline);
         }
