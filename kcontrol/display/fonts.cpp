@@ -13,6 +13,7 @@
 #include <qlabel.h>
 #include <qapplication.h>
 #include <qwhatsthis.h>
+#include <qtooltip.h>
 #include <qframe.h>
 
 // X11 headers
@@ -240,7 +241,8 @@ KFonts::KFonts(QWidget *parent, const char *name)
     fontUseList.append(i);
     connect(i, SIGNAL(changed()), this, SLOT(fontChanged()));
 
-    QWhatsThis::add(preview, i18n("Preview of the \"%1\" font").arg(i->text()));
+    QWhatsThis::add(preview, i18n("This is a preview of the \"%1\" font. You can change this font by using the \"Choose...\" button at right.").arg(i->text()));
+    QToolTip::add(preview, i18n("Preview of the \"%1\" font").arg(i->text()));
 
     QLabel * fontUse = new QLabel(i->text(), this);
     
