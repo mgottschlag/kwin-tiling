@@ -699,9 +699,12 @@ void KColorScheme::readSchemeNames()
     for (it = localList.begin(); it != localList.end(); it++) {
     KSimpleConfig *config = new KSimpleConfig((*it), true);
     config->setGroup("Color Scheme");
-    QString str = config->readEntry("name");
-    if (str.isEmpty())
-        continue;
+    QString str = config->readEntry("Name");
+    if (str.isEmpty()) {
+       str =  config->readEntry("name");  
+       if (str.isEmpty())
+          continue;
+    }
     sList->insertItem(str);
     sFileList.append(*it);
     delete config;
