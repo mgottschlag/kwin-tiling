@@ -91,7 +91,8 @@ protected:
   int effectCircleOut(bool doInit);
   int effectSweep(bool doInit);
   int effectMeltdown(bool doInit);
-  int effectPuzzle(bool doInit);
+  int effectSpiralIn(bool doInit);
+  int effectMultiCircleOut(bool doInit);
 
 protected:
   /** Init mPainter with next-screen's pixmap and call
@@ -122,8 +123,9 @@ protected:
   QString mDirectory;
 
   // values for state of various effects:
-  int mx, my, mw, mh, mdx, mdy, mix, miy, mi, mSubType;
-  double mfx, mfy, mAlpha;
+  int mx, my, mw, mh, mdx, mdy, mix, miy, mi, mj, mSubType;
+  int mx0, my0, mx1, my1, mwait;
+  double mfx, mfy, mAlpha, mfd;
   int* mIntArray;
 };
 

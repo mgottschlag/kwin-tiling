@@ -164,19 +164,138 @@ void kSlideShowSaver::registerEffects()
   int i = 0;
 
   mEffectList = new EffectMethod[64];
-  mEffectList[i++] = &kSlideShowSaver::effectMeltdown;
+  mEffectList[i++] = &kSlideShowSaver::effectMultiCircleOut;
+  mEffectList[i++] = &kSlideShowSaver::effectSpiralIn;
   mEffectList[i++] = &kSlideShowSaver::effectSweep;
+  mEffectList[i++] = &kSlideShowSaver::effectMeltdown;
   mEffectList[i++] = &kSlideShowSaver::effectCircleOut;
   mEffectList[i++] = &kSlideShowSaver::effectBlobs;
-  mEffectList[i++] = &kSlideShowSaver::effectIncomingEdges;
   mEffectList[i++] = &kSlideShowSaver::effectHorizLines;
   mEffectList[i++] = &kSlideShowSaver::effectVertLines;
   mEffectList[i++] = &kSlideShowSaver::effectRandom;
   mEffectList[i++] = &kSlideShowSaver::effectGrowing;
+  mEffectList[i++] = &kSlideShowSaver::effectIncomingEdges;
 
   mNumEffects = i;
+  //  mNumEffects = 1;  //...for testing
+}
 
-//  mNumEffects = 1;  //...for testing
+
+//----------------------------------------------------------------------------
+int kSlideShowSaver::effectMultiCircleOut(bool aInit)
+{
+  int x, y, i;
+  double alpha;
+  static QPointArray pa(4);
+
+  if (aInit)
+  {
+    startPainter();
+    mw = mWidget.width();
+    mh = mWidget.height();
+    mx = mw;
+    my = mh>>1;
+    pa.setPoint(0, mw>>1, mh>>1);
+    pa.setPoint(3, mw>>1, mh>>1);
+    mfy = sqrt(mw*mw + mh*mh) / 2;
+    mi  = rand()%15 + 2;
+    mfd = M_PI*2/mi;
+    mAlpha = mfd;
+    mwait = 10 * mi;
+    mfx = M_PI/32;  // divisor must be powers of 8
+  }
+
+  if (mAlpha < 0)
+  {
+    mPainter.end();
+    showNextScreen();
+    return -1;
+  }
+
+  for (alpha=mAlpha, i=mi; i>=0; i--, alpha+=mfd)
+  {
+    x = (mw>>1) + (int)(mfy * cos(-alpha));
+    y = (mh>>1) + (int)(mfy * sin(-alpha));
+
+    mx = (mw>>1) + (int)(mfy * cos(-alpha + mfx));
+    my = (mh>>1) + (int)(mfy * sin(-alpha + mfx));
+
+    pa.setPoint(1, x, y);
+    pa.setPoint(2, mx, my);
+
+    mPainter.drawPolygon(pa);
+  }
+  mAlpha -= mfx;
+
+  return mwait;
+}
+
+
+//----------------------------------------------------------------------------
+int kSlideShowSaver::effectSpiralIn(bool aInit)
+{
+  if (aInit)
+  {
+    startPainter();
+    mw = mWidget.width();
+    mh = mWidget.height();
+    mix = mw / 8;
+    miy = mh / 8;
+    mx0 = 0;
+    mx1 = mw - mix;
+    my0 = miy;
+    my1 = mh - miy;
+    mdx = mix;
+    mdy = 0;
+    mi = 0;
+    mj = 16 * 16;
+    mx = 0;
+    my = 0;
+  }
+
+  if (mi==0 && mx0>=mx1)
+  {
+    mPainter.end();
+    showNextScreen();
+    return -1;
+  }
+
+  if (mi==0 && mx>=mx1) // switch to: down on right side
+  {
+    mi = 1;
+    mdx = 0;
+    mdy = miy;
+    mx1 -= mix;
+  }
+  else if (mi==1 && my>=my1) // switch to: right to left on bottom side
+  {
+    mi = 2;
+    mdx = -mix;
+    mdy = 0;
+    my1 -= miy;
+  }
+  else if (mi==2 && mx<=mx0) // switch to: up on left side
+  {
+    mi = 3;
+    mdx = 0;
+    mdy = -miy;
+    mx0 += mix;
+  }
+  else if (mi==3 && my<=my0) // switch to: left to right on top side
+  {
+    mi = 0;
+    mdx = mix;
+    mdy = 0;
+    my0 += miy;
+  }
+
+  bitBlt(&mWidget, mx, my, &mNextScreen, mx, my, mix, miy, CopyROP, true);
+
+  mx += mdx;
+  my += mdy;
+  mj--;
+
+  return 8;
 }
 
 
@@ -225,26 +344,40 @@ int kSlideShowSaver::effectMeltdown(bool aInit)
 //----------------------------------------------------------------------------
 int kSlideShowSaver::effectCircleOut(bool aInit)
 {
+  int x, y;
+  static QPointArray pa(4);
+
   if (aInit)
   {
     startPainter();
     mw = mWidget.width();
     mh = mWidget.height();
-    mi = 0;
-    miy = 0;
+    mx = mw;
+    my = mh>>1;
+    mAlpha = 2*M_PI;
+    pa.setPoint(0, mw>>1, mh>>1);
+    pa.setPoint(3, mw>>1, mh>>1);
+    mfx = M_PI/16;  // divisor must be powers of 8
+    mfy = sqrt(mw*mw + mh*mh) / 2;
   }
 
-  if (mi >= 5760)
+  if (mAlpha < 0)
   {
     mPainter.end();
     showNextScreen();
     return -1;
   }
 
-  miy = mi - 1;
-  mi += 128;
+  x = mx;
+  y = my;
+  mx = (mw>>1) + (int)(mfy * cos(mAlpha));
+  my = (mh>>1) + (int)(mfy * sin(mAlpha));
+  mAlpha -= mfx;
 
-  mPainter.drawPie(0, 0, mw, mh, miy, mi);
+  pa.setPoint(1, x, y);
+  pa.setPoint(2, mx, my);
+
+  mPainter.drawPolygon(pa);
 
   return 20;
 }
@@ -365,12 +498,14 @@ int kSlideShowSaver::effectGrowing(bool aInit)
     mh = mWidget.height();
     mx = mw >> 1;
     my = mh >> 1;
+    mi = 0;
     mfx = mx / 100.0;
     mfy = my / 100.0;
   }
 
-  mx = (int)(mx - mfx);
-  my = (int)(my - mfy);
+  mx = (mw>>1) - (int)(mi * mfx);
+  my = (mh>>1) - (int)(mi * mfy);
+  mi++;
 
   if (mx<0 || my<0)
   {
@@ -398,13 +533,12 @@ int kSlideShowSaver::effectIncomingEdges(bool aInit)
     miy = mh >> 1;
     mfx = mix / 100.0;
     mfy = miy / 100.0;
-    mx = 0;
-    my = 0;
+    mi = 0;
     mSubType = rand() & 1;
   }
 
-  mx = (int)(mx + mfx);
-  my = (int)(my + mfy);
+  mx = (int)(mfx * mi);
+  my = (int)(mfy * mi);
 
   if (mx>mix || my>miy)
   {
@@ -414,6 +548,7 @@ int kSlideShowSaver::effectIncomingEdges(bool aInit)
 
   x1 = mw - mx;
   y1 = mh - my;
+  mi++;
 
   if (mSubType)
   {
