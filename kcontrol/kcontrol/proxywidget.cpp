@@ -130,7 +130,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   top->activate();
 
   // Restrict minimum size to the optimal one
-  setMinimumSize(sizeHint());
+  //setMinimumSize(sizeHint());
 }
 
 ProxyWidget::~ProxyWidget()
