@@ -120,7 +120,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     connect(userbutton, SIGNAL(iconChanged(QString)), 
 	    SLOT(slotUserPixChanged(QString)));
     connect(userbutton, SIGNAL(iconChanged(QString)), 
-            SLOT(slotChanged()));
+	    SLOT(slotChanged()));
 
     QToolTip::add(userbutton, i18n("Click or drop an image here"));
     wtstr = i18n("Here you can see the username of the currently selected user and the"
@@ -413,14 +413,10 @@ void KDMUsersWidget::load(QStringList *show_users)
     QStringList rem_users;
 
     struct passwd *ps;
-    for( setpwent(); (ps = getpwent()) != 0; ) {
-        if( CHECK_STRING(ps->pw_dir) && CHECK_STRING(ps->pw_shell) &&
-            ( no_users.contains( ps->pw_name) == 0)
-	) {
-	    // kapp->processEvents(50) makes layout calculation to fail
-	    // do we really need them here?
-            //  kapp->processEvents(50);
-
+    for (setpwent(); (ps = getpwent()) != 0; ) {
+        if (CHECK_STRING(ps->pw_dir) && CHECK_STRING(ps->pw_shell) &&
+            !no_users.contains( ps->pw_name))
+	{
 	    // "Convenience" tab -> Auto-login-able users
     	    show_users->append( QString::fromLocal8Bit(ps->pw_name));
 
@@ -465,6 +461,7 @@ void KDMUsersWidget::defaults()
     rballusr->setChecked(true);
     slotShowUsers(2);
     leminuid->setText("0");
+    lemaxuid->setText("65535");
 }
 
 
