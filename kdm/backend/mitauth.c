@@ -86,7 +86,13 @@ MitGetAuth (unsigned short namelen, const char *name)
     }
     memmove( (char *)new->name, name, namelen);
     new->name_length = namelen;
-    GenerateAuthData (new->data, AUTH_DATA_LEN);
+    if (!GenerateAuthData (new->data, AUTH_DATA_LEN))
+    {
+	free ((char *) new->name);
+	free ((char *) new->data);
+	free ((char *) new);
+	return (Xauth *) 0;
+    }
     new->data_length = AUTH_DATA_LEN;
     return new;
 }

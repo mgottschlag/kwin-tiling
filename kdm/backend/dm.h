@@ -364,6 +364,7 @@ extern int	removeDomainname;
 extern char	*keyFile;
 extern char	**exportList;
 extern char	*randomFile;
+extern char	*randomDevice;
 extern char	*willing;
 extern int	choiceTimeout;	/* chooser choice timeout */
 extern char	*cmdHalt;

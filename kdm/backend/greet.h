@@ -207,6 +207,8 @@ from The Open Group.
 #define C_fifoAllowShutdown	(C_TYPE_INT | 0x015)
 #define C_fifoAllowNuke		(C_TYPE_INT | 0x016)
 
+#define C_randomDevice		(C_TYPE_STR | 0x017)
+
 /* per-display config */
 
 #define C_serverAttempts	(C_TYPE_INT | 0x100)

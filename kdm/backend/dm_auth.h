@@ -92,6 +92,11 @@ extern void SetLocalAuthorization (struct display *d);
 extern void SetUserAuthorization (struct display *d, struct verify_info *verify);
 
 /* genauth.c */
-extern void GenerateAuthData (char *auth, int len);
+extern int GenerateAuthData (char *auth, int len);
+#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+extern void AddPreGetEntropy (void);
+extern void AddOtherEntropy (void);
+extern void AddTimerEntropy (void);
+#endif
 
 #endif /* _DM_AUTH_H_ */

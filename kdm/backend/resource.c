@@ -373,8 +373,11 @@ int	autoRescan;
 int	removeDomainname;
 char	*keyFile;
 char	**exportList;
-#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+#ifndef ARC4_RANDOM
+# ifndef DEV_RANDOM
 char	*randomFile;
+# endif
+char	*randomDevice;
 #endif
 char	*willing;
 int	choiceTimeout;
@@ -400,8 +403,11 @@ struct globVals {
 { C_removeDomainname,	(char **) &removeDomainname },
 { C_keyFile,		&keyFile },
 { C_exportList,		(char **) &exportList },
-#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+#ifndef ARC4_RANDOM
+# ifndef DEV_RANDOM
 { C_randomFile,		&randomFile },
+# endif
+{ C_randomDevice,	&randomDevice },
 #endif
 { C_choiceTimeout,	(char **) &choiceTimeout },
 { C_sourceAddress,	(char **) &sourceAddress },

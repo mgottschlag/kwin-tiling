@@ -102,7 +102,13 @@ XdmGetAuthHelper (
     }
     memmove( (char *)new->name, name, namelen);
     new->name_length = namelen;
-    GenerateAuthData ((char *)new->data, new->data_length);
+    if (!GenerateAuthData ((char *)new->data, new->data_length))
+    {
+	free ((char *) new->name);
+	free ((char *) new->data);
+	free ((char *) new);
+	return (Xauth *) 0;
+    }
     /*
      * set the first byte of the session key to zero as it
      * is a DES key and only uses 56 bits

@@ -434,6 +434,7 @@ Ent entsGeneral[] = {
 { "AutoRescan",		C_autoRescan | C_BOOL,	0,	"true" },
 { "ExportList",		C_exportList,		0,	"" },
 { "RandomFile",		C_randomFile,		0,	"/dev/mem" },
+{ "RandomDevice",	C_randomDevice,		0,	"" },
 { "FifoDir",		C_fifoDir | C_PATH,	0,	"/var/run/xdmctl" },
 { "FifoGroup",		C_fifoGroup | C_GRP,	0,	"0" },
 };

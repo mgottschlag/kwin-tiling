@@ -41,9 +41,71 @@ from The Open Group.
 #include <X11/Xauth.h>
 #include <X11/Xos.h>
 
-static unsigned epool[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
-
 #if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+
+/* ####################################################################### */
+
+/*
+ * Stolen from the Linux kernel.
+ *
+ * Copyright Theodore Ts'o, 1994, 1995, 1996, 1997, 1998, 1999.  All
+ * rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, and the entire permission notice in its entirety,
+ *    including the disclaimer of warranties.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote
+ *    products derived from this software without specific prior
+ *    written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ALL OF
+ * WHICH ARE HEREBY DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF NOT ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ */
+
+static unsigned epool[32], erotate, eadd_ptr;
+
+static void
+add_entropy (unsigned const *in, int nwords)
+{
+	static unsigned const twist_table[8] = {
+		         0, 0x3b6e20c8, 0x76dc4190, 0x4db26158,
+		0xedb88320, 0xd6d6a3e8, 0x9b64c2b0, 0xa00ae278 };
+	unsigned i, w;
+	int new_rotate;
+
+	while (nwords--) {
+		w = *in++;
+		w = (w<<erotate | w>>(32-erotate)) & 0xffffffff;
+		i = eadd_ptr = (eadd_ptr - 1) & 31;
+		new_rotate = erotate + 14;
+		if (i)
+			new_rotate = erotate + 7;
+		erotate = new_rotate & 31;
+		w ^= epool[(i + 26) & 31];
+		w ^= epool[(i + 20) & 31];
+		w ^= epool[(i + 14) & 31];
+		w ^= epool[(i + 7) & 31];
+		w ^= epool[(i + 1) & 31];
+		w ^= epool[i];
+		epool[i] = (w >> 3) ^ twist_table[w & 7];
+	}
+}
 
 /* ####################################################################### */
 
@@ -55,7 +117,6 @@ static unsigned epool[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
  */
 
 /* The four core functions - F1 is optimized somewhat */
-
 #define F1(x, y, z) (z ^ (x & (y ^ z)))
 #define F2(x, y, z) F1 (z, x, y)
 #define F3(x, y, z) (x ^ y ^ z)
@@ -63,22 +124,21 @@ static unsigned epool[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
 
 /* This is the central step in the MD5 algorithm. */
 #define pmd5_step(f, w, x, y, z, data, s) \
-	( w += f(x, y, z) + data,  w = w<<s | w>>(32-s),  w += x )
+	( w += (f(x, y, z) + data) & 0xffffffff,  w = w<<s | w>>(32-s),  w += x )
 
 /*
  * The core of the MD5 algorithm, this alters an existing MD5 hash to
- * reflect the addition of 16 longwords of new data.  PMD5Update blocks
- * the data and converts bytes into longwords for this routine.
+ * reflect the addition of 16 longwords of new data.
  */
 static void 
-add_entropy (unsigned const in[16])
+pmd5_hash (unsigned *out, unsigned const in[16])
 {
     unsigned a, b, c, d;
 
-    a = epool[0];
-    b = epool[1];
-    c = epool[2];
-    d = epool[3];
+    a = out[0];
+    b = out[1];
+    c = out[2];
+    d = out[3];
 
     pmd5_step(F1, a, b, c, d, in[0] + 0xd76aa478, 7);
     pmd5_step(F1, d, a, b, c, in[1] + 0xe8c7b756, 12);
@@ -148,10 +208,10 @@ add_entropy (unsigned const in[16])
     pmd5_step(F4, c, d, a, b, in[2] + 0x2ad7d2bb, 15);
     pmd5_step(F4, b, c, d, a, in[9] + 0xeb86d391, 21);
 
-    epool[0] += a;
-    epool[1] += b;
-    epool[2] += c;
-    epool[3] += d;
+    out[0] += a;
+    out[1] += b;
+    out[2] += c;
+    out[3] += d;
 }
 
 /* ####################################################################### */
@@ -161,10 +221,10 @@ static int
 sumFile (const char *name, int len, int whence, long offset)
 {
     int fd, i, cnt, readlen = 0;
-    unsigned char buf[1024];
+    unsigned char buf[0x1000];
 
     if ((fd = open (name, O_RDONLY)) < 0) {
-	Debug("Cannot open entropy source %\"s: %s\n", name, SysErrorMsg());
+	Debug("cannot open entropy source %\"s: %s\n", name, SysErrorMsg());
 	return -1;
     }
     lseek (fd, offset, whence);
@@ -173,22 +233,23 @@ sumFile (const char *name, int len, int whence, long offset)
 	    break;
 	if (cnt < 0) {
 	    close (fd);
-	    Debug("Cannot read entropy source %\"s: %s\n", name, SysErrorMsg());
+	    Debug("cannot read entropy source %\"s: %s\n", name, SysErrorMsg());
 	    return -1;
 	}
 	readlen += cnt;
-	for (i = 0; i < cnt; i += 64)
-	    if (sizeof(unsigned) == 4)
-		add_entropy((unsigned*)(buf + i));
-	    else {
-		int j, o;
-		unsigned in[16];
-		for (j = 0, o = i; j < 16; j++, o += 4)
-		    in[j] = buf[o] | (buf[o+1] << 8) | (buf[o+2] << 16) | (buf[o+3] << 24);
-		add_entropy(in);
+	if (sizeof(unsigned) == 4)
+	    add_entropy((unsigned*)buf, (cnt + 3) / 4);
+	else {
+	    unsigned buf2[sizeof(buf) / 4];
+	    for (i = 0; i < cnt; i += 8) {
+		buf2[i / 4] = *(unsigned*)(buf + i) & 0xffffffff;
+		buf2[i / 4 + 1] = *(unsigned*)(buf + i) >> 32;
 	    }
+	    add_entropy(buf2, (cnt + 3) / 4);
+	}
     }
     close (fd);
+    Debug("read %d bytes from entropy source %\"s\n", readlen, name);
     return readlen;
 }
 
@@ -198,129 +259,117 @@ sumFile (const char *name, int len, int whence, long offset)
 # define X_GETTIMEOFDAY(t) gettimeofday(t, NULL)
 #endif
 
+void
+AddTimerEntropy (void)
+{
+    struct timeval now;
+    X_GETTIMEOFDAY (&now);
+    add_entropy((unsigned*)&now, sizeof(now)/sizeof(unsigned));
+}
+
 #define BSIZ 0x10000
 
-static void
-UpdateEntropyPool()
+void
+AddOtherEntropy (void)
 {
-    int hit = 0;
-    static int epoolinited;
-    if (!epoolinited) {
-	struct timeval now;
-	unsigned longs[16];
-	X_GETTIMEOFDAY (&now);
-	longs[0] = now.tv_usec;
-	longs[1] = now.tv_sec;
-	longs[2] = getpid();
-	longs[3] = getppid();
-	/* rest unitialized ... so what? */
-	add_entropy(longs);
-	sumFile ("/proc/partitions", BSIZ, SEEK_SET, 0);
-    }
+    AddTimerEntropy();
     /* XXX -- these will work only on linux and similar, but those already have urandom ... */
-    if (sumFile ("/proc/stat", BSIZ, SEEK_SET, 0) > 0)
-	hit++;
-    if (sumFile ("/proc/interrupts", BSIZ, SEEK_SET, 0) > 0)
-	hit++;
-    if (sumFile ("/proc/loadavg", BSIZ, SEEK_SET, 0) > 0)
-	hit++;
-    if (sumFile ("/proc/net/dev", BSIZ, SEEK_SET, 0) > 0)
-	hit++;
-    if (!hit) {
-	static long offset;
-	long readlen;
-	if ((readlen = sumFile (randomFile, BSIZ, SEEK_SET, offset)) == BSIZ) {
-	    offset += readlen;
+    sumFile ("/proc/stat", BSIZ, SEEK_SET, 0);
+    sumFile ("/proc/interrupts", BSIZ, SEEK_SET, 0);
+    sumFile ("/proc/loadavg", BSIZ, SEEK_SET, 0);
+    sumFile ("/proc/net/dev", BSIZ, SEEK_SET, 0);
+    /* XXX -- setup-specific ... use some common ones */
+    sumFile ("/var/log/messages", 0x1000, SEEK_END, -0x1000);
+    sumFile ("/var/log/syslog", 0x1000, SEEK_END, -0x1000);
+    sumFile ("/var/log/debug", 0x1000, SEEK_END, -0x1000);
+    sumFile ("/var/log/kern.log", 0x1000, SEEK_END, -0x1000);
+    sumFile ("/var/log/daemon.log", 0x1000, SEEK_END, -0x1000);
+/* root hardly ever has an own box ... maybe pick a random mailbox instead? eek ...
+    sumFile ("/var/spool/mail/root", 0x1000, SEEK_END, -0x1000);
+*/
+}
+
+void
+AddPreGetEntropy (void)
+{
+    static long offset;
+    long readlen;
+
+    AddTimerEntropy();
+    if ((readlen = sumFile (randomFile, BSIZ, SEEK_SET, offset)) == BSIZ) {
+	offset += readlen;
 #ifdef FRAGILE_DEV_MEM
+	if (!strcmp (randomFile, "/dev/mem")) {
 	    if (offset == 0xa0000) /* skip 640kB-1MB ROM mappings */
 		offset = 0x100000;
 	    else if (offset == 0xf00000) /* skip 15-16MB memory hole */
 		offset = 0x1000000;
+	}
 #endif
-	    goto gotit;
-	} else if (readlen >= 0 && offset) {
-	    if ((offset = sumFile (randomFile, BSIZ, SEEK_SET, 0)) == BSIZ)
-		goto gotit;
-	}
-	if (sumFile ("/var/log/messages", 0x1000, SEEK_END, -0x1000) > 0)
-	    hit++;
-	if (sumFile ("/var/spool/mail/root", 0x1000, SEEK_END, -0x1000) > 0)
-	    hit++;
-	if (!hit) {
-	    if (!epoolinited)
-		LogError("No entropy sources found; X cookies may be easily guessable\n");
-	    else {
-		struct timeval now;
-		unsigned longs[16];
-		X_GETTIMEOFDAY (&now);
-		longs[0] = now.tv_usec;
-		longs[1] = now.tv_sec;
-		add_entropy(longs);
-	    }
-	}
+	return;
+    } else if (readlen >= 0 && offset) {
+	if ((offset = sumFile (randomFile, BSIZ, SEEK_SET, 0)) == BSIZ)
+	    return;
     }
-  gotit:
-    epoolinited = 1;
+    LogError("Cannot read randomFile %\"s; X cookies may be easily guessable\n", randomFile);
 }
 #endif
 
 /* ONLY 8 or 16 bytes! */
-void
+/* auth MUST be sizeof(unsigned)-aligned! */
+int
 GenerateAuthData (char *auth, int len)
 {
+    unsigned *rnd = (unsigned*)auth;
+
 #ifdef ARC4_RANDOM
-    epool[0] = arc4random();
-    epool[1] = arc4random();
-    if (len == 16) {
-	epool[2] = arc4random();
-	epool[3] = arc4random();
-    }
-#elif defined(DEV_RANDOM)
-    int fd;
-    if ((fd = open(DEV_RANDOM, O_RDONLY)) >= 0) {
-	if (read(fd, auth, len) == len) {
-	    close(fd);
-	    return;
-	}
-	close(fd);
-	LogError("Cannot read " DEV_RANDOM ": %s. X cookies may be easily guessable\n", SysErrorMsg());
-    } else
-	LogError("Cannot open " DEV_RANDOM ": %s. X cookies may be easily guessable\n", SysErrorMsg());
-    {
-	/* we don't try the fancy entropy pool stuff here, as if we cannot
-           read DEV_RANDOM, the system is really screwed anyway. */
-	/* really weak ... */
-	struct timeval now;
-	static int epoolinited;
-	if (!epoolinited) {
-	    epoolinited = 1;
-	    epool[0] ^= getpid();
-	    epool[1] ^= getppid();
-	}
-	X_GETTIMEOFDAY (&now);
-	epool[0] ^= now.tv_usec;
-	epool[1] ^= now.tv_sec;
-	if (len == 16) {
-	    epool[2] += epool[1];
-	    epool[3] -= epool[0];
-	}
-    }
-#else
-    UpdateEntropyPool();
-    if (len == 8) {
-	epool[0] ^= epool[2];
-	epool[1] ^= epool[3];
-    }
-#endif
+    int i;
     if (sizeof(unsigned) == 4)
-	memcpy(auth, epool, len);
-    else {
-	int i, o;
-	for (i = o = 0; i < len; i += 4, o++) {
-	    auth[i] = epool[o] & 0xff;
-	    auth[i+1] = (epool[o] >> 8) & 0xff;
-	    auth[i+2] = (epool[o] >> 16) & 0xff;
-	    auth[i+3] = (epool[o] >> 24) & 0xff;
+	for (i = 0; i < len; i += 4)
+	    rnd[i / 4] = arc4random();
+    else
+	for (i = 0; i < len; i += 8)
+	    rnd[i / 8] = arc4random() | (arc4random() << 32);
+    return 1;
+#else
+    int fd;
+    const char *rd = randomDevice;
+# ifdef DEV_RANDOM
+    if (!*rd)
+	rd = DEV_RANDOM;
+# else
+    if (*rd) {
+# endif
+	if ((fd = open(rd, O_RDONLY)) >= 0) {
+	    if (read(fd, auth, len) == len) {
+		close(fd);
+		return 1;
+	    }
+	    close(fd);
+	    LogError("Cannot read randomDevice %\"s: %s\n", rd, SysErrorMsg());
+	} else
+	    LogError("Cannot open randomDevice %\"s: %s\n", rd, SysErrorMsg());
+# ifdef DEV_RANDOM
+	return 0;
+# else
+    }
+
+    {
+	unsigned tmp[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
+	AddPreGetEntropy();
+	pmd5_hash (tmp, epool);
+	add_entropy (tmp, 1);
+	pmd5_hash (tmp, epool + 16);
+	add_entropy (tmp + 2, 1);
+	if (sizeof(unsigned) == 4)
+	    memcpy (auth, tmp, len);
+	else {
+	    int i;
+	    for (i = 0; i < len; i += 8)
+		rnd[i / 8] = tmp[i / 4] | (tmp[i / 4 + 1] << 32);
 	}
     }
+    return 1;
+# endif
+#endif
 }

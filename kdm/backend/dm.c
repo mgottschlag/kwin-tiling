@@ -292,6 +292,10 @@ main (int argc, char **argv)
 	exit (1);
     }
 
+#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+    AddOtherEntropy ();
+#endif
+
     /*
      * We used to clean up old authorization files here. As authDir is
      * supposed to be /var/run/xauth or /tmp, we needn't to care for it.
@@ -1181,6 +1185,9 @@ WaitForChild (void)
 	}
     }
     StartDisplays ();
+#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+    AddOtherEntropy ();
+#endif
 }
 
 FD_TYPE	WellKnownSocketsMask;
@@ -1238,6 +1245,9 @@ WaitForSomething (void)
 #endif
 	Debug ("select returns %d.  Rescan: %d  ChildReady: %d  ChkUtmp: %d\n",
 		nready, Rescan, ChildReady, ChkUtmp);
+#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+	AddTimerEntropy ();
+#endif
 	if (nready > 0)
 	{
 	    /*
