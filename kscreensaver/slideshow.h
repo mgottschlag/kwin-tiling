@@ -86,6 +86,7 @@ protected:
   int effectVertLines(bool doInit);
   int effectRandom(bool doInit);
   int effectGrowing(bool doInit);
+  int effectChessboard(bool doInit);
   int effectIncomingEdges(bool doInit);
   int effectBlobs(bool doInit);
   int effectCircleOut(bool doInit);

@@ -164,6 +164,7 @@ void kSlideShowSaver::registerEffects()
   int i = 0;
 
   mEffectList = new EffectMethod[64];
+  mEffectList[i++] = &kSlideShowSaver::effectChessboard;
   mEffectList[i++] = &kSlideShowSaver::effectMultiCircleOut;
   mEffectList[i++] = &kSlideShowSaver::effectSpiralIn;
   mEffectList[i++] = &kSlideShowSaver::effectSweep;
@@ -177,7 +178,7 @@ void kSlideShowSaver::registerEffects()
   mEffectList[i++] = &kSlideShowSaver::effectIncomingEdges;
 
   mNumEffects = i;
-  //  mNumEffects = 1;  //...for testing
+  // mNumEffects = 1;  //...for testing
 }
 
 
@@ -517,6 +518,48 @@ int kSlideShowSaver::effectGrowing(bool aInit)
 	 mw - (mx<<1), mh - (my<<1), CopyROP, true);
 
   return 20;
+}
+
+
+//----------------------------------------------------------------------------
+int kSlideShowSaver::effectChessboard(bool aInit)
+{
+  int y;
+
+  if (aInit)
+  {
+    mw  = mWidget.width();
+    mh  = mWidget.height();
+    mdx = 8;         // width of one tile
+    mdy = 8;         // height of one tile
+    mj  = (mw+mdx-1)/mdx; // number of tiles
+    mx  = mj*mdx;    // shrinking x-offset from screen border
+    mix = 0;         // growing x-offset from screen border
+    miy = 0;         // 0 or mdy for growing tiling effect
+    my  = mj&1 ? 0 : mdy; // 0 or mdy for shrinking tiling effect
+    mwait = 800 / mj; // timeout between effects
+  }
+
+  if (mix >= mw)
+  {
+    showNextScreen();
+    return -1;
+  }
+
+  mix += mdx;
+  mx  -= mdx;
+  miy = miy ? 0 : mdy;
+  my  = my ? 0 : mdy;
+
+  for (y=0; y<mw; y+=(mdy<<1))
+  {
+    bitBlt(&mWidget, mix, y+miy, &mNextScreen, mix, y+miy, 
+	   mdx, mdy, CopyROP, true);
+    bitBlt(&mWidget, mx, y+my, &mNextScreen, mx, y+my, 
+	   mdx, mdy, CopyROP, true);
+  }
+
+  return mwait;
 }
 
 
