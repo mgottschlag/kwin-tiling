@@ -58,6 +58,22 @@ extern int errno;
 # endif
 #endif
 
+#ifdef KRB4
+# include <sys/param.h>
+/* Some systems define an des_encrypt() in their crypt.h (where it
+   doesn't belong!), which conflicts with the one from KTH Kerberos.  As we
+   are not using it anyway, we temporarily redefine it.  */
+#define des_encrypt des_encrypt_faked_XXX
+/* # include <kerberosIV/krb.h> */
+# include <krb.h>
+# ifdef AFS
+#  include <kafs.h>
+/* #  include <kerberosIV/kafs.h> */
+# endif
+#undef des_encrypt
+static char krbtkfile[MAXPATHLEN];
+#endif
+
 # include	"greet.h"
 
 #if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
@@ -107,17 +123,6 @@ static char *envvars[] = {
 #endif
     NULL
 };
-
-#ifdef KRB4
-# include <sys/param.h>
-/* # include <kerberosIV/krb.h> */
-# include <krb.h>
-# ifdef AFS
-#  include <kafs.h>
-/* #  include <kerberosIV/kafs.h> */
-# endif
-static char krbtkfile[MAXPATHLEN];
-#endif
 
 static char **
 userEnv (struct display *d, int useSystemPath, char *user, char *home, char *shell)

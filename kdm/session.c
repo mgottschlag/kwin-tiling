@@ -66,10 +66,15 @@ from The Open Group.
 #endif
 
 #ifdef KRB4
-#  include <krb.h>
-#  ifdef AFS
-#    include <kafs.h>
-#  endif
+/* Some systems define an des_encrypt() in their crypt.h (where it
+   doesn't belong!), which conflicts with the one from KTH Kerberos.  As we
+   are not using it anyway, we temporarily redefine it.  */
+#define des_encrypt des_encrypt_faked_XXX
+# include <krb.h>
+# ifdef AFS
+#  include <kafs.h>
+# endif
+#undef des_encrypt
 #endif
 
 #ifndef GREET_USER_STATIC
