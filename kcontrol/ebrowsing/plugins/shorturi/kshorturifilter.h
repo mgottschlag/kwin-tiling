@@ -23,10 +23,7 @@
 #ifndef _KSHORTURIFILTER_H_
 #define _KSHORTURIFILTER_H_
 
-#include <qmap.h>
-
 #include <dcopobject.h>
-#include <klocale.h>
 #include <klibloader.h>
 #include <kurifilter.h>
 
@@ -140,7 +137,10 @@ public:
     KShortURIFilterFactory( QObject *parent = 0, const char *name = 0 );
     ~KShortURIFilterFactory();
 
-    virtual QObject *create( QObject *parent = 0, const char *name = 0, const char* classname = "QObject", const QStringList &args = QStringList() );
+    virtual QObject *create( QObject *parent = 0, const char *name = 0,
+                             const char* classname = "QObject",
+                             const QStringList &args = QStringList() );
+
     static KInstance *instance();
 
 private:

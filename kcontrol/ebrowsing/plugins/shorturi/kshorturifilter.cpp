@@ -31,6 +31,7 @@
 #include <kurl.h>
 #include <kdebug.h>
 #include <kprotocolinfo.h>
+#include <klocale.h>
 #include <kinstance.h>
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -38,7 +39,7 @@
 
 //#include "kshorturiopts.h"
 #include "kshorturifilter.h"
-#include "kshorturifilter.moc"
+
 
 #define FQDN_PATTERN    "[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]"
 #define IPv4_PATTERN    "[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?:?[[0-9][0-9]?[0-9]?]?/?"
@@ -302,9 +303,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     KURL u( KURL( data.absolutePath() ), cmd );
     if( !u.isMalformed() )
     {
-      kdDebug() << "(KShortURIFilter) Typed command: " << cmd << endl;
-      kdDebug() << "(KShortURIFilter) Absolute Path: " << data.absolutePath() << endl;
-      kdDebug() << "(KShortURIFilter) Filtered command: " << u.url() << endl;
       setFilteredURI( data, u.url() );
       setURIType( data, KURIFilterData::NET_PROTOCOL );
       return true;
@@ -421,3 +419,4 @@ extern "C"
     }
 }
 
+#include "kshorturifilter.moc"
