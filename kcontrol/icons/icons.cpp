@@ -386,7 +386,7 @@ void KIconConfig::slotUsage(int index)
     {
         mpSizeBox->setEnabled(false);
         mpDPCheck->setEnabled(false);
-	mpAnimatedCheck->setEnabled(false);
+	mpAnimatedCheck->setEnabled( mUsage == KIcon::Panel );
     } 
     else
     {
