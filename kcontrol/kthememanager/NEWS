@@ -2,6 +2,7 @@ Version 0.3
 ===========
 - the theme manager now correctly handles installing and creating
   new themes over existing ones
+- support for widget styles (or the name thereof)
 
 Version 0.2
 ===========

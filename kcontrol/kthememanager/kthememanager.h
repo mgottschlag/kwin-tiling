@@ -82,6 +82,9 @@ public slots:
     void configChanged();
 
 signals:
+    /**
+     * Emitted when some @p urls are dropped onto the kcm
+     */
     void filesDropped(const KURL::List &urls);
 
 private slots:
@@ -106,7 +109,8 @@ private slots:
     void slotThemeChanged( QListViewItem * item );
 
     /**
-     * Invoked when one drops
+     * Invoked when one drag and drops @p urls onto the kcm
+     * @see signal filesDropped
      */
     void slotFilesDropped( const KURL::List & urls );
 

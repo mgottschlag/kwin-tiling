@@ -27,6 +27,7 @@
 #include <kconfig.h>
 #include <kstandarddirs.h>
 
+/// defines the syntax version used by the XML
 #define SYNTAX_VERSION 1
 
 /**
@@ -58,7 +59,7 @@ public:
     ~KTheme();
 
     /**
-     * Unpacks the tarball and loads the theme definition
+     * Download from @p url, unpack the tarball and load the theme definition
      *
      * @return true on success
      */
@@ -166,8 +167,8 @@ private:
     /**
      * Tries to find out absolute path to a resource and copy it to the theme's temp dir;
      * used when creating themes
-     * @param path The original path, relative or absolute
      * @param section The theme section to work on, corresponds to toplevel XML tags
+     * @param path The original path, relative or absolute
      * @return an internal path suitable for writing into the XML file or QString::null
      * in case the resource couldn't be found
      */

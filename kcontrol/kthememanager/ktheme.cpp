@@ -277,8 +277,13 @@ QString KTheme::createYourself( bool pack )
     QDomElement transElem = m_dom.createElement( "transparent" );
     transElem.setAttribute( "value", kickerConf.readBoolEntry( "transparent" ) );
     panelElem.appendChild( transElem );
-
     m_root.appendChild( panelElem );
+
+    // 10. Widget style
+    globalConf->setGroup( "General" );
+    QDomElement widgetsElem = m_dom.createElement( "widgets" );
+    widgetsElem.setAttribute( "name", globalConf->readEntry( "widgetStyle" ) );
+    m_root.appendChild( widgetsElem );
 
 
     // Save the XML
@@ -356,12 +361,11 @@ void KTheme::apply()
     // FIXME Xinerama
 
     // 3. Icons
-    KConfig * iconConf = KGlobal::config();
-    iconConf->setGroup( "Icons" );
-
     QDomElement iconElem = m_dom.elementsByTagName( "icons" ).item( 0 ).toElement();
     if ( !iconElem.isNull() )
     {
+        KConfig * iconConf = KGlobal::config();
+        iconConf->setGroup( "Icons" );
         iconConf->writeEntry( "Theme", iconElem.attribute( "name", "crystalsvg" ), true, true );
         iconConf->sync();
 
@@ -441,6 +445,7 @@ void KTheme::apply()
 
     // 6.Cursors
     QDomElement cursorsElem = m_dom.elementsByTagName( "cursors" ).item( 0 ).toElement();
+
     if ( !cursorsElem.isNull() )
     {
         KConfig * cursorConf = KGlobal::config();
@@ -451,17 +456,16 @@ void KTheme::apply()
     }
 
     // 7. KWin
-    KConfig kwinConf( "kwinrc" );
     QDomElement wmElem = m_dom.elementsByTagName( "wm" ).item( 0 ).toElement();
 
     if ( !wmElem.isNull() )
     {
+        KConfig kwinConf( "kwinrc" );
         kwinConf.setGroup( "Style" );
         QString type = wmElem.attribute( "type" );
         if ( type == "builtin" )
             kwinConf.writeEntry( "PluginLib", wmElem.attribute( "name" ) );
-        //else
-        // TODO support custom themes
+        //else // TODO support custom themes
         kwinConf.writeEntry( "CustomButtonPositions", true );
         kwinConf.writeEntry( "ButtonsOnLeft", getProperty( wmElem, "buttons", "left" ) );
         kwinConf.writeEntry( "ButtonsOnRight", getProperty( wmElem, "buttons", "right" ) );
@@ -472,11 +476,11 @@ void KTheme::apply()
     }
 
     // 8. Konqueror
-    KConfig konqConf( "konquerorrc" );
     QDomElement konqElem = m_dom.elementsByTagName( "konqueror" ).item( 0 ).toElement();
 
     if ( !konqElem.isNull() )
     {
+        KConfig konqConf( "konquerorrc" );
         konqConf.setGroup( "Settings" );
         konqConf.writeEntry( "BgImage", unprocessFilePath( "konqueror", getProperty( konqElem, "wallpaper", "url" ) ) );
         konqConf.writeEntry( "BgColor", QColor( getProperty( konqElem, "bgcolor", "rgb" ) ) );
@@ -486,11 +490,11 @@ void KTheme::apply()
     }
 
     // 9. Kicker
-    KConfig kickerConf( "kickerrc" );
     QDomElement panelElem = m_dom.elementsByTagName( "panel" ).item( 0 ).toElement();
 
     if ( !panelElem.isNull() )
     {
+        KConfig kickerConf( "kickerrc" );
         kickerConf.setGroup( "General" );
         QString kickerBgUrl = getProperty( panelElem, "background", "url" );
         if ( !kickerBgUrl.isEmpty() )
@@ -505,6 +509,18 @@ void KTheme::apply()
 
         kickerConf.sync();
         client->send("kicker", "Panel", "configure()", "");
+    }
+
+    // 10. Widget style
+    QDomElement widgetsElem = m_dom.elementsByTagName( "widgets" ).item( 0 ).toElement();
+
+    if ( !widgetsElem.isNull() )
+    {
+        KConfig * widgetConf = KGlobal::config();
+        widgetConf->setGroup( "General" );
+        widgetConf->writeEntry( "widgetStyle", widgetsElem.attribute( "name" ) );
+        widgetConf->sync();
+        KIPC::sendMessageAll( KIPC::StyleChanged );
     }
 }
 

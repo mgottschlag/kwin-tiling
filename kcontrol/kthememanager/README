@@ -18,6 +18,7 @@ A KDE theme consists of:
 - color scheme
 - cursor theme
 - window decorations
+- name of the widget theme
 - themed apps (mainly Konqueror and Kicker)
 
 
@@ -63,6 +64,7 @@ Sample XML theme config file:
     <!-- or -->
     <transparent value="true|false" />
 </panel>
+<widgets name="qstyle_lib_name" />
 </kdetheme>
 
 
