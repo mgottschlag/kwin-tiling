@@ -119,7 +119,7 @@ QString KURIFilterModule::quickHelp() const
       " type in the name of a brand, a project, a celebrity, etc... and go to the"
       " relevant location. For example you can just type"
       " \"KDE\" or \"K Desktop Environment\" in Konqueror to go to KDE's homepage."
-      "<h2>Search shortcuts</h2>Search shortcuts are a quick way of using Web search engines. For example, type \"altavista:frobozz\""
+      "<h2>Web Shortcuts</h2>Web Shortcuts are a quick way of using Web search engines. For example, type \"altavista:frobozz\""
       " or \"av:frobozz\" and Konqueror will do a search on AltaVista for \"frobozz\"."
       " Even easier: just press Alt-F2 (if you haven't"
       " changed this shortcut) and enter the shortcut in the KDE Run Command dialog.");
