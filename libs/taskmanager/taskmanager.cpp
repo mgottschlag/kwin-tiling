@@ -332,7 +332,7 @@ bool TaskManager::isOnTop(Task* task)
         t = findTask(*it);
         if ( t == task )
             return true;
-        if ( t && (t->staysOnTop() == task->staysOnTop()) )
+        if ( t && (t->isAlwaysOnTop() == task->isAlwaysOnTop()) )
             return false;
     }
     return false;
@@ -379,37 +379,37 @@ void Task::setActive(bool a)
       emit deactivated();
 }
 
-bool Task::maximized() const
+bool Task::isMaximized() const
 {
     return(_info.state & NET::Max);
 }
 
-bool Task::iconified() const
+bool Task::isIconified() const
 {
     return (_info.mappingState == NET::Iconic);
 }
 
-bool Task::staysOnTop() const
+bool Task::isAlwaysOnTop() const
 {
     return (_info.state & NET::StaysOnTop);
 }
 
-bool Task::shaded() const
+bool Task::isShaded() const
 {
     return (_info.state & NET::Shaded);
 }
 
-bool Task::onCurrentDesktop() const
+bool Task::isOnCurrentDesktop() const
 {
     return (_info.onAllDesktops || _info.desktop == kwin_module->currentDesktop());
 }
 
-bool Task::onAllDesktops() const
+bool Task::isOnAllDesktops() const
 {
     return _info.onAllDesktops;
 }
 
-bool Task::active() const
+bool Task::isActive() const
 {
     return _active;
 }

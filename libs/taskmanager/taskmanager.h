@@ -55,13 +55,13 @@ public:
     QValueList<WId> transients() { return _transients; }
 
     // state
-    bool maximized() const;
-    bool iconified() const;
-    bool onCurrentDesktop() const;
-    bool onAllDesktops() const;
-    bool staysOnTop() const;
-    bool shaded() const;
-    bool active() const;
+    bool isMaximized() const;
+    bool isIconified() const;
+    bool isShaded() const;
+    bool isActive() const;
+    bool isOnCurrentDesktop() const;
+    bool isOnAllDesktops() const;
+    bool isAlwaysOnTop() const;
     int  desktop() const { return _info.desktop; }
 
     // actions
