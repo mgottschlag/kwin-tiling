@@ -41,12 +41,13 @@ int authenticate(const char *login, const char *typed_in_password)
 {
   char          *crpt_passwd;
   char          *password;
+  int           result;
 
   struct passwd *pw= getpwnam(login);
   if ( pw == 0 )
     return 2;
   
-  if (strcmp(pw->pw_passwd, "x") == 0) // look up shadow
+  if (strcmp(pw->pw_passwd, "x") == 0) /* look up shadow */
     {
       struct spwd *spw = getspnam(login);
       if ( spw == 0 ) 
@@ -57,16 +58,16 @@ int authenticate(const char *login, const char *typed_in_password)
     password = pw->pw_passwd;
   
 #if defined( __linux__ ) && defined( HAVE_PW_ENCRYPT )
-  crpt_passwd = pw_encrypt(typed_in_password, password);  // (1)
+  crpt_passwd = pw_encrypt(typed_in_password, password);  /* (1) */
 #else  
   crpt_passwd = crypt(typed_in_password, password);
 #endif
-  int result = strcmp(password, crpt_passwd );
+  result = strcmp(password, crpt_passwd );
   endspent();
   if (result == 0)
-    return 1; // success
+      return 1; /* success */
   else
-    return 0;
+      return 0;
 }
 
 /*
