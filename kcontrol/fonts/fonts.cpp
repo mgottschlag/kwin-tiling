@@ -62,10 +62,10 @@ extern "C" {
   }
 
   void init_fonts() {
-		KConfig aacfg("kdeglobals");
- 		aacfg.setGroup("KDE");
-		applyQtXFT(aacfg.readBoolEntry( "AntiAliasing", false ));
-	}
+    KConfig aacfg("kdeglobals");
+    aacfg.setGroup("KDE");
+    applyQtXFT(aacfg.readBoolEntry( "AntiAliasing", false ));
+  }
 }
 
 
@@ -194,8 +194,6 @@ KFonts::KFonts(QWidget *parent, const char *name)
   nameGroupKeyRc
     << i18n("General")        << "General"    << "font"         << ""
     << i18n("Fixed width")    << "General"    << "fixed"        << ""
-    << i18n("Desktop icon")   << "FMSettings" << "StandardFont" << "kdesktoprc"
-    << i18n("File manager")   << "FMSettings" << "StandardFont" << "konquerorrc"
     << i18n("Toolbar")        << "General"    << "toolBarFont"  << ""
     << i18n("Menu")           << "General"    << "menuFont"     << ""
     << i18n("Window title")   << "WM"         << "activeFont"   << ""
@@ -217,15 +215,13 @@ KFonts::KFonts(QWidget *parent, const char *name)
   f3.setPointSize(12);
   f4.setPointSize(11);
 
-  defaultFontList << f0 << f1 << f2 << f2 << f2 << f0 << f3 << f4;
+  defaultFontList << f0 << f1 << f2 << f0 << f3 << f4;
 
   QValueList<bool> fixedList;
 
   fixedList
     <<  false
     <<  true
-    <<  false
-    <<  false
     <<  false
     <<  false
     <<  false
@@ -236,21 +232,16 @@ KFonts::KFonts(QWidget *parent, const char *name)
   quickHelpList
     << i18n("Used for normal text (e.g. button labels, list items).")
     << i18n("A non-proportional font (i.e. typewriter font).")
-    << i18n("Used to display the names of icons on the desktop.")
-    << i18n("Used to display the names of icons in the file manager.")
     << i18n("Used to display text beside toolbar icons.")
     << i18n("Used by menu bars and popup menus.")
     << i18n("Used by the window titlebar.")
     << i18n("Used by the taskbar.");
 
+  QVBoxLayout * layout =
+    new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+
   QGridLayout * fontUseLayout =
-    new QGridLayout(
-      this,
-      nameGroupKeyRc.count() / 4,
-      3,
-      KDialog::marginHint(),
-      KDialog::spacingHint()
-    );
+    new QGridLayout(layout, nameGroupKeyRc.count() / 4, 3);
 
   fontUseLayout->setColStretch(0, 0);
   fontUseLayout->setColStretch(1, 1);
@@ -306,10 +297,15 @@ KFonts::KFonts(QWidget *parent, const char *name)
   }
 
    cbAA = new QCheckBox( i18n( "Use A&nti-Aliasing for fonts and icons" ),this);
-   fontUseLayout->addWidget( cbAA, ++count, 0 );
-   QWhatsThis::add( cbAA, i18n("If this option is selected, KDE will use anti-aliased fonts and pixmaps, meaning fonts can use more than"
-                                                    " just one color to simulate curves.") );
-   fontUseLayout->setRowStretch( count, 1 );
+
+   QWhatsThis::add(cbAA,
+     i18n(
+       "If this option is selected, KDE will use anti-aliased fonts and "
+       "pixmaps, meaning fonts can use more than"
+       " just one color to simulate curves."));
+
+   layout->addWidget(cbAA);
+   layout->addStretch(1);
 
    connect(cbAA, SIGNAL(clicked()), SLOT(slotUseAntiAliasing()));
 
