@@ -260,7 +260,7 @@ void TreeView::itemSelected(QListViewItem *item)
 	}
     // Check if the file is Writeable for us
     QFileInfo finfo((KGlobal::dirs()->findResourceDir("apps", _item->file())) + _item->file());
-    if (finfo.isWritable())
+    if (finfo.isWritable() && (_item->text(0) == i18n("Settings")))
  	_ac->action("delete")->setEnabled(true);
     else
 	_ac->action("delete")->setEnabled(false);
