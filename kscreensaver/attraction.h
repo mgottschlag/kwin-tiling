@@ -38,7 +38,7 @@ public:
 
 	void setNumber( int num );
 	void setGlow( bool c );
-	void setMode( const char * );
+	void setMode( const QString& );
 
 protected slots:
 	void slotTimeout();
@@ -72,7 +72,7 @@ protected:
 private slots:
 	void slotNumber( int );
 	void slotGlow( bool );
-	void slotMode( const char * );
+	void slotMode( const QString& );
 	void slotOkPressed();
 	void slotAbout();
 

@@ -757,7 +757,7 @@ void kAttractionSaver::setGlow( bool c )
         init_balls (dsp, d, this);
 }
 
-void kAttractionSaver::setMode( const char *m)
+void kAttractionSaver::setMode( const QString& m)
 {
 	attr_cleanup();
 	mode = m;
@@ -848,8 +848,8 @@ kAttractionSetup::kAttractionSetup( QWidget *parent, const char *name )
 	min_width(combo);
 	fixed_height(combo);
 	tl11->addWidget(combo, 0, 1);
-	connect( combo, SIGNAL( activated( const char * ) ),
-			SLOT( slotMode( const char * ) ) );
+	connect( combo, SIGNAL( activated( const QString& ) ),
+			SLOT( slotMode( const QString& ) ) );
 
 	QCheckBox *cb = new QCheckBox( glocale->translate("Glow"), this );
 	min_size(cb);
@@ -925,7 +925,7 @@ void kAttractionSetup::slotGlow( bool c )
 		saver->setGlow( glow );
 }
 
-void kAttractionSetup::slotMode( const char * m)
+void kAttractionSetup::slotMode( const QString& m)
 {
 	mode= m;
 	if ( saver )
