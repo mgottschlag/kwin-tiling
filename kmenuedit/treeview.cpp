@@ -860,6 +860,11 @@ void TreeView::del()
     _ac->action("edit_cut")->setEnabled(false);
     _ac->action("edit_copy")->setEnabled(false);
     _ac->action("delete")->setEnabled(false);
+
+    // Select new current item
+    setSelected( currentItem(), true );
+    // Switch the UI to show that item
+    itemSelected( selectedItem() );
 }
 
 void TreeView::cleanupClipboard()
