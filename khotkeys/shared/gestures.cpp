@@ -42,7 +42,7 @@ namespace KHotKeys
 Gesture* gesture_handler;
 
 Gesture::Gesture( bool /*enabled_P*/, QObject* parent_P )
-    : _enabled( false ), recording( false )
+    : _enabled( false ), recording( false ), button( 0 )
     {
     (void) new DeleteObject( this, parent_P );
     assert( gesture_handler == NULL );
