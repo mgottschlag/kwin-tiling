@@ -2,7 +2,7 @@ SUBDIRS = pics
 
 INCLUDES = -I$(srcdir)/../backend $(all_includes)
 
-bin_PROGRAMS = kdm_config kdm_greet
+bin_PROGRAMS = kdm_config kdm_greet 
 
 kdm_config_SOURCES = kdm_config.c
 
@@ -17,14 +17,14 @@ kdm_greet_SOURCES = \
 kdm_greet_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kdm_greet_LDADD = $(LIB_QT) $(LIB_KDECORE) $(LIBXINERAMA) $(LIB_KDEUI)
 
-METASOURCES = kdmshutdown.moc kdmclock.moc kgreeter.moc liloinfo.moc kfdialog.moc
+METASOURCES = AUTO
 
-EXTRA_PROGRAMS = genkdmconf
+noinst_PROGRAMS = genkdmconf
 genkdmconf_SOURCES = genkdmconf.c
 genkdmconf_LDFLAGS = $(all_libraries)
 genkdmconf_LDADD = $(LIB_X11)
 
-install-data-local: genkdmconf
+install-data-local:
 	@if test ! -d $(DESTDIR)$(kde_confdir)/kdm; then \
 	    $(mkinstalldirs) $(DESTDIR)$(kde_confdir)/kdm; \
 	    ./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm; \
