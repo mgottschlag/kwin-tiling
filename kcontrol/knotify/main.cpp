@@ -34,7 +34,7 @@ extern "C"
 
   KCModule *create_knotify(QWidget *parent, const char *name)
   { 
-    KGlobal::locale()->insertCatalogue("knotify");
+    KGlobal::locale()->insertCatalogue("kcmnotify");
     return new KNotifyWidget(parent, name);
   }
 

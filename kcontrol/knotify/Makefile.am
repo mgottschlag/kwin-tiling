@@ -12,7 +12,5 @@ noinst_HEADERS = knotify.h eventview.h eventconfig.h
 
 KDE_ICON = knotify
 
-DISTCLEANFILES = $(lib_knotify_METASOURCES)
-
 messages:
-	$(XGETTEXT) $(libkcm_knotify_la_SOURCES) -o $(podir)/knotify.pot
+	$(XGETTEXT) $(libkcm_knotify_la_SOURCES) -o $(podir)/kcmnotify.pot
