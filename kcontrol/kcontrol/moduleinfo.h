@@ -47,7 +47,7 @@ public:
    * Constructs a CSModuleInfo, note that you will have to take care about the deletion
    * yoruself!
    **/
-  KCModuleInfo(QString desktopFile);
+  KCModuleInfo(const QString& desktopFile, const QString& baseGroup /* = QString::fromLatin1("settings")*/);
   virtual ~KCModuleInfo();
 
   /** @return the filename pass in the constructor **/

@@ -39,7 +39,7 @@ class ConfigModule : public QObject, public KCModuleInfo
 
 public:
 
-  ConfigModule(QString desktopFile);
+  ConfigModule(const QString& desktopFile, const QString& baseGroup);
   ~ConfigModule();
 
   bool isChanged() { return _changed; };

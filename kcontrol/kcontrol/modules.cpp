@@ -50,8 +50,8 @@
 template class QPtrList<ConfigModule>;
 
 
-ConfigModule::ConfigModule(QString desktopFile)
-  : KCModuleInfo(desktopFile), _changed(false), _module(0), _embedWidget(0),
+ConfigModule::ConfigModule(const QString& desktopFile, const QString& baseGroup)
+  : KCModuleInfo(desktopFile, baseGroup), _changed(false), _module(0), _embedWidget(0),
     _rootProcess(0), _embedLayout(0), _embedFrame(0)
 {
 }
@@ -260,7 +260,7 @@ void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
      KSycocaEntry *p = (*it);
      if (p->isType(KST_KService))
      {
-        ConfigModule *module = new ConfigModule(p->entryPath());
+        ConfigModule *module = new ConfigModule(p->entryPath(), KCGlobal::baseGroup());
         append(module);
      }
      else if (p->isType(KST_KServiceGroup))

@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
   {
      aboutData = &aboutKInfoCenter;
      KCGlobal::setIsInfoCenter(true);
+     kdDebug(1208) << "Running as KInfoCenter!\n" << endl;
   }
   else
   {

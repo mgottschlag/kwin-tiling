@@ -28,9 +28,8 @@
 
 #include "moduleinfo.h"
 #include "moduleinfo.moc"
-#include "global.h"
 
-KCModuleInfo::KCModuleInfo(QString desktopFile)
+KCModuleInfo::KCModuleInfo(const QString& desktopFile, const QString& baseGroup)
   : _fileName(desktopFile)
 {
   _allLoaded = false;
@@ -52,9 +51,10 @@ KCModuleInfo::KCModuleInfo(QString desktopFile)
 
   // try to find out the modules groups
   QString group = desktopFile;
-  int pos = group.find(KCGlobal::baseGroup());
+
+  int pos = group.find(baseGroup);
   if (pos >= 0)
-     group = group.mid(pos+KCGlobal::baseGroup().length());
+     group = group.mid(pos+baseGroup.length());
   pos = group.findRev('/');
   if (pos >= 0)
      group = group.left(pos);

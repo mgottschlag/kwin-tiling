@@ -41,9 +41,14 @@ class KCMultiDialog : public KDialogBase
 
 public:
     /**
-     * Constructor
+     * Constructs a new KCMultiDialog
+	 * 
+	 * @param parent The parent Widget
+	 * @param baseGroup The baseGroup, if you want to call a module out if kcontrol, just keep "settings"
+	 * @param name The widget name
+	 * @param modal If you pass true here, the dialog will be modal
      **/
-    KCMultiDialog(QWidget *parent=0, const char *name=0, bool modal=false);
+    KCMultiDialog(QWidget *parent=0, const QString& baseGroup = QString::fromLatin1("settings"), const char *name=0, bool modal=false);
     /**
      * Destructor
      **/
@@ -110,6 +115,7 @@ private:
     QPtrList<KCModule> modules;
     QPtrDict<LoadInfo> moduleDict;
     QString _docPath;
+    QString _baseGroup;
 
     // For future use
     class KCMultiDialogPrivate;

@@ -27,7 +27,6 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kiconloader.h>
-
 #include <kmessagebox.h>
 #include <klibloader.h>
 #include <krun.h>
@@ -41,7 +40,7 @@
 #include "moduleinfo.h"
 #include "modloader.h"
 
-KCMultiDialog::KCMultiDialog(QWidget *parent, const char *name, bool modal)
+KCMultiDialog::KCMultiDialog(QWidget *parent, const QString& baseGroup, const char *name, bool modal)
   : KDialogBase(IconList, i18n("Settings"), Help | Default |Cancel | Apply | Ok, Ok,
                 parent, name, modal, true)
 {
@@ -49,6 +48,7 @@ KCMultiDialog::KCMultiDialog(QWidget *parent, const char *name, bool modal)
     enableButton(Apply, false);
     connect(this, SIGNAL(aboutToShowPage(QWidget *)), this, SLOT(slotAboutToShow(QWidget *)));
     setInitialSize(QSize(640,480));
+	_baseGroup = baseGroup;
 }
 
 KCMultiDialog::~KCMultiDialog()
@@ -113,7 +113,7 @@ void KCMultiDialog::addModule(const QString& path, bool withfallback)
 {
     kdDebug(1208) << "KCMultiDialog::addModule " << path << endl;
 
-    KCModuleInfo info(path);
+    KCModuleInfo info(path, _baseGroup);
 
     QHBox* page = addHBoxPage(info.moduleName(), info.comment(),
                               KGlobal::iconLoader()->loadIcon(info.icon(), KIcon::Desktop, KIcon::SizeMedium));
@@ -136,7 +136,7 @@ void KCMultiDialog::slotAboutToShow(QWidget *page)
 
     moduleDict.remove(page);
 
-    KCModuleInfo info(loadInfo->path);
+    KCModuleInfo info(loadInfo->path, _baseGroup);
 
     KCModule *module = KCModuleLoader::loadModule(info, loadInfo->withfallback);
 
