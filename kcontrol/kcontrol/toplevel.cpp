@@ -268,11 +268,21 @@ void TopLevel::newModule(const QString &name, const QString& docPath, const QStr
   QString cap = i18n("KDE Control Center");
 
   if (!name.isEmpty())
-    cap += " - [" + name +"]";
+    {
+      _active = 0;
+      cap += " - [" + name +"]";
+    }
 
   setPlainCaption(cap);
   
   _helptab->setText( docPath, quickhelp );
+
+  if (!report_bug) return;
+
+  if(name.isEmpty())
+    report_bug->setText(i18n("&Report Bug..."));
+  else
+    report_bug->setText(i18n("Report Bug on Module %1...").arg(name));
 }
 
 void TopLevel::moduleActivated(ConfigModule *module)
@@ -330,7 +340,6 @@ void TopLevel::activateModule(const QString& name)
 		  break;
 		}
 	}
-  report_bug->setText(i18n("Report Bug on Module %1...").arg(name));
 }
 
 void TopLevel::deleteDummyAbout()
@@ -354,22 +363,22 @@ void TopLevel::reportBug()
   bool deleteit = false;
 
   if (!_active) // report against kcontrol
-	dummyAbout = const_cast<KAboutData*>(KGlobal::instance()->aboutData());
+    dummyAbout = const_cast<KAboutData*>(KGlobal::instance()->aboutData());
   else
+    {
+      if (_active->aboutData())
+	dummyAbout = const_cast<KAboutData*>(_active->aboutData());
+      else
 	{
-	  if (_active->aboutData())
-		dummyAbout = const_cast<KAboutData*>(_active->aboutData());
-	  else
-		{
-		  sprintf(buffer, "kcm%s", _active->library().latin1());
-		  dummyAbout = new KAboutData(buffer, _active->name().utf8(), "2.0");
-		  deleteit = true;
-		}
+	  sprintf(buffer, "kcm%s", _active->library().latin1());
+	  dummyAbout = new KAboutData(buffer, _active->name().utf8(), "2.0");
+	  deleteit = true;
+	}
     }
   KBugReport *br = new KBugReport(this, false, dummyAbout);
   if (deleteit)
-	connect(br, SIGNAL(finished()), SLOT(deleteDummyAbout()));
+    connect(br, SIGNAL(finished()), SLOT(deleteDummyAbout()));
   else
-	dummyAbout = 0;
+    dummyAbout = 0;
   br->show();
 }
