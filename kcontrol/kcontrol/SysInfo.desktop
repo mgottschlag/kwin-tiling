@@ -1,0 +1,7 @@
+[Desktop Entry]
+Exec=kcontrol --type info -caption "%c" %i %m
+Icon=information_settings
+Type=Application
+DocPath=kcontrol/index.html
+
+Name=System Information

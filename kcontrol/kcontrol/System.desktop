@@ -1,0 +1,7 @@
+[Desktop Entry]
+Exec=kdesu "kcontrol --type system"
+Icon=exec
+Type=Application
+DocPath=kcontrol/index.html
+
+Name=System Settings

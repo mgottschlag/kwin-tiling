@@ -1,0 +1,7 @@
+[Desktop Entry]
+Exec=kcontrol --type user -caption "%c" %i %m
+Icon=kcontrol
+Type=Application
+DocPath=kcontrol/index.html
+
+Name=User Preferences
