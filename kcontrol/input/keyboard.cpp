@@ -83,14 +83,14 @@ void KeyboardConfig::setClick(int v)
 
 void KeyboardConfig::load()
 {
-  KConfig *config = new KConfig("kcminput");
+  KConfig *config = new KConfig("kcminputrc");
 
     XKeyboardState kbd;
 
     XGetKeyboardControl(kapp->getDisplay(), &kbd);
 
     config->setGroup("Keyboard");
-    bool key = config->readBoolEntry("KeyboardRepeat", true);
+    bool key = config->readBoolEntry("KeyboardRepeating", true);
     keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
     clickVolume = config->readNumEntry("ClickVolume", kbd.key_click_percent);
 
@@ -102,7 +102,7 @@ void KeyboardConfig::load()
 
 void KeyboardConfig::save()
 {
-  KConfig *config = new KConfig("kcminput");
+  KConfig *config = new KConfig("kcminputrc");
 
     XKeyboardControl kbd;
 
@@ -117,7 +117,7 @@ void KeyboardConfig::save()
 
     config->setGroup("Keyboard");
     config->writeEntry("ClickVolume",clickVolume);
-    config->writeEntry("KeyboardRepeat", (keyboardRepeat == AutoRepeatModeOn));
+    config->writeEntry("KeyboardRepeating", (keyboardRepeat == AutoRepeatModeOn));
     config->sync();
 
   delete config;

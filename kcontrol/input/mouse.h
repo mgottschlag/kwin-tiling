@@ -54,7 +54,7 @@ class MouseConfig : public KCModule
 {
   Q_OBJECT
 public:
-  MouseConfig( QWidget *parent=0, const char* name=0);
+  MouseConfig(QWidget *parent=0, const char* name=0);
 
   void save( void );
   void load();

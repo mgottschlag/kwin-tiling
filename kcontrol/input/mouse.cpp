@@ -174,7 +174,7 @@ void MouseConfig::setHandedness(int val)
 
 void MouseConfig::load()
 {
-  KConfig *config = new KConfig("kcminput");
+  KConfig *config = new KConfig("kcminputrc");
 
   int accel_num, accel_den, threshold;
   XGetPointerControl( kapp->getDisplay(),
@@ -249,10 +249,9 @@ void MouseConfig::load()
   else if (key == NULL)
     handed = h;
 
-  // the GUI should always show the real values
-  setAccel(accel_num);
-  setThreshold(threshold);
-  setHandedness(h);
+  setAccel(accelRate);
+  setThreshold(thresholdMove);
+  setHandedness(handed);
 
   // SC/DC/AutoSelect/ChangeCursor
   config->setGroup(QString::fromLatin1("KDE"));
@@ -272,7 +271,7 @@ void MouseConfig::load()
 
 void MouseConfig::save()
 {
-  KConfig *config = new KConfig("kcminput");
+  KConfig *config = new KConfig("kcminputrc");
 
   accelRate = getAccel();
   thresholdMove = getThreshold();

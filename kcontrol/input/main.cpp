@@ -22,8 +22,13 @@
  */
 
 
+#include <kapp.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <kconfig.h>
+
+
+#include <X11/Xlib.h>
 
 
 #include "keyboard.h"
@@ -43,6 +48,34 @@ extern "C"
   { 
     KGlobal::locale()->insertCatalogue("kcminput");
     return new MouseConfig(parent, name);
+  }
+
+  void init_keyboard()
+  {
+    KConfig *config = new KConfig("kcminputrc");
+    config->setGroup("Keyboard");
+
+    XKeyboardState   kbd;
+    XKeyboardControl kbdc;
+
+    XGetKeyboardControl(kapp->getDisplay(), &kbd);
+    bool key = config->readBoolEntry("KeyboardRepeating", true);
+    kbdc.key_click_percent = config->readNumEntry("ClickVolume", kbd.key_click_percent);
+    kbdc.auto_repeat_mode = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
+    XChangeKeyboardControl(kapp->getDisplay(),
+                           KBKeyClickPercent | KBAutoRepeatMode,
+                           &kbdc);
+
+    delete config;
+  }
+
+  void init_mouse()
+  {
+    // TODO: avoid construction of gui
+    MouseConfig cfg(0,0);
+
+    cfg.load();
+    cfg.save();
   }
 
 }
