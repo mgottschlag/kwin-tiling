@@ -10,8 +10,7 @@ LDADD = $(LIB_KDEUI) -lm
 
 bin_PROGRAMS = kswarm.kss krock.kss \
 	kpyro.kss khop.kss $(GL_SAVERS) \
-	kbouboule.kss kscience.kss \
-	kslidescreen.kss krandom.kss
+	kbouboule.kss kslidescreen.kss krandom.kss
 
 EXTRA_PROGRAMS = kmorph3d.kss kspace.kss kpipes.kss
 
@@ -41,15 +40,13 @@ kpipes_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) pipes.cpp
 kpipes_kss_LDADD = $(LDADD) $(GLLIB)
 kspace_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) space.cpp
 kspace_kss_LDADD = $(LDADD) $(GLLIB)
-kscience_kss_SOURCES = $(BASE_SRCS) science.cpp
-kscience_kss_LDADD = $(LDADD) -lm
 
 METASOURCES = saver.moc demowin.moc rock.moc \
 		pyro.moc hop.moc swarm.moc morph3d.moc space.moc bouboule.moc \
-		science.moc pipes.moc slidescreen.moc
+		pipes.moc slidescreen.moc
 
 noinst_HEADERS = saver.h demowin.h xlock.h rock.h \
-		pyro.h hop.h swarm.h space.h bouboule.h  science.h \
+		pyro.h hop.h swarm.h space.h bouboule.h \
 		xlockmore.h mode.h helpers.h morph3d.h pipes.h \
 		xs_colors.h xs_hsv.h xs_yarandom.h xs_utils.h \
 		slidescreen.h xs_visual.h vroot.h
@@ -59,14 +56,13 @@ messages:
 
 ########## Meta objects ##########
 
-data_DATA = kscience.gif kscience-small.gif
+data_DATA = 
 datadir = $(kde_datadir)/kscreensaver
 
 desktop_DATA = KBouboule.desktop \
 	KHop.desktop KMorph3D.desktop KPipes.desktop \
 	KPyro.desktop KRandom.desktop KRock.desktop \
-	KScience.desktop KSlidescreen.desktop \
-	KSpace.desktop KSwarm.desktop
+	KSlidescreen.desktop KSpace.desktop KSwarm.desktop
 desktopdir = $(kde_appsdir)/System/ScreenSavers
 
-EXTRA_DIST = kscience.gif kscience-small.gif kscreensave-0.3.3.lsm $(desktop_DATA)
+EXTRA_DIST = $(desktop_DATA)

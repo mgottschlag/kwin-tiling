@@ -11,7 +11,7 @@
 #include <qrect.h>
 #include <qtimer.h>
 #include <qdialog.h>
-#include "saver.h"
+#include <kscreensaver.h>
 
 #define MAX_MODES  6
 
@@ -20,24 +20,6 @@ typedef signed int T32bit;
 
 
 class KScienceSaver;
-
-
-class KPrepareDlg : public QWidget 
-{
-        Q_OBJECT
-public:
-        KPrepareDlg( QWidget *parent );
-	virtual ~KPrepareDlg();
-	void   hide();
-	void   show();
-	void   setText( const QString & msg );
-	XImage *save;
-	int    x, y, w, h, bpl;
-
-private:
-        QLabel *label;
-	QFrame *frame;	
-};
 
 
 class KPreviewWidget : public QWidget
@@ -51,12 +33,13 @@ private:
 	KScienceSaver *saver;
 };
 
+struct KScienceData;
                                                        
-class KScienceSaver : public kScreenSaver
+class KScienceSaver : public KScreenSaver
 {
 	Q_OBJECT
 public:
-	KScienceSaver(Drawable drawable, bool setup=false, bool gP=false);
+	KScienceSaver( WId id, bool setup=false, bool gP=false);
 	virtual ~KScienceSaver();
 
 	void do_refresh( const QRect & rect );
@@ -97,11 +80,10 @@ protected:
 	void       applyLens16bpp(int xs, int ys, int xd, int yd, int w, int h);
 	void       applyLens24bpp(int xs, int ys, int xd, int yd, int w, int h);
 	void       applyLens32bpp(int xs, int ys, int xd, int yd, int w, int h);
-	KPrepareDlg *dlg;
 	QTimer     timer;
 	bool       moveOn;
 	bool       setup;
-	bool       grabPixmap;	bool       showDialog;
+	bool       grabPixmap;
 	int        mode;
 	bool       inverse[MAX_MODES];
 	bool       gravity[MAX_MODES];
@@ -117,9 +99,7 @@ protected:
 	int        border, radius, diam, origin;
 	int        imgnext;
 	char       blackRestore[4];
-	T32bit     **offset;
-	XImage     *buffer;
-	XImage     *xRootWin;
+    KScienceData *d;
 };
 
 

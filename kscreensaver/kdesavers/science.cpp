@@ -30,13 +30,14 @@
 #include <kbuttonbox.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kglobal.h>
 #include <kstddirs.h>
 #include <krandomsequence.h>
 
-#include "helpers.h"
 #include "science.h"
 #include "science.moc"
 
+#include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
 #define SCI_DEFAULT_MODE          0
@@ -52,6 +53,27 @@
 #define SCI_MAX_MOVE             20
 
 #undef Below
+
+
+// libkscreensaver interface
+extern "C"
+{
+    const char *kss_applicationName = "kscience.kss";
+    const char *kss_description = I18N_NOOP( "Science Screensaver" );
+    const char *kss_version = "2.2.0";
+
+    KScreenSaver *kss_create( WId id )
+    {
+        KLocale::setMainCatalogue("klock");
+        return new KScienceSaver( id );
+    }
+
+    QDialog *kss_setup()
+    {
+        KLocale::setMainCatalogue("klock");
+        return new KScienceSetup();
+    }
+}
 
 static KScienceSaver *saver = 0;
 
@@ -84,108 +106,6 @@ void initModeInfo()
 }
 
 //-----------------------------------------------------------------------------
-// standard screen saver interface functions
-//
-
-void startScreenSaver( Drawable d )
-{
-	if ( saver )
-		return;
-
-	saver = new KScienceSaver( d );
-}               
-
-void stopScreenSaver()
-{
-	if ( saver )
-		delete saver;
-
-	saver = 0;
-}
-
-int setupScreenSaver()
-{
-	KScienceSetup dlg;
-	return dlg.exec();
-}
-
-//-----------------------------------------------------------------------------
-// Prepare Dialog
-// 
-
-KPrepareDlg::KPrepareDlg( QWidget *parent ) : QWidget( parent )
-{
-	save = 0;
-	QPixmap pmap( locate("data", "kscreensaver/pics/kscience-small.gif") );
-	w = ( pmap.isNull() ) ? 300 : 400;
-	h = 99;
-
-	x = ( QApplication::desktop()->width()  - w ) >> 1;
-	y = ( QApplication::desktop()->height() - h ) >> 1;
-     
-	// save screen
-	Display *dsp = qt_xdisplay();
-        Window rootwin = RootWindow( dsp, qt_xscreen() );
-        save = XGetImage( dsp, rootwin, x, y, w, h, AllPlanes, ZPixmap);
-	saver->myAssert( save != 0, "unable to grab screen" );
-        bpl = save->bytes_per_line;
-	
-        frame = new QFrame( parent );
-        frame->setFrameStyle( QFrame::Panel | QFrame::Raised );
-        frame->setLineWidth( 2 );
-
-	QFont font = KGlobalSettings::generalFont();
-	font.setPointSize(18);
-
-	label = new QLabel( QString(), frame );
-	label->setAlignment( AlignCenter );
-	label->setFont( font );
-	label->show();
-
-	if( !pmap.isNull() )
-	{
-		QWidget *image = new QWidget( frame );
-		image->setGeometry( 7, 7, 110, 85 );
-		image->setBackgroundPixmap( pmap );
-		label->setGeometry( 120, 25, 240, 30 );
-	}
-	else
-		label->setGeometry( 30, 35, 240, 30 );
-
-        frame->setGeometry( x, y, w, h );	
-	frame->raise();
-}          
-
-KPrepareDlg::~KPrepareDlg()
-{
-	frame->close(true);
-	if( save )
-		XDestroyImage( save );
-}                                                           
-
-void KPrepareDlg::show()
-{
-	frame->raise();
-	frame->show();
-	kapp->processEvents();
-}
-
-void KPrepareDlg::hide()
-{
-	frame->hide();
-}
-
-void KPrepareDlg::setText( const QString & msg )
-{
-	if( !msg.isNull() ) // FIXME: why??
-	{
-		label->setText( msg );	
-		kapp->processEvents();
-	}
-}
-
-
-//-----------------------------------------------------------------------------
 // KPreviewWidget
 //
 
@@ -207,23 +127,25 @@ void KPreviewWidget::notifySaver( KScienceSaver *s )
 // Screen Saver
 //
 
-KScienceSaver::KScienceSaver( Drawable drawable, bool s, bool gP ) : kScreenSaver( drawable )
+struct KScienceData
 {
-	xRootWin = buffer = 0;
-	dlg = 0;
+    T32bit     **offset;
+    XImage     *buffer;
+    XImage     *xRootWin;
+    GC         gc;
+};
+
+KScienceSaver::KScienceSaver( WId id, bool s, bool gP )
+    : KScreenSaver( id )
+{
+    d = new KScienceData;
+    d->gc = XCreateGC(qt_xdisplay(), id, 0, 0);
+	d->xRootWin = 0;
+    d->buffer = 0;
 
 	moveOn = true;
 	grabPixmap = gP;
 	setup = s;
-//	showDialog = !setup && 	(RootWindow( qt_xdisplay(), qt_xscreen() ) != drawable) &&
-//                     mWidth >= 320 && mHeight >= 200;
-	showDialog = false;  // dialog is grabbed also
-
-	if( showDialog )
-	{
-		dlg = new KPrepareDlg( QWidget::find( drawable ) );
-		myAssert( dlg != 0, "unable to create prepare dialog" );
-	}
 
 	vx = vy = 0.0;
 	readSettings();
@@ -232,7 +154,7 @@ KScienceSaver::KScienceSaver( Drawable drawable, bool s, bool gP ) : kScreenSave
 	{
 		grabRootWindow();
 		initialize();
-		do_refresh( QRect ( 0, 0, mWidth, mHeight ) );
+		do_refresh( QRect ( 0, 0, width(), height() ) );
 	}
 
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -243,10 +165,9 @@ KScienceSaver::~KScienceSaver()
 {
 	timer.stop();
 	releaseLens();
-	if ( xRootWin )
-		XDestroyImage( xRootWin );
-	if( dlg )
-		delete dlg;
+	if ( d->xRootWin )
+		XDestroyImage( d->xRootWin );
+    delete d;
 }
 
 void KScienceSaver::myAssert( bool term, const char *eMsg )
@@ -262,8 +183,8 @@ void KScienceSaver::initialize()
 {
 	KRandomSequence rnd;
 	initLens();
-	signed int ws = (signed int) (mWidth -  diam);
-	signed int hs = (signed int) (mHeight - diam);
+	signed int ws = (signed int) (width() -  diam);
+	signed int hs = (signed int) (height() - diam);
 
 	x = (ws > 0) ? (rnd.getDouble() * ws ) : 0.0;
 	y = (hs > 0) ? (rnd.getDouble() * hs ) : 0.0;
@@ -294,7 +215,7 @@ void KScienceSaver::initWhirlLens()
 	for(int y = side-1; y >= 0; y--)
 	{
 		dy = y - origin;
-		off = offset[y] = (T32bit *) malloc(sizeof(T32bit) * side);
+		off = d->offset[y] = (T32bit *) malloc(sizeof(T32bit) * side);
 		myAssert( off != 0, "too few memory" );
 		for(int x = side-1; x >= 0; x--)
 		{
@@ -335,7 +256,7 @@ void KScienceSaver::initSphereLens()
 	for(int y = side-1; y >= 0; y--)
 	{
 		dy = y - origin;
-		off = offset[y] = (T32bit *) malloc(sizeof(T32bit) * side);
+		off = d->offset[y] = (T32bit *) malloc(sizeof(T32bit) * side);
 		myAssert( off != 0, "too few memory" );
 		for(int x = side-1; x >= 0; x--)
 		{
@@ -375,7 +296,7 @@ void KScienceSaver::initExponentialLens()
 	for(int y = side-1; y >= 0; y--)
 	{
 		dy = y - origin;
-		off = offset[y] = (T32bit *) malloc(sizeof(T32bit) * side);
+		off = d->offset[y] = (T32bit *) malloc(sizeof(T32bit) * side);
 		myAssert( off != 0, "too few memory" );
 		for(int x = side-1; x >= 0; x--)
 		{
@@ -416,7 +337,7 @@ void KScienceSaver::initCurvatureLens()
 	for(int y = side-1; y >= 0; y--)
 	{
 		dy = y - origin;
-		off = offset[y] = (T32bit *) malloc(sizeof(T32bit) * side);
+		off = d->offset[y] = (T32bit *) malloc(sizeof(T32bit) * side);
 		myAssert( off != 0, "too few memory" );
 		for(int x = side-1; x >= 0; x--)
 		{
@@ -454,7 +375,7 @@ void KScienceSaver::initWaveLens()
 	for(int y = side-1; y >= 0; y--)
 	{
 		dy = y - origin;
-		off = offset[y] = (T32bit *) malloc(sizeof(T32bit) * side);
+		off = d->offset[y] = (T32bit *) malloc(sizeof(T32bit) * side);
 		myAssert( off != 0, "too few memory" );
 		for(int x = side-1; x >= 0; x--)
 		{
@@ -485,13 +406,7 @@ void KScienceSaver::initWaveLens()
 
 void KScienceSaver::initLens()
 {
-	if( showDialog && dlg ) {
-		dlg->setText( i18n( "rendering lens..." ) );
-		dlg->show();
-		kapp->processEvents();		
-	}
-
-	int min = (mWidth < mHeight) ? mWidth : mHeight;
+	int min = (width() < height()) ? width() : height();
 	border = 1 + SCI_MAX_MOVE;
 
 	radius = (size[mode] * min) / 100;
@@ -501,11 +416,11 @@ void KScienceSaver::initLens()
 	origin = radius + border;
 	side  = origin << 1;
 
-	buffer = XSubImage( xRootWin, 0, 0, side, side );
-        myAssert( buffer != 0, "can't allocate pixmap" );                             
+	d->buffer = XSubImage( d->xRootWin, 0, 0, side, side );
+        myAssert( d->buffer != 0, "can't allocate pixmap" );                             
 
-	offset = (T32bit **) malloc( sizeof(T32bit *) * side );
-	myAssert( offset != 0, "too few memory" );
+	d->offset = (T32bit **) malloc( sizeof(T32bit *) * side );
+	myAssert( d->offset != 0, "too few memory" );
 
 	switch( mode ) {
 		case MODE_WHIRL: 	initWhirlLens();  break;
@@ -516,22 +431,19 @@ void KScienceSaver::initLens()
 		case MODE_WAVE: 	initWaveLens(); break;
 		default: myAssert( false, "internal error (wrong mode in initLens() )" );
 	}
-
-	if( showDialog && dlg )
-		dlg->hide();
 }
 
 void KScienceSaver::releaseLens()
 {
-	if( offset != 0 ) {
+	if( d->offset != 0 ) {
 		for(int i=0; i<side; i++) 
-    			if( offset[i] != 0 ) free( offset[i] );
-    		free( offset );
-		offset = 0;
+    			if( d->offset[i] != 0 ) free( d->offset[i] );
+    		free( d->offset );
+		d->offset = 0;
 	}
-	if( buffer != 0 ) {
-		XDestroyImage( buffer );
-		buffer = 0;
+	if( d->buffer != 0 ) {
+		XDestroyImage( d->buffer );
+		d->buffer = 0;
 	}
 }
 
@@ -547,7 +459,7 @@ void KScienceSaver::setMode( int m )
 	int dm = diam;
 	initLens();
 	if( hideBG[old] ^ hideBG[m] )
-		do_refresh( QRect( 0, 0, mWidth, mHeight ) );
+		do_refresh( QRect( 0, 0, width(), height() ) );
 	else
 		if( diam < dm )
 		{
@@ -648,14 +560,14 @@ void KScienceSaver::setHideBG( bool b )
 	releaseLens();
 	hideBG[mode] = b;
 	initLens();	
-	do_refresh( QRect( 0, 0, mWidth, mHeight ) );
+	do_refresh( QRect( 0, 0, width(), height() ) );
 		
 	timer.start( SCI_MAX_SPEED - speed[mode]);	
 }
 
 void KScienceSaver::readSettings()
 {
-    KConfig *config = klock_config();
+    KConfig *config = KGlobal::config();
         QString sMode;
   
 	config->setGroup( "Settings" );
@@ -677,7 +589,6 @@ void KScienceSaver::readSettings()
 
 	vx = copysign( moveX[mode], vx );
 	vy = copysign( moveY[mode], vy );
-	delete config;
 }              
 
 void KScienceSaver::do_refresh( const QRect & rect )
@@ -688,14 +599,14 @@ void KScienceSaver::do_refresh( const QRect & rect )
 
 	if( hideBG[mode] )
 	{
-		XSetWindowBackground( qt_xdisplay(), mDrawable, black.pixel() );
-		XClearArea( qt_xdisplay(), mDrawable, rect.left(), rect.top(), 
+		XSetWindowBackground( qt_xdisplay(), winId(), black.pixel() );
+		XClearArea( qt_xdisplay(), winId(), rect.left(), rect.top(), 
                             rect.width(), rect.height(), false );
 	}
 	else 
 	{
-		myAssert( xRootWin != 0, "root window not grabbed" );
-		XPutImage( qt_xdisplay(), mDrawable, mGc, xRootWin, 
+		myAssert( d->xRootWin != 0, "root window not grabbed" );
+		XPutImage( qt_xdisplay(), winId(), d->gc, d->xRootWin, 
 		           rect.left(), rect.top(),
                            rect.left(), rect.top(), 
                            rect.width(), rect.height() );
@@ -706,19 +617,19 @@ void KScienceSaver::do_refresh( const QRect & rect )
 void KScienceSaver::slotTimeout()
 {
 	if( grabPixmap ) {
-		if( !QWidget::find(mDrawable)->isActiveWindow() )
+		if( !QWidget::find(winId())->isActiveWindow() )
 			return;
 		grabPreviewWidget();
 		grabPixmap = false;
 		initialize();
 		if( hideBG[mode] )
-			do_refresh( QRect ( 0, 0, mWidth, mHeight ) );
+			do_refresh( QRect ( 0, 0, width(), height() ) );
 	}
 
 	signed int oldx = xcoord, oldy = ycoord;
 
 	if( gravity[mode] ) {
-		double h = double(y+1.0) / double(mHeight-diam);
+		double h = double(y+1.0) / double(height()-diam);
 		if( h > 1.0 ) h = 1.0;
 		vy = sqrt( h ) * ( (vy > 0.0) ? moveY[mode] : -moveY[mode] );
 	}
@@ -734,19 +645,19 @@ void KScienceSaver::slotTimeout()
 		vx = -vx; 
 		x = 0.0; 
 	}
-	if( (unsigned int) x + diam >= mWidth) { 
+	if( (unsigned int) x + diam >= width()) { 
 		vx = -vx; 
-		myAssert( mWidth-diam > 0, "assertion violated: width-diam > 0" );
-		x = (double) (mWidth - diam - 1); 
+		myAssert( width()-diam > 0, "assertion violated: width-diam > 0" );
+		x = (double) (width() - diam - 1); 
 	}
 	if( y <= 0.0 ) { 
 		vy = -vy; 
 		y = 0.0; 
 	}
-	if( (unsigned int) y + diam >= mHeight ) { 
+	if( (unsigned int) y + diam >= height() ) { 
 		vy = -vy; 
-		myAssert( mHeight - diam > 0, "assertion violated: height-diam > 0" );
-		y = (double) (mHeight - diam - 1); 
+		myAssert( height() - diam > 0, "assertion violated: height-diam > 0" );
+		y = (double) (height() - diam - 1); 
 	}
 
 	xcoord = (int) x ;
@@ -785,19 +696,19 @@ void KScienceSaver::slotTimeout()
 		}
 	}
 
-	if( (unsigned int) xd + w >= mWidth  ) w = mWidth  - xd - 1;
-	if( (unsigned int) yd + h >= mHeight ) h = mHeight - yd - 1;
+	if( (unsigned int) xd + w >= width()  ) w = width()  - xd - 1;
+	if( (unsigned int) yd + h >= height() ) h = height() - yd - 1;
 
 //printf("%d: (dx: %3d, dy: %3d), diam: %3d, (xc: %3d, yc: %3d), (xs: %3d, ys: %3d), (xd: %3d, yd: %3d), (w: %3d, h: %3d)\n", mode, dx, dy, diam, xcoord, ycoord, xs, ys, xd, yd, w, h);	
 	myAssert( dx <= border && dy <=border, "assertion violated: dx or dy <= border");
 	myAssert( xcoord >= 0 && ycoord >= 0, "assertion violated: xcoord, ycoord >= 0 ");
-	myAssert( (unsigned int) xd+w < mWidth, "assertion violated: xd+w < width" );
-	myAssert( (unsigned int) yd+h < mHeight, "assertion violated: yd+h < height" );
+	myAssert( (unsigned int) xd+w < width(), "assertion violated: xd+w < width" );
+	myAssert( (unsigned int) yd+h < height(), "assertion violated: yd+h < height" );
 
 	if( hideBG[mode] )
 		blackPixel( xcoord, ycoord );
 	(this->*applyLens)(xs, ys, xd, yd, w, h);
-	XPutImage( qt_xdisplay(), mDrawable, mGc, buffer, 0, 0, xd, yd, w, h );
+	XPutImage( qt_xdisplay(), winId(), d->gc, d->buffer, 0, 0, xd, yd, w, h );
 	if( hideBG[mode] )
 		blackPixelUndo( xcoord, ycoord );
 }
@@ -807,55 +718,31 @@ void KScienceSaver::grabRootWindow()
 	Display *dsp = qt_xdisplay();
 	Window rootwin = RootWindow( dsp, qt_xscreen() );
 
-	if( showDialog && dlg ) 
-	{
-		dlg->setText( i18n( "grabbing screen..." ) );
-		dlg->show();
-		kapp->processEvents();		
-	}
-
 	// grab contents of root window
-	if( xRootWin )
-		XDestroyImage( xRootWin );
+	if( d->xRootWin )
+		XDestroyImage( d->xRootWin );
 
-	xRootWin = XGetImage( dsp, rootwin, 0, 0, mWidth,
-	                      mHeight, AllPlanes, ZPixmap);
-	myAssert( xRootWin, "unable to grab root window\n" );
+	d->xRootWin = XGetImage( dsp, rootwin, 0, 0, width(),
+	                      height(), AllPlanes, ZPixmap);
+	myAssert( d->xRootWin, "unable to grab root window\n" );
 
-	imgnext = xRootWin->bytes_per_line;
-	bpp = ( xRootWin->bits_per_pixel ) >> 3;
-
-	// remove dialog
-	if( showDialog && dlg )
-		dlg->hide();
-/*
-	if( showDialog && dlg )
-	{
-		char *p = xRootWin->data + imgnext*dlg->y + bpp*dlg->x;
-		char *q = dlg->save->data;
-		for( int y=0; y<dlg->h; y++ )
-		{
-			memcpy(p, q, bpp*dlg->w);
-			p += imgnext;
-			q += dlg->bpl;
-		}
-	}
-*/
+	imgnext = d->xRootWin->bytes_per_line;
+	bpp = ( d->xRootWin->bits_per_pixel ) >> 3;
 }
 
 void KScienceSaver::grabPreviewWidget()
 {
-	myAssert( QWidget::find(mDrawable)->isActiveWindow(), "can't grab preview widget: dialog not active()" );
+	myAssert( QWidget::find(winId())->isActiveWindow(), "can't grab preview widget: dialog not active()" );
 
-	if( xRootWin )
-		XDestroyImage( xRootWin );
+	if( d->xRootWin )
+		XDestroyImage( d->xRootWin );
 
 	Display *dsp = qt_xdisplay();
-	xRootWin = XGetImage( dsp, mDrawable, 0, 0, mWidth, mHeight, AllPlanes, ZPixmap);
-	myAssert( xRootWin, "unable to grab preview window\n" );
+	d->xRootWin = XGetImage( dsp, winId(), 0, 0, width(), height(), AllPlanes, ZPixmap);
+	myAssert( d->xRootWin, "unable to grab preview window\n" );
 
-	imgnext = xRootWin->bytes_per_line;
-	bpp = ( xRootWin->bits_per_pixel ) >> 3;		
+	imgnext = d->xRootWin->bytes_per_line;
+	bpp = ( d->xRootWin->bits_per_pixel ) >> 3;		
 }
 
 void KScienceSaver::blackPixel( int x, int y )
@@ -864,8 +751,8 @@ void KScienceSaver::blackPixel( int x, int y )
 	unsigned int adr = x*bpp + y*imgnext;
 
 	for(int i=0; i<bpp; i++) {
-		blackRestore[i] = xRootWin->data[adr];
-		xRootWin->data[adr++] = black;
+		blackRestore[i] = d->xRootWin->data[adr];
+		d->xRootWin->data[adr++] = black;
 	}
 }
 
@@ -873,7 +760,7 @@ void KScienceSaver::blackPixelUndo( int x, int y )
 {
 	unsigned int adr = x*bpp + y*imgnext;
 	for(int i=0; i<bpp; i++)
-		xRootWin->data[adr++] = blackRestore[i];
+		d->xRootWin->data[adr++] = blackRestore[i];
 }
 
 // hm....
@@ -882,13 +769,13 @@ void KScienceSaver::applyLens8bpp(int xs, int ys, int xd, int yd, int w, int h)
 {
 	T32bit *off;
 	char *img1, *img2, *data;
-	signed int ix, iy, datanext = buffer->bytes_per_line - w;
+	signed int ix, iy, datanext = d->buffer->bytes_per_line - w;
 
-	img1 = xRootWin->data + xd + yd*imgnext;
-	data = buffer->data;
+	img1 = d->xRootWin->data + xd + yd*imgnext;
+	data = d->buffer->data;
 	for(iy = ys; iy < ys+h; iy++)
 	{
-		off = offset[iy] + xs;
+		off = d->offset[iy] + xs;
 		img2 = img1;
 		for(ix = w; ix > 0; ix--)
 			*data++ = img2++[*off++];
@@ -902,13 +789,13 @@ void KScienceSaver::applyLens16bpp(int xs, int ys, int xd, int yd, int w, int h)
 {
 	T32bit *off;
 	char *img1, *img2, *data;
-	int ix, iy, datanext = buffer->bytes_per_line - (w << 1);
+	int ix, iy, datanext = d->buffer->bytes_per_line - (w << 1);
 
-	img1 = xRootWin->data + (xd << 1) + yd*imgnext;
-	data = buffer->data;
+	img1 = d->xRootWin->data + (xd << 1) + yd*imgnext;
+	data = d->buffer->data;
 	for(iy = ys; iy < ys+h; iy++)
 	{
-		off = offset[iy] + xs;
+		off = d->offset[iy] + xs;
 		img2 = img1;
 		for(ix = w; ix > 0; ix--) {
 			*data++ = img2++[*off];
@@ -923,13 +810,13 @@ void KScienceSaver::applyLens24bpp(int xs, int ys, int xd, int yd, int w, int h)
 {
 	T32bit *off;
 	char *img1, *img2, *data;
-	signed int ix, iy, datanext = buffer->bytes_per_line - 3*w;
+	signed int ix, iy, datanext = d->buffer->bytes_per_line - 3*w;
 
-	img1 = xRootWin->data + 3*xd + yd*imgnext;
-	data = buffer->data;
+	img1 = d->xRootWin->data + 3*xd + yd*imgnext;
+	data = d->buffer->data;
 	for(iy = ys; iy < ys+h; iy++)
 	{
-		off = offset[iy] + xs;
+		off = d->offset[iy] + xs;
 		img2 = img1;
 		for(ix = w; ix > 0; ix--) {
 			*data++ = img2++[*off];
@@ -945,13 +832,13 @@ void KScienceSaver::applyLens32bpp(int xs, int ys, int xd, int yd, int w, int h)
 {
 	T32bit *off;
 	char *img1, *img2, *data;
-	signed int ix, iy, datanext = buffer->bytes_per_line - (w << 2);
+	signed int ix, iy, datanext = d->buffer->bytes_per_line - (w << 2);
 
-	img1 = xRootWin->data + (xd << 2) + yd*imgnext;
-	data = buffer->data;
+	img1 = d->xRootWin->data + (xd << 2) + yd*imgnext;
+	data = d->buffer->data;
 	for(iy = ys; iy < ys+h; iy++)
 	{
-		off = offset[iy] + xs;
+		off = d->offset[iy] + xs;
 		img2 = img1;
 		for(ix = w; ix > 0; ix--) {
 			*data++ = img2++[*off];
@@ -994,7 +881,6 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 	
 	// mode
 	label = new QLabel( i18n("Mode:"), this );
-	min_size( label );
 	ltm->addWidget( label );
 
 	QListBox *c = new QListBox( this );
@@ -1037,7 +923,6 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 		
 	// size 	
 	label = new QLabel( i18n("Size:"), this );
-	min_size( label );
 	ltc->addWidget( label );
 		
 	sb = slideSize = new QSlider(9, 50, 5, size[mode], QSlider::Horizontal,
@@ -1054,7 +939,6 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 
 	// intensity
 	label = new QLabel( i18n("Intensity:"), this );
-	min_size( label );
 	ltc->addWidget( label );
 		
 	sb = slideIntensity = new QSlider(0, 10, 1, intensity[mode],
@@ -1070,7 +954,6 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 
 	// speed
 	label = new QLabel( i18n("Speed:"), this );
-	min_size( label );
 	ltc->addWidget( label );
 	
 	sb = slideSpeed = new QSlider(0, SCI_MAX_SPEED, 10, speed[mode],
@@ -1084,7 +967,6 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 
 	// motion
 	label = new QLabel( i18n("Motion:"), this );
-	min_size( label );
 	ltc->addWidget( label );
 
 	QHBoxLayout *ltcm = new QHBoxLayout() ;
@@ -1111,7 +993,7 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 	// preview
 	preview = new KPreviewWidget( this );
 	preview->setFixedSize( 220, 170 );
-	QPixmap p( locate("data", "kscreensaver/pics/kscience.gif") );
+	QPixmap p( locate("data", "kscreensaver/pics/kscience.png") );
 	if( p.isNull() )
 		preview->setBackgroundColor( black );
 	else
@@ -1163,7 +1045,7 @@ void KScienceSetup::updateSettings()
 // read settings from config file
 void KScienceSetup::readSettings()
 {
-    KConfig *config = klock_config();
+    KConfig *config = KGlobal::config();
         QString sMode;
   
 	config->setGroup( "Settings" );
@@ -1182,7 +1064,6 @@ void KScienceSetup::readSettings()
 		gravity[i]   = config->readBoolEntry( "Gravity",   SCI_DEFAULT_GRAVITY);
 		hideBG[i]    = config->readBoolEntry( "HideBG",    SCI_DEFAULT_HIDE);
 	}
-	delete config;
 }  
 
 void KScienceSetup::slotMode( int m )
@@ -1275,7 +1156,7 @@ void KScienceSetup::slotSliderReleased()
 // Ok pressed - save settings and exit
 void KScienceSetup::slotOkPressed()
 {
-    KConfig *config = klock_config();
+    KConfig *config = KGlobal::config();
 	QString sSize, sSpeed, sIntensity, sMode;
 
 	config->setGroup( "Settings" );
@@ -1296,7 +1177,6 @@ void KScienceSetup::slotOkPressed()
 	}
 
 	config->sync();
-	delete config;
 
 	accept();
 }

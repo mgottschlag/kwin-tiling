@@ -9,7 +9,8 @@ LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD = $(LIB_KDEUI) ../libkscreensaver/libkscreensaver.la -lm
 
 bin_PROGRAMS = kbanner.kss kblankscrn.kss kpolygon.kss kslideshow.kss \
-                klines.kss klorenz.kss kblob.kss kvm.kss kmatrix.kss
+                klines.kss klorenz.kss kblob.kss kvm.kss kmatrix.kss \
+                kscience.kss
 
 kbanner_kss_SOURCES = banner.cpp
 kblankscrn_kss_SOURCES = blankscrn.cpp
@@ -21,24 +22,25 @@ klorenz_kss_SOURCES = lorenz.cpp
 kblob_kss_SOURCES = blob.cpp
 kvm_kss_SOURCES = kvm.cpp vm.c vm_random.c
 kmatrix_kss_SOURCES = matrix.cpp
+kscience_kss_SOURCES = science.cpp
 
 METASOURCES = banner.moc blankscrn.moc polygon.moc slideshow.moc lines.moc \
-              lorenz.moc blob.moc kvm.moc matrix.moc
+              lorenz.moc blob.moc kvm.moc matrix.moc science.moc
 
 noinst_HEADERS = banner.h blankscrn.h polygon.h slideshow.h lines.h \
-                 lorenz.h blob.h kvm.h vm.h vm_random.h matrix.h
+                 lorenz.h blob.h kvm.h vm.h vm_random.h matrix.h science.h
 
 messages:
 	$(XGETTEXT) *.cpp *.h -o $(podir)/klock.pot
 
 ########## Meta objects ##########
 
-data_DATA = 
+data_DATA = kscience.png
 datadir = $(kde_datadir)/kscreensaver
 
 desktop_DATA = KBanner.desktop KBlankscreen.desktop KPolygon.desktop \
                 KSlideshow.desktop KLines.desktop KLorenz.desktop \
-                KBlob.desktop KVm.desktop KMatrix.desktop
+                KBlob.desktop KVm.desktop KMatrix.desktop KScience.desktop
 desktopdir = $(kde_appsdir)/System/ScreenSavers
 
-EXTRA_DIST = $(desktop_DATA) vm.xpm vm.xbm
+EXTRA_DIST = $(desktop_DATA) vm.xpm vm.xbm kscience.png
