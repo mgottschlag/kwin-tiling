@@ -129,8 +129,8 @@ void StatisticsView::setListInfo(QListView *list, int nrOfFiles, int nrOfConnect
    dataList=list;
    filesCount=nrOfFiles;
    connectionsCount=nrOfConnections;
-   connectionsL->setText(i18n("Connections: %1").arg(KGlobal::locale()->formatNumber(connectionsCount)));
-   filesL->setText(i18n("File accesses: %1").arg(KGlobal::locale()->formatNumber(filesCount)));
+   connectionsL->setText(i18n("Connections: %1").arg(KGlobal::locale()->formatNumber(connectionsCount, 0)));
+   filesL->setText(i18n("File accesses: %1").arg(KGlobal::locale()->formatNumber(filesCount, 0)));
    clearStatistics();
 };
 
