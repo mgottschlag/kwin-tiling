@@ -24,6 +24,7 @@
 #include <qmap.h>
 #include <qvbox.h>
 #include <qdragobject.h>
+#include <qpainter.h>
 
 #include <kapp.h>
 #include <kglobal.h>
