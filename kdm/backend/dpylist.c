@@ -64,6 +64,38 @@ Debug("AnyActiveDisplays?\n");
 }
 
 int
+AnyRunningDisplays (void)
+{
+    struct display *d;
+
+Debug("AnyRunningDisplays?\n");
+    for (d = displays; d; d = d->next)
+	switch (d->status) {
+	case notRunning:
+	case textMode:
+	case reserve:
+	    break;
+	default:
+Debug(" yes\n");
+	    return 1;
+	}
+Debug(" no\n");
+    return 0;
+}
+
+int
+AnyReserveDisplays (void)
+{
+    struct display *d;
+
+    for (d = displays; d; d = d->next)
+	if ((d->displayType & d_lifetime) == dReserve)
+	    return 1;
+    return 0;
+}
+
+#ifdef AUTO_RESERVE
+int
 AllLocalDisplaysLocked (struct display *dp)
 {
     struct display *d;
@@ -77,23 +109,6 @@ Debug("AllLocalDisplaysLocked?\n");
 	    return 0;
 }Debug(" yes\n");
     return 1;
-}
-
-void
-StartReserveDisplay (int lt)
-{
-    struct display *d, *rd;
-
-Debug("StartReserveDisplay\n");
-    for (rd = 0, d = displays; d; d = d->next)
-	if (d->status == reserve)
-	    rd = d;
-    if (rd)
-    {
-Debug("starting reserve display %s, timeout %d\n", rd->name, lt);
-	rd->idleTimeout = lt;
-	StartDisplay (rd);
-    }
 }
 
 void
@@ -118,6 +133,24 @@ Debug ("killing reserve display %s\n", rd->name);
 		d->userSess < 0)
 		rd = d;
 	}
+}
+#endif /* AUTO_RESERVE */
+
+void
+StartReserveDisplay (int lt)
+{
+    struct display *d, *rd;
+
+Debug("StartReserveDisplay\n");
+    for (rd = 0, d = displays; d; d = d->next)
+	if (d->status == reserve)
+	    rd = d;
+    if (rd)
+    {
+Debug("starting reserve display %s, timeout %d\n", rd->name, lt);
+	rd->idleTimeout = lt;
+	StartDisplay (rd);
+    }
 }
 
 void

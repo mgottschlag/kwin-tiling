@@ -129,7 +129,7 @@ static int StorePid (void);
 static int fifoFd = -1;
 static char *fifoPath;
 
-static int sdAction;
+static int sdAction, Stopping;
 
 char *prog, *progpath;
 
@@ -301,7 +301,7 @@ main (int argc, char **argv)
 #ifdef XDMCP
 	   AnyWellKnownSockets() ||
 #endif
-	   AnyDisplaysLeft ())
+	   (Stopping ? AnyRunningDisplays() : AnyDisplaysLeft ()))
     {
 	if (StopAll)
 	{
@@ -577,6 +577,7 @@ stoppen (int force)
 	ForEachDisplay (StopDisplay);
     else
 	ForEachDisplay (StopInactiveDisplay);
+    Stopping = 1;
 }
 
 
@@ -772,11 +773,15 @@ processDFifo (const char *buf, int len, void *ptr)
 	d->hstent->sd_when = when;
     } else if (!strcmp (ar[0], "lock")) {
 	d->hstent->lock = 1;
+#ifdef AUTO_RESERVE
 	if (AllLocalDisplaysLocked (0))
 	    StartReserveDisplay (0);
+#endif
     } else if (!strcmp (ar[0], "unlock")) {
 	d->hstent->lock = 0;
+#ifdef AUTO_RESERVE
 	ReapReserveDisplays ();
+#endif
     } else if (!strcmp (ar[0], "reserve")) {
 	int lt = 0;
 	if (ar[1])
@@ -1040,18 +1045,22 @@ WaitForChild (void)
 		Debug ("Display exited with EX_TEXTLOGIN\n");
 		ExitDisplay (d, DS_TEXTMODE, FALSE, FALSE);
 		break;
-	    case EX_RESERVE:
-		Debug ("Display exited with EX_RESERVE\n");
-		ExitDisplay (d, DS_RESERVE, FALSE, FALSE);
-		break;
 	    case EX_UNMANAGE_DPY:
 		Debug ("Display exited with EX_UNMANAGE_DPY\n");
 		ExitDisplay (d, DS_REMOVE, FALSE, FALSE);
 		break;
+	    case EX_RESERVE:
+		/* XXX this should go away, i guess */
+		Debug ("Display exited with EX_RESERVE\n");
+		ExitDisplay (d, DS_RESERVE, FALSE, FALSE);
+		break;
 	    case EX_NORMAL:
 		Debug ("Display exited with EX_NORMAL\n");
-		if ((d->displayType & d_lifetime) == dReserve &&
-		    !AllLocalDisplaysLocked (d))
+		if ((d->displayType & d_lifetime) == dReserve
+#ifdef AUTO_RESERVE
+		     && !AllLocalDisplaysLocked (d)
+#endif
+		   )
 		    ExitDisplay (d, DS_RESERVE, FALSE, TRUE);
 		else
 		    ExitDisplay (d, DS_RESTART, FALSE, TRUE);
