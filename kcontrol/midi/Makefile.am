@@ -15,3 +15,5 @@ KDE_ICON = midi
 messages:
 	$(XGETTEXT) $(libkcm_midi_la_SOURCES) -o $(podir)/kcmmidi.pot
 
+data_DATA = midi.desktop
+datadir = $(kde_appsdir)/Settings/Sound

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Exec=kcmshell Sound/midi
+Icon=kcmmidi
+Type=Application
+DocPath=kcontrol/kcmmidi/midi-1.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=midi
+X-KDE-Init=midi
+
+Name=Midi 
+Comment=Midi Configuration
+Keywords=MIDI, synthesizer, music
