@@ -379,7 +379,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     effectStyleMenu = new QButtonGroup( i18n( "Effect options" ), this);
     hlay->addWidget(effectStyleMenu, 10);
 //	effectStyle->setExclusive(false);
-	
+
     vlay = new QVBoxLayout( effectStyleMenu, 10 );
     vlay->addSpacing( effectStyleMenu->fontMetrics().lineSpacing() );
 
@@ -629,7 +629,7 @@ void KGeneral::defaults()
     effectAnimateCombo = false;
     effectFadeTooltip = false;
 	effectNoTooltip = false;
-	
+
     themeList->defaults();
     showSettings();
 
@@ -678,7 +678,7 @@ void KGeneral::save()
     config->writeEntry("EffectFadeTooltip", effectFadeTooltip, true, true);
 	config->writeEntry("EffectAnimateTooltip", effectAnimateTooltip, true, true);
 	config->writeEntry("EffectNoTooltip", effectNoTooltip, true, true);
-	
+
     config->setGroup("Toolbar style");
     config->writeEntry("IconText", tbUseText, true, true);
     config->writeEntry("Highlighting", (int) tbUseHilite, true, true);

@@ -215,7 +215,7 @@ void runRdb(bool exportFonts, bool exportColors) {
   }
 
   KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
-  QColorGroup cg = kapp->palette().normal();
+  QColorGroup cg = kapp->palette().active();
   if ( !kapp->kstyle() || !kapp->kstyle()->inherits("KLegacyStyle") )
       createGtkrc( exportFonts, kapp->font(), exportColors, cg );
 
