@@ -18,7 +18,7 @@
 #include <kurl.h>
 
 class QLabel;
-class QMultiLineEdit;
+class QTextEdit;
 class QPushButton;
 class ThemeListBox;
 
@@ -55,7 +55,7 @@ private:
   bool mGui;
   ThemeListBox *mThemesList;
   QPushButton *mBtnAdd, *mBtnRemove, *mBtnTest;
-  QMultiLineEdit *mText;
+  QTextEdit *mText;
   QLabel *mPreview;
 };
 

@@ -52,10 +52,15 @@ KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const char *name, const QStri
 {
   init();
 
+#if 0
   QHBoxLayout *box = new QHBoxLayout(this);
   QTabWidget *tab = new QTabWidget(this); // There will be more tabs in the future.
   box->addWidget(tab);
   tab->addTab( mInstaller, i18n("&Theme Installer") );
+#else
+  QHBoxLayout *box = new QHBoxLayout(this, 0, 0);
+  box->addWidget(mInstaller);
+#endif
   connect( mInstaller, SIGNAL(changed(bool)), SLOT(setChanged(bool)) );
 }
 

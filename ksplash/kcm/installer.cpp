@@ -15,7 +15,7 @@
 #include <qdir.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qmultilineedit.h>
+#include <qtextedit.h>
 #include <qpushbutton.h>
 
 #include "installer.h"
@@ -122,7 +122,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
 
   bbox->layout();
 
-  mText = new QMultiLineEdit(this);
+  mText = new QTextEdit(this);
   mText->setMinimumSize(mText->sizeHint());
   mText->setReadOnly(true);
   grid->addWidget(mText, 1, 1);
@@ -285,6 +285,7 @@ void SplashInstaller::slotSetTheme(int id)
 {
   bool enabled;
   QString path(QString::null);
+  QString infoTxt;
 
   if (id < 0)
   {
@@ -322,6 +323,21 @@ void SplashInstaller::slotSetTheme(int id)
       {
         KConfig cnf(url.path());
         cnf.setGroup( QString("KSplash Theme: %1").arg(themeName) );
+
+        // Get theme information.
+        infoTxt = "<qt>";
+        if ( cnf.hasKey( "Name" ) )
+          infoTxt += QString( i18n( "<b>Name:</b> %1<br>" ) ).arg( cnf.readEntry( "Name", i18n( "Unknown" ) ) );
+        if ( cnf.hasKey( "Description" ) )
+          infoTxt += QString( i18n( "<b>Description:</b> %1<br>" ) ).arg( cnf.readEntry( "Description", i18n( "Unknown" ) ) );
+        if ( cnf.hasKey( "Version" ) )
+          infoTxt += QString( i18n( "<b>Version:</b> %1<br>" ) ).arg( cnf.readEntry( "Version", i18n( "Unknown" ) ) );
+        if ( cnf.hasKey( "Author" ) )
+          infoTxt += QString( i18n( "<b>Author:</b> %1<br>" ) ).arg( cnf.readEntry( "Author", i18n( "Unknown" ) ) );
+        if ( cnf.hasKey( "Homepage" ) )
+          infoTxt += QString( i18n( "<b>Homepage:</b> %1<br>" ) ).arg( cnf.readEntry( "Homepage", i18n( "Unknown" ) ) );
+        infoTxt += "</qt>";
+
         QString pluginName( cnf.readEntry( "Engine", "Default" ) ); // Perhaps no default is better?
         if ((KTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName))).isEmpty())
         {
@@ -337,6 +353,7 @@ void SplashInstaller::slotSetTheme(int id)
       }
     }
     mBtnTest->setEnabled(enabled);
+    mText->setText(infoTxt);
     if (!enabled)
     {
       url.setPath( path + "/" + "Preview.png" );
@@ -344,7 +361,6 @@ void SplashInstaller::slotSetTheme(int id)
         mPreview->setPixmap(QPixmap(url.path()));
       else
         mPreview->setText(i18n("(Could not load theme)"));
-      mText->setText(QString::null);
       KMessageBox::sorry(this, error);
     }
     else
