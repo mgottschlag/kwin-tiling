@@ -120,7 +120,7 @@ void IndexWidget::activateIconView()
   _tree->hide();
   _icon->show();
   _icon->setFocus();
-  _viewbtn->setText(i18n("Switch to treeview."));
+  _viewbtn->setText(i18n("S&witch to treeview."));
 }
 
 void IndexWidget::activateTreeView()
@@ -128,7 +128,7 @@ void IndexWidget::activateTreeView()
   _tree->show();
   _tree->setFocus();
   _icon->hide();
-  _viewbtn->setText(i18n("Switch to iconview."));
+  _viewbtn->setText(i18n("S&witch to iconview."));
 }
 
 void IndexWidget::viewButtonClicked()
