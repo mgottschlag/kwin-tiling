@@ -989,7 +989,7 @@ void BGDialog::slotGetNewStuff()
    //kcmshellrc or kcontrolrc
    KConfig* config = KGlobal::config();
    config->setGroup("KNewStuff");
-   config->writeEntry( "ProvidersUrl", "http://kde.me.uk/knewstuff/providers.xml" );
+   config->writeEntry( "ProvidersUrl", "http://download.kde.org/khotnewstuff/wallpaper-providers.xml" );
    config->writeEntry( "StandardResource", "wallpaper" );
    config->sync();
 
