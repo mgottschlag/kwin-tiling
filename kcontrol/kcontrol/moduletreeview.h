@@ -20,6 +20,7 @@
 #ifndef __moduletreeview_h__
 #define __moduletreeview_h__
 
+#include <qlist.h>
 #include <qlistview.h>
 #include <klistview.h>
 
@@ -66,6 +67,7 @@ protected slots:
 
 protected:
  void updateItem(ModuleTreeItem *item, ConfigModule* module); 
+ void expandItem(QListViewItem *item, QList<QListViewItem> *parentList);
  ModuleTreeItem *getGroupItem(ModuleTreeItem *parent, const QStringList& groups);
  void keyPressEvent(QKeyEvent *);
   

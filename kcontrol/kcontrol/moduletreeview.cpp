@@ -20,6 +20,9 @@
 
 #include <qheader.h>
 #include <qstring.h>
+#include <qlist.h>
+#include <qpoint.h>
+#include <qcursor.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -106,6 +109,18 @@ void ModuleTreeView::updateItem(ModuleTreeItem *item, ConfigModule *module)
     }
 }
 
+void ModuleTreeView::expandItem(QListViewItem *item, QList<QListViewItem> *parentList)
+{
+  while (item)
+    {
+      setOpen(item, parentList->contains(item));
+      
+	  if (item->childCount() != 0)
+		expandItem(item->firstChild(), parentList);
+      item = item->nextSibling();
+    }
+}
+
 void ModuleTreeView::makeVisible(ConfigModule *module)
 {
   ModuleTreeItem *item;
@@ -189,9 +204,28 @@ void ModuleTreeView::slotItemSelected(QListViewItem* item)
     }
 
   if (item->isOpen())
-    setOpen(item, false);
+      setOpen(item, false);
   else
-    setOpen(item, true);
+    {
+      QList<QListViewItem> parents;
+      
+      QListViewItem* i = item;
+      while(i)
+        {
+          parents.append(i);
+          i = i->parent();
+        }
+
+      //int oy1 = item->itemPos();
+      //int oy2 = mapFromGlobal(QCursor::pos()).y();
+      //int offset = oy2 - oy1;
+      
+      expandItem(firstChild(), &parents);
+
+      //int x =mapFromGlobal(QCursor::pos()).x();
+      //int y = item->itemPos() + offset;
+      //QCursor::setPos(mapToGlobal(QPoint(x, y)));
+    }
 }
 
 void ModuleTreeView::keyPressEvent(QKeyEvent *e)
@@ -201,7 +235,10 @@ void ModuleTreeView::keyPressEvent(QKeyEvent *e)
   if(e->key() == Key_Return
      || e->key() == Key_Enter
         || e->key() == Key_Space)
-    slotItemSelected(currentItem());
+    {
+      //QCursor::setPos(mapToGlobal(QPoint(10, currentItem()->itemPos()+5)));
+      slotItemSelected(currentItem());
+    }
   else
     KListView::keyPressEvent(e);
 }

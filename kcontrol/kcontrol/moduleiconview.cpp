@@ -217,12 +217,27 @@ QDragObject *ModuleIconView::dragObject()
 
 void ModuleIconView::keyPressEvent(QKeyEvent *e)
 {
-  if (!currentItem()) return;
-  
   if(   e->key() == Key_Return
      || e->key() == Key_Enter
      || e->key() == Key_Space)
-      slotItemSelected(currentItem());
+    {
+      if (currentItem())
+        slotItemSelected(currentItem());
+    }
+  // Workaround for strange QIconView behaviour.
+  else if(e->key() == Key_Up)
+    {
+      QKeyEvent ev(e->type(), Key_Left, e->ascii(), e->state(), e->text(),
+                   e->isAutoRepeat(), e->count()); 
+      KIconView::keyPressEvent(&ev);
+    }
+  // Workaround for strange QIconView behaviour.
+  else if(e->key() == Key_Down)
+    {
+      QKeyEvent ev(e->type(), Key_Right, e->ascii(), e->state(), e->text(),
+                   e->isAutoRepeat(), e->count()); 
+      KIconView::keyPressEvent(&ev);
+    }
   else
     KIconView::keyPressEvent(e);
 }
