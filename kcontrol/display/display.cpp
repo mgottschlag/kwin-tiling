@@ -27,14 +27,14 @@
 #include <qtabwidget.h>
 
 typedef KGenericFactory<KCMDisplay, QWidget> DisplayFactory;
-K_EXPORT_COMPONENT_FACTORY ( kcm_display, DisplayFactory( "kcmdisplay" ) )
+K_EXPORT_COMPONENT_FACTORY ( kcm_display, DisplayFactory( "display" ) )
 
 KCMDisplay::KCMDisplay( QWidget *parent, const char *name, const QStringList& )
     : KCModule( parent, name )
 {
   m_tabs = new QTabWidget( this );
 
-  m_randr = addTab( "randr", i18n(  "Size && Orientation" ) );
+  m_randr = addTab( "randr", i18n( "Size && Orientation" ) );
   m_gamma = addTab( "kgamma", i18n( "Monitor Gamma" ) );
   m_xiner = addTab( "xinerama", i18n( "Multiple Monitors" ) );
 
