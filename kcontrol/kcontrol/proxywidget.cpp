@@ -245,12 +245,12 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   QHBoxLayout *buttons = new QHBoxLayout(top, 4);
   buttons->addWidget(_help);
   buttons->addWidget(_default);
-  buttons->addStretch(1);
   if (run_as_root) 
   {
     buttons->addWidget(_root);
-    buttons->addStretch(1);
   }
+
+  buttons->addStretch(1);
   if (mayModify)
   {
     buttons->addWidget(_apply);
