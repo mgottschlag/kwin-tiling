@@ -59,6 +59,7 @@ extern "C" {
     Bool DPMSQueryExtension(Display *, int *, int *);
     Status DPMSEnable(Display *);
     Status DPMSDisable(Display *);
+    Bool DPMSGetTimeouts(Display *, CARD16 *, CARD16 *, CARD16 *);
     Bool DPMSSetTimeouts(Display *, CARD16, CARD16, CARD16);
 #if defined(XIMStringConversionRetrival) || defined (__sun) || defined(__hpux)
 }
@@ -83,10 +84,33 @@ extern "C" {
         KConfig *cfg = new KConfig("kcmdisplayrc", true /*readonly*/, false /*no globals*/);
         cfg->setGroup("DisplayEnergy");
 
-        bool enabled = cfg->readBoolEntry("displayEnergySaving", false);
-        int standby = cfg->readNumEntry("displayStandby", DFLT_STANDBY);
-        int suspend = cfg->readNumEntry("displaySuspend", DFLT_SUSPEND);
-        int off = cfg->readNumEntry("displayPowerOff", DFLT_OFF);
+	Display *dpy = qt_xdisplay();
+	CARD16 pre_configured_status;
+	BOOL pre_configured_enabled;
+	CARD16 pre_configured_standby;
+	CARD16 pre_configured_suspend;
+	CARD16 pre_configured_off;
+        bool enabled;
+        CARD16 standby;
+        CARD16 suspend;
+        CARD16 off;
+	int dummy;
+	/* query the running X server if DPMS is supported */
+	if (DPMSQueryExtension(dpy, &dummy, &dummy) && DPMSCapable(dpy)) {
+	    DPMSGetTimeouts(dpy, &pre_configured_standby, &pre_configured_suspend, &pre_configured_off);
+	    DPMSInfo(dpy, &pre_configured_status, &pre_configured_enabled);
+	    /* let the user override the settings */
+	    enabled = cfg->readBoolEntry("displayEnergySaving", pre_configured_enabled);
+	    standby = cfg->readNumEntry("displayStandby", pre_configured_standby);
+	    suspend = cfg->readNumEntry("displaySuspend", pre_configured_suspend);
+	    off = cfg->readNumEntry("displayPowerOff", pre_configured_off);
+	} else {
+	/* provide our defauts */
+	    enabled = true;
+	    standby = DFLT_STANDBY;
+	    suspend = DFLT_SUSPEND;
+	    off = DFLT_OFF;
+	}
 
         delete cfg;
 
