@@ -209,6 +209,8 @@ void TopLevel::clickedMenu(int id)
         QString *data = pQIDclipData->find(id);
         if(data != 0x0 && *data != QSempty){
             clip->setText(*data);
+            if (bURLGrabber && bReplayActionInHistory)
+                myURLGrabber->checkNewData(*data);
             QSlast = data->copy();
         }
 
@@ -287,6 +289,7 @@ void TopLevel::readConfiguration( KConfig *kc )
     bPopupAtMouse = kc->readBoolEntry("PopupAtMousePosition", false);
     bKeepContents = kc->readBoolEntry("KeepClipboardContents", true);
     bURLGrabber = kc->readBoolEntry("URLGrabberEnabled", false);
+    bReplayActionInHistory = kc->readBoolEntry("ReplayActionInHistory", false);
 }
 
 void TopLevel::writeConfiguration( KConfig *kc )
@@ -336,17 +339,19 @@ void TopLevel::slotConfigure()
                                           &map );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
+    dlg->setReplayActionInHistory( bReplayActionInHistory);
     dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
 
     if ( dlg->exec() == QDialog::Accepted ) {
         bKeepContents = dlg->keepContents();
         bPopupAtMouse = dlg->popupAtMousePos();
+        bReplayActionInHistory = dlg->replayActionInHistory();
         globalKeys->setKeyDict( map );
         globalKeys->writeSettings();
         toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
 
         myURLGrabber->setActionList( dlg->actionList() );
-	myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
+        myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
         writeConfiguration( kapp->config() );
     }
     

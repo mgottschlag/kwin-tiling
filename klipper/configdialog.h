@@ -38,7 +38,7 @@ public:
     ~GeneralWidget();
 
 private:
-    QCheckBox *cbMousePos, *cbSaveContents;
+    QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH;
     KIntNumInput *popupTimeout;
 
 };
@@ -103,6 +103,10 @@ public:
 	return generalWidget->cbMousePos->isChecked();
     }
 
+    bool replayActionInHistory() const {
+	return generalWidget->cbReplayAIH->isChecked();
+    }
+
     int popupTimeout() const {
 	return generalWidget->popupTimeout->value();
     }
@@ -112,6 +116,9 @@ public:
     }
     void setPopupAtMousePos( bool enable ) {
 	generalWidget->cbMousePos->setChecked( enable );
+    }
+    void setReplayActionInHistory( bool enable ) {
+	generalWidget->cbReplayAIH->setChecked( enable );
     }
     void setPopupTimeout( int timeout ) {
 	generalWidget->popupTimeout->setValue( timeout );

@@ -63,7 +63,7 @@ private:
     QIntDict<QString> *pQIDclipData;
     QTimer *pQTcheck;
     QPixmap *pQPpic;
-    bool bPopupAtMouse, bClipEmpty, bKeepContents, bURLGrabber;
+    bool bPopupAtMouse, bClipEmpty, bKeepContents, bURLGrabber, bReplayActionInHistory;
     QString QSempty;
     URLGrabber *myURLGrabber;
 };

@@ -20,6 +20,7 @@
 #include <kiconloader.h>
 #include <kdebug.h>
 #include <netwm.h>
+#include <kstringhandler.h>
 
 #include "urlgrabber.h"
 
@@ -44,7 +45,7 @@ URLGrabber::URLGrabber()
 
     myPopupKillTimer = new QTimer( this );
     connect( myPopupKillTimer, SIGNAL( timeout() ),
-	     SLOT( slotKillPopupMenu() ));
+             SLOT( slotKillPopupMenu() ));
 
     // testing
     /*
@@ -123,8 +124,8 @@ void URLGrabber::slotActionMenu()
         QString item;
         myCommandMapper.clear();
 
-	myPopupKillTimer->stop();
-	delete myMenu;
+        myPopupKillTimer->stop();
+        delete myMenu;
         myMenu = new KPopupMenu;
         connect( myMenu, SIGNAL( activated( int )),
                  SLOT( slotItemSelected( int )));
@@ -133,7 +134,7 @@ void URLGrabber::slotActionMenu()
             QListIterator<ClipCommand> it2( action->commands() );
             if ( it2.count() > 0 )
                 myMenu->insertTitle( kapp->miniIcon(), action->description() +
-                                   i18n(" -  Actions for: ") + myClipData );
+                                   i18n(" -  Actions for: ") + KStringHandler::csqueeze(myClipData) );
             for ( command = it2.current(); command; command = ++it2 ) {
                 item = command->description;
                 if ( item.isEmpty() )
@@ -154,8 +155,8 @@ void URLGrabber::slotActionMenu()
         myMenu->insertItem( SmallIcon("edit"), i18n("&Edit and process again"), URL_EDIT_ITEM );
         myMenu->insertItem( i18n("Do &Nothing"), DO_NOTHING_ITEM );
 
-	if ( myPopupKillTimer > 0 )
-	    myPopupKillTimer->start( 1000 * myPopupKillTimeout, true );
+        if ( myPopupKillTimer > 0 )
+            myPopupKillTimer->start( 1000 * myPopupKillTimeout, true );
 
         emit sigPopup( myMenu );
     }
@@ -205,9 +206,9 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
                 cmdLine.replace( pos, 2, myClipData );
         }
 
-	// escape $ to avoid it being expanded by the shell
-	cmdLine.replace( QRegExp( "\\$" ), "\\$" );
-	startProcess( cmdLine );
+        // escape $ to avoid it being expanded by the shell
+        cmdLine.replace( QRegExp( "\\$" ), "\\$" );
+        startProcess( cmdLine );
     }
 }
 
