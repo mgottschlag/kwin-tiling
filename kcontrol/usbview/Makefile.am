@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_usb.la
+kde_module_LTLIBRARIES = libkcm_usb.la
 
 libkcm_usb_la_SOURCES = kcmusb.cpp usbdevices.cpp usbdb.cpp
 
