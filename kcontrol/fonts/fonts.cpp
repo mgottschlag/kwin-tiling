@@ -183,10 +183,10 @@ KFonts::KFonts(QWidget *parent, const char *name)
 
   // Keep in sync with kglobalsettings.
 
-  QFont f0("helvetica", 12, QFont::SansSerif);
-  QFont f1("courier", 12, QFont::TypeWriter);
-  QFont f2("helvetica", 10, QFont::SansSerif);
-  QFont f3("helvetica", 12, QFont::SansSerif, true);
+  QFont f0("helvetica", 12);
+  QFont f1("courier", 12);
+  QFont f2("helvetica", 10);
+  QFont f3("helvetica", 12, QFont::Bold);
 
   f0.setPixelSize(12);
   f1.setPixelSize(10);
