@@ -49,6 +49,7 @@ class KGDialog : public FDialog {
     void slotActivateMenu( int id );
     void slotExit();
     void slotSwitch();
+    void slotReallySwitch();
     void slotConsole();
     void slotShutdown();
 

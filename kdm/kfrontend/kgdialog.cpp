@@ -121,6 +121,12 @@ KGDialog::slotExit()
 void
 KGDialog::slotSwitch()
 {
+    QTimer::singleShot( 0, this, SLOT(slotReallySwitch()) );
+}
+
+void
+KGDialog::slotReallySwitch()
+{
     done( switchCode );
 }
 
