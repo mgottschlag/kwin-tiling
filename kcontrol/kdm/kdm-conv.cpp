@@ -128,9 +128,9 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
     cbarlen = new QCheckBox(i18n("Automatically log in again after &X server crash"), btGroup);
     QWhatsThis::add( cbarlen, i18n("When this option is on, a user will be"
-	" logged in again automatically, when his session is interrupted by an"
-	" X server crash. Note, that this can open a security hole: if you use"
-	" another screen locker than KDE's integrated one, this will make"
+	" logged in again automatically when their session is interrupted by an"
+	" X server crash; note that this can open a security hole: if you use"
+	" a screen locker than KDE's integrated one, this will make"
 	" circumventing a password-secured screen lock possible.") );
     connect(cbarlen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 

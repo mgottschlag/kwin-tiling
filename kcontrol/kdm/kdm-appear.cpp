@@ -283,8 +283,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hbox->setColStretch(1, 1);
   hbox->addWidget(label, 1, 0);
   hbox->addWidget(langcombo, 1, 1);
-  wtstr = i18n("Here you can choose the language used by KDM. This setting doesn't affect"
-    " a user's personal settings that will take effect after login.");
+  wtstr = i18n("Here you can choose the language used by KDM. This setting does not affect"
+    " a user's personal settings; that will take effect after login.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( langcombo, wtstr );
 
