@@ -624,10 +624,10 @@ restore_modifiers( void )
 #endif
 }
 
-extern void kg_main(int, char **);
+extern void kg_main(const char *argv0);
 
 int
-main (int argc, char **argv)
+main (int argc ATTR_UNUSED, char **argv)
 {
     char *ci;
     FILE *f;
@@ -666,7 +666,6 @@ main (int argc, char **argv)
 	LogPanic( "Cannot create qt config\n" );
     fprintf( f, "[General]\nuseXft=%s\n",
 		GetCfgInt (C_AntiAliasing) ? "true" : "false" );
-    /* XXX add plugin path, etc.? does kapp handle this? */
     fclose( f );
 
     dname = GetCfgStr (C_name);
@@ -679,7 +678,7 @@ main (int argc, char **argv)
 	free (ci);
     }
 
-    kg_main(argc, argv);
+    kg_main (argv[0]);
 
     ExitGreeter (0);
 

@@ -55,7 +55,7 @@ class GreeterApp : public KApplication {
     typedef KApplication inherited;
 
 public:
-    GreeterApp( int& argc, char** argv );
+    GreeterApp();
     virtual bool x11EventFilter( XEvent * );
 
 protected:

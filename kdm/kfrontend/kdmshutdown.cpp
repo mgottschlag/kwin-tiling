@@ -132,7 +132,7 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
     if (kdmcfg->_allowShutdown == SHUT_ROOT ||
 	(!kdmcfg->_interactiveSd && kdmcfg->_allowNuke == SHUT_ROOT)) {
 
-	pswdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode );
+	pswdEdit = new KPasswordEdit( (QLineEdit::EchoMode)kdmcfg->_echoMode, winFrame, 0 );
 	pswdEdit->setSizePolicy( QSizePolicy( QSizePolicy::Ignored,
 					      QSizePolicy::Preferred ) );
 

@@ -169,7 +169,7 @@ KGreeter::KGreeter()
     // start login timeout after entered login
     connect( loginEdit, SIGNAL(lost_focus()), SLOT(SetTimer()) );
 
-    passwdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode );
+    passwdEdit = new KPasswordEdit( (QLineEdit::EchoMode)kdmcfg->_echoMode, winFrame, 0 );
     passwdLabel = new QLabel( passwdEdit, i18n("&Password:"), winFrame );
 
     main_grid->addItem( hbox1, 1, 1 );
@@ -826,8 +826,7 @@ KGreeter::accept()
 	verifyUser(true);
 }
 
-GreeterApp::GreeterApp( int& argc, char** argv )
-    : inherited( argc, argv, "kdmgreet" )
+GreeterApp::GreeterApp()
 {
     pingInterval = GetCfgInt( C_pingInterval );
     if (pingInterval) {
@@ -896,15 +895,14 @@ moveInto (QRect &what, const QRect &where)
 extern bool kde_have_kipc;
 
 extern "C" void
-kg_main( int argc, char **argv )
+kg_main( const char *argv0 )
 {
     KProcess *proc = 0;
-    char *ppath = argv[0];
 
     kde_have_kipc = false;
     KApplication::disableAutoDcopRegistration();
     setenv( "KDE_DEBUG", "1", 1 );	// prevent KCrash installation
-    GreeterApp app( argc, argv );
+    GreeterApp app;
 
     Display *dpy = qt_xdisplay();
 
@@ -917,7 +915,7 @@ kg_main( int argc, char **argv )
     if (!dgrabServer) {
 	if (GetCfgInt( C_UseBackground )) {
 	    proc = new KProcess;
-	    *proc << QCString( ppath, argv[0] - ppath + 1 ) + "krootimage";
+	    *proc << QCString( argv0, strrchr( argv0, '/' ) - argv0 + 2 ) + "krootimage";
 	    char *conf = GetCfgStr( C_BackgroundCfg );
 	    *proc << conf;
 	    free( conf );
