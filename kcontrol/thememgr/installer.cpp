@@ -149,7 +149,7 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
   mBtnAdd = bbox->addButton(i18n("Add..."));
   connect(mBtnAdd, SIGNAL(clicked()), SLOT(slotAdd()));
 
-  mBtnSaveAs = bbox->addButton(i18n("Save as..."));
+  mBtnSaveAs = bbox->addButton(i18n("Save As..."));
   connect(mBtnSaveAs, SIGNAL(clicked()), SLOT(slotSaveAs()));
 
   mBtnCreate = bbox->addButton(i18n("Create..."));
