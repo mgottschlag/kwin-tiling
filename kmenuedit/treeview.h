@@ -26,7 +26,6 @@
 
 class QPopupMenu;
 class KActionCollection;
-class NameDialog;
 
 class TreeItem : public QListViewItem
 {
@@ -103,7 +102,6 @@ protected:
 private:
     KActionCollection *_ac;
     QPopupMenu        *_rmb;
-    NameDialog        *_ndlg;
     QString            _clipboard;
 };
 

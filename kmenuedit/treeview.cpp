@@ -30,6 +30,7 @@
 
 #include <kglobal.h>
 #include <kstandarddirs.h>
+#include <klineeditdlg.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
 #include <kdebug.h>
@@ -38,7 +39,6 @@
 #include <kaction.h>
 #include <kmessagebox.h>
 
-#include "namedlg.h"
 #include "treeview.h"
 #include "treeview.moc"
 #include "khotkeys.h"
@@ -132,8 +132,6 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
 	_ac->action("newitem")->plug(_rmb);
     if(_ac->action("newsubmenu"))
 	_ac->action("newsubmenu")->plug(_rmb);
-
-    _ndlg = new NameDialog(this);
 
     cleanupClipboard();
     fill();
@@ -653,16 +651,11 @@ void TreeView::slotRMBPressed(QListViewItem*, const QPoint& p)
 
 void TreeView::newsubmenu()
 {
-    _ndlg->setText(i18n(""));
-    _ndlg->setCaption(i18n("New Submenu"));
-    if (!_ndlg->exec()) return;
+    KLineEditDlg dlg(i18n("Submenu name:"), QString::null, this);
+    dlg.setCaption(i18n("New Submenu"));
 
-    QString dirname = _ndlg->text();
-    if (dirname.isEmpty()) {
-    	KMessageBox::sorry(0, i18n("Please provide a valid name."), i18n("Invalid Name"));
-	return;
-    }
-
+    if (!dlg.exec()) return;
+    QString dirname = dlg.text();
 
     TreeItem *item = (TreeItem*)selectedItem();
 
@@ -742,15 +735,11 @@ void TreeView::newsubmenu()
 
 void TreeView::newitem()
 {
-    _ndlg->setText(i18n(""));
-    _ndlg->setCaption(i18n("New Item"));
-    if (!_ndlg->exec()) return;
+    KLineEditDlg dlg(i18n("Item name:"), QString::null, this);
+    dlg.setCaption(i18n("New Item"));
 
-    QString filename = _ndlg->text();
-    if (filename.isEmpty()) {
-    	KMessageBox::sorry(0, i18n("Please provide a valid name."), i18n("Invalid Name"));
-	return;
-    }
+    if (!dlg.exec()) return;
+    QString filename = dlg.text();
 
     TreeItem *item = (TreeItem*)selectedItem();
 
