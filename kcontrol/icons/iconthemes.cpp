@@ -43,6 +43,7 @@
 #include <kio/job.h>
 #include <kio/netaccess.h>
 #include <ktar.h>
+#include <dcopclient.h>
 
 #include "iconthemes.h"
 
@@ -396,6 +397,12 @@ void IconThemesConfig::save()
   {
     KIPC::sendMessageAll(KIPC::IconChanged, i);
   }
+
+  DCOPClient *dcc = kapp->dcopClient();
+  if ( !dcc->isAttached() )
+      dcc->attach();
+  dcc->send("kded", "kbuildsycoca", "recreate()", QByteArray());
+
   m_bChanged = false;
 }
 
