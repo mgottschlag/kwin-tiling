@@ -16,11 +16,14 @@ AC_SUBST(XMKMF)
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
-AC_CACHE_VAL(kde_cv_defines_imake,
-[rm -fr conftestdir
-if mkdir conftestdir; then
+imkv=1
+if test -n "$kde_cv_defines_imake" && test "$kde_cv_defines_imake_version" = $imkv; then
+  _AS_ECHO_N([(cached) ])
+else
+  rm -fr conftestdir
+  if mkdir conftestdir; then
     cd conftestdir
-    cat > Imakefile <<'EOF'
+    cat > Imakefile <<'EOF'[
 BASIC_FLAGS = StandardDefines ConnectionFlags 
 
 #if HasXdmAuth
@@ -31,14 +34,20 @@ XDMAUTH_DEFINES = -DHASXDMAUTH
 SOCK_DEFINES = -DBSD44SOCKETS
 #endif
 
-#if defined(i386Architecture) || defined(ia64Architecture) || defined(AmigaArchitecture)
+#if defined(i386Architecture) || defined(AmigaArchitecture)
 FRAGILE_DEFINES = -DFRAGILE_DEV_MEM
 #endif
 
-#ifdef OpenBSDArchitecture
+#ifdef RandomDefines
+RANDOM_DEFINES = RandomDefines
+#elif defined(OpenBSDArchitecture)
 RANDOM_DEFINES = -DARC4_RANDOM
 #elif defined(LinuxArchitecture)
-RANDOM_DEFINES = -DDEV_RANDOM
+RANDOM_DEFINES = -DDEV_RANDOM=\"/dev/urandom\"
+#elif defined(NetBSDArchitecture) && \
+  ((OSMajorVersion > 1) || \
+   (OSMajorVersion == 1 && OSMinorVersion > 3))
+RANDOM_DEFINES = -DDEV_RANDOM=\"/dev/urandom\"
 #endif
 
 #if HasMkstemp
@@ -54,16 +63,16 @@ VERSION_DEFINES = -DOSMAJORVERSION=OSMajorVersion -DOSMINORVERSION=OSMinorVersio
 XDM_CFLAGS = $(BASIC_FLAGS) $(VERSION_DEFINES) $(SIGNAL_DEFINES) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(RANDOM_DEFINES) $(CRYPT_DEFINES) $(MKTMP_DEFINES)
 
 acimake:
-	@echo XDM_CFLAGS=\"$(XDM_CFLAGS)\"
+	@set crap $(XDM_CFLAGS); shift; XDM_CFLAGS=; for i in "$$@"; do XDM_CFLAGS="$$XDM_CFLAGS $$(echo "$$i" | sed "s,\\([ 	\`\"'\\]\\),\\\\\\1,g")"; done; echo "XDM_CFLAGS=$$(echo "$$XDM_CFLAGS" | sed "s,\\([ 	\`\"'\\]\\),\\\\\\1,g")"
 #if HasXdmAuth
 	@echo HASXDMAUTH=1
 #endif
 	@echo XBINDIR=$(BINDIR)
 	@echo XLIBDIR=$(LIBDIR)
-EOF
+]EOF
     if $XMKMF >&5 2>&1 && test -f Makefile; then
-	[kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep '^[^ ]*='`]
-	kde_cv_defines_imake=`echo $kde_cv_defines_imake`
+	[kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep '^[^ ]*=' | tr '\n' ' '`]
+	kde_cv_defines_imake_version=$imkv
     else
         AC_MSG_RESULT([failed])
 	AC_MSG_ERROR([$XMKMF (imake) failed.
@@ -72,12 +81,13 @@ On some systems a missing /lib/cpp symlink is at fault.])
     fi
     cd ..
     rm -fr conftestdir
-else
+  else
     AC_MSG_RESULT([failed])
     AC_MSG_ERROR([cannot create temporary directory])
-fi])
+  fi
+fi
 AC_MSG_RESULT([done])
-eval $kde_cv_defines_imake
+eval "$kde_cv_defines_imake"
 
 AC_MSG_CHECKING([whether to use xdm authorization])
 if test -n "$HASXDMAUTH"; then
