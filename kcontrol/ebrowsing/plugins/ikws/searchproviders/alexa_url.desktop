@@ -2,7 +2,23 @@
 Encoding=UTF-8
 Type=Service
 Name=Alexa URL
-Name[xx]=xx
+Name[da]=Alexa-URL
+Name[de]=Alexa-Adresse
+Name[eo]=Alexa ligo
+Name[es]=URL de Alexa
+Name[fr]=URL Alexa
+Name[hr]=Aleksa URL
+Name[it]=URL Alexa
+Name[mt]=URL Alexa
+Name[nl]=Alexa URL-adres
+Name[nso]=URL ya Alexa
+Name[pl]=Odnośnik Alexa
+Name[pt]=URL do Alexa
+Name[sl]=URL Alexe
+Name[ss]=I-URL ye Alexa 
+Name[sv]=Alexa webbadress
+Name[ta]=«¦Äì¡ URL
+Name[zu]=I-URL ye-Alexa
 ServiceTypes=SearchProvider
 Keys=alu,url
 Query=http://info.alexa.com/data/details?url=\\{@}

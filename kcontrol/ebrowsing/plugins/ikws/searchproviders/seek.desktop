@@ -2,10 +2,11 @@
 Encoding=UTF-8
 Type=Service
 Name=GO.com
-Name[af]=gaan.com
+Name[af]=Gaan.com
 Name[de]=go.com
 Name[eo]=Go.com
-Name[xx]=xx
+Name[nl]=GO.com (zoekmachine)
+Name[nso]=EYA.com
 ServiceTypes=SearchProvider
 Keys=seek
 Query=http://www.go.com/Titles?col=WW&qt=\\{@}&svx=home_searchbox&sv=IS&lk=noframeso

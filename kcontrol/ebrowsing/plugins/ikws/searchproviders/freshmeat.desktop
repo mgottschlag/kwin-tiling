@@ -2,12 +2,10 @@
 Encoding=UTF-8
 Type=Service
 Name=Freshmeat
-Name[af]=freshmeat
 Name[ko]=날고기(프레시미트)
+Name[nso]=Nama ye Botse
 Name[ven]=Namathethe
-Name[xh]=Inyama entsha
-Name[xx]=xx
-Name[zu]=Inyama entsha
+Name[zu]=Inyama yamanje
 ServiceTypes=SearchProvider
 Keys=fm,freshmeat
 Query=http://freshmeat.net/search/?q=\\{@}

@@ -2,16 +2,16 @@
 Encoding=UTF-8
 Type=Service
 Name=Ask Jeeves
-Name[af]=vra jeeves
+Name[af]=Vra Jeeves
 Name[de]=Frag Jeeves
 Name[eo]=Demandu Jeeves
+Name[fo]=Spyr Jeeves
 Name[is]=Spyrja Jeeves
 Name[ko]=지브에게 묻기
 Name[lv]=Jautāt Džīvam
+Name[nso]=Botsisa Jeeves
+Name[ss]=Buta Jeeves 
 Name[ven]=Vhudzisani Jeeves
-Name[xh]=Buza u Jeeves
-Name[xx]=xx
-Name[zu]=Buza Jeeves
 ServiceTypes=SearchProvider
 Keys=ask,jeeves
 Query=http://www.ask.com/main/askJeeves.asp?origin=0&qSource=4&site_name=Jeeves&metasearch=yes&ask=\\{@}

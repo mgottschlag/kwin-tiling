@@ -2,12 +2,12 @@
 Encoding=UTF-8
 Type=Service
 Name=Excite
-Name[af]=excite
 Name[eo]=Ekscito
 Name[ko]=익사이트
-Name[ven]=Takala
-Name[xh]=Vuya
-Name[xx]=xx
+Name[nl]=Excite (zoekmachine)
+Name[nso]=Thabisa
+Name[ss]=Jabulisa
+Name[ven]=Takadza
 Name[zu]=Jabulisa
 ServiceTypes=SearchProvider
 Keys=ex,excite
