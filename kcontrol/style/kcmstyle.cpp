@@ -187,10 +187,16 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	gbWidgetStyleLayout->addWidget( cbTearOffHandles );
 	cbTearOffHandles->hide(); // reenable when the corresponding Qt method is virtual and properly reimplemented
 
-	stylePreview = new StylePreview( page1 );
+    QGroupBox *gbPreview = new QGroupBox( i18n( "Preview" ), page1 );
+	gbPreview->setColumnLayout( 0, Vertical );
+	gbPreview->layout()->setMargin( 0 );
+	gbPreview->layout()->setSpacing( KDialog::spacingHint() );
+	gbPreview->setFlat( true );
+	stylePreview = new StylePreview( gbPreview );
+	gbPreview->layout()->add( stylePreview );
 
 	page1Layout->addWidget( gbWidgetStyle );
-	page1Layout->addWidget( stylePreview );
+	page1Layout->addWidget( gbPreview );
 
 	// Connect all required stuff
 	connect( cbStyle, SIGNAL(activated(int)), this, SLOT(styleChanged()) );
