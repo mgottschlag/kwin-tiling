@@ -37,6 +37,7 @@
 #include <qdialog.h>
 #include <kcmodule.h>
 #include <klocale.h>
+#include <kstdaccel.h>
 
 
 #include "toplevel.h"
@@ -92,7 +93,8 @@ void TopLevel::initMenuBar()
 {
   QPopupMenu *file_menu = new QPopupMenu();
 
-  file_menu->insertItem(BarIcon("exit"), i18n("E&xit"), kapp, SLOT(quit()));
+  file_menu->insertItem(BarIcon("exit"), i18n("E&xit"), kapp, SLOT(quit()),
+                        KStdAccel::quit());
 
   KMenuBar* menu_bar = new KMenuBar(this);
   menu_bar->insertItem(i18n("&File"), file_menu);
