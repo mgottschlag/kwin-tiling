@@ -73,8 +73,8 @@ int MyApplication::newInstance(QValueList<QCString> params)
 
 int main(int argc, char *argv[])
 {
-  if (!MyApplication::start(argc, argv, "kcontrol"))
-      exit(0); // Don't do anything if we are already running
+  //if (!MyApplication::start(argc, argv, "kcontrol"))
+  //    exit(0); // Don't do anything if we are already running
 
   MyApplication app(argc, argv, "kcontrol");
 

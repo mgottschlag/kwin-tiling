@@ -1,6 +1,6 @@
 SUBDIRS = . pics
 
-bin_PROGRAMS = kcontrol kcmshell kcmroot
+bin_PROGRAMS = kcontrol kcmshell kcmroot kcminit
 
 kcontrol_SOURCES = main.cpp toplevel.cpp modules.cpp index.cpp utils.cpp \
 			aboutwidget.cpp kdockwidget.cpp \
@@ -13,6 +13,7 @@ kcontrol_LDADD   = $(LIB_KDEUI)
 kcmshell_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp \
 			utils.cpp proxymodule.cpp KCModuleIface.stub
 
+
 kcmshell_LDADD   = $(LIB_KDEUI)
 
 kcmroot_SOURCES = kcmroot.cpp KCModuleIface.skel moduleinfo.cpp modloader.cpp \
@@ -20,6 +21,12 @@ kcmroot_SOURCES = kcmroot.cpp KCModuleIface.skel moduleinfo.cpp modloader.cpp \
 			proxymodule.cpp
 
 kcmroot_LDADD   = $(LIB_KDEUI)
+
+
+kcminit_SOURCES = kcminit.cpp
+
+kcminit_LDADD   = $(LIB_KDEUI)
+
 
 icons_DATA = close.png
 iconsdir = $(kde_datadir)/kcontrol/pics
