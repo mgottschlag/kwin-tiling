@@ -158,6 +158,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     pb_delSearchProvider->setEnabled(false);
     connect(pb_delSearchProvider, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));
 
+    /*  //lukas: hide these as it's not implemented
     pb_impSearchProvider = new QPushButton( i18n("Import..."), vbox );
     QWhatsThis::add(pb_delSearchProvider, i18n("Click here to import a search provider from a file."));
     connect(pb_impSearchProvider, SIGNAL(clicked()), this, SLOT(importSearchProvider()));
@@ -166,6 +167,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     QWhatsThis::add(pb_expSearchProvider, i18n("Click here to export a search provider to a file."));
     pb_expSearchProvider->setEnabled(false);
     connect(pb_expSearchProvider, SIGNAL(clicked()), this, SLOT(exportSearchProvider()));
+    */
 
     w_grid->addWidget(vbox, 1, 1);
     // Load the options
@@ -329,8 +331,8 @@ void InternetKeywordsOptions::changeSearchKeywordsEnabled()
     pb_addSearchProvider->setEnabled(use_keywords);
     pb_chgSearchProvider->setEnabled(use_keywords);
     pb_delSearchProvider->setEnabled(use_keywords);
-    pb_impSearchProvider->setEnabled(use_keywords);
-    pb_expSearchProvider->setEnabled(use_keywords);
+    //pb_impSearchProvider->setEnabled(use_keywords);
+    //pb_expSearchProvider->setEnabled(use_keywords);
     moduleChanged();
 }
 
@@ -402,7 +404,7 @@ void InternetKeywordsOptions::updateSearchProvider()
 {
     pb_chgSearchProvider->setEnabled(lv_searchProviders->currentItem());
     pb_delSearchProvider->setEnabled(lv_searchProviders->currentItem());
-    pb_expSearchProvider->setEnabled(lv_searchProviders->currentItem());
+    //pb_expSearchProvider->setEnabled(lv_searchProviders->currentItem());
 }
 
 SearchProviderItem *InternetKeywordsOptions::displaySearchProvider(SearchProvider *p, bool fallback)
