@@ -350,8 +350,8 @@ qWarning("MenuFile::moveMenu(%s, %s)", oldMenu.latin1(), newMenu.latin1());
    QStringList oldMenuParts = QStringList::split('/', oldMenu);
    QStringList newMenuParts = QStringList::split('/', newMenu);
    QString commonMenuName;
-   int max = QMIN(oldMenuParts.count(), newMenuParts.count());
-   int i = 0;
+   uint max = QMIN(oldMenuParts.count(), newMenuParts.count());
+   uint i = 0;
    for(; i < max; i++)
    {
       if (oldMenuParts[i] != newMenuParts[i])
@@ -359,14 +359,14 @@ qWarning("MenuFile::moveMenu(%s, %s)", oldMenu.latin1(), newMenu.latin1());
       commonMenuName += '/' + oldMenuParts[i];
    }
    QString oldMenuName;
-   for(int j = i; j < oldMenuParts.count(); j++)
+   for(uint j = i; j < oldMenuParts.count(); j++)
    {
       if (i != j)
          oldMenuName += '/';
       oldMenuName += oldMenuParts[j];
    }
    QString newMenuName;
-   for(int j = i; j < newMenuParts.count(); j++)
+   for(uint j = i; j < newMenuParts.count(); j++)
    {
       if (i != j)
          newMenuName += '/';
