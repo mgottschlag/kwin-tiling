@@ -37,7 +37,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <fstream.h>
-#include <iostream.h>
+#include <iostream>
 #include <stdio.h>
 #include <netinet/in.h>
 #include <qimage.h>
