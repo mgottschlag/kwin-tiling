@@ -27,7 +27,6 @@
 
 #include "moduleinfo.h"
 #include "moduleinfo.moc"
-#include "utils.h"
 #include "global.h"
 
 ModuleInfo::ModuleInfo(QString desktopFile)

@@ -41,7 +41,6 @@
 #include "modules.h"
 #include "modules.moc"
 #include "global.h"
-#include "utils.h"
 #include "proxywidget.h"
 #include "modloader.h"
 #include "kcrootonly.h"

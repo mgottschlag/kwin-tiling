@@ -31,7 +31,6 @@
 #include <qwidget.h>
 
 #include "config.h"
-#include "utils.h"
 #include "global.h"
 
 bool KCGlobal::_root = false;
@@ -76,7 +75,7 @@ void KCGlobal::init()
 void KCGlobal::setType(const QCString& s)
 {
   QString string = s.lower();
-  splitString(string, ',', _types);
+  _types = QStringList::split(',', string);
 }
 
 QString KCGlobal::baseGroup()
