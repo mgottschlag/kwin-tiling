@@ -47,7 +47,7 @@ public:
 
 private:
 
-  QPopupMenu *file, *helpMenu, *options;
+  QPopupMenu *file, *hMenu, *options;
   int        helpModuleID, helpID, swallowID;
 
 protected:

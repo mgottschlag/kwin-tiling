@@ -91,7 +91,7 @@ void TopLevel::setupMenuBar()
     swallowID = options->insertItem(i18n("&Swallow modules"),
                         this, SLOT(swallowChanged()));
 
-    QPopupMenu *helpMenu = kapp->helpMenu(true, i18n("KDE Control Center - "
+    QPopupMenu *hMenu = helpMenu(i18n("KDE Control Center - "
 	     "Version 1.0\n\n"
 	     "Written by Matthias Hölzer\n"
 	     "(hoelzer@physik.uni-wuerzburg.de)\n\n"
@@ -102,7 +102,7 @@ void TopLevel::setupMenuBar()
     menubar->insertItem(i18n("&File"), file);
     menubar->insertItem(i18n("&Options"), options);
     menubar->insertSeparator(-1);
-    menubar->insertItem(i18n("&Help"), helpMenu);
+    menubar->insertItem(i18n("&Help"), hMenu);
 
     setMenu(menubar);
 }
