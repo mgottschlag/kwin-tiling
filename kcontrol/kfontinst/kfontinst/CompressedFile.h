@@ -29,24 +29,32 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <zlib.h>
 #include <stdio.h>
+#include <qiodevice.h>
 
 class CCompressedFile
 {
     public:
 
-    CCompressedFile(const char *fname);
-    virtual ~CCompressedFile() { close(); }
+    enum EType
+    {
+        GZIP,
+        Z,
+        NORM
+    };
 
-    operator bool()            { return itsGzip ? NULL!=itsGzFile : NULL!=itsFile; }
+    CCompressedFile(const char *fname) : itsType(NORM), itsFile(NULL), itsFName(fname) { if(NULL!=fname) open(fname); }
+    virtual ~CCompressedFile()                                                         { close(); }
 
+    operator bool()                                                                    { return GZIP==itsType ? NULL!=itsDev : NULL!=itsFile; }
+
+    void   open(const char *fname);
     void   close();
     int    read(void *data, unsigned int len);
     int    getChar();
     char * getString(char *data, unsigned int len);
     int    seek(int offset, int whence);
-    bool   eof()               { return itsGzip ? gzeof(itsGzFile) : feof(itsFile); }
+    bool   eof()                                                                       { return GZIP==itsType ? itsDev && itsDev->atEnd() : feof(itsFile); }
 
     private:
 
@@ -56,13 +64,14 @@ class CCompressedFile
 
     private:
 
-    bool itsGzip;
-    int  itsPos;
+    EType       itsType;
+    int         itsPos;
+    const char  *itsFName;
 
     union
     {
-        FILE   *itsFile;
-        gzFile itsGzFile;
+        FILE      *itsFile;
+        QIODevice *itsDev;
     };
 };
 

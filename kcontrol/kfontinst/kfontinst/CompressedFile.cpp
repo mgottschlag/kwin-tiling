@@ -27,111 +27,160 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "CompressedFile.h"
+#include <kfilterdev.h>
 #include <string.h>
 #include <ctype.h>
 
-CCompressedFile::CCompressedFile(const char *fname)
+static CCompressedFile::EType getType(const char *fname)
+{
+    int  len=strlen(fname);
+
+    // Check for .gz...
+    if(len>3 && fname[len-3]=='.' && tolower(fname[len-2])=='g' && tolower(fname[len-1])=='z')
+        return CCompressedFile::GZIP;
+
+    // Check for .Z
+    if(len>2 && fname[len-2]=='.' && tolower(fname[len-1])=='z')
+        return CCompressedFile::Z;
+
+    // Else assume its a normal file...
+        return CCompressedFile::NORM;
+}
+
+void CCompressedFile::open(const char *fname)
 {
     unsigned int len=fname ? strlen(fname) : 0;
 
-    itsGzip=len ? !(fname[len-2]=='.' && toupper(fname[len-1])=='Z') : true;
+    itsType=getType(fname);
+    itsFName=fname;
+    itsPos=0;
 
-    if(itsGzip)
-        itsGzFile=gzopen(fname, "r");
-    else
+    switch(itsType)
     {
-        const unsigned int constCmdSize=1024;
-
-        if(len+20<constCmdSize)
+        case GZIP:
+            itsDev=KFilterDev::deviceForFile(fname);
+            if(!itsDev->open(IO_ReadOnly))
+                close();
+            break;
+        case Z:
         {
-            char cmd[constCmdSize];
+            const unsigned int constCmdSize=1024;
 
-            sprintf(cmd, "uncompress -c \"%s\"", fname);
-            itsFile=popen(cmd, "r");
-            itsPos=0;
+            if(len+20<constCmdSize)
+            {
+                char cmd[constCmdSize];
+
+                sprintf(cmd, "uncompress -c \"%s\"", fname);
+                itsFile=popen(cmd, "r");
+            }
+            else
+                itsFile=NULL;
+            break;
         }
-        else
-            itsFile=NULL;
+        case NORM:
+            itsFile=fopen(fname, "r");
     }
 }
 
 void CCompressedFile::close()
 {
     if(*this)
-        if(itsGzip)
+        switch(itsType)
         {
-            gzclose(itsGzFile);
-            itsGzFile=NULL;
-        }
-        else
-        {
-            pclose(itsFile);
-            itsFile=NULL;
+            case GZIP:
+                delete itsDev;
+                itsDev=NULL;
+                break;
+            case Z:
+                while(!eof())
+                    getChar();
+                pclose(itsFile);
+                itsFile=NULL;
+                break;
+            case NORM:
+                fclose(itsFile);
+                itsFile=NULL;
         }
 }
 
 int CCompressedFile::read(void *data, unsigned int len)
 {
-    if(itsGzip)
-        return gzread(itsGzFile, data, len);
-    else
+    int r=0;
+
+    if(GZIP==itsType)
     {
-        int r=fread(data, 1, len, itsFile);
-        if(r>0)
-            itsPos+=r;
-        return r;
+        if(itsDev)
+            r=itsDev->readBlock((char *)data, len);
     }
+    else
+        r=fread(data, 1, len, itsFile);
+
+    if(r>0)
+        itsPos+=r;
+    return r;
 }
 
 int CCompressedFile::getChar()
 {
-    if(itsGzip)
-        return gzgetc(itsGzFile);
-    else
+    int c=EOF;
+
+    if(GZIP==itsType)
     {
-        int c=fgetc(itsFile);
-        if(EOF!=c)
-            itsPos++;
-        return c;
+        if(itsDev)
+            c=itsDev->getch();
     }
+    else
+        c=fgetc(itsFile);
+
+    if(EOF!=c)
+        itsPos++;
+    return c;
 }
 
 char * CCompressedFile::getString(char *data, unsigned int len)
 {
-    if(itsGzip)
-        return gzgets(itsGzFile, data, len);
-    else
+    char *s=NULL;
+
+    if(GZIP==itsType)
     {
-        char *s=fgets(data, len, itsFile);
-        if(NULL!=s)
-            itsPos+=strlen(s);
-        return s;
+        if(itsDev)
+            s=itsDev->readLine(data, len)!=-1 ? data : NULL;
     }
+    else
+        s=fgets(data, len, itsFile);
+
+    if(NULL!=s)
+        itsPos+=strlen(s);
+
+    return s;
 }
 
 int CCompressedFile::seek(int offset, int whence)
 {
-    if(itsGzip)
-        return gzseek(itsGzFile, offset, whence);
+    if(NORM==itsType)
+        return fseek(itsFile, offset, whence);
     else
     {
-        char ch;
-        int  c;
+        int c;
 
         switch(whence)
         {
             case SEEK_CUR:
                 break;
             case SEEK_SET:
+                if(offset<itsPos)
+                {
+                    close();
+                    open(itsFName);
+                }
                 offset-=itsPos;
                 break;
             default:
                 offset=-1;
         }
 
-        for(c=0; c<offset && read(&ch, 1); c++)
-            itsPos++;
-
+        for(c=0; c<offset && -1!=getChar(); c++)
+            ;
         return c==offset ? 0 : -1;
     }
 }
