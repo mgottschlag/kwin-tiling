@@ -37,7 +37,6 @@
 #include <kmessagebox.h>
 #include <kprocess.h>
 
-#include "locale.h"
 #include "localenum.h"
 #include "localemon.h"
 #include "localetime.h"
