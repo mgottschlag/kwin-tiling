@@ -194,7 +194,7 @@ static QString getEntry(QDomElement element, const char *type, unsigned int numA
     return QString::null;
 }
 
-KXftConfig::SubPixel::Type strToType(const char *str)
+static KXftConfig::SubPixel::Type strToType(const char *str)
 {
     if(0==strcmp(str, "rgb"))
         return KXftConfig::SubPixel::Rgb;
@@ -207,6 +207,19 @@ KXftConfig::SubPixel::Type strToType(const char *str)
     else
         return KXftConfig::SubPixel::None;
 }
+
+static KXftConfig::Hint::Style strToStyle(const char *str)
+{
+    if(0==strcmp(str, "hintslight"))
+        return KXftConfig::Hint::Slight;
+    else if(0==strcmp(str, "hintmedium"))
+        return KXftConfig::Hint::Medium;
+    else if(0==strcmp(str, "hintfull"))
+        return KXftConfig::Hint::Full;
+    else
+        return KXftConfig::Hint::None;
+}
+
 #else
 static bool strToType(const char *str, KXftConfig::SubPixel::Type &type)
 {   
@@ -396,7 +409,10 @@ bool KXftConfig::reset()
     bool ok=false;
 
     m_madeChanges=false;
-#ifndef HAVE_FONTCONFIG
+#ifdef HAVE_FONTCONFIG
+    m_hint.reset();
+    m_hinting.reset();
+#else
     m_symbolFamilies.clear();
 #endif
     m_dirs.clear();
@@ -507,7 +523,10 @@ bool KXftConfig::apply()
                 newConfig.setExcludeRange(m_excludeRange.from, m_excludeRange.to);
             if(m_required&SubPixelType)
                 newConfig.setSubPixelType(m_subPixel.type);
-#ifndef HAVE_FONTCONFIG
+#ifdef HAVE_FONTCONFIG
+            if(m_required&HintStyle)
+                newConfig.setHintStyle(m_hint.style);
+#else
             if(m_required&SymbolFamilies)
             {
                 list=getSymbolFamilies();
@@ -550,6 +569,8 @@ bool KXftConfig::apply()
                         }
                         if(m_required&SubPixelType)
                             applySubPixelType();
+                        if(m_required&HintStyle)
+                            applyHintStyle();
                         if(m_required&ExcludeRange)
                         {
                             applyExcludeRange(false);
@@ -718,6 +739,42 @@ void KXftConfig::setSubPixelType(SubPixel::Type type)
     }
 }
 
+#ifdef HAVE_FONTCONFIG
+bool KXftConfig::getHintStyle(Hint::Style &style)
+{
+    if(Hint::NotSet!=m_hint.style && !m_hint.toBeRemoved)
+    {
+        style=m_hint.style;
+        return true;
+    }
+    else
+        return false;
+}
+
+void KXftConfig::setHintStyle(Hint::Style style)
+{
+    if((Hint::NotSet==style && Hint::NotSet!=m_hint.style && !m_hint.toBeRemoved) ||
+       (Hint::NotSet!=style && (style!=m_hint.style || m_hint.toBeRemoved)) )
+    {
+        m_hint.toBeRemoved=(Hint::NotSet==style);
+        m_hint.style=style;
+        m_madeChanges=true;
+    }
+
+    if(Hint::NotSet!=style)
+        setHinting(Hint::None!=m_hint.style);
+}
+
+void KXftConfig::setHinting(bool set)
+{
+    if(set!=m_hinting.set)
+    {
+        m_hinting.set=set;
+        m_madeChanges=true;
+    }
+}
+#endif
+
 bool KXftConfig::getExcludeRange(double &from, double &to)
 {
     if(!equal(0, m_excludeRange.from) || !equal(0,m_excludeRange.to))
@@ -794,6 +851,42 @@ const char * KXftConfig::toStr(SubPixel::Type t)
             return "vbgr";
     }
 }
+
+#ifdef HAVE_FONTCONFIG
+QString KXftConfig::description(Hint::Style s)
+{
+    switch(s)
+    {
+        default:
+        case Hint::Medium:
+            return i18n("Medium");
+        case Hint::NotSet:
+            return "";
+        case Hint::None:
+            return i18n("None");
+        case Hint::Slight:
+            return i18n("Slight");
+        case Hint::Full:
+            return i18n("Full");
+    }
+}
+
+const char * KXftConfig::toStr(Hint::Style s)
+{
+    switch(s)
+    {
+        default:
+        case Hint::Medium:
+            return "hintmedium";
+        case Hint::None:
+            return "hintnone";
+        case Hint::Slight:
+            return "hintslight";
+        case Hint::Full:
+            return "hintfull";
+    }
+}
+#endif
 
 bool KXftConfig::hasDir(const QString &d)
 {
@@ -898,12 +991,22 @@ void KXftConfig::readContents()
                         {
                             QDomElement ene=e.firstChild().toElement();
 
-                            if(!ene.isNull() && "edit"==ene.tagName() && 
-                               !(str=getEntry(ene, "const", 2, "name", "rgba", "mode", "assign")).isNull())
-                            {
-                                m_subPixel.node=n;
-                                m_subPixel.type=strToType(str.latin1());
-                            }
+                            if(!ene.isNull() && "edit"==ene.tagName())
+                                if(!(str=getEntry(ene, "const", 2, "name", "rgba", "mode", "assign")).isNull())
+                                {
+                                    m_subPixel.node=n;
+                                    m_subPixel.type=strToType(str.latin1());
+                                }
+                                else if(!(str=getEntry(ene, "const", 2, "name", "hintstyle", "mode", "assign")).isNull())
+                                {
+                                    m_hint.node=n;
+                                    m_hint.style=strToStyle(str.latin1());
+                                }
+                                else if(!(str=getEntry(ene, "bool", 2, "name", "hinting", "mode", "assign")).isNull())
+                                {
+                                    m_hinting.node=n;
+                                    m_hinting.set=str.lower()!="false";
+                                }
                         }
                         break;
                     case 3:
@@ -1135,6 +1238,59 @@ void KXftConfig::applySubPixelType()
             m_doc.documentElement().replaceChild(matchNode, m_subPixel.node);
         m_subPixel.node=matchNode;
     }
+}
+
+void KXftConfig::applyHintStyle()
+{
+    applyHinting();
+
+    if(Hint::NotSet==m_hint.style || m_hint.toBeRemoved)
+    {
+        if(!m_hint.node.isNull())
+        {
+            m_doc.documentElement().removeChild(m_hint.node);
+            m_hint.node.clear();
+        }
+    }
+    else
+    {
+        QDomElement matchNode = m_doc.createElement("match"),
+                    typeNode  = m_doc.createElement("const"),
+                    editNode  = m_doc.createElement("edit");
+        QDomText    typeText  = m_doc.createTextNode(toStr(m_hint.style));
+
+        matchNode.setAttribute("target", "font");
+        editNode.setAttribute("mode", "assign");
+        editNode.setAttribute("name", "hintstyle");
+        editNode.appendChild(typeNode);
+        typeNode.appendChild(typeText);
+        matchNode.appendChild(editNode);
+        if(m_hint.node.isNull())
+            m_doc.documentElement().appendChild(matchNode);
+        else
+            m_doc.documentElement().replaceChild(matchNode, m_hint.node);
+        m_hint.node=matchNode;
+    }
+}
+
+void KXftConfig::applyHinting()
+{
+    QDomElement matchNode = m_doc.createElement("match"),
+                typeNode  = m_doc.createElement("bool"),
+                editNode  = m_doc.createElement("edit");
+    QDomText    typeText  = m_doc.createTextNode(m_hinting.set ? "true" : "false");
+
+    matchNode.setAttribute("target", "font");
+    editNode.setAttribute("mode", "assign");
+    editNode.setAttribute("name", "hinting");
+    editNode.appendChild(typeNode);
+    typeNode.appendChild(typeText);
+    matchNode.appendChild(editNode);
+    if(m_hinting.node.isNull())
+        m_doc.documentElement().appendChild(matchNode);
+    else
+        m_doc.documentElement().replaceChild(matchNode, m_hinting.node);
+    m_hinting.node=matchNode;
 }
 
 void KXftConfig::applyExcludeRange(bool pixel)

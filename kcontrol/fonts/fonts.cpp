@@ -200,24 +200,9 @@ void FontUseItem::applyFontDiff( const QFont &fnt, int fontDiffFlags )
 
 /**** FontAASettings ****/
 
-static const char * xftHintStrings[]={ "hintnone", "hintslight", "hintmedium", "hintfull" };
-static const int    defaultXftHint=2;
-
-static const char * getHintString(int index)
-{
-  return index>=0 && index<4 ? xftHintStrings[index] : NULL;
-}
-
-static int getHintIndex(const QString &str)
-{
-  for(int i=0; i<4; ++i)
-    if(str==xftHintStrings[i])
-      return i;
-  return 0;
-}
-
 FontAASettings::FontAASettings(QWidget *parent)
-              : KDialogBase(parent, "FontAASettings", true, i18n("Configure Anti-Alias Settings"), Ok|Cancel, Ok, true)
+              : KDialogBase(parent, "FontAASettings", true, i18n("Configure Anti-Alias Settings"), Ok|Cancel, Ok, true),
+                changesMade(false)
 {
   QWidget     *mw=new QWidget(this);
   QGridLayout *layout=new QGridLayout(mw, 1, 1, KDialog::marginHint(), KDialog::spacingHint());
@@ -254,18 +239,18 @@ FontAASettings::FontAASettings(QWidget *parent)
   for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
     subPixelType->insertItem(aaPixmaps[t-1], KXftConfig::description((KXftConfig::SubPixel::Type)t));
 
+#ifdef HAVE_FONTCONFIG
   QLabel *hintingLabel=new QLabel(i18n("Hinting style: "), mw);
   layout->addWidget(hintingLabel, 2, 0);
   hintingStyle=new QComboBox(false, mw);
   layout->addMultiCellWidget(hintingStyle, 2, 2, 1, 3);
-  hintingStyle->insertItem(i18n("None"));
-  hintingStyle->insertItem(i18n("Slight"));
-  hintingStyle->insertItem(i18n("Medium"));
-  hintingStyle->insertItem(i18n("Full"));
+  for(int s=KXftConfig::Hint::NotSet+1; s<=KXftConfig::Hint::Full; ++s)
+    hintingStyle->insertItem(KXftConfig::description((KXftConfig::Hint::Style)s));
 
   QString hintingText(i18n("Hinting is a process used to enhance the quality of fonts at small sizes."));
   QWhatsThis::add(hintingStyle, hintingText);
   QWhatsThis::add(hintingLabel, hintingText);
+#endif
   load();
   enableWidgets();
   setMainWidget(mw);
@@ -275,13 +260,19 @@ FontAASettings::FontAASettings(QWidget *parent)
   connect(excludeFrom, SIGNAL(valueChanged(double)), SLOT(changed()));
   connect(excludeTo, SIGNAL(valueChanged(double)), SLOT(changed()));
   connect(subPixelType, SIGNAL(activated(const QString &)), SLOT(changed()));
+#ifdef HAVE_FONTCONFIG
   connect(hintingStyle, SIGNAL(activated(const QString &)), SLOT(changed()));
+#endif
 }
 
 void FontAASettings::load()
 {
   double     from, to;
+#ifdef HAVE_FONTCONFIG
+  KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType|KXftConfig::HintStyle);
+#else
   KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType);
+#endif
 
   if(xft.getExcludeRange(from, to))
      excludeRange->setChecked(true);
@@ -312,16 +303,35 @@ void FontAASettings::load()
       useSubPixel->setChecked(false);
   }
 
-  KConfig kglobals("kdeglobals", true, false);
+#ifdef HAVE_FONTCONFIG
+  KXftConfig::Hint::Style hStyle;
 
-  kglobals.setGroup("General");
-  hintingStyle->setCurrentItem(getHintIndex(kglobals.readEntry("XftHintStyle", getHintString(defaultXftHint))));
+  if(!xft.getHintStyle(hStyle) || KXftConfig::Hint::NotSet==hStyle)
+  {
+    KConfig kglobals("kdeglobals", false, false);
+
+    kglobals.setGroup("General");
+    hStyle=KXftConfig::Hint::Medium;
+    xft.setHintStyle(hStyle);
+    xft.apply();  // Save this setting
+    kglobals.writeEntry("XftHintStyle", KXftConfig::toStr(hStyle));
+    kglobals.sync();
+    runRdb(KRdbExportXftSettings);
+  }
+
+  hintingStyle->setCurrentItem(getIndex(hStyle));
+#endif
+
   enableWidgets();
 }
 
 bool FontAASettings::save()
 {
+#ifdef HAVE_FONTCONFIG
+  KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType|KXftConfig::HintStyle);
+#else
   KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType);
+#endif
   KConfig    kglobals("kdeglobals", false, false);
 
   kglobals.setGroup("General");
@@ -335,26 +345,35 @@ bool FontAASettings::save()
   {
     KXftConfig::SubPixel::Type spType(getSubPixelType());
 
-    kglobals.writeEntry("XftSubPixel", KXftConfig::toStr(spType));
     xft.setSubPixelType(spType);
+    kglobals.writeEntry("XftSubPixel", KXftConfig::toStr(spType));
   }
   else
   {
-    kglobals.writeEntry("XftSubPixel", "");
     xft.setSubPixelType(KXftConfig::SubPixel::None);
+    kglobals.writeEntry("XftSubPixel", "");
   }
 
-  bool mod=xft.changed();
-  xft.apply();
+  bool mod=false;
+#ifdef HAVE_FONTCONFIG
+  KXftConfig::Hint::Style hStyle(getHintStyle());
 
-  QString hs(getHintString(hintingStyle->currentItem()));
+  xft.setHintStyle(hStyle);
+
+  QString hs(KXftConfig::toStr(hStyle));
 
   if(!hs.isEmpty() && hs!=kglobals.readEntry("XftHintStyle"))
   {
     kglobals.writeEntry("XftHintStyle", hs);
-    kglobals.sync();
     mod=true;
   }
+#endif
+  kglobals.sync();
+
+  if(!mod)
+    mod=xft.changed();
+
+  xft.apply();
 
   return mod;
 }
@@ -365,7 +384,9 @@ void FontAASettings::defaults()
   excludeFrom->setValue(8.0);
   excludeTo->setValue(15.0);
   useSubPixel->setChecked(false);
-  hintingStyle->setCurrentItem(defaultXftHint);
+#ifdef HAVE_FONTCONFIG
+  hintingStyle->setCurrentItem(getIndex(KXftConfig::Hint::Medium));
+#endif
   enableWidgets();
 }
 
@@ -395,6 +416,35 @@ KXftConfig::SubPixel::Type FontAASettings::getSubPixelType()
   return KXftConfig::SubPixel::None;
 }
 
+#ifdef HAVE_FONTCONFIG
+int FontAASettings::getIndex(KXftConfig::Hint::Style hStyle)
+{
+  int pos=-1;
+  int index;
+
+  for(index=0; index<hintingStyle->count(); ++index)
+    if(hintingStyle->text(index)==KXftConfig::description(hStyle))
+    {
+      pos=index;
+      break;
+    }
+
+  return pos;
+}
+
+
+KXftConfig::Hint::Style FontAASettings::getHintStyle()
+{
+  int s;
+
+  for(s=KXftConfig::Hint::NotSet; s<=KXftConfig::Hint::Full; ++s)
+    if(hintingStyle->currentText()==KXftConfig::description((KXftConfig::Hint::Style)s))
+      return (KXftConfig::Hint::Style)s;
+
+  return KXftConfig::Hint::Medium;
+}
+#endif
+
 void FontAASettings::enableWidgets()
 {
   excludeFrom->setEnabled(excludeRange->isChecked());
@@ -405,20 +455,18 @@ void FontAASettings::enableWidgets()
 
 void FontAASettings::changed()
 {
+    changesMade=true;
     enableWidgets();
-    enableButtonOK(true);
 }
 
 int FontAASettings::exec()
 {
-    enableButtonOK(false);
-
     int i=KDialogBase::exec();
 
     if(!i)
         load(); // Reset settings...
 
-    return i;
+    return i && changesMade;
 }
 
 /**** KFonts ****/
@@ -569,6 +617,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    useAA_original = useAA;
 
    cbAA->setChecked(useAA);
+   aaSettingsButton->setEnabled(useAA);
 }
 
 KFonts::~KFonts()

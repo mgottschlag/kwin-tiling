@@ -58,6 +58,10 @@ public:
     void defaults();
     int getIndex(KXftConfig::SubPixel::Type spType);
     KXftConfig::SubPixel::Type getSubPixelType();
+#ifdef HAVE_FONTCONFIG
+    int getIndex(KXftConfig::Hint::Style hStyle);
+    KXftConfig::Hint::Style getHintStyle();
+#endif
     void enableWidgets();
     int exec();
 
@@ -72,8 +76,11 @@ private:
     KDoubleNumInput *excludeFrom;
     KDoubleNumInput *excludeTo;
     QComboBox *subPixelType;
+#ifdef HAVE_FONTCONFIG
     QComboBox *hintingStyle;
+#endif
     QLabel    *excludeToLabel;
+    bool      changesMade;
 };
 
 /**

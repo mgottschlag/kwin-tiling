@@ -43,9 +43,11 @@ class KXftConfig
     {
         Dirs           = 1,
         SubPixelType   = 2,
-        ExcludeRange   = 4
-#ifndef HAVE_FONTCONFIG
-      , SymbolFamilies = 8
+        ExcludeRange   = 4,
+#ifdef HAVE_FONTCONFIG
+        HintStyle      = 8
+#else
+        SymbolFamilies = 8
 #endif
     };
 
@@ -118,6 +120,37 @@ class KXftConfig
                to;
     };
 
+#ifdef HAVE_FONTCONFIG
+    struct Hint : public Item
+    {
+        enum Style
+        {
+            NotSet,
+            None,
+            Slight,
+            Medium,
+            Full
+        };
+
+        Hint(Style s, QDomNode &n) : Item(n), style(s) {}
+        Hint(Style s=NotSet)       : style(s)          {}
+
+        void reset() { Item::reset(); style=NotSet; }
+
+        Style style;
+    };
+
+    struct Hinting : public Item
+    {
+        Hinting(bool s, QDomNode &n) : Item(n), set(s) {}
+        Hinting(bool s=true)         : set(s)          {}
+
+        void reset() { Item::reset(); set=true; }
+
+        bool set;
+    };
+#endif
+
     public:
 
     static QString contractHome(QString path);
@@ -147,7 +180,10 @@ class KXftConfig
     void        removeDir(const QString &d);
     void        clearDirs()                          { clearList(m_dirs); }
     QStringList getDirs()                            { return getList(m_dirs); }
-#ifndef HAVE_FONTCONFIG
+#ifdef HAVE_FONTCONFIG
+    bool        getHintStyle(Hint::Style &style);
+    void        setHintStyle(Hint::Style style);
+#else
     void        addSymbolFamily(const QString &f)    { addItem(m_symbolFamilies, f); }
     void        removeSymbolFamily(const QString &f) { removeItem(m_symbolFamilies, f); }
     void        clearSymbolFamilies()                { clearList(m_symbolFamilies); }
@@ -156,6 +192,10 @@ class KXftConfig
     bool        changed()                            { return m_madeChanges; }
     static QString description(SubPixel::Type t);
     static const char * toStr(SubPixel::Type t);
+#ifdef HAVE_FONTCONFIG
+    static QString description(Hint::Style s);
+    static const char * toStr(Hint::Style s);
+#endif
     bool        hasDir(const QString &d);
 
     private:
@@ -173,6 +213,9 @@ class KXftConfig
     void        applySymbolFamilies();
 #endif
     void        applySubPixelType();
+    void        applyHintStyle();
+    void        setHinting(bool set);
+    void        applyHinting();
     void        applyExcludeRange(bool pixel);
     void        removeItems(QPtrList<ListItem> &list);
 #else
@@ -189,7 +232,10 @@ class KXftConfig
     SubPixel           m_subPixel;
     Exclude            m_excludeRange,
                        m_excludePixelRange;
-#ifndef HAVE_FONTCONFIG
+#ifdef HAVE_FONTCONFIG
+    Hint               m_hint;
+    Hinting            m_hinting;
+#else
     QPtrList<ListItem> m_symbolFamilies;
 #endif
     QPtrList<ListItem> m_dirs;
