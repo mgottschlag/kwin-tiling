@@ -322,6 +322,214 @@ void KIconStyle::setDefaults()
     }
 }
 
+// mosfet's style stuff 04/26/99 (mosfet)
+KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
+    : KTabListBox(parent, name, 2)
+{
+    setColumn(0, i18n("Name:"), 100);
+    setColumn(1, i18n("Description:"), 250);
+    setSeparator('\t');
+    readThemeDir(kapp->localkdedir()+"/share/apps/kstyle/themes");
+    readThemeDir(kapp->kde_datadir()+"/kstyle/themes");
+}
+
+void KThemeListBox::readThemeDir(const QString &directory)
+{
+    QString name, desc;
+
+    KConfig *kconfig = kapp->getConfig();
+    QString oldGroup = kconfig->group();
+    kconfig->setGroup("Misc");
+    curName = kconfig->readEntry("Name", "");
+    kconfig->setGroup(oldGroup);
+    
+    QDir dir(directory, "*.themerc");
+    if(dir.exists()){
+        const QFileInfoList *list = dir.entryInfoList();
+        QFileInfoListIterator it(*list);
+        QFileInfo *fi;
+        while((fi = it.current())){
+            KSimpleConfig config(fi->absFilePath());
+            config.setGroup("Misc");
+            name = config.readEntry("Name", fi->baseName());
+            desc = config.readEntry("Description",
+                                    i18n("No description available."));
+            insertItem(name + "\t" + desc);
+            fileList.append(fi->absFilePath());
+            if(name == curName)
+                setCurrentItem(count()-1);
+            ++it;
+        }
+    }
+}
+
+QString KThemeListBox::currentName()
+{
+    return(curName);
+}
+
+QString KThemeListBox::currentFile()
+{
+    return((currentItem() != -1) ? QString(fileList.at(currentItem())) :
+           QString::null);
+}
+
+void KThemeListBox::writeSettings()
+{
+#define WIDGETS 19
+    
+    static char *widgetEntries[] = {"HorizScrollGroove", "VertScrollGroove",
+    "Slider", "SliderGroove", "IndicatorOn", "IndicatorOff", "Background",
+    "PushButton", "ExIndicatorOn", "ExIndicatorOff", "ComboBox", "ScrollBarSlider",
+    "Bevel", "ToolButton", "ScrollBarButton", "BarHandle", "ToolBar",
+    "ScrollBarDeco", "ComboDeco"};
+
+    if(text(currentItem(), 0) == curName)
+        return;
+    
+    int i;
+    KSimpleConfig inConfig(fileList.at(currentItem()));
+    KConfig outConfig;
+
+    outConfig.setGroup("Scale");
+    inConfig.setGroup("Scale");
+    for(i=0; i < WIDGETS; ++i){
+        outConfig.writeEntry(widgetEntries[i],
+                              inConfig.readEntry(widgetEntries[i], " "),
+                              true, true);
+    }
+    outConfig.setGroup("Extended Background");
+    inConfig.setGroup("Extended Background");
+    for(i=0; i < WIDGETS; ++i){
+        outConfig.writeEntry(widgetEntries[i],
+                              inConfig.readEntry(widgetEntries[i], " "),
+                              true, true);
+    }
+    outConfig.setGroup("Extended Foreground");
+    inConfig.setGroup("Extended Foreground");
+    for(i=0; i < WIDGETS; ++i){
+        outConfig.writeEntry(widgetEntries[i],
+                              inConfig.readEntry(widgetEntries[i], " "),
+                              true, true);
+    }
+    outConfig.setGroup("Borders");
+    inConfig.setGroup("Borders");
+    for(i=0; i < WIDGETS; ++i){
+        outConfig.writeEntry(widgetEntries[i],
+                              inConfig.readNumEntry(widgetEntries[i], 1),
+                              true, true);
+    }
+    outConfig.setGroup("Highlights");
+    inConfig.setGroup("Highlights");
+    for(i=0; i < WIDGETS; ++i){
+        outConfig.writeEntry(widgetEntries[i],
+                              inConfig.readNumEntry(widgetEntries[i], 1),
+                             true, true);
+    }
+    outConfig.setGroup("Pixmaps");
+    inConfig.setGroup("Pixmaps");
+    for(i=0; i < WIDGETS; ++i){
+        outConfig.writeEntry(widgetEntries[i],
+                              inConfig.readEntry(widgetEntries[i], " "),
+                              true, true);
+    }
+    outConfig.setGroup("Gradient Lowcolor");
+    inConfig.setGroup("Gradient Lowcolor");
+    for(i=0; i < WIDGETS; ++i){
+        outConfig.writeEntry(widgetEntries[i],
+                              inConfig.readEntry(widgetEntries[i], " "),
+                              true, true);
+    }
+    outConfig.setGroup("Gradient Highcolor");
+    inConfig.setGroup("Gradient Highcolor");
+    for(i=0; i < WIDGETS; ++i){
+        outConfig.writeEntry(widgetEntries[i],
+                              inConfig.readEntry(widgetEntries[i], " "),
+                              true, true);
+    }
+    outConfig.setGroup("Gradients");
+    inConfig.setGroup("Gradients");
+    for(i=0; i < WIDGETS; ++i){
+        outConfig.writeEntry(widgetEntries[i],
+                              inConfig.readEntry(widgetEntries[i], " "),
+                              true, true);
+    }
+    // Read in standard color scheme. This is kind of messed up because it
+    // conflicts with colorscm... But themes do need to be able to specify
+    // colors. (mosfet)
+    outConfig.setGroup("General");
+    inConfig.setGroup("General");
+    if(inConfig.hasKey("foreground"))
+        outConfig.writeEntry("foreground",
+                             inConfig.readEntry("foreground", " "),
+                             true, true);
+
+    if(inConfig.hasKey("background"))
+        outConfig.writeEntry("background",
+                             inConfig.readEntry("background", " "),
+                             true, true);
+    if(inConfig.hasKey("selectForeground"))
+        outConfig.writeEntry("selectForeground",
+                             inConfig.readEntry("selectForeground", " "),
+                             true, true);
+    if(inConfig.hasKey("selectBackground"))
+        outConfig.writeEntry("selectBackground",
+                             inConfig.readEntry("selectBackground", " "),
+                             true, true);
+    if(inConfig.hasKey("windowForeground"))
+        outConfig.writeEntry("windowForeground",
+                             inConfig.readEntry("windowForeground", " "),
+                             true, true);
+    if(inConfig.hasKey("windowBackground"))
+        outConfig.writeEntry("windowBackground",
+                             inConfig.readEntry("windowBackground", " "),
+                             true, true);
+    outConfig.setGroup("KDE");
+    inConfig.setGroup("KDE");
+    outConfig.writeEntry("Contrast",
+                          inConfig.readEntry("Contrast", " "), true, true);
+    outConfig.writeEntry("widgetStyle",
+                         inConfig.readEntry("widgetStyle", " "), true,
+                         true);
+    // Read in misc settings
+    outConfig.setGroup("Misc");
+    inConfig.setGroup("Misc");
+    outConfig.writeEntry("SButtonType",
+                          inConfig.readEntry("SButtonType", " "), true, true);
+    outConfig.writeEntry("ArrowType", inConfig.readEntry("ArrowType", " "),
+                          true,true);
+    outConfig.writeEntry("ComboDeco", inConfig.readEntry("ComboDeco", " "),
+                          true, true);
+    outConfig.writeEntry("ShadeStyle", inConfig.readEntry("ShadeStyle", " "),
+                          true, true);
+    outConfig.writeEntry("RoundButton",
+                          inConfig.readBoolEntry("RoundButton", false), true,
+                          true);
+    outConfig.writeEntry("RoundCombo",
+                          inConfig.readBoolEntry("RoundCombo", false), true,
+                          true);
+    outConfig.writeEntry("RoundSlider",
+                          inConfig.readBoolEntry("RoundSlider", false), true,
+                          true);
+    outConfig.writeEntry("FrameWidth",
+                          inConfig.readNumEntry("FrameWidth", 2), true, true);
+    outConfig.writeEntry("ButtonXShift",
+                          inConfig.readNumEntry("ButtonXShift", 0), true, true);
+    outConfig.writeEntry("ButtonYShift",
+                          inConfig.readNumEntry("ButtonYShift", 0), true, true);
+    outConfig.writeEntry("SliderLength",
+                          inConfig.readNumEntry("SliderLength", 10), true,
+                          true);
+    outConfig.writeEntry("Name",
+                          inConfig.readEntry("Name", " "), true, true);
+    outConfig.writeEntry("Description",
+                          inConfig.readEntry("Description", " "), true,
+                          true);
+    
+    curName = text(currentItem(), 0);
+    outConfig.sync();
+}
+
 //------------------------------------------------------------------
 
 KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
@@ -342,51 +550,30 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 	screen = DefaultScreen(kde_display);
 	root = RootWindow(kde_display, screen);
 
-	setName( i18n("Style") );
+        setName( i18n("Style") );
 
 	readSettings();
 	
 	QBoxLayout *topLayout = new QVBoxLayout( this, 10 );
-	//CT	QBoxLayout *top2Layout = new QHBoxLayout();
-	//CT	topLayout->addLayout(top2Layout);
 
-	//CT 04Apr1999 - new styles and other options
-	styles = new QButtonGroup ( i18n( "Style for widgets drawing:" ),
+        // my little style list (mosfet 04/26/99)
+        QGroupBox *themeBox = new QGroupBox(i18n("Widget style and theme:"),
+                                            this);
+        topLayout->addWidget(themeBox);
+        QBoxLayout *themeLayout = new QVBoxLayout(themeBox, 10);
+        themeList = new KThemeListBox(themeBox);
+        themeList->setMinimumSize(QSize(100,100));
+        themeLayout->addSpacing(10);
+        themeLayout->addWidget(themeList);
+        connect(themeList, SIGNAL(highlighted(int, int)),
+                                  SLOT(slotChangeStylePlugin(int, int)));
+        
+        styles = new QButtonGroup ( i18n( "Other settings for drawing:" ),
 				    this );
 	topLayout->addWidget(styles, 10);
 
 	QBoxLayout *vlay = new QVBoxLayout (styles, 10);
 	vlay->addSpacing(10);
-
-	QBoxLayout *lay = new QHBoxLayout(20);
-	vlay->addLayout(lay);
-
-	MStyle = new QRadioButton( i18n( "Mo&tif" )     , styles);
-	WStyle = new QRadioButton( i18n( "&Windows 95" ), styles);
-	PStyle = new QRadioButton( i18n( "&Platinum" ),   styles);
-
-	if( applicationStyle == WindowsStyle )
-	  WStyle->setChecked( true );
-	/*CT not yet implemented
-	else if ( applicationStyle == PlatinumStyle )
-	  PStyle->setChecked( true );
-	*/
-	else 
-	  MStyle->setChecked( true );
-
-	slotChangeStyle();
-
-	connect( MStyle, SIGNAL( clicked() ), SLOT( slotChangeStyle()  )  );
-	connect( WStyle, SIGNAL( clicked() ), SLOT( slotChangeStyle()  )  );
-	connect( PStyle, SIGNAL( clicked() ), SLOT( slotChangeStyle()  )  );
-	
-	lay->addWidget(MStyle);
-	lay->addWidget(WStyle);
-	lay->addWidget(PStyle);
-
-
-	//CT 04Apr1999
-
 
 	//CT 30Nov1998
 	cbMac = new QCheckBox( i18n( "&Menubar on top of the screen in "
@@ -431,7 +618,7 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 
 	vlay->addSpacing( 10 );
 	
-	lay = new QHBoxLayout( 10 );
+	QBoxLayout *lay = new QHBoxLayout( 10 );
 	vlay->addLayout( lay );
 
 	tbIcon   = new QRadioButton( i18n( "&Icons only" ), tbStyle);
@@ -485,19 +672,10 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 
 }
 
-
-void KGeneral::slotChangeStyle()
+void KGeneral::slotChangeStylePlugin(int, int)
 {
-  if (PStyle->isChecked() )
-    applicationStyle = WindowsStyle; //CT not yet available
-  else if( WStyle->isChecked() )
-    applicationStyle = WindowsStyle;
-  else
-    applicationStyle = MotifStyle;
-				
-  changed=true;
+    changed=true;
 }
-
 
 //CT 05Apr 1999
 void KGeneral::slotChangeTbStyle()
@@ -544,7 +722,8 @@ void KGeneral::readSettings( int )
 	KConfig config;
 	config.setGroup( "KDE" );
 
-	//CT 04Apr1999
+        // This doesn't do anything anymore (mosfet)
+        //CT 04Apr1999
 	str = config.readEntry( "widgetStyle", "Platinum" );
 	if ( str == "Platinum" )
 	  //CT 04Apr1999 - for the moment Qt doesn't have a PlatinumStyle 
@@ -584,7 +763,6 @@ void KGeneral::setDefaults()
 	cbMac->setChecked( false );//CT
 	useRM = true;
 	macStyle = false;//CT
-	slotChangeStyle();
 	slotMacStyle();//CT
 	iconStyle->setDefaults(); // DF
 
@@ -606,21 +784,15 @@ void KGeneral::defaultSettings()
 void KGeneral::writeSettings()
 {
 	iconStyle->writeSettings(); // DF
-	if ( !changed )
+        themeList->writeSettings();
+        if ( !changed )
 		return;
 		
 	KConfig *config = kapp->getConfig();
 	config->setGroup( "KDE" );
 
 	QString str;
-	//CT 05Apr1999 - attention, this has to be fixed ASA Qt supports 
-	//  Platinum fully
-	if( applicationStyle == WindowsStyle )
-		str.sprintf("Windows 95" );
-	else
-		str.sprintf("Motif" );
-	config->writeEntry("widgetStyle", str, true, true);
-
+        
 	//CT 30Nov1998 - mac style set
 	config->writeEntry( "macStyle", macStyle?"on":"off", true, true);
 	//CT
@@ -649,10 +821,14 @@ void KGeneral::writeSettings()
 		// KResourceMan always for KDE applications to make
 		// the desktop settings machine independent but
 		// per-display (Matthias)
-		KResourceMan *krdb = new KResourceMan();
-		krdb->setGroup( "KDE" );
-		krdb->writeEntry( "widgetStyle", str );
-		krdb->sync();
+                KResourceMan *krdb = new KResourceMan();
+
+                // KThemeListBox sets this now (mosfet)
+
+                // krdb->setGroup( "KDE" );
+                // krdb->writeEntry( "widgetStyle", str );
+
+                krdb->sync();
 
 		QApplication::restoreOverrideCursor();
 	}

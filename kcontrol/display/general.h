@@ -18,10 +18,12 @@
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
+#include <qstrlist.h>
 #include <kspinbox.h>
 #include <kcontrol.h>
 #include <qbuttongroup.h>
 #include <qgroupbox.h>
+#include <ktablistbox.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -104,6 +106,24 @@ protected:
 	QDict <QRadioButton> m_dictCBLarge;  // checkbox 'large' for each application
 };
 
+// mosfet 4/26/99
+class KThemeListBox : public KTabListBox
+{
+    Q_OBJECT
+public:
+    KThemeListBox(QWidget *parent=0, const char *name=0);
+    ~KThemeListBox(){;}
+    QString currentFile();
+    // This is the currently set name, not selected name.
+    QString currentName();
+    void writeSettings();
+protected:
+    void readThemeDir(const QString &directory);
+    QStrList fileList;
+    QString curName;
+};
+
+
 class KGeneral : public KDisplayModule
 {
 	Q_OBJECT
@@ -124,7 +144,7 @@ public:
 	Atom 	KDEChangeGeneral;
 
 protected slots:
-	void slotChangeStyle();
+        void slotChangeStylePlugin(int, int);
         void slotChangeTbStyle();//CT 05Apr1999
 	void slotUseResourceManager();
 	void slotMacStyle();//CT
@@ -138,7 +158,7 @@ protected:
 protected:
 	//CT 04Apr1999
 	QGroupBox *styles, *tbStyle;
-	QRadioButton *MStyle, *WStyle, *PStyle;
+	//QRadioButton *MStyle, *WStyle, *PStyle;
 	QRadioButton *tbIcon, *tbText, *tbAside, *tbUnder;
 	QCheckBox *tbHilite, *tbTransp;
       	QCheckBox *cbRes;
@@ -155,7 +175,8 @@ protected:
 	int tbUseText;//CT 05Apr1999
 	bool tbUseHilite, tbMoveTransparent;//CT 04Apr1999
        
-	KIconStyle * iconStyle;
+        KIconStyle * iconStyle;
+        KThemeListBox *themeList;
 };
 
 class KFonts : public KDisplayModule
