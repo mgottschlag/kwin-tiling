@@ -97,7 +97,7 @@ void TopLevel::initMenuBar()
   menu_bar->insertItem(i18n("&File"), file_menu);
 	
   menu_bar->insertItem(i18n("&Help"), helpMenu(
-    i18n("The KDE Control Center\n\nFramework: Matthias Hölzer-Klüpfel "
+    i18n("The KDE Control Center\n\nFramework: Matthias Hölzer-KlÃ¶pfel "
 	 "(hoelzer@kde.org)\n\nModules: almost the whole KDE team!")));
 
   setMenu(menu_bar);
