@@ -22,14 +22,18 @@
 
 #include <kapplication.h>
 
+#include <time.h>
+
 class MyApp : public KApplication {
     Q_OBJECT
 public:
-    MyApp() : KApplication() {}
+    MyApp() : KApplication(), lastTick( 0 ) {}
 protected:
     bool x11EventFilter( XEvent * );
 signals:
     void activity();
+private:
+    time_t lastTick;
 };      
 
 #endif

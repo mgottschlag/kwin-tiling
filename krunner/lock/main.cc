@@ -35,6 +35,13 @@ bool MyApp::x11EventFilter( XEvent *ev )
 {
     if (ev->type == XKeyPress || ev->type == ButtonPress)
         emit activity();
+    else if (ev->type == MotionNotify) {
+        time_t tick = time( 0 );
+        if (tick != lastTick) {
+            lastTick = tick;
+            emit activity();
+        }
+    }
     return KApplication::x11EventFilter( ev );
 }
 
