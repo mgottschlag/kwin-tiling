@@ -1,8 +1,8 @@
 [Desktop Entry]
 Icon=kcmkicker
 Type=Application
-DocPath=kcontrol/kcmkicker/kicker-1.html
-Exec=kcmshell LookNFeel/Panel/panel
+DocPath=kcontrol/kcmkicker/index.html
+Exec=kcmshell LookNFeel/panel
 
 X-KDE-ModuleType=Library
 X-KDE-Library=kicker
@@ -23,6 +23,7 @@ Name[ja]=パネル
 Name[mk]=Панел
 Name[nl]=Paneel
 Name[pt]=Painel
+Name[pt_BR]=Painel
 Name[ro]=Panou
 Name[ru]=Панель
 Name[sl]=Pult
@@ -52,6 +53,7 @@ Comment[no]=Her kan du konfigurere utseende til panelet
 Comment[no_NY]=Her kan du setja opp utsjånaden til panelet
 Comment[pl]=Konfiguracja panelu
 Comment[pt]=Configuração do painel
+Comment[pt_BR]=Você pode configurar aqui a aparência do Painel
 Comment[ro]=Configurează panoul KDE
 Comment[ru]=Здесь вы можете настроить панель
 Comment[sl]=Tu lahko nastavite videz pulta
@@ -81,6 +83,7 @@ Keywords[nl]=kicker,panel,paneel,kpanel,takenbalk,startbalk,launchbar,startmenu
 Keywords[no_NY]=kicker,panel,kpanel,oppgåvelinje,startlinje,programlinje
 Keywords[pl]=kicker,panel,kpanel,pasek zadań,pasek startu,uruchamianie
 Keywords[pt]=kicker,painel,kpanel,barra de tarefas
+Keywords[pt_BR]=kicker,painel,kpanel,barra de tarefas,barra de início,barra delançamento
 Keywords[ro]=kicker,panel,panou,kpanel,procese,start,lansare,startare
 Keywords[sl]=kicker,panel,kpanel,opravilna vrstica,začetna vrstica,izstrelišče
 Keywords[ta]=பலகமஂ,kபலகமஂ,பணிபடஂைட,ெதாடகஂகபடஂைட
