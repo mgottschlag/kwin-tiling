@@ -105,7 +105,7 @@ void KNotifyWidget::updateView()
     while ( it.current() ) {
 	appItem = new QListViewItem( view, appItem, (*it)->text() );
 	appItem->setPixmap( 0, SmallIcon( (*it)->icon() ));
-	
+
 	// FIXME: delay that?
 	KNEventListIterator it2( *(*it)->eventList() );
 	while( (e = it2.current()) ) {
@@ -115,7 +115,7 @@ void KNotifyWidget::updateView()
 	    connect( eItem, SIGNAL( changed() ), SLOT( changed() ));
 	    ++it2;
 	}
-	
+
 	++it;
     }
 }
@@ -188,7 +188,7 @@ void KNotifyWidget::slotItemActivated( QListViewItem *i )
     if ( item ) {
 	currentItem = item;
 	const KNEvent *event = item->event;
-	
+
 	if ( item->type == KNotifyClient::Sound ) {
 	    requester->setURL( event->soundfile );
 	    enableButton = true;
@@ -230,14 +230,20 @@ QString KNotifyWidget::quickHelp() const
 
 const KAboutData *KNotifyWidget::aboutData() const
 {
-    KAboutData ab(
-		  "kcmnotify", I18N_NOOP("KNotify"), "2.0pre",
-		  I18N_NOOP("System Notification Control Panel Module"),
-		  KAboutData::License_GPL, 0, 0, 0 );
-    ab.addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org" );
-    ab.addCredit( "Charles Samuels", I18N_NOOP("Original implementation"),
-		  "charles@altair.dhs.org" );
-    return &ab;
+    static KAboutData* ab = 0;
+
+    if(!ab)
+    {
+        ab = new KAboutData(
+            "kcmnotify", I18N_NOOP("KNotify"), "2.0pre",
+            I18N_NOOP("System Notification Control Panel Module"),
+            KAboutData::License_GPL, 0, 0, 0 );
+        ab->addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org" );
+        ab->addCredit( "Charles Samuels", I18N_NOOP("Original implementation"),
+                       "charles@altair.dhs.org" );
+    }
+
+    return ab;
 }
 
 
@@ -258,7 +264,7 @@ KNListViewItem::KNListViewItem( QListViewItem *parent,
 					  i18n("Standard error output"));
 	stderrItem->setOn( e->presentation & KNotifyClient::Stderr );
     }
-	
+
     if ( (e->dontShow & KNotifyClient::Messagebox) == 0 ) {
 	msgboxItem = new KNCheckListItem(this, event,KNotifyClient::Messagebox,
 					  i18n("Show messagebox"));
