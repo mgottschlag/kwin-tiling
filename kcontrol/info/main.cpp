@@ -114,8 +114,6 @@ KInfoApplication::KInfoApplication(int &argc, char **argv, const char *name)
       CHECK_PAGE("xserver",    xserver,    GetInfo_XServer_and_Video, i18n("&X-Server"),    "info-11.html"); 
   #endif
   
-      dialog->setApplyButton(i18n("Apply"));
-      dialog->setCancelButton(i18n("Cancel"));
 
       if (memory || processor || interrupts || dma || ioports || pci || 
           sound || devices || scsi || partitions || xserver )
@@ -126,8 +124,9 @@ KInfoApplication::KInfoApplication(int &argc, char **argv, const char *name)
           justInit = TRUE;
         }
 
+      dialog->setMinimumHeight(400);
+
     }
-    mainWidget()->setMinimumSize(600,350);
 }
 
 
