@@ -68,7 +68,7 @@ ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const c
   setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
   addColumn("");
   setAllColumnsShowFocus(true);
-  setRootIsDecorated(true);
+  setRootIsDecorated(false);
   header()->hide();
 
   new ModuleTreeWhatsThis( this );
@@ -196,14 +196,14 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
   if (group && group->isValid())
   {
      menu->setPixmap(0, SmallIcon(group->icon()));
-     menu->setText(0, group->caption());
+     menu->setText(0, " " + group->caption());
      menu->setTag(defName);
   }
   else
   {
      // Should not happen: Installation problem
      // Let's try to fail softly.
-     menu->setText(0, defName);
+     menu->setText(0, " " + defName);
      menu->setTag(defName);
   }
 
@@ -272,7 +272,7 @@ ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
 {
   if (_module)
         {
-          setText(0, module->name());
+          setText(0, " " + module->name());
           setPixmap(0, SmallIcon(module->icon()));
         }
 }
@@ -284,17 +284,17 @@ ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
 {
   if (_module)
         {
-          setText(0, module->name());
+          setText(0, " " + module->name());
           setPixmap(0, SmallIcon(module->icon()));
         }
 }
 
 ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, const QString& text)
-  : QListViewItem(parent, text)
+  : QListViewItem(parent, " " + text)
   , _module(0)
   , _tag(QString::null) {}
 
 ModuleTreeItem::ModuleTreeItem(QListView *parent, const QString& text)
-  : QListViewItem(parent, text)
+  : QListViewItem(parent, " " + text)
   , _module(0)
   , _tag(QString::null) {}
