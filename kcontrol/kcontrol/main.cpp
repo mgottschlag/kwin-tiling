@@ -64,11 +64,11 @@ KControlApp::KControlApp()
 
   KConfig *config = KGlobal::config();
   config->setGroup("General");
-  QWidget *desk = QApplication::desktop();
-  int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk->width()), 
-			       QMIN( desk->width() * 3/4 , 800 ) );
-  int y = config->readNumEntry(QString::fromLatin1("InitialHeight %1").arg(desk->height()), 
-			       QMIN( desk->height() * 3/4 , 600 ) );
+  QRect desk = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(toplevel));
+  int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk.width()), 
+			       QMIN( desk.width() * 3/4 , 800 ) );
+  int y = config->readNumEntry(QString::fromLatin1("InitialHeight %1").arg(desk.height()), 
+			       QMIN( desk.height() * 3/4 , 600 ) );
   toplevel->resize(x,y);
 }
 
