@@ -346,8 +346,8 @@ QString KFonts::quickHelp() const
       " Just click the \"Choose\" button that is next to the font you want to"
       " change."
       " You can ask KDE to try and apply font and color settings to non-KDE"
-      " applications as well. See the \"Style\" control module under"
-      " \"Themes\" for more information.");
+      " applications as well. See the \"Style\" control module for more"
+			" information.");
 }
 
 void KFonts::load()
