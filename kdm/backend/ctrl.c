@@ -311,6 +311,8 @@ str_cat (char **bp, const char *str, int max)
 static void
 processCtrl (const char *string, int len, int fd, struct display *d)
 {
+#define Reply(t) Writer (fd, t, strlen (t))
+
     struct display *di;
     const char *word;
     char **ar, *args, *bp;
@@ -334,36 +336,36 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	Debug ("global control %s received %'[s\n", word, ar);
     if (ar[0]) {
 	if (fd >= 0 && !strcmp (ar[0], "caps")) {
-	    Writer (fd, "ok\tkdm\tlist\t", 12);
+	    Reply ("ok\tkdm\tlist\t");
 	    if (d) {
 		if (d->allowShutdown != SHUT_NONE) {
 		    if (d->allowShutdown == SHUT_ROOT && d->userSess)
-			Writer (fd, "shutdown root\t", 14);
+			Reply ("shutdown root\t");
 		    else
-			Writer (fd, "shutdown\t", 9);
+			Reply ("shutdown\t");
 		    if (d->allowNuke != SHUT_NONE) {
 			if (d->allowNuke == SHUT_ROOT && d->userSess)
-			    Writer (fd, "nuke root\t", 10);
+			    Reply ("nuke root\t");
 			else
-			    Writer (fd, "nuke\t", 5);
+			    Reply ("nuke\t");
 		    }
 		}
 		if ((d->displayType & d_location) == dLocal &&
 		    AnyReserveDisplays ())
 		    Writer (fd, cbuf, sprintf (cbuf, "reserve %d\t",
 					       idleReserveDisplays ()));
-		Writer (fd, "lock\tsuicide\n", 21);
+		Reply ("lock\tsuicide\n");
 	    } else {
 		if (fifoAllowShutdown) {
-		    Writer (fd, "shutdown\t", 9);
+		    Reply ("shutdown\t");
 		    if (fifoAllowNuke)
-			Writer (fd, "nuke\t", 5);
+			Reply ("nuke\t");
 		}
-		Writer (fd, "login\n", 6);
+		Reply ("login\n");
 	    }
 	    goto bust;
 	} else if (fd >= 0 && !strcmp (ar[0], "list")) {
-	    Writer (fd, "ok", 2);
+	    Reply ("ok");
 	    for (di = displays; di; di = di->next) {
 		if (di->status != running || (!ar[1] && di->userSess < 0))
 		    continue;
@@ -386,7 +388,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		*bp++ = ',';
 		Writer (fd, cbuf, bp - cbuf);
 	    }
-	    Writer (fd, "\n", 1);
+	    Reply ("\n");
 	    goto bust;
 	} else if (!strcmp (ar[0], "shutdown")) {
 	    if (!ar[1] || (!ar[2] && !d)) {
@@ -506,7 +508,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    }
 	}
 	if (fd >= 0)
-	    Writer (fd, "ok\n", 3);
+	    Reply ("ok\n");
     }
   bust:
     freeStrArr (ar);
