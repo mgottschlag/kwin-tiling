@@ -20,14 +20,15 @@
 
 #include <qlabel.h>
 #include <qwmatrix.h>
+#include <qlineedit.h>
 #include <qcombobox.h>
 #include <kdebug.h>
 #include <qcheckbox.h>
 #include <kstandarddirs.h>
-#include <qinputdialog.h>
 
 #include <klocale.h>
 #include <kfiledialog.h>
+#include <klineeditdlg.h>
 #include <qtoolbutton.h>
 #include <kicondialog.h>
 #include <kstdguiitem.h>
@@ -294,12 +295,12 @@ void SessionEditor::saveCurrent()
   }
   else
     base = nameLine->text().stripWhiteSpace().simplifyWhiteSpace()+".desktop";
-  QString name = QInputDialog::getText(i18n("Save Session As..."),
-					 i18n("Filename:"), QLineEdit::Normal, base);
+  
+  KLineEditDlg dlg(i18n("Filename:"), base, this);
+  dlg.setCaption(i18n("Save Sessions Profile"));
+  if (!dlg.exec()) return;
 
-  if (name.isNull() || name.isEmpty())
-    return;
-
+  QString name=dlg.text();
   QString fullpath;
   if (name[0] == '/')
     fullpath = name;
