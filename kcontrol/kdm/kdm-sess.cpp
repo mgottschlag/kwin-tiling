@@ -58,9 +58,9 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( group0, i18n("Here you can select who is allowed to shutdown"
         " the computer using KDM. Possible values are:<ul>"
         " <li><em>All:</em> everybody can shutdown the computer using KDM</li>"
-        " <li><em>Console Only:</em> only users sitting in front of this computer can shut it down using KDM</li></ul>"
+        " <li><em>Console Only:</em> only users sitting in front of this computer can shut it down using KDM</li>"
         " <li><em>Root Only:</em> KDM will only allow shutdown after the user has entered the root password</li>"
-        " <li><em>None:</em> nobody can shutdown the computer using KDM</li>") );
+        " <li><em>None:</em> nobody can shutdown the computer using KDM</li></ul>") );
 
 
       QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
