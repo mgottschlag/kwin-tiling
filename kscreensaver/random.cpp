@@ -31,9 +31,9 @@
 
 void usage(char *name)
 {
-    puts(i18n("Usage: %1 [-setup] [args]\n").arg(name).local8Bit());
-    puts(i18n("Starts a random screen saver.\n").local8Bit());
-    puts(i18n("Any arguments (except -setup) are passed on to the screen saver.\n").local8Bit());
+    puts(i18n("Usage: %1 [-setup] [args]\n"
+              "Starts a random screen saver.\n"
+              "Any arguments (except -setup) are passed on to the screen saver.").local8Bit().data());
 }
 
 static const char *appName = "random";
