@@ -297,7 +297,7 @@ void SessionEditor::saveCurrent()
     base = nameLine->text().stripWhiteSpace().simplifyWhiteSpace()+".desktop";
   
   KLineEditDlg dlg(i18n("Filename:"), base, this);
-  dlg.setCaption(i18n("Save Sessions Profile"));
+  dlg.setCaption(i18n("Save Session"));
   if (!dlg.exec()) return;
 
   QString name=dlg.text();
