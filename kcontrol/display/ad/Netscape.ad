@@ -22,7 +22,6 @@ Netscape*power.LED.background: BACKGROUND
 Netscape*defaultBackground:	WINDOW_BACKGROUND
 Netscape*selectColor: BACKGROUND
 Netscape*highlightColor: BACKGROUND
-Netscape*highlightThickness: 1
 Netscape*selectForeground: SELECT_FOREGROUND
 Netscape*selectBackground: SELECT_BACKGROUND
 Netscape*banner*folderDropdown*fontList: FONTLIST
