@@ -49,7 +49,10 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const c
   setItemTextPos(Right);
   setResizeMode(Adjust);
 
-  connect(this, SIGNAL(executed(QIconViewItem*)),
+  // This is intentionally _not_ connected with executed(), since
+  // honoring doubleclick doesn't make any sense here (changed by
+  // large user demand)
+  connect(this, SIGNAL(clicked(QIconViewItem*)),
                   this, SLOT(slotItemSelected(QIconViewItem*)));
 }
 
