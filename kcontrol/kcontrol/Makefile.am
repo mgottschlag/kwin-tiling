@@ -64,6 +64,7 @@ install-data-local: KControl_NoDisplay.desktop
 	@-rm -f $(DESTDIR)$(kde_bindir)/kinfocenter
 	$(mkinstalldirs) $(DESTDIR)$(kde_bindir)
 	@$(LN_S) kcontrol $(DESTDIR)$(kde_bindir)/kinfocenter
+	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/System
 	$(INSTALL_DATA) $(srcdir)/kinfocenter.desktop $(DESTDIR)$(kde_appsdir)/System/
 
 KDE_ICON=AUTO
