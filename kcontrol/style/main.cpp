@@ -5,9 +5,8 @@
 #include "kcmstyle.h"
 
 extern "C" {
-    KCModule *create_style(QWidget *parent, const char *name) {
-      KGlobal::locale()->insertCatalogue(QString::fromLatin1("kcmstyle"));
-      return new KCMStyle(parent, name);
+    KCModule *create_style(QWidget *parent, const char *) {
+      return new KCMStyle(parent, "kcmstyle");
     }
 }
 

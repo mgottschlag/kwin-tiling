@@ -277,10 +277,9 @@ const KAboutData* KSmartcardConfig::aboutData() const
 
 extern "C"
 {
-  KCModule *create_smartcard(QWidget *parent, const char *name)
+  KCModule *create_smartcard(QWidget *parent, const char *)
   {
-    KGlobal::locale()->insertCatalogue("kcmsmartcard");
-    return new KSmartcardConfig(parent, name);
+    return new KSmartcardConfig(parent, "kcmsmartcard");
   }
 
   void init_smartcard()

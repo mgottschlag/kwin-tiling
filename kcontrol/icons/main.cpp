@@ -34,14 +34,7 @@
 /**** DLL Interface ****/
 typedef KGenericFactory<IconModule, QWidget> IconsFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_icons, IconsFactory("kcmicons") );
-/*
-extern "C" {
-    KCModule *create_icons(QWidget *parent, const char *name) {
-        KGlobal::locale()->insertCatalogue("kcmicons");
-        return new IconModule(parent, name);
-    }
-}
-*/
+
 /**** IconModule ****/
 
 IconModule::IconModule(QWidget *parent, const char *name, const QStringList &)

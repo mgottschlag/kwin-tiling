@@ -40,8 +40,7 @@ extern "C"
 
   KCModule *create_syssound(QWidget *parent, const char *name)
   {
-    KGlobal::locale()->insertCatalogue("kcmsyssound");
-    return new KSoundWidget(parent, name);
+    return new KSoundWidget(parent, "kcmsyssound");
   }
 
   void init_sound()

@@ -31,13 +31,3 @@
 
 typedef KGenericFactory<KNotifyWidget, QWidget> NotifyFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_knotify, NotifyFactory("kcmnotify") );
-/*
-extern "C"
-{
-	KCModule *create_knotify(QWidget *parent, const char *name)
-	{
-		KGlobal::locale()->insertCatalogue("kcmnotify");
-		return new KNotifyWidget(parent, name);
-	}
-}
-*/

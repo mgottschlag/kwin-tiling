@@ -96,15 +96,6 @@ QString SMServerConfig::quickHelp() const
     " should be confirmed and if the previous session should be restored"
     " when logging in.");
 }
-/*
-extern "C"
-{
-  KCModule *create_smserver(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmsmserver");
-    return new SMServerConfig(parent, name);
-  };
-}
-*/
+
 #include "kcmsmserver.moc"
 

@@ -38,8 +38,7 @@ extern "C"
   KCModule *create_cpu(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_CPU_AVAILABLE
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(i18n("Processor(s)"), parent, "Processor(s)", GetInfo_CPU);
+    return new KInfoListWidget(i18n("Processor(s)"), parent, "kcminfo", GetInfo_CPU);
 #else
     return 0;
 #endif
@@ -48,8 +47,7 @@ extern "C"
   KCModule *create_irq(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_IRQ_AVAILABLE
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(i18n("Interrupt"), parent, "Interrupt", GetInfo_IRQ);
+    return new KInfoListWidget(i18n("Interrupt"), parent, "kcminfo", GetInfo_IRQ);
 #else
     return 0;
 #endif
@@ -58,8 +56,7 @@ extern "C"
   KCModule *create_pci(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_PCI_AVAILABLE
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(i18n("PCI"), parent, "PCI", GetInfo_PCI);
+    return new KInfoListWidget(i18n("PCI"), parent, "kcminfo", GetInfo_PCI);
 #else
     return 0;
 #endif
@@ -68,8 +65,7 @@ extern "C"
   KCModule *create_dma(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_DMA_AVAILABLE
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(i18n("DMA-Channel"), parent, "DMA-Channel", GetInfo_DMA);
+    return new KInfoListWidget(i18n("DMA-Channel"), parent, "kcminfo", GetInfo_DMA);
 #else
     return 0;
 #endif
@@ -78,8 +74,7 @@ extern "C"
   KCModule *create_ioports(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_IOPORTS_AVAILABLE
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(i18n("I/O-Port"), parent, "I/O-Port", GetInfo_IO_Ports);
+    return new KInfoListWidget(i18n("I/O-Port"), parent, "kcminfo", GetInfo_IO_Ports);
 #else
     return 0;
 #endif
@@ -88,8 +83,7 @@ extern "C"
   KCModule *create_sound(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_SOUND_AVAILABLE
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(i18n("Soundcard"), parent, "Soundcard", GetInfo_Sound);
+    return new KInfoListWidget(i18n("Soundcard"), parent, "kcminfo", GetInfo_Sound);
 #else
     return 0;
 #endif
@@ -98,8 +92,7 @@ extern "C"
   KCModule *create_scsi(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_SCSI_AVAILABLE
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(i18n("SCSI"), parent, "SCSI", GetInfo_SCSI);
+    return new KInfoListWidget(i18n("SCSI"), parent, "kcminfo", GetInfo_SCSI);
 #else
     return 0;
 #endif
@@ -108,8 +101,7 @@ extern "C"
   KCModule *create_devices(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_DEVICES_AVAILABLE
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(i18n("Devices"), parent, "Devices", GetInfo_Devices);
+    return new KInfoListWidget(i18n("Devices"), parent, "kcminfo", GetInfo_Devices);
 #else
     return 0;
 #endif
@@ -118,8 +110,7 @@ extern "C"
   KCModule *create_partitions(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_PARTITIONS_AVAILABLE
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(i18n("Partitions"), parent, "Partitions", GetInfo_Partitions);
+    return new KInfoListWidget(i18n("Partitions"), parent, "kcminfo", GetInfo_Partitions);
 #else
     return 0;
 #endif
@@ -128,8 +119,7 @@ extern "C"
   KCModule *create_xserver(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_XSERVER_AVAILABLE
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(i18n("X-Server"), parent, "X-Server", GetInfo_XServer_and_Video);
+    return new KInfoListWidget(i18n("X-Server"), parent, "kcminfo", GetInfo_XServer_and_Video);
 #else
     return 0;
 #endif
@@ -137,8 +127,7 @@ extern "C"
 
   KCModule *create_memory(QWidget *parent, const char * /*name*/)
   { 
-    KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KMemoryWidget(parent, "Memory");
+    return new KMemoryWidget(parent, "kcminfo");
   }
 
 }

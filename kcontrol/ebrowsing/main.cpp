@@ -130,14 +130,5 @@ void KURIFilterModule::resizeEvent(QResizeEvent *)
 {
     tab->setGeometry(0,0,width(),height());
 }
-/*
-extern "C"
-{
-  KCModule *create_kurifilt(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmkurifilt");
-    return new KURIFilterModule(parent, name);
-  }
-}
-*/
+
 #include "main.moc"

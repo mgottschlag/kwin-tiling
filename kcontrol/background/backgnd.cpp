@@ -66,14 +66,7 @@
 /**** DLL Interface ****/
 typedef KGenericFactory<KBackground, QWidget> KBackGndFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_background, KBackGndFactory("kcmbackground"));
-/*
-extern "C" {
-    KCModule *create_background(QWidget *parent, const char *name) {
-    KGlobal::locale()->insertCatalogue("kcmbackground");
-    return new KBackground(parent, name);
-    }
-}
-*/
+
 
 /**** KBGMonitor ****/
 

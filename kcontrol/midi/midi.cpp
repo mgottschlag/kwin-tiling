@@ -137,14 +137,5 @@ void KMidConfig::defaults()
   emit changed(true);
 }
 
-/*
-extern "C"
-{
-  KCModule *create_midi(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmmidi");
-    return new KMidConfig(parent, name);
-  };
-}
-*/
+
 #include "midi.moc"

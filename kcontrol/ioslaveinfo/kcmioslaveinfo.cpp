@@ -151,16 +151,5 @@ void KCMIOSlaveInfo::showInfo(QListBoxItem *item)
    showInfo( item->text() );
 }
 
-/*
-extern "C"
-{
-
-  KCModule *create_ioslaveinfo(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmioslaveinfo");
-    return new KCMIOSlaveInfo(parent, name);
-  }
-}
-*/
 #include "kcmioslaveinfo.moc"
 

@@ -469,8 +469,7 @@ void KArtsModule::slotChanged()
 
 KCModule *create_arts(QWidget *parent, const char *name)
 {
-	KGlobal::locale()->insertCatalogue("kcmarts");
-	return new KArtsModule(parent, name);
+	return new KArtsModule(parent, "kcmarts");
 }
 
 void init_arts()

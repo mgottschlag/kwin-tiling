@@ -34,17 +34,7 @@
 
 typedef KGenericFactory<LaunchConfig, QWidget> LaunchFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_launch, LaunchFactory("kcmlaunch") );
-/*
-extern "C"
-{
-  KCModule * create_launch(QWidget * parent, const char * name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmlaunch");
 
-    return new LaunchConfig(parent, name);
-  }
-}
-*/
 
 LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringList &)
   : KCModule(parent, name)

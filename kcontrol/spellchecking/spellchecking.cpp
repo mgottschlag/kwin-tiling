@@ -29,16 +29,6 @@
 
 typedef KGenericFactory<KSpellCheckingConfig, QWidget > SpellFactory;
 K_EXPORT_COMPONENT_FACTORY (libkcm_spellchecking, SpellFactory("kcmspellchecking") );
-/*
-extern "C"
-{
-  KCModule *create_spellchecking(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmspellchecking");
-    return new KSpellCheckingConfig(parent, name);
-  }
-}
-*/
 
 
 KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *name, const QStringList &):

@@ -43,8 +43,7 @@ extern "C"
 {
   KCModule *create_bell(QWidget *parent, const char *name)
   {
-    KGlobal::locale()->insertCatalogue("kcmbell");
-    return new KBellConfig(parent, name);
+    return new KBellConfig(parent, "kcmbell");
   }
 
   void init_bell()

@@ -140,16 +140,3 @@ const KAboutData* KThemeMgr::aboutData() const
 
     return about;
 }
-
-/*
-extern "C"
-{
-  KCModule *create_themes(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmthemes");
-    return new KThemeMgr(parent, name);
-  }
-
-}
-*/
-

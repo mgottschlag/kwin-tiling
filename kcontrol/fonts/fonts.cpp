@@ -38,15 +38,6 @@
 typedef KGenericFactory<KFonts, QWidget> FontFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_fonts, FontFactory("kcmfonts") );
 
-/*
-extern "C" {
-  KCModule *create_fonts(QWidget *parent, const char *name) {
-    KGlobal::locale()->insertCatalogue("kcmfonts");
-    return new KFonts(parent, name);
-  }
-}
-*/
-
 /**** FontUseItem ****/
 
 FontUseItem::FontUseItem(

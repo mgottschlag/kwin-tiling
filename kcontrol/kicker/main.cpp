@@ -166,10 +166,9 @@ bool KickerConfig::horizontal()
 
 extern "C"
 {
-    KCModule *create_kicker(QWidget *parent, const char *name)
+    KCModule *create_kicker(QWidget *parent, const char *)
     {
         KImageIO::registerFormats();
-        KGlobal::locale()->insertCatalogue("kcmkicker");
         KGlobal::dirs()->addResourceType("tiles", KStandardDirs::kde_default("data") +
                                          "kicker/tiles");
         KGlobal::dirs()->addResourceType("hb_pics", KStandardDirs::kde_default("data") +
@@ -178,6 +177,6 @@ extern "C"
                                          "kicker/applets");
         KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
                                          "kicker/extensions");
-        return new KickerConfig(parent, name);
+        return new KickerConfig(parent, "kcmkicker");
     };
 }

@@ -37,16 +37,6 @@
 
 typedef KGenericFactory<TaskbarConfig, QWidget > TaskBarFactory;
 K_EXPORT_COMPONENT_FACTORY (libkcm_taskbar, TaskBarFactory("kcmtaskbar") );
-/*
-extern "C"
-{
-    KCModule *create_taskbar(QWidget *parent, const char *name)
-    {
-	KGlobal::locale()->insertCatalogue("kcmtaskbar");
-	return new TaskbarConfig(parent, name);
-    };
-}
-*/
 
 // These are the strings that are actually stored in the config file.
 const QStringList& TaskbarConfig::actionList()

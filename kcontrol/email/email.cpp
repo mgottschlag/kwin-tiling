@@ -339,14 +339,5 @@ void topKCMEmail::slotComboChanged(const QString &name)
 	load(name);
 }
 
-/*
-extern "C"
-{
-	KCModule *create_email(QWidget *parent, const char *name) {
-		KGlobal::locale()->insertCatalogue("kcmemail");
-		return new topKCMEmail(parent, name);
-	};
-}
-*/
 
 #include "email.moc"

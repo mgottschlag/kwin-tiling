@@ -281,16 +281,7 @@ const KAboutData* KSocksConfig::aboutData() const
  
     return about;
 }
-/*
-extern "C"
-{
-  KCModule *create_socks(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmsocks");
-    return new KSocksConfig(parent, name);
-  };
-}
-*/
+
 
 #include "socks.moc"
 

@@ -33,14 +33,7 @@
 typedef KGenericFactory<KPasswordConfig, QWidget > PassFactory;
 K_EXPORT_COMPONENT_FACTORY (libkcm_passwords, PassFactory("passwords") );
 
-/*
-extern "C" {
-    KCModule *create_passwords(QWidget *parent, const char *name) {
-    KGlobal::locale()->insertCatalogue("passwords");
-    return new KPasswordConfig(parent, name);
-    }
-}
-*/
+
 
 /**** KPasswordConfig ****/
 

@@ -172,18 +172,6 @@ NICList* findNICs()
    }
    return nl;
 };
-/*
-extern "C"
-{
-
-  KCModule *create_nic(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmnic");
-    return new KCMNic(parent, name);
-  }
-}
-*/
-
 
 #include "nic.moc"
 

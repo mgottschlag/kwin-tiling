@@ -6,8 +6,7 @@
 
 extern "C" {
     KCModule *create_widgetsettings(QWidget *parent, const char *name) {
-      KGlobal::locale()->insertCatalogue(QString::fromLatin1("kcmwidgetsettings"));
-      return new KWidgetSettingsModule(parent, name);
+	return new KWidgetSettingsModule(parent, "kcmwidgetsettings");
     }
 }
 

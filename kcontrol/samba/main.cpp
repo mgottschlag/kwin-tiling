@@ -114,15 +114,4 @@ QString SambaContainer::quickHelp() const
      " showmount in your PATH.");
 }
 
-/*
-extern "C"
-{
 
-  KCModule *create_samba(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmsamba");
-    return new SambaContainer(parent, name);
-  }
-}
-
-*/

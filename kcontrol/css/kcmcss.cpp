@@ -399,16 +399,6 @@ void CSSConfig::preview()
   delete dlg;
 }
 
-/*
-extern "C" {
 
-  KCModule *create_kcmcss(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmcss");
-    return new CSSConfig(parent, name);
-  }
-
-}
-*/
 #include "kcmcss.moc"
 

@@ -169,13 +169,3 @@ const KAboutData* USBViewer::aboutData() const
  
     return about;
 }
-/*
-extern "C"
-{
-  KCModule *create_usb(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmusb");
-    return new USBViewer(parent, name);
-  };
-}
-*/

@@ -111,14 +111,5 @@ void KclockModule::moduleChanged(bool state)
 {
   emit changed(state);
 }
-/*
-extern "C"
-{
-  KCModule *create_clock(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmkclock");
-    return new KclockModule(parent, name);
-  }
-}
-*/
+
 

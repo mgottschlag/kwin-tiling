@@ -52,14 +52,6 @@
 typedef KGenericFactory<KColorScheme , QWidget> KolorFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_colors, KolorFactory("kcmcolors") );
 
-/*
-extern "C" {
-    KCModule *create_colors(QWidget *parent, const char *name) {
-    KGlobal::locale()->insertCatalogue("kcmcolors");
-    return new KColorScheme(parent, name);
-    }
-}
-*/
 class KColorSchemeEntry {
 public:
     KColorSchemeEntry(const QString &_path, const QString &_name, bool _local)

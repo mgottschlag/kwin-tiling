@@ -51,10 +51,9 @@ static bool firstTime=true;
 CKfiCmModule * CKfiCmModule::theirInstance=NULL;
 
 CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name, const QStringList&)
-            : KCModule(parent, name),
+            : KCModule(parent, "fontinst"),
               itsAboutData(NULL)
 {
-    KGlobal::locale()->insertCatalogue("fontinst");
     QGridLayout *topLayout=new QGridLayout(this);
 
     topLayout->setSpacing(0);

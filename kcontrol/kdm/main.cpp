@@ -211,15 +211,4 @@ void KDModule::resizeEvent(QResizeEvent *)
   tab->setGeometry(0,0,width(),height());
 }
 
-/*
-extern "C"
-{
-  KCModule *create_kdm(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kdmconfig");
-    return new KDModule(parent, name);
-  }
-}
-*/
-
 #include "main.moc"
