@@ -129,7 +129,7 @@ int SaverList::compareItems(QPtrCollection::Item item1, QPtrCollection::Item ite
 //===========================================================================
 //
 TestWin::TestWin()
-    : QXEmbed(0, 0, WStyle_Customize | WStyle_NoBorder)
+    : QXEmbed(0, 0, WStyle_Customize | WStyle_NoBorder | WX11BypassWM )
 {
     setFocusPolicy(StrongFocus);
     KWin::setState( winId(), NET::StaysOnTop );
