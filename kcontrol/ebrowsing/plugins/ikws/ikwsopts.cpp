@@ -133,7 +133,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     gbsLay->setRowStretch(5, 1);
     gbsLay->setRowStretch(6, 1);
 
-    cb_enableSearchKeywords = new QCheckBox(i18n("Enable &Search Shortcuts"), gb_search);
+    cb_enableSearchKeywords = new QCheckBox(i18n("Enable &Web Shortcuts"), gb_search);
     //cb_enableSearchKeywords->adjustSize();
     //cb_enableSearchKeywords->setMinimumSize(cb_enableSearchKeywords->size());
     connect(cb_enableSearchKeywords, SIGNAL(clicked()), this, SLOT(changeSearchKeywordsEnabled()));
