@@ -19,6 +19,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <iostream>
 #include <unistd.h>
 
 #include <qlayout.h>
@@ -104,6 +105,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     lv_searchProviders->addColumn(i18n("Name"));
     lv_searchProviders->addColumn(i18n("Shortcuts"));
     lv_searchProviders->setMinimumSize(lv_searchProviders->sizeHint());
+    lv_searchProviders->setSorting(0);
 
     connect(lv_searchProviders, SIGNAL(selectionChanged(QListViewItem *)),
            this, SLOT(updateSearchProvider(QListViewItem *)));
@@ -179,23 +181,13 @@ void InternetKeywordsOptions::load() {
 
     searcher->loadConfig();
 
+    QString searchFallbackName = searcher->searchFallback();
+
     QValueList<KURISearchFilterEngine::SearchEntry> lstSearchEngines = searcher->searchEngines();
     QValueList<KURISearchFilterEngine::SearchEntry>::ConstIterator it = lstSearchEngines.begin();
     QValueList<KURISearchFilterEngine::SearchEntry>::ConstIterator end = lstSearchEngines.end();
     for (; it != end; ++it) {
-	displaySearchProvider(*it);
-    }
-
-    QString searchFallbackName = searcher->searchFallback();
-
-    QListViewItemIterator lvit(lv_searchProviders);
-    for (; lvit.current(); ++lvit) {
-	const QString &name = lvit.current()->text(0);
-
-	cmb_searchFallback->insertItem(name);
-	if (searchFallbackName == name) {
-	    cmb_searchFallback->setCurrentItem(cmb_searchFallback->count() - 1);
-	}
+	displaySearchProvider(*it, searchFallbackName == (*it).m_strName);
     }
 
     cb_enableInternetKeywords->setChecked(searcher->navEnabled());
@@ -289,17 +281,19 @@ void InternetKeywordsOptions::changeSearchProvider() {
 
     entry.m_strName = provider;
     entry.m_strQuery = uri;
-    entry.m_lstKeys = QStringList::split(le_searchProviderShortcuts->text(), ", ");
+    entry.m_lstKeys = QStringList::split(", ", le_searchProviderShortcuts->text());
 
     searcher->insertSearchEngine(entry);
+    lv_searchProviders->setSelected(displaySearchProvider(entry), true);
 
     pb_chgSearchProvider->setEnabled(false);
+    pb_delSearchProvider->setEnabled(true);
 
     moduleChanged(true);
 }
 
 void InternetKeywordsOptions::deleteSearchProvider() {
-    const char *provider = le_searchProviderName->text();
+    const QString &provider = le_searchProviderName->text();
 
     searcher->removeSearchEngine(provider);
 
@@ -308,9 +302,6 @@ void InternetKeywordsOptions::deleteSearchProvider() {
 	const QString &name = lvit.current()->text(0);
 	if (name == provider) {
 	    lv_searchProviders->removeItem(lvit.current());
-	    if (!lvit.current()) {
-		--lvit;
-	    }
 	    lv_searchProviders->setSelected(lvit.current(), true);
 
 	    break;
@@ -319,14 +310,17 @@ void InternetKeywordsOptions::deleteSearchProvider() {
 
     // Update the combo box to go to None if the fallback was deleted.
 
-    int sel = cmb_searchFallback->currentItem();
-    for (int i = 0, count = cmb_searchFallback->count(); i < count; ++i) {
+    int current = cmb_searchFallback->currentItem();
+    for (int i = 1, count = cmb_searchFallback->count(); i < count; ++i) {
 	if (cmb_searchFallback->text(i) == provider) {
-	    if (i == sel) {
-		cmb_searchFallback->setCurrentItem(0);
-		searcher->setSearchFallback(QString::null);
-	    }
 	    cmb_searchFallback->removeItem(i);
+	    if (current >= i) {
+	        if (i == current) {
+		    searcher->setSearchFallback(QString::null);
+	        }
+		cmb_searchFallback->setCurrentItem(current - 1);
+	    }
+	    cmb_searchFallback->update();
 	    break;
 	}
     }
@@ -356,7 +350,10 @@ void InternetKeywordsOptions::updateSearchProvider(QListViewItem *lvi) {
     pb_delSearchProvider->setEnabled(lvi);
 }
 
-void InternetKeywordsOptions::displaySearchProvider(const KURISearchFilterEngine::SearchEntry &e) {
+QListViewItem *InternetKeywordsOptions::displaySearchProvider(const KURISearchFilterEngine::SearchEntry &e, bool fallback) {
+
+    // Show the provider in the list.
+
     QListViewItem *item = 0L;
 
     QListViewItemIterator it(lv_searchProviders);
@@ -368,11 +365,37 @@ void InternetKeywordsOptions::displaySearchProvider(const KURISearchFilterEngine
     }
 
     if (!item) {
-	item = new QListViewItem(lv_searchProviders);
+        item = new QListViewItem(lv_searchProviders);
+
+	// Put the name in the combo box.
+
+	int i, count = cmb_searchFallback->count();
+	for (i = 1; i < count; ++i) {
+	    if (cmb_searchFallback->text(i) > e.m_strName) {
+		int current = cmb_searchFallback->currentItem();
+		cmb_searchFallback->insertItem(e.m_strName, i);
+		if (current >= i) {
+		    cmb_searchFallback->setCurrentItem(current + 1);
+		}
+		break;
+	    }
+	}
+
+	if (i == count) {
+	    cmb_searchFallback->insertItem(e.m_strName);
+	}
+
+	if (fallback) {
+	    cmb_searchFallback->setCurrentItem(i);
+ 	}
     }
 
     item->setText(0, e.m_strName);
     item->setText(1, e.m_lstKeys.join(", "));
-}
+    if (!it.current()) {
+        lv_searchProviders->sort();
+    }
 
+    return item;
+}
 

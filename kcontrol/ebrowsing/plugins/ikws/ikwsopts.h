@@ -64,7 +64,7 @@ protected slots:
     void updateSearchProvider(QListViewItem *);
 
 private:
-    void displaySearchProvider(const KURISearchFilterEngine::SearchEntry &e);
+    QListViewItem *displaySearchProvider(const KURISearchFilterEngine::SearchEntry &e, bool fallback = false);
 
     // Internet Keywords enabled.
 
