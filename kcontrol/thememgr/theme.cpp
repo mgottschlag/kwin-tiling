@@ -230,7 +230,14 @@ bool Theme::load(const QString &aPath, QString &error)
   i = mFileName.findRev('/');
   if (i >= 0)
      mFileName = mFileName.mid(i+1);
+  if ( !QDir(workDir()).exists())
+  {
+      KProcess p;
+      p << "/bin/mkdir" << workDir();
+      if(!p.start(KProcess::Block) || !p.normalExit() || p.exitStatus())
+          kdWarning() << "Error during creating of work directory: " << workDir() << endl;
 
+  }
   if (finfo.isDir())
   {
     // The theme given is a directory. Copy files over into work dir.
@@ -304,7 +311,6 @@ bool Theme::load(const QString &aPath, QString &error)
     }
   }
   mFileList = list;
-
   if (mThemercFile.isEmpty())
   {
     error = i18n("Theme does not contain a .themerc nor a .theme file.");
