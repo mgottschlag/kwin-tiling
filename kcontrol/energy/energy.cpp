@@ -175,7 +175,6 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     m_pConfig->setGroup("DisplayEnergy");
 
     load();
-    setButtons(buttons());
 }
 
 
@@ -188,10 +187,9 @@ KEnergy::~KEnergy()
 int KEnergy::buttons()
 {
     if (m_bDPMS)
-    return KCModule::Help | KCModule::Default | KCModule::Reset |
-           KCModule::Cancel | KCModule::Ok | KCModule::Apply;
+       return KCModule::Help | KCModule::Default | KCModule::Apply;
     else
-    return KCModule::Help | KCModule::Ok;
+       return KCModule::Help;
 }
 
 
