@@ -606,7 +606,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
                         break;
             }
 
-            if(isBitmap)
+            if(!isBitmap)
                 font.font.pix_width=font.font.pix_height=point2Pixel((int)(fontSize*0.75));
 
             if(y<height && !FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
