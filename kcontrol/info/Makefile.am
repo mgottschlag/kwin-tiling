@@ -4,8 +4,8 @@ lib_LTLIBRARIES = libkcm_info.la
 
 libkcm_info_la_SOURCES = main.cpp memory.cpp
 
-libkcm_info_la_LDFLAGS  = $(all_libraries) -module -avoid-version 
-libkcm_info_la_LIBADD = -lkdeui
+libkcm_info_la_LDFLAGS = $(all_libraries) -module -avoid-version
+# libkcm_info_la_LIBADD =
 
 INCLUDES= $(all_includes)
  

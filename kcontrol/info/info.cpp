@@ -46,7 +46,7 @@
    DEFAULT_ERRORSTRING will be used...
 */
 
-static QString	GetInfo_ErrorString;
+static const char *GetInfo_ErrorString;
 static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 #define DEFAULT_ERRORSTRING \
@@ -178,7 +178,7 @@ void KInfoListWidget::defaults()
 	/*  Delete the user-visible ErrorString, before calling the 
 	    retrieve-function. If the function wants the widget to show
 	    another string, then it should modify GetInfo_ErrorString ! */
-        GetInfo_ErrorString = "";
+        GetInfo_ErrorString = 0;
 	sorting_allowed = true; 	// the functions may set that !
         lBox->setSorting(-1);   	// No Sorting per default
         
@@ -199,7 +199,7 @@ void KInfoListWidget::defaults()
             delete lBox;
             lBox = 0;
         }	    
-        if (GetInfo_ErrorString.isEmpty())
+        if (!GetInfo_ErrorString)
             GetInfo_ErrorString = DEFAULT_ERRORSTRING;
         if (NoInfoText)
             NoInfoText->setText(GetInfo_ErrorString);
@@ -221,7 +221,7 @@ KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name,
     title	= name;
     lBox 	= 0;
     NoInfoText  = 0;
-    GetInfo_ErrorString = "";
+    GetInfo_ErrorString = 0;
     defaults();
 
     setButtons(Ok|Help);
