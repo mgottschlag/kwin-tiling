@@ -84,7 +84,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocaleAdvanced *_locale,
   QGroupBox *grp;
   grp = new QVGroupBox(hbox, I18N_NOOP("Positive"));
   grp->setColumns(2);
-  labMonPosPreCurSym = new QLabel(grp, I18N_NOOP("Currency symbol:"));
+  labMonPosPreCurSym = new QLabel(grp, I18N_NOOP("Prefix currency symbol:"));
   chMonPosPreCurSym = new QCheckBox(grp);
   connect( chMonPosPreCurSym, SIGNAL( clicked() ),
 	   SLOT( slotMonPosPreCurSymChanged() ) );
@@ -96,7 +96,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocaleAdvanced *_locale,
 
   grp = new QVGroupBox(hbox, I18N_NOOP("Negative"));
   grp->setColumns(2);
-  labMonNegPreCurSym = new QLabel(grp, I18N_NOOP("Currency symbol:"));
+  labMonNegPreCurSym = new QLabel(grp, I18N_NOOP("Prefix currency symbol:"));
   chMonNegPreCurSym = new QCheckBox(grp);
   connect( chMonNegPreCurSym, SIGNAL( clicked() ),
 	   SLOT( slotMonNegPreCurSymChanged() ) );
