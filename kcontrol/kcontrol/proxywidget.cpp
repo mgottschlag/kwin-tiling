@@ -19,7 +19,7 @@
 
 #include <qwidget.h>
 #include <qstring.h>
-#include <qpushbutton.h>
+#include <kpushbutton.h>
 #include <qlayout.h>
 #include <qframe.h>
 #include <qscrollview.h>
@@ -30,6 +30,8 @@
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kdialog.h>
+#include <kguiitem.h>
+#include <kstdguiitem.h>
 
 #include <qwhatsthis.h>
 #include <qvbox.h>
@@ -212,11 +214,11 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 
   _sep = new KSeparator(KSeparator::HLine, this);
 
-  _help = new QPushButton(i18n("Hel&p"), this);
-  _default = new QPushButton(i18n("Use &Defaults"), this);
-  _apply = new QPushButton(i18n("&Apply"), this);
-  _reset = new QPushButton(i18n("&Reset"), this);
-  _root = new QPushButton(i18n("&Administrator Mode"), this);
+  _help =    new KPushButton( KStdGuiItem::help(), this );
+  _default = new QPushButton( i18n( "Use &Defaults" ), this );
+  _apply =   new KPushButton( KStdGuiItem::apply(), this );
+  _reset =   new KPushButton( KGuiItem( i18n( "&Reset" ), "undo" ), this );
+  _root =    new QPushButton( i18n( "&Administrator Mode" ), this );
 
   // only enable the requested buttons
   int b = _client->buttons();
