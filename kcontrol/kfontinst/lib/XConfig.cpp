@@ -328,7 +328,7 @@ bool CXConfig::readFontpaths()
                     processPath(line, path, unscaled);
 
                     if(NULL==findPath(path))
-                        itsPaths.append(new TPath(path, false, false, true));
+                        itsPaths.append(new TPath(expandHome(path), false, false, true));
                 }
             }
         }
@@ -355,7 +355,7 @@ bool CXConfig::writeFontpaths()
         cfg << constFontpaths << endl;
         for(path=itsPaths.first(); path; path=itsPaths.next())
             if(!path->disabled && CMisc::dExists(path->dir))
-                cfg << QFile::encodeName(CMisc::xDirSyntax(path->dir)) << endl;
+                cfg << QFile::encodeName(contractHome(CMisc::xDirSyntax(path->dir))) << endl;
 
         cfg.close();
     }
