@@ -498,10 +498,10 @@ void PasswordDlg::slotStartNewSession()
                "CTRL, ALT and the appropriate F-key at the same time.")
             .arg(7).arg(8);
     QLabel *label2 = new QLabel( qt_text, winFrame );
-    QPushButton *okbutton = new QPushButton( KStdGuiItem::cont().text(), winFrame );
+    KPushButton *okbutton = new KPushButton( KGuiItem(i18n("&Start New Session"), "fork"), winFrame );
     okbutton->setDefault( true );
     connect( okbutton, SIGNAL( clicked() ), dialog, SLOT( accept() ) );
-    QPushButton *cbutton = new QPushButton( KStdGuiItem::cancel().text(), winFrame );
+    KPushButton *cbutton = new KPushButton( KStdGuiItem::cancel(), winFrame );
     connect( cbutton, SIGNAL( clicked() ), dialog, SLOT( reject() ) );
 
     QBoxLayout *hbox = new QHBoxLayout( 0 );
