@@ -784,7 +784,10 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("Pattern", KBackgroundPattern::name());
     m_pConfig->writeEntry("Program", KBackgroundProgram::name());
     m_pConfig->writeEntry("BackgroundMode", m_BMRevMap[m_BackgroundMode]);
-    m_pConfig->writeEntry("Wallpaper", m_Wallpaper);
+    //remove old config, otherwise it's all the time prioritary
+    //=> when we add multi wallpaper, "Simple Wallpaper" replace
+    //config for multi wallpaper
+    m_pConfig->writeEntry("Wallpaper", "");
     m_pConfig->writeEntry("WallpaperMode", m_WMRevMap[m_WallpaperMode]);
     m_pConfig->writeEntry("MultiWallpaperMode", m_MMRevMap[m_MultiMode]);
     m_pConfig->writeEntry("BlendMode", m_BlMRevMap[m_BlendMode]);
