@@ -745,37 +745,89 @@ static QString createFamilyName(const QString &familyName, const QString &fullNa
     // ...Therefore can't just use the family name read in from the font - as this would ignore the "Oldstyle" part.
     // So, use the "FullName", and remove the any style information (weight, width, italic/roman/oblique) from this...
     //
-    QString retVal(fullName);
-
+    // NOTE: Can't simply use FullName and remove style info - as this would convert "Times New Roman" to "Times New"!!
+    //
+    QString retVal(fullName),
+            family(familyName);
+ 
     //
     // Remove family name...
-    if(QString::null!=familyName && 0==retVal.find(familyName))
-        retVal.remove(0, familyName.length());
+    if(QString::null!=family)
+        if(0==retVal.find(family))    // This removes "Times New Roman" from "Times New Roman Bold"
+            retVal.remove(0, family.length());
+        else
+        {
+            //
+            // Some fonts have the family name listed with no spaces, but have spaces in the full name, e.g.
+            //
+            //     Family   : LucidyxMono
+            //     FullName : Lucidux Mono Italic Oldstyle
+            //
+            // ...therefore, need to remove each string from FullName that occurs in FamilyName
+            QString full(fullName);
+ 
+            full.replace(QRegExp(" "), "");   // Remove whitespace - so we would now have "LuciduxMonoItalicOldstyle"
+ 
+            if(0==full.find(family))  // Found "LuciduxMono" in "LuciduxMonoItalic" - so set retVal to "ItalicOldstyle"
+            {
+                //
+                // Now we need to extract the family name, and the rest...
+                // i.e. Family: "Lucidux Mono"
+                //      rest  : "Italic Oldstyle"
+ 
+                if(full.length()==family.length())  // No style information...
+                {
+                    family=fullName;
+                    retVal="";
+                }
+                else  // Need to remove style info...
+                {
+                    QString      f;
+                    unsigned int i;
+ 
+                    //
+                    // Create family from retVal(which ==fullName ATM) - i.e. so we have spaces,
+                    // Do this by moving family.length() num chars (+ spaces) from retVal to family
+                    for(i=0; i<family.length(); ++i)
+                    {
+                        if(retVal[0]==QChar(' '))
+                        {
+                            f+=retVal[0];
+                            retVal.remove(0, 1);
+                        }
+                        f+=retVal[0];
+                        retVal.remove(0, 1);
+                    }
+                    family=f;
+                }
+            }
+        }
+ 
     //
     // Remove widthm, weight, and italic stuff from fullName...
     int prop;
-
+ 
     for(prop=CFontEngine::WEIGHT_THIN; prop<=CFontEngine::WEIGHT_BLACK; prop++)
         removeString(retVal, CFontEngine::weightStr((CFontEngine::EWeight)prop));
-
+ 
     for(prop=CFontEngine::WIDTH_ULTRA_CONDENSED; prop<=CFontEngine::WIDTH_ULTRA_EXPANDED; prop++)
         removeString(retVal, CFontEngine::widthStr((CFontEngine::EWidth)prop));
-
+ 
     removeString(retVal, "Italic");
     removeString(retVal, "Oblique");
     removeString(retVal, "Roman");
     removeString(retVal, "Cond");  // Some fonts just have Cond and not Condensed!
-
+ 
     //
     // Add the family name back on...
-    if(QString::null!=familyName)
-        retVal=familyName+retVal;
-
+    if(QString::null!=family)
+        retVal=family+retVal;
+ 
     //
     // Replace any non-alphanumeric or space characters...
     retVal.replace(QRegExp("&"), "And");
     retVal=CMisc::removeSymbols(retVal);
-
+ 
     return retVal.simplifyWhiteSpace();
 }
 
