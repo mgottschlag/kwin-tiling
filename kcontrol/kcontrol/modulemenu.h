@@ -21,19 +21,20 @@
 
 
 #include <qlist.h>
-#include <qpopupmenu.h>
 #include <qstringlist.h>
 #include <qintdict.h>
 #include <qstring.h>
 #include <qwidget.h>
 #include <qdict.h>
 
+#include <kpopmenu.h>
+
 
 class ConfigModule;
 class ConfigModuleList;
 
 
-class ModuleMenu : public QPopupMenu
+class ModuleMenu : public KPopupMenu
 {
   Q_OBJECT;
 
@@ -54,7 +55,7 @@ private slots:
 
 protected:
 
-  QPopupMenu *getGroupMenu(const QStringList &groups);
+  KPopupMenu *getGroupMenu(const QStringList &groups);
 
 
 private:
@@ -63,7 +64,7 @@ private:
 
   ConfigModuleList       *_modules;
   QIntDict<ConfigModule> _moduleDict;
-  QDict<QPopupMenu>      _menuDict;
+  QDict<KPopupMenu>      _menuDict;
 
 };
 

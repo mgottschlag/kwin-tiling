@@ -17,8 +17,6 @@
 */                                                                            
 
 
-#include <qpopupmenu.h>
-
 #include <qheader.h>
 #include <qstring.h>
 #include <qlist.h>
@@ -39,7 +37,7 @@
 
 
 ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * name)
-  : QPopupMenu(parent, name)
+  : KPopupMenu(parent, name)
   , _modules(list)
 {
   // use large id's to start with...
@@ -57,7 +55,7 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
 	  if (module->onlyRoot() && !KCGlobal::root())
 		continue;
          
-      QPopupMenu *parent = 0;
+      KPopupMenu *parent = 0;
       parent = getGroupMenu(module->groups());
       int realid = parent->insertItem(module->smallIcon(), module->name(), id);
       _moduleDict.insert(realid, module);
@@ -81,7 +79,7 @@ QString menuPath(const QStringList& groups)
 }
 
 
-QPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
+KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
 {
   // break recursion if path is empty
   if (groups.count() == 0)
@@ -99,10 +97,10 @@ QPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
   QStringList parGroup;
   for (unsigned int i=0; i<groups.count()-1; i++)
     parGroup.append(groups[i]);
-  QPopupMenu *parent = getGroupMenu(parGroup);
+  KPopupMenu *parent = getGroupMenu(parGroup);
 
   // create new menu
-  QPopupMenu *menu = new QPopupMenu(parent);
+  KPopupMenu *menu = new KPopupMenu(parent);
   connect(menu, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
   KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
   QString defName = path.left(path.length()-1);
