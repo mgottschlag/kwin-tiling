@@ -207,7 +207,7 @@ void KDEDConfig::save() {
 		}	
 
 		// Special case: kalarmd
-		item = static_cast<QCheckListItem *>(_lvStartup->findItem("kxmlrpcd",4));
+		item = static_cast<QCheckListItem *>(_lvStartup->findItem("kalarmd",4));
 		if (item) {
 			KConfig config("kalarmdrc", false, false);
 			config.setGroup("General");
