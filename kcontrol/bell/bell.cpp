@@ -207,7 +207,7 @@ void KBellConfig::ringBell()
                          KBBellPercent | KBBellPitch | KBBellDuration,
                          &kbd);
   // ring bell
-  XBell(kapp->getDisplay(),100);
+  XBell(kapp->getDisplay(),0);
 
   // restore old state
   kbd.bell_percent = old_state.bell_percent;
