@@ -8,6 +8,8 @@
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
+#include <stdlib.h>
+
 #include <qgroupbox.h>
 #include <qbuttongroup.h>
 #include <qlabel.h>
@@ -23,6 +25,8 @@
 #include <qsizepolicy.h>
 #include <qwhatsthis.h>
 #include <qtextstream.h>
+
+#include <dcopclient.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -53,6 +57,40 @@
 
 extern void runRdb();
 
+void applyGtkStyles(bool active)
+{
+   QString gtkkde = QDir::homeDirPath()+"/.gtkrc-kde";
+   QCString gtkrc = getenv("GTK_RC_FILES");
+   QStringList list = QStringList::split(':', QFile::decodeName(gtkrc));
+   if (list.count() == 0)
+   {
+      list.append(QString::fromLatin1("/etc/gtk/gtkrc"));
+      list.append(QDir::homeDirPath()+"/.gtkrc");
+   }
+   list.remove(gtkkde);
+   if (active)
+      list.append(gtkkde);
+
+   // Pass env. var to kdeinit.
+   QCString name = "GTK_RC_FILES";
+   QCString value = QFile::encodeName(list.join(":"));
+   QByteArray params;
+   QDataStream stream(params, IO_WriteOnly);
+   stream << name << value;
+   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
+}
+
+void applyQtXFT(bool active)
+{
+   // Pass env. var to kdeinit.
+   QCString name = "QT_XFT";
+   QCString value = active ? "1" : "0";
+   QByteArray params;
+   QDataStream stream(params, IO_WriteOnly);
+   stream << name << value;
+   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
+}
+
 extern "C" {
     KCModule *create_style(QWidget *parent, const char *name) {
       KGlobal::locale()->insertCatalogue(QString::fromLatin1("kcmstyle"));
@@ -60,16 +98,28 @@ extern "C" {
     }
 
     void init_style() {
-        KConfig config("kcmdisplayrc", true, false);
+        KConfig config("kcmdisplayrc", true, true);
         config.setGroup("X11");
         if (config.readBoolEntry( "useResourceManager", true ))
+        {
 	  runRdb();
+          applyGtkStyles(true);
+        }
+        else
+        {
+          applyGtkStyles(false);
+        }
+
+        config.setGroup("KDE");
+        // Enable/disable Qt anti-aliasing
+        applyQtXFT(config.readBoolEntry( "AntiAliasing", true ));
+
         // Write some Qt root property.
-       QByteArray properties;
-       QDataStream d(properties, IO_WriteOnly);
-       d << kapp->palette() << KGlobalSettings::generalFont();
-       Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
-       XChangeProperty(qt_xdisplay(),  qt_xrootwin(), a, a, 8, PropModeReplace,
+        QByteArray properties;
+        QDataStream d(properties, IO_WriteOnly);
+        d << kapp->palette() << KGlobalSettings::generalFont();
+        Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
+        XChangeProperty(qt_xdisplay(),  qt_xrootwin(), a, a, 8, PropModeReplace,
                (unsigned char*) properties.data(), properties.size());
 
     }
@@ -502,6 +552,7 @@ void KGeneral::save()
     config->writeEntry("macStyle", macStyle, true, true);
 #ifdef HAVE_AA
     config->writeEntry("AntiAliasing", useAA, true, true);
+    applyQtXFT(useAA);
 #endif
     config->setGroup("Toolbar style");
     config->writeEntry("IconText", tbUseText, true, true);
@@ -518,6 +569,7 @@ void KGeneral::save()
       runRdb();
       QApplication::restoreOverrideCursor();
     }
+    applyGtkStyles(useRM);
 
     KIPC::sendMessageAll(KIPC::StyleChanged);
     if ( m_bToolbarsDirty )
