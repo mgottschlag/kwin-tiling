@@ -1,7 +1,5 @@
 dnl this is for kdm:
 
-AC_DEFUN(AC_CHECK_KDM,
-[
 AC_CHECK_FUNCS(getsecretkey)
 dnl checks for X server
 
@@ -118,8 +116,5 @@ if test -n "$LIBXDMCP"; then
   ac_cpp=$ac_cpp_safe
 fi
 
-])
-
-AC_CHECK_KDM
 dnl AC_OUTPUT(kdm/config/kdmrc)
 
