@@ -1,0 +1,18 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kcmshell System/kcmkded
+Icon=kded
+Type=Application
+DocPath=kcontrol/kded.html
+
+X-KDE-SubstituteUID=true
+X-KDE-RootOnly=true
+X-KDE-HasReadOnlyMode=true
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kded
+X-KDE-Factoryname=kded
+
+Name=KDE Service Manager
+Comment=System Services Configuration
+Keywords=KDED,Daemon,Services
