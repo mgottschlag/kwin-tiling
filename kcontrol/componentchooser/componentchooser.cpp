@@ -170,7 +170,7 @@ void CfgEmailClient::selectEmailClient()
 
 	// get the preferred Terminal Application 
 	KConfigGroup confGroup( KGlobal::config(), QString::fromLatin1("General") );
-	QString preferredTerminal = confGroup.readEntry(QString::fromLatin1("TerminalApplication"), QString::fromLatin1("konsole"));
+	QString preferredTerminal = confGroup.readPathEntry("TerminalApplication", QString::fromLatin1("konsole"));
 	preferredTerminal += QString::fromLatin1(" -e ");
 	
 	int len = preferredTerminal.length();
@@ -237,7 +237,7 @@ void CfgTerminalEmulator::defaults()
 void CfgTerminalEmulator::load(KConfig *) {
 	KConfig *config = new KConfig("kdeglobals", true);
 	config->setGroup("General");
-	QString terminal = config->readEntry("TerminalApplication","konsole");
+	QString terminal = config->readPathEntry("TerminalApplication","konsole");
 	if (terminal == "konsole")
 	{
 	   terminalLE->setText("xterm");
