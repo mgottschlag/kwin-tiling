@@ -239,7 +239,7 @@ void ShortcutsModule::readSchemeNames()
 	m_pcbSchemes->clear();
 	m_rgsSchemeFiles.clear();
 
-	m_pcbSchemes->insertItem( "Current Scheme" );
+	m_pcbSchemes->insertItem( i18n("Current Scheme") );
 	m_rgsSchemeFiles.append( "cur" );
 
 	// This for system files
