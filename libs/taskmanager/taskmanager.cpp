@@ -671,7 +671,11 @@ void Task::updateThumbnail()
    // by the thumbnail generation. This makes things much smoother
    // on slower machines.
    //
-   _grab = QPixmap::grabWindow( _win );
+  QWidget *rootWin = qApp->desktop();
+  QRect geom = _info.geometry;
+   _grab = QPixmap::grabWindow( rootWin->winId(),
+				geom.x(), geom.y(),
+				geom.width(), geom.height() );
 
    if ( !_grab.isNull() )
      QTimer::singleShot( 200, this, SLOT( generateThumbnail() ) );
