@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     {
         if (!strcmp(argv[i], "-setup"))
         {
-            kdDebug << "-setup not yet implemented" << endl;
+            kdDebug() << "-setup not yet implemented" << endl;
             exit(1);
         }
         else if (!strcmp(argv[i], "-help"))
