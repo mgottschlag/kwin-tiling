@@ -5,7 +5,6 @@ Icon=kcontrol
 Type=Application
 DocPath=kcontrol/index.html
 X-KDE-StartupNotify=true
-OnlyShowIn=KDE;
 
 Name=Control Center
 Name[af]=Kontrole Sentrum
