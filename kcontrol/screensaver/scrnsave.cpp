@@ -447,12 +447,14 @@ void KScreenSaver::updateValues()
 void KScreenSaver::defaults()
 {
     slotScreenSaver( 0 );
+    mEnabledCheckBox->setChecked( false );
     mSaverListBox->setCurrentItem( 0 );
     mSaverListBox->centerCurrentItem();
     slotTimeoutChanged( 5 );
     slotPriorityChanged( 0 );
     slotLock( false );
     updateValues();
+
 
     emit changed(true);
 }
