@@ -365,22 +365,28 @@ void Task::maximize()
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
     ni.setState( NET::Max, NET::Max );
+
+    if (_info.mappingState == NET::Iconic)
+        activate();
 }
 
 void Task::restore()
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
     ni.setState( 0, NET::Max );
+
+    if (_info.mappingState == NET::Iconic)
+        activate();
 }
 
 void Task::iconify()
 {
     XIconifyWindow( qt_xdisplay(), _win, qt_xscreen() );
-}
 
-void Task::deiconify()
-{
-    activate();
+    if (_info.state & NET::Max) {
+        NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
+        ni.setState( 0, NET::Max );
+    }
 }
 
 void Task::close()

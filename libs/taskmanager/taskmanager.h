@@ -62,7 +62,6 @@ public:
     void maximize();
     void restore();
     void iconify();
-    void deiconify();
     void close();
     void raise();
     void activate();
