@@ -715,8 +715,11 @@ kg_main( int argc, char **argv )
     }
     QDesktopWidget *dsk = kapp->desktop();
     QRect scr = dsk->screenGeometry(
-	unsigned(kdmcfg->_greeterScreen) < unsigned(dsk->numScreens()) ?
-	    kdmcfg->_greeterScreen : dsk->screenNumber( QPoint( 0, 0 ) ) );
+	kdmcfg->_greeterScreen == -1 ?
+	    dsk->screenNumber( QPoint( 0, 0 ) ) :
+	    kdmcfg->_greeterScreen == -2 ?
+		dsk->screenNumber( QPoint( dsk->width() - 1, 0 ) ) :
+		kdmcfg->_greeterScreen );
     kgreeter = new KGreeter;
     kgreeter->setMaximumSize( scr.size() );
     kgreeter->move( -10000, -10000 );

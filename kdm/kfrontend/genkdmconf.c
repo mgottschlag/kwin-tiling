@@ -845,7 +845,7 @@ static Ent entsGreeter[] = {
 "# The screen the greeter should be displayed on in multi-headed setups.\n"
 "# The numbering starts with 0 and corresponds to the listing order in the\n"
 "# active ServerLayout section of XF86Config. -1 means to use the upper-left\n"
-"# screen. Default is 0\n" },
+"# screen, -2 means to use the upper-right screen. Default is 0\n" },
 { "GreetString",	F_UPDATE, (const char *)upd_greetstring, 
 "# The headline in the greeter.\n"
 "# The following character pairs are replaced:\n"
