@@ -98,7 +98,11 @@ class CXftConfig
     void            setIncludes(const QStringList &list)   { itsIncludes=list; itsMadeChanges=true; }
     void            setIncludeIfs(const QStringList &list) { itsIncludeIfs=list; itsMadeChanges=true; }
 
+#if QT_VERSION >= 300
+    void setEntries(QPtrList<TEntry> &list);
+#else
     void setEntries(QList<TEntry> &list);
+#endif
 
     // For use *only* by parser functions... 
     void addEntry(XftTest *test, XftEdit *edit);

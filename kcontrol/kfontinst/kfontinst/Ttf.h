@@ -214,7 +214,11 @@ class CTtf
 
     char              *itsBuffer;
     unsigned int      itsBufferSize;
+#if QT_VERSION >= 300
+    QPtrList<TPsNameMap> itsPsNameList;
+#else
     QList<TPsNameMap> itsPsNameList;
+#endif
 };
 
 #endif
