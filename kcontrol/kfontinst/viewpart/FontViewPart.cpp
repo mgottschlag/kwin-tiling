@@ -86,7 +86,7 @@ CFontViewPart::~CFontViewPart()
 
 bool CFontViewPart::openFile()
 {
-    if(CFontEngine::isATtc(QFile::encodeName(m_url.path())) && CGlobal::fe().openKioFont(m_file, CFontEngine::TEST, true))
+    if(CFontEngine::isATtc(QFile::encodeName(m_url.path())) && CGlobal::fe().openFont(m_url, CFontEngine::TEST, true))
     {
         if(CGlobal::fe().getNumFaces()>1)
         {
@@ -100,7 +100,7 @@ bool CFontViewPart::openFile()
     if(KIO_FONTS_PROTOCOL!=m_url.protocol())
         itsInstallButton->show();
 
-    itsPreview->showFont(m_file);
+    itsPreview->showFont(m_url);
 
     return true;
 }

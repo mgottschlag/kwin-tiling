@@ -668,6 +668,8 @@ void CKioFonts::get(const KURL &url)
 
     QCString realPath=QFile::encodeName(convertUrl(url, true));
 
+    KFI_DBUG << "real: " << realPath << endl;
+
     KDE_struct_stat buff;
     if (-1==KDE_stat(realPath.data(), &buff))
         error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, url.path());

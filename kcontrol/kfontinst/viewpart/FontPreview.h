@@ -51,7 +51,6 @@ class CFontPreview : public QWidget
 
     public slots:
 
-    void showFont(const QString &file, int face=1);
     void showFont(const KURL &url, int face=1);
     void showFace(int face);
 

@@ -211,9 +211,15 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 
         do
         {
-            if(CGlobal::fe().openKioFont(fName , KFileMetaInfo::Fastest==what
+            if(fontsProt
+                   ? CGlobal::fe().openFont(url , KFileMetaInfo::Fastest==what
                                                        ? CFontEngine::NAME
-                                                       : CFontEngine::NAME|CFontEngine::PROPERTIES|CFontEngine::XLFD, true, face))
+                                                       : CFontEngine::NAME|CFontEngine::PROPERTIES|CFontEngine::XLFD,
+                                                         true, face)
+                   : CGlobal::fe().openFont(fName , KFileMetaInfo::Fastest==what
+                                                       ? CFontEngine::NAME
+                                                       : CFontEngine::NAME|CFontEngine::PROPERTIES|CFontEngine::XLFD,
+                                                         true, face))
             {
                 numFaces=CGlobal::fe().getNumFaces(); // Only really for TTC
 

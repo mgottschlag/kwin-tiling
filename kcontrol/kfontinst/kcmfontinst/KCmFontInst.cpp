@@ -557,7 +557,7 @@ void CKCmFontInst::fileHighlighted(const KFileItem *item)
         {
             bool showFs=false;
 
-            if(CFontEngine::TT_COLLECTION==type && CGlobal::fe().openKioFont(previewItem->url().path(), CFontEngine::TEST, true))
+            if(CFontEngine::TT_COLLECTION==type && CGlobal::fe().openFont(previewItem->url(), CFontEngine::TEST, true))
             {
                 if(CGlobal::fe().getNumFaces()>1)
                 {

@@ -46,15 +46,6 @@ CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str
 {
 }
 
-void CFontPreview::showFont(const QString &file, int face)
-{
-    KURL url;
-
-    url.setPath(CMisc::getDir(file));
-    url.setFileName(CMisc::getFile(file));
-    showFont(url, face);
-}
-
 void CFontPreview::showFont(const KURL &url, int face)
 {
     itsCurrentUrl=url;
@@ -72,7 +63,7 @@ void CFontPreview::showFont()
     itsLastWidth=width();
     itsLastHeight=height();
 
-    if(CGlobal::fe().openKioFont(itsCurrentUrl.path(), CFontEngine::NAME, true, itsCurrentFace-1))
+    if(CGlobal::fe().openFont(itsCurrentUrl, CFontEngine::NAME, true, itsCurrentFace-1))
     {
         setEraseColor(Qt::white);
         CGlobal::fe().createPreview(itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1);
