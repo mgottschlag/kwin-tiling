@@ -634,7 +634,7 @@ static Ent entsGeneral[] = {
 
 static Ent entsXdmcp[] = {
 { "Enable",		0, 0, 
-"# Whether KDM should listen to XDMCP requests. Default is false.\n" },
+"# Whether KDM should listen to XDMCP requests. Default is true.\n" },
 { "Port",		0, 0, 
 "# The UDP port KDM should listen on for XDMCP requests. Don't change the 177.\n" },
 { "KeyFile",		F_FILE644, 0, 
