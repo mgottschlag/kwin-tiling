@@ -83,7 +83,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     tabwidget = new QTabWidget(this);
     top->addWidget(tabwidget);
-	
+
 	tab1 = new KMouseDlg(this);
     QButtonGroup *group = new QButtonGroup( tab1 );
     group->setExclusive( true );
@@ -151,9 +151,9 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     wtstr = i18n("Change color of the mouse cursor\n"
         "X11 Standard: black cursor\n"
-        "Windows(tm) Standard: white cursor");    
+        "Windows(tm) Standard: white cursor");
     QWhatsThis::add( tab1->cbWhiteCursor, wtstr);
-            
+
     connect(tab1->slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
     connect(tab1->cbVisualActivate, SIGNAL(clicked()), this, SLOT(changed()));
 
@@ -435,9 +435,9 @@ void MouseConfig::load()
   tab1->cbWhiteCursor->setChecked( settings->whiteCursor );
   slotClick();
 
-  
+
   KConfig ac("kaccessrc", true);
-  
+
   ac.setGroup("Mouse");
   mouseKeys->setChecked(ac.readBoolEntry("MouseKeys", false));
   mk_delay->setValue(ac.readNumEntry("MKDelay", 160));
@@ -474,14 +474,14 @@ void MouseConfig::save()
       config->readBoolEntry("LargeCursor", KDE_DEFAULT_LARGE_CURSOR);
   bool wasWhiteCursor =
       config->readBoolEntry("WhiteCursor", false);
-      
+
   settings->apply();
   settings->save(config);
   if (settings->largeCursor != wasLargeCursor) {
     KMessageBox::information(this, i18n("KDE must be restarted for the cursor size change to take effect"), QString::null, "DoNotRemindCursor");
   }
   if (settings->whiteCursor != wasWhiteCursor) {
-    KMessageBox::information(this, i18n("KDE must be restarted for the cursor color change to take effect"), QString::null, "DoNotRemindCursor");  
+    KMessageBox::information(this, i18n("KDE must be restarted for the cursor color change to take effect"), QString::null, "DoNotRemindCursor");
   }
 
   KConfig ac("kaccessrc", false);
@@ -518,6 +518,7 @@ void MouseConfig::defaults()
     tab1->singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
     tab1->cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
     tab1->cbWhiteCursor->setChecked( false );
+    tab1->cbVisualActivate->setChecked( KDE_DEFAULT_VISUAL_ACTIVATE );
     slotClick();
 
   mouseKeys->setChecked(false);
