@@ -23,6 +23,7 @@
 #include "positiontab.h"
 
 class QFrame;
+class KBackgroundRenderer;
 
 class PositionTab : public PositionTabBase
 {
@@ -30,6 +31,7 @@ class PositionTab : public PositionTabBase
 
 public:
     PositionTab( QWidget *parent=0, const char* name=0 );
+    ~PositionTab();
 
     void load();
     void save();
@@ -42,12 +44,15 @@ protected slots:
     void movePanel(int);
     void lengthenPanel(int);
     void panelDimensionsChanged();
+    void slotBGPreviewReady(int);
 
 private:
     enum positions { PosLeft = 0, PosRight, PosTop, PosBottom };
     enum allignments { AlignLeft = 0, AlignCenter, AlignRight };
     
     QFrame* m_pretendPanel;
+    QWidget* m_pretendDesktop;
+    KBackgroundRenderer* m_desktopPreview;
     unsigned int m_panelPos;
     unsigned int m_panelAlign;
 };

@@ -2,11 +2,11 @@ kde_module_LTLIBRARIES = kcm_kicker.la
 
 kcm_kicker_la_SOURCES = positiontab.ui hidingtab.ui lookandfeeltab.ui menutab.ui extensionstab.ui \
 			positiontab_impl.cpp hidingtab_impl.cpp lookandfeeltab_impl.cpp menutab_impl.cpp \
-			extensionstab_impl.cpp  main.cpp
+			extensionstab_impl.cpp main.cpp
 
 kcm_kicker_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-kcm_kicker_la_LIBADD = $(LIB_KSYCOCA) $(LIB_KFILE)
-INCLUDES= $(all_includes) 
+kcm_kicker_la_LIBADD =  ../background/libbgnd.la $(LIB_KSYCOCA) $(LIB_KFILE)
+INCLUDES= $(all_includes) -I../background 
 
 kcm_kicker_la_METASOURCES = AUTO
 

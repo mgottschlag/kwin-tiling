@@ -15,11 +15,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  */
+#include <stdlib.h>
 
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
-#include <qpixmap.h>
+#include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qwhatsthis.h>
 #include <qslider.h>
@@ -30,8 +31,10 @@
 #include <klocale.h>
 #include <klineedit.h>
 #include <knuminput.h>
+#include <kpixmap.h>
 #include <kstandarddirs.h>
 
+#include "../background/bgrender.h"
 #include "positiontab_impl.h"
 #include "positiontab_impl.moc"
 
@@ -48,6 +51,7 @@ extern const int margin = 1;
 PositionTab::PositionTab( QWidget *parent, const char* name )
   : PositionTabBase (parent, name),
     m_pretendPanel(0),
+    m_desktopPreview(0),
     m_panelPos(PosBottom),
     m_panelAlign(AlignLeft)
 {
@@ -55,13 +59,15 @@ PositionTab::PositionTab( QWidget *parent, const char* name )
     m_monitorImage->setPixmap(monitor);
     m_monitorImage->setFixedSize(m_monitorImage->sizeHint());
 
+    m_pretendDesktop = new QWidget(m_monitorImage, "pretendBG");
+    m_pretendDesktop->setGeometry(offsetX, offsetY, maxX, maxY);
     m_pretendPanel = new QFrame(m_monitorImage, "pretendPanel");
     m_pretendPanel->setGeometry(offsetX + margin, maxY + offsetY - 10, 
                                 maxX - margin, 10 - margin);
     m_pretendPanel->setFrameShape(QFrame::MenuBarPanel);
 
     // connections
-    connect(m_locationGroup, SIGNAL(clicked(int)), SLOT(changed()));
+    connect(m_locationGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
     connect(m_percentSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_percentSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_expandCheckBox, SIGNAL(clicked()), SIGNAL(changed()));
@@ -70,7 +76,14 @@ PositionTab::PositionTab( QWidget *parent, const char* name )
     connect(m_customSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_customSpinbox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
 
+    m_desktopPreview = new KBackgroundRenderer(0);
+    connect(m_desktopPreview, SIGNAL(imageDone(int)), SLOT(slotBGPreviewReady(int)));
     load();
+}
+
+PositionTab::~PositionTab()
+{
+    delete m_desktopPreview;
 }
 
 void PositionTab::load()
@@ -111,6 +124,42 @@ void PositionTab::load()
     m_panelPos = c.readNumEntry("Position", PosBottom);
     m_panelAlign = c.readNumEntry("Alignment", QApplication::reverseLayout() ? AlignRight : AlignLeft);
 
+    if (m_panelPos == PosTop)
+    {
+        if (m_panelAlign == AlignLeft)
+            locationTopLeft->setOn(true);
+        else if (m_panelAlign == AlignCenter)
+            locationTop->setOn(true);
+        else // if (m_panelAlign == AlignRight
+            locationTopRight->setOn(true);
+    }
+    else if (m_panelPos == PosRight)
+    {
+        if (m_panelAlign == AlignLeft)
+            locationRightTop->setOn(true);
+        else if (m_panelAlign == AlignCenter)
+            locationRight->setOn(true);
+        else // if (m_panelAlign == AlignRight
+            locationRightBottom->setOn(true);
+    }
+    else if (m_panelPos == PosBottom)
+    {
+        if (m_panelAlign == AlignLeft)
+            locationBottomLeft->setOn(true);
+        else if (m_panelAlign == AlignCenter)
+            locationBottom->setOn(true);
+        else // if (m_panelAlign == AlignRight
+            locationBottomRight->setOn(true);
+    }
+    else // if (m_panelPos == PosLeft
+    {
+        if (m_panelAlign == AlignLeft)
+            locationLeftTop->setOn(true);
+        else if (m_panelAlign == AlignCenter)
+            locationLeft->setOn(true);
+        else // if (m_panelAlign == AlignRight
+            locationLeftBottom->setOn(true);
+    }
     int sizepercentage = c.readNumEntry( "SizePercentage", 100 );
     m_percentSlider->setValue( sizepercentage );
     m_percentSpinBox->setValue( sizepercentage );
@@ -118,6 +167,8 @@ void PositionTab::load()
     m_expandCheckBox->setChecked( c.readBoolEntry( "ExpandSize", true ) );
     
     lengthenPanel(sizepercentage);
+    m_desktopPreview->setPreview(m_pretendDesktop->size());
+    m_desktopPreview->start();
 }
 
 void PositionTab::save()
@@ -381,5 +432,21 @@ void PositionTab::panelDimensionsChanged()
 {
     lengthenPanel(-1);
 }
+
+void PositionTab::slotBGPreviewReady(int)
+{
+    KPixmap pm;
+    if (QPixmap::defaultDepth() < 15)
+    {
+        pm.convertFromImage(*m_desktopPreview->image(), KPixmap::LowColor);
+    }
+    else
+    {
+        pm.convertFromImage(*m_desktopPreview->image());
+    }
+
+    m_pretendDesktop->setBackgroundPixmap(pm);
+}
+
 
 
