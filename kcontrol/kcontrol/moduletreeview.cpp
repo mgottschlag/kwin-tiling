@@ -31,6 +31,7 @@
 #include <kdesktopfile.h>
 
 #include "moduletreeview.h"
+#include "moduletreeview.moc"
 #include "modules.h"
 #include "global.h"
 

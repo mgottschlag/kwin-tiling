@@ -29,6 +29,7 @@
 #include <kiconloader.h>
 
 #include "moduleiconview.h"
+#include "moduleiconview.moc"
 #include "modules.h"
 #include "global.h"
 

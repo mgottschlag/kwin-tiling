@@ -53,5 +53,4 @@ private:
   static QString _uname, _hname, _isystem, _irelease, _iversion, _imachine, _kdeversion;
 };
 
-
 #endif

@@ -1,5 +1,4 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  
   This program is free software; you can redistribute it and/or modify
@@ -18,10 +17,7 @@
  
 */                                                                            
 
-
-
 #include "utils.h"
-
 
 void splitString(QString q, char c, QStringList &list)
 {
@@ -35,7 +31,4 @@ void splitString(QString q, char c, QStringList &list)
       q.remove(0,pos+1);
     }
   list.append(q);
-} 
-
-
-
+}

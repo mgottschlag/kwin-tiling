@@ -17,7 +17,7 @@
 
 */
 
-#include <qapp.h>
+#include <qapplication.h>
 #include <qlabel.h>
 
 #include <kmessagebox.h>
@@ -120,12 +120,12 @@ void DockContainer::resizeEvent(QResizeEvent *)
   _busy->resize(width(), height());
   if (_module)
 	{
-	  _basew->hide();
 	  _module->module()->resize(size());
+	  _basew->hide();
 	}
   else
 	{
-	  _basew->show();
 	  _basew->resize(size());
+	  _basew->show();
 	}
 }

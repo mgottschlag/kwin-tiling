@@ -40,7 +40,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
   // executable only with root access?
   setOnlyRoot(desktop.readBoolEntry("X-KDE-RootOnly", false));
 
-  // set the modules' simple attributes
+  // set the modules simple attributes
   setName(desktop.readName());
   setComment(desktop.readComment());
   setIcon(desktop.readIcon());
@@ -52,7 +52,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
   QStringList kw = desktop.readListEntry("Keywords");
   setKeywords(kw);
  
-  // try to find out the modules' groups
+  // try to find out the modules groups
   QString group = desktop.readEntry("X-KDE-Group");
   if (group.isEmpty())
     {	  

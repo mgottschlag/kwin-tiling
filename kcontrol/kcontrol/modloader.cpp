@@ -1,5 +1,4 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  
   This program is free software; you can redistribute it and/or modify
@@ -18,9 +17,7 @@
  
 */                                                                            
 
-
 #include <qstringlist.h>
-
 
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -28,7 +25,6 @@
 
 #include "global.h"
 #include "modloader.h"
-
 
 KCModule *ModuleLoader::module(const ModuleInfo &mod)
 {
