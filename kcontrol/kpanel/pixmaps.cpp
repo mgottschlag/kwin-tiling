@@ -75,8 +75,8 @@ KPixmapConfig::KPixmapConfig(QWidget *parent, const char* name)
 
     connect(itemCombo, SIGNAL(activated(int)), SLOT(itemSlot(int)));
     connect(enableBox, SIGNAL(clicked()), SLOT(enableSlot()));
-    connect(currentIcon, SIGNAL(iconChanged(const char *)),
-            SLOT(iconSlot(const char *)));
+    connect(currentIcon, SIGNAL(iconChanged(const QString &)),
+            SLOT(iconSlot(const QString &)));
 
     
     loadSettings();
@@ -102,7 +102,7 @@ void KPixmapConfig::enableSlot()
     enabled[itemCombo->currentItem()] = enableBox->isChecked();
 }
 
-void KPixmapConfig::iconSlot(const char *icon)
+void KPixmapConfig::iconSlot(const QString &icon)
 {
     icons[itemCombo->currentItem()] = icon;
 }
@@ -126,8 +126,10 @@ void KPixmapConfig::saveSettings(){
     else
         config->writeEntry("BackgroundTexture", " ");
 
-    if(enabled[AppIcon_ID])
+    if(enabled[AppIcon_ID]){
         config->writeEntry("IconTexture", icons[AppIcon_ID]);
+        warning("writing icontexture");
+    }
     else
         config->writeEntry("IconTexture", " ");
 

@@ -41,7 +41,7 @@ public:
     virtual void saveSettings();
     virtual void applySettings();
 protected slots:
-    void iconSlot(const char *icon);
+    void iconSlot(const QString &icon);
     void itemSlot(int index);
     void enableSlot();
 protected:
