@@ -9,7 +9,7 @@
 
    Licensed under the GNU GPL Version 2
 
- ------------------------------------------------------------- */
+------------------------------------------------------------- */
 
 #include <qclipboard.h>
 #include <qcursor.h>
@@ -46,19 +46,12 @@
 #include "urlgrabber.h"
 #include "version.h"
 #include "clipboardpoll.h"
+#include "history.h"
+#include "historystringitem.h"
+#include "klipperpopup.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-
-#define QUIT_ITEM     50
-#define CONFIG_ITEM   60
-#define EMPTY_ITEM    80
-#define HELPMENU_ITEM 90
-#define TITLE_ITEM    100
-
-#define MENU_ITEMS   (( isApplet() ? 6 : 8 ) + ( bTearOffHandle ? 1 : 0 ))
-// the <clipboard empty> item
-#define EMPTY (m_popup->count() - MENU_ITEMS)
 
 extern bool qt_qclipboard_bailout_hack;
 #if KDE_IS_VERSION( 3, 9, 0 )
@@ -77,21 +70,44 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     updateTimestamp(); // read initial X user time
     setBackgroundMode( X11ParentRelative );
     clip = kapp->clipboard();
-    m_selectedItem = -1;
 
     connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
     m_overflowClearTimer.start( 1000 );
     connect( &m_pendingCheckTimer, SIGNAL( timeout()), SLOT( slotCheckPending()));
 
-    QSempty = i18n("<empty clipboard>");
-
-    bTearOffHandle = KGlobalSettings::insertTearOffHandle();
+    m_history = new History( this, "main_history" );
 
     // we need that collection, otherwise KToggleAction is not happy :}
+    QString defaultGroup( "default" );
     KActionCollection *collection = new KActionCollection( this, "my collection" );
     toggleURLGrabAction = new KToggleAction( collection, "toggleUrlGrabAction" );
     toggleURLGrabAction->setEnabled( true );
-
+    toggleURLGrabAction->setGroup( defaultGroup );
+    clearHistoryAction = new KAction( i18n("C&lear Clipboard History"),
+                                      "history_clear",
+                                      0,
+                                      m_history,
+                                      SLOT( slotClear() ),
+                                      collection,
+                                      "clearHistoryAction" );
+    connect( clearHistoryAction, SIGNAL( activated() ), SLOT( slotClearClipboard() ) );
+    clearHistoryAction->setGroup( defaultGroup );
+    configureAction = new KAction( i18n("&Configure Klipper..."),
+                                   "configure",
+                                   0,
+                                   this,
+                                   SLOT( slotConfigure() ),
+                                   collection,
+                                   "configureAction" );
+    configureAction->setGroup( defaultGroup );
+    quitAction = new KAction( i18n("&Quit"),
+                              "exit",
+                              0,
+                              this,
+                              SLOT( slotQuit() ),
+                              collection,
+                              "quitAction" );
+    quitAction->setGroup( "exit" );
     myURLGrabber = 0L;
     KConfig *kc = m_config;
     readConfiguration( kc );
@@ -100,9 +116,6 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     menuTimer = new QTime();
 
     m_lastString = "";
-    m_popup = new KPopupMenu(0L, "main_menu");
-    connect(m_popup, SIGNAL(activated(int)), SLOT(clickedMenu(int)));
-    connect(m_popup, SIGNAL(aboutToHide()), SLOT(slotAboutToHideMenu()));
 
     readProperties(m_config);
     connect(kapp, SIGNAL(saveYourself()), SLOT(saveSession()));
@@ -127,13 +140,19 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     connect( toggleURLGrabAction, SIGNAL( toggled( bool )),
              this, SLOT( setURLGrabberEnabled( bool )));
 
+    KlipperPopup* popup = m_history->popup();
+    connect ( m_history,  SIGNAL( changed() ), SLOT( slotHistoryChanged() ) );
+    popup->plugAction( toggleURLGrabAction );
+    popup->plugAction( clearHistoryAction );
+    popup->plugAction( configureAction );
+    popup->plugAction( quitAction );
+
     QToolTip::add( this, i18n("Klipper - clipboard tool") );
 }
 
 KlipperWidget::~KlipperWidget()
 {
     delete menuTimer;
-    delete m_popup;
     delete myURLGrabber;
     if( m_config != kapp->config())
         delete m_config;
@@ -169,10 +188,10 @@ void KlipperWidget::clearClipboardContents()
 // DCOP - don't call from Klipper itself
 void KlipperWidget::clearClipboardHistory()
 {
-  updateTimestamp();
-  slotClearClipboard();
-  trimClipHistory(0);
-  saveSession();
+    updateTimestamp();
+    slotClearClipboard();
+    m_history->slotClear();
+    saveSession();
 }
 
 
@@ -184,8 +203,9 @@ void KlipperWidget::mousePressEvent(QMouseEvent *e)
     // if we only hid the menu less than a third of a second ago,
     // it's probably because the user clicked on the klipper icon
     // to hide it, and therefore won't want it shown again.
-    if ( menuTimer->elapsed() > 300 )
-        showPopupMenu( m_popup );
+    if ( menuTimer->elapsed() > 300 ) {
+        slotPopupMenu();
+    }
 }
 
 void KlipperWidget::paintEvent(QPaintEvent *)
@@ -197,75 +217,6 @@ void KlipperWidget::paintEvent(QPaintEvent *)
     if ( y < 0 ) y = 0;
     p.drawPixmap(x , y, m_pixmap);
     p.end();
-}
-
-void KlipperWidget::clickedMenu(int id)
-{
-    switch ( id ) {
-    case -1:
-        break;
-    case CONFIG_ITEM:
-        slotConfigure();
-        break;
-    case QUIT_ITEM: {
-        saveSession();
-        int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically Start Klipper?") );
-
-        KConfig *config = KGlobal::config();
-        config->setGroup("General");
-        if ( autoStart == KMessageBox::Yes )
-            config->writeEntry("AutoStart", true);
-        else if ( autoStart == KMessageBox::No) {
-            config->writeEntry("AutoStart", false);
-        } else  // cancel chosen don't quit
-            break;
-        config->sync();
-        kapp->quit();
-        break;
-    }
-//    case URLGRAB_ITEM: // handled with an extra slot
-//	break;
-    case EMPTY_ITEM:
-	if ( !bClipEmpty )
-	{
-        trimClipHistory(0);
-        slotClearClipboard();
-        setEmptyClipboard();
-	}
-	break;
-    default:
-	if ( id == URLGrabItem )
-	{
-	    break; // handled by its own slot
-	}
-	else if ( !bClipEmpty )
-	{
-	    //CT mark up the currently put into clipboard -
-            // so that user can see later
-            if ( m_selectedItem != -1 )
-                m_popup->setItemChecked(m_selectedItem, false);
-
-	    m_selectedItem = id;
-	    m_popup->setItemChecked(m_selectedItem, true);
-            QMapIterator<long,QString> it = m_clipDict.find( id );
-
-            if ( it != m_clipDict.end() && it.data() != QSempty )
-            {
-                QString data = it.data();
-                setClipboard( data, Clipboard | Selection );
-
-		if (bURLGrabber && bReplayActionInHistory)
-		    myURLGrabber->checkNewData( data );
-
-                m_lastString = data;
-
-                // We want to move the just selected item to the top of the popup
-                // menu. But when we do this right here, we get a crash a little
-                // bit later. So instead, we fire a timer to perform the moving.
-                QTimer::singleShot( 0, this, SLOT( slotMoveSelectedToTop() ));
-            }
-	}
-    }
 }
 
 void KlipperWidget::slotAboutToHideMenu()
@@ -287,7 +238,7 @@ void KlipperWidget::showPopupMenu( QPopupMenu *menu )
     } else {
         KWin::WindowInfo i = KWin::windowInfo( winId(), NET::WMGeometry );
         QRect g = i.geometry();
-	QRect screen = KGlobalSettings::desktopGeometry(g.center());
+        QRect screen = KGlobalSettings::desktopGeometry(g.center());
 
         if ( g.x()-screen.x() > screen.width()/2 &&
              g.y()-screen.y() + size.height() > screen.height() )
@@ -302,59 +253,30 @@ void KlipperWidget::showPopupMenu( QPopupMenu *menu )
 
 void KlipperWidget::readProperties(KConfig *kc)
 {
-  QStringList dataList;
+    QStringList dataList;
 
-  m_popup->clear();
+    m_history->slotClear();
 
-  m_popup->insertTitle( SmallIcon( "klipper" ),
-                        i18n("Klipper - Clipboard Tool"));
+    if (bKeepContents) { // load old clipboard if configured
+        KConfigGroupSaver groupSaver(kc, "General");
+        dataList = kc->readListEntry("ClipboardData");
 
-  if (bKeepContents) { // load old clipboard if configured
-      KConfigGroupSaver groupSaver(kc, "General");
-      dataList = kc->readListEntry("ClipboardData");
+        for (QStringList::ConstIterator it = dataList.end();
+             it != dataList.begin();
+             )
+        {
+            m_history->forceInsert( new HistoryStringItem( *( --it ) ) );
+        }
 
-      for (QStringList::ConstIterator it = dataList.begin();
-           it != dataList.end(); ++it)
-      {
-          long id = m_popup->insertItem( KStringHandler::cEmSqueeze((*it).simplifyWhiteSpace(), fontMetrics(), 25).replace( "&", "&&" ), -2, -1);
-          m_clipDict.insert( id, *it );
-      }
+        if ( !dataList.isEmpty() )
+        {
+            m_lastSelection = dataList.last();
+            m_lastClipboard = dataList.last();
+            m_lastString    = dataList.last();
+            setClipboard( m_lastString, Clipboard | Selection );
+        }
+    }
 
-      if ( !dataList.isEmpty() )
-      {
-          m_lastSelection = dataList.first();
-          m_lastClipboard = dataList.first();
-          m_lastString    = dataList.first();
-          setClipboard( m_lastString, Clipboard | Selection );
-      }
-  }
-
-  bClipEmpty = clipboardContents().simplifyWhiteSpace().isEmpty() &&
-               dataList.isEmpty();
-
-  m_popup->insertSeparator();
-  toggleURLGrabAction->plug( m_popup, -1 );
-  URLGrabItem = m_popup->idAt( m_popup->count() - 1 );
-
-  m_popup->insertItem( SmallIcon("history_clear"),
-			i18n("C&lear Clipboard History"), EMPTY_ITEM );
-
-  m_popup->insertItem( SmallIcon("configure"), i18n("&Configure Klipper..."),
-                        CONFIG_ITEM);
-
-  KHelpMenu *help = new KHelpMenu( this, aboutData(),
-                false );
-  m_popup->insertItem( SmallIconSet("help"), KStdGuiItem::help().text(), help->menu(), HELPMENU_ITEM );
-
-  if( !isApplet()) {
-    m_popup->insertSeparator();
-    m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
-  }
-  if( bTearOffHandle )
-    m_popup->insertTearOffHandle();
-
-  if (bClipEmpty)
-      setEmptyClipboard();
 }
 
 
@@ -367,7 +289,7 @@ void KlipperWidget::readConfiguration( KConfig *kc )
     bReplayActionInHistory = kc->readBoolEntry("ReplayActionInHistory", false);
     bNoNullClipboard = kc->readBoolEntry("NoEmptyClipboard", true);
     bUseGUIRegExpEditor = kc->readBoolEntry("UseGUIRegExpEditor", true );
-    maxClipItems = kc->readNumEntry("MaxClipItems", 7);
+    m_history->max_size( kc->readNumEntry("MaxClipItems", 7) );
     bIgnoreSelection = kc->readBoolEntry("IgnoreSelection", false);
 }
 
@@ -379,7 +301,7 @@ void KlipperWidget::writeConfiguration( KConfig *kc )
     kc->writeEntry("ReplayActionInHistory", bReplayActionInHistory);
     kc->writeEntry("NoEmptyClipboard", bNoNullClipboard);
     kc->writeEntry("UseGUIRegExpEditor", bUseGUIRegExpEditor);
-    kc->writeEntry("MaxClipItems", maxClipItems);
+    kc->writeEntry("MaxClipItems", m_history->max_size() );
     kc->writeEntry("IgnoreSelection", bIgnoreSelection);
     kc->writeEntry("Version", klipper_version );
 
@@ -392,26 +314,16 @@ void KlipperWidget::writeConfiguration( KConfig *kc )
 // save session on shutdown. Don't simply use the c'tor, as that may not be called.
 void KlipperWidget::saveSession()
 {
-  if ( bKeepContents ) { // save the clipboard eventually
-      QStringList dataList;
-      if ( !bClipEmpty )
-      {
-          // don't iterate over the map, but over the popup (due to sorting!)
-          long id = 0L;
-          for ( uint i = 0; i < m_popup->count(); i++ ) {
-              id = m_popup->idAt( i );
-              if ( id != -1 ) {
-                  QMapIterator<long,QString> it = m_clipDict.find( id );
-                  if ( it != m_clipDict.end() )
-                      dataList.append( it.data() );
-              }
-          }
-      }
+    if ( bKeepContents ) { // save the clipboard eventually
+        QStringList dataList;
+        for (  const HistoryItem* item = m_history->first(); item; item = m_history->next() ) {
+            dataList << item->text();
+        }
 
-      KConfigGroupSaver groupSaver(m_config, "General");
-      m_config->writeEntry("ClipboardData", dataList);
-      m_config->sync();
-  }
+        KConfigGroupSaver groupSaver(m_config, "General");
+        m_config->writeEntry("ClipboardData", dataList);
+        m_config->sync();
+    }
 }
 
 void KlipperWidget::slotSettingsChanged( int category )
@@ -425,11 +337,11 @@ void KlipperWidget::slotSettingsChanged( int category )
 
 void KlipperWidget::disableURLGrabber()
 {
-   KMessageBox::information( 0L,
-            i18n( "You can enable URL actions later by right-clicking on the "
-                  "Klipper icon and selecting 'Enable Actions'" ) );
+    KMessageBox::information( 0L,
+                              i18n( "You can enable URL actions later by right-clicking on the "
+                                    "Klipper icon and selecting 'Enable Actions'" ) );
 
-   setURLGrabberEnabled( false );
+    setURLGrabberEnabled( false );
 }
 
 void KlipperWidget::slotConfigure()
@@ -449,10 +361,9 @@ void KlipperWidget::slotConfigure()
     dlg->setNoNullClipboard( bNoNullClipboard );
     dlg->setUseGUIRegExpEditor( bUseGUIRegExpEditor );
     dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
-    dlg->setMaxItems( maxClipItems );
+    dlg->setMaxItems( m_history->max_size() );
     dlg->setIgnoreSelection( bIgnoreSelection );
     dlg->setNoActionsFor( myURLGrabber->avoidWindows() );
-//    dlg->setEnableActions( haveURLGrabber );
 
     if ( dlg->exec() == QDialog::Accepted ) {
         bKeepContents = dlg->keepContents();
@@ -467,15 +378,12 @@ void KlipperWidget::slotConfigure()
         globalKeys->updateConnections();
         toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
-//	haveURLGrabber = dlg->enableActions();
-
         myURLGrabber->setActionList( dlg->actionList() );
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
         myURLGrabber->setStripWhiteSpace( dlg->stripWhiteSpace() );
-	myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
+        myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
 
-	maxClipItems = dlg->maxItems();
-	trimClipHistory( maxClipItems );
+        m_history->max_size( dlg->maxItems() );
 
         // KClipboardSynchronizer configuration
         m_config->setGroup("General");
@@ -496,15 +404,39 @@ void KlipperWidget::slotConfigure()
     delete dlg;
 }
 
+void KlipperWidget::slotQuit()
+{
+    saveSession();
+    int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically Start Klipper?") );
+
+    KConfig *config = KGlobal::config();
+    config->setGroup("General");
+    if ( autoStart == KMessageBox::Yes ) {
+        config->writeEntry("AutoStart", true);
+    } else if ( autoStart == KMessageBox::No) {
+        config->writeEntry("AutoStart", false);
+    } else  // cancel chosen don't quit
+        return;
+    config->sync();
+    kapp->quit();
+
+}
+
+void KlipperWidget::slotPopupMenu() {
+    KlipperPopup* popup = m_history->popup();
+    popup->ensureClean();
+    showPopupMenu( popup );
+}
+
 
 void KlipperWidget::slotRepeatAction()
 {
     if ( !myURLGrabber ) {
-	myURLGrabber = new URLGrabber( m_config );
-	connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
-		 SLOT( showPopupMenu( QPopupMenu * )) );
-	connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
-			this, SLOT( disableURLGrabber() ) );
+        myURLGrabber = new URLGrabber( m_config );
+        connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
+                 SLOT( showPopupMenu( QPopupMenu * )) );
+        connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
+                 this, SLOT( disableURLGrabber() ) );
     }
 
     myURLGrabber->invokeAction( m_lastString );
@@ -531,7 +463,7 @@ void KlipperWidget::setURLGrabberEnabled( bool enable )
             myURLGrabber = new URLGrabber( m_config );
             connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
                      SLOT( showPopupMenu( QPopupMenu * )) );
-	    connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
+            connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
                      this, SLOT( disableURLGrabber() ) );
         }
     }
@@ -542,27 +474,13 @@ void KlipperWidget::toggleURLGrabber()
     setURLGrabberEnabled( !bURLGrabber );
 }
 
-void KlipperWidget::trimClipHistory( int new_size )
-{
-    while (m_popup->count() - MENU_ITEMS > (unsigned) new_size ) {
-        int id = m_popup->idAt(EMPTY);
-        if ( id == -1 )
-            return;
-
-        m_clipDict.remove(id);
-        m_popup->removeItemAt(EMPTY);
-    }
-}
-
-void KlipperWidget::removeFromHistory( const QString& text )
-{
-    QMapIterator<long,QString> it = m_clipDict.begin();
-    for ( ; it != m_clipDict.end(); ++it ) {
-        if ( it.data() == text ) {
-            long id = it.key();
-            m_popup->removeItem( id );
-            m_clipDict.remove( id );
-            return; // there can be only one (I hope :)
+void KlipperWidget::slotHistoryChanged() {
+    const HistoryItem* topitem = m_history->first();
+    if ( topitem ) {
+        QString top( topitem->text() );
+        if ( m_lastString != top ) {
+            setClipboard( top, Clipboard | Selection );
+            m_lastString = top;
         }
     }
 }
@@ -571,8 +489,7 @@ void KlipperWidget::slotClearClipboard()
 {
     clip->clear(QClipboard::Selection);
     clip->clear(QClipboard::Clipboard);
-    if ( m_selectedItem != -1 )
-        m_popup->setItemEnabled(m_selectedItem, false);
+
 }
 
 QString KlipperWidget::clipboardContents( bool *isSelection )
@@ -607,42 +524,8 @@ void KlipperWidget::applyClipChanges( const QString& clipData )
             return; // don't add into the history
     }
 
-    if (bClipEmpty) { // remove <clipboard empty> from popupmenu and dict
-        if (clipData != QSempty) {
-            bClipEmpty = false;
-            m_popup->removeItemAt(EMPTY);
-            m_clipDict.clear();
-        }
-    }
+    m_history->insert( new HistoryStringItem( clipData ) );
 
-    if (m_selectedItem != -1)
-        m_popup->setItemChecked(m_selectedItem, false);
-
-    removeFromHistory( clipData );
-    trimClipHistory(maxClipItems - 1);
-
-    m_selectedItem = m_popup->insertItem(KStringHandler::cEmSqueeze(clipData.simplifyWhiteSpace(), fontMetrics(), 25).replace( "&", "&&" ), -2, 1); // -2 means unique id, 1 means first location
-    m_clipDict.insert(m_selectedItem, clipData);
-    if ( bClipEmpty )
-        m_popup->setItemEnabled( m_selectedItem, false );
-    else
-        m_popup->setItemChecked(m_selectedItem, true);
-}
-
-void KlipperWidget::setEmptyClipboard()
-{
-    bClipEmpty = true;
-    applyClipChanges( QSempty );
-}
-
-void KlipperWidget::slotMoveSelectedToTop()
-{
-    m_popup->removeItem( m_selectedItem );
-    m_clipDict.remove( m_selectedItem );
-
-    m_selectedItem = m_popup->insertItem( KStringHandler::cEmSqueeze(m_lastString.simplifyWhiteSpace(), fontMetrics(), 25).replace( "&", "&&" ), -2, 1 );
-    m_popup->setItemChecked( m_selectedItem, true );
-    m_clipDict.insert( m_selectedItem, m_lastString );
 }
 
 void KlipperWidget::newClipData()
@@ -724,15 +607,22 @@ void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
     }
 
     bool clipEmpty = (clip->data(selectionMode ? QClipboard::Selection : QClipboard::Clipboard)->format() == 0L);
-//     qDebug("checkClipData(%i): %s, empty: %i (lastClip: %s, lastSel: %s)", selectionMode, text.latin1(), clipEmpty, m_lastClipboard.latin1(), m_lastSelection.latin1() );
 
-//     const char *format;
-//     int i = 0;
-//     while ( (format = clip->data()->format( i++ )) )
-//     {
-//         qDebug( "    format: %s", format);
-//     }
+// debug code
+#ifdef NOISY_KLIPPER
+    kdDebug() << "Checking clip data" << endl;
+#endif
+#if 0
 
+    qDebug("checkClipData(%i): %s, empty: %i (lastClip: %s, lastSel: %s)", selectionMode, text.latin1(), clipEmpty, m_lastClipboard.latin1(), m_lastSelection.latin1() );
+
+    const char *format;
+    int i = 0;
+    while ( (format = clip->data()->format( i++ )) )
+    {
+        qDebug( "    format: %s", format);
+    }
+#endif
     bool changed = !selectionMode || text != m_lastSelection;
 
     QString lastClipRef = selectionMode ? m_lastSelection : m_lastClipboard;
@@ -755,14 +645,7 @@ void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
 
     // If the string is null bug out
     if (lastClipRef.isEmpty()) {
-        if (m_selectedItem != -1) {
-            m_popup->setItemChecked(m_selectedItem, false);
-            m_selectedItem = -1;
-        }
-
-        if ( m_clipDict.isEmpty() ) {
-            setEmptyClipboard();
-        }
+        // XXX: emit something about clipboard changed
         return;
     }
 
@@ -819,36 +702,21 @@ void KlipperWidget::slotClearOverflow()
 QStringList KlipperWidget::getClipboardHistoryMenu()
 {
     QStringList menu;
-    if ( !bClipEmpty )
-    {
-        // don't iterate over the map, but over the popup (due to sorting!)
-        long id = 0L;
-        // We skip the title and start at 1
-        for ( uint i = 1; i < m_popup->count(); i++ )
-        {
-            id = m_popup->idAt( i );
-            if ( id != -1 )
-            {
-                QMapIterator<long,QString> it = m_clipDict.find( id );
-                if ( it == m_clipDict.end() )
-                    break; // End of clipboard entries
-                menu << m_popup->text(id);
-            }
-        }
+    for ( const HistoryItem* item = m_history->first(); item; item = m_history->next() ) {
+        menu << item->text();
     }
     return menu;
 }
 
 QString KlipperWidget::getClipboardHistoryItem(int i)
 {
-    if ( !bClipEmpty )
-    {
-        long id = m_popup->idAt( i+1 ); // Add 1 to skip title
-        QMapIterator<long,QString> it = m_clipDict.find( id );
-        if ( it != m_clipDict.end() )
-            return it.data();
+    for ( const HistoryItem* item = m_history->first(); item; item = m_history->next() , i-- ) {
+        if ( i == 0 ) {
+            return item->text();
+        }
     }
     return QString::null;
+
 }
 
 //
@@ -893,30 +761,30 @@ static Bool update_x_time_predicate( Display*, XEvent* event, XPointer )
     // from qapplication_x11.cpp
     switch ( event->type ) {
     case ButtonPress:
-	// fallthrough intended
+      // fallthrough intended
     case ButtonRelease:
-	next_x_time = event->xbutton.time;
-	break;
+      next_x_time = event->xbutton.time;
+      break;
     case MotionNotify:
-	next_x_time = event->xmotion.time;
-	break;
+      next_x_time = event->xmotion.time;
+      break;
     case KeyPress:
-	// fallthrough intended
+      // fallthrough intended
     case KeyRelease:
-	next_x_time = event->xkey.time;
-	break;
+      next_x_time = event->xkey.time;
+      break;
     case PropertyNotify:
-	next_x_time = event->xproperty.time;
-	break;
+      next_x_time = event->xproperty.time;
+      break;
     case EnterNotify:
     case LeaveNotify:
-	next_x_time = event->xcrossing.time;
-	break;
+      next_x_time = event->xcrossing.time;
+      break;
     case SelectionClear:
-	next_x_time = event->xselectionclear.time;
-	break;
+      next_x_time = event->xselectionclear.time;
+      break;
     default:
-	break;
+      break;
     }
     return False;
 }
@@ -946,7 +814,7 @@ void KlipperWidget::updateTimestamp()
 }
 
 static const char * const description =
-	I18N_NOOP("KDE cut & paste history utility");
+      I18N_NOOP("KDE cut & paste history utility");
 
 void KlipperWidget::createAboutData()
 {

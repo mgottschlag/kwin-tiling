@@ -28,6 +28,8 @@ class KAboutData;
 class URLGrabber;
 class ClipboardPoll;
 class QTime;
+class History;
+class KAction;
 
 class KlipperWidget : public QWidget, public DCOPObject
 {
@@ -47,8 +49,12 @@ public:
     ~KlipperWidget();
 
     virtual void adjustSize();
-    QPopupMenu* popup() { return m_popup; }
     KGlobalAccel *globalKeys;
+
+    /**
+     * Get clipboard history (the "document")
+     */
+    History* history() { return m_history; }
 
     static void updateTimestamp();
     static void createAboutData();
@@ -58,6 +64,7 @@ public:
 public slots:
     void saveSession();
     void slotSettingsChanged( int category );
+    void slotHistoryChanged();
     void slotConfigure();
 
 protected:
@@ -87,7 +94,7 @@ protected:
     bool isApplet() const { return m_config != kapp->config(); }
 
 protected slots:
-    void slotPopupMenu() { showPopupMenu( m_popup ); }
+    void slotPopupMenu();
     void showPopupMenu( QPopupMenu * );
     void slotRepeatAction();
     void setURLGrabberEnabled( bool );
@@ -96,10 +103,7 @@ protected slots:
 
 private slots:
     void newClipData();
-    void clickedMenu(int);
     void slotClearClipboard();
-
-    void slotMoveSelectedToTop();
 
     void slotSelectionChanged() {
         clipboardSignalArrived( true );
@@ -107,7 +111,8 @@ private slots:
     void slotClipboardChanged() {
         clipboardSignalArrived( false );
     }
-    
+
+    void slotQuit();
     void slotAboutToHideMenu();
     
     void slotClearOverflow();
@@ -122,13 +127,14 @@ private:
 
     QString m_lastString;
     QString m_lastClipboard, m_lastSelection;
+    History* m_history;
     int m_overflowCounter;
-    KPopupMenu *m_popup;
     KToggleAction *toggleURLGrabAction;
-    QMap<long,QString> m_clipDict;
+    KAction* clearHistoryAction;
+    KAction* configureAction;
+    KAction* quitAction;
     QPixmap m_pixmap;
     bool bPopupAtMouse :1;
-    bool bClipEmpty    :1;
     bool bKeepContents :1;
     bool bURLGrabber   :1;
     bool bReplayActionInHistory :1;
@@ -136,11 +142,7 @@ private:
     bool bNoNullClipboard       :1;
     bool bTearOffHandle         :1;
     bool bIgnoreSelection       :1;
-    QString QSempty;
     URLGrabber *myURLGrabber;
-    int m_selectedItem;
-    int maxClipItems;
-    int URLGrabItem;
     KConfig* m_config;
     QTimer m_overflowClearTimer;
     QTimer m_pendingCheckTimer;
@@ -148,7 +150,6 @@ private:
     ClipboardPoll* poll;
     static KAboutData* about_data;
 
-    void trimClipHistory(int);
     bool blockFetchingNewData();
 };
 

@@ -20,6 +20,8 @@
 #include <kconfig.h>
 
 #include "toplevel.h"
+#include "history.h"
+#include "klipperpopup.h"
 
 extern "C"
 {
@@ -39,7 +41,7 @@ KlipperApplet::KlipperApplet(const QString& configFile, Type t, int actions,
     move( 0, 0 );
     setBackgroundMode(QWidget::X11ParentRelative);
     widget = new KlipperAppletWidget( this );
-    setCustomMenu(widget->popup());
+    setCustomMenu(widget->history()->popup());
     centerWidget();
     widget->show();
 }
