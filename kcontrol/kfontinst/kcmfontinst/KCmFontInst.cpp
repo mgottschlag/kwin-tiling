@@ -248,18 +248,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         {
             toolbar->insertLineSeparator();
 
-            if((act=previewCol->action("zoomIn")))
-                act->plug(toolbar);
-            if((act=previewCol->action("zoomOut")))
-                act->plug(toolbar);
             if((act=previewCol->action("changeText")))
                 act->plug(toolbar);
-            if((act=previewCol->action("toggleWaterfall")))
-                act->plug(toolbar);
-
-            // For some reason the following always put zoomOut, zoomIn, changeText hmmm :-(
-            //for(unsigned int i=0; i<previewCol->count(); ++i)
-            //    previewCol->action(i)->plug(toolbar);
         }
     }
 #endif
