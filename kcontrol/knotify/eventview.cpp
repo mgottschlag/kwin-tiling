@@ -35,7 +35,6 @@
 static QString presentation[5] = {
 	i18n("Sound"),
 	i18n("MessageBox"),
-	i18n("Log Window"),
 	i18n("Log File"),
 	i18n("Standard Error")
 };
@@ -51,7 +50,6 @@ EventView::EventView(QWidget *parent, const char *name):
 		eventslist->insertItem(presentation[1]);
 		eventslist->insertItem(presentation[2]);
 		eventslist->insertItem(presentation[3]);
-		eventslist->insertItem(presentation[4]);
 	}
 	
 	layout->addMultiCellWidget(eventslist, 0,2, 0,0);
@@ -112,13 +110,7 @@ void EventView::itemSelected(int item)
 		if (present & KNotifyClient::Messagebox)
 			enabled->setChecked(true);
 		break;
-/*		
 	case (2):
-		if (present & KNotifyClient::Logwindow)
-			enabled->setChecked(true);
-		break;
-*/
-	case (3):
 		file->show();
 		file->setText(logfile);
 		/*
@@ -129,7 +121,7 @@ void EventView::itemSelected(int item)
 		}
 		*/
 		break;
-	case (4):
+	case (3):
 		if (present & KNotifyClient::Stderr)
 			enabled->setChecked(true);
 	}
@@ -153,14 +145,9 @@ void EventView::itemToggled(bool on)
 		p=KNotifyClient::Messagebox;
 		break;
 	case (2):
-		p=KNotifyClient::Logwindow;
-		break;
-		/*
-	case (3):
 		p=KNotifyClient::Logfile;
 		break;
-		*/
-	case (4):
+	case (3):
 		p=KNotifyClient::Stderr;
 		break;
 	}
@@ -209,11 +196,8 @@ void EventView::load(KConfig *config, const QString &section)
 		setPixmap(0, true);
 	if (present & KNotifyClient::Messagebox)
 		setPixmap(1, true);
-	if (present & KNotifyClient::Logwindow)
-		setPixmap(2, true);
-	#warning njord, please fix this
-	//	if (present & KNotifyClient::Logfile)
-	//		setPixmap(3, true);
+	if (present & KNotifyClient::Logfile)
+		setPixmap(3, true);
 	if (present & KNotifyClient::Stderr)
 		setPixmap(4, true);
 }
