@@ -41,7 +41,7 @@ BGMultiWallpaperList::BGMultiWallpaperList(QWidget *parent, const char *name)
 	: QListBox(parent, name)
 {
    setAcceptDrops(true);
-   setSelectionMode(QListBox::Multi);
+   setSelectionMode(QListBox::Extended);
 }
 
 
