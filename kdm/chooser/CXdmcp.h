@@ -74,11 +74,12 @@ extern "C" {
 #define TRIES		3
 
 struct _app_resources {
-  ARRAY8Ptr   xdmAddress;
+  ARRAY8Ptr	xdmAddress;
   ARRAY8Ptr	clientAddress;
   int		connectionType;
 };
 
+/*  Huuuh? This is already declared in Xdmcp.h - at least in XFree 4
 extern "C" {
 #ifndef XIMStringConversionRetrival
 extern int XdmcpARRAY8Equal(ARRAY8 *, ARRAY8 *);
@@ -102,10 +103,12 @@ extern int XdmcpWriteCARD16(XdmcpBuffer *, CARD16);
 #endif
 extern int XdmcpWriteHeader(XdmcpBuffer *, XdmcpHeader *);
 }
+*/
 
 class CXdmcp : public QObject {
-Q_OBJECT
- public:
+    Q_OBJECT
+
+public:
 
   typedef struct _hostName {
     struct _hostName	*next;
