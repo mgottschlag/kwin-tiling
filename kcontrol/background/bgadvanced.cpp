@@ -356,13 +356,13 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
     lbl->setBuddy(m_NameEdit);
     grid->addWidget(m_NameEdit, 0, 1);
 
-    lbl = new QLabel(i18n("&Comment:"), frame);
+    lbl = new QLabel(i18n("Co&mment:"), frame);
     grid->addWidget(lbl, 1, 0);
     m_CommentEdit = new QLineEdit(frame);
     lbl->setBuddy(m_CommentEdit);
     grid->addWidget(m_CommentEdit, 1, 1);
 
-    lbl = new QLabel(i18n("&Command:"), frame);
+    lbl = new QLabel(i18n("Comman&d:"), frame);
     grid->addWidget(lbl, 2, 0);
     m_CommandEdit = new QLineEdit(frame);
     lbl->setBuddy(m_CommandEdit);
