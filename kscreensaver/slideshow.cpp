@@ -137,7 +137,7 @@ void kSlideShowSaver::registerEffects()
 
   mNumEffects = i;
 
-  mNumEffects = 1;  //...for testing
+//  mNumEffects = 1;  //...for testing
 }
 
 
