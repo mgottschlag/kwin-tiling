@@ -90,9 +90,6 @@ DIFFERENCES FROM XDM
 
 REQUIREMENTS
   
-  - Qt-1.42 or newer and kdelibs from KDE 1.1
-    You should also define $QTDIR and $KDEDIR
-
   - the background needs the "utopia" type-1 font.
     IMO everybody should have these free type-1 fonts. Using
     programs like "LyX" or the "KDE Help System" is much more
