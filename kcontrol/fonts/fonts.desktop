@@ -1,0 +1,103 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/fonts
+Icon=fonts
+Type=Application
+DocPath=kcontrol/kcmdisplay/kdisplay-6.html
+Init=kcmdisplay -init
+
+X-KDE-ModuleType=Library
+X-KDE-Library=fonts
+X-KDE-FactoryName=fonts
+
+Name=Fonts
+Name[cs]=Písma
+Name[da]=Skrifttyper
+Name[de]=Schrift
+Name[eo]=Tiparo
+Name[es]=Fuentes
+Name[et]=Fondid
+Name[fi]=Kirjasimet
+Name[fr]=Polices
+Name[he]=םינפוג
+Name[hr]=Pisma
+Name[hu]=Betűtípusok
+Name[is]=Letur
+Name[it]=Caratteri
+Name[ja]=フォント
+Name[mk]=Фонтови
+Name[nl]=Lettertypen
+Name[no]=Skrifttype
+Name[no_NY]=Skrifttypar
+Name[pl]=Czcionki
+Name[pt]=Fontes
+Name[ro]=Fonturi
+Name[ru]=Шрифты
+Name[sl]=Pisave
+Name[sr]=Fontovi
+Name[sv]=Typsnitt
+Name[ta]=எழ஡ஂதுவைககளஂ
+Name[tr]=Yazıtipleri
+Name[uk]=Шрифти
+
+Comment=Font settings
+Comment[ca]=Arranjament de les fonts
+Comment[cs]=Nastavení písem
+Comment[da]=Skriftindstillinger
+Comment[de]=Schrifteinstellungen
+Comment[eo]=Tiparagordo
+Comment[es]=Configuración de colores
+Comment[et]=Fontide seadistused
+Comment[fi]=Kirjasinten asetukset
+Comment[fr]=Configuration des polices
+Comment[he]=םינפוג תורדגה
+Comment[hr]=Postavke pisama
+Comment[hu]=A betűtípusok beállítása
+Comment[is]=Stillingar leturs
+Comment[it]=Impostazioni dei caratteri
+Comment[ja]=フォントの設定
+Comment[mk]=Поставки за фонтовите
+Comment[nl]=Lettertype-instellingen
+Comment[no]=Innstill skrifttyper
+Comment[no_NY]=Skrifttypeinnstillingar
+Comment[pl]=Ustawienia stylu i czcionek
+Comment[pt]=Configuração das fontes
+Comment[ro]=Configurează fonturile de sistem
+Comment[ru]=Настройки шрифтов
+Comment[sl]=Nastavitve pisav
+Comment[sr]=Izaberite font
+Comment[sv]=Typsnittsinställningar
+Comment[ta]=எழு஡ஂதுவைக அைமபஂபுகளஂ
+Comment[tr]=Yazıtipi ayarları
+Comment[uk]=Настройки шрифтів
+
+Keywords=fonts,font,font size,style,charset,panel,kicker,control panel
+Keywords[ca]=fonts,font,mida de font,estil,joc de caràcters,plafó,kicker,plafó de control
+Keywords[cs]=Energie,Úspora,APM,ACPI,Časový limit,Vypnutí
+Keywords[da]=skrifttyper,skriftstørrelse,stil,tegnsæt,panel.kicker,kontrolpanel
+Keywords[de]=Schriften,Schriftgrößen,Zeichensatz,Kontrollleiste,Panel,Kicker
+Keywords[eo]=tiparo,grandeco,stilo,signaro,panelo,lanĉilo,stirpanelo
+Keywords[es]=fuentes,fuente,tamaño de fuente,estilo,mapa de caracteres,panel,kicker,panel de control
+Keywords[et]=fondid,font,fondi suurus,stiil,kooditabel,kicker,kontrollkeskus
+Keywords[fi]=kirjasimet,kirjasin,kirjasimen koko,tyyli,merkistö,paneeli,kicker
+Keywords[fr]=polices,police,taille de police,jeu de caractères,tableau de bord,kicker
+Keywords[he]=הרקבה חול,חול,םיוות ךרעמ,ןונגס,ןפוג לדוג,ןפוג,םינפוג
+Keywords[hr]=fonts,font,font size,style,charset,panel,kicker,control panel,pisma,pismo,veličina pisma,stil,skup znakova,ploča,kontrolni centra
+Keywords[hu]=betűtípusok,betűtípus,karakterkészlet,panel,kicker
+Keywords[is]=letur,leturstærð,leturgerð,stafatafla,spjald,stillingar
+Keywords[it]=carattere,caratteri,dimensione carattere,stile,insieme di caratteri,pannello,kicker,pannello di controllo
+Keywords[ja]=フォント,フォントサイズ,スタイル,文字セット,パ=E3=83=8Dル,kicker,コントロールパネル
+Keywords[mk]=фонтови,фонт,големина на фонт,стил,зкаковно множество,панел,контролен панел
+Keywords[nl]=fonts,font,letters,lettertypen,lettertypes,tekenset,karakterverzamelingen,paneel,kicker,configuratiecentrum,stijl,
+Keywords[no]=skrifttypeer,skrifttyper,skriftstørrelse,stil,tegnsett,panel,kicker,kontrollpanel
+Keywords[no_NY]=skrift,skrifttype,skriftstorleik,stil,teiknsett,panel,kicker,kontrollpanel
+Keywords[pl]=czcionki,czcionka, rozmiar czcionki,styl,zestaw znaków,panel,panel sterowania
+Keywords[pt]=fontes,fonte,tamanho de fonte,estilo,mapa de caracteres,painel,kicker,painel de controlo
+Keywords[ro]=fonturi,font,mărime font,stil,set caractere,panou,kicker,panou de control
+Keywords[sl]=pisava,pisave,velikost pisave,slog,stil,znakovni nabor,pult,kicker,nadzorna plošča
+Keywords[sv]=typsnitt,teckensnitt,typsnittstorlek,teckensnittstorlek,stil,teckenkodning,panel,kicker,kontrollpanel
+Keywords[ta]=எழு஡ஂதுவைககளஂ,எழ஡ஂதுவைக அளவு,பலகமஂ,கடஂடுபாடஂடு பலகமஂ
+Keywords[tr]=yazı tipleri,yazı boyutu,stil,karakter kümesi,panel,kicker,denetim paneli
+Keywords[uk]=шрифти,шрифт,розмір шрифту,стиль,набір символів,панель,kicker,conrol panel,панель настройок
+<<<<<<< fonts.desktop
+=======
+>>>>>>> 1.16
