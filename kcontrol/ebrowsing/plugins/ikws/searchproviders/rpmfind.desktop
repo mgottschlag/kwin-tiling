@@ -2,63 +2,6 @@
 Encoding=UTF-8
 Type=Service
 Name=RPM-Find
-Name[be]=Пошук RPM
-Name[de]=RPM-Suche
-Name[el]=RPM-Εύρεση
-Name[eo]=RPM-trovilo
-Name[fa]=RPM-جستجوی
-Name[fi]=RPM-haku
-Name[fo]=RPM-finn
-Name[hi]=आरपीएम-फाइंड
-Name[is]=RPM-leit
-Name[ko]=RPM 찾기
-Name[lv]=RPM-Meklēšana
-Name[mn]=RPM-хайлт
-Name[nso]=RPM-Hwetsa
-Name[pa]=RPM-ਖੋਜ
-Name[pl]=Rpmfind - wyszukiwarka pakietów RPM
-Name[ro]=Căutare pachete RPM
-Name[ru]=Поиск RPM
-Name[ss]=Tfola i-RPM
-Name[ta]=RPM-தேடு
-Name[tg]=Ҷустуҷӯи RPM
-Name[uz]=RPM қидириш
-Name[ven]=RPM-Toda
-Name[xh]=RPM-Fumana
-Name[xx]=xxRPM-Findxx
-Name[zu]=RPM-Thola
 ServiceTypes=SearchProvider
 Keys=rf,rpmfind
-Query=http://speakeasy.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[be]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[bg]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[bs]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[ca]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[cs]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[cy]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[da]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[de]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[el]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[en_GB]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[es]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[et]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[fr]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[hr]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[hu]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[it]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[mt]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[nb]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[nds]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[nl]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[nn]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[pl]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[pt]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[ro]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[ru]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[sk]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[sl]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[sq]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[sr]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[sv]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[uk]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
-Query[wa]=http://fr.rpmfind.net/linux/rpm2html/search.php?query=\{@}
+Query=http://www.rpmfind.net/linux/rpm2html/search.php?query=\{@}
