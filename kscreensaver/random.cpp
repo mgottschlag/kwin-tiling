@@ -25,7 +25,7 @@
 #include <kdebug.h>
 #include <kcmdlineargs.h>
 
-#include "libkscreensaver/vroot.h"
+#include "kscreensaver_vroot.h"
 
 #define MAX_ARGS    20
 

@@ -10,7 +10,7 @@ LDADD = $(LIB_KDEUI) -lm
 
 bin_PROGRAMS = krandom.kss
 
-SUBDIRS = libkscreensaver kdesavers xsavers kxsconfig kpartsaver
+SUBDIRS = kdesavers xsavers kxsconfig kpartsaver
 
 krandom_kss_SOURCES = random.cpp
 

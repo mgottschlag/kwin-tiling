@@ -43,7 +43,7 @@ noinst_HEADERS = saver.h demowin.h xlock.h rock.h \
 		pyro.h swarm.h space.h bouboule.h \
 		xlockmore.h mode.h helpers.h morph3d.h pipes.h \
 		xs_colors.h xs_hsv.h xs_yarandom.h xs_utils.h \
-		slidescreen.h xs_visual.h vroot.h
+		slidescreen.h xs_visual.h
 
 messages:
 	$(XGETTEXT) *.cpp *.h -o $(podir)/klock.pot

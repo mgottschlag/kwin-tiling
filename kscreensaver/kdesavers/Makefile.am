@@ -4,9 +4,9 @@
 
 AM_CPPFLAGS = -UQT_NO_ASCII_CAST
 
-INCLUDES = -I$(top_srcdir)/kscreensaver/libkscreensaver $(all_includes) $(GLINC)
+INCLUDES = $(all_includes) $(GLINC)
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD = $(LIB_KDEUI) ../libkscreensaver/libkscreensaver.la -lm
+LDADD = $(LIB_KDEUI) -lkscreensaver -lm
 
 bin_PROGRAMS = kbanner.kss kblankscrn.kss kpolygon.kss kslideshow.kss \
                 klines.kss klorenz.kss kblob.kss kvm.kss kmatrix.kss \
