@@ -55,7 +55,12 @@ CSettingsWizard::CSettingsWizard(QWidget *parent, const char *name)
 
         itsFnFText->setText(fnfTxt+i18n("\n\nIf \"%1\" is listed as the CUPS folder, it is probable that you are not using the CUPS"
                                         " printing system - in which case just ensure that the chekbox is not selected.").arg(CConfig::constNotFound));
+        itsModifiedDirsText->hide();
     }
+    else
+        if(0==CKfiGlobal::cfg().getModifiedDirs().count())
+            itsModifiedDirsText->hide();
+
 
     itsSOWidget->hideNote();
 

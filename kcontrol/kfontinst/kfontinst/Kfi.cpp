@@ -46,12 +46,6 @@ CKfiMainWidget * CKfi::create(QWidget *parent)
         CSettingsWizard *wiz=new CSettingsWizard(parent);
         wiz->exec();
         QApplication::restoreOverrideCursor();
-
-        //
-        // Mark TrueType and Type1 dirs as having ben modified...
-        //
-        CKfiGlobal::cfg().addModifiedDir(CKfiGlobal::cfg().getFontsDir()+CKfiGlobal::cfg().getTTSubDir());
-        CKfiGlobal::cfg().addModifiedDir(CKfiGlobal::cfg().getFontsDir()+CKfiGlobal::cfg().getT1SubDir());
         CKfiGlobal::cfg().configured();
     }
 
