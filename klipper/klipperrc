@@ -70,9 +70,29 @@ Command_1: description=Send &File
 Command_1: enabled=true
 Number of commands=2
 
+[Action_6]
+Action description=URI
+Action regexp=^ftp:\\/\\/
+Command_0: commandline=kfmclient exec '%s'
+Command_0: description=Open with &Konqueror
+Command_0: enabled=true
+Command_1: commandline=netscape -no-about-splash -remote "openURL(%s, new-window)"
+Command_1: description=Open with &Netscape
+Command_1: enabled=true
+Command_2: commandline=mozilla -remote "openURL(%s, new-window)"
+Command_2: description=Open with &Mozilla
+Command_2: enabled=true
+Command_3: commandline=kmail --body  '%s'
+Command_3: description=Send &URL
+Command_3: enabled=true
+Command_4: commandline=kmail  --attach '%s'
+Command_4: description=Send &File
+Command_4: enabled=true
+Number of commands=5
+
 [General]
 KeepClipboardContents=true
-Number of Actions=14
+Number of Actions=7
 PopupAtMousePosition=false
 URLGrabberEnabled=true
 No Actions for WM_CLASS=Navigator,konqueror,keditbookmarks,mozilla-bin,Opera main window,opera,gnumeric,Gnumeric
