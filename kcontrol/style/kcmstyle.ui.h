@@ -30,6 +30,9 @@ void  KCMStyle::init()
 	connect(cbTooltipEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cboxIconSupport, SIGNAL(toggled(bool)), SLOT(setDirty()));
 	connect(cboxTearOffHandles, SIGNAL(toggled(bool)), SLOT(setDirty()));
+
+	containerFrame->setEnabled(false);
+
 }
 
 void  KCMStyle::setDirty()

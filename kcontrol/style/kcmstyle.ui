@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>492</width>
-            <height>400</height>
+            <width>500</width>
+            <height>396</height>
         </rect>
     </property>
     <property name="caption">
@@ -149,33 +149,20 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>cboxEnableGUIEffects</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Enable GUI Effects</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>If you check this box, you can select several effects for different widgets like combo boxes or tooltips.</string>
-                        </property>
-                    </widget>
                     <widget class="QGroupBox">
                         <property name="name">
                             <cstring>gbGuiEffect</cstring>
                         </property>
                         <property name="enabled">
-                            <bool>false</bool>
+                            <bool>true</bool>
                         </property>
                         <property name="title">
                             <string>GUI Effects</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>&lt;p&gt;&lt;b&gt;Disable: &lt;/b&gt;Don't use an effect on this widget&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Animate: &lt;/b&gt;Do some animation when &lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Fade: &lt;/b&gt;Fade in the widget using alpha-blending&lt;/p&gt;</string>
+                            <string>&lt;b&gt;GUI Effects&lt;/b&gt;: This box allows configuration of some GUI related settings which apply to both native Qt 3 and KDE applications.</string>
                         </property>
-                        <grid>
+                        <vbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
@@ -185,225 +172,361 @@
                             <property name="spacing">
                                 <number>6</number>
                             </property>
-                            <widget class="QComboBox" row="1" column="1" rowspan="1" colspan="2">
-                                <item>
-                                    <property name="text">
-                                        <string>Disable</string>
-                                    </property>
-                                </item>
-                                <item>
-                                    <property name="text">
-                                        <string>Animate</string>
-                                    </property>
-                                </item>
-                                <item>
-                                    <property name="text">
-                                        <string>Fade</string>
-                                    </property>
-                                </item>
+                            <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>cbTooltipEffect</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>TextLabel4</cstring>
+                                    <cstring>cboxEnableGUIEffects</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;ToolTip Effect:</string>
+                                    <string>&amp;Enable GUI Effects</string>
                                 </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>cbTooltipEffect</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="2">
-                                <item>
-                                    <property name="text">
-                                        <string>Disable</string>
-                                    </property>
-                                </item>
-                                <item>
-                                    <property name="text">
-                                        <string>Animate</string>
-                                    </property>
-                                </item>
-                                <property name="name">
-                                    <cstring>cbComboEffect</cstring>
+                                <property name="whatsThis" stdset="0">
+                                    <string>If you check this box, you can select several effects for different widgets like combo boxes or tooltips.</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="0" column="0">
+                            <widget class="QFrame">
                                 <property name="name">
-                                    <cstring>TextLabel3</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>ComboBo&amp;x Effect:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>cbComboEffect</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QComboBox" row="2" column="1" rowspan="1" colspan="2">
-                                <item>
-                                    <property name="text">
-                                        <string>Disable</string>
-                                    </property>
-                                </item>
-                                <item>
-                                    <property name="text">
-                                        <string>Animate</string>
-                                    </property>
-                                </item>
-                                <item>
-                                    <property name="text">
-                                        <string>Fade</string>
-                                    </property>
-                                </item>
-                                <item>
-                                    <property name="text">
-                                        <string>Make translucent</string>
-                                    </property>
-                                </item>
-                                <property name="name">
-                                    <cstring>cbMenuEffect</cstring>
+                                    <cstring>containerFrame</cstring>
                                 </property>
                                 <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="currentItem">
-                                    <number>3</number>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="0">
-                                <property name="name">
-                                    <cstring>TextLabel2</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>1</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Menu Effect:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>cbMenuEffect</cstring>
-                                </property>
-                            </widget>
-                            <widget class="Line" row="3" column="0" rowspan="2" colspan="3">
-                                <property name="name">
-                                    <cstring>Line1</cstring>
-                                </property>
-                                <property name="frameShape" stdset="0">
-                                    <enum>HLine</enum>
-                                </property>
-                                <property name="frameShadow">
-                                    <enum>Sunken</enum>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                            </widget>
-                            <widget class="QFrame" row="4" column="2" rowspan="4" colspan="1">
-                                <property name="name">
-                                    <cstring>Frame4</cstring>
-                                </property>
-                                <property name="paletteBackgroundColor">
-                                    <color>
-                                        <red>140</red>
-                                        <green>150</green>
-                                        <blue>170</blue>
-                                    </color>
+                                    <bool>true</bool>
                                 </property>
                                 <property name="frameShape">
-                                    <enum>StyledPanel</enum>
+                                    <enum>NoFrame</enum>
                                 </property>
                                 <property name="frameShadow">
-                                    <enum>Sunken</enum>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget" row="7" column="0" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>Layout6</cstring>
+                                    <enum>Plain</enum>
                                 </property>
                                 <grid>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
                                     <property name="margin">
-                                        <number>0</number>
+                                        <number>11</number>
                                     </property>
                                     <property name="spacing">
                                         <number>6</number>
                                     </property>
-                                    <widget class="QSlider" row="0" column="0" rowspan="1" colspan="3">
+                                    <widget class="QComboBox" row="1" column="1">
+                                        <item>
+                                            <property name="text">
+                                                <string>Disable</string>
+                                            </property>
+                                        </item>
+                                        <item>
+                                            <property name="text">
+                                                <string>Animate</string>
+                                            </property>
+                                        </item>
+                                        <item>
+                                            <property name="text">
+                                                <string>Fade</string>
+                                            </property>
+                                        </item>
                                         <property name="name">
-                                            <cstring>Slider1</cstring>
+                                            <cstring>cbTooltipEffect</cstring>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="tickmarks">
-                                            <enum>Right</enum>
+                                        <property name="enabled">
+                                            <bool>true</bool>
                                         </property>
                                     </widget>
                                     <widget class="QLabel" row="1" column="0">
                                         <property name="name">
-                                            <cstring>TextLabel2_3</cstring>
+                                            <cstring>TextLabel4</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>true</bool>
                                         </property>
                                         <property name="text">
-                                            <string>0%</string>
+                                            <string>&amp;ToolTip Effect:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>cbTooltipEffect</cstring>
                                         </property>
                                     </widget>
-                                    <widget class="QLabel" row="1" column="2">
+                                    <widget class="QComboBox" row="0" column="1">
+                                        <item>
+                                            <property name="text">
+                                                <string>Disable</string>
+                                            </property>
+                                        </item>
+                                        <item>
+                                            <property name="text">
+                                                <string>Animate</string>
+                                            </property>
+                                        </item>
                                         <property name="name">
-                                            <cstring>TextLabel4_3</cstring>
+                                            <cstring>cbComboEffect</cstring>
                                         </property>
-                                        <property name="text">
-                                            <string>100%</string>
-                                        </property>
-                                        <property name="alignment">
-                                            <set>AlignVCenter|AlignRight</set>
+                                        <property name="enabled">
+                                            <bool>true</bool>
                                         </property>
                                     </widget>
-                                    <widget class="QLabel" row="1" column="1">
+                                    <widget class="QComboBox" row="2" column="1">
+                                        <item>
+                                            <property name="text">
+                                                <string>Disable</string>
+                                            </property>
+                                        </item>
+                                        <item>
+                                            <property name="text">
+                                                <string>Animate</string>
+                                            </property>
+                                        </item>
+                                        <item>
+                                            <property name="text">
+                                                <string>Fade</string>
+                                            </property>
+                                        </item>
+                                        <item>
+                                            <property name="text">
+                                                <string>Make translucent</string>
+                                            </property>
+                                        </item>
                                         <property name="name">
-                                            <cstring>TextLabel3_3</cstring>
+                                            <cstring>cbMenuEffect</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="currentItem">
+                                            <number>3</number>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="2" column="0">
+                                        <property name="name">
+                                            <cstring>TextLabel2</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>4</hsizetype>
+                                                <vsizetype>1</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
                                         </property>
                                         <property name="text">
-                                            <string>50%</string>
+                                            <string>&amp;Menu Effect:</string>
                                         </property>
-                                        <property name="alignment">
-                                            <set>AlignCenter</set>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>cbMenuEffect</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="Line" row="3" column="0" rowspan="1" colspan="3">
+                                        <property name="name">
+                                            <cstring>Line1</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="frameShape" stdset="0">
+                                            <enum>HLine</enum>
+                                        </property>
+                                        <property name="frameShadow">
+                                            <enum>Sunken</enum>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                    </widget>
+                                    <widget class="QFrame" row="4" column="2" rowspan="2" colspan="1">
+                                        <property name="name">
+                                            <cstring>Frame4</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>0</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>132</width>
+                                                <height>132</height>
+                                            </size>
+                                        </property>
+                                        <property name="paletteBackgroundColor">
+                                            <color>
+                                                <red>140</red>
+                                                <green>150</green>
+                                                <blue>170</blue>
+                                            </color>
+                                        </property>
+                                        <property name="frameShape">
+                                            <enum>StyledPanel</enum>
+                                        </property>
+                                        <property name="frameShadow">
+                                            <enum>Sunken</enum>
+                                        </property>
+                                    </widget>
+                                    <widget class="QButtonGroup" row="4" column="0">
+                                        <property name="name">
+                                            <cstring>gbRenderMethod</cstring>
+                                        </property>
+                                        <property name="frameShape">
+                                            <enum>NoFrame</enum>
+                                        </property>
+                                        <property name="frameShadow">
+                                            <enum>Plain</enum>
+                                        </property>
+                                        <property name="title">
+                                            <string></string>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <property name="margin">
+                                                <number>11</number>
+                                            </property>
+                                            <property name="spacing">
+                                                <number>6</number>
+                                            </property>
+                                            <widget class="QRadioButton">
+                                                <property name="name">
+                                                    <cstring>rbXRender</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>&amp;XRender</string>
+                                                </property>
+                                                <property name="checked">
+                                                    <bool>true</bool>
+                                                </property>
+                                            </widget>
+                                            <widget class="QRadioButton">
+                                                <property name="name">
+                                                    <cstring>rbSoftware</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>&amp;Software</string>
+                                                </property>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="2">
+                                        <property name="name">
+                                            <cstring>Layout6</cstring>
+                                        </property>
+                                        <grid>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <property name="margin">
+                                                <number>0</number>
+                                            </property>
+                                            <property name="spacing">
+                                                <number>6</number>
+                                            </property>
+                                            <widget class="QSlider" row="0" column="0" rowspan="1" colspan="3">
+                                                <property name="name">
+                                                    <cstring>Slider1</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>7</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="orientation">
+                                                    <enum>Horizontal</enum>
+                                                </property>
+                                                <property name="tickmarks">
+                                                    <enum>Right</enum>
+                                                </property>
+                                                <property name="tickInterval">
+                                                    <number>10</number>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel" row="1" column="0">
+                                                <property name="name">
+                                                    <cstring>TextLabel2_3</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>0%</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel" row="1" column="2">
+                                                <property name="name">
+                                                    <cstring>TextLabel4_3</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>100%</string>
+                                                </property>
+                                                <property name="alignment">
+                                                    <set>AlignVCenter|AlignRight</set>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel" row="1" column="1">
+                                                <property name="name">
+                                                    <cstring>TextLabel3_3</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>50%</string>
+                                                </property>
+                                                <property name="alignment">
+                                                    <set>AlignCenter</set>
+                                                </property>
+                                            </widget>
+                                        </grid>
+                                    </widget>
+                                    <spacer row="1" column="2">
+                                        <property name="name" stdset="0">
+                                            <cstring>Spacer5</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QLabel" row="0" column="0">
+                                        <property name="name">
+                                            <cstring>TextLabel3</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>ComboBo&amp;x Effect:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>cbComboEffect</cstring>
                                         </property>
                                     </widget>
                                 </grid>
                             </widget>
-                            <widget class="QRadioButton" row="6" column="0">
-                                <property name="name">
-                                    <cstring>rbSoftware</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Software</string>
-                                </property>
-                            </widget>
-                            <widget class="QRadioButton" row="5" column="0">
-                                <property name="name">
-                                    <cstring>rbXRender</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;XRender</string>
-                                </property>
-                                <property name="checked">
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                        </grid>
+                        </vbox>
                     </widget>
                     <spacer>
                         <property name="name" stdset="0">
@@ -641,10 +764,28 @@
     <connection>
         <sender>cboxEnableGUIEffects</sender>
         <signal>toggled(bool)</signal>
-        <receiver>gbGuiEffect</receiver>
+        <receiver>containerFrame</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>TabWidget2</tabstop>
+    <tabstop>ListBox1</tabstop>
+    <tabstop>PushButton1</tabstop>
+    <tabstop>cboxEnableGUIEffects</tabstop>
+    <tabstop>cbComboEffect</tabstop>
+    <tabstop>cbTooltipEffect</tabstop>
+    <tabstop>cbMenuEffect</tabstop>
+    <tabstop>rbXRender</tabstop>
+    <tabstop>rbSoftware</tabstop>
+    <tabstop>Slider1</tabstop>
+    <tabstop>cboxHoverButtons</tabstop>
+    <tabstop>cboxToolbarsHighlight</tabstop>
+    <tabstop>cboxEnableTooltips</tabstop>
+    <tabstop>cbToolbarIcons</tabstop>
+    <tabstop>cboxIconSupport</tabstop>
+    <tabstop>cboxTearOffHandles</tabstop>
+</tabstops>
 <includes>
     <include location="global" impldecl="in declaration">kcmodule.h</include>
     <include location="local" impldecl="in implementation">kcmstyle.ui.h</include>
