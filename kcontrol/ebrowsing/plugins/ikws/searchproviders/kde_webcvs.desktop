@@ -2,10 +2,23 @@
 Encoding=UTF-8
 Type=Service
 Name=KDE WebCVS
+Name[ca]=WebCVS de KDE
+Name[cy]=WebCVS KDE
+Name[de]=KDE-WebCVS
 Name[es]=WebCVS de KDE
 Name[fa]=CVS وب KDE
-Name[pt_BR]=WebCVS do KDE 
+Name[fi]=KDE:n WebCVS
+Name[fr]=WebCVS de KDE
+Name[gl]=WebCVS de KDE
+Name[hi]=केडीई वेब-सीवीएस
+Name[it]=CVS Web di KDE
+Name[mn]=KDE Вэб-CVS
+Name[pl]=WebCVS dla KDE
+Name[pt]=WebCVS do KDE
+Name[pt_BR]=WebCVS do KDE
+Name[ro]=Web CVS KDE
 Name[sv]=KDE-webbcvs
+Name[xx]=xxKDE WebCVSxx
 ServiceTypes=SearchProvider
 Keys=webcvs,kdecvs,kcvs,kvs
 Query=http://webcvs.kde.org/cgi-bin/cvsweb.cgi/\\{@}?sortby=date#dirlist

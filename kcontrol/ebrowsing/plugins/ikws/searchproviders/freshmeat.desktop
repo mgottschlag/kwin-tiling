@@ -2,9 +2,14 @@
 Encoding=UTF-8
 Type=Service
 Name=Freshmeat
+Name[fa]=فرش‌میت
+Name[hi]=फ्रेशमीट
 Name[ko]=날고기(프레시미트)
+Name[mn]=Шинэмах
 Name[nso]=Nama ye Botse
+Name[pl]=Freshmeat - wyszukiwarka aplikacji
 Name[ven]=Namathethe
+Name[xx]=xxFreshmeatxx
 Name[zu]=Inyama yamanje
 ServiceTypes=SearchProvider
 Keys=fm,freshmeat

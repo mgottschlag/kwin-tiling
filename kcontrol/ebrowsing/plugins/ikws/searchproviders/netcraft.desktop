@@ -2,6 +2,10 @@
 Encoding=UTF-8
 Type=Service
 Name=Netcraft
+Name[hi]=नेटक्राफ्ट
+Name[mn]=Нэтскафе
+Name[ta]=Netscape
+Name[xx]=xxNetcraftxx
 ServiceTypes=SearchProvider
 Keys=nc,netcraft
 Query=http://uptime.netcraft.com/up/graph?site=\\{@}

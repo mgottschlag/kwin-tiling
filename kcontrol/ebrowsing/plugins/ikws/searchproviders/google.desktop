@@ -3,7 +3,12 @@ Encoding=UTF-8
 Type=Service
 Name=Google
 Name[fa]=گوگل
+Name[hi]=गूगल
 Name[ko]=구글
+Name[mn]=Гооглэ
+Name[pl]=Google - wyszukiwarka stron WWW
+Name[ta]=கூகுல்
+Name[xx]=xxGooglexx
 ServiceTypes=SearchProvider
 Keys=gg,google
 Query=http://www.google.com/search?q=\\{@}&ie=UTF-8&oe=UTF-8
