@@ -50,18 +50,26 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 {
 #ifdef __linux__
     struct stat st;
-    if (!stat( "/etc/debian_version", &st ) || !stat( "/usr/portage", &st ))
-	defminuid = "1000";	// debian, gentoo
-    else if (!stat( "/etc/mandrake-release", &st ))	// check before redhat!
-	defminuid = "500";	// mandrake
-    else if (!stat( "/etc/redhat-release", &st ))
-	defminuid = "100";	// redhat
-    else //if (!stat( "/etc/SuSE-release", &st ))
-	defminuid = "500";	// suse
+    if (!stat( "/etc/debian_version", &st )) {	/* debian */
+	defminuid = "1000";
+	defmaxuid = "29999";
+    } else if (!stat( "/usr/portage", &st )) {	/* gentoo */
+	defminuid = "1000";
+	defmaxuid = "65000";
+    } else if (!stat( "/etc/mandrake-release", &st )) {	/* mandrake - check before redhat! */
+	defminuid = "500";
+	defmaxuid = "65000";
+    } else if (!stat( "/etc/redhat-release", &st )) {	/* redhat */
+	defminuid = "100";
+	defmaxuid = "65000";
+    } else /* if (!stat( "/etc/SuSE-release", &st )) */ {	/* suse */
+	defminuid = "500";
+	defmaxuid = "65000";
+    }
 #else
     defminuid = "1000";
-#endif
     defmaxuid = "65000";
+#endif
 
     // We assume that $kde_datadir/kdm exists, but better check for pics/ and pics/users,
     // and create them if necessary.
