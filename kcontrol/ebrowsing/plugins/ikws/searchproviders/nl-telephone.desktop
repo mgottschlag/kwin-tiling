@@ -1,39 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Telephonebook Search Provider
-Name[bs]=Telephonebook pretraga
-Name[ca]=Proveïdor de cerques a la guia de telèfons
-Name[cs]=Poskytovatel prohledávání tel. seznamu
-Name[cy]= Darparydd Chwiliadau Llyfr Ffôn
-Name[da]=Telefonbog-søgeudbyder
-Name[de]=Telefonbuch-Suche
-Name[eo]=Telefonlibro-serĉprovizanto
-Name[es]=Proveedor de búsqueda de teléfonos
-Name[et]=Telefoniraamatu otsingumootor
-Name[fi]=Puhelinluettelohaun tarjoaja
-Name[fr]=Moteur de recherche Telephonebook
-Name[hu]=Telefonkönyv (NL)
-Name[it]=Motore di ricerca Elencotelefonico
-Name[nb]=Søkemotor for søk i telefonkatalog
-Name[nl]=Telefoonboek-zoekmachine
-Name[nn]=Søkjemotor for telefonkatalog
-Name[pa]=ਟੈਲੀਫੋਨ ਖੋਜ ਪੇਸ਼ਕਾਰ
-Name[pl]=Wyszukiwarka Telephonebook
-Name[pt]=Motor de Busca de Lista Telefónica
-Name[pt_BR]=Guia Telefônico On-line
-Name[ro]=Căutare în cartea de telefoane
-Name[sk]=Hľadanie v telefónnom zozname
-Name[sl]=Ponudnik iskanja po telefonskem imeniku
-Name[sr]=Провајдер за претрагу телефонског именика
-Name[sr@Latn]=Провајдер за претрагу телефонског именика
-Name[sv]=Söktjänst för telefonkatalog
-Name[ta]=தொலைபேசிபுத்தக தேடுதலை அளிப்பான்
-Name[tr]=Telefon Defteri Arama Sağlayıcı
-Name[uk]=Провайдер пошуку Telephonebook
-Name[uz]=Телефонлар дафтарида қидириш
-Name[xx]=xxTelephonebook Search Providerxx
-Name[zh_CN]=Telephonebook 搜索提供者
 Type=Service
 ServiceTypes=SearchProvider
 Keys=telnl,telefoon
+Query=http://www.detelefoongids.nl/tginl.dll?action=white&type=search&name=\{1}&city=\{2}
 Query[nl]=http://www.detelefoongids.nl/tginl.dll?action=white&type=search&name=\{1}&city=\{2}
