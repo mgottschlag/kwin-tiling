@@ -50,20 +50,6 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QCheckBox" row="0" column="0">
-                    <property name="name">
-                        <cstring>m_showPixmap</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Show &amp;side image</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose whether to show the vertical image down the side of the K menu</string>
-                    </property>
-                </widget>
                 <widget class="QLayoutWidget" row="3" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>Layout9</cstring>
@@ -206,7 +192,18 @@
                         </widget>
                     </hbox>
                 </widget>
-                <widget class="QCheckBox" row="1" column="0">
+                <widget class="QCheckBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>m_detailedEntries</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Detailed menu &amp;entries</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="0" column="0">
                     <property name="name">
                         <cstring>m_showRecent</cstring>
                     </property>
@@ -217,7 +214,18 @@
                         <bool>true</bool>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="0" column="1">
+                <widget class="QCheckBox" row="2" column="0">
+                    <property name="name">
+                        <cstring>m_showQuickBrowser</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show "&amp;Quick Browser" submenu</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0">
                     <property name="name">
                         <cstring>m_showBookmarks</cstring>
                     </property>
@@ -230,24 +238,16 @@
                 </widget>
                 <widget class="QCheckBox" row="1" column="1">
                     <property name="name">
-                        <cstring>m_showQuickBrowser</cstring>
+                        <cstring>m_showPixmap</cstring>
                     </property>
                     <property name="text">
-                        <string>Show "&amp;Quick Browser" submenu</string>
+                        <string>Show &amp;side image</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
-                </widget>
-                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_detailedEntries</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Detailed menu &amp;entries</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose whether to show the vertical image down the side of the K menu</string>
                     </property>
                 </widget>
             </grid>
@@ -520,24 +520,6 @@
         </spacer>
     </vbox>
 </widget>
-<customwidgets>
-    <customwidget>
-        <class>QWidget</class>
-        <header location="global">qwidget.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>1</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-        <pixmap>image2</pixmap>
-    </customwidget>
-</customwidgets>
 <connections>
     <connection>
         <sender>m_maxSlider</sender>
