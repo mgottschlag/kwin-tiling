@@ -196,6 +196,8 @@ kg_main( const char *argv0 )
     restore_modifiers();
 
     delete kdmcfg;
+
+    XSetInputFocus( qt_xdisplay(), PointerRoot, PointerRoot, CurrentTime );
 }
 
 } // extern "C"
