@@ -18,7 +18,8 @@
 
 
 KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
-  : KUniqueApplication(allowStyles, GUIenabled), overlay(0), wm(0)
+  : KUniqueApplication(allowStyles, GUIenabled), _artsBellBlocked(false),
+                                                 overlay(0), wm(0)
 {
   // verify the Xlib has matching XKB extension
   int major = XkbMajorVersion;
@@ -46,6 +47,9 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
 
   _activeWindow = wm.activeWindow();
   connect(&wm, SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
+
+  artsBellTimer = new QTimer( this );
+  connect( artsBellTimer, SIGNAL( timeout() ), SLOT( slotArtsBellTimeout() ));
 }
 
 
@@ -216,7 +220,15 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
     }      
 
   // ask artsd to ring a nice bell
-  if (_artsBell)
+  if (_artsBell && !_artsBellBlocked ) {
     KAudioPlayer::play(_artsBellFile);
+    _artsBellBlocked = true;
+    artsBellTimer->start( 300, true );
+  }
+}
+
+void KAccessApp::slotArtsBellTimeout()
+{
+  _artsBellBlocked = false;
 }
 

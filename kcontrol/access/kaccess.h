@@ -38,6 +38,7 @@ protected:
 private slots:
 
   void activeWindowChanged(WId wid);
+  void slotArtsBellTimeout();
 
 
 private:
@@ -45,11 +46,14 @@ private:
   int xkb_opcode;
 
   bool    _systemBell, _artsBell, _visibleBell, _visibleBellInvert;
+  bool    _artsBellBlocked;
   QString _artsBellFile;
   QColor  _visibleBellColor;
   int     _visibleBellPause;
 
   QWidget *overlay;
+
+  QTimer *artsBellTimer;
 
   KWinModule wm;
 
