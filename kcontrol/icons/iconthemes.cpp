@@ -58,13 +58,13 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   m_preview->setMinimumHeight(50);
 
   QHBoxLayout *lh2=new QHBoxLayout( m_preview );
-  m_previewExec=new QLabel(m_preview); 
+  m_previewExec=new QLabel(m_preview);
   m_previewExec->setPixmap(DesktopIcon("exec"));
-  m_previewFolder=new QLabel(m_preview); 
+  m_previewFolder=new QLabel(m_preview);
   m_previewFolder->setPixmap(DesktopIcon("folder"));
-  m_previewDocument=new QLabel(m_preview); 
+  m_previewDocument=new QLabel(m_preview);
   m_previewDocument->setPixmap(DesktopIcon("document"));
-   
+
   lh2->addStretch(10);
   lh2->addWidget(m_previewExec);
   lh2->addStretch(1);
@@ -108,11 +108,11 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   m_iconThemes->setSelected(m_defaultTheme, true);
 
   load();
-  
+
   m_iconThemes->setFocus();
 }
 
-IconThemesConfig::~IconThemesConfig() 
+IconThemesConfig::~IconThemesConfig()
 {
 }
 
@@ -145,7 +145,7 @@ void IconThemesConfig::loadThemes()
  //  Just in case we have duplicated icon theme names on separate directories
     for (int i=2; m_themeNames.find(tname)!=m_themeNames.end() ; i++)
         tname=QString("%1-%2").arg(name).arg(i);
-    
+
     m_iconThemes->insertItem(new QListViewItem(m_iconThemes,name,
 		icontheme.description()));
 
@@ -168,7 +168,7 @@ void IconThemesConfig::installNewTheme()
   QString cmd;
 
   cmd.sprintf("cd \"%s\"; gzip -c -d \"%s\" | tar xf -",	//lukas: FIXME
-	QFile::encodeName(tgtDir).data(), 
+	QFile::encodeName(tgtDir).data(),
 	QFile::encodeName(m_themeRequester->url()).data());
   kdDebug() << cmd << endl;
   int rc = system(cmd.ascii());	//lukas: FIXME
@@ -176,16 +176,16 @@ void IconThemesConfig::installNewTheme()
   {
     kdWarning() << "Failed\n";
     return;
-  } 
-  m_themeRequester->setURL("");
+  }
+  m_themeRequester->clear();
 
   KGlobal::instance()->newIconLoader();
 
   loadThemes();
 
-  QListViewItem *item=iconThemeItem(KIconTheme::current()); 
+  QListViewItem *item=iconThemeItem(KIconTheme::current());
 //  m_iconThemes->setCurrentItem(item);
-  m_iconThemes->setSelected(item, true);                                                                                                                                 
+  m_iconThemes->setSelected(item, true);
 }
 
 void IconThemesConfig::removeSelectedTheme()
@@ -206,9 +206,9 @@ void IconThemesConfig::removeSelectedTheme()
   QString directory(icontheme.dir());
 
   KIO::del(directory);
-    
+
   KGlobal::instance()->newIconLoader();
-  
+
   loadThemes();
 
 
@@ -261,7 +261,7 @@ void IconThemesConfig::save()
 
   config->setGroup("Icons");
 
-  config->writeEntry("Theme", m_themeNames[ 
+  config->writeEntry("Theme", m_themeNames[
 	m_iconThemes->selectedItem()->text(0)]);
 
   KIconTheme icontheme(m_themeNames[m_iconThemes->selectedItem()->text(0)]);
@@ -274,15 +274,15 @@ void IconThemesConfig::save()
       break;
     config->setGroup(QString::fromLatin1(groups[i]) + "Icons");
     config->writeEntry("Size", icontheme.defaultSize(i));
-  } 
+  }
   delete config;
-  
+
   emit changed(false);
 
   for (int i=0; i<KIcon::LastGroup; i++)
   {
     KIPC::sendMessageAll(KIPC::IconChanged, i);
-  } 
+  }
 
 }
 
@@ -292,7 +292,7 @@ void IconThemesConfig::defaults()
 
 //  m_iconThemes->setCurrentItem(m_defaultTheme);
   m_iconThemes->setSelected(m_defaultTheme,true);
-  
+
   emit changed(true);
 }
 
