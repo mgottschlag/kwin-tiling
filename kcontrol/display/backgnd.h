@@ -152,7 +152,7 @@ protected:
   int savePatterns();
    
 protected slots:
-  void selected(const char *item);
+  void selected(const QString& item);
   virtual void done ( int r );
   void slotMode( int );
     

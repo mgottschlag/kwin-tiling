@@ -1542,8 +1542,8 @@ KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, uint *p, int *orient,
   grid->addWidget( lName, 0, 2 );
 	
   listBox = new QListBox( this );
-  connect(listBox, SIGNAL(highlighted(const char*)), 
-	  SLOT(selected(const char*)));
+  connect(listBox, SIGNAL(highlighted(const QString&)), 
+	  SLOT(selected(const QString&)));
     
   grid->addWidget( listBox, 1, 1);
 	
@@ -1670,7 +1670,7 @@ int KBPatternDlg::savePatterns() {
   return 6;
 }
 
-void KBPatternDlg::selected( const char *selected )
+void KBPatternDlg::selected( const QString& selected )
 {
   for ( PatternEntry *item=list.first(); item != 0; item=list.next() )
     if (*item == selected) {
