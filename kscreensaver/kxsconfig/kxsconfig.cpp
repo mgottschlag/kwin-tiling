@@ -5,6 +5,7 @@
 // Copyright (c)  Martin R. Jones 1999
 //
 
+#include <stdlib.h>
 #include <qlayout.h>
 #include <qtextstream.h>
 #include <qtimer.h>

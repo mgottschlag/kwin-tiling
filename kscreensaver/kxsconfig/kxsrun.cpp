@@ -5,6 +5,7 @@
 // Copyright (c)  Martin R. Jones 1999
 //
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <qlist.h>
