@@ -21,7 +21,7 @@ konqservicedir = $(kde_datadir)/konqueror/servicemenus
 
 bin_SCRIPTS = kdeinstallktheme
 
-messages:
-	$(XGETTEXT) -ki18n -ktr2i18n *.cpp -o $(top_builddir)/po/kthememanager.pot
+messages: rc.cpp
+	$(XGETTEXT) *.cpp -o $(podir)/kthememanager.pot
 
 include ../admin/Doxyfile.am
