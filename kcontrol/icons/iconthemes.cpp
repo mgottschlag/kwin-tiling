@@ -142,11 +142,6 @@ void IconThemesConfig::loadThemes()
 
 }
 
-void IconThemesConfig::configChanged()
-{
-  emit changed(true);
-}
-
 void IconThemesConfig::installNewTheme()
 {
   if (m_themeRequester->url().isEmpty()) return;
@@ -179,8 +174,8 @@ void IconThemesConfig::installNewTheme()
 void IconThemesConfig::removeSelectedTheme()
 {
   QListViewItem *selected = m_iconThemes->selectedItem();
-  if (!selected) 
-     return; 
+  if (!selected)
+     return;
 
   QString question=i18n("Are you sure you want to remove the %1 icon theme ?"
         "\nThis will delete the files installed by this theme").
@@ -205,14 +200,14 @@ void IconThemesConfig::removeSelectedTheme()
 
   QListViewItem *item=0L;
   //Fallback to hicolor if we've deleted the current theme
-  if (!deletingCurrentTheme) 
+  if (!deletingCurrentTheme)
      item=iconThemeItem(KIconTheme::current());
   if (!item)
      item=iconThemeItem("hicolor");
 //  m_iconThemes->setCurrentItem(item);
 
   m_iconThemes->setSelected(item, true);
-  updateRemoveButton();  
+  updateRemoveButton();
 
   if (deletingCurrentTheme) // Change the configuration
     save();
@@ -224,7 +219,7 @@ void IconThemesConfig::updateRemoveButton()
   bool enabled = false;
   if (selected)
   {
-    QString dirName(m_themeNames[selected->text(0)]); 
+    QString dirName(m_themeNames[selected->text(0)]);
     enabled = ( dirName != "hicolor" );
   }
   m_removeButton->setEnabled(enabled);
@@ -251,18 +246,22 @@ void IconThemesConfig::themeSelected(QListViewItem *item)
   kdDebug() << icon.path<< "\n";
   m_previewDocument->setPixmap(QPixmap(icon.path));
   emit changed(true);
+  m_bChanged = true;
 }
 
 void IconThemesConfig::load()
 {
   emit changed(false);
+  m_bChanged = false;
 }
 
 void IconThemesConfig::save()
 {
+  if (!m_bChanged)
+     return;
   QListViewItem *selected = m_iconThemes->selectedItem();
-  if (!selected) 
-     return; 
+  if (!selected)
+     return;
 
   KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
 
@@ -289,6 +288,7 @@ void IconThemesConfig::save()
   {
     KIPC::sendMessageAll(KIPC::IconChanged, i);
   }
+  m_bChanged = false;
 }
 
 void IconThemesConfig::defaults()
@@ -300,6 +300,7 @@ void IconThemesConfig::defaults()
   updateRemoveButton();
 
   emit changed(true);
+  m_bChanged = true;
 }
 
 #include "iconthemes.moc"

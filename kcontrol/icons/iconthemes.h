@@ -38,7 +38,7 @@ class IconThemesConfig : public KCModule
 public:
   IconThemesConfig(QWidget *parent = 0L, const char *name = 0L);
   virtual ~IconThemesConfig();
-  
+
   void loadThemes();
 
   void updateRemoveButton();
@@ -46,15 +46,14 @@ public:
   void load();
   void save();
   void defaults();
-  
+
   int buttons();
-  
+
 protected slots:
-  void configChanged();
   void themeSelected(QListViewItem *item);
   void installNewTheme();
   void removeSelectedTheme();
-      
+
 private:
   QListViewItem *iconThemeItem(QString name);
 
@@ -67,7 +66,7 @@ private:
   QLabel *m_previewDocument;
   QListViewItem *m_defaultTheme;
   QMap <QString, QString>m_themeNames;
-
+  bool m_bChanged;
 };
 
 #endif
