@@ -12,9 +12,8 @@ libkcm_kwindecoration_la_LIBADD = $(LIB_KDEUI)
 
 METASOURCES = AUTO
 
-
 messages:
-	$(XGETTEXT) -kni18n $(libkcm_kwindecoration_la_SOURCES) -o $(podir)/kcmkwindecoration.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmkwindecoration.pot
 
 lnf_DATA = kwindecoration.desktop
 lnfdir = $(kde_appsdir)/Settings/LookNFeel
