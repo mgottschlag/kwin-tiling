@@ -529,7 +529,7 @@ Status SetAuthentication_local (int count, IceListenObj *listenObjs)
                 sock++;
             }
         }
-        kdDebug() << "KSMServer: SetAProc_loc: conn " << (unsigned)i << ", prot=" << prot << ", file=" << sock << endl;
+        kdDebug( 1218 ) << "KSMServer: SetAProc_loc: conn " << (unsigned)i << ", prot=" << prot << ", file=" << sock << endl;
         if (sock && !strcmp(prot, "local")) {
             chmod(sock, 0700);
         }
@@ -928,9 +928,9 @@ void KSMServer::newConnection( int /*socket*/ )
 
     if (cstatus != IceConnectAccepted) {
         if (cstatus == IceConnectIOError)
-            kdDebug() << "IO error opening ICE Connection!" << endl;
+            kdDebug( 1218 ) << "IO error opening ICE Connection!" << endl;
         else
-            kdDebug() << "ICE Connection rejected!" << endl;
+            kdDebug( 1218 ) << "ICE Connection rejected!" << endl;
         (void )IceCloseConnection (iceConn);
     }
 }
@@ -1201,7 +1201,7 @@ void KSMServer::handlePendingInteractions()
 
 void KSMServer::cancelShutdown( KSMClient* c )
 {
-    kdDebug() << "cancelShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
+    kdDebug( 1218 ) << "cancelShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
     clientInteracting = 0;
     for ( KSMClient* c = clients.first(); c; c = clients.next() )
         SmsShutdownCancelled( c->connection() );
@@ -1219,7 +1219,7 @@ void KSMServer::protectionTimeout()
 
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
         if ( !c->saveYourselfDone && !c->waitForPhase2 ) {
-            kdDebug() << "protectionTimeout: client " << c->program() << "(" << c->clientId() << ")" << endl;
+            kdDebug( 1218 ) << "protectionTimeout: client " << c->program() << "(" << c->clientId() << ")" << endl;
             c->saveYourselfDone = true;
         }
     }
@@ -1258,13 +1258,13 @@ void KSMServer::completeShutdownOrCheckpoint()
         // kill all clients
         state = Killing;
         for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-            kdDebug() << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
+            kdDebug( 1218 ) << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
             if (c->wasPhase2)
                 continue;
             SmsDie( c->connection() );
         }
 
-        kdDebug() << " We killed all clients. We have now clients.count()=" <<
+        kdDebug( 1218 ) << " We killed all clients. We have now clients.count()=" <<
            clients.count() << endl;
         completeKilling();
         QTimer::singleShot( 4000, kapp, SLOT( quit() ) );
@@ -1275,7 +1275,7 @@ void KSMServer::completeShutdownOrCheckpoint()
 
 void KSMServer::completeKilling()
 {
-    kdDebug() << "KSMServer::completeKilling clients.count()=" <<
+    kdDebug( 1218 ) << "KSMServer::completeKilling clients.count()=" <<
         clients.count() << endl;
     if ( state != Killing ) {
         //      kdWarning() << "Not Killing !!! state=" << state << endl;
@@ -1386,7 +1386,7 @@ void KSMServer::storeSession()
  */
 void KSMServer::restoreSession( QString sessionName )
 {
-    kdDebug() << "KSMServer::restoreSession " << sessionName << endl;
+    kdDebug( 1218 ) << "KSMServer::restoreSession " << sessionName << endl;
     upAndRunning( "restore session");
     KConfig* config = KGlobal::config();
 
@@ -1602,7 +1602,7 @@ static int winsErrorHandler(Display *, XErrorEvent *ev)
 
 void KSMServer::performLegacySessionSave()
 {
-    kdDebug() << "Saving legacy session apps" << endl;
+    kdDebug( 1218 ) << "Saving legacy session apps" << endl;
     // Setup error handler
     legacyWindows.clear();
     windowMapPtr = &legacyWindows;
@@ -1725,7 +1725,7 @@ void KSMServer::performLegacySessionSave()
             (*it).wmClientMachine = windowWmClientMachine(w);
 	}
     }
-    kdDebug() << "Done saving " << legacyWindows.count() << " legacy session apps" << endl;
+    kdDebug( 1218 ) << "Done saving " << legacyWindows.count() << " legacy session apps" << endl;
 }
 
 /*!
