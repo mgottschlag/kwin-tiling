@@ -52,6 +52,7 @@ CKfiMainWidget * CKfi::create(QWidget *parent)
         //
         CKfiGlobal::cfg().addModifiedDir(CKfiGlobal::cfg().getFontsDir()+CKfiGlobal::cfg().getTTSubDir());
         CKfiGlobal::cfg().addModifiedDir(CKfiGlobal::cfg().getFontsDir()+CKfiGlobal::cfg().getT1SubDir());
+        CKfiGlobal::cfg().configured();
     }
 
     return new CKfiMainWidget(parent);
@@ -59,8 +60,5 @@ CKfiMainWidget * CKfi::create(QWidget *parent)
 
 void CKfi::destroy()
 {
-    if(CKfiGlobal::cfg().firstTime())
-        CKfiGlobal::cfg().configured();
-
     CKfiGlobal::destroy();
 }
