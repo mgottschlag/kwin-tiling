@@ -62,7 +62,7 @@ kcminit_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 rcdir = $(kde_datadir)/kcontrol
 rc_DATA = kcontrolui.rc
 
-data_DATA = KControl.desktop kinfocenter.desktop
+data_DATA = KControl.desktop
 datadir = $(kde_appsdir)/Settingsmenu
 
 install-data-local: KControl_NoDisplay.desktop
@@ -70,6 +70,7 @@ install-data-local: KControl_NoDisplay.desktop
 	$(INSTALL_DATA) $(srcdir)/KControl_NoDisplay.desktop $(DESTDIR)$(kde_appsdir)/KControl.desktop
 	@-rm $(DESTDIR)/$(kde_bindir)/kinfocenter
 	@$(LN_S) kcontrol $(DESTDIR)$(kde_bindir)/kinfocenter
+	$(INSTALL_DATA) $(srcdir)/kinfocenter.desktop $(kde_appsdir)/System/
 
 KDE_ICON=AUTO
 
