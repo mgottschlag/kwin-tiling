@@ -53,7 +53,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 {
 	QVBoxLayout *lay = new QVBoxLayout( this );
 
-	QGroupBox *gb = new QVGroupBox(i18n("Load-on-Demand services"), this );
+	QGroupBox *gb = new QVGroupBox(i18n("Load-on-Demand Services"), this );
 	QWhatsThis::add(gb, i18n("This is a list of available KDE services which will "
 			"be started on demand. They are only listed for convenience, as you "
 			"cannot manipulate these services."));
@@ -66,7 +66,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	_lvLoD->setResizeMode(QListView::LastColumn);
 	_lvLoD->setAllColumnsShowFocus(true);
 
- 	gb = new QVGroupBox(i18n("Startup services"), this );
+ 	gb = new QVGroupBox(i18n("Startup Services"), this );
 	QWhatsThis::add(gb, i18n("This shows all KDE services that can be loaded "
 				"on KDE startup. Checked services will be invoked on next startup. "
 				"Be careful with deactivation of unknown services."));

@@ -117,7 +117,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>After the &amp;cursor leaves the panel</string>
+                        <string>after the &amp;cursor leaves the panel</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_delaySpinBox</cstring>

@@ -64,7 +64,7 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
 
     list->addColumn(i18n("Type"));
     list->addColumn(i18n("Service"));
-    list->addColumn(i18n("Accessed from"));
+    list->addColumn(i18n("Accessed From"));
     list->addColumn(i18n("UID"));
     list->addColumn(i18n("GID"));
     list->addColumn(i18n("PID"));

@@ -14,6 +14,10 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.25  2002/07/09 05:21:13  rikkus
+    Adding a fallback to the alsa 0.9 sndstat, which is in a different location
+    to the code expected.
+
     Revision 1.24  2002/06/07 07:47:40  adrian
     fix Alsa sndstat /proc path for current alsa versions.
     (reported by Florian Schebelle)
@@ -198,7 +202,7 @@ bool GetInfo_IRQ(QListView * lBox)
 bool GetInfo_DMA(QListView * lBox)
 {
     lBox->addColumn(i18n("DMA-Channel"));
-    lBox->addColumn(i18n("Used by"));
+    lBox->addColumn(i18n("Used By"));
     return GetInfo_ReadfromFile(lBox, INFO_DMA, ':');
 }
 
@@ -221,7 +225,7 @@ bool GetInfo_PCI(QListView * lBox)
 bool GetInfo_IO_Ports(QListView * lBox)
 {
     lBox->addColumn(i18n("I/O-Range"));
-    lBox->addColumn(i18n("Used by"));
+    lBox->addColumn(i18n("Used By"));
     return GetInfo_ReadfromFile(lBox, INFO_IOPORTS, ':');
 }
 

@@ -643,10 +643,10 @@ CFontListWidget::CFontListWidget(QWidget *parent)
     itsFixTtfPsNamesME=itsFontsPopup->insertItem(i18n("Fix TTF PostScript names..."), this, SLOT(fixTtfPsNames()));
 
     itsDirsPopup=new QPopupMenu(this);
-    itsCreateDirME=itsDirsPopup->insertItem(i18n("Create new sub-folder..."), this, SLOT(createDir()));
+    itsCreateDirME=itsDirsPopup->insertItem(i18n("Create New Sub-Folder..."), this, SLOT(createDir()));
     itsDirsPopup->insertSeparator();
-    itsSetUnscaledME=itsDirsPopup->insertItem(i18n("Set unscaled"), this, SLOT(toggleUnscaled()));
-    itsSetScaledME=itsDirsPopup->insertItem(i18n("Set scaled"), this, SLOT(toggleUnscaled()));
+    itsSetUnscaledME=itsDirsPopup->insertItem(i18n("Set Unscaled"), this, SLOT(toggleUnscaled()));
+    itsSetScaledME=itsDirsPopup->insertItem(i18n("Set Scaled"), this, SLOT(toggleUnscaled()));
 
     itsAddItems.setAutoDelete(true);
 #ifdef ENABLE_DRAG

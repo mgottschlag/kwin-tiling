@@ -48,7 +48,7 @@ ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
     list.setMinimumSize(425,200);
     list.addColumn(i18n("Type"), 50);
     list.addColumn(i18n("Resource"), 200);
-    list.addColumn(i18n("Mounted under"), 190);
+    list.addColumn(i18n("Mounted Under"), 190);
     
     QWhatsThis::add( this, i18n("This list shows the Samba and NFS shared"
       " resources mounted on your system from other hosts. The \"Type\""

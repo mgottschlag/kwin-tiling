@@ -52,7 +52,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
 {
    QVBoxLayout *layout=new QVBoxLayout(this,KDialog::marginHint(),KDialog::spacingHint());
 
-   QLabel* label=new QLabel(i18n("Available IOSlaves"),this);
+   QLabel* label=new QLabel(i18n("Available IO slaves:"),this);
    QHBox *hbox=new QHBox(this);
    m_ioslavesLb=new KListBox(hbox);
    m_ioslavesLb->setMinimumSize(fontMetrics().width("blahfaselwhatever----"),10);

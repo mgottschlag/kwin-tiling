@@ -289,7 +289,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   QVBoxLayout *vvbox = new QVBoxLayout(grp, 6,6);
   vvbox->addSpacing(grp->fontMetrics().height());
 
-  mouseKeys = new QCheckBox(i18n("&Move mouse with keyboard (using the Num pad)"), grp);
+  mouseKeys = new QCheckBox(i18n("&Move mouse with keyboard (using the num pad)"), grp);
   vvbox->addWidget(mouseKeys);
 
   QBoxLayout *hbox = new QHBoxLayout(vvbox, 6);

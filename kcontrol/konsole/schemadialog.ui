@@ -467,7 +467,7 @@
                         <cstring>TextLabel11</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Image</string>
+                        <string>&amp;Image:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>modeCombo</cstring>

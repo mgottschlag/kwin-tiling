@@ -11,23 +11,31 @@ X-KDE-FactoryName=screensaver
 X-KDE-ParentApp=kcontrol
 
 Name=Screen Saver
+Name[af]=skerm bewaarder
 Name[bs]=Zaštita ekrana (screen saver)
 Name[cs]=Šetřič obrazovky
 Name[da]=Pauseskærm
+Name[es]=Salvapantallas
 Name[he]=שומר מסך
 Name[hu]=Képernyővédők
 Name[ja]=スクリーンセーバー
+Name[mt]=Screen saver
 Name[pt_BR]=Protetor de tela
+Name[sk]=Šetrič obrazovky
 Name[sv]=Skärmsläckare
 
-Comment=Screen saver settings
+Comment=Screen Saver Settings
+Comment[af]=skerm bewaarder instellings
 Comment[bs]=Postavke screen savera
 Comment[cs]=Nastavení šetřiče obrazovky
 Comment[da]=Opsætning af pauseskærm
+Comment[es]=Opciones del salvapantallas
 Comment[he]=שינוי הגדרות שומר המסך
 Comment[hu]=a képernyővédő beállításai
 Comment[ja]=スクリーンセーバーの設定
+Comment[mt]=Setings tal-iscreensaver
 Comment[pt_BR]=Preferências do protetor de tela
+Comment[sk]=Nastavenie šetriča obrazovky
 Comment[sv]=Anpassa skärmsläckare
 
 

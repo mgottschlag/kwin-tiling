@@ -168,7 +168,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        " color scheme. Note that this button is disabled if you do not have"
        " permission to delete the color scheme.") );
 
-	importBt = new QPushButton(i18n("&Import Scheme"), group);
+	importBt = new QPushButton(i18n("&Import Scheme..."), group);
 	connect(importBt, SIGNAL(clicked()),SLOT(slotImport()));
 
 	QWhatsThis::add( importBt, i18n("Press this button to import a new color"

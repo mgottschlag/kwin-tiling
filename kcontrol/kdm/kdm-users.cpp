@@ -104,7 +104,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     connect(lemaxuid, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
     connect(lemaxuid, SIGNAL(textChanged( const QString & )), SLOT(slotMinMaxChanged()) );
 
-    usrGroup = new QButtonGroup( 5, Qt::Vertical, i18n("Show users"), this );
+    usrGroup = new QButtonGroup( 5, Qt::Vertical, i18n("Show Users"), this );
     connect( usrGroup, SIGNAL(clicked( int )), SLOT(slotShowOpts()) );
     connect( usrGroup, SIGNAL(clicked( int )), SLOT(slotChanged()) );
     rbnoneusr = new QRadioButton( i18n("&None"), usrGroup );
@@ -125,21 +125,21 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     wstack = new QWidgetStack( this );
     s_label = new QLabel( wstack, i18n("S&elect users:"), this );
     optinlv = new KListView( this );
-    optinlv->addColumn( i18n("Selected users") );
+    optinlv->addColumn( i18n("Selected Users") );
     optinlv->setResizeMode( QListView::LastColumn );
     QWhatsThis::add( optinlv, i18n("KDM will show all checked users.") );
     wstack->addWidget( optinlv );
     connect( optinlv, SIGNAL(clicked( QListViewItem * )),
 	     SLOT(slotUpdateOptIn( QListViewItem * )) );
     optoutlv = new KListView( this );
-    optoutlv->addColumn( i18n("Hidden users") );
+    optoutlv->addColumn( i18n("Hidden Users") );
     optoutlv->setResizeMode( QListView::LastColumn );
     QWhatsThis::add( optoutlv, i18n("KDM will show all non-checked non-system users.") );
     wstack->addWidget( optoutlv );
     connect( optoutlv, SIGNAL(clicked( QListViewItem * )),
 	     SLOT(slotUpdateOptOut( QListViewItem * )) );
 
-    faceGroup = new QButtonGroup( 5, Qt::Vertical, i18n("User image source"), this );
+    faceGroup = new QButtonGroup( 5, Qt::Vertical, i18n("User Image Source"), this );
     QWhatsThis::add( faceGroup, i18n("Here you can specify where KDM will obtain the images that represent users."
       " \"Admin\" represents the global directory; these are the pictures you can set below."
       " \"User\" means that KDM should read the user's $HOME/.face.icon file."
@@ -151,7 +151,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     rbprefusr = new QRadioButton( i18n("User, Admin"), faceGroup );
     rbusronly = new QRadioButton( i18n("User"), faceGroup );
 
-    QGroupBox *picGroup = new QVGroupBox( i18n("User images"), this );
+    QGroupBox *picGroup = new QVGroupBox( i18n("User Images"), this );
     QWidget *hlpw = new QWidget( picGroup );
     usercombo = new KComboBox( hlpw );
     QWhatsThis::add( usercombo, i18n("The user the image below belongs to.") );
@@ -288,7 +288,7 @@ void KDMUsersWidget::slotUserButtonClicked()
                     KImageIO::pattern( KImageIO::Reading ),
                     this, 0, true);
     dlg.setOperationMode( KFileDialog::Opening );
-    dlg.setCaption( i18n("Choose image") );
+    dlg.setCaption( i18n("Choose Image") );
     dlg.setMode( KFile::File | KFile::LocalOnly );
 
     KImageFilePreview *ip = new KImageFilePreview( &dlg );
