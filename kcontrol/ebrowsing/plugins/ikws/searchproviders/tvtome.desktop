@@ -6,6 +6,8 @@ Name[bn]=টিভি টোম
 Name[da]=TV-Tome
 Name[nb]=Stor TV
 Name[sv]=TV-tome
+Name[th]=ทีวีทอร์ม
+Name[tr]=TV Kanalları
 Name[xx]=xxTV Tomexx
 Query=http://www.tvtome.com/tvtome/servlet/Search?searchType=all&searchString=\\{@}
 Query[xx]=xxhttp://www.tvtome.com/tvtome/servlet/Search?searchType=all&searchString=\\{@}xx
