@@ -55,7 +55,7 @@
 #include "accessibility.moc"
 
 typedef KGenericFactory<AccessibilityConfig, QWidget> AccessibilityFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_accessiblity, AccessibilityFactory("kcmaccessibility") );
+K_EXPORT_COMPONENT_FACTORY( kcm_accessibility, AccessibilityFactory("kcmaccessibility") );
 
 /**
  * This function checks if the kaccess daemon needs to be run
@@ -76,8 +76,8 @@ K_EXPORT_COMPONENT_FACTORY( kcm_accessiblity, AccessibilityFactory("kcmaccessibi
 //    return false; // don't need it
 // }
 
-AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &foo)
-  : AccessibilityConfigWidget(parent, name){
+AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)
+  : AccessibilityConfigWidget(AccessibilityFactory::instance(), parent, name){
 //    QVBoxLayout *main = new QVBoxLayout(this, 0,0);
 //    QTabWidget *tab = new QTabWidget(this);
 //    main->addWidget(tab);
@@ -434,41 +434,18 @@ void AccessibilityConfig::checkAccess(){
 }
 
 QString AccessibilityConfig::quickHelp() const{
-//    kdDebug() << "Running: AccessibilityConfig::quickHelp()"<< endl;
-//    return i18n("<h1>Accessibility</h1>");
+    kdDebug() << "Running: AccessibilityConfig::quickHelp()"<< endl;
+    return i18n("<h1>Accessibility</h1>"); // ### fixme
 }
 
 const KAboutData* AccessibilityConfig::aboutData() const{
-//    KAboutData *about =
-//    new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
-//                   0, 0, KAboutData::License_GPL,
-//                   I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
-// 
-//    about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
-//    about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
-// 
-//    return about;
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
+                   0, 0, KAboutData::License_GPL,
+                   I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
+ 
+    about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
+    about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
+ 
+    return about;
 }
-
-
-// extern "C"
-// {
-//   /*KCModule *create_access(QWidget *parent, const char *name)
-//   {
-//     return new KAccessConfig(parent, name);
-//   };*/
-// 
-//   /* This one gets called by kcminit
-// 
-//    */
-//   /*
-//   void init_access()
-//   {
-//     KConfig *config = new KConfig("kaccessrc", true, false);
-//     bool run = needToRunKAccessDaemon( config );
-// 
-//     delete config;
-//     if (run)
-//       kapp->startServiceByDesktopName("kaccess");
-//   }*/
-// }
