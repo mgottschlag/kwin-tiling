@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.19  1999/07/13 23:49:50  pbrown
+    KDND is dead, long live Xdnd.
+
     Revision 1.18  1999/07/02 15:08:41  bieker
     Added missing i18n("OK")s + removed some QMessageBox::message()s.
 
@@ -178,9 +181,6 @@ const char *eventNames[2][29] = {
 
 KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   KConfigWidget(parent, name), selected_event(0){
-
-
-  setAcceptDrops(true);
 
   QBoxLayout *col1, *col2, *col3, *columns, *top_layout;
 
