@@ -50,6 +50,7 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
             " Please fix the module." << endl;
         client->setChanged( false );
     }
+    clientChanged( false );
 
     KCGlobal::repairAccels( topLevelWidget() );
 }
