@@ -28,6 +28,7 @@
 #include <krun.h>
 #include <qpushbutton.h>
 
+#include "global.h"
 #include "quickhelp.h"
 #include "helpwidget.h"
 #include "helpwidget.moc"
@@ -62,7 +63,13 @@ void HelpWidget::setText( const QString& docPath, const QString& text)
 
 void HelpWidget::setBaseText()
 {
-  _browser->setText(i18n("<h1>KDE Control Center</h1>"
+  if (KCGlobal::isInfoCenter())
+     _browser->setText(i18n("<h1>KDE Info Center</h1>"
+			 "There is no quick help available for the active info module."
+			 "<br><br>"
+			 "Click <a href = \"kinfocenter/index.html\">here</a> to read the general Info Center manual.") );
+  else 
+     _browser->setText(i18n("<h1>KDE Control Center</h1>"
 			 "There is no quick help available for the active control module."
 			 "<br><br>"
 			 "Click <a href = \"kcontrol/index.html\">here</a> to read the general Control Center manual.") );
@@ -71,9 +78,7 @@ void HelpWidget::setBaseText()
 void HelpWidget::urlClicked(const QString & _url)
 {
     KProcess process;
-    KURL url(_url);
-    if (url.protocol() == "file")
-	url.setProtocol("help");
+    KURL url(KURL("help:/"), _url);
 
     if (url.protocol() == "help" || url.protocol() == "man" || url.protocol() == "info") {
         process << "khelpcenter"
