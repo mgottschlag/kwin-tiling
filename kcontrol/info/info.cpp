@@ -411,6 +411,8 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
 #include "info_hpux.cpp"
 #elif __NetBSD__
 #include "info_netbsd.cpp"
+#elif __OpenBSD__
+#include "info_openbsd.cpp"
 #elif __svr4__
 #include "info_svr4.cpp"
 #else
