@@ -77,6 +77,7 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   m_iconThemes=new QListView(this,"IconThemeList");
   m_iconThemes->addColumn(i18n("Name"));
   m_iconThemes->addColumn(i18n("Description"));
+  m_iconThemes->setAllColumnsShowFocus( true );
   connect(m_iconThemes,SIGNAL(selectionChanged(QListViewItem *)),
 		SLOT(themeSelected(QListViewItem *)));
 
