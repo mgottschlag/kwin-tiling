@@ -538,7 +538,7 @@ KGreeter::verifyUser(bool haveto)
 
     switch (MyVerify (::name, ::password, &expire, &nologin)) {
 	case V_ERROR:
-	    errm = i18n("Some critical error occurred.\n"
+	    errm = i18n("A critical error occurred.\n"
 			"Please look at KDM's logfile for more information\n"
 			"or contact your system administrator.");
 	    TempUngrab_Run(msgbox, errorbox);

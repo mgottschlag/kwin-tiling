@@ -368,10 +368,10 @@ QString LiloInfo::getErrorDescription()
 				errorString = i18n ( "Attempted to write invalid next boot option!" );
 				break;
 			case -7:
-				errorString = i18n ( "Lilo location is a non-existing file." );
+				errorString = i18n ( "Lilo location is a non-existent file." );
 				break;
 			case -8:
-				errorString = i18n ( "Boot map location is a non-existing file." );
+				errorString = i18n ( "Boot map location is a non-existent file." );
 				break;
 			default:
 				errorString = i18n ( "Unknown error!" );
