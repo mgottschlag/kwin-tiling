@@ -55,7 +55,7 @@ protected:
      * @returns the contents of the selection or, if empty, the contents of
      * the clipboard.
      */
-    QString clipboardContents();
+    QString clipboardContents( bool *isSelection = 0L );
 
     void removeFromHistory( const QString& text );
     void setEmptyClipboard();

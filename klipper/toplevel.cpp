@@ -70,7 +70,7 @@ TopLevel::TopLevel( QWidget *parent, bool applet )
         m_config = kapp->config();
 
     QSempty = i18n("<empty clipboard>");
-    
+
     bTearOffHandle = KGlobalSettings::insertTearOffHandle();
 
     // we need that collection, otherwise KToggleAction is not happy :}
@@ -93,7 +93,7 @@ TopLevel::TopLevel( QWidget *parent, bool applet )
 
     m_checkTimer = new QTimer(this, "timer");
     m_checkTimer->start(1000, FALSE);
-//     connect(m_checkTimer, SIGNAL(timeout()), this, SLOT(newClipData()));
+    connect(m_checkTimer, SIGNAL(timeout()), this, SLOT(newClipData()));
     connect( clip, SIGNAL( selectionChanged() ), SLOT(slotSelectionChanged()));
     connect( clip, SIGNAL( dataChanged() ), SLOT( slotClipboardChanged() ));
 
@@ -278,7 +278,8 @@ void TopLevel::readProperties(KConfig *kc)
   QStringList dataList;
 
   m_popup->clear();
-  m_popup->insertTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
+  m_popup->insertTitle( SmallIcon( "klipper" ), 
+                        i18n("Klipper - Clipboard Tool"));
 
   if (bKeepContents) { // load old clipboard if configured
       KConfigGroupSaver groupSaver(kc, "General");
@@ -292,7 +293,8 @@ void TopLevel::readProperties(KConfig *kc)
       }
   }
 
-  bClipEmpty = clipboardContents().simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
+  bClipEmpty = clipboardContents().simplifyWhiteSpace().isEmpty() && 
+               dataList.isEmpty();
 
   m_popup->insertSeparator();
   toggleURLGrabAction->plug( m_popup, -1 );
@@ -300,8 +302,8 @@ void TopLevel::readProperties(KConfig *kc)
 
   m_popup->insertItem( SmallIcon("fileclose"),
 			i18n("&Clear Clipboard History"), EMPTY_ITEM );
-  m_popup->insertItem(SmallIcon("configure"), i18n("&Preferences..."),
-		       CONFIG_ITEM);
+  m_popup->insertItem( SmallIcon("configure"), i18n("&Preferences..."),
+                       CONFIG_ITEM);
   if( !isApplet()) {
     m_popup->insertSeparator();
     m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
@@ -497,7 +499,7 @@ void TopLevel::slotClearClipboard()
         m_popup->setItemEnabled(m_selectedItem, false);
 }
 
-QString TopLevel::clipboardContents()
+QString TopLevel::clipboardContents( bool *isSelection )
 {
     clip->setSelectionMode( true );
     QString clipContents = clip->text().stripWhiteSpace();
@@ -505,6 +507,9 @@ QString TopLevel::clipboardContents()
         clip->setSelectionMode( false );
         clipContents = clip->text().stripWhiteSpace();
     }
+
+    if ( isSelection )
+        *isSelection = clip->selectionModeEnabled();
 
     return clipContents;
 }
@@ -556,76 +561,16 @@ void TopLevel::slotMoveSelectedToTop()
     m_clipDict.insert( m_selectedItem, m_lastString );
 }
 
+// clipboard polling for legacy apps
 void TopLevel::newClipData()
 {
-    qDebug("****** newClipData!");
-    return;
-
-    QString clipData;
-
-    clip->setSelectionMode( false );
-
-    bool clipEmpty = (clip->data()->format() == 0L);
-    QString clipContents = clip->text().stripWhiteSpace();
-    clip->setSelectionMode( true );
-    QString selectContents = clip->text().stripWhiteSpace();
-
-    if ( clipContents != m_lastClipboard ) {
-        // keep old clipboard after someone set it to null
-        if ( clipEmpty && bNoNullClipboard ) {
-            clipContents = m_lastClipboard;
-            setClipboard( clipContents, Clipboard );
-        }
-
-        clipData        = clipContents;
-        m_lastClipboard = clipContents;
-        // sync clipboard and selection?
-        if( bSynchronize && clipContents != selectContents ) {
-            m_lastSelection = clipContents;
-            setClipboard( clipContents, Selection );
-        }
-    }
-
-    else {
-        if ( selectContents != m_lastSelection ) {
-            // keep old selection after someone set it to null
-            if ( selectContents.isEmpty() && bNoNullClipboard ) {
-                selectContents = m_lastSelection;
-                setClipboard( selectContents, Selection );
-            }
-
-            clipData        = selectContents;
-            m_lastSelection = selectContents;
-            // sync clipboard and selection?
-            if( bSynchronize && selectContents != clipContents ) {
-                m_lastClipboard = selectContents;
-                setClipboard( selectContents, Clipboard );
-            }
-        }
-        else
-            clipData = m_lastString;
-    }
-
-    // If the string is null bug out
-    if (clipData.isEmpty()) {
-	if (m_selectedItem != -1) {
-            m_popup->setItemChecked(m_selectedItem, false);
-	    m_selectedItem = -1;
-	}
-
-        if ( m_clipDict.isEmpty() ) {
-            setEmptyClipboard();
-        }
-        return;
-    }
-
-    if (clipData != m_lastString) {
-        applyClipChanges( clipData );
-    }
+    bool selectionMode;
+    QString clipContents = clipboardContents( &selectionMode );
+    checkClipData( clipContents, selectionMode );
 }
 
 void TopLevel::clipboardSignalArrived( bool selectionMode )
-{ 
+{
     clip->setSelectionMode( selectionMode );
     QString text = clip->text();
 
@@ -657,7 +602,6 @@ void TopLevel::checkClipData( const QString& text, bool selectionMode )
             if ( clipContents != selectContents ) {
                 m_lastSelection = text;
                 m_lastClipboard = text;
-                qDebug("**** SYNCHRONIZING ****");
                 setClipboard( text, !selectionMode );
             }
         }
@@ -685,8 +629,9 @@ void TopLevel::checkClipData( const QString& text, bool selectionMode )
 
 void TopLevel::setClipboard( const QString& text, int mode )
 {
+    bool blocked = clip->signalsBlocked();
     clip->blockSignals( true ); // ### this might break other kicker applets
-    
+
     if ( mode & Selection ) {
         clip->setSelectionMode( true );
         clip->setText( text );
@@ -695,7 +640,8 @@ void TopLevel::setClipboard( const QString& text, int mode )
         clip->setSelectionMode( false );
         clip->setText( text );
     }
-    clip->blockSignals( false );
+
+    clip->blockSignals( blocked );
 }
 
 #include "toplevel.moc"
