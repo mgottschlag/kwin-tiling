@@ -334,7 +334,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	Debug ("global control %s received %'[s\n", word, ar);
     if (ar[0]) {
 	if (fd >= 0 && !strcmp (ar[0], "caps")) {
-	    Writer (fd, "ok\tkdm\t", 7);
+	    Writer (fd, "ok\tkdm\tlist\t", 12);
 	    if (d) {
 		if (d->allowShutdown != SHUT_NONE) {
 		    if (d->allowShutdown == SHUT_ROOT && d->userSess)
