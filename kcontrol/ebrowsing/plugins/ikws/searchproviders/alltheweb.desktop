@@ -2,20 +2,21 @@
 Encoding=UTF-8
 Type=Service
 Name=AllTheWeb fast
-Name[af]=allesvandieweb vinnige
+Name[af]=Allesvandieweb vinnige
 Name[az]=AllTheWeb
 Name[be]=AllTheWeb
 Name[ca]=AllTheWeb ràpid
 Name[da]=AllTheWeb hurtigt
 Name[eo]=La tuta teksaĵo rapide
 Name[es]=AllTheWeb de Fast
-Name[hu]=AllTheWeb
+Name[hu]=AllTheWeb (gyors)
 Name[is]=AllTheWeb hratt
 Name[it]=AllTheWeb veloce
 Name[ko]=올더웹 패스트
 Name[lv]=VissWebs ātri
 Name[nb]=HeleWeben fort
 Name[nn]=AllTheWeb Fast
+Name[nso]=Web Kamoka ka lebelo
 Name[pl]=AllTheWeb szybko
 Name[pt]=AllThe Web fast
 Name[pt_BR]=AllTheWeb
@@ -24,8 +25,7 @@ Name[sv]=AllTheWeb snabb
 Name[tr]=AllTheWeb
 Name[ven]=Webu dzothe ngau tavhanya
 Name[xh]=Yonke iWeb ngokukhawuleza
-Name[xx]=xx
 Name[zu]=Yonke iWeb ngokukhawuleza
 ServiceTypes=SearchProvider
 Keys=atw,alltheweb
-Query=http://www.alltheweb.com/cgi-bin/search?exec=FAST+Search&type=all&query=\\{@}&exec=FAST+Search
+Query=http://www.alltheweb.com/search?exec=FAST+Search&type=all&query=\\{@}&cat=web
