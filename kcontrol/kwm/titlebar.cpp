@@ -5,7 +5,7 @@
  *
  * Enhancements:
  * Copyright (c) 1999 Dirk A. Mueller <dmuell@gmx.net>
- * 
+ *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -327,7 +327,7 @@ void KTitlebarButtons::drawPreview(bool draw)
 	{
 
 	  // can't place max on left
-	  KMessageBox::information(this, 
+	  KMessageBox::information(this,
                                i18n("The left side of the titlebar "
                                     "is full... disabling the 'maximize' "
                                     "button\n"));
@@ -753,11 +753,11 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   lay->setColStretch(0,1);
   lay->setColStretch(1,1);
 
-  //CT 06Nov1998 - title alignment GUI config  
+  //CT 06Nov1998 - title alignment GUI config
   alignBox = new QButtonGroup (i18n("Title Alignment"), this);
 
   QGridLayout *pixLay = new QGridLayout(alignBox,2,3,15,5);
-  
+
   leftAlign = new QRadioButton(i18n("Left"),alignBox);
   pixLay->addWidget(leftAlign,1,0);
 
@@ -772,7 +772,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   lay->addMultiCellWidget(alignBox,0,0,0,1);
 
   //CT 02Dec1998 - foul changes for some weird options
-  appearBox = new QGroupBox(i18n("Appearance"), 
+  appearBox = new QGroupBox(i18n("Appearance"),
 				 this);
 
   QBoxLayout *appearLay = new QVBoxLayout (appearBox,10,5);
@@ -788,7 +788,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   connect(bShaded, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
 
-  plain = new QRadioButton(i18n("Plain"), 
+  plain = new QRadioButton(i18n("Plain"),
 			   titlebarBox);
   pushLay->addWidget(plain);
 
@@ -813,16 +813,16 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   lay->addWidget(optOpts, 1, 1);
 
-  // the first page - options for pixmap titlebars  
-  pixmapBox    = new QGroupBox(i18n("Pixmap"), optOpts); 
- 
+  // the first page - options for pixmap titlebars
+  pixmapBox    = new QGroupBox(i18n("Pixmap"), optOpts);
+
   pixLay = new QGridLayout(pixmapBox,7,2,10,5);
 
   pbPixmapActive = new QPushButton(pixmapBox);
   pixLay->addWidget(pbPixmapActive,2,1);
 
   connect(pbPixmapActive, SIGNAL(clicked()), this, SLOT(activePressed()));
-  
+
   pbPixmapInactive = new QPushButton(pixmapBox);
   pixLay->addWidget(pbPixmapInactive,5,1);
 
@@ -840,7 +840,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   // second page - options for gradients
 
   gradBox = new QGroupBox(i18n("Gradient"), optOpts);
-  
+
   QBoxLayout *gradLay = new QVBoxLayout(gradBox, 10);
   gradLay->addSpacing(10);
 
@@ -854,10 +854,10 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   gradientTypes->insertItem(i18n("Rectangle"));
   gradientTypes->insertItem(i18n("PipeCross"));
   gradientTypes->insertItem(i18n("Elliptic"));
-  
+
   gradientTypes->setMultiSelection(false);
 
-  connect(gradientTypes, SIGNAL(highlighted(const QString &)), 
+  connect(gradientTypes, SIGNAL(highlighted(const QString &)),
 	  this, SLOT(setGradient(const QString &)));
 
   gradLay->addWidget(gradientTypes);
@@ -902,14 +902,16 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   lay->addMultiCellWidget(titlebarDblClickBox,2,2,0,1);
 
-  titleAnim = new KIntNumInput(i18n("Title animation"), 0, 100, 10, 0,
-                               i18n("ms"), 10, true, this);
-  titleAnim->setSteps(10,10);
+  titleAnim = new KIntNumInput(10, this);
+  titleAnim->setRange(0, 100, 10, true);
+  titleAnim->setLabel(i18n("Title animation"));
+  titleAnim->setSuffix(i18n("ms"));
+
   lay->addMultiCellWidget(titleAnim,3,0, 1, 1);
 
   lay->activate();
   GetSettings();
-  
+
   gradientTypes->setCurrentItem((int) gradient);
 }
 
@@ -939,7 +941,7 @@ int KTitlebarAppearance::getAlign() {
 }
 
 void KTitlebarAppearance::setAlign(int a) {
-  if (a == AT_LEFT) 
+  if (a == AT_LEFT)
     leftAlign->setChecked(true);
   if (a == AT_MIDDLE)
     midAlign->setChecked(true);
@@ -1063,8 +1065,8 @@ void KTitlebarAppearance::SaveSettings( void )
 
     //first, a backup
     sPixmapActive   = "oldactivetitlebar.xpm";
-    sPixmapInactive = "oldinactivetitlebar.xpm";   
- 
+    sPixmapInactive = "oldinactivetitlebar.xpm";
+
     if (!pixmapActiveOld.isNull()) {
       QFile( sPixmapActive ).remove();
       pixmapActiveOld.save(kwmpicsdir+'/'+sPixmapActive,"XPM");
@@ -1092,7 +1094,7 @@ void KTitlebarAppearance::SaveSettings( void )
 
     //and a little check
     if ( !( a_saved && i_saved ) ) {
-      KMessageBox::sorry(this, 
+      KMessageBox::sorry(this,
                          i18n("There was an error while saving\n"
                               "the titlebar pixmaps! Please check permissions."));
     }
@@ -1133,49 +1135,49 @@ void KTitlebarAppearance::setGradient(const QString & grad_name)
   if (grad_name == i18n("Vertical"))
   {
     gradient = VERT;
-    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend,
 			    KPixmapEffect::VerticalGradient);
   }
   else if (grad_name == i18n("Horizontal"))
   {
     gradient = HORIZ;
-    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend,
 			    KPixmapEffect::HorizontalGradient);
   }
   else if (grad_name == i18n("Diagonal"))
   {
     gradient = DIAG;
-    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend,
 			    KPixmapEffect::DiagonalGradient);
   }
   else if (grad_name == i18n("CrossDiagonal"))
   {
     gradient = CROSSDIAG;
-    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend,
 			    KPixmapEffect::CrossDiagonalGradient);
   }
   else if (grad_name == i18n("Pyramid"))
   {
     gradient = PYRAM;
-    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend,
 			    KPixmapEffect::PyramidGradient);
   }
   else if (grad_name == i18n("Rectangle"))
   {
     gradient = RECT;
-    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend,
 			    KPixmapEffect::RectangleGradient);
   }
   else if (grad_name == i18n("PipeCross"))
   {
     gradient = PIPE;
-    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend,
 			    KPixmapEffect::PipeCrossGradient);
   }
   else if (grad_name == i18n("Elliptic"))
   {
     gradient = ELLIP;
-    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend,
 			    KPixmapEffect::EllipticGradient);
   }
 

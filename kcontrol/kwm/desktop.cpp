@@ -64,7 +64,7 @@ extern "C" {
       KGlobal::locale()->insertCatalogue("kcmkwm");
       return new KDesktopConfig( parent, name );
     }
-} 
+}
 
 //CT 21Oct1998 - rewritten for using layouts
 KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
@@ -90,8 +90,9 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
                               ElectricBox);
   eLay->addMultiCellWidget(movepointer,2,2,0,1);
 
-  delays = new KIntNumInput(i18n("Desktop switch delay:"), 0,MAX_EDGE_RES/10,10,0,
-                            QString::null, 10, true, ElectricBox);
+  delays = new KIntNumInput(10, ElectricBox);
+  delays->setRange(0, MAX_EDGE_RES/10, 10, true);
+  delays->setLabel(i18n("Desktop switch delay:"));
   eLay->addMultiCellWidget(delays,4,4,1,2);
 
   connect( enable, SIGNAL(clicked()), this, SLOT(setEBorders()));
@@ -116,15 +117,17 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   eLay->setColStretch(1,0);
   eLay->setColStretch(2,1);
 
-  BrdrSnap = new KIntNumInput(i18n("Border Snap Zone:"), 0, MAX_BRDR_SNAP, 1, 0,
-                                    i18n("pixels"), 10, true, MagicBox);
+  BrdrSnap = new KIntNumInput(10, MagicBox);
+  BrdrSnap->setRange( 0, MAX_BRDR_SNAP);
+  BrdrSnap->setLabel(i18n("Border Snap Zone:"));
+  BrdrSnap->setSuffix(i18n("pixels"));
   BrdrSnap->setSteps(1,1);
   eLay->addWidget(BrdrSnap,1,2);
   eLay->addRowSpacing(0,5);
 
-  WndwSnap = new KIntNumInput(i18n("Window Snap Zone:"), 0, MAX_WNDW_SNAP, 1, 0,
-                              i18n("pixels"), 10, true, MagicBox);
-  WndwSnap->setSteps(1,1);
+  WndwSnap = new KIntNumInput(10, MagicBox);
+  WndwSnap->setRange( 0, MAX_WNDW_SNAP);
+  WndwSnap->setLabel( i18n("pixels"));
   eLay->addWidget(WndwSnap,3,2);
   lay->addWidget(MagicBox,5);
 
@@ -239,7 +242,7 @@ void KDesktopConfig::load( void )
   else if (v < 0) setWindowSnapZone (0);
   else setWindowSnapZone(v);
   //CT ---
-  
+
   emit changed(false);
   delete config;
 }

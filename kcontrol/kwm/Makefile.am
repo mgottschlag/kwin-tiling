@@ -18,12 +18,13 @@ libkcm_kwindesktop_la_SOURCES = desktop.cpp
 libkcm_kwindesktop_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_kwindesktop_la_LIBADD = $(LIB_KDEUI)
 
-bin_PROGRAMS = kcmkwm
-kcmkwm_SOURCES = main.cpp titlebar.cpp desktop.cpp advanced.cpp
-noinst_HEADERS = windows.h desktop.h titlebar.h geom.h mouse.h advanced.h
-kcmkwm_LDFLAGS = $(KDE_RPATH)  $(all_libraries)
-kcmkwm_LDADD = $(LIB_KDEUI)
+# bin_PROGRAMS = kcmkwm
+# kcmkwm_SOURCES = main.cpp titlebar.cpp desktop.cpp advanced.cpp
+# noinst_HEADERS = windows.h desktop.h titlebar.h geom.h mouse.h advanced.h
+noinst_HEADERS = windows.h desktop.h geom.h mouse.h
+#kcmkwm_LDFLAGS = $(KDE_RPATH)  $(all_libraries)
+#kcmkwm_LDADD = $(LIB_KDEUI)
 
 messages:
-	$(XGETTEXT) $(kcmkwm_SOURCES) -o $(podir)/kcmkwm.pot
+	$(XGETTEXT) $(libkcm_kwinmouse_la_SOURCES) $(libkcm_kwinoptions_la_SOURCES) $(libkcm_kwindesktop_la_SOURCES) -o $(podir)/kcmkwm.pot
 

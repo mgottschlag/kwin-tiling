@@ -87,7 +87,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   //CT checkboxes: maximize, move, resize behaviour
   vertOnly = new QCheckBox(i18n("Vertical maximization only by default"), windowsBox);
 
-  // CT: disabling is needed as long as functionality misses in kwin  
+  // CT: disabling is needed as long as functionality misses in kwin
   vertOnly->setEnabled(false);
   bLay->addWidget(vertOnly);
 
@@ -115,13 +115,13 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   rLay->addWidget(resizeAnimFastLabel,1,2);
 
 #ifdef __GNUC__
-#warning CT: disabling is needed as long as functionality misses in kwin  
+#warning CT: disabling is needed as long as functionality misses in kwin
 #endif
   resizeAnimTitleLabel->setEnabled(false);
   resizeAnimSlider->setEnabled(false);
   resizeAnimNoneLabel->setEnabled(false);
   resizeAnimFastLabel->setEnabled(false);
-  
+
   lay->addWidget(windowsBox);
 
   // placement policy --- CT 19jan98, 13mar98 ---
@@ -134,7 +134,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   placementCombo->insertItem(i18n("Smart"), SMART_PLACEMENT);
   placementCombo->insertItem(i18n("Cascade"), CASCADE_PLACEMENT);
   placementCombo->insertItem(i18n("Random"), RANDOM_PLACEMENT);
-  // CT: disabling is needed as long as functionality misses in kwin 
+  // CT: disabling is needed as long as functionality misses in kwin
   //placementCombo->insertItem(i18n("Interactive"), INTERACTIVE_PLACEMENT);
   //placementCombo->insertItem(i18n("Manual"), MANUAL_PLACEMENT);
   placementCombo->setCurrentItem(SMART_PLACEMENT);
@@ -169,7 +169,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   focusCombo =  new QComboBox(false, fcsBox);
   focusCombo->insertItem(i18n("Click to focus"), CLICK_TO_FOCUS);
   focusCombo->insertItem(i18n("Focus follows mouse"), FOCUS_FOLLOWS_MOUSE);
-  // CT: disabling is needed as long as functionality misses in kwin  
+  // CT: disabling is needed as long as functionality misses in kwin
   //  focusCombo->insertItem(i18n("Classic focus follows mouse"), CLASSIC_FOCUS_FOLLOWS_MOUSE);
   //  focusCombo->insertItem(i18n("Classic sloppy focus"), CLASSIC_SLOPPY_FOCUS);
   fLay->addMultiCellWidget(focusCombo,1,1,0,1);
@@ -199,25 +199,25 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   s->setMinimumSize(s->size());
   fLay->addWidget(s,2,2);
 
-  autoRaise = new KIntNumInput(QString::null, 0,3000, 100,500,
-                               QString::null, 10, true, fcsBox);
+  autoRaise = new KIntNumInput(500, fcsBox);
+  autoRaise->setRange(0, 3000, 100, true);
   autoRaise->setSteps(100,100);
   fLay->addMultiCellWidget(autoRaise,3,3,1,2);
   connect( autoRaise, SIGNAL(valueChanged(int)), s, SLOT(display(int)) );
-  
-  fLay->addColSpacing(0,QMAX(autoRaiseOn->sizeHint().width(), 
+
+  fLay->addColSpacing(0,QMAX(autoRaiseOn->sizeHint().width(),
                              clickRaiseOn->sizeHint().width()) + 15);
 
-  // CT: disabling is needed as long as functionality misses in kwin  
+  // CT: disabling is needed as long as functionality misses in kwin
   autoRaiseOn->setEnabled(false);
   clickRaiseOn->setEnabled(false);
   alabel->setEnabled(false);
   s->setEnabled(false);
   autoRaise->setEnabled(false);
-  
+
   lay->addWidget(fcsBox);
 
-  // Any changes goes to slotChanged() 
+  // Any changes goes to slotChanged()
   connect(vertOnly, SIGNAL(clicked()), this, SLOT(slotChanged()));
   connect(opaque, SIGNAL(clicked()), this, SLOT(slotChanged()));
   connect(resizeOpaqueOn, SIGNAL(clicked()), this, SLOT(slotChanged()));
@@ -226,7 +226,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   connect(focusCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   connect(fcsBox, SIGNAL(clicked(int)), this, SLOT(slotChanged()));
   connect(autoRaise, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
-  
+
   load();
 
 }
@@ -272,9 +272,9 @@ int KWindowConfig::getFocus()
 void KWindowConfig::setFocus(int foc)
 {
   focusCombo->setCurrentItem(foc);
-  
+
   // this will disable/hide the auto raise delay widget if focus==click
-  setAutoRaiseEnabled(); 
+  setAutoRaiseEnabled();
 }
 
 int KWindowConfig::getResizeAnim()
@@ -342,7 +342,7 @@ void KWindowConfig::setClickRaise(bool on)
 
 void KWindowConfig::setAutoRaiseEnabled()
 {
-  // KWin doesn't read these settings => don't enable anything 
+  // KWin doesn't read these settings => don't enable anything
   return;
 
   // the auto raise related widgets are: autoRaise, alabel, s, sec
@@ -401,7 +401,7 @@ void KWindowConfig::load( void )
     setMove(OPAQUE);
 
   //CT 17Jun1998 - variable animation speed from 0 (none!!) to 10 (max)
-  // CT: disabling is needed as long as functionality misses in kwin  
+  // CT: disabling is needed as long as functionality misses in kwin
 //   int anim = 1;
 //   if (config->hasKey(KWM_RESIZE_ANIM)) {
 //     anim = config->readNumEntry(KWM_RESIZE_ANIM);
@@ -529,7 +529,7 @@ void KWindowConfig::save( void )
   else
     config->writeEntry(KWM_RESIZE_OPAQUE, "Transparent");
 
- //CT: disabling is needed as long as functionality misses in kwin  
+ //CT: disabling is needed as long as functionality misses in kwin
 //   v = getMaximize();
 //   if (v == MAXIMIZE_VERT)
 //     config->writeEntry(KWM_MAXIMIZE, "on");
