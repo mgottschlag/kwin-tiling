@@ -186,9 +186,9 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsGhostscriptFileText->setFrameShadow( QLabel::Sunken );
     itsGhostscriptFileText->setText( tr2i18n( "TextLabel2" ) );
     itsGhostscriptFileText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add( itsGhostscriptFileText, tr2i18n( "This file is used by Ghostscript to map the names of fonts within Postscript files to the physical fonts located on disk.\n"
+    QWhatsThis::add( itsGhostscriptFileText, tr2i18n( "This file is used by Ghostscript to map the names of fonts within PostScript files to the physical fonts located on disk.\n"
 "\n"
-"(Most UNIX/Linux programs produce Postscript files when printing - and these are passed on to Ghostscript, which does the actual work.)\n"
+"(Most UNIX/Linux programs produce PostScript files when printing - and these are passed on to Ghostscript, which does the actual work.)\n"
 "\n"
 "For normal (non-root) users, this file will usually be:\n"
 "\n"

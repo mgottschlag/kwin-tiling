@@ -44,10 +44,10 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     GroupBox5Layout->setAlignment( Qt::AlignTop );
 
     itsFixTtfPsNamesUponInstall = new QCheckBox( GroupBox5, "itsFixTtfPsNamesUponInstall" );
-    itsFixTtfPsNamesUponInstall->setText( tr2i18n( "Fix &TrueType Postscript names table" ) );
-    QWhatsThis::add( itsFixTtfPsNamesUponInstall, tr2i18n( "Some TrueType fonts have incorrect Postscript names for certain characters.\n"
+    itsFixTtfPsNamesUponInstall->setText( tr2i18n( "Fix &TrueType PostScript names table" ) );
+    QWhatsThis::add( itsFixTtfPsNamesUponInstall, tr2i18n( "Some TrueType fonts have incorrect PostScript names for certain characters.\n"
 "\n"
-"For example, \"Euro\" is sometimes listed as \"uni20ac\". This would affect any Postscript output from applications (and most produce Postscript when printing), as it would list the use of the \"Euro\" character -but when this Postscript output is sent to the printer, or viewed, the \"Euro\" symbol would not be found.\n"
+"For example, \"Euro\" is sometimes listed as \"uni20ac\". This would affect any PostScript output from applications (and most produce PostScript when printing), as it would list the use of the \"Euro\" character - but when this PostScript output is sent to the printer, or viewed, the \"Euro\" symbol would not be found.\n"
 "\n"
 "Selecting this option will cause the installer to automatically correct any broken fonts." ) );
 
