@@ -88,8 +88,6 @@ void MenuTab::load()
     bool showHiddenFiles = c->readBoolEntry("ShowHiddenFiles", false);
     m_hiddenFiles->setChecked(showHiddenFiles);
     m_maxQuickBrowserItems->setValue(c->readNumEntry("MaxEntries2", 30));
-    m_maxQuickBrowserItems->setEnabled(showHiddenFiles);
-    m_maxQuickBrowserItemsLabel->setEnabled(showHiddenFiles);
 
     if (c->readBoolEntry("DetailedMenuEntries", true))
     {

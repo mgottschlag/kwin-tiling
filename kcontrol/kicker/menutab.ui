@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>MenuTabBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>410</width>
-            <height>359</height>
+            <height>417</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>MenuTabBase</string>
     </property>
     <vbox>
         <property name="name">
@@ -442,18 +445,6 @@
         <signal>clicked()</signal>
         <receiver>MenuTabBase</receiver>
         <slot>launchMenuEditor()</slot>
-    </connection>
-    <connection>
-        <sender>m_hiddenFiles</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_maxQuickBrowserItemsLabel</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_hiddenFiles</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_maxQuickBrowserItems</receiver>
-        <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
