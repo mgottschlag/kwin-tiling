@@ -143,6 +143,10 @@ Window_data::Window_data( WId id_P )
         role = windows_handler->get_window_role( id_P );
         wclass = windows_handler->get_window_class( id_P );
         type = kwin_info.windowType( SUPPORTED_WINDOW_TYPES_MASK );
+        if( type == NET::Override ) // HACK consider non-NETWM fullscreens to be normal too
+            type = NET::Normal;
+        if( type == NET::Unknown )
+            type = NET::Normal;
         }
     }
 
