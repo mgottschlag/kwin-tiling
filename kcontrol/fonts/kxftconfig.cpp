@@ -347,7 +347,7 @@ bool KXftConfig::reset()
     if(m_doc.documentElement().isNull())
         m_doc.appendChild(m_doc.createElement("fontconfig"));
 #else
-    ifstream f(QFile::encodeName(m_file));
+    std::ifstream f(QFile::encodeName(m_file));
 
     m_size=0;
 
@@ -359,7 +359,7 @@ bool KXftConfig::reset()
 
     if(f)
     {
-        f.seekg(0, ios::end);
+        f.seekg(0, std::ios::end);
         m_size=f.tellg();
 
         ok=true;
@@ -369,7 +369,7 @@ bool KXftConfig::reset()
 
             if(m_data)
             {
-                f.seekg(0, ios::beg);
+                f.seekg(0, std::ios::beg);
                 f.read(m_data, m_size);
                 m_data[m_size]='\0';
                 readContents();
@@ -453,7 +453,7 @@ bool KXftConfig::apply()
             FcAtomicDestroy(atomic);
         }
 #else
-        ofstream f(QFile::encodeName(m_file));
+        std::ofstream f(QFile::encodeName(m_file));
 
         if(f)
         {
@@ -1089,12 +1089,12 @@ void KXftConfig::outputNewDirs(std::ofstream &f)
     m_dirs.clear();
 }
 
-void KXftConfig::outputSymbolFamily(ofstream &f, const QString &str)
+void KXftConfig::outputSymbolFamily(std::ofstream &f, const QString &str)
 {
     f << "match any family == \"" << str.local8Bit() << "\" edit encoding = " << constSymEnc << ';' << endl;
 }
 
-void KXftConfig::outputNewSymbolFamilies(ofstream &f)
+void KXftConfig::outputNewSymbolFamilies(std::ofstream &f)
 {
     ListItem *item;
 
@@ -1104,13 +1104,13 @@ void KXftConfig::outputNewSymbolFamilies(ofstream &f)
     m_symbolFamilies.clear();
 }
 
-void KXftConfig::outputSubPixelType(ofstream &f, bool ifNew)
+void KXftConfig::outputSubPixelType(std::ofstream &f, bool ifNew)
 {
     if(!m_subPixel.toBeRemoved && ((ifNew && NULL==m_subPixel.end) || (!ifNew && NULL!=m_subPixel.end)) && SubPixel::None!=m_subPixel.type)
         f << "match edit rgba = " << toStr(m_subPixel.type) << ';' << endl;
 }
 
-void KXftConfig::outputExcludeRange(ofstream &f, bool ifNew)
+void KXftConfig::outputExcludeRange(std::ofstream &f, bool ifNew)
 {
     if(((ifNew && NULL==m_excludeRange.end) || (!ifNew && NULL!=m_excludeRange.end)) &&
        (!equal(m_excludeRange.from,0) || !equal(m_excludeRange.to,0)))
