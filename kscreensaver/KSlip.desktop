@@ -1,0 +1,31 @@
+[Desktop Entry]
+Exec=kslip.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Slip
+Name[af]=Glip
+Name[ca]=Relliscada
+Name[eo]=Äˆifonoj
+Name[fi]=Liutus
+Name[hu]=Csúszós
+Name[ja]=¥¹¥ê¥Ã¥×
+Name[mi]=Csúszós
+Name[ro]=Alunecare
+Name[sl]=Zdrs
+Name[sv]=Glid
+
+[Desktop Action Setup]
+Exec=kslip.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kslip.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kslip.kss -root
+Name=Display in root window
+NoDisplay=true

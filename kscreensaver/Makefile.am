@@ -17,8 +17,6 @@ EXTRA_PROGRAMS = kbat.kss kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss
 
 KDE_ICON = kscreensaver
 
-EXTRA_DIST = kscience.gif kscience-small.gif kscreensave-0.3.3.lsm
-
 BASE_SRCS = main.cpp demowin.cpp saver.cpp helpers.cpp
 
 XS_SRCS = xs_colors.c xs_hsv.c xs_visual.c
@@ -92,4 +90,13 @@ messages:
 data_DATA = kscience.gif kscience-small.gif
 datadir = $(kde_datadir)/kscreensaver
 
+desktop_DATA = KAttration.desktop KBanner.desktop KBat.desktop KBlankscreen.desktop \
+	KBlob.desktop KBouboule.desktop KBsod.desktop KFlame.desktop \
+	KForest.desktop KHop.desktop KLaser.desktop KLines.desktop \
+	KLissie.desktop KMatrix.desktop KMorph3D.desktop KPipes.desktop \
+	KPolygon.desktop KPyro.desktop KRandom.desktop KRock.desktop \
+	KScience.desktop KSlidescreen.desktop KSlideshow.desktop KSlip.desktop \
+	KSpace.desktop KSwarm.desktop                               
+desktopdir = $(kde_appsdir)/System/ScreenSavers
 
+EXTRA_DIST = kscience.gif kscience-small.gif kscreensave-0.3.3.lsm $(desktop_DATA)

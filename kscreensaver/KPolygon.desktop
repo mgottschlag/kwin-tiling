@@ -1,0 +1,42 @@
+[Desktop Entry]
+Exec=kpolygon.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Polygons
+Name[af]=Poligone
+Name[ca]=Polígons
+Name[cs]=Polygony
+Name[da]=Polygoner
+Name[de]=Vielecke
+Name[eo]=Poligonoj
+Name[fi]=Polygonit
+Name[fr]=Polygônes
+Name[hr]=Poligoni
+Name[hu]=Poligonok
+Name[it]=Poligoni
+Name[ja]=¥Ý¥ê¥´¥ó
+Name[mi]=Poligonok
+Name[no]=Polygoner
+Name[no_NY]=Polygon
+Name[pt]=Poligonos
+Name[pt_BR]=Poligonos
+Name[ro]=Poligoane
+Name[sl]=Mnogokotniki
+Name[sr]=Poligoni
+Name[sv]=Polygoner
+
+[Desktop Action Setup]
+Exec=kpolygon.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kpolygon.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kpolygon.kss -root
+Name=Display in root window
+NoDisplay=true

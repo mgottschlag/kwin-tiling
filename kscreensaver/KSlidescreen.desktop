@@ -1,0 +1,38 @@
+[Desktop Entry]
+Exec=kslidescreen.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Slide Screen
+Name[af]=Skuifskerm
+Name[ca]=Diapositives
+Name[da]=Glide skærm
+Name[de]=Schiebespiel
+Name[eo]=Puzleroj
+Name[fi]=LiukuNäyttö
+Name[hu]=Puzzle
+Name[it]=Tessere scorrevoli
+Name[ja]=¥¹¥é¥¤¥É¥¹¥¯¥ê¡¼¥ó
+Name[mi]=Puzzle
+Name[no]=Skyv skjermen
+Name[no_NY]=Skyv skjermen
+Name[pt]=Ecrã Deslizante
+Name[pt_BR]=Ecrã Deslizante
+Name[ro]=Ecran alunecãtor
+Name[sl]=Drseèi zaslon
+Name[sv]=Skyffla skärmen
+
+[Desktop Action Setup]
+Exec=kslidescreen.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kslidescreen.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kslidescreen.kss -root
+Name=Display in root window
+NoDisplay=true

@@ -1,0 +1,38 @@
+[Desktop Entry]
+Exec=kattraction.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Attraction
+Name[af]=Attraktors
+Name[ca]=Atracció
+Name[cs]=Pøita¾livost
+Name[eo]=Altirfortoj
+Name[fi]=Attraktori
+Name[hu]=Vonzás
+Name[it]=Attrazione
+Name[ja]=¥¢¥È¥é¥¯¥·¥ç¥ó
+Name[mi]=Vonzás
+Name[no]=Tiltrekning
+Name[no_NY]=Tiltrekking
+Name[pt]=Atração
+Name[pt_BR]=Atração
+Name[ro]=Atracþie
+Name[sl]=Privlaènost
+Name[sv]=Sammandragning
+
+[Desktop Action Setup]
+Exec=kattraction.kss -setup
+Name=Setup...
+Icon=kscreensaver
+
+[Desktop Action InWindow]
+Exec=kattraction.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+
+[Desktop Action Root]
+Exec=kattraction.kss -root
+Name=Display in root window
+NoDisplay=true
+

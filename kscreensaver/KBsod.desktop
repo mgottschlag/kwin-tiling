@@ -1,0 +1,40 @@
+[Desktop Entry]
+Exec=kbsod.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Blue Screen of Death
+Name[af]=Blou Skerm van die Dood
+Name[ca]=La Pantalla Blava de la Mort
+Name[cs]=Modrá obrazovka smrti
+Name[da]=Dødens blåskærm
+Name[de]=Im Zeichen des Totenkopfs
+Name[eo]=Blua Ekrano de Morto
+Name[fi]=Sininen kuoleman ruutu
+Name[fr]=Ecran bleu de la mort
+Name[hu]=Kékhalál
+Name[it]=Schermo blu della morte
+Name[ja]=¥Ö¥ë¡¼¥¹¥¯¥ê¡¼¥ó ¥ª¥Ö ¥Ç¥¹
+Name[mi]=Kékhalál
+Name[no]=DÃƒÂ¸dens blÃƒÂ¥e skjerm
+Name[no_NY]=Dødens blåskjerm
+Name[pt]=Ecrã Azul
+Name[pt_BR]=Ecrã Azul
+Name[ro]='Blue Screen of Death'
+Name[sl]=Modri zaslon smrti
+Name[sv]=Den blåa kraschskärmen
+
+[Desktop Action Setup]
+Exec=kbsod.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kbsod.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kbsod.kss -root
+Name=Display in root window
+NoDisplay=true

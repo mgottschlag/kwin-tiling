@@ -1,0 +1,28 @@
+[Desktop Entry]
+Exec=kbouboule.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Bouboule
+Name[af]=Borrels
+Name[ca]=Pasterada
+Name[da]=Klokke
+Name[eo]=Vezikoj
+Name[ja]=ˢ
+Name[ro]=Pete
+Name[sl]=Skupki
+
+[Desktop Action Setup]
+Exec=kbouboule.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kbouboule.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kbouboule.kss -root
+Name=Display in root window
+NoDisplay=true

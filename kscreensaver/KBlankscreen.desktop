@@ -1,0 +1,42 @@
+[Desktop Entry]
+Exec=kblankscrn.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Blank Screen
+Name[af]=Leë Skerm
+Name[ca]=Pantalla en blanc
+Name[cs]=Prázdná obrazovka
+Name[da]=Blankskærm
+Name[de]=Leerer Bildschirm
+Name[eo]=Nigra ekrano
+Name[fi]=Tyhjä ruutu
+Name[fr]=Écran vide
+Name[hr]=Prazan zaslon
+Name[hu]=Néger feneke az alagútban
+Name[it]=Schermo nero
+Name[ja]=¤Ê¤·
+Name[mi]=Néger feneke az alagútban
+Name[no]=Blank skjerm
+Name[no_NY]=Tom skjerm
+Name[pt]=Ecrã Vazio
+Name[pt_BR]=Ecrã Vazio
+Name[ro]=Ecran gol
+Name[sl]=Prazen zaslon
+Name[sr]=Prazan ekran
+Name[sv]=Tom skärm
+
+[Desktop Action Setup]
+Exec=kblankscrn.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kblankscrn.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kblankscrn.kss -root
+Name=Display in root window
+NoDisplay=true

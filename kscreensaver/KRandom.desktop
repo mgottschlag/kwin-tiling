@@ -1,0 +1,42 @@
+[Desktop Entry]
+Exec=krandom.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Random
+Name[af]=Gelykkansig
+Name[ca]=Aleatori
+Name[cs]=Náhodný
+Name[da]=Tilfældig
+Name[de]=Zufälle
+Name[eo]=Hazarde
+Name[fi]=Satunnainen
+Name[fr]=Aléatoire
+Name[hr]=Sluèajno
+Name[hu]=Véletlenszerû
+Name[it]=Casuale
+Name[ja]=¥é¥ó¥À¥à
+Name[mi]=Véletlenszerû
+Name[no]=Tilfeldig
+Name[no_NY]=Tilfeldig
+Name[pt]=Aleatório
+Name[pt_BR]=Aleatório
+Name[ro]=Aleator
+Name[sl]=Nakljuèje
+Name[sr]=Nasumice
+Name[sv]=Slumpmässig
+
+[Desktop Action Setup]
+Exec=krandom.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=krandom.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=krandom.kss -root
+Name=Display in root window
+NoDisplay=true

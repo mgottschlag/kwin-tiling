@@ -1,0 +1,42 @@
+[Desktop Entry]
+Exec=kflame.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Flame
+Name[af]=Vlamme
+Name[ca]=Flama
+Name[cs]=Plamen
+Name[da]=Flamme
+Name[de]=Flamme
+Name[eo]=Flamo
+Name[fi]=Liekki
+Name[fr]=Flammes
+Name[hr]=Plamen
+Name[hu]=Láng
+Name[it]=Fiamma
+Name[ja]=¥Õ¥ì¡¼¥à
+Name[mi]=Láng
+Name[no]=Flamme
+Name[no_NY]=Flamme
+Name[pt]=Chama
+Name[pt_BR]=Chama
+Name[ro]=Flacãra
+Name[sl]=Ogenj
+Name[sr]=Plamen
+Name[sv]=Flamma
+
+[Desktop Action Setup]
+Exec=kflame.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kflame.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kflame.kss -root
+Name=Display in root window
+NoDisplay=true

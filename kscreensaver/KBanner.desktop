@@ -1,0 +1,36 @@
+[Desktop Entry]
+Exec=kbanner.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Banner
+Name[af]=Banier
+Name[ca]=Pancarta
+Name[cs]=Bì¾ící text
+Name[eo]=Standardo
+Name[fi]=Viesti
+Name[fr]=Bannière
+Name[hu]=Cimke
+Name[it]=Striscione
+Name[ja]=¥Ð¥Ê¡¼
+Name[mi]=Cimke
+Name[no_NY]=Fane
+Name[pt]=Cartaz
+Name[pt_BR]=Cartaz
+Name[sl]=Letak
+Name[sv]=Rubrik
+
+[Desktop Action Setup]
+Exec=kbanner.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kbanner.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kbanner.kss -root
+Name=Display in root window
+NoDisplay=true

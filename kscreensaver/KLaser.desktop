@@ -1,0 +1,27 @@
+[Desktop Entry]
+Exec=klaser.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Laser
+Name[ca]=Làser
+Name[eo]=Lazero
+Name[fi]=Laseri
+Name[hu]=Lézer
+Name[ja]=¥ì¡¼¥¶¡¼
+Name[mi]=Lézer
+
+[Desktop Action Setup]
+Exec=klaser.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=klaser.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=klaser.kss -root
+Name=Display in root window
+NoDisplay=true

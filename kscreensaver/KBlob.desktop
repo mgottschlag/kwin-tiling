@@ -1,0 +1,31 @@
+[Desktop Entry]
+Exec=kblob.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Blob
+Name[ca]=Taca
+Name[cs]=KaÚka
+Name[da]=Boble
+Name[eo]=Gutoj
+Name[fi]=Kuplat
+Name[ja]=»√≈¿
+Name[no_NY]=Klattar
+Name[ro]=Pic„tur„
+Name[sl]=Kepica
+Name[sv]=F‰rgfl‰ck
+
+[Desktop Action Setup]
+Exec=kblob.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kblob.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kblob.kss -root
+Name=Display in root window
+NoDisplay=true

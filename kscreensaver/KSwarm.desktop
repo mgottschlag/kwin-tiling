@@ -1,0 +1,37 @@
+[Desktop Entry]
+Exec=kswarm.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Swarm
+Name[af]=Swerm
+Name[ca]=Eixam
+Name[cs]=Roj
+Name[da]=Sværm
+Name[de]=Schwarm
+Name[eo]=Svarmo
+Name[fi]=Hyönteiset
+Name[hu]=Méh-raj
+Name[ja]=¥¹¥ï¡¼¥à
+Name[mi]=Méh-raj
+Name[no]=Sverm
+Name[no_NY]=Sverm
+Name[pt]=Enxame
+Name[pt_BR]=Enxame
+Name[ro]=Roi
+Name[sv]=Svärm
+
+[Desktop Action Setup]
+Exec=kswarm.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kswarm.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kswarm.kss -root
+Name=Display in root window
+NoDisplay=true

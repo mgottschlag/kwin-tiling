@@ -1,0 +1,42 @@
+[Desktop Entry]
+Exec=klines.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Lines
+Name[af]=Lyne
+Name[ca]=Línies
+Name[cs]=Linie
+Name[da]=Linier
+Name[de]=Linien
+Name[eo]=Linioj
+Name[fi]=Viivat
+Name[fr]=Lignes
+Name[hr]=Linije
+Name[hu]=Vonalak
+Name[it]=Linee
+Name[ja]=Àþ
+Name[mi]=Vonalak
+Name[no]=Linjer
+Name[no_NY]=Linjer
+Name[pt]=Linhas
+Name[pt_BR]=Linhas
+Name[ro]=Linii
+Name[sl]=Èrte
+Name[sr]=Linije
+Name[sv]=Linjer
+
+[Desktop Action Setup]
+Exec=klines.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=klines.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=klines.kss -root
+Name=Display in root window
+NoDisplay=true

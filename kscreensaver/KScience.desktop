@@ -1,0 +1,39 @@
+[Desktop Entry]
+Exec=kscience.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Science
+Name[af]=Wetenskap
+Name[ca]=Ciència
+Name[da]=Naturvidenskab
+Name[de]=Wissenschaft
+Name[eo]=Scienco
+Name[fi]=Linssi
+Name[hu]=Tudományos
+Name[it]=Scienza
+Name[ja]=¥µ¥¤¥¨¥ó¥¹
+Name[mi]=Tudományos
+Name[no]=Vitenskaplig
+Name[no_NY]=Vitskap
+Name[pt]=Ciência
+Name[pt_BR]=Ciência
+Name[ro]=ªtiinþã
+Name[sl]=Znanost
+Name[sr]=Nauka
+Name[sv]=Vetenskap
+
+[Desktop Action Setup]
+Exec=kscience.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kscience.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kscience.kss -root
+Name=Display in root window
+NoDisplay=true

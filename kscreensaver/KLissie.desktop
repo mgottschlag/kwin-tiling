@@ -1,0 +1,25 @@
+[Desktop Entry]
+Exec=klissie.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Lissie
+Name[ca]=Molles
+Name[eo]=Cirklulin'
+Name[fi]=Putki
+Name[ja]=リッシー
+
+[Desktop Action Setup]
+Exec=klissie.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=klissie.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=klissie.kss -root
+Name=Display in root window
+NoDisplay=true

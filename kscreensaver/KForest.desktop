@@ -1,0 +1,42 @@
+[Desktop Entry]
+Exec=kforest.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Forest
+Name[af]=Woud
+Name[ca]=Bosc
+Name[cs]=Les
+Name[da]=Skov
+Name[de]=Wald
+Name[eo]=Arbaro
+Name[fi]=Metsä
+Name[fr]=Forêt
+Name[hr]=©uma
+Name[hu]=Erdõ
+Name[it]=Foresta
+Name[ja]=¿¹
+Name[mi]=Erdõ
+Name[no]=Skog
+Name[no_NY]=Skog
+Name[pt]=Floresta
+Name[pt_BR]=Floresta
+Name[ro]=Pãdure
+Name[sl]=Gozd
+Name[sr]=©uma
+Name[sv]=Skog
+
+[Desktop Action Setup]
+Exec=kforest.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kforest.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kforest.kss -root
+Name=Display in root window
+NoDisplay=true

@@ -1,0 +1,34 @@
+[Desktop Entry]
+Exec=kpyro.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Pyro
+Name[af]=Piromanie
+Name[ca]=Focs
+Name[eo]=PiroteknikaÄµo
+Name[fi]=Ilotulitus
+Name[fr]=Feu d'artifice
+Name[hu]=Piró
+Name[it]=Fuochi d'artificio
+Name[ja]=²Ö²Ð
+Name[mi]=Piró
+Name[no]=Fyrverkeri
+Name[no_NY]=Fyrverkeri
+Name[ro]=Artificii
+Name[sl]=Piro
+
+[Desktop Action Setup]
+Exec=kpyro.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kpyro.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kpyro.kss -root
+Name=Display in root window
+NoDisplay=true

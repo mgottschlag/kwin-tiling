@@ -1,0 +1,39 @@
+[Desktop Entry]
+Exec=kslideshow.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Slide Show
+Name[af]=Skyfies
+Name[ca]=Diapositives
+Name[da]=Lysbilledshow
+Name[de]=Diashow
+Name[eo]=Lumbildoj
+Name[fi]=Diaesitys
+Name[fr]=Diaporama
+Name[hu]=Diavetítés
+Name[it]=Immagini in sequenza
+Name[ja]=¥¹¥é¥¤¥É¥·¥ç¥¦
+Name[no]=Lysbildefremvisning
+Name[no_NY]=Lysbildefremvisning
+Name[pt]=Slides
+Name[pt_BR]=Slides
+Name[ro]=Succesiune imagini
+Name[sl]=Diapozitivi
+Name[sv]=Bildspel
+
+[Desktop Action Setup]
+Exec=kslideshow.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kslideshow.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kslideshow.kss -root
+Name=Display in root window
+NoDisplay=true
+

@@ -1,0 +1,41 @@
+[Desktop Entry]
+Exec=kspace.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Space (GL)
+Name[af]=Ruimte (GL)
+Name[ca]=Espai (GL)
+Name[cs]=Vesmír (GL)
+Name[da]=Rum (GL)
+Name[eo]=Universo (graf. bibl.)
+Name[fi]=Avaruus (GL)
+Name[fr]=Espace (GL)
+Name[hr]=Svemir (GL)
+Name[hu]=Ûr (GL)
+Name[it]=Spazio (GL)
+Name[ja]=±§Ãè (GL)
+Name[mi]=Ûr (GL)
+Name[no]=Rom (GL)
+Name[no_NY]=Rom (GL)
+Name[pt]=Espaço (GL)
+Name[pt_BR]=Espaço (GL)
+Name[ro]=Spaþiu (GL)
+Name[sl]=Vesolje (GL)
+Name[sr]=Svemir (GL)
+Name[sv]=Rymden (GL)
+
+[Desktop Action Setup]
+Exec=kspace.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kspace.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kspace.kss -root
+Name=Display in root window
+NoDisplay=true

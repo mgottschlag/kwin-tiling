@@ -1,0 +1,41 @@
+[Desktop Entry]
+Exec=kpipes.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Pipes (GL)
+Name[af]=Pype (GL)
+Name[ca]=Tubs (GL)
+Name[cs]=Roury (GL)
+Name[da]=Piber
+Name[eo]=Tuboj (graf. bibl.)
+Name[fi]=Putket (GL)
+Name[fr]=Tubes (GL)
+Name[hr]=Pipe (GL)
+Name[hu]=Csövek (GL)
+Name[it]=Tubi (GL)
+Name[ja]=Pine (GL)
+Name[mi]=Csövek (GL)
+Name[no]=RÃƒÂ¸r (GL)
+Name[no_NY]=Røyr (GL)
+Name[pt]=Canos (GL)
+Name[pt_BR]=Canos (GL)
+Name[ro]=Conducte (GL)
+Name[sl]=Pipe (GL)
+Name[sr]=Cevi (GL)
+Name[sv]=Rör (GL)
+
+[Desktop Action Setup]
+Exec=kpipes.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kpipes.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kpipes.kss -root
+Name=Display in root window
+NoDisplay=true

@@ -1,0 +1,29 @@
+[Desktop Entry]
+Exec=kmorph3d.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Morph3D (GL)
+Name[af]=Morf3D (GL)
+Name[cs]=Morph3D (G)L
+Name[eo]=Morph3D (graf. bibl.)
+Name[hu]=3D Átalakulás (GL)
+Name[it]=Trasformazioni 3D (GL)
+Name[mi]=3D Átalakulás (GL)
+Name[no_NY]=Morf3D (GL)
+Name[sv]=Morf3D (GL)
+
+[Desktop Action Setup]
+Exec=kmorph3d.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kmorph3d.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kmorph3d.kss -root
+Name=Display in root window
+NoDisplay=true

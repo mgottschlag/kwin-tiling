@@ -1,0 +1,41 @@
+[Desktop Entry]
+Exec=krock.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Rock
+Name[af]=Rotse
+Name[ca]=Roca
+Name[cs]=Skála
+Name[da]=Klippe
+Name[de]=Gestein
+Name[eo]=Asteroidoj
+Name[fi]=Tähdet
+Name[hu]=Szikla
+Name[it]=Asteroidi
+Name[ja]=´ä
+Name[mi]=Szikla
+Name[no]=Fjell
+Name[no_NY]=Stein
+Name[pt]=Rocha
+Name[pt_BR]=Rocha
+Name[ro]=Asteroizi
+Name[sl]=Skala
+Name[sr]=Stena
+Name[sv]=Stenbumling
+
+[Desktop Action Setup]
+Exec=krock.kss -setup
+Name=Setup...
+Icon=kscreensaver
+
+[Desktop Action InWindow]
+Exec=krock.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+
+[Desktop Action Root]
+Exec=krock.kss -root
+Name=Display in root window
+NoDisplay=true
+

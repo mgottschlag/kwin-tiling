@@ -1,0 +1,43 @@
+[Desktop Entry]
+Exec=kmatrix.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=The Matrix
+Name[de]=Matrix
+
+[Desktop Action Setup]
+Exec=kmatrix.kss -setup
+Name=Setup...
+Name[cs]=Nastavení...
+Name[de]=Einrichtung...
+Name[eo]=Agordo...
+Name[fi]=Asetukset...
+Name[hu]=Beállítás...
+Name[no]=Oppsett...
+Name[sl]=Nastavitve...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=kmatrix.kss -window-id %w
+Name=Display in specified window
+Name[cs]=Zobrazit v určeném okně
+Name[de]=In vorgegebenem Fenster anzeigen
+Name[eo]=Montru en indikita fenestro
+Name[fi]=Näytä määrätyssä ikkunassa
+Name[hu]=Megjelenítés a megadott ablakban
+Name[no]=Vis i det oppgitte vinduet
+Name[sl]=Prikaz v določenemu oknu
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=kmatrix.kss -root
+Name=Display in root window
+Name[cs]=Zobrazit na pozadí plochy
+Name[de]=In Hintergrundfenster anzeigen
+Name[eo]=Montru en radika fenestro
+Name[fi]=Näytä root-ikkunassa
+Name[hu]=Megjelenítés a root ablakban
+Name[no]=Vis i bunnvinduet
+Name[sl]=Prikaz v korenskem oknu
+NoDisplay=true

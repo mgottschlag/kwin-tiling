@@ -1,0 +1,30 @@
+[Desktop Entry]
+Exec=khop.kss
+Icon=kscreensaver
+Type=Application
+Actions=Setup;InWindow;Root
+Name=Hop
+Name[ca]=Bot
+Name[de]=Hops
+Name[eo]=Hop'
+Name[fi]=Hyppy
+Name[fr]=Saut
+Name[it]=Balzo
+Name[ja]=¥Û¥Ã¥×
+Name[no_NY]=Humle
+Name[sl]=Poskakovanje
+
+[Desktop Action Setup]
+Exec=khop.kss -setup
+Name=Setup...
+Icon=kscreensaver
+ 
+[Desktop Action InWindow]
+Exec=khop.kss -window-id %w
+Name=Display in specified window
+NoDisplay=true
+ 
+[Desktop Action Root]
+Exec=khop.kss -root
+Name=Display in root window
+NoDisplay=true
