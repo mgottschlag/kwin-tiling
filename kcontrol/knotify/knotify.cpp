@@ -223,6 +223,7 @@ void KNotifyWidget::load()
 
     setEnabled( false );
     setCursor( KCursor::waitCursor() );
+    currentItem = 0L;
 
     KConfig *kc = new KConfig( "knotifyrc", true, false );
     kc->setGroup( "Misc" );
@@ -265,18 +266,17 @@ void KNotifyWidget::save()
 void KNotifyWidget::slotItemActivated( QListViewItem *i )
 {
     bool enableButton = false;
-    KNCheckListItem *item = dynamic_cast<KNCheckListItem *>( i );
-    if ( item ) {
-	currentItem = item;
-	const KNEvent *event = item->event;
+    currentItem = dynamic_cast<KNCheckListItem *>( i );
+    if ( currentItem ) {
+	const KNEvent *event = currentItem->event;
 
-	if ( item->eventType() == KNotifyClient::Sound ) {
+	if ( currentItem->eventType() == KNotifyClient::Sound ) {
 	    requester->setURL( event->soundfile );
 	    enableButton = true;
 	    playButton->show();
 	    playButton->setEnabled( !event->soundfile.isEmpty() );
 	}
-	else if ( item->eventType() == KNotifyClient::Logfile ) {
+	else if ( currentItem->eventType() == KNotifyClient::Logfile ) {
 	    requester->setURL( event->logfile );
 	    enableButton = true;
 	    playButton->hide();
@@ -287,7 +287,6 @@ void KNotifyWidget::slotItemActivated( QListViewItem *i )
 	}
     }
     else {
-	currentItem = 0L;
 	requester->lineEdit()->clear();
 	playButton->hide();
     }
