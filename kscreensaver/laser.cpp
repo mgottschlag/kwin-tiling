@@ -481,7 +481,8 @@ void kLaserSetup::slotOkPressed()
 
 void kLaserSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Laser"),
+	QMessageBox::information(this,
+			     glocale->translate("About Laser"),
 			     glocale->translate("Laser Version 3.3\n\nCopyright (c) 1995 by Pascal Pensa\n\nPorted to kscreensave by Martin Jones."),
 			     glocale->translate("OK"));
 }

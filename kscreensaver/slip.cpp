@@ -487,7 +487,8 @@ void kSlipSetup::slotOkPressed()
 
 void kSlipSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Slip"), 
+	QMessageBox::information(this,
+			     glocale->translate("About Slip"), 
 			     glocale->translate("Slip\n\nCopyright (c) 1991 by Scott Draves\n\nPorted to kscreensave by Emanuel Pirker."),
 			     glocale->translate("OK"));
 }

@@ -628,8 +628,11 @@ void kPyroSetup::slotOkPressed()
 
 void kPyroSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Pyro"), 
-			     glocale->translate("Pyro Version 3.4\n\nCopyright (c) 1991 by Patrick J. Naughton\n\nPorted to kscreensave by Martin Jones."),
-			     glocale->translate("OK"));
+	QMessageBox::information(this,
+		glocale->translate("About Pyro"), 
+		glocale->translate("Pyro Version 3.4\n\n"
+				   "Copyright (c) 1991 by Patrick J. Naughton\n\n"
+				   "Ported to kscreensave by Martin Jones."),
+		glocale->translate("OK"));
 }
 

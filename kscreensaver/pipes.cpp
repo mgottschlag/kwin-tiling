@@ -795,10 +795,11 @@ void kPipesSetup::slotOkPressed()
 
 void kPipesSetup::slotAbout()
 {
-  QMessageBox::message(glocale->translate("About KPipes"), 
-           glocale->translate(
-        "KPipes\nCopyright (c) 1998\nLars Doelle <lars.doelle@on-line.de>"),
-           glocale->translate("OK"));
+  QMessageBox::information(this,
+	glocale->translate("About KPipes"), 
+	glocale->translate("KPipes\nCopyright (c) 1998\n"
+			   "Lars Doelle <lars.doelle@on-line.de>"),
+	glocale->translate("OK"));
 }
 
 #endif

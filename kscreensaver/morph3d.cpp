@@ -1118,7 +1118,8 @@ void kMorph3dSetup::slotOkPressed()
 
 void kMorph3dSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Morph3D"), 
+	QMessageBox::information(this,
+			     glocale->translate("About Morph3D"), 
 			     glocale->translate("Morph3D\n\nCopyright (c) 1997 by Marcelo F. Vianna\n\nPorted to kscreensave by Emanuel Pirker."),
 			     glocale->translate("OK"));
 }

@@ -682,10 +682,11 @@ void kSpaceSetup::slotOkPressed()
 
 void kSpaceSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About KSpace"), 
-			     glocale->translate(
-        "KSpace\nCopyright (c) 1998\nBernd Johannes Wuebben <wuebben@kde.org>"),
-			     glocale->translate("OK"));
+	QMessageBox::information(this,
+		glocale->translate("About KSpace"), 
+		glocale->translate("KSpace\nCopyright (c) 1998\n"
+				   "Bernd Johannes Wuebben <wuebben@kde.org>"),
+		glocale->translate("OK"));
 }
 
 

@@ -1222,7 +1222,8 @@ void kBoubouleSetup::slotOkPressed()
 
 void kBoubouleSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Bouboule"),
+	QMessageBox::information(this,
+			     glocale->translate("About Bouboule"),
 			     glocale->translate("Bouboule v0.1 -- a glob of spheres twisting and changing size\n\nCopyright (c) 1996 by Jeremie PETIT\n\nPorted to kscreensave by Cedric Tefft"), 
 			     glocale->translate("OK")); 
 }

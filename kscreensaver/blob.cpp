@@ -567,7 +567,8 @@ void KBlobSetup::slotOkPressed()
 
 void KBlobSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Blob"), 
+	QMessageBox::information(this,
+			     glocale->translate("About Blob"), 
 			     glocale->translate("Blobsaver Version 0.1\n\nwritten by Tiaan Wessels 1997\ntiaan@netsys.co.za"), 
 			     glocale->translate("OK"));
 	if (saver)

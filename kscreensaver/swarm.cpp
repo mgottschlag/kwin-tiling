@@ -449,7 +449,8 @@ void kSwarmSetup::slotOkPressed()
 
 void kSwarmSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Swarm"),
+	QMessageBox::information(this,
+			     glocale->translate("About Swarm"),
 			     glocale->translate("Swarm\n\nCopyright (c) 1991 by Patrick J. Naughton\n\nPorted to kscreensave by Emanuel Pirker."),
 			     glocale->translate("OK"));
 }

@@ -660,7 +660,8 @@ void kBatSetup::slotOkPressed()
 
 void kBatSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Bat"), 
+	QMessageBox::information(this,
+			     glocale->translate("About Bat"), 
 			     glocale->translate("Bat\n\nCopyright (c) 1986 by Sun Microsystems\n\nPorted to kscreensave by Emanuel Pirker."), 
 			     glocale->translate("OK"));
 }

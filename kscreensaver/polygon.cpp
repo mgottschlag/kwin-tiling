@@ -237,7 +237,8 @@ void kPolygonSetup::slotOkPressed()
 
 void kPolygonSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Polygon"), 
+	QMessageBox::information(this,
+			     glocale->translate("About Polygon"), 
 			     glocale->translate("Polygon Version 0.1\n\n"\
 					       "written by Martin R. Jones 1996\n"\
 					       "mjones@kde.org"), 

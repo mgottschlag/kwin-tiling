@@ -344,7 +344,8 @@ void KBannerSetup::slotOkPressed()
 
 void KBannerSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Banner"), 
+	QMessageBox::information(this,
+			     glocale->translate("About Banner"), 
 			     glocale->translate("Banner Version 0.1\n\nwritten by Martin R. Jones 1996\nmjones@kde.org"), 
 			     glocale->translate("OK"));
 }

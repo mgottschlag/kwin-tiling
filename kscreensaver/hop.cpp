@@ -463,7 +463,8 @@ void kHopSetup::slotOkPressed()
 
 void kHopSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Hop"), 
+	QMessageBox::information(this,
+			     glocale->translate("About Hop"), 
 			     glocale->translate("Hop Version 3.3\n\nCopyright (c) 1991 by Patrick J. Naughton\n\nPorted to kscreensave by Emanuel Pirker."),
 			     glocale->translate("OK"));
 }

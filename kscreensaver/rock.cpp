@@ -718,7 +718,8 @@ void kRockSetup::slotOkPressed()
 
 void kRockSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Rock"),
+	QMessageBox::information(this,
+			     glocale->translate("About Rock"),
 			     glocale->translate("Rock Version 3.3\n\nCopyright (c) 1992 by Jamie Zawinski\n\nPorted to kscreensave by Martin Jones."),
 			     glocale->translate("OK"));
 }

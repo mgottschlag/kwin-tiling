@@ -557,11 +557,12 @@ void kSlideScreenSetup::slotOkPressed()
 
 void kSlideScreenSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About SlideScreen"), 
-			     glocale->translate("SlideScreen Version 1.1\n\n"
-				"Copyright (c) 1992-1997 by Jamie Zawinski <jwz@jwz.org>\n\n"
-				"Ported to kscreensaver by:\n\n"
-				"Tom Vijlbrief <tom.vijlbrief@knoware.nl> oct 1998"),
-			     glocale->translate("OK"));
+	QMessageBox::information(this,
+		glocale->translate("About SlideScreen"), 
+		glocale->translate("SlideScreen Version 1.1\n\n"
+				   "Copyright (c) 1992-1997 by Jamie Zawinski <jwz@jwz.org>\n\n"
+				   "Ported to kscreensaver by:\n\n"
+				   "Tom Vijlbrief <tom.vijlbrief@knoware.nl> oct 1998"),
+		glocale->translate("OK"));
 }
 

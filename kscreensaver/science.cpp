@@ -1300,7 +1300,8 @@ void KScienceSetup::slotAbout()
 	QString about;
 
 	about = i18n("Science Version 0.26.5\n\nwritten by Rene Beutler (1998)\nrbeutler@g26.ethz.ch");
-	QMessageBox::message( i18n("About Science"), 
-	                      (const char *) about,
+	QMessageBox::information(this,
+			      i18n("About Science"), 
+	                      about,
 	                      i18n("OK") );
 }

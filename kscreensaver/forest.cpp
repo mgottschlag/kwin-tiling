@@ -398,7 +398,8 @@ void kForestSetup::slotOkPressed()
 
 void kForestSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Forest"),
+	QMessageBox::information(this,
+			     glocale->translate("About Forest"),
 			     glocale->translate("Forest\n\nCopyright (c) 1995 by Pascal Pensa\n\nPorted to kscreensave by Emanuel Pirker."), 
 			     glocale->translate("OK"));
 }

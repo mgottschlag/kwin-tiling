@@ -479,9 +479,8 @@ void kLissieSetup::slotOkPressed()
 
 void kLissieSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Lissie"), 
+	QMessageBox::information(this,
+			     glocale->translate("About Lissie"), 
 			     glocale->translate("Lissie\n\nCopyright (c) 1996 by Alexander Jolk\n\nPorted to kscreensave by Emanuel Pirker."), 
 			     glocale->translate("OK"));
 }
-
-

@@ -293,9 +293,12 @@ void kLinesSetup::slotColend(){
 }
 
 void kLinesSetup::slotAbout(){
-	QMessageBox::message(glocale->translate("About Lines"),
-			     glocale->translate("Lines Version 0.1.1\n\nwritten by Dirk Staneker 1997\ndirk.stanerker@student.uni-tuebingen.de"),
-			     glocale->translate("OK"));
+	QMessageBox::information(this,
+		glocale->translate("About Lines"),
+		glocale->translate("Lines Version 0.1.1\n\n"
+				   "written by Dirk Staneker 1997\n"
+				   "dirk.stanerker@student.uni-tuebingen.de"),
+		glocale->translate("OK"));
 }
 
 // Ok pressed - save settings and exit
