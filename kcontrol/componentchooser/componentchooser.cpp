@@ -298,9 +298,8 @@ ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 	QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",false,true,dummy);
 	for (QStringList::Iterator it=services.begin();it!=services.end();++it)
 	{
-		KSimpleConfig *cfg=new KSimpleConfig((*it));
-		ServiceChooser->insertItem(new MyListBoxItem(cfg->readEntry("Name",i18n("Unknown")),(*it)));
-		delete cfg;
+		KSimpleConfig cfg(*it);
+		ServiceChooser->insertItem(new MyListBoxItem(cfg.readEntry("Name",i18n("Unknown")),(*it)));
 
 	}
 	ServiceChooser->setFixedWidth(ServiceChooser->sizeHint().width());
@@ -317,13 +316,13 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	if (somethingChanged) {
 		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?<BR><BR>Selecting <B>No</B> will discard your changes</qt>"))==KMessageBox::Yes) save();
 	}
-	KSimpleConfig *cfg=new KSimpleConfig(static_cast<MyListBoxItem*>(it)->File);
+	KSimpleConfig cfg(static_cast<MyListBoxItem*>(it)->File);
 
-	ComponentDescription->setText(cfg->readEntry("Comment",i18n("No description available")));
+	ComponentDescription->setText(cfg.readEntry("Comment",i18n("No description available")));
 	ComponentDescription->setMinimumSize(ComponentDescription->sizeHint());
 
 
-	QString cfgType=cfg->readEntry("configurationType");
+	QString cfgType=cfg.readEntry("configurationType");
 	QWidget *newConfigWidget = 0;
 	if (cfgType.isEmpty() || (cfgType=="component"))
 	{
@@ -363,10 +362,9 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	}
 	
 	if (configWidget)
-		static_cast<CfgPlugin*>(configWidget->qt_cast("CfgPlugin"))->load(cfg);
+		static_cast<CfgPlugin*>(configWidget->qt_cast("CfgPlugin"))->load(&cfg);
 	
 	emitChanged(false);
-	delete cfg;
 	latestEditedService=static_cast<MyListBoxItem*>(it)->File;
 }
 
@@ -389,9 +387,8 @@ void ComponentChooser::load() {
 				configWidget->qt_cast( "CfgPlugin" ) );
 		if( plugin )
 		{
-			KSimpleConfig *cfg=new KSimpleConfig(latestEditedService);
-			plugin->load( cfg );
-			delete cfg;
+			KSimpleConfig cfg(latestEditedService);
+			plugin->load( &cfg );
 		}
 	}
 }
@@ -403,9 +400,8 @@ void ComponentChooser::save() {
 				configWidget->qt_cast( "CfgPlugin" ) );
 		if( plugin )
 		{
-			KSimpleConfig *cfg=new KSimpleConfig(latestEditedService);
-			plugin->save( cfg );
-			delete cfg;
+			KSimpleConfig cfg(latestEditedService);
+			plugin->save( &cfg );
 		}
 	}
 }
