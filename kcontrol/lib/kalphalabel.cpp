@@ -44,6 +44,7 @@ KAlphaLabel::KAlphaLabel(QWidget *buddy, const QString &text, QWidget *parent, c
 
 KAlphaLabel::~KAlphaLabel()
 {
+	delete m_image;
 }
 
 void KAlphaLabel::setPixmap(const QPixmap &p)
@@ -55,6 +56,12 @@ void KAlphaLabel::setPixmap(const QPixmap &p)
 
 void KAlphaLabel::drawContents(QPainter *p)
 {
+	if (!pixmap())
+	{
+		QLabel::drawContents(p);
+		return;
+	}
+
 	QRect cr = contentsRect();
 
 	int m = indent();
