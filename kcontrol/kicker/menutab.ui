@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>587</width>
+            <width>583</width>
             <height>480</height>
         </rect>
     </property>
@@ -62,7 +62,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Show &amp;bookmark submenu</string>
+                        <string>Show "&amp;Bookmarks" submenu</string>
                     </property>
                     <property stdset="1">
                         <name>checked</name>
@@ -77,7 +77,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Show &amp;recent documents submenu</string>
+                        <string>Show "&amp;Recent Documents" submenu</string>
                     </property>
                     <property stdset="1">
                         <name>checked</name>
@@ -92,7 +92,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Show &amp;quickbrowser submenu</string>
+                        <string>Show "&amp;Quick Browser" submenu</string>
                     </property>
                     <property stdset="1">
                         <name>checked</name>

@@ -41,9 +41,7 @@
 AppletTab::AppletTab( QWidget *parent, const char* name )
   : QWidget (parent, name)
 {
-  layout = new QGridLayout(this, 2, 1,
-                           KDialog::marginHint(),
-                           KDialog::spacingHint());
+  layout = new QGridLayout(this, 2, 1, 6, 11);
 
   // security level group
   level_group = new QButtonGroup(i18n("Security Level"), this);

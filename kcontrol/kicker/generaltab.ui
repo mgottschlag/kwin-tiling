@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI>
 <class>GeneralTabBase</class>
-<include>klineedit.h</include>
+<include location="global">klineedit.h</include>
 <widget>
     <class>QWidget</class>
     <property stdset="1">
@@ -12,7 +12,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>583</width>
+            <width>575</width>
             <height>480</height>
         </rect>
     </property>
@@ -52,7 +52,7 @@
                     </property>
                     <property stdset="1">
                         <name>title</name>
-                        <string>Panel &amp;Location</string>
+                        <string>Panel Lo&amp;cation</string>
                     </property>
                     <property stdset="1">
                         <name>sizePolicy</name>
@@ -95,6 +95,10 @@
                                 <cstring>m_rightButton</cstring>
                             </property>
                             <property stdset="1">
+                                <name>text</name>
+                                <string>&amp;Right</string>
+                            </property>
+                            <property stdset="1">
                                 <name>sizePolicy</name>
                                 <sizepolicy>
                                     <hsizetype>1</hsizetype>
@@ -104,10 +108,6 @@
                             <property stdset="1">
                                 <name>enabled</name>
                                 <bool>true</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>&amp;Right</string>
                             </property>
                         </widget>
                         <widget>
@@ -176,7 +176,7 @@
                             </property>
                             <property stdset="1">
                                 <name>text</name>
-                                <string>Sm&amp;all</string>
+                                <string>S&amp;mall</string>
                             </property>
                             <property stdset="1">
                                 <name>sizePolicy</name>
@@ -194,7 +194,7 @@
                             </property>
                             <property stdset="1">
                                 <name>text</name>
-                                <string>&amp;Normal</string>
+                                <string>Me&amp;dium</string>
                             </property>
                             <property stdset="1">
                                 <name>checked</name>
@@ -351,7 +351,7 @@
             </property>
             <property stdset="1">
                 <name>title</name>
-                <string>Mis&amp;cellaneous</string>
+                <string>Misc&amp;ellaneous</string>
             </property>
             <property stdset="1">
                 <name>sizePolicy</name>
@@ -449,4 +449,13 @@
         <slot>setValue(int)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>m_bottomButton</tabstop>
+    <tabstop>m_normal</tabstop>
+    <tabstop>m_large</tabstop>
+    <tabstop>m_autoHide</tabstop>
+    <tabstop>m_delaySlider</tabstop>
+    <tabstop>m_delaySpinBox</tabstop>
+    <tabstop>m_terminalInput</tabstop>
+</tabstops>
 </UI>

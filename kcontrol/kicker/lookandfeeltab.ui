@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI>
 <class>LookAndFeelTabBase</class>
-<include>klineedit.h</include>
+<include location="global">klineedit.h</include>
 <widget>
     <class>QWidget</class>
     <property stdset="1">
@@ -12,7 +12,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>576</width>
+            <width>568</width>
             <height>480</height>
         </rect>
     </property>
@@ -37,7 +37,7 @@
             </property>
             <property stdset="1">
                 <name>title</name>
-                <string>Hide Buttons</string>
+                <string>&amp;Hide Buttons</string>
             </property>
             <property stdset="1">
                 <name>sizePolicy</name>
@@ -63,7 +63,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Enable hide buttons</string>
+                        <string>&amp;Enable hide buttons</string>
                     </property>
                 </widget>
                 <widget>
@@ -160,7 +160,7 @@
                                     </property>
                                     <property stdset="1">
                                         <name>text</name>
-                                        <string>Normal</string>
+                                        <string>Medium</string>
                                     </property>
                                     <property stdset="1">
                                         <name>sizePolicy</name>
@@ -216,7 +216,7 @@
             </property>
             <property stdset="1">
                 <name>title</name>
-                <string>Manual Hide Animation</string>
+                <string>&amp;Manual Hide Animation</string>
             </property>
             <property stdset="1">
                 <name>frameShadow</name>
@@ -250,7 +250,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Enable manual hide animation</string>
+                        <string>E&amp;nable manual hide animation</string>
                     </property>
                     <property stdset="1">
                         <name>sizePolicy</name>
@@ -354,7 +354,7 @@
                                     </property>
                                     <property stdset="1">
                                         <name>text</name>
-                                        <string>Normal</string>
+                                        <string>Medium</string>
                                     </property>
                                     <property stdset="1">
                                         <name>sizePolicy</name>
@@ -410,7 +410,7 @@
             </property>
             <property stdset="1">
                 <name>title</name>
-                <string>Autohide Animation</string>
+                <string>&amp;Automatic Hide Animation</string>
             </property>
             <hbox>
                 <property stdset="1">
@@ -429,7 +429,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Enable auto hide animation</string>
+                        <string>Ena&amp;ble automatic hide animation</string>
                     </property>
                     <property stdset="1">
                         <name>sizePolicy</name>
@@ -526,7 +526,7 @@
                                     </property>
                                     <property stdset="1">
                                         <name>text</name>
-                                        <string>Normal</string>
+                                        <string>Medium</string>
                                     </property>
                                     <property stdset="1">
                                         <name>sizePolicy</name>
@@ -582,7 +582,7 @@
             </property>
             <property stdset="1">
                 <name>title</name>
-                <string>Background Image</string>
+                <string>Background &amp;Image</string>
             </property>
             <property stdset="1">
                 <name>sizePolicy</name>
@@ -641,7 +641,7 @@
                                     </property>
                                     <property stdset="1">
                                         <name>text</name>
-                                        <string>Enable background image</string>
+                                        <string>Enab&amp;le background image</string>
                                     </property>
                                 </widget>
                                 <widget>
@@ -681,7 +681,7 @@
                                             </property>
                                             <property stdset="1">
                                                 <name>text</name>
-                                                <string>Browse</string>
+                                                <string>Bro&amp;wse</string>
                                             </property>
                                             <property stdset="1">
                                                 <name>enabled</name>
@@ -818,4 +818,15 @@
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>m_hideButtons</tabstop>
+    <tabstop>m_hideButtonSlider</tabstop>
+    <tabstop>m_manualHideAnimation</tabstop>
+    <tabstop>m_manualHideSlider</tabstop>
+    <tabstop>m_autoHideAnimation</tabstop>
+    <tabstop>m_autoHideSlider</tabstop>
+    <tabstop>m_backgroundImage</tabstop>
+    <tabstop>m_backgroundInput</tabstop>
+    <tabstop>m_backgroundButton</tabstop>
+</tabstops>
 </UI>

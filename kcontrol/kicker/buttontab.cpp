@@ -42,9 +42,7 @@
 ButtonTab::ButtonTab( QWidget *parent, const char* name )
   : QWidget (parent, name)
 {
-  layout = new QGridLayout(this,4 , 2,
-                           KDialog::marginHint(),
-                           KDialog::spacingHint());
+  layout = new QGridLayout(this,4 , 2, 6, 11);
 
   // general group
   general_group = new QGroupBox(i18n("General"), this);
@@ -52,7 +50,7 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QVBoxLayout *vbox = new QVBoxLayout(general_group, KDialog::marginHint(),
                          KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
-  
+
   QHBoxLayout* hbl = new QHBoxLayout( vbox );
   tiles_cb = new QCheckBox(i18n("Enable background tiles"), general_group);
   connect(tiles_cb, SIGNAL(clicked()), SLOT(tiles_clicked()));
@@ -436,7 +434,7 @@ void ButtonTab::load()
 
   bool zoom = c->readBoolEntry("EnableIconZoom", true);
   zoom_cb->setChecked(zoom);
-  
+
   c->setGroup("button_tiles");
 
   bool kmenu_tiles = c->readBoolEntry("EnableKMenuTiles", true);
