@@ -136,7 +136,7 @@ char *prog, *progpath;
 int
 main (int argc, char **argv)
 {
-    int	oldpid, oldumask;
+    int	oldpid, oldumask, fd;
     char *pt, *errorLogFile;
 
     /* make sure at least world write access is disabled */
@@ -144,8 +144,10 @@ main (int argc, char **argv)
 	(void) umask (oldumask);
 
     /* give /dev/null as stdin */
-    (void) close (0);
-    open ("/dev/null", O_RDONLY);
+    if ((fd = open ("/dev/null", O_RDONLY)) > 0) {
+	dup2 (fd, 0);
+	close (fd);
+    }
 
     if (argv[0][0] == '/') {
 	if (!StrDup (&progpath, argv[0]))
@@ -236,7 +238,6 @@ main (int argc, char **argv)
 	else
 	    break;
     }
-    InitErrorLog (errorLogFile);
 
     /*
      * Only allow root to run in non-debug mode to avoid problems
@@ -246,6 +247,8 @@ main (int argc, char **argv)
 	fprintf (stderr, "Only root wants to run %s\n", prog);
 	exit (1);
     }
+
+    InitErrorLog (errorLogFile);
 
     /*
      * Step 1 - load configuration parameters

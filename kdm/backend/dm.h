@@ -72,6 +72,9 @@ from The Open Group.
 # include <X11/Xdmcp.h>
 #endif
 
+#ifdef CSRG_BASED
+# include <sys/param.h>
+#endif
 #ifdef pegasus
 # undef dirty		/* Some bozo put a macro called dirty in sys/param.h */
 #endif

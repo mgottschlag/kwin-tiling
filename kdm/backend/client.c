@@ -52,6 +52,12 @@ from The Open Group.
 #ifdef K5AUTH
 # include <krb5/krb5.h>
 #endif
+#ifdef CSRG_BASED
+# ifdef HAS_SETUSERCONTEXT
+#  include <login_cap.h>
+#  define USE_LOGIN_CAP 1
+# endif
+#endif
 #ifdef USE_PAM
 # include <security/pam_appl.h>
 #elif defined(AIXV3) /* USE_PAM */
@@ -69,13 +75,6 @@ extern int loginsuccess (const char *User, const char *Host, const char *Tty, ch
 #  include <krb.h>
 #  ifndef NO_AFS
 #   include <kafs.h>
-#  endif
-# endif
-# ifdef CSRG_BASED
-#  include <sys/param.h>
-#  ifdef HAS_SETUSERCONTEXT
-#   include <login_cap.h>
-#   define USE_LOGIN_CAP 1
 #  endif
 # endif
 /* for nologin */
@@ -867,11 +866,10 @@ StartClient (struct display *d,
     char	*msg;
     char	**theenv;
     extern char	**newenv; /* from libs.a, this is set up by setpenv */
-# else
-#  ifdef HAS_SETUSERCONTEXT
-    extern char	**environ;
-#  endif
 # endif
+#endif
+#ifdef HAS_SETUSERCONTEXT
+    extern char	**environ;
 #endif
     char	*failsafeArgv[2];
     struct verify_info	*verify;
@@ -1004,10 +1002,11 @@ StartClient (struct display *d,
 
 #ifndef AIXV3
 
-# if !defined(HAS_SETUSERCONTEXT) || defined(USE_PAM)
+# ifndef HAS_SETUSERCONTEXT
 	if (!SetGid (name, verify->gid))
 	    exit (1);
-#  ifdef USE_PAM
+# endif
+# ifdef USE_PAM
 	pam_setcred(pamh, 0);
 	/* pass in environment variables set by libpam and modules it called */
 	pam_env = pam_getenvlist(pamh);
@@ -1015,7 +1014,8 @@ StartClient (struct display *d,
 	if (pam_env)
 	    for(; *pam_env; pam_env++)
 		verify->userEnviron = putEnv(*pam_env, verify->userEnviron);
-#  endif
+# endif
+# ifndef HAS_SETUSERCONTEXT
 #  if defined(BSD) && (BSD >= 199103)
 	if (setlogin(name) < 0)
 	{
@@ -1025,7 +1025,8 @@ StartClient (struct display *d,
 #  endif
 	if (!SetUid (name, verify->uid))
 	    exit (1);
-# else /* HAS_SETUSERCONTEXT && !USE_PAM */
+# else /* HAS_SETUSERCONTEXT */
+
 	/*
 	 * Destroy environment unless user has requested its preservation.
 	 * We need to do this before setusercontext() because that may

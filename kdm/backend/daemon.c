@@ -112,10 +112,6 @@ BecomeDaemon (void)
     }
 
 #ifndef CSRG_BASED
-    /*
-     * Close standard file descriptors and get rid of controlling tty
-     */
-
 # if defined(SYSV) || defined(SVR4) || defined(__QNXNTO__)
     setpgrp ();
 # else
@@ -124,6 +120,9 @@ BecomeDaemon (void)
 
     chdir("/");
 
+    /*
+     * Get rid of controlling tty
+     */
 # ifndef __EMX__
 #   if !((defined(SYSV) || defined(SVR4)) && defined(i386)) && !defined(__CYGWIN__)
     if ((i = open ("/dev/tty", O_RDWR)) >= 0) {	/* did open succeed? */

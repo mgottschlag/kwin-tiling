@@ -65,7 +65,7 @@ from The Open Group.
  */
 
 /**************************************************************
- * (C) 2001 Oswald Buddenhagen <ossi@kde.org>
+ * (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
  * Partially stolen from OpenSSH's OpenBSD compat directory.
  * (C) Patrick Powell, Brandon Long, Thomas Roessler, 
  *     Michael Elkins, Ben Lindstrom
@@ -340,6 +340,17 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 	    arpr = arsf = arepr = aresf = "", aresp = " ";
 	    for (;;) {
 		NCHR;
+#if 0
+		if (isdigit ((unsigned char) ch)) {
+		    arlen = ch - '0';
+		    for (;;) {
+			NCHR;
+			if (!isdigit ((unsigned char) ch)))
+			    break;
+			arlen = 10 * arlen + (ch - '0');
+		    }
+		}
+#endif
 		switch (ch) {
 		case ':': flags |= DP_F_COLON; continue;
 		case '*': arlen = va_arg (args, int); continue;
@@ -523,23 +534,24 @@ LogOutOfMem (const char *fkt)
 #ifdef USE_SYSLOG
     syslog (LOG_CRIT, "Out of memory in %s()", fkt);
 #else
-    char dbuf[20];
+    int el;
+    char dbuf[24], sbuf[128];
     logTime (dbuf);
-    fprintf (stderr, "%s "
+    el = sprintf (sbuf, "%s "
 # ifdef LOG_NAME
 	LOG_NAME "[%ld]: Out of memory in %s()\n", dbuf, 
 # else
 	"%s[%ld]: Out of memory in %s()\n", dbuf, prog, 
 # endif
 	(long)getpid(), fkt);
-    fflush (stderr);
+    write (2, sbuf, el);
 #endif
 }
 
 typedef struct {
     char *buf;
     int clen, blen, type;
-    char lmbuf[100];
+    char lmbuf[128];
 } OCLBuf;
 
 static void
@@ -549,24 +561,10 @@ OutChLFlush (OCLBuf *oclbp)
 #ifdef USE_SYSLOG
 	syslog (lognums[oclbp->type], "%.*s", oclbp->clen, oclbp->buf);
 #else
-	char dbuf[20];
-	logTime (dbuf);
-	fprintf (stderr, "%s "
-# ifdef LOG_NAME
-	    LOG_NAME  "[%ld] %s: %.*s\n", dbuf, 
-# else
-	    "%s[%ld] %s: %.*s\n", dbuf, prog, 
-# endif
-	    (long)getpid(), lognams[oclbp->type], oclbp->clen, oclbp->buf);
-	fflush (stderr);
+	oclbp->buf[oclbp->clen] = '\n';
+	write (2, oclbp->buf, oclbp->clen + 1);
 #endif
 	oclbp->clen = 0;
-    }
-    if (oclbp->buf) {
-	if (oclbp->buf != oclbp->lmbuf)
-	    free (oclbp->buf);
-	oclbp->buf = 0;
-	oclbp->blen = 0;
     }
 }
 
@@ -580,10 +578,17 @@ OutChL (void *bp, char c)
     if (c == '\n')
 	OutChLFlush (oclbp);
     else {
+#ifndef USE_SYSLOG
+	if (oclbp->clen >= oclbp->blen - 1) {
+#else
 	if (oclbp->clen >= oclbp->blen) {
-	    if (oclbp->buf == oclbp->lmbuf)
+#endif
+	    if (oclbp->buf == oclbp->lmbuf) {
 		OutChLFlush (oclbp);
-	    nlen = oclbp->blen * 3 / 2 + 100;
+		oclbp->buf = 0;
+		oclbp->blen = 0;
+	    }
+	    nlen = oclbp->blen * 3 / 2 + 128;
 	    nbuf = realloc (oclbp->buf, nlen);
 	    if (nbuf) {
 		oclbp->buf = nbuf;
@@ -595,6 +600,19 @@ OutChL (void *bp, char c)
 		oclbp->blen = sizeof(oclbp->lmbuf);
 	    }
 	}
+#ifndef USE_SYSLOG
+	if (!oclbp->clen) {
+	    char dbuf[24];
+	    logTime (dbuf);
+	    oclbp->clen = sprintf (oclbp->buf, "%s "
+# ifdef LOG_NAME
+		LOG_NAME "[%ld] %s: ", dbuf, 
+# else
+		"%s[%ld] %s: ", dbuf, prog, 
+# endif
+	    (long)getpid(), lognams[oclbp->type]);
+	}
+#endif
 	oclbp->buf[oclbp->clen++] = c;
     }
 }
@@ -602,13 +620,12 @@ OutChL (void *bp, char c)
 static void
 Logger (int type, const char *fmt, va_list args)
 {
-    static OCLBuf oclb;
+    OCLBuf oclb = { 0, 0, 0, type };
 
-    if (oclb.type != type) {
-	OutChLFlush (&oclb);
-	oclb.type = type;
-    }
     DoPr(OutChL, &oclb, fmt, args);
+    /* no flush, every message is supposed to be \n-terminated */
+    if (oclb.buf && oclb.buf != oclb.lmbuf)
+	free (oclb.buf);
 }
 
 #ifdef LOG_DEBUG_MASK
