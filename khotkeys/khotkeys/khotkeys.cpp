@@ -155,7 +155,8 @@ void KHotKeysApp::start_menuentry( const QString& action_P )
 
 void KHotKeysApp::reread_configuration()
     {
-    accel->clear();
+    delete accel;
+    accel = new KHKGlobalAccel( this );
     data.clear();
     KSimpleConfig cfg( CONFIG_FILE, true );
     data.read_config( cfg );
