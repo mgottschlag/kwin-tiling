@@ -29,6 +29,6 @@ SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
 	konqhtml ebrowsing arts kcontrol passwords knotify\
 	clock pics $(ACCESS_SUBDIR) colors energy fonts css \
 	icons screensaver taskbar crypto privacy smserver \
-	konsole spellchecking fileshare $(USBVIEW_SUBDIR) \
+	konsole spellchecking $(USBVIEW_SUBDIR) \
 	$(KSMCARD_SUBDIR) nics $(FONTINST_SUBDIR) $(RANDR_SUBDIR) \
 	componentchooser performance xinerama $(VIEW1394_SUBDIR) display kthememanager
