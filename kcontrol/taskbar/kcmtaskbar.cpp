@@ -146,6 +146,7 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringLi
     connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT(slotUpdateComboBox()));
 
     load();
+    m_moduleChanged = false;
 }
 
 TaskbarConfig::~TaskbarConfig()
@@ -154,6 +155,7 @@ TaskbarConfig::~TaskbarConfig()
 
 void TaskbarConfig::configChanged()
 {
+    m_moduleChanged = true;
     emit changed(true);
 }
 
@@ -192,11 +194,14 @@ void TaskbarConfig::load()
 
     delete c;
     emit changed(false);
+    m_moduleChanged = false;
     slotUpdateComboBox();
 }
 
 void TaskbarConfig::save()
 {
+    if ( !m_moduleChanged )
+        return;
     KConfig *c = new KConfig("ktaskbarrc", false, false);
     { // group for the benefit of the group saver
         KConfigGroupSaver saver(c, "General");

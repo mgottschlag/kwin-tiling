@@ -38,12 +38,12 @@ public:
     void defaults();
 
     QString quickHelp() const;
-    const KAboutData* aboutData() const;    
+    const KAboutData* aboutData() const;
 
 protected slots:
     void configChanged();
     void slotUpdateComboBox();
-    
+
 private:
     enum Action {
         ShowTaskList = 0,
@@ -67,6 +67,7 @@ private:
     static const QStringList& groupModeList();
     static QStringList i18nGroupModeList();
     TaskbarConfigUI *ui;
+    bool m_moduleChanged;
 };
 
 #endif
