@@ -12,8 +12,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>455</width>
-            <height>548</height>
+            <width>448</width>
+            <height>539</height>
         </rect>
     </property>
     <property stdset="1">
@@ -79,6 +79,13 @@
                             <cstring>ButtonGroup1</cstring>
                         </property>
                         <property stdset="1">
+                            <name>sizePolicy</name>
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>5</vsizetype>
+                            </sizepolicy>
+                        </property>
+                        <property stdset="1">
                             <name>frameShape</name>
                             <enum>Box</enum>
                         </property>
@@ -99,82 +106,6 @@
                             <string>&lt;b&gt;Stylesheets&lt;/b&gt;&lt;p&gt;Use this groupbox to determine how Konqueror will render style sheets.&lt;/p&gt;</string>
                         </property>
                         <widget>
-                            <class>QRadioButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>useDefault</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>geometry</name>
-                                <rect>
-                                    <x>30</x>
-                                    <y>19</y>
-                                    <width>369</width>
-                                    <height>19</height>
-                                </rect>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Use &amp;default stylesheet</string>
-                            </property>
-                            <property stdset="1">
-                                <name>checked</name>
-                                <bool>true</bool>
-                            </property>
-                            <property>
-                                <name>whatsThis</name>
-                                <string>&lt;b&gt;Use default stylesheet&lt;/b&gt;&lt;p&gt;Select this option to use the default stylesheet.&lt;/p&gt;</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QRadioButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>useAccess</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>geometry</name>
-                                <rect>
-                                    <x>30</x>
-                                    <y>95</y>
-                                    <width>369</width>
-                                    <height>19</height>
-                                </rect>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Use &amp;accessiblity stylesheet defined in "Customize"-tab</string>
-                            </property>
-                            <property>
-                                <name>whatsThis</name>
-                                <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse.  Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QRadioButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>useUser</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>geometry</name>
-                                <rect>
-                                    <x>30</x>
-                                    <y>44</y>
-                                    <width>369</width>
-                                    <height>19</height>
-                                </rect>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Use &amp;user-defined stylesheet</string>
-                            </property>
-                            <property>
-                                <name>whatsThis</name>
-                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user-defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
-                            </property>
-                        </widget>
-                        <widget>
                             <class>KURLRequester</class>
                             <property stdset="1">
                                 <name>name</name>
@@ -189,9 +120,92 @@
                                 <rect>
                                     <x>50</x>
                                     <y>65</y>
-                                    <width>350</width>
+                                    <width>310</width>
                                     <height>20</height>
                                 </rect>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QRadioButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>useUser</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>30</x>
+                                    <y>44</y>
+                                    <width>360</width>
+                                    <height>19</height>
+                                </rect>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use &amp;user-defined stylesheet</string>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user-defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QRadioButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>useAccess</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>30</x>
+                                    <y>95</y>
+                                    <width>360</width>
+                                    <height>19</height>
+                                </rect>
+                            </property>
+                            <property stdset="1">
+                                <name>sizePolicy</name>
+                                <sizepolicy>
+                                    <hsizetype>3</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                </sizepolicy>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use &amp;accessiblity stylesheet defined in "Customize"-tab</string>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse.  Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QRadioButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>useDefault</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>30</x>
+                                    <y>19</y>
+                                    <width>360</width>
+                                    <height>19</height>
+                                </rect>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use &amp;default stylesheet</string>
+                            </property>
+                            <property stdset="1">
+                                <name>checked</name>
+                                <bool>true</bool>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use default stylesheet&lt;/b&gt;&lt;p&gt;Select this option to use the default stylesheet.&lt;/p&gt;</string>
                             </property>
                         </widget>
                     </widget>
@@ -354,6 +368,13 @@
                             <bool>false</bool>
                         </property>
                         <property stdset="1">
+                            <name>sizePolicy</name>
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>3</vsizetype>
+                            </sizepolicy>
+                        </property>
+                        <property stdset="1">
                             <name>title</name>
                             <string>Font size</string>
                         </property>
@@ -361,54 +382,6 @@
                             <name>whatsThis</name>
                             <string>&lt;b&gt;Font size&lt;/b&gt;</string>
                         </property>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>txtFontsize</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>geometry</name>
-                                <rect>
-                                    <x>11</x>
-                                    <y>20</y>
-                                    <width>93</width>
-                                    <height>22</height>
-                                </rect>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Base Font Si&amp;ze:</string>
-                            </property>
-                            <property>
-                                <name>buddy</name>
-                                <cstring>basefontsize</cstring>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QCheckBox</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>dontScale</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>geometry</name>
-                                <rect>
-                                    <x>11</x>
-                                    <y>48</y>
-                                    <width>413</width>
-                                    <height>20</height>
-                                </rect>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>&amp;Use same size for all elements</string>
-                            </property>
-                            <property>
-                                <name>whatsThis</name>
-                                <string>&lt;b&gt;Use same size for all elements&lt;/b&gt;&lt;p&gt;Select this option to override custom font sizes in favor of the base font size.  All fonts will be displayed in the same size.&lt;/p&gt;</string>
-                            </property>
-                        </widget>
                         <widget>
                             <class>QComboBox</class>
                             <item>
@@ -512,6 +485,61 @@
                             <property stdset="1">
                                 <name>editable</name>
                                 <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QLabel</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>txtFontsize</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>11</x>
+                                    <y>20</y>
+                                    <width>93</width>
+                                    <height>22</height>
+                                </rect>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Base Font Si&amp;ze:</string>
+                            </property>
+                            <property>
+                                <name>buddy</name>
+                                <cstring>basefontsize</cstring>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QCheckBox</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>dontScale</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>10</x>
+                                    <y>43</y>
+                                    <width>400</width>
+                                    <height>20</height>
+                                </rect>
+                            </property>
+                            <property stdset="1">
+                                <name>sizePolicy</name>
+                                <sizepolicy>
+                                    <hsizetype>3</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                </sizepolicy>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>&amp;Use same size for all elements</string>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use same size for all elements&lt;/b&gt;&lt;p&gt;Select this option to override custom font sizes in favor of the base font size.  All fonts will be displayed in the same size.&lt;/p&gt;</string>
                             </property>
                         </widget>
                     </widget>
@@ -941,22 +969,6 @@
 </widget>
 <customwidgets>
     <customwidget>
-        <class>KURLRequester</class>
-        <header location="global">kurlrequester.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>0</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-        </sizepolicy>
-        <pixmap>image0</pixmap>
-        <signal>textChanged(const QString &amp;)</signal>
-        <slot access="public">slotEnabled(bool)</slot>
-    </customwidget>
-    <customwidget>
         <class>KColorButton</class>
         <header location="global">kcolorbtn.h</header>
         <sizehint>
@@ -968,17 +980,33 @@
             <hordata>7</hordata>
             <verdata>1</verdata>
         </sizepolicy>
+        <pixmap>image0</pixmap>
+    </customwidget>
+    <customwidget>
+        <class>KURLRequester</class>
+        <header location="global">kurlrequester.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+        </sizepolicy>
         <pixmap>image1</pixmap>
+        <signal>textChanged(const QString &amp;)</signal>
+        <slot access="public">slotEnabled(bool)</slot>
     </customwidget>
 </customwidgets>
 <images>
     <image>
         <name>image0</name>
-        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1ddec44f503c0ae2a154410f53d0ed20e2bf6bdb656dd6861dd23d9a66591b0587fd1654235ebded6f0edcd53e419d87ae7b1f4f9b8f906d0bfe012317426a70b07bdc2f3ec77f8ed6b89559061a0343d06a124cc105596482585094bc0ae599b04646c9018926491b2205e140c485cace25755c175d0a967b622ff900b8cc9c7d29af594ea722d589167f813aa852ba07d94b9dce296e883fe7bb163f23896753</data>
+        <data format="XPM.GZ" length="45">789cd3d7528808f055d0d2e72a2e492cc94c5648ce482c52d04a29cdcdad8c8eb5ade6523250004143a55a6b2e0026630c4f</data>
     </image>
     <image>
         <name>image1</name>
-        <data format="XPM.GZ" length="45">789cd3d7528808f055d0d2e72a2e492cc94c5648ce482c52d04a29cdcdad8c8eb5ade6523250004143a55a6b2e0026630c4f</data>
+        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
     </image>
 </images>
 <connections>
