@@ -396,6 +396,15 @@ void KIconConfig::slotUsage(int index)
 {
     mUsage = index;
     mState = 0;
+    if (mUsage == KIcon::Panel || mUsage == KIcon::Small)
+    {
+	m_pTabWidget->setTabEnabled(m_pTab1, false);
+	m_pTabWidget->setCurrentPage(1);
+    }
+    else
+    {
+	m_pTabWidget->setTabEnabled(m_pTab1, true);
+    }
     apply();
     preview();
 }
