@@ -187,6 +187,25 @@ void KIconConfig::initDefaults()
 	mEffects[i][1] = mDefaultEffect[1];
 	mEffects[i][2] = mDefaultEffect[2];
     }
+
+    // This is the new default in KDE 2.2, in sync with the kiconeffect of kdelibs Nolden 2001/06/11
+    int activeState = mStates.findIndex( "Active" );
+    if ( activeState != -1 )
+    {
+        int group = mGroups.findIndex( "Desktop" );
+        if ( group != -1 )
+        {
+            mEffects[ group ][ activeState ].type = KIconEffect::ToGamma;
+            mEffects[ group ][ activeState ].value = 0.7;
+        }
+
+        group = mGroups.findIndex( "Panel" );
+        if ( group != -1 )
+        {
+            mEffects[ group ][ activeState ].type = KIconEffect::ToGamma;
+            mEffects[ group ][ activeState ].value = 0.7;
+        }
+    }
 }
 
 void KIconConfig::read()
@@ -334,13 +353,6 @@ void KIconConfig::save()
             mpConfig->writeEntry(*it2 + "SemiTransparent", mEffects[i][j].transparant, true, true);
 	}
     }
-    // This is the new default in KDE 2.2, in sync with the kiconeffect of kdelibs Nolden 2001/06/11
-    mpConfig->setGroup("DesktopIcons");
-    mpConfig->writeEntry("ActiveEffect", "togamma", true, true);
-    mpConfig->writeEntry("ActiveValue", "0.7", true, true);
-    mpConfig->setGroup("PanelIcons");
-    mpConfig->writeEntry("ActiveEffect", "togamma", true, true);
-    mpConfig->writeEntry("ActiveValue", "0.7", true, true);
 
     mpConfig->sync();
 
