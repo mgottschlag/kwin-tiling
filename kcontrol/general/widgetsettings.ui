@@ -43,7 +43,7 @@
                 <string></string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>&lt;b&gt;Note:&lt;/b&gt; that all widgets in this combobox do not apply to Qt only applications!</string>
+                <string>&lt;b&gt;Note:&lt;/b&gt; that all widgets in this combobox do not apply to Qt-only applications!</string>
             </property>
             <grid>
                 <property name="name">
@@ -138,7 +138,7 @@
                         <string>Transparent tool&amp;bars when moving</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>If you check this box, the toolbars will be transparent when moving them around</string>
+                        <string>If you check this box, the toolbars will be transparent when moving them around.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
@@ -152,7 +152,7 @@
                         <string></string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>If you check this options, KDE application will offer tooltips when the cursor remains over items in the toolbar.</string>
+                        <string>If you check this option, the KDE application will offer tooltips when the cursor remains over items in the toolbar.</string>
                     </property>
                 </widget>
             </grid>
@@ -180,7 +180,7 @@
             </property>
             <property name="whatsThis" stdset="0">
                 <string>&lt;p&gt;&lt;b&gt;Disable: &lt;/b&gt;Don't use an effect on this widget&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Animate: &lt;/b&gt;Do some animation when &lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Animate: &lt;/b&gt;Do some animation&lt;/p&gt;
 &lt;p&gt;&lt;b&gt;Fade: &lt;/b&gt;Fade in the widget using alpha-blending&lt;/p&gt;</string>
             </property>
             <grid>
@@ -333,7 +333,7 @@
                         <string></string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>If you enable this option some pop-up menus will show so called tear-off handles. If you click them, you get the menu inside a widget. This can be very helpfull when performing the same action multiple times.</string>
+                        <string>If you enable this option some pop-up menus will show so called tear-off handles. If you click them, you get the menu inside a widget. This can be very helpful when performing the same action multiple times.</string>
                     </property>
                 </widget>
             </vbox>
