@@ -160,10 +160,10 @@ void KCMKonsole::save()
     if (xonXoffOrig != xonXoffNew)
     {
        xonXoffOrig = xonXoffNew;
-       KMessageBox::information(this, i18n("The Ctrl-S / Ctrl-Q flow control setting will only affect "
-                                           "newly started konsoles.\n"
+       KMessageBox::information(this, i18n("The CTRL-S/CTRL-Q flow control setting will only affect "
+                                           "newly started Konsole sessions.\n"
                                            "The 'stty' command can be used to change the flow control "
-                                           "settings of existing konsoles."));
+                                           "settings of existing Konsole sessions."));
     }
 }
 
