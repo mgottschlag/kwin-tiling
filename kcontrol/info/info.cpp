@@ -403,7 +403,7 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
 
 #ifdef __linux__
 #include "info_linux.cpp"
-#elif sgi || sun
+#elif sgi
 #include "info_sgi.cpp"
 #elif __FreeBSD__
 #include "info_fbsd.cpp"
@@ -413,6 +413,8 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
 #include "info_netbsd.cpp"
 #elif __OpenBSD__
 #include "info_openbsd.cpp"
+#elif defined(__svr4__) && defined(sun)
+#include "info_solaris.cpp"
 #elif __svr4__
 #include "info_svr4.cpp"
 #elif _AIX

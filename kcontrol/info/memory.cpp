@@ -41,12 +41,14 @@
 enum { 			/* entries for Memory_Info[] */
     TOTAL_MEM = 0,	/* total physical memory (without swaps) */
     FREE_MEM,		/* total free physical memory (without swaps) */
+#if !defined(__svr4__) || !defined(sun)
 #ifndef __NetBSD__
     SHARED_MEM,
     BUFFER_MEM,
 #else
     ACTIVE_MEM,
     INACTIVE_MEM,
+#endif
 #endif
     SWAP_MEM,		/* total size of all swap-partitions */
     FREESWAP_MEM,	/* free memory in swap-partitions */
@@ -122,12 +124,14 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 	switch (i) {
 	    case TOTAL_MEM: 	title = i18n("Total physical memory");	break;
 	    case FREE_MEM:	title = i18n("Free physical memory");	break;
+#if !defined(__svr4__) || !defined(sun)
 #ifndef __NetBSD__
 	    case SHARED_MEM:	title = i18n("Shared memory");		break;
 	    case BUFFER_MEM:	title = i18n("Buffer memory");		break;
 #else
 	    case ACTIVE_MEM:	title = i18n("Active memory");		break;
 	    case INACTIVE_MEM:	title = i18n("Inactive memory");	break;
+#endif
 #endif
 	    case SWAP_MEM:	vbox->addSpacing(SPACING);
 				title = i18n("Total swap memory");	break;
@@ -306,6 +310,8 @@ void KMemoryWidget::update_Values()
 #include "memory_linux.cpp"
 #elif sgi
 #include "memory_sgi.cpp"
+#elif defined(__svr4__) && defined(sun)
+#include "memory_solaris.cpp"
 #elif __FreeBSD__
 #include "memory_fbsd.cpp"
 #elif hpux
@@ -321,12 +327,14 @@ void KMemoryWidget::update()
 {
     Memory_Info[TOTAL_MEM]    = NO_MEMORY_INFO; // total physical memory (without swaps)
     Memory_Info[FREE_MEM]     = NO_MEMORY_INFO;	// total free physical memory (without swaps)
+#if !define(__svr4__) || !defined(sun)
 #ifndef __NetBSD__
     Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO; 
     Memory_Info[BUFFER_MEM]   = NO_MEMORY_INFO; 
 #else
     Memory_Info[ACTIVE_MEM]   = NO_MEMORY_INFO; 
     Memory_Info[INACTIVE_MEM] = NO_MEMORY_INFO; 
+#endif
 #endif
     Memory_Info[SWAP_MEM]     = NO_MEMORY_INFO; // total size of all swap-partitions
     Memory_Info[FREESWAP_MEM] = NO_MEMORY_INFO; // free memory in swap-partitions
