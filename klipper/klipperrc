@@ -8,7 +8,7 @@ Number of commands=1
 
 [Action_1]
 Action description=Web-URL
-Action regexp=^http:\\/\\/
+Action regexp=^https?:\\/\\/
 Command_0: commandline=kfmclient exec '%s'
 Command_0: description=Open with &Konqueror
 Command_0: enabled=true
