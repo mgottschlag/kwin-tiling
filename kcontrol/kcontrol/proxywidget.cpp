@@ -100,8 +100,6 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name)
 
   top->activate();
 
-  connect(this, SIGNAL(closeClicked()), this, SLOT(cancelClicked()));
-
   // Restrict minimum size to the optimal one
   setMinimumSize(sizeHint());
 }
