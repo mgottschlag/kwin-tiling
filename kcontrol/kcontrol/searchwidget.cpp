@@ -20,6 +20,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qstringlist.h>
+#include <qsortedlist.h>
 #include <qregexp.h>
 #include <qdict.h>
 #include <qpixmap.h>
@@ -33,6 +34,35 @@
 #include "searchwidget.h"
 #include "searchwidget.moc"
 #include "global.h"
+
+/**
+ * Helper class for sorting icon modules by name without losing the fileName ID
+ */
+class ModuleName 
+{
+protected:
+ QString m_name;
+ ConfigModule *m_module;
+ 
+public:
+ ModuleName(const QString &name, ConfigModule *module) :
+	 m_name(name), m_module(module)
+ { }
+ 
+ ModuleName() 
+ { }
+
+ QString name() const { return m_name; };
+
+ ConfigModule *module() const { return m_module; };
+
+ bool operator== (const ModuleName &ip)
+ { return m_name == ip.m_name; }
+ 
+ bool operator< (const ModuleName &ip)
+ { return m_name < ip.m_name; }
+ 
+};
 
 KeywordListEntry::KeywordListEntry(const QString& name, ConfigModule* module)
   : _name(name)
@@ -158,8 +188,8 @@ void SearchWidget::populateResultListBox(const QString& s)
   _resultList->clear();
   _results.clear();
 
-  QStringList results;
-  QDict<ConfigModule> dict;
+  QSortedList <ModuleName>results;
+  results.setAutoDelete(true);
 
   for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
     {
@@ -168,20 +198,17 @@ void SearchWidget::populateResultListBox(const QString& s)
           QList<ConfigModule> modules = k->modules();
           
           for(ConfigModule *m = modules.first(); m != 0; m = modules.next())
-            {
-              results.append(m->name());
-	      dict.insert(m->name(), m);
-	      _results += m->fileName();
-            }
+              results.append(new ModuleName(m->name(),m));
         }
     }
 
   results.sort();
 
-  for(QStringList::ConstIterator it = results.begin(); it != results.end(); it++)
+  for(ModuleName *it = results.first(); it != 0L; it=results.next())
   {
     _resultList->insertItem(KGlobal::iconLoader()->loadIcon(
-		(dict[*it])->icon(), KIcon::Desktop, KIcon::SizeSmall), *it);
+	  it->module()->icon(), KIcon::Desktop, KIcon::SizeSmall), it->name());
+    _results += it->module()->fileName();
   }
 }
 
