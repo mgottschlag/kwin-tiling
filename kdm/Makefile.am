@@ -1,8 +1,6 @@
 # frontend must come first, as it generates config.ci
 SUBDIRS = kfrontend backend
 
-EXTRA_DIST = misc
-
 PAM = @KDM_PAM_SERVICE@
 
 kdmdocdir = $(datadir)/doc/kdm
