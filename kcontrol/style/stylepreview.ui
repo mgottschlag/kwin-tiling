@@ -19,12 +19,6 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>0</number>
-        </property>
         <widget class="QFrame">
             <property name="name">
                 <cstring>Frame3</cstring>
@@ -38,12 +32,6 @@
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
                 </property>
                 <widget class="QTabWidget" row="0" column="0">
                     <property name="name">
@@ -59,12 +47,6 @@
                         <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>11</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
                             </property>
                             <widget class="QProgressBar" row="0" column="1" rowspan="1" colspan="2">
                                 <property name="name">
@@ -115,12 +97,6 @@
                                 <vbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
-                                    </property>
-                                    <property name="margin">
-                                        <number>11</number>
-                                    </property>
-                                    <property name="spacing">
-                                        <number>6</number>
                                     </property>
                                     <widget class="QRadioButton">
                                         <property name="name">
@@ -201,10 +177,12 @@
 </connections>
 <includes>
     <include location="local" impldecl="in implementation">stylepreview.ui.h</include>
+    <include location="local" impldecl="in implementation">kdialog.h</include>
 </includes>
 <slots>
     <slot>init()</slot>
     <slot returnType="bool">eventFilter( QObject * obj, QEvent * ev )</slot>
 </slots>
-<layoutdefaults spacing="6" margin="11"/>
+<layoutdefaults spacing="3" margin="6"/>
+<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 </UI>

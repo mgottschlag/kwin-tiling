@@ -22,12 +22,6 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
-        </property>
         <widget class="QButtonGroup">
             <property name="name">
                 <cstring>ButtonGroup2</cstring>
@@ -42,12 +36,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
                 <widget class="QLayoutWidget" row="2" column="1">
                     <property name="name">
                         <cstring>Layout4</cstring>
@@ -55,12 +43,6 @@
                     <hbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
                         </property>
                         <widget class="QLineEdit">
                             <property name="name">
@@ -217,5 +199,9 @@
 <slots>
     <slot access="protected">selectEmailClient()</slot>
 </slots>
-<layoutdefaults spacing="6" margin="11"/>
+<includes>
+    <include location="local" impldecl="in implementation">kdialog.h</include>
+</includes>
+<layoutdefaults spacing="3" margin="6"/>
+<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 </UI>

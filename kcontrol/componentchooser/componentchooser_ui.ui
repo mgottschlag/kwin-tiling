@@ -111,10 +111,10 @@
 </widget>
 <includes>
     <include location="global" impldecl="in declaration">klistbox.h</include>
-    <include location="global" impldecl="in implementation">kdialog.h</include>
+    <include location="local" impldecl="in implementation">kdialog.h</include>
 </includes>
-<layoutdefaults spacing="6" margin="0"/>
-<layoutfunctions spacing="KDialog::spacingHint"/>
+<layoutdefaults spacing="3" margin="6"/>
+<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
     <includehint>klistbox.h</includehint>
 </includehints>

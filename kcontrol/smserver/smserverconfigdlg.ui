@@ -21,12 +21,6 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
-        </property>
         <widget class="QGroupBox">
             <property name="name">
                 <cstring>topBox</cstring>
@@ -45,12 +39,6 @@
             <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
@@ -82,12 +70,6 @@
             <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
                 </property>
                 <widget class="QRadioButton">
                     <property name="name">
@@ -129,12 +111,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
                 <widget class="QRadioButton">
                     <property name="name">
                         <cstring>logoutRadio</cstring>
@@ -171,12 +147,6 @@
             <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
                 </property>
                 <widget class="QLabel">
                     <property name="name">
@@ -251,9 +221,9 @@
 <slots>
     <slot>configChanged()</slot>
 </slots>
-<layoutdefaults spacing="6" margin="0"/>
-<layoutfunctions spacing="KDialog::spacingHint"/>
-<includehints>
-    <includehint>klineedit.h</includehint>
-</includehints>
+<includes>
+    <include location="local" impldecl="in implementation">kdialog.h</include>
+</includes>
+<layoutdefaults spacing="3" margin="6"/>
+<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 </UI>
