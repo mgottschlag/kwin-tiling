@@ -54,6 +54,7 @@ static const int COL_FILENAME = 1;
 KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
     KCModule(parent, name)
 {
+    updating = true;
     currentItem = 0L;
 
     QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(),
@@ -121,6 +122,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 
     // reading can take some time
     QTimer::singleShot( 0, this, SLOT( loadAll() ));
+    updating = false;
 };
 
 KNotifyWidget::~KNotifyWidget()
@@ -134,6 +136,8 @@ KNotifyWidget::~KNotifyWidget()
  */
 void KNotifyWidget::updateView()
 {
+    bool save_updating = updating;
+    updating = true;
     view->clear();
     QListViewItem *appItem = 0L;
     KNListViewItem *eItem  = 0L;
@@ -158,6 +162,7 @@ void KNotifyWidget::updateView()
 
 	++it;
     }
+    updating = save_updating;
 }
 
 
@@ -174,7 +179,8 @@ void KNotifyWidget::defaults()
 
 void KNotifyWidget::changed()
 {
-    emit KCModule::changed(true);
+    if (!updating)
+       emit KCModule::changed(true);
 }
 
 /**
@@ -211,6 +217,9 @@ void KNotifyWidget::playSound()
 
 void KNotifyWidget::loadAll()
 {
+    bool save_updating = updating;
+    updating = true;
+    
     setEnabled( false );
     setCursor( KCursor::waitCursor() );
 
@@ -225,6 +234,8 @@ void KNotifyWidget::loadAll()
     updateView();
     setEnabled( true );
     unsetCursor();
+  
+    updating = save_updating;
 }
 
 void KNotifyWidget::save()

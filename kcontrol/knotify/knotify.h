@@ -70,7 +70,7 @@ private:
     QPushButton *playButton;
     Events *m_events;
     KNCheckListItem *currentItem;
-
+    bool updating;
 };
 
 class KNListViewItem : public QObject, public QListViewItem
