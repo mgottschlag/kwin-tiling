@@ -20,7 +20,7 @@
 AM_CPPFLAGS= $(all_includes)
 METASOURCES = AUTO
 
-SUBDIRS = . pics
+SUBDIRS = . about
 
 bin_PROGRAMS =
 lib_LTLIBRARIES =
@@ -32,7 +32,7 @@ kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp \
 	moduleIface.cpp moduleIface.skel global.cpp modules.cpp \
 	proxywidget.cpp kcrootonly.cpp searchwidget.cpp
 
-kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KUTILS)
+kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KUTILS) $(LIB_KHTML)
 kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 rccontroldir = $(kde_datadir)/kcontrol

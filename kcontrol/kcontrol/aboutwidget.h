@@ -22,31 +22,21 @@
 
 #include <qwidget.h>
 #include <qlistview.h>
+#include <qhbox.h>
 
 class KCModuleInfo;
 class QPixmap;
 class KPixmap;
 class ConfigModule;
+class KHTMLPart;
+class KURL;
 
-class AboutWidget : public QWidget
+class AboutWidget : public QHBox
 {  
   Q_OBJECT    
   
 public:   
   AboutWidget(QWidget *parent, const char *name=0, QListViewItem* category=0, const QString &caption=QString::null);
-
-    /**
-     * initialize the pixmaps and preprocess the PixmapEffect
-     */
-    static void initPixmaps();
-
-    /**
-     * Free the pixmaps again. They will be reloaded on the next use.
-     * make sure to free them or you will lose QPixmaps to the X server
-     * on exit!
-     * This function is safe to call is init() hasn't been called or failed
-     */
-    static void freePixmaps();
 
     /**
      * Set a new category without creating a new AboutWidget if there is
@@ -57,11 +47,8 @@ public:
 signals:
     void moduleSelected(ConfigModule *);
 
-protected:
-    void paintEvent(QPaintEvent*);
-    void resizeEvent(QResizeEvent*);
-    void mouseMoveEvent(QMouseEvent*);
-    void mouseReleaseEvent(QMouseEvent*);
+private slots:
+    void slotModuleLinkClicked( const KURL& );
 
 private:
     /**
@@ -69,25 +56,12 @@ private:
      * setCategory.
      */
     void updatePixmap();
-    
-    // For performance reasons we make the pixmaps static so they won't
-    // be reloaded every time again!
-    static QPixmap *_part1;
-    static QPixmap *_part2;
-    static QPixmap *_part3;
-    static QPixmap *_part4TopRight;
 
-    // Also for performance reasons we apply the KPixmapEffect only once
-    static KPixmap *_part3Effect;
-    
-    QPixmap _buffer, _linkBuffer;
-    QRect _linkArea;
     bool    _moduleList;
     QListViewItem* _category;
-    struct ModuleLink;
-    QPtrList<ModuleLink> _moduleLinks;
-    ModuleLink *_activeLink;
     QString _caption;
+    KHTMLPart *_viewer;
+    QMap<QString,ConfigModule*> _moduleMap;
 };
 
 #endif

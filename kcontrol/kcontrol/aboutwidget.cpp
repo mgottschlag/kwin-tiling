@@ -20,6 +20,8 @@
 #include <qpainter.h>
 #include <qwhatsthis.h>
 #include <qregexp.h>
+#include <qlayout.h>
+#include <qfile.h>
 
 #include <kstandarddirs.h>
 #include <klocale.h>
@@ -28,6 +30,8 @@
 #include <kpixmapeffect.h>
 #include <kcursor.h>
 #include <kglobalsettings.h>
+#include <khtml_part.h>
+#include <kapplication.h>
 
 #include "global.h"
 #include "aboutwidget.h"
@@ -66,60 +70,31 @@ static const char system_text[] = I18N_NOOP("System:");
 static const char release_text[] = I18N_NOOP("Release:");
 static const char machine_text[] = I18N_NOOP("Machine:");
 
-struct AboutWidget::ModuleLink
-{
-    ConfigModule *module;
-    QRect linkArea;
-};
-
-QPixmap *AboutWidget::_part1 = 0L;
-QPixmap *AboutWidget::_part2 = 0L;
-QPixmap *AboutWidget::_part3 = 0L;
-KPixmap *AboutWidget::_part3Effect = 0L;
-QPixmap *AboutWidget::_part4TopRight = 0L;
-
 AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* category, const QString &caption)
-   : QWidget(parent, name),
+   : QHBox(parent, name),
       _moduleList(false),
       _category(category),
-      _activeLink(0),
       _caption(caption)
 {
     if (_category)
       _moduleList = true;
 
-    _moduleLinks.setAutoDelete(true);
-
     setMinimumSize(400, 400);
-
-    // load images
-    if( !_part1 )
-    {
-      kdDebug(1208) << "AboutWidget: pixmaps were not initialized! Please call initPixmaps() before the constructor and freePixmaps() after deleting the last instance!" << endl;
-      _part1 = new QPixmap;
-      _part2 = new QPixmap;
-      _part3 = new QPixmap;
-      _part4TopRight = new QPixmap;
-      _part3Effect = new KPixmap;
-    }
-
-    // sanity check
-    if(_part1->isNull() || _part2->isNull() || _part3->isNull() || _part4TopRight->isNull()) {
-        kdError() << "AboutWidget::AboutWidget: Image loading error!" << endl;
-        setBackgroundColor(QColor(49,121,172));
-    }
-    else
-        setBackgroundMode(NoBackground); // no flicker
 
     // set qwhatsthis help
     QWhatsThis::add(this, i18n(intro_text));
+    _viewer = new KHTMLPart( this, "_viewer" );
+    _viewer->widget()->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
+    connect( _viewer->browserExtension(),
+             SIGNAL(openURLRequest(const KURL&, const KParts::URLArgs&)),
+             this, SLOT(slotModuleLinkClicked(const KURL&)) );
+    updatePixmap();
 }
 
 void AboutWidget::setCategory( QListViewItem* category, const QString &caption )
 {
   _caption = caption;
   _category = category;
-  _activeLink = 0;
   if ( _category )
     _moduleList = true;
   else
@@ -127,365 +102,97 @@ void AboutWidget::setCategory( QListViewItem* category, const QString &caption )
 
   // Update the pixmap to be shown:
   updatePixmap();
-  repaint();
-}
-
-void AboutWidget::initPixmaps()
-{
-  _part1 = new QPixmap( locate( "data", "kcontrol/pics/part1.png" ) );
-  _part2 = new QPixmap( locate( "data", "kcontrol/pics/part2.png" ) );
-  _part3 = new QPixmap( locate( "data", "kcontrol/pics/part3.png" ) );
-  _part4TopRight = new QPixmap( locate( "data", "kcontrol/pics/top-right.png" ) );
-
-  _part3Effect = new KPixmap( _part3->size() );
-
-  QPainter pb;
-  pb.begin( _part3Effect );
-  pb.fillRect( 0, 0, _part3->width(), _part3->height(),
-               QBrush( QColor( 49, 121, 172 ) ) );
-  pb.drawPixmap( 0, 0, *_part3 );
-  pb.end();
-
-  KPixmapEffect::fade( *_part3Effect, 0.75, white );
-}
-
-void AboutWidget::freePixmaps()
-{
-  delete _part1;
-  delete _part2;
-  delete _part3;
-  delete _part3Effect;
-  delete _part4TopRight;
-  _part1 = 0L;
-  _part2 = 0L;
-  _part3 = 0L;
-  _part3Effect = 0L;
-  _part4TopRight = 0L;
-}
-
-void AboutWidget::paintEvent(QPaintEvent* e)
-{
-    QPainter p (this);
-
-    if(_buffer.isNull())
-        p.fillRect(0, 0, width(), height(), QBrush(QColor(49,121,172)));
-    else
-    {
-        p.drawPixmap(QPoint(e->rect().x(), e->rect().y()), _buffer, e->rect());
-        if (_activeLink)
-        {
-            QRect src = e->rect() & _activeLink->linkArea;
-            QPoint dest = src.topLeft();
-            src.moveBy(-_linkArea.left(), -_linkArea.top());
-            p.drawPixmap(dest, _linkBuffer, src);
-        }
-    }
-}
-
-void AboutWidget::resizeEvent(QResizeEvent*)
-{
-  updatePixmap();
 }
 
 void AboutWidget::updatePixmap()
 {
-    if(_part1->isNull() || _part2->isNull() || _part3->isNull() || _part4TopRight->isNull())
-        return;
+    QString file = locate(  "data", "kcontrol/about/main.html" );
+    QFile f( file );
+    f.open( IO_ReadOnly );
+    QTextStream t(  &f );
+    QString res = t.read();
 
-    _buffer.resize(width(), height());
+    res = res.arg(  locate(  "data", "kdeui/about/kde_infopage.css" ) );
+    if (  kapp->reverseLayout() )
+        res = res.arg(  "@import \"%1\";" ).arg(  locate(  "data", "kdeui/about/kde_infopage_rtl.css" ) );
+    else
+        res = res.arg(  "" );
 
-    QPainter p(&_buffer);
-
-    // draw part1
-    p.drawPixmap(width() - _part4TopRight->width(), 0, *_part4TopRight);
-    p.drawPixmap(0, 0, *_part1);
-
-    int xoffset = _part1->width();
-    int yoffset = _part1->height();
-
-    // draw part2 tiled
-    int xpos = xoffset;
-    if(width() > xpos)
-        p.drawTiledPixmap(xpos, 0, width() - xpos - _part4TopRight->width(), _part2->height(), *_part2);
-
-    QFont f1 = font();
-    QFont f2 = f1;
-    QFont f3 = QFont(KGlobalSettings::generalFont().family(), 28, QFont::Bold, true);
 
     QString title, intro, caption;
     if (KCGlobal::isInfoCenter())
     {
-       title = i18n(title_infotext);
-       intro = i18n(intro_infotext);
-       caption = i18n(kcc_infotext);
+       res = res.arg(i18n(kcc_infotext))
+                .arg(i18n(title_infotext))
+                .arg(i18n(intro_infotext));
     }
     else
     {
-       title = i18n(title_text);
-       intro = i18n(intro_text);
-       caption = i18n(kcc_text);
+       res = res.arg(i18n(kcc_text))
+                .arg(i18n(title_text))
+                .arg(i18n(intro_text));
     }
 
-    //draw the caption text
-    p.setFont(f3);
-    p.setPen(QColor(92, 171, 230));
-    p.drawText(xpos + 13, 60, caption);
-    p.setPen(black);
-    p.drawText(xpos + 10, 57, caption);
-    p.setFont(f1);
-
-    const int hAlign = QApplication::reverseLayout() ? AlignRight : AlignLeft;
-
-
-    // draw title text
-    p.setPen(black);
-    p.drawText(150, 84, width() - 160, 108 - 84, hAlign | AlignVCenter, title);
-
-    // draw intro text
-    p.setPen(black);
-    p.drawText(28, 128, width() - 38, 184 - 128, hAlign | AlignVCenter | WordBreak, intro);
-
-    // fill background
-    p.fillRect(0, yoffset, width(), height() - yoffset, QBrush(QColor(49,121,172)));
-
-    // draw part3
-    if (height() <= 184) return;
-
-    int part3EffectY = height() - _part3->height();
-    int part3EffectX = (hAlign == AlignLeft) ? (width()  - _part3->width()) : 0;
-    if ( part3EffectX < 0)
-      part3EffectX = 0;
-    if ( height() < 184 + _part3->height() )
-      part3EffectY = 184;
-
-    p.drawPixmap( part3EffectX, part3EffectY, *_part3 );
-
-    // draw textbox
-    if (height() <= 184 + 50) return;
-
-    int bheight = height() - 184 - 50 - 40;
-    int bwidth = width() - 50;
-
-    if (bheight < 0) bheight = 0;
-    if (bwidth < 0) bheight = 0;
-    if (bheight > 400) bheight = 400;
-    if (bwidth > 500) bwidth = 500;
-
-    int boxX = (hAlign == AlignLeft) ? 25 : width()-bwidth-25;
-    int boxY = 184 + 50;
-
-    p.setClipRect(boxX, boxY, bwidth, bheight);
-    p.fillRect( boxX, boxY, bwidth, bheight,
-                QBrush( QColor( 204, 222, 234 ) ) );
-    p.drawPixmap( part3EffectX, part3EffectY, *_part3Effect );
-
-    p.setViewport( boxX, boxY, bwidth, bheight);
-    p.setWindow(0, 0, bwidth, bheight);
-
-    // draw info text
-    xoffset = 10;
-    yoffset = 30;
-
-    int fheight = fontMetrics().height();
-
-    f2.setBold(true);
-
+    QString content;
 
     if (!_moduleList)
     {
-        int xoffset = (hAlign == AlignLeft) ? 10 : bwidth-10-120;
-        int xadd = (hAlign == AlignLeft) ? 120 : -xoffset+10;
-
-        // kde version
-        p.setFont(f1);
-        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(version_text));
-        p.setFont(f2);
-        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::kdeVersion());
-        yoffset += fheight + 5;
-        if(yoffset > bheight) return;
-
-        // user name
-        p.setFont(f1);
-        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(user_text));
-        p.setFont(f2);
-        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::userName());
-        yoffset += fheight + 5;
-        if(yoffset > bheight) return;
-
-        // host name
-        p.setFont(f1);
-        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(host_text));
-        p.setFont(f2);
-        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::hostName());
-        yoffset += fheight + 5;
-        if(yoffset > bheight) return;
-
-        // system
-        p.setFont(f1);
-        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(system_text));
-        p.setFont(f2);
-        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::systemName());
-        yoffset += fheight + 5;
-        if(yoffset > bheight) return;
-
-        // release
-        p.setFont(f1);
-        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(release_text));
-        p.setFont(f2);
-        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::systemRelease());
-        yoffset += fheight + 5;
-        if(yoffset > bheight) return;
-
-        // machine
-        p.setFont(f1);
-        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(machine_text));
-        p.setFont(f2);
-        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::systemMachine());
-        if(yoffset > bheight) return;
-
-        yoffset += 10;
-
-        if(width() < 450 || height() < 450) return;
-
-        // draw use text
-        xoffset = 10;
-        bheight = bheight - yoffset;
-        bwidth = bwidth - (xoffset *2); // both left and right margin
-
-        p.setFont(f1);
-
-        QString ut = i18n(use_text);
-        QRect r = p.boundingRect(0, 0, bwidth, bheight, hAlign | AlignVCenter | WordBreak, ut);
-        if (bheight - r.height() < 10)
-           return;
-
-        p.drawText(xoffset, yoffset, bwidth, bheight, hAlign | AlignVCenter | WordBreak, ut);
+        content += "<table class=\"kc_table\">\n";
+#define KC_HTMLROW( a, b ) "<tr><td class=\"kc_leftcol\">" + i18n( a ) + "</td><td class=\"kc_rightcol\">" + b + "</tr>\n"
+        content += KC_HTMLROW( version_text, KCGlobal::kdeVersion() );
+        content += KC_HTMLROW( user_text, KCGlobal::userName() );
+        content += KC_HTMLROW( host_text, KCGlobal::hostName() );
+        content += KC_HTMLROW( system_text, KCGlobal::systemName() );
+        content += KC_HTMLROW( release_text, KCGlobal::systemRelease() );
+        content += KC_HTMLROW( machine_text, KCGlobal::systemMachine() );
+#undef KC_HTMLROW
+        content += "</table>\n";
+        content += "<p class=\"kc_use_text\">" + i18n( use_text ) + "</p>\n";
     }
     else
     {
-        // Need to set this here, not in the ctor. Otherwise Qt resets
-        // it to false when this is reparented (malte)
-        setMouseTracking(true);
-        QFont headingFont = f2;
-        int fs = headingFont.pointSize();
-        if (fs == -1)
-           fs = QFontInfo(headingFont).pointSize();
-        headingFont.setPointSize(fs+5);
-        QFont lf = f2;
-        lf.setUnderline(true);
+        content += _caption;
 
-        const int alxadd = 200; // name-field width
-
- 	const int nameoffset = (hAlign == AlignLeft) ? 10 : bwidth-alxadd;
-	const int namewidth = alxadd -10;
- 	const int commentoffset = (hAlign == AlignLeft) ? alxadd : 0;
- 	const int commentwidth = bwidth-alxadd;
-
- 	int yoffset = 15;
-
-        p.setFont(headingFont);
-        if (!_caption.isEmpty())
-        {
-           p.drawText(10, yoffset, bwidth-20, bheight - yoffset, hAlign | AlignTop, _caption );
-           yoffset += fheight + 15;
-        }
-
+        content += "<table class=\"kc_table\">\n";
         // traverse the list
-        _moduleLinks.clear();
-        _linkBuffer.resize(namewidth, bheight);
-	_linkArea = QRect(p.viewport().left()+nameoffset, p.viewport().top(),
-	                  namewidth, p.viewport().height());
-        QPainter lp(&_linkBuffer);
-        lp.fillRect( 0, 0, namewidth, bheight,
-                    QBrush( QColor( 204, 222, 234 ) ) );
-        lp.drawPixmap( part3EffectX - boxX - nameoffset, part3EffectY - boxY, *_part3Effect );
-        lp.setPen(QColor(0x19, 0x19, 0x70)); // same as about:konqueror
-        lp.setFont(lf);
         QListViewItem* pEntry = _category;
         while (pEntry != NULL)
         {
             QString szName;
             QString szComment;
             ConfigModule *module = static_cast<ModuleTreeItem*>(pEntry)->module();
+            /* TODO: work out link */
+            content += "<tr><td class=\"kc_leftcol\">";
             if (module)
             {
                 szName = module->moduleName();
                 szComment = module->comment();
-                p.setFont(f2);
-                QRect bounds;
-	        int height;
-	        p.drawText(nameoffset, yoffset,
-                           namewidth, bheight - yoffset,
-                           hAlign | AlignTop | WordBreak, szName, -1, &bounds);
-                lp.drawText(0, yoffset,
-                            namewidth, bheight - yoffset,
-                            hAlign | AlignTop | WordBreak, szName);
-                height = bounds.height();
-                p.setFont(f1);
-                p.drawText(commentoffset, yoffset,
-                           commentwidth, bheight - yoffset,
-                           hAlign | AlignTop | WordBreak, szComment, -1, &bounds);
-
-	        height = QMAX(height, bounds.height());
-
-                ModuleLink *linkInfo = new ModuleLink;
-                linkInfo->module = module;
-                linkInfo->linkArea = QRect(nameoffset + p.viewport().left(),
-                                           yoffset + p.viewport().top(),
-                                           namewidth, height);
-                _moduleLinks.append(linkInfo);
-                yoffset += height + 5;
+                content += "<a href=\"%1\" class=\"kcm_link\">" + szName + "</a></td><td class=\"kc_rightcol\">" + szComment;
+                KURL moduleURL( QString("kcm://%1").arg(QString().sprintf("%p",module)) );
+                QString linkURL( moduleURL.url() );
+                content = content.arg( linkURL );
+                _moduleMap.insert( linkURL, module );
             }
             else
             {
                 szName = static_cast<ModuleTreeItem*>(pEntry)->caption();
-                p.setFont(f2);
-                QRect bounds;
-                p.drawText(nameoffset, yoffset, namewidth, bheight - yoffset,
-                           hAlign | AlignTop | WordBreak, szName, -1, &bounds);
-                lp.drawText(nameoffset, yoffset,
-                            namewidth, bheight - yoffset,
-                            hAlign | AlignTop | WordBreak, szName);
-                yoffset += bounds.height() + 5;
+                content += szName + "</td><td class=\"kc_rightcol\">" + szName;
             }
-
-//          yoffset += fheight + 5;
-            if(yoffset > bheight) return;
-
+            content += "</td></tr>\n";
             pEntry = pEntry->nextSibling();
         }
+        content += "</table>";
     }
+    _viewer->begin(KURL( file ));
+    _viewer->write( res.arg( content ) );
+    _viewer->end();
 }
 
-void AboutWidget::mouseMoveEvent(QMouseEvent *e)
+void AboutWidget::slotModuleLinkClicked( const KURL& url )
 {
-    if (!_moduleList)
-        return;
-    ModuleLink *newLink = 0;
-    if (_linkArea.contains(e->pos()))
-    {
-        for (QPtrListIterator<ModuleLink> it(_moduleLinks); it.current(); ++it)
-        {
-            if (it.current()->linkArea.contains(e->pos()))
-            {
-                newLink = it.current();
-                break;
-            }
-        }
-    }
-    if (newLink != _activeLink)
-    {
-        _activeLink = newLink;
-        if (_activeLink)
-            setCursor(KCursor::handCursor());
-        else
-            unsetCursor();
-        repaint(_linkArea);
-    }
+	ConfigModule* module;
+	module = _moduleMap[url.url()];
+	if ( module )
+		emit moduleSelected( module );
 }
 
-void AboutWidget::mouseReleaseEvent(QMouseEvent*)
-{
-    if (_activeLink)
-        emit moduleSelected(_activeLink->module);
-}

@@ -126,9 +126,6 @@ TopLevel::TopLevel(const char* name)
           SLOT(changedModule(ConfigModule*)));
 
   // insert the about widget
-  // First preload about pixmaps for speedup
-  AboutWidget::initPixmaps();
-
   AboutWidget *aw = new AboutWidget(this);
   connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
            SLOT( activateModule( ConfigModule * ) ) );
@@ -192,9 +189,6 @@ TopLevel::~TopLevel()
   config->sync();
 
   delete _modules;
-
-  // Not used anymore, free the pixmaps to the X server
-  AboutWidget::freePixmaps();
 }
 
 bool TopLevel::queryClose()
