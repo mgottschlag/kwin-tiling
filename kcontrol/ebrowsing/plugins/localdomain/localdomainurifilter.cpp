@@ -77,36 +77,20 @@ bool LocalDomainURIFilter::isLocalDomainHost( const QString& cmd ) const
     if( host == last_host && last_time > time( NULL ) - 5 )
 	return last_result;
 
-    pid_t pid;
-    {
-	QString helper = KStandardDirs::findExe(
-	    QString::fromLatin1( "klocaldomainurifilterhelper" ));
-	if( helper.isEmpty())
-	    return last_result = false;
-        KProcess proc;
-        proc << helper << host;
-        if( !proc.start( KProcess::DontCare ))
-	    return last_result = false;
-	pid = proc.getPid();
-    }
-    // destroy 'proc', so that KProcessController now won't do waitpid()
-    // on the process immediatelly
+    QString helper = KStandardDirs::findExe(
+	QString::fromLatin1( "klocaldomainurifilterhelper" ));
+    if( helper.isEmpty())
+	return last_result = false;
+    KProcess proc;
+    proc << helper << host;
+    if( !proc.start( KProcess::NotifyOnExit ))
+	return last_result = false;
 
     last_host = host;
-    last_time = time( NULL );
-    for( int rounds = 0;
-	 rounds < 50; // 50 * 20ms = 1s
-	 ++rounds )
-	{
-	int status;
-	int ret = waitpid( pid, &status, WNOHANG );
-	if( ret < 0 )
-	    return last_result = false;
-	if( ret > 0 )
-	    return last_result = (WIFEXITED( status ) && WEXITSTATUS( status ) == 0);
-	usleep( 20000 );
-    }
-    if ( pid > 0 ) kill( pid, SIGTERM );
+    last_time = time( (time_t *)0 );
+
+    if( proc.wait( 1 ) && proc.normalExit() && proc.exitStatus() == 0)
+	return last_result = true;
     return last_result = false;
 }
 
