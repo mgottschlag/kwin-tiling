@@ -1,0 +1,8 @@
+[Desktop Entry]
+Charset=
+Hidden=false
+Keys=db,docbook
+Name=DocBook - The Definitive Guide
+Query=http://www.docbook.org/tdg/en/html/\\{1}.html
+ServiceTypes=SearchProvider
+Type=Service

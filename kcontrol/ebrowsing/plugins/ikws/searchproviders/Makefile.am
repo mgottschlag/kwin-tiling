@@ -10,6 +10,6 @@ services_DATA =	acronym.desktop alltheweb.desktop altavista.desktop \
 		ruby_application_archive.desktop seek.desktop \
 		sourceforge.desktop tel.desktop thesaurus.desktop \
 		vivisimo.desktop voila.desktop webster.desktop whatis.desktop \
-		msdn.desktop nl-teletekst.desktop rfc.desktop
+		msdn.desktop nl-teletekst.desktop rfc.desktop docbook.desktop
 
 servicesdir = $(kde_servicesdir)/searchproviders
