@@ -954,14 +954,14 @@ void TreeView::del()
     if(file.find(".directory") > 0)
     {
         if (!(deleteDir(file.mid(0, file.find("/.directory")))))
-		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead please."), i18n("Permission denied"));
+		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission denied"));
 	else
         	delete item;
     }
     else if (file.find(".desktop"))
     {
         if (!(deleteFile(file)))
-		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead please."), i18n("Permission denied"));
+		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission denied"));
 	else
 		delete item;
     }
