@@ -6,7 +6,7 @@ SUBDIRS = pics sessions
 AM_CPPFLAGS = -I$(srcdir)/../backend -I$(top_srcdir)/kcontrol/background \
     $(all_includes) $(XDM_DEFINES)
 
-bin_PROGRAMS = kdm_config kdm_greet krootimage genkdmconf
+bin_PROGRAMS = kdm_config kdm_greet krootimage genkdmconf kdmctl
 
 kdm_config_SOURCES = kdm_config.c
 kdm_config_LDADD = $(LIBRESOLV) $(LIBSOCKET) $(LIBPOSIX4)
@@ -42,6 +42,8 @@ METASOURCES = AUTO
 genkdmconf_SOURCES = genkdmconf.c
 genkdmconf_LDFLAGS = $(X_LDFLAGS) $(X_RPATH)
 genkdmconf_LDADD = $(LIB_X11)
+
+kdmctl_SOURCES = kdmctl.c
 
 install-data-local: genkdmconf
 	./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm --face-src $(srcdir)/pics $(GENKDMCONF_FLAGS)
