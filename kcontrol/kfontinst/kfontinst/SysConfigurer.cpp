@@ -155,8 +155,7 @@ void CSysConfigurer::go()
         totalSteps++;
 
 #ifdef HAVE_XFT
-    if(CKfiGlobal::xft().madeChanges() || CKfiGlobal::xcfg().madeChanges())
-        totalSteps++;
+    totalSteps++;
 #endif
 
     emit initProgress(i18n("Configuring System:"), totalSteps);
@@ -182,7 +181,8 @@ void CSysConfigurer::go()
     }
 
 #ifdef HAVE_XFT
-    if(CKfiGlobal::xft().madeChanges() || CKfiGlobal::xcfg().madeChanges())
+    // Always save xft - so that TT and T1 dirs are always added
+    //if(CKfiGlobal::xft().madeChanges() || CKfiGlobal::xcfg().madeChanges())
     {
         QStringList dirs;
 
