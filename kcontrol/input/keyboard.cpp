@@ -149,7 +149,7 @@ void KeyboardConfig::defaults()
     setRepeat(true);
 }
 
-QString KeyboardConfig::quickHelp()
+QString KeyboardConfig::quickHelp() const
 {
   return i18n("<h1>Keyboard</h1> This module allows you to choose options"
      " for the way in which your keyboard works. The actual effect of"

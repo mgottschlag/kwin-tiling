@@ -61,7 +61,7 @@ public:
   void load();
   void defaults();
 
-  QString quickHelp();
+  QString quickHelp() const;
 
 private slots:
 

@@ -110,7 +110,7 @@ void KickerConfig::defaults()
   emit changed(true);
 }
 
-QString KickerConfig::quickHelp()
+QString KickerConfig::quickHelp() const
 {
   return i18n("<h1>Panel</h1> Here you can configure the KDE panel (also"
     " referred to as 'kicker'). This includes options like the position and"
@@ -129,9 +129,9 @@ extern "C"
     KGlobal::locale()->insertCatalogue("kcmkicker");
     KGlobal::dirs()->addResourceType("tiles", KStandardDirs::kde_default("data") +
                                      "kicker/tiles");
-	KGlobal::dirs()->addResourceType("hb_pics", KStandardDirs::kde_default("data") +
+    KGlobal::dirs()->addResourceType("hb_pics", KStandardDirs::kde_default("data") +
                                      "kcmkicker/pics");
-	KGlobal::dirs()->addResourceType("applets", KStandardDirs::kde_default("data") +
+    KGlobal::dirs()->addResourceType("applets", KStandardDirs::kde_default("data") +
                                      "kicker/applets");
     return new KickerConfig(parent, name);
   };

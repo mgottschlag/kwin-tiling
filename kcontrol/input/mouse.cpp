@@ -78,15 +78,15 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     QString wtstr;
 
     QBoxLayout *top = new QVBoxLayout(this);
-  
+
     tabwidget = new QTabWidget(this);
     top->addWidget(tabwidget);
 
     tab1 = new QWidget(0, "General Tab");
     tabwidget->addTab(tab1, "&General");
-  
+
     QBoxLayout *lay = new QVBoxLayout(tab1, KDialog::marginHint(),
-				      KDialog::spacingHint());
+                      KDialog::spacingHint());
 
     handedBox = new QHButtonGroup(i18n("Button Mapping"), tab1, "handed");
     rightHanded = new QRadioButton(i18n("Right handed"), handedBox, "R");
@@ -98,11 +98,11 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     handedEnabled = true;
 
     wtstr = i18n("If you are left-handed, you may prefer to swap the"
-		 " functions of the left and right buttons on your pointing device"
-		 " by choosing the 'left-handed' option. If your pointing device"
-		 " has more than two buttons, only those that function as the"
-		 " left and right buttons are affected. For example, if you have"
-		 " a three-button mouse, the middle button is unaffected.");
+         " functions of the left and right buttons on your pointing device"
+         " by choosing the 'left-handed' option. If your pointing device"
+         " has more than two buttons, only those that function as the"
+         " left and right buttons are affected. For example, if you have"
+         " a three-button mouse, the middle button is unaffected.");
     QWhatsThis::add( handedBox, wtstr );
 
     // SC/DC/AutoSelect/ChangeCursor
@@ -113,11 +113,11 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     lay->addWidget(singleClick);
 
     wtstr = i18n("Checking this option allows you to select and activate"
-		 " icons with a single click of the left button on your pointing"
-		 " device. This behavior is consistent with what you would expect"
-		 " when you click links in most web browsers. If you would prefer"
-		 " to select with a single click, and activate with a double click,"
-		 " uncheck this option.");
+         " icons with a single click of the left button on your pointing"
+         " device. This behavior is consistent with what you would expect"
+         " when you click links in most web browsers. If you would prefer"
+         " to select with a single click, and activate with a double click,"
+         " uncheck this option.");
     QWhatsThis::add( singleClick, wtstr );
 
     cbAutoSelect = new QCheckBox(i18n("&Automatically select icons"), tab1);
@@ -125,9 +125,9 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect(cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
 
     wtstr = i18n("If you check this option, pausing the mouse pointer"
-		 " over an icon on the screen will automatically select that icon."
-		 " This may be useful when single clicks activate icons, and you"
-		 " want only to select the icon without activating it.");
+         " over an icon on the screen will automatically select that icon."
+         " This may be useful when single clicks activate icons, and you"
+         " want only to select the icon without activating it.");
     QWhatsThis::add( cbAutoSelect, wtstr );
 
     //----------
@@ -143,8 +143,8 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect(slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
     wtstr = i18n("If you have checked the option to automatically select"
-		 " icons, this slider allows you to select how long the mouse pointer"
-		 " must be paused over the icon before it is selected.");
+         " icons, this slider allows you to select how long the mouse pointer"
+         " must be paused over the icon before it is selected.");
     QWhatsThis::add( slAutoSelect, wtstr );
 
     lDelay = new QLabel(slAutoSelect, i18n("De&lay:"), tab1);
@@ -169,7 +169,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect( cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
 
     wtstr = i18n("When this option is checked, the shape of the mouse pointer"
-		 " changes whenever it is over an icon.");
+         " changes whenever it is over an icon.");
     QWhatsThis::add( cbCursor, wtstr );
 
     cbLargeCursor = new QCheckBox(i18n("&Large cursor"), tab1);
@@ -180,13 +180,13 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     QWhatsThis::add( cbLargeCursor, wtstr );
 
     lay->addStretch(1);
-  
+
     // Advanced tab
     tab2 = new QWidget(0, "Advanced Tab");
     tabwidget->addTab(tab2, "&Advanced");
-    
+
     lay = new QVBoxLayout(tab2, KDialog::marginHint(),
-			  KDialog::spacingHint());
+              KDialog::spacingHint());
 
     accel = new KIntNumInput(20, tab2);
     accel->setLabel(i18n("Pointer Acceleration"));
@@ -197,18 +197,18 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect(accel, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
     wtstr = i18n("This option allows you to change the relationship"
-		 " between the distance that the mouse pointer moves on the"
-		 " screen and the relative movement of the physical device"
-		 " itself (which may be a mouse, trackball, or some other"
-		 " pointing device.)<p>"
-		 " A high value for the acceleration will lead to large"
-		 " movements of the mouse pointer on the screen even when"
-		 " you only make a small movement with the physical device."
-		 " Selecting very high values may result in the mouse pointer"
-		 " flying across the screen, making it hard to control!<p>"
-		 " You can set the acceleration value by dragging the slider"
-		 " button or by clicking the up/down arrows on the spin-button"
-		 " to the left of the slider.");
+         " between the distance that the mouse pointer moves on the"
+         " screen and the relative movement of the physical device"
+         " itself (which may be a mouse, trackball, or some other"
+         " pointing device.)<p>"
+         " A high value for the acceleration will lead to large"
+         " movements of the mouse pointer on the screen even when"
+         " you only make a small movement with the physical device."
+         " Selecting very high values may result in the mouse pointer"
+         " flying across the screen, making it hard to control!<p>"
+         " You can set the acceleration value by dragging the slider"
+         " button or by clicking the up/down arrows on the spin-button"
+         " to the left of the slider.");
     QWhatsThis::add( accel, wtstr );
 
     thresh = new KIntNumInput(accel, 20, tab2);
@@ -220,17 +220,17 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
     wtstr = i18n("The threshold is the smallest distance that the"
-		 " mouse pointer must move on the screen before acceleration"
-		 " has any effect. If the movement is smaller than the threshold,"
-		 " the mouse pointer moves as if the acceleration was set to 1X.<p>"
-		 " Thus, when you make small movements with the physical device,"
-		 " there is no acceleration at all, giving you a greater degree"
-		 " of control over the mouse pointer. With larger movements of"
-		 " the physical device, you can move the mouse pointer"
-		 " rapidly to different areas on the screen.<p>"
-		 " You can set the threshold value by dragging the slider button"
-		 " or by clicking the up/down arrows on the spin-button to the"
-		 " left of the slider.");
+         " mouse pointer must move on the screen before acceleration"
+         " has any effect. If the movement is smaller than the threshold,"
+         " the mouse pointer moves as if the acceleration was set to 1X.<p>"
+         " Thus, when you make small movements with the physical device,"
+         " there is no acceleration at all, giving you a greater degree"
+         " of control over the mouse pointer. With larger movements of"
+         " the physical device, you can move the mouse pointer"
+         " rapidly to different areas on the screen.<p>"
+         " You can set the threshold value by dragging the slider button"
+         " or by clicking the up/down arrows on the spin-button to the"
+         " left of the slider.");
     QWhatsThis::add( thresh, wtstr );
 
     // It would be nice if the user had a test field.
@@ -244,11 +244,11 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect(doubleClickInterval, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
     wtstr = i18n("The double click interval is the maximal time"
-		 " (in milliseconds) between two mouseclicks which"
-		 " turns them into a double click. If the second"
-		 " click happens later than this time interval after"
-		 " the first click, they are recognized as two"
-		 " separate clicks.");
+         " (in milliseconds) between two mouseclicks which"
+         " turns them into a double click. If the second"
+         " click happens later than this time interval after"
+         " the first click, they are recognized as two"
+         " separate clicks.");
     QWhatsThis::add( doubleClickInterval, wtstr );
 
     dragStartTime = new KIntNumInput(doubleClickInterval, 2000, tab2);
@@ -261,8 +261,8 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect(dragStartTime, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
     wtstr = i18n("If you click with the mouse (e. g. in a multi line"
-		 " editor) and begin to move the mouse within the"
-		 " drag start time, a drag operation will be initiated.");
+         " editor) and begin to move the mouse within the"
+         " drag start time, a drag operation will be initiated.");
     QWhatsThis::add( dragStartTime, wtstr );
 
     dragStartDist = new KIntNumInput(dragStartTime, 20, tab2);
@@ -274,10 +274,10 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect(dragStartDist, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
     wtstr = i18n("If you click with the mouse and begin to move the"
-		 " mouse at least the drag start distance, a drag"
-		 " operation will be initiated.");
+         " mouse at least the drag start distance, a drag"
+         " operation will be initiated.");
     QWhatsThis::add( dragStartDist, wtstr);
-    
+
     lay->addStretch(1);
 
     load();
@@ -328,7 +328,7 @@ void MouseConfig::load()
 
   int accel_num, accel_den, threshold;
   XGetPointerControl( kapp->getDisplay(),
-		      &accel_num, &accel_den, &threshold );
+              &accel_num, &accel_den, &threshold );
   accel_num /= accel_den;   // integer acceleration only
 
   // get settings from X server
@@ -346,29 +346,29 @@ void MouseConfig::load()
       break;
     case 2:
       if ( (int)map[0] == 1 && (int)map[1] == 2 )
-	h = RIGHT_HANDED;
+    h = RIGHT_HANDED;
       else if ( (int)map[0] == 2 && (int)map[1] == 1 )
-	h = LEFT_HANDED;
+    h = LEFT_HANDED;
       else
-	{
-	  /* custom button setup: disable button remapping */
-	  rightHanded->setEnabled(false);
-	  leftHanded->setEnabled(false);
-	}
+    {
+      /* custom button setup: disable button remapping */
+      rightHanded->setEnabled(false);
+      leftHanded->setEnabled(false);
+    }
       break;
     case 3:
       middle_button = (int)map[1];
       if ( (int)map[0] == 1 && (int)map[2] == 3 )
-	h = RIGHT_HANDED;
+    h = RIGHT_HANDED;
       else if ( (int)map[0] == 3 && (int)map[2] == 1 )
-	h = LEFT_HANDED;
+    h = LEFT_HANDED;
       else
-	{
-	  /* custom button setup: disable button remapping */
-	  rightHanded->setEnabled(false);
-	  leftHanded->setEnabled(false);
-	  handedEnabled = false;
-	}
+    {
+      /* custom button setup: disable button remapping */
+      rightHanded->setEnabled(false);
+      leftHanded->setEnabled(false);
+      handedEnabled = false;
+    }
       break;
     default:
       /* custom setup with > 3 buttons: disable button remapping */
@@ -584,7 +584,7 @@ void MouseConfig::defaults()
 }
 
 
-QString MouseConfig::quickHelp()
+QString MouseConfig::quickHelp() const
 {
   return i18n("<h1>Mouse</h1> This module allows you to choose various"
      " options for the way in which your pointing device works. Your"

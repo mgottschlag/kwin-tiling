@@ -50,15 +50,15 @@ KDesktopConfig::KDesktopConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
   QVBoxLayout *layout = new QVBoxLayout(this,
-					KDialog::marginHint(),
-					KDialog::spacingHint());
-  
+                    KDialog::marginHint(),
+                    KDialog::spacingHint());
+
   // number group
   QGroupBox *number_group = new QGroupBox("", this);
 
   QHBoxLayout *lay = new QHBoxLayout(number_group,
-				     KDialog::marginHint(),
-				     KDialog::spacingHint());   
+                     KDialog::marginHint(),
+                     KDialog::spacingHint());
 
   QLabel *label = new QLabel(i18n("Number of Desktops: "), number_group);
   _numLabel = new QLabel("4", number_group);
@@ -78,8 +78,8 @@ KDesktopConfig::KDesktopConfig(QWidget *parent, const char *name)
   QGroupBox *name_group = new QGroupBox("", this);
 
   QGridLayout *grid = new QGridLayout(name_group, 8, 4,
-				      KDialog::marginHint(),
-				      KDialog::spacingHint());     
+                      KDialog::marginHint(),
+                      KDialog::spacingHint());
 
   for(int i = 0; i < 8; i++)
     {
@@ -89,9 +89,9 @@ KDesktopConfig::KDesktopConfig(QWidget *parent, const char *name)
       _nameInput[i+8] = new KLineEdit(name_group);
 
       connect(_nameInput[i], SIGNAL(textChanged(const QString&)),
-	      SLOT(slotTextChanged(const QString&)));
+          SLOT(slotTextChanged(const QString&)));
       connect(_nameInput[i+8], SIGNAL(textChanged(const QString&)),
-	      SLOT(slotTextChanged(const QString&)));
+          SLOT(slotTextChanged(const QString&)));
 
       grid->addWidget(_nameLabel[i], i, 0);
       grid->addWidget(_nameInput[i], i, 1);
@@ -142,7 +142,7 @@ void KDesktopConfig::defaults()
   int n = 4;
   _numSlider->setValue(n);
   _numLabel->setText(QString("%1").arg(n));
-  
+
   for(int i = 0; i < 16; i++)
     _nameInput[i]->setText(i18n("Desktop %1").arg(i+1));
 
@@ -151,7 +151,7 @@ void KDesktopConfig::defaults()
   emit changed(false);
 }
 
-QString KDesktopConfig::quickHelp()
+QString KDesktopConfig::quickHelp() const
 {
   return i18n("<h1>Desktop Number&Names</h1>");
 }

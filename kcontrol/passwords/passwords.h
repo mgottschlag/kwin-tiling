@@ -30,7 +30,7 @@ public:
 
     void apply();
     int buttons();
-    QString quickHelp();
+    QString quickHelp() const;
 
 signals:
     void changed(bool);

@@ -51,7 +51,7 @@ KclockModule::KclockModule(QWidget *parent, const char *name)
   tab->addTab(tzone, i18n("Time Zone"));
   connect(tzone, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-//	removing the Apply button to fix the time sync problem:CFR
+//  removing the Apply button to fix the time sync problem:CFR
 //  setButtons(Help|Reset|Cancel|Apply|Ok);
   setButtons(Help|Reset|Cancel|Ok);
 }
@@ -61,14 +61,14 @@ void KclockModule::save()
   dtime->save();
   tzone->save();
 
-	// restart kicker to sync up the time
-	if (!kapp->dcopClient()->isAttached())
-	{
-		kapp->dcopClient()->attach();
-	}
+    // restart kicker to sync up the time
+    if (!kapp->dcopClient()->isAttached())
+    {
+        kapp->dcopClient()->attach();
+    }
 
-	QByteArray data;
-	kapp->dcopClient()->send( "kicker", "Panel", "restart()", data );
+    QByteArray data;
+    kapp->dcopClient()->send( "kicker", "Panel", "restart()", data );
 
 }
 
@@ -78,7 +78,7 @@ void KclockModule::load()
   tzone->load();
 }
 
-QString KclockModule::quickHelp()
+QString KclockModule::quickHelp() const
 {
   return i18n("<h1>Date & Time</h1> This control module can be used to set the system date and"
     " time. As these settings do not only affect you as a user, but rather the whole system, you"
@@ -94,9 +94,9 @@ void KclockModule::moduleChanged(bool state)
 
 extern "C"
 {
-  
-  KCModule *create_clock(QWidget *parent, const char *name) 
-  { 
+
+  KCModule *create_clock(QWidget *parent, const char *name)
+  {
     KGlobal::locale()->insertCatalogue("kcmkclock");
     return new KclockModule(parent, name);
   }

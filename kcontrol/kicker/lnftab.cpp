@@ -167,7 +167,7 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
 void LnFTab::use_theme_clicked()
 {
   use_theme = use_theme_cb->isChecked();
-  
+
   theme_input->setEnabled(use_theme);
   theme_label->setEnabled(use_theme);
   theme_input->setEnabled(use_theme);
@@ -224,7 +224,7 @@ void LnFTab::autohide_changed(int)
 void LnFTab::load()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
-  
+
   c->setGroup("panel");
 
   use_theme = c->readBoolEntry("UseBackgroundTheme", false);
@@ -256,10 +256,10 @@ void LnFTab::load()
 
   bool hideanim = c->readBoolEntry("HideAnimation", true);
   bool autohideanim = c->readBoolEntry("AutoHideAnimation", true);
-  
+
   hide_input->setValue(c->readNumEntry("HideAnimationSpeed", 50));
   autohide_input->setValue(c->readNumEntry("AutoHideAnimationSpeed", 50));
-  
+
   hide_input->setEnabled(hideanim);
   autohide_input->setEnabled(autohideanim);
 
@@ -274,7 +274,7 @@ void LnFTab::load()
 void LnFTab::save()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
-  
+
   c->setGroup("panel");
 
   c->writeEntry("UseBackgroundTheme", use_theme);
@@ -315,7 +315,7 @@ void LnFTab::defaults()
   fade_out_cb->setChecked(false);
 }
 
-QString LnFTab::quickHelp()
+QString LnFTab::quickHelp() const
 {
   return i18n("");
 }

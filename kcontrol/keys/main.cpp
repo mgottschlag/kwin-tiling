@@ -46,7 +46,7 @@ KeyModule::KeyModule(QWidget *parent, const char *name)
   connect(standard, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
   setMinimumSize(global->sizeHint().width(),
-		 global->sizeHint().height()+30);
+         global->sizeHint().height()+30);
 }
 
 
@@ -82,7 +82,7 @@ void KeyModule::resizeEvent(QResizeEvent *)
   tab->setGeometry(0,0,width(),height());
 }
 
-QString KeyModule::quickHelp()
+QString KeyModule::quickHelp() const
 {
   return i18n("<h1>Key Bindings</h1> Using key bindings you can configure certain actions to be"
     " triggered when you press a key or a combination of keys, e.g. CTRL-C is normally bound to"

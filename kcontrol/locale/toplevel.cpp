@@ -3,21 +3,21 @@
 
   Copyright 1998 Matthias Hoelzer
   Copyright 1999-2000 Hans Petter Bieker <bieker@kde.org>
-  
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-   
+
   */
 
 #include <qlabel.h>
@@ -100,10 +100,10 @@ void KLocaleApplication::save()
     KLocale *lsave = KGlobal::_locale;
     KGlobal::_locale = locale;
     KMessageBox::information(this, locale->translate
-			     ("Changed language settings apply only to "
-			      "newly started applications.\nTo change the "
-			      "language of all programs, you will have to "
-			      "logout first."),
+                 ("Changed language settings apply only to "
+                  "newly started applications.\nTo change the "
+                  "language of all programs, you will have to "
+                  "logout first."),
                              locale->translate("Applying language settings"));
     // restore the old global locale
     KGlobal::_locale = lsave;
@@ -141,18 +141,18 @@ void KLocaleApplication::moduleChanged(bool state)
   emit changed(state);
 }
 
-QString KLocaleApplication::quickHelp()
+QString KLocaleApplication::quickHelp() const
 {
   return locale->translate("<h1>Locale</h1>\n"
-	      "<p>From here you can configure language, numberic, and time \n"
-	      "settings for your particular region. In most cases it will be \n"
-	      "sufficient to choose the country you live in. For instance KDE \n"
-	      "will automatically choose \"German\" as language if you choose \n"
-	      "\"Germany\" from the list. It will also change the time format \n"
-	      "to use 24 hours and and use comma as decimal separator.</p>\n"
-	      "<p><b>Note:</b> The default charset is ISO 8859-1. That \n"
-	      "charset is used when choosing fonts. You will have to change \n"
-	      "it if you are using a non-Western European language.\n");
+          "<p>From here you can configure language, numberic, and time \n"
+          "settings for your particular region. In most cases it will be \n"
+          "sufficient to choose the country you live in. For instance KDE \n"
+          "will automatically choose \"German\" as language if you choose \n"
+          "\"Germany\" from the list. It will also change the time format \n"
+          "to use 24 hours and and use comma as decimal separator.</p>\n"
+          "<p><b>Note:</b> The default charset is ISO 8859-1. That \n"
+          "charset is used when choosing fonts. You will have to change \n"
+          "it if you are using a non-Western European language.\n");
 }
 
 void KLocaleApplication::updateSample()
@@ -163,15 +163,15 @@ void KLocaleApplication::updateSample()
 
 void KLocaleApplication::reTranslate()
 {
-  // The untranslated string for QLabel are stored in 
+  // The untranslated string for QLabel are stored in
   // the name() so we use that when retranslating
   QObject *wc;
   QObjectList *list = queryList("QWidget");
   QObjectListIt it(*list);
   while ( (wc = it.current()) != 0 ) {
     ++it;
-    
-    // unnamed labels will cause errors and should not be 
+
+    // unnamed labels will cause errors and should not be
     // retranslated. E.g. the example box should not be
     // retranslated from here.
     if (strcmp(wc->name(), "unnamed") == 0) continue;
@@ -197,8 +197,8 @@ void KLocaleApplication::reTranslate()
   localetime->reTranslate();
   sample->update();
 
-  // FIXME: All widgets are done now. However, there are 
-  // still some problems. Popup menus from the QLabel are 
+  // FIXME: All widgets are done now. However, there are
+  // still some problems. Popup menus from the QLabel are
   // not retranslated.
 }
 

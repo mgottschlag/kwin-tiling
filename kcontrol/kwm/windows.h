@@ -76,7 +76,7 @@ public:
   void load();
   void save();
   void defaults();
-  QString quickHelp();
+  QString quickHelp() const;
 
   void loadSettings();
   void applySettings();

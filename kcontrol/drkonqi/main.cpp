@@ -77,7 +77,7 @@ void KDrKonqiMain::moduleChanged(bool state)
   emit changed(true);
 }
 
-QString KDrKonqiMain::quickHelp()
+QString KDrKonqiMain::quickHelp() const
 {
     return i18n("<h1>Dr Konqi</h1>Here you can set the options if"
                 " and how Dr. Konqi informs you about application"

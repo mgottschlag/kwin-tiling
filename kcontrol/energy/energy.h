@@ -40,7 +40,7 @@ public:
     virtual void save();
     virtual void defaults();
 
-    QString quickHelp();
+    QString quickHelp() const;
 
 signals:
     void changed(bool);

@@ -53,31 +53,31 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
   QVBoxLayout *vbox = new QVBoxLayout(level_group, KDialog::marginHint(),
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
-  
+
   trusted_rb = new QRadioButton(i18n("Load only trusted applets internal"), level_group);
   vbox->addWidget(trusted_rb);
 
   new_rb = new QRadioButton(i18n("Load startup config applets internal"), level_group);
   vbox->addWidget(new_rb);
- 
+
   all_rb = new QRadioButton(i18n("Load all applets internal"), level_group);
   vbox->addWidget(all_rb);
- 
+
   layout->addWidget(level_group,0,0);
 
   // trusted list group
   list_group = new QGroupBox(i18n("List of Trusted Applets"), this);
-  
+
   QVBoxLayout *vbox1 = new QVBoxLayout(list_group, KDialog::marginHint(),
-									   KDialog::spacingHint());
+                                       KDialog::spacingHint());
   vbox1->addSpacing(fontMetrics().lineSpacing());
 
   QHBoxLayout *hbox = new QHBoxLayout(vbox1, KDialog::spacingHint());
- 
+
   lb_trusted = new KListView(list_group);
   lb_trusted->addColumn(i18n("Trusted Applets"));
   connect(lb_trusted, SIGNAL(selectionChanged(QListViewItem*)),
-		  SLOT(trusted_selection_changed(QListViewItem*)));
+          SLOT(trusted_selection_changed(QListViewItem*)));
   hbox->addWidget(lb_trusted);
 
   QVBox *vbox2 = new QVBox(list_group);
@@ -92,7 +92,7 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
   lb_available = new KListView(list_group);
   lb_available->addColumn(i18n("Available Applets"));
   connect(lb_available, SIGNAL(selectionChanged(QListViewItem*)),
-		  SLOT(available_selection_changed(QListViewItem*)));
+          SLOT(available_selection_changed(QListViewItem*)));
   hbox->addWidget(lb_available);
 
   layout->addWidget(list_group,1,0);
@@ -106,7 +106,7 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
 void AppletTab::load()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
-  
+
   c->setGroup("Applets");
 
   available.clear();
@@ -116,47 +116,47 @@ void AppletTab::load()
   int level = c->readNumEntry("SecurityLevel");
 
   switch(level)
-	{
-	case 0:
-	default:
-	  trusted_rb->setChecked(true);
-	  break;
-	case 1:
-	  new_rb->setChecked(true);
-	  break;
-	case 2:
-	  all_rb->setChecked(true);
-	  break;
-	}
+    {
+    case 0:
+    default:
+      trusted_rb->setChecked(true);
+      break;
+    case 1:
+      new_rb->setChecked(true);
+      break;
+    case 2:
+      all_rb->setChecked(true);
+      break;
+    }
 
   list_group->setEnabled(trusted_rb->isChecked());
 
   QStringList list = KGlobal::dirs()->findAllResources("applets", "*.desktop");
   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
-	{
-	  QFileInfo fi(*it);
-	  available << fi.baseName();
-	}
+    {
+      QFileInfo fi(*it);
+      available << fi.baseName();
+    }
 
   if(c->hasKey("TrustedApplets"))
-	{
-	  QStringList list = c->readListEntry("TrustedApplets", ' ');
-	  for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
-		{
-		  if(available.contains(*it))
-			l_trusted << (*it);
-		}
-	}
+    {
+      QStringList list = c->readListEntry("TrustedApplets", ' ');
+      for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+        {
+          if(available.contains(*it))
+            l_trusted << (*it);
+        }
+    }
   else
-	l_trusted << "kdateapplet" << "kdockapplet"
-			<< "kminipagerapplet" << "koolclockapplet"
-			<< "ktaskbarapplet" << "eyesapplet";
+    l_trusted << "kdateapplet" << "kdockapplet"
+            << "kminipagerapplet" << "koolclockapplet"
+            << "ktaskbarapplet" << "eyesapplet";
 
   for ( QStringList::Iterator it = available.begin(); it != available.end(); ++it )
-	{
-	  if(!l_trusted.contains(*it))
-		l_available << (*it);
-	}
+    {
+      if(!l_trusted.contains(*it))
+        l_available << (*it);
+    }
 
   updateTrusted();
   updateAvailable();
@@ -167,7 +167,7 @@ void AppletTab::load()
 void AppletTab::save()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
-  
+
   c->setGroup("Applets");
 
   int level = 0;
@@ -186,14 +186,14 @@ void AppletTab::defaults()
   trusted_rb->setChecked(true);
 }
 
-QString AppletTab::quickHelp()
+QString AppletTab::quickHelp() const
 {
   return i18n("");
 }
 
 void AppletTab::level_changed(int)
 {
-  list_group->setEnabled(trusted_rb->isChecked());	
+  list_group->setEnabled(trusted_rb->isChecked());
   emit changed();
 }
 
@@ -201,14 +201,14 @@ void AppletTab::updateTrusted()
 {
   lb_trusted->clear();
   for ( QStringList::Iterator it = l_trusted.begin(); it != l_trusted.end(); ++it )
-	(void) new QListViewItem(lb_trusted, (*it));
+    (void) new QListViewItem(lb_trusted, (*it));
 }
 
 void AppletTab::updateAvailable()
 {
   lb_available->clear();
   for ( QStringList::Iterator it = l_available.begin(); it != l_available.end(); ++it )
-	(void) new QListViewItem(lb_available, (*it));
+    (void) new QListViewItem(lb_available, (*it));
 }
 
 void AppletTab::trusted_selection_changed(QListViewItem * item)

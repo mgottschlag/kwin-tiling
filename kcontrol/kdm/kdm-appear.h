@@ -50,7 +50,7 @@ public:
         void load();
         void save();
 	void defaults();
-        QString quickHelp();
+        QString quickHelp() const;
 
 	bool eventFilter(QObject *, QEvent *);
 

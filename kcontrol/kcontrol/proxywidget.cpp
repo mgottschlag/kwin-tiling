@@ -37,15 +37,15 @@ class WhatsThis : public QWhatsThis
 {
 public:
     WhatsThis( ProxyWidget* parent )
-	: QWhatsThis( parent ), proxy( parent ) {}
+    : QWhatsThis( parent ), proxy( parent ) {}
     ~WhatsThis(){};
 
 
     QString text( const QPoint &  ) {
-	if ( !proxy->quickHelp().isEmpty() )
-	    return proxy->quickHelp();
-	else
-	    return i18n("The currently loaded configuration module.");
+    if ( !proxy->quickHelp().isEmpty() )
+        return proxy->quickHelp();
+    else
+        return i18n("The currently loaded configuration module.");
     }
 
 private:
@@ -61,12 +61,12 @@ static void setVisible(QPushButton *btn, bool vis)
 }
 
 ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
-			 bool run_as_root)
+             bool run_as_root)
   : QWidget(0, name)
   , _client(client)
 {
   setCaption(title);
-  
+
   (void) new WhatsThis( this );
 
   client->reparent(this,0,QPoint(0,0),true);
@@ -137,12 +137,12 @@ ProxyWidget::~ProxyWidget()
   delete _client;
 }
 
-QString ProxyWidget::quickHelp()
+QString ProxyWidget::quickHelp() const
 {
   if (_client)
-	return _client->quickHelp();
+    return _client->quickHelp();
   else
-	return "";
+    return "";
 }
 
 void ProxyWidget::helpClicked()

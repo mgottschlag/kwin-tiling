@@ -48,15 +48,15 @@
 
 extern "C" {
     KCModule *create_colors(QWidget *parent, const char *name) {
-	KGlobal::locale()->insertCatalogue("kcmdisplay");
-	return new KColorScheme(parent, name);
+    KGlobal::locale()->insertCatalogue("kcmdisplay");
+    return new KColorScheme(parent, name);
     }
 }
 
 /**** KColorScheme ****/
 
 KColorScheme::KColorScheme(QWidget *parent, const char *name)
-	: KCModule(parent, name)
+    : KCModule(parent, name)
 {
     m_bChanged = false;
     nSysSchemes = 2;
@@ -87,9 +87,9 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
        " image you clicked.") );
 
     connect( cs, SIGNAL( widgetSelected( int ) ),
-	     SLOT( slotWidgetColor( int ) ) );
+         SLOT( slotWidgetColor( int ) ) );
     connect( cs, SIGNAL( colorDropped( int, const QColor&)),
-	     SLOT( slotColorForWidget( int, const QColor&)));
+         SLOT( slotColorForWidget( int, const QColor&)));
     topLayout->addMultiCellWidget( cs, 0, 0, 0, 1 );
 
     QGroupBox *group = new QGroupBox( i18n("Color Scheme"), this );
@@ -186,7 +186,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
 
     colorButton = new KColorButton( group );
     connect( colorButton, SIGNAL( changed(const QColor &)),
-	    SLOT(slotSelectColor(const QColor &)));
+        SLOT(slotSelectColor(const QColor &)));
 
     groupLayout->addWidget( colorButton );
 
@@ -249,7 +249,7 @@ void KColorScheme::load()
 void KColorScheme::save()
 {
     if (!m_bChanged)
-	return;
+    return;
 
     KConfig *cfg = KGlobal::config();
     cfg->setGroup( "General" );
@@ -288,15 +288,15 @@ void KColorScheme::save()
     d << createPalette() << KGlobalSettings::generalFont();
     Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
     XChangeProperty(qt_xdisplay(),  qt_xrootwin(), a, a, 8, PropModeReplace,
-		    (unsigned char*) properties.data(), properties.size());
+            (unsigned char*) properties.data(), properties.size());
     QApplication::flushX();
     // Notify non Qt apps ?
     if (useRM) {
-	QApplication::setOverrideCursor( waitCursor );
-	KProcess proc;
-	proc.setExecutable("krdb");
-	proc.start(KProcess::Block);
-	QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor( waitCursor );
+    KProcess proc;
+    proc.setExecutable("krdb");
+    proc.start(KProcess::Block);
+    QApplication::restoreOverrideCursor();
     }
 
     m_bChanged = false;
@@ -317,7 +317,7 @@ void KColorScheme::defaults()
     emit changed(true);
 }
 
-QString KColorScheme::quickHelp()
+QString KColorScheme::quickHelp() const
 {
     return i18n("<h1>Colors</h1> This module allows you to choose"
        " the color scheme used for the KDE desktop. The different"
@@ -348,8 +348,8 @@ void KColorScheme::sliderValueChanged( int val )
 void KColorScheme::slotSave( )
 {
     KSimpleConfig *config =
-	new KSimpleConfig(sFileList[ sList->currentItem() ] );
-			
+    new KSimpleConfig(sFileList[ sList->currentItem() ] );
+
     config->setGroup("Color Scheme" );
     config->writeEntry("background", cs->back );
     config->writeEntry("selectBackground", cs->select );
@@ -380,11 +380,11 @@ void KColorScheme::slotRemove()
 {
     uint ind = sList->currentItem();
     if (unlink(QFile::encodeName(sFileList[ind]).data())) {
-	KMessageBox::error( 0,
-	      i18n("This color scheme could not be removed.\n"
-		   "Perhaps you do not have permission to alter the file\n"
-		    "system where the color scheme is stored." ));
-	return;
+    KMessageBox::error( 0,
+          i18n("This color scheme could not be removed.\n"
+           "Perhaps you do not have permission to alter the file\n"
+            "system where the color scheme is stored." ));
+    return;
     }
 
     sList->removeItem(ind);
@@ -405,43 +405,43 @@ void KColorScheme::slotAdd()
 
     while (!valid) {
 
-	if (ss->exec() != QDialog::Accepted)
-	    return;
+    if (ss->exec() != QDialog::Accepted)
+        return;
 
-	sName = ss->nameLine->text();
-	sName = sName.simplifyWhiteSpace();
-	if (sName.isEmpty())
-	    return;
-	sFile = sName;
-	
-	int i = 0;
+    sName = ss->nameLine->text();
+    sName = sName.simplifyWhiteSpace();
+    if (sName.isEmpty())
+        return;
+    sFile = sName;
 
-	// Capitalise each word
-	sName.at(0) = sName.at(0).upper();
-	while (1) {
-	    i = sName.find(" ", i);
-	    if (i == -1)
-		break;
-	    if (++i >= (int) sName.length())
-		break;
-	    sName.at(i) = sName.at(i).upper();
-	}
+    int i = 0;
 
-	// Check if it's already there
-	for (i=0; i < (int) sList->count(); i++)
-	    if (sName == sList->text(i)) {
-		KMessageBox::error( 0,
-			i18n("Please choose a unique name for the new color\n"\
-			"scheme. The one you entered already appears\n"\
-			"in the color scheme list." ));
-		break;
-	    }
-	if (i == (int) sList->count())
-	    valid = true;
+    // Capitalise each word
+    sName.at(0) = sName.at(0).upper();
+    while (1) {
+        i = sName.find(" ", i);
+        if (i == -1)
+        break;
+        if (++i >= (int) sName.length())
+        break;
+        sName.at(i) = sName.at(i).upper();
+    }
+
+    // Check if it's already there
+    for (i=0; i < (int) sList->count(); i++)
+        if (sName == sList->text(i)) {
+        KMessageBox::error( 0,
+            i18n("Please choose a unique name for the new color\n"\
+            "scheme. The one you entered already appears\n"\
+            "in the color scheme list." ));
+        break;
+        }
+    if (i == (int) sList->count())
+        valid = true;
     }
 
     disconnect(sList, SIGNAL(highlighted(int)), this,
-	    SLOT(slotPreviewScheme(int)));
+        SLOT(slotPreviewScheme(int)));
 
     sList->insertItem(sName);
     sList->setFocus();
@@ -464,43 +464,43 @@ QColor &KColorScheme::color(int index)
 {
     switch(index) {
     case CSM_Inactive_title_bar:
-	return cs->iaTitle;
+    return cs->iaTitle;
     case CSM_Inactive_title_text:
-	return cs->iaTxt;
+    return cs->iaTxt;
     case CSM_Inactive_title_blend:
-	return cs->iaBlend;
+    return cs->iaBlend;
     case CSM_Active_title_bar:
-	return cs->aTitle;
+    return cs->aTitle;
     case CSM_Active_title_text:
-	return cs->aTxt;
+    return cs->aTxt;
     case CSM_Active_title_blend:
-	return cs->aBlend;
+    return cs->aBlend;
     case CSM_Background:
-	return cs->back;
+    return cs->back;
     case CSM_Text:
-	return cs->txt;
+    return cs->txt;
     case CSM_Select_background:
-	return cs->select;
+    return cs->select;
     case CSM_Select_text:
-	return cs->selectTxt;
+    return cs->selectTxt;
     case CSM_Standard_background:
-	return cs->window;
+    return cs->window;
     case CSM_Standard_text:
-	return cs->windowTxt;
+    return cs->windowTxt;
     case CSM_Button_background:
-	return cs->button;
+    return cs->button;
     case CSM_Button_text:
-	return cs->buttonTxt;
+    return cs->buttonTxt;
     case CSM_Active_title_button:
-	return cs->aTitleBtn;
+    return cs->aTitleBtn;
     case CSM_Inactive_title_button:
-	return cs->iTitleBtn;
+    return cs->iTitleBtn;
     case CSM_Link:
-	return cs->link;
+    return cs->link;
     case CSM_Followed_Link:
-	return cs->visitedLink;
+    return cs->visitedLink;
     }
-    
+
     assert(0); // Should never be here!
     return cs->iaTxt; // Silence compiler
 }
@@ -512,14 +512,14 @@ void KColorScheme::slotSelectColor(const QColor &col)
     selection = wcCombo->currentItem();
 
     color(selection) = col;
-	
+
     cs->drawSampleWidgets();
 
     if (removeBt->isEnabled())
-	saveBt->setEnabled(true);
+    saveBt->setEnabled(true);
     else
-	saveBt->setEnabled(false);
-	
+    saveBt->setEnabled(false);
+
     m_bChanged = true;
     emit changed(true);
 }
@@ -528,11 +528,11 @@ void KColorScheme::slotSelectColor(const QColor &col)
 void KColorScheme::slotWidgetColor(int indx)
 {
     if (wcCombo->currentItem() != indx)
-	wcCombo->setCurrentItem( indx );
+    wcCombo->setCurrentItem( indx );
 
     QColor col = color(indx);
     colorButton->setColor( col );
-    colorPushColor = col;	
+    colorPushColor = col;
 }
 
 
@@ -584,13 +584,13 @@ void KColorScheme::readScheme( int index )
     }
 
     if (index == 0) {
-	// Current scheme
-	config = KGlobal::config();
-	config->setGroup("General");
+    // Current scheme
+    config = KGlobal::config();
+    config->setGroup("General");
     } else {
-	// Open scheme file
-	config = new KSimpleConfig(sFileList[index], true);
-	config->setGroup("Color Scheme");
+    // Open scheme file
+    config = new KSimpleConfig(sFileList[index], true);
+    config->setGroup("Color Scheme");
     }
 
     cs->txt = config->readColorEntry( "foreground", &black );
@@ -605,7 +605,7 @@ void KColorScheme::readScheme( int index )
     cs->visitedLink = config->readColorEntry( "visitedLinkColor", &magenta );
 
     if (index == 0)
-	config->setGroup( "WM" );
+    config->setGroup( "WM" );
 
     cs->iaTitle = config->readColorEntry("inactiveBackground", &darkGray);
     cs->iaTxt = config->readColorEntry("inactiveForeground", &lightGray);
@@ -618,7 +618,7 @@ void KColorScheme::readScheme( int index )
     cs->iTitleBtn = config->readColorEntry("inactiveTitleBtnBg", &cs->back);
 
     if (index == 0)
-	config->setGroup( "KDE" );
+    config->setGroup( "KDE" );
 
     cs->contrast = config->readNumEntry( "contrast", 7 );
 }
@@ -637,44 +637,44 @@ void KColorScheme::readSchemeNames()
     nSysSchemes = 2;
 
     // Global + local schemes
-    QStringList list = KGlobal::dirs()->findAllResources("data", 
+    QStringList list = KGlobal::dirs()->findAllResources("data",
             "kdisplay/color-schemes/*.kcsrc", false, true);
 
     // Put local schemes into localList
     QStringList localList;
     QStringList::Iterator it;
     for (it = list.begin(); it != list.end(); it++) {
-	QFileInfo fi(*it);
-	if (fi.isWritable()) {
-	    localList.append(*it);
-	    it = list.remove(it);
-	    it--;
-	}
+    QFileInfo fi(*it);
+    if (fi.isWritable()) {
+        localList.append(*it);
+        it = list.remove(it);
+        it--;
+    }
     }
 
     // And add them
     for (it = list.begin(); it != list.end(); it++) {
-	KSimpleConfig *config = new KSimpleConfig(*it, true);
-	config->setGroup("Color Scheme");
-	QString str = config->readEntry("name");
-	if (str.isEmpty())
-	    continue;
-	sList->insertItem(str);
-	sFileList.append(*it);
-	nSysSchemes++;
-	delete config;
+    KSimpleConfig *config = new KSimpleConfig(*it, true);
+    config->setGroup("Color Scheme");
+    QString str = config->readEntry("name");
+    if (str.isEmpty())
+        continue;
+    sList->insertItem(str);
+    sFileList.append(*it);
+    nSysSchemes++;
+    delete config;
     }
 
     // Now repeat for local files
     for (it = localList.begin(); it != localList.end(); it++) {
-	KSimpleConfig *config = new KSimpleConfig((*it), true);
-	config->setGroup("Color Scheme");
-	QString str = config->readEntry("name");
-	if (str.isEmpty())
-	    continue;
-	sList->insertItem(str);
-	sFileList.append(*it);
-	delete config;
+    KSimpleConfig *config = new KSimpleConfig((*it), true);
+    config->setGroup("Color Scheme");
+    QString str = config->readEntry("name");
+    if (str.isEmpty())
+        continue;
+    sList->insertItem(str);
+    sFileList.append(*it);
+    delete config;
     }
 }
 
@@ -689,10 +689,10 @@ void KColorScheme::slotPreviewScheme(int indx)
     sb->setValue(cs->contrast);
     slotWidgetColor(0);
     if (indx < nSysSchemes) {
-	removeBt->setEnabled(false);
-	saveBt->setEnabled(false);
+    removeBt->setEnabled(false);
+    saveBt->setEnabled(false);
     } else
-	removeBt->setEnabled(true);
+    removeBt->setEnabled(true);
 
     m_bChanged = true;
     emit changed(true);
@@ -705,11 +705,11 @@ void KColorScheme::slotPreviewScheme(int indx)
 QPalette KColorScheme::createPalette()
 {
     QColorGroup disabledgrp(cs->windowTxt, cs->back, cs->back.light(150),
-			    cs->back.dark(), cs->back.dark(120), cs->back.dark(120),
-			    cs->window);
+                cs->back.dark(), cs->back.dark(120), cs->back.dark(120),
+                cs->window);
 
     QColorGroup colgrp(cs->windowTxt, cs->back, cs->back.light(150),
-		       cs->back.dark(), cs->back.dark(120), cs->txt, cs->window);
+               cs->back.dark(), cs->back.dark(120), cs->txt, cs->window);
 
     colgrp.setColor(QColorGroup::Highlight, cs->select);
     colgrp.setColor(QColorGroup::HighlightedText, cs->selectTxt);
@@ -722,7 +722,7 @@ QPalette KColorScheme::createPalette()
 /**** SaveScm ****/
 
 SaveScm::SaveScm( QWidget *parent, const char *name )
-	: QDialog( parent, name, TRUE )
+    : QDialog( parent, name, TRUE )
 {
     setFocusPolicy(QWidget::StrongFocus);
     setCaption( i18n("Add a color scheme"));
@@ -738,10 +738,10 @@ SaveScm::SaveScm( QWidget *parent, const char *name )
 
     QLabel* tmpQLabel;
     tmpQLabel = new QLabel( nameLine,
-	 i18n( "Enter a name for the new color scheme\n"\
-	    "to be added to your personal list.\n\n"\
-	    "The colors currently used in the preview will\n"\
-	    "be copied into this scheme to begin with." ), this );
+     i18n( "Enter a name for the new color scheme\n"\
+        "to be added to your personal list.\n\n"\
+        "The colors currently used in the preview will\n"\
+        "be copied into this scheme to begin with." ), this );
     tmpQLabel->setAlignment( AlignLeft | AlignBottom | ShowPrefix );
     tmpQLabel->setFixedHeight( tmpQLabel->sizeHint().height() );
     tmpQLabel->setMinimumWidth( tmpQLabel->sizeHint().width() );

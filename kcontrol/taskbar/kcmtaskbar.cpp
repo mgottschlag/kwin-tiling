@@ -87,7 +87,7 @@ void TaskbarConfig::load()
 {
   KConfig *c = new KConfig("ktaskbarappletrc", false, false);
   { // group for the benefit of the group saver
-  KConfigGroupSaver saver(c, "General"); 
+  KConfigGroupSaver saver(c, "General");
 
   showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", false));
   bool is_top_level = c->readBoolEntry("TopLevel", false);
@@ -105,8 +105,8 @@ void TaskbarConfig::save()
 {
   KConfig *c = new KConfig("ktaskbarappletrc", false, false);
   { // group for the benefit of the group saver
-  KConfigGroupSaver saver(c, "General"); 
-  
+  KConfigGroupSaver saver(c, "General");
+
   c->writeEntry("ShowAllWindows", showAllCheck->isChecked());
   c->writeEntry("TopLevel", externalCheck->isChecked());
   if (externalCheck->isChecked())
@@ -134,7 +134,7 @@ void TaskbarConfig::defaults()
   emit changed(true);
 }
 
-QString TaskbarConfig::quickHelp()
+QString TaskbarConfig::quickHelp() const
 {
   return i18n("<h1>Taskbar</h1> You can configure the taskbar here."
     " This includes options such as whether or not the taskbar should be"

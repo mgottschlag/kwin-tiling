@@ -37,7 +37,7 @@ class KDesktopConfig : public KCModule
   void defaults();
   
   int buttons();
-  QString quickHelp();
+  QString quickHelp() const;
 
  protected slots:
   void slotValueChanged(int);

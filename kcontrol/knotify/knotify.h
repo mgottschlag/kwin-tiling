@@ -20,6 +20,15 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.9  2000/05/31 22:30:07  charles
+    Report Bug on Module.
+
+    I can't test this quite yet, due to undefined references (which are not my fault)
+
+    But, they do compile and link and all that.
+
+    all the other modules to to be changes, an example is in knotify
+
     Revision 1.8  2000/04/15 19:46:06  charles
     Here's a commit. Happy David? :)
 
@@ -104,7 +113,7 @@ public:
 
 	void defaults();
 	virtual void save();
-	virtual QString quickHelp();
+	virtual QString quickHelp() const;
 	virtual const KAboutData *aboutData() const;
 		
 private slots:

@@ -61,9 +61,9 @@ extern "C" {
 #endif
 
 
-static const int DFLT_STANDBY	= 0;
-static const int DFLT_SUSPEND	= 30;
-static const int DFLT_OFF	= 60;
+static const int DFLT_STANDBY   = 0;
+static const int DFLT_SUSPEND   = 30;
+static const int DFLT_OFF   = 60;
 
 
 
@@ -72,22 +72,22 @@ static const int DFLT_OFF	= 60;
 extern "C" {
 
     KCModule *create_energy(QWidget *parent, char *name) {
-	KGlobal::locale()->insertCatalogue("kcmdisplay");
-	return new KEnergy(parent, name);
+    KGlobal::locale()->insertCatalogue("kcmdisplay");
+    return new KEnergy(parent, name);
     }
 
     void init_energy() {
-	KConfig *cfg = new KConfig("kcmdisplayrc");
-	cfg->setGroup("DisplayEnergy");
+    KConfig *cfg = new KConfig("kcmdisplayrc");
+    cfg->setGroup("DisplayEnergy");
 
-	bool enabled = cfg->readBoolEntry("displayEnergySaving", false);
-	int standby = cfg->readNumEntry("displayStandby", DFLT_STANDBY);
-	int suspend = cfg->readNumEntry("displaySuspend", DFLT_SUSPEND);
-	int off = cfg->readNumEntry("displayPowerOff", DFLT_OFF);
+    bool enabled = cfg->readBoolEntry("displayEnergySaving", false);
+    int standby = cfg->readNumEntry("displayStandby", DFLT_STANDBY);
+    int suspend = cfg->readNumEntry("displaySuspend", DFLT_SUSPEND);
+    int off = cfg->readNumEntry("displayPowerOff", DFLT_OFF);
 
-	delete cfg;
+    delete cfg;
 
-	KEnergy::applySettings(enabled, standby, suspend, off);
+    KEnergy::applySettings(enabled, standby, suspend, off);
     }
 }
 
@@ -96,7 +96,7 @@ extern "C" {
 /**** KEnergy ****/
 
 KEnergy::KEnergy(QWidget *parent, const char *name)
-	: KCModule(parent, name)
+    : KCModule(parent, name)
 {
     m_bChanged = false;
     m_bEnabled = false;
@@ -116,14 +116,14 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
 
     QLabel *lbl;
     if (m_bDPMS) {
-	m_pCBEnable= new QCheckBox(i18n("&Enable Display Energy Saving" ), this);
-	connect(m_pCBEnable, SIGNAL(toggled(bool)), SLOT(slotChangeEnable(bool)));
-	hbox->addWidget(m_pCBEnable);
+    m_pCBEnable= new QCheckBox(i18n("&Enable Display Energy Saving" ), this);
+    connect(m_pCBEnable, SIGNAL(toggled(bool)), SLOT(slotChangeEnable(bool)));
+    hbox->addWidget(m_pCBEnable);
         QWhatsThis::add( m_pCBEnable, i18n("Check this option to enable the"
            " power saving features of your display.") );
     } else {
-	lbl = new QLabel(i18n("Your display has NO power saving features!"), this);
-	hbox->addWidget(lbl);
+    lbl = new QLabel(i18n("Your display has NO power saving features!"), this);
+    hbox->addWidget(lbl);
     }
 
     lbl= new QLabel(this);
@@ -168,7 +168,7 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
        " display is still physically turned on.") );
 
     top->addStretch();
-		
+
     m_pConfig = new KConfig("kcmdisplayrc");
     m_pConfig->setGroup("DisplayEnergy");
 
@@ -186,10 +186,10 @@ KEnergy::~KEnergy()
 int KEnergy::buttons()
 {
     if (m_bDPMS)
-	return KCModule::Help | KCModule::Default | KCModule::Reset |
-	       KCModule::Cancel | KCModule::Ok;
+    return KCModule::Help | KCModule::Default | KCModule::Reset |
+           KCModule::Cancel | KCModule::Ok;
     else
-	return KCModule::Help | KCModule::Ok;
+    return KCModule::Help | KCModule::Ok;
 }
 
 
@@ -224,7 +224,7 @@ void KEnergy::defaults()
 
 
 void KEnergy::readSettings()
-{		
+{
     m_bEnabled = m_pConfig->readBoolEntry("displayEnergySaving", false);
     m_Standby = m_pConfig->readNumEntry("displayStandby", DFLT_STANDBY);
     m_Suspend = m_pConfig->readNumEntry("displaySuspend", DFLT_SUSPEND);
@@ -237,8 +237,8 @@ void KEnergy::readSettings()
 void KEnergy::writeSettings()
 {
     if (!m_bChanged)
-	 return;
-		
+     return;
+
     m_pConfig->writeEntry( "displayEnergySaving", m_bEnabled);
     m_pConfig->writeEntry("displayStandby", m_Standby);
     m_pConfig->writeEntry("displaySuspend", m_Suspend);
@@ -252,7 +252,7 @@ void KEnergy::writeSettings()
 void KEnergy::showSettings()
 {
     if (m_bDPMS)
-	m_pCBEnable->setChecked(m_bEnabled);
+    m_pCBEnable->setChecked(m_bEnabled);
 
     m_pStandbySlider->setEnabled(m_bEnabled);
     m_pStandbySlider->setValue(m_Standby);
@@ -280,20 +280,20 @@ void KEnergy::applySettings(bool enable, int standby, int suspend, int off)
     int dummy;
     bool hasDPMS = DPMSQueryExtension(dpy, &dummy, &dummy);
     if (hasDPMS) {
-	if (enable) {
+    if (enable) {
             DPMSEnable(dpy);
             DPMSSetTimeouts(dpy, 60*standby, 60*suspend, 60*off);
         } else
             DPMSDisable(dpy);
     } else
-	qWarning("Server has no DPMS extension");
-	
+    qWarning("Server has no DPMS extension");
+
     XFlush(dpy);
     XSetErrorHandler(defaultHandler);
 #else
     /* keep gcc silent */
     if (enable | standby | suspend | off)
-	/* nothing */ ;
+    /* nothing */ ;
 #endif
 }
 
@@ -313,7 +313,7 @@ void KEnergy::slotChangeStandby(int value)
 {
     m_Standby = value;
     if (m_Standby > m_Suspend)
-	m_pSuspendSlider->setValue(m_Standby);
+    m_pSuspendSlider->setValue(m_Standby);
 
     m_bChanged = true;
     emit changed(true);
@@ -324,9 +324,9 @@ void KEnergy::slotChangeSuspend(int value)
 {
     m_Suspend = value;
     if (m_Suspend > m_Off)
-	m_pOffSlider->setValue(m_Suspend);
+    m_pOffSlider->setValue(m_Suspend);
     if (m_Suspend < m_Standby)
-	m_pStandbySlider->setValue(m_Suspend);
+    m_pStandbySlider->setValue(m_Suspend);
 
     m_bChanged = true;
     emit changed(true);
@@ -337,14 +337,14 @@ void KEnergy::slotChangeOff(int value)
 {
     m_Off = value;
     if (m_Off < m_Suspend)
-	m_pSuspendSlider->setValue(m_Off);
+    m_pSuspendSlider->setValue(m_Off);
 
     m_bChanged = true;
     emit changed(true);
 }
 
 
-QString KEnergy::quickHelp()
+QString KEnergy::quickHelp() const
 {
     return i18n("<h1>Energy Saving For Display</h1> If your display supports"
       " power saving features, you can configure them using this module.<p>"

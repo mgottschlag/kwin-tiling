@@ -39,7 +39,7 @@ class SambaContainer:public KCModule
       virtual void load();
       virtual void save();
       virtual void defaults() {};
-      QString quickHelp();
+      QString quickHelp() const;
 
    private:
       QVBoxLayout layout;
@@ -84,7 +84,7 @@ void SambaContainer::load()
 
 void SambaContainer::save()
 {
-//   cout<<"SambaContainer::save"<<endl;   
+//   cout<<"SambaContainer::save"<<endl;
    status.save();
    imports.save();
    logView.save();
@@ -93,7 +93,7 @@ void SambaContainer::save()
 }
 
 
-QString SambaContainer::quickHelp()
+QString SambaContainer::quickHelp() const
 {
    return i18n("The Samba and NFS Status Monitor is a front end to the programs"
      " <em>smbstatus</em> and <em>showmount</em>. Smbstatus reports on current"
@@ -114,7 +114,7 @@ extern "C"
 {
 
   KCModule *create_samba(QWidget *parent, const char *name)
-  { 
+  {
     KGlobal::locale()->insertCatalogue("kcmsamba");
     return new SambaContainer(parent, name);
   }

@@ -36,25 +36,25 @@
 #include "knotify.moc"
 
 KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
-	KCModule(parent, name)
+    KCModule(parent, name)
 {
-	(new QHBoxLayout(this))->setAutoAdd(true);
-	QSplitter *split=new QSplitter(Vertical, this);
-	
-	apps=new QListView(split);
-	apps->addColumn(i18n("Application Name"));
-	apps->addColumn(i18n("Description"));
-	apps->setSelectionMode(QListView::Single);
-	
-	events=new QListView(split);
-	events->setSelectionMode(QListView::Single);
-	events->addColumn(i18n("Event Name"));
-	events->addColumn(i18n("Description"));
-	
-	eventview=new EventView(split);
-	eventview->setEnabled(false);
-	loadAll();
-	connect( eventview, SIGNAL( changed() ), SLOT( changed() ));
+    (new QHBoxLayout(this))->setAutoAdd(true);
+    QSplitter *split=new QSplitter(Vertical, this);
+
+    apps=new QListView(split);
+    apps->addColumn(i18n("Application Name"));
+    apps->addColumn(i18n("Description"));
+    apps->setSelectionMode(QListView::Single);
+
+    events=new QListView(split);
+    events->setSelectionMode(QListView::Single);
+    events->addColumn(i18n("Event Name"));
+    events->addColumn(i18n("Description"));
+
+    eventview=new EventView(split);
+    eventview->setEnabled(false);
+    loadAll();
+    connect( eventview, SIGNAL( changed() ), SLOT( changed() ));
 };
 
 KNotifyWidget::~KNotifyWidget()
@@ -64,54 +64,54 @@ KNotifyWidget::~KNotifyWidget()
 
 void KNotifyWidget::defaults()
 {
-	if (KMessageBox::warningContinueCancel(this,
-		i18n("This will cause the notifications for *All Applications* "
-		     "to be reset to their defaults!"), i18n("Are you sure?!"), i18n("Continue"))
-		!= KMessageBox::Continue)
-		return;
-	delete applications;
-	loadAll();
+    if (KMessageBox::warningContinueCancel(this,
+        i18n("This will cause the notifications for *All Applications* "
+             "to be reset to their defaults!"), i18n("Are you sure?!"), i18n("Continue"))
+        != KMessageBox::Continue)
+        return;
+    delete applications;
+    loadAll();
 }
 
 void KNotifyWidget::changed()
 {
-	emit KCModule::changed(true);
+    emit KCModule::changed(true);
 }
 
 void KNotifyWidget::loadAll()
 {
-	applications = new Programs(eventview, apps, events);
-	applications->show();
+    applications = new Programs(eventview, apps, events);
+    applications->show();
 }
 
 void KNotifyWidget::save()
 {
-	if (applications)
-		applications->save();
+    if (applications)
+        applications->save();
 
 }
 
-QString KNotifyWidget::quickHelp()
+QString KNotifyWidget::quickHelp() const
 {
-	return i18n("<h1>System Notifications</h1>"
-		    "KDE allows for a great deal of control over how you "
-		    "will be notified when certain events occur.  There are "
-		    "several choices as to how you are notified:"
-		    "<ul><li>As the application was originally designed."
-		    "<li>With a beep or other noise."
-		    "<li>Via a popup dialog box with additional information."
-		    "<li>By recording the the event in a logfile without "
-		    "any additional visual or auditory alert."
-		    "</ul>");
+    return i18n("<h1>System Notifications</h1>"
+            "KDE allows for a great deal of control over how you "
+            "will be notified when certain events occur.  There are "
+            "several choices as to how you are notified:"
+            "<ul><li>As the application was originally designed."
+            "<li>With a beep or other noise."
+            "<li>Via a popup dialog box with additional information."
+            "<li>By recording the the event in a logfile without "
+            "any additional visual or auditory alert."
+            "</ul>");
 }
 
 const KAboutData *KNotifyWidget::aboutData() const
 {
-	KAboutData ab(
-		"kcmnotify", I18N_NOOP("KNotify"), "2.0pre",
-		I18N_NOOP("System Notification Control Panel Module"),
-		KAboutData::License_GPL, I18N_NOOP("(c) 2000 Charles Samuels"),
-		0, 0, "charles@kde.org");
-	return &ab;
+    KAboutData ab(
+        "kcmnotify", I18N_NOOP("KNotify"), "2.0pre",
+        I18N_NOOP("System Notification Control Panel Module"),
+        KAboutData::License_GPL, I18N_NOOP("(c) 2000 Charles Samuels"),
+        0, 0, "charles@kde.org");
+    return &ab;
 
 }

@@ -50,9 +50,9 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
 {
   QString wtstr;
   QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
-					   KDialog::spacingHint());
+                       KDialog::spacingHint());
   QGroupBox *uBox = new QGroupBox(2, Qt::Horizontal, i18n("User information"),
-				  this);
+                  this);
   topLayout->addWidget(uBox);
 
   QLabel *label = new QLabel(i18n("&Full Name:"), uBox);
@@ -110,7 +110,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   QWhatsThis::add( replyAddr, wtstr );
 
   uBox = new QGroupBox(2, Qt::Horizontal, i18n("Server information"),
-		       this);
+               this);
   topLayout->addWidget(uBox);
 
   label = new QLabel(i18n("User &name:"), uBox);
@@ -164,7 +164,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   QWhatsThis::add( outServer, wtstr );
 
   bGrp = new QButtonGroup(1, Qt::Vertical,
-			   i18n("Incoming mail server type"), this);
+               i18n("Incoming mail server type"), this);
   connect(bGrp, SIGNAL(clicked(int)), this, SLOT(configChanged()));
 
   topLayout->addWidget(bGrp);
@@ -181,7 +181,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   QWhatsThis::add( localButton, wtstr );
 
   uBox = new QGroupBox(2, Qt::Horizontal, i18n("Preferred email client"),
-		                this);
+                        this);
   topLayout->addWidget(uBox);
 
   emailClient = new KLineEdit(uBox);
@@ -305,7 +305,7 @@ void KEmailConfig::defaults()
 
   QString client;
   client = KGlobal::dirs()->findResource("exe", "kmail");
-  
+
   if (client.isEmpty())
     client = "kmail";
 
@@ -316,7 +316,7 @@ void KEmailConfig::defaults()
   emit changed(true);
 }
 
-QString KEmailConfig::quickHelp()
+QString KEmailConfig::quickHelp() const
 {
   return i18n("<h1>e-mail</h1> This module allows you to enter basic e-mail"
      " information for the current user. The information here is used,"

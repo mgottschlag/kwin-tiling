@@ -26,9 +26,9 @@
 #include <qcombo.h>
 #include <qtimer.h>
 #include <qpushbutton.h>
-#include <qpainter.h> 
-#include <qlayout.h> 
-#include <qlabel.h> 
+#include <qpainter.h>
+#include <qlayout.h>
+#include <qlabel.h>
 #include <qwhatsthis.h>
 
 #include <kdebug.h>
@@ -40,7 +40,7 @@
 #include <kmessagebox.h>
 
 #include "dtime.h"
-#include "dtime.moc" 
+#include "dtime.moc"
 
 Dtime::Dtime(QWidget * parent, const char *name)
   : KCModule(parent, name)
@@ -48,26 +48,26 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // *************************************************************
   // Start Dialog
   // *************************************************************
-  
+
   // Date frame
-  
+
   QFrame* frame1 = new QFrame( this, "Frame_1" );
   frame1->setFrameStyle( QFrame::Sunken | QFrame::Box );
 
   QGridLayout *l1 = new QGridLayout( frame1, 2, 3, 10 );
-  
+
   month = new QComboBox( FALSE, frame1, "ComboBox_1" );
   connect( month, SIGNAL(activated(int)), SLOT(set_month(int)) );
   month->setSizeLimit( 12 );
   l1->addWidget( month, 0, 0 );
   QWhatsThis::add( month, i18n("Here you can change the system date's month.") );
-  
+
   year = new QSpinBox( 1970, 3000, 1, frame1 );
   year->setButtonSymbols( QSpinBox::PlusMinus );
   connect(year, SIGNAL(valueChanged(int)), this, SLOT(set_year(int)) );
   l1->addWidget( year, 0, 2 );
   QWhatsThis::add( year, i18n("Here you can change the system date's year.") );
-  
+
   cal = new KDateTable( this );
   l1->addMultiCellWidget( cal, 1, 1, 0, 2 );
   QWhatsThis::add( cal, i18n("Here you can change the day of month.") );
@@ -83,23 +83,23 @@ Dtime::Dtime(QWidget * parent, const char *name)
   kclock->setMinimumHeight(150);
   v2->addWidget( kclock );
   QWhatsThis::add( kclock, i18n("") );
-  
+
   QGridLayout *v3 = new QGridLayout( 2, 9 );
 
   v3->setColStretch( 0, 1 );
-  
+
   hour = new QLineEdit( frame2, "LineEdit_1" );
   connect( hour, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
   hour->setMaxLength( 2 );
-  hour->setFrame( TRUE ); 
+  hour->setFrame( TRUE );
   hour->setValidator(new KStrictIntValidator(0, 23, hour));
   v3->addMultiCellWidget(hour, 0, 1, 1, 1 );
-  
+
   QLabel *dots1 = new QLabel(":", frame2);
   dots1->setMinimumWidth( 7 );
-  dots1->setAlignment( QLabel::AlignCenter ); 
+  dots1->setAlignment( QLabel::AlignCenter );
   v3->addMultiCellWidget(dots1, 0, 1, 2, 2 );
-                
+
   minute = new QLineEdit( frame2, "LineEdit_2" );
   connect( minute, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
   minute->setMaxLength( 2 );
@@ -108,24 +108,24 @@ Dtime::Dtime(QWidget * parent, const char *name)
   v3->addMultiCellWidget(minute, 0, 1, 3, 3 );
 
   QLabel *dots2 = new QLabel(":", frame2);
-  dots2->setMinimumWidth( 7 ); 
-  dots2->setAlignment( QLabel::AlignCenter ); 
+  dots2->setMinimumWidth( 7 );
+  dots2->setAlignment( QLabel::AlignCenter );
   v3->addMultiCellWidget(dots2, 0, 1, 4, 4 );
-  
+
   second = new QLineEdit( frame2, "LineEdit_3" );
   connect( second, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
   second->setMaxLength( 2 );
   second->setFrame( TRUE );
   second->setValidator(new KStrictIntValidator(0, 59, second));
   v3->addMultiCellWidget(second, 0, 1, 5, 5 );
-  
+
   int w = 2*hour->fontMetrics().width("00");
   hour->setMaximumWidth(w);
   minute->setMaximumWidth(w);
   second->setMaximumWidth(w);
-  
+
   v3->addColSpacing( 6, 5 );
-  
+
   QPushButton* plusPB = new QPushButton( "+", frame2, "plusPB" );
   connect( plusPB, SIGNAL(pressed()), this, SLOT(inc_time()) );
   plusPB->setAutoRepeat( TRUE );
@@ -147,7 +147,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   plusPB->setFixedSize( 20, hour->height()/2 );
   minusPB->setFixedSize( 20, hour->height()/2 );
-  
+
   v3->setColStretch( 8, 1 );
 
   v2->addItem( v3 );
@@ -155,11 +155,11 @@ Dtime::Dtime(QWidget * parent, const char *name)
   QHBoxLayout *top = new QHBoxLayout( this, 5 );
   top->addWidget(frame1, 1);
   top->addWidget(frame2, 1);
-  
+
   // *************************************************************
   // End Dialog
   // *************************************************************
-  
+
   month->insertItem( i18n("January") );
   month->insertItem( i18n("February") );
   month->insertItem( i18n("March") );
@@ -172,7 +172,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
   month->insertItem( i18n("October") );
   month->insertItem( i18n("November") );
   month->insertItem( i18n("December") );
-  
+
   connect( cal, SIGNAL(dateChanged(QDate)), SLOT(changeDate(QDate)));
 
   connect( &internalTimer, SIGNAL(timeout()), SLOT(timeout()) );
@@ -187,9 +187,9 @@ Dtime::Dtime(QWidget * parent, const char *name)
       hour->setReadOnly(true);
       minute->setReadOnly(true);
       second->setReadOnly(true);
-      kclock->setEnabled(false);  
-      plusPB->setEnabled(false);  
-      minusPB->setEnabled(false);  
+      kclock->setEnabled(false);
+      plusPB->setEnabled(false);
+      minusPB->setEnabled(false);
     }
 }
 
@@ -205,18 +205,18 @@ void Dtime::set_time()
 {
   if( ontimeout )
     return;
-  
+
   internalTimer.stop();
 
   time.setHMS( hour->text().toInt(), minute->text().toInt(), second->text().toInt() );
   kclock->setTime( time );
-  
+
   emit changed( TRUE );
 }
 
 void Dtime::changeDate(QDate d)
 {
-  date = d;  
+  date = d;
   emit changed( TRUE );
 }
 
@@ -224,7 +224,7 @@ void Dtime::set_month(int m)
 {
   if ( !date.setYMD(date.year(),m+1,date.day()) )
     date.setYMD(date.year(),m+1,1);
-  cal->setDate(date);  
+  cal->setDate(date);
   emit changed(TRUE);
 }
 
@@ -232,38 +232,38 @@ void Dtime::load()
 {
   // Reset to the current date and time
   time = QTime::currentTime();
-  date = QDate::currentDate();  
+  date = QDate::currentDate();
   month->setCurrentItem(date.month()-1);
   year->setValue(date.year());
   cal->setDate(date);
-  
+
   // start internal timer
   internalTimer.start( 1000 );
-  
+
   timeout();
 }
 
 void Dtime::save()
 {
   KProcess c_proc;
-  
+
   BufS.sprintf("%02d%02d%02d%02d%04d.%02d",
-               date.month(), date.day(), 
+               date.month(), date.day(),
                hour->text().toInt(), minute->text().toInt(),
                date.year(), second->text().toInt());
-  
+
   kdDebug() << "Set date " << BufS << endl;
-  
+
   c_proc.setExecutable( "date" );
   c_proc << BufS;
   c_proc.start( KProcess::Block );
-  
+
   if ( c_proc.exitStatus() != 0 ) {
     KMessageBox::error( this, i18n("Can not set date."));
     return;
   }
-  
-  // try to set hardware clock. We do not care if it fails 
+
+  // try to set hardware clock. We do not care if it fails
   KProcess hwc_proc;
   hwc_proc.setExecutable( "hwclock" );
   hwc_proc << "--systohc";
@@ -295,7 +295,7 @@ void Dtime::dec_time()
 
 void Dtime::joke(QLineEdit *edit,int incr,int Min,int Max,bool refr)
 {
-  if ( refr ) 
+  if ( refr )
     refresh = FALSE;
   BufI=edit->text().toInt();
   BufI=BufI + incr;
@@ -303,16 +303,16 @@ void Dtime::joke(QLineEdit *edit,int incr,int Min,int Max,bool refr)
   if ( BufI < Min ) BufI = Max;
   if ( Max > 99 )
     BufS.sprintf("%04d",BufI);
-  else    
+  else
     BufS.sprintf("%02d",BufI);
   edit->setText(BufS);
-}    
+}
 
 void Dtime::timeout()
 {
   // get current time
   time = QTime::currentTime();
-  
+
   ontimeout = TRUE;
   BufS.sprintf("%02d",time.second());
   second->setText(BufS);
@@ -321,11 +321,11 @@ void Dtime::timeout()
   BufS.sprintf("%02d",time.hour());
   hour->setText(BufS);
   ontimeout = FALSE;
-  
+
   kclock->setTime( time );
 }
 
-QString Dtime::quickHelp()
+QString Dtime::quickHelp() const
 {
   return i18n("<h1>Date & Time</h1> This control module can be used to set the system date and"
     " time. As these settings do not only affect you as a user, but rather the whole system, you"
@@ -334,7 +334,7 @@ QString Dtime::quickHelp()
     " administrator.");
 }
 
-void Kclock::setTime(const QTime &time) 
+void Kclock::setTime(const QTime &time)
 {
   this->time = time;
   repaint();
@@ -361,7 +361,7 @@ void Kclock::paintEvent( QPaintEvent * )
       matrix.translate( cp.x(), cp.y() );
       matrix.scale( d/1000.0F, d/1000.0F );
 
-      // lancetta delle ore 
+      // lancetta delle ore
       float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
       matrix.rotate( h_angle );
       paint.setWorldMatrix( matrix );
@@ -390,8 +390,8 @@ void Kclock::paintEvent( QPaintEvent * )
         {
           paint.setWorldMatrix( matrix );
           if ( (i % 5) == 0 )
-            paint.drawLine( 450,0, 500,0 );	// draw hour lines
-          else	paint.drawPoint( 480,0 );	// draw second lines
+            paint.drawLine( 450,0, 500,0 ); // draw hour lines
+          else  paint.drawPoint( 480,0 );   // draw second lines
           matrix.rotate( 6 );
         }
 
@@ -402,15 +402,15 @@ void Kclock::paintEvent( QPaintEvent * )
   paint.end();
 }
 
-QValidator::State KStrictIntValidator::validate( QString & input, int & d ) const 
+QValidator::State KStrictIntValidator::validate( QString & input, int & d ) const
 {
   if( input.isEmpty() )
     return Valid;
-  
+
   State st = QIntValidator::validate( input, d );
 
   if( st == Intermediate )
     return Invalid;
-  
+
   return st;
 }

@@ -45,7 +45,7 @@
 extern "C" {
     KCModule *create_style(QWidget *parent, const char *name) {
         KGlobal::locale()->insertCatalogue(QString::fromLatin1("kcmdisplay"));
-	return new KGeneral(parent, name);
+    return new KGeneral(parent, name);
     }
 
     void init_style() {
@@ -103,25 +103,25 @@ void KThemeListBox::readThemeDir(const QString &directory)
 
     QDir dir(directory, "*.themerc");
     if (!dir.exists())
-	return;
+    return;
 
     const QFileInfoList *list = dir.entryInfoList();
     QFileInfoListIterator it(*list);
     QFileInfo *fi;
     while ((fi = it.current())){
-	KSimpleConfig config(fi->absFilePath(), true);
-	config.setGroup("Misc");
-	name = config.readEntry("Name", fi->baseName());
-	desc = config.readEntry("Comment", i18n("No description available."));
-	QListViewItem *item = new QListViewItem(this, name, desc, fi->absFilePath());
-	if (name == curName) {
-	    curItem = item;
-	    setSelected(item, true);
-	    ensureItemVisible(item);
-	}
-	if (name == defName)
-	    defItem = item;
-	++it;
+    KSimpleConfig config(fi->absFilePath(), true);
+    config.setGroup("Misc");
+    name = config.readEntry("Name", fi->baseName());
+    desc = config.readEntry("Comment", i18n("No description available."));
+    QListViewItem *item = new QListViewItem(this, name, desc, fi->absFilePath());
+    if (name == curName) {
+        curItem = item;
+        setSelected(item, true);
+        ensureItemVisible(item);
+    }
+    if (name == defName)
+        defItem = item;
+    ++it;
     }
 }
 
@@ -152,7 +152,7 @@ void KThemeListBox::save()
 /**** KGeneral ****/
 
 KGeneral::KGeneral(QWidget *parent, const char *name)
-	: KCModule(parent, name)
+    : KCModule(parent, name)
 {
     m_bChanged = false;
     useRM = true;
@@ -160,15 +160,15 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
 
     config = new KConfig("kcmdisplayrc");
     QBoxLayout *topLayout = new QVBoxLayout( this, KDialog::marginHint(),
-					     KDialog::spacingHint() );
+                         KDialog::spacingHint() );
 
     // my little style list (mosfet 04/26/99)
     QBoxLayout *lay = new QHBoxLayout;
     topLayout->addLayout(lay);
 
     QGroupBox *themeBox = new QGroupBox(1, Vertical,
-					i18n("Widget style and theme:"),
-					this);
+                    i18n("Widget style and theme:"),
+                    this);
     lay->addWidget(themeBox);
 
     themeList = new KThemeListBox(themeBox);
@@ -183,7 +183,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     styles = new QGroupBox ( i18n( "Other settings for drawing:" ), this );
     topLayout->addWidget(styles, 10);
     QBoxLayout *vlay = new QVBoxLayout (styles, KDialog::marginHint(),
-					KDialog::spacingHint());
+                    KDialog::spacingHint());
     vlay->addSpacing(styles->fontMetrics().lineSpacing());
 
     cbMac = new QCheckBox( i18n( "&Menubar on top of the screen in "
@@ -227,7 +227,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
 
     tbHilite = new QCheckBox( i18n( "&Highlight buttons under mouse" ), tbStyle);
     tbTransp = new QCheckBox( i18n( "Tool&bars are transparent when"
-				" moving" ), tbStyle);
+                " moving" ), tbStyle);
 
     QWhatsThis::add( tbHilite, i18n("If this option is selected, toolbar buttons"
       " will change their color when the mouse cursor is moved over them.") );
@@ -268,15 +268,15 @@ void KGeneral::slotChangeStylePlugin(QListViewItem *)
 void KGeneral::slotChangeTbStyle()
 {
     if (tbIcon->isChecked() )
-	tbUseText = 0;
+    tbUseText = 0;
     else if (tbText->isChecked() )
-	tbUseText = 2;
+    tbUseText = 2;
     else if (tbAside->isChecked() )
-	tbUseText = 1;
+    tbUseText = 1;
     else if (tbUnder->isChecked() )
-	tbUseText = 3;
+    tbUseText = 3;
     else
-	tbUseText = 0 ;
+    tbUseText = 0 ;
 
     m_bChanged = true;
     emit changed(true);
@@ -286,7 +286,7 @@ void KGeneral::slotChangeTbStyle()
 void KGeneral::slotUseResourceManager()
 {
     useRM = cbRes->isChecked();
-		
+
     m_bChanged = true;
     emit changed(true);
 }
@@ -295,22 +295,22 @@ void KGeneral::slotUseResourceManager()
 void KGeneral::slotMacStyle()
 {
     macStyle = cbMac->isChecked();
-		
+
     m_bChanged = true;
     emit changed(true);
 }
 
 
 void KGeneral::readSettings()
-{		
+{
     config->setGroup("KDE");
     QString str = config->readEntry( "widgetStyle", "Platinum" );
     if ( str == "Platinum" )
-	applicationStyle = WindowsStyle;
+    applicationStyle = WindowsStyle;
     else if ( str == "Windows 95" )
-	applicationStyle = WindowsStyle;
+    applicationStyle = WindowsStyle;
     else
-	applicationStyle = MotifStyle;
+    applicationStyle = MotifStyle;
     macStyle = config->readBoolEntry( "macStyle", false);
 
     config->setGroup( "Toolbar style" );
@@ -318,7 +318,7 @@ void KGeneral::readSettings()
     int val = config->readNumEntry( "Highlighting", 1);
     tbUseHilite = val? true : false;
     tbMoveTransparent = config->readBoolEntry( "TransparentMoving", true);
-		
+
     config->setGroup("X11");
     useRM = config->readBoolEntry( "useResourceManager", true );
 }
@@ -366,7 +366,7 @@ void KGeneral::defaults()
     emit changed(true);
 }
 
-QString KGeneral::quickHelp()
+QString KGeneral::quickHelp() const
 {
     return i18n("<h1>Style</h1> In this module you can configure how"
       " your KDE applications will look.<p>"
@@ -397,7 +397,7 @@ void KGeneral::save()
     themeList->save();
 
     if (!m_bChanged)
-	return;
+    return;
 
     config->setGroup("KDE");
     config->writeEntry("macStyle", macStyle, true, true);
@@ -405,18 +405,18 @@ void KGeneral::save()
     config->writeEntry("IconText", tbUseText, true, true);
     config->writeEntry("Highlighting", (int) tbUseHilite, true, true);
     config->writeEntry("TransparentMoving", (int) tbMoveTransparent,
-	    true, true);
+        true, true);
 
     config->setGroup("X11");
     config->writeEntry("useResourceManager", useRM, true, true);
     config->sync();
 
     if (useRM) {
-	QApplication::setOverrideCursor( waitCursor );
-	KProcess proc;
-	proc.setExecutable("krdb");
-	proc.start( KProcess::Block );
-	QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor( waitCursor );
+    KProcess proc;
+    proc.setExecutable("krdb");
+    proc.start( KProcess::Block );
+    QApplication::restoreOverrideCursor();
     }
 
     KIPC::sendMessageAll(KIPC::StyleChanged);

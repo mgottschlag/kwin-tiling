@@ -24,16 +24,16 @@
     */
 
 #include <iostream.h>
-#include <stdio.h> 
+#include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdlib.h>
- 
-#include <qfileinfo.h> 
+
+#include <qfileinfo.h>
 #include <qstring.h>
-#include <qmessagebox.h> 
+#include <qmessagebox.h>
 #include <qlayout.h>
 #include <qwidget.h>
 #include <qtabwidget.h>
@@ -51,18 +51,18 @@
 
 bool artswrapper_check()
 {
-	if(system("artswrapper check") == 0)
-		return true;
-	return false;
+    if(system("artswrapper check") == 0)
+        return true;
+    return false;
 }
 
 KArtsModule::KArtsModule(QWidget *parent, const char *name)
   : KCModule(parent, name)
-{ 
+{
     setButtons(Cancel|Apply|Ok);
 
     QVBoxLayout *layout = new QVBoxLayout(this, 10);
-    
+
     // options
     startServer = new QCheckBox(this);
     startServer->setText(i18n("&Start aRts soundserver on KDE startup"));
@@ -75,7 +75,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     QFrame *hLine = new QFrame(this);
     hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
     layout->addWidget(hLine);
-    
+
     networkTransparent = new QCheckBox(this);
     networkTransparent->setText(i18n("Enable &network transparency"));
     layout->addWidget(networkTransparent);
@@ -94,9 +94,9 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     startRealtime->setText(i18n("Run soundserver with &realtime priority"));
     layout->addWidget(startRealtime);
     connect(startRealtime,SIGNAL(clicked()),this,SLOT(slotChanged()));
-    
+
     QWhatsThis::add(startRealtime, i18n("On systems which support realtime scheduling, if you have sufficient permissions, this option will enable a very high priority for processing sound requests."));
-    
+
     fullDuplex = new QCheckBox(this);
     fullDuplex->setText(i18n("Enable full &duplex operation"));
     layout->addWidget(fullDuplex);
@@ -109,99 +109,99 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
     QVBoxLayout *vbox = new QVBoxLayout(responseGroup,10);
     vbox->addSpacing(responseGroup->fontMetrics().height());
-    
+
     responseButton[0] = new QRadioButton( i18n("&Fast (10ms)"), responseGroup );
     responseButton[1] = new QRadioButton( i18n("&Standard (50ms)"), responseGroup );
     responseButton[2] = new QRadioButton( i18n("&Comfortable (250ms)"), responseGroup);
     //connect(style_group, SIGNAL(clicked(int)), SLOT(style_clicked(int)));
-    
+
     for (int i = 0; i < 3; i++)
-	vbox->addWidget(responseButton[i]);
+    vbox->addWidget(responseButton[i]);
     layout->addWidget(responseGroup);
-    
+
     // options end
-    
+
     QLabel *restartHint = new QLabel(this);
     restartHint->setText(i18n("<qt>The aRts soundserver cannot be "
-			      "initialized except at login time. "
-			      "If you modify any settings, you will "
-			      "have to restart your session in order for "
-			      "those changes to take effect.</qt>"));
+                  "initialized except at login time. "
+                  "If you modify any settings, you will "
+                  "have to restart your session in order for "
+                  "those changes to take effect.</qt>"));
     layout->addWidget(restartHint);
     layout->addStretch();
-    
+
     config = new KConfig("kcmartsrc");
-    
+
     GetSettings();
 }
 
 
 void KArtsModule::GetSettings( void )
 {
-	config->setGroup("Arts");
-	startServer->setChecked(config->readBoolEntry("StartServer",true));
-	startRealtime->setChecked(config->readBoolEntry("StartRealtime",false));
-	networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
-	x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
-	fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
-	for(int i=0;i<3;i++)
-	{
-		if(config->readNumEntry("ResponseTime",1) == i)
-			responseButton[i]->setChecked(true);
-	}
-	updateWidgets();
+    config->setGroup("Arts");
+    startServer->setChecked(config->readBoolEntry("StartServer",true));
+    startRealtime->setChecked(config->readBoolEntry("StartRealtime",false));
+    networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
+    x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
+    fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
+    for(int i=0;i<3;i++)
+    {
+        if(config->readNumEntry("ResponseTime",1) == i)
+            responseButton[i]->setChecked(true);
+    }
+    updateWidgets();
 }
 
 void KArtsModule::saveParams( void )
 {
-	config->setGroup("Arts");
-	config->writeEntry("StartServer",startServer->isChecked());
-	config->writeEntry("StartRealtime",startRealtime->isChecked());
-	config->writeEntry("NetworkTransparent",networkTransparent->isChecked());
-	config->writeEntry("X11GlobalComm",x11Comm->isChecked());
-	config->writeEntry("FullDuplex",fullDuplex->isChecked());
-	for(int i=0;i<3;i++)
-	{
-		if(responseButton[i]->isChecked())
-			config->writeEntry("ResponseTime",i);
-	}
-	config->sync();
+    config->setGroup("Arts");
+    config->writeEntry("StartServer",startServer->isChecked());
+    config->writeEntry("StartRealtime",startRealtime->isChecked());
+    config->writeEntry("NetworkTransparent",networkTransparent->isChecked());
+    config->writeEntry("X11GlobalComm",x11Comm->isChecked());
+    config->writeEntry("FullDuplex",fullDuplex->isChecked());
+    for(int i=0;i<3;i++)
+    {
+        if(responseButton[i]->isChecked())
+            config->writeEntry("ResponseTime",i);
+    }
+    config->sync();
 }
 
 void KArtsModule::load()
 {
-	GetSettings();
+    GetSettings();
 }
 
 void KArtsModule::save()
 {
-	if(startRealtime->isChecked() && !artswrapper_check())
-	{
-		FILE *why = popen("artswrapper check 2>&1","r");
-		char reason[1024];
-		QString thereason;
-		while(fgets(reason,1024,why)) thereason += reason;
-		fclose(why);
+    if(startRealtime->isChecked() && !artswrapper_check())
+    {
+        FILE *why = popen("artswrapper check 2>&1","r");
+        char reason[1024];
+        QString thereason;
+        while(fgets(reason,1024,why)) thereason += reason;
+        fclose(why);
 
-		QMessageBox::warning( 0, "kcmarts",
-				i18n("There is an installation problem which doesn't allow "
-					"starting the aRts server with realtime priority. \n"
-					"The following problem occured:\n")+thereason);
-	}
-	saveParams();
+        QMessageBox::warning( 0, "kcmarts",
+                i18n("There is an installation problem which doesn't allow "
+                    "starting the aRts server with realtime priority. \n"
+                    "The following problem occured:\n")+thereason);
+    }
+    saveParams();
 }
 
 void KArtsModule::defaults()
 {
-	startServer->setChecked(true);
-	startRealtime->setChecked(false);
-	networkTransparent->setChecked(false);
-	x11Comm->setChecked(false);
-	fullDuplex->setChecked(false);
-	responseButton[1]->setChecked(true);
+    startServer->setChecked(true);
+    startRealtime->setChecked(false);
+    networkTransparent->setChecked(false);
+    x11Comm->setChecked(false);
+    fullDuplex->setChecked(false);
+    responseButton[1]->setChecked(true);
 }
 
-QString KArtsModule::quickHelp()
+QString KArtsModule::quickHelp() const
 {
         return i18n("<h1>The aRts sound server</h1> Here you can configure aRts, KDE's sound server."
           " This program not only allows you to hear your system sounds while simultaneously"
@@ -212,81 +212,81 @@ QString KArtsModule::quickHelp()
 
 void KArtsModule::updateWidgets()
 {
-	startRealtime->setEnabled(startServer->isChecked());
-	networkTransparent->setEnabled(startServer->isChecked());
-	x11Comm->setEnabled(startServer->isChecked());
-	fullDuplex->setEnabled(startServer->isChecked());
-	responseGroup->setEnabled(startServer->isChecked());
+    startRealtime->setEnabled(startServer->isChecked());
+    networkTransparent->setEnabled(startServer->isChecked());
+    x11Comm->setEnabled(startServer->isChecked());
+    fullDuplex->setEnabled(startServer->isChecked());
+    responseGroup->setEnabled(startServer->isChecked());
 }
 
 void KArtsModule::slotChanged()
 {
-	updateWidgets();
-	emit changed(true);
+    updateWidgets();
+    emit changed(true);
 }
 
 
 extern "C"
 {
-	KCModule *create_arts(QWidget *parent, const char *name) 
-	{ 
-		KGlobal::locale()->insertCatalogue("kcmarts");
-		return new KArtsModule(parent, name);
-	}
+    KCModule *create_arts(QWidget *parent, const char *name)
+    {
+        KGlobal::locale()->insertCatalogue("kcmarts");
+        return new KArtsModule(parent, name);
+    }
 
-	void init_arts()
-	{
-		KConfig *config = new KConfig("kcmartsrc");
-		QCString cmdline;
+    void init_arts()
+    {
+        KConfig *config = new KConfig("kcmartsrc");
+        QCString cmdline;
 
-		config->setGroup("Arts");
-		bool startServer = config->readBoolEntry("StartServer",true);
-		bool startRealtime = config->readBoolEntry("StartRealtime",false);
-		bool networkTransparent = config->readBoolEntry("NetworkTransparent",false);
-		bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
-		bool fullDuplex = config->readBoolEntry("FullDuplex",false);
-		int responseTime = config->readNumEntry("ResponseTime",1);
+        config->setGroup("Arts");
+        bool startServer = config->readBoolEntry("StartServer",true);
+        bool startRealtime = config->readBoolEntry("StartRealtime",false);
+        bool networkTransparent = config->readBoolEntry("NetworkTransparent",false);
+        bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
+        bool fullDuplex = config->readBoolEntry("FullDuplex",false);
+        int responseTime = config->readNumEntry("ResponseTime",1);
 
-		/* put the value of x11Comm into .mcoprc */
-		KConfig *X11CommConfig = new KConfig(QDir::homeDirPath()+"/.mcoprc");
+        /* put the value of x11Comm into .mcoprc */
+        KConfig *X11CommConfig = new KConfig(QDir::homeDirPath()+"/.mcoprc");
 
-		if(x11Comm)
-			X11CommConfig->writeEntry("GlobalComm","Arts::X11GlobalComm");
-		else
-			X11CommConfig->writeEntry("GlobalComm","Arts::TmpGlobalComm");
+        if(x11Comm)
+            X11CommConfig->writeEntry("GlobalComm","Arts::X11GlobalComm");
+        else
+            X11CommConfig->writeEntry("GlobalComm","Arts::TmpGlobalComm");
 
-		X11CommConfig->sync();
-		delete X11CommConfig;
+        X11CommConfig->sync();
+        delete X11CommConfig;
 
-		if(startServer)
-		{
-			cmdline = "kdeinit_wrapper ";
-			if(startRealtime && artswrapper_check())
-				cmdline += "artswrapper";
-			else
-				cmdline += "artsd";
+        if(startServer)
+        {
+            cmdline = "kdeinit_wrapper ";
+            if(startRealtime && artswrapper_check())
+                cmdline += "artswrapper";
+            else
+                cmdline += "artsd";
 
-			if(networkTransparent)
-				cmdline += " -n";
+            if(networkTransparent)
+                cmdline += " -n";
 
-			if(fullDuplex)
-				cmdline += " -d";
+            if(fullDuplex)
+                cmdline += " -d";
 
-			switch(responseTime)
-			{
-				/* 8.7 ms */
-				case 0: cmdline += " -F 3 -S 512";
-					break;
-				/* 40 ms */
-				case 1: cmdline += " -F 7 -S 1024";
-					break;
-				/* 255 ms */
-				case 2: cmdline += " -F 11 -S 4096";
-					break;
-			}
-			system(cmdline);
-		}
-	}
+            switch(responseTime)
+            {
+                /* 8.7 ms */
+                case 0: cmdline += " -F 3 -S 512";
+                    break;
+                /* 40 ms */
+                case 1: cmdline += " -F 7 -S 1024";
+                    break;
+                /* 255 ms */
+                case 2: cmdline += " -F 11 -S 4096";
+                    break;
+            }
+            system(cmdline);
+        }
+    }
 }
 
 #include "arts.moc"

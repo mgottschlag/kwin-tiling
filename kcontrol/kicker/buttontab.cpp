@@ -281,7 +281,7 @@ void ButtonTab::kmenu_changed(const QString& t)
         kmenu_label->clear();
     }
   else
-    kmenu_label->clear(); 
+    kmenu_label->clear();
   emit changed();
 }
 
@@ -306,7 +306,7 @@ void ButtonTab::url_changed(const QString& t)
         url_label->clear();
     }
   else
-    url_label->clear(); 
+    url_label->clear();
   emit changed();
 }
 
@@ -331,7 +331,7 @@ void ButtonTab::browser_changed(const QString& t)
         browser_label->clear();
     }
   else
-    browser_label->clear(); 
+    browser_label->clear();
   emit changed();
 }
 
@@ -356,7 +356,7 @@ void ButtonTab::exe_changed(const QString& t)
         exe_label->clear();
     }
   else
-    exe_label->clear(); 
+    exe_label->clear();
   emit changed();
 }
 
@@ -381,7 +381,7 @@ void ButtonTab::wl_changed(const QString& t)
         wl_label->clear();
     }
   else
-    wl_label->clear(); 
+    wl_label->clear();
   emit changed();
 }
 
@@ -406,14 +406,14 @@ void ButtonTab::drawer_changed(const QString& t)
         drawer_label->clear();
     }
   else
-    drawer_label->clear(); 
+    drawer_label->clear();
   emit changed();
 }
 
 void ButtonTab::load()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
-  
+
   c->setGroup("buttons");
 
   bool tiles = c->readBoolEntry("EnableTileBackground", false);
@@ -425,7 +425,7 @@ void ButtonTab::load()
   browser_group->setEnabled(tiles);
   wl_group->setEnabled(tiles);
   drawer_group->setEnabled(tiles);
-  
+
   c->setGroup("button_tiles");
 
   bool kmenu_tiles = c->readBoolEntry("EnableKMenuTiles", true);
@@ -542,7 +542,7 @@ void ButtonTab::load()
 void ButtonTab::save()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
-  
+
   c->setGroup("buttons");
 
   c->writeEntry("EnableTileBackground", tiles_cb->isChecked());
@@ -577,7 +577,7 @@ void ButtonTab::defaults()
   browser_group->setEnabled(false);
   wl_group->setEnabled(false);
   drawer_group->setEnabled(false);
-  
+
   kmenu_cb->setChecked(true);
   url_cb->setChecked(true);
   browser_cb->setChecked(true);
@@ -609,7 +609,7 @@ QStringList ButtonTab::queryAvailableTiles()
 {
   QStringList list = KGlobal::dirs()->findAllResources("tiles","*_large_up.png");
   QStringList list2;
-  
+
   for (QStringList::Iterator it = list.begin(); it != list.end(); ++it)
     {
       QString tile = (*it);
@@ -622,7 +622,7 @@ QStringList ButtonTab::queryAvailableTiles()
   return list2;
 }
 
-QString ButtonTab::quickHelp()
+QString ButtonTab::quickHelp() const
 {
   return i18n("");
 }

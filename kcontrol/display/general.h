@@ -62,7 +62,7 @@ public:
     virtual void save();
     virtual void defaults();
 
-    virtual QString quickHelp();
+    virtual QString quickHelp() const;
 
 signals:
     void changed(bool);

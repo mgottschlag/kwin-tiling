@@ -12,7 +12,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   General Public License for more details.
-  
+
   You should have received a copy of the GNU Library General Public License
   along with this library; see the file COPYING.LIB.  If not, write to
   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -51,12 +51,12 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 {
   QString wtstr;
   QVBoxLayout *vbox = new QVBoxLayout(this, KDialog::marginHint(),
-				      KDialog::spacingHint(), "vbox");
+                      KDialog::spacingHint(), "vbox");
   QGroupBox *group = new QGroupBox(i18n("Appearance"), this);
   vbox->addWidget(group, 1);
 
   QGridLayout *grid = new QGridLayout( group, 5, 3, KDialog::spacingHint(),
-				       KDialog::spacingHint(), "grid");
+                       KDialog::spacingHint(), "grid");
   grid->addRowSpacing(0,group->fontMetrics().height());
   grid->setColStretch(2,1);
 
@@ -64,15 +64,15 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   greetstr_lined = new KLineEdit(group);
   label->setBuddy( greetstr_lined );
   connect(greetstr_lined, SIGNAL(textChanged(const QString&)),
-	  this, SLOT(changed()));
+      this, SLOT(changed()));
   grid->addWidget(label, 1,0 );
   grid->addMultiCellWidget(greetstr_lined, 1,1, 1,2);
   wtstr = i18n("This is the string KDM will display in the login window. "
-	       "You may want to put here some nice greeting or information "
-	       "about the operating system.<p> KDM will replace the string "
-	       "[HOSTNAME] with the actual host name of the computer "
-	       "running the X server. Especially in networks this is a good "
-	       "idea." );
+           "You may want to put here some nice greeting or information "
+           "about the operating system.<p> KDM will replace the string "
+           "[HOSTNAME] with the actual host name of the computer "
+           "running the X server. Especially in networks this is a good "
+           "idea." );
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( greetstr_lined, wtstr );
 
@@ -85,9 +85,9 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   clockRadio = new QRadioButton( i18n("Show clock"), helper );
   QButtonGroup *buttonGroup = new QButtonGroup( helper );
   connect( buttonGroup, SIGNAL(clicked(int)),
-	   this, SLOT(slotRadioClicked(int)) );
+       this, SLOT(slotRadioClicked(int)) );
   connect( buttonGroup, SIGNAL(clicked(int)),
-	   this, SLOT(changed()) );
+       this, SLOT(changed()) );
   buttonGroup->insert(logoRadio, KdmLogo);
   buttonGroup->insert(clockRadio, KdmClock);
   buttonGroup->hide();
@@ -111,15 +111,15 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   logobutton->setMaximumSize(80,80);
   logobutton->setIcon("kdelogo");
   connect(logobutton, SIGNAL(iconChanged(QString)),
-	  this, SLOT(slotLogoPixChanged(QString)));
+      this, SLOT(slotLogoPixChanged(QString)));
   connect(logobutton, SIGNAL(iconChanged(QString)),
-	  this, SLOT(changed()));
+      this, SLOT(changed()));
   grid->addRowSpacing(3, 80);
   grid->addWidget(logoLabel, 3,0);
   grid->addWidget(logobutton, 3,1, AlignVCenter|AlignLeft);
   wtstr = i18n("Click here to choose an image that KDM will display. "
-	       "You can also drag and drop an image onto this button "
-	       "(e.g. from Konqueror).");
+           "You can also drag and drop an image onto this button "
+           "(e.g. from Konqueror).");
   QWhatsThis::add( logoLabel, wtstr );
   QWhatsThis::add( logobutton, wtstr );
 
@@ -136,7 +136,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addWidget(label, 4,0);
   grid->addWidget(guicombo, 4, 1);
   wtstr = i18n("You can choose a basic GUI style here that will be "
-		"used by KDM only.");
+        "used by KDM only.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( guicombo, wtstr );
 
@@ -187,7 +187,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   load();
 
   vbox->addStretch(1);
-  
+
   // implement read-only mode
   if (getuid() != 0)
     {
@@ -217,7 +217,7 @@ void KDMAppearanceWidget::loadLocaleList(KLanguageCombo *combo, const QString &s
 
   // add all languages to the list
   QStringList alllang = KGlobal::dirs()->findAllResources("locale",
-							   sub + QString::fromLatin1("*/entry.desktop"));
+                               sub + QString::fromLatin1("*/entry.desktop"));
   alllang.sort();
   QStringList langlist = prilang;
   if (langlist.count() > 0)
@@ -226,25 +226,25 @@ void KDMAppearanceWidget::loadLocaleList(KLanguageCombo *combo, const QString &s
 
   QString submenu, name; // we are working on this menu
   for ( QStringList::ConstIterator it = langlist.begin();
-	it != langlist.end(); ++it )
+    it != langlist.end(); ++it )
     {
         if ((*it).isNull())
         {
-	  combo->insertSeparator();
-	  submenu = QString::fromLatin1("other");
-	  combo->insertSubmenu(i18n("Other"), submenu);
+      combo->insertSeparator();
+      submenu = QString::fromLatin1("other");
+      combo->insertSubmenu(i18n("Other"), submenu);
           continue;
         }
-	KSimpleConfig entry(*it);
-	entry.setGroup(QString::fromLatin1("KCM Locale"));
-	name = entry.readEntry(QString::fromLatin1("Name"), i18n("without name"));
+    KSimpleConfig entry(*it);
+    entry.setGroup(QString::fromLatin1("KCM Locale"));
+    name = entry.readEntry(QString::fromLatin1("Name"), i18n("without name"));
 
-	QString path = *it;
-	int index = path.findRev('/');
-	path = path.left(index);
-	index = path.findRev('/');
-	path = path.mid(index+1);
-	combo->insertLanguage(path, name, sub, submenu);
+    QString path = *it;
+    int index = path.findRev('/');
+    path = path.left(index);
+    index = path.findRev('/');
+    path = path.mid(index+1);
+    combo->insertLanguage(path, name, sub, submenu);
     }
 }
 
@@ -259,8 +259,8 @@ void KDMAppearanceWidget::setLogo(QString logo)
 
 void KDMAppearanceWidget::slotRadioClicked(int id)
 {
-	logobutton->setEnabled( id == KdmLogo );
-	logoLabel->setEnabled( id == KdmLogo );
+    logobutton->setEnabled( id == KdmLogo );
+    logoLabel->setEnabled( id == KdmLogo );
 }
 
 
@@ -318,33 +318,33 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 #endif
 
     if( !ext.contains(fileName.right(fileName.length()-
-				     last_dot_idx), false) ) {
+                     last_dot_idx), false) ) {
       msg =  i18n("Sorry, but %1\n"
-		  "does not seem to be an image file\n"
-		  "Please use files with these extensions:\n"
-		  "%2")
-	.arg(fileName)
-	.arg(ext);
+          "does not seem to be an image file\n"
+          "Please use files with these extensions:\n"
+          "%2")
+    .arg(fileName)
+    .arg(ext);
       KMessageBox::sorry( this, msg);
     } else {
       // we gotta check if it is a non-local file and make a tmp copy at the hd.
       if(url.protocol() != "file") {
-	pixurl += url.fileName();
-	KIO::file_copy(url, pixurl);
-	url = pixurl;
-	istmp = true;
+    pixurl += url.fileName();
+    KIO::file_copy(url, pixurl);
+    url = pixurl;
+    istmp = true;
       }
       // By now url should be "file:/..."
       QPixmap p(url.path());
       if(!p.isNull()) {
-	logobutton->setPixmap(p);
-	logobutton->adjustSize();
-	logopath = url.path();
+    logobutton->setPixmap(p);
+    logobutton->adjustSize();
+    logopath = url.path();
       } else {
         msg = i18n("There was an error loading the image:\n"
-		   "%1\n"
-		   "It will not be saved...")
-	    .arg(url.path());
+           "%1\n"
+           "It will not be saved...")
+        .arg(url.path());
         KMessageBox::sorry(this, msg);
       }
     }
@@ -452,7 +452,7 @@ void KDMAppearanceWidget::defaults()
   countrycombo->setCurrentItem("C");
 }
 
-QString KDMAppearanceWidget::quickHelp()
+QString KDMAppearanceWidget::quickHelp() const
 {
   return i18n("<h1>KDM - Appearance</h1> Here you can configure the basic appearance"
     " of the KDM login manager, i.e. a greeting string, an icon etc.<p>"

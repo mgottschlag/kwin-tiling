@@ -64,9 +64,9 @@
 extern "C" {
     KCModule *create_kwinoptions ( QWidget *parent, const char *name )
     {
-	//CT there's need for decision: kwm or kwin?
-	KGlobal::locale()->insertCatalogue("kcmkwm");
-	return new KWindowConfig( parent, name );
+    //CT there's need for decision: kwm or kwin?
+    KGlobal::locale()->insertCatalogue("kcmkwm");
+    return new KWindowConfig( parent, name );
     }
 }
 
@@ -79,12 +79,12 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 {
   QString wtstr;
   QBoxLayout *lay = new QVBoxLayout (this, KDialog::marginHint(),
-				     KDialog::spacingHint());
+                     KDialog::spacingHint());
 
   windowsBox = new QButtonGroup(i18n("Windows"), this);
 
   QBoxLayout *wLay = new QVBoxLayout (windowsBox,KDialog::marginHint(),
-				      KDialog::spacingHint());
+                      KDialog::spacingHint());
   wLay->addSpacing(fontMetrics().lineSpacing());
 
   QBoxLayout *bLay = new QVBoxLayout;
@@ -118,7 +118,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
   // resize animation - CT 27May98; 19Oct1998
   resizeAnimTitleLabel = new QLabel(i18n("Resize animation:"),
-				    windowsBox);
+                    windowsBox);
   rLay->addWidget(resizeAnimTitleLabel,0,0);
 
   resizeAnimSlider = new QSlider(0,10,10,0,QSlider::Horizontal, windowsBox);
@@ -151,8 +151,8 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   plcBox = new QButtonGroup(i18n("Placement policy"),this);
 
   QGridLayout *pLay = new QGridLayout(plcBox,3,3,
-				      KDialog::marginHint(),
-				      KDialog::spacingHint());
+                      KDialog::marginHint(),
+                      KDialog::spacingHint());
   pLay->addRowSpacing(0,fontMetrics().lineSpacing());
 
   placementCombo = new QComboBox(false, plcBox);
@@ -173,11 +173,11 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     " <li><em>Random</em> will use a random position</li></ul>") );
 
   connect(placementCombo, SIGNAL(activated(int)),this,
-	  SLOT(ifPlacementIsInteractive()) );
+      SLOT(ifPlacementIsInteractive()) );
 
   iTLabel = new QLabel(i18n("  Allowed overlap:\n"
-					       "(% of desktop space)"),
-		       plcBox);
+                           "(% of desktop space)"),
+               plcBox);
   iTLabel->setAlignment(AlignTop|AlignHCenter);
   pLay->addWidget(iTLabel,1,1);
 
@@ -192,8 +192,8 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   fcsBox = new QButtonGroup(i18n("Focus policy"),this);
 
   QGridLayout *fLay = new QGridLayout(fcsBox,5,3,
-				      KDialog::marginHint(),
-				      KDialog::spacingHint());
+                      KDialog::marginHint(),
+                      KDialog::spacingHint());
   fLay->addRowSpacing(0,fontMetrics().lineSpacing());
   fLay->setColStretch(0,0);
   fLay->setColStretch(1,1);
@@ -227,7 +227,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     ) );
 
   connect(focusCombo, SIGNAL(activated(int)),this,
-	  SLOT(setAutoRaiseEnabled()) );
+      SLOT(setAutoRaiseEnabled()) );
 
   // autoraise delay
 
@@ -488,7 +488,7 @@ void KWindowConfig::load( void )
       interactiveTrigger->setValue(0);
     else
       interactiveTrigger->setValue (key.right(key.length()
-					      - comma_pos).toUInt(0));
+                          - comma_pos).toUInt(0));
     iTLabel->setEnabled(true);
     interactiveTrigger->show();
   }
@@ -624,7 +624,7 @@ void KWindowConfig::defaults()
     setFocus(CLICK_TO_FOCUS);
 }
 
-QString KWindowConfig::quickHelp()
+QString KWindowConfig::quickHelp() const
 {
     return i18n("<h1>Window Behavior</h1> Here you can modify the way windows behave when being"
       " moved or resized and KWin's policies regarding window placement and window focus.<p>"

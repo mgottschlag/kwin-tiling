@@ -47,13 +47,13 @@
 #include "toplevel.h"
 
 KLocaleConfig::KLocaleConfig(KLocaleAdvanced *_locale,
-			     QWidget *parent, const char *name)
+                 QWidget *parent, const char *name)
   : QWidget (parent, name),
     locale(_locale)
 {
     QGridLayout *lay = new QGridLayout(this, 7, 2,
-				       KDialog::marginHint(),
-				       KDialog::spacingHint());
+                       KDialog::marginHint(),
+                       KDialog::spacingHint());
     lay->setAutoAdd(TRUE);
 
     labCountry = new QLabel(this, I18N_NOOP("Country:"));
@@ -61,19 +61,19 @@ KLocaleConfig::KLocaleConfig(KLocaleAdvanced *_locale,
     comboCountry->setFixedHeight(comboCountry->sizeHint().height());
     labCountry->setBuddy(comboCountry);
     connect( comboCountry, SIGNAL(activated(int)),
-	     this, SLOT(changedCountry(int)) );
+         this, SLOT(changedCountry(int)) );
 
     labLang = new QLabel(this, I18N_NOOP("Language:"));
     comboLang = new KLanguageCombo(this);
     comboLang->setFixedHeight(comboLang->sizeHint().height());
     connect( comboLang, SIGNAL(activated(int)),
-	     this, SLOT(changedLanguage(int)) );
+         this, SLOT(changedLanguage(int)) );
 
     labChset = new QLabel(this, I18N_NOOP("Charset:"));
     comboChset = new KLanguageCombo(this);
     comboChset->setFixedHeight(comboChset->sizeHint().height());
     connect( comboChset, SIGNAL(activated(int)),
-	     this, SLOT(changedCharset(int)) );
+         this, SLOT(changedCharset(int)) );
 
     QStringList list = KGlobal::charsets()->availableCharsetNames();
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
@@ -106,7 +106,7 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo, const QStringList &f
 
   // add all languages to the list
   QStringList alllang = KGlobal::dirs()->findAllResources("locale",
-							   QString::fromLatin1("*/entry.desktop"));
+                               QString::fromLatin1("*/entry.desktop"));
   alllang.sort();
   QStringList langlist = prilang;
   if (langlist.count() > 0)
@@ -116,26 +116,26 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo, const QStringList &f
   int menu_index = -2;
   QString submenu; // we are working on this menu
   for ( QStringList::ConstIterator it = langlist.begin();
-	it != langlist.end(); ++it )
+    it != langlist.end(); ++it )
     {
         if ((*it).isNull())
         {
-	  combo->insertSeparator();
-	  submenu = QString::fromLatin1("other");
-	  combo->insertSubmenu(locale->translate("Other"), submenu, QString::null, -2);
+      combo->insertSeparator();
+      submenu = QString::fromLatin1("other");
+      combo->insertSubmenu(locale->translate("Other"), submenu, QString::null, -2);
           menu_index = -1; // first entries should _not_ be sorted
           continue;
         }
-	KSimpleConfig entry(*it);
-	entry.setGroup(QString::fromLatin1("KCM Locale"));
-	QString name = entry.readEntry(QString::fromLatin1("Name"), locale->translate("without name"));
-	
-	QString path = *it;
-	int index = path.findRev('/');
-	path = path.left(index);
-	index = path.findRev('/');
-	path = path.mid(index+1);
-	combo->insertLanguage(path, name, QString::null, submenu, menu_index);
+    KSimpleConfig entry(*it);
+    entry.setGroup(QString::fromLatin1("KCM Locale"));
+    QString name = entry.readEntry(QString::fromLatin1("Name"), locale->translate("without name"));
+
+    QString path = *it;
+    int index = path.findRev('/');
+    path = path.left(index);
+    index = path.findRev('/');
+    path = path.mid(index+1);
+    combo->insertLanguage(path, name, QString::null, submenu, menu_index);
     }
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -153,12 +153,12 @@ void KLocaleConfig::loadCountryList(KLanguageCombo *combo)
   combo->clear();
 
   QStringList regionlist = KGlobal::dirs()->findAllResources("locale",
-							     sub + QString::fromLatin1("*.desktop"));
+                                 sub + QString::fromLatin1("*.desktop"));
   regionlist.sort();
 
   for ( QStringList::ConstIterator it = regionlist.begin();
-	it != regionlist.end();
-	++it )
+    it != regionlist.end();
+    ++it )
   {
     QString tag = *it;
     int index;
@@ -172,32 +172,32 @@ void KLocaleConfig::loadCountryList(KLanguageCombo *combo)
     KSimpleConfig entry(*it);
     entry.setGroup(QString::fromLatin1("KCM Locale"));
     QString name = entry.readEntry(QString::fromLatin1("Name"),
-				   locale->translate("without name"));
+                   locale->translate("without name"));
 
     combo->insertSubmenu( name, '-' + tag, sub );
   }
 
   // add all languages to the list
   QStringList countrylist = KGlobal::dirs()->findAllResources("locale",
-							   sub + QString::fromLatin1("*/entry.desktop"));
+                               sub + QString::fromLatin1("*/entry.desktop"));
   countrylist.sort();
 
   for ( QStringList::ConstIterator it = countrylist.begin();
-	it != countrylist.end(); ++it )
+    it != countrylist.end(); ++it )
     {
-	KSimpleConfig entry(*it);
-	entry.setGroup(QString::fromLatin1("KCM Locale"));
-	QString name = entry.readEntry(QString::fromLatin1("Name"),
-				       locale->translate("without name"));
-	QString submenu = '-' + entry.readEntry(QString::fromLatin1("Region"));
-	
-	QString tag = *it;
-	int index = tag.findRev('/');
-	tag.truncate(index);
-	index = tag.findRev('/');
-	tag = tag.mid(index+1);
+    KSimpleConfig entry(*it);
+    entry.setGroup(QString::fromLatin1("KCM Locale"));
+    QString name = entry.readEntry(QString::fromLatin1("Name"),
+                       locale->translate("without name"));
+    QString submenu = '-' + entry.readEntry(QString::fromLatin1("Region"));
+
+    QString tag = *it;
+    int index = tag.findRev('/');
+    tag.truncate(index);
+    index = tag.findRev('/');
+    tag = tag.mid(index+1);
         int menu_index = combo->containsTag(tag) ? -1 : -2;
-	combo->insertLanguage(tag, name, sub, submenu, menu_index);
+    combo->insertLanguage(tag, name, sub, submenu, menu_index);
     }
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -217,12 +217,12 @@ void KLocaleConfig::load()
   locale->setCountry(country);
 
   QString charset = config->readEntry(QString::fromLatin1("Charset"),
-				      QString::fromLatin1("iso-8859-1"));
+                      QString::fromLatin1("iso-8859-1"));
   emit chsetChanged();
 
   KSimpleConfig ent(locate("locale",
-			   QString::fromLatin1("l10n/%1/entry.desktop")
-			   .arg(country)), true);
+               QString::fromLatin1("l10n/%1/entry.desktop")
+               .arg(country)), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
   langs = ent.readListEntry(QString::fromLatin1("Languages"));
   if (langs.isEmpty()) langs = QString::fromLatin1("C");
@@ -288,7 +288,7 @@ void KLocaleConfig::defaults()
   emit countryChanged();
 }
 
-QString KLocaleConfig::quickHelp()
+QString KLocaleConfig::quickHelp() const
 {
   return locale->translate("<h1>Locale</h1> Here you can select from several predefined"
     " national settings, i.e. your country, the language that will be used by the"
@@ -316,8 +316,8 @@ void KLocaleConfig::changedCountry(int i)
   for ( QStringList::Iterator it = langs.begin(); it != langs.end(); ++it )
     if (comboLang->containsTag(*it))
       {
-	lang = *it;
-	break;
+    lang = *it;
+    break;
       }
 
   locale->setLanguage(lang);
@@ -353,13 +353,13 @@ void KLocaleConfig::changedCharset(int)
 void KLocaleConfig::reTranslate()
 {
   QToolTip::add(comboCountry, locale->translate
-		( "This is were you live. KDE will use the defaults for "
-		  "this country.") );
+        ( "This is were you live. KDE will use the defaults for "
+          "this country.") );
   QToolTip::add(comboLang, locale->translate
-		( "All KDE programs will be displayed in this language (if "
-		  "available).") );
+        ( "All KDE programs will be displayed in this language (if "
+          "available).") );
   QToolTip::add(comboChset, locale->translate
-		( "The prefered charset for fonts.") );
+        ( "The prefered charset for fonts.") );
 
   QString str;
 
@@ -378,7 +378,7 @@ void KLocaleConfig::reTranslate()
       "be translated to your language; in this case, they will automatically "
       "fall back to the default language, i.e. US English." );
   QWhatsThis::add( labLang, str );
-  QWhatsThis::add( comboLang, str );            
+  QWhatsThis::add( comboLang, str );
 
   str = locale->translate
     ( "Here you can choose the charset KDE uses to display "
@@ -386,5 +386,5 @@ void KLocaleConfig::reTranslate()
       "Western European language. If not, you may have to choose a different "
       "charset." );
   QWhatsThis::add( labChset, str );
-  QWhatsThis::add( comboChset, str );            
+  QWhatsThis::add( comboChset, str );
 }

@@ -95,7 +95,7 @@ public:
     void updateValues();
     void readSettings();
 
-    QString quickHelp();
+    QString quickHelp() const;
 
 signals:
     void changed(bool);

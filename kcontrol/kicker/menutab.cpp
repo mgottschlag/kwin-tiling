@@ -42,7 +42,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
   // general group
   general_group = new QGroupBox(i18n("General"), this);
-  
+
   QVBoxLayout *vbox = new QVBoxLayout(general_group, KDialog::marginHint(),
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
@@ -61,7 +61,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
   // browser menu group
   browser_group = new QGroupBox(i18n("Browser Menus"), this);
-  
+
   vbox = new QVBoxLayout(browser_group, KDialog::marginHint(),
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
@@ -140,7 +140,7 @@ void MenuTab::clear_cache_clicked()
 void MenuTab::load()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
-  
+
   c->setGroup("menus");
 
   bool cc = c->readBoolEntry("ClearMenuCache", true);
@@ -162,7 +162,7 @@ void MenuTab::load()
 void MenuTab::save()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
-  
+
   c->setGroup("menus");
 
   c->writeEntry("ClearMenuCache", clear_cache_cb->isChecked());
@@ -190,7 +190,7 @@ void MenuTab::defaults()
   show_hidden_cb->setChecked(true);
 }
 
-QString MenuTab::quickHelp()
+QString MenuTab::quickHelp() const
 {
   return i18n("");
 }

@@ -160,7 +160,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
 //    << i18n("Panel clock")    << "General"    << "dateFont"     << "kickerrc";
 
   QValueList<QFont> defaultFontList;
-  
+
   QFont defaultFont("helvetica", 12);
 
   defaultFontList
@@ -245,13 +245,13 @@ KFonts::KFonts(QWidget *parent, const char *name)
     QToolTip::add(preview, i18n("Preview of the \"%1\" font").arg(i->text()));
 
     QLabel * fontUse = new QLabel(i->text(), this);
-    
+
     QWhatsThis::add(fontUse, *quickHelpIt++);
 
     QPushButton * chooseButton = new QPushButton(i18n("Choose..."), this);
-  
+
     QWhatsThis::add(chooseButton, i18n("Click to select a font"));
-    
+
     connect(chooseButton, SIGNAL(clicked()), i, SLOT(choose()));
 
     fontUseLayout->addWidget(fontUse, count, 0);
@@ -281,7 +281,7 @@ void KFonts::defaults()
   emit changed(true);
 }
 
-QString KFonts::quickHelp()
+QString KFonts::quickHelp() const
 {
     return i18n( "<h1>Fonts</h1> This module allows you to choose which"
       " fonts will be used to display text in KDE. You can select not only"
@@ -310,7 +310,7 @@ void KFonts::save()
     return;
 
   for ( int i = 0; i < (int) fontUseList.count(); i++ )
-    fontUseList.at( i )->writeFont();  
+    fontUseList.at( i )->writeFont();
 
   KIPC::sendMessageAll(KIPC::FontChanged);
 

@@ -64,8 +64,8 @@
 
 extern "C" {
     KCModule *create_background(QWidget *parent, const char *name) {
-	KGlobal::locale()->insertCatalogue("kcmdisplay");
-	return new KBackground(parent, name);
+    KGlobal::locale()->insertCatalogue("kcmdisplay");
+    return new KBackground(parent, name);
     }
 }
 
@@ -82,22 +82,22 @@ KBGMonitor::KBGMonitor(QWidget *parent, const char *name)
 void KBGMonitor::dropEvent(QDropEvent *e)
 {
     if (!QUriDrag::canDecode(e))
-	return;
+    return;
 
     QStringList uris;
     if (QUriDrag::decodeLocalFiles(e, uris) && (uris.count() > 0)) {
-	QString uri = *uris.begin();
-	emit imageDropped(uri);
+    QString uri = *uris.begin();
+    emit imageDropped(uri);
     }
 }
-				
-					
+
+
 void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 {
     if (QUriDrag::canDecode(e))
-	e->accept(rect());
+    e->accept(rect());
     else
-	e->ignore(rect());
+    e->ignore(rect());
 }
 
 
@@ -186,7 +186,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
     m_pColor1But = new KColorButton(m_pTab1);
     connect(m_pColor1But, SIGNAL(changed(const QColor &)),
-	    SLOT(slotColor1(const QColor &)));
+        SLOT(slotColor1(const QColor &)));
     grid->addWidget(m_pColor1But, 1, 1);
     lbl->setBuddy(m_pColor1But);
     QWhatsThis::add( m_pColor1But, i18n("Click to choose a color.") );
@@ -196,7 +196,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
     m_pColor2But = new KColorButton(m_pTab1);
     connect(m_pColor2But, SIGNAL(changed(const QColor &)),
-	    SLOT(slotColor2(const QColor &)));
+        SLOT(slotColor2(const QColor &)));
     grid->addWidget(m_pColor2But, 2, 1);
     lbl->setBuddy(m_pColor2But);
     QWhatsThis::add( m_pColor2But, i18n("Click to choose a second color. If the"
@@ -243,7 +243,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pWallpaperBox = new QComboBox(m_pTab2);
     lbl->setBuddy(m_pWallpaperBox);
     connect(m_pWallpaperBox, SIGNAL(activated(const QString &)),
-	    SLOT(slotWallpaper(const QString &)));
+        SLOT(slotWallpaper(const QString &)));
     grid->addWidget(m_pWallpaperBox, 1, 1);
     QWhatsThis::add( m_pWallpaperBox, i18n("Click to choose the graphic you want"
       " to use as wallpaper.") );
@@ -304,8 +304,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
       " looking at the effects in the preview image above.") );
     m_pReverseBlending = new QCheckBox(i18n("&Reverse"), m_pTab3);
     m_pReverseBlending->setFixedSize(m_pReverseBlending->sizeHint());
-    connect(m_pReverseBlending, SIGNAL(toggled(bool)), 
-	    SLOT(slotReverseBlending(bool)));
+    connect(m_pReverseBlending, SIGNAL(toggled(bool)),
+        SLOT(slotReverseBlending(bool)));
     grid->addWidget(m_pReverseBlending, 1, 2, Qt::AlignLeft);
     QWhatsThis::add( m_pReverseBlending, i18n("For some types of blending, you can"
       " reverse the background and wallpaper layers by checking this option.") );
@@ -330,8 +330,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_Max = KWin::numberOfDesktops();
     m_pGlobals = new KGlobalBackgroundSettings();
     for (int i=0; i<m_Max; i++) {
-	m_Renderer[i] = new KBackgroundRenderer(i);
-	connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
+    m_Renderer[i] = new KBackgroundRenderer(i);
+    connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
     }
 
     // Doing this only in KBGMonitor only doesn't work, probably due to the
@@ -353,7 +353,7 @@ void KBackground::init()
 
     // Desktop names
     for (i=0; i<m_Max; i++)
-	m_pDeskList->insertItem(m_pGlobals->deskName(i));
+    m_pDeskList->insertItem(m_pGlobals->deskName(i));
 
     // Background modes: make sure these match with kdesktop/bgrender.cc !!
     m_pBackgroundBox->insertItem(i18n("Simple Color", "Flat"));
@@ -383,10 +383,10 @@ void KBackground::init()
     // Wallpapers
     QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
     for (i=0; i<(int)lst.count(); i++) {
-	int n = lst[i].findRev('/');
-	QString s = lst[i].mid(n+1);
-	m_pWallpaperBox->insertItem(s);
-	m_Wallpaper[s] = i;
+    int n = lst[i].findRev('/');
+    QString s = lst[i].mid(n+1);
+    m_pWallpaperBox->insertItem(s);
+    m_Wallpaper[s] = i;
     }
 
     // I would have prefered to use setMinimumWidth here, but it seems to
@@ -412,17 +412,17 @@ void KBackground::apply()
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     // Desktop names
     if (m_pGlobals->commonBackground()) {
-	m_pCBCommon->setChecked(true);
-	m_pDeskList->setEnabled(false);
+    m_pCBCommon->setChecked(true);
+    m_pDeskList->setEnabled(false);
     } else  {
-	m_pCBCommon->setChecked(false);
-	m_pDeskList->setEnabled(true);
-	m_pDeskList->setCurrentItem(m_Desk);
+    m_pCBCommon->setChecked(false);
+    m_pDeskList->setEnabled(true);
+    m_pDeskList->setCurrentItem(m_Desk);
     }
 
     // Background mode
@@ -431,89 +431,89 @@ void KBackground::apply()
     m_pColor2But->setColor(r->colorB());
     switch (r->backgroundMode()) {
     case KBackgroundSettings::Program:
-	m_pColor1But->setEnabled(false);
-	m_pColor2But->setEnabled(false);
-	m_pBGSetupBut->setEnabled(true);
-	break;
+    m_pColor1But->setEnabled(false);
+    m_pColor2But->setEnabled(false);
+    m_pBGSetupBut->setEnabled(true);
+    break;
     case KBackgroundSettings::Flat:
-	m_pColor1But->setEnabled(true);
-	m_pColor2But->setEnabled(false);
-	m_pBGSetupBut->setEnabled(false);
-	break;
+    m_pColor1But->setEnabled(true);
+    m_pColor2But->setEnabled(false);
+    m_pBGSetupBut->setEnabled(false);
+    break;
     case KBackgroundSettings::Pattern:
-	m_pColor1But->setEnabled(true);
-	m_pColor2But->setEnabled(true);
-	m_pBGSetupBut->setEnabled(true);
-	break;
+    m_pColor1But->setEnabled(true);
+    m_pColor2But->setEnabled(true);
+    m_pBGSetupBut->setEnabled(true);
+    break;
     default:
-	m_pColor1But->setEnabled(true);
-	m_pColor2But->setEnabled(true);
-	m_pBGSetupBut->setEnabled(false);
-	break;
+    m_pColor1But->setEnabled(true);
+    m_pColor2But->setEnabled(true);
+    m_pBGSetupBut->setEnabled(false);
+    break;
     }
 
     // Wallpaper mode
     QString wp = r->wallpaper();
     if (wp.isEmpty())
-	wp = QString(" ");
+    wp = QString(" ");
     if (!m_Wallpaper.contains(wp)) {
-	int count = m_Wallpaper.count();
-	m_Wallpaper[wp] = count;
-	m_pWallpaperBox->insertItem(wp);
-	m_pWallpaperBox->setCurrentItem(count);
+    int count = m_Wallpaper.count();
+    m_Wallpaper[wp] = count;
+    m_pWallpaperBox->insertItem(wp);
+    m_pWallpaperBox->setCurrentItem(count);
     }
     m_pWallpaperBox->setCurrentItem(m_Wallpaper[wp]);
     m_pArrangementBox->setCurrentItem(r->wallpaperMode());
 
-    if (r->wallpaperMode() == KBackgroundSettings::NoWallpaper) 
+    if (r->wallpaperMode() == KBackgroundSettings::NoWallpaper)
     {
-	m_pCBMulti->setEnabled(false);
-	m_pWallpaperBox->setEnabled(false);
-	m_pBrowseBut->setEnabled(false);
-	m_pMSetupBut->setEnabled(false);
+    m_pCBMulti->setEnabled(false);
+    m_pWallpaperBox->setEnabled(false);
+    m_pBrowseBut->setEnabled(false);
+    m_pMSetupBut->setEnabled(false);
 
-	// Blending not possible without wallpaper
-	m_pBlendBox->setEnabled(false);
-	m_pBlendSlider->setEnabled(false);
-	m_pReverseBlending->setEnabled(false);
+    // Blending not possible without wallpaper
+    m_pBlendBox->setEnabled(false);
+    m_pBlendSlider->setEnabled(false);
+    m_pReverseBlending->setEnabled(false);
     }
-    else 
+    else
     {
-	m_pCBMulti->setEnabled(true);
-	m_pBlendBox->setEnabled(true);
-	m_pBlendSlider->setEnabled(
-		(r->blendMode() == KBackgroundSettings::NoBlending) ? false : true);
-	m_pReverseBlending->setEnabled(
-		(r->blendMode() < KBackgroundSettings::IntensityBlending) ? false : true);
+    m_pCBMulti->setEnabled(true);
+    m_pBlendBox->setEnabled(true);
+    m_pBlendSlider->setEnabled(
+        (r->blendMode() == KBackgroundSettings::NoBlending) ? false : true);
+    m_pReverseBlending->setEnabled(
+        (r->blendMode() < KBackgroundSettings::IntensityBlending) ? false : true);
 
-	// Multi mode
-	if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti) 
-	{
-	    m_pCBMulti->setChecked(false);
-	    m_pWallpaperBox->setEnabled(true);
-	    m_pBrowseBut->setEnabled(true);
-	    m_pMSetupBut->setEnabled(false);
-	} else 
-	{
-	    m_pCBMulti->setChecked(true);
-	    m_pWallpaperBox->setEnabled(false);
-	    m_pBrowseBut->setEnabled(false);
-	    m_pMSetupBut->setEnabled(true);
-	}
+    // Multi mode
+    if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti)
+    {
+        m_pCBMulti->setChecked(false);
+        m_pWallpaperBox->setEnabled(true);
+        m_pBrowseBut->setEnabled(true);
+        m_pMSetupBut->setEnabled(false);
+    } else
+    {
+        m_pCBMulti->setChecked(true);
+        m_pWallpaperBox->setEnabled(false);
+        m_pBrowseBut->setEnabled(false);
+        m_pMSetupBut->setEnabled(true);
+    }
     }
 
     m_pBlendBox->setCurrentItem(r->blendMode());
     m_pBlendSlider->setValue(r->blendBalance());
     m_pReverseBlending->setChecked(r->reverseBlending());
 
-    if (m_pGlobals->limitCache()) 
+    if (m_pGlobals->limitCache())
     {
-	m_pCBLimit->setChecked(true);
-	m_pCacheBox->setEnabled(true);
-    } else 
+    m_pCBLimit->setChecked(true);
+    m_pCacheBox->setEnabled(true);
+    } else
     {
-	m_pCBLimit->setChecked(false);
-	m_pCacheBox->setEnabled(false);
+    m_pCBLimit->setChecked(false);
+    m_pCacheBox->setEnabled(false);
     }
     m_pCacheBox->setValue(m_pGlobals->cacheSize());
 
@@ -527,7 +527,7 @@ void KBackground::load()
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     m_Renderer[desk]->load(desk);
 
     apply();
@@ -540,12 +540,12 @@ void KBackground::save()
     kdDebug() << "Saving stuff..." << endl;
     m_pGlobals->writeSettings();
     for (int i=0; i<m_Max; i++)
-	m_Renderer[i]->writeSettings();
+    m_Renderer[i]->writeSettings();
 
     // reconfigure kdesktop. kdesktop will notify all clients
     DCOPClient *client = kapp->dcopClient();
     if (!client->isAttached())
-	client->attach();
+    client->attach();
     client->send("kdesktop", "KBackgroundIface", "configure()", "");
 
     emit changed(false);
@@ -556,11 +556,11 @@ void KBackground::defaults()
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     if (r->isActive())
-	r->stop();
+    r->stop();
     r->setBackgroundMode(KBackgroundSettings::Flat);
     r->setColorA(_defColorA);
     r->setColorB(_defColorB);
@@ -580,10 +580,10 @@ void KBackground::defaults()
 void KBackground::slotSelectDesk(int desk)
 {
     if (desk == m_Desk)
-	return;
+    return;
 
     if (m_Renderer[m_Desk]->isActive())
-	m_Renderer[m_Desk]->stop();
+    m_Renderer[m_Desk]->stop();
     m_Desk = desk;
     apply();
 }
@@ -592,7 +592,7 @@ void KBackground::slotSelectDesk(int desk)
 void KBackground::slotCommonDesk(bool common)
 {
     if (common == m_pGlobals->commonBackground())
-	return;
+    return;
 
     m_pGlobals->setCommonBackground(common);
     apply();
@@ -607,11 +607,11 @@ void KBackground::slotBGMode(int mode)
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     if (mode == r->backgroundMode())
-	return;
+    return;
 
     r->stop();
     r->setBackgroundMode(mode);
@@ -626,17 +626,17 @@ void KBackground::slotBlendMode(int mode)
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     if (mode == r->blendMode())
-	return;
+    return;
 
     m_pBlendSlider->setEnabled( (mode==KBackgroundSettings::NoBlending)
-				?false:true);
+                ?false:true);
     m_pReverseBlending->setEnabled(
-	  (r->blendMode()<KBackgroundSettings::IntensityBlending)?false:true);
-				
+      (r->blendMode()<KBackgroundSettings::IntensityBlending)?false:true);
+
     r->stop();
     r->setBlendMode(mode);
     apply();
@@ -650,11 +650,11 @@ void KBackground::slotBlendBalance(int value)
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     if (value == r->blendBalance())
-	return;
+    return;
 
     r->stop();
     r->setBlendBalance(value);
@@ -669,11 +669,11 @@ void KBackground::slotReverseBlending(bool value)
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     if (value == r->reverseBlending())
-	return;
+    return;
 
     r->stop();
     r->setReverseBlending(value);
@@ -689,38 +689,38 @@ void KBackground::slotBGSetup()
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     switch (r->backgroundMode()) {
     case KBackgroundSettings::Pattern:
     {
-	KPatternSelectDialog dlg;
-	QString cur = r->KBackgroundPattern::name();
-	dlg.setCurrent(cur);
-	if ((dlg.exec() == QDialog::Accepted) && !dlg.pattern().isEmpty()) {
-	    r->stop();
-	    r->setPattern(dlg.pattern());
-	    r->start();
-	    emit changed(true);
-	}
-	break;
+    KPatternSelectDialog dlg;
+    QString cur = r->KBackgroundPattern::name();
+    dlg.setCurrent(cur);
+    if ((dlg.exec() == QDialog::Accepted) && !dlg.pattern().isEmpty()) {
+        r->stop();
+        r->setPattern(dlg.pattern());
+        r->start();
+        emit changed(true);
+    }
+    break;
     }
     case KBackgroundSettings::Program:
     {
-	KProgramSelectDialog dlg;
-	QString cur = r->KBackgroundProgram::name();
-	dlg.setCurrent(cur);
-	if ((dlg.exec() == QDialog::Accepted) && !dlg.program().isEmpty()) {
-	    r->stop();
-	    r->setProgram(dlg.program());
-	    r->start();
-	    emit changed(true);
-	}
-	break;
+    KProgramSelectDialog dlg;
+    QString cur = r->KBackgroundProgram::name();
+    dlg.setCurrent(cur);
+    if ((dlg.exec() == QDialog::Accepted) && !dlg.program().isEmpty()) {
+        r->stop();
+        r->setProgram(dlg.program());
+        r->start();
+        emit changed(true);
+    }
+    break;
     }
     default:
-	break;
+    break;
     }
 }
 
@@ -729,11 +729,11 @@ void KBackground::slotColor1(const QColor &color)
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     if (color == r->colorA())
-	return;
+    return;
 
     r->stop();
     r->setColorA(color);
@@ -746,11 +746,11 @@ void KBackground::slotColor2(const QColor &color)
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     if (color == r->colorB())
-	return;
+    return;
 
     r->stop();
     r->setColorB(color);
@@ -763,16 +763,16 @@ void KBackground::slotImageDropped(QString uri)
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
     if (uri == r->wallpaper())
-	return;
+    return;
 
     if (!m_Wallpaper.contains(uri)) {
-	int count = m_Wallpaper.count();
-	m_Wallpaper[uri] = count;
-	m_pWallpaperBox->insertItem(uri);
-	m_pWallpaperBox->setCurrentItem(count);
+    int count = m_Wallpaper.count();
+    m_Wallpaper[uri] = count;
+    m_pWallpaperBox->insertItem(uri);
+    m_pWallpaperBox->setCurrentItem(count);
     }
 
     r->stop();
@@ -786,23 +786,23 @@ void KBackground::slotMultiMode(bool multi)
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
     if (multi == (r->multiWallpaperMode() != KBackgroundSettings::NoMulti))
-	return;
+    return;
 
     r->stop();
     r->setMultiWallpaperMode(multi ? 1 : 0);
     r->start();
 
     if (multi) {
-	m_pWallpaperBox->setEnabled(false);
-	m_pBrowseBut->setEnabled(false);
-	m_pMSetupBut->setEnabled(true);
+    m_pWallpaperBox->setEnabled(false);
+    m_pBrowseBut->setEnabled(false);
+    m_pMSetupBut->setEnabled(true);
     } else {
-	m_pWallpaperBox->setEnabled(true);
-	m_pBrowseBut->setEnabled(true);
-	m_pMSetupBut->setEnabled(false);
+    m_pWallpaperBox->setEnabled(true);
+    m_pBrowseBut->setEnabled(true);
+    m_pMSetupBut->setEnabled(false);
     }
     emit changed(true);
 }
@@ -812,11 +812,11 @@ void KBackground::slotWallpaper(const QString &wallpaper)
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     if (wallpaper == r->wallpaper())
-	return;
+    return;
 
     r->stop();
     r->setWallpaper(wallpaper);
@@ -831,12 +831,12 @@ void KBackground::slotBrowseWallpaper()
 
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
-    KURL url = KFileDialog::getOpenURL(startUrl.url(), 
-                                       KImageIO::pattern(KImageIO::Reading), 
-                                       0, 
+    KURL url = KFileDialog::getOpenURL(startUrl.url(),
+                                       KImageIO::pattern(KImageIO::Reading),
+                                       0,
                                        i18n("Select Wallpaper"));
     if (url.isEmpty())
       return;
@@ -847,13 +847,13 @@ void KBackground::slotBrowseWallpaper()
     startUrl = url;
     QString file = url.path();
     if (file == r->wallpaper())
-	return;
+    return;
 
     if (!m_Wallpaper.contains(file)) {
-	int count = m_Wallpaper.count();
-	m_Wallpaper[file] = count;
-	m_pWallpaperBox->insertItem(file);
-	m_pWallpaperBox->setCurrentItem(count);
+    int count = m_Wallpaper.count();
+    m_Wallpaper[file] = count;
+    m_pWallpaperBox->insertItem(file);
+    m_pWallpaperBox->setCurrentItem(count);
     }
 
     r->stop();
@@ -870,11 +870,11 @@ void KBackground::slotWPMode(int mode)
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     if (mode == r->wallpaperMode())
-	return;
+    return;
 
     if (mode == KBackgroundSettings::NoWallpaper) {
       m_pCBMulti->setEnabled(false);
@@ -890,19 +890,19 @@ void KBackground::slotWPMode(int mode)
       m_pCBMulti->setEnabled(true);
       m_pBlendBox->setEnabled(true);
       m_pBlendSlider->setEnabled(
-	  (r->blendMode()==KBackgroundSettings::NoBlending)?false:true);
+      (r->blendMode()==KBackgroundSettings::NoBlending)?false:true);
 
       // Multi mode
       if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti) {
-	m_pCBMulti->setChecked(false);
-	m_pWallpaperBox->setEnabled(true);
-	m_pBrowseBut->setEnabled(true);
-	m_pMSetupBut->setEnabled(false);
+    m_pCBMulti->setChecked(false);
+    m_pWallpaperBox->setEnabled(true);
+    m_pBrowseBut->setEnabled(true);
+    m_pMSetupBut->setEnabled(false);
       } else {
-	m_pCBMulti->setChecked(true);
-	m_pWallpaperBox->setEnabled(false);
-	m_pBrowseBut->setEnabled(false);
-	m_pMSetupBut->setEnabled(true);
+    m_pCBMulti->setChecked(true);
+    m_pWallpaperBox->setEnabled(false);
+    m_pBrowseBut->setEnabled(false);
+    m_pMSetupBut->setEnabled(true);
       }
     }
 
@@ -917,14 +917,14 @@ void KBackground::slotSetupMulti()
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     KMultiWallpaperDialog dlg(r);
     if (dlg.exec() == QDialog::Accepted) {
-	r->stop();
-	r->start();
-	emit changed(true);
+    r->stop();
+    r->start();
+    emit changed(true);
     }
 }
 
@@ -934,7 +934,7 @@ void KBackground::slotLimitCache(bool limit)
     m_pGlobals->setLimitCache(limit);
     m_pCacheBox->setEnabled(limit);
     emit changed(true);
-} 
+}
 
 
 void KBackground::slotCacheSize(int size)
@@ -950,22 +950,22 @@ void KBackground::slotPreviewDone(int desk_done)
 
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
-	desk = 0;
+    desk = 0;
     if (desk != desk_done)
-	return;
+    return;
     KBackgroundRenderer *r = m_Renderer[desk];
 
     KPixmap pm;
     if (QPixmap::defaultDepth() < 15)
-	pm.convertFromImage(*r->image(), KPixmap::LowColor);
+    pm.convertFromImage(*r->image(), KPixmap::LowColor);
     else
-	pm.convertFromImage(*r->image());
+    pm.convertFromImage(*r->image());
 
     m_pMonitor->setBackgroundPixmap(pm);
 }
 
 
-QString KBackground::quickHelp()
+QString KBackground::quickHelp() const
 {
     return i18n("<h1>Background</h1> This module allows you to control the"
       " appearance of the virtual desktops. KDE offers a variety of options"

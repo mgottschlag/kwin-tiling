@@ -42,7 +42,7 @@ class Dtime : public KCModule
   void	save();
   void	load();
 
-  QString quickHelp();
+  QString quickHelp() const;
 
  private slots:
   void	timeout();

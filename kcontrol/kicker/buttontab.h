@@ -41,7 +41,7 @@ class ButtonTab : public QWidget
   void save();
   void defaults();
 
-  QString quickHelp();
+  QString quickHelp() const;
 
  signals:
   void changed();

@@ -42,7 +42,7 @@ public:
   void defaults();
   
   int buttons();
-  QString quickHelp();
+  QString quickHelp() const;
   
 public slots:
   void configChanged();

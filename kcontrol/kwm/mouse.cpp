@@ -57,7 +57,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
 {
   QString strWin1, strWin2, strWin3, strAll1, strAll2, strAll3;
   QGridLayout *layout = new QGridLayout( this, 15, 5,
-					 KDialog::marginHint(), 1);
+                     KDialog::marginHint(), 1);
   layout->setColStretch( 1, 50 );
   layout->setColStretch( 2, 20 ); // very wide comboboxes look ugly (DF)
   layout->setColStretch( 3, 20 ); // very wide comboboxes look ugly (DF)
@@ -412,7 +412,7 @@ void KMouseConfig::defaults()
   setComboText(coAll3,"Resize");
 }
 
-QString KMouseConfig::quickHelp()
+QString KMouseConfig::quickHelp() const
 {
   return i18n("<h1>Mouse Behavior</h1> Here you can customize the way the KDE window manager handles"
     " mouse button clicks. <p>Please note that this configuration will not take effect if you don't use"

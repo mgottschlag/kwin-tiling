@@ -34,7 +34,7 @@ class KclockModule : public KCModule
 public:
   KclockModule(QWidget *parent, const char *name);
   
-  QString quickHelp();
+  QString quickHelp() const;
   void	save();
   void	load();
 

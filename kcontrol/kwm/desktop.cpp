@@ -74,7 +74,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   QBoxLayout *lay = new QVBoxLayout(this, 5);
 
   ElectricBox = new QButtonGroup(i18n("Active desktop borders"),
-				 this);
+                 this);
 
   QGridLayout *eLay = new QGridLayout(ElectricBox,5,3,10,5);
   eLay->addRowSpacing(0,10);
@@ -83,7 +83,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   enable= new
     QCheckBox(i18n("Enable active desktop borders"),
-	      ElectricBox);
+          ElectricBox);
   eLay->addMultiCellWidget(enable,1,1,0,1);
   QWhatsThis::add( enable, i18n("If this option is enabled, moving the mouse to a screen border"
     " will change your desktop. This is e.g. useful if you want to drag windows from one desktop"
@@ -305,7 +305,7 @@ void KDesktopConfig::defaults( void )
   setBorderSnapZone(KWM_BRDR_SNAP_ZONE_DEFAULT);
 }
 
-QString KDesktopConfig::quickHelp()
+QString KDesktopConfig::quickHelp() const
 {
   return i18n("<h1>Borders</h1> Here you can configure two nice features the KDE window manager KWin"
     " offers: <ul><li><em>Active Desktop Borders</em> enable you to switch desktops by moving the mouse pointer"

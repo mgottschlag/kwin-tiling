@@ -31,8 +31,8 @@
  */
 extern "C" {
     KCModule *create_passwords(QWidget *parent, const char *name) {
-	KGlobal::locale()->insertCatalogue("passwords");
-	return new KPasswordConfig(parent, name);
+    KGlobal::locale()->insertCatalogue("passwords");
+    return new KPasswordConfig(parent, name);
     }
 }
 
@@ -113,13 +113,13 @@ void KPasswordConfig::load()
 
     QString val = m_pConfig->readEntry("EchoMode", "x");
     if (val == "OneStar")
-	m_Echo = KPasswordEdit::OneStar;
+    m_Echo = KPasswordEdit::OneStar;
     else if (val == "ThreeStars")
-	m_Echo = KPasswordEdit::ThreeStars;
+    m_Echo = KPasswordEdit::ThreeStars;
     else if (val == "NoEcho")
-	m_Echo = KPasswordEdit::NoEcho;
+    m_Echo = KPasswordEdit::NoEcho;
     else
-	m_Echo = defEchoMode;
+    m_Echo = defEchoMode;
 
     m_bKeep = m_pConfig->readBoolEntry("Keep", defKeep);
     m_Timeout = m_pConfig->readNumEntry("Timeout", defTimeout);
@@ -135,11 +135,11 @@ void KPasswordConfig::save()
 
     QString val;
     if (m_Echo == KPasswordEdit::OneStar)
-	val = "OneStar";
+    val = "OneStar";
     else if (m_Echo == KPasswordEdit::ThreeStars)
-	val = "ThreeStars";
-    else 
-	val = "NoEcho";
+    val = "ThreeStars";
+    else
+    val = "NoEcho";
     m_pConfig->writeEntry("EchoMode", val, true, true);
 
     m_pConfig->writeEntry("Keep", m_bKeep, true, true);
@@ -149,10 +149,10 @@ void KPasswordConfig::save()
     m_pConfig->sync();
 
     if (!m_bKeep) {
-	// Try to stop daemon
-	KDEsuClient client;
-	if (client.ping() != -1)
-	    client.stopServer();
+    // Try to stop daemon
+    KDEsuClient client;
+    if (client.ping() != -1)
+        client.stopServer();
     }
     emit changed(false);
 }
@@ -177,7 +177,7 @@ void KPasswordConfig::apply()
     m_TimeoutEdit->setValue(m_Timeout/60);
     m_TimeoutEdit->setEnabled(m_bKeep);
 }
-    
+
 
 void KPasswordConfig::slotEchoMode(int i)
 {
@@ -197,10 +197,10 @@ void KPasswordConfig::slotKeep(bool keep)
 int KPasswordConfig::buttons()
 {
     return KCModule::Help | KCModule::Default | KCModule::Reset |
-	   KCModule::Cancel | KCModule::Ok| KCModule::Apply ;
+       KCModule::Cancel | KCModule::Ok| KCModule::Apply ;
 }
 
-QString KPasswordConfig::quickHelp()
+QString KPasswordConfig::quickHelp() const
 {
     return i18n("<h1>Passwords</h1> This module gives you options for"
        " configuring the way in which the \"kdesu\" program treats passwords."

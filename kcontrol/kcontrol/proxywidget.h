@@ -42,7 +42,7 @@ public:
   ProxyWidget(KCModule *client, QString title, const char *name=0, bool run_as_root = false);
   ~ProxyWidget();
 
-  QString quickHelp();
+  QString quickHelp() const;
   const KAboutData *aboutData() const;
 
 
