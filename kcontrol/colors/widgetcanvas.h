@@ -43,7 +43,8 @@
 #define CSM_Inactive_title_text		15
 #define CSM_Inactive_title_blend	16
 #define CSM_Inactive_title_button	17
-#define CSM_LAST			18
+#define CSM_Alternate_background    18
+#define CSM_LAST			19
 
 
 class HotSpot
@@ -87,6 +88,7 @@ public:
     QColor iTitleBtn;
     QColor link;
     QColor visitedLink;
+	QColor alternateBackground;
 
     int contrast;
 
