@@ -103,7 +103,15 @@ GreeterApp::x11EventFilter( XEvent * ev )
 
 extern bool kde_have_kipc;
 
-extern "C" void
+extern "C" {
+
+static int
+xIOErr (Display *)
+{
+    exit( EX_RESERVER_DPY );
+}
+
+void
 kg_main( const char *argv0 )
 {
     KProcess *proc = 0;
@@ -115,6 +123,7 @@ kg_main( const char *argv0 )
     KApplication::disableAutoDcopRegistration();
     KCrash::setSafer( true );
     GreeterApp app;
+    XSetIOErrorHandler( xIOErr );
 
     Display *dpy = qt_xdisplay();
 
@@ -188,3 +197,5 @@ kg_main( const char *argv0 )
 
     delete kdmcfg;
 }
+
+} // extern "C"
