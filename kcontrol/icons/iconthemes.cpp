@@ -178,7 +178,7 @@ void IconThemesConfig::removeSelectedTheme()
      return;
 
   QString question=i18n("Are you sure you want to remove the %1 icon theme?"
-        "\nThis will delete the files installed by this theme").
+        "\nThis will delete the files installed by this theme.").
 	arg(selected->text(0));
 
   bool deletingCurrentTheme=(selected==iconThemeItem(KIconTheme::current()));
