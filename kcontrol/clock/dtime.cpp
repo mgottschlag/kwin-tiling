@@ -78,6 +78,12 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   QGridLayout *v3 = new QGridLayout( 2, 9 );
 
+
+  // Even if the module's widgets are reversed (usually when using RTL
+  // languages), the placing of the time fields must always be H:M:S, from
+  // left to right.
+  bool isRTL = QApplication::reverseLayout();
+
 //  v3->setColStretch( 0, 1 );
 
   QSpacerItem *spacer1 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
@@ -88,7 +94,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
   hour->setMaxLength( 2 );
   hour->setFrame( TRUE );
   hour->setValidator(new KStrictIntValidator(0, 23, hour));
-  v3->addMultiCellWidget(hour, 0, 1, 2, 2 );
+  v3->addMultiCellWidget(hour, 0, 1, isRTL ? 6 : 2, isRTL ? 6 : 2 );
 
   QLabel *dots1 = new QLabel(":", timeBox);
   dots1->setMinimumWidth( 7 );
@@ -112,7 +118,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
   second->setMaxLength( 2 );
   second->setFrame( TRUE );
   second->setValidator(new KStrictIntValidator(0, 59, second));
-  v3->addMultiCellWidget(second, 0, 1, 6, 6 );
+  v3->addMultiCellWidget(second, 0, 1, isRTL ? 2 : 6, isRTL ? 2 : 6 );
 
   int w = 2*hour->fontMetrics().width("00");
   hour->setMaximumWidth(w);
