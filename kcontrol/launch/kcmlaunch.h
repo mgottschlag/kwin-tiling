@@ -21,7 +21,8 @@
 #include <kcmodule.h>
 
 class QCheckBox;
-class QSpinBox;
+//class QSpinBox;
+class KIntNumInput;
 class QGroupBox;
 
 class LaunchConfig : public KCModule
@@ -43,6 +44,8 @@ class LaunchConfig : public KCModule
   protected slots:
 
     void checkChanged();
+    void slotBusyCursor(bool);
+    void slotTaskbarButton(bool);
 
   protected:
 
@@ -57,11 +60,13 @@ class LaunchConfig : public KCModule
 
   private:
 
+    QLabel    * lbl_cursorTimeout;
+    QLabel    * lbl_taskbarTimeout;
     QCheckBox * cb_busyCursor;
     QCheckBox * cb_busyBlinking;
     QCheckBox * cb_taskbarButton;
-    QSpinBox  * sb_cursorTimeout;
-    QSpinBox  * sb_taskbarTimeout;
+    KIntNumInput * sb_cursorTimeout;
+    KIntNumInput * sb_taskbarTimeout;
 
 };
 
