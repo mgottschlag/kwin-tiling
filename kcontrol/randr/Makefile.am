@@ -11,9 +11,10 @@ libkcm_randr_la_SOURCES = krandrmodule.cpp
 libkcm_randr_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_randr_la_LIBADD = librandrinternal.la $(LIB_KFILE) $(LIB_XRANDR)
 
-noinst_HEADERS = randr.h krandrmodule.h krandrtray.h krandrapp.h ktimerdialog.h
+noinst_HEADERS = randr.h krandrmodule.h krandrtray.h krandrapp.h ktimerdialog.h \
+    krandrpassivepopup.h
 
-module_DATA = krandrmodule.desktop
+module_DATA = randr.desktop
 moduledir = $(kde_appsdir)/Settings/Desktop
 
 #install-data-local: uninstall.desktop
@@ -23,7 +24,7 @@ moduledir = $(kde_appsdir)/Settings/Desktop
 
 bin_PROGRAMS = krandrtray
 
-krandrtray_SOURCES = main.cpp krandrtray.cpp krandrapp.cpp
+krandrtray_SOURCES = main.cpp krandrtray.cpp krandrapp.cpp krandrpassivepopup.cpp
 krandrtray_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 krandrtray_LDADD = librandrinternal.la $(LIB_KFILE) $(LIB_XRANDR)
 

@@ -1,0 +1,37 @@
+[Desktop Entry]
+Icon=kscreensaver
+Type=Application
+Exec=kcmshell randr
+X-KDE-ModuleType=Library
+X-KDE-Library=randr
+
+Name=Size & Orientation
+Name[es]=Tamaño y orientación 
+Name[pt]=Tamanho e Orientação
+Name[pt_BR]=Tamanho e Orientação
+Name[sv]=Storlek och orientering
+
+Comment=Resize and Rotate your display
+Comment[es]=Redimensione y gire su pantalla
+Comment[fr]=Redimensionnez et faites pivoter votre affichage
+Comment[ja]=ディスプレイをサイズ変更、回転
+Comment[pt]=Mude o tamanho e rode o seu ecrã
+Comment[pt_BR]=Redimensionar e Rotacionar o seu vídeo.
+Comment[ru]=Изменить размер и вращать экран вашего компьютера
+Comment[sv]=Storleksändring och rotation av skärmen
+Comment[xh]=Yenza ubungbakanani kwakhona Ujikelezise uboniso lwakho
+Comment[zh_CN]=改变屏幕大小并旋转您的屏幕
+Comment[zh_TW]=改變螢幕大小與翻轉您的螢幕
+Comment[zu]=Shintsha usayizi kabusha ebese Ujikelezisa ukuvezwa
+
+Keywords=resize,rotate,display,color,depth,size,horizontal,vertical
+Keywords[es]=redimensionar,girar,pantalla,color,profundidad,tamaño,horizontal,vertical
+Keywords[fr]=redimensionner,rotation,affichage,couleur,profondeur,taille,horizontal,vertical
+Keywords[ja]=サイズ変更,回転,ディスプレイ,色,深さ,サイズ,水平,垂直
+Keywords[pt]=mudar,tamanho,rodar,ecrã,cor,cores,horizontal,vertical
+Keywords[pt_BR]=redimensionar,rotacionar,vídeo,cor,profundidade,tamanho,horizontal,vertical
+Keywords[ru]=resize,rotate,display,color,depth,size,horizontal,vertical,размер,экран,монитор
+Keywords[sv]=ändra storlek,rotera,skärm,färg,djup,storlek,horisontell,vertikal
+Keywords[zh_CN]=resize,rotate,display,color,depth,size,horizontal,vertical,改变大小,旋转,屏幕,颜色,大小,水平,垂直
+Keywords[zh_TW]=resize,rotate,display,color,depth,size,horizontal,vertical,重設大小,翻轉,螢幕,顏色,大小,水平,垂直
+

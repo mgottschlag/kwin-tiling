@@ -35,6 +35,7 @@
 RandRScreen::RandRScreen(int screenIndex, bool requestScreenChangeEvents)
 	: config(0L)
 	, screen(screenIndex)
+	, shownDialog(NULL)
 {
 	root = RootWindow(qt_xdisplay(), screen);
 	if (requestScreenChangeEvents)
@@ -141,8 +142,24 @@ bool RandRScreen::confirm()
 	acceptDialog->setMainWidget(label);
 
 	KDialog::centerOnScreen(acceptDialog, screen);
+	
+	shownDialog = acceptDialog;
+	connect( shownDialog, SIGNAL( destroyed()), this, SLOT( shownDialogDestroyed()));
+	connect( kapp->desktop(), SIGNAL( resized()), this, SLOT( desktopResized()));
     
     return acceptDialog->exec();
+}
+
+void RandRScreen::shownDialogDestroyed()
+{
+    shownDialog = NULL;
+    disconnect( kapp->desktop(), SIGNAL( resized()), this, SLOT( desktopResized()));
+}
+
+void RandRScreen::desktopResized()
+{
+    if( shownDialog != NULL )
+	KDialog::centerOnScreen(shownDialog, screen);
 }
 
 QString RandRScreen::changedMessage()

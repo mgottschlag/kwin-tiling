@@ -24,9 +24,9 @@
 #include <kiconloader.h>
 #include <kaction.h>
 #include <kapplication.h>
-#include <kpassivepopup.h>
 
 #include "krandrtray.h"
+#include "krandrpassivepopup.h"
 #include "krandrtray.moc"
 
 KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
@@ -90,7 +90,10 @@ void KRandRSystemTray::configChanged()
 {
 	refresh();
 	
-	KPassivePopup::message(i18n("Screen configuration has changed"), m_currentScreen->changedMessage(), SmallIcon("window_fullscreen"), this, "ScreenChangeNotification");
+	KRandrPassivePopup::message(
+	    i18n("Screen configuration has changed"),
+	    m_currentScreen->changedMessage(), SmallIcon("window_fullscreen"),
+	    this, "ScreenChangeNotification");
 }
 
 void KRandRSystemTray::populateMenu(KPopupMenu* menu)

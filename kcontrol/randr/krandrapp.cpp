@@ -34,6 +34,5 @@ bool KRandRApp::x11EventFilter(XEvent* e)
 	if (e->type == m_tray->eventBase() + RRScreenChangeNotify) {
 		m_tray->configChanged();
 	}
-	
-	return false;
+	return KApplication::x11EventFilter( e );
 }

@@ -33,6 +33,8 @@
 #undef INT32
 #include <X11/extensions/Xrandr.h>
 
+class KTimerDialog;
+
 class RandRScreen : public QObject
 {
 	Q_OBJECT
@@ -94,6 +96,12 @@ public:
 	Rotation	proposedRotation;
 	SizeID		proposedSize;
 	short		proposedRefreshRate;
+	
+private:  // much more stuff in this class should be private IMHO
+	KTimerDialog*	shownDialog;
+private slots:
+	void		desktopResized();
+	void		shownDialogDestroyed();
 };
 
 typedef QPtrList<RandRScreen> ScreenList;
