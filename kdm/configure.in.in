@@ -31,7 +31,7 @@ XDMAUTH_DEFINES = -DHASXDMAUTH
 SOCK_DEFINES = -DBSD44SOCKETS
 #endif
 
-#if defined(i386Architecture) || defined(AmigaArchitecture)
+#if defined(i386Architecture) || defined(ia64Architecture) || defined(AmigaArchitecture)
 FRAGILE_DEFINES = -DFRAGILE_DEV_MEM
 #endif
 
