@@ -156,7 +156,7 @@ void KCMKNotify::load()
         KGlobal::dirs()->findAllResources("data", "*/eventsrc", false, true );
 
     QStringList::ConstIterator it = fullpaths.begin();
-    for ( ; it != fullpaths.end(); ++it) 
+    for ( ; it != fullpaths.end(); ++it)
         m_notifyWidget->addApplicationEvents( *it );
 
     ApplicationList allApps = m_notifyWidget->allApps();
@@ -200,7 +200,7 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
 {
     QFrame *frame = makeMainWidget();
 
-    QVBoxLayout *topLayout = new QVBoxLayout( frame, 0, 
+    QVBoxLayout *topLayout = new QVBoxLayout( frame, 0,
         KDialog::spacingHint() );
 
     m_ui = new PlayerSettingsUI(frame);
@@ -210,7 +210,7 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
     dataChanged = false;
     enableButton(Apply, false);
 
-    connect( m_ui->cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( externalToggled() ) );
+    connect( m_ui->cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( externalToggled( bool ) ) );
     connect( m_ui->grpPlayers, SIGNAL( clicked( int ) ), this, SLOT( slotChanged() ) );
     connect( m_ui->volumeSlider, SIGNAL( valueChanged ( int ) ), this, SLOT( slotChanged() ) );
     connect( m_ui->reqExternal, SIGNAL( textChanged( const QString& ) ), this, SLOT( slotChanged() ) );
