@@ -205,7 +205,8 @@ class CConfig : public KConfig
                       itsDoTtAfms,
                       itsDoT1Afms,
                       itsOverwriteAfms,
-                      itsConfigured;
+                      itsConfigured,
+                      itsAutoSync;
     EXFontListRefresh itsXRefreshCmd;
     Qt::Orientation   itsFontListsOrientation;
     QStringList       itsModifiedDirs;

@@ -39,6 +39,7 @@
 #include <unistd.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kcmdlineargs.h>
 
 #ifdef HAVE_XFT
 #include "xftint.h"
@@ -280,6 +281,14 @@ CConfig::CConfig()
     QString origGroup=group(),
             val;
     int     intVal;
+
+
+    //
+    // If this module is being run as root from a non-root started kcontrol (i.e. via kcmshell), then
+    // need to save Config changes as they are changed - as when the module is unloaded it is
+    // simply killed, and the destructors don't get a chance to run.
+    const char *appName=KCmdLineArgs::appName();
+    itsAutoSync=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName));
 
     if(CMisc::root())
     {
@@ -804,7 +813,7 @@ void CConfig::clearModifiedDirs()
 
 void CConfig::write(const QString &sect, const QString &key, const QString &value)
 {
-    if(CMisc::root())
+    if(itsAutoSync)
     {
         KConfigGroupSaver cfgSaver(this, sect);
 
@@ -815,7 +824,7 @@ void CConfig::write(const QString &sect, const QString &key, const QString &valu
 
 void CConfig::write(const QString &sect, const QString &key, const QStringList &value)
 {
-    if(CMisc::root())
+    if(itsAutoSync)
     {
         KConfigGroupSaver cfgSaver(this, sect);
 
@@ -826,7 +835,7 @@ void CConfig::write(const QString &sect, const QString &key, const QStringList &
 
 void CConfig::write(const QString &sect, const QString &key, bool value)
 {
-    if(CMisc::root())
+    if(itsAutoSync)
     {
         KConfigGroupSaver cfgSaver(this, sect);
 
@@ -837,7 +846,7 @@ void CConfig::write(const QString &sect, const QString &key, bool value)
 
 void CConfig::write(const QString &sect, const QString &key, int value)
 {
-    if(CMisc::root())
+    if(itsAutoSync)
     {
         KConfigGroupSaver cfgSaver(this, sect);
 
