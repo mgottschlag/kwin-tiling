@@ -14,4 +14,4 @@ kcm_componentchooser_DATA = componentchooser.desktop
 kcm_componentchooserdir = $(kde_appsdir)/Settings/Components
 
 messages: rc.cpp
-	$(XGETTEXT) *.cc *.cpp -o $(podir)/kcmcomponentchooser.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmcomponentchooser.pot
