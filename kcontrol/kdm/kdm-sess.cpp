@@ -36,7 +36,7 @@
 #include <kdialog.h>
 #include <kurlrequester.h>
 
-#include "kdm-sess.moc"
+#include "kdm-sess.h"
 
 
 extern KSimpleConfig *c;
@@ -54,13 +54,13 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       sdlcombo->insertItem(i18n("Everybody"), SdAll);
       sdlcombo->insertItem(i18n("Only root"), SdRoot);
       sdlcombo->insertItem(i18n("Nobody"), SdNone);
-      connect(sdlcombo, SIGNAL(activated(int)), this, SLOT(changed()));
+      connect(sdlcombo, SIGNAL(activated(int)), SLOT(changed()));
       sdrcombo = new QComboBox( FALSE, group0 );
       sdrlabel = new QLabel (sdrcombo, i18n ("Re&mote:"), group0);
       sdrcombo->insertItem(i18n("Everybody"), SdAll);
       sdrcombo->insertItem(i18n("Only root"), SdRoot);
       sdrcombo->insertItem(i18n("Nobody"), SdNone);
-      connect(sdrcombo, SIGNAL(activated(int)), this, SLOT(changed()));
+      connect(sdrcombo, SIGNAL(activated(int)), SLOT(changed()));
       QWhatsThis::add( group0, i18n("Here you can select who is allowed to shutdown"
         " the computer using KDM. You can specify different values for local (console) and remote displays. "
 	"Possible values are:<ul>"
@@ -74,7 +74,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       shutdown_lined = new KURLRequester(group1);
       QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("Ha&lt"), group1);
       connect(shutdown_lined->lineEdit(), SIGNAL(textChanged(const QString&)),
-	      this, SLOT(changed()));
+	      SLOT(changed()));
       wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
       QWhatsThis::add( shutdown_label, wtstr );
       QWhatsThis::add( shutdown_lined, wtstr );
@@ -82,26 +82,26 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       restart_lined = new KURLRequester(group1);
       QLabel *restart_label = new QLabel(restart_lined, i18n("&Reboot"), group1);
       connect(restart_lined->lineEdit(), SIGNAL(textChanged(const QString&)),
-	      this, SLOT(changed()));
+	      SLOT(changed()));
       wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
       QWhatsThis::add( restart_label, wtstr );
       QWhatsThis::add( restart_lined, wtstr );
 
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
       QGroupBox *group4 = new QGroupBox( i18n("Lilo"), this );
 
       lilo_check = new QCheckBox(i18n("Show boot opt&ions"), group4);
       connect(lilo_check, SIGNAL(toggled(bool)),
-	      this, SLOT(slotLiloCheckToggled(bool)));
+	      SLOT(slotLiloCheckToggled(bool)));
       connect(lilo_check, SIGNAL(toggled(bool)),
-	      this, SLOT(changed()));
+	      SLOT(changed()));
       wtstr = i18n("Enable Lilo boot options in the \"Shutdown ...\" dialog.");
       QWhatsThis::add( lilo_check, wtstr );
 
       lilocmd_lined = new KURLRequester(group4);
       lilocmd_label = new QLabel(lilocmd_lined , i18n("Lilo command"), group4);
       connect(lilocmd_lined, SIGNAL(textChanged(const QString&)),
-          this, SLOT(changed()));
+          SLOT(changed()));
       wtstr = i18n("Command to run Lilo. Typical value: /sbin/lilo");
       QWhatsThis::add( lilocmd_label, wtstr );
       QWhatsThis::add( lilocmd_lined, wtstr );
@@ -109,7 +109,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       lilomap_lined = new KURLRequester(group4);
       lilomap_label = new QLabel(lilomap_lined, i18n("Lilo map file"), group4);
       connect(lilomap_lined, SIGNAL(textChanged(const QString&)),
-	      this, SLOT(changed()));
+	      SLOT(changed()));
       wtstr = i18n("Position of Lilo's map file. Typical value: /boot/map");
       QWhatsThis::add( lilomap_label, wtstr );
       QWhatsThis::add( lilomap_lined, wtstr );
@@ -124,7 +124,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       connect(session_lined, SIGNAL(returnPressed()),
 	      SLOT(slotAddSessionType()));
       connect(session_lined, SIGNAL(returnPressed()),
-	      this, SLOT(changed()));
+	      SLOT(changed()));
       wtstr = i18n( "To create a new session type, enter its name here and click on <em>Add new</em>" );
       QWhatsThis::add( type_label, wtstr );
       QWhatsThis::add( session_lined, wtstr );
@@ -168,14 +168,14 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QBoxLayout *main = new QVBoxLayout( this, 10 );
       QGridLayout *lgroup0 = new QGridLayout( group0, 3, 5, 10);
       QGridLayout *lgroup1 = new QGridLayout( group1, 3, 5, 10);
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
       QGridLayout *lgroup4 = new QGridLayout( group4, 3, 4, 10);
 #endif
       QGridLayout *lgroup2 = new QGridLayout( group2, 5, 5, 10);
 
       main->addWidget(group0);
       main->addWidget(group1);
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
       main->addWidget(group4);
 #endif
       main->addWidget(group2);
@@ -198,7 +198,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       lgroup1->addWidget(restart_label, 1, 3);
       lgroup1->addWidget(restart_lined, 1, 4);
 
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
       lgroup4->addRowSpacing(0, group4->fontMetrics().height()/2);
       lgroup4->addColSpacing(1, KDialog::spacingHint() * 2);
       lgroup4->setColStretch(3, 1);
@@ -236,7 +236,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       restart_lined->button()->setEnabled(false);
       shutdown_lined->lineEdit()->setReadOnly(true);
       shutdown_lined->button()->setEnabled(false);
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
       lilo_check->setEnabled(false);
       lilocmd_lined->lineEdit()->setReadOnly(true);
       lilocmd_lined->button()->setEnabled(false);
@@ -254,7 +254,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
 void KDMSessionsWidget::slotLiloCheckToggled(bool on)
 {
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
     lilocmd_label->setEnabled(on);
     lilocmd_lined->setEnabled(on);
     lilomap_label->setEnabled(on);
@@ -325,11 +325,13 @@ void KDMSessionsWidget::writeSD(QComboBox *combo)
 
 void KDMSessionsWidget::save()
 {
-    c->setGroup("X-:*-Greeter");
+    c->setGroup("X-:*-Core");
     writeSD(sdlcombo);
 
-    c->setGroup("X-*-Greeter");
+    c->setGroup("X-*-Core");
     writeSD(sdrcombo);
+
+    c->setGroup("X-*-Greeter");
     QString sesstr;
     for(uint i = 0; i < sessionslb->count(); i++)
     {
@@ -341,7 +343,7 @@ void KDMSessionsWidget::save()
     c->setGroup("Shutdown");
     c->writeEntry("HaltCmd", shutdown_lined->lineEdit()->text(), true);
     c->writeEntry("RebootCmd", restart_lined->lineEdit()->text(), true);
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
     c->writeEntry("UseLilo", lilo_check->isChecked());
     c->writeEntry("LiloCmd", lilocmd_lined->lineEdit()->text());
     c->writeEntry("LiloMap", lilomap_lined->lineEdit()->text());
@@ -365,11 +367,13 @@ void KDMSessionsWidget::load()
 {
   QString str;
 
-  c->setGroup("X-:*-Greeter");
+  c->setGroup("X-:*-Core");
   readSD(sdlcombo, "All");
 
-  c->setGroup("X-*-Greeter");
+  c->setGroup("X-*-Core");
   readSD(sdrcombo, "Root");
+
+  c->setGroup("X-*-Greeter");
   QStringList sessions = c->readListEntry( "SessionTypes");
   if (sessions.isEmpty())
     sessions << "default" << "kde" << "failsafe";
@@ -379,7 +383,7 @@ void KDMSessionsWidget::load()
   c->setGroup("Shutdown");
   restart_lined->lineEdit()->setText(c->readEntry("RebootCmd", "/sbin/reboot"));
   shutdown_lined->lineEdit()->setText(c->readEntry("HaltCmd", "/sbin/halt"));
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
   bool lien = c->readBoolEntry("UseLilo", false);
   lilo_check->setChecked(lien);
   slotLiloCheckToggled(lien);
@@ -403,7 +407,7 @@ void KDMSessionsWidget::defaults()
   sessionslb->insertItem("kde");
   sessionslb->insertItem("failsafe");
 
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
     lilo_check->setChecked(false);
     slotLiloCheckToggled(false);
 
@@ -417,3 +421,5 @@ void KDMSessionsWidget::changed()
 {
   emit KCModule::changed(true);
 }
+
+#include "kdm-sess.moc"
