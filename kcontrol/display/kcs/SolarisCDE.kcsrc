@@ -1,5 +1,7 @@
 [Color Scheme]
 Name=Solaris
+Name[az]=Solaris CDE
+Name[eo]=Solariso
 activeBackground=178,77,122
 activeBlend=174,178,195
 activeForeground=255,255,255

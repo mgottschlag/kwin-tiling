@@ -33,8 +33,12 @@ author=Georg Russell
 email=russell@kde.org
 info=
 Comment=A wooden look for your desktop!\nBy Georg Russell <russell@kde.org>
+Comment[az]=Masa üstünüz üçün təbii bir görünüş!\nGeorg Russell <russell@kde.org>
 Comment[de]=Eine Holz-Optik für Ihre Arbeitsumgebunga\nvon Georg Russell <russell@kde.org>.
+Comment[eo]=Ligneca etoso por via tabulo!\nde Georg Russell <russell@kde.org>
+Comment[lv]=Darbvirsmas apdare kokā!\nNo Georg Russell <russell@kde.org>
 Comment[mt]=Dehra tal-injam għad-desktop tiegħek\nMinn Georg Russell <russell@kde.org>
+Comment[sk]=Drevená plocha!\nOd Georga Russella <russell@kde.org>
 [Panel]
 background=panel.png
 [Filemanager]
