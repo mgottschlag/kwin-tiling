@@ -574,7 +574,7 @@ void KBackground::slotBrowseWallpaper()
     if (url.isEmpty())
     return;
     if (!url.isLocalFile()) {
-      KMessageBox::sorry(this, i18n("Currently are only local wallpapers allowed."));
+      KMessageBox::sorry(this, i18n("Currently only local wallpapers are allowed."));
       return;
     }
     QString file = url.path();
