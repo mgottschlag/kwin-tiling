@@ -9,7 +9,7 @@
 #include <qpushbt.h>
 #include <qfont.h>
 #include <kmenubar.h>
-#include <ktopwidget.h>
+#include <ktmainwindow.h>
 #include <time.h>
 #include <kprocess.h>
 
