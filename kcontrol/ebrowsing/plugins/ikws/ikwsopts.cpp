@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2000 Yves Arrouye <yves@realnames.com>
+ * Copyright (c) 2001 Dawit Alemayehu <adawit@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -21,6 +22,7 @@
 
 #include <assert.h>
 
+#include <qvbox.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
@@ -78,79 +80,59 @@ private:
 InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *name)
                         :KCModule(parent, name)
 {
-    // This is the layout for the whole dialog box.
     QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(), KDialog::spacingHint() );
+    lay->setAutoAdd( true );
 
-    gb_keywords = new QGroupBox(this);
-    QVBoxLayout *gbkLay = new QVBoxLayout( gb_keywords, KDialog::marginHint(), KDialog::spacingHint() );
-
+    // Deals with Internet keywords feature...
+    gb_keywords = new QGroupBox( this );
+    QVBoxLayout *i_vbox = new QVBoxLayout( gb_keywords, KDialog::marginHint(), KDialog::spacingHint() );
     cb_enableInternetKeywords = new QCheckBox(i18n("Enable Int&ernet Keywords"), gb_keywords);
-    //cb_enableInternetKeywords->adjustSize();
-    //cb_enableInternetKeywords->setMinimumSize(cb_enableInternetKeywords->size());
     connect(cb_enableInternetKeywords, SIGNAL(clicked()), this, SLOT(changeInternetKeywordsEnabled()));
     QWhatsThis::add(cb_enableInternetKeywords, i18n("If this box is checked, KDE will let you use <em>Internet Keywords</em> "
                                                     "in its browser's address bar. This means you can simply type normal "
-                                                    "words and phrases, such as \"KDE\", to automatically get "
-                                                    "redirected to the appropriate site. For further details on this "
-                                                    "feature visit <em>www.internetkeywords.org</em> (Internet Keyword: <em>IKW Dev</em>)."));
-
-    gbkLay->addWidget(cb_enableInternetKeywords);
-
-    // We add the Fallback config stuff to a horizontal layout manager
-    // first so that we can add the label and the combo side by side.
-
-    QHBoxLayout *igbopts_lay = new QHBoxLayout( gbkLay, KDialog::spacingHint() );
-
-    lb_searchFallback = new QLabel(i18n("Search &Fallback:"), gb_keywords);
-    //lb_searchFallback->adjustSize();
-    //lb_searchFallback->setMinimumSize(lb_searchFallback->size());
+                                                    "words and phrases, such as \"KDE\", to automatically get redirected "
+                                                    "to the appropriate site. For further details on this feature visit "
+                                                    "<b>http://www.internetkeywords.org</b> or simply type <b>IKW Dev</b>) "
+                                                    "in the browser location bar."));
+    i_vbox->addWidget(cb_enableInternetKeywords);
+    QHBoxLayout *igbopts_lay = new QHBoxLayout( i_vbox, KDialog::spacingHint() );
+    lb_searchFallback = new QLabel(i18n("&Fallback Search Engine:"), gb_keywords);
     igbopts_lay->addWidget( lb_searchFallback );
-
     cmb_searchFallback = new QComboBox(false, gb_keywords);
-    //cmb_searchFallback->adjustSize();
-    //cmb_searchFallback->setMinimumSize(cmb_searchFallback->size());
     igbopts_lay->addWidget( cmb_searchFallback, 1 );
     lb_searchFallback->setBuddy(cmb_searchFallback);
-
     connect(cmb_searchFallback, SIGNAL(activated(const QString &)), this, SLOT(moduleChanged()));
     QString wtstr = i18n("Allows you to select a search provider that will be used in case what you "
                          "typed is not an <em>Internet Keyword</em>.  Select \"None\" if you do not "
                          "want to do a search in this case, and you will get a directory listing of "
-			 "relevant keywords.");
-
+                         "relevant keywords.");
     QWhatsThis::add(lb_searchFallback, wtstr);
     QWhatsThis::add(cmb_searchFallback, wtstr);
 
-    lay->addWidget(gb_keywords);
-
-    gb_search = new QGroupBox( i18n("Search"), this );
-    QGridLayout *gbsLay = new QGridLayout(gb_search, 7, 2, KDialog::marginHint(), KDialog::spacingHint());
-
-    gbsLay->setRowStretch(0, 1);
-    gbsLay->setRowStretch(2, 1);
-    gbsLay->setRowStretch(3, 1);
-    gbsLay->setRowStretch(4, 1);
-    gbsLay->setRowStretch(5, 1);
-    gbsLay->setRowStretch(6, 1);
+    // Deals with the web short cut features...
+    gb_search = new QGroupBox( this );
+    lay->setStretchFactor( gb_search, 10 );
+    QGridLayout *w_grid = new QGridLayout( gb_search, 3, 2,
+                                           KDialog::marginHint(),
+                                           KDialog::spacingHint() );
+    w_grid->setColStretch(0, 2);
+    w_grid->setRowStretch(2, 2);
 
     cb_enableSearchKeywords = new QCheckBox(i18n("Enable &Web Shortcuts"), gb_search);
-    //cb_enableSearchKeywords->adjustSize();
-    //cb_enableSearchKeywords->setMinimumSize(cb_enableSearchKeywords->size());
     connect(cb_enableSearchKeywords, SIGNAL(clicked()), this, SLOT(changeSearchKeywordsEnabled()));
     QWhatsThis::add(cb_enableSearchKeywords, i18n("If this box is checked, KDE will let you use the shortcuts "
                                                   "defined below to quickly search the Internet. For example, "
                                                   "typing the words <em>shortcut</em>:<em>KDE</em> will result in "
                                                   "the word <em>KDE</em> being searched using the URI defined by "
                                                   "the <em>shortcut</em>."));
-    // gbsLay->addRowSpacing(0, kapp->fontMetrics().height());
-    gbsLay->addWidget(cb_enableSearchKeywords, 0, 0);
-
+    w_grid->addMultiCellWidget(cb_enableSearchKeywords, 0, 0, 0, 1);
     lv_searchProviders = new QListView( gb_search );
     lv_searchProviders->setMultiSelection(false);
     lv_searchProviders->addColumn(i18n("Name"));
     lv_searchProviders->addColumn(i18n("Shortcuts"));
     lv_searchProviders->setSorting(0);
-    wtstr = i18n("This list contains the search providers that KDE knows about, and their associated pseudo-URI schemes, or shortcuts.");
+    wtstr = i18n("This list contains the search providers that KDE knows "
+                 "about, and their associated pseudo-URI schemes, or shortcuts.");
     QWhatsThis::add(lv_searchProviders, wtstr);
 
     connect(lv_searchProviders, SIGNAL(selectionChanged(QListViewItem *)),
@@ -158,38 +140,34 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     connect(lv_searchProviders, SIGNAL(doubleClicked(QListViewItem *)),
            this, SLOT(changeSearchProvider()));
 
-    gbsLay->addMultiCellWidget(lv_searchProviders, 2, 6, 0, 0);
+    w_grid->addMultiCellWidget(lv_searchProviders, 1, 2, 0, 0);
 
-    pb_addSearchProvider = new QPushButton(i18n("Add..."), gb_search);
+    QVBox* vbox = new QVBox( gb_search );
+    vbox->setSpacing( KDialog::spacingHint() );
+    pb_addSearchProvider = new QPushButton( i18n("Add..."), vbox );
     QWhatsThis::add(pb_addSearchProvider, i18n("Click here to add a search provider."));
     connect(pb_addSearchProvider, SIGNAL(clicked()), this, SLOT(addSearchProvider()));
-    gbsLay->addWidget(pb_addSearchProvider, 2, 1);
 
-    pb_chgSearchProvider = new QPushButton(i18n("Change..."), gb_search);
+    pb_chgSearchProvider = new QPushButton( i18n("Change..."), vbox );
     QWhatsThis::add(pb_chgSearchProvider, i18n("Click here to change a search provider."));
     pb_chgSearchProvider->setEnabled(false);
     connect(pb_chgSearchProvider, SIGNAL(clicked()), this, SLOT(changeSearchProvider()));
-    gbsLay->addWidget(pb_chgSearchProvider, 3, 1);
 
-    pb_delSearchProvider = new QPushButton(i18n("Delete"), gb_search);
+    pb_delSearchProvider = new QPushButton( i18n("Delete"), vbox );
     QWhatsThis::add(pb_delSearchProvider, i18n("Click here to delete the currently selected search provider from the list."));
     pb_delSearchProvider->setEnabled(false);
     connect(pb_delSearchProvider, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));
-    gbsLay->addWidget(pb_delSearchProvider, 4, 1);
 
-    pb_impSearchProvider = new QPushButton(i18n("Import..."), gb_search);
+    pb_impSearchProvider = new QPushButton( i18n("Import..."), vbox );
     QWhatsThis::add(pb_delSearchProvider, i18n("Click here to import a search provider from a file."));
     connect(pb_impSearchProvider, SIGNAL(clicked()), this, SLOT(importSearchProvider()));
-    gbsLay->addWidget(pb_impSearchProvider, 5, 1);
 
-    pb_expSearchProvider = new QPushButton(i18n("Export..."), gb_search);
+    pb_expSearchProvider = new QPushButton(i18n("Export..."), vbox );
     QWhatsThis::add(pb_expSearchProvider, i18n("Click here to export a search provider to a file."));
     pb_expSearchProvider->setEnabled(false);
     connect(pb_expSearchProvider, SIGNAL(clicked()), this, SLOT(exportSearchProvider()));
-    gbsLay->addWidget(pb_expSearchProvider, 6, 1);
 
-    lay->addWidget( gb_search );
-
+    w_grid->addWidget(vbox, 1, 1);
     // Load the options
     load();
 }
@@ -197,7 +175,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
 QString InternetKeywordsOptions::quickHelp() const
 {
     return i18n("In this module, you can choose whether to use Internet Keywords or not. "
-		"You can also configure various Internet search engines "
+                "You can also configure various Internet search engines "
                 "that KDE can use for keyword search. This allows you, for example, "
                 "to enter a pseudo-URI like gg:smetana to search the Google search "
                 "engine for web pages about the Czech composer Bedrich Smetana.");

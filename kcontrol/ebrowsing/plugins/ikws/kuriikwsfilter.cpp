@@ -57,12 +57,16 @@ bool KURIIKWSFilter::filterURI( KURIFilterData &data ) const
     if (searcher->verbose())
         kdDebug() << "KURIIKWSFilter: filtering " <<  data.uri().url() << endl;
 
-    QString result = searcher->ikwsQuery( data.uri() );
-    if( !result.isEmpty() )
+    KURL u = data.uri();
+    if ( u.pass().isEmpty() )
     {
+      QString result = searcher->ikwsQuery( u );
+      if( !result.isEmpty() )
+      {
         setFilteredURI( data, result );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
         return true;
+      }
     }
     return false;
 }
@@ -79,11 +83,10 @@ KURIIKWSFilterFactory::~KURIIKWSFilterFactory() {
     delete s_instance;
 }
 
-QObject *KURIIKWSFilterFactory::create( QObject *parent, const char *name, const char*, const QStringList & )
+QObject *KURIIKWSFilterFactory::createObject( QObject* parent, const char* name,
+                                              const char*, const QStringList& )
 {
-    QObject *obj = new KURIIKWSFilter( parent, name );
-    emit objectCreated( obj );
-    return obj;
+    return new KURIIKWSFilter( parent, name );
 }
 
 KInstance *KURIIKWSFilterFactory::instance() {

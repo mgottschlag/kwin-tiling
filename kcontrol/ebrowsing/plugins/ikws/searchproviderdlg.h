@@ -45,7 +45,7 @@ private:
     KLineEdit *m_name;
     KLineEdit *m_query;
     KLineEdit *m_keys;
-	KComboBox *m_charset;
+    KComboBox *m_charset;
 
     QPushButton *m_ok;
     QPushButton *m_cancel;
