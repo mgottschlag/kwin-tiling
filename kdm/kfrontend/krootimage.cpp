@@ -58,8 +58,6 @@ void MyApplication::renderDone()
 
 int main(int argc, char *argv[])
 {
-  if (!getenv( "HOME" ))
-    setenv( "HOME", "/tmp", 1 );	/* for QSettings */
   KApplication::disableAutoDcopRegistration();
 
   KLocale::setMainCatalogue( "kdesktop" );
