@@ -282,26 +282,19 @@ void BGDialog::initUI()
    }
 
    // Wallpapers
-   QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
    QMap<QString, QPair<QString, QString> > papers;
-   for (int i = 0; i < (int)lst.count(); ++i)
+   QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
+   for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
    {
-      QString paper = lst[i];
-      int n = lst[i].findRev('/');
-      QString s = paper.mid(n+1);
-      n = 0;
-      while (papers.find(s) != papers.end())
-      {
-        // avoid name collisions
-        ++n;
+      QString s = (*it).mid((*it).findRev('/')+1), rs = s, lrs;
+      // avoid name collisions
+      for (int n = 0; ; ) {
+         lrs = rs.lower();
+         if ( papers.find(lrs) == papers.end() )
+            break;
+         rs = s + " (" + QString::number(++n) + ")";
       }
-
-      if (n > 0)
-      {
-        s += " (" + QString::number(n) + ")";
-      }
-
-      papers[s.lower()] = qMakePair(s, paper);
+      papers[lrs] = qMakePair(rs, (*it));
    }
 
    KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
