@@ -23,9 +23,6 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property name="caption">
-        <string>EmailClientConfig_UI</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
