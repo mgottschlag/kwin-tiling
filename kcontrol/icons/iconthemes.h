@@ -21,7 +21,7 @@
 
 #include <kcmodule.h>
 #include <qmap.h>
-#include <qlistview.h>
+#include <klistview.h>
 
 class QPushButton;
 class DeviceManager;
@@ -57,7 +57,7 @@ protected slots:
 private:
   QListViewItem *iconThemeItem(const QString &name);
 
-  QListView *m_iconThemes;
+  KListView *m_iconThemes;
   QPushButton *m_removeButton;
 
   QLabel *m_previewExec;
