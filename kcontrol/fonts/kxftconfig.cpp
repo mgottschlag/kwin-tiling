@@ -726,7 +726,7 @@ void KXftConfig::readContents()
                 switch(e.childNodes().count())
                 {
                     case 1:
-                        if(m_required&SubPixelType && "font"==e.attribute("target"));
+                        if(m_required&SubPixelType && "font"==e.attribute("target"))
                         {
                             QDomElement ene=e.firstChild().toElement();
 
