@@ -31,7 +31,6 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
@@ -677,7 +676,7 @@ Debug ("parsing config ...\n");
 	if (!cursec) {
 	    if (sectmoan) {
 		sectmoan = 0;
-		LogError ("Entry outside any section at %s:%s", kdmrc, line);
+		LogError ("Entry outside any section at %s:%d", kdmrc, line);
 	    }
 	    goto sktoeol;
 	}
