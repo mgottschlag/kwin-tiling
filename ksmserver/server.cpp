@@ -1685,16 +1685,39 @@ void KSMServer::restoreLegacySession( KConfig* config )
     }
 }
 
+// split command parts separated by spaces,
+// real spaces are backslash-escaped
+static
+QStringList cmdSplit( const QString& wmCommand )
+{
+    QStringList ret;
+    bool ignore = false;
+    int lastpos = 0;
+    for( unsigned int i = 0;
+	 i < wmCommand.length();
+	 ++i ) {
+	if( wmCommand[ i ] == ' ' && !ignore ) {
+	    ret << wmCommand.mid( lastpos, i - lastpos );
+	    lastpos = i + 1;
+	}
+	if( ignore || wmCommand[ i ] != '\\' )
+	    ignore = false;
+	else
+	    ignore = true;
+    }
+    ret << wmCommand.mid( lastpos );
+    return ret;
+}
+
 void KSMServer::restoreLegacySessionInternal( KConfig* config )
 {
     int count = config->readNumEntry( "count" );
-    QRegExp escape_reg( "[^\\] " );
     for ( int i = 1; i <= count; i++ ) {
         QString n = QString::number(i);
         QCString wmCommand = config->readEntry( QString("command")+n ).latin1();
         QCString wmClientMachine = config->readEntry( QString("clientMachine")+n ).latin1();
         if ( !wmCommand.isEmpty() && !wmClientMachine.isEmpty() ) {
-            QStringList command = QStringList::split( escape_reg, wmCommand);
+            QStringList command = cmdSplit( wmCommand );
             if ( wmClientMachine != "localhost" ) {
 		command.prepend( wmClientMachine );
 		command.prepend( "xon" );
