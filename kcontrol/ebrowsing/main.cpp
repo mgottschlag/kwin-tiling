@@ -50,7 +50,7 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name, const QStr
 #if 0
     opts = new FilterOptions(this);
     tab->addTab(opts, i18n("&Filters"));
-    connect(opts, SIGNAL(changed(bool)), this, SLOT(moduleChanged()));
+    connect(opts, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 #endif
 
     modules.setAutoDelete(true);
@@ -63,7 +63,7 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name, const QStr
       {
 	    modules.append(module);
 	    tab->addTab(module, it.current()->configName());
-	    connect(module, SIGNAL(changed(bool)), this, SLOT(moduleChanged()));
+	    connect(module, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 	  }
     }
 
@@ -81,7 +81,6 @@ void KURIFilterModule::load()
     {
 	  it.current()->load();
     }
-    setChanged(false);
 }
 
 void KURIFilterModule::save()
@@ -91,7 +90,6 @@ void KURIFilterModule::save()
     {
 	  it.current()->save();
     }
-    setChanged(false);
 }
 
 void KURIFilterModule::defaults()
@@ -101,21 +99,11 @@ void KURIFilterModule::defaults()
     {
 	  it.current()->defaults();
     }
-    setChanged(true);
 }
 
-void KURIFilterModule::moduleChanged()
+void KURIFilterModule::moduleChanged(bool state)
 {
-    QPtrListIterator<KCModule> it(modules);
-    for (; it.current(); ++it)
-    {
-	if(it.current()->changed())
-	{
-	    setChanged(true);
-	    return;
-	}
-    }
-    setChanged(false);
+    setChanged(state);
 }
 
 QString KURIFilterModule::quickHelp() const

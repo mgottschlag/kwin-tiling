@@ -47,7 +47,7 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 protected slots:
-    void moduleChanged();
+    void moduleChanged(bool state);
 
 private:
     KURIFilter *filter;
