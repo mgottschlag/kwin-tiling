@@ -81,7 +81,6 @@ from The Open Group.
 # endif
 #endif
 
-/* never true in kdm */
 #ifdef CSRG_BASED
 # include <sys/param.h>
 # ifdef HAS_SETUSERCONTEXT

@@ -6,3 +6,4 @@
 #
 #chmod 622 /dev/console
 #chown root /dev/console
+#exec sessreg -d -l $DISPLAY -u /var/run/utmp -x /etc/X11/kdm/Xservers $USER

@@ -93,6 +93,7 @@
 #if defined(__NetBSD__) || defined(__FreeBSD__)
 # define SHUTDOWN_CMD	"/sbin/shutdown -h now"
 # define REBOOT_CMD	"/sbin/shutdown -r now"
+# define CSRG_BASED	/* hmmm - hope this is right .... */
 #endif
 
 #ifdef __SVR4

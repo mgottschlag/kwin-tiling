@@ -54,7 +54,6 @@ public:
     QFont	*_failFont;
     QFont	*_greetFont;
 
-    // GUIStyle	_style;
     bool	_useLogo;
     QString	_logo;
     QString	_greetString;

@@ -298,14 +298,14 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
     }
     else
     {
-	pixLabel = new QLabel( this);
-	pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken);
-	pixLabel->setAutoResize( true);
-	pixLabel->setIndent(0);
 	QPixmap pixmap;
-	if( !pixmap.load( kdmcfg->_logo ) )
-	    pixmap.resize( 64, 64);
-	pixLabel->setPixmap( pixmap);
+	if ( pixmap.load( kdmcfg->_logo ) ) {
+	    pixLabel = new QLabel( this);
+	    pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken);
+	    pixLabel->setAutoResize( true);
+	    pixLabel->setIndent(0);
+	    pixLabel->setPixmap( pixmap);
+	}
     }
 
     // The line-edit look _very_ bad if you don't give them 
@@ -331,8 +331,10 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
     vbox->addLayout( hbox1);
     vbox->addLayout( hbox2);
     hbox1->addLayout( grid, 3);
-    hbox1->addWidget( pixLabel ? (QWidget*)pixLabel : (QWidget*)clock, 0, 
-		      AlignTop);
+    if (clock)
+	hbox1->addWidget( (QWidget*)clock, 0, AlignTop);
+    else if (pixLabel)
+	hbox1->addWidget( (QWidget*)pixLabel, 0, AlignTop);
 
     QFrame* sepFrame = new QFrame( this);
     sepFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken);
@@ -434,7 +436,7 @@ KGreeter::SetTimer()
 void 
 KGreeter::timerDone()
 {
-    if (failedLabel->isVisible()){
+    if (failedLabel->isVisible()) {
 	failedLabel->setText(QString::null);
 	goButton->setEnabled( true);
 	loginEdit->setEnabled( true);
@@ -801,13 +803,13 @@ KGreeter::go_button_clicked()
     strncpy( ::sessarg, 
 	QFile::encodeName( sessionargBox->currentText() ).data(), F_LEN - 1 );
 
-    if (!MyVerify (::d, greet, verify)){
+    if (!MyVerify (::d, greet, verify)) {
 	failedLabel->setText(i18n("Login failed!"));
 	goButton->setEnabled( false);
 	loginEdit->setEnabled( false);
 	passwdEdit->setEnabled( false);
 	clear_button_clicked();
-	timer->start( 1000, true );	// XXX make configurable
+	timer->start( 1500, true );	// XXX make configurable
 	return;
     }
 
@@ -1057,7 +1059,6 @@ GreetUser(
     kdmcfg = new KDMConfig();
      
     myapp.setFont( *kdmcfg->_normalFont);
-    // TODO: myapp.setStyle( kdmcfg->_style);
 
     *dpy = qt_xdisplay();
      

@@ -230,6 +230,9 @@ static struct pam_conv PAM_conversation = {
 };
 #endif /* USE_PAM */
 
+#define UFAILV do { bzero(greet->password, strlen(greet->password)); return 0; } while(0)
+#define FAILV do { if (greet->password) bzero(greet->password, strlen(greet->password)); return 0; } while(0)
+
 int
 Verify (struct display *d, struct greet_info *greet, struct verify_info *verify)
 {
@@ -250,26 +253,26 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify)
 	char		**argv;
 
 	Debug ("Verify %s ...\n", greet->name);
+	if (!strlen (greet->name)) {
+		Debug ("Emtpy user name provided.\n");
+		FAILV;
+	}
+
+#ifndef USE_PAM
 	p = getpwnam (greet->name);
 	endpwent();
-
-	if (!p || strlen (greet->name) == 0) {
+	if (!p) {
 		Debug ("getpwnam() failed.\n");
-		if (greet->password)
-			bzero(greet->password, strlen(greet->password));
-		return 0;
-	} else {
-#ifdef __linux__
-	    if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
-		Debug ("The account is locked, no login allowed.\n");
-		if (greet->password)
-			bzero(greet->password, strlen(greet->password));
-		return 0;
-	    }
-#endif
-	    user_pass = p->pw_passwd;
+		FAILV;
 	}
-#ifndef USE_PAM
+#ifdef __linux__
+	if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
+		Debug ("The account is locked, no login allowed.\n");
+		FAILV;
+	}
+#endif
+	user_pass = p->pw_passwd;
+
     if (greet->password) {
 #ifdef KRB4
 	if (strcmp(greet->name, "root") != 0) {
@@ -287,7 +290,7 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify)
 		    unlink(krbtkfile);
            
 		    ret = krb_verify_user(greet->name, "", realm, 
-				      greet->password, 1, "rcmd");
+					  greet->password, 1, "rcmd");
            
 		    if(ret == KSUCCESS){
 			    chown(krbtkfile, p->pw_uid, p->pw_gid);
@@ -334,8 +337,7 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify)
 	{
 		if(!greet->allow_null_passwd || strlen(p->pw_passwd) > 0) {
 			Debug ("password verify failed\n");
-			bzero(greet->password, strlen(greet->password));
-			return 0;
+			UFAILV;
 		} /* else: null passwd okay */
 	}
     }	/* greet->password */
@@ -346,9 +348,7 @@ done:
 	 */
 	if ((p->pw_uid == 0) && !greet->allow_root_login) {
 		Debug("root logins not allowed\n");
-		if (greet->password)
-			bzero(greet->password, strlen(greet->password));
-		return 0;
+		FAILV;
 	}
 	/*
 	 * Shell must be in /etc/shells 
@@ -360,9 +360,7 @@ done:
 			   -> failure */
 			Debug("shell not in /etc/shells\n");
 			endusershell();
-			if (greet->password)
-				bzero(greet->password, strlen(greet->password));
-			return 0;
+			FAILV;
 		}
 		if (strcmp(s, p->pw_shell) == 0) {
 			/* found the shell in /etc/shells */
@@ -378,27 +376,26 @@ done:
 	if (p->pw_change) {
 		if (tp.tv_sec >= p->pw_change) {
 			Debug("Password has expired.\n");
-			if (greet->password)
-				bzero(greet->password, strlen(greet->password));
-			return 0;
+			FAILV;
 		}
 	}
 	if (p->pw_expire) {
 		if (tp.tv_sec >= p->pw_expire) {
 			Debug("account has expired.\n");
-			if (greet->password)
-				bzero(greet->password, strlen(greet->password));
-			return 0;
+			FAILV;
 		} 
 	}
 #endif /* __OpenBSD__ */
 	bzero(user_pass, strlen(user_pass)); /* in case shadow password */
 #else /* USE_PAM */
-#define PAM_BAIL	\
-	if (pam_error != PAM_SUCCESS) { pam_end(*pamh, 0); return 0; }
 
+#define PAM_BAIL	\
+	if (pam_error != PAM_SUCCESS) { \
+	    pam_end(*pamh, 0); \
+	    FAILV; \
+	}
 	PAM_password = greet->password;
-	pam_error = pam_start(KDE_PAM, p->pw_name, &PAM_conversation, pamh);
+	pam_error = pam_start(KDE_PAM, greet->name, &PAM_conversation, pamh);
 	PAM_BAIL;
 	pam_error = pam_set_item(*pamh, PAM_TTY, d->name);
 	PAM_BAIL;
@@ -412,6 +409,13 @@ done:
 	pam_error = pam_setcred(*pamh, 0);
 	PAM_BAIL;
 #undef PAM_BAIL
+
+	p = getpwnam (greet->name);
+	endpwent();
+	if (!p) {
+		Debug ("getpwnam() failed.\n");
+		FAILV;
+	}
 #endif /* USE_PAM */
 
 	Debug ("verify succeeded\n");
@@ -452,7 +456,7 @@ VerifyRoot( const char *pw)
 #ifndef USE_PAM
     struct passwd *pws = getpwnam( superuser);
     if (!pws) {
-	printf("can't verify root passwd, getpwnam() failed\n");
+	printf("can't verify " superuser " passwd, getpwnam() failed\n");
 	return 0;
     }
     endpwent();
@@ -473,7 +477,7 @@ VerifyRoot( const char *pw)
 	return 0;
     }
 #else
-    printf("can't verify root passwd, lacking crypt() support\n");
+    printf("can't verify " superuser " passwd, lacking crypt() support\n");
     return 0;
 #endif
 #else /* USE_PAM */

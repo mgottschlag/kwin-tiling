@@ -9,3 +9,4 @@
 # causing serious grief.
 #
 #chown $USER /dev/console
+#exec sessreg -a -l $DISPLAY -u /var/run/utmp -x /etc/X11/kdm/Xservers $USER
