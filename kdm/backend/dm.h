@@ -479,7 +479,7 @@ extern char *curuser, *curpass, *curtype, *dmrcuser, *curdmrc, *newdmrc;
 
 /* server.c */
 extern int StartServer (struct display *d);
-extern int WaitForServer (struct display *d);
+extern void WaitForServer (struct display *d);
 extern void ResetServer (struct display *d);
 extern int PingServer(struct display *d);
 extern Display *dpy;

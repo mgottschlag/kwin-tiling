@@ -1434,8 +1434,7 @@ StartDisplay (struct display *d)
 #endif
 	(void) Signal (SIGPIPE, SIG_IGN);
 	SetAuthorization (d);
-	if (!WaitForServer (d))
-	    exit (EX_OPENFAILED_DPY);
+	WaitForServer (d);
 	ManageSession (d);
 	/* NOTREACHED */
     case -1:

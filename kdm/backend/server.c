@@ -260,7 +260,7 @@ openErrorHandler (Display *dspl ATTR_UNUSED)
     return(0);
 }
 
-int
+void
 WaitForServer (struct display *d)
 {
     volatile int i;
@@ -297,7 +297,7 @@ WaitForServer (struct display *d)
 #endif
 		RegisterCloseOnFork (ConnectionNumber (dpy));
 		(void) fcntl (ConnectionNumber (dpy), F_SETFD, 0);
-		return 1;
+		return;
 	    }
 	    Debug ("OpenDisplay(%s) attempt %d failed: %s\n",
 		   d->name, i+1, SysErrorMsg());
@@ -309,7 +309,7 @@ WaitForServer (struct display *d)
 	}
     } while (++i < d->openRepeat);
     LogError ("Cannot connect to %s, giving up\n", d->name);
-    return 0;
+    exit (EX_OPENFAILED_DPY);
 }
 
 void
