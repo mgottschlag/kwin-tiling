@@ -256,8 +256,8 @@ sub write {
 sub update_server {
     if (fork) {
 	system('/usr/sbin/exportfs', '-r');
-	if (system('/sbin/pidof rpc.mountd >/dev/null') != 0 ||
-	    system('/sbin/pidof nfsd >/dev/null') != 0) {
+	if (system('PATH=/bin:/sbin pidof rpc.mountd >/dev/null') != 0 ||
+	    system('PATH=/bin:/sbin pidof nfsd >/dev/null') != 0) {
 	    # trying to start the server...
 	    system('/etc/init.d/portmap start') if system('/etc/init.d/portmap status') != 0;
 	    system('/etc/init.d/nfs', $_) foreach 'stop', 'start';
@@ -379,10 +379,18 @@ sub name_mangle {
 sub update_server {
     if (fork) {
 	system('/usr/bin/killall -HUP smbd 2>/dev/null');
-	if (system('/sbin/pidof smbd >/dev/null') != 0 ||
-	    system('/sbin/pidof nmbd >/dev/null') != 0) {
+	if (system('PATH=/bin:/sbin pidof smbd >/dev/null') != 0 ||
+	    system('PATH=/bin:/sbin pidof nmbd >/dev/null') != 0) {
 	    # trying to start the server...
-	    system('/etc/init.d/smb', $_) foreach 'stop', 'start';
+	    if ( -f '/etc/init.d/smb' ) {
+	 	system('/etc/init.d/smb', $_) foreach 'stop', 'start';
+	    }
+	    elsif ( -f '/etc/init.d/samba' ) {
+	 	system('/etc/init.d/samba', $_) foreach 'stop', 'start';
+            }
+	}
+	else {
+	    print STDERR "Error: Can't find the samba init script \n";
 	}
 	exit 0;
     }
