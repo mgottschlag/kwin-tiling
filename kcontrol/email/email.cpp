@@ -153,6 +153,16 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	chkRunTerminal->setText(i18n( "Run in &terminal" ) );
 	connect(chkRunTerminal, SIGNAL(clicked()), this, SLOT(configChanged()));
 
+	wtstr = i18n(	"Enter the path to your preferred email client (KMail, Mutt, etc.) here or"
+			" choose it with the <em>Browse...</em> button. If no client is specified here,"
+			" KMail will be used (if available) instead.");
+	QWhatsThis::add(txtEMailClient, wtstr);
+	QWhatsThis::add(btnBrowseClient, i18n(	"Press this button to select your favorite email client. Please"
+						" note that the file you select has to have the executable attribute set in order to be"
+						" accepted."));
+	QWhatsThis::add(chkRunTerminal, i18n(	"Activate this option if you want the selected email client"
+						" to be executed in a terminal (e.g. <em>Konsole</em>)."));
+
 	grpIncoming = new QGroupBox(2, Qt::Horizontal, this, "grpIncoming");
 	//grpIncoming->setGeometry( QRect( 5, 290, 535, 80 ) ); 
 	grpIncoming->setTitle(i18n( "Incoming Mail" ) );
