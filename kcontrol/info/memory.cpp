@@ -286,10 +286,11 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
 	if (localheight>0) {
 		paint.fillRect(1, startline, width-2, -localheight, *color);
 
-    		if (localheight >= SPACING)
-			paint.drawText(0, startline, width, -localheight,
+    		if (localheight >= SPACING) {
+			paint.drawText(0, startline-localheight, width, localheight,
 				AlignCenter | WordBreak, 
 				QString("%1 %2%").arg(*text).arg(percent));
+		}
     	}
 	
 	startline -= localheight;
