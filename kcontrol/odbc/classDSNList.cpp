@@ -74,7 +74,7 @@ void classDSNList::Load( int nSource )
 	else
 	{
 		SQLSetConfigMode( ODBC_BOTH_DSN );
-		qsError.sprintf( "Could not load %s This is most likely caused because of lack of privs. Try running as root user the first time you run this app.", szINI );
+		qsError.sprintf( "Could not load (%s) This is most likely because of a lack of privs. Try running as root user the first time you run this program, when you are working with System DSN's or when you are adding/removing Drivers.", szINI );
 		QMessageBox::information(	this, "ODBC Config",  qsError );
 
 		while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
@@ -136,7 +136,7 @@ void classDSNList::Add()
 				delete pProperties;
 				ODBCINSTDestructProperties( &hFirstProperty );
 
-				qsError.sprintf( "Could not write to (%s)", szINI );
+				qsError.sprintf( "Could not write to (%s), try running this program as root.", szINI );
 				QMessageBox::information( this, "ODBC Config",  qsError );
 				while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
 					QMessageBox::information( this, "ODBC Config",  szErrorMsg );
@@ -206,7 +206,7 @@ void classDSNList::Edit()
 	// GET PROPERTY LIST FROM DRIVER
 	if ( ODBCINSTConstructProperties( (char*)qsDataSourceDriver.data(), &hFirstProperty ) != ODBCINST_SUCCESS )
 	{
-		qsError.sprintf( "Could not construct a property list for (%s)", qsDataSourceDriver.data() );
+		qsError.sprintf( "Could not construct a property list for (%s). Ensure that the Driver has a valid Setup lib specified.", qsDataSourceDriver.data() );
 		QMessageBox::information( this, "ODBC Config",  qsError );
 		while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
 			QMessageBox::information( this, "ODBC Config",  szErrorMsg );
@@ -239,7 +239,7 @@ void classDSNList::Edit()
 			delete pProperties;
 			ODBCINSTDestructProperties( &hFirstProperty );
 
-			qsError.sprintf( "Could not write to (%s)", szINI );
+			qsError.sprintf( "Could not write to (%s), you may want to try running this program as root ( ie when dealing with System DSN's.", szINI );
 			QMessageBox::information( this, "ODBC Config",  qsError );
 			while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
 				QMessageBox::information( this, "ODBC Config",  szErrorMsg );
@@ -289,7 +289,7 @@ void classDSNList::Delete()
 	SQLSetConfigMode( nSource );
 	if ( SQLWritePrivateProfileString( pDataSourceName, NULL, NULL, szINI ) == FALSE )
 	{
-		qsError.sprintf( "Could not write property list for (%s)", pDataSourceName );
+		qsError.sprintf( "Could not write property list for (%s). Try running this program as root.", pDataSourceName );
 		QMessageBox::information( this, "ODBC Config",  qsError );
 		while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, FILENAME_MAX, NULL ) == SQL_SUCCESS )
 			QMessageBox::information( this, "ODBC Config",  szErrorMsg );

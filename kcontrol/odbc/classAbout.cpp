@@ -200,7 +200,7 @@ classAbout::classAbout( QWidget* parent, const char* name )
 	qtarch_Label_9->setBackgroundMode( QWidget::PaletteBackground );
 	qtarch_Label_9->setFontPropagation( QWidget::NoChildren );
 	qtarch_Label_9->setPalettePropagation( QWidget::NoChildren );
-	qtarch_Label_9->setText( "http://www.genix.net/unixODBC" );
+	qtarch_Label_9->setText( "http://www.unixodbc.org" );
 	qtarch_Label_9->setAlignment( 289 );
 	qtarch_Label_9->setMargin( -1 );
 
@@ -284,6 +284,7 @@ void classAbout::pbDriverManager_Clicked()
     qsMsg += "Some functionality, such as listing all Data Sources, is only present\n";
     qsMsg += "in the Driver Manager (or via odbcinst lib).\n";
     qsMsg += "\n";
+    qsMsg += "The DriverManager is the hub of ODBC activity... a traffic cop.\n";
     QMessageBox::information( this, "ODBC Config - Driver Manager", qsMsg );
 }
 
@@ -296,12 +297,13 @@ void classAbout::pbDriver_Clicked()
     qsMsg += "Driver Manager.\n";
     qsMsg += "Drivers may implement some database functionality when it\n";
     qsMsg += "is required by ODBC and is not present in the Database System.\n";
-    qsMsg += "Drivers may also translate data types.\n";
+    qsMsg += "Drivers may also translate data types. Drivers, typically,\n";
+    qsMsg += " do most of the ODBC work.\n";
     qsMsg += "\n";
     qsMsg += "ODBC Drivers can be obtained from the Internet or directly\n";
     qsMsg += "from the Database vendor.\n";
     qsMsg += "\n";
-    qsMsg += "Check http://www.genix.net/unixODBC for drivers\n";
+    qsMsg += "Check http://www.unixodbc.org for drivers\n";
     QMessageBox::information( this, "ODBC Config - Drivers", qsMsg );
 }
 
@@ -323,24 +325,20 @@ void classAbout::pbCredits_Clicked()
 {
     QString qsMsg;
 
-    qsMsg = "unixODBC consists of the following components;\n";
+    qsMsg += "This program was derived from unixODBC. KDE also\n";
+    qsMsg += "includes other parts of unixODBC such as the\n";
+    qsMsg += "DriverManager and some supporting libs.\n";
     qsMsg += "\n";
-    qsMsg += "- Driver Manager\n";
-    qsMsg += "- GUI Data Manager\n";
-    qsMsg += "- GUI Config\n";
-    qsMsg += "- Several Drivers and Driver Config libs\n";
-    qsMsg += "- Driver Code Template\n";
-    qsMsg += "- Driver Config Code Template\n";
-    qsMsg += "- ODBCINST lib\n";
-    qsMsg += "- odbcinst (command line tool for install scripts)\n";
-    qsMsg += "- INI lib\n";
-    qsMsg += "- LOG lib\n";
-    qsMsg += "- LST lib\n";
-    qsMsg += "- TRE lib\n";
-    qsMsg += "- SQI lib\n";
-    qsMsg += "- monitor (command line tool for SQL)\n";
+    qsMsg += "Nick Gorham (nick@lurcher.org)\n";
+    qsMsg += "- second project lead\n";
+    qsMsg += "- complete rewrite of Driver Manager\n";
     qsMsg += "\n";
-    qsMsg += "All code is released under GPL and the LGPL license.\n";
+    qsMsg += "Peter Harvey (pharvey@codebydesign.com)\n";
+    qsMsg += "- first project lead\n";
+    qsMsg += "- original creator of most material\n";
+    qsMsg += "\n";
+    qsMsg += "Thanks to folks like Lars Doelle for helping out.\n";
+
     QMessageBox::information( this, "ODBC Config - Credits", qsMsg );
 }
 
@@ -358,6 +356,7 @@ void classAbout::pbApplication_Clicked()
     qsMsg += "The Application is NOT hard-wired to a particular Database\n";
     qsMsg += "System. This allows the user to choose a different Database\n";
     qsMsg += "System using the ODBCConfig tool.\n";
+
     QMessageBox::information( this, "ODBC Config - Application", qsMsg );
 }
 

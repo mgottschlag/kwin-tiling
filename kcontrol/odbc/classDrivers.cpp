@@ -215,7 +215,7 @@ void classDrivers::Add()
 		{
 			delete pProperties;
 			FreeProperties( &hFirstProperty );
-			qsError.sprintf( "Could not write to (%s)", szINI );
+			qsError.sprintf( "Could not write to (%s). Try running this program as root when working with Drivers or System DSN's.", szINI );
 			QMessageBox::information( this, "ODBC Config",  qsError );
 			return;
 		}
