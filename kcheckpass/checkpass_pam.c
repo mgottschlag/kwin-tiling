@@ -131,7 +131,7 @@ AuthReturn Authenticate(const char *caller, const char *method,
 {
   const char	*tty;
   pam_handle_t	*pamh;
-  char		*auser;
+  void		*pam_item;
   const char	*pam_service;
   char		pservb[64];
   int		pam_error;
@@ -176,14 +176,12 @@ AuthReturn Authenticate(const char *caller, const char *method,
   }
 
   /* just in case some module is stupid enough to ignore a preset PAM_USER */
-  void *tmp_auser = 0; /* avoid strict aliasing warning */
-  pam_error = pam_get_item (pamh, PAM_USER, (pam_gi_type)&tmp_auser);
-  auser = tmp_auser;
+  pam_error = pam_get_item (pamh, PAM_USER, (pam_gi_type)&pam_item);
   if (pam_error != PAM_SUCCESS) {
     pam_end(pamh, pam_error);
     return AuthError;
   }
-  if (strcmp(auser, user)) {
+  if (strcmp((const char *)pam_item, user)) {
     pam_end(pamh, PAM_SUCCESS); /* maybe use PAM_AUTH_ERR? */
     return AuthBad;
   }
