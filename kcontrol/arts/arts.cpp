@@ -519,7 +519,7 @@ void KArtsModule::slotChanged()
 {
 	updateWidgets();
 	configChanged = true;
-	emit changed(true);
+	emit setChanged(true);
 }
 
 /* check if starting realtime would be possible */
