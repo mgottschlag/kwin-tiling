@@ -129,29 +129,21 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
     set_fixed (whenGroup);
 
 
-    QWidget *qwd = new QWidget (winFrame);
     // Passwd line edit
-    pswdEdit = new KPasswordEdit( qwd/*winFrame*/, "edit", kdmcfg->_echoMode);
-    pswdEdit->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred));
-//    set_fixed (pswdEdit);
+    pswdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode);
+    pswdEdit->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred));
 
-    QLabel *plb = new QLabel (pswdEdit, i18n("Root &Password:"), qwd/*winFrame*/);
-    set_fixed (plb);
+    QLabel *plb = new QLabel (pswdEdit, i18n("Root &Password:"), winFrame);
 
     timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
-
     
-    QHBoxLayout *qhb = new QHBoxLayout (qwd);
-    qhb->setResizeMode (QLayout::FreeResize);
+    QHBoxLayout *qhb = new QHBoxLayout ();
     qhb->addWidget( plb);
     qhb->addSpacing(KDialog::spacingHint());
     qhb->addWidget( pswdEdit);
+    box->addMultiCellLayout( qhb, 1,1, 0,1);
 
-    qwd->setMinimumSize (qhb->sizeHint());
-//    box->addMultiCellLayout( qhb, 1,1, 0,1);
-    box->addMultiCellWidget( qwd, 1,1, 0,1);
-//    QBoxLayout* box3 = new QBoxLayout( box, QBoxLayout::LeftToRight, 10);
 
     okButton = new QPushButton( i18n("&OK"), winFrame);
     set_fixed( okButton);
@@ -159,8 +151,8 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
     cancelButton = new QPushButton( i18n("&Cancel"), winFrame);
     set_fixed( cancelButton);
 
-    box->addWidget( okButton, 2, 0);
-    box->addWidget( cancelButton, 2, 1);
+    box->addWidget( okButton, 2, 0, AlignHCenter);
+    box->addWidget( cancelButton, 2, 1, AlignHCenter);
 
     connect( okButton, SIGNAL(clicked()), SLOT(bye_bye()));
     connect( cancelButton, SIGNAL(clicked()), SLOT(reject()));

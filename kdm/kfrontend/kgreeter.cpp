@@ -55,9 +55,6 @@ extern "C" {
 # define explicit __explicit_dummy
 # include <X11/XKBlib.h>
 #endif
-#ifdef HAVE_XINERAMA
-# include <X11/extensions/Xinerama.h>
-#endif
 };
 
 #include <sys/param.h>
@@ -354,8 +351,6 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	    loginEdit->selectAll();
 	load_wm();
     }
-
-    setMaximumHeight(QApplication::desktop()->height());
 }
 
 KGreeter::~KGreeter ()
@@ -656,6 +651,20 @@ KGreeter::ReturnPressed()
     }
 }
 
+static void 
+moveInto (QRect &what, const QRect &where)
+{
+    int di;
+
+    if ((di = where.right() - what.right()) < 0)
+	what.moveBy( di, 0);
+    if ((di = where.left() - what.left()) > 0)
+	what.moveBy( di, 0);
+    if ((di = where.bottom() - what.bottom()) < 0)
+	what.moveBy( 0, di);
+    if ((di = where.top() - what.top()) > 0)
+	what.moveBy( 0, di);
+}
 
 extern bool kde_have_kipc;
 
@@ -692,41 +701,16 @@ kg_main(int argc, char **argv)
     SecureDisplay (qt_xdisplay());
     if (!dgrabServer)
 	GSendInt (G_SetupDpy);
+    QRect scr = QApplication::desktop()->screenGeometry(kdmcfg->_greeterScreen);
     kgreeter = new KGreeter;
-    kgreeter->updateGeometry();
-    kapp->processEvents(0);
-    kgreeter->resize(kgreeter->sizeHint());
-    int dw, dh, gw, gh, x, y;
-#ifdef HAVE_XINERAMA
-    int numHeads;
-    XineramaScreenInfo *xineramaInfo;
-    if (XineramaIsActive(qt_xdisplay()) &&
-        ((xineramaInfo = XineramaQueryScreens(qt_xdisplay(), &numHeads)))) {
-	dw = xineramaInfo->width;
-	dh = xineramaInfo->height;
-	XFree(xineramaInfo);
-    } else
-#endif
-    {
-	dw = QApplication::desktop()->width();
-	dh = QApplication::desktop()->height();
-    }
-    gw = kgreeter->width();
-    gh = kgreeter->height();
+    kgreeter->setMaximumSize(scr.size());
+    QRect grt(QPoint (0, 0), kgreeter->sizeHint());
     if (kdmcfg->_greeterPosX >= 0) {
-	x = kdmcfg->_greeterPosX;
-	y = kdmcfg->_greeterPosY;
-    } else {
-	x = dw/2;
-	y = dh/2;
-    }
-    x -= gw/2;
-    y -= gh/2;
-    if (x + gw > dw)
-	x = dw - gw;
-    if (y + gh > dh)
-	y = dh - gh;
-    kgreeter->move( x < 0 ? 0 : x, y < 0 ? 0 : y );
+	grt.moveCenter( QPoint( kdmcfg->_greeterPosX, kdmcfg->_greeterPosY));
+	moveInto (grt, scr);
+    } else
+	grt.moveCenter( scr.center());
+    kgreeter->setGeometry (grt);
     kgreeter->show();
     QApplication::restoreOverrideCursor();
     Debug ("entering event loop\n");

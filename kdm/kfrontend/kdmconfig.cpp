@@ -37,6 +37,7 @@
 #include <qwindowsstyle.h>
 #include <qplatinumstyle.h>
 #include <qtextcodec.h>	//XXX
+#include <qsettings.h> 
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -144,6 +145,7 @@ KDMConfig::KDMConfig()
 	_greeterPosY = GetCfgInt (C_GreeterPosY);
     } else
 	_greeterPosX = -1;
+    _greeterScreen = GetCfgInt (C_GreeterScreen);
 
     kapp->setStyle (GetCfgStr (C_GUIStyle));
 
@@ -167,6 +169,8 @@ KDMConfig::KDMConfig()
     _normalFont = Str2Font (GetCfgQStr (C_StdFont));
     _failFont = Str2Font (GetCfgQStr (C_FailFont));
     _greetFont = Str2Font (GetCfgQStr (C_GreetFont));
+
+    QSettings().writeEntry("/qt/useXft", GetCfgInt (C_AntiAliasing));
 
     // Greet String
     char hostname[256], *ptr;

@@ -58,6 +58,7 @@ public:
     QString	_logo;
     QString	_greetString;
     int		_greeterPosX, _greeterPosY;
+    int		_greeterScreen;
 
     int		_showUsers;
     int		_preselUser;

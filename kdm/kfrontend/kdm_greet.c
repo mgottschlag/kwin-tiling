@@ -400,6 +400,7 @@ main (int argc, char **argv)
 	free (ci);
     }
 
+    setenv("HOME", "/tmp", 1);	/* for QSettings */
     kg_main(argc, argv);
     return 0;
 }

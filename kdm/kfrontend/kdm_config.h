@@ -71,6 +71,7 @@
 # define ECHO_THREE	1
 # define ECHO_NONE	2
 #define C_GreeterScreen		(C_TYPE_INT | 0x1026)
+#define C_AntiAliasing		(C_TYPE_INT | 0x1027)
 
 #define C_BackgroundMode	(C_TYPE_STR | 0x1100)
 #define C_BlendBalance		(C_TYPE_INT | 0x1101)
@@ -87,5 +88,7 @@
 #define C_Wallpaper		(C_TYPE_STR | 0x110c)	
 #define C_WallpaperList		(C_TYPE_ARGV | 0x110d)
 #define C_WallpaperMode		(C_TYPE_STR | 0x110e)
+#define C_MinOptimizationDepth	(C_TYPE_INT | 0x110f)
+#define C_UseSHM		(C_TYPE_INT | 0x1110)
 
 #endif /* _KDM_CONFIG_H_ */
