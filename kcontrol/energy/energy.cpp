@@ -313,8 +313,10 @@ void KEnergy::slotChangeEnable(bool ena)
 void KEnergy::slotChangeStandby(int value)
 {
     m_Standby = value;
-    if (m_Standby > m_Suspend)
+    if (m_Suspend > 0 && m_Standby > m_Suspend)
     m_pSuspendSlider->setValue(m_Standby);
+    else if (m_Off > 0 && m_Standby > m_Off)
+    m_pOffSlider->setValue(m_Standby);
 
     m_bChanged = true;
     emit changed(true);
@@ -324,7 +326,7 @@ void KEnergy::slotChangeStandby(int value)
 void KEnergy::slotChangeSuspend(int value)
 {
     m_Suspend = value;
-    if (m_Suspend > m_Off)
+    if (m_Off > 0 && m_Suspend > m_Off)
     m_pOffSlider->setValue(m_Suspend);
     if (m_Suspend < m_Standby)
     m_pStandbySlider->setValue(m_Suspend);
