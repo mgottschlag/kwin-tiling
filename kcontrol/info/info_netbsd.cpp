@@ -43,6 +43,7 @@
 #include <qtextstream.h>
 
 #include <kdebug.h>
+#include <kio/global.h> /* for KIO::convertSize() */
 
 typedef struct
   {
@@ -89,7 +90,7 @@ bool GetInfo_CPU(QListView *lBox)
 	else {
 		len = sizeof(num);
 		sysctl(mib,2,&num,&len,NULL,0);
-		value.sprintf("%d", num);
+		value = QString::number(num);
 	}
 	new QListViewItem(lBox, hw_info_mib->title, value);
    }
@@ -263,76 +264,86 @@ bool GetInfo_SCSI (QListView *lbox)
 
 bool GetInfo_Partitions (QListView *lbox)
 {
-	QString s;
-	QString MB;
-	char *line, *orig_line;
-	const char *device, *mountpoint, *type, *flags;
-	FILE *pipe = popen("/sbin/mount", "r");
-	QTextStream *t;
-	u_int64_t tsz, fsz;
-	struct statfs sfs;
-	int ok;
+	int num; // number of mounts
+	// FIXME: older pkgsrc patches checked ST_RDONLY for this declaration
+	// what is ST_RDONLY and how does it affect getmntinfo?
+	struct statfs *mnt; // mount data pointer
 
-	if (!pipe) {
-		kdError(0) << i18n("Unable to run /sbin/mount.") << endl;
+	// get mount info
+	if (!(num=getmntinfo(&mnt, MNT_WAIT))) {
+		kdError() << "getmntinfo failed" << endl;
 		return false;
 	}
-	t = new QTextStream(pipe, IO_ReadOnly);
 
-	MB = QString(" ") + i18n("MB");
+	// table headers
 	lbox->addColumn(i18n("Device"));
 	lbox->addColumn(i18n("Mount Point"));
 	lbox->addColumn(i18n("FS Type"));
 	lbox->addColumn(i18n("Total Size"));
 	lbox->addColumn(i18n("Free Size"));
-	lbox->addColumn(i18n("Mount Options"));
+	lbox->addColumn(i18n("Total nodes"));
+	lbox->addColumn(i18n("Free nodes"));
+	lbox->addColumn(i18n("Flags"));
 
-	while (!(s = t->readLine().latin1()).isEmpty()) {
-		orig_line = line = strdup(s.ascii());
+	// mnt points into a static array (no need to free it)
+	for(; num--; ++mnt) {
+		unsigned long long big[2];
+		QString vv[5];
 
-		// the lines returned by /sbin/mount look like:
-		// /dev/wd0a on / type ffs (local, soft dependencies)
+		big[0] = big[1] = mnt->f_bsize; // coerce the product
+		big[0] *= mnt->f_blocks;
+		big[1] *= mnt->f_bavail; // FIXME: use f_bfree if root?
 
-		device = strsep(&line, " ");
+		// convert to strings
+		vv[0] = KIO::convertSize(big[0]);
+		vv[1] = QString::fromLatin1("%1 (%2%%)")
+				.arg(KIO::convertSize(big[1]))
+				.arg(mnt->f_blocks ? mnt->f_bavail*100/mnt->f_blocks : 0);
 
-		(void) strsep(&line, " "); // consume word "on"
-		mountpoint = strsep(&line, " ");
+		// FIXME: these two are large enough to punctuate
+		vv[2] = QString::number(mnt->f_files);
+		vv[3] = QString::fromLatin1("%1 (%2%%) ")
+				.arg(mnt->f_ffree)
+				.arg(mnt->f_files ? mnt->f_ffree*100/mnt->f_files : 0);
 
-		(void) strsep(&line, " "); // consume word "type"
-		type = strsep(&line, " ");
+		vv[4] = QString::null;
+#define MNTF(x) if (mnt->f_flags & MNT_##x) vv[4] += QString::fromLatin1(#x " ");
+		MNTF(ASYNC)
+		MNTF(DEFEXPORTED)
+		MNTF(EXKERB)
+		MNTF(EXNORESPORT)
+		MNTF(EXPORTANON)
+		MNTF(EXPORTED)
+		MNTF(EXPUBLIC)
+		MNTF(EXRDONLY)
+		MNTF(IGNORE)
+		MNTF(LOCAL)
+		MNTF(NOATIME)
+		MNTF(NOCOREDUMP)
+		MNTF(NODEV)
+		MNTF(NODEVMTIME)
+		MNTF(NOEXEC)
+		MNTF(NOSUID)
+		MNTF(QUOTA)
+		MNTF(RDONLY)
+		MNTF(ROOTFS)
+		MNTF(SOFTDEP)
+		MNTF(SYMPERM)
+		MNTF(SYNCHRONOUS)
+		MNTF(UNION)
+#undef MNTF
 
-
-		// Skip leading '(' and trailing ')'
-		if (line != NULL) {
-			line++;
-			flags = strsep(&line, ")");
-		} else {
-			flags = "";
-		}
-
-		if (statfs(mountpoint, &sfs) == 0) {
-			tsz = ((1LL * sfs.f_blocks * sfs.f_bsize / 1024) + 513)
-					/ 1024;
-			fsz = ((1LL * sfs.f_bfree * sfs.f_bsize / 1024) + 513)
-					/ 1024;
-			ok = 1;
-		} else {
-			tsz = fsz = 0;
-			ok = 0;
-		}
-
+		// put it in the table
+		// FIXME: there're more data but we have limited args (this is wrong! just add!)
 		new QListViewItem(lbox,
-			QString(device) + " ",
-			QString(mountpoint) + " ", QString(type) + " ",
-			(ok) ? (Value(tsz, 6) + MB) : " ",
-			(ok) ? (Value(fsz, 6) + MB) : " ",
-			flags);
-
-		free(orig_line);
+			// FIXME: names need pad space
+			mnt->f_mntfromname,
+			mnt->f_mntonname,
+			mnt->f_fstypename,
+			vv[0], vv[1], vv[2], vv[3], vv[4]);
 	}
 
-	delete t;
-	pclose(pipe);
+	// job well done
 	return true;
 }
 
