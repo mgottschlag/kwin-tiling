@@ -68,6 +68,7 @@ bool KPrivacyManager::clearSavedClipboardContents()
       c->deleteEntry("ClipboardData");
       c->sync();
     }
+    delete c;
     return true;
   }
 
