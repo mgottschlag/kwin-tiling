@@ -2,7 +2,7 @@
  * $Id$
  *
  * info_netbsd.cpp is part of the KDE program kcminfo.  This displays
- * various information about the NetBSD system it's running on.
+ * various information about the OpenBSD system it's running on.
  *
  * Originally written by Jaromir Dolecek <dolecek@ics.muni.cz>. CPU info
  * code has been imported from implementation of processor.cpp for KDE 1.0
