@@ -32,6 +32,8 @@
  * to newInstance().
  */
 
+#include <qpaintdevicemetrics.h>
+
 #include <kcmdlineargs.h>
 #include <dcopclient.h>
 #include <kaboutdata.h>
@@ -64,10 +66,20 @@ KControlApp::KControlApp()
   QRect desk = KGlobalSettings::desktopGeometry(toplevel);
   KConfig *config = KGlobal::config();
   config->setGroup("General");
+  // Initial size is:
+  // never bigger than workspace as reported by desk
+  // 940x700 on 96 dpi, 12 pt font
+  // 800x600 on 72 dpi, 12 pt font
+  // --> 368 + 6 x dpiX, 312 + 4 x dpiY
+  // Adjusted for font size
+  QPaintDeviceMetrics pdm(toplevel);
+  int fontSize = toplevel->fontInfo().pointSize();
+  if (fontSize == 0)
+    fontSize = (toplevel->fontInfo().pixelSize() * 72) / pdm.logicalDpiX();
   int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk.width()), 
-			       QMIN( desk.width() * 3/4 , 800 ) );
+			       QMIN( desk.width(), 368 + (6*pdm.logicalDpiX()*fontSize)/12 ) );
   int y = config->readNumEntry(QString::fromLatin1("InitialHeight %1").arg(desk.height()), 
-			       QMIN( desk.height() * 3/4 , 600 ) );
+			       QMIN( desk.height(), 312 + (4*pdm.logicalDpiX()*fontSize)/12 ) );
   toplevel->resize(x,y);
 }
 
