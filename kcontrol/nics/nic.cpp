@@ -3,6 +3,8 @@
  *
  *  Copyright (C) 2001 Alexander Neundorf <neundorf@kde.org>
  *
+ *  $Id$
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -37,6 +39,7 @@
 #endif
 
 #include <sys/types.h>
+#include <sys/param.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <stdio.h>
@@ -55,8 +58,20 @@
 
 #include <sys/ioctl.h>
 
-typedef KGenericFactory<KCMNic, QWidget > KCMNicFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_nic, KCMNicFactory("kcmnic") );
+#if !defined(__FreeBSD__) || (__FreeBSD_version < 400018) // WAG about when this showed up in FreeBSD -- 4.0-S
+	#undef HAVE_GETNAMEINFO
+	#undef HAVE_GETIFADDRS
+#endif
+
+#if defined(HAVE_GETNAMEINFO) && defined(HAVE_GETIFADDRS)
+	#include <ifaddrs.h>
+	#include <netdb.h>
+
+	QString flags_tos (unsigned int flags);
+#endif
+
+typedef KGenericFactory<KCMNic, QWidget> KCMNicFactory;
+K_EXPORT_COMPONENT_FACTORY (kcm_nic, KCMNicFactory("kcmnic"));
 
 struct MyNIC
 {
@@ -127,13 +142,15 @@ NICList* findNICs()
    NICList* nl=new NICList;
    nl->setAutoDelete(true);
 
-	int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+#if !defined(HAVE_GETIFADDRS) && !defined(HAVE_GETNAMEINFO)
+
+   int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
    char buf[8*1024];
    struct ifconf ifc;
-	ifc.ifc_len = sizeof(buf);
-	ifc.ifc_req = (struct ifreq *) buf;
-	int result=ioctl(sockfd, SIOCGIFCONF, &ifc);
+   ifc.ifc_len = sizeof(buf);
+   ifc.ifc_req = (struct ifreq *) buf;
+   int result=ioctl(sockfd, SIOCGIFCONF, &ifc);
 
    for (char* ptr = buf; ptr < buf + ifc.ifc_len; )
    {
@@ -195,8 +212,83 @@ NICList* findNICs()
          break;
       }
    }
+#else
+  struct ifaddrs *ifap, *ifa;
+  if (getifaddrs(&ifap) != 0) {
+    return nl;
+  }
+
+  MyNIC *tmp=0;
+  for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+    switch (ifa->ifa_addr->sa_family) {
+    case AF_INET6:
+    case AF_INET: {
+      tmp = new MyNIC;
+      tmp->name = ifa->ifa_name;
+
+      char buf[128];
+
+      bzero(buf, 128);
+      getnameinfo(ifa->ifa_addr, ifa->ifa_addr->sa_len, buf, 127, 0, 0, NI_NUMERICHOST);
+      tmp->addr = buf;
+
+      if (ifa->ifa_netmask != NULL) {
+	bzero(buf, 128);
+	getnameinfo(ifa->ifa_netmask, ifa->ifa_netmask->sa_len, buf, 127, 0, 0, NI_NUMERICHOST);
+	tmp->netmask = buf;
+      }
+
+      if (ifa->ifa_flags & IFF_UP)
+	tmp->state=i18n("Up");
+      else
+	tmp->state=i18n("Down");
+
+      tmp->type = flags_tos(ifa->ifa_flags);
+
+      nl->append(tmp);
+      break;
+    }
+    default:
+      break;
+    }
+  }
+
+  freeifaddrs(ifap);
+#endif
    return nl;
 };
 
-#include "nic.moc"
 
+#if defined(HAVE_GETNAMEINFO) && defined(HAVE_GETIFADDRS)
+QString flags_tos (unsigned int flags)
+{
+  QString tmp;
+  if (flags & IFF_POINTOPOINT) {
+    tmp +=  i18n("Point to Point");
+  }
+
+  if (flags & IFF_BROADCAST) {
+    if (tmp.length()) {
+      tmp += QString::fromLatin1(", ");
+    }
+    tmp += i18n("Broadcast");
+  }
+  
+  if (flags & IFF_MULTICAST) {
+    if (tmp.length()) {
+      tmp += QString::fromLatin1(", ");
+    }
+    tmp += i18n("Multicast");
+  }
+  
+  if (flags & IFF_LOOPBACK) {
+    if (tmp.length()) {
+      tmp += QString::fromLatin1(", ");
+    }
+    tmp += i18n("Loopback");
+  }
+  return tmp;
+}
+#endif
+
+#include "nic.moc"
