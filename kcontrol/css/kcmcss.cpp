@@ -30,7 +30,7 @@ CSSConfig::CSSConfig(QWidget *parent, const char *name)
   dialog = new CSSConfigDialog(this);
 
   QStringList fonts;
-  KFontChooser::getFontList(fonts, false);
+  KFontChooser::getFontList(fonts, 0);
   dialog->fontFamily->insertStringList(fonts);
 
   connect(dialog->useDefault, SIGNAL(clicked()),
