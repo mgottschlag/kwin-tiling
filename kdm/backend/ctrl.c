@@ -402,7 +402,8 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    }
 	    Reply ("ok");
 	    for (di = displays; di; di = di->next) {
-		if (di->status != remoteLogin && di->userSess < 0 && !ar[1])
+		if (di->status != remoteLogin &&
+		    (ar[1] ? di->status != running : di->userSess < 0))
 		    continue;
 		bp = cbuf;
 		*bp++ = '\t';
