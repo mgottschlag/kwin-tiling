@@ -17,6 +17,7 @@
 
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
+#include <qradiobutton.h>
 #include <qwhatsthis.h>
 #include <qslider.h>
 #include <qspinbox.h>
@@ -37,8 +38,9 @@ PositionTab::PositionTab( QWidget *parent, const char* name )
   : PositionTabBase (parent, name)
 {
     // connections
-    connect(m_locationGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
+    connect(m_locationGroup, SIGNAL(clicked(int)), SLOT(locationChanged()));
     connect(m_sizeGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
+    connect(m_alignGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
     connect(m_percentSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_percentSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_expandCheckBox, SIGNAL(clicked()), SIGNAL(changed()));
@@ -52,6 +54,11 @@ PositionTab::PositionTab( QWidget *parent, const char* name )
     QWhatsThis::add(m_sizeGroup, i18n("This sets the size of the panel."
                                       " You can also access this option via the panel context menu, i.e."
                                       " by right-clicking on some free space on the panel."));
+
+    QWhatsThis::add(m_alignGroup, i18n("This setting determines how the panel is aligned, i.e."
+				       " how it's positioned on the panel edge."
+				       " Note that in order for this setting to have any effect,"
+				       " the panel size has to be set to a value of less than 100%"));
 
     load();
 }
@@ -69,6 +76,17 @@ void PositionTab::load()
 
     m_sizeGroup->setButton(c->readNumEntry("Size", 2));
     m_locationGroup->setButton(c->readNumEntry("Position", 3));
+    m_alignGroup->setButton(c->readNumEntry("Alignment",
+		    QApplication::reverseLayout() ? 2 : 0));
+
+    // if the panel is horizontal...
+    if (m_locationGroup->id(m_locationGroup->selected())) {
+	m_alignLeftTop->setText(i18n("Le&ft"));
+	m_alignRightBottom->setText(i18n("R&ight"));
+    } else {
+	m_alignLeftTop->setText(i18n("T&op"));
+	m_alignRightBottom->setText(i18n("Bottom"));
+    }
 
     int sizepercentage = c->readNumEntry( "SizePercentage", 100 );
     m_percentSlider->setValue( sizepercentage );
@@ -77,6 +95,20 @@ void PositionTab::load()
     m_expandCheckBox->setChecked( c->readBoolEntry( "ExpandSize", true ) );
 
     delete c;
+}
+
+void PositionTab::locationChanged()
+{
+    // if the panel is horizontal...
+    if ( m_locationGroup->id(m_locationGroup->selected()) > 1) {
+    	m_alignLeftTop->setText(i18n("Le&ft"));
+	m_alignRightBottom->setText(i18n("R&ight"));
+    } else {
+	m_alignLeftTop->setText(i18n("T&op"));
+	m_alignRightBottom->setText(i18n("Bottom"));
+    }
+	
+    emit changed();
 }
 
 void PositionTab::save()
@@ -92,6 +124,7 @@ void PositionTab::save()
 
     c->writeEntry("Size", m_sizeGroup->id(m_sizeGroup->selected()));
     c->writeEntry("Position", m_locationGroup->id(m_locationGroup->selected()));
+    c->writeEntry("Alignment", m_alignGroup->id(m_alignGroup->selected()));
     c->writeEntry( "SizePercentage", m_percentSlider->value() );
     c->writeEntry( "ExpandSize", m_expandCheckBox->isChecked() );
     c->sync();
@@ -103,6 +136,7 @@ void PositionTab::defaults()
 {
     m_sizeGroup->setButton(2);
     m_locationGroup->setButton(3);
+    m_alignGroup->setButton( QApplication::reverseLayout() ? 2 : 0 );
     m_expandCheckBox->setChecked( true );
     m_percentSlider->setValue( 100 );
     m_percentSpinBox->setValue( 100 );

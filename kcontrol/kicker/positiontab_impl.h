@@ -34,6 +34,9 @@ public:
 
 signals:
     void changed();
+
+private slots:
+    void locationChanged();
 };
 
 #endif
