@@ -154,7 +154,7 @@ void CXftConfigSettingsWidget::setWidgets()
                             (!fExists && CMisc::dWritable(CMisc::getDir(CKfiGlobal::cfg().getXftConfigFile()))));
 
     itsUseSubPixelHintingCheck->setEnabled(enableConfig);
-    itsAdvancedButton->setEnabled(fExists);
+    itsAdvancedButton->setEnabled(enableConfig);
     itsFromText->setEnabled(enableConfig && itsExcludeRangeCheck->isChecked());
     itsToText->setEnabled(enableConfig && itsExcludeRangeCheck->isChecked());
 
