@@ -33,6 +33,7 @@
 #include <kemailsettings.h>
 
 #include "email.h"
+#include "usernamedlg.h"
 
 topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
     : KCModule (parent, name)
@@ -152,6 +153,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	btnICMSettings->setGeometry( QRect( 245, 45, 175, 26 ) ); 
 	btnICMSettings->setText(i18n( "Incoming mailbox settings..." ) );
 	btnICMSettings->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	connect(btnICMSettings, SIGNAL(clicked()), this, SLOT(slotICMSettings()));
 
 	grpOutgoing = new QGroupBox( 2, Qt::Horizontal, this, "grpOutgoing" );
 	grpOutgoing->setGeometry( QRect( 5, 370, 535, 80 ) ); 
@@ -178,6 +180,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	btnOGMSettings->setGeometry( QRect( 245, 15, 175, 26 ) ); 
 	btnOGMSettings->setText(i18n( "Outgoing mailbox settings..." ));
 	btnOGMSettings->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	connect(btnOGMSettings, SIGNAL(clicked()), this, SLOT(slotOGMSettings()));
 
 	grpOGM->setGeometry( QRect( 5, 20, 230, 50 ) ); 
 	grpICM->setGeometry( QRect( 5, 20, 230, 50 ) ); 
@@ -429,6 +432,18 @@ void topKCMEmail::slotComboChanged(const QString &name)
 		}
 	}
 	load(name);
+}
+
+void topKCMEmail::slotICMSettings()
+{
+}
+
+void topKCMEmail::slotOGMSettings()
+{
+	if (!radOGMLocal->isChecked()) {
+		UserNameDlg *ud = new UserNameDlg(this, i18n("Outgoing Mail Retrieval Settings"));
+		ud->exec();
+	}
 }
 
 extern "C"

@@ -67,6 +67,8 @@ protected:
 protected slots:
 	void slotComboChanged(const QString &);
 	void slotNewProfile();
+	void slotICMSettings();
+	void slotOGMSettings();
 
 protected:
 	void clearData();
