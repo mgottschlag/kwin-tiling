@@ -133,6 +133,7 @@ void IconThemesConfig::loadThemes()
   {
     KIconTheme icontheme(*it);
     if (!icontheme.isValid()) kdDebug() << "notvalid\n";
+    if (icontheme.isHidden()) continue;
 
     name=icontheme.name();
     tname=name;
