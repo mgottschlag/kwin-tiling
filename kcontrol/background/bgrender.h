@@ -12,6 +12,7 @@
 #ifndef __BGRender_h_Included__
 #define __BGRender_h_Included__
 
+#include <unistd.h>
 #include <qobject.h>
 #include <qstring.h>
 
