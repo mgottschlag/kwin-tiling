@@ -36,6 +36,7 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <klibloader.h>
+#include <kaboutdata.h>
 
 #include "kcdialog.h"
 #include "kecdialog.h"
@@ -44,7 +45,8 @@
 #include "global.h"
 #include "kcmshell.h"
 #include "proxywidget.h"
-#include <kaboutdata.h>
+
+#include "version.h"
 
 static KCmdLineOptions options[] =
 {
@@ -129,10 +131,10 @@ kcmApplication::slotAppExit(const QCString &appId)
 int main(int _argc, char *_argv[])
 {
     KAboutData aboutData( "kcmshell", I18N_NOOP("KDE Control Module"),
-                          "3.0alpha1",
+                          KCONTROL_VERSION,
                           I18N_NOOP("A tool to start single KDE control modules"),
                           KAboutData::License_GPL,
-                          "(c) 1999-2000, The KDE Developers");
+                          "(c) 1999-2001, The KDE Developers");
     aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
     aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
     aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");      
@@ -244,9 +246,14 @@ int main(int _argc, char *_argv[])
             return 0;
         }
 
-        KMessageBox::error(0,
+        KMessageBox::detailedError(0,
                            i18n("There was an error loading the module.\nThe diagnostics is:\n%1")
-                           .arg(KLibLoader::self()->lastErrorMessage()));
+                           .arg(KLibLoader::self()->lastErrorMessage()),
+                           i18n("<qt><p>Possible reasons:</p><ul><li>An error occured during your last "
+                                "KDE upgrade leaving an orphant control module<li>You have old third party "
+                                "modules lying around.</ul><p>Check these points carefully and try to remove "
+                                "the module mentioned in the error message. If this fails, consider to contact"
+                                "your distributor or packager.</p></qt>"));
         return 0;
     }
 
