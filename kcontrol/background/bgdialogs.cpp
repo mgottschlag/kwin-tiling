@@ -85,7 +85,7 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
 
     // Add/Remove/Modify buttons
     QHBoxLayout *hbox = new QHBoxLayout(vbox);
-    QPushButton *but = new QPushButton(i18n("&Add"), frame);
+    QPushButton *but = new QPushButton(i18n("&Add..."), frame);
     hbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotAdd()));
     but = new QPushButton(i18n("&Remove"), frame);
@@ -439,7 +439,7 @@ KPatternSelectDialog::KPatternSelectDialog(QWidget *parent, char *name)
 
     // Add/Remove/Modify buttons
     QHBoxLayout *hbox = new QHBoxLayout(vbox);
-    QPushButton *but = new QPushButton(i18n("&Add"), frame);
+    QPushButton *but = new QPushButton(i18n("&Add..."), frame);
     hbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotAdd()));
     but = new QPushButton(i18n("&Remove"), frame);
@@ -500,7 +500,7 @@ void KPatternSelectDialog::updateItem(QString name, bool select)
 	item->setText(0, "  ");
     item->setText(1, pat.name());
     item->setText(2, pat.comment());
-    
+
     QPixmap pmPat(KGlobal::dirs()->findResource("dtop_pattern", pat.pattern()));
     QPixmap preview(100,20);
     QPainter p;
@@ -508,7 +508,7 @@ void KPatternSelectDialog::updateItem(QString name, bool select)
     p.drawTiledPixmap(0,0,100,20,pmPat);
     p.setPen(black);
     p.drawRect(0,0,100,20);
-    p.end();      
+    p.end();
     item->setPixmap(3, preview);
 
     m_Items[name] = item;
@@ -773,7 +773,7 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
     QHBoxLayout *hbox = new QHBoxLayout();
     top->addLayout(hbox);
 
-    QLabel *lbl = new QLabel(i18n("&Interval"), this);
+    QLabel *lbl = new QLabel(i18n("&Interval:"), this);
     hbox->addWidget(lbl);
     m_pIntervalEdit = new QSpinBox(this);
     m_pIntervalEdit->setRange(1, 240);
@@ -784,7 +784,7 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
     hbox->addWidget(m_pIntervalEdit);
     hbox->addStretch();
 
-    lbl = new QLabel(i18n("&Mode"), this);
+    lbl = new QLabel(i18n("&Mode:"), this);
     hbox->addWidget(lbl);
     m_pModeEdit = new QComboBox(this);
     m_pModeEdit->insertItem(i18n("In Order"));
@@ -811,7 +811,7 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
 
     hbox = new QHBoxLayout();
     vbox->addLayout(hbox);
-    QPushButton *pbut = new QPushButton(i18n("&Add"), frame);
+    QPushButton *pbut = new QPushButton(i18n("&Add..."), frame);
     connect(pbut, SIGNAL(clicked()), SLOT(slotAdd()));
     hbox->addWidget(pbut);
     pbut = new QPushButton(i18n("&Remove"), frame);

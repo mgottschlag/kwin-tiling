@@ -156,11 +156,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     top->setColStretch(0, 1);
     top->setColStretch(1, 2);
 
-    // A nice button size. Translators can adapt this
-    QPushButton *pbut = new QPushButton(i18n("some nonsense string as example string", "abcdefgh"), this);
-    QSize bsize = pbut->sizeHint();
-    delete pbut;
-
     // Desktop chooser at (0, 0)
     QGroupBox *group = new QGroupBox(i18n("Desktop"), this);
     top->addWidget(group, 0, 0);
@@ -245,7 +240,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
 					" background mode does not require a second color, this button is disabled.") );
 
     m_pBGSetupBut = new QPushButton(i18n("&Setup..."), m_pTab1);
-    m_pBGSetupBut->setFixedSize(bsize);
     grid->addWidget(m_pBGSetupBut, 3, 1, Qt::AlignLeft);
     connect(m_pBGSetupBut, SIGNAL(clicked()), SLOT(slotBGSetup()));
     QWhatsThis::add( m_pBGSetupBut, i18n("If the background mode you selected has"
@@ -311,7 +305,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     m_pBrowseBut = new QPushButton(i18n("&Browse..."), m_pTab2);
     grid->addWidget(m_pBrowseBut, 2, 2, Qt::AlignLeft);
-    m_pBrowseBut->setFixedSize(bsize);
     connect(m_pBrowseBut, SIGNAL(clicked()), SLOT(slotBrowseWallpaper()));
     QWhatsThis::add( m_pBrowseBut, i18n("If the graphic you want is not in a standard"
 					" directory, you can still find it by clicking here.") );
