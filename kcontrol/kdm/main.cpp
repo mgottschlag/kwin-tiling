@@ -31,7 +31,6 @@
 #include "backgnd.h"
 #include "kdm-users.h"
 #include "kdm-sess.h"
-#include "kdm-lilo.h" 
 
 #include "main.h"
 
@@ -60,10 +59,32 @@ KDModule::KDModule(QWidget *parent, const char *name)
   sessions = new KDMSessionsWidget(this,0);
   tab->addTab(sessions, i18n("&Sessions"));
   connect(sessions, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+}
 
-  lilo = new KDMLiloWidget(this);
-  tab->addTab(lilo, i18n("&Lilo"));
-  connect(lilo, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+
+QString KDModule::quickHelp()
+{
+    return i18n(    "<h1>Login Manager</h1> In this module you can configure the "
+                    "various aspects  of the KDE Login Manager.  This includes "
+                    "the look and feel as well as the users that can be "
+                    "selected for login. Note that you can only make changes "
+                    "if you run the module with superuser rights. If you haven't started the KDE "
+                    "Control Center with superuser rights (which is the completely right thing to "
+                    "do, by the way), click on the <em>Run as root</em> button to acquire "
+                    "superuser rights. You will be asked for the superuser password."
+                    "<h2>Appearance</h2> On this tab page, you can figure how "
+                    "the Login Manager should look like, which language it should use, and which "
+                    "GUI style it should use. The language settings made here have no influence on "
+                    "the user's language settings."
+                    "<h2>Font</h2>Here you can choose the fonts that the Login Manager should use "
+                    "for various purposes like greetings and user names. "
+                    "<h2>Background</h2>If you want to set a special background for the login "
+                    "screen, this is where to do it."
+                    "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
+                    "will offer you for logging in."
+                    "<h2>Sessions</h2> Here you can specify which types of sessions the Login "
+                    "Manager should offer you for logging in. This includes the standard KDE "
+                    "session as well as a classic fvwm session and a failsafe session." );
 }
 
 
@@ -74,7 +95,6 @@ void KDModule::load()
   background->load();
   users->load();
   sessions->load();
-  lilo->load();
 }
 
 
@@ -85,7 +105,6 @@ void KDModule::save()
   background->save();
   users->save();
   sessions->save();
-  lilo->save();
 }
 
 
@@ -96,7 +115,6 @@ void KDModule::defaults()
   background->defaults();
   users->defaults();
   sessions->defaults();
-  lilo->defaults();
 }
 
 
@@ -114,8 +132,8 @@ void KDModule::resizeEvent(QResizeEvent *)
 
 extern "C"
 {
-  KCModule *create_kdm(QWidget *parent, const char *name) 
-  { 
+  KCModule *create_kdm(QWidget *parent, const char *name)
+  {
     KGlobal::locale()->insertCatalogue("kdmconfig");
     return new KDModule(parent, name);
   }

@@ -154,14 +154,14 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     usrGroup->setExclusive( TRUE );
     QVBoxLayout *usrGLayout = new QVBoxLayout( usrGroup, 10 );
 
-    rbselusr = new QRadioButton(i18n("Show only\nselected users"), usrGroup );
+    rbselusr = new QRadioButton(i18n("Show only\n&selected users"), usrGroup );
     usrGroup->insert( rbselusr );
     usrGLayout->addWidget( rbselusr );
     connect(rbselusr, SIGNAL(clicked()), this, SLOT(slotChanged()));
     QWhatsThis::add(rbselusr, i18n("If this option is selected, KDM will only show the users listed"
       " in the \"selected users\" listbox in its login dialog."));
 
-    rballusr = new QRadioButton( i18n("Show all users\nbut no-show users"), usrGroup );
+    rballusr = new QRadioButton( i18n("Show all users\nbut &no-show users"), usrGroup );
     rballusr->setGeometry( 10, 50, 140, 25 );
     usrGroup->insert( rballusr );
     usrGLayout->addWidget( rballusr );
@@ -174,7 +174,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     shwGroup = new QButtonGroup( this );
     QVBoxLayout *shwGLayout = new QVBoxLayout( shwGroup, 10 );
 
-    cbusrshw = new QCheckBox(i18n("Show users"), shwGroup);
+    cbusrshw = new QCheckBox(i18n("S&how users"), shwGroup);
     shwGroup->insert( cbusrshw );
     shwGLayout->addWidget( cbusrshw );
     connect(cbusrshw, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
@@ -182,7 +182,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
       " login dialog, so users can click on their name and image rather than typing"
       " in their login."));
 
-    cbusrsrt = new QCheckBox(i18n("Sort users"), shwGroup);
+    cbusrsrt = new QCheckBox(i18n("S&ort users"), shwGroup);
     shwGroup->insert( cbusrsrt );
     shwGLayout->addWidget( cbusrsrt );
     connect(cbusrsrt, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
@@ -197,18 +197,18 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     // read only mode
     if (getuid() != 0)
       {
-	usrGroup->setEnabled(false);
-	shwGroup->setEnabled(false);
-	cbusrshw->setEnabled(false);
-	cbusrsrt->setEnabled(false);
-	userbutton->setEnabled(false);
-	alluserlb->setEnabled(false);
-	nouserlb->setEnabled(false);
-	userlb->setEnabled(false);
-	all_to_usr->setEnabled(false);
-	usr_to_all->setEnabled(false);
-	no_to_all->setEnabled(false);
-	all_to_no->setEnabled(false);
+    usrGroup->setEnabled(false);
+    shwGroup->setEnabled(false);
+    cbusrshw->setEnabled(false);
+    cbusrsrt->setEnabled(false);
+    userbutton->setEnabled(false);
+    alluserlb->setEnabled(false);
+    nouserlb->setEnabled(false);
+    userlb->setEnabled(false);
+    all_to_usr->setEnabled(false);
+    usr_to_all->setEnabled(false);
+    no_to_all->setEnabled(false);
+    all_to_no->setEnabled(false);
       }
 }
 
@@ -230,7 +230,7 @@ void KDMUsersWidget::slotUserPixChanged(QString)
         return;
     if(!p->save(userpix, "PNG")) {
         QString msg = i18n("There was an error saving the image:\n%1\n")
-	    .arg(userpix);
+        .arg(userpix);
         KMessageBox::sorry(this, msg);
     }
     userbutton->adjustSize();
@@ -275,12 +275,12 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
         if( !KImageIO::isSupported(mimetype, KImageIO::Reading) )
         {
             QString msg =  i18n("Sorry, but\n"
-				"%1\n"
-				"does not seem to be an image file\n"
-				"The following image types are understood:\n"
-				"%2")
-	        .arg(url.url())
-	        .arg(KImageIO::types(KImageIO::Reading).join(", "));
+                "%1\n"
+                "does not seem to be an image file\n"
+                "The following image types are understood:\n"
+                "%2")
+            .arg(url.url())
+            .arg(KImageIO::types(KImageIO::Reading).join(", "));
             KMessageBox::sorry( this, msg);
         } else {
             // we gotta check if it is a non-local file and make a tmp copy at the hd.
@@ -288,7 +288,7 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
             {
                 pixpath = url.path();
             } else {
-		KIO::NetAccess::download(url, pixpath);
+        KIO::NetAccess::download(url, pixpath);
                 istmp = true;
             }
             // Finally we've got an image file to add to the user
@@ -300,9 +300,9 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
                 slotUserPixChanged(user);
             } else {
                 QString msg = i18n("There was an error loading the image:\n"
-				   "%1\n"
-				   "It will not be saved...")
-		    .arg(url.prettyURL());
+                   "%1\n"
+                   "It will not be saved...")
+            .arg(url.prettyURL());
                 KMessageBox::sorry(this, msg);
             }
         }
@@ -313,7 +313,7 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
 void KDMUsersWidget::slotAllToNo()
 {
     int id = alluserlb->currentItem();
-    if (id < 0) 
+    if (id < 0)
        return;
     QString user = alluserlb->currentText();
     if (user == m_defaultText)
@@ -337,7 +337,7 @@ void KDMUsersWidget::slotNoToAll()
 void KDMUsersWidget::slotAllToUsr()
 {
     int id = alluserlb->currentItem();
-    if (id < 0) 
+    if (id < 0)
        return;
     QString user = alluserlb->currentText();
     if (user == m_defaultText)

@@ -1,20 +1,22 @@
-/* This file is part of the KDE Display Manager Configuration package
-    Copyright (C) 1997-1998 Thomas Tanghus (tanghus@earthling.net)
+/*
+  $id: $
+  This file is part of the KDE Display Manager Configuration package
+  Copyright (C) 1997-1998 Thomas Tanghus (tanghus@earthling.net)
 
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public
+  License as published by the Free Software Foundation; either
+  version 2 of the License, or (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public License
-    along with this library; see the file COPYING.LIB.  If not, write to
-    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-    Boston, MA 02111-1307, USA.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
+  
+  You should have received a copy of the GNU Library General Public License
+  along with this library; see the file COPYING.LIB.  If not, write to
+  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+  Boston, MA 02111-1307, USA.
 */
 
 
@@ -58,8 +60,9 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addRowSpacing(0,group->fontMetrics().height());
   grid->setColStretch(2,1);
 
-  QLabel *label = new QLabel(i18n("Greeting string:"), group);
+  QLabel *label = new QLabel(i18n("&Greeting string:"), group);
   greetstr_lined = new KLineEdit(group);
+  label->setBuddy( greetstr_lined );
   connect(greetstr_lined, SIGNAL(textChanged(const QString&)),
 	  this, SLOT(changed()));
   grid->addWidget(label, 1,0 );
@@ -74,10 +77,11 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( greetstr_lined, wtstr );
 
 
-  label = new QLabel(i18n("Logo area:"), group);
+  label = new QLabel(i18n("&Logo area:"), group);
   QWidget *helper = new QWidget( group );
   QHBoxLayout *hlay = new QHBoxLayout( helper, KDialog::spacingHint() );
   logoRadio = new QRadioButton( i18n("Show KDM logo"), helper );
+  label->setBuddy( logoRadio );
   clockRadio = new QRadioButton( i18n("Show clock"), helper );
   QButtonGroup *buttonGroup = new QButtonGroup( helper );
   connect( buttonGroup, SIGNAL(clicked(int)),
@@ -96,9 +100,10 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( logoRadio, wtstr );
   QWhatsThis::add( clockRadio, wtstr );
 
-  logoLabel = new QLabel(i18n("KDM logo:"), group);
+  logoLabel = new QLabel(i18n("&KDM logo:"), group);
   logopath = "kdelogo.png";
   logobutton = new KIconButton(group);
+  logoLabel->setBuddy( logobutton );
   logobutton->setAutoDefault(false);
   logobutton->setAcceptDrops(true);
   logobutton->installEventFilter(this); // for drag and drop
@@ -120,8 +125,9 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
 
 
-  label = new QLabel(i18n("GUI Style:"), group);
+  label = new QLabel(i18n("GUI &Style:"), group);
   guicombo = new QComboBox(false, group);
+  label->setBuddy( guicombo );
   guicombo->insertItem(i18n("Motif"), 0);
   guicombo->insertItem(i18n("Windows"), 1);
   //guicombo->insertItem(i18n("Platinum"), 2);
@@ -146,10 +152,11 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 //  hbox->addColSpacing(3, 10);
 //  hbox->setColStretch(2, 1);
 
-  label = new QLabel(i18n("Language:"), group);
+  label = new QLabel(i18n("L&anguage:"), group);
   hbox->addWidget(label, 0, 0);
 
   langcombo = new KLanguageCombo(group);
+  label->setBuddy( langcombo );
   langcombo->setFixedHeight( langcombo->sizeHint().height() );
   hbox->addWidget(langcombo, 0, 1);
   connect(langcombo, SIGNAL(activated(int)), this, SLOT(changed()));
@@ -159,10 +166,11 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( langcombo, wtstr );
 
-  label = new QLabel(i18n("Country:"), group);
+  label = new QLabel(i18n("&Country:"), group);
   hbox->addWidget(label, 1, 0);
 
   countrycombo = new KLanguageCombo(group);
+  label->setBuddy( countrycombo );
   countrycombo->setFixedHeight( countrycombo->sizeHint().height() );
   hbox->addWidget(countrycombo, 1, 1);
   connect(countrycombo, SIGNAL(activated(int)), this, SLOT(changed()));
@@ -251,8 +259,8 @@ void KDMAppearanceWidget::setLogo(QString logo)
 
 void KDMAppearanceWidget::slotRadioClicked(int id)
 {
-  logobutton->setEnabled( id == KdmLogo );
-  logoLabel->setEnabled( id == KdmLogo );
+	logobutton->setEnabled( id == KdmLogo );
+	logoLabel->setEnabled( id == KdmLogo );
 }
 
 

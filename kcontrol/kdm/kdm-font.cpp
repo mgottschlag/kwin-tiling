@@ -15,7 +15,7 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
-*/  
+*/
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -41,7 +41,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
 
   QWhatsThis::add( bGroup, i18n("Shows a preview of the selected font.") );
 
-  QPushButton *fontbtn = new QPushButton(i18n("Change font..."), tGroup);
+  QPushButton *fontbtn = new QPushButton(i18n("&Change font..."), tGroup);
   connect(fontbtn, SIGNAL(clicked()), SLOT(slotGetFont()));
   fontbtn->setFixedSize(fontbtn->sizeHint());
 
@@ -110,7 +110,7 @@ void KDMFontWidget::save()
 void KDMFontWidget::load()
 {
   QString str;
-  
+
   // Get config object
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
   c->setGroup("KDM");
