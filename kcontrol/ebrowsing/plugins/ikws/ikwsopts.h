@@ -75,10 +75,12 @@ private:
     QStringList m_deletedProviders;
 
     // Internet Keywords.
+    /*
     QGroupBox *gb_keywords;
     QCheckBox *cb_enableInternetKeywords;
     QComboBox *cmb_searchFallback;
     QLabel *lb_searchFallback;
+    */
 
     //Search Engine keywords.
     QCheckBox *cb_enableSearchKeywords;

@@ -84,6 +84,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(KInstance *instance, QWidget *p
     lay->setAutoAdd( true );
 
     // Deals with Internet keywords feature...
+    /* Realnames no more exists.
     gb_keywords = new QGroupBox( this );
     QVBoxLayout *i_vbox = new QVBoxLayout( gb_keywords, KDialog::marginHint(), KDialog::spacingHint() );
     cb_enableInternetKeywords = new QCheckBox(i18n("Enable Int&ernet keywords"), gb_keywords);
@@ -108,6 +109,8 @@ InternetKeywordsOptions::InternetKeywordsOptions(KInstance *instance, QWidget *p
                          "relevant keywords.");
     QWhatsThis::add(lb_searchFallback, wtstr);
     QWhatsThis::add(cmb_searchFallback, wtstr);
+    */
+    QString wtstr;
 
     // Deals with the web short cut features...
     gb_search = new QGroupBox( this );
@@ -188,8 +191,8 @@ void InternetKeywordsOptions::load()
 {
     // Clear state first.
     lv_searchProviders->clear();
-    cmb_searchFallback->clear();
-    cmb_searchFallback->insertItem(ITEM_NONE);
+    //cmb_searchFallback->clear();
+    //cmb_searchFallback->insertItem(ITEM_NONE);
 
     KConfig config( searcher->name() + "rc", false, false );
     config.setGroup("General");
@@ -203,10 +206,12 @@ void InternetKeywordsOptions::load()
     }
 
     // Enable/Disable widgets accordingly.
+    /*
     bool ikwsEnabled = config.readBoolEntry("InternetKeywordsEnabled", true);
     cb_enableInternetKeywords->setChecked( ikwsEnabled );
     cmb_searchFallback->setEnabled( ikwsEnabled );
     lb_searchFallback->setEnabled( ikwsEnabled );
+    */
 
     bool searchEnabled = config.readBoolEntry("SearchEngineShortcutsEnabled", true);
     cb_enableSearchKeywords->setChecked( searchEnabled );
@@ -220,11 +225,13 @@ void InternetKeywordsOptions::save()
 {
     KConfig config( searcher->name() + "rc", false, false );
     config.setGroup("General");
-    config.writeEntry("InternetKeywordsEnabled", cb_enableInternetKeywords->isChecked());
+//    config.writeEntry("InternetKeywordsEnabled", cb_enableInternetKeywords->isChecked());
     config.writeEntry("SearchEngineShortcutsEnabled", cb_enableSearchKeywords->isChecked());
+    /*
     QString fallback = cmb_searchFallback->currentText();
     if (fallback == ITEM_NONE)
         config.writeEntry("InternetKeywordsSearchFallback", QString::null);
+    */
 
     QString path = kapp->dirs()->saveLocation("services", "searchproviders/");
     for (QListViewItemIterator it(lv_searchProviders); it.current(); ++it)
@@ -275,8 +282,10 @@ void InternetKeywordsOptions::save()
             // we might be overwriting a hidden entry
             service.writeEntry("Hidden", false);
         }
+        /*
         if (fallback == provider->name())
             config.writeEntry("InternetKeywordsSearchFallback", name);
+        */
     }
     for (QStringList::ConstIterator it = m_deletedProviders.begin(); it != m_deletedProviders.end(); ++it)
     {
@@ -320,10 +329,12 @@ void InternetKeywordsOptions::moduleChanged()
 
 void InternetKeywordsOptions::changeInternetKeywordsEnabled()
 {
+    /*
     bool use_keywords = cb_enableInternetKeywords->isChecked();
     cmb_searchFallback->setEnabled(use_keywords);
     lb_searchFallback->setEnabled(use_keywords);
     moduleChanged();
+    */
 }
 
 void InternetKeywordsOptions::changeSearchKeywordsEnabled()
@@ -365,6 +376,7 @@ void InternetKeywordsOptions::deleteSearchProvider()
     SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(lv_searchProviders->currentItem());
     assert(item);
     // Update the combo box to go to None if the fallback was deleted.
+    /*
     int current = cmb_searchFallback->currentItem();
     for (int i = 1, count = cmb_searchFallback->count(); i < count; ++i)
     {
@@ -379,6 +391,7 @@ void InternetKeywordsOptions::deleteSearchProvider()
         break;
       }
     }
+    */
 
     if (item->nextSibling())
         lv_searchProviders->setSelected(item->nextSibling(), true);
@@ -430,6 +443,7 @@ SearchProviderItem *InternetKeywordsOptions::displaySearchProvider(SearchProvide
     {
       item = new SearchProviderItem(lv_searchProviders, p);
       // Put the name in the combo box.
+      /*
       int i, count = cmb_searchFallback->count();
       for (i = 1; i < count; ++i)
       {
@@ -447,6 +461,7 @@ SearchProviderItem *InternetKeywordsOptions::displaySearchProvider(SearchProvide
 
       if (fallback)
         cmb_searchFallback->setCurrentItem(i);
+      */
     }
     else
         item->update();

@@ -42,7 +42,7 @@ KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0L;
 
 #define IKW_KEY         "Internet Keywords"
 #define IKW_SUFFIX      " " IKW_KEY
-#define IKW_REALNAMES	"RealNames"
+//#define IKW_REALNAMES	"RealNames"
 #define PIDDBG kdDebug(7023) << "(" << getpid() << ") "
 #define PDVAR(n,v) PIDDBG << n << " = '" << v << "'\n"
 
@@ -476,7 +476,7 @@ void KURISearchFilterEngine::loadConfig()
     config.setGroup( "General" );
 
     m_bInternetKeywordsEnabled = config.readBoolEntry("InternetKeywordsEnabled", true);
-    selIKWSEngine = config.readEntry("InternetKeywordsSelectedEngine", IKW_REALNAMES);
+    selIKWSEngine = config.readEntry("InternetKeywordsSelectedEngine" /*, IKW_REALNAMES*/ );
     m_searchFallback = config.readEntry("InternetKeywordsSearchFallback");
 
     m_bVerbose = config.readBoolEntry("Verbose");
@@ -505,6 +505,7 @@ void KURISearchFilterEngine::loadConfig()
 	}
     }
 
+    /*
     IKWSEntry rn = ikwsEntryByName(IKW_REALNAMES);
     if (rn.m_strName.isEmpty())	{
 	rn.m_strName = IKW_REALNAMES;
@@ -517,5 +518,6 @@ void KURISearchFilterEngine::loadConfig()
 
 	m_lstInternetKeywordsEngine.append(rn);
     }
+    */
 }
 
