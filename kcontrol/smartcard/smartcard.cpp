@@ -24,14 +24,21 @@
 #include <kglobal.h>
 #include <kaboutdata.h>
 #include <qcheckbox.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
 #include <kconfig.h>
 #include <kdialog.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <dcopclient.h>
+#include <klistview.h>
+#include <kpopupmenu.h>
+#include <kmessagebox.h>
 #include <kapplication.h>
 
+#include <kcarddb.h>
 
+#include <kdebug.h>
 KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
@@ -47,12 +54,24 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
   if (_ok) {
      base = new SmartcardBase(this);
      layout->add(base);
-
+     
+     _popUpKardChooser = new KPopupMenu(this,"KpopupKardChooser");
+     _popUpKardChooser->insertItem(i18n("Change module"),
+				   this, 
+				   SLOT(slotLaunchChooser()));
      // The config backend
+     connect(base->testReaderBtn, SIGNAL(clicked()), SLOT(slotTestReader()));
      connect(base->launchManager, SIGNAL(clicked()), this, SLOT(configChanged()));
-     connect(base->beepOnInsert, SIGNAL(clicked()), this, SLOT(configChanged()));
+     connect(base->beepOnInsert,  SIGNAL(clicked()), this, SLOT(configChanged()));
      connect(base->enableSupport, SIGNAL(clicked()), this, SLOT(configChanged()));
      connect(base->enablePolling, SIGNAL(clicked()), this, SLOT(configChanged()));
+     connect(base->_readerHostsListView,
+	     SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
+	     this,
+	     SLOT(slotShowPopup(QListViewItem *,const QPoint &,int)));
+
+     
+     _cardDB= new KCardDB();
      load();
   } else {
      layout->add(new NoSmartcardBase(this));
@@ -62,6 +81,7 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
 KSmartcardConfig::~KSmartcardConfig()
 {
     delete config;
+    delete _cardDB;
 }
 
 void KSmartcardConfig::configChanged()
@@ -69,16 +89,116 @@ void KSmartcardConfig::configChanged()
     emit changed(true);
 }
 
+void KSmartcardConfig::slotLaunchChooser(){
+
+
+  if ( KCardDB::launchSelector(base->_readerHostsListView->currentItem()->parent()->text(0))){
+
+    KMessageBox::sorry(this,i18n("Unable to launch KCardChooser"));
+  }
+
+}
+
+void KSmartcardConfig::slotShowPopup(QListViewItem * item ,const QPoint & _point,int i)
+{
+  
+  //The popup only appears in cards, not in the slots1
+  if (item->isSelectable()) return;
+  _popUpKardChooser->exec(_point);
+
+}
+
+void KSmartcardConfig::slotTestReader(){
+
+  KListViewItem * selReader =(KListViewItem *) base->_readerHostsListView->selectedItem();
+  
+
+
+}
+
 
 void KSmartcardConfig::load()
 {
+
+  QByteArray data, retval;
+  QCString rettype;
+  QDataStream arg(data, IO_WriteOnly);
+  QCString modName = "kardsvc";
+  arg << modName;
+  KListViewItem * temp;
+
 if (_ok) {
   base->enableSupport->setChecked(config->readBoolEntry("Enable Support", false));
   base->enablePolling->setChecked(config->readBoolEntry("Enable Polling", true));
   base->beepOnInsert->setChecked(config->readBoolEntry("Beep on Insert", true));
   base->launchManager->setChecked(config->readBoolEntry("Launch Manager", true));
-}
+  
+  
+  kapp->dcopClient()->call("kded", "kardsvc", "getSlotList ()", 
+			   data, rettype, retval);
+  QStringList _readers;
+  _readers.clear();
+  QDataStream _retReader(retval, IO_ReadOnly);
+  _retReader>>_readers;
+
+
+  base->_readerHostsListView->clear();
+
+  if (_readers.isEmpty()){
+
+    (void) new KListViewItem(base->_readerHostsListView,i18n("No readers found.Check 'pcscd' is running"));
+    return;
+  }
+
+  for (QStringList::Iterator _slot=_readers.begin();_slot!=_readers.end();++_slot){
+
+   temp= new KListViewItem(base->_readerHostsListView,*_slot);
+   
+
+   QByteArray dataATR;
+   QDataStream argATR(dataATR,IO_WriteOnly);
+   argATR << *_slot;
+
+   kapp->dcopClient()->call("kded", "kardsvc", "getCardATR(QString)", 
+			   dataATR, rettype, retval);
+
+   
+   QString cardATR;
+   QDataStream _retReaderATR(retval, IO_ReadOnly);
+   _retReaderATR>>cardATR;
+   
+   if (cardATR.isNull()){
+     
+     (void) new KListViewItem(temp,i18n("No card inserted"));
+     continue;
+   }
+
+   QString modName=_cardDB->getModuleName(cardATR);
+   
+   if (modName!=QString::null){
+     QStringList mng= QStringList::split(",",modName);
+     QString type=mng[0];
+     QString subType=mng[1];
+     QString subSubType=mng[2];
+     KListViewItem * hil =new KListViewItem(temp,
+					    i18n("Managed by: "),
+					    type,
+					    subType,
+					    subSubType);
+     hil->setSelectable(FALSE);
+   }
+   else{
+
+     
+     KListViewItem * hil =new KListViewItem(temp,
+					    i18n("No module managing this card"));
+     hil->setSelectable(FALSE);
+   }
+
+   
+  }
   emit changed(false);
+}
 }
 
 
@@ -90,8 +210,11 @@ if (_ok) {
   config->writeEntry("Beep on Insert", base->beepOnInsert->isChecked());
   config->writeEntry("Launch Manager", base->launchManager->isChecked());
 
+
+
   // Start or stop the server as needed
   if (base->enableSupport->isChecked()) {
+    
 	QByteArray data, retval;
 	QCString rettype;
 	QDataStream arg(data, IO_WriteOnly);
@@ -100,6 +223,7 @@ if (_ok) {
 	kapp->dcopClient()->call("kded", "kded", "loadModule(QCString)", 
 			         data, rettype, retval);
   } else {
+   
 	QByteArray data, retval;
 	QCString rettype;
 	QDataStream arg(data, IO_WriteOnly);
@@ -110,10 +234,10 @@ if (_ok) {
   }
 
   config->sync();
-	QByteArray data, retval;
-	QCString rettype;
-	QDataStream arg(data, IO_WriteOnly);
-	kapp->dcopClient()->call("kded", "kardsvc", "reconfigure()", 
+  QByteArray data, retval;
+  QCString rettype;
+  QDataStream arg(data, IO_WriteOnly);
+  kapp->dcopClient()->call("kded", "kardsvc", "reconfigure()", 
 			         data, rettype, retval);
 }
   emit changed(false);
@@ -129,6 +253,9 @@ if (_ok) {
 }
   emit changed(true);
 }
+
+
+
 
 QString KSmartcardConfig::quickHelp() const
 {
