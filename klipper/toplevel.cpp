@@ -81,6 +81,7 @@ TopLevel::TopLevel()
 {
     clip = kapp->clipboard();
     m_selectedItem = -1;
+    
     QSempty = i18n("<empty clipboard>");
 
     toggleURLGrabAction = new KToggleAction( this );
@@ -169,17 +170,17 @@ void TopLevel::newClipData()
             clipData        = clipContents;
             m_lastSelection = clipContents;
         }
-        else 
+        else
             clipData = m_lastString;
     }
-    
+
     // If the string is null bug out
     if (clipData.isEmpty()) {
 	if (m_selectedItem != -1) {
             m_popup->setItemChecked(m_selectedItem, false);
 	    m_selectedItem = -1;
 	}
-        
+
         if ( m_clipDict->isEmpty() ) {
             setEmptyClipboard();
         }
@@ -225,7 +226,7 @@ void TopLevel::clickedMenu(int id)
 	    trimClipHistory(0);
             slotClearClipboard();
             setEmptyClipboard();
-            
+
 	    m_checkTimer->start(1000);
 	}
 	break;
@@ -237,7 +238,7 @@ void TopLevel::clickedMenu(int id)
 	else if ( !bClipEmpty )
 	{
 	    m_checkTimer->stop();
-	    //CT mark up the currently put into clipboard - 
+	    //CT mark up the currently put into clipboard -
             // so that user can see later
             if ( m_selectedItem != -1 )
                 m_popup->setItemChecked(m_selectedItem, false);
@@ -245,17 +246,23 @@ void TopLevel::clickedMenu(int id)
 	    m_selectedItem = id;
 	    m_popup->setItemChecked(m_selectedItem, true);
 	    QString *data = m_clipDict->find(id);
-	    if (data != 0x0 && *data != QSempty) 
+	    if (data != 0x0 && *data != QSempty)
             {
                 clip->setSelectionMode( true );
 		clip->setText( *data );
                 clip->setSelectionMode( false );
                 clip->setText( *data );
-                
+
 		if (bURLGrabber && bReplayActionInHistory)
 		    myURLGrabber->checkNewData(*data);
-		m_lastString = *data;
-	    }
+
+                m_lastString = *data;
+
+                // We want to move the just selected item to the top of the popup
+                // menu. But when we do this right here, we get a crash a little
+                // bit later. So instead, we fire a timer to perform the moving.
+                QTimer::singleShot( 0, this, SLOT( slotMoveSelectedToTop() ));
+            }
 
 	    m_checkTimer->start(1000);
 	}
@@ -314,7 +321,7 @@ void TopLevel::readProperties(KConfig *kc)
   }
 
   bClipEmpty = clipboardContents().simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
-  
+
   m_popup->insertSeparator();
   toggleURLGrabAction->plug( m_popup, -1 );
   URLGrabItem = m_popup->idAt( m_popup->count() - 1 );
@@ -470,7 +477,7 @@ void TopLevel::trimClipHistory( int new_size )
         int id = m_popup->idAt(EMPTY);
         if ( id == -1 )
             return;
-            
+
         m_clipDict->remove(id);
         m_popup->removeItemAt(EMPTY);
     }
@@ -485,7 +492,7 @@ void TopLevel::removeFromHistory( const QString& text )
             m_popup->removeItem( id );
             m_clipDict->remove( id );
         }
-        
+
         ++it;
     }
 }
@@ -508,7 +515,7 @@ QString TopLevel::clipboardContents()
         clip->setSelectionMode( false );
         clipContents = clip->text().stripWhiteSpace();
     }
-  
+
     return clipContents;
 }
 
@@ -517,7 +524,7 @@ void TopLevel::slotClipboardChanged( const QString& clipData )
     m_lastString = clipData;
 
     QString *data = new QString(clipData);
-    
+
     if ( bURLGrabber && myURLGrabber ) {
         if ( myURLGrabber->checkNewData( clipData ))
             return; // don't add into the history
@@ -533,10 +540,10 @@ void TopLevel::slotClipboardChanged( const QString& clipData )
 
     if (m_selectedItem != -1)
         m_popup->setItemChecked(m_selectedItem, false);
-    
+
     removeFromHistory( clipData );
     trimClipHistory(maxClipItems - 1);
-    
+
     m_selectedItem = m_popup->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace(), 45), -2, 1); // -2 means unique id, 1 means first location
     m_clipDict->insert(m_selectedItem, data);
     if ( bClipEmpty )
@@ -551,5 +558,14 @@ void TopLevel::setEmptyClipboard()
     slotClipboardChanged( QSempty );
 }
 
+void TopLevel::slotMoveSelectedToTop()
+{
+    m_popup->removeItem( m_selectedItem );
+    m_clipDict->remove( m_selectedItem );
+    
+    m_selectedItem = m_popup->insertItem( KStringHandler::csqueeze(m_lastString.simplifyWhiteSpace(), 45), -2, 1 );
+    m_popup->setItemChecked( m_selectedItem, true );
+    m_clipDict->insert( m_selectedItem, new QString( m_lastString ) );
+}
 
 #include "toplevel.moc"

@@ -64,6 +64,8 @@ private slots:
     void slotClearClipboard();
     void slotClipboardChanged( const QString& newContents );
 
+    void slotMoveSelectedToTop();
+    
 private:
     QClipboard *clip;
 
