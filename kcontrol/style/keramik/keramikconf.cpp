@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 
 extern "C"
 {
-	QWidget* allocate_kstyle_config(QWidget* parent)
+	KDE_EXPORT QWidget* allocate_kstyle_config(QWidget* parent)
 	{
 		return new KeramikStyleConfig(parent);
 	}
