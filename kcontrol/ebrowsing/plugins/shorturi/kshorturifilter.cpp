@@ -133,7 +133,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     else if ((cmd==info_proto) || (cmd==man_proto))
       cmd+='/';
 
-    setFilteredURI( data, cmd );
+    setFilteredURI( data, KURL( cmd ));
     setURIType( data, KURIFilterData::HELP );
     return true;
   }
@@ -311,7 +311,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   if( !KStandardDirs::findExe( exe ).isNull() && data.checkForExecutables() )
   {
     //kdDebug() << "EXECUTABLE  exe=" << exe << endl;
-    setFilteredURI( data, exe );
+    setFilteredURI( data, KURL( exe ));
     // check if we have command line arguments
     if( exe != cmd )
         setArguments(data, cmd.right(cmd.length() - exe.length()));
@@ -352,7 +352,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       {
         //kdDebug() << "match - prepending " << (*it).prepend << endl;
         cmd.prepend( (*it).prepend );
-        setFilteredURI( data, cmd );
+        setFilteredURI( data, KURL( cmd ) );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
         return true;
       }
@@ -364,7 +364,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     {
       //kdDebug() << "valid short url, from malformed url -> using default proto=" << m_strDefaultProtocol << endl;
       cmd.insert( 0, m_strDefaultProtocol );
-      setFilteredURI( data, cmd );
+      setFilteredURI( data, KURL( cmd ));
       setURIType( data, KURIFilterData::NET_PROTOCOL );
       return true;
     }

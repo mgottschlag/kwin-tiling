@@ -60,7 +60,7 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
         && isLocalDomainHost( cmd ))
     {
         cmd.prepend( QString::fromLatin1("http://") );
-        setFilteredURI( data, cmd );
+        setFilteredURI( data, KURL( cmd ) );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
         return true;
     }

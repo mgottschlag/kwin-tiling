@@ -59,7 +59,7 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 
   if ( !result.isEmpty() )
   {
-    setFilteredURI( data, result );
+    setFilteredURI( data, KURL( result ) );
     setURIType( data, KURIFilterData::NET_PROTOCOL );
     return true;
   }

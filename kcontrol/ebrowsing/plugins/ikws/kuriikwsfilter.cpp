@@ -64,7 +64,7 @@ bool KAutoWebSearch::filterURI( KURIFilterData &data ) const
       if ( KURISearchFilterEngine::self()->verbose() )
         kdDebug () << "Filtered URL: " << result << endl;
 
-      setFilteredURI( data, result );
+      setFilteredURI( data, KURL( result ) );
       setURIType( data, KURIFilterData::NET_PROTOCOL );
       return true;
     }
