@@ -1,3 +1,8 @@
+1999-08-19 Duncan Haldane <duncan@kde.org>
+	* removed left-over commented out code from change
+	decribed below, and adjusted help doc names to
+	index-1.html
+
 1999-02-28 Duncan Haldane <duncan@kde.org>
 	* commented out those unnecessary debug calls.
 	in keyconfig.cpp 

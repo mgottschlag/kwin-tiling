@@ -64,19 +64,15 @@ KKeyApplication::KKeyApplication(int &argc, char **argv, const char *name)
 
       if (!pages || pages->contains("standard")){
 	printf("create standard\n");
-//	addPage(standard = new KStdConfig(dialog),
-//		i18n("&Standard shortcuts"), "keys-2.html");
  	global_switch = false ;
  	addPage(standard = new KKeyConfig(dialog),
-		i18n("&Standard shortcuts"), "keys-1.html");
+		i18n("&Standard shortcuts"), "index-1.html");
       }
       if (!pages || pages->contains("global")){
 	printf("create global\n");
-//	addPage(global = new KGlobalConfig(dialog),
-//		i18n("&Global shortcuts"), "keys-1.html");
  	global_switch = true ;
 	addPage(global = new KKeyConfig(dialog),
-		i18n("&Global shortcuts"), "keys-1.html");
+		i18n("&Global shortcuts"), "index-1.html");
 
       }
 
