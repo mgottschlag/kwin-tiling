@@ -1029,7 +1029,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 		  !cfg->readBoolEntry( "confirmLogout", true );
     KApplication::ShutdownType old_sdtype = (KApplication::ShutdownType)
 					    cfg->readNumEntry( "shutdownType",
-							       (int)KApplication::ShutdownModeSchedule );
+							       (int)KApplication::ShutdownTypeNone );
     if (sdtype == KApplication::ShutdownTypeDefault)
 	sdtype = old_sdtype;
     KApplication::ShutdownMode old_sdmode = (KApplication::ShutdownMode)
