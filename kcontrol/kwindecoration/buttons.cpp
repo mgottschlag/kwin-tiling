@@ -1,12 +1,14 @@
-/* 
+/*
+	$Id$
+
 	This is the new kwindecoration kcontrol module
 
 	Copyright (c) 2001
-		Karol Szwed (gallium) <karlmail@usa.net>
+		Karol Szwed <gallium@kde.org>
 		http://gallium.n3.net/
 
 	Supports new kwin configuration plugins, and titlebar button position
-	modification via a dnd interface.
+	modification via dnd interface.
 
 	Based on original "kwintheme" (Window Borders) 
 	Copyright (C) 2001 Rik Hemsley (rikkus) <rik@kde.org>
@@ -23,7 +25,7 @@
 enum Buttons{ BtnMenu=0, BtnSticky, BtnSpacer, BtnHelp,
 			  BtnMinimize, BtnMaximize, BtnClose, BtnCount };
 QListBoxPixmap* buttons[ BtnCount ];
-QPixmap*	  	pixmaps[ BtnCount ];
+QPixmap*	 	pixmaps[ BtnCount ];
 QPixmap* 		miniSpacer;
 
 
@@ -555,3 +557,4 @@ void ButtonDropSite::drawContents( QPainter* p )
 }
 
 #include "buttons.moc"
+// vim: ts=4

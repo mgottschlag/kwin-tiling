@@ -1,8 +1,10 @@
-/* 
+/*
+	$Id$
+
 	This is the new kwindecoration kcontrol module
 
 	Copyright (c) 2001
-		Karol Szwed (gallium) <karlmail@usa.net>
+		Karol Szwed <gallium@kde.org>
 		http://gallium.n3.net/
 
 	Supports new kwin configuration plugins, and titlebar button position
@@ -110,3 +112,4 @@ class ButtonDropSite: public QFrame
 
 
 #endif
+// vim: ts=4

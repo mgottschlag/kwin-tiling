@@ -1,8 +1,10 @@
 /*
+	$Id$
+
 	This is the new kwindecoration kcontrol module
 
 	Copyright (c) 2001
-		Karol Szwed (gallium) <karlmail@usa.net>
+		Karol Szwed <gallium@kde.org>
 		http://gallium.n3.net/
 
 	Supports new kwin configuration plugins, and titlebar button position
@@ -433,7 +435,6 @@ QString KWinDecorationModule::quickHelp() const
 
 void KWinDecorationModule::resetKWin()
 {
-	qWarning("kwindecoration: Sending a re-configure request to kwin via dcop....");
 	bool ok = kapp->dcopClient()->send("kwin", "KWinInterface",
                         "reconfigure()", QByteArray());
 	if (!ok) 
@@ -441,3 +442,4 @@ void KWinDecorationModule::resetKWin()
 }
 
 #include "kwindecoration.moc"
+// vim: ts=4
