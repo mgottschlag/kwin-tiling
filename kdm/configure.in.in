@@ -8,8 +8,16 @@ KDE_BINDIR=`eval echo $kde_bindir`
 AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
 AC_SUBST(KDE_BINDIR)
 
-KDE_FIND_PATH(X, X_SERVER, [ XBINDIR=`echo $X_SERVER | sed -e 's#/X$##'` ],
-    [KDE_FIND_PATH(xrdb, XRDB, [ XBINDIR=`echo $XRDB | sed -e 's#/xrdb$##'` ])])
+KDE_FIND_PATH(X, X_SERVER)
+if test -n "$X_SERVER"; then
+    XBINDIR=`echo $X_SERVER | sed -e 's#/X$##'`
+else
+    KDE_FIND_PATH(xrdb, XRDB)
+    if test -n "$XRDB"; then
+        XBINDIR=`echo $XRDB | sed -e 's#/xrdb$##'`
+    fi
+fi
+
 if test "x$XBINDIR" = x; then
   AC_MSG_ERROR([X binaries not found. Please make sure they are in PATH!])
 else
