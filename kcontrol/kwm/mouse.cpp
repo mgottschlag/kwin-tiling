@@ -229,6 +229,8 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   coAll3 =  combo;
 
   layout->activate();
+
+  load();
 }
 
 void KMouseConfig::setComboText(QComboBox* combo, const char* text){
