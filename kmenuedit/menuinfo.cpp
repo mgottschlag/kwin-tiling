@@ -168,6 +168,7 @@ void MenuFolderInfo::save()
       df->writeEntry("Comment", comment);
       df->writeEntry("Icon", icon);
       df->sync();
+      delete df;
    }
 
    // Save sub-menus
