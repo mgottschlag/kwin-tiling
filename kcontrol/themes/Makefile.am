@@ -4,7 +4,6 @@ THEMESDIR= $(kde_datadir)/kthememgr/Themes
 
 ####### Files
 
-SUBDIRS = doc
 bin_PROGRAMS = 	kthememgr
 kthememgr_SOURCES = theme.cpp installer.cpp main.cpp kwmcom.cpp \
 	options.cpp widgetcanvas.cpp about.cpp groupdetails.cpp \
