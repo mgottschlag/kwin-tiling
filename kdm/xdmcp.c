@@ -1136,9 +1136,7 @@ send_failed (
     XdmcpHeader	header;
     ARRAY8	status;
 
-    if (strlen (name) > 100)	/* Avoid use of snprintf */
-	strcpy (name + 95, "[...]");	/* This destroys the name - but it is probably invalid anyway */
-    sprintf (buf, "Session %ld failed for display %s: %s",
+    sprintf (buf, "Session %ld failed for display %.100s: %.100s",
 	     (long) sessionID, name, reason);
     Debug ("Send failed %ld %s\n", (long) sessionID, buf);
     status.length = strlen (buf);

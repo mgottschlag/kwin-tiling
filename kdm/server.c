@@ -43,10 +43,10 @@ from The Open Group.
 # include	<errno.h>
 
 #ifdef MINIX
-#include <sys/ioctl.h>
-#include <net/gen/in.h>
-#include <net/gen/tcp.h>
-#include <net/gen/tcp_io.h>
+# include <sys/ioctl.h>
+# include <net/gen/in.h>
+# include <net/gen/tcp.h>
+# include <net/gen/tcp_io.h>
 #endif
 
 static int receivedUsr1;

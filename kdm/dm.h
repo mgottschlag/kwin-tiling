@@ -43,6 +43,12 @@ from The Open Group.
 extern "C" {
 #endif
 
+#ifdef MINIX
+# ifdef MNX_TCPCONN
+#  define TCPCONN
+# endif
+#endif /* MINIX */
+
 #include <X11/Xos.h>
 #include <X11/Xfuncs.h>
 #include <X11/Xmd.h>
@@ -127,6 +133,7 @@ typedef union wait	waitType;
 
 typedef enum displayStatus { running, notRunning, zombie, phoenix } DisplayStatus;
 
+/* XXX really needed? */
 #ifdef HAVE_SYS_SELECT_H
 # include <sys/select.h>                /* Defines fd_set on some systems */
 #endif
@@ -311,7 +318,7 @@ struct greet_info {
 };
 
 /* setgroups is not covered by POSIX, arg type varies */
-#if defined(SYSV) || defined(SVR4) || defined(__osf__) || defined(linux)
+#if defined(SYSV) || defined(SVR4) || defined(__osf__) || defined(linux) || defined(__GNU__)
 # define GID_T gid_t
 #else
 # define GID_T int

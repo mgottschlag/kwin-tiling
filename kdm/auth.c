@@ -1213,7 +1213,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	    if (fstat (fileno (old), &statb) != -1)
 		chmod (new_name, (int) (statb.st_mode & 0777));
 	    /*SUPPRESS 560*/
-	    while ((entry = XauReadAuth (old)) != 0) {
+	    while ((entry = XauReadAuth (old))) {
 		if (!checkEntry (entry))
 		{
 		    Debug ("Writing an entry\n");
@@ -1298,7 +1298,7 @@ RemoveUserAuthorization (struct display *d, struct verify_info *verify)
 	    if (fstat (fileno (old), &statb) != -1)
 		chmod (new_name, (int) (statb.st_mode & 0777));
 	    /*SUPPRESS 560*/
-	    while ((entry = XauReadAuth (old)) != 0) {
+	    while ((entry = XauReadAuth (old))) {
 		if (!checkEntry (entry))
 		{
 		    Debug ("Writing an entry\n");

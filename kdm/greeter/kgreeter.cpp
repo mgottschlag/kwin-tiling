@@ -145,17 +145,9 @@ public:
     virtual bool x11EventFilter( XEvent * );
 };
 
-bool enterhack = false;
-
 bool 
 MyApp::x11EventFilter( XEvent * ev)
 {
-    if( ev->type == KeyPress && enterhack) {
-	// This should go away
-	KeySym ks = XLookupKeysym(&(ev->xkey), 0);
-	if (ks == XK_Return || ks == XK_KP_Enter)
-	    kgreeter->ReturnPressed();
-    }
     // Hack to tell dialogs to take focus 
     if( ev->type == ConfigureNotify) {
 	QWidget* target = QWidget::find( (( XConfigureEvent *) ev)->window);
@@ -172,8 +164,6 @@ MyApp::x11EventFilter( XEvent * ev)
 static void
 TempUngrab_Run(void (*func)(void *), void *ptr)
 {
-    bool prevhack = enterhack;
-    enterhack = false;
     XUngrabKeyboard(qt_xdisplay(), CurrentTime);
     func(ptr);
     // Secure the keyboard again
@@ -186,7 +176,22 @@ TempUngrab_Run(void (*func)(void *), void *ptr)
 		  ::d->name);
 	SessionExit (::d, RESERVER_DISPLAY, FALSE);	 
     }
-    enterhack = prevhack;
+}
+
+void KGreeter::keyPressEvent( QKeyEvent *e )
+{
+    if ( e->state() == 0 || ( e->state() & Keypad && e->key() == Key_Enter ) ) {
+	switch ( e->key() ) {
+	    case Key_Enter:
+	    case Key_Return:
+		ReturnPressed();
+		return;
+	    case Key_Escape:
+		clear_button_clicked();
+		return;
+	}
+    }
+    e->ignore();
 }
 
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
@@ -298,15 +303,18 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 
     loginLabel = new QLabel( i18n("Login:"), this);
     loginEdit = new KLoginLineEdit( this);
+    loginLabel->setBuddy(loginEdit);
     QString enam = QString::fromLatin1("LastUser_") + 
 		   QString::fromLatin1(::d->name);
     loginEdit->setFocus();
 
     passwdLabel = new QLabel( i18n("Password:"), this);
     passwdEdit = new KPasswordEdit( this, "edit", kdmcfg->_echoMode);
+    passwdLabel->setBuddy(passwdEdit);
 
     sessionargLabel = new QLabel(i18n("Session Type:"), this);
     sessionargBox = new QComboBox( false, this);
+    sessionargLabel->setBuddy(sessionargBox);
     sessionargBox->insertStringList( kdmcfg->_sessionTypes );
 
     vbox->addLayout( hbox1);
@@ -395,6 +403,8 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	connect( user_view, SIGNAL(clicked(QIconViewItem*)), 
 		 this, SLOT(slot_user_name( QIconViewItem*)));
     }
+
+    srand(time(0) + (unsigned)kdmcfg);	/* random enough? call core fkt? */
 }
 
 void 
@@ -478,21 +488,37 @@ void
 KGreeter::save_wm()
 {
     rdwr_wm ((char*)sessionargBox->currentText().latin1(), 0, 
-	     QFile::encodeName( loginEdit->text() ).data(), 0);
+	     loginEdit->text().latin1(), 0);
 }
 
 void
 KGreeter::load_wm()
 {
     char buf[256];
-    
-    if (!rdwr_wm (buf, 256, QFile::encodeName( loginEdit->text() ).data(), 1))
-	strcpy (buf, "default");
+    const char *name;
+    int sum, len, i, num;
 
-    for (int i = 0, j = sessionargBox->count(); i < j; i++)
+    num = sessionargBox->count();
+    name = loginEdit->text().latin1();
+    switch (rdwr_wm (buf, 256, name, 1)) {
+	case -2:	/* no such user */
+	    for (sum = 0, i = 0, len = strlen(name); i < len; i++)
+		sum += (int)name[i] << ((i ^ sum) & 7);	/* voodoo */
+	    i = (sum ^ (sum >> 7)) % (num * 4 / 3);
+	    if (i < num) {
+		sessionargBox->setCurrentItem(i);
+		return;
+	    }
+	    /* fall through */
+	case -1:	/* cannot read */
+	    strcpy (buf, "default");
+	    break;
+    }
+
+    for (i = 0; i < num; i++)
 	if (sessionargBox->text(i) == QString::fromLatin1 (buf)) {
 	    sessionargBox->setCurrentItem(i);
-	    break;
+	    return;
 	}
 }
 
@@ -539,13 +565,11 @@ KGreeter::go_button_clicked()
 
     /* NOTE: name/password are static -> all zero -> terminator present */
     greet->name = ::name;
-    strncpy( ::name, QFile::encodeName(loginEdit->text()).data(), F_LEN - 1 );
+    strncpy( ::name, loginEdit->text().latin1(), F_LEN - 1 );
     greet->password = ::password;
     strncpy( ::password, passwdEdit->password(), F_LEN - 1 );
     greet->string = ::sessarg;
-    // sessions are in fact filenames and should be encoded that way
-    strncpy( ::sessarg, 
-	QFile::encodeName( sessionargBox->currentText() ).data(), F_LEN - 1 );
+    strncpy( ::sessarg, sessionargBox->currentText().latin1(), F_LEN - 1 );
 
     switch (MyVerify (::d, greet, verify, &expire, &nologin)) {
 	case V_ERROR:
@@ -617,7 +641,7 @@ KGreeter::go_button_clicked()
 	    loginEdit->setEnabled( false);
 	    passwdEdit->setEnabled( false);
 	    clear_button_clicked();
-	    timer->start( 1500, true );	// XXX make configurable
+	    timer->start( 1500 + rand()*1000/RAND_MAX, true );	// XXX make configurable
 	    return;
     }
     setActiveWindow();
@@ -872,7 +896,6 @@ GreetUser(
 	// Hack! Kdm looses keyboard focus unless
 	// the keyboard is ungrabbed during setup
 	TempUngrab_Run(creat_greet, 0);
-	enterhack = true;
 	retval = qApp->exec();
 	// Give focus to root window:
 	QApplication::desktop()->setActiveWindow();

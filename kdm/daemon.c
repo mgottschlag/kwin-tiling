@@ -37,7 +37,7 @@ from The Open Group.
 #else
 # include <sys/ioctl.h>
 #endif
-#if defined(__osf__) || defined(linux) || defined(MINIX)
+#if defined(__osf__) || defined(linux) || defined(MINIX) || defined(__GNU__)
 # define setpgrp setpgid
 #endif
 #ifdef hpux
@@ -103,7 +103,7 @@ BecomeDaemon (void)
 	stat = setpgid(child_id, child_id);
 	/* This gets error EPERM.  Why? */
 #else
-#if defined(SYSV) || defined(__GNU__)
+#if defined(SYSV)
 	stat = 0;	/* don't know how to set child's process group */
 #else
 	stat = setpgrp(child_id, child_id);
@@ -123,7 +123,7 @@ BecomeDaemon (void)
      * Close standard file descriptors and get rid of controlling tty
      */
 
-#if defined(SYSV) || defined(SVR4) || defined(__GNU__) || defined(__QNXNTO__)
+#if defined(SYSV) || defined(SVR4) || defined(__QNXNTO__)
     setpgrp ();
 #else
     setpgrp (0, getpid());

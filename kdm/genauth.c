@@ -40,18 +40,44 @@ from The Open Group.
 #include <errno.h>
 
 #ifdef X_NOT_STDC_ENV
-#define Time_t long
+# define Time_t long
 extern Time_t time ();
 extern int errno;
 #else
-#include <time.h>
-#define Time_t time_t
+# include <time.h>
+# define Time_t time_t
 #endif
 
 static unsigned char	key[8];
 
+#ifdef HASXDMAUTH
+
+#ifndef X_GETTIMEOFDAY
+/* WABA: According to the man page gettimeofday takes a second argument */
+/* if this breaks on your system, we need to have a configure test.     */
+# define X_GETTIMEOFDAY(t) gettimeofday(t, NULL)
+#endif
+
+typedef unsigned char auth_cblock[8];	/* block size */
+
+typedef struct auth_ks_struct { auth_cblock _; } auth_wrapper_schedule[16];
+
+extern void _XdmcpWrapperToOddParity();
+
+static void
+longtochars (long l, unsigned char *c)
+{
+    c[0] = (l >> 24) & 0xff;
+    c[1] = (l >> 16) & 0xff;
+    c[2] = (l >> 8) & 0xff;
+    c[3] = l & 0xff;
+}
+
+#endif
+
 # define FILE_LIMIT	1024	/* no more than this many buffers */
 
+#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
 static int
 sumFile (char *name, long sum[2])
 {
@@ -87,31 +113,9 @@ sumFile (char *name, long sum[2])
     close (fd);
     return ret_status;
 }
-
-#ifdef HASXDMAUTH
-
-#ifndef X_GETTIMEOFDAY
-/* WABA: According to the man page gettimeofday takes a second argument */
-/* if this breaks on your system, we need to have a configure test.     */
-#define X_GETTIMEOFDAY(t) gettimeofday(t, NULL)
 #endif
 
-typedef unsigned char auth_cblock[8];	/* block size */
-
-typedef struct auth_ks_struct { auth_cblock _; } auth_wrapper_schedule[16];
-
-extern void _XdmcpWrapperToOddParity();
-
-static void
-longtochars (long l, unsigned char *c)
-{
-    c[0] = (l >> 24) & 0xff;
-    c[1] = (l >> 16) & 0xff;
-    c[2] = (l >> 8) & 0xff;
-    c[3] = l & 0xff;
-}
-
-
+#ifdef HASXDMAUTH
 static void
 InitXdmcpWrapper (void)
 {
@@ -230,17 +234,31 @@ GenerateAuthData (char *auth, int len)
     	int	    seed;
     	int	    value;
     	int	    i;
-	long	    sum[2];
-
-	/* Read random data from file /stefh */
-	if( !sumFile( randomFile, sum)) {
-	    LogError("Failed to read from randomFile %s\n", randomFile);
-	    /* Don't do anything if the read failed. Just rely on
-	     * the randomness fo ldata[] /stefh
-	     */
+	static long localkey[2] = {0, 0};
+    
+	if ( (localkey[0] == 0) && (localkey[1] == 0) ) {
+#ifdef ARC4_RANDOM
+	    localkey[0] = arc4random();
+	    localkey[1] = arc4random();
+#elif defined(DEV_RANDOM)
+	    int fd;
+    
+	    if ((fd = open(DEV_RANDOM, O_RDONLY)) >= 0) {
+		if (read(fd, (char *)localkey, 8) != 8) {
+		    localkey[0] = 1;
+		}
+		close(fd);
+	    } else {
+		localkey[0] = 1;
+	    }
+#else 
+    	    if (!sumFile (randomFile, localkey)) {
+		localkey[0] = 1; /* To keep from continually calling sumFile() */
+    	    }
+#endif
 	}
 
-	seed = (ldata[0]) + (ldata[1] << 16) + sum[0] + sum[1];
+    	seed = (ldata[0]+localkey[0]) + ((ldata[1]+localkey[1]) << 16);
     	xdm_srand (seed);
     	for (i = 0; i < len; i++)
     	{

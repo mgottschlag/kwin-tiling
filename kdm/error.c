@@ -36,14 +36,14 @@ from The Open Group.
  * or use syslog if it exists
  */
 
-# include <stdio.h>
-# include <stdarg.h>
+#include <stdio.h>
+#include <stdarg.h>
 
-# include "dm.h"
-# include "dm_error.h"
+#include "dm.h"
+#include "dm_error.h"
 
 #ifdef HAVE_SYSLOG_H
-#include <syslog.h>
+# include <syslog.h>
 #endif
 
 /*VARARGS1*/

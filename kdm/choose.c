@@ -306,8 +306,10 @@ RegisterIndirectChoice (
 	    break;
 	}
     }
+#if 0
     if (!found)
 	return 0;
+#endif
 
     insert = 0;
     if (!c)

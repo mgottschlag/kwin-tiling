@@ -36,17 +36,13 @@ from The Open Group.
 
 #ifdef SECURE_RPC
 
+# include   <X11/Xos.h>
+# include   <rpc/rpc.h>
+# include   <rpc/key_prot.h>
+
 # include   "dm.h"
 # include   "dm_auth.h"
 # include   "dm_error.h"
-
-# include   <X11/Xos.h>
-#ifdef HAVE_RPC_RPC_H
-# include   <rpc/rpc.h>
-#endif
-#ifdef HAVE_RPC_KEY_PROT_H
-# include   <rpc/key_prot.h>
-#endif
 
 /*ARGSUSED*/
 void

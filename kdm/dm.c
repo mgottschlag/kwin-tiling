@@ -154,7 +154,7 @@ main (int argc, char **argv)
 	BecomeDaemon ();
 
     /* SUPPRESS 560 */
-    if ((oldpid = StorePid ()) != 0)
+    if ((oldpid = StorePid ()))
     {
 	if (oldpid == -1)
 	    LogError ("Can't create/lock pid file %s\n", pidFile);
@@ -460,7 +460,7 @@ WaitForChild (void)
 	if (autoRescan)
 	    RescanIfMod ();
 	/* SUPPRESS 560 */
-	if ((d = FindDisplayByPid (pid)) != 0) {
+	if ((d = FindDisplayByPid (pid))) {
 	    d->pid = -1;
 	    switch (waitVal (status)) {
 	    case UNMANAGE_DISPLAY:
@@ -514,7 +514,7 @@ WaitForChild (void)
 	    }
 	}
 	/* SUPPRESS 560 */
-	else if ((d = FindDisplayByServerPid (pid)) != 0)
+	else if ((d = FindDisplayByServerPid (pid)))
 	{
 	    d->serverPid = -1;
 	    switch (d->status)
@@ -932,7 +932,7 @@ StorePid (void)
 #endif
 #endif
 	}
-	fprintf (pidFilePtr, "%5d\n", getpid ());
+	fprintf (pidFilePtr, "%d\n", getpid ());
 	(void) fflush (pidFilePtr);
 	RegisterCloseOnFork (pidFd);
     }

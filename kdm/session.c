@@ -54,10 +54,8 @@ from The Open Group.
 # define _XOPEN_SOURCE
 # include <unistd.h>
 #endif
-#ifdef HAVE_RPC_RPC_H
+#ifdef SECURE_RPC
 # include <rpc/rpc.h>
-#endif
-#ifdef HAVE_RPC_KEY_PROT_H
 # include <rpc/key_prot.h>
 #endif
 #ifdef K5AUTH
@@ -65,13 +63,6 @@ from The Open Group.
 #endif
 #ifdef USE_PAM
 # include <security/pam_appl.h>
-#endif
-#ifdef USESHADOW
-# include <shadow.h>
-/*
-extern	struct spwd	*getspnam(GETSPNAM_ARGS);
-extern	void	endspent(void);
-*/
 #endif
 
 #ifdef KRB4
@@ -96,13 +87,9 @@ extern	void	endspent(void);
 # endif
 #endif
 
-#ifdef HAVE_LOGIN_CAP_H		/* maybe, HAS_SETUSERCONTEXT fits better */
-# include <login_cap.h>		/* BSDI-like login classes */
-#endif
-
 static	int	runAndWait (char **args, char **environ);
 
-#if defined(CSRG_BASED) || defined(__osf__)
+#if defined(CSRG_BASED) || defined(__osf__) || defined(__DARWIN__)
 # include <sys/types.h>
 # include <grp.h>
 #else
@@ -112,6 +99,10 @@ extern struct group    *getgrent(void);
 extern void    endgrent(void);
 #endif
 
+#ifdef USESHADOW
+extern	struct spwd	*getspnam(GETSPNAM_ARGS);
+extern	void	endspent(void);
+#endif
 #if defined(CSRG_BASED)
 # include <pwd.h>
 # include <unistd.h>
@@ -333,7 +324,7 @@ waitAbort (int n)
 	Longjmp (tenaciousClient, 1);
 }
 
-#if defined(_POSIX_SOURCE) || defined(SYSV) || defined(SVR4) || defined(hpux) || defined(_UNIXWARE)
+#if defined(_POSIX_SOURCE) || defined(SYSV) || defined(SVR4)
 #define killpg(pgrp, sig) kill(-(pgrp), sig)
 #endif
 
@@ -398,6 +389,7 @@ IOErrorHandler (Display *dpy)
     LogError("fatal IO error %d (%s)\n", errno, _SysErrorMsg(errno));
     exit(RESERVER_AL_DISPLAY);
     /*NOTREACHED*/
+    return 0;
 }
 
 static int
@@ -634,8 +626,10 @@ UnsecureDisplay (struct display *d, Display *dpy)
     }
 }
 
+static int removeAuth = 0;
+
 void
-SessionExit (struct display *d, int status, int removeAuth)
+SessionExit (struct display *d, int status, int dummy /* we know better */)
 {
     /* make sure the server gets reset after the session is over */
     if (d->serverPid >= 2 && d->resetSignal)
@@ -648,6 +642,7 @@ SessionExit (struct display *d, int status, int removeAuth)
 	pam_handle_t **pamh = thepamh();
 	if (pamh && *pamh) {
 	    /* shutdown PAM session */
+	    pam_setcred(*pamh, PAM_DELETE_CRED);
 	    pam_close_session(*pamh, 0);
 	    pam_end(*pamh, PAM_SUCCESS);
 	    *pamh = NULL;
@@ -685,12 +680,11 @@ SessionExit (struct display *d, int status, int removeAuth)
 	}
 #endif /* K5AUTH */
 #ifdef KRB4
-        {
-	    (void) dest_tkt();
-#ifdef AFS
-            if (k_hasafs()) (void) k_unlog();
-#endif
-	}
+	(void) dest_tkt();
+# ifdef AFS
+        if (k_hasafs())
+	    (void) k_unlog();
+# endif
 #endif
     }
     Debug ("Display %s exiting with status %d\n", d->name, status);
@@ -709,7 +703,6 @@ StartClient (
     char	*failsafeArgv[2];
     int	pid;
 #ifdef HAS_SETUSERCONTEXT
-    login_cap_t *lc = NULL;
     struct passwd *pwd;
     char **e, **envinit;
     extern char **environ;
@@ -745,11 +738,10 @@ StartClient (
 	    free (buf);
     }
 #ifdef USE_PAM
-    if (pamh && *pamh) {
+    if (pamh && *pamh)
 	pam_open_session(*pamh, 0);
-	pam_setcred(*pamh, 0);
-    }
 #endif    
+    removeAuth = 1;
     switch (pid = fork ()) {
     case 0:
 	CleanUpChild ();
@@ -765,16 +757,15 @@ StartClient (
 	if (pamh && *pamh) {
 	    long i;
 	    char **pam_env = pam_getenvlist(*pamh);
-	    for(i = 0; pam_env && pam_env[i]; i++) {
+	    for(i = 0; pam_env && pam_env[i]; i++)
 		verify->userEnviron = putEnv(pam_env[i], verify->userEnviron);
-	    }
 	}
 #endif
 
 
 #ifndef AIXV3
-#ifndef HAS_SETUSERCONTEXT
-#ifdef NGROUPS_MAX
+# ifndef HAS_SETUSERCONTEXT
+#  ifdef NGROUPS_MAX
 	if (setgid(verify->groups[0]) < 0)
 	{
 	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
@@ -786,41 +777,45 @@ StartClient (
 	    LogError("setgroups for \"%s\" failed, errno=%d\n", name, errno);
 	    return (0);
 	}
-#else
+#  else
 	if (setgid(verify->gid) < 0)
 	{
 	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
 		     verify->gid, name, errno);
 	    return (0);
 	}
-#endif
-#if defined(BSD) && (BSD >= 199103)
+#  endif
+#  if defined(BSD) && (BSD >= 199103)
 	if (setlogin(name) < 0)
 	{
 	    LogError("setlogin for \"%s\" failed, errno=%d", name, errno);
 	    return(0);
 	}
-#endif
-#ifndef QNX4
+#  endif
+#  ifndef QNX4
 	if (initgroups(name, 
-#ifdef NGROUPS_MAX
+#   ifdef NGROUPS_MAX
 	    verify->groups[0]
-#else
+#   else
 	    verify->gid
-#endif
+#   endif
 	    ) < 0)
 	{
 	    LogError("initgroups for \"%s\" failed, errno=%d\n", name, errno);
 	    return (0);
 	}
-#endif   /* QNX4 doesn't support multi-groups, no initgroups() */
+#  endif   /* QNX4 doesn't support multi-groups, no initgroups() */
+#  ifdef USE_PAM
+	if (pamh && *pamh)
+	    pam_setcred(*pamh, 0);
+#  endif
 	if (setuid(verify->uid) < 0)
 	{
 	    LogError("setuid %d (user \"%s\") failed, errno=%d\n",
 		     verify->uid, name, errno);
 	    return (0);
 	}
-#else /* HAS_SETUSERCONTEXT */
+# else /* HAS_SETUSERCONTEXT */
 	/*
 	 * Destroy environment unless user has requested its preservation.
 	 * We need to do this before setusercontext() because that may
@@ -842,11 +837,6 @@ StartClient (
 	pwd = getpwnam(name);
 	if (pwd)
 	{
-#ifdef __bsdi__
-	    lc = login_getclass(pwd->pw_class);
-#else
-	    lc = login_getpwclass(pwd);
-#endif
 	    if (setusercontext(NULL, pwd, pwd->pw_uid, LOGIN_SETALL) < 0)
 	    {
 		LogError("setusercontext for \"%s\" failed, errno=%d\n", name,
@@ -854,7 +844,6 @@ StartClient (
 		return (0);
 	    }
 	    endpwent();
-	    login_close(lc);
 	}
 	else
 	{
@@ -862,11 +851,16 @@ StartClient (
 	    return (0);
 	}
 
+#  ifdef USE_PAM	/* useful? workable (uid != 0)? */
+	if (pamh && *pamh)
+	    pam_setcred(*pamh, 0);
+#  endif
+
 	e = environ;
 	while (*e)
 	    verify->userEnviron = putEnv(*e++, verify->userEnviron);
 
-#endif /* HAS_SETUSERCONTEXT */
+# endif /* HAS_SETUSERCONTEXT */
 #else /* AIXV3 */
 	/*
 	 * Set the user's credentials: uid, gid, groups,
@@ -884,7 +878,7 @@ StartClient (
 	    /*
 	     * Save pointers to tags. Note: changes to the locations of these
 	     * tags in verify.c must be reflected here by adjusting SYS_ENV_TAG
-	     * or USR_ENV_TAG.
+	     * or USR_ENV_TAG. XXX
 	     */
 #	    define SYS_ENV_TAG 0
 #	    define USR_ENV_TAG 3
@@ -900,7 +894,7 @@ StartClient (
 	    if (setpenv(name, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
 			verify->userEnviron, NULL) != 0) {
 
-		Debug("Can't set process environment (user=%s)\n",name);
+		Debug("Can't set process environment (user=%s)\n", name);
 		return(0);
 	    }
 
@@ -1165,7 +1159,7 @@ execute (char **argv, char **environ)
 	if (optarg)
 	    *av++ = optarg;
 	/* SUPPRESS 560 */
-	while ((*av++ = *argv++) != 0)
+	while ((*av++ = *argv++))
 	    /* SUPPRESS 530 */
 	    ;
 	execve (newargv[0], newargv, environ);

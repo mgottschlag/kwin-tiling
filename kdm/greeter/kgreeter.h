@@ -84,6 +84,7 @@ public slots:
 
 protected:
     void timerEvent( QTimerEvent * ) {};
+    void keyPressEvent( QKeyEvent * );
 
 private:
     void save_wm();

@@ -43,7 +43,7 @@ extern "C" {
 /*
  * Do this rather than break a build over a const-mismatch
  */
-#if defined(linux) || defined(CSRG_BASED) || defined(sun)
+#if defined(linux) || defined(CSRG_BASED)
 # define CRYPT_ARGS    const char *s1, const char *s2
 # define GETSPNAM_ARGS const char *name
 # define GETPWNAM_ARGS const char *name

@@ -41,7 +41,7 @@ authorization.
 #include "kdm-config.h"
 
 #if !HAVE_VSYSLOG
-#undef USE_SYSLOG
+# undef USE_SYSLOG
 #endif
 
 #if defined(GCC_PRINTFLIKE) && defined(__GNUC__)
@@ -53,6 +53,7 @@ authorization.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 extern void Debug        (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
 extern void InitErrorLog (void);
 extern void LogError     (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
@@ -60,6 +61,7 @@ extern void LogInfo      (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
 extern void LogOutOfMem  (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
 extern void LogPanic     (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
 extern void Panic        (const char *mesg);
+
 #ifdef __cplusplus
 }
 #endif

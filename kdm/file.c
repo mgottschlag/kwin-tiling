@@ -32,10 +32,10 @@ from The Open Group.
  * file.c
  */
 
-# include	"dm.h"
-# include	"dm_error.h"
+#include "dm.h"
+#include "dm_error.h"
 
-# include	<ctype.h>
+#include <ctype.h>
 
 static int
 DisplayTypeMatch (DisplayType d1, DisplayType d2)
@@ -118,7 +118,7 @@ copyArgs (char **args)
     n = new;
     a = args;
     /* SUPPRESS 560 */
-    while ((*n++ = *a++) != 0)
+    while ((*n++ = *a++))
 	/* SUPPRESS 530 */
 	;
     return new;

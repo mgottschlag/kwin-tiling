@@ -13,8 +13,7 @@
 int
 rdwr_wm (char *wm, int wml, const char *usr, int rd)
 {
-    int rv, gidset_size;
-    gid_t *gidset;
+    int rv;
     char fname[256];
     FILE *file;
 
@@ -22,49 +21,38 @@ rdwr_wm (char *wm, int wml, const char *usr, int rd)
     struct passwd *pwd = getpwnam( usr );
     endpwent();
     if (!pwd)
-	return 0;
+	return -2;
 
     /* Go user */
-    gidset_size = getgroups(0, 0);
-    if (!(gidset = malloc (sizeof(gid_t) * gidset_size)))
-	return 0;
-    if( getgroups( gidset_size, gidset) == -1 ||
-	initgroups(pwd->pw_name, pwd->pw_gid) != 0 ||
-	setegid(pwd->pw_gid) != 0 ||
-        seteuid(pwd->pw_uid) != 0
-    ) {
-	/* Error, back out */
-	seteuid(0);
-        setegid(0);
-	setgroups( gidset_size, gidset);
-	free(gidset);
-	return 0;
-    }
+    rv = -1;
+    if(	!initgroups(pwd->pw_name, pwd->pw_gid) ) {
+	if( !setegid(pwd->pw_gid) ) {
+	    if( !seteuid(pwd->pw_uid) ) {
 
-    /* open file as user which is loging in */
-    sprintf(fname, "%s/" WMRC, pwd->pw_dir);
-    rv = 0;
-    if (rd) {
-	if ( (file = fopen(fname, "r")) != NULL ) {
-	    fgets (wm, wml, file);
-	    rv = strlen (wm);
-	    if (rv && wm[rv - 1] == '\n')
-		wm[--rv] = '\0';
-	    fclose (file);
-	}
-    } else {
-	if ( (file = fopen(fname, "w")) != NULL ) {
-	    fputs (wm, file);
-	    rv = 1;
-	    fclose (file);
-	}
-    }
+		/* open file as user which is loging in */
+		sprintf(fname, "%s/" WMRC, pwd->pw_dir);
+		if (rd) {
+		    if ( (file = fopen(fname, "r")) != NULL ) {
+			fgets (wm, wml, file);
+			rv = strlen (wm);
+			if (rv && wm[rv - 1] == '\n')
+			    wm[--rv] = '\0';
+			fclose (file);
+		    }
+		} else {
+		    if ( (file = fopen(fname, "w")) != NULL ) {
+			fputs (wm, file);
+			rv = 1;
+			fclose (file);
+		    }
+		}
 
-    /* Go root */
-    seteuid(0);
-    setegid(0);
-    setgroups(gidset_size, gidset);
-    free(gidset);
+		seteuid(0);
+	    }
+	    setegid(0);
+	}
+	setgroups( 0, 0);
+    }
 
     return rv;
 }
