@@ -55,6 +55,11 @@
 #include <X11/Xlib.h>
 #include <X11/Xcursor/Xcursor.h>
 
+// Check for older version
+#if !defined(XCURSOR_LIB_MAJOR) && defined(XCURSOR_MAJOR)
+# define XCURSOR_LIB_MAJOR	XCURSOR_MAJOR
+# define XCURSOR_LIB_MINOR	XCURSOR_MINOR
+#endif
 
 namespace {
 	// Listview icon size
