@@ -212,8 +212,8 @@ i18n("There are unsaved changes in the active module.\n"
      "Do you want to apply the changes before exiting "
      "the Control Center or discard the changes?"),
                                           i18n("Unsaved Changes"),
-                                          i18n("&Apply"),
-                                          i18n("&Discard"));
+                                          KStdGuiItem::apply(),
+                                          KStdGuiItem::discard());
       if (res == KMessageBox::Yes)
         _module->module()->applyClicked();
       if (res == KMessageBox::Cancel)
