@@ -207,20 +207,6 @@ QString KShortURIFilter::configName() const
     return i18n("&Short URI");
 }
 
-bool KShortURIFilter::process(const QCString &fun, const QByteArray &data, QCString& replyType, QByteArray &replyData)
-{
-	if ( fun == "configure()" )
-	{
-		replyType = "void";
-		configure( );
-		return TRUE;
-	}
-	if ( DCOPObject::process( fun, data, replyType, replyData ) )
-		return TRUE;
-
-	return FALSE;
-}
-
 KShortURIFilterFactory::KShortURIFilterFactory( QObject *parent, const char *name )
                        :KLibFactory( parent, name )
 {
