@@ -206,10 +206,7 @@ void EventView::setPixmap(int item, bool on)
 {
 // KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small)
 	if (on)
-		eventslist->changeItem(
-			KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small),
-			eventslist->text(item),
-			item);
+		eventslist->changeItem(BarIcon("flag"), eventslist->text(item), item);
 	else
 		eventslist->changeItem(eventslist->text(item), item);
 

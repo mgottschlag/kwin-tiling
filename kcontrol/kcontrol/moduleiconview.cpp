@@ -119,24 +119,24 @@ void ModuleIconView::fill()
           QPixmap icon;
           if (KCGlobal::iconSize() == Small)
             {
-              icon = 
-                KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), KIconLoader::Small);
+              icon = KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), 
+			KIcon::Desktop, KIcon::SizeSmall);
               if(icon.isNull())
-                icon = KGlobal::iconLoader()->loadIcon("folder", KIconLoader::Small);
+                icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeSmall);
             }
           else if (KCGlobal::iconSize() == Large)
             {
-              icon = 
-                KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), KIconLoader::Large);
+              icon = KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), 
+			KIcon::Desktop, KIcon::SizeLarge);
               if(icon.isNull())
-                icon = KGlobal::iconLoader()->loadIcon("folder", KIconLoader::Large);
+                icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeLarge);
             }
           else
             {
-              icon = 
-                KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), KIconLoader::Medium);
+              icon = KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), 
+			KIcon::Desktop, KIcon::SizeMedium);
               if(icon.isNull())
-                icon = KGlobal::iconLoader()->loadIcon("folder", KIconLoader::Medium);
+                icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeMedium);
             }
           
 		  ModuleIconItem *i = new ModuleIconItem(this, directory.readEntry("Name", subdir), icon);
@@ -148,21 +148,21 @@ void ModuleIconView::fill()
       QPixmap icon;
       if (KCGlobal::iconSize() == Small)
         {
-          icon = KGlobal::iconLoader()->loadIcon("up", KIconLoader::Small);
+          icon = KGlobal::iconLoader()->loadIcon("up", KIcon::Desktop, KIcon::SizeSmall);
           if(icon.isNull())
-            icon = KGlobal::iconLoader()->loadIcon("folder", KIconLoader::Small);
+            icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeSmall);
         }
       else if (KCGlobal::iconSize() == Large)
         {
-          icon = KGlobal::iconLoader()->loadIcon("up", KIconLoader::Large);
+          icon = KGlobal::iconLoader()->loadIcon("up", KIcon::Desktop, KIcon::SizeLarge);
           if(icon.isNull())
-            icon = KGlobal::iconLoader()->loadIcon("folder", KIconLoader::Large);
+            icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeLarge);
         }
       else
         {
-          icon = KGlobal::iconLoader()->loadIcon("up", KIconLoader::Medium);
+          icon = KGlobal::iconLoader()->loadIcon("up", KIcon::Desktop, KIcon::SizeMedium);
           if(icon.isNull())
-            icon = KGlobal::iconLoader()->loadIcon("folder", KIconLoader::Medium);
+            icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeMedium);
         }
 
 	  // go-up node

@@ -69,29 +69,17 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 
 QPixmap ModuleInfo::smallIcon()
 {
-  QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Small, 0, true);
-  if(icon.isNull())
-	icon = KGlobal::iconLoader()->loadIcon("unknown", KIconLoader::Small); 
-  
-  return icon;
+  return DesktopIcon(_icon, KIcon::SizeSmall);
 }
 
 QPixmap ModuleInfo::mediumIcon()
 {
-  QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Medium, 0, true);
-  if(icon.isNull())
-	icon = KGlobal::iconLoader()->loadIcon("unknown", KIconLoader::Medium); 
-  
-  return icon;
+  return DesktopIcon(_icon, KIcon::SizeMedium);
 }
 
 QPixmap ModuleInfo::largeIcon()
 {
-  QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Large, 0, true);
-  if(icon.isNull())
-	icon = KGlobal::iconLoader()->loadIcon("unknown", KIconLoader::Large); 
-  
-  return icon;
+  return DesktopIcon(_icon, KIcon::SizeLarge);
 }
 
 QCString ModuleInfo::moduleId() const

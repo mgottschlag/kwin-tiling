@@ -233,7 +233,7 @@ void KIconConfig::preview()
 {
     // Apply effects ourselves because we don't want to sync 
     // the configuratio every preview.
-    QPixmap pm = mpLoader->loadIcon(mExample, -mSizes[mUsage], -1);
+    QPixmap pm = mpLoader->loadIcon(mExample, KIcon::NoGroup, mSizes[mUsage]);
     QImage img = pm.convertToImage();
     img = mpEffect->apply(img, mEffects[mUsage][mState],
 	    mEffectValues[mUsage][mState]);

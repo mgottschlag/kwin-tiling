@@ -94,8 +94,7 @@ void KNotifyWidget::loadAll()
 		QString appname(conf.readEntry("appname", "Unknown Title"));
 		QString desc(conf.readEntry("description"));
 		(new ListViewItem(apps, *it, appname, desc))->setPixmap
-			(0, KGlobal::instance()->iconLoader()->loadIcon("apps/library", 
-				KIconLoader::Small));
+			(0, SmallIcon("library"));
 		kapp->processEvents();
 	}
 	if (!apps->firstChild()) apps->setEnabled(false);
@@ -125,8 +124,7 @@ void KNotifyWidget::appSelected(QListViewItem *_i)
 		QString desc(conf.readEntry("description"));
 		
 		(new EventListViewItem(events, *it, (const char*)((ListViewItem*)_i)->file, friendly,
-			desc))->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("apps/knotify",
-				KIconLoader::Small));
+			desc))->setPixmap(0, SmallIcon("knotify"));
 		kapp->processEvents();
 	}
 

@@ -176,11 +176,7 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
 		  // now decorate the branch
 		  KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
 		  iitem->setText(0, directory.readEntry("Name", *it));
-		  QPixmap icon = KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"),
-														 KIconLoader::Small, 0, true);
-		  if(icon.isNull())
-			icon = KGlobal::iconLoader()->loadIcon("unknown", KIconLoader::Small);
-
+		  QPixmap icon = SmallIcon(directory.readEntry("Icon"));
 		  iitem->setPixmap(0, icon);
 		  
 		  return iitem;
