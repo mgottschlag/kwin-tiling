@@ -289,11 +289,7 @@ void KlipperWidget::readProperties(KConfig *kc)
       for (QStringList::ConstIterator it = dataList.begin();
            it != dataList.end(); ++it)
       {
-          QString data( *it );
-          data.replace( "&", "&&" );
-
-          long id = m_popup->insertItem( KStringHandler::csqueeze(data, 45),
-                  -2, -1);
+          long id = m_popup->insertItem( KStringHandler::cEmSqueeze((*it).simplifyWhiteSpace(), fontMetrics(), 25).replace( "&", "&&" ), -2, -1);
           m_clipDict.insert( id, *it );
       }
 
@@ -598,7 +594,7 @@ void KlipperWidget::applyClipChanges( const QString& clipData )
     removeFromHistory( clipData );
     trimClipHistory(maxClipItems - 1);
 
-    m_selectedItem = m_popup->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace().replace( "&", "&&" ), 45), -2, 1); // -2 means unique id, 1 means first location
+    m_selectedItem = m_popup->insertItem(KStringHandler::cEmSqueeze(clipData.simplifyWhiteSpace(), fontMetrics(), 25).replace( "&", "&&" ), -2, 1); // -2 means unique id, 1 means first location
     m_clipDict.insert(m_selectedItem, clipData);
     if ( bClipEmpty )
         m_popup->setItemEnabled( m_selectedItem, false );
@@ -617,7 +613,7 @@ void KlipperWidget::slotMoveSelectedToTop()
     m_popup->removeItem( m_selectedItem );
     m_clipDict.remove( m_selectedItem );
 
-    m_selectedItem = m_popup->insertItem( KStringHandler::csqueeze(m_lastString.simplifyWhiteSpace().replace( "&", "&&" ), 45), -2, 1 );
+    m_selectedItem = m_popup->insertItem( KStringHandler::cEmSqueeze(m_lastString.simplifyWhiteSpace(), fontMetrics(), 25).replace( "&", "&&" ), -2, 1 );
     m_popup->setItemChecked( m_selectedItem, true );
     m_clipDict.insert( m_selectedItem, m_lastString );
 }
