@@ -70,8 +70,8 @@ KDMConfigApplication::KDMConfigApplication(int &argc, char **argv,
   if (runGUI())
   {
       kimgioRegister();
-      KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_data_relative() + "/kdm/pics/users");
-      KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_data_relative() + "/kdm/pics");
+      KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_default("data") + "/kdm/pics/users");
+      KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_default("data") + "/kdm/pics");
 
       if (!pages || pages->contains("appearance"))
 	  addPage(appearance = new KDMAppearanceWidget(dialog, "appearance", FALSE),

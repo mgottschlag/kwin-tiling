@@ -215,7 +215,7 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     setColumn(0, i18n("Name:"), 100);
     setColumn(1, i18n("Description:"), 250);
     setSeparator('\t');
-    KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_data_relative() + "/kstyle/themes");
+    KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + "/kstyle/themes");
     QStringList list = KGlobal::dirs()->getResourceDirs("themes");
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
         readThemeDir(*it);

@@ -171,7 +171,7 @@ void init(void)
 {
     oldMsgHandler = qInstallMsgHandler(msgHandler);
 
-    KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_data_relative() + '/' + kapp->name() + "/Themes/");
+    KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + kapp->name() + "/Themes/");
     if (!(Theme::mkdirhier(Theme::workDir()))) exit(1);
 }
 

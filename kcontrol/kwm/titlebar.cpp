@@ -1144,7 +1144,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   //the icon loader for the buttons
   iconLoader = new KIconLoader();
   iconLoader->setIconType("kwm_pics");
-  KGlobal::dirs()->addResourceType("kwm_pics", KStandardDirs::kde_data_relative() + "/kwm/pics");
+  KGlobal::dirs()->addResourceType("kwm_pics", KStandardDirs::kde_default("data") + "/kwm/pics");
   
   GetSettings();
 }

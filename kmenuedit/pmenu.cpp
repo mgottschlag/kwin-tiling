@@ -726,7 +726,7 @@ short PMenu::parse( QDataStream &s )
   QString command;
   PMenuItem *new_item;
   PMenu *new_menu;
-  char c;
+  Q_INT8 c;
   s >> c;
   while ( c != '\n' )
     {

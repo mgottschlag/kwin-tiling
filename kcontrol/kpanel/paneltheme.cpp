@@ -173,7 +173,7 @@ KPanelTheme::KPanelTheme(QWidget *parent, const char *name)
 {
     ldr = new KIconLoader();
     ldr->setIconType("kpanel_pics");
-    KGlobal::dirs()->addResourceType("kpanel_pics", KStandardDirs::kde_data_relative() + "/kpanel/pics");
+    KGlobal::dirs()->addResourceType("kpanel_pics", KStandardDirs::kde_default("data") + "/kpanel/pics");
   
     QGroupBox *optionBox = new QGroupBox(i18n("Options"), this);
     colorBtn = new KColorButton(optionBox);
