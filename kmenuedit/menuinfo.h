@@ -25,6 +25,7 @@
 #include <kshortcut.h>
 #include <kservice.h>
 
+class MenuFile;
 class MenuEntryInfo;
 
 class MenuFolderInfo 
@@ -91,9 +92,12 @@ public:
     
     // Return whether this menu or any entry or submenu contained in it is dirty.
     bool hasDirt();
+
+    // Return whether this menu should be explicitly added to its parent menu
+    bool needInsertion();
     
     // Save menu and all its entries and submenus
-    void save();
+    void save(MenuFile *);
 
     // Search service by shortcut
     KService::Ptr findServiceShortcut(const KShortcut&);
@@ -144,6 +148,9 @@ public:
 
     // Set whether the entry is in active use (as opposed to in the clipboard/deleted)
     void setInUse(bool inUse);
+
+    // Return whether this menu should be explicitly added to its parent menu
+    bool needInsertion();
     
     void save();
 

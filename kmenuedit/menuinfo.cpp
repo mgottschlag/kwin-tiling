@@ -18,6 +18,7 @@
  */
 
 #include "menuinfo.h"
+#include "menufile.h"
 
 #include <qregexp.h>
 
@@ -150,7 +151,7 @@ void MenuFolderInfo::setDirty()
    dirty = true;
 }
 
-void MenuFolderInfo::save()
+void MenuFolderInfo::save(MenuFile *menuFile)
 {
    if (dirty)
    {
@@ -181,7 +182,7 @@ void MenuFolderInfo::save()
    for(MenuFolderInfo *subFolderInfo = subFolders.first();
        subFolderInfo; subFolderInfo = subFolders.next())
    {
-      subFolderInfo->save();
+      subFolderInfo->save(menuFile);
    }
 
    // Save entries
@@ -189,6 +190,8 @@ void MenuFolderInfo::save()
    for(QPtrListIterator<MenuEntryInfo> it(entries);
        (entryInfo = it.current()); ++it)
    {
+      if (entryInfo->needInsertion())
+         menuFile->addEntry(fullId, entryInfo->menuId());
       entryInfo->save();
    }
 }
@@ -288,6 +291,12 @@ void MenuEntryInfo::setDirty()
       df->setDesktopGroup();
       delete oldDf;
    }
+}
+
+bool MenuEntryInfo::needInsertion()
+{
+   // If entry is dirty and previously stored under applnk, then we need to be added explicity 
+   return dirty && !service->desktopEntryPath().startsWith("/");
 }
 
 void MenuEntryInfo::save()

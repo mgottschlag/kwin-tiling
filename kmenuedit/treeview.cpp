@@ -1169,7 +1169,7 @@ void TreeView::cleanupClipboard() {
 }
 
 void TreeView::save() {
-    m_rootFolder->save();
+    m_rootFolder->save(m_menuFile);
 
     m_menuFile->performAllActions();
 
