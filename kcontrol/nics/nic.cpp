@@ -133,6 +133,9 @@ void KCMNic::update()
 
 NICList* findNICs()
 {
+   QString upMessage(   i18n("State of network card is connected",    "Enabled") );
+   QString downMessage( i18n("State of network card is disconnected", "Disabled") );
+
    NICList* nl=new NICList;
    nl->setAutoDelete(true);
 
@@ -172,10 +175,7 @@ NICList* findNICs()
 
          tmp=new MyNIC;
          tmp->name=ifr->ifr_name;
-         if ((flags & IFF_UP) == IFF_UP)
-            tmp->state=i18n("Up");
-         else
-            tmp->state=i18n("Down");
+         tmp->state= ((flags & IFF_UP) == IFF_UP) ? upMessage : downMessage;
 
          if ((flags & IFF_BROADCAST) == IFF_BROADCAST)
             tmp->type=i18n("Broadcast");
@@ -234,11 +234,7 @@ NICList* findNICs()
 	tmp->netmask = buf;
       }
 
-      if (ifa->ifa_flags & IFF_UP)
-	tmp->state=i18n("Up");
-      else
-	tmp->state=i18n("Down");
-
+      tmp->state= (ifa->ifa_flags & IFF_UP) ? upMessage : downMessage;
       tmp->type = flags_tos(ifa->ifa_flags);
 
       nl->append(tmp);
