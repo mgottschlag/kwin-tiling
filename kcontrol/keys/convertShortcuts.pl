@@ -3,8 +3,7 @@ $keys=0;
 foreach (<>) {
     if(/^\[.*\]/) { $keys=0; }
     if($keys==1) {
-        print "# DELETEGROUP [Global Keys]\n";
-        print "# DELETEGROUP [Global Shortcuts]\n";
+        ($oldkey) = ($_ =~ /([^=]*)=.*/);
         s/^Execute Command/Run Command/;
         s/^Execute command/Run Command/;
         s/^Lock screen/Lock Screen/;
@@ -47,9 +46,12 @@ foreach (<>) {
         s/^Window to next desktop/Window to Next Desktop/;
         s/^Window to previous desktop/Window to Previous Desktop/;
         s/^repeat-last-klipper-action/Show Klipper Popup-Menu/;
+        ($newkey) = ($_ =~ /([^=]*)=.*/);
+        if ($oldkey ne $newkey) {
+            print "# DELETE " . $oldkey . "\n";
+            print $_
+        }
     }
-    if(/\[Global Keys\]/) { $keys=1; }
-    if(/\[Global Shortcuts\]/) { $keys=1; }
-
-    print $_;
+    if(/\[Global Keys\]/) { $keys=1; print $_; }
+    if(/\[Global Shortcuts\]/) { $keys=1; print $_; }
 }
