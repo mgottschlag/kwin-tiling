@@ -30,7 +30,9 @@
 #include <qtooltip.h>
 #include <qiconset.h>
 #include <qwhatsthis.h>
+#include <qcombobox.h>
 
+#include <kcharsets.h>
 #include <kapp.h>
 #include <kdebug.h>
 #include <kconfig.h>
@@ -68,6 +70,10 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   m_comboLanguage->setFixedHeight(m_comboLanguage->sizeHint().height());
   connect( m_comboLanguage, SIGNAL(activated(int)),
 	   this, SLOT(changedLanguage(int)) );
+
+  new QLabel(this, I18N_NOOP("Encoding:"));
+  QComboBox * cb = new QComboBox( this );
+  cb->insertStringList( KGlobal::charsets()->descriptiveEncodingNames() );
 
   lay->setColStretch(1, 1);
 }
