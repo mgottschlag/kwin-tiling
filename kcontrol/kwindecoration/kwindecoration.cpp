@@ -77,7 +77,7 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 			i18n("Use custom titlebar button &positions"), checkGroup );
 	QWhatsThis::add( cbUseCustomButtonPositions, 
 			i18n(  "The appropriate settings can be found in the \"Buttons\" Tab. "
-                        "Please note that this option is not available on all styles yet!" ) );
+				   "Please note that this option is not available on all styles yet!" ) );
 // Save this for later...
 //	cbUseMiniWindows = new QCheckBox( i18n( "Render mini &titlebars for all windows"), checkGroup );
 //	QWhatsThis::add( cbUseMiniWindows, i18n( "Note that this option is not available on all styles yet!" ) );
@@ -113,7 +113,8 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 
 	tabWidget->insertTab( page1, i18n("&General") );
 	tabWidget->insertTab( buttonPage, i18n("&Buttons") );
-	tabWidget->insertTab( pluginPage, i18n("&Configure") );
+	tabWidget->insertTab( pluginPage, i18n("&Configure [") + 
+						  decorationListBox->currentText() + QString(i18n("]")) );
 
 	tabWidget->setTabEnabled( buttonPage, cbUseCustomButtonPositions->isChecked() );
 
@@ -123,6 +124,8 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	connect( dropSite, SIGNAL(changed()), this, SLOT(slotSelectionChanged()) );
 	connect( buttonSource, SIGNAL(selectionChanged()), this, SLOT(slotSelectionChanged()) );
 	connect( decorationListBox, SIGNAL(selectionChanged()), SLOT(slotSelectionChanged()) );
+	connect( decorationListBox, SIGNAL(highlighted(const QString&)), 
+								SLOT(slotDecorationHighlighted(const QString&)) );
 	connect( cbUseCustomButtonPositions, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
 	connect( cbUseCustomButtonPositions, SIGNAL(toggled(bool)), SLOT(slotEnableButtonTab(bool)) );
 //	connect( cbUseMiniWindows, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
@@ -185,6 +188,19 @@ void KWinDecorationModule::createDecorationList()
 }
 
 
+// Reset the decoration plugin to what the user just selected
+void KWinDecorationModule::slotDecorationHighlighted( const QString& s )
+{
+	KConfig kwinConfig("kwinrc");
+	kwinConfig.setGroup("Style");
+
+	// Let the user see config options for the currently selected decoration
+	resetPlugin( &kwinConfig, &s );
+	tabWidget->changeTab( pluginPage, i18n("&Configure [") + 
+						  decorationListBox->currentText() + QString(i18n("]")) );
+}
+
+
 // This is the selection handler setting
 void KWinDecorationModule::slotSelectionChanged()
 {
@@ -214,7 +230,7 @@ QString KWinDecorationModule::decorationName( QString& libName )
 }
 
 
-QString KWinDecorationModule::decorationLibName( QString& name )
+QString KWinDecorationModule::decorationLibName( const QString& name )
 {
 	QString libName;
 
@@ -237,14 +253,20 @@ QString KWinDecorationModule::decorationLibName( QString& name )
 
 // Loads/unloads and inserts the decoration config plugin into the
 // pluginPage, allowing for dynamic configuration of decorations
-void KWinDecorationModule::resetPlugin( KConfig* conf )
+void KWinDecorationModule::resetPlugin( KConfig* conf, const QString* currentDecoName )
 {
 	// Config names are "libkwinicewm_config"
 	// for "libkwinicewm" kwin client
 
 	QString oldName = oldLibraryName;
 	oldName += "_config";
-	QString currentName = currentLibraryName;
+
+	QString currentName;
+	if (currentDecoName)
+		currentName = decorationLibName( *currentDecoName ); // Use what the user selected
+	else
+		currentName = currentLibraryName; // Use what was read from readConfig()
+
 	currentName += "_config";
 
 	// Delete old plugin widget if it exists
@@ -283,7 +305,8 @@ void KWinDecorationModule::resetPlugin( KConfig* conf )
 	QWidget* plugin = new QGroupBox( 1, Qt::Horizontal, "", pluginPage );
 	(void) new QLabel( 
 		i18n("<H3>No Configurable Options Available</H3>"
-	        "Sorry, no configurable options are available for the current decoration."), plugin );
+	        "Sorry, no configurable options are available for the "
+			"currently selected decoration."), plugin );
 
 	plugin->show();
 	pluginObject = plugin;

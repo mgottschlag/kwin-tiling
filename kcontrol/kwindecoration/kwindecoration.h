@@ -64,6 +64,7 @@ class KWinDecorationModule : public KCModule, virtual public KWinDecorationIface
 		// Allows us to turn "save" on
 		void slotSelectionChanged();
 		void slotEnableButtonTab(bool on);
+		void slotDecorationHighlighted( const QString& s );
 
 	private:
 		void readConfig( KConfig* conf );
@@ -71,10 +72,10 @@ class KWinDecorationModule : public KCModule, virtual public KWinDecorationIface
 		void findDecorations();
 		void createDecorationList();
 		void updateSelection();
-		QString decorationLibName( QString& name );
+		QString decorationLibName( const QString& name );
 		QString decorationName ( QString& libName );
+		void resetPlugin( KConfig* conf, const QString* currentDecoName = 0 );
 		void resetKWin();
-		void resetPlugin( KConfig* conf );
 
 		QTabWidget* tabWidget;
 
