@@ -9,7 +9,7 @@ INCLUDES= $(all_includes)
  
 libkcm_syssound_la_METASOURCES = AUTO
 
-KDE_ICON = ksyssound
+KDE_ICON = ksyssound bell
 
 DISTCLEANFILES = $(lib_syssound_METASOURCES)
 
