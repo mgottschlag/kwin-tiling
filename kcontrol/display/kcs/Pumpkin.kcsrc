@@ -6,6 +6,7 @@ activeBlend=255,215,0
 selectBackground=205,133,63
 inactiveBackground=160,160,160
 Name=Pumpkin
+Name[af]=pampoen
 Name[ca]=Carabassa
 Name[cs]=Dýně
 Name[de]=Kürbis
