@@ -15,7 +15,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>576</width>
+            <width>572</width>
             <height>564</height>
         </rect>
     </property>
@@ -112,184 +112,122 @@
                 <name>title</name>
                 <string>User Information</string>
             </property>
-            <widget>
-                <class>QLineEdit</class>
+            <grid>
                 <property stdset="1">
-                    <name>name</name>
-                    <cstring>txtReplyTo</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>124</x>
-                        <y>103</y>
-                        <width>413</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property>
-                    <name>whatsThis</name>
-                    <string>You can set a reply address if you want replies to your email messages to go to a different address than the email address above. Most likely, you should leave the reply address blank, so replies go to the email address you entered above.&lt;p&gt;&lt;em&gt; Please note:&lt;/em&gt; &lt;ul&gt;&lt;li&gt;You do not need to enter the same email address as above.&lt;/li&gt;&lt;li&gt;You should not use a reply address if you frequently use discussion mailing lists.&lt;/li&gt;&lt;/ul&gt;</string>
-                </property>
-            </widget>
-            <widget>
-                <class>QLineEdit</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>txtEMailAddr</cstring>
+                    <name>margin</name>
+                    <number>11</number>
                 </property>
                 <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>124</x>
-                        <y>75</y>
-                        <width>413</width>
-                        <height>22</height>
-                    </rect>
+                    <name>spacing</name>
+                    <number>6</number>
                 </property>
-                <property>
-                    <name>whatsThis</name>
-                    <string>Enter your email address here, e.g. "john@doe.com" (without the quotation marks). This information is mandatory if you want to use email.&lt;p&gt;
+                <widget row="3"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>txtReplyTo</cstring>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>You can set a reply address if you want replies to your email messages to go to a different address than the email address above. Most likely, you should leave the reply address blank, so replies go to the email address you entered above.&lt;p&gt;&lt;em&gt; Please note:&lt;/em&gt; &lt;ul&gt;&lt;li&gt;You do not need to enter the same email address as above.&lt;/li&gt;&lt;li&gt;You should not use a reply address if you frequently use discussion mailing lists.&lt;/li&gt;&lt;/ul&gt;</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>txtEMailAddr</cstring>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>Enter your email address here, e.g. "john@doe.com" (without the quotation marks). This information is mandatory if you want to use email.&lt;p&gt;
 Do &lt;em&gt;not&lt;/em&gt; enter something like John Doe &amp;lt;john@doe.com&amp;gt;", just a plain email address. Your email address must not contain any blank spaces.</string>
-                </property>
-            </widget>
-            <widget>
-                <class>QLabel</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>lblOrganization</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>11</x>
-                        <y>47</y>
-                        <width>107</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property stdset="1">
-                    <name>text</name>
-                    <string>Organi&amp;zation:</string>
-                </property>
-                <property>
-                    <name>buddy</name>
-                    <cstring>txtOrganization</cstring>
-                </property>
-            </widget>
-            <widget>
-                <class>QLabel</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>lblReplyTo</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>11</x>
-                        <y>103</y>
-                        <width>107</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property stdset="1">
-                    <name>text</name>
-                    <string>Reply-&amp;To Address:</string>
-                </property>
-                <property>
-                    <name>buddy</name>
-                    <cstring>txtReplyTo</cstring>
-                </property>
-            </widget>
-            <widget>
-                <class>QLineEdit</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>txtOrganization</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>124</x>
-                        <y>47</y>
-                        <width>413</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property>
-                    <name>whatsThis</name>
-                    <string>Here you can enter the name of your organization, company or university. This field is &lt;em&gt;optional&lt;/em&gt;. However, if you are using a business account and communicate with persons working for other companies, providing the name of your organization is recommended.</string>
-                </property>
-            </widget>
-            <widget>
-                <class>QLabel</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>lbl_EMailAddr</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>11</x>
-                        <y>75</y>
-                        <width>107</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property stdset="1">
-                    <name>text</name>
-                    <string>&amp;Email Address:</string>
-                </property>
-                <property>
-                    <name>buddy</name>
-                    <cstring>txtEMailAddr</cstring>
-                </property>
-            </widget>
-            <widget>
-                <class>QLineEdit</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>txtFullName</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>124</x>
-                        <y>19</y>
-                        <width>413</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property>
-                    <name>whatsThis</name>
-                    <string>Enter your full name here, e.g. "John Doe" (without the quotation
+                    </property>
+                </widget>
+                <widget row="1"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>lblOrganization</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Organi&amp;zation:</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>txtOrganization</cstring>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>lblReplyTo</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Reply-&amp;To Address:</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>txtReplyTo</cstring>
+                    </property>
+                </widget>
+                <widget row="1"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>txtOrganization</cstring>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>Here you can enter the name of your organization, company or university. This field is &lt;em&gt;optional&lt;/em&gt;. However, if you are using a business account and communicate with persons working for other companies, providing the name of your organization is recommended.</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>lbl_EMailAddr</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Email Address:</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>txtEMailAddr</cstring>
+                    </property>
+                </widget>
+                <widget row="0"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>txtFullName</cstring>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>Enter your full name here, e.g. "John Doe" (without the quotation
 marks).  Some people like to provide a nick name only. You can leave this field blank and still use email. However, providing your full name is &lt;em&gt;recommended&lt;/em&gt; as this makes it much easier for your recipient to browse his or her email.</string>
-                </property>
-            </widget>
-            <widget>
-                <class>QLabel</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>lblFullName</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>11</x>
-                        <y>19</y>
-                        <width>107</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property stdset="1">
-                    <name>text</name>
-                    <string>&amp;Full Name:</string>
-                </property>
-                <property>
-                    <name>buddy</name>
-                    <cstring>txtFullName</cstring>
-                </property>
-            </widget>
+                    </property>
+                </widget>
+                <widget row="0"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>lblFullName</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Full Name:</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>txtFullName</cstring>
+                    </property>
+                </widget>
+            </grid>
         </widget>
         <widget>
             <class>QGroupBox</class>
@@ -394,6 +332,11 @@ marks).  Some people like to provide a nick name only. You can leave this field 
         </sizepolicy>
         <pixmap>image0</pixmap>
         <signal>textChanged(const QString &amp;)</signal>
+        <signal>returnPressed()</signal>
+        <signal>returnPressed(const QString &amp;)</signal>
+        <signal>openFileDialog(KURLRequester *)</signal>
+        <signal>urlSelected(const QString &amp;)</signal>
+        <slot access="public">slotEnabled(bool)</slot>
     </customwidget>
 </customwidgets>
 <images>
