@@ -13,7 +13,7 @@ libkuriikwsfilter_la_SOURCES = kuriikwsfiltereng.cpp kuriikwsfilter.skel kuriikw
 service_DATA = kuriikwsfilter.desktop
 servicedir = $(kde_servicesdir)
 
-# rc_DATA = kuriikwsfilterrc
+rc_DATA = kuriikwsfilterrc
 rcdir = $(kde_confdir)
 
 METASOURCES = AUTO
