@@ -13,7 +13,7 @@ noinst_HEADERS = socks.h
 KDE_ICON = socks
 
 messages: rc.cpp
-	$(XGETTEXT) socks.cpp -o $(podir)/kcmsocks.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmsocks.pot
 
 data_DATA = socks.desktop
 datadir = $(kde_appsdir)/Settings/Network
