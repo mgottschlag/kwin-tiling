@@ -1,0 +1,11 @@
+[Desktop Entry]
+Icon=socks
+Type=Application
+Exec=kcmshell socks
+DocPath=kcontrol/socks.html
+X-KDE-ModuleType=Library
+X-KDE-Library=socks
+Name=SOCKS
+Comment=Configure SOCKS support
+Keywords=SOCKS,SOCKS5,SOCKS4,proxy
+
