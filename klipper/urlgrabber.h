@@ -60,10 +60,9 @@ public:
   const QStringList& avoidWindows() const { return myAvoidWindows; }
   void setAvoidWindows( const QStringList& list ) { myAvoidWindows = list; }
 
-private:	
+private:
   const ActionList& matchingActions( const QString& );
   void execute( const struct ClipCommand *command ) const;
-  void startProcess( const QString& cmdLine ) const;
   void editData();
   bool isAvoidedWindow() const;
   void actionMenu( bool wm_class_check );
@@ -139,8 +138,6 @@ public:
 
 
 private:
-  void startProcess( const QString& cmdLine ) const;
-
   QRegExp 		myRegExp;
   QString 		myDescription;
   QPtrList<ClipCommand> 	myCommands;

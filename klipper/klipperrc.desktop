@@ -49,7 +49,7 @@ Number of commands=1
 Regexp=^\\/.+\\.jpg$
 
 [Action_0/Command_0]
-Commandline=kview "%s"
+Commandline=kview %s
 Description=Launch K&View
 Description[af]=Lanseer K-bekyk
 Description[az]=K&View-u Başlat
@@ -133,7 +133,7 @@ Number of commands=5
 Regexp=^https?://.
 
 [Action_1/Command_0]
-Commandline=dcop `dcop|grep konqueror|head -1` default 'createNewWindow(QString)' '%s' || kfmclient exec '%s'
+Commandline=dcop `dcop|grep konqueror|head -1` default 'createNewWindow(QString)' %s || kfmclient exec %s
 Description=Open with &Konqueror
 Description[af]=Open met Konqueror
 Description[az]=&Konqueror ilə Aç
@@ -186,7 +186,7 @@ Description[zu]=Vula nge-&Konqueror
 Enabled=true
 
 [Action_1/Command_1]
-Commandline=ps x |grep -q '[n]etscape' && netscape -no-about-splash -remote "openURL(%s, new-window)" || netscape "%s"
+Commandline=ps x |grep -q '[n]etscape' && netscape -no-about-splash -remote "openURL(%s, new-window)" || netscape %s
 Description=Open with &Netscape
 Description[af]=Open met Netscape
 Description[az]=&Netscape ilə Aç
@@ -239,7 +239,7 @@ Description[zu]=Vula nge-&Netscape
 Enabled=true
 
 [Action_1/Command_2]
-Commandline=ps x |grep -q '[m]ozilla' && mozilla -remote "openURL(%s, new-window)" || mozilla "%s"
+Commandline=ps x |grep -q '[m]ozilla' && mozilla -remote "openURL(%s, new-window)" || mozilla %s
 Description=Open with &Mozilla
 Description[af]=Open met Mozilla
 Description[az]=&Mozilla ilə Aç
@@ -292,7 +292,7 @@ Description[zu]=Vula nge-&Mozilla
 Enabled=true
 
 [Action_1/Command_3]
-Commandline=kmail --body  '%s'
+Commandline=kmail --body  %s
 Description=Send &URL
 Description[af]=Stuur Url
 Description[az]=&URL Göndər
@@ -341,7 +341,7 @@ Description[zu]=Thumela i-&URL
 Enabled=true
 
 [Action_1/Command_4]
-Commandline=kmail  --attach '%s'
+Commandline=kmail  --attach %s
 Description=Send &Page
 Description[af]=Stuur Bladsy
 Description[az]=&Səhifə Göndər
@@ -487,7 +487,7 @@ Description[zu]=Qalisa i-&Kmail
 Enabled=true
 
 [Action_2/Command_1]
-Commandline=konsole -e mutt `echo "%s" | sed 's/mailto://g'`
+Commandline=konsole -e mutt `echo %s | sed 's/mailto://g'`
 Description=Launch &mutt
 Description[af]=Lanseer mutt
 Description[az]=&mutt-u Başlat
@@ -592,7 +592,7 @@ Number of commands=2
 Regexp=^\\/.+\\.txt$
 
 [Action_3/Command_0]
-Commandline=kedit "%s"
+Commandline=kedit %s
 Description=Launch K&Edit
 Description[af]=Lanseer Kredigeer
 Description[az]=K&Edit-i Başlat
@@ -643,7 +643,7 @@ Description[zu]=Qalisa i-K&Edit
 Enabled=true
 
 [Action_3/Command_1]
-Commandline=kwrite "%s"
+Commandline=kwrite %s
 Description=Launch K&Write
 Description[af]=Lanseer Kskryf
 Description[az]=K&Write-ı Başlat
@@ -746,7 +746,7 @@ Number of commands=2
 Regexp=^file:.
 
 [Action_4/Command_0]
-Commandline=kmail --body  '%s'
+Commandline=kmail --body  %s
 Description=Send &URL
 Description[af]=Stuur Url
 Description[az]=&URL Göndər
@@ -795,7 +795,7 @@ Description[zu]=Thumela i-&URL
 Enabled=true
 
 [Action_4/Command_1]
-Commandline=kmail  --attach '%s'
+Commandline=kmail  --attach %s
 Description=Send &File
 Description[af]=Stuur Lêer
 Description[az]=&Fayl Göndər
@@ -882,7 +882,7 @@ Number of commands=2
 Regexp=^gopher:.
 
 [Action_5/Command_0]
-Commandline=kmail --body  '%s'
+Commandline=kmail --body %s
 Description=Send &URL
 Description[af]=Stuur Url
 Description[az]=&URL Göndər
@@ -931,7 +931,7 @@ Description[zu]=Thumela i-&URL
 Enabled=true
 
 [Action_5/Command_1]
-Commandline=kmail  --attach '%s'
+Commandline=kmail  --attach %s
 Description=Send &File
 Description[af]=Stuur Lêer
 Description[az]=&Fayl Göndər
@@ -1019,7 +1019,7 @@ Number of commands=5
 Regexp=^ftp://.
 
 [Action_6/Command_0]
-Commandline=dcop konqueror default 'createNewWindow(QString)' '%s' || kfmclient exec '%s'
+Commandline=dcop konqueror default 'createNewWindow(QString)' %s || kfmclient exec %s
 Description=Open with &Konqueror
 Description[af]=Open met Konqueror
 Description[az]=&Konqueror ilə Aç
@@ -1178,7 +1178,7 @@ Description[zu]=Vula nge-&Mozilla
 Enabled=true
 
 [Action_6/Command_3]
-Commandline=kmail --body  '%s'
+Commandline=kmail --body  %s
 Description=Send &URL
 Description[af]=Stuur Url
 Description[az]=&URL Göndər
@@ -1227,7 +1227,7 @@ Description[zu]=Thumela i-&URL
 Enabled=true
 
 [Action_6/Command_4]
-Commandline=kmail  --attach '%s'
+Commandline=kmail  --attach %s
 Description=Send &File
 Description[af]=Stuur Lêer
 Description[az]=&Fayl Göndər

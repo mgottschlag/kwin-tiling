@@ -219,43 +219,40 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
 {
     if ( command->isEnabled ) {
         QString cmdLine = command->command;
+        QString escClipData = KProcess::quote(myClipData);
 
-        // escape $ to avoid it being expanded by the shell
-        QString escClipData = myClipData;
-        escClipData.replace( QRegExp( "\\$" ), "\\$" );
-
-        // replace "%s" with the clipboard contents
+        // replace "%s", '%s' and %s with the clipboard contents
+        // the quotes have to be replaced as well as they might
+        // be part of config files from older klipper versions
         // replace \%s to %s
-        int pos = 0;
-
+        int pos;
         while ( (pos = cmdLine.find("%s", pos)) >= 0 ) {
-            if ( pos > 0 && cmdLine.at( pos -1 ) == '\\' ) {
+            if ( pos > 0 && cmdLine.at( pos - 1 ) == '\\' ) {
                 cmdLine.remove( pos -1, 1 ); // \%s -> %s
                 pos++;
             }
+            else if (pos > 0 && (cmdLine[pos - 1] == '\'' || cmdLine[pos - 1] == '"') &&
+                     pos + 2 < cmdLine.length() && cmdLine[pos + 2] == cmdLine[pos - 1]) {
+                cmdLine.replace ( pos - 1, 4, escClipData );
+                pos += escClipData.length();
+            } 
             else {
                 cmdLine.replace( pos, 2, escClipData );
                 pos += escClipData.length();
             }
         }
 
-        startProcess( cmdLine );
+        kdDebug() << "now starting " << cmdLine << endl;
+        if ( cmdLine.isEmpty() )
+            return;
+
+        KProcess proc;
+        proc.setUseShell(true);
+        proc << cmdLine.stripWhiteSpace();
+
+        if ( !proc.start(KProcess::DontCare, KProcess::NoCommunication ))
+            qWarning("Klipper: Couldn't start process!");
     }
-}
-
-
-void URLGrabber::startProcess( const QString& cmdLine ) const
-{
-    kdDebug() << "now starting " << cmdLine << endl;
-    if ( cmdLine.isEmpty() )
-        return;
-
-    KProcess proc;
-    proc.setUseShell(true);
-    proc << cmdLine.simplifyWhiteSpace().stripWhiteSpace();
-
-    if ( !proc.start(KProcess::DontCare, KProcess::NoCommunication ))
-        qWarning("Klipper: Couldn't start process!");
 }
 
 
@@ -377,10 +374,10 @@ void URLGrabber::slotKillPopupMenu()
              myPopupKillTimeout > 0 )
         {
             myPopupKillTimer->start( 1000 * myPopupKillTimeout, true );
-            return;    
+            return;
         }
     }
-    
+
     delete myMenu;
     myMenu = 0L;
 }
