@@ -131,12 +131,6 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
       i18n("Selecting this option synchronizes these two buffers, so they "
            "work the same way as in KDE 1.x and 2.x.") );
 
-    cbImplicitSelection = new QRadioButton(
-        i18n("When the clipboard is set, set the selection as well"), group );
-    QWhatsThis::add( cbImplicitSelection,
-        i18n("Selecting this option will set both clipboard and selection, "
-             "when choosing e.g. \"Copy\" in a menubar.") );
-
     cbSeparate = new QRadioButton(
         i18n("Separate clipboard and selection"), group );
     QWhatsThis::add(
@@ -146,10 +140,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
              "in a menubar.") );
 
     cbSynchronize->setChecked( KClipboard::isSynchronizing() );
-    cbImplicitSelection->setChecked( !KClipboard::isSynchronizing() &&
-                                     KClipboard::implicitSelection() );
-    cbSeparate->setChecked( !cbSynchronize->isChecked() &&
-                            !cbImplicitSelection->isChecked() );
+    cbSeparate->setChecked( !cbSynchronize->isChecked() );
 
     popupTimeout = new KIntNumInput( this );
     popupTimeout->setLabel( i18n( "Tim&eout for action popups:" ) );

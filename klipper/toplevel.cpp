@@ -444,8 +444,6 @@ void KlipperWidget::slotConfigure()
         m_config->setGroup("General");
         m_config->writeEntry("SynchronizeClipboardAndSelection",
                              dlg->synchronize(), true, true );
-        m_config->writeEntry("ImplicitlySetSelection",
-                             dlg->implicitSelection(), true, true );
 
         writeConfiguration( m_config ); // syncs
 
@@ -453,8 +451,6 @@ void KlipperWidget::slotConfigure()
         int message = 0;
         if ( dlg->synchronize() )
             message |= KClipboard::Synchronize;
-        if ( dlg->implicitSelection() )
-            message |= KClipboard::ImplicitSelection;
 
         KIPC::sendMessageAll( KIPC::ClipboardConfigChanged, message );
     }
@@ -710,9 +706,9 @@ void KlipperWidget::setClipboard( const QString& text, int mode )
     clip->blockSignals( true ); // ### this might break other kicker applets
 
     KClipboard *klip = KClipboard::self();
-    bool implicit = klip->implicitSelection();
+    bool selection = klip->isReverseSynchronizing();
     bool synchronize = klip->isSynchronizing();
-    klip->setImplicitSelection( false );
+    klip->setReverseSynchronizing( false );
     klip->setSynchronizing( false );
 
     if ( mode & Selection ) {
@@ -724,7 +720,7 @@ void KlipperWidget::setClipboard( const QString& text, int mode )
         clip->setText( text );
     }
 
-    klip->setImplicitSelection( implicit );
+    klip->setReverseSynchronizing( selection );
     klip->setSynchronizing( synchronize );
 
     clip->blockSignals( blocked );
