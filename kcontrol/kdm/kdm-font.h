@@ -20,7 +20,7 @@
 #ifndef __KDMFONT_H__
 #define __KDMFONT_H__
 
-
+#include <qcheckbox.h>
 
 #include <kfontdialog.h>
 #include <kcmodule.h>
@@ -45,11 +45,10 @@ private slots:
 
 
 private:
-        KIconLoader *iconloader;
-        QFont        tmpfont, stdfont, greetfont, failfont;
-        QLabel       *fontlabel;
-	QComboBox    *fontcombo;
-
+        QFont		stdfont, greetfont, failfont;
+        QLabel		*fontlabel;
+	QComboBox	*fontcombo;
+	QCheckBox	*aacb;
 };
 
 
