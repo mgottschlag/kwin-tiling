@@ -49,13 +49,9 @@ extern "C"
 
 
 // These are the button selector instructions...
-const char* btnSelectorText = "To <b>add titlebar buttons</b>, "
-	"simply <i>drag</i> an item from the list below onto "
-	"the titlebar preview. "
-	"To <b>remove titlebar buttons</b>, <i>double-click</i> on the items "
-	"you want to remove in the titlebar preview, and they will re-appear "
-	"in the available item list.";
-
+const char* btnSelectorText = "To add or remove titlebar buttons, simply <i>drag</i> items "
+	"between the available item list and the titlebar preview. Similarly, drag items within the "
+	"titlebar preview to re-position them.";
 
 
 KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
@@ -82,8 +78,9 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	cbUseCustomButtonOrder = new QCheckBox( i18n("Use custom titlebar button &order"), checkGroup );
 	QWhatsThis::add( cbUseCustomButtonOrder, i18n(  "The appropriate settings can be found in the \"Buttons\"-Tab. "
                                                         "Please note that this option is not available on all styles yet!" ) );
-	cbUseMiniWindows = new QCheckBox( i18n( "Render mini &titlebars for all windows"), checkGroup );
-	QWhatsThis::add( cbUseMiniWindows, i18n( "Note that this option is not available on all styles yet!" ) );
+// Save this for later...
+//	cbUseMiniWindows = new QCheckBox( i18n( "Render mini &titlebars for all windows"), checkGroup );
+//	QWhatsThis::add( cbUseMiniWindows, i18n( "Note that this option is not available on all styles yet!" ) );
 
 	// Page 2 (Button Selector)
 	QVBox* page2 = new QVBox( tabWidget );
@@ -116,11 +113,12 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 
 	connect( dropSite, SIGNAL(buttonAdded(char)), buttonSource, SLOT(hideButton(char)) );
 	connect( dropSite, SIGNAL(buttonRemoved(char)), buttonSource, SLOT(showButton(char)) );
+	connect( buttonSource, SIGNAL(buttonDropped()), dropSite, SLOT(removeClickedButton()) );
 	connect( dropSite, SIGNAL(changed()), this, SLOT(slotSelectionChanged()) );
 	connect( buttonSource, SIGNAL(selectionChanged()), this, SLOT(slotSelectionChanged()) );
 	connect( decorationListBox, SIGNAL(selectionChanged()), SLOT(slotSelectionChanged()) );
 	connect( cbUseCustomButtonOrder, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
-	connect( cbUseMiniWindows, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
+//	connect( cbUseMiniWindows, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
 
 	// Allow kwin dcop signal to update our selection list
 	connectDCOPSignal("kwin", 0, "dcopResetAllClients()", "dcopUpdateClientList()", false);
@@ -285,7 +283,7 @@ void KWinDecorationModule::readConfig( KConfig* conf )
 	// General tab
 	// ============
 	cbUseCustomButtonOrder->setChecked( conf->readBoolEntry("CustomButtonOrder", false));
-	cbUseMiniWindows->setChecked( conf->readBoolEntry("MiniWindowBorders", false));
+//	cbUseMiniWindows->setChecked( conf->readBoolEntry("MiniWindowBorders", false));
 
 	// Find the corresponding decoration name to that of
 	// the current plugin library name
@@ -334,7 +332,7 @@ void KWinDecorationModule::writeConfig( KConfig* conf )
 	// General settings
 	conf->writeEntry("PluginLib", libName);
 	conf->writeEntry("CustomButtonOrder", cbUseCustomButtonOrder->isChecked());
-	conf->writeEntry("MiniWindowBorders", cbUseMiniWindows->isChecked());
+//	conf->writeEntry("MiniWindowBorders", cbUseMiniWindows->isChecked());
 
 	// Button settings
 	conf->writeEntry("ButtonsOnLeft", dropSite->buttonsLeft );
@@ -391,7 +389,7 @@ void KWinDecorationModule::defaults()
 {
 	// Set the KDE defaults
 	cbUseCustomButtonOrder->setChecked( false );
-	cbUseMiniWindows->setChecked( false);
+//	cbUseMiniWindows->setChecked( false);
 	decorationListBox->setSelected( 0, true );  // KDE2 default client
 
 	dropSite->buttonsLeft = "MS";

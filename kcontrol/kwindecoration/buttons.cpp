@@ -6,7 +6,7 @@
 		http://gallium.n3.net/
 
 	Supports new kwin configuration plugins, and titlebar button position
-	modification via dnd interface.
+	modification via a dnd interface.
 
 	Based on original "kwintheme" (Window Borders) 
 	Copyright (C) 2001 Rik Hemsley (rikkus) <rik@kde.org>
@@ -132,6 +132,7 @@ ButtonSource::ButtonSource( QWidget* parent, const char* name )
 	buttons[ BtnClose ]		= new QListBoxPixmap( this, *pixmaps[BtnClose], i18n("Close") );
 
 	spacerCount = 0;	// No spacers inserted yet
+	setAcceptDrops( TRUE );
 };
 
 
@@ -187,6 +188,7 @@ void ButtonSource::showAllButtons()
 
 	spacerCount = 0;	// No inserted spacers
 }
+
 
 void ButtonSource::showButton( char btn )
 {
@@ -259,6 +261,7 @@ void ButtonSource::mousePressEvent( QMouseEvent* e )
 	// Make a selection before moving the mouse
 	QListBox::mousePressEvent( e );
 
+	// Make sure we have at laest 1 item in the listbox
 	if ( count() > 0 )
 	{
 		// Obtain currently selected item
@@ -268,6 +271,31 @@ void ButtonSource::mousePressEvent( QMouseEvent* e )
 	}
 }
 
+
+void ButtonSource::dragMoveEvent( QDragMoveEvent* /* e */ )
+{
+	// Do nothing...
+}
+
+
+void ButtonSource::dragEnterEvent( QDragEnterEvent* e )
+{
+	if ( ButtonDrag::canDecode( e ) )
+		e->accept();
+}
+
+
+void ButtonSource::dragLeaveEvent( QDragLeaveEvent* /* e */ )
+{
+	// Do nothing...
+}
+
+
+void ButtonSource::dropEvent( QDropEvent* /* e */ )
+{
+	// Allow the button to be removed from the ButtonDropSite
+	emit buttonDropped();
+}
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -283,20 +311,21 @@ ButtonDropSite::ButtonDropSite( QWidget* parent, const char* name )
 	setMinimumHeight( 26 );
 	setMaximumHeight( 26 );
 	setMinimumWidth( 250 );		// Ensure buttons will fit
-	titleText = i18n("KDE");
+
+	mouseClickPoint.setX(0);
+	mouseClickPoint.setY(0);
 }
 
 
 ButtonDropSite::~ButtonDropSite()
 {
-	// nothing required
+	// Do nothing...
 }
 
 
 void ButtonDropSite::dragMoveEvent( QDragMoveEvent* /* e */ )
 {
-	// Check if you want the drag at e->pos()...
-	// Give the user some feedback...
+	// Do nothing...
 }
 
 
@@ -304,18 +333,12 @@ void ButtonDropSite::dragEnterEvent( QDragEnterEvent* e )
 {
 	if ( ButtonDrag::canDecode( e ) )
 		e->accept();
-
-	// Give the user some feedback
-	titleText = i18n("Add item?");
-	repaint(false);
 }
 
 
 void ButtonDropSite::dragLeaveEvent( QDragLeaveEvent* /* e */ )
 {
-	// Give the user some feedback...
-	titleText = i18n("KDE");
-	repaint(false);
+	// Do nothing...
 }
 
 
@@ -323,11 +346,20 @@ void ButtonDropSite::dropEvent( QDropEvent* e )
 {
 	char btn;
 	if ( ButtonDrag::decode(e, btn) )
-		if (btn != '?')
-		{		
-			bool isleft;
-			int strPos;
+	{
+		bool isleft;
+		int strPos;
 
+		// If we are moving buttons around, remove the old item first.
+		if (btn == '*')
+		{
+			btn = removeButtonAtPoint( mouseClickPoint );
+			if (btn != '?')
+				emit buttonRemoved( btn );
+		}
+
+		if (btn != '?')
+		{
 			// Add the button to our button strings
 			buttonInsertedAtPoint( e->pos(), isleft, strPos );
 
@@ -336,12 +368,23 @@ void ButtonDropSite::dropEvent( QDropEvent* e )
 			else
 				buttonsRight.insert( strPos, btn );
 
-			titleText = i18n("KDE");
-
 			repaint(false);
+		
+			// Allow listbox to update itself
 			emit buttonAdded( btn );
 			emit changed();
 		}
+	}
+}
+
+
+// Starts dragging a button...
+void ButtonDropSite::mousePressEvent( QMouseEvent* e )
+{
+	mouseClickPoint = e->pos();
+	
+	ButtonDrag* bd = new ButtonDrag( '*', this );
+	bd->dragCopy();
 }
 
 
@@ -369,26 +412,23 @@ int ButtonDropSite::calcButtonStringWidth( const QString& s )
 }
 
 
-
-// This removes which button was double clicked (if any), and allows external
-// classes know about via a signal emission.
-void ButtonDropSite::mouseDoubleClickEvent( QMouseEvent* e )
+// This slot is called after we drop on the item listbox...
+void ButtonDropSite::removeClickedButton()
 {
-	// Obtain the button clicked on
-	char ch = removeButtonAtPoint( e->pos() );
-
-	// If we obtained a valid item at that point
-	if (ch != '?')	
+	if ( !mouseClickPoint.isNull() )
 	{
+		char btn = removeButtonAtPoint( mouseClickPoint );
+		mouseClickPoint.setX(0);
+		mouseClickPoint.setY(0);
 		repaint(false);
 
-		// Allow others to update themselves
-		emit buttonRemoved( ch );
+		emit buttonRemoved( btn );
 		emit changed();
 	}
 }
 
 
+// Find the string and position at which to insert the new button...
 void ButtonDropSite::buttonInsertedAtPoint( QPoint p, bool& isleft, int& strPos )
 {
 	int leftoffset = calcButtonStringWidth( buttonsLeft );
@@ -422,12 +462,11 @@ void ButtonDropSite::buttonInsertedAtPoint( QPoint p, bool& isleft, int& strPos 
 
 char ButtonDropSite::removeButtonAtPoint( QPoint p )
 {
-	QString s;
-	QChar ch;
-	QRect r = contentsRect();
+	int offset = -1;
 	bool isleft = false;
 
 	// Shrink contents rect by 1 to fit in the titlebar border
+	QRect r = contentsRect();
 	r.moveBy(1 , 1);
 	r.setWidth( r.width() - 2 );
 	r.setHeight( r.height() - 2 );
@@ -437,26 +476,25 @@ char ButtonDropSite::removeButtonAtPoint( QPoint p )
 		return '?';
 
 	int posx = p.x();
-	int offset = -1;
 
 	// Is the point in the LHS/RHS button area?
 	if ( (!buttonsLeft.isEmpty()) && (posx <= (calcButtonStringWidth( buttonsLeft )+3)) )
 	{
 		offset = 3;
-		s = buttonsLeft;
 		isleft = true;
 	}
 	else if ( (!buttonsRight.isEmpty()) && (posx >= geometry().width() - calcButtonStringWidth(buttonsRight) - 3))
 		{
 			offset = geometry().width() - calcButtonStringWidth(buttonsRight) - 3;
-			s = buttonsRight;
 			isleft = false;
 		}
 
-	// If we found the clicked point is in our buttons...
-	// retrieve the button character identifier
+	// Step through the button strings and remove the appropriate button
 	if (offset != -1)
 	{
+		QChar ch;
+		QString s = isleft ? buttonsLeft : buttonsRight;
+
 		// Step through the items, to find the appropriate one to remove.
 		for (unsigned int i = 0; i < s.length(); i++)
 		{
@@ -471,9 +509,10 @@ char ButtonDropSite::removeButtonAtPoint( QPoint p )
 					buttonsRight = s;
 				return ch.latin1();
 			}
-		}	
-	}
-	return '?';	
+		}
+	} 
+
+	return '?';
 }
 
 
@@ -509,7 +548,7 @@ void ButtonDropSite::drawContents( QPainter* p )
 	p->fillRect( r, c1 );
 	p->setPen( Qt::white );
 	p->setFont( QFont( "helvetica", 12, QFont::Bold) );
-	p->drawText( r, AlignLeft | AlignVCenter, titleText );
+	p->drawText( r, AlignLeft | AlignVCenter, i18n("KDE") );
 
 	offset = geometry().width() - 3 - rightoffset;
 	drawButtonString( p, buttonsRight, offset );

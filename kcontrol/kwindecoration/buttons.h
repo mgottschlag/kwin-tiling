@@ -46,11 +46,18 @@ class ButtonSource: public QListBox
 		void hideAllButtons();
 		void showAllButtons();
 
+	signals:
+		void buttonDropped();
+
 	public slots:
 		void hideButton( char btn );
 		void showButton( char btn );
 
 	protected:
+		void dragEnterEvent( QDragEnterEvent* e );
+		void dragMoveEvent( QDragMoveEvent* e );
+		void dragLeaveEvent( QDragLeaveEvent* e );
+		void dropEvent( QDropEvent* e );
 		void mousePressEvent( QMouseEvent* e );
 
 	private:
@@ -81,20 +88,24 @@ class ButtonDropSite: public QFrame
 		void buttonRemoved( char c );
 		void changed();
 
+	public slots:
+		void removeClickedButton();
+
 	protected:
 		void dragEnterEvent( QDragEnterEvent* e );
 		void dragMoveEvent( QDragMoveEvent* e );
 		void dragLeaveEvent( QDragLeaveEvent* e );
 		void dropEvent( QDropEvent* e );
-		void mouseDoubleClickEvent( QMouseEvent* e );
-		void drawContents( QPainter* p );
+		void mousePressEvent( QMouseEvent* e );
 
-		int buttonWidth( char btn );
-		int calcButtonStringWidth( const QString& s );
+		void drawContents( QPainter* p );
+		int  buttonWidth( char btn );
+		int  calcButtonStringWidth( const QString& s );
 		char removeButtonAtPoint( QPoint p );
 		void buttonInsertedAtPoint( QPoint p, bool& isleft, int& strPos );
 		void drawButtonString( QPainter* p, QString& s, int offset );
 
+		QPoint mouseClickPoint;
 		QString titleText;
 };
 
