@@ -49,8 +49,8 @@ extern int kickerconfig_screen_number;
 // magic numbers for the preview widget layout
 extern const int offsetX = 23;
 extern const int offsetY = 14;
-extern const int maxX = 151;
-extern const int maxY = 115;
+extern const int maxX = 150;
+extern const int maxY = 114;
 extern const int margin = 1;
 
 PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
