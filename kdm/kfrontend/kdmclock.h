@@ -36,20 +36,17 @@ class KdmClock : public QFrame
   protected:
     virtual void showEvent( QShowEvent * );
     virtual void paintEvent( QPaintEvent * );
-     
+
   private slots:
     void timeout();
-    void initialize();
 
   private:
-     QTime  mTime;
-     QFont  mFont;
-     QColor mBackground;
-     QColor mForeground;     
-     bool   mSecond;
-     bool   mDigital;
-     bool   mDate;
-     bool   mBorder;
+    QBrush mBackgroundBrush;
+    QFont  mFont;
+    bool   mSecond;
+    bool   mDigital;
+    bool   mDate;
+    bool   mBorder;
 };
 
 

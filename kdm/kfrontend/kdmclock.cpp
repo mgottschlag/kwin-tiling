@@ -2,6 +2,7 @@
  *   clock module for kdm
  *   Copyright (C) 2000 Espen Sand, espen@kde.org Based on work by NN
  *   (yet to be determined)
+ *   flicker free code by Remi Guyomarch <rguyom@mail.dotcom.fr>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
     connect( timer, SIGNAL(timeout()), SLOT(timeout()) );
     timer->start( 1000 );
 
-    // reading rc file	
+    // reading rc file
     //KConfig *config = kapp->config();
 
     //config->setGroup("Option");
@@ -49,7 +50,7 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
     mFont.setWeight(75/*config->readNumEntry( "Weight", 75)*/);
     mFont.setItalic(TRUE/*config->readNumEntry( "Italic",TRUE )*/);
     mFont.setBold(TRUE/*config->readNumEntry( "Bold",TRUE )*/);
-    
+
     setFixedSize( 100, 100 );
 
     if( mBorder )
@@ -66,33 +67,27 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
 	    resize( height(), height() );
 	}
         else
-	{	
+	{
 	    resize( width() ,width() );
 	}
     }
 
-    initialize();
+    //setBackgroundOrigin( WindowOrigin );
+    mBackgroundBrush = backgroundBrush();
+    setBackgroundMode( NoBackground );
     repaint();
 }
 
 
 void KdmClock::showEvent( QShowEvent * )
 {
-    timeout();
+    repaint();
 }
 
 
 void KdmClock::timeout()
 {
-    // get current time
-    mTime = QTime::currentTime();
     repaint();
-}
-
-void KdmClock::initialize()
-{
-    // flicker free code by Remi Guyomarch <rguyom@mail.dotcom.fr>
-    setBackgroundMode( NoBackground );
 }
 
 void KdmClock::paintEvent( QPaintEvent * )
@@ -101,49 +96,49 @@ void KdmClock::paintEvent( QPaintEvent * )
     {
         return;
     }
-    
-    QPainter p(this);
-    drawFrame ( &p ); 
 
-    // flicker free code by Remi Guyomarch <rguyom@mail.dotcom.fr>
+    QPainter p(this);
+    drawFrame ( &p );
+
     QPixmap pm( contentsRect().size() );
-    pm.fill( backgroundColor() );
     QPainter paint;
     paint.begin( &pm );
+    paint.fillRect( contentsRect(), mBackgroundBrush );
 
+    // get current time
+    QTime time = QTime::currentTime();
 
     if( mDigital )
     {
         QString buf;
         if( mSecond )
 	{
-	    buf.sprintf( "%02d:%02d:%02d", mTime.hour(), mTime.minute(),
-			 mTime.second() );
+	    buf.sprintf( "%02d:%02d:%02d", time.hour(), time.minute(),
+			 time.second() );
 	}
 	else
 	{
-	    buf.sprintf( "%02d:%02d", mTime.hour(), mTime.minute() );
+	    buf.sprintf( "%02d:%02d", time.hour(), time.minute() );
 	}
 	mFont.setPointSize(QMIN((int)(width()/buf.length()*1.5),height()));
 	paint.setFont( mFont );
 	paint.setPen( backgroundColor() );
 	paint.drawText( contentsRect(),AlignHCenter|AlignVCenter, buf,-1,0,0);
     }
-    else 	
+    else
     {
         QPointArray pts;
 	QPoint cp = contentsRect().center() - QPoint(2,2);
 	int d = QMIN(contentsRect().width()-15,contentsRect().height()-15);
 	paint.setPen( foregroundColor() );
 	paint.setBrush( foregroundColor() );
-   
+
 	QWMatrix matrix;
 	matrix.translate( cp.x(), cp.y() );
 	matrix.scale( d/1000.0F, d/1000.0F );
 
 	// Hour
-	float h_angle = 30*(mTime.hour()%12-3) + mTime.minute()/2;
-		
+	float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
 	matrix.rotate( h_angle );
 	paint.setWorldMatrix( matrix );
 	pts.setPoints( 4, -20,0,  0,-20, 300,0, 0,20 );
@@ -151,7 +146,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 	matrix.rotate( -h_angle );
 
 	// Minute
-	float m_angle = (mTime.minute()-15)*6;
+	float m_angle = (time.minute()-15)*6;
 	matrix.rotate( m_angle );
 	paint.setWorldMatrix( matrix );
 	pts.setPoints( 4, -10,0, 0,-10, 400,0, 0,10 );
@@ -159,7 +154,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 	matrix.rotate( -m_angle );
 
 	// Second
-	float s_angle = (mTime.second()-15)*6;
+	float s_angle = (time.second()-15)*6;
 	matrix.rotate( s_angle );
 	paint.setWorldMatrix( matrix );
 	pts.setPoints( 4,0,0,0,0,400,0,0,0);
@@ -188,7 +183,7 @@ void KdmClock::paintEvent( QPaintEvent * )
     paint.end();
 
     // flicker free code by Remi Guyomarch <rguyom@mail.dotcom.fr>
-    bitBlt ( this, contentsRect().topLeft(), &pm ); 
+    bitBlt ( this, contentsRect().topLeft(), &pm );
 }
 
 #include "kdmclock.moc"
