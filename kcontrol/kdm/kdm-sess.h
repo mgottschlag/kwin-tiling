@@ -60,7 +60,6 @@ protected:
 	void moveSession(int);
 
 protected slots:
-	void slotLiloCheckToggled(bool);
 	void slotAddSessionType();
 	void slotRemoveSessionType();
 	void slotSessionHighlighted(int);
@@ -76,15 +75,12 @@ private:
 	KIconLoader	*iconloader;
 	QComboBox	*sdlcombo, *sdrcombo;
 	QLabel		*sdllabel, *sdrlabel;
-	KURLRequester	*restart_lined, *shutdown_lined;
 	QLineEdit	*session_lined;
 	MyListBox	*sessionslb;
 	KArrowButton	*btnup, *btndown;
 	QButton		*btnrm, *btnadd;
 #ifdef __linux__
 	QCheckBox	*lilo_check;
-	QLabel		*lilocmd_label, *lilomap_label;
-	KURLRequester	*lilocmd_lined, *lilomap_lined;
 #endif
 };
 

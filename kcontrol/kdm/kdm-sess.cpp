@@ -48,7 +48,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QGroupBox *group0 = new QGroupBox( i18n("Allow Shutdown"), this );
 
       sdlcombo = new QComboBox( FALSE, group0 );
-      sdllabel = new QLabel (sdlcombo, i18n ("Co&nsole:"), group0);
+      sdllabel = new QLabel (sdlcombo, i18n ("&Local:"), group0);
       sdlcombo->insertItem(i18n("Everybody"), SdAll);
       sdlcombo->insertItem(i18n("Only Root"), SdRoot);
       sdlcombo->insertItem(i18n("Nobody"), SdNone);
@@ -67,50 +67,14 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
         " <li><em>Nobody:</em> nobody can shutdown the computer using KDM</li></ul>") );
 
 
-      QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
-
-      shutdown_lined = new KURLRequester(group1);
-      QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("Ha&lt:"), group1);
-      connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
-	      SLOT(changed()));
-      wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
-      QWhatsThis::add( shutdown_label, wtstr );
-      QWhatsThis::add( shutdown_lined, wtstr );
-
-      restart_lined = new KURLRequester(group1);
-      QLabel *restart_label = new QLabel(restart_lined, i18n("&Reboot:"), group1);
-      connect(restart_lined, SIGNAL(textChanged(const QString&)),
-	      SLOT(changed()));
-      wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
-      QWhatsThis::add( restart_label, wtstr );
-      QWhatsThis::add( restart_lined, wtstr );
-
 #if defined(__linux__) && defined(__i386__)
       QGroupBox *group4 = new QGroupBox( i18n("LILO"), this );
 
       lilo_check = new QCheckBox(i18n("Show boot opt&ions"), group4);
       connect(lilo_check, SIGNAL(toggled(bool)),
-	      SLOT(slotLiloCheckToggled(bool)));
-      connect(lilo_check, SIGNAL(toggled(bool)),
 	      SLOT(changed()));
       wtstr = i18n("Enable LILO boot options in the \"Shutdown...\" dialog.");
       QWhatsThis::add( lilo_check, wtstr );
-
-      lilocmd_lined = new KURLRequester(group4);
-      lilocmd_label = new QLabel(lilocmd_lined , i18n("LILO command:"), group4);
-      connect(lilocmd_lined, SIGNAL(textChanged(const QString&)),
-	      SLOT(changed()));
-      wtstr = i18n("Command to run LILO. Typical value: /sbin/lilo");
-      QWhatsThis::add( lilocmd_label, wtstr );
-      QWhatsThis::add( lilocmd_lined, wtstr );
-
-      lilomap_lined = new KURLRequester(group4);
-      lilomap_label = new QLabel(lilomap_lined, i18n("LILO map file:"), group4);
-      connect(lilomap_lined, SIGNAL(textChanged(const QString&)),
-	      SLOT(changed()));
-      wtstr = i18n("Position of Lilo's map file. Typical value: /boot/map");
-      QWhatsThis::add( lilomap_label, wtstr );
-      QWhatsThis::add( lilomap_lined, wtstr );
 #endif
 
       QGroupBox *group2 = new QGroupBox( i18n("Session Types"), this );
@@ -165,14 +129,12 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       QBoxLayout *main = new QVBoxLayout( this, 10 );
       QGridLayout *lgroup0 = new QGridLayout( group0, 3, 5, 10);
-      QGridLayout *lgroup1 = new QGridLayout( group1, 3, 5, 10);
 #if defined(__linux__) && defined(__i386__)
       QGridLayout *lgroup4 = new QGridLayout( group4, 3, 4, 10);
 #endif
       QGridLayout *lgroup2 = new QGridLayout( group2, 5, 5, 10);
 
       main->addWidget(group0);
-      main->addWidget(group1);
 #if defined(__linux__) && defined(__i386__)
       main->addWidget(group4);
 #endif
@@ -187,24 +149,9 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       lgroup0->addWidget(sdrlabel, 1, 3);
       lgroup0->addWidget(sdrcombo, 1, 4);
 
-      lgroup1->addRowSpacing(0, group1->fontMetrics().height()/2);
-      lgroup1->addColSpacing(2, KDialog::spacingHint() * 2);
-      lgroup1->setColStretch(1, 1);
-      lgroup1->setColStretch(4, 1);
-      lgroup1->addWidget(shutdown_label, 1, 0);
-      lgroup1->addWidget(shutdown_lined, 1, 1);
-      lgroup1->addWidget(restart_label, 1, 3);
-      lgroup1->addWidget(restart_lined, 1, 4);
-
 #if defined(__linux__) && defined(__i386__)
       lgroup4->addRowSpacing(0, group4->fontMetrics().height()/2);
-      lgroup4->addColSpacing(1, KDialog::spacingHint() * 2);
-      lgroup4->setColStretch(3, 1);
       lgroup4->addWidget(lilo_check, 1, 0);
-      lgroup4->addWidget(lilocmd_label, 1, 2);
-      lgroup4->addWidget(lilocmd_lined, 1, 3);
-      lgroup4->addWidget(lilomap_label, 2, 2);
-      lgroup4->addWidget(lilomap_lined, 2, 3);
 #endif
 
       lgroup2->addRowSpacing(0, group2->fontMetrics().height()/2);
@@ -228,17 +175,8 @@ void KDMSessionsWidget::makeReadOnly()
 {
     sdlcombo->setEnabled(false);
     sdrcombo->setEnabled(false);
-
-    restart_lined->lineEdit()->setReadOnly(true);
-    restart_lined->button()->setEnabled(false);
-    shutdown_lined->lineEdit()->setReadOnly(true);
-    shutdown_lined->button()->setEnabled(false);
 #if defined(__linux__) && defined(__i386__)
     lilo_check->setEnabled(false);
-    lilocmd_lined->lineEdit()->setReadOnly(true);
-    lilocmd_lined->button()->setEnabled(false);
-    lilomap_lined->lineEdit()->setReadOnly(true);
-    lilomap_lined->button()->setEnabled(false);
 #endif
     session_lined->setReadOnly(true);
     sessionslb->setEnabled(false);
@@ -246,16 +184,6 @@ void KDMSessionsWidget::makeReadOnly()
     btndown->setEnabled(false);
     btnrm->setEnabled(false);
     btnadd->setEnabled(false);
-}
-
-void KDMSessionsWidget::slotLiloCheckToggled(bool on)
-{
-#if defined(__linux__) && defined(__i386__)
-    lilocmd_label->setEnabled(on);
-    lilocmd_lined->setEnabled(on);
-    lilomap_label->setEnabled(on);
-    lilomap_lined->setEnabled(on);
-#endif
 }
 
 void KDMSessionsWidget::slotSessionHighlighted(int s)
@@ -336,13 +264,9 @@ void KDMSessionsWidget::save()
     }
     config->writeEntry( "SessionTypes", sesstr );
 
-    config->setGroup("Shutdown");
-    config->writeEntry("HaltCmd", shutdown_lined->url(), true);
-    config->writeEntry("RebootCmd", restart_lined->url(), true);
 #if defined(__linux__) && defined(__i386__)
+    config->setGroup("Shutdown");
     config->writeEntry("UseLilo", lilo_check->isChecked());
-    config->writeEntry("LiloCmd", lilocmd_lined->url());
-    config->writeEntry("LiloMap", lilomap_lined->url());
 #endif
 }
 
@@ -376,15 +300,9 @@ void KDMSessionsWidget::load()
   sessionslb->clear();
   sessionslb->insertStringList(sessions);
 
-  config->setGroup("Shutdown");
-  restart_lined->setURL(config->readEntry("RebootCmd", "/sbin/reboot"));
-  shutdown_lined->setURL(config->readEntry("HaltCmd", "/sbin/halt"));
 #if defined(__linux__) && defined(__i386__)
-  bool lien = config->readBoolEntry("UseLilo", false);
-  lilo_check->setChecked(lien);
-  slotLiloCheckToggled(lien);
-  lilocmd_lined->setURL(config->readEntry("LiloCmd", "/sbin/lilo"));
-  lilomap_lined->setURL(config->readEntry("LiloMap", "/boot/map"));
+  config->setGroup("Shutdown");
+  lilo_check->setChecked(config->readBoolEntry("UseLilo", false));
 #endif
 }
 
@@ -392,9 +310,6 @@ void KDMSessionsWidget::load()
 
 void KDMSessionsWidget::defaults()
 {
-  restart_lined->setURL("/sbin/reboot");
-  shutdown_lined->setURL("/sbin/halt");
-
   sdlcombo->setCurrentItem(SdAll);
   sdrcombo->setCurrentItem(SdRoot);
 
@@ -405,10 +320,6 @@ void KDMSessionsWidget::defaults()
 
 #if defined(__linux__) && defined(__i386__)
     lilo_check->setChecked(false);
-    slotLiloCheckToggled(false);
-
-    lilocmd_lined->setURL("/sbin/lilo");
-    lilomap_lined->setURL("/boot/map");
 #endif
 }
 
