@@ -36,6 +36,8 @@
 #include <dcopclient.h>
 #include <kapplication.h>
 #include <ksimpleconfig.h>
+#include <kstandarddirs.h>
+#include <kconfig.h>
 
 KTheme::KTheme( const QString & xmlFile )
 {

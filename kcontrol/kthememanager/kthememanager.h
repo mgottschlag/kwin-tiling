@@ -20,10 +20,9 @@
 #define KTHEMEMANAGER_H
 
 #include <kcmodule.h>
-#include <kaboutdata.h>
 #include <kurl.h>
 #include <kservice.h>
-#include <kiconview.h>
+//#include <kiconview.h>
 #include <krun.h>
 
 #include "kthemedlg.h"
@@ -32,6 +31,7 @@
 #define ORIGINAL_THEME "original" // no i18n() here!!!
 
 class QString;
+class KAboutData;
 
 /*
 class KIconViewItem;

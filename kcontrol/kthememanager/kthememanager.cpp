@@ -35,6 +35,7 @@
 #include <kurldrag.h>
 #include <kservicegroup.h>
 #include <kiconloader.h>
+#include <kaboutdata.h>
 
 #include "kthememanager.h"
 #include "knewthemedlg.h"
@@ -316,6 +317,7 @@ void kthememanager::slotThemeChanged( QListViewItem * item )
         }
 
         KTheme theme( themeDir + themeName + ".xml" );
+        QToolTip::remove( dlg->lbPreview );
         QToolTip::add( dlg->lbPreview, "<qt>" + i18n( "Author: %1<br>Email: %2<br>Version: %3<br>Homepage: %4" )
                        .arg( theme.author() ).arg( theme.email() )
                        .arg( theme.version() ).arg( theme.homepage() ) + "</qt>");

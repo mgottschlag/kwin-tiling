@@ -24,8 +24,9 @@
 #include <qstringlist.h>
 
 #include <kurl.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
+
+class KStandardDirs;
+class KConfig;
 
 /// defines the syntax version used by the XML
 #define SYNTAX_VERSION 1
