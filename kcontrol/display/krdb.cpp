@@ -19,6 +19,7 @@
 
 #undef Unsorted
 #include <qdir.h>
+#include <qsettings.h>
 
 #include <dcopclient.h>
 
@@ -28,6 +29,8 @@
 #include <kstandarddirs.h>
 #include <kprocess.h>
 #include <ktempfile.h>
+#include <ksimpleconfig.h>
+#include <kglobalsettings.h>
 
 #include "krdb.h"
 
@@ -53,6 +56,102 @@ static void applyGtkStyles(bool active)
    QDataStream stream(params, IO_WriteOnly);
    stream << name << value;
    kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
+}
+
+static void applyQtStyles(bool active)
+{
+   QSettings settings;
+   bool found;
+   QStringList actcg, inactcg, discg;
+   QString font,style;
+   if(active)
+   {
+      /* find out whether we already have backups... silly QSettings doesn't seem to have an exists() */
+      settings.readListEntry("/qt/QTorig/active", &found);
+      if(!found)
+      {
+         QStringList actcgorig, inactcgorig, discgorig;
+         QString fontorig,styleorig;
+         /* activating kde settings for the first time, save qt settings to restore */
+         
+         actcgorig = settings.readListEntry("/qt/Palette/active", &found);
+         if(found)
+            settings.writeEntry("/qt/QTorig/active", actcgorig);
+
+         inactcgorig = settings.readListEntry("/qt/Palette/inactive", &found);
+         if(found)
+            settings.writeEntry("/qt/QTorig/inactive", inactcgorig);
+
+         discgorig = settings.readListEntry("/qt/Palette/disabled", &found);
+         if(found)
+            settings.writeEntry("/qt/QTorig/disabled", discgorig);
+         
+         fontorig = settings.readEntry("/qt/font", QString::null, &found);
+         if(found)
+            settings.writeEntry("/qt/QTorig/font", fontorig);
+
+         styleorig = settings.readEntry("/qt/style", QString::null, &found);
+         if(found)
+            settings.writeEntry("/qt/QTorig/style", styleorig);
+
+
+      }
+
+      KSimpleConfig kconfig("kstylerc",true); /* open the style data read-only */
+      kconfig.setGroup("KDE");
+      style = kconfig.readEntry("WidgetStyle");
+      if (!style.isEmpty())
+        settings.writeEntry("/qt/style", style);
+
+
+      /* and activate the kde color settings */
+      int i;
+      for (i = 0; i < QColorGroup::NColorRoles; i++)
+         actcg   << kapp->palette().color(QPalette::Active,
+                    (QColorGroup::ColorRole) i).name();
+      for (i = 0; i < QColorGroup::NColorRoles; i++)
+         inactcg << kapp->palette().color(QPalette::Inactive,
+                    (QColorGroup::ColorRole) i).name();
+      for (i = 0; i < QColorGroup::NColorRoles; i++)
+         discg   << kapp->palette().color(QPalette::Disabled,
+                    (QColorGroup::ColorRole) i).name();
+
+      settings.writeEntry("/qt/Palette/active", actcg);
+      settings.writeEntry("/qt/Palette/inactive", inactcg);
+      settings.writeEntry("/qt/Palette/disabled", discg);
+
+      settings.writeEntry("/qt/font", KGlobalSettings::generalFont().toString());
+   }
+   else
+   {
+      /* restore qt color settings, if we have any saved */
+      actcg = settings.readListEntry("/qt/QTorig/active", &found);
+      if(found)
+         settings.writeEntry("/qt/Palette/active", actcg);
+
+      inactcg = settings.readListEntry("/qt/QTorig/inactive", &found);
+      if(found)
+         settings.writeEntry("/qt/Palette/inactive", inactcg);
+
+      discg = settings.readListEntry("/qt/QTorig/disabled", &found);
+      if(found)
+         settings.writeEntry("/qt/Palette/disabled", discg);
+      
+      font = settings.readEntry("/qt/QTorig/font", QString::null, &found);
+      if(found)
+         settings.writeEntry("/qt/font", font);
+
+      style = settings.readEntry("/qt/QTorig/style", QString::null, &found);
+      if(found)
+         settings.writeEntry("/qt/style", style);
+
+      /* and remove our clutter from the file */
+      settings.removeEntry("/qt/QTorig/active");
+      settings.removeEntry("/qt/QTorig/inactive");
+      settings.removeEntry("/qt/QTorig/disabled");
+      settings.removeEntry("/qt/QTorig/font");
+      settings.removeEntry("/qt/QTorig/style");
+   }
 }
 
 // -----------------------------------------------------------------------------
@@ -153,6 +252,7 @@ void runRdb(bool exportColors) {
   if (!exportColors)
   {
      applyGtkStyles(false);
+     applyQtStyles(false);
      return;
   }
 
@@ -222,5 +322,6 @@ void runRdb(bool exportColors) {
 
   tmpFile.unlink();
   applyGtkStyles(true);
+  applyQtStyles(true);
 }
 
