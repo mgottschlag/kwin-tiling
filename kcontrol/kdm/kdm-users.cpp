@@ -235,9 +235,7 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
             // we gotta check if it is a non-local file and make a tmp copy at the hd.
             if( !url.isLocalFile() ) {
                 pixurl += url.filename();
-                KIOJob *iojob = new KIOJob(); // will autodelete itself
-                iojob->setGUImode( KIOJob::NONE );
-                iojob->copy(url.url(), pixurl.ascii());
+		KIO::file_copy(url, pixurl);
                 url = pixurl;
                 istmp = true;
             }
@@ -257,13 +255,10 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
                 userpixurl += user;
                 userpixurl += filename.right( filename.length()-(last_dot_idx) );
                 //debug("destination: %s", userpixurl.ascii());
-                // Copy the file. NB: network transparent
-                KIOJob *iojob = new KIOJob(); // will autodelete itself
-                iojob->setGUImode( KIOJob::NONE );
                 if(istmp)
-                    iojob->move(url.url(), userpixurl.ascii());
+                    KIO::file_move(url, userpixurl);
                 else
-                    iojob->copy(url.url(), userpixurl.ascii());
+                    KIO::file_copy(url, userpixurl);
             } else {
                 msg  = i18n("There was an error loading the image:\n>");
                 msg += url.path();

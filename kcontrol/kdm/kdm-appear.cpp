@@ -199,9 +199,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
       // we gotta check if it is a non-local file and make a tmp copy at the hd.
       if(url.protocol() != "file") {
 	pixurl += url.filename();
-	KIOJob *iojob = new KIOJob(); // will autodelete itself
-	iojob->setGUImode( KIOJob::NONE );
-	iojob->copy(url.url().ascii(), pixurl.ascii());
+	KIO::file_copy(url, pixurl);
 	url = pixurl;
 	istmp = true;
       }
