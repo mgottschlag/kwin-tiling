@@ -1,0 +1,19 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kcmshell opengl
+Icon=kcmopengl
+Type=Application
+DocPath=kinfocenter/opengl/index.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=info
+X-KDE-FactoryName=opengl
+X-KDE-ParentApp=kinfocenter
+
+Name=OpenGL
+
+Comment=OpenGL information
+
+Keywords=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Display
+
+Categories=Qt;KDE;X-KDE-information

@@ -129,4 +129,14 @@ extern "C"
     return new KMemoryWidget(parent, "kcminfo");
   }
 
+  KCModule *create_opengl(QWidget *parent, const char * )
+  { 
+#ifdef INFO_OPENGL_AVAILABLE
+    return new KInfoListWidget(i18n("OpenGL"), parent, "kcminfo", GetInfo_OpenGL);
+#else
+    return 0;
+#endif
+  }
+  
+
 }

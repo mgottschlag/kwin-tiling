@@ -16,4 +16,7 @@ case "$host" in
 esac
 AC_SUBST(LIB_TRU64_MACH)
 
+AC_HAVE_GL( have_gl=yes, have_gl=no )
+AM_CONDITIONAL(COMPILE_GL_INFO, test x$have_gl = xyes)
+
 KDE_CHECK_LONG_LONG
