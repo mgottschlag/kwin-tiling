@@ -5,14 +5,18 @@
     written 1998 by Helge Deller (helge.deller@ruhr-uni-bochum.de)
 
     To do (maybe?):
-    - include Information about XFree86 and/or Accelerated X 
+    - include Information about XFree86 and/or Accelerated X
 	(needs to change configure-skript, to see, if Header-files are available !)
     - maybe also include information about the video-framebuffer devices (newer Kernels >= 2.1.100)
     - rewrite detection-routines (maybe not to use the /proc-fs)
     - more & better sound-information
- 
+
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     $Log$
+    Revision 1.12  2000/04/17 21:57:59  deller
+    The last version had an overflow in the calculation of the size of big
+    drives. Now it displays the sizes correct again.
+
     Revision 1.11  2000/01/08 21:35:39  waba
     WABA: Applied patch from Graham TerMarsch <gtermars@home.com>
     (Adding status of AlsaSound driver)
@@ -79,7 +83,7 @@
 
 #define INFO_SOUND_AVAILABLE
 #define INFO_DEV_SNDSTAT "/dev/sndstat"
-#define INFO_SOUND "/proc/sound" 
+#define INFO_SOUND "/proc/sound"
 #define INFO_ASOUND "/proc/asound/sndstat"
 
 #define INFO_DEVICES_AVAILABLE
@@ -98,8 +102,8 @@
 
 #define MAXCOLUMNWIDTH 600
 
-bool GetInfo_ReadfromFile( QListView *lbox, const char *FileName, 
-			    char splitchar, 
+bool GetInfo_ReadfromFile( QListView *lbox, const char *FileName,
+			    char splitchar,
 			    QListViewItem *lastitem = 0,
 			    QListViewItem **newlastitem = 0 )
 {
@@ -109,13 +113,13 @@ bool GetInfo_ReadfromFile( QListView *lbox, const char *FileName,
   QFile *file = new QFile(FileName);
 
   if (!file->exists()) {
-    delete file; 
+    delete file;
     return false;
   }
 
   if (!file->open(IO_ReadOnly)) {
-    delete file; 
-    /*   *GetInfo_ErrorString = 
+    delete file;
+    /*   *GetInfo_ErrorString =
 	i18n("You do not have read-access for the file %1 !\nPlease ask your system-administrator for advice !")
 	.arg(FileName);
     */
@@ -149,14 +153,14 @@ bool GetInfo_ReadfromFile( QListView *lbox, const char *FileName,
 
           QString s1(buf);
           QString s2 = s1.mid(s1.find(splitchar)+1);
-          
+
           s1.truncate(s1.find(splitchar));
           if(!(s1.isEmpty() || s2.isEmpty()))
               lastitem = new QListViewItem(lbox, lastitem, s1, s2);
 	      added = true;
       }
   }
-  
+
   file->close();
   delete file;
   if (newlastitem)
@@ -177,7 +181,7 @@ bool GetInfo_CPU( QListView *lBox )
 
 bool GetInfo_IRQ( QListView *lBox )
 {
-  lBox->setFont(KGlobal::fixedFont());
+  lBox->setFont(KGlobalSettings::fixedFont());
   return GetInfo_ReadfromFile( lBox, INFO_IRQ, 0 );
 }
 
@@ -204,7 +208,7 @@ bool GetInfo_IO_Ports( QListView *lBox )
 bool GetInfo_Sound( QListView *lBox )
 {
   sorting_allowed = false;	// no sorting by user !
-  if ( GetInfo_ReadfromFile( lBox, INFO_DEV_SNDSTAT, 0 )) 
+  if ( GetInfo_ReadfromFile( lBox, INFO_DEV_SNDSTAT, 0 ))
     return true;
   else if ( GetInfo_ReadfromFile( lBox, INFO_SOUND, 0 ))
     return true;
@@ -213,7 +217,7 @@ bool GetInfo_Sound( QListView *lBox )
 }
 
 bool GetInfo_Devices( QListView *lBox )
-{  
+{
   QListViewItem* lastitem = 0;
   sorting_allowed = false;	// no sorting by user !
   GetInfo_ReadfromFile( lBox, INFO_DEVICES, 0, lastitem, &lastitem );
@@ -243,7 +247,7 @@ bool GetInfo_Partitions( QListView *lBox )
 // Some Ideas taken from garbazo from his source in info_fbsd.cpp
 
 #if SIZEOF_LONG > 4	
-#define LONG_TYPE	unsigned long 
+#define LONG_TYPE	unsigned long
 #else
 /* On 32-bit systems we would get an overflow in unsigned int for
    drives bigger than 4GB. Let's use the ugly type double ! */
@@ -311,7 +315,7 @@ bool GetInfo_Partitions (QListView *lbox)
 	Title[4] = i18n("Free Size");
 	Title[5] = i18n("Mount Options");
 
-	for (n=0; n<NUMCOLS; ++n) 
+	for (n=0; n<NUMCOLS; ++n)
         lbox->addColumn(Title[n]);
 
 	// loop through all partitions...
@@ -325,7 +329,7 @@ bool GetInfo_Partitions (QListView *lbox)
 		found_in_List = (Mounted_Partitions.contains(FS_NAME)>0);
 		if (found_in_List && statfs(FS_FILE,&sfs)==0) {
     		    total = ((LONG_TYPE)sfs.f_blocks) * sfs.f_bsize;
-		    avail = (getuid() ? sfs.f_bavail : sfs.f_bfree) 
+		    avail = (getuid() ? sfs.f_bavail : sfs.f_bfree)
 				* ((LONG_TYPE) sfs.f_bsize);
 		};
 		/*
@@ -342,7 +346,7 @@ bool GetInfo_Partitions (QListView *lbox)
                               QString(FS_MNTOPS));
 		else
             new QListViewItem(lbox, QString(FS_NAME), QString(FS_FILE),
-                              QString(FS_TYPE), " ", " ", 
+                              QString(FS_TYPE), " ", " ",
                               QString(FS_MNTOPS));
 	}
 
@@ -354,7 +358,7 @@ bool GetInfo_Partitions (QListView *lbox)
 
     sorting_allowed = true;	// sorting by user allowed !
     lbox->setSorting(1);
-    
+
     return true;
 }
 #endif	 // INFO_PARTITIONS_FULL_INFO
