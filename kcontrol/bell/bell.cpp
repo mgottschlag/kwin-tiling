@@ -41,7 +41,7 @@
 
 extern "C"
 {
-  KCModule *create_bell(QWidget *parent, const char *name)
+  KCModule *create_bell(QWidget *parent, const char *)
   {
     return new KBellConfig(parent, "kcmbell");
   }

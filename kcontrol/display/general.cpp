@@ -54,7 +54,7 @@ void applyMultiHead(bool active)
 }
 
 extern "C" {
-    KCModule *create_style(QWidget *parent, const char *name) {
+    KCModule *create_style(QWidget *parent, const char *) {
       return new KGeneral(parent, "kcmstyle");
     }
 

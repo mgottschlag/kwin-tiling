@@ -173,7 +173,7 @@ static void addColorDef(QString& s, const char* n, const QColor& col)
 
 // -----------------------------------------------------------------------------
 
-static void copyFile(QFile& tmp, QString const& filename, bool copyColors)
+static void copyFile(QFile& tmp, QString const& filename, bool )
 {
   QFile f( filename );
   if ( f.open(IO_ReadOnly) ) {

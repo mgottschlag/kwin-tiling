@@ -216,7 +216,7 @@ bool Theme::load(const QString &aPath, QString &error)
 {
   QString cmd, str;
   QFileInfo finfo(aPath);
-  int rc, num, i;
+  int rc, i;
 
   assert(!aPath.isEmpty());
 
