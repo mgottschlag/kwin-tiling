@@ -81,28 +81,33 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addWidget(guicombo, 4, 1);
   connect(guicombo, SIGNAL(activated(int)), this, SLOT(changed()));
 
+  // The Language group box
   group = new QGroupBox(i18n("Language"), this);
   vbox->addWidget(group);
 
-  vvbox = new QVBoxLayout(group, 6,6);
-  vvbox->addSpacing(group->fontMetrics().height());
-
-  QHBoxLayout *hbox = new QHBoxLayout(vvbox, 6);
+  QGridLayout *hbox = new QGridLayout(group, 2, 2);
+  hbox->addRowSpacing(0, 15);
+  hbox->addRowSpacing(5, 10);
+  hbox->addColSpacing(0, 10);
+  hbox->addColSpacing(3, 10);
+  hbox->setColStretch(2, 1);        
 
   label = new QLabel(i18n("Language:"), group);
-  hbox->addWidget(label);
-  hbox->addSpacing(16);
+  hbox->addWidget(label, 1, 1);
 
   langcombo = new KLanguageCombo(group);
-  hbox->addWidget(langcombo);
+  hbox->addWidget(langcombo, 1, 2);
   connect(langcombo, SIGNAL(activated(int)), this, SLOT(changed()));
 
-  hbox->setStretchFactor(langcombo,1);
-  hbox->addStretch(2);
+  label = new QLabel(i18n("Country:"), group);
+  hbox->addWidget(label, 2, 1);
 
-  vbox->addStretch(1);
+  countrycombo = new KLanguageCombo(group);
+  hbox->addWidget(countrycombo, 2, 2);
+  connect(countrycombo, SIGNAL(activated(int)), this, SLOT(changed()));
 
   loadLocaleList(langcombo, QString::null, QStringList());
+  loadLocaleList(countrycombo, QString::fromLatin1("l10n/"), QStringList());
   load();
 }
 
@@ -289,6 +294,11 @@ void KDMAppearanceWidget::save()
   // write language
   c->setGroup("Locale");
   c->writeEntry("Language", langcombo->currentTag());
+  c->writeEntry("Country",  countrycombo->currentTag());
+  c->writeEntry("Time",     countrycombo->currentTag());
+  // Not used..
+  c->writeEntry("Money",    countrycombo->currentTag());
+  c->writeEntry("Numbers",  countrycombo->currentTag());
 
   delete c;
 }
@@ -330,6 +340,10 @@ void KDMAppearanceWidget::load()
   if (index>0)
     lang.truncate(index);
   langcombo->setCurrentItem(lang);
+
+  // get the country
+  lang = c->readEntry("Country", "C");
+  countrycombo->setCurrentItem(lang);
 }
 
 
@@ -339,6 +353,7 @@ void KDMAppearanceWidget::defaults()
   setLogo("kdelogo.png");
   guicombo->setCurrentItem(0);
   langcombo->setCurrentItem("C");
+  countrycombo->setCurrentItem("C");
 }
 
 
@@ -346,4 +361,3 @@ void KDMAppearanceWidget::changed()
 {
   emit KCModule::changed(true);
 }
-

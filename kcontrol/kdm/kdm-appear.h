@@ -68,6 +68,7 @@ private:
 	QString      logopath;
 	QComboBox    *guicombo;
         KLanguageCombo *langcombo;
+        KLanguageCombo *countrycombo;
 };
 
 #endif
