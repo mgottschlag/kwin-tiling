@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>PositionTabBase</class>
 <author>Aaron J. Seigo</author>
 <widget class="QWidget">
@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>658</width>
-            <height>482</height>
+            <width>580</width>
+            <height>376</height>
         </rect>
     </property>
     <property name="caption">
@@ -29,22 +29,6 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QListView" row="0" column="0" rowspan="4" colspan="1">
-            <column>
-                <property name="text">
-                    <string>Panels</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizeable">
-                    <bool>true</bool>
-                </property>
-            </column>
-            <property name="name">
-                <cstring>m_panelList</cstring>
-            </property>
-        </widget>
         <widget class="QButtonGroup" row="0" column="1">
             <property name="name">
                 <cstring>m_locationGroup</cstring>
@@ -155,7 +139,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>8388657</number>
+                                        <string>Alt+1</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -189,7 +173,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>8388658</number>
+                                        <string>Alt+2</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -223,7 +207,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>8388659</number>
+                                        <string>Alt+3</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -273,7 +257,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>276824125</number>
+                                        <string>Alt+=</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -307,7 +291,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>276824109</number>
+                                        <string>Alt+-</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -341,7 +325,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>8388656</number>
+                                        <string>Alt+0</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -391,7 +375,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>8388665</number>
+                                        <string>Alt+9</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -425,7 +409,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>8388664</number>
+                                        <string>Alt+8</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -459,7 +443,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>8388663</number>
+                                        <string>Alt+7</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -509,7 +493,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>8388660</number>
+                                        <string>Alt+4</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -543,7 +527,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>8388661</number>
+                                        <string>Alt+5</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -577,7 +561,7 @@
                                         <string></string>
                                     </property>
                                     <property name="accel">
-                                        <number>8388662</number>
+                                        <string>Alt+6</string>
                                     </property>
                                     <property name="toggleButton">
                                         <bool>true</bool>
@@ -660,7 +644,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
                                 <enum>Horizontal</enum>
                             </property>
                             <property name="tickmarks">
-                                <enum>Right</enum>
+                                <enum>NoMarks</enum>
                             </property>
                             <property name="tickInterval">
                                 <number>10</number>
@@ -717,7 +701,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Size</string>
+                <string>Si&amp;ze</string>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>This sets the size of the panel. You can also access this option via the panel context menu by right-clicking on some free space on the panel.</string>
@@ -732,7 +716,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <spacer row="5" column="0">
+                <spacer row="1" column="0">
                     <property name="name">
                         <cstring>Spacer14_2</cstring>
                     </property>
@@ -749,85 +733,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
                         </size>
                     </property>
                 </spacer>
-                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_sizeTiny</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Tiny</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>When this option is selected the panel will be 24 pixels high.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="3" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_sizeLarge</cstring>
-                    </property>
-                    <property name="text">
-                        <string>La&amp;rge</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>When this option is selected the panel will be 58 pixels high.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="2" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_sizeNormal</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Normal</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>When this option is selected the panel will be 46 pixels high.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_sizeSmall</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Small</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>When this option is selected the panel will be 30 pixels high.</string>
-                    </property>
-                </widget>
-                <spacer row="2" column="2">
-                    <property name="name">
-                        <cstring>Spacer10</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QRadioButton" row="4" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_sizeCustom</cstring>
-                    </property>
-                    <property name="focusPolicy">
-                        <enum>TabFocus</enum>
-                    </property>
-                    <property name="text">
-                        <string>C&amp;ustom</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>When this option is selected the panel can be adjusted to any size between 24 and 128 pixels using the slider below.</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget" row="5" column="1" rowspan="1" colspan="2">
+                <widget class="QLayoutWidget" row="1" column="1">
                     <property name="name">
                         <cstring>Layout9</cstring>
                     </property>
@@ -875,7 +781,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
                                 <enum>Horizontal</enum>
                             </property>
                             <property name="tickmarks">
-                                <enum>Right</enum>
+                                <enum>NoMarks</enum>
                             </property>
                             <property name="tickInterval">
                                 <number>20</number>
@@ -909,6 +815,36 @@ how it is positioned on the screen and how much of the screen it should use.</st
                         </widget>
                     </hbox>
                 </widget>
+                <widget class="QComboBox" row="0" column="0" rowspan="1" colspan="2">
+                    <item>
+                        <property name="text">
+                            <string>Tiny</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Small</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Normal</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Large</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Custom</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>m_panelSize</cstring>
+                    </property>
+                </widget>
             </grid>
         </widget>
         <spacer row="3" column="1">
@@ -923,8 +859,8 @@ how it is positioned on the screen and how much of the screen it should use.</st
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>0</width>
-                    <height>16</height>
+                    <width>16</width>
+                    <height>109</height>
                 </size>
             </property>
         </spacer>
@@ -1118,8 +1054,26 @@ how it is positioned on the screen and how much of the screen it should use.</st
                 </spacer>
             </grid>
         </widget>
+        <widget class="QListView" row="0" column="0" rowspan="4" colspan="1">
+            <column>
+                <property name="text">
+                    <string>Panels</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>m_panelList</cstring>
+            </property>
+        </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>m_percentSlider</sender>
@@ -1138,18 +1092,6 @@ how it is positioned on the screen and how much of the screen it should use.</st
         <signal>valueChanged(int)</signal>
         <receiver>PositionTabBase</receiver>
         <slot>panelDimensionsChanged()</slot>
-    </connection>
-    <connection>
-        <sender>m_sizeCustom</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_customSlider</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_sizeCustom</sender>
-        <signal>clicked()</signal>
-        <receiver>m_customSlider</receiver>
-        <slot>setFocus()</slot>
     </connection>
     <connection>
         <sender>m_percentSlider</sender>
@@ -1176,12 +1118,6 @@ how it is positioned on the screen and how much of the screen it should use.</st
         <slot>setValue(int)</slot>
     </connection>
     <connection>
-        <sender>m_sizeCustom</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_customSpinbox</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
         <sender>m_locationGroup</sender>
         <signal>clicked(int)</signal>
         <receiver>PositionTabBase</receiver>
@@ -1192,6 +1128,12 @@ how it is positioned on the screen and how much of the screen it should use.</st
         <signal>selectionChanged(QListViewItem*)</signal>
         <receiver>PositionTabBase</receiver>
         <slot>switchPanel(QListViewItem*)</slot>
+    </connection>
+    <connection>
+        <sender>m_panelSize</sender>
+        <signal>activated(int)</signal>
+        <receiver>PositionTabBase</receiver>
+        <slot>panelDimensionsChanged()</slot>
     </connection>
 </connections>
 <tabstops>
@@ -1211,11 +1153,6 @@ how it is positioned on the screen and how much of the screen it should use.</st
     <tabstop>m_percentSlider</tabstop>
     <tabstop>m_percentSpinBox</tabstop>
     <tabstop>m_expandCheckBox</tabstop>
-    <tabstop>m_sizeTiny</tabstop>
-    <tabstop>m_sizeSmall</tabstop>
-    <tabstop>m_sizeNormal</tabstop>
-    <tabstop>m_sizeLarge</tabstop>
-    <tabstop>m_sizeCustom</tabstop>
     <tabstop>m_customSlider</tabstop>
     <tabstop>m_customSpinbox</tabstop>
     <tabstop>m_identifyButton</tabstop>
@@ -1232,4 +1169,8 @@ how it is positioned on the screen and how much of the screen it should use.</st
     <slot access="protected">switchPanel(QListViewItem*)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+</includehints>
 </UI>

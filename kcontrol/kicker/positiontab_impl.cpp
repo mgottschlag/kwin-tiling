@@ -30,6 +30,7 @@
 #include <kapplication.h>
 #include <klocale.h>
 #include <knuminput.h>
+#include <kpanelextension.h>
 #include <kpixmap.h>
 #include <kstandarddirs.h>
 #include <kwin.h>
@@ -138,6 +139,8 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     connect(m_kcm, SIGNAL(extensionAdded(extensionInfo*)), SLOT(extensionAdded(extensionInfo*)));
     connect(m_kcm, SIGNAL(extensionChanged(const QString&)), SLOT(extensionChanged(const QString&)));
     connect(m_kcm, SIGNAL(extensionAboutToChange(const QString&)), SLOT(extensionAboutToChange(const QString&)));
+    connect(m_panelSize, SIGNAL(activated(int)), SLOT(sizeChanged(int)));
+    connect(m_panelSize, SIGNAL(activated(int)), SIGNAL(changed()));
 }
 
 PositionTab::~PositionTab()
@@ -190,11 +193,17 @@ void PositionTab::defaults()
         m_panelAlign = AlignLeft;
     }
 
-    m_sizeSmall->setChecked(true); // small size
+    m_panelSize->setCurrentItem(KPanelExtension::SizeSmall);
 
     // update the magic drawing
     lengthenPanel(-1);
     switchPanel(0);
+}
+
+void PositionTab::sizeChanged(int which)
+{
+    m_customSlider->setEnabled(which == KPanelExtension::SizeCustom);
+    m_customSpinbox->setEnabled(which == KPanelExtension::SizeCustom);
 }
 
 void PositionTab::movePanel(int whichButton)
@@ -263,6 +272,7 @@ void PositionTab::movePanel(int whichButton)
     }
 
     lengthenPanel(-1);
+    emit panelPositionChanged(m_panelPos);
 }
 
 void PositionTab::lengthenPanel(int sizePercent)
@@ -276,21 +286,21 @@ void PositionTab::lengthenPanel(int sizePercent)
     unsigned int diff = 0;
     unsigned int panelSize = 4;
 
-    if (m_sizeSmall->isChecked())
+    switch (m_panelSize->currentItem())
     {
-        panelSize = panelSize * 3 / 2;
-    }
-    else if (m_sizeNormal->isChecked())
-    {
-        panelSize *= 2;
-    }
-    else if (m_sizeLarge->isChecked())
-    {
-        panelSize = panelSize * 5 / 2;
-    }
-    else if (m_sizeCustom->isChecked())
-    {
-        panelSize = panelSize * m_customSlider->value() / 24;
+        case KPanelExtension::SizeTiny:
+        case KPanelExtension::SizeSmall:
+            panelSize = panelSize * 3 / 2;
+            break;
+        case KPanelExtension::SizeNormal:
+            panelSize *= 2;
+            break;
+        case KPanelExtension::SizeLarge:
+            panelSize = panelSize * 5 / 2;
+            break;
+        default:
+            panelSize = panelSize * m_customSlider->value() / 24;
+            break;
     }
 
     switch (m_panelPos)
@@ -436,30 +446,30 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
 
     m_panelInfo = listItem->info();
 
-    switch(m_panelInfo->_size)
+    m_panelSize->removeItem(4);
+    if (m_panelInfo->_customSizeMin == m_panelInfo->_customSizeMax)
     {
-        case 0:
-            m_sizeTiny->setChecked(true);
-            break;
-        case 1:
-            m_sizeSmall->setChecked(true);
-            break;
-        case 2:
-            m_sizeNormal->setChecked(true);
-            break;
-        case 3:
-            m_sizeLarge->setChecked(true);
-            break;
-        default:
-            m_sizeCustom->setChecked(true);
-        break;
+        m_customSlider->setEnabled(false);
+        m_customSpinbox->setEnabled(false);
+    }
+    else
+    {
+        m_panelSize->insertItem(i18n("Custom"), 4);
+        m_customSlider->setEnabled(false);
+        m_customSpinbox->setEnabled(false);
     }
 
-    if (!m_panelInfo->_useStdSizes &&
-        m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax)
+    if (m_panelInfo->_size >= KPanelExtension::SizeCustom ||
+        (!m_panelInfo->_useStdSizes &&
+         m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax)) // compat
     {
-        m_sizeCustom->setChecked(true);
+        m_panelSize->setCurrentItem(4);
     }
+    else
+    {
+        m_panelSize->setCurrentItem(m_panelInfo->_size);
+    }
+    m_panelSize->setEnabled(m_panelInfo->_useStdSizes);
 
     m_customSlider->setMinValue(m_panelInfo->_customSizeMin);
     m_customSlider->setMaxValue(m_panelInfo->_customSizeMax);
@@ -469,11 +479,6 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     m_customSpinbox->setMaxValue(m_panelInfo->_customSizeMax);
     m_customSpinbox->setValue(m_panelInfo->_customSize);
 
-    m_sizeTiny->setEnabled(m_panelInfo->_useStdSizes);
-    m_sizeSmall->setEnabled(m_panelInfo->_useStdSizes);
-    m_sizeNormal->setEnabled(m_panelInfo->_useStdSizes);
-    m_sizeLarge->setEnabled(m_panelInfo->_useStdSizes);
-    m_sizeCustom->setEnabled(m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax);
     m_sizeGroup->setEnabled(m_panelInfo->_resizeable);
 
 
@@ -575,25 +580,13 @@ void PositionTab::storeInfo()
 
     // Magic numbers stolen from kdebase/kicker/core/global.cpp
     // PGlobal::sizeValue()
-    if (m_sizeTiny->isChecked())
+    if (m_panelSize->currentItem() < KPanelExtension::SizeCustom)
     {
-        m_panelInfo->_size = 0;
-    }
-    else if (m_sizeSmall->isChecked())
-    {
-        m_panelInfo->_size = 1;
-    }
-    else if (m_sizeNormal->isChecked())
-    {
-        m_panelInfo->_size = 2;
-    }
-    else if (m_sizeLarge->isChecked())
-    {
-        m_panelInfo->_size = 3;
+        m_panelInfo->_size = m_panelSize->currentItem();
     }
     else // if (m_sizeCustom->isChecked())
     {
-        m_panelInfo->_size = 4;
+        m_panelInfo->_size = KPanelExtension::SizeCustom;
         m_panelInfo->_customSize = m_customSlider->value();
     }
 

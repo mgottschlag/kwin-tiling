@@ -22,11 +22,13 @@
 #include <qradiobutton.h>
 
 #include <kcombobox.h>
+#include <klocale.h>
 #include <knuminput.h>
 
 #include "main.h"
 #include "hidingtab_impl.h"
 #include "hidingtab_impl.moc"
+#include "positiontab_impl.h"
 
 
 HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
@@ -144,6 +146,8 @@ void HidingTab::switchPanel(QListViewItem* panelItem)
         m_backgroundRaise->setChecked(false);
     }
 
+    panelPositionChanged(m_panelInfo->_position);
+
     backgroundModeClicked();
     blockSignals(false);
 }
@@ -188,6 +192,21 @@ void HidingTab::defaults()
     m_delaySpinBox->setValue(3);
     m_backgroundPos->setCurrentItem(triggerConfigToCombo(BottomLeft));
     m_backgroundRaise->setChecked( false );
+}
+
+void HidingTab::panelPositionChanged(int position)
+{
+    if (position == PositionTab::PosTop ||
+        position == PositionTab::PosBottom)
+    {
+        m_lHB->setText(i18n("Show left panel-hiding bu&tton"));
+        m_rHB->setText(i18n("Show right panel-hiding bu&tton"));
+    }
+    else
+    {
+        m_lHB->setText(i18n("Show top panel-hiding bu&tton"));
+        m_rHB->setText(i18n("Show bottom panel-hiding bu&tton"));
+    }
 }
 
 int HidingTab::triggerComboToConfig(int trigger)

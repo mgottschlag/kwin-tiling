@@ -83,10 +83,12 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
 
     load();
 
-    QObject::connect(positiontab->m_panelList, SIGNAL(selectionChanged(QListViewItem*)),
-                     this, SLOT(positionPanelChanged(QListViewItem*)));
-    QObject::connect(hidingtab->m_panelList, SIGNAL(selectionChanged(QListViewItem*)),
-                     this, SLOT(hidingPanelChanged(QListViewItem*)));
+    connect(positiontab->m_panelList, SIGNAL(selectionChanged(QListViewItem*)),
+            this, SLOT(positionPanelChanged(QListViewItem*)));
+    connect(hidingtab->m_panelList, SIGNAL(selectionChanged(QListViewItem*)),
+            this, SLOT(hidingPanelChanged(QListViewItem*)));
+    connect(positiontab, SIGNAL(panelPositionChanged(int)),
+            hidingtab, SLOT(panelPositionChanged(int)));
 
     //applettab = new AppletTab(this);
     //tab->addTab(applettab, i18n("&Applets"));

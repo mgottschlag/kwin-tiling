@@ -35,9 +35,12 @@ public:
     void save();
     void defaults();
     void removeExtension(extensionInfo* info);
-    
+
 signals:
     void changed();
+
+public slots:
+    void panelPositionChanged(int);
 
 protected slots:
     void backgroundModeClicked();
