@@ -1,6 +1,6 @@
 [Color Scheme]
 activeBackground=65,127,75
-activeBlend=0,0,0
+activeBlend=65,127,75
 activeForeground=255,255,255
 activeTitleBtnBg=116,132,115
 background=211,197,190
@@ -9,7 +9,7 @@ buttonForeground=38,75,44
 contrast=0
 foreground=46,90,53
 inactiveBackground=116,132,115
-inactiveBlend=192,179,173
+inactiveBlend=116,132,115
 inactiveForeground=192,179,173
 inactiveTitleBtnBg=162,184,160
 linkColor=14,153,4
