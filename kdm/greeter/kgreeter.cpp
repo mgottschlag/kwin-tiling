@@ -292,20 +292,24 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     pixLabel = 0;
     clock    = 0;
 
-    if( !kdmcfg->_useLogo )
-    {
-	clock = new KdmClock( this, "clock" );
-    }
-    else
-    {
-	QPixmap pixmap;
-	if ( pixmap.load( kdmcfg->_logo ) ) {
-	    pixLabel = new QLabel( this);
-	    pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken);
-	    pixLabel->setAutoResize( true);
-	    pixLabel->setIndent(0);
-	    pixLabel->setPixmap( pixmap);
-	}
+    switch( kdmcfg->_logoArea ) {
+	case KDMConfig::KdmClock:
+	    clock = new KdmClock( this, "clock" );
+	    break;
+	case KDMConfig::KdmLogo:
+	    {
+		QPixmap pixmap;
+		if ( pixmap.load( kdmcfg->_logo ) ) {
+		    pixLabel = new QLabel( this);
+		    pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken);
+		    pixLabel->setAutoResize( true);
+		    pixLabel->setIndent(0);
+		    pixLabel->setPixmap( pixmap);
+		}
+	    }
+	    break;
+	case KDMConfig::KdmNone:
+	    break;
     }
 
     // The line-edit look _very_ bad if you don't give them 
@@ -394,7 +398,7 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 
     if (kdmcfg->_showPrevious) {
 	loginEdit->setText (kdmcfg->readEntry (enam));
-	loginEdit->setSelection (0, loginEdit->maxLength());
+	loginEdit->selectAll();
 	load_wm();
     } else
 	kdmcfg->deleteEntry (enam, false);

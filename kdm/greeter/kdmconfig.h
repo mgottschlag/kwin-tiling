@@ -54,7 +54,8 @@ public:
     QFont	*_failFont;
     QFont	*_greetFont;
 
-    bool	_useLogo;
+    enum	LgModes { KdmNone, KdmClock, KdmLogo };
+    LgModes	_logoArea;
     QString	_logo;
     QString	_greetString;
     int		_greeterPosX, _greeterPosY;

@@ -45,8 +45,10 @@
 #define defShowMode	UsrAll
 
 KDMConfig::KDMConfig() :
-    KSimpleConfig(*KGlobal::dirs()->resourceDirs("config").begin() + 
-		  QString::fromLatin1("kdmrc"))
+    KSimpleConfig( 
+//QString::fromLatin1(KDE_CONFDIR "/kdmrc") 
+    *KGlobal::dirs()->resourceDirs("config").begin() + QString::fromLatin1("kdmrc")
+)
 {
     setGroup( "KDM" );
 
@@ -91,7 +93,12 @@ KDMConfig::KDMConfig() :
 	kapp->setStyle (new QSGIStyle);
 
     QString logoArea = readEntry( "LogoArea", QString::fromLatin1("KdmLogo") );
-    _useLogo = logoArea == QString::fromLatin1( "KdmLogo");
+    if (logoArea == QString::fromLatin1( "KdmLogo"))
+	_logoArea = KdmLogo;
+    else if (logoArea == QString::fromLatin1( "KdmClock"))
+	_logoArea = KdmClock;
+    else
+	_logoArea = KdmNone;
 
     QString logo_string = readEntry( "LogoPixmap" );
     if( logo_string.isEmpty())
@@ -110,7 +117,7 @@ KDMConfig::KDMConfig() :
 	_showUsers = defShowMode;
     _users = readListEntry( "Users");
     _noUsers = readListEntry( "NoUsers");
-    _lowUserId = readNumEntry( "UserIDLow" );
+    _lowUserId = readNumEntry( "MinShowUID" );
     _sortUsers = readBoolEntry("SortUsers", true);
 
     _sessionTypes = readListEntry( "SessionTypes" );
