@@ -16,7 +16,7 @@ that are embedded into a framework appliaction called "kcontrol".
 How to write a control center module?
 -------------------------------------
 
-The mechanism to implement kcontrol modules changed quite a bit with
+The mechanism to implement kcontrol modules changed quite a bit since 
 KDE 2.0. In KDE 1.x the modules have been implemented as separate
 processes that were swallowed into the control center. This had several
 advantages, as well as disadvantages:
@@ -27,7 +27,7 @@ advantages, as well as disadvantages:
 - layout management was a pain
 - communication between modules and framework was inefficient
 
-To overcome the problems, modules in KDE 2.0 are implemented as 
+To overcome the problems, modules from KDE 2.0 on are implemented as 
 simple shared libraries that are loaded, at runtime, into the process
 of the frame application. This solves all of the disadvantages.
 To allow modules to run "standalone", there is a wrapper application
@@ -63,15 +63,6 @@ default values. It gets called when hitting the "Default" button.
 The default values should probably be the same as the ones the 
 application uses when started without a config file.
 
-static void init();
-
-This is a static method which gets called to realize the modules settings
-durign the startup of KDE. NOTE that most modules do not implement this
-method, but modules like the keyboard and mouse modules, which directly
-interact with the X-server, need this method.
-As this method is static, it can avoid to create an instance of
-the user interface, which is often not needed in this case.
-
 int buttons();
 
 The control center calls this function to decide which buttons should
@@ -100,26 +91,58 @@ How to make a module available?
 -------------------------------
 
 Ok, now that you have implemented your class with the module, you
-must make sure it can be accessed from the control center. For
-this purpose, you have to use a function that is exported from
-the library:
+must make sure it can be accessed from the control center. 
 
-extern "C" 
+To achieve this, the preferred way since KDE 3.0 is to simply use 
+KGenericFactory. Don't forget to #include <kgenerifactory.h>!
+
+typedef KGenericFactory<MyKCModule, QWidget> KDEDFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_xyz, KDEDFactory( "kcmxyz" ) );
+
+If you get errors, make sure that the constructor of your derived class
+equals the one of the KCModule baseclass (yes, the QStringList argument
+matters).
+
+If you need to export more than one module per library, you have to use the 
+old loader. That is, you need to create a function like this:
+
+extern "C"
 {
   KCModule *create_xyz(QWidget *parent, const char *name)
   {
-    return new XYZ(parent, name);
+    return new XYZ(parent, name); // XYZ inherits from KCModule
   };
 }
 
 This function and the implementation of the module is then compiled
-to build a shared library. If the name of your modules is 'xyz', the
+as a shared library. If the name of your modules is 'xyz', the
 name of the library should be
 
 kcm_xyz(.la|.so)
 
-and should be installed into $KDEDIR/lib. (Ok, beat me for the KDEDIR, 
+and should be installed into $KDEDIR/lib/kde3. (Ok, beat me for the KDEDIR, 
 but you all know what I mean, don't you? :)
+
+Use "kde_module_LTLIBRARIES = kcm_xyz.la" for that in your Makefile.am.
+Don't call it libkcm_xyz as that is deprecated since KDE 3.0.
+
+
+
+Initialize things on startup
+----------------------------
+
+If your module needs to initialize things on startup, you have have a 
+construct like:
+
+extern "C"
+{
+  KCModule *init_xyz(QWidget *parent, const char *name)
+  {
+    // to startup stuff here
+  };
+}
+
+Don't forget to add X-KDE-Init to your desktop file! (see next chapter)
 
 
 The .desktop entry
@@ -156,7 +179,7 @@ X-KDE-FactoryName
 
 	For example, if you have a library named
 
-	libkcm_frog.la
+	kcm_frog.la
 
 	with two modules, named "kermit" and "quak", you would
 	have 
@@ -181,17 +204,6 @@ X-KDE-RootOnly
    until the "modify" button is pressed which allows running
    the module in an root environment using kdesu and QXEmbed.
    
-
-X-KDE-Group
-
-	If you want to override the place where the modules is shown,
-	then use the Group entry. If this entry is missing, the 
-	path to the module in the module tree is inferred from the
-	path to the desktop file. This entry is here in order
-	to allow users of a future version of the control settings
-	to rearrange the entries. At the moment, you should not use
-	it.
-
 
 X-KDE-Init
 
@@ -226,36 +238,36 @@ font and the desktop color settings, use
 - multiple instances of kcontrol
 
 With the new control center, it is no longer possible to have multiple
-instances in the control center. Instead, when you have a kcontrol 
-instance running, and you call, e.g. "kcontrol Desktop/colors", the
-colors module is opened in the running instance (and this instance
-is popped to the top of the window stack). Long live DCOP!
+instances in the control center.
 
 - KCDialog
 
 Sometimes, you may want to reuse your control center modules
-inside an application. There are several ways to accomplish this:
+inside an application. There are two ways to accomplish this:
 
-a) call "kcontrol module"
-
-to either run a new instance of the control center, or to load
-your modules into the already running instance.
-
-b) call "kcmshell modules"
+a) call "kcmshell modules"
 
 to run the module as a separate program.
 
-c) use "KCDialog"
+b) use "KCDialog"
 
 This is a simple dialog that takes your module as first parameter
-and creates a normal QDialog. The advantage is that you can control
-the behaviour and the results much easier that with a separate
-process. And as your module is a simple library, you can just link
-to it anyway. 
+and creates a normal KDialogBase.
 
+The advantage is that you can control the behaviour and the results 
+much easier that with a separate process. And as your module is a 
+simple library, you can just link to it anyway. 
+
+Debugging your module
+---------------------
+
+You can attach gdb, valgrind or whatever to kcmshell <yourmodule> to track 
+down leaks or crashes. If you need to trace it down inside kcontrol, make
+sure you pass --nofork to kontrol on startup. Anyway, you really want to use 
+kcmshell for debugging as long as your debugging does not involve debugging bad
+interaction with the kcontrol framework itself.
 
 More questions?
 ---------------
 
-Ask: Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
-or : Matthias Elter <elter@kde.org>
+Ask Daniel Molkentin <molkentin@kde.org>
