@@ -46,7 +46,7 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const c
   setItemsMovable(false);
   setSorting(false);
   setWordWrapIconText(true);
-  setItemTextPos(Bottom);
+  setItemTextPos(Right);
   setResizeMode(Adjust);
 
   connect(this, SIGNAL(executed(QIconViewItem*)),
