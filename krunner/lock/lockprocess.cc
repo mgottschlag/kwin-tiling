@@ -101,7 +101,8 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mVisibility(false),
       mRestoreXF86Lock(false),
       mForbidden(false),
-      mAutoLogout(false)
+      mAutoLogout(false),
+      mFadeValue(0)
 {
     setupSignals();
 
@@ -636,8 +637,8 @@ bool LockProcess::startSaver()
     raise();
     XSync(qt_xdisplay(), False);
     setVRoot( winId(), winId() );
-     if (!startHack())
-         setBackgroundColor(black); // failed to start a hack.  Just show a blank screen
+    mOriginal = QPixmap::grabWindow(winId());
+    QTimer::singleShot(1, this, SLOT(slotFade()));
     return true;
 }
 
@@ -731,16 +732,26 @@ bool LockProcess::startLock()
 
 //---------------------------------------------------------------------------
 //
+
+
+void  LockProcess::slotFade()
+{
+    mFadeValue = mFadeValue + 0.1;
+    if (mFadeValue > 0.5)
+    {
+        startHack();
+	return;
+    }
+    else
+    {
+        KPixmapEffect::fade(mOriginal, mFadeValue, Qt::black);
+        bitBlt(this, 0, 0, &mOriginal);
+        QTimer::singleShot(1, this, SLOT(slotFade()));
+    }
+ }
+
 bool LockProcess::startHack()
 {
-    mOriginal = QPixmap::grabWindow(winId());
-
-    for (double i = 0; i < 1.0; i = i + 0.08)
-    {    
-        KPixmap pixmap = mOriginal;
-        KPixmapEffect::fade(pixmap, i, Qt::black);
-        bitBlt(this, 0, 0, &pixmap);
-    }
     if (mSaverExec.isEmpty())
     {
         return false;
@@ -786,7 +797,9 @@ bool LockProcess::startHack()
 	                return true;
 		}
 	}
-	else // we aren't allowed to start the specified screensaver according to the kiosk restrictions
+	else
+	// we aren't allowed to start the specified screensaver either because it didn't run for some reason
+	// according to the kiosk restrictions forbid it
 	{
 		setBackgroundColor(black);
 	}
