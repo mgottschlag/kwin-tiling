@@ -36,7 +36,7 @@
 
 KExtendedCDialog::KExtendedCDialog(QWidget *parent, const char *name, bool modal)
   : KDialogBase(IconList, i18n("Settings"), Help | User1 |Cancel | Apply | Ok, Ok,
-                parent, name, modal, true, i18n("&Use &Defaults"))
+                parent, name, modal, true, i18n("Use &Defaults"))
 {
     enableButton(Apply, false);
 }
