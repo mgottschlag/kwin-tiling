@@ -1294,7 +1294,7 @@ mk_xservers(Entry *ce, Section *cs ATTR_UNUSED)
 
 #ifdef HAVE_VTS
 static char *
-memmem(char *mem, int lmem, const char *smem, int lsmem)
+mem_mem(char *mem, int lmem, const char *smem, int lsmem)
 {
     for (; lmem >= lsmem; mem++, lmem--)
 	if (!memcmp (mem, smem, lsmem))
@@ -1318,7 +1318,7 @@ upd_servervts(Entry *ce, Section *cs ATTR_UNUSED)
 	    for (p = it.buf; p < it.eof; p = eol + 1) {
 		for (eol = p; eol < it.eof && *eol != '\n'; eol++);
 		if (*p != '#') {
-		    if ((ep = memmem(p, eol - p, " tty", 4)) &&
+		    if ((ep = mem_mem(p, eol - p, " tty", 4)) &&
 			ep < eol && isdigit(*ep))
 		    {
 			if (ep + 1 == eol || isspace(*(ep + 1)))
