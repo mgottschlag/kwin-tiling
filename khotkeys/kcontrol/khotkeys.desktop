@@ -7,7 +7,7 @@ X-KDE-ModuleType=Library
 X-KDE-Library=khotkeys
 X-KDE-Init=khotkeys
 
-Name=KHotKeys
+Name=Input Actions
 Name[bg]=Жестове
 Name[cs]=Horké klávesy KDE
 Name[cy]=BysellauBrysKDE
