@@ -3,7 +3,7 @@
  KHotKeys -  (C) 2000 Lubos Lunak <l.lunak@email.cz>
 
  kcmkhotkeys.cpp  -
- 
+
  $Id$
 
 ****************************************************************************/
@@ -15,7 +15,7 @@
 #endif
 
 #include <ksimpleconfig.h>
-#include <kaccel.h>
+#include <kaccelbase.h>
 #include <kdialogbase.h>
 #include <dcopclient.h>
 #include <kkeydialog.h>
@@ -144,8 +144,9 @@ QString change_shortcut_internal( const QString& entry_P,
             return shortcut_P;
         }
     else    
-        pos->shortcut = KKey::keyToString(    // make sure the shortcut
-            KKey::stringToKeyQt( shortcut_P ), false); // is valid
+        //pos->shortcut = KKey::keyToString(    // make sure the shortcut
+        //    KKey::stringToKeyQt( shortcut_P ), false); // is valid
+	pos->shortcut = (KKeySequence( shortcut_P )).toString( KKeySequence::I18N_No );
     if( !save_if_edited_P )
         return pos->shortcut;
     if( pos->shortcut.isEmpty())
@@ -198,22 +199,17 @@ desktop_shortcut_dialog::desktop_shortcut_dialog(
         if( it.current()->shortcut == shortcut_P )
             shortcut_P = ""; // this shortcut is taken up by some other action
         }
-    KKeyEntry entry;
-    entry.aCurrentKeyCode = entry.aConfigKeyCode
-        = KAccel::stringToKey( shortcut_P );
-    entry.bConfigurable = true;
-    entry.descr = action_name_P;
-    entry.bEnabled = true;
-    map.insert( action_name_P, entry );
+    map.insertAction( action_name_P, action_name_P,
+        KAccelShortcuts(shortcut_P), KAccelShortcuts(shortcut_P) );
     QWidget* page = new QWidget( this );
     setMainWidget( page );         // CHECKME i18n
     QLabel* label = new QLabel( i18n( "Desktop file to run" ), page );
-//    QLabel* label = new QLabel( "K Menu entry to run", page ); 
+//    QLabel* label = new QLabel( "K Menu entry to run", page );
     QLineEdit* line = new QLineEdit( page );
     line->setText( item_P->run );
 //    line->setMinimumWidth( 500 );
     line->setReadOnly( true );
-    keychooser = new KKeyChooser( &map, page, true, false, true );
+    keychooser = new KKeyChooser( map, page, true, false, true );
     connect( keychooser, SIGNAL( keyChange()), this, SLOT( key_changed()));
     QBoxLayout* main_layout = new QVBoxLayout( page, KDialog::marginHint(),
         KDialog::spacingHint());
@@ -221,28 +217,39 @@ desktop_shortcut_dialog::desktop_shortcut_dialog(
     main_layout->addWidget( line, 1 );
     main_layout->addWidget( keychooser, 10 );
     }
-    
+
 bool desktop_shortcut_dialog::dlg_exec()
     {
     if( exec() == Accepted )
         {
-        item->shortcut
-            = KKey::keyToString( map[ action_name ].aConfigKeyCode, false );
-        return true;
+        KAccelAction* pAction = map.actionPtr( action_name );
+        if( pAction )
+            {
+            item->shortcut =
+                pAction->m_rgShortcuts.toString( KKeySequence::I18N_No );
+            return true;
+            }
         }
-    return false;    
+    return false;
     }
 
 void desktop_shortcut_dialog::key_changed()
     {
-    uint shortcut = map[ action_name ].aConfigKeyCode;
+    KAccelAction* pAction = map.actionPtr( action_name );
+    if( !pAction )
+        return;
+
+    //uint shortcut = map[ action_name ].aConfigKeyCode;
+    KKeySequence key = pAction->getShortcut(0).getSequence(0).getKey(0);
+    QString shortcut_name = key.toString( KKeySequence::I18N_No );
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
         {
         if( it.current() == item )
             continue;
-        if( KKey::stringToKeyQt( it.current()->shortcut ) == shortcut )
+        //if( KKey::stringToKeyQt( it.current()->shortcut ) == shortcut )
+        if( shortcut_name == it.current()->shortcut )
             {
             QString str =
                 i18n( "The %1 key combination has already "
@@ -252,7 +259,8 @@ void desktop_shortcut_dialog::key_changed()
                      "Please choose a unique key combination."
                     ).arg( it.current()->shortcut ).arg( it.currentKey());
             KMessageBox::sorry( this, str, i18n( "Key conflict" ));
-            map[ action_name ].aConfigKeyCode = 0;
+            //map[ action_name ].aConfigKeyCode = 0;
+            pAction->clearShortcuts();
             keychooser->listSync(); // cancel the selected shortcut
             keychooser->update();   // in KKeyChooser
             return;

@@ -3,7 +3,7 @@
  KHotKeys -  (C) 2000 Lubos Lunak <l.lunak@email.cz>
 
  khotkeys.h  -
- 
+
  $Id$
 
 ****************************************************************************/
@@ -28,7 +28,7 @@ class KHotKeysApp
         KHotKeysApp();
         virtual ~KHotKeysApp();
     protected:
-        virtual bool x11EventFilter(XEvent *);
+        //virtual bool x11EventFilter(XEvent *);
         KHKGlobalAccel* accel;
         KHotData_dict data;
         void start_general( const QString& action_P );

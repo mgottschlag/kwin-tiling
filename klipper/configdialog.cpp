@@ -28,7 +28,7 @@
 
 #include "configdialog.h"
 
-ConfigDialog::ConfigDialog( const ActionList *list, KKeyEntryMap *keyMap )
+ConfigDialog::ConfigDialog( const ActionList *list, KAccelActions &keyMap )
     : KDialogBase( KDialogBase::Tabbed, i18n("Klipper preferences"),
                     KDialogBase::Ok | KDialogBase::Cancel | KDialogBase::Help,
                     KDialogBase::Ok, 0L, "config dialog" )
@@ -397,7 +397,7 @@ void AdvancedWidget::setWMClasses( const QStringList& items )
 //////////
 
 
-KeysWidget::KeysWidget( KKeyEntryMap *keyMap, QWidget *parent, const char *name)
+KeysWidget::KeysWidget( KAccelActions &keyMap, QWidget *parent, const char *name)
     : QVBox( parent, name )
 {
     keyChooser = new KKeyChooser( keyMap, this );

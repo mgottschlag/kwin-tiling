@@ -20,11 +20,12 @@
 #include <qlabel.h>
 
 #include <dcopclient.h>
-#include <kkey.h>	// For KKey::keyboardHasMetaKey()
+#include <kkeysequence.h>	// For KKeySequence::keyboardHasMetaKey()
 #include <klocale.h>
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kglobalsettings.h>
+#include <kkeysequence.h>
 #include <kseparator.h>
 #include <qcombobox.h>
 
@@ -505,7 +506,7 @@ void KActionsConfig::defaults()
   setComboText(coWin1,"Activate, raise and pass click");
   setComboText(coWin2,"Activate and pass click");
   setComboText(coWin3,"Activate and pass click");
-  setComboText(coAllKey, KKey::keyboardHasMetaKey() ? "Meta" : "Alt");
+  setComboText(coAllKey, KKeySequence::keyboardHasMetaKey() ? "Meta" : "Alt");
   setComboText (coAll1,"Move");
   setComboText(coAll2,"Toggle raise and lower");
   setComboText(coAll3,"Resize");

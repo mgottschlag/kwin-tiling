@@ -3,7 +3,7 @@
  KHotKeys -  (C) 2000 Lubos Lunak <l.lunak@email.cz>
 
  kcmkhotkeys.h  -
- 
+
  $Id$
 
 ****************************************************************************/
@@ -31,7 +31,7 @@ QString khotkeys_edit_menu_entry_shortcut( const QString& entry_P,
 // menu entry was moved in K Menu
 bool khotkeys_menu_entry_moved( const QString& new_P, const QString& old_P );
 // menu entry was removed
-void khotkeys_menu_entry_deleted( const QString& entry_P );    
+void khotkeys_menu_entry_deleted( const QString& entry_P );
     } // extern "C"
 
 class desktop_shortcut_dialog
@@ -45,7 +45,7 @@ class desktop_shortcut_dialog
     protected slots:
         void key_changed();
     protected:
-        KKeyEntryMap map;
+        KAccelActions map;
         KHotData_dict& data;
         KHotData* item;
         QString action_name;

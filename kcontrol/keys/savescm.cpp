@@ -24,7 +24,7 @@ SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
 
     QLabel* tmpQLabel;
     tmpQLabel = new QLabel( nameLine,
-     i18n( "Enter a name for the key scheme:\n"), page);
+     i18n("Enter a name for the key scheme:"), page );
 
     tmpQLabel->setAlignment( AlignLeft | AlignBottom | ShowPrefix );
     tmpQLabel->setFixedHeight( tmpQLabel->sizeHint().height() );

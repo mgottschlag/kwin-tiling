@@ -23,26 +23,31 @@
 
 ****************************************************************************/
 
-#ifndef KHKGLOBALACCEL_H 
-#define KHKGLOBALACCEL_H 
+#ifndef KHKGLOBALACCEL_H
+#define KHKGLOBALACCEL_H
 
 #include <kglobalaccel.h>
 #include <X11/Xlib.h>
 #undef Bool   /* stupid X11 */
 
+// I've transfered this functionality to KGlobalAccel. -- ellis
+//  See kglobalaccel_x11.cpp: KGlobalAccelPrivate::x11EventFilter()
+typedef KGlobalAccel KHKGlobalAccel;
+
+#if 0
 /**
- * Since KGlobalAccel requires different slots for each accelerator, 
+ * Since KGlobalAccel requires different slots for each accelerator,
  * this class overrides its x11EventFilter() to make varying number
  * of accelerators possible. Now the slots can have 2 arguments,
  * see @ref #activated () .
- * 
+ *
  *
  * @short KHKGlobalAccel class - slight improvement of KGlobalAccel
  * @author Lubos Lunak <l.lunak@email.cz>
  * @version 0.2
  * @see KGlobalAccel
  */
- 
+
 class KHKGlobalAccel
     : public KGlobalAccel
     {
@@ -54,7 +59,7 @@ class KHKGlobalAccel
 	/**
 	* "Better" activated() signal
 	* @param action is the accelerator item action name
-	* @param descr is the description 
+	* @param descr is the description
 	* @param keyCode is the accelerator keycode, use @ref keyToString()
 	*   to get its name
 	* @see KKeyEntry
@@ -62,5 +67,7 @@ class KHKGlobalAccel
     	void activated( const QString& action, const QString& descr,
     	    int keyCode );
     };
+
+#endif
 
 #endif // KHKGLOBALACCEL_H

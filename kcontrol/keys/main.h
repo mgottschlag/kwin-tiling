@@ -24,21 +24,19 @@
 #ifndef __keys_main_h
 #define __keys_main_h
 
+#include <qbuttongroup.h>
+#include <qradiobutton.h>
 #include <qtabwidget.h>
-
-
 #include <kcmodule.h>
-
+#include <kcombobox.h>
 
 class KKeyModule;
-
 
 class KeyModule : public KCModule
 {
   Q_OBJECT
 
 public:
-
   KeyModule(QWidget *parent, const char *name);
 
   void load();
@@ -46,22 +44,20 @@ public:
   void defaults();
   QString quickHelp() const;
 
-
 protected:
-
-  void resizeEvent(QResizeEvent *e);
-
+	void readSchemeNames();
+	void resizeEvent(QResizeEvent *e);
 
 protected slots:
-
   void moduleChanged(bool state);
   void tabChanged(QWidget *);
 
-
 private:
-
-  QTabWidget          *tab;
-
+  QTabWidget* m_pTab;
+  QRadioButton *m_prbCur, *m_prbNew, *m_prbPre;
+  int m_nSysSchemes;
+  QStringList m_rgsSchemeFiles;
+  KComboBox* m_pcbSchemes;
   KKeyModule *global, *series, *standard;
 };
 

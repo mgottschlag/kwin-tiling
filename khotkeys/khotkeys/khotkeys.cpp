@@ -3,7 +3,7 @@
  KHotKeys -  (C) 2000 Lubos Lunak <l.lunak@email.cz>
 
  khotkeys.cpp  -
- 
+
  $Id$
 
 ****************************************************************************/
@@ -14,6 +14,7 @@
 #include <config.h>
 #endif
 
+#include <kaccelbase.h>
 #include <krun.h>
 #include <kdesktopfile.h>
 #include <ksimpleconfig.h>
@@ -26,13 +27,12 @@
 KHotKeysApp::KHotKeysApp()
     : KUniqueApplication( false, true ) // no styles
     {
-    accel = new KHKGlobalAccel();
+    accel = new KHKGlobalAccel( this );
     reread_configuration();
     }
 
 KHotKeysApp::~KHotKeysApp()
     {
-    delete accel;
     }
 
 // called when any action shortcut is pressed
@@ -111,7 +111,7 @@ void KHotKeysApp::start_menuentry( const QString& action_P )
         {
         KDesktopFile cfg( current->run, true );
         if( cfg.readBoolEntry( "Hidden" )) // menu entry is hidden
-            needs_search = true; 
+            needs_search = true;
         }
     if( needs_search ) // try to find the menu entry ( if it has been moved )
         {
@@ -154,10 +154,11 @@ void KHotKeysApp::start_menuentry( const QString& action_P )
     current->timeout.start( 1000, true ); // 1sec timeout
     }
 
+/*
 void KHotKeysApp::reread_configuration()
     {
     accel->clear();
-    data.clear();    
+    data.clear();
     KSimpleConfig cfg( CONFIG_FILE, true );
     data.read_config( cfg );
     for( KHotData_dict::Iterator it( data );
@@ -171,13 +172,33 @@ void KHotKeysApp::reread_configuration()
             SLOT( accel_activated( const QString&, const QString&, int )));
         }
     }
-    
+*/
+
+void KHotKeysApp::reread_configuration()
+    {
+    accel->basePtr()->clearActions();
+    data.clear();
+    KSimpleConfig cfg( CONFIG_FILE, true );
+    data.read_config( cfg );
+    for( KHotData_dict::Iterator it( data );
+         it.current();
+         ++it )
+        {
+        accel->insertAction( it.currentKey(), it.currentKey(),
+            KShortcuts(it.current()->shortcut), KShortcuts(it.current()->shortcut),
+            this, SLOT( accel_activated( const QString&, const QString&, int )));
+        }
+    accel->updateConnections();
+    }
+
+/*
 // needed for KHKGlobalAccel
-bool KHotKeysApp::x11EventFilter(XEvent * ev) 
+bool KHotKeysApp::x11EventFilter(XEvent * ev)
     {
     if( accel->x11EventFilter( ev ))
         return true;
     return KUniqueApplication::x11EventFilter( ev );
     }
+*/
 
 #include "khotkeys.moc"

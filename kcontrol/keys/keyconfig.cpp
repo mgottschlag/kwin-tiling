@@ -53,35 +53,39 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 
   KeyType = isGlobal ? "global" : "standard";
 
-  keys = new KAccel( this );
-
   bSeriesOnly = _bSeriesOnly;
 
+  kdDebug(125) << "KKeyModule::init() - Get default key bindings." << endl;
   if ( KeyType == "global" ) {
+    KAccelActions* keys = &actions;
 // see also KKeyModule::init() below !!!
-#define WITH_LABELS
+#define NOSLOTS
+#define KShortcuts KAccelShortcuts
 #include "../../kwin/kwinbindings.cpp"
 #include "../../kicker/core/kickerbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
 #include "../../klipper/klipperbindings.cpp"
 #include "../../kxkb/kxkbbindings.cpp"
-#undef WITH_LABELS
-    KeyScheme = "Global Key Scheme " ;
-    KeySet    = "Global Keys" ;
+#undef KShortcuts
+    KeyScheme = "Global Key Scheme";
+    KeySet    = "Global Keys";
     // Sorting Hack: I'll re-write the module once feature-adding begins again.
     if( bSeriesOnly || bSeriesNone ) {
-	KKeyMapOrder *pMapOrder = &keys->keyInsertOrder();
-	int j = 0;
-	for( int i = 0; i < (int)pMapOrder->count(); i++ ) {
-		QString sConfigKey = (*pMapOrder)[i];
-		kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
+	for( uint i = 0; i < actions.size(); i++ ) {
+		QString sConfigKey = actions[i].m_sName;
+		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.findRev( ' ' );
 		bool bIsNum = false;
 		if( iLastSpace >= 0 )
 			sConfigKey.mid( iLastSpace+1 ).toInt( &bIsNum );
 
-		if( (bSeriesOnly && bIsNum) || (bSeriesNone && !bIsNum) || sConfigKey.contains( ':' ) )
-			mapOrder[j++] = sConfigKey;
+		kdDebug(125) << "sConfigKey: " << sConfigKey
+			<< " bIsNum: " << bIsNum
+			<< " bSeriesOnly: " << bSeriesOnly << endl;
+		if( ((bSeriesOnly && !bIsNum) || (bSeriesNone && bIsNum)) && !sConfigKey.contains( ':' ) ) {
+			actions.removeAction( sConfigKey );
+			i--;
+		}
 	}
     }
   }
@@ -89,20 +93,18 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   if ( KeyType == "standard" ) {
     for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++) {
       KStdAccel::StdAccel id = (KStdAccel::StdAccel)i;
-      keys->insertItem( KStdAccel::description(id),
-                        KStdAccel::action(id),
-                        KStdAccel::defaultKey3(id),
-                        KStdAccel::defaultKey4(id),
-                        true );
+      actions.insertAction( KStdAccel::action(id),
+                          KStdAccel::description(id),
+                          KStdAccel::defaultKey3(id),
+                          KStdAccel::defaultKey4(id) );
     }
 
-    KeyScheme = "Standard Key Scheme " ;
-    KeySet    = "Keys" ;
+    KeyScheme = "Standard Key Scheme";
+    KeySet    = "Keys";
   }
 
-  keys->setConfigGlobal( true );
-  keys->setConfigGroup( KeySet );
-  keys->readSettings();
+  //kdDebug(125) << "KKeyModule::init() - Read current key bindings from config." << endl;
+  //actions.readActions( KeySet );
 
   sFileList = new QStringList();
   sList = new QListBox( this );
@@ -133,28 +135,23 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   // Hack to get this setting only displayed once.  It belongs in main.cpp instead.
   // That move will take a lot of UI redesigning, though, so i'll do it once CVS
   //  opens up for feature commits again. -- ellis
-  /* Needed to remove because this depended upon non-BC changes in KeyEntry.
-  / If this is the "Global Keys" section of the KDE Control Center:
+  /* Needed to remove because this depended upon non-BC changes in KeyEntry.*/
+  // If this is the "Global Keys" section of the KDE Control Center:
   if( isGlobal && !bSeriesOnly ) {
 	preferMetaBt = new QCheckBox( i18n("Prefer 4-Modifier Defaults"), this );
-	if( !KAccel::keyboardHasMetaKey() )
+	if( !KKeySequence::keyboardHasMetaKey() )
 		preferMetaBt->setEnabled( false );
-	preferMetaBt->setChecked( KAccel::useFourModifierKeys() );
+	preferMetaBt->setChecked( KKeySequence::useFourModifierKeys() );
 	connect( preferMetaBt, SIGNAL(clicked()), SLOT(slotPreferMeta()) );
 	QWhatsThis::add( preferMetaBt, i18n("If your keyboard has a Meta key, but you would "
 		"like KDE to prefer the 3-modifier configuration defaults, then this option "
 		"should be unchecked.") );
-  } else*/
+  } else
 	preferMetaBt = 0;
 
   KSeparator* line = new KSeparator( KSeparator::HLine, this );
 
-  dict = keys->keyDict();
-
-  if ( KeyType == "global" )
-    kc = new KeyChooserSpec( &dict, mapOrder.count() ? &mapOrder : &keys->keyInsertOrder(), this, isGlobal );
-  else
-    kc =  new KeyChooserSpec( &dict, this, isGlobal );
+  kc = new KeyChooserSpec( actions, this, isGlobal );
   connect( kc, SIGNAL( keyChange() ), this, SLOT( slotChanged() ) );
 
   readScheme();
@@ -177,28 +174,24 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 
 KKeyModule::~KKeyModule (){
   //kdDebug() << "KKeyModule destructor" << endl;
-  delete keys;
 }
 
 void KKeyModule::load()
 {
-  for (KKeyEntryMap::Iterator it = dict.begin(); it != dict.end(); ++it)
-  {
-      (*it).aConfigKeyCode = (*it).aCurrentKeyCode;
-  }
   kc->listSync();
 }
 
 void KKeyModule::save()
 {
   if( preferMetaBt )
-    KKey::useFourModifierKeys( preferMetaBt->isChecked() );
+    KKeySequence::useFourModifierKeys( preferMetaBt->isChecked() );
 
-  keys->setKeyDict( dict );
-  keys->writeSettings();
+  kc->commitChanges();
+  actions.writeActions( KeySet, 0, true, true );
   if ( KeyType == "global" ) {
     if ( !kapp->dcopClient()->isAttached() )
       kapp->dcopClient()->attach();
+    // TODO: create a reconfigureKeys() method.
     kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
     kapp->dcopClient()->send("kdesktop", "", "configure()", "");
     kapp->dcopClient()->send("kicker", "Panel", "configure()", "");
@@ -209,7 +202,7 @@ void KKeyModule::defaults()
 {
   if( preferMetaBt )
     preferMetaBt->setChecked( false );
-  KKey::useFourModifierKeys( false );
+  KKeySequence::useFourModifierKeys( false );
   kc->allDefault();
 }
 
@@ -243,16 +236,21 @@ void KKeyModule::slotRemove()
 void KKeyModule::slotChanged( )
 {
   emit changed(true);
-  emit keysChanged( &dict );
+  //emit keysChanged( &dict );
 }
 
 void KKeyModule::slotSave( )
 {
+    kdDebug(125) << "KKeyModule::slotSave( )" << endl;
     KSimpleConfig config(*sFileList->at( sList->currentItem() ) );
+    kdDebug(125) << "KKeyModule::slotSave( ) A" << endl;
     //  global=true is necessary in order to
     //  let both 'Global Shortcuts' and 'Shortcut Sequences' be
     //  written to the same scheme file.
-    KAccel::writeKeyMap( dict, KeyScheme, &config, KeyType == "global" );
+    kc->commitChanges();
+    kdDebug(125) << "KKeyModule::slotSave( ) B" << endl;
+    actions.writeActions( KeyScheme, &config, KeyType == "global", KeyType == "global" );
+    kdDebug(125) << "KKeyModule::slotSave( ) C" << endl;
 }
 
 void KKeyModule::slotPreferMeta()
@@ -272,10 +270,10 @@ void KKeyModule::readScheme( int index )
     if( index == 0 )	config = new KConfig( "kdeglobals" );
     else		config = new KSimpleConfig( *sFileList->at( index ), true );
 
-    KAccel::readKeyMap( dict, index == 0 ? KeySet : KeyScheme, config );
+    actions.readActions( (index == 0) ? KeySet : KeyScheme, config );
+    kc->listSync();
     delete config;
   }
-  kc->listSync();
 }
 
 void KKeyModule::slotAdd()
@@ -423,8 +421,9 @@ void KKeyModule::readSchemeNames( )
   sFileList->clear();
   sList->insertItem( i18n("Current Scheme"), 0 );
   sFileList->append( "Not a kcsrc file" );
-  sList->insertItem( i18n("KDE Default for 3 Modifiers (Alt/Ctrl/Shift)"), 1 );
+  sList->insertItem( i18n("KDE Traditional"), 1 );
   sFileList->append( "Not a kcsrc file" );
+  //sList->insertItem( i18n("KDE Extended (With 'Win' Key)"), 2 );
   //sList->insertItem( i18n("KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)"), 2 );
   //sFileList->append( "Not a kcsrc file" );
   nSysSchemes = 2;
@@ -434,10 +433,11 @@ void KKeyModule::readSchemeNames( )
     // KPersonalizer relies on .kksrc files containing all the keyboard shortcut
     //  schemes for various setups.  It also requires the KDE defaults to be in
     //  a .kksrc file.  The KDE defaults shouldn't be listed here.
-    if( r.search( *it ) != -1 )
-       continue;
+    //if( r.search( *it ) != -1 )
+    //   continue;
 
     KSimpleConfig config( *it, true );
+    // TODO: Put 'Name' in "Settings" group
     config.setGroup( KeyScheme );
     QString str = config.readEntry( "Name" );
 
@@ -446,10 +446,10 @@ void KKeyModule::readSchemeNames( )
   }
 }
 
-void KKeyModule::updateKeys( const KKeyEntryMap* map_P )
+/*void KKeyModule::updateKeys( const KAccelActions* map_P )
     {
     kc->updateKeys( map_P );
-    }
+    }*/
 
 // write all the global keys to kdeglobals
 // this is needed to be able to check for conflicts with global keys in app's keyconfig
@@ -458,11 +458,6 @@ void KKeyModule::init()
 {
   kdDebug(125) << "KKeyModule::init()\n";
 
-    {
-    KSimpleConfig cfg( "kdeglobals" );
-    cfg.deleteGroup( "Global Keys" );
-    }
-
   /*kdDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
   KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
   QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
@@ -470,53 +465,48 @@ void KKeyModule::init()
   bool bUseFourModifierKeys = KAccel::useFourModifierKeys();
   KGlobal::config()->writeEntry( "User Four Modifier Keys", bUseFourModifierKeys ? "true" : "false", true, true );
   */
-  QWidget workaround;
-  KAccel* keys = new KAccel( &workaround );
+  KAccelActions* keys = new KAccelActions();
 
   kdDebug(125) << "KKeyModule::init() - Load Included Bindings\n";
 // this should match the included files above
+#define NOSLOTS
+#define KShortcuts KAccelShortcuts
 #include "../../klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
 #include "../../kicker/core/kickerbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
 #include "../../kxkb/kxkbbindings.cpp"
-
-  kdDebug(125) << "KKeyModule::init() - Read Modifier Mapping\n";
-  KKeyX11::readModifierMapping();
+#undef KShortcuts
 
   kdDebug(125) << "KKeyModule::init() - Read Config Bindings\n";
-  keys->setConfigGlobal( true );
-  keys->setConfigGroup( "Global Keys" );
-  keys->readSettings();
+  keys->readActions( "Global Keys" );
+
+  {
+    KSimpleConfig cfg( "kdeglobals" );
+    cfg.deleteGroup( "Global Keys" );
+  }
 
   kdDebug(125) << "KKeyModule::init() - Write Config Bindings\n";
-  keys->writeSettings();
+  keys->writeActions( "Global Keys", 0, true, true );
 }
 
 //-----------------------------------------------------------------
 // KeyChooserSpec
 //-----------------------------------------------------------------
 
-KeyChooserSpec::KeyChooserSpec( KKeyEntryMap *aKeyDict, KKeyMapOrder *pKeyOrder, QWidget* parent, bool global_P )
-    : KKeyChooser( aKeyDict, pKeyOrder, parent, global_P, false, true ), global( global_P )
+KeyChooserSpec::KeyChooserSpec( KAccelActions& actions, QWidget* parent, bool bGlobal )
+    : KKeyChooser( actions, parent, bGlobal, false, true ), m_bGlobal( bGlobal )
     {
-    if( global )
-        globalDict()->clear(); // don't check against global keys twice
+    //if( global )
+    //    globalDict()->clear(); // don't check against global keys twice
     }
 
-KeyChooserSpec::KeyChooserSpec( KKeyEntryMap *aKeyDict, QWidget* parent, bool global_P )
-    : KKeyChooser( aKeyDict, parent, global_P, false, true ), global( global_P )
-    {
-    if( global )
-        globalDict()->clear(); // don't check against global keys twice
-    }
-
-void KeyChooserSpec::updateKeys( const KKeyEntryMap* map_P )
+/*void KeyChooserSpec::updateKeys( const KAccelActions* map_P )
     {
     if( global )
         {
         stdDict()->clear();
-        for( KKeyEntryMap::ConstIterator gIt( map_P->begin());
+        for( KAccelActions::ConstIterator gIt( map_P->begin());
              gIt != map_P->end();
              ++gIt )
             {
@@ -528,7 +518,7 @@ void KeyChooserSpec::updateKeys( const KKeyEntryMap* map_P )
     else
         {
         globalDict()->clear();
-        for( KKeyEntryMap::ConstIterator gIt( map_P->begin());
+        for( KAccelActions::ConstIterator gIt( map_P->begin());
              gIt != map_P->end();
              ++gIt )
             {
@@ -538,4 +528,4 @@ void KeyChooserSpec::updateKeys( const KKeyEntryMap* map_P )
             }
         }
     }
-
+*/

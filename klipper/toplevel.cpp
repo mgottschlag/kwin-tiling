@@ -16,6 +16,7 @@
 #include <qpainter.h>
 
 #include <kaboutdata.h>
+#include <kaccelbase.h>
 #include <kaction.h>
 #include <kapp.h>
 #include <kconfig.h>
@@ -109,17 +110,14 @@ TopLevel::TopLevel()
     m_pixmap = new QPixmap(mouse);
     resize( m_pixmap->size() );
 
-    globalKeys = new KGlobalAccel();
+    globalKeys = new KGlobalAccel(this);
     KGlobalAccel* keys = globalKeys;
 #include "klipperbindings.cpp"
-    globalKeys->connectItem("show-klipper-popupmenu", this,
-                            SLOT(slotPopupMenu()));
-    globalKeys->connectItem("repeat-last-klipper-action", this,
-                            SLOT(slotRepeatAction()));
-    globalKeys->connectItem("toggle-clipboard-actions", this,
-                            SLOT( toggleURLGrabber()));
     globalKeys->readSettings();
-    toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
+    globalKeys->updateConnections();
+    KAccelAction* pAction = globalKeys->basePtr()->actionPtr("Enable/Disable Clipboard Actions");
+    uint keyCombQt = pAction->getShortcut(0).getSequence(0).getKey(0).keyQt();
+    toggleURLGrabAction->setAccel(keyCombQt);
 
     connect( toggleURLGrabAction, SIGNAL( toggled( bool )), this,
 	     SLOT( setURLGrabberEnabled( bool )));
@@ -128,7 +126,6 @@ TopLevel::TopLevel()
 
 TopLevel::~TopLevel()
 {
-    delete globalKeys;
     delete m_checkTimer;
     delete m_popup;
     delete m_clipDict;
@@ -398,9 +395,9 @@ void TopLevel::slotConfigure()
         readConfiguration( kapp->config() );
     }
 
-    KKeyEntryMap map = globalKeys->keyDict();
+    KAccelActions map = globalKeys->actions();
     ConfigDialog *dlg = new ConfigDialog( myURLGrabber->actionList(),
-                                          &map );
+                                          map );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
     dlg->setReplayActionInHistory( bReplayActionInHistory);
@@ -415,9 +412,12 @@ void TopLevel::slotConfigure()
         bPopupAtMouse = dlg->popupAtMousePos();
         bReplayActionInHistory = dlg->replayActionInHistory();
         bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
-        globalKeys->setKeyDict( map );
+        globalKeys->actions().updateShortcuts( map );
         globalKeys->writeSettings();
-	toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
+        globalKeys->updateConnections();
+        KAccelAction* pAction = globalKeys->basePtr()->actionPtr("Enable/Disable Clipboard Actions");
+        uint keyCombQt = pAction->getShortcut(0).getSequence(0).getKey(0).keyQt();
+        toggleURLGrabAction->setAccel(keyCombQt);
 
 //	haveURLGrabber = dlg->enableActions();
 

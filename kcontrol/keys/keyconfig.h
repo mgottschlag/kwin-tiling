@@ -25,9 +25,8 @@ class KKeyModule : public KCModule
 {
 	Q_OBJECT
 public:
-	KAccel *keys;
-        KKeyEntryMap dict;
-	KKeyMapOrder mapOrder;
+	KAccelActions actions;
+        //KAccelActions dict;
         KeyChooserSpec *kc;
 
 	KKeyModule( QWidget *parent, bool isGlobal, bool bSeriesOnly, bool bSeriesNone, const char *name = 0 );
@@ -50,11 +49,11 @@ public slots:
 	void slotRemove();
 	void slotChanged();
 	void slotPreferMeta();
-        void updateKeys( const KKeyEntryMap* map_P );
+        //void updateKeys( const KAccelActions* map_P );
 	void readSchemeNames();
 
 signals:
-        void keysChanged( const KKeyEntryMap* map_P );
+        //void keysChanged( const KAccelActions* map_P );
 
 protected:
 	QListBox *sList;
@@ -67,9 +66,9 @@ protected:
 
 	void readScheme( int index=0 );
 
-        QString KeyType ;
-        QString KeyScheme ;
-        QString KeySet ;
+        QString KeyType;
+        QString KeyScheme;
+        QString KeySet;
 
 };
 
@@ -77,13 +76,11 @@ class KeyChooserSpec : public KKeyChooser
 {
         Q_OBJECT
 public:
-	KeyChooserSpec( KKeyEntryMap *aKeyDict, KKeyMapOrder *pKeyOrder,
-		QWidget* parent, bool global );
-        KeyChooserSpec( KKeyEntryMap *aKeyDict, QWidget* parent,
-                 bool global );
-        void updateKeys( const KKeyEntryMap* map_P );
+        KeyChooserSpec( KAccelActions& actions, QWidget* parent,
+                 bool bGlobal );
+        //void updateKeys( const KAccelActions* map_P );
 protected:
-        bool global;
+        bool m_bGlobal;
 };
 
 #endif
