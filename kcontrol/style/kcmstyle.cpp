@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * KCMStyle
  * Copyright (C) 2002 Karol Szwed <gallium@kde.org>
  * Copyright (C) 2002 Daniel Molkentin <molkentin@kde.org>
@@ -535,6 +533,7 @@ void KCMStyle::save()
 	m_bEffectsDirty  = false;
 	m_bToolbarsDirty = false;
 	m_bStyleDirty    = false;
+	setChanged( false );
 }
 
 
@@ -625,19 +624,19 @@ QString KCMStyle::quickHelp() const
 void KCMStyle::setEffectsDirty()
 {
 	m_bEffectsDirty = true;
-	emit changed(true);
+	setChanged(true);
 }
 
 void KCMStyle::setToolbarsDirty()
 {
 	m_bToolbarsDirty = true;
-	emit changed(true);
+	setChanged(true);
 }
 
 void KCMStyle::setStyleDirty()
 {
 	m_bStyleDirty = true;
-	emit changed(true);
+	setChanged(true);
 }
 
 // ----------------------------------------------------------------
