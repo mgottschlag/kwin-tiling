@@ -266,15 +266,15 @@ void KDMSessionsWidget::slotConsoleCheckToggled(bool on)
     console_lined->setEnabled(on);
 }
 
-#ifdef __linux__
 void KDMSessionsWidget::slotLiloCheckToggled(bool on)
 {
+#ifdef __linux__
     lilocmd_label->setEnabled(on);
     lilocmd_lined->setEnabled(on);
     lilomap_label->setEnabled(on);
     lilomap_lined->setEnabled(on);
-}
 #endif
+}
 
 void KDMSessionsWidget::slotSessionHighlighted(int s)
 {

@@ -58,9 +58,7 @@ protected:
 
 protected slots:
 	void slotConsoleCheckToggled(bool);
-#ifdef __linux__
 	void slotLiloCheckToggled(bool);
-#endif
 	void slotAddSessionType();
 	void slotRemoveSessionType();
 	void slotSessionHighlighted(int);
