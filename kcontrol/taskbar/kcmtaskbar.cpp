@@ -62,7 +62,11 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
   vbox->addSpacing(fontMetrics().lineSpacing());
 
 	m_pAllWindows = new QRadioButton( i18n("Display &full windows list"), winlist_group);
+  QWhatsThis::add(m_pAllWindows, i18n("Check this option if you want"
+    " the Windows list to include all of the existing windows at once."));
 	m_pCurrent = new QRadioButton( i18n("Display c&urrent desktop list"), winlist_group);
+  QWhatsThis::add(m_pCurrent, i18n("Check this option if you want"
+    " the Windows list to display windows from current desktop only."));
   vbox->addWidget(m_pAllWindows);
   vbox->addWidget(m_pCurrent);
 
@@ -76,8 +80,14 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
   vbox->addSpacing(fontMetrics().lineSpacing());
 
 	m_pName = new QRadioButton( i18n("Sort by &name"), listorder_group);
+  QWhatsThis::add(m_pName, i18n("Check this option if you want"
+    " the Windows list to be sorted by name."));
 	m_pLastUse = new QRadioButton( i18n("Sort by &last use"), listorder_group);
+  QWhatsThis::add(m_pLastUse, i18n("Check this option if you want"
+    " the Windows list to be sorted by last use."));
 	m_pDesktop = new QRadioButton( i18n("Sort by deskto&p"), listorder_group);
+  QWhatsThis::add(m_pDesktop, i18n("Check this option if you want"
+    " the Windows list to be sorted by desktop."));
   vbox->addWidget(m_pName);
   vbox->addWidget(m_pLastUse);
   vbox->addWidget(m_pDesktop);
@@ -238,10 +248,14 @@ void TaskbarConfig::defaults()
 QString TaskbarConfig::quickHelp() const
 {
   return i18n("<h1>Taskbar</h1> You can configure the taskbar here."
-    " This includes options such as whether or not the taskbar should be"
-    " embedded in the panel or float outside (default: embedded).  You"
-    " can also configure whether or not the taskbar should show all"
-    " windows at once or only those on the current desktop");
+    " This includes options such as whether or not the taskbar should show all"
+		" windows at once or only those on the current desktop."
+    " You can also configure whether or not Windows list button will be displayed"
+    " and how Windows list will appear.");
+//    " This includes options such as whether or not the taskbar should be"
+//    " embedded in the panel or float outside (default: embedded).  You"
+//    " can also configure whether or not the taskbar should show all"
+//    " windows at once or only those on the current desktop");
 }
 
 /*void TaskbarConfig::slotExternal()
