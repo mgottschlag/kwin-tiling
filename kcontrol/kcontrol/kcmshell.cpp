@@ -95,6 +95,7 @@ kcmApplication::isRunning()
 {
     if (dcopClient()->appId() == m_dcopName)
        return false; // We are the one and only.
+    dcopClient()->attach(); // Reregister as anonymous
 
     dcopClient()->setNotifications(true);
 
