@@ -59,8 +59,14 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   }
 
   if ( KeyType == "standard" ) {
-          for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++)
-                  keys->insertStdItem((KStdAccel::StdAccel)i);
+          for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++) {
+              KStdAccel::StdAccel id = (KStdAccel::StdAccel)i;
+              keys->insertItem( KStdAccel::description(id),
+                                 KStdAccel::action(id),
+                                 KStdAccel::key(id),
+                                 true );
+          }
+
           KeyScheme = "Standard Key Scheme " ;
           KeySet    = "Keys" ;
           check_against_std_keys  = false ;
