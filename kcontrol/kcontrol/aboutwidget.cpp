@@ -267,10 +267,8 @@ void AboutWidget::resizeEvent(QResizeEvent*)
       setMouseTracking(true);
       QFont headingFont = f2;
       headingFont.setPointSize(headingFont.pointSize()+5);
-      headingFont.setUnderline(true);
-      QFont lf1 = f1, lf2 = f2;
-      lf1.setUnderline(true);
-      lf2.setUnderline(true);
+      QFont lf = f2;
+      lf.setUnderline(true);
 
       p.setFont(headingFont);
       p.drawText(xoffset, yoffset, static_cast<ModuleTreeItem*>(_category)->caption());
@@ -279,11 +277,13 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
       // traverse the list
       _moduleLinks.clear();
-      _linkBuffer.resize(bwidth, bheight);
+      _linkBuffer.resize(xadd, bheight);
       _linkArea = p.viewport();
+      _linkArea.setWidth(xadd);
       QPainter lp(&_linkBuffer);
       lp.drawPixmap(0, 0, box);
       lp.setPen(QColor(0x19, 0x19, 0x70)); // same as about:konqueror
+      lp.setFont(lf);
       QListViewItem* pEntry = _category->firstChild();
       while (pEntry != NULL)
         {
@@ -295,7 +295,6 @@ void AboutWidget::resizeEvent(QResizeEvent*)
               szName = module->name();
               szComment = module->comment();
               p.setFont(f2);
-              lp.setFont(lf2);
               QRect bounds;
               p.drawText(xoffset, yoffset,
                 xadd - xoffset, bheight - yoffset,
@@ -305,19 +304,15 @@ void AboutWidget::resizeEvent(QResizeEvent*)
                 AlignLeft | AlignTop | WordBreak, szName);
               int height = bounds.height();
               p.setFont(f1);
-              lp.setFont(lf1);
               p.drawText(xoffset + xadd, yoffset,
                 bwidth - xadd - xoffset, bheight - yoffset,
                 AlignLeft | AlignTop | WordBreak, szComment, -1, &bounds);
-              lp.drawText(xoffset + xadd, yoffset,
-                bwidth - xadd - xoffset, bheight - yoffset,
-                AlignLeft | AlignTop | WordBreak, szComment);
               height = QMAX(height, bounds.height());
               ModuleLink *linkInfo = new ModuleLink;
               linkInfo->module = module;
               linkInfo->linkArea = QRect(xoffset + p.viewport().left(),
                                          yoffset + p.viewport().top(),
-                                         bwidth, height);
+                                         xadd, height);
               _moduleLinks.append(linkInfo);
               yoffset += height + 5;
             }
