@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>703</width>
+            <width>694</width>
             <height>472</height>
         </rect>
     </property>
@@ -79,23 +79,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <spacer row="5" column="0">
-                    <property name="name">
-                        <cstring>Spacer5</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>31</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
                 <spacer row="2" column="0">
                     <property name="name">
                         <cstring>Spacer6</cstring>
@@ -113,20 +96,6 @@
                         </size>
                     </property>
                 </spacer>
-                <widget class="QRadioButton" row="4" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_background</cstring>
-                    </property>
-                    <property name="focusPolicy">
-                        <enum>NoFocus</enum>
-                    </property>
-                    <property name="text">
-                        <string>Allow other &amp;windows to cover the panel</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If this option is selected, the panel will allow itself to be covered by other windows.</string>
-                    </property>
-                </widget>
                 <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>m_manual</cstring>
@@ -139,34 +108,6 @@
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>If this option is selected, the only way to hide the panel will be to click on the hide buttons that appear on either end of it.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="3" column="1">
-                    <property name="name">
-                        <cstring>m_autoHideSwitch</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>Show panel when switching &amp;desktops</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If this option is enabled, the panel will automatically show itself for a brief period of time when the desktop is switched so you can see which desktop you are on.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_automatic</cstring>
-                    </property>
-                    <property name="focusPolicy">
-                        <enum>NoFocus</enum>
-                    </property>
-                    <property name="text">
-                        <string>Hide a&amp;utomatically</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If this option is selected, the panel will automatically hide after a period of time and reappear when you move the mouse to the screen edge where the panel is hidden. This is particularly useful for small screen resolutions, such as on laptops.</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget" row="2" column="1">
@@ -244,7 +185,35 @@
                         </spacer>
                     </hbox>
                 </widget>
-                <widget class="QLayoutWidget" row="5" column="1">
+                <widget class="QRadioButton" row="3" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_background</cstring>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>NoFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string>Allow other &amp;windows to cover the panel</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If this option is selected, the panel will allow itself to be covered by other windows.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_automatic</cstring>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>NoFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string>Hide a&amp;utomatically</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If this option is selected, the panel will automatically hide after a period of time and reappear when you move the mouse to the screen edge where the panel is hidden. This is particularly useful for small screen resolutions, such as on laptops.</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget" row="6" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>layout6</cstring>
                     </property>
@@ -336,6 +305,37 @@
                         </spacer>
                     </hbox>
                 </widget>
+                <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_autoHideSwitch</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>Show panel when switching &amp;desktops</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If this option is enabled, the panel will automatically show itself for a brief period of time when the desktop is switched so you can see which desktop you are on.</string>
+                    </property>
+                </widget>
+                <spacer row="4" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>spacer12</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>50</width>
+                            <height>10</height>
+                        </size>
+                    </property>
+                </spacer>
             </grid>
         </widget>
         <widget class="QGroupBox">
@@ -643,8 +643,6 @@
         </spacer>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>m_automatic</sender>
@@ -717,6 +715,18 @@
         <signal>activated(int)</signal>
         <receiver>HidingTabBase</receiver>
         <slot>switchPanel(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_automatic</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_backgroundRaise</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_background</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_autoHideSwitch</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>

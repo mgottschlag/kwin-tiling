@@ -40,6 +40,7 @@ HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
     // connections
     connect(m_manual,SIGNAL(toggled(bool)), SIGNAL(changed()));
     connect(m_automatic, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_automatic, SIGNAL(toggled(bool)), SLOT(backgroundModeClicked()));
     connect(m_background,SIGNAL(toggled(bool)), SIGNAL(changed()));
     connect(m_background, SIGNAL(toggled(bool)), SLOT(backgroundModeClicked()));
     connect(m_hideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
@@ -258,7 +259,8 @@ int HidingTab::triggerConfigToCombo(int trigger)
 
 void HidingTab::backgroundModeClicked()
 {
-    m_backgroundPos->setEnabled(m_background->isChecked() &&
+    m_backgroundPos->setEnabled((m_automatic->isChecked() ||
+                                m_background->isChecked()) &&
                                 m_backgroundRaise->isChecked());
 }
 
