@@ -1,6 +1,14 @@
 [Desktop Entry]
 Type=Service
 Name=RPM-Find
+Name[de]=RPM-Suche
+Name[eo]=RPM-trovilo
+Name[es]=RPM-Find (buscador de paquetes RPM)
+Name[fi]=RPM-haku
+Name[is]=RPM-leit
+Name[ko]=RPM 찾기
+Name[lv]=RPM-Meklēšana
+Name[zh_TW.Big5]=RPM 搜尋
 ServiceTypes=SearchProvider
 Keys=rf,rpmfind
 Query=http://rpmfind.com/RPM/\\1.html
