@@ -92,9 +92,9 @@ void CfgComponent::load(KConfig *cfg) {
 		m_lookupDict.insert((*tit)->name(),new QString((*tit)->desktopEntryName()));
 		m_revLookupDict.insert((*tit)->desktopEntryName(),new QString((*tit)->name()));;
 	}
-        
+
 	KConfig *store = new KConfig(cfg->readEntry("storeInFile","null"));
-        store->setGroup(cfg->readEntry("valueSection",""));               
+        store->setGroup(cfg->readEntry("valueSection",""));
 	QString setting=store->readEntry(cfg->readEntry("valueName","kcm_componenchooser_null"),"");
         delete store;
 	if (setting.isEmpty()) setting=cfg->readEntry("defaultImplementation","");
@@ -107,6 +107,11 @@ void CfgComponent::load(KConfig *cfg) {
 				break;
 			}
 	emit changed(false);
+}
+
+void CfgComponent::defaults()
+{
+    //todo
 }
 
 //END  General kpart based Component selection
@@ -129,12 +134,16 @@ CfgEmailClient::~CfgEmailClient() {
 	delete pSettings;
 }
 
+void CfgEmailClient::defaults()
+{
+    load(0L);
+}
 
 void CfgEmailClient::load(KConfig *)
 {
 	QString emailClient = pSettings->getSetting(KEMailSettings::ClientProgram);
 	bool useKMail = (emailClient.isEmpty());
-    
+
 	kmailCB->setChecked(useKMail);
 	otherCB->setChecked(!useKMail);
 	txtEMailClient->setText(emailClient);
@@ -208,6 +217,11 @@ CfgTerminalEmulator::~CfgTerminalEmulator() {
 void CfgTerminalEmulator::configChanged()
 {
 	emit changed(true);
+}
+
+void CfgTerminalEmulator::defaults()
+{
+    load(0L);
 }
 
 
@@ -367,6 +381,12 @@ void ComponentChooser::save() {
 }
 
 void ComponentChooser::restoreDefault() {
+    if (configWidget)
+    {
+        static_cast<CfgPlugin*>(configWidget->qt_cast("CfgPlugin"))->defaults();
+        emitChanged(true);
+    }
+
 /*
 	txtEMailClient->setText("kmail");
 	chkRunTerminal->setChecked(false);

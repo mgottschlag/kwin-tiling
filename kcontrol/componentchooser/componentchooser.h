@@ -34,9 +34,10 @@ class CfgPlugin
 {
 public:
 	CfgPlugin(){};
-	virtual ~CfgPlugin(){};	
+	virtual ~CfgPlugin(){};
 	virtual void load(KConfig *cfg)=0;
 	virtual void save(KConfig *cfg)=0;
+	virtual void defaults()=0;
 };
 
 
@@ -48,6 +49,7 @@ public:
 	virtual ~CfgComponent();
 	virtual void load(KConfig *cfg);
 	virtual void save(KConfig *cfg);
+    virtual void defaults();
 
 protected:
 	QDict<QString>  m_lookupDict,m_revLookupDict;
@@ -67,6 +69,7 @@ public:
 	virtual ~CfgEmailClient();
 	virtual void load(KConfig *cfg);
 	virtual void save(KConfig *cfg);
+    virtual void defaults();
 
 
 private:
@@ -87,6 +90,7 @@ public:
 	virtual ~CfgTerminalEmulator();
 	virtual void load(KConfig *cfg);
 	virtual void save(KConfig *cfg);
+    virtual void defaults();
 
 protected slots:
 	void selectTerminalApp();
