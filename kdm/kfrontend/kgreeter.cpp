@@ -159,18 +159,20 @@ KGreeter::insertUsers( QIconView *iconview)
 		item->setDragEnabled(false);
 	    }
 	}
-	endpwent();
     } else {
 	QStringList::ConstIterator it = kdmcfg->_users.begin();
 	for( ; it != kdmcfg->_users.end(); ++it) {
-	    QPixmap p( locate("user_pic",
-			      *it + QString::fromLatin1(".png")));
-	    if( p.isNull())
-		p = default_pix;
-	    QIconViewItem *item = new QIconViewItem( iconview, *it, p);
-	    item->setDragEnabled(false);
+	    if (getpwnam((*it).latin1())) {
+		QPixmap p( locate("user_pic",
+				  *it + QString::fromLatin1(".png")));
+		if( p.isNull())
+		    p = default_pix;
+		QIconViewItem *item = new QIconViewItem( iconview, *it, p);
+		item->setDragEnabled(false);
+	    }
 	}
     }
+    endpwent();
     if( kdmcfg->_sortUsers)
         iconview->sort();
 }
