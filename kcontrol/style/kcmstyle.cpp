@@ -69,17 +69,6 @@
 
 /**** DLL Interface for kcontrol ****/
 
-void applyMultiHead(bool active)
-{
-	// Pass env. var to kdeinit.
-	QCString name = "KDE_MULTIHEAD";
-	QCString value = active ? "true" : "false";
-	QByteArray params;
-	QDataStream stream(params, IO_WriteOnly);
-	stream << name << value;
-	kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
-}
-
 // Plugin Interface
 // Danimo: Why do we use the old interface?!
 extern "C"
@@ -101,11 +90,6 @@ extern "C"
         if (exportKDEColors)
             flags |= KRdbExportColors;
         runRdb( flags );
-
-        // This key has no GUI apparently
-        bool isActive = !config.readBoolEntry( "disableMultihead", false) &&
-                        (ScreenCount(qt_xdisplay()) > 1);
-        applyMultiHead( isActive );
 
         // Write some Qt root property.
 #ifndef __osf__      // this crashes under Tru64 randomly -- will fix later

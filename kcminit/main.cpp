@@ -17,6 +17,8 @@
 
 */
 
+#include <config.h>
+
 #include <qfile.h>
 
 #include <kapplication.h>
@@ -26,6 +28,9 @@
 #include <klibloader.h>
 #include <kdebug.h>
 #include <dcopclient.h>
+#include <kconfig.h>
+
+#include <X11/Xlib.h>
 
 static KCmdLineOptions options[] =
 {
@@ -115,6 +120,23 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
   }
 
+  if ( !kapp->dcopClient()->isAttached() )
+    kapp->dcopClient()->attach();
+
+  // This key has no GUI apparently
+  KConfig config("kcmdisplayrc", true );
+  config.setGroup("X11");
+  bool multihead = !config.readBoolEntry( "disableMultihead", false) &&
+                    (ScreenCount(qt_xdisplay()) > 1);
+  // Pass env. var to kdeinit.
+  QCString name = "KDE_MULTIHEAD";
+  QCString value = multihead ? "true" : "false";
+  QByteArray params;
+  QDataStream stream(params, IO_WriteOnly);
+  stream << name << value;
+  kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
+  setenv( name, value, 1 ); // apply effect also to itself
+
   QStrList alreadyInitialized;
 
   // look for X-KDE-Init=... entries
@@ -145,8 +167,6 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
       }
   }
 
-  if ( !kapp->dcopClient()->isAttached() )
-    kapp->dcopClient()->attach();
   kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)",  QString("kcminit"));
 
   return 0;
