@@ -1178,13 +1178,17 @@ void KSMServer::storeSesssion()
     config->setGroup("Session" );
     int count =  0;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-	count++;
-	QString n = QString::number(count);
-	config->writeEntry( QString("program")+n, c->program() );
-	config->writeEntry( QString("restartCommand")+n, c->restartCommand() );
-	config->writeEntry( QString("discardCommand")+n, c->discardCommand() );
-	config->writeEntry( QString("restartStyleHint")+n, c->restartStyleHint() );
-	config->writeEntry( QString("userId")+n, c->userId() );
+        int restartHint = c->restartStyleHint();
+        if (restartHint != SmRestartNever)
+        {
+            count++;
+            QString n = QString::number(count);
+	    config->writeEntry( QString("program")+n, c->program() );
+	    config->writeEntry( QString("restartCommand")+n, c->restartCommand() );
+	    config->writeEntry( QString("discardCommand")+n, c->discardCommand() );
+	    config->writeEntry( QString("restartStyleHint")+n, restartHint );
+	    config->writeEntry( QString("userId")+n, c->userId() );
+        }
     }
     config->writeEntry( "count", count );
     config->sync();
@@ -1249,6 +1253,11 @@ void KSMServer::restoreSessionInternal()
     int count =  config->readNumEntry( "count" );
     for ( int i = 1; i <= count; i++ ) {
 	QString n = QString::number(i);
+        if ( config->readNumEntry( QString("restartStyleHint")+n ) == SmRestartNever)
+        {
+           progress--;
+           continue;
+        }
 	if ( wm != config->readEntry( QString("program")+n ) ) {
 	    startApplication( config->readListEntry( QString("restartCommand")+n ) );
 	}
