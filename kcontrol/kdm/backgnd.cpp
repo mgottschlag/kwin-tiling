@@ -32,6 +32,7 @@
 #include <qdragobject.h>
 #include <qhbox.h>
 #include <qevent.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -77,7 +78,7 @@ void KBGMonitor::dropEvent(QDropEvent *e)
     }
 }
 				
-					
+
 void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 {
     e->accept(QImageDrag::canDecode(e)|| QUriDrag::canDecode(e));
@@ -89,6 +90,7 @@ void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 KBackground::KBackground(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
+    QString wtstr;
     m_pDirs = KGlobal::dirs();
 
     // Top layout
@@ -135,6 +137,12 @@ KBackground::KBackground(QWidget *parent, const char *name)
     lbl->setBuddy(m_pBackgroundBox);
     grid->addWidget(m_pBackgroundBox, 1, 1);
 
+    wtstr = i18n("Here you can change the way colors are applied to KDM's background."
+      " Apart of just a plain color you can choose gradients, custom patterns or a"
+      " background program (e.g. xearth).");
+    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( m_pBackgroundBox, wtstr );
+
     lbl = new QLabel(i18n("Color &1:"), group);
     lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
@@ -143,6 +151,12 @@ KBackground::KBackground(QWidget *parent, const char *name)
 	    SLOT(slotColor1(const QColor &)));
     grid->addWidget(m_pColor1But, 2, 1);
     lbl->setBuddy(m_pColor1But);
+
+    wtstr = i18n("By clicking on these buttons you can choose the colors KDM will use"
+      " to paint the background. If you selected a gradient or a pattern, you can choose"
+      " two colors.");
+    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( m_pColor1But, wtstr );
 
     lbl = new QLabel(i18n("Color &2:"), group);
     lbl->setFixedSize(lbl->sizeHint());
@@ -153,6 +167,9 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->addWidget(m_pColor2But, 3, 1);
     lbl->setBuddy(m_pColor2But);
 
+    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( m_pColor2But, wtstr );
+
     QHBoxLayout *hbox = new QHBoxLayout();
     grid->addLayout(hbox, 4, 1);
     m_pBGSetupBut = new QPushButton(i18n("&Setup"), group);
@@ -160,6 +177,9 @@ KBackground::KBackground(QWidget *parent, const char *name)
     connect(m_pBGSetupBut, SIGNAL(clicked()), SLOT(slotBGSetup()));
     hbox->addWidget(m_pBGSetupBut);
     hbox->addStretch();
+
+    QWhatsThis::add( m_pBGSetupBut, i18n("Click here to setup a pattern or a background"
+      " program."));
 
 
     // Preview monitor at (0,1)
@@ -170,6 +190,10 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pMonitor = new KBGMonitor(lbl);
     m_pMonitor->setGeometry(20, 10, 157, 111);
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
+
+    QWhatsThis::add( m_pMonitor, i18n("Here you can see a preview of how KDM's background"
+      " will look like using the current settings. You can even set a background picture"
+      " by dragging it onto the preview (e.g. from Konqueror).") );
 
     // Wallpaper at (1,1)
     group = new QGroupBox(i18n("Wallpaper"), this);
@@ -187,6 +211,11 @@ KBackground::KBackground(QWidget *parent, const char *name)
     lbl->setBuddy(m_pArrangementBox);
     grid->addWidget(m_pArrangementBox, 1, 1);
 
+    wtstr = i18n("Here you can choose the way the selected picture will be used to cover"
+      " KDM's background. If you select \"No Wallpaper\", the colors settings will be used.");
+    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( m_pArrangementBox, wtstr );
+
     lbl = new QLabel(i18n("&Wallpaper"), group);
     lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
@@ -196,6 +225,13 @@ KBackground::KBackground(QWidget *parent, const char *name)
 	    SLOT(slotWallpaper(const QString &)));
     grid->addWidget(m_pWallpaperBox, 2, 1);
 
+    wtstr = i18n("Here you can choose from several wallpaper pictures, i.e. pictures"
+      " that have been installed in the system's or your wallpaper directory. If you"
+      " want to use other pictures, you can either click on the \"Browse\" button or"
+      " drag a picture (e.g. from Konqueror) onto the preview.");
+    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( m_pWallpaperBox, wtstr );
+
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 3, 1);
     m_pBrowseBut = new QPushButton(i18n("&Browse"), group);
@@ -204,6 +240,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     hbox->addWidget(m_pBrowseBut);
     hbox->addStretch();
 
+    QWhatsThis::add( m_pBrowseBut, i18n("Click here to choose a wallpaper using a file dialog.") );
 
     m_pCBMulti = new QCheckBox(i18n("M&ultiple:"), group);
     m_pCBMulti->setFixedSize(m_pCBMulti->sizeHint());

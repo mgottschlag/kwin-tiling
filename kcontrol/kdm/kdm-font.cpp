@@ -21,6 +21,7 @@
 #include <qlayout.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
+#include <qwhatsthis.h>
 
 #include <ksimpleconfig.h>
 #include <klocale.h>
@@ -34,9 +35,13 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   QGroupBox *tGroup = new QGroupBox(i18n("Select fonts"), this);
   QGroupBox *bGroup = new QGroupBox(i18n("Example"), this);
 
+  QWhatsThis::add( bGroup, i18n("Shows a preview of the selected font.") );
+
   QPushButton *fontbtn = new QPushButton(i18n("Change font..."), tGroup);
   connect(fontbtn, SIGNAL(clicked()), SLOT(slotGetFont()));
   fontbtn->setFixedSize(fontbtn->sizeHint());
+
+  QWhatsThis::add( fontbtn, i18n("Click here to change the selected font.") );
 
   fontcombo = new QComboBox( FALSE, tGroup );
   connect(fontcombo, SIGNAL(highlighted(int)), SLOT(slotSetFont(int)));
@@ -45,29 +50,34 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   fontcombo->insertItem(i18n("Standard"), 2);
   fontcombo->setFixedSize(fontcombo->sizeHint());
 
+  QWhatsThis::add( fontcombo, i18n("Here you can select the font you want to change."
+    " KDM knows three fonts: <ul><li><em>Greeting:</em> used to display KDM's greeting"
+    " string (see \"Appearance\" tab)</li><li><em>Fail:</em> used to display a message"
+    " when a person fails to login</li><li><em>Standard:</em> used for the rest of the text</li></ul>") );
+
   fontlabel = new QLabel( bGroup );
   fontlabel->setFrameStyle(QFrame::WinPanel|QFrame::Sunken);
-  
+
   QBoxLayout *ml = new QVBoxLayout(this, 10);
 
   QBoxLayout *tLayout = new QVBoxLayout(tGroup, 10);
   QBoxLayout *bLayout = new QVBoxLayout(bGroup, 10);
   tLayout->addSpacing(tGroup->fontMetrics().height());
   bLayout->addSpacing(bGroup->fontMetrics().height());
-  
+
   QBoxLayout *tLayout2 = new QHBoxLayout();
   tLayout->addLayout(tLayout2, 1);
   tLayout2->addWidget(fontbtn);
   tLayout2->addWidget(fontcombo);
   tLayout2->addStretch();
-  
+
   bLayout->addWidget(fontlabel);
-  
+
   ml->addWidget(tGroup);
   ml->addWidget(bGroup, 3);
   ml->addStretch(2);
 
-  load();  
+  load();
   slotSetFont(0);
 }
 

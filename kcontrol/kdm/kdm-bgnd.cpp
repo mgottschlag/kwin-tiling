@@ -15,11 +15,12 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
-*/  
+*/
 
 #include <qframe.h>
 #include <qlayout.h>
 #include <qdragobject.h>
+#include <qwhatsthis.h>
 #include <kpixmapeffect.h>
 #include "kdropsite.h"
 #include "kdm-bgnd.moc"
@@ -43,8 +44,8 @@ void KBGMonitor::setAllowDrop(bool a)
 
 // Destructor
 KDMBackgroundWidget::~KDMBackgroundWidget()
-{ 
-  if(gui) 
+{
+  if(gui)
   {
     delete cGroup;
     delete wpGroup;
@@ -63,11 +64,12 @@ KDMBackgroundWidget::KDMBackgroundWidget(QWidget *parent, const char *name, bool
 
 void KDMBackgroundWidget::setupPage(QWidget *)
 {
+      QString wtstr;
       QLabel *label;
       QGroupBox *tGroup, *lGroup, *rGroup;
       QRadioButton *rb;
       QGridLayout *topLayout = new QGridLayout(this, 2, 2, 10);
-      
+
       QPixmap p = BarIcon("monitor");
 
       tGroup = new QGroupBox( i18n("Preview"), this );
@@ -81,17 +83,19 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       QBoxLayout *tLayout = new QVBoxLayout(tGroup, 10, 10, "tLayout");
       tLayout->addSpacing(tGroup->fontMetrics().height()/2);
       tLayout->addWidget(label, 1, AlignCenter);
-      
+
+      QWhatsThis::add( monitor, i18n("This shows a preview of KDM's background.") );
+
       topLayout->addMultiCellWidget(tGroup, 0, 0, 0, 1);
-      
+
       KDropSite *dropsite = new KDropSite( monitor );
-      connect( dropsite, SIGNAL( dropAction( QDropEvent*) ), 
+      connect( dropsite, SIGNAL( dropAction( QDropEvent*) ),
         this, SLOT( slotQDrop( QDropEvent*) ) );
 
-      connect( dropsite, SIGNAL( dragLeave( QDragLeaveEvent*) ), 
+      connect( dropsite, SIGNAL( dragLeave( QDragLeaveEvent*) ),
         this, SLOT( slotQDragLeave( QDragLeaveEvent*) ) );
 
-      connect( dropsite, SIGNAL( dragEnter( QDragEnterEvent*) ), 
+      connect( dropsite, SIGNAL( dragEnter( QDragEnterEvent*) ),
         this, SLOT( slotQDragEnter( QDragEnterEvent*) ) );
 
       lGroup = new QGroupBox( i18n("Color"), this );
@@ -100,7 +104,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       cGroup->setExclusive( TRUE );
       QBoxLayout *lLayout = new QVBoxLayout(lGroup, 10, 10);
       lLayout->addSpacing(lGroup->fontMetrics().height()/2);
- 
+
       QRadioButton *crb1 = new QRadioButton( i18n("Solid Color"), lGroup );
       cGroup->insert( crb1, Plain );
       lLayout->addWidget(crb1);
@@ -113,29 +117,29 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       cGroup->insert( crb3, Vertical );
       lLayout->addWidget(crb3);
 
-      connect( cGroup, SIGNAL( clicked( int ) ), 
+      connect( cGroup, SIGNAL( clicked( int ) ),
 	       SLOT( slotColorMode( int ) ) );
-      
+
       colButton1 = new KColorButton( color1, lGroup );
       colButton1->setFixedSize( colButton1->sizeHint());
       connect( colButton1, SIGNAL( changed( const QColor & ) ),
                SLOT( slotSelectColor1( const QColor & ) ) );
       lLayout->addWidget(colButton1);
-      
+
       colButton2 = new KColorButton( color1, lGroup );
       colButton2->setFixedSize( colButton2->sizeHint());
       connect( colButton2, SIGNAL( changed( const QColor & ) ),
                SLOT( slotSelectColor2( const QColor & ) ) );
       lLayout->addWidget(colButton2);
-      
+
       topLayout->addWidget(lGroup, 1, 0);
-      
+
       rGroup = new QGroupBox( i18n("Wallpaper"), this );
       QGridLayout *rLayout = new QGridLayout(rGroup, 6, 5, 10);
       rLayout->addRowSpacing(0, rGroup->fontMetrics().height()/2);
       rLayout->setRowStretch(5, 1);
       rLayout->setColStretch(3, 1);
-        
+
       QStringList list = KGlobal::dirs()->findAllResources("wallpaper");
       if(!wallpaper.isEmpty())
         list.append( wallpaper );
@@ -157,7 +161,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 
       wpCombo->setMinimumSize(1, 1);
       rLayout->addMultiCellWidget(wpCombo, 1, 1, 0, 3);
-      
+
       rLayout->addWidget(wpCombo, 1, 0);
       connect( wpCombo, SIGNAL( activated( const QString& ) ),
 		SLOT( slotWallpaper( const QString& )  )  );
@@ -180,7 +184,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       rb = new QRadioButton( i18n("Center"), rGroup );
       wpGroup->insert( rb, Center );
       rLayout->addWidget(rb, 4, 0);
-      
+
       rb = new QRadioButton( i18n("Scale"), rGroup );
       wpGroup->insert( rb, Scale );
       rLayout->addWidget(rb, 2, 1);
@@ -190,7 +194,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       rb = new QRadioButton( i18n("TopRight"), rGroup );
       wpGroup->insert( rb, TopRight );
       rLayout->addWidget(rb, 4, 1);
-      
+
       rb = new QRadioButton( i18n("BottomLeft"), rGroup );
       wpGroup->insert( rb, BottomLeft );
       rLayout->addWidget(rb, 2, 2);
@@ -200,12 +204,12 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       rb = new QRadioButton( i18n("Fancy"), rGroup );
       wpGroup->insert( rb, Fancy );
       rLayout->addWidget(rb, 4, 2);
-            
-      connect( wpGroup, SIGNAL( clicked( int ) ), 
+
+      connect( wpGroup, SIGNAL( clicked( int ) ),
 	       SLOT( slotWallpaperMode( int ) ) );
 
       topLayout->addWidget(rGroup, 1, 1);
-      
+
       lLayout->activate();
       rLayout->activate();
       topLayout->activate();
@@ -226,7 +230,7 @@ void KDMBackgroundWidget::slotQDrop( QDropEvent *e )
     s = QUrlDrag::uriToLocalFile(s.ascii()); // a hack. should be improved
     if(!s.isEmpty())
       loadWallpaper(s);
-  } 
+  }
 }
 
 void KDMBackgroundWidget::slotQDragLeave( QDragLeaveEvent* )
@@ -263,7 +267,7 @@ void KDMBackgroundWidget::slotBrowse()
 {
     QString filename = KFileDialog::getOpenFileName( 0 );
     slotWallpaper( filename );
-    if ( !filename.isEmpty() && filename != wallpaper) 
+    if ( !filename.isEmpty() && filename != wallpaper)
 	{
 	    wpCombo->insertItem( wallpaper );
 	    wpCombo->setCurrentItem( wpCombo->count() - 1 );
@@ -587,7 +591,7 @@ void KDMBackgroundWidget::loadSettings()
       if(!str.isEmpty())
 	  {
 	      KGlobal::dirs()->
-		  addResourceDir("wallpaper", 
+		  addResourceDir("wallpaper",
 				 KGlobal::dirs()->
 				 findResourceDir("wallpaper", str));
 	      wallpaper = str;
@@ -596,7 +600,7 @@ void KDMBackgroundWidget::loadSettings()
 
   QString strmode = c->readEntry( "BackGroundColorMode", "Plain");
   if(strmode == "Plain")
-    colorMode = Plain; 
+    colorMode = Plain;
   else if(strmode == "Horizontal")
     colorMode = Horizontal;
   else if(strmode == "Vertical")

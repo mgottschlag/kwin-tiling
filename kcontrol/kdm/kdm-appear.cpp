@@ -24,6 +24,7 @@
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qtooltip.h>
+#include <qwhatsthis.h>
 
 #include <kio/job.h>
 #include <klocale.h>
@@ -39,6 +40,7 @@
 KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
+  QString wtstr;
   QVBoxLayout *vbox = new QVBoxLayout(this, 6,6, "vbox");
 
   QGroupBox *group = new QGroupBox(i18n("Appearance"), this);
@@ -57,6 +59,13 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addMultiCellWidget(greetstr_lined, 1,1, 1,2);
   connect(greetstr_lined, SIGNAL(textChanged(const QString&)), this, SLOT(changed()));
 
+  wtstr = i18n("This is the string KDM will display in the login window. You may"
+  " want to put here some nice greeting or information about the operating system.<p>"
+  " KDM will replace the string [HOSTNAME] with the actual host name of the computer"
+  " running the X server. Especially in networks this is a good idea.");
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( greetstr_lined, wtstr );
+
   label = new QLabel(i18n("KDM logo:"), group);
   grid->addWidget(label, 2,0);
 
@@ -72,6 +81,11 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   connect(logobutton, SIGNAL(iconChanged(QString)), SLOT(slotLogoPixChanged(QString)));
   connect(logobutton, SIGNAL(iconChanged(const QString&)), this, SLOT(changed()));
 
+  wtstr = i18n("Click here to choose an image that KDM will display. You can also drag"
+    " and drop an image onto this button (e.g. from Konqueror).");
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( logobutton, wtstr );
+
   QToolTip::add(logobutton, i18n("Click or drop an image here"));
 
   label = new QLabel(i18n("GUI Style:"), group);
@@ -83,6 +97,10 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addWidget(guicombo, 4, 1);
   connect(guicombo, SIGNAL(activated(int)), this, SLOT(changed()));
 
+  wtstr = i18n("You can choose a basic GUI style here that will be used by KDM only.");
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( guicombo, wtstr );
+
   // The Language group box
   group = new QGroupBox(i18n("Language"), this);
   vbox->addWidget(group);
@@ -92,7 +110,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hbox->addRowSpacing(5, 10);
   hbox->addColSpacing(0, 10);
   hbox->addColSpacing(3, 10);
-  hbox->setColStretch(2, 1);        
+  hbox->setColStretch(2, 1);
 
   label = new QLabel(i18n("Language:"), group);
   hbox->addWidget(label, 1, 1);
@@ -101,12 +119,22 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hbox->addWidget(langcombo, 1, 2);
   connect(langcombo, SIGNAL(activated(int)), this, SLOT(changed()));
 
+  wtstr = i18n("Here you can choose the language used by KDM. This setting doesn't affect"
+    " a user's personal settings that will take effect after login.");
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( langcombo, wtstr );
+
   label = new QLabel(i18n("Country:"), group);
   hbox->addWidget(label, 2, 1);
 
   countrycombo = new KLanguageCombo(group);
   hbox->addWidget(countrycombo, 2, 2);
   connect(countrycombo, SIGNAL(activated(int)), this, SLOT(changed()));
+
+  wtstr = i18n("Here you can choose a country setting for KDM. This setting doesn't affect"
+    " a user's personal settings that will take effect after login.");
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( countrycombo, wtstr );
 
   loadLocaleList(langcombo, QString::null, QStringList());
   loadLocaleList(countrycombo, QString::fromLatin1("l10n/"), QStringList());
@@ -337,6 +365,14 @@ void KDMAppearanceWidget::defaults()
   guicombo->setCurrentItem(0);
   langcombo->setCurrentItem("C");
   countrycombo->setCurrentItem("C");
+}
+
+QString KDMAppearanceWidget::quickHelp()
+{
+  return i18n("<h1>KDM - Appearance</h1> Here you can configure the basic appearance"
+    " of the KDM login manager, i.e. a greeting string, an icon etc.<p>"
+    " For further refinement of KDM's appearance, see the \"Font\" and \"Background\" "
+    " tabs.");
 }
 
 

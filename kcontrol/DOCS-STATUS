@@ -35,7 +35,7 @@ info                     [ ]        [ ]         [ ]         [ ]
 input                      
   keyboard.cpp           [ ]        [x]         [x]         [ ]
   mouse.cpp              [ ]        [x]         [x]         [ ]
-kdm                      [ ]        [ ]         [ ]         [ ]
+kdm                      [ ]        [s]         [ ]         [ ]
 keys                     [ ]        [ ]         [ ]         [ ]
 kicker                   [ ]        [s]         [ ]         [ ]
 kio
@@ -44,7 +44,7 @@ kio
   ksmboptdlg.cpp         [ ]        [s]         [ ]         [ ]
   useragentdlg.cpp       [ ]        [s]         [ ]         [ ]
 knotify                  [ ]        [ ]         [ ]         [ ]
-konq                       
+konq
   behavior.cpp           [ ]        [x]         [x]         [ ]
   fontopts.cpp           [ ]        [x]         [x]         [ ]
   main.cpp               [ ]        [x]         [x]         [ ]
@@ -56,10 +56,10 @@ kwm                      [ ]        [ ]         [ ]         [ ]
 locale                   [ ]        [s]         [ ]         [ ]
 midi                     [ ]        [ ]         [ ]         [ ]
 odbc                     [ ]        [ ]         [ ]         [ ]
-passwords                  
+passwords
   passwords.cpp          [ ]        [x]         [x]         [ ]
 root                     [ ]        [ ]         [ ]         [ ]
-samba                      
+samba
   kcmsambaimports.cpp    [ ]        [x]         [ ]         [ ]
   kcmsambalog.cpp        [ ]        [x]         [ ]         [ ]
   kcmsambastatistics.cpp [ ]        [ ]         [ ]         [ ]
