@@ -19,5 +19,5 @@ datadir = $(kde_appsdir)/Settings/FileBrowsing
 
 sbin_SCRIPTS = fileshareset
 install-exec-hook:
-		@(ln -fs $(sbindir)/fileshareset $(DESTDIR)/$(sbindir)/filesharelist)
+		@(ln -fs fileshareset $(DESTDIR)/$(sbindir)/filesharelist)
 	        @(chown root $(DESTDIR)/$(sbindir)/fileshareset && chmod 4755 $(DESTDIR)/$(sbindir)/fileshareset) || echo "Was not able to make fileshareset setuid root"
