@@ -72,9 +72,12 @@ protected slots:
 protected:
     void fill();
     void fillBranch(const QString& relPath, TreeItem* parent);
+    
+    // moving = src will be removed later
+    void copy( bool moving );
 
-    void copyFile(const QString& src, const QString& dest);
-    void copyDir(const QString& src, const QString& dest);
+    void copyFile(const QString& src, const QString& dest, bool moving );
+    void copyDir(const QString& src, const QString& dest, bool moving );
 
     void deleteFile(const QString& deskfile);
     void deleteDir(const QString& dir);

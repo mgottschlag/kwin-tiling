@@ -244,7 +244,8 @@ void TreeView::currentChanged()
 		    ->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
 }
 
-void TreeView::copyFile(const QString& src, const QString& dest)
+// moving = src will be removed later
+void TreeView::copyFile(const QString& src, const QString& dest, bool moving )
 {
     // We can't simply copy a .desktop file as several prefixes might
     // contain a version of that file. To make sure to copy all groups
@@ -291,11 +292,12 @@ void TreeView::copyFile(const QString& src, const QString& dest)
 
     d.sync();
     
-    if( KHotKeys::present()) // tell khotkeys this menu entry has moved
+    if( moving && KHotKeys::present()) // tell khotkeys this menu entry has moved
         KHotKeys::menuEntryMoved( dest, src );
 }
 
-void TreeView::copyDir(const QString& s, const QString& d)
+// moving = src will be removed later
+void TreeView::copyDir(const QString& s, const QString& d, bool moving )
 {
     // We create the destination directory in a writeable prefix returned
     // by locateLocal(), copy the .directory and the .desktop files over.
@@ -318,7 +320,7 @@ void TreeView::copyDir(const QString& s, const QString& d)
     QStringList filelist = fileList(src);
 
     // copy .directory file
-    copyFile(src + "/.directory", dest + "/.directory");
+    copyFile(src + "/.directory", dest + "/.directory", moving );
 
     cout << "###" << dest.local8Bit() << endl;
     // copy files
@@ -326,7 +328,7 @@ void TreeView::copyDir(const QString& s, const QString& d)
 	{
 	    QString file = (*it).mid((*it).findRev('/'), (*it).length());
 //	    copyFile(src + "/" + file, dest + "/" + file); CHECKME
-	    copyFile(src + file, dest + file);
+	    copyFile(src + file, dest + file, moving );
 	}
 
     // process subdirs
@@ -334,7 +336,7 @@ void TreeView::copyDir(const QString& s, const QString& d)
 	{
 	    QString file = (*it).mid((*it).findRev('/'), (*it).length());
 //	    copyDir(src + "/" + file, dest + "/" + file); CHECKME
-	    copyDir(src + file, dest + file);
+	    copyDir(src + file, dest + file, moving );
 	}
 
     // unset hidden flag
@@ -581,7 +583,7 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *after)
 	{
 	    if (src != dest)
 		{
-		    copyDir(src, dest);
+		    copyDir(src, dest, true );
 		    deleteDir(src);
 		}
 	}
@@ -589,7 +591,7 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *after)
 	{
 	    if (src != dest)
 		{
-		    copyFile(src, dest);
+		    copyFile(src, dest, true );
 		    deleteFile(src);
 		}
 	}
@@ -757,11 +759,16 @@ void TreeView::newitem()
 
 void TreeView::cut()
 {
-    copy();
+    copy( true );
     del();
 }
 
 void TreeView::copy()
+{
+    copy( false );
+}
+
+void TreeView::copy( bool moving )
 {
     TreeItem *item = (TreeItem*)selectedItem();
 
@@ -789,7 +796,7 @@ void TreeView::copy()
 	    if (pos > 0)
 		_clipboard = _clipboard.mid(pos, _clipboard.length());
 	
-	    copyDir(file, QString(clipboard_prefix) + _clipboard);
+	    copyDir(file, QString(clipboard_prefix) + _clipboard, moving );
 	}
     else if (file.find(".desktop"))
 	{
@@ -800,7 +807,7 @@ void TreeView::copy()
 	    if (pos >= 0)
 		_clipboard = _clipboard.mid(pos+1, _clipboard.length());
 	
-	    copyFile(file, QString(clipboard_prefix) + _clipboard);
+	    copyFile(file, QString(clipboard_prefix) + _clipboard, moving );
 	}
     _ac->action("edit_paste")->setEnabled(true);
 }
@@ -842,12 +849,12 @@ void TreeView::paste()
 
     // is _clipboard a .directory or a .desktop file
     if(_clipboard.find(".directory") > 0)
-	{
-	    copyDir(QString(clipboard_prefix) + _clipboard, dest + '/' + _clipboard);
+	{                                 // if cut&paste is done, assume it's moving too
+	    copyDir(QString(clipboard_prefix) + _clipboard, dest + '/' + _clipboard, true );
 	}
     else if (_clipboard.find(".desktop"))
 	{
-	    copyFile(QString(clipboard_prefix) + _clipboard, dest + '/' + _clipboard);
+	    copyFile(QString(clipboard_prefix) + _clipboard, dest + '/' + _clipboard, true );
 	}
 
     // create the TreeItems:
