@@ -542,7 +542,7 @@ void KTheme::apply()
     {
         KConfig * widgetConf = KGlobal::config();
         widgetConf->setGroup( "General" );
-        widgetConf->writeEntry( "widgetStyle", widgetsElem.attribute( "name" ) );
+        widgetConf->writeEntry( "widgetStyle", widgetsElem.attribute( "name" ), true, true );
         widgetConf->sync();
         KIPC::sendMessageAll( KIPC::StyleChanged );
     }
