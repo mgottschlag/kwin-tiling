@@ -40,7 +40,6 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 {
 	setPixmap(SmallIcon("kscreensaver"));
 	setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-	connect(contextMenu(), SIGNAL(activated(int)), SLOT(slotSwitchScreen()));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 }
 
@@ -69,16 +68,18 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 		menu->setItemEnabled(lastIndex, false);
 
 	} else {
-		for (int s = 0; s < numScreens() && numScreens() > 1; s++) {
+		m_screenPopups.clear();
+		for (int s = 0; s < numScreens() /*&& numScreens() > 1 */; s++) {
 			setCurrentScreen(s);
 			if (s == screenIndexOfWidget(this)) {
-				lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
-				menu->setItemEnabled(lastIndex, false);
+				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
+				menu->setItemEnabled(lastIndex, false);*/
 			} else {
 				KPopupMenu* subMenu = new KPopupMenu(menu, QString("screen%1").arg(s+1).latin1());
+				m_screenPopups.append(subMenu);
 				populateMenu(subMenu);
-				menu->insertItem(i18n("Screen %1").arg(s+1), subMenu);
-				connect(subMenu, SIGNAL(activated(int)), SLOT(slotActivated(int)));
+				lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1), subMenu);
+				connect(subMenu, SIGNAL(activated(int)), SLOT(slotScreenActivated()));
 			}
 		}
 
@@ -96,6 +97,11 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 	menu->insertItem(KStdGuiItem::help().text(), m_help->menu());
 	KAction *quitAction = actionCollection()->action(KStdAction::name(KStdAction::Quit));
 	quitAction->plug(menu);
+}
+
+void KRandRSystemTray::slotScreenActivated()
+{
+	setCurrentScreen(m_screenPopups.find(static_cast<const KPopupMenu*>(sender())));
 }
 
 void KRandRSystemTray::configChanged()
@@ -162,21 +168,6 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 		menu->setItemParameter(lastIndex, i);
 		menu->connectItem(lastIndex, this, SLOT(slotRefreshRateChanged(int)));
 	}
-}
-
-void KRandRSystemTray::slotSwitchScreen()
-{
-	if (sender() == contextMenu()) return;
-
-	for (int i = 0; i < (int)contextMenu()->count(); i++) {
-		//kdDebug() << contextMenu()->find(contextMenu()->idAt(i)) << endl;
-		if (sender() == contextMenu()->find(contextMenu()->idAt(i))) {
-			setCurrentScreen(i);
-			return;
-		}
-	}
-
-	Q_ASSERT(false);
 }
 
 void KRandRSystemTray::slotResolutionChanged(int parameter)

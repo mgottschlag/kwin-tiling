@@ -19,11 +19,14 @@
 #ifndef KRANDRTRAY_H
 #define KRANDRTRAY_H
 
+#include <qptrlist.h>
+
 #include <ksystemtray.h>
 
 #include "randr.h"
 
 class KHelpMenu;
+class KPopupMenu;
 
 class KRandRSystemTray :  public KSystemTray, public RandRDisplay
 {
@@ -37,7 +40,7 @@ public:
 	void configChanged();
 
 protected slots:
-	void slotSwitchScreen();
+	void slotScreenActivated();
 	void slotResolutionChanged(int parameter);
 	void slotOrientationChanged(int parameter);
 	void slotRefreshRateChanged(int parameter);
@@ -51,6 +54,7 @@ private:
 
 	bool m_popupUp;
 	KHelpMenu* m_help;
+	QPtrList<KPopupMenu> m_screenPopups;
 };
 
 #endif
