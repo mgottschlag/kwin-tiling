@@ -380,17 +380,32 @@ void LiloInfo::getNextOptionFromStdout ( KProcess *, char *buffer, int len )
  * map file, Lilo says "Ignoring entry 'map'". This is not an error, so we skip that.
  * BTW: we assume that this ignore message is always the first line on stderr.
  */
+static void removeLine(QString &s)
+{
+	int i = s.find('\n');
+
+	if (i >= 0)
+		s.remove(0, i+1);
+	else
+		s.truncate(0);
+}
+
 void LiloInfo::processStderr ( KProcess *, char *buffer, int len )
 {
 	// Copy the received string into a QString
 	buffer[len ? len-1 : 0] = '\0';
-	QString errString = QString::fromLatin1(buffer) + '\n';
+	QString errString = QString::fromLatin1(buffer);
+	QString warning = "Warning:";
 
 	if ( debug ) cerr << "[LiloInfo]     Received on standard error: \"" << errString.latin1() << "\"" << endl;
 
 	// If the string starts with "Ignoring entry ...", remove the first line
 	if ( errString.left ( 8 ) == QString::fromLatin1("Ignoring") )
-		errString.remove(0, errString.find ( '\n' ) + 1 );
+		removeLine (errString);
+
+	// Remove warnings
+	while ( errString.startsWith (warning) )
+		removeLine (errString);
 
 	if ( !errString.isEmpty() )
 	{
