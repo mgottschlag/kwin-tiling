@@ -311,6 +311,13 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
 
     vLayout->addStretch();
 
+    if (mImmutable)
+    {
+       setButtons(buttons() & ~Default);
+       mSettingsGroup->setEnabled(false);
+       mSaverGroup->setEnabled(false);
+    }
+
     // finding the savers can take some time, so defer loading until
     // we've started up.
     mNumLoaded = 0;
@@ -415,6 +422,9 @@ void KScreenSaver::load()
 void KScreenSaver::readSettings()
 {
     KConfig *config = new KConfig( "kdesktoprc");
+    
+    mImmutable = config->groupIsImmutable("ScreenSaver");
+    
     config->setGroup( "ScreenSaver" );
 
     mEnabled = config->readBoolEntry("Enabled", false);
@@ -454,6 +464,8 @@ void KScreenSaver::updateValues()
 //
 void KScreenSaver::defaults()
 {
+    if (mImmutable) return;
+    
     slotScreenSaver( 0 );
 
     QListViewItem *item = mSaverListView->firstChild();

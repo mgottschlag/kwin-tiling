@@ -153,6 +153,8 @@ protected:
     bool        mLock;
     bool        mEnabled;
     QString     mSaver;
+    
+    bool        mImmutable;
 };
 
 #endif
