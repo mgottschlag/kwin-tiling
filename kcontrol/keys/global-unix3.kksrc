@@ -34,6 +34,7 @@ Name[ta]=Unix ¦¸¡¼¡¿¢¨Ä
 Name[tr]=Unix Öntanımlı
 Name[xxx]=xx
 Name[zh_CN.GB2312]=Unix 默认
+Name[zh_TW.Big5]=Unix 預設
 Execute command=Alt+F2
 Kill Window=Alt+F9
 Lock screen=Alt+Ctrl+L

@@ -35,6 +35,7 @@ Name[ta]=Windows ¦¸¡¼¡¿¢¨Ä (Meta/Win-Key ­øÄ¡)
 Name[tr]=Windows Öntanımlı (Meta/Win-Key hariç)
 Name[xxx]=xx
 Name[zh_CN.GB2312]=Windows 默认 (没有 Meta/Win-Key)
+Name[zh_TW.Big5]=Windows 預設 (沒有 Meta/Win-Key)
 Execute command=none
 Kill Window=none
 Lock screen=none

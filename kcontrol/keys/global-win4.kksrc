@@ -35,6 +35,7 @@ Name[ta]=Windows Default (Meta/Win-Key ¯¼ý)
 Name[tr]=Windows Öntanımlı (Meta/Win-Key dahil)
 Name[xxx]=xx
 Name[zh_CN.GB2312]=Windows 默认 (有 Meta/Win-Key)
+Name[zh_TW.Big5]=Windows 預設 (有 Meta/Win-Key)
 Execute command=Meta+R
 Kill Window=none
 Lock screen=none
