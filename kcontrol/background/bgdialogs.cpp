@@ -418,6 +418,7 @@ KPatternSelectDialog::KPatternSelectDialog(QWidget *parent, char *name)
     m_ListView->setColumnAlignment(0, AlignCenter);
     m_ListView->addColumn(i18n("Pattern"));
     m_ListView->addColumn(i18n("Comment"));
+    m_ListView->addColumn(i18n("Preview"));
     m_ListView->setAllColumnsShowFocus(true);
     m_ListView->setItemMargin(2);
 
@@ -499,6 +500,16 @@ void KPatternSelectDialog::updateItem(QString name, bool select)
 	item->setText(0, "  ");
     item->setText(1, pat.name());
     item->setText(2, pat.comment());
+    
+    QPixmap pmPat(KGlobal::dirs()->findResource("dtop_pattern", pat.pattern()));
+    QPixmap preview(100,20);
+    QPainter p;
+    p.begin(&preview);
+    p.drawTiledPixmap(0,0,100,20,pmPat);
+    p.setPen(black);
+    p.drawRect(0,0,100,20);
+    p.end();      
+    item->setPixmap(3, preview);
 
     m_Items[name] = item;
     if (select) {
