@@ -149,9 +149,9 @@ static void createGtkrc( const QFont& font, const QColorGroup& cg )
         t << endl;
         t << "style \"default\"" << endl;
         t << "{" << endl;
-        t << "  " << "fontset = \"" << font.rawName()
-          << ", -*-" << font.family() << "-*-*-*-*-*-*-*-*-*-*-*-*\"" << endl;
-        t << endl;
+//         t << "  " << "fontset = \"" << font.rawName()
+//           << ", -*-" << font.family() << "-*-*-*-*-*-*-*-*-*-*-*-*\"" << endl;
+//         t << endl;
         t << "  bg[NORMAL] = " << color( cg.background() ) << endl;
         t << "  bg[SELECTED] = " << color( cg.highlight() ) << endl;
         t << "  bg[INSENSITIVE] = " << color( cg.background() ) << endl;
