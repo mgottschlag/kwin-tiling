@@ -1,3 +1,4 @@
+# The contents of this section are copied into config.ci verbatim.
 <code>
 #define RCVERMAJOR 2
 #define RCVERMINOR 2
@@ -59,6 +60,14 @@
 #endif
 </code>
 
+# The contents of this section are copied mostly verbatim to the
+# default/example configuration file.
+# Everything indented with a space is considered a comment for the output;
+# it is prefixed with a hash mark but otherwise copied verbatim (except
+# for lines consisting of a single underscore, which generate empty comment
+# lines).
+# Section headers are "condensation seeds" for the Instance:s in the key
+# definitions below.
 <kdmrc>
  KDM master configuration file
  _
@@ -93,7 +102,7 @@
  [X-hishost], [X-myhost:0_dec], [X-*:1], [X-:*]
  If a setting is not found in any matching section, the default is used.
  _
- Every comment applies to the following section or key. Note, that all
+ Every comment applies to the following section or key. Note that all
  comments will be lost if you change this file with the kcontrol frontend.
  The defaults refer to KDM's built-in values, not anything set in this file.
 
@@ -104,8 +113,9 @@
 [Shutdown]
 
  Rough estimations about how many seconds KDM will spend at most on
- - opening a connection to the X-server (OpenTime):
-   OpenRepeat * (OpenTimeout + OpenDelay)
+ - opening a connection to the X-server (OpenTime) if the attempt
+   - times out: OpenTimeout
+   - is refused: OpenRepeat * OpenDelay
  - starting a local X-server (ServerTime):
    ServerAttempts * (ServerTimeout + OpenDelay)
  - starting a display:
@@ -132,8 +142,568 @@
 [X-:0-Greeter]
 </kdmrc>
 
+# The contents of this section are copied into kdmrc-ref.docbook.
+# The macro %REF% is replaced with the accumulated Description:s from the key
+# definitions below.
+<docu>
+<sect1>
+<title>&kdmrc; - The &kdm; master configuration file</title>
+
+<para>The basic format of the file is <quote>INI-like</quote>.
+Options are key/value pairs, placed in sections.
+Everything in the file is case sensitive.
+Syntactic errors and unrecognized key/section identifiers cause &kdm; to
+issue non-fatal error messages.</para>
+
+<para>Lines beginning with <literal>#</literal> are comments; empty lines
+are ignored as well.</para>
+
+<para>Sections are denoted by
+<literal>[</literal><replaceable>Name of Section</replaceable><literal>]</literal>.
+</para>
+
+<para>You can configure every X-display individually.</para>
+<para>Every display has a display name, which consists of a host name
+(which is empty for local displays specified in the Xservers file), a
+colon and a display number. Additionally, a display belongs to a
+display class (which can be ignored in most cases).</para>
+
+<para>Sections with display-specific settings have the formal syntax
+<literal>[X-</literal>&nbsp;<replaceable>host</replaceable>&nbsp;[&nbsp;<literal>:</literal>&nbsp;<replaceable>number</replaceable>&nbsp;[&nbsp;<literal>_</literal>&nbsp;<replaceable>class</replaceable>&nbsp;]&nbsp;]&nbsp;<literal>-</literal>&nbsp;<replaceable>sub-section</replaceable>&nbsp;<literal>]</literal>
+</para>
+<para>All sections with the same <replaceable>sub-section</replaceable>
+make up a section class.</para>
+
+<para>You can use the <literal>*</literal> wildcard for
+<replaceable>host</replaceable>, <replaceable>number</replaceable>
+and <replaceable>class</replaceable>. You may omit trailing components;
+they are assumed to be <literal>*</literal> then. The host part may be a
+domain specification like <replaceable>.inf.tu-dresden.de</replaceable>.</para>
+
+<para>From which section a setting is actually taken is determined by
+these rules:</para>
+
+<itemizedlist>
+<listitem>
+<para>An exact match takes precedence over a partial match (for the
+host part), which in turn takes precedence over a wildcard.</para>
+</listitem>
+
+<listitem>
+<para>Precedence decreases from left to right for equally exact matches.</para>
+</listitem>
+
+<listitem>
+
+<para>
+Example: display name <quote>myhost:0</quote>, class <quote>dpy</quote>
+</para>
+<itemizedlist>
+<listitem>
+<para>[X-myhost:0_dpy] precedes</para>
+</listitem>
+<listitem>
+<para>[X-myhost:0_*] (same as [X-myhost:0]) precedes</para>
+</listitem>
+<listitem>
+<para>[X-myhost:*_dpy] precedes</para>
+</listitem>
+<listitem>
+<para>[X-myhost:*_*] (same as [X-myhost]) precedes</para>
+</listitem>
+<listitem>
+<para>[X-*:0_dpy] precedes</para>
+</listitem>
+<listitem>
+<para>[X-*:0_*] (same as [X-*:0]) precedes</para>
+</listitem>
+<listitem>
+<para>[X-*:*_*] (same as [X-*]).</para>
+</listitem>
+<listitem>
+<para>These sections do <emphasis>not</emphasis> match this display:</para>
+<para>[X-hishost], [X-myhost:0_dec], [X-*:1], [X-:*]</para>
+</listitem>
+</itemizedlist>
+
+</listitem>
+
+</itemizedlist>
+
+<para>Common sections are [X-*] (all displays), [X-:*] (all local displays)
+and [X-:0] (the first local display).</para>
+
+<para>The format for all keys is
+<userinput><option><replaceable>key</replaceable></option>&nbsp;<literal>=</literal>&nbsp;<parameter>value</parameter></userinput>.
+Keys are only valid in the section class they are defined for.
+Some keys don't apply to particular displays, in which case they are ignored.
+</para>
+
+<para>If a setting is not found in any matching section, the default
+is used.</para>
+
+<note><para>A pristine &kdmrc; is very thoroughly commented.
+All comments will be lost if you change this file with the
+kcontrol frontend.</para></note>
+
+%REF%
+
+</sect1>
+
+<sect1 id="kdmrc-xservers">
+<title>Specifying permanent &X-Server;s</title>
+
+<para>Each specification indicates a display which should constantly be
+managed and which is not using &XDMCP;. This method is typically used only for
+local &X-Server;s that are started by &kdm;, but &kdm; can manage externally
+started (<quote>foreign</quote>) &X-Server;s as well, may they run on the 
+local machine or rather remotely.</para>
+
+<para>The formal syntax of a specification is
+<screen>
+<userinput><replaceable>display&nbsp;name</replaceable>&nbsp;[<replaceable>display&nbsp;class</replaceable>]&nbsp;<literal>local</literal>[<literal>@</literal><replaceable>tty</replaceable>]&nbsp;[<literal>reserve</literal>]&nbsp;<replaceable>server&nbsp;command</replaceable></userinput>
+</screen>
+for own &X-Server;s and
+<screen>
+<userinput><replaceable>display&nbsp;name</replaceable>&nbsp;[<replaceable>display&nbsp;class</replaceable>]&nbsp;<literal>foreign</literal></userinput>
+</screen>
+for foreign &X-Server;s.</para>
+
+<para>The <replaceable>display name</replaceable> must be something that can
+be passed in the <option>-display</option> option to an X program. This string
+is used to generate the display-specific section names, so be careful to match
+the names.
+The display name of &XDMCP; displays is derived from the display's address by
+reverse host name resolution. For configuration purposes, the
+<literal>localhost</literal> prefix from locally running &XDMCP; displays is
+<emphasis>not</emphasis> stripped to make them distinguishable from local
+&X-Server;s started by &kdm;.</para>
+
+<para>The <replaceable>display class</replaceable> portion is also used in the
+display-specific sections. This is useful if you have a large collection of
+similar displays (such as a corral of X terminals) and would like to set
+options for groups of them.
+When using &XDMCP;, the display is required to specify the display class,
+so the manual for your particular X terminal should document the display
+class string for your device. If it doesn't, you can run &kdm; in debug
+mode and <command>grep</command> the log for <quote>class</quote>.</para>
+
+<para>The <replaceable>tty</replaceable> specifies which text console an
+&X-Server; is <quote>covering</quote>, so &kdm; knows which console it should
+monitor for activity after switching to <guilabel>Console login</guilabel> to
+find out when the console session ends.
+Note that this concept (originating from Solaris) is not perfectly
+suited for Linux, as there &X-Server;s run on separate virtual terminals
+and consequently don't actually cover consoles (<command>getty</command>s).
+</para>
+
+<para>The <literal>reserve</literal> keyword instructs &kdm; to start the
+display not when &kdm; starts up, but when it is explicitly requested via
+the command <acronym>FiFo</acronym>.
+If reserve displays are specified, the &kde; menu will have a
+<guilabel>Start New Session</guilabel> item near the bottom; use that to
+activate a reserve display with a new login session. The monitor will switch
+to the new display, and you will have a minute to login. If there are no more
+reserve displays available, selecting the menu item will have no effect.</para>
+
+<para>The <replaceable>server command</replaceable> specifies the complete
+&X-Server; command line, including a display number for secondary displays.
+When &kdm; starts a session, it sets up authorization data for the
+&X-Server;. For local servers, &kdm; passes
+<command><option>-auth</option>&nbsp;<filename><replaceable>filename</replaceable></filename></command>
+on the &X-Server;'s command line to point it at its authorization data.
+For &XDMCP; displays, &kdm; passes the authorization data to the &X-Server;
+via the <quote>Accept</quote> &XDMCP; message.</para>
+
+</sect1>
+
+<sect1 id="kdmrc-xaccess">
+<title>&XDMCP; access control</title>
+
+<para>The file specified by the <option>AccessFile</option> option provides
+information which &kdm; uses to control access from displays requesting service
+via &XDMCP;.
+The file contains four types of entries: entries which control the response
+to <quote>Direct</quote> and <quote>Broadcast</quote> queries, entries which
+control the response to <quote>Indirect</quote> queries, macro definitions for
+<quote>Indirect</quote> entries, and entries which control on which network
+interfaces &kdm; listens for &XDMCP; queries.
+Blank lines are ignored, <literal>#</literal> is treated as a comment
+delimiter causing the rest of that line to be ignored, and <literal>\</literal>
+causes an immediately following newline to be ignored, allowing indirect host
+lists to span multiple lines.
+</para>
+
+<para>The format of the <quote>Direct</quote> entries is simple, either a
+host name or a pattern, which is compared against the host name of the display
+device.
+Patterns are distinguished from host names by the inclusion of one or more
+meta characters; <literal>*</literal> matches any sequence of 0 or more
+characters, and <literal>?</literal> matches any single character.
+If the entry is a host name, all comparisons are done using network addresses,
+so any name which converts to the correct network address may be used. Note
+that only the first network address returned for a host name is used.
+For patterns, only canonical host names are used in the comparison, so ensure
+that you do not attempt to match aliases.
+Preceding the entry with a <literal>!</literal> character causes hosts which
+match that entry to be excluded.
+To only respond to <quote>Direct</quote> queries for a host or pattern,
+it can be followed by the optional <literal>NOBROADCAST</literal> keyword.
+This can be used to prevent a &kdm; server from appearing on menus based on
+<quote>Broadcast</quote> queries.</para>
+
+<para>An <quote>Indirect</quote> entry also contains a host name or pattern,
+but follows it with a list of host names or macros to which the queries
+should be forwarded. <quote>Indirect</quote> entries can be excluding as well,
+in which case a (valid) dummy host name must be supplied to make the entry
+distinguishable from a <quote>Direct</quote> entry.
+If compiled with IPv6 support, multicast address groups may also be included
+in the list of addresses the queries are forwarded to.
+<!-- Not actually implemented!
+Multicast addresses may be followed by an optional <literal>/</literal>
+character and hop count. If no hop count is specified, the multicast hop count
+defaults to 1, keeping the packet on the local network. For IPv4 multicasting,
+the hop count is used as the TTL.
+-->
+If the indirect host list contains the keyword <literal>CHOOSER</literal>,
+<quote>Indirect</quote> queries are not forwarded, but instead a host chooser
+dialog is displayed by &kdm;. The chooser will send a <quote>Direct</quote>
+query to each of the remaining host names in the list and offer a menu of
+all the hosts that respond. The host list may contain the keyword
+<literal>BROADCAST</literal>, to make the chooser send a
+<quote>Broadcast</quote> query as well; note that on some operating systems,
+UDP packets cannot be broadcast, so this feature will not work.
+</para>
+
+<para>When checking access for a particular display host, each entry is scanned
+in turn and the first matching entry determines the response.
+<quote>Direct</quote> and <quote>Broadcast</quote> entries are ignored when
+scanning for an <quote>Indirect</quote> entry and vice-versa.</para>
+
+<para>A macro definition contains a macro name and a list of host names and
+other macros that the macro expands to. To distinguish macros from hostnames,
+macro names start with a <literal>%</literal> character.</para>
+
+<para>The last entry type is the <literal>LISTEN</literal> directive.
+The formal syntax is
+<screen>
+<userinput>&nbsp;<literal>LISTEN</literal>&nbsp;[<replaceable>interface</replaceable>&nbsp;[<replaceable>multicast&nbsp;list</replaceable>]]</userinput>
+</screen>
+If one or more <literal>LISTEN</literal> lines are specified, &kdm; listens
+for &XDMCP; requests only on the specified interfaces.
+<replaceable>interface</replaceable> may be a hostname or IP addresss
+representing a network interface on this machine, or the wildcard
+<literal>*</literal> to represent all available network interfaces.
+If multicast group addresses are listed on a <literal>LISTEN</literal> line,
+&kdm; joins the multicast groups on the given interface. For IPv6 multicasts,
+the IANA has assigned ff0<replaceable>X</replaceable>:0:0:0:0:0:0:12b as the
+permanently assigned range of multicast addresses for &XDMCP;. The
+<replaceable>X</replaceable> in the prefix may be replaced by any valid scope
+identifier, such as 1 for Node-Local, 2 for Link-Local, 5 for Site-Local, and
+so on (see IETF RFC 2373 or its replacement for further details and scope
+definitions). &kdm; defaults to listening on the Link-Local scope address
+ff02:0:0:0:0:0:0:12b to most closely match the IPv4 subnet broadcast behavior. 
+If no <literal>LISTEN</literal> lines are given, &kdm; listens on all
+interfaces and joins the default &XDMCP; IPv6 multicast group (when
+compiled with IPv6 support).
+To disable listening for &XDMCP; requests altogther, a
+<literal>LISTEN</literal> line with no addresses may be specified, but using
+the <literal>[Xdmcp]</literal> <option>Enable</option> option is preferred.
+</para>
+
+</sect1>
+
+<sect1>
+<title>Supplementary programs</title>
+
+<para>
+The following programs are run by &kdm; at various stages of a session.
+They typically are shell scripts.
+</para>
+
+<sect2 id="kdmrc-xsetup">
+<title>Setup program</title>
+
+<para>
+The <filename>Xsetup</filename> program is run after the &X-Server; is
+started or reset, but before the greeter is offered.
+It is run as <systemitem class="username">root</systemitem>, so it should
+be careful about security.
+This is the place to change the root background (if
+<option>UseBackground</option> is disabled) or bring up other windows that
+should appear on the screen along with the greeter.
+</para>
+
+<para>
+In addition to any specified by <option>ExportList</option>,
+the following environment variables are passed:</para>
+<variablelist>
+ <varlistentry>
+  <term>DISPLAY</term>
+  <listitem><para>the associated display name</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>PATH</term>
+  <listitem><para>the value of <option>SystemPath</option></para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>SHELL</term>
+  <listitem><para>the value of <option>SystemShell</option></para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>XAUTHORITY</term>
+  <listitem><para>may be set to an authority file</para></listitem>
+ </varlistentry>
+</variablelist>
+
+<para> Note that since &kdm; grabs the keyboard, any other windows will not be
+able to receive keyboard input. They will be able to interact with the mouse,
+however; beware of potential security holes here. If <option>GrabServer</option>
+is set, <filename>Xsetup</filename> will not be able to connect to the display
+at all. Resources for this program can be put into the file named by
+<option>Resources</option>.
+</para>
+
+</sect2>
+
+<sect2 id="kdmrc-xstartup">
+<title>Startup program</title>
+
+<para>The <filename>Xstartup</filename> program is run as
+<systemitem class="username">root</systemitem> when the user logs in.
+Since it is run as <systemitem class="username">root</systemitem>, it should
+be very careful about security.
+This is the place to put commands which add entries to
+<filename>utmp</filename> (the <command>sessreg</command> program
+may be useful here), mount users' home directories from file servers,
+or abort the session if some requirements are not met (but note that on
+modern systems, many of these tasks are already taken care of by
+<acronym>PAM</acronym> modules).</para>
+
+<para>In addition to any specified by <option>ExportList</option>,
+the following environment variables are passed:</para>
+<variablelist>
+ <varlistentry>
+  <term>DISPLAY</term>
+  <listitem><para>the associated display name</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>HOME</term>
+  <listitem><para>the initial working directory of the user</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>LOGNAME</term>
+  <listitem><para>the user name</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>USER</term>
+  <listitem><para>the user name</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>PATH</term>
+  <listitem><para>the value of <option>SystemPath</option></para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>SHELL</term>
+  <listitem><para>the value of <option>SystemShell</option></para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>XAUTHORITY</term>
+  <listitem><para>may be set to an authority file</para></listitem>
+ </varlistentry>
+</variablelist>
+
+<para>No arguments are passed to the script. &kdm; waits until this script
+exits before starting the user session. If the exit value of this script is
+non-zero, &kdm; discontinues the session and starts another authentication
+cycle.</para>
+
+</sect2>
+
+<sect2 id="kdmrc-xsession">
+<title>Session program</title>
+
+<para>The <filename>Xsession</filename> program is the command which is run
+as the user's session. It is run with the permissions of the authorized user.
+One of the keywords <literal>failsafe</literal>, <literal>default</literal>
+or <literal>custom</literal>, or a string to <command>eval</command> by a
+bourne-compatible shell is passed as the first argument.</para>
+
+<para>In addition to any specified by <option>ExportList</option>,
+the following environment variables are passed:</para>
+<variablelist>
+ <varlistentry>
+  <term>DISPLAY</term>
+  <listitem><para>the associated display name</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>HOME</term>
+  <listitem><para>the initial working directory of the user</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>LOGNAME</term>
+  <listitem><para>the user name</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>USER</term>
+  <listitem><para>the user name</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>PATH</term>
+  <listitem><para>the value of <option>UserPath</option>
+   (or <option>SystemPath</option> for
+   <systemitem class="username">root</systemitem> user sessions)</para>
+  </listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>SHELL</term>
+  <listitem><para>the user's default shell</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>XAUTHORITY</term>
+  <listitem><para>may be set to a non-standard authority file</para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>KRBTKFILE</term>
+  <listitem><para>may be set to a Kerberos4 credentials cache name</para>
+  </listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>KRB5CCNAME</term>
+  <listitem><para>may be set to a Kerberos5 credentials cache name</para>
+  </listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>XDM_MANAGED</term>
+  <listitem><para>will contain a comma-separated list of parameters the
+   session might find interesting, like the location of the command
+   <acronym>FiFo</acronym> and its capabilities, and which conversation
+   plugin was used for the login</para>
+  </listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>DESKTOP_SESSION</term>
+  <listitem><para>the name of the session the user has chosen to run</para>
+  </listitem>
+ </varlistentry>
+</variablelist>
+
+</sect2>
+
+<sect2 id="kdmrc-xreset">
+<title>Reset program</title>
+
+<para>Symmetrical with <filename>Xstartup</filename>, the
+<filename>Xreset</filename> program is run after the user session has
+terminated. Run as <systemitem class="username">root</systemitem>, it should
+contain commands that undo the effects of commands in 
+<filename>Xstartup</filename>, removing entries from <filename>utmp</filename>
+or unmounting directories from file servers.</para>
+
+<para>The environment variables that were passed to
+<filename>Xstartup</filename> are also passed to <filename>Xreset</filename>.
+</para>
+
+</sect2>
+
+</sect1>
+</docu>
+
+
+# The rest of this file are section and key definitions for the options.
+# The order of the keywords is fixed and everything is case sensitive.
+# A keyword may expect supplementary data in the form of space-indented
+# lines following it. Definitions are delimited by empty lines.
+#
+# Section definition:
+#   Section: <name>
+#     Section name. Section classes start with a dash.
+#   If: <expression>
+#     C preprocessor conditional for supporting this section.
+#     If it evaluates to false, all keys in this section are disabled as well.
+#   Description:
+#     A docbook description of this section is expected in the next lines.
+#     The contents are automatically enclosed in <para></para>.
+#
+# Option key definition:
+#   Key: <name>
+#     Option name.
+#   If: <expression>
+#     C preprocessor conditional for supporting this option.
+#   Type: (int|bool|enum|group|string|path|list)
+#     The option's data type.
+#     If the type is enum, the element definitions follow in the next lines:
+#       <term>[/<c #define>]: <docbook style description>
+#   Default: <default>
+#     Default value. string, path and list are copied verbatim and therefore
+#     must be already quoted appropriately. The other types are auto-quoted.
+#     If the default value is prefixed with a "*", a c #define def_<Key> is
+#     created.
+#     The default is automatically appended to the kdmrc comment and the
+#     documentation entry.
+#   CDefault: <verbose default>
+#     Append this instead of the real default to the two docs. The quoting
+#     rules are the same as for Default.
+#   DDefault: -
+#     If specified, the default value won't be appended to the documentation
+#     entry. The Description should mention the default then. Use this when
+#     the default is system-dependent.
+#   PostProc: <function>
+#     A function to postprocess the read config value before using it.
+#   User: (dummy|(core|greeter|greeter-c|dep|config)[(<variable>)][:font])
+#     These entries specify which parts of kdm need the option in question:
+#       dummy: no user; entry is there only for syntactical correctness.
+#       dep: this option is an internal dependency for another option.
+#       config: this option configures the config reader itself.
+#       core: the kdm backend needs this option.
+#       greeter-c: the kdm frontend needs this option as a C data type.
+#       greeter: the kdm frontend needs this option as a C++/Qt data type.
+#         If a :font tag is appended, a string entry is converted to a QFont.
+#     If no variable name is specified, it will be derived from the Key by
+#     un-capitalizing it.
+#   Instance: (-|[#][<display spec>/](!|<value>))
+#     These entries specify option instances for the default/example kdmrc.
+#     A "-" entry is a dummy for syntactical correctness.
+#     A prefixing hash mark will be copied to kdmrc.
+#     For options in a section class a display must be specified.
+#     For bool options "!" can be used as the value to specify the negation
+#     of the default.
+#   Update: <function>[/<number>]
+#     Call this function on each occurence of this option in genkdmconf.
+#     Options with higher numbers (default is 0) will be processed later.
+#   Merge: (xdm[:<resource>][(<function>)]|kdm:[<section>/][<key>][<function>])
+#     Specify config options to merge from xdm and older kdm versions.
+#     Kdm options from the current version are automatically merged.
+#     When merging an xdm resource and no resource name is specified, it is
+#     derived from the Key by un-capitalizing it.
+#     When merging a kdm option, at least one of <section> and <key> must
+#     be given; an unspecified entity defaults to the current Section/Key.
+#     <section> may be a dash-prefixed section class.
+#     A function to postprocess the read value can be specified.
+#   Comment: [&|-]
+#     A kdmrc comment for this option is expected in the next lines.
+#     If "-" is given to Comment, no comment is generated at all.
+#     If "&" is given, the comment is derived from the Description below by
+#     applying some simple docbook interpretation to it. Note that the
+#     Description must be preformatted in this case.
+#     If Type is enum, a list of the previously defined element/description
+#     pairs is appended; the descriptions undergo docbook interpretation.
+#     Finally, a sentence with the Default (or CDefault, if given) is appended.
+#   Description: [!|-]
+#     A docbook description of this option is expected in the next lines.
+#     The contents are automatically enclosed in <para></para>.
+#     If "-" is given to Description, no comment is generated at all.
+#     If "!" is given, enums are not treated specially. Otherwise the macro
+#     %ENUM% is replaced with a list of the defined element/description pairs,
+#     or, if the macro is not present, the list is appended to the description.
+#     Finally, a sentence with the Default (or CDefault, if given) is appended,
+#     unless "DDefault: -" was specified.
+#     Each option entry generates an anchor named option-<lowercase(Key)>;
+#     it can be referenced in the main documentation.
 
 Section: General
+Description:
+ This section contains global options that don't fit into any specific section.
 
 Key: ConfigVersion
 Type: string
@@ -145,6 +715,10 @@ Instance:
 Comment:
  This option exists solely for the purpose of a clean automatic upgrade.
  Don't even think about changing it!
+Description:
+ This option exists solely for the purpose of clean automatic upgrades.
+ <emphasis>Do not</emphasis> change it, you may interfere with future
+ upgrades and this could result in &kdm; failing to run.
 
 Key: PAMService
 If: defined(USE_PAM)
@@ -153,10 +727,12 @@ Default: KDM_PAM_SERVICE
 User: core
 Instance: -
 Comment: -
+Description: -
 
 Key: Xservers
 Type: string
 Default: DEF_SERVER_LINE
+DDefault: -
 User: config(Xservers)
 # will be overwritten
 Instance: #""
@@ -167,6 +743,13 @@ Comment:
  to be used by KDM are listed; the file is in the usual XDM-Xservers format.
  Otherwise it's interpreted like one line of the Xservers file, i.e., it
  specifies exactly one X-server.
+Description:
+ If the value starts with a slash (/), it specifies a file to read &X-Server;
+ definitions from. Otherwise it is an &X-Server; definition by itself. See
+ <xref linkend="kdmrc-xservers"/> for the details.
+ </para><para>
+ The default is an &X-Server; definition that is usually reasonable
+ for the system &kdm; was built on.
 
 Key: PidFile
 Type: string
@@ -176,6 +759,10 @@ Instance: "/var/run/kdm.pid"
 Merge: xdm
 Comment:
  Where KDM should store its PID (don't store if empty).
+Description:
+ The filename specified will be created to contain an ASCII representation
+ of the process ID of the main &kdm; process; the PID will not be stored
+ if the filename is empty.
 
 Key: LockPidFile
 Type: bool
@@ -186,6 +773,9 @@ Merge: xdm
 Comment:
  Whether KDM should lock the PID file to prevent having multiple KDM
  instances running at once. Don't change unless you're brave.
+Description:
+ This option controls whether &kdm; uses file locking to keep multiple
+ display managers from running onto each other.
 
 Key: AuthDir
 Type: path
@@ -196,6 +786,13 @@ Instance: #"/tmp"
 Merge: xdm(P_authDir)
 Comment:
  Where to store authorization files.
+Description:
+ This names a directory under which &kdm; stores &X-Server; authorization
+ files while initializing the session. &kdm; expects the system to clean up
+ this directory from stale files on reboot.
+ </para><para>
+ The autorization file to be used for a particular display can be
+ specified with the <option>AuthFile</option> option in [X-*-Core].
 
 Key: AutoRescan
 Type: bool
@@ -206,6 +803,9 @@ Merge: xdm
 Comment:
  Whether KDM should automatically re-read configuration files, if it
  finds them having changed.
+Description:
+ This boolean controls whether &kdm; automatically re-reads its
+ configuration files if it finds them having changed.
 
 Key: ExportList
 Type: list
@@ -213,10 +813,11 @@ Default: ""
 User: core
 Instance: #"LD_LIBRARY_PATH,ANOTHER_IMPORTANT_VAR"
 Merge: xdm(P_List)
-Comment:
- Additional environment variables KDM should pass on to kdm_config, kdm_greet,
- Xsetup, Xstartup, Xsession, and Xreset. LD_LIBRARY_PATH and XCURSOR_THEME are
- good candidates; otherwise it shouldn't be necessary very often.
+Comment: &
+Description:
+ Additional environment variables &kdm; should pass on to all programs it runs.
+ <envar>LD_LIBRARY_PATH</envar> and <envar>XCURSOR_THEME</envar> are good candidates;
+ otherwise it shouldn't be necessary very often.
 
 Key: RandomFile
 If: !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
@@ -226,7 +827,16 @@ User: core
 Instance: #""
 Merge: xdm
 Comment:
- Where KDM should fetch entropy from.
+ A file KDM should read entropy from.
+Description:
+ If the system has no native entropy source like /dev/urandom (see
+ <option>RandomDevice</option>) and no entropy daemon like EGD (see
+ <option>PrngdSocket</option> and <option>PrngdPort</option>) is running,
+ &kdm; will fall back to its own pseudo-random number generator
+ that will, among other things, successively checksum parts of this file
+ (which, obviously, should change frequently).
+ </para><para>
+ This option does not exist on Linux and various BSDs.
 
 Key: PrngdSocket
 If: !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
@@ -237,6 +847,14 @@ User: core
 Instance: #"/tmp/entropy"
 Merge: xdm
 Comment:
+ A UNIX domain socket KDM should read entropy from.
+Description:
+ If the system has no native entropy source like /dev/urandom (see
+ <option>RandomDevice</option>), read random data from a Pseudo-Random
+ Number Generator Daemon,
+ like EGD (http://egd.sourceforge.net) via this UNIX domain socket.
+ </para><para>
+ This option does not exist on Linux and various BSDs.
 
 Key: PrngdPort
 If: !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
@@ -246,6 +864,9 @@ User: core
 Instance: #4840
 Merge: xdm
 Comment:
+ A TCP socket on localhost KDM should read entropy from.
+Description:
+ Same as <option>PrngdSocket</option>, only use a TCP socket on localhost.
 
 Key: RandomDevice
 If: !defined(ARC4_RANDOM)
@@ -255,7 +876,14 @@ User: core
 Instance: #"/dev/altrandom"
 Merge: xdm
 Comment:
+ A character device KDM should read entropy from.
  Empty means use the system's preferred entropy device.
+Description:
+ The path to a character device which KDM should read random data from.
+ Empty means to use the system's preferred entropy device if there is one.
+ </para><para>
+ This option does not exist on OpenBSD, as it uses the arc4_random
+ function instead.
 
 Key: FifoDir
 Type: path
@@ -266,14 +894,20 @@ Update: upd_fifodir
 Comment:
  Where the command FiFos should be created. Make it empty to disable
  the FiFos.
+Description:
+ The directory in which the command <acronym>FiFo</acronym>s should
+ be created. Make it empty to disable the <acronym>FiFo</acronym>s.
+# See <xref linkend="kdm-fifos"/> for the details.
 
 Key: FifoGroup
 Type: group
 Default: 0
 User: core
 Instance: #xdmctl
-Comment:
- To which group the command FiFos should belong.
+Comment: &
+Description:
+ To which group the command <acronym>FiFo</acronym>s should belong.
+ Can be either a name or a numerical ID.
 
 Key: DataDir
 Type: path
@@ -283,28 +917,37 @@ Instance: #""
 Update: upd_datadir
 Comment:
  The directory kdm should store persistent working data in.
+Description:
+ The directory &kdm; should store persistent working data in. Such data is
+ for example the previous user that logged in on a particular display.
 
 Key: DmrcDir
 Type: path
 Default: ""
 User: core
 Instance: #"/nfs-shared/var/dmrcs"
-Comment:
- The directory kdm should store users' .dmrc files in. This is only needed
+Comment: &
+Description:
+ The directory &kdm; should store users' <filename>.dmrc</filename> files in. This is only needed
  if the home directories are not readable before actually logging in (like
  with AFS).
 
 
 Section: Xdmcp
 If: defined(XDMCP)
+Description:
+ This section contains options that control &kdm;'s handling of
+ &XDMCP; requests.
+# See <xref linkend="xdmcp-with-kdm"/> to find out what &XDMCP; is.
 
 Key: Enable
 Type: bool
 Default: true
 User: dep(xdmcpEnable)
 Instance: false
-Comment:
- Whether KDM should listen to XDMCP requests.
+Comment: &
+Description:
+ Whether &kdm; should listen to incoming &XDMCP; requests.
 
 Key: Port
 Type: int
@@ -315,6 +958,10 @@ Instance: #
 Merge: xdm:requestPort(P_requestPort)
 Comment:
  The UDP port KDM should listen on for XDMCP requests. Don't change.
+Description:
+ This indicates the UDP port number which &kdm; uses to listen for incoming
+ &XDMCP; requests. Unless you need to debug the system, leave this with its
+ default value.
 
 Key: KeyFile
 Type: string
@@ -325,6 +972,11 @@ Update: cp_keyfile
 Merge: xdm
 Comment:
  File with the private keys of X-terminals. Required for XDM authentication.
+Description:
+ XDM-AUTHENTICATION-1 style &XDMCP; authentication requires a private
+ key to be shared between &kdm; and the terminal. This option specifies
+ the file containing those values. Each entry in the file consists of a
+ display name and the shared key.
 
 Key: Xaccess
 Type: string
@@ -336,6 +988,12 @@ Update: mk_xaccess
 Merge: xdm:accessFile
 Comment:
  XDMCP access control file in the usual XDM-Xaccess format.
+Description:
+ To prevent unauthorized &XDMCP; service and to allow forwarding of &XDMCP;
+ IndirectQuery requests, this file contains a database of hostnames which
+ are either allowed direct access to this machine, or have a list of hosts
+ to which queries should be forwarded to. The format of this file is
+ described in <xref linkend="kdmrc-xaccess"/>.
 
 Key: ChoiceTimeout
 Type: int
@@ -346,6 +1004,12 @@ Merge: xdm
 Comment:
  Number of seconds to wait for display to respond after the user has
  selected a host from the chooser.
+Description:
+ Number of seconds to wait for the display to respond after the user has
+ selected a host from the chooser. If the display sends an &XDMCP;
+ IndirectQuery within this time, the request is forwarded to the chosen
+ host. Otherwise, it is assumed to be from a new session and the chooser
+ is offered again.
 
 Key: RemoveDomainname
 Type: bool
@@ -356,6 +1020,12 @@ Merge: xdm
 Comment:
  Strip domain name from remote display names if it is equal to the local
  domain.
+Description:
+ When computing the display name for &XDMCP; clients, the name resolver will
+ typically create a fully qualified host name for the terminal. As this is
+ sometimes confusing, &kdm; will remove the domain name portion of the host
+ name if it is the same as the domain name of the local host when this option
+ is enabled.
 
 Key: SourceAddress
 Type: bool
@@ -364,8 +1034,12 @@ User: core
 Instance: #!
 Merge: xdm
 Comment:
- Use the numeric IP address of the incoming connection instead of the
- host name. Use this on multihomed hosts.
+ Use the numeric IP address of the incoming connection on multihomed hosts
+ instead of the host name.
+Description:
+ Use the numeric IP address of the incoming connection on multihomed hosts
+ instead of the host name. This is to avoid trying to connect on the wrong
+ interface which might be down at this time.
 
 Key: Willing
 Type: string
@@ -378,35 +1052,57 @@ Merge: xdm
 Merge: kdm:Xwilling
 Comment:
  The program which is invoked to dynamically generate replies to XDMCP
- BroadcastQuery requests.
+ DirectQuery or BroadcastQuery requests.
  If empty, no program is invoked and "Willing to manage" is sent.
+Description:
+ This specifies a program which is run (as
+ <systemitem class="username">root</systemitem>) when an &XDMCP;
+ DirectQuery or BroadcastQuery is received and this host is configured
+ to offer &XDMCP; display management. The output of this program may be
+ displayed in a chooser window. If no program is specified, the string
+ <quote>Willing to manage</quote> is sent.
 
 
 Section: Shutdown
+Description:
+ This section contains global options concerning system shutdown.
 
 Key: HaltCmd
 Type: string
 Default: HALT_CMD
+DDefault: -
 User: core(cmdHalt)
 Instance: #""
 Comment:
  The command to run to halt the system.
+Description:
+ The command to run to halt/poweroff the system.
+ </para><para>
+ The default is something reasonable for the system &kdm; was built on, like
+ <command>/sbin/shutdown&nbsp;<option>-h</option>&nbsp;<parameter>now</parameter></command>.
 
 Key: RebootCmd
 Type: string
 Default: REBOOT_CMD
+DDefault: -
 User: core(cmdReboot)
 Instance: #""
 Comment:
  The command to run to reboot the system.
+Description:
+ The command to run to reboot the system.
+ </para><para>
+ The default is something reasonable for the system &kdm; was built on, like
+ <command>/sbin/shutdown&nbsp;<option>-r</option>&nbsp;<parameter>now</parameter></command>.
 
 Key: AllowFifo
 Type: bool
 Default: false
 User: core(fifoAllowShutdown)
 Instance: #!
-Comment:
- Whether one can shut down the system via the global command FiFo.
+Comment: &
+Description:
+ Whether it is allowed to shut down the system via the global command <acronym>FiFo</acronym>.
 
 Key: AllowFifoNow
 Type: bool
@@ -414,8 +1110,13 @@ Default: true
 User: core(fifoAllowNuke)
 Instance: #!
 Comment:
- Whether one can abort still running sessions when shutting down the system
- via the global command FiFo.
+ Whether it is allowed to abort active sessions when shutting down the
+ system via the global command FiFo.
+Description:
+ Whether it is allowed to abort active sessions when shutting down the
+ system via the global command <acronym>FiFo</acronym>.
+ </para><para>
+ This will have no effect unless <option>AllowFifo</option> is enabled.
 
 Key: UseLilo
 If: defined(__linux__) && (defined(__i386__) || defined(__amd64__))
@@ -425,6 +1126,10 @@ User: greeter
 Instance: #!
 Comment:
  Offer LiLo boot options in shutdown dialog.
+Description:
+ Instructs &kdm; to offer LiLo boot options in the shutdown dialog.
+ </para><para>
+ Only available on Linux i386 &amp; x86-64.
 
 Key: LiloCmd
 If: defined(__linux__) && (defined(__i386__) || defined(__amd64__))
@@ -434,6 +1139,10 @@ User: greeter
 Instance: #""
 Comment:
  The location of the LiLo binary.
+Description:
+ The location of the LiLo binary.
+ </para><para>
+ Only available on Linux i386 &amp; x86-64.
 
 Key: LiloMap
 If: defined(__linux__) && (defined(__i386__) || defined(__amd64__))
@@ -443,9 +1152,16 @@ User: greeter
 Instance: #""
 Comment:
  The location of the LiLo map file.
+Description:
+ The location of the map file LiLo should use.
+ </para><para>
+ Only available on Linux i386 &amp; x86-64.
 
 
 Section: -Core
+Description:
+ This section class contains options concerning the configuration
+ of the &kdm; backend (core).
 
 Key: OpenDelay
 Type: int
@@ -454,8 +1170,9 @@ User: core
 Instance: #*/
 Merge: xdm(P_openDelay)
 Comment:
- How long to wait before retrying to start the display after various
- errors.
+ How long to wait before retrying to connect a display.
+Description:
+ See <option>OpenRepeat</option>.
 
 Key: OpenTimeout
 Type: int
@@ -464,7 +1181,9 @@ User: core
 Instance: #*/
 Merge: xdm
 Comment:
- How long to wait before timing out XOpenDisplay.
+ How long to wait before timing out a display connection attempt.
+Description:
+ See <option>OpenRepeat</option>.
 
 Key: OpenRepeat
 Type: int
@@ -473,7 +1192,17 @@ User: core
 Instance: #*/
 Merge: xdm
 Comment:
- How often to try the XOpenDisplay.
+ How many connection attempts to make during a start attempt. Note that
+ a timeout aborts the entire start attempt.
+Description:
+ These options control the behavior of &kdm; when attempting to open a
+ connection to an &X-Server;. <option>OpenDelay</option> is the length
+ of the pause (in seconds) between successive attempts,
+ <option>OpenRepeat</option> is the number of attempts to make and
+ <option>OpenTimeout</option> is the amount of time to spend on a
+ connection attempt. After <option>OpenRepeat</option> attempts have been
+ made, or if <option>OpenTimeout</option> seconds elapse in any particular
+ connection attempt, the start attempt is considered failed.
 
 Key: StartAttempts
 Type: int
@@ -484,6 +1213,13 @@ Merge: xdm
 Comment:
  Try at most that many times to start a display. If this fails, the display
  is disabled.
+Description:
+ How many times &kdm; should attempt to start a <literal>foreign</literal>
+ display listed in the <filename>Xservers</filename> file before giving up
+ and disabling it.
+ Local displays are attempted only once, and &XDMCP; displays are retried
+ indefinitely by the client (unless the option <option>-once</option>
+ was given to the &X-Server;).
 
 Key: ServerAttempts
 Type: int
@@ -494,6 +1230,9 @@ Merge: xdm
 Comment:
  How often to try to run the X-server. Running includes executing it and
  waiting for it to come up.
+Description:
+ How many times &kdm; should attempt to start up a local &X-Server;.
+ Starting up includes executing it and waiting for it to come up.
 
 Key: ServerTimeout
 Type: int
@@ -502,6 +1241,8 @@ User: core
 Instance: #:*/
 Comment:
  How long to wait for a local X-server to come up.
+Description:
+ How many seconds &kdm; should wait for a local &X-Server; to come up.
 
 Key: PingInterval
 Type: int
@@ -512,6 +1253,8 @@ Instance: #*/
 Merge: xdm
 Comment:
  Ping remote display every that many minutes.
+Description:
+ See <option>PingTimeout</option>.
 
 Key: PingTimeout
 Type: int
@@ -522,6 +1265,18 @@ Instance: #*/
 Merge: xdm
 Comment:
  Wait for a Pong that many minutes.
+Description:
+ To discover when <emphasis>remote</emphasis> displays disappear, &kdm;
+ regularily pings them.
+ <option>PingInterval</option> specifies the time (in minutes) between the
+ pings and <option>PingTimeout</option> specifies the maximum amount of
+ time (in minutes) to wait for the terminal to respond to the request. If
+ the terminal does not respond, the session is declared dead and terminated.
+ </para><para>
+ If you frequently use X terminals which can become isolated from
+ the managing host, you may wish to increase the timeout. The only worry
+ is that sessions will continue to exist after the terminal has been
+ accidentally disabled.
 
 Key: TerminateServer
 Type: bool
@@ -532,6 +1287,10 @@ Merge: xdm
 Comment:
  Restart instead of resetting the local X-server after session exit.
  Use it if the server leaks memory, etc.
+Description:
+ Whether &kdm; should restart the local &X-Server; after session exit instead
+ of resetting it. Use this if the &X-Server; leaks memory or crashes the system
+ on reset attempts.
 
 Key: ResetSignal
 Type: int
@@ -542,6 +1301,8 @@ Instance: #:*/
 Merge: xdm
 Comment:
  The signal needed to reset the local X-server.
+Description:
+ The signal number to use to reset the local &X-Server;.
 
 Key: TermSignal
 Type: int
@@ -552,6 +1313,8 @@ Instance: #:*/
 Merge: xdm
 Comment:
  The signal needed to terminate the local X-server.
+Description:
+ The signal number to use to terminate the local &X-Server;.
 
 Key: Authorize
 Type: bool
@@ -561,6 +1324,11 @@ Instance: #:*/!
 Merge: xdm
 Comment:
  Create X-authorizations for local displays.
+Description:
+ Controls whether &kdm; generates and uses authorization for
+ <emphasis>local</emphasis> &X-Server; connections.
+ For &XDMCP; displays the authorization requested by the display is used;
+ foreign non-&XDMCP; displays don't support authorization at all.
 
 Key: AuthNames
 Type: list
@@ -570,6 +1338,11 @@ Instance: #:*/""
 Merge: xdm:authName
 Comment:
  Which X-authorization mechanisms should be used.
+Description:
+ If <option>Authorize</option> is true, use the authorization mechanisms
+ listed herein. The MIT-MAGIC-COOKIE-1 authorization is always avaliable;
+ XDM-AUTHORIZATION-1, SUN-DES-1 and MIT-KERBEROS-5 might be available as well,
+ depending on the build configuration.
 
 Key: ResetForAuth
 Type: bool
@@ -579,6 +1352,14 @@ Instance: #:*/!
 Merge: xdm
 Comment:
  Need to reset the X-server to make it read initial Xauth file.
+Description:
+ Some <emphasis>old</emphasis> &X-Server;s reread the authorization file
+ at &X-Server; reset time, instead of when checking the initial connection.
+ As &kdm; generates the authorization information just before connecting to
+ the display, an old &X-Server; would not get up-to-date authorization
+ information. This option causes &kdm; to send SIGHUP to the &X-Server;
+ after setting up the file, causing an additional &X-Server; reset to occur,
+ during which time the new authorization information will be read.
 
 Key: AuthFile
 Type: string
@@ -589,6 +1370,13 @@ Merge: xdm
 Comment:
  The name of this X-server's Xauth file.
  If empty, a random name in the AuthDir directory will be used.
+Description:
+ This file is used to communicate the authorization data from &kdm; to
+ the &X-Server;, using the <option>-auth</option> &X-Server; command line
+ option. It should be kept in a directory which is not world-writable
+ as it could easily be removed, disabling the authorization mechanism in
+ the &X-Server;. If not specified, a random name is generated from
+ <option>AuthDir</option> and the name of the display.
 
 Key: Resources
 # XXX strictly speaking this is supposed to be a string list, i think.
@@ -602,6 +1390,12 @@ Comment:
  Specify a file with X-resources for the greeter, chooser and background.
  The KDE frontend doesn't care for this, so you don't need it unless you
  use another background generator than krootimage.
+Description:
+ This option specifies the name of the file to be loaded by
+ <command>xrdb</command> as the resource database onto the root window
+ of screen 0 of the display. KDE programs generally don't care for
+ X-resources, so this option is only needed if the <option>Setup</option>
+ program needs some X-resources.
 
 Key: Xrdb
 Type: string
@@ -611,6 +1405,9 @@ Instance: #*/""
 Merge: xdm
 Comment:
  The xrdb program to use to read the above specified recources.
+Description:
+ The <command>xrdb</command> program to use to read the X-resources file
+ specified in <option>Recources</option>.
 
 Key: Setup
 Type: string
@@ -621,8 +1418,16 @@ Instance: #*/""
 Update: mk_setup
 Merge: xdm
 Comment:
- A program to run before the greeter is shown. You should start kdmdesktop
- there. Also, xconsole can be started by this script.
+ A program to run before the greeter is shown. Can be used to start an
+ <command>xconsole</command> or an alternative background generator.
+Description:
+ This specifies a program which is run (as
+ <systemitem class="username">root</systemitem>) before offering the
+ greeter window. This may be used to change the appearance of the screen
+ around the greeter window or to put up other windows (e.g., you may want
+ to run <command>xconsole</command> here).
+ The conventional name for a file used here is <command>Xsetup</command>.
+ See <xref linkend="kdmrc-xsetup"/>.
 
 Key: Startup
 Type: string
@@ -635,6 +1440,12 @@ Merge: xdm
 Comment:
  A program to run before a user session starts. You should invoke sessreg
  there and optionally change the ownership of the console, etc.
+Description:
+ This specifies a program which is run (as
+ <systemitem class="username">root</systemitem>) after the user
+ authentication process succeeds.
+ The conventional name for a file used here is <command>Xstartup</command>.
+ See <xref linkend="kdmrc-xstartup"/>.
 
 Key: Reset
 Type: string
@@ -647,6 +1458,12 @@ Merge: xdm
 Comment:
  A program to run after a user session exits. You should invoke sessreg
  there and optionally change the ownership of the console, etc.
+Description:
+ This specifies a program which is run (as
+ <systemitem class="username">root</systemitem>) after the session
+ terminates.
+ The conventional name for a file used here is <command>Xreset</command>.
+ See <xref linkend="kdmrc-xreset"/>.
 
 Key: Session
 Type: string
@@ -660,6 +1477,11 @@ Comment:
  The program which is run as the user which logs in. It is supposed to
  interpret the session argument (see SessionsDirs) and start an appropriate
  session according to it.
+Description:
+ This specifies the session program to be executed (as the user owning
+ the session).
+ The conventional name for a file used here is <command>Xsession</command>.
+ See <xref linkend="kdmrc-xsession"/>.
 
 Key: FailsafeClient
 Type: string
@@ -669,24 +1491,43 @@ Instance: #*/""
 Merge: xdm
 Comment:
  The program to run if Session fails.
+Description:
+ If the <option>Session</option> program fails to execute, &kdm; will
+ fall back to this program. This program is executed with no arguments,
+ but executes using the same environment variables as the session would
+ have had (see <xref linkend="kdmrc-xsession"/>).
 
 Key: UserPath
 Type: string
 Default: DEF_USER_PATH
+DDefault: -
 User: core
 Instance: #*/""
 Merge: xdm
 Comment:
  The PATH for the Session program.
+Description:
+ The <envar>PATH</envar> environment variable for
+ non-<systemitem class="username">root</systemitem> <option>Session</option>s.
+ </para><para>
+ The default depends on the system &kdm; was built on.
 
 Key: SystemPath
 Type: string
 Default: DEF_SYSTEM_PATH
+DDefault: -
 User: core
 Instance: #*/""
 Merge: xdm
 Comment:
  The PATH for Setup, Startup and Reset, etc.
+Description:
+ The <envar>PATH</envar> environment variable for all programs but
+ non-<systemitem class="username">root</systemitem>
+ <option>Session</option>s. Note that it is good practice not to include
+ <literal>.</literal> (the current directory) into this entry.
+ </para><para>
+ The default depends on the system &kdm; was built on.
 
 Key: SystemShell
 Type: string
@@ -696,6 +1537,9 @@ Instance: #*/"/bin/bash"
 Merge: xdm
 Comment:
  The default system shell.
+Description:
+ The <envar>SHELL</envar> environment variable for all programs but the 
+ <option>Session</option>.
 
 Key: UserAuthDir
 Type: path
@@ -706,6 +1550,11 @@ Merge: xdm
 Comment:
  Where to put the user's X-server authorization file if ~/.Xauthority
  cannot be created.
+Description:
+ When &kdm; is unable to write to the usual user authorization file
+ ($<envar>HOME</envar>/.Xauthority), it creates a unique file name in this
+ directory and points the environment variable <envar>XAUTHORITY</envar>
+ at the created file.
 
 Key: AutoReLogin
 Type: bool
@@ -714,10 +1563,14 @@ User: core
 Instance: #*/!
 Merge: xdm
 Comment:
- If "true", KDM will automatically restart a session after an X-server
- crash (or if it is killed by Alt-Ctrl-BackSpace). Note, that enabling
- this opens a security hole: a secured display lock can be circumvented
- (unless you use KDE's built-in screen lock).
+ Whether to automatically restart sessions after X-server crashes.
+ Note that enabling this makes circumventing screen lockers other than
+ KDE's built-in one possible!
+Description:
+ If enabled, &kdm; will automatically restart a session after an &X-Server;
+ crash (or if it is killed by Alt-Ctrl-BackSpace). Note that enabling this
+ feature opens a security hole: a secured display lock can be circumvented
+ (unless &kde;'s built-in screen locker is used).
 
 Key: AllowRootLogin
 Type: bool
@@ -730,6 +1583,9 @@ Instance: :*/true
 Merge: xdm
 Comment:
  Allow root logins?
+Description:
+ If disabled, don't allow <systemitem class="username">root</systemitem>
+ (and any other user with UID = 0) to log in directly.
 
 Key: AllowNullPasswd
 Type: bool
@@ -741,11 +1597,13 @@ Instance: :*/true
 Merge: xdm
 Comment:
  Allow to log in, when user has set an empty password?
+Description:
+ If disabled, only users that have passwords assigned can log in.
 
 Key: AllowShutdown
 Type: enum
- None/SHUT_NONE: no "Shutdown..." button is shown at all
- Root/SHUT_ROOT: the root password must be entered to shut down
+ None/SHUT_NONE: no <guilabel>Shutdown...</guilabel> menu entry is shown at all
+ Root/SHUT_ROOT: the <systemitem class="username">root</systemitem> password must be entered to shut down
  All/SHUT_ALL: everybody can shut down the machine
 Default: All
 User: core
@@ -753,32 +1611,35 @@ User: greeter
 Instance: */Root
 Instance: :*/All
 Merge: kdm:-Greeter/
-Comment:
+Comment: &
+Description:
  Who is allowed to shut down the system. This applies both to the
- greeter and to the command FiFo.
+ greeter and to the command <acronym>FiFo</acronym>.
 
 Key: AllowSdForceNow
 Type: enum
  None: no forced shutdown is allowd at all
- Root: the root password must be entered to shut down forcibly
+ Root: the <systemitem class="username">root</systemitem> password must be entered to shut down forcibly
  All: everybody can shut down the machine forcibly
 Default: All
 User: core(allowNuke)
 User: greeter(allowNuke)
 Instance: #*/Root
-Comment:
- Who is allowed to abort all still running sessions when shutting down.
+Comment: &
+Description:
+ Who is allowed to abort active sessions when shutting down.
 
 Key: DefaultSdMode
 Type: enum
- Schedule: shutdown after all sessions exit (possibly at once)
- TryNow: shutdown, if no sessions are open, otherwise do nothing
- ForceNow: shutdown unconditionally
+ Schedule: shut down after all active sessions exit (possibly at once)
+ TryNow: shut down, if no active sessions are open, otherwise do nothing
+ ForceNow: shut down unconditionally
 Default: Schedule
 User: core(defSdMode)
 User: greeter(defSdMode)
 Instance: #*/ForceNow
-Comment:
+Comment: &
+Description:
  The default choice for the shutdown condition/timing.
 
 Key: InteractiveSd
@@ -787,20 +1648,26 @@ Default: true
 User: greeter
 Instance: #*/!
 Comment:
- If this is false the user must select the shutdown condition/timing already
- in the shutdown dialog. If this is true he won't be bothered with the options,
- but will be asked what to do if sessions are actually open.
- BUG: the interaction is currently not implemented. If this is set to true,
- a normal forced shutdown will happen (without caring for the AllowSdForceNow
- option!), i.e., KDM will behave exactly as before KDE 3.0.
+ Whether to do the shutdown condition/timing choice on demand or in advance.
+ BUG: currently this equals AllowSdForceNow=true & DefaultSdMode=ForceNow!
+Description:
+ If disabled, the user must select the shutdown condition/timing already
+ in the shutdown dialog. Otherwise he won't be bothered with the options,
+ but will be asked what to do if there are active sessions actually.
+ </para><para>
+ BUG: the interaction is currently not implemented. If this option is
+ enabled, a normal forced shutdown will be performed (without caring for 
+ <option>AllowSdForceNow</option>!), i.e., &kdm; will behave exactly as
+ before &kde; 3.0.
 
 Key: NoPassEnable
 Type: bool
 Default: false
 User: dep
 Instance: #:*/true
-Comment:
- Enable password-less logins on this display. USE WITH EXTREME CARE!
+Comment: &
+Description:
+ Enable password-less logins on this display. <emphasis>Use with extreme care!</emphasis>
 
 Key: NoPassUsers
 Type: list
@@ -811,15 +1678,24 @@ Instance: #:*/"fred,ethel"
 Merge: xdm(P_noPassUsers)
 Comment:
  The users that don't need to provide a password to log in. NEVER list root!
- "*" means all users. BUG: this includes root!
+ "*" means all non-root users. @<group> means all users in that group.
+Description:
+ The users that don't need to provide a password to log in.
+ Items which are prefixed with <literal>@</literal> represent all users in the
+ user group named by that item.
+ <literal>*</literal> means all users but
+ <systemitem class="username">root</systemitem>
+ (and any other user with UID = 0).
+ <emphasis>Never</emphasis> list <systemitem class="username">root</systemitem>.
 
 Key: AutoLoginEnable
 Type: bool
 Default: false
 User: dep
 Instance: #:0/true
-Comment:
- Enable automatic login on this display. USE WITH EXTREME CARE!
+Comment: &
+Description:
+ Enable automatic login. <emphasis>Use with extreme care!</emphasis>
 
 Key: AutoLoginUser
 Type: string
@@ -828,8 +1704,9 @@ PostProc: PautoLoginX
 User: core(autoUser)
 Instance: #:0/"fred"
 Merge: xdm:autoUser(P_autoUser)
-Comment:
- The user to log in automatically. NEVER specify root!
+Comment: &
+Description:
+ The user to log in automatically. <emphasis>Never</emphasis> specify <systemitem class="username">root</systemitem>!
 
 Key: AutoLoginPass
 Type: string
@@ -838,10 +1715,11 @@ PostProc: PautoLoginX
 User: core(autoPass)
 Instance: #:0/"secret!"
 Merge: xdm:autoPass(P_autoPass)
-Comment:
- The password for the user to log in automatically. This is NOT required
- unless the user is to be logged into a NIS or Kerberos domain. If you use
- it, you should "chmod 600 kdmrc" for obvious reasons.
+Comment: &
+Description:
+ The password for the user to log in automatically. This is <emphasis>not</emphasis> required
+ unless the user is logged into a <acronym>NIS</acronym> or Kerberos domain. If you use this
+ option, you should <command>chmod&nbsp;<option>600</option>&nbsp;<filename>kdmrc</filename></command> for obvious reasons.
 
 Key: SessionsDirs
 Type: list
@@ -851,6 +1729,9 @@ User: greeter-c
 Instance: #*/"/etc/X11/sessions,/usr/share/xsessions"
 Comment:
  The directories containing session type definitions in .desktop format.
+Description:
+ A list of directories containing session type definitions.
+# See <xref linkend="kdmrc-sessions"> for details.
 
 Key: ClientLogFile
 Type: string
@@ -861,9 +1742,17 @@ Instance: :0/".xsession-errors"
 Comment:
  The file (relative to $HOME) to redirect the session output to. This is
  a printf format string; one %s will be replaced with the display name.
+Description:
+ The file (relative to the user's home directory) to redirect the session
+ output to. One occurrence of <parameter>%s</parameter> in this string will be
+ substituted with the display name. Use <parameter>%%</parameter> to obtain a
+ literal <literal>%</literal>.
 
 
 Section: -Greeter
+Description:
+ This section class contains options concerning the configuration
+ of the &kdm; frontend (greeter).
 
 Key: GUIStyle
 Type: string
@@ -874,6 +1763,9 @@ Update: upd_guistyle
 Comment:
  Widget style of the greeter. "" means the built-in default which currently
  is "Keramik".
+Description:
+ Specify the widget style for the greeter. Empty means to use the
+ built-in default which currently is <literal>Keramik</literal>.
 
 Key: ColorScheme
 Type: string
@@ -882,18 +1774,26 @@ User: greeter
 Instance: #*/"Pumpkin"
 Comment:
  Widget color scheme of the greeter. "" means the built-in default which
- currently is quite greyish.
+ currently is yellowish grey with some light blue and yellow elements.
+Description:
+ Specify the widget color scheme for the greeter. Empty means to use
+ the built-in default which currently is yellowish grey with some light
+ blue and yellow elements.
 
 Key: LogoArea
 Type: enum
  None/LOGO_NONE: nothing
- Logo/LOGO_LOGO: the image specified by LogoPixmap
+ Logo/LOGO_LOGO: the image specified by <option>LogoPixmap</option>
  Clock/LOGO_CLOCK: a neat analog clock
 Default: Clock
 User: greeter
 Instance: */Logo
 Comment:
- What should be shown righthand of the input lines:
+ What should be shown in the greeter's logo are:
+Description:
+ What should be shown in the greeter righthand of the input lines (if
+ <option>UserList</option> is disabled) or above them (if
+ <option>UserList</option> is enabled):
 
 Key: LogoPixmap
 Type: string
@@ -902,6 +1802,9 @@ User: greeter(logo)
 Instance: */KDMDATA "pics/kdelogo.png"
 Comment:
  The image to show when LogoArea=Logo.
+Description:
+ The image to show in the greeter if <option>LogoArea</option> is
+ <literal>Logo</literal>.
 
 Key: GreeterPos
 Type: string
@@ -910,17 +1813,22 @@ User: greeter-c
 Instance: #*/"30,40"
 Comment:
  The relative coordinates (X,Y in percent) of the center of the greeter.
+Description:
+ The relative coordinates (percentages of the screen size; X,Y) at which
+ the center of the greeter is put. &kdm; aligns the greeter to the edges
+ of the screen it would cross otherwise.
 
 Key: GreeterScreen
 Type: int
 Default: 0
 User: greeter
 Instance: #*/-1
-Comment:
- The screen the greeter should be displayed on in multi-headed setups.
- The numbering starts with 0 and corresponds to the listing order in the
- active ServerLayout section of XF86Config. -1 means to use the upper-left
- screen, -2 means to use the upper-right screen.
+Comment: &
+Description:
+ The screen the greeter should be displayed on in multi-headed and Xinerama
+ setups. The numbering starts with 0. For Xinerama, it corresponds to the
+ listing order in the active ServerLayout section of XF86Config; -1 means
+ to use the upper-left screen, -2 means to use the upper-right screen.
 
 Key: GreetString
 Type: string
@@ -936,6 +1844,42 @@ Comment:
  - %r -> the operating system's version
  - %m -> the machine (hardware) type
  - %% -> a single %
+Description:
+ The headline in the greeter. An empty greeting means none at all.
+ </para><para>
+ The following character pairs are replaced by their value:
+ <variablelist>
+ <varlistentry>
+ <term><parameter>%d</parameter></term>
+ <listitem><para>name of the current display</para></listitem>
+ </varlistentry>
+ <varlistentry>
+ <term><parameter>%h</parameter></term>
+ <listitem><para>local host name, possibly with the
+  domain name</para></listitem>
+ </varlistentry>
+ <varlistentry>
+ <term><parameter>%n</parameter></term>
+ <listitem><para>local node name, most probably the host name without the
+  domain name</para></listitem>
+ </varlistentry>
+ <varlistentry>
+ <term><parameter>%s</parameter></term>
+ <listitem><para>operating system</para></listitem>
+ </varlistentry>
+ <varlistentry>
+ <term><parameter>%r</parameter></term>
+ <listitem><para>operating system version</para></listitem>
+ </varlistentry>
+ <varlistentry>
+ <term><parameter>%m</parameter></term>
+ <listitem><para>machine (hardware) type</para></listitem>
+ </varlistentry>
+ <varlistentry>
+ <term><parameter>%%</parameter></term>
+ <listitem><para>a single <literal>%</literal></para></listitem>
+ </varlistentry>
+ </variablelist>
 
 Key: GreetFont
 Type: string
@@ -943,8 +1887,9 @@ Default: "charter,24,5,0,50,0"
 CDefault: "charter,24,bold"
 User: greeter:font
 Instance: #*/"charter,20,5,0,50,0"
-Comment:
- The font for the headline.
+Comment: &
+Description:
+ The font for the greeter headline.
 
 Key: StdFont
 Type: string
@@ -952,7 +1897,8 @@ Default: "helvetica,12,5,0,50,0"
 CDefault: "helvetica,12"
 User: greeter(normalFont):font
 Instance: #*/"helvetica,10,5,0,50,0"
-Comment:
+Comment: &
+Description:
  The normal font used in the greeter.
 
 Key: FailFont
@@ -961,16 +1907,18 @@ Default: "helvetica,12,5,0,75,0"
 CDefault: "helvetica,12,bold"
 User: greeter:font
 Instance: #*/"helvetica,10,5,0,75,0"
-Comment:
- The font used for the "Login Failed" message.
+Comment: &
+Description:
+ The font used for the <quote>Login Failed</quote> message.
 
 Key: AntiAliasing
 Type: bool
 Default: false
 User: greeter-c
 Instance: #*/!
-Comment:
- Whether the fonts shown in the greeter should be antialiased.
+Comment: &
+Description:
+ Whether the fonts used in the greeter should be antialiased.
 
 Key: NumLock
 Type: enum
@@ -980,7 +1928,8 @@ Type: enum
 Default: Keep
 User: greeter(numLockStatus)
 Instance: #*/Off
-Comment:
+Comment: &
+Description:
  What to do with the Num Lock modifier for the time the greeter is running:
 
 Key: Language
@@ -989,15 +1938,17 @@ Default: "en_US"
 User: greeter-c
 Instance: #*/"de_DE"
 Update: upd_language
-Comment:
- Language to use in the greeter.
+Comment: &
+Description:
+ Language and locale to use in the greeter, encoded like $<envar>LC_LANG</envar>.
 
 Key: UserCompletion
 Type: bool
 Default: false
 User: greeter
 Instance: #*/!
-Comment:
+Comment: &
+Description:
  Enable autocompletion in the user name line edit.
 
 Key: UserList
@@ -1007,6 +1958,8 @@ User: greeter
 Instance: #*/!
 Comment:
  Enable user list (names along with images) in the greeter.
+Description:
+ Show a user list with unix login names, real names and images in the greeter.
 
 Key: ShowUsers
 Type: enum
@@ -1018,6 +1971,22 @@ Instance: #*/Selected
 Update: upd_showusers
 Comment:
  User selection for UserCompletion and UserList:
+Description: !
+ This option controls which users will be shown in the user view
+ (<option>UserList</option>) and/or offered for autocompletion
+ (<option>UserCompletion</option>).
+ If it is <literal>Selected</literal>, <option>SelectedUsers</option> contains the
+ final list of users.
+ If it is <literal>NotHidden</literal>, the initial user list are all users found
+ on the system. Users contained in <option>HiddenUsers</option> are removed
+ from the list, just like all users with a UID greater than specified in
+ <option>MaxShowUID</option> and users with a non-zero UID less than
+ specified in <option>MinShowUID</option>.
+ Items in <option>SelectedUsers</option> and <option>HiddenUsers</option>
+ which are prefixed with <literal>@</literal> represent all users in the
+ user group named by that item.
+ Finally, the user list will be sorted alphabetically, if
+ <option>SortUsers</option> is enabled. 
 
 Key: SelectedUsers
 Type: list
@@ -1026,7 +1995,9 @@ User: greeter-c(users)
 Instance: #*/"root,johndoe"
 Merge: kdm:Users
 Comment:
- For ShowUsers=Selected.
+ For ShowUsers=Selected. @<group> means all users in that group.
+Description:
+ See <option>ShowUsers</option>.
 
 Key: HiddenUsers
 Type: list
@@ -1037,7 +2008,9 @@ Instance: #*/"root"
 Update: upd_hiddenusers/1
 Merge: kdm:NoUsers
 Comment:
- For ShowUsers=NotHidden.
+ For ShowUsers=NotHidden. @<group> means all users in that group.
+Description:
+ See <option>ShowUsers</option>.
 
 Key: MinShowUID
 Type: int
@@ -1047,8 +2020,10 @@ User: greeter(lowUserId)
 Instance: #*/
 Update: upd_minshowuid
 Comment:
- Special case of HiddenUsers: users with a UID less than this number
- (except root) will not be shown as well.
+ Special case of HiddenUsers: users with a non-zero UID less than this number
+ will not be shown as well.
+Description:
+ See <option>ShowUsers</option>.
 
 Key: MaxShowUID
 Type: int
@@ -1060,6 +2035,8 @@ Update: upd_maxshowuid
 Comment:
  Complement to MinShowUID: users with a UID greater than this number will
  not be shown as well.
+Description:
+ See <option>ShowUsers</option>.
 
 Key: SortUsers
 Type: bool
@@ -1069,18 +2046,32 @@ Instance: #*/!
 Comment:
  If false, the users are listed in the order they appear in /etc/passwd.
  If true, they are sorted alphabetically.
+Description:
+ See <option>ShowUsers</option>.
 
 Key: FaceSource
 Type: enum
- AdminOnly/FACE_ADMIN_ONLY: from <FaceDir>/$USER.face[.icon]
- PreferAdmin/FACE_PREFER_ADMIN: prefer <FaceDir>, fallback on $HOME
+ AdminOnly/FACE_ADMIN_ONLY: from <filename>&lt;<option>FaceDir</option>&gt;/$<envar>USER</envar>.face[.icon]</filename>
+ PreferAdmin/FACE_PREFER_ADMIN: prefer &lt;<option>FaceDir</option>&gt;, fallback on $<envar>HOME</envar>
  PreferUser/FACE_PREFER_USER: ... and the other way round
- UserOnly/FACE_USER_ONLY: from the user's $HOME/.face[.icon]
+ UserOnly/FACE_USER_ONLY: from the user's <filename>$<envar>HOME</envar>/.face[.icon]</filename>
 Default: AdminOnly
 User: greeter
 Instance: #*/PreferUser
 Comment:
  Specify, where the users' pictures should be taken from.
+Description:
+ If <option>UserList</option> is enabled, this specifies where &kdm; gets the
+ images from:
+ </para>
+ %ENUM%
+ <para>
+ The images can be in any format Qt recognizes, but the filename
+ must match &kdm;'s expectations: <literal>.face.icon</literal> should be a
+ 48x48 icon, while <literal>.face</literal> should be a 300x300 image.
+ Currently the big image is used only as a fallback and is scaled down,
+ but in the future it might be displayed full-size in the logo area or a
+ tooltip.
 
 Key: FaceDir
 Type: string
@@ -1090,12 +2081,14 @@ Instance: #*/"/usr/share/faces"
 Update: upd_facedir
 Comment:
  The directory containing the user images if FaceSource is not UserOnly.
+Description:
+ See <option>FaceSource</option>.
 
 Key: PreselectUser
 Type: enum
  None/PRESEL_NONE: don't preselect any user
  Previous/PRESEL_PREV: the user which successfully logged in last time
- Default/PRESEL_DEFAULT: the user specified in the DefaultUser field
+ Default/PRESEL_DEFAULT: the user specified in the <option>DefaultUser</option> option
 Default: None
 User: greeter(preselUser)
 Instance: #*/Previous
@@ -1103,9 +2096,19 @@ Instance: :*/Previous
 Instance: #:0/Default
 Comment:
  Specify, if/which user should be preselected for log in.
- Note, that enabling this feature can be considered a security hole,
- as it presents a valid login name to a potential attacker, so he "only"
- needs to guess the password.
+Description:
+ Specify, if/which user should be preselected for log in:
+ </para>
+ %ENUM%
+ <para>
+ If <option>FocusPasswd</option> is enabled and a user was preselected,
+ the cursor is placed in the password input field automatically.
+ </para>
+ <note><para>Enabling user preselection can be considered a security hole,
+ as it presents a valid login name to a potential attacker, so he
+ <quote>only</quote> needs to guess the password. On the other hand,
+ one could set <option>DefaultUser</option> to a fake login name.</para></note>
+ <para>
 
 Key: DefaultUser
 Type: string
@@ -1114,6 +2117,8 @@ User: greeter
 Instance: #:0/"johndoe"
 Comment:
  The user to preselect if PreselectUser=Default.
+Description:
+ See <option>PreselectUser</option>.
 
 Key: FocusPasswd
 Type: bool
@@ -1124,17 +2129,20 @@ Instance: :*/true
 Comment:
  If this is true, the password input line is focused automatically if
  a user is preselected.
+Description:
+ See <option>PreselectUser</option>.
 
 Key: EchoMode
 Type: enum
- OneStar: "*" is shown for every typed letter
- ThreeStars: "***" is shown for every typed letter
+ OneStar: <literal>*</literal> is shown for every typed letter
+ ThreeStars: <literal>***</literal> is shown for every typed letter
  NoEcho: nothing is shown at all, the cursor doesn't move
 # HACK! This must be in sync with KPasswordEdit::EchoModes (kpassdlg.h)
 Default: OneStar
 User: greeter
 Instance: #*/NoEcho
-Comment:
+Comment: &
+Description:
  The password input fields cloak the typed in text. Specify, how to do it:
 
 Key: UseBackground
@@ -1145,6 +2153,10 @@ Instance: #*/!
 Comment:
  If true, krootimage will be automatically started by KDM. Otherwise, the
  Setup script should be used to setup the background.
+Description:
+ If enabled, &kdm; will automatically start the <command>krootimage</command>
+ program to set up the background. Otherwise, the <option>Setup</option>
+ program is responsible for the background.
 
 Key: BackgroundCfg
 Type: string
@@ -1154,6 +2166,11 @@ Instance: #*/""
 Update: handBgCfg
 Comment:
  The configuration file to be used by krootimage.
+Description:
+ The configuration file to be used by <command>krootimage</command>.
+ It contains a section named <literal>[Desktop0]</literal> like
+ <filename>kdesktoprc</filename> does. Its options are not described
+ herein; guess their meanings or use the control center.
 
 Key: GrabServer
 Type: bool
@@ -1164,6 +2181,16 @@ Comment:
  Hold the X-server grabbed the whole time the greeter is visible. This
  may be more secure, but it will disable any background and other
  X-clients started from the Setup script.
+Description:
+ To improve security, the greeter grabs the &X-Server; and then the keyboard
+ when it starts up. This option specifies if the &X-Server; grab should be held
+ for the duration of the name/password reading. When disabled, the &X-Server;
+ is ungrabbed after the keyboard grab succeeds, otherwise the &X-Server; is
+ grabbed until just before the session begins.
+ </para>
+ <note><para>Enabling this option disables <option>UseBackground</option> and
+ <option>Setup</option>.</para></note>
+ <para>
 
 Key: GrabTimeout
 Type: int
@@ -1172,6 +2199,13 @@ User: greeter
 Instance: #*/
 Comment:
  How many seconds to wait for grab to succeed.
+Description:
+ This option specifies the maximum time &kdm; will wait for the grabs to
+ succeed. A grab may fail if some other X-client has the &X-Server; or the
+ keyboard grabbed, or possibly if the network latencies are very high. You
+ should be cautious when raising the timeout, as a user can be spoofed by
+ a look-alike window on the display. If a grab fails, &kdm; kills and
+ restarts the &X-Server; (if possible) and the session. 
 
 Key: AuthComplain
 Type: bool
@@ -1181,13 +2215,27 @@ Instance: #*/!
 Merge: xdm
 Comment:
  Warn, if display has no X-authorization (local auth cannot be created,
- XDMCP display sent no auth, or display is foreign from file).
+ XDMCP display wants no auth, or display is foreign from file).
+Description:
+ Warn, if a display has no X-authorization. This will be the case if
+ <itemizedlist>
+  <listitem><para>
+   the authorization file for a local &X-Server; could not be created,
+  </para></listitem>
+  <listitem><para>
+   a remote display from &XDMCP; did not request any authorization or
+  </para></listitem>
+  <listitem><para>
+   the display is a <literal>foreign</literal> display from the
+   <filename>Xservers</filename> file.
+  </para></listitem>
+ </itemizedlist>
 
 Key: LoginMode
 If: defined(XDMCP)
 Type: enum
  LocalOnly/LOGIN_LOCAL_ONLY: only local login possible
- DefaultLocal/LOGIN_DEFAULT_LOCAL: start up in local mode, but allow switch to remote mode
+ DefaultLocal/LOGIN_DEFAULT_LOCAL: start up in local mode, but allow switching to remote mode
  DefaultRemote/LOGIN_DEFAULT_REMOTE: ... and the other way round
  RemoteOnly/LOGIN_REMOTE_ONLY: only choice of remote host possible
 Default: LocalOnly
@@ -1196,7 +2244,8 @@ User: greeter
 Instance: :*/DefaultLocal
 # from make_it_cool branch and SuSE 8.1
 Merge: kdm:EnableChooser(P_EnableChooser)
-Comment:
+Comment: &
+Description:
  Specify whether the greeter of local displays should start up in host chooser
  (remote) or login (local) mode and whether it is allowed to switch to the
  other mode.
@@ -1210,6 +2259,10 @@ Instance: #:*/"*,ugly,sky,dino,kiste.local,login.crap.com"
 Comment:
  A list of hosts to be automatically added to the remote login menu. The
  special name "*" means broadcast.
+Description:
+ A list of hosts to be automatically added to the remote login menu.
+ The special name <literal>*</literal> means broadcast.
+ Has no effect if <option>LoginMode</option> is <literal>LocalOnly</literal>.
 
 Key: ForgingSeed
 Type: int
@@ -1218,6 +2271,9 @@ User: greeter
 Instance: #*/
 Update: upd_forgingseed
 Comment:
+ Random seed for forging saved session types, etc. of unknown users.
+ This value should be random but constant across the login domain.
+Description:
  Use this number as a random seed when forging saved session types, etc. of
  unknown users. This is used to avoid telling an attacker about existing users
  by reverse conclusion. This value should be random but constant across the
@@ -1230,8 +2286,13 @@ Default: false
 User: greeter
 Instance: :0/true
 Comment:
- Enable KDM's built-in xconsole. Note, that this can be enabled for only
+ Enable KDM's built-in xconsole. Note that this can be enabled for only
  one display at a time.
+Description:
+ Enable &kdm;'s built-in <command>xconsole</command>.
+ Note that this can be enabled for only one display at a time.
+ This option is available only if &kdm; was <command>configure</command>d
+ with <option>--enable-kdm-xconsole</option>.
 
 Key: LogSource
 If: defined(WITH_KDM_XCONSOLE)
@@ -1242,6 +2303,11 @@ Instance: :0/"/dev/xconsole"
 Comment:
  The data source for KDM's built-in xconsole.
  If empty, a console log redirection is requested from /dev/console.
+Description:
+ The data source for &kdm;'s built-in <command>xconsole</command>.
+ If empty, a console log redirection is requested from
+ <filename>/dev/console</filename>.
+ Has no effect if <option>ShowLog</option> is disabled.
 
 Key: PluginsLogin
 Type: list
@@ -1249,17 +2315,28 @@ Default: "classic"
 User: greeter
 Instance: #*/"sign"
 Comment:
- Specify greeter plugins that can be used to obtain authentication data.
- This can be a plugin's base name (expands to $kde_modulesdir/kgreet_$base)
- or a full pathname.
+ Specify conversation plugins for the login dialog. Each plugin can be
+ specified as a base name (which expands to $kde_modulesdir/kgreet_$base)
+ or as a full pathname.
+Description:
+ Specify conversation plugins for the login dialog; the first in the list
+ is selected initially.
+ Each plugin can be specified as a base name (which expands to
+ <filename>$<envar>kde_modulesdir</envar>/kgreet_<replaceable>base</replaceable></filename>)
+ or as a full pathname.
+ </para><para>
+ Conversation plugins are modules for the greeter which obtain authentication
+ data from the user. Currently only the <literal>classic</literal> plugin is
+ shipped with &kde;; it presents the well-known user name and password form.
 
 Key: PluginsShutdown
 Type: list
 Default: "classic"
 User: greeter
 Instance: #*/"modern"
-Comment:
- Same as PluginsLogin, but for the shutdown dialog.
+Comment: &
+Description:
+ Same as <option>PluginsLogin</option>, but for the shutdown dialog.
 
 Key: PluginOptions
 Type: list
@@ -1269,6 +2346,11 @@ Instance: #*/"SomeKey=randomvalue,Foo=bar"
 Comment:
  A list of options of the form Key=Value. The conversation plugins can query
  these settings; it's up to them what possible keys are.
+Description:
+ A list of options of the form
+ <replaceable>Key</replaceable><literal>=</literal><replaceable>Value</replaceable>.
+ The conversation plugins can query these settings; it's up to them what
+ possible keys are.
 
 Key: AllowConsole
 Type: bool
@@ -1278,21 +2360,27 @@ Instance: #*/!
 Comment:
  Show the "Console Login" action in the greeter (when the respective @tty
  entry exists in Xservers).
+Description:
+ Show the <guilabel>Console Login</guilabel> action in the greeter. For this
+ to work, a console must be configured for this particular display, see
+ <xref linkend="kdmrc-xservers"/>.
 
 Key: AllowClose
 Type: bool
 Default: true
 User: greeter
 Instance: :*/false
-Comment:
- Show the "Restart X Server"/"Close Connection" action in the greeter.
+Comment: &
+Description:
+ Show the <guilabel>Restart X Server</guilabel>/<guilabel>Close Connection</guilabel> action in the greeter.
 
 Key: Preloader
 Type: string
 Default: ""
 User: greeter-c
 Instance: */KDE_BINDIR "/preloadkde"
-Comment:
+Comment: &
+Description:
  A program to run while the greeter is visible. It is supposed to preload
  as much as possible of the session that is going to be started (most
  probably).
