@@ -506,7 +506,14 @@ LoadDisplayResources (struct display *d)
 	return 0;	/* may memleak */
     if (!startConfig (GC_gDisplay, &d->cfg.dep, FALSE))
 	return 1;
-    GSendStr (d->name);
+    if ((d->displayType & d_origin) == dFromXDMCP && d->name[0] == ':') {
+	char *dname;
+	if (!ASPrintf (&dname, "localhost%s", d->name))
+	    return 0;
+	GSendStr (dname);
+	free (dname);
+    } else
+	GSendStr (d->name);
     GSendStr (d->class2);
     LoadResources (&d->cfg);
 /*    Debug ("display(%s, %s) resources: %[*x\n", d->name, d->class2,
