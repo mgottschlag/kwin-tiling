@@ -24,6 +24,7 @@
 #include <kservicegroup.h>
 #include <ksycoca.h>
 #include <kdebug.h>
+#include <kapp.h>
 
 #include <qobjectlist.h>
 #include <qaccel.h>
@@ -62,7 +63,7 @@ void KCGlobal::init()
   setUserName(username);
   setRoot(getuid() == 0);
 
-  setKDEVersion(VERSION);
+  setKDEVersion(KDE_VERSION_STRING);
 
   uname(&info);
 
