@@ -108,7 +108,7 @@ static bool isRequiredDir(QListViewItem *item)
 {
     CFontListWidget::CListViewItem *citem=(CFontListWidget::CListViewItem *)item;
     QString                        fName=citem->fullName();
-    
+
     return CFontListWidget::CListViewItem::DIR==citem->getType() &&
            (fName==CKfiGlobal::cfg().getFontsDir() ||
             fName==(CKfiGlobal::cfg().getFontsDir()+CKfiGlobal::cfg().getTTSubDir()) ||
@@ -132,7 +132,7 @@ static bool dirInList(const QString &dir, QStringList &list)
     // Look for /a/b/c/d/e/ in
     //    /a/b/c/d/e/f/g/, /a/b/c/, /.....
     // ... /a/b/c/ matches
-    
+
     QStringList::Iterator it;
 
     for(it=list.begin(); it!=list.end(); ++it)
@@ -449,7 +449,7 @@ void CDirectoryItem::setOpen(bool open)
                     ndItem->open();
             }
         }
-        
+
         dir.setPath(fullName()+"/"+constDisabledSubDir);
         if(dir.isReadable())
         {
@@ -1487,8 +1487,8 @@ void CFontListWidget::applyChanges()
     //
     // Now update display...
     CListViewItem *citem=(CListViewItem *)firstChild();
-
-    while(NULL!=citem)
+    CListViewItem *lastitem=(CListViewItem *)lastItem();
+    while(citem!=NULL && citem!=lastitem)
     {
         CListViewItem *next=(CListViewItem *)(citem->itemBelow());
         QString       fName(citem->fullName());
