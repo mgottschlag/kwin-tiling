@@ -91,6 +91,17 @@ void applyQtXFT(bool active)
    kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
 }
 
+void applyMultiHead(bool active)
+{
+   // Pass env. var to kdeinit.
+   QCString name = "KDE_MULTIHEAD";
+   QCString value = active ? "true" : "false";
+   QByteArray params;
+   QDataStream stream(params, IO_WriteOnly);
+   stream << name << value;
+   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
+}
+
 extern "C" {
     KCModule *create_style(QWidget *parent, const char *name) {
       KGlobal::locale()->insertCatalogue(QString::fromLatin1("kcmstyle"));
@@ -110,6 +121,16 @@ extern "C" {
           applyGtkStyles(false);
         }
 
+        if (!config.readBoolEntry( "disableMultihead", false ) &&
+           (ScreenCount(qt_xdisplay()) > 1))
+        {
+          applyMultiHead(true);
+        }
+        else 
+        {
+          applyMultiHead(false);
+        }
+ 
         config.setGroup("KDE");
         // Enable/disable Qt anti-aliasing
         applyQtXFT(config.readBoolEntry( "AntiAliasing", true ));
