@@ -918,9 +918,9 @@ void PMenu::writeConfig( QDir base_dir, PMenuItem *parent_item)
       return;
     }
 
-  const QStringList *temp_list = base_dir.entryList("*", QDir::Files);
+  QStringList temp_list = base_dir.entryList("*", QDir::Files);
   QStringList file_list;
-  QStringList::ConstIterator temp_it = temp_list->begin();
+  QStringList::Iterator temp_it = temp_list.begin();
   while( !temp_it->isNull() )
     {
       file_list.append(*temp_it);
@@ -928,7 +928,7 @@ void PMenu::writeConfig( QDir base_dir, PMenuItem *parent_item)
     }
   temp_list = base_dir.entryList("*", QDir::Dirs);
   QStringList dir_list;
-  temp_it = temp_list->begin();
+  temp_it = temp_list.begin();
   while( !temp_it->isNull() )
     {
       if (*temp_it != "." && *temp_it != "..")

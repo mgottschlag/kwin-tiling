@@ -259,7 +259,7 @@ main( int argc, char ** argv )
 		dUser.setSorting( QDir::Name );
 		dUser.setNameFilter("*.ad");
 		userList = new QFileInfoList( *dUser.entryInfoList() );
-		userNames = new QStringList( *dUser.entryList() );
+		userNames = new QStringList( dUser.entryList() );
 	}
 
 	if ( !sysList && !userList ) {

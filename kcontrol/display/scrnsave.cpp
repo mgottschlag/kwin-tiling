@@ -191,7 +191,7 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 	ssList->adjustSize();
 	ssList->setMinimumSize(ssList->size());
 //	ssList->insertStrList( &saverNames );
-	QStringList::ConstIterator it = saverList->begin();
+	QStringList::Iterator it = saverList.begin();
 	for ( int i = 1; !it->isNull(); ++it )
 	{
 		ssList->insertItem( *saverNames.at( i - 1 ), i );
@@ -497,8 +497,8 @@ void KScreenSaver::getSaverNames()
 
 	saverNames.clear();
 
-	QStringList::ConstIterator it = saverList->begin();
-	for ( ; it != saverList->end(); ++it )
+	QStringList::Iterator it = saverList.begin();
+	for ( ; it != saverList.end(); ++it )
 	{
 		QString name = config->readEntry( *it );
 
@@ -627,7 +627,7 @@ void KScreenSaver::slotScreenSaver( int indx )
 	}
 	else
 	{
-		QStringList::ConstIterator it = saverList->begin();
+		QStringList::Iterator it = saverList.begin();
 		int i = indx - 1;
 		while (i--) { it++; }
 		saverFile = *it;
@@ -750,8 +750,8 @@ void KScreenSaver::loadSettings()
   findSavers();
   getSaverNames();
 
-  QStringList::ConstIterator it = saverList->begin();
-  for ( int i = 1; it != saverList->end(); ++it )
+  QStringList::Iterator it = saverList.begin();
+  for ( int i = 1; it != saverList.end(); ++it )
     {
 	ssList->insertItem( *saverNames.at( i - 1 ), i );
 	if ( saverFile == *it )

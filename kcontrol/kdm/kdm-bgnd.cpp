@@ -131,7 +131,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 
       QString path = kapp->kde_wallpaperdir().copy();
       QDir d( path, "*", QDir::Name, QDir::Readable | QDir::Files );
-      QStringList list = *d.entryList();
+      QStringList list = d.entryList();
       if(!wallpaper.isEmpty())
         list.append( wallpaper.data() );
 

@@ -100,7 +100,7 @@ protected:
 	QSlider *prioritySlider;
 	QCheckBox *cb, *cbStars, *cbRoot;
 	QLabel *monitorLabel;
-	const QStringList *saverList;
+	QStringList saverList;
 	QStringList saverNames;
 	QString saverLocation;
 	QString saverFile;
