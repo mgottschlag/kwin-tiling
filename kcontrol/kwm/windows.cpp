@@ -222,7 +222,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     " active. If the mouse points nowhere, nothing has the focus. "
     " </ul>"
     "  Note that FocusUnderMouse and FocusStrictlyUnderMouse are not"
-    " particulary useful. They are only provided for old-fashined"
+    " particularly useful. They are only provided for old-fashioned"
     " die-hard UNIX people ;-)"
     ) );
 
