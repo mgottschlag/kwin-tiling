@@ -64,6 +64,8 @@ KeyModule::KeyModule( QWidget *parent, const char *name )
 void KeyModule::initGUI()
 {
 	m_pTab = new QTabWidget( this );
+	QVBoxLayout *l = new QVBoxLayout(this);
+	l->addWidget(m_pTab);
 
 	m_pShortcuts = new ShortcutsModule( this );
 	m_pTab->addTab( m_pShortcuts, i18n("Shortcut Schemes") );
