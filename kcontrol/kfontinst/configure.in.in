@@ -29,7 +29,7 @@ if test -n "$FREETYPE_CONFIG"; then
     fi
 fi
 
-if test $KFI_FOUND_FREETYPE -eq 1; then
+if test "$KFI_FOUND_FREETYPE" -eq 1; then
     AC_SUBST(LIBFREETYPE_LIBS)
     AC_SUBST(LIBFREETYPE_CFLAGS)
     AC_SUBST(LIBFREETYPE_RPATH)
@@ -78,7 +78,7 @@ if test $KFI_FOUND_FREETYPE -eq 1; then
         fi
     fi
 
-    if test $KFI_FOUND_FONTCONFIG -eq 1; then
+    if test "$KFI_FOUND_FONTCONFIG" -eq 1; then
         AC_SUBST(LIBFONTCONFIG_LIBS)
         AC_SUBST(LIBFONTCONFIG_CFLAGS)
         AC_SUBST(LIBFONTCONFIG_RPATH)
@@ -129,7 +129,7 @@ if test $KFI_FOUND_FREETYPE -eq 1; then
         CPPFLAGS="$CXXFLAGS"
         
         AC_CHECK_HEADER(X11/Xft/Xft.h, [ac_xft_headers=1])
-        if test $ac_xft_headers -eq 1 ; then
+        if test "$ac_xft_headers" -eq 1 ; then
             LIBXFT_LIB=-lXft
             AC_SUBST(LIBXFT_LIB)
         else
@@ -145,9 +145,9 @@ else
     AC_MSG_WARN([Missing FreeType2 - disabling kfontinst!])
 fi
 
-AM_CONDITIONAL(include_fontinst_tn, test $ac_xft_headers -eq 1)
+AM_CONDITIONAL(include_fontinst_tn, test "$ac_xft_headers" -eq 1)
 
-if test $ac_xft_headers -eq 1 ; then
+if test "$ac_xft_headers" -eq 1 ; then
     AC_DEFINE(HAVE_XFT, 1, [Defines if you have Xft])
 fi
 
