@@ -17,19 +17,12 @@
  
 */               
 
-#include <qcolor.h>
-#include <qbrush.h>                                 
-
 #include "quickhelp.h"
 #include "quickhelp.moc"
 
 QuickHelp::QuickHelp(QWidget *parent , const char *name)
     : KTextBrowser( parent, name)
 {
-  viewport()->setFont( QFont("times") );
-  QColorGroup clgrp = colorGroup();
-  clgrp.setColor( QColorGroup::Base, QColor( 255, 255, 224 ) );
-  setPaperColorGroup( clgrp );
   setFrameStyle( QFrame::Panel | QFrame::Sunken );
   setFocusPolicy( NoFocus );
   setHScrollBarMode( QScrollView::AlwaysOff );
