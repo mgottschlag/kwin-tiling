@@ -3,9 +3,21 @@ Welcome to the this-is-another-kcontrol-reorganization-attempt-but-this-time-it-
 
 This file contain a list of various major changes for KControl(reorganization, broad technical changes etc.) planned for KDE4. I think it is a good idea if small changes in each KCM is not listed(if they not have a meaning in the bigger picture) otherwise this list will grow too big. 
 Feel free to discuss the ideas on kde-usability.
-Of course, nothing in this file is set in stone, or is "correct" or "true" for that matter. It is only ideas.
+Of course, nothing in this file is set in stone, or is "correct" or "true" for that matter.
+
+                 ---These are only ideas.---
 
 ---------- Various reorganization/renaming stuff ---------------
+* Rename Appearance & Themes to Application Appearance
+
+* Move Background, Spalsh Screen, And Screen Saver to Desktop 
+
+* Move Launch Feedback into Desktop/Behavior kcm as another tab.
+
+* Move Theme manger out of KControl as a standalone app (can still be a kcm of course).
+
+* Combine Desktop/Behavior and Desktop/Multiple
+
 * Rename "KDE Wallet" to "Wallet"(people can't differentiate nor care about what is KDE and what's not. It is also irrelevant for the context).
 
 * Rename "Vim Component Configuration" to "Vim Embedding"
@@ -49,9 +61,11 @@ The desktop file is called "kcm_software_components" with "Name=Software Compone
 KCMODULECONTAINER("kcmfontinst, fonts", fonts )
 The desktop file is called "kcm_fonts" with "Name=Fonts" and "Categories=X-KDE-settings-appearance"
 
-* Remove "System Administration/Paths", convert the values to KConfEdit.
+* Remove "System Administration/Paths", convert the values to KConfEdit. Or make it part of an advanced tab in User Account (regedit is bad!)
 
-* Remove "Sound & Multimedia/Bell" since it is a duplicate of the accessibility KCM. How on earth does such a thing slip through? :)
+* Move Component Chooser to a tab in User Account.
+
+* Remove "Sound & Multimedia/Bell" since it is a duplicate of the accessibility KCM. How on earth does such a thing slip through? :)  First move ability to configure Bell to Accessibility
 
 * Remove "Internet & Network/Email". It is replaced by the new kcm_useraccount
 
