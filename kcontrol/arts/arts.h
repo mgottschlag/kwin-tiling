@@ -46,7 +46,7 @@ class KArtsModule : public KCModule
 public:
 
   KArtsModule(QWidget *parent=0, const char *name=0);
-
+  ~KArtsModule();
   void saveParams( void );
 
   void load();

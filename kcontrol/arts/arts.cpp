@@ -233,6 +233,10 @@ void KArtsModule::GetSettings( void )
 	updateWidgets();
 }
 
+KArtsModule::~KArtsModule() {
+        delete config;
+}
+
 void KArtsModule::saveParams( void )
 {
 	QString audioIO;
