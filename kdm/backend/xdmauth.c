@@ -280,9 +280,11 @@ XdmGetKey (pdpy, displayID)
 
 /*ARGSUSED*/
 int
-XdmCheckAuthentication (pdpy, displayID, authenticationName, authenticationData)
-    struct protoDisplay	*pdpy;
-    ARRAY8Ptr		displayID, authenticationName, authenticationData;
+XdmCheckAuthentication (
+    struct protoDisplay *pdpy, 
+    ARRAY8Ptr displayID, 
+    ARRAY8Ptr authenticationName ATTR_UNUSED, 
+    ARRAY8Ptr authenticationData)
 {
     XdmAuthKeyPtr   incoming;
 

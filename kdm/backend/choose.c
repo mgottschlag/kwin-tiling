@@ -375,7 +375,7 @@ RemoveIndirectChoice (
 /*ARGSUSED*/
 static void
 AddChooserHost (
-    CARD16	connectionType,
+    CARD16	connectionType ATTR_UNUSED,
     ARRAY8Ptr	addr,
     char	*closure)
 {

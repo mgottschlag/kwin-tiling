@@ -402,11 +402,11 @@ extern char **GRecvStrArr (int *len);
 extern char **GRecvArgv ();
 
 /* client.c */
-extern int Verify (struct display *d, const char *name, const char *pass);
+extern int Verify (struct display *d, char *name, char *pass);
 extern void Restrict (struct display *d);
 extern int StartClient(struct display *d, char *name, char *pass, char **sessargs);
 extern void SessionExit (struct display *d, int status);
-extern char **RdWrWm (struct display *d, const char *usr, char **args);
+extern char **RdWrWm (struct display *d, char *usr, char **args);
 
 /* server.c */
 extern char *_SysErrorMsg (int n);
@@ -420,9 +420,9 @@ extern int GetChooserAddr (char *addr, int *lenp);
 extern void CreateWellKnownSockets (void);
 
 /* in util.c */
-extern int ReStr (char **dst, const char *src);
-extern int StrDup (char **dst, const char *src);
-extern int StrNDup (char **dst, const char *src, int len);
+extern int ReStr (char **dst, char *src);
+extern int StrDup (char **dst, char *src);
+extern int StrNDup (char **dst, char *src, int len);
 extern int StrApp (char **dst, ...);
 extern void WipeStr (char *str);
 extern char **initStrArr (char **arr);
@@ -433,7 +433,7 @@ extern void mergeStrArrs (char ***darr, char **arr);
 extern void freeStrArr (char **arr);
 extern char **parseArgs (char **argv, char *string);
 extern char **setEnv (char **e, char *name, char *value);
-extern char **putEnv (const char *string, char **env);
+extern char **putEnv (char *string, char **env);
 extern char *getEnv (char **e, char *name);
 extern char *localHostname (void);
 

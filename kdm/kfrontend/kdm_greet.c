@@ -198,7 +198,7 @@ SessionExit (int ret)
 
 
 static int
-ignoreErrors (Display *dpy, XErrorEvent *event)
+ignoreErrors (Display *dpy ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED)
 {
     Debug ("ignoring X error\n");
     return 0;
@@ -214,8 +214,7 @@ static void
 killWindows (Display *dpy, Window window)
 {
     Window	root, parent, *children;
-    int		child;
-    unsigned	nchildren = 0;
+    unsigned	child, nchildren = 0;
 	
     while (XQueryTree (dpy, window, &root, &parent, &children, &nchildren)
 	   && nchildren > 0)

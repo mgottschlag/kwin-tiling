@@ -108,7 +108,7 @@ static Jmp_buf	abortSession;
 
 /* ARGSUSED */
 static SIGVAL
-catchTerm (int n)
+catchTerm (int n ATTR_UNUSED)
 {
     Longjmp (abortSession, 1);
 }
@@ -117,7 +117,7 @@ static Jmp_buf	pingTime;
 
 /* ARGSUSED */
 static SIGVAL
-catchAlrm (int n)
+catchAlrm (int n ATTR_UNUSED)
 {
     Longjmp (pingTime, 1);
 }
@@ -126,7 +126,7 @@ static Jmp_buf	tenaciousClient;
 
 /* ARGSUSED */
 static SIGVAL
-waitAbort (int n)
+waitAbort (int n ATTR_UNUSED)
 {
     Longjmp (tenaciousClient, 1);
 }
@@ -180,7 +180,7 @@ AbortClient (int pid)
 
 /*ARGSUSED*/
 static int
-IOErrorHandler (Display *dpy)
+IOErrorHandler (Display *dpy ATTR_UNUSED)
 {
     LogError("fatal IO error %d (%s)\n", errno, _SysErrorMsg(errno));
     exit(EX_AL_RESERVER_DPY);	/* XXX */
@@ -190,7 +190,7 @@ IOErrorHandler (Display *dpy)
 
 /*ARGSUSED*/
 static int
-ErrorHandler(Display *dpy, XErrorEvent *event)
+ErrorHandler(Display *dpy ATTR_UNUSED, XErrorEvent *event)
 {
     LogError("X error\n");
     if (event->error_code == BadImplementation)

@@ -48,7 +48,7 @@ from The Open Group.
 #include "printf.c"
 
 void
-GDebug (const char *fmt, ...)
+GDebug (char *fmt, ...)
 {
     va_list args;
 
@@ -61,7 +61,7 @@ GDebug (const char *fmt, ...)
 }
 
 void
-Panic (const char *mesg)
+Panic (char *mesg)
 {
 #ifdef USE_SYSLOG
     syslog(LOG_ALERT, mesg);
@@ -83,7 +83,7 @@ ReInitErrorLog ()
 #endif
 
 void
-InitErrorLog (const char *errorLogFile)
+InitErrorLog (char *errorLogFile)
 {
 #ifdef USE_SYSLOG
 # ifdef USE_PAM

@@ -399,7 +399,7 @@ static char
     *shutdown[] = { "None", "Root", "All", 0 };
 
 Ent entsGeneral[] = {
-{ "DaemonMode",		C_daemonMode | C_BOOL,	PdaemonMode,	"true" },
+{ "DaemonMode",		C_daemonMode | C_BOOL,	(void *)PdaemonMode,	"true" },
 { "Xservers",		C_servers,		0,	KDMCONF "/Xservers" },
 { "PidFile",		C_pidFile,		0,	"/var/run/xdm.pid" },
 { "LockPidFile",	C_lockPidFile | C_BOOL,	0,	"true" },
@@ -409,12 +409,12 @@ Ent entsGeneral[] = {
 #if !defined(__linux__) && !defined(__OpenBSD__)
 { "RandomFile",		C_randomFile,		0,	"/dev/mem" },
 #endif
-{ "AutoLogin",		C_autoLogin | C_BOOL,	PautoLogin,	"true" },
+{ "AutoLogin",		C_autoLogin | C_BOOL,	(void *)PautoLogin,	"true" },
 };
 
 Ent entsXdmcp[] = {
 { "Enable",		C_xdmcpEnable | C_BOOL,	&VxdmcpEnable,	"true" },
-{ "Port",		C_requestPort,		PrequestPort,	"177" },
+{ "Port",		C_requestPort,		(void *)PrequestPort,	"177" },
 { "KeyFile",		C_keyFile,		0,	KDMCONF "/kdmkeys" },
 { "Xaccess",		C_accessFile,		0,	KDMCONF "/Xaccess" },
 { "ChoiceTimeout",	C_choiceTimeout,	0,	"15" },
@@ -466,11 +466,11 @@ Ent entsCore[] = {
 { "UserAuthDir",	C_userAuthDir,		0,	"/tmp" },
 { "Chooser",		C_chooser,		0,	KDE_BINDIR "/chooser" },
 { "NoPassEnable",	C_noPassEnable | C_BOOL, &VnoPassEnable, "false" },
-{ "NoPassUsers",	C_noPassUsers,	PnoPassUsers,	"" },
+{ "NoPassUsers",	C_noPassUsers,	(void *)PnoPassUsers,	"" },
 { "AutoLoginEnable",	C_autoLoginEnable | C_BOOL, &VautoLoginEnable, "false" },
-{ "AutoLoginUser",	C_autoUser,	PautoLoginX,	"" },
-{ "AutoLoginPass",	C_autoPass,	PautoLoginX,	"" },
-{ "AutoLoginSession",	C_autoString,	PautoLoginX,	"" },
+{ "AutoLoginUser",	C_autoUser,	(void *)PautoLoginX,	"" },
+{ "AutoLoginPass",	C_autoPass,	(void *)PautoLoginX,	"" },
+{ "AutoLoginSession",	C_autoString,	(void *)PautoLoginX,	"" },
 { "AutoLogin1st",	C_autoLogin1st | C_BOOL, 0,	"true" },
 { "AutoReLogin",	C_autoReLogin | C_BOOL,	0,	"false" },
 { "AllowNullPasswd",	C_allowNullPasswd | C_BOOL, 0,	"true" },
@@ -642,7 +642,7 @@ Debug ("parsing config ...\n");
 		clen = nlen;
 	    }
 	    for (i = 0; i < as(allSects); i++)
-		if (strlen (allSects[i].name) == clen && 
+		if ((int)strlen (allSects[i].name) == clen && 
 		    !memcmp (allSects[i].name, cstr, clen))
 		    goto newsec;
 	  illsec:
@@ -710,7 +710,7 @@ Debug ("parsing config ...\n");
 	nstr = sl;
 	nlen = ek - sl + 1;
 	for (i = 0; i < cursec->sect->numents; i++)
-	    if (strlen (cursec->sect->ents[i].name) == nlen && 
+	    if ((int)strlen (cursec->sect->ents[i].name) == nlen && 
 		!memcmp (cursec->sect->ents[i].name, nstr, nlen))
 		goto keyok;
 	LogError ("Unrecognized key '%.*s' at %s:%d\n", 
@@ -823,7 +823,7 @@ CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 
     switch (et->id & C_TYPE_MASK) {
 	case C_TYPE_INT:
-	    for (i = 0; i < vallen && i < sizeof(buf) - 1; i++)
+	    for (i = 0; i < vallen && i < (int)sizeof(buf) - 1; i++)
 		buf[i] = tolower (val[i]);
 	    buf[i] = 0;
 	    if (et->id & C_BOOL) {
@@ -1077,7 +1077,7 @@ int main(int argc, char **argv)
 		goto oke;
 	    }
 	LogError ("Unknown command line option '%s'\n", argv[ap]);
-      oke:
+      oke: ;
     }
 
     for (;;) {
@@ -1097,7 +1097,7 @@ int main(int argc, char **argv)
 			goto mapok;
 		    }
 		GSendInt (-1);
-	      mapok:
+	      mapok: ;
 	    }
 	    break;
 	case GC_GetConf:

@@ -48,10 +48,10 @@ char **GetCfgStrArr (int id, int *len);
 
 void SessionExit (int ret) ATTR_NORETURN;
 
-void Debug (const char *fmt, ...) ATTR_PRINTFLIKE(1,2);
-void LogInfo(const char *fmt, ...) ATTR_PRINTFLIKE(1,2);
-void LogError (const char *fmt, ...) ATTR_PRINTFLIKE(1,2);
-void LogPanic (const char *fmt, ...) ATTR_PRINTFLIKE(1,2) ATTR_NORETURN;
+void Debug (char *fmt, ...) ATTR_PRINTFLIKE(1,2);
+void LogInfo (char *fmt, ...) ATTR_PRINTFLIKE(1,2);
+void LogError (char *fmt, ...) ATTR_PRINTFLIKE(1,2);
+void LogPanic (char *fmt, ...) ATTR_PRINTFLIKE(1,2) ATTR_NORETURN;
 
 void SecureDisplay (Display *dpy);
 void UnsecureDisplay (Display *dpy);

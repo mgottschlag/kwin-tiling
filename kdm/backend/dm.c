@@ -351,7 +351,7 @@ main (int argc, char **argv)
 
 /* ARGSUSED */
 static SIGVAL
-UtmpNotify (int n)
+UtmpNotify (int n ATTR_UNUSED)
 {
     Debug ("Caught SIGALRM\n");
     ChkUtmp = 1;
@@ -553,7 +553,7 @@ SwitchToTty (struct display *d)
 
 /* ARGSUSED */
 static SIGVAL
-RescanNotify (int n)
+RescanNotify (int n ATTR_UNUSED)
 {
     Debug ("Caught SIGHUP\n");
     Rescan = 1;
@@ -659,7 +659,7 @@ RescanIfMod (void)
 
 /* ARGSUSED */
 static SIGVAL
-StopAll (int n)
+StopAll (int n ATTR_UNUSED)
 {
     Debug ("Shutting down entire manager\n");
 #ifdef XDMCP
@@ -683,7 +683,7 @@ int	ChildReady;
 #ifndef UNRELIABLE_SIGNALS
 /* ARGSUSED */
 static SIGVAL
-ChildNotify (int n)
+ChildNotify (int n ATTR_UNUSED)
 {
     ChildReady = 1;
 #ifdef ISC

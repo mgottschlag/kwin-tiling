@@ -60,7 +60,7 @@ static int serverPause (unsigned t, int serverPid);
 
 /* ARGSUSED */
 static SIGVAL
-CatchUsr1 (int n)
+CatchUsr1 (int n ATTR_UNUSED)
 {
 #ifdef SIGNALS_RESET_WHEN_CAUGHT
     (void) Signal (SIGUSR1, CatchUsr1);
@@ -152,14 +152,14 @@ static int	serverPauseRet;
 
 /* ARGSUSED */
 static SIGVAL
-serverPauseAbort (int n)
+serverPauseAbort (int n ATTR_UNUSED)
 {
     Longjmp (pauseAbort, 1);
 }
 
 /* ARGSUSED */
 static SIGVAL
-serverPauseUsr1 (int n)
+serverPauseUsr1 (int n ATTR_UNUSED)
 {
     Debug ("display manager paused til SIGUSR1\n");
     ++receivedUsr1;
@@ -234,7 +234,7 @@ static Jmp_buf	openAbort;
 
 /* ARGSUSED */
 static SIGVAL
-abortOpen (int n)
+abortOpen (int n ATTR_UNUSED)
 {
     Longjmp (openAbort, 1);
 }
@@ -293,7 +293,7 @@ GetRemoteAddress (struct display *d, int fd)
 #endif /* XDMCP */
 
 static int
-openErrorHandler (Display *dpy)
+openErrorHandler (Display *dpy ATTR_UNUSED)
 {
     LogError ("IO Error in XOpenDisplay\n");
     exit (EX_OPENFAILED_DPY);
@@ -371,7 +371,7 @@ PingLost (void)
 
 /* ARGSUSED */
 static int
-PingLostIOErr (Display *dpy)
+PingLostIOErr (Display *dpy ATTR_UNUSED)
 {
     PingLost();
     return 0;
@@ -379,7 +379,7 @@ PingLostIOErr (Display *dpy)
 
 /* ARGSUSED */
 static SIGVAL
-PingLostSig (int n)
+PingLostSig (int n ATTR_UNUSED)
 {
     PingLost();
 }

@@ -43,7 +43,7 @@ from The Open Group.
 
 /*ARGSUSED*/
 static int
-ignoreErrors (Display *dpy, XErrorEvent *event)
+ignoreErrors (Display *dpy ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED)
 {
 	Debug ("ignoring error\n");
 	return 0;
@@ -59,8 +59,7 @@ static void
 killWindows (Display *dpy, Window window)
 {
 	Window	root, parent, *children;
-	int	child;
-	unsigned int nchildren = 0;
+	unsigned int child, nchildren = 0;
 	
 	while (XQueryTree (dpy, window, &root, &parent, &children, &nchildren)
 	       && nchildren > 0)
@@ -77,7 +76,7 @@ static Jmp_buf	resetJmp;
 
 /* ARGSUSED */
 static SIGVAL
-abortReset (int n)
+abortReset (int n ATTR_UNUSED)
 {
 	Longjmp (resetJmp, 1);
 }

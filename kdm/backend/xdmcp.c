@@ -141,7 +141,7 @@ static void
 sendForward (
     CARD16	connectionType,
     ARRAY8Ptr	address,
-    char	*closure)
+    char	*closure ATTR_UNUSED)
 {
 #ifdef AF_INET
     struct sockaddr_in	    in_addr;
@@ -582,7 +582,7 @@ NetworkAddressToName(
 static void
 forward_respond (
     struct sockaddr	*from,
-    int			fromlen,
+    int			fromlen ATTR_UNUSED,
     int			length)
 {
     ARRAY8	    clientAddress;
@@ -1210,7 +1210,7 @@ NetworkAddressToHostname (
 	{
 	    struct hostent	*hostent;
 	    char dotted[20];
-	    const char *local_name;	/* const added /stefh */
+	    char *local_name;
 
 	    hostent = gethostbyaddr ((char *)connectionAddress->data,
 				     connectionAddress->length, AF_INET);

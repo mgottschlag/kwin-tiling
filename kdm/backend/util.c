@@ -54,7 +54,7 @@ from The Open Group.
 
 /* duplicate src; free old dst string */
 int
-ReStr (char **dst, const char *src)
+ReStr (char **dst, char *src)
 {
     char *ndst = 0;
 
@@ -74,7 +74,7 @@ ReStr (char **dst, const char *src)
 
 /* duplicate src */
 int
-StrNDup (char **dst, const char *src, int len)
+StrNDup (char **dst, char *src, int len)
 {
     if (src) {
 	if (!(*dst = malloc ((unsigned) len + 1)))
@@ -88,7 +88,7 @@ StrNDup (char **dst, const char *src, int len)
 
 /* duplicate src */
 int
-StrDup (char **dst, const char *src)
+StrDup (char **dst, char *src)
 {
     if (src) {
 	unsigned len = strlen (src) + 1;
@@ -339,7 +339,7 @@ setEnv (char **e, char *name, char *value)
 }
 
 char **
-putEnv(const char *string, char **env)
+putEnv(char *string, char **env)
 {
     char *v, *b, *n;
     int nl;

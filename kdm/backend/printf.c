@@ -255,7 +255,7 @@ fmtstr (OutCh dopr_outch, void *bp,
 }
 
 static void
-DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
+DoPr (OutCh dopr_outch, void *bp, char *format, va_list args)
 {
     char *strvalue;
 #ifdef PRINT_ARRAYS
@@ -500,7 +500,7 @@ logTime (char *dbuf)
 #endif
 
 STATIC void
-LogOutOfMem (const char *fkt)
+LogOutOfMem (char *fkt)
 {
 #ifdef USE_SYSLOG
     syslog (LOG_CRIT, "Out of memory in %s()", fkt);
@@ -582,7 +582,7 @@ OutChL (void *bp, char c)
 }
 
 static void
-Logger (int type, const char *fmt, va_list args)
+Logger (int type, char *fmt, va_list args)
 {
     static OCLBuf oclb;
 
@@ -597,7 +597,7 @@ Logger (int type, const char *fmt, va_list args)
 STATIC int debugLevel;
 
 STATIC void
-Debug (const char *fmt, ...)
+Debug (char *fmt, ...)
 {
     va_list args;
 
@@ -612,7 +612,7 @@ Debug (const char *fmt, ...)
 
 #ifndef LOG_NO_INFO
 STATIC void 
-LogInfo(const char *fmt, ...)
+LogInfo(char *fmt, ...)
 {
     va_list args;
 
@@ -624,7 +624,7 @@ LogInfo(const char *fmt, ...)
 
 #ifndef LOG_NO_ERROR
 STATIC void
-LogError (const char *fmt, ...)
+LogError (char *fmt, ...)
 {
     va_list args;
 
@@ -636,7 +636,7 @@ LogError (const char *fmt, ...)
 
 #ifdef LOG_PANIC_EXIT
 STATIC void
-LogPanic (const char *fmt, ...)
+LogPanic (char *fmt, ...)
 {
     va_list args;
 

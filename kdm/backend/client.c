@@ -95,7 +95,7 @@ char *getenv();
 #endif
 
 #ifdef QNX4
-extern char *crypt(const char *, const char *);
+extern char *crypt(char *, char *);
 #endif
 
 
@@ -190,7 +190,7 @@ static char krbtkfile[MAXPATHLEN];
 static int krb4_authed;
 
 static int
-krb4_auth(struct passwd *p, const char *password)
+krb4_auth(struct passwd *p, char *password)
 {
     int ret;
     char realm[REALM_SZ];
@@ -245,7 +245,7 @@ static char		*user_pass;
 #endif
 
 static int
-init_pwd(const char *name arg_shadow)
+init_pwd(char *name arg_shadow)
 {
 #if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
     if (pwinited == 2) {
@@ -293,7 +293,7 @@ static char tty[16], hostname[100];
 #endif
 
 static int
-init_vrf(struct display *d, const char *name, const char *password)
+init_vrf(struct display *d, char *name, char *password)
 {
 #ifdef USE_PAM
     int		pretc;
@@ -398,7 +398,7 @@ init_vrf(struct display *d, const char *name, const char *password)
 }
 
 static int
-AccNoPass (struct display *d, const char *un)
+AccNoPass (struct display *d, char *un)
 {
     char **fp;
 
@@ -413,7 +413,7 @@ AccNoPass (struct display *d, const char *un)
 }
 
 int
-Verify (struct display *d, const char *name, const char *pass)
+Verify (struct display *d, char *name, char *pass)
 {
     int		pretc;
 #if !defined(USE_PAM) && defined(AIXV3)
@@ -530,7 +530,7 @@ CheckAcc (char *fn, int mode)
     }
     mode = (mode & 7) << (p->pw_uid == st.st_uid ? 6 :
 			  p->pw_gid == st.st_gid ? 3 : 0);
-    return (st.st_mode & mode) == mode ? 0 : EACCES;
+    return ((int)(st.st_mode & mode) == mode) ? 0 : EACCES;
 }
 
 void
@@ -1310,7 +1310,7 @@ SessionExit (struct display *d, int status)
 }
 
 char **
-RdWrWm (struct display *d, const char *usr, char **args)
+RdWrWm (struct display *d, char *usr, char **args)
 {
     int i;
     FILE *file;

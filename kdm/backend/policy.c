@@ -133,7 +133,7 @@ Willing_msg (char *mbuf)
 {
 #ifdef linux
     int fd;
-    const char *fail_msg = "Willing to manage";
+    char *fail_msg = "Willing to manage";
     char buf[1024];
     FILE *f;
     float load[3];
@@ -202,7 +202,7 @@ int
 Willing (
     ARRAY8Ptr	    addr,
     CARD16	    connectionType,
-    ARRAY8Ptr	    authenticationName,
+    ARRAY8Ptr	    authenticationName ATTR_UNUSED,
     ARRAY8Ptr	    status,
     xdmOpCode	    type)
 {
@@ -244,9 +244,9 @@ Willing (
 /*ARGSUSED*/
 ARRAY8Ptr
 Accept (
-    struct sockaddr *from,
-    int		    fromlen,
-    CARD16	    displayNumber)
+    struct sockaddr *from ATTR_UNUSED,
+    int		    fromlen ATTR_UNUSED,
+    CARD16	    displayNumber ATTR_UNUSED)
 {
     return 0;
 }
@@ -254,8 +254,8 @@ Accept (
 /*ARGSUSED*/
 int
 SelectConnectionTypeIndex (
-    ARRAY16Ptr	     connectionTypes,
-    ARRAYofARRAY8Ptr connectionAddresses)
+    ARRAY16Ptr	     connectionTypes ATTR_UNUSED,
+    ARRAYofARRAY8Ptr connectionAddresses ATTR_UNUSED)
 {
     return 0;
 }

@@ -42,14 +42,14 @@ authorization.
 
 #include <stdarg.h>
 
-extern void GDebug	(const char *fmt, ...);
-extern void Debug	(const char *fmt, ...);
-extern void LogInfo	(const char *fmt, ...);
-extern void LogError	(const char *fmt, ...);
-extern void LogPanic	(const char *fmt, ...) ATTR_NORETURN;
-extern void LogOutOfMem	(const char *fkt);
-extern void Panic	(const char *mesg) ATTR_NORETURN;
-extern void InitErrorLog(const char *errorLogFile);
+extern void GDebug	(char *fmt, ...);
+extern void Debug	(char *fmt, ...);
+extern void LogInfo	(char *fmt, ...);
+extern void LogError	(char *fmt, ...);
+extern void LogPanic	(char *fmt, ...) ATTR_NORETURN;
+extern void LogOutOfMem	(char *fkt);
+extern void Panic	(char *mesg) ATTR_NORETURN;
+extern void InitErrorLog(char *errorLogFile);
 #ifdef USE_SYSLOG
 extern void ReInitErrorLog(void);
 #else

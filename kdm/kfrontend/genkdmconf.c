@@ -24,6 +24,11 @@
 
     */
 
+#define _SVID_SOURCE	/* argl! Need it for strdup. */
+
+#include <X11/Xlib.h>
+#include <X11/Xresource.h>
+
 #include <config.h>
 
 #include <sys/stat.h>
@@ -35,8 +40,11 @@
 #include <stdarg.h>
 #include <fcntl.h>
 
-#include <X11/Xlib.h>
-#include <X11/Xresource.h>
+#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
+# define ATTR_UNUSED __attribute__((unused))
+#else
+# define ATTR_UNUSED
+#endif
 
 #define KDMCONF KDE_CONFDIR "/kdm"
 
@@ -80,7 +88,7 @@ OutCh_OCA (void *bp, char c)
 }
 
 static int 
-VASPrintf (char **strp, const char *fmt, va_list args)
+VASPrintf (char **strp, char *fmt, va_list args)
 {
     OCABuf ocab = { 0, 0, 0, -1 };
 
@@ -93,7 +101,7 @@ VASPrintf (char **strp, const char *fmt, va_list args)
 }
 
 static int 
-ASPrintf (char **strp, const char *fmt, ...)
+ASPrintf (char **strp, char *fmt, ...)
 {
     va_list args;
     int len;
@@ -816,7 +824,7 @@ Create (const char *fn, int mode)
 }
 
 static void
-writeFile (const char *fsp, int mode, const char *fmt, ...)
+writeFile (char *fsp, int mode, char *fmt, ...)
 {
     va_list args;
     char *fn, *buf;
@@ -1195,7 +1203,7 @@ handleXdmVal (const char *dpy, const char *key, char *value,
 }
 
 static void 
-P_List (const char *sect, const char *key, char **value)
+P_List (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value)
 {
     int is, d, s;
     char *st;
@@ -1215,7 +1223,7 @@ P_List (const char *sect, const char *key, char **value)
 static const char *xdmpath;
 
 static void 
-handFile (const char *sect, const char *key, char **value, int mode)
+handFile (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value, int mode)
 {
     char *buf, *obuf, *bname;
     FILE *f;
@@ -1257,7 +1265,7 @@ P_Prog (const char *sect, const char *key, char **value)
 }
 
 static void 
-P_authDir (const char *sect, const char *key, char **value)
+P_authDir (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value)
 {
     struct stat st;
 
@@ -1266,25 +1274,25 @@ P_authDir (const char *sect, const char *key, char **value)
 }
 
 static void 
-P_openDelay (const char *sect, const char *key, char **value)
+P_openDelay (const char *sect, const char *key ATTR_UNUSED, char **value)
 {
     putfqval (sect, "ServerTimeout", *value);
 }
 
 static void 
-P_noPassUsers (const char *sect, const char *key, char **value)
+P_noPassUsers (const char *sect, const char *key ATTR_UNUSED, char **value ATTR_UNUSED)
 {
     putfqval (sect, "NoPassEnable", "true");
 }
 
 static void 
-P_autoUser (const char *sect, const char *key, char **value)
+P_autoUser (const char *sect, const char *key ATTR_UNUSED, char **value ATTR_UNUSED)
 {
     putfqval (sect, "AutoLoginEnable", "true");
 }
 
 static void 
-P_requestPort (const char *sect, const char *key, char **value)
+P_requestPort (const char *sect, const char *key ATTR_UNUSED, char **value)
 {
     if (!strcmp (*value, "0")) {
 	putfqval (sect, "Enable", "false");
@@ -1295,7 +1303,7 @@ P_requestPort (const char *sect, const char *key, char **value)
 static int kdmrcmode = 0644;
 
 static void 
-P_autoPass (const char *sect, const char *key, char **value)
+P_autoPass (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value ATTR_UNUSED)
 {
     kdmrcmode = 0600;
 }
@@ -1367,12 +1375,12 @@ static XrmQuark XrmQString, empty = NULLQUARK;
 
 static Bool 
 DumpEntry(
-    XrmDatabase         *db,
+    XrmDatabase         *db ATTR_UNUSED,
     XrmBindingList      bindings,
     XrmQuarkList        quarks,
     XrmRepresentation   *type,
     XrmValuePtr         value,
-    XPointer            data)
+    XPointer            data ATTR_UNUSED)
 {
     char *dpy, *key, dpybuf[80];
     int el, hasu;

@@ -91,7 +91,7 @@ TimeoutProtoDisplays (Time_t now)
     for (pdpy = protoDisplays; pdpy; pdpy = next)
     {
 	next = pdpy->next;
-	if (pdpy->date < now - PROTO_TIMEOUT)
+	if (pdpy->date < (unsigned long)(now - PROTO_TIMEOUT))
 	    DisposeProtoDisplay (pdpy);
     }
 }
