@@ -182,13 +182,17 @@ void CXConfig::addPath(const QString &dir, bool unscaled)
     if(itsWritable)
     {
         QString ds(CMisc::dirSyntax(dir));
-        TPath   *path=findPath(ds);
 
-        if(NULL==path)
-            itsPaths.append(new TPath(ds, unscaled, TPath::DIR, false));
-        else
-            if(path->toBeRemoved)
-                path->toBeRemoved=false;
+        if(CMisc::dExists(dir))
+        {
+            TPath   *path=findPath(ds);
+
+            if(NULL==path)
+                itsPaths.append(new TPath(ds, unscaled, TPath::DIR, false));
+            else
+                if(path->toBeRemoved)
+                    path->toBeRemoved=false;
+        }
     }
 }
 
@@ -361,7 +365,7 @@ bool CXConfig::readFontpaths()
                     processPath(line, path, unscaled);
 
                     if(NULL==findPath(path))
-                        itsPaths.append(new TPath(KXftConfig::expandHome(path), false, TPath::DIR, true));
+                        itsPaths.append(new TPath(KXftConfig::expandHome(path)));
                 }
             }
         }
@@ -615,7 +619,7 @@ bool CXConfig::processX11(bool read)
                                 processPath(item, path, unscaled);
 
                                 if(NULL==findPath(path))
-                                    itsPaths.append(new TPath(path, unscaled, TPath::getType(path), true));
+                                    itsPaths.append(new TPath(path, unscaled, TPath::getType(path)));
 
                             }
 
@@ -857,7 +861,7 @@ bool CXConfig::processXfs(bool read)
                                                             processPath(path, str, unscaled);
  
                                                             if(NULL==findPath(path))
-                                                                itsPaths.append(new TPath(str, unscaled, TPath::DIR, true));
+                                                                itsPaths.append(new TPath(str, unscaled));
                                                         }
  
                                                     if(!read) // then must be write...

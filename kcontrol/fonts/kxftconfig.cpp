@@ -131,6 +131,11 @@ inline bool dWritable(const QString &p)
     return check(p, S_IFDIR, true);
 }
 
+inline bool dExists(const QString &p)
+{
+    return check(p, S_IFDIR, false);
+}
+
 static QString getDir(const QString &f)
 {
     QString d(f);
@@ -743,7 +748,7 @@ void KXftConfig::addDir(const QString &d)
 {
     QString dir(dirSyntax(d));
 
-    if(!hasDir(dir))
+    if(dExists(dir) && !hasDir(dir))
         addItem(m_dirs, dir);
 }
 
