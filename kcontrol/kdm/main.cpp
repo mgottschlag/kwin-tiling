@@ -83,28 +83,28 @@ KDModule::KDModule(QWidget *parent, const char *name)
 
   appearance = new KDMAppearanceWidget(this);
   tab->addTab(appearance, i18n("A&ppearance"));
-  connect(appearance, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  connect(appearance, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
 
   font = new KDMFontWidget(this);
   tab->addTab(font, i18n("&Font"));
-  connect(font, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  connect(font, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
 
   background = new KBackground(this);
   tab->addTab(background, i18n("&Background"));
-  connect(background, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  connect(background, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
 
   sessions = new KDMSessionsWidget(this);
   tab->addTab(sessions, i18n("&Sessions"));
-  connect(sessions, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  connect(sessions, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
 
   users = new KDMUsersWidget(this, 0, &show_users);
   tab->addTab(users, i18n("&Users"));
-  connect(users, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  connect(users, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
 
   // FAT NOTE: this must be behind the "users" tab!!!
   convenience = new KDMConvenienceWidget(this, 0, &show_users);
   tab->addTab(convenience, i18n("Con&venience"));
-  connect(convenience, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  connect(convenience, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
   connect(users, SIGNAL(show_user_add(const QString &)), convenience, SLOT(addShowUser(const QString &)));
   connect(users, SIGNAL(show_user_remove(const QString &)), convenience, SLOT(removeShowUser(const QString &)));
 
@@ -141,7 +141,8 @@ QString KDModule::quickHelp() const
                     "will offer you for logging in."
                     "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
 		    "users not needing to provide a password to log in, and other features ideal for "
-		    "lazy people. ;-)");
+		    "lazy people. ;-)<br>"
+		    "Note, that these settings are security holes by their nature, so use them very thoughtfully.");
 }
 
 const KAboutData* KDModule::aboutData() const
