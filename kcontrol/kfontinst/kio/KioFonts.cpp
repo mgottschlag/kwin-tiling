@@ -128,6 +128,8 @@ static bool isSpecialDir(const QString &dir, const QString &sub, bool sys)
         (!sys && -1!=CGlobal::cfg().getUserFontsDirs().findIndex(ds)) )
     {
         KFI_DBUG << "...need to check" << endl;
+        if(i18n(KIO_FONTS_USER)==sub || i18n(KIO_FONTS_SYS)==sub)
+            return true;
         if(sys || CMisc::root())
             return "CID"==sub || "encodings"==sub || "util"==sub;
         else
@@ -297,16 +299,42 @@ static bool createFileEntry(KIO::UDSEntry &entry, const QString &fName, const QS
     return !err;
 }
 
-static bool checkUrl(const KURL &u)
+enum EUrlStatus
 {
-    if(CMisc::root())
-        return true;
-    else
-    {
-        QString sect(CMisc::getSect(u.path()));
+    BAD_URL,
+    URL_OK,
+    REDIRECT_URL
+};
 
-        return i18n(KIO_FONTS_USER)==sect || i18n(KIO_FONTS_SYS)==sect;
-    }
+static EUrlStatus checkUrl(const KURL &u)
+{
+    QString sect(CMisc::getSect(u.path()));
+
+    if(CMisc::root())
+        if(i18n(KIO_FONTS_USER)==sect || i18n(KIO_FONTS_SYS)==sect)
+        {
+            return REDIRECT_URL;
+        }
+        else
+            return URL_OK;
+    else
+        return i18n(KIO_FONTS_USER)==sect || i18n(KIO_FONTS_SYS)==sect ? URL_OK : BAD_URL;
+}
+
+static KURL getRedirect(const KURL &u)
+{
+    // Go from fonts:/System to fonts:/
+
+    KURL    redirect(u);
+    QString path(u.path()),
+            sect(CMisc::getSect(path));
+
+    path.remove(sect);
+    path.replace("//", "/");
+    redirect.setPath(path);
+
+    KFI_DBUG << "Redirect from " << u.path() << " to " << redirect.path() << endl;
+    return redirect;
 }
 
 static bool nonRootSys(const KURL &u)
@@ -315,20 +343,23 @@ static bool nonRootSys(const KURL &u)
 }
 
 #define CHECK_URL(U) \
-if(!checkUrl(U))\
+switch(checkUrl(U))\
 { \
-    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".") \
-    .arg(i18n(KIO_FONTS_USER)).arg(i18n(KIO_FONTS_SYS))); \
-    return; \
+    case BAD_URL: \
+        error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".") \
+        .arg(i18n(KIO_FONTS_USER)).arg(i18n(KIO_FONTS_SYS))); \
+        return; \
+    case REDIRECT_URL: \
+        redirection(getRedirect(U)); \
+        finished(); \
+        return; \
+    case URL_OK:\
+        ; \
 }
 
 #define CHECK_URL_ROOT_OK(U) \
-if("/"!=url.path() && !checkUrl(U)) \
-{ \
-    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".") \
-    .arg(i18n(KIO_FONTS_USER)).arg(i18n(KIO_FONTS_SYS))); \
-    return; \
-}
+if("/"!=U.path()) \
+    CHECK_URL(U)
 
 #define CHECK_ALLOWED(u) \
 if (u.path()==QString(QChar('/')+i18n(KIO_FONTS_USER)) || \
@@ -411,6 +442,8 @@ CKioFonts::~CKioFonts()
 void CKioFonts::listDir(const KURL &url)
 {
     KFI_DBUG << "listDir " << url.path() << endl;
+
+    CHECK_URL_ROOT_OK(url)
 
     KIO::UDSEntry entry;
     int           size=0;
@@ -630,6 +663,7 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, bool sys)
 void CKioFonts::get(const KURL &url)
 {
     KFI_DBUG << "get " << url.path() << endl;
+
     CHECK_URL(url)
 
     QCString realPath=QFile::encodeName(convertUrl(url, true));
@@ -703,6 +737,8 @@ static bool writeAll(int fd, const char *buf, size_t len)
 void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
 {
     KFI_DBUG << "put " << u.path() << endl;
+
+    CHECK_URL(u)
 
     QCString fnameC(QFile::encodeName(u.filename()));
 
@@ -930,6 +966,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
 {
     KFI_DBUG << "copy " << src.path() << " - " << d.path() << endl;
     CHECK_URL(src)
+    CHECK_URL(d)
 
     QCString        realSrc=QFile::encodeName(convertUrl(src, true));
     KDE_struct_stat buffSrc;
@@ -1097,6 +1134,7 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
 
     CHECK_URL(src)
     CHECK_ALLOWED(src)
+    CHECK_URL(dest)
 
     //
     // Konqueror's inline renaming tries to rename based upon the displayed name. However, fonts:/ displays
@@ -1244,10 +1282,13 @@ void CKioFonts::mkdir(const KURL &url, int)
 
     if(isSpecialDir(CMisc::getDir(url.path()), CMisc::getName(url.path()), sys))
         error(KIO::ERR_SLAVE_DEFINED,
-                  sys ? i18n("You cannot create a folder named \"CID\", \"encodings\", or \"util\" - as these are special "
+                  sys ? i18n("You cannot create a folder named \"CID\", \"encodings\", \"util\", \"%1\", or \"%2\", -"
+                             " as these are special "
                              "system folders (\"CID\" is for \"CID\" fonts - these are <b>not</b> handled - and "
-                             "\"encodings\" and \"util\" are for X11 encoding files).")
-                      : i18n("You cannot create a folder named \"kde-override\", as this is a special KDE folder."));
+                             "\"encodings\" and \"util\" are for X11 encoding files").arg(i18n(KIO_FONTS_USER))
+                             .arg(i18n(KIO_FONTS_SYS))
+                      : i18n("You cannot create a folder named \"kde-override\", \"%1\", or \"%2\", as these a special"
+                             " KDE folders.").arg(i18n(KIO_FONTS_USER)).arg(i18n(KIO_FONTS_SYS)));
     else
     {
         checkPath(CGlobal::cfg().getRealTopDirs(url.path()), CMisc::getSub(url.path()), otherExists, otherHidden);
@@ -1531,7 +1572,10 @@ void CKioFonts::cfgDir(const QString &ds, const QString &sub)
         }
 
         if(doTs)
+        {
             CMisc::setTimeStamps(ds);
+            infoMessage(""); // Clear any left over status message...
+        }
     }
 }
 
