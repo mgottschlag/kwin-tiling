@@ -429,6 +429,7 @@ void KDMSessionsWidget::defaults()
   sdcombo->setCurrentItem(SdAll);
 
   sessionslb->clear();
+  sessionslb->insertItem("default");
   sessionslb->insertItem("kde");
   sessionslb->insertItem("failsafe");
 
