@@ -243,19 +243,31 @@ void Dtime::save()
 {
   KProcess c_proc;
 
+// BSD systems reverse year compared to Susv3
+#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__)
+  BufS.sprintf("%04d%02d%02d%02d%02d.%02d",
+               date.year(),
+               date.month(), date.day(),
+               hour->text().toInt(), minute->text().toInt(),
+               second->text().toInt());
+#else
   BufS.sprintf("%02d%02d%02d%02d%04d.%02d",
                date.month(), date.day(),
                hour->text().toInt(), minute->text().toInt(),
                date.year(), second->text().toInt());
+#endif
 
   kdDebug() << "Set date " << BufS << endl;
 
   c_proc.setExecutable( "date" );
   c_proc << BufS;
   c_proc.start( KProcess::Block );
-
-  if ( c_proc.exitStatus() != 0 )
-	{
+  int result = c_proc.exitStatus();
+  if (result != 0
+#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__)
+  	&& result != 2	// can only set local date, which is okay
+#endif
+    ) {
     KMessageBox::error( this, i18n("Can not set date."));
     return;
   }
