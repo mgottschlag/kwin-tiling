@@ -435,8 +435,6 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 		} else {
 #endif
 		    switch (cflags) {
-		    case DP_C_BYTE: value = va_arg (args, unsigned char); break;
-		    case DP_C_SHORT: value = va_arg (args, unsigned int); break;
 		    case DP_C_LONG: value = va_arg (args, unsigned long int); break;
 		    default: value = va_arg (args, unsigned int); break;
 		    }
