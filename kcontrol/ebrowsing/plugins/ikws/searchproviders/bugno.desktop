@@ -1,6 +1,9 @@
 [Desktop Entry]
 Keys=bug,bugno,bugnr
-Name=KDE Bug Database Bug No Search
+Name=KDE Bug Database Bug Number Search
+Name[da]=KDE Problemsatabase Problem ingen søgning
+Name[he]=KDE לש םיגאבה ינותנ סיסבב גאב רפסמ שופיח
+Name[nl]=KDE Bug Database - bug niet zoeken
 Query=http://bugs.kde.org/cgi-bin/Bugs/bugs-fetch2.pl?type=ref&ref=\\1&base=http%3A%2F%2Fwww.kde.org
 ServiceTypes=SearchProvider
 Type=Service
