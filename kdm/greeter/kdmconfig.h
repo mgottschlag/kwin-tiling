@@ -58,6 +58,7 @@ public:
     bool	_useLogo;
     QString	_logo;
     QString	_greetString;
+    int		_greeterPosX, _greeterPosY;
 
     enum	SuModes { UsrNone, UsrSel, UsrAll };
     SuModes	_showUsers;
@@ -83,7 +84,7 @@ public:
     QString	_consoleMode;
 #endif
 
-    bool	_useChooser;
+    bool	_allowChooser;
 
     bool	_useLilo;
     QString	_liloCmd;

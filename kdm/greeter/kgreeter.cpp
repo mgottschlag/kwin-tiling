@@ -356,12 +356,12 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
     hbox2->addWidget( goButton, AlignBottom);
 
-    cancelButton = new QPushButton( i18n("&Clear"), this);
-    connect( cancelButton, SIGNAL(clicked()), SLOT(cancel_button_clicked()));
-    //set_fixed( cancelButton);
-    hbox2->addWidget( cancelButton, AlignBottom);
+    clearButton = new QPushButton( i18n("&Clear"), this);
+    connect( clearButton, SIGNAL(clicked()), SLOT(clear_button_clicked()));
+    //set_fixed( clearButton);
+    hbox2->addWidget( clearButton, AlignBottom);
 
-    if (kdmcfg->_useChooser) {
+    if (kdmcfg->_allowChooser) {
 	chooserButton = new QPushButton( i18n("C&hooser"), this);
 	connect( chooserButton, SIGNAL(clicked()), SLOT(chooser_button_clicked()));
 	//set_fixed( chooserButton);
@@ -444,7 +444,7 @@ KGreeter::timerDone()
 }
 
 void 
-KGreeter::cancel_button_clicked()
+KGreeter::clear_button_clicked()
 {
     loginEdit->clear();
     passwdEdit->erase();
@@ -806,14 +806,14 @@ KGreeter::go_button_clicked()
 	goButton->setEnabled( false);
 	loginEdit->setEnabled( false);
 	passwdEdit->setEnabled( false);
-	cancel_button_clicked();
+	clear_button_clicked();
 	timer->start( 1000, true );	// XXX make configurable
 	return;
     }
 
     if (restrict()) {
 	setActiveWindow();
-	cancel_button_clicked();
+	clear_button_clicked();
 	return;
     }
 
@@ -846,18 +846,30 @@ static void
 creat_greet(void * /* ptr */)
 {
     kgreeter = new KGreeter;		   
-    // More hack. QIconView won't calculate
-    // a correct sizeHint before show()
-    kgreeter->move(-1000,-1000);
-    kgreeter->show();
     kgreeter->updateGeometry();
-    qApp->processEvents(0);
     kgreeter->resize(kgreeter->sizeHint());     
-    // Center on screen:
-    kgreeter->move( QApplication::desktop()->width()/2  - kgreeter->width()/2,
-		QApplication::desktop()->height()/2 - kgreeter->height()/2 );  
-    QApplication::restoreOverrideCursor();
+    int dw = QApplication::desktop()->width();
+    int dh = QApplication::desktop()->height();
+    int gw = kgreeter->width();
+    int gh = kgreeter->height();
+    int x, y;
+    if (kdmcfg->_greeterPosX >= 0) {
+	x = kdmcfg->_greeterPosX;
+	y = kdmcfg->_greeterPosY;
+    } else {
+	x = dw/2;
+	y = dh/2;
+    }
+    x -= gw/2;
+    y -= gh/2;
+    if (x + gw > dw)
+	x = dw - gw;
+    if (y + gh > dh)
+	y = dh - gh;
+    kgreeter->move( x < 0 ? 0 : x, y < 0 ? 0 : y );  
+    kgreeter->show();
     kgreeter->setActiveWindow();
+    QApplication::restoreOverrideCursor();
 }
 
 static int

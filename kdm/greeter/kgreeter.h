@@ -76,7 +76,7 @@ public:
 
 public slots:
     void go_button_clicked();
-    void cancel_button_clicked();
+    void clear_button_clicked();
     void chooser_button_clicked();
     void quit_button_clicked();
     void shutdown_button_clicked();
@@ -106,7 +106,7 @@ private:
     QPushButton*	goButton;
     QPushButton*	chooserButton;
     QPushButton*	quitButton;
-    QPushButton*	cancelButton;
+    QPushButton*	clearButton;
     QPushButton*	shutdownButton;
     QComboBox*		sessionargBox;
 

@@ -66,7 +66,13 @@ KDMConfig::KDMConfig() :
 				  QString::fromLatin1("/sbin/init 3") );
 #endif
 
-    _useChooser = readBoolEntry("UseChooser", false);
+    _allowChooser = readBoolEntry("AllowChooser", false);
+
+    if (readBoolEntry("GreeterPosFixed", false)) {
+	_greeterPosX = readNumEntry("GreeterPosX", 0);
+	_greeterPosY = readNumEntry("GreeterPosY", 0);
+    } else
+	_greeterPosX = -1;
 
     /* TODO: to be ported to QStyle
     if( readEntry( "GUIStyle") == "Windows")
@@ -101,11 +107,12 @@ KDMConfig::KDMConfig() :
     _sessionTypes = readListEntry( "SessionTypes" );
      // Defaults for session types
     if( _sessionTypes.isEmpty() ) {
+	_sessionTypes.append( QString::fromLatin1("default") );
 	_sessionTypes.append( QString::fromLatin1("kde") );
 	_sessionTypes.append( QString::fromLatin1("failsafe") );
     }
 
-    QString val = readEntry("EchoMode").lower();
+    QString val = readEntry("EchoMode");
     if (val == QString::fromLatin1("OneStar"))
 	_echoMode = KPasswordEdit::OneStar;
     else if (val == QString::fromLatin1("ThreeStars"))
@@ -166,7 +173,8 @@ KDMConfig::KDMConfig() :
 	hostname = longhostname.left( dot);
     else
 	hostname = longhostname;
-    QString greet_string = readEntry( "GreetString", QString::fromLatin1("KDE System at [HOSTNAME]") );
+    QString greet_string = readEntry( "GreetString", 
+			    QString::fromLatin1("KDE System at [HOSTNAME]") );
     QRegExp rx( QString::fromLatin1("HOSTNAME") );
     greet_string.replace( rx, hostname);
     _greetString = greet_string;
