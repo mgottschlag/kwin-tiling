@@ -47,7 +47,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QString wtstr;
 
 
-      QGroupBox *group0 = new QGroupBox( i18n("Allow shutdown"), this );
+      QGroupBox *group0 = new QGroupBox( i18n("Allow Shutdown"), this );
 
       sdlcombo = new QComboBox( FALSE, group0 );
       sdllabel = new QLabel (sdlcombo, i18n ("Co&nsole:"), group0);
@@ -72,7 +72,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
 
       shutdown_lined = new KURLRequester(group1);
-      QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("Ha&lt"), group1);
+      QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("Ha&lt:"), group1);
       connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
       wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
@@ -80,7 +80,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( shutdown_lined, wtstr );
 
       restart_lined = new KURLRequester(group1);
-      QLabel *restart_label = new QLabel(restart_lined, i18n("&Reboot"), group1);
+      QLabel *restart_label = new QLabel(restart_lined, i18n("&Reboot:"), group1);
       connect(restart_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
       wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
@@ -88,7 +88,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( restart_lined, wtstr );
 
 #if defined(__linux__) && defined(__i386__)
-      QGroupBox *group4 = new QGroupBox( i18n("Lilo"), this );
+      QGroupBox *group4 = new QGroupBox( i18n("LILO"), this );
 
       lilo_check = new QCheckBox(i18n("Show boot opt&ions"), group4);
       connect(lilo_check, SIGNAL(toggled(bool)),
@@ -99,7 +99,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( lilo_check, wtstr );
 
       lilocmd_lined = new KURLRequester(group4);
-      lilocmd_label = new QLabel(lilocmd_lined , i18n("Lilo command"), group4);
+      lilocmd_label = new QLabel(lilocmd_lined , i18n("LILO command:"), group4);
       connect(lilocmd_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
       wtstr = i18n("Command to run Lilo. Typical value: /sbin/lilo");
@@ -107,7 +107,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( lilocmd_lined, wtstr );
 
       lilomap_lined = new KURLRequester(group4);
-      lilomap_label = new QLabel(lilomap_lined, i18n("Lilo map file"), group4);
+      lilomap_label = new QLabel(lilomap_lined, i18n("LILO map file:"), group4);
       connect(lilomap_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
       wtstr = i18n("Position of Lilo's map file. Typical value: /boot/map");
@@ -115,10 +115,10 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( lilomap_lined, wtstr );
 #endif
 
-      QGroupBox *group2 = new QGroupBox( i18n("Session types"), this );
+      QGroupBox *group2 = new QGroupBox( i18n("Session Types"), this );
 
       session_lined = new QLineEdit(group2);
-      QLabel *type_label = new QLabel(session_lined, i18n("New t&ype"), group2);
+      QLabel *type_label = new QLabel(session_lined, i18n("New t&ype:"), group2);
       connect(session_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(slotCheckNewSession(const QString&)));
       connect(session_lined, SIGNAL(returnPressed()),
@@ -136,7 +136,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( btnadd, i18n( "Click here to add the new session type entered in the <em>New type</em> field to the list of available sessions." ) );
 
       sessionslb = new MyListBox(group2);
-      QLabel *types_label = new QLabel(sessionslb, i18n("Available &types"), group2);
+      QLabel *types_label = new QLabel(sessionslb, i18n("Available &types:"), group2);
       connect(sessionslb, SIGNAL(highlighted(int)),
 	      SLOT(slotSessionHighlighted(int)));
       wtstr = i18n( "This box lists the available session types that will be presented to the user."

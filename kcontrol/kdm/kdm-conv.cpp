@@ -44,7 +44,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     QString wtstr;
 
 
-    alGroup = new QVGroupBox(i18n("Automatic login"), this );
+    alGroup = new QVGroupBox(i18n("Automatic Login"), this );
 
     cbalen = new QCheckBox(i18n("Enable au&to-login"), alGroup);
     QWhatsThis::add( cbalen, i18n("Turn on the auto-login feature."
@@ -97,7 +97,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     connect(cbjumppw, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
 
-    npGroup = new QGroupBox(i18n("Password-less login"), this );
+    npGroup = new QGroupBox(i18n("Password-less Login"), this );
     QGridLayout *rLayout = new QGridLayout(npGroup, 6, 3, 10);
     rLayout->addRowSpacing(0, 10);
 
@@ -110,7 +110,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     connect(cbplen, SIGNAL(toggled(bool)), SLOT(slotEnPLChanged()));
     connect(cbplen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
-    w_label = new QLabel(i18n("Password re&quired"), npGroup);
+    w_label = new QLabel(i18n("Password re&quired:"), npGroup);
     rLayout->addWidget(w_label, 2, 0);
     wpuserlb = new KListBox(npGroup);
     w_label->setBuddy(wpuserlb);
@@ -119,7 +119,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     QWhatsThis::add( w_label, wtstr );
     QWhatsThis::add( wpuserlb, wtstr );
 
-    n_label = new QLabel(i18n("S&kip password check"), npGroup);
+    n_label = new QLabel(i18n("S&kip password check:"), npGroup);
     rLayout->addWidget(n_label, 2, 2);
     npuserlb = new KListBox(npGroup);
     n_label->setBuddy(npuserlb);

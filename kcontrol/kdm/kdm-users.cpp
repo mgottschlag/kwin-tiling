@@ -62,11 +62,11 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
 
     QString wtstr;
 
-    QLabel *a_label = new QLabel(i18n("&Remaining users"), this);
+    QLabel *a_label = new QLabel(i18n("&Remaining users:"), this);
 
-    QLabel *s_label = new QLabel(i18n("S&elected users"), this);
+    QLabel *s_label = new QLabel(i18n("S&elected users:"), this);
 
-    QLabel *n_label = new QLabel(i18n("No-sho&w users"), this);
+    QLabel *n_label = new QLabel(i18n("No-sho&w users:"), this);
 
     QSize sz(40, 20);
 
@@ -144,7 +144,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     QWhatsThis::add( userlabel, wtstr );
     QWhatsThis::add( userbutton, wtstr );
 
-    usrGroup = new QButtonGroup(5, Qt::Vertical, i18n("Show users"),  this );
+    usrGroup = new QButtonGroup(5, Qt::Vertical, i18n("Show Users"),  this );
     connect(usrGroup, SIGNAL(clicked(int)), SLOT(slotShowUsers(int)));
     connect(usrGroup, SIGNAL(clicked(int)), SLOT(slotChanged()));
     rbnoneusr = new QRadioButton(i18n("&None"), usrGroup );
@@ -170,13 +170,13 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
       " explicitly listed in \"No-show users\" to be hidden."));
     QSizePolicy sp_ign_fix(QSizePolicy::Ignored, QSizePolicy::Fixed);
     QValidator *valid = new QIntValidator(0, 999999, minGroup);
-    QLabel *minlab = new QLabel (i18n("below"), minGroup);
+    QLabel *minlab = new QLabel (i18n("Below:"), minGroup);
     leminuid = new QLineEdit(minGroup);
     connect(leminuid,SIGNAL(textChanged ( const QString & )),this,SLOT(slotChanged()));
     minlab->setBuddy(leminuid);
     leminuid->setSizePolicy(sp_ign_fix);
     leminuid->setValidator(valid);
-    QLabel *maxlab = new QLabel (i18n("above"), minGroup);
+    QLabel *maxlab = new QLabel (i18n("Above:"), minGroup);
     lemaxuid = new QLineEdit(minGroup);
     maxlab->setBuddy(lemaxuid);
     lemaxuid->setSizePolicy(sp_ign_fix);

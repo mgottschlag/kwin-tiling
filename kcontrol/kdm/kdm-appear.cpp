@@ -191,7 +191,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
   guicombo = new KComboBox(false, hlp);
   guicombo->insertStringList(QStyleFactory::keys());
-  label = new QLabel(guicombo, i18n("GUI S&tyle:"), hlp);
+  label = new QLabel(guicombo, i18n("GUI s&tyle:"), hlp);
   connect(guicombo, SIGNAL(activated(int)), SLOT(changed()));
   hglay->addWidget(label, 0, 0);
   hglay->addWidget(guicombo, 0, 1);

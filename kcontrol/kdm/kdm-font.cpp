@@ -43,7 +43,7 @@ extern KSimpleConfig *config;
 KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   : QWidget(parent, name)
 {
-  QGroupBox *tGroup = new QHGroupBox(i18n("Select fonts"), this);
+  QGroupBox *tGroup = new QHGroupBox(i18n("Select Fonts"), this);
 
   fontcombo = new QComboBox( FALSE, tGroup );
   fontcombo->insertItem(i18n("Greeting"), 0);

@@ -166,7 +166,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     QHBoxLayout *hbox = new QHBoxLayout();
     grid->addLayout(hbox, 3, 1);
-    m_pBGSetupBut = new QPushButton(i18n("S&etup"), m_pTab1);
+    m_pBGSetupBut = new QPushButton(i18n("S&etup..."), m_pTab1);
     m_pBGSetupBut->setFixedSize(bsize);
     connect(m_pBGSetupBut, SIGNAL(clicked()), SLOT(slotBGSetup()));
     hbox->addWidget(m_pBGSetupBut);
@@ -219,7 +219,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 2, 1);
-    m_pBrowseBut = new QPushButton(i18n("B&rowse"), m_pTab2);
+    m_pBrowseBut = new QPushButton(i18n("B&rowse..."), m_pTab2);
     m_pBrowseBut->setFixedSize(bsize);
     connect(m_pBrowseBut, SIGNAL(clicked()), SLOT(slotBrowseWallpaper()));
     hbox->addWidget(m_pBrowseBut);
