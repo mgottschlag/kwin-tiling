@@ -324,7 +324,7 @@ int KArtsModule::userSavedChanges()
 	if (!configChanged)
 		return KMessageBox::Yes;
 
-	QString question = i18n("The settings are changed since the last time "
+	QString question = i18n("The settings have changed since the last time "
                             "you restarted the sound server.\n"
                             "Do you want to save them?");
 	QString caption = i18n("Save Sound Server Settings?");
