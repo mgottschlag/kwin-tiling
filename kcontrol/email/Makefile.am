@@ -16,5 +16,5 @@ KDE_ICON = email
 data_DATA = email.desktop
 datadir = $(kde_appsdir)/Settings/Personalization
 
-messages:
+messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmemail.pot
