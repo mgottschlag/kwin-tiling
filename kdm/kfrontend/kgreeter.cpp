@@ -309,7 +309,7 @@ KGreeter::~KGreeter()
 class UserListViewItem : public KListViewItem {
 public:
     UserListViewItem( UserListView *parent, const QString &text,
-			 const QPixmap &pixmap, const QString &username )
+		      const QPixmap &pixmap, const QString &username )
 	: KListViewItem( parent )
 	, login( username )
     {
@@ -869,10 +869,9 @@ kg_main( int argc, char **argv )
 	dialog = new KGreeter;
     else
 	dialog = new ChooserDlg;
-    dialog->setMaximumSize( scr.size() );
-    dialog->move( -10000, -10000 );
-    dialog->show();
-    QRect grt( QPoint( 0, 0 ), dialog->sizeHint() );
+    dialog->setMaximumSize( scr.size() * .9 );
+    dialog->adjustSize();
+    QRect grt( 0, 0, dialog->width(), dialog->height() );
     if (kdmcfg->_greeterPosX >= 0) {
 	grt.moveCenter( QPoint( kdmcfg->_greeterPosX, kdmcfg->_greeterPosY ) );
 	moveInto( grt, scr );
