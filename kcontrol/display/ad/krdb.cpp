@@ -109,8 +109,8 @@ int main( int argc, char ** argv )
   addColorDef(preproc, "FOREGROUND"         , cg.foreground());
   QColor backCol = cg.background();        
   addColorDef(preproc, "BACKGROUND"         , backCol);
-  addColorDef(preproc, "HIGHLIGHT"          , backCol.light(100+(2*a.contrast()+4)*16/1));
-  addColorDef(preproc, "LOWLIGHT"           , backCol.dark(100+(2*a.contrast()+4)*10));
+  addColorDef(preproc, "HIGHLIGHT"          , backCol.light(100+(2*KGlobalSettings::contrast()+4)*16/1));
+  addColorDef(preproc, "LOWLIGHT"           , backCol.dark(100+(2*KGlobalSettings::contrast()+4)*10));
   addColorDef(preproc, "SELECT_BACKGROUND"  , cg.highlight());
   addColorDef(preproc, "SELECT_FOREGROUND"  , cg.highlightedText());
   addColorDef(preproc, "WINDOW_BACKGROUND"  , cg.base());
