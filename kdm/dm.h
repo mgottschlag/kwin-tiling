@@ -280,8 +280,7 @@ struct disphist {
 #ifdef XDMCP
 
 #define PROTO_TIMEOUT	(30 * 60)   /* 30 minutes should be long enough */
-#define XDM_BROKEN_INTERVAL (60)    /* server crashing more than once a */
-                                    /* minute is assumed to be broken!  */
+
 struct protoDisplay {
 	struct protoDisplay	*next;
 	XdmcpNetaddr		address;   /* UDP address */
@@ -509,8 +508,9 @@ extern void freeEnv (char **env);
 extern void printEnv (char **e);
 
 /* in verify.c */
-extern int Verify (struct display *d, struct greet_info *greet, struct verify_info *verify);
-extern int VerifyRoot( const char* pw);
+typedef enum verifyRet { V_ERROR, V_FAIL, V_NOHOME, V_NOLOGIN, V_NOROOT, V_BADSHELL, V_BADTIME, V_AEXPIRED, V_PEXPIRED, V_OK, V_AWEXPIRE, V_PWEXPIRE } VerifyRet;
+extern VerifyRet Verify (struct display *d, struct greet_info *greet, struct verify_info *verify, time_t *expire, char **nologin);
+extern VerifyRet VerifyRoot (const char* pw);
 
 #ifdef XDMCP
 

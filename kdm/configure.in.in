@@ -5,7 +5,7 @@ AC_REQUIRE([AC_PATH_KDE])
 KDE_CONFDIR=`eval echo $kde_confdir`
 AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$KDE_CONFDIR", [Define where to look for kde config files])
 
-AC_CHECK_FUNCS(getsecretkey getloadavg)
+AC_CHECK_FUNCS(getsecretkey getloadavg getusershell)
 
 dnl checks for X server
 AC_PATH_PROG(X_SERVER, X)
@@ -27,6 +27,9 @@ acimake:
 	@echo CONN_FLAGS=^ConnectionFlags^\;
 #if HasXdmAuth
 	@echo HASXDMAUTH=1\;
+#endif
+#if CSRG_BASED
+	@echo CSRG_BASED=1\;
 #endif
 #if defined(i386Architecture) || defined(AmigaArchitecture)
 	@echo FRAGILE_DEV_MEM=1\;
@@ -84,6 +87,14 @@ AC_MSG_CHECKING([whether to use xdm authorization])
 if test -n "$HASXDMAUTH"; then
     AC_MSG_RESULT([yes])
     AC_DEFINE(HASXDMAUTH, 1, [Use the different XDM authorization schemes])
+else
+    AC_MSG_RESULT([no])
+fi
+
+AC_MSG_CHECKING([whether the system is CSRG based])
+if test -n "$CSRG_BASED"; then
+    AC_MSG_RESULT([yes])
+    AC_DEFINE(CSRG_BASED, 1, [The system is CSRG based (4.4 BSD + clones)])
 else
     AC_MSG_RESULT([no])
 fi

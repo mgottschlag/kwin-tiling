@@ -63,6 +63,26 @@ extern int errno;
 
 # include	"greet.h"
 
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+# define USE_LOGIN_CAP 1
+# include <login_cap.h>
+#endif
+
+#ifdef _AIX
+# include <login.h>
+# include <usersec.h>
+extern int loginrestrictions (char *Name, int Mode, char *Tty, char **Msg);
+extern int loginfailed (char *User, char *Host, char *Tty);
+extern int loginsuccess (char *User, char *Host, char *Tty, char **Msg);
+#endif /* _AIX */
+
+/* for nologin */
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+/* for expiration */
+#include <time.h>
+
 #ifdef X_NOT_STDC_ENV
 char *getenv();
 #endif
@@ -91,7 +111,7 @@ static char *envvars[] = {
 };
 
 #ifdef KRB4
-/* # include <sys/param.h> */
+# include <sys/param.h>
 /* # include <kerberosIV/krb.h> */
 # include <krb.h>
 # ifdef AFS
@@ -230,226 +250,381 @@ static struct pam_conv PAM_conversation = {
 };
 #endif /* USE_PAM */
 
-#define UFAILV do { bzero(greet->password, strlen(greet->password)); return 0; } while(0)
-#define FAILV do { if (greet->password) bzero(greet->password, strlen(greet->password)); return 0; } while(0)
+#define UFAILV do { bzero(greet->password, strlen(greet->password)); return V_FAIL; } while(0)
+#define FAILV do { if (greet->password) bzero(greet->password, strlen(greet->password)); return V_FAIL; } while(0)
+#define FAILVV(rv) do { if (greet->password) bzero(greet->password, strlen(greet->password)); return rv; } while(0)
 
-int
-Verify (struct display *d, struct greet_info *greet, struct verify_info *verify)
+VerifyRet
+Verify (struct display *d, struct greet_info *greet, struct verify_info *verify, 
+	time_t *expire, char **nologin)
 {
-	struct passwd	*p;
+    struct passwd	*p;
 #ifdef USE_PAM
-	pam_handle_t **pamh = thepamh();
+    pam_handle_t **pamh = thepamh();
 #else
+# ifdef USESHADOW
+    struct spwd		*sp;
+# endif
+    struct stat		st;
+    char		*nolg;
+#endif
+#ifdef HAVE_GETUSERSHELL
+    char		*s;
+#endif
+#if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
+    time_t		tim, exp, warntime;
+    int			quietlog;
+#endif
+#ifdef HAVE_LOGIN_CAP_H
+# ifdef __bsdi__
+    // This only works / is needed on BSDi
+    struct login_cap_t	*lc;
+# else
+    struct login_cap	*lc;
+# endif
+#endif
+    char		*user_pass = NULL;
+    char		*shell, *home;
+    char		**argv;
+    int			retv = V_OK;
+
+    Debug ("Verify %s ...\n", greet->name);
+    if (!strlen (greet->name)) {
+	Debug ("Empty user name provided.\n");
+	FAILV;
+    }
+
+#ifdef USE_PAM
+
+#define PAM_BAIL	\
+    if (pam_error != PAM_SUCCESS) { \
+	pam_end(*pamh, 0); \
+	FAILV; \
+    }
+    PAM_password = greet->password;
+    pam_error = pam_start(KDE_PAM, greet->name, &PAM_conversation, pamh);
+    PAM_BAIL;
+    pam_error = pam_set_item(*pamh, PAM_TTY, d->name);
+    PAM_BAIL;
+    if (greet->password) {
+	pam_error = pam_authenticate(*pamh, 0);
+	PAM_BAIL;
+    }
+    pam_error = pam_acct_mgmt(*pamh, 0);
+    /* really should do password changing, but it doesn't fit well */
+    PAM_BAIL;
+    pam_error = pam_setcred(*pamh, 0);
+    PAM_BAIL;
+#undef PAM_BAIL
+
+/*
+#elif defined(_AIX) / * USE_PAM * /
+
+	int		loginType;
+	struct stat	statBuf;
+	char		v_work[512], tty[512];
+	char		*msg1;
+	char		hostname[512];
+	char		*tmpch;
+
+	if (d->displayType.location == Foreign) {
+	    strncpy(hostname, d->name, 511);
+	    hostname[511] = '\0';
+	    if ((tmpch = strchr(hostname, ':')))
+	        *tmpch = '\0';
+	} else {
+	    hostname[0] = '\0';
+	}
+	CleanUpName(d->name,v_work,512);
+        sprintf(tty,"/dev/xdm/%s",v_work);
+	tty[15] = '\0';      / ** tty names should only be 15 characters long ** /
+
+	loginType = d->displayType.location == Foreign ? S_RLOGIN : S_LOGIN;
+*/
+#endif	/* USE_PAM && _AIX */
+
+    p = getpwnam (greet->name);
+    endpwent();
+    if (!p) {
+	Debug ("getpwnam() failed.\n");
+	FAILV;
+    }
+    user_pass = p->pw_passwd;
+
 #ifdef USESHADOW
-	struct spwd	*sp;
-#endif
-#endif
-#ifdef __OpenBSD__
-	char            *s;
-	struct timeval  tp;
-#endif
-	char		*user_pass = NULL;
-	char		*shell, *home;
-	char		**argv;
+    errno = 0;
+    sp = getspnam(greet->name);
+    if (!sp)
+	Debug ("getspnam() failed, errno=%d.  Are you root?\n", errno);
+    else
+	user_pass = sp->sp_pwdp;
+# ifndef QNX4
+    endspent();
+# endif  /* QNX4 doesn't need endspent() to end shadow passwd ops */
+#endif /* USESHADOW */
 
-	Debug ("Verify %s ...\n", greet->name);
-	if (!strlen (greet->name)) {
-		Debug ("Emtpy user name provided.\n");
-		FAILV;
-	}
+#if !defined(USE_PAM) /*&& !defined(_AIX)*/
 
-#ifndef USE_PAM
-	p = getpwnam (greet->name);
-	endpwent();
-	if (!p) {
-		Debug ("getpwnam() failed.\n");
-		FAILV;
-	}
-#ifdef __linux__
-	if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
-		Debug ("The account is locked, no login allowed.\n");
-		FAILV;
-	}
+#ifdef __linux__	/* only Linux? */
+    if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
+	Debug ("The account is locked, no login allowed.\n");
+	FAILV;
+    }
 #endif
-	user_pass = p->pw_passwd;
 
     if (greet->password) {
+
 #ifdef KRB4
 	if (strcmp(greet->name, "root") != 0) {
-		char name[ANAME_SZ];
-		char realm[REALM_SZ];
-		char *q;
-		int ret;
+	    char name[ANAME_SZ];
+	    char realm[REALM_SZ];
+	    char *q;
+	    int ret;
 	    
-		if (krb_get_lrealm(realm, 1)) {
-			Debug ("Can't get Kerberos realm.\n");
-		} else {
+	    if (krb_get_lrealm(realm, 1))
+		Debug ("Can't get Kerberos realm.\n");
+	    else {
 
-		    sprintf(krbtkfile, "%s.%s", TKT_ROOT, d->name);
-		    krb_set_tkt_string(krbtkfile);
-		    unlink(krbtkfile);
+		sprintf(krbtkfile, "%s.%s", TKT_ROOT, d->name);
+		krb_set_tkt_string(krbtkfile);
+		unlink(krbtkfile);
+
+		ret = krb_verify_user(greet->name, "", realm, 
+				      greet->password, 1, "rcmd");
            
-		    ret = krb_verify_user(greet->name, "", realm, 
-					  greet->password, 1, "rcmd");
-           
-		    if(ret == KSUCCESS){
-			    chown(krbtkfile, p->pw_uid, p->pw_gid);
-			    Debug("kerberos verify succeeded\n");
-#ifdef AFS
-			    if (k_hasafs()) {
-				    if (k_setpag() == -1)
-					    LogError ("setpag() failed for %s\n",
-						      greet->name);
-				    
-				    if((ret = k_afsklog(NULL, NULL)) != KSUCCESS)
-					    LogError("Warning %s\n", 
-						     krb_get_err_text(ret));
-			    }
-#endif
-			    goto done;
-		    } else if(ret != KDC_PR_UNKNOWN && ret != SKDC_CANT){
-			    /* failure */
-			    Debug("kerberos verify failure %d\n", ret);
-			    LogError("KRB4 verification failure %s for %s'\n", 
-				      krb_get_err_text(ret), greet->name);
-			    krbtkfile[0] = '\0';
+		if (ret == KSUCCESS) {
+		    chown(krbtkfile, p->pw_uid, p->pw_gid);
+		    Debug("kerberos verify succeeded\n");
+# ifdef AFS
+		    if (k_hasafs()) {
+			if (k_setpag() == -1)
+			    LogError ("setpag() failed for %s\n", greet->name);
+
+			if ((ret = k_afsklog(NULL, NULL)) != KSUCCESS)
+			    LogError("Warning %s\n", krb_get_err_text(ret));
 		    }
+# endif
+		    goto done;
+		} else if(ret != KDC_PR_UNKNOWN && ret != SKDC_CANT) {
+		    /* failure */
+		    Debug("kerberos verify failure %d\n", ret);
+		    LogError("KRB4 verification failure %s for %s'\n", 
+			     krb_get_err_text(ret), greet->name);
+		    krbtkfile[0] = '\0';
 		}
+	    }
 	}
 #endif  /* KRB4 */
-#ifdef USESHADOW
-	errno = 0;
-	sp = getspnam(greet->name);
-	if (sp == NULL) {
-	    Debug ("getspnam() failed, errno=%d.  Are you root?\n", errno);
-	} else {
-	    user_pass = sp->sp_pwdp;
-	}
-#ifndef QNX4
-	endspent();
-#endif  /* QNX4 doesn't need endspent() to end shadow passwd ops */
-#endif /* USESHADOW */
+
 #if defined(ultrix) || defined(__ultrix__)
 	if (authenticate_user(p, greet->password, NULL) < 0)
 #else
 	if (strcmp (crypt (greet->password, user_pass), user_pass))
 #endif
 	{
-		if(!greet->allow_null_passwd || strlen(p->pw_passwd) > 0) {
-			Debug ("password verify failed\n");
-			UFAILV;
-		} /* else: null passwd okay */
+	    if(!greet->allow_null_passwd || strlen(p->pw_passwd) > 0) {
+		Debug ("password verify failed\n");
+		UFAILV;
+	    } /* else: null passwd okay */
 	}
     }	/* greet->password */
 done:
-#ifdef __OpenBSD__
-	/*
-	 * Only accept root logins if allowRootLogin resource is set
-	 */
-	if ((p->pw_uid == 0) && !greet->allow_root_login) {
-		Debug("root logins not allowed\n");
-		FAILV;
-	}
-	/*
-	 * Shell must be in /etc/shells 
-	 */
-	for (;;) {
-		s = getusershell();
-		if (s == NULL) {
-			/* did not found the shell in /etc/shells 
-			   -> failure */
-			Debug("shell not in /etc/shells\n");
-			endusershell();
-			FAILV;
-		}
-		if (strcmp(s, p->pw_shell) == 0) {
-			/* found the shell in /etc/shells */
-			endusershell();
-			break;
-		}
-	} 
-	/*
-	 * Test for expired password
-	 */
-	if (p->pw_change || p->pw_expire)
-		(void)gettimeofday(&tp, (struct timezone *)NULL);
-	if (p->pw_change) {
-		if (tp.tv_sec >= p->pw_change) {
-			Debug("Password has expired.\n");
-			FAILV;
-		}
-	}
-	if (p->pw_expire) {
-		if (tp.tv_sec >= p->pw_expire) {
-			Debug("account has expired.\n");
-			FAILV;
-		} 
-	}
-#endif /* __OpenBSD__ */
-	bzero(user_pass, strlen(user_pass)); /* in case shadow password */
-#else /* USE_PAM */
+#endif /* USE_PAM && _AIX */
+    bzero(user_pass, strlen(user_pass)); /* in case shadow password */
 
-#define PAM_BAIL	\
-	if (pam_error != PAM_SUCCESS) { \
-	    pam_end(*pamh, 0); \
-	    FAILV; \
-	}
-	PAM_password = greet->password;
-	pam_error = pam_start(KDE_PAM, greet->name, &PAM_conversation, pamh);
-	PAM_BAIL;
-	pam_error = pam_set_item(*pamh, PAM_TTY, d->name);
-	PAM_BAIL;
-	if (greet->password) {
-		pam_error = pam_authenticate(*pamh, 0);
-		PAM_BAIL;
-	}
-	pam_error = pam_acct_mgmt(*pamh, 0);
-	/* really should do password changing, but it doesn't fit well */
-	PAM_BAIL;
-	pam_error = pam_setcred(*pamh, 0);
-	PAM_BAIL;
-#undef PAM_BAIL
+    if (!p->pw_uid)
+	if (!greet->allow_root_login)
+	    FAILVV(V_NOROOT);
+	else
+	    goto norestr;	/* don't deny root to log in */
 
-	p = getpwnam (greet->name);
-	endpwent();
-	if (!p) {
-		Debug ("getpwnam() failed.\n");
-		FAILV;
+#ifdef HAVE_GETUSERSHELL
+    for (;;) {
+	s = getusershell();
+	if (s == NULL) {
+	    /* did not find the shell in /etc/shells  -> failure */
+	    Debug("shell not in /etc/shells\n");
+	    endusershell();
+	    FAILVV(V_BADSHELL);
 	}
-#endif /* USE_PAM */
-
-	Debug ("verify succeeded\n");
-	/* The password is passed to StartClient() for use by user-based
-	   authorization schemes.  It is zeroed there. */
-	verify->uid = p->pw_uid;
-#ifdef NGROUPS_MAX
-	getGroups (greet->name, verify, p->pw_gid);
-#else
-	verify->gid = p->pw_gid;
+	if (strcmp(s, p->pw_shell) == 0) {
+	    /* found the shell in /etc/shells */
+	    endusershell();
+	    break;
+	}
+    } 
 #endif
-	home = p->pw_dir;
-	shell = p->pw_shell;
-	argv = 0;
-	if (d->session)
-		argv = parseArgs (argv, d->session);
-	if (greet->string)
-		argv = parseArgs (argv, greet->string);
-	if (!argv)
-		argv = parseArgs (argv, "xsession");
-	verify->argv = argv;
-	verify->userEnviron = userEnv (d, p->pw_uid == 0,
-				       greet->name, home, shell);
-	Debug ("user environment:\n");
-	printEnv (verify->userEnviron);
-	verify->systemEnviron = systemEnv (d, greet->name, home);
-	Debug ("system environment:\n");
-	printEnv (verify->systemEnviron);
-	Debug ("end of environments\n");
-	return 1;
+
+#ifdef USE_LOGIN_CAP
+# ifdef __bsdi__
+    /* This only works / is needed on BSDi */
+    lc = login_getclass(pwd->pw_class);
+# else
+    lc = login_getpwclass(pwd);
+# endif
+    if (!lc)
+	FAILVV(V_ERROR);
+#endif
+
+
+// restrict_nologin
+#ifndef USE_PAM
+
+#ifndef _PATH_NOLOGIN
+# define _PATH_NOLOGIN "/etc/nologin"
+#endif
+
+#ifdef USE_LOGIN_CAP
+    /* Do we ignore a nologin file? */
+    if (login_getcapbool(lc, "ignorenologin", 0))
+	goto nolog_succ;
+
+    nolg = login_getcapstr(lc, "nologin", "", NULL);
+    if (!stat(nolg, &st))
+	goto nolog;
+#endif
+
+    nolg = _PATH_NOLOGIN;
+    if (!stat(nolg, &st)) {
+      nolog:
+	if (nologin) {
+	    *nologin = nolg;
+# ifdef USE_LOGIN_CAP
+	    login_close(lc);
+# endif
+	    FAILVV(V_NOLOGIN);
+	}
+    }
+#ifdef USE_LOGIN_CAP
+nolog_succ:
+#endif
+#endif /* !USE_PAM */
+// restrict_nologin
+
+
+// restrict_nohome
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+
+    if (login_getcapbool(lc, "requirehome", 0)) {
+	seteuid(p->pw_uid);
+	if (!*p->pw_dir || chdir(p->pw_dir) < 0) {
+	    login_close(lc);
+	    FAILVV(V_NOHOME);
+	}
+	seteuid(0);
+    }
+
+#endif
+// restrict_nohome
+
+
+// restrict_expired
+#if defined(HAVE_PW_EXPIRE) || defined(USESHADOW) /* && !defined(USE_PAM) ? */
+
+#define DEFAULT_WARN  (2L * 7L * 86400L)  /* Two weeks */
+
+    tim = time(NULL);
+
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+    quietlog = login_getcapbool(lc, "hushlogin", 0);
+    warntime = login_getcaptime(lc, "warnexpire",
+				DEFAULT_WARN, DEFAULT_WARN);
+#else
+    quietlog = 0;
+# ifdef USESHADOW
+    warntime = sp->sp_warn*86400;
+# else
+    warntime = DEFAULT_WARN;
+# endif
+#endif
+
+#ifdef HAVE_PW_EXPIRE
+    exp = p->pw_expire;
+    if (exp) {
+#else
+    if (sp->sp_expire != -1) {
+	exp = sp->sp_expire*86400;
+#endif
+	if (exp <= tim) {
+# ifdef USE_LOGIN_CAP
+	    login_close(lc);
+# endif
+	    FAILVV(V_AEXPIRED);
+	} else if (exp - tim < warntime && !quietlog) {
+	    if (expire)
+		*expire = exp;
+	    retv = V_AWEXPIRE;
+	}
+    }
+
+#ifdef HAVE_PW_EXPIRE
+    exp = p->pw_change;
+    if (exp) {
+#else
+    if (sp->sp_max != -1) {
+	exp = (sp->sp_lstchg+sp->sp_max)*86400;
+#endif
+	if (exp <= tim) {
+# ifdef USE_LOGIN_CAP
+	    login_close(lc);
+# endif
+	    FAILVV(V_PEXPIRED);
+	} else if (exp - tim < warntime && !quietlog) {
+	    if (expire && (retv == V_OK || *expire > exp))
+		*expire = exp;
+	    retv = V_PWEXPIRE;
+	}
+    }
+
+#endif /* HAVE_PW_EXPIRE || USESHADOW */
+// restrict_expired
+
+
+// restrict_time
+#ifdef USE_LOGIN_CAP
+    if (!auth_timeok(lc, time(NULL))) {
+	login_close(lc);
+	FAILVV(V_BADTIME);
+    }
+// restrict_time
+
+
+    login_close(lc);
+#endif
+
+norestr:
+    Debug ("verify succeeded\n");
+    /* The password is passed to StartClient() for use by user-based
+       authorization schemes.  It is zeroed there. */
+    verify->uid = p->pw_uid;
+#ifdef NGROUPS_MAX
+    getGroups (greet->name, verify, p->pw_gid);
+#else
+    verify->gid = p->pw_gid;
+#endif
+    home = p->pw_dir;
+    shell = p->pw_shell;
+    argv = 0;
+    if (d->session)
+	argv = parseArgs (argv, d->session);
+    if (greet->string)
+	argv = parseArgs (argv, greet->string);
+    if (!argv)
+	argv = parseArgs (argv, "xsession");
+    verify->argv = argv;
+    verify->userEnviron = userEnv (d, p->pw_uid == 0,
+				   greet->name, home, shell);
+    verify->systemEnviron = systemEnv (d, greet->name, home);
+    Debug ("user environment:\n");
+    printEnv (verify->userEnviron);
+    Debug ("system environment:\n");
+    printEnv (verify->systemEnviron);
+    Debug ("end of environments\n");
+    return retv;
 }
 
 
-int
+VerifyRet
 VerifyRoot( const char *pw)
 {
 #define superuser "root"
@@ -457,7 +632,7 @@ VerifyRoot( const char *pw)
     struct passwd *pws = getpwnam( superuser);
     if (!pws) {
 	printf("can't verify " superuser " passwd, getpwnam() failed\n");
-	return 0;
+	return V_FAIL;
     }
     endpwent();
 #ifdef USESHADOW
@@ -474,11 +649,11 @@ VerifyRoot( const char *pw)
 #ifdef HAVE_CRYPT
     if( strcmp( crypt( pw, pws->pw_passwd), pws->pw_passwd)) {
 	printf("Root passwd verification failed\n");
-	return 0;
+	return V_FAIL;
     }
 #else
     printf("can't verify " superuser " passwd, lacking crypt() support\n");
-    return 0;
+    return V_FAIL;
 #endif
 #else /* USE_PAM */
     {
@@ -486,7 +661,7 @@ VerifyRoot( const char *pw)
 #   	define PAM_BAIL \
 	    if (pam_error != PAM_SUCCESS) { \
 		pam_end(pamh, 0); \
-		return 0; \
+		return V_FAIL; \
 	    }
 	PAM_password = (char *)pw;
 	pam_error = pam_start(KDE_PAM, superuser, &PAM_conversation, &pamh);
@@ -497,6 +672,6 @@ VerifyRoot( const char *pw)
 	pam_end( pamh, PAM_SUCCESS);
     }
 #endif /* USE_PAM */
-    return 1;
+    return V_OK;
 }
 

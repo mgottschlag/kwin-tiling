@@ -82,14 +82,13 @@ public slots:
     void shutdown_button_clicked();
     void timerDone();
     void slot_user_name( QIconViewItem*);
-    bool restrict();
     void load_wm();
-    void save_wm();
 
 protected:
     void timerEvent( QTimerEvent * ) {};
 
 private:
+    void save_wm();
     void insertUsers( QIconView *);
 
     QTimer*		timer;

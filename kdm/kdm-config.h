@@ -80,20 +80,14 @@
 #ifdef sun
 # define SVR4
 #endif
-/*
-#ifdef SVR4
-# define NeedVarargsPrototypes
-#endif
-*/
 
 /*
  * These values define what is called by KDM on Shutdown or Reboot
  * respectively. Default is /sbin/halt and /sbin/reboot
  */
-#if defined(__NetBSD__) || defined(__FreeBSD__)
+#ifdef CSRG_BASED
 # define SHUTDOWN_CMD	"/sbin/shutdown -h now"
 # define REBOOT_CMD	"/sbin/shutdown -r now"
-# define CSRG_BASED	/* hmmm - hope this is right .... */
 #endif
 
 #ifdef __SVR4

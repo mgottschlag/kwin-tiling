@@ -102,7 +102,7 @@ extern	void	endspent(void);
 
 static	int	runAndWait (char **args, char **environ);
 
-#if defined(CSRG_BASED) || defined(__osf__) || defined(__FreeBSD__)
+#if defined(CSRG_BASED) || defined(__osf__) /* this is also csrg: || defined(__FreeBSD__) */
 # include <sys/types.h>
 # include <grp.h>
 #else

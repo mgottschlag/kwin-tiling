@@ -74,11 +74,6 @@
 # include <sys/id.h>
 #endif
 
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
-# define USE_LOGIN_CAP 1
-# include <login_cap.h>
-#endif
-
 #ifdef GREET_LIB
 extern "C" {
 /*
@@ -152,7 +147,7 @@ struct greet_info	*greet;
 char	name[F_LEN], password[F_LEN], sessarg[F_LEN];
 
 int AccNoPass (struct display *, const char *);
-int MyVerify (struct display *, struct greet_info *, struct verify_info *);
+int MyVerify (struct display *, struct greet_info *, struct verify_info *, time_t *expire, char **nologin);
 int AutoLogon (struct display *, struct greet_info *, struct verify_info *);
 int s_copy (char *, const char *, int, int);
 
@@ -613,191 +608,33 @@ KGreeter::save_wm()
 
 #endif /* HAVE_INITGROUPS && HAVE_SETGROUPS && HAVE_GETGROUPS */
 
-/* This stuff doesn't really belong to the kgreeter, but verify.c is
- * just C, not C++.
- *
- * A restrict_host() should be added.
- */
-bool
-KGreeter::restrict()
+QString errm;
+
+static void
+errorbox(void *)
 {
-    struct passwd *pwd = getpwnam(greet->name);
-    endpwent();
-    if (!pwd)
-        return false;
-    // we don't need the password
-    memset(pwd->pw_passwd, 0, strlen(pwd->pw_passwd));
-
-    // don't deny root to log in
-    if (!pwd->pw_uid)
-	return false;
-
-#ifdef USESHADOW
-    struct spwd *swd = getspnam(greet->name);
-    endspent();
-    if (!swd)
-	return false;
-    // we don't need the password
-    memset(swd->sp_pwdp, 0, strlen(swd->sp_pwdp));
-#endif
-
-#ifdef USE_LOGIN_CAP
-#ifdef __bsdi__
-    // This only works / is needed on BSDi
-    struct login_cap_t *lc = login_getclass(pwd->pw_class);
-#else
-    struct login_cap *lc = login_getpwclass(pwd);
-#endif
-#endif
-
-
-// restrict_nologin
-#ifndef USE_PAM
-
-#ifndef _PATH_NOLOGIN
-# define _PATH_NOLOGIN "/etc/nologin"
-#endif
-
-{
-    QFile f;
-
-#ifdef USE_LOGIN_CAP
-    /* Do we ignore a nologin file? */
-    if (login_getcapbool(lc, "ignorenologin", 0))
-	goto nolog_succ;
-
-    QString file;
-    /* Note that <file> will be "" if there is no nologin capability */
-    file = QFile::decodeName(login_getcapstr(lc, "nologin", "", NULL));
-    if (file.isNull()) {
-	KMessageBox::error(this, i18n("Could not access the login capabilities database or out of memory."));
-	goto fail;
-    }
-
-    if (!file.isNull()) {
-	f.setName(file);
-	f.open(IO_ReadOnly);
-    }
-#endif
-
-    if (f.handle() == -1) {
-	f.setName(QString::fromLatin1(_PATH_NOLOGIN));
-	f.open(IO_ReadOnly);
-    }
-
-    if (f.handle() != -1) {
-	QString s;
-	QTextStream t( &f ); 
-
-	while ( !t.eof() )
-	    s += t.readLine() + '\n';
-
-	if (s.isEmpty())
-	    s = i18n("You're not allowed to login at the moment.\n"
-		     "try again later.");
-
-	f.close();
-	KMessageBox::sorry(this, s);
-
-	goto fail;
-    }
-
-}
-#ifdef USE_LOGIN_CAP
-nolog_succ:
-#endif
-#endif /* !USE_PAM */
-// restrict_nologin
-
-
-// restrict_nohome
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
-
-    seteuid(pwd->pw_uid);
-    if (!*pwd->pw_dir || chdir(pwd->pw_dir) < 0) {
-	if (login_getcapbool(lc, "requirehome", 0)) {
-	    KMessageBox::sorry(this, i18n("Home directory not available"));
-	    goto fail;
-	}
-    }
-    seteuid(0);
-
-#endif
-// restrict_nohome
-
-
-// restrict_expired
-#define DEFAULT_WARN  (2L * 7L * 86400L)  /* Two weeks */
-
-#ifdef HAVE_PW_EXPIRE
-{
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
-    bool quietlog = login_getcapbool(lc, "hushlogin", 0);
-    time_t warntime = login_getcaptime(lc, "warnexpire",
-					DEFAULT_WARN, DEFAULT_WARN);
-#else
-    bool quietlog = false;
-    time_t warntime = DEFAULT_WARN;
-#endif
-    if (pwd->pw_expire)
-	if (pwd->pw_expire <= time(NULL)) {
-	    KMessageBox::sorry(this, i18n("Your account has expired."));
-	    goto fail;
-	} else if (pwd->pw_expire - time(NULL) < warntime && !quietlog) {
-	    QDateTime dat;
-	    dat.setTime_t(pwd->pw_expire);
-	    QString str = i18n("Your account expires on %1.")
-				.arg(KGlobal::locale()->formatDateTime(dat));
-	    KMessageBox::sorry(this, str);
-	}
-}
-#elif defined(USESHADOW)
-{
-    time_t warntime = DEFAULT_WARN;
-    time_t expiresec = swd->sp_expire*86400L; //sven: ctime uses seconds
-     
-    if (swd->sp_expire != -1)
-	if (expiresec <= time(NULL)) {
-	    KMessageBox::sorry(this, i18n("Your account has expired."));
-	    goto fail;
-	} else if (expiresec - time(NULL) < warntime) {
-	    QDateTime dat;
-	    dat.setTime_t(expiresec);
-            QString str = i18n("Your account expires on %1.")
-				.arg(KGlobal::locale()->formatDateTime(dat));
-	    KMessageBox::sorry(this, str);
-	}
-}
-#endif /* !defined(USESHADOW) */
-// restrict_expired
-
-
-// restrict_time
-#ifdef USE_LOGIN_CAP
-    if (!auth_timeok(lc, time(NULL))) {
-	KMessageBox::sorry(this, i18n("Logins not available right now."));
-	goto fail;
-    }
-// restrict_time
-
-
-    login_close(lc);
-#endif
-    return false;
-    
-#if defined(USE_LOGIN_CAP) || !defined(USE_PAM) || defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
-fail:
-# ifdef USE_LOGIN_CAP
-    login_close(lc);
-# endif
-    return true;
-#endif
+    KMessageBox::error(kgreeter, errm);
 }
 
+static void
+sorrybox(void *)
+{
+    KMessageBox::sorry(kgreeter, errm);
+}
+
+static void
+infobox(void *)
+{
+    KMessageBox::information(kgreeter, errm);
+}
 
 void 
 KGreeter::go_button_clicked()
 {
+    time_t expire;
+    char *nologin;
+    QDateTime dat;
+
     /* NOTE: name/password are static -> all zero -> terminator present */
     greet->name = ::name;
     strncpy( ::name, QFile::encodeName(loginEdit->text()).data(), F_LEN - 1 );
@@ -808,28 +645,81 @@ KGreeter::go_button_clicked()
     strncpy( ::sessarg, 
 	QFile::encodeName( sessionargBox->currentText() ).data(), F_LEN - 1 );
 
-    if (!MyVerify (::d, greet, verify)) {
-	failedLabel->setText(i18n("Login failed!"));
-	goButton->setEnabled( false);
-	loginEdit->setEnabled( false);
-	passwdEdit->setEnabled( false);
-	clear_button_clicked();
-	timer->start( 1500, true );	// XXX make configurable
-	return;
-    }
+    switch (MyVerify (::d, greet, verify, &expire, &nologin)) {
+	case V_ERROR:
+	    errm = i18n("Could not access the login capabilities database or out of memory.");
+	    TempUngrab_Run(errorbox, 0);
+	    break;
+	case V_NOHOME:
+	    errm = i18n("Home directory not available.");
+	    TempUngrab_Run(sorrybox, 0);
+	    break;
+	case V_NOROOT:
+	    errm = i18n("Root logins are not allowed.");
+	    TempUngrab_Run(sorrybox, 0);
+	    break;
+	case V_BADSHELL:
+	    errm = i18n("Your login shell is not listed in /etc/shells.");
+	    TempUngrab_Run(sorrybox, 0);
+	    break;
+	case V_AEXPIRED:
+	    errm = i18n("Your account has expired.");
+	    TempUngrab_Run(sorrybox, 0);
+	    break;
+	case V_PEXPIRED:
+	    errm = i18n("Your password has expired.");
+	    TempUngrab_Run(sorrybox, 0);
+	    break;
+	case V_BADTIME:
+	    errm = i18n("You are not allowed to login at the moment.");
+	    TempUngrab_Run(sorrybox, 0);
+	    break;
+	case V_NOLOGIN: {
+	    QFile f;
+	    f.setName(QString::fromLatin1(nologin));
+	    f.open(IO_ReadOnly);
+	    QTextStream t( &f ); 
+	    errm = "";
+	    while ( !t.eof() )
+		errm += t.readLine() + '\n';
+	    f.close();
 
-    if (restrict()) {
-	setActiveWindow();
-	clear_button_clicked();
-	return;
+	    if (errm.isEmpty())
+		errm = i18n("Logins are not allowed at the moment.\n"
+			 "Try again later.");
+	    TempUngrab_Run(sorrybox, 0);
+	    } break;
+	case V_AWEXPIRE:
+	    dat.setTime_t(expire);
+	    errm = i18n("Your account expires on %1.")
+			.arg(KGlobal::locale()->formatDateTime(dat));
+	    TempUngrab_Run(infobox, 0);
+	    goto oke;
+	case V_PWEXPIRE:
+	    dat.setTime_t(expire);
+	    errm = i18n("Your password expires on %1.")
+			.arg(KGlobal::locale()->formatDateTime(dat));
+	    TempUngrab_Run(infobox, 0);
+	  oke:
+	case V_OK:
+	    save_wm();
+	    //qApp->desktop()->setCursor( waitCursor);
+	    qApp->setOverrideCursor( waitCursor);
+	    hide();
+	    qApp->exit( ex_login);
+	    DeleteXloginResources( ::d, *dpy);
+	    return;
+	case V_FAIL:
+	    failedLabel->setText(i18n("Login failed!"));
+	    goButton->setEnabled( false);
+	    loginEdit->setEnabled( false);
+	    passwdEdit->setEnabled( false);
+	    clear_button_clicked();
+	    timer->start( 1500, true );	// XXX make configurable
+	    return;
     }
-
-    save_wm();
-    //qApp->desktop()->setCursor( waitCursor);
-    qApp->setOverrideCursor( waitCursor);
-    hide();
-    qApp->exit( ex_login);
-    DeleteXloginResources( ::d, *dpy);
+    setActiveWindow();
+    clear_button_clicked();
 }
 
 void
@@ -907,12 +797,14 @@ int
 MyVerify (
     struct display	*d,
     struct greet_info	*greet,
-    struct verify_info	*verify)
+    struct verify_info	*verify,
+    time_t		*expire,
+    char		**nologin)
 {
     if (greet->password && greet->password[0] == '\0' && 
         AccNoPass (d, greet->name))
 	greet->password = 0;
-    return Verify (d, greet, verify);
+    return Verify (d, greet, verify, expire, nologin);
 }
 
 int s_copy (char *dst, const char *src, int idx, int spc)
@@ -981,7 +873,7 @@ AutoLogon (
 	} else	// no autologin
 	    return 0;
     }
-    return MyVerify (d, greet, verify);
+    return MyVerify (d, greet, verify, 0, 0) >= V_OK;
 }
 
 

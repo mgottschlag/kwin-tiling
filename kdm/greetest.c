@@ -222,9 +222,10 @@ int main(int argc, char **argv)
 	Debug("Greeter exited: %d\n", rslt);
     }
 
+#if 0
     dlclose(greet_lib_handle);
-
     Debug("Greeter unloaded\n");
+#endif
 
     return 0;
 }
