@@ -25,6 +25,7 @@
 #include <kdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <dcopclient.h>
 
 #include "kcmlaunch.h"
 
@@ -114,10 +115,21 @@ LaunchConfig::save()
 
   c.writeEntry("BusyCursor",    cb_busyCursor_     ->isChecked());
   c.writeEntry("TaskbarButton", cb_taskbarButton_  ->isChecked());
+  
+  // c.setGroup( "BusyCursorSettings" );
+  // c.writeEntry( "Timeout", xx );
+  // c.setGroup( "TaskbarButtonSettings" );
+  // c.writeEntry( "Timeout", xx );
 
   c.sync();
 
   emit(changed(false));
+
+  if (!kapp->dcopClient()->isAttached())
+     kapp->dcopClient()->attach();
+  QByteArray data;
+  kapp->dcopClient()->send( "kicker", "Panel", "restart()", data );
+  kapp->dcopClient()->send( "kdesktop", "", "configure()", data );
 }
 
   void
