@@ -127,7 +127,7 @@ KFountainSaver::KFountainSaver( WId id ) : KScreenSaver( id )
 	readSettings();
 
 	timer = new QTimer( this );
-    	timer->start( 50, TRUE );
+    	timer->start( 25, TRUE );
 	setBackgroundColor( black );
         erase();
 	fountain = new Fountain();
@@ -155,7 +155,7 @@ void KFountainSaver::blank()
 	// Play fountain
 
 	fountain->updateGL();
-	timer->start( 30, TRUE );
+	timer->start( 25, TRUE );
 
 }
 Fountain::Fountain( QWidget * parent, const char * name) : QGLWidget (parent,name)
@@ -191,7 +191,7 @@ bool Fountain::loadParticle()
 		QImage dummy( 32, 32, 32 );
   		dummy.fill( Qt::white.rgb() );
         	buf = dummy;
-		tex = QGLWidget::convertToGLFormat( buf );
+		tex = convertToGLFormat( buf );
 	}
 
             /* Set the status to true */
@@ -244,6 +244,7 @@ void Fountain::initializeGL ()
     glEnable( GL_BLEND );
     /* Type Of Blending To Perform */
     glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+
 
     /* Really Nice Perspective Calculations */
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
@@ -309,8 +310,10 @@ void Fountain::paintGL ()
 	glLoadIdentity();
 						// Reset The ModelView Matrix
 	transIndex++;
-	glTranslatef( GLfloat(4.0*sin(2*3.14*transIndex/360)), GLfloat(4.0*cos(2*3.14*transIndex/360)), 0.0 );
-
+	glTranslatef( GLfloat(5.0*sin(2*3.14*transIndex/360)), GLfloat(4.0*cos(2*3.14*transIndex/360)), 0.0 );
+	xspeed = GLfloat(100.0*cos(2*3.14*transIndex/360)+100);
+	yspeed = GLfloat(100.0*sin(2*3.14*transIndex/360)+100);
+	//slowdown = GLfloat(4.0*sin(2*3.14*transIndex/360)+4.01);
 
 	for (loop=0;loop<MAX_PARTICLES;loop++)				// Loop Through All The Particles
 	{
@@ -320,36 +323,29 @@ void Fountain::paintGL ()
 			float y=particle[loop].y;			// Grab Our Particle Y Position
 			float z=particle[loop].z+zoom;			// Particle Z Pos + Zoom
 
-			/* Draw The Particle Using Our RGB Values,
-			* Fade The Particle Based On It's Life
-			*/
-			glColor4f( particle[loop].r,
-				particle[loop].g,
-				particle[loop].b,
-				particle[loop].life );
-			/* Build Quad From A Triangle Strip */
-			glBegin( GL_TRIANGLE_FAN );
-				/* Top Right */
-				glTexCoord2d( 1, 1 );
-				glVertex3f( x + 0.25f, y + 0.25f, z );
-				glVertex3f( x + 0.5f, y + 0.5f, z );
-				glVertex3f( x + 0.25f, y + 0.25f, z );
-				/* Top Left */
-				glTexCoord2d( 0, 1 );
-				glVertex3f( x - 0.25f, y + 0.25f, z );
-				glVertex3f( x - 0.5f, y + 0.5f, z );
-				glVertex3f( x - 0.25f, y + 0.25f, z );
-				/* Bottom Right */
-				glTexCoord2d( 1, 0 );
-				glVertex3f( x + 0.25f, y - 0.25f, z );
-				glVertex3f( x + 0.5f, y - 0.5f, z );
-				glVertex3f( x + 0.25f, y - 0.25f, z );
-				/* Bottom Left */
-				glTexCoord2d( 0, 0 );
-				glVertex3f( x - 0.25f, y - 0.25f, z );
-				glVertex3f( x - 0.5f, y - 0.5f, z );
-				glVertex3f( x - 0.25f, y - 0.25f, z );
-			glEnd( );
+                    /* Draw The Particle Using Our RGB Values,
+                     * Fade The Particle Based On It's Life
+                     */
+                    glColor4f( particle[loop].r,
+                               particle[loop].g,
+                               particle[loop].b,
+                               particle[loop].life );
+
+                    /* Build Quad From A Triangle Strip */
+                    glBegin( GL_TRIANGLE_FAN );
+                      /* Top Right */
+                      glTexCoord2d( 1, 1 );
+                      glVertex3f( x + 0.5f, y + 0.5f, z );
+                      /* Top Left */
+                      glTexCoord2d( 0, 1 );
+                      glVertex3f( x - 0.5f, y + 0.5f, z );
+                      /* Bottom Right */
+                      glTexCoord2d( 1, 0 );
+                      glVertex3f( x + 0.5f, y - 0.5f, z );
+                      /* Bottom Left */
+                      glTexCoord2d( 0, 0 );
+                      glVertex3f( x - 0.5f, y - 0.5f, z );
+                    glEnd( );
 
 			particle[loop].x+=particle[loop].xi/(slowdown*1000);// Move On The X Axis By X Speed
 			particle[loop].y+=particle[loop].yi/(slowdown*1000);// Move On The Y Axis By Y Speed
@@ -376,8 +372,9 @@ void Fountain::paintGL ()
 			}
 			// Lets stir some things up
 			index += 0.001;
-			particle[loop].yg =2.0*sin(2*3.14*index/360);
-			particle[loop].xg =2.0*cos(2*3.14*index/360);
+			particle[loop].yg =2.0*sin(2*3.14*transIndex/360);
+			particle[loop].xg =2.0*cos(2*3.14*transIndex/360);
+			particle[loop].zg =2.0+(2.0*cos(2*3.14*transIndex/360));
 
 		}
 	}
