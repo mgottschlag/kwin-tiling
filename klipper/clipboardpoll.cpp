@@ -152,8 +152,8 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
             unsigned long after;
             unsigned char* prop = NULL;
             if( XGetWindowProperty( qt_xdisplay(), winId(), ev.xselection.property, 0, 1, False,
-                XA_INTEGER, &type, &format, &nitems, &after, &prop ) != Success
-//                || type != XA_INTEGER - I did such a lame mistake :( Qt sets xa_timestamp here
+                AnyPropertyType, &type, &format, &nitems, &after, &prop ) != Success
+//                || type != XA_INTEGER - I did such a lame mistake :( Qt uses TIMESTAMP as the type
                 || format != 32 || nitems != 1 || prop == NULL )
             {
 //                kdDebug() << "BAD PROPERTY:" << ( data.atom == XA_PRIMARY ) << endl;
