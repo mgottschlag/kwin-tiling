@@ -107,7 +107,7 @@
                     <item>
                         <property>
                             <name>text</name>
-                            <string>1 -Backgorund color</string>
+                            <string>1 -Background color</string>
                         </property>
                     </item>
                     <item>
@@ -410,7 +410,7 @@
                     </property>
                     <property stdset="1">
                         <name>title</name>
-                        <string>Backgorund</string>
+                        <string>Background</string>
                     </property>
                     <grid>
                         <property stdset="1">
