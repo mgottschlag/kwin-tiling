@@ -26,7 +26,7 @@
 
 #define MAXPIPES  6 // maximum pipes (> 0)
 #define DEFPIPES  3 // default nr of pipes ( > 0 <= MAXPIPES)
-#define DETAIL    6 // resolution (increase for more curved surfaces)
+#define DETAIL   11 // resolution (increase for more curved surfaces)
 
 // derived parameters
 
@@ -48,6 +48,7 @@ public:
     int col;
     int x,y,z;
     int dir;
+    int prev_dir;
     bool running;
 };
 
@@ -81,6 +82,7 @@ protected:
     virtual GLuint 	makeCoord();
     virtual GLuint 	makeStart();
     virtual GLuint 	makeArrow();
+    virtual GLuint 	makeSphere(float f);
 
 private:
 
@@ -94,6 +96,8 @@ private:
     GLuint coord;
     GLuint start;
     GLuint arrow;
+    GLuint sphere0;
+    GLuint sphere1;
 
     GLfloat xRot, yRot, zRot, scale;
 

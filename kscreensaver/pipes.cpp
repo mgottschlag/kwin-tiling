@@ -315,15 +315,37 @@ QString getScreenSaverName()
 
 #ifdef HAVE_GL
 
+static GLfloat base[2][4] = 
+{ 
+  {0.3, 0.3, 0.3, 0.0 }, // red
+  {0.1, 0.1, 0.8, 0.0 }  // brown
+};
+
 static GLfloat color[6][4] = 
 { 
-  {0.8, 0.8, 0.0, 0.3 }, // red
-  {0.3, 0.3, 0.1, 0.3 }, // blue
-  {0.2, 0.1, 0.4, 0.3 }, // green
-  {0.0, 0.8, 0.7, 0.3 }, // lightblue
-  {0.5, 0.7, 0.1, 0.3 }, // yellow
-  {0.6, 0.2, 0.2, 0.3 }  // brown
+  {0.8, 0.8, 0.0, 0.0 }, // red
+  {0.3, 0.3, 0.1, 0.0 }, // blue
+  {0.2, 0.1, 0.4, 0.0 }, // green
+  {0.0, 0.8, 0.7, 0.0 }, // lightblue
+  {0.5, 0.7, 0.1, 0.0 }, // yellow
+  {0.6, 0.2, 0.2, 0.0 }  // brown
 };
+
+void setColors(int n)
+{ int i;
+  for (i = 0; i < 3; i++)
+  {
+    base[0][i] = (random()%256)/255.0;
+    base[1][i] = (random()%256)/255.0;
+  }
+  for (i = 0; i < n; i++)
+  {
+    color[i][0] = i*(base[1][0]-base[0][0])/n + base[0][0];
+    color[i][1] = i*(base[1][1]-base[0][1])/n + base[0][1];
+    color[i][2] = i*(base[1][2]-base[0][2])/n + base[0][2];
+    color[i][3] = i*(base[1][3]-base[0][3])/n + base[0][3];
+  }
+}
 
 // This is used both for movement and rotating the head (arrow) in
 // the proper direction.
@@ -354,13 +376,14 @@ Pipe::Pipe(kPipesSaver* b, int c)
 bool Pipe::chooseDir()
 { int x0 = x/SUBCELLS, y0 = y/SUBCELLS, z0 = z/SUBCELLS;
   int i, n=0; int possible[6];
+  prev_dir = dir;
   for (i = 0; i<6; i++)
   {
     int x1 = x0 + direct[i].x;
     int y1 = y0 + direct[i].y;
     int z1 = z0 + direct[i].z;
     if (!box->goodCubeLocation(x1,y1,z1)) continue;
-    if (i == dir && random()%(3*CUBESIZE) == 0) goto extend;
+    if (i == dir && random()%(CUBESIZE) != 0) goto extend;
     possible[n++] = i;
   }
   if (n==0) return FALSE; // out of choices, start over
@@ -398,6 +421,7 @@ void kPipesSaver::reinit()
   initial = TRUE;
   clearCube();
   for (i = 0; i < pipes; i++) pipe[i]->choosePos();
+  setColors(pipes);
 }
 
 // Handling locations in the cube //////////////////////////////////////////////
@@ -474,7 +498,8 @@ void kPipesSaver::paintGL()
 void kPipesSaver::makeStep()
 { int i;
   for (i = 0; i < pipes; i++)
-  { Pipe* p = pipe[i]; Direction* d = &direct[p->dir];
+  { Pipe* p = pipe[i]; 
+    Direction* d = &direct[p->dir];
     p->x += d->x; p->y += d->y; p->z += d->z;
   }
 }
@@ -498,6 +523,9 @@ void kPipesSaver::paintStep()
     glRotatef( 90.0*d->deg90, 1.0*d->rx, 1.0*d->ry, 0.0 );
     glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color[pipe[i]->col] );
     glCallList( arrow );
+    if (p->dir != p->prev_dir)
+      glCallList( random()%3==0?sphere1:sphere0 );
+    p->prev_dir = p->dir;
   }
 }
 
@@ -586,7 +614,31 @@ GLuint kPipesSaver::makeArrow()
   GLuint list = glGenLists(1); /* create the call list */
   glNewList(list, GL_COMPILE);
     gluCylinder(quadric, RADIUS, RADIUS, RADIUS, DETAIL, DETAIL);
-    gluSphere(quadric, RADIUS, DETAIL, DETAIL);             /* draw the sphere of specified radius */
+//  gluSphere(quadric, RADIUS, DETAIL, DETAIL);             /* draw the sphere of specified radius */
+  glEndList();               // finish up the list
+  gluDeleteQuadric(quadric); // free up the quadric
+  return list;
+}
+
+/*!
+    The pipes are extended by a combination of a sphere and a cylinder.
+    The cylinder's height and radius is the same as the radius of the
+    sphere and one of it's ends is located at the aequator of the sphere.
+    Later, we'll make the non-cylinder end of this combination to be
+    the extendion of the pipe.
+*/
+
+GLuint kPipesSaver::makeSphere(float f)
+{        
+  GLUquadricObj *quadric = gluNewQuadric();  /* Initialize the Sphere */
+  gluQuadricNormals(quadric, (GLenum) GLU_SMOOTH); /* we want normals */
+  gluQuadricTexture(quadric, GL_FALSE); /* we want texture */
+
+  GLuint list = glGenLists(1); /* create the call list */
+  glNewList(list, GL_COMPILE);
+//  gluCylinder(quadric, RADIUS, RADIUS, RADIUS, DETAIL, DETAIL);
+    glTranslatef( 0, 0, RADIUS );
+    gluSphere(quadric, f*RADIUS, DETAIL, DETAIL);          /* draw the sphere of specified radius */
   glEndList();               // finish up the list
   gluDeleteQuadric(quadric); // free up the quadric
   return list;
@@ -615,9 +667,11 @@ kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
   glEnable( GL_AUTO_NORMAL );
   glEnable( GL_DEPTH_TEST );
 
-  start = makeStart();                // Generate an OpenGL display list
-  arrow = makeArrow();                // Generate an OpenGL display list
-  coord = makeCoord();                // Generate an OpenGL display list
+  start   = makeStart();                // Generate an OpenGL display list
+  arrow   = makeArrow();                // Generate an OpenGL display list
+  coord   = makeCoord();                // Generate an OpenGL display list
+  sphere0 = makeSphere(1.0);            // Generate an OpenGL display list
+  sphere1 = makeSphere(1.3);            // Generate an OpenGL display list
   glShadeModel( GL_SMOOTH );
 //glClearColor( 0.0, 0.0, 0.0, 0.0 ); // Let OpenGL clear to black
 
