@@ -13,5 +13,5 @@ noinst_HEADERS = main.h panel.h
 KDE_ICON = go
 
 messages:
-	$(XGETTEXT) $(libkcm_email_la_SOURCES) -o $(podir)/kcmkicker.pot
+	$(XGETTEXT) $(libkcm_kicker_la_SOURCES) -o $(podir)/kcmkicker.pot
 
