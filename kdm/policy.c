@@ -197,7 +197,7 @@ static void Willing_msg( char* mbuf)
 
 	mbuf[255] = 0;
    }
-#elif BSD4_3
+#elif HAVE_GETLOADAVG
 #warning This code is untested...
      double load[3];
      getloadavg(load, 3);
