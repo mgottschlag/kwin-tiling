@@ -7,8 +7,6 @@ libkcm_input_la_LIBADD = -lkdeui
 
 INCLUDES= $(all_includes)
 
-SUBDIRS = pics
-
 libkcm_input_la_METASOURCES = AUTO
 
 messages:
