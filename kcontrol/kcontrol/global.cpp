@@ -40,7 +40,7 @@ QString KCGlobal::_iversion = "";
 QString KCGlobal::_imachine = "";
 IndexViewMode KCGlobal::_viewmode = Icon;
 IndexIconSize KCGlobal::_iconsize = Medium;
-QString KCGlobal::_baseGroup = QString::null;
+QString KCGlobal::_baseGroup = "";
 
 void KCGlobal::init()
 {
