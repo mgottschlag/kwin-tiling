@@ -42,9 +42,6 @@ from The Open Group.
 
 #include <stdio.h>
 #include <string.h>
-#ifdef __NetBSD__
-# include <sys/param.h>
-#endif
 
 #ifndef sigmask
 # define sigmask(m)  (1 << ((m - 1)))
