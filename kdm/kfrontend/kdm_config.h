@@ -93,8 +93,8 @@
 #define C_Pattern		(C_TYPE_STR | 0x1109)
 #define C_Program		(C_TYPE_STR | 0x110a)
 #define C_ReverseBlending	(C_TYPE_INT | 0x110b)
-#define C_Wallpaper		(C_TYPE_INT | 0x110c)	
-#define C_WallpaperList		(C_TYPE_STR | 0x110d)
+#define C_Wallpaper		(C_TYPE_STR | 0x110c)	
+#define C_WallpaperList		(C_TYPE_ARGV | 0x110d)
 #define C_WallpaperMode		(C_TYPE_STR | 0x110e)
 
 #endif /* _KDM_CONFIG_H_ */
