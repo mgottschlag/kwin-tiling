@@ -8,15 +8,15 @@
  
 ****************************************************************************/
 
-#ifndef _KHOTKEYS_H_
-#define _KHOTKEYS_H_
+#ifndef _KHOTKEYS_APP_H_
+#define _KHOTKEYS_APP_H_
 
 #include <kuniqueapplication.h>
 
-#include <actions.h>
-
 namespace KHotKeys
 {
+
+class Action_data_group;
 
 class KHotKeysApp
     : public KUniqueApplication

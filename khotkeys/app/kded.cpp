@@ -8,45 +8,71 @@
  
 ****************************************************************************/
 
-#define _KHOTKEYS_CPP_
+#define _KHOTKEYS_KDED_CPP_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include "khotkeys.h"
+#include "kded.h"
+
+#include <kcmdlineargs.h>
+#include <kconfig.h>
+#include <klocale.h>
+#include <kapplication.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#include <X11/Xlib.h>
 
 #include <settings.h>
 #include <input.h>
 #include <action_data.h>
 #include <gestures.h>
 
+extern "C" 
+KDEDModule *create_khotkeys( const QCString& obj )
+    {
+    return new KHotKeys::KHotKeysModule( obj );
+    }
+
 namespace KHotKeys
 {
 
-// KhotKeysApp
+// KhotKeysModule
 
-KHotKeysApp::KHotKeysApp()
-    :   KUniqueApplication( false, true ), // no styles
-        delete_helper( new QObject )
+KHotKeysModule::KHotKeysModule( const QCString& obj )
+    : KDEDModule( obj )
     {
-    init_global_data( true, delete_helper ); // grab keys
+    for( int i = 0;
+         i < 5;
+         ++i )
+        {
+        if( kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
+            {
+            QByteArray data, replyData;
+            QCString reply;
+            // wait for it to finish
+            kapp->dcopClient()->call( "khotkeys*", "khotkeys", "quit()", data, reply, replyData );
+            sleep( 1 );
+            }
+        }
+    client.registerAs( "khotkeys", false ); // extra dcop connection (like if it was an app)
+    init_global_data( true, this ); // grab keys
     // CHECKME triggery a dalsi vytvaret az tady za inicializaci
     actions_root = NULL;
     reread_configuration();
     }
 
-KHotKeysApp::~KHotKeysApp()
+KHotKeysModule::~KHotKeysModule()
     {
     // CHECKME triggery a dalsi rusit uz tady pred cleanupem
     delete actions_root;
-// Many global data should be destroyed while the QApplication object still
-// exists, and therefore 'this' cannot be the parent, as ~Object
-// for 'this' would be called after ~QApplication - use proxy object
-    delete delete_helper;
     }
 
-void KHotKeysApp::reread_configuration()
+void KHotKeysModule::reread_configuration()
     { // TODO
     kdDebug( 1217 ) << "reading configuration" << endl;
     delete actions_root;
@@ -65,11 +91,11 @@ void KHotKeysApp::reread_configuration()
     actions_root->update_triggers();
     }
 
-void KHotKeysApp::quit()
+void KHotKeysModule::quit()
     {
-    kapp->quit();
+    delete this;
     }
-    
+
 } // namespace KHotKeys
 
-#include "khotkeys.moc"
+#include "kded.moc"

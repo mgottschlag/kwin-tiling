@@ -32,6 +32,7 @@
 #include <kglobal.h>
 #include <ksimpleconfig.h>
 #include <kfiledialog.h>
+#include <dcopref.h>
 
 #include <input.h>
 #include <triggers.h>
@@ -51,7 +52,29 @@ KCModule* create_khotkeys( QWidget* parent_P, const char* name_P )
     ret->load(); // CHECKME
     return ret;
     }
-    
+
+void init_khotkeys()
+    {
+    KConfig cfg( "khotkeysrc", true );
+    cfg.setGroup( "Main" );
+    if( !cfg.readBoolEntry( "Autostart", false ))
+        return;
+    cfg.setGroup("X11"); // from kdeglobals actually
+    // Non-xinerama multhead support in KDE is just a hack
+    // involving forking apps per-screen. Don't bother with
+    // kded modules in such case.
+    if( cfg.readBoolEntry( "enableMultihead" ))
+        kapp->kdeinitExec( "khotkeys" );
+    else
+        {
+        DCOPRef ref( "kded", "kded" );
+        if( !ref.call( "loadModule", QCString( "khotkeys" )))
+            {
+            kdWarning( 1217 ) << "Loading of khotkeys module failed." << endl;
+            kapp->kdeinitExec( "khotkeys" );
+            }
+        }
+    }
 }
 
 namespace KHotKeys

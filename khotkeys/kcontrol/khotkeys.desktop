@@ -5,6 +5,7 @@ Type=Application
 
 X-KDE-ModuleType=Library
 X-KDE-Library=khotkeys
+X-KDE-Init=khotkeys
 
 Name=KHotKeys
 Name[bg]=Жестове
@@ -14,7 +15,7 @@ Name[eo]=Klavkombinoj
 Name[es]=Teclas rápidas de KDE
 Name[et]=KDE kiirklahvid
 Name[fi]=Pikanäppäimet
-Name[hi]=के-हाट-कीज़
+Name[hi]=के-हॉट-कीज़
 Name[hu]=Parancsbeállító (KHotKeys)
 Name[is]=Flýtilyklar KDE
 Name[ja]=KDE ホットキー
