@@ -105,7 +105,7 @@ TopLevel::TopLevel()
     globalKeys = new KGlobalAccel();
     globalKeys->insertItem(i18n("Show klipper popupmenu"),
                                 "show-klipper-popupmenu", "CTRL+ALT+V");
-    globalKeys->insertItem(i18n("Repeat last action"),
+    globalKeys->insertItem(i18n("Manually invoke action on current clipboard"),
                                 "repeat-last-klipper-action", "CTRL+ALT+R");
     globalKeys->insertItem(i18n("Enable/disable clipboard actions"),
                            "toggle-clipboard-actions", "CTRL+ALT+X" );
@@ -355,7 +355,7 @@ void TopLevel::slotConfigure()
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
         writeConfiguration( kapp->config() );
     }
-    
+
     setURLGrabberEnabled( haveURLGrabber );
 
     delete dlg;
