@@ -402,7 +402,7 @@ void
 KGreeter::save_wm()
 {
      // read passwd
-     struct passwd *pwd = getpwnam(greet->name);
+     pwd = getpwnam(greet->name);
      endpwent();
      if (!pwd) return;
      // we don't need the password
@@ -432,7 +432,7 @@ void
 KGreeter::load_wm()
 {
      // read passwd
-     passwd *pwd = getpwnam(loginEdit->text());
+     pwd = getpwnam(loginEdit->text());
      endpwent();
      if (!pwd) return;
      // we don't need the password
