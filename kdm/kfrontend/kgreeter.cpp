@@ -663,7 +663,12 @@ extern "C" void
 kg_main(int argc, char **argv)
 {
     kde_have_kipc = false;
-//    KApplication::disableAutoDcopRegistration();
+    // !! DO NOT COMMENT OUT THE DCOP REGISTRATION DISABLING LINE BELOW !!
+    // it happened a few times already and it's very annoying cause it
+    // completely breaks the greeter. the dcopclient tries to register,
+    // sees no $HOME is set and aborts the process right away
+    // (Simon)
+    KApplication::disableAutoDcopRegistration();
     MyApp myapp(argc, argv);
 
     kdmcfg = new KDMConfig();
