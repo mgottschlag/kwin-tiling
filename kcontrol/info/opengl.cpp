@@ -92,7 +92,7 @@ static int ReadPipe(QString FileName, QStringList &list)
     return list.count();
 }
 
-#if defined(__linux__)
+#if defined(Q_OS_LINUX)
  
 #define INFO_DRI "/proc/dri/0/name"
  
@@ -139,7 +139,7 @@ static bool get_dri_device()
     return false;
 }
 
-#elif __FreeBSD__
+#elif defined(Q_OS_FREEBSD)
 
 static bool get_dri_device() { 
 
