@@ -844,35 +844,28 @@ static Bool update_x_time_predicate( Display*, XEvent* event, XPointer )
     return False;
 }
 
-static Time nextXTime()
-    {
-    next_x_time = CurrentTime;
-    XEvent dummy;
-    XCheckIfEvent( qt_xdisplay(), &dummy, update_x_time_predicate, NULL );
-    return next_x_time;
-    }
-
 void KlipperWidget::updateTimestamp()
 { // Qt3.3.0 and 3.3.1 use qt_x_user_time for clipboard operations
     Time& time = ( strcmp( qVersion(), "3.3.1" ) == 0
                 || strcmp( qVersion(), "3.3.0" ) == 0 )
                 ? qt_x_user_time : qt_x_time;
-    time = nextXTime();
-    if( time == CurrentTime )
+    static QWidget* w = 0;
+    if ( !w )
+        w = new QWidget;
+    unsigned char data[ 1 ];
+    XChangeProperty( qt_xdisplay(), w->winId(), XA_ATOM, XA_ATOM, 8, PropModeAppend, data, 1 );
+    next_x_time = CurrentTime;
+    XEvent dummy;
+    XCheckIfEvent( qt_xdisplay(), &dummy, update_x_time_predicate, NULL );
+    if( next_x_time == CurrentTime )
         {
-        // get current X timestamp
-        static Window w = None;
-        if( w == None )
-            {
-            w = XCreateSimpleWindow( qt_xdisplay(), qt_xrootwin(), 0, 0, 1, 1, 0, 0, 0 );
-            XSelectInput( qt_xdisplay(), w, PropertyChangeMask );
-            }
-        unsigned char data[ 1 ];
-        XChangeProperty( qt_xdisplay(), w, XA_ATOM, XA_ATOM, 8, PropModeAppend, data, 1 );
-        XEvent ev;
-        XWindowEvent( qt_xdisplay(), w, PropertyChangeMask, &ev );
-        time = ev.xproperty.time;
+        XSync( qt_xdisplay(), False );
+        XCheckIfEvent( qt_xdisplay(), &dummy, update_x_time_predicate, NULL );
         }
+    Q_ASSERT( next_x_time != CurrentTime );
+    time = next_x_time;
+    XEvent ev; // remove the PropertyNotify event from the events queue
+    XWindowEvent( qt_xdisplay(), w->winId(), PropertyChangeMask, &ev );
 }
 
 static const char * const description =
