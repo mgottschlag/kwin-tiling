@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=kscreensaver
+Type=Application
+Exec=kcmshell display
+DocPath=kcontrol/kcmdisplay/index.html
+X-KDE-ModuleType=Library
+X-KDE-Library=display
+X-KDE-FactoryName=display
+X-KDE-ParentApp=kcontrol
+Name=Display
+Comment=Display Settings
+Categories=Qt;KDE;X-KDE-settings-peripherals
