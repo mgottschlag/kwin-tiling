@@ -231,11 +231,9 @@ void KLocaleConfig::defaults()
 {
   changedFlag = FALSE;
 
-  locale->setLanguage("C",
-                      "C", // FIXME -- this is obsoleted
-                      "C",
-                      "C",
-                      "C");
+  locale->setLanguage("C");
+  locale->setCountry("C");
+
   reTranslateLists();
   loadLocaleList(comboLang, 0, QStringList());
 
@@ -259,11 +257,8 @@ void KLocaleConfig::changedCountry(int i)
   QStringList langs = ent.readListEntry("Languages");
   if (langs.isEmpty()) langs = QString("C");
 
-  locale->setLanguage(*langs.at(0),
-                      *langs.at(0), // FIXME -- this is obsoleted
-                      country,
-                      country,
-                      country);
+  locale->setLanguage(*langs.at(0));
+  locale->setCountry(country);
 
   reTranslateLists();
   loadLocaleList(comboLang, 0, langs);
@@ -281,11 +276,8 @@ void KLocaleConfig::changedLanguage(int i)
 {
   changedFlag = TRUE;
 
-  locale->setLanguage(comboLang->tag(i),
-                      comboLang->tag(i),
-                      QString::null,
-                      QString::null,
-                      QString::null);
+  locale->setLanguage(comboLang->tag(i));
+
   reTranslateLists();
 
   emit resample();
@@ -295,11 +287,9 @@ void KLocaleConfig::changedNumber(int i)
 {
   changedFlag = TRUE;
 
-  locale->setLanguage(QString::null,
-                      QString::null,
-                      comboMoney->tag(i),
-                      QString::null,
-                      QString::null);
+  locale->setCountry(comboMoney->tag(i),
+                     QString::null,
+                     QString::null);
   emit resample();
 }
 
@@ -307,11 +297,9 @@ void KLocaleConfig::changedMoney(int i)
 {
   changedFlag = TRUE;
 
-  locale->setLanguage(QString::null,
-                      QString::null,
-                      QString::null,
-                      comboDate->tag(i),
-                      QString::null);
+  locale->setCountry(QString::null,
+                     comboDate->tag(i),
+                     QString::null);
   emit resample();
 }
 
@@ -319,9 +307,7 @@ void KLocaleConfig::changedTime(int i)
 {
   changedFlag = TRUE;
 
-  locale->setLanguage(QString::null,
-                      QString::null,
-                      QString::null,
+  locale->setCountry(QString::null,
                       QString::null,
                       comboDate->tag(i));
   emit resample();
