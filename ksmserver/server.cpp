@@ -982,7 +982,7 @@ void KSMServer::shutdown( bool bFast )
     cfg->setGroup("General" );
     bool old_saveSession = saveSession =
 	cfg->readBoolEntry( "saveSession", FALSE );
-    bool confirmLogout = cfg->readBoolEntry( "confirmLogout", TRUE );
+    bool confirmLogout = !bFast && cfg->readBoolEntry( "confirmLogout", TRUE );
     delete cfg;
  
     if ( confirmLogout ) {
@@ -990,7 +990,7 @@ void KSMServer::shutdown( bool bFast )
         connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ), SLOT( cancelShutdown() ) );
     }
 
-    if ( bFast || !confirmLogout || KSMShutdownDlg::confirmShutdown( saveSession ) ) {
+    if ( !confirmLogout || KSMShutdownDlg::confirmShutdown( saveSession ) ) {
 	// Set the real desktop background to black so that exit looks
 	// clean regardless of what was on "our" desktop.
 	kapp->desktop()->setBackgroundColor( Qt::black );
