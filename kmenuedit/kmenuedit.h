@@ -23,6 +23,8 @@
 #include <kmainwindow.h>
 
 class MenuEditView;
+class KAction;
+class KToggleAction;
 
 class KMenuEdit : public KMainWindow
 {
@@ -38,9 +40,18 @@ protected:
 
 protected slots:
     void slotClose();
+    void slotChangeView();
 
 protected:
-    MenuEditView *_view;
+    MenuEditView *m_view;
+    KAction *m_actionDelete;
+    KAction *m_actionUndelete;
+    KAction *m_actionHide;
+    KAction *m_actionUnhide;
+    KToggleAction *m_actionShowHidden;
+    KToggleAction *m_actionShowRemoved;
+    bool m_showHidden;
+    bool m_showRemoved;
 };
 
 #endif

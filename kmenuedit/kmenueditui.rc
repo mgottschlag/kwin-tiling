@@ -16,8 +16,14 @@
  <Action name="edit_paste"/>
  <Separator/>
  <Action name="delete"/>
+ <Action name="undelete"/>
  <Action name="hide"/>
  <Action name="unhide"/>
+</Menu>
+
+<Menu name="settings">
+ <Action name="show_removed"/>
+ <Action name="show_hidden"/>
 </Menu>
 </MenuBar>
 
@@ -30,6 +36,7 @@
  <Action name="edit_paste"/>
  <Separator/>
  <Action name="delete"/>
+ <Action name="undelete"/>
  <Action name="hide"/>
  <Action name="unhide"/>
 </ToolBar>

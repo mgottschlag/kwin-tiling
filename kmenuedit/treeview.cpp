@@ -27,6 +27,7 @@
 #include <qcstring.h>
 #include <qpopupmenu.h>
 #include <qfileinfo.h>
+#include <qcursor.h>
 
 #include <kglobal.h>
 #include <kstandarddirs.h>
@@ -38,6 +39,7 @@
 #include <kdesktopfile.h>
 #include <kaction.h>
 #include <kmessagebox.h>
+#include <kapplication.h>
 
 #include "treeview.h"
 #include "treeview.moc"
@@ -46,19 +48,72 @@
 const char* clipboard_prefix = ".kmenuedit_clipboard/";
 
 TreeItem::TreeItem(QListViewItem *parent, const QString& file)
-    :QListViewItem(parent), _file(file) {}
+    :QListViewItem(parent), _file(file), _hidden(false), _deleted(false), _init(false), _directory(false) {}
 
 TreeItem::TreeItem(QListViewItem *parent, QListViewItem *after, const QString& file)
-    :QListViewItem(parent, after), _file(file) {}
+    :QListViewItem(parent, after), _file(file), _hidden(false), _deleted(false), _init(false), _directory(false) {}
 
 TreeItem::TreeItem(QListView *parent, const QString& file)
-    : QListViewItem(parent), _file(file) {}
+    : QListViewItem(parent), _file(file), _hidden(false), _deleted(false), _init(false), _directory(false) {}
 
 TreeItem::TreeItem(QListView *parent, QListViewItem *after, const QString& file)
-    : QListViewItem(parent, after), _file(file) {}
+    : QListViewItem(parent, after), _file(file), _hidden(false), _deleted(false), _init(false), _directory(false) {}
+
+void TreeItem::setName(const QString &name)
+{
+    _name = name;
+    update();
+}
+
+QString TreeItem::file() const
+{
+    return _directory ? _file + "/.directory" : _file;
+}
+
+void TreeItem::setDirectory(bool b)
+{
+    _directory = b;
+}
+
+void TreeItem::setDeleted(bool b)
+{
+    if (_deleted == b) return;
+    
+    _deleted = b;
+    update();
+}
+
+void TreeItem::setHidden(bool b)
+{
+    if (_hidden == b) return;
+    _hidden = b;
+    update();
+}
+
+void TreeItem::update()
+{
+    QString s = _name;
+    if (_deleted)
+       s += i18n(" [Removed]");
+    else if (_hidden)
+       s += i18n(" [Hidden]");
+    setText(0, s);           
+}
+
+void TreeItem::setOpen(bool o)
+{
+    if (o && _directory && !_init)
+    {
+       _init = true;
+       TreeView *tv = static_cast<TreeView *>(listView());
+       tv->fillBranch(_file, this);
+    }
+    QListViewItem::setOpen(o);
+}
+
 
 TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
-    : KListView(parent, name), _ac(ac)
+    : KListView(parent, name), _ac(ac), _rmb(0)
 {
     setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
     setAllColumnsShowFocus(true);
@@ -67,6 +122,7 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     setAcceptDrops(true);
     setDropVisualizer(true);
     setDragEnabled(true);
+    setMinimumWidth(240);
 
     addColumn("");
     header()->hide();
@@ -86,44 +142,71 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     // connect actions
     connect(_ac->action("newitem"), SIGNAL(activated()), SLOT(newitem()));
     connect(_ac->action("newsubmenu"), SIGNAL(activated()), SLOT(newsubmenu()));
-    connect(_ac->action("edit_cut"), SIGNAL(activated()), SLOT(cut()));
-    connect(_ac->action("edit_copy"), SIGNAL(activated()), SLOT(copy()));
-    connect(_ac->action("edit_paste"), SIGNAL(activated()), SLOT(paste()));
-    connect(_ac->action("delete"), SIGNAL(activated()), SLOT(del()));
-    connect(_ac->action("hide"), SIGNAL(activated()), SLOT(hide()));
-    connect(_ac->action("unhide"), SIGNAL(activated()), SLOT(unhide()));
+
+    cleanupClipboard();
+}
+
+TreeView::~TreeView() {
+    cleanupClipboard();
+}
+
+void TreeView::setViewMode(bool showRemoved, bool showHidden)
+{
+    delete _rmb;
 
     // setup rmb menu
     _rmb = new QPopupMenu(this);
+    KAction *action;
+    
+    action = _ac->action("edit_cut");
+    if(action) {
+        action->plug(_rmb);
+        action->setEnabled(false);
+        connect(action, SIGNAL(activated()), SLOT(cut()));
+    }
 
-    if(_ac->action("edit_cut"))	{
-        _ac->action("edit_cut")->plug(_rmb);
-        _ac->action("edit_cut")->setEnabled(false);
+    action = _ac->action("edit_copy");
+    if(action) {
+        action->plug(_rmb);
+        action->setEnabled(false);
+        connect(action, SIGNAL(activated()), SLOT(copy()));
     }
-    if(_ac->action("edit_copy")) {
-        _ac->action("edit_copy")->plug(_rmb);
-        _ac->action("edit_copy")->setEnabled(false);
-    }
-    if(_ac->action("edit_paste")) {
-        _ac->action("edit_paste")->plug(_rmb);
-        _ac->action("edit_paste")->setEnabled(false);
+
+    action = _ac->action("edit_paste");
+    if(action) {
+        action->plug(_rmb);
+        action->setEnabled(false);
+        connect(action, SIGNAL(activated()), SLOT(paste()));
     }
 
     _rmb->insertSeparator();
     
-    if(_ac->action("hide")) {
-        _ac->action("hide")->plug(_rmb);
-        _ac->action("hide")->setEnabled(false);
+    action = _ac->action("hide");
+    if(action) {
+        action->plug(_rmb);
+        action->setEnabled(false);
+        connect(action, SIGNAL(activated()), SLOT(hide()));
     }
     
-    if(_ac->action("unhide")) {
-        _ac->action("unhide")->plug(_rmb);
-        _ac->action("unhide")->setEnabled(false);
+    action = _ac->action("unhide");
+    if(action) {
+        action->plug(_rmb);
+        action->setEnabled(false);
+        connect(action, SIGNAL(activated()), SLOT(unhide()));
     }
 
-    if(_ac->action("delete")) {
-        _ac->action("delete")->plug(_rmb);
-        _ac->action("delete")->setEnabled(false);
+    action = _ac->action("delete");
+    if(action) {
+        action->plug(_rmb);
+        action->setEnabled(false);
+        connect(action, SIGNAL(activated()), SLOT(del()));
+    }
+
+    action = _ac->action("undelete");
+    if(action) {
+        action->plug(_rmb);
+        action->setEnabled(false);
+        connect(action, SIGNAL(activated()), SLOT(undel()));
     }
 
     _rmb->insertSeparator();
@@ -133,18 +216,52 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     if(_ac->action("newsubmenu"))
 	_ac->action("newsubmenu")->plug(_rmb);
 
-    cleanupClipboard();
+    _showRemoved = showRemoved;
+    _showHidden = showHidden;
     fill();
-}
-
-TreeView::~TreeView() {
-    cleanupClipboard();
 }
 
 void TreeView::fill()
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     clear();
     fillBranch("", 0);
+    QApplication::restoreOverrideCursor();
+}
+
+QString TreeView::findName(KDesktopFile *df, bool deleted)
+{
+    QString name = df->readName();
+    if (deleted)
+    {
+       if (name == "empty")
+          name = QString::null;
+       if (name.isEmpty())
+       {
+          QString file = df->fileName();
+          QString res = df->resource();
+          
+          bool isLocal = true;
+          QStringList files = KGlobal::dirs()->findAllResources(res.latin1(), file);
+          for(QStringList::ConstIterator it = files.begin();
+              it != files.end();
+              ++it)
+          {
+             if (isLocal)
+             {
+                isLocal = false;
+                continue;
+             }
+             
+             KDesktopFile df2(*it);
+             name = df2.readName();
+
+             if (!name.isEmpty() && (name != "empty"))
+                return name;
+          }
+       }
+    }
+    return name;
 }
 
 void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
@@ -166,25 +283,30 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 	    --it;
 
 	    KDesktopFile df(*it);
-	    if(df.readBoolEntry("Hidden") == true)
-		continue;
+	    bool deleted = df.readBoolEntry("Hidden");
+	    bool hidden = df.readBoolEntry("NoDisplay");
 
-	    if(df.readBoolEntry("NoDisplay") == true) {
-		    TreeItem* item;
-		    if (parent == 0) item = new TreeItem(this, *it);
-	    	else item = new TreeItem(parent, *it);
+	    if (deleted && !_showRemoved)
+                continue;
 
-		    item->setText(0, df.readName() + i18n(" [Hidden]"));
-	    	    item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
-	    }
-	    else {
-	    TreeItem* item;
-	    if (parent == 0) item = new TreeItem(this, *it);
-	    else item = new TreeItem(parent, *it);
+	    if (hidden && !deleted && !_showHidden)
+	        continue;
 
-	    item->setText(0, df.readName());
-	    item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
-	    }
+            QString name = findName(&df, deleted);
+            if (name.isEmpty() && df.readEntry("Exec").isEmpty())
+                continue;
+
+            TreeItem* item;
+            if (parent == 0) 
+                item = new TreeItem(this, *it);
+            else 
+                item = new TreeItem(parent, *it);
+
+            item->setName(name);
+            item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+
+            item->setDeleted(deleted);
+            item->setHidden(hidden);
 	}
 	while (it != filelist.begin());
     }
@@ -197,44 +319,47 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 
 	    QString dirFile = KGlobal::dirs()->findResource("apps", *it + "/.directory");
 	    TreeItem* item;
+	    
+	    bool hidden = false;
+	    bool deleted = false;
+	    QString name;
+	    QString icon;
 
 	    if (dirFile.isNull()) {
-                if (parent == 0)
-                    item = new TreeItem(this, *it + "/.directory");
-                else
-                    item = new TreeItem(parent, *it + "/.directory");
-                item->setText(0, *it);
-                item->setPixmap(0, KGlobal::iconLoader()->
-                                loadIcon("package",KIcon::Desktop, KIcon::SizeSmall));
-                item->setExpandable(true);
-            }
-	    else {
+	        name = *it;
+	        icon = "package";
+	    }
+	    else
+	    {
                 KDesktopFile df(dirFile);
-		if(df.readBoolEntry("Hidden") == true)
-		continue;
-		
-                if(df.readBoolEntry("NoDisplay") == true) {
-	                if (parent == 0)
-	                    item = new TreeItem(this,  *it + "/.directory");
-	                else
-	                    item = new TreeItem(parent, *it + "/.directory");
+		deleted = df.readBoolEntry("Hidden");
+                hidden = df.readBoolEntry("NoDisplay");
 
-	                item->setText(0, df.readName() + i18n(" [Hidden]"));
-	                item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
-	                item->setExpandable(true);
-		}
-		else {
-                if (parent == 0)
-                    item = new TreeItem(this,  *it + "/.directory");
-                else
-                    item = new TreeItem(parent, *it + "/.directory");
+	        if (deleted && !_showRemoved)
+                    continue;
 
-                item->setText(0, df.readName());
-                item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
-                item->setExpandable(true);
-		}
-	   }
-	    fillBranch(*it, item);
+	        if (hidden && !deleted && !_showHidden)
+	            continue;
+
+                name = findName(&df, deleted);
+                icon = df.readIcon();
+	    }
+            
+            if (parent == 0)
+                item = new TreeItem(this,  *it);
+            else
+                item = new TreeItem(parent, *it);
+
+            item->setName(name);
+            item->setPixmap(0, KGlobal::iconLoader()->
+                               loadIcon(icon,KIcon::Desktop, KIcon::SizeSmall));
+
+            item->setDeleted(deleted);
+            item->setHidden(hidden);
+            item->setExpandable(true);
+            item->setDirectory(true);
+
+//	    fillBranch(*it, item);
 	}
 	while (it != dirlist.begin());
     }
@@ -243,29 +368,44 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 void TreeView::itemSelected(QListViewItem *item)
 {
     TreeItem *_item = (TreeItem*)item;
-    bool selected = false, hselected = false;
-    if (item) {
-	selected = true;
-	QString name(item->text(0));
-	if (!(name.find(i18n(" [Hidden]")) > 0)) {
-		hselected = true;
-	}
-    // Check if the file is Writeable for us
-    QFileInfo finfo((KGlobal::dirs()->findResourceDir("apps", _item->file())) + _item->file());
-    if (finfo.isWritable() && !(_item->text(0) == i18n("Settings")))
- 	_ac->action("delete")->setEnabled(true);
-    else
-	_ac->action("delete")->setEnabled(false);
+    bool selected = false;
+    bool dselected = false;
+    bool hselected = false;
+    bool maydelete = true;
+    if (_item) {
+        selected = true;
+        dselected = _item->isDeleted();
+        hselected = _item->isHidden();
+
+#if 0
+        // Check if the file is Writeable for us
+        QFileInfo finfo((KGlobal::dirs()->findResourceDir("apps", _item->file())) + _item->file());
+       
+        if (finfo.isWritable() && (_item->name() != i18n("Settings")))
+            _ac->action("delete")->setEnabled(true);
+        else
+            _ac->action("delete")->setEnabled(false);
+#endif
+        // Ugly hack to prevent Settings being deleted.
+        if (_item->name() == i18n("Settings"))
+           maydelete = false;
+    }
 
     _ac->action("edit_cut")->setEnabled(selected);
     _ac->action("edit_copy")->setEnabled(selected);
-    _ac->action("hide")->setEnabled(hselected);
-    _ac->action("unhide")->setEnabled(!hselected);
-    }
+    if (_ac->action("hide"))
+        _ac->action("hide")->setEnabled(selected && !hselected && !dselected);
+    if (_ac->action("unhide"))
+        _ac->action("unhide")->setEnabled(selected && hselected && !dselected);
+
+    if (_ac->action("delete"))
+        _ac->action("delete")->setEnabled(selected && !dselected && maydelete);
+    if (_ac->action("undelete"))
+        _ac->action("undelete")->setEnabled(selected && dselected);
 
     if(!item) return;
 
-    emit entrySelected(((TreeItem*)item)->file());
+    emit entrySelected(_item->file(), _item->name(), dselected);
 }
 
 void TreeView::currentChanged()
@@ -274,7 +414,7 @@ void TreeView::currentChanged()
     if (item == 0) return;
 
     KDesktopFile df(item->file());
-    item->setText(0, df.readName());
+    item->setName(findName(&df, item->isDeleted()));
     item->setPixmap(0, KGlobal::iconLoader()
 		    ->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
 }
@@ -293,7 +433,7 @@ void TreeView::copyFile(const QString& src, const QString& dest, bool moving)
     kdDebug() << "copyFile: " << src.local8Bit() << " to " << dest.local8Bit() << endl;
 
     // read-only + don't merge in kdeglobals
-    KConfig s(locate("apps", src), true, false);
+    KConfig s(src, true, false, "apps");
 
     KSimpleConfig d(locateLocal("apps", dest));
 
@@ -379,41 +519,52 @@ void TreeView::copyDir(const QString& s, const QString& d, bool moving )
 // Return value: 0 - removed everything
 //               1 - removed only local
 //               2 - removed none
-int TreeView::deleteFile(const QString& deskfile, const bool move)
+bool TreeView::deleteFile(const QString& deskfile, const bool move)
 {
     // We search for the file in all prefixes and remove all writeable
     // ones. If we were not able to remove all (because of lack of permissons)
     // we set the "Hidden" flag in a writeable local file in a path returned
     // by localeLocal().
-    bool removedlocal = false;
-    bool failedglobal = false;
+    bool hasLocal = false;
+    bool hasGlobal = false;
+    bool isLocal = true;
 
     // search the selected item in all resource dirs
     QStringList resdirs = KGlobal::dirs()->resourceDirs("apps");
+    QString localFile = resdirs.first()+deskfile;
+    
     for (QStringList::ConstIterator it = resdirs.begin(); it != resdirs.end(); ++it) {
-        QFile f((*it) + "/" + deskfile);
+        QFile f((*it) + deskfile);
 
         // continue if it does not exist in this resource dir
-        if(!f.exists()) continue;
-
-        // remove all writeable files
-        if(!f.remove()) failedglobal = true; else removedlocal=true;
+        if(f.exists())
+        {
+           if (isLocal)
+              hasLocal = true;
+           else
+              hasGlobal = true;
+        }
+        
+        isLocal = false;
     }
 
     if( KHotKeys::present()) // tell khotkeys this menu entry has been removed
         KHotKeys::menuEntryDeleted( deskfile );
-	
-    if(move) {
-	KSimpleConfig c(locateLocal("apps", deskfile));
+
+    if (hasLocal)
+    {
+//       unlink(QFile::encodeName(localFile).data());
+    }
+
+    if(hasGlobal) {
+	KSimpleConfig c(localFile);
         c.setDesktopGroup();
         c.writeEntry("Name", "empty");
         c.writeEntry("Hidden", true);
         c.sync();
     }
-
-    if (failedglobal) {
-        if (removedlocal) return 1; else return 2;
-    } else return(0);
+    
+    return true;
 }
 
 bool TreeView::deleteDir(const QString& d, const bool move)
@@ -449,6 +600,7 @@ bool TreeView::deleteDir(const QString& d, const bool move)
     deleteFile(directory + "/.directory");
 
     // try to rmdir the directory in all prefixes
+#if 0
     QDir dir;
     QStringList dirs = KGlobal::dirs()->findDirs("apps", directory);
     for (QStringList::ConstIterator it = dirs.begin(); it != dirs.end(); ++it) {
@@ -456,6 +608,7 @@ bool TreeView::deleteDir(const QString& d, const bool move)
         if(!dir.rmdir(*it))
             allremoved = false;
     }
+#endif
     
     if(move) {
         KSimpleConfig c(locateLocal("apps", directory + "/.directory"));
@@ -464,7 +617,7 @@ bool TreeView::deleteDir(const QString& d, const bool move)
         c.writeEntry("Hidden", true);
         c.sync();
     }
-	return allremoved;
+    return allremoved;
 }
 
 void TreeView::hideFile(const QString& deskfile, bool hide) {
@@ -664,7 +817,7 @@ void TreeView::newsubmenu()
 
     QString sfile;
 
-    if(item){
+    if(item && item->isDirectory()){
 	if(item->isExpandable())
 	    parent = item;
 	else {
@@ -720,7 +873,7 @@ void TreeView::newsubmenu()
     else
 	newitem = new TreeItem(parent, after, dir);
 
-    newitem->setText(0, dirname);
+    newitem->setName(dirname);
     newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("package", KIcon::Desktop, KIcon::SizeSmall));
     newitem->setExpandable(true);
 
@@ -789,7 +942,7 @@ void TreeView::newitem()
     else
 	newitem = new TreeItem(parent, after, dir);
 
-    newitem->setText(0, filename);
+    newitem->setName(filename);
     newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("unkown", KIcon::Desktop, KIcon::SizeSmall));
 
     KConfig c(locateLocal("apps", dir));
@@ -928,13 +1081,12 @@ void TreeView::paste()
 
     KDesktopFile df(locateLocal("apps", dest + '/' + newname));
 
-    newitem->setText(0, df.readName());
+    newitem->setName(findName(&df, false));
     if(!dest.isEmpty())
         newitem->setFile(dest + '/' + newname);
     else
         newitem->setFile(newname);
     newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
-
 
     fillBranch(newitem->file(), newitem);
     setSelected ( newitem, true);
@@ -950,35 +1102,78 @@ void TreeView::del()
 
     QString file = item->file();
 
+    bool isDeleted = false;
+
     // is file a .directory or a .desktop file
-    if(file.find(".directory") > 0)
+    if(file.endsWith("/.directory"))
     {
-        if (!(deleteDir(file.mid(0, file.find("/.directory")))))
-		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission denied"));
-	else
-        	delete item;
+        isDeleted = deleteDir(file.mid(0, file.find("/.directory")));
     }
     else if (file.find(".desktop"))
     {
-        int v=deleteFile(file);
-        if (v==1)
-                KMessageBox::sorry(0, i18n("This is a root item. Only your modifications have been deleted. If you want to completely remove this item hide it instead."), i18n("Permission denied"));
-        else if (v==2)
-		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission denied"));
-	else
-		delete item;
+        isDeleted = deleteFile(file);
+    }
+    else
+    {
+        return; // Should not happen.
+    }
+
+    if (isDeleted)
+    {
+        if (_showRemoved)
+            item->setDeleted(true);
+        else
+            delete item;
+    }
+    else
+    {
+        if (_showHidden)
+            item->setHidden(true);
+        else
+            delete item;
     }
 
     _ac->action("edit_cut")->setEnabled(false);
     _ac->action("edit_copy")->setEnabled(false);
     _ac->action("delete")->setEnabled(false);
-    _ac->action("hide")->setEnabled(false);
+    if (_ac->action("hide"))
+        _ac->action("hide")->setEnabled(false);
 
     // Select new current item
     setSelected( currentItem(), true );
     // Switch the UI to show that item
     itemSelected( selectedItem() );
 }
+
+void TreeView::undel()
+{
+    TreeItem *item = (TreeItem*)selectedItem();
+
+    // nil selected? -> nil to delete
+    if (!item || !item->isDeleted()) return;
+
+    KDesktopFile df(item->file());
+    df.writeEntry("Name", item->name());
+    df.deleteEntry("Hidden");
+    df.deleteEntry("NoDisplay");
+    df.sync();
+    
+    item->setDeleted(false);
+    item->setHidden(false);
+
+    _ac->action("edit_cut")->setEnabled(false);
+    _ac->action("edit_copy")->setEnabled(false);
+    _ac->action("delete")->setEnabled(false);
+    if (_ac->action("hide"))
+        _ac->action("hide")->setEnabled(false);
+
+    // Select new current item
+    setSelected( currentItem(), true );
+    // Switch the UI to show that item
+    itemSelected( selectedItem() );
+}
+
+
 
 void TreeView::dohide(bool _hide) {
     TreeItem *item = (TreeItem*)selectedItem();
@@ -992,23 +1187,21 @@ void TreeView::dohide(bool _hide) {
     // is file a .directory or a .desktop file
     if(file.find(".directory") > 0)
     {
-        hideDir(file.mid(0, file.find("/.directory")), df.readName(), _hide, df.readIcon());
+        hideDir(file.mid(0, file.find("/.directory")), findName(&df, false), _hide, df.readIcon());
     }
     else if (file.find(".desktop"))
     {
         hideFile(file, _hide);
     }
-    if (_hide)
-    	item->setText(0, item->text(0) + i18n(" [Hidden]"));
-    else
-    	item->setText(0, df.readName());
 
-    item->repaint();
+    item->setHidden(_hide);
+    item->repaint(); // ?
 
     _ac->action("edit_cut")->setEnabled(false);
     _ac->action("edit_copy")->setEnabled(false);
     _ac->action("delete")->setEnabled(false);
-    _ac->action("hide")->setEnabled(false);
+    if (_ac->action("hide"))
+        _ac->action("hide")->setEnabled(false);
 
     // Select new current item
     setSelected( currentItem(), true );

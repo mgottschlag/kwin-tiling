@@ -37,7 +37,7 @@ signals:
     void changed();
 
 public slots:
-    void setDesktopFile(const QString& desktopFile);
+    void setDesktopFile(const QString& desktopFile, const QString &name, bool isDeleted);
 
 protected slots:
     void slotChanged( bool desktopFileNeedsSave );

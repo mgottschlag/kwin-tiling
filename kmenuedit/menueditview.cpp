@@ -36,10 +36,8 @@ MenuEditView::MenuEditView( KActionCollection* ac, QWidget *parent, const char *
     _tree = new TreeView(_ac, _splitter);
     _editor = new DesktopFileEditor(_splitter);
 
-    connect(_tree, SIGNAL(entrySelected(const QString&)),
-	    _editor, SLOT(setDesktopFile(const QString&)));
-    connect(_tree, SIGNAL(entrySelected(const QString&)),
-	    SIGNAL(pathChanged(const QString&)));
+    connect(_tree, SIGNAL(entrySelected(const QString&, const QString &, bool)),
+	    _editor, SLOT(setDesktopFile(const QString&, const QString &, bool)));
     connect(_editor, SIGNAL(changed()), _tree, SLOT(currentChanged()));
 
     // restore splitter sizes
@@ -59,4 +57,9 @@ MenuEditView::~MenuEditView()
     config->setGroup("General");
     config->writeEntry("SplitterSizes", _splitter->sizes());
     config->sync();
+}
+
+void MenuEditView::setViewMode(bool showRemoved, bool showHidden)
+{
+    _tree->setViewMode(showRemoved, showHidden);
 }

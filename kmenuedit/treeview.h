@@ -26,6 +26,7 @@
 
 class QPopupMenu;
 class KActionCollection;
+class KDesktopFile;
 
 class TreeItem : public QListViewItem
 {
@@ -36,26 +37,49 @@ public:
     TreeItem(QListView *parent, const QString& file);
     TreeItem(QListView *parent, QListViewItem* after, const QString& file);
 
-    QString file() const { return _file; };
+    QString file() const;
     void setFile(const QString& file) { _file = file; }
 
+    QString name() const { return _name; }
+    void setName(const QString &name);
+    
+    bool isDirectory() const { return _directory; }
+    void setDirectory(bool b);
+    
+    bool isDeleted() const { return _deleted; }
+    void setDeleted(bool b);
+    
+    bool isHidden() const { return _hidden; }
+    void setHidden(bool b);
+
+    virtual void setOpen(bool o);
+
 private:
+    void update();
+
     QString _file;
+    QString _name;
+    bool _hidden : 1;
+    bool _deleted : 1;
+    bool _init : 1;
+    bool _directory : 1;
 };
 
 class TreeView : public KListView
 {
+    friend class TreeItem;
     Q_OBJECT
-
 public:
-    TreeView(KActionCollection *ac,QWidget *parent=0, const char *name=0);
+    TreeView(KActionCollection *ac, QWidget *parent=0, const char *name=0);
     ~TreeView();
+
+    void setViewMode(bool showRemoved, bool showHidden);
 
 public slots:
     void currentChanged();
 
 signals:
-    void entrySelected(const QString&);
+    void entrySelected(const QString&, const QString &, bool);
 
 protected slots:
     void itemSelected(QListViewItem *);
@@ -69,12 +93,14 @@ protected slots:
     void copy();
     void paste();
     void del();
+    void undel();
     void hide();
     void unhide();
 
 protected:
     void fill();
     void fillBranch(const QString& relPath, TreeItem* parent);
+    QString findName(KDesktopFile *df, bool deleted);
 
     // moving = src will be removed later
     void copy( bool moving );
@@ -82,7 +108,7 @@ protected:
     void copyFile(const QString& src, const QString& dest, bool moving );
     void copyDir(const QString& src, const QString& dest, bool moving );
 
-    int deleteFile(const QString& deskfile, const bool move = false);
+    bool deleteFile(const QString& deskfile, const bool move = false);
     bool deleteDir(const QString& dir, const bool move = false);
     void hideFile(const QString& deskfile, bool hide);
     void hideDir(const QString& d, const QString name, bool hide, QString icon);
@@ -103,6 +129,8 @@ private:
     KActionCollection *_ac;
     QPopupMenu        *_rmb;
     QString            _clipboard;
+    bool               _showRemoved;
+    bool               _showHidden;
 };
 
 inline void TreeView::hide() {

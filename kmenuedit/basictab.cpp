@@ -54,6 +54,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     QGridLayout *grid = new QGridLayout(general_group, 4, 2,
 					KDialog::marginHint(),
 					KDialog::spacingHint());
+    _isDeleted = true;
 
     // setup line inputs
     _nameEdit = new KLineEdit(general_group);
@@ -111,7 +112,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _pathLabel = new QLabel(i18n("&Work path:"), hbox);
 
     _pathEdit = new KURLRequester(hbox);
-    _pathEdit->fileDialog()->setMode(KFile::Directory | KFile::LocalOnly);
+    _pathEdit->setMode(KFile::Directory | KFile::LocalOnly);
 
     _pathLabel->setBuddy(_pathEdit);
 
@@ -210,15 +211,17 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     connect( this, SIGNAL( changed()), SLOT( slotChanged()));
 }
 
-void BasicTab::setDesktopFile(const QString& desktopFile)
+void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, bool isDeleted)
 {
     _desktopFile = desktopFile;
+    _name = name;
+    _isDeleted = isDeleted;
     // key binding part
     _khotkeysNeedsSave = false;
 
     KDesktopFile df(desktopFile);
 
-    _nameEdit->setText(df.readName());
+    _nameEdit->setText(name.isEmpty() ? df.readName() : name);
     _commentEdit->setText(df.readComment());
     _iconButton->setIcon(df.readIcon());
 
@@ -226,18 +229,20 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
     bool isDF = desktopFile.find(".desktop") > 0;
 
     // set only basic attributes if it is not a .desktop file
-    _nameEdit->setEnabled(true);
-    _commentEdit->setEnabled(true);
-    _execEdit->setEnabled(isDF);
-    _typeEdit->setEnabled(isDF);
-    _nameLabel->setEnabled(true);
-    _commentLabel->setEnabled(true);
-    _execLabel->setEnabled(isDF);
-    _typeLabel->setEnabled(isDF);
+    _nameEdit->setEnabled(!isDeleted);
+    _commentEdit->setEnabled(!isDeleted);
+    _iconButton->setEnabled(!isDeleted);
+    _execEdit->setEnabled(isDF && !isDeleted);
+    _typeEdit->setEnabled(isDF && !isDeleted);
+    _nameLabel->setEnabled(!isDeleted);
+    _commentLabel->setEnabled(!isDeleted);
+    _execLabel->setEnabled(isDF && !isDeleted);
+    _typeLabel->setEnabled(isDF && !isDeleted);
 
-    _path_group->setEnabled(isDF);
-    _term_group->setEnabled(isDF);
-    _uid_group->setEnabled(isDF);
+    _path_group->setEnabled(isDF && !isDeleted);
+    _term_group->setEnabled(isDF && !isDeleted);
+    _uid_group->setEnabled(isDF && !isDeleted);
+    _keyEdit->setEnabled(!isDeleted);
 
     // key binding part
     if( desktopFile.find(".desktop") > 0 )
@@ -279,11 +284,11 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
 
     _uidCB->setChecked(df.readBoolEntry("X-KDE-SubstituteUID", false));
 
-    _termOptEdit->setEnabled(_terminalCB->isChecked());
-    _termOptLabel->setEnabled(_terminalCB->isChecked());
+    _termOptEdit->setEnabled(!isDeleted && _terminalCB->isChecked());
+    _termOptLabel->setEnabled(!isDeleted && _terminalCB->isChecked());
 
-    _uidEdit->setEnabled(_uidCB->isChecked());
-    _uidLabel->setEnabled(_uidCB->isChecked());
+    _uidEdit->setEnabled(!isDeleted && _uidCB->isChecked());
+    _uidLabel->setEnabled(!isDeleted && _uidCB->isChecked());
 }
 
 void BasicTab::apply( bool desktopFileNeedsSave )
@@ -329,7 +334,7 @@ void BasicTab::apply( bool desktopFileNeedsSave )
 void BasicTab::reset()
 {
     if(_desktopFile != "")
-	setDesktopFile(_desktopFile);
+	setDesktopFile(_desktopFile, _name, _isDeleted);
 
     // key binding part
     _khotkeysNeedsSave = false;

@@ -42,14 +42,13 @@ KMenuEdit::KMenuEdit (QWidget *, const char *name)
     int w = config->readNumEntry("Width",640);
     int h = config->readNumEntry("Height", 480);
     resize(w, h);
+    m_showHidden = config->readBoolEntry("ShowHidden");
+    m_showRemoved = config->readBoolEntry("ShowRemoved");
 
     // setup GUI
     setupActions();
-    setupView();
-    createGUI("kmenueditui.rc");
+    slotChangeView();
 
-    // make it look nice
-    toolBar(0)->setIconText(KToolBar::IconTextBottom);
 }
 
 KMenuEdit::~KMenuEdit()
@@ -66,9 +65,18 @@ void KMenuEdit::setupActions()
 {
     (void)new KAction(i18n("&New Submenu"), "menu_new", 0, actionCollection(), "newsubmenu");
     (void)new KAction(i18n("New &Item"), "filenew", 0, actionCollection(), "newitem");
-    (void)new KAction(i18n("&Delete"), "edittrash", 0, actionCollection(), "delete");
-    (void)new KAction(i18n("&Hide"), "editdelete", 0, actionCollection(), "hide");
-    (void)new KAction(i18n("&Unhide"), "redo", 0, actionCollection(), "unhide");
+
+    m_actionDelete = 0;
+    m_actionUndelete = 0;
+    
+    m_actionHide = 0; 
+    m_actionUnhide = 0;
+    
+    m_actionShowRemoved = new KToggleAction(i18n("Show &Removed Items"), KShortcut(), this, SLOT( slotChangeView()), actionCollection(), "show_removed");
+    m_actionShowRemoved->setChecked(m_showRemoved);
+
+    m_actionShowHidden = new KToggleAction(i18n("Show &Hidden Items"), KShortcut(), this, SLOT( slotChangeView()), actionCollection(), "show_hidden");
+    m_actionShowHidden->setChecked(m_showHidden);
 
     KStdAction::quit(this, SLOT( slotClose() ), actionCollection());
     KStdAction::cut(0, 0, actionCollection());
@@ -78,8 +86,65 @@ void KMenuEdit::setupActions()
 
 void KMenuEdit::setupView()
 {
-    _view = new MenuEditView(actionCollection(), this);
-    setCentralWidget(_view);
+    m_view = new MenuEditView(actionCollection(), this);
+    setCentralWidget(m_view);
+}
+
+void KMenuEdit::slotChangeView()
+{
+    m_showHidden = m_actionShowHidden->isChecked();
+    m_showRemoved = m_actionShowRemoved->isChecked();
+
+    // disabling the updates prevents unnecessary redraws
+    setUpdatesEnabled( false );
+    guiFactory()->removeClient( this );
+
+    if (m_actionDelete)
+    {
+//       m_actionDelete->unplugAll();
+       delete m_actionDelete; 
+       m_actionDelete = 0;
+    }
+    if (m_actionUndelete)
+    {
+//       m_actionUndelete->unplugAll();
+       delete m_actionUndelete; 
+       m_actionUndelete = 0;
+    }
+    if (m_actionHide)
+    {
+//       m_actionHide->unplugAll();
+       delete m_actionHide; 
+       m_actionHide = 0;
+    }
+    if (m_actionUnhide)
+    {
+//       m_actionUnhide->unplugAll();
+       delete m_actionUnhide; 
+       m_actionUnhide = 0;
+    }
+    
+    m_actionDelete = new KAction(i18n("&Remove"), "editdelete", 0, actionCollection(), "delete");
+    if (m_showRemoved)
+    {
+       m_actionUndelete = new KAction(i18n("&Re-add"), "undo", 0, actionCollection(), "undelete");
+    }
+    
+    if (m_showHidden)
+    {
+       // Need better icons!
+       m_actionHide = new KAction(i18n("&Hide"), "editdelete", 0, actionCollection(), "hide");
+       m_actionUnhide = new KAction(i18n("Unhid&e"), "redo", 0, actionCollection(), "unhide");
+    }
+
+    if (!m_view)
+       setupView();
+    createGUI("kmenueditui.rc");
+
+    // make it look nice
+    toolBar(0)->setIconText(KToolBar::IconTextBottom);
+    
+    m_view->setViewMode(m_showRemoved, m_showHidden);
 }
 
 void KMenuEdit::slotClose()
