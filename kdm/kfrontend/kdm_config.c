@@ -1319,7 +1319,7 @@ ReadAccessFile (const char *fname)
     if (error) {
 	nHosts = nAliases = nAcls = nChars = 0;
       sendacl:
-	LogError ("No XDMCP reqeusts will be granted\n");
+	LogError ("No XDMCP requests will be granted\n");
     }
     GSendInt (nHosts);
     GSendInt (nAliases);
