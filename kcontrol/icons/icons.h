@@ -58,6 +58,8 @@ class KIconConfig: public KCModule
 
 public:
     KIconConfig(QWidget *parent, const char *name=0);
+    ~KIconConfig();
+
     virtual void load();
     virtual void save();
     virtual void defaults();
@@ -120,6 +122,7 @@ public:
     KIconEffectSetupDialog(const Effect &, const Effect &,
                            const QString &, const QImage &,
 			   QWidget *parent=0L, char *name=0L);
+    ~KIconEffectSetupDialog();
     Effect effect() { return mEffect; }
 
 protected:

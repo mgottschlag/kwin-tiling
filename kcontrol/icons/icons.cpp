@@ -103,6 +103,11 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     preview();
 }
 
+KIconConfig::~KIconConfig()
+{
+  delete mpEffect;
+}
+
 QPushButton *KIconConfig::addPreviewIcon(int i, const QString &str, QWidget *parent, QGridLayout *lay)
 {
     QLabel *lab = new QLabel(str, parent);
@@ -513,6 +518,11 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
 
     init(); 
     preview();
+}
+
+KIconEffectSetupDialog::~KIconEffectSetupDialog()
+{
+  delete mpEffect;
 }
 
 void KIconEffectSetupDialog::init()
