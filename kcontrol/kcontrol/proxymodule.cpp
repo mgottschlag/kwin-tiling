@@ -113,31 +113,9 @@ DCOPProxy::DCOPProxy(QWidget *parent, const ModuleInfo &mod)
   : KCModule(parent), _proxy(0), _process(0), _embed(0), _running(false),
     _notify(0)
 {
-  // find out the DCOP server to use
-  QString server;
-  QString fName = ::getenv("HOME");
-  fName += "/.DCOPserver";
-  QFile f(fName);
-  if (f.open(IO_ReadOnly)) 
-    {
-      QTextStream t(&f);
-      server = t.readLine().latin1();
-      f.close();
-    }
-
-  // set the name of the ICE authority file
-  QString auth = ::getenv("ICEAUTHORITY");
-  if (auth.isEmpty())
-    {
-      auth = QString(::getenv("HOME"))+"/.ICEauthority";
-      ::setenv("ICEAUTHORITY", auth.ascii(), 1);
-    }
-
   // run the remote process
   _process = new KProcess;
   *_process << locate("exe", "kdesu") << locate("exe", "kcmroot") << mod.fileName();
-  if (!server.isEmpty())
-    *_process << "-dcopserver" << server;
   if (!_process->start())
       return;
    
@@ -148,8 +126,11 @@ DCOPProxy::DCOPProxy(QWidget *parent, const ModuleInfo &mod)
     {
       // We need to process events manually to make repaint happen
       kapp->processEvents();
-      if(!_process->isRunning())
-        return;
+
+      // This is not correct if password keeping is used, where it is the
+      // daemon that actually executes the command.
+      //if(!_process->isRunning())
+      //  return;
       
       sleep(1);
       cnt++;

@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
       if (!app.dcopClient()->attach())
 	return -1;
       QCString id = info.moduleId();
-      if (id != app.dcopClient()->registerAs(id))
+      if (id != app.dcopClient()->registerAs(id, false))
 	cerr << "Warning: multiple instances registered" << endl;
 
       // show the proxy
