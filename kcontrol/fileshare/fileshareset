@@ -302,6 +302,7 @@ sub write {
    public = yes
    guest ok = yes
    writable = no
+   wide links = no
 EOF
 	}
     }
