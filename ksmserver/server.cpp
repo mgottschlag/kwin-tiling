@@ -1524,7 +1524,7 @@ void KSMServer::performLegacySessionSave()
     // Compute set of leader windows that need legacy session management
     // and determine which style (WM_COMMAND or WM_SAVE_YOURSELF)
     KWinModule module;
-    if( wm_save_yourself == XNone ) {
+    if( wm_save_yourself == (Atom)XNone ) {
 	Atom atoms[ 3 ];
 	const char* const names[]
 	    = { "WM_SAVE_YOURSELF", "WM_PROTOCOLS", "WM_CLIENT_LEADER" };
@@ -1640,16 +1640,16 @@ void KSMServer::performLegacySessionSave()
 void KSMServer::storeLegacySession( KConfig* config )
 {
     // Write LegacySession data
-    config->deleteGroup( sessionGroup + "-LegacySession" );
-    KConfigGroupSaver saver( config, sessionGroup + "-LegacySession" );
+    config->deleteGroup( "Legacy" + sessionGroup );
+    KConfigGroupSaver saver( config, "Legacy" + sessionGroup );
     int count = 0;
     for (WindowMap::ConstIterator it = legacyWindows.begin(); it != legacyWindows.end(); ++it) {
         if ( (*it).type != SM_ERROR) {
             if ( !(*it).wmCommand.isEmpty() && !(*it).wmClientMachine.isEmpty() ) {
                 count++;
                 QString n = QString::number(count);
-                config->writeEntry( QString("command")+n, (*it).wmCommand.data() );
-                config->writeEntry( QString("clientMachine")+n, (*it).wmClientMachine.data() );
+                config->writeEntry( QString("command")+n, (*it).wmCommand );
+                config->writeEntry( QString("clientMachine")+n, (*it).wmClientMachine );
             }
         }
     }
@@ -1661,8 +1661,8 @@ void KSMServer::storeLegacySession( KConfig* config )
 */
 void KSMServer::restoreLegacySession( KConfig* config )
 {
-    if( config->hasGroup( sessionGroup + "-LegacySession" )) {
-        KConfigGroupSaver saver( config, sessionGroup + "-LegacySession" );
+    if( config->hasGroup( "Legacy" + sessionGroup )) {
+        KConfigGroupSaver saver( config, "Legacy" + sessionGroup );
         restoreLegacySessionInternal( config );
     } else if( wm == "kwin" ) { // backwards comp. - get it from kwinrc
 	KConfigGroupSaver saver( config, sessionGroup );
@@ -1670,8 +1670,9 @@ void KSMServer::restoreLegacySession( KConfig* config )
 	for ( int i = 1; i <= count; i++ ) {
     	    QString n = QString::number(i);
     	    if ( config->readEntry( QString("program")+n ) != wm )
-        	continue;
-    	    QStringList restartCommand = config->readListEntry( QString("restartCommand")+n );
+                continue;
+    	    QStringList restartCommand =
+                config->readListEntry( QString("restartCommand")+n );
 	    for( QStringList::ConstIterator it = restartCommand.begin();
 		 it != restartCommand.end();
 		 ++it ) {
@@ -1680,7 +1681,7 @@ void KSMServer::restoreLegacySession( KConfig* config )
 		    if( it != restartCommand.end()) {
 			KConfig cfg( "session/" + wm + "_" + (*it), true );
 			cfg.setGroup( "LegacySession" );
-			restoreLegacySessionInternal( &cfg );
+			restoreLegacySessionInternal( &cfg, ' ' );
 		    }
 		}
 	    }
@@ -1688,49 +1689,24 @@ void KSMServer::restoreLegacySession( KConfig* config )
     }
 }
 
-// split command parts separated by spaces,
-// real spaces are backslash-escaped
-static
-QStringList cmdSplit( const QString& wmCommand )
-{
-    QStringList ret;
-    bool ignore = false;
-    int lastpos = 0;
-    for( unsigned int i = 0;
-	 i < wmCommand.length();
-	 ++i ) {
-	if( wmCommand[ i ] == ' ' && !ignore ) {
-	    ret << wmCommand.mid( lastpos, i - lastpos );
-	    lastpos = i + 1;
-	}
-	if( ignore || wmCommand[ i ] != '\\' )
-	    ignore = false;
-	else
-	    ignore = true;
-    }
-    ret << wmCommand.mid( lastpos );
-    return ret;
-}
-
-void KSMServer::restoreLegacySessionInternal( KConfig* config )
+void KSMServer::restoreLegacySessionInternal( KConfig* config, char sep )
 {
     int count = config->readNumEntry( "count" );
     for ( int i = 1; i <= count; i++ ) {
         QString n = QString::number(i);
-        QCString wmCommand = config->readEntry( QString("command")+n ).latin1();
-        QCString wmClientMachine = config->readEntry( QString("clientMachine")+n ).latin1();
+        QStringList wmCommand = config->readListEntry( QString("command")+n, sep );
+        QString wmClientMachine = config->readEntry( QString("clientMachine")+n );
         if ( !wmCommand.isEmpty() && !wmClientMachine.isEmpty() ) {
-            QStringList command = cmdSplit( wmCommand );
             if ( wmClientMachine != "localhost" ) {
-		command.prepend( wmClientMachine );
-		command.prepend( "xon" );
+		wmCommand.prepend( wmClientMachine );
+		wmCommand.prepend( "xon" );
 	    }
-	startApplication( command );
+	startApplication( wmCommand );
         }
     }
 }
     
-static QCString getStringProperty(WId w, Atom prop)
+static QCString getQCStringProperty(WId w, Atom prop)
 {
     Atom type;
     int format, status;
@@ -1749,47 +1725,38 @@ static QCString getStringProperty(WId w, Atom prop)
     return result;
 }
 
-static QCString getStringListProperty(WId w, Atom prop)
+static QStringList getQStringListProperty(WId w, Atom prop)
 {
     Atom type;
     int format, status;
     unsigned long nitems = 0;
     unsigned long extra = 0;
     unsigned char *data = 0;
-    QCString result = "";
+    QStringList result;
+
     status = XGetWindowProperty( qt_xdisplay(), w, prop, 0, 10000,
                                  FALSE, XA_STRING, &type, &format,
                                  &nitems, &extra, &data );
     if ( status == Success) {
 	if (!data)
 	    return result;
-	QValueList<QCString> elems;
-	QCString tmp = (char*)data;
-	tmp.replace( ' ', "\\ " ); // escape all spaces that are not separators
-	elems << tmp;
-        for (int i=1; i<(int)nitems; i++)
-            if (!data[i] && i+1<(int)nitems) {
-		tmp = (char*)( data + i + 1 );
-		tmp.replace( ' ', "\\ " );
-		elems << ( ' ' + tmp );
-	    }
+        for (int i=0; i<(int)nitems; i++) {
+            result << QString::fromLatin1( (const char*)data + i );
+            while(data[i]) i++;
+        }
         XFree(data);
-	for( QValueList<QCString>::ConstIterator it = elems.begin();
-	     it != elems.end();
-	     ++it )
-	    result += (*it);
     }
     return result;
 }
 
-QCString KSMServer::windowWmCommand(WId w)
+QStringList KSMServer::windowWmCommand(WId w)
 {
-    return getStringListProperty(w, XA_WM_COMMAND);
+    return getQStringListProperty(w, XA_WM_COMMAND);
 }
 
-QCString KSMServer::windowWmClientMachine(WId w)
+QString KSMServer::windowWmClientMachine(WId w)
 {
-    QCString result = getStringProperty(w, XA_WM_CLIENT_MACHINE);
+    QCString result = getQCStringProperty(w, XA_WM_CLIENT_MACHINE);
     if (result.isEmpty()) {
         result = "localhost";
     } else {
@@ -1804,7 +1771,7 @@ QCString KSMServer::windowWmClientMachine(WId w)
                 result = "localhost";
         }
     }
-    return result;
+    return QString::fromLatin1(result);
 }
 
 WId KSMServer::windowWmClientLeader(WId w)
@@ -1834,9 +1801,9 @@ WId KSMServer::windowWmClientLeader(WId w)
 extern Atom qt_sm_client_id;
 QCString KSMServer::windowSessionId(WId w, WId leader)
 {
-    QCString result = getStringProperty(w, qt_sm_client_id);
-    if (result.isEmpty() && leader != XNone && leader != w)
-	result = getStringProperty(leader, qt_sm_client_id);
+    QCString result = getQCStringProperty(w, qt_sm_client_id);
+    if (result.isEmpty() && leader != (WId)XNone && leader != w)
+	result = getQCStringProperty(leader, qt_sm_client_id);
     return result;
 }
 #endif

@@ -11,6 +11,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #define QT_CLEAN_NAMESPACE 1
 #include <qobject.h>
 #include <qstring.h>
+#include <qstringlist.h>
 #include <qsocketnotifier.h>
 #include <qptrlist.h>
 #include <qvaluelist.h>
@@ -76,8 +77,8 @@ enum SMType { SM_ERROR, SM_WMCOMMAND, SM_WMSAVEYOURSELF };
 struct SMData
     {
     SMType type;
-    QCString wmCommand;
-    QCString wmClientMachine;
+    QStringList wmCommand;
+    QString wmClientMachine;
     };
 typedef QMap<WId,SMData> WindowMap;
 #endif
@@ -149,9 +150,9 @@ private:
     void performLegacySessionSave();
     void storeLegacySession( KConfig* config );
     void restoreLegacySession( KConfig* config );
-    void restoreLegacySessionInternal( KConfig* config );
-    QCString windowWmCommand(WId w);
-    QCString windowWmClientMachine(WId w);
+    void restoreLegacySessionInternal( KConfig* config, char sep = ',' );
+    QStringList windowWmCommand(WId w);
+    QString windowWmClientMachine(WId w);
     WId windowWmClientLeader(WId w);
     QCString windowSessionId(WId w, WId leader);
 #endif
