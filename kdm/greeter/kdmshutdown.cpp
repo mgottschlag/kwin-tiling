@@ -59,6 +59,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 
     : FDialog( _parent, _name, true)
 {
+    QComboBox *targets=0;
     shutdown = _shutdown;
     restart  = _restart;
     int h = 10, w = 0;
@@ -112,12 +113,11 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
     set_min( restart_rb);
     restart_rb->setFocusPolicy( StrongFocus);
     h += restart_rb->height() + 10;
-    w = QMAX( restart_rb->width(), w);
 
     hbox->addWidget(restart_rb);
 
     if ( _lilo ) {
-	QComboBox *targets = new QComboBox(winFrame);
+	targets = new QComboBox(winFrame);
 	hbox->addWidget(targets);
 
 	// fill combo box with contents of lilo config
@@ -131,6 +131,8 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 	    connect(targets,SIGNAL(activated(int)),this,SLOT(target_changed(int)));
 	}
     }
+    w = QMAX( restart_rb->width()
+	      + (targets==0 ? 0 : targets->sizeHint().width()), w);
 
     btGroup->insert( restart_rb);
 
