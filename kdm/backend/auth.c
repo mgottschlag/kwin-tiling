@@ -100,8 +100,6 @@ from The Open Group.
 # endif
 #endif
 
-#include <netinet/in.h>
-
 #ifdef __EMX__
 # define link rename
 int chown(int a,int b,int c) {}
