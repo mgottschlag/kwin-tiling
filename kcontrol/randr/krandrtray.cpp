@@ -36,6 +36,7 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 {
 	setPixmap(SmallIcon("kscreensaver"));
 	connect(contextMenu(), SIGNAL(activated(int)), SLOT(slotSwitchScreen()));
+	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 }
 
 void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
@@ -81,7 +82,8 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 	populateMenu(menu);
 	
 	menu->insertSeparator();
-	KStdAction::quit(KApplication::kApplication(), SLOT(quit()), actionCollection())->plug(menu);
+	KAction *action = actionCollection()->action(KStdAction::name(KStdAction::Quit));
+	action->plug(menu);
 }
 
 void KRandRSystemTray::configChanged()
