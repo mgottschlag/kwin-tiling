@@ -47,30 +47,24 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
   // Time
-  QGridLayout *tl1 = new QGridLayout(this, 1, 1, 
+  QGridLayout *lay = new QGridLayout(this, 4, 2, 
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
-  tl1->setColStretch(2, 1);
+  lay->setAutoAdd(TRUE);
 
   labTimeFmt = new QLabel(this, I18N_NOOP("Time format:"));
   edTimeFmt = new QLineEdit(this);
   connect( edTimeFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotTimeFmtChanged(const QString &) ) );
-  tl1->addWidget(labTimeFmt, 0, 1);
-  tl1->addWidget(edTimeFmt, 0, 2);
 
   labDateFmt = new QLabel(this, I18N_NOOP("Date format:"));
   edDateFmt = new QLineEdit(this);
   connect( edDateFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtChanged(const QString &) ) );
-  tl1->addWidget(labDateFmt, 1, 1);
-  tl1->addWidget(edDateFmt, 1, 2);
 
   labDateFmtShort = new QLabel(this, I18N_NOOP("Short date format:"));
   edDateFmtShort = new QLineEdit(this);
   connect( edDateFmtShort, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtShortChanged(const QString &) ) );
-  tl1->addWidget(labDateFmtShort, 2, 1);
-  tl1->addWidget(edDateFmtShort, 2, 2);
   
-  tl1->setRowStretch(3, 1);
+  lay->setColStretch(1, 1);
 }
 
 KLocaleConfigTime::~KLocaleConfigTime()

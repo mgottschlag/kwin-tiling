@@ -56,6 +56,9 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
 
   labTime = new QLabel(this, I18N_NOOP("Time:"));
   timeSample = new QLabel(this);
+
+  lay->setColStretch(0, 1);
+  lay->setColStretch(1, 3);
 }
 
 KLocaleSample::~KLocaleSample()

@@ -37,6 +37,7 @@
 #include <kstddirs.h>
 #include <ksimpleconfig.h>
 #include <kcharsets.h>
+#include <kdialog.h>
 
 #include "klocaleadv.h"
 #include "klangcombo.h"
@@ -50,8 +51,10 @@ extern KLocaleAdvanced *locale;
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   : QWidget (parent, name)
 {
-    QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
-    tl1->setColStretch( 2, 1);
+    QGridLayout *lay = new QGridLayout(this, 7, 2,
+				       KDialog::marginHint(),
+				       KDialog::spacingHint());
+    lay->setAutoAdd(TRUE);
 
     labCountry = new QLabel(this, I18N_NOOP("&Country"));
     comboCountry = new KLanguageCombo(this);
@@ -59,8 +62,6 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     labCountry->setBuddy(comboCountry);
     connect( comboCountry, SIGNAL(activated(int)),
 	     this, SLOT(changedCountry(int)) );
-    tl1->addWidget(labCountry, 1, 1);
-    tl1->addWidget(comboCountry, 1, 2);
 
     labLang = new QLabel(this, I18N_NOOP("&Language"));
     comboLang = new KLanguageCombo(this);
@@ -68,8 +69,6 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     labLang->setBuddy(comboLang);
     connect( comboLang, SIGNAL(activated(int)),
 	     this, SLOT(changedLanguage(int)) );
-    tl1->addWidget(labLang, 2, 1);
-    tl1->addWidget(comboLang, 2, 2);
 
     labNumber = new QLabel(this, I18N_NOOP("&Numbers"));
     comboNumber = new KLanguageCombo(this);
@@ -77,8 +76,6 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     labNumber->setBuddy(comboNumber);
     connect( comboNumber, SIGNAL(activated(int)),
 	     this, SLOT(changedNumber(int)) );
-    tl1->addWidget(labNumber, 3, 1);
-    tl1->addWidget(comboNumber, 3, 2);
 
     labMoney = new QLabel(this, I18N_NOOP("&Money"));
     comboMoney = new KLanguageCombo(this);
@@ -86,8 +83,6 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     labMoney->setBuddy(comboMoney);
     connect( comboMoney, SIGNAL(activated(int)),
 	     this, SLOT(changedMoney(int)) );
-    tl1->addWidget(labMoney, 4, 1);
-    tl1->addWidget(comboMoney, 4, 2);
 
     labDate = new QLabel(this, I18N_NOOP("&Date and time"));
     comboDate = new KLanguageCombo(this);
@@ -95,8 +90,6 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     labDate->setBuddy(comboDate);
     connect( comboDate, SIGNAL(activated(int)),
 	     this, SLOT(changedTime(int)) );
-    tl1->addWidget(labDate, 5, 1);
-    tl1->addWidget(comboDate, 5, 2);
 
     labChset = new QLabel(this, I18N_NOOP("C&harset"));
     comboChset = new KLanguageCombo(this);
@@ -104,14 +97,12 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     labChset->setBuddy(comboChset);
     connect( comboChset, SIGNAL(activated(int)),
 	     this, SLOT(changedCharset(int)) );
-    tl1->addWidget(labChset, 6, 1);
-    tl1->addWidget(comboChset, 6, 2);
 
     QStringList list = KGlobal::charsets()->availableCharsetNames();
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
        comboChset->insertItem(*it, *it);
 
-    tl1->setRowStretch(7, 1);
+    lay->setColStretch(1, 1);
 }
 
 KLocaleConfig::~KLocaleConfig ()

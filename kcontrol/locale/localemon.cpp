@@ -31,7 +31,7 @@
 #include <qlayout.h>
 
 #include <kglobal.h>
-
+#include <kdialog.h>
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
@@ -48,56 +48,42 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
   // Money
-  QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
-  tl1->setColStretch(2, 1);
+  QGridLayout *lay = new QGridLayout(this, 9, 2,
+				     KDialog::marginHint(),
+				     KDialog::spacingHint());
+  lay->setAutoAdd(TRUE);
 
   labMonCurSym = new QLabel(this, I18N_NOOP("Currency symbol"));
   edMonCurSym = new QLineEdit(this);
   connect( edMonCurSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonCurSymChanged(const QString &) ) );
-  tl1->addWidget(labMonCurSym, 0, 1);
-  tl1->addWidget(edMonCurSym, 0, 2);
 
   labMonDecSym = new QLabel(this, I18N_NOOP("Decimal symbol"));
   edMonDecSym = new QLineEdit(this);
   connect( edMonDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonDecSymChanged(const QString &) ) );
-  tl1->addWidget(labMonDecSym, 1, 1);
-  tl1->addWidget(edMonDecSym, 1, 2);
 
   labMonThoSep = new QLabel(this, I18N_NOOP("Thousands separator"));
   edMonThoSep = new QLineEdit(this);
   connect( edMonThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonThoSepChanged(const QString &) ) );
-  tl1->addWidget(labMonThoSep, 2, 1);
-  tl1->addWidget(edMonThoSep, 2, 2);
 
   labMonFraDig = new QLabel(this, I18N_NOOP("Fract digits"));
   edMonFraDig = new QLineEdit(this);
   connect( edMonFraDig, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonFraDigChanged(const QString &) ) );
-  tl1->addWidget(labMonFraDig, 3, 1);
-  tl1->addWidget(edMonFraDig, 3, 2);
 
   labMonPosPreCurSym =new QLabel(this, I18N_NOOP("Positive currency prefix"));
   chMonPosPreCurSym = new QCheckBox(this);
   connect( chMonPosPreCurSym, SIGNAL( clicked() ), this, SLOT( slotMonPosPreCurSymChanged() ) );
-  tl1->addWidget(labMonPosPreCurSym, 4, 1);
-  tl1->addWidget(chMonPosPreCurSym, 4, 2);
 
   labMonNegPreCurSym =new QLabel(this, I18N_NOOP("Negative currency prefix"));
   chMonNegPreCurSym = new QCheckBox(this);
   connect( chMonNegPreCurSym, SIGNAL( clicked() ), this, SLOT( slotMonNegPreCurSymChanged() ) );
-  tl1->addWidget(labMonNegPreCurSym, 5, 1);
-  tl1->addWidget(chMonNegPreCurSym, 5, 2);
 
   labMonPosMonSignPos =new QLabel(this, I18N_NOOP("Sign position, positive"));
   cmbMonPosMonSignPos = new QComboBox(this, "signpos");
   connect( cmbMonPosMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonPosMonSignPosChanged(int) ) );
-  tl1->addWidget(labMonPosMonSignPos, 6, 1);
-  tl1->addWidget(cmbMonPosMonSignPos, 6, 2);
 
   labMonNegMonSignPos =new QLabel(this, I18N_NOOP("Sign position, negative"));
   cmbMonNegMonSignPos = new QComboBox(this, "signpos");
   connect( cmbMonNegMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonNegMonSignPosChanged(int) ) );
-  tl1->addWidget(labMonNegMonSignPos, 7, 1);
-  tl1->addWidget(cmbMonNegMonSignPos, 7, 2);
 
   // insert some items
   int i = 5;
@@ -107,7 +93,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
     cmbMonNegMonSignPos->insertItem(QString::null);
   }
 
-  tl1->setRowStretch(8, 1);
+  lay->setColStretch(1, 1);
 }
 
 KLocaleConfigMoney::~KLocaleConfigMoney()
