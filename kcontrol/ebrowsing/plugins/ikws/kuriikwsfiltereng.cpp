@@ -366,13 +366,7 @@ QString KURISearchFilterEngine::formatResult( const QString& url,
 			PDVAR ("    map['" + it.key() + "']", it.data());
 	}
 
-	// Decode user query:
-	QString userquery = KURL::decode_string(query);
-
-	PDVAR ("user query", userquery);
-	PDVAR ("query definition", url);
-
-	// Create a codec for the desired encoding so that we can transcode the user's "url".
+        // Create a codec for the desired encoding so that we can transcode the user's "url".
 	QString cseta = cset1;
 	if (cseta.isEmpty()) {
 		cseta = "iso-8859-1";
@@ -382,6 +376,13 @@ QString KURISearchFilterEngine::formatResult( const QString& url,
 		cseta = "iso-8859-1";
 		csetacodec = QTextCodec::codecForName(cseta.latin1());
 	}
+
+	// Decode user query:
+	QString userquery = KURL::decode_string(query, csetacodec->mibEnum());
+
+	PDVAR ("user query", userquery);
+	PDVAR ("query definition", url);
+
 
 	// Add charset indicator for the query to substitution map:
 	map.replace("ikw_charset", cseta);
