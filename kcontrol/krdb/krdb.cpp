@@ -54,8 +54,9 @@ static void applyGtkStyles(bool active)
       list.append(QDir::homeDirPath()+"/.gtkrc");
    }
    list.remove(gtkkde);
-   if (active)
-      list.append(gtkkde);
+   list.append(gtkkde);
+   if (!active)
+      ::unlink(QFile::encodeName(gtkkde));
 
    // Pass env. var to kdeinit.
    QCString name = "GTK_RC_FILES";
@@ -509,7 +510,6 @@ void runRdb( uint flags )
     tmpFile.unlink();
 
     applyGtkStyles(true);
-
   } else {
     applyGtkStyles(false);
 
