@@ -29,6 +29,7 @@ static char sccsid[] = "@(#)rock.c	3.3 95/09/24 xlockmore";
 #include <math.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <krandomsequence.h>
 #include "xlock.h"
 
 
@@ -87,17 +88,18 @@ static void rock_compute(arock *arocks);
 static void rock_draw(Window win, arock *arocks, int draw_p);
 static int compute_move(int axe);
 
+static KRandomSequence *rnd = 0;
 
 
 static void
 rock_reset( Window win, arock *arocks)
 {
   arocks->real_size = MAX_WIDTH;
-  arocks->r = (int)((RESOLUTION * 0.7) + (LRAND() % (30 * RESOLUTION)));
-  arocks->theta = LRAND() % RESOLUTION;
+  arocks->r = (int)((RESOLUTION * 0.7) + (rnd->getLong(30 * RESOLUTION)));
+  arocks->theta = rnd->getLong(RESOLUTION);
   arocks->depth = MAX_DEPTH * DEPTH_SCALE;
   if (!mono && Scr[screen].npixels > 2)
-    arocks->color = Scr[screen].pixels[LRAND() % Scr[screen].npixels];
+    arocks->color = Scr[screen].pixels[rnd->getLong(Scr[screen].npixels)];
   else
     arocks->color = WhitePixel(dsp, screen);
   rock_compute(arocks);
@@ -122,7 +124,7 @@ rock_tick ( Window win, arock *arocks, int d)
 	rock_compute(arocks);
 	rock_draw(win, arocks, True);
       }
-  } else if ((LRAND() % 40) == 0)
+  } else if ((rnd->getLong(40)) == 0)
     rock_reset(win, arocks);
 }
 
@@ -313,9 +315,9 @@ compute_move(int axe)
   else if (speed[axe] < -maxDepSpeed)
     speed[axe] = -maxDepSpeed;
 
-  if((LRAND() % DIRECTION_CHANGE_RATE) == 0){
+  if((rnd->getLong(DIRECTION_CHANGE_RATE)) == 0){
     /* We change direction */
-    change = LRAND() & 1;
+    change = rnd->getLong(2);
     if (change != 1)
       if (direction[axe] == 0)
 	direction[axe] = change - 1; /* 0 becomes either 1 or -1 */
@@ -344,9 +346,9 @@ drawrock(Window win)
         current_delta--;
     }
   } else {
-    if ((LRAND() % 50) == 0) {
-      new_delta = ((LRAND() % 11) - 5);
-      if ((LRAND() % 10) == 0)
+    if (rnd->getLong(50) == 0) {
+      new_delta = (rnd->getLong(11) - 5);
+      if (rnd->getLong(10) == 0)
 	new_delta *= 5;
     }
   }
@@ -440,6 +442,7 @@ int setupScreenSaver()
 
 kRockSaver::kRockSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
+	rnd = new KRandomSequence();	
 	readSettings();
 
 	colorContext = QColor::enterAllocContext();
@@ -467,6 +470,7 @@ kRockSaver::~kRockSaver()
 	rock_cleanup();
 	QColor::leaveAllocContext();
 	QColor::destroyAllocContext( colorContext );
+	delete rnd; rnd = 0;
 }
 
 void kRockSaver::setSpeed( int spd )

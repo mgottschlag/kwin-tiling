@@ -24,6 +24,7 @@ static char sccsid[] = "@(#)pyro.c	3.4 95/11/04 xlockmore";
 
 #include <qslider.h>
 #include <kglobal.h>
+#include <krandomsequence.h>
 #include <kconfig.h>
 
 #include "xlock.h"
@@ -68,8 +69,10 @@ static char sccsid[] = "@(#)pyro.c	3.4 95/11/04 xlockmore";
 #define MINSFUSE 50		/* Range of fuse lengths for stars */
 #define MAXSFUSE 100
 
-#define INTRAND(min,max) (LRAND()%((max+1)-(min))+(min))
-#define FLOATRAND(min,max) ((min)+((double) LRAND()/((double) MAXRAND))*((max)-(min)))
+static KRandomSequence *rnd = 0;
+
+#define INTRAND(min,max) (rnd->getLong((max+1)-(min))+(min))
+#define FLOATRAND(min,max) ((min)+(rnd->getDouble()*((max)-(min))))
 
 //ModeSpecOpt pyroopts = {0, NULL, NULL, NULL};
 
@@ -184,9 +187,9 @@ drawpyro(Window win)
     rocket     *rp;
     int         rockn;
 
-    if (just_started || (LRAND() % pp->p_ignite == 0)) {
+    if (just_started || (rnd->getLong(pp->p_ignite) == 0)) {
 	just_started = False;
-	if (LRAND() % P_FUSILLADE == 0) {
+	if (rnd->getLong(P_FUSILLADE) == 0) {
 	    pp->p_ignite = orig_p_ignite / FUSILFACTOR;
             if (pp->p_ignite <= 0)
 	      pp->p_ignite = 1;
@@ -214,7 +217,7 @@ ignite(pyrostruct *pp)
     unsigned long	color1, color2;
     float       xvel, yvel, x;
 
-    x = LRAND() % pp->width;
+    x = rnd->getLong(pp->width);
     xvel = FLOATRAND(-pp->maxvelx, pp->maxvelx);
 /* All this to stop too many rockets going offscreen: */
     if ((x < pp->lmargin && xvel < 0.0) || (x > pp->rmargin && xvel > 0.0))
@@ -223,18 +226,18 @@ ignite(pyrostruct *pp)
     fuse = INTRAND(MINFUSE, MAXFUSE);
     nstars = INTRAND(MINSTARS, MAXSTARS);
     if (!mono && (npix = Scr[screen].npixels) > 2) {
-	color1 = Scr[screen].pixels[pix = LRAND() % npix];
+	color1 = Scr[screen].pixels[pix = rnd->getLong(npix)];
 	color2 = Scr[screen].pixels[(pix + (npix / 2)) % npix];
     } else {
 	color1 = color2 = WhitePixel(dsp, screen);
     }
 
     multi = 1;
-    if (LRAND() % P_DOUBLECLOUD == 0)
+    if (rnd->getLong(P_DOUBLECLOUD) == 0)
 	shelltype = DOUBLECLOUD;
     else {
 	shelltype = cloud;
-	if (LRAND() % P_MULTI == 0)
+	if (rnd->getLong(P_MULTI) == 0)
 	    multi = INTRAND(5, 15);
     }
 
@@ -308,7 +311,7 @@ shootup(Window win, pyrostruct *pp, rocket *rp)
     rp->yvel += pp->rockdecel;
     XSetForeground(dsp, Scr[screen].gc, pp->rockpixel);
     XFillRectangle(dsp, win, Scr[screen].gc, (int) (rp->x), (int) (rp->y),
-		   ROCKETW, (int) (ROCKETH + LRAND() % 4));
+		   ROCKETW, (int) (ROCKETH + rnd->getLong(4)));
 }
 
 static void
@@ -442,6 +445,7 @@ int setupScreenSaver()
 
 kPyroSaver::kPyroSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
+	rnd = new KRandomSequence();
 	readSettings();
 
     // Clear to background colour when exposed
@@ -466,6 +470,7 @@ kPyroSaver::~kPyroSaver()
 	pyro_cleanup();
 	QColor::leaveAllocContext();
 	QColor::destroyAllocContext( colorContext );
+	delete rnd; rnd=0;
 }
 
 void kPyroSaver::setNumber( int num )

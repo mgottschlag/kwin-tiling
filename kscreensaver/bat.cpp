@@ -51,6 +51,7 @@
 #include <qslider.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <krandomsequence.h>
 #include "xlock.h"
 #include <math.h>
 
@@ -97,6 +98,8 @@
 #define DIR(x)	(((x)>=0)?CCW:CW)
 #define SIGN(x)	(((x)>=0)?1:-1)
 #define ABS(x)	(((x)>=0)?x:-(x))
+
+static KRandomSequence *rnd = 0;
 
 //ModeSpecOpt bat_opts = {0, NULL, NULL, NULL};
 
@@ -204,22 +207,22 @@ initbat(Window win)
 			bp->bats[i].sizey = bat0_height;
 			bp->bats[i].size = (bp->bats[i].sizex + bp->bats[i].sizey) / 2;
 		}
-		bp->bats[i].vx = ((LRAND() & 1) ? -1 : 1) * (LRAND() % MAX_STRENGTH + 1);
+		bp->bats[i].vx = (rnd->getLong(2) ? -1 : 1) * (rnd->getLong(MAX_STRENGTH) + 1);
 		bp->bats[i].x = (bp->bats[i].vx >= 0) ? 0 : bp->width - bp->bats[i].sizex;
-		bp->bats[i].y = LRAND() % (bp->height / 2);
+		bp->bats[i].y = rnd->getLong(bp->height / 2);
 		if (i == collide(i)) {
 			if (!mono && Scr[screen].npixels > 2)
-				bp->bats[i].color = Scr[screen].pixels[LRAND() % Scr[screen].npixels];
+				bp->bats[i].color = Scr[screen].pixels[rnd->getLong(Scr[screen].npixels)];
 			else
 				bp->bats[i].color = WhitePixel(dsp, screen);
 			bp->bats[i].xlast = -1;
 			bp->bats[i].ylast = 0;
 			bp->bats[i].spincount = 1;
 			bp->bats[i].spindelay = 1;
-			bp->bats[i].vy = ((LRAND() & 1) ? -1 : 1) * (LRAND() % MAX_STRENGTH);
+			bp->bats[i].vy = (rnd->getLong(2) ? -1 : 1) * (rnd->getLong(MAX_STRENGTH)+1);
 			bp->bats[i].spindir = 0;
 			bp->bats[i].vang = 0;
-			bp->bats[i].orient = LRAND() % ORIENTS;
+			bp->bats[i].orient = rnd->getLong(ORIENTS);
 			i++;
 		} else
 			bp->nbats--;
@@ -289,7 +292,7 @@ drawbat(Window win)
 	}
 	for (i = 0; i < bp->nbats; i++)
 		checkCollision(i);
-	if (!(LRAND() % TIME))	/* Put some randomness into the time */
+	if (!rnd->getLong(TIME))	/* Put some randomness into the time */
 		bp->restartnum--;
 	if (!bp->restartnum)
 		initbat(win);
@@ -464,6 +467,7 @@ int setupScreenSaver()
 
 kBatSaver::kBatSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
+	rnd = new KRandomSequence();
 	readSettings();
 
 	colorContext = QColor::enterAllocContext();
@@ -486,6 +490,7 @@ kBatSaver::~kBatSaver()
 	timer.stop();
 	QColor::leaveAllocContext();
 	QColor::destroyAllocContext( colorContext );
+	delete rnd; rnd = 0;
 }
 
 void kBatSaver::setSpeed( int spd )

@@ -332,7 +332,6 @@ void kLinesSetup::slotOkPressed(){
 kLinesSaver::kLinesSaver(Drawable drawable):kScreenSaver(drawable){
 	readSettings();
 	lines=new Lines(numLines);
-	srandom((int)time((time_t *)NULL));
 	colorContext=QColor::enterAllocContext();
 	blank();
 	initialiseColor();
@@ -429,10 +428,10 @@ void kLinesSaver::initialiseLines(){
 	if(lines) delete lines;
 	lines=new Lines(numLines);
 	lines->reset();
-	x1=random()%mWidth;
-	y1=random()%mHeight;
-	x2=random()%mWidth;
-	y2=random()%mHeight;
+	x1=rnd.getLong(mWidth);
+	y1=rnd.getLong(mHeight);
+	x2=rnd.getLong(mWidth);
+	y2=rnd.getLong(mHeight);
 	for(i=0; i<numLines; i++){
 		lines->setKoord(x1,y1,x2,y2);
 		lines->next();

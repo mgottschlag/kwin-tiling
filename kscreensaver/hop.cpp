@@ -36,6 +36,7 @@
 
 #include <qslider.h>
 #include <kglobal.h>
+#include <krandomsequence.h>
 #include <kconfig.h>
 #include "xlock.h"
 #include <math.h>
@@ -75,6 +76,7 @@ typedef struct {
 
 static hopstruct hops[MAXSCREENS];
 static XPoint pointBuffer[MAXBATCH];	/* pointer for XDrawPoints */
+static KRandomSequence *rnd = 0;
 
 void
 inithop(Window win)
@@ -88,35 +90,35 @@ inithop(Window win)
   hp->centerx = xwa.width / 2;
   hp->centery = xwa.height / 2;
   /* Make the other operations less common since they are less interesting */
-  if (LRAND() % 6)
+  if (rnd->getLong(6))
     hp->op = SQRT;
   else
-    hp->op = LRAND() % (OPS - 1) + 1;
+    hp->op = rnd->getLong(OPS - 1) + 1;
   switch (hp->op) {
   case SQRT:
     range = sqrt((double) hp->centerx * hp->centerx +
 		 (double) hp->centery * hp->centery) /
-      (10.0 + LRAND() % 10);
+      (10.0 + rnd->getDouble() * 10.0);
     
-    hp->a = (LRAND() / MAXRAND) * range - range / 2.0;
-    hp->b = (LRAND() / MAXRAND) * range - range / 2.0;
-    hp->c = (LRAND() / MAXRAND) * range - range / 2.0;
-    if (LRAND() & 1)
+    hp->a = rnd->getDouble() * range - range / 2.0;
+    hp->b = rnd->getDouble() * range - range / 2.0;
+    hp->c = rnd->getDouble() * range - range / 2.0;
+    if (rnd->getLong(2))
       hp->c = 0.0;
     break;
   case SIN:
-    hp->a = M_PI + ((LRAND() / MAXRAND) * 2.0 - 1.0) * 0.7;
+    hp->a = M_PI + (rnd->getDouble() * 2.0 - 1.0) * 0.7;
     break;
   case JONG:
-    hp->a = (LRAND() / MAXRAND) * 2.0 * M_PI - M_PI;
-    hp->b = (LRAND() / MAXRAND) * 2.0 * M_PI - M_PI;
-    hp->c = (LRAND() / MAXRAND) * 2.0 * M_PI - M_PI;
-    hp->d = (LRAND() / MAXRAND) * 2.0 * M_PI - M_PI;
+    hp->a = rnd->getDouble() * 2.0 * M_PI - M_PI;
+    hp->b = rnd->getDouble() * 2.0 * M_PI - M_PI;
+    hp->c = rnd->getDouble() * 2.0 * M_PI - M_PI;
+    hp->d = rnd->getDouble() * 2.0 * M_PI - M_PI;
     break;
   }
   hp->pix = 0;
   hp->i = hp->j = 0.0;
-  hp->inc = (int) ((LRAND() / MAXRAND) * 200) - 100;
+  hp->inc = ((int) rnd->getLong(200)) - 100;
   hp->bufsize = batchcount;
   
   //if (!pointBuffer)          // made a static structure, epirker, 10-Jul-97
@@ -228,6 +230,7 @@ int setupScreenSaver()
 
 kHopSaver::kHopSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
+	rnd = new KRandomSequence();
 	readSettings();
 
 	colorContext = QColor::enterAllocContext();
@@ -251,6 +254,7 @@ kHopSaver::~kHopSaver()
 	timer.stop();
 	QColor::leaveAllocContext();
 	QColor::destroyAllocContext( colorContext );
+	delete rnd; rnd = 0;
 }
 
 void kHopSaver::setSpeed( int spd )

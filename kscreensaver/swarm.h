@@ -10,7 +10,9 @@
 #include <qlist.h>
 #include <qdialog.h>
 #include <qlineedit.h>
+#include <krandomsequence.h>
 #include "saver.h"
+
 
 class kSwarmSaver : public kScreenSaver
 {
@@ -29,6 +31,7 @@ protected slots:
 	void slotTimeout();
 
 protected:
+	KRandomSequence rnd;
 	QTimer      timer;
 	int         colorContext;
 

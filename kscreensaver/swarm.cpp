@@ -24,6 +24,7 @@
 #include <qslider.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <krandomsequence.h>
 #include "xlock.h"
 
 #define TIMES	4		/* number of time positions recorded */
@@ -35,7 +36,7 @@
 /* Macros */
 #define X(t,b)	(sp->x[(t)*sp->beecount+(b)])
 #define Y(t,b)	(sp->y[(t)*sp->beecount+(b)])
-#define balance_rand(v)	((LRAND()%(v))-((v)/2))		/* random number around 0 */
+#define balance_rand(v)	(rnd.getLong(v)-((v)/2))		/* random number around 0 */
 
 //ModeSpecOpt swarm_opts = {0, NULL, NULL, NULL};
 
@@ -60,7 +61,7 @@ typedef struct {
 static swarmstruct swarms[MAXSCREENS];
 
 void
-initswarm(Window win)
+initswarm(Window win, KRandomSequence &rnd)
 {
 	swarmstruct *sp = &swarms[screen];
 	int         b;
@@ -89,8 +90,8 @@ initswarm(Window win)
 	/* Initialize point positions, velocities, etc. */
 
 	/* wasp */
-	sp->wx[0] = sp->border + LRAND() % (sp->width - 2 * sp->border);
-	sp->wy[0] = sp->border + LRAND() % (sp->height - 2 * sp->border);
+	sp->wx[0] = sp->border + rnd.getLong(sp->width - 2 * sp->border);
+	sp->wy[0] = sp->border + rnd.getLong(sp->height - 2 * sp->border);
 	sp->wx[1] = sp->wx[0];
 	sp->wy[1] = sp->wy[0];
 	sp->wxv = 0;
@@ -98,9 +99,9 @@ initswarm(Window win)
 
 	/* bees */
 	for (b = 0; b < sp->beecount; b++) {
-		X(0, b) = LRAND() % sp->width;
+		X(0, b) = rnd.getLong(sp->width);
 		X(1, b) = X(0, b);
-		Y(0, b) = LRAND() % sp->height;
+		Y(0, b) = rnd.getLong(sp->height);
 		Y(1, b) = Y(0, b);
 		sp->xv[b] = balance_rand(7);
 		sp->yv[b] = balance_rand(7);
@@ -110,7 +111,7 @@ initswarm(Window win)
 
 
 void
-drawswarm(Window win)
+drawswarm(Window win, KRandomSequence &rnd)
 {
 	swarmstruct *sp = &swarms[screen];
 	int         b;
@@ -149,8 +150,8 @@ drawswarm(Window win)
 		sp->wy[0] += sp->wyv;
 	}
 	/* Don't let things settle down. */
-	sp->xv[LRAND() % sp->beecount] += balance_rand(3);
-	sp->yv[LRAND() % sp->beecount] += balance_rand(3);
+	sp->xv[rnd.getLong(sp->beecount)] += balance_rand(3);
+	sp->yv[rnd.getLong(sp->beecount)] += balance_rand(3);
 
 	/* <=- Bees -=> */
 	for (b = 0; b < sp->beecount; b++) {
@@ -269,7 +270,7 @@ kSwarmSaver::kSwarmSaver( Drawable drawable ) : kScreenSaver( drawable )
 	batchcount = maxLevels;
 
 	initXLock( mGc );
-	initswarm( mDrawable );
+	initswarm( mDrawable, rnd );
 
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -292,7 +293,7 @@ void kSwarmSaver::setSpeed( int spd )
 void kSwarmSaver::setLevels( int l )
 {
 	batchcount = maxLevels = l;
-	initswarm( mDrawable );
+	initswarm( mDrawable, rnd );
 }
 
 void kSwarmSaver::readSettings()
@@ -317,7 +318,7 @@ void kSwarmSaver::readSettings()
 
 void kSwarmSaver::slotTimeout()
 {
-	drawswarm( mDrawable );
+	drawswarm( mDrawable, rnd );
 }
 
 //-----------------------------------------------------------------------------

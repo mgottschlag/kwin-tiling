@@ -13,7 +13,7 @@
 #include <qdialog.h>
 #include <qlineedit.h>
 #include "saver.h"
-
+#include <krandomsequence.h>
 
 class Polygon
 {
@@ -56,6 +56,7 @@ protected:
 	uint		colors[64];
 	QList<Polygon> polygons;
 	QArray<XPoint> directions;
+	KRandomSequence rnd;
 };
 
 class kPolygonSetup : public QDialog

@@ -12,6 +12,7 @@
 #include <qlist.h>
 #include <qdialog.h>
 #include <qlineedit.h>
+#include <krandomsequence.h>
 #include "saver.h"
 
 
@@ -54,6 +55,7 @@ class kLinesSaver:public kScreenSaver{
 	void slotTimeout();
 
 	protected:
+	KRandomSequence rnd;
 	QTimer timer;
 	unsigned numLines;
 	int colorContext, speed;

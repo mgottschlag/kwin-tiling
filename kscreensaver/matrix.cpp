@@ -31,6 +31,7 @@
 #include <kcolordlg.h>
 #include <kconfig.h>
 #include <klocale.h>
+#include <krandomsequence.h>
 
 #include "helpers.h"
 
@@ -42,6 +43,7 @@
 
 #include "matrix.h"
 
+static KRandomSequence *rnd = 0;
 
 static KMatrixSaver *saver = NULL;
 const char progname[] = "KMatrix";
@@ -142,6 +144,7 @@ void exposeScreenSaver( int x, int y, int width, int height ) {
 // KMatrixSaver code
 
 KMatrixSaver::KMatrixSaver( Drawable drawable ) : kScreenSaver( drawable ) {
+  rnd = new KRandomSequence();
   readSettings();
 
   blank();
@@ -153,6 +156,7 @@ KMatrixSaver::KMatrixSaver( Drawable drawable ) : kScreenSaver( drawable ) {
 void KMatrixSaver::slotTimeout() {
   draw_matrix();
   XSync(qt_xdisplay(), False);
+  delete rnd; rnd = 0;
 }
 
 KMatrixSaver::~KMatrixSaver() {
@@ -385,7 +389,7 @@ void KMatrixSaver::insert_glyph (int glyph, int x, int y) {
   if (!to->glyph)
     ;
   else if (bottom_feeder_p)
-    to->glow = 1 + (random() % 2);
+    to->glow = 1 + rnd->getLong(2);
   else
     to->glow = 0;
 }
@@ -404,7 +408,7 @@ void KMatrixSaver::feed_matrix () {
         }
       else if (f->remaining > 0)	/* how many items are in the pipe */
         {
-          int g = (random() % state->nglyphs) + 1;
+          int g = rnd->getLong(state->nglyphs) + 1;
           insert_glyph (g, x, f->y);
           f->remaining--;
           if (f->y >= 0)  /* bottom_feeder_p */
@@ -417,9 +421,9 @@ void KMatrixSaver::feed_matrix () {
             f->y++;
         }
 
-      if ((random() % 10) == 0)		/* randomly change throttle speed */
+      if (rnd->getLong(10) == 0)		/* randomly change throttle speed */
         {
-          f->throttle = ((random() % 5) + (random() % 5));
+          f->throttle = rnd->getLong(5) + rnd->getLong(5);
         }
     }
 }
@@ -449,15 +453,15 @@ void KMatrixSaver::hack_matrix () {
   /* Glow some characters. */
   if (!state->insert_bottom_p)
     {
-      int i = random() % (state->grid_width / 2);
+      int i = rnd->getLong(state->grid_width / 2);
       while (--i > 0)
         {
-          int x = random() % state->grid_width;
-          int y = random() % state->grid_height;
+          int x = rnd->getLong(state->grid_width);
+          int y = rnd->getLong(state->grid_height);
           m_cell *cell = &state->cells[state->grid_width * y + x];
           if (cell->glyph && cell->glow == 0)
             {
-              cell->glow = random() % 10;
+              cell->glow = rnd->getLong(10);
               cell->changed = True;
             }
         }
@@ -472,22 +476,22 @@ void KMatrixSaver::hack_matrix () {
       if (f->remaining > 0)	/* never change if pipe isn't empty */
         continue;
 
-      if ((random() % densitizer()) != 0) /* then change N% of the time */
+      if (rnd->getLong(densitizer()) != 0) /* then change N% of the time */
         continue;
 
-      f->remaining = 3 + (random() % state->grid_height);
-      f->throttle = ((random() % 5) + (random() % 5));
+      f->remaining = 3 + rnd->getLong(state->grid_height);
+      f->throttle = rnd->getLong(5) + rnd->getLong(5);
 
-      if ((random() % 4) != 0)
+      if (rnd->getLong(4) != 0)
         f->remaining = 0;
 
       if (state->insert_top_p && state->insert_bottom_p)
-        bottom_feeder_p = (random() & 1);
+        bottom_feeder_p = rnd->getLong(2);
       else
         bottom_feeder_p = state->insert_bottom_p;
 
       if (bottom_feeder_p)
-        f->y = random() % (state->grid_height / 2);
+        f->y = rnd->getLong(state->grid_height / 2);
       else
         f->y = -1;
     }
