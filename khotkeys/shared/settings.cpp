@@ -18,7 +18,7 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <klocale.h>
 #include <kaccel.h>
 
@@ -64,7 +64,7 @@ void Settings::read_settings( bool include_disabled_P )
 
 void Settings::write_settings()
     {
-    KSimpleConfig cfg( KHOTKEYS_CONFIG_FILE, false );
+    KConfig cfg( KHOTKEYS_CONFIG_FILE, false );
 // CHECKME    smazat stare sekce ?
     QStringList groups = cfg.groupList();
     for( QStringList::ConstIterator it = groups.begin();
