@@ -123,6 +123,9 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     // Effects
 // I need to do a QListView here instead
     mpStateList=new QListBox(m_pTab2);
+    // Try to set minimum size to 3 lines of text.
+    mpStateList->setMinimumSize(QSize(0, 
+	mpStateList->fontMetrics().lineSpacing()*4));
     connect(mpStateList, SIGNAL(highlighted(int)), SLOT(slotState(int)));
     grid->addMultiCellWidget(mpStateList, 0, 0, 0, 3);                                   
     lbl = new QLabel(i18n("&Effect:"), m_pTab2);
