@@ -614,13 +614,17 @@ void Task::toDesktop(int desk)
 {
     NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMDesktop);
     if (desk == 0) {
-        if (_info.onAllDesktops)
+        if (_info.onAllDesktops) {
             ni.setDesktop(kwin_module->currentDesktop());
+            KWin::setActiveWindow(_win);
+        }
         else
             ni.setDesktop(NETWinInfo::OnAllDesktops);
         return;
     }
     ni.setDesktop(desk);
+    if(desk == kwin_module->currentDesktop())
+        KWin::setActiveWindow(_win);
 }
 
 void Task::toCurrentDesktop()
