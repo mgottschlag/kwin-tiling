@@ -39,7 +39,6 @@
 #include <unistd.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kcmdlineargs.h>
 #include <fstream>
 
 static const QCString constDefaultFontsDir              ("/usr/X11R6/lib/X11/fonts/");
@@ -262,18 +261,9 @@ void CConfig::load()
     QCString defaultFontsDir,
              defaultXConfigFile,
              defaultGhostscriptFile;
-
-    QString origGroup=group(),
-            val;
-    int     intVal;
-
-
-    //
-    // If this module is being run as root from a non-root started kcontrol (i.e. via kcmshell), then
-    // need to save Config changes as they are changed - as when the module is unloaded it is
-    // simply killed, and the destructors don't get a chance to run.
-    const char *appName=KCmdLineArgs::appName();
-    itsAutoSync=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName));
+    QString  origGroup=group(),
+             val;
+    int      intVal;
 
     if(CMisc::root())
     {

@@ -154,8 +154,7 @@ class CConfig : public KConfig
                       itsDoAfm,
                       itsDoTtAfms,
                       itsDoT1Afms,
-                      itsConfigured,
-                      itsAutoSync;
+                      itsConfigured;
     EXFontListRefresh itsXRefreshCmd;
     QStringList       itsModifiedDirs;
 };
