@@ -34,10 +34,8 @@
 advancedDialog::advancedDialog(QWidget* parent, const char* name)
     : KDialogBase(KDialogBase::Plain,
                   i18n("Advanced Options"),
-                  KDialogBase::Ok |
-                  KDialogBase::Apply |
-                  KDialogBase::Cancel,
-                  KDialogBase::Cancel,
+                  Ok|Apply|Cancel,
+                  Cancel,
                   parent,
                   name,
                   true, true)
@@ -46,13 +44,15 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
             this, SLOT(save()));
     connect(this, SIGNAL(okClicked()),
             this, SLOT(save()));
-    actionButton(Apply)->setEnabled(false);
+
     QFrame* page = plainPage();
     QVBoxLayout* layout = new QVBoxLayout(page);
     m_advancedWidget = new advancedKickerOptions(page);
     layout->addWidget(m_advancedWidget);
-    layout->addSpacing( 20 );
+    layout->addSpacing(20);
     layout->addStretch();
+
+    setMinimumSize( sizeHint() );
 
     connect(m_advancedWidget->handles, SIGNAL(clicked(int)),
             this, SLOT(changed()));
@@ -94,7 +94,7 @@ void advancedDialog::load()
     int tintValue = c.readNumEntry( "TintValue", 0 );
     m_advancedWidget->tintSlider->setValue( tintValue );
 
-    actionButton(Apply)->setEnabled(false);
+    enableButtonApply(false);
 }
 
 void advancedDialog::save()
@@ -148,12 +148,12 @@ void advancedDialog::save()
     c.sync();
 
     KickerConfig::notifyKicker();
-    actionButton(Apply)->setEnabled(false);
+    enableButtonApply(false);
 }
 
 void advancedDialog::changed()
 {
-    actionButton(Apply)->setEnabled(true);
+    enableButtonApply(true);
 }
 
 #include "advancedDialog.moc"
