@@ -7,8 +7,8 @@ ac_cpp=$ac_cpp_safe
 if test "$have_xkb_extension" = "true"; then
    ACCESS_SUBDIR=access
 else
-   ACCESS_SUBDIRS=
+   ACCESS_SUBDIR=
 fi
 
-AC_SUBST(ACCESS_SUBDIRS)
+AC_SUBST(ACCESS_SUBDIR)
 
