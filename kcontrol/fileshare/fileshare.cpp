@@ -43,10 +43,11 @@ KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStr
   box->layout()->setSpacing( KDialog::spacingHint() );
   connect( box, SIGNAL( clicked( int )), this, SLOT(configChanged()));
   layout->addWidget(box);
-  noSharing=new QRadioButton( i18n("Do not share"), box );
-  sharing=new QRadioButton( i18n("Share"),  box);
+  noSharing=new QRadioButton( i18n("Do &not share"), box );
+  sharing=new QRadioButton( i18n("&Share"),  box);
   info = new QLabel( this );
   layout->addWidget(info);
+  layout->addStretch();
 
    QString path = QString::fromLocal8Bit(getenv("PATH")) + QString::fromLatin1(":/usr/sbin");
    QString smbExec = KStandardDirs::findExe( QString::fromLatin1("/usr/sbin/smbd"), path );
@@ -138,7 +139,11 @@ void KFileShareConfig::defaults()
 
 QString KFileShareConfig::quickHelp() const
 {
-  return i18n("To-Do!");
+    return i18n("<h1>File Sharing</h1><p>This module can be used "
+    		    "to enable file sharing over the network using "
+				"the \"Network File System\" (NFS) or SMB in Konqueror. "
+				"The latter enables you to share your files with Windows(TM) "
+				"computers on your network.</p>");
 }
 
 #include "fileshare.moc"
