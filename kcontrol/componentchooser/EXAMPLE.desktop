@@ -1,5 +1,7 @@
-Name=A nice name you have choosen for your interface
-Comment=A helpfull Description of the interface for the top right info box
+Name=A nice name you have chosen for your interface
+Name[sv]=Ett bra namn som du har valt för gränssnittet
+Comment=A helpful description of the interface for the top right info box
+Comment[sv]=En hjälpsam beskrivning av gränssnittet för informationsrutan uppe till höger
 ServiceTypeToConfigure=The service type, which should be  configured. If this line is empty you have to provide a plugin (not supported yet)
 MimeTypeOfInterest=A mimetype which should be used in conjunction with ServiceTypeToConfigure
 defaultImplementation=The name of the default implementation as it would be returned by KService::desktopEntryName()
