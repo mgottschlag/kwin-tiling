@@ -1,1 +1,18 @@
 AC_CHECK_FUNCS(getifaddrs getnameinfo)
+
+AC_MSG_CHECKING([if struct sockaddr has member sa_len])
+AC_TRY_COMPILE(
+  [
+    #include <sys/types.h>
+    #include <sys/socket.h>
+  ],
+  [
+    struct sockaddr sa;
+    sa.sa_len = sizeof(sa);
+  ],
+  [
+    AC_DEFINE(HAVE_SOCKADDR_SA_LEN,1,[Define if struct sockaddr has member sa_len])
+    AC_MSG_RESULT(yes)
+  ],
+  AC_MSG_RESULT(no)
+)
