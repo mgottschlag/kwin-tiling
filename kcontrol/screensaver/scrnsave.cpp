@@ -500,6 +500,12 @@ void KScreenSaver::updateValues()
     mLockCheckBox->setChecked(mLock);
     mDPMSDependentCheckBox->setChecked(mDPMS);
     mPrioritySlider->setValue(19-mPriority);
+
+    m_topLeftCorner->setChecked(mTopLeftCorner);
+    m_topRightCorner->setChecked(mTopRightCorner);
+    m_bottomLeftCorner->setChecked(mBottomLeftCorner);
+    m_bottomRightCorner->setChecked(mBottomRightCorner);
+
 }
 
 //---------------------------------------------------------------------------
@@ -520,8 +526,12 @@ void KScreenSaver::defaults()
     slotPriorityChanged( 0 );
     slotDPMS( false );
     slotLock( false );
-    updateValues();
+    slotChangeBottomRightCorner( false );
+    slotChangeBottomLeftCorner( false );
+    slotChangeTopRightCorner( false );
+    slotChangeTopLeftCorner( false );
 
+    updateValues();
 
     setChanged(true);
 }
