@@ -363,7 +363,7 @@ bool GetInfo_CPU( QListView *lBox )
 			
   if((pstat_getstatic(&pst, sizeof(pst), (size_t)1, 0) == -1) ||
      (pstat_getdynamic(&psd, sizeof(psd), (size_t)1, 0)== -1)) {
-     *GetInfo_ErrorString = i18n("Could not get Information !"); /* Error */
+     *GetInfo_ErrorString = i18n("Could not get Information!"); /* Error */
      return false;
   }
 
@@ -655,7 +655,7 @@ bool GetInfo_XServer_and_Video( QListView *lBox )
 
 bool GetInfo_Sound( QListView *lBox )
 {	lBox = lBox;
-	*GetInfo_ErrorString = i18n("Sorry, Audio-Support (Alib) was disabled during configuration and compile-time !");
+	*GetInfo_ErrorString = i18n("Sorry, Audio-Support (Alib) was disabled during configuration and compile-time!");
 	return false;
 }
 
@@ -687,7 +687,7 @@ bool GetInfo_Sound( QListView *lBox )
     server[0] = 0;    
     audio = AOpenAudio( server, &status );
     if( status ) {
-        *GetInfo_ErrorString = i18n("Unable to open Audio-Server (Alib) !");
+        *GetInfo_ErrorString = i18n("Unable to open Audio-Server (Alib)!");
         return false;
     }
     
@@ -713,13 +713,13 @@ bool GetInfo_Sound( QListView *lBox )
     olditem = new QListViewItem(lBox, olditem, i18n("Byte Order"),
                                 QString((audio->byte_order==ALSBFirst)? i18n("ALSBFirst (LSB)"):
                                         ((audio->byte_order==AMSBFirst)? i18n("AMSBFirst (MSB)"):
-                                         i18n("Invalid Byteorder !")) ));
+                                         i18n("Invalid Byteorder!")) ));
     
     olditem = new QListViewItem(lBox, olditem, i18n("Bit Order"),
                                 QString((audio->sound_bit_order==ALeastSignificant)? 
                                         i18n("ALeastSignificant (LSB)") :
                                         ((audio->sound_bit_order==AMostSignificant) ? 
-                                         i18n("AMostSignificant (MSB)"):i18n("Invalid Bitorder !")) ));
+                                         i18n("AMostSignificant (MSB)"):i18n("Invalid Bitorder!")) ));
 
     olditem = new QListViewItem(lBox, olditem, i18n("Data Formats"));
     for ( i = 0;  i < audio->n_data_format; i++ ) {

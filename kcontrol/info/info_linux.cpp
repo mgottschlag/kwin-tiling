@@ -13,6 +13,9 @@
 
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     $Log$
+    Revision 1.13  2000/06/03 12:28:35  hausmann
+    - KGlobalSettings
+
     Revision 1.12  2000/04/17 21:57:59  deller
     The last version had an overflow in the calculation of the size of big
     drives. Now it displays the sizes correct again.
@@ -120,7 +123,7 @@ bool GetInfo_ReadfromFile( QListView *lbox, const char *FileName,
   if (!file->open(IO_ReadOnly)) {
     delete file;
     /*   *GetInfo_ErrorString =
-	i18n("You do not have read-access for the file %1 !\nPlease ask your system-administrator for advice !")
+	i18n("You do not have read-access for the file %1!\nPlease ask your system-administrator for advice!")
 	.arg(FileName);
     */
     return false;
