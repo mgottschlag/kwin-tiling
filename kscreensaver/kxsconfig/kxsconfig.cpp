@@ -23,12 +23,15 @@
 #include <qlayout.h>
 #include <qtextstream.h>
 #include <qtimer.h>
+
+#include <kdebug.h>
 #include <kapp.h>
 #include <kconfig.h>
 #include <kdialogbase.h>
 #include <kprocess.h>
 #include <kstddirs.h>
 #include <klocale.h>
+
 #include "kxsconfig.h"
 #include "kxscontrol.h"
 
@@ -157,7 +160,7 @@ void KXSConfigDialog::slotPreviewExited(KProcess *)
 
   QString saver = mFilename + " -window-id %w";
   saver += command();
-  debug("Command: %s", saver.ascii());
+  kdDebug() << "Command: " <<  saver << endl;
   QTextStream ts(&saver, IO_ReadOnly);
 
   QString word;
@@ -219,7 +222,7 @@ void KXSConfigDialog::slotOk()
     item->save(config);
   }
 
-  debug(command());
+  kdDebug() << command() << endl;
   kapp->quit();
 }
 

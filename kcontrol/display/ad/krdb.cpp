@@ -12,15 +12,16 @@
 **
 *****************************************************************************/
 
+#include <stdlib.h>
+#include <time.h>
+
 #include <qdir.h>
 #include <qdatastream.h>
 #include <qstring.h>
 #include <qtextstream.h>
 
-#include <stdlib.h>
-#include <time.h>
-
 #include <kapp.h>
+#include <kdebug.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <kstddirs.h>
@@ -157,7 +158,7 @@ int main( int argc, char ** argv )
   if ( tmp.open( IO_WriteOnly ) ) {
     tmp.writeBlock( preproc.latin1(), preproc.length() );
   } else {
-    debug("Couldn't open temp file");
+    kdDebug() << "Couldn't open temp file" << endl;
     exit(0);
   }
   

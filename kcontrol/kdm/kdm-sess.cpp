@@ -233,7 +233,7 @@ void KDMSessionsWidget::slotSetAllowShutdown(int s)
 
 void KDMSessionsWidget::save()
 {
-  //debug("KDMSessionsWidget::applySettings()");
+  //kdDebug() << "KDMSessionsWidget::applySettings()" << endl;
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDM");

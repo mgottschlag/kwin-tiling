@@ -94,7 +94,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
 
 void KDMFontWidget::save()
 {
-  //debug("KDMFontWidget::applySettings()");
+  //kdDebug() << "KDMFontWidget::applySettings()" << endl;
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDM");

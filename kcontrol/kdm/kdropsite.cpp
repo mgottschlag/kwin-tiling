@@ -10,30 +10,30 @@
 
 KDropSite::KDropSite( QWidget * parent ) : QObject( parent ), QDropSite( parent )
 {
-  //debug("KDropSite constructor");
+  //kdDebug() << "KDropSite constructor" << endl;
 }
 
 void KDropSite::dragMoveEvent( QDragMoveEvent *e )
 {
-  //debug("dragMove");
+  //kdDebug() << "dragMove" << endl;
   emit dragMove(e);
 }
 
 void KDropSite::dragEnterEvent( QDragEnterEvent *e )
 {
-  //debug("dragEnter");
+  //kdDebug() << "dragEnter" << endl;
   emit dragEnter(e);
 }
 
 void KDropSite::dragLeaveEvent( QDragLeaveEvent *e )
 {
-  //debug("dragLeave");
+  //kdDebug() << "dragLeave" << endl;
   emit dragLeave(e);
 }
 
 void KDropSite::dropEvent( QDropEvent *e )
 {
-  //debug("drop");
+  //kdDebug() << "drop" << endl;
   emit dropAction(e);
 }
 

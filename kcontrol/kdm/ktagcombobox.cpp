@@ -29,6 +29,8 @@
 #include <qpopupmenu.h>
 #include <qmenudata.h>
 
+#include <kdebug.h>
+
 #include "ktagcombobox.h"
 #include "ktagcombobox.moc"
 
@@ -226,7 +228,7 @@ QString KTagComboBox::tag(int i) const
 {
   if (i < 0 || i >= count())
   {
-    debug("KTagComboBox::tag(), unknown tag %d", i);
+    kdDebug() << "KTagComboBox::tag(), unknown tag " << i << endl;
     return QString::null;
   }
   return *tags->at(i);

@@ -21,13 +21,16 @@
 #include <qlayout.h>
 #include <qdragobject.h>
 #include <qwhatsthis.h>
+
+#include <kdebug.h>
 #include <kpixmapeffect.h>
-#include "kdropsite.h"
-#include "kdm-bgnd.moc"
 #include <kfiledialog.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+
+#include "kdropsite.h"
+#include "kdm-bgnd.moc"
 
 void KBGMonitor::setAllowDrop(bool a)
 {
@@ -226,7 +229,7 @@ void KDMBackgroundWidget::slotQDrop( QDropEvent *e )
   {
     monitor->setAllowDrop(false);
     s = list.first(); // we only want the first
-    //debug("slotQDropEvent - %s", s.ascii());
+    //kdDebug() << "slotQDropEvent - " << s << endl;
     s = QUrlDrag::uriToLocalFile(s.ascii()); // a hack. should be improved
     if(!s.isEmpty())
       loadWallpaper(s);
@@ -235,13 +238,13 @@ void KDMBackgroundWidget::slotQDrop( QDropEvent *e )
 
 void KDMBackgroundWidget::slotQDragLeave( QDragLeaveEvent* )
 {
-  //debug("Got QDragLeaveEvent!");
+  //kdDebug() << "Got QDragLeaveEvent!" << endl;
   monitor->setAllowDrop(false);
 }
 
 void KDMBackgroundWidget::slotQDragEnter( QDragEnterEvent *e )
 {
-  //debug("Got QDragEnterEvent!");
+  //kdDebug() << "Got QDragEnterEvent!" << endl;
   if( QUrlDrag::canDecode( e ) )
   {
     monitor->setAllowDrop(true);
@@ -280,7 +283,7 @@ void KDMBackgroundWidget::setMonitor()
 
   if ( !wallpaper.isEmpty() )
   {
-    //debug("slotSelectColor - setting wallpaper");
+    //kdDebug() << "slotSelectColor - setting wallpaper" << endl;
     float sx = (float)monitor->width() / QApplication::desktop()->width();
     float sy = (float)monitor->height() / QApplication::desktop()->height();
 
@@ -431,7 +434,7 @@ int KDMBackgroundWidget::loadWallpaper( const QString& name, bool useContext )
   }
   else
   {
-    debug("KDMBackgroundWidget::loadWallpaper(): failed loading %s", fileName().ascii());
+    kdDebug() << "KDMBackgroundWidget::loadWallpaper(): failed loading " << fileName() << endl;
     wallpaper = "";
   }
 
@@ -501,7 +504,7 @@ void KDMBackgroundWidget::showSettings()
 
 void KDMBackgroundWidget::applySettings()
 {
-  //debug("KDMBackgroundWidget::applySettings()"); 
+  //kdDebug() << "KDMBackgroundWidget::applySettings()" << endl;
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDMDESKTOP");

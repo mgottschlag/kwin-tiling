@@ -22,11 +22,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+
 #include <qlist.h>
 #include <qtextstream.h>
+
+#include <kdebug.h>
 #include <kapp.h>
 #include <kconfig.h>
 #include <kstddirs.h>
+
 #include "kxsitem.h"
 
 #define MAX_ARGS  20
@@ -129,7 +133,7 @@ int main(int argc, char *argv[])
       cmd += " " + item->command();
     }
 
-    debug("Command: %s", cmd.ascii());
+    kdDebug() << "Command: " << cmd << endl;
 
     // put into char * array for execv
     QTextStream ts(&cmd, IO_ReadOnly);
