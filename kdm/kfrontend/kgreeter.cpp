@@ -596,6 +596,8 @@ KGreeter::verifyUser(bool haveto)
 		break;
 	    case V_AWEXPIRE:
 		expire = GRecvInt ();
+		if (!expire)
+		    MsgBox (infobox, i18n("Your account expires today."));
 		if (expire == 1)
 		    MsgBox (infobox, i18n("Your account expires tomorrow."));
 		else
@@ -604,6 +606,8 @@ KGreeter::verifyUser(bool haveto)
 		break;
 	    case V_PWEXPIRE:
 		expire = GRecvInt ();
+		if (!expire)
+		    MsgBox (infobox, i18n("Your password expires today."));
 		if (expire == 1)
 		    MsgBox (infobox, i18n("Your password expires tomorrow."));
 		else
