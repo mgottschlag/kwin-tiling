@@ -771,10 +771,6 @@
                             <name>title</name>
                             <string>Font Size</string>
                         </property>
-                        <property>
-                            <name>whatsThis</name>
-                            <string>&lt;b&gt;Font size&lt;/b&gt;</string>
-                        </property>
                         <grid>
                             <property stdset="1">
                                 <name>margin</name>
