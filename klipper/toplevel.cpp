@@ -730,6 +730,41 @@ void KlipperWidget::setClipboard( const QString& text, int mode )
     clip->blockSignals( blocked );
 }
 
+QStringList KlipperWidget::getClipboardHistoryMenu()
+{ 
+    QStringList menu;
+    if ( !bClipEmpty )
+    {
+        // don't iterate over the map, but over the popup (due to sorting!)
+        long id = 0L;
+        // We skip the title and start at 1
+        for ( uint i = 1; i < m_popup->count(); i++ ) 
+        {
+            id = m_popup->idAt( i );
+            if ( id != -1 ) 
+            {
+                QMapIterator<long,QString> it = m_clipDict.find( id );
+                if ( it == m_clipDict.end() )
+                    break; // End of clipboard entries
+                menu << m_popup->text(id);
+            }
+        }
+    }
+    return menu;
+}
+
+QString KlipperWidget::getClipboardHistoryItem(int i)
+{
+    if ( !bClipEmpty )
+    {
+        long id = m_popup->idAt( i+1 ); // Add 1 to skip title
+        QMapIterator<long,QString> it = m_clipDict.find( id );
+        if ( it != m_clipDict.end() )
+            return it.data();
+    }
+    return QString::null;
+}
+
 //
 // changing a spinbox in klipper's config-dialog causes the lineedit-contents
 // of the spinbox to be selected and hence the clipboard changes. But we don't

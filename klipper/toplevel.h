@@ -33,6 +33,8 @@ k_dcop:
     QString getClipboardContents();
     void setClipboardContents(QString s);
     void clearClipboardContents();
+    QStringList getClipboardHistoryMenu();
+    QString getClipboardHistoryItem(int i);
 
 public:
     KlipperWidget( QWidget *parent, KConfig* config );
