@@ -130,6 +130,7 @@ void TestWin::keyPressEvent(QKeyEvent *)
 
 //===========================================================================
 //
+
 KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
@@ -137,7 +138,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mPreviewProc = 0;
     mTestWin = 0;
     mTestProc = 0;
-    mPrevSelected = -1;
+    mPrevSelected = -2;
     mMonitor = 0;
 
     // Add non-KDE path
@@ -160,8 +161,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     connect(mPreviewProc, SIGNAL(processExited(KProcess *)),
             this, SLOT(slotPreviewExited(KProcess *)));
 
-    findSavers();
-
     QBoxLayout *topLayout = new QHBoxLayout(this, 10, 10);
 
     // left column
@@ -183,23 +182,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     groupLayout->addSpacing(10);
 
     mSaverListBox = new QListBox( group );
-    /* mSaverListBox->setFixedHeight(120); */
-
-    SaverConfig *saver;
-    mSelected = 0;
-    for (saver = mSaverList.first(); saver != 0; saver = mSaverList.next())
-    {
-        mSaverListBox->insertItem(saver->name());
-        if (saver->file() == mSaver)
-            mSelected = mSaverListBox->count()-1;
-    }
-
-    mSaverListBox->setCurrentItem(mSelected);
-    mSaverListBox->setTopItem(mSaverListBox->currentItem());
-    mSaverListBox->setEnabled(mEnabled);
-    mSelected = mSaverListBox->currentItem();
-    connect( mSaverListBox, SIGNAL( highlighted( int ) ),
-             this, SLOT( slotScreenSaver( int ) ) );
+    mSelected = -1;
+    mSaverListBox->setEnabled(false);
     groupLayout->addWidget( mSaverListBox, 10 );
     QWhatsThis::add( mSaverListBox, i18n("This is a list of the available"
       " screen savers. Select the one you want to use.") );
@@ -207,15 +191,14 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     QBoxLayout* hlay = new QHBoxLayout(groupLayout, 10);
     mSetupBt = new QPushButton(  i18n("&Setup ..."), group );
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
-    mSetupBt->setEnabled(mEnabled &&
-                         !mSaverList.at(mSelected)->setup().isEmpty());
+    mSetupBt->setEnabled(false);
     hlay->addWidget( mSetupBt );
     QWhatsThis::add( mSetupBt, i18n("If the screen saver you selected has"
       " customizable features, you can set them up by clicking this button.") );
 
     mTestBt = new QPushButton(  i18n("&Test"), group );
     connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
-    mTestBt->setEnabled(mEnabled);
+    mTestBt->setEnabled(false);
     hlay->addWidget( mTestBt );
     QWhatsThis::add( mTestBt, i18n("You can try out the screen saver by clicking"
       " this button. (Also, the preview image shows you what the screen saver"
@@ -309,6 +292,13 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     topLayout->activate();
 
     setMonitor();
+
+    // finding the savers can take some time, so defer loading until
+    // we've started up.
+    mNumLoaded = 0;
+    mLoadTimer = new QTimer( this );
+    connect( mLoadTimer, SIGNAL(timeout()), SLOT(findSavers()) );
+    mLoadTimer->start( 100 );
 }
 
 //---------------------------------------------------------------------------
@@ -431,7 +421,8 @@ void KScreenSaver::save()
     config->writeEntry("Timeout", mTimeout);
     config->writeEntry("Lock", mLock);
     config->writeEntry("Priority", mPriority);
-    config->writeEntry("Saver", mSaver);
+    if ( !mSaver.isEmpty() )
+	config->writeEntry("Saver", mSaver);
     config->sync();
     delete config;
 
@@ -449,19 +440,57 @@ void KScreenSaver::save()
 //
 void KScreenSaver::findSavers()
 {
-    QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav",
-                        "*.desktop", false, true);
-
-    QStringList::Iterator it = saverFileList.begin();
-    for ( ; it != saverFileList.end(); ++it ) {
-    SaverConfig *saver = new SaverConfig;
-    if (saver->read(*it))
-        mSaverList.append(saver);
-    else
-        delete saver;
+    if ( !mNumLoaded ) {
+	mSaverFileList = KGlobal::dirs()->findAllResources("scrsav",
+			    "*.desktop", false, true);
+	if ( mSaverFileList.isEmpty() )
+	    mLoadTimer->stop();
+	else
+	    mLoadTimer->start( 50 );
     }
 
-    mSaverList.sort();
+    for ( int i = 0; i < 5 &&
+	    (unsigned)mNumLoaded < mSaverFileList.count();
+	    i++, mNumLoaded++ ) {
+	QString file = mSaverFileList[mNumLoaded];
+	SaverConfig *saver = new SaverConfig;
+	if (saver->read(file)) {
+	    mSaverList.append(saver);
+	} else
+	    delete saver;
+    }
+
+    if ( (unsigned)mNumLoaded == mSaverFileList.count() ) {
+	mLoadTimer->stop();
+	delete mLoadTimer;
+	mSaverList.sort();
+
+	mSelected = 0;
+	mSaverListBox->clear();
+	for ( SaverConfig *s = mSaverList.first(); s != 0; s = mSaverList.next())
+	{
+	    mSaverListBox->insertItem(s->name());
+	    if (s->file() == mSaver)
+		mSelected = mSaverListBox->count()-1;
+	}
+
+	mSaverListBox->setCurrentItem(mSelected);
+	mSaverListBox->ensureCurrentVisible();
+	mSaverListBox->setEnabled(mEnabled);
+	connect( mSaverListBox, SIGNAL( highlighted( int ) ),
+		 this, SLOT( slotScreenSaver( int ) ) );
+	mSetupBt->setEnabled(mEnabled &&
+			     !mSaverList.at(mSelected)->setup().isEmpty());
+	mTestBt->setEnabled(mEnabled);
+	setMonitor();
+    } else {
+	mSaverList.sort();
+	mSaverListBox->clear();
+	for (SaverConfig *s= mSaverList.first(); s!= 0; s= mSaverList.next())
+	{
+	    mSaverListBox->insertItem(s->name());
+	}
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -496,7 +525,7 @@ void KScreenSaver::slotPreviewExited(KProcess *)
                           (mMonitorLabel->height()-160)/2+10, 157, 111);
     mMonitor->show();
 
-    if (mEnabled) {
+    if (mEnabled && mSelected >= 0) {
         mPreviewProc->clearArguments();
 
         QString saver = mSaverList.at(mSelected)->saver();
@@ -535,7 +564,7 @@ void KScreenSaver::slotEnable(bool e)
     mSetupBt->setEnabled( false );
     mEnabled = false;
     } else {
-    if (!mSetupProc->isRunning())
+    if (!mSetupProc->isRunning() && mSelected >= 0)
         mSetupBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
     mEnabled = true;
     }
@@ -558,7 +587,7 @@ void KScreenSaver::slotEnable(bool e)
 //
 void KScreenSaver::slotScreenSaver(int indx)
 {
-    if (!mEnabled)
+    if (!mEnabled || mSelected < 0)
         return;
 
     if (!mSetupProc->isRunning())
@@ -578,7 +607,7 @@ void KScreenSaver::slotScreenSaver(int indx)
 //
 void KScreenSaver::slotSetup()
 {
-    if ( !mEnabled )
+    if ( !mEnabled || mSelected < 0 )
     return;
 
     if (mSetupProc->isRunning())

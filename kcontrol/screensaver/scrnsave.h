@@ -115,10 +115,10 @@ protected slots:
     // be killed. -- This callback is responsible for restarting the
     // new preview
     void slotPreviewExited(KProcess *);
+    void findSavers();
 
 protected:
     void writeSettings();
-    void findSavers();
     void getSaverNames();
     void setMonitor();
     void setDefaults();
@@ -139,10 +139,13 @@ protected:
     QCheckBox   *mStarsCheckBox;
     QCheckBox   *mEnableCheckBox;
     QLabel      *mMonitorLabel;
+    QStringList mSaverFileList;
     SaverList   mSaverList;
+    QTimer      *mLoadTimer;
 
     int         mSelected;
     int         mPrevSelected;
+    int		mNumLoaded;
     bool        mChanged;
 
     // Settings
