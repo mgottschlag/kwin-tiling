@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=kmenuedit  -caption "%c" %i %m %u
+Icon=kmenuedit
+DocPath=kmenuedit/index.html
+Type=Application
+
+Name=Menu Editor
+
+Comment=The KDE Menu Editor

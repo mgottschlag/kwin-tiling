@@ -1,0 +1,28 @@
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
+<kpartgui name="kmenuedit" version="3">
+<MenuBar>
+<Menu name="file"><text>&amp;File</text>
+  <Action name="newitem"/>
+  <Action name="newsubmenu" />
+ </Menu>
+<Menu name="edit"><text>&amp;Edit</text>
+  <Action name="delete" />
+  <Separator/>
+  <Action name="moveup"/>
+  <Action name="movedown"/>
+ </Menu>
+</MenuBar>
+<ToolBar name="mainToolBar" noMerge="1">
+ <Action name="newitem"/>
+ <Action name="newsubmenu"/>
+ <Separator/>
+ <Action name="moveup"/>
+ <Action name="movedown"/>
+ <Separator/>
+ <Action name="edit_cut"/>
+ <Action name="edit_copy"/>
+ <Action name="edit_paste"/>
+ <Separator/>
+ <Action name="delete"/>
+</ToolBar>
+</kpartgui>
