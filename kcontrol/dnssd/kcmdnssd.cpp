@@ -47,7 +47,7 @@ KCMDnssd::KCMDnssd(QWidget *parent, const char *name, const QStringList&)
 	load();
 	// why the hell is this needed?!
 	QTimer::singleShot(0,this,SLOT(notchanged()));
-};
+}
 
 void KCMDnssd::save()
 {
