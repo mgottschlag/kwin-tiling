@@ -59,7 +59,11 @@ public:
 signals:
     void changed();
 
+public slots:
+    void launchMenuEditor();
+
 protected:
+    kSubMenuItem *m_preferencesMenu;
     kSubMenuItem *m_bookmarkMenu;
     kSubMenuItem *m_quickBrowserMenu;
     kSubMenuItem *m_recentDocumentsMenu;
