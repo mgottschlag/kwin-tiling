@@ -118,6 +118,12 @@ QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
 {
   if (m_bInternetKeywordsEnabled)
   {
+    // If the URL is not Malformed and is a known protocol by KIO,
+    // don't process it at all.  This stops accidental typos from
+    // resulting in a redirection to realnames... (DA)
+    if( !url.isMalformed() && KProtocolInfo::isKnownProtocol( url.protocol() ) )
+            return QString::null;
+
     QString search = m_currSearchKeywordsEngine.m_strQuery;
 	if (!search.isEmpty())
 	{
