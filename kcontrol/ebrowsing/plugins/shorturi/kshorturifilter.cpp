@@ -28,6 +28,7 @@
 #include <qdir.h>
 #include <qregexp.h>
 
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kprotocolinfo.h>
 #include <kstandarddirs.h>
@@ -257,14 +258,24 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   //kdDebug() << "path =" << path << " isLocalFullPath=" << isLocalFullPath << " exists=" << exists << endl;
   if( exists )
   {
+    KURL u;
+    u.setPath(path);
+    u.setRef(ref);
+
+    if (kapp && !kapp->authorizeURLAction( QString::fromLatin1("open"), KURL(), u))
+    {
+      // No authorisation, we pretend it's a file will get 
+      // an access denied error later on.
+      setFilteredURI( data, u );
+      setURIType( data, KURIFilterData::LOCAL_FILE );
+      return true;
+    }
+
     // Can be abs path to file or directory, or to executable with args
     bool isDir = S_ISDIR( buff.st_mode );
     if( !isDir && access ( QFile::encodeName(path).data(), X_OK) == 0 )
     {
       //kdDebug() << "Abs path to EXECUTABLE" << endl;
-      KURL u;
-      u.setPath(path);
-      u.setRef(ref);
       setFilteredURI( data, u );
       setURIType( data, KURIFilterData::EXECUTABLE );
       return true;
@@ -273,9 +284,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     if( isDir || S_ISREG( buff.st_mode ) )
     {
       //kdDebug() << "Abs path as local file" << endl;
-      KURL u;
-      u.setPath(path);
-      u.setRef(ref);
       setFilteredURI( data, u );
       setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
       return true;
@@ -356,6 +364,18 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // and if it doesn't exist, then error
   if( isLocalFullPath && !exists )
   {
+    KURL u;
+    u.setPath(path);
+    u.setRef(ref);
+
+    if (kapp && !kapp->authorizeURLAction( QString::fromLatin1("open"), KURL(), u))
+    {
+      // No authorisation, we pretend it exists and will get 
+      // an access denied error later on.
+      setFilteredURI( data, u );
+      setURIType( data, KURIFilterData::LOCAL_FILE );
+      return true;
+    }
     //kdDebug() << "fileNotFound -> ERROR" << endl;
     setErrorMsg( data, i18n( "<qt>The file or folder <b>%1</b> does not exist." ).arg( data.uri().prettyURL() ) );
     setURIType( data, KURIFilterData::ERROR );
