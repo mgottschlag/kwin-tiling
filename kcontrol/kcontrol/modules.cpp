@@ -46,8 +46,8 @@
 template class QPtrList<ConfigModule>;
 
 
-ConfigModule::ConfigModule(const QString& desktopFile, const QString& baseGroup)
-  : KCModuleInfo(desktopFile, baseGroup), _changed(false), _module(0), _embedWidget(0),
+ConfigModule::ConfigModule(const KService::Ptr &s)
+  : KCModuleInfo(s), _changed(false), _module(0), _embedWidget(0),
     _rootProcess(0), _embedLayout(0), _embedFrame(0)
 {
 }
@@ -243,16 +243,19 @@ const KAboutData *ConfigModule::aboutData() const
 ConfigModuleList::ConfigModuleList()
 {
   setAutoDelete(true);
+  subMenus.setAutoDelete(true);
 }
 
 void ConfigModuleList::readDesktopEntries()
 {
   readDesktopEntriesRecursive( KCGlobal::baseGroup() );
-
 }
 
 void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
 {
+  Menu *menu = new Menu;
+  subMenus.insert(path, menu);
+
   KServiceGroup::Ptr group = KServiceGroup::group(path);
 
   if (!group || !group->isValid()) return;
@@ -265,13 +268,50 @@ void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
      KSycocaEntry *p = (*it);
      if (p->isType(KST_KService))
      {
-        ConfigModule *module = new ConfigModule(p->entryPath(), KCGlobal::baseGroup());
+        ConfigModule *module = new ConfigModule(static_cast<KService*>(p));
+        if (module->library().isEmpty())
+        {
+           delete module;
+           continue;
+        }
+              
         append(module);
+        menu->modules.append(module);
      }
      else if (p->isType(KST_KServiceGroup))
      {
         readDesktopEntriesRecursive(p->entryPath());
+        menu->submenus.append(p->entryPath());
      }
   }
 }
 
+QPtrList<ConfigModule> ConfigModuleList::modules(const QString &path)
+{
+  Menu *menu = subMenus.find(path);
+  if (menu)
+     return menu->modules;
+
+  return QPtrList<ConfigModule>();
+}
+
+QStringList ConfigModuleList::submenus(const QString &path)
+{
+  Menu *menu = subMenus.find(path);
+  if (menu)
+     return menu->submenus;
+
+  return QStringList();
+}
+
+QString ConfigModuleList::findModule(ConfigModule *module)
+{
+  QDictIterator<Menu> it(subMenus);
+  Menu *menu;
+  for(;(menu = it.current());++it)
+  {
+     if (menu->modules.containsRef(module))
+        return it.currentKey();
+  }
+  return QString::null;
+}

@@ -203,7 +203,7 @@ void SearchWidget::populateResultListBox(const QString& s)
   {
     _resultList->insertItem(KGlobal::iconLoader()->loadIcon(
 	  it->module()->icon(), KIcon::Desktop, KIcon::SizeSmall), it->moduleName());
-    _results += it->module()->fileName();
+    _results.append(it->module());
   }
 }
 
@@ -221,11 +221,11 @@ void SearchWidget::slotKeywordSelected(const QString & s)
 
 void SearchWidget::slotModuleSelected(int i)
 {
-  emit moduleSelected(_results[i]);
+  emit moduleSelected( _results.at(i) );
 }
 
 void SearchWidget::slotModuleClicked(QListBoxItem *item)
 {
   if (item)
-    emit moduleSelected(_results[_resultList->index(item)]);
+    emit moduleSelected( _results.at(_resultList->index(item)) );
 }

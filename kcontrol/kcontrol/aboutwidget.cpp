@@ -68,7 +68,7 @@ const char * machine_text = I18N_NOOP("Machine:");
 
 struct AboutWidget::ModuleLink
 {
-    KCModuleInfo *module;
+    ConfigModule *module;
     QRect linkArea;
 };
 
@@ -400,7 +400,7 @@ void AboutWidget::updatePixmap()
         {
             QString szName;
             QString szComment;
-            KCModuleInfo *module = static_cast<ModuleTreeItem*>(pEntry)->module();
+            ConfigModule *module = static_cast<ModuleTreeItem*>(pEntry)->module();
             if (module)
             {
                 szName = module->moduleName();
@@ -481,5 +481,5 @@ void AboutWidget::mouseMoveEvent(QMouseEvent *e)
 void AboutWidget::mouseReleaseEvent(QMouseEvent*)
 {
     if (_activeLink)
-        emit moduleSelected(_activeLink->module->fileName());
+        emit moduleSelected(_activeLink->module);
 }

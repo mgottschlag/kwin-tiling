@@ -47,83 +47,54 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
   // use large id's to start with...
   id = 10000;
 
-  ConfigModule *module;
-  for (module=_modules->first(); module != 0; module=_modules->next())
-    {
-      KPopupMenu *parent = getGroupMenu(module->groups());
-  
-      // Item names may contain ampersands. To avoid them being converted to 
-      // accelators, replace them with two ampersands.
-      QString name = module->moduleName();
-      name.replace("&", "&&");
-      
-      int realid = parent->insertItem(KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall)
-                                          , name, id);
-      _moduleDict.insert(realid, module);
-
-      id++;
-    }
+  fill(this, KCGlobal::baseGroup());
 
   connect(this, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
 }
 
-
-QString menuPath(const QStringList& groups)
+void ModuleMenu::fill(KPopupMenu *parentMenu, const QString &parentPath)
 {
-  QString path;
-
-  QStringList::ConstIterator it;
-  for (it=groups.begin(); it != groups.end(); ++it)
-    path += *it + "/";
-
-  return path;
-}
-
-
-KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
-{
-  // break recursion if path is empty
-  if (groups.count() == 0)
-    return this;
-
-  // calculate path
-  QString path = menuPath(groups);
-  //kdDebug(1208) << "Path " << path << endl;
-
-  // look if menu already exists
-  if (_menuDict[path])
-    return _menuDict[path];
-
-  // find parent menu
-  QStringList parGroup;
-  for (unsigned int i=0; i<groups.count()-1; i++)
-    parGroup.append(groups[i]);
-  KPopupMenu *parent = getGroupMenu(parGroup);
-
-  KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+path);
-  if (!group)
+  QStringList subMenus = _modules->submenus(parentPath);
+  for(QStringList::ConstIterator it = subMenus.begin();
+      it != subMenus.end(); ++it)
   {
-     kdWarning() << KCGlobal::baseGroup()+path << " not found!\n";
-     return this;
-  }
- 
-  // create new menu
-  KPopupMenu *menu = new KPopupMenu(parent);
-  connect(menu, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
+     QString path = *it;
+     KServiceGroup::Ptr group = KServiceGroup::group(path);
+     if (!group)
+        continue;
+     
+     // create new menu
+     KPopupMenu *menu = new KPopupMenu(parentMenu);
+     connect(menu, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
 
-  // Item names may contain ampersands. To avoid them being converted to 
-  // accelators, replace them with two ampersands.
-  QString name = group->caption();
-  name.replace("&", "&&");
+     // Item names may contain ampersands. To avoid them being converted to 
+     // accelators, replace them with two ampersands.
+     QString name = group->caption();
+     name.replace("&", "&&");
   
-  parent->insertItem(KGlobal::iconLoader()->loadIcon(group->icon(), KIcon::Desktop, KIcon::SizeSmall)
-                                         , name, menu);
+     parentMenu->insertItem(KGlobal::iconLoader()->loadIcon(group->icon(), KIcon::Desktop, KIcon::SizeSmall)
+                        , name, menu);
 
-  _menuDict.insert(path, menu);
+     fill(menu, path);
+  }
 
-  return menu;
+  ConfigModule *module;
+  QPtrList<ConfigModule> moduleList = _modules->modules(parentPath);
+  for (module=moduleList.first(); module != 0; module=moduleList.next())
+  {
+     // Item names may contain ampersands. To avoid them being converted to 
+     // accelators, replace them with two ampersands.
+     QString name = module->moduleName();
+     name.replace("&", "&&");
+
+     int realid = parentMenu->insertItem(KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall)
+                                     , name, id);
+     _moduleDict.insert(realid, module);
+
+      id++;
+  }
+  
 }
-
 
 void ModuleMenu::moduleSelected(int id)
 {

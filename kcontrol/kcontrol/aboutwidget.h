@@ -26,6 +26,7 @@
 class KCModuleInfo;
 class QPixmap;
 class KPixmap;
+class ConfigModule;
 
 class AboutWidget : public QWidget
 {  
@@ -54,7 +55,7 @@ public:
     void setCategory( QListViewItem* category, const QString& caption);
 
 signals:
-    void moduleSelected(const QString &);
+    void moduleSelected(ConfigModule *);
 
 protected:
     void paintEvent(QPaintEvent*);

@@ -52,7 +52,7 @@ protected:
   void setupActions();
 
 protected slots:
-  void activateModule(const QString& name);
+  void activateModule(ConfigModule *);
   void moduleActivated(ConfigModule *module);
   void categorySelected(QListViewItem *category);
   void newModule(const QString &name, const QString& docPath, const QString &quickhelp);

@@ -88,18 +88,45 @@ void ModuleTreeView::fill()
 {
   clear();
 
-  ConfigModule *module;
-  for (module=_modules->first(); module != 0; module=_modules->next())
-    {
-      ModuleTreeItem *parent = 0;
-      parent = getGroupItem(parent, module->groups());
-      if (parent)
-        new ModuleTreeItem(parent, module);
-      else
-        new ModuleTreeItem(this, module);
-    }
+  QStringList subMenus = _modules->submenus(KCGlobal::baseGroup());
+  for(QStringList::ConstIterator it = subMenus.begin();
+      it != subMenus.end(); ++it)
+  {
+     QString path = *it;
+     ModuleTreeItem*  menu = new ModuleTreeItem(this);
+     menu->setGroup(path);
+     fill(menu, path);
+  }
 
+  ConfigModule *module;
+  QPtrList<ConfigModule> moduleList = _modules->modules(KCGlobal::baseGroup());
+  for (module=moduleList.first(); module != 0; module=moduleList.next())
+  {
+     new ModuleTreeItem(this, module);
+  }
 }
+
+void ModuleTreeView::fill(ModuleTreeItem *parent, const QString &parentPath)
+{
+  QStringList subMenus = _modules->submenus(parentPath);
+  for(QStringList::ConstIterator it = subMenus.begin();
+      it != subMenus.end(); ++it)
+  {
+     QString path = *it;
+     ModuleTreeItem*  menu = new ModuleTreeItem(parent);
+     menu->setGroup(path);
+     fill(menu, path);
+  }
+
+  ConfigModule *module;
+  QPtrList<ConfigModule> moduleList = _modules->modules(parentPath);
+  for (module=moduleList.first(); module != 0; module=moduleList.next())
+  {
+     new ModuleTreeItem(parent, module);
+  }
+}
+
+
 
 QSize ModuleTreeView::sizeHint() const
 {
@@ -144,93 +171,38 @@ void ModuleTreeView::expandItem(QListViewItem *item, QPtrList<QListViewItem> *pa
 */
 void ModuleTreeView::makeVisible(ConfigModule *module)
 {
-  ModuleTreeItem *item;
+  QString path = _modules->findModule(module);
+  if (path.startsWith(KCGlobal::baseGroup()))
+     path = path.mid(KCGlobal::baseGroup().length());
 
-  item = static_cast<ModuleTreeItem*>(firstChild());
+  QStringList groups = QStringList::split('/', path);
 
-  // collapse all
-  //QPtrList<QListViewItem> parents;
-  //expandItem(firstChild(), &parents);
-
+  ModuleTreeItem *item = 0;
   QStringList::ConstIterator it;
-  item =static_cast<ModuleTreeItem*>( firstChild());
-  for (it=module->groups().begin(); it != module->groups().end(); it++)
-    {
-      while (item)
-                {
-                  if (item->tag() == *it)
-                        {
-                          setOpen(item, true);
-                          break;
-                        }
+  for (it=groups.begin(); it != groups.end(); it++)
+  {
+     if (item)
+        item = static_cast<ModuleTreeItem*>(item->firstChild());
+     else
+        item = static_cast<ModuleTreeItem*>(firstChild());
 
-                  item = static_cast<ModuleTreeItem*>(item->nextSibling());
-                }
-    }
+     while (item)
+     {
+        if (item->tag() == *it)
+        {
+           setOpen(item, true);
+           break;
+        }
+        item = static_cast<ModuleTreeItem*>(item->nextSibling());
+     }
+     if (!item)
+        break; // Not found (??)
+  }
 
   // make the item visible
   if (item)
     ensureItemVisible(item);
 }
-
-
-static QString menuPath(const QStringList& groups)
-{
-  return groups.join("/")+"/";
-}
-
-ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStringList& groups)
-{
-  // break recursion if path is empty
-  if (groups.count() == 0)
-    return parent;
-
-  // calculate path
-  QString path = menuPath(groups);
-  //kdDebug(1208) << "Path " << path << endl;
-
-  // look if menu already exists
-  if (_menuDict[path])
-    return _menuDict[path];
-
-  // find parent menu
-  QStringList parGroup;
-  for (unsigned int i=0; i<groups.count()-1; i++)
-    parGroup.append(groups[i]);
-  ModuleTreeItem *mparent = getGroupItem(parent, parGroup);
-
-  // create new menu
-  ModuleTreeItem *menu;
-  if (mparent)
-    menu = new ModuleTreeItem(mparent);
-  else
-    menu = new ModuleTreeItem(this);
-
-  KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+path);
-  QString defName = path.left(path.length()-1);
-  int pos = defName.findRev('/');
-  if (pos >= 0)
-    defName = defName.mid(pos+1);
-  if (group && group->isValid())
-  {
-     menu->setPixmap(0, appIcon(group->icon()));
-     menu->setText(0, " " + group->caption());
-     menu->setTag(defName);
-     menu->setCaption(group->caption());
-  }
-  else
-  {
-     // Should not happen: Installation problem
-     // Let's try to fail softly.
-     menu->setText(0, " " + defName);
-     menu->setTag(defName);
-  }
-
-  _menuDict.insert(path, menu);
-
-  return menu;
-}
-
 
 void ModuleTreeView::slotItemSelected(QListViewItem* item)
 {
@@ -368,3 +340,26 @@ void ModuleTreeItem::paintCell( QPainter * p, const QColorGroup & cg, int column
   QListViewItem::paintCell( p, cg, column, width, align );
 }
 
+
+void ModuleTreeItem::setGroup(const QString &path)
+{     
+  KServiceGroup::Ptr group = KServiceGroup::group(path);
+  QString defName = path.left(path.length()-1);
+  int pos = defName.findRev('/');
+  if (pos >= 0)
+     defName = defName.mid(pos+1);
+  if (group && group->isValid())
+  {
+     setPixmap(0, appIcon(group->icon()));
+     setText(0, " " + group->caption());
+     setTag(defName);
+     setCaption(group->caption());
+  }
+  else
+  {
+     // Should not happen: Installation problem
+     // Let's try to fail softly.
+     setText(0, " " + defName);
+     setTag(defName);
+  }
+}

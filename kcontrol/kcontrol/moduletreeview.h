@@ -50,6 +50,7 @@ public:
   int  maxChildIconWidth() { return _maxChildIconWidth; }
 
   void setPixmap(int column, const QPixmap& pm);
+  void setGroup(const QString &path);
 
 protected:
   void paintCell( QPainter * p, const QColorGroup & cg, int column, int width, int align );
@@ -59,7 +60,6 @@ private:
   QString       _tag;
   QString       _caption;
   int _maxChildIconWidth;
-
 };
 
 class ModuleTreeView : public KListView
@@ -82,16 +82,12 @@ protected slots:
   void slotItemSelected(QListViewItem*);
 
 protected:
- void updateItem(ModuleTreeItem *item, ConfigModule* module); 
-// void expandItem(QListViewItem *item, QPtrList<QListViewItem> *parentList);
- ModuleTreeItem *getGroupItem(ModuleTreeItem *parent, const QStringList& groups);
- void keyPressEvent(QKeyEvent *);
+  void updateItem(ModuleTreeItem *item, ConfigModule* module); 
+  void keyPressEvent(QKeyEvent *);
+  void fill(ModuleTreeItem *parent, const QString &parentPath);
 
 private:
   ConfigModuleList *_modules;
-
-  QDict<ModuleTreeItem> _menuDict;
-
 };
 
 #endif

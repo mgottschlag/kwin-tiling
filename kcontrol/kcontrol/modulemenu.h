@@ -43,33 +43,22 @@ class ModuleMenu : public KPopupMenu
   Q_OBJECT
 
 public:
-
   ModuleMenu(ConfigModuleList *list, QWidget * parent = 0, const char * name = 0);
 
-
 signals:
-
   void moduleActivated(ConfigModule*);
 
-
 private slots:
-
   void moduleSelected(int id);
 
-
 protected:
-
-  KPopupMenu *getGroupMenu(const QStringList &groups);
-
+  void fill(KPopupMenu *parentMenu, const QString &parentPath);
 
 private:
-  
   int id;
 
   ConfigModuleList       *_modules;
   QIntDict<ConfigModule> _moduleDict;
-  QDict<KPopupMenu>      _menuDict;
-
 };
 
 

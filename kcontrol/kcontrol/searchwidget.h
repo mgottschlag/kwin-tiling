@@ -57,7 +57,7 @@ public:
   void populateKeywordList(ConfigModuleList *list);
 
 signals:
-  void moduleSelected(const QString&);
+  void moduleSelected(ConfigModule *);
 
 protected:
   void populateKeyListBox(const QString& regexp);
@@ -73,7 +73,7 @@ private:
   KListBox  *_keyList, *_resultList;
   KLineEdit *_input; 
   QPtrList<KeywordListEntry> _keywords;
-  QStringList _results;
+  QPtrList<ConfigModule> _results;
 };
 
 #endif

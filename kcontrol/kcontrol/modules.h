@@ -22,6 +22,7 @@
 
 #include <kcmoduleinfo.h>
 #include <qobject.h>
+#include <qdict.h>
 
 template<class ConfigModule> class QPtrList;
 class QStringList;
@@ -39,7 +40,7 @@ class ConfigModule : public QObject, public KCModuleInfo
 
 public:
 
-  ConfigModule(const QString& desktopFile, const QString& baseGroup);
+  ConfigModule(const KService::Ptr &s);
   ~ConfigModule();
 
   bool isChanged() { return _changed; };
@@ -90,6 +91,31 @@ public:
   void readDesktopEntries();
   void readDesktopEntriesRecursive(const QString &path);
 
+  /**
+   * Returns all submenus of the submenu identified by path
+   */
+  QPtrList<ConfigModule> modules(const QString &path);
+  
+  /**
+   * Returns all modules of the submenu identified by path
+   */
+  QStringList submenus(const QString &path);
+
+  /**
+   * Returns the path of the submenu the module is in
+   */
+  QString findModule(ConfigModule *module);
+ 
+protected:
+
+  class Menu
+  {
+  public:
+    QPtrList<ConfigModule> modules;
+    QStringList submenus;
+  };
+
+  QDict<Menu> subMenus;
 };
 
 #endif

@@ -98,8 +98,8 @@ TopLevel::TopLevel(const char* name)
   // search tab
   _searchtab = new SearchWidget(_tab);
   _searchtab->populateKeywordList(_modules);
-  connect(_searchtab, SIGNAL(moduleSelected(const QString&)),
-                  this, SLOT(activateModule(const QString&)));
+  connect(_searchtab, SIGNAL(moduleSelected(ConfigModule *)),
+                  this, SLOT(activateModule(ConfigModule *)));
 
   _tab->addTab(_searchtab, i18n("Sear&ch"));
 
@@ -132,8 +132,8 @@ TopLevel::TopLevel(const char* name)
   AboutWidget::initPixmaps();
 
   AboutWidget *aw = new AboutWidget(this);
-  connect( aw, SIGNAL( moduleSelected( const QString & ) ),
-           SLOT( activateModule( const QString & ) ) );
+  connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
+           SLOT( activateModule( ConfigModule * ) ) );
   _dock->setBaseWidget(aw);
 
   // set the main view
@@ -154,8 +154,8 @@ TopLevel::TopLevel(const char* name)
   if (KCGlobal::isInfoCenter())
   {
       AboutWidget *aw = new AboutWidget( this, 0, _indextab->firstTreeViewItem());
-      connect( aw, SIGNAL( moduleSelected( const QString & ) ),
-               SLOT( activateModule( const QString & ) ) );
+      connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
+               SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
   }
 }
@@ -326,7 +326,7 @@ void TopLevel::changedModule(ConfigModule *changed)
 void TopLevel::moduleActivated(ConfigModule *module)
 {
     if (!module) return;
-    activateModule(module->fileName());
+    activateModule(module);
 }
 
 void TopLevel::categorySelected(QListViewItem *category)
@@ -366,8 +366,8 @@ void TopLevel::categorySelected(QListViewItem *category)
   else
   {
     AboutWidget *aw = new AboutWidget( this, 0, firstItem, caption );
-    connect( aw, SIGNAL( moduleSelected( const QString & ) ),
-             SLOT( activateModule( const QString & ) ) );
+    connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
+             SLOT( activateModule( ConfigModule * ) ) );
     _dock->setBaseWidget( aw );
   }
 }
@@ -414,6 +414,40 @@ void TopLevel::showModule(QString desktopFile)
   }
 }
 
+void TopLevel::activateModule(ConfigModule *mod)
+{
+  // tell the index to display the module
+  _indextab->makeVisible(mod);
+
+  // tell the index to mark this module as loaded
+  _indextab->makeSelected(mod);
+
+  // dock it
+  if (!_dock->dockModule(mod))
+  {
+     _indextab->makeVisible(_active);
+     _indextab->makeSelected(_active);
+     return;
+  }
+
+  _active=mod;
+
+  if (mod->aboutData())
+  {
+     about_module->setText(i18n("Help menu->about <modulename>", "About %1").arg(
+                             handleAmpersand( mod->moduleName())));
+     about_module->setIcon(mod->icon());
+     about_module->setEnabled(true);
+  }
+  else
+  {
+     about_module->setText(i18n("About Current Module"));
+     about_module->setIconSet(QIconSet());
+     about_module->setEnabled(false);
+  }
+}
+
+#if 0
 void TopLevel::activateModule(const QString& name)
 {
   kdDebug(1208) << "activate: " << name << endl;
@@ -421,39 +455,12 @@ void TopLevel::activateModule(const QString& name)
   {
      if (mod->fileName() == name)
      {
-        // tell the index to display the module
-        _indextab->makeVisible(mod);
-
-        // tell the index to mark this module as loaded
-        _indextab->makeSelected(mod);
-
-        // dock it
-        if (!_dock->dockModule(mod))
-        {
-           _indextab->makeVisible(_active);
-           _indextab->makeSelected(_active);
-           break;
-        }
-
-        _active=mod;
-
-        if (mod->aboutData())
-        {
-           about_module->setText(i18n("Help menu->about <modulename>", "About %1").arg(
-               handleAmpersand( mod->moduleName())));
-           about_module->setIcon(mod->icon());
-           about_module->setEnabled(true);
-        }
-        else
-        {
-           about_module->setText(i18n("About Current Module"));
-           about_module->setIconSet(QIconSet());
-           about_module->setEnabled(false);
-        }
-        break;
+        activateModule(mod);
+        return;
      }
   }
 }
+#endif
 
 void TopLevel::deleteDummyAbout()
 {
