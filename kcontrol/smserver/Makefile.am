@@ -16,4 +16,4 @@ messages: rc.cpp
 
 xdg_apps_DATA = kcmsmserver.desktop
 
-EXTRA_DIST = $(kcmsmserver_data_DATA)
+EXTRA_DIST = $(xdg_apps_DATA)

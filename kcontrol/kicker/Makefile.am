@@ -32,4 +32,4 @@ install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/panel.desktop
 
-EXTRA_DIST = $(kcmkicker_data_DATA)
+EXTRA_DIST = $(xdg_apps_DATA)

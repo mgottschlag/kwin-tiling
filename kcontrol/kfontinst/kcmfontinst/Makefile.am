@@ -13,7 +13,7 @@ kcm_fontinst_la_SOURCES = \
         RenameJob.cpp
 
 EXTRA_DIST = \
-	$(desktop_DATA) \
+	$(xdg_apps_DATA) \
 	KCmFontInst.h \
         KFileFontIconView.h \
         KFileFontView.h \
