@@ -118,8 +118,8 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
   item = static_cast<ModuleTreeItem*>(firstChild());
 
   // collapse all
-  QList<QListViewItem> parents;
-  expandItem(firstChild(), &parents);
+  //QList<QListViewItem> parents;
+  //expandItem(firstChild(), &parents);
 
   QStringList::ConstIterator it;
   item =static_cast<ModuleTreeItem*>( firstChild());
@@ -197,8 +197,9 @@ void ModuleTreeView::slotItemSelected(QListViewItem* item)
       return;
     }
 
-  if (item->isOpen())
-      setOpen(item, false);
+  setOpen(item, !item->isOpen());
+
+  /*
   else
     {
       QList<QListViewItem> parents;
@@ -220,6 +221,7 @@ void ModuleTreeView::slotItemSelected(QListViewItem* item)
       //int y = item->itemPos() + offset;
       //QCursor::setPos(mapToGlobal(QPoint(x, y)));
     }
+  */
 }
 
 void ModuleTreeView::keyPressEvent(QKeyEvent *e)
