@@ -170,6 +170,10 @@ void SplashInstaller::addNewTheme(const KURL &srcURL)
      filename = filename.left(i)+filename.mid(i).lower();
   url.setPath(locateLocal("tmp",filename));
 
+  // Remove file from temporary directory if it aleady exists - usually the result of a failed install.
+  if ( KIO::NetAccess::exists( url, true, 0 ) )
+    KIO::NetAccess::del( url, 0 );
+
   bool rc = KIO::NetAccess::copy(srcURL, url, 0);
   if (!rc)
   {
@@ -190,6 +194,7 @@ void SplashInstaller::addNewTheme(const KURL &srcURL)
   // TODO: Warn the user if we overwrite something.
   ad->copyTo(locateLocal("ksplashthemes","/"));
   tarFile.close();
+  KIO::NetAccess::del( url, 0 );
 
   // TODO: Update only the entries from this installation.
   readThemesList();
