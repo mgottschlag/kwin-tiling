@@ -45,6 +45,8 @@ void extensionInfo::load()
         _customSizeMin = 24;
         _customSizeMax = 128;
         _customSize = 58;
+        _showLeftHB     = false;
+        _showRightHB    = true;
     }
     else
     {
