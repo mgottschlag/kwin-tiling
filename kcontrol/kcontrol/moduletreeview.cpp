@@ -68,10 +68,11 @@ ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const c
   setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
   addColumn("");
   setAllColumnsShowFocus(true);
+  setRootIsDecorated(true);
   header()->hide();
 
   new ModuleTreeWhatsThis( this );
-  
+
   connect(this, SIGNAL(executed(QListViewItem*)),
 		  this, SLOT(slotItemSelected(QListViewItem*)));
 }
