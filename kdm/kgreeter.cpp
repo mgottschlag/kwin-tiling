@@ -852,8 +852,8 @@ GreetUser(
      verify = verify2;
      greet = greet2;
      
-     int argc = 4;
-     const char* argv[5] = {"kdm", "-display", NULL, NULL, NULL};
+     int argc = 3;
+     const char* argv[5] = {"kdm", "-display", NULL};
  
      struct sigaction sig;
  
