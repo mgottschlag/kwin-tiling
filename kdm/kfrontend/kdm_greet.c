@@ -401,7 +401,7 @@ main (int argc, char **argv)
 	return 1;
 
     if ((debugLevel = GRecvInt ()) & DEBUG_GDB)
-	sleep (100);
+	sleep (15);
 
     dname = GetCfgStr (C_name);
     dgrabServer = GetCfgInt (C_grabServer);

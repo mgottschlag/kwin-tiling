@@ -1063,7 +1063,7 @@ int main(int argc, char **argv)
         return 1;
 
     if ((debugLevel = GRecvInt ()) & DEBUG_GDB)
-	sleep (100);
+	sleep (15);
 
 /*Debug ("parsing command line\n");*/
     for (ap = 1; ap < argc; ap++) {

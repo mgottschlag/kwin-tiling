@@ -239,7 +239,7 @@ main (int argc, char **argv)
 
     if (debugLevel & DEBUG_GDB) {
 	AttachGdb (progpath, getpid());
-	sleep (100);
+	sleep (15);
     }
 
     /*
