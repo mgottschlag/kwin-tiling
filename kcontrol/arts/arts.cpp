@@ -233,7 +233,7 @@ void KArtsModule::GetSettings( void )
 
 void KArtsModule::saveParams( void )
 {
-	QString dev = customDevice->isChecked()?deviceName->text():"";
+	QString dev = customDevice->isChecked()?deviceName->text():QString("");
 	int rate = customRate->isChecked()?samplingRate->text().toLong():0;
 
     config->setGroup("Arts");
