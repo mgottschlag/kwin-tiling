@@ -8,12 +8,14 @@
 **
 ** Copyright (C) 1998 by Mark Donohoe
 ** Copyright (C) 1999 by Dirk A. Mueller (reworked for KDE 2.0)
-** Copyright (C) 200 by Matthias Ettrich (add support for GTK applications )
+** Copyright (C) 2001 by Matthias Ettrich (add support for GTK applications )
+** Copyright (C) 2001 by Waldo Bastian <bastian@kde.org>
 ** This application is freely distributable under the GNU Public License.
 **
 *****************************************************************************/
 
 #include <stdlib.h>
+#include <string.h>
 
 #include <qdir.h>
 #include <qdatastream.h>
@@ -31,6 +33,8 @@
 #include <kstddirs.h>
 #include <kprocess.h>
 #include <ktempfile.h>
+
+#include "krdb.h"
 
 enum FontStyle { Normal, Bold, Italic, Fixed };
 
@@ -87,15 +91,21 @@ static void addFontDef(QString& s, const char* n, const QFont& f, FontStyle fs, 
 
 // -----------------------------------------------------------------------------
 
-static void copyFile(QFile& tmp, QString const& filename)
+static void copyFile(QFile& tmp, QString const& filename, bool copyFonts, bool copyColors)
 {
   QFile f( filename );
-  if ( f.open(IO_ReadOnly|IO_Raw) ) {
+  if ( f.open(IO_ReadOnly) ) {
       QCString buf( 8192 );
       while ( !f.atEnd() ) {
-          int read = f.readBlock( buf.data(), buf.size() );
+          int read = f.readLine( buf.data(), buf.size() );
           if ( read > 0 )
+          {
+              if (!copyFonts && strstr(buf.data(), "FONT"))
+                 continue;
+              if (!copyColors && (strstr(buf.data(), "GROUND") || strstr(buf.data(), "LIGHT")))
+                 continue; 
               tmp.writeBlock( buf.data(), read );
+          }
       }
   }
 }
@@ -112,7 +122,7 @@ static QString color( const QColor& col )
     return QString( "{ %1, %2, %3 }" ).arg( item( col.red() ) ).arg( item( col.green() ) ).arg( item( col.blue() ) );
 }
 
-static void createGtkrc( const QFont& font, const QColorGroup& cg )
+static void createGtkrc( bool exportFonts, const QFont& font, bool exportColors, const QColorGroup& cg )
 {
     QCString filename = ::getenv("HOME");
     filename += "/.gtkrc-kde";
@@ -166,43 +176,48 @@ static void createGtkrc( const QFont& font, const QColorGroup& cg )
 
 // -----------------------------------------------------------------------------
 
-void runRdb() {
+void runRdb(bool exportFonts, bool exportColors) {
 
   KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
   QColorGroup cg = kapp->palette().normal();
   if ( !kapp->kstyle() || !kapp->kstyle()->inherits("KLegacyStyle") )
-      createGtkrc( kapp->font(), cg );
+      createGtkrc( exportFonts, kapp->font(), exportColors, cg );
 
   QString preproc;
 
-  addColorDef(preproc, "FOREGROUND"         , cg.foreground());
-  QColor backCol = cg.background();
-  addColorDef(preproc, "BACKGROUND"         , backCol);
-  addColorDef(preproc, "HIGHLIGHT"          , backCol.light(100+(2*KGlobalSettings::contrast()+4)*16/1));
-  addColorDef(preproc, "LOWLIGHT"           , backCol.dark(100+(2*KGlobalSettings::contrast()+4)*10));
-  addColorDef(preproc, "SELECT_BACKGROUND"  , cg.highlight());
-  addColorDef(preproc, "SELECT_FOREGROUND"  , cg.highlightedText());
-  addColorDef(preproc, "WINDOW_BACKGROUND"  , cg.base());
-  addColorDef(preproc, "WINDOW_FOREGROUND"  , cg.foreground());
-  addColorDef(preproc, "INACTIVE_BACKGROUND", KGlobalSettings::inactiveTitleColor());
-  addColorDef(preproc, "INACTIVE_FOREGROUND", KGlobalSettings::inactiveTitleColor());
-  addColorDef(preproc, "ACTIVE_BACKGROUND"  , KGlobalSettings::activeTitleColor());
-  addColorDef(preproc, "ACTIVE_FOREGROUND"  , KGlobalSettings::activeTitleColor());
+  if (exportColors)
+  {
+    addColorDef(preproc, "FOREGROUND"         , cg.foreground());
+    QColor backCol = cg.background();
+    addColorDef(preproc, "BACKGROUND"         , backCol);
+    addColorDef(preproc, "HIGHLIGHT"          , backCol.light(100+(2*KGlobalSettings::contrast()+4)*16/1));
+    addColorDef(preproc, "LOWLIGHT"           , backCol.dark(100+(2*KGlobalSettings::contrast()+4)*10));
+    addColorDef(preproc, "SELECT_BACKGROUND"  , cg.highlight());
+    addColorDef(preproc, "SELECT_FOREGROUND"  , cg.highlightedText());
+    addColorDef(preproc, "WINDOW_BACKGROUND"  , cg.base());
+    addColorDef(preproc, "WINDOW_FOREGROUND"  , cg.foreground());
+    addColorDef(preproc, "INACTIVE_BACKGROUND", KGlobalSettings::inactiveTitleColor());
+    addColorDef(preproc, "INACTIVE_FOREGROUND", KGlobalSettings::inactiveTitleColor());
+    addColorDef(preproc, "ACTIVE_BACKGROUND"  , KGlobalSettings::activeTitleColor());
+    addColorDef(preproc, "ACTIVE_FOREGROUND"  , KGlobalSettings::activeTitleColor());
+  }
 
-  addFontDef(preproc, "FONT"                , KGlobalSettings::generalFont(), Normal);
-  addFontDef(preproc, "BOLD_FONT"           , KGlobalSettings::generalFont(), Bold);
-  addFontDef(preproc, "ITALIC_FONT"         , KGlobalSettings::generalFont(), Italic);
-  addFontDef(preproc, "FIXED_FONT"          , KGlobalSettings::fixedFont(), Fixed);
-  // Fontlist
-  preproc += "#define FONTLIST FONT,BOLD_FONT=BOLD,ITALIC_FONT=ITALIC\n";
+  if (exportFonts)
+  {
+    addFontDef(preproc, "FONT"                , KGlobalSettings::generalFont(), Normal);
+    addFontDef(preproc, "BOLD_FONT"           , KGlobalSettings::generalFont(), Bold);
+    addFontDef(preproc, "ITALIC_FONT"         , KGlobalSettings::generalFont(), Italic);
+    addFontDef(preproc, "FIXED_FONT"          , KGlobalSettings::fixedFont(), Fixed);
+    // Fontlist
+    preproc += "#define FONTLIST FONT,BOLD_FONT=BOLD,ITALIC_FONT=ITALIC\n";
 
-  addFontDef(preproc, "FONT_8BIT"           , KGlobalSettings::generalFont(), Normal, true);
-  addFontDef(preproc, "BOLD_FONT_8BIT"      , KGlobalSettings::generalFont(), Bold, true);
-  addFontDef(preproc, "ITALIC_FONT_8BIT"    , KGlobalSettings::generalFont(), Italic, true);
-  addFontDef(preproc, "FIXED_FONT_8BIT"     , KGlobalSettings::fixedFont(), Fixed, true);
-  // Fontlist
-  preproc += "#define FONTLIST_8BIT FONT_8BIT,BOLD_FONT_8BIT=BOLD,ITALIC_FONT_8BIT=ITALIC\n";
-
+    addFontDef(preproc, "FONT_8BIT"           , KGlobalSettings::generalFont(), Normal, true);
+    addFontDef(preproc, "BOLD_FONT_8BIT"      , KGlobalSettings::generalFont(), Bold, true);
+    addFontDef(preproc, "ITALIC_FONT_8BIT"    , KGlobalSettings::generalFont(), Italic, true);
+    addFontDef(preproc, "FIXED_FONT_8BIT"     , KGlobalSettings::fixedFont(), Fixed, true);
+    // Fontlist
+    preproc += "#define FONTLIST_8BIT FONT_8BIT,BOLD_FONT_8BIT=BOLD,ITALIC_FONT_8BIT=ITALIC\n";
+  }
   //---------------------------------------------------------------
 
   QStringList list;
@@ -233,17 +248,17 @@ void runRdb() {
   tmp.writeBlock( preproc.latin1(), preproc.length() );
 
   for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
-    copyFile(tmp, locate("appdefaults", *it ));
+    copyFile(tmp, locate("appdefaults", *it ), exportFonts, exportColors);
 
   // very primitive support for  ~/.Xdefaults by appending it
-  copyFile(tmp, QDir::homeDirPath() + "/.Xdefaults");
+  copyFile(tmp, QDir::homeDirPath() + "/.Xdefaults", true, true);
 
   tmpFile.close();
 
   KProcess proc;
 
   proc.setExecutable("xrdb");
-  proc << "-merge" << tmpFile.name();
+  proc << tmpFile.name();
 
   proc.start( KProcess::Block, KProcess::Stdin );
 

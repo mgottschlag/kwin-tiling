@@ -47,14 +47,13 @@
 #include <kmessagebox.h>
 
 #include "general.h"
+#include "krdb.h"
 
 #include <kdebug.h>
 
 #include <X11/Xlib.h>
 
 /**** DLL Interface for kcontrol ****/
-
-extern void runRdb();
 
 void applyGtkStyles(bool active)
 {
@@ -99,9 +98,11 @@ extern "C" {
     void init_style() {
         KConfig config("kcmdisplayrc", true, true);
         config.setGroup("X11");
-        if (config.readBoolEntry( "useResourceManager", true ))
+        bool exportKDEFonts = config.readBoolEntry("exportKDEFonts", true);
+        bool exportKDEColors = config.readBoolEntry("exportKDEColors", true);
+        if (exportKDEFonts || exportKDEColors)
         {
-	  runRdb();
+	  runRdb(exportKDEFonts, exportKDEColors);
           applyGtkStyles(true);
         }
         else
@@ -292,7 +293,8 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     m_bToolbarsDirty = false;
     m_bEffectsDirty = false;
     m_bMacStyleDirty = false;
-    useRM = true;
+    m_bExportFonts = true;
+    m_bExportColors = true;
     macStyle = false;
 
     config = new KConfig("kcmdisplayrc");
@@ -542,7 +544,18 @@ void KGeneral::slotChangeEffectStyle()
 
 void KGeneral::slotUseResourceManager()
 {
-    useRM = cbRes->isChecked();
+    switch(cbRes->state()) {
+    case QButton::On:
+        m_bExportFonts = true;
+        m_bExportColors = true;
+        break;
+    case QButton::Off:
+        m_bExportFonts = false;
+        m_bExportColors = false;
+        break;
+    default:
+        return;
+    }
 
     m_bChanged = true;
     emit changed(true);
@@ -582,7 +595,8 @@ void KGeneral::readSettings()
     tbMoveTransparent = config->readBoolEntry( "TransparentMoving", true);
 
     config->setGroup("X11");
-    useRM = config->readBoolEntry( "useResourceManager", true );
+    m_bExportFonts = config->readBoolEntry( "exportKDEFonts", true );
+    m_bExportColors = config->readBoolEntry( "exportKDEColors", true );
 }
 
 void KGeneral::slotRunImporter()
@@ -595,7 +609,11 @@ void KGeneral::slotRunImporter()
 
 void KGeneral::showSettings()
 {
-    cbRes->setChecked(useRM);
+    if (m_bExportFonts != m_bExportColors)
+       cbRes->setNoChange();
+    else
+       cbRes->setChecked(m_bExportFonts);
+
     cbMac->setChecked(macStyle);
 
     tbHilite->setChecked(tbUseHilite);
@@ -630,7 +648,8 @@ void KGeneral::showSettings()
 
 void KGeneral::defaults()
 {
-    useRM = true;
+    m_bExportFonts = true;
+    m_bExportColors = true;
     macStyle = false;
     tbUseText = "IconOnly";
     tbUseHilite = true;
@@ -698,12 +717,15 @@ void KGeneral::save()
         true, true);
 
     config->setGroup("X11");
-    config->writeEntry("useResourceManager", useRM);
+    config->writeEntry("exportKDEFonts", m_bExportFonts);
+    config->writeEntry("exportKDEColors", m_bExportColors);
     config->sync();
+
+    bool useRM = m_bExportFonts || m_bExportColors;
 
     if (useRM) {
       QApplication::setOverrideCursor( waitCursor );
-      runRdb();
+      runRdb(m_bExportFonts, m_bExportColors);
       QApplication::restoreOverrideCursor();
     }
     applyGtkStyles(useRM);
