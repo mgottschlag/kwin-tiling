@@ -37,9 +37,8 @@ extern "C" {
 #include <X11/Xatom.h>
 }
 
-#include "dm.h"
-
 extern "C" {
+#include "dm.h"
 #include    <X11/Xdmcp.h>
 }
 
@@ -74,14 +73,15 @@ struct _app_resources {
 extern "C" {
 extern int XdmcpARRAY8Equal(ARRAY8 *, ARRAY8 *);
 extern int XdmcpAllocARRAY8 (ARRAY8 *, int);
-extern int XdmcpDisposeARRAY8(ARRAY8 *);
+extern void XdmcpDisposeARRAY8(ARRAY8 *);
 extern int XdmcpFill(int , XdmcpBuffer *, char *, int *);
 extern int XdmcpFlush(int, XdmcpBuffer *, void *, int );
 extern int XdmcpReadARRAY8(XdmcpBuffer *, ARRAY8 *);
 extern int XdmcpReadHeader(XdmcpBuffer *, XdmcpHeader *);
 extern int XdmcpWriteARRAY8(XdmcpBuffer *, ARRAY8 *);
 extern int XdmcpWriteARRAYofARRAY8(XdmcpBuffer *, ARRAYofARRAY8 *);
-extern int XdmcpWriteCARD16(XdmcpBuffer *, CARD16);
+  /*extern int XdmcpWriteCARD16(XdmcpBuffer *, CARD16);*/
+  extern int XdmcpWriteCARD16(/*XdmcpBuffer *, CARD16*/);
 extern int XdmcpWriteHeader(XdmcpBuffer *, XdmcpHeader *);
 }
 
