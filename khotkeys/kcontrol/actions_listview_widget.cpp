@@ -84,27 +84,19 @@ void Actions_listview_widget::set_current_action( Action_listview_item* item_P )
     emit current_action_changed();
     }
 
-// in_group_P = don't put next to the current, but in it (it must be a group)    
-void Actions_listview_widget::new_action( Action_data_base* data_P, bool in_group_P )
+void Actions_listview_widget::new_action( Action_data_base* data_P )
     {
-    Action_listview_item* tmp;
-    if( in_group_P )
+    QListViewItem* parent = NULL;
+    if( current_action() != NULL )
         {
-        assert( current_action() != NULL
-            && dynamic_cast< Action_data_group* >( current_action()->data()) != NULL );
-        tmp = create_item( current_action(), NULL, data_P );
-        current_action()->setOpen( true );
-        }
-    else
-        {
-        if( current_action() == NULL )
-            tmp = create_item( NULL, NULL, data_P );
-        else if( current_action()->parent() == NULL )
-            tmp = create_item( NULL, current_action(), data_P );
+        if( dynamic_cast< Action_data_group* >( current_action()->data()) != NULL )
+            parent = current_action();
         else
-            tmp = create_item( current_action()->parent(),
-                current_action(), data_P );
+            parent = current_action()->parent();
         }
+    if( parent )
+        parent->setOpen( true );
+    Action_listview_item* tmp = create_item( parent, NULL, data_P );
     recent_item = saved_current_item;
     saved_current_item = tmp;
     actions_listview->setSelected( tmp, true );

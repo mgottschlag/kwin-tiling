@@ -198,17 +198,7 @@ void Module::new_action()
 //    check_tree( actions_root());
     Action_data_group* parent = current_action_data() != NULL
         ? dynamic_cast< Action_data_group* >( current_action_data()) : NULL;
-    bool in_group = ( parent != NULL );
-    if( in_group )
-        {
-        int ret = KMessageBox::questionYesNoCancel( NULL,
-            i18n( "A group is selected.\nAdd the new action in this selected group?" ));
-        if( ret == KMessageBox::Cancel )
-            return;
-        else if( ret == KMessageBox::No )
-            in_group = false;
-        }
-    if( !in_group )
+    if( parent == NULL )
         {
         if( current_action_data() != NULL )
             parent = current_action_data()->parent();
@@ -217,7 +207,7 @@ void Module::new_action()
         }
     Action_data_base* item = new Generic_action_data( parent, i18n( "New Action" ), "",
         new Trigger_list( "" ), new Condition_list( "", NULL ), new Action_list( "" ), true );
-    actions_listview_widget->new_action( item, in_group );
+    actions_listview_widget->new_action( item );
 //    check_tree( actions_root());
     set_new_current_action( false );
     }
@@ -229,17 +219,7 @@ void Module::new_action_group()
 //    check_tree( actions_root());
     Action_data_group* parent = current_action_data() != NULL
         ? dynamic_cast< Action_data_group* >( current_action_data()) : NULL;
-    bool in_group = ( parent != NULL );
-    if( in_group )
-        {
-        int ret = KMessageBox::questionYesNoCancel( NULL,
-            i18n( "A group is selected.\nAdd the new action group in this selected group?" ));
-        if( ret == KMessageBox::Cancel )
-            return;
-        else if( ret == KMessageBox::No )
-            in_group = false;
-        }
-    if( !in_group )
+    if( parent == NULL )
         {
         if( current_action_data() != NULL )
             parent = current_action_data()->parent();
@@ -248,7 +228,7 @@ void Module::new_action_group()
         }
     Action_data_base* item = new Action_data_group( parent, i18n( "New Action Group" ), "",
         new Condition_list( "", NULL ), Action_data_group::SYSTEM_NONE, true );
-    actions_listview_widget->new_action( item, in_group );
+    actions_listview_widget->new_action( item );
 //    check_tree( actions_root());
     set_new_current_action( false );
     }

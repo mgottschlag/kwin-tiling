@@ -38,7 +38,7 @@ class Actions_listview_widget
         void action_name_changed( const QString& name_P );
         void clear();
         void build_up();
-        void new_action( Action_data_base* data_P, bool in_group_P );
+        void new_action( Action_data_base* data_P );
         void delete_action();
     private:
         Action_listview_item* create_item( QListViewItem* parent_P, QListViewItem* after_P, Action_data_base* data_P );
