@@ -218,78 +218,6 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   tab->addTab(keys, i18n("&Keyboard"));
 
-  // -----------------------------------------------------
-
-
-
-  // mouse settings ---------------------------------------
-  QWidget *mouse = new QWidget(this);
-
-  vbox = new QVBoxLayout(mouse, 6,6);
-
-  grp = new QGroupBox(i18n("Mouse Navigation"), mouse);
-  vbox->addWidget(grp);
-
-  vvbox = new QVBoxLayout(grp, 6,6);
-  vvbox->addSpacing(grp->fontMetrics().height());
-
-  mouseKeys = new QCheckBox(i18n("&Move mouse with keyboard (using the Num pad)"), grp);
-  vvbox->addWidget(mouseKeys);
-
-  hbox = new QHBoxLayout(vvbox, 6);
-  hbox->addSpacing(24);
-  mk_delay = new KIntNumInput(grp);
-  mk_delay->setLabel(i18n("&Acceleration delay:"), AlignVCenter);
-  mk_delay->setSuffix(i18n(" msec"));
-  mk_delay->setRange(1, 1000, 50);
-  hbox->addWidget(mk_delay);
-
-  hbox = new QHBoxLayout(vvbox, 6);
-  hbox->addSpacing(24);
-  mk_interval = new KIntNumInput(mk_delay, 0, grp);
-  mk_interval->setLabel(i18n("&Repeat interval:"), AlignVCenter);
-  mk_interval->setSuffix(i18n(" msec"));
-  mk_interval->setRange(1, 1000, 10);
-  hbox->addWidget(mk_interval);
-
-  hbox = new QHBoxLayout(vvbox, 6);
-  hbox->addSpacing(24);
-  mk_time_to_max = new KIntNumInput(mk_interval, 0, grp);
-  mk_time_to_max->setLabel(i18n("Acceleration &time:"), AlignVCenter);
-  mk_time_to_max->setRange(1, 5000, 250);
-  hbox->addWidget(mk_time_to_max);
-
-  hbox = new QHBoxLayout(vvbox, 6);
-  hbox->addSpacing(24);
-  mk_max_speed = new KIntNumInput(mk_time_to_max, 0, grp);
-  mk_max_speed->setLabel(i18n("&Maximum speed:"), AlignVCenter);
-  mk_max_speed->setRange(1, 1000, 10);
-  hbox->addWidget(mk_max_speed);
-
-  hbox = new QHBoxLayout(vvbox, 6);
-  hbox->addSpacing(24);
-  mk_curve = new KIntNumInput(mk_max_speed, 0, grp);
-  mk_curve->setLabel(i18n("Acceleration &profile:"), AlignVCenter);
-  mk_curve->setRange(-1000, 1000, 100);
-  hbox->addWidget(mk_curve);
-
-  connect(mouseKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
-  connect(mouseKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
-  connect(mk_delay, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
-  connect(mk_interval, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
-  connect(mk_time_to_max, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
-  connect(mk_max_speed, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
-  connect(mk_curve, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
-
-  vbox->addStretch();
-
-  tab->addTab(mouse, i18n("&Mouse"));
-
-  // -----------------------------------------------------
-
-
-  vbox->addStretch();
-
   load();
 }
 
@@ -353,14 +281,6 @@ void KAccessConfig::load()
   bounceKeysDelay->setValue(config->readNumEntry("BounceKeysDelay", 500));
 
 
-  config->setGroup("Mouse");
-  mouseKeys->setChecked(config->readBoolEntry("MouseKeys", false));
-  mk_delay->setValue(config->readNumEntry("MKDelay", 160));
-  mk_interval->setValue(config->readNumEntry("MKInterval", 5));
-  mk_time_to_max->setValue(config->readNumEntry("MKTimeToMax", 1000));
-  mk_max_speed->setValue(config->readNumEntry("MKMaxSpeed", 500));
-  mk_curve->setValue(config->readNumEntry("MKCurve", 0));
-
   delete config;
 
   checkAccess();
@@ -398,15 +318,6 @@ void KAccessConfig::save()
   config->writeEntry("BounceKeysDelay", bounceKeysDelay->value());
 
 
-  config->setGroup("Mouse");
-
-  config->writeEntry("MouseKeys", mouseKeys->isChecked());
-  config->writeEntry("MKDelay", mk_delay->value());
-  config->writeEntry("MKInterval", mk_interval->value());
-  config->writeEntry("MKTimeToMax", mk_time_to_max->value());
-  config->writeEntry("MKMaxSpeed", mk_max_speed->value());
-  config->writeEntry("MKCurve", mk_curve->value());
-
   config->sync();
   delete config;
 
@@ -438,13 +349,6 @@ void KAccessConfig::defaults()
 
   stickyKeys->setChecked(true);
   stickyKeysLock->setChecked(true);
-
-  mouseKeys->setChecked(false);
-  mk_delay->setValue(160);
-  mk_interval->setValue(5);
-  mk_time_to_max->setValue(1000);
-  mk_max_speed->setValue(500);
-  mk_curve->setValue(0);
 
   checkAccess();
 
@@ -483,12 +387,6 @@ void KAccessConfig::checkAccess()
   slowKeysDelay->setEnabled(slowKeys->isChecked());
 
   bounceKeysDelay->setEnabled(bounceKeys->isChecked());
-
-  mk_delay->setEnabled(mouseKeys->isChecked());
-  mk_interval->setEnabled(mouseKeys->isChecked());
-  mk_time_to_max->setEnabled(mouseKeys->isChecked());
-  mk_max_speed->setEnabled(mouseKeys->isChecked());
-  mk_curve->setEnabled(mouseKeys->isChecked());
 }
 
 
@@ -515,11 +413,6 @@ extern "C"
     if (config->readBoolEntry("ArtsBell", false))
       run = true;
     if (config->readBoolEntry("VisibleBell", false))
-      run = true;
-
-    config->setGroup("Mouse");
-
-    if (config->readBoolEntry("MouseKeys", false))
       run = true;
 
     delete config;
