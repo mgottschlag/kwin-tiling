@@ -50,7 +50,6 @@ class PanelTab : public QWidget
  protected slots:
   void position_clicked(int);
   void size_clicked(int);
-  void move_clicked(int);
   void show_hbs_clicked();
   void hbs_input_changed(int);
   void ah_clicked();
@@ -74,11 +73,6 @@ class PanelTab : public QWidget
   QGroupBox    *hb_group;
   KIntNumInput *hb_input;
   QCheckBox    *show_hbs, *highlight_hbs;
-
-  // move mode group
-  QButtonGroup *move_group;
-  QRadioButton *move_buttons[2];
-  enum MoveMode { Free = 0, Fixed } movemode; 
 
   // auto-hide group
   QGroupBox    *ah_group;

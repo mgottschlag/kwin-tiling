@@ -44,7 +44,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
 {
   int i;
 
-  layout = new QGridLayout(this, 4, 2, 
+  layout = new QGridLayout(this, 3, 2, 
 			   KDialog::marginHint(),
 			   KDialog::spacingHint());
   
@@ -69,7 +69,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
 
   for (i = 0; i < 4; i++)
 	vbox->addWidget(pos_buttons[i]);
-  layout->addMultiCellWidget(pos_group, 0, 1, 0, 0);
+  layout->addWidget(pos_group, 0, 0);
 
   // size button group
   size_group = new QButtonGroup(i18n("&Size"), this);
@@ -90,47 +90,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
 
   for (i = 0; i < 3; i++)
 	vbox->addWidget(size_buttons[i]);
-  layout->addMultiCellWidget(size_group, 2, 3, 0, 0);
-
-  // move mode group
-  move_group = new QButtonGroup(i18n("&Move Mode"), this);
-
-  vbox = new QVBoxLayout(move_group, KDialog::marginHint(),
-                         KDialog::spacingHint());
-  vbox->addSpacing(fontMetrics().lineSpacing());
-
-  move_buttons[0] = new QRadioButton( i18n("&Position switching."), move_group );
-  move_buttons[1] = new QRadioButton( i18n("Other applets are &fixed."), move_group );
-  connect(move_group, SIGNAL(clicked(int)), SLOT(move_clicked(int)));
-
-  for (i = 0; i < 2; i++)
-	vbox->addWidget(move_buttons[i]);
-
-  layout->addWidget(move_group, 0, 1);
-
-  // auto-hide group
-  ah_group = new QButtonGroup(i18n("&Auto-Hide Panel"), this);
-
-  vbox = new QVBoxLayout(ah_group, KDialog::marginHint(),
-                         KDialog::spacingHint());
-  vbox->addSpacing(fontMetrics().lineSpacing());
-
-  ah_cb = new QCheckBox(i18n("Enabled"), ah_group);
-  connect(ah_cb, SIGNAL(clicked()), SLOT(ah_clicked()));
-  vbox->addWidget(ah_cb);
-  QWhatsThis::add( ah_cb, i18n("If this option is enabled the panel will automatically hide"
-    " after some time and reappear when you move the mouse to the screen edge the panel is attached to."
-    " This is particularly useful for small screen resolutions, for example, on laptops.") );
-
-  ah_input = new KIntNumInput(3, ah_group);
-  ah_input->setRange(1, 100, 1, true);
-  ah_input->setLabel(i18n("&Delay in seconds:"), AlignLeft | AlignVCenter);
-  connect(ah_input, SIGNAL(valueChanged(int)), SLOT(ah_input_changed(int)));
-  vbox->addWidget(ah_input);
-  QWhatsThis::add( ah_input, i18n("Here you can change the delay after which the panel will disappear"
-    " if not used."));
-
-  layout->addWidget(ah_group, 1, 1);
+  layout->addWidget(size_group, 1, 0);
 
   // hidebutton group
   hb_group = new QGroupBox(i18n("&Hide Buttons"), this);
@@ -153,7 +113,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
 
   hb_input = new KIntNumInput(10, hb_group);
   hb_input->setRange(3, 24, 1, true);
-  hb_input->setLabel(i18n("Size:"), AlignLeft | AlignVCenter);
+  hb_input->setLabel(i18n("Size:"), AlignTop);
   connect(hb_input, SIGNAL(valueChanged(int)), SLOT(hbs_input_changed(int)));
   QString wtstr = i18n("Here you can change the size of the hide buttons.");
   QWhatsThis::add( hb_input, wtstr );
@@ -161,7 +121,31 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   vbox->addWidget(show_hbs);
   vbox->addWidget(highlight_hbs);
   vbox->addWidget(hb_input);
-  layout->addWidget(hb_group, 2, 1);
+  layout->addWidget(hb_group, 0, 1);
+
+  // auto-hide group
+  ah_group = new QButtonGroup(i18n("&Auto Hide"), this);
+
+  vbox = new QVBoxLayout(ah_group, KDialog::marginHint(),
+                         KDialog::spacingHint());
+  vbox->addSpacing(fontMetrics().lineSpacing());
+
+  ah_cb = new QCheckBox(i18n("En&abled"), ah_group);
+  connect(ah_cb, SIGNAL(clicked()), SLOT(ah_clicked()));
+  vbox->addWidget(ah_cb);
+  QWhatsThis::add( ah_cb, i18n("If this option is enabled the panel will automatically hide"
+    " after some time and reappear when you move the mouse to the screen edge the panel is attached to."
+    " This is particularly useful for small screen resolutions, for example, on laptops.") );
+
+  ah_input = new KIntNumInput(3, ah_group);
+  ah_input->setRange(1, 100, 1, true);
+  ah_input->setLabel(i18n("&Delay in seconds:"), AlignTop);
+  connect(ah_input, SIGNAL(valueChanged(int)), SLOT(ah_input_changed(int)));
+  vbox->addWidget(ah_input);
+  QWhatsThis::add( ah_input, i18n("Here you can change the delay after which the panel will disappear"
+    " if not used."));
+
+  layout->addWidget(ah_group, 1, 1);
 
   // misc group
   misc_group = new QButtonGroup(i18n("Mis&cellaneous"), this);
@@ -178,10 +162,13 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   hbox->setStretchFactor(ta_input, 2);
   vbox->addWidget(hbox);
 
-  layout->addWidget(misc_group, 3, 1);
+  layout->addMultiCellWidget(misc_group, 2, 2, 0, 1);
 
-  // TODO : Enable as soon as kicker supports move modes.
-  move_group->setEnabled(false);
+  layout->setRowStretch(0, 6);
+  layout->setRowStretch(1, 5);
+  layout->setRowStretch(2, 1);
+  layout->setColStretch(0, 1);
+  layout->setColStretch(1, 3);
 
   load();
 }
@@ -195,12 +182,6 @@ void PanelTab::position_clicked(int i)
 void PanelTab::size_clicked(int i)
 {
   size = static_cast<Size>(i);
-  emit changed();
-}
-
-void PanelTab::move_clicked(int i)
-{
-  movemode = static_cast<MoveMode>(i);
   emit changed();
 }
 
@@ -247,9 +228,6 @@ void PanelTab::load()
   position = static_cast<Position>(c->readNumEntry("Position", Bottom));
   pos_buttons[position]->setChecked(true);
 
-  movemode = static_cast<MoveMode>(c->readNumEntry("MoveMode", Free));
-  move_buttons[movemode]->setChecked(true);
-
   bool showHBs = c->readBoolEntry("ShowHideButtons", true);
   show_hbs->setChecked(showHBs);
 
@@ -280,7 +258,6 @@ void PanelTab::save()
 
   c->writeEntry("Size", static_cast<int>(size));
   c->writeEntry("Position", static_cast<int>(position));
-  c->writeEntry("MoveMode", static_cast<int>(movemode));
   c->writeEntry("ShowHideButtons", show_hbs->isChecked());
   c->writeEntry("HighlightHideButtons", highlight_hbs->isChecked());
   c->writeEntry("HideButtonSize", hb_input->value());
@@ -300,11 +277,9 @@ void PanelTab::defaults()
 {
   position = Bottom;
   size = Normal;
-  movemode = Free;
    
   pos_buttons[position]->setChecked(true);
   size_buttons[size]->setChecked(true);
-  move_buttons[movemode]->setChecked(true);
   show_hbs->setChecked(true);
   highlight_hbs->setChecked(true);
   highlight_hbs->setEnabled(true);

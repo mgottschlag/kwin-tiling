@@ -53,7 +53,7 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
                          KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  tiles_cb = new QCheckBox(i18n("Enable background tiles."), general_group);
+  tiles_cb = new QCheckBox(i18n("Enable background tiles"), general_group);
   connect(tiles_cb, SIGNAL(clicked()), SLOT(tiles_clicked()));
   vbox->addWidget(tiles_cb);
   QWhatsThis::add( tiles_cb, i18n("If this option is enabled, the panel will display"
@@ -179,6 +179,35 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   vbox->addWidget(hbox);
   layout->addWidget(exe_group, 2, 1);
 
+  // window list button tiles group
+  wl_group = new QGroupBox(i18n("Window List Tiles"), this);
+
+  vbox = new QVBoxLayout(wl_group,KDialog::marginHint(),
+                                      KDialog::spacingHint());
+  vbox->addSpacing(fontMetrics().lineSpacing());
+
+  hbox = new QHBox(wl_group);
+  hbox->setSpacing(KDialog::spacingHint());
+
+  vbox1 = new QVBox(hbox);
+  wl_cb = new QCheckBox(i18n("Enabled"), vbox1);
+  connect(wl_cb, SIGNAL(clicked()), SLOT(wl_clicked()));
+
+  wl_input = new KComboBox(vbox1);
+  wl_input->setInsertionPolicy(QComboBox::NoInsertion);
+  connect(wl_input, SIGNAL(activated(const QString&)), SLOT(wl_changed(const QString&)));
+  QWhatsThis::add( wl_cb, i18n("Enable or disable the usage of tile images for window list buttons.") );
+  QWhatsThis::add( wl_input, i18n("Choose a tile image for window list buttons."));
+
+  wl_label = new QLabel(hbox);
+  wl_label->setFixedSize(56,56);
+  wl_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  wl_label->setAlignment(AlignCenter);
+  QWhatsThis::add( wl_label, i18n("This is a preview of the tile that will be used for window list buttons.") );
+
+  vbox->addWidget(hbox);
+  layout->addWidget(wl_group, 3, 0);
+
   // drawer button tiles group
   drawer_group = new QGroupBox(i18n("Drawer Tiles"), this);
 
@@ -206,7 +235,12 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QWhatsThis::add( drawer_label, i18n("This is a preview of the tile that will be used for drawer buttons.") );
 
   vbox->addWidget(hbox);
-  layout->addWidget(drawer_group, 3, 0);
+  layout->addWidget(drawer_group, 3, 1);
+
+  layout->setRowStretch(0, 1);
+  layout->setRowStretch(1, 3);
+  layout->setRowStretch(2, 3);
+  layout->setRowStretch(3, 3);
 
   fill_tile_input();
   load();
@@ -220,6 +254,7 @@ void ButtonTab::tiles_clicked()
   url_group->setEnabled(enabled);
   exe_group->setEnabled(enabled);
   browser_group->setEnabled(enabled);
+  wl_group->setEnabled(enabled);
   drawer_group->setEnabled(enabled);
   emit changed();
 }
@@ -325,6 +360,31 @@ void ButtonTab::exe_changed(const QString& t)
   emit changed();
 }
 
+void ButtonTab::wl_clicked()
+{
+  bool enabled = wl_cb->isChecked();
+  wl_input->setEnabled(enabled);
+  wl_label->setEnabled(enabled);
+  emit changed();
+}
+void ButtonTab::wl_changed(const QString& t)
+{
+  QString tile = t + "_large_up.png";
+  tile = KGlobal::dirs()->findResource("tiles", tile);
+
+  if(!tile == QString::null)
+    {
+      QPixmap pix(tile);
+      if (!pix.isNull())
+        wl_label->setPixmap(pix);
+      else
+        wl_label->clear();
+    }
+  else
+    wl_label->clear(); 
+  emit changed();
+}
+
 void ButtonTab::drawer_clicked()
 {
   bool enabled = drawer_cb->isChecked();
@@ -387,6 +447,11 @@ void ButtonTab::load()
   exe_input->setEnabled(exe_tiles);
   exe_label->setEnabled(exe_tiles);
 
+  bool wl_tiles = c->readBoolEntry("EnableWindowListTiles", true);
+  wl_cb->setChecked(wl_tiles);
+  wl_input->setEnabled(wl_tiles);
+  wl_label->setEnabled(wl_tiles);
+
   bool drawer_tiles = c->readBoolEntry("EnableDrawerTiles", true);
   drawer_cb->setChecked(drawer_tiles);
   drawer_input->setEnabled(drawer_tiles);
@@ -444,6 +509,19 @@ void ButtonTab::load()
   exe_input->setCurrentItem(index);
   exe_changed(exe_input->text(index));
 
+  // set window list tile
+  tile = c->readEntry("WindowListTile", "solid_green");
+  index = 0;
+
+  for (int i = 0; i < wl_input->count(); i++) {
+    if (tile == wl_input->text(i)) {
+      index = i;
+      break;
+    }
+  }
+  wl_input->setCurrentItem(index);
+  wl_changed(wl_input->text(index));
+
   // set drawer tile
   tile = c->readEntry("DrawerTile", "solid_orange");
   index = 0;
@@ -473,12 +551,14 @@ void ButtonTab::save()
   c->writeEntry("EnableURLTiles", url_cb->isChecked());
   c->writeEntry("EnableBrowserTiles", browser_cb->isChecked());
   c->writeEntry("EnableExeTiles", exe_cb->isChecked());
+  c->writeEntry("EnableWindowListTiles", wl_cb->isChecked());
   c->writeEntry("EnableDrawerTiles", drawer_cb->isChecked());
 
   c->writeEntry("KMenuTile", kmenu_input->currentText());
   c->writeEntry("URLTile", url_input->currentText());
   c->writeEntry("BrowserTile", browser_input->currentText());
   c->writeEntry("ExeTile", exe_input->currentText());
+  c->writeEntry("WindowListTile", wl_input->currentText());
   c->writeEntry("DrawerTile", drawer_input->currentText());
 
   c->sync();
@@ -494,12 +574,14 @@ void ButtonTab::defaults()
   url_group->setEnabled(false);
   exe_group->setEnabled(false);
   browser_group->setEnabled(false);
+  wl_group->setEnabled(false);
   drawer_group->setEnabled(false);
   
   kmenu_cb->setChecked(true);
   url_cb->setChecked(true);
   browser_cb->setChecked(true);
   exe_cb->setChecked(true);
+  wl_cb->setChecked(true);
   drawer_cb->setChecked(true);
 }
 
@@ -511,12 +593,14 @@ void ButtonTab::fill_tile_input()
   url_input->clear();
   browser_input->clear();
   exe_input->clear();
+  wl_input->clear();
   drawer_input->clear();
 
   kmenu_input->insertStringList(tiles);
   url_input->insertStringList(tiles);
   browser_input->insertStringList(tiles);
   exe_input->insertStringList(tiles);
+  wl_input->insertStringList(tiles);
   drawer_input->insertStringList(tiles);
 }
 

@@ -62,6 +62,9 @@ class ButtonTab : public QWidget
   void exe_changed(const QString&);
   void drawer_clicked();
   void drawer_changed(const QString&);
+  void wl_clicked();
+  void wl_changed(const QString&);
+
 
  private:
   QGridLayout *layout;
@@ -94,6 +97,12 @@ class ButtonTab : public QWidget
   QCheckBox    *exe_cb;
   QLabel       *exe_label;
   KComboBox    *exe_input;
+
+  // window list button-tiles group
+  QGroupBox    *wl_group;
+  QCheckBox    *wl_cb;
+  QLabel       *wl_label;
+  KComboBox    *wl_input;
 
   // drawer button-tiles group
   QGroupBox    *drawer_group;

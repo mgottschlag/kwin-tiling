@@ -47,7 +47,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  clear_cache_cb = new QCheckBox(i18n("Clear menu cache."), general_group);
+  clear_cache_cb = new QCheckBox(i18n("Clear menu cache"), general_group);
   connect(clear_cache_cb, SIGNAL(clicked()), SLOT(clear_cache_clicked()));
   vbox->addWidget(clear_cache_cb);
 
@@ -66,7 +66,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  show_hidden_cb = new QCheckBox(i18n("Show hidden files."), browser_group);
+  show_hidden_cb = new QCheckBox(i18n("Show hidden files"), browser_group);
   connect(show_hidden_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(show_hidden_cb);
 
@@ -85,7 +85,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
                          KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  merge_cb = new QCheckBox(i18n("Merge different menu locations."), kmenu_group);
+  merge_cb = new QCheckBox(i18n("Merge different menu locations"), kmenu_group);
   connect(merge_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(merge_cb);
 
@@ -97,7 +97,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
                                  "merge these different locations into a "
                                  "single logical tree of programs."));
 
-  show_recent_cb = new QCheckBox(i18n("Show recent documents submenu."), kmenu_group);
+  show_recent_cb = new QCheckBox(i18n("Show recent documents submenu"), kmenu_group);
   connect(show_recent_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(show_recent_cb);
   QWhatsThis::add( show_recent_cb, i18n("Enabling this option will make the panel show"
@@ -105,7 +105,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     " edited documents. This assumes you've been using KDE applications to edit those documents,"
     " as other applications will not be able to take advantage of this feature."));
 
-  show_qb_cb = new QCheckBox(i18n("Show quickbrowser submenu."), kmenu_group);
+  show_qb_cb = new QCheckBox(i18n("Show quickbrowser submenu"), kmenu_group);
   connect(show_qb_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(show_qb_cb);
   QWhatsThis::add( show_qb_cb, i18n("Enabling this option will show the 'Quick Browser' in your"
@@ -113,6 +113,10 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     " as a panel button, using the panel context menu."));
 
   layout->addWidget(kmenu_group,2,0);
+
+  layout->setRowStretch(0, 4);
+  layout->setRowStretch(1, 4);
+  layout->setRowStretch(2, 3);
 
   load();
 }

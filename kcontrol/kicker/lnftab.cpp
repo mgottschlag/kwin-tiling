@@ -76,7 +76,7 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
   layout->addWidget(hide_group, 0, 0);
 
   // auto-hide animation group
-  autohide_group = new QGroupBox(i18n("&Auto-Hide Animation"), this);
+  autohide_group = new QGroupBox(i18n("&Auto Hide Animation"), this);
 
   vbox = new QVBoxLayout(autohide_group, KDialog::marginHint(),
                                       KDialog::spacingHint());
@@ -106,7 +106,7 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
   vbox->addSpacing(fontMetrics().lineSpacing());
 
   QHBox *hbox1 = new QHBox(theme_group);
-  use_theme_cb = new QCheckBox(i18n("Use background theme."), hbox1);
+  use_theme_cb = new QCheckBox(i18n("Use background theme"), hbox1);
   connect(use_theme_cb, SIGNAL(clicked()), SLOT(use_theme_clicked()));
   theme_label = new QLabel(hbox1);
   theme_label->setFixedSize(50,50);
@@ -148,13 +148,18 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
   vbox->addSpacing(fontMetrics().lineSpacing());
 
 
-  fade_out_cb = new QCheckBox(i18n("Fade out applet handels."), misc_group);
+  fade_out_cb = new QCheckBox(i18n("Fade out applet handels"), misc_group);
   connect(fade_out_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(fade_out_cb);
   QWhatsThis::add( fade_out_cb, i18n("If this option is enabled, the handle on the left"
     " of a panel applet will only be shown when the mouse cursor is moved over it."));
 
   layout->addWidget(misc_group, 3, 0);
+
+  layout->setRowStretch(0, 3);
+  layout->setRowStretch(1, 3);
+  layout->setRowStretch(2, 3);
+  layout->setRowStretch(3, 1);
 
   load();
 }
