@@ -46,7 +46,8 @@
                             <string>&amp;Audible Bell</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>This is the configuration of the Audible Bell.&lt;br&gt;</string>
+                            <string>This is the configuration of the Audible Bell.&lt;br&gt;
+It could be the system bell and/or a custom bell.</string>
                         </property>
                         <vbox>
                             <property name="name">
