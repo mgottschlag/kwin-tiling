@@ -148,9 +148,8 @@ void AppletTab::load()
         }
     }
   else
-    l_trusted << "kdateapplet" << "kdockapplet"
-            << "kminipagerapplet" << "koolclockapplet"
-            << "ktaskbarapplet" << "eyesapplet";
+      l_trusted << "clockapplet" << "kdockapplet"
+                << "kminipagerapplet" << "ktaskbarapplet" << "eyesapplet";
 
   for ( QStringList::Iterator it = available.begin(); it != available.end(); ++it )
     {
