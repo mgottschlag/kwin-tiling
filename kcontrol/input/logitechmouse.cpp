@@ -54,7 +54,7 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
     m_usbDeviceHandle = usb_open( usbDev );
 
     if ( 0 > m_usbDeviceHandle ) {
-        kdDebug() << "Error opening usbfs file: " << usb_strerror() << endl;
+        kdWarning() << "Error opening usbfs file: " << usb_strerror() << endl;
         return;
     }
 
@@ -262,7 +262,7 @@ void LogitechMouse::updateResolution()
 
     // kdDebug() << "resolution is: " << resolution << endl;
     if (0 > result) {
-        printf("Error getting resolution from device : %s\n", usb_strerror());
+        kdWarning() << "Error getting resolution from device : " << usb_strerror() << endl;
         m_resolution = 0;
     } else {
         m_resolution = resolution;
@@ -280,7 +280,7 @@ void LogitechMouse::setLogitechTo800()
                                   0x0000,
                                   100);
     if (0 > result) {
-        kdDebug() << "Error setting resolution on device: " << usb_strerror() << endl;
+        kdWarning() << "Error setting resolution on device: " << usb_strerror() << endl;
     }
 }
 
@@ -295,7 +295,7 @@ void LogitechMouse::setLogitechTo400()
                                   0x0000,
                                   100);
     if (0 > result) {
-        kdDebug() << "Error setting resolution on device: " << usb_strerror() << endl;
+        kdWarning() << "Error setting resolution on device: " << usb_strerror() << endl;
     }
 }
 
@@ -327,7 +327,7 @@ void LogitechMouse::setChannel1()
                                    1000);
 
     if (0 > result) {
-        kdDebug() << "Error setting mouse to channel 1 : " << usb_strerror() << endl;
+        kdWarning() << "Error setting mouse to channel 1 : " << usb_strerror() << endl;
     }
 
 }
@@ -344,7 +344,7 @@ void LogitechMouse::setChannel2()
                                    1000);
 
     if (0 > result) {
-        kdDebug() << "Error setting mouse to channel 2 : " << usb_strerror() << endl;
+        kdWarning() << "Error setting mouse to channel 2 : " << usb_strerror() << endl;
     }
 
 }
