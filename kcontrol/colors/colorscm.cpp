@@ -567,30 +567,42 @@ void KColorScheme::readScheme( int index )
 
     if (index == 1) {
 
-      // Colours from the 40-colour palette.
-      QColor c1(  0, 128, 128);
-      QColor c2(220, 220, 220);
-      QColor c3(  0,   0, 192);
-      QColor c4(128,   0, 128);
+      QColor kde2Blue;
 
-      cs->back        = c2;
+      if (QPixmap::defaultDepth() > 8)
+        kde2Blue.setRgb(84, 112, 152);
+      else
+        kde2Blue.setRgb(0, 0, 192);
+
+      QColor widget(220, 220, 220);
+
+      QColor button;
+      if (QPixmap::defaultDepth() > 8)
+        button.setRgb(228, 228, 228);
+      else
+        button.setRgb(220, 220, 220);
+
+      QColor link(0, 0, 192);
+      QColor visitedLink(128, 0,128);
+
+      cs->back        = widget;
       cs->txt         = black;
-      cs->select      = c1;
+      cs->select      = kde2Blue;
       cs->selectTxt   = white;
       cs->window      = white;
       cs->windowTxt   = black;
-      cs->iaTitle     = c2;
+      cs->iaTitle     = widget;
       cs->iaTxt       = black;
-      cs->iaBlend     = c2;
-      cs->aTitle      = c1;
+      cs->iaBlend     = widget;
+      cs->aTitle      = kde2Blue;
       cs->aTxt        = white;
-      cs->aBlend      = c1;
-      cs->button      = c2;
+      cs->aBlend      = kde2Blue;
+      cs->button      = button;
       cs->buttonTxt   = cs->txt;
       cs->aTitleBtn   = white;
       cs->iTitleBtn   = white;
-      cs->link        = c3;
-      cs->visitedLink = c4;
+      cs->link        = link;
+      cs->visitedLink = visitedLink;
 
       cs->contrast    = 7;
 
