@@ -66,7 +66,6 @@ void KRandRModule::performApplyOnStartup()
 
 KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&)
     : KCModule(parent, name)
-	, m_changed(false)
 {
 	if (!isValid()) {
 		QVBoxLayout *topLayout = new QVBoxLayout(this);
@@ -290,15 +289,12 @@ void KRandRModule::setChanged()
 			}
 		}
 
-	if (isChanged != m_changed) {
-		m_changed = isChanged;
-		emit changed(m_changed);
-	}
+	KCModule::setChanged(isChanged);
 }
 
 void KRandRModule::apply()
 {
-	if (m_changed) {
+	if (changed()) {
 		applyProposed();
 
 		update();
