@@ -117,8 +117,6 @@ void TaskRMBMenu::fillMenu(TaskList *tasks)
             }
         }
         setItemEnabled(id, enable);
-
-        insertSeparator();
     }
 
     enable = false;
