@@ -4,6 +4,7 @@
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
+#include <qwhatsthis.h>
 
 #include <klocale.h>
 
@@ -12,6 +13,7 @@
 UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 	: KDialogBase (parent, caption.latin1(), true, caption, KDialogBase::Ok|KDialogBase::Cancel)
 {
+	QString wtstr;
 	QWidget *top = new QWidget(this, "TOPWIDGET");
 	setMainWidget(top);
 
@@ -28,6 +30,11 @@ UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 	lblUsername->setBuddy(txtUsername);
 	layUsername->addWidget(lblUsername);
 	layUsername->addWidget(txtUsername);
+	wtstr = i18n(	"The user name you use to login to your e-mail server (sometimes just called \"login\")."
+			" Your e-mail provider should have supplied this information. Your login name is often (but"
+			" not always) identical to the part of your email address that comes before the \"@\".");
+	QWhatsThis::add(lblUsername, wtstr);
+	QWhatsThis::add(txtUsername, wtstr);
 
 	QHBoxLayout *layPass = new QHBoxLayout(topLayout);
 	layPass->setMargin(0);

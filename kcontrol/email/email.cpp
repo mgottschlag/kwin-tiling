@@ -37,6 +37,7 @@
 topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
     : KCModule (parent, name)
 {
+	QString wtstr;
 	m_bChanged=false;
 	QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
 
@@ -79,6 +80,13 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	connect(txtFullName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblFullName->setBuddy(txtFullName);
 
+	wtstr = i18n(	"Enter your full name here, e.g. \"John Doe\" (without the quotation"
+			" marks).  Some people like to provide a nick name only. You can leave this field"
+			" blank and still use email. However, providing your full name is <em>recommended</em> as"
+			" this makes it much easier for your recipient to browse his or her email.");
+        QWhatsThis::add( lblFullName, wtstr );
+        QWhatsThis::add( txtFullName, wtstr );
+
 	lblOrganization = new QLabel( grpUserInfo, "lblOrganization" );
 	lblOrganization->setGeometry( QRect( 7, 50, 107, 22 ) ); 
 	lblOrganization->setText(i18n( "Or&ganization:" ) );
@@ -87,6 +95,12 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	txtOrganization->setGeometry( QRect( 122, 50, 406, 22 ) ); 
 	connect(txtOrganization, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblOrganization->setBuddy(txtOrganization);
+	wtstr = i18n(	"Here you can enter the name of your organization, company"
+			" or university. This field is <em>optional</em>. However, if"
+			" you are using a business account and communicate with persons working for other"
+			" companies, providing the name of your organization is recommended.");
+        QWhatsThis::add( txtOrganization, wtstr );
+        QWhatsThis::add( lblOrganization, wtstr );
 
 	lblEMailAddr = new QLabel( grpUserInfo, "lblEMailAddr" );
 	lblEMailAddr->setGeometry( QRect( 7, 78, 107, 22 ) ); 
@@ -95,6 +109,13 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	txtEMailAddr->setGeometry( QRect( 122, 78, 406, 22 ) ); 
 	connect(txtEMailAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblEMailAddr->setBuddy(txtEMailAddr);
+	wtstr = i18n(	"Enter your email address here, e.g. \"john@doe.com\" (without "
+			"the quotation marks). This information is mandatory if you want to use email.<p>"
+			"Do <em>not</em> enter something like \"John Doe &lt;john@doe.com&gt;\", just a plain email address. "
+			"Your email address may not contain any blank spaces.");
+        QWhatsThis::add( txtEMailAddr, wtstr );
+        QWhatsThis::add( lblEMailAddr, wtstr );
+
 
 	lblReplyTo = new QLabel( grpUserInfo, "lblReplyTo" );
 	lblReplyTo->setGeometry( QRect( 7, 106, 107, 22 ) ); 
@@ -103,6 +124,14 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	txtReplyTo->setGeometry( QRect( 122, 106, 406, 22 ) ); 
 	connect(txtReplyTo, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblReplyTo->setBuddy(txtReplyTo);
+	wtstr = i18n(	"You can set a reply address if you want replies to your e-mail messages"
+			" to go to a different address than the e-mail address above. Most likely, you should"
+			" leave the reply address blank, so replies go to the e-mail address you entered above.<p>"
+			" <em>Please note:</em> <ul><li>You do not need to enter the same email"
+			" address as above.</li><li>You should not use a reply address if you frequently"
+			" use discussion mailing lists.</li></ul>");
+	QWhatsThis::add( lblReplyTo, wtstr );
+	QWhatsThis::add( txtReplyTo, wtstr );
 
 	grpClient = new QGroupBox (2, Qt::Horizontal, this, "grpClient");
 	grpClient->setGeometry( QRect( 5, 215, 535, 70 ) ); 
@@ -149,6 +178,13 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	radICMLocal->setGeometry( QRect( 120, 20, 98, 19 ) ); 
 	radICMLocal->setText(i18n( "Local M&ailbox" ) );
 	connect(radICMLocal, SIGNAL(clicked()), this, SLOT(configChanged()));
+
+	wtstr = i18n(	"This is the protocol used by your incoming e-mail server. Your e-mail provider should have"
+			" supplied this information. If you use dial-up networking, you are probably using a POP3 server.");
+	QWhatsThis::add(grpIncoming, wtstr);
+	QWhatsThis::add(radPOP, wtstr);
+	QWhatsThis::add(radIMAP, wtstr);
+	QWhatsThis::add(radICMLocal, wtstr);
 
 	btnICMSettings = new QPushButton( grpIncoming, "btnICMRemoteSettings" );
 	btnICMSettings->setGeometry( QRect( 245, 45, 175, 26 ) ); 
