@@ -118,7 +118,7 @@ FIXME: this could be clearer done by a calculation on the position.
 -- ------------------------------------------------------------------------ */
 #include "config.h"
 
-#define QT_CLEAN_NAMESPACE
+//#define QT_CLEAN_NAMESPACE
 #include <qslider.h>
 #include <qlayout.h>
 #include <kglobal.h>

@@ -36,7 +36,7 @@
 */
 
 #define LONG64
-#define QT_CLEAN_NAMESPACE
+//#define QT_CLEAN_NAMESPACE
 
 #include <qslider.h>
 #include <qlayout.h>
