@@ -30,7 +30,6 @@
 #include <qregexp.h>
 #include <qwhatsthis.h>
 
-#include <dcopclient.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>
@@ -86,14 +85,6 @@ void KeyModule::save()
 	m_actionsGeneral.writeActions( "Global Shortcuts", 0, true, true );
 	m_actionsSequence.writeActions( "Global Shortcuts", 0, true, true );
 	m_actionsApplication.writeActions( "Shortcuts", 0, true, true );
-
-	// TODO: use KIPC to send a reconfigure message!
-	if ( !kapp->dcopClient()->isAttached() )
-		kapp->dcopClient()->attach();
-	// TODO: create a reconfigureKeys() method.
-	//kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
-	kapp->dcopClient()->send("kdesktop", "", "configure()", "");
-	//kapp->dcopClient()->send("kicker", "Panel", "configure()", "");
 
 	KIPC::sendMessageAll( KIPC::SettingsChanged, KApplication::SETTINGS_SHORTCUTS );
 }
