@@ -1,1 +1,1 @@
-SUBDIRS = hicolor
+KDE_ICON=AUTO
