@@ -98,7 +98,9 @@ TopLevel::TopLevel( QWidget *parent, bool applet )
     connect( clip, SIGNAL( selectionChanged() ), SLOT(slotSelectionChanged()));
     connect( clip, SIGNAL( dataChanged() ), SLOT( slotClipboardChanged() ));
 
-    m_pixmap = UserIcon( "klipper_dock" );
+    // do NOT use UserIcon or appdata or something like that -- this breaks in
+    // the kicker applet case!
+    m_pixmap = QPixmap( locate( "data", "klipper/pics/klipper_dock.png"  ));
     adjustSize();
 
     globalKeys = new KGlobalAccel(this);
