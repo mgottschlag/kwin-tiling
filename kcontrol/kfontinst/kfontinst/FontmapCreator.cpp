@@ -32,13 +32,11 @@
 #include "Misc.h"
 #include "BufferedFile.h"
 #include <qdir.h>
-#include <qfileinfo.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
 #include <stdlib.h>
-#include <qcstring.h>
 #include <qregexp.h>
 #include <klocale.h>
 

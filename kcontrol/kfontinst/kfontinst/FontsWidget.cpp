@@ -27,26 +27,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "FontsWidget.h"
-#include "KfiGlobal.h"
-#include "FontEngine.h"
 #include "FontSelectorWidget.h"
-#include "Config.h"
 #include "SysConfigurer.h"
 #include "FontPreview.h"
 #include "MetaDialog.h"
-#include "Misc.h"
 #include "KfiCmModule.h"
 #include <kprogress.h>
 #include <kapplication.h>
 #include <klocale.h>
-#include <qbitmap.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
-#include <qpalette.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qcombobox.h>
-#include <qsplitter.h>
 #include <stdlib.h>
 
 CFontsWidget::CFontsWidget(QWidget *parent, const char *)

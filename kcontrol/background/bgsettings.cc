@@ -15,22 +15,14 @@
 
 #include <kconfig.h>
 
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qmap.h>
-#include <qobject.h>
-#include <qfileinfo.h>
 #include <qdir.h>
 
 #include <netwm.h>
-#include <kapplication.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
-#include <klocale.h>
 #include <ksimpleconfig.h>
 
-#include <bgdefaults.h>
-#include <bgsettings.h>
+#include "bgdefaults.h"
+#include "bgsettings.h"
 
 
 /*

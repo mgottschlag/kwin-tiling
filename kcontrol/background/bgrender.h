@@ -15,7 +15,7 @@
 #include <qobject.h>
 #include <qstring.h>
 
-#include <bgsettings.h>
+#include "bgsettings.h"
 
 class QSize;
 class QRect;

@@ -17,46 +17,30 @@
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
-#include <qobject.h>
 #include <qlayout.h>
-#include <qstring.h>
-#include <qstringlist.h>
 #include <qlabel.h>
-#include <qlistbox.h>
-#include <qgroupbox.h>
 #include <qcombobox.h>
 #include <qslider.h>
-#include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
-#include <qpushbutton.h>
 #include <qdragobject.h>
-#include <qhbox.h>
-#include <qevent.h>
 #include <qwhatsthis.h>
 #include <qtabwidget.h>
 #include <qspinbox.h>
 #include <qhbuttongroup.h>
 
-#include <kapplication.h>
-#include <kconfig.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
-#include <kiconloader.h>
 #include <kdebug.h>
 #include <kcolorbutton.h>
-#include <klocale.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kpixmap.h>
 #include <kimageio.h>
 #include <kgenericfactory.h>
 
-#include <bgdefaults.h>
-#include <bgsettings.h>
-#include <bgrender.h>
-#include <bgdialogs.h>
-#include <backgnd.h>
+#include "bgrender.h"
+#include "bgdialogs.h"
+#include "backgnd.h"
 #include <netwm.h>
 
 /* as late as possible, as it includes some X headers without protecting them */

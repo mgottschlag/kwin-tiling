@@ -27,8 +27,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "KfiMainWidget.h"
-#include "KfiGlobal.h"
-#include "Config.h"
 #include "SettingsWidget.h"
 #include <qtabwidget.h>
 #include "XConfig.h"

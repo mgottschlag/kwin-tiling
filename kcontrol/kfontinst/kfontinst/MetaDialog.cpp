@@ -29,8 +29,6 @@
 #include "MetaDialog.h"
 #include <qlistview.h>
 #include <qpushbutton.h>
-#include <qstringlist.h>
-#include <kurl.h>
 #include <klocale.h>
 #include <qlayout.h>
 #include "Misc.h"

@@ -21,7 +21,7 @@
 #include <qptrvector.h>
 
 #include <kcmodule.h>
-#include <bgdefaults.h>
+#include "bgdefaults.h"
 
 class QCheckBox;
 class QListBox;

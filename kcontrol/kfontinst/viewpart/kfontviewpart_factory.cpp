@@ -28,9 +28,6 @@
 
 #include "kfontviewpart_factory.h"
 
-#include <klocale.h>
-#include <kstandarddirs.h>
-#include <kinstance.h>
 #include <kdebug.h>
 #include <kaboutdata.h>
 #include <assert.h>

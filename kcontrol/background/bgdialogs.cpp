@@ -9,35 +9,26 @@
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
-#include <qstring.h>
-#include <qstringlist.h>
 #include <qlayout.h>
 #include <qlistview.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
-#include <qpixmap.h>
 #include <qlineedit.h>
-#include <qlistbox.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
-#include <qframe.h>
-#include <qmap.h>
 #include <qvbox.h>
 #include <qdragobject.h>
 #include <qpainter.h>
 
-#include <kapplication.h>
-#include <kglobal.h>
 #include <kdebug.h>
 #include <kimageio.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
-#include <kbuttonbox.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 
-#include <bgdialogs.h>
-#include <bgrender.h>
+#include "bgdialogs.h"
+#include "bgrender.h"
 
 
 /*** KProgramSelectDialog ***/

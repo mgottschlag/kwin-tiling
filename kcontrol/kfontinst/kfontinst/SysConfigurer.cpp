@@ -30,18 +30,14 @@
 #include "config.h"
 #endif
 #include "SysConfigurer.h"
-#include "Misc.h"
 #include "KfiGlobal.h"
 #include "Config.h"
-#include "FontEngine.h"
 #include "XConfig.h"
 #include <stdlib.h>
 #include <qwidget.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <qdir.h>
-#include <qstringlist.h>
-#include <qfileinfo.h>
 #include "kxftconfig.h"
 
 static const char * constFinishedStr = "Finished";

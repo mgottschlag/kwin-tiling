@@ -30,14 +30,10 @@
 #include "Misc.h"
 #include "FontEngine.h"
 #include "Config.h"
-#include "Kfi.h"
 #include "KfiGlobal.h"
 #include "Ttf.h"
 #include <stdlib.h>
-#include <qstring.h>
 #include <qdir.h>
-#include <qvaluelist.h>
-#include <qglobal.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kdeversion.h>

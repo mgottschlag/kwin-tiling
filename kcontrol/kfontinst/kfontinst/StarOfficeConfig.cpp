@@ -28,19 +28,14 @@
 
 #include "StarOfficeConfig.h"
 #include "Misc.h"
-#include "AfmCreator.h"
 #include "FontEngine.h"
-#include "Encodings.h"
 #include "BufferedFile.h"
 #include "KfiGlobal.h"
 #include "Config.h"
 #include <fstream.h>
 #include <stdlib.h>
 #include <string.h>
-#include <qstring.h>
-#include <qcstring.h>
 #include <qdir.h>
-#include <qfileinfo.h>
 #include <qregexp.h>
 #include <klocale.h>
 

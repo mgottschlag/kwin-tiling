@@ -12,32 +12,19 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include <kconfig.h>
 
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qmap.h>
-#include <qobject.h>
-#include <qfileinfo.h>
-#include <qdir.h>
 #include <qtimer.h>
 #include <qpainter.h>
 
 #include <kapplication.h>
-#include <kglobal.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <kpixmap.h>
-#include <kpixmapeffect.h>
 #include <kimageeffect.h>
 #include <kprocess.h>
-#include <kimageio.h>
 #include <kpixmapio.h>
 #include <ktempfile.h>
 
-#include <bgdefaults.h>
-#include <bgsettings.h>
-#include <bgrender.h>
+#include "bgrender.h"
 
 #include <X11/Xlib.h>
 

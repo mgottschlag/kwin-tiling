@@ -33,9 +33,7 @@
 #include "UiConfig.h"
 #include <qdir.h>
 #include <qpopupmenu.h>
-#include <qfile.h>
 #include <klocale.h>
-#include <kglobal.h>
 #include <kiconloader.h>
 #include <stdlib.h>
 

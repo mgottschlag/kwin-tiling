@@ -29,16 +29,9 @@
 #include "KfiCmModule.h"
 #include "KfiMainWidget.h"
 #include "Kfi.h"
-#include "KfiGlobal.h"
-#include "Config.h"
-#include "UiConfig.h"
-#include "Misc.h"
-#include <klocale.h>
 #include <qtimer.h>
 #include <qlayout.h>
-#include <kmessagebox.h>
 #include <kaboutdata.h>
-#include <kapplication.h>
 
 #include <kgenericfactory.h>
 

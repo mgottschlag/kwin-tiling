@@ -30,9 +30,7 @@
 #include "FontEngine.cpp"
 #include "Misc.cpp"
 #include "CompressedFile.cpp"
-#include <qpixmap.h>
 #include <qimage.h>
-#include <qfont.h>
 #include <qpainter.h>
 #include <kiconloader.h>
 

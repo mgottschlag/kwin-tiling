@@ -40,7 +40,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <netinet/in.h>
-#include <qimage.h>
 #include <qregexp.h>
 #include <qfile.h>
 #include <ft2build.h>

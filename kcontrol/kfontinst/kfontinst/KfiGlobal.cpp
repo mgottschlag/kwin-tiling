@@ -28,13 +28,11 @@
 
 #include "KfiGlobal.h"
 #include "FontEngine.h"
-#include "Encodings.h"
 #include "Config.h"
 #include "ErrorDialog.h"
 #include "Ttf.h"
 #include "UiConfig.h"
 #include "XConfig.h"
-#include <qwidget.h>
 #include <stdio.h>
 
 CFontEngine  * CKfiGlobal::theirFontEngine=NULL;

@@ -29,28 +29,17 @@
 #include "SettingsWidget.h"
 #include "KfiGlobal.h"
 #include "Config.h"
-#include "Misc.h"
 #include "XConfig.h"
 #include "Encodings.h"
 #include <klocale.h>
-#include <kglobal.h>
-#include <kiconloader.h>
-#include <qframe.h>
-#include <qsizepolicy.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
 #include <qcombobox.h>
-#include <qradiobutton.h>
 #include <qcheckbox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <klineedit.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <fstream>
-#include <qgroupbox.h>
 
 void CSettingsWidget::reset()
 {

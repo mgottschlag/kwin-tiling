@@ -28,37 +28,23 @@
 
 #include "FontListWidget.h"
 #include "FontEngine.h"
-#include "Config.h"
 #include "XConfig.h"
 #include "KfiGlobal.h"
-#include "KfiCmModule.h"
 #include "ErrorDialog.h"
 #include "StarOfficeConfig.h"
 #include "Ttf.h"
 #include "UiConfig.h"
 #include <klocale.h>
-#include <kglobal.h>
 #include <kiconloader.h>
 #include <klineedit.h>
-#include <klistview.h>
-#include <kurl.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <klineeditdlg.h>
-#include <qgroupbox.h>
-#include <qpushbutton.h>
-#include <qdir.h>
-#include <qfileinfo.h>
-#include <qbitmap.h>
 #include <qpainter.h>
 #include <qheader.h>
 #include <qpopupmenu.h>
 #include <qvalidator.h>
-#include <qmime.h>
 #include <qdragobject.h>
-#include <qcursor.h>
-#include <kapplication.h>
-#include <kcmdlineargs.h>
 #include <dcopclient.h>
 #include <iostream>
 

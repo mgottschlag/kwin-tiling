@@ -28,13 +28,11 @@
 
 #include "XConfig.h"
 #include "KfiGlobal.h"
-#include "Encodings.h"
 #include "FontEngine.h"
 #include "BufferedFile.h"
 #include "Config.h"
 #include <fstream>
 #include <qdir.h>
-#include <qcstring.h>
 #include <klocale.h>
 
 static const QCString constFontpaths ("# KFontinst fontpaths file -- DO NOT EDIT");

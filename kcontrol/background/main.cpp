@@ -17,34 +17,18 @@
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
-#include <qobject.h>
 #include <qlayout.h>
-#include <qstring.h>
-//#include <qstringlist.h>
-//#include <qpushbutton.h>
-#include <qdragobject.h>
-#include <qevent.h>
-#include <qwhatsthis.h>
-//#include <qhbuttongroup.h>
-
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <kconfig.h>
-#include <kglobal.h>
-#include <kiconloader.h>
 #include <kdebug.h>
-#include <klocale.h>
 #include <dcopclient.h>
 #include <kimageio.h>
 #include <kgenericfactory.h>
 
-#include <bgdefaults.h>
-#include <bgsettings.h>
-#include <backgnd.h>
-#include <main.h>
+#include "main.h"
 
 /* as late as possible, as it includes some X headers without protecting them */
-#include <kwin.h>
 #include <X11/Xlib.h>
 
 /**** DLL Interface ****/

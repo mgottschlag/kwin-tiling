@@ -27,17 +27,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Config.h"
-#include "Encodings.h"
 #include "Misc.h"
-#include <qfont.h>
 #include <qdir.h>
-#include <qfileinfo.h>
-#include <kconfig.h>
 #include <kapplication.h>
-#include <kstandarddirs.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <fstream>
 

@@ -5,7 +5,6 @@
 #include "Misc.cpp"
 #include "CompressedFile.cpp"
 #include <kgenericfactory.h>
-#include <klibloader.h>
 
 typedef KGenericFactory<KFileFontPlugin> KFileFontPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfile_font"));

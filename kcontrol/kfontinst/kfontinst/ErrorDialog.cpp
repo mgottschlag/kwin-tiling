@@ -29,7 +29,6 @@
 #include "ErrorDialog.h"
 #include <qgroupbox.h>
 #include <qpushbutton.h>
-#include <qlistview.h>
 #include <qlayout.h>
 #include <klocale.h>
 

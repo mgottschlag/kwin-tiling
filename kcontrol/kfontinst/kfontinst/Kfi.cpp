@@ -28,15 +28,8 @@
 
 #include "Kfi.h"
 #include "KfiMainWidget.h"
-#include "KfiGlobal.h"
-#include "Config.h"
-#include "Misc.h"
 #include "XConfig.h"
-#include <qapplication.h>
-#include <qnamespace.h>
-#include <qfile.h>
 #include <kmessagebox.h>
-#include <klocale.h>
 #include <fstream.h>
 #include "kxftconfig.cpp" // CPD: Hack!!, this source file is located in kcontrol/fonts
 

@@ -34,11 +34,8 @@
 #endif
 
 #include <kprocess.h>
-#include <kstandarddirs.h>
 
 #include <qdir.h>
-#include <qfileinfo.h>
-#include <qfile.h>
 #include <qcombobox.h>
 #include <qregexp.h>
 
