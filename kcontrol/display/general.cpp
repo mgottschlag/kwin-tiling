@@ -65,10 +65,8 @@ FontUseItem::FontUseItem( const char *n, QFont default_fnt, bool f )
 QString FontUseItem::fontString( QFont rFont )
 {
 	QString aValue;
-#if QT_VERSION > 140
 	aValue = rFont.rawName();
 	return aValue;
-#endif
 	QFontInfo fi( rFont );
 	
 	aValue.sprintf( "-*-" );

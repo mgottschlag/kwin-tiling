@@ -264,7 +264,6 @@ void KDMBackgroundWidget::slotQDrop( QDropEvent *e )
   QStrList list;
   QString s;
 
-#if QT_VERSION > 140
   if(QUrlDrag::decode( e, list ) )
   {
     monitor->setAllowDrop(false);
@@ -274,7 +273,6 @@ void KDMBackgroundWidget::slotQDrop( QDropEvent *e )
     if(!s.isEmpty())
       loadWallpaper(s.data());
   } 
-#endif   
 }
 
 void KDMBackgroundWidget::slotQDragLeave( QDragLeaveEvent* )
@@ -286,14 +284,12 @@ void KDMBackgroundWidget::slotQDragLeave( QDragLeaveEvent* )
 void KDMBackgroundWidget::slotQDragEnter( QDragEnterEvent *e )
 {
   //debug("Got QDragEnterEvent!");
-#if QT_VERSION > 140
   if( QUrlDrag::canDecode( e ) )
   {
     monitor->setAllowDrop(true);
     e->accept();
   }
   else
-#endif
     e->ignore();
 }
 

@@ -327,10 +327,8 @@ QString KResourceMan::writeEntry( const QString& rKey, int nValue )
 QString KResourceMan::writeEntry( const QString& rKey, const QFont& rFont )
 {
 	QString aValue;
-#if QT_VERSION > 140
 	aValue = rFont.rawName();
 	return writeEntry( rKey, aValue );
-#endif
 	QFontInfo fi( rFont );
 
 	aValue.sprintf( "-*-" );

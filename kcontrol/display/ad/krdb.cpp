@@ -37,10 +37,8 @@ QString fontString( QFont rFont, FontStyle style )
           rFont.setFixedPitch( true );
 
 	QString aValue;
-#if QT_VERSION > 140
 	aValue = rFont.rawName();
 	return aValue;
-#endif
 
 	QFontInfo fi( rFont );
 	
