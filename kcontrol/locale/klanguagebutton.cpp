@@ -209,8 +209,11 @@ void KLanguageButton::clear()
   connect( m_popup, SIGNAL( highlighted( int ) ),
 	   SLOT( slotHighlighted( int ) ) );
 
-  d->button->setText( QString::null );
-  d->button->setIconSet( QIconSet() );
+  if ( !d->staticText )
+    {
+      d->button->setText( QString::null );
+      d->button->setIconSet( QIconSet() );
+    }
 }
 
 bool KLanguageButton::contains( const QString & id ) const
