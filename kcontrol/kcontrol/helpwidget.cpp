@@ -52,6 +52,8 @@ void HelpWidget::setText( const QString& docPath, const QString& text)
   docpath = docPath;
   if (text.isEmpty() && docPath.isEmpty())
     setBaseText();
+  else if (docPath.isEmpty())
+    _browser->setText(text);
   else
     _browser->setText(text + i18n("<br><br>To read the full manual click <a href=\"%1\">here</a>.")
 		      .arg(docPath.local8Bit()));
