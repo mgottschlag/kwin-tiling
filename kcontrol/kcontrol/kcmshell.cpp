@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <kapp.h>
 #include <kglobal.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <kstddirs.h>
 #include <kcmdlineargs.h>
@@ -94,28 +95,41 @@ int main(int _argc, char *_argv[])
 	return -1;
     }
 
+    QCString arg = "Settings/";
+    arg += args->arg(0);
+    arg += ".desktop";
+
+    args->clear();
+
     // locate the desktop file
-    QStringList files;
-    if (args->arg(0)[0] == '/')
-	files.append(args->arg(0));
+    //QStringList files;
+    if (arg[0] == '/')
+    {
+        kdDebug() << "Full path given to kcmshell - not supported yet" << endl;
+        // (because of KService::findServiceByDesktopPath)
+	//files.append(args->arg(0));
+    }
+    /*
     else
 	files = KGlobal::dirs()->
 	    findAllResources("apps",
 			     QString("Settings/%1.desktop").arg(args->arg(0)),
 			     true);
+    */
 
     // check the matches
+    /*
     if (files.count() > 1)
-	cerr << i18n("Module name not unique. Taking the first match.") << endl;
+    	cerr << i18n("Module name not unique. Taking the first match.") << endl;
     if (files.count() <= 0) {
 	cerr << i18n("Module %1 not found!").arg(args->arg(0)) << endl;
 	return -1;
     }
-
-    args->clear();
+    */
 
     // load the module
-    ModuleInfo info(files[0]);
+    ModuleInfo info(arg);
+
     KCModule *module = ModuleLoader::module(info);
 
     if (module) {

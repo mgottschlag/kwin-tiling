@@ -23,6 +23,8 @@
 #include <kiconloader.h>
 #include <kdesktopfile.h>
 #include <kservice.h>
+#include <kdebug.h>
+#include <assert.h>
 
 #include "moduleinfo.h"
 #include "moduleinfo.moc"
@@ -33,7 +35,9 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 {
   _allLoaded = false;
 
+  //kdDebug() << "desktopFile = " << desktopFile << endl;
   KService::Ptr service = KService::serviceByDesktopPath(desktopFile);
+  assert(service);
 
   // set the modules simple attributes
   setName(service->name());
