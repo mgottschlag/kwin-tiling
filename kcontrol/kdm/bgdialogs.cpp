@@ -522,7 +522,8 @@ void KPatternSelectDialog::slotModify()
 
 void KPatternSelectDialog::slotItemClicked(QListViewItem *item)
 {
-    m_Current = item->text(1);
+    if ( item )
+        m_Current = item->text(1);
     kdDebug() << "current: " << m_Current << endl;
 }
 
