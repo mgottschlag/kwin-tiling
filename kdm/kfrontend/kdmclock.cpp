@@ -50,14 +50,7 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
     mFont.setItalic(TRUE/*config->readNumEntry( "Italic",TRUE )*/);
     mFont.setBold(TRUE/*config->readNumEntry( "Bold",TRUE )*/);
     
-    //config->setGroup( "Color" );
-    QColor tmp  = lightGray;
-    mBackground = tmp;//config->readColorEntry( "Background", &tmp );
-    tmp = black;
-    mForeground = tmp;//config->readColorEntry( "Foreground" , &tmp );
-
     setFixedSize( 100, 100 );
-    setBackgroundColor(mBackground);
 
     if( mBorder )
     {
@@ -114,7 +107,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 
     // flicker free code by Remi Guyomarch <rguyom@mail.dotcom.fr>
     QPixmap pm( contentsRect().size() );
-    pm.fill( mBackground );
+    pm.fill( backgroundColor() );
     QPainter paint;
     paint.begin( &pm );
 
@@ -133,7 +126,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 	}
 	mFont.setPointSize(QMIN((int)(width()/buf.length()*1.5),height()));
 	paint.setFont( mFont );
-	paint.setPen( mBackground );
+	paint.setPen( backgroundColor() );
 	paint.drawText( contentsRect(),AlignHCenter|AlignVCenter, buf,-1,0,0);
     }
     else 	
@@ -141,8 +134,8 @@ void KdmClock::paintEvent( QPaintEvent * )
         QPointArray pts;
 	QPoint cp = contentsRect().center() - QPoint(2,2);
 	int d = QMIN(contentsRect().width()-15,contentsRect().height()-15);
-	paint.setPen( mForeground );
-	paint.setBrush( mForeground );
+	paint.setPen( foregroundColor() );
+	paint.setBrush( foregroundColor() );
    
 	QWMatrix matrix;
 	matrix.translate( cp.x(), cp.y() );
