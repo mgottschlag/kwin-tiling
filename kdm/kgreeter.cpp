@@ -39,6 +39,7 @@
 
 #include <qbitmap.h>
 #include <qmessagebox.h>
+#include <qtextstream.h>
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
