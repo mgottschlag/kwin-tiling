@@ -72,6 +72,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
       m_ioslavesLb->insertItem(*it);
    };
    m_ioslavesLb->sort();
+   m_ioslavesLb->setSelected(0, true);
 
    setButtons(buttons());
    load();
@@ -79,7 +80,20 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
 
 
 KCMIOSlaveInfo::~KCMIOSlaveInfo() {
+}
 
+const KAboutData* KCMIOSlaveInfo::aboutData() const
+{
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmioslaveinfo"),
+		I18N_NOOP("KDE Panel System Information Control Module"),
+		0, 0, KAboutData::License_GPL,
+    		I18N_NOOP("(c) 2001 - 2002 Alexander Neundorf"));
+    
+    about->addAuthor("Alexander Neundorf", 0, "neundorf@kde.org");
+    about->addAuthor("George Staikos", 0, "staikos@kde.org");
+
+    return about;
 }
 
 
@@ -96,15 +110,15 @@ void KCMIOSlaveInfo::save() {
 }
 
 int KCMIOSlaveInfo::buttons () {
-return KCModule::Default|KCModule::Apply|KCModule::Help;
+   return KCModule::Default|KCModule::Apply|KCModule::Help;
 }
 
 void KCMIOSlaveInfo::configChanged() {
-  emit changed(true);
+   emit changed(true);
 }
 
 void KCMIOSlaveInfo::childChanged(bool really) {
-  emit changed(really);
+   emit changed(really);
 }
 
 QString KCMIOSlaveInfo::quickHelp() const

@@ -25,6 +25,7 @@
 #define kcmioslaveinfo_h_included
 
 #include <kcmodule.h>
+#include <kaboutdata.h>
 
 #include <qstring.h>
 #include <ktextbrowser.h>
@@ -49,6 +50,7 @@ public:
     void defaults();
     int buttons();
     QString quickHelp() const;
+    const KAboutData* aboutData() const;
 
 protected:
     KListBox *m_ioslavesLb;
