@@ -144,10 +144,10 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   }
   else
   {
-     path = url.path();
-     ref = url.ref();
-     if (url.isLocalFile())
+    if (url.isLocalFile())
      {
+        path = url.path();
+        ref = url.ref();
         path += KURL::decode_string(url.query());
         if (path.isEmpty() && url.hasHost())
            path = "/";
