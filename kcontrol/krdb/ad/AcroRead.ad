@@ -1,3 +1,4 @@
+nspluginviewer*lprCommand: kprinter
 acroread*lprCommand: kprinter
 Acroread.foreground:               WINDOW_FOREGROUND
 Acroread.background:               WINDOW_BACKGROUND
