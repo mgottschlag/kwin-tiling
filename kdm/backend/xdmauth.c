@@ -43,43 +43,9 @@ static char	auth_name[256];
 static int	auth_name_len;
 
 void
-XdmPrintDataHex (s, a, l)
-    char	    *s;
-    char	    *a;
-    int		    l;
-{
-    int	i;
-
-    Debug ("%s", s);
-    for (i = 0; i < l; i++)
-	Debug (" %02x", a[i] & 0xff);
-    Debug ("\n");
-}
-
-#if 0			/* not used */
-void
-XdmPrintKey (s, k)
-    char	    *s;
-    XdmAuthKeyRec   *k;
-{
-    XdmPrintDataHex (s, (char *) k->data, 8);
-}
-#endif
-
-#ifdef XDMCP
-void
-XdmPrintArray8Hex (s, a)
-    char	*s;
-    ARRAY8Ptr	a;
-{
-    XdmPrintDataHex (s, (char *) a->data, a->length);
-}
-#endif
-
-void
-XdmInitAuth (name_len, name)
-    unsigned short  name_len;
-    char	    *name;
+XdmInitAuth (
+    unsigned short  name_len,
+    char	    *name)
 {
     if (name_len > 256)
 	name_len = 256;
@@ -96,11 +62,11 @@ XdmInitAuth (name_len, name)
  * between xdm and the server (16 bytes total)
  */
 
-Xauth *
-XdmGetAuthHelper (namelen, name, includeRho)
-    unsigned short  namelen;
-    char	    *name;
-    int	    includeRho;
+static Xauth *
+XdmGetAuthHelper (
+    unsigned short  namelen,
+    char	    *name,
+    int	    includeRho)
 {
     Xauth   *new;
     new = (Xauth *) malloc (sizeof (Xauth));
@@ -138,14 +104,14 @@ XdmGetAuthHelper (namelen, name, includeRho)
      * is a DES key and only uses 56 bits
      */
     ((char *)new->data)[new->data_length - 8] = '\0';
-    XdmPrintDataHex ("Local server auth", (char *)new->data, new->data_length);
+    Debug ("Local server auth %02[*hhx\n", new->data_length, new->data);
     return new;
 }
 
 Xauth *
-XdmGetAuth (namelen, name)
-    unsigned short  namelen;
-    char	    *name;
+XdmGetAuth (
+    unsigned short  namelen,
+    char	    *name)
 {
     return XdmGetAuthHelper (namelen, name, TRUE);
 }
@@ -153,10 +119,10 @@ XdmGetAuth (namelen, name)
 #ifdef XDMCP
 
 void
-XdmGetXdmcpAuth (pdpy,authorizationNameLen, authorizationName)
-    struct protoDisplay	*pdpy;
-    unsigned short	authorizationNameLen;
-    char		*authorizationName;
+XdmGetXdmcpAuth (
+    struct protoDisplay	*pdpy,
+    unsigned short	authorizationNameLen,
+    char		*authorizationName)
 {
     Xauth   *fileauth, *xdmcpauth;
 
@@ -194,8 +160,9 @@ XdmGetXdmcpAuth (pdpy,authorizationNameLen, authorizationName)
     memmove( fileauth->name, xdmcpauth->name, xdmcpauth->name_length);
     memmove( fileauth->data, pdpy->authenticationData.data, 8);
     memmove( fileauth->data + 8, xdmcpauth->data, 8);
-    XdmPrintDataHex ("Accept packet auth", xdmcpauth->data, xdmcpauth->data_length);
-    XdmPrintDataHex ("Auth file auth", fileauth->data, fileauth->data_length);
+    Debug ("Accept packet auth %02[*hhx\nAuth file auth %02[*hhx\n", 
+	   xdmcpauth->data_length, xdmcpauth->data, 
+	   fileauth->data_length, fileauth->data);
     /* encrypt the session key for its trip back to the server */
     XdmcpWrap (xdmcpauth->data, (unsigned char *)&pdpy->key, xdmcpauth->data, 8);
     pdpy->fileAuthorization = fileauth;
@@ -207,8 +174,7 @@ XdmGetXdmcpAuth (pdpy,authorizationNameLen, authorizationName)
 		 'A' <= c && c <= 'F' ? c - 'A' + 10 : -1)
 
 static int
-HexToBinary (key)
-    char    *key;
+HexToBinary (char    *key)
 {
     char    *out, *in;
     int	    top, bottom;
@@ -237,7 +203,7 @@ HexToBinary (key)
  * routine accepts either plain ascii strings for keys, or hex-encoded numbers
  */
 
-int
+static int
 XdmGetKey (pdpy, displayID)
     struct protoDisplay	*pdpy;
     ARRAY8Ptr		displayID;
@@ -294,7 +260,8 @@ XdmCheckAuthentication (
 	return FALSE;
     XdmcpUnwrap (authenticationData->data, (unsigned char *)&pdpy->key,
 		  authenticationData->data, 8);
-    XdmPrintArray8Hex ("Request packet auth", authenticationData);
+    Debug ("Request packet auth %02[*hhx\n", 
+	   authenticationData->length, authenticationData->data);
     if (!XdmcpCopyARRAY8(authenticationData, &pdpy->authenticationData))
 	return FALSE;
     incoming = (XdmAuthKeyPtr) authenticationData->data;
