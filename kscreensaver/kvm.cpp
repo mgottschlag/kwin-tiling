@@ -39,7 +39,6 @@
 #include <qcolor.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qmessagebox.h>
 #include <qradiobutton.h>
 #include <qslider.h>
 
@@ -48,6 +47,7 @@
 #include <kcolordlg.h>
 #include <kconfig.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 
 #include "helpers.h"
 
@@ -483,9 +483,10 @@ void kVmSetup::slotOkPressed()
 
 void kVmSetup::slotAbout()
 {
-	QMessageBox::message(i18n("About The Virtual Machine"),
-			     i18n("Virtual Machine Version 0.1\n\nCopyright (c) 2000 Artur Rataj <art@zeus.polsl.gliwice.pl>\n"),
-			     i18n("OK"));
+	KMessageBox::about(this,
+		i18n("Virtual Machine Version 0.1\n\nCopyright (c) 2000 Artur Rataj <art@zeus.polsl.gliwice.pl>\n"),
+	        i18n("About The Virtual Machine")
+	);
 }
 
 #include "kvm.moc"

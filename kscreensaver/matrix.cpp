@@ -22,7 +22,6 @@
 #include <qcolor.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qmessagebox.h>
 #include <qradiobutton.h>
 #include <qslider.h>
 
@@ -34,6 +33,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <krandomsequence.h>
+#include <kmessagebox.h>
 
 #include "helpers.h"
 
@@ -726,7 +726,7 @@ void KMatrixSetup::slotOkPressed() {
 }
 
 void KMatrixSetup::slotAbout() {
-  QMessageBox::message(i18n("About KMatrix"),
+  KMessageBox::about(0, 
 		       i18n("KMatrix\n\n"
 "based on xmatrix\n"
 "Copyright (C) 1999 by Jamie Zawinski <jwz@jwz.org>\n"
@@ -734,7 +734,7 @@ void KMatrixSetup::slotAbout() {
 "<d.malykhanov@iname.com>\n"
 "Ported to KDE 2.0 by Thorsten Westheider\n"
 "<thorsten.westheider@teleos-web.de>"),
-		       i18n("OK"));
+                       i18n("About KMatrix"));
 }
 
 #include "matrix.moc"
