@@ -44,6 +44,7 @@ void extensionInfo::load()
         _name = i18n("Main Panel");
         _resizeable = true;
         _useStdSizes = true;
+        _resizeableHandle = false;
         _customSizeMin = Kicker::MIN_DIMENSION;
         _customSizeMax = Kicker::MAX_DIMENSION;
         _customSize = Kicker::DEFAULT_CUSTOM_DIMENSION;
@@ -64,11 +65,12 @@ void extensionInfo::load()
             _customSizeMin = df.readNumEntry("X-KDE-PanelExt-CustomSizeMin", _customSizeMin);
             _customSizeMax = df.readNumEntry("X-KDE-PanelExt-CustomSizeMax", _customSizeMax);
             _customSize = df.readNumEntry("X-KDE-PanelExt-CustomSizeDefault", _customSize);
+            _resizeableHandle = df.readBoolEntry( "ResizeableHandle", false );
         }
 	QStringList allowedPos=QStringList::split(",",df.readEntry("X-KDE-PanelExt-Positions","Left,Top,Right,Bottom").upper());
 	for (int i=0;i<4;i++) _allowedPosition[i]=false;
 	kdDebug()<<"BEFORE X-KDE-PanelExt-Positions parsing"<<endl;
-	for (int i=0;i<allowedPos.count();i++) {
+	for (unsigned int i=0;i<allowedPos.count();i++) {
 		kdDebug()<<allowedPos[i]<<endl;
 		if (allowedPos[i]=="LEFT") _allowedPosition[KPanelExtension::Left]=true;
 		if (allowedPos[i]=="RIGHT") _allowedPosition[KPanelExtension::Right]=true;
@@ -112,6 +114,7 @@ void extensionInfo::load()
     _orig_alignment = _alignment;
     _orig_size = _size;
     _orig_customSize = _customSize;
+    _orig_resizeableHandle = _resizeableHandle;
 
     // sanitize
     if (_sizePercentage < 1) _sizePercentage = 1;
@@ -151,6 +154,12 @@ void extensionInfo::configChanged()
         {
             _orig_customSize = _customSize = customSize;
         }
+
+        bool resizeableHandle = c.readBoolEntry ("ResizeableHandle", false);
+        if (resizeableHandle != _resizeableHandle && resizeableHandle != _orig_resizeableHandle)
+        {
+            _orig_resizeableHandle = _resizeableHandle = resizeableHandle;
+        }
     }
 }
 
@@ -175,6 +184,7 @@ void extensionInfo::setDefaults()
     _expandSize     = true;
     _customSize     = 0;
     _resizeable     = false;
+    _resizeableHandle = false;
     _useStdSizes    = false;
     _customSizeMin  = 0;
     _customSizeMax  = 0;
@@ -209,6 +219,7 @@ void extensionInfo::save()
     {
         c.writeEntry("Size",       _size);
         c.writeEntry("CustomSize", _customSize);
+        c.writeEntry("ResizeableHandle", _resizeableHandle);
     }
 
     _orig_position = _position;
