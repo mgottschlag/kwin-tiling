@@ -68,7 +68,7 @@ class VisualBell : public QWidget
 public:
 
   VisualBell(int pause) 
-    : QWidget(0, 0, WStyle_NoBorder|WStyle_Tool|WStyle_Customize), _pause(pause)
+    : QWidget(0, 0, WX11BypassWM), _pause(pause)
     {};
 
   
