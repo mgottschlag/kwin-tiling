@@ -1,5 +1,5 @@
 /* This file is part of the KDE project
-   Copyright (C) 2003 Nadeem Hasan <nhasan@kde.org>
+   Copyright (C) 2003-2004 Nadeem Hasan <nhasan@kde.org>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -32,7 +32,7 @@ K_EXPORT_COMPONENT_FACTORY ( kcm_display, DisplayFactory( "display" ) )
 
 KCMDisplay::KCMDisplay( QWidget *parent, const char *name, const QStringList& )
     : KCModule( parent, name ),
-      m_randr( 0 ), m_gamma( 0 ), m_xiner( 0 )
+      m_randr( 0 ), m_gamma( 0 ), m_xiner( 0 ), m_energy( 0 )
 {
   m_tabs = new QTabWidget( this );
 
@@ -40,6 +40,7 @@ KCMDisplay::KCMDisplay( QWidget *parent, const char *name, const QStringList& )
   m_gamma = addTab( "kgamma", i18n( "Monitor Gamma" ) );
   if ( QApplication::desktop()->isVirtualDesktop() )
     m_xiner = addTab( "xinerama", i18n( "Multiple Monitors" ) );
+  m_energy = addTab( "energy", i18n( "Power Control" ) );
 
   QVBoxLayout *top = new QVBoxLayout( this, 0, KDialog::spacingHint() );
   top->addWidget( m_tabs );
@@ -76,6 +77,8 @@ void KCMDisplay::load()
     m_gamma->load();
   if ( m_xiner )
     m_xiner->load();
+  if ( m_energy )
+    m_energy->load();
 }
 
 void KCMDisplay::save()
@@ -86,5 +89,7 @@ void KCMDisplay::save()
     m_gamma->save();
   if ( m_xiner )
     m_xiner->save();
+  if ( m_energy )
+    m_energy->save();
 }
 

@@ -39,6 +39,7 @@ class KCMDisplay : public KCModule
     KCModule *m_randr;
     KCModule *m_gamma;
     KCModule *m_xiner;
+    KCModule *m_energy;
 };
 
 #endif // DISPLAY_H
