@@ -116,11 +116,30 @@ void KAccessApp::readSettings()
   else
       xkb->ctrls->enabled_ctrls &= ~XkbBounceKeysMask;
 
-  // set keyboard state
-  XkbSetControls(qt_xdisplay(), XkbControlsEnabledMask, xkb);
+
+  // mouse-by-keyboard ----------------------------------------------
+
+  config->setGroup("Mouse");
+  
+  if (config->readBoolEntry("MouseKeys", false))
+    {
+      xkb->ctrls->mk_delay = config->readNumEntry("MKDelay", 160);
+      xkb->ctrls->mk_interval = config->readNumEntry("MKInterval", 5);
+      xkb->ctrls->mk_time_to_max = config->readNumEntry("MKTimeToMax", 1000);
+      xkb->ctrls->mk_max_speed = config->readNumEntry("MKMaxSpeed", 500);
+      xkb->ctrls->mk_curve = config->readNumEntry("MKCurve", 0);
+      xkb->ctrls->mk_dflt_btn = config->readNumEntry("MKDefaultButton", 0);
+
+      xkb->ctrls->enabled_ctrls |= XkbMouseKeysMask; 
+    }
+  else
+    xkb->ctrls->enabled_ctrls &= ~XkbMouseKeysMask;
+
+  // set state
+  XkbSetControls(qt_xdisplay(), XkbControlsEnabledMask | XkbMouseKeysAccelMask, xkb);
 
   // reset them after program exit
-  ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask;
+  ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask | XkbMouseKeysMask;
   values = 0;
   XkbSetAutoResetControls(qt_xdisplay(), ctrls, &ctrls, &values);
 }
