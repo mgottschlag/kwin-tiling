@@ -774,6 +774,8 @@ KSMClient* KSMServer::newClient( SmsConn conn )
 
 void KSMServer::deleteClient( KSMClient* client )
 {
+    if ( !clients.findRef( client ) )
+	return;
     clients.removeRef( client );
     if ( client == clientInteracting ) {
 	clientInteracting = 0;
