@@ -93,16 +93,20 @@ static void send_willing (struct sockaddr *from, int fromlen, ARRAY8Ptr authenti
 int	xdmcpFd = -1;
 int	chooserFd = -1;
 
+extern FD_TYPE	WellKnownSocketsMask;
+
 void
 DestroyWellKnownSockets (void)
 {
     if (xdmcpFd != -1)
     {
+	FD_CLR (xdmcpFd, &WellKnownSocketsMask);
 	close (xdmcpFd);
 	xdmcpFd = -1;
     }
     if (chooserFd != -1)
     {
+	FD_CLR (chooserFd, &WellKnownSocketsMask);
 	close (chooserFd);
 	chooserFd = -1;
     }
