@@ -104,13 +104,14 @@ QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
                 */
 
 		PDVAR ("Fallback query", search);
-                QRegExp question("^[ \t]*\\?[ \t]*");
+		QRegExp question("^[ \t]*\\?[ \t]*");
 		if (url.isMalformed() && _url.find(question) == 0) {
-                        _url = _url.replace(question, "");
-			QString fbq = formatResult (search, fallback->charset(), QString::null, _url, true);
-			PDVAR ("fbq", fbq);
-                        return fbq;
-                } else {
+			_url = _url.replace(question, "");
+		}
+		QString fbq = formatResult (search, fallback->charset(), QString::null, _url, true);
+		PDVAR ("fbq", fbq);
+		return fbq;
+#if 0
 			SubstMap map;
 			QString qs = m_currInternetKeywordsEngine.m_strQueryWithSearch;
 			QString fbq = formatResult (search, fallback->charset(), QString::null, _url, true);
@@ -118,8 +119,8 @@ QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
 			PDVAR ("qs", qs);
 			PDVAR ("fbq", fbq);
 			map.replace("wsc_fallback", fbq);
-                        return formatResult (qs, fallback->charset(), QString::null, _url, url.isMalformed(), map);
-                }
+			return formatResult (qs, fallback->charset(), QString::null, _url, url.isMalformed(), map);
+#endif
             }
 
 	    return formatResult( m_currInternetKeywordsEngine.m_strQuery, m_currInternetKeywordsEngine.m_strCharset, QString::null, _url, url.isMalformed() );
@@ -230,7 +231,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
 	QString newurl = url;
 	QStringList ql = modifySubstitutionMap (map, userquery);
 	int count = ql.count();
-	
+
 	// Check, if old style '\1' is found and replace it with \{@} (compatibility mode):
 	{
 		int pos = -1;
