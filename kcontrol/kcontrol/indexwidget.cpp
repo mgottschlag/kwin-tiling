@@ -126,6 +126,7 @@ void IndexWidget::iconButtonClicked()
 {
   _tree->hide();
   _icon->show();
+  _icon->setFocus();
   _iconbtn->setEnabled(false);
   _treebtn->setEnabled(true);
 }
@@ -133,6 +134,7 @@ void IndexWidget::iconButtonClicked()
 void IndexWidget::treeButtonClicked()
 {
   _tree->show();
+  _tree->setFocus();
   _icon->hide();
   _iconbtn->setEnabled(true);
   _treebtn->setEnabled(false);
