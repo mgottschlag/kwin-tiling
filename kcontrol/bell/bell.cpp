@@ -68,9 +68,7 @@ extern "C"
 KBellConfig::KBellConfig(QWidget *parent, const char *name):
     KCModule(parent, name)
 {
-  QBoxLayout *layout = new QVBoxLayout(this,
-				       KDialog::marginHint(),
-				       KDialog::spacingHint());
+  QBoxLayout *layout = new QVBoxLayout(this);
 
   int row = 0;
   QGroupBox *box = new QGroupBox( i18n("Bell Settings"), this );
