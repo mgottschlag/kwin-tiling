@@ -1,5 +1,26 @@
 [Desktop Entry]
 Type=Service
 Name=InternetKeywordsFilter
+Name[ca]=Filtre de paraules clau Internet
+Name[da]=InternetNøgleordsFilter
+Name[de]=Internet-Stichwort-Filter
+Name[eo]=filtro por interretaj ŝlosilvortoj
+Name[es]=Filtro de teclas de Internet
+Name[et]=Interneti võtmesõnade filter
+Name[fr]=Mots-clés Internet
+Name[he]=טנרטניאב חתפמ תולימ ןנסמ
+Name[hu]=Internetes kulcsszavak szűrője
+Name[ja]=インターネットキーワードフィルタ
+Name[nl]=InternetZoektermenFilter
+Name[no_NY]=Filter for Internettnøkkelord
+Name[pl]=Filtr internetowych słów kluczowych
+Name[pt]=Filtro de Palavras Chaves na Internet
+Name[pt_BR]=Filtro de Palavras-chave Internet
+Name[ro]=Filtru de cuvinte cheie Internet
+Name[sl]=FilterKljučnihBesedZaInternet
+Name[sv]=InternetNyckelordFilter
+Name[uk]=Фільтр-ключових слів-Інтернет
+Name[zh_CN.GB2312]=Internet 关键字过滤
 X-KDE-Library=libkuriikwsfilter
+InitialPreference=2
 ServiceTypes=KURIFilter/Plugin

@@ -3,3 +3,4 @@ Type=Service
 Name=SearchKeywordsFilter
 X-KDE-Library=libkurisearchfilter
 ServiceTypes=KURIFilter/Plugin
+InitialPreference=3

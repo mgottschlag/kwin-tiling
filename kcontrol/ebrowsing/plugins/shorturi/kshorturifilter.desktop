@@ -1,5 +1,25 @@
 [Desktop Entry]
 Type=Service
 Name=ShortURIFilter
+Name[ca]=Filtre d'URI curta
+Name[da]=KortUrlFilter
+Name[de]=Kurz-URL-Filter
+Name[eo]=Mallonga URI-filtro
+Name[es]=Filtro Corto URI
+Name[et]=Lühikeste URL'ide filter
+Name[fr]=Filtres d'URLs courtes
+Name[he]=תורצק תובותכ ןנסמ
+Name[hu]=Rövid URI-k szűrője
+Name[ja]=ショートURIフィルタ
+Name[no_NY]=Kort URI-filter
+Name[pl]=Filtr Krótkich URI
+Name[pt]=FiltroURICurtos
+Name[pt_BR]=FiltroURICurtos
+Name[ro]=Filtru URI-uri scurte
+Name[sl]=FilterZaKratkeURI
+Name[sv]=KortWebbadressFilter
+Name[uk]=Короткий-фільтр-URI
+Name[zh_CN.GB2312]=短 URI 过滤
 X-KDE-Library=libkshorturifilter
 ServiceTypes=KURIFilter/Plugin
+InitialPreference=5
