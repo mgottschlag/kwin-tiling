@@ -3,8 +3,8 @@
     Dialog class that handles input focus in absence of a wm
     $Id$
 
-    Copyright (C) 1997, 1998 Steffen Hansen
-                             stefh@mip.ou.dk
+    Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
+    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -33,11 +33,13 @@
 
 class FDialog : public QDialog {
      Q_OBJECT
+
 public:
      FDialog( QWidget *parent = 0, const char* name = 0, 
 	      bool modal = FALSE, WFlags f = 0) 
        : QDialog( parent, name, modal, f) {}
      virtual int exec();
+
 };
 
 #endif /* FDIALOG_H */

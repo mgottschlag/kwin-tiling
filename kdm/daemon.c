@@ -1,17 +1,10 @@
-/* $XConsortium: daemon.c,v 1.16 94/12/01 17:10:49 kaleb Exp $ */
-/* $XFree86: xc/programs/xdm/daemon.c,v 3.5 1995/01/28 16:16:50 dawes Exp $ */
+/* $TOG: daemon.c /main/17 1998/02/09 13:54:47 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -19,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/daemon.c,v 3.11 2000/08/10 17:40:41 dawes Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -38,7 +32,6 @@ from the X Consortium.
 
 #include <X11/Xos.h>
 
-/*
 #if defined(SVR4) || defined(USG)
 #include <termios.h>
 #else
@@ -60,26 +53,25 @@ extern int errno;
 #else
 #define Pid_t pid_t
 #endif
-*/
 
-#include <errno.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <termios.h>
-
-#ifdef X_NOT_POSIX
-#define Pid_t int
+#ifndef X_NOT_STDC_ENV
+#include <stdlib.h>
 #else
-#define Pid_t pid_t
+extern void exit (int);
 #endif
 
-extern void exit ();
-extern int LogError();
 
-void BecomeOrphan ()
+#include "dm.h"
+#include "dm_error.h"
+
+void
+BecomeDaemon (void)
 {
     Pid_t child_id;
+#ifndef CSRG_BASED
     int stat;
+    register int i;
+#endif
 
     /*
      * fork so that the process goes into the background automatically. Also
@@ -103,64 +95,57 @@ void BecomeOrphan ()
     default:
 	/* parent */
 
-/*
-#if defined(SVR4)
-*/
+#ifndef CSRG_BASED
+#if defined(SVR4) || defined(__QNXNTO__)
 	stat = setpgid(child_id, child_id);
 	/* This gets error EPERM.  Why? */
-/*
 #else
-#if defined(SYSV)
-	stat = 0;	/ * don't know how to set child's process group * /
+#if defined(SYSV) || defined(__GNU__)
+	stat = 0;	/* don't know how to set child's process group */
 #else
 	stat = setpgrp(child_id, child_id);
 #ifndef MINIX
-*/
 	if (stat != 0)
 	    LogError("setting process grp for daemon failed, errno = %d\n",
 		     errno);
-/*
-#endif / * MINIX * /
+#endif /* MINIX */
 #endif
 #endif
-*/
+#endif /* !CSRG_BASED */
 	exit (0);
     }
-}
 
-void BecomeDaemon ()
-{
-    register int i;
-
+#ifndef CSRG_BASED
     /*
      * Close standard file descriptors and get rid of controlling tty
      */
 
-/*
-#if defined(SYSV) || defined(SVR4)
+#if defined(SYSV) || defined(SVR4) || defined(__GNU__) || defined(__QNXNTO__)
     setpgrp ();
 #else
     setpgrp (0, getpid());
 #endif
-*/
-    setpgid( 0, getpid()); /* This should be POSIX /stefh */
+
     close (0); 
-    close (1);
-    close (2);
-/*
+    open ("/dev/null", O_RDWR);
+    if (isatty (2))
+	dup2 (0, 2);
+    if (isatty (1))
+	dup2 (2, 1);
+
 #ifndef __EMX__
 #ifdef MINIX
 #if 0
-    / * Use setsid() to get rid of our controlling tty, this requires an extra
+    /* Use setsid() to get rid of our controlling tty, this requires an extra
      * fork though.
-     * /
+     */
     setsid();
     if (fork() > 0)
     	_exit(0);
 #endif
-#else / * !MINIX * /
-#if !((defined(SYSV) || defined(SVR4)) && defined(i386))
-    if ((i = open ("/dev/tty", O_RDWR)) >= 0) {	/ * did open succeed? * /
+#else /* !MINIX */
+#if !((defined(SYSV) || defined(SVR4)) && defined(i386)) && !defined(__CYGWIN__)
+    if ((i = open ("/dev/tty", O_RDWR)) >= 0) {	/* did open succeed? */
 #if defined(USG) && defined(TCCLRCTTY)
 	int zero = 0;
 	(void) ioctl (i, TCCLRCTTY, &zero);
@@ -169,29 +154,20 @@ void BecomeDaemon ()
 	int zero = 0;
 	(void) ioctl (i, TIOCTTY, &zero);
 #else
-	(void) ioctl (i, TIOCNOTTY, (char *) 0);    / * detach, BSD style * /
+#ifndef TIOCNOTTY
+/* HP/UX fix: */
+# define TIOCNOTTY  _IO('t', 113)           /* void tty association */
+#endif
+	(void) ioctl (i, TIOCNOTTY, (char *) 0);    /* detach, BSD style */
 #endif
 #endif
 	(void) close (i);
     }
-#endif / * !((SYSV || SVR4) && i386) * /
-#endif / * MINIX * /
-#endif / * !__EMX__ * /
-*/
-    /* HP/UX fix: */
-#if !((defined(SYSV) || defined(SVR4)) && defined(i386))
-#ifndef TIOCNOTTY
-# define TIOCNOTTY  _IO('t', 113)           /* void tty association */
-#endif
-    if ((i = open ("/dev/tty", O_RDWR)) >= 0) {	/* did open succeed? */
-	 (void) ioctl (i, TIOCNOTTY, (char *) 0);    /* detach, BSD style */
-	 (void) close (i);
-    }
-#endif
-    /*
-     * Set up the standard file descriptors.
-     */
-    (void) open ("/", O_RDONLY);	/* root inode already in core */
-    (void) dup2 (0, 1);
-    (void) dup2 (0, 2);
+#endif /* !((SYSV || SVR4) && i386) */
+#endif /* MINIX */
+#endif /* !__EMX__ */
+
+#else
+    daemon (0, 0);
+#endif /* CSRG_BASED */
 }

@@ -1,16 +1,10 @@
-/* $XConsortium: error.c,v 1.16 94/04/17 20:03:38 gildea Exp $ */
+/* $TOG: error.c /main/17 1998/02/09 13:55:13 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -18,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/error.c,v 1.2 1998/10/10 15:25:34 dawes Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -41,14 +36,11 @@ from the X Consortium.
  * or use syslog if it exists
  */
 
-# include "dm.h"
 # include <stdio.h>
 # include <stdarg.h>
-# include <X11/Xfuncproto.h>
 
-#if !HAVE_VSYSLOG
-#undef USE_SYSLOG
-#endif
+# include "dm.h"
+# include "dm_error.h"
 
 #ifdef HAVE_SYSLOG_H
 #include <syslog.h>
@@ -58,109 +50,97 @@ from the X Consortium.
 void 
 LogInfo(char * fmt, ...)
 {
-#ifndef USE_SYSLOG
-    fprintf (stderr, "xdm info (pid %d): ", (int)getpid());
-#endif
-    {
-	va_list args;
-	va_start(args, fmt);
-#  ifdef USE_SYSLOG
-	vsyslog (LOG_INFO, fmt, args);
-#  else
-	vfprintf (stderr, fmt, args);
+#  ifndef USE_SYSLOG
+    char fmt1[256];
 #  endif
-	va_end(args);
-    }
-#ifdef USE_SYSLOG
+    va_list args;
+
+    va_start(args, fmt);
+#  ifdef USE_SYSLOG
+    openlog("kdm", LOG_PID, LOG_DAEMON);
+    vsyslog (LOG_INFO, fmt, args);
+#  else
+    sprintf (fmt1, "xdm info (pid %d): %s", (int)getpid(), fmt);
+    vfprintf (stderr, fmt1, args);
     fflush (stderr);
-#endif
+#  endif
+    va_end(args);
 }
 
 /*VARARGS1*/
-int
+void
 LogError (char * fmt, ...)
 {
-#ifndef USE_SYSLOG
-    fprintf (stderr, "xdm error (pid %d): ", (int)getpid());
-#endif
-    {
-	va_list args;
-	va_start(args, fmt);
-#  ifdef USE_SYSLOG
-	vsyslog (LOG_ERR, fmt, args);
-#  else
-	vfprintf (stderr, fmt, args);
+#  ifndef USE_SYSLOG
+    char fmt1[256];
 #  endif
-	va_end(args);
-    }
-#ifdef USE_SYSLOG
-    return 0;
-#else
-    return fflush (stderr);
-#endif
+    va_list args;
+
+    va_start(args, fmt);
+#  ifdef USE_SYSLOG
+    openlog("kdm", LOG_PID, LOG_DAEMON);
+    vsyslog (LOG_ERR, fmt, args);
+#  else
+    sprintf (fmt1, "xdm error (pid %d): %s", (int)getpid(), fmt);
+    vfprintf (stderr, fmt1, args);
+    fflush (stderr);
+#  endif
+    va_end(args);
 }
 
 /*VARARGS1*/
 void
 LogPanic (char * fmt, ...)
 {
-#ifndef USE_SYSLOG
-    fprintf (stderr, "xdm panic (pid %d): ", (int)getpid());
-#endif
-    {
-	va_list args;
-	va_start(args, fmt);
-#  ifdef USE_SYSLOG
-	vsyslog (LOG_EMERG, fmt, args);
-#  else
-	vfprintf (stderr, fmt, args);
+#  ifndef USE_SYSLOG
+    char fmt1[256];
 #  endif
-	va_end(args);
-    }
-#ifdef USE_SYSLOG
+    va_list args;
+
+    va_start(args, fmt);
+#  ifdef USE_SYSLOG
+    openlog("kdm", LOG_PID, LOG_DAEMON);
+    vsyslog (LOG_EMERG, fmt, args);
+#  else
+    sprintf (fmt1, "xdm panic (pid %d): %s", (int)getpid(), fmt);
+    vfprintf (stderr, fmt1, args);
     fflush (stderr);
-#endif
+#  endif
+    va_end(args);
     exit (1);
 }
 
 /*VARARGS1*/
-int
+void
 LogOutOfMem (char * fmt, ...)
 {
-#ifdef USE_SYSLOG
     char fmt1[256];
-    sprintf(fmt1, "out of memory: %s", fmt);
-#else
-    fprintf (stderr, "kdm: out of memory in routine ");
-#endif
-    {
-	va_list args;
-	va_start(args, fmt);
+    va_list args;
+
+    va_start(args, fmt);
 #  ifdef USE_SYSLOG
-	vsyslog (LOG_ALERT, fmt1, args);
+    openlog("kdm", LOG_PID, LOG_DAEMON);
+    sprintf (fmt1, "out of memory in routine %s", fmt);
+    vsyslog (LOG_ALERT, fmt1, args);
 #  else
-	vfprintf (stderr, fmt, args);
+    sprintf (fmt1, "kdm: out of memory in routine %s", fmt);
+    vfprintf (stderr, fmt1, args);
+    fflush (stderr);
 #  endif
-	va_end(args);
-    }
-#ifdef USE_SYSLOG
-    return 0;
-#else
-    return fflush (stderr);
-#endif
+    va_end(args);
 }
 
-int
-Panic (mesg)
-char	*mesg;
+void
+Panic (char *mesg)
 {
 #ifdef USE_SYSLOG
+    openlog("kdm", LOG_PID, LOG_DAEMON);
     syslog(LOG_EMERG, mesg);
 #else
     int	i;
 
     i = creat ("/dev/console", 0666);
-    write (i, "panic: ", 7);
+    write (i, "kdm panic: ", 7);
     write (i, mesg, strlen (mesg));
 #endif
     exit (1);
@@ -168,30 +148,36 @@ char	*mesg;
 
 
 /*VARARGS1*/
-int
+void
 Debug (char * fmt, ...)
 {
+#  ifndef USE_SYSLOG
+    char fmt1[256];
+#  endif
+    va_list args;
+
     if (debugLevel > 0)
     {
-	va_list args;
 	va_start(args, fmt);
 #  ifdef USE_SYSLOG
+	openlog("kdm", LOG_PID, LOG_DAEMON);
 	vsyslog (LOG_DEBUG, fmt, args);
-#  endif
-	vprintf (fmt, args);
-	va_end(args);
-#ifndef USE_SYSLOG
+#  else
+	sprintf(fmt1, "%d: %s", getpid(), fmt);
+	vprintf (fmt1, args);
 	fflush (stdout);
-#endif
+#  endif
+	va_end(args);
     }
-    return 0;
 }
 
 void
 InitErrorLog ()
 {
 #ifdef USE_SYSLOG
-	openlog("kdm", LOG_PID, LOG_DAEMON);
+	/* aw shit! PAM re-opens the log with "bad" values ...
+	   so we have to re-open it on every message *grmph*
+	*/
 #else
 	int	i;
 	if (errorLogFile[0]) {

@@ -1,8 +1,17 @@
-1999-11-09  Harald Hoyer  <Harald.Hoyer@RedHat.de>
+2000-12-07  Oswald Buddenhagen <ob6@inf.tu-dresden.de>
+
+	* New XDM port from xfree86 4.0.1
+	* Made the greeter dynamically loadable
+	* Moved chooser and greeter to separate directories, 
+	  same for unused stuff (misc/)
+	* Optional auto-login, auto-re-login and password-free login
+	* A LOT of bug fixes and clean up
+
+1999-11-09  Harald Hoyer <Harald.Hoyer@RedHat.de>
 
 	* made kchooser
 
-1999-07-02  Steffen Hansen  <hansen@kde.org>
+1999-07-02  Steffen Hansen <hansen@kde.org>
 
 	* Fixes from KDE_1_1_BRANCH:
         1) The "session type" wasn't updated when the user left the login line
@@ -23,12 +32,12 @@
 	  TODO: Update kcmkdm to actually use these options
 
 
-1999-02-01  Steffen Hansen  <stefh@mip.ou.dk>
+1999-02-01  Steffen Hansen <hansen@kde.org>
 
 	* kdmshutdown.cpp :
 	fork()/sleep() to prevent gpm and X from racing.
 
-1998-12-17  Steffen Hansen  <stefh@localhost>
+1998-12-17  Steffen Hansen <hansen@kde.org>
 
 	* kdmshutdown.cpp :
 	Changed char[] to QString. We want unicode ;)
@@ -49,14 +58,14 @@
 	third button.
 
 
-1998-12-04  Steffen Hansen  <stefh@localhost>
+1998-12-04  Steffen Hansen <hansen@kde.org>
 
 	* genauth.c (len;): Read random data from "randomFile" (usually
 		/dev/mem) for auth key.
 
 	* kgreeter.cpp (GreetUser): Removed hardcoded backspace
 
-1998-11-27  Steffen Hansen  <stefh@localhost>
+1998-11-27  Steffen Hansen <hansen@kde.org>
 
 	* Make the authentication cookie more unpredictable by adding
 	times from X events to seed

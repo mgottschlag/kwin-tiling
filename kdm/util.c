@@ -1,17 +1,10 @@
-/* $XConsortium: util.c,v 1.18 94/11/21 18:33:11 kaleb Exp $ */
-/* $XFree86: xc/programs/xdm/util.c,v 3.5 1995/01/28 16:16:57 dawes Exp $ */
+/* $TOG: util.c /main/19 1998/02/09 13:56:40 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1989  X Consortium
+Copyright 1989, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -19,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/util.c,v 3.14 2000/08/10 17:40:41 dawes Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -41,7 +35,10 @@ from the X Consortium.
  */
 
 # include   "dm.h"
-/*
+# include   "dm_error.h"
+
+#include <X11/Xmu/SysUtil.h>	/* for XmuGetHostname */
+
 #ifdef X_POSIX_C_SOURCE
 #define _POSIX_C_SOURCE X_POSIX_C_SOURCE
 #include <signal.h>
@@ -55,24 +52,19 @@ from the X Consortium.
 #undef _POSIX_SOURCE
 #endif
 #endif
-#if defined(__osf__) || defined(linux) || defined(MINIX)
+#if defined(__osf__) || defined(linux) || defined(MINIX) || defined(__QNXNTO__)
 #define setpgrp setpgid
 #endif
-*/
 
-#include <signal.h>
-
-void printEnv (e)
-char	**e;
+void
+printEnv (char **e)
 {
 	while (*e)
 		Debug ("%s\n", *e++);
 }
 
 static char *
-makeEnv (name, value)
-char	*name;
-char	*value;
+makeEnv (char *name, char *value)
 {
 	char	*result;
 
@@ -81,20 +73,18 @@ char	*value;
 		LogOutOfMem ("makeEnv");
 		return 0;
 	}
-#ifdef _AIX
+#ifdef AIXV3
 	/* setpenv() depends on "SYSENVIRON:", not "SYSENVIRON:=" */
 	if ( !(value && *value) )
 		sprintf (result, "%s", name);
-	else 
+	else
 #endif
-	sprintf (result, "%s=%s", name, value);
+		sprintf (result, "%s=%s", name, value);
 	return result;
 }
 
 char *
-getEnv (e, name)
-	char	**e;
-	char	*name;
+getEnv (char **e, char *name)
 {
 	int	l = strlen (name);
 
@@ -110,10 +100,7 @@ getEnv (e, name)
 }
 
 char **
-setEnv (e, name, value)
-	char	**e;
-	char	*name;
-	char	*value;
+setEnv (char **e, char *name, char *value)
 {
 	char	**new, **old;
 	char	*newe;
@@ -153,33 +140,32 @@ setEnv (e, name, value)
 }
 
 char **
-putEnv(string, env)
-      const char *string;
-      char ** env;
+putEnv(const char *string, char **env)
 {
-      char *v, *b, *n;
-      int nl;
-      
-      if ((b = strchr(string, '=')) == NULL) return NULL;
-      v = b + 1;
-      
-      nl = b - string;
-      if ((n = malloc(nl + 1)) == NULL)
-        {
-          LogOutOfMem ("putAllEnv");
-          return NULL;
-        }
-      
-      strncpy(n, string,nl + 1);
-      n[nl] = 0;
-      
-      env = setEnv(env,n,v);
-      free(n);
-      return env;
+    char *v, *b, *n;
+    int nl;
+  
+    if ((b = strchr(string, '=')) == NULL)
+	return NULL;
+    v = b + 1;
+  
+    nl = b - string;
+    if ((n = malloc(nl + 1)) == NULL)
+    {
+	LogOutOfMem ("putAllEnv");
+	return NULL;
+    }
+  
+    strncpy(n, string,nl + 1);
+    n[nl] = 0;
+  
+    env = setEnv(env,n,v);
+    free(n);
+    return env;
 }
 
-void freeEnv (env)
-    char    **env;
+void
+freeEnv (char **env)
 {
     char    **e;
 
@@ -194,12 +180,11 @@ void freeEnv (env)
 # define isblank(c)	((c) == ' ' || c == '\t')
 
 char **
-parseArgs (argv, string)
-char	**argv;
-char	*string;
+parseArgs (char **argv, char *string)
 {
 	char	*word;
 	char	*save;
+	char    **newargv;
 	int	i;
 
 	i = 0;
@@ -216,16 +201,17 @@ char	*string;
 	for (;;) {
 		if (!*string || isblank (*string)) {
 			if (word != string) {
-				argv = (char **) realloc ((char *) argv,
+				newargv = (char **) realloc ((char *) argv,
 					(unsigned) ((i + 2) * sizeof (char *)));
 				save = malloc ((unsigned) (string - word + 1));
-				if (!argv || !save) {
+				if (!newargv || !save) {
 					LogOutOfMem ("parseArgs");
-					if (argv)
-						free ((char *) argv);
+					free ((char *) argv);
 					if (save)
 						free (save);
 					return 0;
+				} else {
+				    argv = newargv;
 				}
 				argv[i] = strncpy (save, word, string-word);
 				argv[i][string-word] = '\0';
@@ -241,8 +227,8 @@ char	*string;
 	return argv;
 }
 
-void freeArgs (argv)
-    char    **argv;
+void
+freeArgs (char **argv)
 {
     char    **a;
 
@@ -254,32 +240,36 @@ void freeArgs (argv)
     free ((char *) argv);
 }
 
-extern void CloseOnFork();
-
-void CleanUpChild ()
+void
+CleanUpChild (void)
 {
-/*
-#if defined(SYSV) || defined(SVR4)
-#if !(defined(SVR4) && defined(i386))
+    if(!debugLevel) {
+#ifdef CSRG_BASED
+	setsid();
+#else
+#if defined(SYSV) || defined(SVR4) || defined(__GNU__) || defined(__CYGWIN__)
+#if !(defined(SVR4) && defined(i386)) || defined(SCO325) || defined(__GNU__)
 	setpgrp ();
 #endif
 #else
 	setpgrp (0, getpid ());
-*/
-        setpgid( 0, getpid());     
+#ifdef MINIX /* actually POSIX */
 	{
 		sigset_t ss; 
 		sigemptyset(&ss);
 		sigprocmask(SIG_SETMASK, &ss, NULL);
 	}
-/*	sigsetmask (0);*/
-/*
+#else
+	sigsetmask (0);
 #endif
-#endif*/
+#endif
+#endif
+    }
 #ifdef SIGCHLD
 	(void) Signal (SIGCHLD, SIG_DFL);
 #endif
 	(void) Signal (SIGTERM, SIG_DFL);
+	(void) Signal (SIGINT, SIG_IGN);	/* for -nodaemon */
 	(void) Signal (SIGPIPE, SIG_DFL);
 	(void) Signal (SIGALRM, SIG_DFL);
 	(void) Signal (SIGHUP, SIG_DFL);
@@ -290,7 +280,7 @@ static char localHostbuf[256];
 static int  gotLocalHostname;
 
 char *
-localHostname ()
+localHostname (void)
 {
     if (!gotLocalHostname)
     {
@@ -300,9 +290,7 @@ localHostname ()
     return localHostbuf;
 }
 
-SIGVAL (*Signal (sig, handler))()
-    int sig;
-    SIGVAL (*handler)();
+SIGVAL (*Signal (int sig, SIGFUNC handler))(int)
 {
 #if !defined(X_NOT_POSIX) && !defined(__EMX__)
     struct sigaction sigact, osigact;

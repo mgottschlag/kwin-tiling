@@ -1,17 +1,10 @@
-/* $XConsortium: session.c,v 1.72.1.1 95/06/19 20:29:12 gildea Exp $ */
-/* $XFree86: xc/programs/xdm/session.c,v 3.7 1995/07/08 10:32:08 dawes Exp $ */
+/* $TOG: session.c /main/79 1998/02/09 13:56:17 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -19,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/session.c,v 3.23 2000/06/17 00:27:34 dawes Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -38,23 +32,20 @@ from the X Consortium.
  * session.c
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "dm.h"
+#include "dm_auth.h"
+#include "dm_error.h"
 #include "greet.h"
+
 #include <X11/Xlib.h>
 #include <signal.h>
 #include <X11/Xatom.h>
+/* #include <X11/Xmu/Error.h> */
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <signal.h>
-#include <pwd.h>
-#include <grp.h>
-#include <sys/types.h>
-#ifdef _AIX
+#include <grp.h>	/* for initgroups */
+#ifdef AIXV3
 # include <usersec.h>
 #endif
 #ifdef HAVE_CRYPT_H
@@ -77,6 +68,10 @@ from the X Consortium.
 #endif
 #ifdef USESHADOW
 # include <shadow.h>
+/*
+extern	struct spwd	*getspnam(GETSPNAM_ARGS);
+extern	void	endspent(void);
+*/
 #endif
 
 #ifdef KRB4
@@ -87,45 +82,54 @@ from the X Consortium.
 #endif
 
 #ifndef GREET_USER_STATIC
-#include <dlfcn.h>
-#ifndef RTLD_NOW
-#define RTLD_NOW 1
-#endif
+# include <dlfcn.h>
+# ifndef RTLD_NOW
+#  define RTLD_NOW 1
+# endif
 #endif
 
-extern	int	PingServer();
-extern	int	SessionPingFailed();
-extern	int	Debug(char *, ...);
-extern	int	RegisterCloseOnFork();
-extern	void	SecureDisplay();
-extern	void	UnsecureDisplay();
-extern	int	ClearCloseOnFork();
-extern	int	SetupDisplay();
-extern	int	LogError(char *, ...);
-extern	void	SessionExit();
-extern	void	DeleteXloginResources();
-extern	int	source();
-extern	char	**defaultEnv();
-extern	char	**setEnv();
-extern	char	**putEnv();
-extern	char	**parseArgs();
-extern	int	printEnv();
-extern	char	**systemEnv();
-extern	int	LogOutOfMem(char *, ...);
-extern  void	DestroyWellKnownSockets();
+/* never true in kdm */
+#ifdef CSRG_BASED
+# include <sys/param.h>
+# ifdef HAS_SETUSERCONTEXT
+#  include <login_cap.h>
+#  include <pwd.h>
+# endif
+#endif
 
-#ifndef HAVE_CRYPT
-static char *fake_crypt(const char *s1, const char *s2)
+#ifdef HAVE_LOGIN_CAP_H		/* maybe, HAS_SETUSERCONTEXT fits better */
+# include <login_cap.h>		/* BSDI-like login classes */
+#endif
+
+static	int	runAndWait (char **args, char **environ);
+
+#if defined(CSRG_BASED) || defined(__osf__)
+# include <sys/types.h>
+# include <grp.h>
+#else
+/* should be in <grp.h> */
+extern	void	setgrent(void);
+extern	struct group	*getgrent(void);
+extern	void	endgrent(void);
+#endif
+
+#if defined(CSRG_BASED)
+# include <pwd.h>
+# include <unistd.h>
+#else
+extern	struct passwd	*getpwnam(GETPWNAM_ARGS);
+# ifdef linux
+extern  void	endpwent(void);
+# endif
+extern	char	*crypt(CRYPT_ARGS);
+#endif
+
+#ifdef USE_PAM
+pam_handle_t **thepamh(void)
 {
-	return(s2);
+	static pam_handle_t *pamh = NULL;
+	return &pamh;
 }
-#endif
-
-#ifdef HAVE_LOGIN_CAP_H
-#include <login_cap.h>		/* BSDI-like login classes */
-#define HAVE_SETUSERCONTEXT	/* assume we have setusercontext if we have
-				 * the header file
-				 */
 #endif
 
 /* XmuPrintDefaultErrorMessage is taken from DefErrMsg.c from X11R6 */
@@ -252,43 +256,52 @@ int XmuPrintDefaultErrorMessage (dpy, event, fp)
 static	struct dlfuncs	dlfuncs = {
 	PingServer,
 	SessionPingFailed,
-	(void*) Debug,
+	Debug,
 	RegisterCloseOnFork,
-	(void*) SecureDisplay,
-	(void*) UnsecureDisplay,
+	SecureDisplay,
+	UnsecureDisplay,
 	ClearCloseOnFork,
 	SetupDisplay,
-	(void*) LogError,
-	(void*) SessionExit,
-	(void*) DeleteXloginResources,
+	LogError,
+	SessionExit,
+	DeleteXloginResources,
 	source,
 	defaultEnv,
 	setEnv,
+	putEnv,
 	parseArgs,
 	printEnv,
 	systemEnv,
-	(void*) LogOutOfMem,
-	(void*) setgrent,
+	LogOutOfMem,
+	setgrent,
 	getgrent,
 	endgrent,
 #ifdef USESHADOW
 	getspnam,
+#ifndef QNX4
 	endspent,
+#endif /* QNX4 doesn't use endspent */
 #endif
 	getpwnam,
-#ifdef HAVE_CRYPT
+#ifdef linux
+	endpwent,
+#endif
 	crypt,
-#else
-	fake_crypt,
+#ifdef USE_PAM
+	thepamh,
 #endif
 	};
-	
+
 #ifdef X_NOT_STDC_ENV
 extern int errno;
 #endif
 
-static Bool StartClient();
-void LoadXloginResources (struct display*);
+static Bool StartClient(
+    struct verify_info	*verify,
+    struct display	*d,
+    int			*pidp,
+    char		*name,
+    char		*passwd);
 
 static int			clientPid;
 static struct greet_info	greet;
@@ -296,14 +309,9 @@ static struct verify_info	verify;
 
 static Jmp_buf	abortSession;
 
-#ifdef USE_PAM
-extern pam_handle_t *pamh;
-#endif
-
 /* ARGSUSED */
 static SIGVAL
-catchTerm (n)
-    int n;
+catchTerm (int n)
 {
     Longjmp (abortSession, 1);
 }
@@ -312,8 +320,7 @@ static Jmp_buf	pingTime;
 
 /* ARGSUSED */
 static SIGVAL
-catchAlrm (n)
-    int n;
+catchAlrm (int n)
 {
     Longjmp (pingTime, 1);
 }
@@ -322,19 +329,17 @@ static Jmp_buf	tenaciousClient;
 
 /* ARGSUSED */
 static SIGVAL
-waitAbort (n)
-    int n;
+waitAbort (int n)
 {
 	Longjmp (tenaciousClient, 1);
 }
 
-#if defined(_POSIX_SOURCE) || defined(SYSV) || defined(SVR4) || defined(hpux) || defined(_UNIXWARE) 
+#if defined(_POSIX_SOURCE) || defined(SYSV) || defined(SVR4) || defined(hpux) || defined(_UNIXWARE)
 #define killpg(pgrp, sig) kill(-(pgrp), sig)
 #endif
 
 static void
-AbortClient (pid)
-    int pid;
+AbortClient (int pid)
 {
     int	sig = SIGTERM;
 #ifdef __STDC__
@@ -367,9 +372,8 @@ AbortClient (pid)
     }
 }
 
-int
-SessionPingFailed (d)
-    struct display  *d;
+void
+SessionPingFailed (struct display *d)
 {
     if (clientPid > 1)
     {
@@ -377,7 +381,6 @@ SessionPingFailed (d)
 	source (verify.systemEnviron, d->reset);
     }
     SessionExit (d, RESERVER_DISPLAY, TRUE);
-    return 0;
 }
 
 /*
@@ -390,20 +393,16 @@ SessionPingFailed (d)
 
 /*ARGSUSED*/
 static int
-IOErrorHandler (dpy)
-    Display *dpy;
+IOErrorHandler (Display *dpy)
 {
-    char *s = strerror(errno);
-
-    LogError("fatal IO error %d (%s)\n", errno, s);
+    LogError("fatal IO error %d (%s)\n", errno, _SysErrorMsg(errno));
     exit(RESERVER_DISPLAY);
-    return 0; /* not reached */
+    /*NOTREACHED*/
+    return 0;
 }
 
 static int
-ErrorHandler(dpy, event)
-    Display *dpy;
-    XErrorEvent *event;
+ErrorHandler(Display *dpy, XErrorEvent *event)
 {
     LogError("X error\n");
     if (XmuPrintDefaultErrorMessage (dpy, event, stderr) == 0) return 0;
@@ -411,18 +410,15 @@ ErrorHandler(dpy, event)
     /*NOTREACHED*/
 }
 
-extern void SetTitle();
-
 void
-ManageSession (d)
-struct display	*d;
+ManageSession (struct display *d)
 {
-     /* volatile added /stefh */
-    volatile int       	pid = 0/*, code*/;
+    static int		pid = 0;
     Display		*dpy;
-    greet_user_rtn	greet_stat; 
     static GreetUserProc greet_user_proc = NULL;
-    /*void		*greet_lib_handle;*/
+#ifndef GREET_USER_STATIC
+    void		*greet_lib_handle;
+#endif
 
     Debug ("ManageSession %s\n", d->name);
     (void)XSetIOErrorHandler(IOErrorHandler);
@@ -441,24 +437,24 @@ struct display	*d;
     if (greet_lib_handle != NULL)
 	greet_user_proc = (GreetUserProc)dlsym(greet_lib_handle, "GreetUser");
     if (greet_user_proc == NULL)
-	{
+    {
 	LogError("%s while loading %s\n", dlerror(), greeterLib);
 	exit(UNMANAGE_DISPLAY);
-	}
+    }
 #endif
 
     /* tell the possibly dynamically loaded greeter function
      * what data structure formats to expect.
-     * These version numbers are registered with the X Consortium. */
+     * These version numbers are registered with The Open Group. */
     verify.version = 1;
     greet.version = 1;
-    greet_stat = (*greet_user_proc)(d, &dpy, &verify, &greet, &dlfuncs);
 
-    if (greet_stat == Greet_Success)
+    if ((*greet_user_proc)(d, &dpy, &verify, &greet, &dlfuncs) == Greet_Success)
     {
 	clientPid = 0;
 	if (!Setjmp (abortSession)) {
 	    (void) Signal (SIGTERM, catchTerm);
+	    (void) Signal (SIGINT, catchTerm);	/* for nodaemon */
 	    /*
 	     * Start the clients, changing uid/groups
 	     *	   setting up environment and running the session
@@ -511,16 +507,11 @@ struct display	*d;
     SessionExit (d, OBEYSESS_DISPLAY, TRUE);
 }
 
-int runAndWait( char **args, char **environ );
-extern void freeArgs( char **argv );
-extern void freeEnv( char **env );
-
 void
-LoadXloginResources (d)
-struct display	*d;
+LoadXloginResources (struct display *d)
 {
-    char	**args, **parseArgs();
-    char	**env = 0, **setEnv(), **systemEnv();
+    char	**args;
+    char	**env = 0;
 
     if (d->resources[0] && access (d->resources, 4) == 0) {
 	env = systemEnv (d, (char *) 0, (char *) 0);
@@ -533,11 +524,10 @@ struct display	*d;
     }
 }
 
-int
-SetupDisplay (d)
-struct display	*d;
+void
+SetupDisplay (struct display *d)
 {
-    char	**env = 0, **setEnv(), **systemEnv();
+    char	**env = 0;
 
     if (d->setup && d->setup[0])
     {
@@ -545,13 +535,11 @@ struct display	*d;
     	(void) source (env, d->setup);
     	freeEnv (env);
     }
-   return 0;
 }
 
 /*ARGSUSED*/
-void DeleteXloginResources (d, dpy)
-struct display	*d;
-Display		*dpy;
+void
+DeleteXloginResources (struct display *d, Display *dpy)
 {
     int i;
     Atom prop = XInternAtom(dpy, "SCREEN_RESOURCES", True);
@@ -567,17 +555,13 @@ static Jmp_buf syncJump;
 
 /* ARGSUSED */
 static SIGVAL
-syncTimeout (n)
-    int n;
+syncTimeout (int n)
 {
     Longjmp (syncJump, 1);
 }
 
-extern void pseudoReset( Display *dpy );
-
-void SecureDisplay (d, dpy)
-struct display	*d;
-Display		*dpy;
+void
+SecureDisplay (struct display *d, Display *dpy)
 {
     Debug ("SecureDisplay %s\n", d->name);
     (void) Signal (SIGALRM, syncTimeout);
@@ -610,9 +594,8 @@ Display		*dpy;
     Debug ("done secure %s\n", d->name);
 }
 
-void UnsecureDisplay (d, dpy)
-struct display	*d;
-Display		*dpy;
+void
+UnsecureDisplay (struct display *d, Display *dpy)
 {
     Debug ("Unsecure display %s\n", d->name);
     if (d->grabServer)
@@ -622,19 +605,9 @@ Display		*dpy;
     }
 }
 
-extern void ResetServer( struct display *d );
-
-void SessionExit (d, status, removeAuth)
-    struct display  *d;
+void
+SessionExit (struct display *d, int status, int removeAuth)
 {
-#ifdef USE_PAM
-    if( pamh) {
-        /* shutdown PAM session */
-        pam_close_session(pamh, 0);
-        pam_end(pamh, PAM_SUCCESS);
-        pamh = NULL;
-    }
-#endif
     /* make sure the server gets reset after the session is over */
     if (d->serverPid >= 2 && d->resetSignal)
 	kill (d->serverPid, d->resetSignal);
@@ -642,6 +615,9 @@ void SessionExit (d, status, removeAuth)
 	ResetServer (d);
     if (removeAuth)
     {
+#ifdef USE_PAM
+	pam_handle_t **pamh = thepamh();
+#endif
 #ifdef NGROUPS_MAX
 	setgid (verify.groups[0]);
 #else
@@ -673,6 +649,14 @@ void SessionExit (d, status, removeAuth)
 	    }
 	}
 #endif /* K5AUTH */
+#ifdef USE_PAM
+	if (pamh && *pamh) {
+	    /* shutdown PAM session */
+	    pam_close_session(*pamh, 0);
+	    pam_end(*pamh, PAM_SUCCESS);
+	    *pamh = NULL;
+	}
+#endif
 #ifdef KRB4
         {
 	    (void) dest_tkt();
@@ -686,41 +670,58 @@ void SessionExit (d, status, removeAuth)
     exit (status);
 }
 
-extern void CleanUpChild();
-
 static Bool
-StartClient (verify, d, pidp, name, passwd)
-    struct verify_info	*verify;
-    struct display	*d;
-    int			*pidp;
-    char		*name;
-    char		*passwd;
+StartClient (
+    struct verify_info	*verify,
+    struct display	*d,
+    int			*pidp,
+    char		*name,
+    char		*passwd)
 {
-    char	**f, *home, *getEnv ();
+    char	**f, *home;
     char	*failsafeArgv[2];
     int	pid;
-#ifdef HAVE_SETUSERCONTEXT
+#ifdef HAS_SETUSERCONTEXT
     login_cap_t *lc = NULL;
     extern char **environ;
     char ** e;
     struct passwd *pwd;
     char *envinit[1];
 #endif
+#ifdef USE_PAM 
+    pam_handle_t **pamh = thepamh();
+#endif
 
-    if (verify->argv) {
-	Debug ("StartSession %s: ", verify->argv[0]);
-	for (f = verify->argv; *f; f++)
-		Debug ("%s ", *f);
-	Debug ("; ");
-    }
-    if (verify->userEnviron) {
-	for (f = verify->userEnviron; *f; f++)
-		Debug ("%s ", *f);
-	Debug ("\n");
+    if (debugLevel > 0) {
+	char *buf = NULL, *nbuf;
+	int clen = 0;
+
+	if (verify->argv) {
+	    for (f = verify->argv; *f; f++) {
+		if (!(nbuf = realloc (buf, clen + strlen(*f) + 4)))
+		    goto fa1;
+		buf = nbuf;
+		clen += sprintf (buf + clen, " %s", *f);
+	    }
+	}
+	strcpy (buf + clen, " ;"); clen += 2;
+	if (verify->userEnviron) {
+	    for (f = verify->userEnviron; *f; f++) {
+		if (!(nbuf = realloc (buf, clen + strlen(*f) + 2)))
+		    goto fa1;
+		buf = nbuf;
+		clen += sprintf (buf + clen, " %s", *f);
+	    }
+	}
+	Debug ("StartSession:%s\n", buf);
+      fa1:
+	if (buf)
+	    free (buf);
     }
 #ifdef USE_PAM
-    if( pamh) pam_open_session( pamh, 0);
-#endif
+    if (pamh && *pamh)
+	pam_open_session(*pamh, 0);
+#endif    
     switch (pid = fork ()) {
     case 0:
 	CleanUpChild ();
@@ -732,18 +733,66 @@ StartClient (verify, d, pidp, name, passwd)
 	/* Do system-dependent login setup here */
 
 #ifdef USE_PAM
-	/* pass environment variables that may be present */
-	if (pamh) {
-	  long i;
-	  char **pam_env = pam_getenvlist(pamh);
-	  for(i = 0; pam_env && pam_env[i]; i++)
-	    {
-	      verify->userEnviron = putEnv(pam_env[i], verify->userEnviron);
+	/* pass in environment variables set by libpam and modules it called */
+	if (pamh && *pamh) {
+	    long i;
+	    char **pam_env = pam_getenvlist(*pamh);
+	    for(i = 0; pam_env && pam_env[i]; i++) {
+		verify->userEnviron = putEnv(pam_env[i], verify->userEnviron);
 	    }
 	}
 #endif
 
-#ifdef HAVE_SETUSERCONTEXT
+
+#ifndef AIXV3
+#ifndef HAS_SETUSERCONTEXT
+#ifdef NGROUPS_MAX
+	if (setgid(verify->groups[0]) < 0)
+	{
+	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
+		     verify->groups[0], name, errno);
+	    return (0);
+	}
+	if (setgroups(verify->ngroups, verify->groups) < 0)
+	{
+	    LogError("setgroups for \"%s\" failed, errno=%d\n", name, errno);
+	    return (0);
+	}
+#else
+	if (setgid(verify->gid) < 0)
+	{
+	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
+		     verify->gid, name, errno);
+	    return (0);
+	}
+#endif
+#if defined(BSD) && (BSD >= 199103)
+	if (setlogin(name) < 0)
+	{
+	    LogError("setlogin for \"%s\" failed, errno=%d", name, errno);
+	    return(0);
+	}
+#endif
+#ifndef QNX4
+	if (initgroups(name, 
+#ifdef NGROUPS_MAX
+	    verify->groups[0]
+#else
+	    verify->gid
+#endif
+	    ) < 0)
+	{
+	    LogError("initgroups for \"%s\" failed, errno=%d\n", name, errno);
+	    return (0);
+	}
+#endif   /* QNX4 doesn't support multi-groups, no initgroups() */
+	if (setuid(verify->uid) < 0)
+	{
+	    LogError("setuid %d (user \"%s\") failed, errno=%d\n",
+		     verify->uid, name, errno);
+	    return (0);
+	}
+#else /* HAS_SETUSERCONTEXT */
         /*
          * Destroy environment unless user has requested its preservation.
          * We need to do this before setusercontext() because that may
@@ -764,7 +813,7 @@ StartClient (verify, d, pidp, name, passwd)
 #else
 	    lc = login_getpwclass(pwd);
 #endif
-	    if (setusercontext(lc, pwd, pwd->pw_uid, LOGIN_SETALL) < 0)
+	    if (setusercontext(NULL, pwd, pwd->pw_uid, LOGIN_SETALL) < 0)
 	    {
 		LogError("setusercontext for \"%s\" failed, errno=%d\n", name,
 		    errno);
@@ -782,8 +831,9 @@ StartClient (verify, d, pidp, name, passwd)
 	e = environ;
 	while(*e)
 	  verify->userEnviron = putEnv(*e++, verify->userEnviron);
-#else
-#ifdef _AIX
+
+#endif /* HAS_SETUSERCONTEXT */
+#else /* AIXV3 */
 	/*
 	 * Set the user's credentials: uid, gid, groups,
 	 * audit classes, user limits, and umask.
@@ -802,8 +852,8 @@ StartClient (verify, d, pidp, name, passwd)
 	  * tags in verify.c must be reflected here by adjusting SYS_ENV_TAG
 	  * or USR_ENV_TAG.
 	  */
-	  #define SYS_ENV_TAG 0
-	  #define USR_ENV_TAG 3
+#	  define SYS_ENV_TAG 0
+#	  define USR_ENV_TAG 3
 
 	  sysTag = verify->userEnviron[SYS_ENV_TAG];
 	  usrTag = verify->userEnviron[USR_ENV_TAG];
@@ -832,42 +882,7 @@ StartClient (verify, d, pidp, name, passwd)
 	  freeEnv(verify->userEnviron);
 	  verify->userEnviron = newenv;
 	}
-#else /* _AIX */
-#ifdef NGROUPS_MAX
-	if (setgid(verify->groups[0]) < 0)
-	{
-	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
-		     verify->groups[0], name, errno);
-	    return (0);
-	}
-	if (setgroups(verify->ngroups, verify->groups) < 0)
-	{
-	    LogError("setgroups for \"%s\" failed, errno=%d\n", name, errno);
-	    return (0);
-	}
-#else
-	if (setgid(verify->gid) < 0)
-	{
-	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
-		     verify->gid, name, errno);
-	    return (0);
-	}
-#endif
-#if (BSD >= 199103)
-	if (setlogin(name) < 0)
-	{
-	    LogError("setlogin for \"%s\" failed, errno=%d", name, errno);
-	    return(0);
-	}
-#endif
-	if (setuid(verify->uid) < 0)
-	{
-	    LogError("setuid %d (user \"%s\") failed, errno=%d\n",
-		     verify->uid, name, errno);
-	    return (0);
-	}
-#endif /* _AIX */
-#endif /* HAVE_SETUSERCONTEXT */
+#endif /* AIXV3 */
 
 	/*
 	 * for user-based authorization schemes,
@@ -875,6 +890,9 @@ StartClient (verify, d, pidp, name, passwd)
 	 */
 #ifdef SECURE_RPC
 	/* do like "keylogin" program */
+	if(!passwd)
+	    LogError("Warning: no password for NIS provided.\n");
+	else
 	{
 	    char    netname[MAXNETNAMELEN+1], secretkey[HEXKEYBYTES+1];
 	    int	    nameret, keyret;
@@ -929,6 +947,9 @@ StartClient (verify, d, pidp, name, passwd)
 #endif
 #ifdef K5AUTH
 	/* do like "kinit" program */
+	if(!passwd)
+	    LogError("Warning: no password for Kerberos5 provided.\n");
+	else
 	{
 	    int i, j;
 	    int result;
@@ -956,7 +977,8 @@ StartClient (verify, d, pidp, name, passwd)
 	    }
 	}
 #endif /* K5AUTH */
-	bzero(passwd, strlen(passwd));
+	if (passwd)
+	    bzero(passwd, strlen(passwd));
 	SetUserAuthorization (d, verify);
 	home = getEnv (verify->userEnviron, "HOME");
 	if (home)
@@ -978,13 +1000,15 @@ StartClient (verify, d, pidp, name, passwd)
 	execute (failsafeArgv, verify->userEnviron);
 	exit (1);
     case -1:
-	bzero(passwd, strlen(passwd));
+	if (passwd)
+	    bzero(passwd, strlen(passwd));
 	Debug ("StartSession, fork failed\n");
 	LogError ("can't start session on \"%s\", fork failed, errno=%d\n",
 		  d->name, errno);
 	return 0;
     default:
-	bzero(passwd, strlen(passwd));
+	if (passwd)
+	    bzero(passwd, strlen(passwd));
 	Debug ("StartSession, fork succeeded %d\n", pid);
 	*pidp = pid;
 	return 1;
@@ -992,12 +1016,9 @@ StartClient (verify, d, pidp, name, passwd)
 }
 
 int
-source (environ, file)
-char			**environ;
-char			*file;
+source (char **environ, char *file)
 {
     char	**args, *args_safe[2];
-    extern char	**parseArgs ();
     int		ret;
 
     if (file && file[0]) {
@@ -1016,13 +1037,10 @@ char			*file;
     return 0;
 }
 
-int
-runAndWait (args, environ)
-    char	**args;
-    char	**environ;
+static int
+runAndWait (char **args, char **environ)
 {
-    int	pid,r;
-    extern int	errno;
+    int		pid, r;
     waitType	result;
 
     switch (pid = fork ()) {
@@ -1036,24 +1054,21 @@ runAndWait (args, environ)
 	LogError ("can't fork to execute \"%s\" (err %d)\n", args[0], errno);
 	return 1;
     default:
-	while ((r=wait (&result)) != pid) {
-		if (r < 0)
-			break;
-	}
+	while ((r = wait (&result)) != pid)
+	    if (r < 0)
+		break;
     }
     return waitVal (result);
 }
 
 void
-execute (argv, environ)
-    char **argv;
-    char **environ;
+execute (char **argv, char **environ)
 {
     /* give /dev/null as stdin */
     (void) close (0);
-    open ("/dev/null", 0);
+    open ("/dev/null", O_RDONLY);
     /* make stdout follow stderr to the log file */
-    dup2 (2,1);
+    dup2 (2, 1);
     execve (argv[0], argv, environ);
     /*
      * In case this is a shell script which hasn't been
@@ -1116,17 +1131,15 @@ execute (argv, environ)
 	if (optarg)
 	    *av++ = optarg;
 	/* SUPPRESS 560 */
-	while ( (*av++ = *argv++))
+	while ((*av++ = *argv++) != 0)
 	    /* SUPPRESS 530 */
 	    ;
 	execve (newargv[0], newargv, environ);
     }
 }
 
-extern char **setEnv ();
-
 char **
-defaultEnv ()
+defaultEnv (void)
 {
     char    **env, **exp, *value;
 
@@ -1141,26 +1154,30 @@ defaultEnv ()
 }
 
 char **
-systemEnv (d, user, home)
-struct display	*d;
-char	*user, *home;
+systemEnv (struct display *d, char *user, char *home)
 {
     char	**env;
     
     env = defaultEnv ();
     env = setEnv (env, "DISPLAY", d->name);
-    if (home)
-	env = setEnv (env, "HOME", home);
-    if (user)
-    {
-	env = setEnv (env, "USER", user);
-#if defined(SYSV) || defined(SVR4) || defined(linux)
-	env = setEnv (env, "LOGNAME", user);
-#endif
-    }
+    if (!home)
+	home = "/root";
+    env = setEnv (env, "HOME", home);
+    if (!user)
+	user = "root";
+    env = setEnv (env, "USER", user);
+    env = setEnv (env, "LOGNAME", user);
     env = setEnv (env, "PATH", d->systemPath);
     env = setEnv (env, "SHELL", d->systemShell);
     if (d->authFile)
 	    env = setEnv (env, "XAUTHORITY", d->authFile);
     return env;
 }
+
+/* #if (defined(Lynx) && !defined(HAS_CRYPT)) || defined(SCO) && !defined(SCO_USA) && !defined(_SCO_DS) */
+#ifndef HAVE_CRYPT
+char *crypt(char *s1, char *s2)
+{
+	return(s2);
+}
+#endif

@@ -1,16 +1,10 @@
 /*
- * $XConsortium: access.c,v 1.15 94/04/17 20:03:32 hersh Exp $
- * $XFree86: xc/programs/xdm/access.c,v 3.0 1994/06/28 12:32:25 dawes Exp $
+ * $TOG: access.c /main/17 1998/02/09 13:54:13 kaleb $
  * $Id$
  *
-Copyright (c) 1990  X Consortium
+Copyright 1990, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
@@ -18,16 +12,18 @@ all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
 AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall not be
+Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
-in this Software without prior written authorization from the X Consortium.
+in this Software without prior written authorization from The Open Group.
  *
  * Author:  Keith Packard, MIT X Consortium
  */
+
+/* $XFree86: xc/programs/xdm/access.c,v 3.5 1998/10/10 15:25:30 dawes Exp $ */
 
 /*
  * Access control for XDMCP - keep a database of allowable display addresses
@@ -35,6 +31,7 @@ in this Software without prior written authorization from the X Consortium.
  */
 
 # include   "dm.h"
+# include   "dm_error.h"
 
 #ifdef XDMCP
 
@@ -43,10 +40,11 @@ in this Software without prior written authorization from the X Consortium.
 # include   <X11/X.h>
 # include   <stdio.h>
 # include   <ctype.h>
+
+# include   "dm_socket.h"
+
 #ifndef MINIX
-# include   <netinet/in.h>
 # include   <netdb.h>
-# include   <sys/socket.h>
 #else /* MINIX */
 # include   <net/gen/netdb.h>
 #endif /* !MINIX */
@@ -57,10 +55,10 @@ in this Software without prior written authorization from the X Consortium.
 #define BROADCAST_STRING    "BROADCAST"
 #define NOBROADCAST_STRING  "NOBROADCAST"
 
-#define HOST_ALIAS	0
-#define HOST_ADDRESS	1
-#define HOST_BROADCAST	2
-#define HOST_CHOOSER	3
+#define HOST_ALIAS	    0
+#define HOST_ADDRESS	    1
+#define HOST_BROADCAST	    2
+#define HOST_CHOOSER	    3
 #define HOST_NOBROADCAST    4
 
 typedef struct _hostEntry {
@@ -80,7 +78,7 @@ typedef struct _displayEntry {
     struct _displayEntry    *next;
     int			    type;
     int			    notAllowed;
-    int                     notBroadcast;
+    int			    notBroadcast;
     int			    chooser;
     union _displayType {
 	char		    *aliasName;
@@ -98,7 +96,7 @@ static DisplayEntry	*database;
 static ARRAY8		localAddress;
 
 ARRAY8Ptr
-getLocalAddress ()
+getLocalAddress (void)
 {
     static int	haveLocalAddress;
     
@@ -114,8 +112,7 @@ getLocalAddress ()
 }
 
 static void
-FreeHostEntry (h)
-    HostEntry	    *h;
+FreeHostEntry (HostEntry *h)
 {
     switch (h->type) {
     case HOST_ALIAS:
@@ -131,8 +128,7 @@ FreeHostEntry (h)
 }
 
 static void
-FreeDisplayEntry (d)
-    DisplayEntry    *d;
+FreeDisplayEntry (DisplayEntry *d)
 {
     HostEntry	*h, *next;
     switch (d->type) {
@@ -143,7 +139,7 @@ FreeDisplayEntry (d)
 	free (d->entry.displayPattern);
 	break;
     case DISPLAY_ADDRESS:
-	XdmcpDisposeARRAY8 (&d->entry.displayAddress);
+	XdmcpDisposeARRAY8 (&d->entry.displayAddress.clientAddress);
 	break;
     }
     for (h = d->hosts; h; h = next) {
@@ -154,7 +150,7 @@ FreeDisplayEntry (d)
 }
 
 static void
-FreeAccessDatabase ()
+FreeAccessDatabase (void)
 {
     DisplayEntry    *d, *next;
 
@@ -171,9 +167,7 @@ static char	wordBuffer[WORD_LEN];
 static int	nextIsEOF;
 
 static char *
-ReadWord (file, EOFatEOL)
-    FILE    *file;
-    int	    EOFatEOL;
+ReadWord (FILE *file, int EOFatEOL)
 {
     int	    c;
     char    *wordp;
@@ -232,8 +226,7 @@ ReadWord (file, EOFatEOL)
 }
 
 static HostEntry *
-ReadHostEntry (file)
-    FILE    *file;
+ReadHostEntry (FILE *file)
 {
     char	    *hostOrAlias;
     HostEntry	    *h;
@@ -289,8 +282,7 @@ tryagain:
 }
 
 static int
-HasGlobCharacters (s)
-    char    *s;
+HasGlobCharacters (char *s)
 {
     for (;;)
 	switch (*s++) {
@@ -303,8 +295,7 @@ HasGlobCharacters (s)
 }
 
 static DisplayEntry *
-ReadDisplayEntry (file)
-    FILE    *file;
+ReadDisplayEntry (FILE *file)
 {
     char	    *displayOrAlias;
     DisplayEntry    *d;
@@ -388,7 +379,7 @@ ReadDisplayEntry (file)
     	}
     }
     prev = &d->hosts;
-    while ( (h = ReadHostEntry (file)))
+    while ((h = ReadHostEntry (file)) != 0)
     {
 	if (h->type == HOST_CHOOSER)
 	{
@@ -406,14 +397,13 @@ ReadDisplayEntry (file)
     return d;
 }
 
-static
-void ReadAccessDatabase (file)
-    FILE    *file;
+static void
+ReadAccessDatabase (FILE *file)
 {
     DisplayEntry    *d, **prev;
 
     prev = &database;
-    while ( (d = ReadDisplayEntry (file)))
+    while ((d = ReadDisplayEntry (file)) != 0)
     {
 	*prev = d;
 	prev = &d->next;
@@ -421,7 +411,8 @@ void ReadAccessDatabase (file)
     *prev = NULL;
 }
 
-int ScanAccessDatabase ()
+int
+ScanAccessDatabase (void)
 {
     FILE	*datafile;
 
@@ -447,17 +438,25 @@ int ScanAccessDatabase ()
 
 #define MAX_DEPTH   32
 
-static int indirectAlias ();
+static int indirectAlias (
+    char	*alias,
+    ARRAY8Ptr	clientAddress,
+    CARD16	connectionType,
+    ChooserFunc	function,
+    char	*closure,
+    int		depth,
+    int		broadcast);
+
 
 static int
-scanHostlist (h, clientAddress, connectionType, function, closure, depth, broadcast)
-    HostEntry	*h;
-    ARRAY8Ptr	clientAddress;
-    CARD16	connectionType;
-    int		(*function)();
-    char	*closure;
-    int		depth;
-    int		broadcast;
+scanHostlist (
+    HostEntry	*h,
+    ARRAY8Ptr	clientAddress,
+    CARD16	connectionType,
+    ChooserFunc	function,
+    char	*closure,
+    int		depth,
+    int		broadcast)
 {
     int	haveLocalhost = 0;
 
@@ -497,8 +496,7 @@ scanHostlist (h, clientAddress, connectionType, function, closure, depth, broadc
 /* Returns non-0 iff string is matched by pattern.  Does case folding.
  */
 static int
-patternMatch (string, pattern)
-    char    *string, *pattern;
+patternMatch (char *string, char *pattern)
 {
     int	    p, s;
 
@@ -535,15 +533,14 @@ patternMatch (string, pattern)
 }
 
 static int
-indirectAlias (alias, clientAddress, connectionType, function, closure, depth,
-	       broadcast)
-    char	*alias;
-    ARRAY8Ptr	clientAddress;
-    CARD16	connectionType;
-    int		(*function)();
-    char	*closure;
-    int		depth;
-    int		broadcast;
+indirectAlias (
+    char	*alias,
+    ARRAY8Ptr	clientAddress,
+    CARD16	connectionType,
+    ChooserFunc	function,
+    char	*closure,
+    int		depth,
+    int		broadcast)
 {
     DisplayEntry    *d;
     int		    haveLocalhost = 0;
@@ -563,17 +560,15 @@ indirectAlias (alias, clientAddress, connectionType, function, closure, depth,
     return haveLocalhost;
 }
 
-ARRAY8Ptr IndirectChoice ();
-
-int ForEachMatchingIndirectHost (clientAddress, connectionType, function, closure)
-    ARRAY8Ptr	clientAddress;
-    CARD16	connectionType;
-    int		(*function)();
-    char	*closure;
+int ForEachMatchingIndirectHost (
+    ARRAY8Ptr	clientAddress,
+    CARD16	connectionType,
+    ChooserFunc	function,
+    char	*closure)
 {
     int		    haveLocalhost = 0;
     DisplayEntry    *d;
-    char	    *clientName = 0, *NetworkAddressToHostname ();
+    char	    *clientName = NULL;
 
     for (d = database; d; d = d->next)
     {
@@ -622,12 +617,12 @@ int ForEachMatchingIndirectHost (clientAddress, connectionType, function, closur
     return haveLocalhost;
 }
 
-int UseChooser (clientAddress, connectionType)
-    ARRAY8Ptr	clientAddress;
-    CARD16	connectionType;
+int UseChooser (
+    ARRAY8Ptr	clientAddress,
+    CARD16	connectionType)
 {
     DisplayEntry    *d;
-    char	    *clientName = 0, *NetworkAddressToHostname ();
+    char	    *clientName = NULL;
 
     for (d = database; d; d = d->next)
     {
@@ -654,22 +649,27 @@ int UseChooser (clientAddress, connectionType)
 	    continue;
 	if (d->notAllowed)
 	    break;
-	if (d->chooser && !IndirectChoice (clientAddress, connectionType))
+	if (d->chooser && !IndirectChoice (clientAddress, connectionType)) {
+	    if (clientName)
+		free (clientName);
 	    return 1;
+	}
 	break;
     }
+    if (clientName)
+	free (clientName);
     return 0;
 }
 
-void ForEachChooserHost (clientAddress, connectionType, function, closure)
-    ARRAY8Ptr	clientAddress;
-    CARD16	connectionType;
-    int		(*function)();
-    char	*closure;
+void ForEachChooserHost (
+    ARRAY8Ptr	clientAddress,
+    CARD16	connectionType,
+    ChooserFunc	function,
+    char	*closure)
 {
     int		    haveLocalhost = 0;
     DisplayEntry    *d;
-    char	    *clientName = 0, *NetworkAddressToHostname ();
+    char	    *clientName = NULL;
 
     for (d = database; d; d = d->next)
     {
@@ -716,13 +716,13 @@ void ForEachChooserHost (clientAddress, connectionType, function, closure)
  * given display client is acceptable if it occurs without a host list.
  */
 
-int AcceptableDisplayAddress (clientAddress, connectionType, type)
-    ARRAY8Ptr	clientAddress;
-    CARD16	connectionType;
-    xdmOpCode	type;
+int AcceptableDisplayAddress (
+    ARRAY8Ptr	clientAddress,
+    CARD16	connectionType,
+    xdmOpCode	type)
 {
     DisplayEntry    *d;
-    char	    *clientName = 0, *NetworkAddressToHostname ();
+    char	    *clientName = NULL;
 
     if (!*accessFile)
 	return 1;
@@ -756,7 +756,7 @@ int AcceptableDisplayAddress (clientAddress, connectionType, type)
     if (clientName)
 	free (clientName);
     return (d != 0) && (d->notAllowed == 0)
-      && (type == BROADCAST_QUERY ? d->notBroadcast == 0 : 1);
+	&& (type == BROADCAST_QUERY ? d->notBroadcast == 0 : 1);
 }
 
 #endif /* XDMCP */

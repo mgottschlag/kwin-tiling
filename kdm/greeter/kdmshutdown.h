@@ -3,8 +3,8 @@
     Shutdown dialog. Class KDMShutdown
     $Id$
 
-    Copyright (C) 1997, 1998 Steffen Hansen
-                             stefh@mip.ou.dk
+    Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
+    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,6 @@ public:
                   const QString &_lilomap = QString::null);
 private slots:
      void rb_clicked(int);
-     void pw_entered();
      void bye_bye();
      void target_changed(int);
 private:
@@ -82,11 +81,3 @@ private:
 };
 
 #endif /* KDMSHUTDOWN_H */
-
-
-
-
-
-
-
-

@@ -3,8 +3,8 @@
     Shutdown dialog
     $Id$
 
-    Copyright (C) 1997, 1998, 2000 Steffen Hansen
-                             hansen@kde.org
+    Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
+    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 
 #include "kdmshutdown.h"
 #include "kdmconfig.h" // for shutdown-modes
+/*
 #include <pwd.h>
 #ifdef HAVE_CRYPT_H
 # include <crypt.h>
@@ -37,17 +38,18 @@
 extern "C" {
 # include <security/pam_appl.h>
 }
-#ifdef KDE_PAM_SERVICE
-#define KDE_PAM KDE_PAM_SERVICE
-#else  
-#define KDE_PAM "xdm"  /* default PAM service called by kdm */
-#endif 
-#else /* ! USE_PAM */
+# ifdef KDE_PAM_SERVICE
+#  define KDE_PAM KDE_PAM_SERVICE
+# else  
+#  define KDE_PAM "xdm"  / * default PAM service called by kdm * /
+# endif 
+#else / * ! USE_PAM * /
 # ifdef USESHADOW
 #  include <shadow.h>
 # endif
-#endif /* USE_PAM */
+#endif / * USE_PAM * /
 #include <sys/types.h>
+*/
 
 #include "dm.h"
 
@@ -72,109 +74,7 @@ set_fixed( QWidget* w)
      w->setFixedSize( w->size());
 }
 
-#ifdef USE_PAM
-static const char *PAM_password;
-
-#ifdef PAM_MESSAGE_NONCONST
-typedef struct pam_message pam_message_type;
-#else
-typedef const struct pam_message pam_message_type;
-#endif
-
-static int PAM_conv (int num_msg,
-		     pam_message_type **msg,
-		     struct pam_response **resp,
-		     void *) {
-     int count = 0, replies = 0;
-     struct pam_response *reply = NULL;
-     int size = sizeof(struct pam_response);
-     
-     #define GET_MEM if (reply) realloc(reply, size);\
-                     else reply = (struct pam_response *)malloc(size); \
-	             if (!reply) return PAM_CONV_ERR; \
-	             size += sizeof(struct pam_response)
-     #define COPY_STRING(s) (s) ? strdup(s) : (char *)NULL
-
-     for (count = 0; count < num_msg; count++) {
-	  switch (msg[count]->msg_style) {
-	  case PAM_PROMPT_ECHO_ON:
-	       /* user name given to PAM already */
-	       return PAM_CONV_ERR;
-	  case PAM_PROMPT_ECHO_OFF:
-	       /* wants password */
-	       GET_MEM;
-	       reply[replies].resp_retcode = PAM_SUCCESS;
-	       reply[replies++].resp = COPY_STRING(PAM_password);
-	       /* PAM frees resp */
-	       break;
-	  case PAM_TEXT_INFO:
-	       break;
-	  default:
-	       /* unknown or PAM_ERROR_MSG */
-	       if (reply) free (reply);
-	       return PAM_CONV_ERR;
-	  }
-     }
-     if (reply) *resp = reply;
-     return PAM_SUCCESS;
-}
-
-static struct pam_conv PAM_conversation = {
-	&PAM_conv,
-	NULL
-};
-#endif
-
-static bool
-verify_root_pw( const char* pw)
-{
-     const char* superuser = "root";
-#ifdef USESHADOW
-     struct spwd *spws = getspnam( superuser);
-#endif
-#ifdef USE_PAM
-     pam_handle_t *pamh;
-     int pam_error;
-#endif /* USE_PAM */
-     struct passwd *pws = getpwnam( superuser);
-     CHECK_PTR( pws);
-#ifndef USE_PAM
-#ifdef USESHADOW
-     // If USESHADOW is defined, kdm will work for both shadow and non
-     // shadow systems
-     if( spws != NULL) {
-       char* tmp = pws->pw_passwd;
-       pws->pw_passwd = spws->sp_pwdp;
-       spws->sp_pwdp = tmp;
-     }
-     endspent();
-#endif /* USESHADOW */
-#ifdef HAVE_CRYPT
-     if( strcmp( crypt( pw, pws->pw_passwd), pws->pw_passwd)) {
-	  printf("Root passwd verification failed\n");
-	  
-	  return false;
-     }
-#else
-     printf("can't verify root passwd, lacking crypt() support\n");
-     return false;
-#endif
-#else /* USE_PAM */
-     #define PAM_BAIL \
-        if (pam_error != PAM_SUCCESS) { \
-	pam_end(pamh, 0); \
-        return false; \
-      }
-     PAM_password = pw;
-     pam_error = pam_start(KDE_PAM, superuser, &PAM_conversation, &pamh);
-     PAM_BAIL;
-     pam_error = pam_authenticate( pamh, 0);
-     PAM_BAIL;
-     /* OK, if we get here, the user _should_ be root */
-     pam_end( pamh, PAM_SUCCESS);
-#endif /* USE_PAM */
-     return true;
-}
+extern KDMConfig *kdmcfg;
 
 KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 			  const QString &_shutdown, 
@@ -200,8 +100,8 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised);
      QBoxLayout* box = new QBoxLayout( winFrame, QBoxLayout::TopToBottom, 
 				       10, 10);
-     QString shutdownmsg =  i18n( "Shutdown and restart?");
-     if( mode == KDMConfig::RootOnly) {
+     QString shutdownmsg =  i18n( "Shutdown or reboot?");
+     if( mode == KDMConfig::SdRootOnly) {
 	  shutdownmsg += '\n';
 	  shutdownmsg += i18n( "(Enter Root Password)");
      }
@@ -214,7 +114,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      box->addWidget( label, 0, AlignCenter);
 
      QFrame* sepFrame = new QFrame( winFrame);
-     sepFrame->setFrameStyle( QFrame::HLine| QFrame::Sunken);
+     sepFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken);
      h += sepFrame->height(); 
      box->addWidget( sepFrame);
 
@@ -222,7 +122,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      
      QRadioButton *rb;
      rb = new QRadioButton( winFrame /*btGroup*/);
-     rb->setText( i18n("Shutdown"));
+     rb->setText( i18n("&Shutdown"));
      set_min( rb);
      rb->setFocusPolicy( StrongFocus);
      // Default action
@@ -239,7 +139,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      QHBoxLayout *hbox = new QHBoxLayout(box);
 
      restart_rb = new QRadioButton( winFrame /*btGroup*/);
-     restart_rb->setText( i18n("Restart"));
+     restart_rb->setText( i18n("&Reboot"));
      set_min( restart_rb);
      restart_rb->setFocusPolicy( StrongFocus);
      h += restart_rb->height() + 10;
@@ -266,18 +166,9 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      }
 
      btGroup->insert( restart_rb);
-     rb = new QRadioButton( winFrame /*btGroup*/);
-     rb->setText( i18n("Restart X Server"));//better description
-     set_min( rb);
-     rb->setFocusPolicy( StrongFocus);
-     h += rb->height() + 10;
-     w = QMAX( rb->width(), w);
-
-     box->addWidget( rb);
-     btGroup->insert( rb);
 
      rb = new QRadioButton(winFrame);
-     rb->setText(i18n("Console Mode"));
+     rb->setText(i18n("Console &Mode"));
      set_min(rb);
      rb->setFocusPolicy(StrongFocus);
      h += rb->height() + 10;
@@ -286,12 +177,15 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      btGroup->insert(rb);
 
      // Passwd line edit
-     if( mode == KDMConfig::RootOnly) {
+     if( mode == KDMConfig::SdRootOnly) {
+//	  pswdEdit = new KPasswordEdit( this, "edit", kdmcfg->_echoMode);
+#if 1
 	  pswdEdit = new QLineEdit( winFrame);
 	  //set_min( pswdEdit);
 	  pswdEdit->setMinimumHeight( pswdEdit->sizeHint().height());
 	  pswdEdit->setEchoMode( QLineEdit::NoEcho);
-	  /*QColorGroup   passwdColGroup(
+	  /*
+	  QColorGroup passwdColGroup(
 	       QApplication::palette()->normal().foreground(),
 	       QApplication::palette()->normal().background(),
 	       QApplication::palette()->normal().light(),
@@ -303,6 +197,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 				  passwdColGroup);
 	  pswdEdit->setPalette( passwdPalette);
 	  */
+#endif
 	  pswdEdit->setFocusPolicy( StrongFocus);
 	  pswdEdit->setFocus();
 	  h+= pswdEdit->height() + 10;
@@ -312,12 +207,12 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      QBoxLayout* box3 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
      box->addLayout( box3);
 
-     okButton = new QPushButton( i18n("OK"), winFrame);
+     okButton = new QPushButton( i18n("&OK"), winFrame);
      set_min( okButton);
+     okButton->setDefault( true);
      okButton->setFocusPolicy( StrongFocus);
-     cancelButton = new QPushButton( i18n("Cancel"), winFrame);
+     cancelButton = new QPushButton( i18n("&Cancel"), winFrame);
      set_min( cancelButton);
-     //cancelButton->setDefault( true);
      cancelButton->setFocusPolicy( StrongFocus);
      h += cancelButton->height() + 10;
      w = QMAX( (okButton->width() + 10 + cancelButton->width()), w);
@@ -328,11 +223,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      connect( okButton, SIGNAL(clicked()), SLOT(bye_bye()));
      connect( cancelButton, SIGNAL(clicked()), SLOT(reject()));
      connect( btGroup, SIGNAL(clicked(int)), SLOT(rb_clicked(int)));
-     if( mode == KDMConfig::RootOnly) {
-	  okButton->setEnabled( false);
-	  connect( pswdEdit, SIGNAL( returnPressed()), this, SLOT( pw_entered()));
-     } else
-	  cancelButton->setFocus();
+
      resize( 20 + w, h);
      winFrame->setGeometry( 0, 0, width(), height());
 }
@@ -347,11 +238,8 @@ KDMShutdown::rb_clicked( int id)
      case 1:
 	  cur_action = restart;
 	  break;
-     case 2:
-	  cur_action = QString::null;
-	  break;
 #ifndef BSD
-     case 3:
+     case 2:
 	  cur_action = console;
 	  break;
 #endif
@@ -367,40 +255,32 @@ KDMShutdown::target_changed(int id)
 }
 
 void
-KDMShutdown::pw_entered()
-{
-     // usernames and passwords are stored in the same format as files
-     if( verify_root_pw( QFile::encodeName( pswdEdit->text() ).data() ) ) {
-	  okButton->setEnabled( true);
-     } else {
-	  okButton->setEnabled( false);
-     }
-     pswdEdit->clear();
-}
-
-void
 KDMShutdown::bye_bye()
 {
-     if( !cur_action.isNull() ) {
-	  QApplication::flushX();
-	  if( fork() == 0) {
+     // usernames and passwords are stored in the same format as files
+    if( !pswdEdit || VerifyRoot( QFile::encodeName( pswdEdit->text() ).data() ) ) {
+        QApplication::flushX();
+	if( fork() == 0) {
 
-	       // if lilo, set the reboot option
-	       if (lilo && restart_rb->isChecked())
-	       {
-		    LiloInfo info(liloCmd, liloMap);
+	    // if lilo, set the reboot option
+	    if (lilo && restart_rb->isChecked())
+	    {
+		LiloInfo info(liloCmd, liloMap);
 
-		    info.setNextBootOption(liloTarget);
-	       }
+		info.setNextBootOption(liloTarget);
+	    }
 
-	       sleep(1);
-	       system( QFile::encodeName( cur_action ).data() );
-	       QApplication::exit( UNMANAGE_DISPLAY);
-	  } else {
-	       QApplication::exit( UNMANAGE_DISPLAY);
-	  }
-     } else
-	  QApplication::exit( RESERVER_DISPLAY);
+	    sleep(1);
+	    system( QFile::encodeName( cur_action ).data() );
+	    QApplication::exit( 0);	// init will inherit us
+	} else {
+	    QApplication::exit( UNMANAGE_DISPLAY);
+	}
+    } else {
+	pswdEdit->clear();
+	pswdEdit->setFocus();
+	// should show some message ...
+    }
 }
 
 #include "kdmshutdown.moc"
@@ -413,7 +293,7 @@ int main(int argc, char **argv)
 {
      QApplication app( argc, argv);
      app.setFont( QFont( "helvetica", 18));
-     KDMShutdown sd( 0, 0,"Hej", "echo shutdown", "echo restart", "echo lilo", "");
+     KDMShutdown sd( 0, 0, "Hej", "echo shutdown", "echo restart", "echo lilo", "");
      app.setMainWidget( &sd);
      return sd.exec();
 }

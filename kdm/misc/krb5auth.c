@@ -1,16 +1,10 @@
-/* $XConsortium: krb5auth.c,v 1.4 94/04/17 20:03:40 gildea Exp $ */
+/* $TOG: krb5auth.c /main/5 1998/02/09 13:55:32 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1994  X Consortium
+Copyright 1994, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -18,21 +12,22 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/krb5auth.c,v 1.2 1998/10/10 15:25:35 dawes Exp $ */
 
 /*
  * xdm - display manager daemon
- * Author:  Stephen Gildea, X Consortium
+ * Author:  Stephen Gildea, The Open Group
  */
 
 /*
@@ -42,15 +37,16 @@ from the X Consortium.
  */
 
 #include "dm.h"
+#include "dm_error.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <krb5/krb5.h>
 #include <krb5/kdb.h>			/* for TGTNAME */
 
 /*ARGSUSED*/
-Krb5InitAuth (name_len, name)
-    unsigned short  name_len;
-    char	    *name;
+void
+Krb5InitAuth (unsigned short name_len, char *name)
 {
     krb5_init_ets();		/* initialize error_message() tables */
 }
@@ -60,8 +56,7 @@ Krb5InitAuth (name_len, name)
  * name should be freed by caller.
  */
 char *
-Krb5CCacheName(dname)
-    char *dname;
+Krb5CCacheName(char *dname)
 {
     char *name;
     char *tmpdir;
@@ -78,9 +73,7 @@ Krb5CCacheName(dname)
 }
 
 krb5_error_code
-Krb5DisplayCCache(dname, ccache_return)
-    char *dname;
-    krb5_ccache *ccache_return;
+Krb5DisplayCCache(char *dname, krb5_ccache *ccache_return)
 {
     krb5_error_code code;
     char *name;
@@ -95,10 +88,7 @@ Krb5DisplayCCache(dname, ccache_return)
 }
 
 Xauth *
-Krb5GetAuthFor(namelen, name, dname)
-    unsigned short namelen;
-    char *name;
-    char *dname;
+Krb5GetAuthFor(unsigned short namelen, char *name, char *dname)
 {
     Xauth   *new;
     char *filename;
@@ -148,9 +138,7 @@ Krb5GetAuthFor(namelen, name, dname)
 
 
 Xauth *
-Krb5GetAuth (namelen, name)
-    unsigned short  namelen;
-    char	    *name;
+Krb5GetAuth (unsigned short namelen, char *name)
 {
     return Krb5GetAuthFor(namelen, name, NULL);
 }
@@ -167,10 +155,10 @@ int preauth_search_list[] = {
  * Returns 0 if successful, 1 if not.
  */
 int
-Krb5Init(name, passwd, d)
-    char *name;
-    char *passwd;
-    struct display *d;		/* k5_ccache filled in if successful */
+Krb5Init(
+    char *name,
+    char *passwd,
+    struct display *d)		/* k5_ccache filled in if successful */
 {
     krb5_ccache ccache;
     krb5_error_code code;

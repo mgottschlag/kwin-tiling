@@ -2,24 +2,9 @@ $Id$
 
 Thing yet to be done:
 
-- Scrollable list of users with pictures (like SGI)
-Done!
 - Make more stuff configurable from kdmrc.
 - Make the code less ugly.
-Not done yet ;-) Maybe use kresize?
-- Make someone do a real KDE logo.
-Work is being done here.
+  - Maybe use kresize?
 - Animated logo?
 - Different logos for each session type
-- Remember users last session.
-Done! Make it more portable?
-- Require homedirs etc to login
-Done!
-- Handle expired accounts correctly
-Done! On BSD and Linux.
-- Do html documentation.
-Partially done.
-- Make a kchooser!
-Done!
-- Make kdm return the loadavg. to chooser instead of just "Willing to manage"
-Done! On BSD and Linux.
+- Make remembering user's last session more portable?

@@ -1,16 +1,10 @@
-/* $XConsortium: mitauth.c,v 1.12 94/04/17 20:03:40 gildea Exp $ */
+/* $TOG: mitauth.c /main/13 1998/02/09 13:55:37 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -18,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/mitauth.c,v 1.2 1998/10/10 15:25:36 dawes Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -41,15 +36,16 @@ from the X Consortium.
  */
 
 # include   <X11/Xos.h>
+
 # include   "dm.h"
+# include   "dm_auth.h"
 
 # define AUTH_DATA_LEN	16	/* bytes of authorization data */
 static char	auth_name[256];
 static int	auth_name_len;
 
-void MitInitAuth (name_len, name)
-    unsigned short  name_len;
-    char	    *name;
+void
+MitInitAuth (unsigned short name_len, char *name)
 {
     if (name_len > 256)
 	name_len = 256;
@@ -57,12 +53,8 @@ void MitInitAuth (name_len, name)
     memmove( auth_name, name, name_len);
 }
 
-extern void GenerateAuthData( char *auth, int len );
-
 Xauth *
-MitGetAuth (namelen, name)
-    unsigned short  namelen;
-    char	    *name;
+MitGetAuth (unsigned short namelen, char *name)
 {
     Xauth   *new;
     new = (Xauth *) malloc (sizeof (Xauth));

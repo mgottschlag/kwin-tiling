@@ -1,16 +1,10 @@
-/* $XConsortium: file.c,v 1.16 94/04/17 20:03:38 rws Exp $ */
+/* $TOG: file.c /main/18 1998/02/09 13:55:19 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -18,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/file.c,v 1.4 1998/10/10 15:25:34 dawes Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -38,11 +33,12 @@ from the X Consortium.
  */
 
 # include	"dm.h"
+# include	"dm_error.h"
+
 # include	<ctype.h>
 
-int
-DisplayTypeMatch (d1, d2)
-DisplayType	d1, d2;
+static int
+DisplayTypeMatch (DisplayType d1, DisplayType d2)
 {
 	return d1.location == d2.location &&
 	       d1.lifetime == d2.lifetime &&
@@ -50,8 +46,7 @@ DisplayType	d1, d2;
 }
 
 static void
-freeArgs (args)
-    char    **args;
+freeFileArgs (char **args)
 {
     char    **a;
 
@@ -61,8 +56,7 @@ freeArgs (args)
 }
 
 static char **
-splitIntoWords (s)
-    char    *s;
+splitIntoWords (char *s)
 {
     char    **args, **newargs;
     char    *wordStart;
@@ -91,7 +85,7 @@ splitIntoWords (s)
 					 (nargs+2)*sizeof (char *));
 	    if (!newargs)
 	    {
-	    	freeArgs (args);
+	    	freeFileArgs (args);
 	    	return NULL;
 	    }
 	    args = newargs;
@@ -99,7 +93,7 @@ splitIntoWords (s)
 	args[nargs] = malloc (s - wordStart + 1);
 	if (!args[nargs])
 	{
-	    freeArgs (args);
+	    freeFileArgs (args);
 	    return NULL;
 	}
 	strncpy (args[nargs], wordStart, s - wordStart);
@@ -111,8 +105,7 @@ splitIntoWords (s)
 }
 
 static char **
-copyArgs (args)
-    char    **args;
+copyArgs (char **args)
 {
     char    **a, **new, **n;
 
@@ -125,16 +118,14 @@ copyArgs (args)
     n = new;
     a = args;
     /* SUPPRESS 560 */
-    while ( (*n++ = *a++))
+    while ((*n++ = *a++) != 0)
 	/* SUPPRESS 530 */
 	;
     return new;
 }
 
-void
-freeSomeArgs (args, n)
-    char    **args;
-    int	    n;
+static void
+freeSomeArgs (char **args, int n)
 {
     char    **a;
 
@@ -145,13 +136,10 @@ freeSomeArgs (args, n)
 }
 
 void
-ParseDisplay (source, acceptableTypes, numAcceptable)
-char		*source;
-DisplayType	*acceptableTypes;
-int		numAcceptable;
+ParseDisplay (char *source, DisplayType *acceptableTypes, int numAcceptable)
 {
-    char		**args, **argv, **a;
-    char		*name, *class, *type;
+    char		**args, **argv, **a, *dtx;
+    char		*name, *class2, *type;
     struct display	*d;
     int			usedDefault;
     DisplayType		displayType;
@@ -162,18 +150,18 @@ int		numAcceptable;
     if (!args[0])
     {
 	LogError ("Missing display name in servers file\n");
-	freeArgs (args);
+	freeFileArgs (args);
 	return;
     }
     name = args[0];
     if (!args[1])
     {
 	LogError ("Missing display type for %s\n", args[0]);
-	freeArgs (args);
+	freeFileArgs (args);
 	return;
     }
     displayType = parseDisplayType (args[1], &usedDefault);
-    class = NULL;
+    class2 = NULL;
     type = args[1];
     argv = args + 2;
     /*
@@ -187,7 +175,7 @@ int		numAcceptable;
 	displayType = parseDisplayType (args[2], &usedDefault);
 	if (!usedDefault)
 	{
-	    class = args[1];
+	    class2 = args[1];
 	    type = args[2];
 	    argv = args + 3;
 	}
@@ -208,32 +196,44 @@ int		numAcceptable;
     if (d)
     {
 	d->state = OldEntry;
-	if (class && strcmp (d->class2, class))
+	if (class2 && strcmp (d->class2, class2))
 	{
 	    char    *newclass;
 
-	    newclass = malloc ((unsigned) (strlen (class) + 1));
+	    newclass = malloc ((unsigned) (strlen (class2) + 1));
 	    if (newclass)
 	    {
 		free (d->class2);
-		strcpy (newclass, class);
+		strcpy (newclass, class2);
 		d->class2 = newclass;
 	    }
 	}
-	Debug ("Found existing display:  %s %s %s", d->name, d->class2, type);
-	freeArgs (d->argv);
+	dtx = "Found existing display: ";
+	freeFileArgs (d->argv);
     }
     else
     {
-	d = NewDisplay (name, class);
-	/*Debug ("Found new display:  %s %s %s", d->name, d->class2, type);*/
+	d = NewDisplay (name, class2);
+	dtx = "Found new display: ";
     }
     d->displayType = displayType;
     d->argv = copyArgs (argv);
-    for (a = d->argv; a && *a; a++) {
-	 Debug (" %s", *a);
+    if (debugLevel > 0) {
+	char *buf = NULL, *nbuf;
+	int clen = 0;
+	for (a = d->argv; a && *a; a++) {
+	    nbuf = realloc (buf, clen + strlen(*a) + 3);
+	    if (!nbuf)
+		goto fa1;
+	    buf = nbuf;
+	    clen += sprintf (buf + clen, " %s", *a);
+	}
+	Debug ("%s %s %s %s %s\n", dtx, d->name, d->class2 ? d->class2 : "", 
+		type, buf);
+      fa1:
+	if (buf)
+	    free (buf);
     }
-    Debug ("\n");
     freeSomeArgs (args, argv - args);
 }
 
@@ -241,15 +241,13 @@ static struct displayMatch {
 	char		*name;
 	DisplayType	type;
 } displayTypes[] = {
-{	"local",		{ Local, Permanent, FromFile }},
-{	"foreign",		{ Foreign, Permanent, FromFile }},
-{	0,			{ Local, Permanent, FromFile }},
+	{ "local",		{ Local, Permanent, FromFile } },
+	{ "foreign",		{ Foreign, Permanent, FromFile } },
+	{ 0,			{ Local, Permanent, FromFile } },
 };
 
 DisplayType
-parseDisplayType (string, usedDefault)
-	char	*string;
-	int	*usedDefault;
+parseDisplayType (char *string, int *usedDefault)
 {
 	struct displayMatch	*d;
 

@@ -1,22 +1,16 @@
 $Id$
 
-This is the KDE Display Manager (kdm) for KDE-2.0, the KDE replacement for
+This is the KDE Display Manager (kdm) for KDE-2.1, the KDE replacement for
 the X Display Manager (xdm).
 
 kdm is intended as a "drop-in" replacement of xdm. It reads the xdm
 specific files (usually in /usr/X11R6/lib/X11/xdm), so it should not be
 necessary to change them. You can change the configuration from
-KDE Controll Center. You will find the Login Manager module in "Local
-computer" -> "Applications".
+KDE Control Center. You will find the Login Manager module in "System"
+-> "Login Manager".
 
 In fact it's just a new greeter for the xdm, which was programmed in a way
 that a replacement of the greeter module is possible.
-
-It should also be possible to replace the greeter with a dynamic library,
-but for some reason I wasn't able to do that on my Linux machine. But
-since the standard xdm on Linux doesn't use this dynamic library anyway
-and recompilation of just xdm is a pain in the ass, I don't see a problem
-with that.
 
 How to setup kdm
 ----------------
@@ -39,6 +33,8 @@ Version 0.1 of kdm is copyright
 	Matthias Ettrich <ettrich@informatik.uni-tuebingen.de>
 All later versions copyright:
 	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
+Since the version for KDE 2.1 copyright:
+	(C) 2000 Oswald Buddenhagen <ossi@kde.org>
 
 Thanks to (in no particular order):
 Michael Bach Jensen and Torsten Rahn for drawing icons.
@@ -58,6 +54,49 @@ particular purpose.
 Have fun with it (and feel free to comment),
 
 	Steffen <hansen@kde.org>
+
+Running KDM from init
+---------------------
+
+   Edit (as root) /etc/X11/xdm/Xsetup_0
+
+   Comment out everything in this file below (but not including!) the 
+   first line, then append the following line:
+
+       /opt/kde/bin/kdmdesktop
+
+   Edit (as root) /etc/inittab.
+
+   Look for the line: 
+
+       x:5:respawn:/usr/X11/bin/xdm -nodaemon
+
+   Replace it with:
+
+       x:5:respawn:/opt/kde/bin/kdm -nodaemon
+
+   This tells init(8) to respawn KDM, the KDE display manager, when
+   the system is in run level 5. 
+
+   To start KDM, either run (as root) /sbin/telinit 5 (to switch to
+   run level 5), or (this is risky! don't do it until you _know_ you
+   want the system to boot into this every time!) edit /etc/inittab
+   and change the line:
+
+       id:3:initdefault:
+
+   to
+
+       id:5:initdefault:
+
+   If you do the latter step, then every time your system boots successfully
+   it will go into run level 5 and run KDM, presenting you with the 
+   exceedingly cute KDE login screen. 
+
+   To edit the settings for KDM, as root edit the 
+   file /opt/kde/share/config/kdmrc. This lets you twiddle with things
+   like the welcome message, background wallpaper, and users to allow
+   login via KDM.
 
 Differences from xdm
 --------------------
@@ -80,3 +119,4 @@ brand new graphically login to your workstation,
 
 Fri Jul 11 14:27:02 1997 -- Steffen Hansen
 Sat Sep 30 23:06:02 2000 -- Steffen Hansen
+

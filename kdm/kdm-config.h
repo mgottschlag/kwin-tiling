@@ -2,8 +2,8 @@
 
     $Id$
 
-    Copyright (C) 1997, 1998 Steffen Hansen
-                             stefh@mip.ou.dk
+    Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
+    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -29,15 +29,19 @@
 #include <config.h>
 #endif
 
+/* to avoid INT32 conflict between <qglobal.h> and <X/Xmd.h>. */ 
 #ifndef QT_CLEAN_NAMESPACE
-#define QT_CLEAN_NAMESPACE /* to avoid INT32 conflict between <qglobal.h>
-                              and <X/Xmd.h>. */ 
+# define QT_CLEAN_NAMESPACE
 #endif
 
-/* xdm stuff, should always defined */
-#define UNIXCONN          
-#define TCPCONN           
-#define GREET_USER_STATIC 
+/* xdm stuff */
+#define UNIXCONN
+#define TCPCONN
+#undef GREET_USER_STATIC
+
+#if defined(GREETER) && !defined(GREET_USER_STATIC)
+# define GREET_LIB
+#endif
 
 #ifdef XDMBINDIR
 # define BINDIR XDMBINDIR
@@ -49,35 +53,38 @@
 /* If this isn't defined, we crash boxes with S3 cards.  
  * See genauth.c  
  */ 
-#define FRAGILE_DEV_MEM 1
+#define FRAGILE_DEV_MEM
 
 /* Authorization stuff */
-/* How do we check for HASXDMAUTH? Use Imake ?? */
+/*
+ * How do we check for HASXDMAUTH? Use Imake ?? 
+*/
+/*
 #if defined(HAVE_KRB5_KRB5_H)
+# define K5AUTH
 #endif
-#if defined(HAVE_RPC_RPC_H) && defined(HAVE_RPC_KEY_PROT_H)
-# define SECURE_RPC 1
-#endif
-
+*/
 /* Too many systems have trouble with secure rpc,
    so its disabled for now:
+#if defined(HAVE_RPC_RPC_H) && defined(HAVE_RPC_KEY_PROT_H)
+# define SECURE_RPC
+#endif
 */
-#undef SECURE_RPC
 
 #ifdef HAVE_PATHS_H
 #include <paths.h>
 #endif
 
 #ifdef HAVE_PAM
-# define USE_PAM 1
+# define USE_PAM
 #else
 # ifdef HAVE_SHADOW
-#  define USESHADOW 1
+#  define USESHADOW
 # endif
 #endif
 
 #ifdef HAVE_SYSLOG_H
- #define USE_SYSLOG
+# define USE_SYSLOG
 #endif
 
 #ifndef _PATH_VARRUN
@@ -89,22 +96,11 @@
 #endif
 
 #ifdef sun
-#define SVR4 1
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-  /* int XdmcpAllocARRAY8(); */
-int Debug( char*, ...);
-int LogError( char*, ...);
-int LogOutOfMem( char*, ...);
-#ifdef __cplusplus
-}
+#define SVR4
 #endif
 
 #ifdef SVR4
-#define NeedVarargsPrototypes  1
+#define NeedVarargsPrototypes
 #endif
 
 /*
@@ -126,6 +122,10 @@ int LogOutOfMem( char*, ...);
 #endif
 #ifndef REBOOT_CMD
 #define REBOOT_CMD	"/sbin/reboot"
+#endif
+
+#ifdef HAVE_SETUSERCONTEXT
+#define HAS_SETUSERCONTEXT
 #endif
 
 #endif /* KDM_CONFIG_H */

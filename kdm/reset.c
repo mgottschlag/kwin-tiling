@@ -1,16 +1,10 @@
-/* $XConsortium: reset.c,v 1.11 94/04/17 20:03:42 keith Exp $ */
+/* $TOG: reset.c /main/12 1998/02/09 13:56:00 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -18,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/reset.c,v 1.2 1998/10/10 15:25:37 dawes Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -40,16 +35,17 @@ from the X Consortium.
  */
 
 # include	"dm.h"
+# include	"dm_error.h"
+
 # include	<X11/Xlib.h>
 # include	<signal.h>
 
 /*ARGSUSED*/
 static int
-ignoreErrors (dpy, event)
-Display	*dpy;
-XErrorEvent	*event;
+ignoreErrors (Display *dpy, XErrorEvent *event)
 {
-	return Debug ("ignoring error\n");
+	Debug ("ignoring error\n");
+	return 0;
 }
 
 /*
@@ -95,31 +91,27 @@ static int getSimpleProperty(Display* dpy, Window w, Atom a, long *result){
   return TRUE;
 }
 
-static
-void killWindows (dpy, window)
-Display	*dpy;
-Window	window;
+static void
+killWindows (Display *dpy, Window window)
 {
 	Window	root, parent, *children;
 	int	child;
 	unsigned int nchildren = 0;
+
 	/* This prop. indicates that its a kdm window! */
 	Atom a = XInternAtom(dpy, "KDE_DESKTOP_WINDOW", False);
  
-	/* We cannot loop, when we want to keep the stupid window...*.
-	while (XQueryTree (dpy, window, &root, &parent, &children, &nchildren)
-	       && nchildren > 0)
-	*/
+	/* We cannot loop, when we want to keep the stupid window... */
 	XQueryTree (dpy, window, &root, &parent, &children, &nchildren);
-	if( nchildren > 0)
+	if (nchildren > 0)
 	{
 		for (child = 0; child < nchildren; child++) {
-		        long result = 0;
-			getSimpleProperty(dpy, children[child],a,&result);
-			if( !result) {
-			  /* not kdm window, kill it */
-			  Debug ("XKillClient 0x%x\n", children[child]);
-			  XKillClient (dpy, children[child]);
+			long result = 0;
+			getSimpleProperty (dpy, children[child], a, &result);
+			if (!result) {
+				/* not kdm window, kill it */
+				Debug ("XKillClient 0x%lx\n", (unsigned long)children[child]);
+				XKillClient (dpy, children[child]);
 			}
 		}
 		XFree ((char *)children);
@@ -130,8 +122,7 @@ static Jmp_buf	resetJmp;
 
 /* ARGSUSED */
 static SIGVAL
-abortReset (n)
-    int n;
+abortReset (int n)
 {
 	Longjmp (resetJmp, 1);
 }
@@ -140,8 +131,8 @@ abortReset (n)
  * this display connection better not have any windows...
  */
  
-void pseudoReset (dpy)
-Display	*dpy;
+void
+pseudoReset (Display *dpy)
 {
 	Window	root;
 	int	screen;
@@ -162,7 +153,6 @@ Display	*dpy;
 		(void) alarm (0);
 	}
 	Signal (SIGALRM, SIG_DFL);
-	XSetErrorHandler ((int (*)()) 0);
+	XSetErrorHandler ((XErrorHandler)0 );
 	Debug ("pseudoReset done\n");
 }
-

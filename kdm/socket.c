@@ -1,17 +1,10 @@
-/* $XConsortium: socket.c,v 1.34 94/04/17 20:03:47 gildea Exp $ */
-/* $XFree86: xc/programs/xdm/socket.c,v 3.1 1994/08/31 04:50:53 dawes Exp $ */
+/* $TOG: socket.c /main/37 1998/02/09 13:56:31 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -19,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/socket.c,v 3.6 2000/05/11 18:14:43 tsi Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -39,19 +33,21 @@ from the X Consortium.
  */
 
 #include "dm.h"
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "dm_error.h"
 
 #ifdef XDMCP
 #ifndef STREAMSCONN
 
 #include <errno.h>
+#include "dm_socket.h"
+
 #ifndef MINIX
-#include <sys/socket.h>
-#include <netinet/in.h>
 #ifndef X_NO_SYS_UN
+#ifndef Lynx
 #include <sys/un.h>
+#else
+#include <un.h>
+#endif
 #endif
 #include <netdb.h>
 #else /* MINIX */
@@ -77,9 +73,8 @@ extern int	chooserFd;
 extern FD_TYPE	WellKnownSocketsMask;
 extern int	WellKnownSocketsMax;
 
-extern int RegisterCloseOnFork( int fd );
-
-void CreateWellKnownSockets ()
+void
+CreateWellKnownSockets (void)
 {
 #ifndef MINIX
     struct sockaddr_in	sock_addr;
@@ -90,7 +85,7 @@ void CreateWellKnownSockets ()
     int flags;
     nbio_ref_t ref;
 #endif /* !MINIX */
-    char		*name, *localHostname();
+    char *name;
 
     if (request_port == 0)
 	    return;
@@ -209,26 +204,24 @@ void CreateWellKnownSockets ()
     FD_SET (chooserFd, &WellKnownSocketsMask);
 }
 
-#ifndef MINIX
-int GetChooserAddr (addr, lenp)
-    char	*addr;
-    int		*lenp;
+int
+GetChooserAddr (
+    char	*addr,
+    int		*lenp)
 {
+#ifndef MINIX
     struct sockaddr_in	in_addr;
-    ksize_t		len;
+    int			len;
 
     len = sizeof in_addr;
-    if (getsockname (chooserFd, (struct sockaddr *)&in_addr, &len) < 0)
+    if (getsockname (chooserFd, (struct sockaddr *)&in_addr, (void *)&len) < 0)
 	return -1;
+    Debug ("Chooser socket port: %d\n", ntohs(in_addr.sin_port));
     memmove( addr, (char *) &in_addr, len);
     *lenp = len;
-    return 0;
-}
+
 #else /* MINIX */
-int GetChooserAddr (addr, lenp)
-    char	*addr;
-    int		*lenp;
-{
+
     static struct sockaddr_in	in_addr;
     static int first_time= 1;
     int			len;
@@ -251,9 +244,9 @@ int GetChooserAddr (addr, lenp)
     len = sizeof in_addr;
     memmove( addr, (char *) &in_addr, len);
     *lenp = len;
+#endif /* !MINIX */
     return 0;
 }
-#endif /* !MINIX */
 
 #endif /* !STREAMSCONN */
 #endif /* XDMCP */

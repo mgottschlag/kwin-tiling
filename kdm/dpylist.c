@@ -1,16 +1,10 @@
-/* $XConsortium: dpylist.c,v 1.29 94/04/17 20:03:37 gildea Exp $ */
+/* $TOG: dpylist.c /main/30 1998/02/09 13:55:07 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -18,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/dpylist.c,v 1.3 2000/04/27 16:26:50 eich Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -38,16 +33,19 @@ from the X Consortium.
  */
 
 # include "dm.h"
+# include "dm_error.h"
 
 static struct display	*displays;
+static struct disphist	*disphist;
 
-int AnyDisplaysLeft ()
+int
+AnyDisplaysLeft (void)
 {
 	return displays != (struct display *) 0;
 }
 
-void ForEachDisplay (f)
-	void	(*f)();
+void
+ForEachDisplay (void (*f)(struct display *))
 {
 	struct display	*d, *next;
 
@@ -58,8 +56,7 @@ void ForEachDisplay (f)
 }
 
 struct display *
-FindDisplayByName (name)
-char	*name;
+FindDisplayByName (char *name)
 {
 	struct display	*d;
 
@@ -70,8 +67,7 @@ char	*name;
 }
 
 struct display *
-FindDisplayByPid (pid)
-int	pid;
+FindDisplayByPid (int pid)
 {
 	struct display	*d;
 
@@ -82,8 +78,7 @@ int	pid;
 }
 
 struct display *
-FindDisplayByServerPid (serverPid)
-int	serverPid;
+FindDisplayByServerPid (int serverPid)
 {
 	struct display	*d;
 
@@ -96,8 +91,7 @@ int	serverPid;
 #ifdef XDMCP
 
 struct display *
-FindDisplayBySessionID (sessionID)
-    CARD32  sessionID;
+FindDisplayBySessionID (CARD32 sessionID)
 {
     struct display	*d;
 
@@ -107,14 +101,8 @@ FindDisplayBySessionID (sessionID)
     return 0;
 }
 
-extern int addressEqual( XdmcpNetaddr a1, int len1,
-                         XdmcpNetaddr a2, int len2 );
-
 struct display *
-FindDisplayByAddress (addr, addrlen, displayNumber)
-    XdmcpNetaddr addr;
-    int		 addrlen;
-    CARD16	 displayNumber;
+FindDisplayByAddress (XdmcpNetaddr addr, int addrlen, CARD16 displayNumber)
 {
     struct display  *d;
 
@@ -132,8 +120,8 @@ FindDisplayByAddress (addr, addrlen, displayNumber)
 
 #define IfFree(x)  if (x) free ((char *) x)
     
-void RemoveDisplay (old)
-struct display	*old;
+void
+RemoveDisplay (struct display *old)
 {
     struct display	*d, *p;
     char		**x;
@@ -146,7 +134,6 @@ struct display	*old;
 		p->next = d->next;
 	    else
 		displays = d->next;
-	    IfFree (d->name);
 	    IfFree (d->class2);
 	    for (x = d->argv; x && *x; x++)
 		IfFree (*x);
@@ -182,6 +169,9 @@ struct display	*old;
 	    IfFree (d->from);
 	    XdmcpDisposeARRAY8 (&d->clientAddr);
 #endif
+	    IfFree (d->autoUser);
+	    IfFree (d->autoPass);
+	    IfFree (d->autoString);
 	    free ((char *) d);
 	    break;
 	}
@@ -189,36 +179,58 @@ struct display	*old;
     }
 }
 
+struct disphist *
+FindHist (char *name)
+{
+    struct disphist *hstent;
+
+    for (hstent = disphist; hstent; hstent = hstent->next)
+	if (!strcmp (hstent->name, name))
+	    return hstent;
+    return 0;
+}
+
 struct display *
-NewDisplay (name, class)
-char		*name;
-char		*class;
+NewDisplay (char *name, char *class2)
 {
     struct display	*d;
+    struct disphist	*hstent;
 
-    d = (struct display *) malloc (sizeof (struct display));
+    if (!(hstent = FindHist (name))) {
+	if (!(hstent = malloc (sizeof (*hstent)))) {
+	    LogOutOfMem ("NewDisplay");
+	    return 0;
+	}
+	hstent->startTries = 0;
+	hstent->lastExit = 0;
+	hstent->goodExit = 0;
+	hstent->nLogPipe = NULL;
+	if (!(hstent->name = malloc ((unsigned) (strlen (name) + 1)))) {
+	    free (hstent);
+	    LogOutOfMem ("NewDisplay");
+	    return 0;
+	}
+	strcpy (hstent->name, name);
+	hstent->next = disphist; disphist = hstent;
+    }
+
+    d = (struct display *) malloc (sizeof (*d));
     if (!d) {
 	LogOutOfMem ("NewDisplay");
 	return 0;
     }
     d->next = displays;
-    d->name = malloc ((unsigned) (strlen (name) + 1));
-    if (!d->name) {
-	LogOutOfMem ("NewDisplay");
-	free ((char *) d);
-	return 0;
-    }
-    strcpy (d->name, name);
-    if (class)
+    d->hstent = hstent;
+    d->name = hstent->name;
+    if (class2)
     {
-	d->class2 = malloc ((unsigned) (strlen (class) + 1));
+	d->class2 = malloc ((unsigned) (strlen (class2) + 1));
 	if (!d->class2) {
 	    LogOutOfMem ("NewDisplay");
-	    free (d->name);
 	    free ((char *) d);
 	    return 0;
 	}
-	strcpy (d->class2, class);
+	strcpy (d->class2, class2);
     }
     else
     {
@@ -255,7 +267,7 @@ char		*class;
     d->openRepeat = 0;
     d->openTimeout = 0;
     d->startAttempts = 0;
-    d->startTries = 0;
+    d->startTries = 0;	/* unused */
     d->terminateServer = 0;
     d->grabTimeout = 0;
 #ifdef XDMCP
@@ -270,11 +282,20 @@ char		*class;
     d->clientAddr.length = 0;
     d->connectionType = 0;
 #endif
-    d->version = 1;		/* registered with X Consortium */
+    d->startInterval = 0;
+    d->autoLogin = autoLogin;
+    d->autoReLogin = 0;
+    d->autoLogin1st = 1;
+    d->autoUser = NULL;
+    d->autoPass = NULL;
+    d->autoString = NULL;
+    d->fifoCreate = 0;
+    d->fifoGroup = 0;
+    d->fifoMode = 0;
+    d->fifofd = -1;
+    d->pipefd[0] = -1;
+    d->pipefd[1] = -1;
+    d->version = 1;		/* registered with The Open Group */
     displays = d;
     return d;
 }
-
-
-
-

@@ -1,17 +1,10 @@
-/* $XConsortium: server.c,v 1.19 94/04/17 20:03:44 hersh Exp $ */
-/* $XFree86: xc/programs/xdm/server.c,v 3.1 1994/06/28 12:32:39 dawes Exp $ */
+/* $TOG: server.c /main/21 1998/02/09 13:56:13 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -19,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/server.c,v 3.8 2000/05/11 18:14:42 tsi Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -38,17 +32,15 @@ from the X Consortium.
  * server.c - manage the X server
  */
 
-#ifdef HAVE_CONFIG_H
-#include "../config.h"
-#endif
-
 # include	"dm.h"
+# include	"dm_error.h"
+# include 	"dm_socket.h"
+
 # include	<X11/Xlib.h>
 # include	<X11/Xos.h>
 # include	<stdio.h>
 # include	<signal.h>
 # include	<errno.h>
-# include	<sys/socket.h>
 
 #ifdef MINIX
 #include <sys/ioctl.h>
@@ -63,14 +55,13 @@ static int receivedUsr1;
 extern int errno;
 #endif
 
-static int serverPause ();
+static int serverPause (unsigned t, int serverPid);
 
 static Display	*dpy;
 
 /* ARGSUSED */
 static SIGVAL
-CatchUsr1 (n)
-    int n;
+CatchUsr1 (int n)
 {
 #ifdef SIGNALS_RESET_WHEN_CAUGHT
     (void) Signal (SIGUSR1, CatchUsr1);
@@ -79,16 +70,18 @@ CatchUsr1 (n)
     ++receivedUsr1;
 }
 
-extern void CleanUpChild();
-extern void DestroyWellKnownSockets();
+char *_SysErrorMsg (int n)
+{
+    char *s = strerror(n);
+    return (s ? s : "unknown error");
+}
 
-int StartServerOnce (d)
-struct display	*d;
+static int
+StartServerOnce (struct display *d)
 {
     char	**f;
     char	**argv;
     char	arg[1024];
-    char	**parseArgs ();
     int		pid;
 
     Debug ("StartServer for %s\n", d->name);
@@ -111,9 +104,20 @@ struct display	*d;
 	    sleep ((unsigned) d->openDelay);
 	    exit (UNMANAGE_DISPLAY);
 	}
-	for (f = argv; *f; f++)
-	    Debug ("'%s' ", *f);
-	Debug ("\n");
+	if (debugLevel > 0) {
+	    char *buf = NULL, *nbuf;
+	    int clen = 0;
+	    for (f = argv; *f; f++) {
+		if (!(nbuf = realloc (buf, clen + strlen(*f) + 4)))
+		    goto fa1;
+		buf = nbuf;
+		clen += sprintf (buf + clen, " '%s'", *f);
+	    }
+	    Debug ("Exec%s\n", buf);
+	  fa1:
+	    if (buf)
+		free (buf);
+	}
 	/*
 	 * give the server SIGUSR1 ignored,
 	 * it will notice that and send SIGUSR1
@@ -138,8 +142,8 @@ struct display	*d;
     return TRUE;
 }
 
-int StartServer (d)
-struct display *d;
+int
+StartServer (struct display *d)
 {
     int	i;
     int	ret = FALSE;
@@ -165,26 +169,22 @@ static int	serverPauseRet;
 
 /* ARGSUSED */
 static SIGVAL
-serverPauseAbort (n)
-    int n;
+serverPauseAbort (int n)
 {
     Longjmp (pauseAbort, 1);
 }
 
 /* ARGSUSED */
 static SIGVAL
-serverPauseUsr1 (n)
-    int n;
+serverPauseUsr1 (int n)
 {
     Debug ("display manager paused til SIGUSR1\n");
     ++receivedUsr1;
     Longjmp (pauseAbort, 1);
 }
 
-static
-int serverPause (t, serverPid)
-unsigned    t;
-int	    serverPid;
+static int
+serverPause (unsigned t, int serverPid)
 {
     int		pid;
 
@@ -217,8 +217,8 @@ int	    serverPid;
 			     (struct rusage *) 0);
 #endif /* X_NOT_POSIX */
 #endif /* SYSV */
-	    if ( (pid == serverPid ||
-		pid == -1) && errno == ECHILD)
+	    if (pid == serverPid ||
+	       (pid == -1 && errno == ECHILD))
 	    {
 		Debug ("Server dead\n");
 		serverPauseRet = 1;
@@ -255,8 +255,7 @@ static Jmp_buf	openAbort;
 
 /* ARGSUSED */
 static SIGVAL
-abortOpen (n)
-    int n;
+abortOpen (int n)
 {
 	Longjmp (openAbort, 1);
 }
@@ -267,13 +266,11 @@ abortOpen (n)
 #include <tiuser.h>
 #endif
 
-static
-void GetRemoteAddress (d, fd)
-    struct display  *d;
-    int		    fd;
+static void
+GetRemoteAddress (struct display *d, int fd)
 {
     char    buf[512];
-    ksize_t    len = sizeof (buf);
+    int	    len = sizeof (buf);
 #ifdef STREAMSCONN
     struct netbuf	netb;
 #endif
@@ -307,7 +304,7 @@ void GetRemoteAddress (d, fd)
     	sinp->sin_addr.s_addr= tcpconf.nwtc_remaddr;
     }
 #else
-    getpeername (fd, (struct sockaddr *) buf, &len);
+    getpeername (fd, (struct sockaddr *) buf, (void *)&len);
 #endif
 #endif
     d->peerlen = 0;
@@ -326,21 +323,19 @@ void GetRemoteAddress (d, fd)
 #endif /* XDMCP */
 
 static int
-openErrorHandler (dpy)
-    Display *dpy;
+openErrorHandler (Display *dpy)
 {
     LogError ("IO Error in XOpenDisplay\n");
     exit (OPENFAILED_DISPLAY);
+    /*NOTREACHED*/
+    return(0);
 }
 
-extern int RegisterCloseOnFork( int fd );
-
 int
-WaitForServer (d)
-    struct display  *d;
+WaitForServer (struct display *d)
 {
-    /* volatile added /stefh */
     volatile int i;
+    /* static int i; */
 
     for (i = 0; i < (d->openRepeat > 0 ? d->openRepeat : 1); i++) {
     	(void) Signal (SIGALRM, abortOpen);
@@ -363,7 +358,7 @@ WaitForServer (d)
 #endif
 	    (void) alarm ((unsigned) 0);
 	    (void) Signal (SIGALRM, SIG_DFL);
-	    (void) XSetIOErrorHandler ((int (*)()) 0);
+	    (void) XSetIOErrorHandler ((int (*)(Display *)) 0);
 	    Debug ("After XOpenDisplay(%s)\n", d->name);
 	    if (dpy) {
 #ifdef XDMCP
@@ -391,10 +386,8 @@ WaitForServer (d)
     return 0;
 }
 
-extern void pseudoReset( Display *dpy );
-
-void ResetServer (d)
-    struct display  *d;
+void
+ResetServer (struct display *d)
 {
     if (dpy && d->displayType.origin != FromXDMCP)
 	pseudoReset (dpy);
@@ -403,15 +396,14 @@ void ResetServer (d)
 static Jmp_buf	pingTime;
 
 static void
-PingLost ()
+PingLost (void)
 {
     Longjmp (pingTime, 1);
 }
 
 /* ARGSUSED */
 static int
-PingLostIOErr (dpy)
-    Display *dpy;
+PingLostIOErr (Display *dpy)
 {
     PingLost();
     return 0;
@@ -419,30 +411,28 @@ PingLostIOErr (dpy)
 
 /* ARGSUSED */
 static SIGVAL
-PingLostSig (n)
-    int n;
+PingLostSig (int n)
 {
     PingLost();
 }
 
-int PingServer (d, alternateDpy)
-    struct display  *d;
-    Display	    *alternateDpy;
+int
+PingServer (struct display *d, Display *alternateDpy)
 {
-    int	    (*oldError)();
-    SIGVAL  (*oldSig)();
+    int	    (*oldError)(Display *);
+    SIGVAL  (*oldSig)(int);
     int	    oldAlarm;
-
-    if (!alternateDpy)
-	alternateDpy = dpy;
-    oldError = XSetIOErrorHandler ((void *)PingLostIOErr);
+    static Display *aDpy;
+    
+    aDpy = (alternateDpy != NULL ? alternateDpy : dpy);
+    oldError = XSetIOErrorHandler (PingLostIOErr);
     oldAlarm = alarm (0);
     oldSig = Signal (SIGALRM, PingLostSig);
     (void) alarm (d->pingTimeout * 60);
     if (!Setjmp (pingTime))
     {
 	Debug ("Ping server\n");
-	XSync (alternateDpy, 0);
+	XSync (aDpy, 0);
     }
     else
     {

@@ -1,9 +1,9 @@
     /*
 
+    Dialog class that handles input focus in absence of a wm
     $Id$
 
-    Copyright (C) 1997, 1998 Steffen Hansen
-                             stefh@mip.ou.dk
+    Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -22,19 +22,21 @@
 
     */
  
-#ifndef _KDMUSERS_H_
-#define _KDMUSERS_H_
+
+#ifndef FDIALOG_H
+#define FDIALOG_H
 
 # include "kdm-config.h"
 
-#include "kdmview.h"
+#include <qdialog.h>
 
-class KDMUserItem : public KDMViewItem {
+class FDialog : public QDialog {
+     Q_OBJECT
 public:
-     setName( const QString &name) { user_name = name; }
-     const QString &name() { return user_name } const;
-private:
-     QString user_name;
+     FDialog( QWidget *parent = 0, const char* name = 0, 
+	      bool modal = FALSE, WFlags f = 0) 
+       : QDialog( parent, name, modal, f) {}
+     virtual int exec();
 };
 
-#endif // _KDMUSERS_H_
+#endif /* FDIALOG_H */

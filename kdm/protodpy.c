@@ -1,15 +1,10 @@
 /*
- * $XConsortium: protodpy.c,v 1.14 94/04/17 20:03:42 rws Exp $
+ * $TOG: protodpy.c /main/16 1998/02/09 13:55:55 kaleb $
  * $Id$
  *
-Copyright (c) 1989  X Consortium
+Copyright 1989, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
@@ -17,16 +12,17 @@ all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
 AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall not be
+Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
-in this Software without prior written authorization from the X Consortium.
+in this Software without prior written authorization from The Open Group.
  *
  * Author:  Keith Packard, MIT X Consortium
  */
+/* $XFree86: xc/programs/xdm/protodpy.c,v 1.2 1998/10/10 15:25:37 dawes Exp $ */
 
 /*
  * protodpy.c
@@ -37,6 +33,7 @@ in this Software without prior written authorization from the X Consortium.
  */
 
 #include "dm.h"
+#include "dm_error.h"
 
 #ifdef XDMCP
 
@@ -65,14 +62,11 @@ PrintProtoDisplay (pdpy)
 }
 #endif
 
-extern int addressEqual( XdmcpNetaddr a1, int len1,
-                         XdmcpNetaddr a2, int len2 );
-
 struct protoDisplay *
-FindProtoDisplay (address, addrlen, displayNumber)
-    XdmcpNetaddr    address;
-    int		    addrlen;
-    CARD16	    displayNumber;
+FindProtoDisplay (
+    XdmcpNetaddr    address,
+    int		    addrlen,
+    CARD16	    displayNumber)
 {
     struct protoDisplay	*pdpy;
 
@@ -88,11 +82,8 @@ FindProtoDisplay (address, addrlen, displayNumber)
     return (struct protoDisplay *) 0;
 }
 
-void DisposeProtoDisplay( struct protoDisplay *pdpy );
-
-static
-void TimeoutProtoDisplays (now)
-    Time_t    now;
+static void
+TimeoutProtoDisplays (Time_t now)
 {
     struct protoDisplay	*pdpy, *next;
 
@@ -105,14 +96,13 @@ void TimeoutProtoDisplays (now)
 }
 
 struct protoDisplay *
-NewProtoDisplay (address, addrlen, displayNumber,
-		 connectionType, connectionAddress, sessionID)
-    XdmcpNetaddr    address;
-    int		    addrlen;
-    CARD16	    displayNumber;
-    CARD16	    connectionType;
-    ARRAY8Ptr	    connectionAddress;
-    CARD32	    sessionID;
+NewProtoDisplay (
+    XdmcpNetaddr    address,
+    int		    addrlen,
+    CARD16	    displayNumber,
+    CARD16	    connectionType,
+    ARRAY8Ptr	    connectionAddress,
+    CARD32	    sessionID)
 {
     struct protoDisplay	*pdpy;
     Time_t date;
@@ -148,7 +138,8 @@ NewProtoDisplay (address, addrlen, displayNumber,
     return pdpy;
 }
 
-void DisposeProtoDisplay (pdpy)
+void
+DisposeProtoDisplay (pdpy)
     struct protoDisplay	*pdpy;
 {
     struct protoDisplay	*p, *prev;
@@ -167,11 +158,11 @@ void DisposeProtoDisplay (pdpy)
     else
 	protoDisplays = pdpy->next;
     bzero(&pdpy->key, sizeof(pdpy->key));
-    XdmcpDisposeARRAY8 (&pdpy->connectionAddress);
     if (pdpy->fileAuthorization)
 	XauDisposeAuth (pdpy->fileAuthorization);
     if (pdpy->xdmcpAuthorization)
 	XauDisposeAuth (pdpy->xdmcpAuthorization);
+    XdmcpDisposeARRAY8 (&pdpy->connectionAddress);
     free ((char *) pdpy->address);
     free ((char *) pdpy);
 }

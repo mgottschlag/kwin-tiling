@@ -3,8 +3,8 @@
     Greeter module for xdm
     $Id$
 
-    Copyright (C) 1997, 1998 Steffen Hansen
-                             stefh@mip.ou.dk
+    Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
+    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,7 @@
 
 #include <qlineedit.h>
 #include <qframe.h>
+#include <qiconview.h>
 
 class QTimer;
 class QIconView;
@@ -48,29 +49,34 @@ class QComboBox;
 
 #include "kfdialog.h"
 #include "kdmshutdown.h"
-#include "kdmconfig.h"
+
 class KdmClock;
 
 class KLoginLineEdit : public QLineEdit {
      Q_OBJECT
+
 public:
      KLoginLineEdit( QWidget *parent = 0) : QLineEdit(parent) {}
+
 signals:
      void lost_focus();
+
 protected:
      void focusOutEvent( QFocusEvent *e);
 };
 
 class KGreeter : public QFrame {
      Q_OBJECT
+
 public:
-     KGreeter(QWidget *parent, const char *t);
-     void ReturnPressed();
-     void SetTimer();
+    KGreeter(QWidget *parent, const char *t);
+    void ReturnPressed();
+    void SetTimer();
+
 public slots:
      void go_button_clicked();
      void cancel_button_clicked();
-		 void quit_button_clicked();
+     void quit_button_clicked();
      void shutdown_button_clicked();
      void timerDone();
      void slot_user_name( QIconViewItem*);
@@ -81,14 +87,17 @@ public slots:
      bool restrict_time();
      void load_wm();
      void save_wm();
+
 protected:
      void timerEvent( QTimerEvent * ) {};
+
 private:
      QTimer*        timer;
      QIconView*     user_view;
      KdmClock*      clock;
      QLabel*        pixLabel;
      QLabel*        loginLabel;
+     QLabel*        sessionargLabel;
      QLabel*        passwdLabel;
      QLabel*        failedLabel;
      KLoginLineEdit*     loginEdit;
@@ -103,9 +112,12 @@ private:
 
      struct passwd *pwd;
 
-#if USESHADOW
+#ifdef USESHADOW
      struct spwd *swd;
 #endif
+
+    void	insertUsers( QIconView *);
+
 };
 
 

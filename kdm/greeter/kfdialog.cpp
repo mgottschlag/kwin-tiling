@@ -3,8 +3,8 @@
     Dialog class to handle input focus -- see headerfile
     $Id$
 
-    Copyright (C) 1997, 1998 Steffen Hansen
-                             stefh@mip.ou.dk
+    Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
+    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -28,15 +28,36 @@
 #include <qapplication.h>
 #include <X11/Xlib.h>
 
+#include <unistd.h>
+#include <stdio.h>
+
 int
 FDialog::exec()
 {
-     setResult(0);
-     show();
-     // Give focus back to parent:
-     if( isModal() && parentWidget() != 0)
-	  parentWidget()->setActiveWindow();
-     return result();
+    setResult(0);
+
+    if (isModal()) {
+
+	show();
+#if 0	/* Enable this for qt 3.0 */
+	qApp->processEvents();
+
+	if (XGrabKeyboard ( qt_xdisplay(), winId(), True, GrabModeAsync,
+			    GrabModeAsync, CurrentTime ) == GrabSuccess) {
+	    QDialog::exec();
+	    XUngrabKeyboard (qt_xdisplay(), CurrentTime);
+	} else
+	    hide();
+#endif
+
+	// Give focus back to parent:
+	if( parentWidget() != 0)
+	    parentWidget()->setActiveWindow();
+
+    } else
+	show();
+
+    return result();
 }
 
 #include "kfdialog.moc"

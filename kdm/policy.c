@@ -1,17 +1,10 @@
-/* $XConsortium: policy.c,v 1.12 94/04/17 20:03:41 hersh Exp $ */
-/* $XFree86: xc/programs/xdm/policy.c,v 3.0 1994/06/28 12:32:38 dawes Exp $ */
+/* $TOG: policy.c /main/13 1998/02/09 13:55:49 kaleb $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -19,15 +12,15 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
 
@@ -37,24 +30,16 @@ from the X Consortium.
  *
  * policy.c.  Implement site-dependent policy for XDMCP connections
  */
+/* $XFree86: xc/programs/xdm/policy.c,v 3.4 1998/12/06 06:08:48 dawes Exp $ */
 
 # include "dm.h"
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <config.h>
-
-#include <sys/param.h>
+# include "dm_auth.h"
 
 #ifdef XDMCP
 
 # include <X11/X.h>
-#ifndef MINIX
-# include <sys/socket.h>
-#ifdef AF_INET
-# include <netinet/in.h>
-#endif
-#endif
+
+# include "dm_socket.h"
 
 static ARRAY8 noAuthentication = { (CARD16) 0, (CARD8Ptr) 0 };
 
@@ -77,8 +62,7 @@ static XdmAuthRec auth[] = {
 #define NumAuth	(sizeof auth / sizeof auth[0])
 
 ARRAY8Ptr
-ChooseAuthentication (authenticationNames)
-    ARRAYofARRAY8Ptr	authenticationNames;
+ChooseAuthentication (ARRAYofARRAY8Ptr authenticationNames)
 {
     int	i, j;
 
@@ -90,9 +74,12 @@ ChooseAuthentication (authenticationNames)
     return &noAuthentication;
 }
 
-int CheckAuthentication (pdpy, displayID, name, data)
-    struct protoDisplay	*pdpy;
-    ARRAY8Ptr		displayID, name, data;
+int
+CheckAuthentication (
+    struct protoDisplay	*pdpy,
+    ARRAY8Ptr		displayID,
+    ARRAY8Ptr		name,
+    ARRAY8Ptr		data)
 {
 #ifdef HASXDMAUTH
     if (name->length && !strncmp ((char *)name->data, "XDM-AUTHENTICATION-1", 20))
@@ -101,12 +88,10 @@ int CheckAuthentication (pdpy, displayID, name, data)
     return TRUE;
 }
 
-extern int ValidAuthorization( unsigned short name_length, char *name );
-
 int
-SelectAuthorizationTypeIndex (authenticationName, authorizationNames)
-    ARRAY8Ptr		authenticationName;
-    ARRAYofARRAY8Ptr	authorizationNames;
+SelectAuthorizationTypeIndex (
+    ARRAY8Ptr		authenticationName,
+    ARRAYofARRAY8Ptr	authorizationNames)
 {
     int	i, j;
 
@@ -128,91 +113,85 @@ SelectAuthorizationTypeIndex (authenticationName, authorizationNames)
     return -1;
 }
 
-extern int AcceptableDisplayAddress( ARRAY8Ptr clientAddress,
-                                     CARD16 connectionType,
-                                     xdmOpCode type );
-
-/* Report the loadavg to chooser. Nice feature --
- * someone told me that the xdm packaged with Debian
- * already does this??
+/* Report the loadavg to chooser. Nice feature ...
  *
  * Wed Mar 10 06:14:56 1999 -- Steffen Hansen
  */
-static void Willing_msg( char* mbuf)
+static void Willing_msg (char *mbuf)
 {
 #ifdef __linux__
-	int fd;
-  const char *fail_msg = "Willing to manage";
-  char buf[1024];
-  FILE *f;
-	float load[3];
-  float mhz = 0.0;
-	int numcpu = 0;
+    int fd;
+    const char *fail_msg = "Willing to manage";
+    char buf[1024];
+    FILE *f;
+    float load[3];
+    float mhz = 0.0;
+    int numcpu = 0;
 
-  fd = open( "/proc/loadavg", O_RDONLY);
-  if( fd == -1) {
-		sprintf( mbuf, fail_msg);
-		return;
+    fd = open ("/proc/loadavg", O_RDONLY);
+    if (fd == -1) {
+	sprintf (mbuf, fail_msg);
+	return;
+    } else if (read (fd, buf, 100) < 4) {
+	close (fd);
+	sprintf (mbuf, fail_msg);
+	return;
+    }
 
-  } else if( read( fd, buf, 100) < 4) {
-		close( fd);
-	  sprintf( mbuf, fail_msg);	
-		return;
-  }
+    sscanf (buf, "%f %f %f", &load[0], &load[1], &load[2]);
+    snprintf (mbuf, 256, "Available (load: %0.2f, %0.2f, %0.2f)",
+	      load[0], load[1], load[2]);
+    close (fd);
 
-	sscanf(buf, "%f %f %f", &load[0], &load[1], &load[2]);
-	snprintf(mbuf, 256, "Available (load: %0.2f, %0.2f, %0.2f)",
-		load[0], load[1], load[2]);
-	close( fd);
+    mbuf[255] = 0;
 
-	mbuf[255] = 0;
+    numcpu = 0;
 
-	numcpu = 0;
+    if (!(f = fopen ("/proc/cpuinfo", "r")))
+	return;
 
-	if(!(f = fopen("/proc/cpuinfo", "r")))
-		return;
+    while (!feof (f)) {
+	float m;
+	fgets (buf, 1024, f);
+	buf[sizeof (buf) - 1] = 0;
 
-	while(!feof(f)) {	
-	  float m;
-		fgets(buf, 1024, f);
-		buf[sizeof(buf)-1] = 0;
-
-		if(sscanf(buf, "cpu MHz : %f", &m)) {
-			numcpu++;
-			mhz = m ;
-		}
+	if (sscanf (buf, "cpu MHz : %f", &m)) {
+	    numcpu++;
+	    mhz = m;
 	}
+    }
 
-   fclose(f);
+    fclose (f);
 
-   if(numcpu) {
-        if(numcpu > 1) 
-	   sprintf(buf, " %d*%0.0f MHz", numcpu, mhz);	   
-        else
-	   sprintf(buf, " %0.0f MHz", mhz);	   
-	
-	strncat(mbuf, buf, 256);
+    if (numcpu) {
+	if (numcpu > 1)
+	    sprintf (buf, " %d*%0.0f MHz", numcpu, mhz);
+	else
+	    sprintf (buf, " %0.0f MHz", mhz);
+
+	strncat (mbuf, buf, 256);
 
 	mbuf[255] = 0;
-   }
+    }
 #elif HAVE_GETLOADAVG
 #warning This code is untested...
-     double load[3];
-     getloadavg(load, 3);
-     sprintf( mbuf, "Available (load: %0.2f, %0.2f, %0.2f)", load[0], load[1], load[2]);
-#else /* !__linux__ */
-     sprintf( mbuf, "Willing to manage");     
+    double load[3];
+    getloadavg (load, 3);
+    sprintf (mbuf, "Available (load: %0.2f, %0.2f, %0.2f)", load[0],
+	     load[1], load[2]);
+#else				/* !__linux__ */
+    sprintf (mbuf, "Willing to manage");
 #endif
 }
 
 /*ARGSUSED*/
 int
-Willing (addr, connectionType, authenticationName, status, type)
-    ARRAY8Ptr	    addr;
-    CARD16	    connectionType;
-    ARRAY8Ptr	    authenticationName;
-    ARRAY8Ptr	    status;
-    xdmOpCode	    type;
+Willing (
+    ARRAY8Ptr	    addr,
+    CARD16	    connectionType,
+    ARRAY8Ptr	    authenticationName,
+    ARRAY8Ptr	    status,
+    xdmOpCode	    type)
 {
     char	statusBuf[256];
     int		ret;
@@ -221,7 +200,21 @@ Willing (addr, connectionType, authenticationName, status, type)
     if (!ret)
 	sprintf (statusBuf, "Display not authorized to connect");
     else
-	Willing_msg(statusBuf);
+    {
+        if (*willing)
+	{
+	    FILE *fd;
+	    if ((fd = popen(willing, "r"))) {
+		if (fgets(statusBuf, 256, fd))
+		    statusBuf[strlen(statusBuf)-1] = 0; /* chop newline */
+		else
+		    sprintf (statusBuf, "Willing, but %s failed", willing);
+		pclose(fd);
+	    }
+	}
+	else
+	    Willing_msg (statusBuf);
+    }
     status->length = strlen (statusBuf);
     status->data = (CARD8Ptr) malloc (status->length);
     if (!status->data)
@@ -233,19 +226,19 @@ Willing (addr, connectionType, authenticationName, status, type)
 
 /*ARGSUSED*/
 ARRAY8Ptr
-Accept (from, fromlen, displayNumber)
-    struct sockaddr *from;
-    int		    fromlen;
-    CARD16	    displayNumber;
+Accept (
+    struct sockaddr *from,
+    int		    fromlen,
+    CARD16	    displayNumber)
 {
     return 0;
 }
 
 /*ARGSUSED*/
 int
-SelectConnectionTypeIndex (connectionTypes, connectionAddresses)
-    ARRAY16Ptr	     connectionTypes;
-    ARRAYofARRAY8Ptr connectionAddresses;
+SelectConnectionTypeIndex (
+    ARRAY16Ptr	     connectionTypes,
+    ARRAYofARRAY8Ptr connectionAddresses)
 {
     return 0;
 }

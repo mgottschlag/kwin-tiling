@@ -1,17 +1,10 @@
-/* $XConsortium: dm.c,v 1.70 94/04/17 20:03:36 gildea Exp $ */
-/* $XFree86: xc/programs/xdm/dm.c,v 3.1 1994/10/20 06:15:09 dawes Exp $ */
+/* $TOG: dm.c /main/73 1998/04/09 15:12:03 barstow $ */
 /* $Id$ */
 /*
 
-Copyright (c) 1988  X Consortium
+Copyright 1988, 1998  The Open Group
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+All Rights Reserved.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -19,17 +12,18 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the X Consortium shall
+Except as contained in this notice, the name of The Open Group shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from the X Consortium.
+from The Open Group.
 
 */
+/* $XFree86: xc/programs/xdm/dm.c,v 3.10 2000/04/27 16:26:50 eich Exp $ */
 
 /*
  * xdm - display manager daemon
@@ -39,8 +33,11 @@ from the X Consortium.
  */
 
 # include	"dm.h"
+# include	"dm_auth.h"
+# include	"dm_error.h"
 
 # include	<stdio.h>
+# include	<string.h>
 #ifdef X_POSIX_C_SOURCE
 #define _POSIX_C_SOURCE X_POSIX_C_SOURCE
 #include <signal.h>
@@ -54,6 +51,9 @@ from the X Consortium.
 #undef _POSIX_SOURCE
 #endif
 #endif
+#ifdef __NetBSD__
+#include <sys/param.h>
+#endif
 
 #ifndef sigmask
 #define sigmask(m)  (1 << ((m - 1)))
@@ -62,33 +62,35 @@ from the X Consortium.
 # include	<sys/stat.h>
 # include	<errno.h>
 # include	<X11/Xfuncproto.h>
-#if NeedVarargsPrototypes
-# include <stdarg.h>
-# define Va_start(a,b) va_start(a,b)
-#else
-# include <varargs.h>
-# define Va_start(a,b) va_start(a)
-#endif
+# include	<stdarg.h>
 
-#include	<unistd.h>
+#ifndef F_TLOCK
+#ifndef X_NOT_POSIX
+# include	<unistd.h>
+#endif
+#endif
 
 #ifdef X_NOT_STDC_ENV
 extern int errno;
 #endif
 
 
-#ifdef SVR4
+#if defined(SVR4) && !defined(SCO)
 extern FILE    *fdopen();
 #endif
 
-static void	RescanServers ();
-static void	ScanServers ();
+static SIGVAL	StopAll (int n), RescanNotify (int n);
+static void	RescanServers (void);
+static void	RestartDisplay (struct display *d, int forceReserver);
+static void	ScanServers (void);
+static void	SetAccessFileTime (void);
+static void	SetConfigFileTime (void);
+static void	StartDisplays (void);
+static void	TerminateProcess (int pid, int signal);
+static void	ExitDisplay (struct display *d, int doRestart, int forceReserver, int goodExit);
+
 int		Rescan;
 static long	ServersModTime, ConfigModTime, AccessFileModTime;
-static SIGVAL	StopAll (), RescanNotify ();
-void		StopDisplay ();
-static void	RestartDisplay ();
-static void	StartDisplays ();
 
 int nofork_session = 0;
 
@@ -98,29 +100,25 @@ static int TitleLen;
 #endif
 
 #ifndef UNRELIABLE_SIGNALS
-static SIGVAL ChildNotify ();
+static SIGVAL ChildNotify (int n);
 #endif
 
-extern void InitResources( int argc, char **argv );
-void SetConfigFileTime();
-extern void LoadDMResources();
-extern void BecomeOrphan();
-extern void BecomeDaemon();
-int StorePid();
-extern void InitErrorLog();
-extern void CreateWellKnownSockets();
-void SetAccessFileTime();
-extern int ScanAccessDatabase();
-extern int AnyWellKnownSockets();
-extern int AnyDisplaysLeft();
-extern void WaitForSomething();
+static int StorePid (void);
 
-int main (argc, argv)
-int	argc;
-char	**argv;
+static int parent_pid = -1; 	/* PID of parent xdm process */
+
+int
+main (int argc, char **argv)
 {
     int	oldpid, oldumask;
     char cmdbuf[1024];
+
+    /*
+     * Fix $HOME (if kdm is run by init)
+     */
+    const char* home = getenv("HOME");
+    if (!home || !strcmp("/", home))
+	putenv("HOME=/root");
 
     /* make sure at least world write access is disabled */
     if (((oldumask = umask(022)) & 002) == 002)
@@ -144,40 +142,45 @@ char	**argv;
 	fprintf (stderr, "Only root wants to run %s\n", argv[0]);
 	exit (1);
     }
+    InitErrorLog ();
     chdir("/");
-    if (debugLevel == 0 && daemonMode)
-	BecomeOrphan ();
     if (debugLevel >= 10)
 	nofork_session = 1;
-    if (debugLevel == 0 && daemonMode)
+    if (daemonMode
+#ifndef USE_SYSLOG
+	&& debugLevel == 0
+#endif
+    )
 	BecomeDaemon ();
+
     /* SUPPRESS 560 */
-    if ( (oldpid = StorePid ()))
+    if ((oldpid = StorePid ()) != 0)
     {
 	if (oldpid == -1)
 	    LogError ("Can't create/lock pid file %s\n", pidFile);
 	else
-	    LogError ("Can't lock pid file %s, another xdm is running (pid %d)\n",
+	    LogError ("Can't lock pid file %s, another kdm is running (pid %d)\n",
 		 pidFile, oldpid);
 	exit (1);
     }
-    if (debugLevel == 0)
-	InitErrorLog ();
 
-    /* Clean up any old Authorization files */
-#ifdef MINIX
-    sprintf(cmdbuf, "/usr/bin/rm -f %s/A*", authDir);
+    if (nofork_session == 0) {
+	/* Clean up any old Authorization files */
+#ifndef MINIX
+	sprintf(cmdbuf, "/bin/rm -f %s/authdir/authfiles/A*", authDir);
 #else
-    sprintf(cmdbuf, "/bin/rm -f %s/A*", authDir);
+	sprintf(cmdbuf, "/usr/bin/rm -f %s/authdir/authfiles/A*", authDir);
 #endif
-    system(cmdbuf);
+	system(cmdbuf);
+    }
 
 #ifdef XDMCP
     init_session_id ();
     CreateWellKnownSockets ();
 #else
-    Debug ("xdm: not compiled for XDMCP\n");
+    Debug ("kdm: not compiled for XDMCP\n");
 #endif
+    parent_pid = getpid ();
     (void) Signal (SIGTERM, StopAll);
     (void) Signal (SIGINT, StopAll);
     /*
@@ -221,8 +224,7 @@ char	**argv;
 
 /* ARGSUSED */
 static SIGVAL
-RescanNotify (n)
-    int n;
+RescanNotify (int n)
 {
     Debug ("Caught SIGHUP\n");
     Rescan = 1;
@@ -231,12 +233,8 @@ RescanNotify (n)
 #endif
 }
 
-extern void ParseDisplay( char *source, DisplayType acceptableTypes[],
-                          int numAcceptable);
-
-
 static void
-ScanServers ()
+ScanServers (void)
 {
     char	lineBuf[10240];
     int		len;
@@ -278,18 +276,13 @@ ScanServers ()
 }
 
 static void
-MarkDisplay (d)
-struct display	*d;
+MarkDisplay (struct display *d)
 {
     d->state = MissingEntry;
 }
 
-extern void LogInfo();
-extern void ForEachDisplay();
-extern void ReinitResources();
-
 static void
-RescanServers ()
+RescanServers (void)
 {
     Debug ("rescanning servers\n");
     LogInfo ("Rescanning both config and servers files\n");
@@ -305,7 +298,8 @@ RescanServers ()
     StartDisplays ();
 }
 
-void SetConfigFileTime ()
+static void
+SetConfigFileTime (void)
 {
     struct stat	statb;
 
@@ -313,7 +307,8 @@ void SetConfigFileTime ()
 	ConfigModTime = statb.st_mtime;
 }
 
-void SetAccessFileTime ()
+static void
+SetAccessFileTime (void)
 {
     struct stat	statb;
 
@@ -321,8 +316,8 @@ void SetAccessFileTime ()
 	AccessFileModTime = statb.st_mtime;
 }
 
-static
-void RescanIfMod ()
+static void
+RescanIfMod (void)
 {
     struct stat	statb;
 
@@ -366,13 +361,24 @@ void RescanIfMod ()
  * catch a SIGTERM, kill all displays and exit
  */
 
-extern void DestroyWellKnownSockets();
-
 /* ARGSUSED */
 static SIGVAL
-StopAll (n)
-    int n;
+StopAll (int n)
 {
+    if (parent_pid != getpid())
+    {
+	/* 
+	 * We are a child xdm process that was killed by the
+	 * master xdm before we were able to return from fork()
+	 * and remove this signal handler.
+	 *
+	 * See defect XWSog08655 for more information.
+	 */
+	Debug ("Child xdm caught SIGTERM before it removed that signal.\n");
+	(void) Signal (n, SIG_DFL);
+	TerminateProcess (getpid(), SIGTERM);
+	return;
+    }
     Debug ("Shutting down entire manager\n");
 #ifdef XDMCP
     DestroyWellKnownSockets ();
@@ -395,18 +401,17 @@ int	ChildReady;
 #ifndef UNRELIABLE_SIGNALS
 /* ARGSUSED */
 static SIGVAL
-ChildNotify (n)
-    int n;
+ChildNotify (int n)
 {
     ChildReady = 1;
+#ifdef ISC
+    (void) Signal (SIGCHLD, ChildNotify);
+#endif
 }
 #endif
 
-extern void SendFailed( struct display *d, char *reason );
-extern void RemoveDisplay( struct display *old );
-void TerminateProcess( pid_t pid, int signal );
-
-int WaitForChild ()
+void
+WaitForChild (void)
 {
     int		pid;
     struct display	*d;
@@ -426,10 +431,11 @@ int WaitForChild ()
     sigaddset(&mask, SIGCHLD);
     sigaddset(&mask, SIGHUP);
     sigprocmask(SIG_BLOCK, &mask, &omask);
+    Debug ("signals blocked\n");
 #else
     omask = sigblock (sigmask (SIGCHLD) | sigmask (SIGHUP));
-#endif
     Debug ("signals blocked, mask was 0x%x\n", omask);
+#endif
     if (!ChildReady && !Rescan)
 #ifndef X_NOT_POSIX
 	sigsuspend(&omask);
@@ -454,85 +460,57 @@ int WaitForChild ()
 	if (autoRescan)
 	    RescanIfMod ();
 	/* SUPPRESS 560 */
-	if ( (d = FindDisplayByPid (pid))) {
+	if ((d = FindDisplayByPid (pid)) != 0) {
 	    d->pid = -1;
 	    switch (waitVal (status)) {
 	    case UNMANAGE_DISPLAY:
-	        Debug ("Display exited with UNMANAGE_DISPLAY\n");
-		StopDisplay (d);
+		Debug ("Display exited with UNMANAGE_DISPLAY\n");
+		ExitDisplay (d, FALSE, FALSE, FALSE);
 		break;
 	    case OBEYSESS_DISPLAY:
-		d->startTries = 0;
 		Debug ("Display exited with OBEYSESS_DISPLAY\n");
-		if (d->displayType.lifetime != Permanent ||
-		    d->status == zombie)
-		    StopDisplay (d);
-		else
-		    RestartDisplay (d, FALSE);
+		ExitDisplay (d, TRUE, FALSE, TRUE);
 		break;
 	    default:
 		Debug ("Display exited with unknown status %d\n", waitVal(status));
 		LogError ("Unknown session exit code %d from process %d\n",
 			  waitVal (status), pid);
-		StopDisplay (d);
+		ExitDisplay (d, FALSE, FALSE, FALSE);
 		break;
 	    case OPENFAILED_DISPLAY:
 		Debug ("Display exited with OPENFAILED_DISPLAY, try %d of %d\n",
 		       d->startTries, d->startAttempts);
 		LogError ("Display %s cannot be opened\n", d->name);
 		/*
- 		 * no display connection was ever made, tell the
+		 * no display connection was ever made, tell the
 		 * terminal that the open attempt failed
  		 */
 #ifdef XDMCP
 		if (d->displayType.origin == FromXDMCP)
 		    SendFailed (d, "Cannot open display");
 #endif
-		if (d->displayType.origin == FromXDMCP ||
-		    d->status == zombie ||
-		    ++d->startTries >= d->startAttempts)
-		{
-		    LogError ("Display %s is being disabled\n", d->name);
-		    StopDisplay (d);
-		}
-		else
-		{
-		    RestartDisplay (d, TRUE);
-		}
+		ExitDisplay (d, TRUE, TRUE, FALSE);
 		break;
 	    case RESERVER_DISPLAY:
-		d->startTries = 0;
 		Debug ("Display exited with RESERVER_DISPLAY\n");
-		if (d->displayType.origin == FromXDMCP || d->status == zombie)
-		    StopDisplay(d);
-		else
-		    RestartDisplay (d, TRUE);
+		ExitDisplay (d, TRUE, TRUE, FALSE);
 		break;
 	    case waitCompose (SIGTERM,0,0):
-	    case waitCompose (SIGKILL,0,0):
-		d->startTries = 0;
-		Debug ("Display exited on SIGTERM/SIGKILL\n");
-		if (d->displayType.origin == FromXDMCP || d->status == zombie)
-		    StopDisplay(d);
-		else
-		    RestartDisplay (d, TRUE);
+		Debug ("Display exited on SIGTERM\n");
+		ExitDisplay (d, TRUE, TRUE, FALSE);
 		break;
 	    case REMANAGE_DISPLAY:
-		d->startTries = 0;
 		Debug ("Display exited with REMANAGE_DISPLAY\n");
 		/*
  		 * XDMCP will restart the session if the display
 		 * requests it
 		 */
-		if (d->displayType.origin == FromXDMCP || d->status == zombie)
-		    StopDisplay(d);
-		else
-		    RestartDisplay (d, FALSE);
+		ExitDisplay (d, TRUE, FALSE, FALSE);
 		break;
 	    }
 	}
 	/* SUPPRESS 560 */
-	else if ( (d = FindDisplayByServerPid (pid)))
+	else if ((d = FindDisplayByServerPid (pid)) != 0)
 	{
 	    d->serverPid = -1;
 	    switch (d->status)
@@ -552,7 +530,7 @@ int WaitForChild ()
 		{
 		    Debug ("Terminating session pid %d\n", d->pid);
 		    TerminateProcess (d->pid, SIGTERM);
-		}		
+		}
 		break;
 	    case notRunning:
 		Debug ("Server exited for notRunning session on display %s\n", d->name);
@@ -565,12 +543,10 @@ int WaitForChild ()
 	}
     }
     StartDisplays ();
-    return 0;
 }
 
 static void
-CheckDisplayStatus (d)
-struct display	*d;
+CheckDisplayStatus (struct display *d)
 {
     if (d->displayType.origin == FromFile)
     {
@@ -589,27 +565,16 @@ struct display	*d;
 }
 
 static void
-StartDisplays ()
+StartDisplays (void)
 {
     ForEachDisplay (CheckDisplayStatus);
 }
 
-extern void LoadServerResources( struct display *d );
-extern int StartServer( struct display *d );
-extern int SaveServerAuthorizations( struct display *d, Xauth ** auths,
-                                     int count);
-extern void CleanUpChild();
-extern void LoadSessionResources( struct display *d );
-extern void SetAuthorization( struct display *d );
-extern int WaitForServer( struct display *d );
-extern void RunChooser( struct display *d );
-extern void ManageSession( struct display *d );
-
 void
-StartDisplay (d)
-struct display	*d;
+StartDisplay (struct display *d)
 {
-    int	pid;
+    char	buf[100];
+    int		pid;
 
     Debug ("StartDisplay %s\n", d->name);
     LoadServerResources (d);
@@ -619,8 +584,8 @@ struct display	*d;
 	 * certainly notice when they exit
 	 */
 	d->pingInterval = 0;
-    	if (d->authorize)
-    	{
+	if (d->authorize)
+	{
 	    Debug ("SetLocalAuthorization %s, auth %s\n",
 		    d->name, d->authNames[0]);
 	    SetLocalAuthorization (d);
@@ -632,7 +597,7 @@ struct display	*d;
 	     */
 	    if (d->serverPid != -1 && d->resetForAuth && d->resetSignal)
 		kill (d->serverPid, d->resetSignal);
-    	}
+	}
 	if (d->serverPid == -1 && !StartServer (d))
 	{
 	    LogError ("Server for display %s can't be started, session disabled\n", d->name);
@@ -646,6 +611,27 @@ struct display	*d;
 	if (d->authorizations)
 	    SaveServerAuthorizations (d, d->authorizations, d->authNum);
     }
+    if (d->fifoCreate && d->fifofd < 0) {
+	/* Race condition(s): 1) Somebody else may open the FIFO 
+	   before we do. 2) Even if we win - can we assume, that 
+	   we will be the ones, that actually get the data? We are
+	   on Linux, but who knows, how other systems behave.
+	   Conclusion: do NOT use it unless _really_ necessary.
+	   Maybe, we should use sockets here ...
+	*/
+	sprintf (buf, "/tmp/xlogin-%s", d->name);
+	unlink (buf);
+	mkfifo (buf, 0);
+	if (d->fifoMode)
+	    chmod (buf, d->fifoMode);
+	if (d->fifoGroup)
+	    chown (buf, 0, d->fifoGroup);
+	if ((d->fifofd = open (buf, O_RDONLY | O_NONBLOCK)) < 0)
+	    unlink (buf);
+	else
+	    RegisterCloseOnFork (d->fifofd);
+    }
+    pipe (d->pipefd);
     if (!nofork_session)
 	pid = fork ();
     else
@@ -656,7 +642,15 @@ struct display	*d;
 	if (!nofork_session) {
 	    CleanUpChild ();
 	    (void) Signal (SIGPIPE, SIG_IGN);
-	}
+	    if (d->pipefd[0] >= 0) {
+		close (d->pipefd[0]); d->pipefd[0] = -1;
+		RegisterCloseOnFork (d->pipefd[1]);
+	    }
+	} else
+	    if (d->pipefd[0] >= 0) {
+		RegisterCloseOnFork (d->pipefd[0]);
+		RegisterCloseOnFork (d->pipefd[1]);
+	    }
 	LoadSessionResources (d);
 	SetAuthorization (d);
 	if (!WaitForServer (d))
@@ -674,11 +668,16 @@ struct display	*d;
 	Debug ("pid: %d\n", pid);
 	d->pid = pid;
 	d->status = running;
+	if (d->pipefd[0] >= 0) {
+	    RegisterCloseOnFork (d->pipefd[0]);
+	    close (d->pipefd[1]); d->pipefd[1] = -1;
+	}
 	break;
     }
 }
 
-void TerminateProcess( pid_t pid, int signal)
+static void
+TerminateProcess (int pid, int signal)
 {
     kill (pid, signal);
 #ifdef SIGCONT
@@ -686,14 +685,122 @@ void TerminateProcess( pid_t pid, int signal)
 #endif
 }
 
+static void
+ClrnLog (struct display *d)
+{
+    if (d->hstent->nLogPipe) {
+	free (d->hstent->nLogPipe);
+	d->hstent->nLogPipe = NULL;
+Debug ("cleared nLogPipe\n");
+    }
+}
+
+static void
+ReadnLog (struct display *d, int fd)
+{
+    char	buf[100], *p;
+    int		bpos, bend, ll, rt, ign;
+
+    for(bpos = 0, bend = 0, ign = 0;;) {
+	for(;;) {
+	    if ((p = memchr(buf + bpos, 10, bend - bpos)) != 0) {
+		ll = (p - buf) - bpos + 1;
+		break;
+	    }
+	    if (bpos == 0 && bend == sizeof (buf)) {
+		ign = 1;
+		bend = 0;
+	    } else {
+		memcpy (buf, buf + bpos, bend - bpos);
+		bend -= bpos;
+	    }
+	    bpos = 0;
+	    rt = read (fd, buf + bend, sizeof (buf) - bend);
+	    if (rt < 0) {
+		return;
+	    } else if (!rt) {
+		if (bend) {
+		    ll = bend;
+		    break;
+		} else
+		    return;
+	    } else
+		bend += rt;
+	}
+	if (ign) {
+	    ign = 0;
+	} else {
+	    ClrnLog (d);
+	    if ((d->hstent->nLogPipe = malloc (ll + 1)) != NULL) {
+		memcpy (d->hstent->nLogPipe, buf + bpos, ll);
+		d->hstent->nLogPipe[ll] = '\0';
+Debug ("Saved data to nLogPipe: %s\n", d->hstent->nLogPipe);
+	    }
+	}
+	bpos += ll;
+    }
+}
+
+static void
+ExitDisplay (
+    struct display	*d, 
+    int			doRestart,
+    int			forceReserver,
+    int			goodExit)
+{
+    Time_t	curtime;
+
+    Debug ("Recording exit of %s (GoodExit=%d)\n", d->name, goodExit);
+
+    time (&curtime);
+    if (d->hstent->lastExit + d->startInterval < curtime)
+	d->hstent->startTries = 0;
+    else if (++d->hstent->startTries >= d->startAttempts) {
+	LogError ("Display %s is being disabled (exit frequency too high)\n", d->name);
+	doRestart = FALSE;
+    }
+    d->hstent->lastExit = curtime;
+
+    d->hstent->goodExit = goodExit;
+    ClrnLog (d);
+    if (d->pipefd[0] >= 0) {
+	ReadnLog (d, d->pipefd[0]);
+	ClearCloseOnFork(d->pipefd[0]); 
+	close (d->pipefd[0]); d->pipefd[0] = -1;
+    }
+    if (d->pipefd[1] >= 0) {
+	ClearCloseOnFork(d->pipefd[1]); 
+	close (d->pipefd[1]); d->pipefd[1] = -1;
+    }
+    if (goodExit)
+	ClrnLog (d);
+    if (d->fifofd >= 0)
+	ReadnLog (d, d->fifofd);
+
+    if (!doRestart ||
+	d->displayType.lifetime != Permanent ||
+	d->status == zombie)
+	StopDisplay (d);
+    else
+	RestartDisplay (d, forceReserver);
+}
+
 /*
  * transition from running to zombie or deleted
  */
 
 void
-StopDisplay (d)
-    struct display	*d;
+StopDisplay (struct display *d)
 {
+    char buf[100];
+
+    if (d->fifofd >= 0) {
+	close (d->fifofd);
+	ClearCloseOnFork (d->fifofd);
+	d->fifofd = -1;
+	sprintf (buf, "/tmp/xlogin-%s", d->name);
+	unlink (buf);
+    }
     if (d->serverPid != -1)
 	d->status = zombie; /* be careful about race conditions */
     if (d->pid != -1)
@@ -709,9 +816,7 @@ StopDisplay (d)
  */
 
 static void
-RestartDisplay (d, forceReserver)
-    struct display  *d;
-    int		    forceReserver;
+RestartDisplay (struct display *d, int forceReserver)
 {
     if (d->serverPid != -1 && (forceReserver || d->terminateServer))
     {
@@ -727,17 +832,16 @@ RestartDisplay (d, forceReserver)
 static FD_TYPE	CloseMask;
 static int	max;
 
-int RegisterCloseOnFork (fd)
-int	fd;
+void
+RegisterCloseOnFork (int fd)
 {
     FD_SET (fd, &CloseMask);
     if (fd > max)
 	max = fd;
-    return 0;
 }
 
-void ClearCloseOnFork (fd)
-int	fd;
+void
+ClearCloseOnFork (int fd)
 {
     FD_CLR (fd, &CloseMask);
     if (fd == max) {
@@ -748,7 +852,8 @@ int	fd;
     }
 }
 
-void CloseOnFork ()
+void
+CloseOnFork (void)
 {
     int	fd;
 
@@ -770,7 +875,8 @@ void CloseOnFork ()
 static int  pidFd;
 static FILE *pidFilePtr;
 
-int StorePid ()
+static int
+StorePid (void)
 {
     int		oldpid;
 
@@ -824,14 +930,16 @@ int StorePid ()
 #endif
 #endif
 	}
-	fprintf (pidFilePtr, "%5d\n", (int)getpid ());
+	fprintf (pidFilePtr, "%5d\n", getpid ());
 	(void) fflush (pidFilePtr);
 	RegisterCloseOnFork (pidFd);
     }
     return 0;
 }
 
-void UnlockPidFile ()
+#if 0
+void
+UnlockPidFile (void)
 {
     if (lockPidFile)
 #ifdef F_SETLK
@@ -852,15 +960,9 @@ void UnlockPidFile ()
     close (pidFd);
     fclose (pidFilePtr);
 }
-
-#if NeedVarargsPrototypes
-void SetTitle (char *name, ...)
-#else
-/*VARARGS*/
-void SetTitle (name, va_alist)
-char *name;
-va_dcl
 #endif
+
+void SetTitle (char *name, ...)
 {
 #ifndef NOXDMTITLE
     char	*p = Title;
@@ -868,7 +970,7 @@ va_dcl
     char	*s;
     va_list	args;
 
-    Va_start(args,name);
+    va_start(args, name);
     *p++ = '-';
     --left;
     s = name;
@@ -883,7 +985,7 @@ va_dcl
     }
     while (left > 0)
     {
-	*p++ = ' ';
+	*p++ = '\0';
 	--left;
     }
     va_end(args);
