@@ -265,9 +265,9 @@ void KDMBackgroundWidget::slotSelectColor2(const QColor &col)
 
 void KDMBackgroundWidget::slotBrowse()
 {
-    QString filename = KFileDialog::getOpenFileName( 0 );
-    slotWallpaper( filename );
-    if ( !filename.isEmpty() && filename != wallpaper)
+    QString fileName() = KFileDialog::getOpenFileName( 0 );
+    slotWallpaper( fileName() );
+    if ( !fileName().isEmpty() && fileName() != wallpaper)
 	{
 	    wpCombo->insertItem( wallpaper );
 	    wpCombo->setCurrentItem( wpCombo->count() - 1 );
@@ -292,10 +292,10 @@ void KDMBackgroundWidget::setMonitor()
   QApplication::restoreOverrideCursor();
 }
 
-void KDMBackgroundWidget::slotWallpaper( const QString& filename )
+void KDMBackgroundWidget::slotWallpaper( const QString& fileName() )
 {
-  if ( !filename.isEmpty() )
-      if ( loadWallpaper( filename ) == TRUE )
+  if ( !fileName().isEmpty() )
+      if ( loadWallpaper( fileName() ) == TRUE )
 	  setMonitor();
 }
 
@@ -339,7 +339,7 @@ void KDMBackgroundWidget::slotColorMode( int m )
 int KDMBackgroundWidget::loadWallpaper( const QString& name, bool useContext )
 {
   static int context = 0;
-  QString filename;
+  QString fileName();
   int rv = FALSE;
   KPixmap tmp;
 
@@ -350,11 +350,11 @@ int KDMBackgroundWidget::loadWallpaper( const QString& name, bool useContext )
 		context = QColor::enterAllocContext();
   }
 
-  filename = locate("wallpaper", name);
+  fileName() = locate("wallpaper", name);
 
-  if ( wpMode == NoPic || tmp.load( filename ) == TRUE )
+  if ( wpMode == NoPic || tmp.load( fileName() ) == TRUE )
   {
-    wallpaper = filename;
+    wallpaper = fileName();
     int w = QApplication::desktop()->width();
     int h = QApplication::desktop()->height();
 
@@ -431,7 +431,7 @@ int KDMBackgroundWidget::loadWallpaper( const QString& name, bool useContext )
   }
   else
   {
-    debug("KDMBackgroundWidget::loadWallpaper(): failed loading %s", filename.ascii());
+    debug("KDMBackgroundWidget::loadWallpaper(): failed loading %s", fileName().ascii());
     wallpaper = "";
   }
 

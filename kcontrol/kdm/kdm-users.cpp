@@ -240,7 +240,7 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
     if (QUriDrag::decodeToUnicodeUris(e, uris) && (uris.count() > 0)) {
         KURL url(*uris.begin());
 
-        QString filename = url.filename();
+        QString fileName = url.fileName();
         QString msg, userpixname;
         QStringList dirs = KGlobal::dirs()->findDirs("data", "kdm/pics/");
         QString local = KGlobal::dirs()->saveLocation("data", "kdm/pics/", false);
@@ -250,7 +250,7 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
         QString pixurl("file:"+ *it);
         QString user(userlabel->text());
         QString userpixurl = pixurl + "users/";
-        int last_dot_idx = filename.findRev('.');
+        int last_dot_idx = fileName.findRev('.');
         bool istmp = false;
 
         // CC: Now check for the extension
@@ -262,10 +262,10 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
         ext += " .jpg";
 #endif
 
-        if( !ext.contains(filename.right(filename.length()-
+        if( !ext.contains(fileName.right(fileName.length()-
                                          last_dot_idx), false) ) {
             msg =  i18n("Sorry, but \n");
-            msg += filename;
+            msg += fileName;
             msg += i18n("\ndoes not seem to be an image file");
             msg += i18n("\nPlease use files with these extensions\n");
             msg += ext;
@@ -273,7 +273,7 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
         } else {
             // we gotta check if it is a non-local file and make a tmp copy at the hd.
             if( !url.isLocalFile() ) {
-                pixurl += url.filename();
+                pixurl += url.fileName();
 		KIO::file_copy(url, pixurl);
                 url = pixurl;
                 istmp = true;
@@ -292,7 +292,7 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
                 userbutton->setPixmap(p);
                 userbutton->adjustSize();
                 userpixurl += user;
-                userpixurl += filename.right( filename.length()-(last_dot_idx) );
+                userpixurl += fileName.right( fileName.length()-(last_dot_idx) );
                 //debug("destination: %s", userpixurl.ascii());
                 if(istmp)
                     KIO::file_move(url, userpixurl);

@@ -230,7 +230,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
   if (QUriDrag::decodeToUnicodeUris( e, uris) && (uris.count() > 0)) {
     KURL url(*uris.begin());
 
-    QString filename = url.filename();
+    QString fileName = url.fileName();
     QString msg;
     QStringList dirs = KGlobal::dirs()->findDirs("data", "kdm/pics/");
     QString local = KGlobal::dirs()->saveLocation("data", "kdm/pics/", false);
@@ -238,7 +238,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
     if ((*it).left(local.length()) == local)
       it++;
     QString pixurl("file:"+ *it);
-    int last_dot_idx = filename.findRev('.');
+    int last_dot_idx = fileName.findRev('.');
     bool istmp = false;
 
     // CC: Now check for the extension
@@ -250,19 +250,19 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
     ext += " .jpg";
 #endif
 
-    if( !ext.contains(filename.right(filename.length()-
+    if( !ext.contains(fileName.right(fileName.length()-
 				     last_dot_idx), false) ) {
       msg =  i18n("Sorry, but %1\n"
 		  "does not seem to be an image file\n"
 		  "Please use files with these extensions:\n"
 		  "%2")
-	.arg(filename)
+	.arg(fileName)
 	.arg(ext);
       KMessageBox::sorry( this, msg);
     } else {
       // we gotta check if it is a non-local file and make a tmp copy at the hd.
       if(url.protocol() != "file") {
-	pixurl += url.filename();
+	pixurl += url.fileName();
 	KIO::file_copy(url, pixurl);
 	url = pixurl;
 	istmp = true;
