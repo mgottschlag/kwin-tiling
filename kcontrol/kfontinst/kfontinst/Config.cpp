@@ -487,7 +487,10 @@ CConfig::CConfig()
         }
 
         if(QString::null==(itsCupsDir=getDir(itsCupsDir, constCupsDirs)))
+        {
             itsCupsDir=constNotFound;
+            itsDoCups=false;
+        }
     }
 
     if(QString::null==(itsSODir=getDir(itsSODir, constSODirs)))
