@@ -41,6 +41,8 @@
 
 #include "general.h"
 
+#include <kdebug.h>
+
 #include <X11/Xlib.h>
 
 /**** DLL Interface for kcontrol ****/
@@ -107,7 +109,7 @@ KThemeListBox::~KThemeListBox()
 
 void KThemeListBox::readThemeDir(const QString &directory)
 {
-    qDebug("Reading theme dir: %s", directory.latin1());
+    kdDebug() << "Reading theme dir: " <<  directory << endl;
     QString name, desc;
 
     kconfig->setGroup("KDE");
@@ -165,15 +167,15 @@ void KThemeListBox::save()
     KSimpleConfig configTest(currentItem()->text(2));
     configTest.setGroup("Misc");
     if(configTest.hasKey("RCPath")){
-        qDebug("Legacy theme");
+        kdDebug () << "Legacy theme" << endl;
         QFile input(configTest.readEntry("RCPath"));
         if(!input.open(IO_ReadOnly)){
-            qDebug("Could not open input file!");
+            kdDebug() << "Could not open input file!" << endl;
             return;
         }
         QFile output(QDir::home().absPath() + "/.gtkrc");
         if(!output.open(IO_WriteOnly)){
-            qDebug("Could not open output file!");
+            kdDebug () << "Could not open output file!" << endl;
             return;
         }
         QTextStream outStream(&output);

@@ -35,6 +35,8 @@
 #include "fonts.h"
 #include "fonts.moc"
 
+#include <kdebug.h>
+
 /**** DLL Interface ****/
 
 extern "C" {
@@ -337,7 +339,7 @@ void KFonts::save()
   KSimpleConfig* config = new KSimpleConfig( QCString(::getenv("HOME")) + "/.kderc" );
   config->setGroup( "General" );
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() ) {
-      qDebug("write entry %s", i->rcKey().latin1() );
+      kdDebug () << "write entry " <<  i->rcKey() << endl;
       config->writeEntry( i->rcKey(), i->font() );
   }
   config->sync();

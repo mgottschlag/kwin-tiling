@@ -75,6 +75,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "server.moc"
 
+#include <kdebug.h>
+
 extern "C" {
     /* int umask(...); */
 
@@ -515,8 +517,7 @@ Status SetAuthentication_local (int count, IceListenObj *listenObjs)
 		sock++;
 	    }
 	}
-	qDebug("KSMServer: SetAProc_loc: conn %d, prot=%s, file=%s",
-		(unsigned)i, prot, sock);
+	kdDebug() << "KSMServer: SetAProc_loc: conn " << (unsigned)i << ", prot=" << prot << ", file=" << sock << endl;
 	if (sock && !strcmp(prot, "local")) {
 	    chmod(sock, 0700);
 	}

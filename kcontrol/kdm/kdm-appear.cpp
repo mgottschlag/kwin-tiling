@@ -364,7 +364,7 @@ void KDMAppearanceWidget::save()
   // write logo or clock
   QString logoArea = logoRadio->isChecked() ? "KdmLogo" : "KdmClock";
   c->writeEntry("LogoArea", logoArea );
-  printf("WRITE: logoArea=%s\n", logoArea.latin1() );
+  kdDebug () << "WRITE: logoArea=" <<  logoArea.latin1() << endl;
 
   // write logo path
   c->writeEntry("LogoPixmap", logopath, true);
@@ -399,7 +399,7 @@ void KDMAppearanceWidget::load()
 
   // Regular logo or clock
   QString logoArea = c->readEntry("LogoArea", "KdmLogo" );
-  printf("READ: logoArea=%s\n", logoArea.latin1() );
+  kdDebug () << "READ: logoArea="<<  logoArea.latin1() << endl;
 
   int mode = logoArea == "KdmLogo" ? KdmLogo : KdmClock;
   logoRadio->setChecked( mode == KdmLogo );
