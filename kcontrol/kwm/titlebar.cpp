@@ -1300,36 +1300,36 @@ void KTitlebarAppearance::SaveSettings( void )
     QString kwmpicsdir = locateLocal("data", "kwm/");
 
     //first, a backup
-    sPixmapActive   = kwmpicsdir + "/oldactivetitlebar.xpm";
-    sPixmapInactive = kwmpicsdir + "/oldinactivetitlebar.xpm";   
+    sPixmapActive   = "oldactivetitlebar.xpm";
+    sPixmapInactive = "oldinactivetitlebar.xpm";   
  
     if (!pixmapActiveOld.isNull()) {
       QFile( sPixmapActive ).remove();
-      pixmapActiveOld.save(sPixmapActive,"XPM");
-      iconLoader->flush( "oldactivetitlebar.xpm" );
+      pixmapActiveOld.save(kwmpicsdir+'/'+sPixmapActive,"XPM");
+      iconLoader->flush( sPixmapActive );
     }
 
     if (!pixmapInactiveOld.isNull()) {
       QFile( sPixmapInactive ).remove();
-      pixmapInactiveOld.save(sPixmapInactive,"XPM");
-      iconLoader->flush( "oldinactivetitlebar" );
+      pixmapInactiveOld.save(kwmpicsdir+'/'+sPixmapInactive,"XPM");
+      iconLoader->flush( sPixmapInactive );
     }
 
     //then, the save
-    sPixmapActive   = kwmpicsdir + "/activetitlebar.xpm";
-    sPixmapInactive = kwmpicsdir + "/inactivetitlebar.xpm";
+    sPixmapActive   = "activetitlebar.xpm";
+    sPixmapInactive = "inactivetitlebar.xpm";
 
     bool a_saved = true, i_saved = true;
     if (!pixmapActive.isNull()) {
       QFile( sPixmapActive ).remove();
-      a_saved = pixmapActive.save(sPixmapActive,"XPM");
-      iconLoader->flush( "activetitlebar.xpm" );
+      a_saved = pixmapActive.save(kwmpicsdir+'/'+sPixmapActive,"XPM");
+      iconLoader->flush( sPixmapActive );
     }
 
     if (!pixmapInactive.isNull()) {
       QFile( sPixmapInactive ).remove();
-      i_saved = pixmapInactive.save(sPixmapInactive,"XPM");
-      iconLoader->flush( "inactivetitlebar.xpm" );
+      i_saved = pixmapInactive.save(kwmpicsdir+'/'+sPixmapInactive,"XPM");
+      iconLoader->flush( sPixmapInactive );
     }
 
     //and a little check
@@ -1422,12 +1422,10 @@ void KTitlebarAppearance::GetSettings( void )
 
   sPixmapActive = "activetitlebar.xpm";
   sPixmapInactive = "inactivetitlebar.xpm";
-  if (!sPixmapActive.isEmpty())
-    pbPixmapActive->setPixmap(pixmapActiveOld =
-			      iconLoader->loadIcon(sPixmapActive));
-  if (!sPixmapInactive.isEmpty())
-    pbPixmapInactive->setPixmap(pixmapInactiveOld =
-				iconLoader->loadIcon(sPixmapInactive));
+  pbPixmapActive->setPixmap(pixmapActiveOld =
+			      ICON(locate("icon", sPixmapActive)));
+  pbPixmapInactive->setPixmap(pixmapInactiveOld =
+			      ICON(locate("icon", sPixmapInactive)));
 
 
   int k = config->readNumEntry(KWM_TITLEANIMATION,0);
