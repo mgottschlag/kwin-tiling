@@ -33,23 +33,27 @@
 #include "searchprovider.h"
 
 SearchProviderDialog::SearchProviderDialog(SearchProvider *provider, QWidget *parent, const char *name)
-    : KDialog(parent, name, true),
+    : KDialogBase(parent, name, true, QString::null, Ok|Cancel),
       m_provider(provider)
 {
     // GUI init
-    QGridLayout *layout = new QGridLayout(this, 9, 2, KDialog::marginHint(), KDialog::spacingHint());
+    QWidget *page = new QWidget( this ); 
+    setMainWidget(page);
 
-    QLabel *label = new QLabel(i18n("Search &provider name:"), this);
+    QGridLayout *layout = new QGridLayout(page, 7, 2, 0, KDialog::spacingHint());
+    enableButtonSeparator(true);
+
+    QLabel *label = new QLabel(i18n("Search &provider name:"), page);
     layout->addMultiCellWidget(label, 0, 0, 0, 1);
-    label->setBuddy(m_name = new KLineEdit(this));
+    label->setBuddy(m_name = new KLineEdit(page));
     layout->addMultiCellWidget(m_name, 1, 1, 0, 1);
     QString whatsThis = i18n("Enter the human readable name of the search provider here.");
     QWhatsThis::add(label, whatsThis);
     QWhatsThis::add(m_name, whatsThis);
 
-    label = new QLabel(i18n("Search &URI:"), this);
+    label = new QLabel(i18n("Search &URI:"), page);
     layout->addMultiCellWidget(label, 2, 2, 0, 1);
-    label->setBuddy(m_query = new KLineEdit(this));
+    label->setBuddy(m_query = new KLineEdit(page));
     m_query->setMinimumWidth(kapp->fontMetrics().width('x') * 60);
     layout->addMultiCellWidget(m_query, 3, 3, 0, 1);
     whatsThis = i18n("Enter the URI that is used to do a search on the search engine here.\n"
@@ -62,41 +66,25 @@ SearchProviderDialog::SearchProviderDialog(SearchProvider *provider, QWidget *pa
     QWhatsThis::add(label, whatsThis);
     QWhatsThis::add(m_query, whatsThis);
 
-    label = new QLabel(i18n("UR&I shortcuts:"), this);
+    label = new QLabel(i18n("UR&I shortcuts:"), page);
     layout->addMultiCellWidget(label, 4, 4, 0, 1);
-    label->setBuddy(m_keys = new KLineEdit(this));
+    label->setBuddy(m_keys = new KLineEdit(page));
     layout->addMultiCellWidget(m_keys, 5, 5, 0, 1);
     whatsThis = i18n("The shortcuts entered here can be used as a pseudo-URI scheme in KDE. For example, the shortcut <em>av</em> can be used as in <em>av</em>:<em>my search</em>.");
     QWhatsThis::add(label, whatsThis);
     QWhatsThis::add(m_keys, whatsThis);
 
-    label = new QLabel(i18n("&Charset:"), this);
+    label = new QLabel(i18n("&Charset:"), page);
     layout->addMultiCellWidget(label, 6, 6, 0, 1);
-    label->setBuddy(m_charset = new KComboBox(this));
+    label->setBuddy(m_charset = new KComboBox(page));
     layout->addMultiCellWidget(m_charset, 7, 7, 0, 1);
     whatsThis = i18n("Select the character set that will be used to encode your search query.");
     QWhatsThis::add(label, whatsThis);
     QWhatsThis::add(m_charset, whatsThis);
 
-    QHBoxLayout *Layout2 = new QHBoxLayout;
-    Layout2->setSpacing( KDialog::spacingHint() );
-    Layout2->setMargin( KDialog::marginHint() );
-    QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    Layout2->addItem( spacer_2 );
-
-    m_ok = new QPushButton(i18n("&OK"), this);
-    Layout2->addWidget(m_ok);
-
-    m_cancel = new QPushButton(i18n("&Cancel"), this);
-    Layout2->addWidget(m_cancel);
-
-    layout->addLayout( Layout2, 8, 0 );
-
     connect(m_name, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
     connect(m_query, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
     connect(m_keys, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
-    connect(m_ok, SIGNAL(clicked()), SLOT(accept()));
-    connect(m_cancel, SIGNAL(clicked()), SLOT(reject()));
 
     // Data init
     QStringList charsets = KGlobal::charsets()->availableEncodingNames();
@@ -117,19 +105,18 @@ SearchProviderDialog::SearchProviderDialog(SearchProvider *provider, QWidget *pa
     {
         setPlainCaption(i18n("New Search Provider"));
         m_name->setFocus();
-        m_ok->setEnabled(false);
+        enableButton(Ok, false);
     }
 }
 
 void SearchProviderDialog::slotChanged()
 {
-    m_ok->setEnabled(!(m_name->text().isEmpty()
+    enableButton(Ok, !(m_name->text().isEmpty()
                        || m_keys->text().isEmpty()
                        || m_query->text().isEmpty()));
-    m_ok->setDefault(true);
 }
 
-void SearchProviderDialog::accept()
+void SearchProviderDialog::slotOk()
 {
     if ((m_query->text().find("\\{") == -1)
         && KMessageBox::warningContinueCancel(0,

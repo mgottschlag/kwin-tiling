@@ -20,14 +20,13 @@
 #ifndef __SEARCHPROVIDERDLG_H___
 #define __SEARCHPROVIDERDLG_H___
 
-#include <kdialog.h>
+#include <kdialogbase.h>
 
 class KLineEdit;
 class KComboBox;
-class QPushButton;
 class SearchProvider;
 
-class SearchProviderDialog : public KDialog {
+class SearchProviderDialog : public KDialogBase {
     Q_OBJECT
 
 public:
@@ -37,7 +36,7 @@ public:
 
 protected slots:
     void slotChanged();
-    virtual void accept();
+    void slotOk();
 
 private:
     SearchProvider *m_provider;
@@ -46,9 +45,6 @@ private:
     KLineEdit *m_query;
     KLineEdit *m_keys;
     KComboBox *m_charset;
-
-    QPushButton *m_ok;
-    QPushButton *m_cancel;
 };
 
 #endif
