@@ -27,12 +27,12 @@
 #include <qlayout.h>
 #include <qmessagebox.h>
 
-#include "fontchooser.h"
 #include "kresourceman.h"
 
 #include "general.h"    
 
 #include <kapp.h>
+#include <kglobal.h>
 #include <kthemebase.h>
 #include <kcharsets.h>
 #include <kconfigbase.h>
@@ -184,25 +184,6 @@ void FontUseItem::writeFont()
 	//delete config;
 }
 
-//------------------------------------------------------------------
-
-void FontPreview::fontChange( const QFont & )
-{
-	if ( !(_fnt == font() ) ) {
-		QLabel::setFont( _fnt );
-	}
-	update();
-}
-
-void FontPreview::setPreviewFont( const QFont &fnt )
-{
-	_fnt = fnt;
-	setFont( fnt );
-}
-
-
-//------------------------------------------------------------------
-
 const char * KIconStyle::appName [] = {"kpanel", "kfm", "KDE"};
 const int KIconStyle::nApp = 3;
 
@@ -285,11 +266,12 @@ void KIconStyle::apply()
 
 void KIconStyle::readSettings()
 {
-    KConfig config; // global config (.kderc)
-    config.setGroup( "KDE" );
+    KConfig *config = kapp->getConfig();
+    
+    KConfigGroupSaver saver(config, "KDE");
     for (int i = 0 ; i < nApp ; i++)
     {
-        QString s = config.readEntry( QString(appName[i])+"IconStyle", "Normal" );
+        QString s = config->readEntry( QString(appName[i])+"IconStyle", "Normal" );
         m_dictCBNormal[ appName[i] ] -> setChecked( s == "Normal");
         m_dictCBLarge[ appName[i] ] -> setChecked( s == "Large" );
         char * setting = new char [s.length()];
@@ -300,8 +282,9 @@ void KIconStyle::readSettings()
 
 void KIconStyle::writeSettings()
 {
-    KConfig * config = kapp->getConfig();
-    config->setGroup( "KDE" );
+    KConfig *config = kapp->getConfig();
+
+    KConfigGroupSaver saver(config, "KDE");
     for (int i = 0 ; i < nApp ; i++)
     {
         QString s = m_dictCBNormal[ appName[i] ] -> isChecked() ? "Normal" : "Large";
@@ -335,7 +318,7 @@ void KThemeListBox::readThemeDir(const QString &directory)
 {
     QString name, desc;
 
-    KConfig *kconfig = kapp->getConfig();
+    KConfig *kconfig = KGlobal::config();
     QString oldGroup = kconfig->group();
     kconfig->setGroup("Misc");
     curName = kconfig->readEntry("Name", "");
@@ -574,12 +557,12 @@ void KGeneral::readSettings( int )
 {		
 	QString str;
 
-	KConfig config;
-	config.setGroup( "KDE" );
+	KConfig *config = KGlobal::config();
+	KConfigGroupSaver saver(config, "KDE");
 
         // This doesn't do anything anymore (mosfet)
         //CT 04Apr1999
-	str = config.readEntry( "widgetStyle", "Platinum" );
+	str = config->readEntry( "widgetStyle", "Platinum" );
 	if ( str == "Platinum" )
 	  //CT 04Apr1999 - for the moment Qt doesn't have a PlatinumStyle 
 	  //CT    identifier and however kapp is "frozen" on Platinum style
@@ -591,7 +574,7 @@ void KGeneral::readSettings( int )
 
 	//CT 30Nov1998 - mac style set
 
-	str = config.readEntry( "macStyle", "off");
+	str = config->readEntry( "macStyle", "off");
 	if ( str == "on" )
 	  macStyle = true;
 	else
@@ -599,16 +582,15 @@ void KGeneral::readSettings( int )
 	//CT
 
 	//CT 04Apr1999 - read toolbar style
-	config.setGroup( "Toolbar style" );
+	config->setGroup( "Toolbar style" );
 
-	tbUseText = config.readNumEntry( "IconText", 0);
-	int val = config.readNumEntry( "Highlighting", 1);
+	tbUseText = config->readNumEntry( "IconText", 0);
+	int val = config->readNumEntry( "Highlighting", 1);
 	tbUseHilite = val? true : false;
-	tbMoveTransparent = config.readBoolEntry( "TransparentMoving", true);
-	
-		
-	KConfigGroupSaver saver(kapp->getConfig(), "X11");
-	useRM = kapp->getConfig()->readBoolEntry( "useResourceManager", true );
+	tbMoveTransparent = config->readBoolEntry( "TransparentMoving", true);
+			
+	config->setGroup("X11");
+	useRM = config->readBoolEntry( "useResourceManager", true );
 }
 
 void KGeneral::setDefaults()
@@ -644,7 +626,7 @@ void KGeneral::writeSettings()
 		return;
 		
 	KConfig *config = kapp->getConfig();
-	config->setGroup( "KDE" );
+	KConfigGroupSaver saver(config, "KDE");
 
 	QString str;
         
@@ -653,13 +635,16 @@ void KGeneral::writeSettings()
 	//CT
 
 	//CT 05Apr 1999
+	// bugfix PGB 05/28/1999
+	config->setGroup( "Toolbar style" );
+
 	config->writeEntry( "IconText", tbUseText);
 	config->writeEntry( "Highlighting", tbUseHilite?1:0);
 	config->writeEntry( "TransparentMoving", tbMoveTransparent?1:0);
 	//CT
 
-	KConfigGroupSaver saver(kapp->getConfig(), "X11");
-	kapp->getConfig()->writeEntry( "useResourceManager", useRM );
+	config->setGroup("X11");
+	config->writeEntry( "useResourceManager", useRM );
 
 	config->sync();
 	
@@ -864,8 +849,8 @@ KFonts::KFonts( QWidget *parent, int mode, int desktop )
 	
 	fntChooser = new KFontChooser( this );
 	
-	connect( fntChooser, SIGNAL( fontChanged( QFont ) ), this,
-		SLOT( slotSetFont( QFont ) ) );
+	connect( fntChooser, SIGNAL( fontSelected(const QFont &) ), this,
+		SLOT( slotSetFont(const QFont &) ) );
 	
 	pushLayout->addWidget( fntChooser );
 	
@@ -880,17 +865,6 @@ KFonts::KFonts( QWidget *parent, int mode, int desktop )
 
 	stackLayout->addWidget( label );
 	
-	lSample = new FontPreview( this );
-	lSample->setText(i18n( "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\n"
-			  "the quick brown fox jumps over the lazy dog\n"
-			  "0 1 2 3 4 5 6 7 8 9   ! \" £ $ % ^ & * ( )" ));
-	lSample->setAlignment( AlignLeft | AlignVCenter );
-	lSample->setFixedHeight( 2*lSample->sizeHint().height() );
-	lSample->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-	lSample->adjustSize();
-	lSample->setMinimumSize(lSample->size());
-
-	stackLayout->addWidget( lSample );
 	lbFonts->setCurrentItem( 0 );
 
 	topLayout->activate();
@@ -999,10 +973,9 @@ void KFonts::apply( bool  )
 	changed=false;
 }
 
-void KFonts::slotSetFont( QFont fnt )
+void KFonts::slotSetFont(const QFont &fnt)
 {
 	fontUseList.current()->setFont( fnt );
-	lSample->setPreviewFont( fnt );
 	changed = true;
 }
 
@@ -1010,7 +983,6 @@ void KFonts::slotPreviewFont( int index )
 {
 	fntChooser->setFont( fontUseList.at( index )->font(),
 			fontUseList.at( index )->spacing() );
-	lSample->setPreviewFont( fontUseList.at( index )->font() );
 }
 
 void KFonts::slotHelp()
@@ -1023,8 +995,3 @@ void KFonts::applySettings()
   writeSettings();
   apply( true );
 }
-
-
-
-
-

@@ -268,7 +268,7 @@ void KColorScheme::sliderValueChanged( int val )
 void KColorScheme::slotSave( )
 {
 	KSimpleConfig *config =
-			new KSimpleConfig( sFileList->at( sList->currentItem() ) );
+	  new KSimpleConfig( sFileList->at( sList->currentItem() ) );
 				
 	config->setGroup( "Color Scheme" );
 	config->writeEntry( "background", cs->back );
@@ -507,11 +507,11 @@ void KColorScheme::slotColorForWidget( int indx, const QColor& col)
 }
 
 void KColorScheme::writeNamedColor( KConfigBase *config,
-							const char *key, const char *name)
+				    const char *key, const char *name)
 {
-	QColor tmp;
-	tmp.setNamedColor( name) ;
-	config->writeEntry( key, tmp );
+  QColor tmp;
+  tmp.setNamedColor( name) ;
+  config->writeEntry( key, tmp );
 }
 
 KColorScheme::~KColorScheme()
@@ -520,149 +520,149 @@ KColorScheme::~KColorScheme()
 
 void KColorScheme::readScheme( int index )
 {
-	KConfigBase* config;
-	
-	if( index == 1 ) {
-		cs->back = lightGray;
-		cs->txt = black;
-		cs->select = darkBlue;
-		cs->selectTxt = white;
-		cs->window = white;
-		cs->windowTxt = black;
-		cs->iaTitle = darkGray;
-		cs->iaTxt = lightGray;
-		cs->iaBlend = lightGray;
-		cs->aTitle = darkBlue;
-		cs->aTxt = white;
-		cs->aBlend = black;
-		cs->contrast = 7;
-		
-		return;
-	} if ( index == 0 ) {
-		config  = kapp->getConfig();
-	} else {
-		config =
-			new KSimpleConfig( sFileList->at( index ), true );
-	}
-	
-	if ( index == 0 )
-		config->setGroup( "General" );
-	else
-		config->setGroup( "Color Scheme" );
-
-	cs->txt =
-	config->readColorEntry( "foreground", &black );
-
-	cs->back =
-	config->readColorEntry( "background", &lightGray );
-
-	cs->select =
-	config->readColorEntry( "selectBackground", &darkBlue);
-
-	cs->selectTxt =
-	config->readColorEntry( "selectForeground", &white );
-
-	cs->window =
-	config->readColorEntry( "windowBackground", &white );
-
-	cs->windowTxt =
-	config->readColorEntry( "windowForeground", &black );
-	
-	if ( index == 0 ) config->setGroup( "WM" );
-	
-	cs->iaTitle =
-	config->readColorEntry( "inactiveBackground", &darkGray);
-
-	cs->iaTxt =
-	config->readColorEntry( "inactiveForeground", &lightGray );
-
-	cs->iaBlend =
-	config->readColorEntry( "inactiveBlend", &lightGray );
-
-	cs->aTitle =
-	config->readColorEntry( "activeBackground", &darkBlue );
-
-	cs->aTxt =
-	config->readColorEntry( "activeForeground", &white );
-
-	cs->aBlend =
-	config->readColorEntry( "activeBlend", &black );
-
-	if ( index == 0 ) config->setGroup( "KDE" );
-
-	cs->contrast =
-	config->readNumEntry( "contrast", 7 );
+  KConfigBase* config;
+  
+  if( index == 1 ) {
+    cs->back = lightGray;
+    cs->txt = black;
+    cs->select = darkBlue;
+    cs->selectTxt = white;
+    cs->window = white;
+    cs->windowTxt = black;
+    cs->iaTitle = darkGray;
+    cs->iaTxt = lightGray;
+    cs->iaBlend = lightGray;
+    cs->aTitle = darkBlue;
+    cs->aTxt = white;
+    cs->aBlend = black;
+    cs->contrast = 7;
+    
+    return;
+  } if ( index == 0 ) {
+    config  = kapp->getConfig();
+  } else {
+    config =
+      new KSimpleConfig( sFileList->at( index ), true );
+  }
+  
+  if ( index == 0 )
+    config->setGroup( "General" );
+  else
+    config->setGroup( "Color Scheme" );
+  
+  cs->txt =
+    config->readColorEntry( "foreground", &black );
+  
+  cs->back =
+    config->readColorEntry( "background", &lightGray );
+  
+  cs->select =
+    config->readColorEntry( "selectBackground", &darkBlue);
+  
+  cs->selectTxt =
+    config->readColorEntry( "selectForeground", &white );
+  
+  cs->window =
+    config->readColorEntry( "windowBackground", &white );
+  
+  cs->windowTxt =
+    config->readColorEntry( "windowForeground", &black );
+  
+  if ( index == 0 ) config->setGroup( "WM" );
+  
+  cs->iaTitle =
+    config->readColorEntry( "inactiveBackground", &darkGray);
+  
+  cs->iaTxt =
+    config->readColorEntry( "inactiveForeground", &lightGray );
+  
+  cs->iaBlend =
+    config->readColorEntry( "inactiveBlend", &lightGray );
+  
+  cs->aTitle =
+    config->readColorEntry( "activeBackground", &darkBlue );
+  
+  cs->aTxt =
+    config->readColorEntry( "activeForeground", &white );
+  
+  cs->aBlend =
+    config->readColorEntry( "activeBlend", &black );
+  
+  if ( index == 0 ) config->setGroup( "KDE" );
+  
+  cs->contrast =
+    config->readNumEntry( "contrast", 7 );
 }
 
 void KColorScheme::readSchemeNames( )
 {
-	QString kcsPath = kapp->kde_datadir() + "/kdisplay/color-schemes";
+  QString kcsPath = kapp->kde_datadir() + "/kdisplay/color-schemes";
+  
+  QDir d;
+  d.setPath( kcsPath );
+  
+  if( d.exists() ) {
+    d.setFilter( QDir::Files );
+    d.setSorting( QDir::Name );
+    d.setNameFilter("*.kcsrc");
+    
+    if ( const QFileInfoList *sysList = d.entryInfoList() ) {
+      QFileInfoListIterator sysIt( *sysList );
+      QFileInfo *fi;
+      
+      // Always a current and a default scheme
+      nSysSchemes = 2;
+      
+      QString str;
+      
+      // This for system files
+      while ( ( fi = sysIt.current() ) ) {
 	
-	QDir d;
-	d.setPath( kcsPath );
+	KSimpleConfig *config =
+	  new KSimpleConfig( fi->filePath(), true );
+	config->setGroup( "Color Scheme" );
+	str = config->readEntry( "name" );
 	
-	if( d.exists() ) {
-		d.setFilter( QDir::Files );
-		d.setSorting( QDir::Name );
-		d.setNameFilter("*.kcsrc");
-
-		if ( const QFileInfoList *sysList = d.entryInfoList() ) {
-			QFileInfoListIterator sysIt( *sysList );
-			QFileInfo *fi;
-
-			// Always a current and a default scheme
-			nSysSchemes = 2;
-
-			QString str;
-
-			// This for system files
-			while ( ( fi = sysIt.current() ) ) {
-
-				KSimpleConfig *config =
-						new KSimpleConfig( fi->filePath(), true );
-				config->setGroup( "Color Scheme" );
-				str = config->readEntry( "name" );
-
-				sList->insertItem( str );
-				sFileList->append( fi->filePath().ascii() );
-
-				++sysIt;
-				nSysSchemes++;
-
-				delete config;
-			}
-		}
-	}
+	sList->insertItem( str );
+	sFileList->append( fi->filePath().ascii() );
 	
-	kcsPath = KApplication::localkdedir();
-	kcsPath += "/share/apps/kdisplay/color-schemes";
+	++sysIt;
+	nSysSchemes++;
 	
-	d.setPath( kcsPath );
-	if( d.exists() ) {
-		d.setFilter( QDir::Files );
-		d.setSorting( QDir::Name );
-		d.setNameFilter("*.kcsrc");
-
-		if ( const QFileInfoList *userList = d.entryInfoList() ) {
-			QFileInfoListIterator userIt( *userList );
-			QFileInfo *fi;
-			QString str;
-
-			// This for users files
-			while ( ( fi = userIt.current() ) ) {
-
-				KSimpleConfig config( fi->filePath(), true );
-				config.setGroup( "Color Scheme" );
-				str = config.readEntry( "name" );
-
-				sList->insertItem( str );
-				sFileList->append( fi->filePath().ascii() );
-
-				++userIt;
-			}
-		}
-	}
-		
+	delete config;
+      }
+    }
+  }
+  
+  kcsPath = KApplication::localkdedir();
+  kcsPath += "/share/apps/kdisplay/color-schemes";
+  
+  d.setPath( kcsPath );
+  if( d.exists() ) {
+    d.setFilter( QDir::Files );
+    d.setSorting( QDir::Name );
+    d.setNameFilter("*.kcsrc");
+    
+    if ( const QFileInfoList *userList = d.entryInfoList() ) {
+      QFileInfoListIterator userIt( *userList );
+      QFileInfo *fi;
+      QString str;
+      
+      // This for users files
+      while ( ( fi = userIt.current() ) ) {
+	
+	KSimpleConfig config( fi->filePath(), true );
+	config.setGroup( "Color Scheme" );
+	str = config.readEntry( "name" );
+	
+	sList->insertItem( str );
+	sFileList->append( fi->filePath().ascii() );
+	
+	++userIt;
+      }
+    }
+  }
+  
 }
 
 void KColorScheme::setDefaults()
@@ -677,69 +677,69 @@ void KColorScheme::defaultSettings()
 
 void KColorScheme::writeSettings()
 {
-	if ( !changed )
-		return;
-		
-	KConfig* sys = kapp->getConfig();
+  if ( !changed )
+    return;
+  
+  KConfig* sys = kapp->getConfig();
+  
+  sys->setGroup( "General" );
+  sys->writeEntry("background", cs->back, true, true);
+  sys->writeEntry("selectBackground", cs->select, true, true);
+  sys->writeEntry("foreground", cs->txt, true, true);
+  sys->writeEntry("windowForeground", cs->windowTxt, true, true);
+  sys->writeEntry("windowBackground", cs->window, true, true);
+  sys->writeEntry("selectForeground", cs->selectTxt, true, true);
+  
+  sys->setGroup( "WM" );
+  sys->writeEntry("activeForeground", cs->aTxt, true, true);
+  sys->writeEntry("inactiveBackground", cs->iaTitle, true, true);
+  sys->writeEntry("inactiveBlend", cs->iaBlend, true, true);
+  sys->writeEntry("activeBackground", cs->aTitle, true, true);
+  sys->writeEntry("activeBlend", cs->aBlend, true, true);
+  sys->writeEntry("inactiveForeground", cs->iaTxt, true, true);
+  
+  sys->setGroup( "KDE" );
+  sys->writeEntry("contrast", cs->contrast, true, true);
+  sys->sync();
 	
-	sys->setGroup( "General" );
-	sys->writeEntry("background", cs->back, true, true);
-	sys->writeEntry("selectBackground", cs->select, true, true);
-	sys->writeEntry("foreground", cs->txt, true, true);
-	sys->writeEntry("windowForeground", cs->windowTxt, true, true);
-	sys->writeEntry("windowBackground", cs->window, true, true);
-	sys->writeEntry("selectForeground", cs->selectTxt, true, true);
-	
-	sys->setGroup( "WM" );
-	sys->writeEntry("activeForeground", cs->aTxt, true, true);
-	sys->writeEntry("inactiveBackground", cs->iaTitle, true, true);
-	sys->writeEntry("inactiveBlend", cs->iaBlend, true, true);
-	sys->writeEntry("activeBackground", cs->aTitle, true, true);
-	sys->writeEntry("activeBlend", cs->aBlend, true, true);
-	sys->writeEntry("inactiveForeground", cs->iaTxt, true, true);
-	
-	sys->setGroup( "KDE" );
-	sys->writeEntry("contrast", cs->contrast, true, true);
-    sys->sync();
-	
- 	if ( useRM ) {
- 		QApplication::setOverrideCursor( waitCursor );
-		//Matthias: krdb seems to be more advanced then the kresourceman....
-		// so simply use krdb
-		KProcess proc;
-		proc.setExecutable("krdb");
-		proc.start( KProcess::Block );
-
-// 		KResourceMan *krdb = new KResourceMan();
-
-// 		krdb->setGroup( "General" );
-// 		krdb->writeEntry("background", cs->back );
-// 		krdb->writeEntry("selectBackground", cs->select );
-// 		krdb->writeEntry("foreground", cs->txt );
-// 		krdb->writeEntry("windowForeground", cs->windowTxt );
-// 		krdb->writeEntry("windowBackground", cs->window );
-// 		krdb->writeEntry("selectForeground", cs->selectTxt );
-
-// 		krdb->setGroup( "WM" );
-// 		krdb->writeEntry("activeForeground", cs->aTxt );
-// 		krdb->writeEntry("inactiveBackground", cs->iaTitle );
-// 		krdb->writeEntry("inactiveBlend", cs->iaBlend );
-// 		krdb->writeEntry("activeBackground", cs->aTitle );
-// 		krdb->writeEntry("activeBlend", cs->aBlend );
-// 		krdb->writeEntry("inactiveForeground", cs->iaTxt );
-
-// 		krdb->setGroup( "KDE" );
-// 		krdb->writeEntry("contrast", cs->contrast );
-//     	krdb->sync();
-
- 		QApplication::restoreOverrideCursor();
- 	}
+  if ( useRM ) {
+    QApplication::setOverrideCursor( waitCursor );
+    //Matthias: krdb seems to be more advanced then the kresourceman....
+    // so simply use krdb
+    KProcess proc;
+    proc.setExecutable("krdb");
+    proc.start( KProcess::Block );
+    
+    // 		KResourceMan *krdb = new KResourceMan();
+    
+    // 		krdb->setGroup( "General" );
+    // 		krdb->writeEntry("background", cs->back );
+    // 		krdb->writeEntry("selectBackground", cs->select );
+    // 		krdb->writeEntry("foreground", cs->txt );
+    // 		krdb->writeEntry("windowForeground", cs->windowTxt );
+    // 		krdb->writeEntry("windowBackground", cs->window );
+    // 		krdb->writeEntry("selectForeground", cs->selectTxt );
+    
+    // 		krdb->setGroup( "WM" );
+    // 		krdb->writeEntry("activeForeground", cs->aTxt );
+    // 		krdb->writeEntry("inactiveBackground", cs->iaTitle );
+    // 		krdb->writeEntry("inactiveBlend", cs->iaBlend );
+    // 		krdb->writeEntry("activeBackground", cs->aTitle );
+    // 		krdb->writeEntry("activeBlend", cs->aBlend );
+    // 		krdb->writeEntry("inactiveForeground", cs->iaTxt );
+    
+    // 		krdb->setGroup( "KDE" );
+    // 		krdb->writeEntry("contrast", cs->contrast );
+    //     	krdb->sync();
+    
+    QApplication::restoreOverrideCursor();
+  }
 }
 
 void KColorScheme::slotApply()
 {
-	writeSettings();
-	apply();
+  writeSettings();
+  apply();
 }
 
 //Matthias
@@ -772,62 +772,62 @@ static bool getSimpleProperty(Window w, Atom a, long &result){
 
 void KColorScheme::apply( bool  )
 {
-	if ( !changed )
-		return;
-	
-	XEvent ev;
-	unsigned int i, nrootwins;
-	Window dw1, dw2, *rootwins;
-	int (*defaultHandler)(Display *, XErrorEvent *);
-
-	defaultHandler=XSetErrorHandler(dropError);
-	
-	XQueryTree(kde_display, root, &dw1, &dw2, &rootwins, &nrootwins);
-	
-	// Matthias
-	Atom a = XInternAtom(qt_xdisplay(), "KDE_DESKTOP_WINDOW", False);
-	for (i = 0; i < nrootwins; i++) {
-	  long result = 0;
-	  getSimpleProperty(rootwins[i],a, result);
-	  if (result){
-	    ev.xclient.type = ClientMessage;
-	    ev.xclient.display = kde_display;
-	    ev.xclient.window = rootwins[i];
-	    ev.xclient.message_type = KDEChangePalette;
-	    ev.xclient.format = 32;
-	
-	    XSendEvent(kde_display, rootwins[i] , False, 0L, &ev);
-	  }
-	}
-
-	XFlush(kde_display);
-	XSetErrorHandler(defaultHandler);
-	
-	XFree((char *) rootwins);
-	
-	changed=FALSE;
+  if ( !changed )
+    return;
+  
+  XEvent ev;
+  unsigned int i, nrootwins;
+  Window dw1, dw2, *rootwins;
+  int (*defaultHandler)(Display *, XErrorEvent *);
+  
+  defaultHandler=XSetErrorHandler(dropError);
+  
+  XQueryTree(kde_display, root, &dw1, &dw2, &rootwins, &nrootwins);
+  
+  // Matthias
+  Atom a = XInternAtom(qt_xdisplay(), "KDE_DESKTOP_WINDOW", False);
+  for (i = 0; i < nrootwins; i++) {
+    long result = 0;
+    getSimpleProperty(rootwins[i],a, result);
+    if (result){
+      ev.xclient.type = ClientMessage;
+      ev.xclient.display = kde_display;
+      ev.xclient.window = rootwins[i];
+      ev.xclient.message_type = KDEChangePalette;
+      ev.xclient.format = 32;
+      
+      XSendEvent(kde_display, rootwins[i] , False, 0L, &ev);
+    }
+  }
+  
+  XFlush(kde_display);
+  XSetErrorHandler(defaultHandler);
+  
+  XFree((char *) rootwins);
+  
+  changed=FALSE;
 }
 
 void KColorScheme::slotPreviewScheme( int indx )
 {
-	readScheme( indx );
-	
-	// Set various appropriate for the scheme
-	
-	cs->drawSampleWidgets();
-	sb->setValue( cs->contrast );
-	slotWidgetColor( 0 );
-	if ( indx < nSysSchemes ) {
-		removeBt->setEnabled( FALSE );
-		saveBt->setEnabled( FALSE );
-	} else
-		removeBt->setEnabled( TRUE );
-	changed = TRUE;
+  readScheme( indx );
+  
+  // Set various appropriate for the scheme
+  
+  cs->drawSampleWidgets();
+  sb->setValue( cs->contrast );
+  slotWidgetColor( 0 );
+  if ( indx < nSysSchemes ) {
+    removeBt->setEnabled( FALSE );
+    saveBt->setEnabled( FALSE );
+  } else
+    removeBt->setEnabled( TRUE );
+  changed = TRUE;
 }
 
 void KColorScheme::slotHelp()
 {
-	kapp->invokeHTMLHelp( "kcmdisplay/kdisplay-5.html", "" );
+  kapp->invokeHTMLHelp( "kcmdisplay/kdisplay-5.html", "" );
 }
 
 void KColorScheme::applySettings()
@@ -843,53 +843,53 @@ void KColorScheme::applySettings()
    */
 QPalette KColorScheme::createPalette()
 {
-    
-    KConfigBase* config;
-    config  = kapp->getConfig();
-    config->setGroup( "General" );
-    QColor buttonText = 
-	     config->readColorEntry( "foreground", &black );
-
-    QColor background = 
-	config->readColorEntry( "background", &lightGray );
-    
-    QColor highlight =
-	config->readColorEntry( "selectBackground", &darkBlue);
-
-    QColor highlightedText =
-	config->readColorEntry( "selectForeground", &white );
-
-    QColor base = 
-	config->readColorEntry( "windowBackground", &white );
-
-    QColor foreground =
-	config->readColorEntry( "windowForeground", &black );
-	
-
-    int contrast =
-	config->readNumEntry( "contrast", 7 );
-    
-   int highlightVal, lowlightVal;
-	
-   highlightVal=100+(2*contrast+4)*16/10;
-   lowlightVal=100+(2*contrast+4)*10;
-	
-	
-   QColorGroup disabledgrp( foreground, background,
-			    background.light(150),
-			    background.dark(),
-			    background.dark(120),
-			    background.dark(120), base );
-
-   QColorGroup colgrp( foreground, background,
-		       background.light(150),
-		       background.dark(),
-		       background.dark(120),
-		       foreground, base );
-   
-   colgrp.setColor( QColorGroup::Highlight, highlight);
-   colgrp.setColor( QColorGroup::HighlightedText, highlightedText);
-   colgrp.setColor( QColorGroup::ButtonText, buttonText);
-   return QPalette( colgrp, disabledgrp, colgrp);
+  
+  KConfigBase* config;
+  config  = kapp->getConfig();
+  config->setGroup( "General" );
+  QColor buttonText = 
+    config->readColorEntry( "foreground", &black );
+  
+  QColor background = 
+    config->readColorEntry( "background", &lightGray );
+  
+  QColor highlight =
+    config->readColorEntry( "selectBackground", &darkBlue);
+  
+  QColor highlightedText =
+    config->readColorEntry( "selectForeground", &white );
+  
+  QColor base = 
+    config->readColorEntry( "windowBackground", &white );
+  
+  QColor foreground =
+    config->readColorEntry( "windowForeground", &black );
+  
+  
+  int contrast =
+    config->readNumEntry( "contrast", 7 );
+  
+  int highlightVal, lowlightVal;
+  
+  highlightVal=100+(2*contrast+4)*16/10;
+  lowlightVal=100+(2*contrast+4)*10;
+  
+  
+  QColorGroup disabledgrp( foreground, background,
+			   background.light(150),
+			   background.dark(),
+			   background.dark(120),
+			   background.dark(120), base );
+  
+  QColorGroup colgrp( foreground, background,
+		      background.light(150),
+		      background.dark(),
+		      background.dark(120),
+		      foreground, base );
+  
+  colgrp.setColor( QColorGroup::Highlight, highlight);
+  colgrp.setColor( QColorGroup::HighlightedText, highlightedText);
+  colgrp.setColor( QColorGroup::ButtonText, buttonText);
+  return QPalette( colgrp, disabledgrp, colgrp);
 }
 

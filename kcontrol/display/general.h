@@ -25,6 +25,7 @@
 #include <qbuttongroup.h>
 #include <qgroupbox.h>
 #include <ktablistbox.h>
+#include <kfontdialog.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -32,7 +33,6 @@
 #include <X11/Xos.h>
 
 #include "display.h"
-#include "fontchooser.h"
 
 class FontUseItem
 {
@@ -43,7 +43,7 @@ public:
 	void readFont();
 	void writeFont();
 	void setDefault();
-	void setFont( QFont fnt ) { _font = fnt; }
+	void setFont(const QFont &fnt ) { _font = fnt; }
 	QFont font() { return _font; }
 	const QString& rcFile() { return _rcfile; }
 	const QString& rcGroup() { return _rcgroup; }
@@ -62,23 +62,6 @@ private:
 	QFont _default;
 	bool fixed;
 	bool selected;
-};
-
-class FontPreview : public QLabel
-{
-	Q_OBJECT
-	
-public:
-	FontPreview( QWidget *parent=0, const char * name=0 )
-		: QLabel( parent, name ) {};
-	~FontPreview() {};
-	void setPreviewFont( const QFont &fnt );
-	
-protected slots:
-	void fontChange( const QFont & );
-	
-private:
-	QFont _fnt;
 };
 
 // DF 13-Mar-99
@@ -200,7 +183,7 @@ public:
 
 protected slots:
 	void slotApply();
-	void slotSetFont( QFont fnt );
+	void slotSetFont(const QFont &fnt);
 	void slotPreviewFont( int index );
 	void slotHelp();
 
@@ -210,7 +193,6 @@ protected:
 	
 protected:
 	KFontChooser *fntChooser;
-	FontPreview *lSample;
 	QListBox *lbFonts;
 	bool useRM;
 	

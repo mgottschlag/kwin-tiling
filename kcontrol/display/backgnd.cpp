@@ -523,7 +523,8 @@ void KBackground::readSettings( int num )
   }
 
   KConfig config(KApplication::kde_configdir() + group,
-		  KApplication::localconfigdir() + group);
+		 KApplication::localconfigdir() + group,
+		 true, false);
 
   if ( !first_time ) {
     config.setGroup( "Common" );
@@ -635,7 +636,8 @@ void KBackground::writeSettings( int num )
 
   QString group = QString("/desktop%1rc").arg(num);
   KConfig config(KApplication::kde_configdir() + group, 
-		  KApplication::localconfigdir() + group);
+		 KApplication::localconfigdir() + group,
+		 false, false);
 
   if ( randomMode || !interactive )
     group = QString( "Desktop%1").arg( random );
@@ -717,10 +719,10 @@ void KBackground::writeSettings( int num )
 
   config.setGroup( "Common" );
   config.writeEntry( "RandomMode", randomMode );
+  
+  config.sync();
 
   changed = false;
-
-  config.sync();
 
   KConfig *config2 = kapp->getConfig();
   config2->setGroup( "Desktop Common" );
@@ -1969,7 +1971,8 @@ void KRandomDlg::readSettings()
   QString tmpf = QString("/desktop%1rc").arg(desktop);
 
   KConfig picturesConfig(KApplication::kde_configdir() + tmpf,
-		  KApplication::localconfigdir() + tmpf);
+			 KApplication::localconfigdir() + tmpf, 
+			 true, false);
 
   picturesConfig.setGroup( "Common" );
   count = picturesConfig.readNumEntry( "Count", DEFAULT_RANDOM_COUNT );
@@ -2028,7 +2031,8 @@ void KRandomDlg::done( int r )
   QString tmpf = QString("/desktop%1rc").arg(desktop);
 
   KConfig picturesConfig(KApplication::kde_configdir() + tmpf,
-		  KApplication::localconfigdir() + tmpf);
+			 KApplication::localconfigdir() + tmpf,
+			 false, false);
 
   picturesConfig.setGroup( "Common" );
   picturesConfig.writeEntry( "Count", listBox->count() );
