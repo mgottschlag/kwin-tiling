@@ -84,7 +84,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent )
     vbox->addWidget( label );
     vbox->addStretch();
 
-    checkbox = new QCheckBox( i18n("&Restore session when logging in next time"), frame );
+    checkbox = new QCheckBox( i18n("&Restore session when logging in next times"), frame );
     vbox->addWidget( checkbox, 0, AlignRight  );
     vbox->addStretch();
 
