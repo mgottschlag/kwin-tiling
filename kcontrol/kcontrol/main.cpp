@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
   aboutData->addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
   aboutData->addAuthor("Matthias Elter",0, "elter@kde.org");
   aboutData->addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
+  aboutData->addAuthor("Waldo Bastian",0, "bastian@kde.org");
 
   KCmdLineArgs::init( argc, argv, aboutData );
   KUniqueApplication::addCmdLineOptions();
