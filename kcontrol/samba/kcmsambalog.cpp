@@ -61,7 +61,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    subLayout->addWidget(&showFileOpen,0,1);
    subLayout->addWidget(&showFileClose,1,1);
    mainLayout->addWidget(&updateButton,0,Qt::AlignLeft);
-   
+
    mainLayout->setMargin(SCREEN_XY_OFFSET);
    mainLayout->setSpacing(10);
    leLayout->setMargin(SCREEN_XY_OFFSET);
@@ -70,15 +70,15 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    subLayout->setSpacing(10);
 
    logFileName.setText("/var/log/samba.log");
-   
+
    viewHistory.setAllColumnsShowFocus(TRUE);
    viewHistory.setFocusPolicy(QWidget::ClickFocus);
-   
+
    viewHistory.addColumn(i18n("Date & Time"),130);
    viewHistory.addColumn(i18n("Event"),150);
    viewHistory.addColumn(i18n("Service/File"),210);
    viewHistory.addColumn(i18n("Host/User"),150);
-   
+
    showConnOpen.setChecked(TRUE);
    showConnClose.setChecked(TRUE);
    showFileOpen.setChecked(FALSE);
@@ -155,7 +155,7 @@ void LogView::updateList()
       char buf[400];
       char *c1, *c2, *c3, *c4, *c, time[25];
       int timeRead(0);
-      
+
       while (!logFile.eof())
       {
          logFile.getline(buf,400);
@@ -223,10 +223,9 @@ void LogView::updateList()
       emit contentsChanged(&viewHistory, filesCount, connectionsCount);
       QApplication::restoreOverrideCursor();
    }
-   else 
+   else
    {
-      QString tmp(i18n("Could not open file "));
-      tmp+=logFileName.text();
+      QString tmp = i18n("Could not open file %1").arg(logFileName.text());
       KMessageBox::error(this,tmp);
    };
 };

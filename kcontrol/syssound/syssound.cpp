@@ -20,7 +20,7 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 
-*/  
+*/
 
 
 #include <stdio.h>
@@ -37,6 +37,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
+#include <kdebug.h>
 #include <kstddirs.h>
 #include <kapp.h>
 #include <kwm.h>
@@ -54,19 +55,19 @@
 const char *eventNames[2][29] = {
 
   {
-    "Desktop1", 
-    "Desktop2", 
-    "Desktop3", 
-    "Desktop4", 
+    "Desktop1",
+    "Desktop2",
+    "Desktop3",
+    "Desktop4",
     "Desktop5",
-    "Desktop6", 
-    "Desktop7", 
-    "Desktop8", 
-    "WindowActivate", 
-    "WindowOpen", 
-    "WindowClose", 
-    "Startup", 
-    "WindowShadeUp",                  
+    "Desktop6",
+    "Desktop7",
+    "Desktop8",
+    "WindowActivate",
+    "WindowOpen",
+    "WindowClose",
+    "Startup",
+    "WindowShadeUp",
     "WindowShadeDown",
     "WindowIconify",
     "WindowDeIconify",
@@ -84,18 +85,18 @@ const char *eventNames[2][29] = {
     "WindowResizeEnd",
   },
   {
-    "Desktop1", 
-    "Desktop2", 
-    "Desktop3", 
-    "Desktop4", 
+    "Desktop1",
+    "Desktop2",
+    "Desktop3",
+    "Desktop4",
     "Desktop5",
-    "Desktop6", 
-    "Desktop7", 
-    "Desktop8", 
-    "Window Activate", 
-    "Window New", 
-    "Window Delete", 
-    "Startup", 
+    "Desktop6",
+    "Desktop7",
+    "Desktop8",
+    "Window Activate",
+    "Window New",
+    "Window Delete",
+    "Startup",
     "Window Shade Up",
     "Window Shade Down",
     "Window Iconify",
@@ -172,13 +173,13 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   soundlist = new QListBox(this);
   soundlist->setAcceptDrops(true);
   soundlist->installEventFilter(this);
-  
+
   soundlist->insertItem(i18n("(none)"));
 
   list = KGlobal::dirs()->findAllResources("sound");
 
   soundlist->insertStringList(list);
-  
+
   sounds_enabled = new QCheckBox(this);
   sounds_enabled->setText(i18n("E&nable system sounds"));
   connect(sounds_enabled, SIGNAL(clicked()), this, SLOT(changed()));
@@ -194,7 +195,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   eventlabel->setAlignment(QLabel::AlignLeft);
   soundlabel->setAlignment(QLabel::AlignLeft);
   statustext->setAlignment(QLabel::AlignLeft);
-  
+
   grid_layout = new QGridLayout(2, 2);
   grid_layout->addWidget(eventlabel, 0, 0);
   grid_layout->addWidget(eventlist, 1, 0);
@@ -212,15 +213,15 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   top_layout->addWidget(sounds_enabled,0,AlignLeft);
   top_layout->addLayout(grid_layout, 1);
   top_layout->addLayout(status_layout);
-  
+
   top_layout->activate();
-  
+
   setUpdatesEnabled(TRUE);
-  
+
   load();
 
   connect(eventlist, SIGNAL(highlighted(int)), this, SLOT(eventSelected(int)));
-  connect(soundlist, SIGNAL(highlighted(const QString &)), 
+  connect(soundlist, SIGNAL(highlighted(const QString &)),
 	  this, SLOT(soundSelected(const QString &)));
   connect(btn_test, SIGNAL(clicked()), this, SLOT(playCurrentSound()));
 
@@ -238,13 +239,13 @@ void KSoundWidget::load(){
   QString hlp;
   KConfig *config;
   int lf;
-  
-  // CC: we need to read/write the config file of "kwmsound" and not 
+
+  // CC: we need to read/write the config file of "kwmsound" and not
   // our own (that would be called syssoundrc)
 
   config = new KConfig("kwmsoundrc");
 
-  config->setGroup("SoundConfiguration");  
+  config->setGroup("SoundConfiguration");
 
   soundnames.clear();
   for( lf = 0; lf < EVENT_COUNT; lf++) {
@@ -252,8 +253,8 @@ void KSoundWidget::load(){
     str = new QString;
     *str = config->readEntry(eventNames[0][lf],"(none)");
 
-    if (str->data()[0] == '/') {
-      // CC: a file that is not in the default 
+    if (str->at(0) == '/') {
+      // CC: a file that is not in the default
       // sound directory-> add it to the soundlist too
 
       addToSoundList(*str);
@@ -269,7 +270,7 @@ void KSoundWidget::load(){
 
   hlp = config->readEntry("EnableSounds","No");
 
-  if (!stricmp(hlp.ascii(),"Yes")) 
+  if (!stricmp(hlp.ascii(),"Yes"))
     sounds_enabled->setChecked(True);
   else
     sounds_enabled->setChecked(False);
@@ -297,20 +298,20 @@ void KSoundWidget::eventSelected(int index){
     // CC: at first, get the name of the sound file we want to select
     sname = soundnames.at(index-1);
     CHECK_PTR(sname); // CC: should never happen anyways...
-      debug("event %d wants sound %s", index, sname->data());
+      kDebugInfo("event %d wants sound %s", index, debugString(*sname));
 
     i = 1;
     listlen = soundlist->count();
     found = 0;
     while ( (!found) && (i < (int)listlen) ) {
       hlp = soundlist->text(i);
-      if (hlp == *sname) 
+      if (hlp == *sname)
 	found = 1;
       else
 	i++;
     }
-    
-    if (found) 
+
+    if (found)
       soundlist->setCurrentItem(i);
     else
       soundlist->setCurrentItem(0);
@@ -322,7 +323,7 @@ void KSoundWidget::eventSelected(int index){
 
 }
 
-void KSoundWidget::soundSelected(const QString &filename) 
+void KSoundWidget::soundSelected(const QString &filename)
 {
   QString *snd;
 
@@ -341,16 +342,16 @@ void KSoundWidget::save(){
   QString *sname, helper;
   int lf;
   KWM kwm;
-  
+
   // config = kapp->getConfig();
   config = new KConfig("kwmsoundrc");
 
-  config->setGroup("SoundConfiguration");  
+  config->setGroup("SoundConfiguration");
 
   for( lf = 0; lf < EVENT_COUNT; lf++) {
     sname = soundnames.at(lf);
 
-    if (sname->isEmpty()) 
+    if (sname->isEmpty())
       config->writeEntry(eventNames[0][lf],"(none)");
     else {
       // keep configuration files language--independent
@@ -387,7 +388,7 @@ void KSoundWidget::playCurrentSound()
   soundno = soundlist->currentItem();
   if (soundno > 0) {
       sname = locate("sound", soundlist->text(soundno));
-      audio.play((char*)sname.data());
+      audio.play(sname);
   }
 }
 
@@ -424,7 +425,7 @@ void KSoundWidget::soundlistDropEvent(QDropEvent *e)
       QString fname = *it;
 
       // check for the ending ".wav"
-      if ( stricmp(".WAV",fname.right(4).data()) ) {
+      if ( stricmp(".WAV",fname.right(4).latin1()) ) {
         msg = i18n("Sorry, but \n%1\ndoes not seem "\
 			 "to be a WAV--file.").arg(fname);
 
@@ -441,13 +442,13 @@ void KSoundWidget::soundlistDropEvent(QDropEvent *e)
 			   "is already in the list").arg(fname);
 
 	  KMessageBox::information(this, msg);
-	  
+	
 	}
       }
     }
   } else {
     // non-local file present
-    KMessageBox::sorry(this, 
+    KMessageBox::sorry(this,
                        i18n("At least one file that was dropped "
                             "was not a local file.  You may only "
                             "add local files."));
@@ -470,13 +471,13 @@ bool KSoundWidget::addToSoundList(QString sound){
     found = (sound == *soundnames.at(i));
     i++;
   }
- 
+
  if (!found) {
 
    // CC: Fine, the sound is not already in the sound list!
 
    QString *tmp = new QString(sound); // CC: take a copy...
-   //   soundnames.append(tmp); 
+   //   soundnames.append(tmp);
    soundlist->insertItem(*tmp);
    soundlist->setTopItem(soundlist->count()-1);
 

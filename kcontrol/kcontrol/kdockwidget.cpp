@@ -1,27 +1,27 @@
 /*
 
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
-*/                                                                            
+
+*/
 
 
 #include <qpushbutton.h>
 #include <qtabwidget.h>
-#include <qpainter.h> 
+#include <qpainter.h>
 #include <qiconset.h>
 #include <qtabbar.h>
 
@@ -58,7 +58,7 @@ KDockContainer::KDockContainer(QWidget *parent, const char *name)
   // use a QWidgetStack, as a QWidgetStack does not maintain the
   // order of the other widgets. If you close the top one, the
   // widget stack will be empty, which would confuse the user.
-  // So we use a normal QTabWidget, but use a special QTabBar 
+  // So we use a normal QTabWidget, but use a special QTabBar
   // that shows no tabs :-)
 
   setTabBar(new NoTab(this));
@@ -83,7 +83,7 @@ void KDockContainer::showWidget(QWidget *widget)
 void KDockContainer::addDockWidget(KDockWidget *widget, QPixmap icon)
 {
   addTab(widget, QIconSet(icon), widget->caption());
-  showPage(widget);  
+  showPage(widget);
   updateGeometry();
   emit newModule(widget->caption());
 }
@@ -113,7 +113,7 @@ void KDockContainer::dragChild(KDockWidget *child)
       size = currentPage()->size();
       topLeft += QPoint(0,childrenRect().height()-currentPage()->height());
     }
-  _tbManager->addHotSpot(QRect(topLeft, size));  
+  _tbManager->addHotSpot(QRect(topLeft, size));
   connect(_tbManager, SIGNAL(onHotSpot(int)), this, SLOT(onHotSpot(int)));
   _dockSpot = false;
 
@@ -122,25 +122,25 @@ void KDockContainer::dragChild(KDockWidget *child)
   // do the magic
   _tbManager->doMove(true);
 
-  if (_dockSpot) 
+  if (_dockSpot)
     {
       if (!child->isDocked())
 	{
 	  // dock the window
-	  child->recreate(this, 0, QPoint(0,0), false);
-	  child->dock();	  
+	  child->reparent(this, 0, QPoint(0,0), false);
+	  child->dock();	
 	}
       else
 	{
 	  child->move(orig_pos);
 	}
     }
-  else 
+  else
     {
       if (child->isDocked())
 	{
 	  // reparent the child
-	  child->recreate((QWidget*)0, 0, QPoint(_tbManager->x(), _tbManager->y()), true);
+	  child->reparent((QWidget*)0, 0, QPoint(_tbManager->x(), _tbManager->y()), true);
 	  KWM::setDecoration(child->winId(), KWM::tinyDecoration);
 	  QApplication::syncX();
 	  child->undock();
@@ -149,7 +149,7 @@ void KDockContainer::dragChild(KDockWidget *child)
 
   child->show();
   repaint(true);
-  
+
   delete _tbManager;
   _tbManager = 0;
 }
@@ -225,23 +225,23 @@ void KDockWidget::paintEvent(QPaintEvent *)
 
   paint.begin(&drawBuffer);
   drawBuffer.fill(colorGroup().background());
- 
+
   paint.setPen(white);
   paint.drawLine(1, 3, 1, 2);
   paint.drawLine(1, 2, width()-12, 2);
- 
+
   paint.setPen(colorGroup().mid());
   paint.drawLine(1, 4, width()-12, 4);
   paint.drawLine(width()-12, 4, width()-12, 3);
-  
+
   paint.setPen(white);
   paint.drawLine(1, 6, 1, 5);
   paint.drawLine(1, 5, width()-12, 5);
-  
+
   paint.setPen(colorGroup().mid());
   paint.drawLine(1, 7, width()-12, 7);
   paint.drawLine(width()-12, 7, width()-12, 6);
-  
+
   bitBlt(this,0,0,&drawBuffer,0,0,width(),DOCKBAR_HEIGHT);
   paint.end();
 }

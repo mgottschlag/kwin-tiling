@@ -5,7 +5,7 @@
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
  * documentation.  No representations are made about the suitability of this
- * software for any purpose.  It is provided "as is" without express or 
+ * software for any purpose.  It is provided "as is" without express or
  * implied warranty.
  *
  * Blue Screen of Death: the finest in personal computer emulation.
@@ -78,7 +78,7 @@ get_string_resource (const char *res_name, const char *res_class)
   return config->readEntry(res_name,config->readEntry(res_class)).ascii();
 }
 
-int 
+int
 get_integer_resource (const char *res_name, const char *res_class)
 {
   int val;
@@ -291,7 +291,7 @@ bsod_sleep(int seconds)
     }
   while (q > 0);
 
-  return False; 
+  return False;
 }
 
 
@@ -300,7 +300,7 @@ windows (Window window, int delay, Bool w95p)
 {
   XGCValues gcv;
   XWindowAttributes xgwa;
-  char *fontname;
+  const char *fontname;
   const char *def_font = "fixed";
   XFontStruct *font;
   GC gc;
@@ -369,14 +369,14 @@ windows (Window window, int delay, Bool w95p)
 
   XGetWindowAttributes (qt_xdisplay(), window, &xgwa);
 
-  fontname = (char *)(config->readEntry((xgwa.height > 600
-				   ? (w95p
-				      ? "windows95.font2"
-				      : "windowsNT.font2")
-				   : (w95p
-				      ? "windows95.font"
-				      : "windowsNT.font")),
-"-*-courier-bold-r-*-*-*-120-*-*-m-*-*-*")).data();
+  fontname = config->readEntry((xgwa.height > 600
+				 ? (w95p
+				    ? "windows95.font2"
+				    : "windowsNT.font2")
+				 : (w95p
+				    ? "windows95.font"
+				    : "windowsNT.font")),
+				"-*-courier-bold-r-*-*-*-120-*-*-m-*-*-*").latin1();
   if (!fontname) fontname = (char *)def_font;
   font = XLoadQueryFont (qt_xdisplay(), fontname);
   if (!font) font = XLoadQueryFont (qt_xdisplay(), def_font);
@@ -736,7 +736,7 @@ atari (Window window, int delay)
 
   font = XLoadQueryFont (qt_xdisplay(), def_font);
   if (!font) exit(-1);
-                
+
   gcv.font = font->fid;
   gcv.foreground = get_pixel_resource("atari.foreground", "Atari.Foreground",
 				      xgwa.colormap);
@@ -765,8 +765,8 @@ atari (Window window, int delay)
   for (i=0 ; i<7 ; i++) {
     XCopyArea(qt_xdisplay(), pixmap, window, gc, 0, 0, pix_w, pix_h,
 	      (x + (i*offset)), y);
-  }  
-  
+  }
+
   for (i=7 ; i<10 ; i++) {
     bsod_sleep(1);
     XCopyArea(qt_xdisplay(), pixmap, window, gc, 0, 0, pix_w, pix_h,
@@ -1177,14 +1177,14 @@ void startScreenSaver (Drawable d)
                 return;
         saver = new BSODSaver(d);
 }
-   
+
 void stopScreenSaver ()
 {
         if (saver) {
           delete saver;   // FIX
 	}
         saver = NULL;
-} 
+}
 
 int setupScreenSaver ()
 {
