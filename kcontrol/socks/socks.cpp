@@ -119,12 +119,12 @@ void KSocksConfig::testClicked()
 
   if (KSocks::self()->hasSocks()) {
      KMessageBox::information(NULL,
-                              i18n("Success!  SOCKS was found and initialized."),
+                              i18n("Success! SOCKS was found and initialized."),
                               i18n("SOCKS Support"));
      // Eventually we could actually attempt to connect to a site here.
   } else {
       KMessageBox::information(NULL,
-                               i18n("Sorry, SOCKS could not be loaded."),
+                               i18n("SOCKS could not be loaded."),
                                i18n("SOCKS Support"));
   }
 

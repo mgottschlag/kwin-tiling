@@ -338,7 +338,7 @@ void KInfoListWidget::load()
     /*  Delete the user-visible ErrorString, before calling the
         retrieve-function. If the function wants the widget to show
         another string, then it change *GetInfo_ErrorString ! */
-    ErrorString = i18n("Sorry, no information available about %1!").arg(title)
+    ErrorString = i18n("No information available about %1!").arg(title)
 		    + QString("\n\n") + DEFAULT_ERRORSTRING;
     GetInfo_ErrorString = &ErrorString;  /* save the adress of ErrorString */
 

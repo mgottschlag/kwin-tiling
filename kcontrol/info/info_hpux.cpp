@@ -622,7 +622,7 @@ bool GetInfo_XServer_and_Video( QListView *lBox )
 
 bool GetInfo_Sound( QListView *lBox )
 {	lBox = lBox;
-	*GetInfo_ErrorString = i18n("Sorry, Audio-Support (Alib) was disabled during configuration and compile-time!");
+	*GetInfo_ErrorString = i18n("Audio-Support (Alib) was disabled during configuration and compile-time!");
 	return false;
 }
 

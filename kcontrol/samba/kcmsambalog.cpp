@@ -76,14 +76,14 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    QWhatsThis::add( &showFileOpen, i18n("Check this option if you want to"
      " see the files which were opened on your computer by remote users."
      " Note that file open/close events are not logged unless the samba"
-     " log level is set to at least 2 (sorry, you cannot set the log level"
+     " log level is set to at least 2 (you cannot set the log level"
      " using this module).") );
 
    QWhatsThis::add( &showFileClose, i18n("Check this option if you want to"
      " see the events when files opened by remote users were closed."
      " Note that file open/close events are not logged unless the samba"
-     " log level is set to at least 2 (sorry, you cannot set the log level"
-     " using this module.") );
+     " log level is set to at least 2 (you cannot set the log level"
+     " using this module).") );
 
    QWhatsThis::add( &updateButton, i18n("Click here to refresh the information"
      " on this page. The log file (shown above) will be read to obtain the"
