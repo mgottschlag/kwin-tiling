@@ -28,6 +28,7 @@
 #include <qlineedit.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
+#include <qregexp.h>
 
 #include <klocale.h>
 #include <kglobal.h>

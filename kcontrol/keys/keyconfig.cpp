@@ -17,6 +17,7 @@
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
 #include <qcheckbox.h>
+#include <qregexp.h>
 
 #include <kdebug.h>
 #include <kconfig.h>

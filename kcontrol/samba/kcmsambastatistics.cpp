@@ -30,6 +30,7 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qpushbutton.h>
+#include <qregexp.h>
 
 #include <kapp.h>
 #include <kglobal.h>

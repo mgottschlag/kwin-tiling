@@ -31,6 +31,7 @@
 #include <qlayout.h>
 #include <qvgroupbox.h>
 #include <qvbox.h>
+#include <qregexp.h>
 
 #include <kglobal.h>
 #include <kdialog.h>

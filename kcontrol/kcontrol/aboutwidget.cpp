@@ -19,6 +19,7 @@
 
 #include <qpainter.h>
 #include <qwhatsthis.h>
+#include <qregexp.h>
 
 #include <kglobal.h>
 #include <kstddirs.h>
