@@ -46,6 +46,7 @@ classDrivers::classDrivers( QWidget* parent, const char* name )
 	pbConfigure->setText( "&Configure..." );
 	pbConfigure->setAutoRepeat( FALSE );
 	pbConfigure->setAutoResize( FALSE );
+    pbConfigure->hide();
 
 	lvwDrivers = new QListView( this, "lvwDrivers" );
 	lvwDrivers->setGeometry( 10, 10, 270, 190 );
