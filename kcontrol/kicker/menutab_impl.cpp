@@ -64,7 +64,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
                                        "This makes the panel menus react faster. "
                                        "However, you might want to turn this off if you're short on memory."));
 
-    QString clearstr = i18n("If menu chaching is turned on, you can set a delay after which "
+    QString clearstr = i18n("If menu caching is turned on, you can set a delay after which "
                             "the cache will be cleared.");
 
     QWhatsThis::add(m_clearSlider, clearstr);
