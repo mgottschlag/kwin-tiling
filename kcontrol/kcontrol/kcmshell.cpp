@@ -126,6 +126,10 @@ int main(int _argc, char *_argv[])
 	KCDialog dlg(module, info.docPath(), 0, 0, true);
 	dlg.setCaption(info.name());
 	
+	// Needed for modules that use d'n'd (not really the right
+	// solution for this though, I guess)
+	dlg.setAcceptDrops(true);
+
 	// run the dialog
 	return dlg.exec();
     }
