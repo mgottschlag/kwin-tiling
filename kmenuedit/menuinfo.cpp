@@ -33,6 +33,7 @@
 static QStringList *s_allShortcuts = 0;
 static QStringList *s_newShortcuts = 0;
 static QStringList *s_freeShortcuts = 0;
+static QStringList *s_deletedApps = 0;
 
 // Add sub menu
 void MenuFolderInfo::add(MenuFolderInfo *info)
@@ -153,6 +154,18 @@ void MenuFolderInfo::setDirty()
 
 void MenuFolderInfo::save(MenuFile *menuFile)
 {
+   if (s_deletedApps)
+   {
+      // Remove hotkeys for applications that have been deleted
+      for(QStringList::ConstIterator it = s_deletedApps->begin();
+          it != s_deletedApps->end(); ++it)
+      {
+         KHotKeys::menuEntryDeleted(*it);
+      }
+      delete s_deletedApps;
+      s_deletedApps = 0;
+   }
+
    if (dirty)
    {
       QString local = KDesktopFile::locateLocal(directoryFile);
@@ -423,11 +436,22 @@ void MenuEntryInfo::setInUse(bool inUse)
       shortCut = KShortcut();
       if (isShortcutAvailable(temp))
          shortCut = temp;
+      else
+         dirty = true;
       allocateShortcut(shortCut);
+
+      if (s_deletedApps)
+         s_deletedApps->remove(service->storageId());
    }
    else
    {
       freeShortcut(shortcut());
+      
+      // Add to list of deleted apps
+      if (!s_deletedApps)
+         s_deletedApps = new QStringList;
+
+      s_deletedApps->append(service->storageId());
    }
 }
 
