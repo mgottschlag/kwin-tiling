@@ -315,9 +315,10 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 	logobutton->adjustSize();
 	logopath = url.path();
       } else {
-        msg  = i18n("There was an error loading the image:\n>");
-        msg += url.path();
-        msg += i18n("<\nIt will not be saved...");
+        msg = i18n("There was an error loading the image:\n"
+		   "%1\n"
+		   "It will not be saved...")
+	    .arg(url.path());
         KMessageBox::sorry(this, msg);
       }
     }

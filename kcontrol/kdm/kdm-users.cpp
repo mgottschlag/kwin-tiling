@@ -208,9 +208,8 @@ void KDMUsersWidget::slotUserPixChanged(QString)
     if(!p)
         return;
     if(!p->save(userpix, "PNG")) {
-        QString msg  = i18n("There was an error saving the image:\n");
-        msg += userpix;
-        msg += i18n("\n");
+        QString msg = i18n("There was an error saving the image:\n%1\n")
+	    .arg(userpix);
         KMessageBox::sorry(this, msg);
     }
     userbutton->adjustSize();
@@ -254,11 +253,13 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
         
         if( !KImageIO::isSupported(mimetype, KImageIO::Reading) ) 
         {
-            QString msg =  i18n("Sorry, but \n");
-            msg += url.url();
-            msg += i18n("\ndoes not seem to be an image file");
-            msg += i18n("\nThe following image types are understood:\n");
-            msg += KImageIO::types(KImageIO::Reading).join(", ");
+            QString msg =  i18n("Sorry, but\n"
+				"%1\n"
+				"does not seem to be an image file\n"
+				"The following image types are understood:\n"
+				"%2")
+	        .arg(url.url())
+	        .arg(KImageIO::types(KImageIO::Reading).join(", "));
             KMessageBox::sorry( this, msg);
         } else {
             // we gotta check if it is a non-local file and make a tmp copy at the hd.
@@ -277,9 +278,10 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
                 userbutton->setPixmap(p);
                 slotUserPixChanged(user);
             } else {
-                QString msg  = i18n("There was an error loading the image:\n>");
-                msg += url.prettyURL();
-                msg += i18n("<\nIt will not be saved...");
+                QString msg = i18n("There was an error loading the image:\n"
+				   "%1\n"
+				   "It will not be saved...")
+		    .arg(url.prettyURL());
                 KMessageBox::sorry(this, msg);
             }
         }
