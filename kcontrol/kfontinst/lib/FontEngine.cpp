@@ -205,11 +205,15 @@ bool CFontEngine::openKioFont(const QString &file, unsigned short mask, bool for
         QStringList::ConstIterator it;
 
         for(it=list.begin(); it!=list.end(); it++)
-            if(openFont(*it+CMisc::getSub(file), mask, force, face))
+        {
+            QString fname(*it+CMisc::getSub(file));
+
+            if(CMisc::fExists(fname) && openFont(fname, mask, force, face))
             {
                 itsPath=*it+CMisc::getSub(file);
                 return true;
             }
+        }
     }
     return false; 
 }

@@ -27,9 +27,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "CompressedFile.h"
+#ifdef KFI_USE_KFILTERDEV
 #include <kfilterdev.h>
+#endif
 #include <kprocess.h>
-
 #include <qfile.h>
 
 CCompressedFile::CCompressedFile(const QString &fname) 
@@ -69,9 +70,13 @@ void CCompressedFile::open(const QString &fname)
     switch(itsType)
     {
         case GZIP:
+#ifdef KFI_USE_KFILTERDEV
             itsDev=KFilterDev::deviceForFile(fname, "application/x-gzip");
             if(itsDev && !itsDev->open(IO_ReadOnly))
                 close();
+#else
+            itsGzFile=gzopen(QFile::encodeName(fname), "r");
+#endif
             break;
         case Z:
         {
@@ -90,8 +95,14 @@ void CCompressedFile::close()
         switch(itsType)
         {
             case GZIP:
-                delete itsDev;
+#ifdef KFI_USE_KFILTERDEV
+                if(itsDev)
+                    delete itsDev;
                 itsDev=NULL;
+#else
+                gzclose(itsGzFile);
+                itsGzFile=NULL;
+#endif
                 break;
             case Z:
                 while(!eof())
@@ -110,10 +121,14 @@ int CCompressedFile::read(void *data, unsigned int len)
     int r=0;
 
     if(GZIP==itsType)
+#ifdef KFI_USE_KFILTERDEV
     {
         if(itsDev)
             r=itsDev->readBlock((char *)data, len);
     }
+#else
+        r=gzread(itsGzFile, data, len);
+#endif
     else
         r=fread(data, 1, len, itsFile);
 
@@ -127,10 +142,14 @@ int CCompressedFile::getChar()
     int c=EOF;
 
     if(GZIP==itsType)
+#ifdef KFI_USE_KFILTERDEV
     {
         if(itsDev)
             c=itsDev->getch();
     }
+#else
+        c=gzgetc(itsGzFile);
+#endif
     else
         c=fgetc(itsFile);
 
@@ -139,15 +158,36 @@ int CCompressedFile::getChar()
     return c;
 }
 
+#ifndef KFI_USE_KFILTERDEV
+// Copied from zlib 1.2.1 source as some installtion seem not to have gzgets()
+char * kfi_gzgets(gzFile file, char *buf, int len)
+{
+    char *b=buf;
+
+    if (Z_NULL==buf || len <= 0)
+        return Z_NULL;
+
+    while(--len > 0 && gzread(file, buf, 1) == 1 && *buf++ != '\n')
+        ;
+    *buf = '\0';
+
+    return b == buf && len > 0 ? Z_NULL : b;
+}
+#endif
+
 char * CCompressedFile::getString(char *data, unsigned int len)
 {
     char *s=NULL;
 
     if(GZIP==itsType)
+#ifdef KFI_USE_KFILTERDEV
     {
         if(itsDev)
             s=itsDev->readLine(data, len)!=-1 ? data : NULL;
     }
+#else
+        s=kfi_gzgets(itsGzFile, data, len);
+#endif
     else
         s=fgets(data, len, itsFile);
 

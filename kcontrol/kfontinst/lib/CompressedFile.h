@@ -31,7 +31,11 @@
 
 #include <stdio.h>
 #include <qstring.h>
+#ifdef KFI_USE_KFILTERDEV
 #include <qiodevice.h>
+#else
+#include <zlib.h>
+#endif
 
 class CCompressedFile
 {
@@ -47,7 +51,11 @@ class CCompressedFile
     CCompressedFile(const QString &fname);
     virtual ~CCompressedFile();
 
-    operator bool()                                                                    { return GZIP==itsType ? NULL!=itsDev : NULL!=itsFile; }
+#ifdef KFI_USE_KFILTERDEV
+    operator bool() { return GZIP==itsType ? NULL!=itsDev : NULL!=itsFile; }
+#else
+    operator bool() { return  GZIP==itsType ? NULL!=itsGzFile : NULL!=itsFile; }
+#endif
 
     void   open(const QString &fname);
     void   close();
@@ -55,7 +63,11 @@ class CCompressedFile
     int    getChar();
     char * getString(char *data, unsigned int len);
     int    seek(int offset, int whence);
-    bool   eof()                                                                       { return GZIP==itsType ? itsDev && itsDev->atEnd() : feof(itsFile); }
+#ifdef KFI_USE_KFILTERDEV
+    bool   eof()    { return GZIP==itsType ? itsDev && itsDev->atEnd() : feof(itsFile); }
+#else
+    bool   eof()    { return GZIP==itsType ? gzeof(itsGzFile) : feof(itsFile); }
+#endif
 
     private:
 
@@ -65,14 +77,17 @@ class CCompressedFile
 
     private:
 
-    EType       itsType;
-    int         itsPos;
-    QString     itsFName;
-
+    EType         itsType;
+    int           itsPos;
+    QString       itsFName;
     union
     {
         FILE      *itsFile;
+#ifdef KFI_USE_KFILTERDEV
         QIODevice *itsDev;
+#else
+        gzFile    itsGzFile;
+#endif
     };
 };
 
