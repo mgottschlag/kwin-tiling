@@ -149,7 +149,8 @@ private slots:
     }
 
     void slotQuit();
-    void slotAboutToHideMenu();
+    void slotStartHideTimer();
+    void slotStartShowTimer();
 
     void slotClearOverflow();
     void slotCheckPending();
@@ -158,7 +159,8 @@ private:
 
     QClipboard *clip;
 
-    QTime *menuTimer;
+    QTime *hideTimer;
+    QTime *showTimer;
 
     QMimeSource* m_lastClipdata;
     int m_lastClipboard;

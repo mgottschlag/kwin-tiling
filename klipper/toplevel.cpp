@@ -159,7 +159,8 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     readConfiguration( kc );
     setURLGrabberEnabled( bURLGrabber );
 
-    menuTimer = new QTime();
+    hideTimer = new QTime();
+    showTimer = new QTime();
 
     readProperties(m_config);
     connect(kapp, SIGNAL(saveYourself()), SLOT(saveSession()));
@@ -187,6 +188,9 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
     KlipperPopup* popup = history()->popup();
     connect ( history(),  SIGNAL( topChanged() ), SLOT( slotHistoryTopChanged() ) );
+    connect( popup, SIGNAL( aboutToHide() ), SLOT( slotStartHideTimer() ) );
+    connect( popup, SIGNAL( aboutToShow() ), SLOT( slotStartShowTimer() ) );
+
     popup->plugAction( toggleURLGrabAction );
     popup->plugAction( clearHistoryAction );
     popup->plugAction( configureAction );
@@ -199,7 +203,8 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
 KlipperWidget::~KlipperWidget()
 {
-    delete menuTimer;
+    delete showTimer;
+    delete hideTimer;
     delete myURLGrabber;
     if( m_config != kapp->config())
         delete m_config;
@@ -252,7 +257,7 @@ void KlipperWidget::mousePressEvent(QMouseEvent *e)
     // if we only hid the menu less than a third of a second ago,
     // it's probably because the user clicked on the klipper icon
     // to hide it, and therefore won't want it shown again.
-    if ( menuTimer->elapsed() > 300 ) {
+    if ( hideTimer->elapsed() > 300 ) {
         slotPopupMenu();
     }
 }
@@ -268,9 +273,14 @@ void KlipperWidget::paintEvent(QPaintEvent *)
     p.end();
 }
 
-void KlipperWidget::slotAboutToHideMenu()
+void KlipperWidget::slotStartHideTimer()
 {
-    menuTimer->start();
+    hideTimer->start();
+}
+
+void KlipperWidget::slotStartShowTimer()
+{
+    showTimer->start();
 }
 
 void KlipperWidget::showPopupMenu( QPopupMenu *menu )
@@ -512,6 +522,13 @@ void KlipperWidget::slotConfigure()
 
 void KlipperWidget::slotQuit()
 {
+    // If the menu was just opened, likely the user
+    // selected quit by accident while attempting to
+    // click the Klipper icon.
+    if ( showTimer->elapsed() < 300 ) {
+        return;
+    }
+
     saveSession();
     int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically Start Klipper?") );
 
