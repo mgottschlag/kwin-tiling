@@ -85,5 +85,5 @@ void KMemoryWidget::update()
     Memory_Info[SWAP_MEM] = MEMORY(total) * 1024;
 
     // free memory in swap-partitions
-    Memory_Info[FREESWAP_MEM] = MEMORY(free) * 1024;
+    Memory_Info[FREESWAP_MEM] = MEMORY(_free) * 1024;
 }
