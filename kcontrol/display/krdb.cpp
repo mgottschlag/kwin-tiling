@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#undef Unsorted
 #include <qdir.h>
 #include <qdatastream.h>
 #include <qstring.h>
