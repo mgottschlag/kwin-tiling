@@ -1534,7 +1534,8 @@ void KSMServer::restoreSessionDoneInternal()
     restoreLegacySession( KGlobal::config());
 #endif
     upAndRunning( "session ready" );
-    
+    DCOPRef( "knotify" ).send( "sessionReady" ); // knotify startup optimization
+
     // From now on handle X errors as normal shutdown.
     XSetIOErrorHandler(Xio_ErrorHandler);
 }
