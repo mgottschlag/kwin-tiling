@@ -24,6 +24,8 @@ METASOURCES = AUTO
 
 SUBDIRS = . pics
 
+CLEANFILES = dummy.cpp
+
 bin_PROGRAMS = kcontrol kcmshell kcminit
 lib_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
 
@@ -44,15 +46,15 @@ kcminit_la_SOURCES = kcminit.cpp
 kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA)
 kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
-kcontrol_SOURCES = dummy.C
+kcontrol_SOURCES = dummy.cpp
 kcontrol_LDADD = kcontrol.la
 kcontrol_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
-kcmshell_SOURCES = dummy.C
+kcmshell_SOURCES = dummy.cpp
 kcmshell_LDADD = kcmshell.la
 kcmshell_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
-kcminit_SOURCES = dummy.C
+kcminit_SOURCES = dummy.cpp
 kcminit_LDADD = kcminit.la
 kcminit_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
@@ -67,5 +69,5 @@ EXTRA_DIST = $(data_DATA)
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcontrol.pot
 
-dummy.C:
-	echo > dummy.C
+dummy.cpp:
+	echo > dummy.cpp
