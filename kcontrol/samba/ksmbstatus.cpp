@@ -143,6 +143,8 @@ void NetMon::slotReceivedData(KProcess *, char *buffer, int )
    while ((end = strchr(start,'\n'))) // look for '\n'
    {
       len = end-start;
+      if (len>=sizeof(s))
+	      len=sizeof(s)-1;
       strncpy(s,start,len);
       s[len] = '\0';
       //kdDebug() << "recived: "<<s << endl;
@@ -167,19 +169,22 @@ void NetMon::update()
    QListViewItem *row;
    KProcess * process = new KProcess();
 
-   for (n=0;n<65536;n++) lo[n]=0;
+   memset(&lo, 0, sizeof(lo));
    list->clear();
    /* Re-read the Contents ... */
 
+   QString path(::getenv("PATH"));
+   path += "/bin:/sbin:/usr/bin:/usr/sbin";
+   
    rownumber=0;
    readingpart=header;
    nrpid=0;
+   process->setEnvironment("PATH", path);
    connect(process,
            SIGNAL(receivedStdout(KProcess *, char *, int)),
            SLOT(slotReceivedData(KProcess *, char *, int)));
-   *process << "smbstatus"; // the command line
-   //kdDebug() << "update" << endl;
-   if (!process->start(KProcess::Block,KProcess::Stdout)) // run smbstatus
+   *process << "smbstatus";
+   if (!process->start(KProcess::Block,KProcess::Stdout))
       version->setText(i18n("Error: Unable to run smbstatus"));
    else if (rownumber==0) // empty result
       version->setText(i18n("Error: Unable to open configuration file \"smb.conf\""));
@@ -201,6 +206,7 @@ void NetMon::update()
       delete showmountProc;
    showmountProc=new KProcess();
    //*showmountProc<<"dn";
+   showmountProc->setEnvironment("PATH", path);
    *showmountProc<<"showmount"<<"-a"<<"localhost";
    connect(showmountProc,SIGNAL(receivedStdout(KProcess *, char *, int)),SLOT(slotReceivedData(KProcess *, char *, int)));
    //without this timer showmount hangs up to 5 minutes
