@@ -688,10 +688,7 @@ KGVerify::gplugReturnBinary( const char *data )
 	unsigned const char *up = (unsigned const char *)data;
 	int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
 	Debug( "gplugReturnBinary(%d bytes)\n", len );
-	if (!len)
-	    GSendArr( 4, data );
-	else
-	    GSendArr( len, data );
+	GSendArr( len, data );
 	hasBegun = true;
 	setTimer();
 	handleVerify();

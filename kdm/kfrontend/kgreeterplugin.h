@@ -69,8 +69,8 @@ public:
 };
 
 /**
- * Abstract base class for any authentication frontend modules to be used
- * with KDM, kdesktop_lock, etc.
+ * Abstract base class for conversation plugins ("talkers") to be used with
+ * KDM, kdesktop_lock, etc.
  * The authentication method used by a particular instance of a plugin
  * may be configurable, but the instance must handle exactly one method,
  * i.e., the parameter it passes to gplugStart() must be determined already
@@ -82,14 +82,14 @@ public:
     virtual ~KGreeterPlugin() {}
 
     /**
-     * Variations of the widget:
+     * Variations of the talker:
      * - Authenticate: authentication
      * - AuthChAuthTok: authentication and password change
      * - ChAuthTok: password change
      */
     enum Function { Authenticate, AuthChAuthTok, ChAuthTok };
     /**
-     * Contexts the widget can be used in:
+     * Contexts the talker can be used in:
      * - Login: kdm login dialog
      * - Shutdown: kdm shutdown dialog
      * - Unlock: kdm unlock dialog (TODO)
@@ -97,10 +97,10 @@ public:
      * - ExUnlock: kdesktop_lock unlock dialog
      * - ExChangeTok: kdepasswd password change dialog (TODO)
      *
-     * The Ex* contexts exist within a running session; they must know how to
-     * obtain the currently logged in user (+ domain/realm, etc.) themselves
-     * (i.e., fixedEntity will be null). The non-Ex variants will have a
-     * fixedEntity passed in.
+     * The Ex* contexts exist within a running session; the talker must know
+     * how to obtain the currently logged in user (+ domain/realm, etc.)
+     * itself (i.e., fixedEntity will be null). The non-Ex variants will have
+     * a fixedEntity passed in.
      */
     enum Context { Login, Shutdown, Unlock, ChangeTok,
 		   ExUnlock, ExChangeTok };
@@ -108,7 +108,7 @@ public:
     /**
      * Preload the widget with an (opaque to the greeter) entity.
      * Will be called only when not running.
-     * @param entity the entity to preload the widget with. That
+     * @param entity the entity to preload the talker with. That
      *  will usually be something like "user" or "user@domain".
      * @param field the sub-widget (probably line edit) to put the cursor into
      */
@@ -121,9 +121,8 @@ public:
     virtual QString getEntity() const = 0;
 
     /**
-     * "Push" a user into the conversation widget. That can be a click into
-     * the user list or successful authentication without the plugin calling
-     * gplugSetUser.
+     * "Push" a user into the talker. That can be a click into the user list
+     * or successful authentication without the talker calling gplugSetUser.
      * Will be called only when running.
      * @param user the user to set. Note that this is a UNIX login, not a
      *  canonical entity
@@ -131,7 +130,7 @@ public:
     virtual void setUser( const QString &user ) = 0;
 
     /**
-     * En-/disable any widgets.
+     * En-/disable any widgets contained in the talker.
      * Will be called only when not running.
      * @param on the state to set
      */
@@ -142,8 +141,15 @@ public:
      * @param message the message received from the backend
      * @param error if true, @p message is an error message, otherwise it's
      *  an informational message
-     * @return true means that the plugin already handled the message, false
+     * @return true means that the talker already handled the message, false
      *  that the greeter should display it in a message box
+     *
+     * FIXME: Filtering a message usually means that the backend issued a
+     * prompt and obtains the authentication data itself. However, in that
+     * state the backend is unresponsive, e.g., no shutdown is possible.
+     * The frontend could send the backend a signal, but the "escape path"
+     * within the backend is unclear (PAM won't like simply longjmp()ing
+     * out of it).
      */
     virtual bool textMessage( const char *message, bool error ) = 0;
 
@@ -160,27 +166,28 @@ public:
     virtual void textPrompt( const char *prompt, bool echo, bool nonBlocking ) = 0;
 
     /**
-     * Request binary authentication data from the plugin. Reply by calling
+     * Request binary authentication data from the talker. Reply by calling
      * handler->gplugReturnBinary().
      * @param prompt prompt in pam_client format
      * @param nonBlocking if true, report whatever is already available,
      *  otherwise wait for user input.
+     * @return always true for now
      *
      * TODO:
-     * The plugin may choose to direct actually obtaining the authentication
-     * data to the backend (which will use libpam_client); in this case the
-     * returned array must consist of four zeros. The backend will issue
-     * another binaryPrompt with a null prompt when it finishes obtaining
-     * the data.
+     * @return if true, the prompt was handled by the talker, otherwise the
+     *  handler has to use libpam_client to obtain the authentication data.
+     *  In that state the talker still can abort the data fetch by
+     *  gplugReturn()ing a null array. When the data was obtained, another
+     *  binaryPrompt with a null prompt will be issued.
      */
-    virtual void binaryPrompt( const char *prompt, bool nonBlocking ) = 0;
+    virtual bool binaryPrompt( const char *prompt, bool nonBlocking ) = 0;
 
     /**
      * This can either
      *  - Start a processing cycle. Will be called only when not running.
      *  - Restart authTok cycle - will be called while running and implies
      *    revive(). PAM is a bit too clever, so we need this.
-     * In any case the plugins is running afterwards.
+     * In any case the talker is running afterwards.
      */
     virtual void start() = 0;
 

@@ -208,10 +208,11 @@ KClassicGreeter::textPrompt( const char *, bool, bool nonBlocking )
 	returnData();
 }
 
-void // virtual
+bool // virtual
 KClassicGreeter::binaryPrompt( const char *, bool )
 {
     // this simply cannot happen ... :}
+    return true;
 }
 
 void // virtual
