@@ -1087,7 +1087,7 @@ void KSMServer::interactDone( KSMClient* client, bool cancelShutdown_ )
         return; // should not happen
     clientInteracting = 0;
     if ( cancelShutdown_ )
-        cancelShutdown();
+        cancelShutdown( client );
     else
         handlePendingInteractions();
 }
@@ -1121,9 +1121,9 @@ void KSMServer::handlePendingInteractions()
 }
 
 
-void KSMServer::cancelShutdown()
+void KSMServer::cancelShutdown( KSMClient* c )
 {
-    kdDebug() << "cancelShutdown!" << endl;
+    kdDebug() << "cancelShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
     clientInteracting = 0;
     for ( KSMClient* c = clients.first(); c; c = clients.next() )
         SmsShutdownCancelled( c->connection() );
@@ -1178,7 +1178,7 @@ void KSMServer::completeShutdownOrCheckpoint()
         // kill all clients
         state = Killing;
         for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-            kdDebug() << "completeShutdown: client " << c->program() << endl;
+            kdDebug() << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
             if (c->wasPhase2)
                 continue;
             SmsDie( c->connection() );

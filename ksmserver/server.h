@@ -123,7 +123,7 @@ private:
     void handlePendingInteractions();
     void completeShutdownOrCheckpoint();
     void completeKilling();
-    void cancelShutdown();
+    void cancelShutdown( KSMClient* c );
 
     void discardSession();
     void storeSession();
