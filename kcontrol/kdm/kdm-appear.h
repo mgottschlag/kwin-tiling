@@ -46,7 +46,7 @@ public:
 private slots:
         void slotSetGUI(int);
 	void slotPixDropped(KDNDDropZone *zone);
-        void slotLogoPixChanged(const char*);
+        void slotLogoPixChanged(const QString&);
         void slotLogoPixTextChanged();
 
 private:

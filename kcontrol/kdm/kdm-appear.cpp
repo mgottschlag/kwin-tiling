@@ -108,8 +108,8 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
       }
       logobutton->move(logo_lined->x(), logo_lined->y()+logo_lined->height()+10);
       logobutton->adjustSize();
-      connect(logobutton, SIGNAL(iconChanged(const char*)),
-              SLOT(slotLogoPixChanged(const char*)));
+      connect(logobutton, SIGNAL(iconChanged(const QString&)),
+              SLOT(slotLogoPixChanged(const QString&)));
 
       QToolTip::add(logobutton, i18n("Click or drop an image here"));
       logopixdrop = new KDNDDropZone(logobutton, DndURL);
@@ -181,12 +181,12 @@ void KDMAppearanceWidget::slotLogoPixTextChanged()
   }
 }
 
-void KDMAppearanceWidget::slotLogoPixChanged(const char *icon)
+void KDMAppearanceWidget::slotLogoPixChanged(const QString &iconstr)
 {
   // Because KIconLoaderButton only returns a relative filename
   // we gotta save the image in PIXDIR.
   // To make it easy we save it as an XPM
-  QString msg, iconstr = icon;
+  QString msg;
   QString pix = /*PIXDIR + */ iconstr.left(iconstr.findRev('.')) + ".xpm";
   const QPixmap *p = logobutton->pixmap();
   if(!p)
