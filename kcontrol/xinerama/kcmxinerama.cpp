@@ -108,7 +108,7 @@ KCMXinerama::~KCMXinerama() {
 }
 
 void KCMXinerama::configChanged() {
-	setChanged(true);
+	emit changed(true);
 }
 
 
@@ -139,7 +139,7 @@ void KCMXinerama::load() {
 		else xw->_ksplashDisplay->setCurrentItem(item);
 
 	}
-	setChanged(false);
+	emit changed(false);
 }
 
 
@@ -169,7 +169,7 @@ void KCMXinerama::save() {
 
 	KMessageBox::information(this, i18n("Your settings will only affect newly started applications."), i18n("KDE Multiple Monitors"), "nomorexineramaplease");
 
-	setChanged(false);
+	emit changed(false);
 }
 
 void KCMXinerama::defaults() {
@@ -182,9 +182,9 @@ void KCMXinerama::defaults() {
 				QApplication::desktop()->primaryScreen());
 		xw->_ksplashDisplay->setCurrentItem(
 				QApplication::desktop()->primaryScreen());
-		setChanged(true);
+		emit changed(true);
 	} else {
-		setChanged(false);
+		emit changed(false);
 	}
 }
 

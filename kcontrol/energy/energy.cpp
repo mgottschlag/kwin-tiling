@@ -228,7 +228,7 @@ void KEnergy::load()
     readSettings();
     showSettings();
 
-    setChanged(false);
+    emit changed(false);
 }
 
 
@@ -237,7 +237,7 @@ void KEnergy::save()
     writeSettings();
     applySettings(m_bEnabled, m_Standby, m_Suspend, m_Off);
 
-    setChanged(false);
+    emit changed(false);
 }
 
 
@@ -253,7 +253,7 @@ void KEnergy::defaults()
     m_OffDesired = m_Off;
 
     showSettings();
-    setChanged(true);
+    emit changed(true);
 }
 
 
@@ -354,7 +354,7 @@ void KEnergy::slotChangeEnable(bool ena)
     m_pSuspendSlider->setEnabled(ena);
     m_pOffSlider->setEnabled(ena);
 
-    setChanged(true);
+    emit changed(true);
 }
 
 
@@ -375,7 +375,7 @@ void KEnergy::slotChangeStandby(int value)
     }
 
     m_bChanged = true;
-    setChanged(true);
+    emit changed(true);
 }
 
 
@@ -397,7 +397,7 @@ void KEnergy::slotChangeSuspend(int value)
     }
 
     m_bChanged = true;
-    setChanged(true);
+    emit changed(true);
 }
 
 
@@ -420,7 +420,7 @@ void KEnergy::slotChangeOff(int value)
     }
 
     m_bChanged = true;
-    setChanged(true);
+    emit changed(true);
 }
 
 

@@ -58,7 +58,7 @@ void FilterOptions::defaults()
 
 void FilterOptions::moduleChanged(bool state)
 {
-    setChanged(state);
+    emit changed(state);
 }
 
 #include "filteropts.moc"

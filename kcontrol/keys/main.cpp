@@ -79,7 +79,7 @@ void KeyModule::load()
 	m_pShortcuts->load();
 	m_pCommandShortcuts->load();
 	m_pModifiers->load();
-	setChanged( false );
+	emit changed( false );
 }
 
 // When [Apply] or [OK] are clicked.
@@ -89,7 +89,7 @@ void KeyModule::save()
 	m_pShortcuts->save();
 	m_pCommandShortcuts->save();
 	m_pModifiers->save();
-	setChanged( false );
+	emit changed( false );
 }
 
 void KeyModule::defaults()
@@ -98,7 +98,7 @@ void KeyModule::defaults()
 	m_pShortcuts->defaults();
 	m_pCommandShortcuts->defaults();
 	m_pModifiers->defaults();
-	setChanged( true );
+	emit changed( true );
 }
 
 QString KeyModule::quickHelp() const
@@ -119,7 +119,7 @@ void KeyModule::resizeEvent( QResizeEvent * )
 
 void KeyModule::slotModuleChanged( bool bState )
 {
-	setChanged( bState );
+	emit changed( bState );
 }
 
 //----------------------------------------------------

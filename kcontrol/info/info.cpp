@@ -385,7 +385,7 @@ void KInfoListWidget::load()
         widgetStack->raiseWidget(NoInfoText);
     }
 
-    setChanged(false);
+    emit changed(false);
 }
 
 

@@ -281,7 +281,7 @@ void FilterOptions::save()
 
   config.sync();
 
-  setChanged(false);
+  emit changed(false);
 
   // Update filters in running applications...
   (void) DCOPRef("*", "KURIIKWSFilterIface").send("configure");
@@ -303,7 +303,7 @@ void FilterOptions::defaults()
 void FilterOptions::configChanged()
 {
   // kdDebug () << "FilterOptions::configChanged: TRUE" << endl;
-  setChanged(true);
+  emit changed(true);
 }
 
 void FilterOptions::setWebShortcutState()

@@ -93,7 +93,7 @@ void KCMKonsole::load(bool useDefaults)
 
     dialog->SchemaEditor1->setSchema(config.readEntry("schema"));
 
-    setChanged(useDefaults);
+    emit changed(useDefaults);
 }
 
 void KCMKonsole::load(const QString & /*s*/)
@@ -103,7 +103,7 @@ void KCMKonsole::load(const QString & /*s*/)
 
 void KCMKonsole::configChanged()
 {
-    setChanged(true);
+    emit changed(true);
 }
 
 void KCMKonsole::save()
@@ -142,7 +142,7 @@ void KCMKonsole::save()
 
     config.sync();
 
-    setChanged(false);
+    emit changed(false);
 
     DCOPClient *dcc = kapp->dcopClient();
     dcc->send("konsole-*", "konsole", "reparseConfiguration()", QByteArray());

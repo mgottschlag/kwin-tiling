@@ -238,7 +238,7 @@ void topKCMEmail::slotNewProfile()
 
 void topKCMEmail::configChanged(bool c)
 {
-	setChanged(c);
+	emit changed(c);
 	m_bChanged=c;
 }
 

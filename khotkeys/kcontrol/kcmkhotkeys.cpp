@@ -99,7 +99,7 @@ void Module::load()
     kdDebug( 1217 ) << "actions_root:" << _actions_root << endl;
     actions_listview_widget->build_up();
     tab_widget->load_current_action();
-    setChanged( false ); // HACK otherwise the module would be changed from the very beginning
+    emit KCModule::changed( false ); // HACK otherwise the module would be changed from the very beginning
     }
 
 void Module::save()
@@ -127,7 +127,7 @@ void Module::save()
             kdDebug( 1217 ) << "telling khotkeys daemon to reread configuration" << endl;
             }
         }
-    setChanged( false );
+    emit KCModule::changed( false );
     }
 
 
@@ -271,12 +271,12 @@ void Module::import()
     actions_listview_widget->clear();
     actions_listview_widget->build_up();
     tab_widget->load_current_action();
-    setChanged( true );
+    emit KCModule::changed( true );
     }
     
 void Module::changed()
     {
-    setChanged( true );
+    emit KCModule::changed( true );
     }
 
 Module* module; // CHECKME

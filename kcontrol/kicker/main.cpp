@@ -87,7 +87,7 @@ void KickerConfig::initScreenNumber()
 
 void KickerConfig::configChanged()
 {
-    setChanged(true);
+    emit changed(true);
 }
 
 // this method may get called multiple times during the life of the control panel!
@@ -133,7 +133,7 @@ void KickerConfig::load()
     hidingtab->load();
     menutab->load();
 
-    setChanged(false);
+    emit changed(false);
     connect(configFileWatch, SIGNAL(dirty(const QString&)), this, SLOT(configChanged(const QString&)));
     configFileWatch->startScan();
 }
@@ -144,7 +144,7 @@ void KickerConfig::save()
     hidingtab->save();
     menutab->save();
 
-    setChanged(false);
+    emit changed(false);
 
     notifyKicker();
 }
@@ -170,7 +170,7 @@ void KickerConfig::defaults()
     hidingtab->defaults();
     menutab->defaults();
 
-    setChanged(true);
+    emit changed(true);
 }
 
 QString KickerConfig::quickHelp() const

@@ -268,7 +268,7 @@ KColorScheme::~KColorScheme()
 void KColorScheme::slotChanged()
 {
     m_bChanged = true;
-    setChanged(true);
+    emit changed(true);
 }
 
 void KColorScheme::setColorName( const QString &name, int id )
@@ -298,7 +298,7 @@ void KColorScheme::load()
     cbExportColors->setChecked(exportColors);
 
     m_bChanged = false;
-    setChanged(false);
+    emit changed(false);
 }
 
 
@@ -387,7 +387,7 @@ void KColorScheme::save()
     sList->changeItem(preview, sList->text(current), current);
 
     m_bChanged = false;
-    setChanged(false);
+    emit changed(false);
 }
 
 
@@ -405,7 +405,7 @@ void KColorScheme::defaults()
     cbExportColors->setChecked(true);
 
     m_bChanged = true;
-    setChanged(true);
+    emit changed(true);
 }
 
 QString KColorScheme::quickHelp() const
@@ -433,7 +433,7 @@ void KColorScheme::sliderValueChanged( int val )
     sCurrentScheme = QString::null;
 
     m_bChanged = true;
-    setChanged(true);
+    emit changed(true);
 }
 
 
@@ -688,7 +688,7 @@ void KColorScheme::slotSelectColor(const QColor &col)
     sCurrentScheme = QString::null;
 
     m_bChanged = true;
-    setChanged(true);
+    emit changed(true);
 }
 
 
@@ -925,7 +925,7 @@ void KColorScheme::slotPreviewScheme(int indx)
     }
 
     m_bChanged = (indx != 0);
-    setChanged(m_bChanged);
+    emit changed(m_bChanged);
 }
 
 

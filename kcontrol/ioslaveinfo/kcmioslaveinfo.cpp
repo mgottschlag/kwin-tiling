@@ -101,15 +101,15 @@ const KAboutData* KCMIOSlaveInfo::aboutData() const
 
 
 void KCMIOSlaveInfo::load() {
-   setChanged(false);
+   emit changed(false);
 }
 
 void KCMIOSlaveInfo::defaults() {
-   setChanged(true);
+   emit changed(true);
 }
 
 void KCMIOSlaveInfo::save() {
-   setChanged(true);
+   emit changed(true);
 }
 
 int KCMIOSlaveInfo::buttons () {
@@ -117,11 +117,11 @@ int KCMIOSlaveInfo::buttons () {
 }
 
 void KCMIOSlaveInfo::configChanged() {
-   setChanged(true);
+   emit changed(true);
 }
 
 void KCMIOSlaveInfo::childChanged(bool really) {
-   setChanged(really);
+   emit changed(really);
 }
 
 QString KCMIOSlaveInfo::quickHelp() const

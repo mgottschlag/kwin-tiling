@@ -151,7 +151,7 @@ void KLocaleApplication::load()
 
   emit localeChanged();
   emit languageChanged();
-  setChanged(false);
+  emit changed(false);
 }
 
 void KLocaleApplication::save()
@@ -190,7 +190,7 @@ void KLocaleApplication::save()
     proc.start(KProcess::DontCare);
   }
 
-  setChanged(false);
+  emit changed(false);
 }
 
 void KLocaleApplication::defaults()
@@ -263,7 +263,7 @@ void KLocaleApplication::slotTranslate()
 
 void KLocaleApplication::slotChanged()
 {
-  setChanged(true);
+  emit changed(true);
 }
 
 const KAboutData * KLocaleApplication::aboutData() const

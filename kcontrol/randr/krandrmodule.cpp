@@ -294,7 +294,7 @@ void KRandRModule::setChanged()
 
 	if (isChanged != m_changed) {
 		m_changed = isChanged;
-		KCModule::setChanged(m_changed);
+		emit changed(m_changed);
 	}
 }
 

@@ -43,7 +43,7 @@ class KBellConfig : public KCModule
  protected slots:
   void ringBell();
   void useBell( bool );
-  void configChanged() { setChanged( true ); };
+  void configChanged() { emit changed( true ); };
 
  private:
   QPushButton  *m_testButton;

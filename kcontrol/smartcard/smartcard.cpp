@@ -115,7 +115,7 @@ KSmartcardConfig::~KSmartcardConfig()
 
 void KSmartcardConfig::configChanged()
 {
-    setChanged(true);
+    emit changed(true);
 }
 
 
@@ -320,7 +320,7 @@ void KSmartcardConfig::load()
   //And we update the panel
   loadReadersTab(readers);
 
-  setChanged(false);
+  emit changed(false);
 
 }
 
@@ -359,7 +359,7 @@ if (_ok) {
 
 
 }
-  setChanged(false);
+  emit changed(false);
 }
 
 void KSmartcardConfig::defaults()
@@ -370,7 +370,7 @@ if (_ok) {
   base->beepOnInsert->setChecked(true);
   base->launchManager->setChecked(true);
 }
-  setChanged(true);
+  emit changed(true);
 }
 
 

@@ -224,7 +224,7 @@ void KDModule::defaults()
 
 void KDModule::moduleChanged(bool state)
 {
-  setChanged(state);
+  emit changed(state);
 }
 
 void KDModule::propagateUsers()

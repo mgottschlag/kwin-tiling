@@ -76,7 +76,7 @@ void IconModule::defaults()
 
 void IconModule::moduleChanged(bool state)
 {
-  setChanged(state);
+  emit changed(state);
 }
 
 QString IconModule::quickHelp() const

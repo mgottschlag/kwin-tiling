@@ -284,7 +284,7 @@ void KArtsModule::GetSettings( void )
 	delete midiConfig;
 	
 	updateWidgets();
-	setChanged( false );
+	emit changed( false );
 }
 
 KArtsModule::~KArtsModule() {
@@ -367,7 +367,7 @@ void KArtsModule::save()
 		restartServer();
 		updateWidgets();
 	}
-	setChanged( false );
+	emit changed( false );
 }
 
 int KArtsModule::userSavedChanges()
@@ -526,7 +526,7 @@ void KArtsModule::slotChanged()
 {
 	updateWidgets();
 	configChanged = true;
-	setChanged(true);
+	emit changed(true);
 }
 
 /* check if starting realtime would be possible */

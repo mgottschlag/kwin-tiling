@@ -79,7 +79,7 @@ CSSConfig::CSSConfig(QWidget *parent, const char *name, const QStringList &)
   vbox->addWidget(dialog);
 
   load();
-  setChanged(false);
+  emit changed(false);
 }
 
 
@@ -190,7 +190,7 @@ void CSSConfig::save()
 
   c->sync();
   delete c;
-  setChanged(false);
+  emit changed(false);
 }
 
 
@@ -222,7 +222,7 @@ void CSSConfig::defaults()
 
   dialog->hideImages->setChecked(false);
   dialog->hideBackground->setChecked( true);
-  setChanged(true);
+  emit changed(true);
 }
 
 
@@ -243,7 +243,7 @@ QString CSSConfig::quickHelp() const
 
 void CSSConfig::configChanged()
 {
-  setChanged(true);
+  emit changed(true);
 }
 
 

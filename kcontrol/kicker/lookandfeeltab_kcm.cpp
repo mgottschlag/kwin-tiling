@@ -45,20 +45,20 @@ LookAndFeelConfig::LookAndFeelConfig(QWidget *parent, const char *name)
 
 void LookAndFeelConfig::configChanged()
 {
-    setChanged(true);
+    emit changed(true);
 }
 
 void LookAndFeelConfig::load()
 {
     lookandfeeltab->load();
-    setChanged(false);
+    emit changed(false);
 }
 
 void LookAndFeelConfig::save()
 {
     lookandfeeltab->save();
 
-    setChanged(false);
+    emit changed(false);
 
     // Tell kicker about the new config file.
     KickerConfig::notifyKicker();
@@ -68,7 +68,7 @@ void LookAndFeelConfig::defaults()
 {
     lookandfeeltab->defaults();
 
-    setChanged(true);
+    emit changed(true);
 }
 
 QString LookAndFeelConfig::quickHelp() const
