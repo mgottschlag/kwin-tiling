@@ -187,6 +187,7 @@ Keywords[nl]=processor,CPU,FPU,MHz,systeeminformatie
 Keywords[nn]=prosessor,CPU,FPU,MHz,systeminformasjon
 Keywords[nso]=Mophethagatsi,CPU,FPU,MHz,Tshedimoso ya System
 Keywords[oc]=Processador,CPU,FPU,MHz,Informacion dèu sistemo
+Keywords[pa]=ਪ੍ਰੋਸੈਂਸਰ,CPU,FPU,MHz,ਸਿਸਟਮ ਜਾਣਕਾਰੀ
 Keywords[pl]=procesor,CPU,JAL,FPU,MHz,informacja o systemie
 Keywords[pt]=processador,CPU,FPU,MHz,informações do sistema
 Keywords[pt_BR]=Processador,CPU,FPU,MHz,Informações de sistema
@@ -210,4 +211,4 @@ Keywords[zh_CN]=Processor,CPU,FPU,MHz,System Information,处理器,系统信息
 Keywords[zh_TW]=Processor,CPU,FPU,MHz,System Information,處理器,中央處理器,浮點運算器,系統資訊
 Keywords[zu]=Umqhubekisi,CPU,FPU,MHz,Ulwazi Lwesistimu
 
-Categories=Qt;KDE;X-KDE-information
+Categories=Qt;KDE;X-KDE-information;

@@ -1,4 +1,4 @@
-[Desktop Entry]
+.[Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell mouse
 Icon=mouse
@@ -166,7 +166,7 @@ Keywords[fi]=Hiiri,Hiiren kiihdytys,Hiiren raja-arvo,Hiiren painikkeet,Valinta,O
 Keywords[fr]=souris,accélération de la souris,seuil de la souris,boutons de la souris,sélection,forme du curseur,périphériques d'entrée,curseur,clic,icônes,gaucher,droitier,double clic,simple clic,clic gauche,clic droit
 Keywords[gl]=Rato,Aceleración do rato,Umbral do rato,botóns do rato,Selección,Forma do Cursores,Dispositivos de Entrada,Mapa do botón,Clic,iconas,indicador,Punteiros,Arrastrar,DobreClic,mapear,dereiteiro,esquerdeiro
 Keywords[he]=עכבר,תאוצת עכבר,סף עכבר,לחצני עכבר,בחירה,צורת מצביע,התקני קלט,לחיצה,סמלים,תגובה,מצביעים,גרירה,לחיצה כפולה,תצורה,ימני,שמאלי,תצורת לחצנים
-Keywords[hi]=माउस,माउस त्वरण,माउस दहलीज,माउस बटन,चयन,संकेतक आकार,इनपुट उपकरण,बटन मैपिंग,क्लिक,चिह्न,फीडबैक,प्वाइंटर्स,खींचें,डबल-क्लिक,मैपिंग,दाहिने हाथ वाला, खब्बू(बाएँ हाथ वाला)
+Keywords[hi]=माउस,माउस त्वरण,माउस दहलीज,माउस बटन,चयन,संकेतक आकार,इनपुट औज़ार,बटन मैपिंग,क्लिक,प्रतीक,फ़ीडबैक,प्वाइंटर्स,खींचें,डबल-क्लिक,मैपिंग,दाहिने हाथ वाला, खब्बू(बाएँ हाथ वाला)
 Keywords[hu]=egér,egérgyorsítás,egérérzékenység,egérgombok,kiválasztás,kurzoralak,beviteli eszközök,gombhozzárendelés,kattintás,ikonok,visszajelzés,mutatók,húzás,dupla kattintás,hozzárendelés,jobbkezes,balkezes
 Keywords[id]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input DevicesButton Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed
 Keywords[is]=Næmni músar,bendill,inntakstæki,hröðun,örvhentur,rétthentur,smella,tákn,bendill,tvísmella
@@ -177,11 +177,13 @@ Keywords[lo]=ເມົາສ໌,ການເພີ້ມຄວາມໄວຂອ
 Keywords[lt]=Mouse,pelė,Mouse acceleration,pelės pagreitinimas,Mouse threshold,Mouse buttons,pelės mygtukai,Selection,pažymėjimas,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,right handed,left handed,kairiarankė
 Keywords[lv]=Pele,Peles paātrinājums,Peles slieksnis,Peles taustiņi,Izvēle,Kursora Forma,Ievades Iekārtas,Pogu Sasaiste,Klikšķis,ikonas,atpakaļsaite,Rādītāji,Vilkt,Dubultklikšķis,sasaiste,labās rokas,kreisās rokas
 Keywords[mn]=Хулгана,Хулгана-хурдасгуур, Хулгана-хязгаар,Хулгана товшуур,Сонголт, Түүчээ,Түүчээний хэлбэр,Оролтын төхөөрөмж,Товч,Товшилуур,Холбоос,Товшилт, Зурах төхөөрөмж,Давхар товшилт,Баруун гарын, Зүүн гарын
+Keywords[mt]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed,Maws,lemini,xellugi
 Keywords[nb]=Mus,musehastighet,museknapper,valg,merking,kursoregenskaper,pekeregenskaper,innenheter,inn-enheter,knappetilordning,trykk,klikk,pekere,dra,dobbelttrykk, høyrehendt,venstrehendt
 Keywords[nds]=Muus,Mouse acceleration,Mouse threshold,Muusknööpp,Selektschoon,Cursor Shape,Ingaavreedschapen,Button Mapping,Klicken,Lüttbiller,feedback,Wieser,Drag,Doppelklick,mapping,Rechtpoot, Linkpoot
 Keywords[nl]=muis,muissnelheid,muisknoppen,selectie,cursor-uiterlijk,input devices,invoerapparaten,knopindeling,klikken,iconen,pictogrammen,icons,aanwijzers,pointers,drag,verslepen,dubbelklikken,linkshandig,rechtshandig.randapparaten
 Keywords[nn]=mus,musakselerasjon,musterskel,musknappar,val,peikar,peikarform,inneiningar,knappar,klikk,ikon,tilbakemelding,dra,dobbelklikk,høgrehendt,venstrehendt
 Keywords[nso]=Legotlo,Koketso ya legotlo,Threshold ya legotlo,Ditobetswa tsa legotlo, Kgetho,Sebopego sa Cursor,Maano a Tsenyo,Mapping Setobetswa,Tobetsa, diemedi,phetolo,Disupi,Topa,Tobetsopedi,mapping,swerwe ka lagoja,swerwe ka lanngele
+Keywords[pa]=ਮਾਊਸ,ਮਾਊਸ ਪ੍ਰਵੇਸ਼,ਮਾਊਸ threshold,ਮਾਊਸ buttons,Selection,Cursor Shape,Input ਜੰਤਰ,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed
 Keywords[pl]=Mysz,Akceleracja myszy,Próg myszy,Przyciski myszy,Zaznaczenie,Kształt kursora,Urządzenia wejściowe,mapowanie przycisków,kliknięcie,ikony,widoczne efekty,wskaźniki,przeciąganie,podwójne kliknięcie,mapowanie,praworęczny,leworęczny
 Keywords[pt]=rato,aceleração do rato,limite do rato,botões do rato,selecção,forma do cursor,dispositivos de entrada,atribuição de botões,click,ícones,feedback,cursores,arrastar,duplo 'click',atribuição,destro,esquerdino
 Keywords[pt_BR]=Mouse,aceleração do mouse,limiar do mouse, botões do mouse,Seleção,Formato do Cursor,Dispositivos de entrada,mapeamento de botões,clique,ícones,retorno,ponteiros,arrastar,clique duplo,mapeamento,destro,canhoto
@@ -205,4 +207,4 @@ Keywords[zh_CN]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection
 Keywords[zh_TW]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed,滑鼠,滑鼠游標加速,滑鼠游標加速間距,滑鼠按鈕,選擇,指標外觀,輸入設備,按鍵對應,單擊,圖示,反饋,指標,拖放,雙擊,映射,習慣右手,習慣左手 
 Keywords[zu]=i-Mouse,Ukugijimisa kwe-Mouse,i-Mouse threshold, Izinkinobho ze-Mouse,Ukhetho,Isimo senkomba,Amthuluzi Omphumela wangaphakathi,Ukuqondanisa Izinkinobho,Cofa,Izimpawu zezithombe, umphumela obuyayo,Izinkomba zendawo yokubhala,Hudula,Cofa-kabili, ukuqondanisa,okwesanadla sangakwesokudla,okwesandla sangakwesokunxele
 
-Categories=Qt;KDE;X-KDE-settings-peripherals
+Categories=Qt;KDE;X-KDE-settings-peripherals;

@@ -189,6 +189,7 @@ Keywords[nl]=dma,DMA-channels,systeeminformatie,DMA-kanalen
 Keywords[nn]=dma,DMA-kanalar,systeminformasjon
 Keywords[nso]=dma,Dikanale tsa DMA,Tshedimoso ya System
 Keywords[oc]=dma,Canals DMA,informacion dèu sistemo
+Keywords[pa]=dma,DMA-Channels,ਸਿਸਟਮ ਜਾਣਕਾਰੀ
 Keywords[pl]=dma,kanały DMA,informacja o systemie
 Keywords[pt]=dma,canais dma,informações de sistema
 Keywords[pt_BR]=DMA,canais DMA,canal DMA,informações de sistema
@@ -212,4 +213,4 @@ Keywords[zh_CN]=dma,DMA-Channels,System Information,DMA 通道,系统信息
 Keywords[zh_TW]=dma,DMA-Channels,System Information,DMA通道,系統資訊
 Keywords[zu]=dma,Imigudu-DMA,Ulwazi lwesistimu
 
-Categories=Qt;KDE;X-KDE-information
+Categories=Qt;KDE;X-KDE-information;

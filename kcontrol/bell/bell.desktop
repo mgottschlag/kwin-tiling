@@ -169,7 +169,7 @@ Keywords[fi]=Äänet,Piippaus,Ääni,Äänenvoimakkuus,Korkeus,Kesto
 Keywords[fr]=cloche,audio,son,volume,durée,modulation,bip
 Keywords[gl]=Badalada,Audio,Son,Volume,Pitch,Duración
 Keywords[he]=פעמון,שמע,צליל,עצמה,גובה,משך
-Keywords[hi]=घंटी,ऑडियो,ध्वनि,आवाज निर्धारक,पिच,अवधि
+Keywords[hi]=घंटी,ऑडियो,ध्वनि,आवाज़ निर्धारक,पिच,अवधि
 Keywords[hr]=System sounds,Audio,Sound,Zvuk,Zvuci sustava,Zvono sustava
 Keywords[hu]=csengő,audió,hang,hangerő,hangmagasság,időtartam
 Keywords[id]=Bel,Audio,Suara,Volume,Pitch,Durasi
@@ -210,4 +210,4 @@ Keywords[zh_CN]=Bell,Audio,Sound,Volume,Pitch,Duration,响铃,音频,音量,音�
 Keywords[zh_TW]=Bell,Audio,Sound,Volume,Pitch,Duration,響鈴,聲音,音量,音調,持續時間
 Keywords[zu]=Insimbi,Okuzwakalayo,Usimdo,Izinga lomsindo,Umnswininizo,Ubude besikhathi
 
-Categories=Qt;KDE;X-KDE-settings-sound
+Categories=Qt;KDE;X-KDE-settings-sound;
