@@ -266,26 +266,12 @@ GetCfgStrArr (int id, int *len)
     return GRecvStrArr (len);
 }
 
-static char *savhome;
-
-void
-ExitGreeter (int code)
-{
-    char buf[128];
-
-    if (strcmp (savhome, getenv ("HOME")) || memcmp (savhome, "/tmp/", 5))
-	LogPanic ("Internal error: memory corruption detected\n");
-    sprintf (buf, "rm -rf %s", savhome);
-    system (buf);
-    exit (code);
-}
-
 void
 SessionExit (int ret)
 {
     GSendInt (G_SessionExit);
     GSendInt (ret);
-    ExitGreeter (0);
+    exit (0);
 }
 
 
@@ -643,6 +629,27 @@ setCursor( Display *mdpy, int window, int shape )
     }
 }
 
+static void
+sigterm( int n ATTR_UNUSED )
+{
+    exit( 0 );
+}
+
+static char *savhome;
+
+static void
+cleanup (void)
+{
+    char buf[128];
+
+    if (strcmp (savhome, getenv ("HOME")) || memcmp (savhome, "/tmp/", 5))
+	LogError ("Internal error: memory corruption detected\n"); /* no panic: recursion */
+    else {
+	sprintf (buf, "rm -rf %s", savhome);
+	system (buf);
+    }
+}
+
 extern void kg_main(const char *argv0);
 
 int
@@ -665,6 +672,8 @@ main (int argc ATTR_UNUSED, char **argv)
     if ((debugLevel = GRecvInt ()) & DEBUG_WGREET)
 	sleep (100);
 
+    signal( SIGTERM, sigterm );
+
     /* for QSettings */
     srand( time( 0 ) );
     for (i = 0; i < 10000; i++) {
@@ -678,6 +687,7 @@ main (int argc ATTR_UNUSED, char **argv)
 	LogPanic( "Cannot set $HOME\n" );
     if (!(savhome = strdup (qtrc)))
 	LogPanic( "Cannot save $HOME\n" );
+    atexit( cleanup );
     strcat( qtrc, "/.qt" );
     mkdir( qtrc, 0700 );
     strcat( qtrc, "/qtrc" );
@@ -697,8 +707,6 @@ main (int argc ATTR_UNUSED, char **argv)
     free( ci );
 
     kg_main (argv[0]);
-
-    ExitGreeter (0);
 
     return 0;
 }

@@ -68,7 +68,7 @@ GreeterApp::timerEvent( QTimerEvent * )
 void
 GreeterApp::sigAlarm( int )
 {
-    ExitGreeter( 1 );
+    exit( 1 );
 }
 
 bool
