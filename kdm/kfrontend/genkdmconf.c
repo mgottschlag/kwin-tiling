@@ -670,7 +670,7 @@ static const char def_session[] =
 "  */csh|*/tcsh)\n"
 "    # [t]cshrc is always sourced automatically.\n"
 "    # Note that sourcing csh.login after .cshrc is non-standard.\n"
-"    eval `$SHELL -c 'if (-f /etc/csh.login) source /etc/csh.login; if (-f ~/.login) source ~/.login; sh -c set'`\n"
+"    eval `$SHELL -c 'if (-f /etc/csh.login) source /etc/csh.login; if (-f ~/.login) source ~/.login; sh -c set | egrep -v \"^(BASH_VERSINFO|EUID|PPID|UID|_)=\"'`\n"
 "    ;;\n"
 "  *) # Plain sh, ksh, and anything we don't know.\n"
 "    [ -f /etc/profile ] && . /etc/profile\n"
