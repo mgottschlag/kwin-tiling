@@ -18,6 +18,7 @@
 
 #include "rootopts.h"
 #include <klocale.h>
+#include <kstddirs.h>
 
 KConfigBase *g_pConfig = 0L;
 
@@ -164,7 +165,7 @@ void KfmApplication::apply()
   if ( fork() == 0 )
   { 
       // execute 'kfmclient configure'
-      execl(kapp->kde_bindir()+"/kfmclient","kfmclient","configure",0);
+      execl(locate("exe", "kfmclient"),"kfmclient","configure",0);
       warning("Error launching 'kfmclient configure' !");
       exit(1);
   }

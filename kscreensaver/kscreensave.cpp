@@ -13,6 +13,7 @@
 
 #include "kscreensave.h"
 #include <kconfig.h>
+#include <kstddirs.h>
 
 int sendSignal()
 {
@@ -56,8 +57,7 @@ void kForceLocker()
 			root = 0;
 
 		// either no saver is running or an old pidFile was not removed
-		QString buffer = KApplication::kde_bindir();
-		buffer.append("/kblankscrn.kss");
+		QString buffer = locate("exe", "kblankscrn.kss");
 	    
 		if ( fork() == 0 )
 		{
@@ -67,8 +67,7 @@ void kForceLocker()
 			execlp("kblankscrn.kss","kblankscrn.kss", "-install", "-delay", "0", "-lock", root, 0);
 		    
 			// uh oh - failed
-			fprintf( stderr, "Could not invoke kblankscrn.kss in $PATH or"
-			         " %s/bin\n" , KApplication::kde_bindir().data());
+			fprintf( stderr, "Could not invoke kblankscrn.kss in %s\n", buffer.ascii());
 			exit (1);
 		}
 	}

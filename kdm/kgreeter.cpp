@@ -733,7 +733,8 @@ DoIt()
 int main(int argc, char **argv)
 {
      MyApp app(argc, argv);
-     
+     KGlobal::dirs()->addResourceTypes("user_pic", KStandardDirs::kde_default("data") + "kdm/pics/users/");
+
      kdmcfg = new KDMConfig();
 
      app.setStyle( WindowsStyle);

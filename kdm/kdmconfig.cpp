@@ -32,6 +32,7 @@
 #include <sys/types.h>
 #include <iostream.h>
 #include <kglobal.h>
+#include <kstddirs.h>
 
 // Func. for splitting ';' sep. lists.
 static void semsplit( const QString& str, QStrList& result)
@@ -56,12 +57,10 @@ KDMConfig::KDMConfig( )
 KVItemList*
 KDMConfig::getUsers( QString s, bool sorted)
 {
-     QString user_pix_dir( KApplication::kde_datadir() +"/kdm/pics/users/");
      KVItemList* result = new KVItemList;
-     QPixmap default_pix( user_pix_dir + "default.xpm");
+     QPixmap default_pix( locate("user_pic", "default.xpm"));
      if( default_pix.isNull())
-          printf("Cant get default pixmap from \"%s\"\n",
-                 QString(user_pix_dir + "default.xpm").ascii());
+       printf("Cant get default pixmap from \"default.xpm\"\n");
      if( s.isNull()) {  // isEmpty()?  Th.
           QString  nu = kc->readEntry( "NoUsers");
           QStrList no_users;
@@ -75,7 +74,7 @@ KDMConfig::getUsers( QString s, bool sorted)
                    //CHECK_STRING(ps->pw_gecos) && // many users didn't want this check (tanghus)
                    ( no_users.contains( ps->pw_name) == 0)){
                     // we might have a real user, insert him/her
-                    QPixmap p( user_pix_dir + QString(ps->pw_name) + ".xpm");
+                    QPixmap p( locate("user_pic", QString(ps->pw_name) + ".xpm"));
                     if( p.isNull())
                          p = default_pix;
                     if( sorted)
@@ -95,7 +94,7 @@ p));
           sl.setAutoDelete( true);
           QStrListIterator it( sl);
           for( ; it.current(); ++it) {
-               QPixmap p( user_pix_dir + it.current() + ".xpm");
+               QPixmap p( locate("user_pic", QString(it.current()) + ".xpm"));
                if( p.isNull())
                     p = default_pix;
                if( sorted)
@@ -156,7 +155,7 @@ void KDMConfig::getConfig()
 
      // Logo
      if( logo_string.isNull()) // isEmpty() ?
-          _logo = new QString( KApplication::kde_datadir() + "/kdm/pics/kdelogo.xpm" );
+          _logo = new QString( locate("data", "kdm/pics/kdelogo.xpm") );
      else
           _logo = new QString( logo_string);
 

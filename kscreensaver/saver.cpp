@@ -14,6 +14,7 @@
 #include "config.h"
 #include "saver.h"
 #include <klocale.h>
+#include <kstddirs.h>
 
 #include "saver.moc"
 
@@ -146,9 +147,8 @@ int KPasswordDlg::tryPassword()
 	if( stars )
 	  blinkTimer->stop();
 	KProcess chkpass;
-	QString kcp_binName = "";
-	kcp_binName += KApplication::kde_bindir();
-	kcp_binName += "/kcheckpass";
+	QString kcp_binName;
+	kcp_binName = locate("exe", "kcheckpass");
 	chkpass.clearArguments();
 	chkpass << kcp_binName;
 	bool ret = chkpass.start(KProcess::DontCare, KProcess::Stdin);

@@ -100,6 +100,7 @@ void copyFile(QFile& tmp, QString const& filename)
 int main( int argc, char ** argv )
 {
   KApplication a( argc, argv );
+  KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
   QColorGroup cg = a.palette().normal();
   
   QString preproc;
@@ -131,43 +132,20 @@ int main( int argc, char ** argv )
   
   //---------------------------------------------------------------
   
-  QFileInfoList *sysList = 0;
-  QFileInfoListIterator *sysIt = 0;
-  QFileInfoList *userList = 0;
-  QStringList *userNames = 0;
-  QFileInfoListIterator *userIt = 0;
+  QStringList list;
   
-  QString adPath = kapp->kde_datadir().copy();
-  adPath += "/kdisplay/app-defaults";
-  QDir dSys( adPath);
+  QStringList adPaths = KGlobal::dirs()->findDirs("appdefaults", "");
+  for (QStringList::ConstIterator it = adPaths.begin(); it != adPaths.end(); it++) {
+    QDir dSys( *it );
   
-  if ( dSys.exists() ) {
-    dSys.setFilter( QDir::Files );
-    dSys.setSorting( QDir::Name );
-    dSys.setNameFilter("*.ad");
-    sysList = new QFileInfoList( *dSys.entryInfoList() );
+    if ( dSys.exists() ) {
+      dSys.setFilter( QDir::Files );
+      dSys.setSorting( QDir::Name );
+      dSys.setNameFilter("*.ad");
+      list += dSys.entryList();
+    }
   }
-  
-  adPath = KApplication::localkdedir().copy();
-  adPath += "/share/apps/kdisplay/app-defaults";
-  QDir dUser(adPath);
-  
-  if ( dUser.exists() ) {
-    dUser.setFilter( QDir::Files );
-    dUser.setSorting( QDir::Name );
-    dUser.setNameFilter("*.ad");
-    userList = new QFileInfoList( *dUser.entryInfoList() );
-    userNames = new QStringList( dUser.entryList() );
-  }
-  
-  if ( !sysList && !userList ) {
-    debug("No app-defaults files on system");
-    exit(0);
-  }
-  
-  if (sysList) sysIt = new QFileInfoListIterator( *sysList );
-  if (userList) userIt = new QFileInfoListIterator( *userList );
-  
+
   QString propString;
   
   time_t timestamp;
@@ -184,26 +162,8 @@ int main( int argc, char ** argv )
     exit(0);
   }
   
-  QFileInfo *fi;
-  if ( sysList  ) {
-    while ( ( fi = sysIt->current() ) ) {
-      if ( !(userNames && (userNames->find(fi->fileName()) != userNames->end())) ) {
-        // There is no userlist with that name
-        //debug("Concatenate %s",  fi->filePath().ascii() );
-        
-        copyFile(tmp, fi->filePath());
-      }
-      ++*sysIt;
-    }
-  }
-  
-  if ( userList ) {
-    while ( ( fi = userIt->current() ) ) {
-      copyFile(tmp, fi->filePath());
-      
-      ++*userIt;
-    }
-  }
+  for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
+    copyFile(tmp, locate("appdefaults", *it ));
 
   // very primitive support for  ~/.Xdefaults by appending it
   copyFile(tmp, QDir::homeDirPath() + "/.Xdefaults");

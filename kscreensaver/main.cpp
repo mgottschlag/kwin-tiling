@@ -34,6 +34,7 @@
 #include "main.moc"
 #include <klocale.h>
 #include <kconfig.h>
+#include <kstddirs.h>
 
 KLocale *glocale;
 
@@ -279,9 +280,8 @@ void setLock(QString type)
 bool canReadPasswdDatabase()
 {
 	KProcess chkpass;
-	QString kcp_binName = "";
-	kcp_binName += KApplication::kde_bindir();
-	kcp_binName += "/kcheckpass";
+	QString kcp_binName;
+	kcp_binName = locate("exe", "kcheckpass");
 	chkpass.clearArguments();
 	chkpass << kcp_binName;
 	bool ret = chkpass.start(KProcess::DontCare, KProcess::Stdin);

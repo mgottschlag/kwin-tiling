@@ -35,6 +35,7 @@
 #include <X11/Xutil.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kstddirs.h>
 
 #define SCI_DEFAULT_MODE          0
 #define SCI_DEFAULT_MOVEX         6
@@ -50,8 +51,6 @@
 
 static KScienceSaver *saver = 0;
 extern KLocale *glocale;
-
-#define PIXDIR   KApplication::getKApplication()->kde_datadir() + "/kscreensaver/"
 
 struct {
 	char name[32];
@@ -119,7 +118,7 @@ QString getScreenSaverName()
 KPrepareDlg::KPrepareDlg( QWidget *parent ) : QWidget( parent )
 {
 	save = 0;
-	QPixmap pmap( PIXDIR + "kscience-small.gif" );
+	QPixmap pmap( locate("data", "kscreensaver/pics/kscience-small.gif") );
 	w = ( pmap.isNull() ) ? 300 : 400;
 	h = 99;
 
@@ -1108,7 +1107,7 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 	// preview
 	preview = new KPreviewWidget( this );
 	preview->setFixedSize( 220, 170 );
-	QPixmap p( PIXDIR + "kscience.gif" );
+	QPixmap p( locate("data", "kscreensaver/pics/kscience.gif") );
 	if( p.isNull() )
 		preview->setBackgroundColor( black );
 	else
