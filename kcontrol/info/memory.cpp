@@ -209,7 +209,7 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	    hint = i18n("The swap space is the <b>virtual memory</b> "
 			"available to the system. "
 			"<p>It will be used on demand and is provided "
-			"through swap partitions and swap files.");
+			"through one or more swap partitions and/or swap files.");
 	    break;
 	default:
 	    hint = title = QString::null; 
