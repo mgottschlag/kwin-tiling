@@ -56,7 +56,6 @@ enum { 			/* entries for Memory_Info[] */
    into Memory_Info[] !
 */
 
-typedef unsigned long t_memsize;
 static t_memsize Memory_Info[MEM_LAST_ENTRY];
 
 #define MEMORY(x)	((t_memsize) (x))	  // it's easier...

@@ -11,7 +11,12 @@
 
 #include <kcmodule.h>
 
+#ifdef __i386__
+/* use long-long, because some 32bit-machines have more memory than 4GB (with Swap) */
+typedef unsigned long long t_memsize;
+#else
 typedef unsigned long t_memsize;
+#endif
 
 class KMemoryWidget : public KCModule
 {
@@ -32,10 +37,6 @@ private:
 public slots:
   void update_Values();
 
-/*
-protected:
-  virtual void resizeEvent( QResizeEvent * );
-*/
 };
 
 
