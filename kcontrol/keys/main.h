@@ -27,6 +27,7 @@
 #include <qtabwidget.h>
 #include <kcmodule.h>
 
+class CommandShortcutsModule;
 class ShortcutsModule;
 class ModifiersModule;
 
@@ -50,6 +51,7 @@ class KeyModule : public KCModule
 
  private:
 	QTabWidget* m_pTab;
+	CommandShortcutsModule* m_pCommandShortcuts;
 	ShortcutsModule* m_pShortcuts;
 	ModifiersModule* m_pModifiers;
 };

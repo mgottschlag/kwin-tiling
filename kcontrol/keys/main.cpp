@@ -21,6 +21,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "commandShortcuts.h"
 #include "main.h"
 #include "modifiers.h"
 #include "shortcuts.h"
@@ -61,6 +62,11 @@ void KeyModule::initGUI()
 	m_pTab->addTab( m_pShortcuts, i18n("Shortcut Schemes") );
 	connect( m_pShortcuts, SIGNAL(changed(bool)), SLOT(slotModuleChanged(bool)) );
 
+	m_pCommandShortcuts = new CommandShortcutsModule ( this );
+	m_pTab->addTab( m_pCommandShortcuts, i18n("Command Shortcuts") );
+	connect( m_pCommandShortcuts, SIGNAL(changed(bool)), SLOT(slotModuleChanged(bool)) );
+    connect( m_pTab, SIGNAL(currentChanged(QWidget*)), m_pCommandShortcuts, SLOT(showing(QWidget*)) );
+
 	m_pModifiers = new ModifiersModule( this );
 	m_pTab->addTab( m_pModifiers, i18n("Modifier Keys") );
 	connect( m_pModifiers, SIGNAL(changed(bool)), SLOT(slotModuleChanged(bool)) );
@@ -70,27 +76,25 @@ void KeyModule::initGUI()
 void KeyModule::load()
 {
 	kdDebug(125) << "KeyModule::load()" << endl;
-	if( m_pTab->currentPageIndex() == 0 )
-		m_pShortcuts->load();
+	m_pShortcuts->load();
+	m_pCommandShortcuts->load();
 }
 
 // When [Apply] or [OK] are clicked.
 void KeyModule::save()
 {
 	kdDebug(125) << "KeyModule::save()" << endl;
-	switch( m_pTab->currentPageIndex() ) {
-		case 0: m_pShortcuts->save(); break;
-		case 1: m_pModifiers->save(); break;
-	}
+	m_pShortcuts->save();
+	m_pCommandShortcuts->save();
+	m_pModifiers->save();
 }
 
 void KeyModule::defaults()
 {
 	kdDebug(125) << "KeyModule::defaults()" << endl;
-	switch( m_pTab->currentPageIndex() ) {
-		case 0: m_pShortcuts->defaults(); break;
-		case 1: m_pModifiers->defaults(); break;
-	}
+	m_pShortcuts->defaults();
+	m_pCommandShortcuts->defaults();
+	m_pModifiers->defaults();
 }
 
 QString KeyModule::quickHelp() const
