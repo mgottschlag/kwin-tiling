@@ -28,21 +28,24 @@ class LookAndFeelTab : public LookAndFeelTabBase
     Q_OBJECT
 
 public:
-    LookAndFeelTab( QWidget *parent=0, const char* name=0 );
+    LookAndFeelTab( KickerConfig *parent=0, const char* name=0 );
 
     void load();
     void save();
     void defaults();
+    void show();
 
 signals:
     void changed();
 
 protected slots:
     void browse_theme();
-
+    void hideButtonsSet(int index);
+    
 private:
     QString theme;
     QPixmap theme_preview;
+    KickerConfig* kconf;
 };
 
 #endif

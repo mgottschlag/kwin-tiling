@@ -17,6 +17,7 @@
 
 #include <qtabwidget.h>
 #include <qlayout.h>
+#include <qradiobutton.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -133,6 +134,12 @@ QString KickerConfig::quickHelp() const
                 " on the panel, e.g. dragging it with the left mouse button or using the"
                 " context menu on right button click. This context menu also offers you"
                 " manipulation of the panel's buttons and applets.");
+}
+
+bool KickerConfig::horizontal()
+{
+    return (generaltab->m_topButton->isChecked() || 
+            generaltab->m_bottomButton->isChecked());
 }
 
 extern "C"

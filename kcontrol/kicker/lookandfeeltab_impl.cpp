@@ -25,6 +25,7 @@
 #include <qslider.h>
 
 #include <kconfig.h>
+#include <kcombobox.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <klineedit.h>
@@ -32,6 +33,7 @@
 #include <kmessagebox.h>
 #include <kimageio.h>
 
+#include "main.h"
 #include "lookandfeeltab_impl.h"
 #include "lookandfeeltab_impl.moc"
 
@@ -39,15 +41,16 @@
 extern int kickerconfig_screen_number;
 
 
-LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
+LookAndFeelTab::LookAndFeelTab( KickerConfig *parent, const char* name )
   : LookAndFeelTabBase (parent, name)
 {
+    kconf = parent;
     // connections
     connect(m_manualHideAnimation, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_manualHideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_autoHideAnimation, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_autoHideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_hideButtons, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_hideButtons, SIGNAL(activated(int)), SIGNAL(changed()));
     connect(m_hideButtonSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_backgroundImage, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_backgroundButton, SIGNAL(clicked()), SLOT(browse_theme()));
@@ -167,11 +170,21 @@ void LookAndFeelTab::load()
     m_manualHideAnimation->setChecked(hideanim);
     m_autoHideAnimation->setChecked(autohideanim);
 
-    bool showHBs = c->readBoolEntry("ShowHideButtons", true);
-    m_hideButtons->setChecked(showHBs);
+    bool showLHB = c->readBoolEntry("ShowLeftHideButton", true);    
+    bool showRHB = c->readBoolEntry("ShowRightHideButton", true);
+    
+    if (showLHB)
+        if (showRHB)
+            m_hideButtons->setCurrentItem(0);
+        else
+            m_hideButtons->setCurrentItem(1);
+    else if (showRHB)
+        m_hideButtons->setCurrentItem(2);
+    else
+        m_hideButtons->setCurrentItem(3);
 
     m_hideButtonSlider->setValue(c->readNumEntry("HideButtonSize", 14));
-    m_hideButtonSlider->setEnabled(showHBs);
+    m_hideButtonSlider->setEnabled(showLHB || showRHB);
 
     delete c;
 }
@@ -193,7 +206,17 @@ void LookAndFeelTab::save()
     c->writeEntry("AutoHideAnimation", m_autoHideAnimation->isChecked());
     c->writeEntry("HideAnimationSpeed", m_manualHideSlider->value());
     c->writeEntry("AutoHideAnimationSpeed", m_autoHideSlider->value());
-    c->writeEntry("ShowHideButtons", m_hideButtons->isChecked());
+    
+    if (m_hideButtons->currentItem() == 0 || m_hideButtons->currentItem() == 1)
+        c->writeEntry("ShowLeftHideButton", "true");
+    else
+        c->writeEntry("ShowLeftHideButton", "false");
+    
+    if (m_hideButtons->currentItem() == 0 || m_hideButtons->currentItem() == 2)
+        c->writeEntry("ShowRightHideButton", "true");
+    else
+        c->writeEntry("ShowRightHideButton", "false");
+    
     c->writeEntry("HideButtonSize", m_hideButtonSlider->value());
     c->sync();
 
@@ -221,6 +244,35 @@ void LookAndFeelTab::defaults()
     m_manualHideSlider->setValue(100);
     m_autoHideSlider->setValue(25);
 
-    m_hideButtons->setChecked(true);
+    m_hideButtons->setCurrentItem(2);
     m_hideButtonSlider->setValue(14);
+}
+
+void LookAndFeelTab::hideButtonsSet(int index)
+{
+    if (index < 3)
+    {
+        m_hideButtonSlider->setEnabled(true);
+    }
+    else
+    {
+        m_hideButtonSlider->setEnabled(false);
+    }
+}
+
+void LookAndFeelTab::show()
+{
+    if (kconf->horizontal())
+    {
+        m_hideButtons->changeItem(i18n("Enable Left Hide Button Only"), 1);
+        m_hideButtons->changeItem(i18n("Enable Right Hide Button Only"), 2);
+    }
+    else
+    {
+        qDebug("vertical");
+            m_hideButtons->changeItem(i18n("Enable Top Hide Button Only"), 1);
+            m_hideButtons->changeItem(i18n("Enable Bottom Hide Button Only"), 2);
+    }
+    
+    QWidget::show();
 }

@@ -38,7 +38,8 @@ public:
     void save();
     void defaults();
     QString quickHelp() const;
-
+    bool horizontal();
+    
 public slots:
     void configChanged();
 
