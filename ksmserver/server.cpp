@@ -162,6 +162,10 @@ char * safeSmsGenerateClientID( SmsConn c )
        /* Needs to be malloc(), to look the same as libSM */
        ret = (char *)malloc(1+9+13+10+4+1 + /*safeness*/ 10);
        static int sequence = 0;
+
+       if (ret == NULL)
+           return NULL;
+
        sprintf(ret, "1%s%.13ld%.10d%.4d", my_addr->latin1(), (long)time(NULL),
            getpid(), sequence);
        sequence = (sequence + 1) % 10000;
