@@ -226,6 +226,9 @@ bool Kbd::send_macro_key( unsigned int keycode, Window window_P )
     ev.same_screen = True;
     ret = ret && XSendEvent( qt_xdisplay(), window_P, True, KeyReleaseMask, ( XEvent* )&ev );
 #endif
+    // Qt's autorepeat compression is broken and can create "aab" from "aba"
+    // XSync() should create delay longer than Qt's max autorepeat interval
+    XSync( qt_xdisplay(), False );
     return ret;
     }
 
