@@ -181,14 +181,16 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   _default = new KPushButton( KStdGuiItem::defaults(), this );
   _apply =   new KPushButton( KStdGuiItem::apply(), this );
   _reset =   new KPushButton( KGuiItem( i18n( "&Reset" ), "undo" ), this );
-  _root =    new QPushButton( i18n( "&Administrator Mode" ), this );
+  _root =    new KPushButton( KGuiItem(i18n( "&Administrator Mode" )), this );
+
+  bool mayModify = !run_as_root || !_client->useRootOnlyMsg();
 
   // only enable the requested buttons
   int b = _client->buttons();
   setVisible(_help, b & KCModule::Help);
-  setVisible(_default, !run_as_root && b & KCModule::Default);
-  setVisible(_apply, !run_as_root && (b & KCModule::Apply));
-  setVisible(_reset, !run_as_root && (b & KCModule::Apply));
+  setVisible(_default, mayModify && b & KCModule::Default);
+  setVisible(_apply, mayModify && (b & KCModule::Apply));
+  setVisible(_reset, mayModify && (b & KCModule::Apply));
   setVisible(_root, run_as_root);
 
   // disable initial buttons
@@ -209,9 +211,12 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   buttons->addWidget(_help);
   buttons->addWidget(_default);
   buttons->addStretch(1);
-  if (run_as_root)
+  if (run_as_root) 
+  {
     buttons->addWidget(_root);
-  else
+    buttons->addStretch(1);
+  }
+  if (mayModify)
   {
     buttons->addWidget(_apply);
     buttons->addWidget(_reset);
