@@ -142,5 +142,4 @@ void KCDialog::clientChanged(bool state)
   // enable/disable buttons
   _reset->setEnabled(state);
   _apply->setEnabled(state);
-  _ok->setEnabled(state);
 }
