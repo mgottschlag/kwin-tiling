@@ -60,9 +60,7 @@
 #include <auth.h>
 #endif
 
-#ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#endif
 
 #ifdef OSF1_ENH_SEC
 #include <sys/security.h>
