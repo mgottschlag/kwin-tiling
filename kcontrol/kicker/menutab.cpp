@@ -155,7 +155,7 @@ void MenuTab::load()
 
   bool cc = c->readBoolEntry("ClearMenuCache", true);
   clear_cache_cb->setChecked(cc);
-  cache_time_input->setValue(c->readNumEntry("MenuCacheTime", 60) / 100);
+  cache_time_input->setValue(c->readNumEntry("MenuCacheTime", 60000) / 1000);
   cache_time_input->setEnabled(cc);
 
   max_entries_input->setValue(c->readNumEntry("MaxEntries", 200));
@@ -176,7 +176,7 @@ void MenuTab::save()
   c->setGroup("menus");
 
   c->writeEntry("ClearMenuCache", clear_cache_cb->isChecked());
-  c->writeEntry("MenuCacheTime", cache_time_input->value() * 100);
+  c->writeEntry("MenuCacheTime", cache_time_input->value() * 1000);
   c->writeEntry("MaxEntries", max_entries_input->value());
   c->writeEntry("MergeKDEDirs", merge_cb->isChecked());
   c->writeEntry("UseRecent", show_recent_cb->isChecked());
