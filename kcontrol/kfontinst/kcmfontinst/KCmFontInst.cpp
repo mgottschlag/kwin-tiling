@@ -228,9 +228,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     topMnu->insert(sep);
 
-    if((act=itsDirOp->actionCollection()->action("properties")) )
-        topMnu->insert(act);
-
     if( (itsSepDirsAct=itsDirOp->actionCollection()->action("separate dirs")) &&
         (itsShowHiddenAct=itsDirOp->actionCollection()->action("show hidden")))
     {
