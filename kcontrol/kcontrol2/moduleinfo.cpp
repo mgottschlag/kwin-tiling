@@ -56,10 +56,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 
   // set the modules' simple attributes
   setName(desktop.readName());
-  QString icon = desktop.readMiniIcon();
-  if (icon.isEmpty())
-    icon = desktop.readIcon();
-  setIcon(icon);
+  setIcon(desktop.readIcon());
   
   // try to find out the modules' groups
   QString group = desktop.readEntry("Group");
