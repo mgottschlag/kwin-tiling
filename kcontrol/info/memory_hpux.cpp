@@ -87,6 +87,6 @@ void KMemoryWidget::update()
     bufferMem->setText(format(fields_[2]*page_size));	/* FIXME ?? */
 
       swapMem->setText(format(total_swap));
-  freeSwapMem->setText(format(free_swap)+QString("Freeee!"));
+  freeSwapMem->setText(format(free_swap));
 
 }
