@@ -73,9 +73,7 @@
 #define XFT_CACHE_CMD "xftcache"
 #endif
 
-#define KDE_DBUG kdDebug(7124)
-
-#include <iostream>
+#define KDE_DBUG kdDebug()
 
 extern "C"
 {
@@ -110,11 +108,16 @@ enum ExistsType
 static ExistsType checkIfExists(const QStringList &list, const QString &item)
 {
     QStringList::ConstIterator it;
-    KDE_struct_stat            buff;
 
     for(it=list.begin(); it!=list.end(); ++it)
-        if(-1!=KDE_stat(QFile::encodeName(*it+item).data(), &buff))
-            return S_ISDIR(buff.st_mode) ? EXISTS_DIR : EXISTS_FILE;
+    {
+        QString item(*it+item);
+
+        if(CMisc::fExists(item, true))
+            return EXISTS_FILE;
+        else if(CMisc::dExists(item))
+            return EXISTS_DIR;
+    }
 
     return EXISTS_NO;
 }
@@ -136,27 +139,38 @@ static void addAtom(KIO::UDSEntry &entry, unsigned int ID, long l, const QString
     entry.append(atom);
 }
 
-static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QString &path, const QString &url, const QString &mime)
+static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QString &path, const QString &url, const QString &mime, bool file)
 {
     KDE_DBUG << "createUDSEntry " << name << ' ' << path << endl;
 
     KDE_struct_stat buff;
+    QString         formattedPath;
     QCString        cPath(QFile::encodeName(path));
 
     entry.clear();
-    if(-1!=KDE_lstat(cPath, &buff ))
+
+    bool exists=-1!=KDE_lstat(cPath, &buff),
+         formattedExists=false;
+
+    if(!exists && file)
     {
-        if(CFontEngine::isAFont(cPath) || CFontEngine::isAAfm(cPath))
+        formattedPath=CMisc::formatFileName(path);
+        formattedExists=-1!=KDE_lstat(QFile::encodeName(formattedPath), &buff);
+    }
+
+    if(exists || formattedExists)
+    {
+        if(file && (CFontEngine::isAFont(cPath) || CFontEngine::isAAfm(cPath)))
         {
-            if(CGlobal::fe().openFont(path))
+            if(CGlobal::fe().openFont(exists ? path : formattedPath))
             {
                 QString displayedName(CGlobal::fe().getFullName());
 
-                if(CFontEngine::isAAfm(QFile::encodeName(path)))
+                if(CFontEngine::isAAfm(cPath))
                     displayedName+=i18n(", Metrics");
             
                 if(name[0]=='.')
-                    displayedName+=KIO_FONTS_DISABLED;
+                    displayedName+=i18n(KIO_FONTS_DISABLED);
                 addAtom(entry, KIO::UDS_NAME, 0, displayedName);
                 addAtom(entry, KIO::UDS_URL, 0, url);
                 CGlobal::fe().closeFont();
@@ -170,7 +184,7 @@ static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QStr
             QString displayedName(disabled ? name.mid(1) : name);
 
             if(disabled)
-                displayedName+=KIO_FONTS_DISABLED;
+                displayedName+=i18n(KIO_FONTS_DISABLED);
             addAtom(entry, KIO::UDS_NAME, 0, displayedName);
             addAtom(entry, KIO::UDS_URL, 0, url);
         }
@@ -220,15 +234,15 @@ static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QStr
 
         it++;  // Skip 1st one - thats this one!!!
         for(; it!=CGlobal::cfg().getSysFontsDirs().end(); ++it)
-            if(createUDSEntry(entry, name, *it, url, mime))
+            if(createUDSEntry(entry, name, *it, url, mime, file))
                 return true;
-        return createUDSEntry(entry, name, "/", url, mime);
+        return createUDSEntry(entry, name, "/", url, mime, file);
     }
 
     return false;
 }
 
-#define createDirEntry(A, B, C, D, E) createUDSEntry(A, B, C, D, E ? KIO_FONTS_PROTOCOL"/system-folder" : KIO_FONTS_PROTOCOL"/folder")
+#define createDirEntry(A, B, C, D, E) createUDSEntry(A, B, C, D, E ? KIO_FONTS_PROTOCOL"/system-folder" : KIO_FONTS_PROTOCOL"/folder", false)
 
 static bool createFileEntry(KIO::UDSEntry &entry, const QString &fName, const QString &fPath, const QString &url)
 {
@@ -274,7 +288,7 @@ static bool createFileEntry(KIO::UDSEntry &entry, const QString &fName, const QS
     }
 
     if(!err)
-        err=!createUDSEntry(entry, fName, fPath, QString(KIO_FONTS_PROTOCOL)+QChar(':')+url, mime);
+        err=!createUDSEntry(entry, fName, fPath, QString(KIO_FONTS_PROTOCOL)+QChar(':')+url, mime, true);
 
     return !err;
 }
@@ -527,7 +541,6 @@ void CKioFonts::listDir(const QStringList &top, const QString &sub, const KURL &
 void CKioFonts::stat(const KURL &url)
 {
     KDE_DBUG << "stat " << url.path() << endl;
-std::cerr << "stat " << url.path().latin1() << std::endl;
     CHECK_URL_ROOT_OK(url)
 
     QStringList   path(QStringList::split('/', url.path(-1), false));
@@ -575,7 +588,6 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, bool sys)
 {
     KDE_DBUG << "createStatEntry " << url.path() << endl;
 
-
     const QStringList          top=CGlobal::cfg().getRealTopDirs(url.path());
     QStringList::ConstIterator it;
     QString                    name(CMisc::getName(url.path()));
@@ -602,9 +614,9 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, bool sys)
                 }
             }
         }
-        else if(CMisc::fExists(*it+sub) &&
+        else if(CMisc::fExists(*it+sub, true) &&
                 (CFontEngine::isAFont(QFile::encodeName(name)) || CFontEngine::isAAfm(QFile::encodeName(name))) &&
-                CMisc::fExists(*it+sub) && createFileEntry(entry, name, *it+sub, url.path()))
+                createFileEntry(entry, name, *it+sub, url.path()))
             return true;
     }
 
@@ -687,13 +699,11 @@ static bool writeAll(int fd, const char *buf, size_t len)
 void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
 {
     KDE_DBUG << "put " << u.path() << endl;
-std::cerr << "put " << u.path().latin1() << std::endl;
 
-    QString  destOrig(convertUrl(u, false));
-    QCString destOrigC(QFile::encodeName(destOrig));
+    QCString fnameC(QFile::encodeName(u.filename()));
 
     // Check mime-type - only want to copy fonts, or AFM files...
-    if(!(CFontEngine::isAFont(destOrigC) || CFontEngine::isA(destOrigC, "afm")))
+    if(!(CFontEngine::isAFont(fnameC) || CFontEngine::isA(fnameC, "afm")))
     {
         error(KIO::ERR_SLAVE_DEFINED, i18n("Only fonts may be installed."));
         return;
@@ -702,9 +712,6 @@ std::cerr << "put " << u.path().latin1() << std::endl;
     KURL url(u);
     if(!confirmUrl(url))
         return;
-
-    destOrig=convertUrl(url, false);
-    destOrigC=(QFile::encodeName(destOrig));
 
     ExistsType origExists=checkIfExists(CGlobal::cfg().getRealTopDirs(url.path()), CMisc::getSub(url.path()));
 
@@ -727,6 +734,9 @@ std::cerr << "put " << u.path().latin1() << std::endl;
                                                          "Please rename/disable this."));
         return;
     }
+
+    QString  destOrig(CMisc::formatFileName(convertUrl(u, false)));
+    QCString destOrigC(QFile::encodeName(destOrig));
 
     if(nonRootSys(url))
     {
@@ -916,13 +926,14 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
     KDE_DBUG << "copy " << src.path() << " - " << d.path() << endl;
     CHECK_URL(src)
 
-    QCString        realSrc=QFile::encodeName(convertUrl(src, true)),
-                    realDest=QFile::encodeName(convertUrl(d, false));
+    QCString        realSrc=QFile::encodeName(convertUrl(src, true));
     KDE_struct_stat buffSrc;
 
-    KDE_DBUG << "REAL:" << realSrc << " TO REAL:" << realDest << endl;
-
-std::cerr << "REAL:" << realSrc.data() << " TO REAL:" << realDest.data() << std::endl;
+    if (-1==KDE_stat(realSrc.data(), &buffSrc))
+    {
+        error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, src.path());
+        return;
+    }
     if(S_ISDIR(buffSrc.st_mode))
     {
         error(KIO::ERR_IS_DIRECTORY, src.path());
@@ -939,9 +950,10 @@ std::cerr << "REAL:" << realSrc.data() << " TO REAL:" << realDest.data() << std:
     if(!confirmUrl(dest))
         return;
 
-    realDest=QFile::encodeName(convertUrl(dest, false));
-
+    QCString   realDest=QFile::encodeName(CMisc::formatFileName(convertUrl(dest, false)));
     ExistsType destExists=checkIfExists(CGlobal::cfg().getRealTopDirs(dest.path()), CMisc::getSub(dest.path()));
+
+    KDE_DBUG << "REAL:" << realSrc << " TO REAL:" << realDest << endl;
 
     if (EXISTS_NO!=destExists)
     {
