@@ -30,6 +30,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kstddirs.h>
+#include <krandomsequence.h>
 
 #include "helpers.h"
 #include "science.h"
@@ -257,13 +258,13 @@ void KScienceSaver::myAssert( bool term, const char *eMsg )
 
 void KScienceSaver::initialize()
 {
+	KRandomSequence rnd;
 	initLens();
 	signed int ws = (signed int) (mWidth -  diam);
 	signed int hs = (signed int) (mHeight - diam);
 
-	srandom( (int) time( (time_t *) NULL ) );
-	x = (double) ( (ws > 0) ? (random() % ws ) : 0 );
-	y = (double) ( (hs > 0) ? (random() % hs ) : 0 );
+	x = (ws > 0) ? (rnd.getDouble() * ws ) : 0.0;
+	y = (hs > 0) ? (rnd.getDouble() * hs ) : 0.0;
 
 	xcoord = (int) x;
 	ycoord = (int) y;		

@@ -41,6 +41,7 @@
 #include <qslider.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <krandomsequence.h>
 #include "xlock.h"
 #include "../config.h"
 
@@ -806,6 +807,7 @@ initmorph3d(Window window)
 	Display    *display = dsp;
 	morph3dstruct *mp;
 	XWindowAttributes xwa;
+	KRandomSequence rnd;
 
 	(void) XGetWindowAttributes(dsp, window, &xwa);
 
@@ -815,7 +817,7 @@ initmorph3d(Window window)
 			return;
 	}
 	mp = &morph3d[screen];
-	mp->step = NRAND(90);
+	mp->step = rnd.getLong(90);
 
 	if (mp->glx_context) {
 		glXDestroyContext(display, mp->glx_context);
@@ -867,7 +869,7 @@ initmorph3d(Window window)
 	reshape(xwa.width, xwa.height);
 	mp->object = batchcount;
 	if (mp->object <= 0 || mp->object > 5)
-		mp->object = NRAND(5) + 1;
+		mp->object = rnd.getLong(5) + 1;
 	pinit();
 }
 

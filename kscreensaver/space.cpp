@@ -52,6 +52,7 @@
 #include <qslider.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <krandomsequence.h>
 #include "xlock.h"
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
@@ -118,6 +119,7 @@ starRec stars[MAXSTARS];
 float sinTable[MAXANGLES];
 
 static GLXContext  glx_context;
+static KRandomSequence *rnd = 0;
 
 float Sin(float angle)
 {
@@ -134,18 +136,18 @@ float Cos(float angle)
 void NewStar(GLint n, GLint d)
 {
 
-    if (random()%4 == 0) {
+    if (rnd->getLong(4) == 0) {
 	stars[n].type = CIRCLE;
     } else {
 	stars[n].type = STREAK;
     }
-    stars[n].x[0] = (float)(random() % MAXPOS - MAXPOS / 2);
-    stars[n].y[0] = (float)(random() % MAXPOS - MAXPOS / 2);
-    stars[n].z[0] = (float)(random() % MAXPOS + d);
-    if (random()%4 == 0 && flag == WEIRD) {
-	stars[n].offsetX = (float)(random() % 100 - 100 / 2);
-	stars[n].offsetY = (float)(random() % 100 - 100 / 2);
-	stars[n].offsetR = (float)(random() % 25 - 25 / 2);
+    stars[n].x[0] = rnd->getDouble() * MAXPOS - MAXPOS / 2;
+    stars[n].y[0] = rnd->getDouble() * MAXPOS - MAXPOS / 2;
+    stars[n].z[0] = rnd->getDouble() * MAXPOS + d;
+    if (rnd->getLong(4) == 0 && flag == WEIRD) {
+	stars[n].offsetX = rnd->getDouble()* 100 - 100 / 2;
+	stars[n].offsetY = rnd->getDouble()* 100 - 100 / 2;
+	stars[n].offsetR = rnd->getDouble()* 25 - 25 / 2;
     } else {
 	stars[n].offsetX = 0.0;
 	stars[n].offsetY = 0.0;
@@ -253,8 +255,6 @@ static void Init(void)
 {
     float angle;
     GLint n;
-
-    srandom((unsigned int)time(NULL));
 
     for (n = 0; n < MAXSTARS; n++) {
 	NewStar(n, 100);
@@ -497,6 +497,7 @@ int setupScreenSaver()
 
 kSpaceSaver::kSpaceSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
+	rnd = new KRandomSequence();
 	readSettings();
 	counter = (int)warpinterval *WARPFACTOR;
 
@@ -515,6 +516,7 @@ kSpaceSaver::~kSpaceSaver()
 	release_Space();
 	QColor::leaveAllocContext();
 	QColor::destroyAllocContext( colorContext );
+	delete rnd; rnd = 0;
 }
 
 void kSpaceSaver::setSpeed( int spd )

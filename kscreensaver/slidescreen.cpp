@@ -27,6 +27,7 @@
 #include <klocale.h>
 #include <kbuttonbox.h>
 #include <kmessagebox.h>
+#include <krandomsequence.h>
 
 #include "slidescreen.h"
 #include "helpers.h"
@@ -58,6 +59,7 @@ static GC gc;
 static int max_width, max_height;
 
 static XImage *save;
+static KRandomSequence *rnd = 0;
 
 static void
 init_slide (Display *dpy, Window window, kSlideScreenSaver *)
@@ -206,8 +208,8 @@ init_slide (Display *dpy, Window window, kSlideScreenSaver *)
 
   grid_w = bitmap_w / grid_size;
   grid_h = bitmap_h / grid_size;
-  hole_x = random () % grid_w;
-  hole_y = random () % grid_h;
+  hole_x = rnd->getLong(grid_w);
+  hole_y = rnd->getLong(grid_h);
   xoff = (bitmap_w - (grid_w * grid_size)) / 2;
   yoff = (bitmap_h - (grid_h * grid_size)) / 2;
 
@@ -297,7 +299,7 @@ slide1 (Display *dpy, Window window)
  int i, x, y, ix, iy, dx, dy, dir, w, h, size, inc;
  static int last = -1;
  do {
-   dir = random () % 4;
+   dir = rnd->getLong(4);
    switch (dir)
      {
      case 0: dx = 0,  dy = 1;  break;
@@ -314,10 +316,10 @@ slide1 (Display *dpy, Window window)
 
  switch (dir)
    {
-   case 0: size = 1 + (random()%(grid_h - hole_y - 1)); h = size; w = 1; break;
-   case 1: size = 1 + (random()%hole_x); 	        w = size; h = 1; break;
-   case 2: size = 1 + (random()%hole_y);	        h = size; w = 1; break;
-   case 3: size = 1 + (random()%(grid_w - hole_x - 1)); w = size; h = 1; break;
+   case 0: size = 1 + rnd->getLong(grid_h - hole_y - 1); h = size; w = 1; break;
+   case 1: size = 1 + rnd->getLong(hole_x); 	        w = size; h = 1; break;
+   case 2: size = 1 + rnd->getLong(hole_y);	        h = size; w = 1; break;
+   case 3: size = 1 + rnd->getLong(grid_w - hole_x - 1); w = size; h = 1; break;
    default: abort ();
    }
 
@@ -414,6 +416,7 @@ int setupScreenSaver()
 
 kSlideScreenSaver::kSlideScreenSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
+	rnd = new KRandomSequence();
 	readSettings();
 
 	colorContext = QColor::enterAllocContext();
@@ -431,6 +434,7 @@ kSlideScreenSaver::~kSlideScreenSaver()
 	slide_cleanup();
 	QColor::leaveAllocContext();
 	QColor::destroyAllocContext( colorContext );
+	delete rnd; rnd = 0;
 }
 
 void kSlideScreenSaver::readSettings()

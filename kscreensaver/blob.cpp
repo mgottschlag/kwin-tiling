@@ -35,6 +35,7 @@
 #include <kmessagebox.h>
 #include <kbuttonbox.h>
 #include <klocale.h>
+#include <krandomsequence.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -45,9 +46,10 @@
 
 #include "helpers.h"
 
-#define SMALLRAND(a)	(int)(random()%(int)(a)+1)
+#define SMALLRAND(a)	(int)(rnd->getLong(a)+1)
 
 static KBlobSaver *saver = NULL;
+static KRandomSequence *rnd = 0;
 
 QString alg_str[5];
 void initAlg() 
@@ -68,6 +70,7 @@ KBlobSaver::KBlobSaver
 )
 : kScreenSaver(drawable)
 {
+	rnd = new KRandomSequence();
  initAlg();
  QColor color;
 	float ramp = (256.0-64.0)/(float)RAMP;
@@ -128,9 +131,6 @@ KBlobSaver::KBlobSaver
 	// record starting time to know when to change frames
 	start = time(NULL);
 
-	// set seed so it will look different each time
-	srandom((unsigned long)time(NULL));
-
 	// init some parameters used by all algorithms
 	xhalf = mWidth/2;
 	yhalf = mHeight/2;
@@ -169,6 +169,7 @@ KBlobSaver::~KBlobSaver()
 
 	QColor::leaveAllocContext();
 	QColor::destroyAllocContext(colorContext);
+	delete rnd; rnd = 0;
 }
 
 void KBlobSaver::setAlgorithm(int a)
@@ -204,9 +205,7 @@ void KBlobSaver::cbSetup()
 	cb_sradians = 0.0;
 	cb_deviate = SMALLRAND(mHeight/20)+(mHeight/15);
 	cb_radius = mHeight/2-cb_deviate*2-2*dim;
-	//cb_devradinc = (((float)random()/(float)RAND_MAX)*10.0*2.0*M_PI)/360.0;
-        // Commented out by David. RAND_MAX might not be accurate...
-        cb_devradinc = (((float)(random()%30000)/30000.0)*10.0*2.0*M_PI)/360.0;
+        cb_devradinc = (rnd->getDouble()*10.0*2.0*M_PI)/360.0;
 }
 
 void KBlobSaver::pcSetup()

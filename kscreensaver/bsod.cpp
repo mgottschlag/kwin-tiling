@@ -1078,7 +1078,7 @@ macsbug (Window window, int delay)
 void BSODSaver::draw_bsod (Window win)
 {
       int i=-1;
-      i = (random()%8);
+      i = (kapp->random()%8);
       switch (i) {
 	case 0: windows(win, delay, True); break;
 	case 1: windows(win, delay, False); break;
@@ -1145,11 +1145,6 @@ config->sync();
 BSODSaver::BSODSaver (Drawable d)
  : kScreenSaver(d)
 {
-#ifdef __FreeBSD__
-	srandomdev();
-#else
-	srandom(time(0));
-#endif
 	timer = new QTimer(this);
 
     // Clear to background colour when exposed

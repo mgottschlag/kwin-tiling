@@ -122,6 +122,7 @@ FIXME: this could be clearer done by a calculation on the position.
 #include <qslider.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <krandomsequence.h>
 
 #include "xlock.h"
 #ifdef HAVE_CONFIG_H
@@ -154,7 +155,7 @@ GLenum doubleBuffer, directRender;
 GLint windW, windH;
 
 static GLXContext  glx_context;
-
+static KRandomSequence *rnd = 0;
 
 void reshape(int w, int h)
 {
@@ -343,15 +344,8 @@ static GLfloat color[MAXPIPES][4] =
 
 void setColors(int n)
 { int i;
-/*
-  for (i = 0; i < 2; i++)
-  {
-    base[0][i] = (random()%256)/255.0;
-    base[1][i] = (random()%256)/255.0;
-  }
-*/
-  int hue0 = random()%360;
-  int hue1 = (hue0 + random()%260 + 50)%360;
+  int hue0 = rnd->getLong(360);
+  int hue1 = (hue0 + rnd->getLong(260) + 50)%360;
   QColor co[2];
   co[0].setHsv(hue0,200,180);
   co[1].setHsv(hue1,200,150);
@@ -407,11 +401,11 @@ bool Pipe::chooseDir(bool mayExtend)
     int y1 = y0 + direct[i].y;
     int z1 = z0 + direct[i].z;
     if (!box->goodCubeLocation(x1,y1,z1)) continue;
-    if (mayExtend && i == dir && random()%(CUBESIZE) != 0) goto extend;
+    if (mayExtend && i == dir && rnd->getLong(CUBESIZE) != 0) goto extend;
     possible[n++] = i;
   }
   if (n==0) return FALSE; // out of choices, start over
-  dir = possible[random()%n];
+  dir = possible[rnd->getLong(n)];
 extend:
   int x1 = x0 + direct[dir].x;
   int y1 = y0 + direct[dir].y;
@@ -425,9 +419,9 @@ void Pipe::choosePos()
   running = TRUE;
   for (;;)
   {
-    int x1 = random()%(2*CUBESIZE+1)-CUBESIZE;
-    int y1 = random()%(2*CUBESIZE+1)-CUBESIZE;
-    int z1 = random()%(2*CUBESIZE+1)-CUBESIZE;
+    int x1 = rnd->getLong(2*CUBESIZE+1)-CUBESIZE;
+    int y1 = rnd->getLong(2*CUBESIZE+1)-CUBESIZE;
+    int z1 = rnd->getLong(2*CUBESIZE+1)-CUBESIZE;
     if (!box->goodCubeLocation(x1,y1,z1)) continue; // occupied
     box->occupyCubeLocation(x1,y1,z1);
     x = x1*SUBCELLS; y = y1*SUBCELLS; z = z1*SUBCELLS;
@@ -437,9 +431,9 @@ void Pipe::choosePos()
 
 void kPipesSaver::reinit()
 { int i;
-  xRot = 1.0*random();
-  yRot = 1.0*random();
-  zRot = 1.0*random(); // default object rotation
+  xRot = rnd->getDouble();
+  yRot = rnd->getDouble();
+  zRot = rnd->getDouble(); // default object rotation
   steps = 0;
   running = pipes;
   initial = TRUE;
@@ -557,7 +551,7 @@ void kPipesSaver::paintStep()
     {
       glCallList( arrow );
       if (p->dir != p->prev_dir)
-        glCallList( random()%3==0?sphere1:sphere0 );
+        glCallList( rnd->getLong(3)==0?sphere1:sphere0 );
       p->prev_dir = p->dir;
     }
     else
@@ -668,11 +662,12 @@ GLuint kPipesSaver::makeSphere(float f, float trans)
 
 kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
+  rnd = new KRandomSequence();
   initXLock( mGc );
 
-  xRot = 1.0*random();
-  yRot = 1.0*random();
-  zRot = 1.0*random();                // default object rotation
+  xRot = rnd->getDouble();
+  yRot = rnd->getDouble();
+  zRot = rnd->getDouble();            // default object rotation
   scale = 1.0;                        // default object scale
   steps = 0;
   initial = TRUE;
@@ -699,7 +694,6 @@ kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
   glShadeModel( GL_SMOOTH );
 //glClearColor( 0.0, 0.0, 0.0, 0.0 ); // Let OpenGL clear to black
 
-  srandom(time(NULL));
   int i; for (i = 0; i<MAXPIPES; i++) pipe[i] = new Pipe(this, i%MAXPIPES); 
 
   readSettings();
@@ -715,6 +709,7 @@ kPipesSaver::~kPipesSaver()
 //FIXME: delete display lists
   doneGL();
   int i; for (i = 0; i<MAXPIPES; i++) delete pipe[i]; 
+  delete rnd; rnd = 0;
 }
 
 // configuration support

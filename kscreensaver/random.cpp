@@ -18,6 +18,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdesktopfile.h>
+#include <krandomsequence.h>
 #include "vroot.h"
 
 #define MAX_ARGS    20
@@ -37,8 +38,6 @@ int main(int argc, char *argv[])
     int i;
     char *sargs[MAX_ARGS];
 
-    srandom(time(0));
-    
     for (i = 1; i < argc; i++)
     {
         if (!strcmp(argv[i], "-setup"))
@@ -70,7 +69,8 @@ int main(int argc, char *argv[])
     QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav",
                                                    "*.desktop", false, true);
 
-    int indx = random()%saverFileList.count();
+    KRandomSequence rnd;
+    int indx = rnd.getLong(saverFileList.count());
     QString filename = *(saverFileList.at(indx));
 
     KDesktopFile config(filename, true);

@@ -25,6 +25,7 @@
 #include <qslider.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <krandomsequence.h>
 
 #include "xlock.h"		/* in xlockmore distribution */
 
@@ -118,8 +119,8 @@ bool use3d;
  * variation.
  */
 
-#define VARRANDALPHA (NRAND((int) (M_PI * 1000.0))/1000.0)
-#define VARRANDSTEP  (M_PI/(NRAND(100)+100.0))
+#define VARRANDALPHA (rnd->getDouble())
+#define VARRANDSTEP  (M_PI/(rnd->getDouble()*100.0+100.0))
 #define VARRANDMIN   (-70.0)
 #define VARRANDMAX   70.0
 
@@ -199,6 +200,8 @@ typedef struct StarFieldStruct
 #endif
 } StarField;
 
+static KRandomSequence *rnd = 0;
+
 static StarField starfield;
 
 /*********/
@@ -213,7 +216,7 @@ sinvary(SinVariable * v)
 	if (v->mayrand == 0)
 		v->alpha += v->step;
 	else {
-		int         vaval = NRAND(100);
+		int         vaval = rnd->getLong(100);
 
 		if (vaval <= v->mayrand)
 			sinvary(v->varrand);
@@ -292,7 +295,7 @@ initbouboule(Window win)
  	XFillRectangle(dsp, win, Scr[screen].gc, 0, 0, sp->width,sp->height);
 
 	if (size < -MINSIZE)
-		sp->max_star_size = NRAND(-size - MINSIZE + 1) + MINSIZE;
+		sp->max_star_size = rnd->getLong(-size - MINSIZE + 1) + MINSIZE;
 	else if (size < MINSIZE)
 		sp->max_star_size = MINSIZE;
 	else
@@ -322,7 +325,7 @@ initbouboule(Window win)
 			sp->oldxarcleft = NULL;
 		}
 #endif
-		sp->NbStars = NRAND(-sp->NbStars - MINSTARS + 1) + MINSTARS;
+		sp->NbStars = rnd->getLong(-sp->NbStars - MINSTARS + 1) + MINSTARS;
 	} else if (sp->NbStars < MINSTARS)
 		sp->NbStars = MINSTARS;
 
@@ -343,12 +346,12 @@ initbouboule(Window win)
 	{
 		/* We initialize evolving variables */
 		sininit(&sp->x,
-			NRAND(3142) / 1000.0, M_PI / (NRAND(100) + 100.0),
+			rnd->getDouble() * M_PI, M_PI / (rnd->getDouble()*100.0 + 100.0),
 			((double) sp->width) / 4.0,
 			3.0 * ((double) sp->width) / 4.0,
 			POSCANRAND);
 		sininit(&sp->y,
-			NRAND(3142) / 1000.0, M_PI / (NRAND(100) + 100.0),
+			rnd->getDouble() * M_PI, M_PI / (rnd->getDouble()*100.0 + 100.0),
 			((double) sp->height) / 4.0,
 			3.0 * ((double) sp->height) / 4.0,
 			POSCANRAND);
@@ -358,14 +361,14 @@ initbouboule(Window win)
 		/* bouboule uses the x-radius for the z-radius, too, we have to */
 		/* use the x-values. */
 		sininit(&sp->z,
-			NRAND(3142) / 1000.0, M_PI / (NRAND(100) + 100.0),
+			rnd->getDouble() * M_PI, M_PI / (rnd->getDouble()*100.0 + 100.0),
 			((double) sp->width / 2.0 + MINZVAL),
 			((double) sp->width / 2.0 + MAXZVAL),
 			POSCANRAND);
 
 
 		sininit(&sp->sizex,
-			NRAND(3142) / 1000.0, M_PI / (NRAND(100) + 100.0),
+			rnd->getDouble() * M_PI, M_PI / (rnd->getDouble()*100.0 + 100.0),
 			MIN(((double) sp->width) - sp->x.value,
 			    sp->x.value) / 5.0,
 			MIN(((double) sp->width) - sp->x.value,
@@ -373,7 +376,7 @@ initbouboule(Window win)
 			SIZECANRAND);
 
 		sininit(&sp->sizey,
-			NRAND(3142) / 1000.0, M_PI / (NRAND(100) + 100.0),
+			rnd->getDouble() * M_PI, M_PI / (rnd->getDouble()*100.0 + 100.0),
 			MAX(sp->sizex.value / MAX_SIZEX_SIZEY,
 			    sp->sizey.maximum / 5.0),
 			MIN(sp->sizex.value * MAX_SIZEX_SIZEY,
@@ -383,15 +386,15 @@ initbouboule(Window win)
 			SIZECANRAND);
 
 		sininit(&sp->thetax,
-			NRAND(3142) / 1000.0, M_PI / (NRAND(200) + 200.0),
+			rnd->getDouble() * M_PI, M_PI / (rnd->getDouble()*200.0 + 200.0),
 			-M_PI, M_PI,
 			THETACANRAND);
 		sininit(&sp->thetay,
-			NRAND(3142) / 1000.0, M_PI / (NRAND(200) + 200.0),
+			rnd->getDouble() * M_PI, M_PI / (rnd->getDouble()*200.0 + 200.0),
 			-M_PI, M_PI,
 			THETACANRAND);
 		sininit(&sp->thetaz,
-			NRAND(3142) / 1000.0, M_PI / (NRAND(400) + 400.0),
+			rnd->getDouble() * M_PI, M_PI / (rnd->getDouble()*400.0 + 400.0),
 			-M_PI, M_PI,
 			THETACANRAND);
 	}
@@ -414,8 +417,8 @@ initbouboule(Window win)
 			oarcleft = &(sp->oldxarcleft[i]);
 #endif
 		/* Elevation and bearing of the star */
-		theta = dtor((NRAND(1800)) / 10.0 - 90.0);
-		omega = dtor((NRAND(3600)) / 10.0 - 180.0);
+		theta = dtor(rnd->getDouble()*180.0 - 90.0);
+		omega = dtor(rnd->getDouble()*360.0 - 180.0);
 
 		/* Stars coordinates in a 3D space */
 		star->x = cos(theta) * sin(omega);
@@ -423,7 +426,7 @@ initbouboule(Window win)
 		star->z = cos(omega);
 
 		/* We set the stars size */
-		star->size = NRAND(2 * sp->max_star_size);
+		star->size = rnd->getLong(2 * sp->max_star_size);
 		if (star->size < sp->max_star_size)
 			star->size = 0;
 		else
@@ -477,7 +480,7 @@ initbouboule(Window win)
 	}
 
 	if (!mono && (Scr[screen].npixels > 2))
-		sp->colorp = NRAND(Scr[screen].npixels);
+		sp->colorp = rnd->getLong(Scr[screen].npixels);
 	/* We set up the starfield color */
 	if (!use3d && !mono && Scr[screen].npixels > 2)
 		sp->color = Scr[screen].pixels[sp->colorp];
@@ -861,6 +864,7 @@ int setupScreenSaver()
 
 kBoubouleSaver::kBoubouleSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
+	rnd = new KRandomSequence();
 	readSettings();
 
 	colorContext = QColor::enterAllocContext();
@@ -887,6 +891,7 @@ kBoubouleSaver::~kBoubouleSaver()
         release_bouboule();
 	QColor::leaveAllocContext();
 	QColor::destroyAllocContext( colorContext );
+	delete rnd; rnd = 0;
 }
 
 void kBoubouleSaver::setSpeed( int spd )
