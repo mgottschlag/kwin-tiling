@@ -1,3 +1,7 @@
+1999-03-06  Mario Weilguni <mweilguni@kde.org>
+
+	* changes for Qt 2.0
+
 1998-11-29  Alex Zepeda  <garbanzo@hooked.net>
 
 	* pics/Makefile.am, pics/mini/Makefile.am: Install icons from their

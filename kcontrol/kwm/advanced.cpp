@@ -71,7 +71,7 @@ KAdvancedConfig::KAdvancedConfig(QWidget * parent, const char *name)
   b3grab->setMinimumSize(atLabel->size());
   chkLay->addMultiCellWidget(b3grab,4,4,0,1);
 
-  chkLay->activate();
+  chkLay->activate();  
 
   lay->addWidget(keyBox);
 
@@ -300,8 +300,8 @@ myListBrowser::myListBrowser(const char *title, QWidget *parent, const char *nam
   bEdit->setMinimumSize(bEdit->size());
   lay->addWidget(bEdit,1,0);
 
-  connect(bEdit, SIGNAL(textChanged(const char *)),
-	  this, SLOT(bEditChanged(const char *)));
+  connect(bEdit, SIGNAL(textChanged(const QString &)),
+	  this, SLOT(bEditChanged(const QString &)));
 
   bAdd = new QPushButton("+",browserBox);
   bAdd->adjustSize();
@@ -367,8 +367,8 @@ void myListBrowser::feedList(QStrList *thisList) {
   victimList = thisList;
 }
 
-void myListBrowser::bEditChanged(const char *a) {
-  bool not_empty = strcmp(a, "");
+void myListBrowser::bEditChanged(const QString &a) {
+  bool not_empty = a.length() > 0;
   bAdd->setEnabled(not_empty);
   bDel->setEnabled(not_empty);
 }
