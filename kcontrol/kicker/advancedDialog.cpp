@@ -77,7 +77,7 @@ void advancedDialog::load()
     c.setGroup("General");
 
     bool fadedOut = c.readBoolEntry("FadeOutAppletHandles", false);
-    bool hideHandles = c.readBoolEntry("HideApplletHandles", false);
+    bool hideHandles = c.readBoolEntry("HideAppletHandles", false);
     if (hideHandles)
         m_advancedWidget->hideHandles->setChecked(true);
     else if (fadedOut)
