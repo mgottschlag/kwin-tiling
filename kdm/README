@@ -4,24 +4,11 @@ This is the KDE Display Manager (kdm) for KDE-2.0.
 
 Kdm is intended as a "drop-in" replacement of xdm. It reads the xdm
 specific files (usually in /usr/X11R6/lib/X11/xdm), so it should not be
-necessary to change them. The KDE configuration is in the file
-$(KDEDIR)/config/kdmrc. Please look at the HTML and the example kdmrc.
+necessary to change them. You can change the configuration from
+KDE Controll Center. You will find the Login Manager module in "Local
+computer" -> "Applications".
 
-CHANGES/NEW FEATURES:
-
-* Autoconf
-* Bugfixes
-* -kdedir option
-
-HOW TO COMPILE KDM:
-
-  setenv QTDIR /where/you/have/qt
-  setenv KDEDIR /usr/local/kde
-  [check options with "./configure --help"]
-  ./configure --with-some-options
-  make
-  make install
-  [read html docs]
+HOW TO INSTALL KDM:
   [Then be sure to run kdmdesktop from the xdm setup script -- on most
   systems called /usr/X11/lib/X11/xdm/Xsetup_0 or similar]
 
@@ -77,29 +64,9 @@ anyway and recompilation of xdm doesn't take a minute at all, I don't
 see a problem with that.
 
 
-CHANGES TO THE ORIGINAL XDM
-
-- added this README
-- renamed Imakefile to Imakefile.original
-- added a new Imakefile and a subdirectory "kgreeter"
-- renamed all occurrences of "->class" to "->class2" since
-  "class" is a keyword in C++
-
 DIFFERENCES FROM XDM
 
 - a nice window with Qt-widgets to enter your login and password
-
-REQUIREMENTS
-  
-  - the background needs the "utopia" type-1 font.
-    IMO everybody should have these free type-1 fonts. Using
-    programs like "LyX" or the "KDE Help System" is much more
-    comfortable with them, since suddenly even larger fonts
-    remain readable :-)
-
-    Anyway kdm works without "utopia", too, but the background doesn't
-    look too pretty since the font will be a bit pixelized.
-
 
 KNOWN BUGS 
 
