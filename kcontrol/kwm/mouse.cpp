@@ -226,6 +226,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   combo->insertItem(i18n("Operations menu"));
   combo->insertItem(i18n("Toggle raise and lower"));
   combo->insertItem(i18n("Nothing"));
+  combo->insertItem(i18n("Shade"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 4,2);
   coTiAct2 = combo;
@@ -238,6 +239,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   combo->insertItem(i18n("Operations menu"));
   combo->insertItem(i18n("Toggle raise and lower"));
   combo->insertItem(i18n("Nothing"));
+  combo->insertItem(i18n("Shade"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 5,2);
   coTiAct3 =  combo;
@@ -256,6 +258,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   combo->insertItem(i18n("Activate and raise"));
   combo->insertItem(i18n("Activate and lower"));
   combo->insertItem(i18n("Activate"));
+  combo->insertItem(i18n("Shade"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 3,3);
   coTiInAct1 = combo;
@@ -265,6 +268,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   combo->insertItem(i18n("Activate and raise"));
   combo->insertItem(i18n("Activate and lower"));
   combo->insertItem(i18n("Activate"));
+  combo->insertItem(i18n("Shade"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 4,3);
   coTiInAct2 = combo;
@@ -274,6 +278,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   combo->insertItem(i18n("Activate and raise"));
   combo->insertItem(i18n("Activate and lower"));
   combo->insertItem(i18n("Activate"));
+  combo->insertItem(i18n("Shade"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 5,3);
   coTiInAct3 = combo;
@@ -381,7 +386,7 @@ const char*  KActionsConfig::functionTiAc(int i)
   case 2: return "Operations menu"; break;
   case 3: return "Toggle raise and lower"; break;
   case 4: return "Nothing"; break;
-  case 5: return ""; break;
+  case 5: return "Shade"; break;
   }
   return "";
 }
@@ -391,7 +396,7 @@ const char*  KActionsConfig::functionTiInAc(int i)
   case 0: return "Activate and raise"; break;
   case 1: return "Activate and lower"; break;
   case 2: return "Activate"; break;
-  case 3: return ""; break;
+  case 3: return "Shade"; break;
   case 4: return ""; break;
   case 5: return ""; break;
   }
