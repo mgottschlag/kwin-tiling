@@ -105,7 +105,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     
     responseButton[0] = new QRadioButton( i18n("&Fast (10ms)"), responseGroup );
     responseButton[1] = new QRadioButton( i18n("&Standard (50ms)"), responseGroup );
-    responseButton[2] = new QRadioButton( i18n("&Confortable (250ms)"), responseGroup);
+    responseButton[2] = new QRadioButton( i18n("&Comfortable (250ms)"), responseGroup);
     //connect(style_group, SIGNAL(clicked(int)), SLOT(style_clicked(int)));
     
     for (int i = 0; i < 3; i++)
