@@ -76,14 +76,9 @@ bool KPrivacyManager::clearSavedClipboardContents()
 
 bool KPrivacyManager::clearFormCompletion()
 {
-  QFile *completionFile = new QFile(locateLocal("data", "khtml/formcompletions"));
+  QFile completionFile(locateLocal("data", "khtml/formcompletions"));
 
-  m_error = completionFile->remove();
-
-  delete completionFile;
-
-  return m_error;
-
+  return completionFile.remove();
 }
 
 bool KPrivacyManager::clearWebCache()
@@ -121,15 +116,14 @@ bool KPrivacyManager::clearWebHistory()
 
 bool KPrivacyManager::clearFavIcons()
 {
-  QDir *favIconDir = new QDir(KGlobal::dirs()->saveLocation( "cache", "favicons/" ));
+  QDir favIconDir(KGlobal::dirs()->saveLocation( "cache", "favicons/" ));
 
-  QStringList entries = favIconDir->entryList();
+  QStringList entries = favIconDir.entryList();
 
   // erase all files in favicon directory
   for( QStringList::Iterator it = entries.begin() ; it != entries.end() ; ++it)
-    if(!favIconDir->remove(*it)) m_error = true;
+    if(!favIconDir.remove(*it)) m_error = true;
 
-  delete favIconDir;
   return m_error;
 }
 
