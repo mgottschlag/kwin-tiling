@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 {
   KAboutData about("kaccess", I18N_NOOP("KDE Accessibility Tool"), "0.1",
                    DESCRIPTION, KAboutData::License_QPL, 
-		   "(C) 2000, Matthias Hölzer-Klüpfel");
+		   "(C) 2000, Matthias HÃ¶lzer-KlÃ¼pfel");
   KCmdLineArgs::init(argc, argv, &about);  
   KAccessApp::addCmdLineOptions();
   
