@@ -254,7 +254,7 @@ void TopLevel::readProperties(KConfig *kc)
   pQPMmenu->insertTitle(i18n("Klipper - Clipboard Tool"));
   pQPMmenu->insertItem(i18n("&Quit"), QUIT_ITEM );
   pQPMmenu->insertSeparator();
-  pQPMmenu->insertItem(i18n("&Configuration..."), CONFIG_ITEM);
+  pQPMmenu->insertItem(i18n("&Preferences..."), CONFIG_ITEM);
   toggleURLGrabAction->plug( pQPMmenu );
   pQPMmenu->insertSeparator();
   long int id;

@@ -150,6 +150,7 @@ void URLGrabber::slotActionMenu()
 
 	if ( myPopupKillTimer > 0 )
 	    myPopupKillTimer->start( 1000 * myPopupKillTimeout, true );
+
         emit sigPopup( myMenu );
     }
 }
@@ -157,9 +158,7 @@ void URLGrabber::slotActionMenu()
 
 void URLGrabber::slotItemSelected( int id )
 {
-    myPopupKillTimer->stop();
-    delete myMenu;
-    myMenu = 0L;
+    myMenu->hide(); // deleted by the timer or the next action
 
     switch ( id ) {
     case -1:
