@@ -64,7 +64,6 @@
 #include <kurlrequester.h>
 
 #include "email.h"
-#include "usernamedlg.h"
 
 
 topKCMEmail::topKCMEmail (QWidget *parent,  const char *name)
@@ -76,8 +75,6 @@ topKCMEmail::topKCMEmail (QWidget *parent,  const char *name)
 
  	connect(m_email->cmbCurProfile, SIGNAL(activated(const QString &)), this, SLOT(slotComboChanged(const QString &)) );
 	connect(m_email->btnNewProfile, SIGNAL(clicked()), SLOT(slotNewProfile()) );
-	connect(m_email->btnICMSettings, SIGNAL(clicked()), SLOT(slotICMSettings()) );
-	connect(m_email->btnOGMSettings, SIGNAL(clicked()), SLOT(slotOGMSettings()) );
 
 	connect(m_email->txtFullName,SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
 	connect(m_email->txtOrganization, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
@@ -85,14 +82,12 @@ topKCMEmail::topKCMEmail (QWidget *parent,  const char *name)
 	connect(m_email->txtReplyTo, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
 	connect(m_email->txtEMailClient, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
 	connect(m_email->chkRunTerminal, SIGNAL(clicked()), SLOT(configChanged()) );
-	connect(m_email->radIMAP, SIGNAL(clicked()), SLOT(configChanged()) );
-	connect(m_email->radPOP, SIGNAL(clicked()), SLOT(configChanged()) );
-	connect(m_email->radICMLocal, SIGNAL(clicked()), SLOT(configChanged()) );
-	connect(m_email->radSMTP, SIGNAL(clicked()), SLOT(configChanged()) );
-	connect(m_email->radOGMLocal, SIGNAL(clicked()), SLOT(configChanged()) );
 
 
 	pSettings = new KEMailSettings();
+	m_email->lblCurrentProfile->hide();
+	m_email->cmbCurProfile->hide();
+	m_email->btnNewProfile->hide();
 	load();
 }
 
@@ -133,40 +128,8 @@ void topKCMEmail::load(const QString &s)
 		m_email->txtOrganization->setText(pSettings->getSetting(KEMailSettings::Organization));
 		m_email->txtFullName->setText(pSettings->getSetting(KEMailSettings::RealName));
 
-		QString intype = pSettings->getSetting(KEMailSettings::InServerType);
-		if (intype == "imap4")
-			m_email->grpIncoming->setButton(0);
-		else if (intype == "pop3")
-			m_email->grpIncoming->setButton(1);
-		else if (intype == "localbox")
-			m_email->grpIncoming->setButton(2);
-
-		QString outtype = pSettings->getSetting(KEMailSettings::OutServerType);
-		if (outtype == "smtp") {
-			m_email->radSMTP->setChecked(true);
-		} else if (outtype == "local") {
-			m_email->radOGMLocal->setChecked(true);
-		}
-
 		m_email->txtEMailClient->setURL(pSettings->getSetting(KEMailSettings::ClientProgram));
 		m_email->chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
-
-		m_sICMPassword = pSettings->getSetting(KEMailSettings::InServerPass);
-		m_sICMUsername = pSettings->getSetting(KEMailSettings::InServerLogin);
-		if (m_email->radICMLocal->isChecked()) {
-			m_sICMPath = pSettings->getSetting(KEMailSettings::InServer);
-			m_sICMHost = QString::null;
-		} else {
-			m_sICMHost = pSettings->getSetting(KEMailSettings::InServer);
-			m_sICMPath = QString::null;
-		}
-
-		m_sOGMPassword = pSettings->getSetting(KEMailSettings::OutServerPass);
-		m_sOGMUsername = pSettings->getSetting(KEMailSettings::OutServerLogin);
-		m_sOGMHost = pSettings->getSetting(KEMailSettings::OutServer);
-		m_sOGMCommand = pSettings->getSetting(KEMailSettings::OutServerCommand);
-
-		m_uICMPort = m_uOGMPort = 0;
 
 		configChanged(false);
 	}
@@ -180,28 +143,8 @@ void topKCMEmail::clearData()
 	m_email->txtOrganization->setText(QString::null);
 	m_email->txtFullName->setText(QString::null);
 
-	m_email->radIMAP->setChecked(false);
-	m_email->radPOP->setChecked(false);
-	m_email->radICMLocal->setChecked(false);
-	m_email->radSMTP->setChecked(false);
-	m_email->radOGMLocal->setChecked(false);
-
 	m_email->txtEMailClient->setURL(QString::null);
 	m_email->chkRunTerminal->setChecked(false);
-
-	m_sICMPassword = QString::null;
-	m_sICMUsername = QString::null;
-	m_sICMPath = QString::null;
-	m_sICMHost = QString::null;
-	m_bICMSecure = false;
-	m_uICMPort = 0;
-
-	m_sOGMPassword = QString::null;
-	m_sOGMUsername = QString::null;
-	m_sOGMCommand = QString::null;
-	m_sOGMHost = QString::null;
-	m_bOGMSecure = false;
-	m_uOGMPort = 0;
 
 	configChanged(false);
 }
@@ -259,8 +202,6 @@ void topKCMEmail::slotNewProfile()
 
 void topKCMEmail::configChanged(bool c)
 {
-	m_email->btnOGMSettings->setEnabled((m_email->radSMTP->isChecked() || m_email->radOGMLocal->isChecked()));
-	m_email->btnICMSettings->setEnabled((m_email->radIMAP->isChecked() || m_email->radPOP->isChecked() || m_email->radICMLocal->isChecked()));
 	emit changed(c);
 	m_bChanged=c;
 }
@@ -277,37 +218,6 @@ void topKCMEmail::save()
 	pSettings->setSetting(KEMailSettings::EmailAddress, m_email->txtEMailAddr->text());
 	pSettings->setSetting(KEMailSettings::Organization, m_email->txtOrganization->text());
 	pSettings->setSetting(KEMailSettings::ReplyToAddress, m_email->txtReplyTo->text());
-
-	if (m_email->radIMAP->isChecked() || m_email->radPOP->isChecked()) {
-		if (m_email->radPOP->isChecked())
-			pSettings->setSetting(KEMailSettings::InServerType, "pop3");
-		else
-			pSettings->setSetting(KEMailSettings::InServerType, "imap4");
-		pSettings->setSetting(KEMailSettings::InServerLogin, m_sICMUsername);
-		pSettings->setSetting(KEMailSettings::InServerPass, m_sICMPassword);
-		pSettings->setSetting(KEMailSettings::InServerTLS, m_bICMSecure ? "true" : "false");
-		pSettings->setSetting(KEMailSettings::InServer, m_sICMHost);
-	} else if (m_email->radICMLocal->isChecked()) {
-		pSettings->setSetting(KEMailSettings::InServerType, "localbox");
-		pSettings->setSetting(KEMailSettings::InServerLogin, QString::null);
-		pSettings->setSetting(KEMailSettings::InServerPass, QString::null);
-		pSettings->setSetting(KEMailSettings::InServer, m_sICMPath);
-	}
-
-	if (m_email->radSMTP->isChecked()) {
-		pSettings->setSetting(KEMailSettings::OutServerType, "smtp");
-		pSettings->setSetting(KEMailSettings::OutServer, m_sOGMHost);
-		pSettings->setSetting(KEMailSettings::OutServerLogin, m_sOGMUsername);
-		pSettings->setSetting(KEMailSettings::OutServerPass, m_sOGMPassword);
-		pSettings->setSetting(KEMailSettings::OutServerCommand, QString::null);
-		pSettings->setSetting(KEMailSettings::OutServerTLS, m_bICMSecure ? "true" : "false");
-	} else if (m_email->radOGMLocal->isChecked()) {
-		pSettings->setSetting(KEMailSettings::OutServerType, "local");
-		pSettings->setSetting(KEMailSettings::OutServer, QString::null);
-		pSettings->setSetting(KEMailSettings::OutServerLogin, QString::null);
-		pSettings->setSetting(KEMailSettings::OutServerPass, QString::null);
-		pSettings->setSetting(KEMailSettings::OutServerCommand, m_sOGMCommand);
-	}
 
 	pSettings->setSetting(KEMailSettings::ClientProgram, m_email->txtEMailClient->url());
 	pSettings->setSetting(KEMailSettings::ClientTerminal, (m_email->chkRunTerminal->isChecked()) ? "true" : "false");
@@ -345,20 +255,6 @@ void topKCMEmail::defaults()
 	m_email->txtEMailClient->setURL(client);
 
 	m_email->chkRunTerminal->setChecked(false);
-
-	m_email->radPOP->setChecked(true);
-	m_bICMSecure = false;
-	m_sICMUsername = QString::null;
-	m_sICMPassword = QString::null;
-	m_sICMHost = QString::fromLatin1("pop");
-	m_uICMPort = 110;
-
-	m_email->radSMTP->setChecked(true);
-	m_bOGMSecure = false;
-	m_sOGMUsername = QString::null;
-	m_sOGMPassword = QString::null;
-	m_sOGMHost = QString::fromLatin1("mail");
-	m_uOGMPort = 25; // we should use getservent here.. soon
 
 	configChanged();
 }
@@ -410,77 +306,6 @@ void topKCMEmail::slotComboChanged(const QString &name)
 	load(name);
 }
 
-void topKCMEmail::slotICMSettings()
-{
-	if (!m_email->radICMLocal->isChecked()) {
-		UserNameDlg *ud = new UserNameDlg(this, i18n("Incoming Mail Retrieval Settings"));
-		QString long_num;
-		ud->txtUsername->setText(m_sICMUsername);
-		ud->txtPass->setText(m_sICMPassword);
-		ud->txtHost->setText(m_sICMHost);
-		if (m_uICMPort)
-			long_num.setNum(m_uICMPort);
-		else
-			long_num = QString::null;
-		ud->txtPort->setText(long_num);
-		ud->chkTLS->setChecked(m_bICMSecure);
-		if (ud->exec() == QDialog::Accepted) {
-			m_sICMUsername = ud->txtUsername->text();
-			m_bICMSecure = ud->chkTLS->isChecked();
-			m_sICMPassword = ud->txtPass->text();
-			m_sICMHost = ud->txtHost->text();
-			m_uICMPort = ud->txtPort->text().toUInt();
-			configChanged();
-		}
-		delete ud;
-		return;
-	} else {
-		KFileDialog *kd = new KFileDialog(QString::null, "*", this, "kd", true);
-		kd->setMode(static_cast<KFile::Mode>( KFile::File | KFile::Directory | KFile::ExistingOnly | KFile::LocalOnly));
-		kd->setCaption(i18n("Choose incoming mailbox path"));
-		kd->exec();
-		if (!kd->selectedFile().isEmpty()) {
-			QFileInfo *clientInfo = new QFileInfo(kd->selectedFile());
-			if (clientInfo->exists())
-				m_sICMPath=kd->selectedFile();
-		}
-		delete kd;
-		return;
-	}
-}
-
-void topKCMEmail::slotOGMSettings()
-{
-	if (!m_email->radOGMLocal->isChecked()) {
-		UserNameDlg *ud = new UserNameDlg(this, i18n("Outgoing Mail Retrieval Settings"));
-		QString long_num;
-		ud->txtUsername->setText(m_sOGMUsername);
-		ud->txtPass->setText(m_sOGMPassword);
-		ud->txtHost->setText(m_sOGMHost);
-		if (m_uOGMPort)
-			long_num.setNum(m_uOGMPort);
-		else
-			long_num = QString::null;
-		ud->txtPort->setText(long_num);
-		ud->chkTLS->setChecked(m_bOGMSecure);
-		if (ud->exec() == QDialog::Accepted) {
-			m_bOGMSecure = ud->chkTLS->isChecked();
-			m_sOGMUsername = ud->txtUsername->text();
-			m_sOGMPassword = ud->txtPass->text();
-			m_sOGMHost = ud->txtHost->text();
-			m_uOGMPort = ud->txtPort->text().toUInt();
-
-			configChanged();
-		}
-		delete ud;
-		return;
-	} else {
-		QString command = KFileDialog::getOpenFileName(QString::null, "*", this, i18n("Choose outgoing mailer"));
-		QFileInfo *clientInfo = new QFileInfo(command);
-		if (clientInfo->exists() && clientInfo->isExecutable() && clientInfo->filePath().contains(' ') == 0)
-			m_sOGMCommand=command;
-	}
-}
 
 extern "C"
 {
