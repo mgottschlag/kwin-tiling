@@ -35,6 +35,7 @@
 #include <kiconloader.h>
 #include <knuminput.h>
 #include <klocale.h>
+#include <kdialog.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -129,7 +130,7 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     m_bDPMS = DPMSQueryExtension(qt_xdisplay(), &dummy, &dummy);
 #endif
 
-    QVBoxLayout *top = new QVBoxLayout(this, 10, 10);
+    QVBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
     QHBoxLayout *hbox = new QHBoxLayout();
     top->addLayout(hbox);
 
