@@ -17,6 +17,7 @@ Name[et]=Google (Ehk veab)
 Name[eu]=Google (Zorte onean nago)
 Name[fi]=Google (Kokeile onneasi)
 Name[fr]=Google (J'ai de la chance)
+Name[hr]=Google (osjećam se sretnim)
 Name[is]=Google (Mér líður vel í dag)
 Name[it]=Google (Mi sento fortunato)
 Name[lt]=Google (Man sekasi!)
@@ -40,4 +41,5 @@ Name[zh_TW]=Google (我感覺很幸運)
 Name[zu]=Google (Ngizizwa Ngisenhlanhleni)
 ServiceTypes=SearchProvider
 Keys=ggl,gglucky
-Query=http://www.google.com/search?q=\\{@}&btnI=I%27m+Feeling+Lucky
+Query=http://www.google.com/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
+Charset=utf8
