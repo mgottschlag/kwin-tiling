@@ -178,6 +178,8 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 void TreeView::itemSelected(QListViewItem *item)
 {
     if(!item) return;
+    
+    cout << " SELECTED: " << ((TreeItem*)item)->file().local8Bit() << endl;
     emit entrySelected(((TreeItem*)item)->file());
 }
 
@@ -549,40 +551,158 @@ QDragObject *TreeView::dragObject() const
 
 void TreeView::slotRMBPressed(QListViewItem*, const QPoint& p)
 {
+    TreeItem *item = (TreeItem*)selectedItem();
+    if(item == 0) return;
+    
     QPopupMenu mnu(this);
-    mnu.insertItem(i18n("C&ut") , 100);
-    mnu.insertItem(i18n("&Copy"), 101);
-    mnu.insertItem(i18n("&Paste"), 102);
+    
+    // 42 is the answer to everything
+    mnu.insertItem(i18n("C&ut") , 420);
+    mnu.insertItem(i18n("&Copy"), 421);
+    mnu.insertItem(i18n("&Paste"),422);
     mnu.insertSeparator();
-    mnu.insertItem(i18n("&Delete"), 103);
+    mnu.insertItem(i18n("&Delete"), 423);
+    mnu.insertSeparator();
+    mnu.insertItem(i18n("New &Item"), 424);
+    mnu.insertItem(i18n("New &Submenu"), 425);
     
     int result = mnu.exec(p);
     
     switch (result)
 	{
-	case 100:
+	case 420:
 	    cut();
 	    break;
-	case 101:
+	case 421:
 	    copy();
 	    break;
-	case 102:
+	case 422:
 	    paste();
 	    break;
-	case 103:
+	case 423:
 	    del();
+	    break;
+	case 424:
+	    newitem();
+	    break;
+	case 425:
+	    newsubmenu();
 	    break;
 	}
 }
 
 void TreeView::newsubmenu()
 {
-
+    TreeItem *item = (TreeItem*)selectedItem();
+    
+    QListViewItem* parent = 0;
+    QListViewItem* after = 0;
+    
+    QString sfile;
+    
+    if(item){
+	if(item->childCount() > 0) {
+	    parent = item;
+	}
+	else
+	    {
+		parent = item->parent();
+		after = item;
+	    }
+	
+	sfile = item->file();
+    }
+    
+    QString dir = sfile;
+    
+    if(sfile.find(".directory") > 0)
+	{
+	    // truncate "blah/.directory"
+	    
+	    int pos = dir.findRev('/');
+	    int pos2 = dir.findRev('/', pos-1);
+	    
+	    if (pos2 >= 0)
+		pos = pos2;
+	
+	    if (pos > 0)
+		dir.truncate(pos);
+	}
+    else if (dir.find(".desktop"))
+	{
+	    // truncate "blah.desktop"
+	    int pos = dir.findRev('/');
+	    
+	    if (pos > 0)
+		dir.truncate(pos);
+	}
+    dir += "/NewSubmenu/.directory";
+	    
+    TreeItem* newitem;
+	
+    if (!parent) 
+	newitem = new TreeItem(this, after, dir);
+    else
+	newitem = new TreeItem(parent, after, dir);
+    
+    newitem->setText(0, "New Submenu");
+    newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("package", KIcon::Desktop, KIcon::SizeSmall));
+    
+    KSimpleConfig c(locateLocal("apps", dir));
+    c.setDesktopGroup();
+    c.writeEntry("Name", "New Submenu");
+    c.writeEntry("Icon", "package");
+    c.sync();
 }
 
 void TreeView::newitem()
 {
+    TreeItem *item = (TreeItem*)selectedItem();
+    
+    QListViewItem* parent = 0;
+    QListViewItem* after = 0;
+    
+    QString sfile;
+    
+    if(item){
+	if(item->childCount() > 0) {
+	    parent = item;
+	}	
+	else
+	    {
+		parent = item->parent();
+		after = item;
+	    }		
+	
+	sfile = item->file();
+    }
+    
+    QString dir = sfile;
+    
+    // truncate ".directory" or "blah.desktop"
+    
+    int pos = dir.findRev('/');
+    
+    if (pos > 0)
+	dir.truncate(pos);
 
+    dir += "/NewFile.desktop";
+	    
+    TreeItem* newitem;
+	
+    if (!parent) 
+	newitem = new TreeItem(this, after, dir);
+    else
+	newitem = new TreeItem(parent, after, dir);
+    
+    newitem->setText(0, "New File");
+    newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("unkown", KIcon::Desktop, KIcon::SizeSmall));
+    
+    KSimpleConfig c(locateLocal("apps", dir));
+    c.setDesktopGroup();
+    c.writeEntry("Name", "New File");
+    c.writeEntry("Icon", "file");
+    c.sync();
 }
 
 void TreeView::cut()
