@@ -552,26 +552,35 @@ void KColorScheme::readScheme( int index )
     KConfigBase* config;
 
     if (index == 1) {
-	cs->back = lightGray;
-	cs->txt = black;
-	cs->select = darkBlue;
-	cs->selectTxt = white;
-	cs->window = white;
-	cs->windowTxt = black;
-	cs->iaTitle = darkGray;
-	cs->iaTxt = lightGray;
-	cs->iaBlend = lightGray;
-	cs->aTitle = darkBlue;
-	cs->aTxt = white;
-	cs->aBlend = black;
-	cs->button = cs->back;
-	cs->buttonTxt = cs->txt;
-	cs->aTitleBtn = lightGray;
-	cs->iTitleBtn = lightGray;
-        cs->link = blue;
-        cs->visitedLink = magenta;
-	cs->contrast = 7;
-	return;
+
+      // Colours from the 40-colour palette.
+      QColor c1(  0, 128, 128);
+      QColor c2(220, 220, 220);
+      QColor c3(  0,   0, 192);
+      QColor c4(128,   0, 128);
+
+      cs->back        = c2;
+      cs->txt         = black;
+      cs->select      = c1;
+      cs->selectTxt   = white;
+      cs->window      = white;
+      cs->windowTxt   = black;
+      cs->iaTitle     = c2;
+      cs->iaTxt       = black;
+      cs->iaBlend     = c2;
+      cs->aTitle      = c1;
+      cs->aTxt        = white;
+      cs->aBlend      = c1;
+      cs->button      = c2;
+      cs->buttonTxt   = cs->txt;
+      cs->aTitleBtn   = white;
+      cs->iTitleBtn   = white;
+      cs->link        = c3;
+      cs->visitedLink = c4;
+
+      cs->contrast    = 7;
+
+      return;
     }
 
     if (index == 0) {
