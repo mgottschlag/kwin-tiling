@@ -55,7 +55,6 @@ Comment[xh]=Phendla Injini
 Comment[zh_CN]=搜索引擎
 Comment[zh_TW]=搜索引擎
 Comment[zu]=Injini Yokusesha
-InitialPreference=1
 
 [PropertyDef::Keys]
 Type=QStringList

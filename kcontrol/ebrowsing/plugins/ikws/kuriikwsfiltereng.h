@@ -1,14 +1,12 @@
 /*  This file is part of the KDE project
 
-    Current maintainer 
-    Copyright (C) 2002 Dawit Alemayehu <adawit@kde.org>
-
-    Advanced web shortcuts 
-    Copyright (C) 2001 Andreas Hochsteger <e9625392@student.tuwien.ac.at>
-    
+    Copyright (C) 2002,2003 Dawit Alemayehu <adawit@kde.org>
     Copyright (C) 1999 Simon Hausmann <hausmann@kde.org>
     Copyright (C) 1999 Yves Arrouye <yves@realnames.com>
- 
+
+    Advanced web shortcuts
+    Copyright (C) 2001 Andreas Hochsteger <e9625392@student.tuwien.ac.at>
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -72,7 +70,8 @@ private:
   
   bool m_bVerbose;  
   bool m_bWebShortcutsEnabled;
-  
+  char m_cKeywordDelimiter;
+
   QString m_defaultSearchEngine;
   static KURISearchFilterEngine *s_pSelf;
 };

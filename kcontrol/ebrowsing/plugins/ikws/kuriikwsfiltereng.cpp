@@ -1,15 +1,14 @@
 
 /*  This file is part of the KDE project
     
-    Current Maintainer
     Copyright (C) 2002, 2003 Dawit Alemayehu <adawit@kde.org>
-    
-    Advanced web shortcuts:
-    Copyright (C) 2001 Andreas Hochsteger <e9625392@student.tuwien.ac.at>
-    
     Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
     Copyright (C) 1999 Simon Hausmann <hausmann@kde.org>
-        
+
+    Advanced web shortcuts:
+    Copyright (C) 2001 Andreas Hochsteger <e9625392@student.tuwien.ac.at>
+
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -56,21 +55,20 @@ KURISearchFilterEngine::KURISearchFilterEngine()
 QString KURISearchFilterEngine::webShortcutQuery( const KURL &url ) const
 {
   QString result;
-  
+
   if (m_bWebShortcutsEnabled)
   {
     QString key;
-    
     QString search = url.url();
-    int pos = search.find(':');
-    
+    int pos = search.find(m_cKeywordDelimiter);
+
     if ( pos > -1 )
       key = search.left(pos);
 
     if (!key.isEmpty() && !KProtocolInfo::isKnownProtocol( key ))
     {
       SearchProvider *provider = SearchProvider::findByKey(key);
-      
+
       if (provider)
       {
         result = formatResult(provider->query(), provider->charset(),
@@ -80,9 +78,6 @@ QString KURISearchFilterEngine::webShortcutQuery( const KURL &url ) const
       }
     }
   }
-
-  if (m_bVerbose)
-    kdDebug () << "webShortcutQuery: returning => " << result << endl;
 
   return result;
 }
@@ -109,15 +104,15 @@ QString KURISearchFilterEngine::autoWebSearchQuery( const KURL& url ) const
       if (provider)
       {
         QString search = provider->query();
-        
+
         // TODO: Remove this at some point in the future. Only kept for BC
         // purposes. It was needed to bypass the RealNames feature which is
-        // no more.        
+        // no more.
         QRegExp question("^[ \t]*\\?[ \t]*");
         if (url.isMalformed() && u.find(question) == 0)
           u = u.replace(question, "");
-        
-        result = formatResult (provider->query(), provider->charset(), 
+
+        result = formatResult (provider->query(), provider->charset(),
                                QString::null, u, true);
         delete provider;
       }
@@ -231,15 +226,15 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
   // Check, if old style '\1' is found and replace it with \{@} (compatibility mode):
   {
     int pos = -1;
-    if ((pos = newurl.find("\\1")) >= 0) 
+    if ((pos = newurl.find("\\1")) >= 0)
     {
-      PIDDBG << "WARNING: Using compatibility mode for newurl='" << newurl 
+      PIDDBG << "WARNING: Using compatibility mode for newurl='" << newurl
              << "'. Please replace old style '\\1' with new style '\\{0}' "
                 "in the query definition.\n";
       newurl = newurl.replace(pos, 2, "\\{@}");
     }
   }
-  
+
   PIDDBG << "Substitute references:\n";
   // Substitute references (\{ref1,ref2,...}) with values from user query:
   {
@@ -247,7 +242,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
     QRegExp reflist("\\\\\\{[^\\}]+\\}");
 
     // Substitute reflists (\{ref1,ref2,...}):
-    while ((pos = reflist.search(newurl, 0)) >= 0) 
+    while ((pos = reflist.search(newurl, 0)) >= 0)
     {
       bool found = false;
       
@@ -396,11 +391,11 @@ QString KURISearchFilterEngine::formatResult( const QString& url,
                                               SubstMap& map ) const
 {
   // Return nothing if userquery is empty:
-  if (query.isEmpty()) 
+  if (query.isEmpty())
     return QString::null;
 
   // Debug info of map:
-  if (!map.isEmpty()) 
+  if (!map.isEmpty())
   {
     PIDDBG << "Got non-empty substitution map:\n";
     for(SubstMap::Iterator it = map.begin(); it != map.end(); ++it)
@@ -413,7 +408,7 @@ QString KURISearchFilterEngine::formatResult( const QString& url,
     cseta = "iso-8859-1";
 
   QTextCodec *csetacodec = QTextCodec::codecForName(cseta.latin1());
-  if (!csetacodec) 
+  if (!csetacodec)
   {
     cseta = "iso-8859-1";
     csetacodec = QTextCodec::codecForName(cseta.latin1());
@@ -449,7 +444,7 @@ void KURISearchFilterEngine::loadConfig()
   {
     KSimpleConfig oldConfig(kapp->dirs()->saveLocation("config") + QString(name()) + "rc");
     oldConfig.setGroup("General");
-    
+
     if (oldConfig.hasKey("SearchEngines"))
     {
       // User has an old config file in his local config dir
@@ -460,13 +455,13 @@ void KURISearchFilterEngine::loadConfig()
       {
         if (!oldConfig.hasGroup(*it + " Search"))
             continue;
-        
+
         oldConfig.setGroup(*it + " Search");
         QString query = oldConfig.readEntry("Query");
         QStringList keys = oldConfig.readListEntry("Keys");
         QString charset = oldConfig.readEntry("Charset");
         oldConfig.deleteGroup(*it + " Search");
-        
+
         QString name;
         for (QStringList::ConstIterator key = keys.begin(); key != keys.end(); ++key)
         {
@@ -474,11 +469,11 @@ void KURISearchFilterEngine::loadConfig()
             if ((*key).length() > name.length())
                 name = *key;
         }
-        
+
         if (*it == fallback)
             fallback = name;
         SearchProvider *provider = SearchProvider::findByKey(name);
-        
+
         if (provider)
         {
           // If this entry has a corresponding global entry
@@ -522,10 +517,19 @@ void KURISearchFilterEngine::loadConfig()
   KConfig config( name() + "rc", false, false );
   config.setGroup( "General" );
 
+  m_cKeywordDelimiter = config.readNumEntry("KeywordDelimiter", ':');
   m_bWebShortcutsEnabled = config.readBoolEntry("EnableWebShortcuts", true);
   m_defaultSearchEngine = config.readEntry("DefaultSearchEngine");
   m_bVerbose = config.readBoolEntry("Verbose", false);
 
+  // Support most of the "Excluded characters" in RFC 2396 section
+  // 2.4.3 as possible keyword delimiters. Exceptions are the IPv6
+  // indicators [ and ] as well the the escaping character % and
+  // quotation mark.
+  if (strchr (" =:#<>{}|\\^`",m_cKeywordDelimiter) == 0)
+    m_cKeywordDelimiter = ':';
+
+  PIDDBG << "Keyword Delimiter: " << m_cKeywordDelimiter << endl;
   PIDDBG << "Web Shortcuts Enabled: " << m_bWebShortcutsEnabled << endl;
   PIDDBG << "Default Search Engine: " << m_defaultSearchEngine << endl;
   PIDDBG << "Verbose: " << m_bVerbose << endl;
