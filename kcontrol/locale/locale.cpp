@@ -391,8 +391,8 @@ void KLocaleConfig::reTranslate()
 {
     QToolTip::add(comboCountry, locale->translate("This is were you live. KDE will use the defaults for this country."));
     QToolTip::add(comboLang, locale->translate("All KDE programs will be displayed in this language (if available)."));
-    QToolTip::add(comboNumber, locale->translate("The rules of this country will be used to localize numbers"));
-    QToolTip::add(comboMoney, locale->translate("The rules of this country will be used to localize money"));
-    QToolTip::add(comboDate, locale->translate("The rules of this country will be used to display time and dates"));
-    QToolTip::add(comboChset, locale->translate("The prefered charset for fonts"));
+    QToolTip::add(comboNumber, locale->translate("The rules of this country will be used to localize numbers."));
+    QToolTip::add(comboMoney, locale->translate("The rules of this country will be used to localize money."));
+    QToolTip::add(comboDate, locale->translate("The rules of this country will be used to display time and dates."));
+    QToolTip::add(comboChset, locale->translate("The prefered charset for fonts."));
 }
