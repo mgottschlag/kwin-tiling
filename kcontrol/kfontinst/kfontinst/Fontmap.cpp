@@ -267,7 +267,7 @@ bool create(const QString &dir, CFontEngine &fe)
     QStringList entries;
     int         i;
     FcPattern   *pat = FcPatternCreate();
-    FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_SCALABLE, 0);
+    FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_SCALABLE, (void*)0);
     FcFontSet   *fs = FcFontList(0, pat, os);
 
     FcPatternDestroy(pat);

@@ -867,7 +867,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
 //                itsFoundry=getFcString(xft->pattern, FC_FOUNDRY, faceNo);
 //                XftFontClose(QPaintDevice::x11AppDisplay(), xft);
 //            }
-            FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, 0);
+            FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, (void*)0);
             FcPattern   *pat = FcPatternBuild(NULL,
                                                 FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.latin1()),
                                                 FC_WEIGHT, FcTypeInteger, itsWeight,

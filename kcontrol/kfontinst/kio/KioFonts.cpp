@@ -1679,7 +1679,7 @@ bool CKioFonts::updateFontList()
 #ifdef KFI_FC_HAS_WIDTHS
                                             FC_WIDTH,
 #endif
-                                            FC_SLANT, 0);
+                                            FC_SLANT, (void*)0);
 
         itsFontList=FcFontList(0, pat, os);
 
