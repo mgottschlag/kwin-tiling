@@ -104,7 +104,7 @@ Privacy::Privacy(QWidget *parent, const char *name)
   clearWebCache->setText(1, "Clears the temporary cache of websites visited");
   clearFormCompletion->setText(1, "Clears values which were entered into forms on websites");
   clearRecentDocuments->setText(1, "Clears the list of recently used documents from the KDE applications menu");
-  clearQuickStartMenu->setText(1, "Clears the entries from the kist of recently started applications");
+  clearQuickStartMenu->setText(1, "Clears the entries from the list of recently started applications");
   clearFavIcons->setText(1, "Clears the FavIcons cached from visited websites");
 
   connect(sw, SIGNAL(selectionChanged()), SLOT(configChanged()));
