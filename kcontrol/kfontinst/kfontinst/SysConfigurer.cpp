@@ -184,6 +184,12 @@ void CSysConfigurer::go()
             status(i18n("Could not configure X (%1)").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])), QString::null, true);
             return;
         }
+        else
+#ifdef USE_FONTS_CONF
+            CMisc::doCmd("fc-cache", CKfiGlobal::cfg().getModifiedDirs()[d]);
+#else
+            CMisc::doCmd("xftcache", CKfiGlobal::cfg().getModifiedDirs()[d]);
+#endif
     }
 
     if(CKfiGlobal::xcfg().madeChanges())
