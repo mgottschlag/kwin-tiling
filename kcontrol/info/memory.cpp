@@ -30,6 +30,7 @@
 #include <qdrawutil.h>
 
 #include <kglobal.h>
+#include <kdialog.h>
 #include <kseparator.h>
 
 #include "memory.h"
