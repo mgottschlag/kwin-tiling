@@ -83,7 +83,7 @@ public:
      */
     virtual QString configName() const { return i18n("ShortURIFilter"); }
 	
-    virtual KCModule *configModule( QWidget*, const char* ) const;
+    virtual KCModule* configModule( QWidget*, const char* ) const;
 
 public:
 k_dcop:

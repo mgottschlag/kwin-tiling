@@ -2,7 +2,6 @@
     kshorturifilter.h
 
     This file is part of the KDE project
-    Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
     Copyright (C) 2000 Dawit Alemayehu <adawit@earthlink.net>
     Copyright (C) 2000 Malte Starostik <starosti@zedat.fu-berlin.de>
 
@@ -72,7 +71,7 @@ bool KShortURIFilter::expandEnivVar( QString& cmd ) const
         if( env_loc == -1 ) break;
         const char* exp = getenv( cmd.mid( env_loc + 1, env_len - 1 ).latin1() );
         if( exp == 0 )
-        	env_loc = env_len; // Avoid a big infinte loop :)
+        	env_loc = env_len; // Avoid a big infinite loop :)
         else
         {
 			cmd.replace( env_loc, env_len, exp );
@@ -195,7 +194,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     // Expand any environment variables
     expandEnivVar( cmd );
 
-    // Now for any local resource
+    // Now check for local resource match
     struct stat buff;
 
     // Determine if "uri" is an absolute path to a local resource
@@ -241,6 +240,13 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     setURIType( data, KURIFilterData::SHELL );
     return data.hasBeenFiltered();
 }
+
+KCModule* KShortURIFilter::configModule( QWidget*, const char* ) const
+{
+	return 0;
+}
+
+/***************************************** KShortURIFilterFactory *******************************************/
 
 KShortURIFilterFactory::KShortURIFilterFactory( QObject *parent, const char *name )
                        :KLibFactory( parent, name )
