@@ -50,5 +50,7 @@ int main(int argc, char *argv[])
   toplevel->setGeometry(-100, -100, 42, 42 );
   toplevel->show();
 
-  return app.exec();
+  int ret = app.exec();
+  delete toplevel;
+  return ret;
 }
