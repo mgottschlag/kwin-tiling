@@ -557,6 +557,9 @@ KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
     QHBoxLayout *hbox = new QHBoxLayout();
     grid->addLayout(hbox, 2, 1);
     m_FileEdit = new QLineEdit(frame);
+    connect( m_FileEdit, SIGNAL( textChanged ( const QString & )),
+             this, SLOT( slotFileNameChanged( const QString &)));
+
     lbl->setBuddy(m_FileEdit);
     hbox->addWidget(m_FileEdit);
     QPushButton *but = new QPushButton(i18n("&Browse..."), frame);
@@ -571,6 +574,7 @@ KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
 	    pat.load(i18n("New Pattern <%1>").arg(i++));
 	m_NameEdit->setText(pat.name());
 	m_NameEdit->setSelection(0, 100);
+        enableButtonOK(false );
 	return;
     }
 
@@ -579,6 +583,12 @@ KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
     KBackgroundPattern pat(m_Pattern);
     m_CommentEdit->setText(pat.comment());
     m_FileEdit->setText(pat.pattern());
+    slotFileNameChanged( pat.pattern() );
+}
+
+void KPatternEditDialog::slotFileNameChanged( const QString &text )
+{
+    enableButtonOK( !text.isEmpty() );
 }
 
 void KPatternEditDialog::slotBrowse()
