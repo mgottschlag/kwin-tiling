@@ -69,6 +69,7 @@ void sanity_check( int argc, char* argv[] )
 {
   QCString msg;
   QCString path = getenv("HOME");
+  QCString readOnly = getenv("KDE_HOME_READONLY");
   if (path.isEmpty())
   {
      msg = "$HOME not set!";
@@ -77,7 +78,7 @@ void sanity_check( int argc, char* argv[] )
   {
      if (errno == ENOENT)
         msg = "$HOME directory (%s) does not exist.";
-     else
+     else if (readOnly.isEmpty())
         msg = "No write access to $HOME directory (%s).";
   }
   if (msg.isEmpty() && access(path.data(), R_OK))
@@ -87,7 +88,7 @@ void sanity_check( int argc, char* argv[] )
      else
         msg = "No read access to $HOME directory (%s).";
   }
-  if (msg.isEmpty() && !writeTest(path))
+  if (msg.isEmpty() && readOnly.isEmpty() && !writeTest(path))
   {
      if (errno == ENOSPC)
         msg = "$HOME directory (%s) is out of disk space.";
@@ -97,7 +98,12 @@ void sanity_check( int argc, char* argv[] )
   }
   if (msg.isEmpty())
   {
-     path += "/.ICEauthority";
+     path = getenv("ICEAUTHORITY");
+     if (path.isEmpty())
+     {
+        path = getenv("HOME");
+        path += "/.ICEauthority";
+     }
 
      if (access(path.data(), W_OK) && (errno != ENOENT))
         msg = "No write access to '%s'.";
