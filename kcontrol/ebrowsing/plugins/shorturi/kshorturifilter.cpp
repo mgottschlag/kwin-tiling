@@ -108,7 +108,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   */
   KURL url = data.uri();
   QString cmd = url.url();
-  QString extra; // stuff that must appended to the cmd
+  QString ref;
   bool isMalformed = url.isMalformed();
 
   // Extract path if URL is local
@@ -116,12 +116,11 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   if( url.isLocalFile() && !isMalformed ) {
     cmd = url.path();
     if ( url.hasRef() )
-        extra = QFL1("#") + url.ref();
+        ref = QFL1("#") + url.ref();
   }
 
   // Note: do NOT use "url" below this point
 
-  bool isLocalFullPath = cmd[0] == '/';
   //kdDebug() << "KShortURIFilter::filterURI cmd=" << cmd << endl;
 
   // TODO: Make this a bit more intelligent for Minicli! There
@@ -149,6 +148,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     return true;
   }
 
+  bool expanded = false;
   // Expanding shortcut to HOME URL...
   if( cmd[0] == '~' )
   {
@@ -180,18 +180,32 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         return true;
       }
     }
-    isLocalFullPath = cmd[0] == '/';
+    expanded = true;
   }
   else if ( cmd[0] == '$' ) {
       // Environment variable expansion.
       QRegExp r (QFL1(ENV_VAR_PATTERN));
       if ( r.search( cmd ) == 0 ) {
           const char* exp = getenv( cmd.mid( 1, r.matchedLength() - 1 ).local8Bit().data() );
-          if(exp)
+          if(exp) {
               cmd.replace( 0, r.matchedLength(), QString::fromLocal8Bit(exp) );
+              expanded = true;
+          }
       }
-      isLocalFullPath = cmd[0] == '/';
   }
+
+  if ( expanded ) {
+      // Look for #ref again, after $ and ~ expansion
+      // Can't use KURL here, setPath would escape it...
+      int pos = cmd.find('#');
+      if ( pos > -1 ) {
+          ref = cmd.mid( pos );
+          cmd = cmd.left( pos );
+          //kdDebug() << "cmd=" << cmd << " ref=" << ref << endl;
+      }
+  }
+
+  bool isLocalFullPath = cmd[0] == '/';
 
   // Checking for local resource match...
   // Determine if "uri" is an absolute path to a local resource  OR
@@ -241,7 +255,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     // Open "uri" as file:/xxx if it is a non-executable local resource.
     if( isDir || S_ISREG( buff.st_mode ) )
     {
-      cmd += extra;
+      cmd += ref;
       setFilteredURI( data, cmd );
       setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
       return true;
