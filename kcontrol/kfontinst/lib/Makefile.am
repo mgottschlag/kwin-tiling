@@ -9,7 +9,8 @@ Fontmap.cpp \
 GetPid.c \
 Global.cpp \
 Misc.cpp \
-XConfig.cpp
+XConfig.cpp \
+../../fonts/kxftconfig.cpp
 
 noinst_HEADERS = \
 CompressedFile.h \

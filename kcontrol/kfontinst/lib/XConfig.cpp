@@ -29,12 +29,11 @@
 #include "XConfig.h"
 #include "Global.h"
 #include "FontEngine.h"
+#include "kxftconfig.h"
 #include <fstream>
 #include <string.h>
 #include <qdir.h>
 #include <klocale.h>
-
-#include "kxftconfig.cpp" // CPD: HACK!!! How to sym-link in CVS???
 
 extern "C" unsigned int kfi_getPid(const char *proc, unsigned int ppid);
 
@@ -329,7 +328,7 @@ bool CXConfig::readFontpaths()
                     processPath(line, path, unscaled);
 
                     if(NULL==findPath(path))
-                        itsPaths.append(new TPath(expandHome(path), false, false, true));
+                        itsPaths.append(new TPath(KXftConfig::expandHome(path), false, false, true));
                 }
             }
         }
@@ -356,7 +355,7 @@ bool CXConfig::writeFontpaths()
         cfg << constFontpaths << endl;
         for(path=itsPaths.first(); path; path=itsPaths.next())
             if(!path->disabled && CMisc::dExists(path->dir))
-                cfg << QFile::encodeName(contractHome(CMisc::xDirSyntax(path->dir))) << endl;
+                cfg << QFile::encodeName(KXftConfig::contractHome(CMisc::xDirSyntax(path->dir))) << endl;
 
         cfg.close();
     }
