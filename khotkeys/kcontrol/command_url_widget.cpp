@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _COMMAND_URL_WIDGET_CPP_
@@ -18,8 +18,10 @@
 
 #include <qpushbutton.h>
 #include <qlineedit.h>
+#include <klineedit.h>
 #include <qcheckbox.h>
 #include <qgroupbox.h>
+#include <kurlrequester.h>
 
 #include <actions.h>
 #include <action_data.h>
@@ -41,23 +43,23 @@ Command_url_widget::Command_url_widget( QWidget* parent_P, const char* name_P )
 
 void Command_url_widget::clear_data()
     {
-    command_url_lineedit->setText( "" );
+    command_url_lineedit->lineEdit()->setText( "" );
     }
 
 void Command_url_widget::set_data( const Command_url_action* data_P )
     {
-    command_url_lineedit->setText( data_P->command_url());
+    command_url_lineedit->lineEdit()->setText( data_P->command_url());
     }
 
 Command_url_action* Command_url_widget::get_data( Action_data* data_P ) const
     {
-    return new Command_url_action( data_P, command_url_lineedit->text());
+    return new Command_url_action( data_P, command_url_lineedit->lineEdit()->text());
     }
 
 void Command_url_widget::browse_pressed()
     { // CHECKME TODO
     }
-    
+
 } // namespace KHotKeys
 
 #include "command_url_widget.moc"
