@@ -57,7 +57,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QVBoxLayout *vbox = new QVBoxLayout(this, KDialog::marginHint(),
                       KDialog::spacingHint(), "vbox");
   QGroupBox *group = new QGroupBox(i18n("Appearance"), this);
-  vbox->addWidget(group, 1);
+  vbox->addWidget(group);
 
   QGridLayout *grid = new QGridLayout( group, 5, 2, KDialog::spacingHint(),
                        KDialog::spacingHint(), "grid");
@@ -227,19 +227,18 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
   // The Language group box
   group = new QGroupBox(0, Vertical, i18n("Locale"), this);
-  vbox->addWidget(group, 1);
+  vbox->addWidget(group);
+
+  langcombo = new KLanguageButton(group);
+//  langcombo->setFixedHeight( langcombo->sizeHint().height() );
+  connect(langcombo, SIGNAL(activated(int)), SLOT(changed()));
+
+  label = new QLabel(langcombo, i18n("Languag&e:"), group);
 
   QGridLayout *hbox = new QGridLayout( group->layout(), 2, 2, KDialog::spacingHint() );
   hbox->setColStretch(1, 1);
-
-  label = new QLabel(i18n("Languag&e:"), group);
   hbox->addWidget(label, 1, 0);
-
-  langcombo = new KLanguageButton(group);
-  label->setBuddy( langcombo );
-  langcombo->setFixedHeight( langcombo->sizeHint().height() );
   hbox->addWidget(langcombo, 1, 1);
-  connect(langcombo, SIGNAL(activated(int)), SLOT(changed()));
 
   wtstr = i18n("Here you can choose the language used by KDM. This setting doesn't affect"
     " a user's personal settings that will take effect after login.");
