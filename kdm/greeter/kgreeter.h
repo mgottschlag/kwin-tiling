@@ -4,7 +4,7 @@
     $Id$
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000, 2001 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,7 @@ class QTimer;
 class QIconView;
 class QLabel;
 class QPushButton;
+class QPopupMenu;
 class QComboBox;
 
 #include <kpassdlg.h>
@@ -76,43 +77,44 @@ public slots:
     void go_button_clicked();
     void clear_button_clicked();
     void chooser_button_clicked();
+    void console_button_clicked();
     void quit_button_clicked();
     void shutdown_button_clicked();
     void timerDone();
-    void slot_user_name( QIconViewItem*);
+    void slot_user_name( QIconViewItem *);
+    void slot_session_selected( );
     void load_wm();
 
 protected:
-    void timerEvent( QTimerEvent * ) {};
-    void keyPressEvent( QKeyEvent * );
+    void timerEvent( QTimerEvent *) {};
+    void keyPressEvent( QKeyEvent *);
 
 private:
     void save_wm();
+    void set_wm(const char *);
     void insertUsers( QIconView *);
+    bool verifyUser( bool);
 
-    QTimer*		timer;
-    QIconView*		user_view;
-    KdmClock*		clock;
-    QLabel*		pixLabel;
-    QLabel*		loginLabel;
-    QLabel*		sessionargLabel;
-    QLabel*		passwdLabel;
-    QLabel*		failedLabel;
-    KLoginLineEdit*	loginEdit;
-    KPasswordEdit*	passwdEdit; 
-    QFrame*		separator;
-    QPushButton*	goButton;
-    QPushButton*	chooserButton;
-    QPushButton*	quitButton;
-    QPushButton*	clearButton;
-    QPushButton*	shutdownButton;
-    QComboBox*		sessionargBox;
-
+    enum WmStat { WmNone, WmPrev, WmSel };
+    WmStat		wmstat;
+    QIconView		*user_view;
+    KdmClock		*clock;
+    QLabel		*pixLabel;
+    QLabel		*loginLabel, *passwdLabel, *sessargLabel;
+    KLoginLineEdit	*loginEdit;
+    KPasswordEdit	*passwdEdit; 
+    QComboBox		*sessargBox;
+    QWidget		*sessargStat;
+    QLabel		*sasPrev, *sasSel;
+    QFrame		*separator;
+    QTimer		*timer;
+    QLabel		*failedLabel;
+    QPushButton		*goButton, *clearButton;
+    QPushButton		*menuButton;
+    QPopupMenu		*optMenu;
+    QPushButton		*quitButton;
+    QPushButton		*shutdownButton;
 };
-
-int AccNoPass (struct display *, const char *);
-int MyVerify (struct display *, struct greet_info *, struct verify_info *, time_t *expire, char **nologin);
-int AutoLogon (struct display *, struct greet_info *, struct verify_info *);
 
 
 #endif /* KGREETER_H */

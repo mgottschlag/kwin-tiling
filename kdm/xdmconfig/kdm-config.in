@@ -1,8 +1,8 @@
 ! $XConsortium: xdm-conf.cpp,v 1.2 93/09/28 14:30:32 gildea Exp $
 ! $Id$
-!DisplayManager.errorLogFile:	@XDMDIR@/xdm-errors
-!DisplayManager.pidFile:	@XDMDIR@/xdm-pid
-!DisplayManager.keyFile:	@XDMDIR@/xdm-keys
+!DisplayManager.errorLogFile:	@XDMDIR@/kdm-errors
+!DisplayManager.pidFile:	@XDMDIR@/kdm-pid
+!DisplayManager.keyFile:	@XDMDIR@/kdm-keys
 !DisplayManager.servers:	@XDMDIR@/Xservers
 !DisplayManager.accessFile:	@XDMDIR@/Xaccess
 !DisplayManager._0.authorize:	true

@@ -533,7 +533,8 @@ SessionExit (struct display *d, int status, int dummy /* we know better */)
 	setgid (verify.gid);
 	setuid (verify.uid);
 	RemoveUserAuthorization (d, &verify);
-#ifndef USE_PAM
+#if !defined(USE_PAM) && !defined(AIXV3)
+	/* XXX the init is done as root! */
 # ifdef K5AUTH
 	/* do like "kdestroy" program */
         {

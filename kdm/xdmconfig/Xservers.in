@@ -11,3 +11,9 @@
 #
 
 :0 local @XBINDIR@/X
+
+# for solaris use this one
+#:0 local@console @XBINDIR@/X
+
+# for linux use this one
+#:0 local@tty1 @XBINDIR@/X vt7

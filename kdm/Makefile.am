@@ -1,5 +1,3 @@
-# $Id$
-
 SUBDIRS = greeter pics xdmconfig @kdmchooserdir@
 
 # Extra lib. Might be -lpam -dl or -lshadow or nothing

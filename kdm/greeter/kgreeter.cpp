@@ -4,7 +4,7 @@
     $Id$
 
     Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000, 2001 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -23,11 +23,29 @@
 
     */
 
-#include <strings.h>
+#include <qfile.h>
+#include <qbitmap.h>
+#include <qtextstream.h>
+#include <qpopupmenu.h>
+#include <qtimer.h>
+#include <qcombobox.h>
+#include <qstring.h>
+#include <qaccel.h>
+
+#include <klocale.h>
+#include <kglobal.h>
+#include <kstddirs.h>
+#include <kmessagebox.h>
+#include <kcmdlineargs.h>
+#include <kapp.h>
+
 #include "kgreeter.h"
 #include "kdmconfig.h"
 #include "kdmclock.h" 
 #include "kfdialog.h" 
+#include "miscfunc.h"
+
+#include <X11/Xlib.h>
 
 #include <sys/types.h>
 #include <sys/param.h>
@@ -38,100 +56,17 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
-
-#include <qfile.h>
-#include <qbitmap.h>
-#include <qtextstream.h>
-#include <qpopupmenu.h>
-#include <qtimer.h>
-#include <qcombobox.h>
-#include <qstring.h>
-
-#include <klocale.h>
-#include <kglobal.h>
-#include <kstddirs.h>
-#include <kmessagebox.h>
-#include <kcmdlineargs.h>
-#include <kapp.h>
-
-#include <X11/Xmd.h>
-#include <X11/Xlib.h>
-#include <X11/keysym.h>
-
-#include "dm.h"
-#include "dm_error.h"
-#include "greet.h"
-#include "miscfunc.h"
-
-#ifdef GREET_LIB
-extern "C" {
-/*
- * Function pointers filled in by the initial call into the library
- */
-int	(*__xdm_PingServer)(struct display *d, Display *alternateDpy) = NULL;
-void	(*__xdm_SessionPingFailed)(struct display *d) = NULL;
-void	(*__xdm_Debug)(const char *fmt, ...) = NULL;
-void	(*__xdm_RegisterCloseOnFork)(int fd) = NULL;
-void	(*__xdm_SecureDisplay)(struct display *d, Display *dpy) = NULL;
-void	(*__xdm_UnsecureDisplay)(struct display *d, Display *dpy) = NULL;
-void	(*__xdm_ClearCloseOnFork)(int fd) = NULL;
-void	(*__xdm_SetupDisplay)(struct display *d) = NULL;
-void	(*__xdm_LogError)(const char *fmt, ...) = NULL;
-void	(*__xdm_SessionExit)(struct display *d, int status, int removeAuth) = NULL;
-void	(*__xdm_DeleteXloginResources)(struct display *d, Display *dpy) = NULL;
-int	(*__xdm_source)(char **environ, char *file) = NULL;
-char	**(*__xdm_defaultEnv)(void) = NULL;
-char	**(*__xdm_setEnv)(char **e, char *name, char *value) = NULL;
-char	**(*__xdm_putEnv)(const char *string, char **env) = NULL;
-char	**(*__xdm_parseArgs)(char **argv, char *string) = NULL;
-void	(*__xdm_printEnv)(char **e) = NULL;
-char	**(*__xdm_systemEnv)(struct display *d, char *user, char *home) = NULL;
-void	(*__xdm_LogOutOfMem)(const char *fmt, ...) = NULL;
-SETGRENT_TYPE	(*__xdm_setgrent)(void) = NULL;
-struct group	*(*__xdm_getgrent)(void) = NULL;
-void	(*__xdm_endgrent)(void) = NULL;
-#ifdef USESHADOW
-struct spwd	*(*__xdm_getspnam)(GETSPNAM_ARGS) = NULL;
-void	(*__xdm_endspent)(void) = NULL;
-#endif
-struct passwd	*(*__xdm_getpwnam)(GETPWNAM_ARGS) = NULL;
-#ifdef __linux__
-void	(*__xdm_endpwent)(void) = NULL;
-#endif
-char	*(*__xdm_crypt)(CRYPT_ARGS) = NULL;
-#ifdef USE_PAM
-pam_handle_t	**(*__xdm_thepamh)(void) = NULL;
-#endif
-}
-#endif
-
-#ifdef SECURE_RPC
-# include <rpc/rpc.h>
-# include <rpc/key_prot.h>
-#endif
-
-#ifdef K5AUTH
-# include <krb5/krb5.h>
-#endif
-
-#define ex_login 0
-#define ex_choose 1
-
-static const char *description = I18N_NOOP("KDE Display Manager");	//XXX
-
-static const char *version = "v0.90";
-
+#include <strings.h>
+#include <utime.h>
+#include <time.h>
 
 // Global vars
-KGreeter *kgreeter = 0;
 KDMConfig *kdmcfg = 0;
+KGreeter *kgreeter = 0;
 
-struct display		*d;
-Display			**dpy;
-struct verify_info	*verify;
-struct greet_info	*greet;
-
-char name[F_LEN], password[F_LEN], sessarg[F_LEN];
+/* XXX let it go away */
+extern int dpy_is_local;
+extern Display **dpy;
 
 void
 KLoginLineEdit::focusOutEvent( QFocusEvent *e)
@@ -140,11 +75,17 @@ KLoginLineEdit::focusOutEvent( QFocusEvent *e)
     QLineEdit::focusOutEvent( e);
 }
 
-class MyApp:public KApplication {
+class MyApp : public KApplication {
 
 public:
+    MyApp(Display *display, int& argc, char** argv, const QCString& rAppName);
     virtual bool x11EventFilter( XEvent * );
 };
+
+MyApp::MyApp(Display *display, int& argc, char** argv, const QCString& rAppName)
+    : KApplication(display, argc, argv, rAppName)
+{
+}
 
 bool 
 MyApp::x11EventFilter( XEvent * ev)
@@ -159,25 +100,7 @@ MyApp::x11EventFilter( XEvent * ev)
 				RevertToParent, CurrentTime);
 	}
     }
-    return FALSE;
-}
-
-static void
-TempUngrab_Run(void (*func)(void *), void *ptr)
-{
-    XUngrabKeyboard(qt_xdisplay(), CurrentTime);
-    func(ptr);
-
-    // Secure the keyboard again
-    if (XGrabKeyboard (qt_xdisplay(), 
-		       /* kgreeter ? kgreeter->winId() :*/ DefaultRootWindow (qt_xdisplay()), 
-		       True, GrabModeAsync, GrabModeAsync, CurrentTime) 
-	!= GrabSuccess
-    ) {
-	LogError ("WARNING: keyboard on display %s could not be secured\n",
-		  ::d->name);
-	SessionExit (::d, RESERVER_DISPLAY, FALSE);
-    }
+    return false;
 }
 
 void KGreeter::keyPressEvent( QKeyEvent *e )
@@ -189,7 +112,7 @@ void KGreeter::keyPressEvent( QKeyEvent *e )
 		ReturnPressed();
 		return;
 	    case Key_Escape:
-		clear_button_clicked();
+		clearButton->animateClick();
 		return;
 	}
     }
@@ -202,9 +125,9 @@ void
 KGreeter::insertUsers( QIconView *iconview)
 {
     QPixmap default_pix( locate("user_pic", QString::fromLatin1("default.png")));
-    if( default_pix.isNull())
+/*    if( default_pix.isNull())
 	LogError("Can't get default pixmap from \"default.png\"\n");
-
+*/
     if( kdmcfg->_showUsers == KDMConfig::UsrAll ) {
 	struct passwd *ps;
 	for( setpwent(); (ps = getpwent()) != 0; ) {
@@ -244,17 +167,26 @@ KGreeter::insertUsers( QIconView *iconview)
 
 #undef CHECK_STRING
 
+static void
+inserten (QPopupMenu *mnu, const QString& txt, 
+	  const QObject *receiver, const char *member)
+{
+    mnu->insertItem(txt, receiver, member, QAccel::shortcutKey(txt));
+}
+
+QString enam;
+
 KGreeter::KGreeter(QWidget *parent, const char *t) 
   : QFrame( parent, t, WStyle_Customize | WStyle_NoBorder | WStyle_Tool)
 {
-    setFrameStyle(QFrame::WinPanel| QFrame::Raised);
+    setFrameStyle (QFrame::WinPanel | QFrame::Raised);
     QBoxLayout* vbox = new QBoxLayout(  this, 
 					QBoxLayout::TopToBottom, 
 					10, 10);
     QBoxLayout* hbox1 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
     QBoxLayout* hbox2 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
 
-    QGridLayout* grid = new QGridLayout( 5, 2, 5);
+    QGridLayout* grid = new QGridLayout( 5, 4, 5);
 
     QLabel* welcomeLabel = new QLabel( kdmcfg->_greetString, this);
     welcomeLabel->setAlignment(AlignCenter);
@@ -296,21 +228,21 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	    break;
     }
 
-    loginLabel = new QLabel( i18n("Login:"), this);
     loginEdit = new KLoginLineEdit( this);
-    loginLabel->setBuddy(loginEdit);
-    QString enam = QString::fromLatin1("LastUser_") + 
-		   QString::fromLatin1(::d->name);
-    loginEdit->setFocus();
+    loginLabel = new QLabel( loginEdit, i18n("&Login:"), this);
 
-    passwdLabel = new QLabel( i18n("Password:"), this);
     passwdEdit = new KPasswordEdit( this, "edit", kdmcfg->_echoMode);
-    passwdLabel->setBuddy(passwdEdit);
+    passwdLabel = new QLabel( passwdEdit, i18n("&Password:"), this);
 
-    sessionargLabel = new QLabel(i18n("Session Type:"), this);
-    sessionargBox = new QComboBox( false, this);
-    sessionargLabel->setBuddy(sessionargBox);
-    sessionargBox->insertStringList( kdmcfg->_sessionTypes );
+    sessargBox = new QComboBox( false, this);
+    sessargLabel = new QLabel( sessargBox, i18n("Session &Type:"), this);
+    sessargBox->insertStringList( kdmcfg->_sessionTypes );
+    sessargStat = new QWidget( this);
+    sasPrev = new QLabel( i18n("session type", "(previous)"), sessargStat);
+    sasSel = new QLabel( i18n("session type", "(selected)"), sessargStat);
+    sessargStat->setFixedSize(
+	QMAX(sasPrev->sizeHint().width(), sasSel->sizeHint().width()),
+	sessargBox->height());
 
     vbox->addLayout( hbox1);
     vbox->addLayout( hbox2);
@@ -327,57 +259,61 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     failedLabel = new QLabel( this);
     failedLabel->setFont( *kdmcfg->_failFont);
 
-    grid->addWidget( loginLabel , 0, 0);
-    grid->addWidget( loginEdit  , 0, 1);
+    grid->addWidget( loginLabel, 0, 0);
+    grid->addMultiCellWidget( loginEdit, 0,0, 1,3);
     grid->addWidget( passwdLabel, 1, 0);
-    grid->addWidget( passwdEdit , 1, 1);
-    grid->addWidget( sessionargLabel, 2, 0);
-    grid->addWidget( sessionargBox  , 2, 1);
-    grid->addMultiCellWidget( failedLabel, 3, 3, 0, 1, AlignCenter);
-    grid->addMultiCellWidget( sepFrame, 4, 4, 0, 1);
-    grid->setColStretch( 1, 4);
+    grid->addMultiCellWidget( passwdEdit, 1,1, 1,3);
+    grid->addWidget( sessargLabel, 2, 0);
+    grid->addWidget( sessargBox, 2, 1);
+    grid->addWidget( sessargStat, 2, 2);
+    grid->addMultiCellWidget( failedLabel, 3,3, 0,3, AlignCenter);
+    grid->addMultiCellWidget( sepFrame, 4,4, 0,3);
+    grid->setColStretch( 3, 1);
 
     goButton = new QPushButton( i18n("G&o!"), this);
+    goButton->setFixedWidth(goButton->sizeHint().width());
+    goButton->setDefault( true);
     connect( goButton, SIGNAL( clicked()), SLOT(go_button_clicked()));
-
-    hbox2->addWidget( goButton, AlignBottom);
+    hbox2->addWidget( goButton);
 
     clearButton = new QPushButton( i18n("&Clear"), this);
     connect( clearButton, SIGNAL(clicked()), SLOT(clear_button_clicked()));
-    hbox2->addWidget( clearButton, AlignBottom);
+    hbox2->addWidget( clearButton);
 
-    if (kdmcfg->_allowChooser) {
-	chooserButton = new QPushButton( i18n("C&hooser"), this);
-	connect( chooserButton, SIGNAL(clicked()), SLOT(chooser_button_clicked()));
-	hbox2->addWidget( chooserButton, AlignBottom);
-    }
+    hbox2->addStretch( 1);
 
-    quitButton = new QPushButton( ::d->displayType.location == Local ? i18n("R&estart X Server") : i18n("Clos&e Connection"), this);
-    connect( quitButton, SIGNAL(clicked()), SLOT(quit_button_clicked()));
-    hbox2->addWidget( quitButton, AlignBottom);
+    optMenu = new QPopupMenu(this);
+    optMenu->setCheckable(false);
 
-    int sbw;
-    if( kdmcfg->_shutdownButton != KDMConfig::SdNone 
-	&& ( kdmcfg->_shutdownButton != KDMConfig::SdConsoleOnly 
-	     || ::d->displayType.location == Local)
-    ) {
+    inserten (optMenu, i18n("Co&nsole Login"), 
+	      this, SLOT(console_button_clicked()));
+
+    inserten (optMenu, i18n("&Remote Login"), 
+	      this, SLOT(chooser_button_clicked()));
+
+    inserten (optMenu, dpy_is_local ? 
+		       i18n("R&estart X Server") : 
+		       i18n("Clos&e Connection"), 
+	      this, SLOT(quit_button_clicked()));
+
+    menuButton = new QPushButton( i18n("&Menu"), this);
+    menuButton->setPopup(optMenu);
+    hbox2->addWidget( menuButton);
+
+    hbox2->addStretch( 1);
+
+    int sbw = 0;
+    if (kdmcfg->_shutdownButton != KDMConfig::SdNone && 
+	(kdmcfg->_shutdownButton != KDMConfig::SdConsoleOnly || dpy_is_local))
+    {
 	  
 	shutdownButton = new QPushButton(i18n("&Shutdown..."), this);
 
 	connect( shutdownButton, SIGNAL(clicked()), 
 		 SLOT(shutdown_button_clicked()));
-	hbox2->addWidget( shutdownButton, AlignBottom);
+	hbox2->addWidget( shutdownButton);
 	sbw = shutdownButton->width();
-    } else {
-	sbw = 0;
     }
-
-    if (kdmcfg->_showPrevious) {
-	loginEdit->setText (kdmcfg->readEntry (enam));
-	loginEdit->selectAll();
-	load_wm();
-    } else
-	kdmcfg->deleteEntry (enam, false);
 
     //vbox->activate();
     timer = new QTimer( this );
@@ -388,12 +324,23 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
      // Signal to update session type
     connect( loginEdit, SIGNAL(lost_focus()),
 	     this, SLOT( load_wm()));
+    connect( sessargBox, SIGNAL(activated(int)),
+	     this, SLOT(slot_session_selected()));
     if( user_view) {
 	connect( user_view, SIGNAL(returnPressed(QIconViewItem*)), 
 		 this, SLOT(slot_user_name( QIconViewItem*)));
 	connect( user_view, SIGNAL(clicked(QIconViewItem*)), 
 		 this, SLOT(slot_user_name( QIconViewItem*)));
     }
+
+    clear_button_clicked();
+
+    if (kdmcfg->_showPrevious) {
+	loginEdit->setText (kdmcfg->readEntry (enam));
+	loginEdit->selectAll();
+	load_wm();
+    } else
+	kdmcfg->deleteEntry (enam, false);
 }
 
 void 
@@ -405,6 +352,14 @@ KGreeter::slot_user_name( QIconViewItem *item)
 	passwdEdit->setFocus();
 	load_wm();
     }
+}
+
+void 
+KGreeter::slot_session_selected()
+{
+    wmstat = WmSel;
+    sasSel->show();
+    sasPrev->hide();
 }
 
 void 
@@ -421,8 +376,9 @@ KGreeter::timerDone()
 	failedLabel->setText(QString::null);
 	goButton->setEnabled( true);
 	loginEdit->setEnabled( true);
-        passwdEdit->setEnabled( true);
-        loginEdit->setFocus();
+	passwdEdit->setEnabled( true);
+	sessargBox->setEnabled( true);
+	clear_button_clicked();
     }
 }
 
@@ -432,13 +388,17 @@ KGreeter::clear_button_clicked()
     loginEdit->clear();
     passwdEdit->erase();
     loginEdit->setFocus();
+    sasPrev->hide();
+    sasSel->hide();
+    wmstat = WmNone;
+    set_wm( "default");
 }
 
 void
 KGreeter::quit_button_clicked()
 {
     QApplication::flushX();
-    SessionExit(::d, RESERVER_DISPLAY, FALSE);
+    qApp->exit( ex_reserver );
 }
 
 void
@@ -447,180 +407,189 @@ KGreeter::chooser_button_clicked()
     qApp->exit( ex_choose );
 }
 
-static void
-do_shutdown(void *ptr)
+void
+KGreeter::console_button_clicked()
+{
+    qApp->exit( ex_console );
+}
+
+static int
+do_shutdown(size_t arg)
 {
     KDMShutdown k( kdmcfg->_shutdownButton,
-		   (KGreeter *)ptr, "Shutdown",
+		   (KGreeter *)arg, "Shutdown",
 		   kdmcfg->_shutdown, 
 		   kdmcfg->_restart,
-#ifndef BSD
-		   kdmcfg->_consoleMode,
-#endif
 		   kdmcfg->_useLilo,
 		   kdmcfg->_liloCmd,
 		   kdmcfg->_liloMap);
-    k.exec();
+    return k.exec();
 }
 
 void
 KGreeter::shutdown_button_clicked()
 {
     timer->stop();
-    TempUngrab_Run(do_shutdown, (void *)this);
-    SetTimer();
+    if (TempUngrab_Run(do_shutdown, (size_t)this) == QDialog::Accepted)
+	qApp->exit( ex_unmanage );
+    else
+	SetTimer();
 }
 
-#ifdef USE_RDWR_WM
 
 void
-KGreeter::save_wm()
+KGreeter::set_wm(const char *cwm)
 {
-    rdwr_wm ((char *)sessionargBox->currentText().local8Bit().data(), 0, 
-	     loginEdit->text().local8Bit().data(), 0);
-}
-
-void
-KGreeter::load_wm()
-{
-    char buf[256];
-    QCString name;
-    int sum, len, i, num;
-
-    num = sessionargBox->count();
-    name = loginEdit->text().local8Bit();
-    switch (rdwr_wm (buf, 256, name.data(), 1)) {
-	case -2:	/* no such user */
-	    if ((len = name.length())) {
-		/* XXX - voodoo */
-		for (sum = 0, i = 0; i < len; i++)
-		    sum += (int)name[i] << ((i ^ sum) & 7);
-		sum ^= (sum >> 7);
-		/* forge a session with this hash - default more probable */
-		i = sum % (num * 4 / 3);
-		if (i < num) {
-		    sessionargBox->setCurrentItem(i);
-		    return;
-		}
-	    }
-	    /* fall through */
-	case -1:	/* cannot read */
-	    strcpy (buf, "default");
-	    break;
-    }
-
-    for (i = 0; i < num; i++)
-	if (sessionargBox->text(i) == QString::fromLocal8Bit (buf)) {
-	    sessionargBox->setCurrentItem(i);
+    QString wm = QString::fromLocal8Bit (cwm);
+    for (int i = sessargBox->count(); i--;)
+	if (sessargBox->text(i) == wm) {
+	    sessargBox->setCurrentItem(i);
 	    return;
 	}
 }
 
-#else
+void
+KGreeter::save_wm()
+{
+#ifdef USE_RDWR_WM
+    rdwr_wm ((char *)sessargBox->currentText().local8Bit().data(), 0, 
+	     loginEdit->text().local8Bit().data(), 0);
+#endif /* USE_RDWR_WM */
+}
 
 void
 KGreeter::load_wm()
 {
-}
+#ifdef USE_RDWR_WM
+    int sum, len, i, num;
+    QCString name;
+    char buf[256];
 
-void
-KGreeter::save_wm()
-{
-}
+    if (wmstat == WmSel)
+	return;
 
+    name = loginEdit->text().local8Bit();
+    if (!(len = name.length())) {
+	wmstat = WmNone;
+	sasPrev->hide();
+	set_wm( "default");
+	return;
+    }
+
+    wmstat = WmPrev;
+    sasPrev->show();
+    switch (rdwr_wm (buf, 256, name.data(), 1)) {
+	case -2:	/* no such user */
+	    /* XXX - voodoo */
+	    for (sum = 0, i = 0; i < len; i++)
+		sum += (int)name[i] << ((i ^ sum) & 7);
+	    sum ^= (sum >> 7);
+	    /* forge a session with this hash - default more probable */
+	    num = sessargBox->count();
+	    i = sum % (num * 4 / 3);
+	    if (i < num) {
+		sessargBox->setCurrentItem(i);
+		return;
+	    }
+	    /* fall through */
+	case -1:	/* cannot read */
+	    set_wm( "default");
+	    return;
+	default:
+	    set_wm( buf);
+    }
 #endif /* USE_RDWR_WM */
+}
+
 
 QString errm;
 
-static void
-errorbox(void *)
+#define errorbox ((size_t)QMessageBox::Critical)
+#define sorrybox ((size_t)QMessageBox::Warning)
+#define infobox ((size_t)QMessageBox::Information)
+
+static int
+msgbox(size_t typ)
 {
-    KFMsgBox::box(kgreeter, QMessageBox::Critical, errm);
+    KFMsgBox::box(kgreeter, (QMessageBox::Icon)typ, errm);
+    return 0;
 }
 
-static void
-sorrybox(void *)
+bool
+KGreeter::verifyUser(bool haveto)
 {
-    KFMsgBox::box(kgreeter, QMessageBox::Warning, errm);
-}
-
-static void
-infobox(void *)
-{
-    KFMsgBox::box(kgreeter, QMessageBox::Information, errm);
-}
-
-void 
-KGreeter::go_button_clicked()
-{
-    time_t expire;
+    int expire;
     char *nologin;
-    QDateTime dat;
 
+    init_greet();
     /* NOTE: name/password are static -> all zero -> terminator present */
-    greet->name = ::name;
     strncpy( ::name, loginEdit->text().local8Bit(), F_LEN - 1 );
-    greet->password = ::password;
     strncpy( ::password, passwdEdit->password(), F_LEN - 1 );
-    greet->string = ::sessarg;
-    strncpy( ::sessarg, sessionargBox->currentText().local8Bit(), F_LEN - 1 );
+    strncpy( ::sessarg, sessargBox->currentText().local8Bit(), F_LEN - 1 );
 
-    switch (MyVerify (::d, greet, verify, &expire, &nologin)) {
+    switch (MyVerify (::name, ::password, &expire, &nologin)) {
 	case V_ERROR:
-	    errm = i18n("Could not access the login capabilities database or out of memory.");
-	    TempUngrab_Run(errorbox, 0);
+	    errm = i18n("Some critical error occurred.\n"
+			"Please look at KDM's logfile for more information\n"
+			"or contact your system administrator.");
+	    TempUngrab_Run(msgbox, errorbox);
 	    break;
 	case V_NOHOME:
 	    errm = i18n("Home directory not available.");
-	    TempUngrab_Run(sorrybox, 0);
+	    TempUngrab_Run(msgbox, sorrybox);
 	    break;
 	case V_NOROOT:
 	    errm = i18n("Root logins are not allowed.");
-	    TempUngrab_Run(sorrybox, 0);
+	    TempUngrab_Run(msgbox, sorrybox);
 	    break;
 	case V_BADSHELL:
-	    errm = i18n("Your login shell is not listed in /etc/shells.");
-	    TempUngrab_Run(sorrybox, 0);
+	    errm = i18n("Your login shell is not listed\n"
+			"in /etc/shells.");
+	    TempUngrab_Run(msgbox, sorrybox);
 	    break;
 	case V_AEXPIRED:
 	    errm = i18n("Your account has expired.");
-	    TempUngrab_Run(sorrybox, 0);
+	    TempUngrab_Run(msgbox, sorrybox);
 	    break;
 	case V_PEXPIRED:
 	    errm = i18n("Your password has expired.");
-	    TempUngrab_Run(sorrybox, 0);
+	    TempUngrab_Run(msgbox, sorrybox);
 	    break;
 	case V_BADTIME:
-	    errm = i18n("You are not allowed to login at the moment.");
-	    TempUngrab_Run(sorrybox, 0);
+	    errm = i18n("You are not allowed to login\n"
+			"at the moment.");
+	    TempUngrab_Run(msgbox, sorrybox);
 	    break;
-	case V_NOLOGIN: {
-	    QFile f;
-	    f.setName(QString::fromLocal8Bit(nologin));
-	    f.open(IO_ReadOnly);
-	    QTextStream t( &f ); 
-	    errm = "";
-	    while ( !t.eof() )
-		errm += t.readLine() + '\n';
-	    f.close();
+	case V_NOLOGIN: 
+	    {
+		QFile f;
+		f.setName(QString::fromLocal8Bit(nologin));
+		f.open(IO_ReadOnly);
+	        QTextStream t( &f ); 
+		errm = "";
+		while ( !t.eof() )
+		    errm += t.readLine() + '\n';
+		f.close();
 
-	    if (errm.isEmpty())
-		errm = i18n("Logins are not allowed at the moment.\n"
-			 "Try again later.");
-	    TempUngrab_Run(sorrybox, 0);
-	    } break;
+		if (errm.isEmpty())
+		    errm = i18n("Logins are not allowed at the moment.\n"
+				"Try again later.");
+		TempUngrab_Run(msgbox, sorrybox);
+	    } 
+	    break;
 	case V_AWEXPIRE:
-	    dat.setTime_t(expire);
-	    /* XXX make sensible */
-	    errm = i18n("Your account expires on %1.")
-			.arg(KGlobal::locale()->formatDateTime(dat));
-	    TempUngrab_Run(infobox, 0);
+	    if (expire == 1)
+		errm = i18n("Your account expires tomorrow.");
+	    else
+		errm = i18n("Your account expires in %1 days.").arg(expire);
+	    TempUngrab_Run(msgbox, infobox);
 	    goto oke;
 	case V_PWEXPIRE:
-	    dat.setTime_t(expire);
-	    errm = i18n("Your password expires on %1.")
-			.arg(KGlobal::locale()->formatDateTime(dat));
-	    TempUngrab_Run(infobox, 0);
+	    if (expire == 1)
+		errm = i18n("Your password expires tomorrow.");
+	    else
+		errm = i18n("Your password expires in %1 days.").arg(expire);
+	    TempUngrab_Run(msgbox, infobox);
 	  oke:
 	case V_OK:
 	    save_wm();
@@ -628,138 +597,47 @@ KGreeter::go_button_clicked()
 	    qApp->setOverrideCursor( waitCursor);
 	    hide();
 	    qApp->exit( ex_login);
-	    DeleteXloginResources( ::d, *dpy);
-	    return;
+	    return true;
 	case V_FAIL:
-	    failedLabel->setText(i18n("Login failed!"));
+	    if (!haveto)
+		return false;
+	    failedLabel->setText(i18n("Login failed"));
 	    goButton->setEnabled( false);
 	    loginEdit->setEnabled( false);
 	    passwdEdit->setEnabled( false);
-	    clear_button_clicked();
+	    sessargBox->setEnabled( false);
 	    timer->start( 1500 + kapp->random()/(RAND_MAX/1000), true );// XXX make configurable
-	    return;
+	    return true;
     }
-    setActiveWindow();
+//    setActiveWindow();	XXX (tempungrabrun)
     clear_button_clicked();
+    return true;
+}
+
+void 
+KGreeter::go_button_clicked()
+{
+    verifyUser(true);
 }
 
 void
 KGreeter::ReturnPressed()
 {
-    if( !goButton->isEnabled())
+    if (!goButton->isEnabled())
 	return;
-    else if( loginEdit->hasFocus()) {
-	passwdEdit->setFocus();
+    if (loginEdit->hasFocus()) {
 	load_wm();
-	if (AccNoPass (::d, loginEdit->text().local8Bit()))
-	    go_button_clicked();
-    } else if (passwdEdit->hasFocus() || 
-	       goButton->hasFocus() ||
-	       sessionargBox->hasFocus()) {
-	go_button_clicked();
+	if (!verifyUser(false))
+	    passwdEdit->setFocus();
+    } else if (passwdEdit->hasFocus() ||
+	       sessargBox->hasFocus()) {
+	verifyUser(true);
     }
 }
 
 
-// we have to return RESERVER_DISPLAY to restart the server
 static int
-IOErrorHandler (Display*)
-{
-    exit (RESERVER_AL_DISPLAY);
-    /* Not reached */
-    return 0;
-}
-
-int AccNoPass (
-    struct display	*d,
-    const char		*un)
-{
-    QString user (QString::fromLocal8Bit (un));
-    return (!strcmp (d->name, ":0") &&
-	    (kdmcfg->_autoUser == user ||
-	     kdmcfg->_noPassUsers.contains (user))) ||
-	   (d->autoLogin &&
-	    (QString::fromLocal8Bit (d->autoUser) == user ||
-	     QStringList::split (QString::fromLocal8Bit (","), 
-				 QString::fromLocal8Bit (d->noPassUsers)
-				).contains (user)));
-}
-
-int
-MyVerify (
-    struct display	*d,
-    struct greet_info	*greet,
-    struct verify_info	*verify,
-    time_t		*expire,
-    char		**nologin)
-{
-    if (greet->password && greet->password[0] == '\0' && 
-	AccNoPass (d, greet->name))
-	greet->password = 0;
-    return Verify (d, greet, verify, expire, nologin);
-}
-
-int
-AutoLogon (
-    struct display	*d,
-    struct greet_info	*greet,
-    struct verify_info	*verify)
-{
-    greet->string = sessarg;
-    greet->name = name;
-    greet->password = password;
-
-    if (d->hstent->nLogPipe) {
-	if (d->hstent->nLogPipe[0] == '\n')
-	    return 0;
-	int cp = s_copy(sessarg, d->hstent->nLogPipe, 0, 0);
-	cp = s_copy(name, d->hstent->nLogPipe, cp, 0);
-	s_copy(password, d->hstent->nLogPipe, cp, 1);
-    } else {
-	if (!d->autoLogin)
-	    return 0;
-	if (d->autoUser[0] != '\0') {
-	    // resource specified autologin
-	    if (d->hstent->lastExit > time(0) - d->openDelay) {
-		if (d->hstent->goodExit)
-		    return 0;
-	    } else {
-	        if (!d->autoLogin1st)
-		    return 0;
-	    }
-	    greet->name = d->autoUser;
-	    if (d->autoPass[0] == '\0')
-		greet->password = 0;
-	    else {
-		strncpy(password, d->autoPass, F_LEN - 1);
-		Debug("Password set in auto-login\n");
-	    }
-	    greet->string = strlen (d->autoString) ? 
-			    d->autoString : (char *)"default";
-	} else if (!strcmp(d->name, ":0") && !kdmcfg->_autoUser.isEmpty()) {
-	    // kcontol specified autologin
-	    if (d->hstent->lastExit > time(0) - d->openDelay) {
-		if (d->hstent->goodExit)
-		    return 0;
-	    } else {
-		if (!kdmcfg->_autoLogin1st)
-		    return 0;
-	    }
-	    strncpy(name, kdmcfg->_autoUser.local8Bit(), F_LEN - 1);
-	    greet->password = 0;
-#ifdef USE_RDWR_WM
-	    if (!rdwr_wm (sessarg, F_LEN, name, 1))
-#endif
-		greet->string = (char *)"default";
-	} else	// no autologin
-	    return 0;
-    }
-    return MyVerify (d, greet, verify, 0, 0) >= V_OK;
-}
-
-
-static void
-creat_greet(void * /* ptr */)
+creat_greet(size_t /* arg */)
 {
     kgreeter = new KGreeter;		   
     kgreeter->updateGeometry();
@@ -787,202 +665,69 @@ creat_greet(void * /* ptr */)
     kgreeter->show();
     kgreeter->setActiveWindow();
     QApplication::restoreOverrideCursor();
+    return 0;
 }
 
 extern bool kde_have_kipc;
+extern "C" int IOErrorHandler (Display *);
 
-/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-   This function is a BIG mess. It needs A LOT of cleanup.
-*/
-greet_user_rtn 
-GreetUser(
-    struct display	*d2,
-    Display		**dpy2,
-    struct verify_info	*verify2,
-    struct greet_info	*greet2,
-    struct dlfuncs	*
-#ifdef GREET_LIB
-			 dlfuncs
-#endif
-	 )
+int argc = 1;
+const char *argv[2] = {"kdmgreet", NULL};
+
+extern "C" int
+kg_main(const char *dname)
 {
-#ifdef GREET_LIB
-/*
- * These must be set before they are used.
- */
-    __xdm_PingServer = dlfuncs->_PingServer;
-    __xdm_SessionPingFailed = dlfuncs->_SessionPingFailed;
-    __xdm_Debug = dlfuncs->_Debug;
-    __xdm_RegisterCloseOnFork = dlfuncs->_RegisterCloseOnFork;
-    __xdm_SecureDisplay = dlfuncs->_SecureDisplay;
-    __xdm_UnsecureDisplay = dlfuncs->_UnsecureDisplay;
-    __xdm_ClearCloseOnFork = dlfuncs->_ClearCloseOnFork;
-    __xdm_SetupDisplay = dlfuncs->_SetupDisplay;
-    __xdm_LogError = dlfuncs->_LogError;
-    __xdm_SessionExit = dlfuncs->_SessionExit;
-    __xdm_DeleteXloginResources = dlfuncs->_DeleteXloginResources;
-    __xdm_source = dlfuncs->_source;
-    __xdm_defaultEnv = dlfuncs->_defaultEnv;
-    __xdm_setEnv = dlfuncs->_setEnv;
-    __xdm_putEnv = dlfuncs->_putEnv;
-    __xdm_parseArgs = dlfuncs->_parseArgs;
-    __xdm_printEnv = dlfuncs->_printEnv;
-    __xdm_systemEnv = dlfuncs->_systemEnv;
-    __xdm_LogOutOfMem = dlfuncs->_LogOutOfMem;
-    __xdm_setgrent = dlfuncs->_setgrent;
-    __xdm_getgrent = dlfuncs->_getgrent;
-    __xdm_endgrent = dlfuncs->_endgrent;
-#ifdef USESHADOW
-    __xdm_getspnam = dlfuncs->_getspnam;
-    __xdm_endspent = dlfuncs->_endspent;
-#endif
-    __xdm_getpwnam = dlfuncs->_getpwnam;
-#ifdef __linux__
-    __xdm_endpwent = dlfuncs->_endpwent;
-#endif
-    __xdm_crypt = dlfuncs->_crypt;
-#ifdef USE_PAM
-    __xdm_thepamh = dlfuncs->_thepamh;
-#endif
-#endif
-
-    int retval;
-
-    d = d2;
-    dpy = dpy2;
-    verify = verify2;
-    greet = greet2;
-     
-    int argc = 3;
-    const char* argv[5] = {"kdm", "-display", NULL, NULL};
- 
-    struct sigaction sig;
- 
     /* KApplication trashes xdm's signal handlers :-( */
+    struct sigaction sig;
     sigaction(SIGCHLD, NULL, &sig);
- 
-    argv[2] = ::d->name;
-    KCmdLineArgs::init(argc, (char **) argv, "kdm", description, version);
 
     kde_have_kipc = false;
-    KLocale::setMainCatalogue("kdmgreet");
-    MyApp myapp;
-    KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + QString::fromLatin1("kdm/pics/users/"));
+    MyApp myapp(*dpy, argc, (char **)argv, "kdmgreet");
+
+    QString cfgname (KGlobal::dirs()->resourceDirs("config").last() + 
+		     QString::fromLatin1("kdmrc"));
+    kdmcfg = new KDMConfig(cfgname);
+    struct stat st;
+    stat (QFile::encodeName(cfgname).data(), &st);
+
+    KGlobal::dirs()->addResourceType("user_pic", 
+				     KStandardDirs::kde_default("data") + 
+				     QString::fromLatin1("kdm/pics/users/"));
+
     QApplication::setOverrideCursor( Qt::waitCursor );
 
-    kdmcfg = new KDMConfig();
-     
     myapp.setFont( *kdmcfg->_normalFont);
 
-    *dpy = qt_xdisplay();
-     
     // this is necessary, since Qt just overwrites the
     // IOErrorHandler that was set by xdm!!!
     XSetIOErrorHandler(IOErrorHandler);
      
     sigaction(SIGCHLD, &sig, NULL);
 
+    enam = QString::fromLocal8Bit("LastUser_") + QString::fromLocal8Bit(dname);
 
-    if (AutoLogon (d, greet, verify))
-	retval = ex_login;
-    else {
+    // Hack! Kdm looses keyboard focus unless
+    // the keyboard is ungrabbed during setup
+    TempUngrab_Run(creat_greet, 0);
+    int retval = qApp->exec();
+    // Give focus to root window:
+    QApplication::desktop()->setActiveWindow();
+    delete kgreeter;
 
-	SecureDisplay (d, *dpy);
+    if (retval == ex_login && kdmcfg->_showPrevious)
+	kdmcfg->writeEntry (enam, QString::fromLocal8Bit(name));
 
-	// First initialize display:
-	SetupDisplay( d);
-	// Hack! Kdm looses keyboard focus unless
-	// the keyboard is ungrabbed during setup
-	TempUngrab_Run(creat_greet, 0);
-	retval = qApp->exec();
-	// Give focus to root window:
-	QApplication::desktop()->setActiveWindow();
-	delete kgreeter;
-
-	UnsecureDisplay (d, *dpy);
-
-	if (retval != ex_login)
-	    goto exgrt;
-    }	/* AutoLogon */
-
-    if (kdmcfg->_showPrevious)
-	kdmcfg->writeEntry (QString::fromLocal8Bit("LastUser_") + 
-				QString::fromLocal8Bit(d->name), 
-			    QString::fromLocal8Bit(greet->name));
-
-    /*
-     * Run system-wide initialization file
-     */
-    if (source (verify->systemEnviron, ::d->startup) != 0)
-    {
-	qApp->restoreOverrideCursor();
-	KFMsgBox::box(0, QMessageBox::Critical, 
-			i18n("Startup program %1 exited with non-zero status."
-			     "\nPlease contact your system administrator.\n"
-			     "Please press OK to retry.")
-	       .arg(QFile::decodeName(::d->startup)));
-	SessionExit (::d, OBEYSESS_DISPLAY, FALSE);
-    }
-
-    if (::d->pipefd[1] >= 0) {
-	if (::d->autoReLogin || kdmcfg->_autoReLogin) {
-	    char buf[3 * (F_LEN + 1) + 1];
-	    write (::d->pipefd[1], buf, 
-		sprintf (buf, "%s %s %s\n", greet->string, greet->name, 
-			 greet->password ? greet->password : ""));
-	} else
-	    write (::d->pipefd[1], "\n", 1);
-    }
-
-    /*
-     * for user-based authorization schemes,
-     * add the user to the server's allowed "hosts" list.
-     */
-    for (int i = 0; i < d->authNum; i++)
-    {
-#ifdef SECURE_RPC
-	if (d->authorizations[i]->name_length == 9 &&
-	    memcmp(d->authorizations[i]->name, "SUN-DES-1", 9) == 0)
-	{
-	    XHostAddress	addr;
-	    char		netname[MAXNETNAMELEN+1];
-	    char		domainname[MAXNETNAMELEN+1];
-    
-	    getdomainname(domainname, sizeof domainname);
-	    user2netname (netname, verify->uid, domainname);
-	    addr.family = FamilyNetname;
-	    addr.length = strlen (netname);
-	    addr.address = netname;
-	    XAddHost (*dpy, &addr);
-	}
-#endif
-#ifdef K5AUTH
-	if (d->authorizations[i]->name_length == 14 &&
-	    memcmp(d->authorizations[i]->name, "MIT-KERBEROS-5", 14) == 0)
-	{
-	    /* Update server's auth file with user-specific info.
-	     * Don't need to AddHost because X server will do that
-	     * automatically when it reads the cache we are about
-	     * to point it at.
-	     */
-	    extern Xauth *Krb5GetAuthFor();
-
-	    XauDisposeAuth (d->authorizations[i]);
-	    d->authorizations[i] =
-		Krb5GetAuthFor(14, "MIT-KERBEROS-5", d->name);
-	    SaveServerAuthorizations (d, d->authorizations, d->authNum);
-	} 
-#endif
-    }
-
-exgrt:
-     // Clean up
     qApp->restoreOverrideCursor();
     delete kdmcfg;
-    chmod (QFile::encodeName(KGlobal::dirs()->resourceDirs("config").last() + 
-	   QString::fromLatin1("kdmrc")).data(), 0644);
+    // HACK: KConfigINIBackend sets 600
+    chmod (QFile::encodeName(cfgname).data(), 0644);
+    // HACK: prevent the xdm core from rereading the config
+    struct utimbuf utb;
+    utb.actime = st.st_atime;
+    utb.modtime = st.st_mtime;
+    utime (QFile::encodeName(cfgname).data(), &utb);
 
-    return retval == ex_choose ? Greet_RunChooser : Greet_Success;
+    return retval;
 }
 
 #include "kgreeter.moc"

@@ -1,4 +1,4 @@
-EXTRA_DIST = xdm-config Xresources Xservers Xaccess Xsession \
+EXTRA_DIST = kdm-config Xresources Xservers Xaccess Xsession \
 	GiveConsole TakeConsole Xsetup_0
 
 install-data-local:
