@@ -2,7 +2,7 @@
 Exec=kcmshell LookNFeel/screensaver
 Icon=screensaver
 Type=Application
-DocPath=kcontrol/kcmdisplay/kdisplay-4.html
+DocPath=kcontrol/screensaver.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=screensaver
@@ -64,7 +64,7 @@ Comment[no]=Skjermsparer-oppsett
 Comment[no_NY]=Skjermsparar-innstillingar
 Comment[pl]=Ustawienia wygaszacza ekranu
 Comment[pt]=Configuração dos protectores de ecrã
-Comment[pt_BR]=Configuração das proteções de tela
+Comment[pt_BR]=Preferências dos protetores de tela
 Comment[ro]=Configurează protecţia de ecran
 Comment[ru]=Настройки хранителя экрана
 Comment[sk]=Nastavenie šetriča obrazovky
@@ -100,6 +100,7 @@ Keywords[pl]=wygaszacze ekranu
 Keywords[pt]=protectores de ecrã
 Keywords[pt_BR]=protetores de tela
 Keywords[ro]=protecţie ecran
+Keywords[sk]=Šetriče obrazovky
 Keywords[sl]=ohranjevalniki zaslona
 Keywords[sv]=skärmsläckare
 Keywords[ta]=திைரகாபஂபகஙஂகளஂ

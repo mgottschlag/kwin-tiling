@@ -2,15 +2,17 @@
 Exec=kcmshell LookNFeel/keys
 Icon=keyboard
 Type=Application
+DocPath=kcontrol/key-bindings.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=keys
 
 Name=Key bindings
+Name[bg]=Êàâèøè çà äåéñòâèå
 Name[ca]=Lligams de tecles
 Name[cs]=Klávesové zkratky
 Name[da]=Tastebindinger
-Name[de]=Tastenbelegungen
+Name[de]=Tastenzuordnung
 Name[el]=Συνδυασμοί Πλήκτρων
 Name[eo]=Klavsignifoj
 Name[es]=Uniones de teclas
@@ -41,10 +43,11 @@ Name[uk]=Прив'язка клавіш
 Name[zh_CN.GB2312]=键关联
 
 Comment=Configuration of keybindings
+Comment[bg]=Íàñòðîéêà êëàâèøè çà äåéñòâèå
 Comment[ca]=Configuraci� dels lligams de tecles
 Comment[cs]=Nastavení klávesových zkratek
 Comment[da]=Indstilling af tastebindinger
-Comment[de]=Einrichtung der Tastenzuordnungen
+Comment[de]=Einrichtung von Tastenzuordnungen
 Comment[el]=Ρύθμιση συνδυασμών πλήκτρων
 Comment[eo]=Agordo de klavsignifoj
 Comment[es]=Configuración de uniones de teclas

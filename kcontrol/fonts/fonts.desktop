@@ -2,13 +2,14 @@
 Exec=kcmshell LookNFeel/fonts
 Icon=fonts
 Type=Application
-DocPath=kcontrol/kcmdisplay/kdisplay-6.html
+DocPath=kcontrol/fonts.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=fonts
 X-KDE-FactoryName=fonts
 
 Name=Fonts
+Name[bg]=Øðèôòîâå
 Name[cs]=Písma
 Name[da]=Skrifttyper
 Name[de]=Schrift
@@ -42,6 +43,7 @@ Name[uk]=Шрифти
 Name[zh_CN.GB2312]=字体
 
 Comment=Font settings
+Comment[bg]=Íàñòðîéêà øðèôòîâå
 Comment[ca]=Arranjament de les fonts
 Comment[cs]=Nastavení písem
 Comment[da]=Skriftindstillinger
@@ -63,7 +65,7 @@ Comment[no]=Innstill skrifttyper
 Comment[no_NY]=Skrifttypeinnstillingar
 Comment[pl]=Ustawienia stylu i czcionek
 Comment[pt]=Configuração dos tipos de letra
-Comment[pt_BR]=Configuração das fontes
+Comment[pt_BR]=Preferências de tipos de letra
 Comment[ro]=Configurează fonturile de sistem
 Comment[ru]=Настройки шрифтов
 Comment[sk]=Nastavenie písiem
@@ -99,6 +101,7 @@ Keywords[pl]=czcionki,czcionka, rozmiar czcionki,styl,zestaw znaków,panel,panel
 Keywords[pt]=tipo de letra, tipos de letra,fontes,fonte,tamanho de fonte,estilo,mapa de caracteres,painel,kicker,painel de controlo
 Keywords[pt_BR]=fontes,letras,tipos de letra,tamanho de fonte,tamanho de letra,estilo,conjunto de caracteres,painel,gerenciador de janelas,painel de controle
 Keywords[ro]=fonturi,font,mărime font,stil,set caractere,panou,kicker,panou de control
+Keywords[sk]=písma,písmo, veľkosť písma, panle, kontrol panel
 Keywords[sl]=pisava,pisave,velikost pisave,slog,stil,znakovni nabor,pult,kicker,nadzorna plošča
 Keywords[sv]=typsnitt,teckensnitt,typsnittstorlek,teckensnittstorlek,stil,teckenkodning,panel,kicker,kontrollpanel,inställningscentral
 Keywords[ta]=எழு஡ஂதுவைககளஂ,எழ஡ஂதுவைக அளவு,பலகமஂ,கடஂடுபாடஂடு பலகமஂ
