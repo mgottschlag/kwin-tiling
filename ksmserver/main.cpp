@@ -145,9 +145,9 @@ void sanity_check( int argc, char* argv[] )
              "while trying to start KDE:"
              "\n\n    ";
     const char *msg_post = "\n\nKDE is unable to start.\n";
-    fprintf(stderr, msg_pre);
+    fputs(msg_pre, stderr);
     fprintf(stderr, msg.data(), path.data());
-    fprintf(stderr, msg_post);
+    fputs(msg_post, stderr);
 
     QApplication a(argc, argv);
     QCString qmsg(256+path.length());

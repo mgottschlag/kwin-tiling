@@ -756,8 +756,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
             exit(1);
         }
         char* session_manager = IceComposeNetworkIdList(numTransports, listenObjs);
-        fprintf(f, session_manager);
-        fprintf(f, "\n%i\n", getpid());
+        fprintf(f, "%s\n%i\n", session_manager, getpid());
         fclose(f);
         setenv( "SESSION_MANAGER", session_manager, true  );
        // Pass env. var to kdeinit.
