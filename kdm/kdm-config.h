@@ -105,4 +105,25 @@ int LogOutOfMem( char*, ...);
 #define NeedVarargsPrototypes  1
 #endif
 
+/*
+ * These values define what is called by KDM on Shutdown or Reboot
+ * respectively. Default is /sbin/halt and /sbin/reboot
+ */
+#ifdef __NetBSD__
+#define SHUTDOWN_CMD	"/sbin/shutdown -h now"
+#define REBOOT_CMD	"/sbin/shutdown -r now"
+#endif
+
+#ifdef __SVR4
+#define SHUTDOWN_CMD	"/usr/sbin/halt"
+#define REBOOT_CMD	"/usr/sbin/reboot"
+#endif
+
+#ifndef SHUTDOWN_CMD
+#define	SHUTDOWN_CMD	"/sbin/halt"
+#endif
+#ifndef REBOOT_CMD
+#define REBOOT_CMD	"/sbin/reboot"
+#endif
+
 #endif /* KDM_CONFIG_H */
