@@ -40,9 +40,6 @@ KSysTrayCmd::KSysTrayCmd()
 
 KSysTrayCmd::~KSysTrayCmd()
 {
-    if ( !isVisible ) {
-	showWindow();
-    }
     delete client;
 }
 
@@ -178,7 +175,7 @@ void KSysTrayCmd::clientExited()
     qApp->quit();
 }
 
-void KSysTrayCmd::quit()
+void KSysTrayCmd::quitClient()
 {
   if ( win ) {
     NETRootInfo ri( qt_xdisplay(), NET::CloseWindow );
@@ -190,16 +187,27 @@ void KSysTrayCmd::quit()
   }
 }
 
+void KSysTrayCmd::quit()
+{
+    if ( !isVisible ) {
+	showWindow();
+    }
+    qApp->quit();
+}
+
 void KSysTrayCmd::execContextMenu( const QPoint &pos )
 {
     KPopupMenu *menu = new KPopupMenu();
     menu->insertTitle( *pixmap(), i18n( "KSysTrayCmd" ) );
     int hideShowId = menu->insertItem( isVisible ? i18n( "&Hide" ) : i18n( "&Restore" ) );
+    int undockId = menu->insertItem( SmallIcon("close"), i18n( "&Undock" ) );
     int quitId = menu->insertItem( SmallIcon("exit"), i18n( "&Quit" ) );
 
     int cmd = menu->exec( pos );
 
     if ( cmd == quitId )
+      quitClient();
+    else if ( cmd == undockId )
       quit();
     else if ( cmd == hideShowId )
       toggleWindow();

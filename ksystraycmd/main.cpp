@@ -48,7 +48,7 @@ int main( int argc, char *argv[] )
 			"KSysTrayCmd 0.1", 
 			I18N_NOOP( "Allows any application to be kept in the system tray." ),
 			KAboutData::License_GPL,
-			"(C) 2001 Richard Moore (rich@kde.org)" );
+			"(C) 2001-2002 Richard Moore (rich@kde.org)" );
   aboutData.addAuthor( "Richard Moore", 0, "rich@kde.org" );
 
   KCmdLineArgs::init( argc, argv, &aboutData );
@@ -71,22 +71,19 @@ int main( int argc, char *argv[] )
 	  wid = wid.right( wid.length() - 2 );
       }
 
-      kdDebug() << "Got win id '" << wid << "', base is " << base << endl;
-
       bool ok=true;
       int w = wid.toInt( &ok, base );
-      if ( ok ) {
-	  kdDebug() << "Got win id '" << wid << "', base is " << base << endl;
+      if ( ok )
 	  cmd.setTargetWindow( w );
-      }
       else {
-	  kdDebug() << "Got bad win id" << endl;
+	  kdWarning() << "KSysTrayCmd: Got bad win id" << endl;
       }
   }
 
   // Read window title regexp
   QString title = args->getOption( "window" );
-  cmd.setPattern( title );
+  if ( !title.isEmpty() )
+      cmd.setPattern( title );
 
   if ( !title && !wid && (args->count() == 0) )
     KCmdLineArgs::usage(i18n("No command or window specified"));
@@ -95,7 +92,8 @@ int main( int argc, char *argv[] )
   QString command;
   for ( int i = 0; i < args->count(); i++ )
     command += QCString( args->arg(i) ) + " ";
-  cmd.setCommand( command );
+  if ( !command.isEmpty() )
+      cmd.setCommand( command );
 
   // Tooltip
   QString tip = args->getOption( "tooltip" );

@@ -46,6 +46,7 @@ public slots:
   void execContextMenu( const QPoint &pos );
 
   void quit();
+  void quitClient();
 
 protected slots:
   void clientExited();
