@@ -296,8 +296,9 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     optMenu = new QPopupMenu(this);
     optMenu->setCheckable(false);
 
-    inserten (optMenu, i18n("Co&nsole Login"),
-	      this, SLOT(console_button_clicked()));
+    if (disLocal)
+	inserten (optMenu, i18n("Co&nsole Login"),
+		  this, SLOT(console_button_clicked()));
 
 /*    inserten (optMenu, i18n("&Remote Login"),
 	      this, SLOT(chooser_button_clicked()));
