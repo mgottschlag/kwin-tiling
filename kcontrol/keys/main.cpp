@@ -39,12 +39,7 @@
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 /*
-New Scheme
-Current Scheme
-System Schemes
-User Defined Schemes
-- Save
-- Remove Scheme
+| Shortcut Schemes | Modifier Keys |
 
 o Current scheme  o New scheme  o Pre-set scheme
 | KDE Traditional |v|| <Save Scheme...> <Remove Scheme>
@@ -66,7 +61,7 @@ KeyModule::KeyModule( QWidget *parent, const char *name )
 
 void KeyModule::load()
 {
-	kdDebug() << "KeyModule::load()" << endl;
+	kdDebug(125) << "KeyModule::load()" << endl;
 	//global->load();
 	//series->load();
 	//standard->load();
@@ -75,7 +70,7 @@ void KeyModule::load()
 // When [Apply] or [OK] are clicked.
 void KeyModule::save()
 {
-	kdDebug() << "KeyModule::save()" << endl;
+	kdDebug(125) << "KeyModule::save()" << endl;
 
 	//global->writeSettingsGlobal( "Global Shortcuts" );
 	m_pkcGeneral->commitChanges();
@@ -289,14 +284,14 @@ void KeyModule::resizeEvent( QResizeEvent * )
 
 void KeyModule::slotSchemeCur()
 {
-	kdDebug() << "KeyModule::slotSchemeCur()" << endl;
+	kdDebug(125) << "KeyModule::slotSchemeCur()" << endl;
 	m_pcbSchemes->setCurrentItem( 0 );
 	slotSelectScheme( 0 );
 }
 
 void KeyModule::slotKeyChange()
 {
-	kdDebug() << "KeyModule::slotKeyChange()" << endl;
+	kdDebug(125) << "KeyModule::slotKeyChange()" << endl;
 	m_prbNew->setEnabled( true );
 	m_prbNew->setChecked( true );
 	m_pbtnSave->setEnabled( true );
@@ -304,7 +299,7 @@ void KeyModule::slotKeyChange()
 
 void KeyModule::slotSelectScheme( int )
 {
-	kdDebug() << "KeyModule::slotSelectScheme( " << m_pcbSchemes->currentItem() << " )" << endl;
+	kdDebug(125) << "KeyModule::slotSelectScheme( " << m_pcbSchemes->currentItem() << " )" << endl;
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentItem() ];
 
 	if( sFilename == "cur" ) {
