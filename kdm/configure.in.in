@@ -239,7 +239,13 @@ fi
   ac_save_libs=$LIBS
   LIBS="$LIBS $LIBUTIL"
   AC_CHECK_FUNC(setusercontext, [ XDM_CFLAGS="$XDM_CFLAGS -DHAS_SETUSERCONTEXT" ])
-  AC_CHECK_FUNC(getusershell, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_GETUSERSHELL" ])
+  KDE_CHECK_FUNC_EXT(getusershell, [
+#include <unistd.h>
+], 
+		[getusershell();],
+	        [char *getusershell()],
+		[GETUSERSHELL],
+	[ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_GETUSERSHELL" ])
   AC_CHECK_FUNC(login_getclass, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_LOGIN_GETCLASS" ])
   AC_CHECK_FUNC(auth_timeok, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_AUTH_TIMEOK" ])
   LIBS=$ac_save_libs
