@@ -119,6 +119,7 @@ KShortURIFilter::CmdType KShortURIFilter::parseCmd( QString& cmd )
     }
 
     // Is it to be invoked with kdehelp? btw: how to invoke the man/info browser in KDE 2?
+    /*
     if( cmd.left(5) == "info:" || cmd.left(4) == "man:" || cmd[0] == '#' )
     {
         if( cmd.left(2) == "##" )
@@ -127,7 +128,8 @@ KShortURIFilter::CmdType KShortURIFilter::parseCmd( QString& cmd )
             cmd = "man" + (cmd.length() == 1 ? QString("(index)") : cmd.mid(1));
         return KShortURIFilter::Help;
     }
-
+    */
+    
     // Local file and directory processing.
     // TODO: also detect executables when arguments are given
     QString uri = QDir::cleanDirPath( cmd );
