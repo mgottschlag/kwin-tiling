@@ -413,5 +413,8 @@
     <tabstop>m_showRecent</tabstop>
     <tabstop>m_showFrequent</tabstop>
 </tabstops>
+<includes>
+    <include location="global" impldecl="in implementation">knuminput.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

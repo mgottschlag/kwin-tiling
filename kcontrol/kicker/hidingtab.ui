@@ -653,6 +653,7 @@
 </tabstops>
 <includes>
     <include location="global" impldecl="in declaration">klineedit.h</include>
+    <include location="global" impldecl="in implementation">knuminput.h</include>
     <include location="local" impldecl="in implementation">hidingtab.ui.h</include>
 </includes>
 <slots>

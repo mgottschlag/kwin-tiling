@@ -1031,6 +1031,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
 </tabstops>
 <includes>
     <include location="global" impldecl="in declaration">klineedit.h</include>
+    <include location="global" impldecl="in implementation">knuminput.h</include>
 </includes>
 <slots>
     <slot access="protected">lengthenPanel( int )</slot>
