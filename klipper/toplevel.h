@@ -76,7 +76,7 @@ private:
     QIntDict<QString> *m_clipDict;
     QTimer *m_checkTimer;
     QPixmap *m_pixmap;
-    bool bPopupAtMouse, bClipEmpty, bKeepContents, bURLGrabber, bReplayActionInHistory;
+    bool bPopupAtMouse, bClipEmpty, bKeepContents, bURLGrabber, bReplayActionInHistory, bUseGUIRegExpEditor;
     QString QSempty;
     URLGrabber *myURLGrabber;
     int m_selectedItem;

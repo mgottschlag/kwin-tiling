@@ -31,6 +31,7 @@
 class KGlobalAccel;
 class KListView;
 class QPushButton;
+class KRegExpDialog;
 
 class GeneralWidget : public QVGroupBox
 {
@@ -72,7 +73,7 @@ class ActionWidget : public QVGroupBox
     friend class ConfigDialog;
 
 public:
-    ActionWidget( const ActionList *list, QWidget *parent, const char *name );
+    ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent, const char *name );
     ~ActionWidget();
 
     /**
@@ -98,6 +99,7 @@ private:
     QStringList m_wmClasses;
     AdvancedWidget *advancedWidget;
     QPushButton *delActionButton;
+    QCheckBox *cbUseGUIRegExpEditor;
 };
 
 class KeysWidget : public QVGroupBox
@@ -144,6 +146,10 @@ public:
     QStringList noActionsFor() const {
 	return actionWidget->wmClasses();
     }
+    bool useGUIRegExpEditor() const 
+    {
+      return actionWidget->cbUseGUIRegExpEditor->isChecked();
+    }
 
     void setKeepContents( bool enable ) {
 	generalWidget->cbSaveContents->setChecked( enable );
@@ -163,6 +169,10 @@ public:
     void setNoActionsFor( const QStringList& items ) {
 	actionWidget->setWMClasses( items );
     }
+    void setUseGUIRegExpEditor( bool enabled ) 
+    {
+      actionWidget->cbUseGUIRegExpEditor->setChecked( enabled );
+    }
 
     virtual void show();
 
@@ -176,8 +186,8 @@ private:
 class ListView : public KListView
 {
 public:
-    ListView( QWidget *parent, const char *name )
-	: KListView( parent, name ) {}
+    ListView( ConfigDialog* configWidget, QWidget *parent, const char *name )
+	: KListView( parent, name ), _configWidget( configWidget ) {}
     // QListView has a weird idea of a sizeHint...
     virtual QSize sizeHint () const {
 	int w = minimumSizeHint().width();
@@ -194,6 +204,11 @@ public:
 	return QSize( w, h );
     }
 
+protected:
+    virtual void rename( QListViewItem* item, int c );
+private:
+    ConfigDialog* _configWidget;
+    KRegExpDialog* _regExpEditor;
 };
 
 #endif // CONFIGDIALOG_H

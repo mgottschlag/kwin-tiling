@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kwinmodule.h>
+#include <kregexpdialog.h>
 
 #include "configdialog.h"
 
@@ -36,7 +37,7 @@ ConfigDialog::ConfigDialog( const ActionList *list, KKeyEntryMap *keyMap )
     generalWidget = new GeneralWidget( w, "general widget" );
 
     w = addVBoxPage( i18n("Ac&tions") );
-    actionWidget = new ActionWidget( list, w, "actions widget" );
+    actionWidget = new ActionWidget( list, this, w, "actions widget" );
 
     w = addVBoxPage( i18n("&Shortcuts") );
     keysWidget = new KeysWidget( keyMap, w, "shortcuts widget" );
@@ -97,6 +98,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
                                     this );
     cbReplayAIH = new QCheckBox( i18n("&Replay actions on an item selected from history"),
                                     this );
+
     // make a QLabel because using popupTimeout->setLabel messes up layout
     QLabel *lblTimeout = new QLabel( i18n("Tim&eout for Action popups:" ), this );
     // workaround for KIntNumInput making a huge QSpinBox
@@ -134,8 +136,31 @@ GeneralWidget::~GeneralWidget()
 /////////////////////////////////////////
 ////
 
+void ListView::rename( QListViewItem* item, int c )
+{
+  bool gui = false;
+  if ( item->childCount() != 0 && c == 0) {
+    // This is the regular expression
+    if ( _configWidget->useGUIRegExpEditor() ) {
+      gui = true;
+    }
+  }
+  
+  if ( gui ) {
+    if ( ! _regExpEditor )
+      _regExpEditor = new KRegExpDialog( this );
+    _regExpEditor->slotSetRegExp( item->text(0) );
+    bool ok = _regExpEditor->exec();
+    if ( ok )
+      item->setText( 0, _regExpEditor->regexp() );
+    
+  }
+  else
+    KListView::rename( item ,c );
+}
 
-ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
+
+ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent,
                             const char *name )
     : QVGroupBox( parent, name ),
       advancedWidget( 0L )
@@ -147,7 +172,7 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     QLabel *lblAction = new QLabel(
 	  i18n("Action &list (right click to add/remove commands):"), this );
 
-    listView = new ListView( this, "list view" );
+    listView = new ListView( configWidget, this, "list view" );
     lblAction->setBuddy( listView );
     listView->addColumn( i18n("Regular expression (see http://doc.trolltech.com/qregexp.html#details)") );
     listView->addColumn( i18n("Description") );
@@ -201,6 +226,8 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     }
 
     listView->setSorting( -1 ); // newly inserted items just append unsorted
+
+    cbUseGUIRegExpEditor = new QCheckBox( i18n("&Use graphical editor for editing regular expressions" ), this );
 
     QHBox *box = new QHBox( this );
     box->setSpacing( KDialog::spacingHint() );

@@ -345,6 +345,7 @@ void TopLevel::readConfiguration( KConfig *kc )
     bKeepContents = kc->readBoolEntry("KeepClipboardContents", true);
     bURLGrabber = kc->readBoolEntry("URLGrabberEnabled", true);
     bReplayActionInHistory = kc->readBoolEntry("ReplayActionInHistory", false);
+    bUseGUIRegExpEditor = kc->readBoolEntry("UseGUIRegExpEditor", true );
     maxClipItems = kc->readNumEntry("MaxClipItems", 7);
 }
 
@@ -354,6 +355,7 @@ void TopLevel::writeConfiguration( KConfig *kc )
     kc->writeEntry("PopupAtMousePosition", bPopupAtMouse);
     kc->writeEntry("KeepClipboardContents", bKeepContents);
     kc->writeEntry("ReplayActionInHistory", bReplayActionInHistory);
+    kc->writeEntry("UseGUIRegExpEditor", bUseGUIRegExpEditor);
     kc->writeEntry("MaxClipItems", maxClipItems);
     kc->writeEntry("Version", kapp->aboutData()->version());
 
@@ -400,6 +402,7 @@ void TopLevel::slotConfigure()
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
     dlg->setReplayActionInHistory( bReplayActionInHistory);
+    dlg->setUseGUIRegExpEditor( bUseGUIRegExpEditor );
     dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
     dlg->setMaxItems( maxClipItems );
     dlg->setNoActionsFor( myURLGrabber->avoidWindows() );
@@ -409,6 +412,7 @@ void TopLevel::slotConfigure()
         bKeepContents = dlg->keepContents();
         bPopupAtMouse = dlg->popupAtMousePos();
         bReplayActionInHistory = dlg->replayActionInHistory();
+        bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         globalKeys->setKeyDict( map );
         globalKeys->writeSettings();
 	toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
