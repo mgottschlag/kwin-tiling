@@ -49,8 +49,8 @@
 #define KWM_WNDW_SNAP_ZONE                   "WindowSnapZone"
 #define KWM_WNDW_SNAP_ZONE_DEFAULT           10
 
-#define MAX_BRDR_SNAP                          50
-#define MAX_WNDW_SNAP                          50
+#define MAX_BRDR_SNAP                          100
+#define MAX_WNDW_SNAP                          100
 #define MAX_EDGE_RES                         1000
 
 
