@@ -82,7 +82,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocaleAdvanced *_locale,
     QWidget *vbox = new QVBox(this);
     lay->addMultiCellWidget(vbox, 4, 4, 0, 1);
     QGroupBox *grp;
-    grp = new QGroupBox( i18n("Positive"), vbox );
+    grp = new QGroupBox( vbox, I18N_NOOP("Positive") );
     grp->setColumns(2);
     labMonPosPreCurSym = new QLabel(grp, I18N_NOOP("Prefix currency symbol:"));
     chMonPosPreCurSym = new QCheckBox(grp);
@@ -94,7 +94,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocaleAdvanced *_locale,
     connect( cmbMonPosMonSignPos, SIGNAL( activated(int) ),
 	     SLOT( slotMonPosMonSignPosChanged(int) ) );
 
-    grp = new QGroupBox( i18n("Negative"), vbox );
+    grp = new QGroupBox( vbox, I18N_NOOP("Negative") );
     grp->setColumns(2);
     labMonNegPreCurSym = new QLabel(grp, I18N_NOOP("Prefix currency symbol:"));
     chMonNegPreCurSym = new QCheckBox(grp);

@@ -178,8 +178,8 @@ void KLocaleApplication::reTranslate()
 
     if (strcmp(wc->className(), "QLabel") == 0)
       ((QLabel *)wc)->setText( locale->translate( wc->name() ) );
-    else if (strcmp(wc->className(), "QVGroupBox") == 0)
-      ((QVGroupBox *)wc)->setTitle( locale->translate( wc->name() ) );
+    else if (strcmp(wc->className(), "QGroupBox") == 0)
+      ((QGroupBox *)wc)->setTitle( locale->translate( wc->name() ) );
   }
   delete list;
 
