@@ -2,14 +2,14 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DirSettingsWidget.ui'
 **
-** Created: Wed Nov 21 00:35:18 2001
+** Created: Tue Jan 8 22:18:26 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 #include "DirSettingsWidgetData.h"
 
-#include <qvariant.h>   // first for gcc 2.7.2
+#include <qvariant.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
@@ -192,7 +192,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
 "\n"
 "For normal (non-root) users, this file will usually be:\n"
 "\n"
-"    ~/.kde/share/config/fonts/Fontmap\n"
+"    ~/.kde/share/fonts/Fontmap\n"
 "\n"
 "...and for root, usually the system-wide Fontmap will be selected, and this would normally be something like:\n"
 "\n"
@@ -216,17 +216,13 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsCupsDirText->setFrameShadow( QLabel::Sunken );
     itsCupsDirText->setText( tr2i18n( "TextLabel2" ) );
     itsCupsDirText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add( itsCupsDirText, tr2i18n( "This file is used by Ghostscript to map the names of fonts within Postscript files, to the physical fonts located on disk.\n"
+    QWhatsThis::add( itsCupsDirText, tr2i18n( "This is the system CUPS installation folder. Generally this will be:\n"
 "\n"
-"(Most UNIX/Linux programs produce Postscript files when printing - and these are passed on to Ghostscript, which does the actual work.)\n"
+"    /usr/share/cups/\n"
 "\n"
-"For normal (non-root) users, this file will usually be:\n"
+"This option is only applicable if you are using CUPS as your printing system.\n"
 "\n"
-"    ~/.kde/share/config/fonts/Fontmap\n"
-"\n"
-"...and for root, usually the system-wide Fontmap will be selected, and this would normally be something like:\n"
-"\n"
-"    /usr/share/ghostscript/5.50/Fontmap" ) );
+"Only root may modify the CUPS settings, hence this option is only available if this module is run as root." ) );
 
     CDirSettingsWidgetDataLayout->addWidget( itsCupsDirText, 3, 1 );
 

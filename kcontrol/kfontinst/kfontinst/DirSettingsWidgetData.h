@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DirSettingsWidget.ui'
 **
-** Created: Wed Nov 21 00:35:17 2001
+** Created: Tue Jan 8 22:18:26 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

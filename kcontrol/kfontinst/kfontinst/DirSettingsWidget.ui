@@ -518,7 +518,7 @@ If the file is not specified, is of an unrecognized format, or the Font Installe
 
 For normal (non-root) users, this file will usually be:
 
-    ~/.kde/share/config/fonts/Fontmap
+    ~/.kde/share/fonts/Fontmap
 
 ...and for root, usually the system-wide Fontmap will be selected, and this would normally be something like:
 
@@ -586,17 +586,13 @@ For normal (non-root) users, this file will usually be:
                 <set>AlignVCenter|AlignLeft</set>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>This file is used by Ghostscript to map the names of fonts within Postscript files, to the physical fonts located on disk.
+                <string>This is the system CUPS installation folder. Generally this will be:
 
-(Most UNIX/Linux programs produce Postscript files when printing - and these are passed on to Ghostscript, which does the actual work.)
+    /usr/share/cups/
 
-For normal (non-root) users, this file will usually be:
+This option is only applicable if you are using CUPS as your printing system.
 
-    ~/.kde/share/config/fonts/Fontmap
-
-...and for root, usually the system-wide Fontmap will be selected, and this would normally be something like:
-
-    /usr/share/ghostscript/5.50/Fontmap</string>
+Only root may modify the CUPS settings, hence this option is only available if this module is run as root.</string>
             </property>
             <property name="wordwrap" stdset="0">
             </property>
