@@ -34,14 +34,8 @@ KShortURIFilter::KShortURIFilter( QObject *parent, const char *name )
 
 bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 {
-    if( data.uri().isMalformed() )
-    {
-        parseURI( data );
-        if( data.uriType() != KURIFilterData::ERROR ||
-            data.uriType() != KURIFilterData::UNKNOWN )
-            return true;
-    }
-    return false;
+    parseURI( data );
+    return data.hasBeenFiltered();
 }
 
 bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
@@ -64,14 +58,16 @@ bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
 
 void KShortURIFilter::parseURI( KURIFilterData& data ) const
 {
-    QString cmd = data.uri().url().lower();
+    QString cmd = data.uri().url();
     QStringList protocols = KProtocolManager::self().protocols();
 
     // First look if we've got a known protocol prefix
-    // and assume a qualified URL
+    // and it is a valid URL.  If so return immediately.
+    debug( "kshorturifilter: About to Filter: %s\n", cmd.latin1() );
+    debug( "kshorturifilter: Is Malformed: %i\n", data.uri().isMalformed() );
     for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); it++ )
     {
-        if( cmd.left((*it).length()).lower() == *it )
+        if( (cmd.left((*it).length()).lower() == *it) && !data.uri().isMalformed() )
         {
             setURIType( data, KURIFilterData::NET_PROTOCOL );
             return;
@@ -106,25 +102,29 @@ void KShortURIFilter::parseURI( KURIFilterData& data ) const
     }
 
     // Is it to be invoked with kdehelp? btw: how to invoke the man/info browser in KDE 2?
-    /*
     if( cmd.left(5) == "info:" || cmd.left(4) == "man:" || cmd[0] == '#' )
     {
         if( cmd.left(2) == "##" )
             cmd = "info:" + ( cmd.length() == 2 ? QString("(dir)" ) : cmd.mid(2));
         else if ( cmd[0] == '#' )
             cmd = "man" + (cmd.length() == 1 ? QString("(index)") : cmd.mid(1));
-        return KURIFilter::HELP;
+        setFilteredURI( data, cmd );
+        setURIType( data, KURIFilterData::HELP );
+        return;
     }
-    */
     // Local file and directory processing.
     // TODO: also detect executables when arguments are given
     QString uri = QDir::cleanDirPath( cmd );
 
-    // This will translate "smb:" into "smb:/"
-    // for kio_smb.
-    if( cmd == "smb:" )
+    // This will translate "smb:" or anything that
+    // starts with "\\" into "smb:/" for kio_smb.
+    bool smbURI = (cmd.lower() == "smb:");
+    if( smbURI || cmd.find( "\\\\" ) == 0 )
     {
-        cmd += '/';
+        if( smbURI )
+            cmd += '/';
+        else
+            cmd.replace( 0, 2, "smb:/" );
         setFilteredURI( data, cmd );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
         return;
@@ -166,7 +166,7 @@ void KShortURIFilter::parseURI( KURIFilterData& data ) const
     if( (uri[0] == '/') && ( stat( uri.latin1() , &buff ) == 0 ) )
     {
         bool isDir = S_ISDIR( buff.st_mode );
-        if( isDir && access (uri.latin1(), X_OK) == 0 )
+        if( !isDir && access (uri.latin1(), X_OK) == 0 )
         {
             cmd = uri;
             setFilteredURI( data, cmd );
@@ -203,7 +203,7 @@ void KShortURIFilter::parseURI( KURIFilterData& data ) const
         setURIType( data, KURIFilterData::NET_PROTOCOL );
         return;
     }
-    setURIType( data, KURIFilterData::NET_PROTOCOL );
+    setURIType( data, KURIFilterData::SHELL ); // This has to change !!
 }
 
 KShortURIFilterFactory::KShortURIFilterFactory( QObject *parent, const char *name )
