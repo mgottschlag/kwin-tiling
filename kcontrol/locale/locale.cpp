@@ -301,9 +301,9 @@ void KLocaleConfig::save()
 
   config->setGroup("Locale");
 
-  config->writeEntry("Country", m_locale->country());
+  config->writeEntry("Country", m_locale->country(), true, true);
   config->writeEntry("Language",
-		     m_locale->languageList(), ':');
+		     m_locale->languageList(), ':', true, true);
 
   config->sync();
 }
