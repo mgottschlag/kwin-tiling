@@ -1207,16 +1207,20 @@ void KSMServer::storeSesssion()
     int count =  0;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
         int restartHint = c->restartStyleHint();
-        if (restartHint != SmRestartNever)
-        {
-            count++;
-            QString n = QString::number(count);
-	    config->writeEntry( QString("program")+n, c->program() );
-	    config->writeEntry( QString("restartCommand")+n, c->restartCommand() );
-	    config->writeEntry( QString("discardCommand")+n, c->discardCommand() );
-	    config->writeEntry( QString("restartStyleHint")+n, restartHint );
-	    config->writeEntry( QString("userId")+n, c->userId() );
-        }
+        if (restartHint == SmRestartNever)
+           continue;
+        QString program = c->program();
+        QStringList restartCommand = c->restartCommand();
+        if (program.isEmpty() && restartCommand.isEmpty())
+           continue;
+       
+        count++;
+        QString n = QString::number(count);
+        config->writeEntry( QString("program")+n, program );
+        config->writeEntry( QString("restartCommand")+n, restartCommand );
+        config->writeEntry( QString("discardCommand")+n, c->discardCommand() );
+        config->writeEntry( QString("restartStyleHint")+n, restartHint );
+        config->writeEntry( QString("userId")+n, c->userId() );
     }
     config->writeEntry( "count", count );
     config->sync();
@@ -1310,14 +1314,17 @@ void KSMServer::restoreSessionInternal()
     int count =  config->readNumEntry( "count" );
     for ( int i = 1; i <= count; i++ ) {
 	QString n = QString::number(i);
-        if ( config->readNumEntry( QString("restartStyleHint")+n ) == SmRestartNever)
+        QStringList restartCommand = config->readListEntry( QString("restartCommand")+n );
+        if ( restartCommand.isEmpty() ||
+             (config->readNumEntry( QString("restartStyleHint")+n ) == SmRestartNever))
         {
            progress--;
            continue;
         }
-	if ( wm != config->readEntry( QString("program")+n ) ) {
-	    startApplication( config->readListEntry( QString("restartCommand")+n ) );
-	}
+	if ( wm == config->readEntry( QString("program")+n ) )
+           continue;
+     
+        startApplication( restartCommand );
     }
     if (progress == 0)
     {
