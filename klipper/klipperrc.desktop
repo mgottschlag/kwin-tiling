@@ -81,7 +81,7 @@ Description[sl]=Spletni URL
 Description[sv]=Webbadress
 Description[xx]=xx
 Number of commands=5
-Regexp=^https?://
+Regexp=^https?://.
 
 [Action_1/Command_0]
 Commandline=dcop `dcop|grep konqueror|head -1` default 'createNewWindow(QString)' '%s' || kfmclient exec '%s'
@@ -282,7 +282,7 @@ Description[xh]=Iposi-URL
 Description[xx]=xx
 Description[zh_TW]=郵寄 URL
 Number of commands=2
-Regexp=^mailto:
+Regexp=^mailto:.
 
 [Action_2/Command_0]
 Commandline=kmail --composer %s
@@ -670,7 +670,7 @@ Description[sl]=URL za FTP
 Description[sv]=FTP-webbadress
 Description[xx]=xx
 Number of commands=5
-Regexp=^ftp://
+Regexp=^ftp://.
 
 [Action_6/Command_0]
 Commandline=dcop konqueror default 'createNewWindow(QString)' '%s' || kfmclient exec '%s'
