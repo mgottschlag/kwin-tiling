@@ -610,7 +610,7 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
 
                     if(0==str.find("unix/:"))
                         usingXfsFpe=true;
-                    else if("fonconfig"==str)
+                    else if("fontconfig"==str)
                         usingFcFpe=true;
                 }
         XFreeFontPath(paths);

@@ -922,7 +922,7 @@ CXConfig::TPath::EType CXConfig::TPath::getType(const QString &d)
 
     return 0==str.find("unix/:")
                ? FONT_SERVER
-               : "fonconfig"==str
+               : "fontconfig"==str
                    ? FONT_CONFIG
                    : DIR;
 }

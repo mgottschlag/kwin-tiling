@@ -7,6 +7,8 @@ KDE3.3 -> KDE3.4
 3. Creation of afms from pfa/pfb and a pfm file.
 4. Previews are drawn via Xft - previously FreeType was called directly.
 5. New font preview look.
+6. No longer dependant upon file extension.
+7. Check for FPE of "fontconfig" -> if set, then no need to configure X core fonts.
 
 KDE3.2 -> KDE3.3
 ================
