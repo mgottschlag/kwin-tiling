@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>KHotKeys::Dcop_widget_ui</class>
 <widget class="QWidget">
     <property name="name">
@@ -11,6 +11,9 @@
             <width>576</width>
             <height>480</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Dcop_widget_ui</string>
     </property>
     <vbox>
         <property name="name">
@@ -27,7 +30,7 @@
                 <cstring>remote_app_label</cstring>
             </property>
             <property name="text">
-                <string>Remote &amp;application</string>
+                <string>Remote &amp;application:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>remote_app_lineedit</cstring>
@@ -60,7 +63,7 @@
                 <cstring>remote_object_label</cstring>
             </property>
             <property name="text">
-                <string>Remote &amp;object</string>
+                <string>Remote &amp;object:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>remote_object_lineedit</cstring>
@@ -93,7 +96,7 @@
                 <cstring>called_function_label</cstring>
             </property>
             <property name="text">
-                <string>Called &amp;function</string>
+                <string>Called &amp;function:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>called_function_lineedit</cstring>
@@ -126,7 +129,7 @@
                 <cstring>arguments_label</cstring>
             </property>
             <property name="text">
-                <string>Arguments</string>
+                <string>Arguments:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>arguments_lineedit</cstring>

@@ -27,7 +27,7 @@
                 <cstring>keyboard_input_label</cstring>
             </property>
             <property name="text">
-                <string>Keyboard input</string>
+                <string>Keyboard input:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>keyboard_input_multilineedit</cstring>

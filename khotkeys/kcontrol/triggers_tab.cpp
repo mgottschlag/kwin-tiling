@@ -46,9 +46,9 @@ Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
     : Triggers_tab_ui( parent_P, name_P ), selected_item( NULL )
     {
     QPopupMenu* popup = new QPopupMenu; // CHECKME looks like setting parent doesn't work
-    popup->insertItem( i18n( "Shortcut trigger" ), TYPE_SHORTCUT_TRIGGER );
-    popup->insertItem( i18n( "Gesture trigger" ), TYPE_GESTURE_TRIGGER );
-    popup->insertItem( i18n( "Window trigger" ), TYPE_WINDOW_TRIGGER );
+    popup->insertItem( i18n( "Shortcut Trigger..." ), TYPE_SHORTCUT_TRIGGER );
+    popup->insertItem( i18n( "Gesture Trigger..." ), TYPE_GESTURE_TRIGGER );
+    popup->insertItem( i18n( "Window Trigger..." ), TYPE_WINDOW_TRIGGER );
     connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
     new_button->setPopup( popup );
     copy_button->setEnabled( false );    

@@ -27,7 +27,7 @@
                 <cstring>GroupBox4</cstring>
             </property>
             <property name="title">
-                <string>Trigger when</string>
+                <string>Trigger When</string>
             </property>
             <vbox>
                 <property name="name">
@@ -44,7 +44,7 @@
                         <cstring>window_appears_checkbox</cstring>
                     </property>
                     <property name="text">
-                        <string>window appears</string>
+                        <string>Window appears</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -52,7 +52,7 @@
                         <cstring>window_disappears_checkbox</cstring>
                     </property>
                     <property name="text">
-                        <string>window disappears</string>
+                        <string>Window disappears</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -60,7 +60,7 @@
                         <cstring>window_activates_checkbox</cstring>
                     </property>
                     <property name="text">
-                        <string>window activates</string>
+                        <string>Window activates</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -68,7 +68,7 @@
                         <cstring>window_deactivates_checkbox</cstring>
                     </property>
                     <property name="text">
-                        <string>window deactivates</string>
+                        <string>Window deactivates</string>
                     </property>
                 </widget>
             </vbox>

@@ -42,7 +42,7 @@ Windowdef_list_widget::Windowdef_list_widget( QWidget* parent_P, const char* nam
         autodetect_slot( NULL ), selected_item( NULL )
     {
     QPopupMenu* popup = new QPopupMenu; // CHECKME looks like setting parent doesn't work
-    popup->insertItem( i18n( "Simple window" ), TYPE_WINDOWDEF_SIMPLE );
+    popup->insertItem( i18n( "Simple Window..." ), TYPE_WINDOWDEF_SIMPLE );
     connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
     new_button->setPopup( popup );
     windows_listview->header()->hide();
@@ -205,7 +205,7 @@ Windowdef_list_item::~Windowdef_list_item()
 
 Windowdef_simple_dialog::Windowdef_simple_dialog( Windowdef_simple* window_P, QObject* obj_P,
     const char* slot_P )
-    : KDialogBase( NULL, NULL, true, i18n( "Window details" ), Ok | Cancel ), window( NULL )
+    : KDialogBase( NULL, NULL, true, i18n( "Window Details" ), Ok | Cancel ), window( NULL )
     {
     widget = new Windowdef_simple_widget( this );
     widget->set_autodetect( obj_P, slot_P );

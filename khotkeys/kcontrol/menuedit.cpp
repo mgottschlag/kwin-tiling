@@ -102,7 +102,7 @@ Action_data_group* khotkeys_get_menu_root( Action_data_group* data_P )
                 return group;
             }    
     return new Action_data_group( data_P, i18n( MENU_EDITOR_ENTRIES_GROUP_NAME ),
-        i18n( "These entries were created using Menu Editor" ), new Condition_list( "", NULL ), // CHECKME tenhle condition list
+        i18n( "These entries were created using Menu Editor." ), new Condition_list( "", NULL ), // CHECKME tenhle condition list
         Action_data_group::SYSTEM_MENUENTRIES, true );
     }
 

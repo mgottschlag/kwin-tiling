@@ -174,7 +174,7 @@ void Settings::read_settings_v1( KConfig& cfg_P )
                 {
                 menuentries = new Action_data_group( actions,
                     i18n( MENU_EDITOR_ENTRIES_GROUP_NAME ),
-                    i18n( "These entries were created using Menu Editor" ), NULL,
+                    i18n( "These entries were created using Menu Editor." ), NULL,
                     Action_data_group::SYSTEM_MENUENTRIES, true );
                 menuentries->set_conditions( new Condition_list( "", menuentries ));
                 }

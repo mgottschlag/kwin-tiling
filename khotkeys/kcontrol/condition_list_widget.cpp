@@ -44,8 +44,8 @@ Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* nam
     {
     conditions.setAutoDelete( true );
     QPopupMenu* popup = new QPopupMenu; // CHECKME looks like setting parent doesn't work
-    popup->insertItem( i18n( "Active window" ), TYPE_ACTIVE_WINDOW );
-    popup->insertItem( i18n( "Existing window" ), TYPE_EXISTING_WINDOW );
+    popup->insertItem( i18n( "Active Window..." ), TYPE_ACTIVE_WINDOW );
+    popup->insertItem( i18n( "Existing Window..." ), TYPE_EXISTING_WINDOW );
     popup->insertItem( i18n( "Not_condition", "Not" ), TYPE_NOT );
     popup->insertItem( i18n( "And_condition", "And" ), TYPE_AND );
     popup->insertItem( i18n( "Or_condition", "Or" ), TYPE_OR );
@@ -310,7 +310,7 @@ QString Condition_list_item::text( int column_P ) const
 
 Active_window_condition_dialog::Active_window_condition_dialog( 
     Active_window_condition* condition_P )
-    : KDialogBase( NULL, NULL, true, i18n( "Window details" ), Ok | Cancel ), condition( NULL )
+    : KDialogBase( NULL, NULL, true, i18n( "Window Details" ), Ok | Cancel ), condition( NULL )
     {
     widget = new Windowdef_list_widget( this );
     widget->set_data( condition_P->window());
@@ -333,7 +333,7 @@ void Active_window_condition_dialog::accept()
 
 Existing_window_condition_dialog::Existing_window_condition_dialog( 
     Existing_window_condition* condition_P )
-    : KDialogBase( NULL, NULL, true, i18n( "Window details" ), Ok | Cancel ), condition( NULL )
+    : KDialogBase( NULL, NULL, true, i18n( "Window Details" ), Ok | Cancel ), condition( NULL )
     {
     widget = new Windowdef_list_widget( this );
     widget->set_data( condition_P->window());

@@ -27,7 +27,7 @@
                 <cstring>comment_label</cstring>
             </property>
             <property name="text">
-                <string>Comment</string>
+                <string>Comment:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>comment_lineedit</cstring>
@@ -70,7 +70,7 @@
                                 <cstring>new_button</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;New...</string>
+                                <string>&amp;New</string>
                             </property>
                         </widget>
                         <widget class="QPushButton">

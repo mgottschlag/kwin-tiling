@@ -206,7 +206,7 @@ void Module::new_action()
         else
             parent = module->actions_root();
         }
-    Action_data_base* item = new Generic_action_data( parent, i18n( "New action" ), "",
+    Action_data_base* item = new Generic_action_data( parent, i18n( "New Action" ), "",
         new Trigger_list( "" ), new Condition_list( "", NULL ), new Action_list( "" ), true );
     actions_listview_widget->new_action( item, in_group );
 //    check_tree( actions_root());
@@ -237,7 +237,7 @@ void Module::new_action_group()
         else
             parent = module->actions_root();
         }
-    Action_data_base* item = new Action_data_group( parent, i18n( "New action group" ), "",
+    Action_data_base* item = new Action_data_group( parent, i18n( "New Action Group" ), "",
         new Condition_list( "", NULL ), Action_data_group::SYSTEM_NONE, true );
     actions_listview_widget->new_action( item, in_group );
 //    check_tree( actions_root());
@@ -248,7 +248,7 @@ void Module::delete_action()
     {
     QString txt = i18n( "Do you really want to delete \"%1\"?" ).arg(
         current_action_data()->name());
-    if( KMessageBox::warningContinueCancel( NULL, txt, i18n( "Deleting action" ),
+    if( KMessageBox::warningContinueCancel( NULL, txt, i18n( "Deleting Action" ),
         i18n( "to delete", "Delete" )) != KMessageBox::Continue )
         return;
     delete _current_action_data;

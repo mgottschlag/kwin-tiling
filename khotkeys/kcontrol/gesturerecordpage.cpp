@@ -125,7 +125,7 @@ void GestureRecordPage::slotRecorded(const QString &data)
             break;
             }
         default:
-            KMessageBox::information(this, i18n("You have already completed the three required drawings. Either press Ok to save or Reset to try again."));
+            KMessageBox::information(this, i18n("You have already completed the three required drawings. Either press 'Ok' to save or 'Reset' to try again."));
         }
     }
 

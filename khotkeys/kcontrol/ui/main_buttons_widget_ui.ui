@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>KHotKeys::Main_buttons_widget_ui</class>
 <widget class="QWidget">
     <property name="name">
@@ -20,6 +20,9 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
+    <property name="caption">
+        <string>Main_buttons_widget_ui</string>
+    </property>
     <hbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -35,7 +38,7 @@
                 <cstring>new_action_button</cstring>
             </property>
             <property name="text">
-                <string>&amp;New action</string>
+                <string>&amp;New Action</string>
             </property>
         </widget>
         <widget class="QPushButton">
@@ -43,7 +46,7 @@
                 <cstring>new_action_group_button</cstring>
             </property>
             <property name="text">
-                <string>New &amp;group</string>
+                <string>New &amp;Group</string>
             </property>
         </widget>
         <widget class="QPushButton">
@@ -51,7 +54,7 @@
                 <cstring>delete_action_button</cstring>
             </property>
             <property name="text">
-                <string>Delete action</string>
+                <string>Delete Action</string>
             </property>
         </widget>
         <widget class="Line">
@@ -73,7 +76,7 @@
                 <cstring>global_settings_button</cstring>
             </property>
             <property name="text">
-                <string>Global &amp;settings</string>
+                <string>Global &amp;Settings</string>
             </property>
         </widget>
     </hbox>

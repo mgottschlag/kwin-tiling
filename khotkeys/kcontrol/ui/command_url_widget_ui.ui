@@ -12,6 +12,9 @@
             <height>361</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>Command_url_widget_ui</string>
+    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -35,7 +38,7 @@
                         <cstring>command_url_label</cstring>
                     </property>
                     <property name="text">
-                        <string>Command/URL to execute</string>
+                        <string>Command/URL to execute:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>command_url_lineedit</cstring>
@@ -50,8 +53,6 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <slots>
     <slot access="protected" specifier="pure virtual">browse_pressed()</slot>
 </slots>

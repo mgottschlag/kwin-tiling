@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>KHotKeys::General_tab_ui</class>
 <widget class="QWidget">
     <property name="name">
@@ -11,6 +11,9 @@
             <width>596</width>
             <height>480</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>General_tab_ui</string>
     </property>
     <vbox>
         <property name="name">
@@ -27,7 +30,7 @@
                 <cstring>action_name_label</cstring>
             </property>
             <property name="text">
-                <string>Action &amp;name</string>
+                <string>Action &amp;name:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>action_name_lineedit</cstring>
@@ -57,7 +60,7 @@
                         <cstring>action_type_label</cstring>
                     </property>
                     <property name="text">
-                        <string>Action &amp;type</string>
+                        <string>Action &amp;type:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>action_type_combo</cstring>
@@ -117,7 +120,7 @@
                 <cstring>comment_label</cstring>
             </property>
             <property name="text">
-                <string>&amp;Comment</string>
+                <string>&amp;Comment:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>comment_multilineedit</cstring>
@@ -133,11 +136,12 @@
         </widget>
     </vbox>
 </widget>
-<connections>
-</connections>
 <slots>
     <slot access="protected" specifier="pure virtual">action_name_changed( const QString&amp; )</slot>
     <slot access="protected" specifier="pure virtual">action_type_changed(int)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>ktextedit.h</includehint>
+</includehints>
 </UI>
