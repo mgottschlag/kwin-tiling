@@ -84,7 +84,7 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   QPushButton *installButton=new QPushButton( i18n("Install New Theme..."),
 	this, "InstallNewTheme");
   connect(installButton,SIGNAL(clicked()),SLOT(installNewTheme()));
-  m_removeButton=new QPushButton( i18n("Remove Theme..."),
+  m_removeButton=new QPushButton( i18n("Remove Theme"),
 	this, "RemoveTheme");
   connect(m_removeButton,SIGNAL(clicked()),SLOT(removeSelectedTheme()));
 
