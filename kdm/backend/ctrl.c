@@ -300,7 +300,7 @@ unQuote (const char *str)
 }
 
 static void
-str_cat (char **bp, const char *str, int max)
+str_cat_l (char **bp, const char *str, int max)
 {
     int dnl = strlen (str);
     if (dnl > max)
@@ -310,26 +310,34 @@ str_cat (char **bp, const char *str, int max)
 }
 
 static void
+str_cat (char **bp, const char *str)
+{
+    int dnl = strlen (str);
+    memcpy (*bp, str, dnl);
+    *bp += dnl;
+}
+
+static void
 sd_cat (char **bp, SdRec *sdr)
 {
     if (sdr->how == SHUT_HALT)
-	str_cat (bp, "halt,", 5);
+	str_cat (bp, "halt,");
     else
-	str_cat (bp, "reboot,", 7);
+	str_cat (bp, "reboot,");
     if (sdr->start == TO_INF)
-	str_cat (bp, "0,", 2);
+	str_cat (bp, "0,");
     else
 	*bp += sprintf (*bp, "%d,", sdr->start);
     if (sdr->timeout == TO_INF)
-	str_cat (bp, "-1,", 3);
+	str_cat (bp, "-1,");
     else
 	*bp += sprintf (*bp, "%d,", sdr->timeout);
     if (sdr->force == SHUT_FORCE)
-	str_cat (bp, "force", 5);
+	str_cat (bp, "force");
     else if (sdr->force == SHUT_FORCEMY)
-	str_cat (bp, "forcemy", 7);
+	str_cat (bp, "forcemy");
     else
-	str_cat (bp, "cancel", 6);
+	str_cat (bp, "cancel");
     *bp += sprintf (*bp, ",%d", sdr->uid);
 }
 
@@ -410,7 +418,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		args = di->name;
 		if (!memcmp (args, "localhost:", 10))
 		    args += 9;
-		str_cat (&bp, args, sizeof(cbuf)/2);
+		str_cat_l (&bp, args, sizeof(cbuf)/2);
 		*bp++ = ',';
 #ifdef HAVE_VTS
 		if (di->serverVT)
@@ -418,12 +426,12 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 #endif
 		*bp++ = ',';
 		if (di->userName)
-		    str_cat (&bp, di->userName, sizeof(cbuf)/5);
+		    str_cat_l (&bp, di->userName, sizeof(cbuf)/5);
 		*bp++ = ',';
 		if (di->status == remoteLogin)
-		    str_cat (&bp, "<remote>", 8);
+		    str_cat (&bp, "<remote>");
 		else if (di->sessName)
-		    str_cat (&bp, di->sessName, sizeof(cbuf)/5);
+		    str_cat_l (&bp, di->sessName, sizeof(cbuf)/5);
 		*bp++ = ',';
 		if (di == d)
 		    *bp++ = '*';
@@ -467,11 +475,11 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		*bp++ = 'o';
 		*bp++ = 'k';
 		if (sdRec.how) {
-		    str_cat (&bp, "\tglobal,", 8);
+		    str_cat (&bp, "\tglobal,");
 		    sd_cat (&bp, &sdRec);
 		}
 		if (d && d->hstent->sdRec.how) {
-		    str_cat (&bp, "\tlocal,", 7);
+		    str_cat (&bp, "\tlocal,");
 		    sd_cat (&bp, &d->hstent->sdRec);
 		}
 		*bp++ = '\n';
