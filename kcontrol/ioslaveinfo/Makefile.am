@@ -3,7 +3,7 @@ kde_module_LTLIBRARIES = libkcm_ioslaveinfo.la
 libkcm_ioslaveinfo_la_SOURCES = kcmioslaveinfo.cpp
 
 libkcm_ioslaveinfo_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_ioslaveinfo_la_LIBADD = -lkdeui -lkfile
+libkcm_ioslaveinfo_la_LIBADD = -lkdeui $(LIB_KIO)
 
 INCLUDES= $(all_includes)
 

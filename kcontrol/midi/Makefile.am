@@ -3,7 +3,7 @@ kde_module_LTLIBRARIES = libkcm_midi.la
 libkcm_midi_la_SOURCES = midi.cpp 
 
 libkcm_midi_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_midi_la_LIBADD = -lkdeui -lkfile -lkmid 
+libkcm_midi_la_LIBADD = -lkdeui $(LIB_KFILE) -lkmid 
 INCLUDES= $(all_includes) 
 
 libkcm_midi_la_METASOURCES = AUTO

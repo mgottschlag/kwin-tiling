@@ -3,7 +3,7 @@ kde_module_LTLIBRARIES = libkcm_nic.la
 libkcm_nic_la_SOURCES = nic.cpp
 
 libkcm_nic_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_nic_la_LIBADD = -lkdeui -lkfile $(LIBSOCKET)
+libkcm_nic_la_LIBADD = -lkdeui $(LIB_KFILE) $(LIBSOCKET)
 
 INCLUDES= $(all_includes)
 
