@@ -604,7 +604,7 @@ void KScreenSaver::slotEnable(bool e)
     }
 
     mSaverListBox->setEnabled( e );
-    mTestBt->setEnabled( e );
+    mTestBt->setEnabled( e && (mSelected>=0) );
     mWaitEdit->setEnabled( e );
     mLockCheckBox->setEnabled( e );
 #ifdef HAVE_SETPRIORITY
