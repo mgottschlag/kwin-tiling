@@ -91,7 +91,7 @@ void MenuTab::load()
 
     if (c->readBoolEntry("DetailedMenuEntries", true))
     {
-        if (c->readBoolEntry("DetailedEntriesNamesFirst", true))
+        if (c->readBoolEntry("DetailedEntriesNamesFirst", false))
         {
             m_formatNameDesc->setChecked(true);
         }
@@ -192,7 +192,7 @@ void MenuTab::defaults()
 {
   m_showPixmap->setChecked(true);
   m_maxQuickBrowserItems->setValue(30);
-  m_formatNameDesc->setChecked(true);
+  m_formDescName->setChecked(true);
   m_showRecent->setChecked(true);
   m_hiddenFiles->setChecked(false);
   m_bookmarkMenu->setOn(true);
