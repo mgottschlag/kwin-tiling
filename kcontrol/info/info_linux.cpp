@@ -75,64 +75,41 @@
 #define MAXCOLUMNWIDTH 600
 
 bool GetInfo_ReadfromFile(QListView * lbox, const char *FileName,
-			  char splitchar,
+			  const QChar& splitChar,
 			  QListViewItem * lastitem = 0,
 			  QListViewItem ** newlastitem = 0)
 {
-    char buf[512];
     bool added = false;
+    QFile file(FileName);
 
-    QFile *file = new QFile(FileName);
-
-    if (!file->exists()) {
-	delete file;
+    if (!file.exists()) {
 	return false;
     }
 
-    if (!file->open(IO_ReadOnly)) {
-	delete file;
+    if (!file.open(IO_ReadOnly)) {
 	/*   *GetInfo_ErrorString =
 	   i18n("You do not have read-access for the file %1!\nPlease ask your system-administrator for advice!")
 	   .arg(FileName);
 	 */
 	return false;
     }
-
-    while (file->readLine(buf, sizeof(buf) - 1) > 0) {
-	if (strlen(buf)) {
-	    char *p = buf;
-	    if (splitchar != 0)	/* remove leading spaces between ':' and the following text */
-		while (*p) {
-		    if (!isgraph(*p))
-			*p = ' ';
-		    if (*p == splitchar) {
-			*p++ = ' ';
-			while (*p == ' ')
-			    ++p;
-			*(--p) = splitchar;
-			++p;
-		    } else
-			++p;
-	    } else {
-		while (*p) {
-		    if (!isgraph(*p))
-			*p = ' ';
-		    ++p;
-		}
+    QTextStream stream(&file);
+    QString line;
+    while (stream.atEnd()) {
+	line = stream.readLine();
+	if (!line.isEmpty()) {
+	    if (!splitChar.isNull()) {
+		    int pos = line.find(line.find(splitChar));
+		    QString s1 = line.left(pos).stripWhiteSpace();
+		    QString s2 = line.mid(pos+1).stripWhiteSpace();
+		    if (!(s1.isEmpty() || s2.isEmpty()))
+			lastitem = new QListViewItem(lbox, lastitem, s1, s2);
+		    added = true;
 	    }
-
-	    QString s1 = QString::fromLocal8Bit(buf);
-	    QString s2 = s1.mid(s1.find(splitchar) + 1);
-
-	    s1.truncate(s1.find(splitchar));
-	    if (!(s1.isEmpty() || s2.isEmpty()))
-		lastitem = new QListViewItem(lbox, lastitem, s1, s2);
-	    added = true;
 	}
-    }
+   }
 
-    file->close();
-    delete file;
+    file.close();
     if (newlastitem)
 	*newlastitem = lastitem;
     return added;
