@@ -215,7 +215,7 @@ bool KMemoryWidget::Display_Graph(
     if (total == 0 || total < avail ||
 	total == NO_MEMORY_INFO ||
 	avail == NO_MEMORY_INFO) {
-	paint.fillRect(0,0,graph->width(),graph->height(),
+	paint.fillRect(1,1,graph->width()-2,graph->height()-2,
 			QBrush(QColor(128,128,128)));
 	paint.setPen(pen);
 	paint.drawRect(graph->rect());
@@ -224,15 +224,15 @@ bool KMemoryWidget::Display_Graph(
     }
     
     int percent     = (int) ((((double)avail) * 100) / total);
-    int localheight = (graph->height() * percent) / 100;
+    int localheight = ((graph->height()-2) * percent) / 100;
     int color	    = 250 - (highlight ? 0 : 30);
     
     /* available mem in green */
-    paint.fillRect(0,0,graph->width(),localheight,
+    paint.fillRect(1,1,graph->width()-2,localheight,
 			QBrush(QColor(0,color,0)));
     /* used mem in red */
-    paint.fillRect(0,localheight,
-			graph->width(),graph->height(),
+    paint.fillRect(1,localheight+1,
+			graph->width()-2,graph->height()-2,
 			QBrush(QColor(color,0,0)));
     paint.setPen(pen);
     paint.drawRect(graph->rect());

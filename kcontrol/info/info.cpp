@@ -34,6 +34,7 @@
 #include <kapp.h>
 #include <kglobal.h>
 #include <kcharsets.h>
+#include <kiconloader.h>
 #include <klocale.h>
 #include "info.h"		/* include the forward declares... */
 
@@ -79,7 +80,7 @@ static QString HexStr(unsigned long val, int digits )
 {
     QString hexstr;
     int i;
-    hexstr = QString("0x%1").arg(val,digits,16/*=HEX*/);
+    hexstr = QString("0x%1").arg(val, digits, 16/*=HEX*/);
     for (i=hexstr.length()-1; i>0; --i)
      if (hexstr[i]==' ') 
          hexstr[i] = '0';
@@ -245,8 +246,12 @@ bool GetInfo_XServer_Generic( QListView *lBox )
     lBox->addColumn(i18n("Value") );
     sorting_allowed = false;
 			
-    next = new QListViewItem(lBox, i18n("X-Server Information"));
+    next = new QListViewItem(lBox, i18n("Server Information"));
+    next->setPixmap(0, KGlobal::iconLoader()->loadApplicationIcon(
+    		    "kcmx", KIconLoader::Small));
     next->setOpen(true);
+    next->setSelectable(false);
+    next->setExpandable(false);
     
     last = new QListViewItem(next, i18n("Name of the Display"), 
 		DisplayString(dpy));
@@ -273,7 +278,7 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 	last->setExpandable(true);
 	for (i=0; i<n; i++) {
 	    item = new QListViewItem(last, item, i18n("Pixmap Format #%1").arg(i+1),
-			i18n("%1 BPP, Depth: %2 Bit, scanline_pad: %3)").
+			i18n("%1 BPP, Depth: %2 Bit, scanline_pad: %3").
 			arg(pmf[i].bits_per_pixel).arg(pmf[i].depth).
 			arg(pmf[i].scanline_pad));
 	}
