@@ -97,9 +97,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsConfig.setGroup(CFG_GROUP);
 
+    QFrame      *fontsFrame;
 #ifdef HAVE_XFT
     KLibFactory *factory=KLibLoader::self()->factory("libkfontviewpart");
-    QFrame      *fontsFrame;
 
     if(factory)
     {
