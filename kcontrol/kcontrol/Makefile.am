@@ -25,7 +25,7 @@ SUBDIRS = . pics
 CLEANFILES = dummy.cpp
 
 bin_PROGRAMS = kcontrol kcmshell kcminit
-kde_module_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
+lib_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
 
 kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
 	helpwidget.cpp moduleinfo.cpp modules.cpp proxywidget.cpp \
