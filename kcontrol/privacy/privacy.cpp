@@ -76,11 +76,11 @@ Privacy::Privacy(QWidget *parent, const char *name)
   webbrowsingCLI->setOpen(true);
 
   clearRunCommandHistory = new QCheckListItem(generalCLI,
-      i18n("Run Command History"),QCheckListItem::CheckBox);
+      i18n("Run command history"),QCheckListItem::CheckBox);
   clearAllCookies = new QCheckListItem(webbrowsingCLI,
       i18n("Cookies"),QCheckListItem::CheckBox);
   clearSavedClipboardContents = new QCheckListItem(generalCLI,
-      i18n("saved clipboard contents"),QCheckListItem::CheckBox);
+      i18n("Saved clipboard contents"),QCheckListItem::CheckBox);
   clearWebHistory = new QCheckListItem(webbrowsingCLI,
       i18n("Web history"),QCheckListItem::CheckBox);
   clearWebCache = new QCheckListItem(webbrowsingCLI,
@@ -88,11 +88,11 @@ Privacy::Privacy(QWidget *parent, const char *name)
   clearFormCompletion = new QCheckListItem(webbrowsingCLI,
       i18n("Form completion entries"),QCheckListItem::CheckBox);
   clearRecentDocuments = new QCheckListItem(generalCLI,
-      i18n("Recent Documents"),QCheckListItem::CheckBox);
+      i18n("Recent documents"),QCheckListItem::CheckBox);
   clearQuickStartMenu = new QCheckListItem(generalCLI,
-      i18n("Quick Start Menu"),QCheckListItem::CheckBox);
+      i18n("Quick start menu"),QCheckListItem::CheckBox);
   clearFavIcons = new QCheckListItem(webbrowsingCLI,
-      i18n("Clear favicons"),QCheckListItem::CheckBox);
+      i18n("Favorite icons"),QCheckListItem::CheckBox);
 
   QWhatsThis::add(sw, i18n("Check all cleanup actions you would like to perform. These will be executed by pressing the button below"));
   QWhatsThis::add(cleaningDialog->cleanupButton, i18n("Immediately performs the cleanup actions selected above"));

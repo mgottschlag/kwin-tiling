@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>KCMPrivacyDialog</class>
 <author>Ralf Hoelzer</author>
 <widget class="QWidget">
@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>439</width>
+            <width>440</width>
             <height>515</height>
         </rect>
     </property>
@@ -39,6 +39,9 @@
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
         </property>
         <widget class="QSplitter">
             <property name="name">
@@ -190,5 +193,8 @@
         </widget>
     </vbox>
 </widget>
+<includes>
+    <include location="global" impldecl="in implementation">klistview.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
