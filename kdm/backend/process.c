@@ -463,20 +463,10 @@ GRead (void *buf, int len)
     }
 }
 
-#include <sched.h>
-
 static void
 GWrite (const void *buf, int len)
 {
-#if 0
-    int ret;
-    do {
-	ret = write (curtalk->pipe->wfd, buf, len);
-    } while (ret < 0 && errno == EINTR);
-    if (ret != len) {
-#else
-    if (write (curtalk->pipe->wfd, buf, len) != len) {
-#endif
+    if (Writer (curtalk->pipe->wfd, buf, len) != len) {
 	LogError ("Cannot write to %s\n", curtalk->pipe->who);
 	GErr ();
     }

@@ -460,6 +460,8 @@ Ent entsGeneral[] = {
 { "ExportList",		C_exportList,		0,	"" },
 { "RandomFile",		C_randomFile,		0,	"/dev/mem" },
 { "RandomDevice",	C_randomDevice,		0,	"" },
+{ "PrngdSocket",	C_prngdSocket,		0,	"" },
+{ "PrngdPort",		C_prngdPort,		0,	"0" },
 { "FifoDir",		C_fifoDir | C_PATH,	0,	"/var/run/xdmctl" },
 { "FifoGroup",		C_fifoGroup | C_GRP,	0,	"0" },
 { "DataDir",		C_dataDir | C_PATH,	0,	"/var/lib/kdm" },

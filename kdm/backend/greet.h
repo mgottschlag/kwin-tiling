@@ -216,6 +216,8 @@ from The Open Group.
 
 #define C_randomFile		(C_TYPE_STR | 0x005)
 #define C_randomDevice		(C_TYPE_STR | 0x006)
+#define C_prngdSocket		(C_TYPE_STR | 0x007)
+#define C_prngdPort		(C_TYPE_INT | 0x008)
 
 #define C_exportList		(C_TYPE_ARGV | 0x009)
 

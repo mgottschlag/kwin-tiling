@@ -355,6 +355,8 @@ extern char	*keyFile;
 extern char	**exportList;
 extern char	*randomFile;
 extern char	*randomDevice;
+extern char	*prngdSocket;
+extern int	prngdPort;
 extern char	*willing;
 extern int	choiceTimeout;	/* chooser choice timeout */
 extern char	*cmdHalt;
@@ -524,6 +526,7 @@ extern char **putEnv (const char *string, char **env);
 extern const char *getEnv (char **e, const char *name);
 extern const char *localHostname (void);
 extern int Reader (int fd, void *buf, int len);
+extern int Writer (int fd, const void *buf, int len);
 extern void FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr);
 
 /* in inifile.c */

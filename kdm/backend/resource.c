@@ -367,6 +367,8 @@ char	**exportList;
 #ifndef ARC4_RANDOM
 # ifndef DEV_RANDOM
 char	*randomFile;
+char	*prngdSocket;
+int	prngdPort;
 # endif
 char	*randomDevice;
 #endif
@@ -398,6 +400,8 @@ struct globVals {
 #ifndef ARC4_RANDOM
 # ifndef DEV_RANDOM
 { C_randomFile,		&randomFile },
+{ C_prngdSocket,	&prngdSocket },
+{ C_prngdPort,		(char **) &prngdPort },
 # endif
 { C_randomDevice,	&randomDevice },
 #endif

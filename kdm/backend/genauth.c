@@ -33,6 +33,9 @@ from The Open Group.
  * Author:  Keith Packard, MIT X Consortium
  */
 
+#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+# define NEED_SIGNAL
+#endif
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
@@ -41,6 +44,138 @@ from The Open Group.
 #include <X11/Xos.h>
 
 #if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+
+/* ####################################################################### */
+
+/*
+ * Copyright (c) 1995,1999 Theo de Raadt.  All rights reserved.
+ * Copyright (c) 2001-2002 Damien Miller.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "dm_socket.h"
+
+#ifndef X_NO_SYS_UN
+# ifndef Lynx
+#  include <sys/un.h>
+# else
+#  include <un.h>
+# endif
+#endif
+#include <string.h>
+
+#ifndef INADDR_LOOPBACK
+# define INADDR_LOOPBACK 0x7F000001U
+#endif
+
+#ifndef offsetof
+# define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+#endif
+
+static int
+getPrngdBytes (char *buf, int len,
+	       unsigned short tcp_port, const char *socket_path)
+{
+	int fd, addr_len, rval, errors;
+	char msg[2];
+	struct sockaddr *addr;
+	struct sockaddr_in addr_in;
+	struct sockaddr_un addr_un;
+	int af;
+	SIGFUNC old_sigpipe;
+
+	if (tcp_port) {
+		memset(&addr_in, 0, sizeof(addr_in));
+		af = addr_in.sin_family = AF_INET;
+		addr_in.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+		addr_in.sin_port = htons(tcp_port);
+		addr_len = sizeof(addr_in);
+		addr = (struct sockaddr *)&addr_in;
+	} else if (*socket_path) {
+		unsigned spl = strlen(socket_path);
+		if (spl >= sizeof(addr_un.sun_path)) {
+			LogError("get_random_prngd: "
+				 "Random pool path is too long\n");
+			return -1;
+		}
+		af = addr_un.sun_family = AF_UNIX;
+		strncpy(addr_un.sun_path, socket_path,
+		    sizeof(addr_un.sun_path));
+		addr_len = offsetof(struct sockaddr_un, sun_path) + spl + 1;
+		addr = (struct sockaddr *)&addr_un;
+	} else
+		return -1;
+
+	old_sigpipe = Signal(SIGPIPE, SIG_IGN);
+
+	errors = 0;
+	rval = -1;
+reopen:
+	if ((fd = socket(af, SOCK_STREAM, 0)) < 0) {
+		LogInfo("Couldn't create socket: %m\n");
+		goto done;
+	}
+
+	if (connect(fd, (struct sockaddr*)addr, addr_len)) {
+		if (af == AF_INET)
+			LogInfo("Couldn't connect to PRNGD port %d: %m\n",
+			    tcp_port);
+		else
+			LogInfo("Couldn't connect to PRNGD socket %\"s: %m\n",
+			    socket_path);
+		goto done;
+	}
+
+	/* Send blocking read request to PRNGD */
+	msg[0] = 0x02;
+	msg[1] = len;
+
+	if (Writer(fd, msg, sizeof(msg)) != sizeof(msg)) {
+		if (errno == EPIPE && errors < 10) {
+			close(fd);
+			errors++;
+			goto reopen;
+		}
+		LogInfo("Couldn't write to PRNGD socket: %m\n");
+		goto done;
+	}
+
+	if (Reader(fd, buf, len) != len) {
+		if (errno == EPIPE && errors < 10) {
+			close(fd);
+			errors++;
+			goto reopen;
+		}
+		LogInfo("Couldn't read from PRNGD socket: %m\n");
+		goto done;
+	}
+
+	rval = 0;
+done:
+	Signal(SIGPIPE, old_sigpipe);
+	if (fd != -1)
+		close(fd);
+	return rval;
+}
 
 /* ####################################################################### */
 
@@ -272,11 +407,6 @@ void
 AddOtherEntropy (void)
 {
     AddTimerEntropy();
-    /* XXX -- these will work only on linux and similar, but those already have urandom ... */
-    sumFile ("/proc/stat", BSIZ, SEEK_SET, 0);
-    sumFile ("/proc/interrupts", BSIZ, SEEK_SET, 0);
-    sumFile ("/proc/loadavg", BSIZ, SEEK_SET, 0);
-    sumFile ("/proc/net/dev", BSIZ, SEEK_SET, 0);
     /* XXX -- setup-specific ... use some common ones */
     sumFile ("/var/log/messages", 0x1000, SEEK_END, -0x1000);
     sumFile ("/var/log/syslog", 0x1000, SEEK_END, -0x1000);
@@ -351,6 +481,9 @@ GenerateAuthData (char *auth, int len)
 	return 0;
 # else
     }
+
+    if (!getPrngdBytes (auth, len, prngdPort, prngdSocket))
+	return 1;
 
     {
 	unsigned *rnd = (unsigned*)auth;

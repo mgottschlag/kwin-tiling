@@ -397,14 +397,14 @@ localHostname (void)
     return localHostbuf;
 }
 
-int
-Reader (int fd, void *buf, int count)
+static int
+AtomicIO (ssize_t (*f)(int, void *, size_t), int fd, void *buf, int count)
 {
     int ret, rlen;
 
     for (rlen = 0; rlen < count; ) {
       dord:
-	ret = read (fd, (void *)((char *)buf + rlen), count - rlen);
+	ret = f (fd, (void *)((char *)buf + rlen), count - rlen);
 	if (ret < 0) {
 	    if (errno == EINTR)
 		goto dord;
@@ -417,6 +417,19 @@ Reader (int fd, void *buf, int count)
 	rlen += ret;
     }
     return rlen;
+}
+
+int
+Reader (int fd, void *buf, int count)
+{
+    return AtomicIO (read, fd, buf, count);
+}
+
+int
+Writer (int fd, const void *buf, int count)
+{
+    return AtomicIO ((ssize_t (*)(int, void *, size_t))write,
+		     fd, (void *)buf, count);
 }
 
 void
