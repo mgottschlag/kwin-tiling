@@ -158,7 +158,7 @@ void KDEDConfig::load() {
 		item = new QListViewItem(_lvStartup, QString::null);
 		_lvStartup->header()->setLabel(0, QString::null, 0);
 	}
-	item->setText(1, i18n("KAlarm Daemon"));
+	item->setText(1, i18n("Alarm Daemon"));
 	item->setText(2, QString::null);
 	item->setText(3, i18n("Not running"));
 	item->setText(4, "kalarmd");
