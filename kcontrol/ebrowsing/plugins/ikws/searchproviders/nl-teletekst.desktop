@@ -1,6 +1,24 @@
 [Desktop Entry]
 Name=Teletekst search provider
+Name[ar]=موفر بحث Teletekst
+Name[az]=Teletekst axtarış xidmətçisi
+Name[da]=Teletekst søgeudbyder
+Name[de]=Teletekst Suchprovider
+Name[es]=Proveedor de búsqueda Teletekst
+Name[fr]=Moteur de recherche Teletekst
+Name[hu]=Teletekst keresőszolgáltató
+Name[is]=Teletekst leitarvél
+Name[lv]=Teletekst meklēšanas sniedzējs
+Name[nl]=Teletekst zoekprovider
+Name[pt]=Motor de busca Teletekst
+Name[pt_BR]=Busca de provedores
+Name[sk]=Poskytovateľ hľadania Teletekst
+Name[sl]=Ponudnik iskanja po teletekstu
+Name[sv]=Teletekst, sökmotor
+Name[xh]=Teletekst umnikezi wophendlo
+Name[xx]=xx
+Name[zu]=Teletekst umnikezeli wophenyo
 Type=Service
 ServiceTypes=SearchProvider
 Keys=tt,teletekst
-Query[nl]=http://teletekst.nos.nl/cgi-bin/tt/nos/page/t/o/m/x/n/\\1
+Query[nl]=http://teletekst.nos.nl/cgi-bin/tt/nos/page/t/o/m/x/n/\\{@}
