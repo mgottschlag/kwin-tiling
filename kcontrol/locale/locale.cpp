@@ -209,7 +209,8 @@ void KLocaleConfig::load()
   lang = lang.left(lang.find(':')); // only use  the first lang
   locale->setLanguage(lang);
 
-  QString country = config->readEntry(QString::fromLatin1("Country"));
+  QString country = config->readEntry(QString::fromLatin1("Country"),
+                                      QString::fromLatin1("C"));
   locale->setCountry(country);
 
   QString charset = config->readEntry(QString::fromLatin1("Charset"),
