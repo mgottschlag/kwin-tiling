@@ -57,6 +57,8 @@ extern "C"
     kbdc.bell_percent = config.readNumEntry("Volume", kbd.bell_percent);
     kbdc.bell_pitch = config.readNumEntry("Pitch", kbd.bell_pitch);
     kbdc.bell_duration = config.readNumEntry("Duration", kbd.bell_duration);
+    if (kbdc.bell_percent == 0)
+      kbdc.bell_duration = 0;
     XChangeKeyboardControl(kapp->getDisplay(),
                            KBBellPercent | KBBellPitch | KBBellDuration,
                            &kbdc);

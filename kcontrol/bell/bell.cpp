@@ -159,7 +159,10 @@ void KBellConfig::ringBell()
   XKeyboardControl kbd;
   kbd.bell_percent = m_volume->value();
   kbd.bell_pitch = m_pitch->value();
-  kbd.bell_duration = m_duration->value();
+  if (m_volume->value() > 0)
+    kbd.bell_duration = m_duration->value();
+  else
+    kbd.bell_duration = 0;
   XChangeKeyboardControl(kapp->getDisplay(),
                          KBBellPercent | KBBellPitch | KBBellDuration,
                          &kbd);
