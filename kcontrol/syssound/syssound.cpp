@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.11  1999/04/19 15:53:34  kulow
+    CVS_SILENT header fixes
+
     Revision 1.10  1999/04/16 11:19:24  kulow
     fixes
 
@@ -480,8 +483,8 @@ void KSoundWidget::soundDropped(KDNDDropZone *zone){
       // CC: Now check for the ending ".wav"
 
       if (stricmp(".WAV",url.right(4))) {
-        msg.sprintf(i18n("Sorry, but \n%s\ndoes not seem "\
-			 "to be a WAV--file."), url.data());
+        msg = i18n("Sorry, but \n%1\ndoes not seem "\
+			 "to be a WAV--file.").arg(url);
 
 	QMessageBox::warning(this, i18n("Improper File Extension"), msg);
 
@@ -494,9 +497,9 @@ void KSoundWidget::soundDropped(KDNDDropZone *zone){
 	if (!addToSoundList(url)) {
 
 	  // CC: did not add file because it is already in the list
-	  msg.sprintf(i18n("The file\n"
-		           "%s\n"
-			   "is already in the list"), url.data());
+	  msg = i18n("The file\n"
+		           "%1\n"
+			   "is already in the list").arg(url);
 
 	  QMessageBox::warning(this, i18n("File Already in List"), msg);
 
