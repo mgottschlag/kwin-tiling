@@ -27,12 +27,13 @@
 #include <qpushbutton.h>
 
 #include <kdebug.h>
+
+#include <dcopref.h>
 #include <kconfig.h>
 #include <ktrader.h>
 #include <klocale.h>
 #include <kcombobox.h>
 #include <klistview.h>
-#include <dcopclient.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
 #include <ksimpleconfig.h>
@@ -81,24 +82,6 @@ FilterOptions::FilterOptions(KInstance *instance, QWidget *parent, const char *n
 
     m_dlg->lvSearchProviders->setSorting(0);
 
-    connect(m_dlg->lvSearchProviders, SIGNAL(selectionChanged(QListViewItem *)),
-           this, SLOT(updateSearchProvider()));
-    connect(m_dlg->lvSearchProviders, SIGNAL(doubleClicked(QListViewItem *)),
-           this, SLOT(changeSearchProvider()));
-    connect(m_dlg->lvSearchProviders, SIGNAL(returnPressed(QListViewItem *)),
-           this, SLOT(changeSearchProvider()));
-
-    connect(m_dlg->cbEnableShortcuts, SIGNAL(clicked()), this,
-            SLOT(setWebShortcutState()));
-    connect(m_dlg->cmbDefaultEngine, SIGNAL(activated(const QString &)), this,
-            SLOT(moduleChanged()));
-    connect(m_dlg->cmbDelimiter, SIGNAL(activated(const QString &)), this,
-            SLOT(moduleChanged()));
-
-    connect(m_dlg->pbNew, SIGNAL(clicked()), this, SLOT(addSearchProvider()));
-    connect(m_dlg->pbChange, SIGNAL(clicked()), this, SLOT(changeSearchProvider()));
-    connect(m_dlg->pbDelete, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));
-
     // Load the options
     load();
 }
@@ -140,10 +123,33 @@ void FilterOptions::load()
 
     setDelimiter (config.readNumEntry ("KeywordDelimiter", ':'));
 
+    // Update the GUI to reflect the config options read above...
     setWebShortcutState();
 
     if (m_dlg->lvSearchProviders->childCount())
       m_dlg->lvSearchProviders->setSelected(m_dlg->lvSearchProviders->firstChild(), true);
+
+    // Connect all the signals/slots...
+    connect(m_dlg->cbEnableShortcuts, SIGNAL(clicked()), this,
+            SLOT(setWebShortcutState()));
+    connect(m_dlg->cbEnableShortcuts, SIGNAL(clicked()), this,
+            SLOT(configChanged()));
+    
+    connect(m_dlg->lvSearchProviders, SIGNAL(selectionChanged(QListViewItem *)),
+           this, SLOT(updateSearchProvider()));
+    connect(m_dlg->lvSearchProviders, SIGNAL(doubleClicked(QListViewItem *)),
+           this, SLOT(changeSearchProvider()));
+    connect(m_dlg->lvSearchProviders, SIGNAL(returnPressed(QListViewItem *)),
+           this, SLOT(changeSearchProvider()));
+            
+    connect(m_dlg->cmbDefaultEngine, SIGNAL(activated(const QString &)), this,
+            SLOT(configChanged()));
+    connect(m_dlg->cmbDelimiter, SIGNAL(activated(const QString &)), this,
+            SLOT(configChanged()));
+
+    connect(m_dlg->pbNew, SIGNAL(clicked()), this, SLOT(addSearchProvider()));
+    connect(m_dlg->pbChange, SIGNAL(clicked()), this, SLOT(changeSearchProvider()));
+    connect(m_dlg->pbDelete, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));      
 }
 
 char FilterOptions::delimiter ()
@@ -180,16 +186,15 @@ void FilterOptions::save()
   config.writeEntry("KeywordDelimiter", delimiter() );
 
   QString engine;
-
-  if (m_dlg->cmbDefaultEngine->currentItem() == 0)
-    engine = QString::null;
-  else
+  
+  if (m_dlg->cmbDefaultEngine->currentItem() != 0)
     engine = m_dlg->cmbDefaultEngine->currentText();
-
+  
   config.writeEntry("DefaultSearchEngine", m_defaultEngineMap[engine]);
-
-  kdDebug () << "Engine: " << m_defaultEngineMap[engine] << endl;
-
+  
+  // kdDebug () << "Engine: " << m_defaultEngineMap[engine] << endl;
+  
+  int changedProviderCount = 0;
   QString path = kapp->dirs()->saveLocation("services", "searchproviders/");
 
   for (QListViewItemIterator it(m_dlg->lvSearchProviders); it.current(); ++it)
@@ -204,6 +209,8 @@ void FilterOptions::save()
 
     if (provider->isDirty())
     {
+      changedProviderCount++;
+      
       if (name.isEmpty())
       {
         // New provider
@@ -272,11 +279,16 @@ void FilterOptions::save()
   }
 
   config.sync();
+  
+  setChanged(false);
 
-  QByteArray data;
-  kapp->dcopClient()->send("*", "KURIIKWSFilterIface", "configure()", data);
-  kapp->dcopClient()->send("*", "KURISearchFilterIface", "configure()", data);
-  kapp->dcopClient()->send( "kded", "kbuildsycoca", "recreate()", data);
+  // Update filters in running applications...
+  (void) DCOPRef("*", "KURIIKWSFilterIface").send("configure");    
+  (void) DCOPRef("*", "KURISearchFilterIface").send("configure");
+  
+  // If the providers changed, tell sycoca to rebuild its database...
+  if (changedProviderCount)
+    (void) DCOPRef("kded", "kbuildsycoca").send("recreate");  
 }
 
 void FilterOptions::defaults()
@@ -285,16 +297,10 @@ void FilterOptions::defaults()
   m_dlg->cmbDefaultEngine->setCurrentItem (0);
 }
 
-void FilterOptions::moduleChanged()
+void FilterOptions::configChanged()
 {
-  // Removed the bool parameter, this way this can be directly connected
-  // as it was alwayw called with true as argument anyway (malte)
+  // kdDebug () << "FilterOptions::configChanged: TRUE" << endl;
   setChanged(true);
-}
-
-void FilterOptions::setAutoWebSearchState()
-{
-  moduleChanged();
 }
 
 void FilterOptions::setWebShortcutState()
@@ -308,7 +314,6 @@ void FilterOptions::setWebShortcutState()
   m_dlg->cmbDelimiter->setEnabled (use_keywords);
   m_dlg->lbDefaultEngine->setEnabled (use_keywords);
   m_dlg->cmbDefaultEngine->setEnabled (use_keywords);
-  moduleChanged();
 }
 
 void FilterOptions::addSearchProvider()
@@ -317,7 +322,7 @@ void FilterOptions::addSearchProvider()
   if (dlg.exec())
   {
       m_dlg->lvSearchProviders->setSelected(displaySearchProvider(dlg.provider()), true);
-      moduleChanged();
+      configChanged();
   }
 }
 
@@ -331,7 +336,7 @@ void FilterOptions::changeSearchProvider()
   if (dlg.exec())
   {
     m_dlg->lvSearchProviders->setSelected(displaySearchProvider(dlg.provider()), true);
-    moduleChanged();
+    configChanged();
   }
 }
 
@@ -366,7 +371,7 @@ void FilterOptions::deleteSearchProvider()
 
   delete item;
   updateSearchProvider();
-  moduleChanged();
+  configChanged();
 }
 
 void FilterOptions::updateSearchProvider()

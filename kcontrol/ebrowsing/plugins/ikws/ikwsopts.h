@@ -43,9 +43,8 @@ public:
     QString quickHelp() const;
 
 protected slots:
-    void moduleChanged();
+    void configChanged();
 
-    void setAutoWebSearchState();
     void setWebShortcutState();
 
     void addSearchProvider();
