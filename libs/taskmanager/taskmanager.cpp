@@ -480,7 +480,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
       pixmap = icon( size, size, false  );
 
       // If not, try to get one from the classname
-      if ( pixmap.isNull() || ( pixmap.width( != size ) || ( pixmap.height() != size ) ) {
+      if ( pixmap.isNull() || pixmap.width() != size || pixmap.height() != size ) {
 	pixmap = KGlobal::iconLoader()->loadIcon( className(),
 						  KIcon::NoGroup,
 						  size,
