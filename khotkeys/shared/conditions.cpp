@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _CONDITIONS_CPP_
@@ -41,7 +41,7 @@ Condition::Condition( Condition_list_base* parent_P )
     if( _parent )
         _parent->append( this );
     }
-    
+
 Condition::Condition( KConfig&, Condition_list_base* parent_P )
     : _parent( parent_P )
     {
@@ -71,13 +71,13 @@ Condition::~Condition()
     if( _parent )
         _parent->remove( this );
     }
-    
-    
+
+
 void Condition::cfg_write( KConfig& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" );
     }
-    
+
 void Condition::updated() const
     {
     if( !khotkeys_active())
@@ -145,7 +145,7 @@ void Condition_list_base::cfg_write( KConfig& cfg_P ) const
         it.current()->cfg_write( cfg_P );
         }
     cfg_P.setGroup( save_cfg_group );
-    cfg_P.writeEntry( "ConditionsCount", i );     
+    cfg_P.writeEntry( "ConditionsCount", i );
     }
 
 bool Condition_list_base::accepts_children() const
@@ -179,7 +179,7 @@ Condition_list::Condition_list( KConfig& cfg_P, Action_data_base* data_P )
 void Condition_list::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "Comment", comment());     
+    cfg_P.writeEntry( "Comment", comment());
     }
 
 Condition_list* Condition_list::copy( Action_data_base* data_P ) const
@@ -191,8 +191,8 @@ Condition_list* Condition_list::copy( Action_data_base* data_P ) const
         ret->append( it.current()->copy( ret ));
     return ret;
     }
-    
-    
+
+
 bool Condition_list::match() const
     {
     if( count() == 0 ) // no conditions to match => ok
@@ -204,7 +204,7 @@ bool Condition_list::match() const
             return true;
     return false;
     }
-    
+
 void Condition_list::updated() const
     {
     if( !khotkeys_active())
@@ -248,12 +248,12 @@ void Active_window_condition::init()
     connect( windows_handler, SIGNAL( active_window_changed( WId )),
         this, SLOT( active_window_changed( WId )));
     }
-            
+
 bool Active_window_condition::match() const
     {
     return is_match;
     }
-    
+
 void Active_window_condition::set_match()
     {
     is_match = window()->match( Window_data( windows_handler->active_window()));
@@ -279,23 +279,23 @@ Condition* Active_window_condition::copy( Condition_list_base* parent_P ) const
     {
     return new Active_window_condition( window()->copy(), parent_P );
     }
-    
+
 const QString Active_window_condition::description() const
     {
-    return i18n( "Active window : " ) + window()->comment();
+    return i18n( "Active window: " ) + window()->comment();
     }
 
 void Active_window_condition::active_window_changed( WId )
     {
     set_match();
     }
-    
+
 Active_window_condition::~Active_window_condition()
     {
     disconnect( windows_handler, NULL, this, NULL );
     delete _window;
     }
-    
+
 // Existing_window_condition
 
 Existing_window_condition::Existing_window_condition( KConfig& cfg_P, Condition_list_base* parent_P )
@@ -308,18 +308,18 @@ Existing_window_condition::Existing_window_condition( KConfig& cfg_P, Condition_
     init();
     set_match();
     }
-    
+
 void Existing_window_condition::init()
     {
     connect( windows_handler, SIGNAL( window_added( WId )), this, SLOT( window_added( WId )));
     connect( windows_handler, SIGNAL( window_removed( WId )), this, SLOT( window_removed( WId )));
     }
-    
+
 bool Existing_window_condition::match() const
     {
     return is_match;
     }
-    
+
 void Existing_window_condition::set_match( WId w_P )
     {
     if( w_P != None && !is_match )
@@ -348,17 +348,17 @@ Condition* Existing_window_condition::copy( Condition_list_base* parent_P ) cons
     {
     return new Existing_window_condition( window()->copy(), parent_P );
     }
-    
+
 const QString Existing_window_condition::description() const
     {
-    return i18n( "Existing window : " ) + window()->comment();
+    return i18n( "Existing window: " ) + window()->comment();
     }
 
 void Existing_window_condition::window_added( WId w_P )
     {
     set_match( w_P );
     }
-    
+
 void Existing_window_condition::window_removed( WId )
     {
     set_match();
@@ -369,7 +369,7 @@ Existing_window_condition::~Existing_window_condition()
     disconnect( windows_handler, NULL, this, NULL );
     delete _window;
     }
-    
+
 // Not_condition
 
 Not_condition::Not_condition( KConfig& cfg_P, Condition_list_base* parent_P )
@@ -382,7 +382,7 @@ bool Not_condition::match() const
     {
     return condition() ? !condition()->match() : false;
     }
-    
+
 void Not_condition::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -396,7 +396,7 @@ Not_condition* Not_condition::copy( Condition_list_base* parent_P ) const
         ret->append( condition()->copy( ret ));
     return ret;
     }
-    
+
 const QString Not_condition::description() const
     {
     return i18n( "Not_condition", "Not" );
@@ -424,7 +424,7 @@ bool And_condition::match() const
             return false;
     return true; // all true (or empty)
     }
-    
+
 void And_condition::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -440,7 +440,7 @@ And_condition* And_condition::copy( Condition_list_base* parent_P ) const
         ret->append( (*it)->copy( ret ));
     return ret;
     }
-    
+
 const QString And_condition::description() const
     {
     return i18n( "And_condition", "And" );
@@ -465,7 +465,7 @@ bool Or_condition::match() const
             return true;
     return false;
     }
-    
+
 void Or_condition::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -481,7 +481,7 @@ Or_condition* Or_condition::copy( Condition_list_base* parent_P ) const
         ret->append( (*it)->copy( ret ));
     return ret;
     }
-    
+
 const QString Or_condition::description() const
     {
     return i18n( "Or_condition", "Or" );

@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _WINDOWS_CPP_
@@ -51,12 +51,12 @@ Windows::Windows( bool enable_signal_P, QObject* parent_P )
             SLOT( active_window_changed_slot( WId )));
         }
     }
-    
+
 Windows::~Windows()
     {
     windows_handler = NULL;
     }
-    
+
 void Windows::window_added_slot( WId window_P )
     {
     if( signals_enabled )
@@ -64,37 +64,37 @@ void Windows::window_added_slot( WId window_P )
     // CHECKME tyhle i dalsi by asi mely jit nastavit, jestli aktivuji vsechny, nebo jen jeden
     // pripojeny slot ( stejne jako u Kdb, kde by to take melo jit nastavit )
     }
-    
+
 void Windows::window_removed_slot( WId window_P )
     {
     if( signals_enabled )
         emit window_removed( window_P );
     }
-    
+
 void Windows::active_window_changed_slot( WId window_P )
     {
     if( signals_enabled )
         emit active_window_changed( window_P );
     }
-    
+
 void Windows::window_changed_slot( WId window_P )
     {
     if( signals_enabled )
         emit window_changed( window_P );
     }
-    
+
 void Windows::window_changed_slot( WId window_P, unsigned int flags_P )
     {
     if( signals_enabled )
         emit window_changed( window_P, flags_P );
     }
-    
+
 QString Windows::get_window_role( WId id_P )
     {
     // TODO this is probably just a hack
     return KWin::readNameProperty( id_P, qt_window_role );
     }
-    
+
 QString Windows::get_window_class( WId id_P )
     {
     XClassHint hints_ret;
@@ -112,7 +112,7 @@ WId Windows::active_window()
     {
     return kwin_module->activeWindow();
     }
-    
+
 WId Windows::find_window( const Windowdef_list* window_P )
     {
     for( QValueList< WId >::ConstIterator it = kwin_module->windows().begin();
@@ -130,7 +130,7 @@ void Windows::activate_window( WId id_P )
     {
     KWin::forceActiveWindow( id_P );
     }
-    
+
 // Window_data
 
 Window_data::Window_data( WId id_P )
@@ -151,7 +151,7 @@ Window_data::Window_data( WId id_P )
     }
 
 // Windowdef
-    
+
 void Windowdef::cfg_write( KConfig& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" );
@@ -171,7 +171,7 @@ Windowdef* Windowdef::create_cfg_read( KConfig& cfg_P )
     kdWarning( 1217 ) << "Unknown Windowdef type read from cfg file\n";
     return NULL;
     }
-    
+
 // Windowdef_list
 
 Windowdef_list::Windowdef_list( KConfig& cfg_P )
@@ -192,7 +192,7 @@ Windowdef_list::Windowdef_list( KConfig& cfg_P )
         }
     cfg_P.setGroup( save_cfg_group );
     }
-    
+
 void Windowdef_list::cfg_write( KConfig& cfg_P ) const
     {
     QString save_cfg_group = cfg_P.group();
@@ -205,8 +205,8 @@ void Windowdef_list::cfg_write( KConfig& cfg_P ) const
         it.current()->cfg_write( cfg_P );
         }
     cfg_P.setGroup( save_cfg_group );
-    cfg_P.writeEntry( "WindowsCount", i );     
-    cfg_P.writeEntry( "Comment", comment());     
+    cfg_P.writeEntry( "WindowsCount", i );
+    cfg_P.writeEntry( "Comment", comment());
     }
 
 Windowdef_list* Windowdef_list::copy() const
@@ -218,7 +218,7 @@ Windowdef_list* Windowdef_list::copy() const
         ret->append( it.current()->copy());
     return ret;
     }
-    
+
 
 bool Windowdef_list::match( const Window_data& window_P ) const
     {
@@ -233,7 +233,7 @@ bool Windowdef_list::match( const Window_data& window_P ) const
     }
 
 // Windowdef_simple
-    
+
 Windowdef_simple::Windowdef_simple( const QString& comment_P, const QString& title_P,
     substr_type_t title_type_P, const QString& wclass_P, substr_type_t wclass_type_P,
     const QString& role_P, substr_type_t role_type_P, int window_types_P )
@@ -254,7 +254,7 @@ Windowdef_simple::Windowdef_simple( KConfig& cfg_P )
     role_type = static_cast< substr_type_t >( cfg_P.readNumEntry( "RoleType" ));
     _window_types = cfg_P.readNumEntry( "WindowTypes" );
     }
-    
+
 void Windowdef_simple::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -267,7 +267,7 @@ void Windowdef_simple::cfg_write( KConfig& cfg_P ) const
     cfg_P.writeEntry( "WindowTypes", window_types());
     cfg_P.writeEntry( "Type", "SIMPLE" ); // overwrites value set in base::cfg_write()
     }
-    
+
 bool Windowdef_simple::match( const Window_data& window_P )
     {
     if( !type_match( window_P.type ))
@@ -319,7 +319,7 @@ Windowdef* Windowdef_simple::copy() const
 
 const QString Windowdef_simple::description() const
     {
-    return i18n( "Window simple : " ) + comment();
+    return i18n( "Window simple: " ) + comment();
     }
 
 } // namespace KHotKeys

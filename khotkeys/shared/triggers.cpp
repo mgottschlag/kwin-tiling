@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _TRIGGERS_CPP_
@@ -56,7 +56,7 @@ Trigger* Trigger::create_cfg_read( KConfig& cfg_P, Action_data* data_P )
     }
 
 // Trigger_list
-    
+
 Trigger_list::Trigger_list( KConfig& cfg_P, Action_data* data_P )
     : QPtrList< Trigger >()
     {
@@ -75,7 +75,7 @@ Trigger_list::Trigger_list( KConfig& cfg_P, Action_data* data_P )
         }
     cfg_P.setGroup( save_cfg_group );
     }
-    
+
 void Trigger_list::cfg_write( KConfig& cfg_P ) const
     {
     cfg_P.writeEntry( "Comment", comment());
@@ -89,7 +89,7 @@ void Trigger_list::cfg_write( KConfig& cfg_P ) const
         it.current()->cfg_write( cfg_P );
         }
     cfg_P.setGroup( save_cfg_group );
-    cfg_P.writeEntry( "TriggersCount", i );     
+    cfg_P.writeEntry( "TriggersCount", i );
     }
 
 Trigger_list* Trigger_list::copy( Action_data* data_P ) const
@@ -117,7 +117,7 @@ Shortcut_trigger::Shortcut_trigger( Action_data* data_P, const KShortcut& shortc
     {
     keyboard_handler->insert_item( shortcut(), this );
     }
-    
+
 Shortcut_trigger::Shortcut_trigger( KConfig& cfg_P, Action_data* data_P )
     : Trigger( cfg_P, data_P ), _shortcut( cfg_P.readEntry( "Key", 0 ))
     {
@@ -128,7 +128,7 @@ Shortcut_trigger::~Shortcut_trigger()
     {
     keyboard_handler->remove_item( shortcut(), this );
     }
-    
+
 void Shortcut_trigger::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -141,14 +141,14 @@ Shortcut_trigger* Shortcut_trigger::copy( Action_data* data_P ) const
     kdDebug( 1217 ) << "Shortcut_trigger::copy()" << endl;
     return new Shortcut_trigger( data_P ? data_P : data, shortcut());
     }
-    
+
 const QString Shortcut_trigger::description() const
     {
     // CHECKME vice mods
-    return i18n( "Shortcut trigger : " ) + _shortcut.toString();
+    return i18n( "Shortcut trigger: " ) + _shortcut.toString();
     // CHECKME i18n pro toString() ?
     }
-    
+
 bool Shortcut_trigger::handle_key( const KShortcut& shortcut_P )
     {
     if( shortcut() == shortcut_P )
@@ -166,7 +166,7 @@ void Shortcut_trigger::activate( bool activate_P )
     else
         keyboard_handler->deactivate_receiver( this );
     }
-    
+
 // Window_trigger
 
 Window_trigger::Window_trigger( KConfig& cfg_P, Action_data* data_P )
@@ -180,14 +180,14 @@ Window_trigger::Window_trigger( KConfig& cfg_P, Action_data* data_P )
     window_actions = cfg_P.readNumEntry( "WindowActions" );
     init();
     }
-    
+
 Window_trigger::~Window_trigger()
     {
 //    kdDebug( 1217 ) << "~Window_trigger :" << this << endl;
     disconnect( windows_handler, NULL, this, NULL );
     delete _windows;
     }
-    
+
 void Window_trigger::init()
     {
     kdDebug( 1217 ) << "Window_trigger::init()" << endl;
@@ -204,7 +204,7 @@ void Window_trigger::activate( bool activate_P )
     {
     active = activate_P && khotkeys_active();
     }
-    
+
 void Window_trigger::window_added( WId window_P )
     {
     bool matches = windows()->match( Window_data( window_P ));
@@ -265,7 +265,7 @@ void Window_trigger::window_changed( WId window_P, unsigned int dirty_P )
             data->execute();
     kdDebug( 1217 ) << "Window_trigger::w_changed() : " << was_match << "|" << matches << endl;
     }
-    
+
 void Window_trigger::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -288,19 +288,19 @@ Trigger* Window_trigger::copy( Action_data* data_P ) const
     ret->existing_windows = existing_windows; // CHECKME je tohle vazne treba ?
     return ret;
     }
-    
+
 const QString Window_trigger::description() const
     {
-    return i18n( "Window trigger : " ) + windows()->comment();
+    return i18n( "Window trigger: " ) + windows()->comment();
     }
-    
+
 // Gesture_trigger
 
 Gesture_trigger::Gesture_trigger( Action_data* data_P, const QString &gesturecode_P )
     : Trigger( data_P ), _gesturecode( gesturecode_P )
     {
     }
-    
+
 Gesture_trigger::Gesture_trigger( KConfig& cfg_P, Action_data* data_P )
     : Trigger( cfg_P, data_P )
     {
@@ -311,7 +311,7 @@ Gesture_trigger::~Gesture_trigger()
     {
     gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString & )));
     }
-    
+
 void Gesture_trigger::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -324,12 +324,12 @@ Trigger* Gesture_trigger::copy( Action_data* data_P ) const
     kdDebug( 1217 ) << "Gesture_trigger::copy()" << endl;
     return new Gesture_trigger( data_P ? data_P : data, gesturecode());
     }
-    
+
 const QString Gesture_trigger::description() const
     {
-    return i18n( "Gesture trigger : " ) + gesturecode();
+    return i18n( "Gesture trigger: " ) + gesturecode();
     }
-    
+
 void Gesture_trigger::handle_gesture( const QString &gesture_P )
     {
     if( gesturecode() == gesture_P )
@@ -343,7 +343,7 @@ void Gesture_trigger::activate( bool activate_P )
     else
         gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString & )));
     }
-    
+
 } // namespace KHotKeys
 
 #include "triggers.moc"
