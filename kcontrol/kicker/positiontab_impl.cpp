@@ -29,6 +29,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <klineedit.h>
+#include <knuminput.h>
 #include <kstandarddirs.h>
 
 #include "positiontab_impl.h"
@@ -50,16 +51,6 @@ PositionTab::PositionTab( QWidget *parent, const char* name )
     m_panelPos(PosBottom),
     m_panelAlign(AlignLeft)
 {
-    m_percentSpinBox->setRange( 1, 100, true );
-    m_customSpinBox->setRange( 24, 128, true );
-    // connections
-    connect(m_locationGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
-    connect(m_percentSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_expandCheckBox, SIGNAL(clicked()), SIGNAL(changed()));
-    
-    connect(m_sizeGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
-    connect(m_customSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-
     QPixmap monitor(locate("data", "kcontrol/pics/monitor.png"));
     m_monitorImage->setPixmap(monitor);
     m_monitorImage->setFixedSize(m_monitorImage->sizeHint());
@@ -68,6 +59,16 @@ PositionTab::PositionTab( QWidget *parent, const char* name )
     m_pretendPanel->setGeometry(offsetX + margin, maxY + offsetY - 10, 
                                 maxX - margin, 10 - margin);
     m_pretendPanel->setFrameShape(QFrame::MenuBarPanel);
+
+    // connections
+    connect(m_locationGroup, SIGNAL(clicked(int)), SLOT(changed()));
+    connect(m_percentSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+    connect(m_percentSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+    connect(m_expandCheckBox, SIGNAL(clicked()), SIGNAL(changed()));
+    
+    connect(m_sizeGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
+    connect(m_customSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+    connect(m_customSpinbox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
 
     load();
 }
@@ -80,8 +81,6 @@ void PositionTab::load()
     else
         configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
     KConfig c(configname, false, false);
-
-    m_customSpinBox->setEnabled(false);
 
     c.setGroup("General");
 
@@ -104,22 +103,20 @@ void PositionTab::load()
             break;
         default: 
             m_sizeCustom->setChecked(true);
-            m_customSpinBox->setValue(panelSize);
-            m_customSpinBox->setEnabled(true);
+            m_customSlider->setValue(panelSize);
+            m_customSpinbox->setValue(panelSize);
         break;
     }
 
     m_panelPos = c.readNumEntry("Position", PosBottom);
-    m_panelAlign = c.readNumEntry("Alignment", AlignCenter );
+    m_panelAlign = c.readNumEntry("Alignment", QApplication::reverseLayout() ? AlignRight : AlignLeft);
 
-    int posMap[] = { 3, 9, 0, 6 };
-    int buttonId = posMap[ m_panelPos ] + m_panelAlign;
-    m_locationGroup->setButton( buttonId );
     /*
      * TODO: set the panel to the right place
      */
 
     int sizepercentage = c.readNumEntry( "SizePercentage", 100 );
+    m_percentSlider->setValue( sizepercentage );
     m_percentSpinBox->setValue( sizepercentage );
 
     m_expandCheckBox->setChecked( c.readBoolEntry( "ExpandSize", true ) );
@@ -158,24 +155,34 @@ void PositionTab::save()
     }
     else // if (m_sizeCustom->isChecked())
     {
-        c.writeEntry("Size", m_customSpinBox->value());
+        c.writeEntry("Size", m_customSlider->value());
     }
 
     c.writeEntry("Position", m_panelPos);
     c.writeEntry("Alignment", m_panelAlign);
 
-    c.writeEntry( "SizePercentage", m_percentSpinBox->value() );
+    c.writeEntry( "SizePercentage", m_percentSlider->value() );
     c.writeEntry( "ExpandSize", m_expandCheckBox->isChecked() );
     c.sync();
 }
 
 void PositionTab::defaults()
 {
+    m_panelPos= PosBottom; // bottom of the screen
+    m_percentSlider->setValue( 100 ); // use all space available
     m_percentSpinBox->setValue( 100 ); // use all space available
     m_expandCheckBox->setChecked( true ); // expand as required
     
-    m_panelPos= PosBottom; // bottom of the screen
-    m_panelAlign = AlignCenter;
+    if (QApplication::reverseLayout())
+    {
+        // RTL lang aligns right
+        m_panelAlign = AlignRight;
+    }
+    else
+    {
+        // everyone else aligns left
+        m_panelAlign = AlignLeft;
+    }
 
     m_sizeSmall->setChecked(true); // small size
 
@@ -185,59 +192,69 @@ void PositionTab::defaults()
 
 void PositionTab::movePanel(int whichButton)
 {
-    switch (whichButton)
+    QPushButton* pushed = reinterpret_cast<QPushButton*>(m_locationGroup->find(whichButton));
+
+    if (pushed == locationTopLeft)
     {
-        case posTopLeft:
-            m_panelAlign = AlignLeft;
-            m_panelPos = PosTop;
-            break;
-        case posTop:
-            m_panelAlign = AlignCenter;
-            m_panelPos = PosTop;
-            break;
-        case posTopRight:
-            m_panelAlign = AlignRight;
-            m_panelPos = PosTop;
-            break;
-        case posLeftTop:
-            m_panelAlign = AlignLeft;
-            m_panelPos = PosLeft;
-            break;
-        case posLeft:
-            m_panelAlign = AlignCenter;
-            m_panelPos = PosLeft;
-            break;
-        case posLeftBottom:
-            m_panelAlign = AlignRight;
-            m_panelPos = PosLeft;
-            break;
-        case posBottomLeft:
-            m_panelAlign = AlignLeft;
-            m_panelPos = PosBottom;
-            break;
-        case posBottom:
-            m_panelAlign = AlignCenter;
-            m_panelPos = PosBottom;
-            break;
-        case posBottomRight:
-            m_panelAlign = AlignRight;
-            m_panelPos = PosBottom;
-            break;
-        case posRightTop:
-            m_panelAlign = AlignLeft;
-            m_panelPos = PosRight;
-            break;
-        case posRight:
-            m_panelAlign = AlignCenter;
-            m_panelPos = PosRight;
-            break;
-        case posRightBottom:
-            m_panelAlign = AlignRight;
-            m_panelPos = PosRight;
-            break;
+        m_panelAlign = AlignLeft;
+        m_panelPos = PosTop;
+    }
+    else if (pushed == locationTop)
+    {
+        m_panelAlign = AlignCenter;
+        m_panelPos = PosTop;
+    }
+    else if (pushed == locationTopRight)
+    {
+        m_panelAlign = AlignRight;
+        m_panelPos = PosTop;
+    }
+    else if (pushed == locationLeftTop)
+    {
+        m_panelAlign = AlignLeft;
+        m_panelPos = PosLeft;
+    }
+    else if (pushed == locationLeft)
+    {
+        m_panelAlign = AlignCenter;
+        m_panelPos = PosLeft;
+    }
+    else if (pushed == locationLeftBottom)
+    {
+        m_panelAlign = AlignRight;
+        m_panelPos = PosLeft;
+    }
+    else if (pushed == locationBottomLeft)
+    {
+        m_panelAlign = AlignLeft;
+        m_panelPos = PosBottom;
+    }
+    else if (pushed == locationBottom)
+    {
+        m_panelAlign = AlignCenter;
+        m_panelPos = PosBottom;
+    }
+    else if (pushed == locationBottomRight)
+    {
+        m_panelAlign = AlignRight;
+        m_panelPos = PosBottom;
+    }
+    else if (pushed == locationRightTop)
+    {
+        m_panelAlign = AlignLeft;
+        m_panelPos = PosRight;
+    }
+    else if (pushed == locationRight)
+    {
+        m_panelAlign = AlignCenter;
+        m_panelPos = PosRight;
+    }
+    else if (pushed == locationRightBottom)
+    {
+        m_panelAlign = AlignRight;
+        m_panelPos = PosRight;
     }
 
-    emit changed();
     lengthenPanel(-1);
 }
 
@@ -245,7 +262,7 @@ void PositionTab::lengthenPanel(int sizePercent)
 {
     if (sizePercent < 0)
     {
-        sizePercent = m_percentSpinBox->value();
+        sizePercent = m_percentSlider->value();
     }
 
     unsigned int x(0), y(0), x2(0), y2(0);
@@ -266,7 +283,7 @@ void PositionTab::lengthenPanel(int sizePercent)
     }
     else if (m_sizeCustom->isChecked())
     {
-        panelSize = panelSize * m_customSpinBox->value() / 24;
+        panelSize = panelSize * m_customSlider->value() / 24;
     }
 
     switch (m_panelPos)
@@ -361,8 +378,7 @@ void PositionTab::lengthenPanel(int sizePercent)
             break;
     }
 
-    if ( m_pretendPanel )
-        m_pretendPanel->setGeometry(x, y, x2, y2);
+    m_pretendPanel->setGeometry(x, y, x2, y2);
 }
 
 void PositionTab::panelDimensionsChanged()

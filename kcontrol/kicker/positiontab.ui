@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>604</width>
+            <width>516</width>
             <height>306</height>
         </rect>
     </property>
@@ -37,25 +37,26 @@
                 <enum>Expanding</enum>
             </property>
         </spacer>
-        <widget class="QButtonGroup" row="0" column="0" rowspan="2" colspan="1">
+        <widget class="QButtonGroup" row="0" column="1">
             <property name="name">
-                <cstring>m_locationGroup</cstring>
+                <cstring>m_rsizeGroup</cstring>
             </property>
             <property name="sizePolicy">
                 <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>10</horstretch>
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Location</string>
+                <string>L&amp;ength</string>
             </property>
-            <property name="exclusive">
-                <bool>true</bool>
+            <property name="whatsThis" stdset="0">
+                <string>This group of settings determines how the panel is aligned, including
+how it's positioned on the screen and how much of the screen it should use.</string>
             </property>
-            <grid>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
@@ -63,31 +64,9 @@
                     <number>11</number>
                 </property>
                 <property name="spacing">
-                    <number>1</number>
+                    <number>6</number>
                 </property>
-                <spacer row="3" column="1">
-                    <property name="name">
-                        <cstring>Spacer8</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                </spacer>
-                <spacer row="1" column="3">
-                    <property name="name">
-                        <cstring>Spacer9</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                </spacer>
-                <widget class="QLayoutWidget" row="0" column="1">
+                <widget class="QLayoutWidget">
                     <property name="name">
                         <cstring>Layout8</cstring>
                     </property>
@@ -99,584 +78,80 @@
                             <number>0</number>
                         </property>
                         <property name="spacing">
-                            <number>1</number>
-                        </property>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationTopLeft</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>50</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>32767</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>8388657</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Top left</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationTop</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>50</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>32767</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>8388658</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Top center</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationTopRight</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>50</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>32767</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>8388659</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Top right</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QLayoutWidget" row="1" column="0">
-                    <property name="name">
-                        <cstring>Layout10</cstring>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>1</number>
-                        </property>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationLeftTop</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>7</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>35</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>32767</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>276824125</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Left top</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationLeft</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>7</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>35</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>32767</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>276824109</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Left center</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationLeftBottom</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>7</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>35</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>32767</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>8388656</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Left bottom</string>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-                <widget class="QLayoutWidget" row="2" column="1">
-                    <property name="name">
-                        <cstring>Layout7</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>1</number>
-                        </property>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationBottomLeft</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>50</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>32767</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>8388665</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Bottom left</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationBottom</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>50</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>32767</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>8388664</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Bottom center</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationBottomRight</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>50</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>32767</width>
-                                    <height>16</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>8388663</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Bottom right</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QLayoutWidget" row="1" column="2">
-                    <property name="name">
-                        <cstring>Layout9</cstring>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>1</number>
-                        </property>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationRightTop</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>7</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>35</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>32767</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>8388660</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Right top</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationRight</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>7</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>35</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>32767</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>8388661</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Right center</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationRightBottom</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>7</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>35</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>16</width>
-                                    <height>32767</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string></string>
-                            </property>
-                            <property name="accel">
-                                <number>8388662</number>
-                            </property>
-                            <property name="toggleButton">
-                                <bool>true</bool>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Right bottom</string>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-                <widget class="QLayoutWidget" row="1" column="1">
-                    <property name="name">
-                        <cstring>Layout88</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
                             <number>6</number>
                         </property>
-                        <spacer>
+                        <widget class="QSlider">
                             <property name="name">
-                                <cstring>Spacer118</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                        </spacer>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>m_monitorImage</cstring>
+                                <cstring>m_percentSlider</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
-                                    <hsizetype>1</hsizetype>
-                                    <vsizetype>1</vsizetype>
+                                    <hsizetype>7</hsizetype>
+                                    <vsizetype>0</vsizetype>
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>151</width>
-                                    <height>115</height>
-                                </size>
+                            <property name="minValue">
+                                <number>1</number>
                             </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>32767</width>
-                                    <height>32767</height>
-                                </size>
+                            <property name="maxValue">
+                                <number>100</number>
                             </property>
-                            <property name="scaledContents">
+                            <property name="value">
+                                <number>100</number>
+                            </property>
+                            <property name="tracking">
                                 <bool>true</bool>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>This preview image shows how the panel will appear on your screen with the settings you have chosen. Clicking the buttons around the image will move the positon of the panel, while moving the length slider and choosing different sizes will change the dimensions of the panel.</string>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property name="name">
-                                <cstring>Spacer119</cstring>
                             </property>
                             <property name="orientation">
                                 <enum>Horizontal</enum>
                             </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
+                            <property name="tickmarks">
+                                <enum>Right</enum>
                             </property>
-                        </spacer>
+                            <property name="tickInterval">
+                                <number>10</number>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>This slider defines how much of the screen's edge will be occupied by the panel.</string>
+                            </property>
+                        </widget>
+                        <widget class="KIntNumInput">
+                            <property name="name">
+                                <cstring>m_percentSpinBox</cstring>
+                            </property>
+                            <property name="value">
+                                <number>100</number>
+                            </property>
+                            <property name="minValue">
+                                <number>0</number>
+                            </property>
+                            <property name="maxValue">
+                                <number>100</number>
+                            </property>
+                            <property name="suffix">
+                                <string>%</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>This spinbox defines how much of the screen's edge will be occupied by the panel.</string>
+                            </property>
+                        </widget>
                     </hbox>
                 </widget>
-            </grid>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>m_expandCheckBox</cstring>
+                    </property>
+                    <property name="text">
+                        <string>E&amp;xpand as required to fit contents</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>When this option is selected the panel will grow as necessary to accomodate the buttons and applets in it.</string>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
-        <spacer row="2" column="1">
-            <property name="name">
-                <cstring>Spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-        </spacer>
         <widget class="QButtonGroup" row="1" column="1">
             <property name="name">
                 <cstring>m_sizeGroup</cstring>
@@ -705,20 +180,6 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QRadioButton" row="4" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_sizeCustom</cstring>
-                    </property>
-                    <property name="focusPolicy">
-                        <enum>NoFocus</enum>
-                    </property>
-                    <property name="text">
-                        <string>C&amp;ustom</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>When this option is selected the panel can be adjusted to any size between 24 and 128 pixels using the slider below.</string>
-                    </property>
-                </widget>
                 <spacer row="5" column="0">
                     <property name="name">
                         <cstring>Spacer14_2</cstring>
@@ -794,42 +255,128 @@
                         <enum>Expanding</enum>
                     </property>
                 </spacer>
-                <widget class="KIntNumInput" row="5" column="1" rowspan="1" colspan="2">
+                <widget class="QRadioButton" row="4" column="0" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>m_customSpinBox</cstring>
+                        <cstring>m_sizeCustom</cstring>
                     </property>
-                    <property name="enabled">
-                        <bool>true</bool>
+                    <property name="focusPolicy">
+                        <enum>TabFocus</enum>
                     </property>
-                    <property name="value">
-                        <number>64</number>
+                    <property name="text">
+                        <string>C&amp;ustom</string>
                     </property>
-                    <property name="suffix">
-                        <string> pixels</string>
+                    <property name="whatsThis" stdset="0">
+                        <string>When this option is selected the panel can be adjusted to any size between 24 and 128 pixels using the slider below.</string>
                     </property>
+                </widget>
+                <widget class="QLayoutWidget" row="5" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>Layout9</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QSlider">
+                            <property name="name">
+                                <cstring>m_customSlider</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>7</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minValue">
+                                <number>24</number>
+                            </property>
+                            <property name="maxValue">
+                                <number>128</number>
+                            </property>
+                            <property name="pageStep">
+                                <number>8</number>
+                            </property>
+                            <property name="value">
+                                <number>58</number>
+                            </property>
+                            <property name="tracking">
+                                <bool>true</bool>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="tickmarks">
+                                <enum>Right</enum>
+                            </property>
+                            <property name="tickInterval">
+                                <number>20</number>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>This slider defines the panel size when the Custom option is selected.</string>
+                            </property>
+                        </widget>
+                        <widget class="KIntNumInput">
+                            <property name="name">
+                                <cstring>m_customSpinbox</cstring>
+                            </property>
+                            <property name="value">
+                                <number>58</number>
+                            </property>
+                            <property name="minValue">
+                                <number>24</number>
+                            </property>
+                            <property name="maxValue">
+                                <number>128</number>
+                            </property>
+                            <property name="suffix">
+                                <string> pixels</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>This spinbox defines the panel size when the Custom option is selected.</string>
+                            </property>
+                        </widget>
+                    </hbox>
                 </widget>
             </grid>
         </widget>
-        <widget class="QButtonGroup" row="0" column="1">
+        <spacer row="2" column="1">
             <property name="name">
-                <cstring>m_rsizeGroup</cstring>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+        </spacer>
+        <widget class="QButtonGroup" row="0" column="0" rowspan="2" colspan="1">
+            <property name="name">
+                <cstring>m_locationGroup</cstring>
             </property>
             <property name="sizePolicy">
                 <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>10</horstretch>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>L&amp;ength</string>
+                <string>Location</string>
             </property>
-            <property name="whatsThis" stdset="0">
-                <string>This group of settings determines how the panel is aligned, including
-how it's positioned on the screen and how much of the screen it should use.</string>
-            </property>
-            <vbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
@@ -839,26 +386,554 @@ how it's positioned on the screen and how much of the screen it should use.</str
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="KIntNumInput">
+                <spacer row="1" column="3">
                     <property name="name">
-                        <cstring>m_percentSpinBox</cstring>
+                        <cstring>Spacer7</cstring>
                     </property>
-                    <property name="suffix">
-                        <string>%</string>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
                     </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                </spacer>
+                <spacer row="3" column="2">
+                    <property name="name">
+                        <cstring>Spacer8</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                </spacer>
+                <widget class="QLayoutWidget" row="0" column="2">
+                    <property name="name">
+                        <cstring>Layout8</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>1</number>
+                        </property>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationTopLeft</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>3</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>50</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>8388657</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Top left</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationTop</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>3</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>50</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>8388658</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Top center</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationTopRight</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>3</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>50</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>8388659</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Top right</string>
+                            </property>
+                        </widget>
+                    </hbox>
                 </widget>
-                <widget class="QCheckBox">
+                <widget class="QLayoutWidget" row="2" column="2">
                     <property name="name">
-                        <cstring>m_expandCheckBox</cstring>
+                        <cstring>Layout7</cstring>
                     </property>
-                    <property name="text">
-                        <string>E&amp;xpand as required to fit contents</string>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>1</number>
+                        </property>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationBottomLeft</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>3</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>50</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>8388665</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Bottom left</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationBottom</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>3</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>50</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>8388664</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Bottom center</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationBottomRight</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>3</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>50</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>8388663</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Bottom right</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget" row="1" column="4">
+                    <property name="name">
+                        <cstring>Layout9</cstring>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>1</number>
+                        </property>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationRightTop</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>7</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>35</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>8388660</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Right top</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationRight</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>7</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>35</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>8388661</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Right center</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationRightBottom</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>7</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>35</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>8388662</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Right bottom</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+                <spacer row="1" column="5">
+                    <property name="name">
+                        <cstring>Spacer9</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                </spacer>
+                <widget class="QLabel" row="1" column="2">
+                    <property name="name">
+                        <cstring>m_monitorImage</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>151</width>
+                            <height>115</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>32767</width>
+                            <height>32767</height>
+                        </size>
+                    </property>
+                    <property name="scaledContents">
+                        <bool>true</bool>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>When this option is selected the panel will grow as necessary to accomodate the buttons and applets in it.</string>
+                        <string>This preview image shows how the panel will appear on your screen with the settings you have chosen. Clicking the buttons around the image will move the positon of the panel, while moving the length slider and choosing different sizes will change the dimensions of the panel.</string>
                     </property>
                 </widget>
-            </vbox>
+                <widget class="QLayoutWidget" row="1" column="0">
+                    <property name="name">
+                        <cstring>Layout10</cstring>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>1</number>
+                        </property>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationLeftTop</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>7</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>35</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>276824125</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Left top</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationLeft</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>7</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>35</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>276824109</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Left center</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>locationLeftBottom</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>7</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>35</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>16</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="accel">
+                                <number>8388656</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Left bottom</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+                <spacer row="1" column="1">
+                    <property name="name">
+                        <cstring>Spacer8_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                </spacer>
+            </grid>
         </widget>
     </grid>
 </widget>
@@ -870,7 +945,7 @@ how it's positioned on the screen and how much of the screen it should use.</str
         <slot>movePanel(int)</slot>
     </connection>
     <connection>
-        <sender>m_percentSpinBox</sender>
+        <sender>m_percentSlider</sender>
         <signal>valueChanged(int)</signal>
         <receiver>PositionTabBase</receiver>
         <slot>lengthenPanel(int)</slot>
@@ -882,16 +957,46 @@ how it's positioned on the screen and how much of the screen it should use.</str
         <slot>panelDimensionsChanged()</slot>
     </connection>
     <connection>
+        <sender>m_customSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>PositionTabBase</receiver>
+        <slot>panelDimensionsChanged()</slot>
+    </connection>
+    <connection>
         <sender>m_sizeCustom</sender>
         <signal>toggled(bool)</signal>
-        <receiver>m_customSpinBox</receiver>
+        <receiver>m_customSlider</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
         <sender>m_sizeCustom</sender>
         <signal>clicked()</signal>
-        <receiver>m_customSpinBox</receiver>
+        <receiver>m_customSlider</receiver>
         <slot>setFocus()</slot>
+    </connection>
+    <connection>
+        <sender>m_percentSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>m_percentSpinBox</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_percentSpinBox</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>m_percentSlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_customSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>m_customSpinbox</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_customSpinbox</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>m_customSlider</receiver>
+        <slot>setValue(int)</slot>
     </connection>
 </connections>
 <tabstops>
@@ -907,6 +1012,7 @@ how it's positioned on the screen and how much of the screen it should use.</str
     <tabstop>locationLeftBottom</tabstop>
     <tabstop>locationLeft</tabstop>
     <tabstop>locationLeftTop</tabstop>
+    <tabstop>m_percentSlider</tabstop>
     <tabstop>m_percentSpinBox</tabstop>
     <tabstop>m_expandCheckBox</tabstop>
     <tabstop>m_sizeTiny</tabstop>
@@ -914,10 +1020,11 @@ how it's positioned on the screen and how much of the screen it should use.</str
     <tabstop>m_sizeNormal</tabstop>
     <tabstop>m_sizeLarge</tabstop>
     <tabstop>m_sizeCustom</tabstop>
-    <tabstop>m_customSpinBox</tabstop>
+    <tabstop>m_customSlider</tabstop>
+    <tabstop>m_customSpinbox</tabstop>
 </tabstops>
 <includes>
-    <include location="global" impldecl="in declaration">knuminput.h</include>
+    <include location="global" impldecl="in declaration">klineedit.h</include>
 </includes>
 <slots>
     <slot access="protected">lengthenPanel( int )</slot>

@@ -46,18 +46,6 @@ protected slots:
 private:
     enum positions { PosLeft = 0, PosRight, PosTop, PosBottom };
     enum allignments { AlignLeft = 0, AlignCenter, AlignRight };
-    enum posButtons { posTopLeft = 0,
-                      posTop,
-                      posTopRight,
-                      posLeftTop,
-                      posLeft,
-                      posLeftBottom,
-                      posBottomLeft,
-                      posBottom,
-                      posBottomRight,
-                      posRightTop,
-                      posRight,
-                      posRightBottom };
     
     QFrame* m_pretendPanel;
     unsigned int m_panelPos;
