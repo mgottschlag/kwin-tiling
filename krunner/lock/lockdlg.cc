@@ -432,7 +432,9 @@ void PasswordDlg::gplugStart( const char *method )
         ::close(sfd[0]);
         sprintf(fdbuf, "%d", sfd[1]);
         execlp("kcheckpass", "kcheckpass", 
+#ifdef HAVE_PAM
                "-c", KSCREENSAVER_PAM_SERVICE, 
+#endif
                "-m", method, 
                "-S", fdbuf, 
                (char *)0);
