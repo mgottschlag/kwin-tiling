@@ -383,6 +383,7 @@ SetLocalAuthorization (struct display *d)
 	d->authorizations = (Xauth **) NULL;
 	d->authNum = 0;
     }
+    Debug ("SetLocalAuthorization %s, auths %[s\n", d->name, d->authNames);
     if (!d->authNames)
 	return;
     for (i = 0; d->authNames[i]; i++)
@@ -1035,8 +1036,8 @@ writeRemoteAuth (FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const 
     Debug ("writeRemoteAuth: family %d\n", family);
     if (family != FamilyLocal)
     {
-	Debug ("writeRemoteAuth: %d, %d, %x\n",
-		family, peerlen, *(int *)addr);
+	Debug ("writeRemoteAuth: %d, %02[*:hhx\n",
+		family, peerlen, addr);
 	writeAddr (family, peerlen, addr, file, auth);
     }
     else
