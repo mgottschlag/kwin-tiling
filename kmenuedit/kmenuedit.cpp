@@ -23,6 +23,7 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <kstdaction.h>
+#include <kstdaccel.h>
 #include <kdebug.h>
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -63,11 +64,11 @@ KMenuEdit::~KMenuEdit()
 void KMenuEdit::setupActions()
 {
     (void)new KAction(i18n("&New Submenu..."), "menu_new", 0, actionCollection(), "newsubmenu");
-    (void)new KAction(i18n("New &Item..."), "filenew", 0, actionCollection(), "newitem");
+    (void)new KAction(i18n("New &Item..."), "filenew", KStdAccel::key(KStdAccel::New), actionCollection(), "newitem");
 
     m_actionDelete = 0;
     m_actionUndelete = 0;
-    
+
     m_actionShowHidden = new KToggleAction(i18n("Show &Hidden Items"), KShortcut(), this, SLOT( slotChangeView()), actionCollection(), "show_hidden");
     m_actionShowHidden->setChecked(m_showHidden);
 
@@ -93,16 +94,16 @@ void KMenuEdit::slotChangeView()
 
     if (m_actionDelete)
     {
-       delete m_actionDelete; 
+       delete m_actionDelete;
        m_actionDelete = 0;
     }
     if (m_actionUndelete)
     {
-       delete m_actionUndelete; 
+       delete m_actionUndelete;
        m_actionUndelete = 0;
     }
-    
-    m_actionDelete = new KAction(i18n("&Delete"), "editdelete", 0, actionCollection(), "delete");
+
+    m_actionDelete = new KAction(i18n("&Delete"), "editdelete", Key_Delete, actionCollection(), "delete");
     if (m_showHidden)
     {
        m_actionUndelete = new KAction(i18n("&Re-add"), "undo", 0, actionCollection(), "undelete");
@@ -114,7 +115,7 @@ void KMenuEdit::slotChangeView()
 
     // make it look nice
     toolBar(0)->setIconText(KToolBar::IconTextBottom);
-    
+
     m_view->setViewMode(m_showHidden);
 }
 
