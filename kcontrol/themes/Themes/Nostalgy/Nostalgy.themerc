@@ -1,47 +1,34 @@
 # KDE Config File
 #-----------------------------------------------------------------------------
 [General]
-name=MacOS
-author=Robert Flemming
-email=flemming@themes.org
-description=New and Improved MacOS theme.
-version=0.9
-#-----------------------------------------------------------------------------
-[Panel]
-background=panel.xpm
+name=Nostalgy
+author=Robert Flemming & Daniel M. Duley
+email=mosfet@kde.org
+description=A simple original theme that tries to combine the best aspects of familiar interfaces.
+version=0.1
 #-----------------------------------------------------------------------------
 [Display]
 CommonDesktop=true
-Wallpaper0=desktop2.jpg
+Wallpaper0=Nostalgy.jpg
 WallpaperMode0=tiled
-Wallpaper1=desktop.jpg
-WallpaperMode1=tiled
 RootIconTextStyle=1
 RootIconTextForeground=255,255,255
 RootIconTextBackground=0,0,0
 #-----------------------------------------------------------------------------
 [Colors]
-contrast=7
-activeBackground=206,206,206
-activeBlend=206,206,206
-activeForeground=0,0,0
-background=206,206,206
-foreground=0,0,0
-inactiveBackground=206,206,206
-inactiveBlend=206,206,206
+activeBlend=192,192,192
+inactiveBackground=192,192,192
+activeBackground=192,192,192
+inactiveBlend=192,192,192
 inactiveForeground=107,107,107
-selectBackground=49,49,156
+activeForeground=0,0,0        
+foreground=0,0,0
 selectForeground=255,255,255
-windowBackground=255,255,255
+selectBackground=49,49,156
+background=192,192,192
 windowForeground=0,0,0
-#-----------------------------------------------------------------------------
-[File Manager]
-#backgroundImage=desktop2.jpg
-#htmlBackground=0,0,0
-#htmlForeground=0,0,255
-#htmlLinks=255,0,0
-#htmlFollowedLinks=0,255,0
-#
+windowBackground=255,255,255   
+contrast=7
 #-----------------------------------------------------------------------------
 [Window Border]
 shapePixmapTop=wm_top.xpm
@@ -73,11 +60,5 @@ ButtonE=Iconify
 ButtonF=Off
 #-----------------------------------------------------------------------------
 [Icons]
-Trash=trashempty.xpm:mini-trashempty.xpm
-TrashFull=trashfull.xpm:mini-trashfull.xpm
-inode/directory=folder.xpm:mini-folder.xpm
 #-----------------------------------------------------------------------------
 [Extra Icons]
-ext1=cdrom.xpm
-ext2=harddrive.xpm
-ext3=extensions-folder.xpm
