@@ -83,7 +83,10 @@ KConsole::~KConsole()
 int
 KConsole::OpenConsole()
 {
+#ifdef TIOCCONS
     static const char on = 1;
+#endif
+
     if (!source.isEmpty()) {
 	if ((fd = open( source.latin1(), O_RDONLY | O_NONBLOCK )) >= 0)
 	    goto gotcon;
