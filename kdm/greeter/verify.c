@@ -528,7 +528,7 @@ nolog_succ:
 /* restrict_expired */
 #if defined(HAVE_PW_EXPIRE) || defined(USESHADOW) /* && !defined(USE_PAM) ? */
 
-# if !defined(HAVE_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW)
+# if !defined(HAVE_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW))
     if (!sp)
 	goto spbad;
 # endif
