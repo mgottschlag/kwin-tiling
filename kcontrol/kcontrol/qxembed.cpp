@@ -27,8 +27,6 @@
 #include "qxembed.h"
 #include <X11/Xlib.h>
 
-#include "qxembed.moc"
-
 #include <qcursor.h>
 
 QXEmbed::QXEmbed(QWidget *parent, const char *name)
