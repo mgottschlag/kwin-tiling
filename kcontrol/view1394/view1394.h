@@ -27,10 +27,21 @@
 #include <qvaluelist.h>
 #include <qsocketnotifier.h>
 #include <qtimer.h>
+#include <qmap.h>
+#include <qstring.h>
 
 #include "view1394widget.h"
 
 #include <libraw1394/raw1394.h>
+
+class OuiDb
+{
+   public:
+      OuiDb();
+      QString vendor(octlet_t guid);
+   private:
+      QMap<QString, QString> m_vendorIds;
+};
 
 class View1394: public KCModule
 {
@@ -54,6 +65,7 @@ class View1394: public KCModule
       bool readConfigRom(raw1394handle_t handle, nodeid_t nodeid, quadlet_t& firstQuad, quadlet_t& cap, octlet_t& guid);
       bool m_insideRescanBus;
       QTimer m_rescanTimer;
+      OuiDb *m_ouiDb;
    private slots:
       void callRaw1394EventLoop(int fd);
 };

@@ -21,10 +21,13 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qlistview.h>
+#include <qfile.h>
+#include <qtextstream.h>
 
 #include <klocale.h>
 #include <kglobal.h>
 #include <kdialog.h>
+#include <kstandarddirs.h>
 
 #include "view1394.h"
 
@@ -53,6 +56,7 @@ View1394::View1394(QWidget *parent, const char *name)
 :KCModule(parent,name)
 ,m_insideRescanBus(false)
 {
+   m_ouiDb=new OuiDb();
    QVBoxLayout *box=new QVBoxLayout(this, 0, KDialog::spacingHint());
    m_view=new View1394Widget(this);
    for (int i=2; i<8; i++)
@@ -65,7 +69,6 @@ View1394::View1394(QWidget *parent, const char *name)
    m_notifiers.setAutoDelete(true);
    rescanBus();
 }
-
 
 View1394::~View1394()
 {
@@ -260,6 +263,7 @@ void View1394::rescanBus()
             node->setText(7,pmStr);
             node->setText(8, accStr);
             node->setText(9, speedStr);
+            node->setText(10, m_ouiDb->vendor(guid));
          }
       }
       card->setOpen(true);
@@ -273,6 +277,38 @@ void View1394::generateBusReset()
    for (QValueList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
       raw1394_reset_bus(*it);
 }
+
+OuiDb::OuiDb()
+{
+   QString filename=locate("data","kcmview1394/oui.db");
+   if (filename.isEmpty())
+      return;
+   QFile f(filename);
+   if (!f.open(IO_ReadOnly))
+      return;
+
+   QString line;
+   QTextStream ts(&f);
+   while(!ts.eof())
+   {
+      line=ts.readLine();
+      m_vendorIds.insert(line.left(6).upper(), line.mid(7));
+   }
+   f.close();
+}
+
+QString OuiDb::vendor(octlet_t guid)
+{
+   guid=(guid & 0xffffff0000000000LL)>>40;
+   QString key=QString::number((unsigned int)(guid),16);
+   key=key.rightJustify(6, '0');
+   QString v=m_vendorIds[key];
+   if (v.isEmpty())
+      v=i18n("Unknown");
+   return v;
+}
+
+
 
 // ------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=usb
+Icon=ieee1394
 Type=Application
 DocPath=kinfocenter/view1394/index.html
 Exec=kcmshell kcmview1394
