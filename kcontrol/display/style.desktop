@@ -9,6 +9,7 @@ X-KDE-Library=display
 X-KDE-FactoryName=style
 X-KDE-ControlModuleType=User
 X-KDE-HideFromPanel=true
+X-KDE-Init=style
 
 Name=Style
 Name[ca]=Estil

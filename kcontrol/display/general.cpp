@@ -47,6 +47,17 @@ extern "C" {
         KGlobal::locale()->insertCatalogue(QString::fromLatin1("kcmdisplay"));
 	return new KGeneral(parent, name);
     }
+
+    void init_style() {
+        KConfig config("kcmdisplayrc");
+        config.setGroup("X11");
+        if (config.readBoolEntry( "useResourceManager", true ))
+        {
+            KProcess proc;
+            proc.setExecutable("krdb");
+            proc.start( KProcess::Block );
+        }
+    }
 }
 
 
