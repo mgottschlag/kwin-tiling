@@ -19,6 +19,7 @@
 
 
 #include <qmessagebox.h>
+#include <qdragobject.h>
 
 #include "utils.h"
 #include <kio_job.h>
@@ -36,7 +37,6 @@ KDMAppearanceWidget::~KDMAppearanceWidget()
   if(gui)
   {
     delete logobutton;
-    delete logopixdrop;
     delete logo_lined;
     delete greetstr_lined;
     delete guicombo;
@@ -94,6 +94,8 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
               SLOT(slotLogoPixTextChanged()));
 
       logobutton = new KIconLoaderButton(iconloader, group);
+      logobutton->setAcceptDrops(true);
+      logobutton->installEventFilter(this); // for drag and drop
       logobutton->setMaximumSize(80, 80);
       QPixmap p;
       if(!p.load(logopath))
@@ -112,9 +114,6 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
               SLOT(slotLogoPixChanged(const QString&)));
 
       QToolTip::add(logobutton, i18n("Click or drop an image here"));
-      logopixdrop = new KDNDDropZone(logobutton, DndURL);
-      connect(logopixdrop, SIGNAL(dropAction(KDNDDropZone*)),
-              SLOT(slotPixDropped(KDNDDropZone*)));
 
       label = new QLabel(i18n("GUI Style:"), group);
       label->move(10, logobutton->y()+100);
@@ -203,67 +202,79 @@ void KDMAppearanceWidget::slotLogoPixChanged(const QString &iconstr)
   logobutton->adjustSize();
 }
 
-void KDMAppearanceWidget::slotPixDropped(KDNDDropZone *zone)
+bool KDMAppearanceWidget::eventFilter(QObject */*o*/, QEvent *e)
 {
-  // Find the widget on which the object was dropped
-  QWidget *w = zone->getWidget();
-  // Get the url
-  KURL url(zone->getData());
-  QString filename = url.filename();
-  QString msg;
-  QString pixurl("file:"+kapp->kde_datadir() + "/kdm/pics/"); 
-  int last_dot_idx = filename.findRev('.');
-  bool istmp = false;
-
-  // CC: Now check for the extension
-  QString ext(".xpm .xbm");
-//#ifdef HAVE_LIBGIF
-  ext += " .gif";
-//#endif
-#ifdef HAVE_LIBJPEG
-  ext += " .jpg";
-#endif
-
-  if( !ext.contains(filename.right(filename.length()-last_dot_idx), false) )
-  {
-    msg =  i18n("Sorry, but %1\n"
-                "does not seem to be an image file\n"
-                "Please use files with these extensions:\n"
-                "%2")
-                .arg(filename)
-                .arg(ext);
-    QMessageBox::warning( this, i18n("KDM Setup - Improper File Extension"), msg,
-			  i18n("&Ok"));
+  if (e->type() == QEvent::DragEnter) {
+    iconLoaderDragEnterEvent((QDragEnterEvent *) e);
+    return true;
   }
-  else
-  {
-    // we gotta check if it is a non-local file and make a tmp copy at the hd.
-    if(url.protocol() != "file")
-    {
-      pixurl += url.filename();
-      KIOJob *iojob = new KIOJob(); // will autodelete itself
-      iojob->setGUImode( KIOJob::NONE );
-      iojob->copy(url.url().ascii(), pixurl.ascii());
-      url = pixurl;
-      istmp = true;
-    }
-    // By now url should be "file:/..."
-    if(w == logobutton) // Image dropped on logo button
-    {
-      QPixmap p(url.path());
-      if(!p.isNull())
-      {
-        logobutton->setPixmap(p);
-        logobutton->adjustSize();
-        logopath = url.path();
-        logo_lined->setText(logopath);
+
+  if (e->type() == QEvent::Drop) {
+    iconLoaderDropEvent((QDropEvent *) e);
+    return true;
+  }
+
+  return false;
+}
+
+void KDMAppearanceWidget::iconLoaderDragEnterEvent(QDragEnterEvent *e)
+{
+  e->accept(QUriDrag::canDecode(e));
+}
+
+void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
+{
+  QStringList uris;
+  if (QUriDrag::decodeToUnicodeUris( e, uris) && (uris.count() > 0)) {
+    KURL url(*uris.begin());
+
+    QString filename = url.filename();
+    QString msg;
+    QString pixurl("file:"+kapp->kde_datadir() + "/kdm/pics/"); 
+    int last_dot_idx = filename.findRev('.');
+    bool istmp = false;
+    
+    // CC: Now check for the extension
+    QString ext(".xpm .xbm");
+    //#ifdef HAVE_LIBGIF
+    ext += " .gif";
+    //#endif
+#ifdef HAVE_LIBJPEG
+    ext += " .jpg";
+#endif
+    
+    if( !ext.contains(filename.right(filename.length()-
+				     last_dot_idx), false) ) {
+      msg =  i18n("Sorry, but %1\n"
+		  "does not seem to be an image file\n"
+		  "Please use files with these extensions:\n"
+		  "%2")
+	.arg(filename)
+	.arg(ext);
+      QMessageBox::warning( this, i18n("KDM Setup - Improper File Extension"), msg,
+			    i18n("&Ok"));
+    } else {
+      // we gotta check if it is a non-local file and make a tmp copy at the hd.
+      if(url.protocol() != "file") {
+	pixurl += url.filename();
+	KIOJob *iojob = new KIOJob(); // will autodelete itself
+	iojob->setGUImode( KIOJob::NONE );
+	iojob->copy(url.url().ascii(), pixurl.ascii());
+	url = pixurl;
+	istmp = true;
       }
-      else
-      {
-        msg  = i18n("There was an error loading the image:\n>");
-        msg += url.path();
-        msg += i18n("<\nIt will not be saved...");
-        QMessageBox::warning(this, i18n("KDM Setup - Error"), msg,
+      // By now url should be "file:/..."
+      QPixmap p(url.path());
+      if(!p.isNull()) {
+	logobutton->setPixmap(p);
+	logobutton->adjustSize();
+	logopath = url.path();
+	logo_lined->setText(logopath);
+      } else {
+	msg  = i18n("There was an error loading the image:\n>");
+	msg += url.path();
+	msg += i18n("<\nIt will not be saved...");
+	QMessageBox::warning(this, i18n("KDM Setup - Error"), msg,
 			     i18n("&Ok"));
       }
     }

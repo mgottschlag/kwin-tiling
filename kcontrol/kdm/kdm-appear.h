@@ -25,7 +25,6 @@
 #include <qfileinfo.h>
 #include <kcolorbtn.h>
 #include <kurl.h>
-#include <drag.h>
 
 #include "klangcombo.h"
 
@@ -42,15 +41,18 @@ public:
         void loadSettings();
         void applySettings();
 	void setupPage(QWidget*);
+	bool eventFilter(QObject *, QEvent *);
+
+protected:
+	void iconLoaderDragEnterEvent(QDragEnterEvent *event);
+	void iconLoaderDropEvent(QDropEvent *event);
 
 private slots:
         void slotSetGUI(int);
-	void slotPixDropped(KDNDDropZone *zone);
         void slotLogoPixChanged(const QString&);
         void slotLogoPixTextChanged();
 
 private:
-	KDNDDropZone *logopixdrop;
         KIconLoader *iconloader;
         KIconLoaderButton *logobutton;
         KLineEdit    *greetstr_lined, *logo_lined;

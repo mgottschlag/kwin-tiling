@@ -28,7 +28,6 @@
 #include <qradiobutton.h>
 #include <qcheckbox.h>
 
-#include <drag.h>
 #include <kcolorbtn.h>
 #include <kurl.h>
 
@@ -45,7 +44,12 @@ public:
         void loadSettings();
         void applySettings();
 	void setupPage(QWidget*);
+	bool eventFilter(QObject *o, QEvent *e);
 
+protected:
+	void userButtonDragEnterEvent(QDragEnterEvent *e);
+	void userButtonDropEvent(QDropEvent *e);
+	
 private slots:
         void slotUserSelected(int);
         void slotUserShowMode(int);
@@ -55,7 +59,6 @@ private slots:
         void slotAllToUsr();
         void slotUsrToAll();
         void slotNoToAll();
-	void slotPixDropped(KDNDDropZone *zone);
         void slotUserPixChanged(const QString&);
 
 private:
@@ -63,7 +66,6 @@ private:
         KIconLoader *iconloader;
 	QButtonGroup *usrGroup, *shwGroup;
         QCheckBox    *cbusrshw, *cbusrsrt;
-	KDNDDropZone *userpixdrop;
         KIconLoaderButton *userbutton;
         QLabel       *userlabel;
 	QListBox     *alluserlb, *nouserlb, *userlb;
