@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.4  1999/03/12 18:40:58  dfaure
+    Squashed more ksprintf and did some more Qt2.0 porting
+
     Revision 1.3  1999/03/01 23:24:12  kulow
     CVS_SILENT ported to Qt 2.0
 
@@ -44,7 +47,6 @@
 #include <qlistbox.h>
 #include <qcheckbox.h>
 
-#include <drag.h>
 #include <mediatool.h>
 #include <kaudio.h>
 
@@ -61,15 +63,17 @@ public:
 
         void loadSettings();
         void applySettings();
+	bool eventFilter(QObject *o, QEvent *e);
+
+protected:
+	void soundlistDragEnterEvent(QDragEnterEvent *e);
+	void soundlistDropEvent(QDropEvent *e);
         
 private slots:
-
 	void eventSelected(int index);
         void soundSelected(const QString &filename);
 	void saveConfiguration();
 	void playCurrentSound();
-
-	void soundDropped(KDNDDropZone *zone);
 
 private:
 
@@ -80,9 +84,7 @@ private:
 	KAudio audio;
         QCheckBox *sounds_enabled;
 	QListBox *eventlist, *soundlist;
-	KDNDDropZone *audiodrop;
 	QPushButton *btn_test;
-
 };
 
 #endif

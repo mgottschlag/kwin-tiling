@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.18  1999/07/02 15:08:41  bieker
+    Added missing i18n("OK")s + removed some QMessageBox::message()s.
+
     Revision 1.17  1999/06/26 00:01:56  bieker
     Made it compile with QT_NO_ASCII_CAST...
 
@@ -87,12 +90,11 @@
 #include <qlayout.h>
 #include <qdir.h>
 #include <qmessagebox.h>
-
+#include <qdragobject.h>
 
 #include <klocale.h>
 #include <kapp.h>
 #include <kwm.h>
-#include <drag.h>
 
 #include "syssound.h"
 #include <kconfig.h>
@@ -178,6 +180,8 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   KConfigWidget(parent, name), selected_event(0){
 
 
+  setAcceptDrops(true);
+
   QBoxLayout *col1, *col2, *col3, *columns, *top_layout;
 
   int delta;
@@ -228,15 +232,15 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   //
 
   soundlist = new QListBox(this);
-
+  soundlist->setAcceptDrops(true);
+  soundlist->installEventFilter(this);
+  
   soundlist->insertItem(i18n("(none)"));
 
   list = KGlobal::dirs()->findAllResources("sound");
 
   soundlist->insertStringList(list);
   
-  audiodrop = new KDNDDropZone(soundlist, DndURL);
-
   sounds_enabled = new QCheckBox(this);
   sounds_enabled->setText(i18n("e&nable system sounds"));
   sounds_enabled->setMinimumSize(sounds_enabled->sizeHint());
@@ -300,9 +304,6 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   connect(soundlist, SIGNAL(highlighted(const QString &)), 
 	  this, SLOT(soundSelected(const QString &)));
   connect(btn_test, SIGNAL(clicked()), this, SLOT(playCurrentSound()));
-
-  connect(audiodrop, SIGNAL(dropAction(KDNDDropZone*)), 
-	  SLOT(soundDropped(KDNDDropZone*)));
 
 };
 
@@ -469,59 +470,70 @@ void KSoundWidget::playCurrentSound()
 }
 
 
-void KSoundWidget::soundDropped(KDNDDropZone *zone){
+bool KSoundWidget::eventFilter(QObject */*o*/, QEvent *e)
+{
+  if (e->type() == QEvent::DragEnter) {
+    soundlistDragEnterEvent((QDragEnterEvent *) e);
+    return true;
+  }
 
-  QStrList &list = zone->getURLList();;
-  QString msg;
-  int i, len;
+  if (e->type() == QEvent::Drop) {
+    soundlistDropEvent((QDropEvent *) e);
+    return true;
+  }
 
-  //
-  // CC: For now, we do only accept FILES ending with .wav...
-  //
+  return false;
+}
 
-  len = list.count();
+void KSoundWidget::soundlistDragEnterEvent(QDragEnterEvent *e)
+{
+  e->accept(QUriDrag::canDecode(e));
+}
 
-  for ( i = 0; i < len; i++) {
+void KSoundWidget::soundlistDropEvent(QDropEvent *e)
+{
+  QStringList uris;
 
-    QString url = list.at(i);
+  if (QUriDrag::decodeLocalFiles(e, uris) && (uris.count() > 0)) {
+    QString msg;
 
-    if ( "file:" == url.left(5) ) {
+    QStringList::Iterator it(uris.begin());
+    for (; it != uris.end(); ++it) {
+      QString fname = *it;
 
-      // CC: for now, only file URLs are supported
-
-      QMessageBox::warning(this, i18n("Unsupported URL"),
-        i18n("Sorry, this type of URL is currently unsupported"\
-             "by the KDE System Sound Module"),
-        i18n("OK"));
-
-    } else {
-
-      // CC: Now check for the ending ".wav"
-
-      if ( stricmp(".WAV",url.right(4).ascii()) ) {
+      // check for the ending ".wav"
+      if ( stricmp(".WAV",fname.right(4).data()) ) {
         msg = i18n("Sorry, but \n%1\ndoes not seem "\
-			 "to be a WAV--file.").arg(url);
+			 "to be a WAV--file.").arg(fname);
 
-	QMessageBox::warning(this, i18n("Improper File Extension"), msg, i18n("OK"));
+	QMessageBox::warning(this, 
+			     i18n("Improper File Extension"), 
+			     msg, i18n("OK"));
 
       } else {
 
 	// CC: Hurra! Finally we've got a WAV file to add to the list
-
-	url.remove(0, 5); // strip the leading "file:"
-
-	if (!addToSoundList(url)) {
+	if (!addToSoundList(fname)) {
 
 	  // CC: did not add file because it is already in the list
 	  msg = i18n("The file\n"
 		           "%1\n"
-			   "is already in the list").arg(url);
+			   "is already in the list").arg(fname);
 
-	  QMessageBox::warning(this, i18n("File Already in List"), msg, i18n("OK"));
-
+	  QMessageBox::warning(this, 
+			       i18n("File Already in List"), 
+			       msg, i18n("OK"));
+	  
 	}
       }
     }
+  } else {
+    // non-local file present
+    QMessageBox::warning(this, i18n("Non-local File Dropped"),
+			 i18n("At least one file that was dropped "
+			      "was not a local file.  You may only "
+			      "add local files."),
+			 i18n("&OK"));
   }
 }
 
