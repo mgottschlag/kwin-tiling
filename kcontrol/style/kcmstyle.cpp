@@ -387,7 +387,7 @@ KCMStyle::~KCMStyle()
 
 void KCMStyle::updateConfigButton()
 {
-	if (!styleEntries[currentStyle] || styleEntries[currentStyle]->configPage.isEmpty()) {
+	if (!styleEntries[currentStyle()] || styleEntries[currentStyle()]->configPage.isEmpty()) {
 		pbConfigStyle->setEnabled(false);
 		return;
 	}
@@ -400,7 +400,7 @@ void KCMStyle::updateConfigButton()
 
 void KCMStyle::styleSpecificConfig()
 {
-	QString libname = styleEntries[currentStyle]->configPage;
+	QString libname = styleEntries[currentStyle()]->configPage;
 
 	// Use KLibLoader to get the library, handling
 	// any errors that arise
@@ -428,7 +428,7 @@ void KCMStyle::styleSpecificConfig()
 	}
 
 	//Create the container dialog
-	StyleConfigDialog* dial = new StyleConfigDialog(this, styleEntries[currentStyle]->name);
+	StyleConfigDialog* dial = new StyleConfigDialog(this, styleEntries[currentStyle()]->name);
 	dial->enableButtonSeparator(true);
 	
 	typedef QWidget*(* factoryRoutine)( QWidget* parent );
@@ -450,7 +450,7 @@ void KCMStyle::styleSpecificConfig()
 
 	if (dial->exec() == QDialog::Accepted  && dial->isDirty() ) {
 		// Force re-rendering of the preview, to apply settings
-		switchStyle(currentStyle);
+		switchStyle(currentStyle());
 		
 		//For now, ask all KDE apps to recreate their styles to apply the setitngs
 		KIPC::sendMessageAll(KIPC::StyleChanged);
@@ -573,7 +573,7 @@ void KCMStyle::save()
 	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), true, true );
 
 	config.setGroup("General");
-	config.writeEntry( "widgetStyle", currentStyle );
+	config.writeEntry( "widgetStyle", currentStyle() );
 
 	config.setGroup("Toolbar style");
 	config.writeEntry( "Highlighting", cbHoverButtons->isChecked(), true, true );
@@ -632,11 +632,16 @@ void KCMStyle::save()
 
 bool KCMStyle::findStyle( const QString& str, int& combobox_item )
 {
+	StyleEntry* se   = styleEntries.find(str.lower());
+	
+	QString     name = se ? se->name : str;
+	
 	combobox_item = 0;
 
+	//look up name
 	for( int i = 0; i < cbStyle->count(); i++ )
 	{
-		if ( cbStyle->text(i).lower() == str )
+		if ( cbStyle->text(i) == name )
 		{
 			combobox_item = i;
 			return TRUE;
@@ -668,8 +673,7 @@ void KCMStyle::defaults()
 	cbStyle->setCurrentItem( item );
 
 	m_bStyleDirty = true;
-	currentStyle = cbStyle->currentText();
-	switchStyle( currentStyle );	// make resets visible
+	switchStyle( currentStyle() );	// make resets visible
 
 	// Effects..
 	cbEnableEffects->setChecked(false);
@@ -771,25 +775,33 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 		entry->hidden = config.readBoolEntry("Hidden", false);
 
 		// Insert the entry into our dictionary.
-		styleEntries.insert(strWidgetStyle, entry);
+		styleEntries.insert(strWidgetStyle.lower(), entry);
 	}
 
 	// Obtain all style names
 	QStringList allStyles = QStyleFactory::keys();
 
-	// Remove all hidden style entries
+	// Get translated names, remove all hidden style entries.
 	QStringList styles;
 	StyleEntry* entry;
 	for (QStringList::iterator it = allStyles.begin(); it != allStyles.end(); it++)
 	{
+		QString id = (*it).lower();
 		// Find the entry.
-		if ( (entry = styleEntries.find(*it)) != 0 )
+		if ( (entry = styleEntries.find(id)) != 0 )
 		{
 			// Do not add hidden entries
 			if (entry->hidden)
 				continue;
 
-			styles += (*it);
+			styles += entry->name;
+			
+			nameToStyleKey[entry->name] = id;
+		}
+		else
+		{
+			styles += (*it); //Fall back to the key (but in original case)
+			nameToStyleKey[*it] = id;
 		}
 	}
 
@@ -811,32 +823,34 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 	// We roll our own (yuck)
 	cfgStyle = cfgStyle.lower();
 	int item = 0;
-	QString txt;
 	for( int i = 0; i < cbStyle->count(); i++ )
 	{
-		txt = cbStyle->text(i).lower();
+		QString id = nameToStyleKey[cbStyle->text(i)];
 		item = i;
-		if ( txt == cfgStyle )	// ExactMatch
+		if ( id == cfgStyle )	// ExactMatch
 			break;
-		else if ( txt.contains( cfgStyle ) )
+		else if ( id.contains( cfgStyle ) )
 			break;
-		else if ( txt.contains( QApplication::style().className() ) )
+		else if ( id.contains( QApplication::style().className() ) )
 			break;
 		item = 0;
 	}
 	cbStyle->setCurrentItem( item );
-	currentStyle = cbStyle->currentText();
 
 	m_bStyleDirty = false;
 
-	switchStyle( currentStyle );	// make resets visible
+	switchStyle( currentStyle() );	// make resets visible
+}
+
+QString KCMStyle::currentStyle()
+{
+	return nameToStyleKey[cbStyle->currentText()];
 }
 
 
 void KCMStyle::styleChanged()
 {
-	currentStyle = cbStyle->currentText();
-	switchStyle( currentStyle );
+	switchStyle( currentStyle() );
 }
 
 

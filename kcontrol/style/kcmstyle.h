@@ -98,8 +98,11 @@ protected slots:
 	void menuEffectTypeChanged();
 
 private:
+	QString currentStyle();
+
 	bool m_bEffectsDirty, m_bStyleDirty, m_bToolbarsDirty;
 	QDict<StyleEntry> styleEntries;
+	QMap <QString,QString> nameToStyleKey;
 
 	QVBoxLayout* mainLayout;
 	QTabWidget* tabWidget;
@@ -118,7 +121,6 @@ private:
 	StylePreview* stylePreview;
 	QStyle* appliedStyle;
 	QPalette palette;
-	QString currentStyle;
 
 	// Page2 widgets
 	QGroupBox* gbEffects;
