@@ -88,7 +88,7 @@ TopLevel::TopLevel(const char* name)
 
   // create the layout box
   QHBox *hbox = new QHBox(this);
-  hbox->setSpacing(5);
+  hbox->setSpacing(2);
 
   // create the left hand side (the tab view)
   _tab = new QTabWidget(hbox);
@@ -120,7 +120,7 @@ TopLevel::TopLevel(const char* name)
   KSeparator *sep = new KSeparator( hbox );
   sep->setFocusPolicy(QWidget::NoFocus);
   sep->setOrientation( QFrame::VLine );
-  
+
   // set up the right hand side (the docking area)
   _dock = new DockContainer(hbox);
   connect(_dock, SIGNAL(newModule(const QString&, const QString&, const QString&)),
