@@ -621,7 +621,7 @@ DefineLocal (FILE *file, Xauth *auth)
 	struct utsname name;
 
 	uname(&name);
-	strcpy(displayname, name.nodename);
+	sprintf(displayname, "%.*s", sizeof(displayname) - 1, name.nodename);
 	}
 	writeAddr (FamilyLocal, strlen (displayname), displayname, file, auth);
 
@@ -1021,6 +1021,8 @@ writeRemoteAuth (FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const 
 
 #endif /* XDMCP */
 
+#define NBSIZE 1024
+
 static void
 startUserAuth (char *buf, char *nbuf, 
 	       FILE **old, FILE **new)
@@ -1031,10 +1033,9 @@ startUserAuth (char *buf, char *nbuf,
     initAddrs ();
     *new = 0;
     if ((home = getEnv (userEnviron, "HOME"))) {
-	strcpy (buf, home);
-	if (home[strlen(home) - 1] != '/')
-	    strcat (buf, "/");
-	strcat (buf, ".Xauthority");
+	if (strlen (home) >= NBSIZE - 12)
+	    return;
+	sprintf (buf, "%s/.Xauthority", home);
 	Debug ("XauLockAuth %s\n", buf);
 	lockStatus = XauLockAuth (buf, 1, 2, 10);
 	Debug ("lock is %d\n", lockStatus);
@@ -1097,7 +1098,7 @@ SetUserAuthorization (struct display *d)
     int		i;
     int		magicCookie;
     int		data_len;
-    char	name_buf[1024], new_name[1024];
+    char	name_buf[NBSIZE], new_name[NBSIZE + 2];
 
     Debug ("SetUserAuthorization\n");
     auths = d->authorizations;
@@ -1107,6 +1108,8 @@ SetUserAuthorization (struct display *d)
 	    envname = 0;
 	    name = name_buf;
 	} else {
+	    if (strlen (d->userAuthDir) >= NBSIZE - 13)
+		return;
 	    /*
 	     * Note, that we don't lock the auth file here, as it's
 	     * temporary - we can assume, that we are the only ones
@@ -1198,7 +1201,7 @@ RemoveUserAuthorization (struct display *d)
     Xauth   **auths;
     FILE    *old, *new;
     int	    i;
-    char    name[1024], new_name[1024];
+    char    name[NBSIZE], new_name[NBSIZE + 2];
 
     if (!(auths = d->authorizations))
 	return;
