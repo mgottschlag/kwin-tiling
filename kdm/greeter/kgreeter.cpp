@@ -403,8 +403,6 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	connect( user_view, SIGNAL(clicked(QIconViewItem*)), 
 		 this, SLOT(slot_user_name( QIconViewItem*)));
     }
-
-    srand(time(0) + (unsigned)kdmcfg);	/* random enough? call core fkt? */
 }
 
 void 
@@ -641,7 +639,7 @@ KGreeter::go_button_clicked()
 	    loginEdit->setEnabled( false);
 	    passwdEdit->setEnabled( false);
 	    clear_button_clicked();
-	    timer->start( 1500 + rand()*1000/RAND_MAX, true );	// XXX make configurable
+	    timer->start( 1500 + kapp->random()*1000/RAND_MAX, true );	// XXX make configurable
 	    return;
     }
     setActiveWindow();
