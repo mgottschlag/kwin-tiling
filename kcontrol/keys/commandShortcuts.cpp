@@ -231,6 +231,9 @@ void CommandShortcutsModule::commandDoubleClicked(QListViewItem *item, const QPo
     {
         return;
     }
+    AppTreeItem *rl_item = static_cast<AppTreeItem*>(item);
+    if ( rl_item->isDirectory())
+        return;
 
     m_shortcutButton->captureShortcut();
 }
