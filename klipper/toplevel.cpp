@@ -38,6 +38,7 @@
 #include <dcopclient.h>
 #include <kiconloader.h>
 #include <khelpmenu.h>
+#include <kstdguiitem.h>
 
 #include "configdialog.h"
 #include "toplevel.h"
@@ -173,7 +174,7 @@ void KlipperWidget::mousePressEvent(QMouseEvent *e)
 
         KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(),
                     false );
-        m_popup->insertItem( i18n( "&Help" ), help->menu(), HELPMENU_ITEM );
+        m_popup->insertItem( KStdGuiItem::help().text(), help->menu(), HELPMENU_ITEM );
     }
     showPopupMenu( m_popup );
 }
@@ -355,7 +356,7 @@ void KlipperWidget::readProperties(KConfig *kc)
 
     KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(),
                 false );
-    m_popup->insertItem( i18n( "&Help" ), help->menu(), HELPMENU_ITEM );
+    m_popup->insertItem( KStdGuiItem::help().text(), help->menu(), HELPMENU_ITEM );
 
     m_popup->insertSeparator();
     m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
