@@ -16,13 +16,15 @@
 #include <qpushbutton.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
+#include <assert.h>
 
 #include <kaboutdialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kwinmodule.h>
-#include <kregexpdialog.h>
+#include <kregexpeditor.h>
+#include <kregexpdialoginterface.h>
 
 #include "configdialog.h"
 
@@ -145,11 +147,14 @@ void ListView::rename( QListViewItem* item, int c )
   
   if ( gui ) {
     if ( ! _regExpEditor )
-      _regExpEditor = new KRegExpDialog( this );
-    _regExpEditor->slotSetRegExp( item->text(0) );
+      _regExpEditor = KRegExpEditor::createDialog( this );
+    KRegExpDialogInterface *iface = dynamic_cast<KRegExpDialogInterface *>( _regExpEditor );
+    assert( iface );
+    iface->regExpEditor()->setProperty( "regexp", item->text( 0 ) );
+
     bool ok = _regExpEditor->exec();
     if ( ok )
-      item->setText( 0, _regExpEditor->regexp() );
+      item->setText( 0, iface->regExpEditor()->property( "regexp" ).toString() );
     
   }
   else
@@ -223,6 +228,13 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     listView->setSorting( -1 ); // newly inserted items just append unsorted
 
     cbUseGUIRegExpEditor = new QCheckBox( i18n("&Use graphical editor for editing regular expressions" ), this );
+    QWidget *w = KRegExpEditor::createDialog( 0 );
+    if ( !w )
+    {
+	cbUseGUIRegExpEditor->hide();
+	cbUseGUIRegExpEditor->setChecked( false );
+    }
+    delete w;
 
     QHBox *box = new QHBox( this );
     box->setSpacing( KDialog::spacingHint() );

@@ -30,7 +30,7 @@
 class KGlobalAccel;
 class KListView;
 class QPushButton;
-class KRegExpDialog;
+class QDialog;
 
 class GeneralWidget : public QVBox
 {
@@ -170,7 +170,10 @@ public:
     }
     void setUseGUIRegExpEditor( bool enabled ) 
     {
-      actionWidget->cbUseGUIRegExpEditor->setChecked( enabled );
+	// the checkbox is only hidden explicitly when there's no
+	// regexp editor component available.
+	if ( !actionWidget->cbUseGUIRegExpEditor->isHidden() )
+            actionWidget->cbUseGUIRegExpEditor->setChecked( enabled );
     }
 
     virtual void show();
@@ -207,7 +210,7 @@ protected:
     virtual void rename( QListViewItem* item, int c );
 private:
     ConfigDialog* _configWidget;
-    KRegExpDialog* _regExpEditor;
+    QDialog* _regExpEditor;
 };
 
 #endif // CONFIGDIALOG_H
