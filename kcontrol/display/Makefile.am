@@ -8,7 +8,7 @@ SUBDIRS = . kcs ad pics
 
 noinst_HEADERS = backgnd.h  colorscm.h scrnsave.h general.h widgetcanvas.h \
 	fonts.h energy.h bgdialogs.h advanced.h stdclient_bitmaps.h \
-	bgsettings.h bgrender.h bgdefauts.h
+	bgsettings.h bgrender.h bgdefaults.h
 
 lib_LTLIBRARIES = libkcm_display.la
 libkcm_display_la_SOURCES = advanced.cpp fonts.cpp scrnsave.cpp backgnd.cpp \
