@@ -259,7 +259,7 @@ RegisterIndirectChoice (
 	c->next = choices;
 	choices = c;
     }
-    c->time = time (0);
+    c->time = now;
     return 1;
 }
 

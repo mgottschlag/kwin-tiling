@@ -519,7 +519,7 @@ SwitchToTty (struct display *d)
     }
     strncpy (utp->line, d->console, UT_LINESIZE);
     utp->d = d;
-    utp->time = time(0);
+    utp->time = now;
     utp->hadSess = 0;
     utp->next = utmpList;
     utmpList = utp;
@@ -1391,7 +1391,7 @@ StartDisplayP2 (struct display *d)
 	d->pid = pid;
 	d->hstent->lock = d->hstent->rLogin = d->hstent->goodExit = 
 	    d->hstent->sdRec.how = 0;
-	time (&d->lastStart);
+	d->lastStart = now;
 	break;
     }
 }
@@ -1460,7 +1460,7 @@ ExitDisplay (
 	free (d->userName);
     d->userName = 0;
     he = d->hstent;
-    time (&he->lastExit);
+    he->lastExit = now;
     he->goodExit = goodExit;
     if (he->sdRec.how)
     {
