@@ -157,28 +157,33 @@ modifying the XDM init script shipped by your distribution.
    presenting you the exceedingly cute KDE login screen.
 
 
-The command FiFos
------------------
+The command sockets
+-------------------
 
 This is a feature you can use to remote-control KDM. It's mostly intended
 for use by ksmserver and kdesktop from a running session, but other
-applications are possible as well. You can write to these files from
-an application or by using, for example, the shell echo command.
+applications are possible as well.
 
-There are two types of FiFos: the global one (xdmctl) and the per-display
-ones (xdmctl-<display>).
-The global one is owned by root, the per-display ones are owned by the user
-currently owning the session (root or the logged in user). Group ownership
-of the FiFos can be set via FifoGroup=, otherwise it's root. The file
-permissions of the FiFos are rw--w---- (0620). The FiFos are created in the
-directory specified by FifoDir=.
+The sockets are UNIX domain sockets which live in subdirectories of the
+directory specified by FifoDir=. The subdir is the key to addressing and
+security; the sockets all have the file name "socket" and file permissions
+rw-rw-rw- (0666). This is because some systems don't care for the file
+permission of the socket files.
+There are two types of sockets: the global one (dmctl) and the per-display
+ones (dmctl-<display>).
+The global one's subdir is owned by root, the subdirs of the per-display
+ones' are owned by the user currently owning the session (root or the
+logged in user). Group ownership of the subdirs can be set via FifoGroup=,
+otherwise it's root. The file permissions of the subdirs are rwxr-x--- (0750).
+
 The fields of a command are separated by tabs (\t), the fields of a list
-are separated by spaces. The command is terminated by a newline (\n).
+are separated by spaces, literal spaces in list fields are denoted by "\s".
+The command is terminated by a newline (\n).
+The same applies to replies. The reply on success is "ok", possibly followed
+by the requested information. The reply on error is an errno-style word (e.g.,
+"perm", "noent", etc.) followed by a longer explanation.
 
-Global FiFo commands:
-
-"shutdown" ("reboot"|"halt") ("forcenow"|"trynow"|"schedule")
- - same functionality as the shutdown dialog
+Global commands:
 
 "login" display ("now"|"schedule") user password [session_arguments]
  - login user at specified display. if "now" is specified, a possibly
@@ -187,11 +192,7 @@ Global FiFo commands:
    session_arguments are printf-like escaped contents for .dmrc. Unlisted
    keys will default to previously saved values.
 
-Per-display Fifo commands:
-
-"shutdown" ("reboot"|"halt") ["forcenow"|"trynow"|"schedule"]
- - Same functionality as the shutdown dialog. It takes effect when the
-   session at this display exits.
+Per-display commands:
 
 "lock"
  - The display is marked as locked. If the X-Server crashes in this state,
@@ -200,38 +201,127 @@ Per-display Fifo commands:
 "unlock"
  - Reverse the effect of "lock": re-enable auto-relogin.
 
-"reserve" [timeout in seconds]
- - Start a reserve login screen. If nobody logs in within the specified amount
-   of time (one minute by default), the display is removed again. When the
-   session on the display exits, the display is removed, too. Direct
-   the reserve command to your current session's FiFo. So if session
-   0 is your standard login session and 1 is reserved, send the
-   reserve command to xdmctl-:0. Once it executes, it creates xdmctl-:1.
-
 "suicide"
  - The currently running session is forcibly terminated. No auto-relogin is
    attempted, but a scheduled "login" command will be executed.
 
-To find out where the current session's FiFo is, you should examine the
-XDM_MANAGED environment variable.
-Apart from the FiFo location, XDM_MANAGED contains a comma-separated list
-of flags:
-- "maysd" - FiFo "shutdown" is permitted
-- "mayfn" - FiFo "shutdown" "forcenow" is permitted
-- "fn", "tn", "sched" - FiFo "shutdown" default mode (guess the acronym :)
-- "rsvd" - FiFo "reserve" is permitted
-- "method=<...>" - the conversation method (plugin) that was used for login
+Commands for all sockets:
 
-Here is an example bash script snippet:
+"caps"
+ - Returns a list this socket's capabilities:
+   "kdm" - identifies kdm, in case some other DM implements this protocol, too.
+   "list", "activate", "lock", "suicide", "login" - the respective command
+     is supported.
+   "bootoptions" - the "listbootoptions" command and the "=" option to
+     "shutdown" are supported.
+   "shutdown <list>" - "shutdown" is supported and allowed to the listed users
+     (comma-separated). "*" means all authenticated users.
+   "shutdown" - "shutdown" is supported and allowed to everybody.
+   "nuke <list>" - forced shutdown is allowed to the listed users.
+   "nuke" - forced shutdown is allowed to everybody.
+   "reserve <number>" - reserve displays are configured and <number> are
+     available at this time.
 
-if [ -z "$XDM_MANAGED" ]; then
-  echo "This session was not launched by KDM."
-elif [ ${XDM_MANAGED:0:1} != / ]; then
-  echo "No KDM command FiFo was configured for this session."
-elif [ -n "${XDM_MANAGED//*,maysd*}" ]; then
-  echo "The KDM FiFo command 'shutdown' is not permitted in this session."
+"list" ["all"|"alllocal"]
+ - Return a list of running sessions. By default all active sessions are
+   listed. If "all" is specified, passive sessions are listed as well. If
+   "alllocal" is specified, passive sessions are listed as well, but all
+   incoming remote sessions are skipped.
+   Each session entry is a comma-separated tuple of:
+   - Display or TTY name
+   - VT name for local sessions
+   - Logged in user's name, empty for passive sessions and outgoing remote
+     sessions (local chooser mode)
+   - Session type or "<remote>" for outgoing remote sessions, empty for
+     passive sessions
+   - A flag field:
+     - "*" for the display belonging to the requesting socket
+     - "!" for sessions that cannot be killed by the requesting socket
+   - New fields might be added later.
+
+"reserve" [timeout in seconds]
+ - Start a reserve login screen. If nobody logs in within the specified amount
+   of time (one minute by default), the display is removed again. When the
+   session on the display exits, the display is removed, too.
+ - Permitted only on sockets of local displays and the global socket.
+
+"activate" (vt|display)
+ - Switch to a particular VT (virtual terminal). The VT may be specified
+   either directly (e.g., vt3) or by a display using it (e.g., :2).
+ - Permitted only on sockets of local displays and the global socket.
+
+"listbootoptions"
+ - List available boot options.
+ => "ok" list default current
+    default and current are indices into the list and are -1 if unset or
+    undeterminable.
+
+"shutdown" ("reboot"|"halt") ["="bootchoice] \
+  ("ask"|"trynow"|"forcenow"|"schedule"|\
+   start ("-1"|end ("force"|"forcemy"|"cancel")))
+ - Request a system shutdown, either a reboot or a halt/poweroff.
+ - An OS choice for the next boot may be specified from the list returned by
+   "listbootoptions".
+ - Shutdowns requested from per-display sockets are executed when the current
+   session on that display exits. Such a request may pop up a dialog asking
+   for confirmation and/or authentication.
+ - start is the time for which the shutdown is scheduled. If it starts with
+   a plus-sign, the current time is added. Zero means immediately.
+ - end is the latest time at which the shutdown should be performed if active
+   sessions are still running. If it starts with a plus-sign, the start time
+   is added. Minus one means wait infinitely. If end is through and active
+   sessions are still running, KDM can do one of the following:
+   * "cancel" - give up the shutdown.
+   * "force" - shut down nonetheless.
+   * "forcemy" - shut down nonetheless if all active sessions belong to the
+                 requesting user. Only for per-display sockets.
+ - start and end are specified in seconds since the UNIX epoch.
+ - "trynow" is a synonym for "0 0 cancel", "forcenow" for "0 0 force" and
+   "schedule" for "0 -1".
+ - "ask" attempts an immediate shutdown and interacts with the user if active
+    sessions are still running. Only for per-display sockets.
+
+"shutdown" "cancel" ["local"|"global"]
+ - Cancel a scheduled shutdown. The global socket always cancels the currently
+   pending shutdown, while per-display sockets default to cancelling their
+   queued request.
+
+"shutdown" "status"
+ - Return a list with information about shutdowns.
+   The entries are comma-separated tuples of:
+   - ("global"|"local") - pending vs. queued shutdown. A local entry can be
+     returned only by a per-display socket.
+   - ("halt"|"reboot")
+   - start
+   - end
+   - ("ask"|"force"|"forcemy"|"cancel")
+   - Numeric user ID of the requesting user, -1 for the global socket.
+   - The next boot OS choice or "-" for none.
+   - New fields might be added later.
+ 
+There are two ways of using the sockets:
+- Connecting them directly. FifoDir is exported as $DM_CONTROL; the name
+  of per-display sockets can be derived from $DISPLAY.
+- By using the kdmctl command (e.g., from within a shell script).
+  Try "kdmctl -h" to find out more.
+
+Here is an example bash script "reboot into FreeBSD":
+
+if kdmctl | grep -q shutdown; then
+  IFS=$'\t'
+  set -- `kdmctl listbootoptions`
+  if [ "$1" = ok ]; then
+	fbsd=$(echo "$2" | tr ' ' '\n' | sed -ne 's,\\s, ,g;/freebsd/I{p;q}')
+	if [ -n "$fbsd" ]; then
+      kdmctl shutdown reboot "=$fbsd" ask > /dev/null
+	else
+	  echo "FreeBSD boot unavailable."
+	fi
+  else
+    echo "Boot options unavailable."
+  fi
 else
-  echo -e "shutdown\thalt\tschedule" > ${XDM_MANAGED%%,*}
+  echo "Cannot reboot system."
 fi
 
 
