@@ -69,16 +69,16 @@ CInstalledFontListWidget::CInstalledFontListWidget(QWidget *parent, const char *
                                      "needed by the various programs."));
 
     itsFontsPopup=new QPopupMenu(this);
-    itsFixTtfPsNamesME=itsFontsPopup->insertItem(i18n("Fix TTF Postscript Names..."), this, SLOT(fixTtfPsNames()));
+    itsFixTtfPsNamesME=itsFontsPopup->insertItem(i18n("Fix TTF PostScript Names..."), this, SLOT(fixTtfPsNames()));
 
     itsDirsPopup=new QPopupMenu(this);
-    itsCreateDirME=itsDirsPopup->insertItem(i18n("Create new Sub-Folder..."), this, SLOT(createDir()));
+    itsCreateDirME=itsDirsPopup->insertItem(i18n("Create New Sub-Folder..."), this, SLOT(createDir()));
     itsDeleteDirME=itsDirsPopup->insertItem(i18n("Delete Folder..."), this, SLOT(deleteDir()));
     itsDirsPopup->insertSeparator();
     itsEnableDirME=itsDirsPopup->insertItem(i18n("Add to X Font Path"), this, SLOT(toggleDir()));
     itsDisableDirME=itsDirsPopup->insertItem(i18n("Remove From X Font Path"), this, SLOT(toggleDir()));
     itsDirsPopup->insertSeparator();
-    itsTouchME=itsDirsPopup->insertItem(i18n("\"Touch\" Ffolder"), this, SLOT(touchDir()));
+    itsTouchME=itsDirsPopup->insertItem(i18n("\"Touch\" Folder"), this, SLOT(touchDir()));
     itsDirsPopup->insertSeparator();
     itsSetUnscaledME=itsDirsPopup->insertItem(i18n("Set Unscaled"), this, SLOT(toggleUnscaled()));
     itsSetScaledME=itsDirsPopup->insertItem(i18n("Set Scaled"), this, SLOT(toggleUnscaled()));
