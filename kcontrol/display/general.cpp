@@ -254,8 +254,10 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     m_bToolbarsDirty = false;
     m_bEffectsDirty = false;
     m_bMacStyleDirty = false;
+    m_bIconsDirty = false;
     m_bExportColors = true;
     macStyle = false;
+    icons = false;
 
     config = new KConfig("kcmdisplayrc");
     QBoxLayout *topLayout = new QVBoxLayout( this, KDialog::marginHint(),
@@ -319,7 +321,14 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
       " to force your preferences regarding colors even to non-KDE"
       " applications. While this works fine with most applications, it <em>may</em>"
       " give strange results sometimes.") );
-
+      
+    cbIcons = new QCheckBox( i18n("&Show icons on buttons"), styles );
+    connect( cbIcons, SIGNAL( clicked() ), SLOT( slotUseIcons() )  );
+    vlay->addWidget( cbIcons, 10 );
+    
+    QWhatsThis::add( cbIcons, i18n("If this option is selected, KDE will try"
+      " to show icons on most of the buttons.") );
+      
     tbStyle = new QButtonGroup( i18n( "Style options for toolbars" ), this);
 
     topLayout->addWidget(tbStyle, 10);
@@ -518,7 +527,14 @@ void KGeneral::slotUseResourceManager()
     m_bChanged = true;
     emit changed(true);
 }
+void KGeneral::slotUseIcons()
+{
+    icons = cbIcons->isChecked( );
+    m_bIconsDirty = true;
+    m_bChanged = true;
+    emit changed( true );
 
+}
 void KGeneral::slotMacStyle()
 {
     macStyle = cbMac->isChecked();
@@ -539,6 +555,7 @@ void KGeneral::readSettings()
     else
         applicationStyle = MotifStyle;
     macStyle = config->readBoolEntry( "macStyle", false);
+    icons = config->readBoolEntry("showIcons", false );
     effectAnimateMenu = config->readBoolEntry( "EffectAnimateMenu", false );
     effectFadeMenu = config->readBoolEntry( "EffectFadeMenu", false );
     effectAnimateCombo = config->readBoolEntry( "EffectAnimateCombo", false );
@@ -569,6 +586,7 @@ void KGeneral::showSettings()
     cbRes->setChecked(m_bExportColors);
 
     cbMac->setChecked(macStyle);
+    cbIcons->setChecked( icons );
 
     tbHilite->setChecked(tbUseHilite);
     tbTransp->setChecked(tbMoveTransparent);
@@ -656,6 +674,7 @@ void KGeneral::save()
 
     config->setGroup("KDE");
     config->writeEntry("macStyle", macStyle, true, true);
+    config->writeEntry("showIcons", icons, true, true );
     config->writeEntry("EffectAnimateMenu", effectAnimateMenu, true, true);
     config->writeEntry("EffectFadeMenu", effectFadeMenu, true, true);
     config->writeEntry("EffectAnimateCombo", effectAnimateCombo, true, true);

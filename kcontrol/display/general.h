@@ -76,6 +76,7 @@ private slots:
     void slotUseResourceManager();
     void slotMacStyle();
     void slotRunImporter();
+    void slotUseIcons();
 
 
 private:
@@ -83,9 +84,9 @@ private:
     void showSettings();
 
     bool m_bChanged, m_bStyleDirty, m_bToolbarsDirty;
-    bool m_bEffectsDirty, m_bMacStyleDirty;
+    bool m_bEffectsDirty, m_bMacStyleDirty, m_bIconsDirty;
     bool m_bExportColors;
-    bool macStyle;
+    bool macStyle, icons;
     bool tbUseHilite, tbMoveTransparent;
     bool effectFadeMenu, effectAnimateMenu, effectAnimateCombo, effectFadeTooltip, effectAnimateTooltip, effectNoTooltip;
     QString tbUseText;
@@ -96,6 +97,7 @@ private:
     QCheckBox *tbHilite, *tbTransp;
     QCheckBox *cbRes;
     QCheckBox *cbMac;
+    QCheckBox *cbIcons;
     QRadioButton *effPlainMenu, *effFadeMenu, *effAnimateMenu, *effPlainTooltip, *effFadeTooltip, *effAnimateTooltip;
     QCheckBox *effAnimateCombo, *effNoTooltip;
 
