@@ -472,7 +472,7 @@ void init_arts()
 	bool startServer = config->readBoolEntry("StartServer",true);
 	bool startRealtime = config->readBoolEntry("StartRealtime",true);
 	bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
-	QString args = config->readEntry("Arguments","-F 10 -S 4096 -s 60 -m artsmessage -l 3");
+	QString args = config->readEntry("Arguments","-F 10 -S 4096 -s 60 -m artsmessage -l 3 -f");
 
 	delete config;
 
@@ -536,6 +536,7 @@ QString createArgs(bool netTrans,
 		args += QChar(' ') + addOptions;
 
 	args += QString::fromLatin1(" -l %1").arg(loggingLevel);
+	args += QString::fromLatin1(" -f");
 
 	return args;
 }
