@@ -20,6 +20,7 @@
 
 
 #include "kcmxinerama.h"
+#include <dcopclient.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kconfig.h>
@@ -29,8 +30,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kwin.h>
-
-#include <dcopclient.h>
 
 #include <qcheckbox.h>
 #include <qlayout.h>
@@ -262,11 +261,13 @@ KCModule *create_xinerama(QWidget *parent, const char *name) {
 	return new KCMXinerama(parent, name);
 }
 
+#if 0
 void init_xinerama() {
 	// Should we disable Xinerama support here if they boot without
 	// Xinerama?  or not?  I imagine there are some nice things we could
 	// do here anyways.
 }
+#endif
 }
 
 
