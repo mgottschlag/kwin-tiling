@@ -90,7 +90,7 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 		Task* t = (*it);
 
 		id = insertItem( QIconSet( t->pixmap() ),
-				 t->visibleWindowNameWithState(),
+				 t->visibleNameMatchingState(),
 		                 new TaskRMBMenu( t, manager, this ) );
 		setItemChecked( id, t->isActive() );
 		connectItem( id, t, SLOT( activateRaiseOrIconify() ) );

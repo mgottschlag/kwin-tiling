@@ -44,7 +44,7 @@ void TaskLMBMenu::fillMenu( TaskList* tasks )
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		Task* t = (*it);
 
-		QString text = t->visibleWindowNameWithState().replace("&", "&&");
+		QString text = t->visibleNameWithState().replace("&", "&&");
 
 		int id = insertItem( QIconSet( t->pixmap() ), text,
 				     t, SLOT( activateRaiseOrIconify() ) );
