@@ -33,3 +33,5 @@ messages: rc.cpp
 
 dummy.cpp:
 	echo > dummy.cpp
+
+SUBDIRS = pixmaps
