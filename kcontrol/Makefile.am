@@ -4,5 +4,6 @@ SUBDIRS = bell background filetypes samba display input info ioslaveinfo kdm kwm
 	konqhtml email ebrowsing arts kcontrol passwords knotify\
 	clock pics $(ACCESS_SUBDIR) colors energy fonts css \
 	icons screensaver taskbar crypto midi smserver \
-	socks kwindecoration konsole spellchecking usbview $(FONTINST_SUBDIR)
+	socks kwindecoration konsole spellchecking usbview \
+	smartcard $(FONTINST_SUBDIR)
 

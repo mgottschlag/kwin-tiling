@@ -1,0 +1,52 @@
+<!DOCTYPE UI><UI>
+<class>NoSmartcardBase</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>NoSmartcardBase</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>596</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form2</string>
+    </property>
+    <widget>
+        <class>QLabel</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>TextLabel1</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>30</x>
+                <y>20</y>
+                <width>540</width>
+                <height>440</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>Sorry, I was unable to contact the KDE smartcard service.
+This could be for one of two reasons:
+
+1) The KDE daemon, 'kded' is not running.  You can restart
+it by running the command 'kdeinit' and then try reloading
+the KDE Control Centre to see if this message goes away.
+
+2) You don't appear to have smartcard support in the KDE 
+libraries.  You will need to recompile the kdelibs package with 
+libpcsclite installed.</string>
+        </property>
+    </widget>
+</widget>
+</UI>

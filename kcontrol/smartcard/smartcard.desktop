@@ -1,0 +1,14 @@
+[Desktop Entry]
+Icon=smartcard
+Type=Application
+Exec=kcmshell smartcard
+DocPath=kcontrol/smartcard.html
+X-KDE-ModuleType=Library
+X-KDE-Library=smartcard
+X-KDE-Init=smartcard
+Name=Smartcards
+Name[xxx]=xx
+Comment=Configure smartcard support
+Keywords=Smartcard,PKCS,SSL,reader,smart,card
+Keywords[xxx]=xx
+

@@ -1,0 +1,131 @@
+<!DOCTYPE UI><UI>
+<class>SmartcardBase</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>SmartcardBase</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>596</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>SmartcardBase</string>
+    </property>
+    <widget>
+        <class>QCheckBox</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>launchManager</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>40</x>
+                <y>120</y>
+                <width>540</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>Automatically &amp;launch card manager if inserted card is unclaimed</string>
+        </property>
+        <property>
+            <name>whatsThis</name>
+            <string>When you insert a smartcard, KDE can automatically launch a management tool if no other application attempts to use the card.</string>
+        </property>
+    </widget>
+    <widget>
+        <class>QCheckBox</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>beepOnInsert</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>40</x>
+                <y>90</y>
+                <width>540</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>&amp;Beep on card insert and removal</string>
+        </property>
+    </widget>
+    <widget>
+        <class>QCheckBox</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>enablePolling</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>40</x>
+                <y>60</y>
+                <width>540</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>Enable &amp;polling to autodetect card events</string>
+        </property>
+        <property>
+            <name>whatsThis</name>
+            <string>In most cases you should have this enabled.  It allows KDE to automatically detect card insertion and reader hotplug events.</string>
+        </property>
+    </widget>
+    <widget>
+        <class>QCheckBox</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>enableSupport</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>10</x>
+                <y>20</y>
+                <width>570</width>
+                <height>17</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>&amp;Enable smartcard support</string>
+        </property>
+    </widget>
+</widget>
+<connections>
+    <connection>
+        <sender>enableSupport</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>enablePolling</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enableSupport</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>beepOnInsert</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>enableSupport</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>launchManager</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+</UI>
