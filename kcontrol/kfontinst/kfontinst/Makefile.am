@@ -46,10 +46,6 @@ EXTRA_DIST = \
 	FontPreview.h \
 	CompressedFile.h \
 	UiConfig.h \
-	hi32-app-kcmfontinst.png \
-	hi48-app-kcmfontinst.png \
-	lo16-app-kcmfontinst.png \
-	lo32-app-kcmfontinst.png \
 	kcmfontinst_star_office.png
 
 noinst_HEADERS = $(EXTRA_DIST)
