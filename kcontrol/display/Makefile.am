@@ -13,4 +13,4 @@ noinst_HEADERS = display.h
 xdg_apps_DATA = display.desktop
 
 messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmdisplay.pot
+	$(XGETTEXT) *.cpp -o $(podir)/display.pot
