@@ -209,12 +209,12 @@ void TopLevel::setupActions()
 
   // I need to add this so that each module can get a bug reported,
   // and not just KControl
-
-  report_bug=new KAction(i18n("&Report Bug..."),0,
-                         this, SLOT(reportBug()), actionCollection(),
-                         "help_report_bug");
-
   createGUI("kcontrolui.rc");
+
+  report_bug = actionCollection()->action("help_report_bug");
+  report_bug->setText(i18n("&Report Bug..."));
+  report_bug->disconnect();
+  connect(report_bug, SIGNAL(activated()), SLOT(reportBug()));
 
   // add menu with the modules
   ModuleMenu *menu = new ModuleMenu(_modules, this);
@@ -280,7 +280,6 @@ void TopLevel::newModule(const QString &name, const QString& docPath, const QStr
 
   if (!name.isEmpty())
     {
-      _active = 0;
       cap += " - [" + name +"]";
     }
 
@@ -369,29 +368,29 @@ void TopLevel::slotHelpRequest()
 
 void TopLevel::reportBug()
 {
-  // this assumes the user only opens one bug report at a time
-  static char buffer[30];
+    // this assumes the user only opens one bug report at a time
+    static char buffer[30];
 
-  dummyAbout = 0;
-  bool deleteit = false;
+    dummyAbout = 0;
+    bool deleteit = false;
 
-  if (!_active) // report against kcontrol
-    dummyAbout = const_cast<KAboutData*>(KGlobal::instance()->aboutData());
-  else
+    if (!_active) // report against kcontrol
+        dummyAbout = const_cast<KAboutData*>(KGlobal::instance()->aboutData());
+    else
     {
-      if (_active->aboutData())
-        dummyAbout = const_cast<KAboutData*>(_active->aboutData());
-      else
+        if (_active->aboutData())
+            dummyAbout = const_cast<KAboutData*>(_active->aboutData());
+        else
         {
-          sprintf(buffer, "kcm%s", _active->library().latin1());
-          dummyAbout = new KAboutData(buffer, _active->name().utf8(), "2.0");
-          deleteit = true;
+            sprintf(buffer, "kcm%s", _active->library().latin1());
+            dummyAbout = new KAboutData(buffer, _active->name().utf8(), "2.0");
+            deleteit = true;
         }
     }
-  KBugReport *br = new KBugReport(this, false, dummyAbout);
-  if (deleteit)
-    connect(br, SIGNAL(finished()), SLOT(deleteDummyAbout()));
-  else
-    dummyAbout = 0;
-  br->show();
+    KBugReport *br = new KBugReport(this, false, dummyAbout);
+    if (deleteit)
+        connect(br, SIGNAL(finished()), SLOT(deleteDummyAbout()));
+    else
+        dummyAbout = 0;
+    br->show();
 }
