@@ -10,7 +10,7 @@ KDE_CHECK_HEADER(X11/extensions/xf86misc.h,
         AC_DEFINE(HAVE_XF86MISC, 1, [Define if you have the xf86misc extension])
 	LIB_XF86MISC="-lXxf86misc"
         ],
-        [], [ -lXext -lX11 $X_PRE_LIBS ])
+        [], [ $X_PRE_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
     ],[],
     [
     #include <X11/Xlib.h>
@@ -22,7 +22,7 @@ if test -n "$LIB_XF86MISC"; then
 	[
         AC_DEFINE(HAVE_XF86MISCSETGRABKEYSSTATE, 1, [Define if you have XF86MiscSetGrabKeysState()])
         ],
-        [], [ -lXext -lX11 $X_PRE_LIBS ])
+        [], [ $X_PRE_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
 fi
 
 LDFLAGS="$xss_save_ldflags"
