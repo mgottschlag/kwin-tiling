@@ -824,7 +824,7 @@ Verify (const char *type, GConvFunc gconv)
 	    LC_RET0;
 	} else if (sp->sp_max != -1) {
 	    expir = sp->sp_lstchg + sp->sp_max;
-	    if (sp->sp_inacct != -1 && tim > expir + sp->sp_inacct) {
+	    if (sp->sp_inact != -1 && tim > expir + sp->sp_inact) {
 		PrepErrorGreet ();
 		GSendInt (V_APEXPIRED);
 		LC_RET0;
