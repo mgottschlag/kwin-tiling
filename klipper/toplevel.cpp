@@ -97,6 +97,8 @@ extern bool qt_qclipboard_bailout_hack;
 #error Check status of #80072 with Qt4.
 #endif
 
+static void ensureGlobalSyncOff(KConfig* config);
+
 // config == kapp->config for process, otherwise applet
 KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     : QWidget( parent )
@@ -108,10 +110,8 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 {
     qt_qclipboard_bailout_hack = true;
 
-// We don't use the clipboardsynchronizer anymore
-    KClipboardSynchronizer::setSynchronizing( false );
-    KClipboardSynchronizer::setReverseSynchronizing( false );
-    KIPC::sendMessageAll( KIPC::ClipboardConfigChanged, 0 );
+    // We don't use the clipboardsynchronizer anymore, and it confuses Klipper
+    ensureGlobalSyncOff(m_config);
 
     updateTimestamp(); // read initial X user time
     setBackgroundMode( X11ParentRelative );
@@ -1045,6 +1045,22 @@ void Klipper::quitProcess()
 {
     kapp->dcopClient()->detach();
     kapp->quit();
+}
+
+static void ensureGlobalSyncOff(KConfig* config) {
+    config->setGroup("General");
+    if ( config->readBoolEntry( "SynchronizeClipboardAndSelection" ) ) {
+        kdDebug() << "Shutting off global synchronization" << endl;
+        config->writeEntry("SynchronizeClipboardAndSelection",
+                           false,
+                           true,
+                           true );
+        config->sync();
+        KClipboardSynchronizer::setSynchronizing( false );
+        KClipboardSynchronizer::setReverseSynchronizing( false );
+        KIPC::sendMessageAll( KIPC::ClipboardConfigChanged, 0 );
+    }
+
 }
 
 #include "toplevel.moc"
