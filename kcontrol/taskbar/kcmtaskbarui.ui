@@ -50,8 +50,7 @@
                         <bool>true</bool>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Uncheck this option if you want the taskbar to only display the windows on the current desktop. By default, a
-ll existing windows are shown.</string>
+                        <string>Uncheck this option if you want the taskbar to only display the windows on the current desktop. By default, all existing windows are shown.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
