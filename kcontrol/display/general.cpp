@@ -29,12 +29,12 @@
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kthemebase.h>
-#include <kmessagebox.h>
 #include <kwm.h>
 #include <kdialog.h>
 #include <kipc.h>
 #include <kprocess.h>
 #include <kcmodule.h>
+#include <kiconloader.h>
 
 #include "general.h"
 
@@ -141,6 +141,7 @@ void KIconStyle::load()
 
     config->setGroup(QString::fromLatin1("KDE"));
     
+    // these two need to be reworked Real Soon
     QString s;
     s = config->readEntry(QString::fromLatin1("kpanelIconStyle"), normal);
     m_PanelStyle = 1;
@@ -154,14 +155,28 @@ void KIconStyle::load()
     if (s == small) m_KonqStyle = 2;
     konqGroup->setButton(m_KonqStyle);
 
-    s = config->readEntry(QString::fromLatin1("KDEIconStyle"), normal);
-    m_KDEStyle = 1;
-    if (s == large) m_KDEStyle = 0;
-    if (s == small) m_KDEStyle = 2;
-    kdeGroup->setButton(m_KDEStyle);
-
     bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), true);
     singleClick->setChecked(b);
+
+    // this is now handled in the new and improved way
+    config->setGroup(QString::fromLatin1("Toolbar style"));
+    KIconLoader::Size bar_size;
+    bar_size = config->readNumEntry(QString::fromLatin1("IconSize"),
+                                    KIconLoader::Medium);
+    switch(bar_size)
+    {
+    case KIconLoader::Small:
+      m_KDEStyle = 2;
+      break;
+    case KIconLoader::Large:
+      m_KDEStyle = 0;
+      break;
+    case KIconLoader::Medium:
+    default:
+      m_KDEStyle = 1;
+      break;
+    }
+    kdeGroup->setButton(m_KDEStyle);
 
     bChanged = false;
 }
@@ -211,25 +226,26 @@ void KIconStyle::save()
     }
     config->writeEntry(QString::fromLatin1("konqIconStyle"), entry, true, true);
 
-    switch (m_KDEStyle)
-    {
-    case 0:
-        entry = large;
-        break;
-    case 2:
-        entry = small;
-        break;
-    case 1:
-    default:
-        entry = normal;
-        break;
-    }
-    config->writeEntry(QString::fromLatin1("KDEIconStyle"), entry, true, true);
-
     config->writeEntry(QString::fromLatin1("SingleClick"), singleClick->isChecked(), true, true);
 
-    KMessageBox::information(0L, i18n("The icon style change will "
-	    "not all be applied until you restart KDE."));
+    // this is now handled in the new and improved way
+    config->setGroup(QString::fromLatin1("Toolbar style"));
+    KIconLoader::Size size;
+    switch(m_KDEStyle)
+    {
+    case 0:
+      size = KIconLoader::Large;
+      break;
+    case 2:
+      size = KIconLoader::Small;
+      break;
+    case 1:
+    default:
+      size = KIconLoader::Medium;
+      break;
+    }
+    config->writeEntry(QString::fromLatin1("IconSize"), size, true, true);
+
     bChanged = false;
 }
 
