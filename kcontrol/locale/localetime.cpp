@@ -174,7 +174,7 @@ void KLocaleConfigTime::reTranslate()
    "   (01-12).\n"
    "%l The hour (12-hour clock) as a decimal number (1-12).\n"
    "%M The minute as a decimal number (00-59).\n"
-   "%S The second as a decimal number (00-61).\n"
+   "%S The second as a decimal number (00-59).\n"
    "%p Either AM or PM according to the given time\n"
    "   value. Noon is treated as Pm and midnight as Am."));
 
