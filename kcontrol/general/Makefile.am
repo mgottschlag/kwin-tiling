@@ -4,21 +4,21 @@ INCLUDES = $(all_includes)
 
 SUBDIRS = .
 
-kde_module_LTLIBRARIES = libkcm_general.la
+kde_module_LTLIBRARIES = libkcm_widgetsettings.la
 
-libkcm_general_la_SOURCES = main.cpp widgetsettings.ui
-libkcm_general_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_general_la_LIBADD = $(LIB_KFILE) 
-libkcm_general_la_METASOURCES = AUTO
+libkcm_widgetsettings_la_SOURCES = main.cpp widgetsettings.ui
+libkcm_widgetsettings_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
+libkcm_widgetsettings_la_LIBADD = $(LIB_KFILE) 
+libkcm_widgetsettings_la_METASOURCES = AUTO
 
 noinst_HEADERS = widgetsettings.h
 
 messages:
-	$(XGETTEXT) -kni18n $(libkcm_general_la_SOURCES) -o $(podir)/kcmgeneral.pot
+	$(XGETTEXT) -kni18n $(libkcm_widgetsettings_la_SOURCES) -o $(podir)/kcmwidgetsettings.pot
 
-general_DATA = widgetsettings.desktop
-generaldir = $(kde_appsdir)/Settings/LookNFeel
+widgetsettings_DATA = widgetsettings.desktop
+widgetsettingsdir = $(kde_appsdir)/Settings/LookNFeel
 
 install-data-local:
 
-EXTRA_DIST = $(general_DATA)
+EXTRA_DIST = $(widgetsettings_DATA)
