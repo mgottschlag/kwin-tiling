@@ -510,16 +510,16 @@ wrconf (FILE *f)
 
 #ifndef DEF_USER_PATH
 #  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
-#    define DEF_USER_PATH "/bin:/usr/bin:" XBINDIR ":/usr/local/bin"
+#    define DEF_USER_PATH "/usr/local/bin:/usr/bin:/bin:" XBINDIR ":/usr/games"
 #  else
-#    define DEF_USER_PATH "/bin:/usr/bin:" XBINDIR ":/usr/local/bin:/usr/ucb"
+#    define DEF_USER_PATH "/usr/local/bin:/usr/bin:/bin:" XBINDIR ":/usr/games:/usr/ucb"
 #  endif
 #endif
 #ifndef DEF_SYSTEM_PATH
 #  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
-#    define DEF_SYSTEM_PATH "/sbin:/usr/sbin:/bin:/usr/bin:" XBINDIR ":/usr/local/bin"
+#    define DEF_SYSTEM_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:" XBINDIR
 #  else
-#    define DEF_SYSTEM_PATH "/sbin:/usr/sbin:/bin:/usr/bin:" XBINDIR ":/usr/local/bin:/etc:/usr/ucb"
+#    define DEF_SYSTEM_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:" XBINDIR ":/etc:/usr/ucb"
 #  endif
 #endif
 
