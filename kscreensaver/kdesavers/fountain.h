@@ -77,6 +77,7 @@ private:
 	float	index;
 	float	transIndex;
 	GLfloat scale;
+	GLUquadricObj *obj;
 };
 
 class KFountainSaver : public KScreenSaver

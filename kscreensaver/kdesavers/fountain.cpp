@@ -164,11 +164,14 @@ Fountain::Fountain( QWidget * parent, const char * name) : QGLWidget (parent,nam
 	slowdown=2.0f;
 	zoom=-40.0f;
 	index=0;
+	obj = gluNewQuadric();
+
 }
 
 Fountain::~Fountain()
 {
-
+	glDeleteTextures( 1, &texture[0] );
+	gluDeleteQuadric(obj);
 }
 
 /** load the particle file */
@@ -225,17 +228,32 @@ void Fountain::initializeGL ()
 
 	if (loadParticle())						// Jump To Texture Loading Routine
 	{
-		kdDebug() << "InitGL" << endl;
-		glShadeModel(GL_SMOOTH);					// Enable Smooth Shading
-		qglClearColor(black);				// Black Background
-		glClearDepth(1.0f);						// Depth Buffer Setup
-		glDisable(GL_DEPTH_TEST);					// Disable Depth Testing
-		glEnable(GL_BLEND);						// Enable Blending
-		glBlendFunc(GL_SRC_ALPHA,GL_ONE);				// Type Of Blending To Perform
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);		// Really Nice Perspective Calculations
-		glHint(GL_POINT_SMOOTH_HINT,GL_NICEST);				// Really Nice Point Smoothing
-		glEnable(GL_TEXTURE_2D);					// Enable Texture Mapping
-		glBindTexture(GL_TEXTURE_2D,texture[0]);			// Select Our Texture
+    /* Enable smooth shading */
+    glShadeModel( GL_SMOOTH );
+
+    /* Set the background black */
+    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+
+    /* Depth buffer setup */
+    glClearDepth( 1.0f );
+
+    /* Enables Depth Testing */
+    glDisable( GL_DEPTH_TEST );
+
+    /* Enable Blending */
+    glEnable( GL_BLEND );
+    /* Type Of Blending To Perform */
+    glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+
+    /* Really Nice Perspective Calculations */
+    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+    /* Really Nice Point Smoothing */
+    glHint( GL_POINT_SMOOTH_HINT, GL_NICEST );
+
+    /* Enable Texture Mapping */
+    glEnable( GL_TEXTURE_2D );
+    /* Select Our Texture */
+    glBindTexture( GL_TEXTURE_2D, texture[0] );
 
 		for (loop=0;loop<MAX_PARTICLES;loop++)				// Initials All The Textures
 		{
@@ -285,7 +303,7 @@ void Fountain::paintGL ()
 	{{1.0f,0.5f,0.5f},{1.0f,0.75f,0.5f},{1.0f,1.0f,0.5f},{0.75f,1.0f,0.5f},
 	{0.5f,1.0f,0.5f},{0.5f,1.0f,0.75f},{0.5f,1.0f,1.0f},{0.5f,0.75f,1.0f},
 	{0.5f,0.5f,1.0f},{0.75f,0.5f,1.0f},{1.0f,0.5f,1.0f},{1.0f,0.5f,0.75f}};
-
+	col = ( ++col ) % 12;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		// Clear Screen And Depth Buffer
 
 	glLoadIdentity();
@@ -302,19 +320,36 @@ void Fountain::paintGL ()
 			float y=particle[loop].y;			// Grab Our Particle Y Position
 			float z=particle[loop].z+zoom;			// Particle Z Pos + Zoom
 
-			// Draw The Particle Using Our RGB Values, Fade The Particle Based On It's Life
-			glColor4f(particle[loop].r,particle[loop].g,particle[loop].b,particle[loop].life);
-			glBegin(GL_TRIANGLE_STRIP);				// Build Quad From A Triangle Strip
-
-				glTexCoord2d(1,1);
-				glVertex3f(x+0.5f,y+0.5f,z);	// Top Right
-				glTexCoord2d(0,1);
-				glVertex3f(x-0.5f,y+0.5f,z); // Top Left
-				glTexCoord2d(1,0);
-				glVertex3f(x+0.5f,y-0.5f,z); // Bottom Right
-				glTexCoord2d(0,0);
-				glVertex3f(x-0.5f,y-0.5f,z); // Bottom Left
-			glEnd();						// Done Building Triangle Strip
+			/* Draw The Particle Using Our RGB Values,
+			* Fade The Particle Based On It's Life
+			*/
+			glColor4f( particle[loop].r,
+				particle[loop].g,
+				particle[loop].b,
+				particle[loop].life );
+			/* Build Quad From A Triangle Strip */
+			glBegin( GL_TRIANGLE_FAN );
+				/* Top Right */
+				glTexCoord2d( 1, 1 );
+				glVertex3f( x + 0.25f, y + 0.25f, z );
+				glVertex3f( x + 0.5f, y + 0.5f, z );
+				glVertex3f( x + 0.25f, y + 0.25f, z );
+				/* Top Left */
+				glTexCoord2d( 0, 1 );
+				glVertex3f( x - 0.25f, y + 0.25f, z );
+				glVertex3f( x - 0.5f, y + 0.5f, z );
+				glVertex3f( x - 0.25f, y + 0.25f, z );
+				/* Bottom Right */
+				glTexCoord2d( 1, 0 );
+				glVertex3f( x + 0.25f, y - 0.25f, z );
+				glVertex3f( x + 0.5f, y - 0.5f, z );
+				glVertex3f( x + 0.25f, y - 0.25f, z );
+				/* Bottom Left */
+				glTexCoord2d( 0, 0 );
+				glVertex3f( x - 0.25f, y - 0.25f, z );
+				glVertex3f( x - 0.5f, y - 0.5f, z );
+				glVertex3f( x - 0.25f, y - 0.25f, z );
+			glEnd( );
 
 			particle[loop].x+=particle[loop].xi/(slowdown*1000);// Move On The X Axis By X Speed
 			particle[loop].y+=particle[loop].yi/(slowdown*1000);// Move On The Y Axis By Y Speed
