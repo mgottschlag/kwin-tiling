@@ -9,7 +9,7 @@ libkcm_kdm_la_SOURCES = ktagcombobox.cpp \
 libkcm_kdm_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_kdm_la_LIBADD = -lkdeui -lkio -lkfile $(top_builddir)/kcontrol/display/libbgnd.la
 
-INCLUDES= $(all_includes) -I$(top_srcdir)/kcontrol/display -I$(top_srcdir)/kdesktop
+INCLUDES= $(all_includes) -I$(top_srcdir)/kcontrol/background -I$(top_srcdir)/kdesktop
 
 libkcm_kdm_la_METASOURCES = AUTO
 
