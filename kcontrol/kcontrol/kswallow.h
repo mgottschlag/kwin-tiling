@@ -25,6 +25,8 @@
 
 
 #include <X11/X.h>
+#include <X11/Xutil.h>
+
 #include <qwidget.h>
 #include <qstring.h>
 #include <qxembed.h>

@@ -55,6 +55,16 @@ void KSwallowWidget::swallowWindow(Window w)
 
   orig = QSize(width,height);
 
+  // Define minimum size for the widged 
+  // from the hints provided by window 
+  XSizeHints hints;
+  long flags;
+  if(XGetWMNormalHints(qt_xdisplay(), w, &hints, &flags) != 0 &&
+     (flags & PMinSize) != 0) {
+    setMinimumSize(hints.min_width, hints.min_height);
+    parentWidget()->setMinimumSize(hints.min_width, hints.min_height); 
+  }
+  
   QXEmbed::embed( w );
   show();
 }

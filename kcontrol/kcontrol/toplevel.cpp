@@ -58,19 +58,18 @@ TopLevel::TopLevel (ConfigList *cl)
   treelist->addColumn("");
   treelist->header()->hide();
   configList->fillTreeList(treelist);
-  treelist->setMinimumWidth(200);
+  treelist->setMinimumSize(200, 400);
   splitter->setResizeMode(treelist,QSplitter::KeepSize);
 
   mwidget = new mainWidget(splitter);
+  mwidget->setMinimumSize(450, 400);
+
   connect(mwidget, SIGNAL(resized()), this, SLOT(doResize()));
 
   connect(treelist, SIGNAL(selectionChanged(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
   connect(treelist, SIGNAL(returnPressed(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
 
   setView(splitter);
-  setMinimumSize(450,200);
-
-  resize(700,600);
 
   show();
   resizeEvent(NULL);

@@ -255,6 +255,8 @@ bool KModuleListEntry::execute(QWidget *parent)
 
         swallowWidget->resize(swallowParent->width(), swallowParent->height());
 
+	swallowParent->setMinimumSize(swallowWidget->minimumSize());
+
 	swallowWidget->raise();
 	swallowWidget->show();
 
