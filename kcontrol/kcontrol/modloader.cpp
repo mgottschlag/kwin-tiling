@@ -58,12 +58,12 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
 
       // try to load the library
       QString libname("libkcm_%1");
-     
+
      // attempt to load KDE3 modules (new loader)
-     
-	  KCModule *module = KParts::ComponentFactory::createInstanceFromLibrary<KCModule>(QFile::encodeName(libname.arg(mod.library())));
-     if (module)
-		return module;
+
+      KCModule *module = KParts::ComponentFactory::createInstanceFromLibrary<KCModule>(QFile::encodeName(libname.arg(mod.library())));
+      if (module)
+          return module;
 
      // else do a fallback
      kdDebug() << "Unable to load module using ComponentFactory! Falling back to old loader." << endl;
@@ -81,7 +81,7 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
 	      // create the module
 	      KCModule* (*func)(QWidget *, const char *);
 	      func = (KCModule* (*)(QWidget *, const char *)) create;
-	      return  func(0,"");
+	      return  func(0, 0);
 	    }
 	}
     }
@@ -98,8 +98,8 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
 
 
   if(withfallback)
-      kapp->startServiceByDesktopPath(mod.fileName(), QString::null); 
-  return 0; 
+      kapp->startServiceByDesktopPath(mod.fileName(), QString::null);
+  return 0;
 }
 
 void ModuleLoader::unloadModule(const ModuleInfo &mod)
