@@ -200,3 +200,9 @@ ProgramConfig::ProgramConfig()
 {
 	connect(Programs::events, SIGNAL(selectionChanged(QListViewItem*)), SLOT(selected(QListViewItem*)));
 }
+
+static Programs::localVersion(const QString &path)
+{
+
+}
+

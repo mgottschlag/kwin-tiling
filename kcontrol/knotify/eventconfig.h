@@ -20,6 +20,16 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.8  2000/04/13 01:55:36  charles
+    Milestone 6.  All that's left now is being able to save.  That's also
+    the most important part :)
+
+    Question: if you open a full path in KConfig:
+    	/opt/kde2/share/config/bleh   (I look for this file with KStdDir)
+
+    How do I get this file's local version (~/.kde/share/config/bleh) that is,
+    and safely.
+
     Revision 1.7  2000/04/10 04:56:07  charles
     Thought I'de commit before I break out for the day^H^H^Hnight.
 
@@ -167,6 +177,12 @@ public:
 	 * To the GUI!!!!
 	 **/
 	void show();
+	
+	/**
+	 * Turns $KDEDIR/share/apps/appname/bleh into
+	 * $KDEHOME/share/apps/appname/bleh
+	 */
+	static localVersion(const QString &path);
 
 public slots:
 	/**
