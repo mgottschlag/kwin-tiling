@@ -29,8 +29,10 @@
 #include <config.h>
 #endif
 
+#ifndef QT_CLEAN_NAMESPACE
 #define QT_CLEAN_NAMESPACE /* to avoid INT32 conflict between <qglobal.h>
                               and <X/Xmd.h>. */ 
+#endif
 
 /* xdm stuff, should always defined */
 #define UNIXCONN          
