@@ -1066,12 +1066,12 @@ void KCMStyle::addWhatsThis()
 							"For best performance, it is advisable to disable all effects.") );
 	QWhatsThis::add( cbEnableEffects, i18n( "If you check this box, you can select several effects "
 							"for different widgets like combo boxes, menus or tooltips.") );
-	QWhatsThis::add( comboComboEffect, i18n( "<p><b>Disable: </b>don't use any combo box effects.</p>\n"
+	QWhatsThis::add( comboComboEffect, i18n( "<p><b>Disable: </b>do not use any combo box effects.</p>\n"
 							"<b>Animate: </b>Do some animation.") );
-	QWhatsThis::add( comboTooltipEffect, i18n( "<p><b>Disable: </b>don't use any tooltip effects.</p>\n"
+	QWhatsThis::add( comboTooltipEffect, i18n( "<p><b>Disable: </b>do not use any tooltip effects.</p>\n"
 							"<p><b>Animate: </b>Do some animation.</p>\n"
 							"<b>Fade: </b>Fade in tooltips using alpha-blending.") );
-	QWhatsThis::add( comboMenuEffect, i18n( "<p><b>Disable: </b>don't use any menu effects.</p>\n"
+	QWhatsThis::add( comboMenuEffect, i18n( "<p><b>Disable: </b>do not use any menu effects.</p>\n"
 							"<p><b>Animate: </b>Do some animation.</p>\n"
 							"<p><b>Fade: </b>Fade in menus using alpha-blending.</p>\n"
 							"<b>Make Translucent: </b>Alpha-blend menus for a see-through effect. (KDE styles only)") );
