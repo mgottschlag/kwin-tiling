@@ -9,6 +9,9 @@ libkurifilter_la_LIBADD = -lkio
 
 METASOURCES = AUTO
 
+servicetypedir = $(kde_servicetypesdir)
+servicetype_DATA = kurifilterplugin.desktop
+
 check_PROGRAMS = test
 test_SOURCES = test.cpp
 test_LDFLAGS  = $(all_libraries) -module -avoid-version
