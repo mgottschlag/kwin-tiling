@@ -40,16 +40,12 @@ rccontrol_DATA = kcontrolui.rc
 rcinfodir = $(kde_datadir)/kinfocenter
 rcinfo_DATA = kinfocenterui.rc
 
-xdg_apps_DATA = KControl.desktop
+xdg_apps_DATA = KControl.desktop kinfocenter.desktop
 
-install-data-local: KControl_NoDisplay.desktop
-	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)
-	$(INSTALL_DATA) $(srcdir)/KControl_NoDisplay.desktop $(DESTDIR)$(kde_appsdir)/KControl.desktop
+install-data-local:
 	@-rm -f $(DESTDIR)$(kde_bindir)/kinfocenter
 	$(mkinstalldirs) $(DESTDIR)$(kde_bindir)
 	@$(LN_S) kcontrol $(DESTDIR)$(kde_bindir)/kinfocenter
-	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/System
-	$(INSTALL_DATA) $(srcdir)/kinfocenter.desktop $(DESTDIR)$(kde_appsdir)/System/
 
 KDE_ICON=AUTO
 
