@@ -86,7 +86,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(KInstance *instance, QWidget *p
     // Deals with Internet keywords feature...
     gb_keywords = new QGroupBox( this );
     QVBoxLayout *i_vbox = new QVBoxLayout( gb_keywords, KDialog::marginHint(), KDialog::spacingHint() );
-    cb_enableInternetKeywords = new QCheckBox(i18n("Enable int&ernet keywords"), gb_keywords);
+    cb_enableInternetKeywords = new QCheckBox(i18n("Enable Int&ernet keywords"), gb_keywords);
     connect(cb_enableInternetKeywords, SIGNAL(clicked()), this, SLOT(changeInternetKeywordsEnabled()));
     QWhatsThis::add(cb_enableInternetKeywords, i18n("If this box is checked, KDE will let you use <em>Internet Keywords</em> "
                                                     "in its browser's address bar. This means you can simply type normal "
