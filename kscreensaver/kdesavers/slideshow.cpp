@@ -523,9 +523,9 @@ int kSlideShowSaver::effectChessboard(bool aInit)
 
   for (y=0; y<mw; y+=(mdy<<1))
   {
-    bitBlt(this, mix, y+miy, &mNextScreen, mix, y+miy, 
+    bitBlt(this, mix, y+miy, &mNextScreen, mix, y+miy,
 	   mdx, mdy, CopyROP, true);
-    bitBlt(this, mx, y+my, &mNextScreen, mx, y+my, 
+    bitBlt(this, mx, y+my, &mNextScreen, mx, y+my,
 	   mdx, mdy, CopyROP, true);
   }
 
@@ -892,7 +892,7 @@ kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   mDelay->setTracking(false);
   mDelay->setTickmarks(QSlider::Right);
   mDelay->setTickInterval(10);
-  connect(mDelay, SIGNAL(valueChanged(int)), SLOT(slotDelay(int)));
+  connect(mDelay, SIGNAL(sliderMoved (int)), SLOT(slotDelay(int)));
   tl11->addWidget(mDelay);
   tl11->addSpacing(5);
 
@@ -914,12 +914,12 @@ kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   tl->addWidget(mCboDir);
   //  tl->addSpacing(5);
 
-  KButtonBox *bbox = new KButtonBox(this);	
+  KButtonBox *bbox = new KButtonBox(this);
   button = bbox->addButton(i18n("About"));
   connect(button, SIGNAL(clicked()), SLOT(slotAbout()));
   bbox->addStretch(1);
 
-  button = bbox->addButton(i18n("OK"));	
+  button = bbox->addButton(i18n("OK"));
   connect(button, SIGNAL(clicked()), SLOT(slotOkPressed()));
 
   button = bbox->addButton(i18n("Cancel"));
