@@ -126,7 +126,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   durationSlider = new KIntNumInput(grp);
   durationSlider->setRange(100, 2000, 100);
   durationSlider->setLabel(i18n("&Duration:"));
-  durationSlider->setSuffix(i18n("ms"));
+  durationSlider->setSuffix(i18n(" msec"));
   hbox->addWidget(durationSlider);
   QWhatsThis::add( durationSlider, i18n("Here you can customize the duration of the \"visible bell\" effect being shown.") );
 
@@ -179,7 +179,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   hbox = new QHBoxLayout(vvbox, 6);
   hbox->addSpacing(24);
   slowKeysDelay = new KIntNumInput(grp);
-  slowKeysDelay->setSuffix(i18n("ms"));
+  slowKeysDelay->setSuffix(i18n(" msec"));
   slowKeysDelay->setRange(100, 2000, 100);
   slowKeysDelay->setLabel(i18n("Delay:"));
   hbox->addWidget(slowKeysDelay);
@@ -197,7 +197,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   hbox = new QHBoxLayout(vvbox, 6);
   hbox->addSpacing(24);
   bounceKeysDelay = new KIntNumInput(grp);
-  bounceKeysDelay->setSuffix(i18n("ms"));
+  bounceKeysDelay->setSuffix(i18n(" msec"));
   bounceKeysDelay->setRange(100, 2000, 100);
   bounceKeysDelay->setLabel(i18n("Delay:"));
   hbox->addWidget(bounceKeysDelay);
@@ -240,7 +240,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   hbox->addSpacing(24);
   mk_delay = new KIntNumInput(grp);
   mk_delay->setLabel(i18n("&Acceleration delay:"), AlignVCenter);
-  mk_delay->setSuffix(i18n("ms"));
+  mk_delay->setSuffix(i18n(" msec"));
   mk_delay->setRange(1, 1000, 50);
   hbox->addWidget(mk_delay);
 
@@ -248,7 +248,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   hbox->addSpacing(24);
   mk_interval = new KIntNumInput(mk_delay, 0, grp);
   mk_interval->setLabel(i18n("&Repeat interval:"), AlignVCenter);
-  mk_interval->setSuffix(i18n("ms"));
+  mk_interval->setSuffix(i18n(" msec"));
   mk_interval->setRange(1, 1000, 10);
   hbox->addWidget(mk_interval);
 
