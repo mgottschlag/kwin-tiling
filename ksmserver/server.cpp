@@ -977,9 +977,6 @@ void KSMServer::shutdown( bool bFast )
         return;
     dialogActive = true;
 
-    KSMShutdownFeedback::start(); // make the screen gray
-    connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ), SLOT( cancelShutdown() ) );
-
     // don't use KGlobal::config here! config may have changed!
     KConfig *cfg = new KConfig("ksmserverrc", false, false);
     cfg->setGroup("General" );
@@ -987,6 +984,12 @@ void KSMServer::shutdown( bool bFast )
 	cfg->readBoolEntry( "saveSession", FALSE );
     bool confirmLogout = cfg->readBoolEntry( "confirmLogout", TRUE );
     delete cfg;
+ 
+    if ( confirmLogout ) {
+        KSMShutdownFeedback::start(); // make the screen gray
+        connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ), SLOT( cancelShutdown() ) );
+    }
+
     if ( bFast || !confirmLogout || KSMShutdownDlg::confirmShutdown( saveSession ) ) {
 	// Set the real desktop background to black so that exit looks
 	// clean regardless of what was on "our" desktop.
