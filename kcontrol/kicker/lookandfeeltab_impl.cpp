@@ -110,7 +110,7 @@ int LookAndFeelTab::findComboEntry(QComboBox* combo, const QString& searchFor)
         break;
       }
     }
-    
+
     return index;
 }
 
@@ -132,7 +132,7 @@ void LookAndFeelTab::load()
   m_backgroundInput->setEnabled(use_theme);
   m_backgroundLabel->setEnabled(use_theme);
 
-  if (theme.length() > 0) 
+  if (theme.length() > 0)
   {
     QString themepath;
     if (theme[0] == '/')
@@ -140,7 +140,7 @@ void LookAndFeelTab::load()
     else
         themepath = locate("data", "kicker/"+theme);
     QImage tmpImg(themepath);
-    if(!tmpImg.isNull()) 
+    if(!tmpImg.isNull())
     {
         tmpImg = tmpImg.smoothScale(m_backgroundLabel->contentsRect().width(),
                                     m_backgroundLabel->contentsRect().height());
@@ -163,6 +163,7 @@ void LookAndFeelTab::load()
   }
 
   m_showToolTips->setChecked( c.readBoolEntry( "ShowToolTips", true ) );
+  m_fadeOutAppletHandles=c.readBoolEntry( "FadeOutAppletHandles", false);
 
   c.setGroup("buttons");
 
@@ -195,7 +196,7 @@ void LookAndFeelTab::load()
     {
       m_desktopTile->setCurrentItem(0);
     }
-  
+
     if (c.readBoolEntry("EnableURLTiles", false))
     {
       tile = c.readEntry("URLTile", "solid_gray");
@@ -205,7 +206,7 @@ void LookAndFeelTab::load()
     {
       m_urlTile->setCurrentItem(0);
     }
-    
+
     if (c.readBoolEntry("EnableBrowserTiles", false))
     {
       tile = c.readEntry("BrowserTile", "solid_green");
@@ -215,7 +216,7 @@ void LookAndFeelTab::load()
     {
       m_browserTile->setCurrentItem(0);
     }
-    
+
     if (c.readBoolEntry("EnableExeTiles", false))
     {
       tile = c.readEntry("ExeTile", "solid_red");
@@ -225,7 +226,7 @@ void LookAndFeelTab::load()
     {
       m_exeTile->setCurrentItem(0);
     }
-    
+
     if (c.readBoolEntry("EnableWindowListTiles", false))
     {
       tile = c.readEntry("WindowListTile", "solid_green");
@@ -260,8 +261,8 @@ void LookAndFeelTab::save()
   c.writeEntry("UseBackgroundTheme", m_backgroundImage->isChecked());
   c.writeEntry("BackgroundTheme", theme);
   c.writeEntry( "ShowToolTips", m_showToolTips->isChecked() );
+  c.writeEntry( "FadeOutAppletHandles", m_fadeOutAppletHandles );
 
- 
   c.setGroup("button_tiles");
   bool enableTiles = false;
   int tile = m_kmenuTile->currentItem();

@@ -46,13 +46,15 @@ class LookAndFeelTab : public LookAndFeelTabBase
  protected:
   void fillTileCombos();
   int findComboEntry(QComboBox* combo, const QString& searchFor);
- 
+
  protected slots:
   void browse_theme(const QString&);
 
  private:
   QString theme;
   QPixmap theme_preview;
+  
+  bool    m_fadeOutAppletHandles;
 };
 
 #endif
