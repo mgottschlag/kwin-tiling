@@ -63,7 +63,7 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
 
     m_appCombo = new KComboBox( false, this, "app combo" );
 
-    m_notifyWidget = new KNotifyWidget( this, "knotify widget" );
+    m_notifyWidget = new KNotifyWidget( this, "knotify widget", true );
     connect( m_notifyWidget, SIGNAL( changed( bool )), SIGNAL( changed(bool)));
 
     layout->addWidget( m_appCombo );
@@ -90,8 +90,8 @@ KCMKNotify::~KCMKNotify()
 Application * KCMKNotify::applicationByDescription( const QString& text )
 {
     // not really efficient, but this is not really time-critical
-    ApplicationList apps = m_notifyWidget->apps();
-    ApplicationListIterator it ( apps );
+    ApplicationList& allApps = m_notifyWidget->allApps();
+    ApplicationListIterator it ( allApps );
     for ( ; it.current(); ++it )
     {
         if ( it.current()->text() == text )
@@ -105,7 +105,10 @@ void KCMKNotify::slotAppActivated( const QString& text )
 {
     Application *app = applicationByDescription( text );
     if ( app )
-        m_notifyWidget->setCurrentApplication( app );
+    {
+        m_notifyWidget->clearVisible();
+        m_notifyWidget->addVisibleApp( app );
+    }
 }
 
 void KCMKNotify::slotPlayerSettings()
@@ -132,19 +135,19 @@ void KCMKNotify::load()
     m_appCombo->clear();
     m_notifyWidget->clear();
 
-    m_fullpaths =
+    QStringList fullpaths =
         KGlobal::dirs()->findAllResources("data", "*/eventsrc", false, true );
 
-    QStringList::ConstIterator it = m_fullpaths.begin();
-    for ( ; it != m_fullpaths.end(); ++it) {
+    
+    QStringList::ConstIterator it = fullpaths.begin();
+    for ( ; it != fullpaths.end(); ++it) 
         m_notifyWidget->addApplicationEvents( *it );
-    }
 
-    ApplicationList apps = m_notifyWidget->apps();
-    apps.sort();
-    m_notifyWidget->setEnabled( !apps.isEmpty() );
+    ApplicationList& allApps = m_notifyWidget->allApps();
+    allApps.sort();
+    m_notifyWidget->setEnabled( !allApps.isEmpty() );
 
-    ApplicationListIterator appIt( apps );
+    ApplicationListIterator appIt( allApps );
     for ( ; appIt.current(); ++appIt )
         m_appCombo->insertItem( appIt.current()->text() );
 
@@ -155,6 +158,7 @@ void KCMKNotify::load()
     if ( !appDesc.isEmpty() )
         m_appCombo->setCurrentItem( appDesc );
 
+     // sets the applicationEvents for KNotifyWidget
     slotAppActivated( m_appCombo->currentText() );
 
 

@@ -41,8 +41,8 @@ class PlayerSettingsDialog;
 
 namespace KNotify
 {
-    class KNotifyWidget;
     class Application;
+    class KNotifyWidget;
 };
 
 class KCMKNotify : public KCModule
@@ -67,9 +67,6 @@ private slots:
 
 private:
     KNotify::Application *applicationByDescription( const QString& text );
-
-    // the paths to all application's eventsrcs
-    QStringList m_fullpaths;
 
     KComboBox *m_appCombo;
     KNotify::KNotifyWidget *m_notifyWidget;
