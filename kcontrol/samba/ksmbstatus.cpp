@@ -7,7 +7,6 @@
 #include <qfont.h>
 #include <kmenubar.h>
 #include <ktopwidget.h>
-#include <kpanner.h>
 #include <time.h>
 #include <kprocess.h>
 
