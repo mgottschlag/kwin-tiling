@@ -1,6 +1,8 @@
 /*****************************************************************
 ksmserver - the KDE session management server
 
+$Id$
+
 Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 ******************************************************************/
 
@@ -228,7 +230,7 @@ KSMRadioButton::KSMRadioButton (const QString &text, QWidget *parent, const char
 	: QRadioButton(text, parent, name)
 {}
 
-void KSMRadioButton::mouseDoubleClickEvent (QMouseEvent *pe)
+void KSMRadioButton::mouseDoubleClickEvent (QMouseEvent * /*pe*/)
 {
 	emit doubleClicked();
 }
