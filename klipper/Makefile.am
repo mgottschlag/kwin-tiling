@@ -2,7 +2,7 @@ INCLUDES= $(all_includes)
 
 bin_PROGRAMS = klipper
 lib_LTLIBRARIES = klipper.la
-kde_module_LTLIBRARIES = libklipperapplet.la
+kde_module_LTLIBRARIES = klipper_panelapplet.la
 
 CLEANFILES = dummy.cpp
 
@@ -16,9 +16,9 @@ klipper_LDADD = klipper.la $(LIB_KSYCOCA)
 klipper_SOURCES = dummy.cpp
 klipper_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
-libklipperapplet_la_LIBADD = klipper.la
-libklipperapplet_la_SOURCES = applet.cpp
-libklipperapplet_la_LDFLAGS = $(all_libraries) -module -avoid-version
+klipper_panelapplet_la_LIBADD = klipper.la
+klipper_panelapplet_la_SOURCES = applet.cpp
+klipper_panelapplet_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 
 appsdir = $(kde_appsdir)/Utilities
