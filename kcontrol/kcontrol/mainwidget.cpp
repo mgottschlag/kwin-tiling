@@ -4,12 +4,14 @@
    Date:   September '97         */
 
 
-#include <kiconloader.h>
+#include <stdio.h>
+
 #include <kcharsets.h>
+#include <klocale.h>
+#include <kiconloader.h>
 
 #include "mainwidget.moc"
 #include "mainwidget.h"
-#include <klocale.h>
 
 
 mainWidget::mainWidget(QWidget *parent , const char *name)
@@ -42,56 +44,42 @@ void mainWidget::paintEvent(QPaintEvent *)
 
   // center the pixmap horizontally
   p.drawPixmap( (width() - pmap.width())/2, 250, pmap);
-  str = i18n("KDE Version: ");
   p.setFont(boldFont);
-  p.drawText(60,70,str);
-  str.sprintf("%s",KDE_VERSION_STRING);
+  p.drawText(60,70, i18n("KDE Version: "));
   p.setFont(normalFont);
-  p.drawText(180,70,str);
+  p.drawText(180,70, KDE_VERSION_STRING);
 
   p.setFont(boldFont);
-  str= i18n("User: ");
-  p.drawText(60,90,str);
-  str.sprintf("%s",cuserid(NULL));
+  p.drawText(60,90, i18n("User: "));
   p.setFont(normalFont);
-  p.drawText(180,90,str);
+  str = cuserid(NULL);
+  p.drawText(180,90, str);
 
-  str = i18n("Hostname: ");
   p.setFont(boldFont);
-  p.drawText(60,110,str);
+  p.drawText(60,110, i18n("Hostname: "));
   gethostname(buf,511);
-  str.sprintf("%s",buf);
   p.setFont(normalFont);
-  p.drawText(180,110,str);
+  p.drawText(180,110, buf);
 
-  str = i18n("System: ");
   p.setFont(boldFont);
-  p.drawText(60,130,str);
-  str.sprintf("%s",info.sysname);
+  p.drawText(60,130, i18n("System: "));
   p.setFont(normalFont);
-  p.drawText(180,130,str);
+  p.drawText(180,130, info.sysname);
    
-  str = i18n("Release: ");
   p.setFont(boldFont);
-  p.drawText(60,150,str);
-  str.sprintf("%s",info.release);
+  p.drawText(60,150, i18n("Release: "));
   p.setFont(normalFont);
-  p.drawText(180,150,str);
+  p.drawText(180,150, info.release);
 
-
-  str = i18n("Version: ");
   p.setFont(boldFont);
-  p.drawText(60,170,str);
-  str.sprintf("%s",info.version);
+  p.drawText(60,170, i18n("Version: "));
   p.setFont(normalFont);
-  p.drawText(180,170,str);
+  p.drawText(180,170, info.version);
 
-  str = i18n("Machine: ");
   p.setFont(boldFont);
-  p.drawText(60,190,str);
-  str.sprintf("%s",info.machine);
+  p.drawText(60,190, i18n("Machine: "));
   p.setFont(normalFont);
-  p.drawText(180,190,str);
+  p.drawText(180,190, info.machine);
 
   p.end();
 

@@ -317,7 +317,7 @@ void KDMBackgroundWidget::slotBrowse()
 
 	QDir dir( path );
 	if ( !dir.exists() )
-		path = NULL;
+		path = QString::null;
 
 	QString filename = KFileDialog::getOpenFileName( path );
 	slotWallpaper( filename );
