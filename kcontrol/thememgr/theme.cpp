@@ -34,7 +34,6 @@
 #include <qtextstream.h>
 #include <qfileinfo.h>
 #include <kapp.h>
-#include <qdir.h>
 #include <qpixmap.h>
 #include <qbitmap.h>
 #include <qpainter.h>
@@ -43,7 +42,6 @@
 #include <qregexp.h>
 #include <dcopclient.h>
 
-#include <kapp.h>
 #include <kconfigbackend.h>
 #include <kmessagebox.h>
 #include <klocale.h>

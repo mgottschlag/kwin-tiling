@@ -29,7 +29,6 @@
 #include <qfileinfo.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qpixmap.h>
 #include <qimage.h>
 
 #include <kconfig.h>

@@ -5,7 +5,6 @@
 #include <qframe.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qframe.h>
 #include <qfont.h>
 
 #include <kapp.h>

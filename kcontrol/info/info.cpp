@@ -331,7 +331,6 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 ***************************************************************************
 */
 
-#include <qlayout.h>
 #include <qcollection.h>
 #include <qwidget.h>
 #include <qwidgetlist.h>

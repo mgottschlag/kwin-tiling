@@ -36,7 +36,6 @@
 #include <kconfig.h>
 #include <knuminput.h>
 #include <kdialog.h>
-#include <kapp.h>
 #include <dcopclient.h>
 #include <qdesktopwidget.h>
 

@@ -32,7 +32,6 @@
 #include <kseparator.h>
 #include <dcopclient.h>
 #include <kapp.h>
-#include <kaccel.h>	// Used in KKeyModule::init()
 #include <kkey_x11.h>	// Used in KKeyModule::init()
 
 #include "keyconfig.h"

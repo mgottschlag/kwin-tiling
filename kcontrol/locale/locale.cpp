@@ -42,7 +42,6 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
-#include <kdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 

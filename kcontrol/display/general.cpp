@@ -25,7 +25,6 @@
 #include <qsizepolicy.h>
 #include <qwhatsthis.h>
 #include <qtextstream.h>
-#include <qframe.h>
 
 #include <dcopclient.h>
 

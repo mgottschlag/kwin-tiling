@@ -39,7 +39,6 @@
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kglobal.h>
-#include <kdialog.h>
 #include <kio/job.h>
 #include <kdebug.h>
 #include <qtextcodec.h>

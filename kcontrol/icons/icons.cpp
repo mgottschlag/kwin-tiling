@@ -24,7 +24,6 @@
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qcheckbox.h>
-#include <qlabel.h>
 #include <qtabwidget.h>
 #include <qiconview.h>
 

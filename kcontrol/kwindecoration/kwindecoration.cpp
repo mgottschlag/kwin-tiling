@@ -24,7 +24,6 @@
 #include <qtabwidget.h>
 #include <qvbox.h>
 #include <qlabel.h>
-#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kdebug.h>
