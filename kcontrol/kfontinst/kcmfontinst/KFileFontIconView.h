@@ -29,7 +29,7 @@
 // (C) Craig Drummond, 2003
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "kfileiconview.h"
+#include <kfileiconview.h>
 
 class CKFileFontIconView : public KFileIconView
 {

@@ -497,7 +497,9 @@ bool CKFileFontView::acceptDrag(QDropEvent *e) const
     bool       ok=false;
     KURL::List urls;
 
-    if(KURLDrag::canDecode(e) && (e->source()!=this) && (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action()) && KURLDrag::decode(e, urls) && !urls.isEmpty())
+    if(KURLDrag::canDecode(e) && (e->source()!=const_cast<CKFileFontView *>(this)) &&
+       (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action()) &&
+       KURLDrag::decode(e, urls) && !urls.isEmpty())
     {
         KURL::List::Iterator it;
 
