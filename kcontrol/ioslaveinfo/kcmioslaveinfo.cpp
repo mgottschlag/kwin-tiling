@@ -72,8 +72,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name)
 
    setButtons(buttons());
    load();
-   showInfo( "man" );
-};
+}
 
 
 KCMIOSlaveInfo::~KCMIOSlaveInfo() {
@@ -117,12 +116,10 @@ void KCMIOSlaveInfo::slaveHelp( KIO::Job *, const QByteArray &data)
         int index = helpData.find( "<meta http-equiv=\"Content-Type\"" );
         index = helpData.find( "charset=", index ) + 8;
         QString charset = helpData.mid( index, helpData.find( '\"', index ) - index );
-        kdDebug() << "charset " << charset << endl;
         QString text = QTextCodec::codecForName(charset.latin1())->toUnicode( helpData );
         index = text.find( "<div class=\"article\">" );
         text = text.mid( index );
         index = text.find( "<div id=\"bottom-nav\"" );
-        kdDebug() << "index " << index << endl;
         text = text.left( index );
         m_info->setText(text);
         return;
@@ -140,6 +137,7 @@ void KCMIOSlaveInfo::showInfo(const QString& protocol)
        helpData.truncate( 0 );
        KIO::Job *tfj = KIO::get( QString("help:/kioslave/%1.html").arg( protocol ), true, false );
        connect( tfj, SIGNAL( data( KIO::Job *, const QByteArray &) ), SLOT( slaveHelp( KIO::Job *, const QByteArray &) ) );
+       return;
    }
    m_info->setText(QString("Some info about protocol %1:/ ...").arg(protocol));
 }
