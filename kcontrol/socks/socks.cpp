@@ -135,7 +135,7 @@ void KSocksConfig::testClicked()
 
 void KSocksConfig::chooseCustomLib(KURLRequester * url)
 {
-  url->fileDialog()->setMode( KFile::Directory );
+  url->setMode( KFile::Directory );
 /*  QString newFile = KFileDialog::getOpenFileName();
   if (newFile.length() > 0) {
     base->_c_customPath->setURL(newFile);
