@@ -138,7 +138,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   /* Needed to remove because this depended upon non-BC changes in KeyEntry.*/
   // If this is the "Global Keys" section of the KDE Control Center:
   if( isGlobal && !bSeriesOnly ) {
-	preferMetaBt = new QCheckBox( i18n("Prefer 4-Modifier Defaults"), this );
+	preferMetaBt = new QCheckBox( i18n("Prefer 4-modifier defaults"), this );
 	if( !KKeySequence::keyboardHasMetaKey() )
 		preferMetaBt->setEnabled( false );
 	preferMetaBt->setChecked( KKeySequence::useFourModifierKeys() );

@@ -69,19 +69,19 @@ CInstalledFontListWidget::CInstalledFontListWidget(QWidget *parent, const char *
                                      "needed by the various programs."));
 
     itsFontsPopup=new QPopupMenu(this);
-    itsFixTtfPsNamesME=itsFontsPopup->insertItem(i18n("Fix TTF postscript names..."), this, SLOT(fixTtfPsNames()));
+    itsFixTtfPsNamesME=itsFontsPopup->insertItem(i18n("Fix TTF Postscript Names..."), this, SLOT(fixTtfPsNames()));
 
     itsDirsPopup=new QPopupMenu(this);
-    itsCreateDirME=itsDirsPopup->insertItem(i18n("Create new sub-folder..."), this, SLOT(createDir()));
-    itsDeleteDirME=itsDirsPopup->insertItem(i18n("Delete folder..."), this, SLOT(deleteDir())); 
+    itsCreateDirME=itsDirsPopup->insertItem(i18n("Create new Sub-Folder..."), this, SLOT(createDir()));
+    itsDeleteDirME=itsDirsPopup->insertItem(i18n("Delete Folder..."), this, SLOT(deleteDir()));
     itsDirsPopup->insertSeparator();
-    itsEnableDirME=itsDirsPopup->insertItem(i18n("Add to X font path"), this, SLOT(toggleDir()));
-    itsDisableDirME=itsDirsPopup->insertItem(i18n("Remove from X font path"), this, SLOT(toggleDir()));
+    itsEnableDirME=itsDirsPopup->insertItem(i18n("Add to X Font Path"), this, SLOT(toggleDir()));
+    itsDisableDirME=itsDirsPopup->insertItem(i18n("Remove From X Font Path"), this, SLOT(toggleDir()));
     itsDirsPopup->insertSeparator();
-    itsTouchME=itsDirsPopup->insertItem(i18n("\"Touch\" folder"), this, SLOT(touchDir()));
+    itsTouchME=itsDirsPopup->insertItem(i18n("\"Touch\" Ffolder"), this, SLOT(touchDir()));
     itsDirsPopup->insertSeparator();
-    itsSetUnscaledME=itsDirsPopup->insertItem(i18n("Set unscaled"), this, SLOT(toggleUnscaled()));
-    itsSetScaledME=itsDirsPopup->insertItem(i18n("Set scaled"), this, SLOT(toggleUnscaled()));
+    itsSetUnscaledME=itsDirsPopup->insertItem(i18n("Set Unscaled"), this, SLOT(toggleUnscaled()));
+    itsSetScaledME=itsDirsPopup->insertItem(i18n("Set Scaled"), this, SLOT(toggleUnscaled()));
 }
 
 QString CInstalledFontListWidget::currentDir()

@@ -82,7 +82,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   grid->setColStretch(1, 1);
   grid->addColSpacing(0, 30);
 
-  m_useBell = new QCheckBox( i18n("&Use System Bell instead of System Notification" ), box );
+  m_useBell = new QCheckBox( i18n("&Use system bell instead of system notification" ), box );
   QWhatsThis::add(m_useBell, i18n("You can use the standard system bell (PC speaker) or a "
 				  "more sophisticated system notification, see the "
 				  "\"System Notifications\" control module for the "

@@ -747,8 +747,8 @@ void KColorScheme::readSchemeNames()
     mSchemeList->clear();
     sList->clear();
     // Always a current and a default scheme
-    sList->insertItem( i18n("Current scheme"), 0 );
-    sList->insertItem( i18n("KDE default"), 1 );
+    sList->insertItem( i18n("Current Scheme"), 0 );
+    sList->insertItem( i18n("KDE Default"), 1 );
     nSysSchemes = 2;
 
     // Global + local schemes

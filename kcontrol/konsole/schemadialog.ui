@@ -146,12 +146,12 @@
                     </item>
                     <item>
                         <property name="text">
-                            <string>System background</string>
+                            <string>System Background</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>System foreground</string>
+                            <string>System Foreground</string>
                         </property>
                     </item>
                     <property name="name">
@@ -197,12 +197,12 @@
                 <widget class="QComboBox" row="1" column="0">
                     <item>
                         <property name="text">
-                            <string>0 -Foreground color</string>
+                            <string>0 -Foreground Color</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>1 -Background color</string>
+                            <string>1 -Background Color</string>
                         </property>
                     </item>
                     <item>
@@ -247,52 +247,52 @@
                     </item>
                     <item>
                         <property name="text">
-                            <string>10 -Foreground intensive color</string>
+                            <string>10 -Foreground Intensive Color</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>11 - Background intensive color</string>
+                            <string>11 - Background Intensive Color</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>12 - Color 0 intensive (gray)</string>
+                            <string>12 - Color 0 Intensive (gray)</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>13 - Color 1 intensive (light red)</string>
+                            <string>13 - Color 1 Intensive (light red)</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>14 - Color 2 intensive (light green)</string>
+                            <string>14 - Color 2 Intensive (light green)</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>15 - Color 3 intensive (light yellow)</string>
+                            <string>15 - Color 3 Intensive (light yellow)</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>16 - Color 4 intensive (light blue)</string>
+                            <string>16 - Color 4 Intensive (light blue)</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>17 - Color 5 intensive (light magenta)</string>
+                            <string>17 - Color 5 Intensive (light magenta)</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>18 - Color 6 intensive (light cyan)</string>
+                            <string>18 - Color 6 Intensive (light cyan)</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>19 - Color 7 intensive (white)</string>
+                            <string>19 - Color 7 Intensive (white)</string>
                         </property>
                     </item>
                     <property name="name">

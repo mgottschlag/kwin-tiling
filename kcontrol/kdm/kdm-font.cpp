@@ -73,7 +73,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
 
 
   QGroupBox *mGroup = new QVGroupBox(i18n("Miscellaneous"), this);
-  aacb = new QCheckBox (i18n("Use Anti-Aliasing for fonts"), mGroup);
+  aacb = new QCheckBox (i18n("Use anti-aliasing for fonts"), mGroup);
   QWhatsThis::add( aacb, i18n("If you check this box and your X-Server has the Xft extension, "
 	"fonts will be antialiased (smoothed) in the login dialog.") );
   connect(aacb, SIGNAL(toggled ( bool )),this,SLOT(configChanged()));

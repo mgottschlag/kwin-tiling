@@ -203,7 +203,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   label = new QLabel(i18n("Echo &mode:"), hlp);
   echocombo = new QComboBox(false, hlp);
   label->setBuddy( echocombo );
-  echocombo->insertItem(i18n("No echo"));
+  echocombo->insertItem(i18n("No Echo"));
   echocombo->insertItem(i18n("One Star"));
   echocombo->insertItem(i18n("Three Stars"));
   connect(echocombo, SIGNAL(activated(int)), SLOT(changed()));

@@ -316,10 +316,10 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	QHBoxLayout* box2 = new QHBoxLayout( dummy, 0, KDialog::spacingHint() );
 	lbl = new QLabel( i18n("Toolbar &icons:"), dummy );
 	comboToolbarIcons = new QComboBox( FALSE, dummy );
-	comboToolbarIcons->insertItem( i18n("Icons only") );
-	comboToolbarIcons->insertItem( i18n("Text only") );
-	comboToolbarIcons->insertItem( i18n("Text alongside icons") );
-	comboToolbarIcons->insertItem( i18n("Text under icons") );
+	comboToolbarIcons->insertItem( i18n("Icons Only") );
+	comboToolbarIcons->insertItem( i18n("Text Only") );
+	comboToolbarIcons->insertItem( i18n("Text Alongside Icons") );
+	comboToolbarIcons->insertItem( i18n("Text Under Icons") );
 	lbl->setBuddy( comboToolbarIcons );
 
 	box2->addWidget( lbl );
