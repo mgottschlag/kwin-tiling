@@ -20,7 +20,7 @@ Number of commands=2
 [Action_2]
 Action description=Mail-URL
 Action regexp=^mailto:
-Command_0: commandline=kmail --composer %s
+Command_0: commandline=kmail --composer "%s"
 Command_0: description=Launch &Kmail
 Command_0: enabled=true
 Command_1: commandline=konsole -e mutt `echo "%s" | sed 's/mailto://g'`
