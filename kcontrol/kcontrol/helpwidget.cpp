@@ -22,9 +22,10 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kurl.h>
 #include <kprocess.h>
 #include <kapplication.h>
-
+#include <krun.h>
 #include <qpushbutton.h>
 
 #include "quickhelp.h"
@@ -67,12 +68,20 @@ void HelpWidget::setBaseText()
 			 "Click <a href = \"kcontrol/index.html\">here</a> to read the general Control Center manual.") );
 }
 
-void HelpWidget::urlClicked(const QString & url)
+void HelpWidget::urlClicked(const QString & _url)
 {
-  KProcess process;
-  process << "khelpcenter"
-          << "help:/" + url;
-  process.start(KProcess::DontCare);
+    KProcess process;
+    KURL url(_url);
+    if (url.protocol() == "file")
+	url.setProtocol("help");
+
+    if (url.protocol() == "help" || url.protocol() == "man" || url.protocol() == "info") {
+        process << "khelpcenter"
+                << url.url();
+        process.start(KProcess::DontCare);
+    } else {
+        new KRun(url);
+    }
 }
 
 void HelpWidget::mailClicked(const QString &,const QString & addr)
