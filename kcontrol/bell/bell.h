@@ -33,27 +33,36 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h> 
 
-#include <kcontrol.h>
 #include <knuminput.h>
 
-class KBellConfig : public KConfigWidget
+
+#include <kcmodule.h>
+
+
+class KBellModule : public KCModule
 {
   Q_OBJECT
+
 public:
-  KBellConfig( QWidget *parent=0, const char *name=0, bool init=FALSE );
-  ~KBellConfig( );
+
+  KBellModule(QWidget *parent=0, const char *name=0);
+
   void saveParams( void );
 
-public slots:
+  void load();
+  void save();
+  void defaults();
 
-  void loadSettings();
-  void applySettings();
-  void defaultSettings();
-    
+
 private slots:
+
   void ringBell();
 
+  void slotChanged();
+ 
+
 private:
+
   void GetSettings( void );
 
   int getBellVolume();
@@ -70,7 +79,9 @@ private:
 
   KConfig *config;
   int bellVolume, bellPitch, bellDuration;
+
 };
+
 
 #endif
 

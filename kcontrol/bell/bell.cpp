@@ -20,6 +20,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
 #include <iostream.h>
 #include <stdio.h> 
 #include <sys/stat.h>
@@ -32,9 +33,12 @@
 #include <qstring.h>
 #include <qmessagebox.h> 
 #include <qlayout.h>
+#include <qwidget.h>
+#include <qtabwidget.h>
+#include <qtabbar.h>
 
-#include <klocale.h>
 #include <kconfig.h>
+#include <klocale.h>
 
 #include "bell.h"
 
@@ -43,131 +47,107 @@
 #include "geom.h"
 
 
-static bool GUI;
-
-KBellConfig::~KBellConfig ()
+KBellModule::KBellModule(QWidget *parent, const char *name)
+  : KCModule(parent, name)
 {
-    if (GUI) {
-        delete volume;
-        delete pitch;
-        delete duration;
-    }
-}
+  QVBoxLayout *layout = new QVBoxLayout(this, 10);
 
-KBellConfig::KBellConfig (QWidget * parent, const char *name, bool init)
-    : KConfigWidget (parent, name)
-{
-  GUI = !init;
+  // args: label, min, max, step, initial, units
+  volume = new KIntNumInput(i18n("Volume:"), 0, 100, 5, 50,
+			    "%", 10, true, this);
+  volume->setSteps(5,25);
+  layout->addWidget(volume);
   
-  if (GUI) {
-    QVBoxLayout *layout = new QVBoxLayout(this, 10);
-
-    // args: label, min, max, step, initial, units
-    volume = new KIntNumInput(i18n("Volume:"), 0, 100, 5, 50,
-                              "%", 10, true, this);
-    volume->setSteps(5,25);
-    layout->addWidget(volume);
-    
-    pitch = new KIntNumInput(i18n("Pitch:"),  0, 2000, 20, 800, 
-                             i18n("Hz"), 10, true, this);
-    pitch->setSteps(40,200);
-    layout->addWidget(pitch);
-    
-    duration = new KIntNumInput(i18n("Duration:"), 0, 1000, 50, 100,
-                                i18n("ms"), 10, true, this);
-    duration->setSteps(20,100);
-    layout->addWidget(duration);
-
-    QFrame *hLine = new QFrame(this);
-    hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
-
-    layout->addWidget(hLine);
-    
-    test = new QPushButton(i18n("&Test"), this, "test");
-    layout->addWidget(test, 0, AlignLeft);
-    connect( test, SIGNAL(clicked()), SLOT(ringBell()));
-
-    layout->addStretch(5);
-
-    layout->activate();
-  }
+  pitch = new KIntNumInput(i18n("Pitch:"),  0, 2000, 20, 800, 
+			   i18n("Hz"), 10, true, this);
+  pitch->setSteps(40,200);
+  layout->addWidget(pitch);
   
-  config = kapp->config();
+  duration = new KIntNumInput(i18n("Duration:"), 0, 1000, 50, 100,
+			      i18n("ms"), 10, true, this);
+  duration->setSteps(20,100);
+  layout->addWidget(duration);
+  
+  QFrame *hLine = new QFrame(this);
+  hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
+  
+  layout->addWidget(hLine);
+  
+  test = new QPushButton(i18n("&Test"), this, "test");
+  layout->addWidget(test, 0, AlignLeft);
+  connect( test, SIGNAL(clicked()), SLOT(ringBell()));
+  
+  layout->addStretch(5);
+  
+  layout->activate();
+
+  config = new KConfig("kcmbellrc");
   
   GetSettings();
-  
-  if (init)
-    saveParams();
+
+  // watch for changes
+  connect(volume, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+  connect(pitch, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+  connect(duration, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
 }
 
+
 // set the slider and the LCD to 'val'
-void KBellConfig::setBellVolume(int val)
+void KBellModule::setBellVolume(int val)
 {
     volume->setValue(val);
 }
 
-void KBellConfig::setBellPitch(int val)
+void KBellModule::setBellPitch(int val)
 {
     pitch->setValue(val);
 }
 
-void KBellConfig::setBellDuration(int val)
+void KBellModule::setBellDuration(int val)
 {
     duration->setValue(val);
 }
 
 // return the current LCD setting
-int  KBellConfig::getBellVolume()
+int  KBellModule::getBellVolume()
 {
     return volume->value();
 }
 
-int  KBellConfig::getBellPitch()
+int  KBellModule::getBellPitch()
 {
     return pitch->value();
 }
 
-int  KBellConfig::getBellDuration()
+int  KBellModule::getBellDuration()
 {
     return duration->value();
 }
 
-void KBellConfig::GetSettings( void )
+void KBellModule::GetSettings( void )
 {
     XKeyboardState kbd;
-    
-    config->setGroup("Bell");
-    bellVolume = config->readNumEntry("Volume",-1);
-    bellPitch = config->readNumEntry("Pitch",-1);
-    bellDuration = config->readNumEntry("Duration",-1);
-    
     XGetKeyboardControl(kapp->getDisplay(), &kbd);
     
-    // if the config file didn't have anything, use the X server settings
-    if (bellVolume == -1)
-        bellVolume = kbd.bell_percent;
-    if (bellPitch == -1)
-        bellPitch = kbd.bell_pitch;
-    if (bellDuration == -1)
-        bellDuration = kbd.bell_duration;
+    config->setGroup("Bell");
+    bellVolume = config->readNumEntry("Volume",kbd.bell_percent);
+    bellPitch = config->readNumEntry("Pitch",kbd.bell_pitch);
+    bellDuration = config->readNumEntry("Duration",kbd.bell_duration);
     
     // the GUI should reflect the real values
-    if (GUI) {
-        setBellVolume(kbd.bell_percent);
-        setBellPitch(kbd.bell_pitch);
-        setBellDuration(kbd.bell_duration);
-    }
+    setBellVolume(kbd.bell_percent);
+    setBellPitch(kbd.bell_pitch);
+    setBellDuration(kbd.bell_duration);
 }
 
-void KBellConfig::saveParams( void )
+void KBellModule::saveParams( void )
 {
     XKeyboardControl kbd;
     
-    if (GUI) {
-        bellVolume = getBellVolume();
-        bellPitch = getBellPitch();
-        bellDuration = getBellDuration();
-    }
+    bellVolume = getBellVolume();
+    bellPitch = getBellPitch();
+    bellDuration = getBellDuration();
+
     kbd.bell_percent = bellVolume;
     kbd.bell_pitch = bellPitch;
     kbd.bell_duration = bellDuration;
@@ -182,7 +162,7 @@ void KBellConfig::saveParams( void )
     config->sync();
 }
 
-void KBellConfig::ringBell()
+void KBellModule::ringBell()
 {
     // store the old state
     XKeyboardState old_state;
@@ -208,21 +188,58 @@ void KBellConfig::ringBell()
                            &kbd);
 }
 
-void KBellConfig::loadSettings()
+void KBellModule::load()
 {
     GetSettings();
 }
 
-void KBellConfig::applySettings()
+void KBellModule::save()
 {
     saveParams();
 }
 
-void KBellConfig::defaultSettings()
+void KBellModule::defaults()
 {
     setBellVolume(100);
     setBellPitch(800);
     setBellDuration(100);
 }
 
-#include "bell.moc"
+
+void KBellModule::slotChanged()
+{
+  emit changed(true);
+}
+
+
+extern "C"
+{
+  KCModule *create_bell(QWidget *parent, const char *name) 
+  { 
+    return new KBellModule(parent, name);
+  }
+
+  void init_bell()
+  {
+    KConfig *config = new KConfig("kcmbellrc");
+
+    XKeyboardState kbd;
+    XGetKeyboardControl(kapp->getDisplay(), &kbd);
+    
+    config->setGroup("Bell");
+    int bellVolume = config->readNumEntry("Volume", kbd.bell_percent);
+    int bellPitch = config->readNumEntry("Pitch",kbd.bell_pitch);
+    int bellDuration = config->readNumEntry("Duration",kbd.bell_duration);
+
+    XKeyboardControl kbd2;
+    
+    kbd2.bell_percent = bellVolume;
+    kbd2.bell_pitch = bellPitch;
+    kbd2.bell_duration = bellDuration;
+    
+    XChangeKeyboardControl(kapp->getDisplay(), 
+                           KBBellPercent | KBBellPitch | KBBellDuration,
+                           &kbd2);
+  }
+}
+

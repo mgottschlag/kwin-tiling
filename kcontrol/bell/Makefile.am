@@ -1,16 +1,15 @@
+lib_LTLIBRARIES = libkcm_bell.la
 
-INCLUDES = $(all_includes) 
-LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD =    $(LIB_KDEUI) 
+libkcm_bell_la_SOURCES = bell.cpp
 
-bin_PROGRAMS = kcmbell
+libkcm_bell_la_LIBADD   = -lkdeui -lkdecore -lqt -lXext -lX11 $(LIBSOCKET)
+libkcm_bell_la_LDFLAGS  = $(all_libraries) -module -avoid-version 
 
-kcmbell_SOURCES = main.cpp bell.cpp 
-METASOURCES = bell.moc 
-noinst_HEADERS = bell.h geom.h 
+INCLUDES= $(all_includes)
 
-KDE_ICON = bell
+libkcm_bell_la_METASOURCES = AUTO
+
+DISTCLEANFILES = $(lib_bell_METASOURCES)
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmbell_SOURCES) && mv messages.po ../../po/kcmbell.pot
-
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_bell_SOURCES) -o ../po/libkcm_bell.pot
