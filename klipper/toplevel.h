@@ -33,6 +33,7 @@ k_dcop:
     QString getClipboardContents();
     void setClipboardContents(QString s);
     void clearClipboardContents();
+    void clearClipboardHistory();
     QStringList getClipboardHistoryMenu();
     QString getClipboardHistoryItem(int i);
 

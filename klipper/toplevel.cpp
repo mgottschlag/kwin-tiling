@@ -144,6 +144,15 @@ void KlipperWidget::clearClipboardContents()
     slotClearClipboard();
 }
 
+// DCOP
+void KlipperWidget::clearClipboardHistory()
+{
+  clearClipboardContents();
+  trimClipHistory(0);
+  saveSession();
+}
+
+
 void KlipperWidget::mousePressEvent(QMouseEvent *e)
 {
     if ( e->button() == LeftButton || e->button() == RightButton )
