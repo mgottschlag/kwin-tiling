@@ -64,7 +64,7 @@ int main( int argc, char** argv )
 		}
 
 		env.sprintf("DISPLAY=%s.%d", displayname.data(), khotkeys_screen_number);
-		if (putenv(env.data())) {
+		if (putenv(strdup(env.data()))) {
 		    fprintf(stderr,
 			    "%s: WARNING: unable to set DISPLAY environment variable\n",
 			    argv[0]);
