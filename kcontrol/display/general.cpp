@@ -662,7 +662,7 @@ QString KGeneral::quickHelp() const
 const KAboutData* KGeneral::aboutData() const
 {
     KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmkstyle"), I18N_NOOP("Style Options Control Module"),
+    new KAboutData(I18N_NOOP("kcmkstyle"), I18N_NOOP("Style Configuration Module"),
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 1997 - 2002 KStyle and KControl Authors"));
 
