@@ -1,7 +1,6 @@
 [General]
 Name=Wood
 Name[az]=Odun
-Name[cs]=Dřevo
 Name[de]=Holz
 Name[eo]=Ligno
 Name[es]=Madera
@@ -11,14 +10,15 @@ Name[fr]=Bois
 Name[hu]=Famintázat
 Name[is]=Harðviður
 Name[it]=Legno
+Name[ja]=ウッド
 Name[ko]=숲
 Name[lt]=Medis
 Name[lv]=Koka
 Name[nl]=Hout
 Name[no_NY]=Tre
 Name[pl]=Drewno
-Name[pt]=Madeira
 Name[pt_BR]=Madeira
+Name[pt]=Madeira
 Name[ro]=Lemn
 Name[ru]=Лес
 Name[sk]=Drevo
