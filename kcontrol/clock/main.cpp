@@ -18,8 +18,10 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
+#include <unistd.h>
 
 #include <qtabwidget.h>
+#include <qlabel.h>
 #include <qlayout.h>
 
 #include <kglobal.h>
@@ -32,8 +34,6 @@
 #include "tzone.h"
 #include "dtime.h"
 
-#include <stdio.h>
-
 KclockModule::KclockModule(QWidget *parent, const char *name)
   : KCModule(parent, name)
 { 
@@ -45,23 +45,32 @@ KclockModule::KclockModule(QWidget *parent, const char *name)
   tab->addTab(dtime, i18n("Date && Time"));
   connect(dtime, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  tzone = new Tzone(this);
-  tab->addTab(tzone, i18n("Time Zone"));
-  connect(tzone, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
-  
-  setButtons(Help|Reset|Cancel|Apply|Ok);
+  // TODO: Time Zone is badly broken right now
+  // Just disable
+  //  tzone = new Tzone(this);
+  //  tab->addTab(tzone, i18n("Time Zone"));
+  //  connect(tzone, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+
+  if(getuid() != 0) {
+    layout->addSpacing(5);
+    layout->addWidget(new QLabel(i18n("You do not have authority to change system time"), this));
+    layout->addWidget(new QLabel(i18n("To change time run Control Center as a root"), this));
+    setButtons(Help|Cancel);
+  }
+  else
+    setButtons(Help|Reset|Cancel|Apply|Ok);
 }
 
 void KclockModule::save()
 {
   dtime->save();
-  tzone->save();
+  //  tzone->save();
 }
 
 void KclockModule::load()
 {
   dtime->load();
-  tzone->load();
+  //  tzone->load();
 }
 
 QString KclockModule::quickHelp()
