@@ -10,8 +10,7 @@ bin_PROGRAMS = kpolygon.kss kswarm.kss klissie.kss kbanner.kss \
 	klines.kss kblankscrn.kss krock.kss kflame.kss klaser.kss \
 	kpyro.kss khop.kss $(XPM_SAVERS) $(GL_SAVERS) kslip.kss \
 	kforest.kss kblob.kss kbouboule.kss kscience.kss \
-	kattraction.kss kslidescreen.kss kbsod.kss krandom.kss \
-	kmatrix.kss
+	kattraction.kss kslidescreen.kss kbsod.kss krandom.kss
 
 EXTRA_PROGRAMS = kbat.kss kmorph3d.kss kspace.kss kpipes.kss
 
@@ -72,16 +71,13 @@ kspace_kss_LDADD = $(LDADD) $(GLLIB)
 kscience_kss_SOURCES = $(BASE_SRCS) science.cpp
 kscience_kss_LDADD = $(LDADD) -lm
 
-kmatrix_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) matrix.cpp
-kmatrix_kss_LDADD = $(LDADD) $(XPMLIB)
-
 
 METASOURCES = saver.moc demowin.moc polygon.moc banner.moc\
 		blankscrn.moc rock.moc flame.moc lines.moc laser.moc\
 		pyro.moc hop.moc forest.moc swarm.moc bat.moc slip.moc\
 		lissie.moc morph3d.moc blob.moc space.moc bouboule.moc \
 		kgroupbox.moc science.moc pipes.moc attraction.moc \
-        slidescreen.moc bsod.moc matrix.moc
+        slidescreen.moc bsod.moc
 
 noinst_HEADERS = saver.h demowin.h polygon.h banner.h\
 		blankscrn.h xlock.h rock.h flame.h lines.h\
@@ -89,7 +85,7 @@ noinst_HEADERS = saver.h demowin.h polygon.h banner.h\
 		lissie.h blob.h space.h bouboule.h  kgroupbox.h science.h \
 		xlockmore.h mode.h helpers.h morph3d.h pipes.h \
 		attraction.h xs_colors.h xs_hsv.h xs_yarandom.h xs_utils.h \
-        slidescreen.h amiga.xpm atari.xbm bsod.h mac.xbm xs_visual.h matrix.h 
+        slidescreen.h amiga.xpm atari.xbm bsod.h mac.xbm xs_visual.h 
 
 messages:
 	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot *.cpp *.h && mv messages.po ../po/klock.pot
