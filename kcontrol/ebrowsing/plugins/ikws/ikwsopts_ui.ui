@@ -100,7 +100,7 @@ Select the search engine to use for input boxes that provide automatic lookup se
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>3</hsizetype>
+                            <hsizetype>5</hsizetype>
                             <vsizetype>0</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
@@ -197,6 +197,9 @@ Select the search engine to use for input boxes that provide automatic lookup se
                     <property name="showSortIndicator">
                         <bool>true</bool>
                     </property>
+                    <property name="resizeMode">
+                        <enum>AllColumns</enum>
+                    </property>
                     <property name="treeStepSize">
                         <number>0</number>
                     </property>
@@ -220,7 +223,7 @@ Select the search engine to use for input boxes that provide automatic lookup se
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>3</hsizetype>
+                            <hsizetype>5</hsizetype>
                             <vsizetype>0</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
