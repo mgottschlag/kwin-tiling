@@ -32,6 +32,7 @@ QListView *Programs::events=0;
 
 void EventConfig::load(KConfig &conf)
 {
+	internalname=conf.group();
 	friendly=conf.readEntry("friendly", "Unknown Name");
 	description=conf.readEntry("description", "No Description");
 	
@@ -56,12 +57,21 @@ void EventConfig::load(KConfig &conf)
 
 void EventConfig::set(const EventConfig *old)
 {
+	internalname=old->internalname;
 	application=old->application;
 	present=old->present;
 	logfile=old->logfile;
 	soundfile=old->soundfile;
 	description=old->description;
 	friendly=old->friendly;
+}
+
+void EventConfig::reload()
+{
+	KConfig conf(application->configfile);
+	conf.setGroup(internalname);
+	load(conf);
+
 }
 
 ProgramConfig::~ProgramConfig()
@@ -170,6 +180,8 @@ void ProgramConfig::selected()
 	// Load the new events
 	for (EventConfig *ev=eventlist.first(); ev != 0; ev=eventlist.next())
 		new EventConfig::EventListViewItem(ev);
+		
+	Programs::events->setCurrentItem(Programs::events->firstChild()); // Select the first one in the list
 
 }
 

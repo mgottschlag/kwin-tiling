@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.12  2000/04/11 05:33:12  charles
+    Milestone 5.  Can't even remember how it's better, but it is (trust me).
+
     Revision 1.11  2000/04/10 23:34:06  charles
     More stable, supports browsing better.
     Still doesn't save the configuration though :(
@@ -120,7 +123,6 @@ private:
 	QPushButton *todefault;
 	
 	EventConfig *event;
-	EventConfig *localEvent;
 	int oldListItem;
 };
 

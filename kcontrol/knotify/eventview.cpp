@@ -34,7 +34,7 @@
 
 #include <iostream.h>
 EventView::EventView(QWidget *parent, const char *name):
-	QWidget(parent, name), event(0), localEvent(0), oldListItem(-1)
+	QWidget(parent, name), event(0), oldListItem(-1)
 {
 	QGridLayout *layout=new QGridLayout(this,2,8);
 	
@@ -66,9 +66,12 @@ EventView::~EventView()
 
 void EventView::defaults()
 {
-	emit changed();
+	int current=eventslist->currentItem();
 	
+	emit changed();
+	event->reload();
 	load(event, false);
+	eventslist->setCurrentItem(current);
 }
 
 void EventView::textChanged(const QString &str)
@@ -81,22 +84,22 @@ void EventView::itemSelected(int item)
 	file->setEnabled(false);
 	// charger la nouvelle chose
 	
-	enabled->setChecked((localEvent->present & enumNum(item)) ? true : false);
+	enabled->setChecked((event->present & enumNum(item)) ? true : false);
 	if (enumNum(item) == KNotifyClient::Sound)
-		file->setEnabled(true), file->setText(localEvent->soundfile);
+		file->setEnabled(true), file->setText(event->soundfile);
 	
 	if (enumNum(item) == KNotifyClient::Logfile)
-		file->setEnabled(true), file->setText(localEvent->logfile);
+		file->setEnabled(true), file->setText(event->logfile);
 	oldListItem=item;
 }
 
 void EventView::itemToggled(bool on)
 {
-	if (!localEvent) return;
+	if (!event) return;
 	if (on)
-		localEvent->present|=enumNum(eventslist->currentItem());
+		event->present|=enumNum(eventslist->currentItem());
 	else
-		localEvent->present&= ~enumNum(eventslist->currentItem());
+		event->present&= ~enumNum(eventslist->currentItem());
 	setPixmaps();
 }
 
@@ -104,7 +107,6 @@ void EventView::load(EventConfig *_event, bool save)
 {
 	unload(save);
 	event=_event;
-	localEvent=new EventConfig(_event);
 	setEnabled(true);
 	setPixmaps();
 	eventslist->setSelected(0, true);
@@ -117,11 +119,11 @@ void EventView::setPixmaps()
 { // Handle all of 'dem at once
 	int current=eventslist->currentItem();
 	eventslist->blockSignals(true);
-	if (!localEvent) return;
+	if (!event) return;
 	int i=0;
 	for (int c=1; c <=8; c*=2)
 	{
-		if (localEvent->present & c)
+		if (event->present & c)
 			eventslist->changeItem(SmallIcon("flag"), eventslist->text(i), i);
 		else
 			eventslist->changeItem(eventslist->text(i), i);
@@ -133,14 +135,6 @@ void EventView::setPixmaps()
 
 void EventView::unload(bool save)
 {
-	if (save && localEvent)
-		event->set(localEvent);
-
-	if (localEvent)
-		delete localEvent;
-
-	localEvent=0;
-	
 	event=0;
 	enabled->setChecked(false);
 	setPixmaps();

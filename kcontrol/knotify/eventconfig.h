@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.7  2000/04/10 04:56:07  charles
+    Thought I'de commit before I break out for the day^H^H^Hnight.
+
     Revision 1.6  2000/04/09 22:33:56  charles
     Milestone 3 :)
 
@@ -89,9 +92,15 @@ public:
 	 * When I was selected to get shown with the EventView
 	 **/
 	void selected();
+	/**
+	 * reload the data from the configuration file
+	 **/
+	void reload();
 	
 	const ProgramConfig *application;
 	int present;
+	QString internalname;
+	
 	QString logfile;
 	QString soundfile;
 	
