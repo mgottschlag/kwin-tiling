@@ -306,38 +306,38 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    aaBox->layout()->setSpacing(KDialog::spacingHint());
    aaBox->layout()->setMargin(KDialog::marginHint());
 
-   QGridLayout *aaLayout=new QGridLayout(aaBox->layout(), 3, 5);
+   QGridLayout *aaLayout=new QGridLayout(aaBox->layout());
 
    cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ), aaBox);
+   aaLayout->addMultiCellWidget(cbAA, 0, 0, 0, 1);
+   aaLayout->addMultiCell(new QSpacerItem(16, 16, QSizePolicy::Fixed, QSizePolicy::Fixed), 1, 2, 0, 0);
 
    QWhatsThis::add(cbAA, i18n("If this option is selected, KDE will smooth the edges of curves in "
                               "fonts and some images."));
 
-
+   QHBoxLayout *layout2 = new QHBoxLayout( 0, 0, KDialog::spacingHint());
    aaExcludeRange=new QCheckBox(i18n("E&xclude range:"), aaBox),
+   layout2->addWidget(aaExcludeRange);
    aaExcludeFrom=new KDoubleNumInput(0, 72, 8.0, 1, 1, aaBox),
    aaExcludeFrom->setSuffix(i18n(" pt"));
+   layout2->addWidget(aaExcludeFrom);
+   layout2->addWidget(new QLabel(i18n(" to "), aaBox));
    aaExcludeTo=new KDoubleNumInput(0, 72, 15.0, 1, 1, aaBox);
    aaExcludeTo->setSuffix(i18n(" pt"));
+   layout2->addWidget(aaExcludeTo);
+   layout2->addItem( spacer );
+   aaLayout->addLayout(layout2, 1, 1);
+
+   QHBoxLayout *layout3 = new QHBoxLayout( 0, 0, KDialog::spacingHint());
    aaUseSubPixel=new QCheckBox(i18n("&Use sub-pixel hinting:"), aaBox);
+   layout3->addWidget(aaUseSubPixel);
    aaSubPixelType=new QComboBox(false, aaBox);
+   layout3->addWidget(aaSubPixelType);
+   layout3->addItem( spacer );
+   aaLayout->addLayout(layout3, 2, 1);
 
    for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
        aaSubPixelType->insertItem(KXftConfig::toStr((KXftConfig::SubPixel::Type)t));
-
-   aaLayout->addMultiCellWidget(cbAA, 0, 0, 0, 4);
-   aaLayout->addItem(new QSpacerItem(16, 16, QSizePolicy::Fixed,
-                                     QSizePolicy::Fixed),
-                     1, 0);
-   aaLayout->addWidget(aaExcludeRange, 1, 1);
-   aaLayout->addWidget(aaExcludeFrom, 1, 2);
-   aaLayout->addWidget(new QLabel(i18n(" to "), aaBox), 1, 3);
-   aaLayout->addWidget(aaExcludeTo, 1, 4);
-   aaLayout->addItem(new QSpacerItem(16, 16, QSizePolicy::Fixed,
-                                     QSizePolicy::Fixed),
-                     2, 0);
-   aaLayout->addWidget(aaUseSubPixel, 2, 1);
-   aaLayout->addMultiCellWidget(aaSubPixelType, 2, 2, 2, 4);
 
    setAaWidgets();
 
