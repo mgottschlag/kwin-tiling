@@ -36,7 +36,7 @@
 #include <qslider.h>
 #include <klocale.h>
 #include <kfiledialog.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <qtoolbutton.h>
 #include <kmessagebox.h>
 #include <ksharedpixmap.h>
@@ -352,10 +352,10 @@ void SchemaEditor::saveCurrent()
 	// Only ask for a name for changed titleLine, considered a "save as"
 	fullpath = titleLine->text().stripWhiteSpace().simplifyWhiteSpace()+".schema";
 
-	KLineEditDlg dlg(i18n("Filename:"), fullpath, this);
-	dlg.setCaption(i18n("Save Schema"));
-	if (!dlg.exec()) return;
-	fullpath = dlg.text();
+    bool ok;
+    fullpath = KInputDialog::getText( i18n( "Save Schema" ),
+        i18n( "Filename:" ), fullpath, &ok, this );
+	if (!ok) return;
     }
 
     if (fullpath[0] != '/')

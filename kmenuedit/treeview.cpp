@@ -32,7 +32,7 @@
 
 #include <kglobal.h>
 #include <kstandarddirs.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
 #include <kdebug.h>
@@ -742,11 +742,11 @@ void TreeView::slotRMBPressed(QListViewItem*, const QPoint& p)
 
 void TreeView::newsubmenu()
 {
-    KLineEditDlg dlg(i18n("Submenu name:"), QString::null, this);
-    dlg.setCaption(i18n("New Submenu"));
+    bool ok;
+    QString dirname = KInputDialog::getText( i18n( "New Submenu" ),
+        i18n( "Submenu name:" ), QString::null, &ok, this );
 
-    if (!dlg.exec()) return;
-    QString dirname = dlg.text();
+    if (!ok) return;
 
     TreeItem *item = (TreeItem*)selectedItem();
 
@@ -826,11 +826,12 @@ void TreeView::newsubmenu()
 
 void TreeView::newitem()
 {
-    KLineEditDlg dlg(i18n("Item name:"), QString::null, this);
-    dlg.setCaption(i18n("New Item"));
+    bool ok;
+    QString filename = KInputDialog::getText( i18n( "New Item" ),
+        i18n( "Item name:" ), QString::null, &ok, this );
 
-    if (!dlg.exec()) return;
-    QString filename = dlg.text();
+    if (!ok) return;
+
     if ( filename.contains('/'))
     {
         KMessageBox::error( this,  i18n("Item name cannot contain '/'"));

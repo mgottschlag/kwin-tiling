@@ -25,7 +25,7 @@
 
 #include <klocale.h>
 #include <kfiledialog.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <kicondialog.h>
 #include <kmessagebox.h>
 
@@ -288,10 +288,10 @@ void SessionEditor::saveCurrent()
     // Only ask for a name for changed nameLine, considered a "save as"
     fullpath = nameLine->text().stripWhiteSpace().simplifyWhiteSpace()+".desktop";
 
-    KLineEditDlg dlg(i18n("Filename:"), fullpath, this);
-    dlg.setCaption(i18n("Save Session"));
-    if (!dlg.exec()) return;
-    fullpath = dlg.text();
+    bool ok;
+    fullpath = KInputDialog::getText( i18n( "Save Session" ),
+        i18n( "Filename:" ), fullpath, &ok, this );
+    if (!ok) return;
   }
 
   if (fullpath[0] != '/')

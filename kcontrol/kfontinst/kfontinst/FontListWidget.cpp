@@ -39,7 +39,7 @@
 #include <klineedit.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <qpainter.h>
 #include <qheader.h>
 #include <qpopupmenu.h>
@@ -1768,34 +1768,6 @@ void CFontListWidget::toggleUnscaled()
     updateConfig();
 }
 
-class CCreateDirDialog : public KLineEditDlg
-{
-    class CValidator : public QValidator
-    {
-        public:
-
-        CValidator(QWidget *widget) : QValidator(widget) {}
-        virtual ~CValidator() {}
-
-        State validate(QString &input, int &) const
-        {
-            if(input.contains(QRegExp("[¬|!\"£$%&\\*:;@'`#~<>\\?/\\\\]")))
-                return Invalid;
-            else
-                return Acceptable;
-        }
-    };
-
-    public:
-
-    CCreateDirDialog(QWidget *parent) : KLineEditDlg(i18n("Please type name of new folder:"), "", parent)
-    {
-        edit->setValidator(new CValidator(edit));
-    }
-
-    virtual ~CCreateDirDialog() {}
-};
-
 void CFontListWidget::createDir()
 {
     CListViewItem *item=getFirstSelectedItem();
@@ -1804,11 +1776,16 @@ void CFontListWidget::createDir()
         KMessageBox::error(this, i18n("Folder %1 is not writable!").arg(item->dir()), i18n("Error"));
     else
     {
-        CCreateDirDialog *dlg=new CCreateDirDialog(this);
+        bool ok;
+        QRegExpValidator *validator = new QRegExpValidator(
+            QRegExp( "[^¬|!\\^\\s\"£$%&\\*:;@'`#~<>\\?/\\\\]+" ), this );
+        QString dir = KInputDialog::getText( i18n( "New Folder" ),
+            i18n( "New folder name:" ), QString::null, &ok, this, 0L,
+            validator );
+        delete validator;
 
-        if(dlg->exec())
+        if(ok)
         {
-            QString       dir=dlg->text().stripWhiteSpace();
             CListViewItem *item=getFirstSelectedItem();
 
             if(dir==constDisabledSubDir)
@@ -1826,8 +1803,6 @@ void CFontListWidget::createDir()
                     itsAddItems.append(new TItem(item->dir(), dir, QString::null));
             }
         }
-
-        delete dlg;
     }
 }
 

@@ -32,7 +32,7 @@
 #include <kdebug.h>
 #include <kipc.h>
 #include <kkeynative.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kshortcutlist.h>
@@ -326,22 +326,18 @@ void ShortcutsModule::slotSelectScheme( int )
 void ShortcutsModule::slotSaveSchemeAs()
 {
 	QString sName, sFile;
-	bool bNameValid;
+	bool bNameValid, ok;
 	int iScheme = -1;
 
 	sName = m_pcbSchemes->currentText();
 
-        KLineEditDlg dlg(i18n("Enter a name for the key scheme:"), sName, this);
-        dlg.setCaption(i18n("Save Key Scheme"));
-
 	do {
 		bNameValid = true;
 
-		if( dlg.exec() ) {
-			sName = dlg.text();
-			if( sName.stripWhiteSpace().isEmpty() )
-				return;
+		sName = KInputDialog::getText( i18n( "Save Key Scheme" ),
+			i18n( "Enter a name for the key scheme:" ), sName, &ok, this );
 
+		if( ok ) {
 			sName = sName.simplifyWhiteSpace();
 			sFile = sName;
 
