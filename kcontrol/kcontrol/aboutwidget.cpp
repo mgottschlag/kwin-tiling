@@ -35,7 +35,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   browser->setFrameStyle(QFrame::NoFrame);
   
   QColorGroup clgrp = colorGroup();
-  clgrp.setColor( QColorGroup::Base, QColor( 255, 255, 255 ) );
+  clgrp.setColor( QColorGroup::Base, clgrp.background() );
   browser->setPaperColorGroup( clgrp );
   browser->setFrameStyle(QFrame::NoFrame);
   browser->setFocusPolicy(NoFocus);
@@ -46,7 +46,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   QString kcontrol = locate("icon", "large/hicolor/apps/kcontrol.png");
 
   QString text = "<p>"
-    "<table cellpadding=2 cellspacing=1 border=0  width=98% bgcolor=#EEEEFF>"
+    "<table cellpadding=2 cellspacing=1 border=0  width=98%>"
     "<tr>"
     "<td width=1%>"
     "<img src=\""
@@ -72,7 +72,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
     "</p>"
     "<br>"
     "<p>"
-    "<table cellpadding=2 cellspacing=1 border=0  width=100% bgcolor=#EEEEFF>"
+    "<table cellpadding=2 cellspacing=1 border=0  width=100%>"
     "<tr>"
     "<td>"
     + i18n("KDE version:") +
@@ -80,7 +80,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
     "<td><b>"
     + KCGlobal::kdeVersion() +
     "</b></td>"
-    "<td rowspan=8 bgcolor=#FFFFFF>"
+    "<td rowspan=8>"
     "<img src=\""
     + wizard +
     "\" align=\"left\" border=\"0\">"
@@ -127,7 +127,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
     "</td></b>"
     "</tr>"
     "<tr>"
-    "<td colspan=2  bgcolor=#FFFFFF>"
+    "<td colspan=2>"
     + i18n("Click on the \"Help\" tab on the left to browse a help text on the active "
            "control module. Use the \"Search\" tab if you are unsure where to look for "
            "a particular configuration option.") +
