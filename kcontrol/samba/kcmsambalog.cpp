@@ -21,8 +21,8 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include <string.h>
-#include <iostream.h>
-#include <fstream.h>
+#include <fstream>
+#include <iostream>
 #include <kmessagebox.h>
 
 #include <qlayout.h>
@@ -136,9 +136,9 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 
 void LogView::loadSettings()
 {
-   cout<<"LogView::load starts"<<endl;
+    std::cout<<"LogView::load starts"<<std::endl;
    if (configFile==0) return;
-   cout<<"LogView::load reading..."<<endl;
+   std::cout<<"LogView::load reading..."<<std::endl;
    configFile->setGroup(LOGGROUPNAME);
    logFileName.setURL(configFile->readEntry( "SambaLogFile", "/var/log/samba.log"));
 
@@ -168,7 +168,7 @@ void LogView::saveSettings()
 //caution ! high optimized code :-)
 void LogView::updateList()
 {
-   ifstream logFile(QFile::encodeName(logFileName.url()));
+    std::ifstream logFile(QFile::encodeName(logFileName.url()));
    if (logFile.good())
    {
       QApplication::setOverrideCursor(waitCursor);

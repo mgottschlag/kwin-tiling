@@ -78,8 +78,6 @@ SambaContainer::~SambaContainer()
    saveSettings();
 }
 
-#include <iostream.h>
-
 void SambaContainer::loadSettings()
 {
    status.loadSettings();
