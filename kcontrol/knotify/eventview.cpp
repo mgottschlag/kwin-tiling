@@ -32,8 +32,14 @@
 #include <kinstance.h>
 #include "eventconfig.h"
 
-
 #include <iostream.h>
+
+
+QString iSound(i18n("Sound"));
+QString iMessageBox("Message Box");
+QString iLogFile("Log File");
+QString iStandardError("Standard Error");
+
 EventView::EventView(QWidget *parent, const char *name):
 	QWidget(parent, name), event(0), oldListItem(-1)
 {
@@ -114,14 +120,14 @@ void EventView::load(EventConfig *_event, bool save)
 	
 	// Handle the nopresent thing
 	QStringList presentation;
-//	if (_event->nopresent && ~KNotifyClient::Sound)
-		presentation << i18n("Sound");
-//	if (_event->nopresent && ~KNotifyClient::Messagebox)
-		presentation << i18n("MessageBox");
-//	if (_event->nopresent && ~KNotifyClient::Logfile)
-		presentation << i18n("Log File");
-//	if (_event->nopresent && ~KNotifyClient::Stderr)
-		presentation << i18n("Standard Error");
+	if (!(_event->nopresent && KNotifyClient::Sound))
+		presentation << iSound;
+	if (!(_event->nopresent && KNotifyClient::Messagebox))
+		presentation << iMessageBox;
+	if (!(_event->nopresent && KNotifyClient::Logfile))
+		presentation << iLogFile;
+	if (!(_event->nopresent && KNotifyClient::Stderr))
+		presentation << iStandardError;
 	eventslist->insertStringList(presentation);
 	
 	event=_event;
@@ -166,12 +172,10 @@ void EventView::unload(bool)
 
 int EventView::enumNum(int listNum)
 {
-	switch (listNum)
-	{
-	case (0): return 1;
-	case (1): return 2;
-	case (2): return 4;
-	case (3): return 8;
-	default: return 0;
-	}
+	QString temp=eventslist->text(listNum);
+	if (temp==iSound) return 1;
+	if (temp==iMessageBox) return 2;
+	if (temp==iLogFile) return 4;
+	if (temp==iStandardError) return 8;
+	return 0;
 }

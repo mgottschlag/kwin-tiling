@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.14  2000/05/21 08:23:22  charles
+    *** empty log message ***
+
     Revision 1.13  2000/04/13 01:55:36  charles
     Milestone 6.  All that's left now is being able to save.  That's also
     the most important part :)
@@ -107,7 +110,7 @@ public:
 	EventView(QWidget *parent, const char *name=0);
 	virtual ~EventView();
 
-	static int enumNum(int listNum);
+	int enumNum(int listNum);
 	
 public slots:
 	void defaults();
@@ -125,7 +128,6 @@ signals:
 	void changed();
 
 private:
-
 	QListBox *eventslist;
 	QCheckBox *enabled;
 	KURLRequester *file;
