@@ -34,6 +34,7 @@
 #include <qstylefactory.h>
 #include <qtabwidget.h>
 #include <qvbox.h>
+#include <qfile.h>
 #include <qsettings.h>
 #include <qobjectlist.h>
 #include <qpixmapcache.h>
@@ -47,6 +48,7 @@
 #include <kipc.h>
 #include <kaboutdata.h>
 #include <kdialog.h>
+#include <klibloader.h>
 #include <klistview.h>
 #include <kmessagebox.h>
 #include <ksimpleconfig.h>
@@ -56,6 +58,7 @@
 #include "../krdb/krdb.h"
 
 #include "kcmstyle.h"
+#include "styleconfdialog.h"
 
 #include <X11/Xlib.h>
 // X11 namespace cleanup
@@ -190,6 +193,8 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 
 	// Connect all required stuff
 	connect( cbStyle, SIGNAL(activated(int)), this, SLOT(styleChanged()) );
+	connect( cbStyle, SIGNAL(activated(int)), this, SLOT(updateConfigButton()));
+	connect( pbConfigStyle, SIGNAL(clicked()), this, SLOT(styleSpecificConfig()));
 
 	// Add Page2 (Effects)
 	// -------------------
@@ -362,6 +367,9 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	tabWidget->insertTab( page1, i18n("&Style"));
 	tabWidget->insertTab( page2, i18n("&Effects"));
 	tabWidget->insertTab( page3, i18n("&Miscellaneous"));
+	
+	//Enable/disable the button for the initial style
+	updateConfigButton();
 }
 
 
@@ -370,6 +378,82 @@ KCMStyle::~KCMStyle()
 	delete appliedStyle;
 }
 
+void KCMStyle::updateConfigButton()
+{
+	if (!styleEntries[currentStyle] || styleEntries[currentStyle]->configPage.isEmpty()) {
+		pbConfigStyle->setEnabled(false);
+		return;
+	}
+
+	// We don't check whether it's loadable here -
+	// lets us report an error and not waste time
+	// loading things if the user doesn't click the button
+	pbConfigStyle->setEnabled( true );
+}
+
+void KCMStyle::styleSpecificConfig()
+{
+	QString libname = styleEntries[currentStyle]->configPage;
+
+	// Use KLibLoader to get the library, handling
+	// any errors that arise
+	KLibLoader* loader = KLibLoader::self();
+
+	KLibrary* library = loader->library( QFile::encodeName(libname) );
+	if (!library)
+	{
+		KMessageBox::detailedError(this,
+			i18n("There was an error loading the configuration dialog for this style."),
+			loader->lastErrorMessage(),
+			i18n("Unable to load the dialog."));
+		return;
+	}
+
+	void* allocPtr = library->symbol("allocate_kstyle_config");
+
+	if (!allocPtr)
+	{
+		KMessageBox::detailedError(this,
+			i18n("There was an error loading the configuration dialog for this style."),
+			loader->lastErrorMessage(),
+			i18n("Unable to load the dialog."));
+		return;
+	}
+
+	//Create the container dialog
+	StyleConfigDialog* dial = new StyleConfigDialog(this, styleEntries[currentStyle]->name);
+	dial->enableButtonSeparator(true);
+	
+	typedef QWidget*(* factoryRoutine)( QWidget* parent );
+
+	//Get the factory, and make the widget.
+	factoryRoutine factory      = (factoryRoutine)(allocPtr); //Grmbl. So here I am on my
+	//"never use C casts" moralizing streak, and I find that one can't go void* -> function ptr
+	//even with a reinterpret_cast.
+	
+	QWidget*       pluginConfig = factory( dial );
+	
+	//Insert it in...
+	dial->setMainWidget( pluginConfig );
+
+	//..and connect it to the wrapper
+	connect(pluginConfig, SIGNAL(changed(bool)), dial, SLOT(setDirty(bool)));
+	connect(dial, SIGNAL(defaults()), pluginConfig, SLOT(defaults()));
+	connect(dial, SIGNAL(save()), pluginConfig, SLOT(save()));
+
+	if (dial->exec() == QDialog::Accepted  && dial->isDirty() ) {
+		// Force re-rendering of the preview, to apply settings
+		switchStyle(currentStyle);
+		
+		//For now, ask all KDE apps to recreate their styles to apply the setitngs
+		KIPC::sendMessageAll(KIPC::StyleChanged);
+		
+		// We call setStyleDirty here to make sure we force style re-creation
+		setStyleDirty();
+	}
+	
+	delete dial;
+}
 
 void KCMStyle::load()
 {
@@ -649,7 +733,9 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 {
 	cbStyle->clear();
 
-	// Create a dictionary of WidgetStyle to Name and Desc. mappings.
+	// Create a dictionary of WidgetStyle to Name and Desc. mappings,
+	// as well as the config page info
+	styleEntries.clear();
 	styleEntries.setAutoDelete(true);
 
 	QString strWidgetStyle;
@@ -671,6 +757,7 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 		config.setGroup("Misc");
 		entry->name = config.readEntry("Name");
 		entry->desc = config.readEntry("Comment", i18n("No description available."));
+		entry->configPage = config.readEntry("ConfigPage", QString::null);
 
 		// Check if this style should be shown
 		config.setGroup("Desktop Entry");
@@ -755,12 +842,12 @@ void KCMStyle::switchStyle(const QString& styleName)
 
 	// Prevent Qt from wrongly caching radio button images
 	QPixmapCache::clear();
-
+	
 	setStyleRecursive( stylePreview, style );
-
+	
 	// this flickers, but reliably draws the widgets correctly.
 	stylePreview->resize( stylePreview->sizeHint() );
-
+	
 	delete appliedStyle;
 	appliedStyle = style;
 
@@ -770,7 +857,6 @@ void KCMStyle::switchStyle(const QString& styleName)
 	desc = i18n("Description: %1").arg( entry ? entry->desc : i18n("No description available.") );
 	lblStyleDesc->setText( desc );
 }
-
 
 void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 {

@@ -51,10 +51,12 @@ class QSpacerItem;
 class QLabel;
 class QSlider;
 class KComboBox;
+class StyleConfigDialog;
 
 struct StyleEntry {
 	QString name;
 	QString desc;
+	QString configPage;
 	bool hidden;
 };
 
@@ -83,6 +85,9 @@ protected:
 	void addWhatsThis();
 
 protected slots:
+	void styleSpecificConfig();
+	void updateConfigButton();
+	
 	void setEffectsDirty();
 	void setToolbarsDirty();
 	void setStyleDirty();
