@@ -10,7 +10,7 @@ INCLUDES= $(all_includes)
  
 kcm_knotify_la_METASOURCES = AUTO
 
-noinst_HEADERS = knotify.h events.h
+noinst_HEADERS = knotify.h
 
 messages:
 	$(XGETTEXT) $(kcm_knotify_la_SOURCES) -o $(podir)/kcmnotify.pot
