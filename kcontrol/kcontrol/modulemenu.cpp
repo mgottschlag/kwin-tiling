@@ -48,8 +48,14 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
     {
       KPopupMenu *parent = 0;
       parent = getGroupMenu(module->groups());
+  
+      // Item names may contain ampersands. To avoid them being converted to 
+      // accelators, replace them with two ampersands.
+      QString name = module->name();
+      name.replace(QRegExp("&"), "&&");
+      
       int realid = parent->insertItem(KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall)
-                                                                          , module->name(), id);
+                                          , name, id);
       _moduleDict.insert(realid, module);
 
       id++;
@@ -96,8 +102,14 @@ KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
   connect(menu, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
 
   KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+path);
+
+  // Item names may contain ampersands. To avoid them being converted to 
+  // accelators, replace them with two ampersands.
+  QString name = group->caption();
+  name.replace(QRegExp("&"), "&&");
+  
   parent->insertItem(KGlobal::iconLoader()->loadIcon(group->icon(), KIcon::Desktop, KIcon::SizeSmall)
-                                         , group->caption(), menu);
+                                         , name, menu);
 
   _menuDict.insert(path, menu);
 
