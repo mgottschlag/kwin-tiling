@@ -930,7 +930,7 @@ StartClient (struct display *d,
      */
     for (i = 0; i < d->authNum; i++)
     {
-#ifdef SECURE_RPC
+#if defined(SECURE_RPC) && defined(HAVE_GETDOMAINNAME)
 	if (d->authorizations[i]->name_length == 9 &&
 	    memcmp(d->authorizations[i]->name, "SUN-DES-1", 9) == 0)
 	{
