@@ -22,6 +22,11 @@ FontEncodingDict begin
    % Win95 fonts
    /Symbol /Symbol def
    /Wingdings-Regular /Wingdings-Regular def
+
+   % StarOffice fonts
+   /StarBats /StarBats def
+   /StarMath /StarMath def
+   /Symbol /Symbol def
 end
 
 % END USER DEFINITIONS
