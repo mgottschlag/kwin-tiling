@@ -61,7 +61,8 @@ class CMisc
     static bool         removeDir(const QString &dir)                        { return doCmd("rmdir", dir); }
     static bool         removeFile(const QString &file)                      { return doCmd("rm", "-f", file); }
     static bool         moveFile(const QString &file, const QString &dest)   { return doCmd("mv", "-f", file, dest); }
-    static bool         copyFile(const QString &file, const QString &dest)   { return doCmd("cp", "-f", file, dest); }
+    static bool         copyFile(const QString &src, const QString &file, const QString &dest)
+                            { return doCmd("cp", "-f", src+file, dest) && doCmd("chmod", "+w", dest+file); }
     static bool         linkFile(const QString &source, const QString &dest) { return doCmd("ln", "-s", source, dest); }
     static bool         doCmd(const QString &cmd, const QString &p1=QString::null, const QString &p2=QString::null, const QString &p3=QString::null);
     static bool         doCmdStr(const QString &cmd);

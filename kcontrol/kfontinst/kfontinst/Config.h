@@ -72,6 +72,7 @@ class CConfig : public KConfig
     bool              getFixTtfPsNamesUponInstall() { return itsFixTtfPsNamesUponInstall; }
     bool              getUninstallIsDelete()        { return itsUninstallIsDelete; }
     const QString &   getUninstallDir()             { return itsUninstallDir; }
+    const QString &   getInstallDir()               { return itsInstallDir; }
  
     bool              getSOConfigure()              { return itsSOConfigure; }
     const QString &   getSODir()                    { return itsSODir; }
@@ -107,6 +108,7 @@ class CConfig : public KConfig
     void setFixTtfPsNamesUponInstall(bool b);
     void setUninstallIsDelete(bool b);
     void setUninstallDir(const QString &s);
+    void setInstallDir(const QString &s);
  
     void setSOConfigure(bool b);
     void setSODir(const QString &s);
@@ -154,6 +156,7 @@ class CConfig : public KConfig
                       itsEncodingsDir,
                       itsGhostscriptFile,
                       itsUninstallDir,
+                      itsInstallDir,
                       itsSODir,
                       itsSOPpd,
                       itsEncoding,

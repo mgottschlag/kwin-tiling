@@ -98,6 +98,7 @@ class CFontListWidget : public CFontListWidgetData
 
     CFontListWidget(QWidget *parent, bool useSubDirs, bool showButton2Advanced,
                     const QString &boxLabel, const QString &button1Label, const QString &button2Label,
+                    const QString &basicDir,
                     const QString &dir1, const QString &dir1Name, const QString &dir1Icon,
                     const QString &dir2=QString::null, const QString &dir2Name=QString::null, const QString &dir2Icon=QString::null);
 

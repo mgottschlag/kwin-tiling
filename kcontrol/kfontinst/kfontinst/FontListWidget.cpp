@@ -309,13 +309,14 @@ QString CDirectoryItem::fullName() const
 
 CFontListWidget::CFontListWidget(QWidget *parent, bool useSubDirs, bool showButton2Advanced,
                     const QString &boxLabel, const QString &button1Label, const QString &button2Label,
+                    const QString &basicDir,
                     const QString &dir1, const QString &dir1Name, const QString &dir1Icon,
                     const QString &dir2, const QString &dir2Name, const QString &dir2Icon)
                : CFontListWidgetData(parent),
                  itsAdvancedMode(CKfiGlobal::cfg().getAdvancedMode()),
                  itsShowingProgress(false),
                  itsAdvancedData(dir1, dir1Name, dir1Icon, dir2, dir2Name, dir2Icon, showButton2Advanced),
-                 itsBasicData(dir1, useSubDirs),
+                 itsBasicData(basicDir, useSubDirs),
                  itsBoxTitle(boxLabel)
 {
     itsBox->setTitle(boxLabel);
@@ -428,6 +429,8 @@ void CFontListWidget::addSubDir(const QString &top, const QString &sub)
 void CFontListWidget::scan()
 {
     itsList->clear();
+
+    itsButton1->setEnabled(false);
     if(itsAdvancedMode)
     {
         itsList->setColumnText(0, "Folder/File");

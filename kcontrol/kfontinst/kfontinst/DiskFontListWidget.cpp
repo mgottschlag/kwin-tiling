@@ -42,6 +42,7 @@
 
 CDiskFontListWidget::CDiskFontListWidget(QWidget *parent, const char *)
                    : CFontListWidget(parent, false, false, i18n("Install From:"), i18n("&Install"), i18n("Cha&nge Folder"),
+                                     CKfiGlobal::cfg().getInstallDir(),
                                      QString(getenv("HOME"))+"/", i18n("Home Directory"), "folder_home",
                                      "/", i18n("Root Directory"), "folder"),
                                      itsDestDir(QString::null)
@@ -110,12 +111,12 @@ void CDiskFontListWidget::selectionChanged()
                 numDirs=getNumSelectedDirs();
 
             if(numFonts)
-                enable=itsDestDir.length() && CMisc::dWritable(itsDestDir) && itsDestDir!=CKfiGlobal::cfg().getFontsDir() ? true : false;
+                enable=true;
             else
                 if(numDirs)
-                    enable=CKfiGlobal::xcfg().ok() && CKfiGlobal::xcfg().writable() && itsAdvancedMode &&
+                    enable=CKfiGlobal::xcfg().ok() && CKfiGlobal::xcfg().writable() &&
                            NULL!=cur->parent() && 
-                           cur->getType()==CListViewItem::DIR && itsDestDir.length() && CMisc::dWritable(itsDestDir) ?
+                           cur->getType()==CListViewItem::DIR ?
                                true : false;
         }
 
@@ -141,6 +142,7 @@ void CDiskFontListWidget::changeDirectory()
     if(QString::null!=dir && dir!=itsBasicData.dir)
     {
         itsBasicData.dir=dir;
+        CKfiGlobal::cfg().setInstallDir(dir);
         scan();
     }
 }
@@ -156,71 +158,93 @@ void CDiskFontListWidget::rescan(bool advancedMode)
 
 void CDiskFontListWidget::install()
 {
-    bool    dir=getNumSelectedDirs() ? true : false;
-    QString q(dir ? i18n("Copy selected folder (and ALL of its contents) to:\n") : i18n("Copy selected fonts to:\n"));
+    bool ok=true;
 
-    q+=i18n("X11 fonts folder");
     if(itsAdvancedMode)
-        q+="/"+CMisc::shortName(itsDestDir);
-
-    q+=i18n("\n\nAre you sure?");
-
-    if(KMessageBox::questionYesNo(this, q, i18n("Install"))==KMessageBox::Yes)
     {
-        int           failures=0,
-                      successes=0;
-        CListViewItem *item=(CListViewItem *)itsList->firstChild(),
-                      *firstSel=getFirstSelectedItem();
- 
-        CKfiGlobal::errorDialog().clear();
+        ok=false;
 
-        progressInit(i18n("Installing:"), dir ? NULL!=firstSel ? CMisc::countFonts(firstSel->fullName())+1 : 0 :  getNumSelectedFonts());
-
-        while(item!=NULL)
-        {
-            if(item->isSelected())
-            {
-                QString destDir;
-                EStatus status;
-
-                if(itsAdvancedMode)
-                    destDir=itsDestDir;
-                else
-                {
-                    destDir=CKfiGlobal::cfg().getFontsDir();
-                    if(CFontEngine::isATtf(item->text(0)))
-                        destDir+=CKfiGlobal::cfg().getTTSubDir();
-                    else
-                        if(CFontEngine::isAType1(item->text(0)))
-                            destDir+=CKfiGlobal::cfg().getT1SubDir();
-                }
-
-                if(SUCCESS==(status=dir ? installDir(item->dir(), destDir, item->text(0))
-                                        : install(item->dir(), destDir, item->text(0)) ) )
-                {
-                    item->setSelected(false);
-                    itsList->repaintItem(item);
-                    successes++;
-                    if(dir)
-                        emit installDir(destDir, item->text(0));
-                    else
-                        emit installFont(destDir, item->text(0));
-                }
-                else
-                {
-                    CKfiGlobal::errorDialog().add(item->text(0), statusToStr(status));
-                    failures++;
-                }
-            }
-            item=(CListViewItem *)item->itemBelow();
-        }
-
-        progressStop();
-  
-        if(failures)
-            CKfiGlobal::errorDialog().open(i18n("The following items could not be installed:"));
+        if(itsDestDir.length()<=0)
+            KMessageBox::error(this, i18n("Please select a destination folder first"), i18n("Error"));
         else
-            itsButton1->setEnabled(false);
+            if(!CMisc::dWritable(itsDestDir))
+                KMessageBox::error(this, i18n("Destination is not writeable"), i18n("Error"));
+            else
+                if(getNumSelectedFonts() && CKfiGlobal::cfg().getFontsDir()==itsDestDir)
+                    KMessageBox::error(this, i18n("You can't install fonts into the top level X folder.\n"
+                                                  "Please select a sub-folder"), i18n("Error"));
+                else
+                    ok=true;
+    }
+
+    if(ok)
+    {
+        bool    dir=getNumSelectedDirs() ? true : false;
+        QString q(dir ? i18n("Copy selected folder (and ALL of its contents) to:\n") : i18n("Copy selected fonts to:\n"));
+
+        q+=i18n("X11 fonts folder");
+        if(itsAdvancedMode)
+            q+="/"+CMisc::shortName(itsDestDir);
+
+        q+=i18n("\n\nAre you sure?");
+
+        if(KMessageBox::questionYesNo(this, q, i18n("Install"))==KMessageBox::Yes)
+        {
+            int           failures=0,
+                          successes=0;
+            CListViewItem *item=(CListViewItem *)itsList->firstChild(),
+                          *firstSel=getFirstSelectedItem();
+ 
+            CKfiGlobal::errorDialog().clear();
+
+            progressInit(i18n("Installing:"), dir ? NULL!=firstSel ? CMisc::countFonts(firstSel->fullName())+1 : 0 :  getNumSelectedFonts());
+
+            while(item!=NULL)
+            {
+                if(item->isSelected())
+                {
+                    QString destDir;
+                    EStatus status;
+
+                    if(itsAdvancedMode)
+                        destDir=itsDestDir;
+                    else
+                    {
+                        destDir=CKfiGlobal::cfg().getFontsDir();
+                        if(CFontEngine::isATtf(item->text(0)))
+                            destDir+=CKfiGlobal::cfg().getTTSubDir();
+                        else
+                            if(CFontEngine::isAType1(item->text(0)))
+                                destDir+=CKfiGlobal::cfg().getT1SubDir();
+                    }
+
+                    if(SUCCESS==(status=dir ? installDir(item->dir(), destDir, item->text(0))
+                                            : install(item->dir(), destDir, item->text(0)) ) )
+                    {
+                        item->setSelected(false);
+                        itsList->repaintItem(item);
+                        successes++;
+                        if(dir)
+                            emit installDir(destDir, item->text(0));
+                        else
+                            emit installFont(destDir, item->text(0));
+                    }
+                    else
+                    {
+                        CKfiGlobal::errorDialog().add(item->text(0), statusToStr(status));
+                        failures++;
+                    }
+                }
+                item=(CListViewItem *)item->itemBelow();
+            }
+
+            progressStop();
+  
+            if(failures)
+                CKfiGlobal::errorDialog().open(i18n("The following items could not be installed:"));
+            else
+                itsButton1->setEnabled(false);
+        }
     }
 }
 
@@ -235,13 +259,13 @@ CDiskFontListWidget::EStatus CDiskFontListWidget::install(const QString &sourceD
         status=ALREADY_INSTALLED;
     else
     {
-        status=CMisc::copyFile(sourceDir+fname, destDir) ? SUCCESS : PERMISSION_DENIED;
+        status=CMisc::copyFile(sourceDir, fname, destDir) ? SUCCESS : PERMISSION_DENIED;
         if(SUCCESS==status)
         {
             QString afm=CMisc::afmName(fname);
 
             if(CMisc::fExists(sourceDir+afm))
-                CMisc::copyFile(sourceDir+afm, destDir);
+                CMisc::copyFile(sourceDir, afm, destDir);
  
             if(CFontEngine::isATtf(fname) && CKfiGlobal::cfg().getFixTtfPsNamesUponInstall())
                 CKfiGlobal::ttf().fixPsNames(destDir+fname);

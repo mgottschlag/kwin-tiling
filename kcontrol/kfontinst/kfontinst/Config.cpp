@@ -341,6 +341,8 @@ CConfig::CConfig()
     itsUninstallIsDelete=readBoolEntry("UninstallIsDelete");
     val=readEntry("UninstallDir");
     itsUninstallDir=val.length()>0 ? val : constDefaultUninstallDir;
+    val=readEntry("InstallDir");
+    itsInstallDir=val.length()>0 && CMisc::dExists(val) ? val : (QString(getenv("HOME"))+"/");
 
     setGroup("StarOffice");
     itsSOConfigure=readBoolEntry("SOConfigure");
@@ -565,6 +567,14 @@ void CConfig::setUninstallDir(const QString &s)
  
     writeEntry("UninstallDir", s);
     itsUninstallDir=s; 
+}
+
+void CConfig::setInstallDir(const QString &s)
+{
+    KConfigGroupSaver cfgSaver(this, "InstallUninstall");
+ 
+    writeEntry("InstallDir", s);
+    itsInstallDir=s;
 }
 
 void CConfig::setSOConfigure(bool b)
