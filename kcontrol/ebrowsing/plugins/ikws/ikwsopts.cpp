@@ -139,6 +139,12 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     load();
 }
 
+
+QString InternetKeywordsOptions::quickHelp() const
+{
+    return i18n( "In this module, you can configure various Internet search engines that KDE can use for keyword search. This allows you, for example, to enter a pseudo-URI like gg:Smetana to search the Google search engine for web pages about the Czech composer Bedrich Smetana." );
+}
+
 void InternetKeywordsOptions::load() {
     // Clear state first.
 

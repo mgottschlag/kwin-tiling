@@ -49,6 +49,8 @@ public:
     void save();
     void defaults();
 
+	QString quickHelp() const;
+
 protected:
 
 protected slots:
