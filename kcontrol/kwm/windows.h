@@ -90,7 +90,7 @@ private:
   void setAutoRaise(bool);
   void setClickRaise(bool);
   void setAltTabMode(bool);
-  void setCtrlTab(bool);
+  void setTraverseAll(bool);
 
   QButtonGroup *fcsBox;
   QComboBox *focusCombo;
@@ -104,7 +104,7 @@ private:
   QButtonGroup *kbdBox;
   QRadioButton *kdeMode;
   QRadioButton *cdeMode;
-  QCheckBox    *ctrlTab;
+  QCheckBox    *traverseAll;
   
   KConfig *config;
 };

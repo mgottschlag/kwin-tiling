@@ -63,7 +63,7 @@
 #define KWIN_ANIMSHADE             "AnimateShade"
 #define KWIN_MOVE_RESIZE_MAXIMIZED "MoveResizeMaximizedWindows"
 #define KWIN_ALTTABMODE            "AltTabStyle"
-#define KWIN_CTRLTAB               "ControlTab"
+#define KWIN_TRAVERSE_ALL          "TraverseAll"
 #define KWIN_SHADEHOVER            "ShadeHover"
 #define KWIN_SHADEHOVER_INTERVAL   "ShadeHoverInterval"
 
@@ -178,11 +178,11 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
     lay->addWidget(fcsBox);
 
     kbdBox = new QButtonGroup(i18n("Keyboard"), this);
-    QGridLayout *kLay = new QGridLayout(kbdBox, 3, 4,
+    QGridLayout *kLay = new QGridLayout(kbdBox, 3, 3,
                                         KDialog::marginHint(),
                                         KDialog::spacingHint());
     kLay->addRowSpacing(0,10);
-    QLabel *altTabLabel = new QLabel( i18n("Alt-Tab mode:"), kbdBox);
+    QLabel *altTabLabel = new QLabel( i18n("Walk through windows mode:"), kbdBox);
     kLay->addWidget(altTabLabel, 1, 0);
     kdeMode = new QRadioButton(i18n("KDE"), kbdBox);
     kLay->addWidget(kdeMode, 1, 1);
@@ -190,7 +190,8 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
     kLay->addWidget(cdeMode, 1, 2);
 
     wtstr = i18n("Keep the Alt key pressed and hit repeatedly the Tab key to walk"
-                 " through the windows on the current desktop. The two different modes mean:<ul>"
+                 " through the windows on the current desktop ( the Alt+Tab"
+                 " combination may be reconfigured ). The two different modes mean:<ul>"
                  "<li><b>KDE</b>: a nice widget is shown, displaying the icons of all windows to"
                  " walk through and the title of the currently selected one;"
                  "<li><b>CDE</b>: the focus is passed to a new window at each time Tab is hit."
@@ -198,14 +199,13 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
     QWhatsThis::add( altTabLabel, wtstr );
     QWhatsThis::add( kdeMode, wtstr );
     QWhatsThis::add( cdeMode, wtstr );
-
-    ctrlTab = new QCheckBox( i18n("Use Ctrl-Tab to walk through desktops"), kbdBox);
-    kLay->addMultiCellWidget(ctrlTab, 2, 2, 0, 3);
-
-    QWhatsThis::add(ctrlTab, i18n("Keep the Ctrl key pressed and hit repeatedly the Tab key to walk"
-                                  " through the virtual desktops of your work space.<p>Disable this to"
-                                  " avoid interference with other programs that hardwire the same keyboard"
-                                  " combination for internal usage."));
+    
+    traverseAll = new QCheckBox( i18n( "Traverse all windows" ), kbdBox );
+    kLay->addMultiCellWidget( traverseAll, 2, 2, 0, 2 );
+    
+    wtstr = i18n( "Leave this option disabled if you want limit walking through"
+                  " windows to the current desktop." );
+    QWhatsThis::add( traverseAll, wtstr );
 
     lay->addWidget(kbdBox);
 
@@ -217,7 +217,7 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
     connect(autoRaise, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
     connect(kdeMode, SIGNAL(clicked()), this, SLOT(slotChanged()));
     connect(cdeMode, SIGNAL(clicked()), this, SLOT(slotChanged()));
-    connect(ctrlTab, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    connect(traverseAll, SIGNAL(clicked()), this, SLOT(slotChanged()));
 
     load();
 }
@@ -316,8 +316,8 @@ void KFocusConfig::setAltTabMode(bool a) {
     cdeMode->setChecked(!a);
 }
 
-void KFocusConfig::setCtrlTab(bool a) {
-    ctrlTab->setChecked(a);
+void KFocusConfig::setTraverseAll(bool a) {
+    traverseAll->setChecked(a);
 }
 
 void KFocusConfig::load( void )
@@ -348,8 +348,10 @@ void KFocusConfig::load( void )
     key = config->readEntry(KWIN_ALTTABMODE, "KDE");
     setAltTabMode(key == "KDE");
 
+    config->setGroup( "TabBox" );
+    setTraverseAll( config->readBoolEntry(KWIN_TRAVERSE_ALL, false ));
+
     config->setGroup("Desktops");
-    setCtrlTab(config->readBoolEntry(KWIN_CTRLTAB, true));
 }
 
 void KFocusConfig::save( void )
@@ -387,8 +389,10 @@ void KFocusConfig::save( void )
     else
         config->writeEntry(KWIN_ALTTABMODE, "CDE");
 
+    config->setGroup( "TabBox" );
+    config->writeEntry( KWIN_TRAVERSE_ALL , traverseAll->isChecked());
+    
     config->setGroup("Desktops");
-    config->writeEntry(KWIN_CTRLTAB, ctrlTab->isChecked());
 }
 
 void KFocusConfig::defaults()
@@ -397,7 +401,7 @@ void KFocusConfig::defaults()
     setAutoRaise(false);
     setClickRaise(false);
     setAltTabMode(true);
-    setCtrlTab(true);
+    setTraverseAll( false );
 }
 
 KAdvancedConfig::~KAdvancedConfig ()
