@@ -221,7 +221,8 @@ static int kfi_mkdir(const char *dir, bool make=true)
     {
         kfi_sync_dirs();
 
-        chmod(dir, CMisc::DIR_PERMS);
+        if(!make)
+            ::chmod(dir, CMisc::DIR_PERMS);
         CGlobal::xcfg().addPath(ds);
 
 #ifdef HAVE_FONTCONFIG
@@ -281,23 +282,18 @@ static int kfi_cfgdir(const char *dir)
 
 static int kfi_install(const char *from, const char *to)
 {
-//    KInstance kinst("kfontinst");
-    int       rv=-2;
+    int rv=-2;
         
-//    CGlobal::create(true, true);
-
     QString dir(CMisc::getDir(to));
 
     if(!CMisc::dExists(dir))
-        CMisc::createDir(dir);
+        kfi_mkdir(QFile::encodeName(dir));
 
     if(CMisc::doCmd("cp", "-f", from, to))
     {
-        chmod(to, CMisc::FILE_PERMS);
+        ::chmod(to, CMisc::FILE_PERMS);
         rv=0;
     }
-
-//    CGlobal::destroy();
 
     return rv;
 }
