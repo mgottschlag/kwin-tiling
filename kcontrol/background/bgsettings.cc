@@ -935,7 +935,7 @@ void KGlobalBackgroundSettings::readSettings()
     m_Names.clear();
     NETRootInfo info( qt_xdisplay(), NET::DesktopNames | NET::NumberOfDesktops );
     for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
-      m_Names.append( info.desktopName(i+1) );
+      m_Names.append( QString::fromUtf8(info.desktopName(i+1)) );
     
     dirty = false;
 }
