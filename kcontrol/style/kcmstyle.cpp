@@ -324,6 +324,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	gbVisualAppearance = new QGroupBox( 1, Qt::Horizontal, i18n("Visual Appearance"), page3 );
 	cbIconsOnButtons = new QCheckBox( i18n("Sho&w Icons on buttons"), gbVisualAppearance );
 	cbTearOffHandles = new QCheckBox( i18n("Show tear-off handles in &popup menus"), gbVisualAppearance );
+	cbTearOffHandles->hide(); // reenable when the corresponding Qt method is virtual an properly reimplemented
 	cbMacMenubar = new QCheckBox( i18n("&Menubar on top of the screen in the style of MacOS"), gbVisualAppearance );
 
 	// Layout page3.
