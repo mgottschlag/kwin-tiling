@@ -26,7 +26,7 @@
 
 
 /*
- * all following functions should return TRUE, when the Information 
+ * all following functions should return TRUE, when the Information
  * was filled into the lBox-Widget. Returning FALSE indicates that
  * information was not available.
  */
@@ -61,7 +61,7 @@ bool GetInfo_CPU(QListView *lBox)
 	{ 0,0,0 }
 	};
   hw_info_mib_list_t *hw_info_mib;
-  
+
   int mib[2], num;
   char *buf;
   size_t len;
@@ -122,7 +122,7 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 	}
 
 	QListViewItem *olditem = NULL;
-	while((s = t->readLine()) != "") {
+	while(!(s = t->readLine()).isNull()) {
 		if (!seencpu) {
 			if (s.contains("cpu"))
 				seencpu = true;
@@ -248,7 +248,7 @@ bool GetInfo_Sound (QListView *lbox)
 			free(dev);
 		}
 	}
-	
+
 	return true;
 }
 
@@ -285,15 +285,15 @@ bool GetInfo_Partitions (QListView *lbox)
 	lbox->addColumn(i18n("Mount Options"));
 
 	QListViewItem *olditem = 0;
-	while ((s = t->readLine()) != "") {
+	while (!(s = t->readLine()).isNull()) {
 		orig_line = line = strdup(s.latin1());
 
 		device = strsep(&line, " ");
 
-		(void) strsep(&line, " "); // cosume word "on"
+		(void) strsep(&line, " "); // consume word "on"
 		mountpoint = strsep(&line, " ");
 
-		(void) strsep(&line, " "); // cosume word "type"
+		(void) strsep(&line, " "); // consume word "type"
 		type = strsep(&line, " ");
 
 		flags = line;
