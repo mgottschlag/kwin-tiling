@@ -55,7 +55,7 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStrin
 
     m_KeepBut = new QCheckBox(i18n("&Remember passwords"), this);
     QWhatsThis::add( m_KeepBut, i18n("If this option is checked, kdesu will remember your passwords"
-       " for the specified amount of time. Until then, you won't have to enter your password again."
+       " for the specified amount of time. Until then, you will not have to enter your password again."
        " Keep in mind that this option is insecure and may enable others to damage your system.<p>"
        " Please <em>do not</em> use this option if you are working in an insecure environment,"
        " for example, on a workstation that is located in a publicly accessible area.<p>"

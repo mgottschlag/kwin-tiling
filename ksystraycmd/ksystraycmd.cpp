@@ -72,7 +72,7 @@ bool KSysTrayCmd::start()
 
   // Run the command and watch for its window
   if ( !startClient() ) {
-    errStr = i18n( "KSysTrayCmd: KShellProcess can't find a shell." );
+    errStr = i18n( "KSysTrayCmd: KShellProcess cannot find a shell." );
     clientExited();
     return false;
   }

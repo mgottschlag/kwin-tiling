@@ -206,7 +206,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                 <cstring>_warnShady</cstring>
             </property>
             <property name="text">
-                <string>Warn me when I visit a site that doesn't let me know what information they have about me</string>
+                <string>Warn me when I visit a site that does not let me know what information they have about me</string>
             </property>
         </widget>
         <widget class="QButtonGroup" row="4" column="0" rowspan="1" colspan="2">
