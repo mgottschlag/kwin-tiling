@@ -82,7 +82,7 @@
 
 #define MAX_BRDR_SNAP                          100
 #define MAX_WNDW_SNAP                          100
-#define MAX_EDGE_RES                         1000
+#define MAX_EDGE_RES                          1000
 
 
 KFocusConfig::~KFocusConfig ()
@@ -477,6 +477,29 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
 
     lay->addWidget(xineramaBox);
 #endif
+
+    electricBox = new QVButtonGroup(i18n("Active Desktop Borders"), this);
+    electricBox->setMargin(15);
+
+    enable= new QCheckBox(i18n("Enable &active desktop borders"), electricBox);
+    QWhatsThis::add( enable, i18n("If this option is enabled, moving the mouse to a screen border"
+       " will change your desktop. This is e.g. useful if you want to drag windows from one desktop"
+       " to the other.") );
+
+    delays = new KIntNumInput(10, electricBox);
+    delays->setRange(0, MAX_EDGE_RES, 50, true);
+    delays->setSuffix(i18n("ms."));
+    delays->setLabel(i18n("&Desktop switch delay:"));
+    QWhatsThis::add( delays, i18n("Here you can set a delay for switching desktops using the active"
+       " borders feature. Desktops will be switched after the mouse has been pushed against a screen border"
+       " for the specified number of milliseconds.") );
+ 
+    connect( enable, SIGNAL(clicked()), this, SLOT(setEBorders()));
+ 
+    lay->addWidget(electricBox);
+
+
+
     lay->addStretch();
     load();
 
@@ -486,6 +509,8 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     connect( xineramaPlacementEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
     connect( xineramaMaximizeEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
 #endif
+
+
 }
 
 // many widgets connect to this slot
@@ -546,19 +571,8 @@ void KAdvancedConfig::load( void )
     xineramaMaximizeEnable->setChecked(config->readEntry(KWIN_XINERAMA_MAXIMIZE, false));
 #endif
 
-/* Electric borders are not in kwin yet (?)
-  v = config->readNumEntry(KWM_ELECTRIC_BORDER);
-  setElectricBorders(v != -1);
-
-  v = config->readNumEntry(KWM_ELECTRIC_BORDER_DELAY);
-  setElectricBordersDelay(v);
-
-  //CT 17mar98 re-allign this reading with the one in kwm  ("on"/"off")
-  // matthias: this is obsolete now. Should be fixed in 1.1 with NoWarp, MiddleWarp, FullWarp
-  key = config->readEntry(KWM_ELECTRIC_BORDER_MOVE_POINTER);
-  if (key == "MiddleWarp")
-    setElectricBordersMovePointer(TRUE);
-*/
+    setElectricBorders(config->readBoolEntry(KWM_ELECTRIC_BORDER, false));
+    setElectricBorderDelay(config->readNumEntry(KWM_ELECTRIC_BORDER_DELAY, 150));
 }
 
 void KAdvancedConfig::save( void )
@@ -583,19 +597,8 @@ void KAdvancedConfig::save( void )
     config->writeEntry(KWIN_XINERAMA_MAXIMIZE, xineramaMaximizeEnable->isChecked());
 #endif
 
-/* Electric borders are not in kwin yet
-  int v = getElectricBordersDelay()>10?80*getElectricBordersDelay():800;
-  if (getElectricBorders())
-    config->writeEntry(KWM_ELECTRIC_BORDER,v);
-  else
-    config->writeEntry(KWM_ELECTRIC_BORDER,-1);
-
-
-  config->writeEntry(KWM_ELECTRIC_BORDER_DELAY,getElectricBordersDelay());
-
-  bv = getElectricBordersMovePointer();
-  config->writeEntry(KWM_ELECTRIC_BORDER_MOVE_POINTER,bv?"MiddleWarp":"NoWarp");
-*/
+    config->writeEntry(KWM_ELECTRIC_BORDER, getElectricBorders());
+    config->writeEntry(KWM_ELECTRIC_BORDER_DELAY,getElectricBorderDelay());
 }
 
 void KAdvancedConfig::defaults()
@@ -604,12 +607,13 @@ void KAdvancedConfig::defaults()
     setShadeHover(false);
     setShadeHoverInterval(250);
     setXinerama(false);
+    setElectricBorders(false);
+    setElectricBorderDelay(150);
 }
 
 void KAdvancedConfig::setEBorders()
 {
     delays->setEnabled(enable->isChecked());
-    movepointer->setEnabled(enable->isChecked());
 }
 
 bool KAdvancedConfig::getElectricBorders()
@@ -617,29 +621,9 @@ bool KAdvancedConfig::getElectricBorders()
     return  enable->isChecked();
 }
 
-int KAdvancedConfig::getElectricBordersDelay()
+int KAdvancedConfig::getElectricBorderDelay()
 {
     return delays->value();
-}
-
-bool KAdvancedConfig::getElectricBordersMovePointer()
-{
-    return movepointer->isChecked();
-}
-
-void KAdvancedConfig::setElectricBordersMovePointer(bool move){
-
-  if(move){
-    movepointer->setEnabled(true);
-    movepointer->setChecked(true);
-  }
-  else{
-    movepointer->setEnabled(false);
-    movepointer->setChecked(false);
-  }
-
-  movepointer->setEnabled(enable->isChecked());
-
 }
 
 void KAdvancedConfig::setElectricBorders(bool b){
@@ -647,7 +631,7 @@ void KAdvancedConfig::setElectricBorders(bool b){
     setEBorders();
 }
 
-void KAdvancedConfig::setElectricBordersDelay(int delay)
+void KAdvancedConfig::setElectricBorderDelay(int delay)
 {
     delays->setValue(delay);
 }

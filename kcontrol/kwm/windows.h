@@ -202,19 +202,14 @@ private:
 
   KConfig *config;
 
-  //copied from kcontrol/konq/kwindesktop, aleXXX
   bool getElectricBorders( void );
-  int getElectricBordersDelay();
-  bool getElectricBordersMovePointer( void );
-
+  int getElectricBorderDelay();
   void setElectricBorders( bool );
-  void setElectricBordersDelay( int );
-  void setElectricBordersMovePointer( bool );
+  void setElectricBorderDelay( int );
 
-  QVButtonGroup *ElectricBox;
-  QCheckBox *enable, *movepointer;
+  QVButtonGroup *electricBox;
+  QCheckBox *enable;
   KIntNumInput *delays;
-  QLabel *sec;
 };
 
 #endif
