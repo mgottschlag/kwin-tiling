@@ -307,8 +307,8 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     QWhatsThis::add( cbMac, i18n("If this option is selected, applications"
       " won't have their menubar attached to their own window anymore."
       " Instead, there is one menu bar at the top of the screen which shows"
-      " the menu of the currently active application. Maybe you know this"
-      " behavior from MacOS.") );
+      " the menu of the currently active application. You might recognize"
+      " this behavior from MacOS.") );
 
     connect( cbMac, SIGNAL( clicked() ), SLOT( slotMacStyle()  )  );
     vlay->addWidget( cbMac, 10 );
