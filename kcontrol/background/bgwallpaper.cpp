@@ -154,17 +154,24 @@ void BGMultiWallpaperDialog::slotAdd()
 
 void BGMultiWallpaperDialog::slotRemove()
 {
+    int current = -1;
     for ( unsigned i = 0; i < dlg->m_listImages->count();)
     {
         QListBoxItem * item = dlg->m_listImages->item( i );
         if ( item && item->isSelected())
         {
             dlg->m_listImages->removeItem(i);
+            if (current == -1)
+               current = i;
         }
         else
             i++;
     }
-    dlg->m_buttonRemove->setEnabled( dlg->m_listImages->selectedItem () );
+    if ((current != -1) && (current < dlg->m_listImages->count()))
+       dlg->m_listImages->setSelected(current, true);
+
+    dlg->m_buttonRemove->setEnabled(dlg->m_listImages->hasSelection());
+
     setEnabledMoveButtons();
 }
 
