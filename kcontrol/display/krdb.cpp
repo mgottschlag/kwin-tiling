@@ -14,7 +14,6 @@
 *****************************************************************************/
 
 #include <stdlib.h>
-#include <time.h>
 
 #include <qdir.h>
 #include <qdatastream.h>
@@ -31,6 +30,7 @@
 #include <kglobalsettings.h>
 #include <kstddirs.h>
 #include <kprocess.h>
+#include <ktempfile.h>
 
 enum FontStyle { Normal, Bold, Italic, Fixed };
 
@@ -215,26 +215,16 @@ void runRdb() {
 
   QString propString;
 
-  time_t timestamp;
-  ::time( &timestamp );
+  KTempFile tmpFile;
 
-#ifndef HAVE_MKSTEMP
-  QString tmpFile;
-  tmpFile.sprintf("/tmp/krdb.%ld", timestamp);
-#else
-  char *tmpf=strdup("/tmp/krdbXXXXXX");
-  close(mkstemp(tmpf));
-  QString tmpFile(tmpf);
-  free(tmpf);
-#endif
-
-  QFile tmp( tmpFile );
-  if ( tmp.open( IO_WriteOnly ) ) {
-    tmp.writeBlock( preproc.latin1(), preproc.length() );
-  } else {
+  if (tmpFile.status() != 0)
+  {
     kdDebug() << "Couldn't open temp file" << endl;
     exit(0);
   }
+
+  QFile &tmp = *(tmpFile.file());
+  tmp.writeBlock( preproc.latin1(), preproc.length() );
 
   for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
     copyFile(tmp, locate("appdefaults", *it ));
@@ -242,16 +232,15 @@ void runRdb() {
   // very primitive support for  ~/.Xdefaults by appending it
   copyFile(tmp, QDir::homeDirPath() + "/.Xdefaults");
 
-  tmp.close();
+  tmpFile.close();
 
   KProcess proc;
 
   proc.setExecutable("xrdb");
-  proc << "-merge" << tmpFile.latin1();
+  proc << "-merge" << tmpFile.name();
 
   proc.start( KProcess::Block, KProcess::Stdin );
 
-  QDir d("/tmp");
-  d.remove( tmpFile );
+  tmpFile.unlink();
 }
 
