@@ -1,5 +1,3 @@
-# $Id$
-
 kde_module_LTLIBRARIES = kcm_konsole.la
 
 kcm_konsole_la_SOURCES =  schemaeditor.cpp sessioneditor.cpp kcmkonsole.cpp \
