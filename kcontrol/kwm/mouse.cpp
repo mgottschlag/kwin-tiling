@@ -20,6 +20,7 @@
 #include <qlabel.h>
 
 #include <kapp.h>
+#include <dcopclient.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
@@ -36,14 +37,14 @@
 
 
 extern "C" {
-  KCModule *create_kwinmouse ( QWidget *parent, const char* name) 
+  KCModule *create_kwinmouse ( QWidget *parent, const char* name)
   {
     //CT there's need for decision: kwm or kwin?
     KGlobal::locale()->insertCatalogue("kcmkwm");
     return new KMouseConfig( parent, name);
   }
 }
-    
+
 
 KMouseConfig::~KMouseConfig ()
 {
@@ -157,6 +158,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Lower"));
   combo->insertItem(i18n("Operations menu"));
   combo->insertItem(i18n("Toggle raise and lower"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 1,2);
   coTiAct1 = combo;
   QWhatsThis::add(combo, "Behavior on <em>left</em> click into the titlebar or frame of an <em>active</em> window.");
@@ -167,6 +169,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Operations menu"));
   combo->insertItem(i18n("Toggle raise and lower"));
   combo->insertItem(i18n("Nothing"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 2,2);
   coTiAct2 = combo;
   QWhatsThis::add(combo, "Behavior on <em>middle</em> click into the titlebar or frame of an <em>active</em> window.");
@@ -177,6 +180,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Operations menu"));
   combo->insertItem(i18n("Toggle raise and lower"));
   combo->insertItem(i18n("Nothing"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 3,2);
   coTiAct3 =  combo;
   QWhatsThis::add(combo, "Behavior on <em>right</em> click into the titlebar or frame of an <em>active</em> window.");
@@ -185,6 +189,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and raise"));
   combo->insertItem(i18n("Activate and lower"));
   combo->insertItem(i18n("Activate"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 1,3);
   coTiInAct1 = combo;
   QWhatsThis::add(combo, "Behavior on <em>left</em> click into the titlebar or frame of an <em>inactive</em> window.");
@@ -193,6 +198,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and raise"));
   combo->insertItem(i18n("Activate and lower"));
   combo->insertItem(i18n("Activate"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 2,3);
   coTiInAct2 = combo;
   QWhatsThis::add(combo, "Behavior on <em>middle</em> click into the titlebar or frame of an <em>inactive</em> window.");
@@ -201,6 +207,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and raise"));
   combo->insertItem(i18n("Activate and lower"));
   combo->insertItem(i18n("Activate"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 3,3);
   coTiInAct3 = combo;
   QWhatsThis::add(combo, "Behavior on <em>right</em> click into the titlebar or frame of an <em>inactive</em> window.");
@@ -210,6 +217,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and pass click"));
   combo->insertItem(i18n("Activate"));
   combo->insertItem(i18n("Activate and raise"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addMultiCellWidget(combo, 6,6, 2, 3);
   coWin1 = combo;
   QWhatsThis::add( combo, strWin1 );
@@ -219,6 +227,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and pass click"));
   combo->insertItem(i18n("Activate"));
   combo->insertItem(i18n("Activate and raise"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addMultiCellWidget(combo, 7,7, 2, 3);
   coWin2 = combo;
   QWhatsThis::add( combo, strWin2 );
@@ -228,6 +237,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and pass click"));
   combo->insertItem(i18n("Activate"));
   combo->insertItem(i18n("Activate and raise"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addMultiCellWidget(combo, 8,8, 2, 3);
   coWin3 = combo;
   QWhatsThis::add( combo, strWin3 );
@@ -239,6 +249,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Raise"));
   combo->insertItem(i18n("Lower"));
   combo->insertItem(i18n("Nothing"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addMultiCellWidget(combo, 11,11, 2, 3);
   coAll1 = combo;
   QWhatsThis::add( combo, strAll1 );
@@ -250,6 +261,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Raise"));
   combo->insertItem(i18n("Lower"));
   combo->insertItem(i18n("Nothing"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addMultiCellWidget(combo, 12,12, 2, 3);
   coAll2 = combo;
   QWhatsThis::add( combo, strAll2 );
@@ -261,6 +273,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Raise"));
   combo->insertItem(i18n("Lower"));
   combo->insertItem(i18n("Nothing"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addMultiCellWidget(combo, 13,13, 2, 3);
   coAll3 =  combo;
   QWhatsThis::add( combo, strAll3 );
@@ -350,6 +363,12 @@ void KMouseConfig::load()
   setComboText(coAll3,config->readEntry("CommandAll3","Resize").ascii());
 }
 
+// many widgets connect to this slot
+void KMouseConfig::slotChanged()
+{
+  emit changed(true);
+}
+
 void KMouseConfig::save()
 {
   KConfig *config = new KConfig("kwinrc", false, false);
@@ -369,9 +388,12 @@ void KMouseConfig::save()
   config->writeEntry("CommandAll3", functionAll(coAll3->currentItem()));
 
   config->sync();
+  if ( !kapp->dcopClient()->isAttached() )
+      kapp->dcopClient()->attach();
+  kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
 }
 
-void KMouseConfig::defaults() 
+void KMouseConfig::defaults()
 {
   setComboText(coTiAct1,"Raise");
   setComboText(coTiAct2,"Lower");

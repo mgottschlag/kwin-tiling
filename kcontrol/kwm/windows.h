@@ -66,8 +66,8 @@ class KIntNumInput;
 
 #define  CLICK_TO_FOCUS                0
 #define  FOCUS_FOLLOWS_MOUSE           1
-#define  CLASSIC_FOCUS_FOLLOWS_MOUSE   2
-#define  CLASSIC_SLOPPY_FOCUS          3
+#define  FOCUS_UNDER_MOUSE   2
+#define  FOCUS_STRICTLY_UNDER_MOUSE   3
 
 class QSpinBox;
 

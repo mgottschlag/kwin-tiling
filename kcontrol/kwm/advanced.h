@@ -38,7 +38,7 @@
 #define B3_ON              1
 #define B3_OFF             0
 
-#define AT_MODE            "AltTabMode"
+#define AT_STYLE            "AltTabStyle"
 #define ATM_KDE            0
 #define ATM_CDE            1
 
@@ -104,7 +104,7 @@ class myListBrowser : public QWidget {
   QLineEdit *bEdit;
   QListBox *bList;
 
-};  
+};
 
 class KAdvancedConfig : public KConfigWidget {
 
@@ -148,8 +148,8 @@ class KAdvancedConfig : public KConfigWidget {
   void setTrAll(bool);
   bool getB3Grab();
   void setB3Grab(bool);
-  int getATMode();
-  void setATMode(int);
+  int getATStyle();
+  void setATStyle(int);
 
 };
 

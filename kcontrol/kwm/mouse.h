@@ -41,32 +41,33 @@ public:
 
   QString quickHelp();
 
-public  slots:
+private  slots:
+    void slotChanged();
 
 private:
 
-  QComboBox* coTiAct1; 
-  QComboBox* coTiAct2; 
-  QComboBox* coTiAct3; 
-  QComboBox* coTiInAct1; 
-  QComboBox* coTiInAct2; 
-  QComboBox* coTiInAct3; 
-  
-  QComboBox* coWin1; 
-  QComboBox* coWin2; 
-  QComboBox* coWin3; 
-  
-  QComboBox* coAll1; 
-  QComboBox* coAll2; 
-  QComboBox* coAll3; 
+  QComboBox* coTiAct1;
+  QComboBox* coTiAct2;
+  QComboBox* coTiAct3;
+  QComboBox* coTiInAct1;
+  QComboBox* coTiInAct2;
+  QComboBox* coTiInAct3;
 
-  const char* functionTiAc(int); 
-  const char* functionTiInAc(int); 
-  const char* functionWin(int); 
-  const char* functionAll(int); 
+  QComboBox* coWin1;
+  QComboBox* coWin2;
+  QComboBox* coWin3;
+
+  QComboBox* coAll1;
+  QComboBox* coAll2;
+  QComboBox* coAll3;
+
+  const char* functionTiAc(int);
+  const char* functionTiInAc(int);
+  const char* functionWin(int);
+  const char* functionAll(int);
 
   void setComboText(QComboBox* combo, const char* text);
-  
+
 };
 
 #endif

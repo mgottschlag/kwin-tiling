@@ -31,6 +31,8 @@
 #include <kconfig.h>
 #include <knuminput.h>
 #include <kdialog.h>
+#include <kapp.h>
+#include <dcopclient.h>
 
 #include <kglobal.h>
 
@@ -43,15 +45,15 @@
 
 
 // kwin config keywords
-#define KWM_FOCUS     "focusPolicy"
-#define KWM_PLACEMENT "WindowsPlacement"
-#define KWM_MOVE      "MoveMode"
-#define KWM_MAXIMIZE  "MaximizeOnlyVertically"
-#define KWM_RESIZE_ANIM    "ResizeAnimation"
-#define KWM_RESIZE_OPAQUE    "ResizeMode"
-#define KWM_AUTORAISE_INTERVAL "AutoRaiseInterval"
-#define KWM_AUTORAISE "AutoRaise"
-#define KWM_CLICKRAISE "ClickRaise"
+#define KWIN_FOCUS     "FocusPolicy"
+#define KWIN_PLACEMENT "WindowsPlacement"
+#define KWIN_MOVE      "MoveMode"
+#define KWIN_MAXIMIZE  "MaximizeOnlyVertically"
+#define KWIN_RESIZE_ANIM    "ResizeAnimation"
+#define KWIN_RESIZE_OPAQUE    "ResizeMode"
+#define KWIN_AUTORAISE_INTERVAL "AutoRaiseInterval"
+#define KWIN_AUTORAISE "AutoRaise"
+#define KWIN_CLICKRAISE "ClickRaise"
 
 
 extern "C" {
@@ -199,9 +201,8 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   focusCombo =  new QComboBox(false, fcsBox);
   focusCombo->insertItem(i18n("Click to focus"), CLICK_TO_FOCUS);
   focusCombo->insertItem(i18n("Focus follows mouse"), FOCUS_FOLLOWS_MOUSE);
-  // CT: disabling is needed as long as functionality misses in kwin
-  //  focusCombo->insertItem(i18n("Classic focus follows mouse"), CLASSIC_FOCUS_FOLLOWS_MOUSE);
-  //  focusCombo->insertItem(i18n("Classic sloppy focus"), CLASSIC_SLOPPY_FOCUS);
+  focusCombo->insertItem(i18n("Focus under mouse"), FOCUS_UNDER_MOUSE);
+  focusCombo->insertItem(i18n("Focus strictly under mouse"), FOCUS_STRICTLY_UNDER_MOUSE);
   fLay->addMultiCellWidget(focusCombo,1,1,0,1);
 
   // FIXME, when more policies have been added to KWin
@@ -209,8 +210,19 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     " the window you can work in. <ul>"
     " <li><em>Click to focus:</em> a window becomes active when you click into it. This is the behavior"
     " you might know from other operating systems.</li>"
-    " <li><em>Focus follows mouse:</em> it's always the window containing the mouse pointer that's active."
-    " Long time Unix users are used to this.</li>") );
+    " <li><em>Focus follows mouse:</em> Moving the mouse pointer actively onto a"
+    " normal window activates it. Very practical if you are using the mouse a lot.</li>"
+    " <li><em>FocusUnderMouse</em> - The window that happens to be under the"
+    "  mouse pointer becomes active. The invariant is: no window can"
+    "  have focus that is not under the mouse. </li>"
+    " <li><em>FocusStrictlyUnderMouse</em> - this is even worse than"
+    " FocusUnderMouse. Only the window under the mouse pointer is"
+    " active. If the mouse points nowhere, nothing has the focus. "
+    " </ul>"
+    "  Note that FocusUnderMouse and FocusStrictlyUnderMouse are not"
+    " particulary useful. They are only provided for old-fashined"
+    " die-hard UNIX people ;-)"
+    ) );
 
   connect(focusCombo, SIGNAL(activated(int)),this,
 	  SLOT(setAutoRaiseEnabled()) );
@@ -443,7 +455,7 @@ void KWindowConfig::load( void )
   KConfig *config = new KConfig("kwinrc", false, false);
   config->setGroup( "Windows" );
 
-  key = config->readEntry(KWM_MOVE, "Opaque");
+  key = config->readEntry(KWIN_MOVE, "Opaque");
   if( key == "Transparent")
     setMove(TRANSPARENT);
   else if( key == "Opaque")
@@ -452,25 +464,25 @@ void KWindowConfig::load( void )
   //CT 17Jun1998 - variable animation speed from 0 (none!!) to 10 (max)
   // CT: disabling is needed as long as functionality misses in kwin
 //   int anim = 1;
-//   if (config->hasKey(KWM_RESIZE_ANIM)) {
-//     anim = config->readNumEntry(KWM_RESIZE_ANIM);
+//   if (config->hasKey(KWIN_RESIZE_ANIM)) {
+//     anim = config->readNumEntry(KWIN_RESIZE_ANIM);
 //     if( anim < 1 ) anim = 0;
 //     if( anim > 10 ) anim = 10;
 //     setResizeAnim(anim);
 //   }
 //   else{
 //     setResizeAnim(1);
-//     config->writeEntry(KWM_RESIZE_ANIM, 1);
+//     config->writeEntry(KWIN_RESIZE_ANIM, 1);
 //   }
 
-  key = config->readEntry(KWM_RESIZE_OPAQUE, "Transparent");
+  key = config->readEntry(KWIN_RESIZE_OPAQUE, "Transparent");
   if( key == "Opaque")
     setResizeOpaque(RESIZE_OPAQUE);
   else if ( key == "Transparent")
     setResizeOpaque(RESIZE_TRANSPARENT);
 
   // placement policy --- CT 19jan98 ---
-  key = config->readEntry(KWM_PLACEMENT);
+  key = config->readEntry(KWIN_PLACEMENT);
   //CT 13mar98 interactive placement
   if( key.left(11) == "interactive") {
     setPlacement(INTERACTIVE_PLACEMENT);
@@ -499,28 +511,28 @@ void KWindowConfig::load( void )
       setPlacement(SMART_PLACEMENT);
   }
 
-  key = config->readEntry(KWM_FOCUS);
+  key = config->readEntry(KWIN_FOCUS);
   if( key == "ClickToFocus")
     setFocus(CLICK_TO_FOCUS);
   else if( key == "FocusFollowsMouse")
     setFocus(FOCUS_FOLLOWS_MOUSE);
-  else if(key == "ClassicFocusFollowsMouse")
-    setFocus(CLASSIC_FOCUS_FOLLOWS_MOUSE);
-  else if(key == "ClassicSloppyFocus")
-    setFocus(CLASSIC_SLOPPY_FOCUS);
+  else if(key == "FocusUnderMouse")
+    setFocus(FOCUS_UNDER_MOUSE);
+  else if(key == "FocusStrictlyUnderMouse")
+    setFocus(FOCUS_STRICTLY_UNDER_MOUSE);
 
-  key = config->readEntry(KWM_MAXIMIZE);
+  key = config->readEntry(KWIN_MAXIMIZE);
   if( key == "on")
     setMaximize(MAXIMIZE_VERT);
   else if( key == "off")
     setMaximize(MAXIMIZE_FULL);
 
-  int k = config->readNumEntry(KWM_AUTORAISE_INTERVAL,0);
+  int k = config->readNumEntry(KWIN_AUTORAISE_INTERVAL,0);
   setAutoRaiseInterval(k);
 
-  key = config->readEntry(KWM_AUTORAISE);
+  key = config->readEntry(KWIN_AUTORAISE);
   setAutoRaise(key == "on");
-  key = config->readEntry(KWM_CLICKRAISE);
+  key = config->readEntry(KWIN_CLICKRAISE);
   setClickRaise(key != "off");
   setAutoRaiseEnabled();      // this will disable/hide the auto raise delay widget if focus==click
 
@@ -536,72 +548,76 @@ void KWindowConfig::save( void )
 
   v = getMove();
   if (v == TRANSPARENT)
-    config->writeEntry(KWM_MOVE,"Transparent");
+    config->writeEntry(KWIN_MOVE,"Transparent");
   else
-    config->writeEntry(KWM_MOVE,"Opaque");
+    config->writeEntry(KWIN_MOVE,"Opaque");
 
 
   // placement policy --- CT 31jan98 ---
   v =getPlacement();
   if (v == RANDOM_PLACEMENT)
-    config->writeEntry(KWM_PLACEMENT, "Random");
+    config->writeEntry(KWIN_PLACEMENT, "Random");
   else if (v == CASCADE_PLACEMENT)
-    config->writeEntry(KWM_PLACEMENT, "Cascade");
+    config->writeEntry(KWIN_PLACEMENT, "Cascade");
   //CT 13mar98 manual and interactive placement
   else if (v == MANUAL_PLACEMENT)
-    config->writeEntry(KWM_PLACEMENT, "Manual");
+    config->writeEntry(KWIN_PLACEMENT, "Manual");
   else if (v == INTERACTIVE_PLACEMENT) {
       QString tmpstr = QString("Interactive,%1").arg(interactiveTrigger->value());
-      config->writeEntry(KWM_PLACEMENT, tmpstr);
+      config->writeEntry(KWIN_PLACEMENT, tmpstr);
   }
   else
-    config->writeEntry(KWM_PLACEMENT, "Smart");
+    config->writeEntry(KWIN_PLACEMENT, "Smart");
 
 
   v = getFocus();
   if (v == CLICK_TO_FOCUS)
-    config->writeEntry(KWM_FOCUS,"ClickToFocus");
-  else if (v == CLASSIC_SLOPPY_FOCUS)
-    config->writeEntry(KWM_FOCUS,"ClassicSloppyFocus");
-  else if (v == CLASSIC_FOCUS_FOLLOWS_MOUSE)
-    config->writeEntry(KWM_FOCUS,"ClassicFocusFollowsMouse");
+    config->writeEntry(KWIN_FOCUS,"ClickToFocus");
+  else if (v == FOCUS_UNDER_MOUSE)
+    config->writeEntry(KWIN_FOCUS,"FocusUnderMouse");
+  else if (v == FOCUS_STRICTLY_UNDER_MOUSE)
+    config->writeEntry(KWIN_FOCUS,"FocusStrictlyUnderMouse");
   else
-    config->writeEntry(KWM_FOCUS,"FocusFollowsMouse");
+    config->writeEntry(KWIN_FOCUS,"FocusFollowsMouse");
 
   //CT - 17Jun1998
-  //  config->writeEntry(KWM_RESIZE_ANIM, getResizeAnim());
+  //  config->writeEntry(KWIN_RESIZE_ANIM, getResizeAnim());
 
 
   v = getResizeOpaque();
   if (v == RESIZE_OPAQUE)
-    config->writeEntry(KWM_RESIZE_OPAQUE, "Opaque");
+    config->writeEntry(KWIN_RESIZE_OPAQUE, "Opaque");
   else
-    config->writeEntry(KWM_RESIZE_OPAQUE, "Transparent");
+    config->writeEntry(KWIN_RESIZE_OPAQUE, "Transparent");
 
  //CT: disabling is needed as long as functionality misses in kwin
 //   v = getMaximize();
 //   if (v == MAXIMIZE_VERT)
-//     config->writeEntry(KWM_MAXIMIZE, "on");
+//     config->writeEntry(KWIN_MAXIMIZE, "on");
 //   else
-//     config->writeEntry(KWM_MAXIMIZE, "off");
+//     config->writeEntry(KWIN_MAXIMIZE, "off");
 
 //   v = getAutoRaiseInterval();
 //   if (v <0) v = 0;
-//   config->writeEntry(KWM_AUTORAISE_INTERVAL,v);
+//   config->writeEntry(KWIN_AUTORAISE_INTERVAL,v);
 
 //   if (autoRaiseOn->isChecked())
-//     config->writeEntry(KWM_AUTORAISE, "on");
+//     config->writeEntry(KWIN_AUTORAISE, "on");
 //   else
-//     config->writeEntry(KWM_AUTORAISE, "off");
+//     config->writeEntry(KWIN_AUTORAISE, "off");
 
 //   if (clickRaiseOn->isChecked())
-//     config->writeEntry(KWM_CLICKRAISE, "on");
+//     config->writeEntry(KWIN_CLICKRAISE, "on");
 //   else
-//     config->writeEntry(KWM_CLICKRAISE, "off");
+//     config->writeEntry(KWIN_CLICKRAISE, "off");
 
   config->sync();
 
   delete config;
+
+  if ( !kapp->dcopClient()->isAttached() )
+      kapp->dcopClient()->attach();
+  kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
 }
 
 void KWindowConfig::defaults()

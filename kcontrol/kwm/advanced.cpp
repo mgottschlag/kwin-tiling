@@ -68,7 +68,7 @@ KAdvancedConfig::KAdvancedConfig(QWidget * parent, const char *name)
   b3grab->setMinimumSize(atLabel->size());
   chkLay->addMultiCellWidget(b3grab,4,4,0,1);
 
-  chkLay->activate();  
+  chkLay->activate();
 
   lay->addWidget(keyBox);
 
@@ -172,11 +172,11 @@ void KAdvancedConfig::setB3Grab(bool a) {
   b3grab->setChecked(a);
 }
 
-int KAdvancedConfig::getATMode() {
+int KAdvancedConfig::getATStyle() {
   return alttab->currentItem();
 }
 
-void KAdvancedConfig::setATMode (int a) {
+void KAdvancedConfig::setATStyle (int a) {
   alttab->setCurrentItem(a);
 }
 
@@ -195,9 +195,9 @@ void KAdvancedConfig::loadSettings() {
   key = config->readEntry(B3GRAB, "on");
   setB3Grab( key == "on" );
 
-  key = config->readEntry(AT_MODE, "KDE");
+  key = config->readEntry(AT_STYLE, "KDE");
 
-  if (key == "CDE") setATMode( ATM_CDE );
+  if (key == "CDE") setATStyle( ATM_CDE );
   else setATMode( ATM_KDE );
 
   config->setGroup( "Decoration" );
@@ -232,7 +232,7 @@ void KAdvancedConfig::saveSettings() {
   config->writeEntry(CTRLTAB,getCtrlTab()?"on":"off");
   config->writeEntry(TRALL,getTrAll()?"on":"off");
   config->writeEntry(B3GRAB,getB3Grab()?"on":"off");
-  config->writeEntry(AT_MODE,(getATMode() == ATM_KDE)?"KDE":"CDE");
+  config->writeEntry(AT_STYLE,(getATMode() == ATM_KDE)?"KDE":"CDE");
 
   //CT save lists
   filterSelected(opCombo->currentItem());
@@ -359,9 +359,9 @@ void myListBrowser::setEnabled(bool a) {
 void myListBrowser::feedList(QStrList *thisList) {
 
   victimList->clear();
-  for(unsigned int i = 0; i < bList->count(); i++) 
+  for(unsigned int i = 0; i < bList->count(); i++)
     victimList->insert(i, bList->text(i).ascii());
-    
+
   bList->clear();
 
   bList->insertStrList(thisList);
