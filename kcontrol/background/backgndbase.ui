@@ -81,7 +81,7 @@
                     <property name="whatsThis" stdset="0">
                         <string>Choose the desktop whose background
 you want to modify. If you want the same background settings to be
-applied to all desktops, check the \"Common Background\" option, and
+applied to all desktops, check the "Common Background" option, and
 this list will be disabled.</string>
                     </property>
                 </widget>
@@ -367,7 +367,7 @@ this list will be disabled.</string>
                             <property name="whatsThis" stdset="0">
                                 <string>If you have selected to use wallpaper, you can choose various 
 methods of blending the background colors and patterns
-with the wallpaper. The default option, \"No Blending\", means that the
+with the wallpaper. The default option, "No Blending", means that the
 wallpaper simply obscures the background below.</string>
                             </property>
                         </widget>
