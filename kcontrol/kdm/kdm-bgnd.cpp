@@ -269,7 +269,7 @@ void KDMBackgroundWidget::slotQDrop( QDropEvent *e )
     monitor->setAllowDrop(false);
     s = list.first(); // we only want the first
     //debug("slotQDropEvent - %s", s.data());
-    s = QUrlDrag::urlToLocalFile(s.data()); // a hack. should be improved
+    s = QUrlDrag::uriToLocalFile(s.data()); // a hack. should be improved
     if(!s.isEmpty())
       loadWallpaper(s.data());
   } 
