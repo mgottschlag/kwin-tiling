@@ -44,11 +44,6 @@ public:
   ~ProxyWidget();
 
 
-protected:
-
-  void resizeEvent(QResizeEvent *event);
-
-
 private slots:
 
   void helpClicked();
@@ -71,7 +66,6 @@ signals:
 private:
 
   QPushButton *_help, *_default, *_reset, *_apply, *_cancel, *_ok;
-  QWidget     *_buttons;
   QFrame      *_sep;
   KCModule    *_client;
 

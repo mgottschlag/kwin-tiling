@@ -36,34 +36,24 @@
 #include "proxywidget.moc"
 
 
-ProxyWidget::ProxyWidget(KCModule *client, QString title, QPixmap icon, KDockContainer *parent, const char *name)
+ProxyWidget::ProxyWidget(KCModule *client, QString title, QPixmap icon,
+			 KDockContainer *parent, const char *name)
   : KDockWidget(title,icon,parent,name), _client(client)
 {
   client->reparent(this,0,QPoint(0,0),true);
   connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
-
-  _buttons = new QWidget(this);
-
+  
   _sep = new QFrame(this);
   _sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);
   _sep->show();
-
-  QHBoxLayout *box = new QHBoxLayout(_buttons, 2, 2);
-
-  _help = new QPushButton(i18n("Help"), _buttons);
-  box->addWidget(_help);
-  _default = new QPushButton(i18n("Default"), _buttons);
-  box->addWidget(_default);
-  _reset = new QPushButton(i18n("Reset"), _buttons);
-  box->addWidget(_reset);
-  box->addStretch();
-  _cancel = new QPushButton(i18n("Cancel"), _buttons);
-  box->addWidget(_cancel);
-  _apply = new QPushButton(i18n("Apply"), _buttons);
-  box->addWidget(_apply);
-  _ok = new QPushButton(i18n("Ok"), _buttons);
-  box->addWidget(_ok);
-
+  
+  _help = new QPushButton(i18n("Help"), this);
+  _default = new QPushButton(i18n("Default"), this);
+  _reset = new QPushButton(i18n("Reset"), this);
+  _cancel = new QPushButton(i18n("Cancel"), this);
+  _apply = new QPushButton(i18n("Apply"), this);
+  _ok = new QPushButton(i18n("OK"), this);
+  
   // only enable the requested buttons
   int b = _client->buttons();
   _help->setEnabled(b & KCModule::Help);
@@ -72,35 +62,46 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, QPixmap icon, KDockCon
   _cancel->setEnabled(b & KCModule::Cancel);
   _apply->setEnabled(b & KCModule::Apply);
   _ok->setEnabled(b & KCModule::Ok);
-
-  _buttons->setFixedHeight(_help->sizeHint().height()+4);
-  resizeEvent(0);
-  _buttons->show();
-
+  
   connect(_help, SIGNAL(clicked()), this, SLOT(helpClicked()));
   connect(_default, SIGNAL(clicked()), this, SLOT(defaultClicked()));
   connect(_reset, SIGNAL(clicked()), this, SLOT(resetClicked()));
   connect(_cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(applyClicked()));
   connect(_ok, SIGNAL(clicked()), this, SLOT(okClicked()));
-
-
+  
+  _help->show();
+  _default->show();
+  _reset->show();
+  _cancel->show();
+  _apply->show();
+  _ok->show();
+  
+  QGridLayout *top = new QGridLayout(this, 4, 6, 5);
+  top->addRowSpacing(0, DOCKBAR_HEIGHT);
+  top->addMultiCellWidget(client, 1, 1, 0, 6);
+  top->addMultiCellWidget(_sep, 2, 2, 0, 6);  
+  top->addWidget(_help, 3, 0);
+  top->addWidget(_default, 3, 1);
+  top->addWidget(_reset, 3, 2);
+  top->addWidget(_apply, 3, 4);
+  top->addWidget(_ok, 3, 5);
+  top->addWidget(_cancel, 3, 6);
+  
+  top->setRowStretch(1, 1);
+  top->setColStretch(3, 1);
+  
+  top->activate();
+  
   connect(this, SIGNAL(closeClicked()), this, SLOT(cancelClicked()));
+  
+  // Restrict minimum size to the optimal one  
+  setMinimumSize(sizeHint());
 }
 
 
 ProxyWidget::~ProxyWidget()
 {
-}
-
-
-void ProxyWidget::resizeEvent(QResizeEvent *event)
-{
-  KDockWidget::resizeEvent(event);
-
-  _sep->setGeometry(0,height()-_buttons->height()-2,width(),2);
-  _buttons->setGeometry(0,height()-_buttons->height(),width(),_buttons->height());
-  _client->setGeometry(0,DOCKBAR_HEIGHT,width(),height()-_buttons->height()-2-DOCKBAR_HEIGHT);
 }
 
 
