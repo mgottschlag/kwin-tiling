@@ -119,11 +119,11 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
 
     QWhatsThis::add( group,
      i18n("<qt>There are two different clipboard buffers available:<br><br>"
-          "<b>Clipboard</b> is filled by selecting something<br>"
-          "and pressing Ctrl+C, or by clicking \"Copy\" in a toolbar or<br>"
+          "<b>Clipboard</b> is filled by selecting something "
+          "and pressing Ctrl+C, or by clicking \"Copy\" in a toolbar or "
           "menubar.<br><br>"
-          "<b>Selection</b> is available immediately after<br>"
-          "selecting some text. The only way to access the selection<br>"
+          "<b>Selection</b> is available immediately after "
+          "selecting some text. The only way to access the selection "
           "is to press the middle mouse button.<br><br>"
           "You can configure the relationship between Clipboard and Selection."
           "</qt>" ));
@@ -419,12 +419,12 @@ AdvancedWidget::AdvancedWidget( QWidget *parent, const char *name )
     editListBox = new KEditListBox( i18n("D&isable Actions for Windows of Type WM_CLASS"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
 
     QWhatsThis::add( editListBox,
-          i18n("<qt>This lets you specify windows in which klipper should<br>"
-	       "not invoke \"actions\". Use"
-	       "<center><b>xprop | grep WM_CLASS</b></center>"
-	       "in a terminal to find out the WM_CLASS of a window.<br>"
-	       "Next, click on the window you want to examine. The<br>"
-	       "first string it outputs after the equal sign is the one<br>"
+          i18n("<qt>This lets you specify windows in which klipper should "
+	       "not invoke \"actions\". Use<br><br>"
+	       "<center><b>xprop | grep WM_CLASS</b></center><br>"
+	       "in a terminal to find out the WM_CLASS of a window. "
+	       "Next, click on the window you want to examine. The "
+	       "first string it outputs after the equal sign is the one "
 	       "you need to enter here.</qt>"));
 
     editListBox->setFocus();
