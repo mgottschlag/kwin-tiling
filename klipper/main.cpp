@@ -29,7 +29,7 @@ static const char *version = "v0.7";
 int main(int argc, char *argv[])
 {
   KAboutData aboutData("klipper", I18N_NOOP("Klipper"),
-    version, description, KAboutData::License_GPL,
+    version, description, KAboutData::License_Artistic,
     "(c) 1998-2000, Andrew Stanley-Jones");
   aboutData.addAuthor("Andrew Stanley-Jones", 0, "asj@cban.com");
   aboutData.addAuthor("Carsten Pfeiffer", 0, "pfeiffer@kde.org");
