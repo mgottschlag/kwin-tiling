@@ -118,12 +118,12 @@ FIXME: this could be clearer done by a calculation on the position.
 -- ------------------------------------------------------------------------ */
 #include "config.h"
 
-//#define QT_CLEAN_NAMESPACE
 #include <qslider.h>
 #include <qlayout.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <krandomsequence.h>
+#include <kdebug.h>
 
 #include "xlock.h"
 #ifdef HAVE_CONFIG_H
@@ -205,7 +205,7 @@ int getVisual(XVisualInfo * wantVis, int visual_count) {
                         glVis[screen] = glXChooseVisual(display, screen, attribList);
                 }
         }
-	
+
         // Make sure we have a visual
         if (!glVis[screen])
 	  return (0);
@@ -214,7 +214,7 @@ int getVisual(XVisualInfo * wantVis, int visual_count) {
         for(i=0;i<visual_count;i++)
 	  if ( (glVis[screen]->visual == (wantVis+i)->visual) )
 	    return (1); // success
-	
+
         // The visual we received did not match one we asked for
         return (0);
 }
@@ -258,8 +258,7 @@ void initGL(Window window)
 
   if (!getVisual(wantVis, n)) {
     if (!getVisual(wantVis, n)) {
-      (void) fprintf(stderr, i18n(
-           "GL can not render with root visual\n"));
+      kdError() << i18n("GL can not render with root visual\n");
       return;
     }
   }

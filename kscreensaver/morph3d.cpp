@@ -3,12 +3,12 @@
  *
  * See xlock.c for copying information.
  *
- * The original code for this mode was written by Marcelo Fernandes Vianna 
- * (me...) and was inspired on a WindowsNT(R)'s screen saver. It was written 
- * from scratch and it was not based on any other source code. 
- * 
- * Porting it to xlock (the final objective of this code since the moment I 
- * decided to create it) was possible by comparing the original Mesa's gear 
+ * The original code for this mode was written by Marcelo Fernandes Vianna
+ * (me...) and was inspired on a WindowsNT(R)'s screen saver. It was written
+ * from scratch and it was not based on any other source code.
+ *
+ * Porting it to xlock (the final objective of this code since the moment I
+ * decided to create it) was possible by comparing the original Mesa's gear
  * demo with it's ported version to xlock, so thanks for Danny Sung (look at
  * gear.c) for his indirect help.
  *
@@ -22,7 +22,7 @@
  * mistake.
  *
  * My e-mail addresses are
- * vianna@cat.cbpf.br 
+ * vianna@cat.cbpf.br
  *         and
  * marcelo@venus.rdc.puc-rio.br
  *
@@ -43,6 +43,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <krandomsequence.h>
+#include <kdebug.h>
 #include "xlock.h"
 #include "helpers.h"
 #include "../config.h"
@@ -61,7 +62,7 @@
 #ifdef HAVE_GL_GLUT_H
 // We don't need GLUT, but some BROKEN GLU implemenations, such as the one
 // used in SuSE Linux 6.3, do. :(
-#include <GL/glut.h>  
+#include <GL/glut.h>
 #endif
 #include <GL/glu.h>
 #include <GL/glx.h>
@@ -626,7 +627,7 @@ drawmorph3d(Window window)
 	glTranslatef(0.0, 0.0, -10.0);
 
 	glScalef(Scale4Window * mp->WindH / mp->WindW, Scale4Window, Scale4Window);
-	glTranslatef(2.5 * mp->WindW / mp->WindH * sin(mp->step * 1.11), 2.5 * 
+	glTranslatef(2.5 * mp->WindW / mp->WindH * sin(mp->step * 1.11), 2.5 *
 		     cos(mp->step * 1.25 * 1.11), 0);
 
 	glRotatef(mp->step * 100, 1, 0, 0);
@@ -859,7 +860,7 @@ initmorph3d(Window window)
 		   so fall back on color, but keep the mono "look & feel". */
 		if (!getVisual(wantVis, n)) {
 			if (!getVisual(wantVis, n)) {
-				(void) fprintf(stderr, i18n("GL can not render with root visual\n"));
+			    kdError() << i18n("GL can not render with root visual\n") << endl;
 				return;
 			}
 		}
@@ -875,7 +876,7 @@ initmorph3d(Window window)
 		glIndexi(WhitePixel(display, screen));
 		glClearIndex(BlackPixel(display, screen));
 	}
-	
+
 	reshape(xwa.width, xwa.height);
 	mp->object = batchcount;
 	if (mp->object <= 0 || mp->object > 5)
@@ -979,7 +980,7 @@ kMorph3dSaver::kMorph3dSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	initXLock( mGc );
 	initmorph3d( mDrawable );
-	
+
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
 }
@@ -1014,7 +1015,7 @@ void kMorph3dSaver::readSettings()
 
 	str = config->readEntry( "Speed" );
 	if ( !str.isNull() )
-		speed = MAXSPEED - atoi( str );
+		speed = MAXSPEED - str.toInt();
 	else
 		speed = DEFSPEED;
 

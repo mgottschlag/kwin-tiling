@@ -54,6 +54,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <krandomsequence.h>
+#include <kdebug.h>
 #include "xlock.h"
 #include "helpers.h"
 #ifdef HAVE_CONFIG_H
@@ -428,8 +429,7 @@ initSpace(Window window)
 
 	if (!getVisual(wantVis, n)) {
 	  if (!getVisual(wantVis, n)) {
-	    (void) fprintf(stderr, i18n(
-		       "GL can not render with root visual\n"));
+	    kdError() << i18n("GL can not render with root visual\n") << endl;
 	    return;
 	  }
 	}
@@ -554,7 +554,7 @@ void kSpaceSaver::readSettings()
 
 	str = config->readEntry( "Speed" );
 	if ( !str.isNull() )
-		speed = MAXSPEED - atoi( str );
+		speed = MAXSPEED - str.toInt();
 	else
 		speed = DEFSPEED;
 
