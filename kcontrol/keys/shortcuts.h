@@ -58,7 +58,7 @@ class ShortcutsModule : public QWidget
  protected slots:
 	void slotSchemeCur();
 	void slotKeyChange();
-	void slotSelectScheme( int iItem );
+	void slotSelectScheme();
 	void slotSaveSchemeAs();
 	void slotRemoveScheme();
 

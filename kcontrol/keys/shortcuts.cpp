@@ -113,8 +113,7 @@ void ShortcutsModule::initGUI()
 	createActionsApplication();
 
 	kdDebug(125) << "F-----------" << endl;
-	//QGridLayout* pLayout = new QGridLayout( this, 6, 3 );//, KDialog::marginHint(), KDialog::spacingHint() );
-	QVBoxLayout* pVLayout = new QVBoxLayout( this, KDialog::marginHint() );//, 0, KDialog::spacingHint() );
+	QVBoxLayout* pVLayout = new QVBoxLayout( this, KDialog::marginHint() );
 
 	pVLayout->addSpacing( KDialog::marginHint() );
 
@@ -245,6 +244,7 @@ void ShortcutsModule::readSchemeNames()
 	m_pcbSchemes->clear();
 	m_rgsSchemeFiles.clear();
 
+	i18n("User-Defined Scheme");
 	m_pcbSchemes->insertItem( i18n("Current Scheme") );
 	m_rgsSchemeFiles.append( "cur" );
 
@@ -275,8 +275,8 @@ void ShortcutsModule::resizeEvent( QResizeEvent * )
 void ShortcutsModule::slotSchemeCur()
 {
 	kdDebug(125) << "ShortcutsModule::slotSchemeCur()" << endl;
-	m_pcbSchemes->setCurrentItem( 0 );
-	slotSelectScheme( 0 );
+	//m_pcbSchemes->setCurrentItem( 0 );
+	slotSelectScheme();
 }
 
 void ShortcutsModule::slotKeyChange()
@@ -304,6 +304,9 @@ void ShortcutsModule::slotSelectScheme( int )
 		m_actionsSequence.readActions( "Global Shortcuts", &config );
 		m_actionsApplication.readActions( "Shortcuts", &config );
 	}
+
+	i18n("This scheme requires the \"%1\" modifier key, which is not available on your keyboard layout. "
+		"Do you wish to view it anyway?" ).arg( i18n("Win") );
 
 	m_prbPre->setChecked( true );
 	m_prbNew->setEnabled( false );
