@@ -27,6 +27,7 @@
 #include <qpixmap.h>
 #include <qlist.h>
 #include <qfileinfo.h>
+#include <qtextstream.h>
 
 #include <kapp.h>
 #include "cpopmenu.h"

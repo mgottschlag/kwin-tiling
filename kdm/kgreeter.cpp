@@ -49,6 +49,7 @@
 
 #include <kiconloader.h>
 #include <kimgio.h>
+#include <qtextstream.h>
 
 // Make the C++ compiler shut the f... up:
 extern "C" {
