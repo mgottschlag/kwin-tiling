@@ -14,6 +14,7 @@
 #include <kfontdialog.h>
 #include <kurlrequester.h>
 #include <kgenericfactory.h>
+#include <kglobalsettings.h>
 
 #include "cssconfig.h"
 #include "template.h"
@@ -386,7 +387,7 @@ void CSSConfig::preview()
   // Show the preview
   PreviewDialog *dlg = new PreviewDialog(this, 0, true);
   dlg->preview->setPaper(back);
-  dlg->preview->viewport()->setFont(QFont("helvetica", bfs));
+  dlg->preview->viewport()->setFont(QFont(KGlobalSettings::generalFont().family(), bfs));
 
   dlg->exec();
 

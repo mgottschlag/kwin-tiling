@@ -32,6 +32,7 @@
 #include <kdialog.h>
 #include <ksimpleconfig.h>
 #include <kfontrequester.h>
+#include <kglobalsettings.h>
 #include <klocale.h>
 
 #include "kdm-font.h"
@@ -87,8 +88,8 @@ void KDMFontWidget::configChanged()
 
 void KDMFontWidget::set_def()
 {
-  stdFontChooser->setFont(QFont("helvetica", 10));
-  failFontChooser->setFont(QFont("helvetica", 10, QFont::Bold));
+  stdFontChooser->setFont(QFont(KGlobalSettings::generalFont().family(), 10));
+  failFontChooser->setFont(QFont(KGlobalSettings::generalFont().family(), 10, QFont::Bold));
   greetingFontChooser->setFont(QFont("charter", 20));
 }
 

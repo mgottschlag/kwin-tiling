@@ -282,7 +282,7 @@ void WidgetCanvas::drawSampleWidgets()
 
     // Keep in sync with kglobalsettings.
 
-    QFont windowFontGuess("helvetica", 12, QFont::SansSerif, true);
+    QFont windowFontGuess(KGlobalSettings::generalFont().family(), 12, QFont::SansSerif, true);
     windowFontGuess.setPixelSize(12);
 
     c->setGroup("WM");
