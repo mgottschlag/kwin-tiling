@@ -1,7 +1,5 @@
 ## Makefile.am of kdebase/kscreensaver/kxsconfig
 
-AM_CPPFLAGS = -DQT_NO_ASCII_CAST
-
 INCLUDES = $(all_includes)
 kxsconfig_LDFLAGS  = $(KDE_RPATH) $(all_libraries) 
 kxsconfig_LDADD    = $(LIB_KDEUI)
