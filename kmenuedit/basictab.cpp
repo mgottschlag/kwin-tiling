@@ -319,45 +319,7 @@ void BasicTab::apply( bool desktopFileNeedsSave )
         return;
 
     //
-    QString local;
-    if (_isDesktopFile)
-    {
-        if (!_desktopFile.startsWith("/"))
-        {
-           local = locateLocal("apps", _desktopFile); // Relative to apps
-        }
-        else
-        {
-           // XDG Desktop menu items come with absolute paths, we need to 
-           // extract their relative path and then build a local path.
-           local = KGlobal::dirs()->relativeLocation("xdgdata-apps", _desktopFile);
-           if (local.startsWith("/"))
-           {
-             // What now? Use filename only and hope for the best.
-             local = _desktopFile.mid(_desktopFile.findRev('/')+1);
-           }
-           local = locateLocal("xdgdata-apps", local);
-        }
-    }
-    else
-    {
-        if (!_desktopFile.startsWith("/"))
-        {
-           local = locateLocal("apps", _desktopFile); // Relative to apps
-        }
-        else
-        {
-           // XDG Desktop menu items come with absolute paths, we need to 
-           // extract their relative path and then build a local path.
-           local = KGlobal::dirs()->relativeLocation("xdgdata-dirs", _desktopFile);
-           if (local.startsWith("/"))
-           {
-             // What now? Use filename only and hope for the best.
-             local = _desktopFile.mid(_desktopFile.findRev('/')+1);
-           }
-           local = locateLocal("xdgdata-dirs", local);
-        }
-    }
+    QString local = KDesktopFile::locateLocal(_desktopFile);
 
     KConfig *df = 0;
     if (_desktopFile != local)
