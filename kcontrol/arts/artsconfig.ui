@@ -208,7 +208,7 @@
                         </property>
                         <property stdset="1">
                             <name>text</name>
-                            <string>&amp;Test sound</string>
+                            <string>&amp;Test Sound</string>
                         </property>
                     </widget>
                     <spacer row="9"  column="0"  rowspan="1"  colspan="3" >

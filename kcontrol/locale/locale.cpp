@@ -81,11 +81,11 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
 
   QWidget * vb = new QWidget(hb);
   QVBoxLayout * boxlay = new QVBoxLayout(vb, 0, KDialog::spacingHint());
-  m_addLanguage = new KMenuButton(vb, I18N_NOOP("Add language"));
+  m_addLanguage = new KMenuButton(vb, I18N_NOOP("Add Language"));
   boxlay->add(m_addLanguage);
   connect(m_addLanguage, SIGNAL(activated(int)),
 	  SLOT(slotAddLanguage(int)));
-  m_removeLanguage = new QPushButton(vb, I18N_NOOP("Remove language"));
+  m_removeLanguage = new QPushButton(vb, I18N_NOOP("Remove Language"));
   boxlay->add(m_removeLanguage);
   connect(m_removeLanguage, SIGNAL(clicked()),
 	  SLOT(slotRemoveLanguage()));
