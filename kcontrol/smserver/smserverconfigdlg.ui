@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>285</width>
-            <height>309</height>
+            <width>395</width>
+            <height>357</height>
         </rect>
     </property>
     <property name="caption">
@@ -63,15 +63,47 @@
                         <string>Check this option if you want the session manager to display a logout confirmation dialog box.</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox">
+            </vbox>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>loginGroup</cstring>
+            </property>
+            <property name="title">
+                <string>On Login</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>saveSessionCheck</cstring>
+                        <cstring>previousSessionRadio</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Save session for future logins</string>
+                        <string>&amp;Restore session as it was before logging out</string>
                     </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check this option if you want the session manager to save the running session when logging out. At login time the last saved session will be restored.</string>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>savedSessionRadio</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Restore &amp;saved session</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>emptySessionRadio</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Start with an &amp;empty session</string>
                     </property>
                 </widget>
             </vbox>
@@ -123,7 +155,7 @@
             </vbox>
         </widget>
         <spacer>
-            <property name="name" stdset="0">
+            <property name="name">
                 <cstring>bottomSpacer</cstring>
             </property>
             <property name="orientation">
@@ -132,22 +164,10 @@
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
         </spacer>
     </vbox>
 </widget>
 <connections>
-    <connection>
-        <sender>saveSessionCheck</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>SMServerConfigDlg</receiver>
-        <slot>configChanged()</slot>
-    </connection>
     <connection>
         <sender>confirmLogoutCheck</sender>
         <signal>toggled(bool)</signal>

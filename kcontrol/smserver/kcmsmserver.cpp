@@ -63,7 +63,15 @@ void SMServerConfig::load()
   KConfig *c = new KConfig("ksmserverrc", false, false);
   c->setGroup("General");
   dialog->confirmLogoutCheck->setChecked(c->readBoolEntry("confirmLogout", true));
-  dialog->saveSessionCheck->setChecked(c->readBoolEntry("saveSession", true));
+
+  QString s = c->readEntry( "loginMode" );
+  if ( s == "default" )
+      dialog->emptySessionRadio->setChecked(true);
+  else if ( s == "restoreSavedSession" )
+      dialog->savedSessionRadio->setChecked(true);
+  else // "restorePreviousLogout"
+      dialog->previousSessionRadio->setChecked(true);
+
   switch (c->readNumEntry("shutdownType", int(KApplication::ShutdownTypeNone))) {
   case int(KApplication::ShutdownTypeHalt):
     dialog->haltRadio->setChecked(true);
@@ -84,8 +92,14 @@ void SMServerConfig::save()
 {
   KConfig *c = new KConfig("ksmserverrc", false, false);
   c->setGroup("General");
-  c->writeEntry( "saveSession", dialog->saveSessionCheck->isChecked());
   c->writeEntry( "confirmLogout", dialog->confirmLogoutCheck->isChecked());
+  QString s = "restorePreviousLogout";
+  if ( dialog->emptySessionRadio->isChecked() )
+      s = "default";
+  else if ( dialog->savedSessionRadio->isChecked() )
+      s = "restoreSavedSession";
+  c->writeEntry( "loginMode", s );
+
   c->writeEntry( "shutdownType",
                  dialog->haltRadio->isChecked() ?
                    int(KApplication::ShutdownTypeHalt) :
@@ -96,11 +110,15 @@ void SMServerConfig::save()
   delete c;
 
   emit changed(false);
+
+  // update the k menu if necessary
+  QByteArray data;
+  kapp->dcopClient()->send( "kicker", "kicker", "configure()", data );
 }
 
 void SMServerConfig::defaults()
 {
-  dialog->saveSessionCheck->setChecked(true);
+  dialog->previousSessionRadio->setChecked(true);
   dialog->confirmLogoutCheck->setChecked(true);
   dialog->logoutRadio->setChecked(true);
 
@@ -112,7 +130,7 @@ QString SMServerConfig::quickHelp() const
   return i18n("<h1>Session Manager</h1>"
     " You can configure the session manager here."
     " This includes options such as whether or not the session exit (logout)"
-    " should be confirmed, whether the session should be saved when exiting"
+    " should be confirmed, whether the session should be restored again when loggin in"
     " and whether the computer should be automatically shut down after session"
     " exit by default.");
 }
