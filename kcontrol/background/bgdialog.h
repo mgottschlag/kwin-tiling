@@ -60,6 +60,7 @@ protected slots:
    void slotWallpaperTypeChanged(int i);
    void slotWallpaper(int i);
    void slotWallpaperPos(int);
+   void slotWallpaperSelection();
    void slotSetupMulti();
    void slotPrimaryColor(const QColor &color);
    void slotSecondaryColor(const QColor &color);

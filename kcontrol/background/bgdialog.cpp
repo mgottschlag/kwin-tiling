@@ -31,6 +31,7 @@
 #include <qradiobutton.h>
 #include <qslider.h>
 #include <qtimer.h>
+#include <qtooltip.h>
 #include <qwhatsthis.h>
 #include <qapplication.h>
 
@@ -86,15 +87,18 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
            SLOT(slotSelectDesk(int)));
 
    // background image settings
-   m_urlWallpaper->setFilter(KImageIO::pattern());
-   m_urlWallpaper->comboBox()->setSizePolicy(
-      QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
+   QIconSet iconSet = SmallIconSet(QString::fromLatin1("fileopen"));
+   QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
+   m_urlWallpaperButton->setIconSet( iconSet );
+   m_urlWallpaperButton->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
+   QToolTip::add(m_urlWallpaperButton, i18n("Open file dialog"));
+
    connect(m_buttonGroupBackground, SIGNAL(clicked(int)),
            SLOT(slotWallpaperTypeChanged(int)));
-   connect(m_urlWallpaper->comboBox(), SIGNAL(activated(int)),
+   connect(m_urlWallpaperBox, SIGNAL(activated(int)),
            SLOT(slotWallpaper(int)));
-   connect(m_urlWallpaper, SIGNAL(urlSelected(const QString &)),
-           SLOT(slotImageDropped(const QString &)));
+   connect(m_urlWallpaperButton, SIGNAL(clicked()),
+           SLOT(slotWallpaperSelection()));
    connect(m_comboWallpaperPos, SIGNAL(activated(int)),
            SLOT(slotWallpaperPos(int)));
    connect(m_buttonSetupWallpapers, SIGNAL(clicked()),
@@ -148,7 +152,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
 
    if (KGlobal::dirs()->isRestrictedResource("wallpaper"))
    {
-      m_urlWallpaper->button()->hide();
+      m_urlWallpaperButton->hide();
       m_buttonSetupWallpapers->hide();
       m_radioSlideShow->hide();
    }
@@ -175,7 +179,8 @@ void BGDialog::makeReadOnly()
     m_comboPattern->setEnabled( false );
     m_radioNoPicture->setEnabled( false );
     m_radioPicture->setEnabled( false );
-    m_urlWallpaper->setEnabled( false );
+    m_urlWallpaperBox->setEnabled( false );
+    m_urlWallpaperButton->setEnabled( false );
     m_comboWallpaperPos->setEnabled( false );
     m_buttonSetupWallpapers->setEnabled( false );
     m_buttonAdvanced->setEnabled( false );
@@ -356,7 +361,7 @@ void BGDialog::initUI()
       papers[lrs] = qMakePair(rs, *it);
    }
 
-   KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
+   KComboBox *comboWallpaper = m_urlWallpaperBox;
    int i = 0;
    for (QMap<QString, QPair<QString, QString> >::Iterator it = papers.begin();
         it != papers.end();
@@ -392,7 +397,7 @@ void BGDialog::initUI()
 
 void BGDialog::setWallpaper(const QString &s)
 {
-   KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
+   KComboBox *comboWallpaper = m_urlWallpaperBox;
    comboWallpaper->blockSignals(true);
 
    if (m_Wallpaper.find(s) == m_Wallpaper.end())
@@ -411,8 +416,45 @@ void BGDialog::setWallpaper(const QString &s)
    {
       comboWallpaper->setCurrentItem(m_Wallpaper[s]);
    }
-   m_urlWallpaper->fileDialog()->setURL(KURL( s ));
    comboWallpaper->blockSignals(false);
+}
+
+void BGDialog::slotWallpaperSelection()
+{
+   KFileDialog dlg( QString::null, QString::null, this,
+                    "file dialog", true );
+
+   dlg.setFilter(KImageIO::pattern());
+   dlg.setMode( KFile::File | KFile::ExistingOnly | KFile::LocalOnly );
+   dlg.setCaption( i18n("Select Wallpaper") );
+
+   int j = m_urlWallpaperBox->currentItem();
+   QString uri;
+   for(QMap<QString,int>::ConstIterator it = m_Wallpaper.begin();
+       it != m_Wallpaper.end();
+       ++it)
+   {
+      if (it.data() == j)
+      {
+         uri = it.key();
+         break;
+      }
+   }
+
+   if ( !uri.isEmpty() ) {
+      dlg.setSelection( uri );
+   }
+
+   if ( dlg.exec() == QDialog::Accepted )
+   {
+      setWallpaper(dlg.selectedFile());
+
+      int optionID = m_buttonGroupBackground->id(m_radioPicture);
+      m_buttonGroupBackground->setButton( optionID );
+      slotWallpaperTypeChanged( optionID );
+
+      emit changed(true);
+   }
 }
 
 void BGDialog::updateUI()
@@ -437,7 +479,8 @@ void BGDialog::updateUI()
       // No wallper
       if (wallpaperMode == KBackgroundSettings::NoWallpaper )
       {
-         m_urlWallpaper->setEnabled(false);
+         m_urlWallpaperBox->setEnabled(false);
+         m_urlWallpaperButton->setEnabled(false);
          m_buttonSetupWallpapers->setEnabled(false);
          m_comboWallpaperPos->setEnabled(false);
          m_lblWallpaperPos->setEnabled(false);
@@ -448,7 +491,8 @@ void BGDialog::updateUI()
       // 1 Picture
       else
       {
-         m_urlWallpaper->setEnabled(true);
+         m_urlWallpaperBox->setEnabled(true);
+         m_urlWallpaperButton->setEnabled(true);
          m_buttonSetupWallpapers->setEnabled(false);
          m_comboWallpaperPos->setEnabled(true);
          m_lblWallpaperPos->setEnabled(true);
@@ -461,7 +505,8 @@ void BGDialog::updateUI()
    // Slide show
    else
    {
-      m_urlWallpaper->setEnabled(false);
+      m_urlWallpaperBox->setEnabled(false);
+      m_urlWallpaperButton->setEnabled(false);
       m_buttonSetupWallpapers->setEnabled(true);
       m_comboWallpaperPos->setEnabled(true);
       m_lblWallpaperPos->setEnabled(true);
@@ -553,9 +598,6 @@ void BGDialog::slotImageDropped(const QString &uri)
    int optionID = m_buttonGroupBackground->id(m_radioPicture);
    m_buttonGroupBackground->setButton( optionID );
    slotWallpaperTypeChanged( optionID );
-
-   m_copyAllDesktops = true;
-   emit changed(true);
 }
 
 void BGDialog::slotWallpaperTypeChanged(int i)
@@ -566,7 +608,8 @@ void BGDialog::slotWallpaperTypeChanged(int i)
    // No picture
    if (i == m_buttonGroupBackground->id(m_radioNoPicture))  //None
    {
-      m_urlWallpaper->setEnabled(false);
+      m_urlWallpaperBox->setEnabled(false);
+      m_urlWallpaperButton->setEnabled(false);
       m_buttonSetupWallpapers->setEnabled(false);
       m_comboWallpaperPos->setEnabled(false);
       m_lblWallpaperPos->setEnabled(false);
@@ -583,7 +626,8 @@ void BGDialog::slotWallpaperTypeChanged(int i)
    // Slide show
    else if (i == m_buttonGroupBackground->id(m_radioSlideShow))
    {
-      m_urlWallpaper->setEnabled(false);
+      m_urlWallpaperBox->setEnabled(false);
+      m_urlWallpaperButton->setEnabled(false);
       m_buttonSetupWallpapers->setEnabled(true);
       m_comboWallpaperPos->setEnabled(true);
       m_lblWallpaperPos->setEnabled(true);
@@ -606,7 +650,8 @@ void BGDialog::slotWallpaperTypeChanged(int i)
    // 1 Picture
    else if (i == m_buttonGroupBackground->id(m_radioPicture))
    {
-      m_urlWallpaper->setEnabled(true);
+      m_urlWallpaperBox->setEnabled(true);
+      m_urlWallpaperButton->setEnabled(true);
       m_buttonSetupWallpapers->setEnabled(false);
       m_lblWallpaperPos->setEnabled(true);
       m_comboWallpaperPos->setEnabled(true);
@@ -617,7 +662,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       else
          r->setMultiWallpaperMode(KBackgroundSettings::NoMultiRandom);
 
-      int j = m_urlWallpaper->comboBox()->currentItem();
+      int j = m_urlWallpaperBox->currentItem();
       QString uri;
       for(QMap<QString,int>::ConstIterator it = m_Wallpaper.begin();
           it != m_Wallpaper.end();
@@ -649,7 +694,6 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       m_comboWallpaperPos->blockSignals(false);
 
       r->setWallpaper(uri);
-      m_urlWallpaper->fileDialog()->setURL(KURL( uri ));
    }
 
    r->start(true);

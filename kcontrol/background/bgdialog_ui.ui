@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>BGDialog_UI</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>603</width>
-            <height>370</height>
+            <height>433</height>
         </rect>
     </property>
     <grid>
@@ -465,7 +465,7 @@
                         <bool>true</bool>
                     </property>
                 </widget>
-                <spacer row="0" column="1" rowspan="1" colspan="2">
+                <spacer row="0" column="1" rowspan="1" colspan="3">
                     <property name="name">
                         <cstring>spacer20</cstring>
                     </property>
@@ -493,7 +493,7 @@
                         <string>Click this button to select a set of images to be used as background pictures. One picture at a time will be shown for a specified amount of time, after which another image from the set will be shown. Images can be shown at random or in the order you specify them.</string>
                     </property>
                 </widget>
-                <spacer row="2" column="2">
+                <spacer row="2" column="2" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>spacer19</cstring>
                     </property>
@@ -510,9 +510,33 @@
                         </size>
                     </property>
                 </spacer>
-                <widget class="KURLComboRequester" row="1" column="1" rowspan="1" colspan="2">
+                <widget class="QPushButton" row="1" column="3">
                     <property name="name">
-                        <cstring>m_urlWallpaper</cstring>
+                        <cstring>m_urlWallpaperButton</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="1" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_urlWallpaperBox</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
                     </property>
                 </widget>
             </grid>
@@ -530,7 +554,8 @@
 <tabstops>
     <tabstop>m_comboDesktop</tabstop>
     <tabstop>m_radioPicture</tabstop>
-    <tabstop>m_urlWallpaper</tabstop>
+    <tabstop>m_urlWallpaperBox</tabstop>
+    <tabstop>m_urlWallpaperButton</tabstop>
     <tabstop>m_buttonSetupWallpapers</tabstop>
     <tabstop>m_comboWallpaperPos</tabstop>
     <tabstop>m_comboPattern</tabstop>
@@ -553,8 +578,6 @@
     <includehint>kcombobox.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>kurlrequester.h</includehint>
     <includehint>kcombobox.h</includehint>
-    <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>
