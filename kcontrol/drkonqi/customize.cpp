@@ -27,9 +27,36 @@
 #include <kstddirs.h>
 #include <klocale.h>
 #include <kdialog.h>
+#include <kmessagebox.h>
 #include <qgroupbox.h>
+#include <qlist.h>
+#include <kdebug.h>
+#include <qstringlist.h>
+#include <stdio.h>
 
 #include "customize.h"
+
+void KDrKonqiCustomize::updateControls ( void )
+{
+
+// Update controls here
+QStringList qldd = KGlobal::dirs()->findAllResources("data","drkonqi/presets/*rc",false, true);
+
+for (QStringList::Iterator it = qldd.begin();  it != qldd.end(); ++it)
+{
+// Read the configuration titles
+KConfig config ((*it).latin1(), true, true, "data");
+
+config.setGroup("General");
+
+if ( lb_PresetList->currentText() == config.readEntry(QString::fromLatin1("Name"),QString::fromLatin1("unknown")))
+{
+ //	config.setGroup(QString::fromLatin1("ErrorDescription")
+// 	if (config.readBoolEntry(QString::fromLatin1("WhatToDoHint",
+}
+
+}
+}
 
 KDrKonqiCustomize::KDrKonqiCustomize(KConfig *config, QString group, QWidget *parent, const char *name)
   : KCModule(parent, name), g_pConfig(config), groupname(group)
@@ -107,8 +134,23 @@ KDrKonqiCustomize::KDrKonqiCustomize(KConfig *config, QString group, QWidget *pa
 
   layout->activate();         
 
+QStringList qldd = KGlobal::dirs()->findAllResources("data","drkonqi/presets/*rc",false, true);
 
+
+for (QStringList::Iterator it = qldd.begin();  it != qldd.end(); ++it)
+{
+// Read the configuration titles
+KConfig config ((*it).latin1(), true, true, "data");
+
+config.setGroup("General");
+
+QString ConfigNames = config.readEntry(QString::fromLatin1("Name"),QString::fromLatin1("unknown"));
+lb_PresetList->insertItem(ConfigNames.latin1());
+}
+
+connect(lb_PresetList, SIGNAL(selectionChanged()), SLOT(updateControls()));
 lb_PresetList->insertItem("Test");
+
   /*
    * If nothing is in our list box (no presets available),
    * disable all items. 
