@@ -121,20 +121,27 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   struct group *grp;
   for (setgrent(); (grp = getgrent()); ) {
     QString gn( QFile::decodeName( grp->gr_name ) );
+    bool delme = false;
     if ((tgmapi = tgmap.find( grp->gr_gid )) != tgmap.end()) {
-      for (QStringList::ConstIterator it = (*tgmapi).begin();
-	   it != (*tgmapi).end(); ++it)
-	usermap[*it].second.append( gn );
+      if ((*tgmapi).count() == 1 && (*tgmapi).first() == gn)
+        delme = true;
+      else
+        for (QStringList::ConstIterator it = (*tgmapi).begin();
+             it != (*tgmapi).end(); ++it)
+          usermap[*it].second.append( gn );
       tgmap.remove( tgmapi );
     }
-    for (; *grp->gr_mem; grp->gr_mem++) {
+    if (!*grp->gr_mem ||
+        (delme && !grp->gr_mem[1] && gn == QFile::decodeName( *grp->gr_mem )))
+      continue;
+    do {
       QString un( QFile::decodeName( *grp->gr_mem ) );
       if ((umapi = usermap.find( un )) != usermap.end()) {
         if ((*umapi).second.find( gn ) == (*umapi).second.end())
 	  (*umapi).second.append( gn );
       } else
         kdWarning() << "group '" << gn << "' contains unknown user '" << un << "'" << endl;
-    }
+    } while (*++grp->gr_mem);
   }
   endgrent();
 
