@@ -570,7 +570,7 @@ rdwr_wm (char *wm, int wml, const char *usr, int rd)
 void
 KGreeter::save_wm()
 {
-    rdwr_wm (sessionargBox->currentText().latin1(), 0, 
+    rdwr_wm ((char*)sessionargBox->currentText().latin1(), 0, 
 	     QFile::encodeName( loginEdit->text() ).data(), 0);
 }
 
@@ -957,7 +957,7 @@ AutoLogon (
 		strncpy(password, d->autoPass, F_LEN - 1);
 		Debug("Password set in auto-login\n");
 	    }
-	    greet->string = strlen (d->autoString) ? d->autoString : "default";
+	    greet->string = strlen (d->autoString) ? d->autoString : (char*)"default";
 	} else if (!strcmp(d->name, ":0") && !kdmcfg->_autoUser.isEmpty()) {
 	    // kcontol specified autologin
 	    if (d->hstent->lastExit > time(0) - d->openDelay) {
