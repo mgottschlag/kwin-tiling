@@ -69,14 +69,15 @@ void KclockModule::save()
   dtime->save();
   tzone->save();
 
-    // restart kicker to sync up the time
-    if (!kapp->dcopClient()->isAttached())
-    {
-        kapp->dcopClient()->attach();
-    }
+// it syncs up nicely without restarting
+//    // restart kicker to sync up the time
+//    if (!kapp->dcopClient()->isAttached())
+//    {
+//        kapp->dcopClient()->attach();
+//    }
 
-    QByteArray data;
-    kapp->dcopClient()->send( "kicker", "Panel", "restart()", data );
+//    QByteArray data;
+//    kapp->dcopClient()->send( "kicker", "Panel", "restart()", data );
 
 }
 
