@@ -519,7 +519,7 @@
                         </property>
                         <property>
                             <name>whatsThis</name>
-                            <string>&lt;b&gt;Images&lt;/b&gt;&lt;p&gt;&lt;/b&gt;</string>
+                            <string>&lt;b&gt;Images&lt;/b&gt;&lt;p&gt;</string>
                         </property>
                         <grid>
                             <property stdset="1">
