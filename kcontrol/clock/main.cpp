@@ -42,7 +42,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_clock, KlockModuleFactory("kcmkclock"));
 KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList &)
   : KCModule(KlockModuleFactory::instance(), parent, name)
 {
-qWarning("new");
+//qWarning("new");
   QVBoxLayout *layout = new QVBoxLayout(this);
 
   dtime = new Dtime(this);
@@ -65,8 +65,9 @@ qWarning("new");
 
 void KclockModule::save()
 {
-  tzone->save();
+//  The order here is important
   dtime->save();
+  tzone->save();
 
     // restart kicker to sync up the time
     if (!kapp->dcopClient()->isAttached())

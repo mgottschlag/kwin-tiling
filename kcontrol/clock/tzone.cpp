@@ -108,7 +108,9 @@ QString Tzone::getCurrentZone() const
 {
     QCString result(100);
     time_t now = time(0);
+    tzset();
     strftime(result.data(), result.size(), "%Z", localtime(&now));
+kdDebug() << "strftime returned: " << result << endl;
     return QString::fromLatin1(result);
 }
 
@@ -179,5 +181,19 @@ void Tzone::save()
         config->setGroup("tzone");
         config->writeEntry("TZ", tzonelist->currentItem() );
         config->sync();
+    } else {
+        unlink( "/etc/timezone" );
+        unlink( "/etc/localtime" );
+
+        QString val = ":" + tz;
+        setenv("TZ", val.ascii(), 1);
+        tzset();
+
+        KConfig *config = KGlobal::config();
+        config->setGroup("tzone");
+        config->deleteEntry("TZ");
+        config->sync();
     }
+
+    currentzone->setText(getCurrentZone());
 }
