@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>451</width>
-            <height>563</height>
+            <height>474</height>
         </rect>
     </property>
     <property name="caption">
@@ -506,6 +506,8 @@
         </widget>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>m_backgroundImage</sender>
@@ -553,8 +555,10 @@
     <tabstop>m_browserTile</tabstop>
     <tabstop>m_urlTile</tabstop>
     <tabstop>m_wlTile</tabstop>
+    <tabstop>m_transparent</tabstop>
     <tabstop>m_backgroundImage</tabstop>
     <tabstop>m_backgroundInput</tabstop>
+    <tabstop>advancedOptionsButton</tabstop>
 </tabstops>
 <includes>
     <include location="global" impldecl="in declaration">kcombobox.h</include>
@@ -569,13 +573,6 @@
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kurlrequester.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
