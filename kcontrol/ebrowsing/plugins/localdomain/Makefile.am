@@ -8,7 +8,7 @@ LDFLAGS   = $(all_libraries)
 kde_module_LTLIBRARIES = liblocaldomainurifilter.la
 
 liblocaldomainurifilter_la_LDFLAGS = -module $(KDE_PLUGIN)
-liblocaldomainurifilter_la_LIBADD = $(LIB_KSYCOCA) $(LIB_KDEUI)
+liblocaldomainurifilter_la_LIBADD = $(LIB_KIO) $(LIB_KDEUI) $(LIB_KDECORE)
 
 liblocaldomainurifilter_la_SOURCES = localdomainurifilter.cpp localdomainurifilter.skel
 
@@ -20,3 +20,4 @@ METASOURCES = AUTO
 bin_PROGRAMS = klocaldomainurifilterhelper
 
 klocaldomainurifilterhelper_SOURCES = klocaldomainurifilterhelper.c
+klocaldomainurifilterhelper_LDFLAGS = -lkdefakes

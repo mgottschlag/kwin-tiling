@@ -23,6 +23,7 @@
 #ifndef NULL
 #define NULL 0
 #endif
+#include <config.h>
 
 #include <netdb.h>
 

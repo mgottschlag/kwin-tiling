@@ -34,6 +34,7 @@
 
 #include <kprocess.h>
 #include <kstandarddirs.h>
+#include <config.h>
 
 LocalDomainURIFilter::LocalDomainURIFilter( QObject *parent, const char *name,
     const QStringList & /*args*/ )
@@ -105,10 +106,10 @@ bool LocalDomainURIFilter::isLocalDomainHost( const QString& cmd ) const
 	    bool last_result = WIFEXITED( status ) && WEXITSTATUS( status ) == 0;
 	    return last_result;
 	    }
-	struct timespec tm;
-	tm.tv_sec = 0;
-	tm.tv_nsec = 20 * 1000 * 1000; // 20ms
-	nanosleep( &tm, NULL );
+	//struct timespec tm;
+	//tm.tv_sec = 0;
+	//tm.tv_nsec = 20 * 1000 * 1000; // 20ms
+	usleep( 20000 );
 	}
     kill( pid, SIGTERM );
     last_result = false;
