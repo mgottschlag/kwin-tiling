@@ -1,12 +1,12 @@
 /****************************************************************************
   accessibility.cpp
   KDE Control Accessibility module to control Bell, Keyboard and ?Mouse?
-  ------------------- 
+  -------------------
   Copyright : (c) 2000 Matthias Hölzer-Klüpfel
   -------------------
   Original Author: Matthias Hölzer-Klüpfel
-  Contributors: José Pablo Ezequiel "Pupeno" Fernández <pupeno@kde.org> 
-  Current Maintainer: José Pablo Ezequiel "Pupeno" Fernández <pupeno@kde.org> 
+  Contributors: José Pablo Ezequiel "Pupeno" Fernández <pupeno@kde.org>
+  Current Maintainer: José Pablo Ezequiel "Pupeno" Fernández <pupeno@kde.org>
  ****************************************************************************/
 
 /****************************************************************************
@@ -17,7 +17,7 @@
  *   (at your option) any later version.                                    *
  *                                                                          *
  ****************************************************************************/
- 
+
 // $Id$
 
 // #include <stdlib.h>
@@ -44,7 +44,7 @@
 // #include <kinstance.h>
 #include <kcolorbutton.h>
 // #include <kfiledialog.h>
-#include <knuminput.h> 
+#include <knuminput.h>
 // #include <kapplication.h>
 #include <kaboutdata.h>
 // #include <kdebug.h>
@@ -64,7 +64,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_accessibility, AccessibilityFactory("kcmaccessib
  */
 // static bool needToRunKAccessDaemon( KConfig *config ){
 //    KConfigGroup group( config, "Bell" );
-//     
+//
 //    if(!group.readBoolEntry("SystemBell", true)){
 //       return true;
 //    }
@@ -93,36 +93,36 @@ AccessibilityConfig::~AccessibilityConfig(){
 void AccessibilityConfig::load(){
    kdDebug() << "Running: AccessibilityConfig::load()" << endl;
 //    KConfig *config = new KConfig("kaccessrc", true);
-// 
+//
 //    config->setGroup("Bell");
-// 
+//
 //    systemBell->setChecked(config->readBoolEntry("SystemBell", true));
 //    customBell->setChecked(config->readBoolEntry("ArtsBell", false));
 //    soundEdit->setText(config->readEntry("ArtsBellFile"));
-// 
+//
 //    visibleBell->setChecked(config->readBoolEntry("VisibleBell", false));
 //    invertScreen->setChecked(config->readBoolEntry("VisibleBellInvert", true));
 //    flashScreen->setChecked(!invertScreen->isChecked());
 //    QColor def(Qt::red);
 //    colorButton->setColor(config->readColorEntry("VisibleBellColor", &def));
-// 
+//
 //    durationSlider->setValue(config->readNumEntry("VisibleBellPause", 500));
-// 
-// 
+//
+//
 //    config->setGroup("Keyboard");
-// 
+//
 //    stickyKeys->setChecked(config->readBoolEntry("StickyKeys", false));
 //    stickyKeysLock->setChecked(config->readBoolEntry("StickyKeysLatch", true));
 //    slowKeys->setChecked(config->readBoolEntry("SlowKeys", false));
 //    slowKeysDelay->setValue(config->readNumEntry("SlowKeysDelay", 500));
 //    bounceKeys->setChecked(config->readBoolEntry("BounceKeys", false));
 //    bounceKeysDelay->setValue(config->readNumEntry("BounceKeysDelay", 500));
-// 
-// 
+//
+//
 //    delete config;
-// 
+//
 //    checkAccess();
-// 
+//
 //    emit changed(false);
 }
 
@@ -130,32 +130,32 @@ void AccessibilityConfig::load(){
 void AccessibilityConfig::save(){
    kdDebug() << "Running: AccessibilityConfig::save()" << endl;
    KConfig *config= new KConfig("accessibilityrc", false);
- 
+
 //    config->setGroup("Bell");
-// 
+//
 //    config->writeEntry("SystemBell", systemBell->isChecked());
 //    config->writeEntry("ArtsBell", customBell->isChecked());
 //    config->writeEntry("ArtsBellFile", soundEdit->text());
-// 
+//
 //    config->writeEntry("VisibleBell", visibleBell->isChecked());
 //    config->writeEntry("VisibleBellInvert", invertScreen->isChecked());
 //    config->writeEntry("VisibleBellColor", colorButton->color());
-// 
+//
 //    config->writeEntry("VisibleBellPause", durationSlider->value());
-// 
-// 
+//
+//
 //    config->setGroup("Keyboard");
-// 
+//
 //    config->writeEntry("StickyKeys", stickyKeys->isChecked());
 //    config->writeEntry("StickyKeysLatch", stickyKeysLock->isChecked());
-// 
+//
 //    config->writeEntry("SlowKeys", slowKeys->isChecked());
 //    config->writeEntry("SlowKeysDelay", slowKeysDelay->value());
-// 
+//
 //    config->writeEntry("BounceKeys", bounceKeys->isChecked());
 //    config->writeEntry("BounceKeysDelay", bounceKeysDelay->value());
-// 
-// 
+//
+//
 //    config->sync();
 //
 //    if(systemBell->isChecked() || customBell->isChecked() || visibleBell->isChecked()){
@@ -164,8 +164,8 @@ void AccessibilityConfig::save(){
 //       cfg.writeEntry("UseSystemBell", true);
 //       cfg.sync();
 //    }
-// 
-//   
+//
+//
 //    if( needToRunKAccessDaemon( config ) ){
 //       kapp->startServiceByDesktopName("kaccess");
 //    }else{
@@ -173,16 +173,16 @@ void AccessibilityConfig::save(){
 //       DCOPRef kaccess( "kaccess", "qt/kaccess" );
 //       kaccess.send( "quit" );
 //    }
-// 
+//
 //    delete config;
-//   
+//
 //    emit changed(false);
 }
 
 
 void AccessibilityConfig::defaults(){
    kdDebug() << "Running: AccessibilityConfig::defaults()" << endl;
-   
+
    // Bell
    // Audibe Bell
 //    systemBell->setChecked(true);
@@ -200,15 +200,15 @@ void AccessibilityConfig::defaults(){
    // Sticky Keys
    stickyKeys->setChecked(false);
    lockWithStickyKeys->setChecked(true);
-   
+
    // Slow Keys
    slowKeys->setChecked(false);
    slowKeysDelay->setValue(500);
-   
+
    // Bounce Keys
    bounceKeys->setChecked(false);
    bounceKeysDelay->setValue(500);
-   
+
    // Mouse
    // Navigation
    accelerationDelay->setValue(160);
@@ -232,7 +232,7 @@ QString AccessibilityConfig::quickHelp() const{
          return i18n("<h1>Mouse</h1>"); // ### fixme
          break;
    }
-   
+   return QString::null;
 }
 
 const KAboutData* AccessibilityConfig::aboutData() const{
@@ -241,9 +241,9 @@ const KAboutData* AccessibilityConfig::aboutData() const{
    new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
- 
+
    about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
    about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
- 
+
    return about;
 }
