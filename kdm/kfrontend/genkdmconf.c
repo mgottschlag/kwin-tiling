@@ -2995,7 +2995,7 @@ mergeKdmRcNewer (const char *path)
 typedef struct XResEnt {
     const char	*xname;
     const char	*ksec, *kname;
-    void	(*func)(const char *, const char *, char **);
+    void	(*func)(const char *sect, char **value);
 } XResEnt;
 
 static void
@@ -3020,14 +3020,14 @@ handleXdmVal (const char *dpy, const char *key, char *value,
 			 toupper (ents[i].xname[0]), ents[i].xname + 1);
 	    }
 	    if (ents[i].func)
-		ents[i].func (sname, kname, &value);
+		ents[i].func (sname, &value);
 	    putfqval (sname, kname, value);
 	    break;
 	}
 }
 
 static void 
-P_List (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value)
+P_List (const char *sect ATTR_UNUSED, char **value)
 {
     int is, d, s;
     char *st;
@@ -3045,7 +3045,7 @@ P_List (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value)
 }
 
 static void 
-P_authDir (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value)
+P_authDir (const char *sect ATTR_UNUSED, char **value)
 {
     int l;
 
@@ -3073,25 +3073,25 @@ P_authDir (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **val
 }
 
 static void 
-P_openDelay (const char *sect, const char *key ATTR_UNUSED, char **value)
+P_openDelay (const char *sect, char **value)
 {
     putfqval (sect, "ServerTimeout", *value);
 }
 
 static void 
-P_noPassUsers (const char *sect, const char *key ATTR_UNUSED, char **value ATTR_UNUSED)
+P_noPassUsers (const char *sect, char **value ATTR_UNUSED)
 {
     putfqval (sect, "NoPassEnable", "true");
 }
 
 static void 
-P_autoUser (const char *sect, const char *key ATTR_UNUSED, char **value ATTR_UNUSED)
+P_autoUser (const char *sect, char **value ATTR_UNUSED)
 {
     putfqval (sect, "AutoLoginEnable", "true");
 }
 
 static void 
-P_requestPort (const char *sect, const char *key ATTR_UNUSED, char **value)
+P_requestPort (const char *sect, char **value)
 {
     if (!strcmp (*value, "0")) {
 	*value = 0;
@@ -3103,7 +3103,7 @@ P_requestPort (const char *sect, const char *key ATTR_UNUSED, char **value)
 static int kdmrcmode = 0644;
 
 static void 
-P_autoPass (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value ATTR_UNUSED)
+P_autoPass (const char *sect ATTR_UNUSED, char **value ATTR_UNUSED)
 {
     kdmrcmode = 0600;
 }
