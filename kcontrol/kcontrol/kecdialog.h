@@ -51,9 +51,9 @@ public:
      * @param name The widget name
      * @param modal If you pass true here, the dialog will be modal
      **/
-    KCMultiDialog(QWidget *parent=0, const QString& baseGroup =
-                  QString::fromLatin1("settings"), const char *name=0,
-                  bool modal=false);
+    KCMultiDialog(QWidget *parent=0,
+                  const QString& baseGroup = QString::fromLatin1("settings"),
+                  const char *name=0, bool modal=false);
 
     /**
      * Destructor
