@@ -144,8 +144,8 @@ QString change_shortcut_internal( const QString& entry_P,
             return shortcut_P;
         }
     else    
-        pos->shortcut = KAccel::keyToString(    // make sure the shortcut
-            KAccel::stringToKey( shortcut_P ), false); // is valid
+        pos->shortcut = KKey::keyToString(    // make sure the shortcut
+            KKey::stringToKeyQt( shortcut_P ), false); // is valid
     if( !save_if_edited_P )
         return pos->shortcut;
     if( pos->shortcut.isEmpty())
@@ -227,7 +227,7 @@ bool desktop_shortcut_dialog::dlg_exec()
     if( exec() == Accepted )
         {
         item->shortcut
-            = KAccel::keyToString( map[ action_name ].aConfigKeyCode, false );
+            = KKey::keyToString( map[ action_name ].aConfigKeyCode, false );
         return true;
         }
     return false;    
@@ -235,14 +235,14 @@ bool desktop_shortcut_dialog::dlg_exec()
 
 void desktop_shortcut_dialog::key_changed()
     {
-    int shortcut = map[ action_name ].aConfigKeyCode;
+    uint shortcut = map[ action_name ].aConfigKeyCode;
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
         {
         if( it.current() == item )
             continue;
-        if( KAccel::stringToKey( it.current()->shortcut ) == shortcut )
+        if( KKey::stringToKeyQt( it.current()->shortcut ) == shortcut )
             {
             QString str =
                 i18n( "The %1 key combination has already "

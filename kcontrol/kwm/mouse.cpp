@@ -21,6 +21,7 @@
 
 #include <kapp.h>
 #include <dcopclient.h>
+#include <kkey.h>	// For KKey::keyboardHasMetaKey()
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
@@ -37,8 +38,6 @@
 #include <qlayout.h>
 #include <qwhatsthis.h>
 #include <qtl.h>
-
-#include <kaccel.h>	// For KAccel::keyboardHasMetaKey()
 
 KActionsConfig::~KActionsConfig ()
 {
@@ -509,7 +508,7 @@ void KActionsConfig::defaults()
   setComboText(coWin1,"Activate, raise and pass click");
   setComboText(coWin2,"Activate and pass click");
   setComboText(coWin3,"Activate and pass click");
-  setComboText(coAllKey, KAccel::keyboardHasMetaKey() ? "Meta" : "Alt");
+  setComboText(coAllKey, KKey::keyboardHasMetaKey() ? "Meta" : "Alt");
   setComboText (coAll1,"Move");
   setComboText(coAll2,"Toggle raise and lower");
   setComboText(coAll3,"Resize");

@@ -3,7 +3,7 @@
  KHotKeys -  (C) 1999 Lubos Lunak <l.lunak@email.cz>
 
  khkglobalaccel.cpp  - Slightly modified KGlobalAccel from kdelibs
- 
+
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
  License as published by the Free Software Foundation; either
@@ -25,6 +25,7 @@
 
 #include <qwidget.h>
 #include <kdebug.h>
+#include <kkey_x11.h>
 #include <X11/Xlib.h>
 
 #include "khkglobalaccel.h"
@@ -50,27 +51,27 @@ static uint g_keyModMaskXOnOrOff = 0;
 
 static void calculateGrabMasks()
 {
-	KAccel::readModifierMapping();
-	g_keyModMaskXAccel = KAccel::accelModMaskX();
+	KKeyX11::readModifierMapping();
+	g_keyModMaskXAccel = KKeyX11::accelModMaskX();
 	g_keyModMaskXAlwaysOff = ~(
-			KAccel::keyModXShift() |
-			KAccel::keyModXLock() |
-			KAccel::keyModXCtrl() |
-			KAccel::keyModXAlt() |
-			KAccel::keyModXNumLock() |
-			KAccel::keyModXModeSwitch() |
-			KAccel::keyModXMeta() |
-			KAccel::keyModXScrollLock() );
+			KKeyX11::keyModXShift() |
+			KKeyX11::keyModXLock() |
+			KKeyX11::keyModXCtrl() |
+			KKeyX11::keyModXAlt() |
+			KKeyX11::keyModXNumLock() |
+			KKeyX11::keyModXModeSwitch() |
+			KKeyX11::keyModXMeta() |
+			KKeyX11::keyModXScrollLock() );
 	g_keyModMaskXOnOrOff =
-			KAccel::keyModXLock() |
-			KAccel::keyModXNumLock() |
-			KAccel::keyModXScrollLock();
+			KKeyX11::keyModXLock() |
+			KKeyX11::keyModXNumLock() |
+			KKeyX11::keyModXScrollLock();
 
 	// X11 seems to treat the ModeSwitch bit differently than the others --
 	//  namely, it won't grab anything if it's set, but both switched and
 	//  unswiched keys if it's not.
 	//  So we always need to XGrabKey with the bit set to 0.
-	g_keyModMaskXAlwaysOff |= KAccel::keyModXModeSwitch();
+	g_keyModMaskXAlwaysOff |= KKeyX11::keyModXModeSwitch();
 }
 
 
@@ -97,10 +98,10 @@ bool KHKGlobalAccel::x11EventFilter( const XEvent *event_ ) {
     if ( !areKeyEventsEnabled() ) return false;
 #endif
 
-    KAccel::keyEventXToKeyX( event_, 0, &keySymX, &keyModX );
+    KKeyX11::keyEventXToKeyX( event_, 0, &keySymX, &keyModX );
     keyModX &= g_keyModMaskXAccel;
 
-    kdDebug(125) << "x11EventFilter: seek " << KAccel::keySymXToString( keySymX, keyModX, false )
+    kdDebug(125) << "x11EventFilter: seek " << KKeyX11::keySymXToString( keySymX, keyModX, false )
     	<< QString( " keyCodeX: %1 state: %2 keySym: %3 keyMod: %4\n" )
     		.arg( event_->xkey.keycode, 0, 16 ).arg( event_->xkey.state, 0, 16 ).arg( keySymX, 0, 16 ).arg( keyModX, 0, 16 );
 
@@ -108,8 +109,8 @@ bool KHKGlobalAccel::x11EventFilter( const XEvent *event_ ) {
     KKeyEntry entry;
     QString sConfigKey;
     for (KKeyEntryMap::ConstIterator it = aKeyMap.begin(); it != aKeyMap.end(); ++it) {
-	KAccel::keyQtToKeyX( (*it).aCurrentKeyCode, 0, &keySymX2, &keyModX2 );
-	//kdDebug() << "x11EventFilter: inspecting " << KAccel::keyToString( (*it).aCurrentKeyCode )
+	KKeyX11::keyQtToKeyX( (*it).aCurrentKeyCode, 0, &keySymX2, &keyModX2 );
+	//kdDebug() << "x11EventFilter: inspecting " << KKeyX11::keyToString( (*it).aCurrentKeyCode )
 	//	<< QString( " keySym: %1 keyMod: %2\n" ).arg( keySymX2, 0, 16 ).arg( keyModX2, 0, 16 );
 	if ( keySymX == keySymX2 && keyModX == (keyModX2 & g_keyModMaskXAccel) ) {
 	    entry = *it;
@@ -130,7 +131,7 @@ bool KHKGlobalAccel::x11EventFilter( const XEvent *event_ ) {
 	}
 #endif
 	if ( !entry.receiver || !entry.bEnabled ) {
-		kdDebug(125) << "KGlobalAccel::x11EventFilter(): Key has been grabbed (" << KAccel::keySymXToString( keySymX, keyModX, false ) << ") which doesn't have an associated action or was disabled.\n";
+		kdDebug(125) << "KGlobalAccel::x11EventFilter(): Key has been grabbed (" << KKeyX11::keySymXToString( keySymX, keyModX, false ) << ") which doesn't have an associated action or was disabled.\n";
 		return false;
 	} else {
 #if 0

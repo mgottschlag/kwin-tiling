@@ -33,6 +33,7 @@
 #include <dcopclient.h>
 #include <kapp.h>
 #include <kaccel.h>	// Used in KKeyModule::init()
+#include <kkey_x11.h>	// Used in KKeyModule::init()
 
 #include "keyconfig.h"
 #include "keyconfig.moc"
@@ -198,7 +199,7 @@ void KKeyModule::load()
 void KKeyModule::save()
 {
   if( preferMetaBt )
-    KAccel::useFourModifierKeys( preferMetaBt->isChecked() );
+    KKey::useFourModifierKeys( preferMetaBt->isChecked() );
 
   keys->setKeyDict( dict );
   keys->writeSettings();
@@ -215,7 +216,7 @@ void KKeyModule::defaults()
 {
   if( preferMetaBt )
     preferMetaBt->setChecked( false );
-  KAccel::useFourModifierKeys( false );
+  KKey::useFourModifierKeys( false );
   kc->allDefault();
 }
 
@@ -488,7 +489,7 @@ void KKeyModule::init()
 #include "../../kxkb/kxkbbindings.cpp"
 
   kdDebug(125) << "KKeyModule::init() - Read Modifier Mapping\n";
-  KAccel::readModifierMapping();
+  KKeyX11::readModifierMapping();
 
   kdDebug(125) << "KKeyModule::init() - Read Config Bindings\n";
   keys->setConfigGlobal( true );
