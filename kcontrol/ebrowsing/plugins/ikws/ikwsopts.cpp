@@ -17,27 +17,28 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <qcheckbox.h>
 #include <qfile.h>
-#include <qvbox.h>
+#include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qcheckbox.h>
-#include <qgroupbox.h>
-#include <qwhatsthis.h>
 #include <qpushbutton.h>
+#include <qvbox.h>
+#include <qwhatsthis.h>
 
 #include <kdebug.h>
 
 #include <dcopref.h>
-#include <kconfig.h>
-#include <ktrader.h>
-#include <klocale.h>
-#include <kcombobox.h>
-#include <klistview.h>
-#include <kmessagebox.h>
 #include <kapplication.h>
+#include <kcombobox.h>
+#include <kconfig.h>
+#include <klistview.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kservice.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
+#include <ktrader.h>
 
 #include "ikwsopts.h"
 #include "ikwsopts_ui.h"
@@ -53,7 +54,7 @@ public:
     :QListViewItem(parent), m_provider(provider)
     {
       update();
-    };
+    }
 
     virtual ~SearchProviderItem()
     {
@@ -289,7 +290,7 @@ void FilterOptions::save()
 
   // If the providers changed, tell sycoca to rebuild its database...
   if (changedProviderCount)
-    (void) DCOPRef("kded", "kbuildsycoca").send("recreate");
+    KService::rebuildKSycoca(this);
 }
 
 void FilterOptions::defaults()
