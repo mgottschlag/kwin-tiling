@@ -32,6 +32,7 @@
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kimageio.h>
+#include <kstddirs.h>
 
 #include "main.h"
 #include "lookandfeeltab_impl.h"
@@ -142,7 +143,12 @@ void LookAndFeelTab::load()
     m_backgroundButton->setEnabled(use_theme);
 
     if (theme != QString::null) {
-        QImage tmpImg(theme);
+        QString themepath;
+        if (theme[0] == '/')
+            themepath = theme;
+        else
+            themepath = locate("data", "kicker/"+theme);
+        QImage tmpImg(themepath);
         if(!tmpImg.isNull()) {
             tmpImg = tmpImg.smoothScale(m_backgroundLabel->contentsRect().width(),
                                         m_backgroundLabel->contentsRect().height());
