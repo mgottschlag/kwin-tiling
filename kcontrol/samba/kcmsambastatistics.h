@@ -55,7 +55,7 @@ class LogItem
 	};
   QString name;
   //QStrList accessedBy;
-  QList<SmallLogItem> accessed;
+  QPtrList<SmallLogItem> accessed;
   int count;
   SmallLogItem* itemInList(QString name);
   void addItem (QString host);
@@ -68,7 +68,7 @@ class SambaLog
 	{
 	  items.setAutoDelete(TRUE);
 	};
-  QList<LogItem> items;
+  QPtrList<LogItem> items;
   void addItem (QString share, QString host);
   void printItems();
  private:
