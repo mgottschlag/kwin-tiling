@@ -39,8 +39,10 @@ struct pam_data {
 
 #ifdef PAM_MESSAGE_NONCONST
 typedef struct pam_message pam_message_type;
+typedef void ** pam_gi_type;
 #else
 typedef const struct pam_message pam_message_type;
+typedef const void ** pam_gi_type;
 #endif
 
 static int
@@ -125,10 +127,12 @@ fail_delay(int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED,
 #endif
 
 
-AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *))
+AuthReturn Authenticate(const char *caller, const char *method,
+        const char *user, char *(*conv) (ConvRequest, const char *))
 {
   const char	*tty;
   pam_handle_t	*pamh;
+  char		*auser;
   const char	*pam_service;
   char		pservb[64];
   int		pam_error;
@@ -141,7 +145,7 @@ AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const ch
     PAM_data.classic = 1;
     pam_service = caller;
   }
-  pam_error = pam_start(pam_service, 0, &PAM_conversation, &pamh);
+  pam_error = pam_start(pam_service, user, &PAM_conversation, &pamh);
   if (pam_error != PAM_SUCCESS)
     return AuthError;
 
@@ -172,9 +176,20 @@ AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const ch
     }
   }
 
+  /* just in case some module is stupid enough to ignore a preset PAM_USER */
+  pam_error = pam_get_item (pamh, PAM_USER, (pam_gi_type)&auser);
+  if (pam_error != PAM_SUCCESS) {
+    pam_end(pamh, pam_error);
+    return AuthError;
+  }
+  if (strcmp(auser, user)) {
+    pam_end(pamh, PAM_SUCCESS); /* maybe use PAM_AUTH_ERR? */
+    return AuthBad;
+  }
+
   /* Refresh credentials (Needed e.g. for AFS (timing out Kerberos tokens)) */
   pam_error = pam_setcred(pamh, PAM_REFRESH_CRED);
-  if (pam_error != PAM_SUCCESS)  {
+  if (pam_error != PAM_SUCCESS) {
     pam_end(pamh, pam_error);
     return AuthError;
   }

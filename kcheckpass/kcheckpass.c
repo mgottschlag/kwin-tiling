@@ -62,48 +62,30 @@
 
 
 static int havetty, sfd = -1;
-static const char *username;
-#ifdef HAVE_PAM
-const char *caller = KCHECKPASS_PAM_SERVICE;
-#endif
 
 static char *
 conv_legacy (ConvRequest what, const char *prompt)
 {
     char		*p, *p2;
-    struct passwd	*pw;
     int			len;
-    uid_t		uid;
     char		buf[1024];
 
     switch (what) {
     case ConvGetBinary:
 	break;
     case ConvGetNormal:
-	if (prompt) {
-	    if (!havetty)
-		break;
-	    /* i guess we should use /dev/tty ... */
-	    fputs(prompt, stdout);
-	    fflush(stdout);
-	    if (!fgets(buf, sizeof(buf), stdin))
-		return 0;
-	    len = strlen(buf);
-	    if (len && buf[len - 1] == '\n')
-		buf[--len] = 0;
-	    return strdup(buf);
-	} else {
-	    if (username)
-		return strdup(username);
-	    uid = getuid();
-	    if (!(p = getenv("LOGNAME")) || !(pw = getpwnam(p)) || pw->pw_uid != uid)
-		if (!(p = getenv("USER")) || !(pw = getpwnam(p)) || pw->pw_uid != uid)
-		    if (!(pw = getpwuid(uid))) {
-			message("Cannot determinate current user\n");
-			return 0;
-		    }
-	    return strdup(pw->pw_name);
-	}
+	/* there is no prompt == 0 case */
+	if (!havetty)
+	    break;
+	/* i guess we should use /dev/tty ... */
+	fputs(prompt, stdout);
+	fflush(stdout);
+	if (!fgets(buf, sizeof(buf), stdin))
+	    return 0;
+	len = strlen(buf);
+	if (len && buf[len - 1] == '\n')
+	    buf[--len] = 0;
+	return strdup(buf);
     case ConvGetHidden:
 	if (havetty) {
 	    p = getpass(prompt ? prompt : "Password: ");
@@ -111,6 +93,8 @@ conv_legacy (ConvRequest what, const char *prompt)
 	    memset(p, 0, strlen(p));
 	    return p2;
 	} else {
+	    if (prompt)
+		break;
 	    if ((len = read(0, buf, sizeof(buf) - 1)) < 0) {
 		message("Cannot read password\n");
 		return 0;
@@ -306,15 +290,19 @@ usage(int exitval)
 int
 main(int argc, char **argv)
 {
+#ifdef HAVE_PAM
+  const char	*caller = KCHECKPASS_PAM_SERVICE;
+#endif
   const char	*method = "classic";
+  const char	*username = 0;
 #ifdef ACCEPT_ENV
   char		*p;
 #endif
+  struct passwd	*pw;
   int		c, nfd, lfd, numtries;
   uid_t		uid;
-  long          lasttime;
-
-  AuthReturn ret;
+  long		lasttime;
+  AuthReturn	ret;
 
   openlog("kcheckpass", LOG_PID, LOG_AUTH);
 
@@ -372,11 +360,29 @@ main(int argc, char **argv)
     username = p;
 #endif  
 
+  uid = getuid();
+  if (!username) {
+    if (!(p = getenv("LOGNAME")) || !(pw = getpwnam(p)) || pw->pw_uid != uid)
+      if (!(p = getenv("USER")) || !(pw = getpwnam(p)) || pw->pw_uid != uid)
+        if (!(pw = getpwuid(uid))) {
+          message("Cannot determinate current user\n");
+          return AuthError;
+        }
+    if (!(username = strdup(pw->pw_name))) {
+      message("Out of memory\n");
+      return AuthError;
+    }
+  }
   /* Now do the fandango */
-  ret = Authenticate(method, sfd < 0 ? conv_legacy : conv_server);
+  ret = Authenticate(
+#ifdef HAVE_PAM
+                     caller,
+#endif
+                     method,
+                     username, 
+                     sfd < 0 ? conv_legacy : conv_server);
   if (ret == AuthOk || ret == AuthBad) {
     /* Security: Don't undermine the shadow system. */
-    uid = getuid();
     if (uid != geteuid()) {
       char fname[32], fcont[32];
       sprintf(fname, "/var/lock/kcheckpass.%d", uid);

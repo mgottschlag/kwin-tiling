@@ -224,7 +224,7 @@ KClassicGreeter::start()
 	if (func == Authenticate || ctx == ChangeTok || ctx == ExChangeTok)
 	    exp = -1;
 	else
-	    exp = 0;
+	    exp = 1;
     } else {
 	if (running) { // what a hack ... PAM sucks.
 	    passwd1Edit->erase();
@@ -273,7 +273,7 @@ KClassicGreeter::next()
     } else
 	has = 1;
     if (exp < 0) {
-	exp = authTok ? 2 : 0;
+	exp = authTok ? 2 : (ctx == Login || ctx == Shutdown) ? 0 : 1;
 	handler->gplugStart( "classic" );
     } else if (has >= exp)
 	returnData();

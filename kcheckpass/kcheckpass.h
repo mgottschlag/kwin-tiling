@@ -112,8 +112,13 @@ typedef enum {
 /*****************************************************************
  * Authenticates user
  *****************************************************************/
-AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *));
-
+AuthReturn Authenticate(
+#ifdef HAVE_PAM
+        const char *caller, 
+#endif
+        const char *method,
+        const char *user,
+        char *(*conv) (ConvRequest, const char *));
 
 /*****************************************************************
  * Output a message to syslog or stderr
@@ -124,11 +129,6 @@ void message(const char *, ...) ATTR_PRINTFLIKE(1, 2);
  * Overwrite and free the passed string
  *****************************************************************/
 void dispose(char *);
-
-/* for PAM variant */
-#ifdef HAVE_PAM
-extern const char *caller;
-#endif
 
 #ifdef __cplusplus
 }

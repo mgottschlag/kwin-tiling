@@ -30,41 +30,35 @@ static int osf1c2_getprpwent(char *p, char *n, int len);
  * This is the authentication code for OSF C2 security passwords
  *******************************************************************/
 
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *))
+AuthReturn Authenticate(const char *method,
+        const char *login, char *(*conv) (ConvRequest, const char *))
 {
-  char *login, *passwd;
-  char *crpt_passwd;
+  char *passwd;
   char c2passwd[256];
-  int result;
 
   if (strcmp(method, "classic"))
     return AuthError;
 
-  if (!(login = conv(ConvGetNormal, 0)))
-    return AuthAbort;
-
-  result = osf1c2_getprpwent(c2passwd, login, sizeof(c2passwd));
-
-  free(login);
-
-  if (!result)
+  if (!osf1c2_getprpwent(c2passwd, login, sizeof(c2passwd)))
     return AuthBad;
 
   if (!(passwd = conv(ConvGetHidden, 0)))
     return AuthAbort;
 
-  /* Are they the same? */
-  crpt_passwd = osf1c2crypt(passwd, c2passwd);
-
+  if (!strcmp(c2passwd, osf1c2crypt(passwd, c2passwd))) {
+    dispose(passwd);
+    return AuthOk; /* Success */
+  }
+  if (*passwd) {
+    dispose(passwd);
+    return AuthBad; /* Password wrong or account locked */
+  }
   dispose(passwd);
-
-  if (strcmp(c2passwd, crpt_passwd) != 0)
-    return AuthBad;
-  else
-    return AuthOk;
+  return AuthAbort;
 }
 
 
@@ -106,7 +100,6 @@ initialize_osf_security(int ac, char **av)
   FILE *f;
   char buf[256];
   char siad[] = "siad_ses_init=";
-  int i;
 
   if (access(SIAIGOODFILE, F_OK) == -1)
     {

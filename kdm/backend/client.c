@@ -180,10 +180,7 @@ PAM_conv (int num_msg,
 	    /* could do better error handling here, but see below ... */
 	    if (pd->usecur) {
 		switch (msg[count]->msg_style) {
-		case PAM_PROMPT_ECHO_ON:
-		    Debug( " PAM_PROMPT_ECHO_ON (usecur): %s\n", msg[count]->msg );
-		    StrDup (&reply[count].resp, curuser);
-		    break;
+		/* case PAM_PROMPT_ECHO_ON: cannot happen */
 		case PAM_PROMPT_ECHO_OFF:
 		    Debug( " PAM_PROMPT_ECHO_OFF (usecur): %s\n", msg[count]->msg );
 		    if (!curpass)
@@ -318,11 +315,12 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
 	    LogError ("PAM error: %s\n", pam_strerror (pamh, pretc));
 	    V_RET (V_ERROR);
 	}
-	pam_set_item (pamh, PAM_USER, 0);
+	if ((pretc = pam_set_item (pamh, PAM_USER, curuser)) != PAM_SUCCESS)
+	    goto pam_bail;
     } else {
       opennew:
 	Debug ("opening new PAM handle\n");
-	if (pam_start (psrv, 0, &pconv, &pamh) != PAM_SUCCESS)
+	if (pam_start (psrv, curuser, &pconv, &pamh) != PAM_SUCCESS)
 	    goto pam_bail2;
 	if ((pretc = pam_set_item (pamh, PAM_TTY, td->name)) != PAM_SUCCESS)
 	    goto pam_bail;
@@ -652,7 +650,7 @@ Verify (GConvFunc gconv)
 	if (gconv != conv_interact || pnopass) {
 	    GSendInt (V_CHTOK_AUTH);
 	    /* this cannot auth the wrong user, as only classic auths get here */
-	    while (!doPAMAuth (psrv, &pdata))
+	    while (!doPAMAuth (PAMService, &pdata))
 		if (pdata.abort)
 		    return 0;
 	    GSendInt (V_PRE_OK);

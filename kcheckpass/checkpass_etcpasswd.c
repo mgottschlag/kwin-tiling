@@ -30,43 +30,32 @@
 #include <string.h>
 #include <stdlib.h>
 
-AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *))
+AuthReturn Authenticate(const char *method,
+        const char *login, char *(*conv) (ConvRequest, const char *))
 {
   struct passwd *pw;
-  char *login, *passwd;
-  char *crpt_passwd;
-  int result;
+  char *passwd;
 
   if (strcmp(method, "classic"))
     return AuthError;
 
-  if (!(login = conv(ConvGetNormal, 0)))
-    return AuthAbort;
-
   /* Get the password entry for the user we want */
-  pw = getpwnam(login);
-
-  free(login);
-
-  /* getpwnam should return a NULL pointer on error */
-  if (pw == 0)
+  if (!(pw = getpwnam(login)))
     return AuthBad;
 
   if (!(passwd = conv(ConvGetHidden, 0)))
     return AuthAbort;
 
-  /* Encrypt the password the user entered */
-  crpt_passwd = crypt(passwd, pw->pw_passwd);
-
-  dispose(passwd);
-
-  /* Are they the same? */
-  result = strcmp(pw->pw_passwd, crpt_passwd);
-
-  if (result == 0)
+  if (!strcmp(pw->pw_passwd, crypt(passwd, pw->pw_passwd))) {
+    dispose(passwd);
     return AuthOk; /* Success */
-  else
+  }
+  if (*passwd) {
+    dispose(passwd);
     return AuthBad; /* Password wrong or account locked */
+  }
+  dispose(passwd);
+  return AuthAbort;
 }
 
 #endif

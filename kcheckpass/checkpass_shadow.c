@@ -39,9 +39,10 @@
 #include <shadow.h>
 #endif
 
-AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *))
+AuthReturn Authenticate(const char *method,
+        const char *login, char *(*conv) (ConvRequest, const char *))
 {
-  char          *login, *typed_in_password;
+  char          *typed_in_password;
   char          *crpt_passwd;
   char          *password;
   struct passwd *pw;
@@ -50,18 +51,11 @@ AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const ch
   if (strcmp(method, "classic"))
     return AuthError;
 
-  if (!(login = conv(ConvGetNormal, 0)))
+  if (!(pw = getpwnam(login)))
     return AuthAbort;
-
-  if ( !(pw = getpwnam(login)) ) {
-    free(login);
-    return AuthAbort;
-  }
   
   spw = getspnam(login);
   password = spw ? spw->sp_pwdp : pw->pw_passwd;
- 
-  free(login);
  
   if (!(typed_in_password = conv(ConvGetHidden, 0)))
     return AuthAbort;
@@ -72,9 +66,16 @@ AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const ch
   crpt_passwd = crypt(typed_in_password, password);
 #endif
 
+  if (!strcmp(password, crpt_passwd )) {
+    dispose(typed_in_password);
+    return AuthOk; /* Success */
+  }
+  if (*typed_in_password) {
+    dispose(typed_in_password);
+    return AuthBad; /* Password wrong or account locked */
+  }
   dispose(typed_in_password);
-
-  return !strcmp(password, crpt_passwd );
+  return AuthAbort;
 }
 
 /*

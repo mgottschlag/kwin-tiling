@@ -21,30 +21,29 @@
 #include "kcheckpass.h"
 
 #ifdef HAVE_AIX_AUTH
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 /* 
  * The AIX builtin authenticate() uses whichever method the system 
  * has been configured for.  (/etc/passwd, DCE, etc.)
  */
-int authenticate(char *, char *, int *, char **);
+int authenticate(const char *, const char *, int *, char **);
 
-AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *))
+AuthReturn Authenticate(const char *method,
+        const char *login, char *(*conv) (ConvRequest, const char *))
 {
   int result;
   int reenter;  /* Tells if authenticate is done processing or not. */
-  char *login, *passwd;
+  char *passwd;
   char *msg; /* Contains a prompt message or failure reason.     */
-
-  if (!(login = conv(ConvGetNormal, 0)))
-    return AuthAbort;
 
   if (!strcmp(method, "classic")) {
 
-    if (!(passwd = conv(ConvGetHidden, 0))) {
-      free(login);
+    if (!(passwd = conv(ConvGetHidden, 0)))
       return AuthAbort;
-    }
 
     if ((result = authenticate(login, passwd, &reenter, &msg))) {
       if (msg) {
@@ -52,7 +51,6 @@ AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const ch
         free(msg);
       }
       dispose(passwd);
-      free(login);
       return AuthBad;
     }
     if (reenter) {
@@ -61,11 +59,9 @@ AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const ch
       conv(ConvPutError, buf);
       free(msg);
       dispose(passwd);
-      free(login);
       return result == ENOENT || result == ESAD ? AuthBad : AuthError;
     }
     dispose(passwd);
-    free(login);
     return AuthOk;
 
   } else if (!strcmp(method, "generic")) {
@@ -78,7 +74,6 @@ AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const ch
         }
         if (passwd)
           dispose(passwd);
-        free(login);
         return result == ENOENT || result == ESAD ? AuthBad : AuthError;
       }
       if (passwd)
@@ -87,11 +82,10 @@ AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const ch
         break;
       passwd = conv(ConvGetHidden, msg);
       free(msg);
-      if (!passwd) {
-        free(login);
+      if (!passwd)
         return AuthAbort;
-      }
     }
+    return AuthOk;
 
   } else
     return AuthError;
