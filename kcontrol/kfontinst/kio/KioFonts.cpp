@@ -96,9 +96,12 @@ int kdemain(int argc, char **argv)
     return 0;
 }
 
-inline bool isSpecialDir(const QString &sub)
+static bool isSpecialDir(const QString &sub, bool sys)
 {
-    return "CID"==sub || "encodings"==sub;
+    if(sys || CMisc::root())
+        return "CID"==sub || "encodings"==sub;
+    else
+        return "kde-override"==sub;
 }
 
 static void addAtom(KIO::UDSEntry &entry, unsigned int ID, long l, const QString &s=QString::null)
@@ -385,7 +388,7 @@ void CKioFonts::listDir(const QString &top, const QString &sub, bool sys)
 
     //
     // Ensure this dir is in fontpath - if it exists, and it contains fonts!
-    if(sub.isNull() || (!name.isNull() && !sys && QChar('.')!=name[0] && !isSpecialDir(name)))
+    if(sub.isNull() || (!name.isNull() && !sys && QChar('.')!=name[0] && !isSpecialDir(name, sys)))
     {
         addDir(dPath);
         cfgDir(dPath);
@@ -400,7 +403,7 @@ void CKioFonts::listDir(const QString &top, const QString &sub, bool sys)
             if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                 if(fInfo->isDir())
                 {
-                    if(!((CMisc::root()||sys) && isSpecialDir(fInfo->fileName())))  // Don't handle CID fonts...
+                    if(!isSpecialDir(fInfo->fileName(), sys))
                     {
                         QString ds(CMisc::dirSyntax(fInfo->filePath()));
 
@@ -479,7 +482,7 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, bool sys)
 
         QString name(CMisc::getName(url.path()));
 
-        if(!((CMisc::root()||sys) && isSpecialDir(name)))  // Don't handle CID fonts...
+        if(!isSpecialDir(name, sys))
         {
             CXConfig xcfg=sys ? CGlobal::sysXcfg() : CGlobal::userXcfg();
 
@@ -1045,10 +1048,12 @@ void CKioFonts::mkdir(const KURL &url, int)
                     otherExists,
                     otherHidden;
 
-    if((CMisc::root()||sys) && isSpecialDir(CMisc::getName(url.path())))  // Don't handle CID fonts...
-        error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, you cannot create a folder named \"CID\" or \"encodings\", as these are special "
-                                           "system folders. (\"CID\"is for \"CID\" fonts - these are <b>not</b> handled - and "
-                                           "\"encodings\" is for X11 encoding files.)"));
+    if(isSpecialDir(CMisc::getName(url.path()), sys))
+        error(KIO::ERR_SLAVE_DEFINED,
+                  sys ? i18n("Sorry, you cannot create a folder named either \"CID\" or \"encodings\", as these are special "
+                             "system folders. (\"CID\"is for \"CID\" fonts - these are <b>not</b> handled - and "
+                             "\"encodings\" is for X11 encoding files.)")
+                      : i18n("Sorry, you cannot create a folder named \"kde-override\", as this is a special KDE folder."));
     else
     {
         checkPath(realPath, otherExists, otherHidden);
