@@ -22,11 +22,13 @@
 #include <unistd.h>
 
 #include <qfile.h>
+#include <qdir.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 
 #include <kdebug.h>
+#include <kapp.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
@@ -36,10 +38,13 @@
 #include <klistview.h>
 #include <kurlrequesterdlg.h>
 #include <kmessagebox.h>
+#include <kprogress.h>
 #include <kiconloader.h>
 
 #include <kio/job.h>
 #include <kio/netaccess.h>
+#include <karchive.h>
+#include <ktar.h>
 
 #include "iconthemes.h"
 
@@ -94,7 +99,6 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   loadThemes();
 
   m_defaultTheme=iconThemeItem(KIconTheme::current());
-//  m_iconThemes->setCurrentItem(m_defaultTheme);
   m_iconThemes->setSelected(m_defaultTheme, true);
   updateRemoveButton();
 
@@ -149,7 +153,8 @@ void IconThemesConfig::loadThemes()
 void IconThemesConfig::installNewTheme()
 {
   KURL themeURL = KURLRequesterDlg::getURL(QString::null, this,
-                                           "Type theme URL");
+                                           "Drag or type the theme URL");
+  kdDebug() << themeURL.prettyURL() << endl;
 
   if (themeURL.url().isEmpty()) return;
 
@@ -167,7 +172,28 @@ void IconThemesConfig::installNewTheme()
     return;
   }
 
-  QString iconThemesDir(locateLocal("icon", "./"));
+  QStringList themesNames = findThemeDirs(themeTmpFile);
+  if (themesNames.isEmpty()) {
+    QString invalidArch(i18n("The file is not a valid icon theme archive!"));
+    KMessageBox::error(this, invalidArch);
+
+    KIO::NetAccess::removeTempFile(themeTmpFile);
+    return;
+  }
+
+  if (!installThemes(themesNames, themeTmpFile)) {
+    //FIXME: make me able to know what is wrong....
+    // QStringList instead of bool?
+    QString somethingWrong =
+        i18n("Something went wrong during the install process. "
+             "Still most of the themes in the archive had been installed");
+    KMessageBox::error(this, somethingWrong);
+  }
+
+  KIO::NetAccess::removeTempFile(themeTmpFile);
+  
+
+/*
   QString cmd;
 
   cmd.sprintf("cd \"%s\"; gzip -c -d \"%s\" | tar xf -",	//lukas: FIXME
@@ -181,16 +207,91 @@ void IconThemesConfig::installNewTheme()
     KMessageBox::sorry(this, sorryText);
     return;
   }
+*/
 
-  KIO::NetAccess::removeTempFile(themeTmpFile);
 
   KGlobal::instance()->newIconLoader();
   loadThemes();
 
   QListViewItem *item=iconThemeItem(KIconTheme::current());
-//  m_iconThemes->setCurrentItem(item);
   m_iconThemes->setSelected(item, true);
   updateRemoveButton();
+}
+
+bool IconThemesConfig::installThemes(QStringList themes, QString archiveName)
+{
+  bool everythingOk = true;
+  QString localThemesDir(locateLocal("icon", "./"));
+
+  KProgressDialog progressDiag(this, "themeinstallprogress",
+                               i18n("Installing icon themes"),
+                               QString::null,
+                               true);
+  progressDiag.setAutoClose(true);
+  progressDiag.progressBar()->setTotalSteps(themes.count());
+  progressDiag.show();
+
+  KTar archive(archiveName);
+  archive.open(IO_ReadOnly);
+  kapp->processEvents();
+
+  const KArchiveDirectory* rootDir = archive.directory();
+
+  KArchiveDirectory* currentTheme;
+  for (QStringList::Iterator it = themes.begin();
+       it != themes.end();
+       ++it) {
+    progressDiag.setLabel(
+        i18n("<qt>Installing <strong>%1</strong> theme</qt>")
+        .arg(*it));
+    kapp->processEvents();
+
+    if (progressDiag.wasCancelled())
+      break;
+
+    currentTheme = dynamic_cast<KArchiveDirectory*>(
+                     const_cast<KArchiveEntry*>(
+                       rootDir->entry(*it)));
+    if (currentTheme == NULL) {
+      // we tell back that something went wrong, but try to install as much
+      // as possible
+      everythingOk = false;
+      continue;
+    }
+
+    currentTheme->copyTo(QDir(localThemesDir + "/" + *it));
+    progressDiag.progressBar()->advance(1);
+  }
+
+  archive.close();
+  return everythingOk;
+}
+
+QStringList IconThemesConfig::findThemeDirs(QString archiveName)
+{
+  QStringList foundThemes;
+
+  KTar archive(archiveName);
+  archive.open(IO_ReadOnly);
+  const KArchiveDirectory* themeDir = archive.directory();
+
+  // iterate all the dirs looking for an index.desktop file
+  KArchiveEntry* possibleDir;
+  QStringList entries = themeDir->entries();
+  for (QStringList::Iterator it = entries.begin();
+       it != entries.end();
+       ++it) {
+    kdDebug() << "ispecting dir " << *it << endl;
+    possibleDir = themeDir->entry(*it);
+    if (possibleDir->isDirectory() &&
+       (((KArchiveDirectory*)possibleDir)->entry("index.desktop") != NULL)) {
+      kdDebug() << "found index.desktop! in " << possibleDir->name() << endl;
+      foundThemes.append(possibleDir->name());
+    }
+  }
+
+  archive.close();
+  return foundThemes;
 }
 
 void IconThemesConfig::removeSelectedTheme()
@@ -227,7 +328,6 @@ void IconThemesConfig::removeSelectedTheme()
      item=iconThemeItem(KIconTheme::current());
   if (!item)
      item=iconThemeItem("hicolor");
-//  m_iconThemes->setCurrentItem(item);
 
   m_iconThemes->setSelected(item, true);
   updateRemoveButton();
@@ -318,8 +418,7 @@ void IconThemesConfig::defaults()
 {
   if (m_iconThemes->currentItem()==m_defaultTheme) return;
 
-//  m_iconThemes->setCurrentItem(m_defaultTheme);
-  m_iconThemes->setSelected(m_defaultTheme,true);
+  m_iconThemes->setSelected(m_defaultTheme, true);
   updateRemoveButton();
 
   emit changed(true);

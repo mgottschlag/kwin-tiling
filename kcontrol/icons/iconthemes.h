@@ -28,6 +28,7 @@
 class QPushButton;
 class DeviceManager;
 class QCheckBox;
+class QStringList;
 
 
 class IconThemesConfig : public KCModule
@@ -39,6 +40,8 @@ public:
   virtual ~IconThemesConfig();
 
   void loadThemes();
+  bool installThemes(QStringList themes, QString archiveName);
+  QStringList findThemeDirs(QString archiveName);
 
   void updateRemoveButton();
 
