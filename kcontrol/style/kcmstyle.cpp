@@ -205,7 +205,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	// Add Page2 (Effects)
 	// -------------------
 	gbEffects = new QGroupBox( 1, Qt::Horizontal, i18n("GUI Effects"), page2 );
-	cbEnableEffects = new QCheckBox( i18n("&Enable GUI Effects"), gbEffects );
+	cbEnableEffects = new QCheckBox( i18n("&Enable GUI effects"), gbEffects );
 
 	containerFrame = new QFrame( gbEffects );
 	containerFrame->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
@@ -216,7 +216,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	comboComboEffect = new QComboBox( FALSE, containerFrame );
 	comboComboEffect->insertItem( i18n("Disable") );
 	comboComboEffect->insertItem( i18n("Animate") );
-	lblComboEffect = new QLabel( i18n("ComboBo&x Effect:"), containerFrame );
+	lblComboEffect = new QLabel( i18n("ComboBo&x effect:"), containerFrame );
 	lblComboEffect->setBuddy( comboComboEffect );
 	containerLayout->addWidget( lblComboEffect, 0, 0 );
 	containerLayout->addWidget( comboComboEffect, 0, 1 );
@@ -225,7 +225,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	comboTooltipEffect->insertItem( i18n("Disable") );
 	comboTooltipEffect->insertItem( i18n("Animate") );
 	comboTooltipEffect->insertItem( i18n("Fade") );
-	lblTooltipEffect = new QLabel( i18n("&ToolTip Effect:"), containerFrame );
+	lblTooltipEffect = new QLabel( i18n("&ToolTip effect:"), containerFrame );
 	lblTooltipEffect->setBuddy( comboTooltipEffect );
 	containerLayout->addWidget( lblTooltipEffect, 1, 0 );
 	containerLayout->addWidget( comboTooltipEffect, 1, 1 );
@@ -235,7 +235,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	comboMenuEffect->insertItem( i18n("Animate") );
 	comboMenuEffect->insertItem( i18n("Fade") );
 	comboMenuEffect->insertItem( i18n("Make Translucent") );
-	lblMenuEffect = new QLabel( i18n("&Menu Effect:"), containerFrame );
+	lblMenuEffect = new QLabel( i18n("&Menu effect:"), containerFrame );
 	lblMenuEffect->setBuddy( comboMenuEffect );
 	containerLayout->addWidget( lblMenuEffect, 2, 0 );
 	containerLayout->addWidget( comboMenuEffect, 2, 1 );
@@ -281,9 +281,9 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	lbl = new QLabel( i18n("100%"), box1 );
 	lbl->setAlignment( AlignRight );
 
-	lblMenuEffectType = new QLabel( comboMenuEffectType, i18n("Menu Trans&lucency Type:"), menuContainer );
+	lblMenuEffectType = new QLabel( comboMenuEffectType, i18n("Menu trans&lucency type:"), menuContainer );
 	lblMenuEffectType->setAlignment( AlignBottom | AlignLeft );
-	lblMenuOpacity    = new QLabel( slOpacity, i18n("Menu &Opacity:"), menuContainer );
+	lblMenuOpacity    = new QLabel( slOpacity, i18n("Menu &opacity:"), menuContainer );
 	lblMenuOpacity->setAlignment( AlignBottom | AlignLeft );
 	menuContainerLayout->addWidget( lblMenuEffectType, 0, 0 );
 	menuContainerLayout->addWidget( comboMenuEffectType, 1, 0 );
@@ -309,12 +309,12 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	// -------------------------
 	gbToolbarSettings = new QGroupBox( 1, Qt::Horizontal, i18n("Misc Toolbar Settings"), page3 );
 	cbHoverButtons = new QCheckBox( i18n("High&light buttons under mouse"), gbToolbarSettings );
-	cbTransparentToolbars = new QCheckBox( i18n("Transparent Tool&bars when moving"), gbToolbarSettings );
-	cbEnableTooltips = new QCheckBox( i18n("E&nable Tooltips"), gbToolbarSettings );
+	cbTransparentToolbars = new QCheckBox( i18n("Transparent tool&bars when moving"), gbToolbarSettings );
+	cbEnableTooltips = new QCheckBox( i18n("E&nable tooltips"), gbToolbarSettings );
 
 	QWidget * dummy = new QWidget( gbToolbarSettings );
 	QHBoxLayout* box2 = new QHBoxLayout( dummy, 0, KDialog::spacingHint() );
-	lbl = new QLabel( i18n("Toolbar &Icons:"), dummy );
+	lbl = new QLabel( i18n("Toolbar &icons:"), dummy );
 	comboToolbarIcons = new QComboBox( FALSE, dummy );
 	comboToolbarIcons->insertItem( i18n("Icons only") );
 	comboToolbarIcons->insertItem( i18n("Text only") );
@@ -328,7 +328,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	box2->addItem( sp2 );
 
 	gbVisualAppearance = new QGroupBox( 1, Qt::Horizontal, i18n("Visual Appearance"), page3 );
-	cbIconsOnButtons = new QCheckBox( i18n("Sho&w Icons on buttons"), gbVisualAppearance );
+	cbIconsOnButtons = new QCheckBox( i18n("Sho&w icons on buttons"), gbVisualAppearance );
 	cbTearOffHandles = new QCheckBox( i18n("Show tear-off handles in &popup menus"), gbVisualAppearance );
 	cbTearOffHandles->hide(); // reenable when the corresponding Qt method is virtual an properly reimplemented
 	cbMacMenubar = new QCheckBox( i18n("&Menubar on top of the screen in the style of MacOS"), gbVisualAppearance );
