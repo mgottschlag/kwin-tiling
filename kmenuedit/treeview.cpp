@@ -407,7 +407,7 @@ bool TreeView::deleteFile(const QString& deskfile, const bool move)
         c.writeEntry("Name", "empty");
         c.writeEntry("Hidden", true);
         c.sync();
-    } else
+    }
 	return allremoved;
 }
 
@@ -458,7 +458,7 @@ bool TreeView::deleteDir(const QString& d, const bool move)
         c.writeEntry("Name", "empty");
         c.writeEntry("Hidden", true);
         c.sync();
-    } else
+    }
 	return allremoved;
 }
 
