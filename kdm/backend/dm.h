@@ -1,7 +1,7 @@
 /*
 
 Copyright 1988, 1998  The Open Group
-Copyright 2000-2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2000-2005 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -153,6 +153,59 @@ typedef union wait	waitType;
 #  endif
 # endif
 #endif
+
+#ifdef NEED_UTMP
+# include <utmp.h>
+# if defined(CSRG_BASED) || defined(__DARWIN__)
+#  if __NetBSD_Version__ >= 106030000     /* 1.6C */
+#   define HAVE_UTMPX 1
+#  else
+#   define BSD_UTMP
+#  endif
+# else
+#  if defined(sun)
+#   define HAVE_UTMPX 1
+#  endif
+# endif
+# ifdef HAVE_UTMPX
+#  include <utmpx.h>
+#  define UTMP utmpx
+#  define UTMPNAME utmpxname
+#  define SETUTENT setutxent
+#  define GETUTENT getutxent
+#  define PUTUTLINE pututxline
+#  define ENDUTENT endutxent
+#  define LASTLOG lastlogx
+#  define ut_time ut_tv.tv_sec
+#  define ll_time ll_tv.tv_sec
+# else
+#  define UTMP utmp
+#  define UTMPNAME utmpname
+#  define SETUTENT setutent
+#  define GETUTENT getutent
+#  define PUTUTLINE pututline
+#  define ENDUTENT endutent
+#  define LASTLOG lastlog
+# endif
+# ifndef WTMP_FILE
+#  ifdef _PATH_WTMPX
+#   define WTMP_FILE	_PATH_WTMPX
+#  elif defined(_PATH_WTMP)
+#   define WTMP_FILE	_PATH_WTMP
+#  else
+#   define WTMP_FILE	"/usr/adm/wtmp"
+#  endif
+# endif
+# ifndef UTMP_FILE
+#  ifdef _PATH_UTMPX
+#   define UTMP_FILE	_PATH_UTMPX
+#  elif defined(_PATH_UTMP)
+#   define UTMP_FILE	_PATH_UTMP
+#  else
+#   define UTMP_FILE	"/etc/utmp"
+#  endif
+# endif
+#endif /* NEED_UTMP */
 
 typedef struct GPipe {
     int wfd, rfd;
@@ -585,6 +638,9 @@ int ProcessListenSockets (FD_TYPE *reads);
 
 /* in xdmcp.c */
 void ProcessRequestSocket (int fd);
+
+/* in sessreg.c */
+void sessreg (struct display *d, int pid, const char *user, int uid);
 
 #endif /* XDMCP */
 

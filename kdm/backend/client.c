@@ -1241,6 +1241,7 @@ StartClient ()
     switch (pid = Fork ()) {
     case 0:
 
+	sessreg (td, getpid(), curuser, curuid);
 	if (source (systemEnviron, td->startup, td_setup)) {
 	    LogError ("Cannot execute startup script %\"s\n", td->startup);
 	    exit (1);
@@ -1541,6 +1542,7 @@ SessionExit (int status)
 
 	if (source (systemEnviron, td->reset, td_setup))
 	    LogError ("Cannot execute reset script %\"s\n", td->reset);
+	sessreg (td, 0, 0, 0);
 
 	SetUser (curuser, curuid, curgid);
 	RemoveUserAuthorization (td);

@@ -1,7 +1,7 @@
 # The contents of this section are copied into config.ci verbatim.
 <code>
 #define RCVERMAJOR 2
-#define RCVERMINOR 2
+#define RCVERMINOR 3
 
 #define KDMCONF KDE_CONFDIR "/kdm"
 #define KDMDATA KDE_DATADIR "/kdm"
@@ -1493,8 +1493,7 @@ Instance: #*/""
 Update: mk_startup
 Merge: xdm
 Comment:
- A program to run before a user session starts. You should invoke sessreg
- there and optionally change the ownership of the console, etc.
+ A program to run before a user session starts.
 Description:
  This specifies a program which is run (as
  <systemitem class="username">root</systemitem>) after the user
@@ -1511,8 +1510,7 @@ Instance: #*/""
 Update: mk_reset
 Merge: xdm
 Comment:
- A program to run after a user session exits. You should invoke sessreg
- there and optionally change the ownership of the console, etc.
+ A program to run after a user session exits.
 Description:
  This specifies a program which is run (as
  <systemitem class="username">root</systemitem>) after the session
@@ -1794,6 +1792,20 @@ Description:
  output to. One occurrence of <parameter>%s</parameter> in this string will be
  substituted with the display name. Use <parameter>%%</parameter> to obtain a
  literal <literal>%</literal>.
+
+Key: UseSessReg
+Type: bool
+Default: true
+User: core
+Instance: #*/!
+Comment:
+ Whether kdm's built-in utmp/wtmp/lastlog registration should be used.
+Description:
+ Specify whether &kdm;'s built-in utmp/wtmp/lastlog registration should
+ be used. If it is not, the tool <command>sessreg</command> should be used
+ in the <option>Startup</option> and <option>Reset</option> scripts, or,
+ alternatively, the pam_lastlog module should be used on
+ <acronym>PAM</acronym>-enabled systems.
 
 
 Section: -Greeter

@@ -27,7 +27,7 @@ theming ToDo:
 - before nuking X server on other vt, save current vt and restore it before
   disallocating server vt. or just make the xserver not switch wildly.
 
-- get rid of Xservers file. consider sessreg vs. BSD. see #56329
+- get rid of Xservers file. see #56329
 
 - possibly parse Xserver log to find failure cause. this is very hacky.
 
@@ -41,8 +41,6 @@ save these options to .dmrc?
 
 - per-display sections in .dmrc. read-only, as far as kdm is concerned, as
   otherwise the GUI would become insanely complex.
-
-- merge sessreg into the core? take care of #47151 then.
 
 - make config position independent
 - parse /etc/kderc?

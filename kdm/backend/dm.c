@@ -1,7 +1,7 @@
 /*
 
 Copyright 1988, 1998  The Open Group
-Copyright 2000-2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2000-2005 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -35,6 +35,7 @@ from the copyright holder.
  */
 
 #define NEED_SIGNAL
+#define NEED_UTMP
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
@@ -69,26 +70,6 @@ from the copyright holder.
 # endif
 #endif
 
-#if defined(CSRG_BASED) || defined(__DARWIN__)
-# define BSD_UTMP
-#endif
-
-#if defined(BSD_UTMP) || !defined(sun)
-# include <utmp.h>
-# ifndef UTMP_FILE
-#  define UTMP_FILE _PATH_UTMP
-# endif
-# define LOGSTAT_FILE UTMP_FILE
-#else
-# include <utmpx.h>
-# ifndef ut_time
-#  define ut_time ut_tv.tv_sec
-# endif
-# ifndef UTMPX_FILE
-#  define UTMPX_FILE _PATH_UTMPX
-# endif
-# define LOGSTAT_FILE UTMPX_FILE
-#endif
 #ifdef HAVE_VTS
 # include <sys/ioctl.h>
 # include <sys/vt.h>
@@ -374,16 +355,10 @@ activateVT (int vt)
 
 enum utState { UtWait, UtActive };
 
-#ifndef UT_LINESIZE
-#define UT_LINESIZE 32
-#endif
-
-#define UT_LINESIZE_S stringify(UT_LINESIZE)
-
 struct utmps {
     struct utmps *next;
     struct display *d;
-    char line[UT_LINESIZE];
+    char line[sizeof(((struct UTMP *)0)->ut_line)];
     time_t time;
     enum utState state;
     int hadSess;
@@ -407,15 +382,13 @@ CheckUtmp (void)
     struct stat st;
 #ifdef BSD_UTMP
     struct utmp ut[1];
-#elif defined(sun)
-    struct utmpx *ut;
 #else
-    struct utmp *ut;
+    struct UTMP *ut;
 #endif
 
-    if (stat(LOGSTAT_FILE, &st))
+    if (stat(UTMP_FILE, &st))
     {
-	LogError (LOGSTAT_FILE " not found - cannot use console mode\n");
+	LogError (UTMP_FILE " not found - cannot use console mode\n");
 	return 0;
     }
     if (!utmpList)
@@ -426,7 +399,7 @@ CheckUtmp (void)
 	int fd;
 #endif
 
-	Debug ("rescanning " LOGSTAT_FILE "\n");
+	Debug ("rescanning " UTMP_FILE "\n");
 #ifdef BSD_UTMP
 	for (utp = utmpList; utp; utp = utp->next)
 	    utp->checked = 0;
@@ -436,23 +409,21 @@ CheckUtmp (void)
 	    return 0;
 	}
 	while (Reader (fd, ut, sizeof(ut[0])) == sizeof(ut[0]))
-#elif defined(sun)
-	setutxent();
-	while ((ut = getutxent()))
 #else
-	setutent();
-	while ((ut = getutent()))
+	SETUTENT();
+	while ((ut = GETUTENT()))
 #endif
 	{
 	    for (utp = utmpList; utp; utp = utp->next)
-		if (!strncmp(utp->line, ut->ut_line, UT_LINESIZE))
+		if (!strncmp (utp->line, ut->ut_line, sizeof(ut->ut_line)))
 		{
 #ifdef BSD_UTMP
 		    utp->checked = 1;
 #else
 		    if (ut->ut_type == LOGIN_PROCESS)
 		    {
-			Debug ("utmp entry for %." UT_LINESIZE_S "s marked waiting\n", utp->line);
+			Debug ("utmp entry for %.*s marked waiting\n",
+			       sizeof(utp->line), utp->line);
 			utp->state = UtWait;
 		    }
 		    else if (ut->ut_type != USER_PROCESS)
@@ -461,7 +432,8 @@ CheckUtmp (void)
 #endif
 		    {
 			utp->hadSess = 1;
-			Debug ("utmp entry for %." UT_LINESIZE_S "s marked active\n", utp->line);
+			Debug ("utmp entry for %.*s marked active\n",
+			       sizeof(utp->line), utp->line);
 			utp->state = UtActive;
 		    }
 		    if (utp->time < ut->ut_time)
@@ -476,12 +448,11 @@ CheckUtmp (void)
 	    {
 		utp->state = UtWait;
 		utp->time = now;
-		Debug ("utmp entry for %." UT_LINESIZE_S "s marked waiting\n", utp->line);
+		Debug ("utmp entry for %.*s marked waiting\n",
+		       sizeof(utp->line), utp->line);
 	    }
-#elif defined(sun)
-	endutxent();
 #else
-	endutent();
+	ENDUTENT();
 #endif
 	modtim = st.st_mtime;
     }
@@ -493,8 +464,8 @@ CheckUtmp (void)
 	    if (ends <= now)
 	    {
 		struct display *d = utp->d;
-		Debug ("console login for %s at %." UT_LINESIZE_S "s timed out\n", 
-		       d->name, utp->line);
+		Debug ("console login for %s at %.*s timed out\n", 
+		       d->name, sizeof(utp->line), utp->line);
 		*utpp = utp->next;
 		free (utp);
 		d->status = notRunning;
@@ -534,7 +505,7 @@ SwitchToTty (struct display *d)
 	d->status = notRunning;
 	return;
     }
-    strncpy (utp->line, d->console, UT_LINESIZE);
+    strncpy (utp->line, d->console, sizeof(utp->line));
     utp->d = d;
     utp->time = now;
     utp->hadSess = 0;

@@ -580,33 +580,21 @@ static const char def_startup[] =
 "# We create a pseudodevice for finger.  (host:0 becomes xdm/host_0)\n"
 "# Without it, finger errors out with \"Can't stat /dev/host:0\".\n"
 "#\n"
-"if [ -f /usr/lib/X11/xdm/sessreg ]; then\n"
-"  devname=`echo $DISPLAY | /usr/bin/sed -e 's/[:\\.]/_/g' | /usr/bin/cut -c1-8`\n"
-"  hostname=`echo $DISPLAY | /usr/bin/cut -d':' -f1`\n"
-"\n"
-"  if [ -z \"$devname\" ]; then\n"
-"    devname=\"unknown\"\n"
-"  fi\n"
-"  if [ ! -d /dev/xdm ]; then\n"
-"    /usr/bin/mkdir /dev/xdm\n"
-"    /usr/bin/chmod 755 /dev/xdm\n"
-"  fi\n"
-"  /usr/bin/touch /dev/xdm/$devname\n"
-"  /usr/bin/chmod 644 /dev/xdm/$devname\n"
-"\n"
-"  if [ -z \"$hostname\" ]; then\n"
-"    exec /usr/lib/X11/xdm/sessreg -a -l xdm/$devname $USER\n"
-"  else\n"
-"    exec /usr/lib/X11/xdm/sessreg -a -l xdm/$devname -h $hostname $USER\n"
-"  fi\n"
-"fi\n";
+"#devname=`echo $DISPLAY | cut -c1-8`\n"
+"#if [ ! -d /dev/xdm ]; then\n"
+"#  mkdir /dev/xdm\n"
+"#  chmod 755 /dev/xdm\n"
+"#fi\n"
+"#touch /dev/xdm/$devname\n"
+"#chmod 644 /dev/xdm/$devname\n"
+"#exec sessreg -a -l xdm/$devname -h \"`echo $DISPLAY | cut -d: -f1`\""
 #else
-"exec sessreg -a -l $DISPLAY"
+"#exec sessreg -a -l $DISPLAY -h \"`echo $DISPLAY | cut -d: -f1`\""
 # ifdef BSD
-" -x " KDMCONF "/Xservers -u " _PATH_UTMP
+" -x " KDMCONF "/Xservers"
 # endif
-" $USER\n";
 #endif /* _AIX */
+" $USER\n";
 
 static const char def_reset[] = 
 "#! /bin/sh\n"
@@ -619,17 +607,15 @@ static const char def_reset[] =
 "#chmod 622 /dev/console\n"
 "\n"
 #ifdef _AIX
-"if [ -f /usr/lib/X11/xdm/sessreg ]; then\n"
-"  devname=`echo $DISPLAY | /usr/bin/sed -e 's/[:\\.]/_/g' | /usr/bin/cut -c1-8`\n"
-"  exec /usr/lib/X11/xdm/sessreg -d -l xdm/$devname $USER\n"
-"fi\n";
+"#devname=`echo $DISPLAY | cut -c1-8`\n"
+"#exec sessreg -d -l xdm/$devname -h \"`echo $DISPLAY | cut -d: -f1`\""
 #else
-"exec sessreg -d -l $DISPLAY"
+"#exec sessreg -d -l $DISPLAY -h \"`echo $DISPLAY | cut -d: -f1`\""
 # ifdef BSD
-" -x " KDMCONF "/Xservers -u " _PATH_UTMP
+" -x " KDMCONF "/Xservers"
 # endif
-" $USER\n";
 #endif /* _AIX */
+" $USER\n";
 
 static const char def_session[] = 
 "#! /bin/sh\n"
@@ -1418,7 +1404,7 @@ delstr (File *fil, const char *pat)
 	for (pp = p, pap = pat; ; ) {
 	    if (!*pap) {
 		*p = '\n';
-		memcpy (p + 1, pp, fil->eof - pp);
+		memcpy (p + 1, pp, fil->eof - pp + 1);
 		fil->eof -= pp - p - 1;
 		return 1;
 	    } else if (!memcmp (pap, "*/", 2)) {
@@ -1439,8 +1425,28 @@ delstr (File *fil, const char *pat)
 		pap++;
 		while (*pp == ' ' || *pp == '\t')
 		    pp++;
+	    } else if (*pap == '[') {
+		pap++;
+		for (;;) {
+		    if (!*pap) {
+			fprintf (stderr, "Internal error: unterminated char set\n");
+			exit (1);
+		    }
+		    if (*pap == *pp) {
+			while (*++pap != ']')
+			    if (!*pap) {
+				fprintf (stderr, "Internal error: unterminated char set\n");
+				exit (1);
+			    }
+			pap++;
+			pp++;
+			break;
+		    }
+		    if (*++pap == ']')
+			goto no;
+		}
 	    } else {
-		 if (*pap == '\n')
+		if (*pap == '\n')
 		    while (*pp == ' ' || *pp == '\t')
 			pp++;
 		if (*pap != *pp)
@@ -1507,25 +1513,69 @@ mk_setup(Entry *ce, Section *cs)
 static int
 edit_startup(File *file, char **nbuf ATTR_UNUSED, int *nlen ATTR_UNUSED)
 {
-    if (!delstr (file, "\n"
+    if (mod_usebg &&
+	!delstr (file, "\n"
 		"PIDFILE=/var/run/kdmdesktop-$DISPLAY.pid\n"
-		"if [ -f $PIDFILE ] ; then\n"
+		"if [[] -f $PIDFILE ] ; then\n"
 		"     kill `cat $PIDFILE`\n"
 		"fi\n"))
 	delstr (file, "\n"
 		"PIDFILE=/var/run/kdmdesktop-$DISPLAY.pid\n"
 		"test -f $PIDFILE && kill `cat $PIDFILE`\n");
+    if (oldver < 0x0203)
+	putval ("UseSessReg", (
+#ifdef _AIX
+	    delstr (file, "\n"
+"# We create a pseudodevice for finger.  (host:0 becomes [kx]dm/host_0)\n");
+"# Without it, finger errors out with \"Can't stat /dev/host:0\".\n"
+"#\n"
+"if [[] -f /usr/lib/X11/xdm/sessreg ]; then\n"
+"  devname=`echo $DISPLAY | /usr/bin/sed -e 's/[[]:\\.]/_/g' | /usr/bin/cut -c1-8`\n"
+"  hostname=`echo $DISPLAY | /usr/bin/cut -d':' -f1`\n"
+"\n"
+"  if [[] -z \"$devname\" ]; then\n"
+"    devname=\"unknown\"\n"
+"  fi\n"
+"  if [[] ! -d /dev/[kx]dm ]; then\n"
+"    /usr/bin/mkdir /dev/[kx]dm\n"
+"    /usr/bin/chmod 755 /dev/[kx]dm\n"
+"  fi\n"
+"  /usr/bin/touch /dev/[kx]dm/$devname\n"
+"  /usr/bin/chmod 644 /dev/[kx]dm/$devname\n"
+"\n"
+"  if [[] -z \"$hostname\" ]; then\n"
+"    exec /usr/lib/X11/xdm/sessreg -a -l [kx]dm/$devname $USER\n"
+"  else\n"
+"    exec /usr/lib/X11/xdm/sessreg -a -l [kx]dm/$devname -h $hostname $USER\n"
+"  fi\n"
+"fi\n") ||
+#else
+# ifdef BSD
+	    delstr (file, "\n"
+"exec sessreg -a -l $DISPLAY -x */Xservers -u " _PATH_UTMP " $USER\n") ||
+# endif
+#endif /* _AIX */
+	    delstr (file, "\n"
+"exec sessreg -a -l $DISPLAY"
+#ifdef BSD
+" -x */Xservers"
+#endif
+" $USER\n") ||
+	    delstr (file, "\n"
+"exec sessreg -a -l $DISPLAY -u /var/run/utmp -x */Xservers $USER\n")
+	    ) ? "true" : "false");
     return 0;
 }
 
 static void
-mk_startup(Entry *ce, Section *cs ATTR_UNUSED)
+mk_startup(Entry *ce, Section *cs)
 {
+    setsect (cs->name);
     if (old_scripts || mixed_scripts)
 	linkfile (ce);
     else {
 	if (ce->active && inNewDir (ce->value)) {
-	    if (mod_usebg)
+	    if (mod_usebg || oldver < 0x0203)
 		copyfile (ce, ce->value, 0755, edit_startup);
 	    else
 		linkfile (ce);
@@ -1537,15 +1587,48 @@ mk_startup(Entry *ce, Section *cs ATTR_UNUSED)
     }
 }
 
+static int
+edit_reset(File *file, char **nbuf ATTR_UNUSED, int *nlen ATTR_UNUSED)
+{
+#ifdef _AIX
+    delstr (file, "\n"
+"if [[] -f /usr/lib/X11/xdm/sessreg ]; then\n"
+"  devname=`echo $DISPLAY | /usr/bin/sed -e 's/[[]:\\.]/_/g' | /usr/bin/cut -c1-8`\n"
+"  exec /usr/lib/X11/xdm/sessreg -d -l [kx]dm/$devname $USER\n"
+"fi\n");
+#else
+# ifdef BSD
+    delstr (file, "\n"
+"exec sessreg -d -l $DISPLAY -x */Xservers -u " _PATH_UTMP " $USER\n");
+# endif
+#endif /* _AIX */
+    delstr (file, "\n"
+"exec sessreg -d -l $DISPLAY"
+# ifdef BSD
+" -x */Xservers"
+# endif
+" $USER\n");
+    delstr (file, "\n"
+"exec sessreg -d -l $DISPLAY -u /var/run/utmp -x */Xservers $USER\n");
+    return 0;
+}
+
 static void
 mk_reset(Entry *ce, Section *cs ATTR_UNUSED)
 {
-    if (old_scripts || mixed_scripts || (ce->active && inNewDir (ce->value)))
+    if (old_scripts || mixed_scripts)
 	linkfile (ce);
     else {
-	ce->value = KDMCONF "/Xreset";
-	ce->active = ce->written = 1;
-	writefile (ce->value, 0755, def_reset);
+	if (ce->active && inNewDir (ce->value)) {
+	    if (oldver < 0x0203)
+		copyfile (ce, ce->value, 0755, edit_reset);
+	    else
+		linkfile (ce);
+	} else {
+	    ce->value = KDMCONF "/Xreset";
+	    ce->active = ce->written = 1;
+	    writefile (ce->value, 0755, def_reset);
+	}
     }
 }
 

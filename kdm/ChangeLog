@@ -2,6 +2,10 @@ This change log contains only changes relevant to the KDM configuration,
 startup and packaging. Bug fixes are not listed, and feature changes only
 if they affect the configuration.
 
+2005-01-09  Oswald Buddenhagen <ossi@kde.org>
+
+	* Merged sessreg into kdm. Option UseSessReg.
+
 2004-08-14  Oswald Buddenhagen <ossi@kde.org>
 
 	* Replaced dysfunct InteractiveSd with working

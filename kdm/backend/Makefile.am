@@ -32,6 +32,7 @@ kdm_SOURCES = \
     rpcauth.c \
     server.c \
     session.c \
+    sessreg.c \
     socket.c \
     streams.c \
     util.c \
