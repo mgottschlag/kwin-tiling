@@ -21,6 +21,7 @@
 
 #include <kapp.h>
 #include <klocale.h>
+#include <kglobal.h>
 #include <kconfig.h>
 
 #include <X11/X.h>
@@ -32,6 +33,15 @@
 #include <qlayout.h>
 
 
+extern "C" {
+  KCModule *create_kwinmouse ( QWidget *parent, const char* name) 
+  {
+    //CT there's need for decision: kwm or kwin?
+    KGlobal::locale()->insertCatalogue("kcmkwm");
+    return new KMouseConfig( parent, name);
+  }
+}
+    
 
 KMouseConfig::~KMouseConfig ()
 {
@@ -41,7 +51,7 @@ KMouseConfig::~KMouseConfig ()
 extern KConfig *config;
 
 KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
-  : KConfigWidget (parent, name)
+  : KCModule (parent, name)
 {
   QGridLayout *layout = new QGridLayout( this, 12, 4, 10, 1);
   layout->setColStretch( 2, 100 );
@@ -220,20 +230,6 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   layout->addMultiCellWidget(combo, 11,11, 2, 3);
   coAll3 =  combo;
 
-  config->setGroup( "MouseBindings");
-  setComboText(coTiAct1,config->readEntry("CommandActiveTitlebar1","Raise").ascii());
-  setComboText(coTiAct2,config->readEntry("CommandActiveTitlebar2","Lower").ascii());
-  setComboText(coTiAct3,config->readEntry("CommandActiveTitlebar3","Operations menu").ascii());
-  setComboText(coTiInAct1, config->readEntry("CommandInactiveTitlebar1","Activate and raise").ascii());
-  setComboText(coTiInAct2, config->readEntry("CommandInactiveTitlebar2","Activate and lower").ascii());
-  setComboText(coTiInAct3, config->readEntry("CommandInactiveTitlebar3","Activate").ascii());
-  setComboText(coWin1, config->readEntry("CommandWindow1","Activate, raise and pass click").ascii());
-  setComboText(coWin2, config->readEntry("CommandWindow2","Activate and pass click").ascii());
-  setComboText(coWin3, config->readEntry("CommandWindow3","Activate and pass click").ascii());
-  setComboText (coAll1, config->readEntry("CommandAll1","Move").ascii());
-  setComboText(coAll2, config->readEntry("CommandAll2","Toggle raise and lower").ascii());
-  setComboText(coAll3, config->readEntry("CommandAll3","Resize").ascii());
-
   layout->activate();
 }
 
@@ -298,11 +294,24 @@ const char*  KMouseConfig::functionAll(int i)
 }
 
 
-void KMouseConfig::loadSettings()
+void KMouseConfig::load()
 {
+  config->setGroup( "MouseBindings");
+  setComboText(coTiAct1,config->readEntry("CommandActiveTitlebar1","Raise").ascii());
+  setComboText(coTiAct2,config->readEntry("CommandActiveTitlebar2","Lower").ascii());
+  setComboText(coTiAct3,config->readEntry("CommandActiveTitlebar3","Operations menu").ascii());
+  setComboText(coTiInAct1,config->readEntry("CommandInactiveTitlebar1","Activate and raise").ascii());
+  setComboText(coTiInAct2,config->readEntry("CommandInactiveTitlebar2","Activate and lower").ascii());
+  setComboText(coTiInAct3,config->readEntry("CommandInactiveTitlebar3","Activate").ascii());
+  setComboText(coWin1,config->readEntry("CommandWindow1","Activate, raise and pass click").ascii());
+  setComboText(coWin2,config->readEntry("CommandWindow2","Activate and pass click").ascii());
+  setComboText(coWin3,config->readEntry("CommandWindow3","Activate and pass click").ascii());
+  setComboText(coAll1,config->readEntry("CommandAll1","Move").ascii());
+  setComboText(coAll2,config->readEntry("CommandAll2","Toggle raise and lower").ascii());
+  setComboText(coAll3,config->readEntry("CommandAll3","Resize").ascii());
 }
 
-void KMouseConfig::applySettings()
+void KMouseConfig::save()
 {
   config->setGroup("MouseBindings");
   config->writeEntry("CommandActiveTitlebar1", functionTiAc(coTiAct1->currentItem()));
@@ -321,5 +330,20 @@ void KMouseConfig::applySettings()
   config->sync();
 }
 
+void KMouseConfig::defaults() 
+{
+  setComboText(coTiAct1,"Raise");
+  setComboText(coTiAct2,"Lower");
+  setComboText(coTiAct3,"Operations menu");
+  setComboText(coTiInAct1,"Activate and raise");
+  setComboText(coTiInAct2,"Activate and lower");
+  setComboText(coTiInAct3,"Activate");
+  setComboText(coWin1,"Activate, raise and pass click");
+  setComboText(coWin2,"Activate and pass click");
+  setComboText(coWin3,"Activate and pass click");
+  setComboText (coAll1,"Move");
+  setComboText(coAll2,"Toggle raise and lower");
+  setComboText(coAll3,"Resize");
+}
 
 #include "mouse.moc"

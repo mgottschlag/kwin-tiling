@@ -24,10 +24,10 @@
 
 #include <qcombobox.h>
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 #include <kwm.h>
 
-class KMouseConfig : public KConfigWidget
+class KMouseConfig : public KCModule
 {
   Q_OBJECT
 
@@ -36,8 +36,9 @@ public:
   KMouseConfig( QWidget *parent=0, const char* name=0 );
   ~KMouseConfig( );
 
-  void loadSettings();
-  void applySettings();
+  void load();
+  void save();
+  void defaults();
 
 public  slots:
 

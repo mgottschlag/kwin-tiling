@@ -50,7 +50,6 @@ private:
   KTitlebarButtons *buttons;
   KTitlebarAppearance *appearance;
   KDesktopConfig *desktop;
-  KMouseConfig *mouse;
   KAdvancedConfig *advanced;
 };
 
@@ -58,8 +57,7 @@ private:
 KKWMApplication::KKWMApplication(int &argc, char **argv, const char *name)
   : KControlApplication(argc, argv, name)
 {
-  options = 0; buttons = 0; appearance = 0; desktop = 0; mouse = 0;
-  advanced = 0;
+  options = 0; buttons = 0; appearance = 0; desktop = 0; advanced = 0;
 
   ::config = new KConfig("kwmrc");
 
@@ -77,19 +75,16 @@ KKWMApplication::KKWMApplication(int &argc, char **argv, const char *name)
       if (!pages || pages->contains("borders"))
 	addPage(desktop = new KDesktopConfig(dialog, "borders"), 
 		i18n("Bo&rders"), "kwm-4.html"); 
-      if (!pages || pages->contains("mouse"))
-	addPage(mouse = new KMouseConfig(dialog, "mouse"), 
-		i18n("&Mouse"), "kwm-5.html"); 
 
       if (!pages || pages->contains("advanced"))
 	addPage(advanced = new KAdvancedConfig(dialog, "advanced"), 
 		i18n("&Advanced"), "kwm-6.html"); 
 
-      if (options || buttons || appearance || desktop || mouse || advanced)
+      if (options || buttons || appearance || desktop || advanced)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmkwm [-init | {options,buttons,titlebar,borders,mouse,advanced}]\n").ascii());
+          fprintf(stderr, i18n("usage: kcmkwm [-init | {options,buttons,titlebar,borders,advanced}]\n").ascii());
           justInit = TRUE;
         }
 
@@ -112,8 +107,6 @@ void KKWMApplication::apply()
     buttons->applySettings();
   if (appearance)
     appearance->applySettings();
-  if (mouse)
-    mouse->applySettings();
   if (advanced)
     advanced->applySettings();
 
