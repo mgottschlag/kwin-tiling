@@ -1027,11 +1027,11 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     KConfig *cfg = new KConfig("ksmserverrc", false, false);
     cfg->setGroup("General" );
     bool old_saveSession = saveSession =
-			   cfg->readBoolEntry( "saveSession", FALSE );
+			   cfg->readBoolEntry( "saveSession", true );
     bool logoutConfirmed =
 	(confirm == KApplication::ShutdownConfirmYes) ? false :
        (confirm == KApplication::ShutdownConfirmNo) ? true :
-		  !cfg->readBoolEntry( "confirmLogout", TRUE );
+		  !cfg->readBoolEntry( "confirmLogout", true );
     KApplication::ShutdownType old_sdtype = (KApplication::ShutdownType)
 					    cfg->readNumEntry( "shutdownType",
 							       (int)KApplication::ShutdownModeSchedule );
