@@ -99,6 +99,7 @@ bool MenuFile::save()
       return false;
    }
    QTextStream stream( &file );
+   stream.setEncoding(QTextStream::UnicodeUTF8);
    
    stream << m_doc.toString();
 
