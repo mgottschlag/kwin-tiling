@@ -823,7 +823,7 @@ bool KBackgroundSettings::needWallpaperChange()
     if (m_MultiMode == NoMulti)
 	return false;
 
-    return ((m_LastChange + 60*m_Interval) < time(0L));
+    return ((m_LastChange + 60*m_Interval) <= time(0L));
 }
 
 
