@@ -354,8 +354,8 @@ void KDMUsersWidget::save()
 
     config->writeEntry( "FaceSource",
 	rbadmonly->isChecked() ? "AdminOnly" :
-	rbprefadm->isChecked() ? "PrefAdmin" :
-	rbprefusr->isChecked() ? "PrefUser" : "UserOnly" );
+	rbprefadm->isChecked() ? "PreferAdmin" :
+	rbprefusr->isChecked() ? "PreferUser" : "UserOnly" );
 }
 
 
@@ -444,9 +444,9 @@ void KDMUsersWidget::load()
     QString ps = config->readEntry( "FaceSource" );
     if (ps == QString::fromLatin1("UserOnly"))
 	rbusronly->setChecked(true);
-    else if (ps == QString::fromLatin1("PrefUser"))
+    else if (ps == QString::fromLatin1("PreferUser"))
 	rbprefusr->setChecked(true);
-    else if (ps == QString::fromLatin1("PrefAdmin"))
+    else if (ps == QString::fromLatin1("PreferAdmin"))
 	rbprefadm->setChecked(true);
     else
 	rbadmonly->setChecked(true);
