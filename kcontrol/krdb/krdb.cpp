@@ -398,9 +398,10 @@ void runRdb( uint flags )
 {
   // Obtain the application palette that is about to be set.
   QPalette newPal = KApplication::createApplicationPalette();
-  bool exportColors     = flags & KRdbExportColors;
-  bool exportQtColors   = flags & KRdbExportQtColors;
-  bool exportQtSettings = flags & KRdbExportQtSettings;
+  bool exportColors      = flags & KRdbExportColors;
+  bool exportQtColors    = flags & KRdbExportQtColors;
+  bool exportQtSettings  = flags & KRdbExportQtSettings;
+  bool exportXftSettings = flags & KRdbExportXftSettings;
 
   KConfig kglobals("kdeglobals", true, false);
   kglobals.setGroup("KDE");
@@ -479,6 +480,34 @@ void runRdb( uint flags )
 
   if (!size.isNull())
     contents += "Xcursor.size: " + size + '\n';
+
+  if (exportXftSettings)
+  {
+    kglobals.setGroup("General");
+
+    QString hintStyle(kglobals.readEntry("XftHintStyle", "hintmedium")),
+            subPixel(kglobals.readEntry("XftSubPixel"));
+
+    contents += "Xft.antialias: ";
+    if(QSettings().readBoolEntry("/qt/useXft"))
+      contents += "1";
+    else
+      contents += "0";
+
+    contents += "\nXft.hinting: ";
+    if(hintStyle.isEmpty())
+      contents += "-1";
+    else
+    {
+      if(hintStyle!="hintnone")
+        contents += "1";
+      else
+        contents += "0";
+      contents += "\nXft.hintstyle: " + hintStyle + '\n';
+    }
+    if(!subPixel.isEmpty())
+      contents += "Xft.rgba: " + subPixel + '\n';
+  }
 
   if (contents.length() > 0)
     tmp.writeBlock( contents.latin1(), contents.length() );

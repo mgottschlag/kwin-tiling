@@ -92,7 +92,7 @@ extern "C"
 
     void init_style()
     {
-        uint flags = KRdbExportQtSettings | KRdbExportQtColors;
+        uint flags = KRdbExportQtSettings | KRdbExportQtColors | KRdbExportXftSettings;
         KConfig config("kcmdisplayrc", true /*readonly*/, false /*don't read kdeglobals etc.*/);
         config.setGroup("X11");
 
