@@ -23,35 +23,43 @@ AC_CACHE_VAL(kde_cv_defines_imake,
 if mkdir conftestdir; then
     cd conftestdir
     cat > Imakefile <<'EOF'
-acimake:
-	@echo XDMDIR=$(XDMDIR)
-	@echo CONN_FLAGS=^ConnectionFlags^
-	@echo STD_DEFINES=^StandardDefines^
+acimake:CONN_FLAGS=^ConnectionFlags^
+acimake:STD_DEFINES=^StandardDefines^
 #if HasXdmAuth
-	@echo HASXDMAUTH=1
+acimake:HASXDMAUTH=1
 #endif
 #if defined(i386Architecture) || defined(AmigaArchitecture)
-	@echo FRAGILE_DEV_MEM=1
+acimake:FRAGILE_DEV_MEM=1
 #endif
 #ifndef SharedLibXdmGreet
 # define SharedLibXdmGreet YES
 #endif
 #if !SharedLibXdmGreet
-	@echo GREET_USER_STATIC=1
+acimake:GREET_USER_STATIC=1
 #endif
 #if NeedVarargsPrototypes
-	@echo NEED_VARARGS_PROTOTYPES=1
+acimake:NEED_VARARGS_PROTOTYPES=1
 #endif
 EOF
     xmkmf > /dev/null 2> /dev/null 
     if test -f Makefile; then
-	kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep -v make | tr ^ \"`
-	kde_cv_defines_imake=`echo $kde_cv_defines_imake`
+	idefines=`grep '^acimake:' < Makefile | cut -c9- | tr \^ \"`
+    else
+	AC_MSG_ERROR([xmkmf (imake) failed])
+    fi
+    cat > Imakefile <<'EOF'
+acimake:
+	@echo XDMDIR=$(XDMDIR)
+EOF
+    xmkmf > /dev/null 2> /dev/null 
+    if test -f Makefile; then
+	xdmdir=`${MAKE-make} acimake 2> /dev/null | grep -v make`
     else
 	AC_MSG_ERROR([xmkmf (imake) failed])
     fi
     cd ..
     rm -fr conftestdir
+    kde_cv_defines_imake=`echo $idefines $xdmdir`
 else
     AC_MSG_ERROR([mkdir failed])
 fi])
