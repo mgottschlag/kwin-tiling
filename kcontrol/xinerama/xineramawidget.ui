@@ -12,9 +12,6 @@
             <height>389</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>XineramaWidget</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
