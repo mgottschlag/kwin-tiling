@@ -19,7 +19,7 @@ noinst_LTLIBRARIES = libbgnd.la
 libbgnd_la_SOURCES = bgrender.cc bgsettings.cc
 
 messages: rc.cpp
-	$(XGETTEXT) -kni18n *.cc *.cpp -o $(podir)/kcmbackground.pot
+	$(XGETTEXT) *.cc *.cpp -o $(podir)/kcmbackground.pot
 
 desktop_DATA =  background.desktop
 desktopdir = $(kde_appsdir)/Settings/Desktop
