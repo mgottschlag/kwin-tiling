@@ -42,6 +42,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
 #endif
+#ifdef HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -71,6 +74,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 extern "C" {
     int umask(...);
+
+static void the_reaper(int /*sig*/)
+{
+    int status;
+#ifdef HAVE_WAITPID
+    while(waitpid(-1, &status, WNOHANG) > 0) ;
+#else
+    wait(&status);
+#endif
+    signal(SIGCHLD, the_reaper);
+}
 
 }
 KSMServer* the_server = 0;
@@ -673,6 +687,7 @@ KSMServer::KSMServer( const QString& windowManager )
     signal(SIGHUP, sighandler);
     signal(SIGTERM, sighandler);
     signal(SIGINT, sighandler);
+    signal(SIGCHLD, the_reaper);
     signal(SIGPIPE, SIG_IGN);
 
     connect( &protection, SIGNAL( timeout() ), this, SLOT( protectionTimeout() ) );
@@ -693,6 +708,9 @@ void KSMServer::cleanUp()
     ::unlink(fName.data());
 
     FreeAuthenticationData(numTransports, authDataEntries);
+    signal(SIGTERM, SIG_DFL);
+    signal(SIGINT, SIG_DFL);
+    signal(SIGCHLD, SIG_DFL);
 }
 
 
