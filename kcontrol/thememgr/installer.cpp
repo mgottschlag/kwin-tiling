@@ -265,8 +265,9 @@ void Installer::slotCreate()
   theme->setVersion("0.1");
   theme->savePreview(dlg.preview());
   theme->extract();
-
-  mThemesList->setCurrentItem(addTheme(name));
+  int cur =addTheme(name);
+  mThemesList->setCurrentItem(cur);
+  slotSetTheme(cur);
 }
 
 
@@ -290,7 +291,8 @@ void Installer::slotRemove()
     KMessageBox::sorry(this, i18n("Failed to remove theme '%1'").arg(themeName));
     return;
   }
-  mThemesList->removeItem(cur);
+  //mThemesList->removeItem(cur);
+  readThemesList();
   if (cur >= (int)mThemesList->count()) cur--;
   mThemesList->setCurrentItem(cur);
 }
