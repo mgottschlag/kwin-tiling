@@ -19,17 +19,17 @@ class QVButtonGroup;
 class KSMShutdownFeedback : public QWidget
 {
     Q_OBJECT
-    
+
 public:
-    static void start() { if ( !s_pSelf ) s_pSelf = new KSMShutdownFeedback; }
+    static void start() { s_pSelf = new KSMShutdownFeedback(); s_pSelf->show(); }
     static void stop() { delete s_pSelf; s_pSelf = 0L; }
     static KSMShutdownFeedback * self() { return s_pSelf; }
-    // TODO more feedback (which apps have saved themselves, etc.)
 
 protected:
     ~KSMShutdownFeedback() {}
 
 private:
+    void paintEvent( QPaintEvent* );
     static KSMShutdownFeedback * s_pSelf;
     KSMShutdownFeedback();
 };

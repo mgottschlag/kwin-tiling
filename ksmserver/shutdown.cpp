@@ -34,14 +34,14 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
 KSMShutdownFeedback::KSMShutdownFeedback()
- : QWidget( 0L )
+ : QWidget( 0L, "feedbackwidget", WStyle_Customize  | WStyle_NoBorder | WStyle_StaysOnTop )
 {
     setBackgroundMode( QWidget::NoBackground );
     setGeometry( QApplication::desktop()->geometry() );
-    showFullScreen();
-    KWin::setState( winId(), NET::StaysOnTop );
-    KWin::setOnAllDesktops( winId(), TRUE );
+}
 
+void KSMShutdownFeedback::paintEvent( QPaintEvent* )
+{
     QPainter p;
     QBrush b( Qt::Dense4Pattern );
     p.begin( this );
@@ -55,7 +55,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
   bool saveSession,
   bool maysd, bool maynuke,
   KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode )
-    : QDialog( parent, 0, TRUE, WStyle_Customize | WStyle_NoBorder | WStyle_StaysOnTop ) //WType_Popup )
+    : QDialog( parent, 0, TRUE, WStyle_Customize | WStyle_NoBorder | WType_Popup )
 {
     QVBoxLayout* vbox = new QVBoxLayout( this );
     QFrame* frame = new QFrame( this );
@@ -105,8 +105,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QHBoxLayout* hbox = new QHBoxLayout( vbox );
     hbox->addStretch();
-    KPushButton* yes = new KPushButton( maysd ? 
-                                         KStdGuiItem::ok() : 
+    KPushButton* yes = new KPushButton( maysd ?
+                                         KStdGuiItem::ok() :
                                          KGuiItem( i18n( "&Logout" ) ),
                                         frame );
     connect( yes, SIGNAL( clicked() ), SLOT( accept() ) );
@@ -145,12 +145,12 @@ void KSMShutdownDlg::slotSdMode(int)
     mgrp->setEnabled( !rLogout->isChecked() );
 }
 
-bool KSMShutdownDlg::confirmShutdown( bool& saveSession, 
-  bool maysd, bool maynuke,
-  KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode )
+bool KSMShutdownDlg::confirmShutdown( bool& saveSession,
+				      bool maysd, bool maynuke,
+				      KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode )
 {
     kapp->enableStyles();
-    KSMShutdownDlg* l = new KSMShutdownDlg( KSMShutdownFeedback::self(), 
+    KSMShutdownDlg* l = new KSMShutdownDlg( KSMShutdownFeedback::self(),
                                             saveSession,
 					    maysd, maynuke, sdtype, sdmode );
 
