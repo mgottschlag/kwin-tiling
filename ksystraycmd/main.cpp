@@ -5,7 +5,7 @@
 #include <kcmdlineargs.h>
 #include <klocale.h>
 
-#include "ksystrayproxy.h"
+#include "ksystraycmd.h"
 
 #include <X11/Xlib.h>
 #ifndef KDE_USE_FINAL
@@ -70,7 +70,7 @@ int main( int argc, char *argv[] )
 
   // Tooltip
   QString tip = args->getOption( "tooltip" );
-  if ( tip )
+  if ( !tip.isEmpty() )
     cmd.setDefaultTip( tip );
 
   // Keep running flag

@@ -50,7 +50,7 @@ KSysTrayCmd::~KSysTrayCmd()
 
 bool KSysTrayCmd::start()
 {
-  if ( window )
+  if ( !window.isEmpty() )
     kwinmodule->doNotManage( window );
 
   // If we have no command we must catching an existing window
@@ -128,9 +128,9 @@ void KSysTrayCmd::refresh()
     QToolTip::add( this, KWin::info( win ).name );
   }
   else {
-    if ( tooltip )
+    if ( !tooltip.isEmpty() )
       QToolTip::add( this, tooltip );
-    else if ( command )
+    else if ( !command.isEmpty() )
       QToolTip::add( this, command );
     else
       QToolTip::add( this, window );
@@ -212,7 +212,7 @@ void KSysTrayCmd::checkExistingWindows()
 
 void KSysTrayCmd::windowAdded(WId w)
 {
-  if ( window && ( QRegExp( window ).match( KWin::info(w).name ) == -1 ) )
+  if ( !window.isEmpty() && ( QRegExp( window ).match( KWin::info(w).name ) == -1 ) )
     return; // no match
   setTargetWindow( w );
 }
