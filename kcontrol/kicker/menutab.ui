@@ -223,6 +223,9 @@
                             <verstretch>1</verstretch>
                         </sizepolicy>
                     </property>
+                    <property name="fullWidth">
+                        <bool>true</bool>
+                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>This is a list of the dynamic menus that can be displayed in the KDE menu in addition to the normal applications. Use the checkboxes to add or remove menus.</string>
                     </property>
@@ -254,6 +257,34 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
+                <widget class="QCheckBox" row="0" column="0">
+                    <property name="name">
+                        <cstring>m_hiddenFiles</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Sh&amp;ow hidden files</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If this option is enabled, hidden files (i.e. files beginning with a dot) will be shown in the QuickBrowser menus.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Ma&amp;ximum number of entries:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_maxQuickBrowserItems</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>When browsing directories that contain a lot of files, the QuickBrowser can sometimes hide your whole desktop. Here you can limit the number of entries shown at a time in the QuickBrowser. This is particularly useful for low screen resolutions.</string>
+                    </property>
+                </widget>
                 <widget class="KIntNumInput" row="1" column="1">
                     <property name="name">
                         <cstring>m_maxQuickBrowserItems</cstring>
@@ -271,45 +302,6 @@
                         <string>When browsing directories that contain a lot of files, the QuickBrowser can sometimes hide your whole desktop. Here you can limit the number of entries shown at a time in the QuickBrowser. This is particularly useful for low screen resolutions.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Ma&amp;ximum number of entries:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_maxQuickBrowserItems</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>When browsing directories that contain a lot of files, the QuickBrowser can sometimes hide your whole desktop. Here you can limit the number of entries shown at a time in the QuickBrowser. This is particularly useful for low screen resolutions.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="0" column="0">
-                    <property name="name">
-                        <cstring>m_hiddenFiles</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Sh&amp;ow hidden files</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If this option is enabled, hidden files (i.e. files beginning with a dot) will be shown in the QuickBrowser menus.</string>
-                    </property>
-                </widget>
-                <spacer row="0" column="2" rowspan="2" colspan="1">
-                    <property name="name">
-                        <cstring>Spacer5_2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                </spacer>
             </grid>
         </widget>
         <widget class="QButtonGroup">
@@ -379,17 +371,6 @@
                         <string>This option allows you to define how many applications should be displayed at most in the QuickStart menu area.</string>
                     </property>
                 </widget>
-                <spacer row="0" column="2" rowspan="3" colspan="1">
-                    <property name="name">
-                        <cstring>Spacer6_2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                </spacer>
                 <widget class="KIntNumInput" row="2" column="1">
                     <property name="name">
                         <cstring>m_maxQuickStartItems</cstring>

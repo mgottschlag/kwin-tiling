@@ -74,7 +74,7 @@
                 <cstring>GroupBox9</cstring>
             </property>
             <property name="title">
-                <string>Button Backgrounds</string>
+                <string>Button Background</string>
             </property>
             <grid>
                 <property name="name">

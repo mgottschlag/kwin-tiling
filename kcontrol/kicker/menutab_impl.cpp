@@ -26,6 +26,7 @@
 #include <qtoolbutton.h>
 #include <qdir.h>
 #include <qtooltip.h>
+#include <qlayout.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
@@ -81,6 +82,9 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     connect(m_showFrequent, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_maxQuickStartItems, SIGNAL(valueChanged(int)), SIGNAL(changed()));
 
+    m_browserGroupLayout->setColStretch( 1, 1 );
+    m_pRecentOrderGroupLayout->setColStretch( 1, 1 );
+
     load();
 }
 
@@ -101,6 +105,7 @@ void MenuTab::load()
  
     m_hiddenFiles->setChecked(c.readBoolEntry("ShowHiddenFiles", false));
     m_maxQuickBrowserItems->setValue(c.readNumEntry("MaxEntries2", 30));
+    m_maxQuickBrowserItems->setRange( 10, 30, true );
 
     if (c.readBoolEntry("DetailedMenuEntries", true))
     {
@@ -169,6 +174,7 @@ void MenuTab::load()
         m_showFrequent->setChecked(true);
 
     m_maxQuickStartItems->setValue(c.readNumEntry("NumVisibleEntries", 5));
+    m_maxQuickStartItems->setRange( 0, 20, true );
 }
 
 void MenuTab::save()
