@@ -452,7 +452,7 @@ void KLocaleConfig::changedCountry(const QString & code)
 {
   m_locale->setCountry(code);
 
-  // change to the prefered languages in that country, installed only
+  // change to the preferred languages in that country, installed only
   QStringList languages = languageList();
   QStringList newLanguageList;
   for ( QStringList::Iterator it = languages.begin();

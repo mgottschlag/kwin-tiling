@@ -2361,7 +2361,7 @@ ReadConf (const char *fname)
 		    !cursec->name[nlen])
 		{
 #if 0	/* not our business ... */
-		    fprintf (stderr, "Warning: Multiple occurences of section "
+		    fprintf (stderr, "Warning: Multiple occurrences of section "
 				     "[%.*s] in %s. Consider merging them.\n", 
 			     nlen, nstr, fname);
 #endif
@@ -2415,7 +2415,7 @@ ReadConf (const char *fname)
 	for (curent = cursec->ents; curent; curent = curent->next)
 	    if (!memcmp (nstr, curent->key, nlen) &&
 		!curent->key[nlen]) {
-		fprintf (stderr, "Multiple occurences of key '%s' in section "
+		fprintf (stderr, "Multiple occurrences of key '%s' in section "
 			 "[%s] of %s.\n", curent->key, cursec->name, fname);
 		goto keyfnd;
 	    }

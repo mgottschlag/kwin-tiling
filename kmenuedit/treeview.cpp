@@ -893,7 +893,7 @@ void TreeView::newitem()
 	newitem = new TreeItem(parent, after, dir);
 
     newitem->setName(filename);
-    newitem->setPixmap(0, appIcon("unkown"));
+    newitem->setPixmap(0, appIcon("unknown"));
 
     KConfig c(locateLocal("apps", dir));
     c.setDesktopGroup();

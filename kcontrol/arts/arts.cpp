@@ -432,7 +432,7 @@ int KArtsModule::userSavedChanges()
 
     return reply;
 
-/* FIXME(gioele): This is no more usefull here, shuld be put in updateWidgets()
+/* FIXME(gioele): This is no more useful here, shuld be put in updateWidgets()
 	if (startRealtime->isChecked() && !realtimeIsPossible()) {
 		FILE *why = popen("artswrapper check 2>&1","r");
 
@@ -454,7 +454,7 @@ int KArtsModule::userSavedChanges()
 		KMessageBox::error( 0,
 				    i18n("There is an installation problem which doesn't allow "
 					 "starting the aRts server with realtime priority. \n"
-					 "The following problem occured:\n")+thereason);
+					 "The following problem occurred:\n")+thereason);
 	}
 */
 }

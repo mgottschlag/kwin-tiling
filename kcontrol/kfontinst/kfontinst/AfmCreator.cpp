@@ -164,7 +164,7 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName, const QString &en
     EStatus status=SUCCESS;
     
     //
-    // Only create an AFM file, if it doesnt already exist - or it has a different encoding...
+    // Only create an AFM file, if it doesn't already exist - or it has a different encoding...
     //
     if(!CMisc::fExists(afmName) || encoding!=getEncoding(afmName))
     {

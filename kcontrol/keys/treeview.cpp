@@ -369,7 +369,7 @@ void AppTreeView::newitem()
 	newitem = new AppTreeItem(parent, after, dir);
 
     newitem->setName(filename);
-    newitem->setPixmap(0, appIcon("unkown"));
+    newitem->setPixmap(0, appIcon("unknown"));
 
     KConfig c(locateLocal("apps", dir));
     c.setDesktopGroup();

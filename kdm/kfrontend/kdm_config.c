@@ -613,7 +613,7 @@ Debug ("parsing config ...\n");
 		if (nlen == cursec->nlen && 
 		    !memcmp (nstr, cursec->name, nlen))
 		{
-		    LogInfo ("Multiple occurences of section [%.*s] in %s. "
+		    LogInfo ("Multiple occurrences of section [%.*s] in %s. "
 			     "Consider merging them.\n", nlen, nstr, kdmrc);
 		    goto secfnd;
 		}
@@ -763,7 +763,7 @@ Debug ("parsing config ...\n");
       keyok:
 	for (curent = cursec->entries; curent; curent = curent->next)
 	    if (cursec->sect->ents[i].id == curent->keyid) {
-		LogError ("Multiple occurences of key '%.*s' in section [%.*s]"
+		LogError ("Multiple occurrences of key '%.*s' in section [%.*s]"
 			  " of %s.\n", 
 			  nlen, nstr, cursec->nlen, cursec->name, kdmrc);
 		goto keyfnd;

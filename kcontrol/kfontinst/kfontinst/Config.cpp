@@ -325,7 +325,7 @@ void CConfig::load()
     // ...if not, try to make it sensible...
 
     //
-    // First of all, if this is the first time KFontinst has been run as non-root, check for the existance of
+    // First of all, if this is the first time KFontinst has been run as non-root, check for the existence of
     // $KDEHOME/share/fonts - if it doesn't exist then try to create
     if(!CMisc::root() && !itsConfigured && QString(defaultFontsDir)==itsFontsDir)
         if(!CMisc::dExists(itsFontsDir))

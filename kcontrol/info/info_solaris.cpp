@@ -529,7 +529,7 @@ QString propvalue( di_prop_t prop ) {
 			break;
 		case DI_PROP_TYPE_BOOLEAN:
 			/*
-			 *  hmm, Sun's sample code handles the existance
+			 *  hmm, Sun's sample code handles the existence
 			 *  of a boolean property as "true", whereas
 			 *  prtconf(1M) obviously does not (Sol8, at least)
 			 *  -- we're doing the same and handle "bool" as "byte"

@@ -841,7 +841,7 @@ chooseHost(struct display *d, int hid)
 	    }
 	    break;
 	}
-/*    LogError ("Internal error: choosed unexisting host\n"); */
+/*    LogError ("Internal error: chose unexisting host\n"); */
   bout:
     SessionExit (d, EX_NORMAL);
 }

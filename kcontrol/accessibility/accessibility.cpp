@@ -58,7 +58,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_accessibility, AccessibilityFactory("kcmaccessib
 
 /**
  * This function checks if the kaccess daemon needs to be run
- * This function will be depricated since the kaccess daemon will be part of kded
+ * This function will be deprecated since the kaccess daemon will be part of kded
  */
 // static bool needToRunKAccessDaemon( KConfig *config ){
 //    KConfigGroup group( config, "Bell" );
