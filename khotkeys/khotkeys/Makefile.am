@@ -12,6 +12,9 @@ khotkeys_SOURCES = dummy.cpp
 khotkeys_LDADD   = khotkeys.la
 khotkeys_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
+autostart_DATA = khotkeys.desktop
+autostartdir = $(prefix)/share/autostart
+
 noinst_HEADERS = khotkeys.h khkglobalaccel.h
 
 INCLUDES= $(all_includes) -I$(srcdir)/../shared
