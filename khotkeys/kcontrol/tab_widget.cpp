@@ -297,13 +297,13 @@ void Tab_widget::load_current_action()
                 }
             case TYPE_ACTIVATE_WINDOW_SHORTCUT:
                 {
-                kdDebug( 1217 ) << "loading keyboard_input_shortcut" << endl;
+                kdDebug( 1217 ) << "loading activate_window_shortcut" << endl;
                 Activate_window_shortcut_action_data* item
                     = static_cast< Activate_window_shortcut_action_data* >( tmp );
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
                 static_cast< Shortcut_trigger_tab* >( pages[ TAB_SHORTCUT_TRIGGER ] )
                     ->set_data( item->trigger());
-                static_cast< Windowdef_list_tab* >( pages[ TAB_KEYBOARD_INPUT ] )->set_data(
+                static_cast< Windowdef_list_tab* >( pages[ TAB_WINDOW ] )->set_data(
                     item->action()->window());
               break;
                 }
