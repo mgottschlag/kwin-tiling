@@ -1,5 +1,6 @@
 [General]
 Name=Default
+Name[af]=verstek
 Name[az]=Əsas
 Name[bg]=По подразбиране
 Name[br]=Dre ziouer
@@ -53,6 +54,7 @@ author=Stefan Taferner
 email=taferner@kde.org
 info=
 Comment=Reset to default theme-less Kde desktop
+Comment[af]=herstel aan verstek tema-minder kde deskaanp
 Comment[az]=Örtüsüz KDE masa üstünə geri dön
 Comment[bg]=Възстановява работното място на KDE по подразбиране без теми
 Comment[cs]=Obnovit na výchozí téma KDE
