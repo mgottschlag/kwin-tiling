@@ -130,13 +130,13 @@ void FontUseItem::choose()
 
 void FontUseItem::applyFontDiff( const QFont &fnt, int fontDiffFlags )
 {
-  if (fontDiffFlags && KFontChooser::FontDiffSize) {
+  if (fontDiffFlags & KFontChooser::FontDiffSize) {
     _font.setPointSize( fnt.pointSize() );
   }
-  if (fontDiffFlags && KFontChooser::FontDiffFamily) {
+  if (fontDiffFlags & KFontChooser::FontDiffFamily) {
     if (!fixed) _font.setFamily( fnt.family() );
   }
-  if (fontDiffFlags && KFontChooser::FontDiffStyle) {
+  if (fontDiffFlags & KFontChooser::FontDiffStyle) {
     _font.setBold( fnt.bold() );
     _font.setItalic( fnt.italic() );
     _font.setUnderline( fnt.underline() );
@@ -240,7 +240,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
         *defaultFontIt++,
         *fixedListIt++
       );
-      
+
     fontUseList.append(i);
     connect(i, SIGNAL(changed()), this, SLOT(fontChanged()));
 
@@ -389,7 +389,7 @@ void KFonts::slotApplyFontDiff()
   int fontDiffFlags = 0;
   int ret = KFontDialog::getFontDiff(font,fontDiffFlags);
 
-  if (ret && fontDiffFlags) 
+  if (ret && fontDiffFlags)
   {
     for ( int i = 0; i < (int) fontUseList.count(); i++ )
       fontUseList.at( i )->applyFontDiff( font,fontDiffFlags );
