@@ -13,9 +13,6 @@
             <height>462</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>PositionTabBase</string>
-    </property>
     <property name="whatsThis" stdset="0">
         <string>This is a list of all the panels currently active on your desktop. Select one to configure.</string>
     </property>
@@ -341,9 +338,6 @@ how it is positioned on the screen and how much of the screen it should use.</st
                     <property name="text">
                         <string>&amp;Expand as required to fit contents</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>When this option is selected, the panel will grow as necessary to accommodate the buttons and applets on it.</string>
                     </property>
@@ -521,9 +515,6 @@ how it is positioned on the screen and how much of the screen it should use.</st
                     </property>
                     <property name="text">
                         <string>Allo&amp;w free resizing</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+W</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>When this option is selected, the panel can be resized by clicking on an edge with the mouse and dragging it.</string>

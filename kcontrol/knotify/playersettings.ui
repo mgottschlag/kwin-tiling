@@ -12,9 +12,6 @@
             <height>207</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>Form1</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -68,9 +65,6 @@
                     <property name="text">
                         <string>&amp;No audio output</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+N</string>
-                    </property>
                 </widget>
                 <widget class="QRadioButton" row="2" column="0" rowspan="1" colspan="3">
                     <property name="name">
@@ -78,9 +72,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Use an external player</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+U</string>
                     </property>
                 </widget>
                 <spacer row="1" column="0">
@@ -227,9 +218,6 @@
                     </property>
                     <property name="text">
                         <string>Use the &amp;KDE sound system</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+K</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
