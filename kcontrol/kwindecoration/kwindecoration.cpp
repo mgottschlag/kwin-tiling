@@ -48,12 +48,6 @@ extern "C"
 }
 
 
-// These are the button selector instructions...
-const char* btnSelectorText = "To add or remove titlebar buttons, simply <i>drag</i> items "
-	"between the available item list and the titlebar preview. Similarly, drag items within the "
-	"titlebar preview to re-position them.";
-
-
 KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	: KCModule(parent, name), DCOPObject("KWinClientDecoration")
 {
@@ -91,7 +85,9 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	// Add nifty dnd button modification widgets    
 	dropSite = new ButtonDropSite( buttonBox );
 	QLabel* label = new QLabel( buttonBox );
-	label->setText( i18n( btnSelectorText ) );
+	label->setText( i18n( "To add or remove titlebar buttons, simply <i>drag</i> items "
+	"between the available item list and the titlebar preview. Similarly, drag items within the "
+	"titlebar preview to re-position them.") );
 	buttonSource = new ButtonSource( buttonBox );
 
 	// Page 3 (Configure decoration via client plugin page)
@@ -269,7 +265,7 @@ void KWinDecorationModule::resetPlugin( KConfig* conf )
 	// does not have any configurable options (extended plugin interface not found)
 	QWidget* plugin = new QGroupBox( 1, Qt::Horizontal, "", pluginPage );
 	(void) new QLabel( i18n("<H3>No Configurable Options Available</H3>"
-									"Sorry, no configurable options are available for the current decoration."), plugin );
+	                "Sorry, no configurable options are available for the current decoration."), plugin );
 	plugin->show();
 	pluginObject = plugin;
 }
@@ -413,14 +409,14 @@ QString KWinDecorationModule::quickHelp() const
 {
     return i18n( "<h1>Window Manager Decoration</h1>"
                  "This module allows you to choose the window border decorations, "
-				 "as well as titlebar button positions and custom decoration options.");
+                "as well as titlebar button positions and custom decoration options.");
 }
 
 
 void KWinDecorationModule::resetKWin()
 {
 	bool ok = kapp->dcopClient()->send("kwin", "KWinInterface",
-									   "reconfigure()", QByteArray());
+                        "reconfigure()", QByteArray());
 	if (!ok) 
 		kdDebug() << "kcmkwindecoration: Could not reconfigure kwin" << endl;
 }
