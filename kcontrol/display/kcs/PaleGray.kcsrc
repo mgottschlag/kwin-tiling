@@ -1,10 +1,16 @@
 # KDE Config File
 [Color Scheme]
 Name=Pale gray
+Name[ca]=Gris pàl·lid
 Name[cs]=Světle šedá
+Name[el]=Χλωμό Γκρι
+Name[eo]=Pala grizo
 Name[fi]=Vaaleanharmaa
 Name[he]=ריהב רופא
+Name[ja]=ペールグレー
 Name[nl]=Vaalgrijs
+Name[ro]=Gri pal
+Name[ru]=Дымчатый
 background=#d6d6d6
 buttonBackground=#d6d6d6
 buttonForeground=#000000

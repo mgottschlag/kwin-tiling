@@ -17,6 +17,7 @@ inactiveTitleBtnBg=168,168,168
 inactiveTitleBtnBlend=168,168,168
 inactiveTitleBtnFg=255,255,255
 Name=Next
+Name[eo]=Sekva
 selectBackground=0,0,0
 selectForeground=255,255,255
 windowBackground=255,255,255
