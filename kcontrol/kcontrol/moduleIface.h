@@ -20,11 +20,11 @@
 #ifndef __moduleIface_h__
 #define __moduleIface_h__
 
-#include <qwidget.h>
+#include <dcopobject.h> 
+
 #include <qfont.h>
 #include <qpalette.h>
-
-#include <dcopobject.h> 
+#include <qwidget.h>
 
 class ModuleIface : public QObject, public DCOPObject {
 
@@ -38,6 +38,7 @@ public:
 k_dcop:
 	QFont getFont();
 	QPalette getPalette();
+	QString getStyle();
 	void invokeHelp();
 
 signals:

@@ -20,6 +20,9 @@
 #include "moduleIface.h"
 #include "moduleIface.moc"
 
+#include <kdebug.h>
+#include <kconfig.h>
+
 ModuleIface::ModuleIface(QObject *parent, const char *name) 
 	: QObject(parent, name), DCOPObject(name) {
 
@@ -35,7 +38,14 @@ QFont ModuleIface::getFont() {
 }
 
 QPalette ModuleIface::getPalette(){
+	kdDebug() << "Returned Palette" << endl;
 	return _parent->palette();
+}
+
+QString ModuleIface::getStyle() {
+	KConfig config(  "kdeglobals" );
+	config.setGroup( "General" );
+	return config.readEntry("widgetStyle");
 }
 
 void ModuleIface::invokeHelp() {

@@ -19,6 +19,7 @@
 
 #include <unistd.h> // for getuid()
 
+#include <qpalette.h>
 #include <qwidget.h>
 #include <qstring.h>
 #include <kpushbutton.h>
@@ -169,8 +170,41 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   : QWidget(0, name)
   , _client(client)
 {
-  setCaption(title);
+ setCaption(title);
 
+ if (getuid()==0 ) {
+	 // Make root modules look as similar as possible...
+	 QCString replyType;
+	 QByteArray replyData;
+	 
+	 if (kapp->dcopClient()->call("kcontrol", "moduleIface", "getPalette()", QByteArray(),
+				 replyType, replyData))
+		 if ( replyType == "QPalette") {
+			 QDataStream reply( replyData, IO_ReadOnly );
+			 QPalette pal;
+			 reply >> pal;
+			 setPalette(pal);
+		 }
+/* // Doesn't work ...
+	 if (kapp->dcopClient()->call("kcontrol", "moduleIface", "getStyle()", QByteArray(),
+				 replyType, replyData))
+		 if ( replyType == "QString") {
+			 QDataStream reply( replyData, IO_ReadOnly );
+			 QString style; 
+			 reply >> style;
+			 setStyle(style);
+		 }
+*/	 
+	 if (kapp->dcopClient()->call("kcontrol", "moduleIface", "getFont()", QByteArray(),
+				 replyType, replyData))
+		 if ( replyType == "QFont") {
+			 QDataStream reply( replyData, IO_ReadOnly );
+			 QFont font;
+			 reply >> font;
+			 setFont(font);
+		 }
+ }
+	 
   view = new ProxyView(client, title, this, run_as_root, "proxyview");
   (void) new WhatsThis( this );
 
