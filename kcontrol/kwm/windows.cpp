@@ -666,11 +666,11 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     QWhatsThis::add(xineramaEnable, i18n("Enable support for Xinerama."));
     connect(xineramaEnable, SIGNAL(toggled(bool)), this, SLOT(setXinerama(bool)));
     xineramaMovementEnable = new QCheckBox(i18n("Enable Window Resistance Support"), xineramaBox);
-    QWhatsThis::add(xineramaMovementEnable, i18n("Turn on resistance when moving a window from one physical screen to the other"));
+    QWhatsThis::add(xineramaMovementEnable, i18n("Turn on resistance when moving a window from one physical screen to the other."));
     xineramaPlacementEnable = new QCheckBox(i18n("Enable Window Placement Support"), xineramaBox);
-    QWhatsThis::add(xineramaPlacementEnable, i18n("This option opens new windows on the physical screen on which the cursor is present"));
+    QWhatsThis::add(xineramaPlacementEnable, i18n("This option opens new windows on the physical screen on which the cursor is present."));
     xineramaMaximizeEnable = new QCheckBox(i18n("Enable Window Maximize Support"), xineramaBox);
-    QWhatsThis::add(xineramaMaximizeEnable, i18n("When this option is turned on, windows maximize only to up to the physical screen"));
+    QWhatsThis::add(xineramaMaximizeEnable, i18n("When this option is turned on, windows will only maximize up to the physical screen size."));
 
     lay->addWidget(xineramaBox);
 #endif

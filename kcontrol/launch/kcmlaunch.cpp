@@ -68,12 +68,12 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name)
   layout->addWidget(groupBox);
 
   gb_cursor = new QGroupBox( 1, Vertical, i18n( "Busy cursor settings" ), this );
-  ( void ) new QLabel( i18n( "Startup indication timeout ( seconds ) : " ), gb_cursor );
+  ( void ) new QLabel( i18n( "Startup indication timeout (seconds) : " ), gb_cursor );
   sb_cursorTimeout = new QSpinBox( 0, 60, 1, gb_cursor );
   layout->addWidget(gb_cursor);
 
   gb_taskbar = new QGroupBox( 1, Vertical, i18n( "Taskbar settings" ), this );
-  ( void )  new QLabel( i18n( "Startup indication timeout ( seconds ) : " ), gb_taskbar );
+  ( void )  new QLabel( i18n( "Startup indication timeout (seconds) : " ), gb_taskbar );
   sb_taskbarTimeout = new QSpinBox( 0, 60, 1, gb_taskbar );
   layout->addWidget(gb_taskbar);
 
