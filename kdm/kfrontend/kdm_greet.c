@@ -307,7 +307,9 @@ fetchSessions( int all )
 	if (!(sess = malloc( sizeof(*sess) )))
 	    LogPanic ("Out of memory\n");
 	sess->display = disp;
+#ifdef HAVE_VTS
 	sess->vt = GRecvInt();
+#endif
 	sess->user = GRecvStr();
 	sess->session = GRecvStr();
 	sess->self = GRecvInt();

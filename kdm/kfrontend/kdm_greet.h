@@ -27,6 +27,7 @@
 #define _KDM_GREET_H_
 
 #include <greet.h>	/* for the ATTR_ defines */
+#include <config.ci>	/* for the HAVE_VTS define */
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,7 +50,10 @@ char **GetCfgStrArr (int id, int *len);
 typedef struct dpySpec {
     struct dpySpec *next;
     char *display, *user, *session;
-    int vt, self;
+#ifdef HAVE_VTS
+    int vt;
+#endif
+    int self;
 } dpySpec;
 
 dpySpec *fetchSessions( int all );

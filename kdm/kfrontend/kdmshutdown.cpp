@@ -603,9 +603,11 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, QWidget *_parent )
 		    i18n("user: session type", "%1: %2")
 			.arg( sess->user ).arg( sess->session ) :
 		    i18n("Remote Login"),
+#ifdef HAVE_VTS
 		sess->vt ?
 		    i18n("display, virtual terminal", "%1, vt%2")
 			.arg( sess->display ).arg( sess->vt ) :
+#endif
 		    QString::fromLatin1( sess->display ) );
 	lv->header()->adjustHeaderSize();
 	int fw = lv->frameWidth() * 2;

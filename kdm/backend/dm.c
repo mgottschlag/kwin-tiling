@@ -754,7 +754,9 @@ processGPipe (struct display *d)
 		 (alllocal ? di->status == running : di->userSess >= 0)))
 	    {
 		GSendStr (di->name);
+#ifdef HAVE_VTS
 		GSendInt (di->serverVT);
+#endif
 		GSendStr (di->status == remoteLogin ? "" : di->userName);
 		GSendStr (di->sessName);
 		GSendInt (di == d);
