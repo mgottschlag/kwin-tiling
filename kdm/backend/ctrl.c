@@ -40,6 +40,7 @@ from the copyright holder.
 
 #include <string.h>
 #include <signal.h>
+#include <pwd.h>
 
 static void
 acceptSock( CtrlRec *cr )
@@ -304,9 +305,7 @@ unQuote( const char *str )
 static void
 str_cat_l( char **bp, const char *str, int max )
 {
-	int dnl = strlen( str );
-	if (dnl > max)
-		dnl = max;
+	int dnl = StrNLen( str, max );
 	memcpy( *bp, str, dnl );
 	*bp += dnl;
 }
@@ -343,6 +342,93 @@ sd_cat( char **bp, SdRec *sdr )
 	else
 		str_cat( bp, "cancel" );
 	*bp += sprintf( *bp, ",%d,%s", sdr->uid, sdr->osname ? sdr->osname : "-" );
+}
+
+static void
+emitXSessC( struct display *di, struct display *d, void *ctx )
+{
+	char *dname, *bp;
+	char cbuf[1024];
+
+	bp = cbuf;
+	*bp++ = '\t';
+	dname = di->name;
+	if (!memcmp( dname, "localhost:", 10 ))
+		dname += 9;
+	str_cat_l( &bp, dname, sizeof(cbuf)/2 );
+	*bp++ = ',';
+#ifdef HAVE_VTS
+	if (di->serverVT)
+		bp += sprintf( bp, "vt%d", di->serverVT );
+#endif
+	*bp++ = ',';
+	if (di->status == remoteLogin) {
+		*bp++ = ',';
+		str_cat_l( &bp, di->remoteHost, sizeof(cbuf)/3 );
+	} else {
+		if (di->userName)
+			str_cat_l( &bp, di->userName, sizeof(cbuf)/5 );
+		*bp++ = ',';
+		if (di->sessName)
+			str_cat_l( &bp, di->sessName, sizeof(cbuf)/5 );
+	}
+	*bp++ = ',';
+	if (di == d)
+		*bp++ = '*';
+	if (di->userSess >= 0 &&
+	    (d ? (d->userSess != di->userSess &&
+	          (d->allowNuke == SHUT_NONE ||
+	           (d->allowNuke == SHUT_ROOT && d->userSess))) :
+	         !fifoAllowNuke))
+		*bp++ = '!';
+	Writer( (int)ctx, cbuf, bp - cbuf );
+}
+
+static void
+emitTTYSessC( STRUCTUTMP *ut, struct display *d, void *ctx )
+{
+	struct passwd *pw;
+	char *bp;
+	int vt, l;
+	char cbuf[sizeof(ut->ut_line) + sizeof(ut->ut_user) + sizeof(ut->ut_host) + 16];
+	char user[sizeof(ut->ut_user) + 1];
+
+#ifndef BSD_UTMP
+	if (ut->ut_type != USER_PROCESS)
+		l = 0;
+	else
+#endif
+	{
+		l = StrNLen( ut->ut_user, sizeof(ut->ut_user) );
+		memcpy( user, ut->ut_user, l );
+	}
+	user[l] = 0;
+	bp = cbuf;
+	*bp++ = '\t';
+	str_cat_l( &bp, ut->ut_line, sizeof(ut->ut_line) );
+	*bp++ = ',';
+	if (*ut->ut_host) {
+		*bp++ = '@';
+		str_cat_l( &bp, ut->ut_host, sizeof(ut->ut_host) );
+	}
+#ifdef HAVE_VTS
+	else if ((vt = TTYtoVT( ut->ut_line )))
+		bp += sprintf( bp, "vt%d", vt );
+#endif
+	*bp++ = ',';
+	str_cat( &bp, user );
+	*bp++ = ',';
+	/* blank: session type unknown */
+	*bp++ = ',';
+	/* blank: certainly not querying display */
+	*bp++ = 't';
+	if (*user &&
+	    (d ? ((d->allowNuke == SHUT_NONE ||
+	           (d->allowNuke == SHUT_ROOT && d->userSess)) &&
+	          (!(pw = getpwnam( user )) || d->userSess != (int)pw->pw_uid)) :
+	         !fifoAllowNuke))
+		*bp++ = '!';
+	Writer( (int)ctx, cbuf, bp - cbuf );
 }
 
 static void
@@ -419,12 +505,12 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			}
 			goto bust;
 		} else if (fd >= 0 && !strcmp( ar[0], "list" )) {
-			int all = 0;
+			int flags = lstRemote;
 			if (ar[1]) {
 				if (!strcmp( ar[1], "all" ))
-					all = 1;
+					flags = lstRemote | lstPassive;
 				else if (!strcmp( ar[1], "alllocal" ))
-					all = 3;
+					flags = lstPassive;
 				else {
 					fLog( d, fd, "bad", "invalid list scope %\"s", ar[1] );
 					goto bust;
@@ -433,41 +519,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					goto exce;
 			}
 			Reply( "ok" );
-			for (di = displays; di; di = di->next) {
-				if (((all & 2) && (di->displayType & d_location) != dLocal) ||
-				    (di->status != remoteLogin &&
-				     ((all & 1) ? di->status != running : di->userSess < 0)))
-					continue;
-				bp = cbuf;
-				*bp++ = '\t';
-				args = di->name;
-				if (!memcmp( args, "localhost:", 10 ))
-					args += 9;
-				str_cat_l( &bp, args, sizeof(cbuf)/2 );
-				*bp++ = ',';
-#ifdef HAVE_VTS
-				if (di->serverVT)
-					bp += sprintf( bp, "vt%d", di->serverVT );
-#endif
-				*bp++ = ',';
-				if (di->userName)
-					str_cat_l( &bp, di->userName, sizeof(cbuf)/5 );
-				*bp++ = ',';
-				if (di->status == remoteLogin)
-					str_cat( &bp, "<remote>" );
-				else if (di->sessName)
-					str_cat_l( &bp, di->sessName, sizeof(cbuf)/5 );
-				*bp++ = ',';
-				if (di == d)
-					*bp++ = '*';
-				if (di->userSess >= 0 &&
-				    (d ? (d->userSess != di->userSess &&
-				          (d->allowNuke == SHUT_NONE ||
-				           (d->allowNuke == SHUT_ROOT && d->userSess))) :
-				     !fifoAllowNuke))
-					*bp++ = '!';
-				Writer( fd, cbuf, bp - cbuf );
-			}
+			ListSessions( flags, d, (void *)fd, emitXSessC, emitTTYSessC );
 			Reply( "\n" );
 			goto bust;
 		} else if (!strcmp( ar[0], "reserve" )) {

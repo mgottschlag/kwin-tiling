@@ -679,6 +679,15 @@ GSendNStr( const char *buf, int len )
 	GWrite( "", 1 );
 }
 
+void
+GSendStrN( const char *buf, int len )
+{
+	if (buf)
+		GSendNStr( buf, StrNLen( buf, len ) );
+	else
+		GSendStr( buf );
+}
+
 char *
 GRecvStr()
 {

@@ -104,47 +104,45 @@ typedef int waitType;
 # define Jmp_buf sigjmp_buf
 #endif
 
-#ifdef NEED_UTMP
-# include <utmp.h>
-# ifdef HAVE_UTMPX
-#  include <utmpx.h>
-#  define STRUCTUTMP struct utmpx
-#  define UTMPNAME utmpxname
-#  define SETUTENT setutxent
-#  define GETUTENT getutxent
-#  define PUTUTLINE pututxline
-#  define ENDUTENT endutxent
-#  define LASTLOG lastlogx
-#  define ut_time ut_tv.tv_sec
-#  define ll_time ll_tv.tv_sec
+#include <utmp.h>
+#ifdef HAVE_UTMPX
+# include <utmpx.h>
+# define STRUCTUTMP struct utmpx
+# define UTMPNAME utmpxname
+# define SETUTENT setutxent
+# define GETUTENT getutxent
+# define PUTUTLINE pututxline
+# define ENDUTENT endutxent
+# define LASTLOG lastlogx
+# define ut_time ut_tv.tv_sec
+# define ll_time ll_tv.tv_sec
+#else
+# define STRUCTUTMP struct utmp
+# define UTMPNAME utmpname
+# define SETUTENT setutent
+# define GETUTENT getutent
+# define PUTUTLINE pututline
+# define ENDUTENT endutent
+# define LASTLOG lastlog
+#endif
+#ifndef WTMP_FILE
+# ifdef _PATH_WTMPX
+#  define WTMP_FILE _PATH_WTMPX
+# elif defined(_PATH_WTMP)
+#  define WTMP_FILE _PATH_WTMP
 # else
-#  define STRUCTUTMP struct utmp
-#  define UTMPNAME utmpname
-#  define SETUTENT setutent
-#  define GETUTENT getutent
-#  define PUTUTLINE pututline
-#  define ENDUTENT endutent
-#  define LASTLOG lastlog
+#  define WTMP_FILE "/usr/adm/wtmp"
 # endif
-# ifndef WTMP_FILE
-#  ifdef _PATH_WTMPX
-#   define WTMP_FILE _PATH_WTMPX
-#  elif defined(_PATH_WTMP)
-#   define WTMP_FILE _PATH_WTMP
-#  else
-#   define WTMP_FILE "/usr/adm/wtmp"
-#  endif
+#endif
+#ifndef UTMP_FILE
+# ifdef _PATH_UTMPX
+#  define UTMP_FILE _PATH_UTMPX
+# elif defined(_PATH_UTMP)
+#  define UTMP_FILE _PATH_UTMP
+# else
+#  define UTMP_FILE "/etc/utmp"
 # endif
-# ifndef UTMP_FILE
-#  ifdef _PATH_UTMPX
-#   define UTMP_FILE _PATH_UTMPX
-#  elif defined(_PATH_UTMP)
-#   define UTMP_FILE _PATH_UTMP
-#  else
-#   define UTMP_FILE "/etc/utmp"
-#  endif
-# endif
-#endif /* NEED_UTMP */
+#endif
 
 #ifdef HAVE_NETCONFIG_H
 # define STREAMSCONN
@@ -356,6 +354,7 @@ void setNLogin( struct display *d,
                 const char *nuser, const char *npass, char *nargs,
                 int rl );
 void cancelShutdown( void );
+int TTYtoVT( const char *tty );
 int activateVT( int vt );
 
 /* in ctrl.c */
@@ -457,7 +456,8 @@ char *GRecvArr( int *len );
 int GRecvStrBuf( char *buf );
 int GRecvArrBuf( char *buf );
 void GSendStr( const char *buf );
-void GSendNStr( const char *buf, int len );
+void GSendNStr( const char *buf, int len ); /* exact len, buf != 0 */
+void GSendStrN( const char *buf, int len ); /* maximal len */
 char *GRecvStr( void );
 void GSendArgv( char **argv );
 void GSendStrArr( int len, char **data );
@@ -501,6 +501,11 @@ void *Malloc( size_t size );
 void *Realloc( void *ptr, size_t size );
 void WipeStr( char *str );
 int StrCmp( const char *s1, const char *s2 );
+#ifdef HAVE_STRNLEN
+# define StrNLen(s, m) strnlen(s, m)
+#else
+int StrNLen( const char *s, int max );
+#endif
 int StrNDup( char **dst, const char *src, int len );
 int StrDup( char **dst, const char *src );
 int arrLen( char **arr );
@@ -522,6 +527,9 @@ int Reader( int fd, void *buf, int len );
 int Writer( int fd, const void *buf, int len );
 int fGets( char *buf, int max, FILE *f );
 time_t mTime( const char *fn );
+void ListSessions( int flags, struct display *d, void *ctx,
+                   void (*emitXSess)( struct display *, struct display *, void * ),
+                   void (*emitTTYSess)( STRUCTUTMP *, struct display *, void * ) );
 
 /* in inifile.c */
 char *iniLoad( const char *fname );

@@ -232,12 +232,14 @@ Commands for all sockets:
    - VT name for local sessions
    - Logged in user's name, empty for passive sessions and outgoing remote
      sessions (local chooser mode)
-   - Session type or "<remote>" for outgoing remote sessions, empty for
+   - Session type or remote host for outgoing remote sessions, empty for
      passive sessions
    - A flag field:
+     - "t" for tty sessions
      - "*" for the display belonging to the requesting socket
      - "!" for sessions that cannot be killed by the requesting socket
-   - New fields might be added later.
+     - New flags might be added later
+   - New fields might be added later
 
 "reserve" [timeout in seconds]
  - Start a reserve login screen. If nobody logs in within the specified amount

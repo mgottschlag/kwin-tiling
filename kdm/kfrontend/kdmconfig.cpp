@@ -140,3 +140,35 @@ void init_config( void )
 			_greetString += gst[i];
 	}
 }
+
+
+/* out-of-place utility function */
+void
+decodeSess( dpySpec *sess, QString &user, QString &loc )
+{
+	if (sess->flags & isTTY) {
+		user =
+			i18n( "%1: TTY login", "%1: %n TTY logins", sess->count )
+				.arg( sess->user );
+		loc = 
+#ifdef HAVE_VTS
+			sess->vt ?
+				QString("vt%1").arg( sess->vt ) :
+#endif
+				QString::fromLatin1( *sess->from ? sess->from : sess->display );
+	} else {
+		user =
+			!sess->user ?
+				i18n("Unused") :
+				*sess->user ?
+					i18n("user: session type", "%1: %2")
+						.arg( sess->user ).arg( sess->session ) :
+					i18n("... host", "X login on %1").arg( sess->session );
+		loc =
+#ifdef HAVE_VTS
+			sess->vt ?
+				QString("%1, vt%2").arg( sess->display ).arg( sess->vt ) :
+#endif
+				QString::fromLatin1( sess->display );
+	}
+}

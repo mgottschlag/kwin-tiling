@@ -34,7 +34,6 @@ from the copyright holder.
  * display manager
  */
 
-#define NEED_UTMP
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
@@ -289,6 +288,12 @@ main( int argc, char **argv )
 
 #ifdef HAVE_VTS
 int
+TTYtoVT( const char *tty )
+{
+	return memcmp( tty, "tty", 3 ) ? 0 : atoi( tty + 3 );
+}
+
+int
 activateVT( int vt )
 {
 	int ret = 0;
@@ -455,6 +460,9 @@ SwitchToTty( struct display *d )
 #endif
 {
 	struct utmps *utp;
+#ifdef HAVE_VTS
+	int vt;
+#endif
 
 	if (!(utp = Malloc( sizeof(*utp) ))) {
 #ifdef HAVE_VTS
@@ -475,8 +483,8 @@ SwitchToTty( struct display *d )
 	CheckUtmp();
 
 #ifdef HAVE_VTS
-	if (!memcmp( *consoleTTYs, "tty", 3 ))
-		activateVT( atoi( *consoleTTYs + 3 ) );
+	if ((vt = TTYtoVT( *consoleTTYs )))
+		activateVT( vt );
 #endif
 
 	/* XXX output something useful here */
@@ -659,11 +667,45 @@ processDPipe( struct display *d )
 }
 
 static void
+emitXSessG( struct display *di, struct display *d, void *ctx ATTR_UNUSED )
+{
+	GSendStr( di->name );
+	GSendStr( "" );
+#ifdef HAVE_VTS
+	GSendInt( di->serverVT );
+#endif
+	if (di->status == remoteLogin) {
+		GSendStr( "" );
+		GSendStr( d->remoteHost );
+	} else {
+		GSendStr( di->userName );
+		GSendStr( di->sessName );
+	}
+	GSendInt( di == d ? isSelf : 0 );
+}
+
+static void
+emitTTYSessG( STRUCTUTMP *ut, struct display *d ATTR_UNUSED, void *ctx ATTR_UNUSED )
+{
+	GSendStrN( ut->ut_line, sizeof(ut->ut_line) );
+	GSendStrN( ut->ut_host, sizeof(ut->ut_host) );
+#ifdef HAVE_VTS
+	GSendInt( TTYtoVT( ut->ut_line ) );
+#endif
+#ifdef BSD_UTMP
+	GSendStrN( *ut->ut_user ? ut->ut_user : 0, sizeof(ut->ut_user) );
+#else
+	GSendStrN( ut->ut_type == USER_PROCESS ? ut->ut_user : 0, sizeof(ut->ut_user) );
+#endif
+	GSendStr( 0 ); /* session type unknown */
+	GSendInt( isTTY );
+}
+
+static void
 processGPipe( struct display *d )
 {
-	struct display *di;
 	char **opts, *option;
-	int cmd, flags, ret, dflt, curr;
+	int cmd, ret, dflt, curr;
 	GTalk dpytalk;
 
 	dpytalk.pipe = &d->gpipe;
@@ -708,20 +750,7 @@ processGPipe( struct display *d )
 		GSendStr( sdRec.osname );
 		break;
 	case G_List:
-		flags = GRecvInt();
-		for (di = displays; di; di = di->next)
-			if (((flags & lstRemote) || (di->displayType & d_location) == dLocal) &&
-			    (di->status == remoteLogin ||
-			     ((flags & lstPassive) ? di->status == running : di->userSess >= 0)))
-			{
-				GSendStr( di->name );
-#ifdef HAVE_VTS
-				GSendInt( di->serverVT );
-#endif
-				GSendStr( di->status == remoteLogin ? "" : di->userName );
-				GSendStr( di->sessName );
-				GSendInt( di == d );
-			}
+		ListSessions( GRecvInt(), d, 0, emitXSessG, emitTTYSessG );
 		GSendInt( 0 );
 		break;
 #ifdef HAVE_VTS

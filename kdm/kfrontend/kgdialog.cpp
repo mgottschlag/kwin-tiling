@@ -192,21 +192,16 @@ KGDialog::slotPopulateDisplays()
 #ifdef HAVE_VTS
 	dpyMenu->clear();
 	dpySpec *sessions = fetchSessions( lstPassive );
+	QString user, loc;
 	for (dpySpec *sess = sessions; sess; sess = sess->next) {
-			QString tit =
-				i18n("session (location)", "%1 (%2)")
-				.arg( !sess->user ? i18n("Unused") :
-				      !*sess->user ? i18n("Remote Login") :
-				      i18n("user: session type", "%1: %2")
-				      .arg( sess->user ).arg( sess->session ) )
-				.arg( !sess->vt ? sess->display :
-				      i18n("display, virtual terminal", "%1, vt%2")
-				      .arg( sess->display ).arg( sess->vt ) );
-			int id = dpyMenu->insertItem( tit, sess->vt ? sess->vt : -1 );
-			if (!sess->vt)
-				dpyMenu->setItemEnabled( id, false );
-			if (sess->self)
-				dpyMenu->setItemChecked( id, true );
+		decodeSess( sess, user, loc );
+		int id = dpyMenu->insertItem(
+			i18n("session (location)", "%1 (%2)").arg( user ).arg( loc ),
+			sess->vt ? sess->vt : -1 );
+		if (!sess->vt)
+			dpyMenu->setItemEnabled( id, false );
+		if (sess->flags & isSelf)
+			dpyMenu->setItemChecked( id, true );
 	}
 	disposeSessions( sessions );
 #endif

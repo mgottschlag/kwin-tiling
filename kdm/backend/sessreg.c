@@ -36,7 +36,6 @@ from The Open Group.
 */
 
 #define _FILE_OFFSET_BITS 64
-#define NEED_UTMP
 #include "dm.h"
 #include "dm_error.h"
 

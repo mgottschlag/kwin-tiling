@@ -42,6 +42,10 @@ extern bool _authorized;
 
 CONF_GREET_CPP_DECLS
 
+// this file happens to be included everywhere, so just put it here
+struct dpySpec;
+void decodeSess( dpySpec *sess, QString &user, QString &loc );
+
 extern "C"
 #endif
 void init_config( void );

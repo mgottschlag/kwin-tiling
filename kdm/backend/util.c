@@ -102,6 +102,17 @@ WipeStr( char *str )
 	}
 }
 
+#ifndef HAVE_STRNLEN
+int
+StrNLen( const char *s, int max )
+{
+	unsigned l;
+
+	for (l = 0; l < (unsigned)max && s[l]; l++);
+	return l;
+}
+#endif
+
 /* duplicate src; wipe & free old dst string */
 int
 ReStrN( char **dst, const char *src, int len )
@@ -505,5 +516,94 @@ mTime( const char *fn )
 		return -1;
 	else
 		return st.st_mtime;
+}
+
+static int
+StrNChrCnt( const char *s, int slen, char c )
+{
+	int i, cnt;
+
+	for (i = cnt = 0; i < slen && s[i]; i++)
+		if (s[i] == c)
+			cnt++;
+	return cnt;
+}
+
+/* X -from ip6-addr does not work here, so i don't know whether this is needed.
+#define IP6_MAGIC
+*/
+
+void
+ListSessions( int flags, struct display *d, void *ctx,
+              void (*emitXSess)( struct display *, struct display *, void * ),
+              void (*emitTTYSess)( STRUCTUTMP *, struct display *, void * ) )
+{
+	struct display *di;
+#ifdef IP6_MAGIC
+	int le, dot;
+#endif
+#ifdef BSD_UTMP
+	int fd;
+	struct utmp ut[1];
+#else
+	STRUCTUTMP *ut;
+#endif
+
+	for (di = displays; di; di = di->next)
+		if (((flags & lstRemote) || (di->displayType & d_location) == dLocal) &&
+		    (di->status == remoteLogin ||
+		     ((flags & lstPassive) ? di->status == running : di->userSess >= 0)))
+			emitXSess( di, d, ctx );
+
+#ifdef BSD_UTMP
+	if ((fd = open( UTMP_FILE, O_RDONLY )) < 0)
+		return;
+	while (Reader( fd, ut, sizeof(ut[0]) ) == sizeof(ut[0])) {
+		if (*ut->ut_name) {	/* no idea how to list passive TTYs on BSD */
+#else
+	SETUTENT();
+	while ((ut = GETUTENT())) {
+		if (ut->ut_type == USER_PROCESS
+# if 0 /* list passive TTYs at all? not too sensible, i think. */
+		    || ((flags & lstPassive) && ut->ut_type == LOGIN_PROCESS)
+# endif
+		   )
+		{
+#endif
+			if (!(flags & lstRemote) && *ut->ut_host)
+				continue; /* from remote or x */
+			if (StrNChrCnt( ut->ut_line, sizeof(ut->ut_line), ':' ))
+				continue; /* x login */
+			switch (StrNChrCnt( ut->ut_host, sizeof(ut->ut_host), ':' )) {
+			case 1: /* x terminal */
+				continue;
+			default:
+#ifdef IP6_MAGIC
+				/* unknown - IPv6 makes things complicated */
+				le = StrNLen( ut->ut_host, sizeof(ut->ut_host) );
+				/* cut off screen number */
+				for (dot = le; ut->ut_host[--dot] != ':'; )
+					if (ut->ut_host[dot] == '.') {
+						le = dot;
+						break;
+					}
+				for (di = displays; di; di = di->next)
+					if (!memcmp( di->name, ut->ut_host, le ) && !di->name[le])
+						goto cont; /* x terminal */
+				break;
+			  cont:
+				continue;
+			case 0: /* no x terminal */
+#endif
+				break;
+			}
+			emitTTYSess( ut, d, ctx );
+		}
+	}
+#ifdef BSD_UTMP
+	close( fd );
+#else
+	ENDUTENT();
+#endif
 }
 

@@ -49,11 +49,12 @@ char **GetCfgStrArr( int id, int *len );
 
 typedef struct dpySpec {
 	struct dpySpec *next;
-	char *display, *user, *session;
+	char *display, *from, *user, *session;
 #ifdef HAVE_VTS
 	int vt;
 #endif
-	int self;
+	int flags;
+	int count;
 } dpySpec;
 
 dpySpec *fetchSessions( int flags );

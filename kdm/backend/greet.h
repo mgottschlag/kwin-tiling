@@ -141,9 +141,11 @@ from the copyright holder.
 #define G_PutDmrc       108 /* str key, str value; async - newdmrc */
 #define G_Verify        109 /* str type; ..., int V_ret */
 #define G_VerifyRootOK  110 /* str type; ..., int V_ret */
-#define G_List          111 /* int flags; ?*(str,int,str,str,int), int 0 */
+#define G_List          111 /* int flags; ?*(str,str,[int,]str,str,int), int 0 */
 # define lstRemote        1
 # define lstPassive       2
+# define isSelf           1
+# define isTTY            2
 #define G_QueryShutdown 112 /* ; 5*int; string */
 #define G_Activate      113 /* int vt; async */
 #define G_ListBootOpts  114 /* ; int sts, [argv opts, int dflt, int cur] */
