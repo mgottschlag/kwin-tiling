@@ -160,7 +160,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   setVisible(_help, b & KCModule::Help);
   setVisible(_default, !run_as_root && b & KCModule::Default);
   setVisible(_apply, !run_as_root && (b & KCModule::Apply));
-  setVisible(_reset, !run_as_root && ((b & KCModule::Cancel) || (b & KCModule::Reset)));
+  setVisible(_reset, !run_as_root && (b & KCModule::Apply));
   setVisible(_root, run_as_root);
 
   // disable initial buttons
