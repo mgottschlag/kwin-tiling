@@ -76,11 +76,11 @@ KThemeMgr::KThemeMgr(QWidget *parent, const char *name)
 
   mInstaller = new Installer(this);
   tab->addTab(mInstaller, i18n("&Installer"));
-  connect(mInstaller, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
+//  connect(mInstaller, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
 
   mOptions = new Options(this);
   tab->addTab(mOptions, i18n("&Contents"));
-  connect(mOptions, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
+//  connect(mOptions, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
 
   mAbout = new About(this);
   tab->addTab(mAbout, i18n("&About"));
