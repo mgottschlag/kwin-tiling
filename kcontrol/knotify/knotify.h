@@ -95,12 +95,12 @@ class KNCheckListItem : public QCheckListItem
 public:
     KNCheckListItem( QListViewItem *parent, KNEvent *e, int type,
 		     const QString& text );
-    const int type;
+    int eventType() const { return _eventType; }
     KNEvent *event;
 
 protected:
     virtual void stateChange( bool on );
-
+    const int _eventType;
 };
 
 

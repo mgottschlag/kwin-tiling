@@ -58,8 +58,8 @@ public:
     KNApplication( KConfig * );
     ~KNApplication();
 
-    const QString& text() const { return m_description; }
-    const QString& icon() const { return m_icon; }
+    QString text() const { return m_description; }
+    QString icon() const { return m_icon; }
     EventList * eventList();
     void save();
 
@@ -79,7 +79,7 @@ class KNEvent
     friend class KNApplication;
 
 public:
-    const QString& text() const { return description; }
+    QString text() const { return description; }
 
     int presentation;
     int dontShow;

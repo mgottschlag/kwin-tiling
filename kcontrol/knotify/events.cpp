@@ -55,6 +55,8 @@ void Events::load()
 
 void Events::save()
 {
+    kdDebug() << "save\n";
+
     KNApplicationListIterator it( m_apps );
     while ( it.current() ) {
 	(*it)->save();

@@ -43,6 +43,7 @@
 #include <knotifyclient.h>
 #include <kstddirs.h>
 #include <kurlrequester.h>
+#include <kdebug.h>
 
 #include "knotify.h"
 #include "knotify.moc"
@@ -175,9 +176,9 @@ void KNotifyWidget::slotFileChanged( const QString& text )
     KNEvent *event = currentItem->event;
     QString *itemText = 0L;
 
-    if ( currentItem->type == KNotifyClient::Sound )
+    if ( currentItem->eventType() == KNotifyClient::Sound )
 	itemText = &(event->soundfile);
-    else if ( currentItem->type == KNotifyClient::Logfile )
+    else if ( currentItem->eventType() == KNotifyClient::Logfile )
 	itemText = &(event->logfile);
 
     if ( itemText && *itemText != text ) {
@@ -195,10 +196,7 @@ void KNotifyWidget::playSound()
 
 void KNotifyWidget::loadAll()
 {
-    // Qt Bug, fixed in 2.2.1
-#if QT_VERSION > 220
     setEnabled( false );
-#endif
     setCursor( KCursor::waitCursor() );
     m_events->load();
     updateView();
@@ -222,12 +220,12 @@ void KNotifyWidget::slotItemActivated( QListViewItem *i )
 	currentItem = item;
 	const KNEvent *event = item->event;
 
-	if ( item->type == KNotifyClient::Sound ) {
+	if ( item->eventType() == KNotifyClient::Sound ) {
 	    requester->setURL( event->soundfile );
 	    enableButton = true;
 	    playButton->show();
 	}
-	else if ( item->type == KNotifyClient::Logfile ) {
+	else if ( item->eventType() == KNotifyClient::Logfile ) {
 	    requester->setURL( event->logfile );
 	    enableButton = true;
 	    playButton->hide();
@@ -307,16 +305,17 @@ KNListViewItem::KNListViewItem( QListViewItem *parent,
     if ( (e->dontShow & KNotifyClient::Sound) == 0 ) {
 	soundItem = new KNCheckListItem( this, event, KNotifyClient::Sound,
 					 i18n("Play sound"));
+
 	soundItem->setOn( e->presentation & KNotifyClient::Sound );
-	//	qDebug("******* soundfile: %s", e->soundfile.latin1() );
-	soundItem->setText( COL_FILENAME, e->soundfile );
+//        kdDebug() << "******* soundfile: " << e->soundfile << " " << bool(e->presentation & KNotifyClient::Sound) << " " << soundItem->isOn() << endl;
+        soundItem->setText( COL_FILENAME, e->soundfile );
     }
 
     if ( (e->dontShow & KNotifyClient::Logfile) == 0 ) {
 	logItem = new KNCheckListItem( this, event, KNotifyClient::Logfile,
 				       i18n("Log to file"));
 	logItem->setOn( e->presentation & KNotifyClient::Logfile  );
-	//	qDebug("******** logfile: %s", e->logfile.latin1());
+	//	kdDebug() << "******** logfile: " << e->logfile << endl;
 	logItem->setText( COL_FILENAME, e->logfile );
     }
 }
@@ -328,9 +327,9 @@ KNListViewItem::KNListViewItem( QListViewItem *parent,
 void KNListViewItem::itemChanged( KNCheckListItem *item )
 {
     if ( item->isOn() )
-	event->presentation |= item->type;
+	event->presentation |= item->eventType();
     else
-	event->presentation &= ~item->type;
+	event->presentation &= ~item->eventType();
 
     emit changed();
 }
@@ -345,12 +344,14 @@ void KNListViewItem::itemChanged( KNCheckListItem *item )
 KNCheckListItem::KNCheckListItem( QListViewItem *parent, KNEvent *e, int t,
 				  const QString& text )
     : QCheckListItem( parent, text, QCheckListItem::CheckBox ),
-      type( t ),
-      event( e )
+      event( e ),
+      _eventType( t )
+
 {
 }
 
-void KNCheckListItem::stateChange( bool )
+void KNCheckListItem::stateChange( bool b )
 {
     ((KNListViewItem *) parent())->itemChanged( this );
+    QCheckListItem::stateChange(b);
 }
