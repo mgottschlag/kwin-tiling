@@ -17,7 +17,7 @@ class ModifiersModule : public QWidget
 	void load();
 	void save();
 	void defaults();
-	
+
 	static void setupMacModifierKeys();
 
  signals:
@@ -28,13 +28,18 @@ class ModifiersModule : public QWidget
 	QString m_sLabelCtrlOrig, m_sLabelAltOrig, m_sLabelWinOrig;
 
 	QLabel* m_plblCtrl, * m_plblAlt, * m_plblWin;
-	KComboBox* m_pcbWinX;
+	QLabel* m_plblWinModX;
 	QCheckBox* m_pchkMacKeyboard;
 	KListView* m_plstXMods;
 	QCheckBox* m_pchkMacSwap;
 
+	void readConfig();
 	void initGUI();
-	KComboBox* newModXComboBox( QWidget* parent );
+	// Places the values in the *Orig variables into their
+	//  respective widgets.
+	void updateWidgetData();
+	// Updates the labels according to the check-box settings
+	//  and also reads in the X modifier map.
 	void updateWidgets();
 
  protected slots:

@@ -37,6 +37,7 @@ class ShortcutsModule : public QWidget
 	Q_OBJECT
  public:
 	ShortcutsModule( QWidget *parent = 0, const char *name = 0 );
+	~ShortcutsModule();
 
 	void load();
 	void save();
@@ -68,7 +69,8 @@ class ShortcutsModule : public QWidget
 	QPushButton* m_pbtnSave, * m_pbtnRemove;
 	int m_nSysSchemes;
 	QStringList m_rgsSchemeFiles;
-	KAccelActions m_actionsGeneral, m_actionsSequence, m_actionsApplication;
+	KAccelActions m_actionsGeneral, m_actionsSequence;//, m_actionsApplication;
+	KShortcutList* m_pListGeneral, * m_pListSequence, * m_pListApplication;
 	KKeyChooser* m_pkcGeneral, * m_pkcSequence, * m_pkcApplication;
 };
 

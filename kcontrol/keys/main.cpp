@@ -126,7 +126,7 @@ void KeyModule::slotModuleChanged( bool bState )
 
 extern "C"
 {
-  KCModule *create_keys(QWidget *parent, const char *name)
+  KCModule *create_keys(QWidget *parent, const char */*name*/)
   {
 	// What does this do?  Why not insert klipper and kxkb, too? --ellis, 2002/01/15
 	KGlobal::locale()->insertCatalogue("kwin");

@@ -36,8 +36,10 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kipc.h>
+#include <kkeynative.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kshortcutlist.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <kstdaccel.h>
@@ -46,6 +48,13 @@ ShortcutsModule::ShortcutsModule( QWidget *parent, const char *name )
 : QWidget( parent, name )
 {
 	initGUI();
+}
+
+ShortcutsModule::~ShortcutsModule()
+{
+	delete m_pListGeneral;
+	delete m_pListSequence;
+	delete m_pListApplication;
 }
 
 // Called when [Reset] is pressed
@@ -62,11 +71,10 @@ void ShortcutsModule::save()
 
 	m_pkcGeneral->commitChanges();
 	m_pkcSequence->commitChanges();
-	m_pkcApplication->commitChanges();
+	m_pkcApplication->save();
 
 	m_actionsGeneral.writeActions( "Global Shortcuts", 0, true, true );
 	m_actionsSequence.writeActions( "Global Shortcuts", 0, true, true );
-	m_actionsApplication.writeActions( "Shortcuts", 0, true, true );
 
 	// TODO: Add the widget for this
 	//KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
@@ -114,7 +122,6 @@ void ShortcutsModule::initGUI()
 	kdDebug(125) << "D-----------" << endl;
 	createActionsSequence();
 	kdDebug(125) << "E-----------" << endl;
-	KStdAccel::createAccelActions( m_actionsApplication );
 
 	kdDebug(125) << "F-----------" << endl;
 	QVBoxLayout* pVLayout = new QVBoxLayout( this, KDialog::marginHint() );
@@ -163,15 +170,18 @@ void ShortcutsModule::initGUI()
 	m_pTab = new QTabWidget( this );
 	pVLayout->addWidget( m_pTab );
 
-	m_pkcGeneral = new KKeyChooser( m_actionsGeneral, this, KKeyChooser::Global, false );
+	m_pListGeneral = new KAccelShortcutList( m_actionsGeneral, true );
+	m_pkcGeneral = new KKeyChooser( m_pListGeneral, this, KKeyChooser::Global, false );
 	m_pTab->addTab( m_pkcGeneral, i18n("&Global Shortcuts") );
 	connect( m_pkcGeneral, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
-	m_pkcSequence = new KKeyChooser( m_actionsSequence, this, KKeyChooser::Global, false );
+	m_pListSequence = new KAccelShortcutList( m_actionsGeneral, true );
+	m_pkcSequence = new KKeyChooser( m_pListSequence, this, KKeyChooser::Global, false );
 	m_pTab->addTab( m_pkcSequence, i18n("Shortcut Se&quences") );
-	connect( m_pkcGeneral, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
+	connect( m_pkcSequence, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
-	m_pkcApplication = new KKeyChooser( m_actionsApplication, this, KKeyChooser::Standard, false );
+	m_pListApplication = new KStdAccel::ShortcutList;
+	m_pkcApplication = new KKeyChooser( m_pListApplication, this, KKeyChooser::Standard, false );
 	m_pTab->addTab( m_pkcApplication, i18n("&Application Shortcuts") );
 	connect( m_pkcApplication, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
@@ -228,10 +238,7 @@ void ShortcutsModule::createActionsSequence()
 
 void ShortcutsModule::readSchemeNames()
 {
-	//QStringList schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/" + KeyType + "/*.kksrc");
 	QStringList schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/*.kksrc");
-	//QRegExp r( "-kde[34].kksrc$" );
-	//QRegExp r( "-kde3.kksrc$" );
 
 	m_pcbSchemes->clear();
 	m_rgsSchemeFiles.clear();
@@ -284,27 +291,36 @@ void ShortcutsModule::slotSelectScheme( int )
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentItem() ];
 
 	if( sFilename == "cur" ) {
-		m_actionsGeneral.readActions( "Global Shortcuts", 0 );
-		m_actionsSequence.readActions( "Global Shortcuts", 0 );
-		m_actionsApplication.readActions( "Shortcuts", 0 );
+		// TODO: remove nulls params
+		m_pkcGeneral->syncToConfig( "Global Shortcuts", 0, true );
+		m_pkcSequence->syncToConfig( "Global Shortcuts", 0, true );
+		m_pkcApplication->syncToConfig( "Shortcuts", 0, true );
 	} else {
 		KSimpleConfig config( sFilename );
+		config.setGroup( "Settings" );
+		//m_sBaseSchemeFile = config.readEntry( "Name" );
 
-		m_actionsGeneral.readActions( "Global Shortcuts", &config );
-		m_actionsSequence.readActions( "Global Shortcuts", &config );
-		m_actionsApplication.readActions( "Shortcuts", &config );
+		// If the user's keyboard layout doesn't support the Win key,
+		//  but this layout scheme requires it,
+		if( !KKeyNative::keyboardHasWinKey()
+		    && config.readBoolEntry( "Uses Win Modifer", false ) ) {
+			// TODO: change "Win" to Win's label.
+			int ret = KMessageBox::warningContinueCancel( this,
+				i18n("This scheme requires the \"%1\" modifier key, which is not "
+				"available on your keyboard layout. Do you wish to view it anyway?" )
+				.arg(i18n("Win")) );
+			if( ret == KMessageBox::Cancel )
+				return;
+		}
+
+		m_pkcGeneral->syncToConfig( "Global Shortcuts", &config, true );
+		m_pkcSequence->syncToConfig( "Global Shortcuts", &config, true );
+		m_pkcApplication->syncToConfig( "Shortcuts", &config, true );
 	}
-
-	i18n("This scheme requires the \"%1\" modifier key, which is not available on your keyboard layout. "
-		"Do you wish to view it anyway?" ).arg( i18n("Win") );
 
 	m_prbPre->setChecked( true );
 	m_prbNew->setEnabled( false );
 	m_pbtnSave->setEnabled( false );
-
-	m_pkcGeneral->listSync();
-	m_pkcSequence->listSync();
-	m_pkcApplication->listSync();
 }
 
 void ShortcutsModule::slotSaveSchemeAs()
@@ -405,9 +421,9 @@ void ShortcutsModule::saveScheme()
 	m_pkcSequence->commitChanges();
 	m_pkcApplication->commitChanges();
 
-	m_actionsGeneral.writeActions( "Global Shortcuts", &config, true );
-	m_actionsSequence.writeActions( "Global Shortcuts", &config, true );
-	m_actionsApplication.writeActions( "Shortcuts", &config, true );
+	m_pListGeneral->writeSettings( "Global Shortcuts", &config, true );
+	m_pListSequence->writeSettings( "Global Shortcuts", &config, true );
+	m_pListApplication->writeSettings( "Shortcuts", &config, true );
 }
 
 void ShortcutsModule::slotRemoveScheme()

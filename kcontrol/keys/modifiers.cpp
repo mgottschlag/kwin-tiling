@@ -17,6 +17,7 @@
 #include <kkeynative.h>
 #include <klistview.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 
 #define XK_MISCELLANY
 #define XK_XKB_KEYS
@@ -57,14 +58,20 @@ Extra1		[]		[] User definable
 ModifiersModule::ModifiersModule( QWidget *parent, const char *name )
 :	QWidget( parent, name )
 {
+	readConfig();
+	initGUI();
+}
+
+void ModifiersModule::readConfig()
+{
+	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
+
 	m_sLabelCtrlOrig = KGlobal::config()->readEntry( "Label Ctrl", "Ctrl" );
 	m_sLabelAltOrig = KGlobal::config()->readEntry( "Label Alt", "Alt" );
 	m_sLabelWinOrig = KGlobal::config()->readEntry( "Label Win", "Win" );
 
-	m_bMacKeyboardOrig = (m_sLabelWinOrig != "Win");
+	m_bMacKeyboardOrig = KGlobal::config()->readBoolEntry( "Mac Keyboard", false );
 	m_bMacSwapOrig = m_bMacKeyboardOrig && KGlobal::config()->readBoolEntry( "Mac Modifier Swap", false );
-
-	initGUI();
 }
 
 // When [Apply] or [OK] are clicked.
@@ -74,23 +81,62 @@ void ModifiersModule::save()
 
 	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
 
-	KGlobal::config()->writeEntry( "Label Ctrl", m_plblCtrl->text(), true, true );
-	KGlobal::config()->writeEntry( "Label Alt", m_plblAlt->text(), true, true );
-	KGlobal::config()->writeEntry( "Label Win", m_plblWin->text(), true, true );
+	if( m_plblCtrl->text() != "Ctrl" )
+		KGlobal::config()->writeEntry( "Label Ctrl", m_plblCtrl->text(), true, true );
+	else
+		KGlobal::config()->deleteEntry( "Label Ctrl", true );
+
+	if( m_plblAlt->text() != "Alt" )
+		KGlobal::config()->writeEntry( "Label Alt", m_plblAlt->text(), true, true );
+	else
+		KGlobal::config()->deleteEntry( "Label Alt", true );
+
+	if( m_plblWin->text() != "Win" )
+		KGlobal::config()->writeEntry( "Label Win", m_plblWin->text(), true, true );
+	else
+		KGlobal::config()->deleteEntry( "Label Win", true );
+
+	if( m_pchkMacKeyboard->isChecked() )
+		KGlobal::config()->writeEntry( "Mac Keyboard", true, true, true );
+	else
+		KGlobal::config()->deleteEntry( "Mac Keyboard", true );
 
 	bool bMacSwap = m_pchkMacKeyboard->isChecked() && m_pchkMacSwap->isChecked();
-	KGlobal::config()->writeEntry( "Mac Modifier Swap", bMacSwap, true, true );
+	if( bMacSwap )
+		KGlobal::config()->writeEntry( "Mac Modifier Swap", bMacSwap, true, true );
+	else
+		KGlobal::config()->deleteEntry( "Mac Modifier Swap", true );
+
 	if( m_bMacSwapOrig != bMacSwap ) {
 		if( bMacSwap )
 			setupMacModifierKeys();
 		else
 			kapp->kdeinitExec("kxkb");
+		m_bMacSwapOrig = bMacSwap;
 		updateWidgets();
 	}
+	readConfig();
+}
+
+// Called when [Reset] is pressed
+void ModifiersModule::load()
+{
+	kdDebug(125) << "ModifiersModule::load()" << endl;
+
+	readConfig();
+	updateWidgetData();
 }
 
 void ModifiersModule::defaults()
 {
+	m_sLabelCtrlOrig = "Ctrl";
+	m_sLabelAltOrig = "Alt";
+	m_sLabelWinOrig = "Win";
+
+	m_bMacKeyboardOrig = false;
+	m_bMacSwapOrig = false;
+
+	updateWidgetData();
 }
 
 #define SET_CODE_SYM( iCode, sym ) \
@@ -155,7 +201,8 @@ void ModifiersModule::initGUI()
 	new QLabel( i18n("mod1"), pGroup );
 
 	m_plblWin = new QLabel( i18n("Win"), pGroup );
-	m_pcbWinX = newModXComboBox( pGroup );
+	m_plblWinModX = new QLabel( "", pGroup );
+	/*m_pcbWinX = newModXComboBox( pGroup );
 	int i;
 	switch( KKeyNative::modX(KKey::WIN) ) {
 		case Mod2Mask: i = 1; break;
@@ -164,7 +211,7 @@ void ModifiersModule::initGUI()
 		case Mod5Mask: i = 5; break;
 		default:       i = 0;
 	}
-	m_pcbWinX->setCurrentItem( i );
+	m_pcbWinX->setCurrentItem( i );*/
 
 	m_pchkMacKeyboard = new QCheckBox( "Macintosh keyboard", this );
 	m_pchkMacKeyboard->setChecked( m_bMacKeyboardOrig );
@@ -207,7 +254,7 @@ void ModifiersModule::initGUI()
 	updateWidgets();
 }
 
-KComboBox* ModifiersModule::newModXComboBox( QWidget* parent )
+/*KComboBox* ModifiersModule::newModXComboBox( QWidget* parent )
 {
 	KComboBox* pcb = new KComboBox( parent );
 	pcb->insertItem( "" );
@@ -216,6 +263,15 @@ KComboBox* ModifiersModule::newModXComboBox( QWidget* parent )
 	pcb->insertItem( "mod4" );
 	pcb->insertItem( "mod5" );
 	return pcb;
+}*/
+
+void ModifiersModule::updateWidgetData()
+{
+	m_plblCtrl->setText( m_sLabelCtrlOrig );
+	m_plblAlt->setText( m_sLabelAltOrig );
+	m_plblWin->setText( m_sLabelWinOrig );
+	m_pchkMacKeyboard->setChecked( m_bMacKeyboardOrig );
+	m_pchkMacSwap->setChecked( m_bMacSwapOrig );
 }
 
 void ModifiersModule::updateWidgets()
@@ -244,7 +300,18 @@ void ModifiersModule::updateWidgets()
 	for( int iKey = m_plstXMods->columns()-1; iKey < xmk->max_keypermod; iKey++ )
 		m_plstXMods->addColumn( i18n("Key %1").arg(iKey+1) );
 
+	//int iModWinDef = -1;
 	for( int iMod = 0; iMod < 8; iMod++ ) {
+		// Find the default modifier index for the Win key.
+		/*if( iMod > Mod2Index ) {
+			uint symX = XKeycodeToKeysym( qt_xdisplay(), xmk->modifiermap[xmk->max_keypermod * iMod], 0 );
+			if( symX == XK_Super_L || symX == XK_Super_R )
+				iModWinDef = iMod;
+			else if( iModWinDef == -1 && (symX == XK_Meta_L || symX == XK_Meta_R) )
+				iModWinDef = iMod;
+		}*/
+
+		// Insert items into X modifier map list
 		for( int iKey = 0; iKey < xmk->max_keypermod; iKey++ ) {
 			uint symX = XKeycodeToKeysym( qt_xdisplay(), xmk->modifiermap[xmk->max_keypermod * iMod + iKey], 0 );
 			m_plstXMods->itemAtIndex( iMod )->setText( 1 + iKey, XKeysymToString( symX ) );
@@ -252,25 +319,20 @@ void ModifiersModule::updateWidgets()
 	}
 
 	XFreeModifiermap( xmk );
+
+	int i;
+	switch( KKeyNative::modX(KKey::WIN) ) {
+		case Mod2Mask: i = 2; break;
+		case Mod3Mask: i = 3; break;
+		case Mod4Mask: i = 4; break;
+		case Mod5Mask: i = 5; break;
+		default:       i = 0;
+	}
+	if( i != 0 )
+		m_plblWinModX->setText( "mod" + QString::number(i) );
+	else
+		m_plblWinModX->setText( "<" + i18n("None") + ">" );
 }
-/*
-// Called when [Reset] is pressed
-void ModifiersModule::load()
-{
-	kdDebug(125) << "ModifiersModule::load()" << endl;
-
-	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard Layout" );
-	bool b = KGlobal::config()->readBoolEntry( "Use Four Modifier Keys",  false );
-	QString sLabel;
-	sLabel = KGlobal::config()->readEntry( "Label Ctrl" );
-	sLabel = KGlobal::config()->readEntry( "Label Alt" );
-	sLabel = KGlobal::config()->readEntry( "Label Win" );
-
-}
-
-	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard Layout" );
-	KGlobal::config()->writeEntry( "Use Four Modifier Keys", KAccelAction::g_bUseFourModifierKeys, true, true);
-*/
 
 void ModifiersModule::slotMacKeyboardClicked()
 {
@@ -280,8 +342,17 @@ void ModifiersModule::slotMacKeyboardClicked()
 
 void ModifiersModule::slotMacSwapClicked()
 {
-	updateWidgets();
-	emit changed( true );
+	if( m_pchkMacKeyboard->isChecked() && !KKeyNative::keyboardHasWinKey() ) {
+		KMessageBox::sorry( this,
+			i18n("You can only activate this option if your "
+			"X keyboard layout has the 'Super' or 'Meta' keys "
+			"properly configured as modifier keys."),
+			"Incompatibility" );
+		m_pchkMacSwap->setChecked( false );
+	} else {
+		updateWidgets();
+		emit changed( true );
+	}
 }
 
 #include "modifiers.moc"
