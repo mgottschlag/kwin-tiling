@@ -88,11 +88,11 @@ void CSSConfig::load()
   dialog->sheetName->setText(c->readEntry("SheetName"));
   
   c->setGroup("Font");
-  dialog->basefontsize->setEditText(QString("%1").arg(c->readNumEntry("BaseSize", 12)));
+  dialog->basefontsize->setEditText(QString::number(c->readNumEntry("BaseSize", 12)));
   dialog->dontScale->setChecked(c->readBoolEntry("DontScale", false));
 
   QString fname = c->readEntry("Family", "Arial");
-  for (int i=0; i<dialog->fontFamily->count(); ++i)
+  for (int i=0; i < dialog->fontFamily->count(); ++i)
     if (dialog->fontFamily->text(i) == fname)
       {
 	dialog->fontFamily->setCurrentItem(i);
@@ -106,9 +106,8 @@ void CSSConfig::load()
   dialog->blackOnWhite->setChecked(m == "black-on-white");
   dialog->whiteOnBlack->setChecked(m == "white-on-black");
   dialog->customColor->setChecked(m == "custom");
-  QColor white(Qt::white), black(Qt::black);
-  dialog->backgroundColor->setColor(c->readColorEntry("BackColor", &white));
-  dialog->foregroundColor->setColor(c->readColorEntry("ForeColor", &black));
+  dialog->backgroundColor->setColor(c->readColorEntry("BackColor", &Qt::white));
+  dialog->foregroundColor->setColor(c->readColorEntry("ForeColor", &Qt::black));
   dialog->sameColor->setChecked(c->readBoolEntry("SameColor", false));
 
   // Images
@@ -167,7 +166,7 @@ void CSSConfig::save()
 
       dest = kapp->dirs()->saveLocation("data", "kcmcss");
       dest += "/override.css";
-      
+
       css.expand(dest, cssDict());
     }
 
@@ -194,7 +193,7 @@ void CSSConfig::defaults()
 
 QString CSSConfig::quickHelp() const
 {
-  return "TODO";
+  return QString::fromLatin1("TODO");
 }
 
 
@@ -206,7 +205,10 @@ void CSSConfig::configChanged()
 
 char *px(int i, double scale)
 {
-  return strdup(QString("%1px").arg((int)((double)(i)*scale)).latin1());
+  static QCString px;
+  px.setNum(static_cast<int>(i * scale));
+  px += "px";
+  return strdup(px.data());
 }
 
 
@@ -263,7 +265,7 @@ QAsciiDict<char> CSSConfig::cssDict()
     dict.insert("force-color", strdup(""));
 
   // Fonts -------------------------------------------------------------
-  dict.insert("font-family", strdup(QString("\"%1\"").arg(dialog->fontFamily->currentText()).latin1()));
+  dict.insert("font-family", strdup(dialog->fontFamily->currentText().latin1()));
   if (dialog->sameFamily->isChecked())
     dict.insert("force-font", strdup("! important"));
   else
@@ -304,9 +306,9 @@ void CSSConfig::preview()
     }
   else
     {
-      h1->setFontSize((int)((double)(bfs)*1.8));
-      h2->setFontSize((int)((double)(bfs)*1.6));
-      h3->setFontSize((int)((double)(bfs)*1.4));      
+      h1->setFontSize(static_cast<int>(bfs * 1.8));
+      h2->setFontSize(static_cast<int>(bfs * 1.6));
+      h3->setFontSize(static_cast<int>(bfs * 1.4));      
     }
 
   // Colors
