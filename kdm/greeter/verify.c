@@ -432,11 +432,12 @@ done:
 #endif /* USE_PAM && _AIX */
     bzero(user_pass, strlen(user_pass)); /* in case shadow password */
 
-    if (!p->pw_uid)
+    if (!p->pw_uid) {
 	if (!greet->allow_root_login)
 	    FAILVV(V_NOROOT);
 	else
 	    goto norestr;	/* don't deny root to log in */
+    }
 
 #ifdef HAVE_GETUSERSHELL
     for (;;) {
@@ -458,9 +459,9 @@ done:
 #ifdef USE_LOGIN_CAP
 # ifdef __bsdi__
     /* This only works / is needed on BSDi */
-    lc = login_getclass(pwd->pw_class);
+    lc = login_getclass(p->pw_class);
 # else
-    lc = login_getpwclass(pwd);
+    lc = login_getpwclass(p);
 # endif
     if (!lc)
 	FAILVV(V_ERROR);
