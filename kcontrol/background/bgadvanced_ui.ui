@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>BGAdvancedBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>510</width>
-            <height>361</height>
+            <height>366</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>BGAdvancedBase</string>
     </property>
     <vbox>
         <property name="name">
@@ -43,6 +46,15 @@
                     <property name="text">
                         <string>&amp;Add...</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;
+&lt;p&gt;Click here if you want to add a program to the listbox. This button opens a dialog where you are asked to give details about the program you want to run. To successfully add a program, you must know if it is compatible, the name of the executable file and, if necessary, its options.&lt;/p&gt;
+&lt;p&gt;You usually can get the available options to a suitable program by typing in a terminal emulator the name of the executable file plus --help (foobar --help).&lt;/p&gt;
+&lt;/qt&gt;</string>
+                    </property>
                 </widget>
                 <widget class="QPushButton" row="2" column="1">
                     <property name="name">
@@ -54,6 +66,12 @@
                     <property name="text">
                         <string>&amp;Remove</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Click here to remove programs from this list. Please note that it does not remove the program from your system, it only removes it from the available options in the background drawing programs list.</string>
+                    </property>
                 </widget>
                 <widget class="QPushButton" row="3" column="1">
                     <property name="name">
@@ -64,6 +82,15 @@
                     </property>
                     <property name="text">
                         <string>&amp;Modify...</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+M</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;
+&lt;p&gt;Click here to modify the programs options. You usually can get the available options to a suitable program by typing in a terminal emulator the name of the executable file plus --help. (example: kwebdesktop --help).&lt;/p&gt;
+&lt;p&gt;One useful example is the program kwebdesktop. It draws a web page on the background of your desktop.  You can use this program by selecting it on the listbox on the right, but it will draw a predefined web page. To change the web page it renders, select the kwebdesktop program on the listbox, then click here. A dialog will appear, allowing you to change the web page by replacing the old address (URL) with a new one.&lt;/p&gt;
+&lt;/qt&gt;</string>
                     </property>
                 </widget>
                 <spacer row="4" column="1">
@@ -129,6 +156,17 @@
                             <height>0</height>
                         </size>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;
+&lt;p&gt;Select from this listbox the program you want to use to draw your desktop background.&lt;/p&gt;
+&lt;p&gt;The &lt;b&gt;Program&lt;/b&gt; column shows the name of the program.&lt;br&gt;
+The &lt;b&gt;Comment&lt;/b&gt; column brings a short description.&lt;br&gt;
+The &lt;b&gt;Refresh&lt;/b&gt; column indicates the time interval between redraws of the desktop.&lt;/p&gt;
+&lt;p&gt;The &lt;b&gt;K Web Desktop&lt;/b&gt; program (kwebdesktop) is worth noting: it draws a specified page of the web in your desktop. You can modify it, and the webpage it draws by selecting it here, then clicking on the &lt;b&gt;Modify&lt;/b&gt; button.&lt;br&gt;
+You can also add new compliant programs. To do that, click on the &lt;b&gt;Add&lt;/b&gt; button.&lt;br&gt;
+You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/b&gt; button. Please note that it does not remove the program from your system, it only removes it from the available options in this listbox.&lt;/p&gt;
+&lt;/qt&gt;</string>
+                    </property>
                 </widget>
                 <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
                     <property name="name">
@@ -136,6 +174,9 @@
                     </property>
                     <property name="text">
                         <string>Use the following program for drawing the background:</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check here if you want to allow a program to draw your desktop background. Below you can find the list of programs currently available for drawing the background. You may use one of the available programs, add new ones or modify the existing ones to fit your needs.</string>
                     </property>
                 </widget>
             </grid>
@@ -164,6 +205,9 @@
                     <property name="buddy" stdset="0">
                         <cstring>m_colorText</cstring>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Click here to change the color of the desktop font.</string>
+                    </property>
                 </widget>
                 <widget class="KColorButton" row="1" column="1">
                     <property name="name">
@@ -174,6 +218,9 @@
                     </property>
                     <property name="text">
                         <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Click here to select the solid background color. Choose a different color from the background text color to assure readability.</string>
                     </property>
                 </widget>
                 <widget class="KColorButton" row="0" column="1">
@@ -190,6 +237,9 @@
                     </property>
                     <property name="text">
                         <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Click here to change the color of the desktop font.</string>
                     </property>
                 </widget>
                 <spacer row="0" column="2" rowspan="2" colspan="1">
@@ -219,6 +269,9 @@
                     <property name="accel">
                         <string>Alt+U</string>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check here if you want to use a solid background color. This is useful to assure that the desktop text will be identifiable against all background colors and wallpapers, or in other words, that a background or wallpapers will not make a desktop text of a similar color difficult to read.</string>
+                    </property>
                 </widget>
                 <widget class="QCheckBox" row="2" column="0">
                     <property name="name">
@@ -229,6 +282,9 @@
                     </property>
                     <property name="accel">
                         <string>Alt+E</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check here to enable a shadow outline around the desktop font. This also improves the readability of the desktop text against backgrounds of a similar color.</string>
                     </property>
                 </widget>
             </grid>
