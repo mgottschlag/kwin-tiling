@@ -78,15 +78,20 @@ void IndexPane::resizeEvent(QResizeEvent *)
 
 void IndexPane::fillIndex(ConfigModuleList &list)
 {
-  QString username;
+  QString hostname, username;
+  char buf[128];
   char *user = getlogin();
+
+  gethostname(buf, 128);
+  if (strlen(buf)) hostname = QString("(%1)").arg(buf); else hostname = "";
   if (!user) user = getenv("LOGNAME");
   if (!user) username = ""; else username = QString("(%1)").arg(user);
+
   // add the top level nodes
   localUser = new QListViewItem(_tree, i18n("Local User %1").arg(username));
   localUser->setPixmap(0, KGlobal::iconLoader()->loadIcon(
         	ICON_LOCALUSER, KIconLoader::Small));
-  localMachine = new QListViewItem(_tree, i18n("Local Computer"));
+  localMachine = new QListViewItem(_tree, i18n("Local Computer %1").arg(hostname));
   localMachine->setPixmap(0, KGlobal::iconLoader()->loadIcon(
         	ICON_LOCALMACHINE, KIconLoader::Small));
 
