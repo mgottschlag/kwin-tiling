@@ -215,12 +215,13 @@ void ActionWidget::slotRightPressed( QListViewItem *item, const QPoint&, int )
     delete menu;
 }
 
-void ActionWidget::slotItemChanged( QListViewItem *item, const QPoint& pt, int col )
+void ActionWidget::slotItemChanged( QListViewItem *item, const QPoint&, int col )
 {
     if ( !item->parent() || col != 0 )
         return;
     ClipCommand command( item->text(0), item->text(1) );
-        item->setPixmap( 0, SmallIcon( command.pixmap.isEmpty() ? "exec" : command.pixmap ) );
+        item->setPixmap( 0, SmallIcon( command.pixmap.isEmpty() ? 
+                                                   "exec" : command.pixmap ) );
 }
 
 void ActionWidget::slotAddAction()
