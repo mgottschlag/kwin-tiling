@@ -48,7 +48,7 @@ public:
     typedef void (KBlobSaver::*AlgFunc)();
     struct KBSAlg
     {
-	char Name[64];
+	QString Name;
 	AlgFunc Init;
 	AlgFunc NextFrame;
     };

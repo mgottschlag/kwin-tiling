@@ -49,18 +49,14 @@ extern KLocale *glocale;
 
 static KBlobSaver *saver = NULL;
 
-char alg_str[5][30];
-/* Stephan: I have to replace this to enable i18n
-   char *alg_str[] = { "Random Linear", "Horizonal Sine", "Circular Bounce",
-   "Polar Coordinates", "Random" };
-   */
+QString alg_str[5];
 void initAlg() 
 {
-  strcpy(alg_str[0], glocale->translate("Random Linear"));
-  strcpy(alg_str[1], glocale->translate("Horizonal Sine"));
-  strcpy(alg_str[2], glocale->translate("Circular Bounce"));
-  strcpy(alg_str[3], glocale->translate("Polar Coordinates"));
-  strcpy(alg_str[4], glocale->translate("Random"));
+  alg_str[0] = glocale->translate("Random Linear");
+  alg_str[1] = glocale->translate("Horizonal Sine");
+  alg_str[2] = glocale->translate("Circular Bounce");
+  alg_str[3] = glocale->translate("Polar Coordinates");
+  alg_str[4] = glocale->translate("Random");
 }
 
 //-----------------------------------------------------------------------------
@@ -75,7 +71,7 @@ KBlobSaver::KBlobSaver
  initAlg();
  QColor color;
 	float ramp = (256.0-64.0)/(float)RAMP;
-	const char *msg = 
+	QString msg = 
 	  glocale->translate("Sorry. This screensaver needs a color display");
 
 	// needs colors to work this one
@@ -139,19 +135,19 @@ KBlobSaver::KBlobSaver
 	newalg = newalgp = 1;
 
 	// init algorithm space
-	strcpy(Algs[0].Name, alg_str[0]);
+	Algs[0].Name = alg_str[0];
 	Algs[0].Init = &KBlobSaver::lnSetup;
 	Algs[0].NextFrame = &KBlobSaver::lnNextFrame;
 
-	strcpy(Algs[1].Name, alg_str[1]);
+	Algs[1].Name = alg_str[1];
 	Algs[1].Init = &KBlobSaver::hsSetup;
 	Algs[1].NextFrame = &KBlobSaver::hsNextFrame;
 
-	strcpy(Algs[2].Name, alg_str[2]);
+	Algs[2].Name = alg_str[2];
 	Algs[2].Init = &KBlobSaver::cbSetup;
 	Algs[2].NextFrame = &KBlobSaver::cbNextFrame;
 
-	strcpy(Algs[3].Name, alg_str[3]);
+	Algs[3].Name = alg_str[3];
 	Algs[3].Init = &KBlobSaver::pcSetup;
 	Algs[3].NextFrame = &KBlobSaver::pcNextFrame;
 
@@ -451,7 +447,7 @@ KBlobSetup::KBlobSetup
 
   initAlg();
 	QPushButton *button;
-	char str[32];
+	QString str;
 
 	delete saver;
 	saver = NULL;
@@ -474,7 +470,7 @@ KBlobSetup::KBlobSetup
 	min_size(label);
 	stime = new QLineEdit(this);
 	fixed_size(stime);
-	sprintf(str, "%d", showtime);
+	str.setNum(showtime);
 	stime->setText(str);
 	tl11->addWidget(label);
 	tl11->addWidget(stime);
