@@ -13,6 +13,7 @@
 #include <X11/Xlib.h>
 #define explicit int_explicit        // avoid compiler name clash in XKBlib.h
 #include <X11/XKBlib.h>
+#undef explicit
 
 
 class KAccessApp : public KUniqueApplication
