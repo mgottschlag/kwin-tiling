@@ -323,6 +323,7 @@ void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
   CalendarVector calendars(2);
   calendars[0] = "gregorian";
   calendars[1] = "hijri";
+  calendars[2] = "hebrew";
 
   QString calendarType;
   bool ok;
@@ -341,6 +342,7 @@ void KLocaleConfigTime::slotLocaleChanged()
   CalendarVector calendars(2);
   calendars[0] = "gregorian";
   calendars[1] = "hijri";
+  calendars[2] = "hebrew";
 
   QString calendarType = m_locale->calendarType();
   int calendarSystem = 0;
@@ -449,12 +451,13 @@ void KLocaleConfigTime::slotTranslate()
 
   updateWeekDayNames();
 
-  while ( m_comboCalendarSystem->count() < 2 )
+  while ( m_comboCalendarSystem->count() < 3 )
     m_comboCalendarSystem->insertItem(QString::null);
   m_comboCalendarSystem->changeItem
     (m_locale->translate("Calendar System Gregorian", "Gregorian"), 0);
   m_comboCalendarSystem->changeItem
     (m_locale->translate("Calendar System Hijri", "Hijri"), 1);
+    (m_locale->translate("Calendar System Hebrew", "Hebrew"), 1);
 
   str = m_locale->translate
     ("<p>The text in this textbox will be used to format "
