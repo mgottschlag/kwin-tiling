@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>477</width>
-            <height>374</height>
+            <width>412</width>
+            <height>376</height>
         </rect>
     </property>
     <property stdset="1">
@@ -180,98 +180,7 @@
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget row="4"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>cbAutoSelect</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Automatically select icons</string>
-                    </property>
-                </widget>
-                <spacer row="5"  column="0" >
-                    <property>
-                        <name>name</name>
-                        <cstring>Spacer3</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>orientation</name>
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
-                        <enum>Fixed</enum>
-                    </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>20</width>
-                            <height>21</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget row="0"  column="0"  rowspan="1"  colspan="4" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>cbCursor</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Single-click to open files and folders (changes pointer shape over icons)</string>
-                    </property>
-                    <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget row="1"  column="0"  rowspan="1"  colspan="4" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>doubleClick</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Double-click to open files and folders (marks icons on first click)</string>
-                    </property>
-                </widget>
-                <widget row="2"  column="1"  rowspan="1"  colspan="3" >
-                    <class>Line</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Line1</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>orientation</name>
-                        <enum>Horizontal</enum>
-                    </property>
-                </widget>
-                <widget row="5"  column="1" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>lDelay</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Delay:</string>
-                    </property>
-                </widget>
-                <widget row="7"  column="1" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>lb_short</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Short</string>
-                    </property>
-                </widget>
-                <widget row="7"  column="2" >
+                <widget row="8"  column="2" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -289,7 +198,7 @@
                         <name>hAlign</name>
                     </property>
                 </widget>
-                <spacer row="6"  column="3" >
+                <spacer row="7"  column="3" >
                     <property>
                         <name>name</name>
                         <cstring>Spacer4</cstring>
@@ -310,7 +219,7 @@
                         </size>
                     </property>
                 </spacer>
-                <widget row="6"  column="1"  rowspan="1"  colspan="2" >
+                <widget row="7"  column="1"  rowspan="1"  colspan="2" >
                     <class>QSlider</class>
                     <property stdset="1">
                         <name>name</name>
@@ -325,7 +234,18 @@
                         <enum>Horizontal</enum>
                     </property>
                 </widget>
-                <widget row="3"  column="0"  rowspan="1"  colspan="3" >
+                <widget row="6"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>lDelay</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Delay:</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -336,7 +256,29 @@
                         <string>&amp;Visual feedback on activation</string>
                     </property>
                 </widget>
-                <widget row="3"  column="3" >
+                <widget row="5"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>cbAutoSelect</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Automatically select icons</string>
+                    </property>
+                </widget>
+                <widget row="8"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>lb_short</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Short</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -345,6 +287,79 @@
                     <property stdset="1">
                         <name>text</name>
                         <string>&amp;Large cursor</string>
+                    </property>
+                </widget>
+                <spacer row="6"  column="0" >
+                    <property>
+                        <name>name</name>
+                        <cstring>Spacer3</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>orientation</name>
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property stdset="1">
+                        <name>sizeType</name>
+                        <enum>Fixed</enum>
+                    </property>
+                    <property>
+                        <name>sizeHint</name>
+                        <size>
+                            <width>20</width>
+                            <height>21</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget row="3"  column="0"  rowspan="1"  colspan="4" >
+                    <class>Line</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Line1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>orientation</name>
+                        <enum>Horizontal</enum>
+                    </property>
+                </widget>
+                <widget row="2"  column="0"  rowspan="1"  colspan="4" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>doubleClick</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Double-click to open files and folders (select icons on first click)</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="1"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>cb_pointershape</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Change pointer shape over icons</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget row="0"  column="0"  rowspan="1"  colspan="4" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>cbCursor</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Single-click to open files and folders</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
                     </property>
                 </widget>
             </grid>
@@ -372,4 +387,12 @@
         </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>cbCursor</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>cb_pointershape</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 </UI>

@@ -147,6 +147,8 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect(tab1->slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
     connect(tab1->cbVisualActivate, SIGNAL(clicked()), this, SLOT(changed()));
 
+    connect(tab1->cb_pointershape, SIGNAL(clicked()), this, SLOT(changed()));
+
     connect(tab1->cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
     connect(tab1->cbCursor, SIGNAL(clicked()), this, SLOT(slotClick()));
 
@@ -335,7 +337,7 @@ void MouseConfig::load()
   wheelScrollLines->setValue(settings->wheelScrollLines);
 
   tab1->doubleClick->setChecked(!settings->singleClick);
-
+  tab1->cb_pointershape->setChecked(settings->changeCursor);
   tab1->cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
   if ( settings->autoSelectDelay < 0 )
      tab1->slAutoSelect->setValue( 0 );
@@ -360,7 +362,8 @@ void MouseConfig::save()
   settings->singleClick = !tab1->doubleClick->isChecked();
   settings->autoSelectDelay = tab1->cbAutoSelect->isChecked()? tab1->slAutoSelect->value():-1;
   settings->visualActivate = tab1->cbVisualActivate->isChecked();
-  settings->changeCursor = tab1->cbCursor->isChecked();
+//  settings->changeCursor = tab1->cbCursor->isChecked();
+  settings->changeCursor = tab1->cb_pointershape->isChecked();
   settings->largeCursor = tab1->cbLargeCursor->isChecked();
 
   // Check if the user has asked us not to remind them that KDE needs
