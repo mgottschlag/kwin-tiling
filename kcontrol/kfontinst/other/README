@@ -1,0 +1,7 @@
+Files contained with 'other'
+============================
+
+psnames     contains a list of unicode to postscript-names
+            mappings - to fix errors in .ttf files
+
+StarOffice/ Contains xprinter.prolog files

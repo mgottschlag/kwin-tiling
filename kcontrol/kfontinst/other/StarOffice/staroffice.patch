@@ -1,0 +1,128 @@
+132c
+	16#9b /guilsingright
+.
+121c
+	16#8e /Zcaron
+.
+119c
+	16#8b /guilsingleft
+.
+109c
+	16#80 /Euro
+.
+31d
+0a
+% Patch for ./Office51/xp3/xprinter.prolog to print fonts encoded with
+% CP1252 correctly
+%
+% The code in this patch is copyright (c) 2000 Michael Davis
+% 
+% This program is free software; you can redistribute it and/or modify it
+% under the terms of the GNU General Public License as published by the
+% Free Software Foundation; either version 2 of the License, or (at your
+% option) any later version.
+% 
+% This program is distributed in the hope that it will be useful, but
+% WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+% or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+% for more details.
+%
+% Version history
+%
+% 13 May 2000     Initial public release, version 1.0
+%
+% USAGE: Check that the settings in USER DEFINITIONS (below) are correct
+% before use. The defaults should work for most people.
+
+% USER DEFINITIONS
+
+% 100 defines the maximum no. of fonts in a document. Increase it
+% if you need to print documents with more fonts. Remember that each
+% font family typically requires four fonts for normal, bold, italic and
+% bolditalic faces.
+/FontEncodingDict 100 dict def
+
+% Some fonts don't need to be reencoded. Add them to the dictionary here.
+FontEncodingDict begin
+   % MS FontPack fonts
+   /Webdings /Webdings def
+
+   % Win95 fonts
+   /Symbol /Symbol def
+   /Wingdings-Regular /Wingdings-Regular def
+end
+
+% END USER DEFINITIONS
+% Don't modify anything below here unless you know what you are doing
+
+/ff {
+   FontEncodingDict begin
+      dup where {
+         % the font has a predefined encoding, get it
+         pop load
+      } {
+         % no predefined encoding, reencode the font
+         dup findfont begin
+            /FontName load
+         end
+         dup length /TmpFontNameLen exch def
+         TmpFontNameLen string cvs
+         TmpFontNameLen 7 add string
+         /TmpFontName exch def
+         TmpFontName exch 0 exch putinterval
+         TmpFontName TmpFontNameLen (WinAnsi) putinterval
+         dup TmpFontName cvn def
+         12 dict begin
+            /SysFontDict exch findfont def
+            /NewFontDict SysFontDict maxlength dict def
+            SysFontDict {
+               exch dup /FID eq { pop pop }
+               {
+                  dup /Encoding eq {
+                     exch dup length array copy
+                     NewFontDict 3 1 roll put
+                  } {
+                     exch NewFontDict 3 1 roll put
+                  } ifelse
+               } ifelse
+            } forall
+
+            % rename the font.
+            NewFontDict /FontName TmpFontName put
+
+            % reencode using changesvec
+            changesvec dup length 2 div /noofchanges exch def aload pop
+            1 1 noofchanges {
+               pop
+               NewFontDict /Encoding get 3 1 roll put
+            } for
+
+            % for some reason, some fonts use different glyph names for
+            % single guillemots
+            SysFontDict begin
+               CharStrings /guilsingleft known not {
+                  NewFontDict /Encoding get 16#8b /guilsinglleft put
+                  NewFontDict /Encoding get 16#9b /guilsinglright put
+               } if
+            end
+
+            % enroll font in FontDirectory
+            TmpFontName NewFontDict definefont pop
+         end
+
+         TmpFontName
+      } ifelse
+   end
+   findfont
+} def
+
+% End of patch.
+%
+% The original xprinter.prolog follows. The following modifications
+% were made:
+%
+% 1. The definition for /ff has been removed, as it is redefined above.
+% 2. Spelling of some glyph names corrected (Euro, guilsingleft, Zcaron,
+%    guilsingright).
+
+.

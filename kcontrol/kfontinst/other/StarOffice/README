@@ -1,0 +1,10 @@
+StarOffice files
+================
+
+staroffice.patch     is a patch for StarOffice's xprinter.prolog file to enable
+                     the correct printing of X11 fonts encoded with the
+                     microsoft-cp1252 (win-ansi) encoding scheme.
+
+microsoft-cp1252.xpp is a version of StarOffice's xprinter.prolog with the patch
+                     already applied.
+

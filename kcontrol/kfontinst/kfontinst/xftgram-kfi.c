@@ -1,0 +1,21 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+// File Name     : xftgram-kfi.c
+// Author        : Craig Drummond
+// Project       : K Font Installer (kfontinst-kcontrol)
+// Creation Date : 07/07/2001
+// Version       : $Revision$ $Date$
+//
+////////////////////////////////////////////////////////////////////////////////
+// (C) Craig Drummond, 2001
+////////////////////////////////////////////////////////////////////////////////
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+/* Add XFT guard around xftgram.c... */
+ 
+#ifdef HAVE_XFT
+#include "xftgram.c"
+#endif

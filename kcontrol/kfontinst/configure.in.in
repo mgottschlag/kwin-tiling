@@ -1,0 +1,90 @@
+
+dnl without this order in this file, autoconf will not work!
+dnl the argument is a source file out of your sources. But
+dnl acinclude.m4 makes the job for all programs ;-)
+AC_INIT(acinclude.m4)
+
+dnl without this order in this file, automake will be confused!
+dnl the argument 
+AM_CONFIG_HEADER(config.h)
+
+dnl inits some variables needed by automake's Makefiles.
+dnl add here the package name and it's version number. It will
+dnl be defined in config.h and in the Makefiles
+AM_INIT_AUTOMAKE(kfontinst, 0.10)
+
+dnl sets the prefix to $KDEDIR or /usr/local/kde (if no $KDEDIR
+dnl set) for the case, that there is no --prefix
+AC_PREFIX_DEFAULT(${KDEDIR:-/usr/local/kde})
+
+dnl the first KDE macro to check for the Compilers needed. The
+dnl default autoconf macro had not the best support for C++ compilers.
+AC_CHECK_COMPILERS
+
+dnl don't build libraries. This mainly disables the configure switches
+dnl --enable-shared and --enable-static, since they don't make that much
+dnl sense then :)
+AM_DISABLE_LIBRARIES
+
+dnl let libtool configure. Checks for the way to handle your compiler
+dnl to do some magic 
+KDE_PROG_LIBTOOL
+
+dnl adds --disable-nls to not install the .gmo files out of po. If you
+dnl don't have i18n support, you may want to remove this, but leaving it
+dnl here doesn't hurt
+AM_KDE_WITH_NLS
+
+dnl definitly the biggest macro. Checks for X, qt, moc, KDE and the
+dnl correct paths to install to. This macro adds about 1700 lines to
+dnl your configure, so be aware not to remove it!
+AC_PATH_KDE    
+
+dnl in this space add everything you want to check for;
+dnl examples are specific headers, libraries, etc.
+dnl everything to compile and run a KDE program is already checked
+
+dnl -- FreeType v2 --------------------------------------------------------------
+FREETYPE_INC=NO
+AC_MSG_CHECKING([for FreeType2 freetype/t1tables.h])
+FREETYPE_INC_DIRS="/usr/include /usr/include/freetype2 /usr/local/include /usr/local/include/freetype2 /usr/X11R6/include/freetype2 $kde_extra_includes"
+AC_FIND_FILE(freetype/t1tables.h,$FREETYPE_INC_DIRS,FREETYPE_INC)
+if test "$FREETYPE_INC" = NO; then
+    AC_MSG_ERROR([FreeType2 headers not found!])
+else
+    AC_MSG_RESULT([yes, $FREETYPE_INC])
+    FREETYPE_INC="-I$FREETYPE_INC"
+fi
+
+if test "$FREETYPE_INC" != NO; then
+    dnl FreeType 2.0.1 has a ftnames.h, whereas 2.0.2 calls it ftsnames.h
+    AC_MSG_CHECKING([for FreeType2 freetype/ftsnames.h])
+    AC_FIND_FILE(freetype/ftsnames.h,$FREETYPE_INC_DIRS,FT2_FTSNAMES)
+    if test "$FT2_FTSNAMES" = NO; then
+        AC_MSG_RESULT([no])
+    else
+        AC_MSG_RESULT([yes])
+        AC_DEFINE(HAVE_FT2_FTSNAMES)
+    fi
+
+    AC_CHECK_LIB(freetype,main,FREETYPE_LIB="-lfreetype",FREETYPE_LIB="NO")
+    if test "$FREETYPE_LIB" = NO; then
+        AC_MSG_ERROR([FreeType2 library not found!])
+    else
+        AC_DEFINE(HAVE_FT2)
+        AC_SUBST(FREETYPE_LIB)
+        AC_SUBST(FREETYPE_INC)
+    fi
+fi
+
+dnl -- Xft/XRender --------------------------------------------------------------
+AC_MSG_CHECKING([for Xft/XRender X11/Xft/Xft.h])
+FOUND_XFT=NO
+AC_CHECK_HEADERS(X11/Xft/Xft.h,FOUND_XFT="YES",FOUND_XFT="NO")
+if test "$FOUND_XFT" = YES; then
+    AC_DEFINE(HAVE_XFT)
+fi
+
+dnl add here all your Makefiles. This are created by configure
+AC_OUTPUT(Makefile kfontinst/Makefile kfontinst/docs/Makefile kfontinst/docs/en/Makefile other/Makefile other/StarOffice/Makefile)
+

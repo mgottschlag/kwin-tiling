@@ -1,0 +1,496 @@
+<!DOCTYPE UI><UI>
+<class>CSettingsWizardData</class>
+<comment>////////////////////////////////////////////////////////////////////////////////
+//
+// Class Name    : CSettingsWizardData
+// Author        : Craig Drummond
+// Project       : K Font Installer (kfontinst-kcontrol)
+// Creation Date : 22/04/2001
+// Version       : $Revision$ $Date$
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+////////////////////////////////////////////////////////////////////////////////
+// (C) Craig Drummond, 2001
+////////////////////////////////////////////////////////////////////////////////</comment>
+<widget>
+    <class>QWizard</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>CSettingsWizardData</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>641</width>
+            <height>436</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Settings Wizard</string>
+    </property>
+    <widget>
+        <class>QWidget</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>itsIntroPage</cstring>
+        </property>
+        <attribute>
+            <name>title</name>
+            <string>Welcome To KFontinst</string>
+        </attribute>
+        <grid>
+            <property stdset="1">
+                <name>margin</name>
+                <number>11</number>
+            </property>
+            <property stdset="1">
+                <name>spacing</name>
+                <number>6</number>
+            </property>
+            <widget row="0"  column="0"  rowspan="1"  colspan="3" >
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>itsMainText</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>As this is the first time you have run KFontinst, there are some configuration settings that you will need to inform KFontinst of.</string>
+                </property>
+                <property stdset="1">
+                    <name>alignment</name>
+                    <set>WordBreak|AlignTop|AlignLeft</set>
+                </property>
+                <property>
+                    <name>vAlign</name>
+                </property>
+                <property>
+                    <name>wordwrap</name>
+                </property>
+            </widget>
+            <spacer row="5"  column="2" >
+                <property>
+                    <name>name</name>
+                    <cstring>Spacer1</cstring>
+                </property>
+                <property stdset="1">
+                    <name>orientation</name>
+                    <enum>Vertical</enum>
+                </property>
+                <property stdset="1">
+                    <name>sizeType</name>
+                    <enum>Expanding</enum>
+                </property>
+                <property>
+                    <name>sizeHint</name>
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget row="4"  column="0"  rowspan="1"  colspan="3" >
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Please press "Next&gt;" to proceed.</string>
+                </property>
+            </widget>
+            <spacer row="3"  column="0" >
+                <property>
+                    <name>name</name>
+                    <cstring>Spacer3</cstring>
+                </property>
+                <property stdset="1">
+                    <name>orientation</name>
+                    <enum>Vertical</enum>
+                </property>
+                <property stdset="1">
+                    <name>sizeType</name>
+                    <enum>Fixed</enum>
+                </property>
+                <property>
+                    <name>sizeHint</name>
+                    <size>
+                        <width>16</width>
+                        <height>16</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget row="2"  column="0"  rowspan="1"  colspan="3" >
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>itsNonRootText</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>NOTE: As you are not logged in as "root", then the settings will refer to your own personal settings - any fonts installed by you will (normally) only be available to you. To install fonts system-wide, login as root.</string>
+                </property>
+                <property stdset="1">
+                    <name>alignment</name>
+                    <set>WordBreak|AlignVCenter|AlignLeft</set>
+                </property>
+                <property>
+                    <name>wordwrap</name>
+                </property>
+            </widget>
+            <spacer row="1"  column="1" >
+                <property>
+                    <name>name</name>
+                    <cstring>Spacer2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>orientation</name>
+                    <enum>Vertical</enum>
+                </property>
+                <property stdset="1">
+                    <name>sizeType</name>
+                    <enum>Fixed</enum>
+                </property>
+                <property>
+                    <name>sizeHint</name>
+                    <size>
+                        <width>16</width>
+                        <height>16</height>
+                    </size>
+                </property>
+            </spacer>
+        </grid>
+    </widget>
+    <widget>
+        <class>QWidget</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>itsDirsAndFilesPage</cstring>
+        </property>
+        <attribute>
+            <name>title</name>
+            <string>Folder/File Locations</string>
+        </attribute>
+        <grid>
+            <property stdset="1">
+                <name>margin</name>
+                <number>11</number>
+            </property>
+            <property stdset="1">
+                <name>spacing</name>
+                <number>6</number>
+            </property>
+            <widget row="0"  column="1" >
+                <class>CDirSettingsWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>MyCustomWidget1</cstring>
+                </property>
+                <property stdset="1">
+                    <name>sizePolicy</name>
+                    <sizepolicy>
+                        <hsizetype>3</hsizetype>
+                        <vsizetype>3</vsizetype>
+                    </sizepolicy>
+                </property>
+            </widget>
+            <widget row="0"  column="0" >
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>sizePolicy</name>
+                    <sizepolicy>
+                        <hsizetype>0</hsizetype>
+                        <vsizetype>3</vsizetype>
+                    </sizepolicy>
+                </property>
+                <property stdset="1">
+                    <name>minimumSize</name>
+                    <size>
+                        <width>160</width>
+                        <height>200</height>
+                    </size>
+                </property>
+                <property stdset="1">
+                    <name>maximumSize</name>
+                    <size>
+                        <width>160</width>
+                        <height>32767</height>
+                    </size>
+                </property>
+                <property stdset="1">
+                    <name>frameShape</name>
+                    <enum>Panel</enum>
+                </property>
+                <property stdset="1">
+                    <name>frameShadow</name>
+                    <enum>Sunken</enum>
+                </property>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>10</number>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>KFontinst has determined the following values for your X11 and Ghostscript Fontmap folders and files. Please enter the correct location for any entries containing "&lt;Not Found&gt;"</string>
+                </property>
+                <property stdset="1">
+                    <name>alignment</name>
+                    <set>WordBreak|AlignTop|AlignLeft</set>
+                </property>
+                <property>
+                    <name>vAlign</name>
+                </property>
+                <property>
+                    <name>wordwrap</name>
+                </property>
+            </widget>
+        </grid>
+    </widget>
+    <widget>
+        <class>QWidget</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>itsAAPage</cstring>
+        </property>
+        <attribute>
+            <name>title</name>
+            <string>Anti-Aliasing</string>
+        </attribute>
+        <grid>
+            <property stdset="1">
+                <name>margin</name>
+                <number>11</number>
+            </property>
+            <property stdset="1">
+                <name>spacing</name>
+                <number>6</number>
+            </property>
+            <widget row="0"  column="0" >
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1_2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>sizePolicy</name>
+                    <sizepolicy>
+                        <hsizetype>0</hsizetype>
+                        <vsizetype>3</vsizetype>
+                    </sizepolicy>
+                </property>
+                <property stdset="1">
+                    <name>minimumSize</name>
+                    <size>
+                        <width>160</width>
+                        <height>200</height>
+                    </size>
+                </property>
+                <property stdset="1">
+                    <name>maximumSize</name>
+                    <size>
+                        <width>160</width>
+                        <height>32767</height>
+                    </size>
+                </property>
+                <property stdset="1">
+                    <name>frameShape</name>
+                    <enum>Panel</enum>
+                </property>
+                <property stdset="1">
+                    <name>frameShadow</name>
+                    <enum>Sunken</enum>
+                </property>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>10</number>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>If your system is capable of using the XRender extension for anti-aliasing fonts, then please enter the relevant data.</string>
+                </property>
+                <property stdset="1">
+                    <name>alignment</name>
+                    <set>WordBreak|AlignTop|AlignLeft</set>
+                </property>
+                <property>
+                    <name>vAlign</name>
+                </property>
+                <property>
+                    <name>wordwrap</name>
+                </property>
+            </widget>
+            <widget row="0"  column="1" >
+                <class>CXftConfigSettingsWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>XftWizard</cstring>
+                </property>
+            </widget>
+        </grid>
+    </widget>
+    <widget>
+        <class>QWidget</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>itsStarOfficePage</cstring>
+        </property>
+        <attribute>
+            <name>title</name>
+            <string>StarOffice</string>
+        </attribute>
+        <grid>
+            <property stdset="1">
+                <name>margin</name>
+                <number>11</number>
+            </property>
+            <property stdset="1">
+                <name>spacing</name>
+                <number>6</number>
+            </property>
+            <widget row="0"  column="1" >
+                <class>CStarOfficeSettingsWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>itsSOWidget</cstring>
+                </property>
+                <property stdset="1">
+                    <name>sizePolicy</name>
+                    <sizepolicy>
+                        <hsizetype>3</hsizetype>
+                        <vsizetype>3</vsizetype>
+                    </sizepolicy>
+                </property>
+            </widget>
+            <widget row="0"  column="0" >
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1_2_2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>sizePolicy</name>
+                    <sizepolicy>
+                        <hsizetype>0</hsizetype>
+                        <vsizetype>3</vsizetype>
+                    </sizepolicy>
+                </property>
+                <property stdset="1">
+                    <name>minimumSize</name>
+                    <size>
+                        <width>160</width>
+                        <height>200</height>
+                    </size>
+                </property>
+                <property stdset="1">
+                    <name>maximumSize</name>
+                    <size>
+                        <width>160</width>
+                        <height>32767</height>
+                    </size>
+                </property>
+                <property stdset="1">
+                    <name>frameShape</name>
+                    <enum>Panel</enum>
+                </property>
+                <property stdset="1">
+                    <name>frameShadow</name>
+                    <enum>Sunken</enum>
+                </property>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>10</number>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>If you wish to enable configuration of StarOffice from KFontinst, then select the "Configure" option, and enter the location of the main StarOffice folder.
+
+NOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The only thing that these two require is the exsistence of AFM files for Type1 fonts. This can be set using the "System" part of the "Settings" tab when the module has loaded.</string>
+                </property>
+                <property stdset="1">
+                    <name>alignment</name>
+                    <set>WordBreak|AlignTop|AlignLeft</set>
+                </property>
+                <property>
+                    <name>vAlign</name>
+                </property>
+                <property>
+                    <name>wordwrap</name>
+                </property>
+            </widget>
+        </grid>
+    </widget>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>CDirSettingsWidget</class>
+        <header location="local">DirSettingsWidget.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+    </customwidget>
+    <customwidget>
+        <class>CStarOfficeSettingsWidget</class>
+        <header location="local">StarOfficeSettingsWidget.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+    </customwidget>
+    <customwidget>
+        <class>CXftConfigSettingsWidget</class>
+        <header location="local">XftConfigSettingsWidget.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+    </customwidget>
+</customwidgets>
+<images>
+    <image>
+        <name>image0</name>
+        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1ddec44f503c0ae2a154410f53d0ed20e2bf6bdb656dd6861dd23d9a66591b0587fd1654235ebded6f0edcd53e419d87ae7b1f4f9b8f906d0bfe012317426a70b07bdc2f3ec77f8ed6b89559061a0343d06a124cc105596482585094bc0ae599b04646c9018926491b2205e140c485cace25755c175d0a967b622ff900b8cc9c7d29af594ea722d589167f813aa852ba07d94b9dce296e883fe7bb163f23896753</data>
+    </image>
+</images>
+</UI>

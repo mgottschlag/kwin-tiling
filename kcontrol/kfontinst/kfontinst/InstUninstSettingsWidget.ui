@@ -1,0 +1,319 @@
+<!DOCTYPE UI><UI>
+<class>CInstUninstSettingsWidgetData</class>
+<comment>////////////////////////////////////////////////////////////////////////////////
+//
+// Class Name    : CInstUninstSettingsWidgetData
+// Author        : Craig Drummond
+// Project       : K Font Installer (kfontinst-kcontrol)
+// Creation Date : 27/04/2001
+// Version       : $Revision$ $Date$
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+////////////////////////////////////////////////////////////////////////////////
+// (C) Craig Drummond, 2001
+////////////////////////////////////////////////////////////////////////////////</comment>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>CInstUninstSettingsWidgetData</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>315</width>
+            <height>187</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>sizePolicy</name>
+        <sizepolicy>
+            <hsizetype>3</hsizetype>
+            <vsizetype>5</vsizetype>
+        </sizepolicy>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form2</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <spacer row="3"  column="1" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer5</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+            <class>QGroupBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>GroupBox5</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>Upon Install:</string>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>itsFixTtfPsNamesUponInstall</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Fix &amp;TrueType Postscript names table</string>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>Some TrueType fonts have incorrect
+Postscript names for certain characters.
+
+For example, "Euro" is sometimes listed
+as "uni20ac". This would affect any
+Postscript output from applications (and
+most produce Postscript when printing),
+as it would list the use of the "Euro"
+character -but when this Postscript
+output is sent to the printer, or viewed,
+the "Euro" symbol would not be found.
+
+Selecting this option will cause the installer
+to automatically correct any broken fonts.</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
+            <class>QButtonGroup</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ButtonGroup1</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>To Uninstall:</string>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>itsDeleteRadio</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>De&amp;lete</string>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>If this is selected, then any fonts you choose
+to uninstall will be deleted.</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="3" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>itsUninstallDirButton</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>minimumSize</name>
+                        <size>
+                            <width>22</width>
+                            <height>22</height>
+                        </size>
+                    </property>
+                    <property stdset="1">
+                        <name>maximumSize</name>
+                        <size>
+                            <width>22</width>
+                            <height>22</height>
+                        </size>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>.</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Change Folder.</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="1" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>itsMoveRadio</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>M&amp;ove to:</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>If this is selected, then any fonts you choose
+to uninstall will be moved to the desired folder.</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="2" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>itsUninstallDirText</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>1</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>frameShape</name>
+                        <enum>Panel</enum>
+                    </property>
+                    <property stdset="1">
+                        <name>frameShadow</name>
+                        <enum>Sunken</enum>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>TextLabel4</string>
+                    </property>
+                    <property stdset="1">
+                        <name>alignment</name>
+                        <set>WordBreak|AlignVCenter|AlignLeft</set>
+                    </property>
+                    <property>
+                        <name>wordwrap</name>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <spacer row="1"  column="0" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1_2_2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Fixed</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>16</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>itsMoveRadio</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>itsUninstallDirButton</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>itsFixTtfPsNamesUponInstall</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CInstUninstSettingsWidgetData</receiver>
+        <slot>fixTtfNamesSelected(bool)</slot>
+    </connection>
+    <connection>
+        <sender>itsMoveRadio</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CInstUninstSettingsWidgetData</receiver>
+        <slot>moveToSelected(bool)</slot>
+    </connection>
+    <connection>
+        <sender>itsUninstallDirButton</sender>
+        <signal>clicked()</signal>
+        <receiver>CInstUninstSettingsWidgetData</receiver>
+        <slot>uninstallDirButtonPressed()</slot>
+    </connection>
+    <slot access="public">fixTtfNamesSelected(bool)</slot>
+    <slot access="public">moveToSelected(bool)</slot>
+    <slot access="public">processAfmsSelected(bool)</slot>
+    <slot access="public">uninstallDirButtonPressed()</slot>
+</connections>
+<tabstops>
+    <tabstop>itsFixTtfPsNamesUponInstall</tabstop>
+    <tabstop>itsMoveRadio</tabstop>
+    <tabstop>itsUninstallDirButton</tabstop>
+</tabstops>
+</UI>

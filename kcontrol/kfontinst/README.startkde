@@ -1,0 +1,29 @@
+#
+# This file lists modifications that need to be made to startkde, or your login script, in order to
+# allow non-root users to install fonts...
+#
+
+#
+# Add the following before the call to xset fp rehash in startkde
+#
+kde_fontsdir=$kdehome/share/fonts
+kde_fontpaths=$kde_fontsdir/fontpaths
+ 
+if test -r $kde_fontpaths ; then
+    for fpath in `cat $kde_fontpaths | grep -v '#'` ; do
+        if test -s $fpath/fonts.dir ; then
+            xset fp+ $fpath
+        fi
+    done
+fi
+
+#
+# This next section is for Ghostscript and it should be added after the above...
+#
+if test -n "$GS_LIB" ; then
+    GS_LIB=$kde_fontsdir:$GS_LIB
+    export GS_LIB
+else
+    GS_LIB=$kde_fontsdir
+    export GS_LIB
+fi

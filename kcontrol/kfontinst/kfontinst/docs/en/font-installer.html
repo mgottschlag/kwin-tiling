@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Font Installer</TITLE>
+<META HTTP-EQUIV="content-type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="keywords" CONTENT="Font installer">
+<META NAME="description" CONTENT="KDE Font installer">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#AA0000" VLINK="#AA0055" ALINK="#AA0000" STYLE="font-family: sans-serif;">
+<DIV CLASS="logoheader"><A HREF="http://www.kde.org/"><IMG SRC="common/logotp3.png" BORDER="0" ALT="The K Desktop Environment" HEIGHT="62" WIDTH="229"></A></DIV>
+<DIV CLASS="NAVHEADER">
+
+<TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0" >
+<TR>
+<TH COLSPAN="3" >The <SPAN CLASS="APPLICATION" ><SPAN CLASS="ACRONYM">KDE</SPAN > Control Center</SPAN>
+</TH>
+</TR>
+<TD WIDTH="10%" ALIGN="left" VALIGN="bottom"></TD>
+<TD WIDTH="80%" ALIGN="center" VALIGN="bottom"></TD>
+<TD WIDTH="10%" ALIGN="right" VALIGN="bottom"></TD>
+</TR>
+</TABLE>
+<HR ALIGN="LEFT" WIDTH="100%">
+</DIV>
+<DIV CLASS="SECT1">
+<H1>Font Installer</H1>
+<p>This module is responsible for installing (and uninstalling) fonts. The installer will configure X (XFree86), XRender,
+(anti-aliasing), Ghostscript (printing), KDE and StarOffice, for any TrueType (.ttf) and Type1 (.pfa, .pfb) fonts that you care to install
+- bitmap (.bdf, .pcf, .snf), and Speedo (.spd), fonts will also be installed, but these can <B>only</B> used by X.</p>
+<p>When the module is started by a normal (non-root) user, then the settings will refer to their personal configuration, and
+installed fonts will be available to them only. For root, the settings will usually refer to the system-wide configuration, and
+as such any installed fonts should be available to all users.</p>
+<p>The module has two main modes of operation:
+<ul>
+<li><i>Advanced</i> In this mode the complete X11 folder structure is represented, and the module has a 'file manager' like appearance. In this
+mode all installed fonts can be displayed, and all types may be installed.</li>
+<li><i>Basic</i> In this mode the X11 folder structure is hidden from the user, and only TrueType1 and Type1 fonts are shown and can be installed.</li>
+</ul>
+</p>
+<p>The module has 3 main tabs, and these are described in detail below.</p>
+<h2>Fonts Tab</h2>
+<p>This tab is where the process of installing/uninstalling fonts takes place.</p>
+<p>Installing a font is simply a matter of selecting the desired font in the "Install From" list, and pressing the "Install" button. In "Basic" mode,
+the "Change Folder" button may be used to select a different folder to install from. In "Advanced" mode, you must select a destination folder before
+the fonts may be installed.</p>
+<p>Un-installing a font, again is simply a matter of selecting the desired font in the "Install To" list,  and pressing the "Remove" button. This
+will either delete the font, or move it to a predefined folder - the configuration of this is performed in the "Settings" tab.</p>
+<p>After you have finished installing and uninstalling fonts, you should then press the "Apply..." button - this 'activates' the changes, by
+altering the configuration files for X, XRender, Ghostscript, and StarOffice (for the rest of this help file, this process is
+referred to as the "Configure System" process).</p> 
+<h4>Advanced Mode</h4>
+<p>In this mode, folders that are in X's font path are shown in bold, and those which are marked as "unscaled" are shown in italic.
+<p>When in "Advanced Mode", there is extra functionality available within the "Install to" list. This is activated by right clicking on an entry in the list.
+The functionality is:
+<ul>
+<li><i>Fix TTF postscript names</i> This option will alter the "Postscript" names table contained within a TrueType font, fixing errors as described in the
+"Install/Uninstall" section below.</li>
+<li><i>Create new sub-folder</i></li>
+<li><i>Delete folder</i></li>
+<li><i>Add to X font path</i> This will add a folder X's font path - enabling the fonts within</li>
+<li><i>Remove from X font path</i> Removes the folder from X's font path - disabling the fonts within</li>
+<li><i>"Touch" folder</i> Marks the folder as having been modified - so that the installer will configure this folder the next time "Apply..." button is pressed.
+Folders which have fonts installed to / uninstalled from will automatically be marked as modified</li>
+<li><i>Set unscaled</i> Tells X to not scale the fonts within the folder - this is only really applicable to folders with bitmap fonts, as these can look
+very ugly when scaled</li>
+<li><i>Set scaled</i> Removes the "unscaled" property</li>
+</ul>
+<p>Also added is the ability to install/uninstall complete folders.</p>
+<h2>Anti-Aliasing Tab</h2>
+<p>This section is only available if your system supports the XRender extension for anti-aliasing.</p>
+<p>Changes made using this tab are saved either when the "Save Changes" button of this tab, or the "Apply..." button of
+the "Fonts" tab, are pressed.</p>
+<p>The configurable options are:</p>
+<ul>
+<li><i>Configuration file</i> Here you can specify the name and location of the XRender configuration file. For normal (non-root)
+users - this file is uslually located in the user's home directory, and named <CODE>.xftconfig</CODE>. For root - this file is
+usually located in <code>/usr/X11R6/lib/X11</code> and named <code>XftConfig</code>.</li>
+<li><i>Exclude range</i> This option allows you to specify a range of font sizes that should <b>not</b> be anti-aliased. On most systems, fonts
+between 8 and 12 points are not anti-aliased.</p>
+<li><i>Use sub-pixel hinting</i> This may be of use if you are using an LCD screen.</li>
+</ul>
+</p>
+<h3>Anti Alias - Advanced</h3>
+<p>The majority of the text in the following comes from a posting
+by <A HREF="mailto:obiwan@mailmij.org">Danny Tholen</A> to <A HREF="http://dot.kde.org">KDE dot news</A></p>
+<b>Xft Introduction</b>
+<p>Xft is an interface to the freetype rasterizer written by Keith Packard, member of the XFree86 Project, Inc. It allows applications to use fonts from the new X render extension using a unified font naming scheme. In /etc/X11/XftConfig (or /usr/X11R6/lib/X11/XftConfig) you will find a configuration file which can be adapted to suit your personal taste. Each Xft config file is capable of including other files - e.g. the system Xft configuration file (mentioned previously), can include a personal Xft config file (~/.xftconfig), so that each user may customise Xft to suit their own needs. Xft has two methods of including other files:
+<ul>
+<li><i>include "&lt;file-name&gt;"</i> If a file included this way does not exist, then Xft will complain.</li>
+<li><i>includeif "&lt;file-name&gt;"</i> Files included this way will only be used if they actually exist - and Xft will not complain if they don't.</li>
+</ul>
+<p>In the rest of this document I will explain the syntax and demonstrate some things you can do with this file. Structure The basic structure revolves around a 'pattern'. A pattern is a set of name/valuelist pairs, each valuelist contains one or more typed values. A certain application requests a font, for example: </p>
+<p>family: "Arial"</p>
+<p>size: 12</p>
+<p>encoding: "iso8859-1"</p>
+<p>A size 12 arial font in latin-1 encoding. The Xft extension will now try to patch this pattern to all of the fonts available in the system. And selecting the one with the best score. Before the matching is done Xft looks in XftConfig. The requested pattern can here be extended before use. An example is: </p>
+<p>match any family == "Arial" edit antialias = true;</p>
+<p>This will enable antialiasing for all fonts of the family Arial.</p>
+<p>Also, the X server is queried to list all of its fonts; the XLFD contains just enough information to match fonts roughly.</p>
+<p>Here's a list of attributes used in matching fonts (in priority order, this may not be up to date anymore!): </p>
+<ul>
+<li><i>foundry</i> font foundry (string, like ¨monotype¨)</li>
+<li><i>encoding</i> font encoding (string, like ¨iso8859-1¨)</li>
+<li><i>spacing</i> font spacing (integers or proportional (0), mono (100), charcell (110))</li>
+<li><i>bold</i> is the font bold? (boolean)</li>
+<li><i>italic</i> is the font italic? (boolean)</li>
+<li><i>antialias</i> is the font antialiased? (boolean)</li>
+<li><i>family</i> font family (string)</li>
+<li><i>size</i> font size (double)</li>
+<li><i>style</i> font style (string, like "Bold Italic")</li>
+<li><i>slant</i> font slant (roman, italic, oblique)</li>
+<li><i>weight</i> font weight ( integers or light, medium, (100),demibold, bold, black)</li>
+<li><i>rasterizer</i> not yet used (probably "TrueType", "Type1", ...)</li>
+</ul>
+<p>Edit can be any of the above, plus:</p>
+<ul>
+<li><i>pixelsize</i> font size in pixels (integer)</li>
+<li><i>charspace</i> characer space (integer)</li>
+<li><i>minspace</i> minimal spacing (integer)</li>
+<li><i>rgba</i> color hinting (string ¨rgb¨ or ¨bgr¨ and vertical hinting ¨vrgb¨ ¨vbgr¨)</li>
+<li><i>xlfd</i> server font (string, type xlsfonts to see a list of your xlfd strings)</li>
+<li><i>file</i> the font file (string)</li>
+<li><i>core</i> use X core fonts? (boolean)</li>
+<li><i>render</i> use render fonts? (boolean)</li>
+<li><i>index</i> I have no idea what this does:)</li>
+<li><i>scalable</i> is the font scalable (boolean)</li>
+<li><i>scale</i> scale the font (integer)</li>
+<li><i>charwidth</i> character width (integer)</li>
+<li><i>charheight</i> character height (integer)</li>
+<li><i>matrix</i> no idea (not really at least)</li>
+</ul>
+<p><b>How do I make aliases for my fonts?</b>
+<p>I noted that my KDE console asks for ´mono´ fonts when it
+is looking for a fixed font. ´console´ is used when I select
+´linux´ in the font menu of the KDE konsole. Therefore, I used
+two aliases for fonts which are also named ´fixed´:
+<p><tt>match any family == "fixed" edit family =+ "mono";</tt>
+<br><tt>match any family == "console" edit family =+ "mono";</tt><tt></tt>
+<p><b>Antialiasing my fonts makes me dizzy!</b>
+<p>Although there is a big fuz around AA in X, good fonts actually look
+better if they are not antialiased. The antialiasing blurs the fonts by
+adding grey pixels to the edges, and this may strain your eyes if you looking
+at them for a long time. (Your eyes will try to get the fonts sharper,
+which ofcourse is not working because they are blurred;) However, for very
+small fonts, antialiasing may increase the readability of the fonts, because
+with sharp edges, there are to little pixels available for your mind to
+figure out what it means. And for bigger fonts, the edges become very jagged
+when not anitaliased, so here you also might want to have aliased fonts.
+Ofcourse you can also turn off the antialiasing for specific fonts. In
+other operating systems, most truetype fonts are not antialiased between 8 and 12
+pixels, while only large Type1 fonts are antialiased.
+<p>Use the following in your XftConfig to antialias only fonts of specific sizes:
+<p><tt>match</tt><br>
+<tt>    any size > 8</tt><br>
+
+<tt>    any size < 15</tt><br>
+
+<tt>edit</tt><br>
+
+<tt>    antialias = false;</tt><br>
+
+<p><b>My fixed fonts do not appear or look _very_ wrong in the KDE konsole
+or similar programs!</b>
+<p>I noted that somehow a lot of fixed font do not tell Xft that they are
+fixed, and thus, mono spaced. Therefore only a part of the font is displayed.
+We can manually set the spacing for these fonts (this assumes you have
+fixed aliased with mono as in above):
+<br><br>
+<tt>match</tt><br>
+<tt>    any family ==
+"mono"</tt><br>
+
+<tt>edit</tt><br>
+
+<tt>    spacing = mono;</tt><br>
+
+<p><b>My Symbol, Webdings, etc. fonts do not show up!</b>
+<p>For some reason some (symbol) fonts are not correctly recognized, and Xft will
+show your default font, or a font which has the closest match (which is
+generally not what you mean at all). For Adobe Symbol and MS-webdings I
+did the following to get them working:
+<p><tt>match</tt><br>
+<tt>    any family ==
+"webdings"</tt><br>
+
+<tt>edit</tt><br>
+
+<tt>    antialias = false;</tt><br>
+
+<tt>    encoding += "glyphs-fontspecific";</tt><br>
+<br>
+<br>
+<tt>match</tt><br>
+<tt>    any family ==
+"symbol"</tt><br>
+
+<tt>edit</tt><br>
+
+<tt>    antialias = false;</tt><br>
+
+<tt>    encoding += "glyphs-fontspecific";</tt><br>
+
+<p>A usefull way of figuring out these things is to activate debuging
+with
+<p><tt>export XFT_DEBUG=1024</tt>
+<p>This will generate <b>a lot</b> of output, especially if you have many fonts,
+because it lists the properties and scores of every font available. You
+can also use other values. For a nice summary of what happens (requested font, XftConfig substitutions,
+x server additions and the finally matched font), you can use XFT_DEBUG=2.
+<p><b> Why do my KDE programs start now soooo slow?</b>
+<p>Currently, the Xft mechanism in XFree 4.0.3 has to parse the XftConfig file <i>each</i> time a program is started.
+And the info of all these fonts has to be read. Newer versions (in CVS) will use a cache and are much faster.
+Especially if you have many fonts this can be a problem, and the only real solution is to upgrade to a CVS version of XFree.
+<p><b>I have a LCD screen, can I use subpixel hinting instead of normal antialiasing?</b>
+<p>Yes you can. Subpixel hinting uses colors instead of grey pixels to do the AA.
+I do not have a LCD screen so I do not have any idea of how it looks but you can play with the
+<b>rgba</b> setting. Try
+<p><tt>match edit rgba=bgr;</tt>
+<p>or use rgb if you have a different type of monitor. For vertical AA you can try vbgr and vbgr.
+<p><b>My fonts still look bad!</b>
+<p>If you do not have some good truetype fonts, it is worth to go and look
+for them on the internet. Other reasons why your fonts still look bad can
+be because of your build of freetype2. Snapshots versions before 2.0.2 were
+compiled with an option that had some patent issues. Therefore, the standard
+2.0.2 compiles without this option. To fix this, download the freetype2 source rpm
+and change in <br> include/freetype/config/ftoption.h line 314:<br><br>
+<tt>#undef TT_CONFIG_OPTION_BYTECODE_INTERPRETER</tt></b>
+<h2>Settings Tab</h2>
+<p>This tab is used to customise the look and operation of the font installer.
+<h3>Appearance</h3>
+<p>Here you can alter the look and operation of the "Fonts" tab.
+<ul>
+<li><i>Mode</i> This selects between the two modes of operation, as described in the introduction section above.</li>
+<li><i>Font Lists</i> Here you can select whether the lists of install-able and installed fonts should be side-by-side, or top-bottom.</li>
+<li><i>Custom preview string</i> enter any desired preview string here, the default is "AaBbCcDdEeFf..."</li>
+</ul>
+</p>
+<h3>Folders & Files</h3>
+<p>The installer needs to know the location of certain folders and files in order to function correctly, this section is where most of those may be
+entered/altered.
+<ul>
+<li><i>X - Fonts folder</i> This should be the location of the top-level fonts folder - e.g. <code>~/.kde/share/fonts/</code>
+for normal users, and <code>/usr/X11R6/lib/X11/fonts/</code> for root.</li>
+<li><i>X - Basic Mode Sub-Folders</i> These two combo-boxes allow you to specify the sub-folders, of the top-level fonts folder, where TrueType and
+Type1 fonts will be installed to in "Basic" mode.</li>
+<li><i>X - Configuration file</i> This file is used to list/control the font paths used by X to locate font files. For normal
+users this will usually be <code>~/.kde/share/fonts/fontpaths</code>. For root, this file should be either the system wide
+<code>XF86Config</code> file, or the system-wide xfs <code>config</code> file.</li>
+<li><i>X - Encodings folder</i> If your system supports the .enc style encoding files (used to specify alternative encoding schemes such as cp1252),
+then enter the location of the folder here. As this module does not alter the files in this folder - the folder's location
+can be the same for both non-root and root users.</li>
+<li><i>Ghostscript, Fontmap file</i> This should be the name and location of the "Fontmap" file used by Ghostscript to map X font names to physical
+font files stored on disk. For non-root users, this file will be <code>~/.kde/share/fonts/Fontmap</code> - and for root it will be somthing like
+<code>/usr/share/ghostscript/5.50/Fontmap</code>. (The checkbox is used to tell the "Configure System" process to alter this file, or not.)</li>
+</ul>
+</p>
+<h3>Install/Uninstall</h3>
+<p> This section is used to specify the options for installing and uninstalling fonts.
+<ul>
+<li><i>Upon Install - Fix TrueType Postscript names table</i> Some TrueType fonts have a broken Postscript table - this table is used to map from the
+Postscript name for a character, to its character number (for example "space" is the Postscript name for the 'space' character, which usually has the
+character number of 32). At present only the "Euro" symbol is checked and corrected for (some fonts have this listed as "uni20ac").</li>
+<li><i>To Uninstall</i> Here you can specify if fonts should be deleted or moved (to the specified folder) when they are 'uninstalled'</li>
+</ul>
+</p>
+<h3>StarOffice</h3>
+<p> Here you can specify whether StarOffice (if you have it installed) should be configured.
+<ul>
+<li><i>Configure</i> This checkbox is used to tell the "Configure System" process to also alter the StarOffice configuration files.</li>
+<li><i>Folder</i> Specify the top level StarOffice installation folder.</li>
+<li><i>Use printer file</i> Select the printer file you wish to be altered - this should be the same as the printer that you use in StarOffice.
+Generally this will be "Generic Printer (SGENPRT.PS)"</li>
+</ul>
+Note: This only applies to StarOffice versions &lt 6 - and is not applicable to OpenOffice. (StarOffice v6 onwards, and OpenOffice, have much improved
+font handling.)
+</p>
+<h3>System</h3>
+<p> This section is used to specify system configuration options.
+<ul>
+<li><i>General - Configure X to only use ??? encoding</i> If this checkbox is not enabled, then each font will be installed with every encoding
+that it is capable of using. The problem comes with applications such as StarOffice which do not let you select the encoding of a font - so if you
+wanted to use "microsoft-cp1252" (which is a modified Latin1 encoding which allows access to the "Euro" and "smart quotes") with StarOffice you
+would have to install <b>only</b> this encoding, then StarOffice is forced to use it. The encoding selected here will only be used if the font
+supports it, if it doesn't then the other encodings that the font does support will be used instead.</li>
+<li><i>Generate AFMs, with ??? encoding</i> AFMs (Adobe Font Metrics) are extra files, associated with each font, that contain detailed information
+about the sizes of each character in a font - these are then used by programs such as StarOffice to allow correct positioning of the character
+on the displayed and printed page. AFMs however can only contain one encoding, so here you may specify which one is to be used. (Note: AFMs are
+<b>required</b> by StarOffice - it will not use any font which does not have a corresponding AFM).
+<ul>
+<li><i>TrueType</i> Indicates that AFMs should be created for TrueType fonts. (Note: AFMs are not required for TrueType fonts in OpenOffice or
+StarOffice &gt;= v6)</li>
+<li><i>Type1</i> Indicates the AFMs should be created for Type1 fonts. (Note: AFMs are required by all known versions of OpenOffice and StarOffice.)</li>
+</ul>
+</li>
+<li><i>Command to Refresh X's Font List</i> After the "Configure System" process, the command selected/entered here will be used to tell X to refresh
+its list of fonts. The following options are available:
+<ul>
+<li><i>xset fp rehash</i> If you are not using an X font server, then this will usually be the command you need to use.</li>
+<li><i>/etc/rc.d/init.d/xfs restart</i> This command is used for the restarting of an X font server.</li>
+<li><i>Custom</i> If neither of the above two work, then you may enter a custom command here - for example, it may be that the X font server restart
+command is in another directory (e.g. <code>/etc/init.d/xfs restart</code>)</li>
+</ul>
+</li>
+</ul>
+</p>
+</DIV>
+</BODY>
+</HTML>

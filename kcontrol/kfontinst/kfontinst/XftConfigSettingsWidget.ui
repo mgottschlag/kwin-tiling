@@ -1,0 +1,413 @@
+<!DOCTYPE UI><UI>
+<class>CXftConfigSettingsWidgetData</class>
+<comment>////////////////////////////////////////////////////////////////////////////////
+//
+// Class Name    : CXftConfigSettingsWidgetData
+// Author        : Craig Drummond
+// Project       : K Font Installer (kfontinst-kcontrol)
+// Creation Date : 28/05/2001
+// Version       : $Revision$ $Date$
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+////////////////////////////////////////////////////////////////////////////////
+// (C) Craig Drummond, 2001
+////////////////////////////////////////////////////////////////////////////////</comment>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>CXftConfigSettingsWidgetData</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>502</width>
+            <height>361</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="4"  column="0"  rowspan="1"  colspan="3" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>itsUseSubPixelHintingCheck</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Use sub-pixel hinting</string>
+            </property>
+            <property>
+                <name>whatsThis</name>
+                <string>Subpixel hinting uses colours instead of grey
+pixels to do the anti-aliasing.
+
+This may be of use if you have an LCD screen.</string>
+            </property>
+        </widget>
+        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel2_2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Configuration file:</string>
+            </property>
+            <property stdset="1">
+                <name>alignment</name>
+                <set>AlignVCenter|AlignLeft</set>
+            </property>
+            <property>
+                <name>wordwrap</name>
+            </property>
+        </widget>
+        <widget row="3"  column="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>itsFromText</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>8.0</string>
+            </property>
+            <property stdset="1">
+                <name>alignment</name>
+                <set>AlignRight</set>
+            </property>
+            <property>
+                <name>hAlign</name>
+            </property>
+        </widget>
+        <widget row="3"  column="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>pt, to</string>
+            </property>
+        </widget>
+        <widget row="3"  column="4" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>itsToText</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>15.0</string>
+            </property>
+            <property stdset="1">
+                <name>alignment</name>
+                <set>AlignRight</set>
+            </property>
+            <property>
+                <name>hAlign</name>
+            </property>
+        </widget>
+        <widget row="3"  column="5" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel3</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>pt</string>
+            </property>
+        </widget>
+        <widget row="2"  column="2"  rowspan="1"  colspan="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>itsConfigFileText</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>1</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>frameShape</name>
+                <enum>Panel</enum>
+            </property>
+            <property stdset="1">
+                <name>frameShadow</name>
+                <enum>Sunken</enum>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>TextLabel2</string>
+            </property>
+            <property stdset="1">
+                <name>alignment</name>
+                <set>WordBreak|AlignVCenter|AlignLeft</set>
+            </property>
+            <property>
+                <name>whatsThis</name>
+                <string>This is the configuration file used by the XRender
+extension. Under Linux/XFree86 this file will usually
+be either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide
+settings (not usually on "root" can alter this file).</string>
+            </property>
+            <property>
+                <name>wordwrap</name>
+            </property>
+        </widget>
+        <widget row="2"  column="5" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>itsConfigFileButton</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>true</bool>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>minimumSize</name>
+                <size>
+                    <width>22</width>
+                    <height>22</height>
+                </size>
+            </property>
+            <property stdset="1">
+                <name>maximumSize</name>
+                <size>
+                    <width>22</width>
+                    <height>22</height>
+                </size>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>.</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Select File.</string>
+            </property>
+        </widget>
+        <spacer row="5"  column="1" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Fixed</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>16</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="6"  column="3"  rowspan="1"  colspan="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>itsAdvancedButton</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>true</bool>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Advanced...</string>
+            </property>
+        </widget>
+        <spacer row="6"  column="0"  rowspan="1"  colspan="3" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer4</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="3"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>itsExcludeRangeCheck</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>E&amp;xclude range:</string>
+            </property>
+        </widget>
+        <widget row="7"  column="3"  rowspan="1"  colspan="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>itsSaveButton</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Save &amp;Changes</string>
+            </property>
+        </widget>
+        <spacer row="8"  column="4" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer3</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>itsConfigFileButton</sender>
+        <signal>clicked()</signal>
+        <receiver>CXftConfigSettingsWidgetData</receiver>
+        <slot>fileButtonPressed()</slot>
+    </connection>
+    <connection>
+        <sender>itsExcludeRangeCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CXftConfigSettingsWidgetData</receiver>
+        <slot>excludeRangeChecked(bool)</slot>
+    </connection>
+    <connection>
+        <sender>itsFromText</sender>
+        <signal>textChanged(const QString&amp;)</signal>
+        <receiver>CXftConfigSettingsWidgetData</receiver>
+        <slot>fromChanged(const QString &amp;)</slot>
+    </connection>
+    <connection>
+        <sender>itsToText</sender>
+        <signal>textChanged(const QString&amp;)</signal>
+        <receiver>CXftConfigSettingsWidgetData</receiver>
+        <slot>toChanged(const QString &amp;)</slot>
+    </connection>
+    <connection>
+        <sender>itsUseSubPixelHintingCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CXftConfigSettingsWidgetData</receiver>
+        <slot>useSubPixelChecked(bool)</slot>
+    </connection>
+    <connection>
+        <sender>itsAdvancedButton</sender>
+        <signal>clicked()</signal>
+        <receiver>CXftConfigSettingsWidgetData</receiver>
+        <slot>advancedButtonPressed()</slot>
+    </connection>
+    <connection>
+        <sender>itsSaveButton</sender>
+        <signal>clicked()</signal>
+        <receiver>CXftConfigSettingsWidgetData</receiver>
+        <slot>saveButtonPressed()</slot>
+    </connection>
+    <slot access="public">advancedButtonPressed()</slot>
+    <slot access="public">excludeRangeChecked(bool)</slot>
+    <slot access="public">fileButtonPressed()</slot>
+    <slot access="public">fromChanged(const QString &amp;)</slot>
+    <slot access="public">saveButtonPressed()</slot>
+    <slot access="public">toChanged(const QString &amp;)</slot>
+    <slot access="public">useSubPixelChecked(bool)</slot>
+</connections>
+<tabstops>
+    <tabstop>itsConfigFileButton</tabstop>
+    <tabstop>itsExcludeRangeCheck</tabstop>
+    <tabstop>itsFromText</tabstop>
+    <tabstop>itsToText</tabstop>
+    <tabstop>itsUseSubPixelHintingCheck</tabstop>
+    <tabstop>itsAdvancedButton</tabstop>
+</tabstops>
+</UI>

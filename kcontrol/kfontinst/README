@@ -1,0 +1,49 @@
+To build, type...
+
+    ./configure
+    make
+    make install
+
+---NOTES-------------------------------------------------------------------------
+
+IF YOU HAVE USED A PREVIOUS VERSION <=0.10b3 THEN PLEASE *REMOVE* YOUR PREVIOUS ~/.kde/share/config/kfontinstrc
+OR ~/.kde2/share/config/kfontinstrc FILE *BEFORE* RUNNING THIS NEW VERSION
+
+PLEASE ALSO APPLY THE CHANGES LISTED IN README.startkde TO YOUR startkde OR login SCRIPT - THIS IS NECCESSARY
+IN ORDER TO SET UP SOME ENV VARS SO THAT NON-ROOT USER FONTS MAY BE INSTALLED.
+
+If you have both Qt 1.X and 2.X you may need to set the environment variable
+    QTDIR - i.e. for bash, export QTDIR=/usr/lib/qt2 
+    Likewise for KDE 1.x and 2.X, export KDEDIR=/opt/kde2
+
+The program has the following limitations:
+
+    1. Speedo fonts are always installed as iso8859-1. How do I get an encoding for these?
+       Should I just assume iso8859-1, or use the locale?
+    2. .Z compressed files are not supported - the program will ignore any .Z files.
+    3. Only XFree86 style X config (XF86Config) files, font-server config files, and KFontinst's
+       custom file are supported - are there any other types?
+    4. AFM files only ever contain 256 chars - should I place all other chars in these?
+       And use -1 as charcode? For TrueType fonts this could make these files *very*
+       big.
+
+The current version of Qt will not allow you to print out using the extended encoding
+schemes (e.g. microsoft-cp1252) - as it has it's own inbuilt charactermaps. The only way
+to access other characters is to use Unicode encoding - however Qt creates bad postscript
+files when printing with Unicode installed fonts.
+
+*Data.cpp/h files are generated with the 'qtgen' shell script - this replaces some Qt classes with KDE
+equivalents. Usage:
+
+    qtgen <file name (-.ui) >
+
+e.g.
+
+    qtgen XftConfigRules
+
+
+Craig.
+
+p.s. For using StarOffice with European languages, I recommend using microsoft-cp1252, as this
+     allows access to the Euro and "smart quotes" - and KFontinst comes with a modified xprinter.prolog
+     file for StarOffice that will be used if the user selects microsoft-cp1252.

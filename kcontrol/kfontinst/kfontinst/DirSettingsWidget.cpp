@@ -1,0 +1,197 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+// Class Name    : CDirSettingsWidget
+// Author        : Craig Drummond
+// Project       : K Font Installer (kfontinst-kcontrol)
+// Creation Date : 29/04/2001
+// Version       : $Revision$ $Date$
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+////////////////////////////////////////////////////////////////////////////////
+// (C) Craig Drummond, 2001
+////////////////////////////////////////////////////////////////////////////////
+
+#include "DirSettingsWidget.h"
+#include "KfiGlobal.h"
+#include "Config.h"
+#include "Encodings.h"
+#include "XConfig.h"
+#include <kglobal.h>
+#include <kiconloader.h>
+#include <kfiledialog.h>
+#include <kmessagebox.h>
+#include <klocale.h>
+#include <qcombobox.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
+#include <qdir.h>
+#include <qfileinfo.h>
+#include <qcheckbox.h>
+
+CDirSettingsWidget::CDirSettingsWidget(QWidget *parent, const char *name)
+                  : CDirSettingsWidgetData(parent, name)
+{
+    itsFontsDirText->setText(CKfiGlobal::cfg().getFontsDir());
+    itsEncodingsDirText->setText(CKfiGlobal::cfg().getEncodingsDir());
+    itsGhostscriptFileText->setText(CKfiGlobal::cfg().getGhostscriptFile());
+    itsGhostscriptCheck->setChecked(CKfiGlobal::cfg().getDoGhostscript());
+    itsXConfigFileText->setText(CKfiGlobal::cfg().getXConfigFile());
+    itsFontsDirButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
+    itsEncodingsDirButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
+    itsGhostscriptFileButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
+    itsXConfigFileButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
+
+    setupSubDirCombos();
+}
+ 
+void CDirSettingsWidget::encodingsDirButtonPressed()
+{
+    QString dir=KFileDialog::getExistingDirectory(CConfig::constNotFound==itsEncodingsDirText->text() ? QString::null : itsEncodingsDirText->text(),
+                                                  this, "Select Encodings Folder");
+ 
+    if(QString::null!=dir && dir!=itsEncodingsDirText->text())
+    {
+        itsEncodingsDirText->setText(dir);
+        CKfiGlobal::cfg().setEncodingsDir(dir);
+        CKfiGlobal::enc().clear();
+        CKfiGlobal::enc().addDir(dir);
+        emit encodingsDirChanged();
+    }
+}
+
+void CDirSettingsWidget::gsFontmapButtonPressed()
+{
+    QString file=KFileDialog::getOpenFileName(CConfig::constNotFound==itsGhostscriptFileText->text() ? QString::null : itsGhostscriptFileText->text(),
+                                              "Fontmap*", this, "Select Ghostscript \"Fontmap\"");
+ 
+    if(QString::null!=file && file!=itsGhostscriptFileText->text())
+    {
+        itsGhostscriptFileText->setText(file);
+        CKfiGlobal::cfg().setGhostscriptFile(file);
+    }
+}
+
+void CDirSettingsWidget::xDirButtonPressed()
+{
+    QString dir=KFileDialog::getExistingDirectory(CConfig::constNotFound==itsFontsDirText->text() ? QString::null : itsFontsDirText->text(),
+                                                  this, "Select Fonts Folder");
+ 
+    if(QString::null!=dir && dir!=itsFontsDirText->text())
+    {
+        itsFontsDirText->setText(dir);
+        CKfiGlobal::cfg().setFontsDir(dir);
+        setupSubDirCombos();
+    }
+}
+
+void CDirSettingsWidget::xConfigButtonPressed()
+{
+    QString file=KFileDialog::getOpenFileName(CConfig::constNotFound==itsXConfigFileText->text() ? QString::null : itsXConfigFileText->text(),
+                                              NULL, this, "Select X config file");
+ 
+    if(QString::null!=file && file!=itsXConfigFileText->text())
+    {
+        itsXConfigFileText->setText(file);
+        CKfiGlobal::cfg().setXConfigFile(file);
+        CKfiGlobal::xcfg().readConfig();
+        if(!CKfiGlobal::xcfg().ok())
+            KMessageBox::information(this, i18n("File format not recognised!\n"
+                                                "Advanced mode folder operations will not be available."));
+    }
+}
+
+void CDirSettingsWidget::setupSubDirCombos()
+{
+    itsTTCombo->clear();
+    itsT1Combo->clear();
+
+    QDir dir(CKfiGlobal::cfg().getFontsDir());
+
+    if(dir.isReadable())
+    {
+        const QFileInfoList *files=dir.entryInfoList();
+ 
+        if(files)
+        {
+            QFileInfoListIterator it(*files);
+            QFileInfo             *fInfo;
+            int                   d,
+                                  sub,
+                                  tt=-1,
+                                  t1=-1;
+ 
+            for(; NULL!=(fInfo=it.current()); ++it)
+                if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
+                    if(fInfo->isDir())
+                    {
+                        itsTTCombo->insertItem(fInfo->fileName()+"/");
+                        itsT1Combo->insertItem(fInfo->fileName()+"/");
+                    }
+
+            for(d=0; d<itsTTCombo->count() && (-1==t1 || -1==tt); ++d)
+            {
+                if(-1==tt)
+                {
+                    if(itsTTCombo->text(d)==CKfiGlobal::cfg().getTTSubDir())
+                        tt=d;
+                    else
+                        for(sub=0; QString::null!=CConfig::constTTSubDirs[sub]; ++sub)
+                            if(itsTTCombo->text(d)==CConfig::constTTSubDirs[sub])
+                                tt=d;
+                }
+                if(-1==t1)
+                {
+                    if(itsT1Combo->text(d)==CKfiGlobal::cfg().getT1SubDir())
+                        t1=d;
+                    else
+                        for(sub=0; QString::null!=CConfig::constT1SubDirs[sub]; ++sub)
+                            if(itsT1Combo->text(d)==CConfig::constT1SubDirs[sub])
+                                t1=d;
+                }
+            }
+            if(-1==tt && -1!=t1)
+                tt=t1;
+            else
+                if(-1!=tt && -1==t1)
+                    t1=tt;
+                else
+                    if(-1==tt && -1==t1)
+                        t1=tt=0;
+            
+            CKfiGlobal::cfg().setTTSubDir(itsTTCombo->text(tt));
+            CKfiGlobal::cfg().setT1SubDir(itsT1Combo->text(t1));
+            itsTTCombo->setCurrentItem(tt);
+            itsT1Combo->setCurrentItem(t1);
+        }
+    }
+}
+
+void CDirSettingsWidget::t1SubDir(const QString &str)
+{
+    CKfiGlobal::cfg().setT1SubDir(str);
+}
+
+void CDirSettingsWidget::ttSubDir(const QString &str)
+{
+    CKfiGlobal::cfg().setTTSubDir(str);
+}
+
+void CDirSettingsWidget::ghostscriptChecked(bool on)
+{
+    CKfiGlobal::cfg().setDoGhostscript(on);
+}
