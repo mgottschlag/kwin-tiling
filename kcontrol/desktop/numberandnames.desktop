@@ -1,0 +1,13 @@
+[Desktop Entry]
+Icon=desktop
+Type=Application
+Exec=kcmshell LookNFeel/Desktop/numberandnames
+
+X-KDE-ModuleType=Library
+X-KDE-Library=numberandnames
+
+Name=Number&Name
+
+Comment=Configure desktop number and names
+
+Keywords=Desktop,Name,Number,Desktopcount
