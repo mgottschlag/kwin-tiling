@@ -144,6 +144,7 @@ void KIconConfig::init()
     mpEffectBox->insertItem(i18n("To Gray"));
     mpEffectBox->insertItem(i18n("Desaturate"));
     mpEffectBox->insertItem(i18n("SemiTransparent"));
+    mpEffectBox->insertItem(i18n("SemiTransparent/To Gray"));
 
     // For reading the configuration
     mGroups += "Desktop";
@@ -185,6 +186,8 @@ void KIconConfig::read()
 		effect = KIconEffect::DeSaturate;
 	    else if (tmp == "semitransparent")
 		effect = KIconEffect::SemiTransparent;
+	    else if (tmp == "semigray")
+		effect = KIconEffect::SemiGray;
 	    else if (tmp == "none")
 		effect = KIconEffect::NoEffect;
 	    else
@@ -280,6 +283,9 @@ void KIconConfig::save()
 		break;
 	    case KIconEffect::SemiTransparent:
 		tmp = "semitransparent";
+		break;
+	    case KIconEffect::SemiGray:
+		tmp = "semigray";
 		break;
 	    default:
 		tmp = "none";
