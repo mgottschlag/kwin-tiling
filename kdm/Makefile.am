@@ -70,4 +70,4 @@ messages:
 	$(XGETTEXT) $(kdm_SOURCES) $(kdmdesktop_SOURCES) -o $(podir)/kdm.pot
 
 EXTRA_DIST = Chooser.ad  chooser.cpp kdm-0.5.lsm kdm_on_RH5.0.html kdmusers.h \
-	krb5auth.c sessreg.c sessreg.man xdm.man xdmconfig xdmshell.c
+	krb5auth.c sessreg.c sessreg.man xdmconfig xdmshell.c
