@@ -1,0 +1,1379 @@
+/* $TOG: verify.c /main/37 1998/02/11 10:00:45 kaleb $ */
+/* $Id$ */
+/*
+
+Copyright 1988, 1998  The Open Group
+
+All Rights Reserved.
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of The Open Group shall
+not be used in advertising or otherwise to promote the sale, use or
+other dealings in this Software without prior written authorization
+from The Open Group.
+
+*/
+/* $XFree86: xc/programs/xdm/greeter/verify.c,v 3.9 2000/06/14 00:16:16 dawes Exp $ */
+
+/*
+ * xdm - display manager daemon
+ * Author:  Keith Packard, MIT X Consortium
+ *
+ * verify.c
+ *
+ * typical unix verification routine.
+ */
+
+#include "dm.h"
+#include "dm_auth.h"
+#include "dm_error.h"
+
+#include <errno.h>
+#ifdef X_NOT_STDC_ENV
+extern int errno;
+#endif
+
+#include <pwd.h>
+#include <grp.h>
+#ifdef USE_PAM
+# include <security/pam_appl.h>
+#elif defined(AIXV3) /* USE_PAM */
+# include <login.h>
+# include <usersec.h>
+extern int loginrestrictions (char *Name, int Mode, char *Tty, char **Msg);
+extern int loginfailed (char *User, char *Host, char *Tty);
+extern int loginsuccess (char *User, char *Host, char *Tty, char **Msg);
+#else /* USE_PAM || AIXV3 */
+# ifdef USESHADOW
+#  include <shadow.h>
+# endif
+# ifdef KERBEROS
+#  include <sys/param.h>
+#  include <krb.h>
+#  ifndef NO_AFS
+#   include <kafs.h>
+#  endif
+# endif
+# ifdef SECURE_RPC
+#  include <rpc/rpc.h>
+#  include <rpc/key_prot.h>
+# endif
+# ifdef K5AUTH
+#  include <krb5/krb5.h>
+# endif
+# ifdef CSRG_BASED
+#  include <sys/param.h>
+#  ifdef HAS_SETUSERCONTEXT
+#   include <login_cap.h>
+#   define USE_LOGIN_CAP 1
+#  endif
+# endif
+/* for nologin */
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <unistd.h>
+/* for expiration */
+# include <time.h>
+#endif	/* USE_PAM || AIXV3 */
+
+#if defined(__osf__) || defined(linux) || defined(MINIX) || defined(__QNXNTO__) || defined(__GNU__)
+# define setpgrp setpgid
+#endif
+
+#ifdef X_NOT_STDC_ENV
+char *getenv();
+#endif
+
+#ifdef QNX4
+extern char *crypt(const char *, const char *);
+#endif
+
+
+#ifdef USE_PAM
+
+static char *PAM_password;
+static char *infostr, *errstr;
+
+#ifdef sun
+typedef struct pam_message pam_message_type;
+#else
+typedef const struct pam_message pam_message_type;
+#endif
+
+static int
+PAM_conv (int num_msg,
+	  pam_message_type **msg,
+	  struct pam_response **resp,
+	  void *appdata_ptr)
+{
+    int count;
+    struct pam_response *reply;
+
+    if (!(reply = calloc(num_msg, sizeof(struct pam_response))))
+	return PAM_CONV_ERR;
+
+    for (count = 0; count < num_msg; count++) {
+	switch (msg[count]->msg_style) {
+	case PAM_TEXT_INFO:
+	    StrApp(&infostr, msg[count]->msg, "\n", (char *)0);
+	    break;
+	case PAM_ERROR_MSG:
+	    StrApp(&errstr, msg[count]->msg, "\n", (char *)0);
+	    break;
+	case PAM_PROMPT_ECHO_OFF:
+	    /* wants password */
+	    reply[count].resp_retcode = PAM_SUCCESS;
+	    StrDup (&reply[count].resp, PAM_password);
+	    break;
+	case PAM_PROMPT_ECHO_ON:
+	    /* user name given to PAM already */
+	    /* fall through */
+	default:
+	    /* unknown */
+	    goto conV_AUTH;
+	}
+    }
+
+    *resp = reply;
+    return PAM_SUCCESS;
+
+  conV_AUTH:
+    for (count = 0; count < num_msg; ++count) {
+	if (reply[count].resp == NULL)
+	    continue;
+	switch (msg[count]->msg_style) {
+	case PAM_PROMPT_ECHO_ON:
+	case PAM_PROMPT_ECHO_OFF:
+	    WipeStr(reply[count].resp);
+	    break;
+	case PAM_ERROR_MSG:
+	case PAM_TEXT_INFO:
+	    /* should not actually be able to get here... */
+	    free(reply[count].resp);
+	}
+	reply[count].resp = NULL;
+    }
+    /* forget reply too */
+    free (reply);
+    return PAM_CONV_ERR;
+}
+
+static struct pam_conv PAM_conversation = {
+	PAM_conv,
+	NULL
+};
+
+# ifdef HAVE_PAM_FAIL_DELAY
+static void fail_delay(int retval, unsigned usec_delay, void *appdata_ptr) {}
+# endif
+
+static pam_handle_t *pamh;
+
+#elif !defined(AIXV3) /* USE_PAM */
+
+# ifdef KERBEROS
+static char krbtkfile[MAXPATHLEN];
+static int krb4_authed = 0;
+
+static int
+krb4_auth(struct passwd *p, const char *password)
+{
+    int ret;
+    char realm[REALM_SZ];
+
+    if (krb4_authed)
+	return 1;
+
+    if (!p->pw_uid)
+	return 0;
+
+    if (krb_get_lrealm(realm, 1)) {
+	Debug ("Can't get Kerberos realm.\n");
+	return 0;
+    }
+
+    sprintf(krbtkfile, "%s.%s", TKT_ROOT, d->name);
+    krb_set_tkt_string(krbtkfile);
+    unlink(krbtkfile);
+
+    ret = krb_verify_user(p->pw_name, "", realm, password, 1, "rcmd");
+    if (ret == KSUCCESS) {
+	chown(krbtkfile, p->pw_uid, p->pw_gid);
+	Debug("kerberos verify succeeded\n");
+	return 1;
+    } else if(ret != KDC_PR_UNKNOWN && ret != SKDC_CANT) {
+	/* failure */
+	Debug("kerberos verify failure %d\n", ret);
+	LogError("KERBEROS verification failure '%s' for %s\n",
+		 krb_get_err_text(ret), p->pw_name);
+	krbtkfile[0] = '\0';
+    }
+    return 0;
+}
+# endif /* KERBEROS */
+
+#endif /* USE_PAM */
+
+static int		pwinited;
+static struct passwd	*p;
+#if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
+static struct spwd	*sp;
+static char		*user_pass;
+# define arg_shadow , int shadow
+# define NSHADOW , 0
+# define YSHADOW , 1
+#else
+# define arg_shadow
+# define NSHADOW
+# define YSHADOW
+#endif
+
+static int
+init_pwd(const char *name arg_shadow)
+{
+#if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
+    if (pwinited == 2) {
+	Debug("p & sp for %s already read\n", name);
+	return 1;
+    }
+#endif
+
+    if (!pwinited) {
+	Debug("reading p for %s\n", name);
+	p = getpwnam (name);
+	endpwent();
+	if (!p) {
+	    Debug ("getpwnam() failed.\n");
+	    return 0;
+	}
+#if !defined(USE_PAM) && !defined(AIXV3)
+# ifdef linux	/* only Linux? */
+	if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
+	    Debug ("The account is locked, no login allowed.\n");
+	    return 0;
+	}
+# endif
+# ifdef USESHADOW
+	user_pass = p->pw_passwd;
+# endif
+#endif	/* !USE_PAM */
+	pwinited = 1;
+    }
+
+#if defined(USE_PAM) || defined(AIXV3) || !defined(USESHADOW)
+# define user_pass p->pw_passwd
+#else
+    if (shadow) {
+	Debug("reading sp for %s\n", name);
+	errno = 0;
+	sp = getspnam(name);
+# ifndef QNX4
+	endspent();
+# endif  /* QNX4 doesn't need endspent() to end shadow passwd ops */
+	if (sp) {
+	    user_pass = sp->sp_pwdp;
+	    pwinited = 2;
+	} else
+	    Debug ("getspnam() failed, errno=%d.  Are you root?\n", errno);
+    }
+#endif
+
+    return 1;
+}
+
+
+#if !defined(USE_PAM) && defined(AIXV3)
+static char tty[16], hostname[100];
+#endif
+
+static int
+init_vrf(struct display *d, const char *name, const char *password)
+{
+#if !defined(USE_PAM) && defined(AIXV3)
+    int		i;
+    char	*tmpch;
+#endif
+    int		pretc;
+    static char	*pname;
+
+    if (!strlen (name)) {
+	Debug ("Empty user name provided.\n");
+	return V_AUTH;
+    }
+
+    if (pname && strcmp(pname, name)) {
+	Debug("Re-initializing for new user %s\n", name);
+#if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
+	krb4_authed = 0;
+	krbtkfile[0] = '\0';
+#endif
+	pwinited = 0;
+    }
+    ReStr (&pname, name);
+
+#ifdef USE_PAM
+
+    PAM_password = (char *)password;
+
+    if (!pamh) {
+	Debug("opening new PAM handle\n");
+	if (pam_start(PAMService, name, &PAM_conversation, &pamh) != PAM_SUCCESS) {
+	    Debug("pam_start() failed\n");
+	    return V_ERROR;
+	}
+	Debug("PAM handle open\n");
+	if ((pretc = pam_set_item(pamh, PAM_TTY, d->name)) != PAM_SUCCESS) {
+	    pam_end(pamh, pretc);
+	    pamh = NULL;
+	    return V_ERROR;
+	}
+	Debug("tty set\n");
+/*	if ((pretc = pam_set_item(pamh, PAM_RHOST, "")) != PAM_SUCCESS) {
+	    pam_end(pamh, pretc);
+	    pamh = NULL;
+	    return V_ERROR;
+	}*/
+# ifdef HAVE_PAM_FAIL_DELAY
+	pam_set_item(pamh, PAM_FAIL_DELAY, fail_delay);
+# endif
+    } else
+	if (pam_set_item(pamh, PAM_USER, name) != PAM_SUCCESS)
+	    return V_ERROR;
+
+    if (infostr) {
+	free (infostr);
+	infostr = 0;
+    }
+
+    if (errstr) {
+	free (errstr);
+	errstr = 0;
+    }
+
+#elif defined(AIXV3)
+
+    if (d->displayType & location == Foreign) {
+	strncpy(hostname, d->name, sizeof(hostname) - 1);
+	hostname[sizeof(hostname)-1] = '\0';
+	if ((tmpch = strchr(hostname, ':')))
+	    *tmpch = '\0';
+    } else
+	hostname[0] = '\0';
+
+    /* tty names should only be 15 characters long */
+# if 1
+    for (i = 0; i < 15 && d->name[i]; i++) {
+	if (d->name[i] == ':' || d->name[i] == '.')
+	    tty[i] = '_';
+	else
+	    tty[i] = d->name[i];
+    }
+    tty[i] = '\0';
+# else
+    memcpy(tty, "/dev/xdm/", 9);
+    for (i = 0; i < 6 && d->name[i]; i++) {
+	if (d->name[i] == ':' || d->name[i] == '.')
+	    tty[9 + i] = '_';
+	else
+	    tty[9 + i] = d->name[i];
+    }
+    tty[9 + i] = '\0';
+# endif
+
+#endif
+
+	Debug("init_vrf ok\n");
+    return V_OK;
+}
+
+static int
+AccNoPass (struct display *d, const char *un)
+{
+    char **fp;
+
+    if (!strcmp (un, d->autoUser))
+	return 1;
+
+    for (fp = d->noPassUsers; *fp; fp++)
+	if (!strcmp (un, *fp))
+	    return 1;
+
+    return 0;
+}
+
+int
+Verify (struct display *d, const char *name, const char *pass)
+{
+    int		pretc;
+#if !defined(USE_PAM) && defined(AIXV3)
+    int		reenter;
+    char	*msg;
+#endif
+
+    Debug ("Verify %s ...\n", name);
+
+    if (!pass[0] && AccNoPass (d, name)) {
+	Debug ("accepting despite empty password\n");
+	return V_OK;
+    }
+
+    if ((pretc = init_vrf(d, name, pass)) != V_OK)
+	return pretc;
+
+#ifdef USE_PAM
+
+    if (pam_authenticate(pamh, d->allowNullPasswd ?
+				0 : PAM_DISALLOW_NULL_AUTHTOK) != PAM_SUCCESS)
+	return V_AUTH;
+
+#elif defined(AIXV3) /* USE_PAM */
+
+    enduserdb();
+    msg = NULL;
+    if (authenticate(name, pass, &reenter, &msg) || reenter) {
+	Debug("authenticate() - %s\n", msg ? msg : "Error\n");
+	if (msg)
+	    free((void *)msg);
+	loginfailed(name, hostname, tty);
+	return V_AUTH;
+    }
+    if (msg)
+	free((void *)msg);
+
+#else	/* USE_PAM && AIXV3 */
+
+    if (!init_pwd(name YSHADOW))
+	return V_AUTH;
+
+# ifdef KERBEROS
+    if (!krb4_auth(p, pass))
+# endif  /* KERBEROS */
+# if defined(ultrix) || defined(__ultrix__)
+	if (authenticate_user(p, pass, NULL) < 0)
+# else
+	if (strcmp (crypt (pass, user_pass), user_pass))
+# endif
+	{
+	    if(!d->allowNullPasswd || user_pass[0]) {
+		Debug ("password verify failed\n");
+# ifdef USESHADOW
+		bzero(user_pass, strlen(user_pass));
+# endif
+		return V_AUTH;
+	    } /* else: null passwd okay */
+	}
+
+# ifdef USESHADOW
+    bzero(user_pass, strlen(user_pass));
+# endif
+
+#endif /* USE_PAM && AIXV3 */
+
+    Debug ("verify succeeded\n");
+
+    return V_OK;
+}
+
+#define CA_ISDIR	0x1000
+#define CA_MKDIRS	0x2000
+#define CA_SUBDIR_	0x10000
+
+static int
+CheckAcc (char *fn, int mode)
+{
+    int ret;
+    char *pt;
+    struct stat st;
+
+    if (stat (fn, &st)) {
+	if (errno != ENOENT || !(mode & (CA_MKDIRS | 2)))
+	    return errno;
+	if (!(pt = strrchr (fn, '/')))
+	    return EINVAL;
+	*pt = '\0';
+	ret = CheckAcc (fn, (mode & CA_MKDIRS) | CA_SUBDIR_ | CA_ISDIR | 3);
+	*pt = '/';
+	if (ret != ENOENT || (~mode & (CA_MKDIRS | CA_SUBDIR_)))
+	    return ret;
+	if (mkdir (fn, 0755))
+	    return errno;
+	chown (fn, p->pw_uid, p->pw_gid);
+	return 0;
+    }
+    if ((mode & CA_ISDIR) != 0) {
+#ifndef X_NOT_POSIX
+        if (!S_ISDIR(st.st_mode))
+#else
+        if (!(st.st_mode & S_IFDIR))
+#endif
+	    return ENOTDIR;
+    } else {
+#ifndef X_NOT_POSIX
+        if (!S_ISREG(st.st_mode))
+#else
+        if (!(st.st_mode & S_IFREG))
+#endif
+	    return EISDIR;
+    }
+    mode = (mode & 7) << (p->pw_uid == st.st_uid ? 6 :
+			  p->pw_gid == st.st_gid ? 3 : 0);
+    return (st.st_mode & mode) == mode ? 0 : EACCES;
+}
+
+void
+Restrict (struct display *d)
+{
+    int			pretc;
+    char		*name;
+#ifndef USE_PAM
+# ifdef AIXV3
+    char		*msg
+# else /* AIXV3 */
+    struct stat		st;
+    char		*nolg;
+#  ifdef HAVE_GETUSERSHELL
+    char		*s;
+#  endif
+#  if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
+    int			tim, exp, warntime;
+    int			quietlog;
+#  endif
+#  ifdef USE_LOGIN_CAP
+#   ifdef HAVE_LOGIN_GETCLASS
+    login_cap_t		*lc;
+#   else
+    struct login_cap	*lc;
+#   endif
+#  endif
+#  if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
+    int			expire;
+    int			retv = V_OK;
+#  endif
+# endif /* AIXV3 */
+#endif
+
+    name = GRecvStr ();
+
+    Debug("Restrict %s ...\n", name);
+
+    if ((pretc = init_vrf(d, name, "")) != V_OK) {
+	GSendInt (pretc);
+	return;
+    }
+
+    if (!init_pwd(name YSHADOW)) {
+	GSendInt (V_AUTH);
+	return;
+    }
+
+    if (!p->pw_uid) {
+	if (!d->allowRootLogin)
+	    GSendInt (V_NOROOT);
+	else
+	    GSendInt (V_OK);	/* don't deny root to log in */
+	return;
+    }
+
+#ifdef USE_PAM
+
+    pretc = pam_acct_mgmt(pamh, 0);
+    if (errstr) {
+	GSendInt (V_MSGERR);
+	GSendStr (errstr);
+    } else if (pretc != PAM_SUCCESS) {
+	GSendInt (V_AUTH);
+    } else if (infostr) {
+	GSendInt (V_MSGINFO);
+	GSendStr (infostr);
+    } else
+	GSendInt (V_OK);
+    /* really should do password changing, but it doesn't fit well */
+
+#elif defined(AIXV3)	/* USE_PAM */
+
+    msg = NULL;
+    if (loginrestrictions(name,
+		d->displayType & location == Foreign ? S_RLOGIN : S_LOGIN,
+		tty, &msg) == -1)
+    {
+	Debug("loginrestrictions() - %s\n", msg ? msg : "Error\n");
+	loginfailed(name, hostname, tty);
+	if (msg) {
+	    GSendInt (V_MSGERR);
+	    GSendStr (msg);
+	} else
+	    GSendInt (V_AUTH);
+    } else
+	    GSendInt (V_OK);
+    if (msg)
+	free((void *)msg);
+
+#else	/* USE_PAM || AIXV3 */
+
+# ifdef HAVE_GETUSERSHELL
+    for (;;) {
+	s = getusershell();
+	if (s == NULL) {
+	    /* did not find the shell in /etc/shells  -> failure */
+	    Debug("shell not in /etc/shells\n");
+	    endusershell();
+	    GSendInt (V_BADSHELL);
+	    return;
+	}
+	if (strcmp(s, p->pw_shell) == 0) {
+	    /* found the shell in /etc/shells */
+	    endusershell();
+	    break;
+	}
+    }
+# endif
+
+# ifdef USE_LOGIN_CAP
+#  ifdef HAVE_LOGIN_GETCLASS
+    lc = login_getclass(p->pw_class);
+#  else
+    lc = login_getpwclass(p);
+#  endif
+    if (!lc) {
+	GSendInt (V_ERROR);
+	return;
+    }
+# endif
+
+
+/* restrict_nologin */
+# ifndef _PATH_NOLOGIN
+#  define _PATH_NOLOGIN "/etc/nologin"
+# endif
+
+# ifdef USE_LOGIN_CAP
+    /* Do we ignore a nologin file? */
+    if (login_getcapbool(lc, "ignorenologin", 0))
+	goto nolog_succ;
+
+    nolg = login_getcapstr(lc, "nologin", "", NULL);
+    if (!stat(nolg, &st))
+	goto nolog;
+# endif
+
+    nolg = _PATH_NOLOGIN;
+    if (!stat(nolg, &st)) {
+      nolog:
+	if (nologin) {
+	    GSendInt (V_NOLOGIN);
+	    GSendStr (nolg);
+# ifdef USE_LOGIN_CAP
+	    login_close(lc);
+# endif
+	    return;
+	}
+    }
+# ifdef USE_LOGIN_CAP
+nolog_succ:
+# endif
+
+
+/* restrict_nohome */
+# ifdef USE_LOGIN_CAP
+    if (login_getcapbool(lc, "requirehome", 0)) {
+	if (!*p->pw_dir || CheckAcc (p->pw_dir, CA_ISDIR | 1)) {
+	    GSendInt (V_NOHOME);
+	    login_close(lc);
+	    return;
+	}
+    }
+# endif
+
+
+/* restrict_time */
+# ifdef USE_LOGIN_CAP
+#  ifdef HAVE_AUTH_TIMEOK
+    if (!auth_timeok(lc, time(NULL))) {
+	GSendInt (V_BADTIME);
+	login_close(lc);
+	return;
+    }
+#  endif
+# endif
+
+
+/* restrict_expired; this MUST be the last one */
+# if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
+
+#  if !defined(HAVE_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW))
+    if (!sp)
+	goto spbad;
+#  endif
+
+#  define DEFAULT_WARN  (2L * 7L)  /* Two weeks */
+
+    tim = time(NULL) / 86400L;
+
+#  ifdef USE_LOGIN_CAP
+    quietlog = login_getcapbool(lc, "hushlogin", 0);
+    warntime = login_getcaptime(lc, "warnexpire",
+				DEFAULT_WARN * 86400L, DEFAULT_WARN * 86400L
+			       ) / 86400L;
+#  else
+    quietlog = 0;
+#   ifdef USESHADOW
+    warntime = sp->sp_warn != -1 ? sp->sp_warn : DEFAULT_WARN;
+#   else
+    warntime = DEFAULT_WARN;
+#   endif
+#  endif
+
+#  ifdef HAVE_PW_EXPIRE
+    exp = p->pw_expire / 86400L;
+    if (exp) {
+#  else
+    if (sp->sp_expire != -1) {
+	exp = sp->sp_expire;
+#  endif
+	if (tim > exp) {
+	    GSendInt (V_AEXPIRED);
+#  ifdef USE_LOGIN_CAP
+	    login_close(lc);
+#  endif
+	    return;
+	} else if (tim > (exp - warntime) && !quietlog) {
+	    expire = exp - tim;
+	    retv = V_AWEXPIRE;
+	}
+    }
+
+#  ifdef HAVE_PW_EXPIRE
+    exp = p->pw_change / 86400L;
+    if (exp) {
+#  else
+    if (sp->sp_max != -1) {
+	exp = sp->sp_lstchg + sp->sp_max;
+#  endif
+	if (tim > exp) {
+	    GSendInt (V_PEXPIRED);
+#  ifdef USE_LOGIN_CAP
+	    login_close(lc);
+#  endif
+	    return;
+	} else if (tim > (exp - warntime) && !quietlog) {
+	    if (retv == V_OK || expire > exp)
+		expire = exp - tim;
+	    retv = V_PWEXPIRE;
+	}
+    }
+
+    if (retv != V_OK) {
+	GSendInt (retv);
+	GSendInt (expire);
+#  ifdef USE_LOGIN_CAP
+	login_close(lc);
+#  endif
+	return;
+    }
+
+#  if !defined(HAVE_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW))
+spbad:
+#  endif
+
+# else
+
+    GSendInt (V_OK);
+#  ifdef USE_LOGIN_CAP
+    login_close(lc);
+#  endif
+
+# endif /* HAVE_PW_EXPIRE || USESHADOW */
+
+
+#endif /* USE_PAM || AIXV3 */
+}
+
+
+static char *envvars[] = {
+    "TZ",			/* SYSV and SVR4, but never hurts */
+#ifdef AIXV3
+    "AUTHSTATE",		/* for kerberos */
+#endif
+#if defined(sony) && !defined(SYSTYPE_SYSV) && !defined(_SYSTYPE_SYSV)
+    "bootdev",
+    "boothowto",
+    "cputype",
+    "ioptype",
+    "machine",
+    "model",
+    "CONSDEVTYPE",
+    "SYS_LANGUAGE",
+    "SYS_CODE",
+#endif
+#if (defined(SVR4) || defined(SYSV)) && defined(i386) && !defined(sun)
+    "XLOCAL",
+#endif
+    NULL
+};
+
+static char **
+userEnv (struct display *d, int useSystemPath, char *user, char *home, char *shell)
+{
+    char	**env;
+    char	**envvar;
+    char	*str;
+
+    env = defaultEnv ();
+    env = setEnv (env, "DISPLAY", d->name);
+    env = setEnv (env, "HOME", home);
+    env = setEnv (env, "LOGNAME", user); /* POSIX, System V */
+    env = setEnv (env, "USER", user);    /* BSD */
+    env = setEnv (env, "PATH", useSystemPath ? d->systemPath : d->userPath);
+    env = setEnv (env, "SHELL", shell);
+#if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
+    if (krbtkfile[0] != '\0')
+        env = setEnv (env, "KRBTKFILE", krbtkfile);
+#endif
+    for (envvar = envvars; *envvar; envvar++)
+    {
+	str = getenv(*envvar);
+	if (str)
+	    env = setEnv (env, *envvar, str);
+    }
+    return env;
+}
+
+
+static int removeAuth = 0;
+static int sourceReset = 0;
+
+int
+StartClient(struct display *d, char *name, char *pass, char **sessargs)
+{
+    int		pretc, nargs;
+    char	*shell, *home;
+    char	**argv, **avpt;
+#ifndef USE_PAM
+# ifdef AIXV3
+    char	*msg;
+# else
+    int 	i;
+#  ifdef HAS_SETUSERCONTEXT
+    char	**e, **envinit;
+    extern char	**environ;
+#  endif
+# endif
+#endif
+    char	*failsafeArgv[2];
+    int		pid;
+    struct verify_info	*verify;
+
+    if ((pretc = init_vrf(d, name, pass)) != V_OK)
+	return pretc;
+
+    if (!init_pwd(name NSHADOW))
+	return V_AUTH;
+
+#ifndef USE_PAM
+# ifdef AIXV3
+    msg = NULL;
+    loginsuccess(name, hostname, tty, &msg);
+    if (msg) {
+	Debug("loginsuccess() - %s\n", msg);
+	free((void *)msg);
+    }
+# else /* AIXV3 */
+#  if defined(KERBEROS) && !defined(NO_AFS)
+    if (pass[0] && krb4_auth(p, pass)) {
+	if (k_hasafs()) {
+	    if (k_setpag() == -1)
+		LogError ("setpag() failed for %s\n", name);
+	    /*  XXX maybe, use k_afsklog_uid(NULL, NULL, p->pw_uid)? */
+	    if ((ret = k_afsklog(NULL, NULL)) != KSUCCESS)
+		LogError("Warning %s\n", krb_get_err_text(ret));
+	}
+    }
+#  endif /* KERBEROS && AFS */
+# endif /* AIXV3 */
+#endif	/* !PAM */
+
+    if (!(verify = malloc (sizeof (*verify)))) {
+	LogOutOfMem("StartClient");
+	SessionExit (d, EX_NORMAL);
+    }
+    d->verify = verify;
+    verify->uid = p->pw_uid;
+    verify->gid = p->pw_gid;
+    home = p->pw_dir;
+    shell = p->pw_shell;
+    verify->userEnviron = userEnv (d, p->pw_uid == 0, name, home, shell);
+    verify->systemEnviron = systemEnv (d, name, home);
+    Debug ("user environment:\n%[|>s"
+	   "system environment:\n%[|>s"
+	   "end of environments\n", 
+	   "", "\n", verify->userEnviron,
+	   "", "\n", verify->systemEnviron);
+
+    (void) RdWrWm (d, name, sessargs);
+
+    /*
+     * for user-based authorization schemes,
+     * add the user to the server's allowed "hosts" list.
+     */
+#if !defined(USE_PAM) && !defined(AIXV3)
+    for (i = 0; i < d->authNum; i++)
+    {
+# ifdef SECURE_RPC
+	if (d->authorizations[i]->name_length == 9 &&
+	    memcmp(d->authorizations[i]->name, "SUN-DES-1", 9) == 0)
+	{
+	    XHostAddress	addr;
+	    char		netname[MAXNETNAMELEN+1];
+	    char		domainname[MAXNETNAMELEN+1];
+    
+	    getdomainname(domainname, sizeof domainname);
+	    user2netname (netname, verify->uid, domainname);
+	    addr.family = FamilyNetname;
+	    addr.length = strlen (netname);
+	    addr.address = netname;
+	    XAddHost (*dpy, &addr);
+	}
+# endif
+# ifdef K5AUTH
+	if (d->authorizations[i]->name_length == 14 &&
+	    memcmp(d->authorizations[i]->name, "MIT-KERBEROS-5", 14) == 0)
+	{
+	    /* Update server's auth file with user-specific info.
+	     * Don't need to AddHost because X server will do that
+	     * automatically when it reads the cache we are about
+	     * to point it at.
+	     */
+	    extern Xauth *Krb5GetAuthFor();
+
+	    XauDisposeAuth (d->authorizations[i]);
+	    d->authorizations[i] =
+		Krb5GetAuthFor(14, "MIT-KERBEROS-5", d->name);
+	    SaveServerAuthorizations (d, d->authorizations, d->authNum);
+	}
+# endif
+    }
+#endif /* USE_PAM && AIXV3 */
+
+    /*
+     * Run system-wide initialization file
+     */
+    sourceReset = 1;
+    if (source (verify->systemEnviron, d->startup) != 0) {
+	LogError("Cannot execute startup script %s\n", d->startup);
+	SessionExit (d, EX_NORMAL);
+    }
+
+    Debug ("now starting the session\n");
+#ifdef USE_PAM
+    if (pamh)
+	pam_open_session(pamh, 0);
+#endif    
+    removeAuth = 1;
+    switch (pid = Fork ()) {
+    case 0:
+#ifdef XDMCP
+	/* The chooser socket is not closed by CleanUpChild() */
+	DestroyWellKnownSockets();
+#endif
+
+	/* Do system-dependent login setup here */
+#ifdef CSRG_BASED
+	setsid();
+#else
+# if defined(SYSV) || defined(SVR4) || defined(__CYGWIN__)
+#  if !(defined(SVR4) && defined(i386)) || defined(SCO325) || defined(__GNU__)
+	setpgrp ();
+#  endif
+# else
+	setpgrp (0, getpid ());
+# endif
+#endif
+
+#ifndef AIXV3
+# if !defined(HAS_SETUSERCONTEXT) || defined(USE_PAM)
+	if (setgid(verify->gid) < 0)
+	{
+	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
+		     verify->gid, name, errno);
+	    return 0;
+	}
+#  ifndef QNX4
+	if (initgroups(name, verify->gid) < 0)
+	{
+	    LogError("initgroups for \"%s\" failed, errno=%d\n", name, errno);
+	    return 0;
+	}
+#  endif   /* QNX4 doesn't support multi-groups, no initgroups() */
+#  ifdef USE_PAM
+	if (pamh) {
+	    int i;
+	    char **pam_env;
+
+	    pam_setcred(pamh, 0);
+
+	    /* pass in environment variables set by libpam and modules it called */
+	    pam_env = pam_getenvlist(pamh);
+	    for(i = 0; pam_env && pam_env[i]; i++)
+		verify->userEnviron = putEnv(pam_env[i], verify->userEnviron);
+	}
+#  endif
+#  if defined(BSD) && (BSD >= 199103)
+	if (setlogin(name) < 0)
+	{
+	    LogError("setlogin for \"%s\" failed, errno=%d\n", name, errno);
+	    return 0;
+	}
+#  endif
+	if (setuid(verify->uid) < 0)
+	{
+	    LogError("setuid %d (user \"%s\") failed, errno=%d\n",
+		     verify->uid, name, errno);
+	    return 0;
+	}
+# else /* HAS_SETUSERCONTEXT && !USE_PAM */
+	/*
+	 * Destroy environment unless user has requested its preservation.
+	 * We need to do this before setusercontext() because that may
+	 * set or reset some environment variables.
+	 */
+	envinit = malloc(sizeof(char*));
+	if (NULL == envinit) {
+		LogError("malloc() of initial environment failed, errno=%d\n",
+			 errno);
+		return 0;
+	}
+	envinit[0] = NULL;
+	environ = envinit;
+
+	/*
+	 * Set the user's credentials: uid, gid, groups,
+	 * environment variables, resource limits, and umask.
+	 */
+	if (setusercontext(NULL, p, p->pw_uid, LOGIN_SETALL) < 0)
+	{
+	    LogError("setusercontext for \"%s\" failed, errno=%d\n", name,
+		     errno);
+	    return 0;
+	}
+	endpwent();
+
+	e = environ;
+	while (*e)
+	    verify->userEnviron = putEnv(*e++, verify->userEnviron);
+
+# endif /* HAS_SETUSERCONTEXT */
+#else /* AIXV3 */
+	/*
+	 * Set the user's credentials: uid, gid, groups,
+	 * audit classes, user limits, and umask.
+	 */
+	if (setpcred(name, NULL) == -1)
+	{
+	    LogError("setpcred for \"%s\" failed, errno=%d\n", name, errno);
+	    return 0;
+	}
+
+	{ 
+	    extern char **newenv; /* from libs.a, this is set up by setpenv */
+	    char **theenv;
+	    int i;
+
+	    /*
+	     * Make a copy of the environment, because setpenv will trash it.
+	     */
+	    for (i = 0; verify->userEnviron[i++]; );
+	    if (!(theenv = (char **)malloc(i * sizeof(char *))))
+	    {
+		Debug("Out of memory\n");
+		return 0;
+	    }
+	    memcpy(theenv, verify->userEnviron, i * sizeof(char *));
+
+	    /*
+	     * Set the users process environment. Store protected variables and
+	     * obtain updated user environment list. This call will initialize
+	     * global 'newenv'. 
+	     */
+	    if (setpenv(name, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
+			theenv, NULL) != 0)
+	    {
+		Debug("Can't set process environment (user=%s)\n", name);
+		free(theenv);
+		return 0;
+	    }
+
+	    /*
+	     * Free old userEnviron and replace with newenv from setpenv().
+	     */
+	    free(theenv);
+	    freeEnv(verify->userEnviron);
+	    verify->userEnviron = newenv;
+	}
+#endif /* AIXV3 */
+
+	/*
+	 * for user-based authorization schemes,
+	 * use the password to get the user's credentials.
+	 */
+#if !defined(USE_PAM) && !defined(AIXV3)
+# ifdef SECURE_RPC
+	/* do like "keylogin" program */
+	if (!pass[0])
+	    LogError("Warning: no password for NIS provided.\n");
+	else
+	{
+	    char    netname[MAXNETNAMELEN+1], secretkey[HEXKEYBYTES+1];
+	    int	    nameret, keyret;
+	    int	    len;
+	    int     key_set_ok = 0;
+
+	    nameret = getnetname (netname);
+	    Debug ("User netname: %s\n", netname);
+	    len = strlen (pass);
+	    if (len > 8)
+		bzero (pass + 8, len - 8);
+	    keyret = getsecretkey(netname, secretkey, pass);
+	    Debug ("getsecretkey returns %d, key length %d\n",
+		    keyret, strlen (secretkey));
+	    /* is there a key, and do we have the right password? */
+	    if (keyret == 1)
+	    {
+		if (*secretkey)
+		{
+		    keyret = key_setsecret(secretkey);
+		    Debug ("key_setsecret returns %d\n", keyret);
+		    if (keyret == -1)
+			LogError ("failed to set NIS secret key\n");
+		    else
+			key_set_ok = 1;
+		}
+		else
+		{
+		    /* found a key, but couldn't interpret it */
+		    LogError ("password incorrect for NIS principal \"%s\"\n",
+			      nameret ? netname : name);
+		}
+	    }
+	    if (!key_set_ok)
+	    {
+		/* remove SUN-DES-1 from authorizations list */
+		int i, j;
+		for (i = 0; i < d->authNum; i++)
+		{
+		    if (d->authorizations[i]->name_length == 9 &&
+			memcmp(d->authorizations[i]->name, "SUN-DES-1", 9) == 0)
+		    {
+			for (j = i+1; j < d->authNum; j++)
+			    d->authorizations[j-1] = d->authorizations[j];
+			d->authNum--;
+			break;
+		    }
+		}
+	    }
+	    bzero(secretkey, strlen(secretkey));
+	}
+# endif
+# ifdef K5AUTH
+	/* do like "kinit" program */
+	if (!pass[0])
+	    LogError("Warning: no password for Kerberos5 provided.\n");
+	else
+	{
+	    int i, j;
+	    int result;
+	    extern char *Krb5CCacheName();
+
+	    result = Krb5Init(name, pass, d);
+	    if (result == 0) {
+		/* point session clients at the Kerberos credentials cache */
+		verify->userEnviron =
+		    setEnv(verify->userEnviron,
+			   "KRB5CCNAME", Krb5CCacheName(d->name));
+	    } else {
+		for (i = 0; i < d->authNum; i++)
+		{
+		    if (d->authorizations[i]->name_length == 14 &&
+			memcmp(d->authorizations[i]->name, "MIT-KERBEROS-5", 14) == 0)
+		    {
+			/* remove Kerberos from authorizations list */
+			for (j = i+1; j < d->authNum; j++)
+			    d->authorizations[j-1] = d->authorizations[j];
+			d->authNum--;
+			break;
+		    }
+		}
+	    }
+	}
+# endif /* K5AUTH */
+#endif /* USE_PAM */
+	if (pass)
+	    bzero(pass, strlen(pass));
+	SetUserAuthorization (d, verify);
+	home = getEnv (verify->userEnviron, "HOME");
+	if (home)
+	    if (chdir (home) == -1) {
+		LogError ("user \"%s\": cannot chdir to home \"%s\" (err %d), using \"/\"\n",
+			  getEnv (verify->userEnviron, "USER"), home, errno);
+		chdir ("/");
+		verify->userEnviron = setEnv(verify->userEnviron, "HOME", "/");
+	    }
+	argv = parseArgs (0, d->session);
+Debug ("session args: %'[s\n", sessargs);
+	for (nargs = 0; sessargs[nargs]; nargs++)
+	    if ((avpt = extStrArr (&argv)))
+		*avpt = sessargs[nargs];
+	if (!argv || !argv[0])
+	    argv = addStrArr (argv, "xsession", 8);
+	if (argv) {
+		Debug ("executing session %s\n", argv[0]);
+		execute (argv, verify->userEnviron);
+		LogError ("Session \"%s\" execution failed (err %d)\n", argv[0], errno);
+	} else {
+		LogError ("Session has no command/arguments\n");
+	}
+	failsafeArgv[0] = d->failsafeClient;
+	failsafeArgv[1] = 0;
+	execute (failsafeArgv, verify->userEnviron);
+	exit (1);
+    case -1:
+	Debug ("StartSession, fork failed\n");
+	LogError ("can't start session on \"%s\", fork failed, errno=%d\n",
+		  d->name, errno);
+	return 0;
+    default:
+	Debug ("StartSession, fork succeeded %d\n", pid);
+	return pid;
+    }
+}
+
+void
+SessionExit (struct display *d, int status)
+{
+    /* make sure the server gets reset after the session is over */
+    if (d->serverPid >= 2 && d->resetSignal)
+	kill (d->serverPid, d->resetSignal);
+    else
+	ResetServer (d);
+    if (sourceReset) {
+	/*
+	 * run system-wide reset file
+	 */
+	Debug ("Source reset program %s\n", d->reset);
+	source (d->verify->systemEnviron, d->reset);
+    }
+    if (removeAuth)
+    {
+#ifdef USE_PAM
+	if (pamh) {
+	    /* shutdown PAM session */
+	    pam_setcred(pamh, PAM_DELETE_CRED);
+	    pam_close_session(pamh, 0);
+	    pam_end(pamh, PAM_SUCCESS);
+	    pamh = NULL;
+	}
+#endif
+	setgid (d->verify->gid);
+	setuid (d->verify->uid);
+	RemoveUserAuthorization (d, d->verify);
+#if !defined(USE_PAM) && !defined(AIXV3)
+# ifdef K5AUTH
+	/* do like "kdestroy" program */
+        {
+	    krb5_error_code code;
+	    krb5_ccache ccache;
+
+	    code = Krb5DisplayCCache(d->name, &ccache);
+	    if (code)
+		LogError("%s while getting Krb5 ccache to destroy\n",
+			 error_message(code));
+	    else {
+		code = krb5_cc_destroy(ccache);
+		if (code) {
+		    if (code == KRB5_FCC_NOFILE) {
+			Debug ("No Kerberos ccache file found to destroy\n");
+		    } else
+			LogError("%s while destroying Krb5 credentials cache\n",
+				 error_message(code));
+		} else
+		    Debug ("Kerberos ccache destroyed\n");
+		krb5_cc_close(ccache);
+	    }
+	}
+# endif /* K5AUTH */
+# ifdef KERBEROS
+	if (krbtkfile[0]) {
+	    (void) dest_tkt();
+#  ifndef NO_AFS
+	    if (k_hasafs())
+		(void) k_unlog();
+#  endif
+	}
+# endif
+#endif /* !USE_PAM && !AIXV3*/
+#ifdef USE_PAM
+    } else {
+	if (pamh) {
+	    pam_end(pamh, PAM_SUCCESS);
+	    pamh = NULL;
+	}
+#endif
+    }
+    Debug ("Display %s exiting with status %d\n", d->name, status);
+    exit (status);
+}
+
+char **
+RdWrWm (struct display *d, const char *usr, char **args)
+{
+    int i;
+    FILE *file;
+    char **margs, buf[256];
+
+    if (!usr || !usr[0])
+	return 0;
+
+    if (init_vrf (d, usr, "") != V_OK || !init_pwd (usr NSHADOW))
+	return 0;
+Debug ("do_RdWr\n");
+    sprintf(buf, "%s/%s", p->pw_dir, d->sessSaveFile);
+    if (!args) {
+	margs = initStrArr (0);
+	if (!CheckAcc (buf, 4))
+	    if ( (file = fopen(buf, "r")) != NULL ) {
+		while (fgets (buf, sizeof(buf), file)) {
+		    i = strlen (buf);
+		    if (i && buf[i - 1] == '\n')
+			i--;
+		    margs = addStrArr (margs, buf, i);
+		}
+		fclose (file);
+	    }
+	return margs;
+    } else {
+	if (!CheckAcc (buf, CA_MKDIRS | 2))
+	    if ( (file = fopen(buf, "w")) != NULL ) {
+		for (i = 0; args[i]; i++)
+		    fprintf (file, "%s\n", args[i]);
+		fclose (file);
+	    }
+	return 0;
+    }
+}
+
+
+#if (defined(Lynx) && !defined(HAS_CRYPT)) || defined(SCO) && !defined(SCO_USA) && !defined(_SCO_DS)
+char *crypt(char *s1, char *s2)
+{
+    return(s2);
+}
+#endif

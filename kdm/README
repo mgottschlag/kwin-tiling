@@ -3,60 +3,23 @@ $Id$
 This is the KDE Display Manager (kdm) v0.92 for KDE 2.2, 
 the KDE replacement for the X Display Manager (xdm).
 
-kdm is intended as a "drop-in" replacement of xdm. It reads the xdm
-specific files (usually in /usr/X11R6/lib/X11/xdm), so it should not be
-necessary to change them. You can change the configuration from
-KDE Control Center. You will find the Login Manager module in 
-"System" -> "Login Manager".
-
-In fact it's just a new greeter for the xdm, which was programmed in a way
-that a replacement of the greeter module is possible.
 
 How to setup kdm
 ----------------
 
-After installation of kdebase, be sure to run kdmdesktop from the xdm
-setup script -- on most systems located at /usr/X11/lib/X11/xdm/Xsetup_0,
-or somewhere similar.
+KDM's config files are all located in ${kde_confdir}/kdm.
+"make install" will install an example configuration if the directory
+does not exist yet.
 
-kdebase's configure will look for your xdm configuration files and use
-them. If the files aren't found, you can give the explicit path with the
---with-xdmdir option. If this is still not good, new xdm config files are
-installed. These require hand editing before use. You might want to look
-at the files in the "xdmconfig" directory. They show how to make Xsession
-scripts for different window managers and setups.
+You can change the configuration from the KDE Control Center. 
+You will find the Login Manager module in "System" -> "Login Manager".
 
-Random rambings and license information
----------------------------------------
-
-Version 0.1 of kdm is copyright
-	Matthias Ettrich <ettrich@trolltech.com>
-All later versions copyright:
-	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
-Since version 0.90 (KDE 2.1) copyright:
-	(C) 2000-2001 Oswald Buddenhagen <ossi@kde.org>
-
-Thanks to (in no particular order):
-Michael Bach Jensen and Torsten Rahn for drawing icons.
-Duncan Haldane for investigation of PAM issues.
-Stephan Kulow for helping me with the autoconf stuff.
-Martin Baehr for intensive testing and writing the sample Xsession scripts.
-Harald Hoyer <Harald.Hoyer@redhat.de> for the chooser
-
-The files in this directory (but NOT the subdirectories) are licensed
-under the X licence (see www.xfree86.org for more info). The files
-in the chooser, greeter and pics directories are licensed under the GNU GPL.
-The files in the config directories are more or less public domain, i think.
 
 Running KDM from init
 ---------------------
 
-   Edit (as root) /etc/X11/xdm/Xsetup_0
-
-   Comment out everything in this file below (but not including!) the 
-   first line, then append the following line:
-
-       /opt/kde/bin/kdmdesktop
+NOTE, that this description applies to RedHat and must be adapted for
+other distributions/systems.
 
    Edit (as root) /etc/inittab.
 
@@ -82,77 +45,63 @@ Running KDM from init
 
        id:5:initdefault:
 
-   If you do the latter step, then every time your system boots successfully
-   it will go into run level 5 and run KDM, presenting you with the 
-   exceedingly cute KDE login screen. 
+   If you do the latter step, then every time your system boots 
+   successfully it will go into run level 5 and run KDM, 
+   presenting you the exceedingly cute KDE login screen. 
 
-   To edit the settings for KDM, as root edit the 
-   file /opt/kde/share/config/kdmrc. This lets you twiddle with things
-   like the welcome message, background wallpaper, and users to allow
-   login via KDM.
+
+Random rambings and license information
+---------------------------------------
+
+Version 0.1 of kdm is copyright
+	Matthias Ettrich <ettrich@trolltech.com>
+All later versions copyright:
+	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
+Since version 0.90 (KDE 2.1) copyright:
+	(C) 2000-2001 Oswald Buddenhagen <ossi@kde.org>
+
+The files in the backend directory are licensed under the X licence 
+(see www.xfree86.org for more info). 
+The files in the chooser and kfrontend directories are licensed under 
+the GNU GPL.
+
+Thanks to (in no particular order):
+Michael Bach Jensen and Torsten Rahn for drawing icons.
+Duncan Haldane for investigation of PAM issues.
+Stephan Kulow for helping me with the autoconf stuff.
+Martin Baehr for intensive testing and writing the sample Xsession scripts.
+Harald Hoyer <Harald.Hoyer@redhat.de> for the chooser
+... and _many_ others ...
+
 
 "It doesn't work!!"
 -------------------
 
-In this case you should provide me some information, so I can analyze 
-the problem. Obtaining debugging output:
+More input! ;-)
 
-a) Create some useful logs from a "real" session
+KDM accepts two command line options related logging. These options
+_must_ come first on the command line, if they are used:
 
-- run "kdm -debug 1"
-- let it crash (or whatever your problem is)
-- send me the generated syslog messages (often found in /var/log/debug.log
-  and /var/log/daemon.log; make sure, that your system logs the daemon.*
-  facility (look at /etc/syslog.conf)).
+  -debug <n>, where <n> is a decimal or hexadecimal (prefix 0x) number.
+  The meaning of the number is "explained" in backend/greet.h (the
+  "#define DEBUG_<something>"'s). Just use 255.
 
-for the following points you should configure --with-debug or be using 
-a cvs version of kdm (those have debug info compiled in automatically).
+  -logfile <file>, where <file> is the file to log various messages to.
+  For internal reasons there is no option in kdmrc to permanently specify 
+  another log file location. If you redirect KDM's standard error output
+  to a file, KDM will log there.
+  If KDM is configured to use syslog, all internally generated messages 
+  are logged to the "daemon" facility. The log usually can be found in 
+  /var/log/debug.log and /var/log/daemon.log; make sure, that daemon.* 
+  is logged (look at /etc/syslog.conf). 
 
-b) Only the greeter (the login dialog):
+You should have gdb (GNU debugger) installed, so kdm can automatically 
+create a backtrace ("crash log").
 
-- run "make greetest" (from this directory)
-- run the greeter:
-  * assuming that you have Xnest and want to use it:
-    - start an X session
-    - start "Xnest :1"
-    - open a root shell
-      - run "gdb ./greetest"
-	- type "run greeter/.libs/libKdmGreet.so :1"
-	  (on a.out systems this would be libKdmGreet.a, i think).
-  * without Xnest (note, that you have to run the root shell
-    from another virtual terminal, as the greeter grabs the keyboard
-    and thus makes the whole x session unusable):
-    - open a root shell (in another vt or a remote session)
-      - run "gdb ./greetest"
-        - type "run greeter/.libs/libKdmGreet.so"
-  * now the steps are common:
-	  - perform the steps that make kdm crash - note, that the greeter
-	    behaves a bit different, when run in Xnest.
-	- type "where full" - send me the output.
-	  if this doesn't work ("full not found"), send me the "bt" output.
-	- type "bt" (the same as above, but shorter - only for you)
-	- type "l <file>:<line>", where <file>:<line> is the last part
-	  of the topmost line of the "bt" dump, which has the form
-	    #<some numbers> in <something> at <filename>:<number> 
-	  (note, that the line may actually consist or several lines 
-	  on a small display). send me this listing.
-	- type "q"
-
-c) The greeter inside a "real" session process
-
-- run kdm
-- run "gdb kdm `pidof -- -:0`"
-  * perform the above common steps to generate some useful output
-  clean exit from gdb, if kdm did not crash for some reason:
-  - press ctrl-c
-  - type "detach"
-  - type "q"
-
-d) The manager's startup (if the X-server doesn't even start)
-
-- run "gdb kdm"
-  - type "run -debug 15"
-  * perform the above common steps to generate some useful output
+Send me the logs together with a detailed description what you did and
+what happended. If your problem is related to a specific configuration,
+you should also attach a tar ball (a tar.gz archive) of your kdm config
+directory.
 
 
 -- 

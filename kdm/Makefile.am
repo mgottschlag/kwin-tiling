@@ -1,55 +1,32 @@
-SUBDIRS = greeter xdmconfig @kdmchooserdir@
+# backend needs to be conditional; chooser will go away.
+# this does not support builddir, everything is done in srcdir!
+SUBDIRS = kfrontend @kdmchooserdir@
 
-# Extra lib. Might be -lpam -dl or -lshadow or nothing
-PASSLIB = $(PASSWDLIB) $(PAMLIBS)
+EXTRA_DIST = misc
 
-INCLUDES = $(all_includes) $(KERBEROS_INCS)
+dist-hook:
+	mkdir $(distdir)/backend
+	cd $(srcdir)/backend; \
+	for i in *.c *.h Imakefile; do \
+	    cp -p $$i $(distdir)/backend; \
+	done
 
-bin_PROGRAMS = kdm
+$(srcdir)/backend/Makefile: $(srcdir)/backend/Imakefile
+	cd $(srcdir)/backend; $(XMKMF) -a $(IMAKEFLAGS)
+	rm -f $(srcdir)/backend/Makefile.bak
 
-EXTRA_PROGRAMS = greetest
-greetest_SOURCES = greetest.c
+all-local: $(srcdir)/backend/Makefile
+	$(MAKE) -C backend
 
-AM_CFLAGS = $(STD_DEFINES) $(CONN_FLAGS)
+clean-local: $(srcdir)/backend/Makefile
+	$(MAKE) -C backend clean
 
-# this is for static linking - inserted into KDM_GREET_LIBS by configure
-KDM_KDE_LIBS  = $(LIB_KDEUI) -lXau $(PASSLIB) \
-    $(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
-    $(LIBCRYPT) $(LIBUCB) $(LIBUTIL) $(LIBRESOLV)
+distclean-local:
+	rm -f $(srcdir)/backend/Makefile
 
-# Libraries:
-LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
-LDADD = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSLIB) \
-    $(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
-    $(LIBCRYPT) $(LIBUCB) $(LIBDL) $(LIBUTIL) $(LIBRESOLV)
-kdm_LDADD = $(LDADD) $(KDM_GREET_LIBS)
+install-exec-local:
+	$(INSTALL_PROGRAM) $(srcdir)/backend/xdm $(DESTDIR)$(bindir)/kdm
 
-# Sources for kdm:
-kdm_SOURCES = access.c \
-    auth.c \
-    choose.c \
-    daemon.c \
-    dm.c \
-    dpylist.c \
-    error.c \
-    file.c \
-    genauth.c \
-    krb5auth.c \
-    mitauth.c \
-    netaddr.c \
-    policy.c \
-    protodpy.c \
-    reset.c \
-    resource.c \
-    rpcauth.c \
-    server.c \
-    session.c \
-    socket.c \
-    streams.c \
-    util.c \
-    xdmauth.c \
-    xdmcp.c
+uninstall-local:
+	rm -f $(DESTDIR)$(bindir)/kdm
 
-noinst_HEADERS = kdm-config.h dm.h dm_socket.h dm_error.h dm_auth.h greet.h
-
-EXTRA_DIST = chooser misc

@@ -1,0 +1,353 @@
+# KDM configuration example.
+# Note, that all comments will be lost if you change this file with
+# the kcontrol frontend.
+#
+# Definition: the greeter is the login dialog, i.e., the part of KDM
+# which the user sees.
+#
+# You can configure every X-display individually.
+# Every display has a display name, which consists of a host name
+# (which is empty for local displays), a colon and a display number.
+# Additionally, a display belongs to a display class (which can be
+# ignored in most cases; the kcontrol config frontend does not support
+# this feature at all).
+# Sections with display-specific settings have the formal syntax
+# "[X-" host [":" number [ "_" class ]] "-" sub-section "]"
+# You can use the "*" wildcard for host, number and class. You may omit
+# trailing components; they are assumed to be "*".
+# The host part may be a domain specification like ".inf.tu-dresden.de".
+# From which section a setting is actually taken is determined by these
+# rules:
+# - an exact match takes precedence over a partial match (for the host part), 
+#   which in turn takes precedence over a wildcard
+# - precedence decreases from left to right for equally exact matches
+# Example: display name "myhost:0", class "dpy".
+# [X-myhost:0_dpy] precedes
+# [X-myhost:0_*] (same as [X-myhost:0]) precedes
+# [X-myhost:*_dpy] precedes
+# [X-myhost:*_*] (same as [X-myhost]) precedes
+# [X-*:0_dpy] precedes
+# [X-*:0_*] (same as [X-*:0]) precedes
+# [X-*:*_*] (same as [X-*])
+# These sections do NOT match this display:
+# [X-hishost], [X-myhost:0_dec], [X-*:1], [X-:*]
+# If a setting is not found in any matching section, a default is used.
+#
+# Every comment applies to the following section or key.
+#
+
+# XXX do this on a per-display basis: should be [X-*-Desktop]
+# HELPME: I need help with kbackgroundrenderer!  -- ossi@kde.org
+[Desktop0]
+BackgroundMode=VerticalGradient
+BlendBalance=100
+BlendMode=NoBlending
+ChangeInterval=60
+Color1=0,0,128
+Color2=0,255,255
+CurrentWallpaper=0
+LastChange=0
+MultiWallpaperMode=NoMulti
+Pattern=
+Program=
+ReverseBlending=false
+Wallpaper=
+WallpaperList=
+WallpaperMode=Tiled
+
+[General]
+# If "false", KDM won't daemonize after startup. Use this, if you start
+# KDM from inittab with the respawn instruction. Default is true.
+#DaemonMode=false
+# The file, where X-servers to be used by kdm are listed. The file is in
+# the usual xdm-Xservers format. Default is @kde_confdir@/kdm/Xservers
+# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to
+# do this best. 
+#Xservers=
+# Where KDM should store its PID. Default is /var/run/xdm.pid - this
+# is an intentional conflict with "plain" XDM.
+#PidFile=
+# Whether KDM should lock the pid file to prevent having multiple kdm
+# instances running at once. Leave it "true", unless you're brave.
+#LockPidFile=false
+# Where to store authorizations files. Default is /var/lib/kdm
+# XXX /authdir/authfiles is appended to this path.
+#AuthDir=
+# Whether KDM should automatically re-read configuration files, if it
+# finds them having changed. Just keep it "true".
+#AutoRescan=false
+# Additional environment variables KDM should pass on to the Xsetup, Xstartup,
+# Xsession, and Xreset programs. This shouldn't be necessary very often.
+#ExportList=VAR,ANOTHER_IMPORTANT_VAR,CRAP
+# Where KDM should fetch entropy from. This is meaningless, if your system
+# supports /dev/urandom, otherwise it defaults to /dev/mem.
+#RandomFile=/dev/mem
+# Path to the xrdb program. This only has a meaning, if you use the Recources
+# option below (what you probably won't do). Default is @XBINDIR@/xrdb
+#Xrdb=
+
+[Xdmcp]
+# Whether KDM should listen to XDMCP requests. Default is true.
+Enable=false
+# The UDP port KDM should listen on for XDMCP requests. Don't change the 177.
+#Port=177
+# File with the private keys of X-terminals. Required for XDM authentication.
+# Default is @kde_confdir@/kdm/kdmkeys
+#KeyFile=
+# XDMCP access control file in the usual xdm-Xaccess format.
+# Default is @kde_confdir@/kdm/Xaccess
+# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to
+# do this best. 
+#Xaccess=
+# The program which is invoked to dynamically generate replies to XDMCP
+# BroadcastQuery requests.
+# By default no program is invoked and "Willing to manage" is sent.
+Xwilling=@kde_confdir@/kdm/Xwilling
+# Number of seconds to wait for display to respond after the user has
+# selected a host from the chooser. Default is 15.
+#ChoiceTimeout=10
+# Use the numeric IP address of the incoming connection instead of the
+# host name. Use this on multihomed hosts. Default is false
+#SourceAddress=true
+# Strip domain name from remote display names if it is equal to the local
+# domain. Default is true
+#RemoveDomainname=false
+
+[Shutdown]
+RebootCmd=/sbin/reboot
+HaltCmd=/sbin/poweroff
+UseLilo=false
+LiloCmd=/sbin/lilo
+LiloMap=/boot/map
+
+# Rough estimations about how many seconds KDM will spend at most on
+# - opening a connection to the X-server (OpenTime):
+#   OpenRepeat * (OpenTimeout + OpenDelay)
+# - starting a local X-server (SeverTime): ServerAttempts * ServerWait
+# - starting a display:
+#   - local display: StartAttempts * (ServerTime + OpenTime)
+#   - remote/foreign display: StartAttempts * OpenTime
+
+[X-*-Core]
+# How long to wait before retrying to start the display after various
+# errors. Default is 15
+#OpenDelay=
+# How long to wait before timing out XOpenDisplay. Default is 120
+#OpenTimeout=
+# How often to try the XOpenDisplay. Default is 5
+#OpenRepeat=
+# Try at most that many times to start a display. If this fails, the display
+# is disabled. Default is 4
+#StartAttempts=
+# The StartAttempt counter is reset after that many seconds. Default is 30
+#StartInterval=
+# Ping remote display every that many minutes. Default is 5
+#PingInterval=
+# Wait for a Pong that many minutes. Default is 5
+#PingTimeout=
+# Restart instead of resetting the local X-server after session exit.
+# Use it if the server leaks memory, etc. Default is false
+#TerminateServer=true
+# The signal needed to reset the local X-server. Default is 1 (SIGHUP)
+#ResetSignal=
+# The signal needed to terminate the local X-server. Default is 15 (SIGTERM)
+#TermSignal=
+# Need to reset the X-server to make it read initial Xauth file.
+# Default is false
+#ResetForAuth=true
+# Create X-authorizations for local displays. Default is true
+#Authorize=false
+# Which X-authorization mechanisms should be used.
+# Default is "XDM-AUTHORIZATION-1,MIT-MAGIC-COOKIE-1" if crypto is enabled,
+# otherwise only "MIT-MAGIC-COOKIE-1".
+#AuthNames=
+# The name of this X-server's Xauth file. Default is "", which means, that
+# a random name in the AuthDir directory will be used.
+#AuthFile=
+# Specify a file with X-resources for the greeter, chooser and background.
+# The KDE frontend doesn't care for this, so you don't need it unless you
+# use an alternative chooser or another background generator than kdmdesktop.
+# Default is ""
+#Resources=
+# A program to run before the greeter is shown. You should start kdmdesktop
+# there. Also, xconsole can be started by this script.
+# Default is @kde_confdir@/kdm/Xsetup
+#Setup=
+# A program to run before a user session starts. You should invoke sessreg
+# there and optionally change the ownership of the console, etc.
+# Default is @kde_confdir@/kdm/Xstartup
+#Startup=
+# A program to run after a user session exits. You should invoke sessreg
+# there and optionally change the ownership of the console, etc.
+# Default is @kde_confdir@/kdm/Xreset
+#Reset=
+# The program which is run as the user which logs in. It is supposed to
+# interpret the session argument and start an appropriate session according
+# to it. See SessionTypes.
+# Default is @kde_confdir@/kdm/Xsession
+#Session=
+# The program to run if Session fails. Default is @XBINDIR@/xterm
+#FailsafeClient=
+# The PATH for the Session program. The default is system-specific.
+#UserPath=
+# The PATH for Setup, Startup and Reset, etc. The default is system-specific.
+#SystemPath=
+# The default system shell. Default is /bin/sh
+#SystemShell=
+# Where to put the user's X-server authorization file if ~/.Xauthority 
+# cannot be created. Default is /tmp
+#UserAuthDir=
+# The host chooser program to use. Default is @kde_bindir@/chooser
+# XXX this is going to be integrated into the greeter (probably).
+#Chooser=
+# If "true", KDM will automatically restart a session after an X-server
+# crash (or if it is killed by Alt-Ctrl-BackSpace). Default is false
+#AutoReLogin=true
+# Allow root logins? Default is true
+AllowRootLogin=false
+# Allow to log in, when user has set an empty password? Default is true
+AllowNullPasswd=false
+# Where (relatively to the user's home directory) to store the last selected
+# session. Default is .wmrc
+#SessSaveFile=
+# Command FiFo options.
+# XXX these options will probably change ...
+# Default is false
+#FifoCreate=
+# Default is -1
+#FifoOwner=
+# Default is -1
+#FifoGroup=
+
+[X-*-Greeter]
+# Session types the users can select. It is advisable to have "default" and
+# "failsafe" listed herein, which is also the default.
+# Note, that the meaning of this value is entirely up to your Xsession script.
+SessionTypes=default,kde2,failsafe
+# Widget Style of the greeter:
+# KDE, Windows, Platinum, Motif, Motif+, CDE, SGI; Default is KDE
+GUIStyle=KDE
+# What should be shown righthand of the input lines:
+# "Logo" - the image specified by LogoPixmap (Default)
+# "Clock" - a neat analog clock
+# "None" - nothing
+LogoArea=Logo
+# The image to show when LogoArea=Logo. Default is kdelogo.png
+#LogoPixmap=
+# Normally, the greeter is centered on the screen. Use this, if you want
+# it to appear elsewhere on the screen. Default is false
+#GreeterPosFixed=true
+#GreeterPosX=200
+#GreeterPosY=100
+# The normal font used in the greeter. Default is helvetica,12
+#StdFont=helvetica,12,5,0,50,0
+# The font used for the "Login Failed" message. Default is helvetica,12,bold
+#FailFont=helvetica,12,5,0,75,0
+# The Headline in the greeter.
+# The following character pairs are replaced:
+# - %d -> current display
+# - %h -> host name, possibly with domain name
+# - %n -> node name, most probably the host name without domain name
+# - %s -> the operating system
+# - %r -> the operating system's version
+# - %m -> the machine (hardware) type
+# - %% -> a single %
+# Default is "Welcome to %s at %n"
+#GreetString=K Desktop Environment (%n)
+# The font for the headline. Default is charter,24,bold
+GreetFont=charter,24,5,0,50,0
+# Language to use in the greeter.
+# Use the default C or coutry codes like de, en, pl, etc.
+Language=C
+# Specify, which user names (along with pictures) should be shown in the
+# greeter.
+# "All" - all users from /etc/passwd except those listed in NoUsers (Default)
+# "Selected" - only the ones listed in Users
+# "None" - no user list will be shown at all
+ShowUsers=All
+# For ShowUsers=Selected. Default is ""
+#Users=root,johndoe
+# For ShowUsers=All. Default is ""
+NoUsers=adm,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ingres,kmem,lp,mail,mailnull,man,mta,news,nobody,nscd,operator,pop,postfix,postgres,reboot,rpc,rpcuser,sendmail,shutdown,sympa,sync,tty,uucp,xfs,xten
+# Special case of NoUsers: users with a UID less than this number (except root)
+# will not be shown as well. Default is 0
+#MinShowUID=1000
+# If false, the users are listed in the order they appear in /etc/passwd.
+# If true, they are sorted alphabetically. Default is true
+#SortUsers=false
+# Specify, if/which user should be preselected for log in.
+# Note, that enabling this feature can be considered a security hole,
+# as it presents a valid login name to a potential attacker, so he "only"
+# needs to guess the password.
+# "None" - don't preselect any user (Default)
+# "Previous" - the user which successfully logged in last time
+# "Default" - the user specified in the DefaultUser field
+#PreselectUser=Previous
+# The user to preselect if PreselectUser=Default
+#DefaultUser=ethel
+# If this is true, the password input line is focused automatically if
+# a user is preselected. Default is false
+#JumpToPasswd=true
+# The password input fields cloak the typed in text. Specify, how to do it:
+# "NoEcho" - nothing is shown at all, the cursor doesn't move
+# "OneStar" - "*" is shown for every typed letter (Default)
+# "ThreeStars" - "***" is shown for every typed letter
+#EchoMode=NoEcho
+# Show shutdown button in greeter? Default is true
+ShutdownButton=false
+# Need to enter root password to be allowed to shut down? Default is false
+#ShutdownNeedsRoot=true
+# Hold the X-server grabbed the whole time the greeter is visible.
+# This may be more secure, but will disable any background. Default is false
+#GrabServer=true
+# How many seconds to wait for grab to succeed. Default is 3
+#GrabTimeout=
+
+[X-:*-Core]
+# Enable password-less logins on this display. USE WITH EXTREME CARE!
+# Default is false
+#NoPassEnable=true
+# The users that don't need to provide a password to log in. NEVER list root!
+#NoPassUsers=fred,ethel
+# Allow root logins? Default is true
+AllowRootLogin=true
+# Allow to log in, when user has set an empty password? Default is true
+AllowNullPasswd=true
+# How often to try to run the X-server. Running includes executing it and
+# waiting for it to come up. Default is 1
+#ServerAttempts=
+# How long to wait for a local server to come up. Default is 15
+#ServerWait=
+
+[X-:*-Greeter]
+# Show shutdown button in greeter? Default is true
+ShutdownButton=true
+# Need to enter root password to be allowed to shut down? Default is false
+ShutdownNeedsRoot=false
+# Complain, if local X-authorization cannot be created. Default is true
+# XXX this is a dummy currently
+#AuthComplain=false
+
+[X-:0-Core]
+# Enable automatic login on this display. USE WITH EXTREME CARE!
+# Default is false
+#AutoLoginEnable=true
+# The user to log in automatically. NEVER specify root!
+#AutoLoginUser=fred
+# The password for the user to log in automatically. This is NOT required
+# unless the user is to be logged in a NIS or Kerberos domain. If you use
+# it, you must "chmod 600 kdmrc" for obvious reasons.
+#AutoLoginPass=secret
+# The session for the user to log in automatically. This becomes useless after
+# the user's first login, as the last used session will take precedence.
+#AutoLoginSession=kde2
+# If "true", the auto-login is truly automatic, i.e., the user is logged in
+# when KDM comes up. If "false", the auto-login must be initiated by crashing
+# the X-server with Alt-Ctrl-BackSpace. Default is true
+#AutoLogin1st=false
+
+[X-:0-Greeter]
+# See above.
+#PreselectUser=Default
+#DefaultUser=johndoe
+

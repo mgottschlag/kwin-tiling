@@ -1,0 +1,38 @@
+#!/bin/sh
+# Xsession - run as user
+
+# redirect errors to a file in user's home directory if we can
+for errfile in "$HOME/.xsession-errors" "${TMPDIR-/tmp}/xses-$USER" "/tmp/xses-$USER"
+do
+	if ( cp /dev/null "$errfile" 2> /dev/null )
+	then
+		chmod 600 "$errfile"
+		exec > "$errfile" 2>&1
+		break
+	fi
+done
+
+test -f "$HOME/.xprofile" && . "$HOME/.xprofile"
+
+case $# in
+1)
+	case $1 in
+	failsafe)
+		exec xterm -geometry 80x24-0-0
+		;;
+	default)
+		exec ~/.xsession
+	esac
+esac
+
+# start windowmanager
+type "$1" >/dev/null 2>&1 && exec "$1"
+type "start$1" >/dev/null 2>&1 && exec "start$1"
+type "$1-session" >/dev/null 2>&1 && exec "$1-session"
+sess="`echo "$1" | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz'`"
+type "$sess" >/dev/null 2>&1 && exec "$sess"
+type "start$sess" >/dev/null 2>&1 && exec "start$sess"
+type "$sess-session" >/dev/null 2>&1 && exec "$sess-session"
+
+# windowmanager not found, tell user
+exec xmessage -center -buttons OK:0 -default OK "Sorry, $1 not found."

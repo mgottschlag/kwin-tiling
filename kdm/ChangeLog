@@ -1,4 +1,13 @@
-2001-02-04  Simon Hausmann <simon@kde.org>
+2001-06-10  Oswald Buddenhagen <ossi@kde.org>
+
+	* The source directory structure changed entirely
+	* External greeter: kdm_greet
+	  - libKdmGreet.so is gone
+	* External config parser is now named kdm_config
+	* The config files are all located in ${kde_confdir}/kdm now;
+	  KDM will no longer use kdm-config
+
+2001-04-02  Simon Hausmann <simon@kde.org>
 
         * patch by Joachim Plack <jack@caldera.de> to make dead keys work when
           the keyboard is grabbed.

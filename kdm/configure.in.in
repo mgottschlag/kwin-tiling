@@ -1,18 +1,20 @@
 
 dnl this is for kdm:
 
-AC_CHECK_FUNCS(getsecretkey getloadavg getusershell login_getclass auth_timeok)
+AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$kde_confdir", [KDE's configuration directory])
+AC_DEFINE_UNQUOTED(KDE_BINDIR, "$kde_bindir", [KDE's binaries directory])
 
 dnl checks for X server
 AC_PATH_PROG(X_SERVER, X)
 if test ! -z "$X_SERVER"; then
-    X_SERVER=`echo $X_SERVER | sed -e 's#/X$##'`
-    AC_DEFINE_UNQUOTED(XBINDIR, $X_SERVER, [Define where to find the X server])
-    XBINDIR=$X_SERVER
+    XBINDIR=`echo $X_SERVER | sed -e 's#/X$##'`
+    AC_DEFINE_UNQUOTED(XBINDIR, "$XBINDIR", [Define where to find the X server])
 fi
 AC_SUBST(XBINDIR)
 
+dnl XXX not anywhere else?
 KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please make sure it's in PATH!])])
+AC_SUBST(XMKMF)
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
@@ -21,27 +23,9 @@ AC_CACHE_VAL(kde_cv_defines_imake,
 if mkdir conftestdir; then
     cd conftestdir
     cat > Imakefile <<'EOF'
-CONN_FLAGS = ConnectionFlags
-STD_DEFINES = StandardDefines
-
 acimake:
-	@echo XDMDIR=$(XDMDIR)
-	@echo CONN_FLAGS=\"$(CONN_FLAGS)\"
-	@echo STD_DEFINES=\"$(STD_DEFINES)\"
 #if HasXdmAuth
 	@echo HASXDMAUTH=1
-#endif
-#if defined(i386Architecture) || defined(AmigaArchitecture)
-	@echo FRAGILE_DEV_MEM=1
-#endif
-#ifndef SharedLibXdmGreet
-# define SharedLibXdmGreet YES
-#endif
-#if !SharedLibXdmGreet
-	@echo GREET_USER_STATIC=1
-#endif
-#if NeedVarargsPrototypes
-	@echo NEED_VARARGS_PROTOTYPES=1
 #endif
 EOF
     $XMKMF >&5 2>&1
@@ -63,36 +47,6 @@ if test -n "$kde_cv_defines_imake"; then
     AC_MSG_RESULT([done])
 fi
 
-AC_MSG_CHECKING([which xdm connection flags to use])
-AC_MSG_RESULT([$CONN_FLAGS])
-AC_SUBST(CONN_FLAGS)
-
-AC_MSG_CHECKING([for additional xdm defines])
-AC_MSG_RESULT([$STD_DEFINES])
-AC_SUBST(STD_DEFINES)
-
-AC_MSG_CHECKING([whether to build a shared greeter for xdm])
-AC_ARG_ENABLE(greet-lib,
-	[  --disable-greet-lib     build static kdm greeter [default=auto,dynamic]],
-	[ if test "$enableval" = yes; then
-	    GREET_USER_STATIC=
-	  else
-	    GREET_USER_STATIC=1
-	  fi
-	])
-if test -n "$GREET_USER_STATIC"; then
-    AC_MSG_RESULT([no])
-    AC_DEFINE(GREET_USER_STATIC, 1, [Link the greeter statically])
-    kdmgreetera=libKdmGreet.a
-    KDM_GREET_LIBS="greeter/$kdmgreetera \$(KDM_KDE_LIBS)"
-else
-    kdmgreeterla=libKdmGreet.la
-    AC_MSG_RESULT([yes])
-fi
-AC_SUBST(KDM_GREET_LIBS)
-AC_SUBST(kdmgreetera)
-AC_SUBST(kdmgreeterla)
-
 AC_MSG_CHECKING([whether to use xdm authorization])
 if test -n "$HASXDMAUTH"; then
     AC_MSG_RESULT([yes])
@@ -101,44 +55,47 @@ else
     AC_MSG_RESULT([no])
 fi
 
-AC_MSG_CHECKING([whether to prevent access to video RAM])
-if test -n "$FRAGILE_DEV_MEM"; then
-    AC_MSG_RESULT([yes])
-    AC_DEFINE(FRAGILE_DEV_MEM, 1, [Protect S3 cards from crashing])
-else
-    AC_MSG_RESULT([no])
-fi
+dnl XXX still used in chooser and konsole
+AC_REQUIRE([KDE_MISC_TESTS])
+AC_CHECK_LIB(util, main, [LIBUTIL="-lutil"]) dnl for FreeBSD
+AC_SUBST(LIBUTIL)
+AC_CHECK_LIB(s, main, [LIB_LIBS="-ls"]) dnl for AIX
+AC_SUBST(LIB_LIBS)
 
-AC_MSG_CHECKING([whether function prototypes with Varargs are required])
-if test -n "$NEED_VARARGS_PROTOTYPES"; then
-    AC_MSG_RESULT([yes])
-    AC_DEFINE(NeedVarargsPrototypes, 1, [Need function prototypes with Varargs])
-else
-    AC_MSG_RESULT([no])
-fi
+AC_CHECK_LIB(Xau, main, [:], 
+	[
+	  AC_MSG_WARN([Cannot build KDM! Make sure that libXau.a is installed!])
+	  DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
+	], 
+	  $X_LDFLAGS -lX11 $LIBSOCKET)
 
-dnl This one tries to find XDMDIR for config files
-AC_ARG_WITH(xdmdir,
-	[  --with-xdmdir[=PATH]    If the xdm config dir cannot be found automatically],
-	[ ac_xdmdir=$withval],
-	[ ac_xdmdir="no"])
-AC_MSG_CHECKING([for xdm config directory])
-if test "$ac_xdmdir" = "no"; then
-    AC_REQUIRE([AC_PATH_KDE])
-    KDE_CONFDIR=`eval echo $kde_confdir`
-    ac_xdmdir=$KDE_CONFDIR/kdm
-    dnl should /var/X11/xdm go before $XDMDIR?
-    for i in /etc/X11/kdm /etc/X11/xdm $XDMDIR /var/X11/xdm /usr/openwin/xdm /usr/X11R6/lib/X11/xdm; do
-	if test -d $i; then
-	    ac_xdmdir=$i
-	    break 2
-	fi
-    done
+AC_ARG_WITH(xdmcp,
+	[  --without-xdmcp         build kdm without xdmcp support [default=with xdmcp]],
+	[ if test "$withval" = yes; then
+	    XDMCP=1
+	  else
+	    XDMCP=
+	  fi
+	], [XDMCP=1])
+if test -n "$XDMCP"; then
+  kdmchooserdir=chooser
+  AC_CHECK_LIB(Xdmcp, main, [LIBXDMCP="-lXdmcp"], , $X_LDFLAGS -lX11 $LIBSOCKET)
+  if test -n "$LIBXDMCP"; then
+    ac_cpp_safe=$ac_cpp
+    ac_cpp='$CXXCPP $CPPFLAGS $X_INCLUDES'
+    AC_CHECK_HEADER(X11/Xdmcp.h, [HAVE_X11_XDMCP_H=1])
+    ac_cpp=$ac_cpp_safe
+  fi
+  if test -z "$HAVE_X11_XDMCP_H"; then
+    AC_MSG_WARN([Cannot build KDM! Make sure that libXdmcp.a and Xdmcp.h 
+are installed or use --without-xdmcp to disable XDMCP support!])
+    DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
+  fi
+else
+  IMAKEFLAGS="-DNOXDMCP"
 fi
-XDMDIR=$ac_xdmdir
-AC_MSG_RESULT([$XDMDIR])
-AC_SUBST(XDMDIR)
-AC_DEFINE_UNQUOTED(XDMDIR, "$XDMDIR", [Define where to find the XDM configuration])
+AC_SUBST(LIBXDMCP)	dnl XXX phase out
+AC_SUBST(kdmchooserdir)	dnl XXX phase out
 
 AC_MSG_CHECKING(whether to use Kerberos v4)
 AC_ARG_WITH(krb4,
@@ -153,9 +110,11 @@ AC_ARG_WITH(krb4,
 case "$with_krb4" in
 no)
   AC_MSG_RESULT(no)
+  IMAKEFLAGS="$IMAKEFLAGS -DHasKrbIV=0"
   ;;
 *)
   AC_MSG_RESULT(yes)
+  IMAKEFLAGS="$IMAKEFLAGS -DHasKrbIV=1"
   AC_DEFINE_UNQUOTED(KRB4, 1, [ define if you have Kerberos IV ])
   KERBEROS_ROOT="$with_krb4"
   KERBEROS_INCS="-I${KERBEROS_ROOT}/include"
@@ -187,6 +146,7 @@ AC_ARG_WITH(afs,
   [ with_afs=no ])
 if test "$with_afs" = no; then
   AC_MSG_RESULT(no)
+  IMAKEFLAGS="$IMAKEFLAGS -DNOAFS"
 else
   if test "$with_krb4" = no; then
     AC_MSG_RESULT(no)
@@ -201,53 +161,20 @@ else
   fi
 fi
 
-
 AC_SUBST(KERBEROS_ROOT)dnl
 AC_SUBST(KERBEROS_INCS)dnl
 AC_SUBST(KERBEROS_LIBS)dnl
 AC_SUBST(KRB_RPATH)
 
-AC_REQUIRE([KDE_MISC_TESTS])
-AC_CHECK_LIB(util, main, [LIBUTIL="-lutil"]) dnl for FreeBSD
-AC_SUBST(LIBUTIL)
-AC_CHECK_LIB(s, main, [LIB_LIBS="-ls"]) dnl for AIX
-AC_SUBST(LIB_LIBS)
+IMAKEFLAGS="$IMAKEFLAGS -DKrbIVLibraries=\"$KERBEROS_LIBS\""
 
-AC_CHECK_HEADERS(sys/sockio.h sys/stropts.h sys/socket.h sys/stream.h libutil.h util.h X11/XKBlib.h)
-
-AC_CHECK_LIB(Xau, main, [:], 
-	[
-	  AC_MSG_WARN([Cannot build KDM! Make sure that libXau.a is installed!])
-	  DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
-	], 
-	  $X_LDFLAGS -lX11 $LIBSOCKET)
-
-AC_ARG_WITH(xdmcp,
-	[  --without-xdmcp         build kdm without xdmcp support [default=with xdmcp]],
-	[ if test "$withval" = yes; then
-	    XDMCP=1
-	  else
-	    XDMCP=
-	  fi
-	], [XDMCP=1])
-if test -n "$XDMCP"; then
-  kdmchooserdir=chooser
-  AC_CHECK_LIB(Xdmcp, main, [LIBXDMCP="-lXdmcp"], , $X_LDFLAGS -lX11 $LIBSOCKET)
-  if test -n "$LIBXDMCP"; then
-    ac_cpp_safe=$ac_cpp
-    ac_cpp='$CXXCPP $CPPFLAGS $X_INCLUDES'
-    AC_CHECK_HEADER(X11/Xdmcp.h, [HAVE_X11_XDMCP_H=1])
-    ac_cpp=$ac_cpp_safe
-  fi
-  if test -z "$HAVE_X11_XDMCP_H"; then
-    AC_MSG_WARN([Cannot build KDM! Make sure that libXdmcp.a and Xdmcp.h 
-are installed or use --without-xdmcp to disable XDMCP support!])
-    DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
-  fi
-  AC_DEFINE(XDMCP, 1, [ build KDM with XDMCP support ])
+if test "$kde_use_debug_code" = "yes"; then
+    IMAKEFLAGS="$IMAKEFLAGS -DDebug"
 fi
-AC_SUBST(LIBXDMCP)
-AC_SUBST(kdmchooserdir)
 
-dnl AC_OUTPUT(kdm/xdmconfig/kdm-config)
-dnl AC_OUTPUT(kdm/xdmconfig/Xservers)
+AC_SUBST(IMAKEFLAGS)
+
+dnl AC_OUTPUT(kdm/kfrontend/config/kdmrc)
+dnl AC_OUTPUT(kdm/kfrontend/config/Xservers)
+dnl AC_OUTPUT(kdm/kfrontend/config/Xstartup)
+dnl AC_OUTPUT(kdm/kfrontend/config/Xreset)
