@@ -36,25 +36,15 @@
 
 #include <kdebug.h>
 
-/* stdio.h has NULL, but also a lot of extra cruft */
-#ifndef NULL
-#define NULL 0L
-#endif
-
-/* Again avoid the cruft in stdlib.h since malloc() isn't gonna change 
-   too often, unless someone decides to de-KNR FreeBSD */
-void    *malloc __P((size_t));
-
 bool GetInfo_CPU (KTabListBox *lBox)
 { 
   QString str;
 
   /* Stuff for sysctl */
-  char *buf, *mhz, *cpustring;
+  char *buf, *mhz;
+  QString cpustring;
   int mib[2], machspeed;
   size_t len;
-
-  cpustring=(char *)malloc(128);
 
   mib[0] = CTL_HW;
   mib[1] = HW_MODEL;
@@ -73,14 +63,15 @@ bool GetInfo_CPU (KTabListBox *lBox)
 		   ((machspeed+4999)/10000)%100);
   if (strcmp(mhz,"0.00")==0)
  	/* We dunno how fast it's running */
- 	snprintf(cpustring,128,i18n("%s, unknown speed"),buf);
+	cpustring = i18n("%1, unknown speed").arg(buf);
   else
-	snprintf(cpustring,128,i18n("%s running at %s MHz"),buf,mhz);
+	cpustring = i18n("%1 running at %2 MHz").arg(buf).arg(mhz);
 
   /* Put everything in the listbox */
   lBox->insertItem(cpustring);
   /* Clean up after ourselves, this time I mean it ;-) */
-  free(mhz); free(cpustring); free(buf);
+  free(mhz);
+  free(buf);
 
   return TRUE;
 }
@@ -254,7 +245,11 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 			lbox->setColumnWidth(3, maxwidth[3]+10);
 		}
 
-		s.sprintf("%s;%s;%s;%s", fstab_ent->fs_spec, fstab_ent->fs_file, fstab_ent->fs_vfstype, fstab_ent->fs_mntops);
+		s = QString("%1;%2;%3;%4")
+			.arg(fstab_ent->fs_spec)
+			.arg(fstab_ent->fs_file)
+			.arg(fstab_ent->fs_vfstype)
+			.arg(fstab_ent->fs_mntops);
 		lbox->insertItem(s);
 	}
 
