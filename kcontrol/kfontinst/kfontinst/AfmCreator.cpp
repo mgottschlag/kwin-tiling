@@ -76,9 +76,8 @@ CAfmCreator::EStatus CAfmCreator::go(const QString &dir)
                     emit step(i18n("Creating AFM: ")+CMisc::afmName(fInfo->filePath())); 
 
                     if(createAfm && (st=create(fInfo->filePath()))!=SUCCESS && KMessageBox::questionYesNo(NULL,
-                                                                       i18n("There was an error creating:\n")+
-                                                                       CMisc::afmName(fInfo->fileName())+
-                                                                       i18n("\nDo you wish to continue?"), i18n("AFM Error"))==KMessageBox::No)
+                                                                       i18n("There was an error creating:\n%1\nDo you wish to continue?").
+                                                                       arg(CMisc::afmName(fInfo->fileName())), i18n("AFM Error"))==KMessageBox::No)
                             status=st;
                 }
         }
