@@ -1,6 +1,7 @@
 /*  This file is part of the KDE project
     Copyright (C) 1999 Simon Hausmann <hausmann@kde.org>
     Internet Keywords support (C) 1999 Yves Arrouye <yves@realnames.com>
+    Advanced web shortcuts (C) 2001 Andreas Hochsteger <e9625392@student.tuwien.ac.at>
     Current maintainer Yves Arrouye <yves@realnames.com>
 
     This program is free software; you can redistribute it and/or modify
@@ -30,6 +31,7 @@
 #include <kservice.h>
 
 class KURL;
+typedef QMap <QString, QString> SubstMap;
 
 class KURISearchFilterEngine
 {
@@ -64,10 +66,13 @@ public:
     static KURISearchFilterEngine *self();
 
 protected:
-    QString formatResult( const QString& query, const QString& cset1, const QString& cset2, const QString& url, bool ) const;
+    QString formatResult (const QString& url, const QString& cset1, const QString& cset2, const QString& query, bool isMalformed) const;
+    QString formatResult (const QString& url, const QString& cset1, const QString& cset2, const QString& query, bool isMalformed, SubstMap& map) const;
 
 private:
 
+    QStringList modifySubstitutionMap (SubstMap& map, const QString& query) const;
+    QString substituteQuery (const QString& url, SubstMap &map, const QString& userquery) const;
     bool m_bSearchKeywordsEnabled;
 
     bool m_bInternetKeywordsEnabled;

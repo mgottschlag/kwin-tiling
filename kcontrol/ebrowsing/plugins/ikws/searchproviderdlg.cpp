@@ -52,7 +52,13 @@ SearchProviderDialog::SearchProviderDialog(SearchProvider *provider, QWidget *pa
     label->setBuddy(m_query = new KLineEdit(this));
     m_query->setMinimumWidth(kapp->fontMetrics().width('x') * 60);
     layout->addMultiCellWidget(m_query, 3, 3, 0, 1);
-    whatsThis = i18n("Enter the URI that is used to do a search on the search engine here. The text to be searched for can be specified as \\1.");
+    whatsThis = i18n("Enter the URI that is used to do a search on the search engine here.\n"
+    	"The whole text to be searched for can be specified as \\{@} or \\{0}.\n"
+	"Recommended is \\{@}, since it removes all query variables (name=value) from the resulting string whereas \\{0} will be substituted with the unmodified query string.\n"
+	"You can use \\{1} ... \\{n} to specify certain words from the query and \\{name} to specify a value given by 'name=value' in the user query.\n"
+	"In addition it is possible to specify multiple references (names, numbers and strings) at once (\\{name1,name2,...,\"string\"}).\n"
+	"The first matching value (from the left) will be used as substitution value for the resulting URI.\n"
+	"A quoted string can be used as default value if nothing matches from the left of the reference list.");
     QWhatsThis::add(label, whatsThis);
     QWhatsThis::add(m_query, whatsThis);
 
@@ -124,9 +130,9 @@ void SearchProviderDialog::slotChanged()
 
 void SearchProviderDialog::accept()
 {
-    if ((m_query->text().find("\\1") == -1)
+    if ((m_query->text().find("\\{") == -1)
         && KMessageBox::warningContinueCancel(0,
-            i18n("The URI does not contain a \\1 placeholder for the user query.\n"
+            i18n("The URI does not contain a \\{...} placeholder for the user query.\n"
                  "This means that the same page is always going to be visited, \n"
                  "regardless of what the user types..."),
             QString::null, i18n("Keep It")) == KMessageBox::Cancel)

@@ -1,6 +1,8 @@
 /*  This file is part of the KDE project
     Copyright (C) 1999 Simon Hausmann <hausmann@kde.org>
     Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
+    Advanced web shortcuts:
+    Copyright (C) 2001 Andreas Hochsteger <e9625392@student.tuwien.ac.at>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,6 +41,8 @@ KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0L;
 #define IKW_KEY         "Internet Keywords"
 #define IKW_SUFFIX      " " IKW_KEY
 #define IKW_REALNAMES	"RealNames"
+#define PIDDBG kdDebug(7023) << "(" << getpid() << ") "
+#define PDVAR(n,v) PIDDBG << n << " = '" << v << "'\n"
 
 KURISearchFilterEngine::KURISearchFilterEngine()
 {
@@ -52,7 +56,7 @@ QString KURISearchFilterEngine::searchQuery( const KURL &url ) const
         QString key, search = url.url();
         int pos = search.find(':');
         if ( pos > -1 )
-         key = search.left(pos);
+            key = search.left(pos);
 
         if ( key.isEmpty() || KProtocolInfo::isKnownProtocol( key ) )
             return QString::null;
@@ -74,6 +78,7 @@ QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
 	{
 	    QString key;
 	    QString _url = url.url();
+
 	    if( url.isMalformed() && _url[0] == '/' ) {
 		key = QString::fromLatin1( "file" );
 	    } else {
@@ -96,18 +101,22 @@ QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
                 *
                 */
 
+		PDVAR ("Fallback query", search);
                 QRegExp question("^[ \t]*\\?[ \t]*");
-                if (url.isMalformed() && _url.find(question) == 0) {
+		if (url.isMalformed() && _url.find(question) == 0) {
                         _url = _url.replace(question, "");
-                        return formatResult(search, fallback->charset(), QString::null, _url, true);
+			QString fbq = formatResult (search, fallback->charset(), QString::null, _url, true);
+			PDVAR ("fbq", fbq);
+                        return fbq;
                 } else {
-                        int pct = m_currInternetKeywordsEngine.m_strQueryWithSearch.find("\\|");
-                        if (pct >= 0)
-                        {
-                                search = KURL::encode_string( search );
-                                QString res = m_currInternetKeywordsEngine.m_strQueryWithSearch;
-                                return formatResult( res.replace(pct, 2, search), fallback->charset(), QString::null, _url, url.isMalformed() );
-                        }
+			SubstMap map;
+			QString qs = m_currInternetKeywordsEngine.m_strQueryWithSearch;
+			QString fbq = formatResult (search, fallback->charset(), QString::null, _url, true);
+
+			PDVAR ("qs", qs);
+			PDVAR ("fbq", fbq);
+			map.replace("wsc_fallback", fbq);
+                        return formatResult (qs, fallback->charset(), QString::null, _url, url.isMalformed(), map);
                 }
             }
 
@@ -159,64 +168,252 @@ KURISearchFilterEngine* KURISearchFilterEngine::self()
     return s_pSelf;
 }
 
-QString KURISearchFilterEngine::formatResult( const QString& query,
+QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map, const QString& query) const
+{	// Returns the number of query words
+	QString userquery = query;
+
+	// Do some pre-encoding, before we can start the work:
+	{
+		int start = 0;
+		int pos = 0;
+		int len = 0;
+		QRegExp qsexpr("\\\"[^\\\"]*\\\"");
+
+		// Temporary substitute spaces in quoted strings (" " -> "%20")
+		// Needed to split user query into StringList correctly.
+		while ((pos = qsexpr.match(userquery, start, &len)) >= 0) {
+			int i = 0;
+			int n = 0;
+			QString s = userquery.mid (pos, len);
+			while ((i = s.find(" ")) != -1) {
+				s = s.replace (i, 1, "%20");
+				n++;
+			}
+			start = pos + len + 2*n; // Move after last quote
+			userquery = userquery.replace (pos, len, s);
+		}
+	}
+
+	// Split user query between spaces:
+	QStringList l = QStringList::split(" ", userquery.simplifyWhiteSpace());
+
+	// Back-substitute quoted strings (%20 -> " "):
+	{
+		int i = 0;
+		while ((i = userquery.find("%20")) != -1) userquery = userquery.replace(i, 3, " ");
+	}
+
+	PIDDBG << "Generating substitution map:\n";
+	// Generate substitution map from user query:
+	for (int i=0; i<=l.count(); i++) {
+		int j = 0;
+		int pos = 0;
+		QString v = "";
+		QString nr = QString::number(i);
+
+		if (i==0) { // Add whole user query (\{0}) to substitution map:
+			v = userquery;
+		} else { // Add partial user query items to substitution map:
+			v = l[i-1];
+		}
+
+		// Back-substitute quoted strings (%20 -> " "):
+		while ((j = v.find("%20")) != -1) v = v.replace(j, 3, " ");
+
+		// Insert partial queries (referenced by \1 ... \n) to map:
+		map.replace(QString::number(i), v);
+		PDVAR ("  map['" + nr + "']", map[nr]);
+
+		// Insert named references (referenced by \name) to map:
+		j = 0;
+		if ((i>0) && (pos = v.find("=")) > 0) {
+			QString s = v.mid(pos + 1);
+			QString k = v.left(pos);
+
+			// Back-substitute references contained in references (e.g. '\refname' substitutes to 'thisquery=\0')
+			while ((j = s.find("%5C")) != -1) s = s.replace(j, 3, "\\");
+			map.replace(k, s);
+			PDVAR ("  map['" + k + "']", map[k]);
+		}
+	}
+
+	return l;
+}
+
+QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &map, const QString& userquery) const
+{
+	QString newurl = url;
+	QStringList ql = modifySubstitutionMap (map, userquery);
+	int count = ql.count();
+
+	// Check, if old style '\1' is found and replace it with \{@} (compatibility mode):
+	{
+		int pos = -1;
+		if ((pos = newurl.find("\\1")) >= 0) {
+			PIDDBG << "WARNING: Using compatibility mode for newurl='" << newurl << "'. Please replace old style '\\1' with new style '\\{0}' in the query definition.\n";
+			newurl = newurl.replace(pos, 2, "\\{@}");
+		}
+	}
+
+	PIDDBG << "Substitute references:\n";
+	// Substitute references (\{ref1,ref2,...}) with values from user query:
+	{
+		int pos = 0;
+		int len = 0;
+		QRegExp reflist("\\\\\\{[^\\}]+\\}");
+
+		// Substitute reflists (\{ref1,ref2,...}):
+		while ((pos = reflist.match(newurl, 0, &len)) >= 0) {
+			bool found = false;
+			bool rest = false;
+			QString v = "";
+			QString rlstring = newurl.mid(pos + 2, len - 3);
+			PDVAR ("  reference list", rlstring);
+			if (rlstring == "@") {					// \{@} gets a special treatment later
+				v = "\\@";
+				found = true;
+			}
+			QStringList rl = QStringList::split(",", rlstring);	// Todo: strip whitespaces around commas
+			int i = 0;
+			while ((i<rl.count()) && !found) {
+				QString rlitem = rl[i];
+				QRegExp range("[0-9]*\\-[0-9]*");
+
+				if (range.match(rlitem, 0) >= 0) {					// Substitute a range of keywords
+					int pos = rlitem.find("-");
+					int first = rlitem.left(pos).toInt();
+					int last  = rlitem.right(rlitem.length()-pos-1).toInt();
+					if (first == 0) first = 1;
+					if (last  == 0) last = count;
+					for (int i=first; i<=last; i++) {
+						v += map[QString::number(i)] + " ";
+						ql[i-1] = "";						// Remove used value from ql (needed for \{@}):
+					}
+					v = v.stripWhiteSpace();
+					if (v != "") found = true;
+					PDVAR ("    range", QString::number(first) + "-" + QString::number(last) + " => '" + v + "'");
+					v = KURL::encode_string(v);
+				} else if ((rlitem.left(1) == "\"") && (rlitem.right(1) == "\"")) {	// Use default string from query definition:
+					found = true;
+					QString s = rlitem.mid(1, rlitem.length() - 2);
+					v = KURL::encode_string(s);
+					PDVAR ("    default", s);
+				} else if (map.contains(rlitem)) {					// Use value from substitution map:
+					found = true;
+					PDVAR ("    map['" + rlitem + "']", map[rlitem]);
+					v = KURL::encode_string(map[rlitem]);
+
+					// Remove used value from ql (needed for \{@}):
+					QString c = rlitem.left(1);
+					if (c=="0") {							// It's a numeric reference to '0'
+						for (QStringList::Iterator it = ql.begin(); it!=ql.end(); ++it) (*it) = "";
+					} else if ((c>="0") && (c<="9")) {				// It's a numeric reference > '0'
+						int n = rlitem.toInt();
+						ql[n-1] = "";
+					} else {							// It's a alphanumeric reference
+						QStringList::Iterator it = ql.begin();
+						while ((it != ql.end()) && ((rlitem + "=") != (*it).left(rlitem.length()+1))) ++it;
+						if ((rlitem + "=") == (*it).left(rlitem.length()+1)) {
+							(*it) = "";
+						}
+					}
+
+					// Encode '+', otherwise it would be interpreted as space in the resulting url:
+					int vpos = 0;
+					while ((vpos = v.find('+')) != -1)
+						v = v.replace (vpos, 1, "%2B");
+				} else if (rlitem == "@") {
+					v = "\\@";
+					PDVAR ("    v", v);
+				}
+				i++;
+			}
+
+			newurl = newurl.replace(pos, len, v);
+		}
+
+		{	// Special handling for \{@};
+
+			PDVAR ("  newurl", newurl);
+			// Generate list of unmatched strings:
+			QString v = "";
+			for (int i=0; i<ql.count(); i++) {
+				v += " " + ql[i];
+			}
+			v = v.simplifyWhiteSpace();
+			PDVAR ("    rest", v);
+			v = KURL::encode_string(v);
+
+			// Substitute \{@} with list of unmatched query strings
+			int vpos = 0;
+			while ((vpos = newurl.find("\\@")) != -1)
+				newurl = newurl.replace (vpos, 2, v);
+		}
+	}
+
+	return newurl;
+}
+
+QString KURISearchFilterEngine::formatResult( const QString& url,
                                               const QString& cset1,
                                               const QString& cset2,
-                                              const QString& url,
+                                              const QString& query,
                                               bool isMalformed ) const
 {
-    // Substitute the variable part we find in the query.
-    if (!query.isEmpty())
-	{
-	    QString newurl = query;
-	    int pct;
+	SubstMap map;
+	return formatResult (url, cset1, cset2, query, isMalformed, map);
+}
 
-	    // Create a codec for the desired encoding so that we can
-	    // transcode the user's "url".
-	    QString cseta = cset1;
-	    if (cseta.isEmpty()) {
+QString KURISearchFilterEngine::formatResult( const QString& url,
+                                              const QString& cset1,
+                                              const QString& cset2,
+                                              const QString& query,
+                                              bool isMalformed,
+                                              SubstMap& map ) const
+{
+	// Return nothing if userquery is empty:
+	if (query.isEmpty()) return QString::null;
+
+	// Debug info of map:
+	if (!map.isEmpty()) {
+		PIDDBG << "Got non-empty substitution map:\n";
+		for(SubstMap::Iterator it = map.begin(); it != map.end(); ++it)
+			PDVAR ("    map['" + it.key() + "']", it.data());
+	}
+
+	// Decode user query:
+	QString userquery = KURL::decode_string(query);
+
+	PDVAR ("user query", userquery);
+	PDVAR ("query definition", url);
+
+	// Create a codec for the desired encoding so that we can transcode the user's "url".
+	QString cseta = cset1;
+	if (cseta.isEmpty()) {
 		cseta = "iso-8859-1";
-	    }
-	    QTextCodec *csetacodec = QTextCodec::codecForName(cseta.latin1());
-	    if (!csetacodec) {
+	}
+	QTextCodec *csetacodec = QTextCodec::codecForName(cseta.latin1());
+	if (!csetacodec) {
 		cseta = "iso-8859-1";
 		csetacodec = QTextCodec::codecForName(cseta.latin1());
-	    }
+	}
 
-	    // Substitute the charset indicator for the query.
-	    if ((pct = newurl.find("\\2")) >= 0) {
-		newurl = newurl.replace(pct, 2, cseta);
-	    }
+	// Add charset indicator for the query to substitution map:
+	map.replace("ikw_charset", cseta);
 
-	    // Substitute the charset indicator for the fallback query.
-	    if ((pct = newurl.find("\\3")) >= 0) {
-		QString csetb = cset2;
-		if (csetb.isEmpty()) {
-		    csetb = "iso-8859-1";
-		}
-		newurl = newurl.replace(pct, 2, csetb);
-	    }
+	// Add charset indicator for the fallback query to substitution map:
+	QString csetb = cset2;
+	if (csetb.isEmpty())
+		csetb = "iso-8859-1";
+	map.replace("wsc_charset", csetb);
 
-        QString userquery = csetacodec->fromUnicode(url);
-        int space_pos;
-        while( (space_pos=userquery.find('+')) != -1 )
-        userquery=userquery.replace( space_pos, 1, "%2B" );
+	userquery = csetacodec->fromUnicode(userquery);
 
-        while( (space_pos=userquery.find(' ')) != -1 )
-        userquery=userquery.replace( space_pos, 1, "+" );
+	QString newurl = substituteQuery (url, map, userquery);
 
-        if ( isMalformed )
-        userquery = KURL::encode_string(userquery);
+	PDVAR ("substituted query", newurl);
 
-        if ((pct = newurl.find("\\1")) >= 0)
-        newurl = newurl.replace(pct, 2, userquery);
-
-        if ( m_bVerbose )
-        kdDebug(7023) << "(" << getpid() << ") filtered " << url << " to " << newurl << "\n";
-
-        return newurl;
-    }
-    return QString::null;
+	return newurl;
 }
 
 void KURISearchFilterEngine::loadConfig()
@@ -286,7 +483,7 @@ void KURISearchFilterEngine::loadConfig()
         }
     }
 
-    kdDebug(7023) << "(" << getpid() << ") Keywords Engine: Loading config..." << endl;
+    PIDDBG << "Keywords Engine: Loading config..." << endl;
     // First empty any current config we have.
     m_lstInternetKeywordsEngine.clear();
 
@@ -303,9 +500,9 @@ void KURISearchFilterEngine::loadConfig()
     m_bVerbose = config.readBoolEntry("Verbose");
     m_bSearchKeywordsEnabled = config.readBoolEntry("SearchEngineShortcutsEnabled", true);
 
-    kdDebug(7023) << "(" << getpid() << ") Internet Keyword Enabled: " << m_bInternetKeywordsEnabled << endl;
-    kdDebug(7023) << "(" << getpid() << ") Selected IKWS Engine(s): " << selIKWSEngine << endl;
-    kdDebug(7023) << "(" << getpid() << ") Internet Keywords Fallback Search Engine: " << m_searchFallback << endl;
+    PIDDBG << "Internet Keyword Enabled: " << m_bInternetKeywordsEnabled << endl;
+    PIDDBG << "Selected IKWS Engine(s): " << selIKWSEngine << endl;
+    PIDDBG << "Internet Keywords Fallback Search Engine: " << m_searchFallback << endl;
 
     engines = config.readListEntry("InternetKeywordsEngines");
     QStringList::ConstIterator gIt = engines.begin();
@@ -329,10 +526,10 @@ void KURISearchFilterEngine::loadConfig()
     IKWSEntry rn = ikwsEntryByName(IKW_REALNAMES);
     if (rn.m_strName.isEmpty())	{
 	rn.m_strName = IKW_REALNAMES;
-	rn.m_strQuery = QString::fromLatin1("http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\2&responsecharset=\\3&providerid=180");
+	rn.m_strQuery = QString::fromLatin1("http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\{ikw_charset}&responsecharset=\\{wsc_charset}&providerid=180");
 	rn.m_strCharset = "utf-8";
 	rn.m_strQueryWithSearch = QString::fromLatin1("http://navigation.realnames.com/resolver.dll?"
-						      "action=navigation&realname=\\1&charset=\\2&providerid=180&fallbackuri=\\|");
+						      "action=navigation&realname=\\{0}&charset=\\{ikw_charset}&providerid=180&fallbackuri=\\{wsc_fallback}");
 	if (rn.m_strName == selIKWSEngine)
 	    m_currInternetKeywordsEngine = rn;
 
