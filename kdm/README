@@ -1,6 +1,6 @@
 $Id$
 
-This is the KDE Display Manager (kdm) v0.90 for KDE-2.1, 
+This is the KDE Display Manager (kdm) v0.92 for KDE 2.2, 
 the KDE replacement for the X Display Manager (xdm).
 
 kdm is intended as a "drop-in" replacement of xdm. It reads the xdm
@@ -23,18 +23,18 @@ kdebase's configure will look for your xdm configuration files and use
 them. If the files aren't found, you can give the explicit path with the
 --with-xdmdir option. If this is still not good, new xdm config files are
 installed. These require hand editing before use. You might want to look
-at the files in the "samples" directory. They show how to make Xsession
+at the files in the "xdmconfig" directory. They show how to make Xsession
 scripts for different window managers and setups.
 
 Random rambings and license information
 ---------------------------------------
 
 Version 0.1 of kdm is copyright
-	Matthias Ettrich <ettrich@informatik.uni-tuebingen.de>
+	Matthias Ettrich <ettrich@trolltech.com>
 All later versions copyright:
 	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
 Since version 0.90 (KDE 2.1) copyright:
-	(C) 2000 Oswald Buddenhagen <ossi@kde.org>
+	(C) 2000-2001 Oswald Buddenhagen <ossi@kde.org>
 
 Thanks to (in no particular order):
 Michael Bach Jensen and Torsten Rahn for drawing icons.
@@ -47,10 +47,6 @@ The files in this directory (but NOT the subdirectories) are licensed
 under the X licence (see www.xfree86.org for more info). The files
 in the chooser, greeter and pics directories are licensed under the GNU GPL.
 The files in the config directories are more or less public domain, i think.
-
-Have fun with it (and feel free to comment),
-
-	Steffen <hansen@kde.org>
 
 Running KDM from init
 ---------------------
@@ -109,6 +105,9 @@ a) Create some useful logs from a "real" session
   and /var/log/daemon.log; make sure, that your system logs the daemon.*
   facility (look at /etc/syslog.conf)).
 
+for the following points you should configure --with-debug or be using 
+a cvs version of kdm (those have debug info compiled in automatically).
+
 b) Only the greeter (the login dialog):
 
 - run "make greetest" (from this directory)
@@ -118,7 +117,7 @@ b) Only the greeter (the login dialog):
     - start "Xnest :1"
     - open a root shell
       - run "gdb ./greetest"
-        - type "run greeter/.libs/libKdmGreet.so :1"
+	- type "run greeter/.libs/libKdmGreet.so :1"
 	  (on a.out systems this would be libKdmGreet.a, i think).
   * without Xnest (note, that you have to run the root shell
     from another virtual terminal, as the greeter grabs the keyboard
@@ -127,17 +126,16 @@ b) Only the greeter (the login dialog):
       - run "gdb ./greetest"
         - type "run greeter/.libs/libKdmGreet.so"
   * now the steps are common:
-          - perform the steps that make kdm crash - note, that the greeter
+	  - perform the steps that make kdm crash - note, that the greeter
 	    behaves a bit different, when run in Xnest.
-        - type "where full" - send me the output.
+	- type "where full" - send me the output.
 	  if this doesn't work ("full not found"), send me the "bt" output.
-        - type "bt" (the same as above, but shorter - only for you)
-        - type "l <function>,<line>", where <function> is the topmost function 
-	  listed by "bt" (e.g., GreetUser or KGreeter::KGreeter) and <line> is
-	  the number behind the colon behind the function name. if gdb 
-	  gives an error message instead of listing some code, try the 
-	  functions from the following lines until you get a source listing. 
-	  send me this listing.
+	- type "bt" (the same as above, but shorter - only for you)
+	- type "l <file>:<line>", where <file>:<line> is the last part
+	  of the topmost line of the "bt" dump, which has the form
+	    #<some numbers> in <something> at <filename>:<number> 
+	  (note, that the line may actually consist or several lines 
+	  on a small display). send me this listing.
 	- type "q"
 
 c) The greeter inside a "real" session process
@@ -157,25 +155,7 @@ d) The manager's startup (if the X-server doesn't even start)
   * perform the above common steps to generate some useful output
 
 
-Differences from xdm
---------------------
+-- 
+Have fun with it (and feel free to comment),
 
-* a nice window with Qt-widgets to enter your login and password
-
-KNOWN BUGS 
-
-in kdm-0.[1-5]: 
-  - the "BackSpace"-key had the wrong meaning on my XServer.
-    So I hardcoded a   
-           KeySym mysym = XK_BackSpace;
-           XChangeKeyboardMapping(*dpy, 22, 1, &mysym, 1);
-    Is this Ok? Is there a better solution?
-
-Best regards and I hope you enjoy the hopefully nice-looking 
-brand new graphically login to your workstation,
-
-   Matthias <ettrich@informatik.uni-tuebingen.de>
-
-Fri Jul 11 14:27:02 1997 -- Steffen Hansen
-Sat Sep 30 23:06:02 2000 -- Steffen Hansen
-
+	Oswald Buddenhagen <ossi@kde.org>

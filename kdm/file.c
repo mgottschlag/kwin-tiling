@@ -37,14 +37,6 @@ from The Open Group.
 
 #include <ctype.h>
 
-static int
-DisplayTypeMatch (DisplayType d1, DisplayType d2)
-{
-	return d1.location == d2.location &&
-	       d1.lifetime == d2.lifetime &&
-	       d1.origin == d2.origin;
-}
-
 static void
 freeFileArgs (char **args)
 {
@@ -64,44 +56,41 @@ splitIntoWords (char *s)
 
     args = 0;
     nargs = 0;
-    while (*s)
+    for (;;)
     {
-	while (*s && isspace (*s))
-	    ++s;
-	if (!*s || *s == '#')
-	    break;
-	wordStart = s;
-	while (*s && *s != '#' && !isspace (*s))
-	    ++s;
+	for(;; s++)
+	{
+	    if (!*s || *s == '\n' || *s == '#')
+		return args;
+	    if (!isspace (*s))
+		break;
+	}
+	for (wordStart = s; *s && *s != '#' && !isspace (*s); s++);
 	if (!args)
 	{
-    	    args = (char **) malloc (2 * sizeof (char *));
-    	    if (!args)
+    	    if (!(args = (char **) malloc (2 * sizeof (char *))))
 	    	return NULL;
 	}
 	else
 	{
-	    newargs = (char **) realloc ((char *) args,
-					 (nargs+2)*sizeof (char *));
-	    if (!newargs)
+	    if (!(newargs = (char **) realloc ((char *) args,
+						(nargs+2) * sizeof (char *))))
 	    {
 	    	freeFileArgs (args);
 	    	return NULL;
 	    }
 	    args = newargs;
 	}
-	args[nargs] = malloc (s - wordStart + 1);
-	if (!args[nargs])
+	if (!(args[nargs] = malloc (s - wordStart + 1)))
 	{
 	    freeFileArgs (args);
 	    return NULL;
 	}
-	strncpy (args[nargs], wordStart, s - wordStart);
+	memcpy (args[nargs], wordStart, s - wordStart);
 	args[nargs][s-wordStart] = '\0';
 	++nargs;
 	args[nargs] = NULL;
     }
-    return args;
 }
 
 static char **
@@ -136,16 +125,15 @@ freeSomeArgs (char **args, int n)
 }
 
 void
-ParseDisplay (char *source, DisplayType *acceptableTypes, int numAcceptable)
+ParseDisplay (char *source)
 {
-    char		**args, **argv, **a, *dtx;
+    char		**args, **argv, **a, *dtx, *atPos;
     char		*name, *class2, *type;
     struct display	*d;
     int			usedDefault;
     DisplayType		displayType;
 
-    args = splitIntoWords (source);
-    if (!args)
+    if (!(args = splitIntoWords (source)))
 	return;
     if (!args[0])
     {
@@ -160,7 +148,7 @@ ParseDisplay (char *source, DisplayType *acceptableTypes, int numAcceptable)
 	freeFileArgs (args);
 	return;
     }
-    displayType = parseDisplayType (args[1], &usedDefault);
+    displayType = parseDisplayType (args[1], &usedDefault, &atPos);
     class2 = NULL;
     type = args[1];
     argv = args + 2;
@@ -172,7 +160,7 @@ ParseDisplay (char *source, DisplayType *acceptableTypes, int numAcceptable)
      */
     if (usedDefault && args[2])
     {
-	displayType = parseDisplayType (args[2], &usedDefault);
+	displayType = parseDisplayType (args[2], &usedDefault, &atPos);
 	if (!usedDefault)
 	{
 	    class2 = args[1];
@@ -180,83 +168,57 @@ ParseDisplay (char *source, DisplayType *acceptableTypes, int numAcceptable)
 	    argv = args + 3;
 	}
     }
-    while (numAcceptable)
-    {
-	if (DisplayTypeMatch (*acceptableTypes, displayType))
-	    break;
-	--numAcceptable;
-	++acceptableTypes;
-    }
-    if (!numAcceptable)
-    {
-	LogError ("Unacceptable display type %s for display %s\n",
-		  type, name);
-    }
-    d = FindDisplayByName (name);
-    if (d)
+    if ((d = FindDisplayByName (name)))
     {
 	d->state = OldEntry;
-	if (class2 && strcmp (d->class2, class2))
-	{
-	    char    *newclass;
-
-	    newclass = malloc ((unsigned) (strlen (class2) + 1));
-	    if (newclass)
-	    {
-		free (d->class2);
-		strcpy (newclass, class2);
-		d->class2 = newclass;
-	    }
-	}
-	dtx = "Found existing display: ";
+	ReStr (&d->class2, class2);
+	ReStr (&d->console, atPos);
 	freeFileArgs (d->argv);
+	dtx = "existing";
     }
     else
     {
 	d = NewDisplay (name, class2);
-	dtx = "Found new display: ";
+	StrDup (&d->console, atPos);
+	dtx = "new";
     }
+    Debug ("Found %s display: %s %s %s",
+	   dtx, d->name, d->class2 ? d->class2 : "", type);
     d->displayType = displayType;
     d->argv = copyArgs (argv);
-    if (debugLevel > 0) {
-	char *buf = NULL, *nbuf;
-	int clen = 0;
-	for (a = d->argv; a && *a; a++) {
-	    nbuf = realloc (buf, clen + strlen(*a) + 3);
-	    if (!nbuf)
-		goto fa1;
-	    buf = nbuf;
-	    clen += sprintf (buf + clen, " %s", *a);
-	}
-	Debug ("%s %s %s %s %s\n", dtx, d->name, d->class2 ? d->class2 : "", 
-		type, buf);
-      fa1:
-	if (buf)
-	    free (buf);
-    }
+    for (a = d->argv; a && *a; a++)
+	Debug (" %s", *a);
+    Debug ("\n");
     freeSomeArgs (args, argv - args);
 }
 
 static struct displayMatch {
 	char		*name;
+	int		len;
 	DisplayType	type;
 } displayTypes[] = {
-	{ "local",		{ Local, Permanent, FromFile } },
-	{ "foreign",		{ Foreign, Permanent, FromFile } },
-	{ 0,			{ Local, Permanent, FromFile } },
+	{ "local", 5,		{ Local, Permanent, FromFile } },
+	{ "foreign", 7,		{ Foreign, Permanent, FromFile } },
+	{ 0, 0,			{ Local, Permanent, FromFile } },
 };
 
 DisplayType
-parseDisplayType (char *string, int *usedDefault)
+parseDisplayType (char *string, int *usedDefault, char **atPos)
 {
 	struct displayMatch	*d;
 
+	*atPos = 0;
 	for (d = displayTypes; d->name; d++)
-		if (!strcmp (d->name, string))
+	{
+		if (!memcmp (d->name, string, d->len) && 
+		    (!string[d->len] || string[d->len] == '@'))
 		{
+			if (string[d->len] == '@')
+			    *atPos = string + d->len + 1;
 			*usedDefault = 0;
 			return d->type;
 		}
+	}
 	*usedDefault = 1;
 	return d->type;
 }

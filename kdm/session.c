@@ -53,27 +53,27 @@ from The Open Group.
 # define _XOPEN_SOURCE
 # include <unistd.h>
 #endif
-#ifdef SECURE_RPC
-# include <rpc/rpc.h>
-# include <rpc/key_prot.h>
-#endif
-#ifdef K5AUTH
-# include <krb5/krb5.h>
-#endif
 #ifdef USE_PAM
 # include <security/pam_appl.h>
-#endif
-
-#ifdef KRB4
+#else
+# ifdef SECURE_RPC
+#  include <rpc/rpc.h>
+#  include <rpc/key_prot.h>
+# endif
+# ifdef K5AUTH
+#  include <krb5/krb5.h>
+# endif
+# ifdef KRB4
 /* Some systems define an des_encrypt() in their crypt.h (where it
    doesn't belong!), which conflicts with the one from KTH Kerberos.  As we
    are not using it anyway, we temporarily redefine it.  */
-# define des_encrypt des_encrypt_faked_XXX
-# include <krb.h>
-# ifdef AFS
-#  include <kafs.h>
+#  define des_encrypt des_encrypt_faked_XXX
+#  include <krb.h>
+#  ifdef AFS
+#   include <kafs.h>
+#  endif
+#  undef des_encrypt
 # endif
-# undef des_encrypt
 #endif
 
 #ifndef GREET_USER_STATIC
@@ -208,7 +208,7 @@ waitAbort (int n)
 }
 
 #if defined(_POSIX_SOURCE) || defined(SYSV) || defined(SVR4)
-#define killpg(pgrp, sig) kill(-(pgrp), sig)
+# define killpg(pgrp, sig) kill(-(pgrp), sig)
 #endif
 
 static void
@@ -333,10 +333,8 @@ ManageSession (struct display *d)
 #endif
 
 #ifdef XDMCP
-/*
     if (greet_stat == Greet_RunChooser)
 	RunChooser (d);
-*/
 #endif
 
     if (greet_stat == Greet_Success)
@@ -535,7 +533,8 @@ SessionExit (struct display *d, int status, int dummy /* we know better */)
 	setgid (verify.gid);
 	setuid (verify.uid);
 	RemoveUserAuthorization (d, &verify);
-#ifdef K5AUTH
+#ifndef USE_PAM
+# ifdef K5AUTH
 	/* do like "kdestroy" program */
         {
 	    krb5_error_code code;
@@ -558,8 +557,7 @@ SessionExit (struct display *d, int status, int dummy /* we know better */)
 		krb5_cc_close(ccache);
 	    }
 	}
-#endif /* K5AUTH */
-#ifndef USE_PAM
+# endif /* K5AUTH */
 # ifdef KRB4
 	if (krbtkfile[0]) {
 	    (void) dest_tkt();
@@ -591,42 +589,28 @@ StartClient (
 {
     char	**f, *home;
     char	*failsafeArgv[2];
-    int	pid;
-#ifdef HAS_SETUSERCONTEXT
-    struct passwd *pwd;
-    char **e, **envinit;
-    extern char **environ;
-#endif
-#ifdef USE_PAM
+    int		pid;
+#ifndef AIXV3
+# ifdef USE_PAM
     pam_handle_t **pamh = thepamh();
+# else
+#  ifdef HAS_SETUSERCONTEXT
+    struct passwd	*pwd;
+    char	**e, **envinit;
+    extern char	**environ;
+#  endif
+# endif
 #endif
 
-    if (debugLevel > 0) {
-	char *buf = NULL, *nbuf;
-	int clen = 0;
-
-	if (verify->argv) {
-	    for (f = verify->argv; *f; f++) {
-		if (!(nbuf = realloc (buf, clen + strlen(*f) + 4)))
-		    goto fa1;
-		buf = nbuf;
-		clen += sprintf (buf + clen, " %s", *f);
-	    }
-	}
-	strcpy (buf + clen, " ;"); clen += 2;
-	if (verify->userEnviron) {
-	    for (f = verify->userEnviron; *f; f++) {
-		if (!(nbuf = realloc (buf, clen + strlen(*f) + 2)))
-		    goto fa1;
-		buf = nbuf;
-		clen += sprintf (buf + clen, " %s", *f);
-	    }
-	}
-	Debug ("StartSession:%s\n", buf);
-      fa1:
-	if (buf)
-	    free (buf);
-    }
+    Debug ("StartSession:");
+    if (verify->argv)
+	for (f = verify->argv; *f; f++)
+	    Debug (" %s", *f);
+    Debug (" ;");
+    if (verify->userEnviron)
+	for (f = verify->userEnviron; *f; f++)
+	    Debug (" %s", *f);
+    Debug ("\n");
 #ifdef USE_PAM
     if (*pamh)
 	pam_open_session(*pamh, 0);
@@ -642,32 +626,14 @@ StartClient (
 
 	/* Do system-dependent login setup here */
 
-#ifdef USE_PAM
-	/* pass in environment variables set by libpam and modules it called */
-	if (*pamh) {
-	    long i;
-	    char **pam_env = pam_getenvlist(*pamh);
-	    for(i = 0; pam_env && pam_env[i]; i++)
-		verify->userEnviron = putEnv(pam_env[i], verify->userEnviron);
-	}
-#endif
-
-
 #ifndef AIXV3
-# ifndef HAS_SETUSERCONTEXT
+# if !defined(HAS_SETUSERCONTEXT) || defined(USE_PAM)
 	if (setgid(verify->gid) < 0)
 	{
 	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
 		     verify->gid, name, errno);
 	    return (0);
 	}
-#  if defined(BSD) && (BSD >= 199103)
-	if (setlogin(name) < 0)
-	{
-	    LogError("setlogin for \"%s\" failed, errno=%d", name, errno);
-	    return(0);
-	}
-#  endif
 #  ifndef QNX4
 	if (initgroups(name, verify->gid) < 0)
 	{
@@ -676,8 +642,24 @@ StartClient (
 	}
 #  endif   /* QNX4 doesn't support multi-groups, no initgroups() */
 #  ifdef USE_PAM
-	if (*pamh)
+	if (*pamh) {
+	    int i;
+	    char **pam_env;
+
 	    pam_setcred(*pamh, 0);
+
+	    /* pass in environment variables set by libpam and modules it called */
+	    pam_env = pam_getenvlist(*pamh);
+	    for(i = 0; pam_env && pam_env[i]; i++)
+		verify->userEnviron = putEnv(pam_env[i], verify->userEnviron);
+	}
+#  endif
+#  if defined(BSD) && (BSD >= 199103)
+	if (setlogin(name) < 0)
+	{
+	    LogError("setlogin for \"%s\" failed, errno=%d\n", name, errno);
+	    return(0);
+	}
 #  endif
 	if (setuid(verify->uid) < 0)
 	{
@@ -685,7 +667,7 @@ StartClient (
 		     verify->uid, name, errno);
 	    return (0);
 	}
-# else /* HAS_SETUSERCONTEXT */
+# else /* HAS_SETUSERCONTEXT && !USE_PAM */
 	/*
 	 * Destroy environment unless user has requested its preservation.
 	 * We need to do this before setusercontext() because that may
@@ -704,27 +686,19 @@ StartClient (
 	 * Set the user's credentials: uid, gid, groups,
 	 * environment variables, resource limits, and umask.
 	 */
-	pwd = getpwnam(name);
-	if (pwd)
-	{
-	    if (setusercontext(NULL, pwd, pwd->pw_uid, LOGIN_SETALL) < 0)
-	    {
-		LogError("setusercontext for \"%s\" failed, errno=%d\n", name,
-			 errno);
-		return (0);
-	    }
-	    endpwent();
-	}
-	else
+	if (!(pwd = getpwnam(name)))
 	{
 	    LogError("getpwnam for \"%s\" failed, errno=%d\n", name, errno);
 	    return (0);
 	}
 
-#  ifdef USE_PAM	/* useful? workable (uid != 0)? */
-	if (pamh && *pamh)
-	    pam_setcred(*pamh, 0);
-#  endif
+	if (setusercontext(NULL, pwd, pwd->pw_uid, LOGIN_SETALL) < 0)
+	{
+	    LogError("setusercontext for \"%s\" failed, errno=%d\n", name,
+		     errno);
+	    return (0);
+	}
+	endpwent();
 
 	e = environ;
 	while (*e)
@@ -782,7 +756,8 @@ StartClient (
 	 * for user-based authorization schemes,
 	 * use the password to get the user's credentials.
 	 */
-#ifdef SECURE_RPC
+#ifndef USE_PAM
+# ifdef SECURE_RPC
 	/* do like "keylogin" program */
 	if (!passwd)
 	    LogError("Warning: no password for NIS provided.\n");
@@ -838,8 +813,8 @@ StartClient (
 	    }
 	    bzero(secretkey, strlen(secretkey));
 	}
-#endif
-#ifdef K5AUTH
+# endif
+# ifdef K5AUTH
 	/* do like "kinit" program */
 	if (!passwd)
 	    LogError("Warning: no password for Kerberos5 provided.\n");
@@ -870,7 +845,8 @@ StartClient (
 		}
 	    }
 	}
-#endif /* K5AUTH */
+# endif /* K5AUTH */
+#endif /* USE_PAM */
 	if (passwd)
 	    bzero(passwd, strlen(passwd));
 	SetUserAuthorization (d, verify);
@@ -961,7 +937,8 @@ execute (char **argv, char **environ)
     /* give /dev/null as stdin */
     (void) close (0);
     open ("/dev/null", O_RDONLY);
-    /* make stdout follow stderr to the log file */
+    /* make stdout follow stderr to the log file 
+     * XXX this does not work! with syslog inherently, */
     dup2 (2, 1);
     execve (argv[0], argv, environ);
     /*

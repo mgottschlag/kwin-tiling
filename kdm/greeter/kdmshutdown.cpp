@@ -4,7 +4,7 @@
     $Id$
 
     Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000, 2001 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -23,21 +23,17 @@
 
     */
  
-
-#include <strings.h>
-#include "kdmshutdown.h"
-#include "kdmconfig.h" // for shutdown-modes
-
-#include "dm.h"
-#include "greet.h"
-
 #include <qfile.h>
 #include <qcombobox.h>
 
 #include <kapp.h>
 #include <klocale.h>
 
+#include "kdmshutdown.h"
+#include "kdmconfig.h" // for shutdown-modes
 #include "liloinfo.h"
+#include "miscfunc.h"
+
 
 static inline void
 set_min( QWidget* w)
@@ -45,6 +41,7 @@ set_min( QWidget* w)
      w->adjustSize();
      w->setMinimumSize( w->size());
 }
+
 static inline void
 set_fixed( QWidget* w)
 {
@@ -53,14 +50,10 @@ set_fixed( QWidget* w)
 }
 
 extern KDMConfig *kdmcfg;
-extern struct display *d;
 
 KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 			  const QString &_shutdown, 
 			  const QString &_restart,
-#ifndef BSD
-			  const QString &_console,
-#endif
 			  bool _lilo,
 			  const QString &_lilocmd, const QString &_lilomap)
 
@@ -68,9 +61,6 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 {
     shutdown = _shutdown;
     restart  = _restart;
-#ifndef BSD
-    console = _console;
-#endif
     int h = 10, w = 0;
     lilo = _lilo;
     liloCmd = _lilocmd;
@@ -144,19 +134,6 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 
     btGroup->insert( restart_rb);
 
-#ifndef BSD
-    if (!kdmcfg->_consoleMode.isEmpty()) {
-	rb = new QRadioButton(winFrame);
-	rb->setText(i18n("Console &Mode"));
-	set_min(rb);
-	rb->setFocusPolicy(StrongFocus);
-	h += rb->height() + 10;
-	w = QMAX(rb->width(),w);
-	box->addWidget(rb);
-	btGroup->insert(rb);
-    }
-#endif
-
     // Passwd line edit
     if( mode == KDMConfig::SdRootOnly) {
 	pswdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode);
@@ -201,11 +178,6 @@ KDMShutdown::rb_clicked( int id)
     case 1:
 	cur_action = restart;
 	break;
-#ifndef BSD
-    case 2:
-	cur_action = console;
-	break;
-#endif
     }
 }
 
@@ -221,7 +193,7 @@ void
 KDMShutdown::bye_bye()
 {
      // usernames and passwords are stored in the same format as files
-    if( !pswdEdit || VerifyRoot( pswdEdit->password() ) >= V_OK ) {
+    if( !pswdEdit || Verify( "root", pswdEdit->password()) >= V_OK ) {
 	QApplication::flushX();
 	if( fork() == 0) {
 
@@ -234,10 +206,11 @@ KDMShutdown::bye_bye()
 	    }
 
 	    sleep(1);
+	    /* XXX this should go into the core */
 	    system( QFile::encodeName( cur_action ).data() );
-	    QApplication::exit( 0);	// init will inherit us
+	    exit( 0);	// init will inherit us
 	} else {
-	    SessionExit (::d, UNMANAGE_DISPLAY, FALSE);
+	    accept();
 	}
     } else {
 	pswdEdit->erase();
@@ -247,21 +220,6 @@ KDMShutdown::bye_bye()
 }
 
 #include "kdmshutdown.moc"
-
-#ifdef TEST_KDM_SHUTDOWN
-
-#include <qapplication.h>
-
-int main(int argc, char **argv)
-{
-    QApplication app( argc, argv);
-    app.setFont( QFont( "helvetica", 18));
-    KDMShutdown sd( 0, 0, "Hej", "echo shutdown", "echo restart", "echo lilo", "");
-    app.setMainWidget( &sd);
-    return sd.exec();
-}
-
-#endif /* TEST_KDM */
 
 /*  
  * Local variables:  

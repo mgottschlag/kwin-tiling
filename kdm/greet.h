@@ -82,7 +82,7 @@ struct dlfuncs {
     char **(*_parseArgs)(char **argv, char *string);
     void (*_printEnv)(char **e);
     char **(*_systemEnv)(struct display *d, char *user, char *home);
-    void (*_LogOutOfMem)(const char *fmt, ...);
+    void (*_LogOutOfMem)(const char *fkt);
     SETGRENT_TYPE (*_setgrent)(void);	/* no longer used */
     struct group *(*_getgrent)(void);	/* no longer used */
     void (*_endgrent)(void);		/* no longer used */
@@ -151,10 +151,6 @@ typedef greet_user_rtn (*GreetUserProc)(
 #endif
 );
 
-typedef enum verifyRet { V_ERROR, V_FAIL, V_NOHOME, V_NOLOGIN, V_NOROOT, V_BADSHELL, V_BADTIME, V_AEXPIRED, V_PEXPIRED, V_OK, V_AWEXPIRE, V_PWEXPIRE } VerifyRet;
-extern VerifyRet Verify (struct display *d, struct greet_info *greet, struct verify_info *verify, time_t *expire, char **nologin);
-extern VerifyRet VerifyRoot (const char* pw);
-
 #ifdef GREET_LIB
 /*
  * The greeter uses some symbols from the main xdm executable.  Since some
@@ -183,7 +179,7 @@ extern	char    **(*__xdm_putEnv)(const char *string, char **env);
 extern	char    **(*__xdm_parseArgs)(char **argv, char *string);
 extern	void    (*__xdm_printEnv)(char **e);
 extern	char    **(*__xdm_systemEnv)(struct display *d, char *user, char *home);
-extern	void    (*__xdm_LogOutOfMem)(const char *fmt, ...);
+extern	void    (*__xdm_LogOutOfMem)(const char *fkt);
 extern	SETGRENT_TYPE (*__xdm_setgrent)(void);
 extern	struct group    *(*__xdm_getgrent)(void);
 extern	void    (*__xdm_endgrent)(void);

@@ -130,28 +130,28 @@ struct AuthProtocol {
 };
 
 #ifdef XDMCP
-# define xdmcpauth(arg) arg,
+# define xdmcpauth(arg) , arg
 #else
 # define xdmcpauth(arg)
 #endif
 
 static struct AuthProtocol AuthProtocols[] = {
 { (unsigned short) 18,	"MIT-MAGIC-COOKIE-1",
-    MitInitAuth, MitGetAuth, xdmcpauth(NULL)
+    MitInitAuth, MitGetAuth xdmcpauth(NULL), 0
 },
 #ifdef HASXDMAUTH
 { (unsigned short) 19,	"XDM-AUTHORIZATION-1",
-    XdmInitAuth, XdmGetAuth, xdmcpauth(XdmGetXdmcpAuth)
+    XdmInitAuth, XdmGetAuth xdmcpauth(XdmGetXdmcpAuth), 0
 },
 #endif
 #ifdef SECURE_RPC
 { (unsigned short) 9, "SUN-DES-1",
-    SecureRPCInitAuth, SecureRPCGetAuth, xdmcpauth(NULL)
+    SecureRPCInitAuth, SecureRPCGetAuth xdmcpauth(NULL), 0
 },
 #endif
 #ifdef K5AUTH
 { (unsigned short) 14, "MIT-KERBEROS-5",
-    Krb5InitAuth, Krb5GetAuth, xdmcpauth(NULL)
+    Krb5InitAuth, Krb5GetAuth xdmcpauth(NULL), 0
 },
 #endif
 };
@@ -161,7 +161,7 @@ static struct AuthProtocol AuthProtocols[] = {
 static struct AuthProtocol *
 findProtocol (unsigned short name_length, char *name)
 {
-    int	i;
+    unsigned	i;
 
     for (i = 0; i < NUM_AUTHORIZATION; i++)
 	if (AuthProtocols[i].name_length == name_length &&
@@ -187,10 +187,8 @@ GenerateAuthorization (unsigned short name_length, char *name)
     Xauth   *auth = 0;
     int	    i;
 
-    Debug ("GenerateAuthorization %*.*s\n",
-	    name_length, name_length, name);
-    a = findProtocol (name_length, name);
-    if (a)
+    Debug ("GenerateAuthorization %s\n", name);
+    if ((a = findProtocol (name_length, name)))
     {
 	if (!a->inited)
 	{
@@ -198,27 +196,21 @@ GenerateAuthorization (unsigned short name_length, char *name)
 	    a->inited = TRUE;
 	}
 	auth = (*a->GetAuth) (name_length, name);
-	if (debugLevel > 0) 
+	if (auth)
 	{
-	    if (auth)
-	    {
-		char buf[1000];	/* enough? */
-		int clen;
-		clen = sprintf (buf, "Got %p (%d %*.*s) ", auth,
-		    auth->name_length, auth->name_length,
+	    Debug ("Got %p (%d %.*s)", auth,
+		    auth->name_length,
  		    auth->name_length, auth->name);
-		for (i = 0; i < (int)auth->data_length; i++)
-		    clen += sprintf (buf + clen, " %02x", auth->data[i] & 0xff);
-		strcpy (buf + clen, "\n");
-		Debug (buf);
-	    }
-	    else
-		Debug ("Got (null)\n");
+	    for (i = 0; i < (int)auth->data_length; i++)
+		Debug (" %02x", auth->data[i] & 0xff);
+	    Debug ("\n");
 	}
+	else
+	    Debug ("Got (null)\n");
     }
     else
     {
-	Debug ("Unknown authorization %*.*s\n", name_length, name_length, name);
+	Debug ("Unknown authorization %s\n", name);
     }
     return auth;
 }
@@ -290,63 +282,56 @@ CleanUpFileName (char *src, char *dst, int len)
 static char authdir1[] = "authdir";
 static char authdir2[] = "authfiles";
 
-static int
-MakeServerAuthFile (struct display *d)
-{
-    int len;
 #ifdef SYSV
 # define NAMELEN	14
 #else
 # define NAMELEN	255
 #endif
-    char    cleanname[NAMELEN];
-    int r;
+
+static int
+MakeServerAuthFile (struct display *d)
+{
+    int		r;
     struct stat	statb;
+    char	*af, cleanname[NAMELEN];
 
     if (d->clientAuthFile && *d->clientAuthFile)
-	len = strlen (d->clientAuthFile) + 1;
-    else
-    {
-    	CleanUpFileName (d->name, cleanname, NAMELEN - 8);
-    	len = strlen (authDir) + strlen (authdir1) + strlen (authdir2)
-	    + strlen (cleanname) + 14;
-    }
-    if (d->authFile)
+	return ReStr (&d->authFile, d->clientAuthFile);
+
+    if (d->authFile) {
 	free (d->authFile);
-    d->authFile = malloc ((unsigned) len);
-    if (!d->authFile)
+	d->authFile = 0;
+    }
+    CleanUpFileName (d->name, cleanname, NAMELEN - 8);
+    if (!(af = malloc ((unsigned) strlen (authDir) + 
+			sizeof (authdir1) + sizeof (authdir2) + 
+			strlen (cleanname) + 12)))
 	return FALSE;
-    if (d->clientAuthFile && *d->clientAuthFile)
-	strcpy (d->authFile, d->clientAuthFile);
-    else
-    {
-	sprintf (d->authFile, "%s/%s", authDir, authdir1);
-	r = stat(d->authFile, &statb);
-	if (r == 0) {
-	    if (statb.st_uid != 0)
-		(void) chown(d->authFile, 0, statb.st_gid);
-	    if ((statb.st_mode & 0077) != 0)
-		(void) chmod(d->authFile, statb.st_mode & 0700);
-	} else {
-	    if (errno == ENOENT)
-		r = mkdir(d->authFile, 0700);
-	    if (r < 0) {
-		free (d->authFile);
-		d->authFile = NULL;
-		return FALSE;
-	    }
-	}
-	sprintf (d->authFile, "%s/%s/%s", authDir, authdir1, authdir2);
-	r = mkdir(d->authFile, 0700);
-	if (r < 0  &&  errno != EEXIST) {
-	    free (d->authFile);
-	    d->authFile = NULL;
+    sprintf (af, "%s/%s", authDir, authdir1);
+    r = stat(af, &statb);
+    if (r == 0) {
+	if (statb.st_uid != 0)
+	    (void) chown(af, 0, statb.st_gid);
+	if ((statb.st_mode & 0077) != 0)
+	    (void) chmod(af, statb.st_mode & 0700);
+    } else {
+	if (errno == ENOENT)
+	    r = mkdir(af, 0700);
+	if (r < 0) {
+	    free (af);
 	    return FALSE;
 	}
-    	sprintf (d->authFile, "%s/%s/%s/A%s-XXXXXX",
-		 authDir, authdir1, authdir2, cleanname);
-    	(void) mktemp (d->authFile);
     }
+    sprintf (af, "%s/%s/%s", authDir, authdir1, authdir2);
+    r = mkdir(af, 0700);
+    if (r < 0  &&  errno != EEXIST) {
+	free (af);
+	return FALSE;
+    }
+    sprintf (af, "%s/%s/%s/A%s-XXXXXX",
+	     authDir, authdir1, authdir2, cleanname);
+    (void) mktemp (af);
+    d->authFile = af;
     return TRUE;
 }
 
@@ -483,8 +468,7 @@ openFiles (char *name, char *new_name, FILE **oldp, FILE **newp)
 {
 	int	mask;
 
-	strcpy (new_name, name);
-	strcat (new_name, "-n");
+	strcat (strcpy (new_name, name), "-n");
 	mask = umask (0077);
 	(void) unlink (new_name);
 	*newp = fopen (new_name, "w");
@@ -511,14 +495,11 @@ static void
 dumpBytes (unsigned short len, char *data)
 {
 	unsigned short	i;
-	char buf[1000];	/* enough? */
-	int clen;
 
-	clen = sprintf (buf, "%d: ", len);
+	Debug ("%d:", len);
 	for (i = 0; i < len; i++)
-	    clen += sprintf (buf + clen, "%02x ", data[i] & 0377);
-	strcpy (buf + clen, "\n");
-	Debug (buf);
+		Debug (" %02x", data[i] & 0377);
+	Debug ("\n");
 }
 
 static void
@@ -836,8 +817,10 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
     unsigned char *addr;
     int	len, ipfd;
 
-    if ((ipfd = open ("/dev/ip", O_RDWR, 0 )) < 0)
-        LogError ("Getting interface configuration");
+    if ((ipfd = open ("/dev/ip", O_RDWR, 0 )) < 0) {
+	LogError ("Getting interface configuration\n");
+	return;
+    }
 
     /* Indicate that we want to start at the begining */
     ifnet.ib_next = (struct ipb *) 1;
@@ -852,7 +835,8 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 	if (ioctl (ipfd, (int) I_STR, (char *) &str) < 0)
 	{
 	    close (ipfd);
-	    LogError ("Getting interface configuration");
+	    LogError ("Getting interface configuration\n");
+	    return;
 	}
 
 	ifaddr.ia_next = (struct in_ifaddr *) ifnet.if_addrlist;
@@ -864,7 +848,8 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 	if (ioctl (ipfd, (int) I_STR, (char *) &str) < 0)
 	{
 	    close (ipfd);
-	    LogError ("Getting interface configuration");
+	    LogError ("Getting interface configuration\n");
+	    return;
 	}
 
 	/*
@@ -907,8 +892,10 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
     
     ifc.ifc_len = sizeof (buf);
     ifc.ifc_buf = buf;
-    if (ifioctl (fd, SIOCGIFCONF, (char *) &ifc) < 0)
-        LogError ("Trouble getting network interface configuration");
+    if (ifioctl (fd, SIOCGIFCONF, (char *) &ifc) < 0) {
+	LogError ("Trouble getting network interface configuration\n");
+	return;
+    }
 
 #ifdef ISC
 # define IFC_IFC_REQ (struct ifreq *) ifc.ifc_buf

@@ -104,20 +104,10 @@ StartServerOnce (struct display *d)
 	    sleep ((unsigned) d->openDelay);
 	    exit (UNMANAGE_DISPLAY);
 	}
-	if (debugLevel > 0) {
-	    char *buf = NULL, *nbuf;
-	    int clen = 0;
-	    for (f = argv; *f; f++) {
-		if (!(nbuf = realloc (buf, clen + strlen(*f) + 4)))
-		    goto fa1;
-		buf = nbuf;
-		clen += sprintf (buf + clen, " '%s'", *f);
-	    }
-	    Debug ("Exec%s\n", buf);
-	  fa1:
-	    if (buf)
-		free (buf);
-	}
+	Debug ("Exec");
+	for (f = argv; *f; f++)
+	    Debug (" '%s'", *f);
+	Debug ("\n");
 	/*
 	 * give the server SIGUSR1 ignored,
 	 * it will notice that and send SIGUSR1
@@ -125,8 +115,7 @@ StartServerOnce (struct display *d)
 	 */
 	(void) Signal (SIGUSR1, SIG_IGN);
 	(void) execv (argv[0], argv);
-	LogError ("server %s cannot be executed\n",
-			argv[0]);
+	LogError ("server %s cannot be executed\n", argv[0]);
 	sleep ((unsigned) d->openDelay);
 	exit (REMANAGE_DISPLAY);
     case -1:

@@ -4,7 +4,7 @@
     $Id$
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000, 2001 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -27,26 +27,27 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "kdmconfig.h"
 #include <qfile.h>
-#include <kapp.h>
 #include <qmotifstyle.h>
 #include <qmotifplusstyle.h>
 #include <qcdestyle.h>
 #include <qsgistyle.h>
 #include <qwindowsstyle.h>
 #include <qplatinumstyle.h>
+
+#include <kapp.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kpassdlg.h>
+
+#include "kdmconfig.h"
 
 #define defEchoMode	KPasswordEdit::OneStar
 
 #define defShowMode	UsrAll
 
-KDMConfig::KDMConfig() :
-    KSimpleConfig( KGlobal::dirs()->resourceDirs("config").last() + 
-		   QString::fromLatin1("kdmrc") )
+KDMConfig::KDMConfig(QString cf) :
+    KSimpleConfig( cf )
 {
     setGroup( "KDM" );
 
@@ -62,13 +63,6 @@ KDMConfig::KDMConfig() :
 
     _shutdown = readEntry( "Shutdown", QString::fromLatin1(SHUTDOWN_CMD) );
     _restart = readEntry( "Restart", QString::fromLatin1(REBOOT_CMD) );
-#ifndef BSD
-    if (readBoolEntry("AllowConsoleMode", true))
-	_consoleMode = readEntry( "ConsoleMode", 
-				  QString::fromLatin1("/sbin/init 3") );
-#endif
-
-    _allowChooser = readBoolEntry("AllowChooser", false);
 
     if (readBoolEntry("GreeterPosFixed", false)) {
 	_greeterPosX = readNumEntry("GreeterPosX", 0);
@@ -120,7 +114,7 @@ KDMConfig::KDMConfig() :
      // Defaults for session types
     if( _sessionTypes.isEmpty() ) {
 	_sessionTypes.append( QString::fromLatin1("default") );
-	_sessionTypes.append( QString::fromLatin1("kde") );
+	_sessionTypes.append( QString::fromLatin1("kde2") );
 	_sessionTypes.append( QString::fromLatin1("failsafe") );
     }
 
@@ -191,14 +185,6 @@ KDMConfig::KDMConfig() :
     greet_string.replace( rx, hostname);
     _greetString = greet_string;
 
-    if (readBoolEntry( "AutoLoginEnable", false))
-	_autoUser = readEntry( "AutoLoginUser" );
-    _autoLogin1st = readBoolEntry( "AutoLogin1st", true);
-
-    if (readBoolEntry( "NoPassEnable", false))
-	_noPassUsers = readListEntry( "NoPassUsers" );
-
-    _autoReLogin = readBoolEntry( "AutoReLogin", false);
     _showPrevious = readBoolEntry( "ShowPrevious", false);
 
     // Lilo options

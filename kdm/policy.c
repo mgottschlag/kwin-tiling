@@ -150,7 +150,7 @@ static void Willing_msg (char *mbuf)
 
     while (!feof (f)) {
 	float m;
-	fgets (buf, 1024, f);
+	fgets (buf, sizeof(buf), f);
 	buf[sizeof (buf) - 1] = 0;
 
 	if (sscanf (buf, "cpu MHz : %f", &m)) {
@@ -203,7 +203,7 @@ Willing (
 	{
 	    FILE *fd;
 	    if ((fd = popen(willing, "r"))) {
-		if (fgets(statusBuf, 256, fd))
+		if (fgets(statusBuf, sizeof(statusBuf), fd))
 		    statusBuf[strlen(statusBuf)-1] = 0; /* chop newline */
 		else
 		    sprintf (statusBuf, "Willing, but %s failed", willing);

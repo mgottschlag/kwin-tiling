@@ -4,7 +4,7 @@
     $Id$
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000, 2001 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -52,9 +52,6 @@ public:
     KDMShutdown( int mode, QWidget* _parent=0, const char* _name=0,
 		 const QString &_shutdown = QString::fromLatin1(SHUTDOWN_CMD),
 		 const QString &_restart  = QString::fromLatin1(REBOOT_CMD),
-#ifndef BSD
-		 const QString &_console = QString::fromLatin1("/sbin/init 3"),
-#endif
 		 bool _lilo = FALSE,
 		 const QString &_lilocmd = QString::null,
                  const QString &_lilomap = QString::null);

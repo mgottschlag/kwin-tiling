@@ -314,8 +314,8 @@ RegisterIndirectChoice (
     insert = 0;
     if (!c)
     {
-	c = (ChoicePtr) malloc (sizeof (ChoiceRec));
 	insert = 1;
+	c = (ChoicePtr) malloc (sizeof (ChoiceRec));
 	if (!c)
 	    return 0;
 	c->connectionType = connectionType;
@@ -346,9 +346,9 @@ RegisterIndirectChoice (
 
 #ifdef notdef
 static
-RemoveIndirectChoice (clientAddress, connectionType)
-    ARRAY8Ptr	clientAddress;
-    CARD16	connectionType;
+RemoveIndirectChoice (
+    ARRAY8Ptr	clientAddress,
+    CARD16	connectionType)
 {
     ChoicePtr	c, prev;
 
@@ -384,7 +384,7 @@ AddChooserHost (
 
     argp = (char ***) closure;
     if (addr->length == strlen ("BROADCAST") &&
-	!strncmp ((char *)addr->data, "BROADCAST", addr->length))
+	!memcmp ((char *)addr->data, "BROADCAST", addr->length))
     {
 	*argp = parseArgs (*argp, "BROADCAST");
     }
@@ -397,7 +397,7 @@ AddChooserHost (
 void
 ProcessChooserSocket (int fd)
 {
-    int client_fd;
+    int		client_fd;
     char	buf[1024];
     int		len;
     XdmcpBuffer	buffer;
@@ -406,7 +406,7 @@ ProcessChooserSocket (int fd)
     ARRAY8	choice;
 #if defined(STREAMSCONN)
     struct t_call *call;
-    int flags=0;
+    int		flags = 0;
 #endif
 #ifdef MINIX
     nwio_tcpconf_t tcpconf;
@@ -463,7 +463,7 @@ ProcessChooserSocket (int fd)
     /* If the listen succeeded save the filedescriptor */
     if (listen_completed)
     {
-    	client_fd= dup(fd);
+    	client_fd = dup(fd);
     	if (client_fd == -1)
     	{
 		LogError ("Dup failed: %s\n", strerror(errno));
@@ -471,7 +471,7 @@ ProcessChooserSocket (int fd)
     	}
     }
     else
-    	client_fd= -1;
+    	client_fd = -1;
 
     /* Try to setup a new tcp device at the same filedescriptor as the old
      * one.
@@ -482,10 +482,10 @@ ProcessChooserSocket (int fd)
 	return;
     }
     close(fd);
-    tcp_device= getenv("TCP_DEVICE");
+    tcp_device = getenv("TCP_DEVICE");
     if (tcp_device == NULL)
-    	tcp_device= TCP_DEVICE;
-    new_fd= open(tcp_device, O_RDWR);
+    	tcp_device = TCP_DEVICE;
+    new_fd = open(tcp_device, O_RDWR);
     if (new_fd == -1)
     {
 	LogError ("open '%s' failed: %s\n", tcp_device, strerror(errno));
@@ -496,7 +496,7 @@ ProcessChooserSocket (int fd)
     	dup2(new_fd, fd);
     	close(new_fd);
     }
-    if ((flags= fcntl(fd, F_GETFD)) == -1)
+    if ((flags = fcntl(fd, F_GETFD)) == -1)
     {
 	LogError ("F_GETFD failed: %s\n", strerror(errno));
 	return;
@@ -506,20 +506,20 @@ ProcessChooserSocket (int fd)
 	LogError ("F_SETFD failed: %s\n", strerror(errno));
 	return;
     }
-    tcpconf.nwtc_flags= NWTC_EXCL | NWTC_LP_SET | NWTC_UNSET_RA | NWTC_UNSET_RP;
+    tcpconf.nwtc_flags = NWTC_EXCL | NWTC_LP_SET | NWTC_UNSET_RA | NWTC_UNSET_RP;
     if (ioctl(fd, NWIOSTCPCONF, &tcpconf) == -1)
     {
 	LogError ("NWIOSTCPCONF failed: %s\n", strerror(errno));
 	return;
     }
-    listen_inprogress= 0;
-    listen_completed= 0;
+    listen_inprogress = 0;
+    listen_completed = 0;
 
-    tcpcl.nwtcl_flags= 0;
-    r= ioctl(fd, NWIOTCPLISTEN, &tcpcl);
+    tcpcl.nwtcl_flags = 0;
+    r = ioctl(fd, NWIOTCPLISTEN, &tcpcl);
     if (r == -1 && errno == EINPROGRESS)
     {
-    	listen_inprogress= 1;
+    	listen_inprogress = 1;
     	nbio_inprogress(fd, ASIO_IOCTL, 1 /* read */, 1 /* write */,
     		0 /* except */);
     }
@@ -529,7 +529,7 @@ ProcessChooserSocket (int fd)
 	return;
     }
     else
-    	listen_completed= 1;
+    	listen_completed = 1;
     if (client_fd == -1)
     	return;
 #else /* !MINIX */
@@ -604,13 +604,18 @@ RunChooser (struct display *d)
     strcpy (buf, "-xdmaddress ");
     if (FormatChooserArgument (buf + strlen (buf), sizeof (buf) - strlen (buf)))
 	args = parseArgs (args, buf);
-    strcpy (buf, "-clientaddress ");
-    if (FormatARRAY8 (&d->clientAddr, buf + strlen (buf), sizeof (buf) - strlen (buf)))
+    if (d->useChooser)
+    {
+	strcpy (buf, "-clientaddress ");
+	if (FormatARRAY8 (&d->clientAddr, buf + strlen (buf), sizeof (buf) - strlen (buf)))
+	    args = parseArgs (args, buf);
+	sprintf (buf, "-connectionType %d", d->connectionType);
 	args = parseArgs (args, buf);
-    sprintf (buf, "-connectionType %d", d->connectionType);
-    args = parseArgs (args, buf);
-    ForEachChooserHost (&d->clientAddr, d->connectionType, AddChooserHost,
-			(char *) &args);
+	ForEachChooserHost (&d->clientAddr, d->connectionType, AddChooserHost,
+			    (char *) &args);
+    }
+    else
+	args = parseArgs (args, "BROADCAST");
     env = systemEnv (d, (char *) 0, (char *) 0);
     Debug ("Running %s\n", args[0]);
     execute (args, env);

@@ -48,13 +48,12 @@ XdmPrintDataHex (s, a, l)
     char	    *a;
     int		    l;
 {
-    if (debugLevel > 0) {
-	int i, clen = 0;
-	char buf[1000];	/* hopefully enough */
-	for (i = 0; i < l; i++)
-	    clen += sprintf (buf + clen, " %02x", a[i] & 0xff);
-	Debug ("%s%s\n", s, buf);
-    }
+    int	i;
+
+    Debug ("%s", s);
+    for (i = 0; i < l; i++)
+	Debug (" %02x", a[i] & 0xff);
+    Debug ("\n");
 }
 
 #ifdef notdef			/* not used */
@@ -247,7 +246,7 @@ XdmGetKey (pdpy, displayID)
     char    line[1024], id[1024], key[1024];
     int	    keylen;
 
-    Debug ("Lookup key for %*.*s\n", displayID->length, displayID->length, displayID->data);
+    Debug ("Lookup key for %.*s\n", displayID->length, displayID->data);
     keys = fopen (keyFile, "r");
     if (!keys)
 	return FALSE;

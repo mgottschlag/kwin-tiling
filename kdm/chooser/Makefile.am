@@ -1,6 +1,6 @@
 # $Id$
 
-AM_CPPFLAGS = $(STD_DEFINES) $(CONN_FLAGS) -DQT_NO_CAST_ASCII
+AM_CXXFLAGS = $(STD_DEFINES) $(CONN_FLAGS)
 
 INCLUDES = -I$(srcdir)/.. $(all_includes)
 

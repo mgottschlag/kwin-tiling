@@ -126,7 +126,7 @@ typedef union wait	waitType;
 #define waitCompose(sig,core,code) ((sig) * 256 + (core) * 128 + (code))
 #define waitVal(w) waitCompose(waitSig(w), waitCore(w), waitCode(w))
 
-typedef enum displayStatus { running, notRunning, zombie, phoenix } DisplayStatus;
+typedef enum displayStatus { running, notRunning, zombie, phoenix, suspended } DisplayStatus;
 
 /* XXX uncomment this, if it's really needed!!!!!
 #ifdef HAVE_SYS_SELECT_H
@@ -169,7 +169,7 @@ typedef struct displayType {
 # define FromFile	1
 # define FromXDMCP	0
 
-extern DisplayType parseDisplayType (char *string, int *usedDefault);
+extern DisplayType parseDisplayType (char *string, int *usedDefault, char **atPos);
 
 typedef enum fileState { NewEntry, OldEntry, MissingEntry } FileState;
 
@@ -262,9 +262,10 @@ struct display {
 	int		allowRootLogin;	/* allow direct root login */
 
 	/* belongs to server management resources */
-	int		fifoCreate;	/* do we want a login data fifo? */
-	int		fifoGroup;	/* who should own it? */
-	int		fifoMode;	/* fifo permissions */
+	int		fifoCreate;	/* create a login data fifo */
+	int		fifoOwner;	/* owner of fifo */
+	int		fifoGroup;	/* group of fifo */
+	char		*console;	/* the tty line hidden by the server */
 
 	/* misc server state */
 	int		startInterval;	/* reset startAttempts after this time */
@@ -338,6 +339,7 @@ struct verify_info {
 # define RESERVER_DISPLAY	3	/* force server termination */
 # define OPENFAILED_DISPLAY	4	/* XOpenDisplay failed, retry */
 # define RESERVER_AL_DISPLAY	5	/* reserver; maybe, auto-(re-)login */
+# define ALTMODE_DISPLAY	6	/* start console login */
 
 #ifndef TRUE
 # define TRUE	1
@@ -345,6 +347,7 @@ struct verify_info {
 #endif
 
 extern char	*config;
+extern char	*config2Parse;
 
 extern char	*servers;
 extern int	request_port;
@@ -412,10 +415,14 @@ extern void RunChooser (struct display *d);
 extern void BecomeDaemon (void);
 
 /* in dm.c */
+extern char prog[];
 extern void CloseOnFork (void);
 extern void RegisterCloseOnFork (int fd);
 extern void StartDisplay (struct display *d);
 extern void SetTitle (char *name, ...);
+extern int ReStr (char **dst, const char *src);
+extern int StrDup (char **dst, const char *src);
+extern int StrApp (char **dst, const char *src);
 
 /* in dpylist.c */
 extern int AnyDisplaysLeft (void);
@@ -423,7 +430,7 @@ extern void ForEachDisplay (void (*f)(struct display *));
 extern void RemoveDisplay (struct display *old);
 
 /* in file.c */
-extern void ParseDisplay (char *source, DisplayType *acceptableTypes, int numAcceptable);
+extern void ParseDisplay (char *source);
 
 #ifdef XDMCP
 

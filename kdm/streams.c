@@ -95,7 +95,7 @@ CreateWellKnownSockets ()
     if (it < 0)
     {
 	LogError ("error binding STREAMS address %d\n", request_port);
-	t_error("CreateWellKNowSocket(xdmcpFd): t_bind failed");
+	t_error("CreateWellKnownSockets(xdmcpFd): t_bind failed");
 	t_close (xdmcpFd);
 	xdmcpFd = -1;
 	return;
@@ -108,7 +108,7 @@ CreateWellKnownSockets ()
     if (chooserFd == -1)
     {
 	LogError ("chooser stream creation failed\n");
-	t_error("CreateWellKnowSockets(chooserFd): t_open failed");
+	t_error("CreateWellKnownSockets(chooserFd): t_open failed");
 	return;
     }
     bind_addr.qlen = 5;

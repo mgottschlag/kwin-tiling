@@ -21,10 +21,13 @@ AC_CACHE_VAL(kde_cv_defines_imake,
 if mkdir conftestdir; then
     cd conftestdir
     cat > Imakefile <<'EOF'
+CONN_FLAGS = ConnectionFlags
+STD_DEFINES = StandardDefines
+
 acimake:
 	@echo XDMDIR=$(XDMDIR)
-	@echo CONN_FLAGS=%ConnectionFlags%
-	@echo STD_DEFINES=%StandardDefines%
+	@echo CONN_FLAGS=\"$(CONN_FLAGS)\"
+	@echo STD_DEFINES=\"$(STD_DEFINES)\"
 #if HasXdmAuth
 	@echo HASXDMAUTH=1
 #endif
@@ -43,7 +46,9 @@ acimake:
 EOF
     $XMKMF >&5 2>&1
     if test -f Makefile; then
-	kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep -v make | tr % \"`
+changequote(, )
+	kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep '^[^ ]*='`
+changequote([, ])
 	kde_cv_defines_imake=`echo $kde_cv_defines_imake`
     else
 	AC_MSG_ERROR([$XMKF (imake) failed])

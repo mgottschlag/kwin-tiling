@@ -32,12 +32,16 @@ from The Open Group.
  * resource.c
  */
 
-# include "dm.h"
-# include "dm_error.h"
+#include "dm.h"
+#include "dm_error.h"
 
-# include <X11/Intrinsic.h>
+#include <X11/Intrinsic.h>
+
+#include <ctype.h>
 
 char	*config;
+char	*configParser;
+char	*config2Parse;
 
 char	*servers;
 int	request_port;
@@ -73,7 +77,11 @@ int	autoLogin;
 #define Quote(s) #s
 #define QUOTE(s) Quote(s)
 #ifndef DEF_SERVER_LINE 
-#define DEF_SERVER_LINE ":0 local " QUOTE(XBINDIR) "/X :0"
+#ifdef linux
+#define DEF_SERVER_LINE ":0 local@tty1 " QUOTE(XBINDIR) "/X :0"
+#else
+#define DEF_SERVER_LINE ":0 local@console " QUOTE(XBINDIR) "/X :0"
+#endif
 #endif
 #ifndef XRDB_PROGRAM
 /* use krdb instead? */
@@ -111,7 +119,7 @@ int	autoLogin;
 #define DEF_FAILSAFE_CLIENT QUOTE(XBINDIR) "/xterm"
 #endif
 #ifndef DEF_XDM_CONFIG
-#define DEF_XDM_CONFIG XDMDIR "/xdm-config"
+#define DEF_XDM_CONFIG XDMDIR "/%DMNAME%-config"
 #endif
 #ifndef DEF_CHOOSER
 #define DEF_CHOOSER XDMDIR "/chooser"
@@ -144,11 +152,11 @@ int	autoLogin;
 #endif
 #ifndef DEF_PID_FILE
 #  if defined(__FreeBSD__) || defined(__NetBSD__)
-#    define DEF_PID_FILE _PATH_VARRUN"kdm.pid"
+#    define DEF_PID_FILE _PATH_VARRUN"%DMNAME%.pid"
 #  else
 /* this may be readonly
  */
-#    define DEF_PID_FILE XDMDIR "/kdm-pid"
+#    define DEF_PID_FILE XDMDIR "/%DMNAME%-pid"
 #  endif
 #endif
 #else	/* __EMX__ */
@@ -176,10 +184,10 @@ int	autoLogin;
 #define DEF_FAILSAFE_CLIENT "/XFree86/bin/xterm"
 #endif
 #ifndef DEF_XDM_CONFIG
-#define DEF_XDM_CONFIG "/XFree86/lib/X11/xdm/xdm-config"
+#define DEF_XDM_CONFIG "/XFree86/lib/X11/%DMNAME%/%DMNAME%-config"
 #endif
 #ifndef DEF_CHOOSER
-#define DEF_CHOOSER "/XFree86/lib/X11/xdm/chooser"
+#define DEF_CHOOSER "/XFree86/lib/X11/%DMNAME%/chooser"
 #endif
 #ifndef DEF_AUTH_NAME
 #ifdef HASXDMAUTH
@@ -189,7 +197,7 @@ int	autoLogin;
 #endif
 #endif
 #ifndef DEF_AUTH_DIR
-#define DEF_AUTH_DIR "/XFree86/lib/X11/xdm"
+#define DEF_AUTH_DIR "/XFree86/lib/X11/%DMNAME%"
 #endif
 #ifndef DEF_USER_AUTH_DIR
 #define DEF_USER_AUTH_DIR	"/tmp"
@@ -209,60 +217,41 @@ int	autoLogin;
 
 #endif /* __EMX__ */
 
-#define DEF_UDP_PORT	"177"	    /* registered XDMCP port, dont change */
+#define DEF_UDP_PORT	"177"	    /* registered XDMCP port, don't change */
 
 struct dmResources {
-	char	*name, *class2;
+	char	*name;
 	int	type;
 	char	**dm_value;
 	char	*default_value;
 } DmResources[] = {
-{ "servers",	"Servers", 	DM_STRING,	&servers,
-				DEF_SERVER_LINE} ,
-{ "requestPort","RequestPort",	DM_INT,		(char **) &request_port,
-				DEF_UDP_PORT} ,
-{ "debugLevel",	"DebugLevel",	DM_INT,		(char **) &debugLevel,
-				"0"} ,
-{ "errorLogFile","ErrorLogFile",	DM_STRING,	&errorLogFile,
-				""} ,
-{ "daemonMode",	"DaemonMode",	DM_BOOL,	(char **) &daemonMode,
-				"true"} ,
-{ "pidFile",	"PidFile",	DM_STRING,	&pidFile,
-				""} ,
-{ "lockPidFile","LockPidFile",	DM_BOOL,	(char **) &lockPidFile,
-				"true"} ,
-{ "authDir",	"authDir",	DM_STRING,	&authDir,
-				DEF_AUTH_DIR} ,
-{ "autoRescan",	"AutoRescan",	DM_BOOL,	(char **) &autoRescan,
-				"true"} ,
-{ "removeDomainname","RemoveDomainname",DM_BOOL,(char **) &removeDomainname,
-				"true"} ,
-{ "keyFile",	"KeyFile",	DM_STRING,	&keyFile,
-				DEF_KEY_FILE} ,
-{ "accessFile",	"AccessFile",	DM_STRING,	&accessFile,
-				DEF_ACCESS_FILE} ,
-{ "exportList",	"ExportList",	DM_ARGV,	(char **) &exportList,
-				""} ,
-{ "randomFile",	"RandomFile",	DM_STRING,	&randomFile,
-				DEF_RANDOM_FILE} ,
-{ "greeterLib",	"GreeterLib",	DM_STRING,	&greeterLib,
-				DEF_GREETER_LIB} ,
-{ "choiceTimeout","ChoiceTimeout",DM_INT,	(char **) &choiceTimeout,
-				"15"} ,
-{ "sourceAddress","SourceAddress",DM_BOOL,	(char **) &sourceAddress,
-				"false"} ,
-{ "willing",	"Willing",	DM_STRING,	&willing,
-				""} ,
-{ "autoLogin",	"AutoLogin",	DM_BOOL,	(char **) &autoLogin,
-				"true"} ,
+{ "servers",	DM_STRING,	&servers,		DEF_SERVER_LINE},
+{ "requestPort",DM_INT,		(char **) &request_port,DEF_UDP_PORT},
+{ "debugLevel",	DM_INT,		(char **) &debugLevel,	"0"},
+{ "errorLogFile",DM_STRING,	&errorLogFile,		""},
+{ "daemonMode",	DM_BOOL,	(char **) &daemonMode,	"true"},
+{ "pidFile",	DM_STRING,	&pidFile,		""},
+{ "lockPidFile",DM_BOOL,	(char **) &lockPidFile,	"true"},
+{ "authDir",	DM_STRING,	&authDir,		DEF_AUTH_DIR},
+{ "autoRescan",	DM_BOOL,	(char **) &autoRescan,	"true"},
+{ "removeDomainname",DM_BOOL,	(char **) &removeDomainname,"true"},
+{ "keyFile",	DM_STRING,	&keyFile,		DEF_KEY_FILE},
+{ "accessFile",	DM_STRING,	&accessFile,		DEF_ACCESS_FILE},
+{ "exportList",	DM_ARGV,	(char **) &exportList,	""},
+{ "randomFile",	DM_STRING,	&randomFile,		DEF_RANDOM_FILE},
+{ "greeterLib",	DM_STRING,	&greeterLib,		DEF_GREETER_LIB},
+{ "choiceTimeout",DM_INT,	(char **) &choiceTimeout,"15"},
+{ "sourceAddress",DM_BOOL,	(char **) &sourceAddress,"false"},
+{ "willing",	DM_STRING,	&willing,		""},
+{ "autoLogin",	DM_BOOL,	(char **) &autoLogin,	"true"},
 };
 
-# define NUM_DM_RESOURCES	(sizeof DmResources / sizeof DmResources[0])
+#define NUM_DM_RESOURCES	(sizeof DmResources / sizeof DmResources[0])
 
-# define boffset(f)	XtOffsetOf(struct display, f)
+#define boffset(f)	XtOffsetOf(struct display, f)
 
 struct displayResource {
-	char	*name, *class2;
+	char	*name;
 	int	type;
 	int	offset;
 	char	*default_value;
@@ -271,102 +260,64 @@ struct displayResource {
 /* resources for managing the server */
 
 struct displayResource serverResources[] = {
-{ "serverAttempts","ServerAttempts",DM_INT,	boffset(serverAttempts),
-				"1" },
-{ "openDelay",	"OpenDelay",	DM_INT,		boffset(openDelay),
-				"15" },
-{ "openRepeat",	"OpenRepeat",	DM_INT,		boffset(openRepeat),
-				"5" },
-{ "openTimeout","OpenTimeout",	DM_INT,		boffset(openTimeout),
-				"120" },
-{ "startAttempts","StartAttempts",DM_INT,	boffset(startAttempts),
-				"4" },
-{ "pingInterval","PingInterval",DM_INT,		boffset(pingInterval),
-				"5" },
-{ "pingTimeout","PingTimeout",	DM_INT,		boffset(pingTimeout),
-				"5" },
-{ "terminateServer","TerminateServer",DM_BOOL,	boffset(terminateServer),
-				"false" },
-{ "grabServer",	"GrabServer",	DM_BOOL,	boffset(grabServer),
-				"false" },
-{ "grabTimeout","GrabTimeout",	DM_INT,		boffset(grabTimeout),
-				"3" },
-{ "resetSignal","Signal",	DM_INT,		boffset(resetSignal),
-				"1" },	/* SIGHUP */
-{ "termSignal",	"Signal",	DM_INT,		boffset(termSignal),
-				"15" },	/* SIGTERM */
-{ "resetForAuth","ResetForAuth",DM_BOOL,	boffset(resetForAuth),
-				"false" },
-{ "authorize",	"Authorize",	DM_BOOL,	boffset(authorize),
-				"true" },
-{ "authComplain","AuthComplain",DM_BOOL,	boffset(authComplain),
-				"true" },
-{ "authName",	"AuthName",	DM_ARGV,	boffset(authNames),
-				DEF_AUTH_NAME },
-{ "authFile",	"AuthFile",	DM_STRING,	boffset(clientAuthFile),
-				"" },
-{ "fifoCreate",	"FifoCreate",	DM_BOOL,	boffset(fifoCreate),
-				"false" },
-{ "fifoGroup",	"FifoGroup",	DM_INT,		boffset(fifoGroup),
-				"0" },
-{ "fifoMode",	"FifoMode",	DM_INT,		boffset(fifoMode),
-				"0" },
-{ "startInterval","StartInterval",DM_INT,	boffset(startInterval),
-				"30" },
+{ "serverAttempts",DM_INT,	boffset(serverAttempts),	"1" },
+{ "openDelay",	DM_INT,		boffset(openDelay),		"15" },
+{ "openRepeat",	DM_INT,		boffset(openRepeat),		"5" },
+{ "openTimeout",DM_INT,		boffset(openTimeout),		"120" },
+{ "startAttempts",DM_INT,	boffset(startAttempts),		"4" },
+{ "pingInterval",DM_INT,	boffset(pingInterval),		"5" },
+{ "pingTimeout",DM_INT,		boffset(pingTimeout),		"5" },
+{ "terminateServer",DM_BOOL,	boffset(terminateServer),	"false" },
+{ "grabServer",	DM_BOOL,	boffset(grabServer),		"false" },
+{ "grabTimeout",DM_INT,		boffset(grabTimeout),		"3" },
+{ "resetSignal",DM_INT,		boffset(resetSignal),		"1" },	/* SIGHUP */
+{ "termSignal",	DM_INT,		boffset(termSignal),		"15" },	/* SIGTERM */
+{ "resetForAuth",DM_BOOL,	boffset(resetForAuth),		"false" },
+{ "authorize",	DM_BOOL,	boffset(authorize),		"true" },
+{ "authComplain",DM_BOOL,	boffset(authComplain),		"true" },
+{ "authName",	DM_ARGV,	boffset(authNames),		DEF_AUTH_NAME },
+{ "authFile",	DM_STRING,	boffset(clientAuthFile),	"" },
+{ "fifoCreate",	DM_BOOL,	boffset(fifoCreate),		"false" },
+{ "fifoOwner",	DM_INT,		boffset(fifoOwner),		"-1" },
+{ "fifoGroup",	DM_INT,		boffset(fifoGroup),		"-1" },
+{ "startInterval",DM_INT,	boffset(startInterval),		"30" },
 };
 
-# define NUM_SERVER_RESOURCES	(sizeof serverResources/\
+#define NUM_SERVER_RESOURCES	(sizeof serverResources/\
 				 sizeof serverResources[0])
 
 /* resources which control the session behaviour */
 
 struct displayResource sessionResources[] = {
-{ "resources",	"Resources",	DM_STRING,	boffset(resources),
-				"" },
-{ "xrdb",	"Xrdb",		DM_STRING,	boffset(xrdb),
-				XRDB_PROGRAM },
-{ "setup",	"Setup",	DM_STRING,	boffset(setup),
-				"" },
-{ "startup",	"Startup",	DM_STRING,	boffset(startup),
-				"" },
-{ "reset",	"Reset",	DM_STRING,	boffset(reset),
-				"" },
-{ "session",	"Session",	DM_STRING,	boffset(session),
-				DEF_SESSION },
-{ "userPath",	"Path",		DM_STRING,	boffset(userPath),
-				DEF_USER_PATH },
-{ "systemPath",	"Path",		DM_STRING,	boffset(systemPath),
-				DEF_SYSTEM_PATH },
-{ "systemShell","Shell",	DM_STRING,	boffset(systemShell),
-				DEF_SYSTEM_SHELL },
-{ "failsafeClient","FailsafeClient", DM_STRING,	boffset(failsafeClient),
-				DEF_FAILSAFE_CLIENT },
-{ "userAuthDir","UserAuthDir",	DM_STRING,	boffset(userAuthDir),
-				DEF_USER_AUTH_DIR },
-{ "chooser",	"Chooser",	DM_STRING,	boffset(chooser),
-				DEF_CHOOSER },
-{ "noPassUsers", "NoPassUsers",	DM_STRING,	boffset(noPassUsers),
-				"" },
-{ "autoUser",	"AutoUser",	DM_STRING,	boffset(autoUser),
-                        	"" },
-{ "autoPass",	"AutoPass",	DM_STRING,	boffset(autoPass),
-                        	"" },
-{ "autoString",	"AutoString",	DM_STRING,	boffset(autoString),
-                        	"" },
-{ "autoLogin1st", "AutoLogin1st", DM_BOOL,	boffset(autoLogin1st),
-				"true" },
-{ "autoReLogin", "AutoReLogin",	DM_BOOL,	boffset(autoReLogin),
-				"false" },
-{ "allowNullPasswd", "AllowNullPasswd", DM_BOOL,boffset(allowNullPasswd),
-				"true" },
-{ "allowRootLogin", "AllowRootLogin", DM_BOOL,	boffset(allowRootLogin),
-				"true" },
+{ "resources",	DM_STRING,	boffset(resources),	"" },
+{ "xrdb",	DM_STRING,	boffset(xrdb),		XRDB_PROGRAM },
+{ "setup",	DM_STRING,	boffset(setup),		DEF_SETUP },
+{ "startup",	DM_STRING,	boffset(startup),	"" },
+{ "reset",	DM_STRING,	boffset(reset),		"" },
+{ "session",	DM_STRING,	boffset(session),	DEF_SESSION },
+{ "userPath",	DM_STRING,	boffset(userPath),	DEF_USER_PATH },
+{ "systemPath",	DM_STRING,	boffset(systemPath),	DEF_SYSTEM_PATH },
+{ "systemShell",DM_STRING,	boffset(systemShell),	DEF_SYSTEM_SHELL },
+{ "failsafeClient",DM_STRING,	boffset(failsafeClient),DEF_FAILSAFE_CLIENT },
+{ "userAuthDir",DM_STRING,	boffset(userAuthDir),	DEF_USER_AUTH_DIR },
+{ "chooser",	DM_STRING,	boffset(chooser),	DEF_CHOOSER },
+{ "noPassUsers",DM_STRING,	boffset(noPassUsers),	"" },
+{ "autoUser",	DM_STRING,	boffset(autoUser),	"" },
+{ "autoPass",	DM_STRING,	boffset(autoPass),	"" },
+{ "autoString",	DM_STRING,	boffset(autoString),	"" },
+{ "autoLogin1st",DM_BOOL,	boffset(autoLogin1st),	"true" },
+{ "autoReLogin",DM_BOOL,	boffset(autoReLogin),	"false" },
+{ "allowNullPasswd",DM_BOOL,	boffset(allowNullPasswd),"true" },
+{ "allowRootLogin",DM_BOOL,	boffset(allowRootLogin),"true" },
 };
 
-# define NUM_SESSION_RESOURCES	(sizeof sessionResources/\
+#define NUM_SESSION_RESOURCES	(sizeof sessionResources/\
 				 sizeof sessionResources[0])
 
 XrmDatabase	DmResourceDB;
+
+static int	originalArgc;
+static char	**originalArgv;
 
 static void
 GetResource (
@@ -378,58 +329,62 @@ GetResource (
 {
     char	*type;
     XrmValue	value;
-    char	*string, *new_string;
-    char	str_buf[50];
-    int	len;
+    char	*string;
+    int		l;
+    char	*sp, *tp, *pdp, *pdn, *sbs, *cp, tbuf[256];
 
-    if (DmResourceDB && XrmGetResource (DmResourceDB,
-	name, class2,
-	&type, &value))
-    {
+    if (DmResourceDB && 
+		XrmGetResource (DmResourceDB, name, class2, &type, &value))
 	string = value.addr;
-	len = value.size;
-    }
     else
-    {
-	string = default_value;
-	len = strlen (string);
-    }
+	string = default_value ? default_value : "";
 
-    Debug ("%s/%s value %*.*s\n", name, class2, len, len, string);
+    Debug ("%s/%s value %500s\n", name, class2, string);
 
     switch (valueType) {
     case DM_STRING:
-        if (*valuep)
-        {
-	    if (strlen (*valuep) == len && !strncmp (*valuep, string, len))
-		return;
-	    else
-		free (*valuep);
-        }
-	new_string = malloc ((unsigned) (len+1));
-	if (!new_string) {
-		LogOutOfMem ("GetResource");
-		return;
+	for (sp = string, tp = tbuf; ; ) {
+	    pdp = strstr (sp, "%DMPATH%");
+	    pdn = strstr (sp, "%DMNAME%");
+#	    define V_COPY(es, el) \
+		l = el; \
+		if (tp + l > tbuf + sizeof(tbuf)) { \
+		    LogError ("length of value for %s/%s exceeds limit (255).\n", name, class2); \
+		    return; \
+		} \
+		memcpy (tp, es, l); \
+		tp += l
+	    if (pdn && (!pdp || pdn < pdp)) {
+		cp = pdn;
+		sbs = prog;
+	    } else if (pdp) {
+		cp = pdp;
+		sbs = originalArgv[0];
+	    } else {
+		V_COPY(sp, strlen(sp) + 1);
+		break;
+	    }
+	    V_COPY(sp, cp - sp);
+	    sp = cp + 8;
+	    V_COPY(sbs, strlen(sbs));
 	}
-	strncpy (new_string, string, len);
-	new_string[len] = '\0';
-	*(valuep) = new_string;
+	if (!ReStr (valuep, tbuf))
+	    LogOutOfMem ("GetResource");
 	break;
     case DM_INT:
-	strncpy (str_buf, string, sizeof (str_buf));
-	str_buf[sizeof (str_buf)-1] = '\0';
-	sscanf (str_buf, "%i", (int *) valuep);
+	sscanf (string, "%i", (int *) valuep);
 	break;
     case DM_BOOL:
-	strncpy (str_buf, string, sizeof (str_buf));
-	str_buf[sizeof (str_buf)-1] = '\0';
-	if (!strcasecmp (str_buf, "true") ||
-	    !strcasecmp (str_buf, "on") ||
-	    !strcasecmp (str_buf, "yes"))
+	for (l = 0; l < sizeof(tbuf) - 1 && string[l]; l++)
+	    tbuf[l] = tolower (string[l]);
+	tbuf[l] = 0;
+	if (!strcmp (tbuf, "true") ||
+	    !strcmp (tbuf, "on") ||
+	    !strcmp (tbuf, "yes"))
 		*((int *) valuep) = 1;
-	else if (!strcasecmp (str_buf, "false") ||
-		 !strcasecmp (str_buf, "off") ||
-		 !strcasecmp (str_buf, "no"))
+	else if (!strcmp (tbuf, "false") ||
+		 !strcmp (tbuf, "off") ||
+		 !strcmp (tbuf, "no"))
 		*((int *) valuep) = 0;
 	break;
     case DM_ARGV:
@@ -447,7 +402,9 @@ XrmOptionDescRec configTable [] = {
 {"-session",	NULL,			XrmoptionSkipArg,	(caddr_t) NULL },
 {"-debug",	NULL,			XrmoptionSkipArg,	(caddr_t) NULL },
 {"-xrm",	NULL,			XrmoptionSkipArg,	(caddr_t) NULL },
-{"-config",	".configFile",		XrmoptionSepArg,	(caddr_t) NULL }
+{"-config",	".configFile",		XrmoptionSepArg,	(caddr_t) NULL },
+{"-getcfg",	".configParser",	XrmoptionSepArg,	(caddr_t) NULL },
+{"-cfg2get",	".config2Parse",	XrmoptionSepArg,	(caddr_t) NULL }
 };
 
 XrmOptionDescRec optionTable [] = {
@@ -464,42 +421,95 @@ XrmOptionDescRec optionTable [] = {
 {"-nodaemon",	".daemonMode",		XrmoptionNoArg,		"false"        }
 };
 
-static int	originalArgc;
-static char	**originalArgv;
-
 void
 InitResources (int argc, char **argv)
 {
-	XrmInitialize ();
-	originalArgc = argc;
-	originalArgv = argv;
-	ReinitResources ();
+    XrmInitialize ();
+    originalArgc = argc;
+    originalArgv = argv;
+    ReinitResources ();
 }
+
+extern long ConfigModTime, Config2ParseModTime;
 
 void
 ReinitResources (void)
 {
-    int	argc;
-    char	**a;
+    int		argc;
     char	**argv;
+    char	**a;
     XrmDatabase newDB;
+    struct stat	statb;
 
-    argv = (char **) malloc ((originalArgc + 1) * sizeof (char *));
-    if (!argv)
+    if (!(argv = (char **) malloc ((originalArgc + 1) * sizeof (char *))))
 	LogPanic ("no space for argument realloc\n");
     for (argc = 0; argc < originalArgc; argc++)
 	argv[argc] = originalArgv[argc];
     argv[argc] = 0;
-    if (DmResourceDB)
-	XrmDestroyDatabase (DmResourceDB);
-    DmResourceDB = XrmGetStringDatabase ("");
-    /* pre-parse the command line to get the -config option, if any */
-    XrmParseCommand (&DmResourceDB, configTable,
+    /* pre-parse the command line to get the -config* options, if any */
+    newDB = NULL;
+    XrmParseCommand (&newDB, configTable,
 		     sizeof (configTable) / sizeof (configTable[0]),
 		     "DisplayManager", &argc, argv);
     GetResource ("DisplayManager.configFile", "DisplayManager.ConfigFile",
 		 DM_STRING, &config, DEF_XDM_CONFIG);
-    newDB = XrmGetFileDatabase ( config );
+    GetResource ("DisplayManager.configParser", "DisplayManager.ConfigParser",
+		 DM_STRING, &configParser, "%DMPATH%_getcfg");
+    GetResource ("DisplayManager.config2Parse", "DisplayManager.Config2Parse",
+		 DM_STRING, &config2Parse, config2Parse);
+    XrmDestroyDatabase (newDB);
+    newDB = NULL;
+    if (stat (config, &statb) != -1)
+	ConfigModTime = statb.st_mtime;
+    if (strcmp(prog, "xdm") && configParser[0])
+    {
+	FILE	*pip;
+	pid_t	pid;
+	int	i, bufs, pfd[2];
+	char	*bufp, tbuf[1024];
+
+	if (pipe(pfd))
+	    LogPanic ("pipe() failed\n");
+	switch (pid = fork()) {
+	case -1:
+	    LogPanic ("fork() failed\n");
+	case 0:
+	    CloseOnFork();
+	    close (pfd[0]);
+	    dup2 (pfd[1], 1);
+	    close (pfd[1]);
+	    execlp (configParser, configParser, config, config2Parse, NULL);
+	    exit (127);
+	}
+	close (pfd[1]);
+	if (!(pip = fdopen (pfd[0], "r")))
+	    LogPanic ("fdopen() failed\n");
+	fseek(pip, 0, SEEK_SET);
+	/* XXX possibly broken, as space in the filename will confuse it */
+	if (fscanf(pip, "%1023s %ld\n", tbuf, &Config2ParseModTime) == 2)
+	    ReStr (&config2Parse, tbuf);
+	for (bufp = NULL, bufs = 0; !feof(pip); )
+	{
+	    if (!(bufp = realloc(bufp,  bufs + 4097)))
+		LogPanic ("no space for config buffer\n");
+	    if ((i = fread(bufp + bufs, 1, 4096, pip)) < 0)
+		LogPanic ("error reading config from parser\n");
+	    bufs += i;
+	}
+	fclose(pip);
+	if (waitpid(pid, &i, 0) != pid || i) {
+	    /* XXX maybe, this should be Debug or LogInfo*/
+	    LogError ("Cannot execute config parser %s\n", configParser);
+	    if (bufp)
+		free(bufp);
+	} else if (bufp) {
+	    bufp[bufs] = 0;
+	    newDB = XrmGetStringDatabase ( bufp );
+	    free(bufp);
+	}
+    }
+    if (!newDB)
+	newDB = XrmGetFileDatabase ( config );
     if (newDB)
     {
 	if (DmResourceDB)
@@ -513,9 +523,9 @@ ReinitResources (void)
 		     "DisplayManager", &argc, argv);
     if (argc > 1)
     {
-	LogError ("extra arguments on command line:");
+	LogError ("Extra arguments on command line:");
 	for (a = argv + 1; *a; a++)
-		LogError (" \"%s\"", *a);
+	    LogError (" \"%s\"", *a);
 	LogError ("\n");
     }
     free (argv);
@@ -524,16 +534,17 @@ ReinitResources (void)
 void
 LoadDMResources (void)
 {
-	int	i;
-	char	name[1024], class2[1024];
+    int		i;
+    char	name[1024], class2[1024];
 
-	for (i = 0; i < NUM_DM_RESOURCES; i++) {
-		sprintf (name, "DisplayManager.%s", DmResources[i].name);
-		sprintf (class2, "DisplayManager.%s", DmResources[i].class2);
-		GetResource (name, class2, DmResources[i].type,
-			      (char **) DmResources[i].dm_value,
-			      DmResources[i].default_value);
-	}
+    for (i = 0; i < NUM_DM_RESOURCES; i++) {
+	sprintf (name, "DisplayManager.%s", DmResources[i].name);
+	sprintf (class2, "DisplayManager.%c%s", 
+		 DmResources[i].name[0] - 0x20, DmResources[i].name + 1);
+	GetResource (name, class2, DmResources[i].type,
+		     (char **) DmResources[i].dm_value,
+		     DmResources[i].default_value);
+    }
 }
 
 static void
@@ -562,20 +573,19 @@ LoadDisplayResources (
     struct displayResource  *resources,
     int			    numResources)
 {
-    int	i;
+    int		i;
     char	name[1024], class2[1024];
     char	dpyName[512], dpyClass[512];
 
     CleanUpName (d->name, dpyName, sizeof (dpyName));
     CleanUpName (d->class2 ? d->class2 : d->name, dpyClass, sizeof (dpyClass));
     for (i = 0; i < numResources; i++) {
-	    sprintf (name, "DisplayManager.%s.%s", 
-		    dpyName, resources[i].name);
-	    sprintf (class2, "DisplayManager.%s.%s",
-		    dpyClass, resources[i].class2);
-	    GetResource (name, class2, resources[i].type,
-			  (char **) (((char *) d) + resources[i].offset),
-			  resources[i].default_value);
+	sprintf (name, "DisplayManager.%s.%s", dpyName, resources[i].name);
+	sprintf (class2, "DisplayManager.%s.%c%s", dpyClass, 
+		 resources[i].name[0] - 0x20, resources[i].name + 1);
+	GetResource (name, class2, resources[i].type,
+		     (char **) (((char *) d) + resources[i].offset),
+		     resources[i].default_value);
     }
 }
 

@@ -240,12 +240,10 @@ tryagain:
     if (*hostOrAlias == ALIAS_CHARACTER)
     {
 	h->type = HOST_ALIAS;
-	h->entry.aliasName = malloc (strlen (hostOrAlias) + 1);
-	if (!h->entry.aliasName) {
+	if (!StrDup (&h->entry.aliasName, hostOrAlias)) {
 	    free ((char *) h);
 	    return NULL;
 	}
-	strcpy (h->entry.aliasName, hostOrAlias);
     }
     else if (!strcmp (hostOrAlias, CHOOSER_STRING))
     {
@@ -272,7 +270,7 @@ tryagain:
 	}
 	if (!XdmcpAllocARRAY8 (&h->entry.hostAddress, hostent->h_length))
 	{
-	    LogOutOfMem ("ReadHostEntry\n");
+	    LogOutOfMem ("ReadHostEntry");
 	    free ((char *) h);
 	    return NULL;
 	}
@@ -313,13 +311,11 @@ ReadDisplayEntry (FILE *file)
     if (*displayOrAlias == ALIAS_CHARACTER)
     {
 	d->type = DISPLAY_ALIAS;
-	d->entry.aliasName = malloc (strlen (displayOrAlias) + 1);
-	if (!d->entry.aliasName)
+	if (!StrDup (&d->entry.aliasName, displayOrAlias))
 	{
 	    free ((char *) d);
 	    return NULL;
 	}
-	strcpy (d->entry.aliasName, displayOrAlias);
     }
     else
     {
@@ -331,13 +327,11 @@ ReadDisplayEntry (FILE *file)
     	if (HasGlobCharacters (displayOrAlias))
     	{
 	    d->type = DISPLAY_PATTERN;
-	    d->entry.displayPattern = malloc (strlen (displayOrAlias) + 1);
-	    if (!d->entry.displayPattern)
+	    if (!StrDup (&d->entry.displayPattern, displayOrAlias))
 	    {
 	    	free ((char *) d);
 	    	return NULL;
 	    }
-	    strcpy (d->entry.displayPattern, displayOrAlias);
     	}
     	else
     	{

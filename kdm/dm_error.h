@@ -54,13 +54,16 @@ authorization.
 extern "C" {
 #endif
 
+/* NOTE: the printf-like functions have a fixed 1100-byte buffer.
+ * Don't overflow! */
+
 extern void Debug        (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
-extern void InitErrorLog (void);
-extern void LogError     (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
 extern void LogInfo      (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
-extern void LogOutOfMem  (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
+extern void LogError     (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
 extern void LogPanic     (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
+extern void LogOutOfMem  (const char *fkt);
 extern void Panic        (const char *mesg);
+extern void InitErrorLog (void);
 
 #ifdef __cplusplus
 }

@@ -46,24 +46,80 @@ from The Open Group.
 # include <syslog.h>
 #endif
 
+enum { DM_DEBUG, DM_INFO, DM_ERR, DM_EMERG };
+#ifdef USE_SYSLOG
+static int lognums[] = { LOG_DEBUG, LOG_INFO, LOG_ERR, LOG_EMERG };
+#else
+static char *lognams[] = { "debug", "info", "error", "panic" };
+static FILE *errf;
+#endif
+
+static void
+logger (int type, const char *fmt, va_list args)
+{
+#ifdef USE_SYSLOG
+    int fl = 1;
+#endif
+    static char *pbuf;
+    char *p, *cp, buf[1100];	/* bad bad */
+
+#ifdef HAS_SNPRINTF
+    vsnprintf (buf, sizeof(buf), fmt, args);
+#else
+    if (vsprintf (buf, fmt, args) >= sizeof(buf))
+	Panic ("buffer overflow in logger()\n");
+#endif
+
+    for (cp = buf; (p = strchr (cp, '\n')); cp = p + 1) {
+#ifdef USE_SYSLOG
+	if (fl) {
+	    fl = 0;
+	    openlog(prog, LOG_PID, LOG_DAEMON);
+	}
+#endif
+	if (pbuf) {
+#ifdef USE_SYSLOG
+	    syslog (lognums[type], "%s%.*s", pbuf, (int)(p - cp), cp);
+#else
+	    fprintf (errf ? errf : stderr, "%s[%d] %s: %s%.*s\n", 
+		 prog, (int)getpid(), lognams[type], pbuf, (int)(p - cp), cp);
+#endif
+	    free (pbuf);
+	    pbuf = NULL;
+	} else
+#ifdef USE_SYSLOG
+	    syslog (lognums[type], "%.*s", (int)(p - cp), cp);
+#else
+	    fprintf (errf ? errf : stderr, "%s[%d] %s: %.*s\n", 
+		     prog, (int)getpid(), lognams[type], (int)(p - cp), cp);
+#endif
+    }
+    if (*cp)
+	StrApp (&pbuf, cp);
+}
+
+/*VARARGS1*/
+void
+Debug (const char *fmt, ...)
+{
+    va_list args;
+
+    if (debugLevel > 0)
+    {
+	va_start(args, fmt);
+	logger (DM_DEBUG, fmt, args);
+	va_end(args);
+    }
+}
+
 /*VARARGS1*/
 void 
 LogInfo(const char *fmt, ...)
 {
-#  ifndef USE_SYSLOG
-    char fmt1[256];
-#  endif
     va_list args;
 
     va_start(args, fmt);
-#  ifdef USE_SYSLOG
-    openlog("kdm", LOG_PID, LOG_DAEMON);
-    vsyslog (LOG_INFO, fmt, args);
-#  else
-    sprintf (fmt1, "xdm info (pid %d): %s", (int)getpid(), fmt);
-    vfprintf (stderr, fmt1, args);
-    fflush (stderr);
-#  endif
+    logger (LOG_INFO, fmt, args);
     va_end(args);
 }
 
@@ -71,20 +127,10 @@ LogInfo(const char *fmt, ...)
 void
 LogError (const char *fmt, ...)
 {
-#  ifndef USE_SYSLOG
-    char fmt1[256];
-#  endif
     va_list args;
 
     va_start(args, fmt);
-#  ifdef USE_SYSLOG
-    openlog("kdm", LOG_PID, LOG_DAEMON);
-    vsyslog (LOG_ERR, fmt, args);
-#  else
-    sprintf (fmt1, "xdm error (pid %d): %s", (int)getpid(), fmt);
-    vfprintf (stderr, fmt1, args);
-    fflush (stderr);
-#  endif
+    logger (DM_ERR, fmt, args);
     va_end(args);
 }
 
@@ -92,103 +138,52 @@ LogError (const char *fmt, ...)
 void
 LogPanic (const char *fmt, ...)
 {
-#  ifndef USE_SYSLOG
-    char fmt1[256];
-#  endif
     va_list args;
 
     va_start(args, fmt);
-#  ifdef USE_SYSLOG
-    openlog("kdm", LOG_PID, LOG_DAEMON);
-    vsyslog (LOG_EMERG, fmt, args);
-#  else
-    sprintf (fmt1, "xdm panic (pid %d): %s", (int)getpid(), fmt);
-    vfprintf (stderr, fmt1, args);
-    fflush (stderr);
-#  endif
+    logger (DM_EMERG, fmt, args);
     va_end(args);
     exit (1);
 }
 
-/*VARARGS1*/
 void
-LogOutOfMem (const char *fmt, ...)
+LogOutOfMem (const char *fkt)
 {
-    char fmt1[256];
-    va_list args;
-
-    va_start(args, fmt);
-#  ifdef USE_SYSLOG
-    openlog("kdm", LOG_PID, LOG_DAEMON);
-    sprintf (fmt1, "out of memory in routine %s", fmt);
-    vsyslog (LOG_ALERT, fmt1, args);
-#  else
-    sprintf (fmt1, "kdm: out of memory in routine %s", fmt);
-    vfprintf (stderr, fmt1, args);
-    fflush (stderr);
-#  endif
-    va_end(args);
+#ifdef USE_SYSLOG
+    openlog(prog, LOG_PID, LOG_DAEMON);
+    syslog (LOG_ALERT, "out of memory in %s()", fkt);
+#else
+    fprintf (errf ? errf : stderr, "%s[%d] %s: out of memory in %s()\n", 
+	     prog, (int)getpid(), lognams[DM_ERR], fkt);
+#endif
 }
 
 void
 Panic (const char *mesg)
 {
 #ifdef USE_SYSLOG
-    openlog("kdm", LOG_PID, LOG_DAEMON);
+    openlog(prog, LOG_PID, LOG_DAEMON);
     syslog(LOG_EMERG, mesg);
 #else
-    int	i;
-
-    i = creat ("/dev/console", 0666);
-    write (i, "kdm panic: ", 7);
+    int i = creat ("/dev/console", 0666);
+    write (i, "xdm panic: ", 11);
     write (i, mesg, strlen (mesg));
 #endif
     exit (1);
 }
 
 
-/*VARARGS1*/
-void
-Debug (const char *fmt, ...)
-{
-#  ifndef USE_SYSLOG
-    char fmt1[256];
-#  endif
-    va_list args;
-
-    if (debugLevel > 0)
-    {
-	va_start(args, fmt);
-#  ifdef USE_SYSLOG
-	openlog("kdm", LOG_PID, LOG_DAEMON);
-	vsyslog (LOG_DEBUG, fmt, args);
-#  else
-	sprintf(fmt1, "%d: %s", getpid(), fmt);
-	vprintf (fmt1, args);
-	fflush (stdout);
-#  endif
-	va_end(args);
-    }
-}
-
 void
 InitErrorLog ()
 {
 #ifdef USE_SYSLOG
-	/* aw shit! PAM re-opens the log with "bad" values ...
-	   so we have to re-open it on every message *grmph*
-	*/
+    /* aw shit! PAM re-opens the log with "bad" values ...
+     * so we have to re-open it on every message *grmph*
+     */
 #else
-	int	i;
-	if (errorLogFile[0]) {
-		i = creat (errorLogFile, 0666);
-		if (i != -1) {
-			if (i != 2) {
-				dup2 (i, 2);
-				close (i);
-			}
-		} else
-			LogError ("Cannot open errorLogFile %s\n", errorLogFile);
-	}
+    if (errorLogFile[0]) {
+	if (!(errf = fopen (errorLogFile, "a")))
+	    LogError ("Cannot open errorLogFile %s\n", errorLogFile);
+    }
 #endif
 }

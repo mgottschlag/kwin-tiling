@@ -34,25 +34,40 @@ from The Open Group.
  * various utility routines
  */
 
-# include   "dm.h"
-# include   "dm_error.h"
+#include   "dm.h"
+#include   "dm_error.h"
 
 #ifdef X_POSIX_C_SOURCE
-#define _POSIX_C_SOURCE X_POSIX_C_SOURCE
-#include <signal.h>
-#undef _POSIX_C_SOURCE
+# define _POSIX_C_SOURCE X_POSIX_C_SOURCE
+# include <signal.h>
+# undef _POSIX_C_SOURCE
 #else
-#if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
-#include <signal.h>
-#else
-#define _POSIX_SOURCE
-#include <signal.h>
-#undef _POSIX_SOURCE
-#endif
+# if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
+#  include <signal.h>
+# else
+#  define _POSIX_SOURCE
+#  include <signal.h>
+#  undef _POSIX_SOURCE
+# endif
 #endif
 #if defined(__osf__) || defined(linux) || defined(MINIX) || defined(__QNXNTO__) || defined(__GNU__)
-#define setpgrp setpgid
+# define setpgrp setpgid
 #endif
+
+#include <X11/Xosdefs.h>
+#ifndef X_NOT_STDC_ENV
+# include <string.h>
+# include <unistd.h>
+#endif
+
+#ifdef USG
+# define NEED_UTSNAME
+#endif
+
+#ifdef NEED_UTSNAME
+# include <sys/utsname.h>
+#endif
+
 
 void
 printEnv (char **e)
@@ -154,10 +169,10 @@ putEnv(const char *string, char **env)
 	return NULL;
     }
   
-    strncpy(n, string,nl + 1);
+    memcpy(n, string, nl);
     n[nl] = 0;
   
-    env = setEnv(env,n,v);
+    env = setEnv(env, n, v);
     free(n);
     return env;
 }
@@ -241,26 +256,26 @@ freeArgs (char **argv)
 void
 CleanUpChild (void)
 {
-    if(!debugLevel) {
+    if (!debugLevel) {
 #ifdef CSRG_BASED
 	setsid();
 #else
-#if defined(SYSV) || defined(SVR4) || defined(__CYGWIN__)
-#if !(defined(SVR4) && defined(i386)) || defined(SCO325) || defined(__GNU__)
+# if defined(SYSV) || defined(SVR4) || defined(__CYGWIN__)
+#  if !(defined(SVR4) && defined(i386)) || defined(SCO325) || defined(__GNU__)
 	setpgrp ();
-#endif
-#else
+#  endif
+# else
 	setpgrp (0, getpid ());
-#ifdef MINIX /* actually POSIX */
+#  ifdef MINIX /* actually POSIX */
 	{
 		sigset_t ss; 
 		sigemptyset(&ss);
 		sigprocmask(SIG_SETMASK, &ss, NULL);
 	}
-#else
+#  else
 	sigsetmask (0);
-#endif
-#endif
+#  endif
+# endif
 #endif
     }
 #ifdef SIGCHLD
@@ -274,6 +289,31 @@ CleanUpChild (void)
 	CloseOnFork ();
 }
 
+int
+GetHostname(char *buf, int maxlen)
+{
+    int len;
+
+#ifdef NEED_UTSNAME
+    /*
+     * same host name crock as in server and xinit.
+     */
+    struct utsname name;
+
+    uname (&name);
+    len = strlen (name.nodename);
+    if (len >= maxlen) len = maxlen - 1;
+    memcpy (buf, name.nodename, len);
+    buf[len] = '\0';
+#else
+    buf[0] = '\0';
+    (void) gethostname (buf, maxlen);
+    buf [maxlen - 1] = '\0';
+    len = strlen(buf);
+#endif /* hpux */
+    return len;
+}
+
 static char localHostbuf[256];
 static int  gotLocalHostname;
 
@@ -282,7 +322,7 @@ localHostname (void)
 {
     if (!gotLocalHostname)
     {
-	gethostname (localHostbuf, sizeof (localHostbuf) - 1);
+	GetHostname (localHostbuf, sizeof (localHostbuf) - 1);
 	gotLocalHostname = 1;
     }
     return localHostbuf;

@@ -19,7 +19,6 @@
  *
  */
 
-#include "kdmclock.h"
 #include <qpainter.h>
 #include <qtimer.h>
 #include <kapp.h>

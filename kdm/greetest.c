@@ -139,6 +139,8 @@ pam_handle_t    **thepamh(void) {static pam_handle_t *pamh = 0; return &pamh;}
 int debugLevel = 1;
 char *errorLogFile = "";
 
+char prog[16];
+
 #undef HAVE_VSYSLOG
 #undef HAVE_SYSLOG_H
 #include "error.c"
@@ -146,6 +148,43 @@ char *errorLogFile = "";
 int autoLogin = 0;
 #define addressEqual(a1, l1, a2, l2) 1
 #include "dpylist.c"
+
+/* duplicate src */
+int
+StrDup (char **dst, const char *src)
+{
+    if (src) {
+	int len = strlen (src) + 1;
+	if (!(*dst = malloc ((unsigned) len)))
+	    return 0;
+	memcpy (*dst, src, len);
+    } else
+	*dst = NULL;
+    return 1;
+}
+
+/* append src to dst */
+int
+StrApp(char **dst, const char *src)
+{
+    int olen, len;
+    char *bk;
+
+    if (*dst) {
+	if (!src)
+	    return 1;
+	len = strlen(src) + 1;
+	olen = strlen(*dst);
+	if (!(bk = malloc (olen + len)))
+	    return 0;
+	memcpy(bk, *dst, olen);
+	memcpy(bk + olen, src, len);
+	free(*dst);
+	*dst = bk;
+	return 1;
+    } else
+	return StrDup (dst, src);
+}
 
 static	struct dlfuncs	dlfuncs = {
 	PingServer,
@@ -199,6 +238,10 @@ int main(int argc, char **argv)
     static GreetUserProc greet_user_proc = NULL;
     void	*greet_lib_handle;
     int rt;
+    char *pptr;
+
+    strncpy(prog, (pptr = strrchr(argv[0], '/')) ? pptr + 1 : argv[0], 
+	    sizeof(prog) - 1);
 
     if (!(d = NewDisplay (Aname, 0)))
 	return 1;

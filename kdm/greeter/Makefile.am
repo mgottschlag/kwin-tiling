@@ -3,8 +3,13 @@ PASSLIB= $(PASSWDLIB) $(PAMLIBS)
 
 INCLUDES = -I$(srcdir)/.. $(all_includes) $(KERBEROS_INCS)
 
-AM_CFLAGS = $(STD_DEFINES) $(CONN_FLAGS) -DGREETER -DQT_CLEAN_NAMESPACE
-AM_CPPFLAGS = $(AM_CFLAGS) -DQT_NO_CAST_ASCII
+DBGFLAGS = -g
+AM_CFLAGS = $(STD_DEFINES) $(CONN_FLAGS) $(DBGFLAGS) -DGREETER
+AM_CXXFLAGS = $(AM_CFLAGS)
+
+bin_PROGRAMS = kdm_getcfg
+kdm_getcfg_SOURCES = kdm_getcfg.cpp
+kdm_getcfg_LDADD = $(LIB_QT) $(LIB_KDECORE)
 
 # static
 noinst_LIBRARIES = @kdmgreetera@

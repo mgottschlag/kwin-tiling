@@ -99,21 +99,21 @@ BecomeDaemon (void)
 	/* parent */
 
 #ifndef CSRG_BASED
-#if defined(SVR4) || defined(__QNXNTO__)
+# if defined(SVR4) || defined(__QNXNTO__)
 	stat = setpgid(child_id, child_id);
 	/* This gets error EPERM.  Why? */
-#else
-#if defined(SYSV)
+# else
+#  if defined(SYSV)
 	stat = 0;	/* don't know how to set child's process group */
-#else
+#  else
 	stat = setpgrp(child_id, child_id);
-#ifndef MINIX
+#   ifndef MINIX
 	if (stat != 0)
 	    LogError("setting process grp for daemon failed, errno = %d\n",
 		     errno);
-#endif /* MINIX */
-#endif
-#endif
+#   endif /* MINIX */
+#  endif
+# endif
 #endif /* !CSRG_BASED */
 	exit (0);
     }
@@ -123,48 +123,48 @@ BecomeDaemon (void)
      * Close standard file descriptors and get rid of controlling tty
      */
 
-#if defined(SYSV) || defined(SVR4) || defined(__QNXNTO__)
+# if defined(SYSV) || defined(SVR4) || defined(__QNXNTO__)
     setpgrp ();
-#else
+# else
     setpgrp (0, getpid());
-#endif
+# endif
 
     close (0); 
-    open ("/dev/null", O_RDWR);
-    if (isatty (2))
-	dup2 (0, 2);
-    if (isatty (1))
-	dup2 (2, 1);
+    (void) open ("/dev/null", O_RDWR);
+    (void) dup2 (0, 1);
+    (void) dup2 (0, 2);
 
-#ifndef __EMX__
-#ifdef MINIX
-#if 0
+    chdir("/");
+
+# ifndef __EMX__
+#  ifdef MINIX
+#   if 0
     /* Use setsid() to get rid of our controlling tty, this requires an extra
      * fork though.
      */
     setsid();
     if (fork() > 0)
     	_exit(0);
-#endif
-#else /* !MINIX */
-#if !((defined(SYSV) || defined(SVR4)) && defined(i386)) && !defined(__CYGWIN__)
+#   endif
+#  else /* !MINIX */
+#   if !((defined(SYSV) || defined(SVR4)) && defined(i386)) && !defined(__CYGWIN__)
     if ((i = open ("/dev/tty", O_RDWR)) >= 0) {	/* did open succeed? */
-#if defined(USG) && defined(TCCLRCTTY)
+#    if defined(USG) && defined(TCCLRCTTY)
 	int zero = 0;
 	(void) ioctl (i, TCCLRCTTY, &zero);
-#else
-#if (defined(SYSV) || defined(SVR4)) && defined(TIOCTTY)
+#    else
+#     if (defined(SYSV) || defined(SVR4)) && defined(TIOCTTY)
 	int zero = 0;
 	(void) ioctl (i, TIOCTTY, &zero);
-#else
+#     else
 	(void) ioctl (i, TIOCNOTTY, (char *) 0);    /* detach, BSD style */
-#endif
-#endif
+#     endif
+#    endif
 	(void) close (i);
     }
-#endif /* !((SYSV || SVR4) && i386) */
-#endif /* MINIX */
-#endif /* !__EMX__ */
+#   endif /* !((SYSV || SVR4) && i386) */
+#  endif /* MINIX */
+# endif /* !__EMX__ */
 
 #else
     daemon (0, 0);

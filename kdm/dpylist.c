@@ -206,36 +206,25 @@ NewDisplay (char *name, char *class2)
 	hstent->lastExit = 0;
 	hstent->goodExit = 0;
 	hstent->nLogPipe = NULL;
-	if (!(hstent->name = malloc ((unsigned) (strlen (name) + 1)))) {
+	if (!StrDup (&hstent->name, name)) {
 	    free (hstent);
 	    LogOutOfMem ("NewDisplay");
 	    return 0;
 	}
-	strcpy (hstent->name, name);
 	hstent->next = disphist; disphist = hstent;
     }
 
-    d = (struct display *) malloc (sizeof (*d));
-    if (!d) {
+    if (!(d = (struct display *) malloc (sizeof (*d)))) {
 	LogOutOfMem ("NewDisplay");
 	return 0;
     }
     d->next = displays;
     d->hstent = hstent;
     d->name = hstent->name;
-    if (class2)
-    {
-	d->class2 = malloc ((unsigned) (strlen (class2) + 1));
-	if (!d->class2) {
-	    LogOutOfMem ("NewDisplay");
-	    free ((char *) d);
-	    return 0;
-	}
-	strcpy (d->class2, class2);
-    }
-    else
-    {
-	d->class2 = (char *) 0;
+    if (!StrDup (&d->class2, class2)) {
+	LogOutOfMem ("NewDisplay");
+	free ((char *) d);
+	return 0;
     }
     /* initialize every field to avoid possible problems */
     d->argv = 0;
@@ -291,9 +280,10 @@ NewDisplay (char *name, char *class2)
     d->autoUser = NULL;
     d->autoPass = NULL;
     d->autoString = NULL;
+    d->console = NULL;
     d->fifoCreate = 0;
-    d->fifoGroup = 0;
-    d->fifoMode = 0;
+    d->fifoOwner = -1;
+    d->fifoGroup = -1;
     d->fifofd = -1;
     d->pipefd[0] = -1;
     d->pipefd[1] = -1;

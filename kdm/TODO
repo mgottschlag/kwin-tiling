@@ -8,10 +8,13 @@ Things to be done:
 - Animated logo?
 - Different logos for each session type
 - Make remembering user's last session more portable?
-- Integrate chooser
 
 - Make nis & kerberos5 work
 - Let verify return V_AUTHMSG for PAM and authenticate() errors -> messagebox
 
+- Finish integration of the chooser for loopback remote login
 - Possibly kill warning on AIX - see bug #13628
+
+	* External greeter: kdm_greet
+	  - libKdmGreet.so is gone
 

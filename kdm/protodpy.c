@@ -53,7 +53,7 @@ static
 PrintProtoDisplay (pdpy)
     struct protoDisplay	*pdpy;
 {
-    Debug ("ProtoDisplay 0x%x\n", pdpy);
+    Debug ("ProtoDisplay %p\n", pdpy);
     Debug ("\taddress: ");
     PrintSockAddr (pdpy->address, pdpy->addrlen);
     Debug ("\tdate %d (%d from now)\n", pdpy->date, time(0) - pdpy->date);

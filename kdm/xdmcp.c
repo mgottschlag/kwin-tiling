@@ -394,7 +394,7 @@ WaitForSomething (void)
 	nready = select (WellKnownSocketsMax + 1, (int*)reads.fds_bits, 0, 0, 0);
 # else
 	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, 0);
-#endif
+# endif
 #endif
 	Debug ("select returns %d.  Rescan: %d  ChildReady: %d\n",
 		nready, Rescan, ChildReady);
@@ -616,13 +616,10 @@ forward_respond (
 	    j = 0;
 	    for (i = 0; i < (int)clientPort.length; i++)
 		j = j * 256 + clientPort.data[i];
-	    if (debugLevel > 0) {
-		char buf[100];	/* should suffice */
-		int clen = 0;
-		for (i = 0; i < (int)clientAddress.length; i++)
-		    clen += sprintf (buf + clen, " %d", clientAddress.data[i]);
-		Debug ("Forward client address (port %d)%s\n", j, buf);
-	    }
+	    Debug ("Forward client address (port %d)", j);
+	    for (i = 0; i < (int)clientAddress.length; i++)
+		Debug (" %d", clientAddress.data[i]);
+	    Debug ("\n");
     	    switch (from->sa_family)
     	    {
 #ifdef AF_INET
@@ -1026,43 +1023,47 @@ manage (
 					 &pdpy->connectionAddress,
 					 from,
 					 pdpy->displayNumber);
-	    Debug ("Computed display name: %s\n", name);
 	    if (!name)
 	    {
+		Debug ("Could not compute display name\n");
 		send_failed (from, fromlen, "(no name)", sessionID, "out of memory");
 		goto abort;
 	    }
-	    d = FindDisplayByName (name);
-	    if (d)
+	    if (strlen (name) > 260)	/* XXX hard limit */
+	    {
+		Debug ("Computed too long display name: %.260s...\n", name);
+		send_failed (from, fromlen, "(no name)", sessionID, "display name too long");
+		goto abort;
+	    }
+	    Debug ("Computed display name: %s\n", name);
+	    if ((d = FindDisplayByName (name)))
 	    {
 		Debug ("Terminating active session for %s\n", d->name);
 		StopDisplay (d);
 	    }
-	    class2 = malloc (displayClass.length + 1);
-	    if (!class2)
-	    {
-		send_failed (from, fromlen, name, sessionID, "out of memory");
-		goto abort;
-	    }
 	    if (displayClass.length)
 	    {
+		if (displayClass.length > 260)	/* XXX hard limit */
+		{
+		    Debug ("Too long display class name: %.260s...\n", displayClass.data);
+		    send_failed (from, fromlen, name, sessionID, "display class name too long");
+		    goto abort;
+		}
+		if (!(class2 = malloc (displayClass.length + 1)))
+		{
+		    send_failed (from, fromlen, name, sessionID, "out of memory");
+		    goto abort;
+		}
 		memmove( class2, displayClass.data, displayClass.length);
 		class2[displayClass.length] = '\0';
 	    }
-	    else
-	    {
-		free ((char *) class2);
-		class2 = (char *) NULL;
-	    }
-	    from_save = (XdmcpNetaddr) malloc (fromlen);
-	    if (!from_save)
+	    if (!(from_save = (XdmcpNetaddr) malloc (fromlen)))
 	    {
 		send_failed (from, fromlen, name, sessionID, "out of memory");
 		goto abort;
 	    }
 	    memmove( from_save, from, fromlen);
-	    d = NewDisplay (name, class2);
-	    if (!d)
+	    if (!(d = NewDisplay (name, class2)))
 	    {
 		free ((char *) from_save);
 		send_failed (from, fromlen, name, sessionID, "out of memory");
@@ -1132,13 +1133,13 @@ send_failed (
     CARD32	    sessionID,
     char	    *reason)
 {
-    static char	buf[256];
+    char	buf[360];
     XdmcpHeader	header;
     ARRAY8	status;
 
-    sprintf (buf, "Session %ld failed for display %.100s: %.100s",
+    sprintf (buf, "Session %ld failed for display %.260s: %s",
 	     (long) sessionID, name, reason);
-    Debug ("Send failed %ld %s\n", (long) sessionID, buf);
+    Debug ("send_failed(\"%s\")", buf);
     status.length = strlen (buf);
     status.data = (CARD8Ptr) buf;
     header.version = XDM_PROTOCOL_VERSION;
@@ -1241,9 +1242,7 @@ NetworkAddressToHostname (
 		LogError ("Cannot convert Internet address %s to host name\n",
 			  dotted);
 	    }
-	    if (!getString (name, strlen (local_name)))
-		break;
-	    strcpy (name, local_name);
+	    StrDup (&name, local_name);
 	    break;
 	}
 #ifdef DNET

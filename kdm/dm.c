@@ -32,42 +32,48 @@ from The Open Group.
  * display manager
  */
 
-# include	"dm.h"
-# include	"dm_auth.h"
-# include	"dm_error.h"
+#include "dm.h"
+#include "dm_auth.h"
+#include "dm_error.h"
 
-# include	<stdio.h>
-# include	<string.h>
+#include <stdio.h>
+#include <string.h>
 #ifdef X_POSIX_C_SOURCE
-#define _POSIX_C_SOURCE X_POSIX_C_SOURCE
-#include <signal.h>
-#undef _POSIX_C_SOURCE
+# define _POSIX_C_SOURCE X_POSIX_C_SOURCE
+# include <signal.h>
+# undef _POSIX_C_SOURCE
 #else
-#if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
-#include <signal.h>
-#else
-#define _POSIX_SOURCE
-#include <signal.h>
-#undef _POSIX_SOURCE
-#endif
+# if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
+#  include <signal.h>
+# else
+#  define _POSIX_SOURCE
+#  include <signal.h>
+#  undef _POSIX_SOURCE
+# endif
 #endif
 #ifdef __NetBSD__
-#include <sys/param.h>
+# include <sys/param.h>
 #endif
 
 #ifndef sigmask
-#define sigmask(m)  (1 << ((m - 1)))
+# define sigmask(m)  (1 << ((m - 1)))
 #endif
 
-# include	<sys/stat.h>
-# include	<errno.h>
-# include	<X11/Xfuncproto.h>
-# include	<stdarg.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <X11/Xfuncproto.h>
+#include <stdarg.h>
 
 #ifndef F_TLOCK
-#ifndef X_NOT_POSIX
-# include	<unistd.h>
+# ifndef X_NOT_POSIX
+#  include <unistd.h>
+# endif
 #endif
+
+#include <utmp.h>
+#ifdef linux
+# include <sys/ioctl.h>
+# include <linux/vt.h>
 #endif
 
 #ifdef X_NOT_STDC_ENV
@@ -79,18 +85,21 @@ extern int errno;
 extern FILE    *fdopen();
 #endif
 
-static SIGVAL	StopAll (int n), RescanNotify (int n);
+static SIGVAL	StopAll (int n), UtmpNotify (int n), RescanNotify (int n);
 static void	RescanServers (void);
 static void	RestartDisplay (struct display *d, int forceReserver);
 static void	ScanServers (void);
 static void	SetAccessFileTime (void);
-static void	SetConfigFileTime (void);
 static void	StartDisplays (void);
 static void	TerminateProcess (int pid, int signal);
 static void	ExitDisplay (struct display *d, int doRestart, int forceReserver, int goodExit);
+static int	Reader (int fd, void *buf, int len);
+static int	CheckUtmp (void);
+static void	SwitchToTty (struct display *d);
 
-int		Rescan;
-static long	ServersModTime, ConfigModTime, AccessFileModTime;
+int	Rescan;
+int	ChkUtmp;
+long	ServersModTime, AccessFileModTime, ConfigModTime, Config2ParseModTime;
 
 int nofork_session = 0;
 
@@ -107,22 +116,29 @@ static int StorePid (void);
 
 static int parent_pid = -1; 	/* PID of parent xdm process */
 
+char prog[16];
+
 int
 main (int argc, char **argv)
 {
     int	oldpid, oldumask;
-    char cmdbuf[1024];
+    char *pptr, cmdbuf[1024];
 
     /*
-     * Fix $HOME (if kdm is run by init)
+     * Fix $HOME (if xdm is run by init)
+     * XXX this is WRONG for some/many systems (e.g., solaris)
      */
-    const char* home = getenv("HOME");
+    const char *home = getenv("HOME");
     if (!home || !strcmp("/", home))
 	putenv("HOME=/root");
 
     /* make sure at least world write access is disabled */
     if (((oldumask = umask(022)) & 002) == 002)
 	(void) umask (oldumask);
+
+    strncpy(prog, (pptr = strrchr(argv[0], '/')) ? pptr + 1 : argv[0], 
+	    sizeof(prog) - 1);
+
 #ifndef NOXDMTITLE
     Title = argv[0];
     TitleLen = (argv[argc - 1] + strlen(argv[argc - 1])) - Title;
@@ -132,8 +148,8 @@ main (int argc, char **argv)
      * Step 1 - load configuration parameters
      */
     InitResources (argc, argv);
-    SetConfigFileTime ();
     LoadDMResources ();
+
     /*
      * Only allow root to run in non-debug mode to avoid problems
      */
@@ -142,10 +158,10 @@ main (int argc, char **argv)
 	fprintf (stderr, "Only root wants to run %s\n", argv[0]);
 	exit (1);
     }
-    InitErrorLog ();
-    chdir("/");
     if (debugLevel >= 10)
 	nofork_session = 1;
+
+    InitErrorLog ();
     if (daemonMode
 #ifndef USE_SYSLOG
 	&& debugLevel == 0
@@ -159,7 +175,7 @@ main (int argc, char **argv)
 	if (oldpid == -1)
 	    LogError ("Can't create/lock pid file %s\n", pidFile);
 	else
-	    LogError ("Can't lock pid file %s, another kdm is running (pid %d)\n",
+	    LogError ("Can't lock pid file %s, another xdm is running (pid %d)\n",
 		 pidFile, oldpid);
 	exit (1);
     }
@@ -178,11 +194,12 @@ main (int argc, char **argv)
     init_session_id ();
     CreateWellKnownSockets ();
 #else
-    Debug ("kdm: not compiled for XDMCP\n");
+    Debug ("not compiled for XDMCP\n");
 #endif
     parent_pid = getpid ();
     (void) Signal (SIGTERM, StopAll);
     (void) Signal (SIGINT, StopAll);
+
     /*
      * Step 2 - Read /etc/Xservers and set up
      *	    the socket.
@@ -211,6 +228,11 @@ main (int argc, char **argv)
 	    RescanServers ();
 	    Rescan = 0;
 	}
+	if (ChkUtmp)
+	{
+	    CheckUtmp ();
+	    ChkUtmp = 0;
+	}
 #if defined(UNRELIABLE_SIGNALS) || !defined(XDMCP)
 	WaitForChild ();
 #else
@@ -220,6 +242,194 @@ main (int argc, char **argv)
     Debug ("Nothing left to do, exiting\n");
     exit(0);
     /*NOTREACHED*/
+}
+
+static int
+Reader (int fd, void *buf, int count)
+{
+    int ret;
+    do {
+	ret = read (fd, buf, count);
+    } while (ret < 0 && errno == EINTR);
+    return ret;
+}
+
+/* ARGSUSED */
+static SIGVAL
+UtmpNotify (int n)
+{
+    Debug ("Caught SIGALRM\n");
+    ChkUtmp = 1;
+}
+
+enum utState { UtWait, UtActive };
+
+struct utmps {
+    struct utmps *next;
+    struct display *d;
+    char line[UT_LINESIZE];
+    time_t time;
+    enum utState state;
+    int hadSess;
+#ifdef CSRG_BASED
+    int checked;
+#endif
+};
+
+#define TIME_LOG 40
+#define TIME_RELOG 10
+
+static struct utmps *utmpList;
+
+static int
+CheckUtmp (void)
+{
+    static time_t modtim;
+    int cnt, nck, nextChk;
+    time_t now;
+    struct utmps *utp, **utpp;
+    struct stat st;
+    struct utmp ut;
+
+    if (stat(_PATH_UTMP, &st))
+    {
+	LogError (_PATH_UTMP " not found - cannot use console mode\n");
+	return 0;
+    }
+    if (!utmpList)
+	return 1;
+    time(&now);
+    if (modtim != st.st_mtime)
+    {
+	int fd;
+
+	Debug ("Rescanning " _PATH_UTMP "\n");
+#ifdef CSRG_BASED
+	for (utp = utmpList; utp; utp = utp->next)
+	    utp->checked = 0;
+#endif
+	if ((fd = open (_PATH_UTMP, O_RDONLY)) < 0)
+	{
+	    LogError ("Cannot open " _PATH_UTMP " - cannot use console mode\n");
+	    return 0;
+	}
+	while ((cnt = Reader (fd, &ut, sizeof(ut))) == sizeof(ut))
+	{
+	    for (utp = utmpList; utp; utp = utp->next)
+		if (!strncmp(utp->line, ut.ut_line, UT_LINESIZE))
+		{
+#ifdef CSRG_BASED
+		    utp->checked = 1;
+#else
+		    if (ut.ut_type != USER_PROCESS)
+		    {
+			Debug ("utmp entry for %s marked waiting\n", utp->line);
+			utp->state = UtWait;
+		    }
+		    else
+#endif
+		    {
+			utp->hadSess = 1;
+			Debug ("utmp entry for %s marked active\n", utp->line);
+			utp->state = UtActive;
+		    }
+		    if (utp->time < ut.ut_time)
+			utp->time = ut.ut_time;
+		    break;
+		}
+	}
+	close (fd);
+#ifdef CSRG_BASED
+	for (utp = utmpList; utp; utp = utp->next)
+	    if (!utp->checked && utp->state == UtActive)
+	    {
+		utp->state = UtWait;
+		utp->time = now;
+		Debug ("utmp entry for %s marked waiting\n", utp->line);
+	    }
+#endif
+	modtim = st.st_mtime;
+    }
+    nextChk = 1000;
+    for (utpp = &utmpList; (utp = *utpp); )
+    {
+	if (utp->state == UtWait)
+	{
+	    time_t remains = utp->time + (utp->hadSess ? TIME_RELOG : TIME_LOG) 
+			     - now;
+	    if (remains <= 0)
+	    {
+		struct display *d = utp->d;
+		Debug ("console login for %s at %s timed out\n", 
+		       utp->d->name, utp->line);
+		*utpp = utp->next;
+		free (utp);
+		ExitDisplay (d, TRUE, TRUE, TRUE);
+		StartDisplays ();
+		continue;
+	    }
+	    else
+		nck = remains;
+	}
+	else
+#ifdef CSRG_BASED
+	    nck = (TIME_RELOG + 5) / 3;
+#else
+	    nck = TIME_RELOG;
+#endif
+	if (nck < nextChk)
+	    nextChk = nck;
+	utpp = &(*utpp)->next;
+    }
+    if (nextChk < 1000)
+    {
+	Signal (SIGALRM, UtmpNotify);
+	alarm (nextChk);
+    }
+    return 1;
+}
+
+static void
+SwitchToTty (struct display *d)
+{
+    struct utmps *utp;
+
+    if (!d->console || !d->console[0])
+    {
+	Debug("No console for %s specified", d->name);
+	d->status = notRunning;
+	return;
+    }
+    if (!(utp = malloc (sizeof(*utp))))
+    {
+	LogOutOfMem("SwitchToTty");
+	d->status = notRunning;
+	return;
+    }
+    strncpy (utp->line, d->console, UT_LINESIZE);
+    utp->d = d;
+    utp->time = time(0);
+    utp->hadSess = 0;
+    utp->next = utmpList;
+    utmpList = utp;
+#ifdef linux	/* chvt */
+    if (!memcmp(d->console, "tty", 3))
+    {
+	int con = open ("/dev/console", O_RDONLY);
+	if (con >= 0)
+	{
+	    ioctl (con, VT_ACTIVATE, atoi (d->console + 3));
+	    close (con);
+	}
+    }
+#endif
+    if (!CheckUtmp ())
+    {
+	utmpList = utp->next;
+	free (utmpList);
+	d->status = notRunning;
+	return;
+    }
 }
 
 /* ARGSUSED */
@@ -237,15 +447,8 @@ static void
 ScanServers (void)
 {
     char	lineBuf[10240];
-    int		len;
     FILE	*serversFile;
     struct stat	statb;
-    static DisplayType	acceptableTypes[] =
-	    { { Local, Permanent, FromFile },
-	      { Foreign, Permanent, FromFile },
-	    };
-
-#define NumTypes    (sizeof (acceptableTypes) / sizeof (acceptableTypes[0]))
 
     if (servers[0] == '/')
     {
@@ -261,17 +464,12 @@ ScanServers (void)
 	    ServersModTime = statb.st_mtime;
 	}
 	while (fgets (lineBuf, sizeof (lineBuf)-1, serversFile))
-	{
-	    len = strlen (lineBuf);
-	    if (lineBuf[len-1] == '\n')
-		lineBuf[len-1] = '\0';
-	    ParseDisplay (lineBuf, acceptableTypes, NumTypes);
-	}
+	    ParseDisplay (lineBuf);
 	fclose (serversFile);
     }
     else
     {
-	ParseDisplay (servers, acceptableTypes, NumTypes);
+	ParseDisplay (servers);
     }
 }
 
@@ -287,7 +485,6 @@ RescanServers (void)
     Debug ("rescanning servers\n");
     LogInfo ("Rescanning both config and servers files\n");
     ForEachDisplay (MarkDisplay);
-    SetConfigFileTime ();
     ReinitResources ();
     LoadDMResources ();
     ScanServers ();
@@ -296,15 +493,6 @@ RescanServers (void)
     ScanAccessDatabase ();
 #endif
     StartDisplays ();
-}
-
-static void
-SetConfigFileTime (void)
-{
-    struct stat	statb;
-
-    if (stat (config, &statb) != -1)
-	ConfigModTime = statb.st_mtime;
 }
 
 static void
@@ -320,17 +508,26 @@ static void
 RescanIfMod (void)
 {
     struct stat	statb;
+    int rescan = 0;
 
-    if (config && stat (config, &statb) != -1)
+    if (stat (config, &statb) != -1 && statb.st_mtime != ConfigModTime) {
+	Debug ("Config file %s has changed, rereading\n", config);
+	rescan = 1;
+    }
+    if (config2Parse[0] && stat (config2Parse, &statb) != -1 && 
+	statb.st_mtime != Config2ParseModTime) 
     {
-	if (statb.st_mtime != ConfigModTime)
-	{
-	    Debug ("Config file %s has changed, rereading\n", config);
+	Debug ("Config file %s has changed, rereading\n", config2Parse);
+	rescan = 1;
+    }
+    if (rescan) {
+	if (config2Parse[0])
+	    LogInfo ("Rereading configuration files %s and %s\n", 
+		     config, config2Parse);
+	else
 	    LogInfo ("Rereading configuration file %s\n", config);
-	    ConfigModTime = statb.st_mtime;
-	    ReinitResources ();
-	    LoadDMResources ();
-	}
+	ReinitResources ();
+	LoadDMResources ();
     }
     if (servers[0] == '/' && stat(servers, &statb) != -1)
     {
@@ -426,33 +623,31 @@ WaitForChild (void)
     /* XXX classic System V signal race condition here with RescanNotify */
     if ((pid = wait (&status)) != -1)
 #else
-#ifndef X_NOT_POSIX
+# ifndef X_NOT_POSIX
     sigemptyset(&mask);
     sigaddset(&mask, SIGCHLD);
     sigaddset(&mask, SIGHUP);
+    sigaddset(&mask, SIGALRM);
     sigprocmask(SIG_BLOCK, &mask, &omask);
     Debug ("signals blocked\n");
-#else
-    omask = sigblock (sigmask (SIGCHLD) | sigmask (SIGHUP));
+# else
+    omask = sigblock (sigmask (SIGCHLD) | sigmask (SIGHUP) | sigmask (SIGALRM));
     Debug ("signals blocked, mask was 0x%x\n", omask);
-#endif
+# endif
     if (!ChildReady && !Rescan)
-#ifndef X_NOT_POSIX
+# ifndef X_NOT_POSIX
 	sigsuspend(&omask);
-#else
+# else
 	sigpause (omask);
-#endif
+# endif
     ChildReady = 0;
-#ifndef X_NOT_POSIX
+# ifndef X_NOT_POSIX
     sigprocmask(SIG_SETMASK, &omask, (sigset_t *)NULL);
-#else
-    sigsetmask (omask);
-#endif
-#ifndef X_NOT_POSIX
     while ((pid = waitpid (-1, &status, WNOHANG)) > 0)
-#else
+# else
+    sigsetmask (omask);
     while ((pid = wait3 (&status, WNOHANG, (struct rusage *) 0)) > 0)
-#endif
+# endif
 #endif
     {
 	Debug ("Manager wait returns pid: %d sig %d core %d code %d\n",
@@ -466,6 +661,11 @@ WaitForChild (void)
 	    case UNMANAGE_DISPLAY:
 		Debug ("Display exited with UNMANAGE_DISPLAY\n");
 		ExitDisplay (d, FALSE, FALSE, FALSE);
+		break;
+	    case ALTMODE_DISPLAY:
+		Debug ("Display exited with ALTMODE_DISPLAY\n");
+		d->status = suspended;
+		TerminateProcess (d->serverPid, d->termSignal);
 		break;
 	    case OBEYSESS_DISPLAY:
 		Debug ("Display exited with OBEYSESS_DISPLAY\n");
@@ -487,7 +687,7 @@ WaitForChild (void)
  		 */
 #ifdef XDMCP
 		if (d->displayType.origin == FromXDMCP)
-		    SendFailed (d, "Cannot open display");
+		    SendFailed (d, "cannot open display");
 #endif
 		ExitDisplay (d, TRUE, TRUE, FALSE);
 		break;
@@ -519,6 +719,10 @@ WaitForChild (void)
 	    d->serverPid = -1;
 	    switch (d->status)
 	    {
+	    case suspended:
+		Debug ("Server for suspended display %s exited\n", d->name);
+		SwitchToTty (d);
+		break;
 	    case zombie:
 		Debug ("Zombie server reaped, removing display %s\n", d->name);
 		RemoveDisplay (d);
@@ -616,26 +820,30 @@ StartDisplay (struct display *d)
 	    SaveServerAuthorizations (d, d->authorizations, d->authNum);
     }
     if (d->fifoCreate && d->fifofd < 0) {
-	/* Race condition(s): 1) Somebody else may open the FIFO 
-	   before we do. 2) Even if we win - can we assume, that 
-	   we will be the ones, that actually get the data? We are
-	   on Linux, but who knows, how other systems behave.
-	   Conclusion: do NOT use it unless _really_ necessary.
-	   Maybe, we should use sockets here ...
-	*/
 	sprintf (buf, "/tmp/xlogin-%s", d->name);
 	unlink (buf);
-	mkfifo (buf, 0);
-	if (d->fifoMode)
-	    chmod (buf, d->fifoMode);
-	if (d->fifoGroup)
-	    chown (buf, 0, d->fifoGroup);
-	if ((d->fifofd = open (buf, O_RDONLY | O_NONBLOCK)) < 0)
-	    unlink (buf);
-	else
-	    RegisterCloseOnFork (d->fifofd);
+	if (mkfifo (buf, 0) < 0)
+	    LogError ("cannot create login data fifo %s\n", buf);
+	else {
+	    chown (buf, d->fifoOwner, d->fifoGroup);
+	    if (d->fifoOwner >= 0)
+		chmod (buf, 0600);
+	    else if (d->fifoGroup >= 0)
+		chmod (buf, 0620);
+	    else
+		chmod (buf, 0622);
+	    if ((d->fifofd = open (buf, O_RDONLY | O_NONBLOCK)) < 0)
+		unlink (buf);
+	    else
+		RegisterCloseOnFork (d->fifofd);
+	}
     }
-    pipe (d->pipefd);
+    if (d->pipefd[0] < 0) {
+	if (!pipe (d->pipefd)) {
+	    (void) fcntl (d->pipefd[0], F_SETFL, O_NONBLOCK);
+	    RegisterCloseOnFork (d->pipefd[0]);
+	}
+    }
     if (!nofork_session)
 	pid = fork ();
     else
@@ -646,15 +854,9 @@ StartDisplay (struct display *d)
 	if (!nofork_session) {
 	    CleanUpChild ();
 	    (void) Signal (SIGPIPE, SIG_IGN);
-	    if (d->pipefd[0] >= 0) {
-		close (d->pipefd[0]); d->pipefd[0] = -1;
-		RegisterCloseOnFork (d->pipefd[1]);
-	    }
-	} else
-	    if (d->pipefd[0] >= 0) {
-		RegisterCloseOnFork (d->pipefd[0]);
-		RegisterCloseOnFork (d->pipefd[1]);
-	    }
+	}
+	if (d->pipefd[0] >= 0)
+	    RegisterCloseOnFork (d->pipefd[1]);
 	LoadSessionResources (d);
 	SetAuthorization (d);
 	if (!WaitForServer (d))
@@ -672,10 +874,6 @@ StartDisplay (struct display *d)
 	Debug ("pid: %d\n", pid);
 	d->pid = pid;
 	d->status = running;
-	if (d->pipefd[0] >= 0) {
-	    RegisterCloseOnFork (d->pipefd[0]);
-	    close (d->pipefd[1]); d->pipefd[1] = -1;
-	}
 	break;
     }
 }
@@ -693,6 +891,7 @@ static void
 ClrnLog (struct display *d)
 {
     if (d->hstent->nLogPipe) {
+	bzero (d->hstent->nLogPipe, strlen (d->hstent->nLogPipe));
 	free (d->hstent->nLogPipe);
 	d->hstent->nLogPipe = NULL;
     }
@@ -718,15 +917,18 @@ ReadnLog (struct display *d, int fd)
 		bend -= bpos;
 	    }
 	    bpos = 0;
-	    rt = read (fd, buf + bend, sizeof (buf) - bend);
+	    rt = Reader (fd, buf + bend, sizeof (buf) - bend);
 	    if (rt < 0) {
+		bzero (buf, sizeof(buf));
 		return;
 	    } else if (!rt) {
 		if (bend) {
 		    ll = bend;
 		    break;
-		} else
+		} else {
+		    bzero (buf, sizeof(buf));
 		    return;
+		}
 	    } else
 		bend += rt;
 	}
@@ -765,15 +967,8 @@ ExitDisplay (
 
     d->hstent->goodExit = goodExit;
     ClrnLog (d);
-    if (d->pipefd[0] >= 0) {
+    if (d->pipefd[0] >= 0)
 	ReadnLog (d, d->pipefd[0]);
-	ClearCloseOnFork(d->pipefd[0]); 
-	close (d->pipefd[0]); d->pipefd[0] = -1;
-    }
-    if (d->pipefd[1] >= 0) {
-	ClearCloseOnFork(d->pipefd[1]); 
-	close (d->pipefd[1]); d->pipefd[1] = -1;
-    }
     if (goodExit)
 	ClrnLog (d);
     if (d->fifofd >= 0)
@@ -794,14 +989,21 @@ ExitDisplay (
 void
 StopDisplay (struct display *d)
 {
-    char buf[100];
-
     if (d->fifofd >= 0) {
+	char buf[100];
 	close (d->fifofd);
 	ClearCloseOnFork (d->fifofd);
 	d->fifofd = -1;
 	sprintf (buf, "/tmp/xlogin-%s", d->name);
 	unlink (buf);
+    }
+    if (d->pipefd[0] >= 0) {
+	int i;
+	for (i = 0; i < 2; i++) {
+	    ClearCloseOnFork(d->pipefd[i]); 
+	    close (d->pipefd[i]); 
+	    d->pipefd[i] = -1;
+	}
     }
     if (d->serverPid != -1)
 	d->status = zombie; /* be careful about race conditions */
@@ -898,9 +1100,9 @@ StorePid (void)
 	if (lockPidFile)
 	{
 #ifdef F_SETLK
-#ifndef SEEK_SET
-#define SEEK_SET 0
-#endif
+# ifndef SEEK_SET
+#  define SEEK_SET 0
+# endif
 	    struct flock lock_data;
 	    lock_data.l_type = F_WRLCK;
 	    lock_data.l_whence = SEEK_SET;
@@ -913,7 +1115,7 @@ StorePid (void)
 		    return -1;
 	    }
 #else
-#ifdef LOCK_EX
+# ifdef LOCK_EX
 	    if (flock (pidFd, LOCK_EX|LOCK_NB) == -1)
 	    {
 		if (errno == EWOULDBLOCK)
@@ -921,7 +1123,7 @@ StorePid (void)
 		else
 		    return -1;
 	    }
-#else
+# else
 	    if (lockf (pidFd, F_TLOCK, 0) == -1)
 	    {
 		if (errno == EACCES)
@@ -929,7 +1131,7 @@ StorePid (void)
 		else
 		    return -1;
 	    }
-#endif
+# endif
 #endif
 	}
 	fprintf (pidFilePtr, "%d\n", getpid ());
@@ -944,7 +1146,7 @@ void
 UnlockPidFile (void)
 {
     if (lockPidFile)
-#ifdef F_SETLK
+# ifdef F_SETLK
     {
 	struct flock lock_data;
 	lock_data.l_type = F_UNLCK;
@@ -952,13 +1154,13 @@ UnlockPidFile (void)
 	lock_data.l_start = lock_data.l_len = 0;
 	(void) fcntl(pidFd, F_SETLK, &lock_data);
     }
-#else
-#ifdef F_ULOCK
+# else
+#  ifdef F_ULOCK
 	lockf (pidFd, F_ULOCK, 0);
-#else
+#  else
 	flock (pidFd, LOCK_UN);
-#endif
-#endif
+#  endif
+# endif
     close (pidFd);
     fclose (pidFilePtr);
 }
@@ -992,4 +1194,61 @@ void SetTitle (char *name, ...)
     }
     va_end(args);
 #endif	
+}
+
+/* duplicate src; free old dst string */
+int
+ReStr (char **dst, const char *src)
+{
+    char *ndst = NULL;
+
+    if (src) {
+	int len = strlen (src) + 1;
+	if (*dst && !memcmp (*dst, src, len))
+	    return 1;
+	if (!(ndst = malloc ((unsigned) len)))
+	    return 0;
+	memcpy (ndst, src, len);
+    }
+    if (*dst)
+	free (*dst);
+    *dst = ndst;
+    return 1;
+}
+
+/* duplicate src */
+int
+StrDup (char **dst, const char *src)
+{
+    if (src) {
+	int len = strlen (src) + 1;
+	if (!(*dst = malloc ((unsigned) len)))
+	    return 0;
+	memcpy (*dst, src, len);
+    } else
+	*dst = NULL;
+    return 1;
+}
+
+/* append src to dst */
+int
+StrApp(char **dst, const char *src)
+{
+    int olen, len;
+    char *bk;
+
+    if (*dst) {
+	if (!src)
+	    return 1;
+	len = strlen(src) + 1;
+	olen = strlen(*dst);
+	if (!(bk = malloc (olen + len)))
+	    return 0;
+	memcpy(bk, *dst, olen);
+	memcpy(bk + olen, src, len);
+	free(*dst);
+	*dst = bk;
+	return 1;
+    } else
+	return StrDup (dst, src);
 }

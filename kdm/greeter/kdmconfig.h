@@ -4,7 +4,7 @@
     $Id$
 
     Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000, 2001 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -34,11 +34,7 @@
 
 #include <qstring.h>
 #include <qstrlist.h>
-//#include <qregexp.h>
 #include <qfont.h>
-//#include <qcolor.h>
-//#include <qfile.h>
-//#include <qiconview.h>
 
 #include <ksimpleconfig.h>
 
@@ -47,7 +43,7 @@
 class KDMConfig : public KSimpleConfig {
 
 public:
-    KDMConfig();
+    KDMConfig(QString cf);
     ~KDMConfig();
 
     QFont	*_normalFont;
@@ -71,20 +67,10 @@ public:
      
     QStringList	_sessionTypes;
 
-    bool	_autoReLogin;
-    bool	_autoLogin1st;
-    QString	_autoUser;
-    QStringList	_noPassUsers;
-
     enum	SdModes { SdNone, SdAll, SdRootOnly, SdConsoleOnly };
     SdModes	_shutdownButton;
     QString	_shutdown;
     QString	_restart;
-#ifndef BSD
-    QString	_consoleMode;
-#endif
-
-    bool	_allowChooser;
 
     bool	_useLilo;
     QString	_liloCmd;
