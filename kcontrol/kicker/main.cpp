@@ -72,7 +72,7 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     applettab = new AppletTab(this);
-    tab->addTab(applettab, i18n("Applets"));
+    tab->addTab(applettab, i18n("&Applets"));
     connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     extensionstab = new ExtensionsTab(this);
@@ -119,7 +119,7 @@ void KickerConfig::save()
 	appname = "kicker";
     else
 	appname.sprintf("kicker-screen-%d", kickerconfig_screen_number);
-    kapp->dcopClient()->send( appname, "Panel", "configure()", data );
+    kapp->dcopClient()->send( appname, "kicker", "configure()", data );
 }
 
 void KickerConfig::defaults()
