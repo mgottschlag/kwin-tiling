@@ -166,7 +166,7 @@ static bool ok(char *data, char *entry)
     return false;
 }
 
-static char * getKey(char *data, char *key)
+static char * getKey(char *data, const char *key)
 {
     char *entry,
          *start=data;
@@ -290,9 +290,7 @@ KXftConfig::KXftConfig(int required, bool system)
     {
         char *home=getenv("HOME");
 
-        if(!home)
-            home="";
-        m_file=QString(home)+"/"+defaultUserFile;
+        m_file=QString(home ? home : "")+"/"+defaultUserFile;
     }
 
     m_symbolFamilies.setAutoDelete(true);
@@ -440,8 +438,8 @@ bool KXftConfig::apply()
             while(!finished)
             {
                 int      type=0;
-                ListItem *fdi,
-                         *ffi;
+                ListItem *fdi=NULL,
+                         *ffi=NULL;
                 Item     *first=NULL;
 
                 if(m_required&Dirs && NULL!=(fdi=getFirstItem(m_dirs)) && (NULL==first || fdi->start < first->start))
@@ -776,7 +774,7 @@ void KXftConfig::readContents()
          data[constMaxDataLen];
 
     if(m_required&&Dirs)
-        while(ptr=getKey(ptr, "dir"))
+        while((ptr=getKey(ptr, "dir")))
         {
             from=ptr;
             ptr+=4;
@@ -809,7 +807,7 @@ void KXftConfig::readContents()
 
         ptr=m_data;
 
-        while(ptr=getKey(ptr, "match"))
+        while((ptr=getKey(ptr, "match")))
         {
             from=ptr;
             ptr+=6;
