@@ -701,18 +701,14 @@ void KColorScheme::readScheme( int index )
 {
     KConfigBase* config;
 
-    // define some KDE2 default colors
-    QColor kde2Blue;
-    if (QPixmap::defaultDepth() > 8)
-      kde2Blue.setRgb(10, 95, 137);
-    else
-      kde2Blue.setRgb(0, 0, 192);
-
-    QColor widget(220, 220, 220);
+    QColor widget(238, 238, 230);
+    QColor kde31Beige(255,221,118);
+    QColor emerald1(143,159,180);
+    QColor emerald2(62,145,235);
 
     QColor button;
     if (QPixmap::defaultDepth() > 8)
-      button.setRgb(228, 228, 228);
+      button.setRgb(238, 234, 222);
     else
       button.setRgb(220, 220, 220);
 
@@ -722,18 +718,18 @@ void KColorScheme::readScheme( int index )
     // note: keep default color scheme in sync with default Current Scheme
     if (index == 1) {
       sCurrentScheme  = "<default>";
-      cs->back        = widget;
       cs->txt         = black;
-      cs->select      = kde2Blue;
-      cs->selectTxt   = white;
+      cs->back        = widget;
+      cs->select      = kde31Beige;
+      cs->selectTxt   = black;
       cs->window      = white;
       cs->windowTxt   = black;
-      cs->iaTitle     = widget;
-      cs->iaTxt       = black;
-      cs->iaBlend     = widget;
-      cs->aTitle      = kde2Blue;
+      cs->iaTitle     = emerald1;
+      cs->iaTxt       = white;
+      cs->iaBlend     = emerald1;
+      cs->aTitle      = emerald2;
       cs->aTxt        = white;
-      cs->aBlend      = kde2Blue;
+      cs->aBlend      = emerald2;
       cs->button      = button;
       cs->buttonTxt   = black;
       cs->aTitleBtn   = cs->back;
@@ -766,8 +762,8 @@ void KColorScheme::readScheme( int index )
     // note: defaults should be the same as the KDE default
     cs->txt = config->readColorEntry( "foreground", &black );
     cs->back = config->readColorEntry( "background", &widget );
-    cs->select = config->readColorEntry( "selectBackground", &kde2Blue );
-    cs->selectTxt = config->readColorEntry( "selectForeground", &white );
+    cs->select = config->readColorEntry( "selectBackground", &kde31Beige );
+    cs->selectTxt = config->readColorEntry( "selectForeground", &black );
     cs->window = config->readColorEntry( "windowBackground", &white );
     cs->windowTxt = config->readColorEntry( "windowForeground", &black );
     cs->button = config->readColorEntry( "buttonBackground", &button );
@@ -780,12 +776,12 @@ void KColorScheme::readScheme( int index )
     if (index == 0)
       config->setGroup( "WM" );
 
-    cs->iaTitle = config->readColorEntry("inactiveBackground", &widget);
-    cs->iaTxt = config->readColorEntry("inactiveForeground", &black);
-    cs->iaBlend = config->readColorEntry("inactiveBlend", &widget);
-    cs->aTitle = config->readColorEntry("activeBackground", &kde2Blue);
+    cs->iaTitle = config->readColorEntry("inactiveBackground", &emerald1);
+    cs->iaTxt = config->readColorEntry("inactiveForeground", &white);
+    cs->iaBlend = config->readColorEntry("inactiveBlend", &emerald1);
+    cs->aTitle = config->readColorEntry("activeBackground", &emerald2);
     cs->aTxt = config->readColorEntry("activeForeground", &white);
-    cs->aBlend = config->readColorEntry("activeBlend", &kde2Blue);
+    cs->aBlend = config->readColorEntry("activeBlend", &emerald2);
     // hack - this is all going away. For now just set all to button bg
     cs->aTitleBtn = config->readColorEntry("activeTitleBtnBg", &cs->back);
     cs->iTitleBtn = config->readColorEntry("inactiveTitleBtnBg", &cs->back);
