@@ -28,7 +28,7 @@ from the copyright holder.
 
 /*
  * xdm - display manager daemon
- * Author:  Keith Packard, MIT X Consortium
+ * Author: Keith Packard, MIT X Consortium
  *
  * pseudoReset -- pretend to reset the server by killing all clients
  * with windows.  It will reset the server most of the time, unless
@@ -43,10 +43,10 @@ from the copyright holder.
 
 /*ARGSUSED*/
 static int
-ignoreErrors (Display *dspl ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED)
+ignoreErrors( Display *dspl ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED )
 {
-	Debug ("ignoring error\n");
-	return 0;
+		Debug( "ignoring error\n" );
+		return 0;
 }
 
 /*
@@ -56,55 +56,55 @@ ignoreErrors (Display *dspl ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED)
  */
 
 static void
-killWindows (Window window)
+killWindows( Window window )
 {
-	Window	root, parent, *children;
-	unsigned int child, nchildren = 0;
-	
-	while (XQueryTree (dpy, window, &root, &parent, &children, &nchildren)
-	       && nchildren > 0)
-	{
-		for (child = 0; child < nchildren; child++) {
-			Debug ("XKillClient %p\n", children[child]);
-			XKillClient (dpy, children[child]);
+		Window root, parent, *children;
+		unsigned int child, nchildren = 0;
+
+		while (XQueryTree( dpy, window, &root, &parent, &children, &nchildren )
+		       && nchildren > 0)
+		{
+				for (child = 0; child < nchildren; child++) {
+						Debug( "XKillClient %p\n", children[child] );
+						XKillClient( dpy, children[child] );
+				}
+				XFree( (char *)children );
 		}
-		XFree ((char *)children);
-	}
 }
 
-static Jmp_buf	resetJmp;
+static Jmp_buf resetJmp;
 
 /* ARGSUSED */
 static SIGVAL
-abortReset (int n ATTR_UNUSED)
+abortReset( int n ATTR_UNUSED )
 {
-	Longjmp (resetJmp, 1);
+		Longjmp( resetJmp, 1 );
 }
 
 /*
  * this display connection better not have any windows...
  */
- 
-void
-pseudoReset ()
-{
-	int	screen;
 
-	if (Setjmp (resetJmp)) {
-		LogError ("pseudoReset timeout\n");
-	} else {
-		(void) Signal (SIGALRM, abortReset);
-		(void) alarm (30);
-		XSetErrorHandler (ignoreErrors);
-		for (screen = 0; screen < ScreenCount (dpy); screen++) {
-			Debug ("pseudoReset screen %d\n", screen);
-			killWindows (RootWindow (dpy, screen));
+void
+pseudoReset()
+{
+		int screen;
+
+		if (Setjmp( resetJmp )) {
+				LogError( "pseudoReset timeout\n" );
+		} else {
+				(void)Signal( SIGALRM, abortReset );
+				(void)alarm( 30 );
+				XSetErrorHandler( ignoreErrors );
+				for (screen = 0; screen < ScreenCount (dpy); screen++) {
+						Debug( "pseudoReset screen %d\n", screen );
+						killWindows( RootWindow( dpy, screen ) );
+				}
+				Debug( "before XSync\n" );
+				XSync( dpy, False );
+				(void)alarm( 0 );
 		}
-		Debug ("before XSync\n");
-		XSync (dpy, False);
-		(void) alarm (0);
-	}
-	Signal (SIGALRM, SIG_DFL);
-	XSetErrorHandler ((XErrorHandler)0 );
-	Debug ("pseudoReset done\n");
+		Signal( SIGALRM, SIG_DFL );
+		XSetErrorHandler( (XErrorHandler)0 );
+		Debug( "pseudoReset done\n" );
 }

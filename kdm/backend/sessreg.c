@@ -29,9 +29,9 @@ from The Open Group.
 
 /*
 
-Author:  Keith Packard, MIT X Consortium
-Lastlog support and dynamic utmp entry allocation
-  by Andreas Stolcke <stolcke@icsi.berkeley.edu>
+  Author: Keith Packard, MIT X Consortium
+  Lastlog support and dynamic utmp entry allocation
+    by Andreas Stolcke <stolcke@icsi.berkeley.edu>
 
 */
 
@@ -54,11 +54,11 @@ Lastlog support and dynamic utmp entry allocation
 # endif
 # ifndef LLOG_FILE
 #  ifdef _PATH_LASTLOGX
-#   define LLOG_FILE	_PATH_LASTLOGX
+#   define LLOG_FILE _PATH_LASTLOGX
 #  elif defined(_PATH_LASTLOG)
-#   define LLOG_FILE	_PATH_LASTLOG
+#   define LLOG_FILE _PATH_LASTLOG
 #  else
-#   define LLOG_FILE	"/usr/adm/lastlog"
+#   define LLOG_FILE "/usr/adm/lastlog"
 #  endif
 # endif
 #endif
@@ -76,7 +76,7 @@ Lastlog support and dynamic utmp entry allocation
 
 #ifdef BSD_UTMP
 # ifndef TTYS_FILE
-#  define TTYS_FILE	"/etc/ttys"
+#  define TTYS_FILE "/etc/ttys"
 # endif
 #endif
 
@@ -89,224 +89,224 @@ Lastlog support and dynamic utmp entry allocation
 
 #ifndef BSD_UTMP
 static unsigned
-crc32s (const unsigned char *str)
+crc32s( const unsigned char *str )
 {
-    int b;
-    unsigned crc = 0xffffffff, by;
-  
-    for (; *str; str++) {
-	by = (crc & 255) ^ *str;
-	for (b = 0; b < 8; b++)
-	    by = (by >> 1) ^ (-(by & 1) & 0xedb88320);
-	crc = (crc >> 8) ^ by;
-    }
-    return crc;
+	int b;
+	unsigned crc = 0xffffffff, by;
+
+	for (; *str; str++) {
+		by = (crc & 255) ^ *str;
+		for (b = 0; b < 8; b++)
+			by = (by >> 1) ^ (-(by & 1) & 0xedb88320);
+		crc = (crc >> 8) ^ by;
+	}
+	return crc;
 }
 #endif
 
 void
-sessreg (struct display *d, int pid, const char *user, int uid)
+sessreg( struct display *d, int pid, const char *user, int uid )
 {
-    const char *dot, *colon;
-    int left, clen;
+	const char *dot, *colon;
+	int left, clen;
 #ifdef BSD_UTMP
-    FILE *ttys;
-    int utmp, slot, freeslot;
-    struct UTMP entry;
+	FILE *ttys;
+	int utmp, slot, freeslot;
+	struct UTMP entry;
 #else
-    unsigned crc, i;
+	unsigned crc, i;
 #endif
-    int wtmp, c;
+	int wtmp, c;
 #ifndef NO_LASTLOG
-    int llog;
-    struct LASTLOG ll;
+	int llog;
+	struct LASTLOG ll;
 #endif
-    struct UTMP ut_ent;
+	struct UTMP ut_ent;
 
-    if (!d->useSessReg)
-	return;
+	if (!d->useSessReg)
+		return;
 
-    bzero (&ut_ent, sizeof(ut_ent));
+	bzero( &ut_ent, sizeof(ut_ent) );
 
-    if (pid) {
-	strncpy (ut_ent.ut_name, user, sizeof(ut_ent.ut_name));
+	if (pid) {
+		strncpy( ut_ent.ut_name, user, sizeof(ut_ent.ut_name) );
 #ifndef BSD_UTMP
-	ut_ent.ut_pid = pid;
-	ut_ent.ut_type = USER_PROCESS;
-    } else {
-	ut_ent.ut_type = DEAD_PROCESS;
+		ut_ent.ut_pid = pid;
+		ut_ent.ut_type = USER_PROCESS;
+	} else {
+		ut_ent.ut_type = DEAD_PROCESS;
 #endif
-    }
-    ut_ent.ut_time = time (0);
+	}
+	ut_ent.ut_time = time( 0 );
 
-    colon = strchr (d->name, ':');
-    clen = strlen (colon);
-    if (clen > (int)(sizeof(ut_ent.ut_line) - UTL_OFF) - 2)
-	return; /* uhm, well ... */
-    if (colon == d->name) {
+	colon = strchr( d->name, ':' );
+	clen = strlen( colon );
+	if (clen > (int)(sizeof(ut_ent.ut_line) - UTL_OFF) - 2)
+		return; /* uhm, well ... */
+	if (colon == d->name) {
 #ifndef BSD_UTMP
-	strncpy (ut_ent.ut_id, d->name, sizeof(ut_ent.ut_id));
+		strncpy( ut_ent.ut_id, d->name, sizeof(ut_ent.ut_id) );
 #endif
-	left = 0;
-    } else {
+		left = 0;
+	} else {
 #ifdef SESSREG_HOST
 # ifndef BSD_UTMP
-	if (pid)
+		if (pid)
 # endif
-	{
-	    if (colon - d->name > (int)sizeof(ut_ent.ut_host)) {
-		ut_ent.ut_host[0] = '~';
-		memcpy (ut_ent.ut_host + 1,
-			colon - (sizeof(ut_ent.ut_host) - 1),
-			sizeof(ut_ent.ut_host) - 1);
-	    } else
-		memcpy (ut_ent.ut_host, d->name, colon - d->name);
-	}
+		{
+			if (colon - d->name > (int)sizeof(ut_ent.ut_host)) {
+				ut_ent.ut_host[0] = '~';
+				memcpy( ut_ent.ut_host + 1,
+				        colon - (sizeof(ut_ent.ut_host) - 1),
+				        sizeof(ut_ent.ut_host) - 1 );
+			} else
+				memcpy( ut_ent.ut_host, d->name, colon - d->name );
+		}
 #endif
 #ifndef BSD_UTMP
-	crc = crc32s (d->name);
-	ut_ent.ut_id[0] = crc % 26 + 'A';
-	crc /= 26;
-	for (i = 1; i < sizeof(ut_ent.ut_id); i++) {
-	    c = crc % 62;
-	    crc /= 62;
-	    ut_ent.ut_id[i] = c < 26 ? c + 'A' :
-			      c < 52 ? c - 26 + 'a' : c - 52 + '0';
-	}
+		crc = crc32s( d->name );
+		ut_ent.ut_id[0] = crc % 26 + 'A';
+		crc /= 26;
+		for (i = 1; i < sizeof(ut_ent.ut_id); i++) {
+			c = crc % 62;
+			crc /= 62;
+			ut_ent.ut_id[i] = c < 26 ? c + 'A' :
+							  c < 52 ? c - 26 + 'a' : c - 52 + '0';
+		}
 #endif
-	left = sizeof(ut_ent.ut_line) - UTL_OFF - clen;
-	if (colon - d->name <= left) {
-	    clen += colon - d->name;
-	    colon = d->name;
-	    left = 0;
-	} else {
-	    dot = strchr (d->name, '.');
-	    if (dot && dot - d->name < left) {
-		memcpy (ut_ent.ut_line + UTL_OFF, d->name, left - 1);
-		ut_ent.ut_line[UTL_OFF + left - 1] = '~';
-	    } else {
-		memcpy (ut_ent.ut_line + UTL_OFF, d->name, left/2 - 1);
-		ut_ent.ut_line[UTL_OFF + left/2 - 1] = '~';
-		if (dot) {
-		    memcpy (ut_ent.ut_line + UTL_OFF + left/2,
-			dot - (left - left/2 - 1),
-			left - left/2 - 1);
-		    ut_ent.ut_line[UTL_OFF + left - 1] = '~';
-		} else
-		    memcpy (ut_ent.ut_line + UTL_OFF + left/2,
-			    colon - (left - left/2), left - left/2);
-	    }
+		left = sizeof(ut_ent.ut_line) - UTL_OFF - clen;
+		if (colon - d->name <= left) {
+			clen += colon - d->name;
+			colon = d->name;
+			left = 0;
+		} else {
+			dot = strchr( d->name, '.' );
+			if (dot && dot - d->name < left) {
+				memcpy( ut_ent.ut_line + UTL_OFF, d->name, left - 1 );
+				ut_ent.ut_line[UTL_OFF + left - 1] = '~';
+			} else {
+				memcpy( ut_ent.ut_line + UTL_OFF, d->name, left/2 - 1 );
+				ut_ent.ut_line[UTL_OFF + left/2 - 1] = '~';
+				if (dot) {
+					memcpy( ut_ent.ut_line + UTL_OFF + left/2,
+					        dot - (left - left/2 - 1),
+					        left - left/2 - 1 );
+					ut_ent.ut_line[UTL_OFF + left - 1] = '~';
+				} else
+					memcpy( ut_ent.ut_line + UTL_OFF + left/2,
+					        colon - (left - left/2), left - left/2 );
+			}
+		}
 	}
-    }
 #ifdef UTL_PFX
-    memcpy (ut_ent.ut_line, UTL_PFX, UTL_OFF);
+	memcpy( ut_ent.ut_line, UTL_PFX, UTL_OFF );
 #endif
-    memcpy (ut_ent.ut_line + UTL_OFF + left, colon, clen);
+	memcpy( ut_ent.ut_line + UTL_OFF + left, colon, clen );
 
 #ifndef NO_UTMP
 # ifdef BSD_UTMP
-    if ((utmp = open (UTMP_FILE, O_RDWR)) < 0)
-	Debug ("cannot open utmp file " UTMP_FILE ": %m\n");
-    else {
+	if ((utmp = open( UTMP_FILE, O_RDWR )) < 0)
+		Debug( "cannot open utmp file " UTMP_FILE ": %m\n" );
+	else {
 
-	slot = 1;
-	if (pid) {
-	    if (!(ttys = fopen (TTYS_FILE, "r")))
-		LogInfo ("Cannot open tty file " TTYS_FILE ": %m\n");
-	    else {
-		int column0 = 1;
-		while ((c = getc (ttys)) != EOF)
-		    if (c == '\n') {
+		slot = 1;
+		if (pid) {
+			if (!(ttys = fopen( TTYS_FILE, "r" )))
+				LogInfo( "Cannot open tty file " TTYS_FILE ": %m\n" );
+			else {
+				int column0 = 1;
+				while ((c = getc( ttys )) != EOF)
+					if (c == '\n') {
+						slot++;
+						column0 = 1;
+					} else
+						column0 = 0;
+				if (!column0)
+					slot++;
+				fclose( ttys );
+			}
+		}
+		freeslot = -1;
+		lseek( utmp, slot * sizeof(entry), SEEK_SET );
+		while (read( utmp, (char *)&entry, sizeof(entry) ) == sizeof(entry)) {
+			if (!strncmp( entry.ut_line, ut_ent.ut_line,
+			              sizeof(entry.ut_line) ))
+#  ifdef SESSREG_HOST
+				if (!strncmp( entry.ut_host, ut_ent.ut_host,
+				              sizeof(entry.ut_host) ))
+#  endif
+					goto found;
+			if (freeslot < 0 && *entry.ut_name == '\0')
+				freeslot = slot;
 			slot++;
-			column0 = 1;
-		    } else
-			column0 = 0;
-		if (!column0)
-		    slot++;
-		fclose (ttys);
-	    }
-	}
-	freeslot = -1;
-	lseek (utmp, slot * sizeof(entry), SEEK_SET);
-	while (read (utmp, (char *) &entry, sizeof(entry)) == sizeof(entry)) {
-	    if (!strncmp (entry.ut_line, ut_ent.ut_line,
-			  sizeof(entry.ut_line)))
-#  ifdef SESSREG_HOST
-                if (!strncmp (entry.ut_host, ut_ent.ut_host,
-			      sizeof(entry.ut_host)))
-#  endif
-		    goto found;
-	    if (freeslot < 0 && *entry.ut_name == '\0')
-		freeslot = slot;
-	    slot++;
-	}
-	if (!pid) {
-	    Debug ("utmp entry for display %s vanished\n", d->name);
-	    goto skip;
-	}
-	if (freeslot >= 0)
-	    slot = freeslot;
-      found:
+		}
+		if (!pid) {
+			Debug( "utmp entry for display %s vanished\n", d->name );
+			goto skip;
+		}
+		if (freeslot >= 0)
+			slot = freeslot;
+	  found:
 
 #  ifdef SESSREG_HOST
-	if (!pid)
-	    bzero (ut_ent.ut_host, sizeof(ut_ent.ut_host));
+		if (!pid)
+			bzero( ut_ent.ut_host, sizeof(ut_ent.ut_host) );
 #  endif
-	lseek (utmp, slot * sizeof(ut_ent), SEEK_SET);
-	if (write (utmp, (char *) &ut_ent, sizeof(ut_ent)) != sizeof(ut_ent))
-	    LogError ("Cannot write utmp file " UTMP_FILE ": %m\n");
-      skip:
-	close (utmp);
-    }
+		lseek( utmp, slot * sizeof(ut_ent), SEEK_SET );
+		if (write( utmp, (char *)&ut_ent, sizeof(ut_ent) ) != sizeof(ut_ent))
+			LogError( "Cannot write utmp file " UTMP_FILE ": %m\n" );
+	  skip:
+		close( utmp );
+	}
 # else
-    UTMPNAME (UTMP_FILE);
-    SETUTENT ();
-    PUTUTLINE (&ut_ent);
-    ENDUTENT ();
+	UTMPNAME( UTMP_FILE );
+	SETUTENT();
+	PUTUTLINE( &ut_ent );
+	ENDUTENT();
 # endif
 #endif
 
-    if ((wtmp = open (WTMP_FILE, O_WRONLY|O_APPEND)) < 0)
-	Debug ("cannot open wtmp file " WTMP_FILE ": %m\n");
-    else {
-	if (write (wtmp, (char *) &ut_ent, sizeof(ut_ent)) != sizeof(ut_ent))
-	    LogError ("Cannot write wtmp file " WTMP_FILE ": %m\n");
-	close (wtmp);
-    }
+	if ((wtmp = open( WTMP_FILE, O_WRONLY|O_APPEND )) < 0)
+		Debug( "cannot open wtmp file " WTMP_FILE ": %m\n" );
+	else {
+		if (write( wtmp, (char *)&ut_ent, sizeof(ut_ent) ) != sizeof(ut_ent))
+			LogError( "Cannot write wtmp file " WTMP_FILE ": %m\n" );
+		close( wtmp );
+	}
 
 #ifndef NO_LASTLOG
-    if (pid) {
-	bzero ((char *)&ll, sizeof(ll));
-	ll.ll_time = ut_ent.ut_time;
-	memcpy (ll.ll_line, ut_ent.ut_line, sizeof(ll.ll_line));
-	memcpy (ll.ll_host, ut_ent.ut_host, sizeof(ll.ll_host));
+	if (pid) {
+		bzero( (char *)&ll, sizeof(ll) );
+		ll.ll_time = ut_ent.ut_time;
+		memcpy( ll.ll_line, ut_ent.ut_line, sizeof(ll.ll_line) );
+		memcpy( ll.ll_host, ut_ent.ut_host, sizeof(ll.ll_host) );
 # ifdef HAVE_UTMPX
-	updlastlogx (LLOG_FILE, uid, &ll);
+		updlastlogx( LLOG_FILE, uid, &ll );
 # else
-	if ((llog = open (LLOG_FILE, O_RDWR)) < 0)
-	    Debug ("cannot open lastlog file " LLOG_FILE ": %m\n");
-	else {
-	    lseek (llog, (off_t)uid * sizeof(ll), SEEK_SET);
-	    if (write (llog, (char *) &ll, sizeof(ll)) != sizeof(ll))
-		LogError ("Cannot write llog file " WTMP_FILE ": %m\n");
-	    close (llog);
-	}
+		if ((llog = open( LLOG_FILE, O_RDWR )) < 0)
+			Debug( "cannot open lastlog file " LLOG_FILE ": %m\n" );
+		else {
+			lseek( llog, (off_t)uid * sizeof(ll), SEEK_SET );
+			if (write( llog, (char *)&ll, sizeof(ll) ) != sizeof(ll))
+				LogError( "Cannot write llog file " WTMP_FILE ": %m\n" );
+			close( llog );
+		}
 # endif
-    }
+	}
 #else
-    (void) uid;
+	(void)uid;
 #endif
 
 #ifdef UTL_PFX
-    {
-	char tmp[sizeof("/dev/") + sizeof(ut_ent.ut_line)];
-	mkdir ("/dev/" UTL_PFX, 0755);
-	chmod ("/dev/" UTL_PFX, 0755);
-	sprintf (tmp, "/dev/%.*s", sizeof(ut_ent.ut_line), ut_ent.ut_line);
-	if (pid)
-	    close (creat (tmp, 0644));
-	else
-	    unlink (tmp);
-    }
+	{
+		char tmp[sizeof("/dev/") + sizeof(ut_ent.ut_line)];
+		mkdir( "/dev/" UTL_PFX, 0755 );
+		chmod( "/dev/" UTL_PFX, 0755 );
+		sprintf( tmp, "/dev/%.*s", sizeof(ut_ent.ut_line), ut_ent.ut_line );
+		if (pid)
+			close( creat( tmp, 0644 ) );
+		else
+			unlink( tmp );
+	}
 #endif
 }

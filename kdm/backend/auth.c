@@ -29,7 +29,7 @@ from the copyright holder.
 
 /*
  * xdm - display manager daemon
- * Author:  Keith Packard, MIT X Consortium
+ * Author: Keith Packard, MIT X Consortium
  *
  * maintain the authorization generation daemon
  */
@@ -87,22 +87,21 @@ from the copyright holder.
 
 #ifdef __EMX__
 # define link rename
-int chown(int a,int b,int c) {}
+int chown( int a,int b,int c ) {}
 # include <io.h>
 #endif
 
 struct AuthProtocol {
-    unsigned short  name_length;
-    const char	    *name;
-    void	    (*InitAuth)(unsigned short len, const char *name);
-    Xauth	    *(*GetAuth)(unsigned short len, const char *name);
+	unsigned short name_length;
+	const char *name;
+	void (*InitAuth)( unsigned short len, const char *name );
+	Xauth *(*GetAuth)( unsigned short len, const char *name );
 #ifdef XDMCP
-    void	    (*GetXdmcpAuth)(
-			struct protoDisplay	*pdpy,
-			unsigned short		authorizationNameLen,
-			const char		*authorizationName);
+	void (*GetXdmcpAuth)( struct protoDisplay *pdpy,
+	                      unsigned short authorizationNameLen,
+	                      const char *authorizationName );
 #endif
-    int		    inited;
+	int inited;
 };
 
 #ifdef XDMCP
@@ -112,297 +111,274 @@ struct AuthProtocol {
 #endif
 
 static struct AuthProtocol AuthProtocols[] = {
-{ (unsigned short) 18,	"MIT-MAGIC-COOKIE-1",
-    MitInitAuth, MitGetAuth xdmcpauth(NULL), 0
+{ (unsigned short)18, "MIT-MAGIC-COOKIE-1",
+	MitInitAuth, MitGetAuth xdmcpauth(NULL), 0
 },
 #ifdef HASXDMAUTH
-{ (unsigned short) 19,	"XDM-AUTHORIZATION-1",
-    XdmInitAuth, XdmGetAuth xdmcpauth(XdmGetXdmcpAuth), 0
+{ (unsigned short)19, "XDM-AUTHORIZATION-1",
+	XdmInitAuth, XdmGetAuth xdmcpauth(XdmGetXdmcpAuth), 0
 },
 #endif
 #ifdef SECURE_RPC
-{ (unsigned short) 9, "SUN-DES-1",
-    SecureRPCInitAuth, SecureRPCGetAuth xdmcpauth(NULL), 0
+{ (unsigned short)9, "SUN-DES-1",
+	SecureRPCInitAuth, SecureRPCGetAuth xdmcpauth(NULL), 0
 },
 #endif
 #ifdef K5AUTH
-{ (unsigned short) 14, "MIT-KERBEROS-5",
-    Krb5InitAuth, Krb5GetAuth xdmcpauth(NULL), 0
+{ (unsigned short)14, "MIT-KERBEROS-5",
+	Krb5InitAuth, Krb5GetAuth xdmcpauth(NULL), 0
 },
 #endif
 };
 
 static struct AuthProtocol *
-findProtocol (unsigned short name_length, const char *name)
+findProtocol( unsigned short name_length, const char *name )
 {
-    unsigned	i;
+	unsigned i;
 
-    for (i = 0; i < as(AuthProtocols); i++)
-	if (AuthProtocols[i].name_length == name_length &&
-	    memcmp(AuthProtocols[i].name, name, name_length) == 0)
-	{
-	    return &AuthProtocols[i];
-	}
-    return (struct AuthProtocol *) 0;
+	for (i = 0; i < as(AuthProtocols); i++)
+		if (AuthProtocols[i].name_length == name_length &&
+		    memcmp( AuthProtocols[i].name, name, name_length ) == 0)
+		{
+			return &AuthProtocols[i];
+		}
+	return (struct AuthProtocol *)0;
 }
 
 int
-ValidAuthorization (unsigned short name_length, const char *name)
+ValidAuthorization( unsigned short name_length, const char *name )
 {
-    if (findProtocol (name_length, name))
-	return TRUE;
-    return FALSE;
+	if (findProtocol( name_length, name ))
+		return TRUE;
+	return FALSE;
 }
 
 static Xauth *
-GenerateAuthorization (unsigned short name_length, const char *name)
+GenerateAuthorization( unsigned short name_length, const char *name )
 {
-    struct AuthProtocol	*a;
-    Xauth   *auth = 0;
+	struct AuthProtocol *a;
+	Xauth *auth = 0;
 
-    Debug ("GenerateAuthorization %s\n", name);
-    if ((a = findProtocol (name_length, name)))
-    {
-	if (!a->inited)
-	{
-	    (*a->InitAuth) (name_length, name);
-	    a->inited = TRUE;
-	}
-	auth = (*a->GetAuth) (name_length, name);
-	if (auth)
-	{
-	    Debug ("got %p (%d %.*s) %02[*hhx\n", auth,
-		    auth->name_length, auth->name_length, auth->name,
-		    auth->data_length, auth->data);
-	}
-	else
-	    Debug ("got (null)\n");
-    }
-    else
-    {
-	Debug ("unknown authorization %s\n", name);
-    }
-    return auth;
+	Debug( "GenerateAuthorization %s\n", name );
+	if ((a = findProtocol( name_length, name ))) {
+		if (!a->inited) {
+			(*a->InitAuth)( name_length, name );
+			a->inited = TRUE;
+		}
+		auth = (*a->GetAuth)( name_length, name );
+		if (auth) {
+			Debug( "got %p (%d %.*s) %02[*hhx\n", auth,
+			       auth->name_length, auth->name_length, auth->name,
+			       auth->data_length, auth->data );
+		} else
+			Debug( "got (null)\n" );
+	} else
+		Debug( "unknown authorization %s\n", name );
+	return auth;
 }
 
 #ifdef XDMCP
 
 void
-SetProtoDisplayAuthorization (
-    struct protoDisplay	*pdpy,
-    unsigned short	authorizationNameLen,
-    const char		*authorizationName)
+SetProtoDisplayAuthorization( struct protoDisplay *pdpy,
+                              unsigned short authorizationNameLen,
+                              const char *authorizationName )
 {
-    struct AuthProtocol	*a;
-    Xauth   *auth;
+	struct AuthProtocol *a;
+	Xauth *auth;
 
-    a = findProtocol (authorizationNameLen, authorizationName);
-    pdpy->xdmcpAuthorization = pdpy->fileAuthorization = 0;
-    if (a)
-    {
-	if (!a->inited)
-	{
-	    (*a->InitAuth) (authorizationNameLen, authorizationName);
-	    a->inited = TRUE;
+	a = findProtocol( authorizationNameLen, authorizationName );
+	pdpy->xdmcpAuthorization = pdpy->fileAuthorization = 0;
+	if (a) {
+		if (!a->inited) {
+			(*a->InitAuth)( authorizationNameLen, authorizationName );
+			a->inited = TRUE;
+		}
+		if (a->GetXdmcpAuth) {
+			(*a->GetXdmcpAuth)( pdpy, authorizationNameLen, authorizationName );
+			auth = pdpy->xdmcpAuthorization;
+		} else {
+			auth = (*a->GetAuth)( authorizationNameLen, authorizationName );
+			pdpy->fileAuthorization = auth;
+			pdpy->xdmcpAuthorization = 0;
+		}
+		if (auth)
+			Debug( "got %p (%d %.*s)\n", auth,
+			       auth->name_length, auth->name_length, auth->name );
+		else
+			Debug( "got (null)\n" );
 	}
-	if (a->GetXdmcpAuth)
-	{
-	    (*a->GetXdmcpAuth) (pdpy, authorizationNameLen, authorizationName);
-	    auth = pdpy->xdmcpAuthorization;
-	}
-	else
-	{
-	    auth = (*a->GetAuth) (authorizationNameLen, authorizationName);
-	    pdpy->fileAuthorization = auth;
-	    pdpy->xdmcpAuthorization = 0;
-	}
-	if (auth)
-	    Debug ("got %p (%d %.*s)\n", auth,
-		auth->name_length, auth->name_length, auth->name);
-	else
-	    Debug ("got (null)\n");
-    }
 }
 
 #endif /* XDMCP */
 
 void
-CleanUpFileName (const char *src, char *dst, int len)
+CleanUpFileName( const char *src, char *dst, int len )
 {
-    while (*src) {
-	if (--len <= 0)
-		break;
-	switch (*src & 0x7f)
-	{
-	case '/':
-	    *dst++ = '_';
-	    break;
-	case '-':
-	    *dst++ = '.';
-	    break;
-	default:
-	    *dst++ = (*src & 0x7f);
+	while (*src) {
+		if (--len <= 0)
+				break;
+		switch (*src & 0x7f) {
+		case '/':
+			*dst++ = '_';
+			break;
+		case '-':
+			*dst++ = '.';
+			break;
+		default:
+			*dst++ = (*src & 0x7f);
+		}
+		++src;
 	}
-	++src;
-    }
-    *dst = '\0';
+	*dst = '\0';
 }
 
 
 static FILE *
-fdOpenW (int fd)
+fdOpenW( int fd )
 {
-    FILE *f;
+	FILE *f;
 
-    if (fd >= 0) {
-	if ((f = fdopen (fd, "w")))
-	    return f;
-	close (fd);
-    }
-    return 0;
+	if (fd >= 0) {
+		if ((f = fdopen( fd, "w" )))
+			return f;
+		close( fd );
+	}
+	return 0;
 }
 
 
 #if defined(SYSV) && !defined(SVR4)
-# define NAMELEN	14
+# define NAMELEN 14
 #else
-# define NAMELEN	255
+# define NAMELEN 255
 #endif
 
 static FILE *
-MakeServerAuthFile (struct display *d)
+MakeServerAuthFile( struct display *d )
 {
-    FILE	*f;
+	FILE *f;
 #ifndef HAS_MKSTEMP
-    int		r;
+	int r;
 #endif
-    char	cleanname[NAMELEN], nambuf[NAMELEN+128];
+	char cleanname[NAMELEN], nambuf[NAMELEN+128];
 
-    /*
-     * Some paranoid, but still not sufficient (DoS was still possible)
-     * checks used to be here. I removed all this stuff because
-     * a) authDir is supposed to be /var/run/xauth (=safe) or similar and
-     * b) even if it's not (say, /tmp), we create files safely (hopefully).
-     */
-    if (mkdir(authDir, 0755) < 0  &&  errno != EEXIST)
-	return 0;
-    CleanUpFileName (d->name, cleanname, NAMELEN - 8);
+	/*
+	 * Some paranoid, but still not sufficient (DoS was still possible)
+	 * checks used to be here. I removed all this stuff because
+	 * a) authDir is supposed to be /var/run/xauth (=safe) or similar and
+	 * b) even if it's not (say, /tmp), we create files safely (hopefully).
+	 */
+	if (mkdir( authDir, 0755 ) < 0  &&  errno != EEXIST)
+		return 0;
+	CleanUpFileName( d->name, cleanname, NAMELEN - 8 );
 #ifdef HAS_MKSTEMP
-    sprintf (nambuf, "%s/A%s-XXXXXX", authDir, cleanname);
-    if ((f = fdOpenW (mkstemp (nambuf)))) {
-	StrDup (&d->authFile, nambuf);
-	return f;
-    }
-#else
-    for (r = 0; r < 100; r++) {
-	sprintf (nambuf, "%s/A%s-XXXXXX", authDir, cleanname);
-	(void) mktemp (nambuf);
-	if ((f = fdOpenW (open (nambuf, O_WRONLY | O_CREAT | O_EXCL, 0600)))) {
-	    StrDup (&d->authFile, nambuf);
-	    return f;
+	sprintf( nambuf, "%s/A%s-XXXXXX", authDir, cleanname );
+	if ((f = fdOpenW( mkstemp( nambuf ) ))) {
+		StrDup( &d->authFile, nambuf );
+		return f;
 	}
-    }
-#endif	
-    return 0;
+#else
+	for (r = 0; r < 100; r++) {
+		sprintf( nambuf, "%s/A%s-XXXXXX", authDir, cleanname );
+		(void)mktemp( nambuf );
+		if ((f = fdOpenW( open( nambuf, O_WRONLY | O_CREAT | O_EXCL, 0600 ) ))) {
+			StrDup( &d->authFile, nambuf );
+			return f;
+		}
+	}
+#endif
+	return 0;
 }
 
 int
-SaveServerAuthorizations (
-    struct display  *d,
-    Xauth	    **auths,
-    int		    count)
+SaveServerAuthorizations( struct display *d, Xauth **auths, int count )
 {
-    FILE	*auth_file;
-    int		i, ret;
+	FILE *auth_file;
+	int i, ret;
 
-    if (!d->authFile && d->clientAuthFile && *d->clientAuthFile)
-	StrDup (&d->authFile, d->clientAuthFile);
-    if (d->authFile) {
-	if (!(auth_file = fdOpenW (creat (d->authFile, 0600)))) {
-	    LogError ("Cannot open X server authorization file %s\n", d->authFile);
-	    free (d->authFile);
-	    d->authFile = NULL;
-	    return FALSE;
+	if (!d->authFile && d->clientAuthFile && *d->clientAuthFile)
+		StrDup( &d->authFile, d->clientAuthFile );
+	if (d->authFile) {
+		if (!(auth_file = fdOpenW( creat( d->authFile, 0600 ) ))) {
+			LogError( "Cannot open X server authorization file %s\n", d->authFile );
+			free( d->authFile );
+			d->authFile = NULL;
+			return FALSE;
+		}
+	} else {
+		if (!(auth_file = MakeServerAuthFile( d ))) {
+			LogError( "Cannot create X server authorization file\n" );
+			return FALSE;
+		}
 	}
-    } else {
-	if (!(auth_file = MakeServerAuthFile (d))) {
-	    LogError ("Cannot create X server authorization file\n");
-	    return FALSE;
+	Debug( "file: %s  auth: %p\n", d->authFile, auths );
+	ret = TRUE;
+	for (i = 0; i < count; i++) {
+		/*
+		 * User-based auths may not have data until
+		 * a user logs in.  In which case don't write
+		 * to the auth file so xrdb and setup programs don't fail.
+		 */
+		if (auths[i]->data_length > 0)
+			if (!XauWriteAuth( auth_file, auths[i] ) ||
+			    fflush( auth_file ) == EOF)
+			{
+				LogError( "Cannot write X server authorization file %s\n",
+				          d->authFile );
+				ret = FALSE;
+				free( d->authFile );
+				d->authFile = NULL;
+			}
 	}
-    }
-    Debug ("file: %s  auth: %p\n", d->authFile, auths);
-    ret = TRUE;
-    for (i = 0; i < count; i++)
-    {
-	/*
-	 * User-based auths may not have data until
-	 * a user logs in.  In which case don't write
-	 * to the auth file so xrdb and setup programs don't fail.
-	 */
-	if (auths[i]->data_length > 0)
-	    if (!XauWriteAuth (auth_file, auths[i]) ||
-		fflush (auth_file) == EOF)
-	    {
-		LogError ("Cannot write X server authorization file %s\n",
-			  d->authFile);
-		ret = FALSE;
-		free (d->authFile);
-		d->authFile = NULL;
-	    }
-    }
-    fclose (auth_file);
-    return ret;
+	fclose( auth_file );
+	return ret;
 }
 
 void
-SetLocalAuthorization (struct display *d)
+SetLocalAuthorization( struct display *d )
 {
-    Xauth	*auth, **auths;
-    int		i, j;
+	Xauth *auth, **auths;
+	int i, j;
 
-    if (d->authorizations)
-    {
-	for (i = 0; i < d->authNum; i++)
-	    XauDisposeAuth (d->authorizations[i]);
-	free ((char *) d->authorizations);
-	d->authorizations = (Xauth **) NULL;
-	d->authNum = 0;
-    }
-    Debug ("SetLocalAuthorization %s, auths %[s\n", d->name, d->authNames);
-    if (!d->authNames)
-	return;
-    for (i = 0; d->authNames[i]; i++)
-	;
-    d->authNameNum = i;
-    if (d->authNameLens)
-	free ((char *) d->authNameLens);
-    d->authNameLens = (unsigned short *) Malloc
-				(d->authNameNum * sizeof (unsigned short));
-    if (!d->authNameLens)
-	return;
-    for (i = 0; i < d->authNameNum; i++)
-	d->authNameLens[i] = strlen (d->authNames[i]);
-    auths = (Xauth **) Malloc (d->authNameNum * sizeof (Xauth *));
-    if (!auths)
-	return;
-    j = 0;
-    for (i = 0; i < d->authNameNum; i++)
-    {
-	auth = GenerateAuthorization (d->authNameLens[i], d->authNames[i]);
-	if (auth)
-	    auths[j++] = auth;
-    }
-    if (SaveServerAuthorizations (d, auths, j))
-    {
-	d->authorizations = auths;
-	d->authNum = j;
-    }
-    else
-    {
-	for (i = 0; i < j; i++)
-	    XauDisposeAuth (auths[i]);
-	free ((char *) auths);
-    }
+	if (d->authorizations)
+	{
+		for (i = 0; i < d->authNum; i++)
+			XauDisposeAuth( d->authorizations[i] );
+		free( (char *)d->authorizations );
+		d->authorizations = (Xauth **)NULL;
+		d->authNum = 0;
+	}
+	Debug( "SetLocalAuthorization %s, auths %[s\n", d->name, d->authNames );
+	if (!d->authNames)
+		return;
+	for (i = 0; d->authNames[i]; i++)
+		;
+	d->authNameNum = i;
+	if (d->authNameLens)
+		free( (char *)d->authNameLens );
+	d->authNameLens = (unsigned short *)Malloc( d->authNameNum * sizeof(unsigned short));
+	if (!d->authNameLens)
+		return;
+	for (i = 0; i < d->authNameNum; i++)
+		d->authNameLens[i] = strlen( d->authNames[i] );
+	auths = (Xauth **)Malloc( d->authNameNum * sizeof(Xauth *));
+	if (!auths)
+		return;
+	j = 0;
+	for (i = 0; i < d->authNameNum; i++) {
+		auth = GenerateAuthorization( d->authNameLens[i], d->authNames[i] );
+		if (auth)
+			auths[j++] = auth;
+	}
+	if (SaveServerAuthorizations( d, auths, j )) {
+		d->authorizations = auths;
+		d->authNum = j;
+	} else {
+		for (i = 0; i < j; i++)
+			XauDisposeAuth( auths[i] );
+		free( (char *)auths );
+	}
 }
 
 /*
@@ -414,108 +390,107 @@ SetLocalAuthorization (struct display *d)
  * to allow root in.  This is bogus and should be fixed.
  */
 void
-SetAuthorization (struct display *d)
+SetAuthorization( struct display *d )
 {
-    register Xauth **auth = d->authorizations;
-    int i;
+	register Xauth **auth = d->authorizations;
+	int i;
 
-    for (i = 0; i < d->authNum; i++)
-    {
-	if (auth[i]->name_length == 9 &&
-	    memcmp(auth[i]->name, "SUN-DES-1", 9) == 0)
-	    continue;
-	if (auth[i]->name_length == 14 &&
-	    memcmp(auth[i]->name, "MIT-KERBEROS-5", 14) == 0)
-	    continue;
-	XSetAuthorization (auth[i]->name, (int) auth[i]->name_length,
-			   auth[i]->data, (int) auth[i]->data_length);
-    }
+	for (i = 0; i < d->authNum; i++) {
+		if (auth[i]->name_length == 9 &&
+		    memcmp( auth[i]->name, "SUN-DES-1", 9 ) == 0)
+			continue;
+		if (auth[i]->name_length == 14 &&
+		    memcmp( auth[i]->name, "MIT-KERBEROS-5", 14 ) == 0)
+			continue;
+		XSetAuthorization( auth[i]->name, (int)auth[i]->name_length,
+		                   auth[i]->data, (int)auth[i]->data_length );
+	}
 }
 
 static int
-openFiles (const char *name, char *new_name, FILE **oldp, FILE **newp)
+openFiles( const char *name, char *new_name, FILE **oldp, FILE **newp )
 {
-	strcat (strcpy (new_name, name), "-n");
-	if (!(*newp = 
-	      fdOpenW (creat (new_name, 0600)))) {
-		Debug ("can't open new file %s\n", new_name);
+	strcat( strcpy( new_name, name ), "-n" );
+	if (!(*newp =
+	      fdOpenW( creat( new_name, 0600 ) ))) {
+		Debug( "can't open new file %s\n", new_name );
 		return 0;
 	}
-	*oldp = fopen (name, "r");
-	Debug ("opens succeeded %s %s\n", name, new_name);
+	*oldp = fopen( name, "r" );
+	Debug( "opens succeeded %s %s\n", name, new_name );
 	return 1;
 }
 
 struct addrList {
-	unsigned short	family;
-	unsigned short	address_length;
-	char	*address;
-	unsigned short	number_length;
-	char	*number;
-	unsigned short	name_length;
-	char	*name;
-	struct addrList	*next;
+	unsigned short family;
+	unsigned short address_length;
+	char *address;
+	unsigned short number_length;
+	char *number;
+	unsigned short name_length;
+	char *name;
+	struct addrList *next;
 };
 
-static struct addrList	*addrs;
+static struct addrList *addrs;
 
 static void
-initAddrs (void)
+initAddrs( void )
 {
 	addrs = 0;
 }
 
 static void
-doneAddrs (void)
+doneAddrs( void )
 {
-	struct addrList	*a, *n;
+	struct addrList *a, *n;
 	for (a = addrs; a; a = n) {
 		n = a->next;
 		if (a->address)
-			free (a->address);
+			free( a->address );
 		if (a->number)
-			free (a->number);
-		free ((char *) a);
+			free( a->number );
+		free( (char *)a );
 	}
 }
 
-static int checkEntry (Xauth *auth);
+static int checkEntry( Xauth *auth );
 
 static void
-saveEntry (Xauth *auth)
+saveEntry( Xauth *auth )
 {
-	struct addrList	*new;
+	struct addrList *new;
 
-	if (!(new = (struct addrList *) Malloc (sizeof (struct addrList))))
+	if (!(new = (struct addrList *)Malloc( sizeof(struct addrList))))
 		return;
 	if ((new->address_length = auth->address_length) > 0) {
-		new->address = Malloc (auth->address_length);
+		new->address = Malloc( auth->address_length );
 		if (!new->address) {
-			free ((char *) new);
+			free( (char *)new );
 			return;
 		}
-		memmove( new->address, auth->address, (int) auth->address_length);
+		memmove( new->address, auth->address, (int)auth->address_length );
 	} else
 		new->address = 0;
 	if ((new->number_length = auth->number_length) > 0) {
-		new->number = Malloc (auth->number_length);
+		new->number = Malloc( auth->number_length );
 		if (!new->number) {
-			free (new->address);
-			free ((char *) new);
+			free( new->address );
+			free( (char *)new );
 			return;
 		}
-		memmove( new->number, auth->number, (int) auth->number_length);
+		memmove( new->number, auth->number, (int)auth->number_length );
 	} else
 		new->number = 0;
 	if ((new->name_length = auth->name_length) > 0) {
-		new->name = Malloc (auth->name_length);
+		new->name = Malloc( auth->name_length );
 		if (!new->name) {
-			free (new->number);
-			free (new->address);
-			free ((char *) new);
+			free( new->number );
+			free( new->address );
+			free( (char *)new );
 			return;
 		}
-		memmove( new->name, auth->name, (int) auth->name_length);
+		memmove( new->name, auth->name, (int)auth->name_length );
 	} else
 		new->name = 0;
 	new->family = auth->family;
@@ -524,68 +499,61 @@ saveEntry (Xauth *auth)
 }
 
 static int
-checkEntry (Xauth *auth)
+checkEntry( Xauth *auth )
 {
-	struct addrList	*a;
+	struct addrList *a;
 
-	for (a = addrs; a; a = a->next) {
+	for (a = addrs; a; a = a->next)
 		if (a->family == auth->family &&
 		    a->address_length == auth->address_length &&
-		    !memcmp (a->address, auth->address, auth->address_length) &&
+		    !memcmp( a->address, auth->address, auth->address_length ) &&
 		    a->number_length == auth->number_length &&
-		    !memcmp (a->number, auth->number, auth->number_length) &&
+		    !memcmp( a->number, auth->number, auth->number_length ) &&
 		    a->name_length == auth->name_length &&
-		    !memcmp (a->name, auth->name, auth->name_length))
+		    !memcmp( a->name, auth->name, auth->name_length ))
 		{
 			return 1;
 		}
-	}
 	return 0;
 }
 
-static int  doWrite;
+static int doWrite;
 
 static void
-writeAuth (FILE *file, Xauth *auth)
+writeAuth( FILE *file, Xauth *auth )
 {
-    if (debugLevel & DEBUG_AUTH) {	/* normally too verbose */
-	Debug (	"writeAuth: doWrite = %d\n"
-		"family: %d\n"
-		"addr:   %02[*:hhx\n"
-		"number: %02[*:hhx\n"
-		"name:   %02[*:hhx\n"
-		"data:   %02[*:hhx\n", 
-		doWrite, auth->family,
-		auth->address_length, auth->address,
-		auth->number_length, auth->number,
-		auth->name_length, auth->name,
-		auth->data_length, auth->data);
-    }
-    if (doWrite)
-	XauWriteAuth (file, auth);
+	if (debugLevel & DEBUG_AUTH) /* normally too verbose */
+		Debug( "writeAuth: doWrite = %d\n"
+		       "family: %d\n"
+		       "addr:    %02[*:hhx\n"
+		       "number:  %02[*:hhx\n"
+		       "name:    %02[*:hhx\n"
+		       "data:    %02[*:hhx\n",
+		       doWrite, auth->family,
+		       auth->address_length, auth->address,
+		       auth->number_length, auth->number,
+		       auth->name_length, auth->name,
+		       auth->data_length, auth->data );
+	if (doWrite)
+		XauWriteAuth( file, auth );
 }
 
 static void
-writeAddr (
-    int		family,
-    int		addr_length,
-    char	*addr,
-    FILE	*file,
-    Xauth	*auth)
+writeAddr( int family, int addr_length, char *addr, FILE *file, Xauth *auth )
 {
-	auth->family = (unsigned short) family;
+	auth->family = (unsigned short)family;
 	auth->address_length = addr_length;
 	auth->address = addr;
-	Debug ("writeAddr: writing and saving an entry\n");
-	writeAuth (file, auth);
-	saveEntry (auth);
+	Debug( "writeAddr: writing and saving an entry\n" );
+	writeAuth( file, auth );
+	saveEntry( auth );
 }
 
 static void
-DefineLocal (FILE *file, Xauth *auth)
+DefineLocal( FILE *file, Xauth *auth )
 {
-	char	displayname[100];
-	char	tmp_displayname[100];
+	char displayname[100];
+	char tmp_displayname[100];
 
 	tmp_displayname[0] = 0;
 
@@ -605,17 +573,17 @@ DefineLocal (FILE *file, Xauth *auth)
 	 * Why not use gethostname()?  Well, at least on my system, I've had to
 	 * make an ugly kernel patch to get a name longer than 8 characters, and
 	 * uname() lets me access to the whole string (it smashes release, you
-	 * see), whereas gethostname() kindly truncates it for me.
+	                                               * see), whereas gethostname() kindly truncates it for me.
 	 */
 	{
-	struct utsname name;
+		struct utsname name;
 
-	uname(&name);
-	sprintf(displayname, "%.*s", sizeof(displayname) - 1, name.nodename);
+		uname( &name );
+		sprintf( displayname, "%.*s", sizeof(displayname) - 1, name.nodename );
 	}
-	writeAddr (FamilyLocal, strlen (displayname), displayname, file, auth);
+	writeAddr( FamilyLocal, strlen( displayname ), displayname, file, auth );
 
-	strcpy(tmp_displayname, displayname);
+	strcpy( tmp_displayname, displayname );
 #endif
 
 #if (!defined(NEED_UTSNAME) || defined (hpux))
@@ -630,16 +598,16 @@ DefineLocal (FILE *file, Xauth *auth)
 	 * also still create the entry using uname() above.
 	 */
 	displayname[0] = 0;
-	if (!gethostname (displayname, sizeof(displayname)))
-	    displayname[sizeof(displayname) - 1] = 0;
+	if (!gethostname( displayname, sizeof(displayname) ))
+		displayname[sizeof(displayname) - 1] = 0;
 
 	/*
 	 * If gethostname and uname both returned the same name,
 	 * do not write a duplicate entry.
 	 */
-	if (strcmp (displayname, tmp_displayname))
-	    writeAddr (FamilyLocal, strlen (displayname), displayname, 
-		       file, auth);
+	if (strcmp( displayname, tmp_displayname ))
+		writeAddr( FamilyLocal, strlen( displayname ), displayname,
+		           file, auth );
 #endif
 }
 
@@ -651,15 +619,15 @@ DefineLocal (FILE *file, Xauth *auth)
  * to a local display name.  Meets the _XTransConvertAddress's localhost
  * hack.
  */
- 
+
 static int
-ConvertAuthAddr (XdmcpNetaddr saddr, int *len, char **addr)
+ConvertAuthAddr( XdmcpNetaddr saddr, int *len, char **addr )
 {
-    int ret = ConvertAddr(saddr, len, addr);
-    if (ret == FamilyInternet &&
-	((struct in_addr *)*addr)->s_addr == htonl(0x7F000001L))
-	ret = FamilyLocal;
-    return ret;
+	int ret = ConvertAddr( saddr, len, addr );
+	if (ret == FamilyInternet &&
+	    ((struct in_addr *)*addr)->s_addr == htonl( 0x7F000001L ))
+		ret = FamilyLocal;
+	return ret;
 }
 
 #ifdef SYSV_SIOCGIFCONF
@@ -669,47 +637,44 @@ ConvertAuthAddr (XdmcpNetaddr saddr, int *len, char **addr)
 int
 ifioctl (int fd, int cmd, char *arg)
 {
-    struct strioctl ioc;
-    int ret;
+	struct strioctl ioc;
+	int ret;
 
-    bzero((char *) &ioc, sizeof(ioc));
-    ioc.ic_cmd = cmd;
-    ioc.ic_timout = 0;
-    if (cmd == SIOCGIFCONF)
-    {
-	ioc.ic_len = ((struct ifconf *) arg)->ifc_len;
-	ioc.ic_dp = ((struct ifconf *) arg)->ifc_buf;
+	bzero( (char *)&ioc, sizeof(ioc) );
+	ioc.ic_cmd = cmd;
+	ioc.ic_timout = 0;
+	if (cmd == SIOCGIFCONF) {
+		ioc.ic_len = ((struct ifconf *)arg)->ifc_len;
+		ioc.ic_dp = ((struct ifconf *)arg)->ifc_buf;
 #ifdef ISC
-	/* SIOCGIFCONF is somewhat brain damaged on ISC. The argument
-	 * buffer must contain the ifconf structure as header. Ifc_req
-	 * is also not a pointer but a one element array of ifreq
-	 * structures. On return this array is extended by enough
-	 * ifreq fields to hold all interfaces. The return buffer length
-	 * is placed in the buffer header.
-	 */
-	((struct ifconf *) ioc.ic_dp)->ifc_len =
-					 ioc.ic_len - sizeof(struct ifconf);
+		/* SIOCGIFCONF is somewhat brain damaged on ISC. The argument
+		 * buffer must contain the ifconf structure as header. Ifc_req
+		 * is also not a pointer but a one element array of ifreq
+		 * structures. On return this array is extended by enough
+		 * ifreq fields to hold all interfaces. The return buffer length
+		 * is placed in the buffer header.
+		 */
+		((struct ifconf *)ioc.ic_dp)->ifc_len =
+			ioc.ic_len - sizeof(struct ifconf);
 #endif
-    }
-    else
-    {
-	ioc.ic_len = sizeof(struct ifreq);
-	ioc.ic_dp = arg;
-    }
-    ret = ioctl(fd, I_STR, (char *) &ioc);
-    if (ret >= 0 && cmd == SIOCGIFCONF)
+	} else {
+		ioc.ic_len = sizeof(struct ifreq);
+		ioc.ic_dp = arg;
+	}
+	ret = ioctl( fd, I_STR, (char *)&ioc );
+	if (ret >= 0 && cmd == SIOCGIFCONF)
 #ifdef SVR4
-	((struct ifconf *) arg)->ifc_len = ioc.ic_len;
+		((struct ifconf *)arg)->ifc_len = ioc.ic_len;
 #endif
 #ifdef ISC
-    {
-	((struct ifconf *) arg)->ifc_len =
-				 ((struct ifconf *)ioc.ic_dp)->ifc_len;
-	((struct ifconf *) arg)->ifc_buf = 
+	{
+		((struct ifconf *)arg)->ifc_len =
+			((struct ifconf *)ioc.ic_dp)->ifc_len;
+		((struct ifconf *)arg)->ifc_buf =
 			(caddr_t)((struct ifconf *)ioc.ic_dp)->ifc_req;
-    }
+	}
 #endif
-    return(ret);
+	return (ret);
 }
 
 #endif /* SYSV_SIOCGIFCONF */
@@ -718,50 +683,49 @@ ifioctl (int fd, int cmd, char *arg)
 # include <ifaddrs.h>
 
 static void
-DefineSelf(int fd, FILE *file, Xauth *auth)
+DefineSelf( int fd, FILE *file, Xauth *auth )
 {
-    struct ifaddrs *ifap, *ifr;
-    char *addr;
-    int family, len;
-    
-    if (getifaddrs(&ifap) < 0) 
-	return;
-    for (ifr = ifap; ifr; ifr = ifr->ifa_next) {
-	len = sizeof(*(ifr->ifa_addr));
-	family = ConvertAddr((XdmcpNetaddr)(ifr->ifa_addr), &len, &addr);
-	if (family == -1 || family == FamilyLocal) 
-	    continue;
-	/*
-	 * don't write out 'localhost' entries, as
-	 * they may conflict with other local entries.
-	 * DefineLocal will always be called to add
-	 * the local entry anyway, so this one can
-	 * be tossed.
-	 */
-	if (family == FamilyInternet &&
-	    addr[0] == 127 && addr[1] == 0 &&
-	    addr[2] == 0 && addr[3] == 1)
-	{
-	    Debug ("Skipping localhost address\n");
-	    continue;
-	}
+	struct ifaddrs *ifap, *ifr;
+	char *addr;
+	int family, len;
+
+	if (getifaddrs( &ifap ) < 0)
+		return;
+	for (ifr = ifap; ifr; ifr = ifr->ifa_next) {
+		len = sizeof(*(ifr->ifa_addr));
+		family = ConvertAddr( (XdmcpNetaddr)(ifr->ifa_addr), &len, &addr );
+		if (family == -1 || family == FamilyLocal)
+			continue;
+		/*
+		 * don't write out 'localhost' entries, as
+		 * they may conflict with other local entries.
+		 * DefineLocal will always be called to add
+		 * the local entry anyway, so this one can
+		 * be tossed.
+		 */
+		if (family == FamilyInternet &&
+		    addr[0] == 127 && addr[1] == 0 && addr[2] == 0 && addr[3] == 1)
+		{
+			Debug( "Skipping localhost address\n" );
+			continue;
+		}
 # if defined(IPv6) && defined(AF_INET6)
-	if (family == FamilyInternet6) {
-	    if (IN6_IS_ADDR_LOOPBACK(((struct in6_addr *)addr))) {
-		Debug ("Skipping IPv6 localhost address\n");
-		continue;
-	    }
-	    /* Also skip XDM-AUTHORIZATION-1 */
-	    if (auth->name_length == 19 && 
-		!memcmp (auth->name, "XDM-AUTHORIZATION-1", 19)) {
-		Debug ("Skipping IPv6 XDM-AUTHORIZATION-1\n");
-		continue;
-	    }
-	}
+		if (family == FamilyInternet6) {
+			if (IN6_IS_ADDR_LOOPBACK( ((struct in6_addr *)addr) )) {
+				Debug( "Skipping IPv6 localhost address\n" );
+				continue;
+			}
+			/* Also skip XDM-AUTHORIZATION-1 */
+			if (auth->name_length == 19 &&
+			    !memcmp( auth->name, "XDM-AUTHORIZATION-1", 19 )) {
+				Debug( "Skipping IPv6 XDM-AUTHORIZATION-1\n" );
+				continue;
+			}
+		}
 # endif
-	writeAddr (family, len, addr, file, auth);
-    }
-    freeifaddrs (ifap);
+		writeAddr( family, len, addr, file, auth );
+	}
+	freeifaddrs( ifap );
 }
 #else  /* GETIFADDRS */
 
@@ -769,22 +733,22 @@ DefineSelf(int fd, FILE *file, Xauth *auth)
 
 #include <tiuser.h>
 
-/* Define this host for access control.  Find all the hosts the OS knows about 
+/* Define this host for access control.  Find all the hosts the OS knows about
  * for this fd and add them to the selfhosts list.
  * TLI version, written without sufficient documentation.
  */
 static void
-DefineSelf (int fd, FILE *file, Xauth *auth)
+DefineSelf( int fd, FILE *file, Xauth *auth )
 {
-    struct netbuf	netb;
-    char		addrret[1024]; /* easier than t_alloc */
-    
-    netb.maxlen = sizeof(addrret);
-    netb.buf = addrret;
-    if (t_getname (fd, &netb, LOCALNAME) == -1)
-	t_error ("t_getname");
-    /* what a kludge */
-    writeAddr (FamilyInternet, 4, netb.buf+4, file, auth);
+	struct netbuf netb;
+	char addrret[1024]; /* easier than t_alloc */
+
+	netb.maxlen = sizeof(addrret);
+	netb.buf = addrret;
+	if (t_getname( fd, &netb, LOCALNAME ) == -1)
+		t_error( "t_getname" );
+	/* what a kludge */
+	writeAddr( FamilyInternet, 4, netb.buf+4, file, auth );
 }
 
 #else
@@ -802,66 +766,63 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 #include <netinet/in_var.h>
 
 static void
-DefineSelf (int fd, FILE *file, Xauth *auth)
+DefineSelf( int fd, FILE *file, Xauth *auth )
 {
-    /*
-     * The Wollongong drivers used by NCR SVR4/MP-RAS don't understand the
-     * socket IO calls that most other drivers seem to like. Because of
-     * this, this routine must be special cased for NCR. Eventually,
-     * this will be cleared up.
-     */
-
-    struct ipb ifnet;
-    struct in_ifaddr ifaddr;
-    struct strioctl str;
-    unsigned char *addr;
-    int	len, ipfd;
-
-    if ((ipfd = open ("/dev/ip", O_RDWR, 0 )) < 0) {
-	LogError ("Trouble getting interface configuration\n");
-	return;
-    }
-
-    /* Indicate that we want to start at the begining */
-    ifnet.ib_next = (struct ipb *) 1;
-
-    while (ifnet.ib_next)
-    {
-	str.ic_cmd = IPIOC_GETIPB;
-	str.ic_timout = 0;
-	str.ic_len = sizeof (struct ipb);
-	str.ic_dp = (char *) &ifnet;
-
-	if (ioctl (ipfd, (int) I_STR, (char *) &str) < 0)
-	{
-	    close (ipfd);
-	    LogError ("Trouble getting interface configuration\n");
-	    return;
-	}
-
-	ifaddr.ia_next = (struct in_ifaddr *) ifnet.if_addrlist;
-	str.ic_cmd = IPIOC_GETINADDR;
-	str.ic_timout = 0;
-	str.ic_len = sizeof (struct in_ifaddr);
-	str.ic_dp = (char *) &ifaddr;
-
-	if (ioctl (ipfd, (int) I_STR, (char *) &str) < 0)
-	{
-	    close (ipfd);
-	    LogError ("Trouble getting interface configuration\n");
-	    return;
-	}
-
 	/*
-	 * Ignore the 127.0.0.1 entry.
+	 * The Wollongong drivers used by NCR SVR4/MP-RAS don't understand the
+	 * socket IO calls that most other drivers seem to like. Because of
+	 * this, this routine must be special cased for NCR. Eventually,
+	 * this will be cleared up.
 	 */
-	if (IA_SIN(&ifaddr)->sin_addr.s_addr == htonl(0x7f000001) )
-		continue;
 
-	writeAddr (FamilyInternet, 4, (char *)&(IA_SIN(&ifaddr)->sin_addr), file, auth);
- 
-    }
-    close(ipfd);
+	struct ipb ifnet;
+	struct in_ifaddr ifaddr;
+	struct strioctl str;
+	unsigned char *addr;
+	int len, ipfd;
+
+	if ((ipfd = open( "/dev/ip", O_RDWR, 0 )) < 0) {
+		LogError( "Trouble getting interface configuration\n" );
+		return;
+	}
+
+	/* Indicate that we want to start at the begining */
+	ifnet.ib_next = (struct ipb *)1;
+
+	while (ifnet.ib_next) {
+		str.ic_cmd = IPIOC_GETIPB;
+		str.ic_timout = 0;
+		str.ic_len = sizeof(struct ipb);
+		str.ic_dp = (char *)&ifnet;
+
+		if (ioctl( ipfd, (int)I_STR, (char *)&str ) < 0) {
+			close( ipfd );
+			LogError( "Trouble getting interface configuration\n" );
+			return;
+		}
+
+		ifaddr.ia_next = (struct in_ifaddr *)ifnet.if_addrlist;
+		str.ic_cmd = IPIOC_GETINADDR;
+		str.ic_timout = 0;
+		str.ic_len = sizeof(struct in_ifaddr);
+		str.ic_dp = (char *)&ifaddr;
+
+		if (ioctl( ipfd, (int)I_STR, (char *)&str ) < 0) {
+			close( ipfd );
+			LogError( "Trouble getting interface configuration\n" );
+			return;
+		}
+
+		/*
+		 * Ignore the 127.0.0.1 entry.
+		 */
+		if (IA_SIN( &ifaddr )->sin_addr.s_addr == htonl( 0x7f000001 ) )
+				continue;
+
+		writeAddr( FamilyInternet, 4, (char *)&(IA_SIN( &ifaddr )->sin_addr), file, auth );
+
+	}
+	close( ipfd );
 }
 
 #else /* WINTCP */
@@ -886,18 +847,18 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 #endif
 
 #ifdef USE_SIOCGLIFCONF
-# define ifr_type    struct lifreq
+# define ifr_type struct lifreq
 #else
-# define ifr_type    struct ifreq
+# define ifr_type struct ifreq
 #endif
 
 /* Handle variable length ifreq in BNR2 and later */
 #ifdef VARIABLE_IFREQ
-# define ifr_size(p) (sizeof (struct ifreq) + \
-		      (p->ifr_addr.sa_len > sizeof (p->ifr_addr) ? \
-		       p->ifr_addr.sa_len - sizeof (p->ifr_addr) : 0))
+# define ifr_size(p) (sizeof(struct ifreq) + \
+                      (p->ifr_addr.sa_len > sizeof(p->ifr_addr) ? \
+                       p->ifr_addr.sa_len - sizeof(p->ifr_addr) : 0))
 #else
-# define ifr_size(p) (sizeof (ifr_type))
+# define ifr_size(p) (sizeof(ifr_type))
 #endif
 
 #ifdef USE_SIOCGLIFCONF
@@ -906,10 +867,10 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 # define IFC_LEN(ifc) ifc.lifc_len
 # define IFR_ADDR(ifr) ifr->lifr_addr
 # define IFR_NAME(ifr) ifr->lifr_name
-#else    
+#else
 # define IFC_IOCTL_REQ SIOCGIFCONF
 # ifdef ISC
-#  define IFC_REQ(ifc) ((ifr_type *) ifc.ifc_buf)
+#  define IFC_REQ(ifc) ((ifr_type *)ifc.ifc_buf)
 # else
 #  define IFC_REQ(ifc) ifc.ifc_req
 # endif
@@ -918,160 +879,158 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 # define IFR_NAME(ifr) ifr->ifr_name
 #endif
 
-/* Define this host for access control.  Find all the hosts the OS knows about 
+/* Define this host for access control.  Find all the hosts the OS knows about
  * for this fd and add them to the selfhosts list.
  */
 static void
-DefineSelf (int fd, FILE *file, Xauth *auth)
+DefineSelf( int fd, FILE *file, Xauth *auth )
 {
-    char		buf[2048], *cp, *cplim;
-    int 		len;
-    char 		*addr;
-    int 		family;
-    ifr_type		*ifr;
+	char buf[2048], *cp, *cplim;
+	int len;
+	char *addr;
+	int family;
+	ifr_type *ifr;
 #ifdef USE_SIOCGLIFCONF
-    int			n;
-    void *		bufptr = buf;
-    size_t		buflen = sizeof(buf);
-    struct lifconf	ifc;
+	int n;
+	void * bufptr = buf;
+	size_t buflen = sizeof(buf);
+	struct lifconf ifc;
 # ifdef SIOCGLIFNUM
-    struct lifnum	ifn;
+	struct lifnum ifn;
 # endif
 #else
-    struct ifconf	ifc;
+	struct ifconf ifc;
 #endif
-    
+
 #if defined(SIOCGLIFNUM) && defined(SIOCGLIFCONF)
-    ifn.lifn_family = AF_UNSPEC;
-    ifn.lifn_flags = 0;
-    if (ioctl (fd, (int) SIOCGLIFNUM, (char *) &ifn) < 0)
-	LogError ("Failed getting interface count\n");
-    if (buflen < (ifn.lifn_count * sizeof(struct lifreq))) {
-	buflen = ifn.lifn_count * sizeof(struct lifreq);
-	bufptr = Malloc (buflen);
-    }
+	ifn.lifn_family = AF_UNSPEC;
+	ifn.lifn_flags = 0;
+	if (ioctl( fd, (int)SIOCGLIFNUM, (char *)&ifn ) < 0)
+		LogError( "Failed getting interface count\n" );
+	if (buflen < (ifn.lifn_count * sizeof(struct lifreq))) {
+		buflen = ifn.lifn_count * sizeof(struct lifreq);
+		bufptr = Malloc( buflen );
+	}
 #endif
 
 #ifdef USE_SIOCGLIFCONF
-    ifc.lifc_family = AF_UNSPEC;
-    ifc.lifc_flags = 0;
-    ifc.lifc_len = buflen;
-    ifc.lifc_buf = bufptr;
+	ifc.lifc_family = AF_UNSPEC;
+	ifc.lifc_flags = 0;
+	ifc.lifc_len = buflen;
+	ifc.lifc_buf = bufptr;
 #else
-    ifc.ifc_len = sizeof (buf);
-    ifc.ifc_buf = buf;
+	ifc.ifc_len = sizeof(buf);
+	ifc.ifc_buf = buf;
 #endif
-    if (ifioctl (fd, IFC_IOCTL_REQ, (char *) &ifc) < 0) {
-	LogError ("Trouble getting network interface configuration\n");
+	if (ifioctl (fd, IFC_IOCTL_REQ, (char *)&ifc) < 0) {
+		LogError( "Trouble getting network interface configuration\n" );
+#if defined(SIOCGLIFNUM) && defined(SIOCGLIFCONF)
+		if (bufptr != buf)
+			free( bufptr );
+#endif
+		return;
+	}
+
+	cplim = (char *)IFC_REQ( ifc ) + IFC_LEN( ifc );
+
+	for (cp = (char *)IFC_REQ( ifc ); cp < cplim; cp += ifr_size (ifr)) {
+		ifr = (ifr_type *) cp;
+#ifdef DNETCONN
+		/*
+		 * this is ugly but SIOCGIFCONF returns decnet addresses in
+		 * a different form from other decnet calls
+		 */
+		if (IFR_ADDR( ifr ).sa_family == AF_DECnet) {
+				len = sizeof(struct dn_naddr);
+				addr = (char *)IFR_ADDR( ifr ).sa_data;
+				family = FamilyDECnet;
+		} else
+#endif
+		{
+			family = ConvertAddr( (XdmcpNetaddr)&IFR_ADDR( ifr ), &len, &addr );
+			if (family < 0)
+				continue;
+
+			if (len == 0) {
+				Debug( "skipping zero length address\n" );
+				continue;
+			}
+			/*
+			 * don't write out 'localhost' entries, as
+			 * they may conflict with other local entries.
+			 * DefineLocal will always be called to add
+			 * the local entry anyway, so this one can
+			 * be tossed.
+			 */
+			if (family == FamilyInternet &&
+			    addr[0] == 127 && addr[1] == 0 &&
+			    addr[2] == 0 && addr[3] == 1)
+			{
+					Debug( "skipping localhost address\n" );
+					continue;
+			}
+#if defined(IPv6) && defined(AF_INET6)
+			if (family == FamilyInternet6) {
+				if (IN6_IS_ADDR_LOOPBACK( ((struct in6_addr *)addr) )) {
+					Debug( "Skipping IPv6 localhost address\n" );
+					continue;
+				}
+				/* Also skip XDM-AUTHORIZATION-1 */
+				if (auth->name_length == 19 &&
+				    !memcmp( auth->name, "XDM-AUTHORIZATION-1", 19 )) {
+					Debug( "Skipping IPv6 XDM-AUTHORIZATION-1\n" );
+					continue;
+				}
+			}
+#endif
+		}
+		Debug( "DefineSelf: write network address, length %d\n", len );
+		writeAddr( family, len, addr, file, auth );
+	}
 #if defined(SIOCGLIFNUM) && defined(SIOCGLIFCONF)
 	if (bufptr != buf)
-	    free (bufptr);
-#endif
-	return;
-    }
-
-    cplim = (char *) IFC_REQ (ifc) + IFC_LEN (ifc);
-
-    for (cp = (char *) IFC_REQ (ifc); cp < cplim; cp += ifr_size (ifr))
-    {
-	ifr = (ifr_type *) cp;
-#ifdef DNETCONN
-	/*
-	 * this is ugly but SIOCGIFCONF returns decnet addresses in
-	 * a different form from other decnet calls
-	 */
-	if (IFR_ADDR (ifr).sa_family == AF_DECnet) {
-		len = sizeof (struct dn_naddr);
-		addr = (char *)IFR_ADDR (ifr).sa_data;
-		family = FamilyDECnet;
-	} else
-#endif
-	{
-	    family = ConvertAddr ((XdmcpNetaddr) &IFR_ADDR (ifr), &len, &addr);
-	    if (family < 0)
-		continue;
-
-	    if (len == 0)
-	    {
-		Debug ("skipping zero length address\n");
-		continue;
-	    }
-	    /*
-	     * don't write out 'localhost' entries, as
-	     * they may conflict with other local entries.
-	     * DefineLocal will always be called to add
-	     * the local entry anyway, so this one can
-	     * be tossed.
-	     */
-	    if (family == FamilyInternet &&
-		addr[0] == 127 && addr[1] == 0 &&
-		addr[2] == 0 && addr[3] == 1)
-	    {
-		    Debug ("skipping localhost address\n");
-		    continue;
-	    }
-#if defined(IPv6) && defined(AF_INET6)
-	    if (family == FamilyInternet6) {
-		if (IN6_IS_ADDR_LOOPBACK(((struct in6_addr *)addr))) {
-		    Debug ("Skipping IPv6 localhost address\n");
-		    continue;
-		}
-		/* Also skip XDM-AUTHORIZATION-1 */
-		if (auth->name_length == 19 && 
-		    !memcmp (auth->name, "XDM-AUTHORIZATION-1", 19)) {
-		    Debug ("Skipping IPv6 XDM-AUTHORIZATION-1\n");
-		    continue;
-		}
-	    }
-#endif
-	}
-	Debug ("DefineSelf: write network address, length %d\n", len);
-	writeAddr (family, len, addr, file, auth);
-    }
-#if defined(SIOCGLIFNUM) && defined(SIOCGLIFCONF)
-    if (bufptr != buf)
-	free (bufptr);
+		free( bufptr );
 #endif
 }
 
 #else /* SIOCGIFCONF */
 
-/* Define this host for access control.  Find all the hosts the OS knows about 
+/* Define this host for access control.  Find all the hosts the OS knows about
  * for this fd and add them to the selfhosts list.
  */
 static void
-DefineSelf (int fd, int file, int auth)
+DefineSelf( int fd, int file, int auth )
 {
-    int		len;
-    caddr_t	addr;
-    int		family;
+	int len;
+	caddr_t addr;
+	int family;
 
-    struct utsname name;
-    register struct hostent  *hp;
+	struct utsname name;
+	register struct hostent  *hp;
 
-    union {
-	struct  sockaddr   sa;
-	struct  sockaddr_in  in;
-    } saddr;
-	
-    struct	sockaddr_in	*inetaddr;
+	union {
+		struct sockaddr   sa;
+		struct sockaddr_in  in;
+	} saddr;
 
-    /* hpux:
-     * Why not use gethostname()?  Well, at least on my system, I've had to
-     * make an ugly kernel patch to get a name longer than 8 characters, and
-     * uname() lets me access to the whole string (it smashes release, you
-     * see), whereas gethostname() kindly truncates it for me.
-     */
-    uname(&name);
-    if ((hp = gethostbyname (name.nodename))) {
-	saddr.sa.sa_family = hp->h_addrtype;
-	inetaddr = (struct sockaddr_in *) (&(saddr.sa));
-	memmove( (char *) &(inetaddr->sin_addr), (char *) hp->h_addr, (int) hp->h_length);
-	if ( (family = ConvertAddr ( &(saddr.sa), &len, &addr)) >= 0) {
-	    writeAddr (FamilyInternet, sizeof (inetaddr->sin_addr),
-			(char *) (&inetaddr->sin_addr), file, auth);
+	struct sockaddr_in *inetaddr;
+
+	/* hpux:
+	 * Why not use gethostname()?  Well, at least on my system, I've had to
+	 * make an ugly kernel patch to get a name longer than 8 characters, and
+	 * uname() lets me access to the whole string (it smashes release, you
+	 * see), whereas gethostname() kindly truncates it for me.
+	 */
+	uname( &name );
+	if ((hp = gethostbyname( name.nodename ))) {
+		saddr.sa.sa_family = hp->h_addrtype;
+		inetaddr = (struct sockaddr_in *)(&(saddr.sa));
+		memmove( (char *)&(inetaddr->sin_addr), (char *)hp->h_addr,
+		         (int)hp->h_length );
+		if ( (family = ConvertAddr( &(saddr.sa), &len, &addr )) >= 0)
+			writeAddr( FamilyInternet, sizeof(inetaddr->sin_addr),
+			           (char *)(&inetaddr->sin_addr), file, auth );
 	}
-    }
 }
 
 #endif /* SIOCGIFCONF else */
@@ -1082,85 +1041,81 @@ DefineSelf (int fd, int file, int auth)
 #endif /* XDMCP */
 
 static void
-setAuthNumber (Xauth *auth, const char *name)
+setAuthNumber( Xauth *auth, const char *name )
 {
-    char	*colon;
-    char	*dot;
+	char *colon;
+	char *dot;
 
-    Debug ("setAuthNumber %s\n", name);
-    colon = strrchr(name, ':');
-    if (colon) {
-	++colon;
-	dot = strchr(colon, '.');
-	if (dot)
-	    auth->number_length = dot - colon;
-	else
-	    auth->number_length = strlen (colon);
-	if (!StrNDup (&auth->number, colon, auth->number_length))
-	    auth->number_length = 0;
-	Debug ("setAuthNumber: %s\n", auth->number);
-    }
+	Debug( "setAuthNumber %s\n", name );
+	colon = strrchr( name, ':' );
+	if (colon) {
+		++colon;
+		dot = strchr( colon, '.' );
+		if (dot)
+			auth->number_length = dot - colon;
+		else
+			auth->number_length = strlen( colon );
+		if (!StrNDup( &auth->number, colon, auth->number_length ))
+			auth->number_length = 0;
+		Debug( "setAuthNumber: %s\n", auth->number );
+	}
 }
 
 static void
-writeLocalAuth (FILE *file, Xauth *auth, const char *name)
+writeLocalAuth( FILE *file, Xauth *auth, const char *name )
 {
 #ifdef XDMCP
-    int	fd;
+	int fd;
 #endif
 
-    Debug ("writeLocalAuth: %s %.*s\n", name, auth->name_length, auth->name);
-    setAuthNumber (auth, name);
+	Debug( "writeLocalAuth: %s %.*s\n", name, auth->name_length, auth->name );
+	setAuthNumber( auth, name );
 #ifdef XDMCP
 #ifdef STREAMSCONN
-    fd = t_open ("/dev/tcp", O_RDWR, 0);
-    t_bind(fd, NULL, NULL);
-    DefineSelf (fd, file, auth);
-    t_unbind (fd);
-    t_close (fd);
+	fd = t_open( "/dev/tcp", O_RDWR, 0 );
+	t_bind( fd, NULL, NULL );
+	DefineSelf( fd, file, auth );
+	t_unbind( fd );
+	t_close( fd );
 #endif
 #ifdef TCPCONN
 #if defined(IPv6) && defined(AF_INET6)
-    fd = socket (AF_INET6, SOCK_STREAM, 0);
-    if (fd < 0)
+	fd = socket( AF_INET6, SOCK_STREAM, 0 );
+	if (fd < 0)
 #endif
-    fd = socket (AF_INET, SOCK_STREAM, 0);
-    DefineSelf (fd, file, auth);
-    close (fd);
+	fd = socket( AF_INET, SOCK_STREAM, 0 );
+	DefineSelf( fd, file, auth );
+	close( fd );
 #endif
 #ifdef DNETCONN
-    fd = socket (AF_DECnet, SOCK_STREAM, 0);
-    DefineSelf (fd, file, auth);
-    close (fd);
+	fd = socket( AF_DECnet, SOCK_STREAM, 0 );
+	DefineSelf( fd, file, auth );
+	close( fd );
 #endif
 #endif /* XDMCP */
-    DefineLocal (file, auth);
+	DefineLocal( file, auth );
 }
 
 #ifdef XDMCP
 
 static void
-writeRemoteAuth (FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const char *name)
+writeRemoteAuth( FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const char *name )
 {
-    int	    family = FamilyLocal;
-    char    *addr;
-    
-    Debug ("writeRemoteAuth: %s %.*s\n", name, auth->name_length, auth->name);
-    if (!peer || peerlen < 2)
-	return;
-    setAuthNumber (auth, name);
-    family = ConvertAuthAddr (peer, &peerlen, &addr);
-    Debug ("writeRemoteAuth: family %d\n", family);
-    if (family != FamilyLocal)
-    {
-	Debug ("writeRemoteAuth: %d, %02[*:hhx\n",
-		family, peerlen, addr);
-	writeAddr (family, peerlen, addr, file, auth);
-    }
-    else
-    {
-	writeLocalAuth (file, auth, name);
-    }
+	int family = FamilyLocal;
+	char *addr;
+
+	Debug( "writeRemoteAuth: %s %.*s\n", name, auth->name_length, auth->name );
+	if (!peer || peerlen < 2)
+		return;
+	setAuthNumber( auth, name );
+	family = ConvertAuthAddr( peer, &peerlen, &addr );
+	Debug( "writeRemoteAuth: family %d\n", family );
+	if (family != FamilyLocal) {
+		Debug( "writeRemoteAuth: %d, %02[*:hhx\n",
+		       family, peerlen, addr );
+		writeAddr( family, peerlen, addr, file, auth );
+	} else
+		writeLocalAuth( file, auth, name );
 }
 
 #endif /* XDMCP */
@@ -1168,203 +1123,196 @@ writeRemoteAuth (FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const 
 #define NBSIZE 1024
 
 static void
-startUserAuth (char *buf, char *nbuf, 
-	       FILE **old, FILE **new)
+startUserAuth( char *buf, char *nbuf, FILE **old, FILE **new )
 {
-    const char	*home;
-    int		lockStatus;
+	const char *home;
+	int lockStatus;
 
-    initAddrs ();
-    *new = 0;
-    if ((home = getEnv (userEnviron, "HOME")) && strlen (home) < NBSIZE - 12) {
-	sprintf (buf, "%s/.Xauthority", home);
-	Debug ("XauLockAuth %s\n", buf);
-	lockStatus = XauLockAuth (buf, 1, 2, 10);
-	Debug ("lock is %d\n", lockStatus);
-	if (lockStatus == LOCK_SUCCESS)
-	    if (!openFiles (buf, nbuf, old, new))
-		XauUnlockAuth (buf);
-    }
-    if (!*new)
-	LogInfo ("Can't update authorization file in home dir %s\n", home);
+	initAddrs();
+	*new = 0;
+	if ((home = getEnv( userEnviron, "HOME" )) && strlen( home ) < NBSIZE - 12) {
+		sprintf( buf, "%s/.Xauthority", home );
+		Debug( "XauLockAuth %s\n", buf );
+		lockStatus = XauLockAuth( buf, 1, 2, 10 );
+		Debug( "lock is %d\n", lockStatus );
+		if (lockStatus == LOCK_SUCCESS)
+			if (!openFiles( buf, nbuf, old, new ))
+				XauUnlockAuth( buf );
+	}
+	if (!*new)
+		LogInfo( "Can't update authorization file in home dir %s\n", home );
 }
 
 static void
-endUserAuth (FILE *old, FILE *new, const char *nname)
+endUserAuth( FILE *old, FILE *new, const char *nname )
 {
-    Xauth	*entry;
-    struct stat	statb;
+	Xauth *entry;
+	struct stat statb;
 
-    if (old) {
-	if (fstat (fileno (old), &statb) != -1)
-	    chmod (nname, (int) (statb.st_mode & 0777));
-	/*SUPPRESS 560*/
-	while ((entry = XauReadAuth (old))) {
-	    if (!checkEntry (entry))
-	    {
-		Debug ("writing an entry\n");
-		writeAuth (new, entry);
-	    }
-	    XauDisposeAuth (entry);
+	if (old) {
+		if (fstat( fileno( old ), &statb ) != -1)
+			chmod( nname, (int)(statb.st_mode & 0777) );
+		/*SUPPRESS 560*/
+		while ((entry = XauReadAuth( old ))) {
+			if (!checkEntry( entry )) {
+				Debug( "writing an entry\n" );
+				writeAuth( new, entry );
+			}
+			XauDisposeAuth( entry );
+		}
+		fclose( old );
 	}
-	fclose (old);
-    }
-    fclose (new);
-    doneAddrs ();
+	fclose( new );
+	doneAddrs();
 }
 
 static char *
-moveUserAuth (const char *name, char *new_name, char *envname)
+moveUserAuth( const char *name, char *new_name, char *envname )
 {
-    if (unlink (name))
-	Debug ("unlink %s failed\n", name);
-    if (link (new_name, name)) {
-	Debug ("link failed %s %s\n", new_name, name);
-	LogError ("Can't move authorization into place\n");
-	envname = new_name;
-    } else {
-	Debug ("new authorization moved into place\n");
-	unlink (new_name);
-    }
-    XauUnlockAuth (name);
-    return envname;
-}
-
-void
-SetUserAuthorization (struct display *d)
-{
-    FILE	*old, *new;
-    char	*name;
-    char	*envname;
-    Xauth	**auths;
-    int		i;
-    int		magicCookie;
-    int		data_len;
-    char	name_buf[NBSIZE], new_name[NBSIZE + 2];
-
-    Debug ("SetUserAuthorization\n");
-    auths = d->authorizations;
-    if (auths) {
-	startUserAuth (name_buf, new_name, &old, &new);
-	if (new) {
-	    envname = 0;
-	    name = name_buf;
+	if (unlink( name ))
+		Debug( "unlink %s failed\n", name );
+	if (link( new_name, name )) {
+		Debug( "link failed %s %s\n", new_name, name );
+		LogError( "Can't move authorization into place\n" );
+		envname = new_name;
 	} else {
-	    if (strlen (d->userAuthDir) >= NBSIZE - 13)
-		return;
-	    /*
-	     * Note, that we don't lock the auth file here, as it's
-	     * temporary - we can assume, that we are the only ones
-	     * knowing about this file anyway.
-	     */
-#ifdef HAS_MKSTEMP
-	    sprintf (name_buf, "%s/.XauthXXXXXX", d->userAuthDir);
-	    new = fdOpenW (mkstemp (name_buf));
-#else
-	    for (i = 0; i < 100; i++) {
-		sprintf (name_buf, "%s/.XauthXXXXXX", d->userAuthDir);
-		(void) mktemp (name_buf);
-		if ((new = 
-		     fdOpenW (open (name_buf, O_WRONLY | O_CREAT | O_EXCL, 
-				    0600))))
-		    break;
-	    }
-#endif
-	    if (!new) {
-		LogError ("Can't create authorization file in %s\n", 
-			  d->userAuthDir);
-		return;
-	    }
-	    name = 0;
-	    envname = name_buf;
-	    old = 0;
+		Debug( "new authorization moved into place\n" );
+		unlink( new_name );
 	}
-	doWrite = 1;
-	Debug ("%d authorization protocols for %s\n", d->authNum, d->name);
-	/*
-	 * Write MIT-MAGIC-COOKIE-1 authorization first, so that
-	 * R4 clients which only knew that, and used the first
-	 * matching entry will continue to function
-	 */
-	magicCookie = -1;
-	for (i = 0; i < d->authNum; i++)
-	{
-	    if (auths[i]->name_length == 18 &&
-		!memcmp (auths[i]->name, "MIT-MAGIC-COOKIE-1", 18))
-	    {
-		magicCookie = i;
-		if ((d->displayType & d_location) == dLocal)
-		    writeLocalAuth (new, auths[i], d->name);
-#ifdef XDMCP
-		else
-		    writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
-				     d->peer.length, d->name);
-#endif
-		break;
-	    }
-	}
-	/* now write other authorizations */
-	for (i = 0; i < d->authNum; i++)
-	{
-	    if (i != magicCookie)
-	    {
-		data_len = auths[i]->data_length;
-		/* client will just use default Kerberos cache, so don't
-		 * even write cache info into the authority file.
-		 */
-		if (auths[i]->name_length == 14 &&
-		    !strncmp (auths[i]->name, "MIT-KERBEROS-5", 14))
-		    auths[i]->data_length = 0;
-		if ((d->displayType & d_location) == dLocal)
-		    writeLocalAuth (new, auths[i], d->name);
-#ifdef XDMCP
-		else
-		    writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
-				     d->peer.length, d->name);
-#endif
-		auths[i]->data_length = data_len;
-	    }
-	}
-	endUserAuth (old, new, new_name);
-	if (name)
-	    envname = moveUserAuth (name, new_name, envname);
-	if (envname) {
-	    userEnviron = setEnv (userEnviron, "XAUTHORITY", envname);
-	    systemEnviron = setEnv (systemEnviron, "XAUTHORITY", envname);
-	}
-	/* a chown() used to be here, but this code runs as user anyway */
-    }
-    Debug ("done SetUserAuthorization\n");
+	XauUnlockAuth( name );
+	return envname;
 }
 
 void
-RemoveUserAuthorization (struct display *d)
+SetUserAuthorization( struct display *d )
 {
-    Xauth   **auths;
-    FILE    *old, *new;
-    int	    i;
-    char    name[NBSIZE], new_name[NBSIZE + 2];
+	FILE *old, *new;
+	char *name;
+	char *envname;
+	Xauth **auths;
+	int i;
+	int magicCookie;
+	int data_len;
+	char name_buf[NBSIZE], new_name[NBSIZE + 2];
 
-    if (!(auths = d->authorizations))
-	return;
-    Debug ("RemoveUserAuthorization\n");
-    startUserAuth (name, new_name, &old, &new);
-    if (new)
-    {
-	doWrite = 0;
-	for (i = 0; i < d->authNum; i++)
-	{
-	    if ((d->displayType & d_location) == dLocal)
-		writeLocalAuth (new, auths[i], d->name);
-#ifdef XDMCP
-	    else
-		writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
-				 d->peer.length, d->name);
+	Debug( "SetUserAuthorization\n" );
+	auths = d->authorizations;
+	if (auths) {
+		startUserAuth( name_buf, new_name, &old, &new );
+		if (new) {
+			envname = 0;
+			name = name_buf;
+		} else {
+			if (strlen( d->userAuthDir ) >= NBSIZE - 13)
+				return;
+			/*
+			 * Note, that we don't lock the auth file here, as it's
+			 * temporary - we can assume, that we are the only ones
+			 * knowing about this file anyway.
+			 */
+#ifdef HAS_MKSTEMP
+			sprintf( name_buf, "%s/.XauthXXXXXX", d->userAuthDir );
+			new = fdOpenW( mkstemp( name_buf ) );
+#else
+			for (i = 0; i < 100; i++) {
+				sprintf( name_buf, "%s/.XauthXXXXXX", d->userAuthDir );
+				(void)mktemp( name_buf );
+				if ((new =
+				     fdOpenW( open( name_buf, O_WRONLY | O_CREAT | O_EXCL,
+				                    0600 ) )))
+					break;
+			}
 #endif
+			if (!new) {
+				LogError( "Can't create authorization file in %s\n",
+				          d->userAuthDir );
+				return;
+			}
+			name = 0;
+			envname = name_buf;
+			old = 0;
+		}
+		doWrite = 1;
+		Debug( "%d authorization protocols for %s\n", d->authNum, d->name );
+		/*
+		 * Write MIT-MAGIC-COOKIE-1 authorization first, so that
+		 * R4 clients which only knew that, and used the first
+		 * matching entry will continue to function
+		 */
+		magicCookie = -1;
+		for (i = 0; i < d->authNum; i++) {
+			if (auths[i]->name_length == 18 &&
+			    !memcmp( auths[i]->name, "MIT-MAGIC-COOKIE-1", 18 ))
+			{
+				magicCookie = i;
+				if ((d->displayType & d_location) == dLocal)
+					writeLocalAuth( new, auths[i], d->name );
+#ifdef XDMCP
+				else
+					writeRemoteAuth( new, auths[i], (XdmcpNetaddr)d->peer.data,
+					                 d->peer.length, d->name );
+#endif
+				break;
+			}
+		}
+		/* now write other authorizations */
+		for (i = 0; i < d->authNum; i++) {
+			if (i != magicCookie) {
+				data_len = auths[i]->data_length;
+				/* client will just use default Kerberos cache, so don't
+				 * even write cache info into the authority file.
+				 */
+				if (auths[i]->name_length == 14 &&
+				    !strncmp( auths[i]->name, "MIT-KERBEROS-5", 14 ))
+					auths[i]->data_length = 0;
+				if ((d->displayType & d_location) == dLocal)
+					writeLocalAuth( new, auths[i], d->name );
+#ifdef XDMCP
+				else
+					writeRemoteAuth( new, auths[i], (XdmcpNetaddr)d->peer.data,
+					                 d->peer.length, d->name );
+#endif
+				auths[i]->data_length = data_len;
+			}
+		}
+		endUserAuth( old, new, new_name );
+		if (name)
+			envname = moveUserAuth( name, new_name, envname );
+		if (envname) {
+			userEnviron = setEnv( userEnviron, "XAUTHORITY", envname );
+			systemEnviron = setEnv( systemEnviron, "XAUTHORITY", envname );
+		}
+		/* a chown() used to be here, but this code runs as user anyway */
 	}
-	doWrite = 1;
-	endUserAuth (old, new, new_name);
-	(void) moveUserAuth (name, new_name, 0);
-    }
-    Debug ("done RemoveUserAuthorization\n");
+	Debug( "done SetUserAuthorization\n" );
+}
+
+void
+RemoveUserAuthorization( struct display *d )
+{
+	Xauth **auths;
+	FILE *old, *new;
+	int i;
+	char name[NBSIZE], new_name[NBSIZE + 2];
+
+	if (!(auths = d->authorizations))
+		return;
+	Debug( "RemoveUserAuthorization\n" );
+	startUserAuth( name, new_name, &old, &new );
+	if (new) {
+		doWrite = 0;
+		for (i = 0; i < d->authNum; i++) {
+			if ((d->displayType & d_location) == dLocal)
+				writeLocalAuth( new, auths[i], d->name );
+#ifdef XDMCP
+			else
+				writeRemoteAuth( new, auths[i], (XdmcpNetaddr)d->peer.data,
+				                 d->peer.length, d->name );
+#endif
+		}
+		doWrite = 1;
+		endUserAuth( old, new, new_name );
+		(void)moveUserAuth( name, new_name, 0 );
+	}
+	Debug( "done RemoveUserAuthorization\n" );
 }

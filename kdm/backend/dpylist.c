@@ -29,7 +29,7 @@ from the copyright holder.
 
 /*
  * xdm - display manager daemon
- * Author:  Keith Packard, MIT X Consortium
+ * Author: Keith Packard, MIT X Consortium
  *
  * a simple linked list of known displays
  */
@@ -38,311 +38,295 @@ from the copyright holder.
 #include "dm.h"
 #include "dm_error.h"
 
-struct display	*displays;
-static struct disphist	*disphist;
+struct display *displays;
+static struct disphist *disphist;
 
 int
-AnyDisplaysLeft (void)
+AnyDisplaysLeft( void )
 {
-    return displays != (struct display *) 0;
+	return displays != (struct display *)0;
 }
 
 int
-AnyActiveDisplays (void)
+AnyActiveDisplays( void )
 {
-    struct display *d;
+	struct display *d;
 
-Debug("AnyActiveDisplays?\n");
-    for (d = displays; d; d = d->next)
-	if (d->status == remoteLogin || d->userSess >= 0)
-{Debug(" yes\n");
-	    return 1;
-}Debug(" no\n");
-    return 0;
+	for (d = displays; d; d = d->next)
+		if (d->status == remoteLogin || d->userSess >= 0)
+			return 1;
+	return 0;
 }
 
 int
-AnyRunningDisplays (void)
+AnyRunningDisplays( void )
 {
-    struct display *d;
+	struct display *d;
 
-Debug("AnyRunningDisplays?\n");
-    for (d = displays; d; d = d->next)
-	switch (d->status) {
-	case notRunning:
-	case textMode:
-	case reserve:
-	    break;
-	default:
-Debug(" yes\n");
-	    return 1;
-	}
-Debug(" no\n");
-    return 0;
+	for (d = displays; d; d = d->next)
+		switch (d->status) {
+		case notRunning:
+		case textMode:
+		case reserve:
+			break;
+		default:
+			return 1;
+		}
+	return 0;
 }
 
 int
-AnyReserveDisplays (void)
+AnyReserveDisplays( void )
 {
-    struct display *d;
+	struct display *d;
 
-    for (d = displays; d; d = d->next)
-	if ((d->displayType & d_lifetime) == dReserve)
-	    return 1;
-    return 0;
+	for (d = displays; d; d = d->next)
+		if ((d->displayType & d_lifetime) == dReserve)
+			return 1;
+	return 0;
 }
 
 int
-idleReserveDisplays (void)
+idleReserveDisplays( void )
 {
-    struct display *d;
-    int cnt = 0;
+	struct display *d;
+	int cnt = 0;
 
-    for (d = displays; d; d = d->next)
-	if (d->status == reserve)
-	    cnt++;
-    return cnt;
+	for (d = displays; d; d = d->next)
+		if (d->status == reserve)
+			cnt++;
+	return cnt;
 }
 
 #ifdef AUTO_RESERVE
 int
-AllLocalDisplaysLocked (struct display *dp)
+AllLocalDisplaysLocked( struct display *dp )
 {
-    struct display *d;
+	struct display *d;
 
-Debug("AllLocalDisplaysLocked?\n");
-    for (d = displays; d; d = d->next)
-	if (d != dp &&
-	    (d->displayType & d_location) == dLocal &&
-	    d->status == running && !d->hstent->lock)
-{Debug(" no\n");
-	    return 0;
-}Debug(" yes\n");
-    return 1;
+	for (d = displays; d; d = d->next)
+		if (d != dp &&
+		    (d->displayType & d_location) == dLocal &&
+		    d->status == running && !d->hstent->lock)
+			return 0;
+	return 1;
 }
 
 void
-ReapReserveDisplays (void)
+ReapReserveDisplays( void )
 {
-    struct display *d, *rd;
+	struct display *d, *rd;
 
-Debug("ReapReserveDisplays\n");
-    for (rd = 0, d = displays; d; d = d->next)
-	if ((d->displayType & d_location) == dLocal && d->status == running &&
-	    !d->hstent->lock)
-	{
-	    if (rd)
-	    {
-		rd->idleTimeout = 0;
-Debug ("killing reserve display %s\n", rd->name);
-		if (rd->pid != -1)
-		    kill (rd->pid, SIGALRM);
-		rd = 0;
-	    }
-	    if ((d->displayType & d_lifetime) == dReserve &&
-		d->userSess < 0)
-		rd = d;
-	}
+	for (rd = 0, d = displays; d; d = d->next)
+		if ((d->displayType & d_location) == dLocal && d->status == running &&
+		    !d->hstent->lock)
+		{
+			if (rd) {
+				rd->idleTimeout = 0;
+				if (rd->pid != -1)
+					kill( rd->pid, SIGALRM );
+				rd = 0;
+			}
+			if ((d->displayType & d_lifetime) == dReserve &&
+			    d->userSess < 0)
+				rd = d;
+		}
 }
 #endif /* AUTO_RESERVE */
 
 int
-StartReserveDisplay (int lt)
+StartReserveDisplay( int lt )
 {
-    struct display *d, *rd;
+	struct display *d, *rd;
 
-Debug("StartReserveDisplay\n");
-    for (rd = 0, d = displays; d; d = d->next)
-	if (d->status == reserve)
-	    rd = d;
-    if (rd)
-    {
-Debug("starting reserve display %s, timeout %d\n", rd->name, lt);
-	rd->idleTimeout = lt;
-	rd->status = notRunning;
-	return 1;
-    }
-    return 0;
+	for (rd = 0, d = displays; d; d = d->next)
+		if (d->status == reserve)
+			rd = d;
+	if (rd) {
+		rd->idleTimeout = lt;
+		rd->status = notRunning;
+		return 1;
+	}
+	return 0;
 }
 
 void
-ForEachDisplay (void (*f)(struct display *))
+ForEachDisplay( void (*f)( struct display * ) )
 {
-    struct display *d, *next;
+	struct display *d, *next;
 
-    for (d = displays; d; d = next) {
-	next = d->next;
-	(*f) (d);
-    }
+	for (d = displays; d; d = next) {
+		next = d->next;
+		(*f)( d );
+	}
 }
 
 #ifdef HAVE_VTS
 static void
-_forEachDisplayRev (struct display *d, void (*f)(struct display *))
+_forEachDisplayRev( struct display *d, void (*f)( struct display * ) )
 {
-    if (d) {
-	if (d->next)
-	    _forEachDisplayRev(d->next, f);
-	(*f) (d);
-    }	
+	if (d) {
+		if (d->next)
+			_forEachDisplayRev( d->next, f );
+		(*f)( d );
+	}
 }
 
 void
-ForEachDisplayRev (void (*f)(struct display *))
+ForEachDisplayRev( void (*f)( struct display * ) )
 {
-    _forEachDisplayRev(displays, f);
+	_forEachDisplayRev( displays, f );
 }
 #endif
 
 struct display *
-FindDisplayByName (const char *name)
+FindDisplayByName( const char *name )
 {
-    struct display *d;
+	struct display *d;
 
-    for (d = displays; d; d = d->next)
-	if (!strcmp (name, d->name))
-	    return d;
-    return 0;
+	for (d = displays; d; d = d->next)
+		if (!strcmp( name, d->name ))
+			return d;
+	return 0;
 }
 
 struct display *
-FindDisplayByPid (int pid)
+FindDisplayByPid( int pid )
 {
-    struct display *d;
+	struct display *d;
 
-    for (d = displays; d; d = d->next)
-	if (pid == d->pid)
-	    return d;
-    return 0;
+	for (d = displays; d; d = d->next)
+		if (pid == d->pid)
+			return d;
+	return 0;
 }
 
 struct display *
-FindDisplayByServerPid (int serverPid)
+FindDisplayByServerPid( int serverPid )
 {
-    struct display *d;
+	struct display *d;
 
-    for (d = displays; d; d = d->next)
-	if (serverPid == d->serverPid)
-	    return d;
-    return 0;
+	for (d = displays; d; d = d->next)
+		if (serverPid == d->serverPid)
+			return d;
+	return 0;
 }
 
 #ifdef XDMCP
 
 struct display *
-FindDisplayBySessionID (CARD32 sessionID)
+FindDisplayBySessionID( CARD32 sessionID )
 {
-    struct display	*d;
+	struct display *d;
 
-    for (d = displays; d; d = d->next)
-	if (sessionID == d->sessionID)
-	    return d;
-    return 0;
+	for (d = displays; d; d = d->next)
+		if (sessionID == d->sessionID)
+			return d;
+	return 0;
 }
 
 struct display *
-FindDisplayByAddress (XdmcpNetaddr addr, int addrlen, CARD16 displayNumber)
+FindDisplayByAddress( XdmcpNetaddr addr, int addrlen, CARD16 displayNumber )
 {
-    struct display  *d;
+	struct display *d;
 
-    for (d = displays; d; d = d->next)
-	if ((d->displayType & d_origin) == dFromXDMCP &&
-	    d->displayNumber == displayNumber &&
-	    addressEqual ((XdmcpNetaddr)d->from.data, d->from.length, 
-			  addr, addrlen))
-	    return d;
-    return 0;
+	for (d = displays; d; d = d->next)
+		if ((d->displayType & d_origin) == dFromXDMCP &&
+		    d->displayNumber == displayNumber &&
+		    addressEqual( (XdmcpNetaddr)d->from.data, d->from.length,
+		                  addr, addrlen ))
+			return d;
+	return 0;
 }
 
 #endif /* XDMCP */
 
-#define IfFree(x)  if (x) free ((char *) x)
-    
-void
-RemoveDisplay (struct display *old)
-{
-    struct display	*d, **dp;
-    int			i;
+#define IfFree(x)  if (x) free( (char *)x )
 
-    for (dp = &displays; (d = *dp); dp = &(*dp)->next) {
-	if (d == old) {
-Debug ("Removing display %s\n", d->name);
-	    *dp = d->next;
-	    IfFree (d->class2);
-	    IfFree (d->cfg.data);
-	    delStr (d->cfg.dep.name);
-	    freeStrArr (d->serverArgv);
+void
+RemoveDisplay( struct display *old )
+{
+	struct display *d, **dp;
+	int i;
+
+	for (dp = &displays; (d = *dp); dp = &(*dp)->next) {
+		if (d == old) {
+			Debug( "Removing display %s\n", d->name );
+			*dp = d->next;
+			IfFree( d->class2 );
+			IfFree( d->cfg.data );
+			delStr( d->cfg.dep.name );
+			freeStrArr( d->serverArgv );
 #ifdef XDMCP
-	    IfFree (d->remoteHost);
+			IfFree( d->remoteHost );
 #endif
-	    if (d->authorizations)
-	    {
-		for (i = 0; i < d->authNum; i++)
-		    XauDisposeAuth (d->authorizations[i]);
-		free ((char *) d->authorizations);
-	    }
-	    if (d->authFile) {
-		(void) unlink (d->authFile);
-		free (d->authFile);
-	    }
-	    IfFree (d->authNameLens);
+			if (d->authorizations) {
+				for (i = 0; i < d->authNum; i++)
+					XauDisposeAuth( d->authorizations[i] );
+				free( (char *)d->authorizations );
+			}
+			if (d->authFile) {
+				(void)unlink( d->authFile );
+				free( d->authFile );
+			}
+			IfFree( d->authNameLens );
 #ifdef XDMCP
-	    XdmcpDisposeARRAY8 (&d->peer);
-	    XdmcpDisposeARRAY8 (&d->from);
-	    XdmcpDisposeARRAY8 (&d->clientAddr);
+			XdmcpDisposeARRAY8( &d->peer );
+			XdmcpDisposeARRAY8( &d->from );
+			XdmcpDisposeARRAY8( &d->clientAddr );
 #endif
-	    free ((char *) d);
-	    break;
+			free( (char *)d );
+			break;
+		}
 	}
-    }
 }
 
 static struct disphist *
-FindHist (const char *name)
+FindHist( const char *name )
 {
-    struct disphist *hstent;
+	struct disphist *hstent;
 
-    for (hstent = disphist; hstent; hstent = hstent->next)
-	if (!strcmp (hstent->name, name))
-	    return hstent;
-    return 0;
+	for (hstent = disphist; hstent; hstent = hstent->next)
+		if (!strcmp( hstent->name, name ))
+			return hstent;
+	return 0;
 }
 
 struct display *
-NewDisplay (const char *name)
+NewDisplay( const char *name )
 {
-    struct display	*d;
-    struct disphist	*hstent;
+	struct display *d;
+	struct disphist *hstent;
 
-    if (!(hstent = FindHist (name))) {
-	if (!(hstent = Calloc (1, sizeof (*hstent))))
-	    return 0;
-	if (!StrDup (&hstent->name, name)) {
-	    free (hstent);
-	    return 0;
+	if (!(hstent = FindHist( name ))) {
+		if (!(hstent = Calloc( 1, sizeof(*hstent) )))
+			return 0;
+		if (!StrDup( &hstent->name, name )) {
+			free( hstent );
+			return 0;
+		}
+		hstent->next = disphist; disphist = hstent;
 	}
-	hstent->next = disphist; disphist = hstent;
-    }
 
-    if (!(d = (struct display *) Calloc (1, sizeof (*d))))
-	return 0;
-    d->next = displays;
-    d->hstent = hstent;
-    d->name = hstent->name;
-    /* initialize fields (others are 0) */
-    d->pid = -1;
-    d->serverPid = -1;
-    d->ctrl.fd = -1;
-    d->ctrl.fifo.fd = -1;
-    d->pipe.rfd = -1;
-    d->pipe.wfd = -1;
-    d->gpipe.rfd = -1;
-    d->gpipe.wfd = -1;
-    d->userSess = -1;
+	if (!(d = (struct display *)Calloc( 1, sizeof(*d) )))
+		return 0;
+	d->next = displays;
+	d->hstent = hstent;
+	d->name = hstent->name;
+	/* initialize fields (others are 0) */
+	d->pid = -1;
+	d->serverPid = -1;
+	d->ctrl.fd = -1;
+	d->ctrl.fifo.fd = -1;
+	d->pipe.rfd = -1;
+	d->pipe.wfd = -1;
+	d->gpipe.rfd = -1;
+	d->gpipe.wfd = -1;
+	d->userSess = -1;
 #ifdef XDMCP
-    d->xdmcpFd = -1;
+	d->xdmcpFd = -1;
 #endif
-    displays = d;
-Debug ("created new display %s\n", d->name);
-    return d;
+	displays = d;
+	Debug( "created new display %s\n", d->name );
+	return d;
 }

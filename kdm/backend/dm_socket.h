@@ -3,7 +3,7 @@
 Copyright 1998 by Thomas E. Dickey <dickey@clark.net>
 Copyright 2002-2004 Oswald Buddenhagen <ossi@kde.org>
 
-                        All Rights Reserved
+   All Rights Reserved
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
@@ -18,7 +18,7 @@ in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 IN NO EVENT SHALL THE ABOVE LISTED COPYRIGHT HOLDER(S) BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
@@ -54,7 +54,7 @@ authorization.
 
 #if ((defined(SVR4) && !defined(sun)) || defined(ISC)) && defined(SIOCGIFCONF)
 # define SYSV_SIOCGIFCONF
-int ifioctl (int fd, int cmd, char *arg);
+int ifioctl( int fd, int cmd, char *arg );
 #endif
 
 #ifdef CSRG_BASED

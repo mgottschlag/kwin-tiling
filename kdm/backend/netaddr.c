@@ -29,7 +29,7 @@ from the copyright holder.
 
 /*
  * xdm - display manager daemon
- * Author:  Keith Packard, MIT X Consortium
+ * Author: Keith Packard, MIT X Consortium
  *
  * netaddr.c - Interpretation of XdmcpNetaddr object.
  */
@@ -40,22 +40,22 @@ from the copyright holder.
 #include "dm_socket.h"
 #include "dm_error.h"
 
-#include <X11/X.h>		/* FamilyInternet, etc. */
+#include <X11/X.h> /* FamilyInternet, etc. */
 
 #ifdef DNETCONN
-#include <netdnet/dn.h>		/* struct sockaddr_dn */
+# include <netdnet/dn.h> /* struct sockaddr_dn */
 #endif
 
 /* given an XdmcpNetaddr, returns the socket protocol family used,
    e.g., AF_INET */
 
-int NetaddrFamily(XdmcpNetaddr netaddrp)
+int NetaddrFamily( XdmcpNetaddr netaddrp )
 {
 #ifdef STREAMSCONN
-    short family = *(short *)netaddrp;
-    return family;
+	short family = *(short *)netaddrp;
+	return family;
 #else
-    return ((struct sockaddr *)netaddrp)->sa_family;
+	return ((struct sockaddr *)netaddrp)->sa_family;
 #endif
 }
 
@@ -64,26 +64,26 @@ int NetaddrFamily(XdmcpNetaddr netaddrp)
    and sets *lenp to the length of the address
    or 0 if not using TCP or UDP. */
 
-char * NetaddrPort(XdmcpNetaddr netaddrp, int *lenp)
+char * NetaddrPort( XdmcpNetaddr netaddrp, int *lenp )
 {
 #ifdef STREAMSCONN
-    *lenp = 2;
-    return netaddrp+2;
+	*lenp = 2;
+	return netaddrp+2;
 #else
-    switch (NetaddrFamily(netaddrp))
-    {
-    case AF_INET:
-	*lenp = 2;
-	return (char *)&(((struct sockaddr_in *)netaddrp)->sin_port);
+	switch (NetaddrFamily( netaddrp ))
+	{
+	case AF_INET:
+		*lenp = 2;
+		return (char *)&(((struct sockaddr_in *)netaddrp)->sin_port);
 #if defined(IPv6) && defined(AF_INET6)
-    case AF_INET6:
-	*lenp = 2;
-	return (char *)&(((struct sockaddr_in6 *)netaddrp)->sin6_port);
+	case AF_INET6:
+		*lenp = 2;
+		return (char *)&(((struct sockaddr_in6 *)netaddrp)->sin6_port);
 #endif
-    default:
-	*lenp = 0;
-	return NULL;
-    }
+	default:
+		*lenp = 0;
+		return NULL;
+	}
 #endif
 }
 
@@ -91,48 +91,48 @@ char * NetaddrPort(XdmcpNetaddr netaddrp, int *lenp)
 /* given an XdmcpNetaddr, returns a pointer to the network address
    and sets *lenp to the length of the address */
 
-char * NetaddrAddress(XdmcpNetaddr netaddrp, int *lenp)
+char * NetaddrAddress( XdmcpNetaddr netaddrp, int *lenp )
 {
 #ifdef STREAMSCONN
-    *lenp = 4;
-    return netaddrp+4;
+	*lenp = 4;
+	return netaddrp+4;
 #else
-    switch (NetaddrFamily(netaddrp)) {
+	switch (NetaddrFamily( netaddrp )) {
 #ifdef UNIXCONN
-    case AF_UNIX:
-	*lenp = strlen(((struct sockaddr_un *)netaddrp)->sun_path);
-	return (char *) (((struct sockaddr_un *)netaddrp)->sun_path);
+	case AF_UNIX:
+		*lenp = strlen( ((struct sockaddr_un *)netaddrp)->sun_path );
+		return (char *)(((struct sockaddr_un *)netaddrp)->sun_path);
 #endif
 #ifdef TCPCONN
-    case AF_INET:
-	*lenp = sizeof (struct in_addr);
-	return (char *) &(((struct sockaddr_in *)netaddrp)->sin_addr);
+	case AF_INET:
+		*lenp = sizeof(struct in_addr);
+		return (char *)&(((struct sockaddr_in *)netaddrp)->sin_addr);
 #if defined(IPv6) && defined(AF_INET6)
-    case AF_INET6:
-    {
-	struct in6_addr *a = &(((struct sockaddr_in6 *)netaddrp)->sin6_addr);
-	if (IN6_IS_ADDR_V4MAPPED(a)) {
-	    *lenp = sizeof (struct in_addr);
-	    return ((char *) &(a->s6_addr))+12;
-	} else {
-	    *lenp = sizeof (struct in6_addr);
-	    return (char *) &(a->s6_addr);
+	case AF_INET6:
+	{
+		struct in6_addr *a = &(((struct sockaddr_in6 *)netaddrp)->sin6_addr);
+		if (IN6_IS_ADDR_V4MAPPED( a )) {
+			*lenp = sizeof(struct in_addr);
+			return ((char *)&(a->s6_addr))+12;
+		} else {
+			*lenp = sizeof(struct in6_addr);
+			return (char *)&(a->s6_addr);
+		}
 	}
-    }
 #endif
 #endif
 #ifdef DNETCONN
-    case AF_DECnet:
-	*lenp = sizeof (struct dn_naddr);
-	return (char *) &(((struct sockaddr_dn *)netaddrp)->sdn_add);
+	case AF_DECnet:
+		*lenp = sizeof(struct dn_naddr);
+		return (char *)&(((struct sockaddr_dn *)netaddrp)->sdn_add);
 #endif
 #ifdef AF_CHAOS
-    case AF_CHAOS:
+	case AF_CHAOS:
 #endif
-    default:
-	*lenp = 0;
-	return NULL;
-    }
+	default:
+		*lenp = 0;
+		return NULL;
+	}
 #endif /* STREAMSCONN else */
 }
 
@@ -141,129 +141,120 @@ char * NetaddrAddress(XdmcpNetaddr netaddrp, int *lenp)
    sets *len to the number of bytes in addr.
    Returns the X protocol family used, e.g., FamilyInternet */
 
-int ConvertAddr (XdmcpNetaddr saddr, int *len, char **addr)
+int ConvertAddr( XdmcpNetaddr saddr, int *len, char **addr )
 {
-    int retval;
+	int retval;
 
-    if (len == NULL)
-	return -1;
-    *addr = NetaddrAddress(saddr, len);
+	if (len == NULL)
+		return -1;
+	*addr = NetaddrAddress( saddr, len );
 #ifdef STREAMSCONN
-    /* kludge */
-    if (NetaddrFamily(saddr) == 2)
-	retval = FamilyInternet;
+	/* kludge */
+	if (NetaddrFamily( saddr ) == 2)
+		retval = FamilyInternet;
 #else
-    switch (NetaddrFamily(saddr))
-    {
+	switch (NetaddrFamily( saddr )) {
 #ifdef AF_UNSPEC
-      case AF_UNSPEC:
-	retval = FamilyLocal;
-	break;
+	  case AF_UNSPEC:
+		retval = FamilyLocal;
+		break;
 #endif
 #ifdef AF_UNIX
 #ifndef hpux
-      case AF_UNIX:
-	retval = FamilyLocal;
-	break;
+	  case AF_UNIX:
+		retval = FamilyLocal;
+		break;
 #endif
 #endif
 #ifdef TCPCONN
-      case AF_INET:
-	retval = FamilyInternet;
-	break;
+	  case AF_INET:
+		retval = FamilyInternet;
+		break;
 #if defined(IPv6) && defined(AF_INET6)
-      case AF_INET6:
-	if (*len == sizeof(struct in_addr)) 
-	    retval = FamilyInternet;
-	else  
-	    retval = FamilyInternet6;
-	break;
+	  case AF_INET6:
+		if (*len == sizeof(struct in_addr))
+			retval = FamilyInternet;
+		else
+			retval = FamilyInternet6;
+		break;
 #endif
 #endif
 #ifdef DNETCONN
-      case AF_DECnet:
-	retval = FamilyDECnet;
-	break;
+	  case AF_DECnet:
+		retval = FamilyDECnet;
+		break;
 #endif
 #ifdef AF_CHAOS
-    case AF_CHAOS:
-	retval = FamilyChaos;
-	break;
+	case AF_CHAOS:
+		retval = FamilyChaos;
+		break;
 #endif
-      default:
-	retval = -1;
-	break;
-    }
+	  default:
+		retval = -1;
+		break;
+	}
 #endif /* STREAMSCONN else */
-    Debug ("ConvertAddr returning %d for family %d\n", retval,
-	   NetaddrFamily(saddr));
-    return retval;
+	Debug( "ConvertAddr returning %d for family %d\n", retval,
+	       NetaddrFamily( saddr ) );
+	return retval;
 }
 
 int
-addressEqual (XdmcpNetaddr a1, int len1, XdmcpNetaddr a2, int len2)
+addressEqual( XdmcpNetaddr a1, int len1, XdmcpNetaddr a2, int len2 )
 {
-    int partlen1, partlen2;
-    char *part1, *part2;
+	int partlen1, partlen2;
+	char *part1, *part2;
 
-    if (len1 != len2)
-    {
-	return FALSE;
-    }
-    if (NetaddrFamily(a1) != NetaddrFamily(a2))
-    {
-	return FALSE;
-    }
-    part1 = NetaddrPort(a1, &partlen1);
-    part2 = NetaddrPort(a2, &partlen2);
-    if (partlen1 != partlen2 || memcmp(part1, part2, partlen1) != 0)
-    {
-	return FALSE;
-    }
-    part1 = NetaddrAddress(a1, &partlen1);
-    part2 = NetaddrAddress(a2, &partlen2);
-    if (partlen1 != partlen2 || memcmp(part1, part2, partlen1) != 0)
-    {
-	return FALSE;
-    }
-    return TRUE;
+	if (len1 != len2)
+		return FALSE;
+	if (NetaddrFamily( a1 ) != NetaddrFamily( a2 ))
+		return FALSE;
+	part1 = NetaddrPort( a1, &partlen1 );
+	part2 = NetaddrPort( a2, &partlen2 );
+	if (partlen1 != partlen2 || memcmp( part1, part2, partlen1 ) != 0)
+		return FALSE;
+	part1 = NetaddrAddress( a1, &partlen1 );
+	part2 = NetaddrAddress( a2, &partlen2 );
+	if (partlen1 != partlen2 || memcmp( part1, part2, partlen1 ) != 0)
+		return FALSE;
+	return TRUE;
 }
 
 #ifdef DEBUG
 /*ARGSUSED*/
 void
-PrintSockAddr (char *buf, struct sockaddr *a, int len)
+PrintSockAddr( char *buf, struct sockaddr *a, int len )
 {
-    unsigned char    *t, *p;
+	unsigned char  *t, *p;
 
-    switch (a->sa_family) {
+	switch (a->sa_family) {
 #ifdef AF_INET
-    case AF_INET:
+	case AF_INET:
 
-	p = (unsigned char *) &((struct sockaddr_in *) a)->sin_port;
-	t = (unsigned char *) &((struct sockaddr_in *) a)->sin_addr;
+		p = (unsigned char *)&((struct sockaddr_in *)a)->sin_port;
+		t = (unsigned char *)&((struct sockaddr_in *)a)->sin_addr;
 
-	sprintf (buf, "family AF_INET, port %d, host %d.%d.%d.%d",
-		 (p[0] << 8) + p[1], t[0], t[1], t[2], t[3]);
-	break;
+		sprintf( buf, "family AF_INET, port %d, host %d.%d.%d.%d",
+		         (p[0] << 8) + p[1], t[0], t[1], t[2], t[3] );
+		break;
 #endif
 #if defined(IPv6) && defined(AF_INET6)
-    case AF_INET6:
-	{
-	char astr[INET6_ADDRSTRLEN] = "";
-	
-	inet_ntop(a->sa_family, &((struct sockaddr_in6 *) a)->sin6_addr,
-	  astr, sizeof(astr));
-	p = (unsigned char *) &((struct sockaddr_in6 *) a)->sin6_port;
-		
-	Debug ("port %d, host %s\n", (p[0] << 8) + p[1], astr);
-	break;
-	}
+	case AF_INET6:
+		{
+		char astr[INET6_ADDRSTRLEN] = "";
+
+		inet_ntop( a->sa_family, &((struct sockaddr_in6 *)a)->sin6_addr,
+		           astr, sizeof(astr) );
+		p = (unsigned char *)&((struct sockaddr_in6 *)a)->sin6_port;
+
+		Debug( "port %d, host %s\n", (p[0] << 8) + p[1], astr );
+		break;
+		}
 #endif
-    default:
-	sprintf (buf, "unknown family %d", a->sa_family);
-	break;
-    }
+	default:
+		sprintf( buf, "unknown family %d", a->sa_family );
+		break;
+	}
 }
 #endif
 

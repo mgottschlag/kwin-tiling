@@ -28,7 +28,7 @@ from the copyright holder.
 
 /*
  * xdm - display manager daemon
- * Author:  Keith Packard, MIT X Consortium
+ * Author: Keith Packard, MIT X Consortium
  *
  * generate SecureRPC authorization records
  */
@@ -46,47 +46,44 @@ from the copyright holder.
 
 /*ARGSUSED*/
 void
-SecureRPCInitAuth (unsigned short name_len ATTR_UNUSED, const char *name ATTR_UNUSED)
+SecureRPCInitAuth( unsigned short name_len ATTR_UNUSED,
+                   const char *name ATTR_UNUSED )
 {
 }
 
 Xauth *
-SecureRPCGetAuth (
-    unsigned short  namelen,
-    const char	    *name)
+SecureRPCGetAuth( unsigned short namelen, const char *name )
 {
-    Xauth   *new;
-    char    key[MAXNETNAMELEN+1];
+	Xauth *new;
+	char key[MAXNETNAMELEN+1];
 
-    new = (Xauth *) Malloc (sizeof *new);
-    if (!new)
-	return (Xauth *) 0;
-    new->family = FamilyWild;
-    new->address_length = 0;
-    new->address = 0;
-    new->number_length = 0;
-    new->number = 0;
+	new = (Xauth *)Malloc( sizeof *new );
+	if (!new)
+		return (Xauth *)0;
+	new->family = FamilyWild;
+	new->address_length = 0;
+	new->address = 0;
+	new->number_length = 0;
+	new->number = 0;
 
-    getnetname (key);
-    Debug ("system netname %s\n", key);
-    new->data_length = strlen(key);
-    new->data = (char *) Malloc (new->data_length);
-    if (!new->data)
-    {
-	free ((char *) new);
-	return (Xauth *) 0;
-    }
-    new->name = (char *) Malloc (namelen);
-    if (!new->name)
-    {
-	free ((char *) new->data);
-	free ((char *) new);
-	return (Xauth *) 0;
-    }
-    memmove( new->name, name, namelen);
-    new->name_length = namelen;
-    memmove( new->data, key, new->data_length);
-    return new;
+	getnetname( key );
+	Debug( "system netname %s\n", key );
+	new->data_length = strlen( key );
+	new->data = (char *)Malloc( new->data_length );
+	if (!new->data) {
+		free( (char *)new );
+		return (Xauth *)0;
+	}
+	new->name = (char *)Malloc( namelen );
+	if (!new->name) {
+		free( (char *)new->data );
+		free( (char *)new );
+		return (Xauth *)0;
+	}
+	memmove( new->name, name, namelen );
+	new->name_length = namelen;
+	memmove( new->data, key, new->data_length );
+	return new;
 }
 
 #endif

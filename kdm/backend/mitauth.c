@@ -29,7 +29,7 @@ from the copyright holder.
 
 /*
  * xdm - display manager daemon
- * Author:  Keith Packard, MIT X Consortium
+ * Author: Keith Packard, MIT X Consortium
  *
  * generate authorization keys
  * for MIT-MAGIC-COOKIE-1 type authorization
@@ -40,53 +40,50 @@ from the copyright holder.
 
 #include <X11/Xos.h>
 
-#define AUTH_DATA_LEN	16	/* bytes of authorization data */
-static char	auth_name[256];
+#define AUTH_DATA_LEN 16 /* bytes of authorization data */
+static char auth_name[256];
 
 void
-MitInitAuth (unsigned short name_len, const char *name)
+MitInitAuth( unsigned short name_len, const char *name )
 {
-    if (name_len > 256)
-	name_len = 256;
-    memmove( auth_name, name, name_len);
+	if (name_len > 256)
+		name_len = 256;
+	memmove( auth_name, name, name_len );
 }
 
 Xauth *
-MitGetAuth (unsigned short namelen, const char *name)
+MitGetAuth( unsigned short namelen, const char *name )
 {
-    Xauth   *new;
-    new = (Xauth *) Malloc (sizeof (Xauth));
+	Xauth *new;
+	new = (Xauth *)Malloc( sizeof(Xauth));
 
-    if (!new)
-	return (Xauth *) 0;
-    new->family = FamilyWild;
-    new->address_length = 0;
-    new->address = 0;
-    new->number_length = 0;
-    new->number = 0;
+	if (!new)
+		return (Xauth *)0;
+	new->family = FamilyWild;
+	new->address_length = 0;
+	new->address = 0;
+	new->number_length = 0;
+	new->number = 0;
 
-    new->data = (char *) Malloc (AUTH_DATA_LEN);
-    if (!new->data)
-    {
-	free ((char *) new);
-	return (Xauth *) 0;
-    }
-    new->name = (char *) Malloc (namelen);
-    if (!new->name)
-    {
-	free ((char *) new->data);
-	free ((char *) new);
-	return (Xauth *) 0;
-    }
-    memmove( (char *)new->name, name, namelen);
-    new->name_length = namelen;
-    if (!GenerateAuthData (new->data, AUTH_DATA_LEN))
-    {
-	free ((char *) new->name);
-	free ((char *) new->data);
-	free ((char *) new);
-	return (Xauth *) 0;
-    }
-    new->data_length = AUTH_DATA_LEN;
-    return new;
+	new->data = (char *)Malloc( AUTH_DATA_LEN );
+	if (!new->data) {
+		free( (char *)new );
+		return (Xauth *)0;
+	}
+	new->name = (char *)Malloc( namelen );
+	if (!new->name) {
+		free( (char *)new->data );
+		free( (char *)new );
+		return (Xauth *)0;
+	}
+	memmove( (char *)new->name, name, namelen );
+	new->name_length = namelen;
+	if (!GenerateAuthData( new->data, AUTH_DATA_LEN )) {
+		free( (char *)new->name );
+		free( (char *)new->data );
+		free( (char *)new );
+		return (Xauth *)0;
+	}
+	new->data_length = AUTH_DATA_LEN;
+	return new;
 }

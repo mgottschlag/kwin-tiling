@@ -29,7 +29,7 @@ from the copyright holder.
 
 /*
  * xdm - display manager daemon
- * Author:  Keith Packard, MIT X Consortium
+ * Author: Keith Packard, MIT X Consortium
  */
 
 #include "dm.h"
@@ -46,7 +46,7 @@ from the copyright holder.
 # ifdef hpux
 #  include <sys/ptyio.h>
 #  ifndef TIOCNOTTY
-#   define TIOCNOTTY _IO('t', 113)           /* void tty association */
+#   define TIOCNOTTY _IO('t', 113) /* void tty association */
 #  endif
 #endif
 #endif
@@ -59,78 +59,78 @@ from the copyright holder.
 #endif
 
 void
-BecomeDaemon (void)
+BecomeDaemon( void )
 {
-    int pfd[2];
+	int pfd[2];
 
-    /*
-     * fork so that the process goes into the background automatically. Also
-     * has a nice side effect of having the child process get inherited by
-     * init (pid 1).
-     * Create a pipe and block on it, so the parent knows when the child is
-     * done with detaching. This eliminates the possibility that the child
-     * might get killed when the init script that's running xdm exits.
-     */
+	/*
+	 * fork so that the process goes into the background automatically. Also
+	 * has a nice side effect of having the child process get inherited by
+	 * init (pid 1).
+	 * Create a pipe and block on it, so the parent knows when the child is
+	 * done with detaching. This eliminates the possibility that the child
+	 * might get killed when the init script that's running xdm exits.
+	 */
 
-    if (pipe (pfd))
-	pfd[0] = pfd[1] = -1; /* so what ...? */
-    switch (fork ()) {
-    case 0:
-	/* child */
-	break;
-    case -1:
-	/* error */
-	LogError("Daemon fork failed: %m\n");
-	break;
+	if (pipe( pfd ))
+		pfd[0] = pfd[1] = -1; /* so what ...? */
+	switch (fork ()) {
+	case 0:
+		/* child */
+		break;
+	case -1:
+		/* error */
+		LogError( "Daemon fork failed: %m\n" );
+		break;
 
-    default:
-	/* parent */
-	close(pfd[1]);
-	read(pfd[0], &pfd[1] /* dummy */, 1);
-	exit (0);
-    }
+	default:
+		/* parent */
+		close( pfd[1] );
+		read( pfd[0], &pfd[1] /* dummy */, 1 );
+		exit( 0 );
+	}
 
-    /* don't use daemon() - it doesn't buy us anything but an additional fork */
+	/* don't use daemon() - it doesn't buy us anything but an additional fork */
 
 #if !defined(X_NOT_POSIX) || defined(SVR4)
-    setsid ();
+	setsid();
 #elif defined(SYSV) || defined(__QNXNTO__)
-    setpgrp ();
+	setpgrp();
 #else
 # if defined(__osf__) || defined(linux) || defined(__GNU__) || defined(__CYGWIN__)
-    setpgid (0, 0);
+	setpgid( 0, 0 );
 # else /* BSD */
-    setpgrp (0, 0);
+	setpgrp( 0, 0 );
 # endif
 
-    /*
-     * Get rid of controlling tty
-     */
+	/*
+	 * Get rid of controlling tty
+	 */
 # if !defined(__UNIXOS2__) && !defined(__CYGWIN__)
 #  if !((defined(SYSV) || defined(SVR4)) && defined(i386))
-  {
-    register int i;
-    if ((i = open ("/dev/tty", O_RDWR)) >= 0) {	/* did open succeed? */
+	{
+		int i;
+		if ((i = open( "/dev/tty", O_RDWR )) >= 0) { /* did open succeed? */
 #   if defined(USG) && defined(TCCLRCTTY)
-	int zero = 0;
-	(void) ioctl (i, TCCLRCTTY, &zero);
+			int zero = 0;
+			(void)ioctl( i, TCCLRCTTY, &zero );
 #   else
 #    if (defined(SYSV) || defined(SVR4)) && defined(TIOCTTY)
-	int zero = 0;
-	(void) ioctl (i, TIOCTTY, &zero);
+			int zero = 0;
+			(void)ioctl( i, TIOCTTY, &zero );
 #    else
-	(void) ioctl (i, TIOCNOTTY, (char *) 0);    /* detach, BSD style */
+			(void)ioctl( i, TIOCNOTTY, (char *)0 ); /* detach, BSD style */
 #    endif
 #   endif
-	(void) close (i);
-    }
-  }
+			(void)close( i );
+		}
+	}
 #  endif /* !((SYSV || SVR4) && i386) */
 # endif /* !__UNIXOS2__ && !__CYGWIN__ */
 #endif /* !X_NOT_POSIX || SVR4 || SYSV || __QNXNTO_ */
 
-    close(pfd[0]);
-    close(pfd[1]); /* tell parent that we're done with detaching */
+	close( pfd[0] );
+	close( pfd[1] ); /* tell parent that we're done with detaching */
 
-    chdir ("/");
+	chdir( "/" );
 }
