@@ -66,6 +66,7 @@ bool ThemeCreator::create(const QString aThemeName)
 
   delete mConfig; mConfig = 0;
   cleanupWorkDir();
+  mValid = false;
 
   mThemePath = workDir() + aThemeName + '/';
   mFileName = aThemeName;
@@ -107,6 +108,7 @@ bool ThemeCreator::extract(void)
 
   saveSettings();
   save(KGlobal::dirs()->saveLocation("themes") + fileName());
+  mValid = true;
 
   return true;
 }

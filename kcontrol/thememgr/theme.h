@@ -41,6 +41,9 @@ public:
   /** Load theme and prepare it for installation or modification. Returns
    true on success. */
   virtual bool load(const QString &path, QString &error);
+  
+  bool isValid() { return mValid; }
+  void setValid(bool valid) { mValid = valid; }
 
   /** Apply current theme to the users Kde configuration. This updates several
       config files and executes the initialization programs. */
@@ -193,6 +196,8 @@ protected:
 
 
 protected:
+  bool mValid; 		   // Whether the theme can be applied.
+
   QString mFileName;       // Name+path
   QString mThemePath;      // Path to dir where theme files are stored
   QString mThemercFile;    // Name of the .themerc file

@@ -51,7 +51,7 @@ public:
   virtual void init();
   virtual void save();
   virtual void load();
-  virtual void defaultValues();
+  virtual void defaults();
 
 private:
   Installer* mInstaller;
@@ -84,7 +84,6 @@ KThemeMgr::KThemeMgr(QWidget *parent, const char *name)
 
   mAbout = new About(this);
   tab->addTab(mAbout, i18n("&About"));
-  defaultValues();
 }
 
 
@@ -103,9 +102,9 @@ void KThemeMgr::init()
 
 
 //-----------------------------------------------------------------------------
-void KThemeMgr::defaultValues()
+void KThemeMgr::defaults()
 {
-//  theme->extract();
+  mInstaller->defaults();
 }
 
 

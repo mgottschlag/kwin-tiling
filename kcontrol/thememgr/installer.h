@@ -44,6 +44,7 @@ public:
 
   virtual void load();
   virtual void save();
+  virtual void defaults();
 
   /** Find item in listbox. Returns item index or -1 if not found */
   virtual int findItem(const QString text) const;

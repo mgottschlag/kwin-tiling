@@ -79,6 +79,7 @@ Theme::Theme()
   mKwmCount = 0;
 
   mMappings = NULL;
+  mValid = false;
   loadMappings();
 
   loadSettings();
@@ -194,6 +195,7 @@ bool Theme::load(const QString &aPath, QString &error)
 
   delete mConfig; mConfig = 0;
   cleanupWorkDir();
+  mValid = false;
 
   mFileName = aPath;
   i = mFileName.findRev('/');
@@ -266,6 +268,7 @@ bool Theme::load(const QString &aPath, QString &error)
   mConfig = new KSimpleConfig(mThemercFile);
   loadGroupGeneral();
 
+  mValid = true;
   emit changed();
   return true;
 }
@@ -274,6 +277,8 @@ bool Theme::load(const QString &aPath, QString &error)
 //-----------------------------------------------------------------------------
 bool Theme::save(const QString &aPath)
 {
+  if (!mValid) return false;
+
   emit apply();
 
   mConfig->sync();
@@ -921,6 +926,8 @@ void Theme::uninstallFiles(const char* aGroupName)
 //-----------------------------------------------------------------------------
 void Theme::install(void)
 {
+  if (!mValid) return false;
+
   loadMappings();
   mCmdList.clear();
 

@@ -232,8 +232,12 @@ void Installer::readThemesList(void)
   // as I don't know where this is used, I can't fix it ;(
 }
 
-
 //-----------------------------------------------------------------------------
+void Installer::defaults()
+{
+  mThemesList->setCurrentItem(0);
+}
+
 void Installer::load()
 {
   kdDebug() << "Installer::load() called" << endl;
