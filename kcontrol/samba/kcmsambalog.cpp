@@ -20,21 +20,17 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include <string.h>
-#include <fstream>
-#include <iostream>
 
+#include <qfile.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
 
 #include <kmessagebox.h>
 #include <kdialog.h>
+#include <klocale.h>
 
 #include "kcmsambalog.h"
 #include "kcmsambalog.moc"
-
-#include <klocale.h>
-#include <stdio.h>
 
 #define LOG_SCREEN_XY_OFFSET 10
 
@@ -132,9 +128,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 
 void LogView::loadSettings()
 {
-    std::cout<<"LogView::load starts"<<std::endl;
    if (configFile==0) return;
-   std::cout<<"LogView::load reading..."<<std::endl;
    configFile->setGroup(LOGGROUPNAME);
    logFileName.setURL(configFile->readPathEntry( "SambaLogFile", "/var/log/samba.log"));
 
@@ -164,8 +158,8 @@ void LogView::saveSettings()
 //caution ! high optimized code :-)
 void LogView::updateList()
 {
-    std::ifstream logFile(QFile::encodeName(logFileName.url()));
-   if (logFile.good())
+   QFile logFile(logFileName.url());
+   if (logFile.open(IO_ReadOnly))
    {
       QApplication::setOverrideCursor(waitCursor);
       viewHistory.clear();
@@ -181,9 +175,9 @@ void LogView::updateList()
       char *c1, *c2, *c3, *c4, *c, time[25];
       int timeRead(0);
 
-      while (!logFile.eof())
+      while (!logFile.atEnd())
       {
-         logFile.getline(buf,400);
+         logFile.readLine(buf,sizeof(buf));
          timeRead=0;
          if (buf[0]=='[')
          {
@@ -246,6 +240,7 @@ void LogView::updateList()
             };
          };
       };
+      logFile.close();
       emit contentsChanged(&viewHistory, filesCount, connectionsCount);
       QApplication::restoreOverrideCursor();
    }
