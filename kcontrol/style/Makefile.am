@@ -11,7 +11,7 @@ libkcm_style_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_style_la_LIBADD = $(LIB_KFILE) 
 libkcm_style_la_METASOURCES = AUTO
 
-noinst_HEADERS = style.h
+noinst_HEADERS = kcmstyle.h
 
 messages: rc.cpp
 	$(XGETTEXT) -kni18n *.cpp -o $(podir)/kcmstyle.pot
