@@ -87,7 +87,7 @@ private:
     bool useAA, useAA_original;
     bool defaultCharset;
     QCheckBox *cbAA;
-    QList <FontUseItem> fontUseList;
+    QPtrList <FontUseItem> fontUseList;
 };
 
 #endif
