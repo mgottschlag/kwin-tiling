@@ -26,6 +26,7 @@
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
+#include <qobjectlist.h>
 
 #include <kglobal.h>
 
@@ -287,4 +288,21 @@ void KLocaleConfigMoney::reset()
   locale->_negativeMonetarySignPosition = (KLocale::SignPosition)ent.readNumEntry(QString::fromLatin1("NegativeMonetarySignPosition"), KLocale::ParensAround);
 
   load();
+}
+
+void KLocaleConfigMoney::reTranslate()
+{
+  QObjectList list;
+  list.append(cmbMonPosMonSignPos);
+  list.append(cmbMonNegMonSignPos);
+
+  QComboBox *wc;
+  for(QObjectListIt li(list) ; (wc = (QComboBox *)li.current()) != 0; li++)
+  {
+    wc->changeItem(locale->translate("Parens around"), 0);
+    wc->changeItem(locale->translate("Before quantity money"), 1); 
+    wc->changeItem(locale->translate("After quantity money"), 2);  
+    wc->changeItem(locale->translate("Before money"), 3);
+    wc->changeItem(locale->translate("After money"), 4);
+  }
 }

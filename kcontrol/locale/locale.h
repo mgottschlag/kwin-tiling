@@ -49,6 +49,7 @@ public:
 
 public slots:
   void reTranslateLists();
+  void reTranslate();
 
 signals:
   void translate();

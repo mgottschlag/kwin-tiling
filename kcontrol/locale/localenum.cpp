@@ -173,3 +173,7 @@ void KLocaleConfigNumber::reset()
 
   load();
 }
+
+void KLocaleConfigNumber::reTranslate()
+{
+}

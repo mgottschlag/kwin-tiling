@@ -47,6 +47,7 @@ public:
 
 public slots:
   void reset();
+  void reTranslate();
 
 private slots:
   // Time & dates

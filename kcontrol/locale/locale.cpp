@@ -26,7 +26,6 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
-#include <qobjectlist.h>
 #include <qtooltip.h>
 
 #include <kconfig.h>
@@ -109,14 +108,6 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 	     this, SLOT(changedCharset(int)) );
     tl1->addWidget(label, 6, 1);
     tl1->addWidget(comboChset, 6, 2);
-
-    // FIXME no support for retranslation
-    QToolTip::add(comboCountry, locale->translate("This is were you live. KDE will use the defaults for this country."));
-    QToolTip::add(comboLang, locale->translate("All KDE programs will be displayed in this language (if available)."));
-    QToolTip::add(comboNumber, locale->translate("The rules of this country will be used to localize numbers"));
-    QToolTip::add(comboMoney, locale->translate("The rules of this country will be used to localize money"));
-    QToolTip::add(comboDate, locale->translate("The rules of this country will be used to display time and dates"));
-    QToolTip::add(comboChset, locale->translate("The prefered charset for fonts"));
 
     QStringList list = KGlobal::charsets()->availableCharsetNames();
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
@@ -391,6 +382,15 @@ void KLocaleConfig::reTranslateLists()
       readLocale(comboLang->tag(j), name, QString::null);
       comboLang->changeLanguage(name, j);
     }
-
   }
+}
+
+void KLocaleConfig::reTranslate()
+{
+    QToolTip::add(comboCountry, locale->translate("This is were you live. KDE will use the defaults for this country."));
+    QToolTip::add(comboLang, locale->translate("All KDE programs will be displayed in this language (if available)."));
+    QToolTip::add(comboNumber, locale->translate("The rules of this country will be used to localize numbers"));
+    QToolTip::add(comboMoney, locale->translate("The rules of this country will be used to localize money"));
+    QToolTip::add(comboDate, locale->translate("The rules of this country will be used to display time and dates"));
+    QToolTip::add(comboChset, locale->translate("The prefered charset for fonts"));
 }

@@ -83,7 +83,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
 
 KLocaleApplication::~KLocaleApplication()
 {
-  delete locale;
+    delete locale;
 }
 
 void KLocaleApplication::load()
@@ -124,10 +124,14 @@ void KLocaleApplication::updateSample()
 
 void KLocaleApplication::reTranslate()
 {
-  QObjectList it;
-  it.append( this );
-  reTranslate(it);
-  //CT ?  setTitle(locale->translate("Locale settings"));
+    QObjectList it;
+    it.append( this );
+    reTranslate(it);
+
+    localemain->reTranslate();
+    localenum->reTranslate();
+    localemon->reTranslate();
+    localetime->reTranslate();
 }
 
 void KLocaleApplication::reTranslate(QObjectListIt it)
@@ -152,17 +156,6 @@ void KLocaleApplication::reTranslate(QObjectListIt it)
       {
         ((QLabel *)wc)->setText(locale->translate(wc->name()));
         ((QLabel *)wc)->setMinimumSize(((QLabel *)wc)->sizeHint());
-      }
-      else if ( !qstrcmp(wc->className(), "QComboBox"))
-      {
-	if (!qstrcmp(wc->name(), "signpos"))
-	{
-	  ((QComboBox*)wc)->changeItem(locale->translate("Parens around"), 0);
-	  ((QComboBox*)wc)->changeItem(locale->translate("Before quantity money"), 1);
-	  ((QComboBox*)wc)->changeItem(locale->translate("After quantity money"), 2);
-	  ((QComboBox*)wc)->changeItem(locale->translate("Before money"), 3);
-	  ((QComboBox*)wc)->changeItem(locale->translate("After money"), 4);
-	}
       }
       else if ( !qstrcmp(wc->className(), "QTabWidget"))
       {
