@@ -112,6 +112,9 @@ TopLevel::TopLevel(const char* name)
   _helptab = new HelpWidget(_tab);
   _tab->addTab(_helptab, i18n("Hel&p"));
 
+  _tab->setMinimumWidth(_tab->sizeHint().width());
+  _tab->setMaximumWidth(_tab->sizeHint().width());
+
   // set a reasonable resize mode
   _splitter->setResizeMode(_tab, QSplitter::KeepSize);
 
