@@ -119,6 +119,7 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     {   /* populate the combobox for the available screens */
         m_xineramaScreenComboBox->insertItem(QString::number(s));
     }
+    m_xineramaScreenComboBox->insertItem(i18n("All Screens"));
 
     // hide the xinerama chooser widgets if there is no need for them
     if (QApplication::desktop()->numScreens() < 2)
@@ -486,6 +487,8 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     m_panelAlign = m_panelInfo->_alignment;
     if(m_panelInfo->_xineramaScreen >= 0 && m_panelInfo->_xineramaScreen < QApplication::desktop()->numScreens())
         m_xineramaScreenComboBox->setCurrentItem(m_panelInfo->_xineramaScreen);
+    else if(m_panelInfo->_xineramaScreen == -2) /* the All Screens option: qt uses -1 for default, so -2 for all */
+        m_xineramaScreenComboBox->setCurrentItem(m_xineramaScreenComboBox->count()-1);
     else
         m_xineramaScreenComboBox->setCurrentItem(QApplication::desktop()->primaryScreen());
 
@@ -602,7 +605,11 @@ void PositionTab::storeInfo()
 
     m_panelInfo->_position = m_panelPos;
     m_panelInfo->_alignment = m_panelAlign;
-    m_panelInfo->_xineramaScreen = m_xineramaScreenComboBox->currentItem();
+		if(m_xineramaScreenComboBox->currentItem() == m_xineramaScreenComboBox->count()-1)
+        m_panelInfo->_xineramaScreen = -2; /* all screens */
+		else
+        m_panelInfo->_xineramaScreen = m_xineramaScreenComboBox->currentItem();
+		
 
     m_panelInfo->_sizePercentage = m_percentSlider->value();
     m_panelInfo->_expandSize = m_expandCheckBox->isChecked();
