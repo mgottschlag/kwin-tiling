@@ -194,13 +194,13 @@ void ModifiersModule::initGUI()
 	plbl->setFont( font );
 
 	new QLabel( i18n("QAccel", "Shift"), pGroup );
-	new QLabel( i18n("QAccel", "shift"), pGroup );
+	new QLabel( "shift", pGroup );
 
 	m_plblCtrl = new QLabel( i18n("QAccel", "Ctrl"), pGroup );
-	new QLabel( i18n("control"), pGroup );
+	new QLabel( "control", pGroup );
 
 	m_plblAlt = new QLabel( i18n("QAccel", "Alt"), pGroup );
-	new QLabel( i18n("mod1"), pGroup );
+	new QLabel( "mod1", pGroup );
 
 	m_plblWin = new QLabel( i18n("Win"), pGroup );
 	m_plblWinModX = new QLabel( "", pGroup );
