@@ -29,7 +29,7 @@ rcdir = $(kde_datadir)/kmenuedit
 rc_DATA = kmenueditui.rc
 
 messages: rc.cpp
-	$(XGETTEXT) rc.cpp *.cpp -o $(podir)/kedit.pot
+	$(XGETTEXT) rc.cpp *.cpp -o $(podir)/kmenuedit.pot
 
 dummy.cpp:
 	echo > dummy.cpp
