@@ -36,28 +36,36 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	KCModule(parent, name)
 {
 	QVBoxLayout *layout=new QVBoxLayout(this,0,3);
-	layout->setAutoAdd(true);
+	//layout->setAutoAdd(true);
 	
 	apps=new QListView(this);
-//	apps->setMaximumHeight(100);
+	//apps->setMaximumHeight(100);
 	apps->addColumn(i18n("Application Name"));
 	apps->addColumn(i18n("Description"));
 	apps->setSelectionMode(QListView::Single);
-	layout->setStretchFactor(events, -1);
+	layout->addWidget(apps, 1);
+	//layout->setStretchFactor(events, -1);
 	
 	events=new QListView(this);
 	events->setSelectionMode(QListView::Single);
 	events->addColumn(i18n("Event Name"));
 	events->addColumn(i18n("Description"));
-	layout->setStretchFactor(events, 1);
+	layout->addWidget(events, 1);
+	//layout->setStretchFactor(events, 1);
+	
 	eventview=new EventView(this);
 	eventview->setEnabled(false);
-	loadAll();
+	layout->addWidget(eventview, 1);
+	//layout->setStretchFactor(events, 1);
+	
+	connect(apps, SIGNAL(selectionChanged(QListViewItem*)),
+	        SLOT(appSelected(QListViewmItem*)));
 	connect(apps, SIGNAL(selectionChanged(QListViewItem*)), 
 		SLOT(appSelected(QListViewItem*)));
 	connect(events, SIGNAL(selectionChanged(QListViewItem*)),
 		SLOT(eventSelected(QListViewItem*)));
 	
+	loadAll();
 };
 
 KNotifyWidget::~KNotifyWidget()
@@ -138,6 +146,7 @@ void KNotifyWidget::eventSelected(QListViewItem *_i)
 	KConfig *conf = new KConfig(file,false,false);
 	eventview->load(conf,event);
 }
+
 
 
 ListViewItem::ListViewItem(QListView *parent, const QString &configfile,
