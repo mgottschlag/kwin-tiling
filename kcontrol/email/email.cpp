@@ -42,14 +42,12 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
-#include <qtoolbutton.h>
 
 #include <kdebug.h>
 #include <klineedit.h>
 #include <kcombobox.h>
 #include <kdialog.h>
 #include <klocale.h>
-#include <kopenwith.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kemailsettings.h>
@@ -77,10 +75,6 @@ topKCMEmail::topKCMEmail (QWidget *parent,  const char *name, const QStringList 
 	connect(m_email->txtOrganization, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
 	connect(m_email->txtEMailAddr, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
 	connect(m_email->txtReplyTo, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
-	connect(m_email->txtEMailClient, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
-	connect(m_email->chkRunTerminal, SIGNAL(clicked()), SLOT(configChanged()) );
-	connect(m_email->btnSelectEmail, SIGNAL(clicked()), SLOT(selectEmailClient()) );
-
 
 	pSettings = new KEMailSettings();
 	m_email->lblCurrentProfile->hide();
@@ -161,9 +155,6 @@ void topKCMEmail::load(const QString &s)
 		m_email->txtOrganization->setText(pSettings->getSetting(KEMailSettings::Organization));
 		m_email->txtFullName->setText(pSettings->getSetting(KEMailSettings::RealName));
 
-		m_email->txtEMailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
-		m_email->chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
-
 		configChanged(false);
 	}
 
@@ -175,9 +166,6 @@ void topKCMEmail::clearData()
 	m_email->txtReplyTo->setText(QString::null);
 	m_email->txtOrganization->setText(QString::null);
 	m_email->txtFullName->setText(QString::null);
-
-	m_email->txtEMailClient->setText(QString::null);
-	m_email->chkRunTerminal->setChecked(false);
 
 	configChanged(false);
 }
@@ -252,9 +240,6 @@ void topKCMEmail::save()
 	pSettings->setSetting(KEMailSettings::Organization, m_email->txtOrganization->text());
 	pSettings->setSetting(KEMailSettings::ReplyToAddress, m_email->txtReplyTo->text());
 
-	pSettings->setSetting(KEMailSettings::ClientProgram, m_email->txtEMailClient->text());
-	pSettings->setSetting(KEMailSettings::ClientTerminal, (m_email->chkRunTerminal->isChecked()) ? "true" : "false");
-
 	// insure proper permissions -- contains sensitive data
 	QString cfgName(KGlobal::dirs()->findResource("config", "emaildefaults"));
 	if (!cfgName.isEmpty())
@@ -282,9 +267,6 @@ void topKCMEmail::defaults()
 
 	m_email->txtEMailAddr->setText(tmp);
 
-	m_email->txtEMailClient->setText("kmail");
-	m_email->chkRunTerminal->setChecked(false);
-
 	configChanged();
 }
 
@@ -298,23 +280,7 @@ QString topKCMEmail::quickHelp() const
 	            " features, but they provide their own configuration facilities.");
 }
 
-void topKCMEmail::selectEmailClient()
-{
-	KURL::List urlList;
-	KOpenWithDlg dlg(urlList, i18n("Preferred Email Client"), QString::null, this);
-	if (dlg.exec() != QDialog::Accepted) return;
-	QString client = dlg.text();
 
-/*	QFileInfo *clientInfo = new QFileInfo(client);
-	if (clientInfo->exists() && clientInfo->isExecutable() && clientInfo->filePath().contains(' ') == 0) */
-	bool b = client.left(11) == "konsole -e ";
-	if (b) client = client.mid(11);
-	if (!client.isEmpty())
-	{
-		m_email->chkRunTerminal->setChecked(b);
-		m_email->txtEMailClient->setText(client);
-	}
-}
 
 void topKCMEmail::profileChanged(const QString &s)
 {

@@ -75,7 +75,6 @@ public slots:
 
 	void configChanged();
 	void configChanged(bool);
-	void selectEmailClient();
 	void profileChanged(const QString &);
 
 
