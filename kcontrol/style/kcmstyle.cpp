@@ -62,7 +62,7 @@
 #include <kstyle.h>
 #include <kstandarddirs.h>
 
-#include "../display/krdb.h"
+#include "../krdb/krdb.h"
 
 #include "kcmstyle.h"
 #include "stylepreview.h"

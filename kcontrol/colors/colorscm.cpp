@@ -42,7 +42,7 @@
 
 #include <X11/Xlib.h>
 
-#include "../display/krdb.h"
+#include "../krdb/krdb.h"
 
 #include "colorscm.h"
 #include "widgetcanvas.h"
