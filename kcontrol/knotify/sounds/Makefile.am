@@ -18,7 +18,7 @@ sounds_data_DATA = \
 	KDE_Chimes_3.ogg KDE_Click_1.ogg KDE_Click_2.ogg KDE_Click_3.ogg \
 	KDE_Desktop_1.ogg KDE_Desktop_2.ogg KDE_Desktop_3.ogg KDE_Desktop_4.ogg \
 	KDE_Desktop_5.ogg KDE_Desktop_6.ogg KDE_Desktop_7.ogg KDE_Desktop_8.ogg \
-	KDE_Dialogue_Appear.ogg KDE_Dialogue_Disappear.ogg KDE_Door.ogg \
+	KDE_Dialog_Appear.ogg KDE_Dialog_Disappear.ogg KDE_Door.ogg \
 	KDE_Drum_Break.ogg KDE_Error_1.ogg KDE_Error_2.ogg KDE_Event_1.ogg \
 	KDE_Event_2.ogg KDE_Event_3.ogg KDE_Event_4.ogg KDE_Event_5.ogg \
 	KDE_Glass_Break.ogg KDE_Keyboard_Key_1.ogg KDE_Logout_1.ogg \
