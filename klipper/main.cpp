@@ -30,6 +30,11 @@
 #include "toplevel.h"
 #include "version.h"
 
+#if defined Q_WS_X11 && ! defined K_WS_QTONLY
+#include <qxembed.h> // schroder
+#endif
+
+
 extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
 {
   Klipper::createAboutData();
@@ -44,6 +49,12 @@ extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
   app.disableSessionManagement();
 
   Klipper *toplevel = new Klipper();
+
+  // Make Klipper conform to freedesktop system tray standard, see
+  // http://bugs.kde.org/show_bug.cgi?id=69119
+#if defined Q_WS_X11 && ! defined K_WS_QTONLY
+  QXEmbed::initialize();
+#endif
 
   KWin::setSystemTrayWindowFor( toplevel->winId(), 0 );
   toplevel->setGeometry(-100, -100, 42, 42 );
