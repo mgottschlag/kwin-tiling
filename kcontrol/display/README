@@ -1,11 +1,9 @@
+This is the README for the display setup modules.
 
-	 KCMDISPLAY &  KBGNDWM
-	------------------------
+7 December 1999: Geert Jansen
 
-
-This is README for two programs : kbgndwm and kcmdisplay - background module
-Both are part of KDE and require kwm to work properly.
-
+  Finished porting to kcontrol2. Some modules still need some work because
+  the underlying programs changed (style).
 
 30 October 1999:
 
@@ -25,6 +23,8 @@ Both are part of KDE and require kwm to work properly.
   Geert Jansen <g.t.jansen@stud.tue.nl>
 
     
+**** Original README ****
+
 Some new features :
 
 1. One Desktop radio button -
