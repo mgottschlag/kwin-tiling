@@ -37,6 +37,7 @@
 #include <qmenubar.h>
 #include <qdialog.h>
 #include <kcmodule.h>
+#include <klocale.h>
 
 
 #include "toplevel.h"
@@ -63,24 +64,23 @@ TopLevel::TopLevel(const char* name)
   connect(_index, SIGNAL(moduleDoubleClicked(ConfigModule*)),
 	  this, SLOT(moduleDoubleClicked(ConfigModule*)));
 
-
   // set up the right hand side (the docking area)
   _container = new KDockContainer(splitter);
-  
-  
+  connect(_container, SIGNAL(newModule(const QString&)), this, SLOT(newModule(const QString&)));
+
   // insert the about widget
   QPixmap about = kapp->miniIcon();
   _container->addWidget(new AboutWidget(this), about);
 
-
   // set the main view
   setView(splitter);
-
 
   // initialize the various *bars
   initMenuBar();
   initToolBars();
   initStatusBar();
+
+  setPlainCaption(i18n("KDE Control Center"));
 }
 
 
@@ -128,6 +128,7 @@ void TopLevel::moduleDoubleClicked(ConfigModule *module)
   if (widget)
     {
       _container->showPage(widget);
+      newModule(widget->caption());
       widget->show();
       widget->raise();
     }
@@ -156,6 +157,7 @@ void TopLevel::showModule(QString desktopFile)
 	    if (widget)
 	      {
 		_container->showPage(widget);
+	        newModule(widget->caption());
 		widget->show();
 	      }
 
@@ -183,4 +185,15 @@ bool TopLevel::queryClose()
       }
   
   return (cnt == 0) || (dlg.exec() == QDialog::Accepted);
+}
+
+
+void TopLevel::newModule(const QString &name)
+{
+  QString cap = i18n("KDE Control Center");
+  
+  if (!name.isEmpty())
+    cap += " - [" + name +"]";
+
+  setPlainCaption(cap);
 }

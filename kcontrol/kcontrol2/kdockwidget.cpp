@@ -21,29 +21,62 @@
 
 #include <qpushbutton.h>
 #include <qtabwidget.h>
-#include <qpainter.h>
+#include <qpainter.h> 
 #include <qiconset.h>
+#include <qtabbar.h>
 
 
 #include <ktoolboxmgr.h>
 #include <kwm.h>
 #include <kglobal.h>
 #include <kiconloader.h>
+#include <kapp.h>
+#include <klocale.h>
 
 
 #include "kdockwidget.h"
 #include "kdockwidget.moc"
 
 
+class NoTab : public QTabBar
+{
+public:
+
+  NoTab(QWidget *parent=0, const char *name=0) : QTabBar(parent,name) {};
+
+protected:
+
+  QSize sizeHint() const { return QSize(width(), 0); };
+
+};
+
+
 KDockContainer::KDockContainer(QWidget *parent, const char *name)
   : QTabWidget(parent, name)
 {
+  // This is a very strange way to disable the tabs. I can't just
+  // use a QWidgetStack, as a QWidgetStack does not maintain the
+  // order of the other widgets. If you close the top one, the
+  // widget stack will be empty, which would confuse the user.
+  // So we use a normal QTabWidget, but use a special QTabBar 
+  // that shows no tabs :-)
+
+  setTabBar(new NoTab(this));
+  tabBar()->hide();
 }
 
 
 void KDockContainer::addWidget(QWidget *widget, QPixmap icon)
 {
   addTab(widget, QIconSet(icon), widget->caption());
+  emit newModule(widget->caption());
+}
+
+
+void KDockContainer::showWidget(QWidget *widget)
+{
+  showPage(widget);
+  emit newModule(widget->caption());
 }
 
 
@@ -52,8 +85,9 @@ void KDockContainer::addDockWidget(KDockWidget *widget, QPixmap icon)
   _children.append(widget);
 
   addTab(widget, QIconSet(icon), widget->caption());
-  showPage(widget);  
+  showWidget(widget);  
   updateGeometry();
+  emit newModule(widget->caption());
 }
 
 
@@ -61,6 +95,10 @@ void KDockContainer::removeDockWidget(KDockWidget *widget)
 {
   _children.remove(widget);
   updateGeometry();
+  if (currentPage())
+    emit newModule(currentPage()->caption());
+  else
+    emit newModule("");
 }
 
 
@@ -79,7 +117,6 @@ void KDockContainer::dragChild(KDockWidget *child)
     }
   _tbManager->addHotSpot(QRect(topLeft, size));  
   connect(_tbManager, SIGNAL(onHotSpot(int)), this, SLOT(onHotSpot(int)));
-
   _dockSpot = false;
 
   // do the magic

@@ -46,6 +46,8 @@ public:
   KDockContainer(QWidget *parent=0, const char *name=0);
 
   void addWidget(QWidget *widget, QPixmap icon);
+  void showWidget(QWidget *widget);
+
 
 protected:
 
@@ -53,6 +55,11 @@ protected:
   void removeDockWidget(KDockWidget *widget);
 
   void dragChild(KDockWidget *child);
+
+
+signals:
+
+  void newModule(const QString &name);
 
 
 public slots:
