@@ -242,7 +242,7 @@ if [ -z "$XDM_MANAGED" ]; then
   echo "This session was not launched by KDM."
 elif [ ${XDM_MANAGED:0:1} != / ]; then
   echo "No KDM command FiFo was configured for this session."
-elif [ -n "${XDM_MANAGED//*maysd*}" ]; then
+elif [ -n "${XDM_MANAGED//*,maysd*}" ]; then
   echo "The KDM FiFo command 'shutdown' is not permitted in this session."
 else
   echo -e "shutdown\thalt\tschedule" > ${XDM_MANAGED%%,*}
