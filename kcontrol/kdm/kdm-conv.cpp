@@ -43,6 +43,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 {
     QString wtstr;
 
+    QLabel *paranoia = new QLabel( i18n("<qt><center><font color=red><big><b>Attention!<br>Read help!</b></big></font></center></qt>"), this );
+
     QSizePolicy vpref( QSizePolicy::Minimum, QSizePolicy::Fixed );
 
     alGroup = new QVGroupBox(i18n("Automatic Login"), this );
@@ -130,13 +132,14 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     connect(cbarlen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     QGridLayout *main = new QGridLayout(this, 5, 2, 10);
-    main->addWidget(alGroup, 0, 0);
-    main->addWidget(puGroup, 1, 0);
-    main->addMultiCellWidget(npGroup, 0,2, 1,1);
-    main->addMultiCellWidget(btGroup, 3,3, 0,1);
+    main->addWidget(paranoia, 0, 0);
+    main->addWidget(alGroup, 1, 0);
+    main->addWidget(puGroup, 2, 0);
+    main->addMultiCellWidget(npGroup, 0,3, 1,1);
+    main->addMultiCellWidget(btGroup, 4,4, 0,1);
     main->setColStretch(0, 1);
     main->setColStretch(1, 2);
-    main->setRowStretch(2, 1);
+    main->setRowStretch(3, 1);
 
     connect( userlb, SIGNAL(activated( const QString & )),
 	     SLOT(slotSetAutoUser( const QString & )) );
