@@ -216,9 +216,7 @@ void runRdb(bool exportColors) {
   tmpFile.close();
 
   KProcess proc;
-
-  proc.setExecutable("xrdb");
-  proc << tmpFile.name();
+  proc << "xrdb" << tmpFile.name();
 
   proc.start( KProcess::Block, KProcess::Stdin );
 
