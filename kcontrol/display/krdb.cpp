@@ -218,8 +218,15 @@ void runRdb() {
   time_t timestamp;
   ::time( &timestamp );
 
+#ifndef HAVE_MKSTEMP
   QString tmpFile;
   tmpFile.sprintf("/tmp/krdb.%ld", timestamp);
+#else
+  char *tmpf=strdup("/tmp/krdbXXXXXX");
+  close(mkstemp(tmpf));
+  QString tmpFile(tmpf);
+  free(tmpf);
+#endif
 
   QFile tmp( tmpFile );
   if ( tmp.open( IO_WriteOnly ) ) {
