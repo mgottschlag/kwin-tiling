@@ -54,7 +54,7 @@ void HelpWidget::setText( const QString& docPath, const QString& text)
   else if (docPath.isEmpty())
     _browser->setText(text);
   else
-    _browser->setText(text + i18n("<br><br>Use the \"Whats This\" (Shift+F1) to get help on specific options.<br>To read the full manual click <a href=\"%1\">here</a>.")
+    _browser->setText(text + i18n("<p>Use the \"Whats This\" (Shift+F1) to get help on specific options.</p><p>To read the full manual click <a href=\"%1\">here</a>.</p>")
 		      .arg(docPath.local8Bit()));
 }
 
