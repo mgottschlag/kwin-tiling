@@ -110,7 +110,7 @@ private:
 
     void discardSession();
     void storeSesssion();
-    
+
     void startProtection();
     void endProtection();
 
@@ -130,6 +130,8 @@ private:
     QString wm;
     QCString launcher;
     QTimer protection;
+    
+    int informKSplashCounter;
 };
 
 #endif

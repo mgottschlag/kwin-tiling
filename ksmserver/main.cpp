@@ -10,6 +10,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <dcopclient.h>
 #include "server.h"
 #include <fcntl.h>
 
@@ -55,7 +56,7 @@ int main( int argc, char* argv[] )
     KCmdLineArgs::init(argc, argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options );
 
-     KApplication a;
+    KApplication a;
     fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
