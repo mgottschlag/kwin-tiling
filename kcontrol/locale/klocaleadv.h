@@ -22,10 +22,7 @@
 #ifndef KLOCALEADV_H
 #define KLOCALEADV_H
 
-/// !!! UGLY HACK TO FIX BUILD BREAK - SHOULD THE METHODS IN QUESTION IN KLocale BE MADE PROTECTED INSTEAD OF PUBLIC??? Kalle Dalheimer 00-06-15
-#define private protected
 #include <klocale.h>
-#undef private
 
 class KLocaleAdvanced : public KLocale
 {
