@@ -7,8 +7,6 @@ PASSLIB= $(PASSWDLIB) $(PAMLIBS)
 
 INCLUDES = $(all_includes) $(KERBEROS_INCS)
 
-#AM_CFLAGS   = -g -Wall -Wno-implicit -Wno-return-type
-
 bin_PROGRAMS = kdm
 
 #noinst_PROGRAMS = greetest
@@ -16,13 +14,10 @@ bin_PROGRAMS = kdm
 
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
-#LDADD  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) \
-#	$(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
-#	$(LIBCRYPT) $(LIBUCB) $(LIBUTIL) 
 #
 LDADD  = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSLIB) \
 	$(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
-	$(LIBCRYPT) $(LIBUCB) $(LIBUTIL) 
+	$(LIBCRYPT) $(LIBUCB) -ldl $(LIBUTIL) 
 
 # Sources for kdm:
 kdm_SOURCES = access.c \
@@ -51,4 +46,4 @@ kdm_SOURCES = access.c \
 
 noinst_HEADERS = kdm-config.h dm.h dm_socket.h dm_error.h dm_auth.h greet.h
 
-EXTRA_DIST = kdm-0.5.lsm kdm_on_RH5.0.html misc	xdmconfig
+EXTRA_DIST = misc	xdmconfig
