@@ -97,7 +97,7 @@ void KArtsModule::initAudioIOList()
 	        this, SLOT(slotProcessArtsdOutput(KProcess*, char*, int)));
 
 	if (!artsd->start(KProcess::Block, KProcess::Stderr)) {
-		KMessageBox::error(0, i18n("Can't start aRts sound server to retrive "
+		KMessageBox::error(0, i18n("Unable to start aRts sound server to retrieve "
 		                           "possible sound I/O methods"));
 	}
 }
