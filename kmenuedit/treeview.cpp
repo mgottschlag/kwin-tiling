@@ -849,7 +849,11 @@ void TreeView::newitem()
 
     if (!dlg.exec()) return;
     QString filename = dlg.text();
-
+    if ( filename.contains('/'))
+    {
+        KMessageBox::error( this,  i18n("Item name can't contain '/'"));
+        return;
+    }
     TreeItem *item = (TreeItem*)selectedItem();
 
     QListViewItem* parent = 0;
