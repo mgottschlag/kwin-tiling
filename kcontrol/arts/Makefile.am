@@ -1,13 +1,13 @@
-kde_module_LTLIBRARIES = libkcm_arts.la
+kde_module_LTLIBRARIES = kcm_arts.la
 
-libkcm_arts_la_SOURCES = arts.cpp artsconfig.ui
+kcm_arts_la_SOURCES = arts.cpp artsconfig.ui
 
-libkcm_arts_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_arts_la_LIBADD = -lkdeui
+kcm_arts_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+kcm_arts_la_LIBADD = -lkdeui
 
 INCLUDES = -I$(kde_includes)/arts  $(all_includes)
 
-libkcm_arts_la_METASOURCES = AUTO
+kcm_arts_la_METASOURCES = AUTO
 
 KDE_ICON = arts
 

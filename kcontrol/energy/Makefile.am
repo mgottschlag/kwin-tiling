@@ -4,17 +4,17 @@ SUBDIRS= . pics
 
 INCLUDES = $(all_includes) $(DPMSINC)
 
-kde_module_LTLIBRARIES = libkcm_energy.la
+kde_module_LTLIBRARIES = kcm_energy.la
 
-libkcm_energy_la_SOURCES = energy.cpp
-libkcm_energy_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_energy_la_LIBADD = $(DPMSLIB) $(LIB_KDEUI) 
-libkcm_energy_la_METASOURCES = energy.moc
+kcm_energy_la_SOURCES = energy.cpp
+kcm_energy_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
+kcm_energy_la_LIBADD = $(DPMSLIB) $(LIB_KDEUI) 
+kcm_energy_la_METASOURCES = energy.moc
 
 noinst_HEADERS = energy.h
 
 messages:
-	$(XGETTEXT) -kni18n $(libkcm_energy_la_SOURCES) -o $(podir)/kcmenergy.pot
+	$(XGETTEXT) -kni18n $(kcm_energy_la_SOURCES) -o $(podir)/kcmenergy.pot
 
 power_DATA = energy.desktop
 powerdir = $(kde_appsdir)/Settings/PowerControl

@@ -1,13 +1,13 @@
 # $Id$
 
-kde_module_LTLIBRARIES = libkcm_email.la
+kde_module_LTLIBRARIES = kcm_email.la
 
-libkcm_email_la_SOURCES = emailbase.ui email.cpp
-libkcm_email_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_email_la_LIBADD = -lkdeui $(LIB_KIO) $(LIB_KFILE)
+kcm_email_la_SOURCES = emailbase.ui email.cpp
+kcm_email_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+kcm_email_la_LIBADD = -lkdeui $(LIB_KIO) $(LIB_KFILE)
 INCLUDES= $(all_includes) 
 
-libkcm_email_la_METASOURCES = AUTO
+kcm_email_la_METASOURCES = AUTO
 
 noinst_HEADERS = email.h
 

@@ -1,13 +1,13 @@
-kde_module_LTLIBRARIES = libkcm_info.la
+kde_module_LTLIBRARIES = kcm_info.la
 
-libkcm_info_la_SOURCES = main.cpp memory.cpp
+kcm_info_la_SOURCES = main.cpp memory.cpp
 
-libkcm_info_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_info_la_LIBADD = $(LIBALIB) $(LIB_KDEUI) $(LIB_TRU64_MACH) $(LIBCFG) $(LIBODM) $(LIBKSTAT) $(LIBDEVINFO)
+kcm_info_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
+kcm_info_la_LIBADD = $(LIBALIB) $(LIB_KDEUI) $(LIB_TRU64_MACH) $(LIBCFG) $(LIBODM) $(LIBKSTAT) $(LIBDEVINFO)
 
 INCLUDES= $(all_includes)
  
-libkcm_info_la_METASOURCES = AUTO
+kcm_info_la_METASOURCES = AUTO
 
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/kcminfo.pot

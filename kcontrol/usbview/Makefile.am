@@ -1,13 +1,13 @@
-kde_module_LTLIBRARIES = libkcm_usb.la
+kde_module_LTLIBRARIES = kcm_usb.la
 
-libkcm_usb_la_SOURCES = kcmusb.cpp usbdevices.cpp usbdb.cpp
+kcm_usb_la_SOURCES = kcmusb.cpp usbdevices.cpp usbdb.cpp
 
-libkcm_usb_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_usb_la_LIBADD = $(LIB_KDEUI)
+kcm_usb_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+kcm_usb_la_LIBADD = $(LIB_KDEUI)
 
 INCLUDES= $(all_includes) 
 
-libkcm_usb_la_METASOURCES = AUTO
+kcm_usb_la_METASOURCES = AUTO
 
 KDE_ICON = AUTO
 

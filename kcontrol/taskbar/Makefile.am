@@ -1,11 +1,11 @@
-kde_module_LTLIBRARIES = libkcm_taskbar.la
+kde_module_LTLIBRARIES = kcm_taskbar.la
 
-libkcm_taskbar_la_SOURCES = kcmtaskbarui.ui kcmtaskbar.cpp
-libkcm_taskbar_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_taskbar_la_LIBADD = -lkdeui
+kcm_taskbar_la_SOURCES = kcmtaskbarui.ui kcmtaskbar.cpp
+kcm_taskbar_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+kcm_taskbar_la_LIBADD = -lkdeui
 INCLUDES= $(all_includes) 
 
-libkcm_taskbar_la_METASOURCES = AUTO
+kcm_taskbar_la_METASOURCES = AUTO
 
 noinst_HEADERS = kcmtaskbar.h
 

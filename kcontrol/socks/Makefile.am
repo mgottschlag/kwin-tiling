@@ -1,12 +1,12 @@
 INCLUDES = $(all_includes)
-kde_module_LTLIBRARIES = libkcm_socks.la
+kde_module_LTLIBRARIES = kcm_socks.la
 
-libkcm_socks_la_SOURCES = socks.cpp socksbase.ui 
+kcm_socks_la_SOURCES = socks.cpp socksbase.ui 
 
-libkcm_socks_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_socks_la_LIBADD = -lkdeui $(LIB_KFILE)
+kcm_socks_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+kcm_socks_la_LIBADD = -lkdeui $(LIB_KFILE)
 
-libkcm_socks_la_METASOURCES = AUTO
+kcm_socks_la_METASOURCES = AUTO
 
 noinst_HEADERS = socks.h
 

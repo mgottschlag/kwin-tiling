@@ -1,11 +1,11 @@
-kde_module_LTLIBRARIES = libkcm_smserver.la
+kde_module_LTLIBRARIES = kcm_smserver.la
 
-libkcm_smserver_la_SOURCES = kcmsmserver.cpp smserverconfigdlg.ui smserverconfigimpl.cpp
-libkcm_smserver_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_smserver_la_LIBADD = -lkdeui
+kcm_smserver_la_SOURCES = kcmsmserver.cpp smserverconfigdlg.ui smserverconfigimpl.cpp
+kcm_smserver_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+kcm_smserver_la_LIBADD = -lkdeui
 INCLUDES= $(all_includes) 
 
-libkcm_smserver_la_METASOURCES = AUTO
+kcm_smserver_la_METASOURCES = AUTO
 
 noinst_HEADERS = kcmsmserver.h smserverconfigimpl.h
 

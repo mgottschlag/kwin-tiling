@@ -1,18 +1,18 @@
-kde_module_LTLIBRARIES = libkcm_kdm.la
+kde_module_LTLIBRARIES = kcm_kdm.la
 
-libkcm_kdm_la_SOURCES = kdm-appear.cpp kdm-font.cpp kdm-sess.cpp \
+kcm_kdm_la_SOURCES = kdm-appear.cpp kdm-font.cpp kdm-sess.cpp \
 	kdropsite.cpp backgnd.cpp kdm-users.cpp kdm-conv.cpp \
 	klanguagebutton.cpp main.cpp bgdialogs.cpp
 
-libkcm_kdm_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_kdm_la_LIBADD = $(LIB_KIO) $(top_builddir)/kcontrol/background/libbgnd.la
+kcm_kdm_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+kcm_kdm_la_LIBADD = $(LIB_KIO) $(top_builddir)/kcontrol/background/libbgnd.la
 
 INCLUDES= -I$(top_srcdir)/kcontrol/background -I$(top_srcdir)/kdesktop $(all_includes)
 
-libkcm_kdm_la_METASOURCES = AUTO
+kcm_kdm_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) $(libkcm_kdm_la_SOURCES) -o $(podir)/kdmconfig.pot
+	$(XGETTEXT) $(kcm_kdm_la_SOURCES) -o $(podir)/kdmconfig.pot
 
 data_DATA = kdm.desktop
 datadir = $(kde_appsdir)/Settings/System

@@ -4,11 +4,11 @@ SUBDIRS = . pics
 
 INCLUDES = $(all_includes)
 
-kde_module_LTLIBRARIES = libkcm_background.la
+kde_module_LTLIBRARIES = kcm_background.la
 
-libkcm_background_la_SOURCES = backgnd.cpp bgdialogs.cpp 
-libkcm_background_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_background_la_LIBADD = $(LIB_KFILE) libbgnd.la
+kcm_background_la_SOURCES = backgnd.cpp bgdialogs.cpp 
+kcm_background_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
+kcm_background_la_LIBADD = $(LIB_KFILE) libbgnd.la
 
 METASOURCES = AUTO
 

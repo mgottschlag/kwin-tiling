@@ -4,12 +4,12 @@ INCLUDES = $(all_includes)
 
 SUBDIRS = .
 
-kde_module_LTLIBRARIES = libkcm_style.la
+kde_module_LTLIBRARIES = kcm_style.la
 
-libkcm_style_la_SOURCES = kcmstyle.cpp stylepreview.ui menupreview.cpp
-libkcm_style_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_style_la_LIBADD = $(LIB_KFILE) 
-libkcm_style_la_METASOURCES = AUTO
+kcm_style_la_SOURCES = kcmstyle.cpp stylepreview.ui menupreview.cpp
+kcm_style_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
+kcm_style_la_LIBADD = $(LIB_KFILE) 
+kcm_style_la_METASOURCES = AUTO
 
 noinst_HEADERS = kcmstyle.h stylepreview.h menupreview.h
 

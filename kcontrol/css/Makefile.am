@@ -3,12 +3,12 @@ INCLUDES = $(all_includes)
 template_DATA = template.css
 templatedir = $(kde_datadir)/kcmcss
 
-kde_module_LTLIBRARIES = libkcm_css.la
-libkcm_css_la_SOURCES = template.cpp cssconfig.ui kcmcss.cpp preview.ui
-libkcm_css_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_css_la_LIBADD = -lkdeui $(LIB_KFILE)
+kde_module_LTLIBRARIES = kcm_css.la
+kcm_css_la_SOURCES = template.cpp cssconfig.ui kcmcss.cpp preview.ui
+kcm_css_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+kcm_css_la_LIBADD = -lkdeui $(LIB_KFILE)
 
-libkcm_css_la_METASOURCES = AUTO
+kcm_css_la_METASOURCES = AUTO
  
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmcss.pot
