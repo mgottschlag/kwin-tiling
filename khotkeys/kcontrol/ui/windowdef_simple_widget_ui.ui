@@ -83,37 +83,37 @@
                 <widget class="QComboBox">
                     <item>
                         <property name="text">
-                            <string>is not important</string>
+                            <string>Is Not Important</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>contains</string>
+                            <string>Contains</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>is</string>
+                            <string>Is</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>matches regular expression</string>
+                            <string>Matches Regular Expression</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>does not contain</string>
+                            <string>Does Not Contain</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>is not</string>
+                            <string>Is Not</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>does not match regular expression</string>
+                            <string>Does Not Match Regular Expression</string>
                         </property>
                     </item>
                     <property name="name">
@@ -172,37 +172,37 @@
                 <widget class="QComboBox">
                     <item>
                         <property name="text">
-                            <string>is not important</string>
+                            <string>Is Not Important</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>contains</string>
+                            <string>Contains</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>is</string>
+                            <string>Is</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>matches regular expression</string>
+                            <string>Matches Regular Expression</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>does not contain</string>
+                            <string>Does Not Contain</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>is not</string>
+                            <string>Is Not</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>does not match regular expression</string>
+                            <string>Does Not Match Regular Expression</string>
                         </property>
                     </item>
                     <property name="name">
@@ -261,37 +261,37 @@
                 <widget class="QComboBox">
                     <item>
                         <property name="text">
-                            <string>is not important</string>
+                            <string>Is Not Important</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>contains</string>
+                            <string>Contains</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>is</string>
+                            <string>Is</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>matches regular expression</string>
+                            <string>Matches Regular Expression</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>does not contain</string>
+                            <string>Does Not Contain</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>is not</string>
+                            <string>Is Not</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>does not match regular expression</string>
+                            <string>Does Not Match Regular Expression</string>
                         </property>
                     </item>
                     <property name="name">
