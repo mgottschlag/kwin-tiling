@@ -273,6 +273,9 @@ QString mouseKeysShortcut (Display *display) {
   // Calculate the modifiers by searching the keysym in the X keyboard mapping
   XkbDescPtr xkbdesc = XkbGetMap(display, XkbKeyTypesMask | XkbKeySymsMask, XkbUseCoreKbd);
 
+  if (!xkbdesc)
+      return ""; // Failed to obtain the mapping from server
+
   bool found = false;
   unsigned char modifiers = 0;
   int groups = XkbKeyNumGroups(xkbdesc, code);
