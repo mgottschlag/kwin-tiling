@@ -150,7 +150,7 @@ KClassicGreeter::presetEntity( const QString &entity, int field )
 QString // virtual 
 KClassicGreeter::getEntity() const
 {
-    return loginEdit->text();
+    return fixedUser.isEmpty() ? loginEdit->text() : fixedUser;
 }
 
 void // virtual
