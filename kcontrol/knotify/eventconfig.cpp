@@ -24,7 +24,7 @@
 #include <qlistview.h>
 #include <eventconfig.h>
 #include <kstddirs.h>
-// #include "eventconfig.moc"
+#include "eventconfig.moc"
 
 EventView *Programs::eventview=0;
 QListView *Programs::programs=0;
@@ -96,13 +96,14 @@ Programs::Programs(EventView *_eventview, QListView *_programs,
 	
 	for (QStringList::Iterator it=dirs.begin(); it!=dirs.end(); ++it)
 	{
-		KConfig conf(*it);
+		KConfig conf(*it, false, false);
 		conf.setGroup("!Global!");
 		ProgramConfig *prog=new ProgramConfig;
 		programlist.append(prog);
 		prog->configfile=*it;
 		prog->load(conf);
 	}
+	connect(Programs::programs, SIGNAL(selectionChanged(QListViewItem*)), SLOT(selected(QListViewItem*)));
 }
 
 Programs::~Programs()
@@ -134,12 +135,31 @@ void ProgramConfig::show()
 	Programs::events->setSelected(Programs::events->firstChild(),true);
 }
 
-ProgramConfig::ProgramListViewItem::ProgramListViewItem(const ProgramConfig *prog)
+ProgramConfig::ProgramListViewItem::ProgramListViewItem(ProgramConfig *prog)
 	: QListViewItem(Programs::programs, prog->appname, prog->description),
 	  program(prog)
-{}
+{
+	
+}
 
-EventConfig::EventListViewItem::EventListViewItem(const EventConfig *ev)
+EventConfig::EventListViewItem::EventListViewItem(EventConfig *ev)
 	: QListViewItem(Programs::events, ev->friendly, ev->description),
 	  event(ev)
 {}
+
+void Programs::selected(QListViewItem *_i)
+{
+	(static_cast<ProgramConfig::ProgramListViewItem*>(_i))->program->selected();
+	
+}
+
+void ProgramConfig::selected()
+{
+	// Clean up after the previous ProgramConfig
+	
+	// Load the new events
+	for (EventConfig *ev=eventlist.first(); ev != 0; ev=eventlist.next())
+		new EventConfig::EventListViewItem(ev);
+
+}
+

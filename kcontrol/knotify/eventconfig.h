@@ -20,6 +20,11 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.4  2000/04/09 05:57:05  charles
+    Major milestone in progress of the new version of this applet.
+
+    Aren't ya all proud of me? :D
+
     Revision 1.3  2000/04/09 02:21:38  charles
     Yeah Baby! this rewrite is going good... very slowly.  Now it's a matter of
     connecting the UI to it.  fun, fun!
@@ -60,9 +65,8 @@ public:
 	class EventListViewItem : public QListViewItem
 	{
 	public:
-		EventListViewItem(const EventConfig *ev);
-	protected:
-		const EventConfig *event;
+		EventListViewItem(EventConfig *ev);
+		EventConfig *event;
 	};
 
 	EventConfig(const ProgramConfig *parent=0) {application=parent;}
@@ -89,9 +93,8 @@ public:
 	class ProgramListViewItem : public QListViewItem
 	{
 	public:
-		ProgramListViewItem(const ProgramConfig *prog);
-	protected:
-		const ProgramConfig *program;
+		ProgramListViewItem(ProgramConfig *prog);
+		ProgramConfig *program;
 	};
 
 	ProgramConfig() {}
@@ -105,7 +108,10 @@ public:
 	 * shows it to the GUI
 	 **/
 	void show();
-		
+public slots:
+	void selected();
+
+public:
 	QString configfile;
 	QString appname;
 	QString description;
@@ -129,7 +135,11 @@ public:
 	 * To the GUI!!!!
 	 **/
 	void show();
-	
+
+public slots:
+	void selected(QListViewItem *_i);
+
+public:
 	static EventView *eventview;
 	static QListView *programs;
 	static QListView *events;
