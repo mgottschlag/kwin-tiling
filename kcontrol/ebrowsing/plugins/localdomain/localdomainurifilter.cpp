@@ -78,19 +78,19 @@ bool LocalDomainURIFilter::isLocalDomainHost( const QString& cmd ) const
 	return last_result;
 
     pid_t pid;
-
-	{
+    {
 	QString helper = KStandardDirs::findExe(
 	    QString::fromLatin1( "klocaldomainurifilterhelper" ));
 	if( helper.isEmpty())
-	    return false;
+	    return last_result = false;
         KProcess proc;
         proc << helper << host;
         if( !proc.start( KProcess::DontCare ))
-	    return false;
+	    return last_result = false;
 	pid = proc.getPid();
-	} // destroy 'proc', so that KProcessController now won't do waitpid()
-	  // on the process immediatelly
+    }
+    // destroy 'proc', so that KProcessController now won't do waitpid()
+    // on the process immediatelly
 
     last_host = host;
     last_time = time( NULL );
@@ -101,21 +101,14 @@ bool LocalDomainURIFilter::isLocalDomainHost( const QString& cmd ) const
 	int status;
 	int ret = waitpid( pid, &status, WNOHANG );
 	if( ret < 0 )
-	    return false;
+	    return last_result = false;
 	if( ret > 0 )
-	    {
-	    bool last_result = WIFEXITED( status ) && WEXITSTATUS( status ) == 0;
-	    return last_result;
-	    }
-	//struct timespec tm;
-	//tm.tv_sec = 0;
-	//tm.tv_nsec = 20 * 1000 * 1000; // 20ms
+	    return last_result = (WIFEXITED( status ) && WEXITSTATUS( status ) == 0);
 	usleep( 20000 );
-	}
-    if ( pid > 0 ) kill( pid, SIGTERM );
-    last_result = false;
-    return false;
     }
+    if ( pid > 0 ) kill( pid, SIGTERM );
+    return last_result = false;
+}
 
 void LocalDomainURIFilter::configure()
     {
