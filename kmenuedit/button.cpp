@@ -40,6 +40,7 @@
 #include "button.moc"
 #include "pmenu.h"
 #include <drag.h>
+#include <klocale.h>
 
 Window debugWin = 0;
 
