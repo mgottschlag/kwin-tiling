@@ -20,6 +20,7 @@
 #include <qpixmap.h>
 #include <qlabel.h>
 #include <qtooltip.h>
+#include <qtoolbutton.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -31,6 +32,8 @@
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <kurldrag.h>
+#include <kservicegroup.h>
+#include <kiconloader.h>
 
 #include "kthememanager.h"
 #include "knewthemedlg.h"
@@ -46,6 +49,8 @@ kthememanager::kthememanager( QWidget *parent, const char *name )
 
     dlg = new KThemeDlg(this);
     top->addWidget( dlg );
+
+    dlg->lvThemes->setColumnWidthMode( 0, QListView::Maximum );
 
     connect( ( QObject * )dlg->btnInstall, SIGNAL( clicked() ),
              this, SLOT( slotInstallTheme() ) );
@@ -67,6 +72,7 @@ kthememanager::kthememanager( QWidget *parent, const char *name )
     m_origTheme->createYourself();
 
     load();
+    queryLNFModules();
 }
 
 kthememanager::~kthememanager()
@@ -302,6 +308,37 @@ void kthememanager::slotFilesDropped( const KURL::List & urls )
         addNewTheme( *it );
 }
 
+void kthememanager::queryLNFModules()
+{
+    /*KServiceGroup::Ptr settings = KServiceGroup::group( "Settings/LookNFeel/" );
+    if ( !settings || !settings->isValid() )
+        return;
+
+    KServiceGroup::List list = settings->entries();
+
+    // Iterate over all entries in the group
+    for( KServiceGroup::List::ConstIterator it = list.begin();
+         it != list.end(); it++ )
+    {
+        KSycocaEntry *p = ( *it );
+        if ( p->isType( KST_KService ) )
+        {
+            KService *s = static_cast<KService *>( p );
+            ( void ) new KThemeDetailsItem( dlg->lvDetails, s->name(), s->pixmap( KIcon::Desktop ), s->exec() );
+        }
+    }
+
+    dlg->lvDetails->sort();*/
+
+    // For now use a static list
+    KIconLoader * il = KGlobal::iconLoader();
+    dlg->btnBackground->setIconSet( il->loadIconSet( "background", KIcon::Desktop ) );
+    dlg->btnColors->setIconSet( il->loadIconSet( "colorscm", KIcon::Desktop ) );
+    dlg->btnStyle->setIconSet( il->loadIconSet( "style", KIcon::Desktop ) );
+    dlg->btnIcons->setIconSet( il->loadIconSet( "icons", KIcon::Desktop ) );
+    dlg->btnSaver->setIconSet( il->loadIconSet( "kscreensaver", KIcon::Desktop ) );
+}
+
 extern "C"
 {
     KCModule *create_kthememanager(QWidget *parent, const char *)
@@ -317,8 +354,7 @@ const KAboutData* kthememanager::aboutData() const
     KAboutData *about = new KAboutData("kthemenanager", I18N_NOOP("KDE Theme Manager"),
                                        VERSION, I18N_NOOP("This control module handles installing, removing and "
                                                           "creating visual KDE themes."),
-                                       KAboutData::License_GPL,
-                                       I18N_NOOP("(c) 2003 Lukáš Tinkl"), 0,
+                                       KAboutData::License_GPL, "(c) 2003 Lukáš Tinkl", 0,
                                        "http://developer.kde.org/~lukas/kthememanager");
 
     return about;

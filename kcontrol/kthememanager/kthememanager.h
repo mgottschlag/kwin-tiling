@@ -22,14 +22,31 @@
 #include <kcmodule.h>
 #include <kaboutdata.h>
 #include <kurl.h>
+#include <kservice.h>
+#include <kiconview.h>
+#include <krun.h>
 
 #include "kthemedlg.h"
 #include "ktheme.h"
 
 #define ORIGINAL_THEME "original" // no i18n() here!!!
 
-class QTabWidget;
 class QString;
+class KIconViewItem;
+
+class KThemeDetailsItem: public KIconViewItem
+{
+public:
+    KThemeDetailsItem( KIconView * parent, const QString & text, const QPixmap & icon, const QString & execString )
+        : KIconViewItem( parent, text, icon ) { m_exec = execString; }
+    virtual ~KThemeDetailsItem() { };
+
+    void exec() {
+        ( void ) new KRun( m_exec );
+    }
+private:
+    QString m_exec;
+};
 
 /**
  *
@@ -42,7 +59,6 @@ class QString;
 class kthememanager: public KCModule
 {
     Q_OBJECT
-
 public:
     kthememanager( QWidget *parent=0, const char *name=0 );
     virtual ~kthememanager();
@@ -136,6 +152,8 @@ private:
      * @return The theme's version number or -1 if not installed
      */
     static float getThemeVersion( const QString & themeName );
+
+    void queryLNFModules();
 
     KThemeDlg * dlg;
 

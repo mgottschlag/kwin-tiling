@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>503</width>
-            <height>426</height>
+            <width>521</width>
+            <height>379</height>
         </rect>
     </property>
     <property name="caption">
@@ -20,161 +20,397 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QListView" row="1" column="0" rowspan="1" colspan="4">
-            <column>
-                <property name="text">
-                    <string>Theme</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Description</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
-            </column>
+        <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
-                <cstring>lvThemes</cstring>
+                <cstring>layout2</cstring>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>7</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>1</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="showSortIndicator">
-                <bool>true</bool>
-            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>NoFrame</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Plain</enum>
+                    </property>
+                    <property name="text">
+                        <string>Choose your visual KDE theme:</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>MinimumExpanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>170</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KURLLabel">
+                    <property name="name">
+                        <cstring>lbGet</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Get new themes...</string>
+                    </property>
+                    <property name="url" stdset="0">
+                        <string>http://www.kde-look.org</string>
+                    </property>
+                    <property name="tipText">
+                        <string>Go to the KDE themes website</string>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
-        <widget class="QPushButton" row="2" column="2" rowspan="1" colspan="2">
+        <widget class="QLayoutWidget" row="1" column="0">
             <property name="name">
-                <cstring>btnInstall</cstring>
+                <cstring>layout1</cstring>
             </property>
-            <property name="text">
-                <string>&amp;Install New Theme...</string>
-            </property>
-            <property name="accel">
-                <string>Alt+I</string>
-            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="0" column="1" rowspan="4" colspan="1">
+                    <property name="name">
+                        <cstring>lbPreview</cstring>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>300</width>
+                            <height>225</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>300</width>
+                            <height>225</height>
+                        </size>
+                    </property>
+                    <property name="frameShape">
+                        <enum>Box</enum>
+                    </property>
+                    <property name="text">
+                        <string>Preview</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignCenter</set>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="2" column="0">
+                    <property name="name">
+                        <cstring>btnRemove</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Remove Theme</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="3" column="0">
+                    <property name="name">
+                        <cstring>btnCreate</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Create New Theme...</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+C</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>btnInstall</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Install New Theme...</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+I</string>
+                    </property>
+                </widget>
+                <widget class="QListView" row="0" column="0">
+                    <column>
+                        <property name="text">
+                            <string>Theme</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizable">
+                            <bool>false</bool>
+                        </property>
+                    </column>
+                    <property name="name">
+                        <cstring>lvThemes</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>7</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>1</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="showSortIndicator">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <widget class="QPushButton" row="3" column="2" rowspan="1" colspan="2">
+        <widget class="Line" row="2" column="0">
             <property name="name">
-                <cstring>btnRemove</cstring>
+                <cstring>line1</cstring>
             </property>
-            <property name="text">
-                <string>&amp;Remove Theme</string>
+            <property name="frameShape">
+                <enum>HLine</enum>
             </property>
-            <property name="accel">
-                <string>Alt+R</string>
-            </property>
-        </widget>
-        <widget class="KURLLabel" row="0" column="3">
-            <property name="name">
-                <cstring>lbGet</cstring>
-            </property>
-            <property name="text">
-                <string>Get new themes...</string>
-            </property>
-            <property name="url" stdset="0">
-                <string>http://www.kde-look.org</string>
-            </property>
-            <property name="tipText">
-                <string>Go to the KDE themes website</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>textLabel1</cstring>
-            </property>
-            <property name="text">
-                <string>Choose your visual KDE theme</string>
-            </property>
-        </widget>
-        <spacer row="0" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>spacer2</cstring>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
             </property>
             <property name="orientation">
                 <enum>Horizontal</enum>
             </property>
-            <property name="sizeType">
-                <enum>MinimumExpanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>81</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <spacer row="4" column="3">
-            <property name="name">
-                <cstring>spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>90</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QPushButton" row="5" column="2" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>btnCreate</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Create New Theme...</string>
-            </property>
-            <property name="accel">
-                <string>Alt+C</string>
-            </property>
         </widget>
-        <widget class="QLabel" row="2" column="0" rowspan="4" colspan="2">
+        <widget class="QLayoutWidget" row="3" column="0">
             <property name="name">
-                <cstring>lbPreview</cstring>
+                <cstring>layout5</cstring>
             </property>
-            <property name="minimumSize">
-                <size>
-                    <width>300</width>
-                    <height>225</height>
-                </size>
-            </property>
-            <property name="maximumSize">
-                <size>
-                    <width>300</width>
-                    <height>225</height>
-                </size>
-            </property>
-            <property name="frameShape">
-                <enum>Box</enum>
-            </property>
-            <property name="text">
-                <string>Preview</string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string></string>
-            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QToolButton" row="1" column="2">
+                    <property name="name">
+                        <cstring>btnStyle</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>80</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>80</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>TabFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="usesTextLabel">
+                        <bool>true</bool>
+                    </property>
+                    <property name="textLabel">
+                        <string>Style</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Customize your theme:</string>
+                    </property>
+                </widget>
+                <widget class="QToolButton" row="1" column="3">
+                    <property name="name">
+                        <cstring>btnIcons</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>80</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>80</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>TabFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="usesTextLabel">
+                        <bool>true</bool>
+                    </property>
+                    <property name="textLabel">
+                        <string>Icons</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QToolButton" row="1" column="1">
+                    <property name="name">
+                        <cstring>btnColors</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>80</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>80</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>TabFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="usesTextLabel">
+                        <bool>true</bool>
+                    </property>
+                    <property name="textLabel">
+                        <string>Colors</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QToolButton" row="1" column="4">
+                    <property name="name">
+                        <cstring>btnSaver</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>80</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>80</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>TabFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="usesTextLabel">
+                        <bool>true</bool>
+                    </property>
+                    <property name="textLabel">
+                        <string>Screensaver</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QToolButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>btnBackground</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>80</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>80</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>TabFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="usesTextLabel">
+                        <bool>true</bool>
+                    </property>
+                    <property name="textLabel">
+                        <string>Background</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Background</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
     </grid>
 </widget>
@@ -185,18 +421,58 @@
         <receiver>Form1</receiver>
         <slot>startKonqui(const QString&amp;)</slot>
     </connection>
+    <connection>
+        <sender>btnBackground</sender>
+        <signal>clicked()</signal>
+        <receiver>Form1</receiver>
+        <slot>startBackground()</slot>
+    </connection>
+    <connection>
+        <sender>btnColors</sender>
+        <signal>clicked()</signal>
+        <receiver>Form1</receiver>
+        <slot>startColors()</slot>
+    </connection>
+    <connection>
+        <sender>btnStyle</sender>
+        <signal>clicked()</signal>
+        <receiver>Form1</receiver>
+        <slot>startStyle()</slot>
+    </connection>
+    <connection>
+        <sender>btnIcons</sender>
+        <signal>clicked()</signal>
+        <receiver>Form1</receiver>
+        <slot>startIcons()</slot>
+    </connection>
+    <connection>
+        <sender>btnSaver</sender>
+        <signal>clicked()</signal>
+        <receiver>Form1</receiver>
+        <slot>startSaver()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>lvThemes</tabstop>
     <tabstop>btnInstall</tabstop>
     <tabstop>btnRemove</tabstop>
     <tabstop>btnCreate</tabstop>
+    <tabstop>btnBackground</tabstop>
+    <tabstop>btnColors</tabstop>
+    <tabstop>btnStyle</tabstop>
+    <tabstop>btnIcons</tabstop>
+    <tabstop>btnSaver</tabstop>
 </tabstops>
 <includes>
     <include location="local" impldecl="in implementation">kthemedlg.ui.h</include>
 </includes>
 <slots>
     <slot specifier="non virtual">startKonqui( const QString &amp; url )</slot>
+    <slot specifier="non virtual">startBackground()</slot>
+    <slot specifier="non virtual">startColors()</slot>
+    <slot specifier="non virtual">startStyle()</slot>
+    <slot specifier="non virtual">startIcons()</slot>
+    <slot specifier="non virtual">startSaver()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

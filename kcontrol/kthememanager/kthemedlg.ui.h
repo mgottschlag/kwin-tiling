@@ -12,3 +12,33 @@ void KThemeDlg::startKonqui( const QString & url )
 {
     (void) new KRun(url);
 }
+
+
+void KThemeDlg::startBackground()
+{
+    KRun::runCommand("kcmshell background");
+}
+
+
+void KThemeDlg::startColors()
+{
+    KRun::runCommand("kcmshell colors");
+}
+
+
+void KThemeDlg::startStyle()
+{
+    KRun::runCommand("kcmshell style");
+}
+
+
+void KThemeDlg::startIcons()
+{
+    KRun::runCommand("kcmshell icons");
+}
+
+
+void KThemeDlg::startSaver()
+{
+    KRun::runCommand("kcmshell screensaver");
+}
