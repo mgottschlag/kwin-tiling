@@ -805,7 +805,6 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				goto bust;
 			}
 		}
-			fLog( d, fd, "hoho", "done command, fd is %d", fd );
 		if (fd >= 0)
 			Reply( "ok\n" );
 	}
