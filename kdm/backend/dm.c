@@ -608,6 +608,7 @@ doShutdown (int how, int when)
 	    if (AnyActiveDisplays ())
 		return;
 	    /* fallthrough */
+	case SHUT_INTERACT:	/* XXX temp hack! */
 	case SHUT_FORCENOW:
 	    stoppen (TRUE);
 	    break;

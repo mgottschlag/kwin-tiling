@@ -80,6 +80,7 @@ from The Open Group.
 # define SHUT_SCHEDULE	0	/* when */
 # define SHUT_TRYNOW	1
 # define SHUT_FORCENOW	2
+# define SHUT_INTERACT	10
 #define G_SessionExit	2	/* int code; async */
 #define G_Verify	3	/* str name, str pass; int V_ret */
 #define G_Restrict	4	/* str name; <variable> */
@@ -226,7 +227,8 @@ from The Open Group.
 # define SHUT_ROOT	1
 # define SHUT_ALL	2
 #define C_allowNuke		(C_TYPE_INT | 0x12d)	/* see previous */
-#define C_defSdMode		(C_TYPE_INT | 0x12e)	/* see G_Shutdown */
+#define C_defSdMode		(C_TYPE_INT | 0x12e)	/* see G_Shutdown, but no SHUT_INTERACT */
+#define C_interactiveSd		(C_TYPE_INT | 0x12f)
 
 /* display variables */
 #define C_name			(C_TYPE_STR | 0x200)
