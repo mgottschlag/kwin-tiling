@@ -237,7 +237,7 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
   
   
   //Read qt library path..
-  QStringList plugins = QApplication::libraryPaths();
+  QStringList plugins = settings.readListEntry("/qt/libraryPath", ':');
   for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
   {
     QString path = *it;
