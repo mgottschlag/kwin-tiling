@@ -182,7 +182,7 @@ bool PasswordDlg::eventFilter(QObject *, QEvent *ev)
 void PasswordDlg::startCheckPassword()
 {
     const char *passwd = mEntry->password();
-    if (passwd && *passwd)
+    if (passwd)
     {
 	mLabel->setEnabled(false);
         mButton->setEnabled(false);
