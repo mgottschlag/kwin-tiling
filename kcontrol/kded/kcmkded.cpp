@@ -57,7 +57,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 {
 	RUNNING = i18n("Running")+" ";
 	NOT_RUNNING = i18n("Not running")+" ";
-	
+
 	QVBoxLayout *lay = new QVBoxLayout( this, 0, KDialog::spacingHint() );
 
 	QGroupBox *gb = new QVGroupBox(i18n("Load-on-Demand Services"), this );
@@ -110,7 +110,7 @@ void setModuleGroup(KConfig *config, const QString &filename)
 	i = module.findRev('.');
 	if (i != -1)
 	   module = module.left(i);
-	
+
 	config->setGroup(QString("Module-%1").arg(module));
 }
 
@@ -175,7 +175,7 @@ void KDEDConfig::load() {
         }
 		item = clitem;
 		item->setText(1, i18n("Alarm Daemon"));
-		item->setText(2, QString::null);
+		item->setText(2, i18n("Monitors KOrganizer/KAlarm schedules"));
 		item->setText(3, NOT_RUNNING);
 		item->setText(4, QString::fromLatin1(KALARMD));
 	}
@@ -192,7 +192,7 @@ void KDEDConfig::load() {
         }
 		item = clitem;
 		item->setText(1, i18n("KWrite Daemon"));
-		item->setText(2, QString::null);
+		item->setText(2, i18n("Watch for messages from local users sent with \"write\""));
 		item->setText(3, NOT_RUNNING);
 		item->setText(4, QString::fromLatin1(KWRITED));
 	}
@@ -244,7 +244,7 @@ void KDEDConfig::save() {
 		config.writeEntry("Autostart", item->isOn());
 	}
 	kdedrc.sync();
-	
+
 	DCOPRef( "kded", "kded" ).call( "reconfigure" );
 	QTimer::singleShot(0, this, SLOT(slotServiceRunningToggled()));
 }
