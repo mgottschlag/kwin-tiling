@@ -586,7 +586,7 @@ KStdGreeter::KStdGreeter()
 #ifdef WITH_KDM_XCONSOLE
     if (consoleView) {
 	QBoxLayout *ex_box = new QVBoxLayout( this, 10, 10 );
-	main_box = new QHBoxLayout( main_box, 10 );
+	main_box = new QHBoxLayout( ex_box, 10 );
 	ex_box->addWidget( consoleView );
     } else
 #endif

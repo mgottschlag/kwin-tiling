@@ -27,7 +27,10 @@
 #define _KDM_GREET_H_
 
 #include <greet.h>	/* for the ATTR_ defines */
-#include <config.ci>	/* for the HAVE_VTS define */
+#ifndef RCVERMAJOR
+# include <config.h>
+# include <config.ci>	/* for the HAVE_VTS define */
+#endif
 
 #ifdef __cplusplus
 extern "C" {

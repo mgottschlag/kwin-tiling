@@ -24,6 +24,7 @@
 #ifdef XDMCP
 
 #include "kchooser.h"
+#include "kconsole.h"
 #include "kdmconfig.h"
 #include "kdm_greet.h"
 
