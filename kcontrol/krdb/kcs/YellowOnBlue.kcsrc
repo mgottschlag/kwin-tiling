@@ -2,6 +2,8 @@
 Name=Yellow on Blue
 Name[da]=Gult på blåt
 Name[hu]=Sárga-kék
+Name[pt_BR]=Amarelo no Azul
+Name[sr]=Жута на плавој
 Name[sv]=Gul på blå
 activeBackground=255,255,0
 activeBlend=255,255,0

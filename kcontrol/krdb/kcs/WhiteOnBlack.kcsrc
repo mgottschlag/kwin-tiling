@@ -2,6 +2,8 @@
 Name=White on Black
 Name[da]=Hvidt på sort
 Name[hu]=Fehér-fekete
+Name[pt_BR]=Branco no Preto
+Name[sr]=Бела на црној
 Name[sv]=Vit på svart
 activeBackground=255,255,255
 activeBlend=255,255,255
