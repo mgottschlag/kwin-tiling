@@ -143,7 +143,7 @@ void createGtkrc( const QFont& font, const QColorGroup& cg )
 	t << "# Themes/Styles in the control center and disable the checkbox " << endl;
 	t << "# \"Apply fonts and colors to non-KDE apps\"" << endl;
 	t << "#" << endl;
-	t << "# If you had a ~/.gtkrc before starting KDE, its contents is" << endl;
+	t << "# If you had a ~/.gtkrc before starting KDE, its contents are" << endl;
 	t << "# preserved in ~/.gtkrc-save" << endl;
 	t << "#" << endl;
 	t << endl;
@@ -186,7 +186,7 @@ void createGtkrc( const QFont& font, const QColorGroup& cg )
 int main( int argc, char ** argv )
 {
   KAboutData aboutData( "krdb", I18N_NOOP("Krdb"),
-	"$Id:  $",
+	"$Id$",
 	I18N_NOOP("Krdb - applies KDE colors and styles to X and GTK settings."));
   KCmdLineArgs::init(argc, argv, &aboutData);
 
