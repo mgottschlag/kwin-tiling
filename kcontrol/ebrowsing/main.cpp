@@ -58,7 +58,7 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
 
     modules.setAutoDelete(true);
 
-    QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
+    QPtrListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
     for (; it.current(); ++it)
     {
 	  KCModule *module = it.current()->configModule(this, 0);
@@ -79,7 +79,7 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
 
 void KURIFilterModule::load()
 {
-    QListIterator<KCModule> it(modules);
+    QPtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
     {
 	  KCModule *module = it.current();
@@ -89,7 +89,7 @@ void KURIFilterModule::load()
 
 void KURIFilterModule::save()
 {
-    QListIterator<KCModule> it(modules);
+    QPtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
     {
 	  KCModule *module = it.current();
@@ -99,7 +99,7 @@ void KURIFilterModule::save()
 
 void KURIFilterModule::defaults()
 {
-    QListIterator<KCModule> it(modules);
+    QPtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
     {
 	  KCModule *module = it.current();

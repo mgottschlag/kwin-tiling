@@ -54,7 +54,7 @@ private:
 
     QTabWidget *tab;
     FilterOptions *opts;
-    QList<KCModule> modules;
+    QPtrList<KCModule> modules;
 };
 
 #endif
