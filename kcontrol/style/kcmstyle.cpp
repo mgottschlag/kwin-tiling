@@ -312,22 +312,22 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	page3Layout->addItem( sp3 );
 
 	// Do all the setDirty connections.
-	connect(lbStyle, SIGNAL(selectionChanged()), this, SLOT(setDirty()));
+	connect(lbStyle, SIGNAL(selectionChanged()), this, SLOT(setStyleDirty()));
 	// Page2
-	connect( cbEnableEffects,     SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
-	connect( comboTooltipEffect,  SIGNAL(highlighted(int)), this, SLOT(setDirty()));
-	connect( comboComboEffect,    SIGNAL(highlighted(int)), this, SLOT(setDirty()));
-	connect( comboMenuEffect,     SIGNAL(highlighted(int)), this, SLOT(setDirty()));
-	connect( comboMenuEffectType, SIGNAL(highlighted(int)), this, SLOT(setDirty()));
-	connect( slOpacity,           SIGNAL(valueChanged(int)),this, SLOT(setDirty()));
+	connect( cbEnableEffects,     SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
+	connect( comboTooltipEffect,  SIGNAL(highlighted(int)), this, SLOT(setEffectsDirty()));
+	connect( comboComboEffect,    SIGNAL(highlighted(int)), this, SLOT(setEffectsDirty()));
+	connect( comboMenuEffect,     SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
+	connect( comboMenuEffectType, SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
+	connect( slOpacity,           SIGNAL(valueChanged(int)),this, SLOT(setEffectsDirty()));
 	// Page3
-	connect( cbHoverButtons,        SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
-	connect( cbTransparentToolbars, SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
-	connect( cbEnableTooltips,      SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
-	connect( cbIconsOnButtons,      SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
-	connect( cbTearOffHandles,      SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
-	connect( cbMacMenubar,          SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
-	connect( comboToolbarIcons,     SIGNAL(highlighted(int)), this, SLOT(setDirty()));
+	connect( cbHoverButtons,        SIGNAL(toggled(bool)),    this, SLOT(setToolbarsDirty()));
+	connect( cbTransparentToolbars, SIGNAL(toggled(bool)),    this, SLOT(setToolbarsDirty()));
+	connect( cbEnableTooltips,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
+	connect( cbIconsOnButtons,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
+	connect( cbTearOffHandles,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
+	connect( comboToolbarIcons,     SIGNAL(highlighted(int)), this, SLOT(setToolbarsDirty()));
+	connect( cbMacMenubar,          SIGNAL(toggled(bool)),    this, SLOT(setMacDirty()));
 
 	addWhatsThis();
 
@@ -349,13 +349,11 @@ KCMStyle::~KCMStyle()
 
 void KCMStyle::load()
 {
-	QSettings settings;
-
 	// Page1 - Build up the Style ListBox
-	loadStyle(settings);
+	loadStyle();
 
 	// Page2 - Effects
-	loadEffects(settings);
+	loadEffects();
 
 	// Page3 - Misc.
 	loadMisc();
@@ -364,9 +362,6 @@ void KCMStyle::load()
 
 void KCMStyle::save()
 {
-	QSettings* settings = new QSettings();
-	settings->writeEntry("/qt/style", currentStyle);
-
 	bool allowMenuTransparency = false;
 
 	// Read the KStyle flags to see if the style writer
@@ -395,47 +390,44 @@ void KCMStyle::save()
 	}
 
 	// Save effects.
-	QStringList effects;
-	if (cbEnableEffects->isChecked()) 
-	{
-		QString engine("Disabled");
-		effects << "general";
-		switch (comboComboEffect->currentItem()) {
-			case 1: effects << "animatecombo"; break;
+	KConfig* config = KGlobal::config();
+	config->setGroup("KDE");
+
+	config->writeEntry( "EffectsEnabled", cbEnableEffects->isChecked());
+	int item = comboComboEffect->currentItem();
+	config->writeEntry( "EffectAnimateCombo", item == 1 );
+	item = comboTooltipEffect->currentItem();
+	config->writeEntry( "EffectAnimateTooltip", item == 1);
+	config->writeEntry( "EffectFadeTooltip", item == 2 );
+	item = comboMenuEffect->currentItem();
+	config->writeEntry( "EffectAnimateMenu", item == 1 );
+	config->writeEntry( "EffectFadeMenu", item == 2 );
+
+	// Handle KStyle's menu effects
+	QString engine("Disabled");
+	if (item == 3)	// Make Translucent
+		switch( comboMenuEffectType->currentItem())	
+		{
+			case 1: engine = "SoftwareBlend"; break;
+			case 2: engine = "XRender"; break;
+			default:
+			case 0: engine = "SoftwareTint"; break;
 		}
-		switch (comboTooltipEffect->currentItem()) {
-			case 1: effects << "animatetooltip"; break;
-			case 2: effects << "fadetooltip"; break;
-		}
-		switch (comboMenuEffect->currentItem()) {
-			case 1: effects << "animatemenu"; break;
-			case 2: effects << "fademenu"; break;
-			case 3: {		// Make Translucent
-				switch (comboMenuEffectType->currentItem()) {
-					case 0: engine = "SoftwareTint"; break;
-					case 1: engine = "SoftwareBlend"; break;
-					case 2: engine = "XRender"; break;
-				}
-				break;
-			}
-		}
-		settings->writeEntry("/KStyle/Settings/MenuTransparencyEngine", engine);
-		settings->writeEntry("/KStyle/Settings/MenuOpacity", slOpacity->value()/100.0);
-	} else {
-		effects << "none";
-		// Turn off all KStyle's added effects.
-		settings->writeEntry("/KStyle/Settings/MenuTransparencyEngine", "Disabled");
+
+	{	// Braces force a QSettings::sync()
+		QSettings settings;	// Only for KStyle stuff
+		settings.writeEntry("/KStyle/Settings/MenuTransparencyEngine", engine);
+		settings.writeEntry("/KStyle/Settings/MenuOpacity", slOpacity->value()/100.0);
 	}
-	settings->writeEntry("/qt/GUIEffects", effects);
 
-	// Delete the QSettings before applying the changes. 
-	// This works like KConfig::sync(), and not doing this *will* cause
-	// style changes to fail. I'm not joking.
-	delete settings;
+	// Misc page
+	config->writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), true, true );
+	config->writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), true, true );
+	config->writeEntry( "InsertTearOffHandle", cbTearOffHandles->isChecked(), true, true );
+	config->writeEntry( "macStyle", cbMacMenubar->isChecked(), true, true );
 
-	// KDE specifics (Misc page)
-	// -------------------------
-	KConfig* config = kapp->config();
+	config->setGroup("General");
+	config->writeEntry( "widgetStyle", currentStyle );
 
 	config->setGroup("Toolbar style");
 	config->writeEntry( "Highlighting", cbHoverButtons->isChecked(), true, true );
@@ -450,24 +442,37 @@ void KCMStyle::save()
 		default: tbIcon = "IconOnly"; break;
 	}
 	config->writeEntry( "IconText", tbIcon, true, true );
-
-	config->setGroup("KDE");
-	config->writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), true, true );
-	config->writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), true, true );
-	config->writeEntry( "InsertTearOffHandle", cbTearOffHandles->isChecked(), true, true );
-//	config->writeEntry( "macStyle", cbMacMenubar->isChecked(), true, true );
 	config->sync();
 
-	// Propagate changes to all Qt applications.
+	// ###### TODO - export changes to qtrc via krdb first
+
+	// Propagate changes to all Qt-only applications.
 	QApplication::x11_apply_settings();
 
 	// Now allow KDE apps to reconfigure themselves.
-	KIPC::sendMessageAll(KIPC::StyleChanged);	// REDUNDANT - use Qt's method.
-	KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0);
-	KIPC::sendMessageAll(KIPC::SettingsChanged);
+	if ( m_bStyleDirty )
+		KIPC::sendMessageAll(KIPC::StyleChanged);
+	else if (m_bMacDirty)
+		kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", QByteArray());
 
-	// Hmm, I'll soon fix KWin from flickering so000 much.. - Karol.
-	// kapp->dcopClient()->send("kwin*", "", "reconfigure()", "");
+	if ( m_bToolbarsDirty )
+		// ##### FIXME - Doesn't apply all settings correctly due to bugs in 
+		// KApplication/KToolbar
+		KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0 
+			/* we could use later for finer granularity */);
+
+	if (m_bEffectsDirty) {
+		KIPC::sendMessageAll(KIPC::SettingsChanged);
+		kapp->dcopClient()->send("kwin*", "", "reconfigure()", "");
+	}
+
+	QApplication::syncX();
+
+	// Clean up
+	m_bMacDirty      = false;
+	m_bEffectsDirty  = false;
+	m_bToolbarsDirty = false;
+	m_bStyleDirty    = false;
 }
 
 
@@ -504,7 +509,7 @@ void KCMStyle::defaults()
 	comboToolbarIcons->setCurrentItem(0);
 	cbIconsOnButtons->setChecked(true);
 	cbTearOffHandles->setChecked(true);
-//	cbMacMenubar->setChecked(false);
+	cbMacMenubar->setChecked(false);
 }
 
 
@@ -531,18 +536,39 @@ QString KCMStyle::quickHelp() const
 }
 
 
-void KCMStyle::setDirty()
+void KCMStyle::setMacDirty()
 {
+	m_bMacDirty = true;
 	emit changed(true);
 }
 
+void KCMStyle::setEffectsDirty()
+{
+	m_bEffectsDirty = true;
+	emit changed(true);
+}
+
+void KCMStyle::setToolbarsDirty()
+{
+	m_bToolbarsDirty = true;
+	emit changed(true);
+}
+
+void KCMStyle::setStyleDirty()
+{
+	m_bStyleDirty = true;
+	emit changed(true);
+}
 
 // ----------------------------------------------------------------
 // All the Style Switching / Preview stuff
 // ----------------------------------------------------------------
 
-void KCMStyle::loadStyle(QSettings& settings)
+void KCMStyle::loadStyle(void)
 {
+	KConfig* config = KGlobal::config();
+	config->setGroup("KDE");
+
 	// Insert all the styles into the listbox.
 	lbStyle->clear();
 	QStringList styles = QStyleFactory::keys();
@@ -550,8 +576,7 @@ void KCMStyle::loadStyle(QSettings& settings)
 	lbStyle->setSelectionMode( QListBox::Single );
 
 	// Find out which style is currently being used
-	// This uses Qtconfig's method of style matching for compatibility
-	QString currentStyle = settings.readEntry("/qt/style");
+	QString currentStyle = config->readEntry("widgetStyle", "Unknown");
 	if (currentStyle.isNull() || currentStyle == "Unknown")
 		currentStyle = QApplication::style().className();
 
@@ -591,6 +616,8 @@ void KCMStyle::loadStyle(QSettings& settings)
 	// Sort after the match is found.
 	lbStyle->sort();
 	currentStyle = lbStyle->currentText();
+
+	m_bStyleDirty = false;
 }
 
 
@@ -657,57 +684,55 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 // All the Effects stuff
 // ----------------------------------------------------------------
 
-void KCMStyle::loadEffects(QSettings& settings)
+void KCMStyle::loadEffects(void)
 {
-	QStringList effects = settings.readListEntry("/qt/GUIEffects");
+	// Load effects.
+	KConfig* config = KGlobal::config();
+	config->setGroup("KDE");
 
-	cbEnableEffects->setChecked( false );
-	for (QStringList::Iterator it = effects.begin(); it != effects.end(); ++it )
-	{
-		if (*it == "general")
-			cbEnableEffects->setChecked(true);
-		if (*it == "animatemenu") 
-			comboMenuEffect->setCurrentItem(1);
-		if (*it == "fademenu") 
-			comboMenuEffect->setCurrentItem(2);
-		if (*it == "animatecombo") 
-			comboComboEffect->setCurrentItem(1);
-		if (*it == "animatetooltip") 
-			comboTooltipEffect->setCurrentItem(1);
-		if (*it == "fadetooltip") 
-			comboTooltipEffect->setCurrentItem(2);
-	}
+	cbEnableEffects->setChecked( config->readBoolEntry( "EffectsEnabled", false) );
+	
+	if ( config->readBoolEntry( "EffectAnimateCombo", false) )
+		comboComboEffect->setCurrentItem( 1 );
+	else 
+		comboComboEffect->setCurrentItem( 0 );
+		
+	if ( config->readBoolEntry( "EffectAnimateTooltip", false) )
+		comboTooltipEffect->setCurrentItem( 1 );
+	else if ( config->readBoolEntry( "EffectFadeTooltip", false) )
+		comboTooltipEffect->setCurrentItem( 2 );
+	else
+		comboTooltipEffect->setCurrentItem( 0 );
 
+	if ( config->readBoolEntry( "EffectAnimateMenu", false) )
+		comboMenuEffect->setCurrentItem( 1 );
+	else if ( config->readBoolEntry( "EffectFadeMenu", false) )
+		comboMenuEffect->setCurrentItem( 2 );
+	else
+		comboMenuEffect->setCurrentItem( 0 );
+	
 	// KStyle Menu transparency options...
+	QSettings settings;
 	QString effectEngine = settings.readEntry("/KStyle/Settings/MenuTransparencyEngine", "Disabled");
-	if (effectEngine != "Disabled")
-		comboMenuEffect->setCurrentItem(3);
 
 // #### Add XRENDER check!
 #ifdef HAVE_XRENDER
-	if (effectEngine == "XRender") 
-	{
+	if (effectEngine == "XRender") {
 		comboMenuEffectType->setCurrentItem(2);
 		comboMenuEffect->setCurrentItem(3);
-	} else if (effectEngine == "SoftwareBlend") 
-	{
+	} else if (effectEngine == "SoftwareBlend") {
 		comboMenuEffectType->setCurrentItem(1);
 		comboMenuEffect->setCurrentItem(3);
 #else
-	if (effectEngine == "XRender" || effectEngine == "SoftwareBlend") 
-	{
+	if (effectEngine == "XRender" || effectEngine == "SoftwareBlend") {
 		comboMenuEffectType->setCurrentItem(1);	// Software Blend
 		comboMenuEffect->setCurrentItem(3);
 #endif
-	} else if (effectEngine == "SoftwareTint") 
-	{
+	} else if (effectEngine == "SoftwareTint") {
 		comboMenuEffectType->setCurrentItem(0);
 		comboMenuEffect->setCurrentItem(3);
-	} else 
-	{
+	} else
 		comboMenuEffectType->setCurrentItem(0);
-		comboMenuEffect->setCurrentItem(0);		// Menu Effects disabled
-	}
 
 	if (comboMenuEffect->currentItem() != 3)	// If not translucency...
 		menuPreview->setPreviewMode( MenuPreview::Tint );
@@ -725,6 +750,8 @@ void KCMStyle::loadEffects(QSettings& settings)
 		menuContainer->setEnabled( false );
 		containerFrame->setEnabled( false );
 	}
+
+	m_bEffectsDirty = false;
 }
 
 
@@ -740,12 +767,15 @@ void KCMStyle::menuEffectTypeChanged()
 		mode = MenuPreview::Blend;
 
 	menuPreview->setPreviewMode(mode);
+
+	m_bEffectsDirty = true;
 }
 
 
 void KCMStyle::menuEffectChanged()
 {
 	menuEffectChanged( cbEnableEffects->isChecked() );
+	m_bEffectsDirty = true;
 }
 
 
@@ -756,6 +786,7 @@ void KCMStyle::menuEffectChanged( bool enabled )
 		menuContainer->setEnabled(true);
 	} else
 		menuContainer->setEnabled(false);
+	m_bEffectsDirty = true;
 }
 
 
@@ -766,7 +797,7 @@ void KCMStyle::menuEffectChanged( bool enabled )
 void KCMStyle::loadMisc()
 {
 	// KDE's Part via KConfig
-	KConfig* config = kapp->config();
+	KConfig* config = KGlobal::config();
 
 	config->setGroup("Toolbar style");
 	cbHoverButtons->setChecked(config->readBoolEntry("Highlighting", true));
@@ -786,7 +817,9 @@ void KCMStyle::loadMisc()
 	cbIconsOnButtons->setChecked(config->readBoolEntry("ShowIconsOnPushButtons", true));
 	cbEnableTooltips->setChecked(!config->readBoolEntry("EffectNoTooltip", false));
 	cbTearOffHandles->setChecked(config->readBoolEntry("InsertTearOffHandle",true));
-//	cbMacMenubar->setChecked(config->readBoolEntry("macStyle", false));
+	cbMacMenubar->setChecked(config->readBoolEntry("macStyle", false));
+
+	m_bMacDirty = false;
 }
 
 void KCMStyle::addWhatsThis()

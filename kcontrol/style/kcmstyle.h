@@ -66,16 +66,21 @@ public:
 	virtual QString quickHelp() const;
 
 protected:
-	void loadStyle(QSettings& settings);
+	void loadStyle(void);
 	void switchStyle(const QString& styleName);
 	void setStyleRecursive(QWidget* w, QStyle* s);
 
-	void loadEffects(QSettings& settings);
+	void loadEffects(void);
 	void loadMisc();
 	void addWhatsThis();
 
 protected slots:
-	void setDirty();
+//	void setDirty();
+	void setMacDirty();
+	void setEffectsDirty();
+	void setToolbarsDirty();
+	void setStyleDirty();
+
 	void updateStyleTimer(const QString& style);
 	void styleChanged();
 	void menuEffectChanged( bool enabled );
@@ -83,6 +88,10 @@ protected slots:
 	void menuEffectTypeChanged();
 
 private:
+	bool m_bMacDirty, m_bEffectsDirty, m_bStyleDirty,
+//		 m_bGeneralDirty, 
+		 m_bToolbarsDirty;
+
 	QVBoxLayout* mainLayout;
 	QTabWidget* tabWidget;
 	QWidget *page1, *page2, *page3;
