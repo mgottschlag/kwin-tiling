@@ -82,6 +82,10 @@ KBlobSaver::KBlobSaver
 		return;
 	}
 
+    // Clear to background colour when exposed
+    XSetWindowBackground(qt_xdisplay(), mDrawable,
+                            BlackPixel(qt_xdisplay(), qt_xscreen()));
+
 	colorContext = QColor::enterAllocContext();
 
 	// if 8-bit, create lookup table for color ramping further down

@@ -657,6 +657,10 @@ kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
   steps = 0;
   initial = TRUE;
 
+  // Clear to background colour when exposed
+  XSetWindowBackground(qt_xdisplay(), mDrawable,
+                          BlackPixel(qt_xdisplay(), qt_xscreen()));
+
   initGL( mDrawable );
 
   static GLfloat pos[4] = {-5.0, -5.0, 10.0, 1.0 };

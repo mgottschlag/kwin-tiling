@@ -876,6 +876,10 @@ kBoubouleSaver::kBoubouleSaver( Drawable drawable ) : kScreenSaver( drawable )
 	colorchange=MAXCCSPEED-colorCycleDelay;
 	use3d=flag_3dmode;
 
+    // Clear to background colour when exposed
+    XSetWindowBackground(qt_xdisplay(), mDrawable,
+                            BlackPixel(qt_xdisplay(), qt_xscreen()));
+
 	initXLock( mGc );
 	initbouboule( mDrawable );
 

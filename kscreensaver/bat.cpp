@@ -478,6 +478,10 @@ kBatSaver::kBatSaver( Drawable drawable ) : kScreenSaver( drawable )
 	initXLock( mGc );
 	initbat( mDrawable );
 
+    // Clear to background colour when exposed
+    XSetWindowBackground(qt_xdisplay(), mDrawable,
+                        BlackPixel(qt_xdisplay(), qt_xscreen()));
+
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
 }

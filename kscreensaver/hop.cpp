@@ -238,6 +238,11 @@ kHopSaver::kHopSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	batchcount = maxLevels;
 	cycles = numPoints;
+
+    // Clear to background colour when exposed
+    XSetWindowBackground(qt_xdisplay(), mDrawable,
+                            BlackPixel(qt_xdisplay(), qt_xscreen()));
+
 	initXLock( mGc );
 	inithop( mDrawable );
 

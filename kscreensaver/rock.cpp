@@ -451,6 +451,10 @@ kRockSaver::kRockSaver( Drawable drawable ) : kScreenSaver( drawable )
 	initXLock( mGc );
 	initrock( drawable );
 
+    // Clear to background colour when exposed
+    XSetWindowBackground(qt_xdisplay(), mDrawable,
+                            BlackPixel(qt_xdisplay(), qt_xscreen()));
+
 	rock_setMove( move );
 	rock_setRotate( rotate );
 

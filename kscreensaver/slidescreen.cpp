@@ -463,7 +463,6 @@ kSlideScreenSetup::kSlideScreenSetup( QWidget *parent, const char *name )
 
 	//QLabel *label;
 	QPushButton *button;
-	//KSlider *slider;
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;

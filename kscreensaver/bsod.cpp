@@ -1150,6 +1150,11 @@ BSODSaver::BSODSaver (Drawable d)
 	srandom(time(0));
 #endif
 	timer = new QTimer(this);
+
+    // Clear to background colour when exposed
+    XSetWindowBackground(qt_xdisplay(), mDrawable,
+                            BlackPixel(qt_xdisplay(), qt_xscreen()));
+
 	readSettings();
 	timer->start(delay);
 	connect(timer, SIGNAL(timeout()), this, SLOT(timeout()));

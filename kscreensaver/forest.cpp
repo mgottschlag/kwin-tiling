@@ -218,6 +218,10 @@ kForestSaver::kForestSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	cycles = numPoints;
 
+    // Clear to background colour when exposed
+    XSetWindowBackground(qt_xdisplay(), mDrawable,
+                            BlackPixel(qt_xdisplay(), qt_xscreen()));
+
 	initXLock( mGc );
 	initforest( mDrawable );
 

@@ -301,6 +301,10 @@ kSlipSaver::kSlipSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
 	readSettings();
 
+    // Clear to background colour when exposed
+    XSetWindowBackground(qt_xdisplay(), mDrawable,
+                            BlackPixel(qt_xdisplay(), qt_xscreen()));
+
 	colorContext = QColor::enterAllocContext();
 
 	batchcount = maxLevels;

@@ -728,6 +728,10 @@ kAttractionSaver::kAttractionSaver( Drawable drawable ) : kScreenSaver( drawable
 	initXLock( mGc );	// needed by all xlock ports
     init_balls (dsp, mDrawable, this);
 
+    // Clear to background colour when exposed
+    XSetWindowBackground(qt_xdisplay(), mDrawable,
+                        BlackPixel(qt_xdisplay(), qt_xscreen()));
+
 	timer.start( 10, TRUE );		// single shot timer makes smoother animation
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
 }
