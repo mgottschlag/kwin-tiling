@@ -74,7 +74,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
    m_ioslavesLb->sort();
    m_ioslavesLb->setSelected(0, true);
 
-   setButtons(buttons());
+   setButtons(KCModule::Help);
    load();
 }
 
@@ -89,7 +89,7 @@ const KAboutData* KCMIOSlaveInfo::aboutData() const
 		I18N_NOOP("KDE Panel System Information Control Module"),
 		0, 0, KAboutData::License_GPL,
     		I18N_NOOP("(c) 2001 - 2002 Alexander Neundorf"));
-    
+
     about->addAuthor("Alexander Neundorf", 0, "neundorf@kde.org");
     about->addAuthor("George Staikos", 0, "staikos@kde.org");
 
