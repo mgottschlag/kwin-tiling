@@ -1,5 +1,5 @@
-/* 
- * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
+/*
+ * Copyright (c) 2002 Hamish Rodda <rodda@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ class KRandRApp : public KApplication
 
 public:
 	KRandRApp();
-	
+
 	virtual bool x11EventFilter(XEvent * e);
 
 private:

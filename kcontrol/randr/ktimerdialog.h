@@ -1,6 +1,6 @@
 /*
  *  This file is part of the KDE Libraries
- *  Copyright (C) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
+ *  Copyright (C) 2002 Hamish Rodda <rodda@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -40,7 +40,7 @@ class QLabel;
  * In addition, this class retains all of the functionality of @see KDialogBase .
  *
  * @short A dialog with a time limit and corresponding UI features.
- * @author Hamish Rodda <meddie@yoyo.its.monash.edu.au>
+ * @author Hamish Rodda <rodda@kde.org>
  */
 class KTimerDialog : public KDialogBase
 {

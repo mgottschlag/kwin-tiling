@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
+ * Copyright (c) 2002 Hamish Rodda <rodda@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 
 #include "randr.h"
 
+class KHelpMenu;
+
 class KRandRSystemTray :  public KSystemTray, public RandRDisplay
 {
 	Q_OBJECT
@@ -45,6 +47,7 @@ private:
 	void populateMenu(KPopupMenu* menu);
 
 	bool m_popupUp;
+	KHelpMenu* m_help;
 };
 
 #endif

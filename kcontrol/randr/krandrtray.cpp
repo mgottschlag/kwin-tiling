@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002,2003 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
+ * Copyright (c) 2002,2003 Hamish Rodda <rodda@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include <kiconloader.h>
 #include <kaction.h>
 #include <kapplication.h>
+#include <khelpmenu.h>
 
 #include "krandrtray.h"
 #include "krandrpassivepopup.h"
@@ -32,8 +33,10 @@
 KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 	: KSystemTray(parent, name)
 	, m_popupUp(false)
+	, m_help(new KHelpMenu(this, KGlobal::instance()->aboutData(), false, actionCollection()))
 {
 	setPixmap(SmallIcon("kscreensaver"));
+	setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 	connect(contextMenu(), SIGNAL(activated(int)), SLOT(slotSwitchScreen()));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 }
@@ -61,7 +64,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 	if (!isValid()) {
 		lastIndex = menu->insertItem(i18n("Required X extension not available"));
 		menu->setItemEnabled(lastIndex, false);
-	
+
 	} else {
 		for (int s = 0; s < numScreens(); s++) {
 			setCurrentScreen(s);
@@ -81,8 +84,11 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 	}
 
 	menu->insertSeparator();
-	KAction *action = actionCollection()->action(KStdAction::name(KStdAction::Quit));
-	action->plug(menu);
+	menu->insertItem(i18n("&Help"), m_help->menu());
+	//actionCollection()->action(KStdAction::name(KStdAction::Help))->plug(menu);
+	menu->insertSeparator();
+	KAction *quitAction = actionCollection()->action(KStdAction::name(KStdAction::Quit));
+	quitAction->plug(menu);
 }
 
 void KRandRSystemTray::configChanged()
@@ -101,7 +107,7 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 	int lastIndex = 0;
 
 	menu->insertTitle(SmallIcon("window_fullscreen"), i18n("Screen Size"));
-	
+
 	for (int i = 0; i < (int)currentScreen()->numSizes(); i++) {
 		lastIndex = menu->insertItem(i18n("%1 x %2").arg(currentScreen()->pixelSize(i).width()).arg(currentScreen()->pixelSize(i).height()));
 
