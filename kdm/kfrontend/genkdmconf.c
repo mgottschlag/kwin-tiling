@@ -2195,8 +2195,10 @@ static DEnt dEnts0Core[] = {
 static DEnt dEnts0Greeter[] = {
 { "PreselectUser",	"Default", 0 },
 { "DefaultUser",	"johndoe", 0 },
+#ifdef BUILTIN_XCONSOLE
 { "ShowLog",		"true", 1 },
 { "LogSource",		"/dev/xconsole", 1 },
+#endif
 };
 
 typedef struct DSect {
