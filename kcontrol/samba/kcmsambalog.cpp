@@ -195,7 +195,8 @@ void LogView::updateList()
                if (buf[5]=='/')
                {
                   buf[20]='\0';
-                  strcpy(time,buf+1);
+                  strncpy(time,buf+1, sizeof(time));
+                  time[sizeof(time)-1] = '\0';
                   timeRead=1;
                };
          };
