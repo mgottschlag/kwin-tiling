@@ -337,7 +337,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 					      " reverse the background and wallpaper layers by checking this option.") );
 
     m_pCBLimit = new QCheckBox(i18n("&Limit Pixmap Cache"), m_pTab3);
-    QWhatsThis::add( m_pCBLimit, i18n( "Checking this box limits the amount of memory that KDE will use to save pixmap (raster graphics). It is advisable to do this, especially if you do not have alot of memory." ) );
+    QWhatsThis::add( m_pCBLimit, i18n( "Checking this box limits the amount of memory that KDE will use to save pixmap (raster graphics). It is advisable to do this, especially if you do not have a lot of memory." ) );
     grid->addMultiCellWidget(m_pCBLimit, 2, 2, 0, 1);
     connect(m_pCBLimit, SIGNAL(toggled(bool)), SLOT(slotLimitCache(bool)));
     hbox = new QHBoxLayout();
