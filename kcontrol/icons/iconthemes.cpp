@@ -18,6 +18,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <config.h>
+
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -44,6 +46,10 @@
 #include <kio/netaccess.h>
 #include <ktar.h>
 #include <dcopclient.h>
+
+#ifdef HAVE_LIBART
+#include <ksvgiconengine.h>
+#endif
 
 #include "iconthemes.h"
 
@@ -336,35 +342,49 @@ void IconThemesConfig::updateRemoveButton()
 
 void IconThemesConfig::themeSelected(QListViewItem *item)
 {
+#ifdef HAVE_LIBART
+  KSVGIconEngine engine;  
+#endif 
   QString dirName(m_themeNames[item->text(0)]);
   KIconTheme icontheme(dirName);
   if (!icontheme.isValid()) kdDebug() << "notvalid\n";
 
   updateRemoveButton();
+  const int size = icontheme.defaultSize(KIcon::Desktop);
 
-  KIcon icon=icontheme.iconPath("exec.png",
-	icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
-  if (!icon.isValid())
-	  icon=icontheme.iconPath("exec.svg",
-	  icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
-  kdDebug() << icon.path<< "\n";
-  m_previewExec->setPixmap(QPixmap(icon.path));
+  KIcon icon=icontheme.iconPath("exec.png", size, KIcon::MatchBest);
+  if (!icon.isValid()) {
+#ifdef HAVE_LIBART
+	  icon=icontheme.iconPath("exec.svg", size, KIcon::MatchBest);
+	  if(engine.load(size, size, icon.path))
+		m_previewExec->setPixmap(*engine.image());
+#endif
+  }
+  else
+          m_previewExec->setPixmap(QPixmap(icon.path));
 
-  icon=icontheme.iconPath("folder.png",
-	icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
-  if (!icon.isValid())
-	  icon=icontheme.iconPath("folder.svg",
-	  icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest); 
-  kdDebug() << icon.path<< "\n";
-  m_previewFolder->setPixmap(QPixmap(icon.path));
+  icon=icontheme.iconPath("folder.png",size,KIcon::MatchBest);
+  if (!icon.isValid()) {
+#ifdef HAVE_LIBART
+	  icon=icontheme.iconPath("folder.svg", size, KIcon::MatchBest);
+	  if(engine.load(size, size, icon.path))
+		m_previewFolder->setPixmap(*engine.image());
+#endif
+  }
+  else
+  	  m_previewFolder->setPixmap(QPixmap(icon.path));
 
-  icon=icontheme.iconPath("txt.png",
-	icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
-  if (!icon.isValid())
-	  icon=icontheme.iconPath("txt.svg",
-	  icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
-  kdDebug() << icon.path<< "\n";
-  m_previewDocument->setPixmap(QPixmap(icon.path));
+  icon=icontheme.iconPath("txt.png",size,KIcon::MatchBest);
+  if (!icon.isValid()) {
+#ifdef HAVE_LIBART
+	  icon=icontheme.iconPath("txt.svg", size, KIcon::MatchBest);
+	  if(engine.load(size, size, icon.path))
+		m_previewDocument->setPixmap(*engine.image());
+#endif
+  }
+  else  
+	  m_previewDocument->setPixmap(QPixmap(icon.path));
+  
   emit changed(true);
   m_bChanged = true;
 }
