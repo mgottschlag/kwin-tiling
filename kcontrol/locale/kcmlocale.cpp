@@ -425,9 +425,9 @@ void KLocaleConfig::slotTranslate()
 
   str = m_locale->translate
     ( "Here you can choose the languages that will be used by KDE. If the "
-      "first language in the list is not available, the second will be used "
+      "first language in the list is not available, the second will be used, "
       "etc. If only US English is available, no translations "
-      "have been installed. You can get translations packages for many "
+      "have been installed. You can get translation packages for many "
       "languages from the place you got KDE from.<p>"
       "Note that some applications may not be translated to your languages; "
       "in this case, they will automatically fall back to US English." );
