@@ -1,29 +1,30 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
+
 */
-                                          
+
 #include <kapp.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kbugreport.h>
+#include <kaboutdata.h>
 
 #include <qsplitter.h>
 #include <qtabwidget.h>
@@ -43,7 +44,7 @@
 #include "proxywidget.h"
 #include "global.h"
 #include "modulemenu.h"
-
+#include <stdio.h>
 
 #include "toplevel.h"
 #include "toplevel.moc"
@@ -51,7 +52,7 @@
 
 TopLevel::TopLevel(const char* name)
   : KTMainWindow( name )
-  , _active(0)
+  , _active(0), dummyAbout(0)
 {
   setPlainCaption(i18n("KDE Control Center"));
 
@@ -72,7 +73,7 @@ TopLevel::TopLevel(const char* name)
     KCGlobal::setIconSize(Large);
   else
     KCGlobal::setIconSize(Medium);
-  
+
   // initialize the entries
   _modules = new ConfigModuleList();
   _modules->readDesktopEntries();
@@ -100,7 +101,7 @@ TopLevel::TopLevel(const char* name)
   // help tab
   _helptab = new HelpWidget(_tab);
   _tab->addTab(_helptab, i18n("Hel&p"));
-  
+
   // set a reasonable resize mode
   _splitter->setResizeMode(_tab, QSplitter::KeepSize);
 
@@ -190,7 +191,9 @@ void TopLevel::setupActions()
   // I need to add this so that each module can get a bug reported,
   // and not just KControl
 
-  report_bug=new KAction(i18n("&Report Bug on Module"),0, this, SLOT(reportBug()), actionCollection(), "report_bug");
+  report_bug=new KAction(i18n("&Report Bug..."),0,
+			 this, SLOT(reportBug()), actionCollection(),
+			 "help_report_bug");
 
   createGUI("kcontrolui.rc");
 
@@ -255,7 +258,7 @@ void TopLevel::activateLargeIcons()
 void TopLevel::newModule(const QString &name, const QString &quickhelp)
 {
   QString cap = i18n("KDE Control Center");
-  
+
   if (!name.isEmpty())
     cap += " - [" + name +"]";
 
@@ -266,8 +269,8 @@ void TopLevel::newModule(const QString &name, const QString &quickhelp)
 
 void TopLevel::moduleActivated(ConfigModule *module)
 {
-  _active=module;
-  activateModule(module->name());
+    _active=module;
+    activateModule(module->name());
 }
 
 void TopLevel::showModule(QString desktopFile)
@@ -280,7 +283,7 @@ void TopLevel::showModule(QString desktopFile)
   // locate the desktop file
   QStringList files;
   files = KGlobal::dirs()->findAllResources("apps", "Settings/"+desktopFile+".desktop", TRUE);
-  
+
   // show all matches
   QStringList::Iterator it;
   for (it = files.begin(); it != files.end(); ++it)
@@ -313,16 +316,43 @@ void TopLevel::activateModule(const QString& name)
 
 		  // tell the index to mark this module as loaded
 		  _indextab->makeSelected(mod);
-		  
+		
 		  // dock it
-          _dock->dockModule(mod);
+		  _dock->dockModule(mod);
 		  break;
 		}
 	}
+  report_bug->setText(i18n("Report Bug on Module %1...").arg(name));
 }
 
+void TopLevel::deleteDummyAbout() {
+  delete dummyAbout;
+  dummyAbout = 0;
+}
 void TopLevel::reportBug()
 {
-  KBugReport *br=new KBugReport(this, false, _active->aboutData());
-  br->show();
+  // this assumes the user only opens one bug report at a time
+  static char buffer[30];
+
+    dummyAbout = 0;
+    bool deleteit = false;
+
+    if (!_active) // report against kcontrol
+        dummyAbout = const_cast<KAboutData*>(KGlobal::instance()->aboutData());
+    else {
+	if (_active->aboutData())
+	    dummyAbout = const_cast<KAboutData*>(_active->aboutData());
+	else {
+	  sprintf(buffer, "kcm%s", _active->library().latin1());
+	  dummyAbout = new KAboutData(buffer,
+				      _active->name(), "2.0");
+	  deleteit = true;
+	}
+    }
+    KBugReport *br = new KBugReport(this, false, dummyAbout);
+    if (deleteit) {
+	connect(br, SIGNAL(finished()), SLOT(deleteDummyAbout()));
+    } else
+      dummyAbout = 0;
+    br->show();
 }
