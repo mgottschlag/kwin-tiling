@@ -244,7 +244,7 @@ QString KMemoryWidget::quickHelp() const
 {
   return i18n("<h1>Memory Information</h1>"
 	" This display shows you the current memory usage of your system."
-	" The values are updated on a regular basis and give you an "
+	" The values are updated on a regular basis and give you an"
 	" overview of the physical and virtual used memory." );
 }
 
