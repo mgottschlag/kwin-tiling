@@ -258,13 +258,11 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     listView->setSorting( -1 ); // newly inserted items just append unsorted
 
     cbUseGUIRegExpEditor = new QCheckBox( i18n("&Use graphical editor for editing regular expressions" ), this );
-    QDialog *w = KParts::ComponentFactory::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor" );
-    if ( !w )
+    if ( KTrader::self()->query("KRegExpEditor/KRegExpEditor").isEmpty() )
     {
 	cbUseGUIRegExpEditor->hide();
 	cbUseGUIRegExpEditor->setChecked( false );
     }
-    delete w;
 
     QHBox *box = new QHBox( this );
     box->setSpacing( KDialog::spacingHint() );
