@@ -72,11 +72,6 @@
 #define XFT_CACHE_CMD "xftcache"
 #endif
 
-#undef KFI_DBUG
-#include <qtextstream.h>
-QTextOStream dbg(stderr);
-#define KFI_DBUG dbg
-
 extern "C"
 {
     int kdemain(int argc, char **argv);
