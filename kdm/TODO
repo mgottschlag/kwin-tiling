@@ -1,42 +1,19 @@
-3.2:
-
-- DON'T implement KGreeeterPlugin::suspend() by means of abort(), as it
-  locks the greeter/core into the current scheme.
-  simply suspend the timer as well to avoid any action in the background.
-- make it compile on darwin - CSRG_BASED not defined, but utmp is BSD-like
-  (tell Benjamin Reed <ranger@befunk.com>)
-- make kcrash work in the greeter
-- check #49886, #66783
-- fix #56066
-
-----
-
 - message after switching to text mode
 - implement a "console mode" that is more adequate for linux
 
 - maybe don't expect fixed vt numbers in Xservers. instead, allocate a free
   vt dynamically (lowest vt configurable) and force the Xserver on that.
   dragging this further, one could drop Xservers alltogether, but that gives
-  problems with sessreg on BSD.
+  problems with sessreg on BSD. see #56329
 
 - possibly parse Xserver log to find the vt, whether the config is busted or
   the display is busy, etc.
 
 - dealloc vt after reserve Xserver shutdown (#65346)
 
-- improve the crashing xserver/greeter handling. five restarts are just
-  nonsense and can be extremely annoying.
+- try harder to get rid of processes, see X servers failure cleanup path
 
-- delay consecutive Xserver launches to allow them to finish initialization.
-  (#54285)
-
-- launch Xservers from the display subdaemons. alternatively, build proper
-  timers into the mainloop. in any case, an Xserver launch should not block
-  the core.
-
-- implement auto-re-login by keeping the display subdaemon alive instead
-  of starting a new one and feeding it the old auth data.
-- make it a per-user option; save in .dmrc.
+- make auto-re-login a per-user option; save in .dmrc.
 
 - add Xserver option set selection (#56329)
 - add support for XRandR (#48602)
@@ -45,9 +22,9 @@ save these options to .dmrc?
 - per-display sections in .dmrc. read-only, as far as kdm is concerned, as
   otherwise the GUI would become insanely complex.
 
-- merge sessreg into the core?
+- merge sessreg into the core? take care of #47151 then.
 
-- handle _all_ config changes on the fly, including xdmcp
+- handle _all_ config changes on the fly, including xdmcp & fifo
 - make config position independent
 - parse /etc/kderc?
 - genkdmconf: treat backgroundrc as an ini file, not as a text blob
@@ -67,24 +44,16 @@ save these options to .dmrc?
 
 - actually implement the libpam_client support
 
-- have a look at OpenPAM
-
 - check if pam works before trying to authenticate
 - test whether nis, kerberos4 & kerberos5 work
-- support heimdal krb5 ... wontfix, as far as i'm concerned
 - sync BSD_AUTH from xdm, sync osfc2 from kcheckpass
 
 - swap pam_setcred and pam_open_session order.
-  check how the system specific functions like setpcred (AIX) and
+- check how the system specific functions like setpcred (AIX) and
   setusercontext (BSD) combine with pam_setcred.
-
-- support 32-bit UIDs (#47151)
 
 - Move clock from greeter dialog to desktop
 - add more clock types (#18178)
-
-- prepend "localhost" to xdmcp-initiated local displays in kdm_config, so
-  they can be distinguished from "static" X servers
 
 - merge ipv6 xdmcp support from xdm
 - Add XDMCP _client_ to core (for remote login like in dtlogin).
@@ -123,7 +92,8 @@ save these options to .dmrc?
 - disable autologin if some modifier (shift, like lilo?) is pressed (#60111)
 
 - set LC_ALL in the backend for i18n-capable PAM libs - does one exist?
-  alternative hack: interpret PAM's messages.
+  alternative hack: interpret PAM's messages. generalizing that to the
+  non-PAM case, the V_* marshalling overhead would go away.
 
 - add language selection (export as LC_*). kde should respect this until the
   language is explicitly configured. and later? option "use system setting"?
@@ -150,7 +120,7 @@ and the session. .dmrc later affects only the session, not the greeter.
 
 - greeter theming support. possibly compatible to gdm. (#37349)
 
-- cursor theming support via Xcursor (#60242, #66829)
+- cursor theming support via Xcursor (#66829)
 
 - add screensaver (#41941)
 - support DPMS (#18597)
@@ -160,6 +130,8 @@ and the session. .dmrc later affects only the session, not the greeter.
 - add a minimalistic window manager to the greeter (#17716, #51039)
 
 - make kdm kcontrol module invokable from greeter. depends on wm. security!?
+- write a separate configurator application, as kcontrol does not scale well
+  enough to cover all of kdm's options.
 
 - Different logos for each session type
 - User pictures in logo field
@@ -175,7 +147,7 @@ and the session. .dmrc later affects only the session, not the greeter.
 - faking session parameters (type, language, etc.) of nonexistent users based
   on statistical analysis of actual users ... severe overkill!?
 
-- export password to the startup/session scrips. somehow ... (#35396)
+- export password to the startup/session scripts. somehow ... (#35396)
 
 - actually implement AuthComplain
 
@@ -194,8 +166,8 @@ and the session. .dmrc later affects only the session, not the greeter.
   possibly auto-hide it on vt switch - see kdesktop_lock for the x event
   handling.
 
-- make --without-xdmcp work again. this is part of a bigger problem, though:
-  the coupling of the kdm components, particularily the config reader. options:
+- rethink the coupling of the kdm components, particularily the config reader.
+  options:
   - keep things basically as-is, make the Xaccess and Xservers interfaces
     even more flexible, add capability flags.
   - as previous, but don't use #defines, but textual constants. even more
@@ -213,12 +185,24 @@ and the session. .dmrc later affects only the session, not the greeter.
 
 - speedup login by prefetching files with session-specific scripts (#63789)
 
-internal nitpicks:
+internal stuff:
 - pass FamilyBroadcast instead of hostname BROADCAST to chooser
+- improve signal handling in the subdaemon, it's incredibly racy (GOpen/GClose).
+  depends on proper main loop.
+- alternative extreme measure: launch greeter from master daemon? problem:
+  G_Verify communication overhead.
+- the process reaping from GClose should be in sync with the main loop.
 - config seems to be rescanned at exit even though it needn't to be.
   related: ReadAccessDatabase() should be called in some reasonable location.
   also related: reserve status change in Xservers is still wrong (userSess).
 - kill warning on AIX - see bug #13628 (really present?)
+- clean up OOM handling, particularily get rid of LogOutOfMem, and make sure
+  an error is not masked by following functions (e.g., addStrArr).
+- put %m support into dopr(), nuke SysErrorMsg().
+- implement auto-re-login by keeping the display subdaemon alive instead
+  of starting a new one and feeding it the old auth data.
+- move OS selection code to the core. the greeter could finally run
+  unprivileged then
 
 ralf says:
 - put the kmenu sidebar image on the left of the greeter
@@ -230,6 +214,9 @@ thoughts (not really todo):
   PAM_CONV_AGAIN/PAM_INCOMPLETE, but this is not portable.
   actually suspending is not required at all if PAM is reentrant enough to
   run a complete auth cycle from within the conversation function.
+- multiple plugins could be used in a row, each serving a pam module.
+  the plugins would have to detect that it's their turn by filtering messages
+  and prompts.
 - versioned .desktop files? if the already installed Version is -1, never
   upgrade, otherwise update if the new Version is greater.
   this is relatively pointless, as customized session definitions can be put
