@@ -22,6 +22,7 @@
 
 
 #include <qdir.h>
+#include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
@@ -36,7 +37,6 @@
 #include <kstddirs.h>
 #include <kdialog.h>
 #include <kurlrequester.h>
-#include <qcheckbox.h>
 
 #include "kdm-sess.moc"
 
@@ -234,11 +234,15 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       sdrcombo->setEnabled(false);
 
       restart_lined->lineEdit()->setReadOnly(true);
+      restart_lined->button()->setEnabled(false);
       shutdown_lined->lineEdit()->setReadOnly(true);
+      shutdown_lined->button()->setEnabled(false);
 #ifdef __linux__
       lilo_check->setEnabled(false);
       lilocmd_lined->lineEdit()->setReadOnly(true);
+      lilocmd_lined->button()->setEnabled(false);
       lilomap_lined->lineEdit()->setReadOnly(true);
+      lilomap_lined->button()->setEnabled(false);
 #endif
       session_lined->setReadOnly(true);
       sessionslb->setEnabled(false);
