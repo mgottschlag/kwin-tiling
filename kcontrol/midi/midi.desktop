@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=kcmshell Sound/midi
-Icon=midi
+Icon=kcmmidi
 Type=Application
 DocPath=kcontrol/midi.html
 
@@ -42,8 +42,7 @@ Comment[ro]=Configurare Midi
 Comment[ru]=Настройка Midi
 Comment[sk]=Konfigurácia Midi
 Comment[sl]=Prikrojitev Midi
-Comment[sr]=Konfiguracija midija
-Comment[sv]=Anpassnig av Midi
+Comment[sv]=Anpassning av Midi
 Comment[ta]=Midi ÅÊÅ¨ÁôÒ
 Comment[tr]=Midi Yapılandırması
 Comment[uk]=Конфігурації midi
