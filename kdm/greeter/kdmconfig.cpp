@@ -45,7 +45,8 @@
 #define defShowMode	UsrAll
 
 KDMConfig::KDMConfig() :
-    KSimpleConfig( QString::fromLatin1(KDE_CONFDIR "/kdmrc") )
+    KSimpleConfig( KGlobal::dirs()->resourceDirs("config").last() + 
+		   QString::fromLatin1("kdmrc") )
 {
     setGroup( "KDM" );
 

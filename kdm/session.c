@@ -414,7 +414,6 @@ ManageSession (struct display *d)
 #endif
 
     Debug ("ManageSession %s\n", d->name);
-    (void) Signal (SIGINT, SIG_IGN);	/* for nodaemon */
     (void)XSetIOErrorHandler(IOErrorHandler);
     (void)XSetErrorHandler(ErrorHandler);
     SetTitle(d->name, (char *) 0);

@@ -30,6 +30,7 @@
 
 #include <sys/types.h>
 #include <sys/param.h>
+#include <sys/stat.h>
 
 #include <pwd.h>
 #include <stdio.h>
@@ -485,27 +486,32 @@ KGreeter::shutdown_button_clicked()
 void
 KGreeter::save_wm()
 {
-    rdwr_wm ((char*)sessionargBox->currentText().latin1(), 0, 
-	     loginEdit->text().latin1(), 0);
+    rdwr_wm ((char *)sessionargBox->currentText().local8Bit().data(), 0, 
+	     loginEdit->text().local8Bit().data(), 0);
 }
 
 void
 KGreeter::load_wm()
 {
     char buf[256];
-    const char *name;
+    QCString name;
     int sum, len, i, num;
 
     num = sessionargBox->count();
-    name = loginEdit->text().latin1();
-    switch (rdwr_wm (buf, 256, name, 1)) {
+    name = loginEdit->text().local8Bit();
+    switch (rdwr_wm (buf, 256, name.data(), 1)) {
 	case -2:	/* no such user */
-	    for (sum = 0, i = 0, len = strlen(name); i < len; i++)
-		sum += (int)name[i] << ((i ^ sum) & 7);	/* voodoo */
-	    i = (sum ^ (sum >> 7)) % (num * 4 / 3);
-	    if (i < num) {
-		sessionargBox->setCurrentItem(i);
-		return;
+	    if ((len = name.length())) {
+		/* XXX - voodoo */
+		for (sum = 0, i = 0; i < len; i++)
+		    sum += (int)name[i] << ((i ^ sum) & 7);
+		sum ^= (sum >> 7);
+		/* forge a session with this hash - default more probable */
+		i = sum % (num * 4 / 3);
+		if (i < num) {
+		    sessionargBox->setCurrentItem(i);
+		    return;
+		}
 	    }
 	    /* fall through */
 	case -1:	/* cannot read */
@@ -514,7 +520,7 @@ KGreeter::load_wm()
     }
 
     for (i = 0; i < num; i++)
-	if (sessionargBox->text(i) == QString::fromLatin1 (buf)) {
+	if (sessionargBox->text(i) == QString::fromLocal8Bit (buf)) {
 	    sessionargBox->setCurrentItem(i);
 	    return;
 	}
@@ -563,11 +569,11 @@ KGreeter::go_button_clicked()
 
     /* NOTE: name/password are static -> all zero -> terminator present */
     greet->name = ::name;
-    strncpy( ::name, loginEdit->text().latin1(), F_LEN - 1 );
+    strncpy( ::name, loginEdit->text().local8Bit(), F_LEN - 1 );
     greet->password = ::password;
     strncpy( ::password, passwdEdit->password(), F_LEN - 1 );
     greet->string = ::sessarg;
-    strncpy( ::sessarg, sessionargBox->currentText().latin1(), F_LEN - 1 );
+    strncpy( ::sessarg, sessionargBox->currentText().local8Bit(), F_LEN - 1 );
 
     switch (MyVerify (::d, greet, verify, &expire, &nologin)) {
 	case V_ERROR:
@@ -600,7 +606,7 @@ KGreeter::go_button_clicked()
 	    break;
 	case V_NOLOGIN: {
 	    QFile f;
-	    f.setName(QString::fromLatin1(nologin));
+	    f.setName(QString::fromLocal8Bit(nologin));
 	    f.open(IO_ReadOnly);
 	    QTextStream t( &f ); 
 	    errm = "";
@@ -615,6 +621,7 @@ KGreeter::go_button_clicked()
 	    } break;
 	case V_AWEXPIRE:
 	    dat.setTime_t(expire);
+	    /* XXX make sensible */
 	    errm = i18n("Your account expires on %1.")
 			.arg(KGlobal::locale()->formatDateTime(dat));
 	    TempUngrab_Run(infobox, 0);
@@ -653,8 +660,8 @@ KGreeter::ReturnPressed()
 	return;
     else if( loginEdit->hasFocus()) {
 	passwdEdit->setFocus();
-        load_wm();
-	if (AccNoPass (::d, loginEdit->text().latin1()))
+	load_wm();
+	if (AccNoPass (::d, loginEdit->text().local8Bit()))
 	    go_button_clicked();
     } else if (passwdEdit->hasFocus() || 
 	       goButton->hasFocus() ||
@@ -677,14 +684,14 @@ int AccNoPass (
     struct display	*d,
     const char		*un)
 {
-    QString user (QString::fromLatin1 (un));
+    QString user (QString::fromLocal8Bit (un));
     return (!strcmp (d->name, ":0") &&
-            (kdmcfg->_autoUser == user ||
-    	     kdmcfg->_noPassUsers.contains (user))) ||
+	    (kdmcfg->_autoUser == user ||
+	     kdmcfg->_noPassUsers.contains (user))) ||
 	   (d->autoLogin &&
-	    (QString::fromLatin1 (d->autoUser) == user ||
-	     QStringList::split (QString::fromLatin1 (","), 
-				 QString::fromLatin1 (d->noPassUsers)
+	    (QString::fromLocal8Bit (d->autoUser) == user ||
+	     QStringList::split (QString::fromLocal8Bit (","), 
+				 QString::fromLocal8Bit (d->noPassUsers)
 				).contains (user)));
 }
 
@@ -697,7 +704,7 @@ MyVerify (
     char		**nologin)
 {
     if (greet->password && greet->password[0] == '\0' && 
-        AccNoPass (d, greet->name))
+	AccNoPass (d, greet->name))
 	greet->password = 0;
     return Verify (d, greet, verify, expire, nologin);
 }
@@ -748,7 +755,7 @@ AutoLogon (
 		if (!kdmcfg->_autoLogin1st)
 		    return 0;
 	    }
-	    strncpy(name, kdmcfg->_autoUser.latin1(), F_LEN - 1);
+	    strncpy(name, kdmcfg->_autoUser.local8Bit(), F_LEN - 1);
 	    greet->password = 0;
 #ifdef USE_RDWR_WM
 	    if (!rdwr_wm (sessarg, F_LEN, name, 1))
@@ -909,9 +916,9 @@ GreetUser(
     }	/* AutoLogon */
 
     if (kdmcfg->_showPrevious)
-	kdmcfg->writeEntry (QString::fromLatin1("LastUser_") + 
-				QString::fromLatin1(d->name), 
-			    QString::fromLatin1(greet->name));
+	kdmcfg->writeEntry (QString::fromLocal8Bit("LastUser_") + 
+				QString::fromLocal8Bit(d->name), 
+			    QString::fromLocal8Bit(greet->name));
 
     /*
      * Run system-wide initialization file
@@ -982,6 +989,8 @@ exgrt:
      // Clean up
     qApp->restoreOverrideCursor();
     delete kdmcfg;
+    chmod (QFile::encodeName(KGlobal::dirs()->resourceDirs("config").last() + 
+	   QString::fromLatin1("kdmrc")).data(), 0644);
 
     return retval == ex_choose ? Greet_RunChooser : Greet_Success;
 }

@@ -12,11 +12,14 @@ int
 rdwr_wm (char *wm, int wml, const char *usr, int rd)
 {
     int rv;
-    char fname[256];
     FILE *file;
+    char fname[256];
+    struct passwd *pwd;
 
     /* read passwd */
-    struct passwd *pwd = getpwnam( usr );
+    if (!usr || !usr[0])
+	return -2;
+    pwd = getpwnam( usr );
     endpwent();
     if (!pwd)
 	return -2;
