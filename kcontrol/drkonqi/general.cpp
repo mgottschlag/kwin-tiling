@@ -34,25 +34,51 @@
 KDrKonqiGeneral::KDrKonqiGeneral(KConfig *config, QString group, QWidget *parent, const char *name)
   : KCModule(parent, name), g_pConfig(config), groupname(group)
 {
-  QGridLayout *layout = new QGridLayout(this, 3,1,
+  QGridLayout *layout = new QGridLayout(this, 2,2,
                                         KDialog::marginHint(),
 					KDialog::spacingHint());
 
- // layout->setRowStretch(
-  
 
-/*  bGrp = new QButtonGroup(1, Qt::Vertical,
-						  i18n("Sample optionss"), this);
-  connect(bGrp, SIGNAL(clicked(int)), this, SLOT(configChanged()));
 
-  topLayout->addWidget(bGrp);
+   lb_Presets = new QListBox(layout, "Preset list",0);
 
-  button1 = new QRadioButton(i18n("&Some option"), bGrp);
-  button2 = new QRadioButton(i18n("Some &other option"), bGrp);
-  button3 = new QRadioButton(i18n("&Yet another option"), bGrp);
-*/
+
+QStringList qldd = KGlobal::dirs()->findAllResources("data","drkonqi/presets/*rc",false, true);
+
+
+for (QStringList::Iterator it = qldd.begin();  it != qldd.end(); ++it)
+{
+// Read the configuration titles
+KConfig config ((*it).latin1(), true, true, "data");
+
+config.setGroup("General");
+
+QString ConfigNames = config.readEntry(QString::fromLatin1("Name"),QString::fromLatin1("unknown"));
+lb_Presets->insertItem(ConfigNames.latin1());
+}
+   connect(lb_Presets,SIGNAL(selectionChanged()), SLOT(showDetails()));
   load();
 }
+
+void KDrKonqiGeneral::showDetails (void)
+{
+QStringList qldd = KGlobal::dirs()->findAllResources("data","drkonqi/presets/*rc",false, true);
+
+for (QStringList::Iterator it = qldd.begin();  it != qldd.end(); ++it)
+{
+// Read the configuration titles
+KConfig config ((*it).latin1(), true, true, "data");
+
+config.setGroup("General");
+
+if ( lb_Presets->currentText() == config.readEntry(QString::fromLatin1("Name"),QString::fromLatin1("unknown")))
+{
+
+}
+
+}
+}
+
 
 void KDrKonqiGeneral::load()
 {
