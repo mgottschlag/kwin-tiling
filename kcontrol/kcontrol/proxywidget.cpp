@@ -40,6 +40,7 @@
 #include <qvbox.h>
 #include <qlabel.h>
 
+#include "global.h"
 #include "proxywidget.h"
 #include "proxywidget.moc"
 
@@ -183,12 +184,12 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   _reset =   new KPushButton( KGuiItem( i18n( "&Reset" ), "undo" ), this );
   _root =    new KPushButton( KGuiItem(i18n( "&Administrator Mode" )), this );
 
-  bool mayModify = !run_as_root || !_client->useRootOnlyMsg();
+  bool mayModify = (!run_as_root || !_client->useRootOnlyMsg()) && !KCGlobal::isInfoCenter();
 
   // only enable the requested buttons
   int b = _client->buttons();
-  setVisible(_help, b & KCModule::Help);
-  setVisible(_default, mayModify && b & KCModule::Default);
+  setVisible(_help, (b & KCModule::Help));
+  setVisible(_default, mayModify && (b & KCModule::Default));
   setVisible(_apply, mayModify && (b & KCModule::Apply));
   setVisible(_reset, mayModify && (b & KCModule::Apply));
   setVisible(_root, run_as_root);
