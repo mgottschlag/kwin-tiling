@@ -116,7 +116,7 @@ QPushButton *KIconConfig::addPreviewIcon(int i, const QString &str, QWidget *par
     mpPreview[i]->setAlignment(AlignCenter);
     mpPreview[i]->setMinimumSize(105, 105);
     lay->addWidget(mpPreview[i], 2, i);
-    QPushButton *push = new QPushButton(i18n("Set Effect"), parent);
+    QPushButton *push = new QPushButton(i18n("Set Effect..."), parent);
     lay->addWidget(push, 3, i, AlignCenter);
     return push;
 }
