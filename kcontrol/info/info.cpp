@@ -73,7 +73,8 @@ static bool	sorting_allowed;	/* is sorting allowed by user ? */
 #define HEXDIGITS (sizeof(int)*8/4)	/* 4 Byte = 32 Bit = 8 Hex-Digits */
 
 static QString Value( int val, int numbers=1 )
-{	return QString("%1").arg(val,numbers);
+{
+  return KGlobal::locale()->formatNumber(val, 0).rightJustify(numbers);
 }
 
 static QString HexStr(unsigned long val, int digits )
