@@ -56,17 +56,13 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   : KCModule (parent, name)
 {
   QString strWin1, strWin2, strWin3, strAll1, strAll2, strAll3;
-  QGridLayout *layout = new QGridLayout( this, 15, 5,
+  QGridLayout *layout = new QGridLayout( this, 15, 4,
                      KDialog::marginHint(), 1);
-  layout->setColStretch( 1, 50 );
-  layout->setColStretch( 2, 20 ); // very wide comboboxes look ugly (DF)
-  layout->setColStretch( 3, 20 ); // very wide comboboxes look ugly (DF)
-  layout->setColStretch( 4, 50 );
 
   QLabel* label;
 
   label = new QLabel(i18n("Titlebar doubleclick:"), this);
-  layout->addMultiCellWidget(label, 0,0,0,0);
+  layout->addMultiCellWidget(label, 0,0,0,1);
   label = new QLabel(this);
   label->setFrameStyle(QFrame::HLine|QFrame::Sunken);
   layout->addMultiCellWidget(label, 1, 1, 0, 3);
