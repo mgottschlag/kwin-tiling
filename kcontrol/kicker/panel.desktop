@@ -5,7 +5,7 @@ DocPath=kcontrol/kcmkicker/kicker-1.html
 Exec=kcmshell LookNFeel/Panel/panel
 
 X-KDE-ModuleType=Library
-X-KDE-LibraryName=kicker
+X-KDE-Library=kicker
 X-KDE-FactoryName=kicker
 
 Name=Panel

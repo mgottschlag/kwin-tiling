@@ -5,51 +5,136 @@ Type=Application
 DocPath=kcontrol/kcminfo/info-5.html
 
 X-KDE-ModuleType=Library
-X-KDE-LibraryName=info
+X-KDE-Library=info
 X-KDE-FactoryName=ioports
 X-KDE-ControlModuleType=Info
 X-KDE-HideFromPanel=true
 
 Name=IO-Ports
 Name[ca]=Ports E/S
-Name[cs]=IO-porty
+Name[cs]=Vstupně/výstupní-porty
+Name[da]=IO-porte
 Name[de]=Ports für Ein-/Ausgabe
 Name[eo]=En/el-pordoj
+Name[es]=Puertos E/S
+Name[et]=IO pordid
 Name[fi]=IO-portit
 Name[fr]=Ports d'entrée/sortie
-Name[hu]=IO-Portok
-Name[it]=Porte di IO
+Name[he]=טלפ\טלק
+Name[hr]=IO-Portovi
+Name[hu]=IO-portok
+Name[is]=Inn-/úttaksport
+Name[it]=Porte di I/O
 Name[ja]=IO ポート
+Name[mk]=В/И-порти
+Name[nl]=IO-Poorten
 Name[no]=IO-porter
 Name[no_NY]=IU-portar
+Name[pl]=Porty wejścia/wyjścia
 Name[pt]=Portas de I/O
 Name[ro]=Porturi I/O
+Name[ru]=Порты ввода/вывода
 Name[sl]=V/I vrata
+Name[sr]=IO-Portovi
 Name[sv]=I/O-portar
-Name[ta]=¯/¦Å-Ð¨È¸û
+Name[ta]=உ/ெவ-துைறகளஂ
+Name[tr]=G/Ç Portları
+Name[uk]=Порти вводу/виводу
 
 Comment=IO-port information
 Comment[ca]=Informació dels ports E/S
-Comment[cs]=Informace o IO-portech
+Comment[cs]=Informace o vstupně/výstupních-portech
+Comment[da]=IO-portinformation
 Comment[de]=Informationen zu benutzten Ein-/Ausgabe-Ports
 Comment[eo]=Informo pri En/el-pordoj
+Comment[es]=Información de puertos E/S
+Comment[et]=Info IO portide kohta
 Comment[fi]=IO-porttitiedot
 Comment[fr]=Informations sur les ports d'entrée/sortie
-Comment[hu]=Információk a ki/bemeneti portokról
-Comment[it]=Informazioni sulle porte di IO
+Comment[he]=טלפ\טלק תואיצי לע עדימ
+Comment[hr]=Informacije o IO-portovima
+Comment[hu]=Információk a ki- és bemeneti portokról
+Comment[is]=Upplýsingar um inn-/úttaksport
+Comment[it]=Informazioni sulle porte di I/O
 Comment[ja]=IO ポートの情報
+Comment[mk]=Информации за влезно/излезните порти
+Comment[nl]=IO-poortinformatie
 Comment[no]=IO-portinformasjon
 Comment[no_NY]=IU-port-informasjon
+Comment[pl]=Informacje o portach wejścia/wyjścia
 Comment[pt]=Informação sobre portas de I/O
 Comment[ro]=Informaţii despre porturile I/O
+Comment[ru]=Информация о портах ввода/вывода
 Comment[sl]=Informacija o vhodno/izhodnih vratih
+Comment[sr]=Informacije o IO-Portovima
 Comment[sv]=Information om I/O-portar
-Comment[ta]=¯/¦Å-Ð¨È ¾¸Åø
+Comment[ta]=உ/ெவ-துைற தகவலஂ
+Comment[tr]=Girdi Çıktı portları hakkında bilgi
+Comment[uk]=Інформація щодо портів вводу/виводу
 
 Keywords=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System Information
-Keywords[hu]=IO,I/O,IO portok,I/O portok,portok,IO tartomány,I/O tartomány,rendszerinformáció
+Keywords[ca]=ES,E/S,Ports d'ES,Ports d'E/S,Ports,Rang d'ES,Rang d'E/S,Informació del sistema
+Keywords[cs]=IO,I/O,IO-porty,I/O-porty,Porty,Rozsah IO,Rozsah I/O,Informace o systému
+Keywords[da]=IU,I/U,IU-porte,I/U-Porte,Porte,IU-område,I/U område,System information
+Keywords[de]=Ein-/Ausgabe,IO,I/O,IO-ports,I/O-Ports,Ports,IO-Bereich,I/O-Bereich,Systeminformation
+Keywords[eo]=IO,I/O,en,el,eneligo,pordoj,sistemo,operaciumo,informo
+Keywords[es]=ES,E/S,Puertos-ES,Puertos-E/S,Puertos,Rango-E/S,Intervalo-E/S,Información del sistema
+Keywords[et]=IO,I/O,IO pordid,I/O pordid,pordid,IO piirkond,I/O piirkond,Süsteemi info
+Keywords[fi]=IO,I/O,IO-Portit,I/O-Portit,Portit,IO_Alue,I/O-Alue,Järjestelmätiedot
+Keywords[fr]=IO,I/O,entrées-sorties,ports d'entrée-sortie,informations système,plage d'entrée-sortie
+Keywords[he]=תכרעמ עדימ,טלפ\טלק חווט,תואיצי,טלפ\טלק תואיצי,טלפ\טלק,IO
+Keywords[hr]=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System 
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Keywords[hu]=IO,I/O,IO-portok,I/O-portok,portok,IO-tartomány,I/O tartomány,rendszerinformáció
+Keywords[is]=Inntak,Úttak,I/Ú,Port,upplýsingar,kerfi
+Keywords[it]=IO,I/O,Porte di IO,Porte di I/O,Porte,Intervallo di IO,Intervallo di I/O,Informazioni sul sistema
+Keywords[ja]=IO,I/O,IO-ポート,I/O-ポート,ポート,IO-レンジ,I/O-レン=E3=82=B8,システムの情報
+Keywords[mk]=IO,I/O,IO-порти,I/O-порти,Порти,ВИ-порти,В/И-порти,Информации за системот
+Keywords[nl]=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,SysteeminformatieIO-poorten
 Keywords[no]=IO,I/O,IO-porter,I/O-porter,port,IO-område,I/O-område,IU,I/U,IU-porter,I/U-porter,port,IU-område,I/U-område,Systeminformasjon
 Keywords[no_NY]=IU,I/U,IO,I/O,IU-portar,I/U-portar,portar,IU-område,I/U-område,systeminformasjon
+Keywords[pl]=IO,I/O,porty IO,porty I/O,porty,zakres IO,zakres I/O,informacja o systemie
 Keywords[pt]=IO,I/O,portos IO,portos,gama de IO,informações de sistema
 Keywords[ro]=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,Informaţii sistem
+Keywords[sl]=VI,V/I,V/I-vrata,VI-vrata,vrata,VI-obseg,V/I-obseg,informacije o sistemu
+Keywords[ta]=உெவ,உ/ெவ,உெவ-துைறகளஂ,உ/ெவ-துைறகளஂ,உெவ வீசஂசு,உ/ெவ-வீசஂசு,கணினி தகவலஂ
+Keywords[tr]=GÇ,G/Ç,GÇ Portları,G/Ç Portları, Portlar,GÇ-Aralığı,G/Ç-Aralığı,Sistem
+Keywords[uk]=порти вводу/виводу,вв,в/в,порти,io,i/o,io-ports,i/p-ports,ports,system information
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
+Information,IO-portovi,I/O-portovi,portovi,IO-raspon,I/O-raspon,informacije o sustavu
 

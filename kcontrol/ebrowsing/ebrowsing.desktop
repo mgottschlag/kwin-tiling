@@ -5,7 +5,7 @@ Icon=konqueror
 Exec=kcmshell Browsing/Web/ebrowsing
 
 X-KDE-ModuleType=Library
-X-KDE-LibraryName=kurifilt
+X-KDE-Library=kurifilt
 X-KDE-FactoryName=kurifilt
 X-KDE-ControlModuleType=User
 X-KDE-HideFromPanel=true
@@ -13,41 +13,123 @@ X-KDE-HideFromPanel=true
 Name=Enhanced Browsing
 Name[ca]=Navegació millorada
 Name[cs]=Rozšířené prohledávání
+Name[da]=Udvidet netsøgning
 Name[de]=Erweiterte Ansicht
+Name[eo]=progresinta TTTumado
+Name[es]=Navegación mejorada
+Name[et]=Täiustatud brausimine
 Name[fi]=Edistynyt selailu
 Name[fr]=Navigation avancée
-Name[he]=רפושמ ףודפד
+Name[he]=תרפושמ השילג
+Name[hr]=Napredno pregledavanje
 Name[hu]=Fejlett böngészés
-Name[it]=Browsing avanzato
+Name[it]=Navigazione avanzata
 Name[ja]=拡張ブラウズ
+Name[mk]=Напредно разгледување
 Name[no]=Utvidet losing
 Name[no_NY]=Utvida surfing
+Name[pl]=Rozszerzone przeglądanie
 Name[pt]=Navegação Melhorada
 Name[ro]=Navigare avansată
-Name[sl]=Izbolj�ano brkljanje
+Name[ru]=Расширенные настройки
+Name[sl]=Izboljšano brkljanje
+Name[sr]=Napredno pretraživanje
+Name[sv]=Utökad bläddring
+Name[ta]=ேமமஂபடஂட ேமேலாடு
+Name[tr]=Gelişkin Tarama
+Name[uk]=Перегляд з розширеними можливостями
 
 Comment=You can configure Enhanced Browsing here
 Comment[ca]=Aquí podeu configurar la navegació millorada
 Comment[cs]=Zde je možné nastavit rozšířené prohledávání
+Comment[da]=Man kan indstille udvidet netsøgning her
 Comment[de]=Hier können Sie die weitere Ansichtsmöglichkeiten einstellen
+Comment[eo]=Agordo de TTTumado por progresintoj
+Comment[es]=Aquí puede configurar navegación mejorada
+Comment[et]=Täiustatud brausimise konfigureerimine
 Comment[fi]=Voit muokata edistyneitä selainasetuksia täältä
-Comment[fr]=Vous pouvez configurer ici la Navigation Avancée
-Comment[he]=ןאכ רפושמ ףודפדה תא רידגהל ךתורשפאב
+Comment[fr]=Configuration de la "navigation avancée"
+Comment[he]=ןאכ תרפושמה השילגה תא רידגהל ךתורשפאב
+Comment[hr]=Ovdje možete namjestiti napredno pregledavanje
 Comment[hu]=Itt lehet beállítani a fejlett böngészés tulajdonságait
-Comment[it]=Qui puoi configurare il browsing avanzato
+Comment[it]=Qui puoi configurare la navigazione avanzata
 Comment[ja]=ここで拡張ブラウズを設定します
+Comment[mk]=Конфигурирање на напредното разгледување
+Comment[nl]=U kunt hier het geavanceerd Internetbrowsen instellen
 Comment[no]=Her kan du konfigurere Utvidet losing
 Comment[no_NY]=Du kan setja opp utvida surfing her
+Comment[pl]=Można tu skonfigurować rozszerzone przeglądanie
 Comment[pt]=Configuração da navegação avançada
 Comment[ro]=Configurează navigarea de web avansată
-Comment[sl]=Tu lahko nastavite izbolj�ano brkljanje
+Comment[ru]=Здесь вы можете настроить расширения
+Comment[sl]=Tu lahko nastavite izboljšano brkljanje
+Comment[sr]=Ovde možete podesiti napredno pretraživanje
+Comment[sv]=Här kan du anpassa utökad bläddring
+Comment[ta]=ேமமஂபாடஂடு ேமேலாடிைய இஙஂேக வடிவைமகஂகலாமஂ
+Comment[tr]=Gelişkin Taramayı buradan yapılandırabilirsiniz
+Comment[uk]=Тут ви можете настроїти перегляд з розширеними можливостями
 
 Keywords=Enhanced Browsing,Browsing,WWW,Internet,Internet Keywords,Internet Filters,Network
 Keywords[ca]=Navegació millorada,navegació,WWW,Internet,paraules clau d'Internet,filtres d'Internet,Xarxa
-Keywords[de]=erweitertes browsen,browsen,www,internet,stichwörter,filter netz
+Keywords[cs]=Rozšížené procházení,Procházení,WWW,Internet,Klíčová slova internetu, Internetové filtry,Síť
+Keywords[da]=Udvidet netsøgning,Netsøgning,www,Internet,Internettastatur,Internet filtre,Netværk
+Keywords[de]=Durchsuchen,Erweitertes Browsen,Browsen,WWW,Internet,Stichwörter,Filter,Netz
+Keywords[eo]=progresintoj,TTT,krozado,WWW,Interreto,filtrilo,reto
+Keywords[es]=Navegación mejorada,Navegación,WWW,Internet,Palabras clave de internet,Filtros internet,Red
+Keywords[et]=Täiustatud brausimine,brausimine,WWW,internet,interneti võtmesõnad,interneti filtrid,võrk
+Keywords[fi]=Edistynyt selailu,selailu,WWW,Internet,Internet-hakusanat,Internet suodattimet,Verkko
+Keywords[fr]=navigation avancée,navigation,WWW,Web,Internet,mots-clés Internet,filtres Internet,réseau
+Keywords[he]=טנרטניא יננסמ,טנרטניאב חתפמ תולימ,WWW,טנרטניא,תשר,השילג,תרפושמ השילג
+Keywords[hr]=Enhanced Browsing,Browsing,WWW,Internet,Internet Keywords,Internet 
+Filters,Network,Filteri,Mreža
 Keywords[hu]=fejlett böngészés,böngészés,WWW,internet,internet szűrők,hálózat
+Keywords[it]=Navigazione avanzata,Navigazione,WWW,Internet,Parole chiave Internet,Filtri Internet,Rete
+Keywords[ja]=拡張ブラウズ,ブラウズ,WWW,インターネット,インタ=E3=83=BCネットキーワード ,インターネットフィルタ,ネットワーク
+Keywords[mk]=Напредно разгледување,Разгледување,WWW,Интернет,Internet,Интернет филтери,Мрежа
+Keywords[nl]=Geavanceerd bladeren,Browsing,WWW,Internet,Internet Keywords,Internet Filters,Netwerk
 Keywords[no]=Utvidet los,Nettlosing,WWW,vev,Internet,Internett,Internet-nøkkelord,Internett-nøkkelord,Internet-filtre,Internett-filtre,Nettverk
 Keywords[no_NY]=Utvida surfing,surfing,WWW,Internett,Internett-nøkkelord,Internett-filter,nettverk
+Keywords[pl]=Rozszerzone przeglądanie,przeglądanie,WWW,Internet,słowa kluczowe w Internecie, filtry w Internecie, sieć
 Keywords[pt]=navegação melhorada,navegação,WWW,internet,palavras chave internet,filtros internet,rede
 Keywords[ro]=navigare avansată,navigare,WWW,Internet,cuvinte cheie Internet,filtre Internet,reţea
-Keywords[sl]=izbolj�ano brkljanje,brkljanje,WWW,splet,internet,klju�ne besede interneta,filtri interneta,omre�je
+Keywords[sl]=izboljšano brkljanje,brkljanje,WWW,splet,internet,ključne besede interneta,filtri interneta,omrežje
+Keywords[ta]=ேமமஂபாடஂடு ேமேலாடி,ேமேலாடி,இைணயமஂ,வைல,வைல முதனஂைமசஂெசாலஂ,வைல வடிகடஂடி,வைலயைமபஂபு
+Keywords[tr]=Gelişkin Tarama,Tarama,WWW,İnternet,İnternet Anahtar Kelimeleri,İnternet Süzgeçleri,Ağ
+Keywords[uk]=розширений перегляд,пергляд,Browsing,WWW,Інтернет,Internet,ключові слова, Інтернет,фільтри,мережа
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža
+Filters,Network,Filteri,Mreža

@@ -6,7 +6,7 @@ Icon=kfm
 Exec=kcmshell LookNFeel/Desktop/desktop
 
 X-KDE-ModuleType=Library
-X-KDE-LibraryName=konq
+X-KDE-Library=konq
 X-KDE-FactoryName=desktop
 X-KDE-ControlModuleType=User
 X-KDE-HideFromPanel=true
@@ -14,38 +14,162 @@ X-KDE-HideFromPanel=true
 Name=Desktop
 Name[ca]=Escriptori
 Name[cs]=Pracovní plocha
+Name[da]=Skrivebord
 Name[de]=Arbeitsfläche
-Name[eo]=Labortabulo
+Name[eo]=Tabulo
+Name[es]=Escritorio
+Name[et]=Töölaud
 Name[fi]=Työpöytä
 Name[fr]=Bureau
 Name[he]=הדובע ןחלוש
+Name[hr]=Radna površina
 Name[hu]=Munkaasztal
+Name[is]=Skjáborð
 Name[ja]=デスクトップ
+Name[mk]=Работна површина
+Name[nl]=Bureaublad
 Name[no]=Skrivebord
 Name[pt]=Ambiente de Trabalho
 Name[ro]=Ecran
+Name[ru]=Рабочий стол
 Name[sl]=Namizje
+Name[sr]=Radna površina
 Name[sv]=Skrivbordet
-Name[ta]=§Á¨º
+Name[ta]=ேமைச
+Name[tr]=Masaüstü
+Name[uk]=Робочій стіл
 
 Comment=You can customize the desktop here
 Comment[ca]=Aquí podeu configurar l'escriptori
+Comment[cs]=Zde je možné přizpůsobit pracovní plochu
+Comment[da]=Her kan man indstille skrivebordet
 Comment[de]=Hier können Sie die Arbeitsfläche einrichten
+Comment[eo]=Agordo de la tabulo
+Comment[es]=Aquí puede personalizar el escritorio
+Comment[et]=Siin saad kohandada töölauda
+Comment[fi]=Muokkaa työpöydän asetuksia
+Comment[fr]=Personnalisation du bureau
 Comment[he]=ןאכ הדובעה ןחלוש תרוצת תא עובקל ךתורשפאב
+Comment[hr]=Ovdje možete podesiti radnu površinu
 Comment[hu]=A munkaasztalt itt lehet testreszabni
+Comment[is]=Þú getur sniðið skjáborðið að þínum þörfum hér
 Comment[it]=Qui puoi personalizzare il dekstop
+Comment[ja]=ここでデスクトップのカスタマイズをします
+Comment[mk]=Поставки на самата работна површина
+Comment[nl]=Hier kunt u uw bureaublad aanpassen
 Comment[no]=Her kan du tilpasse ikonene på skrivebordet
 Comment[no_NY]=Du kan tilpassa skrivebordet her
+Comment[pl]=Konfiguracja biurka (desktopu)
 Comment[pt]=Configuração do ambiente de trabalho
 Comment[ro]=Personalizează ecranul
+Comment[ru]=Здесь вы можете настроить рабочий стол
 Comment[sl]=Tu lahko prikrojite namizje
+Comment[sr]=Ovde možete prilagoditi radnu površinu
+Comment[sv]=Här kan du anpassa skrivbordet
+Comment[ta]=நீஙஂகளஂ ேமைசைய தனிபஂபயனாகஂகலாமஂ
+Comment[tr]=Masaüstünü buradan özelleştirebilirsiniz
+Comment[uk]=Тут Ви можете настроїти ваш робочій стіл
 
 Keywords=icons,desktop,colors,colors,font,font size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,desktops
 Keywords[ca]=icones,escriptori,colors,,font,mida de font,fitxer,noms de fitxer,menú,menú emergent,menu k,menú d'inici,llista de finestres,finestres,escriptoris
-Keywords[de]=symbole,icons,arbeitsfläche,desktop,farben, schrift, schriftgröße dateien,dateinamen,menü,kontextmenüs,k-menü,startmenü,fensterliste,fenster, arbeitsflächen
-Keywords[hu]=ikonok,munkaasztal,asztal,színek,betűtípusok,fájlok,fájlnevek,menü,k-menü,startmenü,ablaklista,munkaasztalok
+Keywords[cs]=Ikony,Pracovní plocha,barvy,Písmo,Velikost písma,Soubory,Jména souborů,Menu,Kontextová menu,K-menu,Statrovní menu,Seznam oken,Okna,Pracovní plochy
+Keywords[da]=ikoner,skrivebord,farver,skrifttype,skriftstørrelse,filer,filnavne,menu,popopmenuk-menu,startmenu,vindiesliste,vinduer,skriveborde
+Keywords[de]=Symbole,Icons,Arbeitsfläche,Desktop,Farben,Schrift,Schriftgröße,Dateien,Dateinamen,Menü,Kontextmenüs,K-menü,Startmenü,Fensterliste,Fenster
+Keywords[eo]=piktogramoj,tabulo,koloroj,tiparo,grandeco,dosieroj,dosiernomoj,menuo,K-menuo,lanĉo,fenestrolisto,fenestroj
+Keywords[et]=ikoonid,töölaud,värvid,font,fondi suurus,failid,failinimed,menüü,k-menüü,startmenüü,aknad,töölauad
+Keywords[fi]=kuvakkeet,työpöytä,värit,kirjasimet,kirjasimen koko,tiedostot,tiedostonimet,valikko,ponnahdusvalikko,k-valikko,käynnistysvalikko,ikkunalista,ikkunat,työpöydät
+Keywords[fr]=icônes,bureau,couleurs,police,taille de police,fichiers,noms de fichiers,menu,menu contextuel,menu k,menu de démarrage,liste des fenêtes,fenêtres,bureaux
+Keywords[he]=הדובע תונחלוש,תונולח,תונולח תמישר,לחתה טירפת,K טירפת,ץפקומ טירפת,טירפת,םיצבק תומש,םיצבק,ןפוג לדוג,ןפוג,םיעבצ,הדובע ןחלוש,םילמס
+Keywords[hr]=icons,desktop,colors,colors,font,font 
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+Keywords[hu]=ikonok,munkaasztal,asztal,színek,betűtípusok,fájlok,fájlnevek,menü,indítómenü,ablaklista,munkaasztalok
+Keywords[is]=táknmyndir,skjáborð,litir,letur,leturstærð,skrár,skráarnöfn,valmynd,K valmynd,gluggalisti,gluggar,skjaorð
+Keywords[it]=icone,desktop,colori,carattere,dimensione carattere,file,nomi file,menu,menu a scomparsa,menu k,menu avvio,lista finestre,finestre
+Keywords[ja]=アイコン,デスクトップ,色,色,フォント,フォントサイズ ファイル,ファイル名,メニュー,ポップアップメニュー,k-=E3=83=A1ニュー スタートメニュー,ウィンドウリスト,ウィンドウ,デスク=E3=83=88ップ
+Keywords[mk]=икони,работна површина,боја,бои,фонтови,фонт големина,датотеки,имиња на датотеки,мени,start мени,листа на прозорци,прозорци,работни површини
+Keywords[nl]=iconen,bureaublad,pictogrammen,kleur,kleuren,letters,lettertypen,bestanden,bestandsnamen,menu,popup-menu,k-menu,startmenu,vensterlijst,vensters,buraubladen
 Keywords[no]=ikoner,skrivebord,farger,skrifttype,skriftstørrelse filer,filnavn,meny,oppsprettmeny,k-meny,startmeny,vindusliste,vinduer,skrivebord
 Keywords[no_NY]=ikon,skrivebord,fargar,skrifttype,skriftstorleik,filer,filnamn,menu,oppsprettmeny,k-meny,startmeny,vindaugsliste,vindauge
-Keywords[pt]=ícones,ecrã,cores,fonte,tamanho da fonte,ficheiros,nomes de ficheiro,menu,menu k, menu inical,lista de janelas,janelas,ecrãs
+Keywords[pl]=ikony,biurko,desktop,kolory,czcionka,rozmiar czcionki,pliki,nazwy plików,menu,menu kontekstowe,K-menu,menu startowe,lista okien,okna,operacje na biurku
+Keywords[pt]=ícones,ecrã,cores,fonte,tamanho da fonte,ficheiros,nomes de ficheiro,menu,menu k,menu inicial,lista de janelas,janelas,ecrãs
 Keywords[ro]=iconiţe,ecran,culori,font,mărime font,fişiere,nume fişiere,meniu,meniu popup,meniu k,meniu start,listă ferestre,ferestre,ecrane
-Keywords[sl]=ikone,namizje,barve,pisava,velikost pisave,datoteke,imena datotek,menu,dvi�ni menu,k-menu,zagonski menu,seznam oken,okna,namizja
+Keywords[sl]=ikone,namizje,barve,pisava,velikost pisave,datoteke,imena datotek,menu,dvižni menu,k-menu,zagonski menu,seznam oken,okna,namizja
+Keywords[sv]=ikoner,skrivbord,färger,typsnitt,teckensnitt,typsnittstorlek,teckensnittstorlek,filer,filnamn,meny,poppuppmeny,k-meny,startmeny,fönsterlista,fönster,skrivbord
+Keywords[ta]=குறுமபடஙகளஂ,ேமைச,நிறஙஂகளஂ,எழு஡ஂதுவைக,எழ஡ஂதுவைக அளவு,ேகாபஂபுகளஂ,ேகாபஂபுெபயரஂகளஂ,படஂடி,ேமலஂமீடஂபுபடஂடி,k-படஂடி,ெதாடகஂகபடஂடி,சாளரபடஂடியலஂ,சாளரஙஂகளஂ,ேமைச
+Keywords[tr]=simgeler,masaüstü,renkler,yazı tipi,yazı tipi büyüklüğü,dosyalar,dosya adları,menü,seyyar menü,k-menü,başlat menüsü,pencere listesi,pencereler
+Keywords[uk]=піктограми,робочий стіл,desktop,кольори,розмір шрифту,шрифт,файли,імена файлів,меню,спливаюче меню,k-menu,меню запуску,список вікон,вікна,робочі столи
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
+size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,deskt
+ops,ikone,boje,pismo,veličina pisma,datoteke,imena datoteka,izbornik
