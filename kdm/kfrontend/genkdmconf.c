@@ -1873,8 +1873,8 @@ static Ent entsGeneral[] = {
 "# finds them having changed. Just keep it \"true\".\n" },
 { "ExportList",		0, 0, 
 "# Additional environment variables KDM should pass on to kdm_config, kdm_greet,\n"
-"# Xsetup, Xstartup, Xsession, and Xreset. LD_LIBRARY_PATH is a good candidate;\n"
-"# otherwise it shouldn't be necessary very often.\n" },
+"# Xsetup, Xstartup, Xsession, and Xreset. LD_LIBRARY_PATH and XCURSOR_THEME are\n"
+"# good candidates; otherwise it shouldn't be necessary very often.\n" },
 #if !defined(__linux__) && !defined(__OpenBSD__)
 { "RandomFile",		0, 0, 
 "# Where KDM should fetch entropy from. Default is /dev/mem.\n" },
