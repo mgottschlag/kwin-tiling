@@ -188,6 +188,7 @@ KCMKonsoleDialog::KCMKonsoleDialog( QWidget* parent,  const char* name, WFlags f
     tabLayout_2->addWidget( SchemaEditor1, 0, 0 );
     TabWidget2->insertTab( tab_2, i18n( "&Schema" ) );
 
+/*
     tab_3 = new QWidget( TabWidget2, "tab_3" );
     tabLayout_3 = new QGridLayout( tab_3 ); 
     tabLayout_3->setSpacing( 6 );
@@ -209,7 +210,7 @@ KCMKonsoleDialog::KCMKonsoleDialog( QWidget* parent,  const char* name, WFlags f
 
     tabLayout_4->addWidget( TextLabel10, 0, 0 );
     TabWidget2->insertTab( tab_4, i18n( "Keyboard" ) );
-
+*/
     KCMKonsoleDialogLayout->addWidget( TabWidget2, 0, 0 );
 
     // signals and slots connections

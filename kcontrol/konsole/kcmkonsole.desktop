@@ -6,7 +6,13 @@ X-KDE-ModuleType=Library
 X-KDE-Library=konsole
 Name=Konsole
 Name[da]=Konsol
+Name[eo]=Konzolo
+Name[fi]=Pääte-emulaattori
 Name[he]=ףוסמ
+Name[no_NY]=Konsoll
 Name[ro]=Consolă
 Name[ru]=Консоль
-
+Name[sl]=Konzola
+Name[sv]=Konsollen
+Comment=Konsole configuration module
+Keywords=konsole,schema,konsole background,colors,background,terminal application,terminal

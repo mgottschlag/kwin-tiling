@@ -3,6 +3,7 @@
 #define KCMKONSOLE_H
 
 #include <kcmodule.h>
+#include <kaboutdata.h>
 #include "kcmkonsoledialog.h"
 class QFont;
 
@@ -19,7 +20,7 @@ public:
 	void save();
 	void defaults();
 	QString quickHelp() const;
-
+	virtual const KAboutData * aboutData() const;
 public slots:
 	void setupFont();
 	void configChanged();

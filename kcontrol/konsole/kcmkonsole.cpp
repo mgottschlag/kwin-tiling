@@ -117,6 +117,17 @@ QString KCMKonsole::quickHelp() const
 }
 
 
+const KAboutData * KCMKonsole::aboutData() const
+{
+ 
+ KAboutData *ab=new KAboutData( "kcmkonsole", I18N_NOOP("KCM Konsole"),
+    "0.2",I18N_NOOP("KControl module for konsole configuration"), KAboutData::License_GPL,
+    "(c) 2001, Andrea Rizzi", 0, 0, "rizzi@kde.org");
+ 
+  ab->addAuthor("Andrea Rizzi",0, "rizzi@kde.org");
+ return ab;
+      
+}
 
 extern "C" {
     KCModule *create_konsole(QWidget * parent, const char *name) {
@@ -124,4 +135,7 @@ extern "C" {
 	return new KCMKonsole(parent, name);
     };
 }
+
+
+
 #include "kcmkonsole.moc"
