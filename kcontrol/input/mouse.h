@@ -31,16 +31,17 @@
 #ifndef __MOUSECONFIG_H__
 #define __MOUSECONFIG_H__
 
+#include <qbuttongroup.h>
 #include <qdialog.h>
-#include <qpushbutton.h>
 #include <qlabel.h>
 #include <qlcdnumber.h>
+#include <qpushbutton.h>
 #include <qradiobutton.h>
-#include <qbuttongroup.h>
 
 #include <kapplication.h>
-#include <knuminput.h>
+
 #include <kglobalsettings.h>
+#include <knuminput.h>
 
 #include <config.h>
 #ifdef HAVE_LIBUSB
@@ -48,7 +49,6 @@
 #endif
 
 #include <kcmodule.h>
-
 #include "kmousedlg.h"
 #include "themepage.h"
 
@@ -100,12 +100,9 @@ public:
   void load();
   void defaults();
 
-  QString quickHelp() const;
-
 private slots:
 
   void slotClick();
-  void changed();
   /** No descriptions */
   void slotHandedChanged(int val);
   void slotScrollPolarityChanged();

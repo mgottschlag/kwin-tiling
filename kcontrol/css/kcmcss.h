@@ -38,13 +38,9 @@ public:
   void load();
   void save();
   void defaults();
-  QString quickHelp() const;
 
-  
 public slots:
  
-  void configChanged();
-
   void preview();
 
 

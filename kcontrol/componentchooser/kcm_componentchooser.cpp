@@ -13,12 +13,14 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <qlayout.h>
+
 #include <kaboutdata.h>
+#include <kglobal.h>
 
 #include "kcm_componentchooser.h"
 #include "kcm_componentchooser.moc"
-#include <qlayout.h>
-#include <kglobal.h>
+
 
 KCMComponentChooser::KCMComponentChooser( QWidget *parent, const char *name ):
 	KCModule(parent,name) {
@@ -40,17 +42,14 @@ KCMComponentChooser::KCMComponentChooser( QWidget *parent, const char *name ):
 
 void KCMComponentChooser::load(){
 	m_chooser->load();
-	emit changed(false);
 }
 
 void KCMComponentChooser::save(){
 	m_chooser->save();
-	emit changed(false);
 }
 
 void KCMComponentChooser::defaults(){
 	m_chooser->restoreDefault();
-	emit changed(true);
 }
 
 

@@ -18,11 +18,12 @@
 #ifndef KCMKONSOLE_H
 #define KCMKONSOLE_H
 
-#include <qstringlist.h>
 #include <kcmodule.h>
-#include <kaboutdata.h>
+
 #include "kcmkonsoledialog.h"
+
 class QFont;
+class QStringList;
 
 class KCMKonsole
 	: public KCModule
@@ -34,12 +35,8 @@ public:
 	
 	void load();
 	void load(bool useDefaults);
-	void load(const QString &);
 	void save();
 	void defaults();
-	QString quickHelp() const;
-public slots:
-	void configChanged();
 private:
 	KCMKonsoleDialog *dialog;
 	bool xonXoffOrig;

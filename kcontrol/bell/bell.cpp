@@ -20,15 +20,16 @@
 */
 
 #include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-#include <qwhatsthis.h>
 #include <qgroupbox.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qwhatsthis.h>
 
-#include <kconfig.h>
-#include <kglobal.h>
+#include <kaboutdata.h>
 #include <kapplication.h>
+#include <kconfig.h>
 #include <kdialog.h>
+#include <kglobal.h>
 #include <knotifyclient.h>
 #include <knuminput.h>
 
@@ -36,7 +37,6 @@
 #include "bell.moc"
 
 #include <X11/Xlib.h>
-#include <kaboutdata.h>
 
 extern "C"
 {
@@ -88,6 +88,11 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   row++;
   grid->addMultiCellWidget(m_useBell, row, row, 0, 1);
 
+  setQuickHelp( i18n("<h1>System Bell</h1> Here you can customize the sound of the standard system bell,"
+    " i.e. the \"beep\" you always hear when there is something wrong. Note that you can further"
+    " customize this sound using the \"Accessibility\" control module; for example, you can choose"
+    " a sound file to be played instead of the standard bell."));
+
   m_volume = new KIntNumInput(50, box);
   m_volume->setLabel(i18n("&Volume:"));
   m_volume->setRange(0, 100, 5);
@@ -123,9 +128,9 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   QWhatsThis::add( m_testButton, i18n("Click \"Test\" to hear how the system bell will sound using your changed settings.") );
 
   // watch for changes
-  connect(m_volume, SIGNAL(valueChanged(int)), SLOT(configChanged()));
-  connect(m_pitch, SIGNAL(valueChanged(int)), SLOT(configChanged()));
-  connect(m_duration, SIGNAL(valueChanged(int)), SLOT(configChanged()));
+  connect(m_volume, SIGNAL(valueChanged(int)), SLOT(changed()));
+  connect(m_pitch, SIGNAL(valueChanged(int)), SLOT(changed()));
+  connect(m_duration, SIGNAL(valueChanged(int)), SLOT(changed()));
   
   KAboutData *about =
     new KAboutData(I18N_NOOP("kcmbell"), I18N_NOOP("KDE Bell Control Module"),
@@ -238,14 +243,6 @@ void KBellConfig::defaults()
   useBell( false );
 }
 
-QString KBellConfig::quickHelp() const
-{
-  return i18n("<h1>System Bell</h1> Here you can customize the sound of the standard system bell,"
-    " i.e. the \"beep\" you always hear when there is something wrong. Note that you can further"
-    " customize this sound using the \"Accessibility\" control module; for example, you can choose"
-    " a sound file to be played instead of the standard bell.");
-}
-
 void KBellConfig::useBell( bool on )
 {
   m_volume->setEnabled( on );
@@ -255,5 +252,4 @@ void KBellConfig::useBell( bool on )
   KConfig *kc = KGlobal::config();
   KConfigGroupSaver cgs( kc, "General" );
   kc->writeEntry( "UseSystemBell", on );
-  configChanged();
 }

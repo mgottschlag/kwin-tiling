@@ -42,11 +42,8 @@ public:
     virtual void save();
     virtual void defaults();
 
-    int buttons();
     void updateValues();
     void readSettings();
-
-    QString quickHelp() const;
 
 protected slots:
     void slotEnable( bool );

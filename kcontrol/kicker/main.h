@@ -19,6 +19,7 @@
 #define __main_h__
 
 #include <dcopobject.h>
+
 #include <kcmodule.h>
 #include <kconfig.h>
 
@@ -45,7 +46,6 @@ public:
     void load();
     void save();
     void defaults();
-    QString quickHelp() const;
 
     void populateExtensionInfoList(QComboBox* list);
     void reloadExtensionInfo();
@@ -65,9 +65,6 @@ signals:
     void extensionAdded(extensionInfo*);
     void extensionChanged(const QString&);
     void extensionAboutToChange(const QString&);
-
-public slots:
-    void configChanged();
 
 protected slots:
     void positionPanelChanged(int);

@@ -9,10 +9,12 @@
 #define FONTS_H
 
 #include <qobject.h>
-#include <kfontdialog.h>
+
 #include <kcmodule.h>
-#include <kfontrequester.h>
 #include <kdialogbase.h>
+#include <kfontdialog.h>
+#include <kfontrequester.h>
+
 #include "kxftconfig.h"
 
 class QCheckBox;
@@ -97,9 +99,6 @@ public:
     virtual void load();
     virtual void save();
     virtual void defaults();
-    virtual QString quickHelp() const;
-
-    int buttons();
 
 protected slots:
     void fontSelected();
@@ -108,7 +107,6 @@ protected slots:
     void slotCfgAa();
 
 private:
-    bool _changed;
     bool useAA, useAA_original;
     QCheckBox *cbAA;
     QPtrList <FontUseItem> fontUseList;

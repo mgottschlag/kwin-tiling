@@ -17,16 +17,20 @@
    Boston, MA 02111-1307, USA.
 */
 
-#include <qlayout.h>
-#include <qwhatsthis.h>
-#include <qvgroupbox.h>
-#include <qpushbutton.h>
 #include <qheader.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
 #include <qtimer.h>
+#include <qvgroupbox.h>
+#include <qwhatsthis.h>
+
+#include <dcopclient.h>
+#include <dcopref.h>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kbuttonbox.h>
+#include <kdebug.h>
 #include <kdesktopfile.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
@@ -34,11 +38,6 @@
 #include <kmessagebox.h>
 #include <kservice.h>
 #include <kstandarddirs.h>
-
-#include <dcopclient.h>
-#include <dcopref.h>
-
-#include <kdebug.h>
 
 #include "kcmkded.h"
 #include "kcmkded.moc"
@@ -60,6 +59,13 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	about->addAuthor("Daniel Molkentin",0,"molkentin@kde.org");
 	setAboutData( about );
 
+	setQuickHelp( i18n("<h1>Service Manager</h1><p>This module allows you to have an overview of all plugins of the "
+			"KDE Daemon, also referred to as KDE Services. Generally, there are two types of service:</p>"
+			"<ul><li>Services invoked at startup</li><li>Services called on demand</li></ul>"
+			"<p>The latter are only listed for convenience. The startup services can be started and stopped. "
+			"In Administrator mode, you can also define whether services should be loaded at startup.</p>"
+			"<p><b> Use this with care: some services are vital for KDE; do not deactivate services if you"
+			" do not know what you are doing.</b></p>"));
 
 	RUNNING = i18n("Running")+" ";
 	NOT_RUNNING = i18n("Not running")+" ";
@@ -394,19 +400,6 @@ void KDEDConfig::slotItemChecked(QCheckListItem*)
 {
 	emit changed(true);
 }
-
-QString KDEDConfig::quickHelp() const
-{
-	return i18n("<h1>Service Manager</h1><p>This module allows you to have an overview of all plugins of the "
-			"KDE Daemon, also referred to as KDE Services. Generally, there are two types of service:</p>"
-			"<ul><li>Services invoked at startup</li><li>Services called on demand</li></ul>"
-			"<p>The latter are only listed for convenience. The startup services can be started and stopped. "
-			"In Administrator mode, you can also define whether services should be loaded at startup.</p>"
-			"<p><b> Use this with care: some services are vital for KDE; do not deactivate services if you"
-			" do not know what you are doing.</b></p>");
-}
-
-
 
 CheckListItem::CheckListItem(QListView *parent, const QString &text)
 	: QObject(parent),

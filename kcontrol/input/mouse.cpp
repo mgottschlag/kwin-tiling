@@ -76,6 +76,13 @@
 MouseConfig::MouseConfig (QWidget * parent, const char *name)
   : KCModule(parent, name)
 {
+
+
+   setQuickHelp( i18n("<h1>Mouse</h1> This module allows you to choose various"
+     " options for the way in which your pointing device works. Your"
+     " pointing device may be a mouse, trackball, or some other hardware"
+     " that performs a similar function."));
+
     QString wtstr;
 
     QBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
@@ -574,16 +581,6 @@ void MouseConfig::defaults()
   changed();
 }
 
-
-QString MouseConfig::quickHelp() const
-{
-  return i18n("<h1>Mouse</h1> This module allows you to choose various"
-     " options for the way in which your pointing device works. Your"
-     " pointing device may be a mouse, trackball, or some other hardware"
-     " that performs a similar function.");
-}
-
-
 void MouseConfig::slotClick()
 {
   // Autoselect has a meaning only in single-click mode
@@ -595,11 +592,6 @@ void MouseConfig::slotClick()
    tab1->lb_short->setEnabled( bDelay );
    tab1->lb_long->setEnabled( bDelay );
 
-}
-
-void MouseConfig::changed()
-{
-  emit KCModule::changed(true);
 }
 
 /** No descriptions */

@@ -5,13 +5,11 @@ kcm_konsole_la_SOURCES =  schemaeditor.cpp sessioneditor.cpp kcmkonsole.cpp \
 
 kcm_konsole_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_konsole_la_LIBADD = -lkdeui $(LIB_KIO)
-INCLUDES= $(all_includes) 
+AM_CPPFLAGS = $(all_includes) 
 
-kcm_konsole_la_METASOURCES = AUTO
+METASOURCES = AUTO 
 
 noinst_HEADERS = kcmkonsole.h schemaeditor.h sessioneditor.h schemadialog.h sessiondialog.h kcmkonsoledialog.h
-
-KDE_ICON = konsole
 
 kcmkonsole_data_DATA = kcmkonsole.desktop
 kcmkonsole_datadir = $(kde_appsdir)/.hidden

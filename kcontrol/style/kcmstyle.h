@@ -27,29 +27,30 @@
 #ifndef __KCMSTYLE_H
 #define __KCMSTYLE_H
 
-#include <qtimer.h>
 #include <qstring.h>
+#include <qtimer.h>
+
 #include <kcmodule.h>
 
 #include "stylepreview.h"
 #include "menupreview.h"
 
+class KComboBox;
 class QCheckBox;
 class QComboBox;
 class QFrame;
 class QGroupBox;
+class QLabel;
 class QListBox;
 class QListViewItem;
+class QSettings;
+class QSlider;
+class QSpacerItem;
 class QStyle;
 class QTabWidget;
 class QVBoxLayout;
-class WidgetPreview;
-class QSettings;
-class QSpacerItem;
-class QLabel;
-class QSlider;
-class KComboBox;
 class StyleConfigDialog;
+class WidgetPreview;
 
 struct StyleEntry {
 	QString name;
@@ -69,7 +70,6 @@ public:
 	virtual void load();
 	virtual void save();
 	virtual void defaults();
-	virtual QString quickHelp() const;
 
 protected:
 	bool findStyle( const QString& str, int& combobox_item );

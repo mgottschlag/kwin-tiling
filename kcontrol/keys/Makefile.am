@@ -4,9 +4,9 @@ kcm_keys_la_SOURCES =  shortcuts.cpp modifiers.cpp main.cpp khotkeys.cpp treevie
 kcm_keys_la_LIBADD   = -lkdeui -lkio
 kcm_keys_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 
-INCLUDES= $(all_includes)
+AM_CPPFLAGS= $(all_includes)
 
-kcm_keys_la_METASOURCES = AUTO
+METASOURCES = AUTO
 
 messages:
 	customkeys=`grep "^.include .\.\." keyconfig.cpp | sed -e "s#.*\"\(.*\)\"#\1#"` ;\

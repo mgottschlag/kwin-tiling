@@ -5,11 +5,9 @@ kcm_view1394_la_SOURCES = view1394widget.ui view1394.cpp
 kcm_view1394_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_view1394_la_LIBADD = $(LIB_KDEUI) -lraw1394
 
-INCLUDES= $(all_includes) 
+AM_CPPFLAGS= $(all_includes) 
 
-kcm_view1394_la_METASOURCES = AUTO
-
-KDE_ICON = AUTO
+METASOURCES = AUTO
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmview1394.pot

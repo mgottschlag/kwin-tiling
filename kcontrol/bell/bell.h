@@ -37,12 +37,10 @@ class KBellConfig : public KCModule
   void load();
   void save();
   void defaults();
-  QString quickHelp() const;
 
  protected slots:
   void ringBell();
   void useBell( bool );
-  void configChanged() { emit changed( true ); };
 
  private:
   QPushButton  *m_testButton;

@@ -1,5 +1,5 @@
 
-INCLUDES= $(all_includes)
+AM_CPPFLAGS= $(all_includes)
 METASOURCES = AUTO
 
 bin_PROGRAMS =
@@ -21,8 +21,6 @@ xdg_apps_DATA = kcmaccess.desktop
 
 services_DATA = kaccess.desktop
 servicesdir = $(kde_servicesdir)
-
-#KDE_ICON = sample
 
 messages:
 	$(XGETTEXT) $(kaccess_la_SOURCES) -o $(podir)/kaccess.pot

@@ -12,28 +12,27 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <qdir.h>
-#include <qvgroupbox.h>
 #include <qcheckbox.h>
-#include <qlabel.h>
-#include <qslider.h>
-#include <qpainter.h>
 #include <qcombobox.h>
+#include <qdir.h>
+#include <qlabel.h>
 #include <qlayout.h>
+#include <qpainter.h>
+#include <qslider.h>
+#include <qvgroupbox.h>
 #include <qwhatsthis.h>
 
-#include <kfiledialog.h>
-#include <kmessagebox.h>
+#include <kcolorbutton.h>
 #include <kcursor.h>
+#include <kfiledialog.h>
+#include <kgenericfactory.h>
 #include <kglobalsettings.h>
 #include <kinputdialog.h>
-#include <kstandarddirs.h>
-#include <kipc.h>
-#include <kcolorbutton.h>
-#include <kgenericfactory.h>
-#include <kprocess.h>
-
 #include <kio/netaccess.h>
+#include <kipc.h>
+#include <kmessagebox.h>
+#include <kprocess.h>
+#include <kstandarddirs.h>
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY
 #include <X11/Xlib.h>
@@ -95,8 +94,20 @@ QPixmap mkColorPreview(const WidgetCanvas *cs)
 KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList &)
     : KCModule(KolorFactory::instance(), parent, name)
 {
-    m_bChanged = false;
     nSysSchemes = 2;
+
+    setQuickHelp( i18n(
+       " the color scheme used for the KDE desktop. The different"
+       " elements of the desktop, such as title bars, menu text, etc.,"
+       " are called \"widgets\". You can choose the widget whose"
+       " color you want to change by selecting it from a list, or by"
+       " clicking on a graphical representation of the desktop.<p>"
+       " You can save color settings as complete color schemes,"
+       " which can also be modified or deleted. KDE comes with several"
+       " predefined color schemes on which you can base your own.<p>"
+       " All KDE applications will obey the selected color scheme."
+       " Non-KDE applications may also obey some or all of the color"
+       " settings, if this option is enabled."));
 
     KConfig *cfg = new KConfig("kcmdisplayrc");
     cfg->setGroup("X11");
@@ -253,7 +264,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 
     cbExportColors = new QCheckBox(i18n("Apply colors to &non-KDE applications"), this);
     topLayout->addMultiCellWidget( cbExportColors, 2, 2, 0, 1 );
-    connect(cbExportColors, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    connect(cbExportColors, SIGNAL(toggled(bool)), this, SLOT(changed()));
 
     QWhatsThis::add(cbExportColors, i18n("Check this box to apply the"
        " current color scheme to non-KDE applications."));
@@ -265,12 +276,6 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 KColorScheme::~KColorScheme()
 {
     delete mSchemeList;
-}
-
-void KColorScheme::slotChanged()
-{
-    m_bChanged = true;
-    emit changed(true);
 }
 
 void KColorScheme::setColorName( const QString &name, int id )
@@ -299,16 +304,12 @@ void KColorScheme::load()
     bool exportColors = cfg.readBoolEntry("exportKDEColors", true);
     cbExportColors->setChecked(exportColors);
 
-    m_bChanged = false;
     emit changed(false);
 }
 
 
 void KColorScheme::save()
 {
-    if (!m_bChanged)
-        return;
-
     KConfig *cfg = KGlobal::config();
     cfg->setGroup( "General" );
     cfg->writeEntry("background", cs->back, true, true);
@@ -390,7 +391,6 @@ void KColorScheme::save()
     preview = mkColorPreview(cs);
     sList->changeItem(preview, sList->text(current), current);
 
-    m_bChanged = false;
     emit changed(false);
 }
 
@@ -408,26 +408,8 @@ void KColorScheme::defaults()
 
     cbExportColors->setChecked(true);
 
-    m_bChanged = true;
     emit changed(true);
 }
-
-QString KColorScheme::quickHelp() const
-{
-    return i18n("<h1>Colors</h1> This module allows you to choose"
-       " the color scheme used for the KDE desktop. The different"
-       " elements of the desktop, such as title bars, menu text, etc.,"
-       " are called \"widgets\". You can choose the widget whose"
-       " color you want to change by selecting it from a list, or by"
-       " clicking on a graphical representation of the desktop.<p>"
-       " You can save color settings as complete color schemes,"
-       " which can also be modified or deleted. KDE comes with several"
-       " predefined color schemes on which you can base your own.<p>"
-       " All KDE applications will obey the selected color scheme."
-       " Non-KDE applications may also obey some or all of the color"
-       " settings, if this option is enabled.");
-}
-
 
 void KColorScheme::sliderValueChanged( int val )
 {
@@ -436,7 +418,6 @@ void KColorScheme::sliderValueChanged( int val )
 
     sCurrentScheme = QString::null;
 
-    m_bChanged = true;
     emit changed(true);
 }
 
@@ -691,7 +672,6 @@ void KColorScheme::slotSelectColor(const QColor &col)
 
     sCurrentScheme = QString::null;
 
-    m_bChanged = true;
     emit changed(true);
 }
 
@@ -930,8 +910,7 @@ void KColorScheme::slotPreviewScheme(int indx)
        removeBt->setEnabled(entry ? entry->local : false);
     }
 
-    m_bChanged = (indx != 0);
-    emit changed(m_bChanged);
+    emit changed((indx != 0));
 }
 
 

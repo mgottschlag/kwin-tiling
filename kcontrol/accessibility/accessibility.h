@@ -65,20 +65,6 @@ class AccessibilityConfig : public AccessibilityConfigWidget {
        */
       void defaults();
 
-      /**
-       * This function returns the small quickhelp.
-       * That is displayed in the sidebar in the KControl
-       */
-      QString quickHelp() const;            
-      
-   private slots:
-      /**
-       * This slot is used to emit the signal changed when any widget changes the configuration 
-       */
-      void configChanged(){
-         kdDebug() << "Running: AccessibilityConfig::configChanged()"<< endl;
-         emit changed(true);
-      };  
 };
 
 #endif // _ACCESSIBILITY_H_

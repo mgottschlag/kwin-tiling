@@ -8,13 +8,13 @@
 #ifndef __COLORSCM_H__
 #define __COLORSCM_H__
 
+#include <qcolor.h>
 #include <qobject.h>
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qcolor.h>
-#include <kdialogbase.h>
 
 #include <kcmodule.h>
+#include <kdialogbase.h>
 
 #include "widgetcanvas.h"
 
@@ -45,7 +45,6 @@ public:
     virtual void load();
     virtual void save();
     virtual void defaults();
-    QString quickHelp() const;
 
 private slots:
     void sliderValueChanged(int val);
@@ -57,7 +56,6 @@ private slots:
     void slotWidgetColor(int);
     void slotColorForWidget(int, const QColor &);
     void slotPreviewScheme(int);
-    void slotChanged();
 
 private:
     void setColorName( const QString &name, int id );
@@ -70,7 +68,7 @@ private:
     QColor &color(int index);
 
     int nSysSchemes;
-    bool m_bChanged, useRM;
+    bool useRM;
 
     QColor colorPushColor;
     QSlider *sb;

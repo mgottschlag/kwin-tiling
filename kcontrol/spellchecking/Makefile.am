@@ -5,13 +5,12 @@ kcm_spellchecking_la_SOURCES = spellchecking.cpp
 kcm_spellchecking_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
 kcm_spellchecking_la_LIBADD = -lkdeui
 
-INCLUDES= $(all_includes)
+AM_CPPFLAGS= $(all_includes)
 
-kcm_spellchecking_la_METASOURCES = spellchecking.moc
-
-KDE_ICON = spellchecking
+METASOURCES = spellchecking.moc
 
 messages:
 	$(XGETTEXT) $(kcm_spellchecking_la_SOURCES) -o $(podir)/kcmspellchecking.pot
 
 xdg_apps_DATA = spellchecking.desktop
+

@@ -18,30 +18,32 @@
   *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   */
 
-#include <qlayout.h>
 #include <qcheckbox.h>
+#include <qlayout.h>
+#include <qptrlist.h>
 #include <qpushbutton.h>
 #include <qtabwidget.h>
-#include <qwhatsthis.h>
 #include <qtooltip.h>
-#include <qptrlist.h>
+#include <qwhatsthis.h>
 
-#include <klocale.h>
-#include <kglobal.h>
-#include <kdialog.h>
+#include <kaboutdata.h>
 #include <kconfig.h>
+#include <kdialog.h>
+#include <kglobal.h>
 #include <klistview.h>
-#include <ktextedit.h>
+#include <klocale.h>
 #include <kmessagebox.h>
-
+#include <ktextedit.h>
 
 #include "privacy.h"
-
-
 
 Privacy::Privacy(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
+  setQuickHelp( i18n("The privacy module allows a user to erase traces which KDE leaves on "
+              "the system, such as command histories or browser caches."));
+
+  setButtons( KCModule::Default|KCModule::Apply|KCModule::Help );
 
   KAboutData *about =
     new KAboutData(I18N_NOOP("kcm_privacy"), I18N_NOOP("KDE Privacy Control Module"),
@@ -121,7 +123,7 @@ Privacy::Privacy(QWidget *parent, const char *name)
   clearQuickStartMenu->setText(1, i18n("Clears the entries from the list of recently started applications"));
   clearFavIcons->setText(1, i18n("Clears the FavIcons cached from visited websites"));
 
-  connect(sw, SIGNAL(selectionChanged()), SLOT(configChanged()));
+  connect(sw, SIGNAL(selectionChanged()), SLOT(changed()));
 
   // store all entries in a list for easy access later on
   checklist.append(clearThumbnails);
@@ -219,18 +221,6 @@ void Privacy::save()
 
 }
 
-
-int Privacy::buttons()
-{
-  return KCModule::Default|KCModule::Apply|KCModule::Help;
-}
-
-
-void Privacy::configChanged()
-{
-  emit changed(true);
-}
-
 void Privacy::selectAll()
 {
   QCheckListItem *item;
@@ -311,14 +301,6 @@ void Privacy::cleanup()
   cleaningDialog->statusTextEdit->append(i18n("Clean up finished."));
 
 }
-
-
-QString Privacy::quickHelp() const
-{
-  return i18n("The privacy module allows a user to erase traces which KDE leaves on "
-              "the system, such as command histories or browser caches.");
-}
-
 
 extern "C"
 {

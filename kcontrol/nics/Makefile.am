@@ -5,9 +5,9 @@ kcm_nic_la_SOURCES = nic.cpp
 kcm_nic_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_nic_la_LIBADD = -lkdeui $(LIB_KIO) $(LIBSOCKET)
 
-INCLUDES= $(all_includes)
+AM_CPPFLAGS= $(all_includes)
 
-kcm_nic_la_METASOURCES = AUTO
+METASOURCES = AUTO
 
 messages:
 	$(XGETTEXT) $(kcm_nic_la_SOURCES) -o $(podir)/kcmnic.pot

@@ -1,25 +1,22 @@
 
-
-#include <qlayout.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qlayout.h>
 #include <qradiobutton.h>
 #include <qtextbrowser.h>
-#include <qcombobox.h>
 
-
-#include <kstandarddirs.h>
-#include <kconfig.h>
 #include <kapplication.h>
 #include <kcolorbutton.h>
+#include <kconfig.h>
 #include <kfontdialog.h>
-#include <kurlrequester.h>
 #include <kgenericfactory.h>
 #include <kglobalsettings.h>
+#include <kstandarddirs.h>
+#include <kurlrequester.h>
 
 #include "cssconfig.h"
 #include "template.h"
 #include "preview.h"
-
 
 #include "kcmcss.h"
 
@@ -31,55 +28,65 @@ CSSConfig::CSSConfig(QWidget *parent, const char *name, const QStringList &)
 {
   dialog = new CSSConfigDialog(this);
 
+  setQuickHelp( i18n("<h1>Konqueror Stylesheets</h1> This module allows you to apply your own color"
+              " and font settings to Konqueror by using"
+              " stylesheets (CSS). You can either specify"
+              " options or apply your own self-written"
+              " stylesheet by pointing to its location.<br>"
+              " Note that these settings will always have"
+              " precedence before all other settings made"
+              " by the site author. This can be useful to"
+              " visually impaired people or for web pages"
+              " that are unreadable due to bad design."));
+
+
   QStringList fonts;
   KFontChooser::getFontList(fonts, 0);
   dialog->fontFamily->insertStringList(fonts);
 
   connect(dialog->useDefault, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->useAccess, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->useUser, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->urlRequester, SIGNAL(textChanged(const QString&)),
-	  this, SLOT(configChanged()));
-
+	  SLOT(changed()));
   connect(dialog->basefontsize, SIGNAL(highlighted(int)),
-          this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->basefontsize, SIGNAL(textChanged(const QString&)),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->dontScale, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->blackOnWhite, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->whiteOnBlack, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->customColor, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->foregroundColor, SIGNAL(changed(const QColor &)),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->backgroundColor, SIGNAL(changed(const QColor &)),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->fontFamily, SIGNAL(highlighted(int)),
-          this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->fontFamily, SIGNAL(textChanged(const QString&)),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->sameFamily, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->preview, SIGNAL(clicked()),
-	  this, SLOT(preview()));
+	  SLOT(changed()));
   connect(dialog->sameColor, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->hideImages, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
   connect(dialog->hideBackground, SIGNAL(clicked()),
-	  this, SLOT(configChanged()));
+	  SLOT(changed()));
 
   QVBoxLayout *vbox = new QVBoxLayout(this, 0, 0);
   vbox->addWidget(dialog);
 
   load();
-  emit changed(false);
 }
 
 
@@ -222,27 +229,6 @@ void CSSConfig::defaults()
 
   dialog->hideImages->setChecked(false);
   dialog->hideBackground->setChecked( true);
-  emit changed(true);
-}
-
-
-QString CSSConfig::quickHelp() const
-{
-  return i18n("<h1>Konqueror Stylesheets</h1> This module allows you to apply your own color"
-              " and font settings to Konqueror by using"
-              " stylesheets (CSS). You can either specify"
-              " options or apply your own self-written"
-              " stylesheet by pointing to its location.<br>"
-              " Note that these settings will always have"
-              " precedence before all other settings made"
-              " by the site author. This can be useful to"
-              " visually impaired people or for web pages"
-              " that are unreadable due to bad design.");
-}
-
-
-void CSSConfig::configChanged()
-{
   emit changed(true);
 }
 

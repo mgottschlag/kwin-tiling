@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)/kicker/core
+AM_CPPFLAGS = -I$(top_srcdir)/kicker/core
 kde_module_LTLIBRARIES = kcm_kicker.la
 
 kcm_kicker_la_SOURCES = positiontab.ui hidingtab.ui lookandfeeltab.ui menutab.ui \
@@ -10,12 +10,10 @@ kcm_kicker_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_kicker_la_LIBADD =  ../background/libbgnd.la $(LIB_KIO)
 AM_CPPFLAGS = -I$(srcdir)/../background $(all_includes)
 
-kcm_kicker_la_METASOURCES = AUTO
+METASOURCES = AUTO
 
 noinst_HEADERS = positiontab_impl.h hidingtab_impl.h lookandfeeltab_impl.h menutab_impl.h \
 		extensionInfo.h main.h  advancedDialog.h
-
-KDE_ICON = kmenu
 
 # Translation of tiles is used by lookandfeeltab_impl.cpp
 # Tile names are transformed to words with title case

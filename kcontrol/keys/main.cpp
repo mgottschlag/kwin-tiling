@@ -21,16 +21,17 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "commandShortcuts.h"
-#include "main.h"
-#include "modifiers.h"
-#include "shortcuts.h"
-
 #include <qlayout.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
+
+#include "commandShortcuts.h"
+#include "main.h"
+#include "modifiers.h"
+#include "shortcuts.h"
+
 /*
 | Shortcut Schemes | Modifier Keys |
 
@@ -49,6 +50,14 @@ Global Shortcuts
 KeyModule::KeyModule( QWidget *parent, const char *name )
 : KCModule( parent, name )
 {
+    setQuickHelp( i18n("<h1>Keyboard Shortcuts</h1> Using shortcuts you can configure certain actions to be"
+    " triggered when you press a key or a combination of keys, e.g. Ctrl+C is normally bound to"
+    " 'Copy'. KDE allows you to store more than one 'scheme' of shortcuts, so you might want"
+    " to experiment a little setting up your own scheme, although you can still change back to the"
+    " KDE defaults.<p> In the 'Global Shortcuts' tab you can configure non-application-specific"
+    " bindings, like how to switch desktops or maximize a window; in the 'Application Shortcuts' tab"
+    " you will find bindings typically used in applications, such as copy and paste."));
+
 	initGUI();
 }
 
@@ -60,16 +69,16 @@ void KeyModule::initGUI()
 
 	m_pShortcuts = new ShortcutsModule( this );
 	m_pTab->addTab( m_pShortcuts, i18n("Shortcut Schemes") );
-	connect( m_pShortcuts, SIGNAL(changed(bool)), SLOT(slotModuleChanged(bool)) );
+	connect( m_pShortcuts, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
 
 	m_pCommandShortcuts = new CommandShortcutsModule ( this );
 	m_pTab->addTab( m_pCommandShortcuts, i18n("Command Shortcuts") );
-	connect( m_pCommandShortcuts, SIGNAL(changed(bool)), SLOT(slotModuleChanged(bool)) );
+	connect( m_pCommandShortcuts, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
     connect( m_pTab, SIGNAL(currentChanged(QWidget*)), m_pCommandShortcuts, SLOT(showing(QWidget*)) );
 
 	m_pModifiers = new ModifiersModule( this );
 	m_pTab->addTab( m_pModifiers, i18n("Modifier Keys") );
-	connect( m_pModifiers, SIGNAL(changed(bool)), SLOT(slotModuleChanged(bool)) );
+	connect( m_pModifiers, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
 }
 
 // Called when [Reset] is pressed
@@ -79,7 +88,6 @@ void KeyModule::load()
 	m_pShortcuts->load();
 	m_pCommandShortcuts->load();
 	m_pModifiers->load();
-	emit changed( false );
 }
 
 // When [Apply] or [OK] are clicked.
@@ -89,7 +97,6 @@ void KeyModule::save()
 	m_pShortcuts->save();
 	m_pCommandShortcuts->save();
 	m_pModifiers->save();
-	emit changed( false );
 }
 
 void KeyModule::defaults()
@@ -98,18 +105,6 @@ void KeyModule::defaults()
 	m_pShortcuts->defaults();
 	m_pCommandShortcuts->defaults();
 	m_pModifiers->defaults();
-	emit changed( true );
-}
-
-QString KeyModule::quickHelp() const
-{
-  return i18n("<h1>Keyboard Shortcuts</h1> Using shortcuts you can configure certain actions to be"
-    " triggered when you press a key or a combination of keys, e.g. Ctrl+C is normally bound to"
-    " 'Copy'. KDE allows you to store more than one 'scheme' of shortcuts, so you might want"
-    " to experiment a little setting up your own scheme, although you can still change back to the"
-    " KDE defaults.<p> In the 'Global Shortcuts' tab you can configure non-application-specific"
-    " bindings, like how to switch desktops or maximize a window; in the 'Application Shortcuts' tab"
-    " you will find bindings typically used in applications, such as copy and paste.");
 }
 
 void KeyModule::resizeEvent( QResizeEvent * )
@@ -117,16 +112,11 @@ void KeyModule::resizeEvent( QResizeEvent * )
 	m_pTab->setGeometry( 0, 0, width(), height() );
 }
 
-void KeyModule::slotModuleChanged( bool bState )
-{
-	emit changed( bState );
-}
-
 //----------------------------------------------------
 
 extern "C"
 {
-  KCModule *create_keys(QWidget *parent, const char */*name*/)
+  KCModule *create_keys(QWidget *parent, const char * /*name*/)
   {
 	// What does this do?  Why not insert klipper and kxkb, too? --ellis, 2002/01/15
 	KGlobal::locale()->insertCatalogue("kwin");

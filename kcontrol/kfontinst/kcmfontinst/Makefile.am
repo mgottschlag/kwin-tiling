@@ -1,8 +1,8 @@
 kde_module_LTLIBRARIES = kcm_fontinst.la
 kcm_fontinst_la_LIBADD  = $(LIB_KIO) $(LIBFREETYPE_LIBS) $(LIBFONTCONFIG_LIBS) ../lib/libkfontinst.la
-kcm_fontinst_la_METASOURCES = AUTO
+METASOURCES = AUTO
 kcm_fontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH) -module -avoid-version -no-undefined
-INCLUDES = $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS) -I$(srcdir)/../lib -I$(srcdir)/../../fonts $(all_includes)
+AM_CPPFLAGS = $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS) -I$(srcdir)/../lib -I$(srcdir)/../../fonts $(all_includes)
  
 xdg_apps_DATA = kcmfontinst.desktop
  
@@ -21,4 +21,4 @@ EXTRA_DIST = \
 
 noinst_HEADERS = $(EXTRA_DIST)
 
-KDE_ICON = kcmfontinst newfont
+KDE_ICON = AUTO

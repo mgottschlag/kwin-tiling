@@ -24,9 +24,10 @@
 #include <qlayout.h>
 
 #include <dcopclient.h>
-#include <kgenericfactory.h>
+
 #include <kaboutdata.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
 
 #include "main.h"
 #include "main.moc"
@@ -49,6 +50,11 @@ KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList 
   about->addAuthor("Paul Campbell", I18N_NOOP("Current Maintainer"), "paul@taniwha.com");
   about->addAuthor("Benjamin Meyer", I18N_NOOP("Added NTP support"), "ben+kcmclock@meyerhome.net");
   setAboutData( about );
+  setQuickHelp( i18n("<h1>Date & Time</h1> This control module can be used to set the system date and"
+    " time. As these settings do not only affect you as a user, but rather the whole system, you"
+    " can only change these settings when you start the Control Center as root. If you do not have"
+    " the root password, but feel the system time should be corrected, please contact your system"
+    " administrator."));
 
   KGlobal::locale()->insertCatalogue("timezones"); // For time zone translations
 
@@ -56,11 +62,11 @@ KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList 
 
   dtime = new Dtime(this);
   layout->addWidget(dtime);
-  connect(dtime, SIGNAL(timeChanged(bool)), this, SLOT(moduleChanged(bool)));
+  connect(dtime, SIGNAL(timeChanged(bool)), this, SIGNAL(changed(bool)));
 
   tzone = new Tzone(this);
   layout->addWidget(tzone);
-  connect(tzone, SIGNAL(zoneChanged(bool)), this, SLOT(moduleChanged(bool)));
+  connect(tzone, SIGNAL(zoneChanged(bool)), this, SIGNAL(changed(bool)));
 
   layout->addStretch();
 
@@ -94,16 +100,3 @@ void KclockModule::load()
   tzone->load();
 }
 
-QString KclockModule::quickHelp() const
-{
-  return i18n("<h1>Date & Time</h1> This control module can be used to set the system date and"
-    " time. As these settings do not only affect you as a user, but rather the whole system, you"
-    " can only change these settings when you start the Control Center as root. If you do not have"
-    " the root password, but feel the system time should be corrected, please contact your system"
-    " administrator.");
-}
-
-void KclockModule::moduleChanged(bool state)
-{
-  emit changed(state);
-}

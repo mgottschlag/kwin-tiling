@@ -22,22 +22,20 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-
 #ifndef KCMLOCALE_H
 #define KCMLOCALE_H
 
 #include <qwidget.h>
+#include <qstringlist.h>
 
-class KLocale;
-class KLanguageButton;
-class KLocaleSample;
 class KAddButton;
+class KLanguageButton;
+class KLocale;
+class KLocaleSample;
 
 class QLabel;
 class QListBox;
 class QPushButton;
-
-#include <qstringlist.h>
 
 class KLocaleConfig : public QWidget
 {
@@ -46,7 +44,6 @@ class KLocaleConfig : public QWidget
 public:
   KLocaleConfig( KLocale *_locale,
                  QWidget *parent = 0, const char *name = 0);
-  virtual ~KLocaleConfig( );
 
   void save();
 

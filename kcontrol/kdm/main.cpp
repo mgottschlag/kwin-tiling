@@ -25,10 +25,10 @@
 
 #include <qlayout.h>
 
-#include <kimageio.h>
-#include <kmessagebox.h>
 #include <kaboutdata.h>
 #include <kgenericfactory.h>
+#include <kimageio.h>
+#include <kmessagebox.h>
 #include <kurldrag.h>
 
 #include "kdm-appear.h"
@@ -38,8 +38,8 @@
 #include "kdm-conv.h"
 
 #include "main.h"
-
 #include "background.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -92,6 +92,30 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   about->addAuthor("Thomas Tanghus", I18N_NOOP("Original author"), "tanghus@earthling.net");
 	about->addAuthor("Steffen Hansen", 0, "hansen@kde.org");
 	about->addAuthor("Oswald Buddenhagen", I18N_NOOP("Current maintainer"), "ossi@kde.org");
+
+  setQuickHelp( i18n(    "<h1>Login Manager</h1> In this module you can configure the "
+                    "various aspects of the KDE Login Manager. This includes "
+                    "the look and feel as well as the users that can be "
+                    "selected for login. Note that you can only make changes "
+                    "if you run the module with superuser rights. If you have not started the KDE "
+                    "Control Center with superuser rights (which is absolutely the right thing to "
+                    "do, by the way), click on the <em>Modify</em> button to acquire "
+                    "superuser rights. You will be asked for the superuser password."
+                    "<h2>Appearance</h2> On this tab page, you can configure how "
+                    "the Login Manager should look, which language it should use, and which "
+                    "GUI style it should use. The language settings made here have no influence on "
+                    "the user's language settings."
+                    "<h2>Font</h2>Here you can choose the fonts that the Login Manager should use "
+                    "for various purposes like greetings and user names. "
+                    "<h2>Background</h2>If you want to set a special background for the login "
+                    "screen, this is where to do it."
+                    "<h2>Shutdown</h2> Here you can specify who is allowed to shutdown/reboot the machine "
+                    "and whether a boot manager should be used."
+                    "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
+                    "will offer you for logging in."
+                    "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
+		    "users not needing to provide a password to log in, and other convenience features.<br>"
+		    "Note, that these settings are security holes by their nature, so use them very carefully."));
 
   setAboutData( about );
 
@@ -156,23 +180,23 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
 
   appearance = new KDMAppearanceWidget(this);
   tab->addTab(appearance, i18n("A&ppearance"));
-  connect(appearance, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
+  connect(appearance, SIGNAL(changed(bool)), SIGNAL( changed(bool)));
 
   font = new KDMFontWidget(this);
   tab->addTab(font, i18n("&Font"));
-  connect(font, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
+  connect(font, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 
   background = new KBackground(this);
   tab->addTab(background, i18n("&Background"));
-  connect(background, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
+  connect(background, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 
   sessions = new KDMSessionsWidget(this);
   tab->addTab(sessions, i18n("&Shutdown"));
-  connect(sessions, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
+  connect(sessions, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 
   users = new KDMUsersWidget(this, 0);
   tab->addTab(users, i18n("&Users"));
-  connect(users, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
+  connect(users, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
   connect(users, SIGNAL(setMinMaxUID(int,int)), SLOT(slotMinMaxUID(int,int)));
   connect(this, SIGNAL(addUsers(const QMap<QString,int> &)), users, SLOT(slotAddUsers(const QMap<QString,int> &)));
   connect(this, SIGNAL(delUsers(const QMap<QString,int> &)), users, SLOT(slotDelUsers(const QMap<QString,int> &)));
@@ -180,7 +204,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
 
   convenience = new KDMConvenienceWidget(this, 0);
   tab->addTab(convenience, i18n("Con&venience"));
-  connect(convenience, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
+  connect(convenience, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
   connect(this, SIGNAL(addUsers(const QMap<QString,int> &)), convenience, SLOT(slotAddUsers(const QMap<QString,int> &)));
   connect(this, SIGNAL(delUsers(const QMap<QString,int> &)), convenience, SLOT(slotDelUsers(const QMap<QString,int> &)));
   connect(this, SIGNAL(clearUsers()), convenience, SLOT(slotClearUsers()));
@@ -200,33 +224,6 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
 KDModule::~KDModule()
 {
   delete config;
-}
-
-QString KDModule::quickHelp() const
-{
-    return i18n(    "<h1>Login Manager</h1> In this module you can configure the "
-                    "various aspects of the KDE Login Manager. This includes "
-                    "the look and feel as well as the users that can be "
-                    "selected for login. Note that you can only make changes "
-                    "if you run the module with superuser rights. If you have not started the KDE "
-                    "Control Center with superuser rights (which is absolutely the right thing to "
-                    "do, by the way), click on the <em>Modify</em> button to acquire "
-                    "superuser rights. You will be asked for the superuser password."
-                    "<h2>Appearance</h2> On this tab page, you can configure how "
-                    "the Login Manager should look, which language it should use, and which "
-                    "GUI style it should use. The language settings made here have no influence on "
-                    "the user's language settings."
-                    "<h2>Font</h2>Here you can choose the fonts that the Login Manager should use "
-                    "for various purposes like greetings and user names. "
-                    "<h2>Background</h2>If you want to set a special background for the login "
-                    "screen, this is where to do it."
-                    "<h2>Shutdown</h2> Here you can specify who is allowed to shutdown/reboot the machine "
-                    "and whether a boot manager should be used."
-                    "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
-                    "will offer you for logging in."
-                    "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
-		    "users not needing to provide a password to log in, and other convenience features.<br>"
-		    "Note, that these settings are security holes by their nature, so use them very carefully.");
 }
 
 void KDModule::load()
@@ -265,12 +262,6 @@ void KDModule::defaults()
         convenience->defaults();
         propagateUsers();
     }
-}
-
-
-void KDModule::moduleChanged(bool state)
-{
-  emit changed(state);
 }
 
 void KDModule::propagateUsers()

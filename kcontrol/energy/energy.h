@@ -34,13 +34,9 @@ public:
     KEnergy(QWidget *parent, const char *name);
     ~KEnergy();
 
-    int buttons();
-
     virtual void load();
     virtual void save();
     virtual void defaults();
-
-    QString quickHelp() const;
 
 private slots:
     void slotChangeEnable(bool);
@@ -57,7 +53,7 @@ private:
     static void applySettings(bool, int, int, int);
     friend void init_energy();
 
-    bool m_bChanged, m_bEnabled, m_bDPMS, m_bMaintainSanity;
+    bool m_bChanged, m_bDPMS, m_bEnabled, m_bMaintainSanity;
     int m_Standby, m_Suspend, m_Off;
     int m_StandbyDesired, m_SuspendDesired, m_OffDesired;
 

@@ -15,19 +15,20 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qgroupbox.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
-#include <qlabel.h>
+
+#include <dcopclient.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
-#include <kgenericfactory.h>
-#include <dcopclient.h>
-#include <knuminput.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
+#include <knuminput.h>
 
 #include "kcmlaunch.h"
 
@@ -40,6 +41,9 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
 {
     QVBoxLayout* Form1Layout = new QVBoxLayout( this, 0, 
         KDialog::spacingHint() );
+
+    setQuickHelp( i18n ( "<h1>Launch Feedback</h1>"
+     " You can configure the application-launch feedback here."));
 
     QGroupBox* GroupBox1 = new QGroupBox( this, "GroupBox1" );
     GroupBox1->setTitle( i18n( "Bus&y Cursor" ) );
@@ -266,16 +270,6 @@ LaunchConfig::checkChanged()
       savedBusyBlinking != newBusyBlinking
       ||
       savedBusyBouncing != newBusyBouncing
-    );
-}
-
-  QString
-LaunchConfig::quickHelp() const
-{
-  return i18n
-    (
-     "<h1>Launch Feedback</h1>"
-     " You can configure the application-launch feedback here."
     );
 }
 

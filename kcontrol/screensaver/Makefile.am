@@ -1,12 +1,12 @@
 
-INCLUDES = $(all_includes)
+AM_CPPFLAGS = $(all_includes)
 
 kde_module_LTLIBRARIES = kcm_screensaver.la
 
 kcm_screensaver_la_SOURCES = advanceddialogimpl.ui scrnsave.cpp testwin.cpp saverlist.cpp saverconfig.cpp advanceddialog.cpp 
 kcm_screensaver_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 kcm_screensaver_la_LIBADD = $(LIB_KSYCOCA) $(DPMSLIB)
-kcm_screensaver_la_METASOURCES = AUTO
+METASOURCES = AUTO
 
 noinst_HEADERS = scrnsave.h
 

@@ -21,6 +21,8 @@
 #include <qlayout.h>
 
 #include <dcopclient.h>
+
+#include <kaboutdata.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdialog.h>
@@ -28,7 +30,6 @@
 #include <kwin.h>
 
 #include "kcmtaskbar.h"
-#include <kaboutdata.h>
 #include "kcmtaskbar.moc"
 
 typedef KGenericFactory<TaskbarConfig, QWidget > TaskBarFactory;
@@ -120,14 +121,19 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringLi
 {
     ui = new TaskbarConfigUI(this);
 
+    setQuickHelp( i18n("<h1>Taskbar</h1> You can configure the taskbar here."
+                " This includes options such as whether or not the taskbar should show all"
+                " windows at once or only those on the current desktop."
+                " You can also configure whether or not the Window List button will be displayed."));
+
     QVBoxLayout *vbox = new QVBoxLayout(this, 0, KDialog::spacingHint());
     vbox->addWidget(ui);
-    connect(ui->showAllCheck, SIGNAL(clicked()), SLOT(configChanged()));
-    connect(ui->showAllScreensCheck, SIGNAL(clicked()), SLOT(configChanged()));
-    connect(ui->showListBtnCheck, SIGNAL(clicked()), SLOT(configChanged()));
-    connect(ui->sortCheck, SIGNAL(clicked()), SLOT(configChanged()));
-    connect(ui->iconCheck, SIGNAL(clicked()), SLOT(configChanged()));
-    connect(ui->iconifiedCheck, SIGNAL(clicked()), SLOT(configChanged()));
+    connect(ui->showAllCheck, SIGNAL(clicked()), SLOT( changed()));
+    connect(ui->showAllScreensCheck, SIGNAL(clicked()), SLOT( changed()));
+    connect(ui->showListBtnCheck, SIGNAL(clicked()), SLOT( changed()));
+    connect(ui->sortCheck, SIGNAL(clicked()), SLOT( changed()));
+    connect(ui->iconCheck, SIGNAL(clicked()), SLOT( changed()));
+    connect(ui->iconifiedCheck, SIGNAL(clicked()), SLOT( changed()));
 
     QStringList list = i18nActionList();
     ui->leftButtonComboBox->insertStringList( list );
@@ -135,10 +141,10 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringLi
     ui->rightButtonComboBox->insertStringList( list );
     ui->groupComboBox->insertStringList( i18nGroupModeList() );
 
-    connect(ui->leftButtonComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
-    connect(ui->middleButtonComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
-    connect(ui->rightButtonComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
-    connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
+    connect(ui->leftButtonComboBox, SIGNAL(activated(int)), SLOT( changed()));
+    connect(ui->middleButtonComboBox, SIGNAL(activated(int)), SLOT( changed()));
+    connect(ui->rightButtonComboBox, SIGNAL(activated(int)), SLOT( changed()));
+    connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT( changed()));
     connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT(slotUpdateComboBox()));
 
     if (KWin::numberOfDesktops() < 2)
@@ -162,17 +168,6 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringLi
     setAboutData(about);
 
     load();
-    m_moduleChanged = false;
-}
-
-TaskbarConfig::~TaskbarConfig()
-{
-}
-
-void TaskbarConfig::configChanged()
-{
-    m_moduleChanged = true;
-    emit changed(true);
 }
 
 void TaskbarConfig::slotUpdateComboBox()
@@ -210,15 +205,11 @@ void TaskbarConfig::load()
     }
 
     delete c;
-    emit changed(false);
-    m_moduleChanged = false;
     slotUpdateComboBox();
 }
 
 void TaskbarConfig::save()
 {
-    if ( !m_moduleChanged )
-        return;
     KConfig *c = new KConfig("ktaskbarrc", false, false);
     { // group for the benefit of the group saver
         KConfigGroupSaver saver(c, "General");
@@ -237,8 +228,6 @@ void TaskbarConfig::save()
     }
 
     delete c;
-
-    emit changed(false);
 
     // Tell kicker about the new config file.
     if (!kapp->dcopClient()->isAttached())
@@ -259,14 +248,6 @@ void TaskbarConfig::defaults()
     ui->middleButtonComboBox->setCurrentItem( buttonAction( MidButton ) );
     ui->rightButtonComboBox->setCurrentItem( buttonAction( RightButton ) );
     ui->groupComboBox->setCurrentItem( groupMode() );
-    emit changed(true);
     slotUpdateComboBox();
 }
 
-QString TaskbarConfig::quickHelp() const
-{
-    return i18n("<h1>Taskbar</h1> You can configure the taskbar here."
-                " This includes options such as whether or not the taskbar should show all"
-                " windows at once or only those on the current desktop."
-                " You can also configure whether or not the Window List button will be displayed.");
-}

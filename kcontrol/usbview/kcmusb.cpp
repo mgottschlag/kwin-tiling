@@ -8,20 +8,17 @@
  *                                                                         *
  ***************************************************************************/
 
-
-
-
-#include <qlayout.h>
 #include <qgroupbox.h>
-#include <qsplitter.h>
-#include <qlistview.h>
-#include <qtextview.h>
 #include <qheader.h>
+#include <qlayout.h>
+#include <qlistview.h>
+#include <qsplitter.h>
+#include <qtextview.h>
 #include <qtimer.h>
 
-#include <kgenericfactory.h>
 #include <kaboutdata.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
 
 #include "usbdevices.h"
 #include "kcmusb.moc"
@@ -33,6 +30,9 @@ USBViewer::USBViewer(QWidget *parent, const char *name, const QStringList &)
   : KCModule(USBFactory::instance(), parent, name)
 {
   setButtons(Help);
+
+  setQuickHelp( i18n("<h1>USB Devices</h1> This module allows you to see"
+     " the devices attached to your USB bus(es)."));
 
   QVBoxLayout *vbox = new QVBoxLayout(this, 0, KDialog::spacingHint());
   QGroupBox *gbox = new QGroupBox(i18n("USB Devices"), this);
@@ -78,12 +78,6 @@ USBViewer::USBViewer(QWidget *parent, const char *name, const QStringList &)
 
   load();
 }
-
-
-USBViewer::~USBViewer()
-{
-}
-
 
 void USBViewer::load()
 {
@@ -195,20 +189,4 @@ void USBViewer::selectionChanged(QListViewItem *item)
   _details->clear();
 }
 
-
-void USBViewer::save()
-{
-}
-
-
-void USBViewer::defaults()
-{
-}
-
-
-QString USBViewer::quickHelp() const
-{
-  return i18n("<h1>USB Devices</h1> This module allows you to see"
-     " the devices attached to your USB bus(es).");
-}
 

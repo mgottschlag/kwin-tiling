@@ -40,14 +40,10 @@ class KeyModule : public KCModule
 	void load();
 	void save();
 	void defaults();
-	QString quickHelp() const;
 
  protected:
 	void initGUI();
 	void resizeEvent( QResizeEvent* );
-
- protected slots:
-	void slotModuleChanged( bool state );
 
  private:
 	QTabWidget* m_pTab;

@@ -23,18 +23,18 @@
 #endif
 
 #include <qcheckbox.h>
-#include <qlayout.h>
 #include <qlabel.h>
+#include <qlayout.h>
 #include <qwhatsthis.h>
 
-#include <kcursor.h>
-#include <krun.h>
 #include <kconfig.h>
-#include <kstandarddirs.h>
-#include <kiconloader.h>
-#include <knuminput.h>
-#include <klocale.h>
+#include <kcursor.h>
 #include <kdialog.h>
+#include <kiconloader.h>
+#include <klocale.h>
+#include <knuminput.h>
+#include <krun.h>
+#include <kstandarddirs.h>
 #include <kurllabel.h>
 
 #include <X11/X.h>
@@ -142,6 +142,15 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     m_bDPMS = false;
     m_bMaintainSanity = true;
 
+    setQuickHelp( i18n("<h1>Display Power Control</h1> If your display supports"
+      " power saving features, you can configure them using this module.<p>"
+      " There are three levels of power saving: standby, suspend, and off."
+      " The greater the level of power saving, the longer it takes for the"
+      " display to return to an active state.<p>"
+      " To wake up the display from a power saving mode, you can make a small"
+      " movement with the mouse, or press a key that is not likely to cause"
+      " any unintentional side-effects, for example, the \"Shift\" key."));
+
 #ifdef HAVE_DPMS
     int dummy;
     m_bDPMS = DPMSQueryExtension(qt_xdisplay(), &dummy, &dummy);
@@ -211,6 +220,11 @@ connect(logo, SIGNAL(leftClickedURL(const QString&)), SLOT(openURL(const QString
 
     top->addStretch();
 
+    if (m_bDPMS)
+       setButtons( KCModule::Help | KCModule::Default | KCModule::Apply );
+    else
+       setButtons( KCModule::Help );
+
     m_pConfig = new KConfig("kcmdisplayrc", false /*readwrite*/, false /*no globals*/);
     m_pConfig->setGroup("DisplayEnergy");
 
@@ -223,14 +237,6 @@ KEnergy::~KEnergy()
     delete m_pConfig;
 }
 
-
-int KEnergy::buttons()
-{
-    if (m_bDPMS)
-       return KCModule::Help | KCModule::Default | KCModule::Apply;
-    else
-       return KCModule::Help;
-}
 
 
 void KEnergy::load()
@@ -431,19 +437,6 @@ void KEnergy::slotChangeOff(int value)
 
     m_bChanged = true;
     emit changed(true);
-}
-
-
-QString KEnergy::quickHelp() const
-{
-    return i18n("<h1>Display Power Control</h1> If your display supports"
-      " power saving features, you can configure them using this module.<p>"
-      " There are three levels of power saving: standby, suspend, and off."
-      " The greater the level of power saving, the longer it takes for the"
-      " display to return to an active state.<p>"
-      " To wake up the display from a power saving mode, you can make a small"
-      " movement with the mouse, or press a key that is not likely to cause"
-      " any unintentional side-effects, for example, the \"Shift\" key.");
 }
 
 void KEnergy::openURL(const QString &URL)

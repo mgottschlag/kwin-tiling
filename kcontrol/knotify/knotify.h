@@ -53,7 +53,6 @@ public:
 
     virtual void defaults();
     virtual void save();
-    virtual QString quickHelp() const;
 
 public slots:
     virtual void load();

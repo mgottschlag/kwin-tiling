@@ -1,8 +1,7 @@
 SUBDIRS= . componentservices
-INCLUDES = -I../ -I$(top_srcdir)/kio -I$(top_srcdir) $(all_includes)
+AM_CPPFLAGS  = -I../ -I$(top_srcdir)/kio -I$(top_srcdir) $(all_includes)
 
-
-METASOURCES = AUTO
+METASOURCES = AUTO 
 
 kde_module_LTLIBRARIES = kcm_componentchooser.la
 

@@ -1,5 +1,5 @@
 
-INCLUDES = $(all_includes) 
+AM_CPPFLAGS = $(all_includes) 
 
 kdisplay_defaults_data_DATA = AAAAAAGeneral.ad AAAMotif.ad AAATk.ad AAAXaw.ad AcroRead.ad \
 	Editres.ad Emacs.ad GV.ad ML.ad Nedit.ad Netscape.ad RVPlayer.ad \

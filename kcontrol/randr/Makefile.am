@@ -1,4 +1,4 @@
-INCLUDES = $(all_includes)
+AM_CPPFLAGS  = $(all_includes)
 
 lib_LTLIBRARIES = 
 kde_module_LTLIBRARIES = kcm_randr.la
@@ -7,7 +7,7 @@ kdeinit_LTLIBRARIES = krandrinithack.la
 noinst_LTLIBRARIES = librandrinternal.la
 
 librandrinternal_la_SOURCES = ktimerdialog.cpp randr.cpp
-librandrinternal_la_METASOURCES = AUTO
+METASOURCES = AUTO 
 
 kcm_randr_la_SOURCES = krandrmodule.cpp
 kcm_randr_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined

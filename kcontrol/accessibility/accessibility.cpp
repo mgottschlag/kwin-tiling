@@ -18,36 +18,16 @@
  *                                                                          *
  ****************************************************************************/
 
-// #include <stdlib.h>
-
-// #include <dcopref.h>
-
-#include <qtabwidget.h>
-// #include <qlayout.h>
-// #include <qgroupbox.h>
-// #include <qlabel.h>
 #include <qcheckbox.h>
-// #include <qlineedit.h>
-// #include <qpushbutton.h>
 #include <qradiobutton.h>
-// #include <qwhatsthis.h>
+#include <qtabwidget.h>
 
-#include <kconfig.h>
-// #include <kglobal.h>
-// #include <kstandarddirs.h>
-// #include <klocale.h>
-// #include <krun.h>
-// #include <kurl.h>
-// #include <kinstance.h>
-#include <kcolorbutton.h>
-// #include <kfiledialog.h>
-#include <knuminput.h>
-// #include <kapplication.h>
 #include <kaboutdata.h>
-// #include <kdebug.h>
+#include <kcolorbutton.h>
+#include <kconfig.h>
 #include <kgenericfactory.h>
+#include <knuminput.h>
 #include <kurlrequester.h>
-
 
 #include "accessibility.moc"
 
@@ -250,22 +230,3 @@ void AccessibilityConfig::defaults(){
    maximumSpeed->setValue(500);
    accelerationProfile->setValue(0);
 }
-
-QString AccessibilityConfig::quickHelp() const{
-   kdDebug() << "Running: AccessibilityConfig::quickHelp()"<< endl;
-   kdDebug() << "mainTab->currentPageIndex=" << mainTab->currentPageIndex() << endl;
-   switch(mainTab->currentPageIndex()){
-      case 0:
-         return i18n("<h1>Bell</h1>"); // ### fixme
-         break;
-      case 1:
-         return i18n("<h1>Keyboard</h1>"); // ### fixme
-         break;
-      case 2:
-         return i18n("<h1>Mouse</h1>"); // ### fixme
-         break;
-      default:
-         return QString::null;   // This should never happen
-   }
-}
-

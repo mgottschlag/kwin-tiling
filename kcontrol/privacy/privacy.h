@@ -22,11 +22,11 @@
 #define _PRIVACY_H_
 
 #include <kcmodule.h>
-#include <kaboutdata.h>
-#include "kcmprivacydialog.h"
-#include "kprivacysettings.h"
-#include "kprivacymanager.h"
 #include <klistview.h>
+
+#include "kcmprivacydialog.h"
+#include "kprivacymanager.h"
+#include "kprivacysettings.h"
 
 class Privacy: public KCModule
 {
@@ -39,17 +39,13 @@ public:
     virtual void load();
     virtual void save();
     virtual void defaults();
-    virtual int buttons();
-    virtual QString quickHelp() const;
 
 public slots:
-    void configChanged();
     void cleanup();
     void selectAll();
     void selectNone();
 
 private:
-    KAboutData *myAboutData;
     KCMPrivacyDialog  *cleaningDialog;
     KPrivacySettings  *p3pSettings;
     KPrivacyManager *m_privacymanager;

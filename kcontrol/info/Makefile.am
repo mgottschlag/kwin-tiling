@@ -8,9 +8,9 @@ kcm_info_la_SOURCES = main.cpp memory.cpp opengl.cpp
 
 kcm_info_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined $(FRAMEWORK_COREAUDIO)
 kcm_info_la_LIBADD = $(LIBALIB) $(LIB_KDEUI) $(LIB_TRU64_MACH) $(LIBCFG) $(LIBODM) $(LIBKSTAT) $(LIBDEVINFO) $(GLLIB)
-kcm_info_la_METASOURCES = AUTO
+METASOURCES = AUTO
 
-INCLUDES= $(all_includes) $(GLINC)
+AM_CPPFLAGS= $(all_includes) $(GLINC)
 
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/kcminfo.pot

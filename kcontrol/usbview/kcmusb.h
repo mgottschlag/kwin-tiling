@@ -12,12 +12,9 @@
 #ifndef _KCMUSB_H
 #define _KCMUSB_H
 
-
 #include <qintdict.h>
 
-
 #include <kcmodule.h>
-
 
 class QListView;
 class QListViewItem;
@@ -31,14 +28,8 @@ class USBViewer : public KCModule
 public:
 
   USBViewer(QWidget *parent = 0L, const char *name = 0L, const QStringList &list=QStringList() );
-  virtual ~USBViewer();
 
   void load();
-  void save();
-  void defaults();
-
-  int buttons();
-  QString quickHelp() const;
 
 protected slots:
 

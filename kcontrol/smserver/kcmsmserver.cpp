@@ -18,14 +18,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  */
-#include <qlayout.h>
-
-#include <dcopclient.h>
-#include <kapplication.h>
-#include <kconfig.h>
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
+#include <qlayout.h>
 #include <qradiobutton.h>
+
+#include <dcopclient.h>
+
+#include <kapplication.h>
+#include <kconfig.h>
 #include <kgenericfactory.h>
 #include <klineedit.h>
 
@@ -38,23 +39,21 @@ K_EXPORT_COMPONENT_FACTORY (kcm_smserver, SMSFactory("kcmsmserver") )
 SMServerConfig::SMServerConfig( QWidget *parent, const char* name, const QStringList & )
   : KCModule (SMSFactory::instance(), parent, name)
 {
+    setQuickHelp( i18n("<h1>Session Manager</h1>"
+    " You can configure the session manager here."
+    " This includes options such as whether or not the session exit (logout)"
+    " should be confirmed, whether the session should be restored again when logging in"
+    " and whether the computer should be automatically shut down after session"
+    " exit by default."));
+
     QVBoxLayout *topLayout = new QVBoxLayout(this);
     dialog = new SMServerConfigImpl(this);
-    connect(dialog, SIGNAL(changed()), SLOT(configChanged()));
+    connect(dialog, SIGNAL(changed()), SLOT(changed()));
 
     dialog->show();
     topLayout->add(dialog);
     load();
 
-}
-
-SMServerConfig::~SMServerConfig()
-{
-}
-
-void SMServerConfig::configChanged()
-{
-  emit changed(true);
 }
 
 void SMServerConfig::load()
@@ -115,8 +114,6 @@ void SMServerConfig::save()
   c->sync();
   delete c;
 
-  emit changed(false);
-
   // update the k menu if necessary
   QByteArray data;
   kapp->dcopClient()->send( "kicker", "kicker", "configure()", data );
@@ -131,17 +128,6 @@ void SMServerConfig::defaults()
   dialog->logoutRadio->setChecked(true);
   dialog->excludeLineedit->setText("");
 
-  emit changed(true);
-}
-
-QString SMServerConfig::quickHelp() const
-{
-  return i18n("<h1>Session Manager</h1>"
-    " You can configure the session manager here."
-    " This includes options such as whether or not the session exit (logout)"
-    " should be confirmed, whether the session should be restored again when logging in"
-    " and whether the computer should be automatically shut down after session"
-    " exit by default.");
 }
 
 #include "kcmsmserver.moc"

@@ -18,26 +18,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <config.h>
-
-#include "nic.h"
-
-#include <kdialog.h>
-#include <kgenericfactory.h>
-#include <kaboutdata.h>
-
-
-#include <qtimer.h>
-#include <qtabwidget.h>
-#include <kglobal.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qlistview.h>
-
-#ifdef HAVE_SYS_SOCKIO_H
-#include <sys/sockio.h>
-#endif
-
 #include <sys/types.h>
 #include <sys/param.h>
 #include <netinet/in.h>
@@ -45,6 +25,23 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <config.h>
+#ifdef HAVE_SYS_SOCKIO_H
+#include <sys/sockio.h>
+#endif
+
+#include <kaboutdata.h>
+#include <kdialog.h>
+#include <kgenericfactory.h>
+#include <kglobal.h>
+
+#include <qlayout.h>
+#include <qlistview.h>
+#include <qpushbutton.h>
+#include <qtabwidget.h>
+#include <qtimer.h>
+
+#include "nic.h"
 
 #ifdef USE_SOLARIS
 /* net/if.h is incompatible with STL on Solaris 2.6 - 2.8, redefine

@@ -9,7 +9,6 @@
 
 
 #include <config.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -19,28 +18,29 @@
 #include <sys/wait.h>
 
 #include <qbuttongroup.h>
-#include <qpushbutton.h>
 #include <qcheckbox.h>
-#include <qslider.h>
-#include <qlayout.h>
-#include <qwhatsthis.h>
-#include <qtimer.h>
-#include <qlabel.h>
-#include <qlistview.h>
 #include <qheader.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qlistview.h>
+#include <qpushbutton.h>
+#include <qslider.h>
+#include <qtimer.h>
+#include <qwhatsthis.h>
 
+#include <dcopclient.h>
+
+#include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kdialogbase.h>
-#include <kprocess.h>
-#include <knuminput.h>
-#include <kstandarddirs.h>
-#include <kiconloader.h>
-#include <dcopclient.h>
-#include <kservicegroup.h>
-#include <kgenericfactory.h>
 #include <kdialog.h>
-#include <kaboutdata.h>
+#include <kdialogbase.h>
+#include <kgenericfactory.h>
+#include <kiconloader.h>
+#include <knuminput.h>
+#include <kprocess.h>
+#include <kservicegroup.h>
+#include <kstandarddirs.h>
 
 #include <X11/Xlib.h>
 
@@ -88,6 +88,18 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
                                      "apps/ScreenSavers/");
+
+    setQuickHelp( i18n("<h1>Screen Saver</h1> This module allows you to enable and"
+       " configure a screen saver. Note that you can enable a screen saver"
+       " even if you have power saving features enabled for your display.<p>"
+       " Besides providing an endless variety of entertainment and"
+       " preventing monitor burn-in, a screen saver also gives you a simple"
+       " way to lock your display if you are going to leave it unattended"
+       " for a while. If you want the screen saver to lock the session, make sure you enable"
+       " the \"Require password\" feature of the screen saver; if you do not, you can still"
+       " explicitly lock the session using the desktop's \"Lock Session\" action."));
+
+    setButtons( KCModule::Help | KCModule::Default | KCModule::Apply );
 
     // Add KDE specific screensaver path
     QString relPath="System/ScreenSavers/";
@@ -323,14 +335,6 @@ void KScreenSaver::keyPressEvent( QKeyEvent *)
     if ( mTesting )
 	slotStopTest();
 }
-
-//---------------------------------------------------------------------------
-//
-int KScreenSaver::buttons()
-{
-    return KCModule::Help | KCModule::Default | KCModule::Apply;
-}
-
 //---------------------------------------------------------------------------
 //
 KScreenSaver::~KScreenSaver()
@@ -878,21 +882,6 @@ void KScreenSaver::slotSetupDone(KProcess *)
     setMonitor();
     mSetupBt->setEnabled( true );
     emit changed(true);
-}
-
-//---------------------------------------------------------------------------
-//
-QString KScreenSaver::quickHelp() const
-{
-    return i18n("<h1>Screen Saver</h1> This module allows you to enable and"
-       " configure a screen saver. Note that you can enable a screen saver"
-       " even if you have power saving features enabled for your display.<p>"
-       " Besides providing an endless variety of entertainment and"
-       " preventing monitor burn-in, a screen saver also gives you a simple"
-       " way to lock your display if you are going to leave it unattended"
-       " for a while. If you want the screen saver to lock the session, make sure you enable"
-       " the \"Require password\" feature of the screen saver; if you do not, you can still"
-       " explicitly lock the session using the desktop's \"Lock Session\" action.");
 }
 
 #include "scrnsave.moc"

@@ -24,9 +24,9 @@
 #include <qfile.h>
 #include <qtextstream.h>
 
-#include <klocale.h>
-#include <kglobal.h>
 #include <kdialog.h>
+#include <kglobal.h>
+#include <klocale.h>
 #include <kstandarddirs.h>
 
 #include "view1394.h"
@@ -43,6 +43,7 @@
 #define CONFIGROM_CAP  0x08
 #define CONFIGROM_GUID_HI 0x0c
 #define CONFIGROM_GUID_LO 0x10
+#define MAX_1394_PORTS 16
 
 int my_reset_handler(raw1394handle_t handle, unsigned int )
 {
@@ -57,6 +58,22 @@ View1394::View1394(QWidget *parent, const char *name)
 :KCModule(parent,name)
 ,m_insideRescanBus(false)
 {
+   setQuickHelp( i18n("On the right hand side you can see some information about "
+               "your IEEE 1394 configuration.<br>"
+               "The meaning of the columns:<br>"
+               "<b>Name</b>: port or node name, the number can change with each bus reset<br>"
+               "<b>GUID</b>: the 64 bit GUID of the node<br>"
+               "<b>Local</b>: checked if the node is an IEEE 1394 port of your computer<br>"
+               "<b>IRM</b>: checked if the node is isochronous resource manager capable<br>"
+               "<b>CRM</b>: checked if the node is cycle master capable<br>"
+               "<b>ISO</b>: checked if the node supports isochronous transfers<br>"
+               "<b>BM</b>: checked if the node is bus manager capable<br>"
+               "<b>PM</b>: checked if the node is power management capable<br>"
+               "<b>Acc</b>: the cycle clock accuracy of the node, valid from 0 to 100<br>"
+               "<b>Speed</b>: the speed of the node<br>"));
+
+   setButtons( KCModule::Help );
+
    m_ouiDb=new OuiDb();
    QVBoxLayout *box=new QVBoxLayout(this, 0, KDialog::spacingHint());
    m_view=new View1394Widget(this);
@@ -70,34 +87,6 @@ View1394::View1394(QWidget *parent, const char *name)
    m_notifiers.setAutoDelete(true);
    rescanBus();
 }
-
-View1394::~View1394()
-{
-}
-
-int View1394::buttons ()
-{
-   return KCModule::Help;
-}
-
-QString View1394::quickHelp() const
-{
-   return i18n("On the right hand side you can see some information about "
-               "your IEEE 1394 configuration.<br>"
-               "The meaning of the columns:<br>"
-               "<b>Name</b>: port or node name, the number can change with each bus reset<br>"
-               "<b>GUID</b>: the 64 bit GUID of the node<br>"
-               "<b>Local</b>: checked if the node is an IEEE 1394 port of your computer<br>"
-               "<b>IRM</b>: checked if the node is isochronous resource manager capable<br>"
-               "<b>CRM</b>: checked if the node is cycle master capable<br>"
-               "<b>ISO</b>: checked if the node supports isochronous transfers<br>"
-               "<b>BM</b>: checked if the node is bus manager capable<br>"
-               "<b>PM</b>: checked if the node is power management capable<br>"
-               "<b>Acc</b>: the cycle clock accuracy of the node, valid from 0 to 100<br>"
-               "<b>Speed</b>: the speed of the node<br>");
-}
-
-#define MAX_1394_PORTS 16
 
 bool View1394::readConfigRom(raw1394handle_t handle, nodeid_t nodeid, quadlet_t& firstQuad, quadlet_t& cap, octlet_t& guid)
 {

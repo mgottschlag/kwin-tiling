@@ -134,6 +134,11 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kcmstyle, GeneralFactory )
 KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	: KCModule( parent, name ), appliedStyle(NULL)
 {
+    setQuickHelp( i18n("<h1>Style</h1>"
+			"This module allows you to modify the visual appearance "
+			"of user interface elements, such as the widget style "
+			"and effects."));
+
 	m_bEffectsDirty = false;
 	m_bStyleDirty= false;
 	m_bToolbarsDirty = false;
@@ -703,15 +708,6 @@ void KCMStyle::defaults()
 	comboToolbarIcons->setCurrentItem(0);
 	cbIconsOnButtons->setChecked(false);
 	cbTearOffHandles->setChecked(false);
-}
-
-
-QString KCMStyle::quickHelp() const
-{
-	return i18n("<h1>Style</h1>"
-			"This module allows you to modify the visual appearance "
-			"of user interface elements, such as the widget style "
-			"and effects.");
 }
 
 void KCMStyle::setEffectsDirty()

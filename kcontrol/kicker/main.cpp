@@ -15,14 +15,15 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qtabwidget.h>
 #include <qlayout.h>
+#include <qtabwidget.h>
 
+#include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdirwatch.h>
-#include <kstandarddirs.h>
 #include <kimageio.h>
 #include <klistview.h>
+#include <kstandarddirs.h>
 
 #include <dcopclient.h>
 
@@ -35,7 +36,6 @@
 #include "lookandfeeltab_kcm.h"
 
 #include <X11/Xlib.h>
-#include <kaboutdata.h>
 
 // for multihead
 int KickerConfig::kickerconfig_screen_number = 0;
@@ -47,25 +47,33 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
 {
     initScreenNumber();
 
+    setQuickHelp( i18n("<h1>Panel</h1> Here you can configure the KDE panel (also"
+                " referred to as 'kicker'). This includes options like the position and"
+                " size of the panel, as well as its hiding behavior and its looks.<p>"
+                " Note that you can also access some of these options directly by clicking"
+                " on the panel, e.g. dragging it with the left mouse button or using the"
+                " context menu on right mouse button click. This context menu also offers you"
+                " manipulation of the panel's buttons and applets."));
+
     QVBoxLayout *layout = new QVBoxLayout(this);
     QTabWidget *tab = new QTabWidget(this);
     layout->addWidget(tab);
 
     positiontab = new PositionTab(this);
     tab->addTab(positiontab, i18n("Arran&gement"));
-    connect(positiontab, SIGNAL(changed()), this, SLOT(configChanged()));
+    connect(positiontab, SIGNAL(changed()), SLOT( changed() ));
 
     hidingtab = new HidingTab(this);
     tab->addTab(hidingtab, i18n("H&iding"));
-    connect(hidingtab, SIGNAL(changed()), this, SLOT(configChanged()));
+    connect(hidingtab, SIGNAL(changed()), SLOT( changed() ));
 
     menutab = new MenuTab(this);
     tab->addTab(menutab, i18n("&Menus"));
-    connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
+    connect(menutab, SIGNAL(changed()), SLOT( changed() ));
 
     lookandfeeltab = new LookAndFeelTab(this);
     tab->addTab(lookandfeeltab, i18n("A&ppearance"));
-    connect(lookandfeeltab, SIGNAL(changed()), this, SLOT(configChanged()));
+    connect(lookandfeeltab, SIGNAL(changed()), SLOT( changed() ));
 
     load();
 
@@ -106,11 +114,6 @@ void KickerConfig::initScreenNumber()
 {
     if (qt_xdisplay())
         kickerconfig_screen_number = DefaultScreen(qt_xdisplay());
-}
-
-void KickerConfig::configChanged()
-{
-    emit changed(true);
 }
 
 // this method may get called multiple times during the life of the control panel!
@@ -199,17 +202,6 @@ void KickerConfig::defaults()
     lookandfeeltab->defaults();
 
     emit changed(true);
-}
-
-QString KickerConfig::quickHelp() const
-{
-    return i18n("<h1>Panel</h1> Here you can configure the KDE panel (also"
-                " referred to as 'kicker'). This includes options like the position and"
-                " size of the panel, as well as its hiding behavior and its looks.<p>"
-                " Note that you can also access some of these options directly by clicking"
-                " on the panel, e.g. dragging it with the left mouse button or using the"
-                " context menu on right mouse button click. This context menu also offers you"
-                " manipulation of the panel's buttons and applets.");
 }
 
 void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists, bool reloadIfExists)

@@ -20,18 +20,18 @@
 #define KTHEMEMANAGER_H
 
 #include <kcmodule.h>
-#include <kurl.h>
-#include <kservice.h>
-//#include <kiconview.h>
 #include <krun.h>
+#include <kservice.h>
+#include <kurl.h>
 
 #include "kthemedlg.h"
 #include "ktheme.h"
 
-#define ORIGINAL_THEME "original" // no i18n() here!!!
-
 class QString;
+
 class KAboutData;
+
+#define ORIGINAL_THEME "original" // no i18n() here!!!
 
 /*
 class KIconViewItem;
@@ -78,22 +78,10 @@ public:
      * Called when the user requests the default values
      */
     virtual void defaults();
-    /**
-     * @return the  set of available buttons
-     */
-    virtual int buttons();
-
-    /**
-     * @return quick help for the config module
-     */
-    virtual QString quickHelp() const;
 
 protected:
     void dragEnterEvent ( QDragEnterEvent * ev );
     void dropEvent ( QDropEvent * ev );
-
-public slots:
-    void configChanged();
 
 signals:
     /**

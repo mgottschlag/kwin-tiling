@@ -5,11 +5,9 @@ kcm_usb_la_SOURCES = kcmusb.cpp usbdevices.cpp usbdb.cpp
 kcm_usb_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_usb_la_LIBADD = $(LIB_KDEUI)
 
-INCLUDES= $(all_includes) 
+AM_CPPFLAGS= $(all_includes) 
 
-kcm_usb_la_METASOURCES = AUTO
-
-KDE_ICON = AUTO
+METASOURCES = AUTO
 
 messages:
 	$(XGETTEXT) *.cpp *.i18n -o $(podir)/kcmusb.pot

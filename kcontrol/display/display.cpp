@@ -17,15 +17,15 @@
    Boston, MA 02111-1307, USA.
 */
 
-#include "display.h"
+#include <qapplication.h>
+#include <qlayout.h>
+#include <qtabwidget.h>
 
 #include <kcmoduleloader.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
 
-#include <qapplication.h>
-#include <qlayout.h>
-#include <qtabwidget.h>
+#include "display.h"
 
 typedef KGenericFactory<KCMDisplay, QWidget> DisplayFactory;
 K_EXPORT_COMPONENT_FACTORY ( kcm_display, DisplayFactory( "display" ) )

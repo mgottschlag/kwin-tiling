@@ -4,9 +4,9 @@ kcm_display_la_SOURCES = display.cpp
 
 kcm_display_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_display_la_LIBADD = $(LIB_KUTILS)
-INCLUDES= $(all_includes) 
+AM_CPPFLAGS = $(all_includes) 
 
-kcm_display_la_METASOURCES = AUTO
+METASOURCES = AUTO
 
 noinst_HEADERS = display.h
 

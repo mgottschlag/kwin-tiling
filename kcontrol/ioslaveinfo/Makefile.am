@@ -5,9 +5,9 @@ kcm_ioslaveinfo_la_SOURCES = kcmioslaveinfo.cpp
 kcm_ioslaveinfo_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_ioslaveinfo_la_LIBADD = -lkdeui $(LIB_KIO)
 
-INCLUDES= $(all_includes)
+AM_CPPFLAGS= $(all_includes)
 
-kcm_ioslaveinfo_la_METASOURCES = AUTO
+METASOURCES = AUTO
 
 messages:
 	$(XGETTEXT) $(kcm_ioslaveinfo_la_SOURCES) -o $(podir)/kcmioslaveinfo.pot

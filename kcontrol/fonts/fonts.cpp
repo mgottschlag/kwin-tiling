@@ -6,29 +6,30 @@
 //
 // Ported to kcontrol2 by Geert Jansen.
 
-#include <qlayout.h>
+#include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qdir.h>
+#include <qgroupbox.h>
 #include <qhbox.h>
 #include <qlabel.h>
-#include <qwhatsthis.h>
-#include <qtooltip.h>
-#include <qcheckbox.h>
-#include <qsettings.h>
-#include <qcombobox.h>
-#include <qgroupbox.h>
-#include <knuminput.h>
+#include <qlayout.h>
 #include <qpushbutton.h>
-#include <qdir.h>
+#include <qsettings.h>
+#include <qtooltip.h>
+#include <qwhatsthis.h>
 
 #include <dcopclient.h>
-#include <kapplication.h>
-#include <ksimpleconfig.h>
-#include <kipc.h>
-#include <kstandarddirs.h>
-#include <kmessagebox.h>
-#include <kgenericfactory.h>
-#include <stdlib.h>
-#include "../krdb/krdb.h"
 
+#include <kapplication.h>
+#include <kgenericfactory.h>
+#include <kipc.h>
+#include <kmessagebox.h>
+#include <knuminput.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
+#include <stdlib.h>
+
+#include "../krdb/krdb.h"
 #include "fonts.h"
 #include "fonts.moc"
 
@@ -506,8 +507,7 @@ static QCString desktopConfigName()
 }
 
 KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
-    :   KCModule(FontFactory::instance(), parent, name),
-        _changed(false)
+    :   KCModule(FontFactory::instance(), parent, name)
 {
   QStringList nameGroupKeyRc;
 
@@ -648,7 +648,6 @@ KFonts::~KFonts()
 
 void KFonts::fontSelected()
 {
-  _changed = true;
   emit changed(true);
 }
 
@@ -660,22 +659,7 @@ void KFonts::defaults()
   useAA = false;
   cbAA->setChecked(useAA);
   aaSettings->defaults();
-  _changed = true;
   emit changed(true);
-}
-
-QString KFonts::quickHelp() const
-{
-    return i18n( "<h1>Fonts</h1> This module allows you to choose which"
-      " fonts will be used to display text in KDE. You can select not only"
-      " the font family (for example, <em>helvetica</em> or <em>times</em>),"
-      " but also the attributes that make up a specific font (for example,"
-      " <em>bold</em> style and <em>12 points</em> in height.)<p>"
-      " Just click the \"Choose\" button that is next to the font you want to"
-      " change."
-      " You can ask KDE to try and apply font and color settings to non-KDE"
-      " applications as well. See the \"Style\" control module for more"
-			" information.");
 }
 
 void KFonts::load()
@@ -690,16 +674,11 @@ void KFonts::load()
 
   aaSettings->load();
 
-  _changed = true;
   emit changed(false);
 }
 
 void KFonts::save()
 {
-  if ( !_changed )
-    return;
-
-  _changed = false;
 
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() )
       i->writeFont();
@@ -740,10 +719,6 @@ void KFonts::save()
   emit changed(false);
 }
 
-int KFonts::buttons()
-{
-  return KCModule::Help | KCModule::Default | KCModule::Apply;
-}
 
 void KFonts::slotApplyFontDiff()
 {
@@ -755,7 +730,6 @@ void KFonts::slotApplyFontDiff()
   {
     for ( int i = 0; i < (int) fontUseList.count(); i++ )
       fontUseList.at( i )->applyFontDiff( font,fontDiffFlags );
-    _changed = true;
     emit changed(true);
   }
 }
@@ -763,7 +737,6 @@ void KFonts::slotApplyFontDiff()
 void KFonts::slotUseAntiAliasing()
 {
     useAA = cbAA->isChecked();
-    _changed = true;
     emit changed(true);
 }
 
@@ -771,7 +744,6 @@ void KFonts::slotCfgAa()
 {
   if(aaSettings->exec())
   {
-    _changed = true;
     emit changed(true);
   }
 }

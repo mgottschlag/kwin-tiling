@@ -32,13 +32,15 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include <kcmodule.h>
-#include <qstringlist.h>
+
 #include <qsize.h>
-#include <kurl.h>
+#include <qstringlist.h>
+
+#include <kcmodule.h>
 #include <kconfig.h>
 #include <kio/job.h>
 #include <kparts/part.h>
+#include <kurl.h>
 
 class KDirOperator;
 class KAction;

@@ -25,32 +25,30 @@
 
 #include <unistd.h>
 
+#include <qcombobox.h>
+#include <qdir.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qcombobox.h>
-#include <qslider.h>
-#include <qdir.h>
-#include <qwhatsthis.h>
 #include <qregexp.h>
+#include <qslider.h>
 #include <qtabwidget.h>
+#include <qwhatsthis.h>
 
 #include <dcopref.h>
 
-#include <kapplication.h>
 #include <kaboutdata.h>
-#include <ksimpleconfig.h>
-#include <kmessagebox.h>
-#include <kstandarddirs.h>
-#include <kprocess.h>
+#include <kapplication.h>
+#include <kcmoduleloader.h>
+#include <kdebug.h>
 #include <kdialog.h>
+#include <klineedit.h>
+#include <kmessagebox.h>
+#include <kprocess.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
 #include <kurlrequester.h>
 #include <libkmid/deviceman.h>
-#include <kdebug.h>
-#include <kcmoduleloader.h>
-#include <klineedit.h>
 
-//#include <kparts/componentfactory.h>
-//#include "midi.h"
 #include "arts.h"
 
 extern "C" {
@@ -143,6 +141,12 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
   : KCModule(parent, name), configChanged(false)
 {
 	setButtons(Default|Apply);
+
+	setQuickHelp( i18n("<h1>Sound System</h1> Here you can configure aRts, KDE's sound server."
+		    " This program not only allows you to hear your system sounds while simultaneously"
+		    " listening to an MP3 file or playing a game with background music. It also allows you"
+		    " to apply different effects to your system sounds and provides programmers with"
+		    " an easy way to achieve sound support."));
 
 	initAudioIOList();
 
@@ -464,15 +468,6 @@ void KArtsModule::defaults()
 	hardware->midiMapper->lineEdit()->clear();
 
 	slotChanged();
-}
-
-QString KArtsModule::quickHelp() const
-{
-	return i18n("<h1>Sound System</h1> Here you can configure aRts, KDE's sound server."
-		    " This program not only allows you to hear your system sounds while simultaneously"
-		    " listening to an MP3 file or playing a game with background music. It also allows you"
-		    " to apply different effects to your system sounds and provides programmers with"
-		    " an easy way to achieve sound support.");
 }
 
 void KArtsModule::calculateLatency()

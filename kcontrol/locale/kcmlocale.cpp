@@ -23,22 +23,20 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <qlayout.h>
+#include <qhbox.h>
 #include <qlabel.h>
+#include <qlayout.h>
+#include <qlistbox.h>
+#include <qpushbutton.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
-#include <qpushbutton.h>
 
-#include <qhbox.h>
-
-#include <kdialog.h>
 #include <kdebug.h>
-#include <kstandarddirs.h>
-#include <ksimpleconfig.h>
+#include <kdialog.h>
 #include <kiconloader.h>
 #include <klanguagebutton.h>
-
-#include <qlistbox.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
 
 #include "kcmlocale.h"
 #include "kcmlocale.moc"
@@ -96,10 +94,6 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   lay->setRowStretch(2, 5);
 
   lay->setColStretch(1, 1);
-}
-
-KLocaleConfig::~KLocaleConfig()
-{
 }
 
 void KLocaleConfig::slotAddLanguage(const QString & code)

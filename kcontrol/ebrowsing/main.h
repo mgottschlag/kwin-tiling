@@ -41,13 +41,9 @@ public:
     void load();
     void save();
     void defaults();
-    QString quickHelp() const;
 
 protected:
     void resizeEvent(QResizeEvent *);
-
-protected slots:
-    void moduleChanged(bool state);
 
 private:
     KURIFilter *filter;

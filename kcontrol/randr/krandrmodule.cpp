@@ -17,23 +17,23 @@
  */
 
 #include <qbuttongroup.h>
-#include <qlabel.h>
-#include <qradiobutton.h>
-#include <qlayout.h>
-#include <qvbuttongroup.h>
 #include <qcheckbox.h>
-#include <qhbox.h>
-#include <qvbox.h>
 #include <qdesktopwidget.h>
+#include <qhbox.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qradiobutton.h>
+#include <qvbox.h>
+#include <qvbuttongroup.h>
 #include <qwhatsthis.h>
 
-#include <kdebug.h>
-#include <klocale.h>
 #include <kcmodule.h>
-#include <kglobal.h>
-#include <kgenericfactory.h>
 #include <kcombobox.h>
+#include <kdebug.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
+#include <kglobal.h>
+#include <klocale.h>
 
 #include "krandrmodule.h"
 #include "krandrmodule.moc"

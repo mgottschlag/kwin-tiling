@@ -10,20 +10,21 @@
  */
 
 #include <stdlib.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qgroupbox.h>
-#include <qcombobox.h>
-#include <qslider.h>
-#include <qcheckbox.h>
 
-#include <kdebug.h>
+#include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qslider.h>
+
+#include <kcolorbutton.h>
 #include <kconfig.h>
+#include <kdebug.h>
 #include <kiconeffect.h>
 #include <kiconloader.h>
-#include <klocale.h>
 #include <kipc.h>
-#include <kcolorbutton.h>
+#include <klocale.h>
 #include <kseparator.h>
 
 #include "icons.h"

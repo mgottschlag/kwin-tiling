@@ -56,10 +56,10 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     m_base = new BGDialog(this, m_pConfig);
+    setQuickHelp( m_base->quickHelp());
     layout->add(m_base);
     layout->addStretch();
 
-    kdDebug() << "KBackground\n";
     KImageIO::registerFormats();
 
     // reparenting that is done.
@@ -115,11 +115,5 @@ void KBackground::defaults()
 {
     m_base->defaults();
 }
-
-QString KBackground::quickHelp() const
-{
-    return m_base->quickHelp();
-}
-
 
 #include "main.moc"

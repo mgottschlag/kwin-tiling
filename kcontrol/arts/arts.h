@@ -28,17 +28,17 @@
 
 #include <kapplication.h>
 
+#include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
+#include <qradiobutton.h>
 #include <qtimer.h>
 
 #include <kcmodule.h>
 #include <knuminput.h>
 #include <kprogress.h>
 
-#include <qbuttongroup.h>
-#include <qradiobutton.h>
 #include "generaltab.h"
 #include "hardwaretab.h"
 
@@ -60,7 +60,6 @@ public:
   void save();
   void defaults();
 
-  QString quickHelp() const;
   bool artsdIsRunning();
 
 private slots:

@@ -32,16 +32,10 @@ class SMServerConfig : public KCModule
 
 public:
   SMServerConfig( QWidget *parent=0, const char* name=0, const QStringList &list=QStringList() );
-  virtual ~SMServerConfig();
 
   void load();
   void save();
   void defaults();
-
-  QString quickHelp() const;
-
-protected slots:
-  void configChanged();
 
 private:
   SMServerConfigImpl* dialog;

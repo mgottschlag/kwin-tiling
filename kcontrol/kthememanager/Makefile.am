@@ -1,4 +1,4 @@
-INCLUDES    = $(all_includes)
+AM_CPPFLAGS    = $(all_includes)
 METASOURCES = AUTO
 
 kde_module_LTLIBRARIES = kcm_kthememanager.la

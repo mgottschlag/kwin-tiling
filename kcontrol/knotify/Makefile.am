@@ -6,9 +6,9 @@ kcm_knotify_la_SOURCES = knotify.cpp
 
 kcm_knotify_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
 kcm_knotify_la_LIBADD = $(LIB_KIO)
-INCLUDES= $(all_includes)
+AM_CPPFLAGS = $(all_includes)
  
-kcm_knotify_la_METASOURCES = AUTO
+METASOURCES = AUTO 
 
 noinst_HEADERS = knotify.h
 

@@ -22,13 +22,12 @@
 #define VIEW1394_H_
 
 #include <kcmodule.h>
-#include <kaboutdata.h>
 
-#include <qvaluelist.h>
-#include <qsocketnotifier.h>
-#include <qtimer.h>
 #include <qmap.h>
+#include <qsocketnotifier.h>
 #include <qstring.h>
+#include <qtimer.h>
+#include <qvaluelist.h>
 
 #include "view1394widget.h"
 
@@ -50,15 +49,11 @@ class View1394: public KCModule
       View1394(QWidget *parent = 0L, const char *name = 0L);
       virtual ~View1394();
 
-      int buttons();
-      QString quickHelp() const;
-
    public slots: // Public slots
       void rescanBus();
       void generateBusReset();
 
    private:
-      KAboutData *myAboutData;
       View1394Widget *m_view;
       QValueList<raw1394handle_t> m_handles;
       QPtrList<QSocketNotifier> m_notifiers;

@@ -3,13 +3,11 @@ kde_module_LTLIBRARIES = kcm_taskbar.la
 kcm_taskbar_la_SOURCES = kcmtaskbarui.ui kcmtaskbar.cpp
 kcm_taskbar_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_taskbar_la_LIBADD = -lkdeui
-INCLUDES= $(all_includes) 
+AM_CPPFLAGS = $(all_includes) 
 
-kcm_taskbar_la_METASOURCES = AUTO
+METASOURCES = AUTO
 
 noinst_HEADERS = kcmtaskbar.h
-
-KDE_ICON = go
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmtaskbar.pot

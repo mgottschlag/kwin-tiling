@@ -20,9 +20,11 @@
 #define KCMKDED_H
 
 #include <qlistview.h>
+
 #include <kcmodule.h>
 
 class KListView;
+
 class QStringList;
 class QPushButton;
 
@@ -36,8 +38,6 @@ public:
 	void       load();
 	void       save();
 	void       defaults();
-
-	QString quickHelp() const;
 
 protected slots:
 	void slotReload();

@@ -15,4 +15,3 @@ messages:
 
 noinst_HEADERS =  joywidget.h joywidget.h poswidget.h joydevice.h caldialog.h
 
-KDE_ICON = joystick

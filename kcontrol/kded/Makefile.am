@@ -5,11 +5,9 @@ kcm_kded_la_SOURCES = kcmkded.cpp
 kcm_kded_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
 kcm_kded_la_LIBADD =  $(LIB_KIO)
 
-INCLUDES= $(all_includes)
+AM_CPPFLAGS= $(all_includes)
 
-kcm_kded_la_METASOURCES = AUTO
-
-KDE_ICON = kded
+METASOURCES = AUTO
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkded.pot

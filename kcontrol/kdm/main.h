@@ -49,8 +49,6 @@ public:
   void save();
   void defaults();
 
-  QString quickHelp() const;
-
 public slots:
 
   void slotMinMaxUID(int min, int max);
@@ -60,10 +58,6 @@ signals:
   void clearUsers();
   void addUsers(const QMap<QString,int> &);
   void delUsers(const QMap<QString,int> &);
-
-protected slots:
-
-  void moduleChanged(bool state);
 
 private:
 

@@ -25,12 +25,13 @@
 #include <config.h>
 #endif
 
+#include <dcopobject.h>
+
 #include <kcmodule.h>
 
 #include "smartcardbase.h"
 #include "nosmartcardbase.h"
 
-#include <dcopobject.h>
 class KConfig;
 class KCardDB;
 class KPopupMenu;
@@ -62,13 +63,6 @@ public:
                           bool isCardPresent,
                           QString atr);
  void loadReadersTab (QStringList lr);
-
-
-
-  public slots:
-
-    void configChanged();
-
 
   private slots:
 

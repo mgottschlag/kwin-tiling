@@ -1,7 +1,7 @@
 
 SUBDIRS = plugins
 
-INCLUDES = -I$(srcdir)/plugins/ikws $(all_includes)
+AM_CPPFLAGS  = -I$(srcdir)/plugins/ikws $(all_includes)
 
 METASOURCES = AUTO
 

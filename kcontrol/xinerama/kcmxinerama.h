@@ -40,8 +40,6 @@ public:
 	void save();
 	void defaults();
 
-	QString quickHelp() const;
-
 public slots:
 	void windowIndicator(int dpy);
 	void clearIndicator();

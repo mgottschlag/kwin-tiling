@@ -5,9 +5,9 @@ kcm_clock_la_SOURCES = dtime.cpp tzone.cpp main.cpp
 kcm_clock_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
 kcm_clock_la_LIBADD = $(LIB_KIO)
 
-INCLUDES= $(all_includes)
+AM_CPPFLAGS = $(all_includes)
  
-kcm_clock_la_METASOURCES = AUTO
+METASOURCES = AUTO
 
 messages:
 	$(XGETTEXT) $(kcm_clock_la_SOURCES) -o $(podir)/kcmkclock.pot

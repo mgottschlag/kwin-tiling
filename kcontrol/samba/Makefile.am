@@ -5,9 +5,9 @@ kcm_samba_la_SOURCES = main.cpp ksmbstatus.cpp kcmsambaimports.cpp kcmsambalog.c
 kcm_samba_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_samba_la_LIBADD = $(LIB_KIO)
 
-INCLUDES= $(all_includes)
+AM_CPPFLAGS = $(all_includes)
 
-kcm_samba_la_METASOURCES = AUTO
+METASOURCES = AUTO 
 
 messages:
 	$(XGETTEXT) $(kcm_samba_la_SOURCES) -o $(podir)/kcmsamba.pot

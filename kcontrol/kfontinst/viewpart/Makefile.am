@@ -8,7 +8,7 @@ noinst_HEADERS  = FontViewPart.h FontViewPartFactory.h FontPreview.h FontViewerA
 
 kde_services_DATA = kfontviewpart.desktop
 
-INCLUDES = -I$(srcdir)/../lib -I$(srcdir)/../../fonts $(all_includes) $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS)
+AM_CPPFLAGS = -I$(srcdir)/../lib -I$(srcdir)/../../fonts $(all_includes) $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS)
 METASOURCES = AUTO
 
 kfontview_LDADD = $(LIB_KPARTS)
@@ -22,5 +22,4 @@ appdatadir = $(kde_datadir)/kfontview
 
 kfontview_SOURCES = FontViewerApp.cpp
 
-KDE_ICON = kfontview textwaterfall
-
+KDE_ICON = AUTO

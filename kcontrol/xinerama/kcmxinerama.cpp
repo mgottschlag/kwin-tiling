@@ -53,6 +53,9 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 	about->addAuthor("George Staikos", 0, "staikos@kde.org");
 	setAboutData( about );
 
+	setQuickHelp( i18n("<h1>Multiple Monitors</h1> This module allows you to configure KDE support"
+     " for multiple monitors."));
+
 	config = new KConfig("kdeglobals", false, false);
 	ksplashrc = new KConfig("ksplashrc", false, false);
 
@@ -244,11 +247,6 @@ QWidget *KCMXinerama::indicator(int dpy) {
 
 void KCMXinerama::clearIndicator() {
 	_indicators.clear();
-}
-
-QString KCMXinerama::quickHelp() const {
-	return i18n("<h1>Multiple Monitors</h1> This module allows you to configure KDE support"
-     " for multiple monitors.");
 }
 
 extern "C" {

@@ -16,27 +16,26 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "ksmbstatus.h"
+#include <qlayout.h>
+#include <qtabwidget.h>
+
+#include <kaboutdata.h>
+#include <kcmodule.h>
+#include <kdialog.h>
+#include <kgenericfactory.h>
+
 #include "kcmsambaimports.h"
 #include "kcmsambalog.h"
 #include "kcmsambastatistics.h"
-#include <qtabwidget.h>
-#include <qlayout.h>
-
-#include <kcmodule.h>
-#include <kaboutdata.h>
-#include <kgenericfactory.h>
-#include <kdialog.h>
+#include "ksmbstatus.h"
 
 class SambaContainer:public KCModule
 {
    public:
       SambaContainer(QWidget *parent=0, const char * name=0, const QStringList &list = QStringList() );
       virtual ~SambaContainer();
-      virtual void loadSettings();
-      virtual void saveSettings();
-      virtual void defaults() {};
-      QString quickHelp() const;
+      virtual void load();
+      virtual void save();
 
    private:
       KConfig config;
@@ -67,7 +66,20 @@ SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringL
    tabs.addTab(&statisticsView,i18n("&Statistics"));
    connect(&logView,SIGNAL(contentsChanged(QListView* , int, int)),&statisticsView,SLOT(setListInfo(QListView *, int, int)));
    setButtons(Help);
-   loadSettings();
+   load();
+
+   setQuickHelp( i18n("The Samba and NFS Status Monitor is a front end to the programs"
+     " <em>smbstatus</em> and <em>showmount</em>. Smbstatus reports on current"
+     " Samba connections, and is part of the suite of Samba tools, which"
+     " implements the SMB (Session Message Block) protocol, also called the"
+     " NetBIOS or LanManager protocol. This protocol can be used to provide"
+     " printer sharing or drive sharing services on a network including"
+     " machines running the various flavors of Microsoft Windows.<p>"
+     " Showmount is part of the NFS software package. NFS stands for Network"
+     " File System and is the traditional UNIX way to share directories over"
+     " the network. In this case the output of <em>showmount -a localhost</em>"
+     " is parsed. On some systems showmount is in /usr/sbin, check if you have"
+     " showmount in your PATH."));
 
     KAboutData *about =
     new KAboutData(I18N_NOOP("kcmsamba"),
@@ -85,10 +97,10 @@ SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringL
 
 SambaContainer::~SambaContainer()
 {
-   saveSettings();
+   save();
 }
 
-void SambaContainer::loadSettings()
+void SambaContainer::load()
 {
    status.loadSettings();
    imports.loadSettings();
@@ -96,7 +108,7 @@ void SambaContainer::loadSettings()
    statisticsView.loadSettings();
 }
 
-void SambaContainer::saveSettings()
+void SambaContainer::save()
 {
    status.saveSettings();
    imports.saveSettings();
@@ -104,22 +116,4 @@ void SambaContainer::saveSettings()
    statisticsView.saveSettings();
    config.sync();
 }
-
-
-QString SambaContainer::quickHelp() const
-{
-   return i18n("The Samba and NFS Status Monitor is a front end to the programs"
-     " <em>smbstatus</em> and <em>showmount</em>. Smbstatus reports on current"
-     " Samba connections, and is part of the suite of Samba tools, which"
-     " implements the SMB (Session Message Block) protocol, also called the"
-     " NetBIOS or LanManager protocol. This protocol can be used to provide"
-     " printer sharing or drive sharing services on a network including"
-     " machines running the various flavors of Microsoft Windows.<p>"
-     " Showmount is part of the NFS software package. NFS stands for Network"
-     " File System and is the traditional UNIX way to share directories over"
-     " the network. In this case the output of <em>showmount -a localhost</em>"
-     " is parsed. On some systems showmount is in /usr/sbin, check if you have"
-     " showmount in your PATH.");
-}
-
 

@@ -31,16 +31,12 @@ class TaskbarConfig : public KCModule
 
 public:
     TaskbarConfig( QWidget *parent=0, const char* name=0 , const QStringList &list = QStringList() );
-    virtual ~TaskbarConfig();
 
     void load();
     void save();
     void defaults();
 
-    QString quickHelp() const;
-
 protected slots:
-    void configChanged();
     void slotUpdateComboBox();
 
 private:
@@ -66,7 +62,6 @@ private:
     static const QStringList& groupModeList();
     static QStringList i18nGroupModeList();
     TaskbarConfigUI *ui;
-    bool m_moduleChanged;
 };
 
 #endif

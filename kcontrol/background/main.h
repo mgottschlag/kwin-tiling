@@ -30,8 +30,6 @@ public:
     virtual void save();
     virtual void defaults();
 
-    QString quickHelp() const;
-
 private:
     BGDialog      *m_base;
     KConfig       *m_pConfig;

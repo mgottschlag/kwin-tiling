@@ -22,8 +22,9 @@
 
 class QCheckBox;
 class QComboBox;
-class KIntNumInput;
 class QGroupBox;
+
+class KIntNumInput;
 
 class LaunchConfig : public KCModule
 {
@@ -38,8 +39,6 @@ class LaunchConfig : public KCModule
     void load();
     void save();
     void defaults();
-
-    QString quickHelp() const;
 
   protected slots:
 

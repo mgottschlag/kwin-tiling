@@ -23,7 +23,6 @@
 
 #include <unistd.h>
 
-
 #include <dcopclient.h>
 #include <kconfig.h>
 #include <kurifilter.h>
@@ -43,6 +42,16 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name, const QStr
 
     filter = KURIFilter::self();
 
+    setQuickHelp( i18n("<h1>Enhanced Browsing</h1> In this module you can configure some enhanced browsing"
+      " features of KDE. <h2>Internet Keywords</h2>Internet Keywords let you"
+      " type in the name of a brand, a project, a celebrity, etc... and go to the"
+      " relevant location. For example you can just type"
+      " \"KDE\" or \"K Desktop Environment\" in Konqueror to go to KDE's homepage."
+      "<h2>Web Shortcuts</h2>Web Shortcuts are a quick way of using Web search engines. For example, type \"altavista:frobozz\""
+      " or \"av:frobozz\" and Konqueror will do a search on AltaVista for \"frobozz\"."
+      " Even easier: just press Alt+F2 (if you have not"
+      " changed this shortcut) and enter the shortcut in the KDE Run Command dialog."));
+
     QVBoxLayout *layout = new QVBoxLayout(this);
     tab = new QTabWidget(this);
     layout->addWidget(tab);
@@ -50,7 +59,7 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name, const QStr
 #if 0
     opts = new FilterOptions(this);
     tab->addTab(opts, i18n("&Filters"));
-    connect(opts, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+    connect(opts, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 #endif
 
     modules.setAutoDelete(true);
@@ -63,7 +72,7 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name, const QStr
       {
 	    modules.append(module);
 	    tab->addTab(module, it.current()->configName());
-	    connect(module, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+	    connect(module, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 	  }
     }
 
@@ -99,24 +108,6 @@ void KURIFilterModule::defaults()
     {
 	  it.current()->defaults();
     }
-}
-
-void KURIFilterModule::moduleChanged(bool state)
-{
-    emit changed(state);
-}
-
-QString KURIFilterModule::quickHelp() const
-{
-    return i18n("<h1>Enhanced Browsing</h1> In this module you can configure some enhanced browsing"
-      " features of KDE. <h2>Internet Keywords</h2>Internet Keywords let you"
-      " type in the name of a brand, a project, a celebrity, etc... and go to the"
-      " relevant location. For example you can just type"
-      " \"KDE\" or \"K Desktop Environment\" in Konqueror to go to KDE's homepage."
-      "<h2>Web Shortcuts</h2>Web Shortcuts are a quick way of using Web search engines. For example, type \"altavista:frobozz\""
-      " or \"av:frobozz\" and Konqueror will do a search on AltaVista for \"frobozz\"."
-      " Even easier: just press Alt+F2 (if you have not"
-      " changed this shortcut) and enter the shortcut in the KDE Run Command dialog.");
 }
 
 void KURIFilterModule::resizeEvent(QResizeEvent *)

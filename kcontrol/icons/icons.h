@@ -12,32 +12,32 @@
 #ifndef __icons_h__
 #define __icons_h__
 
-#include <qvaluelist.h>
 #include <qcolor.h>
 #include <qimage.h>
+#include <qvaluelist.h>
 
 #include <kcmodule.h>
 #include <kdialogbase.h>
 
-class QColor;
-class QWidget;
 class QCheckBox;
+class QColor;
 class QComboBox;
+class QGridLayout;
+class QGroupBox;
+class QIconView;
+class QLabel;
 class QListBox;
 class QListView;
-class QSlider;
-class QLabel;
-class QIconView;
-class QTabWidget;
-class QGridLayout;
 class QPushButton;
-class QGroupBox;
+class QSlider;
+class QTabWidget;
+class QWidget;
 
+class KColorButton;
 class KConfig;
 class KIconEffect;
-class KIconTheme;
 class KIconLoader;
-class KColorButton;
+class KIconTheme;
 
 struct Effect 
 {

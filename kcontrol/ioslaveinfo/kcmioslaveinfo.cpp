@@ -22,28 +22,28 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "kcmioslaveinfo.h"
-
+#include <qfile.h>
+#include <qhbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qhbox.h>
-#include <qfile.h>
 #include <qspinbox.h>
 #include <qtabwidget.h>
+#include <qtextcodec.h>
 #include <qvbox.h>
 #include <qwhatsthis.h>
 
-#include <kprotocolinfo.h>
-#include <kstandarddirs.h>
-#include <klocale.h>
 #include <kconfig.h>
+#include <kdebug.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kio/job.h>
-#include <kdebug.h>
-#include <qtextcodec.h>
-#include <kgenericfactory.h>
+#include <klocale.h>
+#include <kprotocolinfo.h>
+#include <kstandarddirs.h>
+
+#include "kcmioslaveinfo.h"
 
 typedef KGenericFactory<KCMIOSlaveInfo, QWidget> SlaveFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_ioslaveinfo, SlaveFactory("kcmioslaveinfo") )
@@ -52,6 +52,9 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
                :KCModule(SlaveFactory::instance(), parent,name),m_ioslavesLb(0),m_tfj(0)
 {
    QVBoxLayout *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
+
+   setQuickHelp( i18n("<h1>IO slaves</h1> Gives you an overview of the installed ioslaves."));
+   setButtons( KCModule::Help );
 
    QLabel* label=new QLabel(i18n("Available IO slaves:"),this);
    QHBox *hbox=new QHBox(this);
@@ -77,7 +80,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
    m_ioslavesLb->sort();
    m_ioslavesLb->setSelected(0, true);
 
-   setButtons(buttons ());
+   setButtons(KCModule::Help);
 
    KAboutData *about =
    new KAboutData(I18N_NOOP("kcmioslaveinfo"),
@@ -89,40 +92,6 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
    about->addAuthor("George Staikos", 0, "staikos@kde.org");
    setAboutData( about );
 
-   load();
-}
-
-
-KCMIOSlaveInfo::~KCMIOSlaveInfo() {
-}
-
-void KCMIOSlaveInfo::load() {
-   emit changed(false);
-}
-
-void KCMIOSlaveInfo::defaults() {
-   emit changed(true);
-}
-
-void KCMIOSlaveInfo::save() {
-   emit changed(true);
-}
-
-int KCMIOSlaveInfo::buttons () {
-   return KCModule::Help;
-}
-
-void KCMIOSlaveInfo::configChanged() {
-   emit changed(true);
-}
-
-void KCMIOSlaveInfo::childChanged(bool really) {
-   emit changed(really);
-}
-
-QString KCMIOSlaveInfo::quickHelp() const
-{
-   return i18n("<h1>IO slaves</h1> Gives you an overview of the installed ioslaves.");
 }
 
 void KCMIOSlaveInfo::slaveHelp( KIO::Job *, const QByteArray &data)

@@ -26,33 +26,35 @@
 // (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "KCmFontInst.h"
 #include <qlayout.h>
+#include <qsplitter.h>
+
 #include <kaboutdata.h>
-#include <kgenericfactory.h>
+#include <kapplication.h>
+#include <kcmdlineargs.h>
+#include <kdirlister.h>
 #include <kdiroperator.h>
+#include <kfiledialog.h>
+#include <kgenericfactory.h>
+#include <kguiitem.h>
+#include <kio/job.h>
+#include <kio/netaccess.h>
+#include <klibloader.h>
+#include <kmessagebox.h>
+#include <kpopupmenu.h>
+#include <kpushbutton.h>
+#include <kstdaccel.h>
+#include <ktoolbar.h>
+#include <ktoolbarbutton.h>
+#include <kurllabel.h>
+
 #include "Global.h"
 #include "Misc.h"
 #include "FontEngine.h"
 #include "KFileFontIconView.h"
 #include "KFileFontView.h"
 #include "RenameJob.h"
-#include <kpopupmenu.h>
-#include <ktoolbar.h>
-#include <ktoolbarbutton.h>
-#include <kstdaccel.h>
-#include <kfiledialog.h>
-#include <kmessagebox.h>
-#include <kcmdlineargs.h>
-#include <kurllabel.h>
-#include <kapplication.h>
-#include <klibloader.h>
-#include <kio/job.h>
-#include <kio/netaccess.h>
-#include <kdirlister.h>
-#include <kpushbutton.h>
-#include <kguiitem.h>
-#include <qsplitter.h>
+#include "KCmFontInst.h"
 
 #define CFG_GROUP          "Main Settings"
 #define CFG_LISTVIEW       "ListView"

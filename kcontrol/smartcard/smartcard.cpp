@@ -19,34 +19,33 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-
-#include <kcardfactory.h>
-#include <kcardgsm_impl.h>
-
-#include "smartcard.h"
-#include <klocale.h>
-#include <kglobal.h>
-#include <kaboutdata.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
+#include <qlayout.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
-#include <kconfig.h>
-#include <kdialog.h>
-#include <qlayout.h>
-#include <qlabel.h>
+
 #include <dcopclient.h>
-#include <klistview.h>
-#include <kpopupmenu.h>
-#include <kmessagebox.h>
+
+#include <kaboutdata.h>
 #include <kapplication.h>
-
 #include <kcarddb.h>
-
+#include <kcardfactory.h>
+#include <kcardgsm_impl.h>
+#include <kconfig.h>
 #include <kdebug.h>
+#include <kdialog.h>
+#include <kglobal.h>
+#include <klistview.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kpopupmenu.h>
+
+#include "smartcard.h"
+
 KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
   : KCModule(parent, name),DCOPObject(name)
 {
-
 
   QVBoxLayout *layout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
   config = new KConfig("ksmartcardrc", false, false);
@@ -76,12 +75,12 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
 				   SLOT(slotLaunchChooser()));
      // The config backend
 
-     connect(base->launchManager, SIGNAL(clicked()), this, SLOT(configChanged()));
-     connect(base->beepOnInsert,  SIGNAL(clicked()), this, SLOT(configChanged()));
-     connect(base->enableSupport, SIGNAL(clicked()), this, SLOT(configChanged()));
+     connect(base->launchManager, SIGNAL(clicked()), SLOT( changed() ));
+     connect(base->beepOnInsert,  SIGNAL(clicked()), SLOT( changed() ));
+     connect(base->enableSupport, SIGNAL(clicked()), SLOT( changed() ));
 
 
-     connect(base->enablePolling, SIGNAL(clicked()), this, SLOT(configChanged()));
+     connect(base->enablePolling, SIGNAL(clicked()), SLOT( changed() ));
      connect(base->_readerHostsListView,
 	     SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
 	     this,
@@ -120,13 +119,6 @@ KSmartcardConfig::~KSmartcardConfig()
     delete config;
     delete _cardDB;
 }
-
-void KSmartcardConfig::configChanged()
-{
-    emit changed(true);
-}
-
-
 
 void KSmartcardConfig::slotLaunchChooser(){
 

@@ -24,14 +24,14 @@
 #ifndef kcmioslaveinfo_h_included
 #define kcmioslaveinfo_h_included
 
-#include <kcmodule.h>
-#include <kaboutdata.h>
-
-#include <qstring.h>
-#include <ktextbrowser.h>
 #include <qlistbox.h>
-#include <klistbox.h>
+#include <qstring.h>
+
+#include <kaboutdata.h>
+#include <kcmodule.h>
 #include <kio/job.h>
+#include <klistbox.h>
+#include <ktextbrowser.h>
 
 class KIOTimeoutControl;
 class QTabWidget;
@@ -43,13 +43,6 @@ class KCMIOSlaveInfo : public KCModule
     Q_OBJECT
 public:
     KCMIOSlaveInfo(QWidget *parent = 0L, const char *name = 0L, const QStringList &lits=QStringList() );
-    virtual ~KCMIOSlaveInfo();
-
-    void load();
-    void save();
-    void defaults();
-    int buttons();
-    QString quickHelp() const;
 
 protected:
     KListBox *m_ioslavesLb;
@@ -63,10 +56,6 @@ protected slots:
     void showInfo(QListBoxItem *item);
     void slaveHelp( KIO::Job *, const QByteArray &data);
     void slotResult( KIO::Job * );
-
-public slots:
-    void configChanged();
-    void childChanged(bool really);
 
 };
 #endif

@@ -16,27 +16,27 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qpixmap.h>
-#include <qlabel.h>
-#include <qtooltip.h>
-#include <qtoolbutton.h>
 #include <qpushbutton.h>
+#include <qtoolbutton.h>
+#include <qtooltip.h>
 
-#include <kapplication.h>
-#include <klocale.h>
-#include <kglobal.h>
-#include <kdialog.h>
-#include <kfiledialog.h>
-#include <klistview.h>
-#include <kstandarddirs.h>
-#include <kemailsettings.h>
-#include <kmessagebox.h>
-#include <kdebug.h>
-#include <kurldrag.h>
-#include <kservicegroup.h>
-#include <kiconloader.h>
 #include <kaboutdata.h>
+#include <kapplication.h>
+#include <kdebug.h>
+#include <kdialog.h>
+#include <kemailsettings.h>
+#include <kfiledialog.h>
+#include <kglobal.h>
+#include <kiconloader.h>
+#include <klistview.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kservicegroup.h>
+#include <kstandarddirs.h>
+#include <kurldrag.h>
 
 #include "kthememanager.h"
 #include "knewthemedlg.h"
@@ -52,6 +52,11 @@ kthememanager::kthememanager( QWidget *parent, const char *name )
                                        KAboutData::License_GPL, "(c) 2003, 2004 Lukáš Tinkl", 0,
                                        "http://developer.kde.org/~lukas/kthememanager");
     setAboutData( about );
+
+    setQuickHelp( i18n("This control module handles installing, removing and "
+                "creating visual KDE themes."));
+
+    setButtons( KCModule::Default|KCModule::Apply|KCModule::Help );
 
     setAcceptDrops( true );
     init();
@@ -129,7 +134,6 @@ void kthememanager::defaults()
 {
     if ( m_origTheme )
         m_origTheme->apply();
-    emit changed( false );
 }
 
 void kthememanager::save()
@@ -153,25 +157,7 @@ void kthememanager::save()
         delete m_theme;
         m_theme = 0;
 
-        emit changed( false );
     }
-}
-
-int kthememanager::buttons()
-{
-    return KCModule::Default|KCModule::Apply|KCModule::Help;
-}
-
-void kthememanager::configChanged()
-{
-    // insert your saving code here...
-    emit changed(true);
-}
-
-QString kthememanager::quickHelp() const
-{
-    return i18n("This control module handles installing, removing and "
-                "creating visual KDE themes.");
 }
 
 void kthememanager::listThemes()
