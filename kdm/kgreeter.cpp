@@ -754,22 +754,17 @@ KGreeter::go_button_clicked()
 void
 KGreeter::ReturnPressed()
 {
-	printf("ReturnPressed:0\n");
      if( !goButton->isEnabled())
 	  return;
-	printf("ReturnPressed:1\n");
      if( loginEdit->hasFocus()) {
 	  passwdEdit->setFocus();
           load_wm();
-	printf("ReturnPressed:4\n");
      }
      else if (passwdEdit->hasFocus()
 	      || goButton->hasFocus() 
 	      || cancelButton->hasFocus()) {
 	  go_button_clicked();
-	printf("ReturnPressed:3\n");
      }
-	printf("ReturnPressed:2\n");
 }
 
 static void 
