@@ -22,6 +22,7 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kconfig.h>
+#include <kdebug.h>
 
 #include <qsplitter.h>
 #include <qtabwidget.h>
@@ -285,7 +286,7 @@ void TopLevel::showModule(QString desktopFile)
 
 void TopLevel::activateModule(const QString& name)
 {
-  qDebug("activate: %s", name.latin1());
+  kdDebug() << "activate: " << name << endl;
   for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
 	{
 	  if (mod->name() == name)

@@ -24,7 +24,9 @@
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
-#include <kstddirs.h>                                                                
+#include <kstddirs.h>
+#include <kdebug.h>
+
 #include <kdesktopfile.h>
 #include <kiconloader.h>
 
@@ -102,7 +104,7 @@ void ModuleIconView::fill()
 	}
   subdirs.sort();
 
-  qDebug("path = %s", _path.latin1());
+  kdDebug() << "path: " << _path << endl;
 
   if (_path == QString::null)
 	{

@@ -21,6 +21,7 @@
 
 #include <kglobal.h>
 #include <klocale.h>
+#include <kdebug.h>
 
 #include "quickhelp.h"
 #include "helpwidget.h"
@@ -61,11 +62,11 @@ void HelpWidget::setBaseText()
 void HelpWidget::urlClicked(const QString &)
 {
   // TODO Launch khelpcenter.
-  qDebug("KControl: URL clicked.");
+  kdDebug() << "KControl: URL clicked." << endl;
 }
 
 void HelpWidget::mailClicked(const QString &,const QString &)
 {
   // TODO Launch kmail.
-  qDebug("KControl: EMail adress clicked.");
+  kdDebug() << "KControl: EMail adress clicked." << endl;
 }
