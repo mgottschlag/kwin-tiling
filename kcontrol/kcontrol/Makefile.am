@@ -71,6 +71,7 @@ install-data-local: KControl_NoDisplay.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)
 	$(INSTALL_DATA) $(srcdir)/KControl_NoDisplay.desktop $(DESTDIR)$(kde_appsdir)/KControl.desktop
 	@-rm -f $(DESTDIR)$(kde_bindir)/kinfocenter
+	@mkdir -p $(DESTDIR)$(kde_bindir)
 	@$(LN_S) kcontrol $(DESTDIR)$(kde_bindir)/kinfocenter
 	$(INSTALL_DATA) $(srcdir)/kinfocenter.desktop $(DESTDIR)$(kde_appsdir)/System/
 
