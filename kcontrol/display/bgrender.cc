@@ -145,14 +145,20 @@ int KBackgroundRenderer::doBackground(bool quit)
     if (m_State & BackgroundDone)
         return Done;
 
-    int mode = wallpaperMode();
-    if ((mode == Tiled) || (mode == Scaled) || (mode == CenterTiled)) {
-        // full screen wallpaper modes: background is not visible
-        m_State |= BackgroundDone;
-        return Done;
+    int wpmode = wallpaperMode();
+    int blmode = blendMode();
+    int bgmode = backgroundMode();
+    
+    if ( (blmode == NoBlending) &&
+	 ((wpmode == Tiled) ||
+	  (wpmode == Scaled) ||
+	  (wpmode == CenterTiled)) ) {
+      // full screen wallpaper modes: background is not visible
+      m_State |= BackgroundDone;
+      return Done;
     }
     if (quit) {
-	if (mode == Program)
+	if (bgmode == Program)
 	    m_pProc->kill();
         return Done;
     }
@@ -160,7 +166,7 @@ int KBackgroundRenderer::doBackground(bool quit)
     int retval = Done;
     QString file;
 
-    switch (backgroundMode()) {
+    switch (bgmode) {
 
     case Flat:
 	m_pBackground->create(10, 10, 32);
@@ -253,6 +259,13 @@ int KBackgroundRenderer::doWallpaper(bool quit)
         return Done;
 
     int wpmode = wallpaperMode();
+    int blmode = blendMode();
+
+    // Tiling is only possible if there's no blending
+    bool bTile = m_bTile;
+    if ((wpmode != NoWallpaper) && (blmode != NoBlending))
+      bTile = false;
+
     QImage wp;
     if (wpmode != NoWallpaper) {
 	if (currentWallpaper().isEmpty()) {
@@ -282,11 +295,9 @@ int KBackgroundRenderer::doWallpaper(bool quit)
     }
 wp_out:
 
-    if (((wpmode == NoWallpaper) || (wpmode == Centred) || 
-	(wpmode == CentredMaxpect)) && m_pBackground->isNull()
-       ) {
-	    m_pBackground->create(10, 10, 32);
-	    m_pBackground->fill(colorA().rgb());
+    if ( m_pBackground->isNull()) {
+      m_pBackground->create(10, 10, 32);
+      m_pBackground->fill(colorA().rgb());
     }
 	
     int ww = wp.width();
@@ -296,7 +307,7 @@ wp_out:
     switch (wpmode) {
     case NoWallpaper:
     {
-	if (m_bTile)
+	if (bTile)
 	    *m_pImage = *m_pBackground;
 	else  {
 	    m_pImage->create(m_Size, 32);
@@ -311,7 +322,7 @@ wp_out:
 	int h = m_Size.height();
         int y;
 
-	if (m_bTile && (ww <= w) && (wh <= h))
+	if (bTile && (ww <= w) && (wh <= h))
 	    *m_pImage = wp;
 	else {
 	    m_pImage->create(m_Size, 32);
@@ -328,7 +339,7 @@ wp_out:
     case CenterTiled:
     {
 	QSize size = m_Size;
-	if (m_bTile)
+	if (bTile)
 	    size = QSize(QMIN(m_Size.width(), wp.width()), 
 		    QMIN(m_Size.height(), wp.height()));
 	m_pImage->create(size, 32);
@@ -373,18 +384,26 @@ wp_out:
             offy = 0;
 	
 	// Background is no tile?
-	if (m_pBackground->size() == m_Size)
+	if (m_pBackground->size() == m_Size) {
+
+	  // if we blend, we need a deep copy
+	  if (blmode != NoBlending)
+	    *m_pImage = m_pBackground->copy();
+	  else
 	    *m_pImage = *m_pBackground;
+	  if (m_pImage->depth()<32)
+	    *m_pImage = m_pImage->convertDepth(32);
+	}
 	else {
 	    int tw = w, th = h;
 	    int bw = m_pBackground->width(), bh = m_pBackground->height();
-	    if (m_bTile) {
+	    if (bTile) {
 		tw = QMIN(bw * ((xa + ww + bw - 1) / bw), w);
 		th = QMIN(bh * ((ya + wh + bh - 1) / bh), h);
 	    }
 	    m_pImage->create(tw, th, 32);
 
-	    // Fill the rectangles not convered by the centred image.
+	    // Fill the rectangles not covered by the centred image.
 	    if (ya) {
 		tile(m_pImage, QRect(0, 0, tw, ya), m_pBackground);
 		tile(m_pImage, QRect(0, ya+wh, tw, th-ya-wh), m_pBackground);
@@ -395,11 +414,11 @@ wp_out:
 	    }
 	}
 
-	// And copy the centred image	
+	// And copy the centred image		
         for (y=0; y<wh; y++)
             memcpy(m_pImage->scanLine(ya+y) + xa * sizeof(QRgb),
                    wp.scanLine(y+offy) + offx * sizeof(QRgb),
-                   ww * sizeof(QRgb));
+                   ww * sizeof(QRgb));		   
         break;
     }
 
@@ -423,12 +442,22 @@ wp_out:
         int ya = (h - wh) / 2;
         int y;
 
-	if (m_pBackground->size() == m_Size)
+	if (m_pBackground->size() == m_Size) {
+
+	  // if we blend, we need a deep copy
+	  if (blmode != NoBlending)
+	    *m_pImage = m_pBackground->copy();
+	  else
 	    *m_pImage = *m_pBackground;
+	    
+	  if (m_pImage->depth()<32)
+	    *m_pImage = m_pImage->convertDepth(32);
+
+	}
 	else {
 	    int tw = w, th = h;
 	    int bw = m_pBackground->width(), bh = m_pBackground->height();
-	    if (m_bTile) {
+	    if (bTile) {
 		tw = QMIN(bw * ((xa + ww + bw - 1) / bw), w);
 		th = QMIN(bh * ((ya + wh + bh - 1) / bh), h);
 	    }
@@ -451,6 +480,62 @@ wp_out:
 
     }
 
+    if (wpmode != NoWallpaper) {
+      int bal = blendBalance();
+
+      switch( blmode ) {
+      case HorizontalBlending:
+	KImageEffect::blend( *m_pImage, *m_pBackground,
+			     KImageEffect::HorizontalGradient,
+			     bal, 100 );
+	break;
+
+      case VerticalBlending:
+	KImageEffect::blend( *m_pImage, *m_pBackground,
+			     KImageEffect::VerticalGradient, 
+			     100, bal );
+	break;
+
+      case PyramidBlending:
+	KImageEffect::blend( *m_pImage, *m_pBackground,
+			     KImageEffect::PyramidGradient, 
+			     bal, bal );
+	break;
+
+      case PipeCrossBlending:
+	KImageEffect::blend( *m_pImage, *m_pBackground,
+			     KImageEffect::PipeCrossGradient,
+			     bal, bal );
+	break;
+
+      case EllipticBlending:
+	KImageEffect::blend( *m_pImage, *m_pBackground,
+			     KImageEffect::EllipticGradient, 
+			     bal, bal );
+	break;
+
+      case IntensityBlending:
+	KImageEffect::modulate( *m_pImage, *m_pBackground, reverseBlending(),
+		    KImageEffect::Intensity, bal, KImageEffect::All );
+	break;
+
+      case SaturateBlending:
+	KImageEffect::modulate( *m_pImage, *m_pBackground, reverseBlending(),
+		    KImageEffect::Saturation, bal, KImageEffect::Gray );
+	break;
+
+      case ContrastBlending:
+	KImageEffect::modulate( *m_pImage, *m_pBackground, reverseBlending(),
+		    KImageEffect::Contrast, bal, KImageEffect::All );
+	break;
+
+      case HueShiftBlending:
+	KImageEffect::modulate( *m_pImage, *m_pBackground, reverseBlending(),
+		    KImageEffect::HueShift, bal, KImageEffect::Gray );
+	break;
+      }
+    }
+
     if (retval == Done)
         m_State |= WallpaperDone;
 
@@ -469,6 +554,7 @@ void KBackgroundRenderer::slotBackgroundDone(KProcess *)
     unlink(m_Tempfile.latin1());
     m_pTimer->start(0, true);
 }
+
 
 
 /*

@@ -168,6 +168,22 @@ public:
     void setBackgroundMode(int mode);
     int backgroundMode() const { return m_BackgroundMode; }
 
+    enum BlendMode {
+        NoBlending, 
+	HorizontalBlending, VerticalBlending, PyramidBlending,
+	PipeCrossBlending, EllipticBlending, 
+	IntensityBlending, SaturateBlending, ContrastBlending,
+	HueShiftBlending, lastBlendMode
+    };
+    void setBlendMode(int mode);
+    int blendMode() const { return m_BlendMode; }
+
+    void setReverseBlending(bool value);
+    bool reverseBlending() const { return m_ReverseBlending; }
+
+    void setBlendBalance(int value);
+    int blendBalance() const { return m_BlendBalance; }
+
     void setWallpaper(QString name);
     QString wallpaper() const { return m_Wallpaper; }
 
@@ -217,6 +233,9 @@ private:
 
     int m_BackgroundMode, defBackgroundMode;
     int m_WallpaperMode, defWallpaperMode;
+    int m_BlendMode, defBlendMode;
+    int m_BlendBalance, defBlendBalance;
+    bool m_ReverseBlending, defReverseBlending;
 
     int m_MultiMode, defMultiMode;
     int m_Interval, m_LastChange;
@@ -229,9 +248,11 @@ public:
     QMap<QString,int> m_BMMap;
     QMap<QString,int> m_WMMap;
     QMap<QString,int> m_MMMap;
+    QMap<QString,int> m_BlMMap;
     char *m_BMRevMap[16];
     char *m_WMRevMap[16];
     char *m_MMRevMap[16];
+    char *m_BlMRevMap[16];
 };
 
 

@@ -412,6 +412,9 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     defBackgroundMode = _defBackgroundMode;
     defWallpaperMode = _defWallpaperMode;
     defMultiMode = _defMultiMode;
+    defBlendMode = _defBlendMode;
+    defBlendBalance = _defBlendBalance;
+    defReverseBlending = _defReverseBlending;
 
     // Background modes
     #define ADD_STRING(ID) m_BMMap[#ID] = ID; m_BMRevMap[ID] = (char *) #ID;
@@ -423,6 +426,20 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     ADD_STRING(PyramidGradient)
     ADD_STRING(PipeCrossGradient) 
     ADD_STRING(EllipticGradient)
+    #undef ADD_STRING
+
+    // Blend modes
+    #define ADD_STRING(ID) m_BlMMap[#ID] = ID; m_BlMRevMap[ID] = (char *) #ID;
+    ADD_STRING(NoBlending)
+    ADD_STRING(HorizontalBlending)
+    ADD_STRING(VerticalBlending)
+    ADD_STRING(PyramidBlending)
+    ADD_STRING(PipeCrossBlending) 
+    ADD_STRING(EllipticBlending)
+    ADD_STRING(IntensityBlending)
+    ADD_STRING(SaturateBlending)
+    ADD_STRING(ContrastBlending)
+    ADD_STRING(HueShiftBlending)
     #undef ADD_STRING
 
     // Wallpaper modes
@@ -519,6 +536,30 @@ void KBackgroundSettings::setBackgroundMode(int mode)
     m_BackgroundMode = mode;
 }
 
+void KBackgroundSettings::setBlendMode(int mode)
+{
+    if (m_BlendMode == mode)
+	return;
+    dirty = hashdirty = true;
+    m_BlendMode = mode;
+}
+
+void KBackgroundSettings::setBlendBalance(int value)
+{
+    if (m_BlendBalance == value)
+	return;
+    dirty = hashdirty = true;
+    m_BlendBalance = value;
+}
+
+void KBackgroundSettings::setReverseBlending(bool value)
+{
+    if (m_ReverseBlending == value)
+	return;
+    dirty = hashdirty = true;
+    m_ReverseBlending = value;
+}
+
 
 void KBackgroundSettings::setWallpaper(QString wallpaper)
 {
@@ -592,13 +633,26 @@ void KBackgroundSettings::readSettings(bool reparse)
     if (m_BMMap.contains(s)) {
         int mode = m_BMMap[s];
         // consistency check
-        if  ( (mode != Pattern) || (mode != Program) ||
+        if  ( ((mode != Pattern) && (mode != Program)) ||
               ((mode == Pattern) && !pattern().isEmpty()) ||
               ((mode == Program) && !command().isEmpty())
             ) 
             m_BackgroundMode = mode;
     }
     
+    m_BlendMode = defBlendMode;
+    s = m_pConfig->readEntry("BlendMode", "invalid");
+    if (m_BlMMap.contains(s)) {
+      m_BlendMode = m_BlMMap[s];
+    }
+
+    m_BlendBalance = defBlendBalance;
+    int value = m_pConfig->readNumEntry( "BlendBalance", defBlendBalance);
+    if (value > -201 && value < 201)
+      m_BlendBalance = value;
+      
+    m_ReverseBlending = m_pConfig->readBoolEntry( "ReverseBlending", defReverseBlending);
+
     // Wallpaper mode (NoWallpaper, div. tilings)
     m_WallpaperMode = defWallpaperMode;
     m_Wallpaper = m_pConfig->readEntry("Wallpaper");
@@ -648,6 +702,9 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("Wallpaper", m_Wallpaper);
     m_pConfig->writeEntry("WallpaperMode", m_WMRevMap[m_WallpaperMode]);
     m_pConfig->writeEntry("MultiWallpaperMode", m_MMRevMap[m_MultiMode]);
+    m_pConfig->writeEntry("BlendMode", m_BlMRevMap[m_BlendMode]);
+    m_pConfig->writeEntry("BlendBalance", m_BlendBalance);
+    m_pConfig->writeEntry("ReverseBlending", m_ReverseBlending);
 
     m_pConfig->writeEntry("WallpaperList", m_WallpaperList);
     m_pConfig->writeEntry("ChangeInterval", m_Interval);
@@ -745,9 +802,10 @@ bool KBackgroundSettings::needWallpaperChange()
 QString KBackgroundSettings::fingerprint()
 {
     // Desktop filling wallpaper modes:
-    if ((m_WallpaperMode == Tiled) ||
-	(m_WallpaperMode == CenterTiled) ||
-	(m_WallpaperMode == Scaled)
+    if ( (m_BlendMode == NoBlending) &&
+	((m_WallpaperMode == Tiled) ||
+	 (m_WallpaperMode == CenterTiled) ||
+	 (m_WallpaperMode == Scaled))
        )
 	return QString("wm:%1;wp:%2;").arg(m_WallpaperMode)
 	       .arg(currentWallpaper());
@@ -772,7 +830,11 @@ QString KBackgroundSettings::fingerprint()
     s += QString("wm:%1;").arg(m_WallpaperMode);
     if (m_WallpaperMode != NoWallpaper)
         s += QString("wp:%1;").arg(currentWallpaper());
-    
+    s += QString("blm:%1;").arg(m_BlendMode);
+    if (m_BlendMode != NoBlending) {
+      s += QString("blb:%1;").arg(m_BlendBalance);
+      s += QString("rbl:%1;").arg(m_ReverseBlending);
+    }    
     return s;
 }
 

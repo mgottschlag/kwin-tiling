@@ -29,6 +29,7 @@ class QStringList;
 class QButtonGroup;
 class QPalette;
 class QLabel;
+class QSlider;
 
 class KColorButton;
 class KBackgroundRenderer;
@@ -87,6 +88,9 @@ private slots:
     void slotSetupMulti();
     void slotPreviewDone(int);
     void slotMultiMode(bool);
+    void slotBlendMode(int mode);
+    void slotBlendBalance(int value);
+    void slotReverseBlending(bool value);
 
 private:
     void init();
@@ -95,9 +99,10 @@ private:
     int m_Desk, m_Max;
 
     QListBox *m_pDeskList;
-    QCheckBox *m_pCBCommon, *m_pCBMulti;
+    QCheckBox *m_pCBCommon, *m_pCBMulti, *m_pReverseBlending;
     QComboBox *m_pBackgroundBox, *m_pWallpaperBox;
-    QComboBox *m_pArrangementBox;
+    QComboBox *m_pArrangementBox, *m_pBlendBox;
+    QSlider *m_pBlendSlider;
     QPushButton *m_pBGSetupBut, *m_pMSetupBut;
     QPushButton *m_pBrowseBut;
     QMap<QString,int> m_Wallpaper;

@@ -27,5 +27,8 @@
 #define _defBackgroundMode Flat
 #define _defWallpaperMode NoWallpaper
 #define _defMultiMode NoMulti
+#define _defBlendMode NoBlending
+#define _defBlendBalance 100
+#define _defReverseBlending false
 
 #endif // __BGDefaults_h_Included__

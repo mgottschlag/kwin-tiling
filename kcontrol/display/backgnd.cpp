@@ -25,6 +25,7 @@
 #include <qlistbox.h>
 #include <qgroupbox.h>
 #include <qcombobox.h>
+#include <qslider.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
@@ -102,7 +103,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pDirs = KGlobal::dirs();
 
     // Top layout
-    QGridLayout *top = new QGridLayout(this, 2, 2);
+    QGridLayout *top = new QGridLayout(this, 3, 2);
     top->setSpacing(10); top->setMargin(10);
     top->setColStretch(0, 1);
     top->setColStretch(1, 2);
@@ -226,6 +227,40 @@ KBackground::KBackground(QWidget *parent, const char *name)
     hbox->addWidget(m_pMSetupBut);
     hbox->addStretch();
 
+    // Blending
+    group = new QGroupBox(i18n("Blending between Background and Wallpaper"),
+			  this);
+    top->addMultiCellWidget(group, 2,2, 0, 1);
+    grid = new QGridLayout(group, 2, 5);
+    grid->setMargin(10);
+    grid->setSpacing(10);
+    grid->addRowSpacing(0, 10);
+
+    lbl = new QLabel(i18n("&Mode:"), group);
+    lbl->setFixedSize(lbl->sizeHint());
+    grid->addWidget(lbl,1,0);
+    m_pBlendBox = new QComboBox(group);
+    connect(m_pBlendBox, SIGNAL(activated(int)), SLOT(slotBlendMode(int)));
+    lbl->setBuddy(m_pBlendBox);
+    grid->addWidget(m_pBlendBox,1,1);
+
+
+    lbl = new QLabel(i18n("&Balance:"), group);
+    lbl->setFixedSize(lbl->sizeHint());
+    grid->addWidget(lbl,1,2);
+    m_pBlendSlider = new QSlider( QSlider::Horizontal, group );
+    m_pBlendSlider->setRange( -200, 200 );
+    connect(m_pBlendSlider, SIGNAL(valueChanged(int)),
+	    SLOT(slotBlendBalance(int)));
+    lbl->setBuddy(m_pBlendSlider);
+    grid->addWidget(m_pBlendSlider,1,3);
+
+    m_pReverseBlending = new QCheckBox(i18n("&Reverse"), group);
+    m_pReverseBlending->setFixedSize(m_pReverseBlending->sizeHint());
+    connect(m_pReverseBlending, SIGNAL(toggled(bool)), 
+	    SLOT(slotReverseBlending(bool)));
+    grid->addWidget(m_pReverseBlending,1,4);
+
     m_Desk = KWin::currentDesktop() - 1;
     m_Max = KWin::numberOfDesktops();
     m_pGlobals = new KGlobalBackgroundSettings();
@@ -264,6 +299,18 @@ void KBackground::init()
     m_pBackgroundBox->insertItem(i18n("Pyramid Gradient"));
     m_pBackgroundBox->insertItem(i18n("Pipecross Gradient"));
     m_pBackgroundBox->insertItem(i18n("Elliptic Gradient"));
+
+    // Blend modes: make sure these match with kdesktop/bgrender.cc !!
+    m_pBlendBox->insertItem(i18n("No Blending"));
+    m_pBlendBox->insertItem(i18n("Horizontal Blending"));
+    m_pBlendBox->insertItem(i18n("Vertical Blending"));
+    m_pBlendBox->insertItem(i18n("Pyramid Blending"));
+    m_pBlendBox->insertItem(i18n("Pipecross Blending"));
+    m_pBlendBox->insertItem(i18n("Elliptic Blending"));
+    m_pBlendBox->insertItem(i18n("Intensity Blending"));
+    m_pBlendBox->insertItem(i18n("Saturate Blending"));
+    m_pBlendBox->insertItem(i18n("Contrast Blending"));
+    m_pBlendBox->insertItem(i18n("Hue Shift Blending"));
 
     // Use this as a common size for the combo boxen
     int width = m_pBackgroundBox->sizeHint().width();
@@ -349,19 +396,42 @@ void KBackground::apply()
     }
     m_pWallpaperBox->setCurrentItem(m_Wallpaper[wp]);
     m_pArrangementBox->setCurrentItem(r->wallpaperMode());
+    if (r->wallpaperMode() == KBackgroundSettings::NoWallpaper) {
+      m_pCBMulti->setEnabled(false);
+      m_pWallpaperBox->setEnabled(false);
+      m_pBrowseBut->setEnabled(false);
+      m_pMSetupBut->setEnabled(false);
 
-    // Multi mode
-    if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti) {
+      // Blending not possible without wallpaper
+      m_pBlendBox->setEnabled(false);
+      m_pBlendSlider->setEnabled(false);
+      m_pReverseBlending->setEnabled(false);
+    }
+    else {
+      m_pCBMulti->setEnabled(true);
+      m_pBlendBox->setEnabled(true);
+      m_pBlendSlider->setEnabled(
+	  (r->blendMode()==KBackgroundSettings::NoBlending)?false:true);
+      m_pReverseBlending->setEnabled(
+	  (r->blendMode()<KBackgroundSettings::IntensityBlending)?false:true);
+
+      // Multi mode
+      if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti) {
 	m_pCBMulti->setChecked(false);
 	m_pWallpaperBox->setEnabled(true);
 	m_pBrowseBut->setEnabled(true);
 	m_pMSetupBut->setEnabled(false);
-    } else {
+      } else {
 	m_pCBMulti->setChecked(true);
 	m_pWallpaperBox->setEnabled(false);
 	m_pBrowseBut->setEnabled(false);
 	m_pMSetupBut->setEnabled(true);
+      }
     }
+
+    m_pBlendBox->setCurrentItem(r->blendMode());
+    m_pBlendSlider->setValue(r->blendBalance());
+    m_pReverseBlending->setChecked(r->reverseBlending());
 
     // Start preview render
     r->setPreview(m_pMonitor->size());
@@ -410,6 +480,9 @@ void KBackground::defaults()
     r->setColorB(_defColorB);
     r->setWallpaperMode(KBackgroundSettings::NoWallpaper);
     r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
+    r->setBlendMode(KBackgroundSettings::NoBlending);
+    r->setBlendBalance(_defBlendBalance);
+    r->setReverseBlending(_defReverseBlending);
     m_pGlobals->setCommonBackground(_defCommon);
     apply();
     emit changed(true);
@@ -454,6 +527,68 @@ void KBackground::slotBGMode(int mode)
 
     r->stop();
     r->setBackgroundMode(mode);
+    apply();
+    emit changed(true);
+}
+
+/*
+ * Called from the "Blending Mode" combobox.
+ */
+void KBackground::slotBlendMode(int mode)
+{
+    int desk = m_Desk;
+    if (m_pGlobals->commonBackground())
+	desk = 0;
+    KBackgroundRenderer *r = m_Renderer[desk];
+
+    if (mode == r->blendMode())
+	return;
+
+    m_pBlendSlider->setEnabled( (mode==KBackgroundSettings::NoBlending)
+				?false:true);
+    m_pReverseBlending->setEnabled(
+	  (r->blendMode()<KBackgroundSettings::IntensityBlending)?false:true);
+				
+    r->stop();
+    r->setBlendMode(mode);
+    apply();
+    emit changed(true);
+}
+
+/*
+ * Called from the "Blending" Slider
+ */
+void KBackground::slotBlendBalance(int value)
+{
+    int desk = m_Desk;
+    if (m_pGlobals->commonBackground())
+	desk = 0;
+    KBackgroundRenderer *r = m_Renderer[desk];
+
+    if (value == r->blendBalance())
+	return;
+
+    r->stop();
+    r->setBlendBalance(value);
+    apply();
+    emit changed(true);
+}
+
+/*
+ * Called from the "Reverse Blending" Checkbox
+ */
+void KBackground::slotReverseBlending(bool value)
+{
+    int desk = m_Desk;
+    if (m_pGlobals->commonBackground())
+	desk = 0;
+    KBackgroundRenderer *r = m_Renderer[desk];
+
+    if (value == r->reverseBlending())
+	return;
+
+    r->stop();
+    r->setReverseBlending(value);
     apply();
     emit changed(true);
 }
@@ -646,6 +781,36 @@ void KBackground::slotWPMode(int mode)
 
     if (mode == r->wallpaperMode())
 	return;
+
+    if (mode == KBackgroundSettings::NoWallpaper) {
+      m_pCBMulti->setEnabled(false);
+      m_pWallpaperBox->setEnabled(false);
+      m_pBrowseBut->setEnabled(false);
+      m_pMSetupBut->setEnabled(false);
+
+      // Blending not possible without wallpaper
+      m_pBlendBox->setEnabled(false);
+      m_pBlendSlider->setEnabled(false);
+    }
+    else {
+      m_pCBMulti->setEnabled(true);
+      m_pBlendBox->setEnabled(true);
+      m_pBlendSlider->setEnabled(
+	  (r->blendMode()==KBackgroundSettings::NoBlending)?false:true);
+
+      // Multi mode
+      if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti) {
+	m_pCBMulti->setChecked(false);
+	m_pWallpaperBox->setEnabled(true);
+	m_pBrowseBut->setEnabled(true);
+	m_pMSetupBut->setEnabled(false);
+      } else {
+	m_pCBMulti->setChecked(true);
+	m_pWallpaperBox->setEnabled(false);
+	m_pBrowseBut->setEnabled(false);
+	m_pMSetupBut->setEnabled(true);
+      }
+    }
 
     r->stop();
     r->setWallpaperMode(mode);
