@@ -833,7 +833,7 @@ void TreeView::newitem()
     QString filename = dlg.text();
     if ( filename.contains('/'))
     {
-        KMessageBox::error( this,  i18n("Item name can't contain '/'"));
+        KMessageBox::error( this,  i18n("Item name cannot contain '/'"));
         return;
     }
     TreeItem *item = (TreeItem*)selectedItem();
