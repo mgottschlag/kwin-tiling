@@ -176,7 +176,7 @@ void KHotKeysApp::reread_configuration()
 
 void KHotKeysApp::reread_configuration()
     {
-    accel->basePtr()->clearActions();
+    accel->clearActions();
     data.clear();
     KSimpleConfig cfg( CONFIG_FILE, true );
     data.read_config( cfg );
@@ -184,7 +184,7 @@ void KHotKeysApp::reread_configuration()
          it.current();
          ++it )
         {
-        accel->insertAction( it.currentKey(), it.currentKey(),
+        accel->insertAction( it.currentKey(), it.currentKey(), QString::null,
             KShortcuts(it.current()->shortcut), KShortcuts(it.current()->shortcut),
             this, SLOT( accel_activated( const QString&, const QString&, int )));
         }

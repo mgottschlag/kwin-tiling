@@ -199,7 +199,7 @@ desktop_shortcut_dialog::desktop_shortcut_dialog(
         if( it.current()->shortcut == shortcut_P )
             shortcut_P = ""; // this shortcut is taken up by some other action
         }
-    map.insertAction( action_name_P, action_name_P,
+    map.insertAction( action_name_P, action_name_P, QString::null,
         KAccelShortcuts(shortcut_P), KAccelShortcuts(shortcut_P) );
     QWidget* page = new QWidget( this );
     setMainWidget( page );         // CHECKME i18n
