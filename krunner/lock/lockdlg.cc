@@ -118,7 +118,7 @@ QString PasswordDlg::currentUser(void)
 QString PasswordDlg::passwordQueryMsg()
 {
     return i18n("Enter Password") + "\n" + currentUser();
-} 
+}
 
 //---------------------------------------------------------------------------
 //
@@ -138,6 +138,7 @@ void PasswordDlg::timerEvent(QTimerEvent *ev)
         mLabel->setText(passwordQueryMsg());
         mEntry->erase();
         mEntry->setEnabled(true);
+        mEntry->setFocus();
         if( mButton )
             mButton->setEnabled(true);
     }
@@ -152,7 +153,7 @@ bool PasswordDlg::eventFilter( QObject *, QEvent *ev )
         mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
         QKeyEvent *e = (QKeyEvent *)ev;
         if ( ( e->state() == 0 &&
-	       ( e->key() == Key_Enter || e->key() == Key_Return ) ) || 
+	       ( e->key() == Key_Enter || e->key() == Key_Return ) ) ||
              ( e->state() & Keypad && e->key() == Key_Enter ) ) {
             if ( focusWidget() == mButton )
                 mButton->animateClick();
@@ -293,7 +294,7 @@ void PasswordDlg::slotStartNewSession()
 
     QLabel *label1 = new QLabel( winFrame );
     label1->setPixmap( QMessageBox::standardIcon( QMessageBox::Warning ) );
-    QString qt_text = 
+    QString qt_text =
           i18n("You have chosen to open another desktop session "
                "instead of resuming the current one.<br>"
                "The current session will be hidden "
