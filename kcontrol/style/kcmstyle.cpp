@@ -412,7 +412,7 @@ void KCMStyle::styleSpecificConfig()
 		KMessageBox::detailedError(this,
 			i18n("There was an error loading the configuration dialog for this style."),
 			loader->lastErrorMessage(),
-			i18n("Unable to load the dialog."));
+			i18n("Unable to Load Dialog"));
 		return;
 	}
 
@@ -423,7 +423,7 @@ void KCMStyle::styleSpecificConfig()
 		KMessageBox::detailedError(this,
 			i18n("There was an error loading the configuration dialog for this style."),
 			loader->lastErrorMessage(),
-			i18n("Unable to load the dialog."));
+			i18n("Unable to Load Dialog"));
 		return;
 	}
 
