@@ -100,10 +100,10 @@
                         <cstring>iconifiedCheck</cstring>
                     </property>
                     <property name="text">
-                        <string>Show o&amp;nly iconified windows</string>
+                        <string>Show o&amp;nly minimized windows</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Check this option if you want the taskbar to display only windows which are iconified. By default, the taskbar will show all windows.</string>
+                        <string>Check this option if you want the taskbar to display only windows which are minimized. By default, the taskbar will show all windows.</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
@@ -148,6 +148,17 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>leftButtonLabel</cstring>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>leftButtonComboBox</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Left button:</string>
+                    </property>
+                </widget>
                 <widget class="QLabel" row="1" column="0">
                     <property name="name">
                         <cstring>middleButtonLabel</cstring>
@@ -170,6 +181,11 @@
                         <string>Right b&amp;utton:</string>
                     </property>
                 </widget>
+                <widget class="QComboBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>leftButtonComboBox</cstring>
+                    </property>
+                </widget>
                 <widget class="QComboBox" row="1" column="1">
                     <property name="name">
                         <cstring>middleButtonComboBox</cstring>
@@ -178,22 +194,6 @@
                 <widget class="QComboBox" row="2" column="1">
                     <property name="name">
                         <cstring>rightButtonComboBox</cstring>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="0" column="1">
-                    <property name="name">
-                        <cstring>leftButtonComboBox</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>leftButtonLabel</cstring>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>leftButtonComboBox</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Left button:</string>
                     </property>
                 </widget>
             </grid>
@@ -211,16 +211,6 @@
         </spacer>
     </vbox>
 </widget>
-<tabstops>
-    <tabstop>showAllCheck</tabstop>
-    <tabstop>showListBtnCheck</tabstop>
-    <tabstop>groupComboBox</tabstop>
-    <tabstop>sortCheck</tabstop>
-    <tabstop>iconCheck</tabstop>
-    <tabstop>leftButtonComboBox</tabstop>
-    <tabstop>middleButtonComboBox</tabstop>
-    <tabstop>rightButtonComboBox</tabstop>
-</tabstops>
 <includes>
     <include location="local" impldecl="in implementation">kdialog.h</include>
 </includes>
