@@ -66,6 +66,7 @@ ChooserDlg::ChooserDlg()
 	host_view->addColumn( i18n("Status") );
 	host_view->setMinimumWidth( fontMetrics().width( "login.crap.com Display not authorized to connect this server" ) );
 	host_view->setResizeMode( QListView::LastColumn );
+	host_view->setAllColumnsShowFocus( true );
 	vbox->addWidget( host_view );
 
 	iline = new QLineEdit( this );
