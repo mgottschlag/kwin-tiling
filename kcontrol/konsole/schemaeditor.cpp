@@ -24,6 +24,7 @@
 #include <dcopclient.h>
 
 #include <qlabel.h>
+#include <qwmatrix.h>
 #include <kcolorbutton.h>
 #include <qcombobox.h>
 #include <kdebug.h>
@@ -291,8 +292,13 @@ void SchemaEditor::saveCurrent()
 	base = *filename.at(schemaList->currentItem());
     else
 	base = titleLine->text().stripWhiteSpace().simplifyWhiteSpace() + ".schema";
+#if QT_VERSION < 300
     QString name = QInputDialog::getText(i18n("Save schema as..."),
 					 i18n("Filename:"), base);
+#else
+    QString name = QInputDialog::getText(i18n("Save schema as..."),
+					 i18n("Filename:"), QLineEdit::Normal, base);
+#endif
 
     if (name.isNull() || name.isEmpty())
 	return;
