@@ -247,7 +247,7 @@ void URLGrabber::editData()
 {
     myPopupKillTimer->stop();
     KDialogBase *dlg = new KDialogBase( 0, 0, true,
-                                        i18n("Edit contents"),
+                                        i18n("Edit Contents"),
                                         KDialogBase::Ok | KDialogBase::Cancel);
     KEdit *edit = new KEdit( dlg );
     edit->setText( myClipData );
