@@ -23,7 +23,7 @@ main.lo: bgdialog_ui.h
 
 messages: rc.cpp
 	$(EXTRACTRC) *.ui *.rc >> rc.cpp
-	$(XGETTEXT) -kni18n *.cc *.cpp -o $(podir)/kcmbackground.pot
+	$(XGETTEXT) -kni18n *.cpp -o $(podir)/kcmbackground.pot
 
 desktop_DATA =  background.desktop
 desktopdir = $(kde_appsdir)/Settings/LookNFeel
