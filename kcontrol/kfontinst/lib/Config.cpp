@@ -210,13 +210,14 @@ static const QString constEncodingsSubDirs[]=
 static const QString constXConfigFiles[]=
 {
     constDefaultXConfigFile,
+    "/etc/X11/XF86Config"
     "/etc/XF86Config-4",
-    "/usr/X11R6/etc/X11/XF86Config-4",
-    "/usr/X11R6/lib/X11/XF86Config-4",
-    "/etc/X11/XF86Config",
-    "/usr/X11R6/etc/X11/XF86Config",
-    "/etc/X11/XF86Config",
     "/etc/XF86Config",
+    //"/usr/X11R6/etc/X11/XF86Config.$HOSTNAME"
+    "/usr/X11R6/etc/X11/XF86Config-4",
+    "/usr/X11R6/etc/X11/XF86Config",
+    //"/usr/X11R6/lib/X11/XF86Config.$HOSTNAME",
+    "/usr/X11R6/lib/X11/XF86Config-4",
     "/usr/X11R6/lib/X11/XF86Config",
     QString::null
 };
