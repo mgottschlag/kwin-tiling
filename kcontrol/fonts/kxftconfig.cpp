@@ -560,7 +560,7 @@ bool KXftConfig::getSubPixelType(SubPixel::Type &type)
 
 void KXftConfig::setSubPixelType(SubPixel::Type type)
 {
-    if((SubPixel::None==type && !m_subPixel.toBeRemoved) ||
+    if((SubPixel::None==type && SubPixel::None!=m_subPixel.type && !m_subPixel.toBeRemoved) ||
        (SubPixel::None!=type && (type!=m_subPixel.type || m_subPixel.toBeRemoved)) )
     {
         m_subPixel.toBeRemoved=(SubPixel::None==type);
