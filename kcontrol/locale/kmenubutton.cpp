@@ -33,6 +33,7 @@
 
 KMenuButton::~KMenuButton()
 {
+    delete m_tags;
 }
 
 KMenuButton::KMenuButton( QWidget * parent, const char *name )
