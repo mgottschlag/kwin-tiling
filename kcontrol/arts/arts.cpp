@@ -173,7 +173,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name, const QStringList &)
 	connect(artsConfig->customOptions,SIGNAL(clicked()),SLOT(slotChanged()));
 	connect(artsConfig->addOptions,SIGNAL(textChanged(const QString&)),SLOT(slotChanged()));
 	connect(artsConfig->soundQuality,SIGNAL(highlighted(int)),SLOT(slotChanged()));
-	connect(artsConfig->latencySlider,SIGNAL(sliderMoved(int)),SLOT(slotChanged()));
+	connect(artsConfig->latencySlider,SIGNAL(valueChanged(int)),SLOT(slotChanged()));
 	connect(artsConfig->autoSuspend,SIGNAL(clicked()),SLOT(slotChanged()));
 	connect(artsConfig->suspendTime,SIGNAL(valueChanged(const QString &)),SLOT(slotChanged()));
 	connect(displayMessage, SIGNAL(clicked()), SLOT(slotChanged()));
