@@ -55,6 +55,8 @@ public:
 
 public slots:
     virtual void load();
+    void disableAllSounds();
+    void enableAllSounds();
 
 private slots:
     void slotRequesterClicked( KURLRequester * );
@@ -71,7 +73,7 @@ private:
     QCheckBox *cbExternal;
     QListView *view;
     KURLRequester *requester, *reqExternal;
-    QPushButton *playButton;
+    QPushButton *playButton, *soundButton;
     QSlider *volumeSlider;
     Events *m_events;
     KNCheckListItem *currentItem;

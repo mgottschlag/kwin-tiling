@@ -110,6 +110,9 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringLis
     connect( volumeSlider, SIGNAL( valueChanged( int ) ), SLOT( changed() ) );
     l->setBuddy( volumeSlider );
 
+    soundButton = new QPushButton( box );
+    // this is configured in updateView
+
     m_events = new Events();
     qApp->processEvents(); // let's show up
 
@@ -135,6 +138,7 @@ void KNotifyWidget::updateView()
     QListViewItem *appItem = 0L;
     KNListViewItem *eItem  = 0L;
     KNEvent *e;
+    bool soundsDisabled = true;
 
     QPixmap icon = SmallIcon("idea");
 
@@ -146,6 +150,8 @@ void KNotifyWidget::updateView()
 
 	KNEventListIterator it2( *(*it)->eventList() );
 	while( (e = it2.current()) ) {
+	    if(e->presentation & KNotifyClient::Sound) soundsDisabled = false;
+
 	    eItem = new KNListViewItem( appItem, eItem, e );
 	    eItem->setPixmap( 0, icon );
 
@@ -156,6 +162,18 @@ void KNotifyWidget::updateView()
 	++it;
     }
     updating = save_updating;
+
+	soundButton->disconnect(this);
+	if(soundsDisabled)
+	{
+		soundButton->setText( i18n("&Enable All Sounds") );
+		connect(soundButton, SIGNAL(clicked()), this, SLOT(enableAllSounds()));
+	}
+	else
+	{
+		soundButton->setText( i18n("&Disable All Sounds") );
+		connect(soundButton, SIGNAL(clicked()), this, SLOT(disableAllSounds()));
+	}
 }
 
 
@@ -358,7 +376,32 @@ void KNotifyWidget::slotRequesterClicked( KURLRequester *requester )
     }
 }
 
+void KNotifyWidget::disableAllSounds()
+{
+	for(KNApplicationListIterator app(m_events->apps()); app.current(); ++app)
+	{
+		for(KNEventListIterator event(*(*app)->eventList()); event.current(); ++event)
+		{
+			(*event)->presentation &= ~KNotifyClient::Sound;
+		}
+	}
+	updateView();
+	changed();
+}
 
+void KNotifyWidget::enableAllSounds()
+{
+	for(KNApplicationListIterator app(m_events->apps()); app.current(); ++app)
+	{
+		for(KNEventListIterator event(*(*app)->eventList()); event.current(); ++event)
+		{
+			if(!(*event)->soundfile.isNull())
+				(*event)->presentation |= KNotifyClient::Sound;
+		}
+	}
+	updateView();
+	changed();
+}
 ///////////////////////////////////////////////////////////////////
 
 /**
