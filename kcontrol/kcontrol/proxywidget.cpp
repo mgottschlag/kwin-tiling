@@ -51,12 +51,12 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name)
   _sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);
   _sep->show();
 
-  _help = new QPushButton(i18n("Help"), this);
-  _default = new QPushButton(i18n("Default"), this);
-  _reset = new QPushButton(i18n("Reset"), this);
-  _cancel = new QPushButton(i18n("Cancel"), this);
-  _apply = new QPushButton(i18n("Apply"), this);
-  _ok = new QPushButton(i18n("OK"), this);
+  _help = new QPushButton(i18n("&Help"), this);
+  _default = new QPushButton(i18n("&Default"), this);
+  _reset = new QPushButton(i18n("&Reset"), this);
+  _cancel = new QPushButton(i18n("&Cancel"), this);
+  _apply = new QPushButton(i18n("&Apply"), this);
+  _ok = new QPushButton(i18n("&OK"), this);
 
   // only enable the requested buttons
   int b = _client->buttons();
