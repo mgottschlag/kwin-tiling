@@ -217,13 +217,13 @@ void KSMServer::startApplication( const QStringList& command )
     int n = command.count();
     QCString app = command[0].latin1();
     QValueList<QCString> argList;
+    for ( int i=1; i < n; i++)
+       argList.append( QCString(command[i].latin1()));
 
-    for ( int i=1; i < n; i++) {
       QByteArray params;
       QDataStream stream(params, IO_WriteOnly);
       stream << app << argList;
       kapp->dcopClient()->send(launcher, launcher, "exec_blind(QCString,QValueList<QCString>)", params);
-    }
 }
 
 /*! Utility function to execute a command on the local machine. Used
