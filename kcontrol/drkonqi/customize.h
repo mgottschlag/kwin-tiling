@@ -21,9 +21,12 @@
 #ifndef __customize_h__
 #define __customize_h__
 
+#include <qpushbutton.h>
+#include <qcheckbox.h>
+#include <qlistbox.h>
+#include <qgroupbox.h>
 #include <kcmodule.h>
-#include <kconfig.h>
-
+#include <kconfig.h> 
 class KDrKonqiCustomize : public KCModule
 {
   Q_OBJECT
@@ -42,6 +45,20 @@ protected slots:
 private:
   KConfig *g_pConfig;
   QString groupname;
+
+  QGroupBox *gb_Presets;
+  QListBox  *lb_PresetList;
+  QPushButton   *bt_Add;
+  QPushButton   *bt_Remove;
+  QPushButton   *bt_Save;
+
+  QGroupBox *gb_Show;
+  QCheckBox *cb_Technical;
+  QCheckBox *cb_Signal;
+  QCheckBox *cb_SignalDetail;
+  QCheckBox *cb_WhatToDo;
+  QCheckBox *cb_ShowBugReport;
+
 
 };
 

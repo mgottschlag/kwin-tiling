@@ -26,6 +26,7 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klocale.h>
+#include <kdialog.h>
 
 #include "main.h"
 #include "general.h"
@@ -33,7 +34,12 @@
 KDrKonqiGeneral::KDrKonqiGeneral(KConfig *config, QString group, QWidget *parent, const char *name)
   : KCModule(parent, name), g_pConfig(config), groupname(group)
 {
-  QVBoxLayout *topLayout = new QVBoxLayout(this, 5);
+  QGridLayout *layout = new QGridLayout(this, 3,1,
+                                        KDialog::marginHint(),
+					KDialog::spacingHint());
+
+ // layout->setRowStretch(
+  
 
 /*  bGrp = new QButtonGroup(1, Qt::Vertical,
 						  i18n("Sample optionss"), this);

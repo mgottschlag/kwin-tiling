@@ -78,13 +78,13 @@ QString KDrKonqiMain::quickHelp()
                 " crashes. Altough of course you should never see"
                 " Dr. Konqi, in complex applications you can never"
                 " eleminate all bugs."
-                "<h2>General</h2>Here you can configure if and how"
-                "Dr. Konqi informs you about an error. You can"
-                "choose pre-defined message presets (end users and"
-                "developers for example) to provide you only with"
-                "the informations you need for your daily work."
-                "<h2>Customize</h2>Here you can change the presets"
-                "for Dr. Konqi's appearance.");
+                " <h2>General</h2>Here you can configure if and how"
+                " Dr. Konqi informs you about an error. You can"
+                " choose pre-defined message presets (end users and"
+                " developers for example) to provide you only with"
+                " the informations you need for your daily work."
+                " <h2>Customize</h2>Here you can change the presets"
+                " for Dr. Konqi's appearance.");
 }
 
 

@@ -23,6 +23,8 @@
 
 #include <kcmodule.h>
 #include <kconfig.h>
+#include <qcombobox.h>
+#include <qcheckbox.h>
 
 class KDrKonqiGeneral : public KCModule
 {
@@ -43,6 +45,9 @@ private:
   KConfig *g_pConfig;
   QString groupname;
 
+  QCheckBox *cbEnable;
+  QCheckBox *cbAllowBugReporting;
+  QComboBox *cmPresets;
 };
 
 #endif
