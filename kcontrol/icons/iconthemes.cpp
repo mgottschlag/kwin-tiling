@@ -296,11 +296,10 @@ void IconThemesConfig::removeSelectedTheme()
 
   KIconTheme icontheme(m_themeNames[selected->text(0)]);
 
+  // delete the index file before the async KIO::del so loadThemes() will
+  // ignore that dir.
   unlink(QFile::encodeName(icontheme.dir()+"/index.desktop").data());
-
-  QString directory(icontheme.dir());
-
-  KIO::del(directory);
+  KIO::del(icontheme.dir());
 
   KGlobal::instance()->newIconLoader();
 
