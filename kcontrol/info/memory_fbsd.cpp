@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <stdlib.h>	// For atoi()
+#include <unistd.h>
 
 void KMemoryWidget::update()
 {
@@ -22,9 +23,21 @@ void KMemoryWidget::update()
   totalMem->setText(format(memory));
   /*	To: questions@freebsd.org
 		Anyone have any ideas on how to calculate this */
-  freeMem->setText(i18n("Not available"));
   sharedMem->setText(i18n("Not available"));
-  bufferMem->setText(i18n("Not available"));
+
+  int buffers;
+  len = sizeof (buffers);
+  if ((sysctlbyname("vfs.bufspace", &buffers, &len, NULL, 0) == -1) || !len)
+    bufferMem->setText(i18n("Not available")); // Doesn't work under FreeBSD v2.2.x
+  else
+    bufferMem->setText(format(buffers));
+
+  int free;
+  len = sizeof (buffers);
+  if ((sysctlbyname("vm.stats.vm.v_free_count", &free, &len, NULL, 0) == -1) || !len)
+    freeMem->setText(i18n("Not available")); // Doesn't work under FreeBSD v2.2.x
+  else
+    freeMem->setText(format(free*getpagesize()));
 
   /* Q&D hack for swap display. Borrowed from xsysinfo-1.4 */
   if ((pipe = popen("/usr/sbin/pstat -ks", "r")) == NULL) {
