@@ -1,6 +1,6 @@
 /*****************************************************************
 ksmserver - the KDE session management server
-								  
+								
 Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 ******************************************************************/
 
@@ -14,7 +14,7 @@ class KSMShutdown : public QDialog
 {
     Q_OBJECT
 public:
-    KSMShutdown();
+    KSMShutdown( QWidget* parent = 0 );
     ~KSMShutdown();
 
     static bool shutdown( bool& saveSession );

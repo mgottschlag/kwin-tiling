@@ -18,6 +18,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <klocale.h>
 #include <kapp.h>
+#include <kwin.h>
 
 #include <X11/Xlib.h>
 
@@ -28,8 +29,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include "shutdown.moc"
 
 
-KSMShutdown::KSMShutdown()
-    : QDialog( 0, 0, TRUE, WStyle_Customize | WStyle_NoBorder ) //WType_Popup )
+KSMShutdown::KSMShutdown( QWidget* parent )
+    : QDialog( parent, 0, TRUE, WStyle_Customize | WStyle_NoBorderEx | WStyle_StaysOnTop ) //WType_Popup )
 {
     QVBoxLayout* vbox = new QVBoxLayout( this );
     QFrame* frame = new QFrame( this );
@@ -76,16 +77,18 @@ void KSMShutdown::requestFocus()
 bool KSMShutdown::shutdown( bool& saveSession )
 {
     kapp->enableStyles();
-    QWidget* w = new QWidget(0, 0, WStyle_Customize | WStyle_NoBorder);
+    QWidget* w = new QWidget;
     w->setBackgroundMode( QWidget::NoBackground );
     w->setGeometry( QApplication::desktop()->geometry() );
-    w->show();
+    w->showFullScreen();
+    KWin::setState( w->winId(), NET::StaysOnTop );
+    KWin::setOnAllDesktops( w->winId(), TRUE );
     QPainter p;
     QBrush b( Dense4Pattern );
     p.begin( w );
     p.fillRect( w->rect(), b);
     p.end();
-    KSMShutdown* l = new KSMShutdown;
+    KSMShutdown* l = new KSMShutdown( w );;
     l->checkbox->setChecked( saveSession );
     l->show();
     saveSession = l->checkbox->isChecked();
