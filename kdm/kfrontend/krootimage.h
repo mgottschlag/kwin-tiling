@@ -1,20 +1,22 @@
-/* This file is part of the KDE project
-   Copyright (C) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
-   Copyright (C) 2002,2004 Oswald Buddenhagen <ossi@kde.org>
+/*
 
-   This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public
-   License version 2 as published by the Free Software Foundation.
+Copyright (C) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+Copyright (C) 2002,2004 Oswald Buddenhagen <ossi@kde.org>
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    General Public License for more details.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License version 2 as published by the Free Software Foundation.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; see the file COPYING.  If not, write to
-   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; see the file COPYING.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.
+
 */
 
 #ifndef __KDMDESKTOP_H__
@@ -29,18 +31,18 @@
 
 class MyApplication : public KApplication
 {
-  Q_OBJECT
+	Q_OBJECT
 
-public:
-  MyApplication( const char * );
+  public:
+	MyApplication( const char * );
 
-private slots:
-  void renderDone();
-  void slotTimeout();
+  private slots:
+	void renderDone();
+	void slotTimeout();
 
-private:
-  KBackgroundRenderer renderer;
-  QTimer timer;
+  private:
+	KBackgroundRenderer renderer;
+	QTimer timer;
 };
 
 #endif

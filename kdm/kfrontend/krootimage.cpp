@@ -1,20 +1,22 @@
-/* This file is part of the KDE project
-   Copyright (C) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
-   Copyright (C) 2002,2004 Oswald Buddenhagen <ossi@kde.org>
+/*
 
-   This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public
-   License version 2 as published by the Free Software Foundation.
+Copyright (C) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+Copyright (C) 2002,2004 Oswald Buddenhagen <ossi@kde.org>
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    General Public License for more details.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public
+License version 2 as published by the Free Software Foundation.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; see the file COPYING.  If not, write to
-   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; see the file COPYING.	 If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.
+
 */
 
 #include <config.h>
@@ -32,79 +34,82 @@
 #include <stdlib.h>
 
 static const char description[] =
-	I18N_NOOP("Fancy desktop background for kdm");
+	I18N_NOOP( "Fancy desktop background for kdm" );
 
 static const char version[] = "v2.0";
 
 static KCmdLineOptions options[] = {
-    { "+config", I18N_NOOP("Name of the configuration file"), 0 },
-    KCmdLineLastOption
+	{ "+config", I18N_NOOP( "Name of the configuration file" ), 0 },
+	KCmdLineLastOption
 };
 
 
 MyApplication::MyApplication( const char *conf )
-  : KApplication(),
-    renderer( 0, new KSimpleConfig( QFile::decodeName( conf ) ) )
+	: KApplication(),
+	  renderer( 0, new KSimpleConfig( QFile::decodeName( conf ) ) )
 {
-  connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()));
-  connect( &renderer, SIGNAL(imageDone(int)), this, SLOT(renderDone()) );
-  timer.start( 60000 );
-  renderer.start();
+	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
+	connect( &renderer, SIGNAL(imageDone( int )), this, SLOT(renderDone()) );
+	timer.start( 60000 );
+	renderer.start();
 }
 
 
-void MyApplication::renderDone()
+void
+MyApplication::renderDone()
 {
-  desktop()->setBackgroundPixmap( *renderer.pixmap() );
-  desktop()->repaint( true );
-  if (renderer.backgroundMode() != KBackgroundSettings::Program &&
-      (renderer.multiWallpaperMode() == KBackgroundSettings::NoMulti ||
-       renderer.multiWallpaperMode() == KBackgroundSettings::NoMultiRandom))
-    quit();
+	desktop()->setBackgroundPixmap( *renderer.pixmap() );
+	desktop()->repaint( true );
+	if (renderer.backgroundMode() != KBackgroundSettings::Program &&
+	    (renderer.multiWallpaperMode() == KBackgroundSettings::NoMulti ||
+	     renderer.multiWallpaperMode() == KBackgroundSettings::NoMultiRandom))
+		quit();
 }
 
-void MyApplication::slotTimeout()
+void
+MyApplication::slotTimeout()
 {
-  bool change = false;
+	bool change = false;
 
-  if ((renderer.backgroundMode() == KBackgroundSettings::Program) &&
-      (renderer.KBackgroundProgram::needUpdate()))
-  {
-     renderer.KBackgroundProgram::update();
-     change = true;
-  }
+	if ((renderer.backgroundMode() == KBackgroundSettings::Program) &&
+	    (renderer.KBackgroundProgram::needUpdate()))
+	{
+		renderer.KBackgroundProgram::update();
+		change = true;
+	}
 
-  if (renderer.needWallpaperChange()) {
-     renderer.changeWallpaper();
-     change = true;
-  }
+	if (renderer.needWallpaperChange()) {
+		renderer.changeWallpaper();
+		change = true;
+	}
 
-  if (change)
-     renderer.start();
+	if (change)
+		renderer.start();
 }
 
-int main(int argc, char *argv[])
+int
+main( int argc, char *argv[] )
 {
-  KApplication::disableAutoDcopRegistration();
+	KApplication::disableAutoDcopRegistration();
 
-  KLocale::setMainCatalogue( "kdesktop" );
-  KCmdLineArgs::init( argc, argv, "krootimage", I18N_NOOP("KRootImage"), description, version );
-  KCmdLineArgs::addCmdLineOptions( options );
+	KLocale::setMainCatalogue( "kdesktop" );
+	KCmdLineArgs::init( argc, argv, "krootimage", I18N_NOOP( "KRootImage" ), description, version );
+	KCmdLineArgs::addCmdLineOptions( options );
 
-  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  if (!args->count())
-    args->usage();
-  MyApplication app( args->arg( 0 ) );
-  args->clear();
+	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+	if (!args->count())
+		args->usage();
+	MyApplication app( args->arg( 0 ) );
+	args->clear();
 
-  app.exec();
+	app.exec();
 
-  app.flushX();
+	app.flushX();
 
-  // Keep color resources after termination
-  XSetCloseDownMode( qt_xdisplay(), RetainTemporary );
+	// Keep color resources after termination
+	XSetCloseDownMode( qt_xdisplay(), RetainTemporary );
 
-  return 0;
+	return 0;
 }
 
 #include "krootimage.moc"

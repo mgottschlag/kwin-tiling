@@ -1,24 +1,24 @@
-    /*
+/*
 
-    KDM remote control application
+KDM remote control application
 
-    Copyright (C) 2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright (C) 2004 Oswald Buddenhagen <ossi@kde.org>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-    */
+*/
 
 #include <config.h>
 
@@ -120,7 +120,7 @@ run( int fd, char **argv )
 			if (exe( fd, buf, strlen( buf ) ))
 				return 1;
 		}
-	} else {	
+	} else {
 		len = strlen( *argv );
 		if (len >= sizeof(buf))
 			goto bad;
@@ -135,7 +135,7 @@ run( int fd, char **argv )
 		}
 		buf[len++] = '\n';
 		return exe( fd, buf, len );
-	    bad:
+	  bad:
 		fprintf( stderr, "Command too long\n" );
 		return 1;
 	}
@@ -150,7 +150,7 @@ main( int argc, char **argv )
 	char *ptr;
 	int fd;
 
-	(void) argc;
+	(void)argc;
 	while (*++argv) {
 		ptr = *argv;
 		if (*ptr != '-' || !*(ptr + 1))
@@ -163,11 +163,11 @@ main( int argc, char **argv )
 "Usage: kdmctl [options] [command [command arguments]]\n"
 "\n"
 "Options are:\n"
-" -h -help	This help message.\n"
-" -g -global	Use global control socket even if $DISPLAY is set\n"
-" -d -display	Override $DISPLAY\n"
-" -s -sockets	Override $DM_CONTROL\n"
-" -c -config	Use alternative kdm config file\n"
+" -h -help     This help message.\n"
+" -g -global   Use global control socket even if $DISPLAY is set\n"
+" -d -display  Override $DISPLAY\n"
+" -s -sockets  Override $DM_CONTROL\n"
+" -c -config   Use alternative kdm config file\n"
 "\n"
 "The directory in which the sockets are located is determined this way:\n"
 "- the -s option is examined\n"
@@ -198,7 +198,7 @@ main( int argc, char **argv )
 			ctl = *++argv;
 		} else if (!strcmp( ptr, "c" ) || !strcmp( ptr, "config" )) {
 			if (!argv[1]) {
-			    needarg:
+			  needarg:
 				fprintf( stderr, "Option '%s' needs argument.\n",
 				         ptr );
 				return 1;
