@@ -1,8 +1,7 @@
 /* $Id$ */
 
 #include <qtabbar.h>
-#include <kapp.h>
-#include <kcharsets.h>
+#include <kglobal.h>
 #include "memory.h"
 #include <klocale.h>
 #include "memory.moc"
@@ -21,8 +20,7 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
   totalMem = new QLabel("0k", this);
   totalMem->move(STARTX2,STARTY+0*DY);
   totalMem->setAutoResize(TRUE);
-  QFont courierFont("Courier");
-  KApplication::getKApplication()->getCharsets()->setQFont(courierFont);
+  QFont courierFont = KGlobal::fixedFont();
   totalMem->setFont(courierFont);
 
   freeMem = new QLabel(i18n("Free memory"), this);

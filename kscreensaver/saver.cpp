@@ -5,7 +5,7 @@
 #include <qbitmap.h>
 #include <main.h>  // ssApp
 #include <kapp.h>  // for kde_bindir()
-#include <kcharsets.h>
+#include <kglobal.h>
 #include <kprocess.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
@@ -53,15 +53,15 @@ KPasswordDlg::KPasswordDlg( QWidget *parent, bool s ) : QWidget( parent )
 	frame->setLineWidth( 2 );
 	frame->setGeometry( 0, 0, 200, 100 );
 
-	QFont font( "helvetica", 18 );
-	KApplication::getKApplication()->getCharsets()->setQFont(font);
+	QFont font = KGlobal::generalFont();
+	font.setPointSize(18);
+
 	label = new QLabel( glocale->translate("Enter Password"), frame );
 	label->setGeometry( 20, 20, 160, 30 );
 	label->setAlignment( AlignCenter );
 	label->setFont( font );
 	
 	font.setPointSize( 16 );
-	KApplication::getKApplication()->getCharsets()->setQFont(font);
 	entry = new QLabel( "", frame );
 	entry->setGeometry( 20, 60, 160, 30 );
 	entry->setFont( font );	

@@ -12,7 +12,7 @@
 #include <time.h>
 
 #include <kapp.h> 
-#include <kcharsets.h>
+#include <kglobal.h>
 
 #include <qpainter.h>
 #include <qpixmap.h>
@@ -140,8 +140,8 @@ KPrepareDlg::KPrepareDlg( QWidget *parent ) : QWidget( parent )
         frame->setFrameStyle( QFrame::Panel | QFrame::Raised );
         frame->setLineWidth( 2 );
 
-	QFont font( "helvetica", 18 );
-	KApplication::getKApplication()->getCharsets()->setQFont(font);
+	QFont font = KGlobal::generalFont();
+	font.setPointSize(18);
 
 	label = new QLabel( QString(), frame );
 	label->setAlignment( AlignCenter );

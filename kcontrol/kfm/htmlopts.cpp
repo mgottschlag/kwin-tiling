@@ -17,7 +17,7 @@
 #include <qlayout.h>//CT - 12Nov1998
 #include <qpushbutton.h>
 #include <qradiobutton.h>
-#include <kapp.h>
+#include <kglobal.h>
 #include <kconfig.h>
 #include <X11/Xlib.h>
 
@@ -119,7 +119,7 @@ KFontOptions::KFontOptions( QWidget *parent, const char *name )
     lay->activate();
 
     m_pCharset = new QComboBox( false, this );
-    charsets = kapp->getCharsets()->availableCharsetNames();
+    charsets = KGlobal::charsets()->availableCharsetNames();
     charsets.insert(0, i18n("Use language charset"));
     m_pCharset->insertStringList( charsets );
 

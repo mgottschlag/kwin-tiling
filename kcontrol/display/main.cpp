@@ -35,6 +35,7 @@
 #include "energy.h"
 #include <qfont.h>
 #include <kconfig.h>
+#include <kglobal.h>
 
 class KDisplayApplication : public KControlApplication
 {
@@ -101,7 +102,7 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
 void KDisplayApplication::init()
 {
   KColorScheme *colors = new KColorScheme(0, KDisplayModule::Init);
-  writeQDesktopProperties( colors->createPalette(), kapp->generalFont() );
+  writeQDesktopProperties( colors->createPalette(), KGlobal::generalFont() );
   delete colors;
   KBackground *background =  new KBackground(0, KDisplayModule::Init);
   delete background;
@@ -112,8 +113,8 @@ void KDisplayApplication::init()
   KGeneral *general = new KGeneral(0, KDisplayModule::Init);
   delete general;
 
-  KConfigGroupSaver saver(kapp->getConfig(), "X11");
-  if (kapp->getConfig()->readBoolEntry( "useResourceManager", true )){
+  KConfigGroupSaver saver(KGlobal::config(), "X11");
+  if (KGlobal::config()->readBoolEntry( "useResourceManager", true )){
       KProcess proc;
       proc.setExecutable("krdb");
       proc.start( KProcess::Block );
@@ -139,10 +140,10 @@ void KDisplayApplication::apply()
   if (colors || fonts) {
       QPalette pal = colors?colors->createPalette():qApp->palette();
 
-      KConfig *config = kapp->getConfig();
+      KConfig *config = KGlobal::config();
       config->reparseConfiguration();
       config->setGroup( "General" );
-      QFont font = kapp->generalFont();
+      QFont font = KGlobal::generalFont();
       font = config->readFontEntry( "font", &font);
       writeQDesktopProperties( pal, font);
   }

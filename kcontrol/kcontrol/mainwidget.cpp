@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 
+#include <kglobal.h>
 #include <kcharsets.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -20,8 +21,9 @@ mainWidget::mainWidget(QWidget *parent , const char *name)
   KIconLoader iconLoader;
 
   QLabel *heading = new QLabel(i18n("KDE Control Center"),this);
+  // FIXME: should use KDE fonts
   QFont font("times",18,QFont::Bold);
-  KApplication::getKApplication()->getCharsets()->setQFont(font);
+  KGlobal::charsets()->setQFont(font);
   pmap = iconLoader.loadIcon("kdekcc.xpm");
   heading->setFont(font);
   heading->adjustSize();
@@ -37,10 +39,11 @@ void mainWidget::paintEvent(QPaintEvent *)
   char buf[512];
   QPainter p(this);
   
+  // FIXME: should use KDE Fonts!!!
   QFont normalFont("times",12,QFont::Normal);
-  KApplication::getKApplication()->getCharsets()->setQFont(normalFont);
+  KGlobal::charsets()->setQFont(normalFont);
   QFont boldFont("times",12,QFont::Bold);
-  KApplication::getKApplication()->getCharsets()->setQFont(boldFont);
+  KGlobal::charsets()->setQFont(boldFont);
 
   // center the pixmap horizontally
   p.drawPixmap( (width() - pmap.width())/2, 250, pmap);

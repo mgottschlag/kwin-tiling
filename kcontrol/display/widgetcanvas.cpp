@@ -8,6 +8,7 @@
 #include <kcolordrag.h>
 #include "widgetcanvas.h"
 #include "widgetcanvas.moc"
+#include <kglobal.h>
 
 WidgetCanvas::WidgetCanvas( QWidget *parent, const char *name )
 	: QWidget( parent, name )
@@ -117,8 +118,7 @@ void WidgetCanvas::drawSampleWidgets()
 	pmTitle.gradientFill( iaTitle, iaBlend, FALSE );
 	paint.drawPixmap( 20, 10, pmTitle ); 
    
-    QFont fnt("Helvetica", 12, QFont::Bold);
-    KApplication::getKApplication()->getCharsets()->setQFont(fnt);
+	QFont fnt = KGlobal::generalFont();
     paint.setFont( fnt );
     paint.setPen( iaTxt );
     paint.drawText( 25, 25, i18n("Inactive window") );
