@@ -29,6 +29,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kio/netaccess.h>
+#include <kio/job.h>
 #include <ktar.h>
 #include <kipc.h>
 #include <kiconloader.h>
@@ -83,7 +84,7 @@ bool KTheme::load( const KURL & url )
     kdDebug() << "Loading theme from URL: " << url << endl;
 
     QString tmpFile;
-    if ( !KIO::NetAccess::download( url, tmpFile ) )
+    if ( !KIO::NetAccess::download( url, tmpFile, 0L ) )
         return false;
 
     kdDebug() << "Theme is in temp file: " << tmpFile << endl;
@@ -547,7 +548,7 @@ void KTheme::apply()
 bool KTheme::remove( const QString & name )
 {
     kdDebug() << "Going to remove theme: " << name << endl;
-    return KIO::NetAccess::del( KGlobal::dirs()->saveLocation( "themes", name + "/" ) );
+    return KIO::NetAccess::del( KGlobal::dirs()->saveLocation( "themes", name + "/" ), 0L );
 }
 
 void KTheme::setProperty( const QString & name, const QString & value, QDomElement parent )
@@ -627,30 +628,26 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
     if ( fi.isRelative() )
         fi.setFile( findResource( section, path ) );
 
-    //kdDebug() << "Processing file: " << fi.absFilePath() << ", " << fi.fileName() << endl;
+    kdDebug() << "Processing file: " << fi.absFilePath() << ", " << fi.fileName() << endl;
 
     if ( section == "desktop" )
     {
-        if ( copyFile( fi.absFilePath(),
-                       m_kgd->saveLocation( "themes", m_name + "/wallpapers/desktop/" ) + fi.fileName() ) )
+        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/desktop/" ) ) )
             return "theme:/wallpapers/desktop/" + fi.fileName();
     }
     else if ( section == "sounds" )
     {
-        if ( copyFile( fi.absFilePath(),
-                  m_kgd->saveLocation( "themes", m_name + "/sounds/" ) + fi.fileName() ) )
+        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/sounds/" ) ) )
             return "theme:/sounds/" + fi.fileName();
     }
     else if ( section == "konqueror" )
     {
-        if ( copyFile( fi.absFilePath(),
-                       m_kgd->saveLocation( "themes", m_name + "/wallpapers/konqueror/" ) + fi.fileName() ) )
+        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/konqueror/" ) ) )
             return "theme:/wallpapers/konqueror/" + fi.fileName();
     }
     else if ( section == "panel" )
     {
-        if ( copyFile( fi.absFilePath(),
-                       m_kgd->saveLocation( "themes", m_name + "/wallpapers/panel/" ) + fi.fileName() ) )
+        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/panel/" ) ) )
             return "theme:/wallpapers/panel/" + fi.fileName();
     }
     else
@@ -698,16 +695,17 @@ void KTheme::setVersion( const QString & version )
 void KTheme::addPreview()
 {
     QString file = m_kgd->saveLocation( "themes", m_name + "/" ) + m_name + ".preview.png";
+    kdDebug() << "Adding preview: " << file << endl;
     QPixmap snapshot = QPixmap::grabWindow( qt_xrootwin() );
     snapshot.save( file, "PNG" );
-
-    kdDebug() << k_funcinfo << "Adding preview: " << file << endl;
 }
 
 bool KTheme::copyFile( const QString & from, const QString & to )
 {
     // we overwrite b/c of restoring the "original" theme
-    return KIO::NetAccess::file_copy( from, to, -1, true /*overwrite*/ );
+    KIO::copy( from, to, false /*progress*/ );
+    struct stat buf;
+    return ( ( stat( QFile::encodeName( to ), &buf ) == 0 ) && ( S_IRUSR & buf.st_mode ) );
 }
 
 QString KTheme::findResource( const QString & section, const QString & path )
