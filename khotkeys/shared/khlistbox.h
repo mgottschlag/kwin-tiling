@@ -22,7 +22,7 @@ class KHListBox
     : public QListBox
     {
     Q_OBJECT
-    Q_PROPERTY( bool forceSelect READ forceSelect WRITE setForceSelect );
+    Q_PROPERTY( bool forceSelect READ forceSelect WRITE setForceSelect )
     public:
         KHListBox( QWidget* parent_P, const char* name_P = NULL );
         virtual void clear();

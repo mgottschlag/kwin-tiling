@@ -304,7 +304,7 @@ const T* Simple_action_data< T, A >::trigger() const
     
 // Command_url_shortcut_action_data
 
-template Simple_action_data< Shortcut_trigger, Command_url_action >;
+template class Simple_action_data< Shortcut_trigger, Command_url_action >;
 
 Command_url_shortcut_action_data::Command_url_shortcut_action_data( Action_data_group* parent_P,
     const QString& name_P, const QString& comment_P,
@@ -326,7 +326,7 @@ void Simple_action_data< Shortcut_trigger, Command_url_action >
 
 // Menuentry_shortcut_action_data
 
-template Simple_action_data< Shortcut_trigger, Menuentry_action >;
+template class Simple_action_data< Shortcut_trigger, Menuentry_action >;
 
 Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( Action_data_group* parent_P,
     const QString& name_P, const QString& comment_P,
@@ -348,7 +348,7 @@ void Simple_action_data< Shortcut_trigger, Menuentry_action >
 
 // Dcop_shortcut_action_data
 
-template Simple_action_data< Shortcut_trigger, Dcop_action >;
+template class Simple_action_data< Shortcut_trigger, Dcop_action >;
 
 template<>
 void Simple_action_data< Shortcut_trigger, Dcop_action >
@@ -360,7 +360,7 @@ void Simple_action_data< Shortcut_trigger, Dcop_action >
 
 // Keyboard_input_shortcut_action_data
 
-template Simple_action_data< Shortcut_trigger, Keyboard_input_action >;
+template class Simple_action_data< Shortcut_trigger, Keyboard_input_action >;
 
 template<>
 void Simple_action_data< Shortcut_trigger, Keyboard_input_action >
@@ -372,7 +372,7 @@ void Simple_action_data< Shortcut_trigger, Keyboard_input_action >
 
 // Activate_window_shortcut_action_data
 
-template Simple_action_data< Shortcut_trigger, Activate_window_action >;
+template class Simple_action_data< Shortcut_trigger, Activate_window_action >;
 
 template<>
 void Simple_action_data< Shortcut_trigger, Activate_window_action >

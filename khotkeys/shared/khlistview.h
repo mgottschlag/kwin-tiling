@@ -24,7 +24,7 @@ class KHListView
     // obey single/double click settings?
     {
     Q_OBJECT
-    Q_PROPERTY( bool forceSelect READ forceSelect WRITE setForceSelect );
+    Q_PROPERTY( bool forceSelect READ forceSelect WRITE setForceSelect )
     public:
         KHListView( QWidget* parent_P, const char* name_P = NULL );
         virtual void clear();
