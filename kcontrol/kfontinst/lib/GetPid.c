@@ -157,7 +157,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
     mib[1] = KERN_PROC;
     mib[2] = KERN_PROC_ALL;
     sysctl(mib, 3, NULL, &len, NULL, 0);
-    p=malloc(len);
+    p=(struct kinfo_proc*)malloc(len);
     sysctl(mib, 3, p, &len, NULL, 0);
 
     for(num=0; num < len / sizeof(struct kinfo_proc)  && !error; num++)
@@ -180,7 +180,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
         else
         {
 #ifdef __FreeBSD_version
-            if(proc_p.ki_ppid==ppid && p.ki_comm && 0==strcmp(p.ki_comm, proc))
+            if(proc_p.ki_ppid==ppid && p[num].ki_comm && 0==strcmp(p[num].ki_comm, proc))
                 if(pid)
                     error=true;
                 else
