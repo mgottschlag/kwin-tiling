@@ -12,6 +12,7 @@
 #include <qstring.h>
 #include <qspinbox.h>
 #include <qlabel.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -45,6 +46,12 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name)
 
     // Echo mode
     m_EMGroup = new QButtonGroup(i18n("Echo characters as"), this);
+    QWhatsThis::add( m_EMGroup,  i18n("Here you can configure the visual feedback given"
+      " when you have to enter a password in kdesu. It does not affect other programs.<p>"
+      " You can chose between: <ul><li><em>1 star:</em> for each character entered, an asterisk (*)"
+      " appears.</li><li><em>3 stars:</em> for each character entered, three asterisks appear.</li>"
+      " <li><em>no echo:</em> you don't get any visual feed back (so people watching can't even"
+      " tell how many characters your password has).</li></ul>"));
     top->addWidget(m_EMGroup);
     QVBoxLayout *vbox = new QVBoxLayout(m_EMGroup, 10, 10);
     vbox->addSpacing(10);
@@ -59,6 +66,13 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name)
     // Keep password
 
     m_KeepBut = new QCheckBox(i18n("&Remember passwords"), this);
+    QWhatsThis::add( m_KeepBut, i18n("If this option is selected, kdesu will remember your passwords"
+       " for a given time. This way you don't have to enter your password again everytime you do"
+       " something that requires a password. Keep in mind that this option is insecure and may enable"
+       " others to do harm to your information and your system.<p>"
+       " Please <em>do not</em> use this option if you are working in an insecure environment (e.g. in an open-plan office).<p>"
+       " This option does not affect passwords explicitely set in applications, e.g. your mail password"
+       " in KMail.") );
     connect(m_KeepBut, SIGNAL(toggled(bool)), SLOT(slotKeep(bool)));
     top->addWidget(m_KeepBut);
     QHBoxLayout *hbox = new QHBoxLayout();
@@ -68,6 +82,10 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name)
     hbox->addSpacing(20);
     hbox->addWidget(lbl);
     m_TimeoutEdit = new QSpinBox(this);
+    QString wtstr = i18n("Here you can specify for how long kdesu will remember your"
+       " passwords. A short timeout is more secure than a long timeout.");
+    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( m_TimeoutEdit, wtstr );
     lbl->setBuddy(m_TimeoutEdit);
     m_TimeoutEdit->setRange(5, 1200);
     m_TimeoutEdit->setSteps(5, 10);
@@ -180,5 +198,17 @@ int KPasswordConfig::buttons()
 {
     return KCModule::Help | KCModule::Default | KCModule::Reset |
 	   KCModule::Cancel | KCModule::Ok;
+}
+
+QString KPasswordConfig::quickHelp()
+{
+    return i18n("<h1>Passwords</h1> For some actions, like changing the date/time"
+       " of your system clock or creating users on your system, you need special"
+       " privileges. In these cases a KDE program called 'kdesu' will ask you for"
+       " a password. Here you can configure the behavior of kdesu, i.e. what visual"
+       " feedback is given when you enter a password and whether kdesu should remember"
+       " your passwords for a certain time.<p>"
+       " These settings affect kdesu <em>only</em>. This means that e.g. the behavior of"
+       " KMail and other programs asking you for passwords can not be configured here.");
 }
 
