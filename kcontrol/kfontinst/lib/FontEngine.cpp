@@ -775,6 +775,8 @@ static const char * getFoundry(const FT_Face face)
                    *foundry;
     };
 
+    static const int constVendLen=4;
+
     // These are taken from ttmkfdir
     // Removed any commas - StarOffice doesn't like these...
     // Shortened quite a few entires to help with StarOffice
@@ -795,7 +797,7 @@ static const char * getFoundry(const FT_Face face)
         { "IBM",  "IBM"},
         { "ITC",  "ITC"},
         { "IMPR", "Impress"},
-        { "LARA", "LarabieFonts"},
+        { "LARA", "Larabie"},
         { "LEAF", "Interleaf"},
         { "LETR", "letraset"},
         { "LINO", "Linotype"},
@@ -811,127 +813,136 @@ static const char * getFoundry(const FT_Face face)
         { "Y&Y" , "Z&Y"},
         { "2REB", "2Rebels"}, 
         { "3IP" , "3ip"},
-        { "ABC" , "AltekInst"},
+        { "ABC" , "Altek Inst"},
         { "ACUT", "AcuteType"},
-        { "AOP" , "AnArtofP"},
-        { "AZLS", "AzaleaInc"},
+        { "AOP" , "Art Of Penguin"},
+        { "AZLS", "Azalea"},
         { "BARS", "CIA UK"},
         { "BERT", "Berthold"},
         { "BITM", "Bitmap Soft"},
         { "BLAH", "MisterBlas"},
-        { "BOYB", "I.Frances"},
-        { "BRTC", "BearRockTech"},
-        { "BWFW", "B/WFontworks"},
+        { "BOYB", "I Frances"},
+        { "BRTC", "Bear Rock"},
+        { "BWFW", "B/W Fontworks"},
         { "C&C",  "Carter&Cone"},
         { "CAK" , "Pluginfonts"},
-        { "CASL", "H.W.Caslon"},
+        { "CASL", "H W Caslon"},
         { "COOL", "CoolFonts"},
-        { "CTDL", "ChinaTyDesLtd"},
-        { "DAMA", "D.M.Ltd"},
-        { "DS"  , "DSMCoInc"},
-        { "DSCI", "DesScInc"},
-        { "DTC",  "DTCorp"},
-        { "DTPS", "DTPS"},
-        { "DUXB", "DSysInc"},
-        { "ECF" , "E.C.F."},
-        { "EDGE", "R.E.Corp."},
-        { "EFF" , "EFF"},
-        { "EFNT", "EFLLC"},
+        { "CTDL", "ChinaType"},
+        { "DAMA", "DM Ltd"},
+        { "DS"  , "Dainippon"},
+        { "DSCI", "Design Science"},
+        { "DTC",  "Digital Typeface"},
+        { "DTPS", "DTP Software"},
+        { "DUXB", "Duxbury"},
+        { "ECF" , "Emerald City"},
+        { "EDGE", "Rivers Edge"},
+        { "EFF" , "Electronic"},
+        { "EFNT", "E Fonts"},
         { "ELSE", "Elseware"},
         { "ERAM", "Eraman"},
-        { "ESIG", "E-Signature"},
-        { "FBI",  "TFBI"},
-        { "FCAB", "TFC"},
-        { "FONT", "FontSource"},
-        { "FS"  , "FormulaSls"},
-        { "FSE" , "FontSrc"},
-        { "FSI" , "FSIGmbH"},
+        { "ESIG", "E Signature"},
+        { "FBI",  "Font Bureau"},
+        { "FCAB", "Font Cabinet"},
+        { "FONT", "Font Source"},
+        { "FS"  , "Formula"},
+        { "FSE" , "Font Source Europe"},
+        { "FSI" , "FSI GmbH"},
         { "FTFT", "FontFont"},
-        { "FWRE", "FontwareLtd"},
+        { "FWRE", "Fontware"},
         { "GALA", "Galapagos"},
         { "GD"  , "GDFonts"},
-        { "GLYF", "GlyphSys"},
-        { "GPI",  "GammaProd"},
-        { "HY",   "HanYangSys"},
-        { "HILL", "Hill Sys"},
-        { "HOUS", "HouseInd"},
+        { "GLYF", "Glyph Systems"},
+        { "GPI",  "Gamma Productions"},
+        { "HY",   "HanYang System"},
+        { "HILL", "Hill Systems"},
+        { "HOUS", "House Industries"},
         { "HP",   "HP"},
         { "IDEE", "IDEE"},
-        { "IDF",  "IntDigital"},
-        { "ILP",  "IndLang"},
-        { "ITF" , "IntTypeInc"},
+        { "IDF",  "Digital Fonts"},
+        { "ILP",  "Indigenous Lang"},
+        { "ITF" , "Int Type Founders"},
         { "KATF", "Kingsley"},
         { "LANS", "Lanston"},
-        { "LGX" , "LogixRII"},
+        { "LGX" , "Logix Research"},
         { "LING", "Linguists"},
-        { "LP",   "LetterPer"},
+        { "LP",   "LetterPerfect"},
         { "LTRX", "Lighttracks"},
         { "MC"  , "Cerajewski"},
         { "MILL", "Millan"},
-        { "MJ"  , "MajusCorp"},
+        { "MJ"  , "Majus"},
         { "MLGC", "Micrologic"},
-        { "MSCR", "MajusCorp"},
-        { "MTY" , "MotoyaCoLTD"},
+        { "MSCR", "Majus"},
+        { "MTY" , "Motoya"},
         { "MUTF", "CACHE"},
-        { "NB"  , "NoBodoniTyp"},
-        { "NDTC", "NeufvilleDig"},
-        { "NIS" , "NIS Corp"},
-        { "ORBI", "OrbitEntInc"},
-        { "P22" , "P22 Inc"},
-        { "PDWX", "ParsonsDes"},
-        { "PF"  , "PhilsFonts"},
+        { "NB"  , "No Bodoni"},
+        { "NDTC", "Neufville Digital"},
+        { "NIS" , "NIS"},
+        { "ORBI", "Orbit"},
+        { "P22" , "P22"},
+        { "PDWX", "Parsons Design"},
+        { "PF"  , "Phils Fonts"},
         { "PRFS", "Production"},
         { "RKFN", "R K Fonts"},
-        { "robo", "Buro Petr"},
-        { "RUDY", "RudynFluffy"},
+        { "ROBO", "Buro Petr"},
+        { "RUDY", "Rudyn Fluffy"},
         { "SAX" , "SAX gmbh"},
-        { "Sean", "The FontSite"},
-        { "SFI" , "SoftwareF"},
+        { "SEAN", "The FontSite"},
+        { "SFI" , "Software Friends"},
         { "SFUN", "Soft Union"},
-        { "SG"  , "ScooterGfx"},
+        { "SG"  , "Scooter Graphics"},
         { "SIG" , "Signature"},
-        { "SKZ" , "CelticLadys"},
+        { "SKZ" , "Celtic Ladys"},
         { "SN"  , "SourceNet"},
         { "SOHO", "SoftHorizons"},
-        { "SOS" , "StandingOvs"},
-        { "STF" , "BrianSooy"},
+        { "SOS" , "Standing Ovations"},
+        { "STF" , "Brian Sooy"},
         { "STON", "ZHUHAI"},
         { "SUNW", "Sunwalk"},
-        { "SWFT", "SwfteInt"},
+        { "SWFT", "Swfte"},
         { "SYN" , "SynFonts"},
-        { "TDR" , "TansinADarcs"},
+        { "TDR" , "Tansin A Darcos"},
         { "TF"  , "Treacyfaces"},
-        { "TILD", "SIATilde"},
-        { "TPTC", "TESTPILOT"},
-        { "TR"  , "TypeRevivals"},
+        { "TILD", "SIA Tilde"},
+        { "TPTC", "Test Pilot"},
+        { "TR"  , "Type Revivals"},
         { "TS"  , "TamilSoft"},
-        { "UA"  , "UnAuthorized"},
-        { "VKP" , "VijayKPatel"},
+        { "UA"  , "UnAuthorized Type"},
+        { "VKP" , "Vijay K Patel"},
         { "VLKF", "Visualogik"},
-        { "VOG" , "MartinVogel"},
-        { "ZEGR", "ZebraFontFacit"},
-        { "ZETA", "TangramStudio"},
+        { "VOG" , "Martin Vogel"},
+        { "ZEGR", "Zebra Font Facit"},
+        { "ZETA", "Tangram Studio"},
         { "ZSFT", "ZSoft"},
         { NULL  ,  NULL}
     };
 
-    void *table=FT_Get_Sfnt_Table(face, ft_sfnt_os2);
+    void   *table=FT_Get_Sfnt_Table(face, ft_sfnt_os2);
+    static char vendor[constVendLen+1];
+
+    vendor[0]='\0';
 
     if(NULL!=table && 0xFFFF!=((TT_OS2*)table)->version)
     {
-        const char *vendor=(const char *)((TT_OS2*)table)->achVendID;
-        const Map  *entry;
+        const Map *entry;
+        char      vend[constVendLen+1];
+
+        strncpy(vendor, (const char *)((TT_OS2*)table)->achVendID, constVendLen);
+        vendor[constVendLen]='\0';
+
+        for(int i=0; i<constVendLen; ++i)
+            vend[i]=toupper(vendor[i]);
 
         for(entry=map; NULL!=entry->vendorId; entry++)
         {
             unsigned int len=strlen(entry->vendorId);
 
-            if(0==memcmp(entry->vendorId, vendor, len))
+            if(0==memcmp(entry->vendorId, vend, len))
             {
                 bool ok=true;
 
-                for(int i=len; i<4 && ok; i++)
-                    if(vendor[i]!=' ' && entry->vendorId[i]!='\0')
+                for(int i=len; i<constVendLen && ok; i++)
+                    if(vend[i]!=' ' && entry->vendorId[i]!='\0')
                         ok=false;
 
                 if(ok)
@@ -950,10 +961,29 @@ static const char * getFoundry(const FT_Face face)
 #endif
 
     if(!foundry)
-        foundry=getFoundry(getName(face, TT_NAME_ID_TRADEMARK));
+        foundry=getFoundry(getName(face, TT_NAME_ID_TRADEMARK), true);
 
     if(!foundry)
-        foundry=getFoundry(getName(face, TT_NAME_ID_MANUFACTURER));
+        foundry=getFoundry(getName(face, TT_NAME_ID_MANUFACTURER), true);
+
+    if(!foundry && vendor[0] && !isspace(vendor[0]) && '-'!=vendor[0])  // Some fonts have a totally blank vendor field - just spaces!
+    {
+        int i;
+
+        // Remove any dashes...
+        for(int i=constVendLen-1; i>0; i--)
+            if('-'==vendor[i])
+                vendor[i]=' ';
+
+        // Strip any trailing whitepace
+        for(i=constVendLen-1; i>0; i--)
+            if(isspace(vendor[i]))
+               vendor[i]='\0';
+            else
+               break;
+
+        foundry=vendor;
+    }
 
     return foundry ? foundry : constDefaultFoundry;
 }
@@ -1391,6 +1421,9 @@ QStringList CFontEngine::getEncodingsT1()
     else
         enc=getEncodingsFt();
 
+    if(0==enc.count())
+        enc.append("adobe-standard");
+
     return enc;
 }
 
@@ -1546,12 +1579,32 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask, int face)
 
                     bool gotItalic=false;
 
-                    if(NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post)))
+                    if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
                     {
-                        itsItalic=ITALIC_NONE;
-                        itsItalicAngle=0;
+                        itsWidth=WIDTH_UNKNOWN;
+                        itsWeight=WEIGHT_UNKNOWN;
                     }
                     else
+                    {
+                        itsWeight=mapWeightTT(((TT_OS2*)table)->usWeightClass);
+                        itsWidth=mapWidthTT(((TT_OS2*)table)->usWidthClass);
+                        if(WEIGHT_UNKNOWN==itsWeight)
+                            itsWeight=((TT_OS2*)table)->fsSelection&(1 << 5) ? WEIGHT_BOLD : WEIGHT_UNKNOWN;
+                        itsItalic=((TT_OS2*)table)->fsSelection&(1 << 0) ? ITALIC_ITALIC : ITALIC_NONE;
+                        itsItalicAngle=ITALIC_ITALIC==itsItalic ? -12 : 0 ; // Hmm...
+                        gotItalic=true;
+                    }
+
+                    if(WEIGHT_UNKNOWN==itsWeight && NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)))
+                        itsWeight=((TT_Header *)table)->Mac_Style & 1 ? WEIGHT_BOLD : WEIGHT_UNKNOWN;
+
+                    if(!gotItalic && NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)))
+                    {
+                        gotItalic=true;
+                        itsItalic=((TT_Header *)table)->Mac_Style & 2 ? ITALIC_ITALIC: ITALIC_NONE; 
+                    }
+
+                    if(!gotItalic && NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post)))
                     {
                         struct TFixed
                         {
@@ -1566,38 +1619,6 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask, int face)
                         gotItalic=true;
                         itsItalicAngle=((TFixed)((TT_Postscript*)table)->italicAngle).value();
                         itsItalic=itsItalicAngle== 0.0f ? ITALIC_NONE : ITALIC_ITALIC;
-                    }
-
-                    if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
-                    {
-                        itsWidth=WIDTH_UNKNOWN;
-                        itsWeight=WEIGHT_UNKNOWN;
-                        if(!gotItalic)
-                        {
-                            itsItalicAngle=0;
-                            itsItalic=ITALIC_NONE;
-                        }
-                    }
-                    else
-                    {
-                        itsWeight=mapWeightTT(((TT_OS2*)table)->usWeightClass);
-                        itsWidth=mapWidthTT(((TT_OS2*)table)->usWidthClass);
-                        if(WEIGHT_UNKNOWN==itsWeight)
-                            itsWeight=((TT_OS2*)table)->fsSelection&(1 << 5) ? WEIGHT_BOLD : WEIGHT_UNKNOWN;
-                        if(!gotItalic)
-                        {
-                            itsItalic=((TT_OS2*)table)->fsSelection&(1 << 0) ? ITALIC_ITALIC : ITALIC_NONE;
-                            itsItalicAngle=ITALIC_ITALIC==itsItalic ? -12 : 0 ; // Hmm...
-                        }
-                    }
-
-                    if(WEIGHT_UNKNOWN==itsWeight && NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)))
-                        itsWeight=((TT_Header *)table)->Mac_Style & 1 ? WEIGHT_BOLD : WEIGHT_UNKNOWN;
-
-                    if(!gotItalic && NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)))
-                    {
-                        gotItalic=true;
-                        itsItalic=((TT_Header *)table)->Mac_Style & 2 ? ITALIC_ITALIC: ITALIC_NONE; 
                     }
 
                     if(itsItalicAngle>45.0 || itsItalicAngle<-45.0)
@@ -2007,6 +2028,10 @@ QStringList CFontEngine::getEncodingsFt()
         }
 #endif
     }
+
+    if(0==enc.count())
+        enc.append("iso8859-1");
+
     return enc;
 }
 
