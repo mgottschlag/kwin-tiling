@@ -23,8 +23,8 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kwinmodule.h>
-#include <kregexpeditor.h>
-#include <kregexpdialoginterface.h>
+#include <kregexpeditorinterface.h>
+#include <kparts/componentfactory.h>
 
 #include "configdialog.h"
 
@@ -147,14 +147,14 @@ void ListView::rename( QListViewItem* item, int c )
   
   if ( gui ) {
     if ( ! _regExpEditor )
-      _regExpEditor = KRegExpEditor::createDialog( this );
-    KRegExpDialogInterface *iface = dynamic_cast<KRegExpDialogInterface *>( _regExpEditor );
+      _regExpEditor = KParts::ComponentFactory::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor", QString::null, this );
+    KRegExpEditorInterface *iface = dynamic_cast<KRegExpEditorInterface *>( _regExpEditor );
     assert( iface );
-    iface->regExpEditor()->setProperty( "regexp", item->text( 0 ) );
+    iface->setRegExp( item->text( 0 ) );
 
     bool ok = _regExpEditor->exec();
     if ( ok )
-      item->setText( 0, iface->regExpEditor()->property( "regexp" ).toString() );
+      item->setText( 0, iface->regExp() );
     
   }
   else
@@ -228,7 +228,7 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     listView->setSorting( -1 ); // newly inserted items just append unsorted
 
     cbUseGUIRegExpEditor = new QCheckBox( i18n("&Use graphical editor for editing regular expressions" ), this );
-    QWidget *w = KRegExpEditor::createDialog( 0 );
+    QDialog *w = KParts::ComponentFactory::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor" );
     if ( !w )
     {
 	cbUseGUIRegExpEditor->hide();

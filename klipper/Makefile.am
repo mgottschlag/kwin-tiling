@@ -5,7 +5,7 @@ lib_LTLIBRARIES = klipper.la
 
 CLEANFILES = dummy.cpp
 
-klipper_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) -lkregexpeditor
+klipper_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) 
 klipper_la_SOURCES = main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp
 
 klipper_la_METASOURCES = AUTO
