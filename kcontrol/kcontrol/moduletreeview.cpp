@@ -199,7 +199,7 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
         item = static_cast<ModuleTreeItem*>(item->nextSibling());
      }
      if (!item)
-        break; // Not found (??)
+        break; // Not found (?)
   }
 
   // make the item visible
