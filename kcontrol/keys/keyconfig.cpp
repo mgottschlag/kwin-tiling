@@ -150,7 +150,11 @@ void KKeyModule::init()
 
 void KKeyModule::load()
 {
-  // TODO
+  for (KKeyEntryMap::Iterator it = dict.begin(); it != dict.end(); ++it) 
+  {
+      (*it).aConfigKeyCode = (*it).aCurrentKeyCode;
+  }
+  kc->listSync();
 }
 
 void KKeyModule::save()
