@@ -128,7 +128,7 @@ void KLanguageButton::insertSubmenu( const QString &text, const QString &tag,
 }
 
 void KLanguageButton::insertLanguage( const QString& path, const QString& name,
-                        const QString& sub, const QString &submenu, int index )
+                        const QString&, const QString &submenu, int index )
 {
   QString output = name + QString::fromLatin1( " (" ) + path +
                    QString::fromLatin1( ")" );

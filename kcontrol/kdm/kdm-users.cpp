@@ -332,7 +332,7 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
     KURL *url = decodeImgDrop(e, this);
     if (url) {
 	QString pixpath;
-	KIO::NetAccess::download(*url, pixpath);
+	KIO::NetAccess::download(*url, pixpath, parentWidget());
 	changeUserPix( pixpath );
 	KIO::NetAccess::removeTempFile(pixpath);
 	delete url;

@@ -463,7 +463,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 	    pixurl = "file:" +
 		     KGlobal::dirs()->resourceDirs("data").last() +
 		     "kdm/pics/" + url->fileName();
-	    KIO::NetAccess::copy(*url, pixurl);
+	    KIO::NetAccess::copy(*url, pixurl, parentWidget());
 	    istmp = true;
 	} else {
 	    pixurl = *url;
@@ -472,7 +472,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 
 	// By now url should be "file:/..."
 	if (!setLogo(pixurl.path())) {
-	    KIO::NetAccess::del(pixurl);
+	    KIO::NetAccess::del(pixurl, parentWidget());
 	    QString msg = i18n("There was an error loading the image:\n"
 			       "%1\n"
 			       "It will not be saved.")
