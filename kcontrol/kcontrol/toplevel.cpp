@@ -85,12 +85,15 @@ TopLevel::TopLevel(const char* name)
   for ( ConfigModule* m = _modules->first(); m; m = _modules->next() )
       connect( m, SIGNAL( helpRequest() ), this, SLOT( slotHelpRequest() ) );
 
+/***** START: MK
+*/
+
   // create the layout box
-  QHBox *hbox = new QHBox(this);
-  hbox->setSpacing(2);
+  QSplitter *_splitter = new QSplitter( QSplitter::Horizontal, this );
 
   // create the left hand side (the tab view)
-  _tab = new QTabWidget(hbox);
+//  _tab = new QTabWidget(hbox);
+  _tab = new QTabWidget( _splitter );
 
   QWhatsThis::add( _tab, i18n("Choose between Index, Search and Quick Help") );
 
@@ -115,16 +118,15 @@ TopLevel::TopLevel(const char* name)
   _helptab = new HelpWidget(_tab);
   _tab->addTab(_helptab, i18n("Hel&p"));
 
-  _tab->setMinimumWidth(_tab->sizeHint().width());
-  _tab->setMaximumWidth(_tab->sizeHint().width());
+  _tab->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
 
-  // add a seperator
-  KSeparator *sep = new KSeparator( hbox );
-  sep->setFocusPolicy(QWidget::NoFocus);
-  sep->setOrientation( QFrame::VLine );
+  // That one does the trick ..,
+  _splitter->setResizeMode( _tab, QSplitter::FollowSizeHint );
 
   // set up the right hand side (the docking area)
-  _dock = new DockContainer(hbox);
+  _dock = new DockContainer( _splitter );
+  _dock->setSizePolicy( QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Preferred ) );
+
   connect(_dock, SIGNAL(newModule(const QString&, const QString&, const QString&)),
                   this, SLOT(newModule(const QString&, const QString&, const QString&)));
   connect(_dock, SIGNAL(changedModule(ConfigModule*)),
@@ -134,13 +136,8 @@ TopLevel::TopLevel(const char* name)
   AboutWidget *aw = new AboutWidget(this);
   _dock->setBaseWidget(aw);
 
-  // set a reasonable resize mode
-  hbox->setStretchFactor(_tab, 0);
-  hbox->setStretchFactor(sep, 0);
-  hbox->setStretchFactor(_dock, 1);
-
   // set the main view
-  setCentralWidget(hbox);
+  setCentralWidget( _splitter );
 
   // initialize the GUI actions
   setupActions();
