@@ -728,17 +728,10 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				if (ar[1])
 					goto exce;
 				d->hstent->lock = 1;
-#ifdef AUTO_RESERVE
-				if (AllLocalDisplaysLocked( 0 ))
-					StartReserveDisplay( 0 );
-#endif
 			} else if (!strcmp( ar[0], "unlock" )) {
 				if (ar[1])
 					goto exce;
 				d->hstent->lock = 0;
-#ifdef AUTO_RESERVE
-				ReapReserveDisplays();
-#endif
 			} else if (!strcmp( ar[0], "suicide" )) {
 				if (ar[1])
 					goto exce;

@@ -98,42 +98,6 @@ idleReserveDisplays( void )
 	return cnt;
 }
 
-#ifdef AUTO_RESERVE
-int
-AllLocalDisplaysLocked( struct display *dp )
-{
-	struct display *d;
-
-	for (d = displays; d; d = d->next)
-		if (d != dp &&
-		    (d->displayType & d_location) == dLocal &&
-		    d->status == running && !d->hstent->lock)
-			return 0;
-	return 1;
-}
-
-void
-ReapReserveDisplays( void )
-{
-	struct display *d, *rd;
-
-	for (rd = 0, d = displays; d; d = d->next)
-		if ((d->displayType & d_location) == dLocal && d->status == running &&
-		    !d->hstent->lock)
-		{
-			if (rd) {
-				rd->idleTimeout = 0;
-				if (rd->pid != -1)
-					kill( rd->pid, SIGALRM );
-				rd = 0;
-			}
-			if ((d->displayType & d_lifetime) == dReserve &&
-			    d->userSess < 0)
-				rd = d;
-		}
-}
-#endif /* AUTO_RESERVE */
-
 int
 StartReserveDisplay( int lt )
 {

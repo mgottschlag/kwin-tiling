@@ -574,11 +574,7 @@ ManageSession( struct display *d )
 		OpenGreeter();
 		if (Setjmp( idleTOJmp )) {
 			CloseGreeter( TRUE );
-#ifdef AUTO_RESERVE
-			SessionExit( EX_RESERVE );
-#else
 			SessionExit( EX_NORMAL );
-#endif
 		}
 		Signal( SIGALRM, IdleTOJmp );
 		alarm( td->idleTimeout );

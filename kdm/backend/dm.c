@@ -845,20 +845,10 @@ ReapChildren( void )
 				ExitDisplay( d, DS_REMOTE, 0, 0 );
 				break;
 #endif
-#ifdef AUTO_RESERVE
-			case EX_RESERVE:
-				Debug( "display exited with EX_RESERVE\n" );
-				ExitDisplay( d, DS_RESERVE, 0, 0 );
-				break;
-#endif
 			case EX_NORMAL:
 				/* (any type of) session ended */
 				Debug( "display exited with EX_NORMAL\n" );
-				if ((d->displayType & d_lifetime) == dReserve
-#ifdef AUTO_RESERVE
-				    && !AllLocalDisplaysLocked( d )
-#endif
-				   )
+				if ((d->displayType & d_lifetime) == dReserve)
 					ExitDisplay( d, DS_RESERVE, 0, 0 );
 				else
 					ExitDisplay( d, DS_RESTART, XS_KEEP, TRUE );

@@ -650,7 +650,4 @@ void sessreg( struct display *d, int pid, const char *user, int uid );
 
 #endif /* XDMCP */
 
-/* automatically fork off reserve display if all displays are locked */
-/*#define AUTO_RESERVE 1*/
-
 #endif /* _DM_H_ */
