@@ -104,6 +104,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   mPreview = new QLabel(this);
   mPreview->setFrameStyle(QFrame::Panel|QFrame::Sunken);
   mPreview->setMinimumSize(QSize(320,240));
+  mPreview->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
   mGrid->addWidget(mPreview, 0, 1);
 
   bbox = new KButtonBox(this, KButtonBox::Vertical, 0, 6);
