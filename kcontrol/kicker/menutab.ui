@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>578</width>
-            <height>619</height>
+            <width>502</width>
+            <height>541</height>
         </rect>
     </property>
     <property name="caption">
@@ -40,7 +40,7 @@
             <property name="title">
                 <string>&amp;K Menu Layout</string>
             </property>
-            <vbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
@@ -50,7 +50,7 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QCheckBox">
+                <widget class="QCheckBox" row="0" column="0">
                     <property name="name">
                         <cstring>m_showPixmap</cstring>
                     </property>
@@ -64,51 +64,7 @@
                         <string>Choose whether to show the vertical image down the side of the K menu</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>m_showBookmarks</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Show "&amp;Bookmarks" submenu</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>m_showRecent</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Show "Recent &amp;Documents" submenu</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>m_showQuickBrowser</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Show "&amp;Quick Browser" submenu</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>m_mergeLocations</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Merge d&amp;ifferent menu locations</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget">
+                <widget class="QLayoutWidget" row="3" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>Layout9</cstring>
                     </property>
@@ -250,7 +206,51 @@
                         </widget>
                     </hbox>
                 </widget>
-            </vbox>
+                <widget class="QCheckBox" row="1" column="0">
+                    <property name="name">
+                        <cstring>m_showRecent</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show "Recent &amp;Documents" submenu</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>m_showBookmarks</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show "&amp;Bookmarks" submenu</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="1">
+                    <property name="name">
+                        <cstring>m_showQuickBrowser</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show "&amp;Quick Browser" submenu</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_mergeLocations</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Merge d&amp;ifferent menu locations</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </grid>
         </widget>
         <widget class="QGroupBox">
             <property name="name">
@@ -307,7 +307,10 @@
                                 <cstring>TextLabel1</cstring>
                             </property>
                             <property name="text">
-                                <string>Maximum browser menu entries:</string>
+                                <string>&amp;Maximum browser menu entries:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>m_maxSlider</cstring>
                             </property>
                         </widget>
                         <widget class="QLayoutWidget">
@@ -428,7 +431,10 @@
                                 <cstring>TextLabel</cstring>
                             </property>
                             <property name="text">
-                                <string>Clear after x seconds:</string>
+                                <string>Clear after &amp;x seconds:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>m_clearSlider</cstring>
                             </property>
                         </widget>
                         <widget class="QLayoutWidget">
@@ -535,7 +541,10 @@
                                 </sizepolicy>
                             </property>
                             <property name="text">
-                                <string>Max number of "Quick Start" entries:</string>
+                                <string>Max n&amp;umber of "Quick Start" entries:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>m_num2ShowSpinBox</cstring>
                             </property>
                         </widget>
                         <widget class="QSpinBox">
@@ -586,7 +595,7 @@
                     <property name="title">
                         <string>"Quick Start" section contains</string>
                     </property>
-                    <vbox>
+                    <hbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
@@ -612,7 +621,7 @@
                                 <string>Most &amp;frequently used items</string>
                             </property>
                         </widget>
-                    </vbox>
+                    </hbox>
                 </widget>
             </vbox>
         </widget>

@@ -41,7 +41,6 @@ ExtensionsTab::ExtensionsTab( QWidget *parent, const char* name )
   : ExtensionsTabBase (parent, name)
 {
     m_extensionsListView->clear();
-    m_extensionsListView->setColumnText( 0, i18n("Extensions") );
 
     connect(m_locationGroup, SIGNAL(clicked(int)), SLOT(slotChanged()));
     connect(m_autoHide, SIGNAL(clicked()), SLOT(slotChanged()));
