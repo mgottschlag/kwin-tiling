@@ -22,14 +22,15 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
     */
- 
+
 #include "kfdialog.h"
 
 #include <klocale.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qpushbutton.h>
+#include <kpushbutton.h>
+#include <kstdguiitem.h>
 
 #include <X11/Xlib.h>
 
@@ -60,7 +61,7 @@ KFMsgBox::KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text
     QLabel *label1 = new QLabel( winFrame );
     label1->setPixmap( QMessageBox::standardIcon( type ) );
     QLabel *label2 = new QLabel( text, winFrame );
-    QPushButton *button = new QPushButton( i18n("&OK"), winFrame );
+    KPushButton *button = new KPushButton( KStdGuiItem::ok(), winFrame );
     button->setDefault( true );
     button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
     connect( button, SIGNAL( clicked() ), SLOT( accept() ) );

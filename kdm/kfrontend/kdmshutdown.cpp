@@ -31,6 +31,7 @@
 #include <kapplication.h>
 #include <klocale.h>
 #include <kpassdlg.h>
+#include <kstdguiitem.h>
 
 #include <qcombobox.h>
 #include <qvbuttongroup.h>
@@ -38,7 +39,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtimer.h>
-#include <qpushbutton.h>
+#include <kpushbutton.h>
 
 #include <stdlib.h>
 
@@ -148,10 +149,10 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
     } else
 	pswdEdit = 0;
 
-    okButton = new QPushButton( i18n("&OK"), winFrame );
+    okButton = new KPushButton( KStdGuiItem::ok(), winFrame );
     okButton->setSizePolicy( fp );
     okButton->setDefault( true );
-    cancelButton = new QPushButton( i18n("&Cancel"), winFrame );
+    cancelButton = new KPushButton( KStdGuiItem::cancel(), winFrame );
     cancelButton->setSizePolicy( fp );
 
     hlay = new QHBoxLayout( box );

@@ -33,7 +33,7 @@
 
 class LiloInfo;
 class QLabel;
-class QPushButton;
+class KPushButton;
 class QButtonGroup;
 class KPasswordEdit;
 class QComboBox;
@@ -58,8 +58,8 @@ private slots:
 private:
     QLabel		*label;
     QButtonGroup	*howGroup, *whenGroup;
-    QPushButton		*okButton;
-    QPushButton		*cancelButton;
+    KPushButton		*okButton;
+    KPushButton		*cancelButton;
     KPasswordEdit	*pswdEdit;
     QRadioButton	*restart_rb, *force_rb, *try_rb;
     QTimer		*timer;
