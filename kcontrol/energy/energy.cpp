@@ -154,8 +154,8 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     top->addWidget(m_pSuspendSlider);
     QWhatsThis::add( m_pSuspendSlider, i18n("Choose the period of inactivity"
        " after which the display should enter \"suspend\" mode. This is the"
-       " second level of power saving, but for some displays, may not be"
-       " different from the first level.") );
+       " second level of power saving, but may not be different from the first"
+       " level for some displays.") );
 
     m_pOffSlider = new KIntNumInput(m_pSuspendSlider, m_Off, this);
     m_pOffSlider->setLabel(i18n("&Power Off after:"));

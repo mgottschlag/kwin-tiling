@@ -285,7 +285,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
     fontUseList.append(i);
     connect(i, SIGNAL(changed()), this, SLOT(fontChanged()));
 
-    QWhatsThis::add(preview, i18n("This is a preview of the \"%1\" font. You can change this font by using the \"Choose...\" button at right.").arg(i->text()));
+    QWhatsThis::add(preview, i18n("This is a preview of the \"%1\" font. You can change this font by clicking the \"Choose...\" button to the right.").arg(i->text()));
     QToolTip::add(preview, i18n("Preview of the \"%1\" font").arg(i->text()));
 
     QLabel * fontUse = new QLabel(i->text(), this);
@@ -308,7 +308,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
    cbAA = new QCheckBox( i18n( "Use A&nti-Aliasing for fonts and icons" ),this);
    fontUseLayout->addWidget( cbAA, ++count, 0 );
    QWhatsThis::add( cbAA, i18n("If this option is selected, KDE will use anti-aliased fonts and pixmaps, meaning fonts can use more than"
-                                                    "just one color to simulate curves.") );
+                                                    " just one color to simulate curves.") );
    fontUseLayout->setRowStretch( count, 1 );
 
    connect(cbAA, SIGNAL(clicked()), SLOT(slotUseAntiAliasing()));
@@ -347,7 +347,7 @@ QString KFonts::quickHelp() const
       " the font family (for example, <em>helvetica</em> or <em>times</em>),"
       " but also the attributes that make up a specific font (for example,"
       " <em>bold</em> style and <em>12 points</em> in height.)<p>"
-      " Just click the \"Choose\" button that next to the font you want to"
+      " Just click the \"Choose\" button that is next to the font you want to"
       " change."
       " You can ask KDE to try and apply font and color settings to non-KDE"
       " applications as well. See the \"Style\" control module under"
@@ -410,7 +410,7 @@ void KFonts::save()
   aacfg.sync();
 
   if(useAA != useAA_original) {
-    KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change won't take effect before you restart KDE."), i18n("Anti-aliasing settings changed"), "AAsettingsChanged", false);
+    KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change won't take effect until you restart KDE."), i18n("Anti-aliasing settings changed"), "AAsettingsChanged", false);
     useAA_original = useAA;
   }
   _changed = false;

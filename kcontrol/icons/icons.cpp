@@ -96,13 +96,13 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     // Size
     QLabel *lbl = new QLabel(i18n("Size:"), m_pTab1);
     lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 0, 0, Qt::AlignLeft);                                                  
+    grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
     mpSizeBox = new QComboBox(m_pTab1);
     connect(mpSizeBox, SIGNAL(activated(int)), SLOT(slotSize(int)));
     lbl->setBuddy(mpSizeBox);
-    grid->addWidget(mpSizeBox, 0, 1, Qt::AlignLeft);                                                    
+    grid->addWidget(mpSizeBox, 0, 1, Qt::AlignLeft);
 
-    mpDPCheck = new QCheckBox(i18n("Double sized pixels"), m_pTab1);
+    mpDPCheck = new QCheckBox(i18n("Double-sized pixels"), m_pTab1);
     connect(mpDPCheck, SIGNAL(toggled(bool)), SLOT(slotDPCheck(bool)));
     grid->addWidget(mpDPCheck, 1, 0, Qt::AlignLeft);
 
@@ -142,7 +142,7 @@ void KIconConfig::init()
 	mbChanged[i] = false;
 
     // Fill list/checkboxen
-    mpUsageList->insertItem(i18n("Desktop / FileManager"));
+    mpUsageList->insertItem(i18n("Desktop / File Manager"));
     mpUsageList->insertItem(i18n("Toolbar"));
     mpUsageList->insertItem(i18n("Main Toolbar"));
     mpUsageList->insertItem(i18n("Small Icons"));

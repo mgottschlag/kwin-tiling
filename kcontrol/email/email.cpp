@@ -239,7 +239,7 @@ void topKCMEmail::slotNewProfile()
 
 	if (dlgAskName->exec() == QDialog::Accepted) {
 		if (txtName->text().isEmpty()) {
-			KMessageBox::sorry(this, i18n("Oops, you need to enter a name please, thanks."));
+			KMessageBox::sorry(this, i18n("Oops, you need to enter a name please. Thanks."));
 		} else if (m_email->cmbCurProfile->currentText().contains(txtName->text()))
 			KMessageBox::sorry(this, i18n("This e-mail profile already exists, and cannot be created again"), i18n("Oops"));
 		else {

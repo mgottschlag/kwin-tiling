@@ -87,9 +87,9 @@ void IconModule::moduleChanged(bool state)
 QString IconModule::quickHelp() const
 {
   return i18n("<h1>Icons</h1>\n"
-    "This module allows you to choose the icons for you desktop.\n"
+    "This module allows you to choose the icons for your desktop.\n"
     "You can also specify effects that should be applied to the icons.\n"
-    "Use the \"Whats This?\" (Shift+F1) to get help on specific options.");               
+    "Use the \"Whats This?\" (Shift+F1) to get help on specific options.");
 }
 
 

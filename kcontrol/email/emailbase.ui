@@ -129,7 +129,7 @@
                                 <property>
                                     <name>whatsThis</name>
                                     <string>Enter your email address here, e.g. "john@doe.com\ (without the quotation marks). This information is mandatory if you want to use email.&lt;p&gt;
-Do &lt;em&gt;not&lt;/em&gt; enter something like John Doe &amp;lt;john@doe.com&amp;gt;", just a plain email address. Your email address may not contain any blank spaces.</string>
+Do &lt;em&gt;not&lt;/em&gt; enter something like John Doe &amp;lt;john@doe.com&amp;gt;", just a plain email address. Your email address must not contain any blank spaces.</string>
                                 </property>
                             </widget>
                             <widget row="1"  column="0" >

@@ -191,7 +191,7 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
     last = new QListViewItem(item, last, i18n("Default Number of Colormap Cells"),
 		Value((int)DisplayCells(dpy, scr)));
     last = new QListViewItem(item, last, i18n("Preallocated Pixels"),
-		i18n("black %1, White %2")
+		i18n("Black %1, White %2")
 		.arg(KGlobal::locale()->formatNumber(BlackPixel(dpy,scr), 0))
 		.arg(KGlobal::locale()->formatNumber(WhitePixel(dpy,scr), 0)));
 

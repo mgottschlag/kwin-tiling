@@ -114,7 +114,7 @@ void CSSConfig::load()
   c->setGroup("Images");
   dialog->hideImages->setChecked(c->readBoolEntry("Hide", false));
   dialog->hideBackground->setChecked(c->readBoolEntry("HideBackground", true));
-  
+
   delete c;
 }
 
@@ -193,15 +193,15 @@ void CSSConfig::defaults()
 
 QString CSSConfig::quickHelp() const
 {
-  return i18n("This module allows to apply your own color"
+  return i18n("This module allows you to apply your own color"
               " and font settings to konqueror by using"
               " stylesheets (CSS). You can either specify"
-              " options or apply your own self written"
+              " options or apply your own self-written"
               " stylesheet by pointing to its location.<br>"
               " Note that these settings will always have"
               " precedence before all other settings made"
-              " by the site author. This can be useful for"
-              " visually impaired people or webpages"
+              " by the site author. This can be useful to"
+              " visually impaired people or for web pages"
               " that are unreadable due to bad design.");
 }
 

@@ -147,11 +147,11 @@
                             </property>
                             <property>
                                 <name>toolTip</name>
-                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
+                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, Konqueror will try to load a user-defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
                             </property>
                             <property>
                                 <name>whatsThis</name>
-                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
+                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user-defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
                             </property>
                         </widget>
                         <widget>
@@ -175,7 +175,7 @@
                             </property>
                             <property>
                                 <name>whatsThis</name>
-                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
+                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user-defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
                             </property>
                         </widget>
                         <widget>
@@ -797,15 +797,15 @@
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>&amp;Supress images</string>
+                                    <string>&amp;Suppress images</string>
                                 </property>
                                 <property>
                                     <name>toolTip</name>
-                                    <string>&lt;b&gt;Supress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
+                                    <string>&lt;b&gt;Suppress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
-                                    <string>&lt;b&gt;Supress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
+                                    <string>&lt;b&gt;Suppress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
                                 </property>
                             </widget>
                             <widget row="1"  column="0" >
@@ -816,7 +816,7 @@
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>Supress background images</string>
+                                    <string>Suppress background images</string>
                                 </property>
                                 <property stdset="1">
                                     <name>checked</name>
@@ -824,11 +824,11 @@
                                 </property>
                                 <property>
                                     <name>toolTip</name>
-                                    <string>&lt;b&gt;Supress background images&lt;/b&gt;&lt;p&gt;Selecting this option will prevent Konqueror from loading background images.&lt;/p&gt;</string>
+                                    <string>&lt;b&gt;Suppress background images&lt;/b&gt;&lt;p&gt;Selecting this option will prevent Konqueror from loading background images.&lt;/p&gt;</string>
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
-                                    <string>&lt;b&gt;Supress background images&lt;/b&gt;&lt;p&gt;Selecting this option will prevent Konqueror from loading background images.&lt;/p&gt;</string>
+                                    <string>&lt;b&gt;Suppress background images&lt;/b&gt;&lt;p&gt;Selecting this option will prevent Konqueror from loading background images.&lt;/p&gt;</string>
                                 </property>
                             </widget>
                         </grid>
@@ -1035,3 +1035,4 @@
     <tabstop>preview</tabstop>
 </tabstops>
 </UI>
+

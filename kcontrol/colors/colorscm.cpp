@@ -322,7 +322,7 @@ QString KColorScheme::quickHelp() const
        " elements of the desktop, such as title bars, menu text, etc.,"
        " are called \"widgets\". You can choose the widget whose"
        " color you want to change by selecting it from a list, or by"
-       " clicking on a graphic representation of the desktop.<p>"
+       " clicking on a graphical representation of the desktop.<p>"
        " You can save color settings as complete color schemes,"
        " which can also be modified or deleted. KDE comes with several"
        " predefined color schemes on which you can base your own.<p>"
