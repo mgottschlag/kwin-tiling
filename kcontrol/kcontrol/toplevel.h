@@ -30,6 +30,7 @@
 #include <qlistview.h>
 #include <kstatusbar.h>
 #include <qsplitter.h>
+#include <ktmainwindow.h>
 
 #include "mainwidget.h"
 #include "configlist.h"
