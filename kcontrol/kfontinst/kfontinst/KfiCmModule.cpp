@@ -40,8 +40,10 @@
 #include <kapplication.h>
 #include <kgenericfactory.h>
 
+#if KDE_VERSION >= 292
 typedef KGenericFactory<CKfiCmModule, QWidget> FontInstallFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_fontinst, FontInstallFactory );
+#endif
 
 static bool firstTime=true;
 
@@ -84,7 +86,7 @@ const KAboutData * CKfiCmModule::aboutData() const
                                           I18N_NOOP("KDE Font Installer"),
                                           CKfi::constVersion, 0,
                                           KAboutData::License_GPL,
-                                          I18N_NOOP("(C) Craig Drummond, 2000, 2001"),
+                                          I18N_NOOP("(C) Craig Drummond, 2000 - 2002"),
                                           I18N_NOOP("(TQMM, PS - MBFM y CGD)"));
 
         that->itsAboutData->addAuthor("Craig Drummond", "Developer and maintainer", "cpdrummond@uklinux.net");
@@ -146,7 +148,8 @@ QString CKfiCmModule::quickHelp() const
 
     return CMisc::root() ? help : help+rootHelp;
 }
-/*
+
+#if KDE_VERSION <= 291
 extern "C"
 {
     KCModule * create_fontinst(QWidget *parent, const char *name)
@@ -154,5 +157,6 @@ extern "C"
         return new CKfiCmModule(parent, name);
     };
 }
-*/
+#endif
+
 #include "KfiCmModule.moc"
