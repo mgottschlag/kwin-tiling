@@ -22,6 +22,7 @@
 #include <qfile.h>
 
 #include <kapp.h>
+#include <kdebug.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klibloader.h>
@@ -70,6 +71,8 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
 	    }
 	}
     }
+    else
+      kdWarning() << "Module " << mod.fileName() << " doesn't specify a library!" << endl;
 
   /*
    * Ok, we could not load the library.
