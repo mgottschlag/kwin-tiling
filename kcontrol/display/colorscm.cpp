@@ -686,7 +686,7 @@ void KColorScheme::writeSettings()
 
 void KColorScheme::apply()
 {
-  KIPC::sendMessage("KDEChangePalette");
+  KIPC::sendMessageAll("KDEChangePalette");
 }
 
 void KColorScheme::slotPreviewScheme( int indx )

@@ -869,7 +869,7 @@ void KColorScheme::apply( bool  )
   if ( !changed )
     return;
 	
-  KIPC::sendMessage("KDEChangePalette");
+  KIPC::sendMessageAll("KDEChangePalette");
 
   changed=FALSE;
 }

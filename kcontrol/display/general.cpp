@@ -505,7 +505,7 @@ void KGeneral::apply()
 	return;
 
     debug("KDEChangeGeneral in general.cpp");
-    KIPC::sendMessage("KDEChangeGeneral");
+    KIPC::sendMessageAll("KDEChangeGeneral");
 }
 
 void KGeneral::applySettings()

@@ -1287,7 +1287,7 @@ void Theme::runKrdb(void) const
 //-----------------------------------------------------------------------------
 void Theme::colorSchemeApply(void)
 {
-  KIPC::sendMessage("KDEChangePalette");
+  KIPC::sendMessageAll("KDEChangePalette");
 }
 
 

@@ -202,7 +202,7 @@ void KFonts::apply()
 	if ( !changed )
 		return;
 	
-	KIPC::sendMessage("KDEChangeGeneral");
+	KIPC::sendMessageAll("KDEChangeGeneral");
 	
 	if ( useRM )
 	    runResourceManager = TRUE;
