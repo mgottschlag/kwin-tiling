@@ -222,13 +222,15 @@ GRecvArr (int *num)
 {
     char *arr;
 
+    GDebug ("Receiving array from core ...\n");
     GRead (num, sizeof(*num));
+    GDebug (" -> %d bytes\n", *num);
     if (!*num)
-	return 0;
+	return (char *)0;
     if (!(arr = malloc (*num)))
 	LogPanic ("No memory for read buffer\n");
     GRead (arr, *num);
-    GDebug (" -> %02[:*hhx\n", *num, arr);
+    GDebug (" -> %02[*hhx\n", *num, arr);
     return arr;
 }
 

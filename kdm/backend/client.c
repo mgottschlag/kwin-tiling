@@ -159,7 +159,7 @@ PAM_conv (int num_msg,
 
     ReInitErrorLog ();
     Debug( "PAM_conv\n" );
-    for (count = 0; count < num_msg; count++) {
+    for (count = 0; count < num_msg; count++)
 	switch (msg[count]->msg_style) {
 	case PAM_TEXT_INFO:
 	    Debug( " PAM_TEXT_INFO: %s\n", msg[count]->msg );
@@ -215,16 +215,15 @@ PAM_conv (int num_msg,
 		pd->abort = TRUE;
 		goto conv_err;
 	    }
+	    reply[count].resp_retcode = PAM_SUCCESS; /* unused in linux-pam */
 	}
-	reply[count].resp_retcode = PAM_SUCCESS; /* unused in linux-pam */
-    }
     Debug( " PAM_conv success\n" );
     *resp = reply;
     return PAM_SUCCESS;
 
   conv_err:
     for (; count >= 0; count--)
-	if (reply[count].resp) {
+	if (reply[count].resp)
 	    switch (msg[count]->msg_style) {
 	    case PAM_PROMPT_ECHO_ON:
 	    case PAM_PROMPT_ECHO_OFF: /* could wipe ... */
@@ -232,7 +231,6 @@ PAM_conv (int num_msg,
 		free(reply[count].resp);
 		break;
 	    }
-	}
     free (reply);
     return PAM_CONV_ERR;
 }
@@ -504,6 +502,8 @@ Verify (const char *type, GConvFunc gconv)
 		loginfailed (curuser, hostname, tty);
 		V_RET (i == ENOENT || i == ESAD ? V_AUTH : V_ERROR);
 	    }
+	    if (curret)
+		free (curret);
 	    if (!reenter)
 		break;
 	    if (!(curret = gconv (GCONV_HIDDEN, msg)))
