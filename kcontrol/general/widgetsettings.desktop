@@ -11,7 +11,7 @@ X-KDE-Init=general
 
 Name=Widget Settings 
 
-Comment=Allows to manipulate the behavior of some widgets.
+Comment=Allows the behavior of some widgets to be manipulated.
 Comment[az]=Bəzi pəncərəciklərin davranışını idarə edər.
 Comment[da]=Tillader manipulering af visse dimsers opførsel.
 Comment[es]=Permite manipular el comportamiento de algunos widgets (objetos visuales)
