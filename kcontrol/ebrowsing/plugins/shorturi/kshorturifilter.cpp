@@ -173,9 +173,11 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     // Local file and directory processing.
     // Strip off "file:/" in order to expand local
     // URLs if necessary.
+    // Use KURL::path, which does the right thing.
+    // The previous hack made "/" an empty string. (David)
+    if( data.uri().isLocalFile() )
+      cmd = data.uri().path();
     cmd = QDir::cleanDirPath( cmd );
-    if( cmd.lower().find("file:/") == 0 )
-        cmd.remove ( 0, cmd[6] == '/' ? 6 : 5 );
 
     // HOME directory ?
     if( cmd[0] == '~' )
