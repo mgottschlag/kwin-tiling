@@ -126,7 +126,10 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
             !data.uri().isMalformed() && !data.uri().isLocalFile() )
         {
             setFilteredURI( data, cmd );
-            setURIType( data, KURIFilterData::NET_PROTOCOL );
+            if ( *it == "man" || *it == "help" )
+                setURIType( data, KURIFilterData::HELP );
+            else
+                setURIType( data, KURIFilterData::NET_PROTOCOL );
             return data.hasBeenFiltered();
         }
     }
@@ -164,7 +167,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         else if ( cmd[0] == '#' )
             cmd = "man:/" + cmd.mid(1);
         setFilteredURI( data, cmd );
-        setURIType( data, KURIFilterData::NET_PROTOCOL );
+        setURIType( data, KURIFilterData::HELP );
         return data.hasBeenFiltered();
     }
 
