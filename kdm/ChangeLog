@@ -9,9 +9,88 @@
 	  in kfrontend/Makefile.am to enable it.
 	* The DaemonMode option is gone. The command line switches -daemon and
 	  -nodaemon still exist, but are mostly unnecessary, as KDM can decide
-	  what to do based on the parent process.
+	  what to do based on the parent process ID.
 	* The AutoLogin option and the -autolog/-noautolog switches are gone.
 	* The AutoLogin1st option is gone.
+
+2002-08-28  Oswald Buddenhagen <ossi@kde.org>
+
+	* Made it possible to specify the color scheme for the greeter;
+	  option ColorScheme
+
+2002-08-10  Oswald Buddenhagen <ossi@kde.org>
+
+	* Renamed kdmdesktop to krootimage and changed its command line
+	* krootimage will be automatically invoked by the greeter by default;
+	  option UseBackground
+	* Chucked out the [Desktop0] section from kdmrc. Instead, the
+	  location of the config file containing such a section is specified
+	  with the BackgroundRc option.
+	* User images can now be optionally fetched from the users's home
+	  directories; option FaceSource
+	* The default of the KeyFile option is now empty
+
+2002-01-14  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added NumLock option to preset the NumLock modifier state for
+	  the greeter
+
+2001-12-11  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added AntiAliasing option to disable antialiasing in the greeter
+
+2001-11-30  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added GreeterScreen option to put the greeter on a particular
+	  screen in multi-headed setups.
+
+2001-11-22  Oswald Buddenhagen <ossi@kde.org>
+
+	* The defaults of the options Xservers, Xsession, Setup, Startup, 
+	  and Reset now back to more conservative XDM defaults, so it works
+	  even without config files.
+	* The default for the PidFile option is now empty like in XDM.
+	* Changed option ShowUsers: "All" -> "NotHidden"
+	* Renamed the option Users to SelectedUsers and NoUsers to HiddenUsers.
+	* The GUIStyle option now groks all installed widget styles
+
+2001-11-02  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added conditional/scheduled shutdown modes; options
+	  DefaultSdMode and AllowSdForceNow
+	* Added command FiFo support (see README); options FifoDir,
+	  FifoGroup, [ShutDown]/AllowFifo, and [ShutDown]/AllowFifoNow.
+
+2001-10-04  Oswald Buddenhagen <ossi@kde.org>
+
+	* Changed default of AuthDir from /var/lib/kdm[/authdir/authfiles]
+	  to /var/run/xauth.
+
+2001-07-12  Oswald Buddenhagen <ossi@kde.org>
+
+	* Renamed the option Xwilling to Willing
+	* The RandomFile option is not recognized on Linux and OpenBSD any
+	  longer, as they have better entropy sources
+
+2001-07-10  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added the tool 'genkdmconf'. It's supposed to create a suitable
+	  configuration for KDM during 'make install' by merging new defaults
+	  with a previous XDM/KDM config (if any is found).
+
+2001-07-03  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added counterpart to the MinShowUID option: MaxShowUID
+
+2001-06-16  Oswald Buddenhagen <ossi@kde.org>
+
+	* Optionally put the cursor right in the "Password" field when
+	  a user is preselected in the "Login" field; option FocusPasswd
+
+2001-06-15  Oswald Buddenhagen <ossi@kde.org>
+
+	* Replaced the ShutdownButton + ShutdownNeedsRoot option pair with
+	  the tri-state AllowShutdown option
 
 2001-06-10  Oswald Buddenhagen <ossi@kde.org>
 
@@ -20,12 +99,15 @@
 	  - libKdmGreet.so is gone
 	* External config parser is now named kdm_config
 	* The config files are all located in ${kde_confdir}/kdm now;
-	  KDM will no longer use kdm-config
+	  KDM will no longer use kdm-config (most of its options are 
+	  in kdmrc's [X-<display>-Core] sections now). Most options
+	  from the [KDM] section of the old kdmrc are in the 
+	  [X-<display>-Greeter] sections now.
 
 2001-04-02  Simon Hausmann <simon@kde.org>
 
-        * patch by Joachim Plack <jack@caldera.de> to make dead keys work when
-          the keyboard is grabbed.
+        * patch by Joachim Plack <jack@caldera.de> to make dead keys work
+          when the keyboard is grabbed.
 
 2001-03-19  Oswald Buddenhagen <ossi@kde.org>
 
@@ -34,13 +116,36 @@
 	* Stolen idea for console mode handling from dtlogin
 	* Tons of internal changes
 
+2001-01-15  Oswald Buddenhagen <ossi@kde.org>
+
+	* Renamed LowUserID option to MinShowUID
+	* The LogoArea option now accepts the value "None"
+
+2001-01-13  Oswald Buddenhagen <ossi@kde.org>
+
+	* The GUIStyle option now actually works and groks all of QT's
+	  built-in widget styles and the "KDE" style
+
+2001-01-11  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added placing of the greeter at fixed coordinates; options
+	  GreeterPosFixed, GreeterPosX, and GreeterPosY.
+
+2000-12-09  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added auto-login; options AutoLoginEnable, AutoLoginUser, and
+	  AutoLogin1st
+	* Added password-less login; option NoPassUsers
+	* Added auto-re-login on XServer crash; option AutoReLogin
+	* Added displaying the previously logged in user in the "Login"
+	  field; option ShowPrevious
+
 2000-12-07  Oswald Buddenhagen <ossi@kde.org>
 
 	* New XDM port from xfree86 4.0.1
 	* Made the greeter dynamically loadable
 	* Moved chooser and greeter to separate directories, 
 	  same for unused stuff (misc/)
-	* Optional auto-login, auto-re-login and password-free login
 	* A LOT of bug fixes and clean up
 
 1999-11-09  Harald Hoyer <Harald.Hoyer@RedHat.de>
