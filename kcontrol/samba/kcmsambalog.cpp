@@ -78,7 +78,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
      " see the files which were opened on your computer by remote users."
      " Note that file open/close events are not logged unless the samba"
      " log level is set to at least 2 (sorry, you cannot set the log level"
-     " using this module.") );
+     " using this module).") );
 
    QWhatsThis::add( &showFileClose, i18n("Check this option if you want to"
      " see the events when files opened by remote users were closed."
