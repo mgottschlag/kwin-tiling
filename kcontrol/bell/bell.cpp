@@ -1,29 +1,23 @@
 /*
-
-    $Id$
-
-    Copyright (C) 1997 Christian Czezatke (e9025461@student.tuwien.ac.at)
-                  1998 Bernd Wuebben <wuebben@kde.org>
-
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public License
-    along with this library; see the file COPYING.LIB.  If not, write to
-    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-    Boston, MA 02111-1307, USA.
-
+  Copyright (c) 1997 Christian Czezatke (e9025461@student.tuwien.ac.at)
+                1998 Bernd Wuebben <wuebben@kde.org>
+                2000 Matthias Elter <elter@kde.org> 
+ 
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-
-#include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
 
@@ -118,49 +112,18 @@ void KBellConfig::load()
   XKeyboardState kbd;
   XGetKeyboardControl(kapp->getDisplay(), &kbd);
   
-  setBellVolume(kbd.bell_percent);
-  setBellPitch(kbd.bell_pitch);
-  setBellDuration(kbd.bell_duration);
+  m_volume->setValue(kbd.bell_percent);
+  m_pitch->setValue(kbd.bell_pitch);
+  m_duration->setValue(kbd.bell_duration);
 }
-
-void KBellConfig::setBellVolume(int val)
-{
-  m_volume->setValue(val);
-}
-
-void KBellConfig::setBellPitch(int val)
-{
-  m_pitch->setValue(val);
-}
-
-void KBellConfig::setBellDuration(int val)
-{
-  m_duration->setValue(val);
-}
-
-int  KBellConfig::getBellVolume()
-{
-  return m_volume->value();
-}
-
-int  KBellConfig::getBellPitch()
-{
-  return m_pitch->value();
-}
-
-int  KBellConfig::getBellDuration()
-{
-  return m_duration->value();
-}
-
 
 void KBellConfig::save()
 {  
   XKeyboardControl kbd;
   
-  int bellVolume = getBellVolume();
-  int bellPitch = getBellPitch();
-  int bellDuration = getBellDuration();
+  int bellVolume = m_volume->value();
+  int bellPitch = m_pitch->value();
+  int bellDuration = m_duration->value();
 
   kbd.bell_percent = bellVolume;
   kbd.bell_pitch = bellPitch;
@@ -186,9 +149,9 @@ void KBellConfig::ringBell()
 
   // switch to the test state
   XKeyboardControl kbd;
-  kbd.bell_percent = getBellVolume();
-  kbd.bell_pitch = getBellPitch();
-  kbd.bell_duration = getBellDuration();
+  kbd.bell_percent = m_volume->value();
+  kbd.bell_pitch = m_pitch->value();
+  kbd.bell_duration = m_duration->value();
   XChangeKeyboardControl(kapp->getDisplay(),
 			 KBBellPercent | KBBellPitch | KBBellDuration,
 			 &kbd);
@@ -206,7 +169,7 @@ void KBellConfig::ringBell()
 
 void KBellConfig::defaults()
 {
-  setBellVolume(100);
-  setBellPitch(800);
-  setBellDuration(100);
+  m_volume->setValue(100);
+  m_pitch->setValue(800);
+  m_duration->setValue(100);
 }

@@ -7,7 +7,7 @@ libkcm_bell_la_LIBADD = -lkdeui
 
 INCLUDES= $(all_includes)
 
-libkcm_bell_la_METASOURCES = AUTO
+libkcm_bell_la_METASOURCES = bell.moc
 
 KDE_ICON = bell
 
