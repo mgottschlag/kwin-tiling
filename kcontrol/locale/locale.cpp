@@ -101,10 +101,12 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl1->addWidget(label, 5, 1);
     tl1->addWidget(comboDate, 5, 2);
 
-    label = new QLabel(this, I18N_NOOP("&Charset"));
+    label = new QLabel(this, I18N_NOOP("C&harset"));
     comboChset = new KLanguageCombo(this);
     comboChset->setFixedHeight(comboChset->sizeHint().height());
     label->setBuddy(comboChset);
+    connect( comboChset, SIGNAL(activated(int)),
+	     this, SLOT(changedCharset(int)) );
     tl1->addWidget(label, 6, 1);
     tl1->addWidget(comboChset, 6, 2);
 
@@ -356,6 +358,13 @@ void KLocaleConfig::changedTime(int i)
                       QString::null,
                       comboDate->tag(i));
   emit resample();
+}
+
+void KLocaleConfig::changedCharset(int i)
+{
+  changedFlag = TRUE;
+
+//  locale->chset = comboChset->currentTag();
 }
 
 void KLocaleConfig::reTranslateLists()
