@@ -44,7 +44,8 @@ KMidConfig::KMidConfig(QWidget *parent, const char *name)
   mididevices=new QListBox(this,"midideviceslist");
   connect(mididevices,SIGNAL(highlighted(int)),SLOT(deviceSelected(int)));
   devman=new DeviceManager();
- // int r=devman->initManager();
+  //int r=
+	  devman->initManager();
   
   QString s;
   for (int i=0;i<devman->midiPorts()+devman->synthDevices();i++)
