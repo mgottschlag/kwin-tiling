@@ -59,7 +59,6 @@
 #include <klocale.h>
 #include <kdialog.h>
 #include <kconfig.h>
-#include <kipc.h>
 #include <kapp.h>
 #include <kstddirs.h>
 #include <kio/netaccess.h>
@@ -70,6 +69,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <kipc.h>
 
 #undef Below
 

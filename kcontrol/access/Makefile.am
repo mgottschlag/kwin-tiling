@@ -4,7 +4,7 @@ METASOURCES = AUTO
 
 bin_PROGRAMS = kaccess
 
-kaccess_SOURCES = main.cpp kaccess.cpp
+kaccess_SOURCES = kaccess.cpp main.cpp
 
 kaccess_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
