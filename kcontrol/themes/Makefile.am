@@ -16,8 +16,6 @@ kthememgr_LDFLAGS = $(all_libraries) $(LDFLAGS) $(KDE_RPATH)
 METASOURCES = theme.moc installer.moc colors.moc widgetcanvas.moc \
 	options.moc about.moc groupdetails.moc 
 
-KDE_ICON = kthememgr
-
 apps_DATA = kthememgr.desktop
 appsdir = $(kde_appsdir)/Settings/Desktop 
 
