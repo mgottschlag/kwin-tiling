@@ -380,7 +380,11 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				Reply( "bootoptions\t" );
 			if (d) {
 				if ((d->displayType & d_location) == dLocal)
+#ifdef HAVE_VTS
+					Reply( "local\tactivate\t" );
+#else
 					Reply( "local\t" );
+#endif
 				if (d->allowShutdown != SHUT_NONE) {
 					if (d->allowShutdown == SHUT_ROOT && d->userSess)
 						Reply( "shutdown root\t" );
@@ -407,7 +411,11 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				if (AnyReserveDisplays())
 					Writer( fd, cbuf, sprintf( cbuf, "reserve %d\t",
 					                           idleReserveDisplays() ) );
+#ifdef HAVE_VTS
+				Reply( "login\nactivate\t" );
+#else
 				Reply( "login\n" );
+#endif
 			}
 			goto bust;
 		} else if (fd >= 0 && !strcmp( ar[0], "list" )) {
