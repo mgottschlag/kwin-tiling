@@ -264,167 +264,158 @@ void AboutWidget::updatePixmap()
 
     if (!_moduleList)
     {
-	int xoffset = (hAlign == AlignLeft) ? 10 : bwidth-10-120;
+        int xoffset = (hAlign == AlignLeft) ? 10 : bwidth-10-120;
 	int xadd = (hAlign == AlignLeft) ? 120 : -xoffset+10;
       
 	// kde version
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(version_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::kdeVersion());
-      yoffset += fheight + 5;
-      if(yoffset > bheight) return;
+        p.setFont(f1);
+        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(version_text));
+        p.setFont(f2);
+        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::kdeVersion());
+        yoffset += fheight + 5;
+        if(yoffset > bheight) return;
 
-      // user name
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(user_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::userName());
-      yoffset += fheight + 5;
-      if(yoffset > bheight) return;
+        // user name
+        p.setFont(f1);
+        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(user_text));
+        p.setFont(f2);
+        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::userName());
+        yoffset += fheight + 5;
+        if(yoffset > bheight) return;
 
-      // host name
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(host_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::hostName());
-      yoffset += fheight + 5;
-      if(yoffset > bheight) return;
+        // host name
+        p.setFont(f1);
+        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(host_text));
+        p.setFont(f2);
+        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::hostName());
+        yoffset += fheight + 5;
+        if(yoffset > bheight) return;
 
-      // system
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(system_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::systemName());
-      yoffset += fheight + 5;
-      if(yoffset > bheight) return;
+        // system
+        p.setFont(f1);
+        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(system_text));
+        p.setFont(f2);
+        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::systemName());
+        yoffset += fheight + 5;
+        if(yoffset > bheight) return;
 
-      // release
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(release_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::systemRelease());
-      yoffset += fheight + 5;
-      if(yoffset > bheight) return;
+        // release
+        p.setFont(f1);
+        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(release_text));
+        p.setFont(f2);
+        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::systemRelease());
+        yoffset += fheight + 5;
+        if(yoffset > bheight) return;
 
-      // machine
-      p.setFont(f1);
-      p.drawText(xoffset, yoffset, i18n(machine_text));
-      p.setFont(f2);
-      p.drawText(xoffset + xadd, yoffset, KCGlobal::systemMachine());
-      if(yoffset > bheight) return;
+        // machine
+        p.setFont(f1);
+        p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(machine_text));
+        p.setFont(f2);
+        p.drawText(xoffset + xadd, yoffset, bwidth-130, fheight, hAlign, KCGlobal::systemMachine());
+        if(yoffset > bheight) return;
 
-      yoffset += 10;
+        yoffset += 10;
 
-      if(width() < 450 || height() < 450) return;
+        if(width() < 450 || height() < 450) return;
 
-      // draw use text
-      xoffset = 10;
-      bheight = bheight - yoffset - 10;
-      bwidth = bwidth - xoffset - 10;
+        // draw use text
+        xoffset = 10;
+        bheight = bheight - yoffset - 10;
+        bwidth = bwidth - xoffset - 10;
 
-      p.setFont(f1);
+        p.setFont(f1);
 
-      QString ut = i18n(use_text);
-      // do not break message freeze
-      ut.replace(QRegExp("<b>"), "");
-      ut.replace(QRegExp("</b>"), "");
+        QString ut = i18n(use_text);
+        // do not break message freeze
+        ut.replace(QRegExp("<b>"), "");
+        ut.replace(QRegExp("</b>"), "");
 
-      p.drawText(xoffset, yoffset, bwidth, bheight, hAlign | AlignVCenter | WordBreak, ut);
+        p.drawText(xoffset, yoffset, bwidth, bheight, hAlign | AlignVCenter | WordBreak, ut);
     }
     else
     {
-      // Need to set this here, not in the ctor. Otherwise Qt resets
-      // it to false when this is reparented (malte)
-      setMouseTracking(true);
-      QFont headingFont = f2;
-      headingFont.setPointSize(headingFont.pointSize()+5);
-      QFont lf = f2;
-      lf.setUnderline(true);
+        // Need to set this here, not in the ctor. Otherwise Qt resets
+        // it to false when this is reparented (malte)
+        setMouseTracking(true);
+        QFont headingFont = f2;
+        headingFont.setPointSize(headingFont.pointSize()+5);
+        QFont lf = f2;
+        lf.setUnderline(true);
 
-      p.setFont(headingFont);
-      p.drawText(xoffset, yoffset, static_cast<ModuleTreeItem*>(_category)->caption(), -1, hAlign);
-      yoffset += fheight + 10;
-      xadd = 200;
+        const int alxadd = 200; // AlignLeft xadd
+        int xoffset = (hAlign == AlignLeft) ? 10 : bwidth-10-alxadd;
+        int xadd = (hAlign == AlignLeft) ? alxadd : 10-xoffset;
+	int yoffset = 20;
+       
+        p.setFont(headingFont);
+        p.drawText(xoffset, yoffset, alxadd, fheight+10, hAlign, 
+	           static_cast<ModuleTreeItem*>(_category)->caption() );
+        yoffset += fheight + 15;
 
-      // traverse the list
-      _moduleLinks.clear();
-      _linkBuffer.resize(xadd - 10, bheight);
-      _linkArea = p.viewport();
-      _linkArea.setWidth(xadd);
-      QPainter lp(&_linkBuffer);
-      lp.fillRect( 0, 0, xadd - 10, bheight,
-                  QBrush( QColor( 204, 222, 234 ) ) );
-      lp.drawPixmap( part3EffectX - boxX, part3EffectY - boxY, *_part3Effect );
-      lp.setPen(QColor(0x19, 0x19, 0x70)); // same as about:konqueror
-      lp.setFont(lf);
-      QListViewItem* pEntry = _category->firstChild();
-      while (pEntry != NULL)
+        // traverse the list
+        _moduleLinks.clear();
+        _linkBuffer.resize(alxadd - 10, bheight);
+        _linkArea = p.viewport();
+        _linkArea.setWidth(alxadd);
+        QPainter lp(&_linkBuffer);
+        lp.fillRect( 0, 0, alxadd - 10, bheight,
+                    QBrush( QColor( 204, 222, 234 ) ) );
+        lp.drawPixmap( part3EffectX - boxX, part3EffectY - boxY, *_part3Effect );
+        lp.setPen(QColor(0x19, 0x19, 0x70)); // same as about:konqueror
+        lp.setFont(lf);
+        QListViewItem* pEntry = _category->firstChild();
+        while (pEntry != NULL)
         {
-          QString szName;
-          QString szComment;
-          ModuleInfo *module = static_cast<ModuleTreeItem*>(pEntry)->module();
-          if (module)
+            QString szName;
+            QString szComment;
+            ModuleInfo *module = static_cast<ModuleTreeItem*>(pEntry)->module();
+            if (module)
             {
-              szName = module->name();
-              szComment = module->comment();
-              p.setFont(f2);
-              QRect bounds;
-	      int height;
-              if (! QApplication::reverseLayout() ) {
-	          p.drawText(xoffset, yoffset,
-                      xadd - xoffset, bheight - yoffset,
-                      hAlign | AlignTop | WordBreak, szName, -1, &bounds);
-                  lp.drawText(xoffset, yoffset,
-                      xadd - xoffset, bheight - yoffset,
-                      hAlign | AlignTop | WordBreak, szName);
-                  height = bounds.height();
-                  p.setFont(f1);
-                  p.drawText(xoffset + xadd, yoffset,
-                      bwidth - xadd - xoffset, bheight - yoffset,
-                      hAlign | AlignTop | WordBreak, szComment, -1, &bounds);
-              } else {
-	          p.drawText(xoffset+xadd, yoffset,
-                      bwidth - xadd - xoffset, bheight - yoffset,
-                      hAlign | AlignTop | WordBreak, szName, -1, &bounds);
-                  lp.drawText(xoffset+xadd, yoffset,
-                      bwidth - xadd - xoffset, bheight - yoffset,
-                      hAlign | AlignTop | WordBreak, szName);
-                  height = bounds.height();
-                  p.setFont(f1);
-                  p.drawText(xoffset, yoffset,
-                      xadd - xoffset, bheight - yoffset,
-                      hAlign | AlignTop | WordBreak, szComment, -1, &bounds);
- 	      }	
+                szName = module->name();
+                szComment = module->comment();
+                p.setFont(f2);
+                QRect bounds;
+	        int height;
+	        p.drawText(xoffset, yoffset,
+                           alxadd, bheight - yoffset,
+                           hAlign | AlignTop | WordBreak, szName, -1, &bounds);
+                lp.drawText(xoffset, yoffset,
+                            alxadd, bheight - yoffset,
+                            hAlign | AlignTop | WordBreak, szName);
+                height = bounds.height();
+                p.setFont(f1);
+                p.drawText(xoffset + xadd, yoffset,
+                           bwidth - alxadd - 10, bheight - yoffset,
+                           hAlign | AlignTop | WordBreak, szComment, -1, &bounds);
 	      
-	      height = QMAX(height, bounds.height());
-              ModuleLink *linkInfo = new ModuleLink;
-              linkInfo->module = module;
-              linkInfo->linkArea = QRect(xoffset + p.viewport().left(),
-                                         yoffset + p.viewport().top(),
-                                         xadd, height);
-              _moduleLinks.append(linkInfo);
-              yoffset += height + 5;
+	        height = QMAX(height, bounds.height());
+                ModuleLink *linkInfo = new ModuleLink;
+                linkInfo->module = module;
+                linkInfo->linkArea = QRect(xoffset + p.viewport().left(),
+                                           yoffset + p.viewport().top(),
+                                           alxadd, height);
+                _moduleLinks.append(linkInfo);
+                yoffset += height + 5;
             }
-          else
+            else
             {
-              szName = static_cast<ModuleTreeItem*>(pEntry)->caption();
-              p.setFont(f2);
-              QRect bounds;
-              p.drawText(xoffset, yoffset, xadd - xoffset, bheight - yoffset,
-                hAlign | AlignTop | WordBreak, szName, -1, &bounds);
-              lp.drawText(xoffset, yoffset,
-                xadd - xoffset, bheight - yoffset,
-                hAlign | AlignTop | WordBreak, szName);
-              yoffset += bounds.height() + 5;
+                szName = static_cast<ModuleTreeItem*>(pEntry)->caption();
+                p.setFont(f2);
+                QRect bounds;
+                p.drawText(xoffset, yoffset, xadd - xoffset, bheight - yoffset,
+                           hAlign | AlignTop | WordBreak, szName, -1, &bounds);
+                lp.drawText(xoffset, yoffset,
+                            xadd - xoffset, bheight - yoffset,
+                            hAlign | AlignTop | WordBreak, szName);
+                yoffset += bounds.height() + 5;
             }
 
 //          yoffset += fheight + 5;
-          if(yoffset > bheight) return;
+            if(yoffset > bheight) return;
 
-          pEntry = pEntry->nextSibling();
+            pEntry = pEntry->nextSibling();
         }
-      }
+    }
 }
 
 void AboutWidget::mouseMoveEvent(QMouseEvent *e)
