@@ -1,5 +1,7 @@
 ## Makefile.am of kdebase/kcontrol/ebrowsing/plugins/shorturi
 
+AM_CPPFLAGS = -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST
+
 INCLUDES  =  $(all_includes)
 LDFLAGS   = $(all_libraries)
 
