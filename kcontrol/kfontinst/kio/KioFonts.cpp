@@ -744,14 +744,14 @@ void CKioFonts::stat(const KURL &url)
                 if(itsRoot)
                     err=!createStatEntry(entry, url, FOLDER_SYS);
                 else
-                    if(i18n(KFI_KIO_FONTS_USER)==pathList[0])
+                    if(i18n(KFI_KIO_FONTS_USER)==pathList[0] || KFI_KIO_FONTS_USER==pathList[0])
                         err=!createUDSEntry(entry, i18n(KFI_KIO_FONTS_USER), itsFolders[FOLDER_USER].location, false);
-                    else if(i18n(KFI_KIO_FONTS_SYS)==pathList[0])
+                    else if(i18n(KFI_KIO_FONTS_SYS)==pathList[0] || KFI_KIO_FONTS_SYS==pathList[0])
                         err=!createUDSEntry(entry, i18n(KFI_KIO_FONTS_SYS), itsFolders[FOLDER_USER].location, true);
                     else
                     {
                         error(KIO::ERR_SLAVE_DEFINED,
-                              i18n("Please specify \"%1\" or \"%2\".").arg(KFI_KIO_FONTS_USER).arg(KFI_KIO_FONTS_SYS));
+                              i18n("Please specify \"%1\" or \"%2\".").arg(i18n(KFI_KIO_FONTS_USER)).arg(i18n(KFI_KIO_FONTS_SYS)));
                         return;
                     }
                 break;
@@ -917,7 +917,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
  
         if(passwd.isEmpty())
         {
-            error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KFI_KIO_FONTS_SYS));
+            error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
             return;
         }
     }
@@ -969,7 +969,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
             }
             else
             {
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KFI_KIO_FONTS_SYS));
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
                 return;
             }
         }
@@ -984,7 +984,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
             }
             else
             {
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KFI_KIO_FONTS_USER));
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_USER)));
                 return;
             }
         }
@@ -1188,7 +1188,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
                     }
                     else
                     {
-                        error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KFI_KIO_FONTS_SYS));
+                        error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
                         return;
                     }
                 }
@@ -1375,7 +1375,7 @@ void CKioFonts::rename(const KURL &src, const KURL &d, bool overwrite)
                     }
                     else
                     {
-                        error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KFI_KIO_FONTS_SYS));
+                        error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
                         return;
                     }
                 }
@@ -1433,7 +1433,7 @@ void CKioFonts::del(const KURL &url, bool)
             if(doRootCmd(cmd))
                 modified(FOLDER_SYS);
             else
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KFI_KIO_FONTS_SYS));
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
         }
         else
         {
@@ -1617,7 +1617,8 @@ bool CKioFonts::confirmUrl(KURL &url)
     {
         QString sect(getSect(url.path()));
 
-        if(i18n(KFI_KIO_FONTS_USER)!=sect && i18n(KFI_KIO_FONTS_SYS)!=sect)
+        if(i18n(KFI_KIO_FONTS_USER)!=sect && i18n(KFI_KIO_FONTS_SYS)!=sect && 
+           KFI_KIO_FONTS_USER!=sect && KFI_KIO_FONTS_SYS!=sect)
         {
             bool changeToSystem=false;
 
@@ -1629,7 +1630,7 @@ bool CKioFonts::confirmUrl(KURL &url)
                                                                 "case the font will only be usable by you), or \"%2\" ("
                                                                 "the font will be usable by all users - but you will "
                                                                 "need to know the administrator's password)?")
-                                                               .arg(KFI_KIO_FONTS_USER).arg(KFI_KIO_FONTS_SYS),
+                                                               .arg(i18n(KFI_KIO_FONTS_USER)).arg(i18n(KFI_KIO_FONTS_SYS)),
                                                            i18n("Where to Install"), i18n(KFI_KIO_FONTS_USER),
                                                            i18n(KFI_KIO_FONTS_SYS));
 
@@ -1987,6 +1988,11 @@ bool CKioFonts::checkUrl(const KURL &u, bool rootOk)
 
         if(itsRoot)
         {
+            if (KFI_KIO_FONTS_USER==sect)
+                 sect = i18n(KFI_KIO_FONTS_USER);
+            if (KFI_KIO_FONTS_SYS==sect)
+                 sect = i18n(KFI_KIO_FONTS_SYS);
+                 
             if((i18n(KFI_KIO_FONTS_USER)==sect || i18n(KFI_KIO_FONTS_SYS)==sect) &&
                (itsFolders[FOLDER_SYS].fontMap.end()==itsFolders[FOLDER_SYS].fontMap.find(sect)))
 //CPD: TODO: || it has a font specified! e.g. fonts:/System/Times -> even in have a fonts:/System font, redirect
@@ -1998,7 +2004,8 @@ bool CKioFonts::checkUrl(const KURL &u, bool rootOk)
             }
         }
         else
-            if(i18n(KFI_KIO_FONTS_USER)!=sect && i18n(KFI_KIO_FONTS_SYS)!=sect)
+            if(i18n(KFI_KIO_FONTS_USER)!=sect && i18n(KFI_KIO_FONTS_SYS)!=sect &&
+               KFI_KIO_FONTS_USER!=sect && KFI_KIO_FONTS_SYS!=sect)
             {
                 error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".")
                       .arg(i18n(KFI_KIO_FONTS_USER)).arg(i18n(KFI_KIO_FONTS_SYS)));
@@ -2016,7 +2023,9 @@ bool CKioFonts::checkAllowed(const KURL &u)
         QString ds(Misc::dirSyntax(u.path()));
 
         if(ds==QString(QChar('/')+i18n(KFI_KIO_FONTS_USER)+QChar('/')) ||
-           ds==QString(QChar('/')+i18n(KFI_KIO_FONTS_SYS)+QChar('/')))
+           ds==QString(QChar('/')+i18n(KFI_KIO_FONTS_SYS)+QChar('/')) ||
+           ds==QString(QChar('/')+QString::fromLatin1(KFI_KIO_FONTS_USER)+QChar('/')) ||
+           ds==QString(QChar('/')+QString::fromLatin1(KFI_KIO_FONTS_SYS)+QChar('/')))
         {
             error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, you cannot rename, move, copy, or delete either \"%1\" or \"%2\".")
                   .arg(i18n(KFI_KIO_FONTS_USER)).arg(i18n(KFI_KIO_FONTS_SYS))); \

@@ -133,7 +133,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     QString previousPath=itsConfig.readEntry(CFG_PATH);
 
-    itsDirOp = new KDirOperator(Misc::root() ? QString("fonts:/") : QString("fonts:/")+i18n(KFI_KIO_FONTS_USER),
+    itsDirOp = new KDirOperator(Misc::root() ? QString("fonts:/") : QString("fonts:/")+KFI_KIO_FONTS_USER,
                                 fontsFrame);
     itsDirOp->setViewConfig(&itsConfig, "ListView Settings");
     itsDirOp->setMinimumSize(QSize(96, 64));
