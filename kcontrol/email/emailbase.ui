@@ -235,7 +235,7 @@ marks). Some people like to provide a nickname only. You can leave this field bl
             </grid>
         </widget>
         <spacer>
-            <property name="name" stdset="0">
+            <property name="name">
                 <cstring>Spacer21</cstring>
             </property>
             <property name="orientation">
@@ -243,12 +243,6 @@ marks). Some people like to provide a nickname only. You can leave this field bl
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
             </property>
         </spacer>
     </vbox>
@@ -260,6 +254,7 @@ marks). Some people like to provide a nickname only. You can leave this field bl
     <tabstop>txtOrganization</tabstop>
     <tabstop>txtEMailAddr</tabstop>
     <tabstop>txtReplyTo</tabstop>
+    <tabstop>txtEMailClient</tabstop>
     <tabstop>chkRunTerminal</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
