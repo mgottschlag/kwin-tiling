@@ -179,8 +179,66 @@ void TreeView::slotDeleteCurrent()
     deleteFile(file);
 }
 
+void TreeView::copyFile(const QString& src, const QString& dest)
+{
+  // We can't simply copy a .desktop file as several prefixes might
+  // contain a version of that file. To make sure to copy all groups
+  // and keys we read all groups and keys via KConfig which handles
+  // the merging. We then write out the destination .desktop file
+  // in a writeable prefix we get using locateLocal().
+
+  KConfig s(locate("apps", src));
+  KSimpleConfig d(locateLocal("apps", dest));
+
+  // loop through all groups
+  QStringList groups = s.groupList();
+  for (QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it)
+    {
+      // set the dest group
+      d.setGroup(*it);
+
+      // get a map of keys/value pairs
+      QMap<QString, QString> map = s.entryMap(*it);
+
+      // iterate through the map and write out key/value pairs to the dest file
+      QMap<QString, QString>::ConstIterator it;
+      for (it = map.begin(); it != map.end(); ++it)
+	d.writeEntry(it.key(), it.data());
+    }
+}
+
+void TreeView::copyDir(const QString& src, const QString& dest)
+{
+  // We create the destination directory in a writeable prefix returned
+  // by locateLocal(), copy the .directory and the .desktop files over.
+  // Then process the subdirs. 
+  cout << "copyDir: " << src.local8Bit() << " to " << dest.local8Bit() << endl;
+
+  QStringList dirlist = dirList(src);
+  QStringList filelist = fileList(src);
+
+  // create dir
+  QDir d;
+  d.mkdir(locateLocal("apps", dest));
+
+  // copy .directory file
+  copyFile(src + "/.directory", dest + "/.directroy");
+
+  // copy files
+  for (QStringList::ConstIterator it = filelist.begin(); it != filelist.end(); ++it)
+    copyFile(src + "/" + *it, dest + "/" + *it);
+
+  // process subdirs
+  for (QStringList::ConstIterator it = dirlist.begin(); it != dirlist.end(); ++it)
+    copyDir(src + "/" + *it, dest + "/" + *it);
+}
+
 void TreeView::deleteFile(const QString& deskfile)
 {
+  // We search for the file in all prefixes and remove all writeable
+  // ones. If we were not able to remove all (because of lack of permissons)
+  // we set the "Hidden" flag in a writeable local file in a path returned
+  // by localeLocal().
   bool allremoved = true;
  
   // search the selected item in all resource dirs
@@ -209,9 +267,15 @@ void TreeView::deleteFile(const QString& deskfile)
 
 void TreeView::deleteDir(const QString& directory)
 {
+  // We delete all .desktop files and then process with the subdirs.
+  // Afterwards the .directory file gets deleted from all prefixes 
+  // and we try to rmdir the directory in all prefixes.
+  // If we don't succed in deleting the directory from all prefixes
+  // we add a .directory file with the "Hidden" flag set in a local
+  // writeable dir return by locateLocal().
   bool allremoved = true;
 
-  cout << "deletedir: " << directory.local8Bit() << endl;
+  cout << "deleteDir: " << directory.local8Bit() << endl;
 
   QStringList dirlist = dirList(directory);
   QStringList filelist = fileList(directory);

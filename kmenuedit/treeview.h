@@ -56,6 +56,9 @@ class TreeView : public KListView
   void fill();
   void fillBranch(const QString& relPath, TreeItem* parent);
 
+  void copyFile(const QString& src, const QString& dest);
+  void copyDir(const QString& src, const QString& dest);
+
   void deleteFile(const QString& deskfile);
   void deleteDir(const QString& dir);
 
