@@ -327,7 +327,7 @@ CtrlGreeterWait (int wreply)
 	    Debug ("G_SessionExit\n");
 	    exitCode = GRecvInt ();
 	    Debug (" code %d\n", exitCode);
-	    /* CloseGreeter (FALSE); not really necessary, init will reap it */
+	    CloseGreeter (FALSE);
 	    SessionExit (exitCode);
 	    break;
 	case G_Verify:
@@ -367,8 +367,8 @@ CtrlGreeterWait (int wreply)
 	if (!wreply)
 	    return -1;
     }
-    LogError ("Greeter exited unexpectedly\n");
-    /* CloseGreeter (FALSE); not really necessary, init will reap it */
+    LogError ("Lost connection to greeter\n");
+    CloseGreeter (FALSE);
     SessionExit (EX_RESERVER_DPY);
 }
 
