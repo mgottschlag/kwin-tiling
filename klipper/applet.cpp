@@ -7,7 +7,7 @@
 
    Generated with the KDE Application Generator
 
-   Licensed under the Artistic License
+   Licensed under the GNU GPL Version 2
 
  ------------------------------------------------------------- */
 

@@ -4,7 +4,7 @@
 
    (C) 2000,2001,2002 by Carsten Pfeiffer <pfeiffer@kde.org>
 
-   Licensed under the Artistic License
+   Licensed under the GNU GPL Version 2
 
  ------------------------------------------------------------- */
 

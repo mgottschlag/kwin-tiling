@@ -7,7 +7,7 @@
 
    Generated with the KDE Application Generator
 
-   Licensed under the Artistic License
+   Licensed under the GNU GPL Version 2
 
  ------------------------------------------------------------- */
 
@@ -874,7 +874,7 @@ static const char * const description =
 void KlipperWidget::createAboutData()
 {
   about_data = new KAboutData("klipper", I18N_NOOP("Klipper"),
-    klipper_version, description, KAboutData::License_Artistic,
+    klipper_version, description, KAboutData::License_GPL,
 		       "(c) 1998, Andrew Stanley-Jones\n"
 		       "1998-2002, Carsten Pfeiffer\n"
 		       "2001, Patrick Dubroy");

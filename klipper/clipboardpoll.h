@@ -4,7 +4,7 @@
 
    (C) 2003 by Lubos Lunak <l.lunak@kde.org>
 
-   Licensed under the Artistic License
+   Licensed under the GNU GPL Version 2
 
  ------------------------------------------------------------- */
 
