@@ -77,7 +77,7 @@
             </property>
             <property name="whatsThis" stdset="0">
                 <string>Specify the window where the keyboard input should be sent to:&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;Action window:&lt;/em&gt; The window where the triggering action happened. This is usually the currently active window except for mouse gesture triggers where it is the window under mouse and window triggers where it is the windowtriggering the action.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Action window:&lt;/em&gt; The window where the triggering action happened; this is usually the currently active window, except for mouse gesture triggers - where it is the window under mouse - and window triggers -where it is the window triggering the action.&lt;/li&gt;
 &lt;li&gt;&lt;em&gt;Active window:&lt;/em&gt; The currently active window.&lt;/li&gt;
 &lt;li&gt;&lt;em&gt;Specific window:&lt;/em&gt; Any window matching the given criteria.&lt;/li&gt;
 &lt;/ul&gt;</string>
