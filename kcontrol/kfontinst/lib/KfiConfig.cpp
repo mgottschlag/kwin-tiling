@@ -392,7 +392,7 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
                         s;
 
                 for(t=0; !top[t].isEmpty() && !found; ++t)
-                    for(s=0; !constEncodingsSubDirs[s].isEmpty() && !found; ++s)
+                    for(s=0; constEncodingsSubDirs[s] && !found; ++s)
                         if(CMisc::dExists(top[t]+constEncodingsSubDirs[s]))
                         {
                             itsEncodingsDir=top[t]+constEncodingsSubDirs[s];
