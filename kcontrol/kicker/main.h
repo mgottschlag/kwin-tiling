@@ -26,6 +26,7 @@ class LookAndFeelTab;
 class MenuTab;
 class ButtonTab;
 class AppletTab;
+class ExtensionsTab;
 
 class KickerConfig : public KCModule
 {
@@ -50,6 +51,7 @@ private:
     MenuTab        *menutab;
     ButtonTab      *buttontab;
     AppletTab      *applettab;
+    ExtensionsTab  *extensionstab;
 };
 
 #endif // __main_h__

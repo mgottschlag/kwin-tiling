@@ -35,6 +35,7 @@
 #include "menutab_impl.h"
 #include "buttontab.h"
 #include "applettab.h"
+#include "extensionstab_impl.h"
 
 #include <X11/Xlib.h>
 
@@ -73,6 +74,9 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     tab->addTab(applettab, i18n("&Applets"));
     connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
 
+    extensionstab = new ExtensionsTab(this);
+    tab->addTab(extensionstab, i18n("&Extensions"));
+    connect(extensionstab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     load();
 }
@@ -89,6 +93,7 @@ void KickerConfig::load()
     menutab->load();
     buttontab->load();
     applettab->load();
+    extensionstab->load();
     emit changed(false);
 }
 
@@ -99,6 +104,7 @@ void KickerConfig::save()
     menutab->save();
     buttontab->save();
     applettab->save();
+    extensionstab->save();
 
     emit changed(false);
 
@@ -122,6 +128,8 @@ void KickerConfig::defaults()
     menutab->defaults();
     buttontab->defaults();
     applettab->defaults();
+    extensionstab->defaults();
+
     emit changed(true);
 }
 
@@ -154,6 +162,8 @@ extern "C"
                                          "kcmkicker/pics");
         KGlobal::dirs()->addResourceType("applets", KStandardDirs::kde_default("data") +
                                          "kicker/applets");
+        KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
+                                         "kicker/extensions");
         return new KickerConfig(parent, name);
     };
 }

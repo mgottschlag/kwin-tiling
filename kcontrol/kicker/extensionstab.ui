@@ -1,17 +1,17 @@
 <!DOCTYPE UI><UI>
-<class>Form1</class>
+<class>ExtensionsTabBase</class>
 <widget>
     <class>QWidget</class>
     <property stdset="1">
         <name>name</name>
-        <cstring>Form1</cstring>
+        <cstring>ExtensionsTabBase</cstring>
     </property>
     <property stdset="1">
         <name>geometry</name>
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>537</width>
+            <width>535</width>
             <height>404</height>
         </rect>
     </property>
@@ -29,16 +29,34 @@
             <number>6</number>
         </property>
         <widget>
-            <class>QListBox</class>
-            <item>
+            <class>QListView</class>
+            <column>
                 <property>
                     <name>text</name>
-                    <string>New Item</string>
+                    <string>Column 1</string>
                 </property>
-            </item>
+                <property>
+                    <name>clickable</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>resizeable</name>
+                    <bool>true</bool>
+                </property>
+            </column>
+        <item>
+            <property>
+                <name>text</name>
+                <string>New Item</string>
+            </property>
+            <property>
+                <name>pixmap</name>
+                <pixmap></pixmap>
+            </property>
+        </item>
             <property stdset="1">
                 <name>name</name>
-                <cstring>m_extensions</cstring>
+                <cstring>m_extensionsListView</cstring>
             </property>
         </widget>
         <widget>
@@ -545,4 +563,36 @@
         </widget>
     </hbox>
 </widget>
+<connections>
+    <connection>
+        <sender>m_autoHide</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_delaySlider</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_autoHide</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_delaySpinBox</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_autoHide</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_autoHideSwitch</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_delaySpinBox</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>m_delaySlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_delaySlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>m_delaySpinBox</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+</connections>
 </UI>
