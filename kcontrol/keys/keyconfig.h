@@ -14,7 +14,7 @@
 #include <kaccel.h>
 #include <kkeydialog.h>
 #include <kcmodule.h>
-
+#include <qdict.h>
 #include "savescm.h"
 
 class KKeyModule : public KCModule
@@ -22,8 +22,8 @@ class KKeyModule : public KCModule
 	Q_OBJECT
 public:
 	KAccel *keys;
-	QDict<KKeyEntry> dict;
-	KKeyChooser *kc;
+        KKeyEntryMap dict;
+        KKeyChooser *kc;
 
 	KKeyModule( QWidget *parent, bool isGlobal, const char *name = 0 );
 	~KKeyModule ();
@@ -32,7 +32,7 @@ public:
         void save();
         void defaults();
         void init();
-        
+
 public slots:
 	void slotPreviewScheme( int );
 	void slotAdd();

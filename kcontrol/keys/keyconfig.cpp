@@ -47,7 +47,6 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   globalDict = new QDict<int> ( 37, false );
   globalDict->setAutoDelete( true );
 
-  dict.setAutoDelete( false );
   keys = new KAccel( this );
 
   if ( KeyType == "global" ) {
@@ -168,9 +167,8 @@ void KKeyModule::defaults()
 
 void KKeyModule::slotRemove()
 {
-  QString kksPath = getenv( "HOME" );
-  kksPath += "/.kde/share/apps/kcmkeys/";
-  kksPath += KeyType ;
+    QString kksPath =
+        KGlobal::dirs()->saveLocation("data", "kcmkeys/" + KeyType);
 
   QDir d( kksPath );
   if (!d.exists()) // what can we do?
@@ -204,21 +202,16 @@ void KKeyModule::slotChanged( )
 
 void KKeyModule::slotSave( )
 {
-  KSimpleConfig *config =
-    new KSimpleConfig( *sFileList->at( sList->currentItem() ) );
+    KSimpleConfig config(*sFileList->at( sList->currentItem() ) );
 
-  config->setGroup( KeyScheme );
+    config.setGroup( KeyScheme );
+    for (KKeyEntryMap::ConstIterator it = dict.begin();
+         it != dict.end(); ++it) {
+        config.writeEntry( it.key(),
+                           KAccel::keyToString( (*it).aConfigKeyCode ) );
+    }
 
-  kc->aIt->toFirst();
-  while ( kc->aIt->current() ) {
-    config->writeEntry( kc->aIt->currentKey(),
-			KAccel::keyToString( kc->aIt->current()->aConfigKeyCode ) );
-    ++ ( *kc->aIt );
-  }
-
-  config->sync();
-
-  saveBt->setEnabled( FALSE );
+    saveBt->setEnabled( FALSE );
 }
 
 void KKeyModule::readScheme( int index )
@@ -251,14 +244,12 @@ void KKeyModule::readScheme( int index )
     //kdDebug() << gIt->currentKey() << ", " << *keyCode << endl;
   }
 
-  kc->aIt->toFirst();
-  while ( kc->aIt->current() ) {
-    if ( globalDict->find( kc->aIt->currentKey() ) ) {
-      kc->aIt->current()->aConfigKeyCode = *globalDict->find( kc->aIt->currentKey() );
-      kc->aIt->current()->aCurrentKeyCode = kc->aIt->current()->aConfigKeyCode;
+  for (KKeyEntryMap::Iterator it = dict.begin(); it != dict.end(); ++it) {
+      if ( globalDict->find( it.key() ) ) {
+      (*it).aConfigKeyCode = *globalDict->find( it.key() );
+      (*it).aCurrentKeyCode = (*it).aConfigKeyCode;
       // kdDebug() << "Change: " << kc->aIt->currentKey() << endl;
     }
-    ++ ( *kc->aIt );
   }
 
   kc->listSync();
@@ -327,9 +318,7 @@ void KKeyModule::slotAdd()
   sList->setFocus();
   sList->setCurrentItem( sList->count()-1 );
 
-  QString kksPath( getenv( "HOME" ) );
-
-  kksPath += "/.kde/share/apps/kcmkeys/";
+  QString kksPath = KGlobal::dirs()->saveLocation("data", "kcmkeys/");
 
   QDir d( kksPath );
   if ( !d.exists() )
