@@ -291,7 +291,9 @@ static KXftConfig::ListItem * getLastItem(QPtrList<KXftConfig::ListItem> &list)
 #ifdef HAVE_FONTCONFIG
 static const QString defaultPath("/etc/fonts/local.conf");
 static const QString defaultUserFile(".fonts.conf");
+#if 0
 static const char *  constSymEnc="glyphs-fontspecific";
+#endif
 #else
 static const QString defaultPath("/usr/X11R6/lib/X11/XftConfig");
 static const QString defaultUserFile(".xftconfig");
@@ -339,7 +341,9 @@ KXftConfig::KXftConfig(int required, bool system)
         m_file=QString(home ? home : "")+"/"+defaultUserFile;
     }
 
+#if 0
     m_symbolFamilies.setAutoDelete(true);
+#endif
     m_dirs.setAutoDelete(true);
     reset();
 }
@@ -360,7 +364,9 @@ bool KXftConfig::reset()
     bool ok=false;
 
     m_madeChanges=false;
+#if 0
     m_symbolFamilies.clear();
+#endif
     m_dirs.clear();
     m_excludeRange.reset();
     m_excludePixelRange.reset();
@@ -477,11 +483,13 @@ bool KXftConfig::apply()
                         applyDirs();
                         removeItems(m_dirs);
                     }
+#if 0
                     if(m_required&SymbolFamilies)
                     {
                         applySymbolFamilies();
                         removeItems(m_symbolFamilies);
                     }
+#endif
                     if(m_required&SubPixelType)
                         applySubPixelType();
                     if(m_required&ExcludeRange)
@@ -839,6 +847,7 @@ void KXftConfig::readContents()
                             }
                         }
                         break;
+#if 0
                     case 2:
                         if(m_required&SymbolFamilies && "pattern"==e.attribute("target"))
                         {
@@ -868,6 +877,7 @@ void KXftConfig::readContents()
                                 m_symbolFamilies.append(new ListItem(family, n));
                         }
                         break;
+#endif
                     case 3:
                         if(m_required&ExcludeRange && "font"==e.attribute("target"))  // CPD: Is target "font" or "pattern" ????
                         {
@@ -1068,6 +1078,7 @@ void KXftConfig::applyDirs()
         }
 }
 
+#if 0
 void KXftConfig::applySymbolFamilies()
 {
     ListItem *item,
@@ -1101,6 +1112,7 @@ void KXftConfig::applySymbolFamilies()
                 m_doc.documentElement().appendChild(matchNode);
         }
 }
+#endif
 
 void KXftConfig::applySubPixelType()
 {

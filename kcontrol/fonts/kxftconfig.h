@@ -41,9 +41,11 @@ class KXftConfig
     enum RequiredData
     {
         Dirs           = 1,
-        SymbolFamilies = 2,
-        SubPixelType   = 4,
-        ExcludeRange   = 8
+        SubPixelType   = 2,
+        ExcludeRange   = 4
+#ifndef HAVE_FONTCONFIG
+      , SymbolFamilies = 8
+#endif
     };
 
     struct Item
@@ -141,10 +143,12 @@ class KXftConfig
     void        removeDir(const QString &d);
     void        clearDirs()                          { clearList(m_dirs); }
     QStringList getDirs()                            { return getList(m_dirs); }
+#ifndef HAVE_FONTCONFIG
     void        addSymbolFamily(const QString &f)    { addItem(m_symbolFamilies, f); }
     void        removeSymbolFamily(const QString &f) { removeItem(m_symbolFamilies, f); }
     void        clearSymbolFamilies()                { clearList(m_symbolFamilies); }
     QStringList getSymbolFamilies()                  { return getList(m_symbolFamilies); }
+#endif
     bool        changed()                            { return m_madeChanges; }
     static QString description(SubPixel::Type t);
     static const char * toStr(SubPixel::Type t);
@@ -161,7 +165,9 @@ class KXftConfig
     void        readContents();
 #ifdef HAVE_FONTCONFIG
     void        applyDirs();
+#if 0
     void        applySymbolFamilies();
+#endif
     void        applySubPixelType();
     void        applyExcludeRange(bool pixel);
     void        removeItems(QPtrList<ListItem> &list);
@@ -179,8 +185,10 @@ class KXftConfig
     SubPixel           m_subPixel;
     Exclude            m_excludeRange,
                        m_excludePixelRange;
-    QPtrList<ListItem> m_symbolFamilies,
-                       m_dirs;
+#ifndef HAVE_FONTCONFIG
+    QPtrList<ListItem> m_symbolFamilies;
+#endif
+    QPtrList<ListItem> m_dirs;
     QString            m_file;
     int                m_required;
 #ifdef HAVE_FONTCONFIG
