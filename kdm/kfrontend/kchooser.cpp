@@ -65,7 +65,7 @@ ChooserDlg::ChooserDlg()
     vbox->addWidget(title);
 
     host_view = new QListView(winFrame, "hosts");
-    host_view->addColumn(i18n("Host Name"));
+    host_view->addColumn(i18n("Hostname"));
     host_view->setColumnWidth(0, fontMetrics().width("login.crap.net"));
     host_view->addColumn(i18n("Status"));
     host_view->setMinimumWidth(fontMetrics().width("login.crap.com Display not authorized to connect this server"));

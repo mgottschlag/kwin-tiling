@@ -61,7 +61,7 @@ const char * use_text = I18N_NOOP("Click on the \"Help\" tab on the left to view
 
 const char * version_text = I18N_NOOP("KDE version:");
 const char * user_text = I18N_NOOP("User:");
-const char * host_text = I18N_NOOP("Host name:");
+const char * host_text = I18N_NOOP("Hostname:");
 const char * system_text = I18N_NOOP("System:");
 const char * release_text = I18N_NOOP("Release:");
 const char * machine_text = I18N_NOOP("Machine:");
