@@ -29,8 +29,6 @@
 
 #include <kcolorbtn.h>
 #include <kurl.h>
-//#include <kiconloader.h>
-//#include <kicondialog.h>
 #include <kfiledialog.h>
 #include <kcmodule.h>
 
@@ -50,10 +48,14 @@ class KDMAppearanceWidget : public KCModule
 public:
 	KDMAppearanceWidget(QWidget *parent, const char *name=0);
 
-        void load();
-        void save();
+	void load();
+	void save();
 	void defaults();
-        QString quickHelp() const;
+	QString quickHelp() const;
+
+	void loadLanguageList(KLanguageCombo *combo, const QStringList &first);
+	void loadCountryList(KLanguageCombo *combo);
+	void loadLangs(QString country);
 
 	bool eventFilter(QObject *, QEvent *);
 
@@ -65,15 +67,15 @@ protected:
 private slots:
 	void slotAreaRadioClicked(int id);
 	void slotPosRadioClicked(int id);
-        void slotLogoButtonClicked();
-        void changed();
-        void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
+	void slotLogoButtonClicked();
+	void changed();
+	void changedCountry(int i);
  
 private:
 	enum { KdmNone, KdmClock, KdmLogo };
 	QLabel      *logoLabel;
-        QPushButton *logobutton;
-        KLineEdit    *greetstr_lined;
+	QPushButton *logobutton;
+	KLineEdit    *greetstr_lined;
 	QString      logopath;
 	QRadioButton *noneRadio;
 	QRadioButton *clockRadio;
@@ -86,8 +88,9 @@ private:
 	QLineEdit    *yLineEdit;
 	QComboBox    *guicombo;
 	QComboBox    *echocombo;
-        KLanguageCombo *langcombo;
-        KLanguageCombo *countrycombo;
+	KLanguageCombo *langcombo;
+	KLanguageCombo *countrycombo;
+	QStringList  langs;
 
 };
 
