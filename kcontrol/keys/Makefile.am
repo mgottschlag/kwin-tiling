@@ -5,7 +5,7 @@ INCLUDES= $(all_includes)
 bin_PROGRAMS = 	kcmkeys
 kcmkeys_SOURCES = main.cpp keyconfig.cpp savescm.cpp 
 noinst_HEADERS =  keyconfig.h savescm.h
-kcmkeys_LDADD =   $(LIB_KFM) $(LIB_KDEUI)
+kcmkeys_LDADD =   $(LIB_KDEUI)
 kcmkeys_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 METASOURCES = keyconfig.moc savescm.moc  
