@@ -47,7 +47,8 @@
 #include <kaboutdata.h>
 #include "toplevel.moc"
 
-KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name, const QStringList &args)
+KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name, 
+				       const QStringList &args)
   : KCModule( KLocaleFactory::instance(), parent, args),
     m_aboutData(0)
 {
