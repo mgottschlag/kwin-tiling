@@ -22,7 +22,7 @@
 
 #include <iostream.h>
 
-
+#include <stdlib.h>
 #include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
