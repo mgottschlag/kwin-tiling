@@ -4,7 +4,7 @@ DataCount=1
 [Data_1]
 Comment=This group contains various examples demonstrating most of the features of KHotkeys. (Note that this group and all its actions are disabled by default.)\n
 DataCount=8
-Enabled=true
+Enabled=false
 Name=Examples
 SystemGroup=0
 Type=ACTION_DATA_GROUP
