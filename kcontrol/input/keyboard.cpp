@@ -30,11 +30,16 @@
 //#include <sys/stat.h>
 //#include <stdlib.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <qfileinfo.h>
 #include <qcheckbox.h>
 #include <qstring.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
+#include <qvbuttongroup.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <knuminput.h>
@@ -42,6 +47,10 @@
 #include "keyboard.h"
 #include <X11/Xlib.h>
 
+#ifdef HAVE_XTEST
+#include <X11/extensions/XTest.h>
+#include <X11/keysym.h>
+#endif
 
 KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name)
     : KCModule (parent, name)
@@ -80,6 +89,20 @@ KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name)
      " arrows on the spin-button. Setting the volume to 0 % turns off"
      " the key click.");
   QWhatsThis::add( click, wtstr );
+  
+  numlockGroup = new QVButtonGroup( i18n( "NumLock on KDE startup" ), this );
+  ( void ) new QRadioButton( i18n( "Turn on" ), numlockGroup );
+  ( void ) new QRadioButton( i18n( "Turn off" ), numlockGroup );
+  ( void ) new QRadioButton( i18n( "Leave unchanged" ), numlockGroup );
+  lay->addWidget( numlockGroup );
+#ifndef HAVE_XTEST
+  numlockGroup->setDisabled( true );
+#endif
+  wtstr = i18n("If supported, this option allows you to setup"
+     " the state of NumLock after KDE startup.<p> "
+     " You can configure NumLock to be turned on or off,"
+     " or configure KDE not to set NumLock state." );
+  QWhatsThis::add( numlockGroup, wtstr );
 
   lay->addStretch(10);
   load();
@@ -101,6 +124,22 @@ void KeyboardConfig::setClick(int v)
     click->setValue(v);
 }
 
+int KeyboardConfig::getNumLockState()
+{
+    QButton* selected = numlockGroup->selected();
+    if( selected == NULL )
+        return 2;
+    int ret = numlockGroup->id( selected );
+    if( ret == -1 )
+        ret = 2;
+    return ret;
+}
+
+void KeyboardConfig::setNumLockState( int s )
+{
+    numlockGroup->setButton( s );
+}
+
 void KeyboardConfig::load()
 {
   KConfig *config = new KConfig("kcminputrc");
@@ -113,9 +152,11 @@ void KeyboardConfig::load()
     bool key = config->readBoolEntry("KeyboardRepeating", true);
     keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
     clickVolume = config->readNumEntry("ClickVolume", kbd.key_click_percent);
+    numlockState = config->readNumEntry( "NumLock", 2 );
 
     setClick(kbd.key_click_percent);
     setRepeat(kbd.global_auto_repeat);
+    setNumLockState( numlockState );
 
   delete config;
 }
@@ -128,6 +169,7 @@ void KeyboardConfig::save()
 
     clickVolume = getClick();
     keyboardRepeat = repeatBox->isChecked() ? AutoRepeatModeOn : AutoRepeatModeOff;
+    numlockState = getNumLockState();
 
     kbd.key_click_percent = clickVolume;
     kbd.auto_repeat_mode = keyboardRepeat;
@@ -138,6 +180,7 @@ void KeyboardConfig::save()
     config->setGroup("Keyboard");
     config->writeEntry("ClickVolume",clickVolume);
     config->writeEntry("KeyboardRepeating", (keyboardRepeat == AutoRepeatModeOn));
+    config->writeEntry("NumLock", numlockState );
     config->sync();
 
   delete config;
@@ -147,6 +190,7 @@ void KeyboardConfig::defaults()
 {
     setClick(50);
     setRepeat(true);
+    setNumLockState( 2 );
 }
 
 QString KeyboardConfig::quickHelp() const
@@ -164,5 +208,65 @@ void KeyboardConfig::changed()
   emit KCModule::changed(true);
 }
 
+/*
+ Originally comes from NumLockX http://dforce.sh.cvut.cz/~seli/en/numlockx
+ Copyright (C) 2000 Lubos Lunak <l.lunak@email.cz>
+*/
+
+#ifdef HAVE_XTEST
+int numlockx_get_numlock_state()
+    {
+    int i;
+    int numlock_mask = 0;
+    Window dummy1, dummy2;
+    int dummy3, dummy4, dummy5, dummy6;
+    unsigned int mask;
+    XModifierKeymap* map = XGetModifierMapping( qt_xdisplay());
+    KeyCode numlock_keycode = XKeysymToKeycode( qt_xdisplay(), XK_Num_Lock );
+    if( numlock_keycode == NoSymbol )
+        return 0;
+    for( i = 0;
+         i < 8;
+         ++i )
+        {
+	if( map->modifiermap[ map->max_keypermod * i ] == numlock_keycode )
+		numlock_mask = 1 << i;
+	}
+    XQueryPointer( qt_xdisplay(), DefaultRootWindow( qt_xdisplay()), &dummy1, &dummy2,
+        &dummy3, &dummy4, &dummy5, &dummy6, &mask );
+    XFreeModifiermap( map );
+    return mask & numlock_mask;
+    }
+
+void numlockx_change_numlock()
+    {
+    XTestFakeKeyEvent( qt_xdisplay(), XKeysymToKeycode( qt_xdisplay(), XK_Num_Lock ), True,
+        CurrentTime );
+    XTestFakeKeyEvent( qt_xdisplay(), XKeysymToKeycode( qt_xdisplay(), XK_Num_Lock ), False,
+        CurrentTime );
+    }
+
+void numlockx_set_on()
+    {
+    if( !numlockx_get_numlock_state())
+        numlockx_change_numlock();
+    }
+
+void numlockx_set_off()
+    {
+    if( numlockx_get_numlock_state())
+        numlockx_change_numlock();
+    }
+
+void numlockx_change_numlock_state( bool set_P )
+    {
+    if( set_P )
+        numlockx_set_on();
+    else
+        numlockx_set_off();
+    }
+#else
+void numlockx_change_numlock_state( bool ) {} // dummy
+#endif
 
 #include "keyboard.moc"

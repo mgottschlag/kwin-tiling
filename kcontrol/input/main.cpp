@@ -34,6 +34,8 @@
 #include "keyboard.h"
 #include "mouse.h"
 
+// in keyboard.cpp
+extern void numlockx_change_numlock_state( bool set_P );
 
 extern "C"
 {
@@ -65,6 +67,9 @@ extern "C"
     XChangeKeyboardControl(kapp->getDisplay(),
                            KBKeyClickPercent | KBAutoRepeatMode,
                            &kbdc);
+    int numlockState = config->readNumEntry( "NumLock", 2 );
+    if( numlockState != 2 )
+        numlockx_change_numlock_state( numlockState == 0 );
 
     MouseSettings settings;
     settings.load(config);

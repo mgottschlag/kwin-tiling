@@ -32,6 +32,7 @@
 class KIntNumInput;
 class KConfig;
 class QCheckBox;
+class QVButtonGroup;
 
 
 class KeyboardConfig : public KCModule
@@ -56,14 +57,18 @@ private:
   void setClick( int );
   void setRepeat( int );
   void setRepeatRate( int );
+  void setNumLockState( int );
 
   int getClick();
   int getRepeatRate();
+  int getNumLockState();
 
   QCheckBox *repeatBox;
   KIntNumInput *click;
+  QVButtonGroup* numlockGroup;
 
   int clickVolume, keyboardRepeat;
+  int numlockState; // 0 = on, 1 = off, 2 = don't change
 };
 
 #endif
