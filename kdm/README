@@ -82,26 +82,40 @@ More input! ;-)
 KDM accepts two command line options related logging. These options
 _must_ come first on the command line, if they are used:
 
-  -debug <n>, where <n> is a decimal or hexadecimal (prefix 0x) number.
-  The meaning of the number is "explained" in backend/greet.h (the
-  "#define DEBUG_<something>"'s). Just use 255.
+  -debug <n>
+    <n> is a decimal or hexadecimal (prefix 0x) number.
+    The number is a bitfield, i.e., it is formed by summing up the 
+    required values from this table:
+    1 (0x1) - core debugging. probably the most useful one.
+    2 (0x2) - config reader debugging.
+    4 (0x4) - greeter debugging.
+    8 (0x8) - ipc debugging. this logs _all_ communication between the
+	      core, the config reader and the greeter - including the
+	      passwords you type - so edit the log before showing it to
+	      somebody.
+    16 (0x10) - wait after forking session sub-daemon.
+    32 (0x20) - wait after starting config reader.
+    64 (0x40) - wait after starting greeter.
+	the wait options are only useful, if you need to attach a debugger
+	to a process but it crashes before you are able to do so without
+	the delay.
+    256 (0x100) - core Xauth debugging.
+    512 (0x200) - don't fork session sub-daemon, but manage one session
+	in the master daemon. not for real-world use.
 
-  -logfile <file>, where <file> is the file to log various messages to.
-  For internal reasons there is no option in kdmrc to permanently specify 
-  another log file location. If you redirect KDM's standard error output
-  to a file, KDM will log there.
-  If KDM is configured to use syslog, all internally generated messages 
-  are logged to the "daemon" facility. The log usually can be found in 
-  /var/log/debug.log and /var/log/daemon.log; make sure, that daemon.* 
-  is logged (look at /etc/syslog.conf). 
-
-You should have gdb (GNU debugger) installed, so kdm can automatically 
-create a backtrace ("crash log").
+  -logfile <file>
+    <file> is the file to log various messages to.
+    For internal reasons there is no option in kdmrc to permanently specify 
+    another log file location. If you redirect KDM's standard error output
+    to a file, KDM will log there.
+    If KDM is configured to use syslog, all internally generated messages 
+    are logged to the "daemon" facility. The log usually can be found in 
+    /var/log/debug.log and /var/log/daemon.log; make sure, that daemon.* 
+    is logged (look at /etc/syslog.conf). 
 
 Send me the logs together with a detailed description what you did and
 what happended. If your problem is related to a specific configuration,
-you should also attach a tar ball (a tar.gz archive) of your kdm config
-directory.
+you should also attach a tar.gz archive of your kdm config directory.
 
 
 -- 
