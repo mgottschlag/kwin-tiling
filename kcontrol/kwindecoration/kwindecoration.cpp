@@ -1,4 +1,4 @@
-/* 
+/*
 	This is the new kwindecoration kcontrol module
 
 	Copyright (c) 2001
@@ -22,6 +22,7 @@
 #include <qtabwidget.h>
 #include <qvbox.h>
 #include <qlabel.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kdebug.h>
@@ -73,11 +74,16 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	page1->setMargin( KDialog::marginHint() );
 
 	QGroupBox* btnGroup = new QGroupBox( 1, Qt::Horizontal, i18n("Window Decoration"), page1 );
+	QWhatsThis::add( btnGroup, i18n("Select the window decoration. This is the look and feel of both the window borders "
+	                                "and the window handle.") );
 	decorationListBox = new QListBox( btnGroup );
 
 	QGroupBox* checkGroup = new QGroupBox( 1, Qt::Horizontal, i18n("General options (if available)"), page1 );
 	cbUseCustomButtonOrder = new QCheckBox( i18n("Use custom titlebar button &order"), checkGroup );
-	cbUseMiniWindows = new QCheckBox( i18n("Render mini &titlebars for all windows"), checkGroup );
+	QWhatsThis::add( cbUseCustomButtonOrder, i18n(  "The appropriate settings can be found in the \"Buttons\"-Tab. "
+                                                        "Please note that this option is not available on all styles yet!" ) );
+	cbUseMiniWindows = new QCheckBox( i18n( "Render mini &titlebars for all windows"), checkGroup );
+	QWhatsThis::add( cbUseMiniWindows, i18n( "Note that this option is not available on all styles yet!" ) );
 
 	// Page 2 (Button Selector)
 	QVBox* page2 = new QVBox( tabWidget );
@@ -85,7 +91,7 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	page2->setMargin( KDialog::marginHint() );
 
 	QGroupBox* buttonBox = new QGroupBox( 1, Qt::Horizontal, i18n("Titlebar Button Position"), page2 );
-	// Add nifty dnd button modification widgets
+	// Add nifty dnd button modification widgets    
 	dropSite = new ButtonDropSite( buttonBox );
 	QLabel* label = new QLabel( buttonBox );
 	label->setText( i18n( btnSelectorText ) );
@@ -97,7 +103,7 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	pluginPage->setMargin( KDialog::marginHint() );
 	pluginObject = NULL;
 
-	// Load all installed decorations into memory 
+	// Load all installed decorations into memory
 	// Set up the decoration lists and other UI settings
 	findDecorations();
 	createDecorationList();
