@@ -84,9 +84,9 @@ void KFileShareConfig::load()
     QFile file( "/etc/security/fileshare.conf");
     if ( !file.open( IO_ReadWrite ) )
     {
-        // The defaults if the file doesn't exist
-        noSharing->setChecked( false );
-        sharing->setChecked( true );
+        // The defaults if the directory /etc/security or /etc/security/fileshare.conf doesn't exist
+        noSharing->setChecked( true );
+        sharing->setChecked( false );
     }
     else
     {
