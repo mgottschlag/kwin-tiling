@@ -89,12 +89,16 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
 
     mpDPCheck = new QCheckBox(i18n("Double-sized pixels"), m_pTab1);
     connect(mpDPCheck, SIGNAL(toggled(bool)), SLOT(slotDPCheck(bool)));
-    grid->addWidget(mpDPCheck, 1, 0, Qt::AlignLeft);
+    grid->addMultiCellWidget(mpDPCheck, 1, 1, 0, 1, Qt::AlignLeft);
 
     mpAlphaBCheck = new QCheckBox(i18n("Blend alpha channel"), m_pTab1);
     connect(mpAlphaBCheck, SIGNAL(toggled(bool)), SLOT(slotAlphaBCheck(bool)));
-    grid->addWidget(mpAlphaBCheck, 2, 0, Qt::AlignLeft);
+    grid->addMultiCellWidget(mpAlphaBCheck, 2, 2, 0, 1, Qt::AlignLeft);
     disableAlphaBlending = (QPixmap::defaultDepth()<=8);
+
+    mpAnimatedCheck = new QCheckBox(i18n("Animate icons"), m_pTab1);
+    connect(mpAnimatedCheck, SIGNAL(toggled(bool)), SLOT(slotAnimatedCheck(bool)));
+    grid->addMultiCellWidget(mpAnimatedCheck, 3, 3, 0, 1, Qt::AlignLeft);
 
     top->activate();
 
@@ -168,12 +172,17 @@ void KIconConfig::initDefaults()
 	mbDP[i] = false;
 	mbAlphaB[i] = false;
 	mbChanged[i] = true;
+	mbAnimated[i] = false;
 	mSizes[i] = mpTheme->defaultSize(i);
 
 	mEffects[i][0] = mDefaultEffect[0];
 	mEffects[i][1] = mDefaultEffect[1];
 	mEffects[i][2] = mDefaultEffect[2];
     }
+    // Animate desktop icons by default
+    int group = mGroups.findIndex( "Desktop" );
+    if ( group != -1 )
+        mbAnimated[group] = true;
 
     // This is the new default in KDE 2.2, in sync with the kiconeffect of kdelibs Nolden 2001/06/11
     int activeState = mStates.findIndex( "Active" );
@@ -215,6 +224,7 @@ void KIconConfig::read()
 	mSizes[i] = mpConfig->readNumEntry("Size", mSizes[i]);
 	mbDP[i] = mpConfig->readBoolEntry("DoublePixels", mbDP[i]);
 	mbAlphaB[i] = mpConfig->readBoolEntry("AlphaBlending", mbAlphaB[i]);
+	mbAnimated[i] = mpConfig->readBoolEntry("Animated", mbAnimated[i]);
 
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
 	{
@@ -264,6 +274,7 @@ void KIconConfig::apply()
     }
     mpDPCheck->setChecked(mbDP[mUsage]);
     mpAlphaBCheck->setChecked(mbAlphaB[mUsage]);
+    mpAnimatedCheck->setChecked(mbAnimated[mUsage]);
 }
 
 void KIconConfig::preview(int i)
@@ -313,6 +324,7 @@ void KIconConfig::save()
 	mpConfig->writeEntry("Size", mSizes[i], true, true);
 	mpConfig->writeEntry("DoublePixels", mbDP[i], true, true);
 	mpConfig->writeEntry("AlphaBlending", mbAlphaB[i], true, true);
+	mpConfig->writeEntry("Animated", mbAnimated[i], true, true);
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
 	{
 	    QString tmp;
@@ -373,13 +385,15 @@ void KIconConfig::slotUsage(int index)
         mpDPCheck->setEnabled(false);
 	if (!disableAlphaBlending)
 	    mpAlphaBCheck->setEnabled(true);
+	mpAnimatedCheck->setEnabled(false);
     } 
     else
     {
         mpSizeBox->setEnabled(true);
         mpDPCheck->setEnabled(true);
 	if (!disableAlphaBlending)
-	    mpAlphaBCheck->setEnabled( (mUsage==KIcon::Desktop)? true : false);
+	    mpAlphaBCheck->setEnabled( mUsage==KIcon::Desktop );
+	mpAnimatedCheck->setEnabled( mUsage==KIcon::Desktop );
     }
     if (disableAlphaBlending)
 	mpAlphaBCheck->setEnabled(false);
@@ -440,6 +454,13 @@ void KIconConfig::slotAlphaBCheck(bool check)
  // take effect when restarting KDE.
 
  //    preview();
+    emit changed(true);
+    mbChanged[mUsage] = true;
+}
+
+void KIconConfig::slotAnimatedCheck(bool check)
+{
+    mbAnimated[mUsage] = check;
     emit changed(true);
     mbChanged[mUsage] = true;
 }
