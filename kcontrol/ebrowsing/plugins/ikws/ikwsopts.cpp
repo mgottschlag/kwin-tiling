@@ -36,6 +36,7 @@
 #include <qhgroupbox.h>
 #include <qvgroupbox.h>
 #include <qvbox.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kbuttonbox.h>
@@ -62,12 +63,16 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
 
     cb_enableInternetKeywords = new QCheckBox( i18n("&Enable Internet Keywords"), igb );
     connect( cb_enableInternetKeywords, SIGNAL( clicked() ), this, SLOT( changeInternetKeywordsEnabled() ) );
+    QWhatsThis::add( cb_enableInternetKeywords, i18n( "If this box is checked, KDE will search for keywords on the web using the search engines configured below." ) );
 
     QLabel *lb_searchFallback = new QLabel( i18n("Search &Fallback:"), igb);
 
     cmb_searchFallback = new QComboBox(false, igb);
     lb_searchFallback->setBuddy( cmb_searchFallback );
     connect(cmb_searchFallback, SIGNAL(activated(const QString &)), this, SLOT(changeSearchFallback(const QString &)));
+    QString wtstr = i18n( "Here you can select a search engine that will be used if the user-selected search engine did not give any results." );
+    QWhatsThis::add( lb_searchFallback, wtstr );
+    QWhatsThis::add( cmb_searchFallback, wtstr );
 
     QVGroupBox *gb = new QVGroupBox(i18n("Search"), this);
     toplevel->addWidget( gb );
@@ -77,6 +82,8 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     lv_searchProviders->addColumn(i18n("Shortcuts"));
     lv_searchProviders->setSorting(0);
     lv_searchProviders->setFixedSize( lv_searchProviders->sizeHint() );
+    wtstr = i18n( "This list contains the search engines that KDE knows about with the parameters needed to use them." );
+    QWhatsThis::add( lv_searchProviders, wtstr );
 
     connect(lv_searchProviders, SIGNAL(selectionChanged(QListViewItem *)),
            this, SLOT(updateSearchProvider(QListViewItem *)));
@@ -86,33 +93,46 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     QHBox* hb = new QHBox( lowerthings );
     hb->setSpacing( 10 );
     QVBox* vb1 = new QVBox( hb );
-    lb_searchProviderName = new QLabel( i18n("Search Provider Name:"), vb1);
+    lb_searchProviderName = new QLabel( i18n("Search &Provider Name:"), vb1);
 
     le_searchProviderName = new QLineEdit(vb1);
+    lb_searchProviderName->setBuddy( le_searchProviderName );
     connect( le_searchProviderName, SIGNAL( textChanged( const QString & ) ),
          SLOT( textChanged( const QString & ) ) );
-
+    wtstr = i18n( "Enter a human-readable name of the search engine here." );
+    QWhatsThis::add( lb_searchProviderName, wtstr );
+    QWhatsThis::add( le_searchProviderName, wtstr );
 
     QVBox* vb2 = new QVBox( hb );
-    lb_searchProviderURI = new QLabel( i18n("Search URI:"), vb2);
+    lb_searchProviderURI = new QLabel( i18n("Search &URI:"), vb2);
 
     le_searchProviderURI = new QLineEdit(vb2);
+    lb_searchProviderURI->setBuddy( le_searchProviderURI );
     connect( le_searchProviderURI, SIGNAL( textChanged( const QString & ) ),
          SLOT( textChanged( const QString & ) ) );
-
+    wtstr = i18n( "Enter the URI that is used for the search engine here. The text to be searched for can be specified as \\1" );
+    QWhatsThis::add( lb_searchProviderURI, wtstr );
+    QWhatsThis::add( le_searchProviderURI, wtstr );
 
     QVBox* vb3 = new QVBox( hb );
-    lb_searchProviderShortcuts = new QLabel( i18n("URI Shortcuts:"), vb3);
+    lb_searchProviderShortcuts = new QLabel( i18n("UR&I Shortcuts:"), vb3);
 
     le_searchProviderShortcuts = new QLineEdit(vb3);
+    lb_searchProviderShortcuts->setBuddy( le_searchProviderShortcuts );
     connect( le_searchProviderShortcuts, SIGNAL( textChanged( const QString & ) ),
          SLOT( textChanged(const QString &) ) );
+    wtstr = i18n( "The abbreviations entered here can be used whereever in KDE you can enter a URI." );
+    QWhatsThis::add( lb_searchProviderShortcuts, wtstr );
+    QWhatsThis::add( le_searchProviderShortcuts, wtstr );
+
 
     KButtonBox *bbox = new KButtonBox(lowerthings);
     bbox->addStretch(20);
     pb_chgSearchProvider = bbox->addButton(i18n("&Add"));
+    QWhatsThis::add( pb_chgSearchProvider, i18n( "Click here to add/change a search engine." ) );
     connect( pb_chgSearchProvider, SIGNAL( clicked() ), this, SLOT( changeSearchProvider() ) );
     pb_delSearchProvider = bbox->addButton(i18n("&Delete"));
+    QWhatsThis::add( pb_delSearchProvider, i18n( "Click here to delete the currently selected search engine from the list." ) );
     pb_delSearchProvider->setEnabled(false);
     connect( pb_delSearchProvider, SIGNAL( clicked() ), this, SLOT( deleteSearchProvider() ) );
 
