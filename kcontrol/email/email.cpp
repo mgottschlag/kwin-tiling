@@ -148,12 +148,12 @@ void topKCMEmail::load(const QString &s)
 	if (s.isNull()) {
 		m_email->cmbCurProfile->insertStringList(pSettings->profiles());
 		if (!pSettings->defaultProfileName().isNull()) {
-			kdDebug() << "prfile is: " << pSettings->defaultProfileName()<< "line is " << __LINE__ << endl;
+			//kdDebug() << "prfile is: " << pSettings->defaultProfileName()<< "line is " << __LINE__ << endl;
 			load(pSettings->defaultProfileName());
 		} else {
 			if (m_email->cmbCurProfile->count()) {
 				//pSettings->setProfile(m_email->cmbCurProfile->text(0));
-				kdDebug() << "prfile is: " << m_email->cmbCurProfile->text(0) << endl;
+				//kdDebug() << "prfile is: " << m_email->cmbCurProfile->text(0) << endl;
 				load(m_email->cmbCurProfile->text(0));
 				//pSettings->setDefault(m_email->cmbCurProfile->text(0));
 			} else {
