@@ -56,6 +56,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 {
     updating = true;
     currentItem = 0L;
+    setButtons( Help | Apply | Cancel );
 
     QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(),
 					KDialog::spacingHint() );
@@ -73,7 +74,6 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
     hbox->setSpacing( KDialog::spacingHint() );
     QLabel *l = new QLabel( i18n("&Filename: "), hbox );
     requester = new KURLRequester( hbox );
-    requester->setEnabled( false );
     l->setBuddy( requester );
 
     // find the first "sound"-resource that contains files
@@ -121,7 +121,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
     qApp->processEvents(); // let's show up
 
     // reading can take some time
-    QTimer::singleShot( 0, this, SLOT( loadAll() ));
+    QTimer::singleShot( 0, this, SLOT( load() ));
     updating = false;
 };
 
@@ -166,6 +166,7 @@ void KNotifyWidget::updateView()
 }
 
 
+// FIXME: this doesn't work, it's a Reset, not a Defaults.
 void KNotifyWidget::defaults()
 {
     if (KMessageBox::warningContinueCancel(this,
@@ -174,7 +175,7 @@ void KNotifyWidget::defaults()
         != KMessageBox::Continue)
         return;
 
-    loadAll();
+    load();
 }
 
 void KNotifyWidget::changed()
@@ -190,7 +191,7 @@ void KNotifyWidget::changed()
 void KNotifyWidget::slotFileChanged( const QString& text )
 {
     playButton->setEnabled( !text.isEmpty() );
-    
+
     if ( !currentItem )
 	return;
 
@@ -215,26 +216,31 @@ void KNotifyWidget::playSound()
     KAudioPlayer::play( requester->url() );
 }
 
-void KNotifyWidget::loadAll()
+void KNotifyWidget::load()
 {
     bool save_updating = updating;
     updating = true;
-    
+
     setEnabled( false );
     setCursor( KCursor::waitCursor() );
 
-    KConfig *kc = new KConfig( "knotifyrc" );
+    KConfig *kc = new KConfig( "knotifyrc", true, false );
     kc->setGroup( "Misc" );
     cbExternal->setChecked( kc->readBoolEntry( "Use external player", false ));
     reqExternal->setURL( kc->readEntry( "External player" ));
     reqExternal->setEnabled( cbExternal->isChecked() );
     delete kc;
 
+    requester->clear();
+    requester->setEnabled( false );
+    playButton->hide();
+
+    view->clear();
     m_events->load();
     updateView();
     setEnabled( true );
     unsetCursor();
-  
+
     updating = save_updating;
 }
 

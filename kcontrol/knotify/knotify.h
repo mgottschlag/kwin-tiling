@@ -52,10 +52,12 @@ public:
     virtual QString quickHelp() const;
     virtual const KAboutData *aboutData() const;
 
+public slots:
+    virtual void load();
+    
 private slots:
     void externalClicked( bool on );
     void changed();
-    void loadAll();
 
     void slotItemActivated( QListViewItem * );
     void slotFileChanged( const QString& text );
