@@ -200,14 +200,6 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   view = new ProxyView(client, title, this, run_as_root, "proxyview");
   (void) new WhatsThis( this );
 
-  if( client->changed() )
-  {
-    kdWarning( 1208 ) << "The KCModule \"" << client->className() <<
-      "\" called setChanged( true ) in the constructor."
-      " Please fix the module." << endl;
-    client->setChanged( false );
-  }
-
   connect(_client, SIGNAL(changed(bool)), SLOT(clientChanged(bool)));
   connect(_client, SIGNAL(quickHelpChanged()), SIGNAL(quickHelpChanged()));
 
@@ -292,40 +284,18 @@ void ProxyWidget::defaultClicked()
 void ProxyWidget::applyClicked()
 {
   _client->save();
-  if( _client->changed() )
-  {
-    kdWarning( 1208 ) << "The KCModule \"" << _client->className() <<
-      "\" doesn't call setChanged( false ) in save."
-      " Please fix the module." << endl;
-    _client->setChanged( false );
-  }
-  else
-    clientChanged(false);
+  clientChanged(false);
 }
 
 void ProxyWidget::resetClicked()
 {
   _client->load();
-  if( _client->changed() )
-  {
-    kdWarning( 1208 ) << "The KCModule \"" << _client->className() <<
-      "\" doesn't call setChanged( false ) in load."
-      " Please fix the module." << endl;
-    _client->setChanged( false );
-  }
-  else
-    clientChanged(false);
+  clientChanged(false);
 }
 
 void ProxyWidget::rootClicked()
 {
   emit runAsRoot();
-}
-
-
-void ProxyWidget::clientChanged()
-{
-  clientChanged( true );
 }
 
 void ProxyWidget::clientChanged(bool state)

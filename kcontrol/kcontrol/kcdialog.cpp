@@ -43,13 +43,6 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
     client->reparent(this,0,QPoint(0,0),true);
     setMainWidget(client);
     connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
-    if( client->changed() )
-    {
-        kdWarning( 1208 ) << "The KCModule \"" << client->className() <<
-            "\" called setChanged( true ) in the constructor."
-            " Please fix the module." << endl;
-        client->setChanged( false );
-    }
     clientChanged( false );
 
     KCGlobal::repairAccels( topLevelWidget() );
@@ -77,15 +70,7 @@ void KCDialog::clientChanged(bool state)
 void KCDialog::slotApply()
 {
     _client->save();
-    if( _client->changed() )
-    {
-        kdWarning( 1208 ) << "The KCModule \"" << _client->className() <<
-            "\" doesn't call setChanged( false ) in save."
-            " Please fix the module." << endl;
-        _client->setChanged( false );
-    }
-    else
-        clientChanged(false);
+    clientChanged(false);
 }
 
 void KCDialog::slotHelp()
