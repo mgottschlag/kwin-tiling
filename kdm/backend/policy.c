@@ -193,7 +193,12 @@ Willing( ARRAY8Ptr addr, CARD16 connectionType,
 {
 	int ret;
 	char statusBuf[256];
+	static time_t lastscan;
 
+	if (autoRescan && lastscan + 15 < now) {
+		lastscan = now;
+		ScanAccessDatabase( FALSE );
+	}
 	ret = AcceptableDisplayAddress( addr, connectionType, type );
 	if (!ret)
 		sprintf( statusBuf, "Display not authorized to connect" );
