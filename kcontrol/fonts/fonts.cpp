@@ -40,6 +40,8 @@
 #include "fonts.h"
 #include "fonts.moc"
 
+#include "../display/krdb.h"
+
 #include <kdebug.h>
 
 /**** DLL Interface ****/
@@ -309,6 +311,15 @@ KFonts::KFonts(QWidget *parent, const char *name)
 			 "fonts and some images."));
 
    layout->addWidget(cbAA);
+
+   cbExportFonts = new QCheckBox( i18n( "Apply Fonts to non-KDE applications." ),this);
+
+   QWhatsThis::add(cbExportFonts,
+     i18n(
+       "If this option is selected, the KDE font options will be exported to GNOME"
+       " and other non-KDE applications as well."));
+
+   layout->addWidget(cbExportFonts);
    layout->addStretch(1);
 
    connect(cbAA, SIGNAL(clicked()), SLOT(slotUseAntiAliasing()));
@@ -319,6 +330,12 @@ KFonts::KFonts(QWidget *parent, const char *name)
    useAA_original = useAA;
 
    cbAA->setChecked(useAA);
+
+   KConfig displaycfg("kcmdisplayrc", true, false);
+   displaycfg.setGroup("X11");
+   bool exportFonts = displaycfg.readBoolEntry("exportKDEFonts", true);
+   cbExportFonts->setChecked(exportFonts);
+   connect(cbExportFonts, SIGNAL(toggled(bool)), this, SLOT(fontChanged()));
 }
 
 KFonts::~KFonts()
@@ -335,6 +352,10 @@ void KFonts::defaults()
 {
   for ( int i = 0; i < (int) fontUseList.count(); i++ )
     fontUseList.at( i )->setDefault();
+
+  useAA = false;
+  cbAA->setChecked(useAA);
+  cbExportFonts->setChecked(true);
 
   _changed = true;
   emit changed(true);
@@ -366,6 +387,11 @@ void KFonts::load()
   kdDebug() << "AA:" << useAA << endl;
   cbAA->setChecked(useAA);
 
+  KConfig displaycfg("kcmdisplayrc", true, false);
+  displaycfg.setGroup("X11");
+  bool exportFonts = displaycfg.readBoolEntry("exportKDEFonts", true);
+  cbExportFonts->setChecked(exportFonts);
+
   _changed = true;
   emit changed(false);
 
@@ -389,25 +415,24 @@ void KFonts::save()
   config->sync();
   delete config;
 
-  KIPC::sendMessageAll(KIPC::FontChanged);
-
-  KConfig * cfg = KGlobal::config();
-  cfg->setGroup("X11");
-
-  if (cfg->readBoolEntry("useResourceManager", true)) {
-    QApplication::setOverrideCursor( waitCursor );
-    KProcess proc;
-    proc.setExecutable("krdb");
-    proc.start( KProcess::Block );
-    QApplication::restoreOverrideCursor();
-  }
-
   applyQtXFT(useAA); // Apply config now
 
   KConfig aacfg("kdeglobals");
   aacfg.setGroup("KDE");
   aacfg.writeEntry( "AntiAliasing", useAA);
   aacfg.sync();
+
+  KConfig displaycfg("kcmdisplayrc", true, false);
+  displaycfg.setGroup("X11");
+  bool exportFonts = cbExportFonts->isChecked();
+  displaycfg.writeEntry("exportKDEFonts", exportFonts);
+  bool exportColors = displaycfg.readBoolEntry("exportKDEColors", true);
+  displaycfg.sync();
+  QApplication::setOverrideCursor( waitCursor );
+  runRdb(exportFonts, exportColors);
+  QApplication::restoreOverrideCursor();
+
+  KIPC::sendMessageAll(KIPC::FontChanged);
 
   if(useAA != useAA_original) {
     KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change won't take effect until you restart KDE."), i18n("Anti-aliasing settings changed"), "AAsettingsChanged", false);
