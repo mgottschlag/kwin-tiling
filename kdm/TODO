@@ -1,4 +1,4 @@
-theming ToDo:
+theming (#37349):
 - maybe add a Themable plugin flag. if not set and no talker, abort.
 - minor: show QWidgets only when the layout is ready and the theme was painted.
   but one can't hide the widgets in a QLayout, as they have no size then.
@@ -10,24 +10,26 @@ theming ToDo:
 - extract background from theme. use explicit node-id "background", i think.
 - automatic talker node detection/creation. same for background, possibly.
 
-- bomb kapp::kdmExec, make separate source file in kdebase that talks
-  kdm new, kdm old and gdm - restore backwards compat!
-
 - remote login can have the chosen host as the sessName
 - popup menu grabs keyboard. that means it is ungrabbed afterwards ...
 - error label uses fixed colors. red might be ok, but not black.
 
 - message after switching to text mode
-- implement a "console mode" that is more adequate for linux
-- starting kdm while a kdm is running in the background in "console mode"
-  would reactivate the greeter. this would require lots of magic (suid root
-  (disable -config option or make audit!) and make it write the fifo).
 
-- FreeBSD has virtual consoles as well; use them.
+- handle non-linux VTs:
+  on systems without VT_GETSTATE, try activating all consoles in turn to
+  find free ones. wow, this sucks so much.
+  - BSD: 1st: pcvt, /dev/ttyC[0] (OpenBSD), /dev/ttyv[0] (other),
+              also emulated by wscons on /dev/ttyE.
+         2nd: syscons, /dev/ttyv[0], fallback /dev/vga
+  - Lynx, /dev/atc[0]
+  - Solaris, /dev/vt[00]
+  - SVR4, /dev/vc[00] (ESIX), /dev/vt[00] (other)
+  - SCO, /dev/tty[00], query current with CONS_GETINFO, counts 0-based
+  ref: xorg/programs/Xserver/hw/xfree86/os-support/xf86_OSlib.h
+- act on BSD_INIT
 - before nuking X server on other vt, save current vt and restore it before
   disallocating server vt. or just make the xserver not switch wildly.
-
-- get rid of Xservers file. see #56329
 
 - possibly parse Xserver log to find failure cause. this is very hacky.
 
@@ -44,7 +46,9 @@ save these options to .dmrc?
 
 - make config position independent
 - parse /etc/kderc?
+- merge multiple kdmrcs in the style of kconfig. how to set section priorities?
 - genkdmconf: treat backgroundrc as an ini file, not as a text blob
+- add proper quoting and dequoting to genkdmconf ini parser & writer
 
 - think of something extremely clever to solve the case of modules
   that simply hang in pam_authenticate waiting for data.
@@ -84,14 +88,13 @@ save these options to .dmrc?
 - LoginMode=DirectQuery
 
 - "XDMCP over FiFo" - or at least a "manage <dpy> [<xauth>]" command
+- the per-display sockets are in fact nonsense; gdm's approach is better
 
 - add bgset to XDM_MANAGED
   add FiFo command "background\t{inprogress,aborted,done}"
 
-- export OS choices, for selection in ksmserver (#45322)
 - lilo boot option <default>, i.e., -R with no argument
 - support lilo -A mode
-- support grub (#63800)
 
 - support sleep/suspend in the shutdown menu. should this be really treated
   like a shutdown? (#33839)
@@ -109,8 +112,6 @@ and the session. .dmrc later affects only the session, not the greeter.
 - TryExec for "custom" session type. always show the entry, but disable it
   if it is unavailable for the selected user.
 
-- greeter theming support. possibly compatible to gdm. (#37349)
-
 - cursor theming support via Xcursor (#66829)
 
 - add screensaver (#41941)
@@ -118,9 +119,6 @@ and the session. .dmrc later affects only the session, not the greeter.
 
 - add a minimalistic window manager to the greeter (#17716, #51039)
 
-- make kdm kcontrol module invokable from greeter (#80264)
-  depends on wm. security!?
-  the usability experts say that this is a stupid idea.
 - write a separate configurator application, as kcontrol does not scale well
   enough to cover all of kdm's options.
 
@@ -176,21 +174,16 @@ and the session. .dmrc later affects only the session, not the greeter.
 internal stuff:
 - improve signal handling in the subdaemon, it's incredibly racy (GOpen/GClose).
   depends on proper main loop.
-- alternative extreme measure: launch greeter from master daemon? problem:
-  G_Verify communication overhead.
+- alternative extreme measure: launch greeter from master daemon?
 - the process reaping from GClose should be in sync with the main loop.
-- config seems to be rescanned at exit even though it needn't to be.
-  related: ReadAccessDatabase() should be called in some reasonable location.
-  also related: reserve status change in Xservers is still wrong (userSess).
 - kill warning on AIX - see bug #13628 (really present?)
 - implement auto-re-login by keeping the display subdaemon alive instead
   of starting a new one and feeding it the old auth data.
-- move OS selection code to the core. the greeter could finally run
-  unprivileged then
+- options for running the greeter and the core unprivileged. problem: xauth.
 - rethink the coupling of the kdm components, particularily the config reader.
   options:
-  - keep things basically as-is, make the Xaccess and Xservers interfaces
-    even more flexible, add capability flags.
+  - keep things basically as-is, make the Xaccess interface even more flexible,
+    add capability flags.
   - as previous, but don't use #defines, but textual constants. even more
     flexible, but slower, bigger, no compile-time checking, and the typing
     system would have to be more core-based. keys in the rc are considered
