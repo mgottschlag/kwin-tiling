@@ -2,6 +2,9 @@
 Encoding=UTF-8
 Type=Service
 Name=Feedster
+Name[fa]=فیدستر
+Name[hi]=फीडस्टर
+Name[xx]=xxFeedsterxx
 ServiceTypes=SearchProvider
 Keys=blog,rss,feedster
 Query=http://www.feedster.com/search.php?q=\\{@}&ie=UTF-8&oe=UTF-8
