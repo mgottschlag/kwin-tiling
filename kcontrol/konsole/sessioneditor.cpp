@@ -208,7 +208,7 @@ void SessionEditor::readSession(int num)
         str = co->readPathEntry("Exec");
         executeLine->setText(str);
 
-        str = co->readEntry("Icon","openterm");
+        str = co->readEntry("Icon","konsole");
         previewIcon->setIcon(str);
 
         i = co->readUnsignedNumEntry("Font",(unsigned int)-1);
