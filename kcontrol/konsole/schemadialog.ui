@@ -197,12 +197,12 @@
                 <widget class="QComboBox" row="1" column="0">
                     <item>
                         <property name="text">
-                            <string>0 -Foreground Color</string>
+                            <string>0 - Foreground Color</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>1 -Background Color</string>
+                            <string>1 - Background Color</string>
                         </property>
                     </item>
                     <item>
@@ -247,7 +247,7 @@
                     </item>
                     <item>
                         <property name="text">
-                            <string>10 -Foreground Intensive Color</string>
+                            <string>10 - Foreground Intensive Color</string>
                         </property>
                     </item>
                     <item>
