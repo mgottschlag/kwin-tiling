@@ -226,7 +226,7 @@ void CSSConfig::defaults()
 QString CSSConfig::quickHelp() const
 {
   return i18n("<h1>Konqueror Stylesheets</h1> This module allows you to apply your own color"
-              " and font settings to konqueror by using"
+              " and font settings to Konqueror by using"
               " stylesheets (CSS). You can either specify"
               " options or apply your own self-written"
               " stylesheet by pointing to its location.<br>"
