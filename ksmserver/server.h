@@ -47,6 +47,7 @@ public:
     uint saveYourselfDone : 1;
     uint pendingInteraction : 1;
     uint waitForPhase2 : 1;
+    uint phase2Workaround : 1;
 
     QList<SmProp> properties;
     SmProp* property( const char* name ) const;
@@ -66,7 +67,7 @@ class KSMServer : public QObject
 {
 Q_OBJECT
 public:
-    KSMServer();
+    KSMServer( const QString& windowManager );
     ~KSMServer();
 
     void* watchConnection( IceConn iceConn );
@@ -81,7 +82,8 @@ public:
     void interactDone( KSMClient* client, bool cancelShutdown );
     void phase2Request( KSMClient* client );
 
-    bool restoreSession( const QString& wm );
+    void restoreSession();
+    void startDefaultSession();
 
 public slots:
     void shutdown();

@@ -106,6 +106,7 @@ void KSMClient::resetState()
     saveYourselfDone = FALSE;
     pendingInteraction = FALSE;
     waitForPhase2 = FALSE;
+    phase2Workaround = FALSE;
 }
 
 void KSMClient::registerClient( const char* previousId )
@@ -217,7 +218,7 @@ void KSMInteractRequestProc (
     int			dialogType
 )
 {
-    qDebug("KSMInteractRequestProc");
+//     qDebug("KSMInteractRequestProc");
     the_server->interactRequest( (KSMClient*) managerData, dialogType );
 }
 
@@ -227,7 +228,7 @@ void KSMInteractDoneProc (
     Bool			cancelShutdown
 )
 {
-    qDebug("KSMInteractDoneProc");
+//     qDebug("KSMInteractDoneProc");
     the_server->interactDone( (KSMClient*) managerData, cancelShutdown );
 }
 
@@ -241,7 +242,7 @@ void KSMSaveYourselfRequestProc (
     Bool		/* global */
 )
 {
-    qDebug("KSMSaveYourselfRequestProc");
+//     qDebug("KSMSaveYourselfRequestProc");
     the_server->shutdown();
 }
 
@@ -250,7 +251,7 @@ void KSMSaveYourselfPhase2RequestProc (
     SmPointer		managerData
 )
 {
-    qDebug("KSMSaveYourselfPhase2RequestProc");
+//     qDebug("KSMSaveYourselfPhase2RequestProc");
     the_server->phase2Request( (KSMClient*) managerData );
 }
 
@@ -260,22 +261,24 @@ void KSMSaveYourselfDoneProc (
     Bool		success
 )
 {
-    qDebug("KSMSaveYourselfDoneProc");
+//     qDebug("KSMSaveYourselfDoneProc");
     the_server->saveYourselfDone( (KSMClient*) managerData, success );
 }
 
 void KSMCloseConnectionProc (
-    SmsConn		/* smsConn */,
+    SmsConn		smsConn,
     SmPointer		managerData,
     int			count,
     char **		reasonMsgs
 )
 {
-    qDebug("KSMCloseConnectionProc %p", managerData);
-    qDebug("delete client");
+//     qDebug("KSMCloseConnectionProc %p", managerData);
     the_server->deleteClient( ( KSMClient* ) managerData );
     if ( count )
 	SmFreeReasons( count, reasonMsgs );
+    IceConn iceConn = SmsGetIceConnection( smsConn );
+    SmsCleanUp( smsConn );
+    IceCloseConnection( iceConn );
 }
 
 void KSMSetPropertiesProc (
@@ -316,7 +319,7 @@ void KSMGetPropertiesProc (
     SmPointer		managerData
 )
 {
-    qDebug("KSMGetPropertiesProc");
+//     qDebug("KSMGetPropertiesProc");
     KSMClient* client = ( KSMClient* ) managerData;
     SmProp** props = new SmProp*[client->properties.count()];
     int i = 0;
@@ -628,7 +631,7 @@ void KSMWatchProc ( IceConn iceConn, IcePointer client_data, Bool opening, IcePo
 static Status KSMNewClientProc ( SmsConn conn, SmPointer manager_data,
 				 unsigned long* mask_ret, SmsCallbacks* cb, char** failure_reason_ret)
 {
-    qDebug("KSMNewClientProc");
+//     qDebug("KSMNewClientProc");
 
     //     *failure_reason_ret = qstrdup("some failure" );
     *failure_reason_ret = 0;
@@ -670,9 +673,10 @@ static Status KSMNewClientProc ( SmsConn conn, SmPointer manager_data,
 };
 
 
-KSMServer::KSMServer()
+KSMServer::KSMServer( const QString& windowManager )
 {
     the_server = this;
+    wm = windowManager;
 
     state = Idle;
     KConfig* config = KGlobal::config();
@@ -686,7 +690,7 @@ KSMServer::KSMServer()
 			 (SmPointer) this,
 			 HostBasedAuthProc, 256, errormsg ) ) {
 
-	qDebug("KSMServer: could not register XSM protocol");
+	qWarning("KSMServer: could not register XSM protocol");
     }
 
     if (!IceListenForConnections (&numTransports, &listenObjs,
@@ -708,8 +712,7 @@ KSMServer::KSMServer()
 	}
 
     if (!SetAuthentication(numTransports, listenObjs, &authDataEntries)) {
-	qDebug("ksmserver could not set authorization");
- 	exit(1);
+	qFatal("ksmserver could not set authorization");
     }
 
   IceAddConnectionWatch (KSMWatchProc, (IcePointer) this);
@@ -742,6 +745,8 @@ void* KSMServer::watchConnection( IceConn iceConn )
 
 void KSMServer::removeConnection( KSMConnection* conn )
 {
+    
+    // safety, check wether there's  still a client exisiting that waits for that connection
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	if ( SmsGetIceConnection( c->connection() ) == conn->iceConn ) {
 	    deleteClient( c );
@@ -825,6 +830,17 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 	return;
     if ( success ) {
 	client->saveYourselfDone = TRUE;
+	
+	// workaround for broken qt-2.1beta3: make the window manager
+	// pseudo phase2. #### remove this with qt-2.1 final
+	if ( !client->waitForPhase2 && !client->phase2Workaround &&
+	     !wm.isEmpty() && client->program() == wm ) {
+	    client->waitForPhase2 = TRUE;
+	    client->phase2Workaround = TRUE;
+	    client->saveYourselfDone = FALSE;
+	    SmsShutdownCancelled( client->connection() );
+	}
+	
 	completeShutdown();
     } else {
 	cancelShutdown();
@@ -882,6 +898,12 @@ void KSMServer::cancelShutdown()
 {
     clientInteracting = 0;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	// workaround for broken qt-2.1beta3: make the window
+	// manager pseudo phase2. #### remove this with qt-2.1
+	// final
+	if ( c->phase2Workaround && c->waitForPhase2)
+	    continue;
+	
  	SmsShutdownCancelled( c->connection() );
     }
     state = Idle;
@@ -902,7 +924,15 @@ void KSMServer::completeShutdown()
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	if ( !c->saveYourselfDone && c->waitForPhase2 ) {
 	    c->waitForPhase2 = FALSE;
-	    SmsSaveYourselfPhase2( c->connection() );
+	    if ( c->phase2Workaround ) {
+		// workaround for broken qt-2.1beta3: make the window
+		// manager pseudo phase2. #### remove this with qt-2.1
+		// final
+		SmsSaveYourself( c->connection(), saveSession?SmSaveBoth: SmSaveGlobal,
+				 TRUE, SmInteractStyleAny, FALSE );
+	    } else {
+		SmsSaveYourselfPhase2( c->connection() );
+	    }
 	    waitForPhase2 = TRUE;
 	}
     }
@@ -951,7 +981,6 @@ void KSMServer::discardSession()
 
 void KSMServer::storeSesssion()
 {
-    qDebug("KSMServer::storeSesssion");
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
     int count =  0;
@@ -968,27 +997,46 @@ void KSMServer::storeSesssion()
     config->sync();
 }
 
-bool KSMServer::restoreSession( const QString& wm )
+
+/*!  Restores the previous session. Ensures the window manager is
+  running (if specified).
+ */
+void KSMServer::restoreSession()
 {
-    this->wm = wm;
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
     int count =  config->readNumEntry( "count" );
 
     if ( !wm.isEmpty() ) {
+	// when we have a window manager, we start it first and give
+	// it some time before launching other processes. Results in a
+	// visually more appealing startup.
+	QStringList wmCommand = wm;
 	for ( int i = 1; i <= count; i++ ) {
 	    QString n = QString::number(i);
 	    if ( wm == config->readEntry( QString("program")+n ) ) {
-		executeCommand( config->readListEntry( QString("restartCommand")+n ) );
-		QTimer::singleShot( 2000, this, SLOT( restoreSessionInternal() ) );
-		return TRUE;
+		wmCommand = config->readListEntry( QString("restartCommand")+n );
+		break;
 	    }
 	}
+	executeCommand( wmCommand );
+	QTimer::singleShot( 2000, this, SLOT( restoreSessionInternal() ) );
+	return;
     }
 
     restoreSessionInternal();
-    return FALSE;
 }
+
+/*!
+  Starts the default session.
+
+  Currently, that's the window manager only (if specified).
+ */
+void KSMServer::startDefaultSession()
+{
+    executeCommand( wm );
+}
+
 
 void KSMServer::restoreSessionInternal()
 {
@@ -1028,16 +1076,18 @@ int main( int argc, char* argv[] )
      KApplication a;
     fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
 
-    KSMServer server;
-    InstallIOErrorHandler();
-
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-
     QCString wm = args->getOption("windowmanager");
     if ( wm.isEmpty() )
 	wm = "kwin";
-    if ( !args->isSet("restore") || !server.restoreSession( wm ) )
-	executeCommand( QStringList( QString::fromLatin1( wm ) ) );
+
+    KSMServer server ( QString::fromLatin1(wm) );
+    InstallIOErrorHandler();
+
+    if ( args->isSet("restore") )
+	server.restoreSession();
+    else
+	server.startDefaultSession();
 
     return a.exec();
 }
