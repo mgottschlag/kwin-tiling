@@ -816,26 +816,13 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   pixmapBox    = new QGroupBox(i18n("Pixmap"), optOpts); 
  
   pixLay = new QGridLayout(pixmapBox,7,2,10,5);
-  pixLay->addRowSpacing(0,10);
-  pixLay->addRowSpacing(3,10);
-  pixLay->addColSpacing(0,20);
-  pixLay->setRowStretch(0,1);
-  pixLay->setRowStretch(1,0);
-  pixLay->setRowStretch(2,0);
-  pixLay->setRowStretch(3,1);
-  pixLay->setRowStretch(4,0);
-  pixLay->setRowStretch(5,0);
-  pixLay->setRowStretch(6,1);
-  pixLay->setColStretch(0,0);
 
   pbPixmapActive = new QPushButton(pixmapBox);
-  pbPixmapActive->resize(96,32);
   pixLay->addWidget(pbPixmapActive,2,1);
 
   connect(pbPixmapActive, SIGNAL(clicked()), this, SLOT(activePressed()));
   
   pbPixmapInactive = new QPushButton(pixmapBox);
-  pbPixmapInactive->resize(96,32);
   pixLay->addWidget(pbPixmapInactive,5,1);
 
   connect(pbPixmapInactive, SIGNAL(clicked()), this, SLOT(inactivePressed()));
@@ -853,7 +840,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   gradBox = new QGroupBox(i18n("Gradient"), optOpts);
   
-  QBoxLayout *gradLay = new QVBoxLayout(optOpts);
+  QBoxLayout *gradLay = new QVBoxLayout(gradBox, 10);
   gradLay->addSpacing(10);
 
   gradientTypes = new QListBox(gradBox);
@@ -919,6 +906,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   titleAnim->setSteps(10,10);
   lay->addMultiCellWidget(titleAnim,3,0, 1, 1);
 
+  lay->activate();
   GetSettings();
   
   gradientTypes->setCurrentItem((int) gradient);
