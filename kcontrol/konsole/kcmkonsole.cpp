@@ -72,28 +72,26 @@ void KCMKonsole::load()
 
 void KCMKonsole::load(bool useDefaults)
 {
-    KConfig *config = new KConfig("konsolerc", true);
-    config->setDesktopGroup();
-    config->setReadDefaults(useDefaults);
+    KConfig config("konsolerc", true);
+    config.setDesktopGroup();
+    config.setReadDefaults(useDefaults);
 
-    dialog->terminalSizeHintCB->setChecked(config->readBoolEntry("TerminalSizeHint",true));
-    bidiOrig = config->readBoolEntry("EnableBidi",false);
+    dialog->terminalSizeHintCB->setChecked(config.readBoolEntry("TerminalSizeHint",false));
+    bidiOrig = config.readBoolEntry("EnableBidi",false);
     dialog->bidiCB->setChecked(bidiOrig);
-    dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
-    dialog->ctrldragCB->setChecked(config->readBoolEntry("CtrlDrag",true));
-    dialog->cutToBeginningOfLineCB->setChecked(config->readBoolEntry("CutToBeginningOfLine",false));
-    dialog->allowResizeCB->setChecked(config->readBoolEntry("AllowResize",false));
-    xonXoffOrig = config->readBoolEntry("XonXoff",false);
+    dialog->warnCB->setChecked(config.readBoolEntry("WarnQuit",true));
+    dialog->ctrldragCB->setChecked(config.readBoolEntry("CtrlDrag",true));
+    dialog->cutToBeginningOfLineCB->setChecked(config.readBoolEntry("CutToBeginningOfLine",false));
+    dialog->allowResizeCB->setChecked(config.readBoolEntry("AllowResize",false));
+    xonXoffOrig = config.readBoolEntry("XonXoff",false);
     dialog->xonXoffCB->setChecked(xonXoffOrig);
-    dialog->blinkingCB->setChecked(config->readBoolEntry("BlinkingCursor",false));
-    dialog->frameCB->setChecked(config->readBoolEntry("has frame",true));
-    dialog->line_spacingSB->setValue(config->readUnsignedNumEntry( "LineSpacing", 0 ));
-    dialog->silence_secondsSB->setValue(config->readUnsignedNumEntry( "SilenceSeconds", 10 ));
-    dialog->word_connectorLE->setText(config->readEntry("wordseps",":@-./_~"));
+    dialog->blinkingCB->setChecked(config.readBoolEntry("BlinkingCursor",false));
+    dialog->frameCB->setChecked(config.readBoolEntry("has frame",true));
+    dialog->line_spacingSB->setValue(config.readUnsignedNumEntry( "LineSpacing", 0 ));
+    dialog->silence_secondsSB->setValue(config.readUnsignedNumEntry( "SilenceSeconds", 10 ));
+    dialog->word_connectorLE->setText(config.readEntry("wordseps",":@-./_~"));
 
-    dialog->SchemaEditor1->setSchema(config->readEntry("schema"));
-
-    delete config;
+    dialog->SchemaEditor1->setSchema(config.readEntry("schema"));
 
     setChanged(useDefaults);
 }
@@ -122,27 +120,27 @@ void KCMKonsole::save()
        dialog->SessionEditor1->querySave();
     }
 
-    KConfig *config = new KConfig("konsolerc");
-    config->setDesktopGroup();
+    KConfig config("konsolerc");
+    config.setDesktopGroup();
 
-    config->writeEntry("TerminalSizeHint", dialog->terminalSizeHintCB->isChecked());
+    config.writeEntry("TerminalSizeHint", dialog->terminalSizeHintCB->isChecked());
     bool bidiNew = dialog->bidiCB->isChecked();
-    config->writeEntry("EnableBidi", bidiNew);
-    config->writeEntry("WarnQuit", dialog->warnCB->isChecked());
-    config->writeEntry("CtrlDrag", dialog->ctrldragCB->isChecked());
-    config->writeEntry("CutToBeginningOfLine", dialog->cutToBeginningOfLineCB->isChecked());
-    config->writeEntry("AllowResize", dialog->allowResizeCB->isChecked());
+    config.writeEntry("EnableBidi", bidiNew);
+    config.writeEntry("WarnQuit", dialog->warnCB->isChecked());
+    config.writeEntry("CtrlDrag", dialog->ctrldragCB->isChecked());
+    config.writeEntry("CutToBeginningOfLine", dialog->cutToBeginningOfLineCB->isChecked());
+    config.writeEntry("AllowResize", dialog->allowResizeCB->isChecked());
     bool xonXoffNew = dialog->xonXoffCB->isChecked();
-    config->writeEntry("XonXoff", xonXoffNew);
-    config->writeEntry("BlinkingCursor", dialog->blinkingCB->isChecked());
-    config->writeEntry("has frame", dialog->frameCB->isChecked());
-    config->writeEntry("LineSpacing" , dialog->line_spacingSB->value());
-    config->writeEntry("SilenceSeconds" , dialog->silence_secondsSB->value());
-    config->writeEntry("wordseps", dialog->word_connectorLE->text());
+    config.writeEntry("XonXoff", xonXoffNew);
+    config.writeEntry("BlinkingCursor", dialog->blinkingCB->isChecked());
+    config.writeEntry("has frame", dialog->frameCB->isChecked());
+    config.writeEntry("LineSpacing" , dialog->line_spacingSB->value());
+    config.writeEntry("SilenceSeconds" , dialog->silence_secondsSB->value());
+    config.writeEntry("wordseps", dialog->word_connectorLE->text());
 
-    config->writeEntry("schema", dialog->SchemaEditor1->schema());
+    config.writeEntry("schema", dialog->SchemaEditor1->schema());
 
-    delete config;
+    config.sync();
 
     setChanged(false);
 
@@ -150,7 +148,7 @@ void KCMKonsole::save()
     dcc->send("konsole-*", "konsole", "reparseConfiguration()", QByteArray());
     dcc->send("kdesktop", "default", "configure()", QByteArray());
     dcc->send("klauncher", "klauncher", "reparseConfiguration()", QByteArray());
-    
+
     if (xonXoffOrig != xonXoffNew)
     {
        xonXoffOrig = xonXoffNew;
