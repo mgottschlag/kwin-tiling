@@ -102,6 +102,19 @@ void TreeItem::setOpen(bool o)
     QListViewItem::setOpen(o);
 }
 
+static QPixmap appIcon(const QString &iconName)
+{
+    QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, KIcon::Small, 0, KIcon::DefaultState, 0L, true);
+    // make sure they are not larger than 20x20
+    if (normal.width() > 20 || normal.height() > 20) 
+    {
+       QImage tmp = normal.convertToImage();
+       tmp = tmp.smoothScale(20, 20);
+       normal.convertFromImage(tmp);
+    }
+    return normal;
+}
+
 
 TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     : KListView(parent, name), _ac(ac), _rmb(0)
@@ -275,7 +288,7 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
                 item = new TreeItem(parent, *it);
 
             item->setName(name);
-            item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+            item->setPixmap(0, appIcon(df.readIcon()));
 
             item->setHidden(hidden);
 	}
@@ -314,8 +327,7 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
                 item = new TreeItem(parent, *it);
 
             item->setName(name);
-            item->setPixmap(0, KGlobal::iconLoader()->
-                               loadIcon(icon,KIcon::Desktop, KIcon::SizeSmall));
+            item->setPixmap(0, appIcon(icon));
 
             item->setHidden(hidden);
             item->setExpandable(true);
@@ -365,8 +377,7 @@ void TreeView::currentChanged()
 
     KDesktopFile df(item->file());
     item->setName(findName(&df, item->isHidden()));
-    item->setPixmap(0, KGlobal::iconLoader()
-		    ->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+    item->setPixmap(0, appIcon(df.readIcon()));
 }
 
 // moving = src will be removed later
@@ -818,7 +829,7 @@ void TreeView::newsubmenu()
 	newitem = new TreeItem(parent, after, dir);
 
     newitem->setName(dirname);
-    newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("package", KIcon::Desktop, KIcon::SizeSmall));
+    newitem->setPixmap(0, appIcon("package"));
     newitem->setExpandable(true);
 
     KConfig c(locateLocal("apps", dir));
@@ -887,7 +898,7 @@ void TreeView::newitem()
 	newitem = new TreeItem(parent, after, dir);
 
     newitem->setName(filename);
-    newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("unkown", KIcon::Desktop, KIcon::SizeSmall));
+    newitem->setPixmap(0, appIcon("unkown"));
 
     KConfig c(locateLocal("apps", dir));
     c.setDesktopGroup();
@@ -1030,7 +1041,7 @@ void TreeView::paste()
         newitem->setFile(dest + '/' + newname);
     else
         newitem->setFile(newname);
-    newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+    newitem->setPixmap(0, appIcon(df.readIcon()));
 
     fillBranch(newitem->file(), newitem);
     setSelected ( newitem, true);
