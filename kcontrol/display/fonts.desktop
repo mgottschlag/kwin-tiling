@@ -6,7 +6,7 @@ DocPath=kcontrol/kcmdisplay/kdisplay-6.html
 Init=kcmdisplay -init
 
 X-KDE-ModuleType=Library
-X-KDE-Library=display
+X-KDE-Library=fonts
 X-KDE-FactoryName=fonts
 
 Name=Fonts

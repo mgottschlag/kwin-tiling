@@ -29,6 +29,7 @@
 #include <klocale.h>
 
 #include "icnmain.h"
+#include "icnmain.moc"
 
 KIconConfigMain::KIconConfigMain(QWidget *parent, const char *name)
   : KCModule(parent, name)

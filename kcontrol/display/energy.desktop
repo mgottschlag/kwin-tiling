@@ -6,7 +6,7 @@ Type=Application
 Terminal=0
 
 X-KDE-ModuleType=Library
-X-KDE-Library=display
+X-KDE-Library=energy
 X-KDE-FactoryName=energy
 
 Name=Energy
