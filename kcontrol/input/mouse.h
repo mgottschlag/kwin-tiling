@@ -63,6 +63,7 @@ public:
  int num_buttons;
  int middle_button;
  bool handedEnabled;
+ bool m_handedNeedsApply;
  int handed;
  int accelRate;
  int thresholdMove;

@@ -420,15 +420,16 @@ void MouseConfig::slotClick()
 
 void MouseConfig::changed()
 {
-
   emit KCModule::changed(true);
 }
+
 /** No descriptions */
 void MouseConfig::slotHandedChanged(int val){
   if(val==0)
     tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_rh.png"));
   else
     tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_lh.png"));
+  settings->m_handedNeedsApply = true;
 }
 
 void MouseSettings::load(KConfig *config)
@@ -500,6 +501,7 @@ void MouseSettings::load(KConfig *config)
     handed = LEFT_HANDED;
   else if (key == NULL)
     handed = h;
+  m_handedNeedsApply = (handed != h);
 
   // SC/DC/AutoSelect/ChangeCursor
   config->setGroup("KDE");
@@ -523,7 +525,7 @@ void MouseSettings::apply()
 
   unsigned char map[5];
   int remap=1;
-  if (handedEnabled) {
+  if (handedEnabled && m_handedNeedsApply) {
       switch (num_buttons) {
       case 1:
           map[0] = (unsigned char) 1;
@@ -582,6 +584,7 @@ void MouseSettings::apply()
                                             num_buttons)) == MappingBusy)
               /* keep trying until the pointer is free */
           { };
+      m_handedNeedsApply = false;
   }
 
   // Make sure we have the 'font' resource dir registered and can find the
