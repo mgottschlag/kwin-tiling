@@ -16,7 +16,7 @@ Command_1: commandline=netscape -no-about-splash -remote "openURL(%s, new-window
 Command_1: description=Open with &Netscape
 Command_1: enabled=true
 Command_2: commandline=mozilla -remote "openURL(%s, new-window)"
-Command_2: description=Open with &Netscape
+Command_2: description=Open with &Mozilla
 Command_2: enabled=true
 Number of commands=3
 
