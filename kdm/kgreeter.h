@@ -35,7 +35,7 @@
 
 #define WMRC ".wmrc"
 
-#include <qwidcoll.h>
+#include <qwidgetlist.h>
 #include <qregexp.h>
 #include <qstrlist.h>
 #include <qtimer.h>
