@@ -476,4 +476,11 @@ extern "C"
     }
 }
 
+void dummy() {
+  //lukas: these are hacks to allow translation of the following
+  (void) i18n("No audio input/output");
+  (void) i18n("Advanced Linux Sound Architecture");
+  (void) i18n("Open Sound System");
+}
+
 #include "arts.moc"
