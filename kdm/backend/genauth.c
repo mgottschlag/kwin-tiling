@@ -86,7 +86,7 @@ sumFile (const char *name, long sum[2])
 
     fd = open (name, O_RDONLY);
     if (fd < 0) {
-	LogError("Cannot open randomFile \"%s\", errno = %d\n", name, errno);
+	LogError("Cannot open randomFile %\"s: %s\n", name, SysErrorMsg());
 	return 0;
     }
 #ifdef FRAGILE_DEV_MEM
@@ -105,7 +105,7 @@ sumFile (const char *name, long sum[2])
 	}
     }
     if (cnt < 0)
-	LogError("Cannot read randomFile \"%s\", errno = %d\n", name, errno);
+	LogError("Cannot read randomFile %\"s: %s\n", name, SysErrorMsg());
     close (fd);
     return ret_status;
 }

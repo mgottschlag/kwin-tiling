@@ -92,7 +92,7 @@ CreateWellKnownSockets ()
     netdir_free((char *)servaddrs, ND_ADDRLIST);
     if (it < 0)
     {
-	LogError ("error binding STREAMS address %d\n", request_port);
+	LogError ("Error binding UDP port %d\n", request_port);
 	t_error("CreateWellKnownSockets(xdmcpFd): t_bind failed");
 	t_close (xdmcpFd);
 	xdmcpFd = -1;

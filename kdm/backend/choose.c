@@ -189,11 +189,11 @@ IndirectChoice (
     for (c = choices; c; c = next)
     {
 	next = c->next;
-	Debug ("Choice checking timeout: %ld >? %d\n",
+	Debug ("choice checking timeout: %ld >? %d\n",
 	    (long)(now - c->time), choiceTimeout);
 	if (now - c->time > (Time_t)choiceTimeout)
 	{
-	    Debug ("Timeout choice %ld > %d\n",
+	    Debug ("timeout choice %ld > %d\n",
 		(long)(now - c->time), choiceTimeout);
 	    if (prev)
 		prev->next = next;
@@ -224,7 +224,7 @@ RegisterIndirectChoice (
     int		insert;
     int		found = 0;
 
-    Debug ("Got indirect choice back\n");
+    Debug ("got indirect choice back\n");
     for (c = choices; c; c = c->next) {
 	if (XdmcpARRAY8Equal (clientAddress, &c->client) &&
 	    connectionType == c->connectionType) {
@@ -901,7 +901,7 @@ DoChoose (struct display *d)
 	/* XXX the config reader should do the lookup already */
 	for (hostp = d->chooserHosts; *hostp; hostp++)
 	    if (!registerForPing (*hostp))
-		LogError ("Unkown host '%s' specified for local chooser preload of display %s\n", *hostp, d->name);
+		LogError ("Unkown host %\"s specified for local chooser preload of display %s\n", *hostp, d->name);
     } else
 	ForEachChooserHost (&d->clientAddr, d->connectionType,
 			    AddChooserHost, 0);

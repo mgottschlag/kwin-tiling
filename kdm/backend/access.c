@@ -139,17 +139,17 @@ ScanAccessDatabase (int force)
     accData->acList = (AclEntry *)(accData->aliasList + accData->nAliases);
     cptr = (char *)(accData->acList + accData->nAcls);
     for (i = 0; i < accData->nHosts; i++) {
-Debug ("Host entry %d at %p:\n", i, &accData->hostList[i]);
+Debug ("host entry %d at %p:\n", i, &accData->hostList[i]);
 	switch ((accData->hostList[i].type = GRecvInt ())) {
 	case HOST_ALIAS:
 	    accData->hostList[i].entry.aliasPattern = cptr;
 	    cptr += GRecvStrBuf (cptr);
-Debug ("Alias pattern %s\n", accData->hostList[i].entry.aliasPattern);
+Debug ("alias pattern %s\n", accData->hostList[i].entry.aliasPattern);
 	    break;
 	case HOST_PATTERN:
 	    accData->hostList[i].entry.hostPattern = cptr;
 	    cptr += GRecvStrBuf (cptr);
-Debug ("Host pattern %s\n", accData->hostList[i].entry.hostPattern);
+Debug ("host pattern %s\n", accData->hostList[i].entry.hostPattern);
 	    break;
 	case HOST_ADDRESS:
 	    da = &accData->hostList[i].entry.displayAddress;
@@ -174,13 +174,13 @@ Debug ("Host pattern %s\n", accData->hostList[i].entry.hostPattern);
 		da->connectionType = FamilyLocal;
 		break;
 	    }
-Debug ("Address %02[:*hhx, type %d\n",
+Debug ("address %02[:*hhx, type %d\n",
 	    da->hostAddress.length,
 	    da->hostAddress.data,
 	    da->connectionType);
 	    break;
 	case HOST_BROADCAST:
-Debug ("Broadcast\n");
+Debug ("broadcast\n");
 	    break;
 	default:
 	    LogError ("Received unknown host type %d from config reader\n", accData->hostList[i].type);
@@ -192,7 +192,7 @@ Debug ("Broadcast\n");
 	cptr += GRecvStrBuf (cptr);
 	accData->aliasList[i].hosts = GRecvInt ();
 	accData->aliasList[i].nhosts = GRecvInt ();
-Debug ("Alias %s, %d hosts at %d\n", accData->aliasList[i].name,
+Debug ("alias %s, %d hosts at %d\n", accData->aliasList[i].name,
 	accData->aliasList[i].nhosts, accData->aliasList[i].hosts);
     }
     for (i = 0; i < accData->nAcls; i++) {
@@ -201,7 +201,7 @@ Debug ("Alias %s, %d hosts at %d\n", accData->aliasList[i].name,
 	accData->acList[i].hosts = GRecvInt ();
 	accData->acList[i].nhosts = GRecvInt ();
 	accData->acList[i].flags = GRecvInt ();
-Debug ("Entry at %p: %d entries at %d, %d hosts at %d, flags %d\n", 
+Debug ("entry at %p: %d entries at %d, %d hosts at %d, flags %d\n", 
 	&accData->acList[i],
 	accData->acList[i].nentries,
 	accData->acList[i].entries,

@@ -444,3 +444,9 @@ FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr)
     }
 }
 
+const char *SysErrorMsg ()
+{
+    const char *s = strerror(errno);
+    return (s ? s : "Unknown error");
+}
+

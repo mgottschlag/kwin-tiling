@@ -776,7 +776,7 @@ FdPrintf (int fd, const char *fmt, ...)
     DoPr(OutCh_OCF, &ocfb, fmt, args);
     va_end(args);
     if (ocfb.buf) {
-	Debug ("FdPrintf %'.*s to %d\n", ocfb.clen, ocfb.buf, fd);
+	Debug ("FdPrintf %\".*s to %d\n", ocfb.clen, ocfb.buf, fd);
 	(void) write (fd, ocfb.buf, ocfb.clen);
 	free (ocfb.buf);
     }

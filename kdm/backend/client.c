@@ -205,7 +205,7 @@ krb4_auth(struct passwd *p, const char *password)
 	return 0;
 
     if (krb_get_lrealm(realm, 1)) {
-	Debug ("Can't get Kerberos realm.\n");
+	Debug ("can't get Kerberos realm.\n");
 	return 0;
     }
 
@@ -221,7 +221,7 @@ krb4_auth(struct passwd *p, const char *password)
     } else if(ret != KDC_PR_UNKNOWN && ret != SKDC_CANT) {
 	/* failure */
 	Debug("kerberos verify failure %d\n", ret);
-	LogError("KERBEROS verification failure '%s' for %s\n",
+	LogError("KERBEROS verification failure %\"s for %s\n",
 		 krb_get_err_text(ret), p->pw_name);
 	krbtkfile[0] = '\0';
     }
@@ -282,7 +282,7 @@ init_pwd(const char *name arg_shadow)
 	    user_pass = sp->sp_pwdp;
 	    pwinited = 2;
 	} else
-	    Debug ("getspnam() failed, errno=%d.  Are you root?\n", errno);
+	    Debug ("getspnam() failed: %s.  Are you root?\n", SysErrorMsg());
     }
 #endif
 
@@ -306,12 +306,12 @@ init_vrf(struct display *d, const char *name, const char *password)
     static char	*pname;
 
     if (!strlen (name)) {
-	Debug ("Empty user name provided.\n");
+	Debug ("empty user name provided.\n");
 	return V_AUTH;
     }
 
     if (pname && strcmp(pname, name)) {
-	Debug("Re-initializing for new user %s\n", name);
+	Debug("re-initializing for new user %s\n", name);
 #if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
 	krb4_authed = 0;
 	krbtkfile[0] = '\0';
@@ -823,14 +823,14 @@ SetGid (const char *name, int gid)
 {
     if (setgid(gid) < 0)
     {
-	LogError("setgid %d (user \"%s\") failed, errno=%d\n",
-		 gid, name, errno);
+	LogError("setgid(%d) (user %s) failed: %s\n",
+		 gid, name, SysErrorMsg());
 	return 0;
     }
 #ifndef QNX4
     if (initgroups(name, gid) < 0)
     {
-	LogError("initgroups for \"%s\" failed, errno=%d\n", name, errno);
+	LogError("initgroups for %s failed: %s\n", name, SysErrorMsg());
 	return 0;
     }
 #endif   /* QNX4 doesn't support multi-groups, no initgroups() */
@@ -842,8 +842,8 @@ SetUid (const char *name, int uid)
 {
     if (setuid(uid) < 0)
     {
-	LogError("setuid %d (user \"%s\") failed, errno=%d\n",
-		 uid, name, errno);
+	LogError("setuid(%d) (user %s) failed: %s\n",
+		 uid, name, SysErrorMsg());
 	return 0;
     }
     return 1;
@@ -900,10 +900,10 @@ StartClient (struct display *d,
     if (pass[0] && krb4_auth(p, pass)) {
 	if (k_hasafs()) {
 	    if (k_setpag() == -1)
-		LogError ("setpag() failed for %s\n", name);
+		LogError ("setpag() for %s failed\n", name);
 	    /*  XXX maybe, use k_afsklog_uid(NULL, NULL, p->pw_uid)? */
 	    if ((ret = k_afsklog(NULL, NULL)) != KSUCCESS)
-		LogError("Warning %s\n", krb_get_err_text(ret));
+		LogError("AFS Warning: %s\n", krb_get_err_text(ret));
 	}
     }
 #  endif /* KERBEROS && AFS */
@@ -974,7 +974,7 @@ StartClient (struct display *d,
      */
     sourceReset = 1;
     if (source (verify->systemEnviron, d->startup) != 0) {
-	LogError("Cannot execute startup script %s\n", d->startup);
+	LogError("Cannot execute startup script %\"s\n", d->startup);
 	SessionExit (d, EX_NORMAL);
     }
 
@@ -1009,8 +1009,8 @@ StartClient (struct display *d,
 # endif
 # ifdef USE_PAM
 	if (pam_setcred(pamh, 0) != PAM_SUCCESS) {
-	    LogError("pam_setcred for %\"s failed, errno=%d\n",
-		     name, errno);
+	    LogError("pam_setcred for %s failed: %s\n",
+		     name, SysErrorMsg());
 	    exit (1);
 	}
 	/* pass in environment variables set by libpam and modules it called */
@@ -1024,7 +1024,7 @@ StartClient (struct display *d,
 #  if defined(BSD) && (BSD >= 199103)
 	if (setlogin(name) < 0)
 	{
-	    LogError("setlogin for \"%s\" failed, errno=%d\n", name, errno);
+	    LogError("setlogin for %s failed: %s\n", name, SysErrorMsg());
 	    exit (1);
 	}
 #  endif
@@ -1048,8 +1048,8 @@ StartClient (struct display *d,
 	 */
 	if (setusercontext(NULL, p, p->pw_uid, LOGIN_SETALL) < 0)
 	{
-	    LogError("setusercontext for \"%s\" failed, errno=%d\n", name,
-		     errno);
+	    LogError("setusercontext for %s failed: %s\n",
+		     name, SysErrorMsg());
 	    exit (1);
 	}
 
@@ -1064,7 +1064,7 @@ StartClient (struct display *d,
 	 */
 	if (setpcred(name, NULL) == -1)
 	{
-	    LogError("setpcred for \"%s\" failed, errno=%d\n", name, errno);
+	    LogError("setpcred for %s failed: %s\n", name, SysErrorMsg());
 	    exit (1);
 	}
 
@@ -1085,7 +1085,7 @@ StartClient (struct display *d,
 	if (setpenv(name, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
 		    theenv, NULL) != 0)
 	{
-	    LogError("Can't set process environment (user=%s)\n", name);
+	    LogError("Can't set %s's process environment\n", name);
 	    exit (1);
 	}
 
@@ -1105,7 +1105,7 @@ StartClient (struct display *d,
 #ifdef SECURE_RPC
 	/* do like "keylogin" program */
 	if (!pass[0])
-	    LogInfo("no password for NIS provided.\n");
+	    LogInfo("No password for NIS provided.\n");
 	else
 	{
 	    char    netname[MAXNETNAMELEN+1], secretkey[HEXKEYBYTES+1];
@@ -1114,7 +1114,7 @@ StartClient (struct display *d,
 	    int     key_set_ok = 0;
 
 	    nameret = getnetname (netname);
-	    Debug ("User netname: %s\n", netname);
+	    Debug ("user netname: %s\n", netname);
 	    len = strlen (pass);
 	    if (len > 8)
 		bzero (pass + 8, len - 8);
@@ -1129,14 +1129,14 @@ StartClient (struct display *d,
 		    keyret = key_setsecret(secretkey);
 		    Debug ("key_setsecret returns %d\n", keyret);
 		    if (keyret == -1)
-			LogError ("failed to set NIS secret key\n");
+			LogError ("Failed to set NIS secret key\n");
 		    else
 			key_set_ok = 1;
 		}
 		else
 		{
 		    /* found a key, but couldn't interpret it */
-		    LogError ("password incorrect for NIS principal \"%s\"\n",
+		    LogError ("Password incorrect for NIS principal %s\n",
 			      nameret ? netname : name);
 		}
 	    }
@@ -1162,7 +1162,7 @@ StartClient (struct display *d,
 #ifdef K5AUTH
 	/* do like "kinit" program */
 	if (!pass[0])
-	    LogInfo("no password for Kerberos5 provided.\n");
+	    LogInfo("No password for Kerberos5 provided.\n");
 	else
 	{
 	    int i, j;
@@ -1197,8 +1197,8 @@ StartClient (struct display *d,
 	home = getEnv (verify->userEnviron, "HOME");
 	if (home) {
 	    if (chdir (home) < 0) {
-		LogError ("user \"%s\": cannot chdir to home \"%s\" (err %d), using \"/\"\n",
-			  getEnv (verify->userEnviron, "USER"), home, errno);
+		LogError ("Cannot chdir to %s's home %s: %s, using /\n",
+			  getEnv (verify->userEnviron, "USER"), home, SysErrorMsg());
 		chdir ("/");
 		verify->userEnviron = setEnv(verify->userEnviron, "HOME", "/");
 	    } else {
@@ -1218,14 +1218,15 @@ StartClient (struct display *d,
 	    }
 	}
 	argv = parseArgs ((char **)0, d->session);
-Debug ("session args: %'[s\n", sessargs);
+Debug ("session args: %\"[s\n", sessargs);
 	mergeStrArrs (&argv, sessargs);
 	if (!argv || !argv[0])
 	    argv = addStrArr (argv, "xsession", 8);
 	if (argv) {
 		Debug ("executing session %s\n", argv[0]);
 		execute (argv, verify->userEnviron);
-		LogError ("Session \"%s\" execution failed (err %d)\n", argv[0], errno);
+		LogError ("Session %\"s execution failed: %s\n",
+			  argv[0], SysErrorMsg());
 	} else {
 		LogError ("Session has no command/arguments\n");
 	}
@@ -1234,9 +1235,8 @@ Debug ("session args: %'[s\n", sessargs);
 	execute (failsafeArgv, verify->userEnviron);
 	exit (1);
     case -1:
-	Debug ("StartSession, fork failed\n");
-	LogError ("can't start session on \"%s\", fork failed, errno=%d\n",
-		  d->name, errno);
+	LogError ("Forking session on %s failed: %s\n",
+		  d->name, SysErrorMsg());
 	return 0;
     default:
 	Debug ("StartSession, fork succeeded %d\n", pid);
@@ -1272,7 +1272,7 @@ SessionExit (struct display *d, int status)
 	/*
 	 * run system-wide reset file
 	 */
-	Debug ("Source reset program %s\n", d->reset);
+	Debug ("source reset program %s\n", d->reset);
 	source (d->verify->systemEnviron, d->reset);
     }
     if (removeAuth)
@@ -1283,8 +1283,8 @@ SessionExit (struct display *d, int status)
 	if (pamh) {
 	    /* shutdown PAM session */
 	    if (pam_setcred(pamh, PAM_DELETE_CRED) != PAM_SUCCESS)
-		LogError("pam_setcred(DELETE_CRED) for %\"s failed, errno=%d\n",
-			 d->verify->user, errno);
+		LogError("pam_setcred(DELETE_CRED) for %s failed: %s\n",
+			 d->verify->user, SysErrorMsg());
 	    pam_close_session(pamh, 0);
 	    pam_end(pamh, PAM_SUCCESS);
 	    pamh = NULL;
@@ -1306,13 +1306,13 @@ SessionExit (struct display *d, int status)
 	    else {
 		code = krb5_cc_destroy(ccache);
 		if (code) {
-		    if (code == KRB5_FCC_NOFILE) {
-			Debug ("No Kerberos ccache file found to destroy\n");
-		    } else
+		    if (code == KRB5_FCC_NOFILE)
+			Debug ("no Kerberos ccache file found to destroy\n");
+		    else
 			LogError("%s while destroying Krb5 credentials cache\n",
 				 error_message(code));
 		} else
-		    Debug ("Kerberos ccache destroyed\n");
+		    Debug ("kerberos ccache destroyed\n");
 		krb5_cc_close(ccache);
 	    }
 	}
@@ -1337,7 +1337,7 @@ SessionExit (struct display *d, int status)
 	}
 #endif
     }
-    Debug ("Display %s exiting with status %d\n", d->name, status);
+    Debug ("display %s exiting with status %d\n", d->name, status);
     exit (status);
 }
 

@@ -256,7 +256,7 @@ main (int argc, char **argv)
 	else if (argv[1] && (!strcmp (pt, "error") || !strcmp (pt, "logfile")))
 	    errorLogFile = *++argv;
 	else {
-	    fprintf (stderr, "Unknown option or missing parameter: '%s'\n", *argv);
+	    fprintf (stderr, "Unknown option or missing parameter: %\"s\n", *argv);
 	    exit (1);
 	}
     }
@@ -327,7 +327,7 @@ main (int argc, char **argv)
     {
 	if (StopAll)
 	{
-	    Debug ("Shutting down entire manager\n");
+	    Debug ("shutting down entire manager\n");
 	    stoppen (TRUE);
 	    StopAll = 0;
 	    continue;
@@ -355,7 +355,7 @@ main (int argc, char **argv)
 	{
 	    char *cmd = sdAction == SHUT_HALT ? cmdHalt : cmdReboot;
 	    execute (parseArgs ((char **)0, cmd), (char **)0);
-	    LogError ("Failed to execute shutdown command '%s'\n", cmd);
+	    LogError ("Failed to execute shutdown command %\"s\n", cmd);
 	    exit (1);
 	}
 	else
@@ -372,7 +372,7 @@ main (int argc, char **argv)
 #endif
 	}
     }
-    Debug ("Nothing left to do, exiting\n");
+    Debug ("nothing left to do, exiting\n");
     return 0;
 }
 
@@ -381,7 +381,7 @@ main (int argc, char **argv)
 static SIGVAL
 UtmpNotify (int n ATTR_UNUSED)
 {
-    Debug ("Caught SIGALRM\n");
+    Debug ("caught SIGALRM\n");
     ChkUtmp = 1;
 }
 
@@ -443,7 +443,7 @@ CheckUtmp (void)
 	int fd;
 #endif
 
-	Debug ("Rescanning " LOGSTAT_FILE "\n");
+	Debug ("rescanning " LOGSTAT_FILE "\n");
 #ifdef CSRG_BASED
 	for (utp = utmpList; utp; utp = utp->next)
 	    utp->checked = 0;
@@ -610,18 +610,19 @@ StartRemoteLogin (struct display *d)
 	    LogError ("StartRemoteLogin: no arguments\n");
 	    exit (EX_RESERVER_DPY);
 	}
-	Debug ("Exec %'[s\n", argv);
+	Debug ("exec %\"[s\n", argv);
 	(void) execv (argv[0], argv);
-	LogError ("server %s cannot be executed\n", argv[0]);
+	LogError ("X server %\"s cannot be executed\n", argv[0]);
 	exit (0);
     case -1:
-	LogError ("fork failed, sleeping\n");
+	LogError ("Forking X server for remote login failed: %s",
+		  SysErrorMsg());
 	d->status = notRunning;
 	return;
     default:
 	break;
     }
-    Debug ("Server forked, pid %d\n", pid);
+    Debug ("X server forked, pid %d\n", pid);
     d->serverPid = pid;
 
     d->status = remoteLogin;
@@ -674,7 +675,7 @@ openFifo (int *fifofd, char **fifopath, const char *dname)
 {
     if (*fifoDir && *fifofd < 0) {
 	if (mkdir (fifoDir, 0755) < 0  &&  errno != EEXIST) {
-	    LogError ("mkdir %s failed; no control fifos will be available\n", 
+	    LogError ("mkdir %\"s failed; no control FiFos will be available\n", 
 		      fifoDir);
 	    return;
 	}
@@ -685,7 +686,7 @@ openFifo (int *fifofd, char **fifopath, const char *dname)
 	if (*fifopath) {
 	    unlink (*fifopath);
 	    if (mkfifo (*fifopath, 0) < 0)
-		LogError ("cannot create control fifo %s\n", *fifopath);
+		LogError ("Cannot create control FiFo %\"s\n", *fifopath);
 	    else {
 		chown (*fifopath, -1, fifoGroup);
 		chmod (*fifopath, 0620);
@@ -695,7 +696,7 @@ openFifo (int *fifofd, char **fifopath, const char *dname)
 		    return;
 		}
 		unlink (*fifopath);
-		LogError ("cannot open control fifo %s\n", *fifopath);
+		LogError ("Cannot open control FiFo %\"s\n", *fifopath);
 	    }
 	    free (*fifopath);
 	    *fifopath = 0;
@@ -740,7 +741,7 @@ setNLogin (struct display *d,
     freeStrArr (he->nargs);
     he->nargs = nargs;
     he->rLogin = rl;
-    Debug ("Set next login for %s, level %d\n", nuser, rl);
+    Debug ("set next login for %s, level %d\n", nuser, rl);
 }
 
 static void
@@ -807,7 +808,7 @@ parseSd (char **ar, int *how, int *when, int wdef)
 	return 0;
     *how = 0;
     if (!ar[1] || (!ar[2] && wdef < 0)) {
-	LogInfo ("Missing argument(s) to fifo command 'shutdown'\n");
+	LogInfo ("Missing argument(s) to FiFo command \"shutdown\"\n");
 	return 1;
     }
     if (ar[2]) {
@@ -818,7 +819,7 @@ parseSd (char **ar, int *how, int *when, int wdef)
 	else if (!strcmp (ar[2], "schedule"))
 	    *when = SHUT_SCHEDULE;
 	else {
-	    LogInfo ("Invalid mode spec %'s to fifo command 'shutdown'\n", ar[2]);
+	    LogInfo ("Invalid mode spec %\"s to FiFo command \"shutdown\"\n", ar[2]);
 	    return 1;
 	}
     } else
@@ -828,7 +829,7 @@ parseSd (char **ar, int *how, int *when, int wdef)
     else if (!strcmp (ar[1], "halt"))
 	*how = SHUT_HALT;
     else
-	LogInfo ("Invalid type spec %'s to fifo command 'shutdown'\n", ar[1]);
+	LogInfo ("Invalid type spec %\"s to FiFo command \"shutdown\"\n", ar[1]);
     return 1;
 }
 
@@ -848,14 +849,14 @@ processDFifo (const char *buf, int len, void *ptr)
 	if (d->allowShutdown == SHUT_NONE ||
 	    (d->allowShutdown == SHUT_ROOT && d->userSess))
 	{
-	    LogInfo ("Display %s attempted fifo command 'shutdown'\n", d->name);
+	    LogInfo ("Display %s attempted FiFo command \"shutdown\"\n", d->name);
 	    return;
 	}
 	if (when == SHUT_FORCENOW &&
 	    (d->allowNuke == SHUT_NONE ||
 	    (d->allowNuke == SHUT_ROOT && d->userSess)))
 	{
-	    LogInfo ("Display %s attempted fifo command 'shutdown forcenow'\n",
+	    LogInfo ("Display %s attempted FiFo command \"shutdown forcenow\"\n",
 		     d->name);
 	    return;
 	}
@@ -879,14 +880,14 @@ processDFifo (const char *buf, int len, void *ptr)
 		lt = atoi (ar[1]);
 	    StartReserveDisplay (lt ? lt : 60); /* XXX maybe make configurable? */
 	} else
-	    LogInfo ("Remote display %s attempted fifo command 'reserve'\n", d->name);
+	    LogInfo ("Remote display %s attempted FiFo command \"reserve\"\n", d->name);
     } else if (!strcmp (ar[0], "suicide")) {
 	if (d->pid != -1) {
 	    TerminateProcess (d->pid, SIGTERM);
 	    d->status = raiser;
 	}
     } else
-	LogInfo ("Invalid fifo command %'s from display %s\n", ar[0], d->name);
+	LogInfo ("Invalid FiFo command %\"s from display %s\n", ar[0], d->name);
     freeStrArr (ar);
 }
 
@@ -904,22 +905,22 @@ processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 	    return;
 	if (!fifoAllowShutdown)
 	{
-	    LogInfo ("System shutdown via command fifo forbidden\n");
+	    LogInfo ("System shutdown via command FiFo forbidden\n");
 	    return;
 	}
 	if (when == SHUT_FORCENOW && !fifoAllowNuke)
 	{
-	    LogInfo ("Forced system shutdown via command fifo forbidden\n");
+	    LogInfo ("Forced system shutdown via command FiFo forbidden\n");
 	    return;
 	}
 	doShutdown (how, when);
     } else if (!strcmp (ar[0], "login")) {
 	if (arrLen (ar) < 5) {
-	    LogInfo ("Missing argument(s) to fifo command %s\n", ar[0]);
+	    LogInfo ("Missing argument(s) to FiFo command %s\"\n", ar[0]);
 	    return;
 	}
 	if (!(d = FindDisplayByName (ar[1]))) {
-	    LogInfo ("Display %s in fifo command '%s' not found\n", ar[1], ar[0]);
+	    LogInfo ("Display %s in FiFo command %\"s not found\n", ar[1], ar[0]);
 	    return;
 	}
 	setNLogin (d, 
@@ -930,7 +931,7 @@ processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 	} else
 	    StartDisplay (d);
     } else
-	LogInfo ("Invalid fifo command %'s\n", ar[0]);
+	LogInfo ("Invalid FiFo command %\"s\n", ar[0]);
     freeStrArr (ar);
 }
 
@@ -939,7 +940,7 @@ processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 static SIGVAL
 RescanNotify (int n ATTR_UNUSED)
 {
-    Debug ("Caught SIGHUP\n");
+    Debug ("caught SIGHUP\n");
     Rescan = 1;
 #ifdef SIGNALS_RESET_WHEN_CAUGHT
     (void) Signal (SIGHUP, RescanNotify);
@@ -1054,7 +1055,7 @@ WaitForChild (void)
 # endif
 #endif
     {
-	Debug ("Manager wait returns  pid %d  sig %d  core %d  code %d\n",
+	Debug ("manager wait returns  pid %d  sig %d  core %d  code %d\n",
 	       pid, waitSig(status), waitCore(status), waitCode(status));
 	if (autoRescan)
 	    RescanIfMod ();
@@ -1066,20 +1067,20 @@ WaitForChild (void)
 	    closeFifo (&d->fifofd, d->fifoPath);
 	    switch (waitVal (status)) {
 	    case EX_TEXTLOGIN:
-		Debug ("Display exited with EX_TEXTLOGIN\n");
+		Debug ("display exited with EX_TEXTLOGIN\n");
 		ExitDisplay (d, DS_TEXTMODE, FALSE, FALSE);
 		break;
 	    case EX_UNMANAGE_DPY:
-		Debug ("Display exited with EX_UNMANAGE_DPY\n");
+		Debug ("display exited with EX_UNMANAGE_DPY\n");
 		ExitDisplay (d, DS_REMOVE, FALSE, FALSE);
 		break;
 	    case EX_RESERVE:
 		/* XXX this should go away, i guess */
-		Debug ("Display exited with EX_RESERVE\n");
+		Debug ("display exited with EX_RESERVE\n");
 		ExitDisplay (d, DS_RESERVE, FALSE, FALSE);
 		break;
 	    case EX_NORMAL:
-		Debug ("Display exited with EX_NORMAL\n");
+		Debug ("display exited with EX_NORMAL\n");
 		if ((d->displayType & d_lifetime) == dReserve
 #ifdef AUTO_RESERVE
 		     && !AllLocalDisplaysLocked (d)
@@ -1090,7 +1091,7 @@ WaitForChild (void)
 		    ExitDisplay (d, DS_RESTART, FALSE, TRUE);
 		break;
 	    case EX_REMOTE:
-		Debug ("Display exited with EX_REMOTE\n");
+		Debug ("display exited with EX_REMOTE\n");
 		ExitDisplay (d, DS_REMOTE, FALSE, FALSE);
 		break;
 	    default:
@@ -1111,20 +1112,20 @@ WaitForChild (void)
 		ExitDisplay (d, DS_RESTART, TRUE, FALSE);
 		break;
 	    case EX_RESERVER_DPY:
-		Debug ("Display exited with EX_RESERVER_DPY\n");
+		Debug ("display exited with EX_RESERVER_DPY\n");
 		ExitDisplay (d, DS_RESTART, TRUE, TRUE);
 		break;
 	    case EX_AL_RESERVER_DPY:
-		Debug ("Display exited with EX_AL_RESERVER_DPY\n");
+		Debug ("display exited with EX_AL_RESERVER_DPY\n");
 		ExitDisplay (d, DS_RESTART, TRUE, FALSE);
 		break;
 	    case waitCompose (SIGTERM,0,0):
-		Debug ("Display exited on SIGTERM\n");
+		Debug ("display exited on SIGTERM\n");
 		ExitDisplay (d, DS_RESTART, TRUE, FALSE);
 		break;
 #if 0
 	    case EX_REMANAGE_DPY:
-		Debug ("Display exited with EX_REMANAGE_DPY\n");
+		Debug ("display exited with EX_REMANAGE_DPY\n");
 		/*
  		 * XDMCP will restart the session if the display
 		 * requests it
@@ -1141,16 +1142,16 @@ WaitForChild (void)
 	    switch (d->status)
 	    {
 	    case zombie:
-		Debug ("Zombie server for display %s reaped\n", d->name);
+		Debug ("zombie X server for display %s reaped\n", d->name);
 		rStopDisplay (d, d->zstatus);
 		break;
 	    case phoenix:
-		Debug ("Phoenix server arises, restarting display %s\n",
+		Debug ("phoenix X server arises, restarting display %s\n",
 		       d->name);
 		d->status = notRunning;
 		break;
 	    case remoteLogin:
-		Debug ("Remote login server for display %s exited, restarting display\n",
+		Debug ("remote login X server for display %s exited, restarting display\n",
 		       d->name);
 		d->status = notRunning;
 		break;
@@ -1158,25 +1159,25 @@ WaitForChild (void)
 		d->status = notRunning;
 		/* fallthrough */
 	    case running:
-		LogError ("Server for display %s terminated unexpectedly\n",
+		LogError ("X server for display %s terminated unexpectedly\n",
 			  d->name);
 		if (d->pid != -1)
 		{
-		    Debug ("Terminating session pid %d\n", d->pid);
+		    Debug ("terminating session pid %d\n", d->pid);
 		    TerminateProcess (d->pid, SIGTERM);
 		}
 		break;
 	    case notRunning:
 	    case textMode:
 	    case reserve:
-		Debug ("Server exited for passive (%d) session on display %s\n",
+		Debug ("X server exited for passive (%d) session on display %s\n",
 		       (int) d->status, d->name);
 		break;
 	    }
 	}
 	else
 	{
-	    Debug ("Unknown child termination\n");
+	    Debug ("unknown child termination\n");
 	}
     }
     StartDisplays ();
@@ -1305,7 +1306,7 @@ StartDisplay (struct display *d)
 
     if (sdAction)
     {
-	Debug ("Stopping display %s because shutdown is scheduled\n", d->name);
+	Debug ("stopping display %s because shutdown is scheduled\n", d->name);
 	StopDisplay (d);
 	return;
     }
@@ -1323,7 +1324,7 @@ StartDisplay (struct display *d)
 	d->hstent->startTries = 0;
     else if (d->hstent->startTries > d->startAttempts)
     {
-	Debug ("Ignoring disabled display %s\n", d->name);
+	Debug ("ignoring disabled display %s\n", d->name);
 	StopDisplay (d);
 	return;
     }
@@ -1358,7 +1359,7 @@ StartDisplay (struct display *d)
 	}
 	if (d->serverPid == -1 && !StartServer (d))
 	{
-	    LogError ("Server for display %s can't be started, session disabled\n", d->name);
+	    LogError ("X server for display %s can't be started, session disabled\n", d->name);
 	    StopDisplay (d);
 	    return;
 	}
@@ -1421,7 +1422,7 @@ StartDisplay (struct display *d)
 static void
 rStopDisplay (struct display *d, int endState)
 {
-    Debug ("Stopping display %s to state %d\n", d->name, endState);
+    Debug ("stopping display %s to state %d\n", d->name, endState);
     if (d->serverPid != -1 || d->pid != -1)
     {
 	if (d->pid != -1)
@@ -1483,7 +1484,7 @@ ExitDisplay (
 	{
 	    if (d->serverPid != -1 && (forceReserver || d->terminateServer))
 	    {
-	    	Debug ("Killing X-server for %s\n", d->name);
+	    	Debug ("killing X server for %s\n", d->name);
 		TerminateProcess (d->serverPid, d->termSignal);
 		d->status = phoenix;
 	    }

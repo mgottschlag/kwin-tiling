@@ -317,6 +317,6 @@ NewDisplay (const char *name, const char *class2)
     d->pipe.wfd = -1;
     d->userSess = -1;
     displays = d;
-Debug ("Created new display %s\n", d->name);
+Debug ("created new display %s\n", d->name);
     return d;
 }

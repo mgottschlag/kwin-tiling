@@ -175,16 +175,16 @@ GenerateAuthorization (unsigned short name_length, const char *name)
 	auth = (*a->GetAuth) (name_length, name);
 	if (auth)
 	{
-	    Debug ("Got %p (%d %.*s) %02[*hhx\n", auth,
+	    Debug ("got %p (%d %.*s) %02[*hhx\n", auth,
 		    auth->name_length, auth->name_length, auth->name,
 		    auth->data_length, auth->data);
 	}
 	else
-	    Debug ("Got (null)\n");
+	    Debug ("got (null)\n");
     }
     else
     {
-	Debug ("Unknown authorization %s\n", name);
+	Debug ("unknown authorization %s\n", name);
     }
     return auth;
 }
@@ -221,10 +221,10 @@ SetProtoDisplayAuthorization (
 	    pdpy->xdmcpAuthorization = 0;
 	}
 	if (auth)
-	    Debug ("Got %p (%d %.*s)\n", auth,
+	    Debug ("got %p (%d %.*s)\n", auth,
 		auth->name_length, auth->name_length, auth->name);
 	else
-	    Debug ("Got (null)\n");
+	    Debug ("got (null)\n");
     }
 }
 
@@ -323,18 +323,18 @@ SaveServerAuthorizations (
 	StrDup (&d->authFile, d->clientAuthFile);
     if (d->authFile) {
 	if (!(auth_file = fopen (d->authFile, "w"))) {
-	    LogError ("Cannot open server authorization file %s\n", d->authFile);
+	    LogError ("Cannot open X server authorization file %s\n", d->authFile);
 	    free (d->authFile);
 	    d->authFile = NULL;
 	    return FALSE;
 	}
     } else {
 	if (!(auth_file = MakeServerAuthFile (d))) {
-	    LogError ("Cannot create server authorization file\n");
+	    LogError ("Cannot create X server authorization file\n");
 	    return FALSE;
 	}
     }
-    Debug ("File: %s auth: %p\n", d->authFile, auths);
+    Debug ("file: %s  auth: %p\n", d->authFile, auths);
     ret = TRUE;
     for (i = 0; i < count; i++)
     {
@@ -347,7 +347,7 @@ SaveServerAuthorizations (
 	    if (!XauWriteAuth (auth_file, auths[i]) ||
 		fflush (auth_file) == EOF)
 	    {
-		LogError ("Cannot write server authorization file %s\n",
+		LogError ("Cannot write X server authorization file %s\n",
 			  d->authFile);
 		ret = FALSE;
 		free (d->authFile);
@@ -778,7 +778,7 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
     int	len, ipfd;
 
     if ((ipfd = open ("/dev/ip", O_RDWR, 0 )) < 0) {
-	LogError ("Getting interface configuration\n");
+	LogError ("Trouble getting interface configuration\n");
 	return;
     }
 
@@ -795,7 +795,7 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 	if (ioctl (ipfd, (int) I_STR, (char *) &str) < 0)
 	{
 	    close (ipfd);
-	    LogError ("Getting interface configuration\n");
+	    LogError ("Trouble getting interface configuration\n");
 	    return;
 	}
 
@@ -808,7 +808,7 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 	if (ioctl (ipfd, (int) I_STR, (char *) &str) < 0)
 	{
 	    close (ipfd);
-	    LogError ("Getting interface configuration\n");
+	    LogError ("Trouble getting interface configuration\n");
 	    return;
 	}
 
@@ -869,7 +869,7 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 		continue;
 	    if (len == 0)
  	    {
-		Debug ("Skipping zero length address\n");
+		Debug ("skipping zero length address\n");
 		continue;
 	    }
 	    /*
@@ -883,7 +883,7 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 		addr[0] == 127 && addr[1] == 0 &&
 		addr[2] == 0 && addr[3] == 1)
 	    {
-		    Debug ("Skipping localhost address\n");
+		    Debug ("skipping localhost address\n");
 		    continue;
 	    }
 	    family = FamilyInternet;
@@ -1037,13 +1037,13 @@ startUserAuth (struct verify_info *verify, char *buf, char *nbuf,
 	strcat (buf, ".Xauthority");
 	Debug ("XauLockAuth %s\n", buf);
 	lockStatus = XauLockAuth (buf, 1, 2, 10);
-	Debug ("Lock is %d\n", lockStatus);
+	Debug ("lock is %d\n", lockStatus);
 	if (lockStatus == LOCK_SUCCESS)
 	    if (!openFiles (buf, nbuf, old, new))
 		XauUnlockAuth (buf);
     }
     if (!*new)
-	LogInfo ("can't update authorization file in home dir %s\n", home);
+	LogInfo ("Can't update authorization file in home dir %s\n", home);
 }
 
 static void
@@ -1059,7 +1059,7 @@ endUserAuth (FILE *old, FILE *new, const char *nname)
 	while ((entry = XauReadAuth (old))) {
 	    if (!checkEntry (entry))
 	    {
-		Debug ("Writing an entry\n");
+		Debug ("writing an entry\n");
 		writeAuth (new, entry);
 	    }
 	    XauDisposeAuth (entry);
@@ -1126,7 +1126,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	    }
 #endif
 	    if (!new) {
-		LogError ("can't create authorization file in %s\n", 
+		LogError ("Can't create authorization file in %s\n", 
 			  d->userAuthDir);
 		return;
 	    }

@@ -176,20 +176,20 @@ Krb5Init(
     int	i;
 
     if (code = Krb5DisplayCCache(d->name, &ccache)) {
-	LogError("%s while getting Krb5 ccache for \"%s\"\n",
+	LogError("%s while getting Krb5 ccache for %\"s\n",
 		 error_message(code), d->name);
 	return 1;
     }
 
     if (code = krb5_parse_name (name, &me)) {
-	 LogError("%s while parsing Krb5 name \"%s\"\n",
+	 LogError("%s while parsing Krb5 name %\"s\n",
 		  error_message(code), name);
 	 return 1;
     }
 
     code = krb5_cc_initialize (ccache, me);
     if (code != 0) {
-	LogError("%s while initializing Krb5 cache \"%s\"\n",
+	LogError("%s while initializing Krb5 cache %\"s\n",
 		 error_message(code), krb5_cc_default_name());
 	return 1;
     }
@@ -248,11 +248,11 @@ Krb5Init(
 	char *my_name = NULL;
 	int code2 = krb5_unparse_name(me, &my_name);
 	if (code == KRB5KRB_AP_ERR_BAD_INTEGRITY) {
-	    LogError ("password incorrect for Krb5 principal \"%s\"\n",
+	    LogError ("Password incorrect for Krb5 principal %\"s\n",
 		      code2 ? name : my_name);
 	}
 	else
-	    LogError("%s while getting initial Krb5 credentials for \"%s\"\n",
+	    LogError("%s while getting initial Krb5 credentials for %\"s\n",
 		     error_message(code), code2 ? name : my_name);
 	if (my_name)
 	    free (my_name);

@@ -87,7 +87,7 @@ BecomeDaemon (void)
 	break;
     case -1:
 	/* error */
-	LogError("daemon fork failed, errno = %d\n", errno);
+	LogError("Daemon fork failed: %s\n", SysErrorMsg());
 	break;
 
     default:
@@ -103,8 +103,8 @@ BecomeDaemon (void)
 #  else
 	sts = setpgrp(child_id, child_id);
 	if (sts)
-	    LogError("setting process grp for daemon failed, errno = %d\n",
-		     errno);
+	    LogError("Setting process group for daemon failed: %s\n",
+		     SysErrorMsg());
 #  endif
 # endif
 #endif /* !CSRG_BASED */

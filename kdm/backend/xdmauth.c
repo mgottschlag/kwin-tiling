@@ -108,7 +108,7 @@ XdmGetAuthHelper (
      * is a DES key and only uses 56 bits
      */
     ((char *)new->data)[new->data_length - 8] = '\0';
-    Debug ("Local server auth %02[*hhx\n", new->data_length, new->data);
+    Debug ("local server auth %02[*hhx\n", new->data_length, new->data);
     return new;
 }
 
@@ -164,7 +164,7 @@ XdmGetXdmcpAuth (
     memmove( fileauth->name, xdmcpauth->name, xdmcpauth->name_length);
     memmove( fileauth->data, pdpy->authenticationData.data, 8);
     memmove( fileauth->data + 8, xdmcpauth->data, 8);
-    Debug ("Accept packet auth %02[*hhx\nAuth file auth %02[*hhx\n", 
+    Debug ("accept packet auth %02[*hhx\nauth file auth %02[*hhx\n", 
 	   xdmcpauth->data_length, xdmcpauth->data, 
 	   fileauth->data_length, fileauth->data);
     /* encrypt the session key for its trip back to the server */
@@ -217,7 +217,7 @@ XdmGetKey (
     char    line[1024], id[1024], key[1024];
     int	    keylen;
 
-    Debug ("Lookup key for %.*s\n", displayID->length, displayID->data);
+    Debug ("lookup key for %.*s\n", displayID->length, displayID->data);
     keys = fopen (keyFile, "r");
     if (!keys)
 	return FALSE;
@@ -226,7 +226,7 @@ XdmGetKey (
 	if (line[0] == '#' || sscanf (line, "%s %s", id, key) != 2)
 	    continue;
 	bzero(line, sizeof(line));
-	Debug ("Key entry for \"%s\" %d bytes\n", id, strlen(key));
+	Debug ("key entry for %\"s %d bytes\n", id, strlen(key));
 	if (strlen (id) == displayID->length &&
 	    !strncmp (id, (char *)displayID->data, displayID->length))
 	{
@@ -265,7 +265,7 @@ XdmCheckAuthentication (
 	return FALSE;
     XdmcpUnwrap (authenticationData->data, (unsigned char *)&pdpy->key,
 		  authenticationData->data, 8);
-    Debug ("Request packet auth %02[*hhx\n", 
+    Debug ("request packet auth %02[*hhx\n", 
 	   authenticationData->length, authenticationData->data);
     if (!XdmcpCopyARRAY8(authenticationData, &pdpy->authenticationData))
 	return FALSE;

@@ -147,7 +147,7 @@ Debug ("autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, user = %s\n",
     if (fargs)
 	freeStrArr (args);
     if (!clientPid)
-	LogError ("session start failed\n");
+	LogError ("Session start failed\n");
     return clientPid;
 }
 
@@ -207,11 +207,11 @@ CtrlGreeterWait (struct display *d, int wreply)
 		    GSendInt (*(int *)avptr);
 		    break;
 		case C_TYPE_STR:
-		    Debug (" -> string %'s\n", *avptr);
+		    Debug (" -> string %\"s\n", *avptr);
 		    GSendStr (*avptr);
 		    break;
 		case C_TYPE_ARGV:
-		    Debug (" -> sending argv %'[{s\n", *(char ***)avptr);
+		    Debug (" -> sending argv %\"[{s\n", *(char ***)avptr);
 		    GSendArgv (*(char ***)avptr);
 		    break;
 #ifdef XDMCP
@@ -229,9 +229,9 @@ CtrlGreeterWait (struct display *d, int wreply)
 	case G_GetSessArg:
 	    Debug ("G_GetSessArg\n");
 	    name = GRecvStr ();
-	    Debug (" user '%s'\n", name);
+	    Debug (" user %\"s\n", name);
 	    RdUsrData (d, name, &args);
-	    Debug (" -> %'[{s\n", args);
+	    Debug (" -> %\"[{s\n", args);
 	    GSendArgv (args);
 	    freeStrArr (args);
 	    free (name);
@@ -246,7 +246,7 @@ CtrlGreeterWait (struct display *d, int wreply)
 	case G_Verify:
 	    Debug ("G_Verify\n");
 	    name = GRecvStr ();
-	    Debug (" user '%s'\n", name);
+	    Debug (" user %\"s\n", name);
 	    pass = GRecvStr ();
 	    Debug (pass[0] ? " password\n" : " no password\n");
 	    GSendInt (i = Verify (d, name, pass));
@@ -370,18 +370,18 @@ DoGreet (struct display *d)
 
     if (cmd == G_Ready) {
 	name = GRecvStr ();
-	Debug (" user '%s'\n", name);
+	Debug (" user %\"s\n", name);
 	pass = GRecvStr ();
 	Debug (pass[0] ? " password\n" : " no password\n");
 	args = GRecvArgv ();
-	Debug (" arguments: %'[{s\n", args);
+	Debug (" arguments: %\"[{s\n", args);
 	CloseGreeter (d, 0);
 	clientPid = StartClient (d, name, pass, args);
 	freeStrArr (args);
 	WipeStr (pass);
 	free (name);
 	if (!clientPid)
-	    LogError ("session start failed\n");
+	    LogError ("Session start failed\n");
     }
 
     return cmd;
@@ -409,7 +409,7 @@ catchTerm (int n ATTR_UNUSED)
 static int
 IOErrorHandler (Display *dpy ATTR_UNUSED)
 {
-    LogError("fatal IO error %d (%s)\n", errno, _SysErrorMsg(errno));
+    LogError("Fatal X server IO error: %s\n", SysErrorMsg());
     Longjmp (abortSession, EX_AL_RESERVER_DPY);	/* XXX EX_RESERVER_DPY */
     /*NOTREACHED*/
     return 0;
@@ -479,7 +479,7 @@ ManageSession (struct display *d)
 
     }
 
-    Debug ("Client Started\n");
+    Debug ("client Started\n");
     /*
      * Wait for session to end,
      */
@@ -505,7 +505,7 @@ ManageSession (struct display *d)
      * for being killed.
      */
     if (!PingServer (d)) {
-	Debug("X-Server dead upon session exit.\n");
+	Debug("X server dead upon session exit.\n");
 	if ((d->displayType & d_location) == dLocal)
 	    sleep (10);
 	SessionExit (d, EX_AL_RESERVER_DPY);
@@ -523,7 +523,7 @@ LoadXloginResources (struct display *d)
 	env = systemEnv (d, (char *) 0, (char *) 0);
 	args = parseArgs ((char **) 0, d->xrdb);
 	args = parseArgs (args, d->resources);
-	Debug ("Loading resource file: %s\n", d->resources);
+	Debug ("loading resource file: %s\n", d->resources);
 	(void) runAndWait (args, env);
 	freeStrArr (args);
 	freeStrArr (env);

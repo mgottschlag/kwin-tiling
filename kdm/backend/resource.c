@@ -59,7 +59,7 @@ OpenGetter ()
 	    LogPanic ("Cannot run config reader\n");
 	freeStrArr (env);
     }
-    Debug ("Getter ready\n");
+    Debug ("getter ready\n");
 }
 
 void
@@ -69,7 +69,7 @@ CloseGetter ()
 	GSet (&cnftalk);
 	(void) GClose (&getter, 0);
     }
-    Debug ("Getter closed\n");
+    Debug ("getter closed\n");
 }
 
 /*
@@ -359,7 +359,7 @@ FindCfgEnt (struct display *d, int id)
 	    if (d->cfg.idx[i] == id)
 		return ((char **)d->cfg.data) + i;
     }
-    Debug ("Unknown config entry %#x requested\n", id);
+    Debug ("unknown config entry %#x requested\n", id);
     return (char **)0;
 }	    
 
@@ -428,7 +428,7 @@ LoadDMResources (int force)
     if (!startConfig (GC_gGlobal, &cfg.dep, force))
 	return 1;
     LoadResources (&cfg);
-/*    Debug ("Manager resources: %[*x\n", 
+/*    Debug ("manager resources: %[*x\n", 
 	    cfg.numCfgEnt, ((char **)cfg.data) + cfg.numCfgEnt);*/
     ret = 1;
     for (i = 0; i < as(globVal); i++) {
@@ -503,7 +503,7 @@ LoadDisplayResources (struct display *d)
     GSendStr (d->name);
     GSendStr (d->class2);
     LoadResources (&d->cfg);
-/*    Debug ("Display(%s, %s) resources: %[*x\n", d->name, d->class2,
+/*    Debug ("display(%s, %s) resources: %[*x\n", d->name, d->class2,
 	    d->cfg.numCfgEnt, ((char **)d->cfg.data) + d->cfg.numCfgEnt);*/
     ret = 1;
     for (i = 0; i < as(dpyVal); i++) {
@@ -563,7 +563,7 @@ ScanServers (int force)
 	    dtx = "new";
 	}
 	d->stillThere = 1;
-	Debug ("Found %s display: %s %s %s%s %[s\n",
+	Debug ("found %s display: %s %s %s%s %[s\n",
 	       dtx, d->name, d->class2, 
 	       ((type & d_location) == dLocal) ? "local" : "foreign",
 	       ((type & d_lifetime) == dReserve) ? " reserve" : "", argv);

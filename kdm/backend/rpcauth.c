@@ -73,7 +73,7 @@ SecureRPCGetAuth (
     new->number = 0;
 
     getnetname (key);
-    Debug ("System netname %s\n", key);
+    Debug ("system netname %s\n", key);
     new->data_length = strlen(key);
     new->data = (char *) malloc (new->data_length);
     if (!new->data)

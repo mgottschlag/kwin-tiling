@@ -152,7 +152,7 @@ Wait4 (int pid)
 #endif
 	if (errno != EINTR)
 	{
-	    Debug ("Wait4(%d) failed: %s\n", pid, _SysErrorMsg(errno) );
+	    Debug ("Wait4(%d) failed: %s\n", pid, SysErrorMsg() );
 	    return 0;
 	}
     return waitVal (result);
@@ -197,7 +197,7 @@ execute (char **argv, char **env)
 	else
 	    newargv = addStrArr (0, "/bin/sh", 7);
 	mergeStrArrs (&newargv, argv);
-	Debug ("Shell script execution: %[s\n", newargv);
+	Debug ("shell script execution: %[s\n", newargv);
 	execve (newargv[0], newargv, env);
     }
 }
@@ -210,10 +210,10 @@ runAndWait (char **args, char **env)
     switch (pid = Fork ()) {
     case 0:
 	execute (args, env);
-	LogError ("can't execute \"%s\" (err %d)\n", args[0], errno);
+	LogError ("Can't execute %\"s: %s\n", args[0], SysErrorMsg());
 	exit (1);
     case -1:
-	LogError ("can't fork to execute \"%s\" (err %d)\n", args[0], errno);
+	LogError ("Can't fork to execute %\"s: %s\n", args[0], SysErrorMsg());
 	return 1;
     }
     ret = Wait4 (pid);
@@ -320,11 +320,11 @@ GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
 	close (pip[1]);
 	if (Reader (pip[0], coninfo, 1)) {
 	    Wait4 (proc->pid);
-	    LogError ("Cannot execute '%s' (%s)\n", margv[0], cname);
+	    LogError ("Cannot execute %\"s (%s)\n", margv[0], cname);
 	    goto fail1;
 	}
 	close (pip[0]);
-	Debug ("Started %s (%s), pid %d\n", cname, margv[0], proc->pid);
+	Debug ("started %s (%\"s), pid %d\n", cname, margv[0], proc->pid);
 	free (margv[0]);
 	free (margv);
 	GSendInt (debugLevel);
@@ -354,7 +354,7 @@ GClose (GProc *proc, int force)
     int	ret;
 
     if (!proc->pid) {
-	Debug ("Whoops, GClose while helper not running\n");
+	Debug ("whoops, GClose while helper not running\n");
 	return 0;
     }
     iGClosen (&proc->pipe);
@@ -405,7 +405,7 @@ GWrite (const void *buf, int len)
 void
 GSendInt (int val)
 {
-    GDebug ("Sending int %d (%#x) to %s\n", val, val, curtalk->pipe->who);
+    GDebug ("sending int %d (%#x) to %s\n", val, val, curtalk->pipe->who);
     GWrite (&val, sizeof(val));
 }
 
@@ -414,7 +414,7 @@ GRecvInt ()
 {
     int val;
 
-    GDebug ("Receiving int from %s ...\n", curtalk->pipe->who);
+    GDebug ("receiving int from %s ...\n", curtalk->pipe->who);
     GRead (&val, sizeof(val));
     GDebug (" -> %d (%#x)\n", val, val);
     return val;
@@ -423,7 +423,7 @@ GRecvInt ()
 int
 GRecvCmd (int *cmd)
 {
-    GDebug ("Receiving command from %s ...\n", curtalk->pipe->who);
+    GDebug ("receiving command from %s ...\n", curtalk->pipe->who);
     if (Reader (curtalk->pipe->rfd, cmd, sizeof(*cmd)) == sizeof(*cmd)) {
 	GDebug (" -> %d\n", *cmd);
 	return 1;
@@ -436,7 +436,7 @@ GRecvCmd (int *cmd)
 void
 GSendArr (int len, const char *data)
 {
-    GDebug ("Sending array[%d] %02[*{hhx to %s\n", len, len, data, curtalk->pipe->who);
+    GDebug ("sending array[%d] %02[*{hhx to %s\n", len, len, data, curtalk->pipe->who);
     GWrite (&len, sizeof(len));
     GWrite (data, len);
 }
@@ -467,7 +467,7 @@ GRecvArr (int *rlen)
 {
     char *buf;
 
-    GDebug ("Receiving array from %s ...\n", curtalk->pipe->who);
+    GDebug ("receiving array from %s ...\n", curtalk->pipe->who);
     buf = iGRecvArr (rlen);
     GDebug (" -> %02[*{hhx\n", *rlen, buf);
     return buf;
@@ -490,7 +490,7 @@ GRecvArrBuf (char *buf)
 {
     int len;
 
-    GDebug ("Receiving already allocated array from %s ...\n", curtalk->pipe->who);
+    GDebug ("receiving already allocated array from %s ...\n", curtalk->pipe->who);
     len = iGRecvArrBuf (buf);
     GDebug (" -> %02[*{hhx\n", len, buf);
     return len;
@@ -501,9 +501,9 @@ GRecvStrBuf (char *buf)
 {
     int len;
 
-    GDebug ("Receiving already allocated string from %s ...\n", curtalk->pipe->who);
+    GDebug ("receiving already allocated string from %s ...\n", curtalk->pipe->who);
     len = iGRecvArrBuf (buf);
-    GDebug (" -> %'.*s\n", len, buf);
+    GDebug (" -> %\".*s\n", len, buf);
     return len;
 }
 
@@ -512,7 +512,7 @@ GSendStr (const char *buf)
 {
     int len;
 
-    GDebug ("Sending string %'s to %s\n", buf, curtalk->pipe->who);
+    GDebug ("sending string %\"s to %s\n", buf, curtalk->pipe->who);
     if (buf) {
 	len = strlen (buf) + 1;
 	GWrite (&len, sizeof(len));
@@ -525,7 +525,7 @@ void
 GSendNStr (const char *buf, int len)
 {
     int tlen = len + 1;
-    GDebug ("Sending string %'.*s to %s\n", len, buf, curtalk->pipe->who);
+    GDebug ("sending string %\".*s to %s\n", len, buf, curtalk->pipe->who);
     GWrite (&tlen, sizeof(tlen));
     GWrite (buf, len);
     GWrite ("", 1);
@@ -537,9 +537,9 @@ GRecvStr ()
     int len;
     char *buf;
 
-    GDebug ("Receiving string from %s ...\n", curtalk->pipe->who);
+    GDebug ("receiving string from %s ...\n", curtalk->pipe->who);
     buf = iGRecvArr (&len);
-    GDebug (" -> %'.*s\n", len, buf);
+    GDebug (" -> %\".*s\n", len, buf);
     return buf;
 }
 
@@ -557,7 +557,7 @@ iGSendStrArr (int num, char **data)
 void
 GSendStrArr (int num, char **data)
 {
-    GDebug ("Sending string array[%d] to %s\n", num, curtalk->pipe->who);
+    GDebug ("sending string array[%d] to %s\n", num, curtalk->pipe->who);
     iGSendStrArr (num, data);
 }
 */
@@ -568,7 +568,7 @@ GRecvStrArr (int *rnum)
     int num;
     char **argv, **cargv;
 
-    GDebug ("Receiving string array from %s ...\n", curtalk->pipe->who);
+    GDebug ("receiving string array from %s ...\n", curtalk->pipe->who);
     GRead (&num, sizeof(num));
     GDebug (" -> %d strings\n", num);
     *rnum = num;
@@ -591,10 +591,10 @@ GSendArgv (char **argv)
 
     if (argv) {
 	for (num = 0; argv[num]; num++);
-	GDebug ("Sending argv[%d] to %s ...\n", num, curtalk->pipe->who);
+	GDebug ("sending argv[%d] to %s ...\n", num, curtalk->pipe->who);
 	iGSendStrArr (num + 1, argv);
     } else {
-	GDebug ("Sending NULL argv to %s\n", curtalk->pipe->who);
+	GDebug ("sending NULL argv to %s\n", curtalk->pipe->who);
 	GWrite (&argv, sizeof(int));
     }
 }

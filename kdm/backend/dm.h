@@ -484,7 +484,6 @@ extern void SessionExit (struct display *d, int status) ATTR_NORETURN;
 extern void RdUsrData (struct display *d, const char *usr, char ***args);
 
 /* server.c */
-extern const char *_SysErrorMsg (int n);
 extern int StartServer (struct display *d);
 extern int WaitForServer (struct display *d);
 extern void ResetServer (struct display *d);
@@ -514,6 +513,7 @@ extern const char *getEnv (char **e, const char *name);
 extern const char *localHostname (void);
 extern int Reader (int fd, void *buf, int len);
 extern void FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr);
+extern const char *SysErrorMsg (void);
 
 #ifdef XDMCP
 
