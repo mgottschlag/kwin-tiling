@@ -1,0 +1,136 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>KXmlRpcDialogBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>KXmlRpcDialogBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>591</width>
+            <height>474</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>KXmlRpcDialogBase</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>ButtonGroup1</cstring>
+            </property>
+            <property name="title">
+                <string>Select port for XML RPC service</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>autoPort</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Select port automatically</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>manualPort</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use the following port:</string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox" row="1" column="1">
+                    <property name="name">
+                        <cstring>port</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>100</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                    <property name="maxValue">
+                        <number>65535</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
+                </widget>
+                <spacer row="1" column="2">
+                    <property name="name" stdset="0">
+                        <cstring>Spacer1</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </grid>
+        </widget>
+        <spacer>
+            <property name="name" stdset="0">
+                <cstring>Spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>manualPort</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>port</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

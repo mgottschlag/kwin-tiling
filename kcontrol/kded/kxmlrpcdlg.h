@@ -1,5 +1,5 @@
 /* This file is part of the KDE project
-   Copyright (C) 2002 Daniel Molkentin <molkentin@kde.org>
+   Copyright (C) 2002 Waldo Bastian <bastian@kde.org>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -16,49 +16,28 @@
    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.
  */
-#ifndef KCMKDED_H
-#define KCMKDED_H
+#ifndef KXMLRPCDLG_H
+#define KXMLRPCDLG_H
 
-#include <kcmodule.h>
+#include <kdialogbase.h>
 
-class KListView;
-class QListViewItem;
-class QStringList;
-class QPushButton;
+class KXmlRpcDialogBase;
+class KConfig;
 
-class KDEDConfig : public KCModule
+class KXmlRpcDialog : public KDialogBase
 {
 Q_OBJECT
 public:
-	KDEDConfig(QWidget* parent, const char* name= 0L, const QStringList& foo = QStringList());
-	~KDEDConfig() {};
-
-	void       load();
-	void       save();
-	void       defaults();
-	
-	QString quickHelp() const;
-	const KAboutData* aboutData() const;
-
-protected:
-
-	void getServiceStatus();
+	KXmlRpcDialog(QWidget* parent, const char* name= 0);
+	~KXmlRpcDialog();
 
 protected slots:
-
-	void slotStartService();
-	void slotStopService();
-	void configureService();
-	void slotEvalItem(QListViewItem *item);
+	void slotOk();
 	
 private:
-
-	KListView *_lvLoD;
-	KListView *_lvStartup;
-	QPushButton *_pbStart;
-	QPushButton *_pbStop;
-	QPushButton *_pbOptions;
+	KXmlRpcDialogBase *mWidget;
+	KConfig *mConfig;
 };
 
-#endif // KCMKDED_H
+#endif // KXMLRPCDLG_H
 
