@@ -38,7 +38,7 @@ MenuEditView::MenuEditView( KActionCollection* ac, QWidget *parent, const char *
 
     connect(_tree, SIGNAL(entrySelected(const QString&, const QString &, bool)),
 	    _editor, SLOT(setDesktopFile(const QString&, const QString &, bool)));
-    connect(_editor, SIGNAL(changed()), _tree, SLOT(currentChanged()));
+    connect(_editor, SIGNAL(changed(const QString &)), _tree, SLOT(currentChanged(const QString &)));
 
     // restore splitter sizes
     KConfig* config = KGlobal::config();

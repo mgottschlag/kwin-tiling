@@ -34,7 +34,8 @@ public:
     DesktopFileEditor( QWidget *parent=0, const char *name=0 );
 
 signals:
-    void changed();
+    // Signals a change, @p file contains the new version.
+    void changed(const QString &file);
 
 public slots:
     void setDesktopFile(const QString& desktopFile, const QString &name, bool isDeleted);

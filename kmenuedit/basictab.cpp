@@ -239,7 +239,7 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
 
     // is desktopFile a .desktop file?
     // (It's a .desktopfile if it's no .directory file)
-    bool isDF = desktopFile.find(".directory") == -1;
+    bool isDF = _isDesktopFile = (desktopFile.find(".directory") == -1);
 
     // set only basic attributes if it is not a .desktop file
     _nameEdit->setEnabled(!isDeleted);
@@ -308,6 +308,12 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
     _uidLabel->setEnabled(!isDeleted && _uidCB->isChecked());
 }
 
+static QString locateLocalXDG(const QString &prefix, const QString &file)
+{
+    QString path = QDir::homeDirPath() + "/.desktop/" + prefix + "/" + file;
+    return path;
+}
+
 void BasicTab::apply( bool desktopFileNeedsSave )
 {
     // key binding part
@@ -317,34 +323,72 @@ void BasicTab::apply( bool desktopFileNeedsSave )
 
     if( !desktopFileNeedsSave )
         return;
-    QString local = locateLocal("apps", _desktopFile);
 
-    KDesktopFile df(local);
-    df.writeEntry("Name", _nameEdit->text());
-    df.writeEntry("Comment", _commentEdit->text());
-    df.writeEntry("Icon", _iconButton->icon());
-
-    if(_desktopFile.find(".desktop") < 0)
-	{
-	    df.sync();
-	    return;
-	}
-
-    df.writeEntry("Exec", _execEdit->lineEdit()->text());
-    df.writeEntry("Type", desktopTypeToString((DesktopType)_typeEdit->currentItem()));
-    df.writeEntry("Path", _pathEdit->lineEdit()->text());
-
-    if (_terminalCB->isChecked())
-        df.writeEntry("Terminal", 1);
+    //
+    QString local;
+    if (_isDesktopFile)
+    {
+        if (!_desktopFile.startsWith("/"))
+        {
+           local = locateLocal("apps", _desktopFile); // Relative to apps
+        }
+        else
+        {
+           // VFolder style needs to be made relative, assume no subdirectories.
+           local = _desktopFile.mid(_desktopFile.findRev('/')+1);
+           local = locateLocalXDG("applications", local);
+        }
+    }
     else
-        df.writeEntry("Terminal", 0);
+    {
+        if (!_desktopFile.startsWith("/"))
+        {
+           local = locateLocal("apps", _desktopFile); // Relative to apps
+        }
+        else
+        {
+           // VFolder style needs to be made relative, assume no subdirectories.
+           local = _desktopFile.mid(_desktopFile.findRev('/')+1);
+           local = locateLocalXDG("desktop-directories", local);
+        }
+    }
 
-    df.writeEntry("TerminalOptions", _termOptEdit->text());
-    df.writeEntry("X-KDE-SubstituteUID", _uidCB->isChecked());
-    df.writeEntry("X-KDE-Username", _uidEdit->text());
-    df.writeEntry("X-KDE-StartupNotify", _launchCB->isChecked());
+    KConfig *df = 0;
+    if (_desktopFile != local)
+    {
+       KConfig orig(_desktopFile, true, false, "apps");
+       df = orig.copyTo(local);
+    }
+    else
+    {
+       df = new KConfig(_desktopFile, false, false, "apps");
+    }
 
-    df.sync();
+    df->setDesktopGroup();
+    df->writeEntry("Name", _nameEdit->text());
+    df->writeEntry("Comment", _commentEdit->text());
+    df->writeEntry("Icon", _iconButton->icon());
+
+    if(_isDesktopFile)
+    {
+        df->writeEntry("Exec", _execEdit->lineEdit()->text());
+        df->writeEntry("Type", desktopTypeToString((DesktopType)_typeEdit->currentItem()));
+        df->writeEntry("Path", _pathEdit->lineEdit()->text());
+
+        if (_terminalCB->isChecked())
+            df->writeEntry("Terminal", 1);
+        else
+            df->writeEntry("Terminal", 0);
+
+        df->writeEntry("TerminalOptions", _termOptEdit->text());
+        df->writeEntry("X-KDE-SubstituteUID", _uidCB->isChecked());
+        df->writeEntry("X-KDE-Username", _uidEdit->text());
+        df->writeEntry("X-KDE-StartupNotify", _launchCB->isChecked());
+    }
+
+    df->sync();
+    delete df;
+    _desktopFile = local;
 }
 
 void BasicTab::reset()

@@ -78,7 +78,7 @@ void DesktopFileEditor::slotApply()
     _apply->setEnabled(false);
     _reset->setEnabled(false);
     _desktopFileNeedsSave = false;
-    emit changed();
+    emit changed(_basicTab->desktopFile());
 }
 
 void DesktopFileEditor::slotReset()
@@ -88,3 +88,4 @@ void DesktopFileEditor::slotReset()
     _reset->setEnabled(false);
     _desktopFileNeedsSave = false;
 }
+

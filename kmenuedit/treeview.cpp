@@ -41,6 +41,8 @@
 #include <kaction.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
+#include <kservice.h>
+#include <kservicegroup.h>
 
 #include "treeview.h"
 #include "treeview.moc"
@@ -49,31 +51,21 @@
 const char* clipboard_prefix = ".kmenuedit_clipboard/";
 
 TreeItem::TreeItem(QListViewItem *parent, const QString& file)
-    :QListViewItem(parent), _file(file), _hidden(false), _init(false), _directory(false) {}
+    :QListViewItem(parent), _hidden(false), _init(false), _file(file) {}
 
 TreeItem::TreeItem(QListViewItem *parent, QListViewItem *after, const QString& file)
-    :QListViewItem(parent, after), _file(file), _hidden(false), _init(false), _directory(false) {}
+    :QListViewItem(parent, after), _hidden(false), _init(false), _file(file) {}
 
 TreeItem::TreeItem(QListView *parent, const QString& file)
-    : QListViewItem(parent), _file(file), _hidden(false), _init(false), _directory(false) {}
+    : QListViewItem(parent), _hidden(false), _init(false), _file(file) {}
 
 TreeItem::TreeItem(QListView *parent, QListViewItem *after, const QString& file)
-    : QListViewItem(parent, after), _file(file), _hidden(false), _init(false), _directory(false) {}
+    : QListViewItem(parent, after), _hidden(false), _init(false), _file(file) {}
 
 void TreeItem::setName(const QString &name)
 {
     _name = name;
     update();
-}
-
-QString TreeItem::file() const
-{
-    return _directory ? _file + "/.directory" : _file;
-}
-
-void TreeItem::setDirectory(bool b)
-{
-    _directory = b;
 }
 
 void TreeItem::setHidden(bool b)
@@ -93,11 +85,11 @@ void TreeItem::update()
 
 void TreeItem::setOpen(bool o)
 {
-    if (o && _directory && !_init)
+    if (o && !_directoryPath.isEmpty() && !_init)
     {
        _init = true;
        TreeView *tv = static_cast<TreeView *>(listView());
-       tv->fillBranch(_file, this);
+       tv->fillBranch(_directoryPath, this);
     }
     QListViewItem::setOpen(o);
 }
@@ -214,7 +206,7 @@ void TreeView::fill()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     clear();
-    fillBranch("", 0);
+    fillBranch(QString::null, 0);
     QApplication::restoreOverrideCursor();
 }
 
@@ -260,80 +252,68 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
     if(relPath[0] == '/')
 	relPath = relPath.mid(1, relPath.length());
 
-    // I don't use findAllResources as subdirectories are not recognised as resources
-    // and therefore I already have to iterate by hand to get the subdir list.
-    QStringList dirlist = dirList(relPath);
-    QStringList filelist = fileList(relPath);
+    // We ask KSycoca to give us all services (sorted).
+    KServiceGroup::Ptr root = KServiceGroup::group(relPath);
 
-    // first add tree items for the desktop files in this directory
-    if (!filelist.isEmpty()) {
-	QStringList::ConstIterator it = filelist.end();
-	do{
-	    --it;
+    if (!root || !root->isValid())
+        return;
 
-	    KDesktopFile df(*it);
-	    bool hidden = df.readBoolEntry("NoDisplay") || df.readBoolEntry("Hidden");
+    KServiceGroup::List list = root->entries(true, !_showHidden);
 
-	    if (hidden && !_showHidden)
-	        continue;
+    QListViewItem *after = 0;
 
-            QString name = findName(&df, hidden);
-            if (name.isEmpty() && df.readEntry("Exec").isEmpty())
-                continue;
+    for(KServiceGroup::List::ConstIterator it = list.begin();
+        it != list.end(); ++it) 
+    {
+        KSycocaEntry * e = *it;
+
+        if (e->isType(KST_KServiceGroup)) 
+        {
+            KServiceGroup::Ptr g(static_cast<KServiceGroup *>(e));
+            QString groupCaption = g->caption();
+
+            // Item names may contain ampersands. To avoid them being converted
+            // to accelerators, replace them with two ampersands.
+            groupCaption.replace("&", "&&");
+
+            bool hidden = g->noDisplay();
+
+            TreeItem *item;		
+            if (parent == 0)
+                item = new TreeItem(this,  after, g->directoryEntryPath());
+            else
+                item = new TreeItem(parent, after, g->directoryEntryPath());
+
+            item->setName(groupCaption);
+            item->setPixmap(0, appIcon(g->icon()));
+            item->setDirectoryPath(g->relPath());
+            item->setHidden(hidden);
+            item->setExpandable(true);
+            after = item;
+        }
+        else if (e->isType(KST_KService)) 
+        {
+            KService::Ptr s(static_cast<KService *>(e));
+            QString serviceCaption = s->name();
+
+            // Item names may contain ampersands. To avoid them being converted
+            // to accelerators, replace them with two ampersands.
+            serviceCaption.replace("&", "&&");
+
+            bool hidden = s->noDisplay();
 
             TreeItem* item;
             if (parent == 0)
-                item = new TreeItem(this, *it);
+                item = new TreeItem(this, after, s->desktopEntryPath());
             else
-                item = new TreeItem(parent, *it);
+                item = new TreeItem(parent, after, s->desktopEntryPath());
 
-            item->setName(name);
-            item->setPixmap(0, appIcon(df.readIcon()));
+            item->setName(serviceCaption);
+            item->setPixmap(0, appIcon(s->icon()));
 
             item->setHidden(hidden);
-	}
-	while (it != filelist.begin());
-    }
-
-    // add directories and process sudirs
-    if (!dirlist.isEmpty()) {
-	QStringList::ConstIterator it = dirlist.end();
-	do {
-	    --it;
-
-	    QString dirFile = *it + "/.directory";
-	    TreeItem* item;
-
-	    bool hidden = false;
-	    QString name;
-	    QString icon;
-
-            KDesktopFile df(dirFile, true);
-            hidden = df.readBoolEntry("NoDisplay") || df.readBoolEntry("Hidden");
-            if (hidden && !_showHidden)
-                continue;
-
-            name = findName(&df, hidden);
-            if (name.isEmpty())
-                name = *it;
-
-            icon = df.readIcon();
-            if (icon.isEmpty())
-                icon = "package";
-
-            if (parent == 0)
-                item = new TreeItem(this,  *it);
-            else
-                item = new TreeItem(parent, *it);
-
-            item->setName(name);
-            item->setPixmap(0, appIcon(icon));
-
-            item->setHidden(hidden);
-            item->setExpandable(true);
-            item->setDirectory(true);
-	}
-	while (it != dirlist.begin());
+            after = item;
+        }
     }
 }
 
@@ -370,12 +350,14 @@ void TreeView::itemSelected(QListViewItem *item)
     emit entrySelected(_item->file(), _item->name(), dselected);
 }
 
-void TreeView::currentChanged()
+void TreeView::currentChanged(const QString& file)
 {
     TreeItem *item = (TreeItem*)selectedItem();
     if (item == 0) return;
 
-    KDesktopFile df(item->file());
+    item->setFile(file);
+
+    KDesktopFile df(file);
     item->setName(findName(&df, item->isHidden()));
     item->setPixmap(0, appIcon(df.readIcon()));
 }

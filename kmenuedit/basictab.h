@@ -44,6 +44,8 @@ public:
     void apply( bool desktopFileNeedsSave );
     void reset();
 
+    QString desktopFile() { return _desktopFile; }
+
 signals:
     void changed();
     void changed( bool desktopFileNeedsSave );
@@ -75,6 +77,7 @@ protected:
     QString       _name;
     bool _khotkeysNeedsSave;
     bool _isDeleted;
+    bool _isDesktopFile;
 private:
     enum DesktopType {Application=0, Link=1};
     QString desktopTypeToString(DesktopType type) const;

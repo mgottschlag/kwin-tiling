@@ -37,14 +37,14 @@ public:
     TreeItem(QListView *parent, const QString& file);
     TreeItem(QListView *parent, QListViewItem* after, const QString& file);
 
-    QString file() const;
+    QString file() const { return _file; }
     void setFile(const QString& file) { _file = file; }
+    void setDirectoryPath(const QString& path) { _directoryPath = path; }
 
     QString name() const { return _name; }
     void setName(const QString &name);
     
-    bool isDirectory() const { return _directory; }
-    void setDirectory(bool b);
+    bool isDirectory() const { return !_directoryPath.isEmpty(); }
     
     bool isHidden() const { return _hidden; }
     void setHidden(bool b);
@@ -54,11 +54,11 @@ public:
 private:
     void update();
 
-    QString _file;
-    QString _name;
     bool _hidden : 1;
     bool _init : 1;
-    bool _directory : 1;
+    QString _file;
+    QString _name;
+    QString _directoryPath;
 };
 
 class TreeView : public KListView
@@ -72,7 +72,7 @@ public:
     void setViewMode(bool showHidden);
 
 public slots:
-    void currentChanged();
+    void currentChanged(const QString& desktopFile);
 
 signals:
     void entrySelected(const QString&, const QString &, bool);
