@@ -15,7 +15,11 @@ noinst_HEADERS = positiontab_impl.h hidingtab_impl.h lookandfeeltab_impl.h menut
 
 KDE_ICON = go
 
+# Translation of tiles is used by lookandfeeltab_impl.cpp
+# Tile names are transformed to words with title case
 messages: rc.cpp
+	(cd ../../kicker/data/tiles ; ls *_tiny_up.png) | perl -p -e \
+	  's/(.*)_tiny_up\.png/i18n\(\"\u$$1\"\)\;/; s/[_ ]+(.)/ \u$$1/g' >> rc.cpp
 	$(XGETTEXT) rc.cpp $(kcm_kicker_la_SOURCES) -o $(podir)/kcmkicker.pot
 
 data_DATA = panel.desktop panel_appearance.desktop panel_menus.desktop

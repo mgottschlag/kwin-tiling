@@ -31,6 +31,7 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qimage.h>
+#include <qregexp.h>
 
 #include <kconfig.h>
 #include <kdialog.h>
@@ -96,22 +97,6 @@ void LookAndFeelTab::browse_theme(const QString& newtheme)
     }
 
     KMessageBox::error(this, i18n("Failed to load image file."), i18n("Failed to Load Image File"));
-}
-
-int LookAndFeelTab::findComboEntry(QComboBox* combo, const QString& searchFor)
-{
-    int index = 0;
-
-    for (int i = 0; i < combo->count(); i++) 
-    {
-      if (searchFor == combo->text(i))
-      {
-        index = i;
-        break;
-      }
-    }
-
-    return index;
 }
 
 void LookAndFeelTab::load()
@@ -180,7 +165,7 @@ void LookAndFeelTab::load()
     if (c.readBoolEntry("EnableKMenuTiles", false))
     {
       tile = c.readEntry("KMenuTile", "solid_blue");
-      m_kmenuTile->setCurrentItem(findComboEntry(m_kmenuTile, tile));
+      m_kmenuTile->setCurrentItem(m_tilename.findIndex(tile));
     }
     else
     {
@@ -190,7 +175,7 @@ void LookAndFeelTab::load()
     if (c.readBoolEntry("EnableDesktopButtonTiles", false))
     {
       tile = c.readEntry("DesktopButtonTile", "solid_orange");
-      m_desktopTile->setCurrentItem(findComboEntry(m_desktopTile, tile));
+      m_desktopTile->setCurrentItem(m_tilename.findIndex(tile));
     }
     else
     {
@@ -200,7 +185,7 @@ void LookAndFeelTab::load()
     if (c.readBoolEntry("EnableURLTiles", false))
     {
       tile = c.readEntry("URLTile", "solid_gray");
-      m_urlTile->setCurrentItem(findComboEntry(m_urlTile, tile));
+      m_urlTile->setCurrentItem(m_tilename.findIndex(tile));
     }
     else
     {
@@ -210,7 +195,7 @@ void LookAndFeelTab::load()
     if (c.readBoolEntry("EnableBrowserTiles", false))
     {
       tile = c.readEntry("BrowserTile", "solid_green");
-      m_browserTile->setCurrentItem(findComboEntry(m_browserTile, tile));
+      m_browserTile->setCurrentItem(m_tilename.findIndex(tile));
     }
     else
     {
@@ -220,7 +205,7 @@ void LookAndFeelTab::load()
     if (c.readBoolEntry("EnableExeTiles", false))
     {
       tile = c.readEntry("ExeTile", "solid_red");
-      m_exeTile->setCurrentItem(findComboEntry(m_exeTile, tile));
+      m_exeTile->setCurrentItem(m_tilename.findIndex(tile));
     }
     else
     {
@@ -230,7 +215,7 @@ void LookAndFeelTab::load()
     if (c.readBoolEntry("EnableWindowListTiles", false))
     {
       tile = c.readEntry("WindowListTile", "solid_green");
-      m_wlTile->setCurrentItem(findComboEntry(m_wlTile, tile));
+      m_wlTile->setCurrentItem(m_tilename.findIndex(tile));
     }
     else
     {
@@ -270,7 +255,7 @@ void LookAndFeelTab::save()
   {
     enableTiles = true;
     c.writeEntry("EnableKMenuTiles", tile > 0);
-    c.writeEntry("KMenuTile", m_kmenuTile->currentText());
+    c.writeEntry("KMenuTile", m_tilename[m_kmenuTile->currentItem()]);
   }
   else
   {
@@ -282,7 +267,7 @@ void LookAndFeelTab::save()
   {
     enableTiles = true;
     c.writeEntry("EnableDesktopButtonTiles", tile > 0);
-    c.writeEntry("DesktopButtonTile", m_desktopTile->currentText());
+    c.writeEntry("DesktopButtonTile", m_tilename[m_desktopTile->currentItem()]);
   }
   else
   {
@@ -294,7 +279,7 @@ void LookAndFeelTab::save()
   {
     enableTiles = true;
     c.writeEntry("EnableURLTiles", tile > 0);
-    c.writeEntry("URLTile", m_urlTile->currentText());
+    c.writeEntry("URLTile", m_tilename[m_urlTile->currentItem()]);
   }
   else
   {
@@ -305,8 +290,8 @@ void LookAndFeelTab::save()
   if (tile > 0)
   {
     enableTiles = true;
-    c.writeEntry("EnablEnableBrowserTiles", tile > 0);
-    c.writeEntry("BrowserTile", m_browserTile->currentText());
+    c.writeEntry("EnableBrowserTiles", tile > 0);
+    c.writeEntry("BrowserTile", m_tilename[m_browserTile->currentItem()]);
   }
   else
   {
@@ -318,7 +303,7 @@ void LookAndFeelTab::save()
   {
     enableTiles = true;
     c.writeEntry("EnableExeTiles", tile > 0);
-    c.writeEntry("ExeTile", m_exeTile->currentText());
+    c.writeEntry("ExeTile", m_tilename[m_exeTile->currentItem()]);
   }
   else
   {
@@ -330,7 +315,7 @@ void LookAndFeelTab::save()
   {
     enableTiles = true;
     c.writeEntry("EnableWindowListTiles", tile > 0);
-    c.writeEntry("WindowListTile", m_wlTile->currentText());
+    c.writeEntry("WindowListTile", m_tilename[m_wlTile->currentItem()]);
   }
   else
   {
@@ -380,6 +365,8 @@ void LookAndFeelTab::fillTileCombos()
   m_exeTile->insertItem(i18n("No Tile"));
   m_wlTile->clear();
   m_wlTile->insertItem(i18n("No Tile"));
+  m_tilename.clear();
+  m_tilename << "";
 
   QStringList list = KGlobal::dirs()->findAllResources("tiles","*_tiny_up.png");
   int minHeight = 0;
@@ -391,6 +378,14 @@ void LookAndFeelTab::fillTileCombos()
     QFileInfo fi(tile);
     tile = fi.fileName();
     tile.truncate(tile.find("_tiny_up.png"));
+    m_tilename << tile;
+
+    // Transform tile to words with title case
+    // The same is done when generating messages for translation
+    QStringList words = QStringList::split(QRegExp("[_ ]"), tile);
+    for (QStringList::iterator w = words.begin(); w != words.end(); w++)
+      (*w)[0] = (*w)[0].upper();
+    tile = i18n(words.join(" ").utf8());
 
     m_kmenuTile->insertItem(pix, tile);
     m_desktopTile->insertItem(pix, tile);
