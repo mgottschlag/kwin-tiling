@@ -28,6 +28,7 @@
 #include <qpaintdevice.h>
 #include <klocale.h>
 #include <klargefile.h>
+#include <qdir.h>
 
 #ifdef HAVE_FONTCONFIG
 #include <stdarg.h>
@@ -336,9 +337,7 @@ KXftConfig::KXftConfig(int required, bool system)
     }
     else
     {
-        char *home=getenv("HOME");
-
-        m_file=QString(home ? home : "")+"/"+defaultUserFile;
+        m_file= QString(QDir::homeDirPath()+"/"+defaultUserFile);
     }
 
 #if 0
