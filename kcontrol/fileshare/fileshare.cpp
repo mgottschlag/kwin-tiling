@@ -43,7 +43,7 @@ KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStr
   box->layout()->setSpacing( KDialog::spacingHint() );
   connect( box, SIGNAL( clicked( int )), this, SLOT(configChanged()));
   layout->addWidget(box);
-  noSharing=new QRadioButton( i18n("Do not Share"), box );
+  noSharing=new QRadioButton( i18n("Do not share"), box );
   sharing=new QRadioButton( i18n("Share"),  box);
   info = new QLabel( this );
   layout->addWidget(info);

@@ -348,7 +348,7 @@ void KArtsModule::save()
 
 	if(KMessageBox::warningYesNo(this,
                      dialogText,
-				     i18n("Restart sound server now?")) == KMessageBox::Yes)
+				     i18n("Restart Sound Server Now?")) == KMessageBox::Yes)
 	{
 		system("artsshell terminate");
 		sleep(1);				// leave artsd some time to go away
