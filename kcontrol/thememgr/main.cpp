@@ -27,7 +27,7 @@
 #include "installer.h"
 #include "global.h"
 #include "options.h"
-#include "about.h"
+#include "version.h"
 
 #include <qlayout.h>
 #include <qtabwidget.h>
@@ -38,6 +38,7 @@
 #include <kstandarddirs.h>
 #include <kapplication.h>
 #include <kgenericfactory.h>
+#include <kaboutdata.h>
 
 ThemeCreator* theme = NULL;
 
@@ -53,11 +54,11 @@ public:
   virtual void save();
   virtual void load();
   virtual void defaults();
+  const KAboutData* aboutData() const;
 
 private:
   Installer* mInstaller;
   Options* mOptions;
-  About* mAbout;
 };
 
 typedef KGenericFactory<KThemeMgr, QWidget > ThemeTimeFactory;
@@ -83,9 +84,6 @@ KThemeMgr::KThemeMgr(QWidget *parent, const char *name, const QStringList &)
   mOptions = new Options(this);
   tab->addTab(mOptions, i18n("&Contents"));
   connect(mOptions, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
-
-  mAbout = new About(this);
-  tab->addTab(mAbout, i18n("&About"));
 }
 
 
@@ -113,7 +111,6 @@ void KThemeMgr::defaults()
 //-----------------------------------------------------------------------------
 void KThemeMgr::save()
 {
-  mAbout->save();
   mOptions->save();
   mInstaller->save();
   theme->install();
@@ -124,8 +121,26 @@ void KThemeMgr::load()
 {
   mInstaller->load();
   mOptions->load();
-  mAbout->load();
 }
+
+//-----------------------------------------------------------------------------
+const KAboutData* KThemeMgr::aboutData() const
+{
+
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmthememgr"), I18N_NOOP("KDE Theming Manager"),
+                  KTHEME_VERSION, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1998 - 2001 The KDE Theme Manager authors"));
+
+    about->addAuthor("Stefan Taferner", 0, "taferner@kde.org");
+    about->addAuthor("Waldo Bastian", 0, "bastian@kde.org");
+    about->addCredit("Divide by Zero", 
+                     I18N_NOOP("Support for M$-Windows' Themes"), 
+						   "divide@priv.onet.pl" );
+
+    return about;
+}
+
 /*
 extern "C"
 {

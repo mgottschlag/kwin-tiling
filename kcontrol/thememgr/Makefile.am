@@ -7,10 +7,10 @@ METASOURCES = AUTO
 kde_module_LTLIBRARIES = libkcm_themes.la
 
 libkcm_themes_la_SOURCES = main.cpp installer.cpp \
-	options.cpp about.cpp groupdetails.cpp \
+	options.cpp groupdetails.cpp \
 	themecreator.cpp newthemedlg.cpp theme.cpp
 noinst_HEADERS = theme.h installer.h \
-	options.h about.h version.h groupdetails.h \
+	options.h version.h groupdetails.h \
 	themecreator.h newthemedlg.h
 
 libkcm_themes_la_LIBADD = $(LIB_KFILE) 
