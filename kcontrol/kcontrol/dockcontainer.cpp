@@ -54,14 +54,16 @@ DockContainer::~DockContainer()
 
 void DockContainer::setBaseWidget(QWidget *widget)
 {
+  delete _basew;
+  _basew = 0;
   if (!widget) return;
 
   _basew = widget;
-  _basew->reparent(this, 0 , QPoint(0,0), true);
+  _basew->reparent(this, 0, QPoint(0,0), true);
 
   // "inherit" the minimum size
   setMinimumSize( _basew->minimumSize() );
-  resize(_basew->sizeHint());
+  _basew->resize( size() );
   emit newModule(widget->caption(), "", "");
 }
 

@@ -26,6 +26,7 @@
 #include <kbugreport.h>
 #include <kaboutdata.h>
 #include <kaboutapplication.h>
+#include <kmessagebox.h>
 
 #include <qhbox.h>
 #include <qtabwidget.h>
@@ -98,6 +99,9 @@ TopLevel::TopLevel(const char* name)
   connect(_indextab, SIGNAL(moduleActivated(ConfigModule*)),
                   this, SLOT(moduleActivated(ConfigModule*)));
   _tab->addTab(_indextab, i18n("In&dex"));
+
+  connect(_indextab, SIGNAL(categorySelected(QListViewItem*)),
+                  this, SLOT(categorySelected(QListViewItem*)));
 
   // search tab
   _searchtab = new SearchWidget(_tab);
@@ -306,6 +310,38 @@ void TopLevel::moduleActivated(ConfigModule *module)
     _active=module;
     activateModule(module->fileName());
 }
+
+void TopLevel::categorySelected(QListViewItem *category)
+{
+  if (_active)
+  {
+    if (_active->isChanged())
+      {
+        int res = KMessageBox::warningYesNo(this, _active ?
+                            i18n("There are unsaved changes in the "
+                                 "active module.\n"
+                                 "Do you want to apply the changes "
+                                 "before running\n"
+                                 "the new module or forget the changes?") :
+                            i18n("There are unsaved changes in the "
+                                 "active module.\n"
+                                 "Do you want to apply the changes "
+                                 "before exiting\n"
+                                 "the Control Center or forget the changes?"),
+                            i18n("Unsaved changes"),
+                            i18n("&Apply"),
+                            i18n("&Forget"));
+        if (res == KMessageBox::Yes)
+          _active->module()->applyClicked();
+      }
+  }
+  _dock->removeModule();
+  
+  // insert the about widget
+  AboutWidget *aw = new AboutWidget(this, 0, category);
+  _dock->setBaseWidget(aw);
+}
+
 
 void TopLevel::showModule(QString desktopFile)
 {

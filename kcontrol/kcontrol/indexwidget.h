@@ -48,6 +48,7 @@ protected slots:
 
 signals:
   void moduleActivated(ConfigModule *module);
+  void categorySelected(QListViewItem *);
 
 protected:
   void resizeEvent(QResizeEvent *e);

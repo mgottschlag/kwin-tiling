@@ -31,6 +31,8 @@
 #include "global.h"
 #include "aboutwidget.h"
 #include "aboutwidget.moc"
+#include "modules.h"
+#include "moduletreeview.h"
 
 const char * title_text = I18N_NOOP("Configure your desktop environment.");
 
@@ -53,9 +55,16 @@ const char * system_text = I18N_NOOP("System:");
 const char * release_text = I18N_NOOP("Release:");
 const char * machine_text = I18N_NOOP("Machine:");
 
-AboutWidget::AboutWidget(QWidget *parent , const char *name)
-   : QWidget(parent, name)
+AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* category)
+   : QWidget(parent, name),
+      _moduleList(false),
+      _category(category)
 {
+    if (_category)
+    {
+      _moduleList = true;
+    }
+    
     setMinimumSize(400, 400);
 
     // load images
@@ -166,6 +175,9 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     QFont f2 = f1;
     f2.setBold(true);
 
+    
+    if (!_moduleList)
+    {
     // kde version
     p.setFont(f1);
     p.drawText(xoffset, yoffset, i18n(version_text));
@@ -229,4 +241,51 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     ut.replace(QRegExp("</b>"), "");
 
     p.drawText(xoffset, yoffset, bwidth, bheight, AlignLeft | AlignVCenter | WordBreak, ut);
+    }
+    else
+    {
+      QFont headingFont = f2;
+      headingFont.setPointSize(headingFont.pointSize()+5);
+      headingFont.setUnderline(true);
+
+      p.setFont(headingFont);
+      p.drawText(xoffset, yoffset, static_cast<ModuleTreeItem*>(_category)->caption());
+      yoffset += fheight + 10;
+      xadd = 200;
+
+      // traverse the list
+      QListViewItem* pEntry = _category->firstChild();
+      while (pEntry != NULL)
+        {
+          QString szName;
+          QString szComment;
+          if (static_cast<ModuleTreeItem*>(pEntry)->module())
+            {
+              szName = static_cast<ModuleTreeItem*>(pEntry)->module()->name();
+              szComment = static_cast<ModuleTreeItem*>(pEntry)->module()->comment();
+              p.setFont(f2);
+              QRect bounds;
+              p.drawText(xoffset, yoffset,
+                xadd - xoffset, bheight - yoffset,
+                AlignLeft | AlignTop | WordBreak, szName, -1, &bounds);
+              int height = bounds.height();
+              p.setFont(f1);
+              p.drawText(xoffset + xadd, yoffset,
+                bwidth - xadd - xoffset, bheight - yoffset,
+                AlignLeft | AlignTop | WordBreak, szComment, -1, &bounds);
+              yoffset += QMAX(height, bounds.height()) + 5;
+            }
+          else
+            {
+              szName = static_cast<ModuleTreeItem*>(pEntry)->caption();
+              p.setFont(f2);
+              p.drawText(xoffset, yoffset, szName);
+            }
+
+//          yoffset += fheight + 5;
+          if(yoffset > bheight) return;
+          
+          pEntry = pEntry->nextSibling();
+        }
+      }
 }
