@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>KHotKeys::Info_tab_ui</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>588</width>
-            <height>483</height>
+            <width>388</width>
+            <height>317</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Info_tab_ui</string>
     </property>
     <vbox>
         <property name="name">
@@ -22,68 +25,6 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>TextLabel1</cstring>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>50</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>KHotKeys</string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-            <property name="hAlign" stdset="0">
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>version_label</cstring>
-            </property>
-            <property name="text">
-                <string>KHotKeys</string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-            <property name="hAlign" stdset="0">
-            </property>
-        </widget>
-        <widget class="Line">
-            <property name="name">
-                <cstring>line1</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-        </widget>
         <widget class="QLabel">
             <property name="name">
                 <cstring>warning_label</cstring>

@@ -21,16 +21,12 @@
 
 #include <klocale.h>
 
-#include <khotkeysglobal.h>
-
 namespace KHotKeys
 {
 
 Info_tab::Info_tab( QWidget* parent_P, const char* name_P )
     : Info_tab_ui( parent_P, name_P )
     {
-    QString version = i18n( "version %1" ).arg( KHOTKEYS_VERSION );
-    version_label->setText( version );
     clear_data();
     }
 
