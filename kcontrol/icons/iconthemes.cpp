@@ -22,6 +22,7 @@
 #include <unistd.h>
 
 #include <qfile.h>
+#include <qfileinfo.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -305,11 +306,11 @@ void IconThemesConfig::removeSelectedTheme()
   loadThemes();
 
   QListViewItem *item=0L;
-  //Fallback to hicolor if we've deleted the current theme
+  //Fallback to the default if we've deleted the current theme
   if (!deletingCurrentTheme)
      item=iconThemeItem(KIconTheme::current());
   if (!item)
-     item=iconThemeItem("hicolor");
+     item=iconThemeItem(KIconTheme::defaultThemeName());
 
   m_iconThemes->setSelected(item, true);
   updateRemoveButton();
@@ -324,8 +325,9 @@ void IconThemesConfig::updateRemoveButton()
   bool enabled = false;
   if (selected)
   {
-    QString dirName(m_themeNames[selected->text(0)]);
-    enabled = ( dirName != "hicolor" );
+    KIconTheme icontheme(m_themeNames[selected->text(0)]);
+    QFileInfo fi(icontheme.dir());
+    enabled = fi.isWritable();
   }
   m_removeButton->setEnabled(enabled);
 }
