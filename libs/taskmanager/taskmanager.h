@@ -210,7 +210,7 @@ public:
     /**
     * Returns true if the window is on the specified screen of a multihead configuration
     */
-    bool isOnScreen( int screen, bool debug = false ) const;
+    bool isOnScreen( int screen ) const;
 
     // internal
 

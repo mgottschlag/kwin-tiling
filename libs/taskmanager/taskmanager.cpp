@@ -456,7 +456,7 @@ bool Task::demandsAttention() const
         || _transients_demanding_attention.count() > 0;
 }
 
-bool Task::isOnScreen( int screen, bool debug ) const
+bool Task::isOnScreen( int screen ) const
 {
     return taskManager()->isOnScreen( screen, _win );
 }
