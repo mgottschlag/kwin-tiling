@@ -112,8 +112,8 @@ void KResourceMan::sync()
 // 	    }
 	    ++it;
 	}
-		
-		QString fileName(_PATH_TMP"/krdb."+timestamp);
+                QString fileName;
+                fileName.sprintf("%s%s%d", _PATH_TMP, "/krdb.", timestamp);
 		
 		QFile f( fileName );
 		if ( f.open( IO_WriteOnly ) ) {
