@@ -126,7 +126,7 @@ void CFontsWidget::setPreviewMode(bool on)
 
         itsBox->setTitle(i18n("Progress:"));
         itsLabel->setText("");
-        if(itsProgress->maxValue()>0)
+        if(itsProgress->totalSteps()>0)
             itsProgress->show();
     }
 }
@@ -136,11 +136,11 @@ void CFontsWidget::initProgress(const QString &title, int numSteps)
     emit progressActive(true);
     if(topLevelWidget())
         topLevelWidget()->setEnabled(false);
-    itsProgress->setRange(0, numSteps);
+    itsProgress->setTotalSteps(numSteps);
     setPreviewMode(false);
     itsBox->setTitle(title);
     if(numSteps>0)
-        itsProgress->setValue(0);
+        itsProgress->setProgress(0);
     itsLabel->setText("");
 }
 
@@ -149,7 +149,7 @@ void CFontsWidget::progress(const QString &str)
     if(QString::null!=str)
         itsLabel->setText(" "+str);
 
-    if(itsProgress->maxValue()>0)
+    if(itsProgress->totalSteps()>0)
         itsProgress->advance(1);
 
     kapp->processEvents();
@@ -164,9 +164,9 @@ void CFontsWidget::progress(const QString &str)
 
 void CFontsWidget::stopProgress()
 {
-    if(itsProgress->maxValue()>0)
+    if(itsProgress->totalSteps()>0)
     {
-        itsProgress->setValue(0);
+        itsProgress->setProgress(0);
         itsProgress->repaint();
     }
 
