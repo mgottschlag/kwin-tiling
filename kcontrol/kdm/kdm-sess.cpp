@@ -47,7 +47,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QString wtstr;
 
 
-      QGroupBox *group0 = new QGroupBox( i18n("Allow to shutdown"), this );
+      QGroupBox *group0 = new QGroupBox( i18n("Allow shutdown"), this );
 
       sdlcombo = new QComboBox( FALSE, group0 );
       sdllabel = new QLabel (sdlcombo, i18n ("Co&nsole:"), group0);

@@ -97,7 +97,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     cbjumppw = new QCheckBox(i18n("Focus pass&word"), puGroup);
     QWhatsThis::add( cbjumppw, i18n("When this option is on, KDM will place the cursor "
 	"in the password field instead of the login field after preselecting a user. "
-	"This will save one key press per login, if the user name is changed very seldom.") );
+	"This will save one key press per login, if the user name is very seldom changed.") );
     connect(cbjumppw, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
 
 
