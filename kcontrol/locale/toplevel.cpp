@@ -198,7 +198,7 @@ void KLocaleApplication::reTranslate()
   sample->update();
 
   // FIXME: All widgets are done now. However, there are
-  // still some problems. Popup menus from the QLabel are
+  // still some problems. Popup menus from the QLabels are
   // not retranslated.
 }
 
@@ -230,7 +230,7 @@ void KLocaleApplication::newChset()
   }
   delete list;
 
-  // FIXME: the context help are still using the old charset
+  // FIXME: the context helps are still using the old charset
 
   moduleChanged(true);
 }
