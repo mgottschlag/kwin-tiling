@@ -381,7 +381,7 @@ int main(int argc, char *argv[])
         case 3:
             if(0==CMisc::stricmp(argv[1], "mkdir"))
                 rv=kfi_mkdir(argv[2]);
-            if(0==CMisc::stricmp(argv[1], "adddir"))
+            else if(0==CMisc::stricmp(argv[1], "adddir"))
                 rv=kfi_mkdir(argv[2], false);
             else if(0==CMisc::stricmp(argv[1], "rmdir"))
                 rv=kfi_rmdir(argv[2]);
