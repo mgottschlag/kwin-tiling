@@ -116,9 +116,9 @@ i18n("There are unsaved changes in the active module.\n"
               this, SLOT(removeModule()));
       connect(_module, SIGNAL(changed(ConfigModule *)),
               SIGNAL(changedModule(ConfigModule *)));
-      //####### this doesn't work anymore, what was it supposed to do? The signal is gone.
-//       connect(_module, SIGNAL(quickHelpChanged()),
-//               this, SLOT(quickHelpChanged()));
+
+      connect(widget, SIGNAL(quickHelpChanged()),
+              this, SLOT(quickHelpChanged()));
 
       widget->reparent(this, 0 , QPoint(0,0), false);
       widget->resize(size());

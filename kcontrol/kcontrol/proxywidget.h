@@ -65,7 +65,7 @@ signals:
   void helpRequest();
   void changed(bool state);
   void runAsRoot();
-
+  void quickHelpChanged();
 
 private:
 
