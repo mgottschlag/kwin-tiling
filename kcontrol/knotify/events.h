@@ -89,8 +89,8 @@ public:
 
 private:
     KNEvent() {
-	presentation = 0;
-	dontShow = 0;
+        presentation = 0;
+        dontShow = 0;
     }
     QString name;
     QString description;

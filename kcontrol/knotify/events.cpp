@@ -42,9 +42,9 @@ void Events::load()
     QString path;
     for (QStringList::Iterator it=fullpaths.begin(); it!=fullpaths.end(); ++it) {
         path = makeRelative( *it );
-	if ( !path.isEmpty() ) {
-	    m_apps.append( new KNApplication( path ));
-	}
+        if ( !path.isEmpty() ) {
+            m_apps.append( new KNApplication( path ));
+        }
     }
 }
 
@@ -54,8 +54,8 @@ void Events::save()
 
     KNApplicationListIterator it( m_apps );
     while ( it.current() ) {
-	(*it)->save();
-	++it;
+        (*it)->save();
+        ++it;
     }
 }
 
@@ -63,13 +63,13 @@ void Events::save()
 // "/opt/kde2/share/apps/kwin/eventsrc"
 QString Events::makeRelative( const QString& fullPath )
 {
-  int slash = fullPath.findRev( '/' ) - 1;
-  slash = fullPath.findRev( '/', slash );
+    int slash = fullPath.findRev( '/' ) - 1;
+    slash = fullPath.findRev( '/', slash );
 
-  if ( slash < 0 )
-    return QString::null;
+    if ( slash < 0 )
+        return QString::null;
 
-  return fullPath.mid( slash+1 );
+    return fullPath.mid( slash+1 );
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ KNApplication::KNApplication( const QString &path )
     m_icon = kc->readEntry(QString::fromLatin1("IconName"),
                            QString::fromLatin1("misc"));
     m_description = kc->readEntry( QString::fromLatin1("Comment"),
-				   i18n("No description available") );
+                                   i18n("No description available") );
 }
 
 KNApplication::~KNApplication()
@@ -101,9 +101,9 @@ KNApplication::~KNApplication()
 EventList * KNApplication::eventList()
 {
     if ( !m_events ) {
-	m_events = new EventList;
-	m_events->setAutoDelete( true );
-	loadEvents();
+        m_events = new EventList;
+        m_events->setAutoDelete( true );
+        loadEvents();
     }
 
     return m_events;
@@ -113,17 +113,17 @@ EventList * KNApplication::eventList()
 void KNApplication::save()
 {
     if ( !m_events )
-	return;
+        return;
 
     KNEventListIterator it( *m_events );
     KNEvent *e;
     while ( (e = it.current()) ) {
-	config->setGroup( e->configGroup );
-	config->writeEntry( "presentation", e->presentation );
-	config->writeEntry( "soundfile", e->soundfile );
-	config->writeEntry( "logfile", e->logfile );
+        config->setGroup( e->configGroup );
+        config->writeEntry( "presentation", e->presentation );
+        config->writeEntry( "soundfile", e->soundfile );
+        config->writeEntry( "logfile", e->logfile );
 
-	++it;
+        ++it;
     }
     config->sync();
 }
@@ -144,32 +144,32 @@ void KNApplication::loadEvents()
     QStringList::Iterator it = conflist.begin();
 
     while ( it != conflist.end() ) {
-	if ( (*it) != global && (*it) != default_group ) { // event group
-	    kc->setGroup( *it );
+        if ( (*it) != global && (*it) != default_group ) { // event group
+            kc->setGroup( *it );
 
-	    e = new KNEvent;
-	    e->name = kc->readEntry( name, unknown );
-	    e->description = kc->readEntry( comment, nodesc );
-	    e->configGroup = *it;
+            e = new KNEvent;
+            e->name = kc->readEntry( name, unknown );
+            e->description = kc->readEntry( comment, nodesc );
+            e->configGroup = *it;
 
-	    if ( e->name.isEmpty() || e->description.isEmpty() )
-		delete e;
+            if ( e->name.isEmpty() || e->description.isEmpty() )
+                delete e;
 
-	    else { // load the event
-		int default_rep = kc->readNumEntry("default_presentation", 0 );
+            else { // load the event
+                int default_rep = kc->readNumEntry("default_presentation", 0 );
                 QString default_logfile = kc->readEntry("default_logfile");
                 QString default_soundfile = kc->readEntry("default_sound");
                 config->setGroup(*it);
-		e->presentation = config->readNumEntry("presentation", default_rep);
-		e->dontShow = config->readNumEntry("nopresentation", 0 );
-		e->logfile = config->readEntry("logfile", default_logfile);
-		e->soundfile = config->readEntry("soundfile", default_soundfile);
+                e->presentation = config->readNumEntry("presentation", default_rep);
+                e->dontShow = config->readNumEntry("nopresentation", 0 );
+                e->logfile = config->readEntry("logfile", default_logfile);
+                e->soundfile = config->readEntry("soundfile", default_soundfile);
 
-		m_events->append( e );
-	    }
-	}
+                m_events->append( e );
+            }
+        }
 
-	++it;
+        ++it;
     }
 
     return;

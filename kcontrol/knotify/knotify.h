@@ -106,7 +106,7 @@ class KNCheckListItem : public QCheckListItem
 {
 public:
     KNCheckListItem( QListViewItem *parent, KNEvent *e, int type,
-		     const QString& text );
+                     const QString& text );
     int eventType() const { return _eventType; }
     KNEvent *event;
 

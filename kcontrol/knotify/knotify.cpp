@@ -59,9 +59,9 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringLis
     setButtons( Help | Apply );
 
     QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(),
-					KDialog::spacingHint() );
+                                        KDialog::spacingHint() );
     QVGroupBox *box = new QVGroupBox( i18n("System Notification Settings"),
-				      this );
+                                      this );
     lay->addWidget( box );
     view =  new QListView( box );
     view->addColumn(i18n("Application/Events"));
@@ -76,7 +76,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringLis
     requester = new KURLRequester( hbox );
     lblFilename->setBuddy( requester );
     connect( requester, SIGNAL( openFileDialog( KURLRequester * )),
-	     SLOT( slotRequesterClicked( KURLRequester * )));
+             SLOT( slotRequesterClicked( KURLRequester * )));
 
     playButton = new QPushButton(  hbox );
     playButton->setFixedSize( requester->button()->size() );
@@ -86,9 +86,9 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringLis
 
     connect( playButton, SIGNAL( clicked() ), SLOT( playSound() ));
     connect(requester, SIGNAL( textChanged( const QString& )),
-	    SLOT( slotFileChanged( const QString& )) );
+            SLOT( slotFileChanged( const QString& )) );
     connect( view, SIGNAL( currentChanged( QListViewItem * )),
-	     SLOT( slotItemActivated( QListViewItem * )));
+             SLOT( slotItemActivated( QListViewItem * )));
 
 
     hbox = new QHBox( box );
@@ -97,9 +97,9 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringLis
     reqExternal = new KURLRequester( hbox );
     reqExternal->completionObject()->setMode( KURLCompletion::ExeCompletion );
     connect( cbExternal, SIGNAL( toggled( bool )),
-	     SLOT( externalClicked( bool )));
+             SLOT( externalClicked( bool )));
     connect( reqExternal, SIGNAL( textChanged( const QString& )),
-	     SLOT( changed() ));
+             SLOT( changed() ));
 
     hbox = new QHBox( box );
     hbox->setSpacing( KDialog::spacingHint() );
@@ -145,35 +145,35 @@ void KNotifyWidget::updateView()
     // using the last appItem and eItem as "after-item" to get proper sorting
     KNApplicationListIterator it( m_events->apps() );
     while ( it.current() ) {
-	appItem = new QListViewItem( view, appItem, (*it)->text() );
-	appItem->setPixmap( 0, SmallIcon( (*it)->icon() ));
+        appItem = new QListViewItem( view, appItem, (*it)->text() );
+        appItem->setPixmap( 0, SmallIcon( (*it)->icon() ));
 
-	KNEventListIterator it2( *(*it)->eventList() );
-	while( (e = it2.current()) ) {
-	    if(e->presentation & KNotifyClient::Sound) soundsDisabled = false;
+        KNEventListIterator it2( *(*it)->eventList() );
+        while( (e = it2.current()) ) {
+            if(e->presentation & KNotifyClient::Sound) soundsDisabled = false;
 
-	    eItem = new KNListViewItem( appItem, eItem, e );
-	    eItem->setPixmap( 0, icon );
+            eItem = new KNListViewItem( appItem, eItem, e );
+            eItem->setPixmap( 0, icon );
 
-	    connect( eItem, SIGNAL( changed() ), SLOT( changed() ));
-	    ++it2;
-	}
+            connect( eItem, SIGNAL( changed() ), SLOT( changed() ));
+            ++it2;
+        }
 
-	++it;
+        ++it;
     }
     updating = save_updating;
 
-	soundButton->disconnect(this);
-	if(soundsDisabled)
-	{
-		soundButton->setText( i18n("&Enable All Sounds") );
-		connect(soundButton, SIGNAL(clicked()), this, SLOT(enableAllSounds()));
-	}
-	else
-	{
-		soundButton->setText( i18n("&Disable All Sounds") );
-		connect(soundButton, SIGNAL(clicked()), this, SLOT(disableAllSounds()));
-	}
+    soundButton->disconnect(this);
+    if(soundsDisabled)
+    {
+        soundButton->setText( i18n("&Enable All Sounds") );
+        connect(soundButton, SIGNAL(clicked()), this, SLOT(enableAllSounds()));
+    }
+    else
+    {
+        soundButton->setText( i18n("&Disable All Sounds") );
+        connect(soundButton, SIGNAL(clicked()), this, SLOT(disableAllSounds()));
+    }
 }
 
 
@@ -204,19 +204,19 @@ void KNotifyWidget::slotFileChanged( const QString& text )
     playButton->setEnabled( !text.isEmpty() );
 
     if ( !currentItem )
-	return;
+        return;
 
     KNEvent *event = currentItem->event;
     QString *itemText = 0L;
 
     if ( currentItem->eventType() == KNotifyClient::Sound )
-	itemText = &(event->soundfile);
+        itemText = &(event->soundfile);
     else if ( currentItem->eventType() == KNotifyClient::Logfile )
-	itemText = &(event->logfile);
+        itemText = &(event->logfile);
 
     if ( itemText && *itemText != text ) {
-	*itemText = text;
-	changed();
+        *itemText = text;
+        changed();
     }
 
     currentItem->setText( COL_FILENAME, text );
@@ -269,10 +269,10 @@ void KNotifyWidget::save()
     kc->writeEntry( "Volume", volumeSlider->value() );
     kc->sync();
     delete kc;
-	
+        
     m_events->save();
     if ( !kapp->dcopClient()->isAttached() )
-	kapp->dcopClient()->attach();
+        kapp->dcopClient()->attach();
     kapp->dcopClient()->send("knotify", "", "reconfigure()", "");
 
     emit KCModule::changed( false );
@@ -283,27 +283,27 @@ void KNotifyWidget::slotItemActivated( QListViewItem *i )
     bool enableButton = false;
     currentItem = dynamic_cast<KNCheckListItem *>( i );
     if ( currentItem ) {
-	const KNEvent *event = currentItem->event;
+        const KNEvent *event = currentItem->event;
 
-	if ( currentItem->eventType() == KNotifyClient::Sound ) {
-	    requester->setURL( event->soundfile );
-	    enableButton = true;
-	    playButton->show();
-	    playButton->setEnabled( !event->soundfile.isEmpty() );
-	}
-	else if ( currentItem->eventType() == KNotifyClient::Logfile ) {
-	    requester->setURL( event->logfile );
-	    enableButton = true;
-	    playButton->hide();
-	}
-	else {
-	    requester->lineEdit()->clear();
-	    playButton->hide();
-	}
+        if ( currentItem->eventType() == KNotifyClient::Sound ) {
+            requester->setURL( event->soundfile );
+            enableButton = true;
+            playButton->show();
+            playButton->setEnabled( !event->soundfile.isEmpty() );
+        }
+        else if ( currentItem->eventType() == KNotifyClient::Logfile ) {
+            requester->setURL( event->logfile );
+            enableButton = true;
+            playButton->hide();
+        }
+        else {
+            requester->lineEdit()->clear();
+            playButton->hide();
+        }
     }
     else {
-	requester->lineEdit()->clear();
-	playButton->hide();
+        requester->lineEdit()->clear();
+        playButton->hide();
     }
 
     requester->setEnabled( enableButton );
@@ -313,7 +313,7 @@ void KNotifyWidget::slotItemActivated( QListViewItem *i )
 void KNotifyWidget::externalClicked( bool on )
 {
     if ( on )
-	reqExternal->setFocus();
+        reqExternal->setFocus();
     reqExternal->setEnabled( on );
     static_cast<QHBox *>( volumeSlider->parent() )->setEnabled( !on );
     changed();
@@ -322,15 +322,15 @@ void KNotifyWidget::externalClicked( bool on )
 QString KNotifyWidget::quickHelp() const
 {
     return i18n("<h1>System Notifications</h1>"
-		"KDE allows for a great deal of control over how you "
-		"will be notified when certain events occur. There are "
-		"several choices as to how you are notified:"
-		"<ul><li>As the application was originally designed."
-		"<li>With a beep or other noise."
-		"<li>Via a popup dialog box with additional information."
-		"<li>By recording the event in a logfile without "
-		"any additional visual or audible alert."
-		"</ul>");
+                "KDE allows for a great deal of control over how you "
+                "will be notified when certain events occur. There are "
+                "several choices as to how you are notified:"
+                "<ul><li>As the application was originally designed."
+                "<li>With a beep or other noise."
+                "<li>Via a popup dialog box with additional information."
+                "<li>By recording the event in a logfile without "
+                "any additional visual or audible alert."
+                "</ul>");
 }
 
 const KAboutData *KNotifyWidget::aboutData() const
@@ -355,54 +355,54 @@ void KNotifyWidget::slotRequesterClicked( KURLRequester *requester )
 {
     static bool init = true;
     if ( !init )
-	return;
+        return;
 
     init = false;
     
     // find the first "sound"-resource that contains files
     QStringList soundDirs = KGlobal::dirs()->resourceDirs( "sound" );
     if ( !soundDirs.isEmpty() ) {
-	KURL soundURL;
-	QDir dir;
-	dir.setFilter( QDir::Files | QDir::Readable );
-	QStringList::Iterator it = soundDirs.begin();
-	while ( it != soundDirs.end() ) {
-	    dir = *it;
-	    if ( dir.isReadable() && dir.count() > 2 ) {
-		soundURL.setPath( *it );
-		requester->fileDialog()->setURL( soundURL );
-		break;
-	    }
-	    ++it;
-	}
+        KURL soundURL;
+        QDir dir;
+        dir.setFilter( QDir::Files | QDir::Readable );
+        QStringList::Iterator it = soundDirs.begin();
+        while ( it != soundDirs.end() ) {
+            dir = *it;
+            if ( dir.isReadable() && dir.count() > 2 ) {
+                soundURL.setPath( *it );
+                requester->fileDialog()->setURL( soundURL );
+                break;
+            }
+            ++it;
+        }
     }
 }
 
 void KNotifyWidget::disableAllSounds()
 {
-	for(KNApplicationListIterator app(m_events->apps()); app.current(); ++app)
-	{
-		for(KNEventListIterator event(*(*app)->eventList()); event.current(); ++event)
-		{
-			(*event)->presentation &= ~KNotifyClient::Sound;
-		}
-	}
-	updateView();
-	changed();
+    for(KNApplicationListIterator app(m_events->apps()); app.current(); ++app)
+    {
+        for(KNEventListIterator event(*(*app)->eventList()); event.current(); ++event)
+        {
+            (*event)->presentation &= ~KNotifyClient::Sound;
+        }
+    }
+    updateView();
+    changed();
 }
 
 void KNotifyWidget::enableAllSounds()
 {
-	for(KNApplicationListIterator app(m_events->apps()); app.current(); ++app)
-	{
-		for(KNEventListIterator event(*(*app)->eventList()); event.current(); ++event)
-		{
-			if(!(*event)->soundfile.isNull())
-				(*event)->presentation |= KNotifyClient::Sound;
-		}
-	}
-	updateView();
-	changed();
+        for(KNApplicationListIterator app(m_events->apps()); app.current(); ++app)
+        {
+                for(KNEventListIterator event(*(*app)->eventList()); event.current(); ++event)
+                {
+                        if(!(*event)->soundfile.isNull())
+                                (*event)->presentation |= KNotifyClient::Sound;
+                }
+        }
+        updateView();
+        changed();
 }
 ///////////////////////////////////////////////////////////////////
 
@@ -411,38 +411,38 @@ void KNotifyWidget::enableAllSounds()
  * creates and handles checkable child-items
  */
 KNListViewItem::KNListViewItem( QListViewItem *parent,
-				QListViewItem *afterItem, KNEvent *e )
+                                QListViewItem *afterItem, KNEvent *e )
     : QListViewItem( parent, afterItem, e->text() )
 {
     event = e;
 
     if ( (e->dontShow & KNotifyClient::Stderr) == 0 ) {
-	stderrItem = new KNCheckListItem( this, event, KNotifyClient::Stderr,
-					  i18n("Standard error output"));
-	stderrItem->setOn( e->presentation & KNotifyClient::Stderr );
+        stderrItem = new KNCheckListItem( this, event, KNotifyClient::Stderr,
+                                          i18n("Standard error output"));
+        stderrItem->setOn( e->presentation & KNotifyClient::Stderr );
     }
 
     if ( (e->dontShow & KNotifyClient::Messagebox) == 0 ) {
-	msgboxItem = new KNCheckListItem(this, event,KNotifyClient::Messagebox,
-					  i18n("Show messagebox"));
-	msgboxItem->setOn( e->presentation & KNotifyClient::Messagebox );
+        msgboxItem = new KNCheckListItem(this, event,KNotifyClient::Messagebox,
+                                          i18n("Show messagebox"));
+        msgboxItem->setOn( e->presentation & KNotifyClient::Messagebox );
     }
 
     if ( (e->dontShow & KNotifyClient::Sound) == 0 ) {
-	soundItem = new KNCheckListItem( this, event, KNotifyClient::Sound,
-					 i18n("Play sound"));
+        soundItem = new KNCheckListItem( this, event, KNotifyClient::Sound,
+                                         i18n("Play sound"));
 
-	soundItem->setOn( e->presentation & KNotifyClient::Sound );
+        soundItem->setOn( e->presentation & KNotifyClient::Sound );
 //        kdDebug() << "******* soundfile: " << e->soundfile << " " << bool(e->presentation & KNotifyClient::Sound) << " " << soundItem->isOn() << endl;
         soundItem->setText( COL_FILENAME, e->soundfile );
     }
 
     if ( (e->dontShow & KNotifyClient::Logfile) == 0 ) {
-	logItem = new KNCheckListItem( this, event, KNotifyClient::Logfile,
-				       i18n("Log to file"));
-	logItem->setOn( e->presentation & KNotifyClient::Logfile  );
-	//	kdDebug() << "******** logfile: " << e->logfile << endl;
-	logItem->setText( COL_FILENAME, e->logfile );
+        logItem = new KNCheckListItem( this, event, KNotifyClient::Logfile,
+                                       i18n("Log to file"));
+        logItem->setOn( e->presentation & KNotifyClient::Logfile  );
+        //        kdDebug() << "******** logfile: " << e->logfile << endl;
+        logItem->setText( COL_FILENAME, e->logfile );
     }
 }
 
@@ -453,9 +453,9 @@ KNListViewItem::KNListViewItem( QListViewItem *parent,
 void KNListViewItem::itemChanged( KNCheckListItem *item )
 {
     if ( item->isOn() )
-	event->presentation |= item->eventType();
+        event->presentation |= item->eventType();
     else
-	event->presentation &= ~item->eventType();
+        event->presentation &= ~item->eventType();
 
     changed();
 }
@@ -468,7 +468,7 @@ void KNListViewItem::itemChanged( KNCheckListItem *item )
  * custom checkable item telling its parent when it was clicked
  */
 KNCheckListItem::KNCheckListItem( QListViewItem *parent, KNEvent *e, int t,
-				  const QString& text )
+                                  const QString& text )
     : QCheckListItem( parent, text, QCheckListItem::CheckBox ),
       event( e ),
       _eventType( t )
