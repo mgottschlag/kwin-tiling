@@ -330,6 +330,9 @@ how it's positioned on the screen and how much of the screen it should use.</str
                             <property name="name">
                                 <cstring>m_customSpinbox</cstring>
                             </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
                             <property name="value">
                                 <number>58</number>
                             </property>
@@ -997,6 +1000,12 @@ how it's positioned on the screen and how much of the screen it should use.</str
         <signal>valueChanged(int)</signal>
         <receiver>m_customSlider</receiver>
         <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_sizeCustom</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_customSpinbox</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
