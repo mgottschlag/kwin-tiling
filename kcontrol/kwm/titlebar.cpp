@@ -117,30 +117,83 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
 {
   int label_w = 0, pixmap_w = 16, selection_w = 0, i;
 
+  //CT 08Apr1999 - layout - finaly
+  QGridLayout *lay = new QGridLayout( this, 11, 15, 10);
+  lay->addRowSpacing( 0, 20);
+  lay->addRowSpacing( 2, 20);
+  lay->addRowSpacing( 4, 10);
+  lay->addRowSpacing( 6, 10);
+  lay->addRowSpacing( 6, 10);
+  lay->addRowSpacing( 8, 10);
+  lay->addRowSpacing(10, 10);
+  lay->addRowSpacing(12, 10);
+  lay->addRowSpacing(14, 20);
+
+  lay->addColSpacing( 0, 20);
+  lay->addColSpacing( 2, 20);
+  lay->addColSpacing( 4, 10);
+  lay->addColSpacing( 6, 10);
+  lay->addColSpacing( 6, 10);
+  lay->addColSpacing( 8, 10);
+  lay->addColSpacing( 9, 10);
+  lay->addColSpacing(10, 20);
+  
+
+  lay->setRowStretch( 0,  0);
+  lay->setRowStretch( 1,  0);
+  lay->setRowStretch( 2,  1);
+  lay->setRowStretch( 3,  0);
+  lay->setRowStretch( 4,  1);
+  lay->setRowStretch( 5,  0);
+  lay->setRowStretch( 6,  1);
+  lay->setRowStretch( 7,  0);
+  lay->setRowStretch( 8,  1);
+  lay->setRowStretch( 9,  0);
+  lay->setRowStretch(10,  1);
+  lay->setRowStretch(11,  0);
+  lay->setRowStretch(12,  1);
+  lay->setRowStretch(13,  0);
+  lay->setRowStretch(14,  0);
+
+  lay->setColStretch( 0,  0);
+  lay->setColStretch( 1,  0);
+  lay->setColStretch( 2,  1);
+  lay->setColStretch( 3,  0);
+  lay->setColStretch( 4,  1);
+  lay->setColStretch( 5,  0);
+  lay->setColStretch( 6,  1);
+  lay->setColStretch( 7,  0);
+  lay->setColStretch( 8,  1);
+  lay->setColStretch( 9,  0);
+  lay->setColStretch(10,  0);
+  //CT
+
   titlebarFrame = new QFrame(this, "testframe");
   titlebarFrame ->setFrameStyle(QFrame::WinPanel | QFrame::Raised );
   blankTitlebar = new TitlebarPreview(titlebarFrame, "blanktbar");
 
+  lay->addMultiCellWidget (titlebarFrame, 1, 1, 1, 7, 10);
+
   // button name labels
   minB = new QLabel(i18n("Minimize"), this);
-  minB->adjustSize();
-  label_w = max(label_w, minB->width());
+
+  lay->addWidget( minB, 5, 1, 10);
 
   maxB = new QLabel(i18n("Maximize"), this);
-  maxB->adjustSize();
-  label_w = max(label_w, maxB->width());
+
+  lay->addWidget( maxB, 7, 1, 10);
 
   stickyB = new QLabel(i18n("Sticky"), this);
-  stickyB->adjustSize();
-  label_w = max(label_w, stickyB->width());
+
+  lay->addWidget( stickyB, 9, 1, 10);
 
   closeB = new QLabel(i18n("Close"), this);
-  closeB->adjustSize();
-  label_w = max(label_w, closeB->width());
+
+  lay->addWidget( closeB, 11, 1, 10);
 
   menuB = new QLabel(i18n("Menu"), this);
-  menuB->adjustSize();
-  label_w = max(label_w, menuB->width());
+
+  lay->addWidget( menuB, 13, 1, 10);
 
   // pixmap labels to show which button is which
   QPixmap *pm;
@@ -150,11 +203,15 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
   minP->adjustSize();
   delete pm;
 
+  lay->addWidget( minP, 5, 3, 10);
+
   pm = loadIcon("maximize.xpm");
   maxP = new QLabel("", this);
   maxP->setPixmap( *pm );
   maxP->adjustSize();
   delete pm;
+
+  lay->addWidget( maxP, 7, 3, 10);
 
   pm = loadIcon("pinup.xpm");
   stickyP = new QLabel("", this);
@@ -162,11 +219,15 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
   stickyP->adjustSize();
   delete pm;
 
+  lay->addWidget( stickyP, 9, 3, 10);
+
   pm = loadIcon("close.xpm");
   closeP = new QLabel("", this);
   closeP->setPixmap( *pm );
   closeP->adjustSize();
   delete pm;
+
+  lay->addWidget( closeP, 11, 3, 10);
 
   pm = loadIcon("menu.xpm");
   menuP = new QLabel("", this);
@@ -174,68 +235,90 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
   menuP->adjustSize();
   delete pm;
 
+  lay->addWidget( menuP, 13, 3, 10);
+
   // left/right/off column labels
   left = new QLabel(i18n("Left"), this);
-  left->adjustSize();
-  selection_w = max(selection_w, left->width());
+
+  lay->addWidget( left, 3, 5, 10);
 
   right = new QLabel(i18n("Right"), this);
-  right->adjustSize();
-  selection_w = max(selection_w, right->width());
+
+  lay->addWidget( right, 3, 7, 10);
 
   off = new QLabel(i18n("Off"), this);
-  off->adjustSize();
-  selection_w = max(selection_w, off->width());
+
+  lay->addWidget( off, 3, 9, 10);
 
   // left/right/off radio buttons and groups
+  QBoxLayout *hlay;
+
   minBox = new QButtonGroup("", this, NULL);
   minBox->setFrameStyle( QFrame::NoFrame );
+
+  lay->addMultiCellWidget(minBox, 5, 5, 5, 9, 10);
+
+  hlay = new QHBoxLayout( minBox, 10);
   for (i=0; i<3; i++)
     {
-      minRB[i] = new QRadioButton("", minBox, NULL);
+      minRB[i] = new QRadioButton(" ", minBox, NULL);
       minRB[i]->adjustSize();
+      hlay->addWidget(minRB[i], 10);
       connect(minRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
+  hlay->addStretch(0);
 
-  maxBox = new QButtonGroup("", this, NULL);
+  maxBox = new QButtonGroup(" ", this, NULL);
   maxBox->setFrameStyle( QFrame::NoFrame );
+
+  lay->addMultiCellWidget(maxBox, 7, 7, 5, 9, 10);
+
+  hlay = new QHBoxLayout( maxBox, 10);
   for (i=0; i<3; i++)
     {
-      maxRB[i] = new QRadioButton("", maxBox, NULL);
-      maxRB[i]->adjustSize();
+      maxRB[i] = new QRadioButton(" ", maxBox, NULL);
+      hlay->addWidget(maxRB[i], 10);
       connect(maxRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
 
   stickyBox = new QButtonGroup("", this, NULL);
   stickyBox->setFrameStyle( QFrame::NoFrame );
+
+  lay->addMultiCellWidget(stickyBox, 9, 9, 5, 9, 10);
+
+  hlay = new QHBoxLayout( stickyBox, 10);
   for (i=0; i<3; i++)
     {
-      stickyRB[i] = new QRadioButton("", stickyBox, NULL);
-      stickyRB[i]->adjustSize();
+      stickyRB[i] = new QRadioButton(" ", stickyBox, NULL);
+      hlay->addWidget(stickyRB[i], 10);
       connect(stickyRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
 
   closeBox = new QButtonGroup("", this, NULL);
   closeBox->setFrameStyle( QFrame::NoFrame );
+
+  lay->addMultiCellWidget(closeBox, 11, 11, 5, 9, 10);
+
+  hlay = new QHBoxLayout( closeBox, 10);
   for (i=0; i<3; i++)
     {
-      closeRB[i] = new QRadioButton("", closeBox, NULL);
-      closeRB[i]->adjustSize();
+      closeRB[i] = new QRadioButton(" ", closeBox, NULL);
+      hlay->addWidget(closeRB[i], 10);
       connect(closeRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
 
   menuBox = new QButtonGroup("", this, NULL);
   menuBox->setFrameStyle( QFrame::NoFrame );
+
+  lay->addMultiCellWidget(menuBox, 13, 13, 5, 9, 10);
+
+  hlay = new QHBoxLayout( menuBox, 10);
   for (i=0; i<3; i++)
     {
-      menuRB[i] = new QRadioButton("", menuBox, NULL);
-      menuRB[i]->adjustSize();
+      menuRB[i] = new QRadioButton(" ", menuBox, NULL);
+      hlay->addWidget(menuRB[i], 10);
       connect(menuRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
-
-  label_width = label_w;
-  pixmap_width = pixmap_w;
-  selection_width = 3*selection_w + 2*SPACE_XO;
 
   GetSettings();
 }
@@ -254,64 +337,6 @@ void KTitlebarButtons::resizeEvent(QResizeEvent *)
 			      width() - 2*SPACE_XO - 8, minP->height() );
   blankTitlebar->setPixmapSize( minP->width(), minP->height() );
 
-  minB->move(SPACE_XO, h);
-  minP->move(label_width + 2*SPACE_XO, h);
-
-  int i, c, xs[3];
-  int boxW = selection_width;
-  int boxH = minP->height();
-  int boxX = minP->x() + minP->width() + SPACE_XO;
-  float frac;
-
-  for (i=0; i<3; i++)
-    {
-      frac = (i/3.0 + 1.0/6.0);
-      xs[i] = (int) ((float) frac*selection_width);
-    }
-  c = minRB[0]->width()/3;   // why 3?
-  left->move(  boxX + c + xs[0] - left->width()/2,  column_h);
-  right->move( boxX + c + xs[1] - right->width()/2, column_h);
-  off->move(   boxX + c + xs[2] - off->width()/2,   column_h);
-
-  // now we are ready to position everything
-  minBox->resize(boxW, boxH);
-  minBox->move(minP->x() + minP->width() + SPACE_XO, h);
-  for (i=0; i<3; i++)
-    minRB[i]->move( xs[i], 0);
-
-  h += SPACE_YO + minB->height();
-
-  maxB->move(SPACE_XO, h);
-  maxP->move(label_width + 2*SPACE_XO, h);
-  maxBox->resize(boxW, boxH);
-  maxBox->move(maxP->x() + maxP->width() + SPACE_XO, h);
-  for (i=0; i<3; i++)
-    maxRB[i]->move( xs[i], 0);
-  h += SPACE_YO + maxB->height();
-
-  stickyB->move(SPACE_XO, h);
-  stickyP->move(label_width + 2*SPACE_XO, h);
-  stickyBox->resize(boxW, boxH);
-  stickyBox->move(stickyP->x() + stickyP->width() + SPACE_XO, h);
-  for (i=0; i<3; i++)
-    stickyRB[i]->move( xs[i], 0);
-  h += SPACE_YO + stickyB->height();
-
-  closeB->move(SPACE_XO, h);
-  closeP->move(label_width + 2*SPACE_XO, h);
-  closeBox->resize(boxW, boxH);
-  closeBox->move(closeP->x() + closeP->width() + SPACE_XO, h);
-  for (i=0; i<3; i++)
-    closeRB[i]->move( xs[i], 0);
-  h += SPACE_YO + closeB->height();
-
-  menuB->move(SPACE_XO, h);
-  menuP->move(label_width + 2*SPACE_XO, h);
-  menuBox->resize(boxW, boxH);
-  menuBox->move(menuP->x() + menuP->width() + SPACE_XO, h);
-  for (i=0; i<3; i++)
-    menuRB[i]->move( xs[i], 0);
-  h += SPACE_YO + menuB->height();
 
   drawPreview(TRUE);
 }
