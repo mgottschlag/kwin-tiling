@@ -1,0 +1,6 @@
+[Desktop Entry]
+Keys=bug,bugno,bugnr
+Name=KDE Bug Database Bug No Search
+Query=http://bugs.kde.org/cgi-bin/Bugs/bugs-fetch2.pl?type=ref&ref=\\1&base=http%3A%2F%2Fwww.kde.org
+ServiceTypes=SearchProvider
+Type=Service

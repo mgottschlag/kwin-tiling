@@ -1,0 +1,6 @@
+[Desktop Entry]
+Keys=bugft
+Name=KDE Bug Database Fulltext Search
+Query=http://bugs.kde.org/cgi-bin/Bugs/htsearch-bugs?exclude=%2Fix%2Ffull.html&words=\\1
+ServiceTypes=SearchProvider
+Type=Service
