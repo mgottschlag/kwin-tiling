@@ -34,6 +34,7 @@ public:
 
 public slots:
 	void configChanged();
+	void configChanged(bool);
 	void selectEmailClient();
 	void profileChanged(const QString &);
 
@@ -64,6 +65,7 @@ protected:
 	QLineEdit *txtFullName, *txtOrganization, *txtEMailAddr, *txtReplyTo;
 
 protected slots:
+	void slotComboChanged(const QString &);
 	void slotNewProfile();
 
 protected:

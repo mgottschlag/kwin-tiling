@@ -52,6 +52,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	cmbCurProfile->setGeometry( QRect( 95, 6, 444, 22 ) ); 
 	cmbCurProfile->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, cmbCurProfile->sizePolicy().hasHeightForWidth() ) );
 	layCurProfile->addWidget(cmbCurProfile);
+	connect(cmbCurProfile, SIGNAL(activated(const QString &)), this, SLOT(slotComboChanged(const QString &)));
 
 	QHBoxLayout *layCurProfile2 = new QHBoxLayout(topLayout);
 	btnNewProfile = new QPushButton( this, "btnNewProfile" );
@@ -246,7 +247,8 @@ void topKCMEmail::load(const QString &s)
 
 		txtEMailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
 		chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
-		emit changed(false);
+
+		configChanged(false);
 	}
 }
 
@@ -263,7 +265,8 @@ void topKCMEmail::clearData()
 	grpICM->setButton(0);
 	txtEMailClient->setText(QString::null);
 	chkRunTerminal->setChecked(false);
-	emit changed(false);
+
+	configChanged(false);
 }
 
 void topKCMEmail::slotNewProfile()
@@ -312,15 +315,20 @@ void topKCMEmail::slotNewProfile()
 	delete dlgAskName;
 }
 
+void topKCMEmail::configChanged(bool c)
+{
+        emit changed(c);
+        m_bChanged=c;
+}
+
 void topKCMEmail::configChanged()
 {
-        emit changed(true);
-        m_bChanged=true;
+	configChanged(true);
 }
 
 void topKCMEmail::save()
 {
-	pSettings->setProfile(cmbCurProfile->text(cmbCurProfile->currentItem()));
+	//pSettings->setProfile(cmbCurProfile->text(cmbCurProfile->currentItem()));
 	pSettings->setSetting(KEMailSettings::RealName, txtFullName->text());
 	pSettings->setSetting(KEMailSettings::EmailAddress, txtEMailAddr->text());
 	pSettings->setSetting(KEMailSettings::Organization, txtOrganization->text());
@@ -347,8 +355,7 @@ void topKCMEmail::save()
 	if (!cfgName.isEmpty())
 		::chmod(cfgName.utf8(), 0600);
 
-	emit changed(false);
-	m_bChanged=false;
+	configChanged(false);
 }
 
 void topKCMEmail::defaults()
@@ -375,8 +382,7 @@ void topKCMEmail::defaults()
 
 	chkRunTerminal->setChecked(false);
 
-	emit changed(true);
-	m_bChanged=true;
+	configChanged();
 }
 
 QString topKCMEmail::quickHelp() const
@@ -402,6 +408,27 @@ void topKCMEmail::profileChanged(const QString &s)
 {
 	save(); // Save our changes...
 	load(s);
+}
+
+void topKCMEmail::slotComboChanged(const QString &name)
+{
+	if (m_bChanged) {
+		if (KMessageBox::warningYesNo(this, i18n("Do you wish to discard changes to the current profile?")) == KMessageBox::No) {
+			if (KMessageBox::warningYesNo(this, i18n("Do you wish to save changes to the current profile?")) == KMessageBox::Yes) {
+				save();
+			} else {
+				int keep;
+				for (int i=0; i < cmbCurProfile->count(); i++) {
+					if (cmbCurProfile->text(i) == pSettings->currentProfileName()) {
+						keep=i; break;
+					}
+				}
+				cmbCurProfile->setCurrentItem(keep);
+				return;
+			}
+		}
+	}
+	load(name);
 }
 
 extern "C"
