@@ -26,6 +26,7 @@
 #include <dcopobject.h>
 #include <kgenericfactory.h>
 #include <kurifilter.h>
+#include <qregexp.h>
 
 class KInstance;
 
@@ -40,7 +41,7 @@ class LocalDomainURIFilter : public KURIFilterPlugin, public DCOPObject
 {
   K_DCOP
   Q_OBJECT
-  
+
   public:
     LocalDomainURIFilter( QObject* parent, const char* name, const QStringList& args );
     virtual bool filterURI( KURIFilterData &data ) const;
@@ -53,6 +54,7 @@ class LocalDomainURIFilter : public KURIFilterPlugin, public DCOPObject
     mutable QString last_host;
     mutable bool last_result;
     mutable time_t last_time;
+    QRegExp m_hostPortPattern;
 };
 
 #endif

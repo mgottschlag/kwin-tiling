@@ -25,11 +25,16 @@
 #include <kprocess.h>
 #include <kstandarddirs.h>
 #include <config.h>
+#include <kdebug.h>
+
+#define HOSTPORT_PATTERN "[a-zA-Z][a-zA-Z0-9-]*:[0-9]+"
 
 LocalDomainURIFilter::LocalDomainURIFilter( QObject *parent, const char *name,
                                             const QStringList & /*args*/ )
     : KURIFilterPlugin( parent, name ? name : "localdomainurifilter", 1.0 ),
-      DCOPObject( "LocalDomainURIFilterIface" ), last_time( 0 )
+      DCOPObject( "LocalDomainURIFilterIface" ),
+      last_time( 0 ),
+      m_hostPortPattern( QString::fromLatin1(HOSTPORT_PATTERN) )
 {
     configure();
 }
@@ -41,7 +46,6 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
 
     if( cmd[ 0 ] != '#' && cmd[ 0 ] != '~' && cmd[ 0 ] != '/'
         && !cmd.contains( ' ' ) && !cmd.contains( '.' )
-        && !cmd.contains( ':' ) // KShortURIFilter takes care of these
         && !cmd.contains( '$' ) // env. vars could resolve to anything
         // most of these are taken from KShortURIFilter
         && cmd[ cmd.length() - 1 ] != '&'
@@ -49,7 +53,7 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
         && !cmd.contains( QString::fromLatin1("&&")) // must not look like shell
         && !cmd.contains( QRegExp( QString::fromLatin1( "[ ;<>]" )))
         && KStandardDirs::findExe( cmd ).isNull()
-        && url.isMalformed()
+        && ( url.isMalformed() || m_hostPortPattern.exactMatch( cmd ) )
         && isLocalDomainHost( cmd ))
     {
         cmd.insert( 0, QString::fromLatin1( "http://" ));
@@ -65,6 +69,9 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
 bool LocalDomainURIFilter::isLocalDomainHost( const QString& cmd ) const
 {
     QString host( cmd.contains( '/' ) ? cmd.left( cmd.find( '/' )) : cmd );
+    if ( host.contains( ':' ) )
+        host.truncate( host.find( ':' ) ); // Remove port number
+
     if( host == last_host && last_time > time( NULL ) - 5 )
         return last_result;
 
