@@ -82,9 +82,14 @@ void IconModule::moduleChanged(bool state)
 QString IconModule::quickHelp() const
 {
   return i18n("<h1>Icons</h1>\n"
-    "This module allows you to choose the icons for your desktop.\n"
-    "You can also specify effects that should be applied to the icons.\n"
-    "Use the \"Whats This?\" (Shift+F1) to get help on specific options.");
+    "This module allows you to choose the icons for your desktop.<p>"
+    "To choose an icon theme click on the name of it and apply your choice by pressing the button \"Apply\" right below.\n If you do not want to apply your choice you might press the \"Reset\" button to discard your changes.</p>"
+    "<p>By pressing the button \"Install New Theme\" you can install your new icon theme by writing the location of it in the box or browse to the location.\n"
+    "Please press the button \"OK\" to finish the installation.</p>"
+    "<p>The \"Remove Theme\" button will only be activated if you select a theme that you installed using this module.\n"
+    "You are not able to remove globally installed themes here.</p>"
+    "<p>You can also specify effects that should be applied to the icons.\n"
+    "Use the \"Whats This?\" (Shift+F1) to get help on specific options.</p>");
 }
 
 
