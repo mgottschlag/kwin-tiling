@@ -37,7 +37,7 @@ from The Open Group.
 #else
 # include <sys/ioctl.h>
 #endif
-#if defined(__osf__) || defined(__linux__) || defined(MINIX) || defined(__GNU__) || defined(__CYGWIN__)
+#if defined(__osf__) || defined(linux) || defined(MINIX) || defined(__GNU__) || defined(__CYGWIN__)
 # define setpgrp setpgid
 #endif
 #ifdef hpux
