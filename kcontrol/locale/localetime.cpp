@@ -99,7 +99,7 @@ void KLocaleConfigTime::load()
   // TimeFormat
   str = config->readEntry(QString::fromLatin1("TimeFormat"));
   if (str.isNull())
-    str = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p"));
+    str = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%H:%M:%S"));
   locale->setTimeFormat(str);
 
   // DateFormat
@@ -111,7 +111,7 @@ void KLocaleConfigTime::load()
   // DateFormatShort
   str = config->readEntry(QString::fromLatin1("DateFormatShort"));
   if (str.isNull())
-    str = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y"));
+    str = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%Y-%m-%d"));
   locale->setDateFormatShort(str);
 
   // WeekStartsMonday
@@ -157,7 +157,7 @@ void KLocaleConfigTime::save()
 
   QString str;
 
-  str = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p"));
+  str = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%H:%M:%S"));
   str = config->readEntry(QString::fromLatin1("TimeFormat"), str);
   if (str != locale->timeFormat())
     config->writeEntry(QString::fromLatin1("TimeFormat"), locale->timeFormat(), true, true);
@@ -167,7 +167,7 @@ void KLocaleConfigTime::save()
   if (str != locale->dateFormat())
     config->writeEntry(QString::fromLatin1("DateFormat"), locale->dateFormat(), true, true);
 
-  str = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y"));
+  str = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%Y-%m-%d"));
   str = config->readEntry(QString::fromLatin1("DateFormatShort"), str);
   if (str != locale->dateFormatShort())
     config->writeEntry(QString::fromLatin1("DateFormatShort"), locale->dateFormatShort(), true, true);
@@ -225,9 +225,9 @@ void KLocaleConfigTime::reset()
 			   .arg(locale->country())), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
-  locale->setTimeFormat(ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p")));
+  locale->setTimeFormat(ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%H:%M:%S")));
   locale->setDateFormat(ent.readEntry(QString::fromLatin1("DateFormat"), QString::fromLatin1("%A %d %B %Y")));
-  locale->setDateFormatShort(ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y")));
+  locale->setDateFormatShort(ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%Y-%m-%d")));
   locale->setWeekStartsMonday(ent.readBoolEntry(QString::fromLatin1("WeekStartsMonday"), true));
 
   edTimeFmt->setText(locale->timeFormat());
