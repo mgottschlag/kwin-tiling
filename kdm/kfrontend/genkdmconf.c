@@ -937,6 +937,7 @@ getInitTab( void )
 	if (maxTTY)
 		return;
 	if (readFile( &it, "/etc/inittab" )) {
+		usedFile( "/etc/inittab" );
 		for (p = it.buf; p < it.eof; p = eol + 1) {
 			for (eol = p; eol < it.eof && *eol != '\n'; eol++);
 			if (*p != '#') {
@@ -1127,6 +1128,7 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 	if (**value == '/') {
 		if (!readFile( &file, *value ))
 			return;
+		usedFile( *value );
 	} else {
 		file.buf = *value;
 		file.eof = *value + strlen( *value );
@@ -1280,6 +1282,9 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 
 	putfqval( "General", "StaticServers", sdpys ? sdpys + 1 : "" );
 	putfqval( "General", "ReserveServers", rdpys ? rdpys + 1 : "" );
+
+	if (**value == '/' && inNewDir( *value ) && !use_destdir)
+		displace( *value );
 }
 
 #ifdef HAVE_VTS
