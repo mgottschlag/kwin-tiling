@@ -143,6 +143,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // Expanding shortcut to HOME URL...
   QString path;
   QString ref;
+  QString query;
   
   if (KURL::isRelativeURL(cmd))
      path = cmd;
@@ -152,7 +153,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
      {
         path = url.path();
         ref = url.ref();
-        path += KURL::decode_string(url.query(), 106 /* utf-8 */);
+        query = url.query();
         if (path.isEmpty() && url.hasHost())
            path = "/";
      }
@@ -253,6 +254,14 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   if( isLocalFullPath && !exists )
   {
     exists = ( stat( QFile::encodeName(path).data() , &buff ) == 0 );
+    if ( !exists && !query.isEmpty() ) { // maybe what we thought was a 'query', is part of the path (#58990)
+        QString pathWithQuery = path + KURL::decode_string(query, 106 /* utf-8 */);
+        if ( stat( QFile::encodeName(pathWithQuery).data() , &buff ) == 0 ) {
+            path = pathWithQuery;
+            exists = true;
+            query = QString::null;
+        }
+    }
   }
 
   //kdDebug() << "path =" << path << " isLocalFullPath=" << isLocalFullPath << " exists=" << exists << endl;
@@ -261,6 +270,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     KURL u;
     u.setPath(path);
     u.setRef(ref);
+    u.setQuery(query);
 
     if (kapp && !kapp->authorizeURLAction( QString::fromLatin1("open"), KURL(), u))
     {
