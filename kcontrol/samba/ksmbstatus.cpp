@@ -124,8 +124,10 @@ void NetMon::processSambaLine(char *bufline, int)
           && (strncmp(bufline,"--", 2) !=0)) // "------------"
       {
          char *tok=strtok(bufline," ");
-         int pid=atoi(tok);
-         (lo)[pid]++;
+         if (tok) {
+             int pid=atoi(tok);
+             (lo)[pid]++;
+         }
       }
    };
 }
@@ -174,7 +176,7 @@ void NetMon::update()
 
    QString path(::getenv("PATH"));
    path += "/bin:/sbin:/usr/bin:/usr/sbin";
-   
+
    rownumber=0;
    readingpart=header;
    nrpid=0;
