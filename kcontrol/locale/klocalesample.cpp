@@ -89,7 +89,7 @@ void KLocaleSample::update()
   moneySample->setText(locale->formatMoney(123456789.00) +
 		       " / " +
 		       locale->formatMoney(-123456789.00));
-  dateSample->setText(locale->formatDate(QDate::currentDate()));
+  dateSample->setText(locale->formatDate(QDate::currentDate(), false));
   dateShortSample->setText(locale->formatDate(QDate::currentDate(), true));
   timeSample->setText(locale->formatTime(QTime::currentTime()));
 }

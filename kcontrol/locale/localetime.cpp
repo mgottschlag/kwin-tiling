@@ -160,7 +160,7 @@ void KLocaleConfigTime::reset()
 
   locale->_timefmt = ent.readEntry("TimeFormat", "%I:%M:%S %p");
   locale->_datefmt = ent.readEntry("DateFormat", "%m/%d/%y");
-  locale->_datefmt = ent.readEntry("DateFormatShort", "%m/%d/%y");
+  locale->_datefmtshort = ent.readEntry("DateFormatShort", "%m/%d/%y");
 
   load();
 }
