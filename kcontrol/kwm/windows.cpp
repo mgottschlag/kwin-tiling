@@ -40,6 +40,7 @@
 #include <kdialog.h>
 #include <kapp.h>
 #include <dcopclient.h>
+#include <kdesktopwidget.h>
 
 #include <kglobal.h>
 
@@ -67,7 +68,10 @@
 #define KWIN_TRAVERSE_ALL          "TraverseAll"
 #define KWIN_SHADEHOVER            "ShadeHover"
 #define KWIN_SHADEHOVER_INTERVAL   "ShadeHoverInterval"
-
+#define KWIN_XINERAMA              "XineramaEnabled"
+#define KWIN_XINERAMA_MOVEMENT     "XineramaMovementEnabled"
+#define KWIN_XINERAMA_PLACEMENT    "XineramaPlacementEnabled"
+#define KWIN_XINERAMA_MAXIMIZE     "XineramaMaximizeEnabled"
 
 /*
  * Some inter-widget spacing constants
@@ -655,12 +659,33 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
                                        " comes only near another window or border.") );
 
     lay->addWidget(MagicBox);
+#ifdef HAVE_XINERAMA
+    xineramaBox = new QVButtonGroup(i18n("Xinerama"), this);
+
+    xineramaEnable = new QCheckBox(i18n("Enable Xinerama Support"), xineramaBox);
+    QWhatsThis::add(xineramaEnable, i18n("Enable support for Xinerama."));
+    connect(xineramaEnable, SIGNAL(toggled(bool)), this, SLOT(setXinerama(bool)));
+    xineramaMovementEnable = new QCheckBox(i18n("Enable Window Resistance Support"), xineramaBox);
+    QWhatsThis::add(xineramaMovementEnable, i18n("Turn on resistance when moving a window from one physical screen to the other"));
+    xineramaPlacementEnable = new QCheckBox(i18n("Enable Window Placement Support"), xineramaBox);
+    QWhatsThis::add(xineramaPlacementEnable, i18n("This option opens new windows on the physical screen on which the cursor is present"));
+    xineramaMaximizeEnable = new QCheckBox(i18n("Enable Window Maximize Support"), xineramaBox);
+    QWhatsThis::add(xineramaMaximizeEnable, i18n("When this option is turned on, windows maximize only to up to the physical screen"));
+
+    lay->addWidget(xineramaBox);
+#endif
     lay->addStretch();
     load();
 
     connect( BrdrSnap, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
     connect( WndwSnap, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
     connect( OverlapSnap, SIGNAL(clicked()), this, SLOT(slotChanged()));
+#ifdef HAVE_XINERAMA
+    connect( xineramaEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    connect( xineramaMovementEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    connect( xineramaPlacementEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    connect( xineramaMaximizeEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
+#endif
 
     load();
 }
@@ -767,6 +792,19 @@ void KAdvancedConfig::shadeHoverChanged(bool a) {
     shlabel->setEnabled(a);
 }
 
+void KAdvancedConfig::setXinerama(bool on) {
+#ifdef HAVE_XINERAMA
+    if (KApplication::desktop()->isVirtualDesktop())
+ 	xineramaEnable->setChecked(on);
+    else
+	xineramaEnable->setEnabled(false);
+
+    xineramaMovementEnable->setEnabled(on);
+    xineramaPlacementEnable->setEnabled(on);
+    xineramaMaximizeEnable->setEnabled(on);
+#endif
+}
+
 void KAdvancedConfig::setAnimateShade(bool a) {
     animateShade->setChecked(a);
 }
@@ -847,6 +885,20 @@ void KAdvancedConfig::load( void )
 
     int k = config->readNumEntry(KWIN_SHADEHOVER_INTERVAL, 250);
     setShadeHoverInterval(k);
+
+#ifdef HAVE_XINERAMA
+    key = config->readEntry(KWIN_XINERAMA, "off");
+    setXinerama(key == "on");
+ 
+    key = config->readEntry(KWIN_XINERAMA_MOVEMENT, "off");
+    xineramaMovementEnable->setChecked(key == "on");
+
+    key = config->readEntry(KWIN_XINERAMA_PLACEMENT, "off");
+    xineramaPlacementEnable->setChecked(key == "on");
+
+    key = config->readEntry(KWIN_XINERAMA_MAXIMIZE, "off");
+    xineramaMaximizeEnable->setChecked(key == "on");
+#endif
 
     //copied from kcontrol/konq/kwindesktop, aleXXX
     int v;
@@ -936,6 +988,28 @@ void KAdvancedConfig::save( void )
     v = getShadeHoverInterval();
     if (v<0) v = 0;
     config->writeEntry(KWIN_SHADEHOVER_INTERVAL, v);
+
+#ifdef HAVE_XINERAMA
+    if (xineramaEnable->isChecked())
+	config->writeEntry(KWIN_XINERAMA, "on");
+    else
+	config->writeEntry(KWIN_XINERAMA, "off");
+
+    if (xineramaMovementEnable->isChecked())
+	config->writeEntry(KWIN_XINERAMA_MOVEMENT, "on");
+    else
+	config->writeEntry(KWIN_XINERAMA_MOVEMENT, "off");
+
+    if (xineramaPlacementEnable->isChecked())
+	config->writeEntry(KWIN_XINERAMA_PLACEMENT, "on");
+    else
+	config->writeEntry(KWIN_XINERAMA_PLACEMENT, "off");
+
+    if (xineramaMaximizeEnable->isChecked())
+	config->writeEntry(KWIN_XINERAMA_MAXIMIZE, "on");
+    else
+	config->writeEntry(KWIN_XINERAMA_MAXIMIZE, "off");
+#endif
 
   //copied from kcontrol/konq/kwindesktop, aleXXX
   config->setGroup( "Windows" );

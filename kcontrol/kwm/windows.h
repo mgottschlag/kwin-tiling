@@ -25,6 +25,7 @@
 #define __KWINDOWCONFIG_H__
 
 #include <kcmodule.h>
+#include <config.h>
 
 class QRadioButton;
 class QCheckBox;
@@ -127,6 +128,8 @@ private slots:
   //copied from kcontrol/konq/kwindesktop, aleXXX
   void setEBorders();
 
+  void setXinerama(bool);
+
 private:
 
   int getMove( void );
@@ -165,6 +168,14 @@ private:
   QCheckBox *shadeHoverOn;
   KIntNumInput *shadeHover;
   QLabel *shlabel;
+
+#ifdef HAVE_XINERAMA
+  QButtonGroup *xineramaBox;
+  QCheckBox *xineramaEnable;
+  QCheckBox *xineramaMovementEnable;
+  QCheckBox *xineramaPlacementEnable;
+  QCheckBox *xineramaMaximizeEnable;
+#endif
 
   KConfig *config;
 
