@@ -185,6 +185,7 @@ KPanelTheme::KPanelTheme(QWidget *parent, const char *name)
     wCombo->insertItem(i18n("Taskbar"), WidgetCanvas::C_TBar);
     wCombo->insertItem(i18n("Taskbar Button"), WidgetCanvas::C_TBtn);
     wCombo->insertItem(i18n("Taskbar Text"), WidgetCanvas::C_TText);
+    wCombo->setMinimumSize(wCombo->sizeHint());
     QPushButton *resetBtn = new
         QPushButton(i18n("Reset this item"), optionBox);
     QPushButton *resetAllBtn =
