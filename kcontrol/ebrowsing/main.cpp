@@ -122,7 +122,7 @@ QString KURIFilterModule::quickHelp() const
       " \"KDE\" or \"K Desktop Environment\" in Konqueror to go to KDE's homepage."
       "<h2>Web Shortcuts</h2>Web Shortcuts are a quick way of using Web search engines. For example, type \"altavista:frobozz\""
       " or \"av:frobozz\" and Konqueror will do a search on AltaVista for \"frobozz\"."
-      " Even easier: just press Alt-F2 (if you haven't"
+      " Even easier: just press Alt+F2 (if you haven't"
       " changed this shortcut) and enter the shortcut in the KDE Run Command dialog.");
 }
 
