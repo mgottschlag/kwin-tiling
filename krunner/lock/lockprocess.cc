@@ -249,6 +249,11 @@ void LockProcess::configure()
     if (mPriority > 19) mPriority = 19;
     mSaver = config.readEntry("Saver");
 
+    if (mSaver.isEmpty() && mLockOnce) 
+    {
+        mSaver = "KBlankscreen.desktop";
+    }
+
     readSaver();
 }
 
