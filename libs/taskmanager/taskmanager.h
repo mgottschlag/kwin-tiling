@@ -48,12 +48,12 @@ class TaskManager;
 class Task: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( QString visibleNameMatchingState READ visibleNameMatchingState )
+    Q_PROPERTY( QString visibleIconicName READ visibleIconicName )
+    Q_PROPERTY( QString iconicName READ iconicName )
+    Q_PROPERTY( QString visibleIconicNameWithState READ visibleIconicNameWithState )
     Q_PROPERTY( QString visibleName READ visibleName )
     Q_PROPERTY( QString name READ name )
     Q_PROPERTY( QString visibleNameWithState READ visibleNameWithState )
-    Q_PROPERTY( QString visibleIconicName READ visibleIconicName )
-    Q_PROPERTY( QString iconicName READ iconicName )
     Q_PROPERTY( QPixmap pixmap READ pixmap )
     Q_PROPERTY( bool maximized READ isMaximized )
     Q_PROPERTY( bool minimized READ isMinimized )
@@ -78,12 +78,12 @@ public:
     TaskManager* taskManager() const { return (TaskManager*) parent(); }
 
     WId window() const { return _win; }
-    QString visibleNameMatchingState() const { return _info.visibleNameMatchingState(); }
+    QString visibleIconicName() const { return _info.visibleIconName(); }
+    QString visibleIconicNameWithState() const { return _info.visibleIconNameWithState(); }
+    QString iconicName() const { return _info.iconName(); }
     QString visibleName() const { return _info.visibleName(); }
     QString visibleNameWithState() const { return _info.visibleNameWithState(); }
     QString name() const { return _info.name(); }
-    QString visibleIconicName() const { return _info.visibleIconName(); }
-    QString iconicName() const { return _info.iconName(); }
     QString className();
     QString classClass();
 
