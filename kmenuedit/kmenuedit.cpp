@@ -109,18 +109,12 @@ void KMenuEdit::slotChangeView()
     setUpdatesEnabled( false );
     guiFactory()->removeClient( this );
 
-    if (m_actionDelete)
-    {
-       delete m_actionDelete;
-       m_actionDelete = 0;
-    }
-    if (m_actionUndelete)
-    {
-       delete m_actionUndelete;
-       m_actionUndelete = 0;
-    }
+    delete m_actionDelete;
 
     m_actionDelete = new KAction(i18n("&Delete"), "editdelete", Key_Delete, actionCollection(), "delete");
+
+    delete m_actionUndelete;
+    m_actionUndelete = 0;
     if (m_showHidden)
     {
        m_actionUndelete = new KAction(i18n("&Re-add"), "undo", KStdAccel::key(KStdAccel::Undo), actionCollection(), "undelete");
