@@ -76,13 +76,13 @@ Panic (const char *mesg)
     write (fd, mesg, strlen (mesg));
     write (fd, "\n", 1);
 #ifdef USE_SYSLOG
-    InitLog ();
-    syslog(LOG_ALERT, "%s", mesg);
+    ReInitErrorLog ();
+    syslog (LOG_ALERT, "%s", mesg);
 #endif
     exit (1);
 }
 
-#if defined(USE_SYSLOG) && defined(USE_PAM)
+#ifdef USE_SYSLOG
 void
 ReInitErrorLog ()
 {
@@ -98,11 +98,7 @@ InitErrorLog (const char *errorLogFile)
     char buf[128];
 
 #ifdef USE_SYSLOG
-# ifdef USE_PAM
     ReInitErrorLog ();
-# else
-    InitLog ();
-# endif
 #endif
     /* We do this independently of using syslog, as we cannot redirect
      * the output of external programs to syslog.
