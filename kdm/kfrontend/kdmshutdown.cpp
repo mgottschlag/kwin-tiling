@@ -220,15 +220,6 @@ KDMShutdownBase::verifySetUser( const QString & )
 }
 
 
-QCString
-BootHandler::obtainTarget()
-{
-	if (_bootManager != BO_NONE && targets->currentItem() != oldTarget)
-		return targets->currentText().local8Bit();
-	return QCString();
-}
-
-
 static void
 doShutdown( int type, const char *os )
 {

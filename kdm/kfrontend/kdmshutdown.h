@@ -91,16 +91,6 @@ class KDMShutdownBase : public FDialog, public KGVerifyHandler {
 };
 
 
-class BootHandler {
-  public:
-	BootHandler() {}
-	bool setupTargets( QWidget *parent );
-	QCString obtainTarget();
-
-	QComboBox *targets;
-	int defaultTarget, oldTarget;
-};
-
 class KDMShutdown : public KDMShutdownBase {
 	Q_OBJECT
 	typedef KDMShutdownBase inherited;
