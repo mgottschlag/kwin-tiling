@@ -260,6 +260,7 @@ void TreeView::deleteFile(const QString& deskfile)
   if(!allremoved)
     {
       KSimpleConfig c(locateLocal("apps", deskfile));
+      c.setDesktopGroup();
       c.writeEntry("Hidden", true);
       c.sync();
     }
@@ -305,6 +306,7 @@ void TreeView::deleteDir(const QString& directory)
   if(!allremoved)
     {
       KSimpleConfig c(locateLocal("apps", directory + "/.directory"));
+      c.setDesktopGroup();
       c.writeEntry("Hidden", true);
       c.sync();
     }
