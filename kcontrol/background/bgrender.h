@@ -86,7 +86,6 @@ private:
 
     bool m_bPreview;
     int m_State;
-    pid_t m_Pid;
 
     KTempFile* m_Tempfile;
     QSize m_Size, m_rSize;
