@@ -392,7 +392,7 @@ AccNoPass (const char *un, struct passwd *pw)
     for (hg = 0, fp = td->noPassUsers; *fp; fp++)
 	if (**fp == '@')
 	    hg = 1;
-	else if (!strcmp (un, *fp))
+	else if (!strcmp (un, *fp) || !strcmp ("*", *fp))
 	    return 1;
 
 #if defined(USE_PAM) || defined(AIXV3)
