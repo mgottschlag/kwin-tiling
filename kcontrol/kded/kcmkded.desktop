@@ -3,7 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell System/kcmkded
 Icon=kded
 Type=Application
-DocPath=kcontrol/kded.html
+DocPath=kcontrol/kded/index.html
 
 X-KDE-SubstituteUID=true
 X-KDE-RootOnly=true
@@ -14,5 +14,18 @@ X-KDE-Library=kded
 X-KDE-Factoryname=kded
 
 Name=KDE Service Manager
+Name[hu]=KDE szolgáltatáskezelő
+Name[ja]=KDE サービスマネージャー
+Name[pt_BR]=Gerenciador de Serviços KDE
+Name[sv]=KDE:s tjänsthanterare
 Comment=System Services Configuration
+Comment[hu]=A rendszerszolgáltatások beállításai
+Comment[ja]=システムサービスの設定
+Comment[pt_BR]=Configuração de Serviços do sistema
+Comment[sv]=Anpassa systemets tjänster
 Keywords=KDED,Daemon,Services
+Keywords[hu]=KDED,démon,szolgáltatás
+Keywords[ja]=KDED,デーモン,サービス
+Keywords[pt]=KDED,Servidor,Serviços
+Keywords[pt_BR]=KDED,Servidor,Serviços
+Keywords[sv]=KDED,Demon,Tjänster

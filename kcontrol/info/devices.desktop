@@ -3,7 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell devices
 Icon=kcmdevices
 Type=Application
-DocPath=devices/index.html
+DocPath=kinfocenter/devices/index.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=info
@@ -101,6 +101,7 @@ Comment[nb]=Informasjon om tilkoblede enheter
 Comment[nl]=Informatie over aangesloten apparaten
 Comment[oc]=Informacion dèus dispositius connectats
 Comment[pl]=Informacje o włączonych urządzeniach
+Comment[pt]=Informações sobre os Dispositivos
 Comment[pt_BR]=Informações sobre dispositivos conectados
 Comment[ro]=Informaţii despre dispozitivele instalate
 Comment[ru]=Сведения о подключенных устройствах
