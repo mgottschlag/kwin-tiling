@@ -87,7 +87,7 @@ void KThemeListBox::readThemeDir(const QString &directory)
     QString name, desc;
 
     kconfig->setGroup("KDE");
-    QString defName = "Qt Platinum";
+    QString defName = "Default";
     QString curName = kconfig->readEntry("widgetStyleName", defName);
 
     QDir dir(directory, "*.themerc");
