@@ -199,28 +199,28 @@ void URLGrabber::slotItemSelected( int id )
 
 void URLGrabber::execute( const struct ClipCommand *command ) const
 {
-    QString cmdLine;
-
     if ( command->isEnabled ) {
-        cmdLine = command->command;
+        QString cmdLine = command->command;
+
+        // escape $ to avoid it being expanded by the shell
+        QString escClipData = myClipData;
+        escClipData.replace( QRegExp( "\\$" ), "\\$" );
 
         // replace "%s" with the clipboard contents
         // replace \%s to %s
-        // currently, only the first %s will be replaced... fix this?
-        int pos = cmdLine.find("%s");
-        if ( pos >= 0 ) {
-            bool doReplace = true;
+        int pos = 0;
+        
+        while ( (pos = cmdLine.find("%s", pos)) >= 0 ) {
             if ( pos > 0 && cmdLine.at( pos -1 ) == '\\' ) {
                 cmdLine.remove( pos -1, 1 ); // \%s -> %s
-                doReplace = false;
+                pos++;
             }
-
-            if ( doReplace )
-                cmdLine.replace( pos, 2, myClipData );
+            else {
+                cmdLine.replace( pos, 2, escClipData );
+                pos += escClipData.length();
+            }
         }
 
-        // escape $ to avoid it being expanded by the shell
-        cmdLine.replace( QRegExp( "\\$" ), "\\$" );
         startProcess( cmdLine );
     }
 }
