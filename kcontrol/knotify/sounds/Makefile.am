@@ -13,6 +13,7 @@ sounds_data_DATA = \
 	KDE_Window_Shade_Down.wav KDE_Window_Shade_Up.wav KDE_Window_Sticky.wav \
 	KDE_Window_UnMaximize.wav KDE_Window_UnSticky.wav \
 	\
+	KDE_Beep.ogg KDE_Beep_Car.ogg KDE_Beep_Classic.ogg KDE_Beep_Connect.ogg \
 	KDE_Beep_Digital_1.ogg KDE_Beep_Digital_2.ogg KDE_Beep_Phone_1.ogg \
 	KDE_Beep_Phone_2.ogg KDE_Bottles.ogg KDE_Chimes_1.ogg KDE_Chimes_2.ogg \
 	KDE_Chimes_3.ogg KDE_Click_1.ogg KDE_Click_2.ogg KDE_Click_3.ogg \
