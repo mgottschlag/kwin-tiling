@@ -24,6 +24,7 @@
 
 #include <kcmdlineargs.h>
 #include <klocale.h>
+#include <kglobal.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
 
@@ -135,6 +136,7 @@ int main( int argc, char **argv )
     MyApp app;
     kdDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
     app.disableSessionManagement();
+    KGlobal::locale()->insertCatalogue("libdmctl");
 
     // we need to read from the right rc file - possibly taking screen number in account
     KDesktopSettings::instance("kdesktoprc");

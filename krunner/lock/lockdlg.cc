@@ -656,15 +656,11 @@ void PasswordDlg::slotSwitchUser()
         lv->setColumnWidthMode( 0, QListView::Maximum );
         lv->setColumnWidthMode( 1, QListView::Maximum );
         QListViewItem *itm = 0;
+        QString user, loc;
         int ns = 0;
         for (SessList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
-            itm = new LockListViewItem( lv,
-                (*it).session.isEmpty() ? i18n("Unused") :
-                  (*it).session == "<remote>" ? i18n("Remote Login") :
-                  i18n("user: session type", "%1: %2").arg((*it).user).arg((*it).session),
-                !(*it).vt ? (*it).display :
-                  i18n("display, virtual terminal", "%1, vt%2").arg((*it).display).arg((*it).vt),
-                (*it).vt );
+            DM::sess2Str2( *it, user, loc );
+            itm = new LockListViewItem( lv, user, loc, (*it).vt );
             if (!(*it).vt)
                 itm->setEnabled( false );
             if ((*it).self) {
