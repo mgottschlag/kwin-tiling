@@ -60,7 +60,7 @@ Options::Options (QWidget * aParent, const char *aName, bool aInit)
   mCbxWallpapers = newLine("Display", i18n("Wallpapers"), &mStatWallpapers);
   mCbxSounds = newLine("Sounds", i18n("Sound effects"), &mStatSounds);
   mCbxIcons = newLine("Icons", i18n("Icons"), &mStatIcons);
-  mCbxWM = newLine("Window Border", i18n("Window Decorations"), &mStatWM);
+  mCbxWM = newLine("Window Border", i18n("Window decorations"), &mStatWM);
   mCbxPanel = newLine("Panel", i18n("Panel"), &mStatPanel);
 
   btn = new QPushButton(i18n("Clear"), this);

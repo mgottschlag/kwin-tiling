@@ -52,8 +52,8 @@ NewThemeDlg::NewThemeDlg(QWidget *parent):
   mGrid = new QGridLayout(page, 8, 4, 0, spacingHint());
   mGridRow = 0;
 
-  mEdtFilename = newLine(i18n("File Name:"),1);
-  mEdtName = newLine(i18n("Detailed Name:"),1);
+  mEdtFilename = newLine(i18n("File name:"),1);
+  mEdtName = newLine(i18n("Detailed name:"),1);
   mEdtAuthor = newLine(i18n("Author:"),1);
   mEdtEmail = newLine(i18n("Email:"),1);
   mEdtHomepage = newLine(i18n("Webpage:"),1);

@@ -109,7 +109,7 @@
                         <cstring>iconifiedCheck</cstring>
                     </property>
                     <property name="text">
-                        <string>Show only Iconified Windows</string>
+                        <string>Show only iconified windows</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Check this option if you want the taskbar to display only windows which are iconified. By default, the taskbar will show all windows.</string>
