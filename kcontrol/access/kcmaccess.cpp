@@ -37,7 +37,7 @@
 #include "kcmaccess.moc"
 
 
-KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
+KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   : KCModule(parent, "kcmaccess")
 {
   QVBoxLayout *main = new QVBoxLayout(this, 0,0);
