@@ -333,7 +333,8 @@ void PasswordDlg::slotStartNewSession()
        KConfig gc("kdeglobals", false, false);
        gc.setGroup("Windows");
        QRect rect;
-       if (gc.readBoolEntry("XineramaEnabled", true) &&
+       if (QApplication::desktop()->isVirtualDesktop() &&
+           gc.readBoolEntry("XineramaEnabled", true) &&
            gc.readBoolEntry("XineramaPlacementEnabled", true)) {
           rect = QApplication::desktop()->screenGeometry(scr);
        } else {

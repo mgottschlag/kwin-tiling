@@ -204,7 +204,8 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, bool maynuke,
     KConfig gc("kdeglobals", false, false);
     gc.setGroup("Windows");
     QRect rect;
-    if (gc.readBoolEntry("XineramaEnabled", true) &&
+    if (QApplication::desktop()->isVirtualDesktop() &&
+	gc.readBoolEntry("XineramaEnabled", true) &&
         gc.readBoolEntry("XineramaPlacementEnabled", true)) {
         rect = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
     } else {

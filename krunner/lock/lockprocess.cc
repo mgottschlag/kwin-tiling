@@ -664,7 +664,8 @@ bool LockProcess::checkPass()
         KConfig gc("kdeglobals", false, false);
         gc.setGroup("Windows");
         QRect desk;
-        if (gc.readBoolEntry("XineramaEnabled", true) &&
+        if (QApplication::desktop()->isVirtualDesktop() &&
+            gc.readBoolEntry("XineramaEnabled", true) &&
             gc.readBoolEntry("XineramaPlacementEnabled", true)) {
             desk = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
         } else {

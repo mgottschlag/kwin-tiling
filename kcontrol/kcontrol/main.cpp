@@ -63,7 +63,8 @@ KControlApp::KControlApp()
   QRect desk;
   KConfig gc("kdeglobals", false, false);
   gc.setGroup("Windows");
-  if (gc.readBoolEntry("XineramaEnabled", true) &&
+  if (QApplication::desktop()->isVirtualDesktop() &&
+      gc.readBoolEntry("XineramaEnabled", true) &&
       gc.readBoolEntry("XineramaPlacementEnabled", true)) {
     desk = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(toplevel));
   } else {
