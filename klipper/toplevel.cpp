@@ -117,9 +117,7 @@ TopLevel::TopLevel()
 #include "klipperbindings.cpp"
     globalKeys->readSettings();
     globalKeys->updateConnections();
-    KAccelAction* pAction = globalKeys->actions().actionPtr("Enable/Disable Clipboard Actions");
-    uint keyCombQt = pAction->shortcut().keyPrimaryQt();
-    toggleURLGrabAction->setAccel(keyCombQt);
+    toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
     connect( toggleURLGrabAction, SIGNAL( toggled( bool )), this,
 	     SLOT( setURLGrabberEnabled( bool )));
@@ -455,9 +453,7 @@ void TopLevel::slotConfigure()
         globalKeys->actions().updateShortcuts( map );
         globalKeys->writeSettings();
         globalKeys->updateConnections();
-        KAccelAction* pAction = globalKeys->actions().actionPtr("Enable/Disable Clipboard Actions");
-        uint keyCombQt = pAction->shortcut().keyPrimaryQt();
-        toggleURLGrabAction->setAccel(keyCombQt);
+        toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
 //	haveURLGrabber = dlg->enableActions();
 
