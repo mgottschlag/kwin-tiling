@@ -42,11 +42,11 @@
 #include <kiconloader.h>
 #include <kcolorbtn.h>
 #include <klocale.h>
-#include <kipc.h>
 #include <kfiledialog.h>
 #include <kpixmap.h>
 
 #include <bgdefaults.h>
+#include <bgsettings.h>
 #include <bgrender.h>
 #include <bgdialogs.h>
 #include <backgnd.h>
@@ -72,126 +72,6 @@ void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 {
     e->accept(QImageDrag::canDecode(e)|| QUriDrag::canDecode(e));
 }                                                                                                             
-
-
-/**** KGlobalBackgroundSettings ****/
-
-KGlobalBackgroundSettings::KGlobalBackgroundSettings()
-{
-    dirty = false;
-
-    readSettings();
-}
-
-QString KGlobalBackgroundSettings::deskName(int desk)
-{
-    if (desk < _maxDesktops)
-	return m_Names[desk];
-    return QString();
-}
-
-
-void KGlobalBackgroundSettings::setDeskName(int desk, QString name)
-{
-    if ((desk >= _maxDesktops) || (name == m_Names[desk]))
-	return;
-    dirty = true;
-    m_Names[desk] = name;
-}
-
-
-void KGlobalBackgroundSettings::setCacheSize(int size)
-{
-    if (size == m_CacheSize)
-	return;
-    dirty = true;
-    m_CacheSize = size;
-}
-
-
-void KGlobalBackgroundSettings::setLimitCache(bool limit)
-{
-    if (limit == m_bLimitCache)
-	return;
-    dirty = true;
-    m_bLimitCache = limit;
-}
-
-
-void KGlobalBackgroundSettings::setCommonBackground(bool common)
-{
-    if (common == m_bCommon)
-	return;
-    dirty = true;
-    m_bCommon = common;
-}
-
-
-void KGlobalBackgroundSettings::setDockPanel(bool dock)
-{
-    if (dock == m_bDock)
-	return;
-    dirty = true;
-    m_bDock = dock;
-}
-
-
-void KGlobalBackgroundSettings::setExportBackground(bool _export)
-{
-    if (_export == m_bExport)
-	return;
-    dirty = true;
-    m_bExport = _export;
-}
-
-
-void KGlobalBackgroundSettings::readSettings()
-{
-    KConfig cfg("kdesktoprc");
-    cfg.setGroup("Background Common");
-    m_bCommon = cfg.readBoolEntry("CommonDesktop", _defCommon);
-    m_bDock = cfg.readBoolEntry("Dock", _defDock);
-    m_bExport = cfg.readBoolEntry("Export", _defExport);
-    m_bLimitCache = cfg.readBoolEntry("LimitCache", _defLimitCache);
-    m_CacheSize = cfg.readNumEntry("CacheSize", _defCacheSize);
-
-    m_Names.clear();
-    if (KWM::isKWMInitialized()) {
-	m_bKWM = true;
-	for (int i=0; i<_maxDesktops; i++)
-	    m_Names.append(KWM::desktopName(i+1));
-    } else {
-	m_bKWM = false;
-	for (int i=0; i<_maxDesktops; i++)
-	    m_Names.append(i18n("Desktop %1").arg(i+1));
-    }
-
-    dirty = false;
-}
-
-
-void KGlobalBackgroundSettings::writeSettings()
-{
-    if (!dirty)
-	return;
-
-    KConfig cfg("kdesktoprc");
-    cfg.setGroup("Background Common");
-    cfg.writeEntry("CommonDesktop", m_bCommon);
-    cfg.writeEntry("Dock", m_bDock);
-    cfg.writeEntry("Export", m_bExport);
-    cfg.writeEntry("LimitCache", m_bLimitCache);
-    cfg.writeEntry("CacheSize", m_CacheSize);
-
-    if (m_bKWM) {
-	for (int i=0; i<_maxDesktops; i++)
-	    if (m_Names[i] != KWM::desktopName(i+1))
-		KWM::setDesktopName(i+1, m_Names[i]);
-    }
-
-    dirty = false;
-}
-
 
 
 /**** KBackground ****/
@@ -318,7 +198,7 @@ KBackground::KBackground(QWidget *parent, Mode m)
     hbox->addWidget(m_pBrowseBut);
     hbox->addStretch();
 
-    m_pCBMulti = new QCheckBox(i18n("&Random:"), group);
+    m_pCBMulti = new QCheckBox(i18n("M&ultiple:"), group);
     m_pCBMulti->setFixedSize(m_pCBMulti->sizeHint());
     connect(m_pCBMulti, SIGNAL(toggled(bool)), SLOT(slotMultiMode(bool)));
     grid->addWidget(m_pCBMulti, 4, 0);
@@ -617,9 +497,9 @@ void KBackground::slotImageDropped(QString uri)
 
 void KBackground::slotMultiMode(bool multi)
 {
-    //m_Renderer[m_Desk]->stop();
-    //m_Renderer[m_Desk]->setMultiWallpaperMode(mode);
-    //m_Renderer[m_Desk]->start();
+    m_Renderer[m_Desk]->stop();
+    m_Renderer[m_Desk]->setMultiWallpaperMode(multi ? 1 : 0);
+    m_Renderer[m_Desk]->start();
 
     if (multi) {
 	m_pWallpaperBox->setEnabled(false);
@@ -696,7 +576,16 @@ void KBackground::slotWPMode(int mode)
 
 void KBackground::slotSetupMulti()
 {
-    qDebug("slotSetupMulti");
+    int desk = m_Desk;
+    if (m_pGlobals->commonBackground())
+	desk = 0;
+    KBackgroundRenderer *r = m_Renderer[desk];
+
+    KMultiWallpaperDialog dlg(r);
+    if (dlg.exec() == QDialog::Accepted) {
+	r->stop();
+	r->start();
+    }
 }
 
 

@@ -63,47 +63,6 @@ protected:
 };
 
 
-
-/**
- * A class to read/modify the global desktop background settings.
- */
-class KGlobalBackgroundSettings
-{
-public:
-    KGlobalBackgroundSettings();
-
-    QString deskName(int desk);
-    void setDeskName(int desk, QString name);
-
-    int cacheSize() { return m_CacheSize; }
-    void setCacheSize(int size);
-
-    bool limitCache() { return m_bLimitCache; }
-    void setLimitCache(bool limit);
-
-    bool commonBackground() { return m_bCommon; }
-    void setCommonBackground(bool common);
-
-    bool dockPanel() { return m_bDock; }
-    void setDockPanel(bool dock);
-
-    bool exportBackground() {return m_bExport; }
-    void setExportBackground(bool _export);
-
-    void readSettings();
-    void writeSettings();
-
-private:
-    bool dirty, m_bKWM;
-    bool m_bCommon, m_bDock;
-    bool m_bLimitCache, m_bExport;
-    int m_CacheSize;
-    QStringList m_Names;
-
-    KConfig *m_pConfig;
-};
-
-
 /**
  * The "background" tab in kcmdisplay.
  */

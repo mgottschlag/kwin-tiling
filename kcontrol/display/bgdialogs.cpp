@@ -17,12 +17,16 @@
 #include <qlabel.h>
 #include <qpixmap.h>
 #include <qlineedit.h>
+#include <qlistbox.h>
 #include <qspinbox.h>
+#include <qcombobox.h>
 #include <qframe.h>
 #include <qmap.h>
 
+#include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kstddirs.h>
 #include <kbuttonbox.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
@@ -705,6 +709,117 @@ void KPatternEditDialog::slotOK()
     pat.setPattern(m_FileEdit->text());
     pat.writeSettings();
 
+    accept();
+}
+
+
+/**** KMultiWallpaperDialog ****/
+
+KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
+	QWidget *parent, char *name)
+	: QDialog(parent, name, true)
+{
+    m_pSettings = setts;
+    m_Wallpapers = m_pSettings->wallpaperList();
+    m_Interval = m_pSettings->wallpaperChangeInterval();
+    m_Mode = m_pSettings->multiWallpaperMode();
+
+    QVBoxLayout *top = new QVBoxLayout(this);
+    top->setSpacing(10);
+    top->setMargin(10);
+    top->addSpacing(10);
+
+    QHBoxLayout *hbox = new QHBoxLayout();
+    top->addLayout(hbox);
+
+    QLabel *lbl = new QLabel(i18n("&Interval"), this);
+    hbox->addWidget(lbl);
+    m_pIntervalEdit = new QSpinBox(this);
+    m_pIntervalEdit->setRange(5, 240);
+    m_pIntervalEdit->setSteps(5, 15);
+    m_pIntervalEdit->setValue(QMAX(5,m_Interval));
+    m_pIntervalEdit->setSuffix(i18n(" minutes"));
+    lbl->setBuddy(m_pIntervalEdit);
+    hbox->addWidget(m_pIntervalEdit);
+    hbox->addStretch();
+
+    lbl = new QLabel(i18n("&Mode"), this);
+    hbox->addWidget(lbl);
+    m_pModeEdit = new QComboBox(this);
+    m_pModeEdit->insertItem(i18n("In Order"));
+    m_pModeEdit->insertItem(i18n("Random"));
+    lbl->setBuddy(m_pModeEdit);
+    hbox->addWidget(m_pModeEdit);
+    hbox->addStretch();
+
+    top->addSpacing(10);
+    lbl = new QLabel(i18n("You can select files and directories below:"), this);
+    top->addWidget(lbl);
+
+    QFrame *frame = new QFrame(this);
+    frame->setFrameStyle(QFrame::WinPanel|QFrame::Raised);
+    top->addWidget(frame);
+    QVBoxLayout *vbox = new QVBoxLayout(frame);
+    vbox->setSpacing(10);
+    vbox->setMargin(10);
+    m_pListBox = new QListBox(frame);
+    m_pListBox->setMinimumSize(QSize(300,150));
+    vbox->addWidget(m_pListBox);
+    m_pListBox->insertStringList(m_Wallpapers);
+
+    hbox = new QHBoxLayout();
+    vbox->addLayout(hbox);
+    QPushButton *pbut = new QPushButton(i18n("&Add"), frame);
+    connect(pbut, SIGNAL(clicked()), SLOT(slotAdd()));
+    hbox->addWidget(pbut);
+    pbut = new QPushButton(i18n("&Remove"), frame);
+    connect(pbut, SIGNAL(clicked()), SLOT(slotRemove()));
+    hbox->addWidget(pbut);
+
+    KButtonBox *bbox = new KButtonBox(this);
+    pbut = bbox->addButton("&Help");
+    connect(pbut, SIGNAL(clicked()), SLOT(slotHelp()));
+    bbox->addStretch();
+    pbut = bbox->addButton(i18n("&OK"));
+    connect(pbut, SIGNAL(clicked()), SLOT(slotOK()));
+    pbut = bbox->addButton(i18n("&Cancel"));
+    connect(pbut, SIGNAL(clicked()), SLOT(reject()));
+    top->addWidget(bbox);
+}
+
+
+void KMultiWallpaperDialog::slotAdd()
+{
+    QString file = KFileDialog::getOpenFileName();
+    if (file.isEmpty())
+	return;
+
+    m_pListBox->insertItem(file);
+}
+
+
+void KMultiWallpaperDialog::slotRemove()
+{
+    int item = m_pListBox->currentItem();
+    if (item == -1)
+	return;
+    m_pListBox->removeItem(item);
+}
+
+
+void KMultiWallpaperDialog::slotHelp()
+{
+}
+
+
+void KMultiWallpaperDialog::slotOK()
+{
+    QStringList lst;
+    for (unsigned i=0; i<m_pListBox->count(); i++)
+	lst.append(m_pListBox->text(i));
+    m_pSettings->setWallpaperList(lst);
+    m_pSettings->setWallpaperChangeInterval(m_pIntervalEdit->value());
+    m_pSettings->setMultiWallpaperMode(m_pModeEdit->currentItem()+1);
     accept();
 }
 

@@ -1,6 +1,6 @@
 /* vi: ts=8 sts=4 sw=4
  *
- * $Id: $
+ * $Id$
  *
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
@@ -12,16 +12,18 @@
 #ifndef __BGDialogs_h_Included__
 #define __BGDialogs_h_Included__
 
-class QListView;
-class QListViewItem;
-class KBackgroundProgram;
-class QLineEdit;
-class QSpinBox;
-class QGroupBox;
-
 #include <qdialog.h>
 #include <qmap.h>
 #include <qstring.h>
+
+class QListView;
+class QListViewItem;
+class QLineEdit;
+class QSpinBox;
+class QGroupBox;
+class QListBox;
+class KBackgroundProgram;
+class KBackgroundSettings;
 
 
 /**
@@ -137,6 +139,36 @@ private:
     QLineEdit *m_CommentEdit;
 };
     
+
+/**
+ * Multiwallpaper settings.
+ */
+
+class KMultiWallpaperDialog: public QDialog
+{
+    Q_OBJECT
+
+public:
+    KMultiWallpaperDialog(KBackgroundSettings *settings, 
+	    QWidget *parent=0L, char *name=0L);
+
+public slots:
+    void slotAdd();
+    void slotRemove();
+    void slotHelp();
+    void slotOK();
+
+private:
+    int m_Interval, m_Mode;
+
+    QStringList m_Wallpapers;
+    QSpinBox *m_pIntervalEdit;
+    QComboBox *m_pModeEdit;
+    QListBox *m_pListBox;
+
+    KBackgroundSettings *m_pSettings;
+};
+
 
 #endif // __BGDialogs_h_Included__
 

@@ -1,6 +1,6 @@
 /* vi: ts=8 sts=4 sw=4
  *
- * $Id: $
+ * $Id$
  *
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
@@ -21,6 +21,8 @@
 #include <kwm.h>
 
 #include <bgdefaults.h>
+#include <bgsettings.h>
+
 #include "backgnd.h"
 #include "advanced.h"
 
@@ -146,3 +148,6 @@ void KAdvanced::defaultSettings()
     m_pSettings->setCacheSize(_defCacheSize);
     apply();
 }
+
+
+#include "advanced.moc"
