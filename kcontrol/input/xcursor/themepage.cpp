@@ -117,9 +117,16 @@ ThemePage::~ThemePage()
 
 void ThemePage::save()
 {
+	if ( currentTheme == selectedTheme )
+		return;
+
 	KConfig c( "kdeglobals" );
 	c.setGroup( "KDE" );
 	c.writeEntry( "cursorTheme", selectedTheme );
+
+	KMessageBox::information( this, i18n("You have to restart KDE for these "
+				"changes to take affect."), i18n("Cursor Settings Changed"),
+				"CursorSettingsChanged" );
 
 	currentTheme = selectedTheme;
 }
