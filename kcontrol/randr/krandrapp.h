@@ -19,11 +19,11 @@
 #ifndef KRANDRAPP_H
 #define KRANDRAPP_H
 
-#include <kapplication.h>
+#include <kuniqueapplication.h>
 
 class KRandRSystemTray;
 
-class KRandRApp : public KApplication
+class KRandRApp : public KUniqueApplication
 {
 	Q_OBJECT
 
