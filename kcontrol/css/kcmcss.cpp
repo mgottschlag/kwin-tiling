@@ -19,7 +19,7 @@
 #include <kapp.h>
 #include <kcolorbutton.h>
 #include <kfontdialog.h>
-
+#include <kurlrequester.h>
 
 #include "cssconfig.h"
 #include "template.h"
@@ -85,7 +85,7 @@ void CSSConfig::load()
   dialog->useDefault->setChecked(u == "default");
   dialog->useUser->setChecked(u == "user");
   dialog->useAccess->setChecked(u == "access");
-  dialog->sheetName->setText(c->readEntry("SheetName"));
+  dialog->urlRequester->setURL(c->readEntry("SheetName"));
   
   c->setGroup("Font");
   dialog->basefontsize->setEditText(QString::number(c->readNumEntry("BaseSize", 12)));
@@ -131,7 +131,7 @@ void CSSConfig::save()
     c->writeEntry("Use", "user");
   if (dialog->useAccess->isChecked())
     c->writeEntry("Use", "access");
-  c->writeEntry("SheetName", dialog->sheetName->text());
+  c->writeEntry("SheetName", dialog->urlRequester->url());
 
   c->setGroup("Font");
   c->writeEntry("BaseSize", dialog->basefontsize->currentText());
@@ -177,7 +177,7 @@ void CSSConfig::save()
   c->writeEntry("UserStyleSheetEnabled", !dialog->useDefault->isChecked());
 
   if (dialog->useUser->isChecked())
-    c->writeEntry("UserStyleSheet", dialog->sheetName->text());
+    c->writeEntry("UserStyleSheet", dialog->urlRequester->url());
   if (dialog->useAccess->isChecked())
     c->writeEntry("UserStyleSheet", dest);
 
@@ -283,7 +283,7 @@ QMap<QString,QString> CSSConfig::cssDict()
   // Images
 
   if (dialog->hideImages->isChecked())
-    dict.insert("display-images", "display : none ! important");
+    dict.insert("display-images", "background-image : none ! important");
   else
     dict.insert("display-images", "");
   if (dialog->hideBackground->isChecked())

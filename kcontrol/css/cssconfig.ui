@@ -12,7 +12,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>463</width>
+            <width>455</width>
             <height>548</height>
         </rect>
     </property>
@@ -98,120 +98,102 @@
                             <name>whatsThis</name>
                             <string>&lt;b&gt;Stylesheets&lt;/b&gt;&lt;p&gt;Use this groupbox to determine how Konqueror will render style sheets.&lt;/p&gt;</string>
                         </property>
-                        <grid>
+                        <widget>
+                            <class>QRadioButton</class>
                             <property stdset="1">
-                                <name>margin</name>
-                                <number>11</number>
+                                <name>name</name>
+                                <cstring>useDefault</cstring>
                             </property>
                             <property stdset="1">
-                                <name>spacing</name>
-                                <number>6</number>
+                                <name>geometry</name>
+                                <rect>
+                                    <x>30</x>
+                                    <y>19</y>
+                                    <width>369</width>
+                                    <height>19</height>
+                                </rect>
                             </property>
-                            <widget row="0"  column="0"  rowspan="1"  colspan="2" >
-                                <class>QRadioButton</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>useDefault</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Use &amp;default stylesheet</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>true</bool>
-                                </property>
-                                <property>
-                                    <name>whatsThis</name>
-                                    <string>&lt;b&gt;Use default stylesheet&lt;/b&gt;&lt;p&gt;Select this option to use the default stylesheet.&lt;/p&gt;</string>
-                                </property>
-                            </widget>
-                            <widget row="2"  column="2" >
-                                <class>QPushButton</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>PushButton1</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
-                                    <bool>false</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string></string>
-                                </property>
-                                <property stdset="1">
-                                    <name>pixmap</name>
-                                    <pixmap>image0</pixmap>
-                                </property>
-                            </widget>
-                            <widget row="1"  column="0"  rowspan="1"  colspan="2" >
-                                <class>QRadioButton</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>useUser</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Use &amp;user-defined stylesheet</string>
-                                </property>
-                                <property>
-                                    <name>whatsThis</name>
-                                    <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user-defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
-                                </property>
-                            </widget>
-                            <widget row="3"  column="0"  rowspan="1"  colspan="2" >
-                                <class>QRadioButton</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>useAccess</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Use &amp;accessiblity stylesheet defined in "Customize"-tab</string>
-                                </property>
-                                <property>
-                                    <name>whatsThis</name>
-                                    <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse.  Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
-                                </property>
-                            </widget>
-                            <widget row="2"  column="1" >
-                                <class>QLineEdit</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>sheetName</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
-                                    <bool>false</bool>
-                                </property>
-                                <property>
-                                    <name>whatsThis</name>
-                                    <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user-defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
-                                </property>
-                            </widget>
-                            <spacer row="2"  column="0" >
-                                <property>
-                                    <name>name</name>
-                                    <cstring>Spacer11</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>orientation</name>
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property stdset="1">
-                                    <name>sizeType</name>
-                                    <enum>Fixed</enum>
-                                </property>
-                                <property>
-                                    <name>sizeHint</name>
-                                    <size>
-                                        <width>16</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </grid>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use &amp;default stylesheet</string>
+                            </property>
+                            <property stdset="1">
+                                <name>checked</name>
+                                <bool>true</bool>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use default stylesheet&lt;/b&gt;&lt;p&gt;Select this option to use the default stylesheet.&lt;/p&gt;</string>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QRadioButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>useAccess</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>30</x>
+                                    <y>95</y>
+                                    <width>369</width>
+                                    <height>19</height>
+                                </rect>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use &amp;accessiblity stylesheet defined in "Customize"-tab</string>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse.  Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QRadioButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>useUser</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>30</x>
+                                    <y>44</y>
+                                    <width>369</width>
+                                    <height>19</height>
+                                </rect>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use &amp;user-defined stylesheet</string>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user-defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>KURLRequester</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>urlRequester</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>enabled</name>
+                                <bool>false</bool>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>50</x>
+                                    <y>65</y>
+                                    <width>350</width>
+                                    <height>20</height>
+                                </rect>
+                            </property>
+                        </widget>
                     </widget>
                     <spacer>
                         <property>
@@ -379,27 +361,6 @@
                             <name>whatsThis</name>
                             <string>&lt;b&gt;Font size&lt;/b&gt;</string>
                         </property>
-                        <spacer>
-                            <property>
-                                <name>name</name>
-                                <cstring>Spacer10</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>orientation</name>
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property stdset="1">
-                                <name>sizeType</name>
-                                <enum>Expanding</enum>
-                            </property>
-                            <property>
-                                <name>sizeHint</name>
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
                         <widget>
                             <class>QLabel</class>
                             <property stdset="1">
@@ -980,6 +941,22 @@
 </widget>
 <customwidgets>
     <customwidget>
+        <class>KURLRequester</class>
+        <header location="global">kurlrequester.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+        <signal>textChanged(const QString &amp;)</signal>
+        <slot access="public">slotEnabled(bool)</slot>
+    </customwidget>
+    <customwidget>
         <class>KColorButton</class>
         <header location="global">kcolorbtn.h</header>
         <sizehint>
@@ -997,7 +974,7 @@
 <images>
     <image>
         <name>image0</name>
-        <data format="XPM.GZ" length="1160">789c5dd24b73da301007f03b9fc2836f4c27f14baa3d9d1e303881f0087910c8747a90258121e16993009d7ef77a770564bae2a0df9f5d9991b9ae59e341cfaa5d57f242143369c94c6cad9ada2d16875fbf7ffea9545d6e951fe65b6ef55ba57a6549abbf5a6ad8dbe5de76b0808fc81016f001e83ab080afc8d0952e7edb017a0e2ce027d0777dc7c7a78c0d03e20818b88113205f0c03e214297c874e4e88411808e0d05012df81cc3b31233287383f9179c01952b0887807e482471c3930541c679f81611aaa300536815110b128003e2165144512786fa8880da008844bec9d2870b66fc8886da4144260736ca88937c034f8aee8723e88a997e2ecce9013eb48958a54010b434d7c034a1632ba9c16517a920173434edc2295141267bb869a78042aa63c85cd1b434edc23b5120aff576b434d1440cd05a36bbf256a4f73e0ca90130f48ad057169581670019c7058408d9c94bd78b2224a2ff481d29013278682de6f4a541ebdb22b2cbb2cda9db332c0d4be64f697decbec29fc3ffbd27739fefc0c5ba452d854e72c954a9bb24fd9444db32c9b65d97c9e95bd98a9b7f7c562b95a6fb679b1fbf8a46cba5f1f56eb635e8f1bcd84666fb2fdfeb6ec6aedda8dbb0e65d3ee76b339765bf5b857b65136ef1679de2a7671ff7ef040d963d16fc771bbdf7b6a3e27e6b7749264381c26c9cb68347e85ecef8fca3fee56080b</data>
+        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1ddec44f503c0ae2a154410f53d0ed20e2bf6bdb656dd6861dd23d9a66591b0587fd1654235ebded6f0edcd53e419d87ae7b1f4f9b8f906d0bfe012317426a70b07bdc2f3ec77f8ed6b89559061a0343d06a124cc105596482585094bc0ae599b04646c9018926491b2205e140c485cace25755c175d0a967b622ff900b8cc9c7d29af594ea722d589167f813aa852ba07d94b9dce296e883fe7bb163f23896753</data>
     </image>
     <image>
         <name>image1</name>
@@ -1005,18 +982,6 @@
     </image>
 </images>
 <connections>
-    <connection>
-        <sender>useUser</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>sheetName</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>useUser</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>PushButton1</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
     <connection>
         <sender>useAccess</sender>
         <signal>toggled(bool)</signal>
@@ -1071,18 +1036,18 @@
         <receiver>GroupBox3_2</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>useUser</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>urlRequester</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
-    <tabstop>styleTab</tabstop>
-    <tabstop>useDefault</tabstop>
-    <tabstop>useUser</tabstop>
-    <tabstop>sheetName</tabstop>
-    <tabstop>PushButton1</tabstop>
-    <tabstop>useAccess</tabstop>
-    <tabstop>basefontsize</tabstop>
-    <tabstop>dontScale</tabstop>
     <tabstop>fontFamily</tabstop>
     <tabstop>sameFamily</tabstop>
+    <tabstop>basefontsize</tabstop>
+    <tabstop>dontScale</tabstop>
     <tabstop>blackOnWhite</tabstop>
     <tabstop>whiteOnBlack</tabstop>
     <tabstop>customColor</tabstop>
@@ -1090,6 +1055,10 @@
     <tabstop>hideImages</tabstop>
     <tabstop>hideBackground</tabstop>
     <tabstop>preview</tabstop>
+    <tabstop>styleTab</tabstop>
+    <tabstop>useDefault</tabstop>
+    <tabstop>useUser</tabstop>
+    <tabstop>useAccess</tabstop>
     <tabstop>backgroundColor</tabstop>
     <tabstop>foregroundColor</tabstop>
 </tabstops>
