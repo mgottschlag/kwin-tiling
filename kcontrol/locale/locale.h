@@ -49,11 +49,11 @@ public:
 
 public slots:
   void reTranslateLists();
-  void countryChanged();
 
 signals:
   void translate();
   void resample();
+  void countryChanged();
 
 private:
   KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate;

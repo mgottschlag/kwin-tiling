@@ -58,10 +58,10 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   localetime = new KLocaleConfigTime( this, i18n("&Time && dates") );
   tab->addTab( localetime, "1" ); 
 
-  connect(localemain, SIGNAL(resample()),       SLOT(updateSample()));
-  connect(localenum,  SIGNAL(resample()),       SLOT(updateSample()));
-  connect(localemon,  SIGNAL(resample()),       SLOT(updateSample()));
-  connect(localetime, SIGNAL(resample()),       SLOT(updateSample()));
+  connect(localemain, SIGNAL(resample()),       SLOT(update()));
+  connect(localenum,  SIGNAL(resample()),       SLOT(update()));
+  connect(localemon,  SIGNAL(resample()),       SLOT(update()));
+  connect(localetime, SIGNAL(resample()),       SLOT(update()));
   connect(localemain, SIGNAL(countryChanged()), SLOT(reset()) );
 
   // Examples
@@ -70,8 +70,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   sample = new KLocaleSample(gbox);
 #undef i18n
 
-  reTranslate();
-  updateSample();
+  update();
 }
 
 
