@@ -6,7 +6,7 @@ libui_la_SOURCES = dummy.cpp windowdef_simple_widget_ui.ui windowdef_list_widget
     action_list_widget_ui.ui keyboard_input_widget_ui.ui condition_list_widget_ui.ui \
     gesture_triggers_tab_ui.ui
 
-libui_la_LIBADD  = $(LIB_KDEUI)
+libui_la_LIBADD  = ../../shared/libshared.la $(LIB_KDEUI)
 libui_la_LDFLAGS = $(all_libraries)
 
 INCLUDES= $(all_includes) -I$(srcdir)/.. -I$(top_srcdir)/khotkeys/shared

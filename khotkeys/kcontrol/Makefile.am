@@ -10,7 +10,7 @@ kcm_khotkeys_la_SOURCES = \
     action_list_widget.cpp keyboard_input_widget.cpp condition_list_widget.cpp \
     gesturedrawer.cpp gesturerecorder.cpp gesturerecordpage.cpp gesture_triggers_tab.cpp
     
-kcm_khotkeys_la_LIBADD  = ../shared/libshared.la ui/libui.la $(LIB_KDEUI)
+kcm_khotkeys_la_LIBADD  = ui/libui.la $(LIB_KDEUI)
 kcm_khotkeys_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
 
 noinst_HEADERS = menuedit.h window_trigger_widget.h \
