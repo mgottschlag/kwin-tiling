@@ -150,6 +150,18 @@ void KDEDConfig::load() {
 	item->setText(2, QString::null);
 	item->setText(3, i18n("Not running"));
 	item->setText(4, "kxmlrpcd");
+
+	// Special case: kalarmd
+	if (getuid()==0) // only allow check if user has permissions
+		item = new QCheckListItem(_lvStartup, QString::null , QCheckListItem::CheckBox );
+	else {
+		item = new QListViewItem(_lvStartup, QString::null);
+		_lvStartup->header()->setLabel(0, QString::null, 0);
+	}
+	item->setText(1, i18n("KAlarm Daemon"));
+	item->setText(2, QString::null);
+	item->setText(3, i18n("Not running"));
+	item->setText(4, "kalarmd");
 	
 	getServiceStatus();
 }
@@ -192,6 +204,14 @@ void KDEDConfig::save() {
 			KConfig config("kxmlrpcdrc", false, false);
 			config.setGroup("General");
 			config.writeEntry("StartServer", item->isOn()); 
+		}	
+
+		// Special case: kalarmd
+		item = static_cast<QCheckListItem *>(_lvStartup->findItem("kxmlrpcd",4));
+		if (item) {
+			KConfig config("kalarmdrc", false, false);
+			config.setGroup("General");
+			config.writeEntry("Autostart", item->isOn()); 
 		}	
 	}
 
@@ -275,10 +295,26 @@ void KDEDConfig::getServiceStatus()
 			}
 		}
 	}
+
+	// Special case: kalarmd
+	if (kapp->dcopClient()->isApplicationRegistered("kalarmd"))
+	{
+		QListViewItem *item = _lvStartup->findItem("kalarmd", 4);
+		if ( item )
+		{
+			item->setText(3, i18n("Running"));
+			if (item->rtti()==1) {
+				item->setText(5, "true");
+				QCheckListItem *ci = static_cast<QCheckListItem *>(item);
+				ci->setOn(true);
+			}
+		}
+	}
 }
 
 void KDEDConfig::slotEvalItem(QListViewItem * item)
 {
+	// Special case: kxmlrpcd
 	bool options = false;
 	if ( item->text(4) == "kxmlrpcd" )
 		options = true;
@@ -310,6 +346,14 @@ void KDEDConfig::slotStartService()
 		load();
 		return;
 	}
+
+	// Special case: kalarmd
+	if (service == "kalarmd")
+	{
+		kapp->startServiceByDesktopName("kalarmd");
+		load();
+		return;
+	}
 	
 	QByteArray data;
 	QDataStream arg( data, IO_WriteOnly );
@@ -333,6 +377,14 @@ void KDEDConfig::slotStopService()
 	if (service == "kxmlrpcd")
 	{
 		kapp->dcopClient()->send("kxmlrpcd", "qt/kxmlrpcd", "quit()", data);
+		load();
+		return;
+	}
+
+	// Special case: kalarmd
+	if (service == "kalarmd")
+	{
+		kapp->dcopClient()->send("kalarmd", "qt/kalarmd", "quit()", data);
 		load();
 		return;
 	}
