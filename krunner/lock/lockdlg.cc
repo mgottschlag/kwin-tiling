@@ -3,7 +3,8 @@
 // This file is part of the KDE project
 //
 // Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
-//
+// Copyright (c) 2003 Chris Howells <howells@kde.org>
+
 #include <ctype.h>
 #include <unistd.h>
 #include <pwd.h>
@@ -36,7 +37,7 @@
 // Simple dialog for entering a password.
 //
 PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
-    : LockDlgImpl(parent, "password dialog", true, WStyle_Customize | WStyle_NoBorder)
+    : LockDlgImpl(parent, "password dialog", true, WStyle_Customize | WStyle_NoBorder), mCapsLocked(-1), mUnlockingFailed(false)
 {
     frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
     frame->setLineWidth(2);
@@ -69,7 +70,7 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
 //
 // Fetch current user id, and return "Firstname Lastname (username)"
 //
-QString PasswordDlg::labelText(void)
+QString PasswordDlg::labelText()
 {
     struct passwd *current = getpwuid(getuid());
     if ( !current )
@@ -88,6 +89,25 @@ QString PasswordDlg::labelText(void)
 }
 
 
+void PasswordDlg::updateLabel()
+{
+    if (mUnlockingFailed)
+    {
+        mStatusLabel->setPaletteForegroundColor(Qt::black);
+        mStatusLabel->setText( i18n("<b>Unlocking failed</b>"));
+    }
+    else
+    if (mCapsLocked)
+    {
+        mStatusLabel->setPaletteForegroundColor(Qt::red);
+        mStatusLabel->setText(i18n("<b>Warning: Caps Lock on</b>"));
+    }
+    else
+    {
+        mStatusLabel->clear();
+    }
+}
+
 //---------------------------------------------------------------------------
 //
 // Handle timer events.
@@ -105,25 +125,28 @@ void PasswordDlg::timerEvent(QTimerEvent *ev)
         // Show the normal password prompt.
 	mLabel->setEnabled(true);
         mLabel->setText(labelText());
-	mLabelFailed->clear();
+        mUnlockingFailed = false;
+	updateLabel();
         mEntry->erase();
         mEntry->setEnabled(true);
         ok->setEnabled(true);
         cancel->setEnabled(true);
         password->setEnabled(true);
         mEntry->setFocus();
-        if( mButton )
+        if(mButton)
             mButton->setEnabled(true);
     }
 }
 
 #undef KeyPress	/* i hate X #defines */
 
-bool PasswordDlg::eventFilter( QObject *, QEvent *ev )
+bool PasswordDlg::eventFilter(QObject *, QEvent *ev)
 {
+    capsLocked();
     if ( ev->type() == QEvent::KeyPress ) {
         killTimer(mTimeoutTimerId);
         mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
+        capsLocked();
         QKeyEvent *e = (QKeyEvent *)ev;
         if ( ( e->state() == 0 &&
 	       ( e->key() == Key_Enter || e->key() == Key_Return ) ) ||
@@ -230,7 +253,8 @@ XXX this needs to go into a separate routine at startup time
 	}
         else
         {
-            mLabelFailed->setText(i18n("<b>Unlocking failed</b>"));
+            mUnlockingFailed = true;
+            updateLabel();
             mFailedTimerId = startTimer(1500);
         }
     }
@@ -371,3 +395,18 @@ void PasswordDlg::slotOK()
 {
    startCheckPassword();
 }
+
+void PasswordDlg::capsLocked()
+{
+    unsigned int lmask;
+    Window dummy1, dummy2;
+    int dummy3, dummy4, dummy5, dummy6;
+    XQueryPointer(qt_xdisplay(), DefaultRootWindow( qt_xdisplay() ), &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6, &lmask);
+    int nlock = lmask & LockMask;
+    if (nlock != mCapsLocked)
+    {
+     mCapsLocked = nlock;
+    }
+    updateLabel();
+}
+

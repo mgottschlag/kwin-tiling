@@ -41,10 +41,13 @@ protected slots:
 
 private:
     void startCheckPassword();
+    void capsLocked();
+    void updateLabel();
     QString labelText();
-
     int         mFailedTimerId;
     int         mTimeoutTimerId;
+    int         mCapsLocked;
+    bool        mUnlockingFailed;
     KProcess    mPassProc;
 };
 
