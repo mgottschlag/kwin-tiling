@@ -261,6 +261,13 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     QWhatsThis::add( mActivateLbl, wtstr );
     QWhatsThis::add( mWaitEdit, wtstr );
 
+    mDPMSDependentCheckBox = new QCheckBox(i18n("Make the screen saver aware of power management"), mSettingsGroup);
+    mDPMSDependentCheckBox->setChecked( mDPMS );
+    connect( mDPMSDependentCheckBox, SIGNAL( toggled( bool ) ),
+	this, SLOT( slotDPMS( bool ) ) );
+    groupLayout->addWidget(mDPMSDependentCheckBox);
+    QWhatsThis::add( mDPMSDependentCheckBox, i18n("Enable this option if you want to disable the screen saver while watching TV or movies.") );
+
     mLockCheckBox = new QCheckBox( i18n("&Require password to stop screen saver"), mSettingsGroup );
     mLockCheckBox->setChecked( mLock );
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ),
@@ -422,6 +429,7 @@ void KScreenSaver::readSettings()
 
     mEnabled = config->readBoolEntry("Enabled", false);
     mTimeout = config->readNumEntry("Timeout", 300);
+    mDPMS = config->readBoolEntry("DPMS-dependent", false);
     mLock = config->readBoolEntry("Lock", false);
     mPriority = config->readNumEntry("Priority", 19);
     mSaver = config->readEntry("Saver");
@@ -448,6 +456,7 @@ void KScreenSaver::updateValues()
     }
 
     mLockCheckBox->setChecked(mLock);
+    mDPMSDependentCheckBox->setChecked(mDPMS);
     mPrioritySlider->setValue(19-mPriority);
 }
 
@@ -465,6 +474,7 @@ void KScreenSaver::defaults()
     }
     slotTimeoutChanged( 5 );
     slotPriorityChanged( 0 );
+    slotDPMS( false );
     slotLock( false );
     updateValues();
 
@@ -484,6 +494,7 @@ void KScreenSaver::save()
 
     config->writeEntry("Enabled", mEnabled);
     config->writeEntry("Timeout", mTimeout);
+    config->writeEntry("DPMS-dependent", mDPMS);
     config->writeEntry("Lock", mLock);
     config->writeEntry("Priority", mPriority);
     if ( !mSaver.isEmpty() )
@@ -839,6 +850,15 @@ void KScreenSaver::slotStopTest()
 void KScreenSaver::slotTimeoutChanged(int to )
 {
     mTimeout = to * 60;
+    mChanged = true;
+    emit changed(true);
+}
+
+//---------------------------------------------------------------------------
+//
+void KScreenSaver::slotDPMS( bool d )
+{
+    mDPMS = d;
     mChanged = true;
     emit changed(true);
 }

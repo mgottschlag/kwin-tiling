@@ -98,6 +98,7 @@ protected slots:
     void slotTest();
     void slotStopTest();
     void slotTimeoutChanged(int);
+    void slotDPMS( bool );
     void slotLock( bool );
     void slotPriorityChanged( int val );
     void slotSetupDone(KProcess*);
@@ -130,6 +131,7 @@ protected:
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;
     QCheckBox   *mEnabledCheckBox;
+    QCheckBox	*mDPMSDependentCheckBox;
     QLabel      *mMonitorLabel;
     QLabel      *mActivateLbl;
     QStringList mSaverFileList;
@@ -147,6 +149,7 @@ protected:
     // Settings
     int         mTimeout;
     int         mPriority;
+    bool	mDPMS;
     bool        mLock;
     bool        mEnabled;
     QString     mSaver;
