@@ -11,6 +11,10 @@
 #include <sys/param.h>
 #include <sys/swap.h>
 
+#ifndef UBSIZE
+#define UBSIZE 512
+#endif
+
 
 void KMemoryWidget::update()
 {
@@ -30,6 +34,10 @@ void KMemoryWidget::update()
   swapctl(SC_GETFREESWAP, &val);
   Memory_Info[FREESWAP_MEM] = MEMORY(val*UBSIZE); // free memory in swap-partitions
 
+#ifndef MPKA_SHMINFO
+  /* Irix 6.5 (also 6.4?) */
+  Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO;
+#else
   FILE *kmem = fopen("/dev/kmem", "r");
   if( kmem == 0 ) {
     Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO; 
@@ -59,4 +67,5 @@ void KMemoryWidget::update()
   Memory_Info[SHARED_MEM]   = MEMORY(val);
 
   fclose(kmem);
+#endif
 }
