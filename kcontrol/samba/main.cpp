@@ -26,6 +26,7 @@
 #include <qlayout.h>
 
 #include <kcmodule.h>
+#include <kaboutdata.h>
 #include <kgenericfactory.h>
 
 class SambaContainer; // damn forward declaration :( but I want the factory first zecke
@@ -42,6 +43,7 @@ class SambaContainer:public KCModule
       virtual void saveSettings();
       virtual void defaults() {};
       QString quickHelp() const;
+      const KAboutData* aboutData() const;
 
    private:
       QVBoxLayout layout;
@@ -76,6 +78,22 @@ SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringL
 SambaContainer::~SambaContainer()
 {
    saveSettings();
+}
+
+const KAboutData* SambaContainer::aboutData() const
+{
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmsamba"),
+		I18N_NOOP("KDE Panel System Information Control Module"),
+		0, 0, KAboutData::License_GPL,
+		I18N_NOOP("(c) 2002 KDE Information Control Module Samba Team"));
+    about->addAuthor("Michael Glauche", 0, "glauche@isa.rwth-aachen.de");
+    about->addAuthor("Matthias Hoelzer", 0, "hoelzer@kde.org");
+    about->addAuthor("David Faure", 0, "faure@kde.org");
+    about->addAuthor("Harald Koschinski", 0, "Harald.Koschinski@arcormail.de");
+    about->addAuthor("Wilco Greven", 0, "greven@kde.org");
+    about->addAuthor("Alexander Neundorf", 0, "neundorf@kde.org");
+    return about;
 }
 
 void SambaContainer::loadSettings()
