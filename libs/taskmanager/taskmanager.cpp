@@ -198,7 +198,8 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     }
 
     // check if any state we are interested in is marked dirty
-    if(!(dirty & (NET::WMVisibleName|NET::WMName|NET::WMState|NET::WMIcon|NET::XAWMState|NET::WMDesktop)) )
+    if(!(dirty & (NET::WMVisibleName|NET::WMName|NET::WMVisibleIconName|NET::WMIconName|NET::WMState
+                    |NET::WMIcon|NET::XAWMState|NET::WMDesktop)) )
         return;
 
     // find task
@@ -318,14 +319,13 @@ bool TaskManager::isOnTop(const Task* task)
     return false;
 }
 
-
 Task::Task(WId win, TaskManager * parent, const char *name)
   : QObject(parent, name),
     _active(false), _win(win),
     _lastWidth(0), _lastHeight(0), _lastResize(false), _lastIcon(),
     _thumbSize(0.2), _thumb(), _grab()
 {
-    _info = KWin::info(_win);
+    _info = KWin::windowInfo(_win);
 
     // try to load icon via net_wm
     _pixmap = KWin::icon(_win, 16, 16, true);
@@ -347,7 +347,7 @@ Task::~Task()
 
 void Task::refresh(bool icon)
 {
-    _info = KWin::info(_win);
+    _info = KWin::windowInfo(_win);
     if (icon) {
 
         // try to load icon via net_wm
@@ -380,7 +380,7 @@ void Task::setActive(bool a)
 
 bool Task::isMaximized() const
 {
-    return(_info.state & NET::Max);
+    return(_info.state() & NET::Max);
 }
 
 bool Task::isMinimized() const
@@ -395,22 +395,22 @@ bool Task::isIconified() const
 
 bool Task::isAlwaysOnTop() const
 {
-    return (_info.state & NET::StaysOnTop);
+    return (_info.state() & NET::StaysOnTop);
 }
 
 bool Task::isShaded() const
 {
-    return (_info.state & NET::Shaded);
+    return (_info.state() & NET::Shaded);
 }
 
 bool Task::isOnCurrentDesktop() const
 {
-    return (_info.onAllDesktops || _info.desktop == kwin_module->currentDesktop());
+    return (_info.isOnCurrentDesktop());
 }
 
 bool Task::isOnAllDesktops() const
 {
-    return _info.onAllDesktops;
+    return _info.onAllDesktops();
 }
 
 bool Task::isActive() const
@@ -426,25 +426,14 @@ bool Task::isOnTop() const
 bool Task::isModified() const
 {
   static QString modStr = QString::fromUtf8("[") + i18n("modified") + QString::fromUtf8("]");
-  int modStrPos = _info.visibleName.find(modStr);
+  int modStrPos = _info.visibleName().find(modStr);
 
   return ( modStrPos != -1 );
 }
 
 bool Task::demandsAttention() const
 {
-    return (_info.state & NET::DemandsAttention);
-}
-
-QString Task::iconName() const
-{
-    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMIconName);
-    return QString::fromUtf8(ni.iconName());
-}
-QString Task::visibleIconName() const
-{
-    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMVisibleIconName);
-    return QString::fromUtf8(ni.visibleIconName());
+    return (_info.state() & NET::DemandsAttention);
 }
 
 QString Task::className()
@@ -655,7 +644,7 @@ void Task::toDesktop(int desk)
 {
     NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMDesktop);
     if (desk == 0) {
-        if (_info.onAllDesktops) {
+        if (_info.onAllDesktops()) {
             ni.setDesktop(kwin_module->currentDesktop());
             KWin::setActiveWindow(_win);
         }
@@ -727,7 +716,7 @@ void Task::updateThumbnail()
    // on slower machines.
    //
   QWidget *rootWin = qApp->desktop();
-  QRect geom = _info.geometry;
+  QRect geom = _info.geometry();
    _grab = QPixmap::grabWindow( rootWin->winId(),
 				geom.x(), geom.y(),
 				geom.width(), geom.height() );

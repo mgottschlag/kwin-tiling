@@ -48,11 +48,12 @@ class TaskManager;
 class Task: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( QString name READ name )
-    Q_PROPERTY( QString visibleName READ visibleName )
-    Q_PROPERTY( QString visibleNameWithState READ visibleNameWithState )
-    Q_PROPERTY( QString iconName READ iconName )
-    Q_PROPERTY( QString visibleIconName READ visibleIconName )
+    Q_PROPERTY( QString visibleIconicName READ visibleIconicName )
+    Q_PROPERTY( QString visibleIconicNameWithState READ visibleIconicNameWithState )
+    Q_PROPERTY( QString iconicName READ iconicName )
+    Q_PROPERTY( QString visibleWindowName READ visibleWindowName )
+    Q_PROPERTY( QString visibleWindowNameWithState READ visibleWindowNameWithState )
+    Q_PROPERTY( QString windowName READ windowName )
     Q_PROPERTY( QPixmap pixmap READ pixmap )
     Q_PROPERTY( bool maximized READ isMaximized )
     Q_PROPERTY( bool minimized READ isMinimized )
@@ -77,11 +78,15 @@ public:
     TaskManager* taskManager() const { return (TaskManager*) parent(); }
 
     WId window() const { return _win; }
-    QString name() const { return _info.name; }
-    QString visibleName() const { return _info.visibleName; }
-    QString visibleNameWithState() const { return _info.visibleNameWithState(); }
-    QString iconName() const;
-    QString visibleIconName() const;
+    // Note that these function don't have anything to do with icons.
+    // They return the text that should be shown in "iconic" representations of the window,
+    // i.e. taskbars etc.
+    QString visibleIconicName() const { return _info.visibleIconName(); }
+    QString visibleIconicNameWithState() const { return _info.visibleIconNameWithState(); }
+    QString iconicName() const { return _info.iconName(); }
+    QString visibleWindowName() const { return _info.visibleName(); }
+    QString visibleWindowNameWithState() const { return _info.visibleNameWithState(); }
+    QString windowName() const { return _info.name(); }
     QString className();
     QString classClass();
 
@@ -192,7 +197,7 @@ public:
     /**
      * Returns the desktop on which this task's window resides.
      */
-    int desktop() const { return _info.desktop; }
+    int desktop() const { return _info.desktop(); }
     
     /**
      * Returns true if the task is not active but demands user's attention.
@@ -353,7 +358,7 @@ private:
     bool                _active;
     WId                 _win;
     QPixmap             _pixmap;
-    KWin::Info          _info;
+    KWin::WindowInfo    _info;
     QValueList<WId>     _transients;
 
     int                 _lastWidth;
