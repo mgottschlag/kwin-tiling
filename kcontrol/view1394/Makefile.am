@@ -11,8 +11,8 @@ kcm_view1394_la_METASOURCES = AUTO
 
 KDE_ICON = AUTO
 
-messages:
-	$(XGETTEXT) *.cpp *.i18n -o $(podir)/kcmview1394.pot
+messages: rc.cpp
+	$(XGETTEXT) *.cpp -o $(podir)/kcmview1394.pot
 
 view1394_data_DATA = kcmview1394.desktop
 view1394_datadir = $(kde_appsdir)/Settings/Information
