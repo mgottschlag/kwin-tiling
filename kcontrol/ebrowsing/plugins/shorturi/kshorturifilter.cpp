@@ -167,6 +167,15 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     return true;
   }
 
+  // Filter for the about command.
+  if ( cmd == QFL1("about:") )
+  {
+    cmd = QFL1("about:konqueror");
+    setFilteredURI( data, cmd );
+    setURIType( data, KURIFilterData::NET_PROTOCOL );
+    return true;
+  }
+
   // LOCAL URL TEST CASE BEGINS...
   // Remove any leading "file:" if present
   // from the supplied command.
