@@ -243,7 +243,20 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
 #include <pwd.h>
 #include <sys/resource.h>
 #ifdef OS_Solaris
+
+#if (!defined(_LP64)) && (_FILE_OFFSET_BITS - 0 == 64)
+#define PROCFS_FILE_OFFSET_BITS_HACK 1
+#undef _FILE_OFFSET_BITS
+#else
+#define PROCFS_FILE_OFFSET_BITS_HACK 0
+#endif
+
 #include <procfs.h>
+
+#if (PROCFS_FILE_OFFSET_BITS_HACK - 0 == 1)
+#define _FILE_OFFSET_BITS 64
+#endif
+
 #else
 #include <sys/procfs.h>
 #include <sys/sysmp.h>
