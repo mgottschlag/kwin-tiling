@@ -535,25 +535,30 @@ KGreeter::slotLoadPrevWM()
 void // private
 KGreeter::pluginSetup()
 {
+    int field;
+    QString ent;
+
     if (verify->isPluginLocal()) {
         if (kdmcfg->_preselUser != PRESEL_PREV)
 	    stsFile->deleteEntry( dName, false );
-	if (kdmcfg->_preselUser != PRESEL_NONE)
-	    verify->presetEntity(
-		kdmcfg->_preselUser == PRESEL_PREV ?
-		    stsFile->readEntry( dName ) : kdmcfg->_defaultUser,
-		kdmcfg->_focusPasswd );
+	if (kdmcfg->_preselUser != PRESEL_NONE) {
+	    ent = kdmcfg->_preselUser == PRESEL_PREV ?
+		    stsFile->readEntry( dName ) : kdmcfg->_defaultUser;
+	    field = kdmcfg->_focusPasswd;
+	}
     } else {
 	QString pn( verify->pluginName() ), dn( dName + '_' + pn );
         if (kdmcfg->_preselUser != PRESEL_PREV)
 	    stsFile->deleteEntry( dn, false );
-	if (kdmcfg->_preselUser != PRESEL_NONE)
-	    verify->presetEntity(
-		kdmcfg->_preselUser == PRESEL_PREV ?
+	if (kdmcfg->_preselUser != PRESEL_NONE) {
+	    ent = kdmcfg->_preselUser == PRESEL_PREV ?
 		    stsFile->readEntry( dn ) :
-		    verify->getConf( 0, (pn + ".DefaultEntity").latin1(), QVariant( "" ) ).toString(),
-		verify->getConf( 0, (pn + ".FocusField").latin1(), QVariant( 0 ) ).toInt() );
+		    verify->getConf( 0, (pn + ".DefaultEntity").latin1(), QVariant( "" ) ).toString();
+	    field = verify->getConf( 0, (pn + ".FocusField").latin1(), QVariant( 0 ) ).toInt();
+	}
     }
+    if (!ent.isEmpty())
+	verify->presetEntity( ent, field );
     if (userView) {
 	if (verify->isPluginLocal())
 	    userView->show();
