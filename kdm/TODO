@@ -13,6 +13,8 @@ Must:
 
 Should:
 
+- sync BSD_AUTH from xdm, sync osfc2 from kcheckpass
+
 - kill warning on AIX - see bug #13628 (really present?)
 
 - dpi/bpp/resolution selection. will require x-server restart.
