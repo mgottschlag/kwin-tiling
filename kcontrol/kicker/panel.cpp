@@ -137,7 +137,7 @@ void PanelTab::load()
   
   c->setGroup("panel");
 
-  size = static_cast<Size>(c->readNumEntry("SizeMode", Normal));
+  size = static_cast<Size>(c->readNumEntry("Size", Normal));
   size_buttons[size]->setChecked(true);
 
   position = static_cast<Position>(c->readNumEntry("Position", Bottom));
@@ -158,7 +158,7 @@ void PanelTab::save()
   
   c->setGroup("panel");
 
-  c->writeEntry("SizeMode", static_cast<int>(size));
+  c->writeEntry("Size", static_cast<int>(size));
   c->writeEntry("Position", static_cast<int>(position));
   c->writeEntry("ShowHideButtons", showHBs);
   c->writeEntry("HideButtonSize", HBwidth);
