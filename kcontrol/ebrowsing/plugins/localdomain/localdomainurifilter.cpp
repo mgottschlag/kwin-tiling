@@ -20,7 +20,7 @@
 
 
 /*
- 
+
  This filter takes care of hostnames in the local search domain.
  If you're in domain domain.org which has a host intranet.domain.org
  and the typed URI is just intranet, check if there's a host
@@ -52,6 +52,7 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
     if( cmd[ 0 ] != '#' && cmd[ 0 ] != '~' && cmd[ 0 ] != '/'
 	&& !cmd.contains( ' ' ) && !cmd.contains( '.' )
 	&& !cmd.contains( ':' ) // KShortURIFilter takes care of these
+        && !cmd.contains( '$' ) // env. vars could resolve to anything
 	// most of these are taken from KShortURIFilter
 	&& cmd[ cmd.length() - 1 ] != '&'
 	&& !cmd.contains( QString::fromLatin1("||"))
@@ -121,7 +122,7 @@ void LocalDomainURIFilter::configure()
     // nothing
     }
 
-K_EXPORT_COMPONENT_FACTORY( liblocaldomainurifilter, 
+K_EXPORT_COMPONENT_FACTORY( liblocaldomainurifilter,
 	                    KGenericFactory<LocalDomainURIFilter>( "localdomainurifilter" ) );
 
 #include "localdomainurifilter.moc"
