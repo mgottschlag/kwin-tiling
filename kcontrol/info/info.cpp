@@ -53,7 +53,8 @@
    DEFAULT_ERRORSTRING will be used...
 */
 
-QString	GetInfo_ErrorString;
+static QString	GetInfo_ErrorString;
+static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 #define DEFAULT_ERRORSTRING \
   i18n("No Information available\n or \nthis System is not yet supported :-(")
@@ -69,7 +70,7 @@ static QString Value( int val, int numbers=1 )
 }
 
 
-static void XServer_fill_screen_info( QListView *lBox, Display *dpy, int scr)
+static QListViewItem* XServer_fill_screen_info( QListView *lBox, QListViewItem* last, Display *dpy, int scr)
 {
     int i;
     double xres, yres;
@@ -79,8 +80,8 @@ static void XServer_fill_screen_info( QListView *lBox, Display *dpy, int scr)
     xres = ((double)(DisplayWidth(dpy,scr)  * 25.4) / DisplayWidthMM(dpy,scr) );
     yres = ((double)(DisplayHeight(dpy,scr) * 25.4) / DisplayHeightMM(dpy,scr));
     
-    QListViewItem* item =
-        new QListViewItem(lBox, i18n("Screen # %1").arg((int)scr,-1) );
+    QListViewItem* item;
+    item = new QListViewItem(lBox, last, i18n("Screen # %1").arg((int)scr,-1) );
     
     txt2 = i18n("%1 x %2 Pixel (%3 x %4 mm)")
 		.arg( (int)DisplayWidth(dpy,scr) )
@@ -88,12 +89,12 @@ static void XServer_fill_screen_info( QListView *lBox, Display *dpy, int scr)
 		.arg( (int)DisplayWidthMM(dpy,scr) )
 		.arg( (int)DisplayHeightMM (dpy,scr) );
     
-    new QListViewItem(item, i18n("Dimensions"), txt2);
+    last = new QListViewItem(item, i18n("Dimensions"), txt2);
     
     txt2 = i18n("%1 x %2 dpi")
 		.arg( (int)(xres+0.5) )
 		.arg( (int)(yres+0.5) );
-    new QListViewItem(item, i18n("Resolution"), txt2 );
+    last = new QListViewItem(item, last, i18n("Resolution"), txt2 );
     
     depths = XListDepths (dpy, scr, &ndepths);
     if (depths) {
@@ -105,11 +106,12 @@ static void XServer_fill_screen_info( QListView *lBox, Display *dpy, int scr)
                 txt = txt + QString(", ");
         }
     
-        new QListViewItem(item, i18n("Depths") + QString(" (%1)").arg(ndepths,-1), txt);
+        new QListViewItem(item, last, i18n("Depths (%1)").arg(ndepths,-1), txt);
         XFree((char *) depths);
     }
 
     item->setOpen(true);
+    return item;
 }
 
 
@@ -127,24 +129,25 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 
     lBox->addColumn(i18n("Information") );
     lBox->addColumn(i18n("Value") );
-    lBox->header()->setClickEnabled(false);
+    sorting_allowed = false;
 			
-    new QListViewItem(lBox, i18n("Name of the Display"), DisplayString(dpy));
+    QListViewItem *last;
+    last = new QListViewItem(lBox, i18n("Name of the Display"), DisplayString(dpy));
 
-    new QListViewItem(lBox,i18n("Version Number"),
+    last = new QListViewItem(lBox, last, i18n("Version Number"),
                       Value((int)ProtocolVersion(dpy)) + QString(".")
                       + Value((int)ProtocolRevision(dpy)));
 
-    new QListViewItem(lBox, i18n("Vendor String"), QString(ServerVendor(dpy)));
-    new QListViewItem(lBox, i18n("Vendor Release Number"),
+    last = new QListViewItem(lBox, last, i18n("Vendor String"), QString(ServerVendor(dpy)));
+    last = new QListViewItem(lBox, last, i18n("Vendor Release Number"),
                       Value((int)VendorRelease(dpy)));
-    new QListViewItem(lBox, i18n("Default Screen Number") + "   ",
+    last = new QListViewItem(lBox, last, i18n("Default Screen Number") + "   ",
                       Value((int)DefaultScreen(dpy)));
-    new QListViewItem(lBox,i18n("Number of Screens") ,
+    last = new QListViewItem(lBox, last, i18n("Number of Screens") ,
                       Value((int)ScreenCount(dpy)));
 
     for (i = 0; i < ScreenCount (dpy); ++i)
-        XServer_fill_screen_info (lBox,dpy, i);
+        last = XServer_fill_screen_info (lBox, last, dpy, i);
 
     XCloseDisplay (dpy);
     return true;
@@ -175,10 +178,7 @@ void KInfoListWidget::defaultSettings()
 
     if (lBox) {
         lBox->setAllColumnsShowFocus(true);
-        lBox->setSorting(-1, true);   // No Sorting per default
         
-         
-//        lBox->clear();
         setMinimumSize( 200,6*SCREEN_XY_OFFSET );
         lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
                           width() -2*SCREEN_XY_OFFSET,
@@ -188,17 +188,19 @@ void KInfoListWidget::defaultSettings()
 	    retrieve-function. If the function wants the widget to show
 	    another string, then it should modify GetInfo_ErrorString ! */
         GetInfo_ErrorString = "";
+	sorting_allowed = true; 	// the functions may set that !
+        lBox->setSorting(-1);   	// No Sorting per default
         
         if (getlistbox)
             ok = (*getlistbox)(lBox);	// retrieve the information !
 
         if (lBox->header()->count()<=1) 
             lBox->addColumn(title);
-        
-        lBox->header()->setClickEnabled(false); // Headers readonly
-        
         if (ok)
             lBox->show();
+
+	/* is the user allowed to use sorting ? */
+        lBox->header()->setClickEnabled(sorting_allowed); 
     }
 
     if (!ok) {
@@ -215,6 +217,7 @@ void KInfoListWidget::defaultSettings()
         NoInfoText->setAutoResize(true);
         NoInfoText->setAlignment(AlignCenter); //  | WordBreak);
         NoInfoText->move( width()/2,height()/2 ); // -120 -30
+        NoInfoText->adjustSize();
     }
 }
 

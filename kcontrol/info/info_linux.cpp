@@ -13,6 +13,11 @@
  
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     $Log$
+    Revision 1.8  1999/07/27 22:34:51  dmuell
+    KTabListBox -> QListView.
+    Will probably break compilation if platform != linux. Please tell me
+    about problems, so I can fix it.
+
     Revision 1.7  1999/07/26 00:36:19  deller
 
     * partition-info should now work for systems without fstab.h but with
@@ -78,19 +83,20 @@
 
 #define MAXCOLUMNWIDTH 600
 
-bool GetInfo_ReadfromFile( QListView *lbox, const char *Name, char splitchar  )
+bool GetInfo_ReadfromFile( QListView *lbox, const char *FileName, 
+			    char splitchar, 
+			    QListViewItem *lastitem = 0,
+			    QListViewItem **newlastitem = 0 )
 {
   char buf[512];
 
-  QFile *file = new QFile(Name);
+  QFile *file = new QFile(FileName);
 
   if(!file->open(IO_ReadOnly)) {
     delete file; 
     return false;
   }
 
-  QListViewItem* olditem = 0;
-  
   while (file->readLine(buf,sizeof(buf)-1) > 0) {
       if (strlen(buf)) {
           char *p=buf;
@@ -121,12 +127,14 @@ bool GetInfo_ReadfromFile( QListView *lbox, const char *Name, char splitchar  )
           
           s1.truncate(s1.find(splitchar));
           if(!(s1.isEmpty() || s2.isEmpty()))
-              olditem = new QListViewItem(lbox, olditem, s1, s2);
+              lastitem = new QListViewItem(lbox, lastitem, s1, s2);
       }
   }
   
   file->close();
   delete file;
+  if (newlastitem)
+      *newlastitem = lastitem;
   return true;
 }
 
@@ -143,6 +151,7 @@ bool GetInfo_CPU( QListView *lBox )
 
 bool GetInfo_IRQ( QListView *lBox )
 {
+  lBox->setFont(KGlobal::fixedFont());
   return GetInfo_ReadfromFile( lBox, INFO_IRQ, 0 );
 }
 
@@ -155,6 +164,7 @@ bool GetInfo_DMA( QListView *lBox )
 
 bool GetInfo_PCI( QListView *lBox )
 {
+  sorting_allowed = false;	// no sorting by user !
   return GetInfo_ReadfromFile( lBox, INFO_PCI, 0 );
 }
 
@@ -167,6 +177,7 @@ bool GetInfo_IO_Ports( QListView *lBox )
 
 bool GetInfo_Sound( QListView *lBox )
 {
+  sorting_allowed = false;	// no sorting by user !
   if ( GetInfo_ReadfromFile( lBox, INFO_DEV_SNDSTAT, 0 )) 
     return true;
   else 
@@ -175,10 +186,13 @@ bool GetInfo_Sound( QListView *lBox )
 
 bool GetInfo_Devices( QListView *lBox )
 {  
-  GetInfo_ReadfromFile( lBox, INFO_DEVICES, 0 );
+  QListViewItem* lastitem = 0;
+  sorting_allowed = false;	// no sorting by user !
+  GetInfo_ReadfromFile( lBox, INFO_DEVICES, 0, lastitem, &lastitem );
   // don't use i18n() for "Misc devices", because all other info is english too!
-  new QListViewItem(lBox, QString("Misc devices:"));
-  GetInfo_ReadfromFile( lBox, INFO_MISC, 0 );
+  lastitem = new QListViewItem(lBox, lastitem, "" ); // add empty line..
+  lastitem = new QListViewItem(lBox, lastitem, QString("Misc devices:"));
+  GetInfo_ReadfromFile( lBox, INFO_MISC, 0, lastitem, &lastitem );
   return true;
 }
 
@@ -299,8 +313,8 @@ bool GetInfo_Partitions (QListView *lbox)
 	endmntent(fp);  // close fstab..
 #endif
 
+    sorting_allowed = true;	// sorting by user allowed !
     lbox->setSorting(1);
-    lbox->header()->setClickEnabled(true);
     
     return true;
 }
