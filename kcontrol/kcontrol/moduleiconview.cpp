@@ -117,25 +117,25 @@ void ModuleIconView::fill()
   {
     if (KCGlobal::iconSize() == Small)
     {
-      icon = LoadSmall("up");
+      icon = LoadSmall("back");
       if(icon.isNull())
         icon = LoadSmall("folder");
     }
     else if (KCGlobal::iconSize() == Large)
     {
-      icon = LoadLarge("up");
+      icon = LoadLarge("back");
       if(icon.isNull())
         icon = LoadLarge("folder");
     }
     else
     {
-      icon = LoadMedium("up");
+      icon = LoadMedium("back");
       if(icon.isNull())
         icon = LoadMedium("folder");
     }
 
     // go-up node
-    ModuleIconItem *i = new ModuleIconItem(this, i18n("Go up"), icon);
+    ModuleIconItem *i = new ModuleIconItem(this, i18n("Back"), icon);
 	i->setDragEnabled(false);
     int last_slash = _path.findRev('/');
     if (last_slash == -1)
