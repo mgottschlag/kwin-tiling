@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qlistview.h>                                                                     
+#include <qlistview.h>
 #include <qgroupbox.h>
 #include <qcombobox.h>
 #include <qslider.h>
@@ -56,7 +56,7 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
 
     KSeparator *sep = new KSeparator( KSeparator::HLine, this );
     top->addWidget(sep, 1, 1);
-    // Preview at (2,0) - (2, 1) 
+    // Preview at (2,0) - (2, 1)
     QGridLayout *g_lay = new QGridLayout(4, 3, KDialog::marginHint(), 0);
     top->addMultiCellLayout(g_lay, 2, 2, 0, 1);
     g_lay->addRowSpacing(0, fontMetrics().lineSpacing());
@@ -283,7 +283,7 @@ void KIconConfig::preview(int i)
     // the configuration every preview.
 
     int viewedGroup = (mUsage == KIcon::LastGroup) ? KIcon::FirstGroup : mUsage;
-    
+
     QPixmap pm = mpLoader->loadIcon(mExample, KIcon::NoGroup, mSizes[viewedGroup]);
     QImage img = pm.convertToImage();
     if (mbDP[viewedGroup])
@@ -292,7 +292,7 @@ void KIconConfig::preview(int i)
 	img = img.smoothScale(w, w);
     }
 
-    Effect &effect = mEffects[viewedGroup][i]; 
+    Effect &effect = mEffects[viewedGroup][i];
 
     img = mpEffect->apply(img, effect.type,
 	    effect.value, effect.color, effect.transparant);
@@ -387,7 +387,7 @@ void KIconConfig::slotUsage(int index)
         mpSizeBox->setEnabled(false);
         mpDPCheck->setEnabled(false);
 	mpAnimatedCheck->setEnabled( mUsage == KIcon::Panel );
-    } 
+    }
     else
     {
         mpSizeBox->setEnabled(true);
@@ -418,7 +418,7 @@ void KIconConfig::EffectSetup(int state)
     case 1 : caption = i18n("Setup Active Icon Effect"); break;
     case 2 : caption = i18n("Setup Disabled Icon Effect"); break;
     }
-   
+
     KIconEffectSetupDialog dlg(mEffects[viewedGroup][state], mDefaultEffect[state], caption, img);
 
     if (dlg.exec() == QDialog::Accepted)
@@ -459,12 +459,12 @@ void KIconConfig::slotDPCheck(bool check)
     Q_ASSERT(mUsage < KIcon::LastGroup);
     if (mbDP[mUsage] != check)
     {
-        mbDP[mUsage] = check;       
+        mbDP[mUsage] = check;
         emit changed(true);
         mbChanged[mUsage] = true;
     }
     preview();
-    
+
 }
 
 void KIconConfig::slotAnimatedCheck(bool check)
@@ -478,14 +478,14 @@ void KIconConfig::slotAnimatedCheck(bool check)
     }
 }
 
-KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect, 
-    const Effect &defaultEffect, 
-    const QString &caption, const QImage &image, 
+KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
+    const Effect &defaultEffect,
+    const QString &caption, const QImage &image,
     QWidget *parent, char *name)
     : KDialogBase(parent, name, true, caption,
-	Default|Ok|Cancel, Ok, true), 
-      mEffect(effect), 
-      mDefaultEffect(defaultEffect), 
+	Default|Ok|Cancel, Ok, true),
+      mEffect(effect),
+      mDefaultEffect(defaultEffect),
       mExample(image)
 {
     mpEffect = new KIconEffect;
@@ -520,7 +520,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpSTCheck = new QCheckBox(i18n("&Semi-transparent"), page);
     connect(mpSTCheck, SIGNAL(toggled(bool)), SLOT(slotSTCheck(bool)));
     top->addWidget(mpSTCheck, 3, 0, Qt::AlignLeft);
-    
+
     frame = new QGroupBox(i18n("Preview"), page);
     top->addMultiCellWidget(frame, 0, 1, 1, 1);
     grid = new QGridLayout(frame, 2, 1, marginHint(), spacingHint());
@@ -552,7 +552,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
 		SLOT(slotEffectColor(const QColor &)));
     grid->addWidget(mpEColButton, 2, 1);
 
-    init(); 
+    init();
     preview();
 }
 
@@ -587,6 +587,7 @@ void KIconEffectSetupDialog::slotEffectType(int type)
 {
     mEffect.type = type;
     mpEffectGroup->setEnabled(mEffect.type != KIconEffect::NoEffect);
+    mpEffectSlider->setEnabled(mEffect.type != KIconEffect::NoEffect);
     mpEffectColor->setEnabled(mEffect.type == KIconEffect::Colorize);
     mpEColButton->setEnabled(mEffect.type == KIconEffect::Colorize);
     preview();
