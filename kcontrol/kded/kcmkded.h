@@ -19,10 +19,10 @@
 #ifndef KCMKDED_H
 #define KCMKDED_H
 
+#include <qlistview.h>
 #include <kcmodule.h>
 
 class KListView;
-class QListViewItem;
 class QStringList;
 class QPushButton;
 
@@ -36,7 +36,7 @@ public:
 	void       load();
 	void       save();
 	void       defaults();
-	
+
 	QString quickHelp() const;
 	const KAboutData* aboutData() const;
 
@@ -51,7 +51,8 @@ protected slots:
 	void slotStopService();
 	void configureService();
 	void slotEvalItem(QListViewItem *item);
-	
+	void slotItemChecked(QCheckListItem *item);
+
 private:
 
 	KListView *_lvLoD;
@@ -59,6 +60,19 @@ private:
 	QPushButton *_pbStart;
 	QPushButton *_pbStop;
 	QPushButton *_pbOptions;
+	QMap<QCString, bool> _userChecked;
+};
+
+class CheckListItem : public QObject, public QCheckListItem
+{
+	Q_OBJECT
+public:
+	CheckListItem(QListView* parent, const QString &text);
+	~CheckListItem() { }
+signals:
+	void changed(QCheckListItem*);
+protected:
+	virtual void stateChange(bool);
 };
 
 #endif // KCMKDED_H
