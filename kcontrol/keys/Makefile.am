@@ -15,5 +15,5 @@ messages:
 data_DATA = keys.desktop
 datadir = $(kde_appsdir)/Settings/LookNFeel
 
-scheme_DATA = Unix.kksrc
+scheme_DATA = Unix.kksrc Windows2000.kksrc
 schemedir = $(kde_datadir)/kcmkeys/standard
