@@ -28,8 +28,6 @@
 #include <klibloader.h>
 #include <kparts/componentfactory.h>
 
-#include <stdlib.h>
-
 #include "config.h"
 #include "global.h"
 #include "modloader.h"
@@ -85,14 +83,6 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
    *  from the factory.
    */
 
-    /* Corel's distro builds some .desktop files at boot time. In the previous version
-     * of KDE, each module was a separate executable which could be passed parameters. Sinnce
-     * KDE 2 now uses libraries for the modules, this is needed to pass some info to Corel's
-     * hardware control panel. Essentially it sets an environment variable to be the name of
-     * the .desktop file name of the module selected from the list view.
-     */
-  setenv("KDE_CONTROL_CENTER_ENV1", mod.fileName().latin1(), 1);
-
   if (!mod.library().isEmpty())
   {
       // get the library loader instance
@@ -107,6 +97,7 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
     }
     else
       kdWarning() << "Module " << mod.fileName() << " doesn't specify a library!" << endl;
+	
   /*
    * Ok, we could not load the library.
    * Try to run it as an executable.
@@ -115,8 +106,6 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
    * (startService calls kcmshell which calls modloader which calls startService...)
    *
    */
-
-
   if(withfallback)
       KApplication::startServiceByDesktopPath(mod.fileName(), QString::null);
   return 0;
@@ -124,8 +113,6 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
 
 void ModuleLoader::unloadModule(const ModuleInfo &mod)
 {
-  unsetenv("KDE_CONTROL_CENTER_ENV1");
-
 	// get the library loader instance
   KLibLoader *loader = KLibLoader::self();
 

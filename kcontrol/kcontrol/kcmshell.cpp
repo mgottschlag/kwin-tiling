@@ -37,9 +37,9 @@
 #include <kmessagebox.h>
 #include <klibloader.h>
 #include <kaboutdata.h>
-#include <kcmultidialog.h>
 
 #include "kcdialog.h"
+#include "kecdialog.h"
 #include "moduleinfo.h"
 #include "modloader.h"
 #include "global.h"
