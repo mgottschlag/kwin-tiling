@@ -14,6 +14,9 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.26  2002/08/12 08:58:59  binner
+    CVS_SILENT scheck'ed GUI, use "cvslastchange" or X-WebCVS header line to view
+
     Revision 1.25  2002/07/09 05:21:13  rikkus
     Adding a fallback to the alsa 0.9 sndstat, which is in a different location
     to the code expected.
@@ -301,10 +304,15 @@ bool GetInfo_Partitions(QListView * lBox)
 
 
 
-#if defined(HAVE_LINUX_RAW_H) && defined(HAVE_SYS_IOCTL_H) && defined(__GNUC__) && !defined(__STRICT_ANSI__)
+#if ( defined(HAVE_LINUX_RAW_H) || defined(HAVE_SYS_RAW_H) ) && defined(HAVE_SYS_IOCTL_H) && defined(__GNUC__) && !defined(__STRICT_ANSI__)
 #include <sys/ioctl.h>
 #include <fcntl.h>
+
+#if defined(HAVE_LINUX_RAW_H)
 #include <linux/raw.h>
+#elif defined(HAVE_SYS_RAW_H)
+#include <sys/raw.h>
+#endif
 
 /* 
  * get raw device bindings and information
