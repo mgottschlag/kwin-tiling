@@ -45,7 +45,7 @@ void KURISearchFilter::configure() {
     KURISearchFilterEngine::self()->loadConfig();
 }
 
-bool KURISearchFilter::filterURI(KURL &kurl) const {
+bool KURISearchFilter::filterURI(KURL &kurl){
     QString url = kurl.url();
 
     if (KURISearchFilterEngine::self()->verbose()) {
@@ -129,7 +129,7 @@ KURISearchFilterFactory::~KURISearchFilterFactory() {
 
 QObject *KURISearchFilterFactory::create( QObject *parent, const char *, const char*, const QStringList & )
 {
-  return new KURISearchFilter( parent );
+    return new KURISearchFilter( parent );
 }
 
 KInstance *KURISearchFilterFactory::instance() {
