@@ -1,7 +1,7 @@
-/* $TOG: krb5auth.c /main/5 1998/02/09 13:55:32 kaleb $ */
 /*
 
 Copyright 1994, 1998  The Open Group
+Copyright 2003 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -15,26 +15,21 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of The Open Group shall
+Except as contained in this notice, the name of a copyright holder shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from The Open Group.
+from the copyright holder.
 
 */
-/* $XFree86: xc/programs/xdm/krb5auth.c,v 1.2 1998/10/10 15:25:35 dawes Exp $ */
 
 /*
  * xdm - display manager daemon
  * Author:  Stephen Gildea, The Open Group
- */
-
-/*
- * krb5auth
  *
  * generate Kerberos Version 5 authorization records
  */

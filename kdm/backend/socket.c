@@ -1,8 +1,8 @@
-/* $TOG: socket.c /main/37 1998/02/09 13:56:31 kaleb $ */
 /*
 
 Copyright 1988, 1998  The Open Group
 Copyright 2002 Sun Microsystems, Inc.  All rights reserved.
+Copyright 2002,2004 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -27,7 +27,6 @@ other dealings in this Software without prior written authorization
 from the copyright holder.
 
 */
-/* $XFree86: xc/programs/xdm/socket.c,v 3.6 2000/05/11 18:14:43 tsi Exp $ */
 
 /*
  * xdm - display manager daemon

@@ -1,7 +1,3 @@
-/*
- * $XFree86: xc/programs/xdm/dm_auth.h,v 1.2 2000/05/31 07:15:11 eich Exp $
- */
-
 /************************************************************
 
 Copyright 1998 by Thomas E. Dickey <dickey@clark.net>

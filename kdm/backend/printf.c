@@ -1,6 +1,6 @@
 /*
 
-Copyright 1988, 1998  The Open Group
+Copyright 2001,2002,2004 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -14,25 +14,23 @@ in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR
+IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of The Open Group shall
+Except as contained in this notice, the name of a copyright holder shall
 not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
-from The Open Group.
+from the copyright holder.
 
 */
-/* $XFree86: $ */
 
 /*
  * xdm - display manager daemon
  * Author:  Keith Packard, MIT X Consortium
  *
  * printf.c - working horse of error.c
- *
  */
 
 /*
@@ -66,7 +64,6 @@ from The Open Group.
  */
 
 /**************************************************************
- * (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
  * Partially stolen from OpenSSH's OpenBSD compat directory.
  * (C) Patrick Powell, Brandon Long, Thomas Roessler, 
  *     Michael Elkins, Ben Lindstrom

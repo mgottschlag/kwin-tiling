@@ -1,7 +1,3 @@
-/*
- * $XFree86: xc/programs/xdm/dm_error.h,v 1.1 1998/10/10 15:25:33 dawes Exp $
- */
-
 /************************************************************
 
 Copyright 1998 by Thomas E. Dickey <dickey@clark.net>

@@ -1,7 +1,7 @@
 /*
- * $TOG: access.c /main/17 1998/02/09 13:54:13 kaleb $
- *
+
 Copyright 1990, 1998  The Open Group
+Copyright 2001,2004 Oswald Buddenhagen <ossi@kde.org>
 Copyright 2002 Sun Microsystems, Inc.  All rights reserved.
 
 Permission to use, copy, modify, distribute, and sell this software and its
@@ -10,26 +10,28 @@ the above copyright notice appear in all copies and that both that
 copyright notice and this permission notice appear in supporting
 documentation.
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of a copyright holder shall not be
-used in advertising or otherwise to promote the sale, use or other dealings
-in this Software without prior written authorization from the copyright holder.
- *
- * Author:  Keith Packard, MIT X Consortium
- */
+Except as contained in this notice, the name of a copyright holder shall
+not be used in advertising or otherwise to promote the sale, use or
+other dealings in this Software without prior written authorization
+from the copyright holder.
 
-/* $XFree86: xc/programs/xdm/access.c,v 3.5 1998/10/10 15:25:30 dawes Exp $ */
+*/
 
 /*
+ * xdm - display manager daemon
+ * Author:  Keith Packard, MIT X Consortium
+ *
  * Access control for XDMCP - keep a database of allowable display addresses
  * and (potentially) a list of hosts to send ForwardQuery packets to
  */
