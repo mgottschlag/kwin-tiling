@@ -1,11 +1,10 @@
 # $Id$
 # kdebase/kcontrol/display/pics
 
-SUBDIRS = mini
+KDE_ICON = background colors energy fonts screensaver style
 
-pics_DATA = background.xpm colors.xpm logo.xpm monitor.xpm \
-	screensaver.xpm style.xpm fonts.xpm energybig.xpm energy.xpm
-
+pics_DATA = logo.png monitor.png energybig.png
 picsdir = $(kde_datadir)/kcontrol/pics
 
 EXTRA_DIST = $(pics_DATA)
+
