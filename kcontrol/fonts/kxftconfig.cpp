@@ -22,10 +22,12 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include <qregexp.h>
-#include <qfileinfo.h>
-
+#include <qfile.h>
+#include <qpaintdevice.h>
 #include <klocale.h>
+#include <klargefile.h>
 
 #ifdef HAVE_FONTCONFIG
 #include <stdarg.h>
@@ -34,6 +36,16 @@
 #endif
 
 using namespace std;
+
+static int point2Pixel(double point)
+{
+    return (int)(((point*QPaintDevice::x11AppDpiY())/72.0)+0.5);
+}
+
+static int pixel2Point(double pixel)
+{
+    return (int)(((pixel*72.0)/(double)QPaintDevice::x11AppDpiY())+0.5);
+}
 
 static bool equal(double d1, double d2)
 {
@@ -59,18 +71,37 @@ static QString dirSyntax(const QString &d)
     return d;
 }
 
-static bool fExists(const QString &f)
+static QString xDirSyntax(const QString &d)
 {
-    QFile file(f);
+    if(!d.isNull())
+    {
+        QString ds(d);
+        int     slashPos=ds.findRev('/');
+ 
+        if(slashPos==(((int)ds.length())-1))
+            ds.remove(slashPos, 1);
+        return ds;
+    }
 
-    return file.exists();
+    return d;
 }
 
-static bool dWritable(const QString &d)
+static bool check(const QString &path, unsigned int fmt, bool checkW=false)
 {
-    QFileInfo inf(d);
+    KDE_struct_stat info;
+    QCString        pathC(QFile::encodeName(path));
 
-    return inf.isWritable();
+    return 0==KDE_lstat(pathC, &info) && (info.st_mode&S_IFMT)==fmt && (!checkW || 0==::access(pathC, W_OK));
+}
+
+inline bool fExists(const QString &p)
+{
+    return check(p, S_IFREG, false);
+}
+
+inline bool dWritable(const QString &p)
+{
+    return check(p, S_IFDIR, true);
 }
 
 static QString getDir(const QString &f)
@@ -258,7 +289,7 @@ static KXftConfig::ListItem * getLastItem(QPtrList<KXftConfig::ListItem> &list)
 }
 
 #ifdef HAVE_FONTCONFIG
-static const QString defaultPath("/etc/fonts/fonts.conf");
+static const QString defaultPath("/etc/fonts/local.conf");
 static const QString defaultUserFile(".fonts.conf");
 static const char *  constSymEnc="glyphs-fontspecific";
 #else
@@ -267,14 +298,15 @@ static const QString defaultUserFile(".xftconfig");
 static const char *  constSymEnc="\"glyphs-fontspecific\"";
 #endif
 
+#ifndef HAVE_FONTCONFIG
 static const QString constConfigFiles[]=
 {
     defaultPath,
-#ifndef HAVE_FONTCONFIG
+
     "/etc/X11/XftConfig",
-#endif
     QString::null
 };
+#endif
 
 KXftConfig::KXftConfig(int required, bool system)
           : m_required(required),
@@ -287,6 +319,9 @@ KXftConfig::KXftConfig(int required, bool system)
 {
     if(system) 
     {
+#ifdef HAVE_FONTCONFIG
+        m_file=defaultPath;
+#else
         int f;
 
         for(f=0; !constConfigFiles[f].isNull(); ++f)
@@ -295,6 +330,7 @@ KXftConfig::KXftConfig(int required, bool system)
 
         if(m_file.isNull())
             m_file=defaultPath;
+#endif
     }
     else
     {
@@ -327,6 +363,7 @@ bool KXftConfig::reset()
     m_symbolFamilies.clear();
     m_dirs.clear();
     m_excludeRange.reset();
+    m_excludePixelRange.reset();
     m_subPixel.reset();
 
 #ifdef HAVE_FONTCONFIG
@@ -381,6 +418,32 @@ bool KXftConfig::reset()
         ok=!fExists(m_file) && dWritable(getDir(m_file));
 #endif
 
+    if(ok && m_required&ExcludeRange)
+    {
+        //
+        // Check exclude range values - i.e. size and pixel size...
+        if(!equal(0, m_excludeRange.from) || !equal(0, m_excludeRange.to))    // If "size" range is set, ensure "pixelsize" matches...
+        {
+            double pFrom=(double)point2Pixel(m_excludeRange.from),
+                   pTo=(double)point2Pixel(m_excludeRange.to);
+
+            if(!equal(pFrom, m_excludePixelRange.from) || !equal(pTo, m_excludePixelRange.to))
+            {
+                m_excludePixelRange.from=pFrom;
+                m_excludePixelRange.to=pTo;
+                m_madeChanges=true;
+                apply();
+            }
+        }
+        else if(!equal(0, m_excludePixelRange.from) || !equal(0, m_excludePixelRange.to))   // "pixelsize" set, but not "size" !!!
+        {
+            m_excludeRange.from=(int)pixel2Point(m_excludePixelRange.from);
+            m_excludeRange.to=(int)pixel2Point(m_excludePixelRange.to);
+            m_madeChanges=true;
+            apply();
+        }
+    }
+
     return ok;
 }
 
@@ -390,6 +453,13 @@ bool KXftConfig::apply()
 
     if(m_madeChanges)
     {
+        if(m_required&ExcludeRange)
+        {
+            // Ensure these are always equal...
+            m_excludePixelRange.from=(int)point2Pixel(m_excludeRange.from);
+            m_excludePixelRange.to=(int)point2Pixel(m_excludeRange.to);
+        }
+
 #ifdef HAVE_FONTCONFIG
         FcAtomic *atomic=FcAtomicCreate((const unsigned char *)((const char *)(QFile::encodeName(m_file))));
 
@@ -415,7 +485,10 @@ bool KXftConfig::apply()
                     if(m_required&SubPixelType)
                         applySubPixelType();
                     if(m_required&ExcludeRange)
-                        applyExcludeRange();
+                    {
+                        applyExcludeRange(false);
+                        applyExcludeRange(true);
+                    }
 
                     //
                     // Check document syntax...
@@ -460,7 +533,8 @@ bool KXftConfig::apply()
             ListItem *ldi=m_required&Dirs ? getLastItem(m_dirs) : NULL,
                      *lfi=m_required&SymbolFamilies ? getLastItem(m_symbolFamilies) : NULL;
             char     *pos=m_data;
-            bool     finished=false;
+            bool     finished=false,
+                     pixel=false;
 
             while(!finished)
             {
@@ -484,11 +558,19 @@ bool KXftConfig::apply()
                     first=&m_subPixel;
                     type=SubPixelType;
                 }
-                if(m_required&ExcludeRange && NULL!=m_excludeRange.start && (NULL==first || m_excludeRange.start < first->start))
-                {
-                    first=&m_excludeRange;
-                    type=ExcludeRange;
-                }
+                if(m_required&ExcludeRange)
+                    if(NULL!=m_excludeRange.start && (NULL==first || m_excludeRange.start < first->start))
+                    {
+                        first=&m_excludeRange;
+                        type=ExcludeRange;
+                        pixel=false;
+                    }
+                    else if(NULL!=m_excludePixelRange.start && (NULL==first || m_excludePixelRange.start < first->start))
+                    {
+                        first=&m_excludePixelRange;
+                        type=ExcludeRange;
+                        pixel=true;
+                    }
 
                 if(first && first->start!=pos)
                     f.write(pos, first->start-pos);
@@ -519,7 +601,7 @@ bool KXftConfig::apply()
                         break;
                     case ExcludeRange:
                         if(!first->toBeRemoved)
-                            outputExcludeRange(f, false);
+                            outputExcludeRange(f, false, pixel);
                         m_excludeRange.start=NULL;
                         break;
                     case 0: // 0 => All read in entries written...
@@ -534,7 +616,8 @@ bool KXftConfig::apply()
             outputNewDirs(f);
             outputNewSymbolFamilies(f);
             outputSubPixelType(f, true);
-            outputExcludeRange(f, true);
+            outputExcludeRange(f, true, false);
+            outputExcludeRange(f, true, true);
             f.close();
             reset(); // Re-read contents...
         }
@@ -598,7 +681,8 @@ void KXftConfig::addDir(const QString &d)
 {
     QString dir(dirSyntax(d));
 
-    addItem(m_dirs, dir);
+    if(!hasDir(dir))
+        addItem(m_dirs, dir);
 }
 
 void KXftConfig::removeDir(const QString &d)
@@ -642,6 +726,23 @@ const char * KXftConfig::toStr(SubPixel::Type t)
         case SubPixel::Vbgr:
             return "vbgr";
     }
+}
+
+bool KXftConfig::hasDir(const QString &d)
+{
+    QString dir(dirSyntax(d));
+
+#ifdef HAVE_FONTCONFIG
+    ListItem *item;
+
+    for(item=m_dirs.first(); item; item=m_dirs.next())
+        if(0==dir.find(item->str))
+            return true;
+
+    return false;
+#else
+    return NULL!=findItem(m_dirs, dir);
+#endif
 }
 
 KXftConfig::ListItem * KXftConfig::findItem(QPtrList<ListItem> &list, const QString &i)
@@ -774,7 +875,9 @@ void KXftConfig::readContents()
                             QDomNode en=e.firstChild();
                             QString  family;
                             double   from=-1.0,
-                                     to=-1.0;
+                                     to=-1.0,
+                                     pixelFrom=-1.0,
+                                     pixelTo=-1.0;
 
                             while(!en.isNull())
                             {
@@ -785,9 +888,12 @@ void KXftConfig::readContents()
                                     {
                                         if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "more")).isNull())
                                             from=str.toDouble();
-                                        else if(!(str=getEntry(ene, "double", 3, "qual", "any",
-                                                                                               "name", "size", "compare", "less")).isNull())
+                                        else if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "less")).isNull())
                                             to=str.toDouble();
+                                        else if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "more")).isNull())
+                                            pixelFrom=str.toDouble();
+                                        else if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "less")).isNull())
+                                            pixelTo=str.toDouble();
                                     }
                                     else if("edit"==ene.tagName() && "false"==getEntry(ene, "bool", 2, "name", "antialias", "mode", "assign"))
                                         foundFalse=true;
@@ -800,6 +906,12 @@ void KXftConfig::readContents()
                                 m_excludeRange.from=from < to ? from : to;
                                 m_excludeRange.to  =from < to ? to   : from;
                                 m_excludeRange.node=n;
+                            }
+                            else if((pixelFrom>=0 || pixelTo>=0) && foundFalse)
+                            {
+                                m_excludePixelRange.from=pixelFrom < pixelTo ? pixelFrom : pixelTo;
+                                m_excludePixelRange.to  =pixelFrom < pixelTo ? pixelTo   : pixelFrom;
+                                m_excludePixelRange.node=n;
                             }
                         }
                         break;
@@ -896,6 +1008,18 @@ void KXftConfig::readContents()
                     m_excludeRange.start=from;
                     m_excludeRange.end=ptr;
                 }
+                else if(m_required&ExcludeRange && skipToken(&ptr, "pixelsize") && (skipToken(&ptr, ">")||skipToken(&ptr, "<")) && 
+                        readNum(&ptr, &efrom) && skipToken(&ptr, "any") && skipToken(&ptr, "pixelsize") &&
+                        (skipToken(&ptr, "<")||skipToken(&ptr, ">")) && readNum(&ptr, &eto) && skipToken(&ptr, "edit") &&
+                        skipToken(&ptr, "antialias") && skipToken(&ptr, "=") && skipToken(&ptr, "false") && skipToken(&ptr, ";"))
+                {
+                    while(*ptr!='\n' && *ptr!='\0' && isWhiteSpace(*ptr))
+                        ptr++;
+                    m_excludePixelRange.from=efrom<eto ? efrom : eto;
+                    m_excludePixelRange.to=efrom<eto ?   eto   : efrom;
+                    m_excludePixelRange.start=from;
+                    m_excludePixelRange.end=ptr;
+                }
             }
             else if(m_required&SubPixelType && skipToken(&ptr, "edit") && skipToken(&ptr, "rgba") && skipToken(&ptr, "="))
             {
@@ -933,7 +1057,7 @@ void KXftConfig::applyDirs()
         if(!item->toBeRemoved && item->node.isNull())
         {
             QDomElement newNode = m_doc.createElement("dir");
-            QDomText    text    = m_doc.createTextNode(item->str);
+            QDomText    text    = m_doc.createTextNode(xDirSyntax(item->str));
 
             newNode.appendChild(text);
 
@@ -1009,14 +1133,16 @@ void KXftConfig::applySubPixelType()
     }
 }
 
-void KXftConfig::applyExcludeRange()
+void KXftConfig::applyExcludeRange(bool pixel)
 {
-    if(equal(m_excludeRange.from,0) && equal(m_excludeRange.to,0))
+    Exclude &range=pixel ? m_excludePixelRange : m_excludeRange;
+
+    if(equal(range.from, 0) && equal(range.to, 0))
     {
-        if(!m_excludeRange.node.isNull())
+        if(!range.node.isNull())
         {
-            m_doc.documentElement().removeChild(m_excludeRange.node);
-            m_excludeRange.node.clear();
+            m_doc.documentElement().removeChild(range.node);
+            range.node.clear();
         }
     }
     else
@@ -1024,8 +1150,8 @@ void KXftConfig::applyExcludeRange()
         QString     fromString,
                     toString;
 
-        fromString.setNum(m_excludeRange.from);
-        toString.setNum(m_excludeRange.to);
+        fromString.setNum(range.from);
+        toString.setNum(range.to);
 
         QDomElement matchNode    = m_doc.createElement("match"),
                     fromTestNode = m_doc.createElement("test"),
@@ -1040,12 +1166,12 @@ void KXftConfig::applyExcludeRange()
 
         matchNode.setAttribute("target", "font");   // CPD: Is target "font" or "pattern" ????
         fromTestNode.setAttribute("qual", "any");
-        fromTestNode.setAttribute("name", "size");
+        fromTestNode.setAttribute("name", pixel ? "pixelsize" : "size");
         fromTestNode.setAttribute("compare", "more");
         fromTestNode.appendChild(fromNode);
         fromNode.appendChild(fromText);
         toTestNode.setAttribute("qual", "any");
-        toTestNode.setAttribute("name", "size");
+        toTestNode.setAttribute("name", pixel ? "pixelsize" : "size");
         toTestNode.setAttribute("compare", "less");
         toTestNode.appendChild(toNode);
         toNode.appendChild(toText);
@@ -1056,11 +1182,11 @@ void KXftConfig::applyExcludeRange()
         matchNode.appendChild(fromTestNode);
         matchNode.appendChild(toTestNode);
         matchNode.appendChild(editNode);
-        if(m_excludeRange.node.isNull())
+        if(range.node.isNull())
             m_doc.documentElement().appendChild(matchNode);
         else
-            m_doc.documentElement().replaceChild(matchNode, m_excludeRange.node);
-        m_excludeRange.node=matchNode;
+            m_doc.documentElement().replaceChild(matchNode, range.node);
+        range.node=matchNode;
     }
 }
 
@@ -1076,7 +1202,7 @@ void KXftConfig::removeItems(QPtrList<ListItem> &list)
 #else
 void KXftConfig::outputDir(std::ofstream &f, const QString &str)
 {
-    f << "dir \"" << str.local8Bit() << "\"" << endl;
+    f << "dir \"" << xDirSyntax(str).local8Bit() << "\"" << endl;
 }
 
 void KXftConfig::outputNewDirs(std::ofstream &f)
@@ -1110,10 +1236,24 @@ void KXftConfig::outputSubPixelType(std::ofstream &f, bool ifNew)
         f << "match edit rgba = " << toStr(m_subPixel.type) << ';' << endl;
 }
 
-void KXftConfig::outputExcludeRange(std::ofstream &f, bool ifNew)
+void KXftConfig::outputExcludeRange(std::ofstream &f, bool ifNew, bool pixel)
 {
-    if(((ifNew && NULL==m_excludeRange.end) || (!ifNew && NULL!=m_excludeRange.end)) &&
-       (!equal(m_excludeRange.from,0) || !equal(m_excludeRange.to,0)))
-        f << "match any size > " << m_excludeRange.from << " any size < " << m_excludeRange.to << " edit antialias = false;" << endl;
+    ExcludeRange &range=pixel ? m_excludePixelRange : m_excludeRange;
+
+    if(((ifNew && NULL==range.end) || (!ifNew && NULL!=range.end)) &&
+       (!equal(range.from,0) || !equal(range.to,0)))
+    {
+        if(pixel)
+            f << "match any pixelsize > ";
+        else
+            f << "match any size > ";
+
+        f << range.from;
+        if(pixel)
+            f << " any pixelsize < ";
+        else
+            f << " any size < ";
+        f << range.to << " edit antialias = false;" << endl;
+}
 }
 #endif

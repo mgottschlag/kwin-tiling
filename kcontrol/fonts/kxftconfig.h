@@ -148,6 +148,7 @@ class KXftConfig
     bool        changed()                            { return m_madeChanges; }
     static QString description(SubPixel::Type t);
     static const char * toStr(SubPixel::Type t);
+    bool        hasDir(const QString &d);
 
     private:
 
@@ -162,7 +163,7 @@ class KXftConfig
     void        applyDirs();
     void        applySymbolFamilies();
     void        applySubPixelType();
-    void        applyExcludeRange();
+    void        applyExcludeRange(bool pixel);
     void        removeItems(QPtrList<ListItem> &list);
 #else
     void        outputDir(std::ofstream &f, const QString &str);
@@ -170,13 +171,14 @@ class KXftConfig
     void        outputSymbolFamily(std::ofstream &f, const QString &str);
     void        outputNewSymbolFamilies(std::ofstream &f);
     void        outputSubPixelType(std::ofstream &f, bool ifNew);
-    void        outputExcludeRange(std::ofstream &f, bool ifNew);
+    void        outputExcludeRange(std::ofstream &f, bool ifNew, bool pixel);
 #endif
 
     private:
 
     SubPixel           m_subPixel;
-    Exclude            m_excludeRange;
+    Exclude            m_excludeRange,
+                       m_excludePixelRange;
     QPtrList<ListItem> m_symbolFamilies,
                        m_dirs;
     QString            m_file;
