@@ -104,10 +104,10 @@ class KRenameDeskDlg : public QDialog
 {
   Q_OBJECT
 public:
-  KRenameDeskDlg( const char *t, QWidget *parent );
+  KRenameDeskDlg( const QString& t, QWidget *parent );
   virtual ~KRenameDeskDlg() {}
 
-  const char *title()
+  QString title()
     {  return edit->text(); }
 
 private:
@@ -285,7 +285,7 @@ protected:
   void showSettings();
   void writeSettings( int deskNum );
   void setMonitor();
-  bool loadWallpaper( const char *filename, bool useContext = TRUE );
+  bool loadWallpaper( const QString& filename, bool useContext = TRUE );
   void retainResources();
   void setDefaults();
 

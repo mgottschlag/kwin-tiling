@@ -111,7 +111,7 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 	
 	//debug("KScreenSaver::KScreenSaver");
 
-	setName(  i18n("Screen Saver") );
+	setName(  i18n("Screen Saver").ascii() );
 
 	// if we are just initialising we don't need to create setup widget
 	if ( mode == Init )
@@ -192,7 +192,8 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 	getSaverNames();
 	ssList->adjustSize();
 	ssList->setMinimumSize(ssList->size());
-//	ssList->insertStrList( &saverNames );
+	ssList->insertStringList( saverNames );
+/*
 	QStringList::Iterator it = saverList.begin();
 	for ( int i = 1; !it->isNull(); ++it )
 	{
@@ -201,6 +202,7 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 			ssList->setCurrentItem( i );
 		i++;
 	}
+*/
 	ssList->setTopItem( ssList->currentItem() );
 	connect( ssList, SIGNAL( highlighted( int ) ),
 			SLOT( slotScreenSaver( int ) ) );
@@ -381,7 +383,7 @@ void KScreenSaver::readSettings( int )
 		else
 			bUseSaver = false;
 	} else
-		saverFile.sprintf( i18n("No screensaver") );
+		saverFile = i18n("No screensaver");
 
 	xtimeout = config->readNumEntry( "Timeout" );
 	
@@ -405,7 +407,7 @@ void KScreenSaver::readSettings( int )
 
 	str = config->readEntry( "CornerAction" );
 	if ( !str.isNull() )
-		strncpy( cornerAction, str, 4 );
+		strncpy( cornerAction, str.ascii(), 4 );
 	else
 		strcpy( cornerAction, "iiii" );
 	
@@ -508,7 +510,7 @@ void KScreenSaver::getSaverNames()
 		{
 			char buffer[80];
 			QString cmd = saverLocation + '/' + *it + " -desc";
-			FILE *fp = popen( cmd, "r");
+			FILE *fp = popen( cmd.ascii(), "r");
 			if ( fp )
 			{
 				fgets( buffer, 80, fp );
@@ -548,7 +550,7 @@ void KScreenSaver::apply( bool force )
 		gethostname(ksshostname, 200);
 		pidFile += ksshostname;
 		FILE *fp;
-		if ( ( fp = fopen( pidFile, "r" ) ) != NULL )
+		if ( ( fp = fopen( pidFile.ascii(), "r" ) ) != NULL )
 		{
 			int pid;
 			fscanf( fp, "%d", &pid );
@@ -612,8 +614,8 @@ void KScreenSaver::slotPreviewExited(KProcess *)
     id.setNum( monitor->winId() );
 
     ssPreview->clearArguments();
-    ssPreview->setExecutable(path.data());
-    *ssPreview << "-preview" << id.data();
+    ssPreview->setExecutable(path);
+    *ssPreview << "-preview" << id;
     ssPreview->start();
 }
 
@@ -622,7 +624,7 @@ void KScreenSaver::slotScreenSaver( int indx )
 	if ( indx == 0 )
 	{
 		
-		saverFile.sprintf( i18n("No screensaver") );
+		saverFile = i18n("No screensaver");
 		setupBt->setEnabled( FALSE );
 		testBt->setEnabled( FALSE );
 		bUseSaver = false;
@@ -689,7 +691,7 @@ void KScreenSaver::slotTest()
 
 void KScreenSaver::slotTimeoutChanged( const QString &to )
 {
-	xtimeout = atoi( (const char *)to ) * 60;
+	xtimeout = to.toInt() * 60;
 
 	if ( xtimeout <= 0 )
 		xtimeout = 60;

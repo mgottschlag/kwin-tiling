@@ -82,7 +82,7 @@ KColorScheme::KColorScheme( QWidget *parent, int mode, int desktop )
 	screen = DefaultScreen(kde_display);
 	root = RootWindow(kde_display, screen);
 	
-	setName( i18n("Colors") );
+	setName( i18n("Colors").ascii() );
 	
 	cs = new WidgetCanvas( this );
 	cs->setCursor( KCursor::handCursor() );
@@ -335,7 +335,7 @@ void KColorScheme::slotAdd()
 			return;
 			
 		sName = sName.simplifyWhiteSpace();
-		sFile.sprintf(sName);
+		sFile = sName;
 		
 		int ind = 0;
 		while ( ind < (int) sFile.length() ) {
@@ -376,24 +376,24 @@ void KColorScheme::slotAdd()
 	disconnect( sList, SIGNAL( highlighted( int ) ), this,
 			SLOT( slotPreviewScheme( int ) ) );
 	
-	sList->insertItem( sName.data() );
+	sList->insertItem( sName );
 	sList->setFocus();
 	sList->setCurrentItem( sList->count()-1 );
 	
 	QString kcsPath = KApplication::localkdedir() + "/share/apps/kdisplay/";
 	
-	QDir d( kcsPath.data() );
+	QDir d( kcsPath );
 	if ( !d.exists() )
-		if ( !d.mkdir( kcsPath.data() ) ) {
+		if ( !d.mkdir( kcsPath ) ) {
 			warning("KColorScheme: Could not make directory to store user info.");
 			return;
 		}
 		
 	kcsPath += "color-schemes/";
 	
-	d.setPath( kcsPath.data() );
+	d.setPath( kcsPath );
 	if ( !d.exists() )
-		if ( !d.mkdir( kcsPath.data() ) ) {
+		if ( !d.mkdir( kcsPath ) ) {
 			warning("KColorScheme: Could not make directory to store user info.");
 			return;
 		}
@@ -403,7 +403,7 @@ void KColorScheme::slotAdd()
 	sFileList->append( sFile.data() );
 	
 	KSimpleConfig *config =
-			new KSimpleConfig( sFile.data() );
+			new KSimpleConfig( sFile );
 			
 	config->setGroup( "Color Scheme" );
 	config->writeEntry( "name", sName );
@@ -623,8 +623,8 @@ void KColorScheme::readSchemeNames( )
 				config->setGroup( "Color Scheme" );
 				str = config->readEntry( "name" );
 
-				sList->insertItem( str.data() );
-				sFileList->append( fi->filePath() );
+				sList->insertItem( str );
+				sFileList->append( fi->filePath().ascii() );
 
 				++sysIt;
 				nSysSchemes++;
@@ -634,7 +634,7 @@ void KColorScheme::readSchemeNames( )
 		}
 	}
 	
-	kcsPath.sprintf( KApplication::localkdedir().data() );
+	kcsPath = KApplication::localkdedir();
 	kcsPath += "/share/apps/kdisplay/color-schemes";
 	
 	d.setPath( kcsPath );
@@ -655,8 +655,8 @@ void KColorScheme::readSchemeNames( )
 				config.setGroup( "Color Scheme" );
 				str = config.readEntry( "name" );
 
-				sList->insertItem( str.data() );
-				sFileList->append( fi->filePath() );
+				sList->insertItem( str );
+				sFileList->append( fi->filePath().ascii() );
 
 				++userIt;
 			}

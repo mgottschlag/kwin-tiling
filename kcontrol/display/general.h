@@ -37,18 +37,18 @@
 class FontUseItem
 {
 public:
-    FontUseItem( const char *n, QFont default_fnt, bool fixed = false );
+    FontUseItem( const QString& n, QFont default_fnt, bool fixed = false );
 	QString fontString( QFont rFont );
-	void setRC( const char *group, const char *key, const char *rc = 0 );
+	void setRC( const QString& group, const QString& key, const QString& rc = QString::null );
 	void readFont();
 	void writeFont();
 	void setDefault();
 	void setFont( QFont fnt ) { _font = fnt; }
 	QFont font() { return _font; }
-	const char *rcFile() { return _rcfile.data(); }
-	const char *rcGroup() { return _rcgroup.data(); }
-	const char *rcKey() { return _rckey.data(); }
-	const char *text()		{ return _text.data(); }
+	const QString& rcFile() { return _rcfile; }
+	const QString& rcGroup() { return _rcgroup; }
+	const QString& rcKey() { return _rckey; }
+	const QString& text()		{ return _text; }
 	bool spacing() { return fixed; }
 	void	setSelect( bool flag )	{ selected = flag; }
 	bool	select()		{ return selected; }

@@ -83,7 +83,7 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmdisplay [-init | {background,screensaver,colors,fonts,style}]\n"));
+          fprintf(stderr, i18n("usage: kcmdisplay [-init | {background,screensaver,colors,fonts,style}]\n").ascii());
           justInit = TRUE;
         }
 

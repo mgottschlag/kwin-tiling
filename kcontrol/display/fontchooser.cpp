@@ -75,7 +75,7 @@ KFontChooser::KFontChooser( QWidget *parent, const char *name )
 	cmbFont->insertStrList( &fontList );
 	QStrListIterator it( fontList );
 	for ( i = 0; it.current(); ++it, i++ ) {
-		if ( !strcmp( fnt.family(), it.current() ) )
+		if ( fnt.family() == it.current() )
 			cmbFont->setCurrentItem( i );
 	}
 	
@@ -170,7 +170,7 @@ void KFontChooser::setFont( QFont start_fnt, bool fixed )
 	
 	QStrListIterator it( fixed ? fixedList : fontList );
 	for ( int i = 0; it.current(); ++it, i++ ) {
-		if ( !strcmp( fnt.family(), it.current() ) )
+		if ( fnt.family(), it.current() )
 			cmbFont->setCurrentItem( i );
 	}
 	
@@ -253,7 +253,7 @@ void KFontChooser::addFont( QStrList &list, const char *xfont )
 			if ( it.current() == font )
 				return;
 
-		list.inSort( font );
+		list.inSort( font.ascii() );
 	}
 }
 
@@ -261,9 +261,9 @@ void KFontChooser::fillCharsetCombo(){
 int i;
 	cmbCharset->clear();
 	KCharsets *charsets=kapp->getCharsets();
-        QStrList sets=charsets->displayable(fnt.family());
+        QStrList sets=charsets->displayable(fnt.family().ascii());
 	cmbCharset->insertItem( i18n("default") );
-	for(QString set=sets.first();set;set=sets.next())
+	for(QString set=sets.first();!set.isNull();set=sets.next())
 	  cmbCharset->insertItem( set );
 	cmbCharset->insertItem( i18n("any") );
 
@@ -280,7 +280,7 @@ void KFontChooser::slotCharset(const QString &name)
 {
 
   KCharsets *charsets=kapp->getCharsets();
-  if (strcmp(name,"default")==0){
+  if (name == "default"){
      charsets->setQFont(fnt,klocale->charset());
      defaultCharset=TRUE;
   }   

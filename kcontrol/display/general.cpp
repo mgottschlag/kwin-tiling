@@ -54,7 +54,7 @@
 
 extern int dropError(Display *, XErrorEvent *);
 
-FontUseItem::FontUseItem( const char *n, QFont default_fnt, bool f )
+FontUseItem::FontUseItem( const QString& n, QFont default_fnt, bool f )
 	: selected(0)
 {
 	_text = n;
@@ -69,7 +69,7 @@ QString FontUseItem::fontString( QFont rFont )
 	return aValue;
 	QFontInfo fi( rFont );
 	
-	aValue.sprintf( "-*-" );
+	aValue = "-*-";
 	aValue += fi.family();
 	
 	if ( fi.bold() )
@@ -84,14 +84,12 @@ QString FontUseItem::fontString( QFont rFont )
 		
 	//aValue += "-normal-*-*-";
 	//	
-	//QString s;
-	//s.sprintf( "%d-*-*-*-*-", fi.pointSize()*10 );
+	//QString s = QString( "%1-*-*-*-*-").arg(fi.pointSize()*10 );
 	//aValue += s;
 	
 	aValue += "-normal-*-";
 		
-	QString s;
-	s.sprintf( "%d-*-*-*-*-*-", fi.pointSize() );
+	QString s = QString( "%1-*-*-*-*-*-").arg(fi.pointSize() );
 	aValue += s;
 	
 	
@@ -131,11 +129,11 @@ QString FontUseItem::fontString( QFont rFont )
 	return aValue;
 }
 
-void FontUseItem::setRC( const char *group, const char *key, const char *rc )
+void FontUseItem::setRC( const QString& group, const QString& key, const QString&rc )
 {
 	_rcgroup = group;
 	_rckey = key;
-	if ( rc ) _rcfile = rc;
+	if ( !rc.isNull() ) _rcfile = rc;
 }
 
 void FontUseItem::setDefault()
@@ -153,13 +151,13 @@ void FontUseItem::readFont()
 		QString s( KApplication::localconfigdir() );
 		s += "/";
 		s += _rcfile;
-		config = new KSimpleConfig( s.data(), true );
+		config = new KSimpleConfig( s, true );
 	}
 
-	config->setGroup( _rcgroup.data() );
+	config->setGroup( _rcgroup );
 	
 	QFont tmpFnt( _font );
-	_font = config->readFontEntry( _rckey.data(), &tmpFnt );
+	_font = config->readFontEntry( _rckey, &tmpFnt );
 }
 
 void FontUseItem::writeFont()
@@ -171,14 +169,14 @@ void FontUseItem::writeFont()
 		QString s( KApplication::localconfigdir() );
 		s += "/";
 		s += _rcfile;
-		config = new KSimpleConfig( s.data() );
+		config = new KSimpleConfig( s );
 	}
 	
-	config->setGroup( _rcgroup.data() );
+	config->setGroup( _rcgroup );
 	if ( _rcfile.isEmpty() ) {
-		 config->writeEntry( _rckey.data(), _font, true, true );
+		 config->writeEntry( _rckey, _font, true, true );
 	} else {
-		config->writeEntry( _rckey.data(), _font );
+		config->writeEntry( _rckey, _font );
 	}
 	
 	 config->sync();
@@ -268,11 +266,11 @@ void KIconStyle::apply()
     {
         QString s = m_dictCBNormal[ appName[i] ] -> isChecked() ? "Normal" : "Large";
         // See if the settings have changed
-        if ( strcmp( (char*) m_dictSettings [ appName[i] ], s) != 0 )
+        if (m_dictSettings [ appName[i] ] != s)
         {
             // Store new setting
             char * setting = new char [s.length()];
-            strcpy( setting, s );
+            strcpy( setting, s.ascii() );
             m_dictSettings.replace( appName[i], setting );
             // Apply it
             if ( strcmp( appName[i], "kpanel" ) == 0 )
@@ -295,7 +293,7 @@ void KIconStyle::readSettings()
         m_dictCBNormal[ appName[i] ] -> setChecked( s == "Normal");
         m_dictCBLarge[ appName[i] ] -> setChecked( s == "Large" );
         char * setting = new char [s.length()];
-        strcpy( setting, s );
+        strcpy( setting, s.ascii() );
         m_dictSettings.insert( appName[i], setting ); // store initial value
     }    
 }
@@ -355,7 +353,7 @@ void KThemeListBox::readThemeDir(const QString &directory)
             desc = config.readEntry("Description",
                                     i18n("No description available."));
             insertItem(name + "\t" + desc);
-            fileList.append(fi->absFilePath());
+            fileList.append(fi->absFilePath().ascii());
             if(name == curName)
                 setCurrentItem(count()-1);
             ++it;
@@ -407,7 +405,7 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 	screen = DefaultScreen(kde_display);
 	root = RootWindow(kde_display, screen);
 
-        setName( i18n("Style") );
+        setName( i18n("Style").ascii() );
 
 	readSettings();
 	
@@ -812,7 +810,7 @@ KFonts::KFonts( QWidget *parent, int mode, int desktop )
 	screen = DefaultScreen(kde_display);
 	root = RootWindow(kde_display, screen);
 
-	setName( i18n("Fonts") );
+	setName( i18n("Fonts").ascii() );
 
 	readSettings();
 	

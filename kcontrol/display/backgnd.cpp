@@ -62,7 +62,7 @@ void KBGMonitor::dragEnterEvent( QDragEnterEvent *e)
   e->accept( QImageDrag::canDecode( e)|| QUrlDrag::canDecode( e));  
 }
 
-KRenameDeskDlg::KRenameDeskDlg( const char *t, QWidget *parent )
+KRenameDeskDlg::KRenameDeskDlg( const QString& t, QWidget *parent )
   : QDialog( parent, 0, true )
 {
   
@@ -127,7 +127,7 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
 
   kimgioRegister();
 
-  setName( i18n("Desktop") );
+  setName( i18n("Desktop").ascii() );
       
   // if we are just initialising we don't need to create setup widget
   if ( mode == Init )
@@ -512,8 +512,7 @@ void KBackground::resizeEvent( QResizeEvent * )
 
 void KBackground::readSettings( int num )
 {
-  QString group;
-  group.sprintf( "/desktop%drc", num);
+  QString group = QString("/desktop%1rc").arg(num);
 
   bool first_time = false;
 
@@ -531,12 +530,12 @@ void KBackground::readSettings( int num )
     randomMode = config.readBoolEntry( "RandomMode", DEFAULT_ENABLE_RANDOM_MODE);
 
     if ( randomMode || !interactive )
-      group.sprintf( "Desktop%d", random );
+      group = QString( "Desktop%1").arg( random );
     else
-      group.sprintf( "Desktop%d", DEFAULT_DESKTOP);
+      group = QString( "Desktop%1").arg(DEFAULT_DESKTOP);
   }
   else
-    group.sprintf( "Desktop%d", num + 1);
+    group = QString( "Desktop%1").arg(num + 1);
 
   config.setGroup( group );
   
@@ -599,7 +598,7 @@ void KBackground::readSettings( int num )
   if ( currentItem.bUseWallpaper ) {
      currentItem.wallpaper = config.readEntry( "Wallpaper", DEFAULT_WALLPAPER );
   if ( !currentItem.wallpaper.isEmpty() && interactive )
-     loadWallpaper( currentItem.wallpaper.data() );
+     loadWallpaper( currentItem.wallpaper );
   } else
      currentItem.wallpaper = DEFAULT_WALLPAPER;
 }
@@ -612,8 +611,8 @@ void KBackground::setDefaults()
      currentItem.ncMode = DEFAULT_NUMBER_OF_COLORS;
      currentItem.stMode = DEFAULT_COLOR_MODE;
      currentItem.orMode = DEFAULT_ORIENTATION_MODE;
-     currentItem.color1 = DEFAULT_COLOR_1;
-     currentItem.color2 = DEFAULT_COLOR_2;
+     currentItem.color1 = QColor(DEFAULT_COLOR_1);
+     currentItem.color2 = QColor(DEFAULT_COLOR_2);
      currentItem.bUseWallpaper = DEFAULT_USE_WALLPAPER;
      currentItem.wallpaper = DEFAULT_WALLPAPER;
      changed = true;
@@ -634,13 +633,12 @@ void KBackground::writeSettings( int num )
     return;
   }
 
-  QString group;
-  group.sprintf( "/desktop%drc", num);
+  QString group = QString("/desktop%1rc").arg(num);
   KConfig config(KApplication::kde_configdir() + group, 
 		  KApplication::localconfigdir() + group);
 
   if ( randomMode || !interactive )
-    group.sprintf( "Desktop%d", random );
+    group = QString( "Desktop%1").arg( random );
   else
     group ="Desktop0";
 
@@ -929,7 +927,7 @@ void KBackground::setMonitor()
 // Note that centred pixmaps are placed on a full screen image of background
 // color1, so if you want to save memory use a small tiled pixmap.
 //
-bool KBackground::loadWallpaper( const char *name, bool useContext )
+bool KBackground::loadWallpaper( const QString& name, bool useContext )
 {
   static int context = 0;
   QString filename;
@@ -954,7 +952,7 @@ bool KBackground::loadWallpaper( const char *name, bool useContext )
   else
     filename = name;
 	
-  if ( tmp.load( filename, QString::null, KPixmap::LowColor ) )
+  if ( tmp.load( filename, 0, KPixmap::LowColor ) )
     {
       int w = QApplication::desktop()->width();
       int h = QApplication::desktop()->height();
@@ -1177,7 +1175,7 @@ void KBackground::slotSelectColor1( const QColor &col )
     {
       // force the background to be made with different background
       if ( currentItem.wpMode == Centred || currentItem.wpMode == CentredBrick || currentItem.wpMode == CentredWarp )
-	loadWallpaper( currentItem.wallpaper.data() );
+	loadWallpaper( currentItem.wallpaper );
       setMonitor();
     }
 
@@ -1219,18 +1217,18 @@ void KBackground::slotBrowse()
   }
 
   QString filename = KFileDialog::getOpenFileName( path );
-  debug("filename:%s", (const char *)filename);
+  debug("filename:%s", filename.ascii());
   if(!filename.isNull())
       debug("Passed Null");
   else
       debug("Failed Null");
-  if(!strcmp( filename, currentItem.wallpaper))
+  if(filename == currentItem.wallpaper)
       debug("Passed strncmp");
   else
       debug("Failed strncmp");
   slotWallpaper( filename );
   
-  if ( !filename.isNull() && !strcmp( filename, currentItem.wallpaper) )
+  if ( !filename.isNull() && filename == currentItem.wallpaper )
     {
       wpCombo->insertItem( currentItem.wallpaper );
       wpCombo->setCurrentItem( wpCombo->count() - 1 );
@@ -1241,7 +1239,7 @@ void KBackground::slotWallpaper( const QString &filename )
 {
   if ( !filename.isNull() )
     {
-      if ( !strcmp((const char*)filename, i18n("No wallpaper") ) )
+      if (filename == i18n("No wallpaper"))
 	{
 	  wpPixmap.resize(0, 0); // make NULL pixmap
 	  currentItem.wallpaper = filename;
@@ -1266,7 +1264,7 @@ void KBackground::slotWallpaper( const QString &filename )
 void KBackground::slotWallpaperMode( int m )
 {
   currentItem.wpMode = m + 1;
-  slotWallpaper( currentItem.wallpaper.data() );
+  slotWallpaper( currentItem.wallpaper );
 }
 
 void KBackground::slotColorMode( int m )
@@ -1406,13 +1404,13 @@ void KBackground::applySettings()
 
 bool KBackground::setNew( QString pic, int item )
 {
-  if ( !strcmp(pic, i18n("No wallpaper") ) )
+  if ( pic == i18n("No wallpaper") )
     {
       wpPixmap.resize(0, 0); // make NULL pixmap
       currentItem.wallpaper = pic;
       currentItem.bUseWallpaper = false;
     }
-  else if ( loadWallpaper( pic.data() ) )
+  else if ( loadWallpaper( pic ) )
     {
       currentItem.wallpaper = pic;
       currentItem.bUseWallpaper = true;
@@ -1441,10 +1439,10 @@ void KBackground::slotDropped (KDNDDropZone *zone)
 
     QString url = list.first();
 
-    if (strcmp("file:", url.left(5)))  // for now, only file URLs are supported
+    if ("file:" != url.left(5))  // for now, only file URLs are supported
       QMessageBox::warning(this, i18n("Unsupported URL"),
         i18n( "Sorry, this type of URL is currently unsupported"\
-		 "by the KDE Display Module" ) );
+		 "by the KDE Display Module" ), i18n("OK") );
     else {
       url = url.right(url.length()-5); // strip the leading "file:"
 
@@ -1461,7 +1459,7 @@ void KBackground::slotDropped( QDropEvent *e)
     QString url = *urls.begin();
     printf( "Url=\"%s\"\n", url.data());
     url.prepend('/');
-    setNew( url.data(), random );
+    setNew( url, random );
   }
 }
 
@@ -1498,14 +1496,14 @@ KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, uint *p, int *orient,
   QString name;
   for (i = 0; i < count; i++) {
     PatternEntry *entry = new PatternEntry();
-    name.sprintf("Name%d",i);
+    name = QString("Name%1").arg(i);
     entry->name = config->readEntry( name );
     if (entry->name.isNull()) {
       delete entry;
       continue;
     }
     QStrList strl;
-    name.sprintf("Pattern%d",i);
+    name = QString("Pattern%1").arg(i);
     config->readListEntry(name, strl);
     uint size = strl.count();
     if (size > 8) size = 8;
@@ -1638,7 +1636,7 @@ KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, uint *p, int *orient,
   listBox->setMinimumSize(listBox->size());
 	
   slotMode( mode );
-  selected( current->name );
+  selected( current->name.ascii() );
 
   toplevelHL->activate();
 	
@@ -1665,7 +1663,7 @@ void KBPatternDlg::slotMode( int m )
     lPreview->setEnabled( true );
     break;
   }
-  selected( listBox->text( listBox->currentItem() ) );
+  selected( listBox->text( listBox->currentItem() ).ascii() );
 }
 
 int KBPatternDlg::savePatterns() {
@@ -1924,10 +1922,10 @@ void KRandomDlg::picDropped( KDNDDropZone *zone )
     
     QString url = list.at(i);
 
-    if (strcmp("file:", url.left(5)))  // for now, only file URLs are supported
+    if ("file:" != url.left(5))  // for now, only file URLs are supported
       QMessageBox::warning(this, i18n("Unsupported URL"),
         i18n( "Sorry, this type of URL is currently unsupported"\
-		 "by the KDE Display Module" ) );
+		 "by the KDE Display Module" ), i18n("OK") );
     else {
       url = url.right(url.length()-5); // strip the leading "file:"
       addToPicList( url );
@@ -1988,8 +1986,7 @@ void KRandomDlg::copyCurrent()
 
 void KRandomDlg::readSettings()
 {
-  QString tmpf;
-  tmpf.sprintf( "/desktop%drc", desktop);
+  QString tmpf = QString("/desktop%1rc").arg(desktop);
 
   KConfig picturesConfig(KApplication::kde_configdir() + tmpf,
 		  KApplication::localconfigdir() + tmpf);
@@ -2049,8 +2046,7 @@ void KRandomDlg::done( int r )
   kb->currentItem = *ItemList.first();
   kb->interactive = true;
 
-  QString tmpf;
-  tmpf.sprintf( "/desktop%drc", desktop);
+  QString tmpf = QString("/desktop%1rc").arg(desktop);
 
   KConfig picturesConfig(KApplication::kde_configdir() + tmpf,
 		  KApplication::localconfigdir() + tmpf);

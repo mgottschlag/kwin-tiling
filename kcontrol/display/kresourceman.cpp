@@ -21,7 +21,7 @@ KResourceMan::KResourceMan()
 	unsigned long bytes_after = 1;
 	char *buf;
 	
-	prefix.sprintf("*");
+	prefix = "*";
 	
 	QString rProp( "RESOURCE_MANAGER" );
 	
@@ -75,7 +75,7 @@ KResourceMan::KResourceMan()
 				key = keypair.left( i ).simplifyWhiteSpace();
 				value = keypair.right( keypair.length() - i - 1 ).simplifyWhiteSpace();
 				//debug("%s -> %s", key.data(), value.data() );
-				propDict->insert( key.data(), new QString( value.data() ) );
+				propDict->insert( key.data(), new QString( value ) );
 			}
 		}
 	}
@@ -102,19 +102,18 @@ void KResourceMan::sync()
 
 	    QString *value = propDict->find( it.currentKey() );
 			
-	    keyvalue.sprintf( "%s: %s\n", it.currentKey().data(), value->data() );
+	    keyvalue = QString("%1: %2\n").arg(it.currentKey()).arg(*value);
 	    propString += keyvalue;
 // 	    if (it.currentKey() == "font"){
 // 		// dirty hack, makes font to fontList for x-resources
-// 		keyvalue.sprintf( "%s: %s\n", it.currentKey(), value->data() );
+// 		keyvalue = QString("%1: %2\n").arg(it.currentKey()).arg(*value);
 // 		propString += keyvalue;
 		
 // 	    }
 	    ++it;
 	}
 		
-		QString fileName;
-		fileName.sprintf(_PATH_TMP"/krdb.%d", timestamp);
+		QString fileName(_PATH_TMP"/krdb."+timestamp);
 		
 		QFile f( fileName );
 		if ( f.open( IO_WriteOnly ) ) {
@@ -123,7 +122,7 @@ void KResourceMan::sync()
 		}
 		
 		proc.setExecutable("xrdb");
-		proc << "-merge" << fileName.data();
+		proc << "-merge" << fileName;
 		
 		proc.start( KProcess::Block );
 		
@@ -139,9 +138,9 @@ void KResourceMan::setGroup( const QString& rGroup )
 {
 	QString s("General");
 	if ( rGroup == s )
-		prefix.sprintf( "*" );
+		prefix = "*";
 	else
-		prefix.sprintf( "%s.", rGroup.data() );
+		prefix = rGroup + ".";
 }
 
 QString KResourceMan::readEntry( const QString& rKey,
@@ -149,7 +148,7 @@ QString KResourceMan::readEntry( const QString& rKey,
 {
 	if( !propDict->isEmpty() ) {
 		
-		QString *fullKey = new QString(rKey.data());
+		QString *fullKey = new QString(rKey);
 		fullKey->prepend( prefix );
 		
 		QString *aValue = 0;
@@ -157,7 +156,7 @@ QString KResourceMan::readEntry( const QString& rKey,
 		
 		if (!aValue && pDefault ) {
 			aValue = new QString;
-			aValue->sprintf( pDefault );
+			*aValue = pDefault;
 		}
 		return *aValue;
 	} else {
@@ -165,7 +164,7 @@ QString KResourceMan::readEntry( const QString& rKey,
 		QString aValue;
 		
 		if ( pDefault )
-			aValue.sprintf( pDefault );
+			aValue = pDefault;
 			
 		return aValue;
 	}
@@ -299,18 +298,18 @@ QString KResourceMan::writeEntry( const QString& rKey, const QString& rValue )
 {
 	QString *aValue = new QString();
 	
-	QString *fullKey = new QString(rKey.data());
+	QString *fullKey = new QString(rKey);
 	fullKey->prepend( prefix );
 	
 	if( propDict->find( fullKey->data() ) ) {
 		aValue = propDict->find( fullKey->data() );
-		propDict->replace( fullKey->data(), new QString( rValue.data() ) );
+		propDict->replace( fullKey->data(), new QString( rValue ) );
 	} else {
-		propDict->insert( fullKey->data(), new QString( rValue.data() ) );
+		propDict->insert( fullKey->data(), new QString( rValue ) );
 	}
 	
 	if ( !aValue )
-		aValue->sprintf(rValue);
+		*aValue = rValue;
 	
 	return *aValue;
 }
@@ -331,7 +330,7 @@ QString KResourceMan::writeEntry( const QString& rKey, const QFont& rFont )
 	return writeEntry( rKey, aValue );
 	QFontInfo fi( rFont );
 
-	aValue.sprintf( "-*-" );
+	aValue = "-*-";
 	aValue += fi.family();
 	
 	if ( fi.bold() )
