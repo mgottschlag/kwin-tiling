@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
        fprintf(stderr, "%s is already running!\n", aboutData.appName());
        exit(0);
   }
-  KApplication app;
+  KUniqueApplication app;
 
   TopLevel *toplevel = new TopLevel();
 
