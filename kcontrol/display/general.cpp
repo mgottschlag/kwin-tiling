@@ -531,7 +531,7 @@ void KGeneral::readSettings()
 void KGeneral::slotRunImporter()
 {
     KProcess *themeImporter = new KProcess();
-    themeImporter->setExecutable("klecacyimport");
+    themeImporter->setExecutable("klegacyimport");
     connect(themeImporter, SIGNAL(processExited(KProcess *)), themeList,SLOT(rescan()));
     themeImporter->start();
 }
