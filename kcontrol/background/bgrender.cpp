@@ -443,6 +443,23 @@ wp_out:
 	      d.setRect(0, 0, w, h);
 	      break;
             }
+	 case ScaleAndCrop:
+            {
+              double sx = (double) w / ww;
+              double sy = (double) h / wh;
+              if (sx > sy) {
+	      	  //Case 1: x needs bigger scaling. Lets increase x and leave part of y offscreen
+                  ww = w;
+		  wh=(int)(sx * wh);
+              } else {
+	          //Case 2: y needs bigger scaling. Lets increase y and leave part of x offscreen
+                  wh = h;
+                  ww = (int)(sy*ww);
+              }
+              wp = wp.smoothScale(ww, wh);
+	      d.setRect((w - ww) / 2, (h - wh) / 2,w, h);
+	      break;
+            }
     }
 
     wallpaperBlend( d, wp, ww, wh );

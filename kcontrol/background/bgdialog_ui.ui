@@ -230,6 +230,7 @@
 &lt;li&gt;&lt;em&gt;Centered Maxpect:&lt;/em&gt; Magnify the picture without distorting it until it fills either the width or height of the desktop, and then center it on the desktop.&lt;/li&gt;
 &lt;li&gt;&lt;em&gt;Scaled:&lt;/em&gt;Magnify the picture, until the entire desktop is covered. This may result in some distortion of the picture.&lt;/li&gt;
 &lt;li&gt;&lt;em&gt;Centered Auto Fit:&lt;/em&gt; If the picture fits the desktop this mode works like the Centered option. If the picture is larger than the desktop it is scaled down to fit while keeping the aspect ratio.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Scale and Crop:&lt;/em&gt; Magnify the picture without distorting it until it fills both the width and height of the desktop (clipping the picture if necessary), and then center it on the desktop.&lt;/li&gt;
 &lt;/ul&gt;&lt;/qt&gt;</string>
                     </property>
                 </widget>
@@ -419,6 +420,7 @@
 &lt;li&gt;&lt;em&gt;Centered Maxpect:&lt;/em&gt; Magnify the picture without distorting it until it fills either the width or height of the desktop, and then center it on the desktop.&lt;/li&gt;
 &lt;li&gt;&lt;em&gt;Scaled:&lt;/em&gt;Magnify the picture, until the entire desktop is covered. This may result in some distortion of the picture.&lt;/li&gt;
 &lt;li&gt;&lt;em&gt;Centered Auto Fit:&lt;/em&gt; If the picture fits the desktop this mode works like the Centered option. If the picture is larger than the desktop it is scaled down to fit while keeping the aspect ratio.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Scale and Crop:&lt;/em&gt; Magnify the picture without distorting it until it fills both the width and height of the desktop (clipping the picture if necessary), and then center it on the desktop.&lt;/li&gt;
 &lt;/ul&gt;&lt;/qt&gt;</string>
                     </property>
                 </widget>
