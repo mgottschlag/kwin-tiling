@@ -42,15 +42,16 @@ Privacy::Privacy(QWidget *parent, const char *name)
 
   QBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
-  QTabWidget *privacyTabs = new QTabWidget(this, "privacytabs");
+  // add this once the P3P stuff is finished
+  //QTabWidget *privacyTabs = new QTabWidget(this, "privacytabs");
   
-  top->addWidget(privacyTabs);
   cleaningDialog = new KCMPrivacyDialog(this);
   //p3pSettings    = new KPrivacySettings(this);
 
-  privacyTabs->addTab(cleaningDialog, i18n("Cleanup"));
-  
-  // add this once the P3P stuff is finished
+  top->addWidget(cleaningDialog); 
+
+  //top->addWidget(privacyTabs);
+  //privacyTabs->addTab(cleaningDialog, i18n("Cleanup"));
   //privacyTabs->addTab(p3pSettings, i18n("Privacy Settings"));
 
 

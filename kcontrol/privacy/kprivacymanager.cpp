@@ -41,32 +41,29 @@ KPrivacyManager::~KPrivacyManager()
 
 bool KPrivacyManager::clearRunCommandHistory()
 {
-  KConfig *c = new KConfig("kdesktoprc", false, false);
-
-  {
-    KConfigGroupSaver saver(c, "MiniCli");
-    c->deleteEntry("CompletionItems");
-    c->deleteEntry("History");
-    c->sync();
-  }
-
-  QByteArray dummyData;
-
-  return kapp->dcopClient()->send( "kdesktop", "KDesktopIface", "reloadConfiguration()", dummyData );
+  return kapp->dcopClient()->send( "kdesktop", "KDesktopIface", "clearCommandHistory()", "" );
 }
 
 bool KPrivacyManager::clearAllCookies()
 {
-
-  QByteArray dummyData;
-
-  return kapp->dcopClient()->send( "kded", "kcookiejar", "deleteAllCookies()", dummyData );
+  return kapp->dcopClient()->send( "kded", "kcookiejar", "deleteAllCookies()", "" );
 }
 
 bool KPrivacyManager::clearSavedClipboardContents()
 {
-  // TODO
-  return true;
+  if(!isApplicationRegistered("klipper"))
+  {
+    KConfig *c = new KConfig("klipperrc", false, false);
+
+    {
+      KConfigGroupSaver saver(c, "General");
+      c->deleteEntry("ClipboardData");
+      c->sync();
+    }
+    return true;
+  } 
+  
+  return kapp->dcopClient()->send( "klipper", "klipper", "clearClipboardHistory()", "" );
 }
 
 bool KPrivacyManager::clearStoredPasswords()
@@ -84,7 +81,6 @@ bool KPrivacyManager::clearWebCache()
 
 bool KPrivacyManager::clearWebHistory()
 {
-  QByteArray dummyData;
   QStringList args("--preload");
 
   // preload Konqueror if it is not running
@@ -95,7 +91,7 @@ bool KPrivacyManager::clearWebHistory()
   }
 
   return kapp->dcopClient()->send( "konqueror*", "KonqHistoryManager",
-                                   "notifyClear(QCString)",dummyData );
+                                   "notifyClear(QCString)", "" );
 }
 
 bool KPrivacyManager::isApplicationRegistered(QString appName)
