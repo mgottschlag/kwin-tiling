@@ -16,6 +16,7 @@
 
 #include <kcmdlineargs.h>
 #include <kconfig.h>
+#include <klocale.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,7 +86,8 @@ int kdemain( int argc, char** argv )
 	appname.sprintf("khotkeys-screen-%d", khotkeys_screen_number);
 
                              // no need to i18n these, no GUI
-    KCmdLineArgs::init( argc, argv, appname, "KHotKeys", KHOTKEYS_VERSION );
+    KCmdLineArgs::init( argc, argv, appname, I18N_NOOP( "KHotKeys" ),
+        I18N_NOOP( "KHotKeys daemon" ), KHOTKEYS_VERSION );
     KUniqueApplication::addCmdLineOptions();
     if( !KHotKeysApp::start()) // already running
         return 0;

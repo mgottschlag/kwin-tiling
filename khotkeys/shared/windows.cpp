@@ -134,13 +134,16 @@ void Windows::activate_window( WId id_P )
 // Window_data
 
 Window_data::Window_data( WId id_P )
+    : type( NET::Unknown )
     {
-    KWin::Info kwin_info = KWin::info( id_P ); // TODO optimize
-    title = kwin_info.name;
-    pid = kwin_info.pid;
-    role = windows_handler->get_window_role( id_P );
-    wclass = windows_handler->get_window_class( id_P );
-    type = kwin_info.windowType;
+    KWin::WindowInfo kwin_info = KWin::windowInfo( id_P, NET::WMName | NET::WMWindowType ); // TODO optimize
+    if( kwin_info.valid())
+        {
+        title = kwin_info.name();
+        role = windows_handler->get_window_role( id_P );
+        wclass = windows_handler->get_window_class( id_P );
+        type = kwin_info.windowType( SUPPORTED_WINDOW_TYPES_MASK );
+        }
     }
 
 // Windowdef
@@ -245,7 +248,6 @@ Windowdef_simple::Windowdef_simple( KConfig& cfg_P )
     wclass_type = static_cast< substr_type_t >( cfg_P.readNumEntry( "ClassType" ));
     _role = cfg_P.readEntry( "Role" );
     role_type = static_cast< substr_type_t >( cfg_P.readNumEntry( "RoleType" ));
-//    pid = cfg_P.readBoolEntry( "Pid" ) ? -1 : 0; // -1 = pid yet unknown
     _window_types = cfg_P.readNumEntry( "WindowTypes" );
     }
     
@@ -272,8 +274,6 @@ bool Windowdef_simple::match( const Window_data& window_P )
         return false;
     if( !is_substr_match( window_P.role, role(), role_type ))
         return false;
-//    if( pid != 0 && window_P.pid != pid ) // CHECKME a kdyz je jeste -1 ?
-//        return false;
     kdDebug( 1217 ) << "window match:" << window_P.title << ":OK" << endl;
     return true;
     }

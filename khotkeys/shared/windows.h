@@ -27,6 +27,10 @@ class KWinModule;
 namespace KHotKeys
 {
 
+const int SUPPORTED_WINDOW_TYPES_MASK = NET::NormalMask | NET::DesktopMask | NET::DockMask
+    | NET::ToolbarMask | NET::MenuMask | NET::DialogMask | NET::OverrideMask | NET::TopMenuMask
+    | NET::UtilityMask | NET::SplashMask;
+
 class Windowdef_list;
 /*class Action_data_base;*/
 
@@ -63,7 +67,6 @@ struct Window_data
     {
     Window_data( WId id_P );
     QString title; // _NET_WM_NAME or WM_NAME
-    pid_t pid;    // _NET_WM_PID
     QString role; // WM_WINDOW_ROLE
     QString wclass; // WM_CLASS
     NET::WindowType type;

@@ -215,18 +215,18 @@ Shortcut_trigger_widget::Shortcut_trigger_widget( QWidget* parent_P, const char*
 
 void Shortcut_trigger_widget::clear_data()
     {
-    bt->setShortcut( 0 );
+    bt->setShortcut( 0, false );
     }    
     
 void Shortcut_trigger_widget::capturedShortcut( const KShortcut& s_P )
     {
     // CHECKME some checks?
-    bt->setShortcut( s_P );
+    bt->setShortcut( s_P, false );
     }    
     
 void Shortcut_trigger_widget::set_data( const Shortcut_trigger* data_P )
     {
-    bt->setShortcut( data_P->keycode());
+    bt->setShortcut( data_P->keycode(), false );
     }
 
 Shortcut_trigger* Shortcut_trigger_widget::get_data( Action_data* data_P ) const
