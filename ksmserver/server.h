@@ -33,7 +33,7 @@ extern "C" {
 #include <X11/SM/SMlib.h>
 }
 
-#include <dcopobject.h>
+#include "KSMServerInterface.h"
 
 typedef QValueList<QCString> QCStringList;
 class KSMListener;
@@ -67,7 +67,7 @@ private:
     SmsConn smsConn;
 };
 
-class KSMServer : public QObject, public DCOPObject
+class KSMServer : public QObject, public KSMServerInterface
 {
 Q_OBJECT
 public:
@@ -89,16 +89,11 @@ public:
     // error handling
     void ioError( IceConn iceConn );
 
-    // DCOP processing
-    bool process( const QCString &, const QByteArray &,
-                  QCString&, QByteArray & );
-    QCStringList functions();
-
     // notification
     void clientSetProgram( KSMClient* client );
 
     // public API
-    void restoreSession();
+    void restoreSession( QString sessionName );
     void startDefaultSession();
     void shutdown( KApplication::ShutdownConfirm confirm,
                    KApplication::ShutdownType sdtype,
@@ -110,9 +105,8 @@ public slots:
 private slots:
     void newConnection( int socket );
     void processData( int socket );
-    void timeoutQuit();
     void restoreSessionInternal();
-    void restoreSessionDone();
+    void restoreSessionDoneInternal();
 
     void protectionTimeout();
 
@@ -120,13 +114,12 @@ private slots:
 
 private:
     void handlePendingInteractions();
-    void completeShutdown();
+    void completeShutdownOrCheckpoint();
     void completeKilling();
     void cancelShutdown();
 
     void discardSession();
     void storeSession();
-    void discardStoredSession();
 
     void startProtection();
     void endProtection();
@@ -136,11 +129,18 @@ private:
 
     void autoStart2();
 
+    // public dcop interface
+    void logout( int, int, int );
+    QStringList sessionList();
+    QString currentSession();
+    void saveCurrentSession();
+    void saveCurrentSessionAs( QString );
+
  private:
     QPtrList<KSMListener> listener;
     QPtrList<KSMClient> clients;
 
-    enum State { Idle, Shutdown, Killing }; // KSMServer does not support pure checkpoints yet.
+    enum State { Idle, Shutdown, Checkpoint, Killing };
     State state;
     bool dialogActive;
     bool saveSession;
@@ -148,6 +148,8 @@ private:
     bool clean;
     KSMClient* clientInteracting;
     QString wm;
+    QString sessionGroup;
+    QString sessionName;
     QCString launcher;
     QTimer protection;
 

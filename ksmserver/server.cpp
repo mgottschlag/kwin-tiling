@@ -124,10 +124,10 @@ SmProp* KSMClient::property( const char* name ) const
 
 void KSMClient::resetState()
 {
-    saveYourselfDone = FALSE;
-    pendingInteraction = FALSE;
-    waitForPhase2 = FALSE;
-    wasPhase2 = FALSE;
+    saveYourselfDone = false;
+    pendingInteraction = false;
+    waitForPhase2 = false;
+    wasPhase2 = false;
 }
 
 /*
@@ -165,7 +165,7 @@ void KSMClient::registerClient( const char* previousId )
     if ( !clientId )
 	clientId = safeSmsGenerateClientID( smsConn );
     SmsRegisterClientReply( smsConn, (char*) clientId );
-    SmsSaveYourself( smsConn, SmSaveLocal, FALSE, SmInteractStyleNone, FALSE );
+    SmsSaveYourself( smsConn, SmSaveLocal, false, SmInteractStyleNone, false );
     SmsSaveComplete( smsConn );
 }
 
@@ -274,9 +274,9 @@ static bool only_local = 0;
 static Bool HostBasedAuthProc ( char* /*hostname*/)
 {
     if (only_local)
-	return TRUE;
+	return true;
     else
-	return FALSE;
+	return false;
 }
 
 
@@ -326,7 +326,7 @@ void KSMSaveYourselfRequestProc (
 			      KApplication::ShutdownTypeDefault,
 			      KApplication::ShutdownModeDefault );
     } else if ( !global ) {
-	SmsSaveYourself( smsConn, saveType, FALSE, interactStyle, fast );
+	SmsSaveYourself( smsConn, saveType, false, interactStyle, fast );
 	SmsSaveComplete( smsConn );
     }
     // else checkpoint only, ksmserver does not yet support this
@@ -770,11 +770,13 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     the_server = this;
     clean = false;
     wm = windowManager;
+    sessionGroup = "Session";
 
     progress = 0;
 
     state = Idle;
     dialogActive = false;
+    saveSession = false;
     KConfig* config = KGlobal::config();
     config->setGroup("General" );
     clientInteracting = 0;
@@ -829,7 +831,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 	fprintf(f, session_manager);
 	fprintf(f, "\n%i\n", getpid());
 	fclose(f);
-	setenv( "SESSION_MANAGER", session_manager, TRUE  );
+	setenv( "SESSION_MANAGER", session_manager, true  );
        // Pass env. var to kdeinit.
        QCString name = "SESSION_MANAGER";
        QCString value = session_manager;
@@ -849,7 +851,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
     IceAddConnectionWatch (KSMWatchProc, (IcePointer) this);
 
-    listener.setAutoDelete( TRUE );
+    listener.setAutoDelete( true );
     KSMListener* con;
     for ( int i = 0; i < numTransports; i++) {
 	con = new KSMListener( listenObjs[i] );
@@ -916,7 +918,7 @@ void KSMServer::removeConnection( KSMConnection* conn )
 /*!
   Called from our IceIoErrorHandler
  */
-void KSMServer::ioError( IceConn iceConn  )
+void KSMServer::ioError( IceConn /*iceConn*/  )
 {
 }
 
@@ -961,8 +963,8 @@ void KSMServer::deleteClient( KSMClient* client )
 	handlePendingInteractions();
     }
     delete client;
-    if ( state == Shutdown )
-	completeShutdown();
+    if ( state == Shutdown || state == Checkpoint )
+	completeShutdownOrCheckpoint();
     if ( state == Killing )
 	completeKilling();
 }
@@ -990,9 +992,7 @@ void KSMServer::newConnection( int /*socket*/ )
 void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode )
 {
-    if ( state != Idle )
-	return;
-    if ( dialogActive )
+    if ( state != Idle || dialogActive )
 	return;
     dialogActive = true;
 
@@ -1068,18 +1068,16 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 	    config->writeEntry( "shutdownType", (int)sdtype);
 	    config->writeEntry( "shutdownMode", (int)sdmode);
 	}
-	if ( saveSession )
-	    discardStoredSession();
 	state = Shutdown;
 	startProtection();
 	for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	    c->resetState();
 	    SmsSaveYourself( c->connection(), saveSession?SmSaveBoth: SmSaveGlobal,
-			     TRUE, SmInteractStyleAny, FALSE );
+			     true, SmInteractStyleAny, false );
 
 	}
 	if ( clients.isEmpty() )
-	    completeShutdown();
+	    completeShutdownOrCheckpoint();
 	if ( sdtype != KApplication::ShutdownTypeNone ) {
 	    QFile fifo( fifoname );
 	    if ( fifo.open( IO_WriteOnly | IO_Raw ) ) {
@@ -1098,20 +1096,49 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     dialogActive = false;
 }
 
+QString KSMServer::currentSession()
+{
+    if ( sessionGroup.startsWith( "Session: " ) )
+        return sessionGroup.mid( 9 );
+    return "default";
+}
+
+void KSMServer::saveCurrentSession()
+{
+    if ( state != Idle || dialogActive )
+	return;
+    state = Checkpoint;
+    saveSession = true;
+    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+        c->resetState();
+        SmsSaveYourself( c->connection(), SmSaveLocal, false, SmInteractStyleNone, false );
+    }
+    if ( clients.isEmpty() )
+        completeShutdownOrCheckpoint();
+}
+
+void KSMServer::saveCurrentSessionAs( QString session )
+{
+    if ( state != Idle || dialogActive )
+	return;
+    sessionGroup = session == "default" ? "Session" : "Session: " + session;
+    saveCurrentSession();
+}
+
 // callbacks
 void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 {
     if ( state == Idle )
 	return;
     if ( success ) {
-	client->saveYourselfDone = TRUE;
-	completeShutdown();
+	client->saveYourselfDone = true;
+	completeShutdownOrCheckpoint();
     } else {
 	// fake success to make KDE's logout not block with broken
 	// apps. A perfect ksmserver would display a warning box at
 	// the very end.
-	client->saveYourselfDone = TRUE;
-	completeShutdown();
+	client->saveYourselfDone = true;
+	completeShutdownOrCheckpoint();
     }
     startProtection();
 }
@@ -1119,7 +1146,7 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 void KSMServer::interactRequest( KSMClient* client, int /*dialogType*/ )
 {
     if ( state == Shutdown )
-	client->pendingInteraction = TRUE;
+	client->pendingInteraction = true;
     else
 	SmsInteract( client->connection() );
 
@@ -1141,9 +1168,9 @@ void KSMServer::interactDone( KSMClient* client, bool cancelShutdown_ )
 
 void KSMServer::phase2Request( KSMClient* client )
 {
-    client->waitForPhase2 = TRUE;
-    client->wasPhase2 = TRUE;
-    completeShutdown();
+    client->waitForPhase2 = true;
+    client->wasPhase2 = true;
+    completeShutdownOrCheckpoint();
 }
 
 void KSMServer::handlePendingInteractions()
@@ -1154,7 +1181,7 @@ void KSMServer::handlePendingInteractions()
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	if ( c->pendingInteraction ) {
 	    clientInteracting = c;
-	    c->pendingInteraction = FALSE;
+	    c->pendingInteraction = false;
 	    break;
 	}
     }
@@ -1183,14 +1210,14 @@ void KSMServer::cancelShutdown()
 void KSMServer::protectionTimeout()
 {
     endProtection();
-    if ( state != Shutdown || clientInteracting )
+    if ( ( state != Shutdown && state != Checkpoint ) || clientInteracting )
 	return;
 
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	if ( !c->saveYourselfDone && !c->waitForPhase2 )
-	    c->saveYourselfDone = TRUE;
+	    c->saveYourselfDone = true;
     }
-    completeShutdown();
+    completeShutdownOrCheckpoint();
     startProtection();
 }
 
@@ -1205,104 +1232,118 @@ void KSMServer::endProtection()
 }
 
 
-void KSMServer::completeShutdown()
+void KSMServer::completeShutdownOrCheckpoint()
 {
-    if ( state != Shutdown )
+    if ( state != Shutdown && state != Checkpoint )
 	return;
 
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-	if ( !c->saveYourselfDone && !c->waitForPhase2 )
-	    return; // not done yet
+        if ( !c->saveYourselfDone && !c->waitForPhase2 )
+            return; // not done yet
     }
 
     // do phase 2
-    bool waitForPhase2 = FALSE;
+    bool waitForPhase2 = false;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-	if ( !c->saveYourselfDone && c->waitForPhase2 ) {
-	    c->waitForPhase2 = FALSE;
-	    SmsSaveYourselfPhase2( c->connection() );
-	    waitForPhase2 = TRUE;
-	}
+        if ( !c->saveYourselfDone && c->waitForPhase2 ) {
+            c->waitForPhase2 = false;
+            SmsSaveYourselfPhase2( c->connection() );
+            waitForPhase2 = true;
+        }
     }
     if ( waitForPhase2 )
-	return;
+        return;
 
     if ( saveSession )
-	storeSession();
+        storeSession();
     else
-	discardSession();
+        discardSession();
 
-    // kill all clients
-    state = Killing;
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-        kdDebug() << "completeShutdown: client " << c->program() << endl;
-	if (c->wasPhase2)
-	    continue;
-       	SmsDie( c->connection() );
+    if ( state == Shutdown ) {
+        // kill all clients
+        state = Killing;
+        for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+            kdDebug() << "completeShutdown: client " << c->program() << endl;
+            if (c->wasPhase2)
+                continue;
+            SmsDie( c->connection() );
+        }
+
+        kdDebug() << " We killed all clients. We have now clients.count()=" <<
+           clients.count() << endl;
+        completeKilling();
+        QTimer::singleShot( 4000, kapp, SLOT( quit() ) );
+    } else if ( state == Checkpoint ) {
+        state = Idle;
     }
-    kdDebug() << " We killed all clients. We have now clients.count()=" <<
-	clients.count() << endl;
-
-    completeKilling();
-    QTimer::singleShot( 4000, this, SLOT( timeoutQuit() ) );
 }
 
 void KSMServer::completeKilling()
 {
     kdDebug() << "KSMServer::completeKilling clients.count()=" <<
-	clients.count() << endl;
+        clients.count() << endl;
     if ( state != Killing ) {
-// 	kdWarning() << "Not Killing !!! state=" << state << endl;
-	return;
+        //      kdWarning() << "Not Killing !!! state=" << state << endl;
+        return;
     }
 
     if ( clients.isEmpty() ) {
-	kdDebug() << "Calling qApp->quit()" << endl;
-	qApp->quit();
+        kapp->quit();
     } else {
-	for (KSMClient *c = clients.first(); c; c = clients.next()) {
-	    if (! c->wasPhase2)
-		return;
-	}
-	// the wm was not killed yet, do it
-	for (KSMClient *c = clients.first(); c; c = clients.next()) {
-	    SmsDie( c->connection() );
-	}
+        for (KSMClient *c = clients.first(); c; c = clients.next()) {
+            if (! c->wasPhase2)
+                return;
+        }
+        // the wm was not killed yet, do it
+        for (KSMClient *c = clients.first(); c; c = clients.next()) {
+            SmsDie( c->connection() );
+        }
     }
-}
-
-void KSMServer::timeoutQuit()
-{
-    qApp->quit();
-}
-
-void KSMServer::discardStoredSession()
-{
-    KConfig* config = KGlobal::config();
-    config->setGroup("Session" );
-    int count =  config->readNumEntry( "count" );
-    for ( int i = 1; i <= count; i++ ) {
-	QString n = QString::number(i);
-	executeCommand( config->readListEntry( QString("discardCommand")+n ) );
-    }
-    config->deleteGroup("Session");
 }
 
 void KSMServer::discardSession()
 {
+    KConfig* config = KGlobal::config();
+    config->setGroup( sessionGroup );
+    int count =  config->readNumEntry( "count" );
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-	QStringList discardCommand = c->discardCommand();
-	if ( discardCommand.isEmpty())
-	    continue;
-	executeCommand( discardCommand );
+        QStringList discardCommand = c->discardCommand();
+        if ( discardCommand.isEmpty())
+            continue;
+        // check that non of the old clients used the exactly same
+        // discardCommand before we execute it. This used to be the
+        // case up to KDE and Qt < 3.1
+        int i = 1;
+        while ( i <= count &&
+                config->readListEntry( QString("discardCommand") + QString::number(i) ) != discardCommand )
+            i++;
+        if ( i <= count )
+            executeCommand( discardCommand );
     }
 }
 
 void KSMServer::storeSession()
 {
     KConfig* config = KGlobal::config();
-    config->setGroup("Session" );
-    int count =  0;
+    config->setGroup( sessionGroup );
+    int count =  config->readNumEntry( "count" );
+    for ( int i = 1; i <= count; i++ ) {
+        QStringList discardCommand = config->readListEntry( QString("discardCommand") + QString::number(i) );
+        if ( discardCommand.isEmpty())
+	    continue;
+        // check that non of the new clients uses the exactly same
+        // discardCommand before we execute it. This used to be the
+        // case up to KDE and Qt < 3.1
+        KSMClient* c = clients.first();
+        while ( c && discardCommand != c->discardCommand() )
+            c = clients.next();
+        if ( c )
+            continue;
+        executeCommand( discardCommand );
+    }
+    config->deleteGroup( sessionGroup );
+    config->setGroup( sessionGroup );
+    count =  0;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
         int restartHint = c->restartStyleHint();
         if (restartHint == SmRestartNever)
@@ -1332,12 +1373,18 @@ void KSMServer::storeSession()
 /*!  Restores the previous session. Ensures the window manager is
   running (if specified).
  */
-void KSMServer::restoreSession()
+void KSMServer::restoreSession( QString sessionName )
 {
-    kdDebug() << "KSMServer::restoreSession" << endl;
+    kdDebug() << "KSMServer::restoreSession " << sessionName << endl;
     upAndRunning( "restore session");
     KConfig* config = KGlobal::config();
-    config->setGroup("Session" );
+
+    if ( !sessionName.isEmpty() && sessionName != "default" )
+        sessionGroup = "Session: " + sessionName;
+    else
+        sessionGroup = "Session";
+
+    config->setGroup( sessionGroup );
     int count =  config->readNumEntry( "count" );
     appsToStart = count;
 
@@ -1355,21 +1402,19 @@ void KSMServer::restoreSession()
 	wmCommand << wm;
 
     publishProgress( appsToStart, true );
-
     connectDCOPSignal( "klauncher", "klauncher", "autoStartDone()",
                        "restoreSessionInternal()", true);
-
     upAndRunning( "ksmserver" );
-    
+
     if ( !wmCommand.isEmpty() ) {
 	// when we have a window manager, we start it first and give
 	// it some time before launching other processes. Results in a
 	// visually more appealing startup.
         for (uint i = 0; i < wmCommand.count(); i++)
 	    startApplication( QStringList::split(',', wmCommand[i]) );
-	QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
+        QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
     } else {
-	autoStart();
+        autoStart();
     }
 }
 
@@ -1387,59 +1432,20 @@ void KSMServer::startDefaultSession()
     QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
 }
 
-bool KSMServer::process(const QCString &fun, const QByteArray &data,
-                        QCString& replyType, QByteArray &replyData)
-{
-    if (fun == "restoreSessionInternal()")
-    {
-       restoreSessionInternal();
-       replyType = "void";
-       return true;
-    }
-    if (fun == "restoreSessionDone()")
-    {
-       restoreSessionDone();
-       replyType = "void";
-       return true;
-    }
-    else if (fun == "logout(int,int,int)")
-    {
-	int confirm, sdtype, sdmode;
-	QDataStream arg( data, IO_ReadOnly );
-	arg >> confirm;
-	arg >> sdtype;
-	arg >> sdmode;
-        shutdown( (KApplication::ShutdownConfirm)confirm,
-                  (KApplication::ShutdownType)sdtype,
-                  (KApplication::ShutdownMode)sdmode );
-	replyType = "void";
-        return true;
-    }
-    return DCOPObject::process(fun, data, replyType, replyData);
-}
 
-/*
-QCStringList KSMServer::interfaces()
+void KSMServer::logout( int confirm, int sdtype, int sdmode )
 {
-    QCStringList ifaces = DCOPObject::interfaces();
-    ifaces += "ksmserver";
-    return ifaces;
-}
-*/
-
-QCStringList KSMServer::functions()
-{
-    QCStringList funcs = DCOPObject::functions();
-    funcs << "void logout(int,int,int)";
-    return funcs;
+    shutdown( (KApplication::ShutdownConfirm)confirm,
+              (KApplication::ShutdownType)sdtype,
+              (KApplication::ShutdownMode)sdmode );
 }
 
 void KSMServer::autoStart()
 {
-    static bool beenThereDoneThat = FALSE;
+    static bool beenThereDoneThat = false;
     if ( beenThereDoneThat )
 	return;
-    beenThereDoneThat = TRUE;
+    beenThereDoneThat = true;
 
     QByteArray data;
     QDataStream arg(data, IO_WriteOnly);
@@ -1449,10 +1455,10 @@ void KSMServer::autoStart()
 
 void KSMServer::autoStart2()
 {
-    static bool beenThereDoneThat = FALSE;
+    static bool beenThereDoneThat = false;
     if ( beenThereDoneThat )
 	return;
-    beenThereDoneThat = TRUE;
+    beenThereDoneThat = true;
 
     QByteArray data;
     QDataStream arg(data, IO_WriteOnly);
@@ -1474,7 +1480,7 @@ void KSMServer::restoreSessionInternal()
                           "restoreSessionInternal()");
     progress = appsToStart;
     KConfig* config = KGlobal::config();
-    config->setGroup("Session" );
+    config->setGroup( sessionGroup );
     int count =  config->readNumEntry( "count" );
     for ( int i = 1; i <= count; i++ ) {
 	QString n = QString::number(i);
@@ -1491,15 +1497,15 @@ void KSMServer::restoreSessionInternal()
     }
 
     connectDCOPSignal( "klauncher", "klauncher", "autoStart2Done()",
-                       "restoreSessionDone()", true);
+                       "restoreSessionDoneInternal()", true);
     autoStart2();
 }
 
 
-void KSMServer::restoreSessionDone()
+void KSMServer::restoreSessionDoneInternal()
 {
     disconnectDCOPSignal( "klauncher", "klauncher", "autoStart2Done()",
-                          "restoreSessionDone()");
+                          "restoreSessionDoneInternal()");
     if (progress == 0) {
 	publishProgress( progress );
 	upAndRunning( "session ready" );
@@ -1519,3 +1525,16 @@ void KSMServer::upAndRunning( const QString& msg )
 {
     kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)", msg );
 }
+
+
+QStringList KSMServer::sessionList()
+{
+    QStringList sessions = "default";
+    KConfig* config = KGlobal::config();
+    QStringList groups = config->groupList();
+    for ( QStringList::ConstIterator it = groups.begin(); it != groups.end(); it++ )
+        if ( (*it).startsWith( "Session: " ) )
+            sessions << (*it).mid( 9 );
+    return sessions;
+}
+

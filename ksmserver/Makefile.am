@@ -15,7 +15,7 @@
 # AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-SUBDIRS = . 
+SUBDIRS = .
 
 INCLUDES=  $(all_includes)
 
@@ -25,7 +25,7 @@ noinst_HEADERS = global.h server.h shutdown.h
 
 ksmserver_la_METASOURCES = AUTO
 # Order is important for --enable-final!
-ksmserver_la_SOURCES = main.cpp server.cpp shutdown.cpp
+ksmserver_la_SOURCES = main.cpp server.cpp shutdown.cpp KSMServerInterface.skel
 ksmserver_SOURCES = dummy.cpp
 
 ksmserver_la_LDFLAGS = $(all_libraries) -avoid-version -module

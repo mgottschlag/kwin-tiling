@@ -64,7 +64,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
   bool saveSession,
   bool maysd, bool maynuke,
   KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode )
-    : QDialog( parent, 0, TRUE, WType_Popup ) 
+    : QDialog( parent, 0, TRUE, WType_Popup )
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
@@ -77,7 +77,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     char *user = getlogin();
     if (!user) user = getenv("LOGNAME");
-    QLabel* label = new QLabel( 
+    QLabel* label = new QLabel(
       i18n("End session for %1").arg(QString::fromLatin1(user ? user : "<?""?""?>")),
       frame );
     QFont fnt = label->font();
@@ -89,42 +89,42 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     if (maysd)
     {
         QHBoxLayout* hbox = new QHBoxLayout( vbox );
-	QLabel* icon = new QLabel( frame );
-	icon->setPixmap( UserIcon( "shutdownkonq" ) );
-	hbox->addWidget( icon, AlignCenter );
+        QLabel* icon = new QLabel( frame );
+        icon->setPixmap( UserIcon( "shutdownkonq" ) );
+        hbox->addWidget( icon, AlignCenter );
         QButtonGroup *tgrp = new QButtonGroup( frame );
-	tgrp->setPaletteBackgroundColor( tgrp->colorGroup().midlight() );
-	tgrp->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+        tgrp->setPaletteBackgroundColor( tgrp->colorGroup().midlight() );
+        tgrp->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 
-	tgrp->setColumnLayout( 0, Qt::Vertical );
-	tgrp->layout()->setSpacing( 6 );
-	tgrp->layout()->setMargin( 11 );
-	QGridLayout* grid = new QGridLayout( tgrp->layout() );
-	grid->setAlignment( Qt::AlignTop );
+        tgrp->setColumnLayout( 0, Qt::Vertical );
+        tgrp->layout()->setSpacing( 6 );
+        tgrp->layout()->setMargin( 11 );
+        QGridLayout* grid = new QGridLayout( tgrp->layout() );
+        grid->setAlignment( Qt::AlignTop );
 
-	QLabel* whatNext = new QLabel( i18n("What do you want to do next?"), tgrp );
+        QLabel* whatNext = new QLabel( i18n("What do you want to do next?"), tgrp );
         rLogout = new QRadioButton( i18n("&Login as different user"), tgrp );
         rHalt = new QRadioButton( i18n("&Turn off computer"), tgrp );
         rReboot = new QRadioButton( i18n("&Restart computer"), tgrp );
 
-	grid->addWidget( rLogout, 1, 1 );
-	grid->addWidget( rHalt, 2, 1 );
-	grid->addWidget( rReboot, 3, 1 );
-	grid->addMultiCellWidget( whatNext, 0, 0, 0, 1 );
-	QSpacerItem* spacer = new QSpacerItem( 20, 0, QSizePolicy::Expanding, QSizePolicy::Minimum );
-	grid->addItem( spacer, 1, 0 );
+        grid->addWidget( rLogout, 1, 1 );
+        grid->addWidget( rHalt, 2, 1 );
+        grid->addWidget( rReboot, 3, 1 );
+        grid->addMultiCellWidget( whatNext, 0, 0, 0, 1 );
+        QSpacerItem* spacer = new QSpacerItem( 20, 0, QSizePolicy::Expanding, QSizePolicy::Minimum );
+        grid->addItem( spacer, 1, 0 );
 
 
         hbox->addWidget( tgrp, AlignTop );
         connect( tgrp, SIGNAL( clicked(int) ), SLOT( slotSdMode(int) ) );
-#if 0
+ #if 0
         mgrp = new QVButtonGroup( i18n("Shutdown Mode"), frame );
         rSched = new QRadioButton( i18n("Sch&edule"), mgrp );
         if (maynuke)
             rForce = new QRadioButton( i18n("&Force Now"), mgrp );
         rTry = new QRadioButton( i18n("&Try Now"), mgrp );
         hbox->addWidget( mgrp, AlignTop );
-#endif
+ #endif
     }
 
     checkbox = new QCheckBox( i18n("&Save session for future logins"), frame );
@@ -134,9 +134,9 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     QHBoxLayout* hbox = new QHBoxLayout( vbox );
     hbox->addStretch();
     KPushButton* yes = new KPushButton( maysd ?
-                                         KStdGuiItem::ok() :
-                                         KGuiItem( i18n( "&Logout" ) ),
-                                        frame );
+					 KStdGuiItem::ok() :
+					 KGuiItem( i18n( "&Logout" ) ),
+					frame );
     connect( yes, SIGNAL( clicked() ), SLOT( accept() ) );
     yes->setDefault( TRUE );
     hbox->addWidget( yes );
