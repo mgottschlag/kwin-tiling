@@ -675,9 +675,14 @@ void KColorScheme::slotWidgetColor(int indx)
     if (wcCombo->currentItem() != indx)
         wcCombo->setCurrentItem( indx );
 
+    // Do not emit KCModule::changed()
+    colorButton->blockSignals( true );
+
     QColor col = color(indx);
     colorButton->setColor( col );
     colorPushColor = col;
+
+    colorButton->blockSignals( false );
 }
 
 
