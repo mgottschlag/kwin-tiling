@@ -22,6 +22,7 @@
 #include <qlabel.h>
 #include <qslider.h>
 #include <qlayout.h>
+#include <qcombobox.h>
 #include "kxscontrol.h"
 
 //===========================================================================

@@ -24,11 +24,12 @@
 
 #include <qwidget.h>
 #include <qcheckbox.h>
-#include <qcombobox.h>
+
 #include "kxsitem.h"
 
 class QLabel;
 class QSlider;
+class QComboBox;
 
 //===========================================================================
 class KXSRangeControl : public QWidget, public KXSRangeItem
