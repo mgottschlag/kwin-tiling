@@ -759,7 +759,11 @@ StartClient (verify, d, pidp, name, passwd)
 	pwd = getpwnam(name);
 	if (pwd)
 	{
+#ifdef __bsdi__
+	    lc = login_getclass(pwd->pw_class);
+#else
 	    lc = login_getpwclass(pwd);
+#endif
 	    if (setusercontext(lc, pwd, pwd->pw_uid, LOGIN_SETALL) < 0)
 	    {
 		LogError("setusercontext for \"%s\" failed, errno=%d\n", name,

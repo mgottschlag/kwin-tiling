@@ -75,7 +75,14 @@ extern "C" {
 #endif
 
 #if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+	#define USE_LOGIN_CAP 1
 	#include <login_cap.h>
+#ifdef __bsdi__
+	// This only works / is needed on BSDi
+	struct login_cap_t *lc;
+#else
+	struct login_cap *lc;
+#endif
 #endif
 
 #ifdef TEST_KDM
@@ -517,8 +524,12 @@ KGreeter::restrict()
      memset(swd->sp_pwdp, 0, strlen(swd->sp_pwdp));
 #endif
 
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+#ifdef USE_LOGIN_CAP
+#ifdef __bsdi__
+     lc = login_getclass(pwd->pw_class);
+#else
      lc = login_getpwclass(pwd);
+#endif
 #endif
 
      if (restrict_nologin() ||
@@ -527,7 +538,7 @@ KGreeter::restrict()
 	 restrict_time())
        rval = true;
 
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+#ifdef USE_LOGIN_CAP
      login_close(lc);
      lc = NULL;
 #endif
@@ -535,39 +546,30 @@ KGreeter::restrict()
      return rval;
 }
 
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
 bool
 KGreeter::restrict_time()
 {
-     // don't deny root to log in
+#ifdef USE_LOGIN_CAP
+     // don't deny a root log in
      if (!pwd->pw_uid) return false;
 
      if(!auth_timeok(lc, time(NULL))) {
          KMessageBox::sorry(this, i18n("Logins not available right now."));
          return true;
      }
-
-     return false;
-}
-#else
-bool
-KGreeter::restrict_time()
-{
-     return false;
-}
 #endif
+     return false;
+}
 
-#ifdef USE_PAM
+
 bool
 KGreeter::restrict_nologin()
 {
+#ifdef USE_PAM
      // PAM handles /etc/nologin itself.
      return false;
-}
 #else /* !USE_PAM */
-bool
-KGreeter::restrict_nologin()
-{
+
      // don't deny root to log in
      if (pwd && !pwd->pw_uid) return false;
 
@@ -575,7 +577,7 @@ KGreeter::restrict_nologin()
 #define _PATH_NOLOGIN "/etc/nologin"
 #endif
 
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+#ifdef USE_LOGIN_CAP
      /* Do we ignore a nologin file? */
      if (login_getcapbool(lc, "ignorenologin", 0))
        return false;
@@ -591,7 +593,7 @@ KGreeter::restrict_nologin()
 
      QFile f;
 
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+#ifdef USE_LOGIN_CAP
      if (!file.isNull()) {
        f.setName(file);
        f.open(IO_ReadOnly);
