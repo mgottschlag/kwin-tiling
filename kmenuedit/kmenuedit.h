@@ -21,8 +21,8 @@
 #define __kmenuedit_h__
 
 #include <kmainwindow.h>
+#include <treeview.h>
 
-class TreeView;
 class BasicTab;
 class QSplitter;
 class KAction;
@@ -35,6 +35,9 @@ class KMenuEdit : public KMainWindow
 public:
     KMenuEdit( bool controlCenter, QWidget *parent=0, const char *name=0 );
     ~KMenuEdit();
+
+    void selectMenu(const QString &menu) { m_tree->selectMenu(menu); }
+    void selectMenuEntry(const QString &menuEntry) { m_tree->selectMenuEntry(menuEntry); }
 
 protected:
     void setupView();

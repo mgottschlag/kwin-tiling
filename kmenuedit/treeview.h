@@ -34,6 +34,7 @@ class MenuFile;
 class MenuFolderInfo;
 class MenuEntryInfo;
 class MenuSeparatorInfo;
+class KShortcut;
 
 class TreeItem : public QListViewItem
 {
@@ -97,6 +98,9 @@ public:
     bool save();
 
     bool dirty();
+
+    void selectMenu(const QString &menu);
+    void selectMenuEntry(const QString &menuEntry);
     
 public slots:
     void currentChanged(MenuFolderInfo *folderInfo);
@@ -130,6 +134,8 @@ protected:
     void fill();
     void fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent);
     QString findName(KDesktopFile *df, bool deleted);
+
+    void closeAllItems(QListViewItem *item);
 
     // moving = src will be removed later
     void copy( bool moving );

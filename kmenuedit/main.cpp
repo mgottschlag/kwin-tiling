@@ -28,7 +28,37 @@
 #include "kmenuedit.h"
 
 static const char description[] = I18N_NOOP("KDE menu editor");
-static const char version[] = "0.6";
+static const char version[] = "0.7";
+
+static const KCmdLineOptions options[] =
+{
+	{ "+[menu]", I18N_NOOP("Sub menu to pre-select"), 0 },
+	{ "+[menu-id]", I18N_NOOP("Menu entry to pre-select"), 0 },
+	KCmdLineLastOption
+};
+
+static KMenuEdit *menuEdit = 0;
+
+class KMenuApplication : public KUniqueApplication
+{
+public:
+   KMenuApplication() { }
+   
+   virtual int newInstance()
+   {
+      KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+      if (args->count() > 0)
+      {
+          menuEdit->selectMenu(QString::fromLocal8Bit(args->arg(0)));
+          if (args->count() > 1)
+          {
+              menuEdit->selectMenuEntry(QString::fromLocal8Bit(args->arg(1)));
+          }
+      }
+      return KUniqueApplication::newInstance();
+   }
+};
+
 
 extern "C" int kdemain( int argc, char **argv )
 {
@@ -41,13 +71,14 @@ extern "C" int kdemain( int argc, char **argv )
 
     KCmdLineArgs::init( argc, argv, &aboutData );
     KUniqueApplication::addCmdLineOptions();
+    KCmdLineArgs::addCmdLineOptions( options );
 
     if (!KUniqueApplication::start()) 
 	return 1;
 
-    KUniqueApplication app;
+    KMenuApplication app;
 
-    KMenuEdit *menuEdit = new KMenuEdit(false);
+    menuEdit = new KMenuEdit(false);
     menuEdit->show();
 
     app.setMainWidget(menuEdit);

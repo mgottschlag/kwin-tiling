@@ -441,6 +441,77 @@ void TreeView::fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent)
     }
 }
 
+void TreeView::closeAllItems(QListViewItem *item)
+{
+    if (!item) return;
+    item->setOpen(false);
+    while(item)
+    {
+       closeAllItems(item->firstChild());
+       item = item->nextSibling();
+    }
+}
+
+void TreeView::selectMenu(const QString &menu)
+{
+   if (menu.length() <= 1)
+      return; // Root menu
+
+   MenuFolderInfo *menuInfo = m_rootFolder;
+   QString restMenu = menu.mid(1);
+   if (!restMenu.endsWith("/"))
+      restMenu += "/";
+
+   closeAllItems(firstChild());
+
+   TreeItem *item = 0;
+   do
+   {
+      int i = restMenu.find("/");
+      QString subMenu = restMenu.left(i+1);
+      restMenu = restMenu.mid(i+1);
+   
+      item = (TreeItem*)(item ? item->firstChild() : firstChild());
+      while(item)
+      {
+         MenuFolderInfo *folderInfo = item->folderInfo();
+         if (folderInfo && (folderInfo->id == subMenu))
+         {
+            item->setOpen(true);
+            break;
+         }
+         item = (TreeItem*) item->nextSibling();
+      }
+   }
+   while( item && !restMenu.isEmpty());
+
+   if (item)
+   {
+      setCurrentItem(item);
+      ensureItemVisible(item);
+   }
+}
+
+void TreeView::selectMenuEntry(const QString &menuEntry)
+{
+   TreeItem *item = (TreeItem *) currentItem();
+   if (!item)
+      return;
+      
+   item = (TreeItem *) item->firstChild();
+   while(item)
+   {
+      MenuEntryInfo *entry = item->entryInfo();
+      if (entry && (entry->menuId() == menuEntry))
+      {
+         setCurrentItem(item);
+         ensureItemVisible(item);
+         return;
+      }
+      item = (TreeItem*) item->nextSibling();
+   }
+}
+
 void TreeView::itemSelected(QListViewItem *item)
 {
     TreeItem *_item = (TreeItem*)item;
