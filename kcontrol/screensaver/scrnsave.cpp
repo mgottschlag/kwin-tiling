@@ -173,7 +173,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
 
 
     QBoxLayout *topLayout = new QVBoxLayout(this, 10, 10);
-    
+
     QBoxLayout *helperLayout = new QHBoxLayout(topLayout, 10);
 
     // left column
@@ -229,7 +229,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
                                             " This time out period can be defined in the spinbox below") );
     connect(mEnabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnable(bool)));
     groupLayout->addWidget(mEnabledCheckBox);
-    
+
     QBoxLayout *hbox = new QHBoxLayout();
     groupLayout->addLayout(hbox);
     hbox->addSpacing(30);
@@ -238,7 +238,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     hbox->addWidget(mActivateLbl);
     mWaitEdit = new QSpinBox(mSettingsGroup);
     mWaitEdit->setSteps(1, 10);
-    mWaitEdit->setRange(1, 120);
+    mWaitEdit->setRange(1, INT_MAX);
     mWaitEdit->setSuffix(i18n(" minutes"));
     mWaitEdit->setSpecialValueText(i18n("1 minute"));
     mWaitEdit->setValue(mTimeout/60);
@@ -247,12 +247,12 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mActivateLbl->setBuddy(mWaitEdit);
     hbox->addWidget(mWaitEdit);
     hbox->addStretch(1);
-    QString wtstr = i18n("Choose the period of inactivity (from 1"
-      " to 120 minutes) after which the screen saver should start."
+    QString wtstr = i18n("Choose the period of inactivity "
+      " after which the screen saver should start."
       " To prevent the screen saver from automatically starting, uncheck the above option.");
     QWhatsThis::add( mActivateLbl, wtstr );
     QWhatsThis::add( mWaitEdit, wtstr );
-    
+
     mLockCheckBox = new QCheckBox( i18n("&Require password to stop screen saver"), mSettingsGroup );
     mLockCheckBox->setChecked( mLock );
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ),
@@ -632,7 +632,7 @@ void KScreenSaver::slotScreenSaver(int indx)
         mSetupBt->setEnabled(!mSaverList.at(indx)->setup().isEmpty());
     mTestBt->setEnabled(true);
     mSaver = mSaverList.at(indx)->file();
-    
+
     mSelected = indx;
     setMonitor();
     if (bChanged)
