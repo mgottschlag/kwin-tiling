@@ -1,6 +1,7 @@
 # $Id$
 
-AM_CXXFLAGS = $(STD_DEFINES) $(CONN_FLAGS)
+AM_CXXFLAGS = $(XDM_CFLAGS)
+AM_CFLAGS = $(XDM_CFLAGS)
 
 INCLUDES = -I$(srcdir)/../backend $(all_includes)
 
