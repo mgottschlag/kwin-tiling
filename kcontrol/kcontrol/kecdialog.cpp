@@ -1,5 +1,6 @@
 /*
    Copyright (c) 2000 Matthias Elter <elter@kde.org>
+   Copyright (c) 2003 Daniel Molkentin <molkentin@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -43,8 +44,9 @@ KExtendedCDialog::KExtendedCDialog(QWidget *parent, const char *name, bool modal
   : KDialogBase(IconList, i18n("Settings"), Help | Default |Cancel | Apply | Ok, Ok,
                 parent, name, modal, true)
 {
+    d = 0L;
     enableButton(Apply, false);
-    connect(this, SIGNAL(aboutToShowPage(QWidget *)), this, SLOT(aboutToShow(QWidget *)));
+    connect(this, SIGNAL(aboutToShowPage(QWidget *)), this, SLOT(slotAboutToShow(QWidget *)));
     setInitialSize(QSize(640,480));
 }
 
@@ -115,10 +117,10 @@ void KExtendedCDialog::addModule(const QString& path, bool withfallback)
     }
     moduleDict.insert(page, new LoadInfo(path, withfallback));
     if (modules.isEmpty())
-       aboutToShow(page);
+       slotAboutToShow(page);
 }
 
-void KExtendedCDialog::aboutToShow(QWidget *page)
+void KExtendedCDialog::slotAboutToShow(QWidget *page)
 {
     LoadInfo *loadInfo = moduleDict[page];
     if (!loadInfo)
@@ -131,7 +133,6 @@ void KExtendedCDialog::aboutToShow(QWidget *page)
     ModuleInfo info(loadInfo->path);
 
     KCModule *module = ModuleLoader::loadModule(info, loadInfo->withfallback);
-
 
     if (!module)
     {
