@@ -93,7 +93,7 @@ void SambaContainer::save()
 }
 
 
-QString quickHelp()
+QString SambaContainer::quickHelp()
 {
    return i18n("The Samba and NFS Status Monitor is a front end to the programs"
      " <em>smbstatus</em> and <em>showmount</em>. Smbstatus reports on current"
