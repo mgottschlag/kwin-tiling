@@ -161,7 +161,9 @@ void KSocksConfig::customPathChanged(const QString&)
 
 void KSocksConfig::testClicked()
 {
-
+  KMessageBox::information(NULL,
+                           "Sorry, this isn't implemented yet.",
+                           i18n("SOCKS Support"));
 }
 
 
