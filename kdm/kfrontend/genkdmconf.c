@@ -354,7 +354,7 @@ const char def_xservers[] =
 "\n" DEF_SERVER_LINES "\n";
 
 const char def_willing[] = 
-"#!/bin/sh\n"
+"#! /bin/sh\n"
 "# The output of this script is displayed in the chooser window.\n"
 "# (instead of \"Willing to manage\")\n"
 "\n"
@@ -365,13 +365,19 @@ const char def_willing[] =
 "echo \"${nrusers} user${s}, load: ${load}\"\n";
 
 const char def_setup[] = 
-"#!/bin/sh\n"
+"#! /bin/sh\n"
 "# Xsetup - run as root before the login dialog appears\n"
 "\n"
-KDE_BINDIR "/kdmdesktop &\n";
+"(\n"
+"  PIDFILE=/var/run/kdmdesktop-$DISPLAY.pid\n"
+"  " KDE_BINDIR "/kdmdesktop &\n"
+"  echo $! >$PIDFILE\n"
+"  wait $!\n"
+"  rm $PIDFILE\n"
+") &\n";
 
 const char def_startup[] = 
-"#!/bin/sh\n"
+"#! /bin/sh\n"
 "# Xstartup - run as root before session starts\n"
 "\n"
 "# By convention, both xconsole and xterm -C check that the\n"
@@ -380,6 +386,10 @@ const char def_startup[] =
 "# causing serious grief.\n"
 "# This is not required if you use PAM, as pam_console should handle it.\n"
 "#\n"
+"\n"
+"PIDFILE=/var/run/kdmdesktop-$DISPLAY.pid\n"
+"test -f $PIDFILE && kill `cat $PIDFILE`\n"
+"\n"
 #ifdef HAVE_PAM
 "#chown $USER /dev/console\n"
 #else
@@ -393,7 +403,7 @@ const char def_startup[] =
 "$USER\n";
 
 const char def_reset[] = 
-"#!/bin/sh\n"
+"#! /bin/sh\n"
 "# Xreset - run as root after session exits\n"
 "\n"
 "# Reassign ownership of the console to root, this should disallow\n"
@@ -415,7 +425,7 @@ const char def_reset[] =
 "$USER\n";
 
 const char def_session[] = 
-"#!/bin/sh\n"
+"#! /bin/sh\n"
 "# Xsession - run as user\n"
 "\n"
 "# redirect errors to a file in user's home directory if we can\n"
