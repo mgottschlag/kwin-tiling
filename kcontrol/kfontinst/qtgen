@@ -1,25 +1,29 @@
-#!/bin/csh -f
+#!/bin/sh -f
 
 #
 # Simple shell script to replace some Qt classes with KDE equivalents.
 #
 
-if ($#argv != 1) then
-    echo "Usage: $0 <ui file (without .ui)"
+cmd=`basename $0`
+cmd_dir=${0%%$cmd}
+ 
+if [ $# != 1 ]; then
+    echo "Usage: $cmd <ui file (without .ui)"
 else
-    if((! -e $1Data.h) || ((-e $1Data.h) && (-w $1Data.h))) then
+    if (! test -e $1Data.h ) || (test -w $1Data.h) then
         uic -o $1Data.h $1.ui
         \cat $1Data.h | \sed s/QDialog/KDialog/ | \sed s/qdialog/kdialog/ | \sed s/QWizard/KWizard/ | \sed s/qwizard/kwizard/ | \sed s/QProgressBar/KProgress/ | \sed s/qprogressbar/kprogress/ > /tmp/$user$1Data.h
         \mv /tmp/$user$1Data.h $1Data.h
     else
         echo "$1Data.h is not writable"
-    endif
-    if((! -e $1Data.cpp) || ((-e $1Data.cpp) && (-w $1Data.cpp))) then
+    fi
+    if (! test -e $1Data.cpp ) || (test -w $1Data.cpp) then
         uic -tr i18n -i $1Data.h -o $1Data.cpp $1.ui
         echo "#include <klocale.h>" > /tmp/$user$1Data.cpp
-        \cat $1Data.cpp | \sed s/QDialog/KDialog/ | \sed s/qdialog/kdialog/ | \sed s/QWizard/KWizard/ | \sed s/qwizard/kwizard/ | \sed s/QProgressBar/KProgress/ | \sed s/qprogressbar/kprogress/ >>& /tmp/$user$1Data.cpp
+        \cat $1Data.cpp | \sed s/QDialog/KDialog/ | \sed s/qdialog/kdialog/ | \sed s/QWizard/KWizard/ | \sed s/qwizard/kwizard/ | \sed s/QProgressBar/KProgress/ | \sed s/qprogressbar/kprogress/ >> /tmp/$user$1Data.cpp
+        echo "#include \"$1Data.moc\"" >> /tmp/$user$1Data.cpp
         \mv /tmp/$user$1Data.cpp $1Data.cpp
     else
         echo "$1Data.cpp is not writable"
-    endif
-endif
+    fi
+fi
