@@ -23,6 +23,28 @@
 #define MAX_HOTSPOTS   28
 #define SCROLLBAR_SIZE 16
 
+// These defines define the order of the colors in the combo box.
+#define CSM_Standard_background		0
+#define CSM_Standard_text		1
+#define CSM_Select_background		2
+#define CSM_Select_text			3
+#define CSM_Link			4
+#define CSM_Followed_Link		5
+#define CSM_Background			6
+#define CSM_Text			7
+#define CSM_Button_background		8
+#define CSM_Button_text			9
+#define CSM_Active_title_bar		10
+#define CSM_Active_title_text		11
+#define CSM_Active_title_blend		12
+#define CSM_Active_title_button		13
+#define CSM_Inactive_title_bar		14
+#define CSM_Inactive_title_text		15
+#define CSM_Inactive_title_blend	16
+#define CSM_Inactive_title_button	17
+#define CSM_LAST			18
+
+
 class HotSpot
 {
 public:
@@ -61,10 +83,8 @@ public:
     QColor buttonTxt;
     QColor aTitleBtn;
     QColor iTitleBtn;
-    QColor aTitleBtnBack;
-    QColor iTitleBtnBack;
-    QColor aTitleBtnBlend;
-    QColor iTitleBtnBlend;
+    QColor link;
+    QColor visitedLink;
 
     int contrast;
 

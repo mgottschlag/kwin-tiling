@@ -6,7 +6,9 @@
 // Converted to a kcc module by Matthias Hoelzer 1997
 // Ported to Qt-2.0 by Matthias Ettrich 1999
 // Ported to kcontrol2 by Geert Jansen 1999
+// Made maintable by Waldo Bastian 2000
 
+#include <assert.h>
 #include <config.h>
 #include <stdlib.h>
 
@@ -150,22 +152,28 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     groupLayout->addSpacing(10);
 
     wcCombo = new QComboBox(false, group);
-    wcCombo->insertItem(i18n("Inactive title bar"));
-    wcCombo->insertItem(i18n("Inactive title text"));
-    wcCombo->insertItem(i18n("Inactive title blend"));
-    wcCombo->insertItem(i18n("Active title bar"));
-    wcCombo->insertItem(i18n("Active title text"));
-    wcCombo->insertItem(i18n("Active title blend"));
-    wcCombo->insertItem(i18n("Background"));
-    wcCombo->insertItem(i18n("Text"));
-    wcCombo->insertItem(i18n("Select background"));
-    wcCombo->insertItem(i18n("Select text"));
-    wcCombo->insertItem(i18n("Window background"));
-    wcCombo->insertItem(i18n("Window text"));
-    wcCombo->insertItem(i18n("Button background"));
-    wcCombo->insertItem(i18n("Button text"));
-    wcCombo->insertItem(i18n("Active title button"));
-    wcCombo->insertItem(i18n("Inactive title button"));
+    for(int i=0; i < CSM_LAST;i++)
+    {
+       wcCombo->insertItem(QString::null);
+    }
+    wcCombo->changeItem(i18n("Inactive title bar") , CSM_Inactive_title_bar);
+    wcCombo->changeItem(i18n("Inactive title text"), CSM_Inactive_title_text);
+    wcCombo->changeItem(i18n("Inactive title blend"), CSM_Inactive_title_blend);
+    wcCombo->changeItem(i18n("Active title bar"), CSM_Active_title_bar);
+    wcCombo->changeItem(i18n("Active title text"), CSM_Active_title_text);
+    wcCombo->changeItem(i18n("Active title blend"), CSM_Active_title_blend);
+    wcCombo->changeItem(i18n("Window background"), CSM_Background);
+    wcCombo->changeItem(i18n("Window text"), CSM_Text);
+    wcCombo->changeItem(i18n("Select background"), CSM_Select_background);
+    wcCombo->changeItem(i18n("Select text"), CSM_Select_text);
+    wcCombo->changeItem(i18n("Standard Background"), CSM_Standard_background);
+    wcCombo->changeItem(i18n("Standard Text"), CSM_Standard_text);
+    wcCombo->changeItem(i18n("Button background"), CSM_Button_background);
+    wcCombo->changeItem(i18n("Button text"), CSM_Button_text);
+    wcCombo->changeItem(i18n("Active title button"), CSM_Active_title_button);
+    wcCombo->changeItem(i18n("Inactive title button"), CSM_Inactive_title_button);
+    wcCombo->changeItem(i18n("Link"), CSM_Link);
+    wcCombo->changeItem(i18n("Followed Link"), CSM_Followed_Link);
 
     wcCombo->adjustSize();
     connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
@@ -177,8 +185,6 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
        " of the preview image above.") );
 
     colorButton = new KColorButton( group );
-    colorButton->setColor(cs->iaTitle);
-    colorPushColor = cs->iaTitle;
     connect( colorButton, SIGNAL( changed(const QColor &)),
 	    SLOT(slotSelectColor(const QColor &)));
 
@@ -227,8 +233,7 @@ void KColorScheme::load()
     readScheme(0);
 
     cs->drawSampleWidgets();
-    wcCombo->setCurrentItem(0);
-    colorButton->setColor(cs->iaTitle);
+    slotWidgetColor(0);
     sb->setValue(cs->contrast);
 
     m_bChanged = false;
@@ -251,6 +256,8 @@ void KColorScheme::save()
     cfg->writeEntry("selectForeground", cs->selectTxt, true, true);
     cfg->writeEntry("buttonBackground", cs->button, true, true);
     cfg->writeEntry("buttonForeground", cs->buttonTxt, true, true);
+    cfg->writeEntry("linkColor", cs->link, true, true);
+    cfg->writeEntry("visitedLinkColor", cs->visitedLink, true, true);
 
     cfg->setGroup( "WM" );
     cfg->writeEntry("activeForeground", cs->aTxt, true, true);
@@ -357,6 +364,8 @@ void KColorScheme::slotSave( )
     config->writeEntry("buttonBackground", cs->button );
     config->writeEntry("activeTitleBtnBg", cs->aTitleBtn);
     config->writeEntry("inactiveTitleBtnBg", cs->iTitleBtn);
+    config->writeEntry("linkColor", cs->link);
+    config->writeEntry("visitedLinkColor", cs->visitedLink);
 
     config->sync();
     saveBt->setEnabled( FALSE );
@@ -447,76 +456,58 @@ void KColorScheme::slotAdd()
     slotPreviewScheme(sList->currentItem());
 }
 
+QColor &KColorScheme::color(int index)
+{
+    switch(index) {
+    case CSM_Inactive_title_bar:
+	return cs->iaTitle;
+    case CSM_Inactive_title_text:
+	return cs->iaTxt;
+    case CSM_Inactive_title_blend:
+	return cs->iaBlend;
+    case CSM_Active_title_bar:
+	return cs->aTitle;
+    case CSM_Active_title_text:
+	return cs->aTxt;
+    case CSM_Active_title_blend:
+	return cs->aBlend;
+    case CSM_Background:
+	return cs->back;
+    case CSM_Text:
+	return cs->txt;
+    case CSM_Select_background:
+	return cs->select;
+    case CSM_Select_text:
+	return cs->selectTxt;
+    case CSM_Standard_background:
+	return cs->window;
+    case CSM_Standard_text:
+	return cs->windowTxt;
+    case CSM_Button_background:
+	return cs->button;
+    case CSM_Button_text:
+	return cs->buttonTxt;
+    case CSM_Active_title_button:
+	return cs->aTitleBtn;
+    case CSM_Inactive_title_button:
+	return cs->iTitleBtn;
+    case CSM_Link:
+	return cs->link;
+    case CSM_Followed_Link:
+	return cs->visitedLink;
+    }
+    
+    assert(0); // Should never be here!
+    return cs->iaTxt; // Silence compiler
+}
+
 
 void KColorScheme::slotSelectColor(const QColor &col)
 {
-    colorPushColor = col;
-
     int selection;
-    selection = wcCombo->currentItem()+1;
+    selection = wcCombo->currentItem();
 
-    switch(selection) {
-    case 1:
-	cs->iaTitle = colorPushColor;
-	break;
-    case 2:
-	cs->iaTxt = colorPushColor;
-	break;
-    case 3:
-	cs->iaBlend = colorPushColor;
-	break;
-    case 4:
-	cs->aTitle = colorPushColor;
-	break;
-    case 5:
-	cs->aTxt = colorPushColor;
-	break;
-    case 6:
-	cs->aBlend = colorPushColor;
-	break;
-    case 7:
-	cs->back = colorPushColor;
-	break;
-    case 8:
-	cs->txt = colorPushColor;
-	break;
-    case 9:
-	cs->select = colorPushColor;
-	break;
-    case 10:
-	cs->selectTxt = colorPushColor;
-	break;
-    case 11:
-	cs->window = colorPushColor;
-	break;
-    case 12:
-	cs->windowTxt = colorPushColor;
-	break;
-    case 13:
-	cs->button = colorPushColor;
-	break;
-    case 14:
-	cs->buttonTxt = colorPushColor;
-	break;
-    case 15:
-	cs->aTitleBtn = colorPushColor;
-	break;
-    case 16:
-	cs->iTitleBtn = colorPushColor;
-	break;
-    case 17:
-	cs->aTitleBtnBack = colorPushColor;
-	break;
-    case 18:
-	cs->iTitleBtnBack = colorPushColor;
-	break;
-    case 19:
-	cs->aTitleBtnBlend = colorPushColor;
-	break;
-    case 20:
-	cs->iTitleBtnBlend = colorPushColor;
-	break;
-    }
+    color(selection) = col;
 	
     cs->drawSampleWidgets();
 
@@ -532,79 +523,14 @@ void KColorScheme::slotSelectColor(const QColor &col)
 
 void KColorScheme::slotWidgetColor(int indx)
 {
-    int selection;
-    QColor col;
     if (wcCombo->currentItem() != indx)
 	wcCombo->setCurrentItem( indx );
 
-    selection = indx + 1;
-
-    switch (selection) {
-    case 1:
-	col = cs->iaTitle;
-	break;
-    case 2:
-	col = cs->iaTxt;
-	break;
-    case 3:
-	col = cs->iaBlend;
-	break;
-    case 4:
-	col = cs->aTitle;
-	break;
-    case 5:
-	col = cs->aTxt;
-	break;	
-    case 6:
-	col = cs->aBlend;
-	break;
-    case 7:
-	col = cs->back;
-	break;
-    case 8:
-	col = cs->txt;
-	break;
-    case 9:
-	col = cs->select;
-	break;
-    case 10:
-	col = cs->selectTxt;
-	break;
-    case 11:
-	col = cs->window;
-	break;
-    case 12:
-	col = cs->windowTxt;
-	break;
-    case 13:
-	col = cs->button;
-	break;
-    case 14:
-	col = cs->buttonTxt;
-	break;
-    case 15:
-	col = cs->aTitleBtn;
-	break;
-    case 16:
-	col = cs->iTitleBtn;
-	break;
-    case 17:
-	col = cs->aTitleBtnBack;
-	break;
-    case 18:
-	col = cs->iTitleBtnBack;
-	break;
-    case 19:
-	col = cs->aTitleBtnBlend;
-    	break;
-    case 20:
-	col = cs->iTitleBtnBlend;
-	break;
-    }
-
+    QColor col = color(indx);
     colorButton->setColor( col );
     colorPushColor = col;	
 }
+
 
 
 void KColorScheme::slotColorForWidget(int indx, const QColor& col)
@@ -638,10 +564,8 @@ void KColorScheme::readScheme( int index )
 	cs->buttonTxt = cs->txt;
 	cs->aTitleBtn = lightGray;
 	cs->iTitleBtn = lightGray;
-	cs->aTitleBtnBack = lightGray;
-	cs->iTitleBtnBack = lightGray;
-	cs->aTitleBtnBlend = lightGray;
-	cs->iTitleBtnBlend = lightGray;
+        cs->link = blue;
+        cs->visitedLink = magenta;
 	cs->contrast = 7;
 	return;
     }
@@ -664,6 +588,8 @@ void KColorScheme::readScheme( int index )
     cs->windowTxt = config->readColorEntry( "windowForeground", &black );
     cs->button = config->readColorEntry( "buttonBackground", &cs->back );
     cs->buttonTxt = config->readColorEntry( "buttonForeground", &cs->txt );
+    cs->link = config->readColorEntry( "linkColor", &blue);
+    cs->visitedLink = config->readColorEntry( "visitedLinkColor", &magenta );
 
     if (index == 0)
 	config->setGroup( "WM" );
@@ -677,10 +603,6 @@ void KColorScheme::readScheme( int index )
     // hack - this is all going away. For now just set all to button bg
     cs->aTitleBtn = config->readColorEntry("activeTitleBtnBg", &cs->back);
     cs->iTitleBtn = config->readColorEntry("inactiveTitleBtnBg", &cs->back);
-    cs->aTitleBtnBack = cs->aTitleBtn;
-    cs->iTitleBtnBack = cs->iTitleBtn;
-    cs->aTitleBtnBlend = cs->aTitleBtn;
-    cs->iTitleBtnBlend = cs->iTitleBtn;
 
     if (index == 0)
 	config->setGroup( "KDE" );

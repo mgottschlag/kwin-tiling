@@ -62,6 +62,8 @@ private:
     void readScheme(int index=0);
     void readSchemeNames();
     QPalette createPalette();
+    
+    QColor &color(int index);
 
     int nSysSchemes;
     bool m_bChanged, useRM;

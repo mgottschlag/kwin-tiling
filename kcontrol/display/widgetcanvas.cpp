@@ -323,19 +323,19 @@ void WidgetCanvas::drawSampleWidgets()
     
     int spot = 0;
     hotspots[ spot++ ] =
-        HotSpot( QRect( 65, 25-14, textLen, 14 ), 1 ); // inactive text
+        HotSpot( QRect( 65, 25-14, textLen, 14 ), CSM_Inactive_title_text );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 60, 10, (width()-160)/2, 20 ), 0 ); // inactive title
+        HotSpot( QRect( 60, 10, (width()-160)/2, 20 ), CSM_Inactive_title_bar );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 65+(width()-160)/2, 10,
-                        (width()-160)/2, 20 ), 2 ); // inactive blend
+        HotSpot( QRect( 60+(width()-160)/2, 10,
+                        (width()-160)/2, 20 ), CSM_Inactive_title_blend );
 
     hotspots[spot++] =
-        HotSpot(QRect(20, 12, 40, 20), 15); // inactive titlebtn bg
+        HotSpot(QRect(20, 12, 40, 20), CSM_Inactive_title_button); 
     hotspots[spot++] =
-        HotSpot(QRect(tmp, 12, 60, 20), 15);
+        HotSpot(QRect(tmp, 12, 60, 20), CSM_Inactive_title_button);
     
 
     // Active window
@@ -348,7 +348,7 @@ void WidgetCanvas::drawSampleWidgets()
 
     pmTitle.resize( width()-152, 20 );
     KPixmapEffect::gradient(pmTitle, aTitle, aBlend,
-                            KPixmapEffect::VerticalGradient);
+                            KPixmapEffect::HorizontalGradient);
     paint.drawPixmap( 65, 35, pmTitle );
 
     paint.setFont( fnt );
@@ -364,17 +364,17 @@ void WidgetCanvas::drawSampleWidgets()
     paint.drawPixmap(tmp+42, 35, *close_pix);
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 75, 50, textLen, 14 ), 4 ); // Active text
+        HotSpot( QRect( 75, 50-14, textLen, 14 ), CSM_Active_title_text);
     hotspots[ spot ++] =
-        HotSpot( QRect( 65, 35, (width()-152)/2, 20 ), 3 ); // Active title
+        HotSpot( QRect( 65, 35, (width()-152)/2, 20 ), CSM_Active_title_bar );
     hotspots[ spot ++] =
         HotSpot( QRect( 65+(width()-152)/2, 35,
-                        (width()-152)/2, 20 ), 5 ); // Active title
+                        (width()-152)/2, 20 ), CSM_Active_title_blend );
 
     hotspots[spot++] =
-        HotSpot(QRect(25, 35, 40, 20), 14); // Active titlebtn fg
+        HotSpot(QRect(25, 35, 40, 20), CSM_Active_title_button);
     hotspots[spot++] =
-        HotSpot(QRect(tmp, 35, 60, 20), 14);
+        HotSpot(QRect(tmp, 35, 60, 20), CSM_Active_title_button);
     
     // Menu bar
 
@@ -388,16 +388,16 @@ void WidgetCanvas::drawSampleWidgets()
     paint.drawText( 35, 74, i18n("File") );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 35, 62, textLen, 14 ), 7 );
+        HotSpot( QRect( 35, 62, textLen, 14 ), CSM_Text );
     hotspots[ spot++ ] =
-        HotSpot( QRect( 27, 57, 33, 21 ), 6 );
+        HotSpot( QRect( 27, 57, 33, 21 ), CSM_Background );
 
     paint.setFont( fnt );
     paint.setPen( txt );
-    paint.drawText( 35 + textLen + 20, 69+5, i18n("Edit") );
+    paint.drawText( 35 + textLen + 20, 74, i18n("Edit") );
     textLen = paint.fontMetrics().width( i18n("Edit") );
 
-    hotspots[ spot++ ] = HotSpot( QRect( 65, 62, textLen, 14 ), 7 ); // text
+    hotspots[ spot++ ] = HotSpot( QRect( 35 + textLen + 20, 62, textLen, 14 ), CSM_Text );
 
     // Button Rects need to go before window
 
@@ -407,17 +407,22 @@ void WidgetCanvas::drawSampleWidgets()
     qDrawShadePanel ( &paint, 25, 80+5-4, width()-7-45-2,
                       height(), cg, TRUE, 2, &brush);
 
+    // Standard text
     fnt.setPointSize(12);
     paint.setFont( fnt );
     paint.setPen( windowTxt );
-    paint.drawText( 140, 127-20, i18n( "Window text") );
-    textLen = paint.fontMetrics().width( i18n("Window text") );
-
+    paint.drawText( 140, 127-20, i18n( "Standard text") );
+    textLen = paint.fontMetrics().width( i18n("Standard text") );
+    int column2 = 120 + textLen + 40 + 16;
+ 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 140, 113-20, textLen, 14 ), 11 ); // window text
+        HotSpot( QRect( 140, 113-20, textLen, 14 ), CSM_Standard_text );
 
-
+    // Selected text
     textLen = paint.fontMetrics().width( i18n("Selected text") );
+    if (120 + textLen + 40 + 16 > column2)
+       column2 = 120 + textLen + 40 + 16;
+
     paint.setBrush( select );paint.setPen( select );
     paint.drawRect ( 120, 115, textLen+40, 32);
 
@@ -427,20 +432,38 @@ void WidgetCanvas::drawSampleWidgets()
     paint.drawText( 140, 135, i18n( "Selected text") );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 140, 121, textLen, 14 ), 9 ); // select text
+        HotSpot( QRect( 140, 121, textLen, 14 ), CSM_Select_text );
     hotspots[ spot++ ] =
-        HotSpot( QRect( 120, 115, textLen+40, 32), 8 ); // select bg
+        HotSpot( QRect( 120, 115, textLen+40, 32), CSM_Select_background ); // select bg
 
+    // Link
+    paint.setPen( link );
+    paint.drawText( column2+18, 127-20, i18n( "link") );
+    textLen = paint.fontMetrics().width( i18n("link") );
+    paint.drawLine( column2+18, 109, column2+18+textLen, 109);
+
+    hotspots[ spot++ ] =
+        HotSpot( QRect( column2+18, 113-20, textLen, 17 ), CSM_Link );
+
+    int column3 = column2 + 25 + textLen;
+    // Followed Link
+    paint.setPen( visitedLink );
+    paint.drawText( column3, 127-20, i18n( "followed link") );
+    textLen = paint.fontMetrics().width( i18n("followed link") );
+    paint.drawLine( column3, 109, column3+textLen, 109);
+
+    hotspots[ spot++ ] =
+        HotSpot( QRect( column3, 113-20, textLen, 17 ), CSM_Followed_Link );
 
     // Button
-    int xpos = 120 + textLen + 40 + 16;
+    int xpos = column2;
     int ypos = 115 + 2;
     textLen = paint.fontMetrics().width(i18n("Push Button"));
     hotspots[ spot++ ] =
         HotSpot( QRect(xpos+16, ypos+((28-paint.fontMetrics().height())/2),
-                       textLen, paint.fontMetrics().height()), 13 );
+                       textLen, paint.fontMetrics().height()), CSM_Button_text );
     hotspots[ spot++ ] =
-        HotSpot( QRect(xpos, ypos, textLen+32, 28), 12 );
+        HotSpot( QRect(xpos, ypos, textLen+32, 28), CSM_Button_background );
     brush.setColor( button );
     qDrawWinButton(&paint, xpos, ypos, textLen+32, 28, cg, false, &brush);
     paint.setPen(buttonTxt);
@@ -459,32 +482,28 @@ void WidgetCanvas::drawSampleWidgets()
     paint.setFont( fnt );
     paint.setPen( txt );
     paint.drawText( 38, 97, i18n("New") );
+    textLen = paint.fontMetrics().width( i18n("New") );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 38, 83, textLen, 14 ), 7 );
-    //hotspots[ spot++ ] =
-    //HotSpot( QRect( 28, 97, 78, 21 ), 6 );
-
-    //qDrawShadePanel ( &paint, 32, 101, 80, 25, cg, FALSE, 2,
-    //&brush);
+        HotSpot( QRect( 38, 83, textLen, 14 ), CSM_Text );
 
     paint.setFont( fnt );
     paint.drawText( 38, 119, i18n("Open") );
     textLen = paint.fontMetrics().width( i18n("Open") );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 38, 105, textLen, 14 ), 7 );
-    hotspots[ spot++ ] =
-        HotSpot( QRect( 28, 101, 78, 21 ), 6 );
+        HotSpot( QRect( 38, 105, textLen, 14 ), CSM_Text );
 
     paint.setFont( fnt );
     paint.setPen( lightGray.dark() );
     paint.drawText( 38, 141, i18n("Save") );
     textLen = paint.fontMetrics().width( i18n("Save") );
 
+    hotspots[ spot++ ] =
+        HotSpot( QRect( 28, 78, 88, 77 ), CSM_Background );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect(25, 80+5-4, width()-7-45-2, height()), 10 ); // window bg
+        HotSpot( QRect(25, 80+5-4, width()-7-45-2, height()), CSM_Standard_background );
 
 
     // Valance
@@ -495,7 +514,7 @@ void WidgetCanvas::drawSampleWidgets()
     // Stop the painting
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 0, 0, width(), height() ), 6 );
+        HotSpot( QRect( 0, 0, width(), height() ), CSM_Background ); // ?
 
     repaint( FALSE );
 }
