@@ -217,6 +217,7 @@ void PasswordDlg::timerEvent(QTimerEvent *ev)
         updateLabel();
         ok->setEnabled(true);
         cancel->setEnabled(true);
+        mNewSessButton->setEnabled( true );
         greet->revive();
         greet->start();
     }
@@ -326,6 +327,7 @@ void PasswordDlg::reapVerify()
             mFailedTimerId = startTimer(1500);
             ok->setEnabled(false);
             cancel->setEnabled(false);
+            mNewSessButton->setEnabled( false );
             return;
         case AuthAbort:
             return;
