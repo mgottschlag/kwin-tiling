@@ -4,7 +4,7 @@ LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD =       $(LIBJPEG) $(LIB_KDEUI) 
 
 data_DATA = AAAAAAGeneral.ad AAAMotif.ad AAATk.ad AAAXaw.ad Editres.ad Emacs.ad \
-ML.ad Nedit.ad Netscape.ad XCalc.ad XTerm.ad XV.ad
+	ML.ad Nedit.ad Netscape.ad WPerfect.ad XCalc.ad XTerm.ad XV.ad 
 
 datadir = $(kde_datadir)/kdisplay/app-defaults
 

@@ -7,13 +7,13 @@
 ** applications fit in with the desktop
 **
 ** Copyright (C) 1998 by Mark Donohoe
+** Copyright (C) 1999 by Dirk A. Mueller (reworked for KDE 2.0)
 ** This application is freely distributable under the GNU Public License.
 **
 *****************************************************************************/
 
 #include <qdir.h>
 #include <qdatastream.h>
-#include <qdatetime.h>
 #include <qstring.h>
 #include <qtextstream.h>
 
@@ -21,340 +21,202 @@
 #include <time.h>
 
 #include <kapp.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 #include <kprocess.h>
 
-enum FontStyle { Normal, Bold, Italic, Fixed, Title };
+enum FontStyle { Normal, Bold, Italic, Fixed };
+
+// -----------------------------------------------------------------------------
 
 QString fontString( QFont rFont, FontStyle style )
 {
-        if( style == Bold )
-          rFont.setBold( true );
 
-        if( style == Italic )
-          rFont.setItalic( true );
+  switch(style) {
+  case Bold:
+    rFont.setBold(true);
+    break;
+  case Italic:
+    rFont.setItalic(true);
+    break;
+  case Fixed:
+    rFont.setFixedPitch(true);
+    break;
+  case Normal:
+    break;
+  }
 
-        if( style == Fixed )
-          rFont.setFixedPitch( true );
-
-	QString aValue;
-	aValue = rFont.rawName();
-	return aValue;
-
-	QFontInfo fi( rFont );
-	
-	aValue.sprintf( "-*-" );
-	aValue += fi.family();
-	
-	if ( fi.bold() )
-		aValue += "-bold";
-	else
-		aValue += "-medium";
-	
-	if ( fi.italic() )
-		aValue += "-i";
-	else
-		aValue += "-r";
-		
-	//aValue += "-normal-*-*-";
-	//	
-	//QString s;
-	//s.sprintf( "%d-*-*-*-*-", fi.pointSize()*10 );
-	//aValue += s;
-	
-	aValue += "-normal-*-";
-		
-	QString s;
-	s.sprintf( "%d-*-*-*-*-*-", fi.pointSize() );
-	aValue += s;
-	
-	
-	switch ( fi.charSet() ) {
-		case QFont::Latin1:
-			aValue += "iso8859-1";
-			break;
-		case QFont::AnyCharSet:
-		default:
-			aValue += "*-*";
-			break;
-		case QFont::ISO_8859_2:
-			aValue += "iso8859-2";
-			break;
-		case QFont::ISO_8859_3:
-			aValue += "iso8859-3";
-			break;
-		case QFont::ISO_8859_4:
-			aValue += "iso8859-4";
-			break;
-		case QFont::ISO_8859_5:
-			aValue += "iso8859-5";
-			break;
-		case QFont::ISO_8859_6:
-			aValue += "iso8859-6";
-			break;
-		case QFont::ISO_8859_7:
-			aValue += "iso8859-7";
-			break;
-		case QFont::ISO_8859_8:
-			aValue += "iso8859-8";
-			break;
-		case QFont::ISO_8859_9:
-			aValue += "iso8859-9";
-			break;
-	}
-	return aValue;
+  return rFont.rawName();
 }
 
-main( int argc, char ** argv )
+
+// -----------------------------------------------------------------------------
+
+void addColorDef(QString& s, const char* n, const QColor& col) 
 {
-	KApplication a( argc, argv );
-	QColorGroup cg = a.palette().normal();
-	
-	int contrast = 7;
-	
-	QString s;
-	QString preproc;
-	
-	QColor col, backCol;
-	
-	QFont fnt( "helvetica", 12 );
-	
-	col = cg.foreground();
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define FOREGROUND " );
-	preproc += s;
-	
-	backCol = cg.background();
-	s.sprintf("#%02x%02x%02x\n", backCol.red(), backCol.green(), backCol.blue());
-	s.prepend( "#define BACKGROUND " );
-	preproc += s;
+  QString tmp;
 
-	col = cg.highlight();
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define SELECT_BACKGROUND " );
-	preproc += s;
+  tmp.sprintf("#define %s #%02x%02x%02x\n",
+              n, col.red(), col.green(), col.blue());
 
-	col = cg.highlightedText();
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define SELECT_FOREGROUND " );
-	preproc += s;
-
-	col = cg.base();
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define WINDOW_BACKGROUND " );
-	preproc += s;
-
-	col = cg.foreground();
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define WINDOW_FOREGROUND " );
-	preproc += s;
-	
-	fnt = a.generalFont();
-	s = fontString( fnt, Normal );
-	s += "\n";
-	s.prepend( "#define FONT " );
-	preproc += s;
-	
-	s = fontString( fnt, Bold );
-	s += "\n";
-	s.prepend( "#define BOLD_FONT " );
-	preproc += s;
-
-	s = fontString( fnt, Italic );
-	s += "\n";
-	s.prepend( "#define ITALIC_FONT " );
-	preproc += s;
-
-	fnt = a.fixedFont();
-	s = fontString( fnt, Fixed );
-	s += "\n";
-	s.prepend( "#define FIXED_FONT " );
-	preproc += s;
-	
-	col = a.inactiveTitleColor();
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define INACTIVE_BACKGROUND " );
-	preproc += s;
-
-	col = a.inactiveTitleColor();
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define INACTIVE_FOREGROUND " );
-	preproc += s;
-
-// 	col = a.inactiveBlend();
-// 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-// 	s.prepend( "#define INACTIVE_BLEND " );
-// 	preproc += s;
-
-	col = a.activeTitleColor();
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define ACTIVE_BACKGROUND " );
-	preproc += s;
-
-	col = a.activeTitleColor();
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define ACTIVE_FOREGROUND " );
-	preproc += s;
-
-// 	col = a.activeBlend();
-// 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-// 	s.prepend( "#define ACTIVE_BLEND " );
-// 	preproc += s;
-
-// 	fnt = ???
-// 	s = fontString( fnt, Title );
-// 	s += "\n";
-// 	s.prepend( "#define TITLE_FONT " );
-// 	preproc += s;
-
-	s = "FONT,BOLD_FONT=BOLD,ITALIC_FONT=ITALIC";
-	s += "\n";
-        s.prepend( "#define FONTLIST ");
-	preproc += s;
+  s += tmp;
+}
 
 
-	contrast = a.contrast();
-	
-	int highlightVal=100+(2*contrast+4)*16/10;
-	int lowlightVal=100+(2*contrast+4)*10;
-	
-	col = backCol.light(highlightVal);
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define HIGHLIGHT " );
-	preproc += s;
-	
-    col = backCol.dark(lowlightVal);
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define LOWLIGHT " );
-	preproc += s;
-	
-	//---------------------------------------------------------------
-	
-	QFileInfoList *sysList = 0;
-	QFileInfoListIterator *sysIt = 0;
-	QFileInfoList *userList = 0;
-	QStringList *userNames = 0;
-	QFileInfoListIterator *userIt = 0;
-		
-	QString adPath = kapp->kde_datadir().copy();
-	adPath += "/kdisplay/app-defaults";
-	QDir dSys;
-	dSys.setPath( adPath );
-	
-	if ( dSys.exists() ) {
-		dSys.setFilter( QDir::Files );
-		dSys.setSorting( QDir::Name );
-		dSys.setNameFilter("*.ad");
-		sysList = new QFileInfoList( *dSys.entryInfoList() );
-	}
-	
-	adPath.sprintf( KApplication::localkdedir().data() );
-	adPath += "/share/apps/kdisplay/app-defaults";
-	QDir dUser;
-	dUser.setPath( adPath );
-	
-	if ( dUser.exists() ) {
-		dUser.setFilter( QDir::Files );
-		dUser.setSorting( QDir::Name );
-		dUser.setNameFilter("*.ad");
-		userList = new QFileInfoList( *dUser.entryInfoList() );
-		userNames = new QStringList( dUser.entryList() );
-	}
+// -----------------------------------------------------------------------------
 
-	if ( !sysList && !userList ) {
-		debug("No app-defaults files on system");
-		exit(0);
-	}
-	
-	if (sysList) sysIt = new QFileInfoListIterator( *sysList );
-	if (userList) userIt = new QFileInfoListIterator( *userList );
-	
-	QString propString;
+void addFontDef(QString& s, const char* n, const QFont& f, FontStyle fs)
+{
+  QString tmp;
 
-	time_t timestamp;
-	::time( &timestamp );
+  tmp.sprintf("#define %s %s\n", n, fontString(f, fs).latin1());
+  
+  s += tmp;
+}
 
-	QString tmpFile;
-	tmpFile.sprintf("/tmp/krdb.%d", timestamp);
-	
-	QFile tmp( tmpFile );
-	if ( tmp.open( IO_WriteOnly ) ) {
-			tmp.writeBlock( preproc.data(), preproc.length() );
-	} else {
-		debug("Couldn't open temp file");
-		exit(0);
-	}
-	
-	
-//	debug("Creating file %s", tmpFile.data() );
 
-	QFileInfo *fi;
-	if ( sysList  ) {
-		//debug("Found system list");
-	
-		while ( ( fi = sysIt->current() ) ) {
-		    QStringList::Iterator result = userNames->end();
-		    if ( userList )
-			result = userNames->find( fi->fileName() );
-		
-			if ( result != userNames->end() ) {
-				//debug("System ad's overridden by user ads.");
-			} else {
-				
-				//debug("Concatenate %s",  fi->filePath() );
+// -----------------------------------------------------------------------------
 
-				QFile f( fi->filePath() );
+void copyFile(QFile& tmp, QString const& filename) 
+{
+  QFile f( filename );
+  QString s;
+  
+  if ( f.open(IO_ReadOnly) ) {
+    
+    QTextStream t( &f );
+    
+    while ( !t.eof() ) {
+      s += t.readLine() + "\n";
+    }
+    f.close();
+  }
+  tmp.writeBlock( s.latin1(), s.length() );
+}
 
-				if ( f.open(IO_ReadOnly) ) {
 
-					QTextStream t( &f );
+// -----------------------------------------------------------------------------
 
-    				while ( !t.eof() ) {
-        				propString += t.readLine();
-						propString +="\n";
-    				}
-    				f.close();
-				}
-				tmp.writeBlock( propString.data(), propString.length() );
-				propString = QString::null;
-			}
-			++*sysIt;
-		}
-	}
-	
-	if ( userList ) {
-		//debug("Found user list");
-		while ( ( fi = userIt->current() ) ) {
-			//debug("Concatenate %s",  fi->filePath() );
+int main( int argc, char ** argv )
+{
+  KApplication a( argc, argv );
+  QColorGroup cg = a.palette().normal();
+  
+  QString preproc;
+  
+  addColorDef(preproc, "FOREGROUND"         , cg.foreground());
+  QColor backCol = cg.background();        
+  addColorDef(preproc, "BACKGROUND"         , backCol);
+  addColorDef(preproc, "HIGHLIGHT"          , backCol.light(100+(2*a.contrast()+4)*16/1));
+  addColorDef(preproc, "LOWLIGHT"           , backCol.dark(100+(2*a.contrast()+4)*10));
+  addColorDef(preproc, "SELECT_BACKGROUND"  , cg.highlight());
+  addColorDef(preproc, "SELECT_FOREGROUND"  , cg.highlightedText());
+  addColorDef(preproc, "WINDOW_BACKGROUND"  , cg.base());
+  addColorDef(preproc, "WINDOW_FOREGROUND"  , cg.foreground());
+  addColorDef(preproc, "INACTIVE_BACKGROUND", a.inactiveTitleColor());
+  addColorDef(preproc, "INACTIVE_FOREGROUND", a.inactiveTitleColor());
+  //addColorDef(preproc, "INACTIVE_BLEND"     , a.inactiveBlend());
+  addColorDef(preproc, "ACTIVE_BACKGROUND"  , a.activeTitleColor());
+  addColorDef(preproc, "ACTIVE_FOREGROUND"  , a.activeTitleColor());
+  //addColorDef(preproc, "ACTIVE_BLEND"       , a.activeBlend()); 
+  
+  addFontDef(preproc, "FONT"                , KGlobal::generalFont(), Normal);
+  addFontDef(preproc, "BOLD_FONT"           , KGlobal::generalFont(), Bold);
+  addFontDef(preproc, "ITALIC_FONT"         , KGlobal::generalFont(), Italic);
+  addFontDef(preproc, "FIXED_FONT"          , KGlobal::fixedFont(), Fixed);
+  // TITLE_FONT...
+  
+  // Fontlist
+  preproc += "#define FONTLIST FONT,BOLD_FONT=BOLD,ITALIC_FONT=ITALIC\n";
+  
+  //---------------------------------------------------------------
+  
+  QFileInfoList *sysList = 0;
+  QFileInfoListIterator *sysIt = 0;
+  QFileInfoList *userList = 0;
+  QStringList *userNames = 0;
+  QFileInfoListIterator *userIt = 0;
+  
+  QString adPath = kapp->kde_datadir().copy();
+  adPath += "/kdisplay/app-defaults";
+  QDir dSys( adPath);
+  
+  if ( dSys.exists() ) {
+    dSys.setFilter( QDir::Files );
+    dSys.setSorting( QDir::Name );
+    dSys.setNameFilter("*.ad");
+    sysList = new QFileInfoList( *dSys.entryInfoList() );
+  }
+  
+  adPath = KApplication::localkdedir().copy();
+  adPath += "/share/apps/kdisplay/app-defaults";
+  QDir dUser(adPath);
+  
+  if ( dUser.exists() ) {
+    dUser.setFilter( QDir::Files );
+    dUser.setSorting( QDir::Name );
+    dUser.setNameFilter("*.ad");
+    userList = new QFileInfoList( *dUser.entryInfoList() );
+    userNames = new QStringList( dUser.entryList() );
+  }
+  
+  if ( !sysList && !userList ) {
+    debug("No app-defaults files on system");
+    exit(0);
+  }
+  
+  if (sysList) sysIt = new QFileInfoListIterator( *sysList );
+  if (userList) userIt = new QFileInfoListIterator( *userList );
+  
+  QString propString;
+  
+  time_t timestamp;
+  ::time( &timestamp );
+  
+  QString tmpFile;
+  tmpFile.sprintf("/tmp/krdb.%d", timestamp);
+  
+  QFile tmp( tmpFile );
+  if ( tmp.open( IO_WriteOnly ) ) {
+    tmp.writeBlock( preproc.latin1(), preproc.length() );
+  } else {
+    debug("Couldn't open temp file");
+    exit(0);
+  }
+  
+  QFileInfo *fi;
+  if ( sysList  ) {
+    while ( ( fi = sysIt->current() ) ) {
+      if ( !(userNames && (userNames->find(fi->fileName()) != userNames->end())) ) {
+        // There is no userlist with that name
+        //debug("Concatenate %s",  fi->filePath().ascii() );
+        
+        copyFile(tmp, fi->filePath());
+      }
+      ++*sysIt;
+    }
+  }
+  
+  if ( userList ) {
+    while ( ( fi = userIt->current() ) ) {
+      copyFile(tmp, fi->filePath());
+      
+      ++*userIt;
+    }
+  }
 
-			QFile f( fi->filePath() );
-
-			if ( f.open(IO_ReadOnly) ) {
-
-				QTextStream t( &f );
-
-    			while ( !t.eof() ) {
-        			propString += t.readLine();
-					propString +="\n";
-    			}
-    			f.close();
-			}
-			tmp.writeBlock( propString.data(), propString.length() );
-			propString = QString::null;
-			++*userIt;
-		}
-	}
-
-	tmp.close();
-
-	KProcess proc;
-
-	proc.setExecutable("xrdb");
-	proc << "-merge" << tmpFile.data();
-
-	proc.start( KProcess::Block, KProcess::Stdin );
-
-	QDir d;
-	d.setPath( "/tmp" );
-		if ( d.exists() )
-		         d.remove( tmpFile );
+  // very primitive support for  ~/.Xdefaults by appending it
+  copyFile(tmp, QDir::homeDirPath() + "/.Xdefaults");
+  
+  tmp.close();
+  
+  KProcess proc;
+  
+  proc.setExecutable("xrdb");
+  proc << "-merge" << tmpFile.latin1();
+  
+  proc.start( KProcess::Block, KProcess::Stdin );
+  
+  QDir d("/tmp");
+  d.remove( tmpFile );
 }
