@@ -45,7 +45,7 @@
 
 extern "C"
 {
-KCModule* create_khotkeys( QWidget* parent_P, const char* name_P )
+    KDE_EXPORT KCModule* create_khotkeys( QWidget* parent_P, const char* name_P )
     {
 //    sleep( 20 ); // CHECKME DEBUG
     KGlobal::locale()->insertCatalogue("khotkeys");
@@ -54,7 +54,7 @@ KCModule* create_khotkeys( QWidget* parent_P, const char* name_P )
     return ret;
     }
 
-void init_khotkeys()
+    KDE_EXPORT void init_khotkeys()
     {
     KConfig cfg( "khotkeysrc", true );
     cfg.setGroup( "Main" );

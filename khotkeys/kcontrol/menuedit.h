@@ -21,21 +21,21 @@ extern "C"
     {
 // initializes khotkeys DSO - loads i18n catalogue
 // handled automatically by KHotKeys wrapper class in kmenuedit
-void khotkeys_init( void );
+KDE_EXPORT void khotkeys_init( void );
 // return keyboard shortcut ( e.g. "ALT+T" ) for given menu entry ( e.g.
 // "System/Konsole.desktop"
-QString khotkeys_get_menu_entry_shortcut( const QString& entry_P );
+KDE_EXPORT QString khotkeys_get_menu_entry_shortcut( const QString& entry_P );
 // changes assigned shortcut to menu entry a updates config file
-QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
+KDE_EXPORT QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
     const QString& shortcut_P );
 // menu entry was moved in K Menu
-bool khotkeys_menu_entry_moved( const QString& new_P, const QString& old_P );
+KDE_EXPORT bool khotkeys_menu_entry_moved( const QString& new_P, const QString& old_P );
 // menu entry was removed
-void khotkeys_menu_entry_deleted( const QString& entry_P );    
+KDE_EXPORT void khotkeys_menu_entry_deleted( const QString& entry_P );    
 // List of all hotkeys in use
-QStringList khotkeys_get_all_shortcuts( );
+KDE_EXPORT QStringList khotkeys_get_all_shortcuts( );
 // Find menu entry that uses shortcut
-KService::Ptr khotkeys_find_menu_entry( const QString& shortcut_P );
+KDE_EXPORT KService::Ptr khotkeys_find_menu_entry( const QString& shortcut_P );
     } // extern "C"
 
 #endif
