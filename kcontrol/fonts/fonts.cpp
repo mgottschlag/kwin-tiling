@@ -300,9 +300,8 @@ KFonts::KFonts(QWidget *parent, const char *name)
 
    QWhatsThis::add(cbAA,
      i18n(
-       "If this option is selected, KDE will use anti-aliased fonts and "
-       "pixmaps, meaning fonts can use more than"
-       " just one color to simulate curves."));
+       "If this option is selected, KDE will smooth the edges of curves in "
+			 "fonts and some images."));
 
    layout->addWidget(cbAA);
    layout->addStretch(1);
