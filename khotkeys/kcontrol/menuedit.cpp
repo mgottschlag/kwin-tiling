@@ -42,27 +42,6 @@ void khotkeys_init()
     init_global_data( false, new QObject );
     }
 
-static bool menuentry_match( QString s1, QString s2 )
-    {
-    if( s1.endsWith( ".desktop" ))
-        s1.truncate( s1.length() - 8 );
-    if( s1.endsWith( ".kdelnk" ))
-        s1.truncate( s1.length() - 7 );
-    int slash = s1.findRev( '/' );
-    if( slash >= 0 )
-        s1 = s1.mid( slash + 1 );
-    s1 = s1.lower();
-    if( s2.endsWith( ".desktop" ))
-        s2.truncate( s2.length() - 8 );
-    if( s2.endsWith( ".kdelnk" ))
-        s2.truncate( s2.length() - 7 );
-    slash = s2.findRev( '/' );
-    if( slash >= 0 )
-        s2 = s2.mid( slash + 1 );
-    s2 = s2.lower();
-    return s1 == s2;
-    }
-    
 Menuentry_shortcut_action_data* khotkeys_get_menu_entry_internal2( 
     const Action_data_group* data_P, const QString& entry_P )
     {
@@ -77,7 +56,8 @@ Menuentry_shortcut_action_data* khotkeys_get_menu_entry_internal2(
         if( Menuentry_shortcut_action_data* entry
             = dynamic_cast< Menuentry_shortcut_action_data* >( *it ))
             {
-            if( entry->action() != NULL && menuentry_match( entry->action()->command_url(), entry_P ))
+               KService::Ptr service = entry->action() ? entry->action()->service() : 0;
+               if ( service && (service->storageId() == entry_P) )
                     return entry;
             }
         if( Action_data_group* group = dynamic_cast< Action_data_group* >( *it ))

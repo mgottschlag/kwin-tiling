@@ -16,6 +16,8 @@
 #include <qptrlist.h>
 #include <qtimer.h>
 
+#include <kservice.h>
+
 class KConfig;
 
 #include <khotkeysglobal.h>
@@ -87,6 +89,9 @@ class Menuentry_action
         virtual void execute();
         virtual const QString description() const;
         virtual Action* copy( Action_data* data_P ) const;
+        KService::Ptr service() const;
+    private:
+        KService::Ptr _service;
     };
     
 class Dcop_action

@@ -183,25 +183,28 @@ void Menuentry_action::cfg_write( KConfig& cfg_P ) const
     cfg_P.writeEntry( "Type", "MENUENTRY" ); // overwrites value set in base::cfg_write()
     }
 
+KService::Ptr Menuentry_action::service() const
+    {
+    if (!_service)
+    {
+        const_cast<Menuentry_action *>(this)->_service = KService::serviceByStorageId(command_url());
+    }
+    return _service;
+    }
+
 void Menuentry_action::execute()
     {
-    if( command_url().isEmpty())
+    (void) service();
+    if (!_service)
         return;
-    QString entry = command_url();
-    if( entry.endsWith( ".desktop" ))
-        entry.truncate( entry.length() - 8 );
-    if( entry.endsWith( ".kdelnk" ))
-        entry.truncate( entry.length() - 7 );
-    int slash = entry.findRev( '/' );
-    if( slash >= 0 )
-        entry = entry.mid( slash + 1 );
-    kapp->startServiceByDesktopName( entry );
+    KRun::run( *_service, KURL::List());
     timeout.start( 1000, true ); // 1sec timeout
     }
 
 const QString Menuentry_action::description() const
     {
-    return i18n( "Menuentry : " ) + command_url();
+    (void) service();
+    return i18n( "Menuentry : " ) + (_service ? _service->name() : QString::null);
     }
 
 Action* Menuentry_action::copy( Action_data* data_P ) const
