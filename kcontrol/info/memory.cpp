@@ -35,6 +35,7 @@
 
 #include <klocale.h>
 #include <kglobal.h>
+#include <kseparator.h>
 
 #include "memory.h"
 
@@ -159,10 +160,8 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
     /* stretch the right side */
     hbox->addStretch();
 
-    QFrame* tmpQFrame = new QFrame( this );
-    tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
-    tmpQFrame->setMinimumHeight(SPACING/2);
-    top->addWidget(tmpQFrame);
+    KSeparator* line = new KSeparator( KSeparator::HLine, this );
+    top->addWidget(line);
     
     /* the middle stretch... */
 //    top->addStretch(1);

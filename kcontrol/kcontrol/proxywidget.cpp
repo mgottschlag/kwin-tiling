@@ -26,6 +26,7 @@
 #include <klocale.h>
 #include <kapp.h>
 #include <kcmodule.h>
+#include <kseparator.h>
 
 #include <qwhatsthis.h>
 
@@ -145,9 +146,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 
   connect(_client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
 
-  _sep = new QFrame(this);
-  _sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);
-  _sep->show();
+  _sep = new KSeparator(KSeparator::HLine, this);
 
   _help = new QPushButton(i18n("&Help"), this);
   _default = new QPushButton(i18n("Use &Defaults"), this);
