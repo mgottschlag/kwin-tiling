@@ -58,61 +58,59 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
     QString url = kurl.url();
 
     if (KURISearchFilterEngine::self()->verbose())
-	kdDebug() << "KURISearchFilter: filtering " << url << endl;
+        kdDebug() << "KURISearchFilter: filtering " << url << endl;
 
     // Is this URL a candidate for filtering?
-    if (!kurl.isMalformed())
+
+    // Note: we don't use KURL::protocol anymore. This depends too much
+    // on the whole URL. We just want the protocol here.
+    QString protocol;
+
+    // See if it's a searcher prefix. If not, use Internet Keywords
+    // if we can. Note that we want a colon to match a searcher
+    // prefix. Also note that other filterings like doing a DNS
+    // lookup for a hostname should have been taken care of before.
+    int pos = url.find(':');
+    if (pos >= 0)
+        protocol = url.left(pos);
+
+    if (!KProtocolInfo::isKnownProtocol(protocol))
     {
-        return false;
-    }
-    kdDebug() << "Ok, malformed " << url << endl;
-
-    if (!KProtocolInfo::isKnownProtocol(kurl.protocol())) {
-        kdDebug() << "not known " << url << endl;
-	QString query;
-	int pos = -1;
-
-	// See if it's a searcher prefix. If not, use Internet Keywords
-	// if we can. Note that we want a colon to match a searcher
-	// prefix. Also note that other filterings like doing a DNS
-	// lookup for a hostname should have been taken care of before.
-	
-	pos = url.find(':');
-	if (pos >= 0) {
-            QString key = url.left(pos);
-            query = KURISearchFilterEngine::self()->searchQuery(key);
-	} else
+        QString query;
+        if ( !protocol.isEmpty() )
+            query = KURISearchFilterEngine::self()->searchQuery(protocol);
+        else
             query = KURISearchFilterEngine::self()->navQuery();
-	
-	// Substitute the variable part in the query we found.
-	
-	if (!query.isEmpty()) {
-	    QString newurl = query;
-	
-	    int pct;
-	
-	    // Always use utf-8, since it is guaranteed that this
-	    // will be understood.
-	
-	    if ((pct = newurl.find("\\2")) >= 0) {
-		newurl = newurl.replace(pct, 2, "utf-8");
-	    }
-	
-	    QString userquery = url.mid(pos+1).replace(QRegExp(" "), "+").utf8();
-	    if (kurl.isMalformed()) {
-	        userquery = KURL::encode_string(userquery);
-	    }
-	    if ((pct = newurl.find("\\1")) >= 0) {
-		newurl = newurl.replace(pct, 2, userquery);
-	    }
-	
-	    if (KURISearchFilterEngine::self()->verbose())
-		kdDebug() << "filtered " << url << " to " << newurl << "\n";
+
+        // Substitute the variable part in the query we found.
+
+        if (!query.isEmpty()) {
+            QString newurl = query;
+
+            int pct;
+
+            // Always use utf-8, since it is guaranteed that this
+            // will be understood.
+
+            if ((pct = newurl.find("\\2")) >= 0) {
+                newurl = newurl.replace(pct, 2, "utf-8");
+            }
+
+            QString userquery = url.mid(pos+1).replace(QRegExp(" "), "+").utf8();
+            if (kurl.isMalformed()) {
+                userquery = KURL::encode_string(userquery);
+            }
+            if ((pct = newurl.find("\\1")) >= 0) {
+                newurl = newurl.replace(pct, 2, userquery);
+            }
+
+            if (KURISearchFilterEngine::self()->verbose())
+                kdDebug() << "filtered " << url << " to " << newurl << "\n";
 
             setFilteredURI( data, newurl );
             setURIType( data, KURIFilterData::NET_PROTOCOL );
-	    return true;
-	}
+            return true;
+        }
     }
     kdDebug() << "return false" << endl;
     return false;

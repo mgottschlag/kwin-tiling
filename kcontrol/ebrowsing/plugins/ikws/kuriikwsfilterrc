@@ -39,7 +39,7 @@ Query=http://www.go.com/Titles?col=WW&qt=\\1&svx=home_searchbox&sv=IS&lk=noframe
 
 [Google Search]
 Keys=gg,google
-Query=http://google.com/search?q=\\1
+Query=http://www.google.com/search?q=\\1
 
 [Hotbot Search]
 Keys=hb,hotbot
