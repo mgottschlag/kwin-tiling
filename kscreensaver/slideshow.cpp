@@ -149,7 +149,7 @@ void kSlideShowSaver::readConfig()
   mShowRandom = config->readBoolEntry("ShowRandom", true);
   mZoomImages = config->readBoolEntry("ZoomImages", false);
   mPrintName = config->readBoolEntry("PrintName", true);
-  mDirectory = config->readEntry("Directory", "~/.kde/share/apps/kslideshow/pics");
+  mDirectory = config->readEntry("Directory", KGlobal::dirs()->saveLocation("data", "kslideshow/pics", false));
   mDelay = config->readNumEntry("Delay", 10) * 1000;
 
   loadDirectory();
