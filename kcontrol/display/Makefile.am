@@ -16,6 +16,14 @@ libkcm_display_la_LDFLAGS = -module -avoid-version $(all_libraries)
 libkcm_display_la_LIBADD = $(LIB_KDEUI) $(LIB_KIMGIO) $(LIB_KFILE) $(DPMSLIB) \
 	$(top_builddir)/kdesktop/libbgnd.la
 
+check_PROGRAMS = test
+test_SOURCES = $(libkcm_display_la_SOURCES) test.cpp
+test.cpp:
+	echo "int main() {};" > test.cpp
+test_LDFLAGS  = $(all_libraries) -module -avoid-version
+test_LDADD = $(LIB_KDEUI) $(LIB_KIMGIO) $(LIB_KFILE) $(DPMSLIB) \
+	$(top_builddir)/kdesktop/libbgnd.la
+
 METASOURCES = AUTO
 EXTRA_DIST = README
 
