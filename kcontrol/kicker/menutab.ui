@@ -88,7 +88,7 @@
                                 <enum>TabFocus</enum>
                             </property>
                             <property name="text">
-                                <string>&amp;Name Only</string>
+                                <string>&amp;Name only</string>
                             </property>
                             <property name="whatsThis" stdset="0">
                                 <string>When this option is selected, items in the K Menu will appear with the application's name next to the icon.</string>
