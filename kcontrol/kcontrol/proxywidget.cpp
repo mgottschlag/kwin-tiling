@@ -291,6 +291,7 @@ void ProxyWidget::resetClicked()
 {
   _client->load();
   clientChanged(false);
+  _apply->setEnabled(false);
 }
 
 void ProxyWidget::rootClicked()
