@@ -34,7 +34,7 @@ K_EXPORT_COMPONENT_FACTORY (kcm_passwords, PassFactory("passwords") );
 KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStringList &)
     : KCModule(PassFactory::instance(), parent, name)
 {
-    QVBoxLayout *top = new QVBoxLayout(this, 10, 10);
+    QVBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
     // Echo mode
     m_EMGroup = new QVButtonGroup(i18n("Echo Characters As"), this);

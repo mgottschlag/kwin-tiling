@@ -26,6 +26,7 @@
 #include <dcopclient.h>
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
+#include <kdialog.h>
 
 #include "main.h"
 #include "main.moc"
@@ -41,7 +42,7 @@ KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList 
 {
   KGlobal::locale()->insertCatalogue("timezones"); // For time zone translations
 
-  QVBoxLayout *layout = new QVBoxLayout(this);
+  QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
   dtime = new Dtime(this);
   layout->addWidget(dtime);
