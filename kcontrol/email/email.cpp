@@ -84,7 +84,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( organization, wtstr );
 
-  label = new QLabel(i18n("E-mail &Address:"), uBox);
+  label = new QLabel(i18n("Email &Address:"), uBox);
 
   emailAddr = new KLineEdit(uBox);
   connect(emailAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
