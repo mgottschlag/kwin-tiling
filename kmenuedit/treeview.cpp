@@ -654,7 +654,6 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
       // update fileInfo data
       parentFolderInfo->add(entryInfo);
 
-
       TreeItem *newItem = createTreeItem(parentItem, after, entryInfo, true);
 
       setSelected ( newItem, true);
@@ -830,15 +829,15 @@ void TreeView::newitem()
    s->setMenuId(menuId);
 
    MenuEntryInfo *entryInfo = new MenuEntryInfo(s, df);
+
+   if(parentItem)
+      parentItem->setOpen(true);
+
    // update fileInfo data
    parentFolderInfo->add(entryInfo);
 
-
-   TreeItem *newItem = createTreeItem(parentItem, item, entryInfo, true);
-
    // create the TreeItem
-   if(parentItem)
-      parentItem->setOpen(true);
+   TreeItem *newItem = createTreeItem(parentItem, item, entryInfo, true);
 
    setSelected ( newItem, true);
    itemSelected( newItem);
