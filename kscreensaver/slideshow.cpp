@@ -838,13 +838,8 @@ void kSlideShowSetup::slotDirSelected(int aIdx)
   if (aIdx <= 0)
   {
     QString dirName;
-#ifdef AFTER_KRASH_API
     dirName = KFileDialog::getExistingDirectory(QDir::homeDirPath(), this,
 		   glocale->translate("Choose Images Directory") );
-#else
-    dirName = KFileBaseDialog::getDirectory(QDir::homeDirPath(), this,
-			    glocale->translate("Choose Images Directory"));
-#endif
     if (dirName.isEmpty()) return;
     mCboDir->insertItem(dirName, 1);
     mCboDir->setCurrentItem(1);
