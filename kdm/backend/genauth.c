@@ -320,10 +320,9 @@ AddPreGetEntropy (void)
 int
 GenerateAuthData (char *auth, int len)
 {
-    unsigned *rnd = (unsigned*)auth;
-
 #ifdef ARC4_RANDOM
     int i;
+    unsigned *rnd = (unsigned*)auth;
     if (sizeof(unsigned) == 4)
 	for (i = 0; i < len; i += 4)
 	    rnd[i / 4] = arc4random();
@@ -355,6 +354,7 @@ GenerateAuthData (char *auth, int len)
     }
 
     {
+	unsigned *rnd = (unsigned*)auth;
 	unsigned tmp[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
 	AddPreGetEntropy();
 	pmd5_hash (tmp, epool);

@@ -74,6 +74,7 @@ from The Open Group.
  **************************************************************/
 
 #include <ctype.h>
+#include <stdarg.h>
 
 /* format flags - Bits */
 #define DP_F_MINUS	(1 << 0)
