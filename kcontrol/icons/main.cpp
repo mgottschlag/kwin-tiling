@@ -101,6 +101,7 @@ const KAboutData *IconModule::aboutData() const
                             KAboutData::License_GPL,
                             I18N_NOOP("(c) 2000-2003 Geert Jansen"), 0, 0);
         ab->addAuthor("Geert Jansen", 0, "jansen@kde.org");
+        ab->addAuthor("Antonio Larrosa Jiménez", 0, "larrosa@kde.org");
         ab->addCredit("Torsten Rahn", 0, "torsten@kde.org");
     }
 
