@@ -1,365 +1,270 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>SocksBase</class>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>SocksBase</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
             <width>587</width>
-            <height>478</height>
+            <height>430</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Socks</string>
     </property>
-    <property>
-        <name>layoutMargin</name>
+    <property name="layoutMargin" stdset="0">
     </property>
-    <property>
-        <name>layoutSpacing</name>
+    <property name="layoutSpacing" stdset="0">
     </property>
     <vbox>
-        <property stdset="1">
-            <name>margin</name>
-            <number>0</number>
+        <property name="name">
+            <cstring>unnamed</cstring>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QCheckBox">
+            <property name="name">
                 <cstring>_c_enableSocks</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>&amp;Enable SOCKS support</string>
             </property>
-            <property>
-                <name>whatsThis</name>
+            <property name="whatsThis" stdset="0">
                 <string>Check this to enable SOCKS4 and SOCKS5 support in KDE applications and I/O subsystems.</string>
             </property>
         </widget>
-        <widget>
-            <class>QButtonGroup</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QButtonGroup">
+            <property name="name">
                 <cstring>bg</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>SOCKS Implementation</string>
             </property>
             <vbox>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget>
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QRadioButton">
+                    <property name="name">
                         <cstring>_c_detect</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>A&amp;uto detect</string>
                     </property>
-                    <property stdset="1">
-                        <name>buttonGroupId</name>
+                    <property name="buttonGroupId">
                         <number>1</number>
                     </property>
-                    <property>
-                        <name>whatsThis</name>
+                    <property name="whatsThis" stdset="0">
                         <string>If you select Autodetect, then KDE will automatically search for an implementation of SOCKS on your computer.</string>
                     </property>
                 </widget>
-                <widget>
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QRadioButton">
+                    <property name="name">
                         <cstring>_c_NEC</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Use &amp;NEC SOCKS</string>
                     </property>
-                    <property stdset="1">
-                        <name>buttonGroupId</name>
+                    <property name="buttonGroupId">
                         <number>2</number>
                     </property>
-                    <property>
-                        <name>whatsThis</name>
+                    <property name="whatsThis" stdset="0">
                         <string>This will force KDE to use NEC SOCKS if it can be found.</string>
                     </property>
                 </widget>
-                <widget>
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QRadioButton">
+                    <property name="name">
                         <cstring>_c_Dante</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Use &amp;Dante</string>
                     </property>
-                    <property stdset="1">
-                        <name>buttonGroupId</name>
+                    <property name="buttonGroupId">
                         <number>3</number>
                     </property>
-                    <property>
-                        <name>whatsThis</name>
+                    <property name="whatsThis" stdset="0">
                         <string>This will force KDE to use Dante if it can be found.</string>
                     </property>
                 </widget>
-                <widget>
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QRadioButton">
+                    <property name="name">
                         <cstring>_c_custom</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Use &amp;custom library</string>
                     </property>
-                    <property stdset="1">
-                        <name>buttonGroupId</name>
+                    <property name="buttonGroupId">
                         <number>4</number>
                     </property>
-                    <property>
-                        <name>whatsThis</name>
+                    <property name="whatsThis" stdset="0">
                         <string>Select custom if you wish to use an unlisted SOCKS library. Please note that this may not always work as it depends on the API of the library which you specify (below).</string>
                     </property>
                 </widget>
-                <widget>
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLayoutWidget">
+                    <property name="name">
                         <cstring>Layout6</cstring>
                     </property>
                     <hbox>
-                        <property stdset="1">
-                            <name>margin</name>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
                             <number>0</number>
                         </property>
-                        <property stdset="1">
-                            <name>spacing</name>
+                        <property name="spacing">
                             <number>6</number>
                         </property>
-                        <spacer>
-                            <property>
-                                <name>name</name>
-                                <cstring>Spacer10</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>orientation</name>
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property stdset="1">
-                                <name>sizeType</name>
-                                <enum>Fixed</enum>
-                            </property>
-                            <property>
-                                <name>sizeHint</name>
-                                <size>
-                                    <width>30</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QLabel">
+                            <property name="name">
                                 <cstring>_c_customLabel</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>sizePolicy</name>
+                            <property name="sizePolicy">
                                 <sizepolicy>
                                     <hsizetype>4</hsizetype>
                                     <vsizetype>1</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
-                            <property stdset="1">
-                                <name>text</name>
+                            <property name="text">
                                 <string>&amp;Path:</string>
                             </property>
-                            <property>
-                                <name>buddy</name>
+                            <property name="indent">
+                                <number>21</number>
+                            </property>
+                            <property name="buddy" stdset="0">
                                 <cstring>_c_customPath</cstring>
                             </property>
                         </widget>
-                        <widget>
-                            <class>KURLRequester</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="KURLRequester">
+                            <property name="name">
                                 <cstring>_c_customPath</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>minimumSize</name>
-                                <size>
-                                    <width>0</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                            <property>
-                                <name>whatsThis</name>
-                                <string>Enter the path to an unsupported SOCKS library.</string>
                             </property>
                         </widget>
                     </hbox>
                 </widget>
             </vbox>
         </widget>
-        <widget>
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox">
+            <property name="name">
                 <cstring>_c_addPaths</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
                     <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>Additional library search paths</string>
             </property>
-            <property>
-                <name>whatsThis</name>
+            <property name="whatsThis" stdset="0">
                 <string>Here you can specify additional directories to search for the SOCKS libraries.  /usr/lib, /usr/local/lib, /usr/local/socks5/lib and /opt/socks5/lib are already searched by default.</string>
             </property>
             <vbox>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget>
-                    <class>QListView</class>
+                <widget class="QListView">
                     <column>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Path</string>
                         </property>
-                        <property>
-                            <name>clickable</name>
+                        <property name="clickable">
                             <bool>true</bool>
                         </property>
-                        <property>
-                            <name>resizeable</name>
+                        <property name="resizeable">
                             <bool>true</bool>
                         </property>
                     </column>
-                    <property stdset="1">
-                        <name>name</name>
+                    <property name="name">
                         <cstring>_c_libs</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
+                    <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>3</hsizetype>
                             <vsizetype>3</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property>
-                        <name>whatsThis</name>
+                    <property name="whatsThis" stdset="0">
                         <string>This is the list of additional paths that will be searched.</string>
                     </property>
                 </widget>
-                <widget>
-                    <class>KURLRequester</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="KURLRequester">
+                    <property name="name">
                         <cstring>_c_newPath</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>minimumSize</name>
-                        <size>
-                            <width>0</width>
-                            <height>25</height>
-                        </size>
-                    </property>
                 </widget>
-                <widget>
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLayoutWidget">
+                    <property name="name">
                         <cstring>Layout1</cstring>
                     </property>
                     <hbox>
-                        <property stdset="1">
-                            <name>margin</name>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
                             <number>0</number>
                         </property>
-                        <property stdset="1">
-                            <name>spacing</name>
+                        <property name="spacing">
                             <number>6</number>
                         </property>
-                        <widget>
-                            <class>QPushButton</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QPushButton">
+                            <property name="name">
                                 <cstring>_c_add</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>text</name>
+                            <property name="text">
                                 <string>&amp;Add</string>
                             </property>
                         </widget>
-                        <widget>
-                            <class>QPushButton</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QPushButton">
+                            <property name="name">
                                 <cstring>_c_remove</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>text</name>
+                            <property name="text">
                                 <string>&amp;Remove</string>
                             </property>
                         </widget>
                         <spacer>
-                            <property>
-                                <name>name</name>
+                            <property name="name" stdset="0">
                                 <cstring>Spacer1</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>orientation</name>
+                            <property name="orientation">
                                 <enum>Horizontal</enum>
                             </property>
-                            <property stdset="1">
-                                <name>sizeType</name>
+                            <property name="sizeType">
                                 <enum>MinimumExpanding</enum>
                             </property>
-                            <property>
-                                <name>sizeHint</name>
+                            <property name="sizeHint">
                                 <size>
                                     <width>20</width>
                                     <height>20</height>
@@ -370,88 +275,72 @@
                 </widget>
             </vbox>
         </widget>
-        <widget>
-            <class>QLayoutWidget</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Layout2</cstring>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout7</cstring>
             </property>
             <hbox>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>0</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
                 <spacer>
-                    <property>
-                        <name>name</name>
+                    <property name="name" stdset="0">
                         <cstring>Spacer2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>orientation</name>
+                    <property name="orientation">
                         <enum>Horizontal</enum>
                     </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
+                    <property name="sizeType">
                         <enum>Expanding</enum>
                     </property>
-                    <property>
-                        <name>sizeHint</name>
+                    <property name="sizeHint">
                         <size>
                             <width>20</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
-                <widget>
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton">
+                    <property name="name">
                         <cstring>_c_test</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>enabled</name>
+                    <property name="enabled">
                         <bool>false</bool>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Test</string>
                     </property>
-                    <property>
-                        <name>whatsThis</name>
+                    <property name="whatsThis" stdset="0">
                         <string>Click here to test SOCKS support.</string>
                     </property>
                 </widget>
             </hbox>
         </widget>
+        <spacer>
+            <property name="name" stdset="0">
+                <cstring>Spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
-<customwidgets>
-    <customwidget>
-        <class>KURLRequester</class>
-        <header location="global">kurlrequester.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>0</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-        </sizepolicy>
-        <pixmap>image0</pixmap>
-        <signal>textChanged(const QString &amp;)</signal>
-    </customwidget>
-</customwidgets>
-<images>
-    <image>
-        <name>image0</name>
-        <data format="XPM.GZ" length="45">789cd3d7528808f055d0d2e72a2e492cc94c5648ce482c52d04a29cdcdad8c8eb5ade6523250004143a55a6b2e0026630c4f</data>
-    </image>
-</images>
 <connections>
     <connection>
         <sender>_c_enableSocks</sender>
@@ -472,4 +361,5 @@
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>
