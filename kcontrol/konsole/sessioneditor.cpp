@@ -28,6 +28,8 @@
 #include <kinputdialog.h>
 #include <kicondialog.h>
 #include <kmessagebox.h>
+#include <kurlrequester.h>
+#include <klineedit.h>
 
 // SessionListBoxText is a list box text item with session filename
 class SessionListBoxText : public QListBoxText
@@ -52,7 +54,7 @@ SessionEditor::SessionEditor(QWidget * parent, const char *name)
   loaded=false;
 
   KGlobal::locale()->insertCatalogue("konsole"); // For schema and keytab translations
-
+  directoryLine->setMode(KFile::Directory);
   connect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
   connect(saveButton, SIGNAL(clicked()), this, SLOT(saveCurrent()));
   connect(removeButton, SIGNAL(clicked()), this, SLOT(removeCurrent()));
@@ -201,7 +203,7 @@ void SessionEditor::readSession(int num)
         nameLine->setText(str);
 
         str = co->readPathEntry("Cwd");
-        directoryLine->setText(str);
+        directoryLine->lineEdit()->setText(str);
 
         str = co->readPathEntry("Exec");
         executeLine->setText(str);
@@ -301,7 +303,7 @@ void SessionEditor::saveCurrent()
   co->setDesktopGroup();
   co->writeEntry("Type","KonsoleApplication");
   co->writeEntry("Name",nameLine->text());
-  co->writePathEntry("Cwd",directoryLine->text());
+  co->writePathEntry("Cwd",directoryLine->lineEdit()->text());
   co->writePathEntry("Exec",executeLine->text());
   co->writeEntry("Icon",previewIcon->icon());
   if (fontCombo->currentItem()==0)
