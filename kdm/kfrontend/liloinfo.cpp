@@ -78,7 +78,6 @@ LiloInfo::LiloInfo ( const QString &lilolocation,
 				options.append( *it );
 		}
 
-		options.sort();
 		int i = 0;
 		for ( it = options.begin(); it != options.end(); ++it, ++i )
 		{
