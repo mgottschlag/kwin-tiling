@@ -373,6 +373,10 @@ void Task::setActive(bool a)
 {
     _active = a;
     emit changed();
+    if ( a )
+      emit activated();
+    else
+      emit deactivated();
 }
 
 bool Task::maximized() const

@@ -86,6 +86,8 @@ public:
 
 signals:
     void changed();
+    void activated();
+    void deactivated();
 
 private:
     bool                _active;
