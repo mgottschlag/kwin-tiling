@@ -12,7 +12,9 @@
 // Many thanks goes also to Mike Romberg, who implemented such functions in
 // the program "xosview". Here's his copyright:
 //  Copyright (c) 1994, 1995 by Mike Romberg ( romberg@fsl.noaa.gov )
-
+//
+// Last Updates: 
+// 29.04.1999 deller	corrected swap-file-size determination
 
 #include <stdio.h>
 #include <unistd.h>
@@ -24,16 +26,16 @@
 
 void KMemoryWidget::update()
 {
-  int  	page_size;
-  long 	total_mem, total_free,
-	total_physical, total_swap, free_physical,
-	used_physical,  used_swap,  free_swap;
+  int  		page_size,i;
+  unsigned long total_mem, total_free,
+		total_physical, total_swap, free_physical,
+		used_physical,  used_swap,  free_swap;
 
-  struct pst_static pststatic;
-  struct pst_dynamic stats;
-  struct pst_vminfo vmstats;
-  long   fields_[4];
-  struct pst_swapinfo swapinfo;
+  struct 	pst_static pststatic;
+  struct 	pst_dynamic stats;
+  struct 	pst_vminfo vmstats;
+  unsigned long fields_[4];
+  struct 	pst_swapinfo swapinfo;
 
   pstat_getstatic( &pststatic, sizeof( struct pst_static ), (size_t)1, 0);
   total_physical = pststatic.physical_memory;
@@ -54,17 +56,21 @@ void KMemoryWidget::update()
 
   /* Now check the SWAP-AREAS !! */
 
-  total_swap = 0;
-  free_swap  = 0;
+  total_swap = free_swap  = 0;
 
-  for (int i = 0 ; i < MAX_SWAP_AREAS ; ++i)
+  for (i = 0 ; i < MAX_SWAP_AREAS ; i++)
   {
       pstat_getswap(&swapinfo, sizeof(swapinfo), (size_t)1, i);
       if (swapinfo.pss_idx == (unsigned)i)
       {
-          total_swap += (swapinfo.pss_nblksenabled * 1024);
-          free_swap  += (swapinfo.pss_nfpgs * 4 * 1024);
+	  swapinfo.pss_nfpgs *= 4;  // nfpgs is in 512 Byte Blocks....
+	  if (swapinfo.pss_nblksenabled == 0) // == 0 ??
+	      swapinfo.pss_nblksenabled = swapinfo.pss_nfpgs;
+          total_swap += (((unsigned long)swapinfo.pss_nblksenabled) * 1024);
+          free_swap  += (((unsigned long)swapinfo.pss_nfpgs       ) * 1024);
+	  //fprintf(stderr,"%luMB -> %luMB\r\n", swapinfo.pss_nblksenabled/1024, swapinfo.pss_nfpgs/1024 );
       }
+     //fprintf(stderr,"\r\n");
   }
 
   used_swap = total_swap - free_swap;
@@ -81,6 +87,6 @@ void KMemoryWidget::update()
     bufferMem->setText(format(fields_[2]*page_size));	/* FIXME ?? */
 
       swapMem->setText(format(total_swap));
-  freeSwapMem->setText(format(free_swap));
+  freeSwapMem->setText(format(free_swap)+QString("Freeee!"));
 
 }
