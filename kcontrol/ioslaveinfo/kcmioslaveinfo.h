@@ -27,7 +27,7 @@
 #include <kcmodule.h>
 
 #include <qstring.h>
-#include <qtextview.h>
+#include <ktextbrowser.h>
 #include <qlistbox.h>
 //#include <klistbox.h>
 
@@ -51,7 +51,7 @@ class KCMIOSlaveInfo : public KCModule
 
    protected:
       QListBox *m_ioslavesLb;
-      QTextView *m_info;
+      KTextBrowser *m_info;
    protected slots:
 
       void showInfo(const QString& protocol);

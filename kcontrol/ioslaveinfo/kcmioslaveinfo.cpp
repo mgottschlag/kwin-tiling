@@ -27,23 +27,26 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qhbox.h>
-
-#include <kprotocolinfo.h>
-#include <klocale.h>
-#include <kconfig.h>
-#include <kdialog.h>
-#include <kglobal.h>
+#include <qfile.h>
 #include <qspinbox.h>
 #include <qtabwidget.h>
 #include <qvbox.h>
 #include <qwhatsthis.h>
+
+#include <kprotocolinfo.h>
+#include <kstddirs.h>
+#include <klocale.h>
+#include <kconfig.h>
+#include <kdialog.h>
+#include <kglobal.h>
 
 
 KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name)
 :KCModule(parent,name)
 ,m_ioslavesLb(0)
 {
-QBoxLayout *top = new QVBoxLayout(this);
+   setButtons(Help);
+   QBoxLayout *top = new QVBoxLayout(this,10,15);
 
    tabs = new QTabWidget(this);
    top->addWidget(tabs);
@@ -60,15 +63,15 @@ QBoxLayout *top = new QVBoxLayout(this);
 
    QHBox *hbox=new QHBox(tabInfo);
    m_ioslavesLb=new QListBox(hbox);
+   m_ioslavesLb->setMinimumSize(fontMetrics().width("blahfaselwhatever----"),10);
    //TODO make something useful after 2.1 is released
-   //m_info=new QTextView(hbox);
-/*   QWidget *dummy=new QWidget(hbox);
-   hbox->setStretchFactor(dummy,1);
-   hbox->setStretchFactor(m_ioslavesLb,1);*/
+   m_info=new KTextBrowser(hbox);
    hbox->setSpacing(15);
 
    layout->addWidget(label);
    layout->addWidget(hbox);
+   hbox->setStretchFactor(m_ioslavesLb,1);
+   hbox->setStretchFactor(m_info,5);
 
    QStringList protocols=KProtocolInfo::protocols();
    for (QStringList::Iterator it=protocols.begin(); it!=protocols.end(); it++)
@@ -76,10 +79,9 @@ QBoxLayout *top = new QVBoxLayout(this);
       m_ioslavesLb->insertItem(*it);
    };
    m_ioslavesLb->sort();
-   //connect(m_ioslavesLb,SIGNAL(highlighted( const QString&)),this,SLOT(showInfo(const QString&)));
-   //connect(m_ioslavesLb,SIGNAL(highlighted( QListBoxItem *item )),this,SLOT(showInfo(QListBoxItem *item)));
-   //showInfo(m_ioslavesLb->text(0));
-   //showInfo(m_ioslavesLb->firstItem());
+
+   connect(m_ioslavesLb,SIGNAL(highlighted( const QString&)),this,SLOT(showInfo(const QString&)));
+   showInfo(m_ioslavesLb->text(0));
 
 
    ////////////////////////////////////////
@@ -140,6 +142,36 @@ QString KCMIOSlaveInfo::quickHelp() const
 void KCMIOSlaveInfo::showInfo(const QString& protocol)
 {
    //m_info->setText(QString("Some info about protocol %1:/ ...").arg(protocol));
+/*   QStringList dirs=KGlobal::dirs()->resourceDirs("html");
+   for ( QStringList::Iterator it = dirs.begin(); it != dirs.end(); ++it )
+   {
+      printf( "%s \n", (*it).latin1() );
+   };*/
+
+   QString tmp("default/kioslave/");
+   tmp+=protocol+".html";
+   QString file=KGlobal::dirs()->findResource("html",tmp);
+   /*QString tmp("kioslave/");
+   tmp+=protocol+".html";
+   QString file=KGlobal::dirs()->findResource("data",tmp);*/
+
+   //cout<<"found for -"<<tmp.latin1()<<"- file -"<<file.latin1()<<"-"<<endl;
+   if (!file.isEmpty())
+   {
+      QFile theFile( file );
+      theFile.open( IO_ReadOnly );
+      uint size = theFile.size();
+      char* buffer = new char[ size + 1 ];
+      theFile.readBlock( buffer, size );
+      buffer[ size ] = 0;
+      theFile.close();
+
+      QString text = QString::fromUtf8( buffer, size );
+      delete[] buffer;
+      m_info->setText(text);
+      return;
+   };
+   m_info->setText(QString("Some info about protocol %1:/ ...").arg(protocol));
 };
 
 /*void KCMIOSlaveInfo::showInfo(QListBoxItem *item)
@@ -166,12 +198,13 @@ extern "C"
 ////////////////////////////////////////////////////////////////////////////
 
 KIOTimeoutControl::KIOTimeoutControl(QWidget *parent, const char *name) 
-                 : QWidget(parent, name) {
-QGridLayout *grid = new QGridLayout(this, 5, 2, KDialog::marginHint(),
-                                                KDialog::spacingHint());
+: QWidget(parent, name)
+{
+   QGridLayout *grid = new QGridLayout(this, 6, 2, KDialog::marginHint(),
+                                       KDialog::spacingHint());
 
-QLabel *anonylabel;
-QString whatstr;
+   QLabel *anonylabel;
+   QString whatstr;
 
    anonylabel = new QLabel(i18n("Timeout values for KDE IO subsystem (in seconds)."), this);
    grid->addMultiCellWidget(anonylabel, 0, 0, 0, 1);
@@ -218,6 +251,7 @@ QString whatstr;
 
    _cfg = new KConfig("kioslaverc", false, false);
 
+   grid->setRowStretch(5,100);
    load();
 }
 
