@@ -27,8 +27,9 @@
 #include <knuminput.h>
 
 #include "advancedDialog.h"
-#include "bgadvanced.h" 
+#include "bgadvanced.h"
 #include "bgsettings.h"
+#include <bgdefaults.h>
 
 AdvancedDialog::AdvancedDialog(KGlobalBackgroundSettings* settings,
                                QWidget* parent, char* name)
@@ -87,9 +88,8 @@ void AdvancedDialog::changed()
 
 void AdvancedDialog::defaults()
 {
-    m_advancedWidget->m_pCBLimit->setChecked(true);
-    m_advancedWidget->m_pCacheBox->setValue(2048);
+    m_advancedWidget->m_pCBLimit->setChecked(_defLimitCache);
+    m_advancedWidget->m_pCacheBox->setValue(_defCacheSize);
 }
 
 #include "advancedDialog.moc"
-
