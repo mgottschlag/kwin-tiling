@@ -302,7 +302,7 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     optMenu = new QPopupMenu(this);
     optMenu->setCheckable(false);
 
-    if (disLocal)
+    if (dhasConsole)
 	inserten (optMenu, i18n("Co&nsole Login"),
 		  this, SLOT(console_button_clicked()));
 

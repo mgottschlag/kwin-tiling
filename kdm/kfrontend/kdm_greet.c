@@ -49,6 +49,7 @@
 
 char *dname;
 int disLocal;
+int dhasConsole;
 
 static int rfd, wfd;
 
@@ -391,6 +392,10 @@ main (int argc, char **argv)
 /*    dpingInterval = GetCfgInt (C_pingInterval);*/	/* XXX not here */
     dpingTimeout = GetCfgInt (C_pingTimeout);
     disLocal = (GetCfgInt (C_displayType) & location) == Local;
+    if ((ci = GetCfgStr (C_console))) {
+	dhasConsole = ci[0] != 0;
+	free (ci);
+    }
 
     kg_main(argc, argv);
     return 0;

@@ -58,6 +58,7 @@ void UnsecureDisplay (Display *dpy);
 
 extern char *dname;		/* d->name */
 extern int disLocal;		/* d->displayType.location == Local */
+extern int dhasConsole;		/* !isEmpty(d->console) */
 extern int dgrabServer;		/* d->grabServer */
 
 #ifdef __cplusplus
