@@ -39,7 +39,7 @@
 
 // DLL Interface for kcontrol
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_randr, KSSFactory("krandr") );
+K_EXPORT_COMPONENT_FACTORY (libkcm_randr, KSSFactory("krandr") )
 
 extern "C"
 {
