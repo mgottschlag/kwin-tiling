@@ -841,9 +841,13 @@ void KlipperWidget::checkClipData( bool selectionMode )
     {
         QString text;
         QTextDrag::decode( data, text );
-        if ( myURLGrabber->checkNewData( text ) )
-        {
-            return; // don't add into the history
+        const HistoryStringItem* topItem = dynamic_cast<const HistoryStringItem*>( history()->first() );
+        if ( !topItem || text != topItem->text() ) {
+            if ( myURLGrabber->checkNewData( text ) )
+            {
+                return; // don't add into the history
+            }
+
         }
     }
 
