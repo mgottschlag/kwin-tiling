@@ -94,7 +94,6 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
 
 
     KGlobal::locale()->insertCatalogue("konsole"); // For schema translations
-
     connect(imageBrowse, SIGNAL(clicked()), this, SLOT(imageSelect()));
     connect(saveButton, SIGNAL(clicked()), this, SLOT(saveCurrent()));
     connect(removeButton, SIGNAL(clicked()), this, SLOT(removeCurrent()));
@@ -117,6 +116,7 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     connect(colorButton, SIGNAL(changed(const QColor&)), this, SLOT(schemaModified()));
 
     connect(defaultSchemaCB, SIGNAL(toggled(bool)), this, SIGNAL(changed()));
+    removeButton->setEnabled( schemaList->currentItem() );
 }
 
 
@@ -132,7 +132,7 @@ QString SchemaEditor::schema()
 	    if (j > -1)
 	        filename = filename.mid(j+1);
 
-    return filename;    
+    return filename;
 }
 
 
@@ -555,6 +555,7 @@ void SchemaEditor::readSchema(int num)
 
 	return;
     }
+    removeButton->setEnabled( QFileInfo (fPath).isWritable () );
     defaultSchemaCB->setChecked(fPath == defaultSchema);
 
     FILE *sysin = fopen(QFile::encodeName(fPath), "r");
