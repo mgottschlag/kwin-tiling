@@ -125,9 +125,13 @@ QString SchemaEditor::schema()
 {
     int i = schemaList->currentItem();
     if (defaultSchemaCB->isChecked())
-	if(i>=0)
-	    return ((SchemaListBoxText *) schemaList->item(i))->filename();
-
+	if(i>=0) {
+	    QString filename = ((SchemaListBoxText *) schemaList->item(i))->filename();
+	    int j = filename.findRev('/');
+	    if (j > -1)
+	        filename = filename.mid(j+1);
+	    return filename;
+        }
     return defaultSchema;
 
 }
@@ -136,6 +140,7 @@ QString SchemaEditor::schema()
 void SchemaEditor::setSchema(QString sch)
 {
     defaultSchema = sch;
+    sch = locate("data", "konsole/"+sch);
 
     int sc = -1;
     for (int i = 0; i < (int) schemaList->count(); i++)
