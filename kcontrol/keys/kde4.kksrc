@@ -1,14 +1,18 @@
 [Settings]
 Name=KDE Default for 4 Modifier Keys
+Name[cs]=Výchozí pro KDE (4 modifikátory)
 Name[da]=KDE-standard for 4 modifikatortaster
+Name[de]=KDE-Voreinstellung für vier Modifikationstasten
 Name[es]=Predeterminado de KDE para 4 teclas modificadoras
 Name[he]=תצורת ברירת המחדל של KDE לארבעה מקשים משני מצב
 Name[lv]=KDE Noklusētais priekš 4 Modifikatoru Taustiņiem
+Name[nl]=KDE-standaard voor 4 wijzigerstoetsen
 Name[pt]=KDE por Omissão para 4 Modificadores
 Name[pt_BR]=KDE por Omissão para 4 Modificadores
 Name[sk]=KDE štandardná pre 4 modifikátory
 Name[sl]=Privzeto za KDE za 4 modifikatorje
 Name[sv]=KDE-förinställt för 4 väljartangenter
+Name[xx]=xx
 Uses Win Modifer=true
 
 [Global Shortcuts]
