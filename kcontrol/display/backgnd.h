@@ -1,6 +1,6 @@
 /* vi: ts=8 sts=4 sw=4
  *
- * $Id: $
+ * $Id$
  *
  * This file is part of the KDE project, module kdesktop.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
@@ -88,7 +88,7 @@ public:
     void setDockPanel(bool dock);
 
     bool exportBackground() {return m_bExport; }
-    void setExportBackground(bool export);
+    void setExportBackground(bool _export);
 
     void readSettings();
     void writeSettings();
