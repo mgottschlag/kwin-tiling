@@ -1114,6 +1114,7 @@ Type: enum
 Default: None
 User: greeter(preselUser)
 Instance: #*/Previous
+Instance: :*/Previous
 Instance: #:0/Default
 Comment:
  Specify, if/which user should be preselected for log in.
@@ -1134,6 +1135,7 @@ Type: bool
 Default: false
 User: greeter
 Instance: #*/!
+Instance: :*/true
 Comment:
  If this is true, the password input line is focused automatically if
  a user is preselected.
