@@ -16,9 +16,6 @@ METASOURCES = AUTO
 
 ####### Build rules
 
-messages:
-	$(XGETTEXT) *.cc *.cpp *.h -o $(podir)/kdesktop_lock.pot
-
 PAM = @KSCREENSAVER_PAM_SERVICE@
 
 install-data-local:
