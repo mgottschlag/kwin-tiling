@@ -1,24 +1,25 @@
-// vi: ts=8 sts=4 sw=4
-//
 // KDE Display fonts setup tab
 //
 // Copyright (c)  Mark Donohoe 1997
 //                lars Knoll 1999
+//                Rik Hemsley 2000
+//
 // Ported to kcontrol2 by Geert Jansen.
 
 /* $Id$ */
 
 #include <qlayout.h>
-#undef index
 #include <qlistbox.h>
 #include <qlabel.h>
 #include <qapplication.h>
 #include <qwhatsthis.h>
+#include <qframe.h>
 
 // X11 headers
 #undef Bool
 #undef Unsorted
 
+#include <kfontdialog.h>
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kglobal.h>
@@ -33,192 +34,247 @@
 /**** DLL Interface ****/
 
 extern "C" {
-    KCModule *create_fonts(QWidget *parent, const char *name) {
-	KGlobal::locale()->insertCatalogue("kcmdisplay");
-	return new KFonts(parent, name);
-    }
+  KCModule *create_fonts(QWidget *parent, const char *name) {
+    KGlobal::locale()->insertCatalogue("kcmdisplay");
+    return new KFonts(parent, name);
+  }
 }
 
 
 /**** FontUseItem ****/
 
-FontUseItem::FontUseItem(QString n, QFont default_fnt, bool f)
-	: selected(0)
+FontUseItem::FontUseItem(
+  QWidget * parent,
+  QLabel * prvw,
+  QString n,
+  QString grp,
+  QString key,
+  QString rc,
+  QFont default_fnt,
+  bool f
+)
+  : QObject(),
+    prnt(parent),
+    preview(prvw),
+    _text(n),
+    _rcfile(rc),
+    _rcgroup(grp),
+    _rckey(key),
+    _font(default_fnt),
+    _default(default_fnt),
+    fixed(f)
 {
-    _text = n;
-    _default = _font = default_fnt;
-    fixed = f;
+  readFont();
+  updateLabel();
 }
 
 QString FontUseItem::fontString(QFont rFont)
 {
-    QString aValue;
-    aValue = rFont.rawName();
-    return aValue;
-}
-
-void FontUseItem::setRC(QString group, QString key, QString rcfile)
-{
-    _rcgroup = group;
-    _rckey = key;
-    _rcfile = rcfile;
+  QString aValue;
+  aValue = rFont.rawName();
+  return aValue;
 }
 
 void FontUseItem::setDefault()
 {
-    _font = _default;
+  _font = _default;
 }
 
 void FontUseItem::readFont()
 {
-    KConfigBase *config;
+  KConfigBase *config;
 
-    bool deleteme = false;
-    if (_rcfile.isEmpty())
-	config = KGlobal::config();
-    else
-    {
-	 config = new KSimpleConfig(locate("config", _rcfile), true);
-	 deleteme = true;
-    }
+  bool deleteme = false;
+  if (_rcfile.isEmpty())
+    config = KGlobal::config();
+  else
+  {
+    config = new KSimpleConfig(locate("config", _rcfile), true);
+    deleteme = true;
+  }
 
-    config->setGroup(_rcgroup);
-    QFont tmpFnt(_font);
-    _font = config->readFontEntry(_rckey, &tmpFnt);
-    if (deleteme) delete config;
+  config->setGroup(_rcgroup);
+  QFont tmpFnt(_font);
+  _font = config->readFontEntry(_rckey, &tmpFnt);
+  if (deleteme) delete config;
 }
 
 void FontUseItem::writeFont()
 {
-    KConfigBase *config;
-    
-    if (_rcfile.isEmpty()) {
-	config = KGlobal::config();
-	config->setGroup(_rcgroup);
-	config->writeEntry(_rckey, _font, true, true);
-	config->sync();
-    } else {
-	config = new KSimpleConfig(locate("config", _rcfile));
-	config->setGroup(_rcgroup);
-	config->writeEntry(_rckey, _font);
-	config->sync();
-	delete config;
-    }
+  KConfigBase *config;
+
+  if (_rcfile.isEmpty()) {
+    config = KGlobal::config();
+    config->setGroup(_rcgroup);
+    config->writeEntry(_rckey, _font, true, true);
+    config->sync();
+  } else {
+    config = new KSimpleConfig(locate("config", _rcfile));
+    config->setGroup(_rcgroup);
+    config->writeEntry(_rckey, _font);
+    config->sync();
+    delete config;
+  }
 }
 
+void FontUseItem::choose()
+{
+  int result = KFontDialog::getFont(_font, fixed, prnt);
+
+  if (KDialog::Accepted == result) {
+    updateLabel();
+    emit(changed());
+  }
+}
+
+void FontUseItem::updateLabel()
+{
+  QString fontDescToTranslate(i18n("%1 %2"));
+
+  QString fontDesc =
+    fontDescToTranslate.arg(_font.family()).arg(_font.pointSize());
+
+  preview->setText(fontDesc);
+  preview->setFont(_font);
+}
 
 /**** KFonts ****/
 
 KFonts::KFonts(QWidget *parent, const char *name)
-	: KCModule(parent, name)
+    :   KCModule(parent, name),
+        _changed(false)
 {
-    int i;
-    _changed = false;
+  QStringList nameGroupKeyRc;
 
-    KConfig *cfg = KGlobal::config();
-    cfg->setGroup("X11");
-    useRM = cfg->readBoolEntry("useResourceManager", true);
+  nameGroupKeyRc
+    << i18n("General")        << "General"    << "font"         << ""
+    << i18n("Fixed width")    << "General"    << "fixed"        << ""
+    << i18n("Desktop icon")   << "FMSettings" << "StandardFont" << "kdesktoprc"
+    << i18n("File manager")   << "FMSettings" << "StandardFont" << "konquerorrc"
+    << i18n("Toolbar")        << "General"    << "toolBarFont"  << ""
+    << i18n("Menu")           << "General"    << "menuFont"     << ""
+    << i18n("Window title")   << "WM"         << "titleFont"    << "";
+// Disabled these two for beta release, as they don't do anything.
+//    << i18n("Taskbar button") << "General"    << "taskbarFont"  << "kickerrc"
+//    << i18n("Panel clock")    << "General"    << "dateFont"     << "kickerrc";
 
-    QBoxLayout *topLayout = new QVBoxLayout(this, 10, 10);
-    QBoxLayout *pushLayout = new QHBoxLayout( 5 );
-    topLayout->addLayout( pushLayout );
+  QValueList<QFont> defaultFontList;
+  
+  QFont defaultFont("helvetica", 12);
 
-    FontUseItem *item = new FontUseItem( i18n("General font"),
-			    QFont( "helvetica", 12 ) );
-    item->setRC( "General", "font" );
-    fontUseList.append( item );
+  defaultFontList
+    <<  defaultFont
+    <<  defaultFont
+    <<  defaultFont
+    <<  defaultFont
+    <<  QFont("helvetica", 10)
+    <<  defaultFont
+    <<  QFont("helvetica", 12, QFont::Bold)
+    <<  defaultFont
+    <<  QFont("helvetica", 10);
 
-    item = new FontUseItem( i18n("Fixed font"),
-			    QFont( "fixed", 12 ), true );
-    item->setRC( "General", "fixedFont" );
-    fontUseList.append( item );
+  QValueList<bool> fixedList;
 
-    item = new FontUseItem( i18n("Desktop icon font"),
-			    QFont( "helvetica", 12 )  );
-    item->setRC( "FMSettings", "StandardFont", "kdesktoprc" );
-    fontUseList.append( item );
+  fixedList
+    <<  false
+    <<  true
+    <<  false
+    <<  false
+    <<  false
+    <<  false
+    <<  false
+    <<  false
+    <<  false;
 
-    item = new FontUseItem( i18n("File Manager font"),
-			    QFont( "helvetica", 12 )  );
-    item->setRC( "FMSettings", "StandardFont", "konquerorrc" );
-    fontUseList.append( item );
+  QStringList quickHelpList;
 
-    item = new FontUseItem( i18n("Toolbar font"),
-			    QFont( "helvetica", 10 ) );
-    item->setRC( "General", "toolBarFont" );
-    fontUseList.append( item );
+  quickHelpList
+    << i18n("Used for normal text (e.g. button labels, list items).")
+    << i18n("A non-proportional font (i.e. typewriter font).")
+    << i18n("Used to display the names of icons on the desktop.")
+    << i18n("Used to display the names of icons in the file manager.")
+    << i18n("Used to display text beside toolbar icons.")
+    << i18n("Used by menu bars and popup menus.")
+    << i18n("Used by the window titlebar.")
+    << i18n("Used by panel taskbar buttons.")
+    << i18n("Used by the panel clock.");
 
-    item = new FontUseItem( i18n("Menu font"),
-			    QFont( "helvetica", 10, QFont::Bold ) );
-    item->setRC( "General", "menuFont" );
-    fontUseList.append( item );
+  QGridLayout * fontUseLayout =
+    new QGridLayout(
+      this,
+      nameGroupKeyRc.count() / 4,
+      3,
+      KDialog::marginHint(),
+      KDialog::spacingHint()
+    );
 
-    item = new FontUseItem( i18n("Window title font"),
-			    QFont( "helvetica", 12, QFont::Bold ) );
-    item->setRC( "WM", "titleFont" );
-    fontUseList.append( item );
+  fontUseLayout->setColStretch(0, 1);
+  fontUseLayout->setColStretch(1, 1);
+  fontUseLayout->setColStretch(2, 0);
 
-    item = new FontUseItem( i18n("Panel button font"),
-			    QFont( "helvetica", 12 )  );
-    item->setRC( "kpanel", "DesktopButtonFont", "kpanelrc" );
-    fontUseList.append( item );
+  QValueList<QFont>::ConstIterator defaultFontIt(defaultFontList.begin());
+  QValueList<bool>::ConstIterator fixedListIt(fixedList.begin());
+  QStringList::ConstIterator quickHelpIt(quickHelpList.begin());
+  QStringList::ConstIterator it(nameGroupKeyRc.begin());
 
-    item = new FontUseItem( i18n("Panel clock font"),
-			    QFont( "helvetica", 12, QFont::Normal) );
-    item->setRC( "kpanel", "DateFont", "kpanelrc" );
-    fontUseList.append( item );
+  unsigned int count = 0;
 
-    for ( i = 0; i < (int) fontUseList.count(); i++ )
-	fontUseList.at( i )->readFont();
+  while (it != nameGroupKeyRc.end()) {
 
-    lbFonts = new QListBox( this );
-    for ( i=0; i < (int) fontUseList.count(); i++ )
-	 lbFonts->insertItem( fontUseList.at( i )->text() );
-    lbFonts->adjustSize();
-    lbFonts->setMinimumSize(lbFonts->size());
+    QLabel * preview = new QLabel(this);
+    preview->setFrameStyle(QFrame::Box | QFrame::Plain);
+    preview->setMaximumWidth(200);
+    QWhatsThis::add(preview, i18n("Preview of selected font"));
 
-    connect( lbFonts, SIGNAL( highlighted( int ) ),
-	     SLOT( slotPreviewFont( int ) ) );
-    pushLayout->addWidget(lbFonts, 2);
+    FontUseItem * i =
+      new FontUseItem(
+        this,
+        preview,
+        *it++,
+        *it++,
+        *it++,
+        *it++,
+        *defaultFontIt++,
+        *fixedListIt++
+      );
 
-    // FIXME: are all of these still used?
-    // FIXME: add QWhatsThis to KFontChoser
+    fontUseList.append(i);
+    connect(i, SIGNAL(changed()), this, SLOT(fontChanged()));
+    QLabel * fontUse = new QLabel(i->text(), this);
+    
+    QWhatsThis::add(fontUse, *quickHelpIt++);
 
-    QWhatsThis::add( lbFonts, i18n("The entries in this list each describe"
-      " a certain kind of text that a font can be assigned to. Select one"
-      " to change its settings on the right.<ul><li><em>General font:</em> the font used for normal text</li>"
-      " <li><em>Fixed font:</em> a non-proportional font (i.e. typewriter font)</li>"
-      " <li><em>Desktop icon font:</em> used to display the icon names on the desktop</li>"
-      " <li><em>File Manager font:</em> used by the Konqueror file manager</li>"
-      " <li><em>Toolbar font:</em> used by the toolbar, if text toolbars are turned on</li>"
-      " <li><em>Menu font:</em> used in menu bars and popup menus</li>"
-      " <li><em>Window title font:</em> used in the window titles. Note that this probably depends on you using KWin as window manager</li>"
-      " <li><em>Panel button font:</em> used for the panel's buttons</li>"
-      " <li><em>Panel clock font:</em> used by the panel's clock applet</li></ul>") );
+    QPushButton * chooseButton = new QPushButton(i18n("Choose..."), this);
+  
+    QWhatsThis::add(chooseButton, i18n("Click to select a font"));
+    
+    connect(chooseButton, SIGNAL(clicked()), i, SLOT(choose()));
 
-    fntChooser = new KFontChooser( this );
-    connect( fntChooser, SIGNAL( fontSelected(const QFont &) ), this,
-	     SLOT( slotSetFont(const QFont &) ) );
-    pushLayout->addWidget(fntChooser, 5);
+    fontUseLayout->addWidget(fontUse, count, 0);
+    fontUseLayout->addWidget(preview, count, 1);
+    fontUseLayout->addWidget(chooseButton, count, 2);
 
-    lbFonts->setCurrentItem( 0 );
+    ++count;
+  }
 }
 
 KFonts::~KFonts()
 {
 }
 
+void KFonts::fontChanged()
+{
+  _changed = true;
+  emit(changed(true));
+}
+
 void KFonts::defaults()
 {
-    int ci = lbFonts->currentItem();
-    for ( int i = 0; i < (int) fontUseList.count(); i++ )
-	fontUseList.at( i )->setDefault();
+  for ( int i = 0; i < (int) fontUseList.count(); i++ )
+    fontUseList.at( i )->setDefault();
 
-    fontUseList.at( ci );
-    slotPreviewFont( ci );
-
-    _changed = true;
-    emit changed(true);
+  _changed = true;
+  emit changed(true);
 }
 
 QString KFonts::quickHelp()
@@ -240,55 +296,42 @@ QString KFonts::quickHelp()
 
 void KFonts::load()
 {
-    int ci = lbFonts->currentItem();
-    for ( int i = 0; i < (int) fontUseList.count(); i++ )
-	fontUseList.at( i )->readFont();
+  for ( int i = 0; i < (int) fontUseList.count(); i++ )
+    fontUseList.at( i )->readFont();
 
-    fontUseList.at( ci );
-    slotPreviewFont( ci );
-
-    _changed = true;
-    emit changed(false);
+  _changed = true;
+  emit changed(false);
 }
 
 void KFonts::save()
 {
-    if ( !_changed )
-	return;
-	    
-    for ( int i = 0; i < (int) fontUseList.count(); i++ )
-	fontUseList.at( i )->writeFont();	
+  if ( !_changed )
+    return;
 
-    fontUseList.at( lbFonts->currentItem() );
+  for ( int i = 0; i < (int) fontUseList.count(); i++ )
+    fontUseList.at( i )->writeFont();  
 
-    KIPC::sendMessageAll(KIPC::FontChanged);
-    if (useRM) {
-	QApplication::setOverrideCursor( waitCursor );
-	KProcess proc;
-	proc.setExecutable("krdb");
-	proc.start( KProcess::Block );
-	QApplication::restoreOverrideCursor();
-    }
+  KIPC::sendMessageAll(KIPC::FontChanged);
 
-    _changed = false;
-    emit changed(false);
+  KConfig * cfg = KGlobal::config();
+  cfg->setGroup("X11");
+
+  if (cfg->readBoolEntry("useResourceManager", true)) {
+    QApplication::setOverrideCursor( waitCursor );
+    KProcess proc;
+    proc.setExecutable("krdb");
+    proc.start( KProcess::Block );
+    QApplication::restoreOverrideCursor();
+  }
+
+  _changed = false;
+  emit changed(false);
 }
 
 int KFonts::buttons()
 {
-    return KCModule::Help | KCModule::Default | KCModule::Reset |
-	   KCModule::Cancel | KCModule::Apply | KCModule::Ok;
+  return KCModule::Help | KCModule::Default | KCModule::Reset |
+    KCModule::Cancel | KCModule::Apply | KCModule::Ok;
 }
 
-void KFonts::slotSetFont(const QFont &fnt)
-{
-    fontUseList.current()->setFont( fnt );
-    _changed = true;
-    emit changed(true);
-}
-
-void KFonts::slotPreviewFont( int index )
-{
-    fntChooser->setFont( fontUseList.at( index )->font(),
-			 fontUseList.at( index )->spacing() );
-}
+// vim:ts=2:sw=2:tw=78

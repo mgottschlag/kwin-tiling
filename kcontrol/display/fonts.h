@@ -13,13 +13,14 @@
 #include <kcmodule.h>
 
 
-class FontUseItem
+class FontUseItem : public QObject
 {
+  Q_OBJECT
+
 public:
-    FontUseItem(QString n, QFont default_fnt, bool fixed = false);
+    FontUseItem(QWidget * parent, QLabel * prvw, QString n, QString grp, QString key, QString rc, QFont default_fnt, bool fixed = false);
 
     QString fontString(QFont rFont);
-    void setRC(QString group, QString key, QString rcfile=QString::null);
 
     void readFont();
     void writeFont();
@@ -32,10 +33,17 @@ public:
     const QString& rcKey() { return _rckey; }
     const QString& text() { return _text; }
     bool spacing() { return fixed; }
-    void setSelect( bool flag )	{ selected = flag; }
-    bool select() { return selected; }
+
+signals:
+    void changed();
+
+public slots:
+    void choose();
 
 private:
+    void updateLabel();
+    QWidget * prnt;
+    QLabel * preview;
     QString _text;
     QString _rcfile;
     QString _rcgroup;
@@ -43,12 +51,11 @@ private:
     QFont _font;
     QFont _default;
     bool fixed;
-    bool selected;
 };
 
 
 /**
- * The Destkop/fonts tab in kcontrol.
+ * The Desktop/fonts tab in kcontrol.
  */
 class KFonts : public KCModule
 {
@@ -68,18 +75,14 @@ public:
 signals:
     void changed(bool);
 
-private slots:
-    void slotSetFont(const QFont &fnt);
-    void slotPreviewFont( int index );
+protected slots:
+    void fontChanged();
 
 private:
-    bool useRM;
     bool _changed;
     bool defaultCharset;
     
-    QListBox *lbFonts;
     QList <FontUseItem> fontUseList;
-    KFontChooser *fntChooser;
 };
 
 #endif
