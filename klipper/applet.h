@@ -14,7 +14,7 @@
 
 #include <kpanelapplet.h>
 
-class TopLevel;
+class Klipper;
 
 class KlipperApplet : public KPanelApplet
 {
@@ -30,7 +30,7 @@ protected:
         void resizeEvent( QResizeEvent* );
 private:
         void centerWidget();
-        TopLevel* toplevel;
+        Klipper* toplevel;
 };
 
 #endif

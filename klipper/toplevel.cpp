@@ -23,6 +23,7 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kiconloader.h>
+#include <kipc.h>
 #include <kkeydialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -51,7 +52,7 @@
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
 
-TopLevel::TopLevel( QWidget *parent, bool applet )
+Klipper::Klipper( QWidget *parent, bool applet )
     : KSystemTray( parent ), DCOPObject( "klipper" ), m_dcop( 0 )
 {
     clip = kapp->clipboard();
@@ -117,7 +118,7 @@ TopLevel::TopLevel( QWidget *parent, bool applet )
     QToolTip::add( this, i18n("Klipper - Clipboard Tool") );
 }
 
-TopLevel::~TopLevel()
+Klipper::~Klipper()
 {
     delete m_checkTimer;
     delete m_popup;
@@ -128,13 +129,13 @@ TopLevel::~TopLevel()
     }
 }
 
-void TopLevel::adjustSize()
+void Klipper::adjustSize()
 {
     resize( m_pixmap.size() );
 }
 
 // this is used for quiting klipper process, if klipper is being started as an applet
-void TopLevel::quitProcess()
+void Klipper::quitProcess()
 {
     if( !isApplet()) {
         kapp->dcopClient()->detach();
@@ -143,34 +144,34 @@ void TopLevel::quitProcess()
 }
 
 // this is just to make klipper process think we're KUniqueApplication
-int TopLevel::newInstance()
+int Klipper::newInstance()
 {
     return 0;
 }
 
-QString TopLevel::getClipboardContents()
+QString Klipper::getClipboardContents()
 {
     return clipboardContents();
 }
 
-void TopLevel::setClipboardContents(QString s)
+void Klipper::setClipboardContents(QString s)
 {
     setClipboard( s, Clipboard | Selection);
     newClipData();
 }
 
-void TopLevel::clearClipboardContents()
+void Klipper::clearClipboardContents()
 {
     slotClearClipboard();	
 }
 
-void TopLevel::mousePressEvent(QMouseEvent *e)
+void Klipper::mousePressEvent(QMouseEvent *e)
 {
     if ( e->button() == LeftButton || e->button() == RightButton )
         showPopupMenu( m_popup );
 }
 
-void TopLevel::paintEvent(QPaintEvent *)
+void Klipper::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
     int x = (width() - m_pixmap.width()) / 2;
@@ -181,7 +182,7 @@ void TopLevel::paintEvent(QPaintEvent *)
     p.end();
 }
 
-void TopLevel::clickedMenu(int id)
+void Klipper::clickedMenu(int id)
 {
     switch ( id ) {
     case -1:
@@ -258,7 +259,7 @@ void TopLevel::clickedMenu(int id)
 }
 
 
-void TopLevel::showPopupMenu( QPopupMenu *menu )
+void Klipper::showPopupMenu( QPopupMenu *menu )
 {
     Q_ASSERT( menu != 0L );
 
@@ -290,7 +291,7 @@ void TopLevel::showPopupMenu( QPopupMenu *menu )
 }
 
 
-void TopLevel::readProperties(KConfig *kc)
+void Klipper::readProperties(KConfig *kc)
 {
   QStringList dataList;
 
@@ -350,7 +351,7 @@ void TopLevel::readProperties(KConfig *kc)
 }
 
 
-void TopLevel::readConfiguration( KConfig *kc )
+void Klipper::readConfiguration( KConfig *kc )
 {
     kc->setGroup("General");
     bPopupAtMouse = kc->readBoolEntry("PopupAtMousePosition", false);
@@ -362,7 +363,7 @@ void TopLevel::readConfiguration( KConfig *kc )
     maxClipItems = kc->readNumEntry("MaxClipItems", 7);
 }
 
-void TopLevel::writeConfiguration( KConfig *kc )
+void Klipper::writeConfiguration( KConfig *kc )
 {
     kc->setGroup("General");
     kc->writeEntry("PopupAtMousePosition", bPopupAtMouse);
@@ -380,7 +381,7 @@ void TopLevel::writeConfiguration( KConfig *kc )
 }
 
 // save session on shutdown. Don't simply use the c'tor, as that may not be called.
-void TopLevel::saveSession()
+void Klipper::saveSession()
 {
   if ( bKeepContents ) { // save the clipboard eventually
       QStringList dataList;
@@ -405,7 +406,7 @@ void TopLevel::saveSession()
 }
 
 
-void TopLevel::slotConfigure()
+void Klipper::slotConfigure()
 {
     bool haveURLGrabber = bURLGrabber;
     if ( !myURLGrabber ) { // temporary, for the config-dialog
@@ -451,10 +452,17 @@ void TopLevel::slotConfigure()
                              dlg->synchronize(), true, true );
         m_config->writeEntry("ImplicitlySetSelection",
                              dlg->implicitSelection(), true, true );
-        // ### notify running apps!
-        // ------------------------
 
         writeConfiguration( m_config ); // syncs
+
+        // notify all other apps about new KClipboard configuration
+        int message = 0;
+        if ( dlg->synchronize() )
+            message |= KClipboard::Synchronize;
+        if ( dlg->implicitSelection() )
+            message |= KClipboard::ImplicitSelection;
+
+        KIPC::sendMessageAll( KIPC::ClipboardConfigChanged, message );
     }
     setURLGrabberEnabled( haveURLGrabber );
 
@@ -462,7 +470,7 @@ void TopLevel::slotConfigure()
 }
 
 
-void TopLevel::slotRepeatAction()
+void Klipper::slotRepeatAction()
 {
     if ( !myURLGrabber ) {
 	myURLGrabber = new URLGrabber( m_config );
@@ -473,7 +481,7 @@ void TopLevel::slotRepeatAction()
     myURLGrabber->invokeAction( m_lastString );
 }
 
-void TopLevel::setURLGrabberEnabled( bool enable )
+void Klipper::setURLGrabberEnabled( bool enable )
 {
     bURLGrabber = enable;
     toggleURLGrabAction->setChecked( enable );
@@ -498,12 +506,12 @@ void TopLevel::setURLGrabberEnabled( bool enable )
     }
 }
 
-void TopLevel::toggleURLGrabber()
+void Klipper::toggleURLGrabber()
 {
     setURLGrabberEnabled( !bURLGrabber );
 }
 
-void TopLevel::trimClipHistory( int new_size )
+void Klipper::trimClipHistory( int new_size )
 {
     while (m_popup->count() - MENU_ITEMS > (unsigned) new_size ) {
         int id = m_popup->idAt(EMPTY);
@@ -515,7 +523,7 @@ void TopLevel::trimClipHistory( int new_size )
     }
 }
 
-void TopLevel::removeFromHistory( const QString& text )
+void Klipper::removeFromHistory( const QString& text )
 {
     QMapIterator<long,QString> it = m_clipDict.begin();
     for ( ; it != m_clipDict.end(); ++it ) {
@@ -528,7 +536,7 @@ void TopLevel::removeFromHistory( const QString& text )
     }
 }
 
-void TopLevel::slotClearClipboard()
+void Klipper::slotClearClipboard()
 {
     clip->setSelectionMode( true );
     clip->clear();
@@ -538,7 +546,7 @@ void TopLevel::slotClearClipboard()
         m_popup->setItemEnabled(m_selectedItem, false);
 }
 
-QString TopLevel::clipboardContents( bool *isSelection )
+QString Klipper::clipboardContents( bool *isSelection )
 {
     clip->setSelectionMode( true );
 
@@ -560,7 +568,7 @@ QString TopLevel::clipboardContents( bool *isSelection )
     return contents;
 }
 
-void TopLevel::applyClipChanges( const QString& clipData )
+void Klipper::applyClipChanges( const QString& clipData )
 {
     m_lastString = clipData;
 
@@ -591,13 +599,13 @@ void TopLevel::applyClipChanges( const QString& clipData )
         m_popup->setItemChecked(m_selectedItem, true);
 }
 
-void TopLevel::setEmptyClipboard()
+void Klipper::setEmptyClipboard()
 {
     bClipEmpty = true;
     applyClipChanges( QSempty );
 }
 
-void TopLevel::slotMoveSelectedToTop()
+void Klipper::slotMoveSelectedToTop()
 {
     m_popup->removeItem( m_selectedItem );
     m_clipDict.remove( m_selectedItem );
@@ -608,7 +616,7 @@ void TopLevel::slotMoveSelectedToTop()
 }
 
 // clipboard polling for legacy apps
-void TopLevel::newClipData()
+void Klipper::newClipData()
 {
     bool selectionMode;
     QString clipContents = clipboardContents( &selectionMode );
@@ -616,7 +624,7 @@ void TopLevel::newClipData()
     checkClipData( clipContents, selectionMode );
 }
 
-void TopLevel::clipboardSignalArrived( bool selectionMode )
+void Klipper::clipboardSignalArrived( bool selectionMode )
 {
 //     qDebug("*** clipboardSignalArrived: %i", selectionMode);
 
@@ -628,7 +636,7 @@ void TopLevel::clipboardSignalArrived( bool selectionMode )
     m_checkTimer->start(1000);
 }
 
-void TopLevel::checkClipData( const QString& text, bool selectionMode )
+void Klipper::checkClipData( const QString& text, bool selectionMode )
 {
     clip->setSelectionMode( selectionMode );
 
@@ -639,9 +647,9 @@ void TopLevel::checkClipData( const QString& text, bool selectionMode )
                       selectionMode );
         return;
     }
-    
 
-    
+
+
     bool clipEmpty = (clip->data()->format() == 0L);
 //     qDebug("checkClipData(%i): %s, empty: %i (lastClip: %s, lastSel: %s)", selectionMode, text.latin1(), clipEmpty, m_lastClipboard.latin1(), m_lastSelection.latin1() );
 
@@ -688,12 +696,12 @@ void TopLevel::checkClipData( const QString& text, bool selectionMode )
     }
 }
 
-void TopLevel::setClipboard( const QString& text, bool selectionMode )
+void Klipper::setClipboard( const QString& text, bool selectionMode )
 {
     setClipboard( text, selectionMode ? Selection : Clipboard );
 }
 
-void TopLevel::setClipboard( const QString& text, int mode )
+void Klipper::setClipboard( const QString& text, int mode )
 {
     bool blocked = clip->signalsBlocked();
     clip->blockSignals( true ); // ### this might break other kicker applets
@@ -724,20 +732,20 @@ void TopLevel::setClipboard( const QString& text, int mode )
 // of the spinbox to be selected and hence the clipboard changes. But we don't
 // want all those items in klipper's history. See #41917
 //
-bool TopLevel::ignoreClipboardChanges() const
+bool Klipper::ignoreClipboardChanges() const
 {
     QWidget *focusWidget = qApp->focusWidget();
     if ( focusWidget )
     {
-        if ( focusWidget->inherits( "QSpinBox" ) || 
+        if ( focusWidget->inherits( "QSpinBox" ) ||
              (focusWidget->parentWidget() &&
-              focusWidget->inherits("QLineEdit") && 
+              focusWidget->inherits("QLineEdit") &&
               focusWidget->parentWidget()->inherits("QSpinWidget")) )
         {
             return true;
         }
     }
-    
+
     return false;
 }
 

@@ -25,7 +25,7 @@ class QClipboard;
 class KToggleAction;
 class URLGrabber;
 
-class TopLevel : public KSystemTray, public DCOPObject
+class Klipper : public KSystemTray, public DCOPObject
 {
   Q_OBJECT
   K_DCOP
@@ -38,8 +38,8 @@ k_dcop:
     void clearClipboardContents();
 
 public:
-    TopLevel( QWidget *parent = 0L, bool applet = false );
-    ~TopLevel();
+    Klipper( QWidget *parent = 0L, bool applet = false );
+    ~Klipper();
 
     virtual void adjustSize();
 

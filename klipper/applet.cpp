@@ -31,7 +31,7 @@ KlipperApplet::KlipperApplet(const QString& configFile, Type t, int actions,
 {
     move( 0, 0 );
     setBackgroundMode(QWidget::X11ParentRelative);
-    toplevel = new TopLevel( this, true );
+    toplevel = new Klipper( this, true );
     centerWidget();
     toplevel->show();
 }
