@@ -98,16 +98,16 @@ int main( int argc, char **argv )
   global_pix_loader = KApplication::getKApplication()->getIconLoader();
   global_pix_sel = new KIconLoaderDialog;
   global_pix_sel2 = new KIconLoaderDialog;
-  QStrList icon_sel_list;
-  QStrList icon_sel_list2;
+  QStringList icon_sel_list;
+  QStringList icon_sel_list2;
   icon_sel_list.append(KApplication::kde_icondir());
   //icon_sel_list.append(QDir::homeDirPath()+"/.kde/share/icons");
   icon_sel_list.append(KApplication::localkdedir()+"/share/icons");
   icon_sel_list2.append(KApplication::kde_icondir() + "/mini");
   //icon_sel_list2.append(QDir::homeDirPath()+"/.kde/share/icons/mini");
   icon_sel_list2.append(KApplication::localkdedir()+"/share/icons/mini");
-  global_pix_sel->setDir(&icon_sel_list);
-  global_pix_sel2->setDir(&icon_sel_list2);
+  global_pix_sel->setDir(icon_sel_list);
+  global_pix_sel2->setDir(icon_sel_list2);
 
   KMenuEdit edit;
   if( a.isRestored() )
