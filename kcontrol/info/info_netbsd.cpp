@@ -281,7 +281,7 @@ bool GetInfo_Partitions (QListView *lbox)
 	}
 	t = new QTextStream(pipe, IO_ReadOnly);
 
-	MB = QString(" ") + QString(i18n("MB"));
+	MB = QString(" ") + i18n("MB");
 	lbox->addColumn(i18n("Device"));
 	lbox->addColumn(i18n("Mount Point"));
 	lbox->addColumn(i18n("FS Type"));
