@@ -267,16 +267,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
       " will be locked when the screen saver starts. To restore the display,"
       " enter your account password at the prompt.") );
 
-    mStarsCheckBox = new QCheckBox( i18n("Show p&assword as stars"), group );
-    mStarsCheckBox->setChecked(mPasswordStars);
-    mStarsCheckBox->setEnabled(mEnabled);
-    connect( mStarsCheckBox, SIGNAL( toggled( bool ) ), 
-	     this, SLOT( slotStars( bool ) ) );
-    groupLayout->addWidget(mStarsCheckBox);
-    QWhatsThis::add( mStarsCheckBox, i18n("If you check this option and the one"
-      " above, each character you type in the password will be echoed as an"
-      " asterisk (*) symbol. Otherwise, there will be no visual feedback.") );
-
     groupLayout->addStretch(1);
 
     QGridLayout *gl = new QGridLayout(groupLayout, 2, 4);
@@ -391,7 +381,6 @@ void KScreenSaver::readSettings()
     mLock = config->readBoolEntry("Lock", false);
     mTimeout = config->readNumEntry("Timeout", 300);
     mPriority = config->readNumEntry("Priority", 19);
-    mPasswordStars = config->readBoolEntry("PasswordAsStars", true);
     mSaver = config->readEntry("Saver");
 
     if (mPriority < 0) mPriority = 0;
@@ -408,7 +397,6 @@ void KScreenSaver::updateValues()
 {
     mWaitEdit->setValue(mTimeout/60);
     mLockCheckBox->setChecked(mLock);
-    mStarsCheckBox->setChecked(mPasswordStars);
     mPrioritySlider->setValue(mPriority);
     mEnableCheckBox->setChecked( mEnabled );
 }
@@ -424,7 +412,6 @@ void KScreenSaver::defaults()
     slotTimeoutChanged( 1 );
     slotPriorityChanged( 0 );
     slotLock( false );
-    slotStars( true );
     updateValues();
 
     emit changed(true);
@@ -444,7 +431,6 @@ void KScreenSaver::save()
     config->writeEntry("Timeout", mTimeout);
     config->writeEntry("Lock", mLock);
     config->writeEntry("Priority", mPriority);
-    config->writeEntry("PasswordAsStars", mPasswordStars);
     config->writeEntry("Saver", mSaver);
     config->sync();
     delete config;
@@ -558,7 +544,6 @@ void KScreenSaver::slotEnable(bool e)
     mTestBt->setEnabled( e );
     mWaitEdit->setEnabled( e );
     mLockCheckBox->setEnabled( e );
-    mStarsCheckBox->setEnabled( e );
 #ifdef HAVE_SETPRIORITY
     mPrioritySlider->setEnabled( e );
 #endif
@@ -701,15 +686,6 @@ void KScreenSaver::slotTimeoutChanged(int to )
 void KScreenSaver::slotLock( bool l )
 {
     mLock = l;
-    mChanged = true;
-    emit changed(true);
-}
-
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::slotStars( bool s )
-{
-    mPasswordStars = s;
     mChanged = true;
     emit changed(true);
 }
