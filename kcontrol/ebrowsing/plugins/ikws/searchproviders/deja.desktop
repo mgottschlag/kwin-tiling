@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Deja.com
+Name[de]=deja.com
 ServiceTypes=SearchProvider
 Keys=dj,deja
 Query=http://www.deja.com/dnquery.xp?QRY=\\1
