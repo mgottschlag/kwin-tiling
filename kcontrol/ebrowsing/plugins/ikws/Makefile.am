@@ -1,7 +1,7 @@
 ## Makefile.am of kdebase/kcontrol/ebrowsing/plugins/ikws
 
 INCLUDES  =  -I$(srcdir)/../../kurifilter $(all_includes)
-LDFLAGS   = $(KDE_RPATH) $(all_libraries)
+LDFLAGS   = $(all_libraries)
 
 lib_LTLIBRARIES = libkuriikwsfilter.la
 
