@@ -54,7 +54,7 @@ HidingTab::HidingTab( KickerConfig *parent, const char* name )
     connect(m_delaySpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_autoHideSwitch, SIGNAL(toggled(bool)), SIGNAL(changed()));
     connect(m_backgroundRaise, SIGNAL(toggled(bool)), SIGNAL(changed()));
-    connect(m_backgroundPos, SIGNAL(activated(bool)), SIGNAL(changed()));
+    connect(m_backgroundPos, SIGNAL(activated(int)), SIGNAL(changed()));
     connect(m_lHB, SIGNAL(toggled(bool)), SIGNAL(changed()));
     connect(m_rHB, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
