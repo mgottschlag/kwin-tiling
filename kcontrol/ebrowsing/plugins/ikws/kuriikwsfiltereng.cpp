@@ -182,7 +182,10 @@ QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map, const Q
 	// Back-substitute quoted strings (%20 -> " "):
 	{
 		int i = 0;
-		while ((i = userquery.find("%20")) != -1) userquery = userquery.replace(i, 3, " ");
+		while ((i = userquery.find("%20")) != -1)
+			userquery = userquery.replace(i, 3, " ");
+		for ( QStringList::Iterator it = l.begin(); it != l.end(); ++it )
+			*it = (*it).replace(QRegExp("%20"), " ");
 	}
 
 	PIDDBG << "Generating substitution map:\n";
