@@ -24,7 +24,7 @@
 #include <qregexp.h>
 #include <qfile.h>
 #include <qfileinfo.h>
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
 #include <stdarg.h>
 #endif
 #include "kxftconfig.h"
@@ -81,14 +81,14 @@ static QString getDir(const QString &f)
     return dirSyntax(d);
 }
 
-#ifdef USE_FONTS_CONF
-static QString getEntry(QDomElement element, const char *type, int numAttributes, ...)
+#ifdef HAVE_FONTCONFIG
+static QString getEntry(QDomElement element, const char *type, unsigned int numAttributes, ...)
 {
     if(numAttributes==element.attributes().length())
     {
-        va_list args;
-        int     arg;
-        bool    ok=true;
+        va_list      args;
+        unsigned int arg;
+        bool         ok=true;
 
         va_start(args, numAttributes);
 
@@ -253,7 +253,7 @@ static KXftConfig::ListItem * getLastItem(QPtrList<KXftConfig::ListItem> &list)
     return NULL;
 }
 
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
 static const QString defaultPath("/etc/fonts/fonts.conf");
 static const QString defaultUserFile(".fonts.conf");
 static const char *  constSymEnc="glyphs-fontspecific";
@@ -266,7 +266,7 @@ static const char *  constSymEnc="\"glyphs-fontspecific\"";
 static const QString constConfigFiles[]=
 {
     defaultPath,
-#ifndef USE_FONTS_CONF
+#ifndef HAVE_FONTCONFIG
     "/etc/X11/XftConfig",
 #endif
     QString::null
@@ -274,7 +274,7 @@ static const QString constConfigFiles[]=
 
 KXftConfig::KXftConfig(int required, bool system)
           : m_required(required),
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
             m_doc("fontconfig")
 #else
             m_size(0),
@@ -306,7 +306,7 @@ KXftConfig::KXftConfig(int required, bool system)
 
 KXftConfig::~KXftConfig()
 {
-#ifndef USE_FONTS_CONF
+#ifndef HAVE_FONTCONFIG
     if(m_data)
     {
         delete [] m_data;
@@ -325,7 +325,7 @@ bool KXftConfig::reset()
     m_excludeRange.reset();
     m_subPixel.reset();
 
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
     QFile f(QFile::encodeName(m_file));
 
     if(f.open(IO_ReadOnly))
@@ -390,7 +390,7 @@ bool KXftConfig::apply()
 
         if(f)
         {
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
             if(m_required&Dirs)
             {
                 applyDirs();
@@ -410,7 +410,7 @@ bool KXftConfig::apply()
             // Check document syntax...
             static const char * qtXmlHeader   = "<?xml version = '1.0'?>";
             static const char * xmlHeader     = "<?xml version=\"1.0\"?>";
-            static const char * qtDocTypeLine = "<!DOCTYPE fontconfig >";
+            static const char * qtDocTypeLine = "<!DOCTYPE fontconfig>";
             static const char * docTypeLine   = "<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">";
 
             QString str(m_doc.toString());
@@ -423,14 +423,6 @@ bool KXftConfig::apply()
 
             if(-1!=(idx=str.find(qtDocTypeLine)))
                 str.replace(idx, strlen(qtDocTypeLine), docTypeLine);
-
-            str.replace(QRegExp("><"), ">\n<");
-            str.replace(QRegExp("> <"), ">\n\t<");
-            str.replace(QRegExp(">  <"), ">\n\t\t<");
-            str.replace(QRegExp(">   <"), ">\n\t\t\t<");
-            str.replace(QRegExp("\n <"), "\n\t<");
-            str.replace(QRegExp("\n  <"), "\n\t\t<");
-            str.replace(QRegExp("\n   <"), "\n\t\t\t<");
 
             //
             // Write to file...
@@ -643,7 +635,7 @@ void KXftConfig::addItem(QPtrList<ListItem> &list, const QString &i)
     if(!item)
     {
         list.append(new ListItem(i
-#ifndef USE_FONTS_CONF
+#ifndef HAVE_FONTCONFIG
                                  , NULL, NULL
 #endif
                                 ));
@@ -667,7 +659,7 @@ void KXftConfig::removeItem(QPtrList<ListItem> &list, ListItem *item)
 
 void KXftConfig::readContents()
 {
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
     QDomNode n = m_doc.documentElement().firstChild();
 
     while(!n.isNull())
@@ -884,7 +876,7 @@ void KXftConfig::readContents()
 #endif
 }
 
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
 void KXftConfig::applyDirs()
 {
     ListItem *item,

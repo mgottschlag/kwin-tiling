@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <fstream>
 
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
 #include <qdom.h>
 #endif
 
@@ -48,7 +48,7 @@ class KXftConfig
 
     struct Item
     {
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
         Item(QDomNode &n) : node(n), toBeRemoved(false) {}
         Item()            : toBeRemoved(false)          {}
         virtual void reset()                            { node.clear(); toBeRemoved=false; }
@@ -69,7 +69,7 @@ class KXftConfig
 
     struct ListItem : public Item
     {
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
         ListItem(const QString &st, QDomNode &n) : Item(n), str(st) {}
         ListItem(const QString &st)              : str(st)          {}
 #else
@@ -90,7 +90,7 @@ class KXftConfig
             Vbgr
         };
 
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
         SubPixel(Type t, QDomNode &n) : Item(n), type(t) {}
         SubPixel(Type t=None)         : type(t)          {}
 #else
@@ -103,7 +103,7 @@ class KXftConfig
 
     struct Exclude : public Item
     {
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
         Exclude(double f, double t, QDomNode &n) : Item(n), from(f), to(t) {}
         Exclude(double f=0, double t=0)          : from(f), to(t)          {}
 #else
@@ -157,7 +157,7 @@ class KXftConfig
     void        removeItem(QPtrList<ListItem> &list, ListItem *item);
     void        removeItem(QPtrList<ListItem> &list, const QString &i) { removeItem(list, findItem(list, i)); }
     void        readContents();
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
     void        applyDirs();
     void        applySymbolFamilies();
     void        applySubPixelType();
@@ -180,7 +180,7 @@ class KXftConfig
                        m_dirs;
     QString            m_file;
     int                m_required;
-#ifdef USE_FONTS_CONF
+#ifdef HAVE_FONTCONFIG
     QDomDocument       m_doc;
 #else
     int                m_size;
