@@ -1605,9 +1605,7 @@ ReadDmrc ()
 	return GE_Ok;
     }
 
-    /* on POSIX systems only EACCES can be returned - 
-       I leave the EPERM here just because I don't know all non-POSIX systems */
-    if (errno != EACCES && errno != EPERM) {
+    if (errno != EACCES) {
 	free (fname);
 	return GE_NoFile;
     }
