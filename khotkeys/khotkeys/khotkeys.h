@@ -15,8 +15,8 @@
 #include <qtimer.h>
 #include <dcopobject.h>
 #include <kurifilter.h>
+#include <kglobalaccel.h>
 
-#include "khkglobalaccel.h"
 #include "khotkeysglobal.h"
 
 class KHotKeysApp
@@ -29,7 +29,7 @@ class KHotKeysApp
         virtual ~KHotKeysApp();
     protected:
         //virtual bool x11EventFilter(XEvent *);
-        KHKGlobalAccel* accel;
+        KGlobalAccel* accel;
         KHotData_dict data;
         void start_general( const QString& action_P );
         void start_menuentry( const QString& action_P );

@@ -14,7 +14,7 @@ khotkeys_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 autostart_DATA = khotkeys.desktop
 autostartdir = $(prefix)/share/autostart
 
-noinst_HEADERS = khotkeys.h khkglobalaccel.h
+noinst_HEADERS = khotkeys.h
 
 INCLUDES= -I$(srcdir)/../shared $(all_includes)
 

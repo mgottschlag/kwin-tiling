@@ -26,7 +26,7 @@
 KHotKeysApp::KHotKeysApp()
     : KUniqueApplication( false, true ) // no styles
     {
-    accel = new KHKGlobalAccel( this );
+    accel = new KGlobalAccel( this );
     reread_configuration();
     }
 
@@ -156,7 +156,7 @@ void KHotKeysApp::start_menuentry( const QString& action_P )
 void KHotKeysApp::reread_configuration()
     {
     delete accel;
-    accel = new KHKGlobalAccel( this );
+    accel = new KGlobalAccel( this );
     data.clear();
     KSimpleConfig cfg( CONFIG_FILE, true );
     data.read_config( cfg );
@@ -172,7 +172,7 @@ void KHotKeysApp::reread_configuration()
     }
 
 /*
-// needed for KHKGlobalAccel
+// needed for KGlobalAccel
 bool KHotKeysApp::x11EventFilter(XEvent * ev)
     {
     if( accel->x11EventFilter( ev ))

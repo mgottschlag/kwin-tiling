@@ -22,6 +22,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <X11/Xlib.h>
+
 
 // for multihead
 int khotkeys_screen_number = 0;
