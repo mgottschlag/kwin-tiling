@@ -342,16 +342,27 @@ void IconThemesConfig::themeSelected(QListViewItem *item)
 
   updateRemoveButton();
 
-  KIcon icon=icontheme.iconPath("exec",
+  KIcon icon=icontheme.iconPath("exec.png",
 	icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
+  if (!icon.isValid())
+	  icon=icontheme.iconPath("exec.svg",
+	  icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
   kdDebug() << icon.path<< "\n";
   m_previewExec->setPixmap(QPixmap(icon.path));
-  icon=icontheme.iconPath("folder",
+
+  icon=icontheme.iconPath("folder.png",
 	icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
+  if (!icon.isValid())
+	  icon=icontheme.iconPath("folder.svg",
+	  icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest); 
   kdDebug() << icon.path<< "\n";
   m_previewFolder->setPixmap(QPixmap(icon.path));
-  icon=icontheme.iconPath("txt",
+
+  icon=icontheme.iconPath("txt.png",
 	icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
+  if (!icon.isValid())
+	  icon=icontheme.iconPath("txt.svg",
+	  icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
   kdDebug() << icon.path<< "\n";
   m_previewDocument->setPixmap(QPixmap(icon.path));
   emit changed(true);
