@@ -55,7 +55,7 @@ private:
 class KNApplication
 {
 public:
-    KNApplication( KConfig * );
+    KNApplication( const QString &path );
     ~KNApplication();
 
     QString text() const { return m_description; }
@@ -70,7 +70,8 @@ private:
     QString m_description;
     EventList *m_events;
 
-    KConfig *kc;
+    KConfig *kc; // The file that defines the events.
+    KConfig *config; // The file that contains the settings for the events.
 };
 
 

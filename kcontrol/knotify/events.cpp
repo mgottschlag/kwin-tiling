@@ -40,15 +40,12 @@ Events::Events()
 void Events::load()
 {
     m_apps.clear();
-    m_apps.append( new KNApplication( new KConfig("eventsrc", false, false)));
-
     QStringList fullpaths(KGlobal::dirs()->findAllResources("data", "*/eventsrc", false, true));
     QString path;
     for (QStringList::Iterator it=fullpaths.begin(); it!=fullpaths.end(); ++it) {
         path = makeRelative( *it );
 	if ( !path.isEmpty() ) {
-	    KConfig *kc = new KConfig( path, false, false, "data" );
-	    m_apps.append( new KNApplication( kc ));
+	    m_apps.append( new KNApplication( path ));
 	}
     }
 }
@@ -82,10 +79,13 @@ QString Events::makeRelative( const QString& fullPath )
 
 
 // ownership of the KConfig is transferred
-KNApplication::KNApplication( KConfig *config )
+KNApplication::KNApplication( const QString &path )
 {
+    QString config_file = path;
+    config_file[config_file.find('/')] = '.';
     m_events = 0L;
-    kc = config;
+    config = new KConfig(config_file, false, false);
+    kc = new KConfig(path, true, false, "data");
     kc->setGroup( QString::fromLatin1("!Global!") );
     m_icon = kc->readEntry(QString::fromLatin1("IconName"),
                            QString::fromLatin1("misc"));
@@ -117,21 +117,17 @@ void KNApplication::save()
     if ( !m_events )
 	return;
 
-    QString presentation = QString::fromLatin1("presentation");
-    QString soundfile = QString::fromLatin1("soundfile");
-    QString logfile = QString::fromLatin1("logfile");
-
     KNEventListIterator it( *m_events );
     KNEvent *e;
     while ( (e = it.current()) ) {
-	kc->setGroup( e->configGroup );
-	kc->writeEntry( presentation, e->presentation );
-	kc->writeEntry( soundfile, e->soundfile );
-	kc->writeEntry( logfile, e->logfile );
+	config->setGroup( e->configGroup );
+	config->writeEntry( "presentation", e->presentation );
+	config->writeEntry( "soundfile", e->soundfile );
+	config->writeEntry( "logfile", e->logfile );
 
 	++it;
     }
-    kc->sync();
+    config->sync();
 }
 
 
@@ -145,14 +141,6 @@ void KNApplication::loadEvents()
     QString comment = QString::fromLatin1("Comment");
     QString unknown = i18n("Unknown Title");
     QString nodesc = i18n("No Description");
-
-    QString presentation = QString::fromLatin1("presentation");
-    QString defpresentation = QString::fromLatin1("default_presentation");
-    QString nopresentation = QString::fromLatin1("nopresentation");
-    QString soundfile = QString::fromLatin1("soundfile");
-    QString defsoundfile = QString::fromLatin1("default_sound");
-    QString logfile = QString::fromLatin1("logfile");
-    QString deflogfile = QString::fromLatin1("default_logfile");
 
     QStringList conflist = kc->groupList();
     QStringList::Iterator it = conflist.begin();
@@ -170,12 +158,14 @@ void KNApplication::loadEvents()
 		delete e;
 
 	    else { // load the event
-		int default_rep = kc->readNumEntry( defpresentation, 0 );
-		e->presentation = kc->readNumEntry( presentation, default_rep);
-		e->dontShow = kc->readNumEntry( nopresentation, 0 );
-		e->logfile = kc->readEntry(logfile, kc->readEntry(deflogfile));
-		e->soundfile = kc->readEntry( soundfile,
-					      kc->readEntry( defsoundfile ));
+		int default_rep = kc->readNumEntry("default_presentation", 0 );
+                QString default_logfile = kc->readEntry("default_logfile");
+                QString default_soundfile = kc->readEntry("default_soundfile");
+                config->setGroup(*it);
+		e->presentation = config->readNumEntry("presentation", default_rep);
+		e->dontShow = config->readNumEntry("nopresentation", 0 );
+		e->logfile = config->readEntry("logfile", default_logfile);
+		e->soundfile = config->readEntry("soundfile", default_soundfile);
 
 		m_events->append( e );
 	    }
