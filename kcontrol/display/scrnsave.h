@@ -108,7 +108,7 @@ protected slots:
     void slotStopTest();
     void slotTimeoutChanged(int);
     void slotLock( bool );
-    void slotStars( bool );
+//    void slotStars( bool );
     void slotPriorityChanged( int val );
     void slotSetupDone(KProcess*);
     // when selecting a new screensaver, the old preview will
