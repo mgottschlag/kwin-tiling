@@ -52,64 +52,58 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 {
     locale =  KGlobal::locale();
 
-    QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
-    QGroupBox *gbox = new QGroupBox(this, i18n("Locale"));
-    tl->addWidget(gbox);
-
-    QGridLayout *tl1 = new QGridLayout(gbox, 5, 4, 5);
-    tl1->addRowSpacing(0, 15);
-    tl1->addRowSpacing(4, 10);
-    tl1->addColSpacing(0, 10);
-    tl1->addColSpacing(3, 10);
-    tl1->setColStretch(2, 1);
+    QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
+    tl1->setRowStretch( 0, 1);
+    tl1->setColStretch( 2, 1);
 
     changedFlag = FALSE;
 
-    QLabel *label = new QLabel(gbox, i18n("&Country"));
-    comboCountry = new KLanguageCombo(gbox);
+    QLabel *label = new QLabel(this, i18n("&Country"));
+    comboCountry = new KLanguageCombo(this);
     comboCountry->setFixedHeight(comboCountry->sizeHint().height());
     label->setBuddy(comboCountry);
-    connect(comboCountry,SIGNAL(activated(int)),this,SLOT(changedCountry(int)));
+    connect( comboCountry, SIGNAL(activated(int)),
+	     this, SLOT(changedCountry(int)) );
     tl1->addWidget(label, 1, 1);
     tl1->addWidget(comboCountry, 1, 2);
 
-    label = new QLabel(gbox, i18n("&Language"));
-    comboLang = new KLanguageCombo(gbox);
+    label = new QLabel(this, i18n("&Language"));
+    comboLang = new KLanguageCombo(this);
     comboLang->setFixedHeight(comboLang->sizeHint().height());
     label->setBuddy(comboLang);
-    connect(comboLang,SIGNAL(activated(int)),this,SLOT(changedLanguage(int)));
+    connect( comboLang, SIGNAL(activated(int)),
+	     this, SLOT(changedLanguage(int)) );
     tl1->addWidget(label, 2, 1);
     tl1->addWidget(comboLang, 2, 2);
 
-    label = new QLabel(gbox, i18n("&Numbers"));
-    comboNumber = new KLanguageCombo(gbox);
+    label = new QLabel(this, i18n("&Numbers"));
+    comboNumber = new KLanguageCombo(this);
     comboNumber->setFixedHeight(comboNumber->sizeHint().height());
     label->setBuddy(comboNumber);
-    connect(comboNumber,SIGNAL(activated(int)),this,SLOT(changedNumber(int)));
+    connect( comboNumber, SIGNAL(activated(int)),
+	     this, SLOT(changedNumber(int)) );
     tl1->addWidget(label, 3, 1);
     tl1->addWidget(comboNumber, 3, 2);
 
-    label = new QLabel(gbox, i18n("&Money"));
-    comboMoney = new KLanguageCombo(gbox);
+    label = new QLabel(this, i18n("&Money"));
+    comboMoney = new KLanguageCombo(this);
     comboMoney->setFixedHeight(comboMoney->sizeHint().height());
     label->setBuddy(comboMoney);
-    connect(comboMoney,SIGNAL(activated(int)),this,SLOT(changedMoney(int)));
+    connect( comboMoney, SIGNAL(activated(int)),
+	     this, SLOT(changedMoney(int)) );
     tl1->addWidget(label, 4, 1);
     tl1->addWidget(comboMoney, 4, 2);
 
-    label = new QLabel(gbox, i18n("&Date and time"));
-    comboDate = new KLanguageCombo(gbox);
+    label = new QLabel(this, i18n("&Date and time"));
+    comboDate = new KLanguageCombo(this);
     comboDate->setFixedHeight(comboDate->sizeHint().height());
     label->setBuddy(comboDate);
-    connect(comboDate,SIGNAL(activated(int)),this,SLOT(changedTime(int)));
+    connect( comboDate, SIGNAL(activated(int)),
+	     this, SLOT(changedTime(int)) );
     tl1->addWidget(label, 5, 1);
     tl1->addWidget(comboDate, 5, 2);
 
-    tl1->activate();
-
-    tl->addStretch(1);
-    tl->activate();
-
+    tl1->setRowStretch(6,1);
     load();
 }
 

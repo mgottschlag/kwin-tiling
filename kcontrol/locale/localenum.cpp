@@ -48,49 +48,36 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
   QLabel *label;
-  QGroupBox *gbox;
-
-  QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 
   // Numbers
-  gbox = new QGroupBox(this, i18n("Numbers"));
-  tl->addWidget(gbox);
-
-  QGridLayout *tl1 = new QGridLayout(gbox, 2, 4, 5);
-  tl1->addRowSpacing(0, 15);
-  tl1->addRowSpacing(4, 10);
-  tl1->addColSpacing(0, 10);
-  tl1->addColSpacing(3, 10);
+  QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
   tl1->setColStretch(2, 1); 
 
-  label = new QLabel("1", gbox, i18n("Decimal symbol"));
-  edDecSym = new QLineEdit(gbox);
+  label = new QLabel("1", this, i18n("Decimal symbol"));
+  edDecSym = new QLineEdit(this);
   connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
-  tl1->addWidget(label, 1, 1);
-  tl1->addWidget(edDecSym, 1, 2);
+  tl1->addWidget(label, 0, 1);
+  tl1->addWidget(edDecSym, 0, 2);
 
-  label = new QLabel("1", gbox, i18n("Thousands separator"));
-  edThoSep = new QLineEdit(gbox);
+  label = new QLabel("1", this, i18n("Thousands separator"));
+  edThoSep = new QLineEdit(this);
   connect( edThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotThoSepChanged(const QString &) ) );
-  tl1->addWidget(label, 2, 1);
-  tl1->addWidget(edThoSep, 2, 2);
+  tl1->addWidget(label, 1, 1);
+  tl1->addWidget(edThoSep, 1, 2);
 
-  label = new QLabel("1", gbox, i18n("Positive sign"));
-  edMonPosSign = new QLineEdit(gbox);
+  label = new QLabel("1", this, i18n("Positive sign"));
+  edMonPosSign = new QLineEdit(this);
   connect( edMonPosSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonPosSignChanged(const QString &) ) );
-  tl1->addWidget(label, 3, 1);
-  tl1->addWidget(edMonPosSign, 3, 2);
+  tl1->addWidget(label, 2, 1);
+  tl1->addWidget(edMonPosSign, 2, 2);
 
-  label = new QLabel("1", gbox, i18n("Negative sign"));
-  edMonNegSign = new QLineEdit(gbox);
+  label = new QLabel("1", this, i18n("Negative sign"));
+  edMonNegSign = new QLineEdit(this);
   connect( edMonNegSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonNegSignChanged(const QString &) ) );
-  tl1->addWidget(label, 4, 1);
-  tl1->addWidget(edMonNegSign, 4, 2);
+  tl1->addWidget(label, 3, 1);
+  tl1->addWidget(edMonNegSign, 3, 2);
 
-  tl1->activate();
-
-  tl->addStretch(1);
-  tl->activate();
+  tl1->setRowStretch(4, 1);
 
   load();
 }
@@ -133,6 +120,7 @@ void KLocaleConfigNumber::save()
 
 void KLocaleConfigNumber::defaults()
 {
+  reset();
 }
 
 void KLocaleConfigNumber::slotDecSymChanged(const QString &t)

@@ -48,43 +48,30 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
   QLabel *label;
-  QGroupBox *gbox;
-
-  QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 
   // Time
-  gbox = new QGroupBox(this, i18n("Date && Time"));
-  tl->addWidget(gbox);
-
-  QGridLayout *tl1 = new QGridLayout(gbox, 3, 4, 5);
-  tl1->addRowSpacing(0, 15);
-  tl1->addRowSpacing(4, 10);
-  tl1->addColSpacing(0, 10);
-  tl1->addColSpacing(3, 10);
+  QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
   tl1->setColStretch(2, 1); 
 
-  label = new QLabel("1", gbox, i18n("Time format"));
-  edTimeFmt = new QLineEdit(gbox);
+  label = new QLabel("1", this, i18n("Time format"));
+  edTimeFmt = new QLineEdit(this);
   connect( edTimeFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotTimeFmtChanged(const QString &) ) );
-  tl1->addWidget(label, 1, 1);
-  tl1->addWidget(edTimeFmt, 1, 2);
+  tl1->addWidget(label, 0, 1);
+  tl1->addWidget(edTimeFmt, 0, 2);
 
-  label = new QLabel("1", gbox, i18n("Date format"));
-  edDateFmt = new QLineEdit(gbox);
+  label = new QLabel("1", this, i18n("Date format"));
+  edDateFmt = new QLineEdit(this);
   connect( edDateFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtChanged(const QString &) ) );
-  tl1->addWidget(label, 2, 1);
-  tl1->addWidget(edDateFmt, 2, 2);
+  tl1->addWidget(label, 1, 1);
+  tl1->addWidget(edDateFmt, 1, 2);
 
-  label = new QLabel("1", gbox, i18n("Short date format"));
-  edDateFmtShort = new QLineEdit(gbox);
+  label = new QLabel("1", this, i18n("Short date format"));
+  edDateFmtShort = new QLineEdit(this);
   connect( edDateFmtShort, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtShortChanged(const QString &) ) );
-  tl1->addWidget(label, 3, 1);
-  tl1->addWidget(edDateFmtShort, 3, 2);
-
-  tl1->activate();
-
-  tl->addStretch(1);
-  tl->activate();
+  tl1->addWidget(label, 2, 1);
+  tl1->addWidget(edDateFmtShort, 2, 2);
+  
+  tl1->setRowStretch(3, 1);
 
   load();
 }
@@ -131,6 +118,7 @@ void KLocaleConfigTime::save()
 
 void KLocaleConfigTime::defaults()
 {
+  reset();
 }
 
 void KLocaleConfigTime::slotTimeFmtChanged(const QString &t)
