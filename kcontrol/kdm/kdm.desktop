@@ -1,0 +1,58 @@
+[Desktop Entry]
+Exec=kdesu kcmshell Applications/System/kdm
+Icon=kdmconfig
+Type=Application
+DocPath=kcontrol/kdmconfig/index.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=kdm
+X-KDE-RootOnly=true
+X-KDE-ControlModuleType=System
+X-KDE-HideFromPanel=true
+
+Name=Login Manager
+Name[ca]=Gestor de connexió
+Name[cs]=Správce přihlášení
+Name[eo]=Saluto-Administrilo
+Name[fi]=Sisäänkirjautumisasetukset
+Name[fr]=Gestionnaire de connexion
+Name[he]=תכרעמל הסינכ להנמ
+Name[hu]=Bejelentkezés Kezelő
+Name[it]=Gestione login
+Name[ja]=ログインマネージャ
+Name[no]=Innloggingsbehandler
+Name[no_NY]=Innloggingsbehandlar
+Name[pt]=Gestor de Logins
+Name[ro]=Manager de logare
+Name[sl]=Upravljalnik prijav
+Name[sv]=Inloggningshanteraren
+Name[ta]=Ñ¨Æ §ÁÄ¡Ç÷
+
+Comment=All KDM settings
+Comment[ca]=Tot l'arranjament de KDM
+Comment[cs]=Všechna nastavení KDM
+Comment[de]=Alle KDM Einstellungen
+Comment[eo]=La tuta KDM-agordaĵo
+Comment[fi]=Kaikki KDM:n asetukset
+Comment[fr]=Configuration de KDM
+Comment[he]=KDM לש תורדגהה לכ
+Comment[hu]=Minden KDM beállítás
+Comment[it]=Tutte le impostazioni di KDM
+Comment[ja]=KDMの全ての設定です
+Comment[no]=Alle KDM-innstillinger
+Comment[no_NY]=Alle KDM-innstillingar
+Comment[pt]=Todas as configurações do KDM
+Comment[ro]=Toate setările KDM
+Comment[sl]=Vse nastavitve KDM
+Comment[sv]=Alla KDM-inställningar
+Comment[ta]=«¨ÉòÐ KDM «¨ÁôÒ¸û
+
+Keywords=kdm,display manager,xdm,users,login
+Keywords[ca]=kdm,gestor de monitor,xdm,usuaris,connexió
+Keywords[de]=kdm,display manager,xdm,benutzer,login
+Keywords[hu]=kdm,bejelentkezés kezelő,xdm,felhasználók,login
+Keywords[no]=kdm,skjermbehandler,innloggingsbehandling,xdm,brukere,innlogging
+Keywords[no_NY]=kdm,skjerm,xdm,brukarar,innlogging
+Keywords[pt]=kdm,gestor de ecrãs,xdm,utilizadores,login
+Keywords[ro]=kdm,manager,ecran,afişare,xdm,utilizatori,login,logare
+Keywords[sl]=kdm,upravljalnik zaslona,xdm,uporabniki,prijava
