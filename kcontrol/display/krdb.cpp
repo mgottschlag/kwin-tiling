@@ -181,12 +181,12 @@ static void applyQtStyles(bool active)
       else
           guieffects << QString("none");
 
-      settings.writeEntry("qt/GUIEffects", guieffects);
+      settings.writeEntry("/qt/GUIEffects", guieffects);
 
       bool usexft = kglobals.readBoolEntry("AntiAliasing", false);
 
-      settings.writeEntry("qt/enableXft", usexft);
-      settings.writeEntry("qt/useXft", usexft);
+      settings.writeEntry("/qt/enableXft", usexft);
+      settings.writeEntry("/qt/useXft", usexft);
 
    }
    else
