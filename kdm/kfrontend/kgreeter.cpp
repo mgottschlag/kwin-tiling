@@ -354,6 +354,8 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	    loginEdit->selectAll();
 	load_wm();
     }
+
+    setMaximumHeight(QApplication::desktop()->height());
 }
 
 KGreeter::~KGreeter ()
