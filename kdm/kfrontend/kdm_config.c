@@ -1306,9 +1306,11 @@ ReadAccessFile (const char *fname)
 	    (*acPtr)->nentries = 1;
 	    if (!ParseHost (&nHosts, &hostPtr, &nChars, displayOrAlias, len))
 	    {
+		if ((*acPtr)->flags & a_notAllowed) {
 	      sktoeol:
+		    error = 1;
+		}
 		while (ReadWord (&file, &len, TRUE));
-		error = 1;
 		continue;
 	    }
 	    (*acPtr)->hosts = nHosts;
@@ -1321,10 +1323,9 @@ ReadAccessFile (const char *fname)
 		    (*acPtr)->flags |= a_notBroadcast;
 		else
 		{
-		    if (!ParseHost (&nHosts, &hostPtr, &nChars, 
-				    hostOrAlias, len))
-			goto sktoeol;
-		    (*acPtr)->nhosts++;
+		    if (ParseHost (&nHosts, &hostPtr, &nChars, 
+				   hostOrAlias, len))
+			(*acPtr)->nhosts++;
 		}
 	    }
 	    acPtr = &(*acPtr)->next;
