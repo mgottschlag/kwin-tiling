@@ -315,7 +315,7 @@ void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
   kdDebug() << "CalendarSystem: " << calendarSystem << endl;
 
   typedef QValueVector<QString> CalendarVector;
-  CalendarVector calendars(2);
+  CalendarVector calendars(3);
   calendars[0] = "gregorian";
   calendars[1] = "hijri";
   calendars[2] = "hebrew";
@@ -452,7 +452,8 @@ void KLocaleConfigTime::slotTranslate()
     (m_locale->translate("Calendar System Gregorian", "Gregorian"), 0);
   m_comboCalendarSystem->changeItem
     (m_locale->translate("Calendar System Hijri", "Hijri"), 1);
-    (m_locale->translate("Calendar System Hebrew", "Hebrew"), 1);
+  m_comboCalendarSystem->changeItem
+    (m_locale->translate("Calendar System Hebrew", "Hebrew"), 2);
 
   str = m_locale->translate
     ("<p>The text in this textbox will be used to format "
