@@ -176,7 +176,7 @@ void TaskbarConfig::load()
         KConfigGroupSaver saver(c, "General");
 
         ui->showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", true));
-        ui->showListBtnCheck->setChecked(c->readBoolEntry("ShowWindowListBtn", true));
+        ui->showListBtnCheck->setChecked(c->readBoolEntry("ShowWindowListBtn", false));
         ui->sortCheck->setChecked(c->readBoolEntry("SortByDesktop", true));
         ui->iconCheck->setChecked(c->readBoolEntry("ShowIcon", true));
         ui->iconifiedCheck->setChecked(c->readBoolEntry("ShowOnlyIconified", false));
@@ -226,7 +226,7 @@ void TaskbarConfig::save()
 void TaskbarConfig::defaults()
 {
     ui->showAllCheck->setChecked(true);
-    ui->showListBtnCheck->setChecked(true);
+    ui->showListBtnCheck->setChecked(false);
     ui->sortCheck->setChecked(true);
     ui->iconCheck->setChecked(true);
     ui->iconifiedCheck->setChecked(false);
