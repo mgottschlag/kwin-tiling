@@ -40,6 +40,7 @@
 #include <kprogress.h>
 #include <kapp.h>
 #include <klocale.h>
+#include <stdlib.h>
 
 CFontsWidget::CFontsWidget(QWidget *parent, const char *)
             : CFontsWidgetData(parent),
