@@ -96,13 +96,23 @@ XDM's Xservers file, but it contains some extensions:
   This is not perfectly suited for Linux, as there X-Servers don't actually
   cover consoles (gettys), but hey, it works. :-)
 * reserve. A server marked as reserve is not started at KDM's startup time,
-  but when the user explicitly requests it. See "Command FiFos" below.
+  but when the user explicitly requests it. If there is a reserve 
+  specification, the KDE Menu will have a "Start New Session" item
+  near the bottom; use that to start KDM's greeter on one of the
+  reserved screens. The display will switch to the new screen, and
+  you will have a minute to login. If there are no more available
+  reserved screens, selecting the menu item will have no effect. For
+  finer control, see "Command FiFos" below. 
 
 Example:
 
 :0 local@tty1 /usr/bin/X11/X vt7
 :1 local reserve /usr/bin/X11/X :1 vt8
 
+Note that changes to Xservers will not take effect until you do a kdm
+reload, and your KDE menu won't change until you start a new session.
+Be careful: if you restart rather than reload kdm you will terminate
+your own session.
 
 Configuring session types
 -------------------------
@@ -184,7 +194,9 @@ The command FiFos
 
 This is a feature you can use to remote-control KDM. It's mostly intended
 for use by ksmserver and kdesktop from a running session, but other
-applications are possible as well.
+applications are possible as well. You can write to these files from
+an application or by using, for example, the shell echo command.
+
 There are two types of FiFos: the global one (xdmctl) and the per-display
 ones (xdmctl-<display>).
 The global one is owned by root, the per-display ones are owned by the user
@@ -223,7 +235,10 @@ Per-display Fifo commands:
 "reserve" [timeout in seconds]
  - Start a reserve login screen. If nobody logs in within the specified amount
    of time (one minute by default), the display is removed again. When the
-   session on the display exits, the display is removed, too.
+   session on the display exits, the display is removed, too. Direct
+   the reserve command to your current session's FiFo. So if session
+   0 is your standard login session and 1 is reserved, send the
+   reserve command to xdmct-\:0. Once it executes, it creates xdmctl-\:1.
 
 "suicide"
  - The currently running session is forcibly terminated. No auto-relogin is
