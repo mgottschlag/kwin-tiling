@@ -2488,10 +2488,12 @@ static DSect dAllSects[] = {
 "# Rough estimations about how many seconds KDM will spend at most on\n"
 "# - opening a connection to the X-server (OpenTime):\n"
 "#   OpenRepeat * (OpenTimeout + OpenDelay)\n"
-"# - starting a local X-server (ServerTime): ServerAttempts * ServerTimeout\n"
+"# - starting a local X-server (ServerTime):\n"
+"#   ServerAttempts * (ServerTimeout + OpenDelay)\n"
 "# - starting a display:\n"
-"#   - local display: StartAttempts * (ServerTime + OpenTime)\n"
-"#   - remote/foreign display: StartAttempts * OpenTime\n\n"
+"#   - local display: ServerTime + OpenTime\n"
+"#   - foreign display: StartAttempts * OpenTime\n"
+"#   - xdmcp display: OpenTime (repeated indefinitely by client)\n\n"
 "# Core config for all displays\n" },
 { "X-*-Greeter",	dEntsAnyGreeter, as(dEntsAnyGreeter), 1, 
 "# Greeter config for all displays\n" },
