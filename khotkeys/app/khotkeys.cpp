@@ -26,9 +26,10 @@ namespace KHotKeys
 // KhotKeysApp
 
 KHotKeysApp::KHotKeysApp()
-    : KUniqueApplication( false, true ) // no styles
+    :   KUniqueApplication( false, true ), // no styles
+        delete_helper( new QObject )
     {
-    init_global_data( true, this ); // grab keys
+    init_global_data( true, delete_helper ); // grab keys
     // CHECKME triggery a dalsi vytvaret az tady za inicializaci
     actions_root = NULL;
     reread_configuration();
@@ -36,6 +37,10 @@ KHotKeysApp::KHotKeysApp()
 
 KHotKeysApp::~KHotKeysApp()
     {
+// Many global data should be destroyed while the QApplication object still
+// exists, and therefore 'this' cannot be the parent, as ~Object
+// for 'this' would be called after ~QApplication - use proxy object
+    delete delete_helper;
     // CHECKME triggery a dalsi rusit uz tady pred cleanupem
     delete actions_root;
     }
