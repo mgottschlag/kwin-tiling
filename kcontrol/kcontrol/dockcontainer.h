@@ -37,6 +37,7 @@ public:
 
 protected slots:
   void removeModule();
+  void quickHelpChanged();
 
 protected:
   void resizeEvent (QResizeEvent *);

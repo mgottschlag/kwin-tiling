@@ -22,6 +22,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kprocess.h>
 
 #include "quickhelp.h"
 #include "helpwidget.h"
@@ -53,20 +54,24 @@ void HelpWidget::setText(const QString& text)
 
 void HelpWidget::setBaseText()
 {
-  _browser->setText(i18n("<b>KDE Control Center</b><br><br>"
+  _browser->setText(i18n("<h1>KDE Control Center</2>"
 						 "Sorry, there is no quick help available for the active control module."
 						 "<br><br>"
 						 "Click <a href = \"kcontrol/index.html\">here</a> to read the general control center manual.") );
 }
 
-void HelpWidget::urlClicked(const QString &)
+void HelpWidget::urlClicked(const QString & url)
 {
-  // TODO Launch khelpcenter.
-  kdDebug() << "KControl: URL clicked." << endl;
+  KProcess process;
+  process << "khelpcenter"
+          << "help:/" + url;
+  process.start(KProcess::DontCare);
 }
 
-void HelpWidget::mailClicked(const QString &,const QString &)
+void HelpWidget::mailClicked(const QString &,const QString & addr)
 {
-  // TODO Launch kmail.
-  kdDebug() << "KControl: EMail adress clicked." << endl;
+  KProcess process;
+  process << "kmail"
+          << addr;
+  process.start(KProcess::DontCare);
 }
