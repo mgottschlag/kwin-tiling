@@ -73,7 +73,15 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
 
   /* build up the KDE palette, and save it to qtrc. */
 
-  /* --- this code is from kapplication.cpp --- */
+  /*
+     * WARNING WARNING WARNING 
+     *
+     * For reasons I do not understand the code below is duplicated from
+     * kdelibs/kdecore/kapplication.cpp
+     *
+     * If you change it here, change it there as well
+     */
+
   QColor kde2Gray(220, 220, 220);
   QColor kde2Blue;
   if (QPixmap::defaultDepth() > 8)
@@ -134,14 +142,26 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
   colgrp.setColor(QColorGroup::LinkVisited, visitedLink);
 
   disabledgrp.setColor(QColorGroup::Button, button);
-  disabledgrp.setColor(QColorGroup::ButtonText, buttonText);
+  QColor disbtntext = buttonText;
+  disbtntext.hsv( &h, &s, &v );
+  if (v > 128)
+      // dark button, light buttonText - need a darker disabled buttonText
+      disbtntext = disbtntext.dark(lowlightVal);
+  else if (disbtntext != Qt::black)
+      // light buttonText, dark button - need a lighter disabled buttonText - but only if !black
+      disbtntext = disbtntext.light(highlightVal);
+  else
+      // black button - use darkgrey disabled buttonText
+      disbtntext = Qt::darkGray;
+    
+  disabledgrp.setColor(QColorGroup::ButtonText, disbtntext);
   disabledgrp.setColor(QColorGroup::Midlight, background.light(110));
   disabledgrp.setColor(QColorGroup::Link, link);
   disabledgrp.setColor(QColorGroup::LinkVisited, visitedLink);
 
   QPalette newPal(colgrp, disabledgrp, colgrp);
   /* --- end of kapplication.cpp palette code --- */
-  
+
   /* export kde color settings */
   int i;
   for (i = 0; i < QColorGroup::NColorRoles; i++)
@@ -177,7 +197,7 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
   settings.writeEntry("/qt/KWinPalette/frame", clr.name());
   clr = kglobals.readColorEntry("activeTitleBtnBg", &clr);
   settings.writeEntry("/qt/KWinPalette/activeTitleBtnBg", clr.name());
-  
+
   // inactive colors
   clr = newPal.inactive().background();
   clr = kglobals.readColorEntry("inactiveBackground", &clr);
@@ -228,14 +248,14 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
 
   /* export widget style */
   kglobals.setGroup("General");
-  QString style = kglobals.readEntry("widgetStyle", 
+  QString style = kglobals.readEntry("widgetStyle",
                   (QPixmap::defaultDepth()) > 8 ? "HighColor" : "Default");
   if (!style.isEmpty())
     settings.writeEntry("/qt/style", style);
 
   /* export font settings */
   settings.writeEntry("/qt/font", KGlobalSettings::generalFont().toString());
-  
+
   /* ##### looks like kcmfonts skips this, so we don't do this here */
 /*bool usexft = kglobals.readBoolEntry("AntiAliasing", false);
   kconfig.setGroup("General");
@@ -362,7 +382,7 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg )
 void runRdb( uint flags )
 {
   // Export colors to non-(KDE/Qt) apps (e.g. Motif, GTK+ apps)
-  if (flags & KRdbExportColors) 
+  if (flags & KRdbExportColors)
   {
 
     KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
