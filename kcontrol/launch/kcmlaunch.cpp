@@ -26,6 +26,7 @@
 #include <kgenericfactory.h>
 #include <dcopclient.h>
 #include <knuminput.h>
+#include <kdialog.h>
 
 #include "kcmlaunch.h"
 
@@ -36,9 +37,8 @@ K_EXPORT_COMPONENT_FACTORY( kcm_launch, LaunchFactory("kcmlaunch") );
 LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringList &)
   : KCModule(LaunchFactory::instance(), parent, name)
 {
-    QVBoxLayout* Form1Layout = new QVBoxLayout( this );
-    Form1Layout->setSpacing( 6 );
-    Form1Layout->setMargin( 11 );
+    QVBoxLayout* Form1Layout = new QVBoxLayout( this, 0, 
+        KDialog::spacingHint() );
 
     QGroupBox* GroupBox1 = new QGroupBox( this, "GroupBox1" );
     GroupBox1->setTitle( i18n( "Bus&y Cursor" ) );
