@@ -104,7 +104,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
                           "application exits, the clipboard would usually be "
                           "emptied.") );
 
-    QVButtonGroup *group = new QVButtonGroup( i18n("Clipboard / Selection Behavior"), this );
+    QVButtonGroup *group = new QVButtonGroup( i18n("Clipboard/Selection Behavior"), this );
     group->setExclusive( true );
     
     QWhatsThis::add( group,
@@ -142,7 +142,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     cbSynchronize->setChecked( KClipboard::isSynchronizing() );
     cbImplicitSelection->setChecked( !KClipboard::isSynchronizing() && 
                                      KClipboard::implicitSelection() );
-    cbSeparate->setChecked( !cbSynchronize->isChecked() && 
+    cbSeparate->setChecked( !cbSynchronize->isChecked() &&
                             !cbImplicitSelection->isChecked() );
     
     popupTimeout = new KIntNumInput( this );

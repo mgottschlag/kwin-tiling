@@ -132,7 +132,7 @@ void KIconConfig::init()
 	mbChanged[i] = false;
 
     // Fill list/checkboxen
-    mpUsageList->insertItem(i18n("Desktop / File Manager"));
+    mpUsageList->insertItem(i18n("Desktop/File Manager"));
     mpUsageList->insertItem(i18n("Toolbar"));
     mpUsageList->insertItem(i18n("Main Toolbar"));
     mpUsageList->insertItem(i18n("Small Icons"));
