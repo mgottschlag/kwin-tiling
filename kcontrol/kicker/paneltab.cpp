@@ -24,8 +24,9 @@
 #include <qcheckbox.h>
 #include <qwhatsthis.h>
 #include <qslider.h>
-#include <qlabel.h>
 #include <qvbox.h>
+#include <qlabel.h>
+#include <qpainter.h>
 
 #include <kconfig.h>
 #include <kdialog.h>
@@ -34,9 +35,12 @@
 #include <knuminput.h>
 #include <klineedit.h>
 #include <kstddirs.h>
+#include <kiconloader.h>
 
 #include "paneltab.h"
 #include "paneltab.moc"
+
+const int hb_arrow = 8;
 
 PanelTab::PanelTab( QWidget *parent, const char* name )
   : QWidget (parent, name)
@@ -116,13 +120,8 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   QWhatsThis::add( highlight_hbs, i18n("If this option is enabled, the"
     " hide buttons are highlighted when the mouse cursor is moved over them.") );
 
-  hb_default.load(KGlobal::dirs()->findResource("hb_pics", "hb_default.png"));
-  hb_disabled.load(KGlobal::dirs()->findResource("hb_pics", "hb_disabled.png"));
-  hb_large.load(KGlobal::dirs()->findResource("hb_pics", "hb_large.png"));
-  hb_small.load(KGlobal::dirs()->findResource("hb_pics", "hb_small.png"));
-
-  hb_preview = new QLabel(hbox2);
-  hb_preview->setPixmap(hb_default);
+  hb_preview = new HBPreview(hbox2);
+  hb_preview->setFixedSize(68,46);
 
   hbox2->setStretchFactor(hb_preview, 1);
   hbox2->setStretchFactor(vbox2, 2);
@@ -203,35 +202,18 @@ void PanelTab::size_clicked(int i)
 void PanelTab::show_hbs_clicked()
 {
   bool showHBs = show_hbs->isChecked();
+
+  hb_preview->setEnabled(show_hbs->isChecked());
   
   highlight_hbs->setEnabled(showHBs);
   hb_input->setEnabled(showHBs);
-
-  if (showHBs && hb_input->value() <= 5)
-	hb_preview->setPixmap(hb_small);
-  else if (showHBs && hb_input->value() >= 16)
-	hb_preview->setPixmap(hb_large);
-  else if (showHBs)
-	hb_preview->setPixmap(hb_default);
-  else
-	hb_preview->setPixmap(hb_disabled);
 
   emit changed();
 }
 
 void PanelTab::hbs_input_changed(int)
 {
-  bool showHBs = show_hbs->isChecked();
-
-  if (showHBs && hb_input->value() <= 5)
-	hb_preview->setPixmap(hb_small);
-  else if (showHBs && hb_input->value() >= 16)
-	hb_preview->setPixmap(hb_large);
-  else if (showHBs)
-	hb_preview->setPixmap(hb_default);
-  else
-	hb_preview->setPixmap(hb_disabled);
-
+  hb_preview->setWidth(hb_input->value());
   emit changed();
 }
 
@@ -265,14 +247,16 @@ void PanelTab::load()
 
   bool showHBs = c->readBoolEntry("ShowHideButtons", true);
   show_hbs->setChecked(showHBs);
-  if ( !showHBs )
-      hb_preview->setPixmap(hb_disabled);
 
   highlight_hbs->setChecked(c->readBoolEntry("HighlightHideButtons", true));
   hb_input->setValue(c->readNumEntry("HideButtonSize", 10));
 
   highlight_hbs->setEnabled(showHBs);
   hb_input->setEnabled(showHBs);
+
+  hb_preview->setEnabled(show_hbs->isChecked());
+  hb_preview->setWidth(hb_input->value());
+  hb_preview->setHighlight(highlight_hbs->isChecked());
 
   bool ah = c->readBoolEntry("AutoHidePanel", false);
   ah_cb->setChecked(ah);
@@ -326,4 +310,70 @@ void PanelTab::defaults()
   ah_cb->setChecked(false);
   ah_input->setValue(3);
   ah_input->setEnabled(false);
+}
+
+HBPreview::HBPreview(QWidget *parent, const char* name)
+  : QWidget(parent, name)
+  , _enabled(true)
+  , _highlight(true)
+  , _width(10)
+{
+  _icon = KGlobal::iconLoader()->loadIcon("go", KIcon::Desktop, KIcon::SizeMedium, KIcon::DefaultState, 0L, true);
+}
+
+
+void HBPreview::paintEvent(QPaintEvent*)
+{
+  QRect brect, prect;
+
+  if (_enabled)
+	{
+	  brect = QRect(0, 0, _width, height());
+	  prect = QRect(brect.right()+1, 0, width() - brect.width(), height());
+	}
+  else
+	prect = rect();
+
+  bool hl = false;
+
+  QPainter p(this);
+  p.setFont(font());
+
+  // fill panel rect
+  p.fillRect(prect, colorGroup().brush(QColorGroup::Background));
+
+  // draw panel
+  p.setPen(colorGroup().light());
+  p.drawLine(prect.left(), 0, prect.right()-1, 0);
+  p.drawLine(prect.left(), 0, prect.left(), prect.bottom()-1);
+  p.setPen(Qt::black);
+  p.drawLine(prect.left(), prect.bottom()-1, prect.right()-1, prect.bottom()-1);
+  p.drawLine(prect.right()-1, 0, prect.right()-1, prect.bottom()-1);
+
+  // draw icon
+  if(!_icon.isNull())
+	p.drawPixmap(brect.width()+7, 7, _icon);
+
+
+  if (!_enabled) return;
+
+  // fill button rect
+  if(!hl)
+	p.fillRect(brect, colorGroup().brush(QColorGroup::Background));
+  else
+	p.fillRect(brect, colorGroup().brush(QColorGroup::Light));
+  
+  // draw button
+  p.setPen(colorGroup().light());
+  p.drawLine(0, 0, brect.right()-1, 0);
+  p.drawLine(0, 0, 0, brect.bottom()-1);
+  p.setPen(Qt::black);
+  p.drawLine(0, brect.bottom()-1, brect.right()-1, brect.bottom()-1);
+  p.drawLine(brect.right()-1, 0, brect.right()-1, brect.bottom()-1);
+  
+  if(_width < 10) return; // don't draw arrows if we are to small
+
+  QApplication::style().drawArrow(&p, Qt::LeftArrow, false,
+								  (_width-hb_arrow)/2, (height()-hb_arrow)/2,
+								  hb_arrow, hb_arrow, colorGroup(), true);
 }

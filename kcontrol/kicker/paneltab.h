@@ -34,6 +34,26 @@ class QLabel;
 class KLineEdit;
 class KIntNumInput;
 
+class HBPreview : public QWidget
+{
+  Q_OBJECT;
+  
+ public:
+  HBPreview(QWidget *parent=0, const char* name=0);
+
+  void setEnabled(bool v) { _enabled = v; repaint(); }
+  void setHighlight(bool v) { _highlight = v; repaint(); }
+  void setWidth(int v) { _width = v; repaint(); }
+
+ protected:
+  void paintEvent(QPaintEvent*);
+
+ private:
+  bool       _enabled, _highlight;
+  QPixmap    _icon;
+  int        _width;
+};
+
 class PanelTab : public QWidget
 {
   Q_OBJECT;
@@ -74,8 +94,7 @@ class PanelTab : public QWidget
   QGroupBox    *hb_group;
   KIntNumInput *hb_input;
   QCheckBox    *show_hbs, *highlight_hbs;
-  QLabel       *hb_preview;
-  QPixmap      hb_default, hb_disabled, hb_large, hb_small;
+  HBPreview    *hb_preview;
 
   // auto-hide group
   QGroupBox    *ah_group;
