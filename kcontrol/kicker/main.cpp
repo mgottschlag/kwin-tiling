@@ -85,6 +85,7 @@ KickerConfig::~KickerConfig()
     }
 }
 
+// TODO: This is not true anymore:
 // this method may get called multiple times during the life of the control panel!
 void KickerConfig::init()
 {
@@ -101,7 +102,7 @@ void KickerConfig::init()
     QString configpath = KGlobal::dirs()->findResource("config", configname);
     if (configpath.isEmpty())
        configpath = locateLocal("config", configname);
-    KSharedConfig::Ptr c = KSharedConfig::openConfig(configname);
+    KSharedConfig::Ptr config = KSharedConfig::openConfig(configname);
 
     if (m_extensionInfo.isEmpty())
     {
@@ -124,7 +125,7 @@ void KickerConfig::init()
         }
     }
 
-    setupExtensionInfo(*c, true, true);
+    setupExtensionInfo(*config, true, true);
 
     connect(configFileWatch, SIGNAL(dirty(const QString&)), this, SLOT(configChanged(const QString&)));
     configFileWatch->startScan();
@@ -157,10 +158,10 @@ void KickerConfig::notifyKicker()
     kapp->dcopClient()->send(appname, "kicker", "configure()", data);
 }
 
-void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists, bool reloadIfExists)
+void KickerConfig::setupExtensionInfo(KConfig& config, bool checkExists, bool reloadIfExists)
 {
-    c.setGroup("General");
-    QStringList elist = c.readListEntry("Extensions2");
+    config.setGroup("General");
+    QStringList elist = config.readListEntry("Extensions2");
 
     // all of our existing extensions
     // we'll remove ones we find which are still there the oldExtensions, and delete
@@ -173,16 +174,16 @@ void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists, bool reloadI
         QString group(*it);
 
         // is there a config group for this extension?
-        if (!c.hasGroup(group) || group.contains("Extension") < 1)
+        if (!config.hasGroup(group) || group.contains("Extension") < 1)
         {
             continue;
         }
 
         // set config group
-        c.setGroup(group);
+        config.setGroup(group);
 
-        QString df = KGlobal::dirs()->findResource("extensions", c.readEntry("DesktopFile"));
-        QString configname = c.readEntry("ConfigFile");
+        QString df = KGlobal::dirs()->findResource("extensions", config.readEntry("DesktopFile"));
+        QString configname = config.readEntry("ConfigFile");
         QString configpath = KGlobal::dirs()->findResource("config", configname);
 
         if (checkExists)
@@ -231,26 +232,27 @@ void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists, bool reloadI
     }
 }
 
-void KickerConfig::configChanged(const QString& config)
+void KickerConfig::configChanged(const QString& configPath)
 {
-    if (config.endsWith(configName()))
+    if (configPath.endsWith(configName()))
     {
-        KSharedConfig::Ptr c = KSharedConfig::openConfig(configName());
-        setupExtensionInfo(*c, true);
+        KSharedConfig::Ptr config = KSharedConfig::openConfig(configName());
+        config->reparseConfiguration();
+        setupExtensionInfo(*config, true);
     }
 
     // find the extension and change it
     for (ExtensionInfoList::iterator it = m_extensionInfo.begin(); it != m_extensionInfo.end(); ++it)
     {
-        if (config == (*it)->_configPath)
+        if (configPath == (*it)->_configPath)
         {
-            emit extensionAboutToChange(config);
+            emit extensionAboutToChange(configPath);
             (*it)->configChanged();
             break;
         }
     }
 
-    emit extensionChanged(config);
+    emit extensionChanged(configPath);
 }
 
 void KickerConfig::populateExtensionInfoList(QComboBox* list)
