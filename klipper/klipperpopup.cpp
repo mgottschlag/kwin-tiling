@@ -263,6 +263,9 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
         kdDebug() << "Passing this event to ancestor (KPopupMenu): " << e << endl;
 #endif
         KPopupMenu::keyPressEvent( e );
+        if ( isItemActive( m_filterWidgetId ) ) {
+            setActiveItem( TOP_HISTORY_ITEM_INDEX );
+        }
         break;
     }
     default:
