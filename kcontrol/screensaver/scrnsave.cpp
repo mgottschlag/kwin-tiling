@@ -112,18 +112,21 @@ int SaverList::compareItems(QCollection::Item item1, QCollection::Item item2)
 //===========================================================================
 //
 TestWin::TestWin()
-    : QWidget(0, 0, WStyle_Customize | WStyle_NoBorder)
+    : QXEmbed(0, 0, WStyle_Customize | WStyle_NoBorder)
 {
     setFocusPolicy(StrongFocus);
+    grabMouse();
 }
 
 void TestWin::mousePressEvent(QMouseEvent *)
 {
+    releaseMouse();
     emit stopTest();
 }
 
 void TestWin::keyPressEvent(QKeyEvent *)
 {
+    releaseMouse();
     emit stopTest();
 }
 

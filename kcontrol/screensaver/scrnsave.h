@@ -18,6 +18,7 @@
 #include <qcheckbox.h>
 #include <qslider.h>
 #include <qspinbox.h>
+#include <qxembed.h>
 
 #include <kcmodule.h>
 #include <kprocess.h>
@@ -25,11 +26,11 @@
 class KIntNumInput;
 
 //===========================================================================
-class KSSMonitor : public QWidget
+class KSSMonitor : public QXEmbed
 {
     Q_OBJECT
 public:
-    KSSMonitor( QWidget *parent ) : QWidget( parent ) {}
+    KSSMonitor( QWidget *parent ) : QXEmbed( parent ) {}
 
     // we don't want no steenking palette change
     virtual void setPalette( const QPalette & ) {}
@@ -65,7 +66,7 @@ protected:
 };
 
 //===========================================================================
-class TestWin : public QWidget
+class TestWin : public QXEmbed
 {
     Q_OBJECT
 public:
