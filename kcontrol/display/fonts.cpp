@@ -90,7 +90,7 @@ void FontUseItem::writeFont()
     if (_rcfile.isEmpty()) {
 	config = new KConfig(QString::fromLatin1("kcontrolrc"));
 	config->setGroup(_rcgroup);
-	config->writeEntry(_rckey, _font, false, true);
+	config->writeEntry(_rckey, _font, true, true);
     } else {
 	config = new KSimpleConfig(locate("config", _rcfile));
 	config->setGroup(_rcgroup);
