@@ -2,5 +2,6 @@ SUBDIRS = bell background filetypes samba display input info ioslaveinfo kdm kwm
 	kicker locale keys kio konq thememgr \
 	konqhtml email ebrowsing arts kcontrol passwords knotify\
 	clock pics $(ACCESS_SUBDIR) colors energy fonts css \
-	icons screensaver taskbar crypto midi smserver $(KDEDB_SUBDIR)
+	icons screensaver taskbar crypto midi smserver $(KDEDB_SUBDIR) \
+  kwintheme
 
