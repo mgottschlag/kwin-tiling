@@ -29,6 +29,7 @@
 
 #include <qdir.h>
 #include <qlayout.h>
+#include <qsplitter.h>
 
 #include "eventconfig.h"
 #include "knotify.h"
@@ -37,23 +38,21 @@
 KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	KCModule(parent, name)
 {
-	QVBoxLayout *layout=new QVBoxLayout(this,0,3);
+	(new QHBoxLayout(this))->setAutoAdd(true);
+	QSplitter *split=new QSplitter(Vertical, this);
 	
-	apps=new QListView(this);
+	apps=new QListView(split);
 	apps->addColumn(i18n("Application Name"));
 	apps->addColumn(i18n("Description"));
 	apps->setSelectionMode(QListView::Single);
-	layout->addWidget(apps, 1);
 	
-	events=new QListView(this);
+	events=new QListView(split);
 	events->setSelectionMode(QListView::Single);
 	events->addColumn(i18n("Event Name"));
 	events->addColumn(i18n("Description"));
-	layout->addWidget(events, 1);
 	
-	eventview=new EventView(this);
+	eventview=new EventView(split);
 	eventview->setEnabled(false);
-	layout->addWidget(eventview, 1);
 	loadAll();
 };
 
