@@ -61,7 +61,7 @@ void SetupDisplay( struct display* d);
 void SecureDisplay( struct display* d, Display *);
 void RegisterCloseOnFork( int );
 int source(void*,void*);
-void SessionExit(void*,void*,void*);
+void SessionExit(void*,int,int);
 }
 
 #ifdef USESHADOW
@@ -81,7 +81,7 @@ void SetupDisplay( struct display* d) {}
 void SecureDisplay( struct display* d, Display *dpy) {}
 void RegisterCloseOnFork( int i) {}
 int source(void*,void*) {}
-void SessionExit(void*,void*,void*) {}
+void SessionExit(void*,int,int) {}
 #endif
 
 static const char *description = 
@@ -194,15 +194,13 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      pixLabel = new QLabel( winFrame);
      pixLabel->setFrameStyle( QFrame::Panel| QFrame::Sunken);
      pixLabel->setAutoResize( true);
-     pixLabel->setMargin( 0);
-
+     pixLabel->setIndent(0);
      QPixmap pixmap;
      if( QFile::exists( kdmcfg->logo() ) )
 	  pixmap.load( kdmcfg->logo() );
      else
 	  pixmap.resize( 100,100);
      pixLabel->setPixmap( pixmap);
-     pixLabel->setFixedSize( pixLabel->width(), pixLabel->height());
 
      loginLabel = new QLabel( i18n("Login:"), winFrame);
      set_min( loginLabel);
@@ -212,7 +210,8 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      // a resonal height that observes a proportional aspect.
      // -- Bernd
      int leheight;
-     leheight = QMAX( 30,loginEdit->sizeHint().height());
+     //leheight = QMAX( 30,loginEdit->sizeHint().height());
+     leheight = loginEdit->sizeHint().height();
      loginEdit->setFixedHeight( leheight);
      loginEdit->setFocus();
 
@@ -221,7 +220,8 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      passwdEdit = new QLineEdit( winFrame);
 
      int pweheight;
-     pweheight = QMAX( 30,passwdEdit->sizeHint().height());
+     //pweheight = QMAX( 30,passwdEdit->sizeHint().height());
+     pweheight = passwdEdit->sizeHint().height();
      passwdEdit->setFixedHeight( pweheight);
 
      passwdEdit->setEchoMode( QLineEdit::NoEcho);
@@ -780,6 +780,13 @@ DoIt()
      QApplication::restoreOverrideCursor();
      XUngrabKeyboard(qt_xdisplay(), CurrentTime);
      kgreeter->setActiveWindow();
+     if (XGrabKeyboard (qt_xdisplay(), DefaultRootWindow (qt_xdisplay()), 
+			True, GrabModeAsync, GrabModeAsync, CurrentTime) 
+	 != GrabSuccess) {
+	  LogError ("WARNING: keyboard on display %s could not be secured\n",
+		    d->name);
+	  SessionExit (d, RESERVER_DISPLAY, FALSE);	 
+     }
      qApp->exec();
      // Give focus to root window:
      QApplication::desktop()->setActiveWindow();
