@@ -43,7 +43,8 @@ class CDiskFontListWidget : public CFontListWidget
         PERMISSION_DENIED,
         ALREADY_INSTALLED,
         HAS_SUB_DIRS,
-        COULD_NOT_CREATE_DIR
+        COULD_NOT_CREATE_DIR,
+        INVALID_FONT
     };
 
     CDiskFontListWidget(QWidget *parent, const char *name=NULL);

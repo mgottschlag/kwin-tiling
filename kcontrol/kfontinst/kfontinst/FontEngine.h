@@ -99,6 +99,7 @@ class CFontEngine
 
     enum EOpen
     {
+        TEST       = 0x0,    // Justr try to open font - used for checking if font is valid...
         NAME       = 0x1,    // Read name
         PROPERTIES = 0x2,    // Read weight, familiy, and postscript names
         XLFD       = 0x4,    // Read extra details only needed for xlfd (i.e. foundry, width, and spacing)
