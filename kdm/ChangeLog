@@ -1,3 +1,7 @@
+This change log contains only changes relevant to the KDM configuration,
+startup and packaging. Bug fixes are not listed, and feature changes only
+if they affect the configuration.
+
 2004-04-15  Oswald Buddenhagen <ossi@kde.org>
 
 	* Merge from XDM:
@@ -5,6 +9,11 @@
 	  - LISTEN keyword in Xaccess
 	  - Changes to Enable and Port in [Xdmcp] now take effect when HUPed
 	  - Support for EGD/PRNGD; options PrngdPort and PrngdSocket
+
+2004-04-14  Oswald Buddenhagen <ossi@kde.org>
+
+	* -debug now groks additional bits for stracing and valgrinding
+	  helper processes and disabling syslog usage.
 
 2004-04-09  Oswald Buddenhagen <ossi@kde.org>
 
@@ -14,6 +23,15 @@
 
 	* Changes to FifoDir and FifoGroup now take effect on the global
 	  command FiFo when HUPed.
+
+2004-03-16  Oswald Buddenhagen <ossi@kde.org>
+
+	* Changed AllowClose default to true; only the default kdmrc
+	  disables it for local display now.
+
+2004-03-11  Chris Cheney <ccheney@cheney.cx>
+
+	* Sanitized UserPath and SystemPath defaults.
 
 2004-03-07  Oswald Buddenhagen <ossi@kde.org>
 
@@ -42,6 +60,10 @@
 	* XDMCP initiated local displays are now treated as remote displays
 	  (on localhost) by the config reader.
 
+2003-11-09  Oswald Buddenhagen <ossi@kde.org>
+
+	* Sanitized display restart behaviour; option StartInterval is gone.
+
 2003-11-04  Oswald Buddenhagen <ossi@kde.org>
 
 	* Conversation plugins can be configured now; option PluginOptions.
@@ -58,10 +80,18 @@
 	* Password-less and automatic logins now use a separate PAM service
 	  (${KDM_PAM_SERVICE}-np).
 
-2003-09-22  Oswald Buddenhagen <ossi@kde.org>
+2003-10-17  Oswald Buddenhagen <ossi@kde.org>
+
+	* Add --with-kdm-xconsole configure switch. No need to patch
+	  Makefile.am to enable the built-in xconsole anymore.
+
+2003-09-23  Oswald Buddenhagen <ossi@kde.org>
 
 	* Session types are now defined with .desktop files; consequently the
 	  SessionTypes option is gone and we got SessionsDirs instead.
+	* The default Xsession now hard-wires the session types
+	  - "default" to startkde
+	  - "custom" to ~/.xsession
 	* The previous session type choice is now saved in a different file
 	  (~/.dmrc) in a different format (ini-file); the SessSaveFile option
 	  is gone. Optionally KDM can be configured to store all .dmrc files
@@ -78,6 +108,26 @@
 	* Nuked the AutoLoginSession option; i don't think it was useful at all
 	  and it can be emulated anyway.
 
+2003-09-03  Oswald Buddenhagen <ossi@kde.org>
+
+	* Add option RandomDevice to override the OS specific default
+	  entropy source.
+
+2003-08-26  Oswald Buddenhagen <ossi@kde.org>
+
+	* Add random seed to forged "previous" session type calculation;
+	  option ForgingSeed.
+
+2003-07-15  Malte Starostik <malte@kde.org>
+
+	* ColorScheme is now interpreted as the base name of the .kcsrc file,
+	  not the contents of its Name field.
+
+2003-05-11  Oswald Buddenhagen <ossi@kde.org>
+
+	* GUIStyle & ColorScheme now accept an empty string, meaning
+	  "built-in default". Made defaults empty, consequently.
+
 2002-12-01  Oswald Buddenhagen <ossi@kde.org>
 
 	* Integrated chooser into greeter; external 'chooser' executable
@@ -92,6 +142,9 @@
 	  what to do based on the parent process ID.
 	* The AutoLogin option and the -autolog/-noautolog switches are gone.
 	* The AutoLogin1st option is gone.
+	* The position of the -debug and -logfile command line options is
+	  irrelevant again. The -xrm option is back, but is ignored by the
+	  KDE frontend.
 
 2002-08-28  Oswald Buddenhagen <ossi@kde.org>
 
@@ -100,7 +153,8 @@
 
 2002-08-10  Oswald Buddenhagen <ossi@kde.org>
 
-	* Renamed kdmdesktop to krootimage and changed its command line
+	* Renamed kdmdesktop to krootimage, moved it back into the KDM source
+	  tree, and changed its command line
 	* krootimage will be automatically invoked by the greeter by default;
 	  option UseBackground
 	* Chucked out the [Desktop0] section from kdmrc. Instead, the
@@ -108,12 +162,34 @@
 	  with the BackgroundRc option.
 	* User images can now be optionally fetched from the users's home
 	  directories; option FaceSource
-	* The default of the KeyFile option is now empty
+	* The default of the KeyFile option is now empty again
+	* GreeterScreen now groks -2, meaning upper-right screen
+
+2002-08-06  Oswald Buddenhagen <ossi@kde.org>
+
+	* Automatically don't daemonize if started by init.
+
+2002-03-19  Oswald Buddenhagen <ossi@kde.org>
+
+	* The default Xsession will emulate the startup behaviour of sh/ksh
+	  by sourcing /etc/profile and ~/.profile.
+
+2002-03-10  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added InteractiveSd option. This is not really implemented yet,
+	  so enabling it just makes KDM deny the existence of the shutdown
+	  condition/timing options.
+	* The Setup script is now executed synchronously. Long-lasting
+	  commands should be put in the background explicitly.
+
+2002-02-28  George Staikos <staikos@kde.org>
+
+	* GreeterScreen now groks -1, meaning upper-left screen.
 
 2002-01-14  Oswald Buddenhagen <ossi@kde.org>
 
-	* Added NumLock option to preset the NumLock modifier state for
-	  the greeter
+	* Added option NumLock {On,Off,Keep} to preset the NumLock modifier
+	  state for the greeter
 
 2001-12-11  Oswald Buddenhagen <ossi@kde.org>
 
@@ -123,28 +199,32 @@
 
 	* Added GreeterScreen option to put the greeter on a particular
 	  screen in multi-headed setups.
+	* Changed the default of Language from "C" to "en_US"
 
 2001-11-22  Oswald Buddenhagen <ossi@kde.org>
 
-	* The defaults of the options Xservers, Xsession, Setup, Startup, 
-	  and Reset now back to more conservative XDM defaults, so it works
-	  even without config files.
-	* The default for the PidFile option is now empty like in XDM.
-	* Changed option ShowUsers: "All" -> "NotHidden"
+	* The defaults of the options Xservers, Session, Setup, Startup, 
+	  Reset and PidFile are now back to the saner XDM defaults,
+	  so KDM works even without config files.
+	* Changed option ShowUsers: All -> NotHidden
 	* Renamed the option Users to SelectedUsers and NoUsers to HiddenUsers.
-	* The GUIStyle option now groks all installed widget styles
+	* The GUIStyle option now groks all installed widget styles.
+	  Note that Motif+ and KDE are now called MotifPlus resp. Default.
 
 2001-11-02  Oswald Buddenhagen <ossi@kde.org>
 
 	* Added conditional/scheduled shutdown modes; options
-	  DefaultSdMode and AllowSdForceNow
+	  DefaultSdMode and AllowSdForceNow; moved AllowShutdown from
+	  [X-<dpy>-Greeter] to [X-<dpy>-Core].
+	* Added reserve display support; extension to Xservers.
 	* Added command FiFo support (see README); options FifoDir,
 	  FifoGroup, [ShutDown]/AllowFifo, and [ShutDown]/AllowFifoNow.
+	  FiFo location and capabilities are exported in $XDM_MANAGED.
 
 2001-10-04  Oswald Buddenhagen <ossi@kde.org>
 
-	* Changed default of AuthDir from /var/lib/kdm[/authdir/authfiles]
-	  to /var/run/xauth.
+	* Xauth files are now created in AuthDir, not AuthDir/authdir.
+	  Changed AuthDir default to /var/run/xauth.
 
 2001-07-12  Oswald Buddenhagen <ossi@kde.org>
 
@@ -162,6 +242,11 @@
 
 	* Added counterpart to the MinShowUID option: MaxShowUID
 
+2001-06-23  Oswald Buddenhagen <ossi@kde.org>
+
+	* Xauth files are now created in AuthDir/authfiles, not
+	  AuthDir/authdir/authfiles
+
 2001-06-16  Oswald Buddenhagen <ossi@kde.org>
 
 	* Optionally put the cursor right in the "Password" field when
@@ -170,65 +255,232 @@
 2001-06-15  Oswald Buddenhagen <ossi@kde.org>
 
 	* Replaced the ShutdownButton + ShutdownNeedsRoot option pair with
-	  the tri-state AllowShutdown option
+	  the AllowShutdown {None,Root,All} option
 
 2001-06-10  Oswald Buddenhagen <ossi@kde.org>
 
 	* The source directory structure changed entirely
-	* External greeter: kdm_greet
-	  - libKdmGreet.so is gone
-	* External config parser is now named kdm_config
-	* The config files are all located in ${kde_confdir}/kdm now;
-	  KDM will no longer use kdm-config (most of its options are 
-	  in kdmrc's [X-<display>-Core] sections now). Most options
-	  from the [KDM] section of the old kdmrc are in the 
-	  [X-<display>-Greeter] sections now.
+	* The argument to the -debug command line option is now a bit field;
+	  the DebugLevel resource is gone
+	* The ErrorLogFile resource is gone
+	* The greeter module libKdmGreet.so has been converted to an
+	  executable named kdm_greet; the external config parser is now
+	  named kdm_config. The resource GreeterLib and the command line
+	  option -getcfg (and -cfg2get) are gone, as the locations of the
+	  config parser and greeter are derived from the location of the
+	  kdm executable
+	* The config files are all located in ${kde_confdir}/kdm now; the
+	  defaults for Setup & Session were adapted to this.
+	* The keys in kdmrc were reorganized:
+	  - [KDM]/ShutdownButton -> [X-<dpy>-Greeter]/(ShutdownButton & 
+			ShutdownNeedsRoot)
+	  - [KDM]/Shutdown -> [Shutdown]/HaltCmd
+	  - [KDM]/Restart -> [Shutdown]/RebootCmd
+	  - [KDM]/LogoArea -> [X-*-Greeter]/ {None,Logo,Clock}
+	  - remaining keys from [KDM] -> [X-*-Greeter]/
+	  - [Lilo]/Lilo -> [Shutdown]/UseLilo
+	  - [Lilo]/LiloCommand -> [Shutdown]/LiloCmd
+	  - [Lilo]/LiloMap -> [Shutdown]/
+	  - [Locale]/Language -> [X-*-Greeter]/ (Country key dropped)
+	* KDM will no longer use kdm-config; most of its resources were
+	  absorbed into kdmrc:
+	  - Servers -> [General]/Xservers
+	  - RequestPort -> [Xdmcp]/(Port & Enable)
+	  - DaemonMode -> [General]/
+	  - PidFile -> [General]/
+	  - LockPidFile -> [General]/
+	  - AuthDir -> [General]/
+	  - AutoRescan -> [General]/
+	  - RemoveDomainname -> [Xdmcp]/
+	  - KeyFile -> [Xdmcp]/
+	  - AccessFile -> [Xdmcp]/Xaccess/
+	  - ExportList -> [General]/
+	  - RandomFile -> [General]/
+	  - ChoiceTimeout -> [Xdmcp]/
+	  - SourceAddress -> [Xdmcp]/
+	  - Willing -> [Xdmcp]/Xwilling
+	  - AutoLogin -> [General]/
+	  - GrabServer -> [X-<dpy>-Greeter]/
+	  - GrabTimeout -> [X-<dpy>-Greeter]/
+	  - AuthComplain -> [X-<dpy>-Greeter]/
+	  - AuthName -> [X-<dpy>-Core]/AuthNames
+	  - NoPassUsers -> [X-<dpy>-Core]/ & [X-<dpy>-Core]/NoPassEnable
+	  - AutoUser -> [X-<dpy>-Core]/(AutoLoginUser & AutoLoginEnable)
+	  - AutoPass -> [X-<dpy>-Core]/AutoLoginPass
+	  - AutoString -> [X-<dpy>-Core]/AutoLoginSession
+	  - remaining server & session resources -> [X-<dpy>-Core]/
+	* In GreetString the HOSTNAME substitution was replaced with the
+	  %%, %d, %h, %n, %s, %r & %m expandos
+	* EchoMode does not understand "NoStars" any more. Use "NoEcho".
+	* Defaults changed: AuthDir to /var/lib/kdm, KeyFile to
+	  $kdm_confdir/kdmkeys, Xservers to $kdm_confdir/Xservers, Xaccess to
+	  $kdm_confdir/Xaccess, Startup to $kdm_confdir/Xstartup, Reset to
+	  $kdm_confdir/Xreset, removed kde2 from SessionTypes
+	* The previous user is now saved in $kdm_confdir/kdmsts, not kdmrc
+	* Added option SessSaveFile, defaulting to .wmrc
+	* Command line option changes:
+	  - -server, -udpPort, -resources, -session and -xrm are gone
+	  - -error is aliased to -logfile
+	  - -debug and -error/-logfile must be specified first
+	  - options are now accepted with both one and two leading dashes
+	* The default Xsession will now
+	  - source ~/.xprofile if present
+	  - try harder to determine what executable $1 corresponds to
+	  - interpret "default" as ~/.xsession
 
 2001-03-19  Oswald Buddenhagen <ossi@kde.org>
 
-	* External config parser: kdm_getcfg
-	  - kdm will now use kdm-config, NOT xdm-config
-	* Stolen idea for console mode handling from dtlogin
-	* Tons of internal changes
+	* %DMNAME% and %DMPATH% are expanded in string resources;
+	  changed the defaults for PidFile and ConfigFile accordingly -
+	  the latter resulting in KDM now using kdm-config, NOT xdm-config
+	* Use external config parser to merge platform-specific (that is,
+	  KDE-like) configuration data into the XDM resources; command line
+	  options -getcfg (default %DMPATH%_getcfg) and -cfg2get (no default,
+	  meaning kdm_getcfg will use $kde_confdir/kdmrc).
+	* Changed "kde" to "kde2" in the default SessionTypes
+	* Stolen idea for console mode handling from dtlogin; options
+	  ConsoleMode and AllowConsoleMode are gone; extension to Xservers
+
+2001-01-19  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added resources AllowRootLogin and AllowNullPasswd
 
 2001-01-15  Oswald Buddenhagen <ossi@kde.org>
 
-	* Renamed LowUserID option to MinShowUID
+	* Renamed UserIDLow option to MinShowUID
 	* The LogoArea option now accepts the value "None"
 
 2001-01-13  Oswald Buddenhagen <ossi@kde.org>
 
-	* The GUIStyle option now actually works and groks all of QT's
+	* The GUIStyle option now works again and groks all of Qt's
 	  built-in widget styles and the "KDE" style
 
 2001-01-11  Oswald Buddenhagen <ossi@kde.org>
 
 	* Added placing of the greeter at fixed coordinates; options
 	  GreeterPosFixed, GreeterPosX, and GreeterPosY.
+	* Added "default" to the default SessionTypes
+
+2000-01-06  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added option AllowConsoleMode
 
 2000-12-09  Oswald Buddenhagen <ossi@kde.org>
 
-	* Added auto-login; options AutoLoginEnable, AutoLoginUser, and
-	  AutoLogin1st
-	* Added password-less login; options NoPassEnable and NoPassUsers
-	* Added auto-re-login on XServer crash; option AutoReLogin
+	* Added auto-login; options AutoLoginEnable, AutoLoginUser &
+	  AutoLogin1st; resources AutoUser, AutoPass, AutoString & AutoLogin1st
+	* Added password-less login; options NoPassEnable & NoPassUsers;
+	  resource NoPassUsers
+	* Added auto-re-login on XServer crash; resource & option AutoReLogin
+
+	The kdmrc options and xdm-config resources are "ORed", i.e., if
+	either is enabled, the function is enabled.
+	The command line options -autolog/-noautolog and the resource AutoLogin
+	can be used to disable auto-login and password-less login at once.
+
 	* Added displaying the previously logged in user in the "Login"
-	  field; option ShowPrevious
+	  field; option ShowPrevious. The previous user is saved in kdmrc,
+	  section [Previous].
 
 2000-12-07  Oswald Buddenhagen <ossi@kde.org>
 
-	* New XDM port from xfree86 4.0.1
-	* Made the greeter dynamically loadable
-	* Moved chooser and greeter to separate directories, 
+	* New XDM port from XFree86 4.0.1
+	  - new resources SourceAddress & Willing
+	  - /authdir/authfiles is now automatically appended to AuthDir
+	* Default for PidFile and Setup changed back to empty
+	* Displays restarting too fast are disabled; resource StartInterval
+	* Option UserView, and NoUsers dependency on Users being empty
+	  replaced with explicit option ShowUsers {All,Selected,None}
+	* Made the greeter dynamically loadable (libKdmGreet.so)
+	* Moved chooser and greeter to separate directories,
 	  same for unused stuff (misc/)
-	* A LOT of bug fixes and clean up
 
-1999-11-09  Harald Hoyer <Harald.Hoyer@RedHat.de>
+	* Added half-baked support for command FiFos; resources
+	  FifoCreate, FifoGroup, FifoMode. Replaced on 2001-11-02
+
+2000-10-10  Steffen Hansen <hansen@kde.org>
+
+	* Made kdmdesktop read the [Desktop0] section from kdmrc instead
+	  of kdmdesktoprc.
+
+2000-09-07  Waldo Bastian <bastian@kde.org>
+
+	* Make password echo mode configurable;
+	  option EchoMode {OneStar,ThreeStars,NoEcho}
+
+2000-08-07  Christopher Molnar <molnar@kde.org>
+
+	* The minimal user ID to show in the user view can be specified now;
+	  option UserIDLow.
+
+2000-06-04  Espen Sand <espen@kde.org>
+
+	* The logo area can now display either a clock or a pixmap;
+	  option LogoArea {KdmClock,KdmLogo}
+
+1999-12-12  Jaromir Dolecek <jdolecek@NetBSD.org>
+
+	* Use OS-specific defaults for Shutdown & Restart
+	* Make PidFile, UserPath & SystemPath defaults on NetBSD match FreeBSD
+
+1999-11-17  Harald Hoyer <Harald.Hoyer@RedHat.de>
 
 	* Made kchooser
 
+1999-11-15  Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+
+	* kdmdesktop replaced with ../kdesktop/kdmdesktop. Uses new config
+	  file (kdmdesktoprc) with new options (all in section [Desktop0]):
+
+1999-07-01  Steffen Hansen <hansen@kde.org>
+
+	* Xaccess now accepts NOBROADCAST
+
 1999-06-07  Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
 
-	* Added Lilo reboot handling by
-	  Stefan van den Oord <oord@cs.utwente.nl> 
-	* Added button to switch to console mode
+	* Added next boot OS selection via LiLo; options [Lilo] Lilo,
+	  LiloCommand & LiloMap
+	* Added button to switch to console mode; option [KDM] ConsoleMode
+
+1999-03-01  Stephan Kulow <coolo@kde.org>
+
+	* Option GUIStyle temporarily removed
+
+1998-10-08  Thomas Tanghus <tanghus@earthling.net>
+
+	* [KDMDESKTOP] option changes:
+	  - BackgroundPictureTile, BackgroundPictureCenter, FancyBackground ->
+	    BackgroundPictureMode {None,Tile,Center,Scale,
+	              TopLeft,TopRight,BottomLeft,BottomRight,Fancy}
+	  - add BackGroundColorMode {Plain,Horizontal,Vertical}
+	  - BackgroundColor -> BackGroundColor1, BackGroundColor2
+
+1998-09-20  Hans Petter Bieker <bieker@kde.org>
+
+	* Change defaults:
+	  - Setup: "" -> XDMDIR/Xsetup
+	  - PidFile: "" -> FreeBSD: /var/run/kdm.pid, others: XDMDIR/kdm-pid
+	  - Session: "XBINDIR/xterm -ls" -> XDMDIR/Xsession
+	  - UserPath & SystemPath: no /usr/ucb for Linux & FreeBSD
+
+1998-09-11  Hans Petter Bieker <bieker@kde.org>
+
+	* Replace hard-coded paths with XBINDIR/XDMDIR in various defaults
+
+1998-09-06  Hans Petter Bieker <bieker@kde.org>
+
+	* Default Xsession now searches $1 in PATH and execs it
+
+1998-03-26  Stephan Kulow <coolo@kde.org>
+
+	* Nuke -kdedir cmdline option and Kdedir resource
+
+1997-09-09  Steffen Hansen <hansen@kde.org>
+
+	* Change defaults:
+	  - AuthDir: XDMDIR/authDir -> XDMDIR/authdir
+
+1997-09-04  kdecvs
+
+	* Change defaults:
+	  - AuthDir: XDMDIR -> XDMDIR/authDir
