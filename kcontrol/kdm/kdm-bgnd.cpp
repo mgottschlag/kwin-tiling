@@ -21,7 +21,6 @@
 #include <qlayout.h>
 #include <qdragobject.h>
 #include <kpixmapeffect.h>
-#include "utils.h"
 #include "kdropsite.h"
 #include "kdm-bgnd.moc"
 #include <kfiledialog.h>

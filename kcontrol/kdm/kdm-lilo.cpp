@@ -17,9 +17,11 @@
     Boston, MA 02111-1307, USA.
 */  
 
-#include "utils.h"
 #include <klocale.h>
 #include <qlayout.h>
+#include <qlabel.h>
+
+#include <ksimpleconfig.h>
 #include <kstddirs.h>
 
 #include "kdm-lilo.moc"

@@ -18,8 +18,13 @@
 */
 
 #include <qdragobject.h>
+#include <qlayout.h>
+#include <qlabel.h>
+#include <qtooltip.h>
 
-#include "utils.h"
+#include <kapp.h>
+#include <ksimpleconfig.h>
+#include <kicondialog.h>
 #include <kio/job.h>
 #include <klocale.h>
 #include <kglobal.h>

@@ -17,8 +17,12 @@
     Boston, MA 02111-1307, USA.
 */  
 
-#include "utils.h"
 #include <qcombobox.h>
+#include <qlayout.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+
+#include <ksimpleconfig.h>
 #include <klocale.h>
 #include <kstddirs.h>
 #include "kdm-font.moc"

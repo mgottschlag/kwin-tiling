@@ -19,12 +19,16 @@
 
 #include <qdir.h>
 #include <qcombobox.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
+#include <qlayout.h>
+
+#include <ksimpleconfig.h>
 #include <kdbtn.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kstddirs.h>
-
-#include "utils.h"
 
 #include "kdm-sess.moc"
 

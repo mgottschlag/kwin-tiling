@@ -21,14 +21,17 @@
 #include <qdragobject.h>
 #include <qlayout.h>
 #include <qcombobox.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qtooltip.h>
 
-#include "utils.h"
 #include <kio/job.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <klineedit.h>
 #include <kmessagebox.h>
 #include <kstddirs.h>
+#include <ksimpleconfig.h>
 
 #include "kdm-appear.moc"
 
