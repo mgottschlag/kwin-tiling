@@ -33,6 +33,9 @@
             <property name="exclusive">
                 <bool>true</bool>
             </property>
+            <property name="whatsThis" stdset="0">
+                <string>Here you can set the position of the panel highlighted on the left side. You can put any panel on top or bottom of the screen and on the left or right side of the screen. There you can put it into the center or into either corner of the screen.</string>
+            </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>

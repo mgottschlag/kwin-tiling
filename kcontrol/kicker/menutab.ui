@@ -130,7 +130,7 @@
                                 <string>Menu item format:</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>This is a preview of the tile that will be used for window list buttons.</string>
+                                <string>Here you can choose how menu entries are shown.</string>
                             </property>
                         </widget>
                         <widget class="QRadioButton" row="1" column="1">
@@ -203,6 +203,9 @@
                     </property>
                     <property name="text">
                         <string>Edit &amp;K Menu</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Start the editor for the K menu. Here you can add, edit, remove and hide applications.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="1" column="0">
