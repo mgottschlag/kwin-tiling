@@ -57,8 +57,7 @@ acimake:
 	@echo XBINDIR=$(BINDIR)
 	@echo XLIBDIR=$(LIBDIR)
 EOF
-    $XMKMF >&5 2>&1
-    if test -f Makefile; then
+    if $XMKMF >&5 2>&1 && test -f Makefile; then
 	[kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep '^[^ ]*='`]
 	kde_cv_defines_imake=`echo $kde_cv_defines_imake`
     else
