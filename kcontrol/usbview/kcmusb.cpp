@@ -155,6 +155,17 @@ QString USBViewer::quickHelp() const
      " the devices attached to your USB bus(es).");
 }
 
+const KAboutData* USBViewer::aboutData() const
+{
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmusb"), I18N_NOOP("KDE USB Viewer"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 2001 Matthias Hoelzer-Kluepfel"));
+ 
+    about->addAuthor("Matthias Hoelzer-Kluepfel", 0, "mhk@kde.org");
+ 
+    return about;
+}
 
 extern "C"
 {

@@ -231,6 +231,22 @@ QString KBellConfig::quickHelp() const
     " a sound file to be played instead of the standard bell.");
 }
 
+const KAboutData* KBellConfig::aboutData() const
+{
+
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmbell"), I18N_NOOP("KDE Bell Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1997 - 2001 Christian Czezatke, Matthias Elter"));
+
+    about->addAuthor("Christian Czezatke", I18N_NOOP("Original author"), "e9025461@student.tuwien.ac.at");
+    about->addAuthor("Bernd Wuebben", 0, "wuebben@kde.org");
+    about->addAuthor("Matthias Elter", I18N_NOOP("Current maintainer"), "elter@kde.org");
+    about->addAuthor("Carsten PFeiffer", 0, "pfeiffer@kde.org");
+
+    return about;
+}
+
 void KBellConfig::useBell( bool on )
 {
   m_volume->setEnabled( on );

@@ -146,6 +146,19 @@ QString KDModule::quickHelp() const
 		    "lazy people. ;-)");
 }
 
+const KAboutData* KDModule::aboutData() const
+{
+   KAboutData *about =
+   new KAboutData(I18N_NOOP("kcmkdm"), I18N_NOOP("KDE Login Manager Config Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1996 - 2001 The KDM Authors"));
+ 
+   about->addAuthor("Thomas Tanghus", I18N_NOOP("Original author"), "tanghus@earthling.net");
+	about->addAuthor("Steffen Hansen", 0, "hansen@kde.org");
+	about->addAuthor("Oswald Buddenhagen", I18N_NOOP("Current maintainer"), "ossi@kde.org");
+ 
+   return about;
+}
 
 void KDModule::load()
 {

@@ -35,6 +35,7 @@ public:
   KclockModule(QWidget *parent, const char *name);
   
   QString quickHelp() const;
+  const KAboutData* aboutData() const;
   void	save();
   void	load();
 

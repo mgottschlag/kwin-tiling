@@ -144,6 +144,19 @@ QString KickerConfig::quickHelp() const
                 " manipulation of the panel's buttons and applets.");
 }
 
+const KAboutData* KickerConfig::aboutData() const
+{
+
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmkicker"), I18N_NOOP("KDE Panel Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1999 - 2001 Matthias Elter"));
+
+	 about->addAuthor("Matthias Elter", 0, "elter@kde.org");
+
+    return about;
+}
+
 bool KickerConfig::horizontal()
 {
     return (positiontab->m_topButton->isChecked() ||

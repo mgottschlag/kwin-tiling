@@ -394,6 +394,18 @@ QString KArtsModule::quickHelp() const
 		    " an easy way to achieve sound support.");
 }
 
+const KAboutData* KArtsModule::aboutData() const
+{
+   KAboutData *about =  
+   new KAboutData(I18N_NOOP("kcmarts"), I18N_NOOP("The Sound Server Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1999 - 2001 Stefan Westerfeld"));
+ 
+   about->addAuthor("Stefan Westerfeld",I18N_NOOP("aRts Author") , "stefan@kde.org");
+ 
+   return about;
+}
+
 void KArtsModule::calculateLatency()
 {
 	int latencyInBytes, latencyInMs;

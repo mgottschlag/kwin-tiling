@@ -90,6 +90,19 @@ QString KclockModule::quickHelp() const
     " administrator.");
 }
 
+const KAboutData* KclockModule::aboutData() const
+{
+   KAboutData *about =
+   new KAboutData(I18N_NOOP("kcmclock"), I18N_NOOP("KDE Clock Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1996 - 2001 Luca Montecchiani"));
+ 
+   about->addAuthor("Luca Montecchiani", I18N_NOOP("Original author"), "m.luca@usa.net");
+	about->addAuthor("Paul Campbell", I18N_NOOP("Current Maintainer"), "paul@taniwha.com");
+ 
+   return about;
+}
+
 void KclockModule::moduleChanged(bool state)
 {
   emit changed(state);

@@ -270,6 +270,18 @@ QString KSocksConfig::quickHelp() const
      " for a SOCKS server or proxy.");
 }
 
+const KAboutData* KSocksConfig::aboutData() const
+{
+ 
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmsocks"), I18N_NOOP("KDE SOCKS Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 2001 George Staikos"));
+ 
+    about->addAuthor("George Staikos", 0, "staikos@kde.org");
+ 
+    return about;
+}
 
 extern "C"
 {
