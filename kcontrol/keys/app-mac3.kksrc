@@ -1,5 +1,7 @@
 [Standard Key Scheme ]
 Name=Mac Default
+Name[az]=Mac Əsas
+Name[bg]=По подразбиране Макинтош
 Name[cs]=Výchozí pro Mac
 Name[da]=Mac standard
 Name[de]=Mac-Standard
@@ -20,6 +22,7 @@ Name[nl]=Mac-standaard
 Name[no_NY]=Mac-standard
 Name[pt_BR]=Mac por Omissão
 Name[pt]=Mac por Omissão
+Name[ru]=Как в Mac
 Name[sk]=Mac štandardný
 Name[sl]=Privzeto za Mac
 Name[sv]=Mac-förinställt

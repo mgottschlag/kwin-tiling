@@ -1,6 +1,8 @@
 [Standard Key Scheme ]
 Name=Unix Default
 Name[af]=UNIX VERSTEK
+Name[az]=Unix Əsas
+Name[bg]=По подразбиране на Unix
 Name[cs]=Výchozí pro Unix
 Name[da]=Unix standard
 Name[de]=Unix-Standard
@@ -21,6 +23,7 @@ Name[nl]=Unix-standaard
 Name[no_NY]=Unix-standard
 Name[pt_BR]=Unix por Omissão
 Name[pt]=Unix por Omissão
+Name[ru]=Как в обычном Unix
 Name[sk]=Unix štandardný
 Name[sl]=Privzeto za Unix
 Name[sv]=Unix-förinställt

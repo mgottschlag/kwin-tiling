@@ -1,6 +1,8 @@
 [Standard Key Scheme ]
 Name=Windows Default
 Name[af]=VENSTERS VERSTEK
+Name[az]=Windows Əsas
+Name[bg]=По подразбиране на прозорци
 Name[cs]=Výchozí pro Windows
 Name[da]=Windows standard
 Name[de]=Windows-Standard
@@ -21,6 +23,7 @@ Name[nl]=Windows-standaard
 Name[no_NY]=Windows-standard
 Name[pt_BR]=Windows por Omissão
 Name[pt]=Windows por Omissão
+Name[ru]=Как в Windows
 Name[sk]=Windows štandardný
 Name[sl]=Privzeto za Windows
 Name[sv]=Windows-förinställt
