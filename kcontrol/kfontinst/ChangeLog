@@ -1,3 +1,51 @@
+KDE3.1 -> KDE3.2
+================
+1.  Re-designed (yet again...) to be a kio slave. As a user, starting fonts:/ will display
+
+        Personal   links to ~/.fonts
+        System     links to (e.g.) /usr/X11R6/lib/X11/fonts
+
+    To install fonts system wide, just drop onto "System" and root's password will be asked
+    for.
+
+    As root, fonts:/ will show the contents of (e.g.) /usr/X11R6/lib/X11/fonts
+
+2.  New kcontrol module that uses fonts:/
+3.  Removed:
+        AFM creation  -- only really required (TTF wise) for SO <6.0
+        StarOffice configuration (S0 6.0 / OO.o is *much* better anyway)
+4.  X font server (xfs) - if used - is refreshed by seding a SIGUSR1 instead of
+    relying on a /etc/init.d/xfs script. This is much more portable.
+5.  Simple FontView part for konqueror - this is basically a big re-sizable preview of the font.
+6.  Speed up creation of fonts.dir and fonts.scale - by reading in any existing files, and using the
+    entries from these instead of loading and testing the font (if listed).
+7.  Better font preview and thumbnails.
+8.  Only add a dir to fontpath if fonts.dir has greater than 0 entries!
+9.  Use /etc/fonts/local.conf as root fontconfig file.
+10. Only add dirs to fontconfig if *not* a sub-dir of an existing dir.
+11. Ensure that top-level fonts dir is always in fontpath.
+12. A Fontmap file is created in each sub dir, which is then combined into 1 top level Fontmap file.
+    ~/.fonts/Fontmap for normal users, and /etc/fonts/Fontmap for root. 
+13. Modify <ghostscript dir><sub-dir>/Fontmap to contain:
+       (/etc/fonts/Fontmap) .runlibfile
+    ...as this is the system-wide Fontmap file created. As for the per-user, one, hmmm...
+14. When a folder is configured, ensure fonts.dir/fonts.scale/Fontmap/.fonts-config-timestamp (SuSE
+    specific) all have the same timestamp (if they exist). Helps to discover if a folder has been
+    modified - in which case it needs to be reconfigured (and should happen automatically).
+15. Add support for TrueType Collections (.ttc), and OpenType (.otf) fonts. Currently TTC's are only
+    configured for X - need to also configure GS to see other faces.
+16. CID fonts are *not* handled - therefore don't list the X11 CID directory, and don't let users
+    try to create this.
+17. Don't list "encodings" in fonts:/System - and don't allow users to create this.
+18. Use XFree86's libfontenc (if found) to read font-encodings.
+19. Handle 1bpp glyphs in thumbnail code.
+20. Ensure X fontpaths *never* end in "/" - i.e. when write XF86Config, xfs/config,
+    or fontpaths remove any trailing "/"
+21. When adding/removing an unscaled dir from X font path, ensure ":unscaled" is
+    part of the path!
+22. Call fc-cache on top-level dir, not on each dir.
+
+
 0.11-> KDE3.1
 =============
 1.  Re-design of UI - removed "Install From" view.

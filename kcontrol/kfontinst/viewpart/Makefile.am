@@ -1,19 +1,15 @@
 lib_LTLIBRARIES = libkfontviewpart.la
 
-libkfontviewpart_la_SOURCES = kfontviewpart.cpp kfontviewpart_factory.cpp
+libkfontviewpart_la_SOURCES = FontViewPart.cpp FontViewPartFactory.cpp FontPreview.cpp
 libkfontviewpart_la_LDFLAGS = -module $(KDE_PLUGIN)
-libkfontviewpart_la_LIBADD = $(LIB_KPARTS)
+libkfontviewpart_la_LIBADD = $(LIB_KPARTS) ../lib/libkfontinst.la
 
-noinst_HEADERS  = kfontviewpart.h kfontviewpart_factory.h
+noinst_HEADERS  = FontViewPart.h FontViewPartFactory.h FontPreview.h
 
 kde_services_DATA = kfontviewpart.desktop
 
-INCLUDES = -I$(srcdir)/../kfontinst $(all_includes)
+INCLUDES = -I../lib -I../../fonts $(all_includes) $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS)
 METASOURCES = AUTO
-
-bin_SCRIPTS = kcmfontinst_install_fonts.sh
-konqservice_DATA = kcmfontinst_install_fonts.desktop
-konqservicedir = $(kde_datadir)/konqueror/servicemenus
 
 messages:
 	$(XGETTEXT) *.cpp *.h -o $(podir)/kfontviewpart.pot

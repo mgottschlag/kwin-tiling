@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Comment=Fonts folder
+Icon=folder
+Type=MimeType
+MimeType=fonts/folder
+Patterns=
+
+X-KDE-AutoEmbed=true

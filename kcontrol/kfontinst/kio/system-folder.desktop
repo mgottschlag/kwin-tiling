@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Comment=System fonts folder
+Icon=folder_red
+Type=MimeType
+MimeType=fonts/system-folder
+Patterns=
+
+X-KDE-AutoEmbed=true

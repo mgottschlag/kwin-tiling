@@ -2,7 +2,7 @@
 //
 // Class Name    : CFontThumbnail
 // Author        : Craig Drummond
-// Project       : K Font Installer (kfontinst-kcontrol)
+// Project       : K Font Installer
 // Creation Date : 02/05/2002
 // Version       : $Revision$ $Date$
 //
@@ -23,16 +23,21 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2002
+// (C) Craig Drummond, 2002, 2003
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "FontThumbnail.h"
-#include "FontEngine.cpp"
-#include "Misc.cpp"
-#include "CompressedFile.cpp"
+#include "FontEngine.h"
+#include "Misc.h"
+#include "CompressedFile.h"
+#include "Global.h"
+#include "Config.h"
 #include <qimage.h>
+#include <qbitmap.h>
 #include <qpainter.h>
 #include <kiconloader.h>
+#include <kglobalsettings.h>
+#include <klocale.h>
 
 extern "C"
 {
@@ -44,7 +49,14 @@ extern "C"
     static FT_Error face_requester(FTC_FaceID faceId, FT_Library lib, FT_Pointer ptr, FT_Face *face)
     {
         ptr=ptr;
-        return FT_New_Face(lib, ((QString *)faceId)->local8Bit(), 0, face);
+
+        FT_Error err=FT_New_Face(lib, QFile::encodeName(*((QString *)faceId)), 0, face);
+
+        if(err)
+            err=FT_New_Face(lib, QFile::encodeName(
+                                   CGlobal::cfg().getRealTopDir(*((QString *)faceId))+CMisc::getSub(*((QString *)faceId))),
+                            0, face);
+        return err;
     }
 }
 
@@ -53,7 +65,7 @@ CFontThumbnail::CFontThumbnail()
              itsBufferSize(0)
 {
     itsFiles.setAutoDelete(true);
-    FTC_Manager_New(itsEngine.itsFt.library, 0, 0, 0, face_requester, 0, &itsCacheManager);
+    FTC_Manager_New(CGlobal::fe().itsFt.library, 0, 0, 0, face_requester, 0, &itsCacheManager);
     FTC_SBit_Cache_New(itsCacheManager, &itsSBitCache);
     FTC_Image_Cache_New(itsCacheManager, &itsImageCache);
 }
@@ -63,6 +75,7 @@ CFontThumbnail::~CFontThumbnail()
     FTC_Manager_Done(itsCacheManager);
     if(itsBuffer)
         delete [] itsBuffer;
+    CGlobal::destroy();
 }
 
 FTC_FaceID CFontThumbnail::getId(const QString &f)
@@ -97,7 +110,7 @@ bool CFontThumbnail::getGlyphBitmap(FTC_Image_Desc &font, FT_ULong index, Bitmap
 
         if(!FTC_SBit_Cache_Lookup(itsSBitCache, &font, index, &sbit))
         {
-            target.greys=ft_pixel_mode_mono==sbit->format ? 1 : 256;
+            target.greys=ft_pixel_mode_mono==sbit->format ? 2 : 256;
             target.height=sbit->height;
             target.width=sbit->width;
             target.buffer=sbit->buffer;
@@ -174,49 +187,133 @@ void CFontThumbnail::align32(Bitmap &bmp)
         bmp.mod=0;
 }
 
+bool CFontThumbnail::drawGlyph(QPixmap &pix, FTC_Image_Desc &font, FT_Size &size, int glyphNum,
+                               FT_F26Dot6 &x, FT_F26Dot6 &y, FT_F26Dot6 width, FT_F26Dot6 height,
+                               FT_F26Dot6 startX, FT_F26Dot6 stepY, int space)
+{
+    int        left,
+               top,
+               xAdvance;
+    FT_Pointer glyph;
+    Bitmap     bmp;
+
+    if(getGlyphBitmap(font, glyphNum, bmp, left, top, xAdvance, &glyph) && bmp.width>0 && bmp.height>0)
+    {
+        if(2==bmp.greys)
+        {
+            QPixmap glyphPix(QBitmap(bmp.width, bmp.height, bmp.buffer));
+
+            bitBlt(&pix, x+left, y-top, &glyphPix, 0, 0, bmp.width, bmp.height, Qt::AndROP);
+        }
+        else
+        {
+            static QRgb clut[256];
+            static bool clutSetup=false;
+
+            if(!clutSetup)
+            {
+                int j;
+                for(j=0; j<256; j++)
+                    clut[j]=qRgb(255-j, 255-j, 255-j);
+                clutSetup=true;
+            }
+
+            align32(bmp);
+
+            QPixmap glyphPix(QImage(bmp.buffer, bmp.width, bmp.height, 8, clut , bmp.greys, QImage::IgnoreEndian));
+
+            bitBlt(&pix, x+left, y-top, &glyphPix, 0, 0, bmp.width, bmp.height, Qt::AndROP);
+        }
+
+        if(glyph)
+            FT_Done_Glyph((FT_Glyph)glyph);
+
+        x+=xAdvance+1;
+
+        if(x+size->metrics.x_ppem>width)
+        {
+            x=startX;
+            y+=stepY;
+
+            if(y>height)
+                return true;
+        }
+    }
+    else if(x!=startX)
+        x+=space;
+
+    return false;
+}
+
+static bool getCharMap(FT_Face &face, const QString &str)
+{
+    int cm;
+
+    for(cm=0; cm<face->num_charmaps; cm++)
+    {
+        unsigned int ch;
+        bool         found=true;
+
+        FT_Set_Charmap(face, face->charmaps[cm]);
+
+        for(ch=0; ch<str.length() && found; ch++)
+            if(FT_Get_Char_Index(face, str[ch].unicode())==0)
+                found=false;
+
+        if(found)
+            return true;
+    }
+    return false;
+}
+
 bool CFontThumbnail::create(const QString &path, int width, int height, QImage &img)
 {
-    enum
+    static const struct
     {
-        KONQ_SMALL  = 48,
-        KONQ_MEDIUM = 60,
-        KONQ_LARGE  = 90
-    };
+        int height,
+            titleFont,
+            font, 
+            offset,
+            space;
+    } sizes[] = { { 16, 0,  10, 2, 0 },
+                  { 32, 0,  12, 2, 0 },
+                  { 48, 10, 10, 1, 3 },
+                  { 64, 12, 14, 1, 4 },
+                  { 90, 12, 28, 2, 6 },
+                  { 0,  12, 28, 4, 8 }
+                };
 
-    bool status=false,
-         konqPreview=height==width && (KONQ_SMALL==height || KONQ_MEDIUM==height || KONQ_LARGE==height);
-    int  pointSize=height <= KONQ_SMALL && width <= KONQ_SMALL ? SMALL :   // Konqueror's small icon preview
-                   height <= KONQ_MEDIUM && width <=KONQ_MEDIUM ? MEDIUM :  // "           medium "   "
-                   height < 30 ? MEDIUM : LARGE;
-    bool showName=!konqPreview && (pointSize==LARGE) && (height > (point2Pixel(pointSize)*3));
+    bool status=false;
+    int  s;
 
-    if(!showName || itsEngine.openFont(path))
+    for(s=0; sizes[s].height && height>sizes[s].height; ++s)
+        ;
+
+    if(CGlobal::fe().openKioFont(path, CFontEngine::NAME, true))
     {
         FT_Face        face;
         FT_Size        size;
         FTC_Image_Desc font;
 
         font.font.face_id=getId(path);
-        font.font.pix_width=font.font.pix_height=point2Pixel(pointSize);
+        font.font.pix_width=font.font.pix_height=point2Pixel(sizes[s].font);
         font.image_type=ftc_image_grays;
-   
-        static const int constOffset=4;
 
-        FT_F26Dot6 startX=constOffset,
-                   startY=constOffset+font.font.pix_height,
+        FT_F26Dot6 startX=sizes[s].offset,
+                   startY=sizes[s].offset+font.font.pix_height,
                    x=startX,
                    y=startY;
         QPixmap    pix(width, height);
+        QPainter   painter(&pix);
 
-        pix.fill(Qt::black);
+        pix.fill(Qt::white);
 
-        if(showName)
+        if(sizes[s].titleFont)
         {
-            QFont    font("times", 12);
-            QPainter painter(&pix);
-            QString  name(itsEngine.getFullName()),
-                     info;
-            bool     bmp=CFontEngine::isABitmap(path.local8Bit());
+            QString name(CGlobal::fe().getFullName()),
+                    info;
+            bool    bmp=CFontEngine::isABitmap(QFile::encodeName(path));
+            QFont   title(KGlobalSettings::generalFont());
 
             if(bmp)
             {
@@ -226,9 +323,10 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
                 name=name.left(pos);
             }
 
-            painter.setFont(font);
-            painter.setPen(Qt::white);
-            y=constOffset+painter.fontMetrics().height();
+            title.setPixelSize(sizes[s].titleFont);
+            painter.setFont(title);
+            painter.setPen(Qt::black);
+            y=painter.fontMetrics().height();
             painter.drawText(x, y, name);
 
             if(bmp)
@@ -238,100 +336,81 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
             }
 
             y+=4;
-            painter.drawLine(constOffset, y, width-(constOffset*2), y);
+            painter.drawLine(sizes[s].offset, y, width-(sizes[s].offset*2), y);
             y+=2;
             y+=startY;
-            status=true;
         }
- 
-        if(!FTC_Manager_Lookup_Size(itsCacheManager, &(font.font), &face, &size))
-        {
-            int        i;
-            FT_F26Dot6 stepY=(size->metrics.height>>6) + constOffset;
-
-            for(i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
-            {
-                int        left,
-                           top,
-                           xAdvance;
-                FT_Pointer glyph;
-                Bitmap     bmp;
-
-                if(getGlyphBitmap(font, i, bmp, left, top, xAdvance, &glyph) && bmp.width>0 && bmp.height>0)
-                {
-                    static QRgb clut [256];
-                    static bool clutSetup=false;
-
-                    if(!clutSetup)
-                    {
-                        int j;
-                        for(j=0; j<256; j++)
-                            clut[j]=qRgb(j, j, j);
-                        clutSetup=true;
-                    }
-
-                    status=true;
-                    align32(bmp);
-
-                    QPixmap glyphPix(QImage(bmp.buffer, bmp.width, bmp.height, bmp.greys>1 ? 8 : 1, clut, bmp.greys, QImage::IgnoreEndian));
-
-                    bitBlt(&pix, x+left, y-top, &glyphPix, 0, 0, bmp.width, bmp.height, Qt::XorROP);
-
-                    if(glyph)
-                        FT_Done_Glyph((FT_Glyph)glyph);
-
-                    x+=xAdvance+1;
-
-                    if(x+size->metrics.x_ppem>width)
-                    {
-                        x=startX;
-                        y+=stepY;
-
-                        if(y>height)
-                            break;
-                    }
-                }
-            }
-        }
-
-        if(status)
-        {
-            img=pix.convertToImage();
-            img.invertPixels();
-        }
-
-        if(showName)
-            itsEngine.closeFont();
-    }
-
-    if(!status)
-    {
-        int size= konqPreview ? (height==KONQ_SMALL  ? KIcon::SizeSmall :
-                                 height==KONQ_MEDIUM ? KIcon::SizeMedium :
-                                                       KIcon::SizeLarge)
-                              : (pointSize==SMALL    ? KIcon::SizeSmall :
-                                 pointSize==MEDIUM   ? KIcon::SizeMedium :
-                                                       KIcon::SizeLarge);
 
         status=true;
 
-        switch(CFontEngine::getType(QFile::encodeName(path)))
+        if(!FTC_Manager_Lookup_Size(itsCacheManager, &(font.font), &face, &size))
         {
-            case CFontEngine::TRUE_TYPE:
-                img=KGlobal::iconLoader()->loadIcon("font_truetype", KIcon::Desktop, size).convertToImage();
-                break;
-            case CFontEngine::TYPE_1:
-                img=KGlobal::iconLoader()->loadIcon("font_type1", KIcon::Desktop, size).convertToImage();
-                break;
-            case CFontEngine::SPEEDO:
-                img=KGlobal::iconLoader()->loadIcon("font_speedo", KIcon::Desktop, size).convertToImage();
-                break;
-            case CFontEngine::BITMAP:
-                img=KGlobal::iconLoader()->loadIcon("font_bitmap", KIcon::Desktop, size).convertToImage();
-                break;
-            default:
-                status=false;
+            int        i;
+            FT_F26Dot6 stepY=size->metrics.y_ppem /*(size->metrics.height>>6)*/ + sizes[s].offset;
+
+            if(0==sizes[s].height)
+            {
+                QString  quote(i18n("The quick brown fox jumps over the lazy dog"));
+                bool     foundCmap=getCharMap(face, quote);
+
+                if(foundCmap)
+                {
+                    unsigned int ch;
+
+                    for(ch=0; ch<quote.length(); ++ch)
+                        if(drawGlyph(pix, font, size, FT_Get_Char_Index(face, quote[ch].unicode()),
+                           x, y, width, height, startX, stepY, sizes[s].space))
+                            break;
+                }
+
+                font.font.pix_width=font.font.pix_height=point2Pixel((int)(sizes[s].font*0.75));
+
+                if(y<height && !FTC_Manager_Lookup_Size(itsCacheManager, &(font.font), &face, &size))
+                {
+                    FT_F26Dot6 stepY=size->metrics.y_ppem /*(size->metrics.height>>6)*/ + sizes[s].offset;
+
+                    if(foundCmap)
+                    {
+                        if(x!=startX)
+                        {
+                            y+=stepY;
+                            x=startX;
+                        }
+
+                        y+=font.font.pix_height;
+                    }
+
+                    for(i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
+                        if(drawGlyph(pix, font, size, i, x, y, width, height, startX, stepY))
+                            break;
+                }
+            }
+            else
+            {
+                QString str(i18n("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"));
+
+                if(getCharMap(face, str))
+                {
+                    unsigned int ch;
+
+                    for(ch=0; ch<str.length(); ++ch)
+                        if(drawGlyph(pix, font, size, FT_Get_Char_Index(face, str[ch].unicode()),
+                           x, y, width, height, startX, stepY))
+                            break;
+
+                }
+                else
+                    for(i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
+                        if(drawGlyph(pix, font, size, i, x, y, width, height, startX, stepY))
+                            break;
+            }
+
         }
+
+        if(status)
+            img=pix.convertToImage();
+
+        CGlobal::fe().closeFont();
     }
 
     return status;
@@ -339,5 +418,5 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
 
 ThumbCreator::Flags CFontThumbnail::flags() const
 {
-    return None;
+    return DrawFrame;
 }

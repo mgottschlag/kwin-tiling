@@ -1,7 +1,7 @@
 kde_module_LTLIBRARIES = fontthumbnail.la
 
 fontthumbnail_la_SOURCES = FontThumbnail.cpp
-fontthumbnail_la_LIBADD = $(LIBFREETYPE_LIBS) $(LIB_KDECORE) $(LIB_KIO)
+fontthumbnail_la_LIBADD = $(LIBFREETYPE_LIBS) $(LIB_KDECORE) $(LIB_KIO) ../lib/libkfontinst.la
 fontthumbnail_la_LDFLAGS = $(all_libraries) $(KDE_RPATH) $(LIBFREETYPE_RPATH) -module $(KDE_PLUGIN)
 METASOURCES = AUTO
 
@@ -11,4 +11,4 @@ kdelnkdir = $(kde_servicesdir)
 
 kde_services_DATA = fontthumbnail.desktop
 
-INCLUDES= $(LIBFREETYPE_CFLAGS) -I$(srcdir)/../kfontinst $(all_includes)
+INCLUDES= $(LIBFREETYPE_CFLAGS) -I../lib -I../../fonts $(all_includes)

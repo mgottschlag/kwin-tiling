@@ -1,3 +1,5 @@
+# Check for FreeType...
+
 FOUND_FREETYPE=0
 
 KDE_FIND_PATH(freetype-config, FREETYPE_CONFIG, [${prefix}/bin ${exec_prefix}/bin /usr/bin /usr/local/bin /opt/local/bin], [
@@ -44,3 +46,41 @@ if test $FOUND_FREETYPE -eq 1; then
 fi
 
 AM_CONDITIONAL(include_fontinst_tn, test -n "$FONTINST_TN")
+
+# Check OS...
+
+if test $FOUND_FREETYPE -eq 1; then
+  AC_MSG_CHECKING([OS])
+  case "$host" in
+    *-*-linux*) UNAME='Linux' ;;
+    *-*-freebsd*) UNAME='FreeBSD' ;;
+    *-*-netbsd*) UNAME='NetBSD' ;;
+    *-*-solaris*) UNAME='Solaris' ;;
+    *-*-irix*) UNAME='Irix' ;;
+    *-*-aix*) UNAME='AIX' ;;
+    *-*-hpux*) UNAME='HPUX' ;;
+    *) UNAME='Unknown' ;;
+  esac
+  AC_MSG_RESULT($UNAME)
+  AC_SUBST(UNAME)
+fi
+
+# Check for fontenc...
+
+if test $FOUND_FREETYPE -eq 1; then
+  ac_font_enc_headers=0
+  AC_CHECK_HEADER(X11/fonts/fontenc.h,[ac_font_enc_headers=1])
+  if test "$ac_font_enc_headers" = "0"; then
+    AC_MSG_WARN(FontEnc headers not found. FontEnc support disabled)
+  else
+    ac_LDFLAGS_save="$LDFLAGS"
+    LDFLAGS="$LDFLAGS $all_libraries -lz"
+    AC_CHECK_LIB(fontenc,FontEncDirectory,ac_font_enc_lib=1,ac_font_enc_lib=0)
+    if test "$ac_font_enc_lib" = "1"; then
+      LIB_FONT_ENC="-lfontenc"
+      AC_DEFINE(HAVE_FONT_ENC, 1, [Defines if you have FontEnc])
+    fi
+    LDFLAGS="$ac_LDFLAGS_save"
+  fi
+  AC_SUBST(LIB_FONT_ENC)
+fi
