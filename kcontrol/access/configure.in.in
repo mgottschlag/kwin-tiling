@@ -1,0 +1,14 @@
+ac_cpp_safe=$ac_cpp
+ac_cpp='$CXXCPP $CPPFLAGS $X_INCLUDES'
+have_xkb_extension=false
+AC_CHECK_HEADERS(X11/extensions/XKBstr.h, have_xkb_extension=true)
+ac_cpp=$ac_cpp_safe  
+
+if test "$have_xkb_extension" = "true"; then
+   ACCESS_SUBDIR=access
+else
+   ACCESS_SUBDIRS=
+fi
+
+AC_SUBST(ACCESS_SUBDIRS)
+
