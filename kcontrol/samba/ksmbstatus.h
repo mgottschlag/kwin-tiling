@@ -59,7 +59,6 @@ private:
 
    QCString strShare, strUser, strGroup, strMachine, strSince, strPid;
    int iUser, iGroup, iMachine, iPid;
-   bool m_nothingReceived;
 
 private slots:
    void killShowmount();

@@ -58,7 +58,6 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
    ,iGroup(0)
    ,iMachine(0)
    ,iPid(0)
-   ,m_nothingReceived(TRUE)
 {
     QBoxLayout *topLayout = new QVBoxLayout(this);
     topLayout->setAutoAdd(true);
@@ -145,7 +144,7 @@ void NetMon::processSambaLine(char *bufline, int)
 // half of one ...)
 void NetMon::slotReceivedData(KProcess *, char *buffer, int )
 {
-   m_nothingReceived=false;
+   //kdDebug()<<"received stuff"<<endl;
    char s[250],*start,*end;
    size_t len;
    start = buffer;
@@ -154,13 +153,18 @@ void NetMon::slotReceivedData(KProcess *, char *buffer, int )
       len = end-start;
       strncpy(s,start,len);
       s[len] = '\0';
-      //kdDebug() << s << endl;
+      //kdDebug() << "recived: "<<s << endl;
       if (readingpart==nfs)
          processNFSLine(s,len);
       else
          processSambaLine(s,len); // process each line
       start=end+1;
    }
+   if (readingpart==nfs)
+   {
+      list->viewport()->update();
+      list->update();
+   };
    // here we could save the remaining part of line, if ever buffer
    // doesn't end with a '\n' ... but will this happen ?
 }
@@ -204,16 +208,18 @@ void NetMon::update()
    if (showmountProc!=0)
       delete showmountProc;
    showmountProc=new KProcess();
+   //*showmountProc<<"dn";
    *showmountProc<<"showmount"<<"-a"<<"localhost";
    connect(showmountProc,SIGNAL(receivedStdout(KProcess *, char *, int)),SLOT(slotReceivedData(KProcess *, char *, int)));
-   m_nothingReceived=TRUE;
    //without this timer showmount hangs up to 5 minutes
    //if the portmapper daemon isn't running
    QTimer::singleShot(5000,this,SLOT(killShowmount()));
-   if (!showmountProc->start(KProcess::Block,KProcess::Stdout)) // run showmount
+   //kdDebug()<<"starting kill timer with 5 seconds"<<endl;
+   connect(showmountProc,SIGNAL(processExited(KProcess*)),this,SLOT(killShowmount()));
+   if (!showmountProc->start(KProcess::NotifyOnExit,KProcess::Stdout)) // run showmount
       version->setText(version->text()+i18n(" Error: Unable to run showmount"));
-   delete showmountProc;
-   showmountProc=0;
+   //delete showmountProc;
+   //showmountProc=0;
 
    version->adjustSize();
    list->show();
@@ -221,11 +227,15 @@ void NetMon::update()
 
 void NetMon::killShowmount()
 {
-   if ((m_nothingReceived) && (showmountProc!=0))
+   //kdDebug()<<"killShowmount()"<<endl;
+   //if (showmountProc==0) cerr<<"showmountProc==0 !"<<endl;
+   if (showmountProc!=0)
    {
       //this one kills showmount
+      //cerr<<"killing showmount..."<<endl;
       delete showmountProc;
       showmountProc=0;
+      //cerr<<"succeeded"<<endl;
    };
 
 };
