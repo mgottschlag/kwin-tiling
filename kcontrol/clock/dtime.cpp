@@ -208,7 +208,7 @@ void Dtime::set_time()
   
   internalTimer.stop();
 
-  time.setHMS( atoi(hour->text()), atoi(minute->text()), atoi(second->text()) );
+  time.setHMS( hour->text().toInt(), minute->text().toInt(), second->text().toInt() );
   kclock->setTime( time );
   
   emit changed( TRUE );
@@ -249,8 +249,8 @@ void Dtime::save()
   
   BufS.sprintf("%02d%02d%02d%02d%04d.%02d",
                date.month(), date.day(), 
-               atoi(hour->text()), atoi(minute->text()),
-               date.year(), atoi(second->text()));
+               hour->text().toInt(), minute->text().toInt(),
+               date.year(), second->text().toInt());
   
   kdDebug() << "Set date " << BufS << endl;
   
@@ -297,7 +297,7 @@ void Dtime::joke(QLineEdit *edit,int incr,int Min,int Max,bool refr)
 {
   if ( refr ) 
     refresh = FALSE;
-  BufI=atoi(edit->text());
+  BufI=edit->text().toInt();
   BufI=BufI + incr;
   if ( BufI > Max ) BufI = Min;
   if ( BufI < Min ) BufI = Max;

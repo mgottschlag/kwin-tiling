@@ -244,7 +244,7 @@ void NetMon::update()
       for (row=list->firstChild();row!=0;row=row->itemBelow())
       {
 //         cerr<<"NetMon::update: this should be the pid: "<<row->text(5)<<endl;
-         pid=atoi(row->text(5));
+         pid=row->text(5).toInt();
          row->setText(6,QString("%1").arg((lo)[pid]));
       }
    }

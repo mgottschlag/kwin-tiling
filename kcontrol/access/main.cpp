@@ -6,7 +6,7 @@
 #include "kaccess.h"
 
 
-const QString DESCRIPTION = 
+const char * DESCRIPTION = 
   I18N_NOOP("A utility to improve KDE's accessibility for people "
 	    "with disabilities.");
 

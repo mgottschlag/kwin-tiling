@@ -257,12 +257,12 @@ void InternetKeywordsOptions::changeSearchProvider() {
     const char *uri = le_searchProviderURI->text();
 
     if (!*provider) {
-    	QMessageBox::warning( 0, i18n("Error"),
+    	KMessageBox::error( 0,
                               i18n("You must enter a search provider name first!") );
         return;
     }
     if (!*uri && strncmp(provider, "RealNames", 9)) {
-    	QMessageBox::warning( 0, i18n("Error"),
+    	KMessageBox::error( 0,
                               i18n("You must enter a search provider URI first!") );
         return;
     }

@@ -272,7 +272,7 @@ void ButtonTab::kmenu_changed(const QString& t)
   QString tile = t + "_large_up.png";
   tile = KGlobal::dirs()->findResource("tiles", tile);
 
-  if(!tile == QString::null)
+  if(!tile.isNull())
     {
       QPixmap pix(tile);
       if (!pix.isNull())
@@ -297,7 +297,7 @@ void ButtonTab::url_changed(const QString& t)
   QString tile = t + "_large_up.png";
   tile = KGlobal::dirs()->findResource("tiles", tile);
 
-  if(!tile == QString::null)
+  if(!tile.isNull())
     {
       QPixmap pix(tile);
       if (!pix.isNull())
@@ -322,7 +322,7 @@ void ButtonTab::browser_changed(const QString& t)
   QString tile = t + "_large_up.png";
   tile = KGlobal::dirs()->findResource("tiles", tile);
 
-  if(!tile == QString::null)
+  if(!tile.isNull())
     {
       QPixmap pix(tile);
       if (!pix.isNull())
@@ -347,7 +347,7 @@ void ButtonTab::exe_changed(const QString& t)
   QString tile = t + "_large_up.png";
   tile = KGlobal::dirs()->findResource("tiles", tile);
 
-  if(!tile == QString::null)
+  if(!tile.isNull())
     {
       QPixmap pix(tile);
       if (!pix.isNull())
@@ -372,7 +372,7 @@ void ButtonTab::wl_changed(const QString& t)
   QString tile = t + "_large_up.png";
   tile = KGlobal::dirs()->findResource("tiles", tile);
 
-  if(!tile == QString::null)
+  if(!tile.isNull())
     {
       QPixmap pix(tile);
       if (!pix.isNull())
@@ -397,7 +397,7 @@ void ButtonTab::drawer_changed(const QString& t)
   QString tile = t + "_large_up.png";
   tile = KGlobal::dirs()->findResource("tiles", tile);
 
-  if(!tile == QString::null)
+  if(!tile.isNull())
     {
       QPixmap pix(tile);
       if (!pix.isNull())
