@@ -31,6 +31,7 @@ class DockContainer : public QWidget
 
 public:
   DockContainer(QWidget *parent=0, const char *name=0);
+  virtual ~DockContainer();
 
   void setBaseWidget(QWidget *widget);
   void dockModule(ConfigModule *module);

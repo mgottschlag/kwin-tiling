@@ -70,6 +70,7 @@ KControlApp::~KControlApp()
       config->writeEntry("InitialHeight", toplevel->height());
       config->sync();
     }
+  delete toplevel;
 }
 
 int main(int argc, char *argv[])

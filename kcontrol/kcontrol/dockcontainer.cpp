@@ -24,6 +24,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kcmodule.h>
+#include <kdebug.h>
 
 #include "dockcontainer.h"
 #include "dockcontainer.moc"
@@ -48,6 +49,11 @@ DockContainer::DockContainer(QWidget *parent, const char *name)
   _rootOnly->setTextFormat(RichText);
   _rootOnly->setGeometry(0,0, width(), height());
   _rootOnly->hide();
+}
+
+DockContainer::~DockContainer()
+{
+  deleteModule();
 }
 
 void DockContainer::setBaseWidget(QWidget *widget)

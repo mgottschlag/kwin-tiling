@@ -14,9 +14,11 @@
 
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
-  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  Foundation, Inc., 675 Mass Ave, Cambridt tge, MA 02139, USA.
 
 */
+
+#include <iostream.h>                                   
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -135,7 +137,7 @@ TopLevel::TopLevel(const char* name)
     activateIconView();
     icon_view->setChecked(true);
   }
-}
+} 
 
 TopLevel::~TopLevel()
 {
