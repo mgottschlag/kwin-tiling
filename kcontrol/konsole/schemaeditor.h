@@ -22,7 +22,7 @@
 #include <config.h>
 #endif
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <kapp.h>
 #include <qwidget.h>
 class QPixmap;
@@ -57,13 +57,13 @@ class SchemaEditor : public SchemaDialog
 	void updatePreview();
   private:
 	bool schMod;
-  	QArray<QColor> color;
-	QArray<int> type; // 0= custom, 1= sysfg, 2=sysbg
-	QArray<bool> transparent;
-	QArray<bool> bold;
+  	QMemArray<QColor> color;
+	QMemArray<int> type; // 0= custom, 1= sysfg, 2=sysbg
+	QMemArray<bool> transparent;
+	QMemArray<bool> bold;
 	QPixmap pix;
 	KSharedPixmap *spix;
-	QList<QString> filename;
+	QPtrList<QString> filename;
 	QString defaultSchema;	
 	bool loaded;
 	int oldSchema;
