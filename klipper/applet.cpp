@@ -13,6 +13,8 @@
 
 #include <kglobal.h>
 #include <klocale.h>
+#include <dcopclient.h>
+#include <kconfig.h>
 
 #include "toplevel.h"
 
@@ -31,39 +33,67 @@ KlipperApplet::KlipperApplet(const QString& configFile, Type t, int actions,
 {
     move( 0, 0 );
     setBackgroundMode(QWidget::X11ParentRelative);
-    toplevel = new Klipper( this, true );
+    widget = new KlipperAppletWidget( this );
     centerWidget();
-    toplevel->show();
+    widget->show();
 }
 
 KlipperApplet::~KlipperApplet()
 {
-    toplevel->saveSession();
-    delete toplevel;
+    widget->saveSession();
+    delete widget;
 }
 
 int KlipperApplet::widthForHeight(int) const
 {
-    return toplevel->width();
+    return widget->width();
 }
 
 int KlipperApplet::heightForWidth(int) const
 {
-    return toplevel->height();
+    return widget->height();
 }
 
 void KlipperApplet::resizeEvent( QResizeEvent* ev )
 {
-    toplevel->adjustSize();
+    widget->adjustSize();
     KPanelApplet::resizeEvent( ev );
     centerWidget();
 }
 
 void KlipperApplet::centerWidget()
 {
-    int x = (width() - toplevel->width())/2;
-    int y = (height() - toplevel->height())/2;
-    toplevel->move( x, y );
+    int x = (width() - widget->width())/2;
+    int y = (height() - widget->height())/2;
+    widget->move( x, y );
 }
+
+
+KlipperAppletWidget::KlipperAppletWidget( QWidget* parent )
+    : KlipperWidget( parent, new KConfig( "klipperrc" ))
+{
+    // if there's klipper process running, quit it
+    QByteArray arg1, arg2;
+    QCString str;
+    // call() - wait for finishing
+    kapp->dcopClient()->call("klipper", "klipper", "quitProcess()", arg1, str, arg2 );
+    // register ourselves, so if klipper process is started,
+    // it will quit immediately (KUniqueApplication)
+    m_dcop = new DCOPClient;
+    m_dcop->registerAs( "klipper", false );
+}
+
+KlipperAppletWidget::~KlipperAppletWidget()
+{
+    delete m_dcop;
+}
+    
+// this is just to make klipper process think we're KUniqueApplication
+// (AKA ugly hack)
+int KlipperAppletWidget::newInstance()
+{
+    return 0;
+}
+
 
 #include "applet.moc"

@@ -15,7 +15,6 @@
 #include <kapplication.h>
 #include <kglobalaccel.h>
 #include <kpopupmenu.h>
-#include <ksystemtray.h>
 #include <qmap.h>
 #include <qtimer.h>
 #include <qpixmap.h>
@@ -25,21 +24,19 @@ class QClipboard;
 class KToggleAction;
 class URLGrabber;
 
-class Klipper : public KSystemTray, public DCOPObject
+class KlipperWidget : public QWidget, public DCOPObject
 {
   Q_OBJECT
   K_DCOP
 
 k_dcop:
-    void quitProcess(); // not ASYNC
-    int newInstance();
     QString getClipboardContents();
     void setClipboardContents(QString s);
     void clearClipboardContents();
 
 public:
-    Klipper( QWidget *parent = 0L, bool applet = false );
-    ~Klipper();
+    KlipperWidget( QWidget *parent, KConfig* config );
+    ~KlipperWidget();
 
     virtual void adjustSize();
 
@@ -52,10 +49,6 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
-    // we don't use any of KSystemTray's features, beside the X11 focus/event
-    // handling (without, our tooltip will never show), so we just skip
-    // KSystemTray's mouseReleaseEvent handler.
-    void mouseReleaseEvent(QMouseEvent *e) { QWidget::mouseReleaseEvent( e ); }
     void readProperties(KConfig *);
     void readConfiguration(KConfig *);
     void writeConfiguration(KConfig *);
@@ -75,6 +68,9 @@ protected:
     void setClipboard( const QString& text, int mode );
     void setClipboard( const QString& text, bool selectionMode );
     bool ignoreClipboardChanges() const;
+    
+    KConfig* config() const { return m_config; }
+    bool isApplet() const { return m_config != kapp->config(); }
 
 protected slots:
     void slotPopupMenu() { showPopupMenu( m_popup ); }
@@ -126,11 +122,23 @@ private:
     int m_selectedItem;
     int maxClipItems;
     int URLGrabItem;
-    bool isApplet() const { return m_config != kapp->config(); }
     KConfig* m_config;
-    DCOPClient* m_dcop;
 
     void trimClipHistory(int);
+};
+
+
+class Klipper : public KlipperWidget
+{
+    Q_OBJECT
+    K_DCOP
+k_dcop:
+    int newInstance();
+    void quitProcess(); // not ASYNC
+public:
+    Klipper( QWidget* parent = NULL );
+protected:
+    virtual void enterEvent( QEvent* );
 };
 
 #endif

@@ -14,7 +14,9 @@
 
 #include <kpanelapplet.h>
 
-class Klipper;
+#include "toplevel.h"
+
+class KlipperAppletWidget;
 
 class KlipperApplet : public KPanelApplet
 {
@@ -30,7 +32,21 @@ protected:
         void resizeEvent( QResizeEvent* );
 private:
         void centerWidget();
-        Klipper* toplevel;
+        KlipperAppletWidget* widget;
+};
+
+class KlipperAppletWidget : public KlipperWidget
+{
+    Q_OBJECT
+    K_DCOP
+k_dcop:
+    int newInstance();
+public:
+    KlipperAppletWidget( QWidget* parent = NULL );
+    virtual ~KlipperAppletWidget();
+private:
+    DCOPClient* m_dcop;
+    
 };
 
 #endif

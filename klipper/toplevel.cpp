@@ -42,6 +42,7 @@
 #include "urlgrabber.h"
 #include "version.h"
 
+#include <X11/Xlib.h>
 
 #define QUIT_ITEM    50
 #define CONFIG_ITEM  60
@@ -52,26 +53,12 @@
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
 
-Klipper::Klipper( QWidget *parent, bool applet )
-    : KSystemTray( parent ), DCOPObject( "klipper" ), m_dcop( 0 )
+// config == kapp->config for process, otherwise applet
+KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
+    : QWidget( parent ), DCOPObject( "klipper" ), m_config( config )
 {
     clip = kapp->clipboard();
     m_selectedItem = -1;
-
-    if( applet ) {
-        m_config = new KConfig( "klipperrc" );
-        // if there's klipper process running, quit it
-        QByteArray arg1, arg2;
-        QCString str;
-        // call() - wait for finishing
-        kapp->dcopClient()->call("klipper", "klipper", "quitProcess()", arg1, str, arg2 );
-        // register ourselves, so if klipper process is started,
-        // it will quit immediately (KUniqueApplication)
-        m_dcop = new DCOPClient;
-        m_dcop->registerAs( "klipper", false );
-    }
-    else
-        m_config = kapp->config();
 
     QSempty = i18n("<empty clipboard>");
 
@@ -118,60 +105,43 @@ Klipper::Klipper( QWidget *parent, bool applet )
     QToolTip::add( this, i18n("Klipper - Clipboard Tool") );
 }
 
-Klipper::~Klipper()
+KlipperWidget::~KlipperWidget()
 {
     delete m_checkTimer;
     delete m_popup;
     delete myURLGrabber;
-    if( isApplet()) {
+    if( m_config != kapp->config())
         delete m_config;
-        delete m_dcop;
-    }
 }
 
-void Klipper::adjustSize()
+void KlipperWidget::adjustSize()
 {
     resize( m_pixmap.size() );
 }
 
-// this is used for quiting klipper process, if klipper is being started as an applet
-void Klipper::quitProcess()
-{
-    if( !isApplet()) {
-        kapp->dcopClient()->detach();
-        kapp->quit();
-    }
-}
-
-// this is just to make klipper process think we're KUniqueApplication
-int Klipper::newInstance()
-{
-    return 0;
-}
-
-QString Klipper::getClipboardContents()
+QString KlipperWidget::getClipboardContents()
 {
     return clipboardContents();
 }
 
-void Klipper::setClipboardContents(QString s)
+void KlipperWidget::setClipboardContents(QString s)
 {
     setClipboard( s, Clipboard | Selection);
     newClipData();
 }
 
-void Klipper::clearClipboardContents()
+void KlipperWidget::clearClipboardContents()
 {
     slotClearClipboard();	
 }
 
-void Klipper::mousePressEvent(QMouseEvent *e)
+void KlipperWidget::mousePressEvent(QMouseEvent *e)
 {
     if ( e->button() == LeftButton || e->button() == RightButton )
         showPopupMenu( m_popup );
 }
 
-void Klipper::paintEvent(QPaintEvent *)
+void KlipperWidget::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
     int x = (width() - m_pixmap.width()) / 2;
@@ -182,7 +152,7 @@ void Klipper::paintEvent(QPaintEvent *)
     p.end();
 }
 
-void Klipper::clickedMenu(int id)
+void KlipperWidget::clickedMenu(int id)
 {
     switch ( id ) {
     case -1:
@@ -259,7 +229,7 @@ void Klipper::clickedMenu(int id)
 }
 
 
-void Klipper::showPopupMenu( QPopupMenu *menu )
+void KlipperWidget::showPopupMenu( QPopupMenu *menu )
 {
     Q_ASSERT( menu != 0L );
 
@@ -291,7 +261,7 @@ void Klipper::showPopupMenu( QPopupMenu *menu )
 }
 
 
-void Klipper::readProperties(KConfig *kc)
+void KlipperWidget::readProperties(KConfig *kc)
 {
   QStringList dataList;
 
@@ -351,7 +321,7 @@ void Klipper::readProperties(KConfig *kc)
 }
 
 
-void Klipper::readConfiguration( KConfig *kc )
+void KlipperWidget::readConfiguration( KConfig *kc )
 {
     kc->setGroup("General");
     bPopupAtMouse = kc->readBoolEntry("PopupAtMousePosition", false);
@@ -364,7 +334,7 @@ void Klipper::readConfiguration( KConfig *kc )
     bIgnoreSelection = kc->readBoolEntry("IgnoreSelection", false);
 }
 
-void Klipper::writeConfiguration( KConfig *kc )
+void KlipperWidget::writeConfiguration( KConfig *kc )
 {
     kc->setGroup("General");
     kc->writeEntry("PopupAtMousePosition", bPopupAtMouse);
@@ -383,7 +353,7 @@ void Klipper::writeConfiguration( KConfig *kc )
 }
 
 // save session on shutdown. Don't simply use the c'tor, as that may not be called.
-void Klipper::saveSession()
+void KlipperWidget::saveSession()
 {
   if ( bKeepContents ) { // save the clipboard eventually
       QStringList dataList;
@@ -407,7 +377,7 @@ void Klipper::saveSession()
   }
 }
 
-void Klipper::disableURLGrabber()
+void KlipperWidget::disableURLGrabber()
 {
    KMessageBox::information( 0L,
             i18n( "You can enable URL actions later by right-clicking on the "
@@ -416,7 +386,7 @@ void Klipper::disableURLGrabber()
    setURLGrabberEnabled( false );
 }
 
-void Klipper::slotConfigure()
+void KlipperWidget::slotConfigure()
 {
     bool haveURLGrabber = bURLGrabber;
     if ( !myURLGrabber ) { // temporary, for the config-dialog
@@ -482,7 +452,7 @@ void Klipper::slotConfigure()
 }
 
 
-void Klipper::slotRepeatAction()
+void KlipperWidget::slotRepeatAction()
 {
     if ( !myURLGrabber ) {
 	myURLGrabber = new URLGrabber( m_config );
@@ -495,7 +465,7 @@ void Klipper::slotRepeatAction()
     myURLGrabber->invokeAction( m_lastString );
 }
 
-void Klipper::setURLGrabberEnabled( bool enable )
+void KlipperWidget::setURLGrabberEnabled( bool enable )
 {
     bURLGrabber = enable;
     toggleURLGrabAction->setChecked( enable );
@@ -522,12 +492,12 @@ void Klipper::setURLGrabberEnabled( bool enable )
     }
 }
 
-void Klipper::toggleURLGrabber()
+void KlipperWidget::toggleURLGrabber()
 {
     setURLGrabberEnabled( !bURLGrabber );
 }
 
-void Klipper::trimClipHistory( int new_size )
+void KlipperWidget::trimClipHistory( int new_size )
 {
     while (m_popup->count() - MENU_ITEMS > (unsigned) new_size ) {
         int id = m_popup->idAt(EMPTY);
@@ -539,7 +509,7 @@ void Klipper::trimClipHistory( int new_size )
     }
 }
 
-void Klipper::removeFromHistory( const QString& text )
+void KlipperWidget::removeFromHistory( const QString& text )
 {
     QMapIterator<long,QString> it = m_clipDict.begin();
     for ( ; it != m_clipDict.end(); ++it ) {
@@ -552,7 +522,7 @@ void Klipper::removeFromHistory( const QString& text )
     }
 }
 
-void Klipper::slotClearClipboard()
+void KlipperWidget::slotClearClipboard()
 {
     clip->setSelectionMode( true );
     clip->clear();
@@ -562,7 +532,7 @@ void Klipper::slotClearClipboard()
         m_popup->setItemEnabled(m_selectedItem, false);
 }
 
-QString Klipper::clipboardContents( bool *isSelection )
+QString KlipperWidget::clipboardContents( bool *isSelection )
 {
     clip->setSelectionMode( true );
 
@@ -584,7 +554,7 @@ QString Klipper::clipboardContents( bool *isSelection )
     return contents;
 }
 
-void Klipper::applyClipChanges( const QString& clipData )
+void KlipperWidget::applyClipChanges( const QString& clipData )
 {
     m_lastString = clipData;
 
@@ -615,13 +585,13 @@ void Klipper::applyClipChanges( const QString& clipData )
         m_popup->setItemChecked(m_selectedItem, true);
 }
 
-void Klipper::setEmptyClipboard()
+void KlipperWidget::setEmptyClipboard()
 {
     bClipEmpty = true;
     applyClipChanges( QSempty );
 }
 
-void Klipper::slotMoveSelectedToTop()
+void KlipperWidget::slotMoveSelectedToTop()
 {
     m_popup->removeItem( m_selectedItem );
     m_clipDict.remove( m_selectedItem );
@@ -632,7 +602,7 @@ void Klipper::slotMoveSelectedToTop()
 }
 
 // clipboard polling for legacy apps
-void Klipper::newClipData()
+void KlipperWidget::newClipData()
 {
     bool selectionMode;
     QString clipContents = clipboardContents( &selectionMode );
@@ -640,7 +610,7 @@ void Klipper::newClipData()
     checkClipData( clipContents, selectionMode );
 }
 
-void Klipper::clipboardSignalArrived( bool selectionMode )
+void KlipperWidget::clipboardSignalArrived( bool selectionMode )
 {
 //     qDebug("*** clipboardSignalArrived: %i", selectionMode);
 
@@ -652,7 +622,7 @@ void Klipper::clipboardSignalArrived( bool selectionMode )
     m_checkTimer->start(1000);
 }
 
-void Klipper::checkClipData( const QString& text, bool selectionMode )
+void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
 {
    clip->setSelectionMode( selectionMode );
 
@@ -717,12 +687,12 @@ void Klipper::checkClipData( const QString& text, bool selectionMode )
     }
 }
 
-void Klipper::setClipboard( const QString& text, bool selectionMode )
+void KlipperWidget::setClipboard( const QString& text, bool selectionMode )
 {
     setClipboard( text, selectionMode ? Selection : Clipboard );
 }
 
-void Klipper::setClipboard( const QString& text, int mode )
+void KlipperWidget::setClipboard( const QString& text, int mode )
 {
     bool blocked = clip->signalsBlocked();
     clip->blockSignals( true ); // ### this might break other kicker applets
@@ -753,7 +723,7 @@ void Klipper::setClipboard( const QString& text, int mode )
 // of the spinbox to be selected and hence the clipboard changes. But we don't
 // want all those items in klipper's history. See #41917
 //
-bool Klipper::ignoreClipboardChanges() const
+bool KlipperWidget::ignoreClipboardChanges() const
 {
     QWidget *focusWidget = qApp->focusWidget();
     if ( focusWidget )
@@ -768,6 +738,56 @@ bool Klipper::ignoreClipboardChanges() const
     }
 
     return false;
+}
+
+
+
+Klipper::Klipper( QWidget* parent )
+    : KlipperWidget( parent, kapp->config())
+{
+}
+
+#ifndef Q_WS_QWS
+extern Time qt_x_time;
+#endif
+
+void Klipper::enterEvent( QEvent* )
+{
+#ifndef Q_WS_QWS
+    // FIXME(E): Implement for Qt Embedded
+    if ( !qApp->focusWidget() ) {
+	XEvent ev;
+	memset(&ev, 0, sizeof(ev));
+	ev.xfocus.display = qt_xdisplay();
+	ev.xfocus.type = FocusIn;
+	ev.xfocus.window = winId();
+	ev.xfocus.mode = NotifyNormal;
+	ev.xfocus.detail = NotifyAncestor;
+	Time time = qt_x_time;
+	qt_x_time = 1;
+	qApp->x11ProcessEvent( &ev );
+	qt_x_time = time;
+    }
+#endif
+}
+
+// this sucks ... KUniqueApplication registers itself as 'klipper'
+// for the unique-app detection calls (and it shouldn't use that name IMHO)
+// but in Klipper it's not KUniqueApplication class who handles
+// the DCOP calls, but an instance of class Klipper, registered as 'klipper'
+// this below avoids a warning when KUniqueApplication wouldn't otherwise
+// find newInstance()  (which doesn't do anything in Klipper anyway)
+int Klipper::newInstance()
+{
+    return 0;
+}
+
+// this is used for quiting klipper process, if klipper is being started as an applet
+// (AKA ugly hack)
+void Klipper::quitProcess()
+{
+    kapp->dcopClient()->detach();
+    kapp->quit();
 }
 
 #include "toplevel.moc"
