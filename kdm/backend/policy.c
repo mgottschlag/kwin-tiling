@@ -222,18 +222,25 @@ Willing (
         if (*willing)
 	{
 	    FILE *fd;
-	    sprintf (statusBuf, "Willing, but %s failed", willing);
+	    int ok = 0;
 	    if ((fd = popen(willing, "r"))) {
 		for (;;) {
 		    if (fgets(statusBuf, sizeof(statusBuf), fd)) {
-			statusBuf[strlen(statusBuf)-1] = 0; /* chop newline */
-			break;
+			int len = strlen(statusBuf);
+			if (len && statusBuf[len - 1] == '\n')
+			    statusBuf[--len] = 0; /* chop newline */
+			if (len) {
+			    ok = 1;
+			    break;
+			}
 		    }
 		    if (feof (fd) || errno != EINTR)
 			break;
 		}
 		pclose(fd);
 	    }
+	    if (!ok)
+		sprintf (statusBuf, "Willing, but %s failed", willing);
 	}
 	else
 #ifdef WILLING_INTERNAL
