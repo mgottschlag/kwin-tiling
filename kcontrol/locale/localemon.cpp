@@ -101,13 +101,13 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
 
   label = new QLabel("1", gbox, i18n("Positive currency prefix"));
   chMonPosPreCurSym = new QCheckBox(gbox);
-//  connect( chMonPosPreCurSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonPosPreCurSymChanged(const QString &) ) );
+  connect( chMonPosPreCurSym, SIGNAL( clicked() ), this, SLOT( slotMonPosPreCurSymChanged() ) );
   tl1->addWidget(label, 7, 1);
   tl1->addWidget(chMonPosPreCurSym, 7, 2);
 
   label = new QLabel("1", gbox, i18n("Negative currency prefix"));
   chMonNegPreCurSym = new QCheckBox(gbox);
-//  connect( chMonNegPreCurSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonNegPreCurSymChanged(const QString &) ) );
+  connect( chMonNegPreCurSym, SIGNAL( clicked() ), this, SLOT( slotMonNegPreCurSymChanged() ) );
   tl1->addWidget(label, 8, 1);
   tl1->addWidget(chMonNegPreCurSym, 8, 2);
 
@@ -264,6 +264,18 @@ void KLocaleConfigMoney::slotMonPosSignChanged(const QString &t)
 void KLocaleConfigMoney::slotMonFraDigChanged(const QString &t)
 {
   KGlobal::locale()->_fracDigits = (int)KGlobal::locale()->readNumber(t);
+  ((KLocaleApplication*)kapp)->updateSample();
+}
+
+void KLocaleConfigMoney::slotMonPosPreCurSymChanged()
+{
+  KGlobal::locale()->_positivePrefixCurrencySymbol = chMonPosPreCurSym->isChecked();
+  ((KLocaleApplication*)kapp)->updateSample();
+}
+
+void KLocaleConfigMoney::slotMonNegPreCurSymChanged()
+{
+  KGlobal::locale()->_negativePrefixCurrencySymbol = chMonNegPreCurSym->isChecked();
   ((KLocaleApplication*)kapp)->updateSample();
 }
 

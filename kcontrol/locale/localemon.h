@@ -57,7 +57,8 @@ private slots:
   void slotMonPosSignChanged(const QString &t);
   void slotMonNegSignChanged(const QString &t);
   void slotMonFraDigChanged(const QString &t);
-//  void slotMonPosPreCurSymChanged();
+  void slotMonPosPreCurSymChanged();
+  void slotMonNegPreCurSymChanged();
   void slotMonPosMonSignPosChanged(int i);
   void slotMonNegMonSignPosChanged(int i);
 
