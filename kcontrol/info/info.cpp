@@ -4,7 +4,7 @@
 	Main Widget for showing system-dependent information.
 	(But all functions in THIS FILE should be system independent !)
 
-	(C) 1998-1999 by Helge Deller (deller@gmx.de)
+	(C) 1998-2002 by Helge Deller <deller@gmx.de>
 
 	** main.cpp includes this file ! **
 
@@ -364,12 +364,18 @@ void KInfoListWidget::load()
         NoInfoText->setText(ErrorString);
         widgetStack->raiseWidget(NoInfoText);
     }
+
+    emit changed(false);
 }
 
 
 QString KInfoListWidget::quickHelp() const
 {
-  return i18n( "<h1>System Information</h1>All the information modules return information about a certain aspect of your computer hardware or your operating system. Not all modules are available on all hardware architectures and/or operating systems." );
+  return i18n("<h1>System Information</h1>"
+	" All the information modules return information about a certain"
+	" aspect of your computer hardware or your operating system."
+	" Not all modules are available on all hardware architectures"
+	" and/or operating systems." );
 }
 
 
@@ -378,7 +384,7 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
     : KCModule(parent, name),
       title(_title)
 {
-    setButtons(Help);
+    setButtons(KCModule::Help);
     getlistbox 	= _getlistbox;
     GetInfo_ErrorString = 0;
     QHBoxLayout *layout = new QHBoxLayout(this, 10);
@@ -395,6 +401,20 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
     NoInfoText->setAlignment(AlignCenter); //  | WordBreak);
     widgetStack->raiseWidget(NoInfoText);
     load();
+}
+
+
+const KAboutData* KInfoListWidget::aboutData() const
+{
+
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcminfo"), I18N_NOOP("KDE Panel Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1998 - 2002 Helge Deller"));
+
+    about->addAuthor("Helge Deller", 0, "deller@gmx.de");
+
+    return about;
 }
 
 

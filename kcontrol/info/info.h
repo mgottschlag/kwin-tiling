@@ -13,6 +13,7 @@
 #include <qevent.h>
 
 #include <kcmodule.h>
+#include <kaboutdata.h>
 
 #include "config.h"
 
@@ -35,8 +36,8 @@ public:
   KInfoListWidget(const QString &_title, QWidget *parent, const char *name=0, bool _getlistbox (QListView *)=0);
 
   virtual void load();
-
-  QString quickHelp() const;
+  virtual QString quickHelp() const;
+  virtual const KAboutData* aboutData() const;
   
 private:
   QListView 	*lBox;
