@@ -87,6 +87,7 @@ QString FontUseItem::fontString(QFont rFont)
 void FontUseItem::setDefault()
 {
   _font = _default;
+  updateLabel();
 }
 
 void FontUseItem::readFont()
