@@ -235,7 +235,12 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
 
     QString filename = url.filename();
     QString msg, userpixname;
-    QString pixurl("file:"+kapp->kde_datadir() + "/kdm/pics/"); 
+    QStringList dirs = KGlobal::dirs()->getResourceDirs("data", "kdm/pics/");
+    QString local = KGlobal::dirs()->getSaveLocation("data", "kdm/pics/", false);
+    QStringList::ConstIterator it = dirs.begin();
+    if (*it.left(local.length()) == local)
+      it++;
+    QString pixurl("file:"+ *it); 
     QString user(userlabel->text()); 
     QString userpixurl = pixurl + "users/";
     int last_dot_idx = filename.findRev('.');
@@ -361,9 +366,8 @@ void KDMUsersWidget::slotUserShowMode( int m )
 
 void KDMUsersWidget::slotUserSelected(int)
 {
-  QString user_pix_dir(kapp->kde_datadir() +"/kdm/pics/users/"); 
+  QString default_pix(locate("data", "kdm/pics/users/default.xpm")); 
   QString name;
-  QPixmap default_pix( user_pix_dir + "default.xpm");
   QListBox *lb;
 
   // Get the listbox with the focus

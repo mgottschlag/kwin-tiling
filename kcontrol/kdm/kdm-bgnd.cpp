@@ -66,9 +66,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       QGroupBox *tGroup, *lGroup, *rGroup;
       QRadioButton *rb;
 
-      QString s = kapp->kde_datadir();
-      s += "/kdmconfig/pics/monitor.xpm";
-      QPixmap p(s); // = iconloader->loadIcon("monitor.xpm");
+      QPixmap p = ICON("monitor.xpm");
 
       tGroup = new QGroupBox( i18n("Preview"), this );
 

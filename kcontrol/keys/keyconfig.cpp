@@ -39,6 +39,8 @@
 
 #include "keyconfig.h"
 #include <kconfig.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 #include "keyconfig.moc"
 
 
@@ -416,74 +418,22 @@ void KKeyConfig::readSchemeNames( )
  {
    // Always a current and a default scheme 
    nSysSchemes = 2;
-	
-	QString kksPath = kapp->kde_datadir().copy();
-	kksPath += "/kcmkeys/";
-        kksPath += KeyType ;	
 
-	QDir d;
-	d.setPath( kksPath );
-	
-	if( d.exists() ) {
-		d.setFilter( QDir::Files );
-		d.setSorting( QDir::Name );
-		d.setNameFilter("*.kksrc");
-
-		if ( const QFileInfoList *sysList = d.entryInfoList() ) {
-			QFileInfoListIterator sysIt( *sysList );
-			QFileInfo *fi;
-
-
-			QString str;
-
-			// This for system files
-			while ( ( fi = sysIt.current() ) ) { 
-
-				KSimpleConfig *config =
-						new KSimpleConfig( fi->filePath(), true );
-				config->setGroup( KeyScheme );
-				str = config->readEntry( "SchemeName" );
-
-				sList->insertItem( str );
-				sFileList->append( fi->filePath() );
-
-				++sysIt;
-				nSysSchemes++;
-
-				delete config;
-			}
-		}
-	}
-	
-	kksPath.sprintf( getenv( "HOME" ) );
-	kksPath += "/.kde/share/apps/kcmkeys/";
-        kksPath += KeyType ;
-	
-	d.setPath( kksPath );
-	if( d.exists() ) {
-		d.setFilter( QDir::Files );
-		d.setSorting( QDir::Name );
-		d.setNameFilter("*.kksrc");
-
-		if ( const QFileInfoList *userList = d.entryInfoList() ) {
-			QFileInfoListIterator userIt( *userList );
-			QFileInfo *fi;
-			QString str;
-
-			// This for users files
-			while ( ( fi = userIt.current() ) ) {
-
-				KSimpleConfig config( fi->filePath(), true );
-				config.setGroup( KeyScheme );
-				str = config.readEntry( "SchemeName" );
-
-				sList->insertItem( str );
-				sFileList->append( fi->filePath() );
-
-				++userIt;
-			}
-		}
-	}
+   QStringList schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/" + KeyType + "/*.kksrc");
+   
+   // This for system files
+   for ( QStringList::ConstIterator it = schemes.begin(); it != schemes.end(); it++) { 
+     
+     KSimpleConfig config( fi->filePath(), true );
+     config.setGroup( KeyScheme );
+     str = config.readEntry( "SchemeName" );
+     
+     sList->insertItem( str );
+     sFileList->append( fi->filePath() );
+     
+     nSysSchemes++;
+     
+   }
 		
 }
 
