@@ -28,12 +28,14 @@
 
 #include <kapplication.h>
 
+#include <qcheckbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <qcheckbox.h>
+#include <qtimer.h>
 
 #include <kcmodule.h>
 #include <knuminput.h>
+#include <kprogress.h>
 
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
@@ -59,6 +61,7 @@ public:
   void defaults();
 
   QString quickHelp() const;
+  bool artsdIsRunning();
 
 private slots:
 
@@ -81,7 +84,6 @@ private:
                      int suspendTime);
   void GetSettings ();
   int userSavedChanges();
-  bool artsdIsRunning();
 
   QCheckBox *startServer, *startRealtime, *networkTransparent,
   			*fullDuplex, *customDevice, *customRate, *autoSuspend;
@@ -109,12 +111,27 @@ private:
   void initAudioIOList();
   QPtrList<AudioIOElement> audioIOList;
 
-  void initServer();
-  void stopServer();
   void restartServer();
   bool realtimeIsPossible();
 };
 
+
+class KStartArtsProgressDialog : public KProgressDialog
+{
+   Q_OBJECT
+public:
+   KStartArtsProgressDialog(KArtsModule *parent, const char *name,
+                          const QString &caption, const QString &text);
+public slots:   
+   void slotProgress();
+   void slotFinished();
+
+private:
+   QTimer m_timer;
+   int m_timeStep;
+   KArtsModule *m_module;
+   bool m_shutdown;
+};
 
 #endif
 

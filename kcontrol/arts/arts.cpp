@@ -34,6 +34,9 @@
 #include <qregexp.h>
 #include <qtabwidget.h>
 
+#include <dcopref.h>
+
+#include <kapplication.h>
 #include <kaboutdata.h>
 #include <ksimpleconfig.h>
 #include <kmessagebox.h>
@@ -58,6 +61,23 @@ extern "C" {
 		KGlobal::locale()->insertCatalogue("kcmarts");
 		return new KArtsModule(parent, "kcmarts" );
 	}
+}
+
+static bool startArts()
+{
+	KConfig *config = new KConfig("kcmartsrc", true, false);
+
+	config->setGroup("Arts");
+	bool startServer = config->readBoolEntry("StartServer",true);
+	bool startRealtime = config->readBoolEntry("StartRealtime",true);
+	QString args = config->readEntry("Arguments","-F 10 -S 4096 -s 60 -m artsmessage -c drkonqi -l 3 -f");
+
+	delete config;
+
+	if (startServer)
+		kapp->kdeinitExec(startRealtime?"artswrapper":"artsd",
+		                  QStringList::split(" ",args));
+	return startServer;
 }
 
 /*
@@ -571,33 +591,33 @@ bool KArtsModule::realtimeIsPossible()
 	return realtimePossible;
 }
 
-void KArtsModule::initServer()
+void KArtsModule::restartServer()
 {
-	init_arts();
-	// FIXME(gioele): loop until artsshell status returns ok
-	//                and add a KProgressDialog
-	sleep(1);
+	config->setGroup("Arts");
+        bool starting = config->readBoolEntry("StartServer", true);
+	bool restarting = artsdIsRunning();
 
-}
+	// Shut down knotify
+	DCOPRef("knotify", "qt/knotify").send("quit");
 
-void KArtsModule::stopServer()
-{
+	// Shut down artsd
 	KProcess terminateArts;
 	terminateArts << "artsshell";
 	terminateArts << "terminate";
 	terminateArts.start(KProcess::Block);
 
-	// leave artsd some time to go away
-	// FIXME(gioele): loop until artsshell status returns ok
-	//                and add a KProgressDialog
+	KStartArtsProgressDialog *dlg = 0;
+	if (starting)
+	{
+		// Wait for artsd to shutdown completely and then (re)start artsd again
+		KStartArtsProgressDialog dlg(this, "start_arts_progress",
+	                       restarting ? i18n("Restarting Sound System") : i18n("Starting Sound System"),
+	                       restarting ? i18n("Restarting sound system.") : i18n("Starting sound system."));
+	        dlg.exec();
+	}
 
-	sleep(1);
-}
-
-void KArtsModule::restartServer()
-{
-	stopServer();
-	initServer();
+	// Restart knotify
+	kapp->startServiceByDesktopName("knotify");
 }
 
 bool KArtsModule::artsdIsRunning()
@@ -610,20 +630,10 @@ bool KArtsModule::artsdIsRunning()
 	return (check.exitStatus() == 0);
 }
 
+
 void init_arts()
 {
-	KConfig *config = new KConfig("kcmartsrc", true, false);
-
-	config->setGroup("Arts");
-	bool startServer = config->readBoolEntry("StartServer",true);
-	bool startRealtime = config->readBoolEntry("StartRealtime",true);
-	QString args = config->readEntry("Arguments","-F 10 -S 4096 -s 60 -m artsmessage -c drkonqi -l 3 -f");
-
-	delete config;
-
-	if (startServer)
-		kapp->kdeinitExec(startRealtime?"artswrapper":"artsd",
-		                  QStringList::split(" ",args));
+	startArts();
 }
 
 QString KArtsModule::createArgs(bool netTrans,
@@ -674,6 +684,60 @@ QString KArtsModule::createArgs(bool netTrans,
 
 	return args;
 }
+
+KStartArtsProgressDialog::KStartArtsProgressDialog(KArtsModule *parent, const char *name,
+                          const QString &caption, const QString &text)
+ : KProgressDialog(parent, name, caption, text, true), m_module(parent), m_shutdown(false)
+{
+  connect(&m_timer, SIGNAL(timeout()), this, SLOT(slotProgress()));
+  progressBar()->setTotalSteps(20);
+  m_timeStep = 700;
+  m_timer.start(m_timeStep);
+  setAutoClose(false);
+}
+
+void
+KStartArtsProgressDialog::slotProgress()
+{
+  int p = progressBar()->progress();
+  if (p == 18)
+  {
+     progressBar()->reset();
+     progressBar()->setProgress(1);
+     m_timeStep = m_timeStep * 2;
+     m_timer.start(m_timeStep);
+  }
+  else
+  {
+     progressBar()->setProgress(p+1);
+  }
+
+  if (!m_shutdown)
+  {
+     // Wait for arts to shutdown
+     if (!m_module->artsdIsRunning())
+     {
+     	// Shutdown complete, restart
+     	if (!startArts())
+     		slotFinished(); // Strange, it didn't start
+     	else
+	     	m_shutdown = true;
+     }
+  }
+  
+  // Shut down completed? Wait for artsd to come up again
+  if (m_shutdown && m_module->artsdIsRunning())
+     slotFinished(); // Restart complete
+}
+
+void
+KStartArtsProgressDialog::slotFinished()
+{
+  progressBar()->setProgress(20);
+  m_timer.stop();
+  QTimer::singleShot(1000, this, SLOT(close()));
+}
+
 
 #ifdef I18N_ONLY
 	//lukas: these are hacks to allow translation of the following
