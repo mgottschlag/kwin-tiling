@@ -1,4 +1,3 @@
-#include <kcmdlineargs.h>
 #include <klocale.h>
 
 #include "kaccess.h"
@@ -19,5 +18,5 @@ int main(int argc, char * argv[] )
     return 0;
 
   KAccessApp app;
-  return app.exec();		
+  return app.exec();
 }

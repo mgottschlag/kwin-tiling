@@ -39,8 +39,6 @@
 #include <assert.h>
 #include <signal.h>
 #include <qsocketnotifier.h>
-#include <qtimer.h>
-#include <kdebug.h>
 
 #include "lockprocess.h"
 #include "lockprocess.moc"
@@ -233,17 +231,17 @@ void LockProcess::configure()
         {
             lockGrace = 300000; // 5 minutes, keep the value sane
         }
-                                          
+
         QTimer::singleShot(lockGrace, this, SLOT(actuallySetLock()));
     }
     mLock = false;
-    
+
     mPriority = config.readNumEntry("Priority", 19);
     if (mPriority < 0) mPriority = 0;
     if (mPriority > 19) mPriority = 19;
     mSaver = config.readEntry("Saver");
 
-    if ((mSaver.isEmpty() && mLockOnce) || mUseBlankOnly) 
+    if ((mSaver.isEmpty() && mLockOnce) || mUseBlankOnly)
     {
         mSaver = "KBlankscreen.desktop";
     }
@@ -450,7 +448,7 @@ bool LockProcess::grabKeyboard()
 bool LockProcess::grabMouse()
 {
     int rv = XGrabPointer( qt_xdisplay(), QApplication::desktop()->winId(),
-            True, GRABEVENTS, GrabModeAsync, GrabModeAsync, None, 
+            True, GRABEVENTS, GrabModeAsync, GrabModeAsync, None,
             blankCursor.handle(), CurrentTime );
 
     return (rv == GrabSuccess);

@@ -36,7 +36,6 @@
 #include <ktempfile.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
-#include <kglobalsettings.h>
 #include <kstyle.h>
 
 #include "krdb.h"
@@ -137,63 +136,63 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings, QPalett
 static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
 {
   /* export kde's plugin library path to qtrc */
-  
+
   QMap <QString, bool> pathDb;
-    // OK, this isn't fun at all. 
+    // OK, this isn't fun at all.
     // KApp adds paths ending with /, QApp those without slash, and if
     // one gives it something that is other way around, it will complain and scare
     // users. So we need to know whether a path being added is from KApp, and in this case
     // end it with.. So keep a QMap to bool, specifying whether the path is KDE-specified..
-    
-  QStringList kdeAdded = 
+
+  QStringList kdeAdded =
     settings.readListEntry("/qt/KDE/kdeAddedLibraryPaths");
-  QString libPathKey = 
+  QString libPathKey =
     QString("/qt/%1.%2/libraryPath").arg( QT_VERSION >> 16 ).arg( (QT_VERSION & 0xff00 ) >> 8 );
-  
+
   //Read qt library path..
   QStringList plugins = settings.readListEntry(libPathKey, ':');
   for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
   {
     QString path = *it;
     if (path.endsWith("/"))
-      path.truncate(path.length()-1);  
-    
-    pathDb[path]=false;  
+      path.truncate(path.length()-1);
+
+    pathDb[path]=false;
   }
-  
+
   //Get rid of old KDE-added ones...
   for (QStringList::ConstIterator it = kdeAdded.begin(); it != kdeAdded.end(); ++it)
   {
     //Normalize..
     QString path = *it;
     if (path.endsWith("/"))
-      path.truncate(path.length()-1);  
+      path.truncate(path.length()-1);
 
     //Remove..
     pathDb.remove(path);
   }
-  
+
   kdeAdded.clear();
-  
+
   //Merge in KDE ones..
   plugins = KGlobal::dirs()->resourceDirs( "qtplugins" );
-  
+
   for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
   {
     QString path = *it;
     if (path.endsWith("/"))
-      path.truncate(path.length()-1);  
-  
-    pathDb[path]=true;  
+      path.truncate(path.length()-1);
+
+    pathDb[path]=true;
   }
-  
+
   QStringList paths;
   for (QMap <QString, bool>::ConstIterator it = pathDb.begin();
          it != pathDb.end(); it++)
   {
     QString path = it.key();
     bool fromKDE = it.data();
-    
+
     char new_path[PATH_MAX+1];
     if (realpath(QFile::encodeName(path), new_path))
       path = QFile::decodeName(new_path);
@@ -204,10 +203,10 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
         path += "/";
       kdeAdded.push_back(path); //Add for the new list -- do it here to have it in the right form..
     }
-    
+
     paths.append(path);
   }
-  
+
    //Write the list out..
   settings.writeEntry("/qt/KDE/kdeAddedLibraryPaths", kdeAdded);
   settings.writeEntry(libPathKey, paths, ':');
@@ -426,7 +425,7 @@ void runRdb( uint flags )
 /*  Don't do this, it removes all xrdb entries during KDE startup
     If exporting KDE colors is disabled, the property is removed in the kcontrol
     module and it re-runs xrdb ~/.Xdefaults
-    
+
     // Undo the property xrdb has placed on the root window (if any).
     Atom resource_manager;
     resource_manager = XInternAtom( qt_xdisplay(), "RESOURCE_MANAGER", True);
@@ -454,7 +453,7 @@ void runRdb( uint flags )
 
     if ( exportQtSettings )
       applyQtSettings( kglobals, *settings );          // For kcmstyle
-    
+
     delete settings;
     QApplication::flushX();
 

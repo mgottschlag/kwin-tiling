@@ -32,7 +32,6 @@
 #include <qframe.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
-#include <qlabel.h>
 #include <qlayout.h>
 #include <qlistbox.h>
 #include <qslider.h>

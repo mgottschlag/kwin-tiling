@@ -28,7 +28,7 @@
 #include <qpushbutton.h>
 
 #include <kdebug.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
@@ -192,7 +192,7 @@ void IconThemesConfig::installNewTheme()
   }
 
   KIO::NetAccess::removeTempFile(themeTmpFile);
-  
+
   KGlobal::instance()->newIconLoader();
   loadThemes();
 

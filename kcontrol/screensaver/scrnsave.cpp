@@ -19,7 +19,6 @@
 #include <sys/wait.h>
 
 #include <qbuttongroup.h>
-#include <qlabel.h>
 #include <qpixmap.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>

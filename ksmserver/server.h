@@ -16,7 +16,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qvaluelist.h>
 #include <qcstring.h>
 #include <qdict.h>
-#include <qqueue.h>
+#include <qptrqueue.h>
 #include <qptrdict.h>
 #include <qapplication.h>
 #include <qtimer.h>

@@ -22,7 +22,6 @@
 #include <kclipboard.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kiconloader.h>
 #include <kipc.h>
 #include <kkeydialog.h>
 #include <klocale.h>
@@ -134,7 +133,7 @@ void KlipperWidget::setClipboardContents(QString s)
 
 void KlipperWidget::clearClipboardContents()
 {
-    slotClearClipboard();	
+    slotClearClipboard();
 }
 
 void KlipperWidget::mousePressEvent(QMouseEvent *e)
@@ -439,7 +438,7 @@ void KlipperWidget::slotConfigure()
 
 	maxClipItems = dlg->maxItems();
 	trimClipHistory( maxClipItems );
-	
+
         // KClipboardSynchronizer configuration
         m_config->setGroup("General");
         m_config->writeEntry("SynchronizeClipboardAndSelection",
@@ -654,7 +653,7 @@ void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
 //     }
 
     bool changed = !selectionMode || text != m_lastSelection;
-    
+
     QString lastClipRef = selectionMode ? m_lastSelection : m_lastClipboard;
 
     if ( text != lastClipRef ) {

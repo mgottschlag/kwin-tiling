@@ -14,7 +14,6 @@
  ***************************************************************************/
 
 #include <kaboutdata.h>
-#include <klocale.h>
 
 #include <kcm_componentchooser.h>
 #include <kcm_componentchooser.moc>
