@@ -15,11 +15,11 @@ libkcm_display_la_SOURCES = energy.cpp advanced.cpp fonts.cpp scrnsave.cpp \
 	icnmain.cpp icngeneral.cpp icnlabel.cpp
 
 libkcm_display_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_display_la_LIBADD = $(LIB_KIMGIO) $(LIB_KFILE) $(DPMSLIB) libbgnd.la
+libkcm_display_la_LIBADD = $(LIB_KFILE) $(DPMSLIB) libbgnd.la
 
 noinst_LTLIBRARIES = libbgnd.la
 libbgnd_la_SOURCES = bgsettings.cc bgrender.cc
-libbgnd_la_LIBADD = $(LIB_KIMGIO)
+libbgnd_la_LIBADD = $(LIB_KSYCOCA)
 libbgnd_la_LDFLAGS = -no-undefined $(all_libraries)
 
 check_PROGRAMS = test testicons
