@@ -186,7 +186,9 @@ Dtime::Dtime(QWidget * parent, const char *name)
       hour->setReadOnly(true);
       minute->setReadOnly(true);
       second->setReadOnly(true);
-      kclock->setEnabled(false);      
+      kclock->setEnabled(false);  
+      plusPB->setEnabled(false);  
+      minusPB->setEnabled(false);  
     }
 }
 
