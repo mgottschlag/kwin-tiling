@@ -25,6 +25,7 @@
 #ifndef __KLOCALESAMPLE_H__
 #define __KLOCALESAMPLE_H__
 
+#include <qimage.h>
 #include <qwidget.h>
 
 class QLabel;
@@ -40,7 +41,8 @@ public slots:
   void update();
 
 protected:
-  virtual void resizeEvent(QResizeEvent *);
+    virtual void resizeEvent(QResizeEvent *);
+    void setBackground(const QPixmap&);
 
 private:
   QLabel *numberSample, *labNumber;
@@ -48,6 +50,7 @@ private:
   QLabel *timeSample, *labTime;
   QLabel *dateSample, *labDate;
   QLabel *dateShortSample, *labDateShort;
+  QImage bgImage;
 };
 
 #endif

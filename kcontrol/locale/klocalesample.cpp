@@ -24,14 +24,17 @@
  */
 
 #include <qdatetime.h>
+#include <qevent.h>
 #include <qlabel.h>
+#include <qimage.h>
 #include <qwhatsthis.h>
 #include <qlayout.h>
+#include <qobjectlist.h>
 #include <qpixmap.h>
 
 #include <kglobal.h>
-#include <klocale.h>
 #include <kstddirs.h>
+#include <klocale.h>
 
 #include "klocaleadv.h"
 #include "klocalesample.h"
@@ -62,52 +65,56 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
   lay->setColStretch(0, 1);
   lay->setColStretch(1, 3);
 
+
+  QString str;
+
+  str = locale->translate("This is how numbers will be displayed.");
+  QWhatsThis::add( labNumber,  str );
+  QWhatsThis::add( numberSample, str );
+
+  str = locale->translate("This is how monetary values will be displayed.");
+  QWhatsThis::add( labMoney,    str );
+  QWhatsThis::add( moneySample, str );
+
+  str = locale->translate("This is how date values will be displayed.");
+  QWhatsThis::add( labDate,    str );
+  QWhatsThis::add( dateSample, str );
+
+  str = locale->translate("This is how date values will be displayed using "
+			  "a short notation.");
+  QWhatsThis::add( labDateShort, str );
+  QWhatsThis::add( dateShortSample, str );
+
+  str = locale->translate("This is how the time will be displayed.");
+  QWhatsThis::add( labTime,    str );
+  QWhatsThis::add( timeSample, str );
+
+
   // background pixmap stuff
-  QString path = locate("data", 
+  QString path = locate("data",
 			QString::fromLatin1("kcmlocale/pics/background.png"));
-  QPixmap pix;
-  pix.load( path );
+  QPixmap bgPix( path );
 
-  if ( !pix.isNull() ) {
-    setBackgroundPixmap( pix );
+  if ( !bgPix.isNull() ) {
+      bgImage = bgPix.convertToImage();
 
-    labNumber->setBackgroundOrigin( ParentOrigin );
-    numberSample->setBackgroundOrigin( ParentOrigin );
-    labMoney->setBackgroundOrigin( ParentOrigin );
-    moneySample->setBackgroundOrigin( ParentOrigin );
-    labDate->setBackgroundOrigin( ParentOrigin );
-    dateSample->setBackgroundOrigin( ParentOrigin );
-    labDateShort->setBackgroundOrigin( ParentOrigin );
-    dateShortSample->setBackgroundOrigin( ParentOrigin );
-    labTime->setBackgroundOrigin( ParentOrigin );
-    timeSample->setBackgroundOrigin( ParentOrigin );
-
-    labNumber->setBackgroundPixmap( pix );
-    numberSample->setBackgroundPixmap( pix );
-    labMoney->setBackgroundPixmap( pix );
-    moneySample->setBackgroundPixmap( pix );
-    labDate->setBackgroundPixmap( pix );
-    dateSample->setBackgroundPixmap( pix );
-    labDateShort->setBackgroundPixmap( pix );
-    dateShortSample->setBackgroundPixmap( pix );
-    labTime->setBackgroundPixmap( pix );
-    timeSample->setBackgroundPixmap( pix );
+      const QObjectList *list = children();
+      if ( list ) {
+	  QObject *o;
+	  QObjectListIt it( *list );
+	  while ( (o = it.current()) ) {
+	      if ( o->isWidgetType() )
+		  static_cast<QWidget*>(o)->setBackgroundOrigin(ParentOrigin);
+	      ++it;
+	  }
+      
+	  setBackground( bgPix );
+      }
   }
 }
 
 KLocaleSample::~KLocaleSample()
 {
-}
-
-void KLocaleSample::resizeEvent( QResizeEvent * )
-{
-  const QPixmap *old = backgroundPixmap();
-  if ( !old )
-    return;
-    
-  QPixmap *pix = new QPixmap( *old );
-  pix->resize( size() );
-  setBackgroundPixmap( pix ? *pix : 0L );
 }
 
 void KLocaleSample::update()
@@ -122,27 +129,34 @@ void KLocaleSample::update()
   dateSample->setText(locale->formatDate(QDate::currentDate(), false));
   dateShortSample->setText(locale->formatDate(QDate::currentDate(), true));
   timeSample->setText(locale->formatTime(QTime::currentTime()));
+}
 
-  QString str;
 
-  str = locale->translate("This is how numbers will be displayed.");
-  QWhatsThis::add( labNumber,  str );
-  QWhatsThis::add( numberSample, str );
+void KLocaleSample::resizeEvent( QResizeEvent *e )
+{
+    QWidget::resizeEvent( e );
+    
+    static QPixmap pix;
+    if ( !bgImage.isNull() ) {
+	pix = bgImage.smoothScale( width(), height() );
+	setBackground( pix );
+    }
+}
 
-  str = locale->translate("This is how monetary values will be displayed.");
-  QWhatsThis::add( labMoney,    str );
-  QWhatsThis::add( moneySample, str );   
+void KLocaleSample::setBackground( const QPixmap& pix )
+{
+    setBackgroundPixmap( pix );
 
-  str = locale->translate("This is how date values will be displayed.");
-  QWhatsThis::add( labDate,    str );
-  QWhatsThis::add( dateSample, str ); 
-
-  str = locale->translate("This is how date values will be displayed using "
-			  "a short notation.");
-  QWhatsThis::add( labDateShort, str );
-  QWhatsThis::add( dateShortSample, str );    
-
-  str = locale->translate("This is how the time will be displayed.");
-  QWhatsThis::add( labTime,    str );
-  QWhatsThis::add( timeSample, str );       
+    const QObjectList *list = children();
+    if ( list ) {
+	QObject *o;
+	QObjectListIt it( *list );
+	while ( (o = it.current()) ) {
+	    if ( o->isWidgetType() )
+		static_cast<QWidget*>( o )->setBackgroundPixmap( pix );
+	    ++it;
+	}
+      
+	setBackgroundPixmap( pix );
+    }
 }
