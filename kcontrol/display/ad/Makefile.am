@@ -1,8 +1,9 @@
 
 INCLUDES = $(all_includes) 
 
-data_DATA = AAAAAAGeneral.ad AAAMotif.ad AAATk.ad AAAXaw.ad Editres.ad Emacs.ad \
-	ML.ad Nedit.ad Netscape.ad RVPlayer.ad WPerfect.ad XCalc.ad XTerm.ad XV.ad 
+data_DATA = AAAAAAGeneral.ad AAAMotif.ad AAATk.ad AAAXaw.ad Editres.ad \
+	Emacs.ad ML.ad Nedit.ad Netscape.ad RVPlayer.ad WPerfect.ad XCalc.ad \
+	XTerm.ad XOsview.ad XV.ad 
 
 datadir = $(kde_datadir)/kdisplay/app-defaults
 
