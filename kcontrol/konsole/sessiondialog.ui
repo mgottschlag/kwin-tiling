@@ -109,7 +109,7 @@
                         <string>&amp;Name:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>titleLine</cstring>
+                        <cstring>nameLine</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -120,7 +120,7 @@
                         <string>&amp;Comment:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>titleLine</cstring>
+                        <cstring>commentLine</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="2" column="0">
@@ -128,10 +128,10 @@
                         <cstring>TextLabel3</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Execute:</string>
+                        <string>E&amp;xecute:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>titleLine</cstring>
+                        <cstring>executeLine</cstring>
                     </property>
                 </widget>
             </grid>
@@ -183,7 +183,7 @@
                                 <cstring>saveButton</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Save Session...</string>
+                                <string>Sa&amp;ve Session...</string>
                             </property>
                         </widget>
                         <widget class="QPushButton" row="1" column="0">
@@ -249,7 +249,7 @@
                         <widget class="QComboBox" row="0" column="1">
                             <item>
                                 <property name="text">
-                                    <string>&lt;undefined&gt;</string>
+                                    <string>&lt;Default&gt;</string>
                                 </property>
                             </item>
                             <item>
@@ -327,7 +327,7 @@
                                 <string>&amp;Font:</string>
                             </property>
                             <property name="buddy" stdset="0">
-                                <cstring>modeCombo</cstring>
+                                <cstring>fontCombo</cstring>
                             </property>
                         </widget>
                         <widget class="QComboBox" row="5" column="0" rowspan="1" colspan="2">
@@ -343,7 +343,7 @@
                                 <string>Sc&amp;hema:</string>
                             </property>
                             <property name="buddy" stdset="0">
-                                <cstring>modeCombo</cstring>
+                                <cstring>schemaCombo</cstring>
                             </property>
                         </widget>
                         <widget class="QLabel" row="1" column="0">
@@ -354,7 +354,7 @@
                                 <string>$&amp;TERM:</string>
                             </property>
                             <property name="buddy" stdset="0">
-                                <cstring>modeCombo</cstring>
+                                <cstring>termLine</cstring>
                             </property>
                         </widget>
                         <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
@@ -365,7 +365,7 @@
                                 <string>&amp;Keytab:</string>
                             </property>
                             <property name="buddy" stdset="0">
-                                <cstring>modeCombo</cstring>
+                                <cstring>keytabCombo</cstring>
                             </property>
                         </widget>
                     </grid>
@@ -412,7 +412,7 @@
                         <set>AlignTop|AlignLeft</set>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>modeCombo</cstring>
+                        <cstring>previewIcon</cstring>
                     </property>
                 </widget>
             </grid>
