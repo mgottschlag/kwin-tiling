@@ -18,28 +18,36 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <qlayout.h>
-#include <qlabel.h>
-#include <klistview.h>
-#include <kstandarddirs.h>
-#include <klocale.h>
-#include <kurlrequester.h>
-#include <kipc.h>
-#undef Unsorted
-#include <kfiledialog.h>
-#include <kdebug.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#include <qfile.h>
+#include <qlayout.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
+
+#include <kdebug.h>
+#include <kstandarddirs.h>
+#include <klocale.h>
+#include <ksimpleconfig.h>
+#undef Unsorted
+#include <kipc.h>
+
+#include <klistview.h>
+#include <kurlrequesterdlg.h>
 #include <kmessagebox.h>
+#include <kiconloader.h>
+
 #include <kio/job.h>
+#include <kio/netaccess.h>
 
 #include "iconthemes.h"
-#include <kiconloader.h>
 
 IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-  QVBoxLayout *topLayout = new QVBoxLayout(this,5);
+  QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
+                                           KDialog::spacingHint());
 
   QFrame *m_preview=new QFrame(this);
   m_preview->setMinimumHeight(50);
@@ -68,9 +76,6 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   connect(m_iconThemes,SIGNAL(selectionChanged(QListViewItem *)),
 		SLOT(themeSelected(QListViewItem *)));
 
-  m_themeRequester=new KURLRequester(this,"themeRequester");
-//  m_themeRequester->fileDialog()->setMode( KFile::File | KFile::ExistingOnly );
-
   QPushButton *installButton=new QPushButton( i18n("Install New Theme"),
 	this, "InstallNewTheme");
   connect(installButton,SIGNAL(clicked()),SLOT(installNewTheme()));
@@ -79,13 +84,12 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   connect(m_removeButton,SIGNAL(clicked()),SLOT(removeSelectedTheme()));
 
   topLayout->addWidget(
-	new QLabel(i18n("Select the icon theme you want to use:"),this) );
+	new QLabel(i18n("Select the icon theme you want to use:"), this));
   topLayout->addWidget(m_preview);
   topLayout->addWidget(m_iconThemes);
-  QGridLayout *lg=new QGridLayout( topLayout, 2, 2);
-  lg->addWidget(m_themeRequester,1,0);
-  lg->addWidget(installButton,1,1);
-  lg->addWidget(m_removeButton,0,1);
+  QHBoxLayout *lg = new QHBoxLayout(topLayout, KDialog::spacingHint());
+  lg->addWidget(installButton);
+  lg->addWidget(m_removeButton);
 
   loadThemes();
 
@@ -144,25 +148,43 @@ void IconThemesConfig::loadThemes()
 
 void IconThemesConfig::installNewTheme()
 {
-  if (m_themeRequester->url().isEmpty()) return;
+  KURL themeURL = KURLRequesterDlg::getURL(QString::null, this,
+                                           "Type theme URL");
 
-  QString tgtDir(locateLocal("icon", "./"));
+  if (themeURL.url().isEmpty()) return;
+
+  QString themeTmpFile;
+  // themeTmpFile contains the name of the downloaded file
+
+  if (!KIO::NetAccess::download(themeURL, themeTmpFile)) {
+    QString sorryText;
+    if (themeURL.isLocalFile())
+       sorryText = i18n("I could not find the icon theme archive %1!");
+    else
+       sorryText = i18n("I could not download the icon theme archive!\n"
+                        "Please check that address %1 is correct.");
+    KMessageBox::sorry(this, sorryText.arg(themeURL.prettyURL()));
+    return;
+  }
+
+  QString iconThemesDir(locateLocal("icon", "./"));
   QString cmd;
 
   cmd.sprintf("cd \"%s\"; gzip -c -d \"%s\" | tar xf -",	//lukas: FIXME
-	QFile::encodeName(tgtDir).data(),
-	QFile::encodeName(m_themeRequester->url()).data());
+	QFile::encodeName(iconThemesDir).data(),
+	QFile::encodeName(themeTmpFile).data());
   kdDebug() << cmd << endl;
   int rc = system(cmd.ascii());	//lukas: FIXME
-  if (rc)
+  if (rc != 0)
   {
-    kdWarning() << "Failed\n";
+    QString sorryText = i18n("I could not install the icon theme.");
+    KMessageBox::sorry(this, sorryText);
     return;
   }
-  m_themeRequester->clear();
+
+  KIO::NetAccess::removeTempFile(themeTmpFile);
 
   KGlobal::instance()->newIconLoader();
-
   loadThemes();
 
   QListViewItem *item=iconThemeItem(KIconTheme::current());

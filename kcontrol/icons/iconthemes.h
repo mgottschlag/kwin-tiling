@@ -27,7 +27,6 @@
 
 class QPushButton;
 class DeviceManager;
-class KURLRequester;
 class QCheckBox;
 
 
@@ -58,7 +57,6 @@ private:
   QListViewItem *iconThemeItem(QString name);
 
   QListView *m_iconThemes;
-  KURLRequester *m_themeRequester;
   QPushButton *m_removeButton;
 
   QLabel *m_previewExec;
