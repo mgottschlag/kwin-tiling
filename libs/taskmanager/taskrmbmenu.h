@@ -1,6 +1,7 @@
 /*****************************************************************
 
 Copyright (c) 2001 Matthias Elter <elter@kde.org>
+Copyright (c) 2001 John Firebaugh <jfirebaugh@kde.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,60 +22,34 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#ifndef __rmbmenu_h__
-#define __rmbmenu_h__
+#ifndef __taskrmbmenu_h__
+#define __taskrmbmenu_h__
 
 #include <qpopupmenu.h>
 #include "taskmanager.h"
 
-class TaskOpMenu : public QPopupMenu
+class TaskRMBMenu : public QPopupMenu
 {
-    Q_OBJECT
-
+	Q_OBJECT
+	
 public:
-    TaskOpMenu( Task* t, TaskManager* manager, QWidget *parent = 0, const char *name = 0 );
-    virtual ~TaskOpMenu();
-
-    enum WindowOperation {
-        MaximizeOp = 100,
-        IconifyOp,
-        CloseOp,
-        ToCurrentOp,
-        RestoreOp,
-        StayOnTopOp,
-        ShadeOp
-    };
-
-protected slots:
-    void init();
-    void initDeskPopup();
-    void op( int );
-    void sendToDesktop( int );
-
-
+	TaskRMBMenu( TaskList* tasks, TaskManager* manager, QWidget *parent = 0, const char *name = 0 );
+	TaskRMBMenu( Task* tasks, TaskManager* manager, QWidget *parent = 0, const char *name = 0 );
+	
 private:
-    Task 		*task;
-    TaskManager 	*taskManager;
-    QPopupMenu 		*deskpopup;
-};
-
-class RMBMenu : public QPopupMenu
-{
-    Q_OBJECT
-
-public:
-    RMBMenu( TaskList* list, TaskManager* manager, QWidget *parent = 0, const char *name = 0 );
-    virtual ~RMBMenu();
-
-    void init();
-
-protected slots:
-    void slotExec( int );
-
+	void fillMenu( Task* t, TaskManager* manager );
+	void fillMenu( TaskList* tasks, TaskManager* manager );
+	QPopupMenu* makeDesktopsMenu( Task* t, TaskManager* manager );
+	
+private slots:
+	void slotMinimizeAll();
+	void slotMaximizeAll();
+	void slotRestoreAll();
+	void slotShadeAll();
+	void slotCloseAll();
+	
 private:
-    QMap<int, Task*> 	 map;
-    TaskList 	*tasks;
-    TaskManager 	*taskManager;
+	TaskList* tasks;
 };
 
 #endif

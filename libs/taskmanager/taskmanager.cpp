@@ -280,19 +280,7 @@ int TaskManager::numberOfDesktops() const
 bool TaskManager::isOnTop(Task* task)
 {
     if(!task) return false;
-
-    Task* t = 0;
-
-    for (QValueList<WId>::ConstIterator it = kwin_module->stackingOrder().fromLast();
-         it != kwin_module->stackingOrder().end(); --it ) {
-
-        t = findTask(*it);
-        if ( t == task )
-            return true;
-        if ( t && !t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop()) )
-            return false;
-    }
-    return false;
+    return task->isOnTop();
 }
 
 
@@ -388,6 +376,21 @@ bool Task::isOnAllDesktops() const
 bool Task::isActive() const
 {
     return _active;
+}
+
+bool Task::isOnTop() const
+{
+    for (QValueList<WId>::ConstIterator it = kwin_module->stackingOrder().fromLast();
+         it != kwin_module->stackingOrder().end(); --it ) {
+
+        if ( (*it) == _win )
+            return true;
+
+        Task t(*it, 0);
+        if ( !t.isIconified() && (t.isAlwaysOnTop() == isAlwaysOnTop()) )
+            return false;
+    }
+    return false;
 }
 
 bool Task::isModified() const
@@ -586,6 +589,17 @@ void Task::activate()
     ri.setActiveWindow( _win );
 }
 
+void Task::activateRaiseOrIconify()
+{
+    if ( !isActive() || isIconified() ) {
+        activate();
+    } else if ( !isOnTop() ) {
+       raise();
+    } else {
+       iconify();
+    }
+}
+
 void Task::toDesktop(int desk)
 {
     NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMDesktop);
@@ -613,6 +627,11 @@ void Task::setAlwaysOnTop(bool stay)
         ni.setState( 0, NET::StaysOnTop );
 }
 
+void Task::toggleAlwaysOnTop()
+{
+    setAlwaysOnTop( !isAlwaysOnTop() );
+}
+
 void Task::setShaded(bool shade)
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
@@ -620,6 +639,11 @@ void Task::setShaded(bool shade)
         ni.setState( NET::Shaded, NET::Shaded );
     else
         ni.setState( 0, NET::Shaded );
+}
+
+void Task::toggleShaded()
+{
+    setShaded( !isShaded() );
 }
 
 void Task::publishIconGeometry(QRect rect)

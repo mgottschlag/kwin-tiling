@@ -150,6 +150,12 @@ public:
     bool isActive() const;
 
     /**
+     * Returns true if the task's window is the topmost non-iconified,
+     * non-always-on-top window.
+     */
+    bool isOnTop() const;
+
+    /**
      * Returns true if the task's window is on the current virtual desktop.
      */
     bool isOnCurrentDesktop() const;
@@ -251,15 +257,24 @@ public slots:
     void activate();
 
     /**
+     * Perform the action that is most appropriate for this task. If it
+     * is not active, activate it. Else if it is not the top window, raise
+     * it. Otherwise, iconify it.
+     */
+    void activateRaiseOrIconify();
+
+    /**
      * If true, the task's window will remain at the top of the stacking order.
      */
     void setAlwaysOnTop(bool);
+    void toggleAlwaysOnTop();
 
     /**
      * If true then the task's window will be shaded. Most window managers
      * represent this state by displaying on the window's title bar.
      */
     void setShaded(bool);
+    void toggleShaded();
 
     /**
      * Moves the task's window to the specified virtual desktop.
