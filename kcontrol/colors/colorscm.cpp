@@ -1,4 +1,4 @@
-//
+
 // KDE Display color scheme setup module
 //
 // Copyright (c)  Mark Donohoe 1997
@@ -39,6 +39,7 @@
 #include <kcolordialog.h>
 #include <kcolorbutton.h>
 #include <kbuttonbox.h>
+#include <kstringhandler.h>
 #include <kgenericfactory.h>
 
 #include <X11/Xlib.h>
@@ -480,16 +481,7 @@ void KColorScheme::slotAdd()
         int i = 0;
 
         // Capitalise each word
-        sName.at(0) = sName.at(0).upper();
-        while (1)
-        {
-            i = sName.find(" ", i);
-            if (i == -1)
-                break;
-            if (++i >= (int) sName.length())
-                break;
-            sName.at(i) = sName.at(i).upper();
-        }
+		sName = KStringHandler::capwords(sName);
 
         exists = -1;
         // Check if it's already there
@@ -771,7 +763,7 @@ void KColorScheme::readSchemeNames()
 
     // And add them
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++) {
-       KSimpleConfig *config = new KSimpleConfig(*it, true);
+       KSimpleConfig *config = new KSimpleConfig(*it);
        config->setGroup("Color Scheme");
        QString str = config->readEntry("Name");
        if (str.isEmpty()) {
