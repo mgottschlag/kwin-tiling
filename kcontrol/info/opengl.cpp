@@ -388,13 +388,13 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
     {KCMGL_SIZE(arb_vp), GL_VERTEX_PROGRAM_ARB, arb_vp, "ARB_vertex_program", "GL_ARB_vertex_program"},
 #endif
 #ifdef GL_ARB_fragment_program
-    {KCMGL_SIZE(arb_fp), GL_FRAGMENT_PROGRAM_ARB, arb_fp, "ARB_fragment_program", "GL_ARB_fragment_program"}
+    {KCMGL_SIZE(arb_fp), GL_FRAGMENT_PROGRAM_ARB, arb_fp, "ARB_fragment_program", "GL_ARB_fragment_program"},
 #endif
 #ifdef GL_ARB_vertex_shader
     {KCMGL_SIZE(arb_vs), 0, arb_vs, "ARB_vertex_shader", "GL_ARB_vertex_shader"},
 #endif
 #ifdef GL_ARB_fragment_shader
-    {KCMGL_SIZE(arb_fs), 0, arb_fs, "ARB_fragment_shader", "GL_ARB_fragment_shader"}
+    {KCMGL_SIZE(arb_fs), 0, arb_fs, "ARB_fragment_shader", "GL_ARB_fragment_shader"},
 #endif
    };
 
