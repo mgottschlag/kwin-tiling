@@ -12,7 +12,7 @@ INCLUDES= $(all_includes)
 libkcm_input_la_METASOURCES = AUTO
 
 messages: rc.cpp
-	$(XGETTEXT) $(libkcm_input_la_SOURCES) -o $(podir)/kcminput.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcminput.pot
 
 data_DATA = mouse.desktop
 datadir = $(kde_appsdir)/Settings/Peripherals
