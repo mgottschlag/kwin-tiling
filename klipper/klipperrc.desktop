@@ -1249,7 +1249,7 @@ Enabled=true
 
 [General]
 KeepClipboardContents=true
-No Actions for WM_CLASS=Navigator,konqueror,keditbookmarks,mozilla-bin,Opera main window,opera,gnumeric,Gnumeric,Galeon,kcontrol,ksirc
+No Actions for WM_CLASS=Navigator,navigator:browser,konqueror,keditbookmarks,mozilla-bin,Mozilla,Opera main window,opera,gnumeric,Gnumeric,Galeon,kcontrol,ksirc
 Number of Actions=7
 PopupAtMousePosition=false
 URLGrabberEnabled=false
