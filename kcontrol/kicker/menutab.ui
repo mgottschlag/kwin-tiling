@@ -85,6 +85,17 @@
                                 </widget>
                                 <widget class="QRadioButton" row="3" column="1">
                                     <property name="name">
+                                        <cstring>m_formatDescOnly</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>D&amp;escription only</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>When this option is selected, items in the K Menu will appear with the application's brief description next to the icon.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton" row="4" column="1">
+                                    <property name="name">
                                         <cstring>m_formDescName</cstring>
                                     </property>
                                     <property name="focusPolicy">
