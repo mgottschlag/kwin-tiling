@@ -54,7 +54,7 @@ void HelpWidget::setText(const QString& text)
 
 void HelpWidget::setBaseText()
 {
-  _browser->setText(i18n("<h1>KDE Control Center</2>"
+  _browser->setText(i18n("<h1>KDE Control Center</h1>"
 						 "Sorry, there is no quick help available for the active control module."
 						 "<br><br>"
 						 "Click <a href = \"kcontrol/index.html\">here</a> to read the general control center manual.") );
