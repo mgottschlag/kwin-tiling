@@ -150,6 +150,7 @@ void FilterOptions::load()
     connect(m_dlg->pbNew, SIGNAL(clicked()), this, SLOT(addSearchProvider()));
     connect(m_dlg->pbChange, SIGNAL(clicked()), this, SLOT(changeSearchProvider()));
     connect(m_dlg->pbDelete, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));      
+    setChanged(false);
 }
 
 char FilterOptions::delimiter ()
@@ -295,6 +296,7 @@ void FilterOptions::defaults()
 {
   setDelimiter (':');
   m_dlg->cmbDefaultEngine->setCurrentItem (0);
+  setChanged(true);
 }
 
 void FilterOptions::configChanged()
