@@ -105,7 +105,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 
     // LAYOUT
 
-    QGridLayout *topLayout = new QGridLayout( this, 3, 2, 0, 
+    QGridLayout *topLayout = new QGridLayout( this, 3, 2, 0,
         KDialog::spacingHint() );
     topLayout->setRowStretch(0,0);
     topLayout->setRowStretch(1,0);
@@ -477,6 +477,11 @@ void KColorScheme::slotRemove()
 
     sList->removeItem(ind);
     mSchemeList->remove(entry);
+
+    ind = sList->currentItem();
+    entry = mSchemeList->at(ind-nSysSchemes);
+    if (!entry) return;
+    removeBt->setEnabled(entry ? entry->local : false);
 }
 
 
