@@ -30,7 +30,6 @@ services_DATA =	acronym.desktop \
 		pgpkeys.desktop \
 		php.desktop \
 		python.desktop \
-		realnames.desktop \
 		rfc.desktop \
 		rpmfind.desktop \
 		ruby_application_archive.desktop \
