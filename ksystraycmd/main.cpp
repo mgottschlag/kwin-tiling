@@ -72,7 +72,7 @@ int main( int argc, char *argv[] )
       }
 
       bool ok=true;
-      int w = wid.toInt( &ok, base );
+      ulong w = wid.toULong( &ok, base );
       if ( ok )
 	  cmd.setTargetWindow( w );
       else {

@@ -34,6 +34,8 @@ public:
 
   bool start();
 
+  static WId findRealWindow( WId w, int depth = 0 );
+
 public slots:
   void refresh();
 

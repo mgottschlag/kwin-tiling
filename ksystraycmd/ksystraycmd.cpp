@@ -245,3 +245,34 @@ void KSysTrayCmd::mousePressEvent( QMouseEvent *e )
   else
     toggleWindow();
 }
+
+WId KSysTrayCmd::findRealWindow( WId w, int depth )
+{
+    if( depth > 5 )
+	return None;
+    static Atom wm_state = XInternAtom( qt_xdisplay(), "WM_STATE", False );
+    Atom type;
+    int format;
+    unsigned long nitems, after;
+    unsigned char* prop;
+    if( XGetWindowProperty( qt_xdisplay(), w, wm_state, 0, 0, False, AnyPropertyType,
+	&type, &format, &nitems, &after, &prop ) == Success ) {
+	if( prop != NULL )
+	    XFree( prop );
+	if( type != None )
+	    return w;
+    }
+    Window root, parent;
+    Window* children;
+    unsigned int nchildren;
+    Window ret = None;
+    if( XQueryTree( qt_xdisplay(), w, &root, &parent, &children, &nchildren ) != 0 ) {
+	for( unsigned int i = 0;
+	     i < nchildren && ret == None;
+	     ++i )
+	    ret = findRealWindow( children[ i ], depth + 1 );
+	if( children != NULL )
+	    XFree( children );
+    }
+    return ret;
+}
