@@ -16,7 +16,8 @@
 #include <kstddirs.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kdesktopfile.h>
+#include "vroot.h"
 
 #define MAX_ARGS    20
 
@@ -31,6 +32,7 @@ int main(int argc, char *argv[])
 {
     KApplication app(argc, argv, "random");
     long windowId = 0;
+    bool root = false;
     int i;
     char *sargs[MAX_ARGS];
 
@@ -52,6 +54,10 @@ int main(int argc, char *argv[])
         {
             windowId = atol(argv[++i]);
         }
+        else if (!strcmp(argv[i], "-root"))
+        {
+            root = true;
+        }
     }
 
     KGlobal::dirs()->addResourceType("scrsav",
@@ -66,18 +72,18 @@ int main(int argc, char *argv[])
     int indx = random()%saverFileList.count();
     QString filename = *(saverFileList.at(indx));
 
-    KSimpleConfig config(filename, true);
-    config.setDesktopGroup();
+    KDesktopFile config(filename, true);
 
     QString cmd;
-    if (windowId)
+    if (windowId && config.hasActionGroup("InWindow"))
     {
-        cmd = config.readEntry("Exec-kss");
+        config.setActionGroup("InWindow");
     }
-    else
+    else if (root && config.hasActionGroup("Root"))
     {
-        cmd = config.readEntry("Exec");
+        config.setActionGroup("Root");
     }
+    cmd = config.readEntry("Exec");
 
     QTextStream ts(&cmd, IO_ReadOnly);
     QString word;
@@ -106,6 +112,16 @@ int main(int argc, char *argv[])
         sargs[i] = 0;
 
         execv(exeFile.ascii(), sargs);
+    }
+
+    // If we end up here then we couldn't start a saver.
+    // If we have been supplied a window id or root window then blank it.
+    if (windowId || root)
+    {
+      Window win = windowId ? windowId : RootWindow(qt_xdisplay(), qt_xscreen());
+      XSetWindowBackground(qt_xdisplay(), win,
+                          BlackPixel(qt_xdisplay(), qt_xscreen()));
+      XClearWindow(qt_xdisplay(), win);
     }
 }
 
