@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_midi.la
+kde_module_LTLIBRARIES = libkcm_midi.la
 
 libkcm_midi_la_SOURCES = midi.cpp 
 

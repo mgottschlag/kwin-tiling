@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_bell.la
+kde_module_LTLIBRARIES = libkcm_bell.la
 
 libkcm_bell_la_SOURCES = bell.cpp
 

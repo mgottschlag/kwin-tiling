@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_kdm.la
+kde_module_LTLIBRARIES = libkcm_kdm.la
 
 # ktagcombobox is first for --enable-final
 libkcm_kdm_la_SOURCES = ktagcombobox.cpp \

@@ -2,7 +2,7 @@
 
 INCLUDES = $(all_includes)
 
-lib_LTLIBRARIES = libkcm_colors.la
+kde_module_LTLIBRARIES = libkcm_colors.la
 
 libkcm_colors_la_SOURCES = colorscm.cpp widgetcanvas.cpp
 libkcm_colors_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined

@@ -6,7 +6,7 @@ LDFLAGS =  $(all_libraries)
 
 METASOURCES = AUTO
 
-lib_LTLIBRARIES = libkcm_kurifilt.la
+kde_module_LTLIBRARIES = libkcm_kurifilt.la
 
 libkcm_kurifilt_la_SOURCES = filteropts.cpp main.cpp
 

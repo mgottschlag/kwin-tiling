@@ -4,7 +4,7 @@ INCLUDES = $(all_includes)
 
 SUBDIRS = . kcs ad pics
 
-lib_LTLIBRARIES = libkcm_style.la
+kde_module_LTLIBRARIES = libkcm_style.la
 
 libkcm_style_la_SOURCES = general.cpp krdb.cpp
 libkcm_style_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined

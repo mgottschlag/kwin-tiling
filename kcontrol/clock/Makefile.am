@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_clock.la
+kde_module_LTLIBRARIES = libkcm_clock.la
 
 libkcm_clock_la_SOURCES = dtime.cpp tzone.cpp main.cpp 
 

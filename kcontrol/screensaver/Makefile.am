@@ -4,7 +4,7 @@ SUBDIRS= . pics
 
 INCLUDES = $(all_includes)
 
-lib_LTLIBRARIES = libkcm_screensaver.la
+kde_module_LTLIBRARIES = libkcm_screensaver.la
 
 libkcm_screensaver_la_SOURCES = scrnsave.cpp
 libkcm_screensaver_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined

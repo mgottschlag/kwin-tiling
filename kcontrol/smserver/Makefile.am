@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_smserver.la
+kde_module_LTLIBRARIES = libkcm_smserver.la
 
 libkcm_smserver_la_SOURCES = kcmsmserver.cpp
 libkcm_smserver_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined

@@ -2,7 +2,7 @@
 
 INCLUDES = $(all_includes)
 
-lib_LTLIBRARIES = libkcm_icons.la
+kde_module_LTLIBRARIES = libkcm_icons.la
 
 libkcm_icons_la_SOURCES = iconthemes.cpp icons.cpp main.cpp
 libkcm_icons_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined

@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_kicker.la
+kde_module_LTLIBRARIES = libkcm_kicker.la
 
 libkcm_kicker_la_SOURCES = generaltab.ui lookandfeeltab.ui menutab.ui generaltab_impl.cpp \
 			lookandfeeltab_impl.cpp menutab_impl.cpp buttontab.cpp applettab.cpp main.cpp

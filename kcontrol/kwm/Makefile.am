@@ -4,7 +4,7 @@
 METASOURCES = AUTO
 INCLUDES = $(all_includes)
 
-lib_LTLIBRARIES = libkcm_kwinmouse.la libkcm_kwinoptions.la 
+kde_module_LTLIBRARIES = libkcm_kwinmouse.la libkcm_kwinoptions.la 
 libkcm_kwinmouse_la_SOURCES = mouse.cpp
 libkcm_kwinmouse_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_kwinmouse_la_LIBADD = $(LIB_KDEUI)

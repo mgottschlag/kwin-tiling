@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_arts.la
+kde_module_LTLIBRARIES = libkcm_arts.la
 
 libkcm_arts_la_SOURCES = arts.cpp
 

@@ -3,7 +3,7 @@ INCLUDES = -I$(top_builddir)/lib $(all_includes)
 METASOURCES = AUTO
 
 
-lib_LTLIBRARIES = libkcm_kdb.la
+kde_module_LTLIBRARIES = libkcm_kdb.la
 
 #libkcm_kdb_la_SOURCES = kcmkdb.cpp connectionlist.cpp connectionconfig.cpp pluginconfig.cpp
 libkcm_kdb_la_SOURCES = kcmkdb.cpp connectionconfig.cpp pluginconfig.cpp

@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_keys.la
+kde_module_LTLIBRARIES = libkcm_keys.la
 
 libkcm_keys_la_SOURCES =  keyconfig.cpp savescm.cpp main.cpp
 libkcm_keys_la_LIBADD   = -lkdeui

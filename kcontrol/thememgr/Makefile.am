@@ -4,7 +4,7 @@ INCLUDES= $(all_includes)
 
 METASOURCES = AUTO
 
-lib_LTLIBRARIES = libkcm_themes.la
+kde_module_LTLIBRARIES = libkcm_themes.la
 
 libkcm_themes_la_SOURCES = main.cpp installer.cpp \
 	options.cpp about.cpp groupdetails.cpp \

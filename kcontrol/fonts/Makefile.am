@@ -2,7 +2,7 @@
 
 INCLUDES = $(all_includes)
 
-lib_LTLIBRARIES = libkcm_fonts.la
+kde_module_LTLIBRARIES = libkcm_fonts.la
 
 libkcm_fonts_la_SOURCES = fonts.cpp
 libkcm_fonts_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined

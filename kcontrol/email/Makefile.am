@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_email.la
+kde_module_LTLIBRARIES = libkcm_email.la
 
 libkcm_email_la_SOURCES = email.cpp emailsettings.cpp
 

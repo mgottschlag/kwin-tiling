@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_input.la
+kde_module_LTLIBRARIES = libkcm_input.la
 
 libkcm_input_la_SOURCES = main.cpp keyboard.cpp mouse.cpp
 

@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_samba.la
+kde_module_LTLIBRARIES = libkcm_samba.la
 
 libkcm_samba_la_SOURCES = main.cpp ksmbstatus.cpp kcmsambaimports.cpp kcmsambalog.cpp kcmsambastatistics.cpp
 

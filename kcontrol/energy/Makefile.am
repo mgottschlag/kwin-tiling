@@ -4,7 +4,7 @@ SUBDIRS= . pics
 
 INCLUDES = $(all_includes) $(DPMSINC)
 
-lib_LTLIBRARIES = libkcm_energy.la
+kde_module_LTLIBRARIES = libkcm_energy.la
 
 libkcm_energy_la_SOURCES = energy.cpp
 libkcm_energy_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined

@@ -2,7 +2,7 @@
 
 INCLUDES= $(all_includes)
 
-lib_LTLIBRARIES = libkcm_passwords.la
+kde_module_LTLIBRARIES = libkcm_passwords.la
 libkcm_passwords_la_SOURCES = passwords.cpp
 libkcm_passwords_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_passwords_la_LIBADD = $(LIB_KDEUI) -lkdesu
