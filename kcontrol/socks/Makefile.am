@@ -17,3 +17,6 @@ messages: rc.cpp
 
 data_DATA = socks.desktop
 datadir = $(kde_appsdir)/Settings/Network
+
+update_DATA = socks.upd
+updatedir = $(kde_datadir)/kconf_update

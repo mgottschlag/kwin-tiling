@@ -69,8 +69,6 @@ private:
 
   bool _socksEnabled;
   int _useWhat;
-
-  KConfig *config;
 };
 
 #endif
