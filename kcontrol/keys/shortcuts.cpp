@@ -23,7 +23,6 @@
  */
 
 #include "shortcuts.h"
-#include "savescm.h"
 
 #include <qdir.h>
 #include <qlayout.h>
@@ -37,6 +36,7 @@
 #include <kglobal.h>
 #include <kipc.h>
 #include <kkeynative.h>
+#include <klineeditdlg.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kshortcutlist.h>
@@ -336,12 +336,14 @@ void ShortcutsModule::slotSaveSchemeAs()
 
 	sName = m_pcbSchemes->currentText();
 
-	SaveScm ss( 0, "save scheme", sName );
+        KLineEditDlg dlg(i18n("Enter a name for the key scheme:"), sName, this);
+        dlg.setCaption(i18n("Save Key Scheme"));
+
 	do {
 		bNameValid = true;
 
-		if( ss.exec() ) {
-			sName = ss.nameLine->text();
+		if( dlg.exec() ) {
+			sName = dlg.text();
 			if( sName.stripWhiteSpace().isEmpty() )
 				return;
 

@@ -15,7 +15,6 @@
 #include <kkeydialog.h>
 //#include <kcmodule.h>
 #include <qdict.h>
-#include "savescm.h"
 
 class QCheckBox;
 
