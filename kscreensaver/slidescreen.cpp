@@ -62,7 +62,7 @@ static int max_width, max_height;
 static XImage *save;
 
 static void
-init_slide (Display *dpy, Window window, kSlideScreenSaver *kss)
+init_slide (Display *dpy, Window window, kSlideScreenSaver *)
 {
   int i;
   XGCValues gcv;

@@ -924,7 +924,7 @@ void PMenu::writeConfig( QDir base_dir, PMenuItem *parent_item)
   QStringList temp_list = base_dir.entryList("*", QDir::Files);
   QStringList file_list;
   QStringList::Iterator temp_it = temp_list.begin();
-  while( !temp_it->isNull() )
+  while( !(*temp_it).isNull() )
     {
       file_list.append(*temp_it);
       temp_it++;
@@ -932,7 +932,7 @@ void PMenu::writeConfig( QDir base_dir, PMenuItem *parent_item)
   temp_list = base_dir.entryList("*", QDir::Dirs);
   QStringList dir_list;
   temp_it = temp_list.begin();
-  while( !temp_it->isNull() )
+  while( !(*temp_it).isNull() )
     {
       if (*temp_it != "." && *temp_it != "..")
 	  dir_list.append(*temp_it);
@@ -980,7 +980,7 @@ void PMenu::writeConfig( QDir base_dir, PMenuItem *parent_item)
   QStringList::Iterator temp_it2;
 
   // remove files not in pmenu
-  for( temp_it2 = file_list.begin(); !temp_it2->isNull(); temp_it2++ )
+  for( temp_it2 = file_list.begin(); !(*temp_it2).isNull(); temp_it2++ )
     {
       if( isKdelnkFile(base_dir.absFilePath(*temp_it2)) )
 	{
@@ -989,7 +989,7 @@ void PMenu::writeConfig( QDir base_dir, PMenuItem *parent_item)
 	}
     }
   // remove dirs not in pmenu
-  for( temp_it2 = dir_list.begin(); !temp_it2->isNull(); temp_it2++ )
+  for( temp_it2 = dir_list.begin(); !(*temp_it2).isNull(); temp_it2++ )
     {
       //debug("will remove dir: %s", (const char *) name );
       QDir sub_dir(base_dir);

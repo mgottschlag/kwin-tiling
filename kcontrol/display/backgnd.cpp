@@ -354,7 +354,7 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
   //  groupLayout->addStretch( 3 );
     
   QStringList::Iterator it = list.begin();
-  for ( int i = 1; !it->isNull(); ++it, i++ )
+  for ( int i = 1; !(*it).isNull(); ++it, i++ )
     {
       wpCombo->insertItem( *it );
       if ( currentItem.wallpaper == *it )
