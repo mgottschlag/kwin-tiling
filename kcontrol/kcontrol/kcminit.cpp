@@ -28,6 +28,9 @@
 #include <klibloader.h>
 #include <kdebug.h>
 #include <dcopclient.h>
+
+#include <qstrlist.h>
+
 #include "global.h"
 
 static KCmdLineOptions options[] =
@@ -87,6 +90,8 @@ int main(int argc, char *argv[])
 
   }
 
+  QStrList alreadyInitialized;
+
   // look for X-KDE-Init=... entries
   for(KService::List::Iterator it = list.begin();
       it != list.end();
@@ -97,22 +102,26 @@ int main(int argc, char *argv[])
 	continue; // Skip
       // try to load the library
       QString libName = QString("libkcm_%1").arg(service->library());
-      KLibrary *lib = loader->library(QFile::encodeName(libName));
-      if (lib)
-	{
-	  // get the init_ function
-	  QString factory = QString("init_%1").arg(service->init());
-	  void *init = lib->symbol(factory.utf8());
-	  if (init)
+      if ( ! alreadyInitialized.contains( libName.ascii() ) )
+         {
+            KLibrary *lib = loader->library(QFile::encodeName(libName));
+            if (lib)
 	    {
-	      // initialize the module
-	      kdDebug(1208) << "Initializing " << libName << ": " << factory << endl;
+	      // get the init_ function
+	      QString factory = QString("init_%1").arg(service->init());
+	      void *init = lib->symbol(factory.utf8());
+	      if (init)
+	       {
+	         // initialize the module
+                 alreadyInitialized.append( libName.ascii() );
+	         kdDebug(1208) << "Initializing " << libName << ": " << factory << endl;
 
-	      void (*func)() = (void(*)())init;
-	      func();
+	         void (*func)() = (void(*)())init;
+	         func();
+	       }
+	      loader->unloadLibrary(QFile::encodeName(libName));
 	    }
-	  loader->unloadLibrary(QFile::encodeName(libName));
-	}
+         }
     }
 
   if ( !kapp->dcopClient()->isAttached() )
