@@ -76,7 +76,7 @@ bool ThemeCreator::create(const QString aThemeName)
   mPreviewFile = QString::null;
   mPreview.resize(0,0);
 
-  backEnd->changeFileName(mThemercFile, false);
+  backEnd->changeFileName(mThemercFile, "", false);
   reparseConfiguration();
 
   setGroupGeneral();

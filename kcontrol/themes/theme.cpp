@@ -263,7 +263,7 @@ bool Theme::load(const QString aPath)
 
   // read theme config file
   setReadOnly(TRUE);
-  backEnd->changeFileName(mThemercFile, false);
+  backEnd->changeFileName(mThemercFile, "", false);
   reparseConfiguration();
 
   readConfig();
@@ -282,7 +282,7 @@ bool Theme::save(const QString aPath)
   emit apply();
   writeConfig();
 
-  backEnd->changeFileName(mThemercFile, false);
+  backEnd->changeFileName(mThemercFile, "", false);
   backEnd->sync(true); // true so that disk entries are merged.  Is this right?
 
   if (stricmp(aPath.right(4).ascii(), ".tgz") == 0 ||
