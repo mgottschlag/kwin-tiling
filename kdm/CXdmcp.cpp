@@ -15,12 +15,18 @@
  *                                                                         *
  ***************************************************************************/
 
+#ifdef HAVE_CONFIG_H
 #include    <config.h>
+#endif
 
 #include    <sys/types.h>
 #include    <stdio.h>
 #include    <ctype.h>
 #include    <stdlib.h>
+
+#ifdef HAVE_SYS_SOCKET_H
+#include    <sys/socket.h>
+#endif
 
 #ifdef HAVE_SYS_SOCKIO_H
 #include    <sys/sockio.h>
@@ -28,10 +34,6 @@
 
 #ifdef HAVE_SYS_STROPTS_H
 #include    <sys/stropts.h>
-#endif
-
-#ifdef HAVE_SYS_SOCKET_H
-#include    <sys/socket.h>
 #endif
 
 #ifdef HAVE_SYS_STREAM_H
@@ -46,6 +48,7 @@
 #ifndef MINIX
 extern "C" {
 #include    <arpa/inet.h>
+#include <netinet/in.h>
 }
 #else /* MINIX */
 #include <net/hton.h>
