@@ -12,9 +12,6 @@
             <height>327</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>FilterOptionsUI</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
