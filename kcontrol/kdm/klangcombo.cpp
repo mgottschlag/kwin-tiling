@@ -138,3 +138,4 @@ void KLanguageCombo::loadLanguageList()
        setCurrentItem(count()-1);
     }
 }
+
