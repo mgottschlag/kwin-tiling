@@ -687,7 +687,10 @@ static QString createDesktopFile(const QString &file, QString *menuId, QStringLi
 static KDesktopFile *copyDesktopFile(MenuEntryInfo *entryInfo, QString *menuId, QStringList *excludeList)
 {
    QString result = createDesktopFile(entryInfo->file(), menuId, excludeList);
-   return entryInfo->desktopFile()->copyTo(result);
+   KDesktopFile *df = entryInfo->desktopFile()->copyTo(result);
+   df->deleteEntry("Categories"); // Don't set any categories!
+   
+   return df;
 }
 
 static QString createDirectoryFile(const QString &file, QStringList *excludeList)
