@@ -112,9 +112,9 @@ void NetMon::update()
     *process << "smbstatus"; // the command line
     //debug("update");
     if (!process->start(KProcess::Block,KProcess::Stdout)) // run smbstatus
-        version->setText(i18n("Error launching smbstatus !"));
+        version->setText(i18n("Error: Unable to run smbstatus"));
     else if (rownumber==0) // empty result
-        version->setText(i18n("Error ! smbstatus not found or non working !"));
+        version->setText(i18n("Error: Unable to open configuration file \"smb.conf\""));
     else { // ok -> count the number of locked files for each pid
         int m;
         char tmp[255];
