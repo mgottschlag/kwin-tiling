@@ -194,7 +194,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	connect(customDevice, SIGNAL(clicked()), SLOT(slotChanged()));
 	connect(deviceName, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
 	connect(customRate, SIGNAL(clicked()), SLOT(slotChanged()));
-	connect(samplingRate, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
+	connect(samplingRate, SIGNAL(valueChanged(const QString&)), SLOT(slotChanged()));
 //	connect(general->volumeSystray, SIGNAL(clicked()), this, SLOT(slotChanged()) );
 
 	connect(hardware->audioIO,SIGNAL(highlighted(int)),SLOT(slotChanged()));
@@ -300,7 +300,7 @@ void KArtsModule::saveParams( void )
 	}
 
 	QString dev = customDevice->isChecked() ? deviceName->text() : QString::null;
-	int rate = customRate->isChecked()?samplingRate->text().toLong() : 0;
+	int rate = customRate->isChecked()?samplingRate->value() : 0;
 	QString addOptions;
 	if(hardware->customOptions->isChecked())
 		addOptions = hardware->addOptions->text();
