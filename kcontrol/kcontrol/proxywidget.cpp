@@ -32,6 +32,7 @@
 #include <kdialog.h>
 #include <kguiitem.h>
 #include <kstdguiitem.h>
+#include <dcopclient.h>
 
 #include <qwhatsthis.h>
 #include <qvbox.h>
@@ -92,9 +93,13 @@ RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
     QHBoxLayout *layout = new QHBoxLayout(this, KDialog::spacingHint(), KDialog::marginHint());
     QLabel *pixmap = new QLabel(this);
     pixmap->setPixmap(KGlobal::iconLoader()->loadIcon("info", KIcon::Desktop, KIcon::SizeMedium ));
-    text = new QLabel(i18n("<qt><h3>Changes on this module require root access!</h3>"
-                                   "<p>Click the &quot;Administrator Mode&quot; button to "
-                                   "allow modifications on this module.</p></qt>"), this);
+    text = new QLabel(i18n("Changes on this module require root access!\n"
+                      "Click the \"Administrator Mode\" button to "
+                      "allow modifications on this module."), this);
+
+    QFont font;
+    font.setBold(true);
+	 text->setFont(font);
 
 	QWhatsThis::add(this, i18n("This module requires special permissions, probably "
                               "for system-wide modifications. Therefore it is "
@@ -207,6 +212,8 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 {
   setCaption(title);
 
+  isRootModule=run_as_root;
+
   view = new ProxyView(client, title, this, run_as_root, "proxyview");
   (void) new WhatsThis( this );
 
@@ -267,10 +274,19 @@ ProxyWidget::~ProxyWidget()
 
 QString ProxyWidget::quickHelp() const
 {
-  if (_client)
-    return _client->quickHelp();
+  kdDebug() << "Help clicked (isRootModule=" << isRootModule << ")" << endl;
+  if (isRootModule)
+  {
+    if (_client)
+      return _client->quickHelp();
+    else
+      return "";
+  }
   else
-    return "";
+  {
+    kdDebug() << "Sending help request via DCOP!" << endl;
+    kapp->dcopClient()->send("kcontrol", "moduleIface", "invokeHelp()", "");
+  }
 }
 
 void ProxyWidget::helpClicked()
