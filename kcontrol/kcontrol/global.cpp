@@ -58,7 +58,7 @@ void KCGlobal::init()
   setUserName(username);
   setRoot(getuid() == 0);
 
-  setKDEVersion(KDE_VERSION_STRING);
+  setKDEVersion(KDE::versionString());
 
   struct utsname info;
   uname(&info);
