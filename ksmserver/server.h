@@ -102,6 +102,10 @@ public:
 
 public slots:
     void shutdown();
+    // If fast shutdown is select, the confirmation dialog will be skipped.
+    // This allows users whose default is to confirm to shutdown immediately.
+    // It does not yet allow for confirmation when immediate shutdown is the default.
+    void shutdown( bool bFast );
     void cleanUp();
 
 private slots:

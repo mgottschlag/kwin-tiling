@@ -314,11 +314,11 @@ void KSMSaveYourselfRequestProc (
     int  		/* saveType */,
     Bool		/* shutdown */,
     int			/* interactStyle */,
-    Bool		/* fast */,
+    Bool		fast,
     Bool		/* global */
 )
 {
-    the_server->shutdown();
+    the_server->shutdown( fast );
 }
 
 void KSMSaveYourselfPhase2RequestProc (
@@ -967,6 +967,9 @@ void KSMServer::newConnection( int /*socket*/ )
 
 
 void KSMServer::shutdown()
+    { shutdown( false ); }
+
+void KSMServer::shutdown( bool bFast )
 {
     if ( state != Idle )
 	return;
@@ -984,7 +987,7 @@ void KSMServer::shutdown()
 	cfg->readBoolEntry( "saveSession", FALSE );
     bool confirmLogout = cfg->readBoolEntry( "confirmLogout", TRUE );
     delete cfg;
-    if ( !confirmLogout || KSMShutdownDlg::confirmShutdown( saveSession ) ) {
+    if ( bFast || !confirmLogout || KSMShutdownDlg::confirmShutdown( saveSession ) ) {
 	// Set the real desktop background to black so that exit looks
 	// clean regardless of what was on "our" desktop.
 	kapp->desktop()->setBackgroundColor( Qt::black );
