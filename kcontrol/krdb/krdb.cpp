@@ -156,10 +156,16 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
     // users. So we need to know whether a path being added is from KApp, and in this case
     // end it with.. So keep a QMap to bool, specifying whether the path is KDE-specified..
 
+  QString qversion = qVersion();
+  if ( qversion.contains( '.' ) > 1 )
+     qversion.truncate( qversion.findRev( '.' ) );
+  if ( qversion.contains( '-' ) )
+     qversion.truncate( qversion.findRev( '-' ) );
+
   QStringList kdeAdded =
     settings.readListEntry("/qt/KDE/kdeAddedLibraryPaths");
   QString libPathKey =
-    QString("/qt/%1.%2/libraryPath").arg( QT_VERSION >> 16 ).arg( (QT_VERSION & 0xff00 ) >> 8 );
+    QString("/qt/%1/libraryPath").arg( qversion );
 
   //Read qt library path..
   QStringList plugins = settings.readListEntry(libPathKey, ':');
