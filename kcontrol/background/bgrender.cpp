@@ -321,11 +321,11 @@ wp_load:
 		    svgWidth = m_Size.width();
 	            break;
 	        case CentredMaxpect:
+		case ScaleAndCrop:
 	        case TiledMaxpect:
 		    svgHeight = m_Size.height();
 		    svgWidth = svgHeight;
 	            break;
-		case ScaleAndCrop:
 	        case NoWallpaper:
 	        default:
 	            kdWarning() << k_funcinfo << "unknown diagram type" << endl;
