@@ -6,7 +6,6 @@ DocPath=
 
 X-KDE-ModuleType=Library
 X-KDE-Library=spellchecking
-X-KDE-Init=spellchecking
 
 Name=Spell Checking
 Name[af]=SPEL TOETSING
@@ -102,6 +101,7 @@ Keywords[ko]=Spell, 맞춤법
 Keywords[lt]=Spell, rašyba
 Keywords[lv]=Pareizrakstība
 Keywords[mt]=Spell,Spelli
+Keywords[no]=stavekontroll,staving,stave
 Keywords[no_NY]=Stavekontroll
 Keywords[pl]=Literówki,Poprawność pisowni
 Keywords[pt_BR]=Ortografia
