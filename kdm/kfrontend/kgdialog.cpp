@@ -25,7 +25,6 @@
 #include "kgdialog.h"
 #include "kconsole.h"
 #include "kdmshutdown.h"
-#include "kdmconfig.h"
 #include "kdm_greet.h"
 
 #include <klocale.h>
@@ -59,6 +58,17 @@ KGDialog::completeMenu( int _switchIf, int _switchCode, const QString &_switchMs
 KGDialog::completeMenu()
 #endif
 {
+#ifdef HAVE_VTS
+    if (_isLocal) {
+	dpyMenu = new QPopupMenu( winFrame );
+	inserten( i18n("Sess&ions"), ALT+Key_I, dpyMenu );
+	connect( dpyMenu, SIGNAL(activated(int)),
+		 SLOT(slotDisplaySelected(int)) );
+	connect( dpyMenu, SIGNAL(aboutToShow()),
+		 SLOT(slotPopulateDisplays()) );
+    }
+#endif
+
     if (_allowClose)
 	inserten( _isLocal ? i18n("R&estart X Server") : i18n("Clos&e Connection"),
 	      ALT+Key_E, SLOT(slotExit()) );
@@ -154,6 +164,50 @@ KGDialog::slotShutdown()
 	KDMShutdown::scheduleShutdown( this );
     else
 	KDMSlimShutdown( this ).exec();
+}
+
+void
+KGDialog::slotDisplaySelected( int vt )
+{
+#ifdef HAVE_VTS
+    GSet( 1 );
+    GSendInt( G_Activate );
+    GSendInt( vt );
+    GSet( 0 );
+#else
+    (void) vt;
+#endif
+}
+
+void
+KGDialog::slotPopulateDisplays()
+{
+#ifdef HAVE_VTS
+    dpyMenu->clear();
+    dpySpec *sessions = fetchSessions( 1 );
+    for (dpySpec *sess = sessions; sess; sess = sess->next )
+	if (*sess->display == ':') {
+	    QString tit =
+		!sess->user ?
+		    i18n("Unused") :
+		!*sess->user ?
+		    i18n("Remote Login") :
+		    QString::fromLatin1( sess->user ) + ": " +  sess->session;
+	    tit += " (";
+	    tit += sess->display;
+	    if (sess->vt) {
+		tit += ", vt";
+		tit += QString::number( sess->vt );
+	    }
+	    tit += ')';
+	    int id = dpyMenu->insertItem( tit, sess->vt ? sess->vt : -1 );
+	    if (!sess->vt)
+		dpyMenu->setItemEnabled( id, false );
+	    if (sess->self)
+		dpyMenu->setItemChecked( id, true );
+	}
+    disposeSessions( sessions );
+#endif
 }
 
 #include "kgdialog.moc"

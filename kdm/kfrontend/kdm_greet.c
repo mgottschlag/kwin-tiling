@@ -310,6 +310,7 @@ fetchSessions( int all )
 	sess->vt = GRecvInt();
 	sess->user = GRecvStr();
 	sess->session = GRecvStr();
+	sess->self = GRecvInt();
 	sess->next = sessions;
 	sessions = sess;
     }

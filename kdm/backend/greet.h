@@ -139,8 +139,9 @@ from the copyright holder.
 #define G_PutDmrc	108	/* str key, str value; async - newdmrc */
 #define G_Verify	109	/* str type; ..., int V_ret */
 #define G_VerifyRootOK	110	/* str type; ..., int V_ret */
-#define G_List		111	/* int all; ?*(str,int,str,str), int 0 */
+#define G_List		111	/* int all; ?*(str,int,str,str,int), int 0 */
 #define G_QueryShutdown	112	/* ; 5*int */
+#define G_Activate	113	/* int vt; async */
 
 /*
  * Command codes core -> config reader

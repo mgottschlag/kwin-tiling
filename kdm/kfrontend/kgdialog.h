@@ -28,6 +28,7 @@
 
 #include <config.h> // for WITH_KDM_XCONSOLE
 
+#include "kdmconfig.h"
 #include "kfdialog.h"
 
 class QPopupMenu;
@@ -69,8 +70,16 @@ class KGDialog : public FDialog {
     QGridLayout *layout;
 #endif
 
+  private slots:
+    void slotDisplaySelected( int vt );
+    void slotPopulateDisplays();
+
   private:
     void ensureMenu();
+
+#ifdef HAVE_VTS
+    QPopupMenu *dpyMenu;
+#endif
     int switchCode;
 };
 

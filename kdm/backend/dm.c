@@ -754,9 +754,15 @@ processGPipe (struct display *d)
 		GSendInt (di->serverVT);
 		GSendStr (di->status == remoteLogin ? "" : di->userName);
 		GSendStr (di->sessName);
+		GSendInt (di == d);
 	    }
 	GSendInt (0);
 	break;
+#ifdef HAVE_VTS
+    case G_Activate:
+	activateVT (GRecvInt ());
+	break;
+#endif
     default:
 	LogError ("Internal error: unknown G_* command %d\n", cmd);
 	StopDisplay (d);

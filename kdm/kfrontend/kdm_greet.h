@@ -49,7 +49,7 @@ char **GetCfgStrArr (int id, int *len);
 typedef struct dpySpec {
     struct dpySpec *next;
     char *display, *user, *session;
-    int vt;
+    int vt, self;
 } dpySpec;
 
 dpySpec *fetchSessions( int all );
