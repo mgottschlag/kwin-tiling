@@ -32,21 +32,21 @@
 CSSConfig::CSSConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-  dialog = new CSSConfigDialog(this);  
+  dialog = new CSSConfigDialog(this);
 
   QStringList fonts;
   KFontChooser::getFontList(fonts, false);
   dialog->fontFamily->insertStringList(fonts);
- 
+
   connect(dialog->useDefault, SIGNAL(clicked()),
 	  this, SLOT(configChanged()));
-  connect(dialog->useAccess, SIGNAL(clicked()), 
+  connect(dialog->useAccess, SIGNAL(clicked()),
 	  this, SLOT(configChanged()));
-  connect(dialog->useUser, SIGNAL(clicked()), 
+  connect(dialog->useUser, SIGNAL(clicked()),
 	  this, SLOT(configChanged()));
   connect(dialog->urlRequester, SIGNAL(textChanged(const QString&)),
 	  this, SLOT(configChanged()));
- 
+
   connect(dialog->basefontsize, SIGNAL(highlighted(int)),
           this, SLOT(configChanged()));
   connect(dialog->basefontsize, SIGNAL(textChanged(const QString&)),
@@ -77,9 +77,9 @@ CSSConfig::CSSConfig(QWidget *parent, const char *name)
 	  this, SLOT(configChanged()));
   connect(dialog->hideBackground, SIGNAL(clicked()),
 	  this, SLOT(configChanged()));
-  
+
   QVBoxLayout *vbox = new QVBoxLayout(this, 0, 0);
-  vbox->addWidget(dialog);  
+  vbox->addWidget(dialog);
 
   load();
 }
@@ -88,14 +88,14 @@ CSSConfig::CSSConfig(QWidget *parent, const char *name)
 void CSSConfig::load()
 {
   KConfig *c = new KConfig("kcmcssrc", false, false);
-  
+
   c->setGroup("Stylesheet");
   QString u = c->readEntry("Use", "default");
   dialog->useDefault->setChecked(u == "default");
   dialog->useUser->setChecked(u == "user");
   dialog->useAccess->setChecked(u == "access");
   dialog->urlRequester->setURL(c->readEntry("SheetName"));
-  
+
   c->setGroup("Font");
   dialog->basefontsize->setEditText(QString::number(c->readNumEntry("BaseSize", 12)));
   dialog->dontScale->setChecked(c->readBoolEntry("DontScale", false));
@@ -144,7 +144,7 @@ void CSSConfig::save()
 
   c->setGroup("Font");
   c->writeEntry("BaseSize", dialog->basefontsize->currentText());
-  c->writeEntry("DontScale", dialog->dontScale->isChecked());  
+  c->writeEntry("DontScale", dialog->dontScale->isChecked());
   c->writeEntry("SameFamily", dialog->sameFamily->isChecked());
   c->writeEntry("Family", dialog->fontFamily->currentText());
 
@@ -165,7 +165,7 @@ void CSSConfig::save()
 
   c->sync();
   delete c;
-  
+
   // generate CSS template
   QString templ = locate("data", "kcmcss/template.css");
   QString dest;
@@ -197,6 +197,32 @@ void CSSConfig::save()
 
 void CSSConfig::defaults()
 {
+  dialog->useDefault->setChecked(true);
+  dialog->useUser->setChecked(false);
+  dialog->useAccess->setChecked(false);
+  dialog->urlRequester->setURL("");
+
+  dialog->basefontsize->setEditText(QString::number(12));
+  dialog->dontScale->setChecked(false);
+
+  QString fname =  "Arial";
+  for (int i=0; i < dialog->fontFamily->count(); ++i)
+    if (dialog->fontFamily->text(i) == fname)
+      {
+	dialog->fontFamily->setCurrentItem(i);
+	break;
+      }
+
+  dialog->sameFamily->setChecked(false);
+  dialog->blackOnWhite->setChecked(true);
+  dialog->whiteOnBlack->setChecked(false);
+  dialog->customColor->setChecked(false);
+  dialog->backgroundColor->setColor(Qt::white);
+  dialog->foregroundColor->setColor(Qt::black);
+  dialog->sameColor->setChecked(false);
+
+  dialog->hideImages->setChecked(false);
+  dialog->hideBackground->setChecked( true);
 }
 
 
@@ -235,10 +261,10 @@ QMap<QString,QString> CSSConfig::cssDict()
   QMap<QString,QString> dict;
 
   // Fontsizes ------------------------------------------------------
-  
+
   int bfs = dialog->basefontsize->currentText().toInt();
   dict.insert("fontsize-base", px(bfs, 1.0));
- 
+
   if (dialog->dontScale->isChecked())
     {
       dict.insert("fontsize-small-1", px(bfs, 1.0));
@@ -258,14 +284,14 @@ QMap<QString,QString> CSSConfig::cssDict()
       dict.insert("fontsize-large-4", px(bfs, 1.6));
       dict.insert("fontsize-large-5", px(bfs, 1.8));
     }
-  
+
   // Colors --------------------------------------------------------
-  
+
   if (dialog->blackOnWhite->isChecked())
     {
       dict.insert("background-color", "White");
       dict.insert("foreground-color", "Black");
-    } 
+    }
   else if (dialog->whiteOnBlack->isChecked())
     {
       dict.insert("background-color", "Black");
@@ -276,7 +302,7 @@ QMap<QString,QString> CSSConfig::cssDict()
       dict.insert("background-color", dialog->backgroundColor->color().name());
       dict.insert("foreground-color", dialog->foregroundColor->color().name());
     }
-  
+
   if (dialog->sameColor->isChecked())
     dict.insert("force-color", "! important");
   else
@@ -311,7 +337,7 @@ void CSSConfig::preview()
   QStyleSheetItem *h2 = new QStyleSheetItem(QStyleSheet::defaultSheet(), "h2");
   QStyleSheetItem *h3 = new QStyleSheetItem(QStyleSheet::defaultSheet(), "h3");
   QStyleSheetItem *text = new QStyleSheetItem(QStyleSheet::defaultSheet(), "p");
-  
+
   // Fontsize
 
   int bfs = dialog->basefontsize->currentText().toInt();
@@ -326,7 +352,7 @@ void CSSConfig::preview()
     {
       h1->setFontSize(static_cast<int>(bfs * 1.8));
       h2->setFontSize(static_cast<int>(bfs * 1.6));
-      h3->setFontSize(static_cast<int>(bfs * 1.4));      
+      h3->setFontSize(static_cast<int>(bfs * 1.4));
     }
 
   // Colors
@@ -359,7 +385,7 @@ void CSSConfig::preview()
   h1->setFontFamily(dialog->fontFamily->currentText());
   h2->setFontFamily(dialog->fontFamily->currentText());
   h3->setFontFamily(dialog->fontFamily->currentText());
-  text->setFontFamily(dialog->fontFamily->currentText());  
+  text->setFontFamily(dialog->fontFamily->currentText());
 
   // Show the preview
   PreviewDialog *dlg = new PreviewDialog(this, 0, true);
@@ -369,7 +395,7 @@ void CSSConfig::preview()
   dlg->preview->viewport()->setFont(QFont("helvetica", bfs));
 
   dlg->exec();
-  
+
   delete dlg;
 }
 
