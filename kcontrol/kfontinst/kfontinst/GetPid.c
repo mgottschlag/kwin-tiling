@@ -82,8 +82,6 @@
     6. Email me and let me know if it works!
 */
 
-unsigned int kfi_getPid(const char *proc, unsigned int ppid);
-
 #if defined OS_Linux || defined __Linux__
 
 #include <dirent.h>
