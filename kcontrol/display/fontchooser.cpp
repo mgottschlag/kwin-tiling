@@ -48,6 +48,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <klocale.h>
+#include <kglobal.h>
 
 #include "fontchooser.moc"
 
@@ -281,7 +282,7 @@ void KFontChooser::slotCharset(const QString &name)
 
   KCharsets *charsets=kapp->getCharsets();
   if (name == "default"){
-     charsets->setQFont(fnt,klocale->charset());
+     charsets->setQFont(fnt,KGlobal::locale()->charset());
      defaultCharset=TRUE;
   }   
   else{   
