@@ -277,8 +277,8 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
 #endif
 #ifdef HAVE_LOGIN_CAP_H
 # ifdef __bsdi__
-    /* This only works / is needed on BSDi */
-    struct login_cap_t	*lc;
+    /* On BSD/OS the login_cap_t typedef has the 'struct' builtin */
+    login_cap_t	*lc;
 # else
     struct login_cap	*lc;
 # endif
