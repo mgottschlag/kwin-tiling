@@ -532,25 +532,25 @@ wrconf (FILE *f)
 #endif
 
 #ifdef __linux__
-# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X vt7"
+# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X -nolisten tcp vt7"
 /* ###
 # define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
-			 ":1 local@tty2 reserve " XBINDIR "/X :1 vt8\n" \
-			 ":2 local@tty3 reserve " XBINDIR "/X :2 vt9\n" \
-			 "#:3 local@tty4 reserve " XBINDIR "/X :3 vt10\n" \
-			 "#:4 local@tty5 reserve " XBINDIR "/X :4 vt11\n"
+			 ":1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1 vt8\n" \
+			 ":2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2 vt9\n" \
+			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3 vt10\n" \
+			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4 vt11\n"
 */
 # define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
-			 "#:1 local@tty2 reserve " XBINDIR "/X :1 vt8\n" \
-			 "#:2 local@tty3 reserve " XBINDIR "/X :2 vt9\n" \
-			 "#:3 local@tty4 reserve " XBINDIR "/X :3 vt10\n" \
-			 "#:4 local@tty5 reserve " XBINDIR "/X :4 vt11\n"
+			 "#:1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1 vt8\n" \
+			 "#:2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2 vt9\n" \
+			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3 vt10\n" \
+			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4 vt11\n"
 #elif defined(__sun__)
-# define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X"
+# define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X -nolisten tcp"
 #elif defined(_AIX)
-# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X -T -force"
+# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X -T -force -nolisten tcp"
 #else
-# define DEF_SERVER_LINE ":0 local " XBINDIR "/X"
+# define DEF_SERVER_LINE ":0 local " XBINDIR "/X -nolisten tcp"
 #endif
 #ifndef DEF_SERVER_LINES
 # define DEF_SERVER_LINES DEF_SERVER_LINE "\n"
