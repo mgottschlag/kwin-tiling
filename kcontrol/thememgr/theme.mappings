@@ -83,6 +83,7 @@
 #   - setWallPaperMode: corrects wallpaper settings.
 #   - setSound: enable sound notification
 #   - setKWM: enable kwm theme
+#   - setKicker: enable kicker background theme
 #
 #-----------------------------------------------------------------------------
 [Colors]
@@ -557,3 +558,10 @@ ConfigGroup=exitkde
 ConfigThemeGroup=AppEvents/Schemes/Apps/.Default/SystemExit/.Current
 DefaultValue=soundfile
 
+[Panel]
+ConfigAppDir=apps/kicker
+ConfigFile=kickerrc
+ConfigGroup=General
+ConfigInstallCmd=setKicker
+ConfigActivateCmd=applyKicker
+background=BackgroundTheme

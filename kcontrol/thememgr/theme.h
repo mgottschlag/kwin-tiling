@@ -69,6 +69,7 @@ public:
   bool instSounds;
   bool instIcons;
   bool instWM;
+  bool instPanel;
   bool instOverwrite;
 
   /** Test if group with given name exists. If notEmpty is true the

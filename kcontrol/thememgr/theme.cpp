@@ -873,6 +873,13 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
        aCfg->writeEntry("PluginLib", "libkwinkwmtheme");
     }
   }
+  else if (cmd == "setKicker")
+  {
+    QString value = aCfg->readEntry("BackgroundTheme",QString::null);
+    aCfg->writeEntry("UseBackgroundTheme", !value.isEmpty());
+    if (!value.isEmpty())
+        aCfg->writeEntry("RotateBackground", true);
+  }
   else
   {
     kdWarning() << "Unknown command `" << aCmd << "' in theme.mappings "
@@ -957,6 +964,14 @@ void Theme::doCmdList(void)
        if (!client->isAttached())
           client->attach();
        client->send("kwin", "", "reconfigure()", "");
+    }
+    else if (cmd == "applyKicker")
+    {
+       // reconfigure kicker
+       DCOPClient *client = kapp->dcopClient();
+       if (!client->isAttached())
+          client->attach();
+       client->send("kicker", "", "configure()", "");
     }
     else if (cmd.startsWith("restart"))
     {
@@ -1077,6 +1092,7 @@ void Theme::install(void)
      installGroup("Window Border");
      installGroup("Window Titlebar");
   }
+  if (instPanel) installGroup("Panel");
 
   doCmdList();
 

@@ -51,12 +51,14 @@ protected:
   QCheckBox *mCbxSounds;
   QCheckBox *mCbxIcons;
   QCheckBox *mCbxWM;
+  QCheckBox *mCbxPanel;
   QCheckBox *mCbxOverwrite;
   QLabel *mStatColors;
   QLabel *mStatWallpapers;
   QLabel *mStatSounds;
   QLabel *mStatIcons;
   QLabel *mStatWM;
+  QLabel *mStatPanel;
   QGridLayout *mGrid;
   bool mGui;
   int mGridRow;

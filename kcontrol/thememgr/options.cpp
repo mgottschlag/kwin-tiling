@@ -60,6 +60,7 @@ Options::Options (QWidget * aParent, const char *aName, bool aInit)
   mCbxSounds = newLine("Sounds", i18n("Sound effects"), &mStatSounds);
   mCbxIcons = newLine("Icons", i18n("Icons"), &mStatIcons);
   mCbxWM = newLine("Window Border", i18n("Window Decorations"), &mStatWM);
+  mCbxPanel = newLine("Panel", i18n("Panel"), &mStatPanel);
 
   btn = new QPushButton(i18n("Clear"), this);
   btn->setFixedSize(btn->sizeHint());
@@ -137,6 +138,7 @@ void Options::save()
   theme->instSounds = mCbxSounds->isChecked();
   theme->instIcons = mCbxIcons->isChecked();
   theme->instWM = mCbxWM->isChecked();
+  theme->instPanel = mCbxPanel->isChecked();
   theme->instOverwrite = !mCbxOverwrite->isChecked();
 }
 
@@ -149,6 +151,7 @@ void Options::slotInvert()
   mCbxSounds->setChecked(!mCbxSounds->isChecked());
   mCbxIcons->setChecked(!mCbxIcons->isChecked());
   mCbxWM->setChecked(!mCbxWM->isChecked());
+  mCbxPanel->setChecked(!mCbxPanel->isChecked());
   save();
 }
 
@@ -161,6 +164,7 @@ void Options::slotClear()
   mCbxSounds->setChecked(false);
   mCbxIcons->setChecked(false);
   mCbxWM->setChecked(false);
+  mCbxPanel->setChecked(false);
   save();
 }
 
@@ -231,6 +235,7 @@ void Options::updateStatus(void)
   updateStatus("Sounds", mStatSounds);
   updateStatus("Icons", mStatIcons);
   updateStatus("Window Border", mStatWM);
+  updateStatus("Panel", mStatPanel);
 }
 
 
@@ -246,6 +251,7 @@ void Options::writeConfig()
   cfg->writeEntry("sounds", mCbxSounds->isChecked());
   cfg->writeEntry("icons", mCbxIcons->isChecked());
   cfg->writeEntry("wm", mCbxWM->isChecked());
+  cfg->writeEntry("panel", mCbxPanel->isChecked());
 }
 
 
@@ -261,6 +267,7 @@ void Options::readConfig()
   mCbxSounds->setChecked(cfg->readBoolEntry("sounds", true));
   mCbxIcons->setChecked(cfg->readBoolEntry("icons", true));
   mCbxWM->setChecked(cfg->readBoolEntry("wm", true));
+  mCbxPanel->setChecked(cfg->readBoolEntry("panel", true));
   save();
 }
 
