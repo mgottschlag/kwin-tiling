@@ -6,7 +6,7 @@
 #include <X11/Xlib.h>
 #include <qbitmap.h>
 #include <main.h>  // ssApp
-#include <kapp.h>  // for kde_bindir()
+//#include <kapp.h>  // for kde_bindir()
 #include <kglobal.h>
 #include <kprocess.h>
 #include <qpushbutton.h>
