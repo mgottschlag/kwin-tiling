@@ -14,3 +14,11 @@ messages:
 
 data_DATA = keyboard.desktop mouse.desktop
 datadir = $(kde_appsdir)/Settings/Peripherals
+
+fontdir = $(kde_datadir)/kcminput
+font_DATA = cursor_large.pcf.gz cursor.pcf.gz
+EXTRA_DIST = $(font_DATA)
+
+install-data-hook:
+	$(mkinstalldirs) $(DESTDIR)$(prefix)/share/fonts/override
+	-mkfontdir $(DESTDIR)$(prefix)/share/fonts/override
