@@ -128,8 +128,8 @@ void MenuTab::load()
     m_clearSpinBox->setValue(c->readNumEntry("MenuCacheTime", 60000) / 1000);
     m_clearSpinBox->setEnabled(cc);
 
-    m_maxSlider->setValue(c->readNumEntry("MaxEntries", 30));
-    m_maxSpinBox->setValue(c->readNumEntry("MaxEntries", 30));
+    m_maxSlider->setValue(c->readNumEntry("MaxEntries2", 30));
+    m_maxSpinBox->setValue(c->readNumEntry("MaxEntries2", 30));
 
     m_mergeLocations->setChecked(c->readBoolEntry("MergeKDEDirs", true));
     m_showBookmarks->setChecked(c->readBoolEntry("UseBookmarks", true));
@@ -161,7 +161,7 @@ void MenuTab::save()
 
     c->writeEntry("ClearMenuCache", m_clearCache->isChecked());
     c->writeEntry("MenuCacheTime", m_clearSlider->value() * 1000);
-    c->writeEntry("MaxEntries", m_maxSlider->value());
+    c->writeEntry("MaxEntries2", m_maxSlider->value());
     c->writeEntry("MergeKDEDirs", m_mergeLocations->isChecked());
     c->writeEntry("UseBookmarks", m_showBookmarks->isChecked());
     c->writeEntry("UseRecent", m_showRecent->isChecked());
