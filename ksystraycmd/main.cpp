@@ -31,6 +31,8 @@ static KCmdLineOptions options[] =
   { "tooltip <text>", I18N_NOOP( "Sets the initial tooltip for the tray icon" ), 0 },
   { "keeprunning", I18N_NOOP( "Keep the tray icon even if the client exits. This option\n"
 			 "has no effect unless startonshow is specified." ), 0 },
+  { "quitonhide", I18N_NOOP( "Quit the client when we're told to hide the window\n"
+             "has no effect unless startonshow is specified and implies keeprunning." ), 0 },
   /*  { "menuitem <item>", I18N_NOOP( "Adds a custom entry to the tray icon menu.\n"
       "The item should have the form text:command." ), 0 },*/
   { 0, 0, 0 }
@@ -76,6 +78,11 @@ int main( int argc, char *argv[] )
   // Keep running flag
   if ( args->isSet( "keeprunning" )  )
     cmd.setNoQuit( true );
+
+  if ( args->isSet( "quitonhide" ) ) {
+    cmd.setNoQuit( true );
+	cmd.setQuitOnHide( true );
+  }
 
   // Start hidden
   if ( args->isSet( "hidden" ) )

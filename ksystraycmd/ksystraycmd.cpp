@@ -233,6 +233,11 @@ void KSysTrayCmd::mousePressEvent( QMouseEvent *e )
     execContextMenu( e->globalPos() );
   else if ( lazyStart && ( !hasRunningClient() ) )
     start();
+  else if ( quitOnHide && ( hasRunningClient() ) && isVisible )
+  {
+    NETRootInfo ri( qt_xdisplay(), NET::CloseWindow );
+    ri.closeWindowRequest( win );
+  }
   else
     toggleWindow();
 }

@@ -26,6 +26,7 @@ public:
   void setPattern( const QString &regexp ) { window = regexp; }
   void setStartOnShow( bool enable ) { lazyStart = enable; }
   void setNoQuit( bool enable ) { noquit = enable; }
+  void setQuitOnHide( bool enable ) { quitOnHide = enable; }
   void setDefaultTip( const QString &tip ) { tooltip = tip; }
   bool hasTargetWindow() const { return (win != 0); }
   bool hasRunningClient() const { return (client != 0); }
@@ -66,6 +67,7 @@ private:
   bool isVisible;
   bool lazyStart;
   bool noquit;
+  bool quitOnHide;
 
   WId win;
   KShellProcess *client;
