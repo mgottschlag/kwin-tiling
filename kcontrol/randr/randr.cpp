@@ -81,19 +81,6 @@ Status RandRScreen::applyProposed()
 	
 	//kdDebug() << "New size: " << WidthOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << ", " << HeightOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << endl;
 	
-	// Tell the desktop it has resized
-	QSize newSize(sizes[proposedSize].width, sizes[proposedSize].height);
-	QSize oldSize(sizes[currentSize].width, sizes[currentSize].height);
-	QResizeEvent resize(newSize, oldSize);
-	KApplication::sendEvent(KApplication::kApplication()->desktop(), &resize);
-	
-	// Restart kicker if its size should have changed
-	if (proposedSize != currentSize || (proposedRotation & 15) != (currentRotation & 15)) {
-		DCOPClient* dcop = KApplication::kApplication()->dcopClient();
-		if (dcop->isApplicationRegistered("kicker"))
-			dcop->send("kicker", "kicker", "restart()", "");
-	}
-	
 	if (status == RRSetConfigSuccess) {
 		currentSize = proposedSize;
 		currentRotation = proposedRotation;
