@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #include <qbuttongroup.h>
+#include <qvgroupbox.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
@@ -296,11 +297,9 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     connect(btnImport, SIGNAL(clicked()), SLOT(slotRunImporter()));
 
     // Drawing settings
-    styles = new QGroupBox ( i18n( "Other settings for drawing" ), this );
+    styles = new QVGroupBox ( i18n( "Other settings for drawing" ), this );
+    styles->layout()->setSpacing( KDialog::spacingHint() );
     topLayout->addWidget(styles, 10);
-    QBoxLayout *vlay = new QVBoxLayout (styles, KDialog::marginHint(),
-                    KDialog::spacingHint());
-    vlay->addSpacing(styles->fontMetrics().lineSpacing());
 
     cbMac = new QCheckBox( i18n( "&Menubar on top of the screen in "
                                  "the style of MacOS" ), styles);
@@ -311,11 +310,9 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
       " this behavior from MacOS.") );
 
     connect( cbMac, SIGNAL( clicked() ), SLOT( slotMacStyle()  )  );
-    vlay->addWidget( cbMac, 10 );
 /*
     cbRes = new QCheckBox( i18n( "&Apply colors to non-KDE apps" ), styles);
     connect( cbRes, SIGNAL( clicked() ), SLOT( slotUseResourceManager()  )  );
-    vlay->addWidget( cbRes, 10 );
 
     QWhatsThis::add( cbRes, i18n("If this option is selected, KDE will try"
       " to force your preferences regarding colors even to non-KDE"
@@ -324,7 +321,6 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
       
     cbIcons = new QCheckBox( i18n("&Show icons on buttons"), styles );
     connect( cbIcons, SIGNAL( clicked() ), SLOT( slotUseIcons() )  );
-    vlay->addWidget( cbIcons, 10 );
     
     QWhatsThis::add( cbIcons, i18n("If this option is selected, KDE will try"
       " to show icons on most of the buttons.") );
@@ -333,7 +329,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
 
     topLayout->addWidget(tbStyle, 10);
 
-    vlay = new QVBoxLayout( tbStyle, 10 );
+    QVBoxLayout *vlay = new QVBoxLayout( tbStyle, 10 );
     vlay->addSpacing( tbStyle->fontMetrics().lineSpacing() );
 
     QGridLayout *grid = new QGridLayout(4, 2);
