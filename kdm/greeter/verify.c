@@ -452,16 +452,9 @@ Verify (const char *name, const char *password)
 	{
 	    if(!d->allowNullPasswd || user_pass[0]) {
 		Debug ("password verify failed\n");
-# ifdef USESHADOW
-		bzero(user_pass, strlen(user_pass));
-# endif
 		return V_FAIL;
 	    } /* else: null passwd okay */
 	}
-
-# ifdef USESHADOW
-    bzero(user_pass, strlen(user_pass));
-# endif
 
 #endif /* USE_PAM && AIXV3 */
 
