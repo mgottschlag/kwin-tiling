@@ -158,8 +158,8 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect( tab1->cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
 
     // Only allow setting reversing scroll polarity if we have scroll buttons
-    unsigned char map[5];
-    if ( XGetPointerMapping(kapp->getDisplay(), map, 5) == 5 )
+    unsigned char map[20];
+    if ( XGetPointerMapping(kapp->getDisplay(), map, 20) >= 5 )
     {
       tab1->cbScrollPolarity->setEnabled( true );
       tab1->cbScrollPolarity->show();
@@ -613,20 +613,19 @@ void MouseSettings::load(KConfig *config)
 
   // get settings from X server
   int h = RIGHT_HANDED;
-  bool revScroll = false;
-  unsigned char map[5];
-  num_buttons = XGetPointerMapping(kapp->getDisplay(), map, 5);
+  unsigned char map[20];
+  num_buttons = XGetPointerMapping(kapp->getDisplay(), map, 20);
 
   handedEnabled = true;
 
   // ## keep this in sync with KGlobalSettings::mouseSettings
-  switch (num_buttons)
-    {
-    case 1:
+  if( num_buttons == 1 )
+  {
       /* disable button remapping */
       handedEnabled = false;
-      break;
-    case 2:
+  }
+  else if( num_buttons == 2 )
+  {
       if ( (int)map[0] == 1 && (int)map[1] == 2 )
         h = RIGHT_HANDED;
       else if ( (int)map[0] == 2 && (int)map[1] == 1 )
@@ -634,9 +633,9 @@ void MouseSettings::load(KConfig *config)
       else
         /* custom button setup: disable button remapping */
         handedEnabled = false;
-      break;
-    case 3:
-    case 5:
+  }
+  else
+  {
       middle_button = (int)map[1];
       if ( (int)map[0] == 1 && (int)map[2] == 3 )
     h = RIGHT_HANDED;
@@ -647,15 +646,7 @@ void MouseSettings::load(KConfig *config)
       /* custom button setup: disable button remapping */
       handedEnabled = false;
     }
-      break;
-    default:
-      /* custom setup with > 3 buttons: disable button remapping */
-      handedEnabled = false;
-      break;
-    }
-  if ( handedEnabled && num_buttons == 5 && ( int )map[3] == 5 && ( int )map[4] == 4 )
-    revScroll = true;
-
+  }
 
   config->setGroup("Mouse");
   double a = config->readDoubleNumEntry("Acceleration",-1);
@@ -678,7 +669,7 @@ void MouseSettings::load(KConfig *config)
   else if (key == NULL)
     handed = h;
   reverseScrollPolarity = config->readBoolEntry( "ReverseScrollPolarity", false );
-  m_handedNeedsApply = ( (handed != h) || (reverseScrollPolarity != revScroll) );
+  m_handedNeedsApply = false;
 
   // SC/DC/AutoSelect/ChangeCursor
   config->setGroup("KDE");
@@ -698,60 +689,57 @@ void MouseSettings::apply()
   XChangePointerControl( kapp->getDisplay(),
                          true, true, int(qRound(accelRate*10)), 10, thresholdMove);
 
-  unsigned char map[5];
-  int remap=1;
+  unsigned char map[20];
+  num_buttons = XGetPointerMapping(kapp->getDisplay(), map, 20);
+  int remap=(num_buttons>=1);
   if (handedEnabled && m_handedNeedsApply) {
-      switch (num_buttons) {
-      case 1:
+      if( num_buttons == 1 )
+      {
           map[0] = (unsigned char) 1;
-          break;
-      case 2:
-          if (handed == RIGHT_HANDED) {
+      }
+      else if( num_buttons == 2 )
+      {
+          if (handed == RIGHT_HANDED)
+          {
               map[0] = (unsigned char) 1;
               map[1] = (unsigned char) 3;
           }
-          else {
+          else
+          {
               map[0] = (unsigned char) 3;
               map[1] = (unsigned char) 1;
           }
-          break;
-      case 3:
-          if (handed == RIGHT_HANDED) {
+      }
+      else // 3 buttons and more
+      {
+          if (handed == RIGHT_HANDED)
+          {
               map[0] = (unsigned char) 1;
               map[1] = (unsigned char) middle_button;
               map[2] = (unsigned char) 3;
           }
-          else {
+          else
+          {
               map[0] = (unsigned char) 3;
               map[1] = (unsigned char) middle_button;
               map[2] = (unsigned char) 1;
           }
-          break;
-      case 5:
-          // Intellimouse case, where buttons 1-3 are left, middle, and
-          // right, and 4-5 are up/down depending on scroll polarity
-          if (handed == RIGHT_HANDED) {
-              map[0] = (unsigned char) 1;
-              map[1] = (unsigned char) 2;
-              map[2] = (unsigned char) 3;
-              map[3] = reverseScrollPolarity ? (unsigned char) 5 : (unsigned char) 4;
-              map[4] = reverseScrollPolarity ? (unsigned char) 4 : (unsigned char) 5;
+          if( num_buttons >= 5 )
+          {
+          // Apps seem to expect logical buttons 4,5 are the vertical wheel.
+          // With mice with more than 3 buttons (not including wheel) the physical
+          // buttons mapped to logical 4,5 may not be physical 4,5 , so keep
+          // this mapping, only possibly reversing them.
+              int pos;
+              for( pos = 0; pos < num_buttons; ++pos )
+                  if( map[pos] == 4 || map[pos] == 5 )
+                      break;
+              if( pos < num_buttons - 1 )
+              {
+                  map[pos] = reverseScrollPolarity ? (unsigned char) 5 : (unsigned char) 4;
+                  map[pos+1] = reverseScrollPolarity ? (unsigned char) 4 : (unsigned char) 5;
+              }
           }
-          else {
-              map[0] = (unsigned char) 3;
-              map[1] = (unsigned char) 2;
-              map[2] = (unsigned char) 1;
-              map[3] = reverseScrollPolarity ? (unsigned char) 5 : (unsigned char) 4;
-              map[4] = reverseScrollPolarity ? (unsigned char) 4 : (unsigned char) 5;
-          }
-          break;
-      default: {
-              //catch-all for mice with four or more than five buttons
-              //Without this, XSetPointerMapping is called with a undefined value
-              //for map
-              remap=0;  //don't remap
-          }
-          break;
       }
       int retval;
       if (remap)
