@@ -22,6 +22,7 @@
 
 #include <kdebug.h>
 #include <kglobal.h>
+#include <klocale.h>
 #include <kstandarddirs.h>
 
 #include "menufile.h"
@@ -96,6 +97,7 @@ bool MenuFile::save()
    if (!file.open( IO_WriteOnly ))
    {
       kdWarning() << "Could not write " << m_fileName << endl;
+      m_error = i18n("Could not write to %1").arg(m_fileName);
       return false;
    }
    QTextStream stream( &file );
@@ -104,10 +106,17 @@ bool MenuFile::save()
    stream << m_doc.toString();
 
    file.close();
+   
+   if (file.status() != IO_Ok)
+   {
+      kdWarning() << "Could not close " << m_fileName << endl;
+      m_error = i18n("Could not write to %1").arg(m_fileName);
+      return false;
+   }
 
    m_bDirty = false;
    
-   return false;
+   return true;
 }
 
 QDomElement MenuFile::findMenu(QDomElement elem, const QString &menuName, bool create)
@@ -510,7 +519,7 @@ void MenuFile::popAction(ActionAtom *atom)
    delete atom;
 }
 
-void MenuFile::performAllActions()
+bool MenuFile::performAllActions()
 {
    for(ActionAtom *atom; (atom = m_actionList.getFirst()); m_actionList.removeFirst())
    {
@@ -530,11 +539,13 @@ void MenuFile::performAllActions()
 
    m_removedEntries.clear();
    
-   if (m_bDirty)
-      save();
+   if (!m_bDirty)
+      return true;
+   
+   return save();
 }
 
 bool MenuFile::dirty()
 {
-   return (m_actionList.count() != 0);
+   return (m_actionList.count() != 0) || m_bDirty;
 }

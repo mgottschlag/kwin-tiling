@@ -1364,17 +1364,26 @@ void TreeView::saveLayout()
     }
 }
 
-void TreeView::save()
+bool TreeView::save()
 {
     saveLayout();
     m_rootFolder->save(m_menuFile);
 
-    m_menuFile->performAllActions();
+    bool success = m_menuFile->performAllActions();
 
     m_newMenuIds.clear();
     m_newDirectoryList.clear();
-
-    KService::rebuildKSycoca(this);
+    
+    if (success)
+    {
+       KService::rebuildKSycoca(this);
+    }
+    else
+    {
+       KMessageBox::sorry(this, "<qt>"+i18n("Menu changes could not be saved because of the following problem:")+"<br><br>"+
+                                m_menuFile->error()+"</qt>");
+    }
+    return success;
 }
 
 void TreeView::setLayoutDirty(TreeItem *parentItem)

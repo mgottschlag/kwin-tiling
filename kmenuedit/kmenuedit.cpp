@@ -179,8 +179,7 @@ bool KMenuEdit::queryClose()
     switch(result)
     {
       case KMessageBox::Yes:
-         m_tree->save();
-         return true;
+         return m_tree->save();
 
       case KMessageBox::No:
          return true;

@@ -94,7 +94,7 @@ public:
 
     void readMenuFolderInfo(MenuFolderInfo *folderInfo=0, KServiceGroup::Ptr folder=0, const QString &prefix=QString::null);
     void setViewMode(bool showHidden);
-    void save();
+    bool save();
 
     bool dirty();
     

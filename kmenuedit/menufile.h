@@ -31,6 +31,7 @@ public:
    bool load();
    bool save();
    void create();
+   QString error() { return m_error; } // Returns the last error message
 
    enum ActionType {
        ADD_ENTRY = 0,
@@ -64,9 +65,11 @@ public:
    void performAction(const ActionAtom *);
    
    /**
-    * Perform all actions currently on the stack and remove them from the stack
+    * Perform all actions currently on the stack, remove them from the stack and
+    * save result
+    * @return whether save was successful
     */
-   void performAllActions();
+   bool performAllActions();
    
    /**
     * Returns whether the stack contains any actions
@@ -97,6 +100,7 @@ protected:
    QDomElement findMenu(QDomElement elem, const QString &menuName, bool create);
    
 private:
+   QString m_error;
    QString m_fileName;
 
    QDomDocument m_doc;
