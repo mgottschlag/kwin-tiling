@@ -17,7 +17,7 @@ libkcmbgnd_la_SOURCES = bgdialog.cpp bgdialog_ui.ui bgwallpaper_ui.ui \
 
 
 messages:
-        $(XGETTEXT) -kni18n *.cc *.cpp -o $(podir)/kcmbackground.pot
+	$(XGETTEXT) -kni18n *.cc *.cpp -o $(podir)/kcmbackground.pot
 
 desktop_DATA =  background.desktop
 desktopdir = $(kde_appsdir)/Settings/LookNFeel
