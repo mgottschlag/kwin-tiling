@@ -86,6 +86,7 @@ protected slots:
 
 private slots:
     void newClipData();
+    void pollClipboard();
     void clickedMenu(int);
     void slotConfigure();
     void slotClearClipboard();

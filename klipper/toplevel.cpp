@@ -59,7 +59,6 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 {
     setBackgroundMode( X11ParentRelative );
     clip = kapp->clipboard();
-    updateXTime();
     m_selectedItem = -1;
 
     QSempty = i18n("<empty clipboard>");
@@ -129,7 +128,7 @@ QString KlipperWidget::getClipboardContents()
     return clipboardContents();
 }
 
-// DCOP
+// DCOP - don't call from Klipper itself
 void KlipperWidget::setClipboardContents(QString s)
 {
     updateXTime();
@@ -137,18 +136,18 @@ void KlipperWidget::setClipboardContents(QString s)
     newClipData();
 }
 
-// DCOP
+// DCOP - don't call from Klipper itself
 void KlipperWidget::clearClipboardContents()
 {
     updateXTime();
     slotClearClipboard();
 }
 
-// DCOP
+// DCOP - don't call from Klipper itself
 void KlipperWidget::clearClipboardHistory()
 {
-  //disable until Qt 3.2 hang bug is fixed
-  //clearClipboardContents();
+  updateXTime();
+  slotClearClipboard();
   trimClipHistory(0);
   saveSession();
 }
@@ -203,9 +202,8 @@ void KlipperWidget::clickedMenu(int id)
 	    m_checkTimer->stop();
 
         trimClipHistory(0);
-        //disable until Qt 3.2 hang bug is fixed
-        //slotClearClipboard();
-        //setEmptyClipboard();
+        slotClearClipboard();
+        setEmptyClipboard();
 
 	    m_checkTimer->start(1000);
 	}
@@ -627,9 +625,15 @@ void KlipperWidget::slotMoveSelectedToTop()
 }
 
 // clipboard polling for legacy apps
-void KlipperWidget::newClipData()
+// Call only from the QTimer timeout() signal
+void KlipperWidget::pollClipboard()
 {
     updateXTime();
+    newClipData();
+}
+
+void KlipperWidget::newClipData()
+{
     bool selectionMode;
     QString clipContents = clipboardContents( &selectionMode );
 //     qDebug("**** newClipData polled: %s", clipContents.latin1());
@@ -638,7 +642,6 @@ void KlipperWidget::newClipData()
 
 void KlipperWidget::clipboardSignalArrived( bool selectionMode )
 {
-    updateXTime();
 //     qDebug("*** clipboardSignalArrived: %i", selectionMode);
 
     QString text = clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
@@ -803,6 +806,9 @@ extern Time qt_x_time;
 // without any user action triggering it, so qt_x_time may be old,
 // which could possibly lead to QClipboard reporting empty clipboard.
 // Therefore, qt_x_time needs to be updated to current X server timestamp.
+
+// Call only from functions that are called from outside (DCOP),
+// or from QTimer timeout !
 void KlipperWidget::updateXTime()
 {
     static QWidget* w = 0;
