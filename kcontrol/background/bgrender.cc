@@ -84,6 +84,7 @@ KBackgroundRenderer::~KBackgroundRenderer()
 {
     cleanup();
     delete m_Tempfile; m_Tempfile = 0;
+    delete m_pTimer;
     if( m_bDeleteConfig )
         delete m_pConfig;
 }
@@ -176,7 +177,7 @@ int KBackgroundRenderer::doBackground(bool quit)
 
     int retval = Done;
     QString file;
-    
+
     static unsigned int tileWidth = 0;
     static unsigned int tileHeight = 0;
     if( tileWidth == 0 )
@@ -219,7 +220,7 @@ int KBackgroundRenderer::doBackground(bool quit)
         if (m_State & BackgroundStarted)
             break;
         m_State |= BackgroundStarted;
-        createTempFile();        
+        createTempFile();
 
 	file = buildCommand();
 	if (file.isEmpty())
@@ -353,7 +354,7 @@ wp_out:
 	case CenterTiled:
 	    d.setCoords(-ww + ((w - ww) / 2) % ww, -wh + ((h - wh) / 2) % wh, w, h);
 	    break;
-	case Scaled: 
+	case Scaled:
 	    wp = wp.smoothScale(ww = w, wh = h);
 	    d.setRect(0, 0, w, h);
 	    break;
@@ -396,7 +397,7 @@ wp_out:
     }
 
     wallpaperBlend( d, wp, ww, wh );
-    
+
     if (retval == Done)
         m_State |= WallpaperDone;
 
