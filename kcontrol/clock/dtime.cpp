@@ -92,7 +92,6 @@ Dtime::Dtime(QWidget * parent, const char *name)
   v3->addMultiCell(spacer1, 0, 1, 1, 1);
 
   hour = new HMSTimeWidget( timeBox );
-  connect( hour, SIGNAL(valueChanged(int)), SLOT(set_time()) );
   hour->setWrapping(true);
   hour->setMaxValue(23);
   hour->setValidator(new KStrictIntValidator(0, 23, hour));
@@ -104,7 +103,6 @@ Dtime::Dtime(QWidget * parent, const char *name)
   v3->addMultiCellWidget(dots1, 0, 1, 3, 3 );
 
   minute = new HMSTimeWidget( timeBox );
-  connect( minute, SIGNAL(valueChanged(int)), SLOT(set_time()) );
   minute->setWrapping(true);
   minute->setMinValue(0);
   minute->setMaxValue(59);
@@ -117,7 +115,6 @@ Dtime::Dtime(QWidget * parent, const char *name)
   v3->addMultiCellWidget(dots2, 0, 1, 5, 5 );
 
   second = new HMSTimeWidget( timeBox );
-  connect( second, SIGNAL(valueChanged(int)), SLOT(set_time()) );
   second->setWrapping(true);
   second->setMinValue(0);
   second->setMaxValue(59);
@@ -146,6 +143,9 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // End Dialog
   // *************************************************************
 
+  connect( hour, SIGNAL(valueChanged(int)), SLOT(set_time()) );
+  connect( minute, SIGNAL(valueChanged(int)), SLOT(set_time()) );
+  connect( second, SIGNAL(valueChanged(int)), SLOT(set_time()) );
   connect( cal, SIGNAL(dateChanged(QDate)), SLOT(changeDate(QDate)));
 
   connect( &internalTimer, SIGNAL(timeout()), SLOT(timeout()) );
