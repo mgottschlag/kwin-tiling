@@ -92,10 +92,8 @@ struct ClipCommand
  * expression, an (optional) description and a list of ClipCommands
  * (a command to be executed, a description and an enabled/disabled flag).
  */
-class ClipAction : public QObject
+class ClipAction
 {
-  Q_OBJECT
-
 public:
   ClipAction( const QString& regExp, const QString& description );
   ClipAction( const ClipAction& );

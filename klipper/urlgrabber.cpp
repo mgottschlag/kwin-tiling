@@ -322,7 +322,7 @@ ClipAction::ClipAction( const QString& regExp, const QString& description )
 }
 
 
-ClipAction::ClipAction( const ClipAction& action ) : QObject()
+ClipAction::ClipAction( const ClipAction& action )
 {
     myCommands.setAutoDelete( true );
     myRegExp      = action.myRegExp;

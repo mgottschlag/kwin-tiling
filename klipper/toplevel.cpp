@@ -9,11 +9,7 @@
 
  ------------------------------------------------------------- */
 
-// REMOVE when fixed in Qt.
-#define private public
 #include <qclipboard.h>
-#undef private
-
 #include <qcursor.h>
 #include <qintdict.h>
 #include <qmenudata.h>
@@ -77,8 +73,7 @@ static const char*mouse[]={
 TopLevel::TopLevel()
   : KMainWindow(0)
 {
-    clip = new QClipboard( this, "hacked Qt QClipboard" );
-    //    clip = kapp->clipboard();
+    clip = kapp->clipboard();
 
     toggleURLGrabAction = new KToggleAction( this );
     toggleURLGrabAction->setEnabled( true );
@@ -135,7 +130,6 @@ TopLevel::~TopLevel()
     delete pQIDclipData;
     delete pQPpic;
     delete myURLGrabber;
-    delete clip;
 }
 
 void TopLevel::mousePressEvent(QMouseEvent *e)
