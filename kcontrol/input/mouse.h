@@ -49,6 +49,7 @@
 
 class QCheckBox;
 class QSlider;
+class QTabWidget;
 
 class MouseConfig : public KCModule
 {
@@ -97,6 +98,9 @@ private:
   QSlider *slAutoSelect;
   QCheckBox *cbCursor;
   QCheckBox *cbLargeCursor;
+    
+    QTabWidget *tabwidget;
+    QWidget *tab1, *tab2;
 };
 
 #endif

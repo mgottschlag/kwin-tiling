@@ -15,6 +15,9 @@
  * Large cursor support
  * Copyright (c) 2000 Rik Hemsley <rik@kde.org>
  *
+ * General/Advanced tabs
+ * Copyright (c) 2000 Brad Hughes <bhughes@trolltech.com>
+ *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -50,6 +53,7 @@
 #undef Above
 #include <qslider.h>
 #include <qwhatsthis.h>
+#include <qtabwidget.h>
 
 #include <klocale.h>
 #include <kdialog.h>
@@ -71,193 +75,213 @@
 MouseConfig::MouseConfig (QWidget * parent, const char *name)
   : KCModule(parent, name)
 {
-  QString wtstr;
-  QBoxLayout* lay = new QVBoxLayout(this, KDialog::marginHint(),
-				    KDialog::spacingHint());
+    QString wtstr;
 
-  accel = new KIntNumInput(20, this);
-  accel->setLabel(i18n("Pointer Acceleration"));
-  accel->setRange(1,20,2);
-  accel->setSuffix("x");
-  accel->setSteps(1,1);
-  lay->addWidget(accel);
-  connect(accel, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-
-  wtstr = i18n("This option allows you to change the relationship"
-     " between the distance that the mouse pointer moves on the"
-     " screen and the relative movement of the physical device"
-     " itself (which may be a mouse, trackball, or some other"
-     " pointing device.)<p>"
-     " A high value for the acceleration will lead to large"
-     " movements of the mouse pointer on the screen even when"
-     " you only make a small movement with the physical device."
-     " Selecting very high values may result in the mouse pointer"
-     " flying across the screen, making it hard to control!<p>"
-     " You can set the acceleration value by dragging the slider"
-     " button or by clicking the up/down arrows on the spin-button"
-     " to the left of the slider.");
-  QWhatsThis::add( accel, wtstr );
-
-  thresh = new KIntNumInput(accel, 20, this);
-  thresh->setLabel(i18n("Pointer Threshold"));
-  thresh->setRange(1,20,2);
-  thresh->setSuffix(i18n("pixels"));
-  thresh->setSteps(1,1);
-  lay->addWidget(thresh);
-  connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-
-  wtstr = i18n("The threshold is the smallest distance that the"
-     " mouse pointer must move on the screen before acceleration"
-     " has any effect. If the movement is smaller than the threshold,"
-     " the mouse pointer moves as if the acceleration was set to 1X.<p>"
-     " Thus, when you make small movements with the physical device,"
-     " there is no acceleration at all, giving you a greater degree"
-     " of control over the mouse pointer. With larger movements of"
-     " the physical device, you can move the mouse pointer"
-     " rapidly to different areas on the screen.<p>"
-     " You can set the threshold value by dragging the slider button"
-     " or by clicking the up/down arrows on the spin-button to the"
-     " left of the slider.");
-  QWhatsThis::add( thresh, wtstr );
-
-  // It would be nice if the user had a test field.
-  // Selecting such values in milliseconds is not intuitive
-  doubleClickInterval = new KIntNumInput(thresh, 2000, this);
-  doubleClickInterval->setLabel(i18n("Double Click Interval"));
-  doubleClickInterval->setRange(0, 2000, 100);
-  doubleClickInterval->setSuffix(i18n("ms"));
-  doubleClickInterval->setSteps(100, 100);
-  lay->addWidget(doubleClickInterval);
-  connect(doubleClickInterval, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-
-  wtstr = i18n("The double click interval is the maximal time"
-               " (in milliseconds) between two mouseclicks which"
-               " turns them into a double click. If the second"
-               " click happens later than this time interval after"
-               " the first click, they are recognized as two"
-               " separate clicks.");
-  QWhatsThis::add( doubleClickInterval, wtstr );
-
-  dragStartTime = new KIntNumInput(doubleClickInterval, 2000, this);
-  dragStartTime->setLabel(i18n("Drag Start Time"));
-  dragStartTime->setRange(0, 2000, 100);
-  dragStartTime->setSuffix(i18n("ms"));
-  dragStartTime->setSteps(100, 100);
-  lay->addSpacing(15);
-  lay->addWidget(dragStartTime);
-  connect(dragStartTime, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-
-  wtstr = i18n("If you click with the mouse (e. g. in a multi line"
-               " editor) and begin to move the mouse within the"
-               " drag start time, a drag operation will be initiated.");
-  QWhatsThis::add( dragStartTime, wtstr );
+    QBoxLayout *top = new QVBoxLayout(this, KDialog::marginHint(),
+				      KDialog::spacingHint());
   
-  dragStartDist = new KIntNumInput(dragStartTime, 20, this);
-  dragStartDist->setLabel(i18n("Drag Start Distance"));
-  dragStartDist->setRange(1, 20, 2);
-  dragStartDist->setSuffix(i18n("pixels"));
-  dragStartDist->setSteps(1,1);
-  lay->addWidget(dragStartDist);
-  connect(dragStartDist, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+    tabwidget = new QTabWidget(this);
+    top->addWidget(tabwidget);
 
-  wtstr = i18n("If you click with the mouse and begin to move the"
-               " mouse at least the drag start distance, a drag"
-               " operation will be initiated.");
-  QWhatsThis::add( dragStartDist, wtstr);
-
-  handedBox = new QHButtonGroup(i18n("Button Mapping"), this, "handed");
-  rightHanded = new QRadioButton(i18n("Right handed"), handedBox, "R");
-  leftHanded = new QRadioButton(i18n("Left handed"), handedBox, "L");
-  connect(handedBox, SIGNAL(clicked(int)), this, SLOT(changed()));
-  lay->addSpacing(15);
-  lay->addWidget(handedBox);
-
-  handedEnabled = true;
-
-  wtstr = i18n("If you are left-handed, you may prefer to swap the"
-     " functions of the left and right buttons on your pointing device"
-     " by choosing the 'left-handed' option. If your pointing device"
-     " has more than two buttons, only those that function as the"
-     " left and right buttons are affected. For example, if you have"
-     " a three-button mouse, the middle button is unaffected.");
-  QWhatsThis::add( handedBox, wtstr );
-
-  // SC/DC/AutoSelect/ChangeCursor
-
-  singleClick = new QCheckBox(i18n("Single &click activates/opens"), this);
-  connect(singleClick, SIGNAL(clicked()), SLOT(changed()));
-  lay->addSpacing(15);
-  lay->addWidget(singleClick);
-
-  wtstr = i18n("Checking this option allows you to select and activate"
-     " icons with a single click of the left button on your pointing"
-     " device. This behavior is consistent with what you would expect"
-     " when you click links in most web browsers. If you would prefer"
-     " to select with a single click, and activate with a double click,"
-     " uncheck this option.");
-  QWhatsThis::add( singleClick, wtstr );
-
-  cbAutoSelect = new QCheckBox(i18n("&Automatically select icons"), this);
-  lay->addWidget(cbAutoSelect);
-  connect(cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
-
-  wtstr = i18n("If you check this option, pausing the mouse pointer"
-     " over an icon on the screen will automatically select that icon."
-     " This may be useful when single clicks activate icons, and you"
-     " want only to select the icon without activating it.");
-  QWhatsThis::add( cbAutoSelect, wtstr );
-
-  //----------
-  QGridLayout* grid = new QGridLayout(lay, 2 /*rows*/, 3 /*cols*/ );
-
-  int row = 0;
-  slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, this);
-  slAutoSelect->setSteps( 125, 125 );
-  slAutoSelect->setTickmarks( QSlider::Below );
-  slAutoSelect->setTickInterval( 250 );
-  slAutoSelect->setTracking( true );
-  grid->addMultiCellWidget(slAutoSelect,row,row,1,2);
-  connect(slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-
-  wtstr = i18n("If you have checked the option to automatically select"
-     " icons, this slider allows you to select how long the mouse pointer"
-     " must be paused over the icon before it is selected.");
-  QWhatsThis::add( slAutoSelect, wtstr );
+    tab1 = new QWidget(0, "General Tab");
+    tabwidget->addTab(tab1, "&General");
   
-  lDelay = new QLabel(slAutoSelect, i18n("De&lay:"), this);
-  lDelay->adjustSize();
-  grid->addWidget(lDelay, row, 0);
+    QBoxLayout *lay = new QVBoxLayout(tab1, KDialog::marginHint(),
+				      KDialog::spacingHint());
 
-  row++;
-  QLabel * label = new QLabel(i18n("Small"), this);
-  grid->addWidget(label,row,1);
+    handedBox = new QHButtonGroup(i18n("Button Mapping"), tab1, "handed");
+    rightHanded = new QRadioButton(i18n("Right handed"), handedBox, "R");
+    leftHanded = new QRadioButton(i18n("Left handed"), handedBox, "L");
+    connect(handedBox, SIGNAL(clicked(int)), this, SLOT(changed()));
+    lay->addSpacing(15);
+    lay->addWidget(handedBox);
 
-  label = new QLabel(i18n("Large"), this);
-  grid->addWidget(label,row,2, Qt::AlignRight);
+    handedEnabled = true;
 
-  //lay->addLayout( grid );
-  //----------
+    wtstr = i18n("If you are left-handed, you may prefer to swap the"
+		 " functions of the left and right buttons on your pointing device"
+		 " by choosing the 'left-handed' option. If your pointing device"
+		 " has more than two buttons, only those that function as the"
+		 " left and right buttons are affected. For example, if you have"
+		 " a three-button mouse, the middle button is unaffected.");
+    QWhatsThis::add( handedBox, wtstr );
 
-  cbCursor = new QCheckBox(i18n("&Pointer shape changes when over an icon"), this);
-  lay->addWidget(cbCursor,Qt::AlignLeft);
-  connect(cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
+    // SC/DC/AutoSelect/ChangeCursor
+
+    singleClick = new QCheckBox(i18n("Single &click activates/opens"), tab1);
+    connect(singleClick, SIGNAL(clicked()), SLOT(changed()));
+    lay->addSpacing(15);
+    lay->addWidget(singleClick);
+
+    wtstr = i18n("Checking this option allows you to select and activate"
+		 " icons with a single click of the left button on your pointing"
+		 " device. This behavior is consistent with what you would expect"
+		 " when you click links in most web browsers. If you would prefer"
+		 " to select with a single click, and activate with a double click,"
+		 " uncheck this option.");
+    QWhatsThis::add( singleClick, wtstr );
+
+    cbAutoSelect = new QCheckBox(i18n("&Automatically select icons"), tab1);
+    lay->addWidget(cbAutoSelect);
+    connect(cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
+
+    wtstr = i18n("If you check this option, pausing the mouse pointer"
+		 " over an icon on the screen will automatically select that icon."
+		 " This may be useful when single clicks activate icons, and you"
+		 " want only to select the icon without activating it.");
+    QWhatsThis::add( cbAutoSelect, wtstr );
+
+    //----------
+    QGridLayout* grid = new QGridLayout(lay, 2 /*rows*/, 3 /*cols*/ );
+
+    int row = 0;
+    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, tab1);
+    slAutoSelect->setSteps( 125, 125 );
+    slAutoSelect->setTickmarks( QSlider::Below );
+    slAutoSelect->setTickInterval( 250 );
+    slAutoSelect->setTracking( true );
+    grid->addMultiCellWidget(slAutoSelect,row,row,1,2);
+    connect(slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+    wtstr = i18n("If you have checked the option to automatically select"
+		 " icons, this slider allows you to select how long the mouse pointer"
+		 " must be paused over the icon before it is selected.");
+    QWhatsThis::add( slAutoSelect, wtstr );
+
+    lDelay = new QLabel(slAutoSelect, i18n("De&lay:"), tab1);
+    lDelay->adjustSize();
+    grid->addWidget(lDelay, row, 0);
+
+    row++;
+    QLabel * label = new QLabel(i18n("Small"), tab1);
+    grid->addWidget(label,row,1);
+
+    label = new QLabel(i18n("Large"), tab1);
+    grid->addWidget(label,row,2, Qt::AlignRight);
+
+    //lay->addLayout( grid );
+    //----------
+
+    cbCursor = new QCheckBox(i18n("&Pointer shape changes when over an icon"), tab1);
+    lay->addWidget(cbCursor,Qt::AlignLeft);
+    connect(cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
+
+    connect( singleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+    connect( cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+
+    wtstr = i18n("When this option is checked, the shape of the mouse pointer"
+		 " changes whenever it is over an icon.");
+    QWhatsThis::add( cbCursor, wtstr );
+
+    cbLargeCursor = new QCheckBox(i18n("&Large cursor"), tab1);
+    lay->addWidget(cbLargeCursor,Qt::AlignLeft);
+    connect(cbLargeCursor, SIGNAL(clicked()), this, SLOT(changed()));
+
+    wtstr = i18n("Use high-visibility large cursor");
+    QWhatsThis::add( cbLargeCursor, wtstr );
+
+    lay->addStretch(1);
   
-  connect( singleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
-  connect( cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+    // Advanced tab
+    tab2 = new QWidget(0, "Advanced Tab");
+    tabwidget->addTab(tab2, "&Advanced");
+    
+    lay = new QVBoxLayout(tab2, KDialog::marginHint(),
+			  KDialog::spacingHint());
 
-  wtstr = i18n("When this option is checked, the shape of the mouse pointer"
-     " changes whenever it is over an icon.");
-  QWhatsThis::add( cbCursor, wtstr );
-  
-  cbLargeCursor = new QCheckBox(i18n("&Large cursor"), this);
-  lay->addWidget(cbLargeCursor,Qt::AlignLeft);
-  connect(cbLargeCursor, SIGNAL(clicked()), this, SLOT(changed()));
-  
-  wtstr = i18n("Use high-visibility large cursor");
-  QWhatsThis::add( cbLargeCursor, wtstr );
+    accel = new KIntNumInput(20, tab2);
+    accel->setLabel(i18n("Pointer Acceleration"));
+    accel->setRange(1,20,2);
+    accel->setSuffix("x");
+    accel->setSteps(1,1);
+    lay->addWidget(accel);
+    connect(accel, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
-  lay->addStretch(10);
-  load();
+    wtstr = i18n("This option allows you to change the relationship"
+		 " between the distance that the mouse pointer moves on the"
+		 " screen and the relative movement of the physical device"
+		 " itself (which may be a mouse, trackball, or some other"
+		 " pointing device.)<p>"
+		 " A high value for the acceleration will lead to large"
+		 " movements of the mouse pointer on the screen even when"
+		 " you only make a small movement with the physical device."
+		 " Selecting very high values may result in the mouse pointer"
+		 " flying across the screen, making it hard to control!<p>"
+		 " You can set the acceleration value by dragging the slider"
+		 " button or by clicking the up/down arrows on the spin-button"
+		 " to the left of the slider.");
+    QWhatsThis::add( accel, wtstr );
+
+    thresh = new KIntNumInput(accel, 20, tab2);
+    thresh->setLabel(i18n("Pointer Threshold"));
+    thresh->setRange(1,20,2);
+    thresh->setSuffix(i18n("pixels"));
+    thresh->setSteps(1,1);
+    lay->addWidget(thresh);
+    connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+    wtstr = i18n("The threshold is the smallest distance that the"
+		 " mouse pointer must move on the screen before acceleration"
+		 " has any effect. If the movement is smaller than the threshold,"
+		 " the mouse pointer moves as if the acceleration was set to 1X.<p>"
+		 " Thus, when you make small movements with the physical device,"
+		 " there is no acceleration at all, giving you a greater degree"
+		 " of control over the mouse pointer. With larger movements of"
+		 " the physical device, you can move the mouse pointer"
+		 " rapidly to different areas on the screen.<p>"
+		 " You can set the threshold value by dragging the slider button"
+		 " or by clicking the up/down arrows on the spin-button to the"
+		 " left of the slider.");
+    QWhatsThis::add( thresh, wtstr );
+
+    // It would be nice if the user had a test field.
+    // Selecting such values in milliseconds is not intuitive
+    doubleClickInterval = new KIntNumInput(thresh, 2000, tab2);
+    doubleClickInterval->setLabel(i18n("Double Click Interval"));
+    doubleClickInterval->setRange(0, 2000, 100);
+    doubleClickInterval->setSuffix(i18n("ms"));
+    doubleClickInterval->setSteps(100, 100);
+    lay->addWidget(doubleClickInterval);
+    connect(doubleClickInterval, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+    wtstr = i18n("The double click interval is the maximal time"
+		 " (in milliseconds) between two mouseclicks which"
+		 " turns them into a double click. If the second"
+		 " click happens later than this time interval after"
+		 " the first click, they are recognized as two"
+		 " separate clicks.");
+    QWhatsThis::add( doubleClickInterval, wtstr );
+
+    dragStartTime = new KIntNumInput(doubleClickInterval, 2000, tab2);
+    dragStartTime->setLabel(i18n("Drag Start Time"));
+    dragStartTime->setRange(0, 2000, 100);
+    dragStartTime->setSuffix(i18n("ms"));
+    dragStartTime->setSteps(100, 100);
+    lay->addSpacing(15);
+    lay->addWidget(dragStartTime);
+    connect(dragStartTime, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+    wtstr = i18n("If you click with the mouse (e. g. in a multi line"
+		 " editor) and begin to move the mouse within the"
+		 " drag start time, a drag operation will be initiated.");
+    QWhatsThis::add( dragStartTime, wtstr );
+
+    dragStartDist = new KIntNumInput(dragStartTime, 20, tab2);
+    dragStartDist->setLabel(i18n("Drag Start Distance"));
+    dragStartDist->setRange(1, 20, 2);
+    dragStartDist->setSuffix(i18n("pixels"));
+    dragStartDist->setSteps(1,1);
+    lay->addWidget(dragStartDist);
+    connect(dragStartDist, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+    wtstr = i18n("If you click with the mouse and begin to move the"
+		 " mouse at least the drag start distance, a drag"
+		 " operation will be initiated.");
+    QWhatsThis::add( dragStartDist, wtstr);
+    
+    lay->addStretch(1);
+
+    load();
 }
 
 int MouseConfig::getAccel()
@@ -389,14 +413,14 @@ void MouseConfig::load()
   dragStartTime->setValue(v);
   v = config->readNumEntry("StartDragDist", 4);
   dragStartDist->setValue(v);
-  
+
   bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), KDE_DEFAULT_SINGLECLICK);
   singleClick->setChecked(b);
   int  autoSelect = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
   bool changeCursor = config->readBoolEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
 
   bool largeCursor = config->readBoolEntry(QString::fromLatin1("LargeCursor"), KDE_DEFAULT_LARGE_CURSOR);
-  
+
   cbAutoSelect->setChecked( autoSelect >= 0 );
   if ( autoSelect < 0 ) autoSelect = 0;
   slAutoSelect->setValue( autoSelect );
