@@ -38,10 +38,11 @@ class KColorScheme: public KCModule
 public:
     KColorScheme(QWidget *parent, const char *name);
     ~KColorScheme();
-	
+
     virtual void load();
     virtual void save();
     virtual void defaults();
+    QString quickHelp();
 
 signals:
     void changed(bool);

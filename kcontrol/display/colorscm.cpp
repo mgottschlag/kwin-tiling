@@ -20,6 +20,7 @@
 #include <qcursor.h>
 #include <qstringlist.h>
 #include <qfileinfo.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -53,7 +54,7 @@ extern "C" {
 
 KColorScheme::KColorScheme(QWidget *parent, const char *name)
 	: KCModule(parent, name)
-{	
+{
     m_bChanged = false;
     nSysSchemes = 2;
 
@@ -67,7 +68,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
 
     cs = new WidgetCanvas( this );
     cs->setCursor( KCursor::handCursor() );
-	
+
     // LAYOUT
 
     QGridLayout *topLayout = new QGridLayout( this, 2, 2, 10 );
@@ -75,9 +76,16 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     topLayout->setRowStretch(1,0);
     topLayout->setColStretch(0,1);
     topLayout->setColStretch(1,1);
-	
+
     cs->setFixedHeight(160);
     cs->setMinimumWidth(440);
+
+    QWhatsThis::add( cs, i18n("This graphic gives you a preview of how your changed "
+       "color settings will look, so you don't need to apply them first.<br>Also, here you can click on a desktop element whose "
+       "color setting you want to change (e.g. the text on buttons). You'll notice "
+       "that its name (\"Button text\") will appear below in the \"Widget color\" listbox. "
+       "Then you can change its color by pressing on the color button.<br> "
+       "Alternatively, you can chose the element you want to change in the listbox below.") );
 
     connect( cs, SIGNAL( widgetSelected( int ) ),
 	     SLOT( slotWidgetColor( int ) ) );
@@ -98,6 +106,10 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
     groupLayout->addWidget(sList);
 
+    QWhatsThis::add( sList, i18n("Here you can see a list of complete color schemes, "
+       "predefined as well as schemes you've saved before. Select a color scheme to "
+       "see a preview in the graphic above.") );
+
     QBoxLayout *pushLayout = new QHBoxLayout;
     groupLayout->addLayout( pushLayout );
 
@@ -105,9 +117,14 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     connect(addBt, SIGNAL(clicked()), SLOT(slotAdd()));
     pushLayout->addWidget(addBt, 10);
 
+    QWhatsThis::add( addBt, i18n("Press this button if you want to save your current "
+       "color settings to a new color scheme. You will be prompted for a name.") );
+
     removeBt = new QPushButton(i18n("&Remove"), group);
     removeBt->setEnabled(FALSE);
     connect(removeBt, SIGNAL(clicked()), SLOT(slotRemove()));
+
+    QWhatsThis::add( removeBt, i18n("Press this button to remove the selected color scheme.") );
 
     pushLayout->addWidget( removeBt, 10 );
 
@@ -115,6 +132,10 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     saveBt->setEnabled(FALSE);
     connect(saveBt, SIGNAL(clicked()), SLOT(slotSave()));
     groupLayout->addWidget(saveBt);
+
+    QWhatsThis::add(saveBt, "Press this button to save changes you've made to a custom "
+       "color scheme you've created before. You can not save changes to predefined KDE "
+       "color schemes.");
 
     QBoxLayout *stackLayout = new QVBoxLayout;
     topLayout->addLayout(stackLayout, 1, 1);
@@ -150,13 +171,20 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
     groupLayout->addWidget(wcCombo);
 
+    QWhatsThis::add( wcCombo, i18n("Here you can choose an element of the KDE "
+       "desktop whose color you want to change. Alternatively, you can click on "
+       "an item in the preview.") );
+
     colorButton = new KColorButton( group );
     colorButton->setColor(cs->iaTitle);
     colorPushColor = cs->iaTitle;
     connect( colorButton, SIGNAL( changed(const QColor &)),
 	    SLOT(slotSelectColor(const QColor &)));
-	
+
     groupLayout->addWidget( colorButton );
+
+    QWhatsThis::add( colorButton, i18n("Click here to change the color of the "
+       "selected element.") );
 
     group = new QGroupBox(  i18n("Contrast"), this );
     stackLayout->addWidget(group);
@@ -170,6 +198,10 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     sb->setRange( 0, 10 );
     sb->setFocusPolicy( QWidget::StrongFocus );
     connect(sb, SIGNAL(valueChanged(int)), SLOT(sliderValueChanged(int)));
+
+    QWhatsThis::add(sb, i18n("Use this slider to change the contrast of your "
+       "current color scheme. This does not only affect the selected element, but all "
+       "of your desktop."));
 
     QLabel *label = new QLabel(sb, i18n("&Low"), group);
     groupLayout->addWidget(label);
@@ -280,6 +312,17 @@ void KColorScheme::defaults()
 
     m_bChanged = true;
     emit changed(true);
+}
+
+QString KColorScheme::quickHelp()
+{
+    return i18n("<h1>Colors</h1> Here you can modify the colors of your KDE desktop. "
+       "All KDE applications will obey these settings (and some settings may even be "
+       "obeyed by non-KDE applications, see the \"Style\" tab for details).<p> "
+       "If you want, you can choose between several provided color schemes or save your "
+       "own color schemes. If you've already made up your own color scheme, it's a good idea to "
+       "save it before trying others.<p> Please use \"What's This\" help for more "
+       "details.");
 }
 
 
