@@ -22,11 +22,11 @@
 #include <qdir.h>
 #include <stdio.h>
 
-#include <kwm.h>
 #include <kcontrol.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kwm.h>
 
 #include "panel.h"
 #include "desktops.h"

@@ -25,6 +25,8 @@
 #include <stdlib.h>
 
 #include <kapp.h>
+#include <klocale.h>
+#include <kconfig.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -33,8 +35,7 @@
 #include "mouse.h"
 #include "geom.h"
 #include <qlayout.h>
-#include <klocale.h>
-#include <kconfig.h>
+
 
 
 KMouseConfig::~KMouseConfig ()

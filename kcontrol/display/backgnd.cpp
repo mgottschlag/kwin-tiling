@@ -31,13 +31,13 @@
 
 #include <kfiledialog.h>
 #include <kapp.h>
+#include <kconfig.h>
 #include <kwm.h>
 #include <kiconloader.h>
 #include <kbuttonbox.h>
 #include <kpixmapeffect.h>
 #include <kimgio.h>
 #include <klocale.h>
-#include <kconfig.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 

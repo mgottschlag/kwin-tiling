@@ -21,10 +21,9 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "desktops.h"
-#include "desktops.moc"
 #include <ksimpleconfig.h>
 #include <klocale.h>
+#include "desktops.h"
 
 extern KConfigBase *config;
 
@@ -137,5 +136,6 @@ void KDesktopsConfig::applySettings() {
     saveSettings();
 }
 
+#include "desktops.moc"
 
 

@@ -27,13 +27,11 @@
 #include <qlayout.h>
 #include <qmessagebox.h>
 
-#include "kresourceman.h"
-#include "fonts.h"
-
-#include "general.h"    
-
 #include <kapp.h>
 #include <kglobal.h>
+#include <klocale.h>
+#include <kconfig.h>
+#include <kthemebase.h>
 #include <kthemebase.h>
 #include <kstddirs.h>
 #include <kcharsets.h>
@@ -42,15 +40,17 @@
 #include <kwm.h>
 #include <kcolordlg.h>
 
+#include "kresourceman.h"
+#include "fonts.h"
+
+#include "general.h"
+
 #include <X11/Xlib.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
-#include <klocale.h>
-#include <kconfig.h>
-#include <kthemebase.h>
 
 #include "general.moc"
 

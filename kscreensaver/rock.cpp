@@ -27,6 +27,7 @@ static char sccsid[] = "@(#)rock.c	3.3 95/09/24 xlockmore";
 
 #include <qslider.h>
 #include <math.h>
+#include <kconfig.h>
 #include "xlock.h"
 
 
@@ -411,7 +412,6 @@ void rock_setRotate( bool rotate )
 #include "helpers.h"
 #include <kapp.h>
 #include <klocale.h>
-#include <kconfig.h>
 
 #undef Below
 

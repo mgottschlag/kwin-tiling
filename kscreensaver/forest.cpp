@@ -21,6 +21,7 @@
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
 #include <qslider.h>
+#include <kconfig.h>
 
 #define MAXSPEED 100
 #define MINSPEED 0

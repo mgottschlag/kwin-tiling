@@ -31,6 +31,9 @@
 #include <qlayout.h>
 #include <qspinbox.h>
 #include <kapp.h>
+#include <ksimpleconfig.h>
+#include <klocale.h>
+#include <kconfig.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -38,9 +41,7 @@
 
 #include "windows.h"
 #include "geom.h"
-#include <ksimpleconfig.h>
-#include <klocale.h>
-#include <kconfig.h>
+
 
 // kwm config keywords
 #define KWM_MOVE      "WindowMoveType"

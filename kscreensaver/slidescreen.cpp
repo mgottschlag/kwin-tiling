@@ -13,6 +13,27 @@
 //#include <stdio.h>
 //#include <math.h>
 
+//================================================================
+
+// Qt includes:
+
+#include <qpushbutton.h>
+//#include <qcheckbox.h>
+#include <qcolor.h>
+#include <qmessagebox.h>
+#include <qlabel.h>
+//#include <qcombobox.h>
+#include <kconfig.h>
+#include <kapp.h>
+#include <klocale.h>
+
+#include "slidescreen.h"
+
+#include <qlayout.h>
+#include <kbuttonbox.h>
+#include "helpers.h"
+
+
 //=============================================================
 
 // xscreensaver includes:
@@ -24,29 +45,6 @@ extern "C" {
 #include "xs_visual.h"
 
 }
-
-//================================================================
-
-// Qt includes:
-
-#include <qpushbutton.h>
-//#include <qcheckbox.h>
-#include <qcolor.h>
-#include <qmessagebox.h>
-#include <qlabel.h>
-//#include <qcombobox.h>
-
-#include "slidescreen.h"
-
-#include "slidescreen.moc"
-
-#include <qlayout.h>
-#include <kbuttonbox.h>
-#include "helpers.h"
-#include <kapp.h>
-#include <klocale.h>
-#include <kconfig.h>
-
 
 //================================================================
 
@@ -562,3 +560,4 @@ void kSlideScreenSetup::slotAbout()
 		glocale->translate("OK"));
 }
 
+#include "slidescreen.moc"

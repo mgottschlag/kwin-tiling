@@ -15,7 +15,8 @@
 #include <qslider.h>
 #include <kapp.h>
 #include <time.h>
-
+#include <klocale.h>
+#include <kconfig.h>
 
 #include "polygon.h"
 
@@ -24,8 +25,7 @@
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
-#include <klocale.h>
-#include <kconfig.h>
+
 
 #undef Below
 

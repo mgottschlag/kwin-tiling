@@ -27,15 +27,16 @@
 
 #include <qlayout.h>
 #include <kbuttonbox.h>
+#include <klocale.h>
+#include <kconfig.h>
+#include <kstddirs.h>
 #include "helpers.h"
 
 #include "science.h"
 #include "science.moc"
 
 #include <X11/Xutil.h>
-#include <klocale.h>
-#include <kconfig.h>
-#include <kstddirs.h>
+
 
 #define SCI_DEFAULT_MODE          0
 #define SCI_DEFAULT_MOVEX         6

@@ -19,22 +19,19 @@
    
   */
 
+#include <config.h>
 
 #include <qapplication.h>
 #include <qpushbutton.h>
 #include <qstring.h>
 
-#include "configlist.h"
-#include "toplevel.h"
-
 #include <kapp.h>
+#include <klocale.h>
+#include <kconfig.h>
 #include <kwmmapp.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#include <klocale.h>
-#endif
-
+#include "configlist.h"
+#include "toplevel.h"
 
 // run the control center application
 

@@ -29,14 +29,14 @@
 #include <time.h>
 #endif
 
+#include <kapp.h>
+#include <kconfig.h>
+
 #include "bsod.h"
 
 #include <qpainter.h>
 #include <qstring.h>
 #include <qwindowdefs.h>
-
-#include <kapp.h>
-#include <kconfig.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xos.h>

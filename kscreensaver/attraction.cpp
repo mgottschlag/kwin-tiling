@@ -68,6 +68,9 @@
 #include <qmessagebox.h>
 #include <qcombobox.h>
 #include <qslider.h>
+#include <kapp.h>
+#include <klocale.h>
+#include <kconfig.h>
 
 #include "attraction.h"
 #include "attraction.moc"
@@ -75,9 +78,6 @@
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
-#include <kapp.h>
-#include <klocale.h>
-#include <kconfig.h>
 
 //=============================================================
 

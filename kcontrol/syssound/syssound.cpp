@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.20  1999/07/13 23:50:39  pbrown
+    main sound widget should not accept drops.
+
     Revision 1.19  1999/07/13 23:49:50  pbrown
     KDND is dead, long live Xdnd.
 
@@ -96,19 +99,16 @@
 #include <qdragobject.h>
 
 #include <klocale.h>
+#include <kconfig.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 #include <kapp.h>
 #include <kwm.h>
 
 #include "syssound.h"
-#include <kconfig.h>
-#include <kglobal.h>
-#include <kstddirs.h>
 #include "syssound.moc"
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
-
 
 #define EVENT_COUNT 28
 

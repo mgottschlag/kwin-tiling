@@ -6,9 +6,6 @@
 
 /* $Id$ */
 
-#include "fonts.h"
-#include "kresourceman.h"
-
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kglobal.h>
@@ -16,9 +13,12 @@
 #include <qlayout.h>
 #include <qlistbox.h>
 #include <qlabel.h>
+#include <kstddirs.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include <kstddirs.h>
+
+#include "fonts.h"
+#include "kresourceman.h"
 
 #include "fonts.moc"
 

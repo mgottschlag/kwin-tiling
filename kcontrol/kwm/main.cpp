@@ -21,16 +21,17 @@
   */
 
 #include <qdir.h>
-#include <kwm.h>
 #include <kcontrol.h>
+#include <kconfig.h>
+#include <klocale.h>
 #include "windows.h"
 #include "desktop.h"
 #include "titlebar.h"
 #include "mouse.h"
 #include "advanced.h"
-#include <klocale.h>
 #include <stdio.h>
-#include <kconfig.h>
+
+#include <kwm.h>
 
 KConfig *config;
 

@@ -27,6 +27,8 @@
 
 #include <qlayout.h> //CT
 #include <kapp.h>
+#include <klocale.h>
+#include <kconfig.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -34,8 +36,7 @@
 
 #include "desktop.h"
 #include "geom.h"
-#include <klocale.h>
-#include <kconfig.h>
+
 
 // kwm config keywords
 #define KWM_ELECTRIC_BORDER                  "ElectricBorder"

@@ -22,12 +22,16 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "options.h"
-#include "options.moc"
 #include <qlayout.h>
 #include <kconfigbase.h>
 #include <kslider.h>
 #include <klocale.h>
+
+#include "options.h"
+
+#ifdef Below
+#undef Below
+#endif
 
 extern KConfigBase *config;
 
@@ -581,3 +585,5 @@ void KOptionsConfig::saveSettings() {
     config->writeEntry("MenuToolTips", tips->isChecked()?slider->value():-1);
     config->sync();
 }
+
+#include "options.moc"

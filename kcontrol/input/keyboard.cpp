@@ -30,14 +30,13 @@
 #include <qfileinfo.h> 
 #include <qstring.h>
 #include <qmessagebox.h> 
-
-#include "keyboard.h"
-
-#include <X11/Xlib.h>
-
-#include "geom.h"
 #include <klocale.h>
 #include <kconfig.h>
+
+#include "keyboard.h"
+#include <X11/Xlib.h>
+#include "geom.h"
+
 
 KeyboardConfig::~KeyboardConfig ()
 {

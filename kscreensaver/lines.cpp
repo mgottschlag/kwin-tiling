@@ -16,6 +16,7 @@
 #include <qscrollbar.h>
 #include <qmessagebox.h>
 #include <qslider.h>
+#include <kconfig.h>
 #include <kapp.h>
 
 #include "kcolordlg.h"
@@ -26,7 +27,6 @@
 #include <kbuttonbox.h>
 #include "helpers.h"
 #include <klocale.h>
-#include <kconfig.h>
 
 #undef Below
 

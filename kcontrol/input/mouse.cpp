@@ -31,6 +31,8 @@
 #include <qfileinfo.h> 
 #include <qstring.h>
 #include <qmessagebox.h> 
+#include <klocale.h>
+#include <kconfig.h>
 
 #include "mouse.h"
 
@@ -39,8 +41,6 @@
 #include <X11/Xutil.h>
 
 #include "geom.h"
-#include <klocale.h>
-#include <kconfig.h>
 
 MouseConfig::~MouseConfig ()
 {

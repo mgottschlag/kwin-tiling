@@ -32,16 +32,17 @@
 #include <qmessagebox.h>
 
 #include <kapp.h>
+#include <klocale.h>
+#include <kconfig.h>
+#include <kstddirs.h>
+#include <kglobal.h>
 #include <kiconloaderdialog.h>
 #include <kiconloader.h>
 
 #include "titlebar.h"
 
 #include "geom.h"
-#include <klocale.h>
-#include <kconfig.h>
-#include <kstddirs.h>
-#include <kglobal.h>
+
 
 #include <kpixmapeffect.h> //CT for the previews
 extern KConfig *config;

@@ -17,6 +17,7 @@
 
 
 #include <qslider.h>
+#include <kconfig.h>
 #include "xlock.h"
 #include <math.h>
 

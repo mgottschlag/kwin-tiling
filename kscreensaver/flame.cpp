@@ -20,6 +20,7 @@
 
 #include <qlayout.h>
 #include <qslider.h>
+#include <kconfig.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
 

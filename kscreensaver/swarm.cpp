@@ -22,6 +22,7 @@
 #define DEFBATCH 20
 
 #include <qslider.h>
+#include <kconfig.h>
 #include "xlock.h"
 
 #define TIMES	4		/* number of time positions recorded */

@@ -21,13 +21,13 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include <qdir.h>
+#include <kconfigbase.h>
+#include <kprocess.h>
+#include <klocale.h>
 
 #include "disknav.h"
 #include "disknav.moc"
 #include <qlayout.h>
-#include <kconfigbase.h>
-#include <kprocess.h>
-#include <klocale.h>
 
 extern KConfigBase *config;
 

@@ -5,10 +5,7 @@
 // Copyright (c)  Matthias Ettrich 1998
 // Converted to generic key configuration module, Duncan Haldane 1998.
 
-#ifdef HAVE_CONFIG
 #include <config.h>
-#endif
-
 #include <stdlib.h>
 
 #ifdef HAVE_UNISTD_H
@@ -27,6 +24,9 @@
 #include <qmessagebox.h>
 
 #include <kapp.h>
+#include <kconfig.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 #include <kwm.h>
 #include <kiconloader.h>
 #include <ksimpleconfig.h>
@@ -38,9 +38,6 @@
 #include <klocale.h>
 
 #include "keyconfig.h"
-#include <kconfig.h>
-#include <kglobal.h>
-#include <kstddirs.h>
 #include "keyconfig.moc"
 
 

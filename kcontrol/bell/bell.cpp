@@ -31,14 +31,15 @@
 #include <qfileinfo.h> 
 #include <qstring.h>
 #include <qmessagebox.h> 
+#include <klocale.h>
+#include <kconfig.h>
 
 #include "bell.h"
 
 #include <X11/Xlib.h>
 
 #include "geom.h"
-#include <klocale.h>
-#include <kconfig.h>
+
 
 static bool GUI;
 

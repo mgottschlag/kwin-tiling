@@ -17,6 +17,7 @@ static char sccsid[] = "@(#)laser.c	3.3 95/09/26 xlockmore";
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
 #include <qslider.h>
+#include <kconfig.h>
 
 #include "xlock.h"
 

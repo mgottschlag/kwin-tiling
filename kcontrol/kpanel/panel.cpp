@@ -22,12 +22,13 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "panel.h"
-#include "panel.moc"
-#include <qlayout.h>
 #include <kconfig.h>
 #include <kconfigbase.h>
 #include <klocale.h>
+#include "panel.h"
+#include "panel.moc"
+#include <qlayout.h>
+
 
 const char * locations[] = { "top", "left", "bottom", "right" , 0};
 const char * taskbar_locations[] = { "hidden", "top", "bottom", "top_left", 0 };

@@ -16,7 +16,8 @@
 #include <qmessagebox.h>
 #include <qslider.h>
 #include <kapp.h>
-
+#include <klocale.h>
+#include <kconfig.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <kbuttonbox.h>
@@ -24,8 +25,7 @@
 
 #include "kcolordlg.h"
 #include "banner.h"
-#include <klocale.h>
-#include <kconfig.h>
+
 
 #include "banner.moc"
 
