@@ -30,6 +30,8 @@ class QButtonGroup;
 class QPalette;
 class QLabel;
 class QSlider;
+class QTabWidget;
+class QSpinBox;
 
 class KColorButton;
 class KBackgroundRenderer;
@@ -93,6 +95,8 @@ private slots:
     void slotBlendMode(int mode);
     void slotBlendBalance(int value);
     void slotReverseBlending(bool value);
+    void slotLimitCache(bool);
+    void slotCacheSize(int);
 
 private:
     void init();
@@ -101,12 +105,16 @@ private:
     int m_Desk, m_Max;
 
     QListBox *m_pDeskList;
-    QCheckBox *m_pCBCommon, *m_pCBMulti, *m_pReverseBlending;
+    QCheckBox *m_pCBCommon, *m_pCBMulti;
+    QCheckBox *m_pReverseBlending, *m_pCBLimit;
     QComboBox *m_pBackgroundBox, *m_pWallpaperBox;
     QComboBox *m_pArrangementBox, *m_pBlendBox;
     QSlider *m_pBlendSlider;
     QPushButton *m_pBGSetupBut, *m_pMSetupBut;
     QPushButton *m_pBrowseBut;
+    QTabWidget *m_pTabWidget;
+    QWidget *m_pTab1, *m_pTab2, *m_pTab3, *m_pTab4;
+    QSpinBox *m_pCacheBox;
     QMap<QString,int> m_Wallpaper;
 
     KBackgroundRenderer *m_Renderer[_maxDesktops];
