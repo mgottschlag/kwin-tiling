@@ -1,6 +1,5 @@
 #include <syscall.h>
 #include <linux/kernel.h>
-#include <asm/page.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <qfile.h>
@@ -17,16 +16,16 @@ void KMemoryWidget::update()
   /* try to fix the change, introduced with kernel 2.3.25, which
      now counts the memory-information in pages (not bytes anymore) */
   if (info.totalram < (4*1024*1024)) /* smaller than 4MB ? */
-      shift_val = PAGE_SHIFT;
+      shift_val = getpagesize();
   else
-      shift_val = 0;
+      shift_val = 1;
 
-  Memory_Info[TOTAL_MEM]    = MEMORY(info.totalram  << shift_val); // total physical memory (without swaps)
-  Memory_Info[FREE_MEM]     = MEMORY(info.freeram   << shift_val); // total free physical memory (without swaps)
-  Memory_Info[SHARED_MEM]   = MEMORY(info.sharedram << shift_val); 
-  Memory_Info[BUFFER_MEM]   = MEMORY(info.bufferram << shift_val); 
-  Memory_Info[SWAP_MEM]     = MEMORY(info.totalswap << shift_val); // total size of all swap-partitions
-  Memory_Info[FREESWAP_MEM] = MEMORY(info.freeswap  << shift_val); // free memory in swap-partitions
+  Memory_Info[TOTAL_MEM]    = MEMORY(info.totalram  * shift_val); // total physical memory (without swaps)
+  Memory_Info[FREE_MEM]     = MEMORY(info.freeram   * shift_val); // total free physical memory (without swaps)
+  Memory_Info[SHARED_MEM]   = MEMORY(info.sharedram * shift_val); 
+  Memory_Info[BUFFER_MEM]   = MEMORY(info.bufferram * shift_val); 
+  Memory_Info[SWAP_MEM]     = MEMORY(info.totalswap * shift_val); // total size of all swap-partitions
+  Memory_Info[FREESWAP_MEM] = MEMORY(info.freeswap  * shift_val); // free memory in swap-partitions
 
   
   QFile file("/proc/meminfo");
