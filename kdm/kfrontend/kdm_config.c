@@ -407,7 +407,7 @@ PautoLoginX (Value *retval)
 
 #ifdef __linux__
 # define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X vt7"
-#elif defined(sun)
+#elif defined(__sun) || defined(__sun__)
 # define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X"
 #elif defined(_AIX)
 # define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X"
@@ -570,6 +570,7 @@ ReadConf ()
     char *s, *e, *st, *en, *ek, *sl, *pt;
     Section *cursec;
     Entry *curent;
+    Ent *ce;
     int nlen, dlen, clen, dhostl, dnuml, dclassl;
     int i, line, sectmoan, restl;
     File file;
@@ -754,33 +755,35 @@ Debug ("parsing config ...\n");
 
 	nstr = sl;
 	nlen = ek - sl + 1;
-	for (i = 0; i < cursec->sect->numents; i++)
-	    if ((int)strlen (cursec->sect->ents[i].name) == nlen && 
-		!memcmp (cursec->sect->ents[i].name, nstr, nlen))
+	Debug ("read entry '%.*s'='%.*s'\n", nlen, nstr, en - st, st);
+	for (i = 0; i < cursec->sect->numents; i++) {
+	    ce = cursec->sect->ents + i;
+	    if ((int)strlen (ce->name) == nlen && 
+		!memcmp (ce->name, nstr, nlen))
 		goto keyok;
-	LogError ("Unrecognized key '%.*s' at %s:%d\n", 
-		  nlen, nstr, kdmrc, line);
-	goto keyfnd;
+	}
+	LogError ("Unrecognized key '%.*s' in section [%.*s] at %s:%d\n", 
+		  nlen, nstr, cursec->nlen, cursec->name, kdmrc, line);
+	continue;
       keyok:
 	for (curent = cursec->entries; curent; curent = curent->next)
-	    if (cursec->sect->ents[i].id == curent->keyid) {
-		LogError ("Multiple occurrences of key '%.*s' in section [%.*s]"
-			  " of %s.\n", 
-			  nlen, nstr, cursec->nlen, cursec->name, kdmrc);
+	    if (ce->id == curent->keyid) {
+		LogError ("Multiple occurrences of key '%s' in section [%.*s]"
+			  " of %s\n", 
+			  ce->name, cursec->nlen, cursec->name, kdmrc);
 		goto keyfnd;
 	    }
 	if (!(curent = malloc (sizeof (*curent)))) {
 	    LogOutOfMem ("ReadConf");
 	    return;
 	}
-	curent->keyid = cursec->sect->ents[i].id;
+	curent->keyid = ce->id;
 	curent->line = line;
 	curent->val = st;
 	curent->vallen = en - st;
 	curent->next = cursec->entries;
 	cursec->entries = curent;
       keyfnd:
-	Debug ("read entry '%.*s'='%.*s'\n", nlen, nstr, en - st, st);
 	continue;
     }
 Debug ("config parsed\n");
