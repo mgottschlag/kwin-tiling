@@ -716,6 +716,7 @@ void KScreenSaver::slotTest()
         mTestWin->grabKeyboard();
 
         mTestBt->setEnabled( FALSE );
+	mPreviewProc->kill();
 
         while (!ts.atEnd())
         {
@@ -741,6 +742,8 @@ void KScreenSaver::slotStopTest()
     mTestWin->releaseKeyboard();
     mTestWin->hide();
     mTestBt->setEnabled(true);
+    mPrevSelected = -1;
+    setMonitor();
 }
 
 //---------------------------------------------------------------------------
