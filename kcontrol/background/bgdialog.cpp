@@ -589,11 +589,16 @@ void BGDialog::slotWallpaper(int)
 
 void BGDialog::setBlendingEnabled(bool enable)
 {
+   int mode = m_Renderer[m_eDesk]->blendMode();
+
+   bool b = !(mode == KBackgroundSettings::NoBlending);
    m_lblBlending->setEnabled(enable);
    m_comboBlend->setEnabled(enable);
-   m_lblBlendBalance->setEnabled(enable);
-   m_sliderBlend->setEnabled(enable);
-   m_cbBlendReverse->setEnabled(enable);
+   m_lblBlendBalance->setEnabled(enable && b);
+   m_sliderBlend->setEnabled(enable && b);
+
+   b = !(mode < KBackgroundSettings::IntensityBlending);
+   m_cbBlendReverse->setEnabled(enable && b);
 }
 
 void BGDialog::slotWallpaperPos(int mode)
