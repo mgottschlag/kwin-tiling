@@ -26,6 +26,7 @@
 #include <qlayout.h>
 #include <qcstring.h>
 #include <klocale.h>
+#include <qwhatsthis.h>
 
 #include <stdio.h>
 #include <iostream.h>
@@ -48,6 +49,14 @@ ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
     list.addColumn(i18n("Type"), 50);
     list.addColumn(i18n("Resource"), 200);
     list.addColumn(i18n("Mounted under"), 190);
+    
+    QWhatsThis::add( this, i18n("This list shows the Samba and NFS shared"
+      " resources mounted on your system from other hosts. The \"Type\""
+      " column tells you whether the mounted resource is a Samba or an NFS"
+      " type of resource. The \"Resource\" column shows the descriptive name"
+      " of the shared resource. Finally, the third column, which is labeled"
+      " \"Mounted under\" shows the location on your system where the shared"
+      " resource is mounted.") );
  
     timer.start(10000);
     QObject::connect(&timer, SIGNAL(timeout()), this, SLOT(updateList()));
