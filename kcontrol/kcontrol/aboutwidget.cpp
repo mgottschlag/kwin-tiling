@@ -41,7 +41,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   browser->setNotifyClick(true);
 
   QString wizard = locate("data", "kcontrol/pics/wizard.png");
-  QString kcontrol = KGlobal::iconLoader()->iconPath("kcontrol", KIconLoader::Large);
+  QString kcontrol = KGlobal::iconLoader()->iconPath("kcontrol", KIcon::SizeLarge);
 
   QString text = "<p>"
     "<table cellpadding=\"2\" cellspacing=\"1\" border=\"0\"  width=\"98%\">"
@@ -63,16 +63,14 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
     "<p>"
     + i18n("Welcome to the \"KDE Control Center\", a central place to configure your "
            "desktop environment. "
-           "Select a item from the index on the left to load a configuration module. "
-           "Click on \"Desktop\" -> \"Background\" to configure the desktop background "
-           "for example.") +
+           "Select a item from the index on the left to load a configuration module. ") +
     "</p>"
     "<p>"
     "<table cellpadding=0 cellspacing=0 border=0  width=100%>"
     "<tr>"
 
     "<td>"
-    "<br>"
+
     "<table cellpadding=2 cellspacing=1 border=0  width=50%>"
     "<tr>"
     "<td>"
@@ -121,11 +119,6 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
     "<td><b>"
     + KCGlobal::systemMachine() +
     "</td></b>"
-    "</tr>"
-    "<tr>"
-    "<td>"
-    "<br>"
-    "</td>"
     "</tr>"
     "<tr>"
     "<td colspan=2>"
