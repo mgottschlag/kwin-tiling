@@ -10,7 +10,8 @@
 
 #include <qwidget.h>
 #include <kprocess.h>
-#include "lockdlg.h"
+
+#include <X11/Xlib.h>
 
 //===========================================================================
 //
@@ -34,23 +35,21 @@ public:
     void setChildren(QValueList<int> children) { child_sockets = children; }
     void setParent(int fd) { parent = fd; }
 
-protected:
-    virtual bool x11Event(XEvent *);
-    virtual void timerEvent(QTimerEvent *);
-
 public slots:
     void quitSaver();
 
-protected slots:
-    void passwordChecked(KProcess *);
+protected:
+    virtual bool x11Event(XEvent *);
+
+private slots:
     void hackExited(KProcess *);
     void slotStart();
     void sigtermPipeSignal();
+    void startNewSession();
     void actuallySetLock();
 
-protected:
+private:
     void configure();
-    enum State { Saving, Password };
     void readSaver();
     void createSaverWindow();
     void hideSaverWindow();
@@ -62,36 +61,25 @@ protected:
     bool grabInput();
     void ungrabInput();
     void xdmFifoCmd(const char *cmd);
+    void xdmFifoLockCmd(const char *cmd);
     void startSaver();
     void stopSaver();
     bool startHack();
     void stopHack();
-    void showPassDlg();
-    void hidePassDlg();
-    void setPassDlgTimeout(int t);
-    void killPassDlgTimeout();
-    void startCheckPassword();
-    bool handleKeyPress(XKeyEvent *xke);
     void setupSignals();
+    bool checkPass();
 
-protected:
-    bool        mEnabled;
     bool        mLock;
     int         mPriority;
     bool        mLockOnce;
-    State       mState;
-    PasswordDlg *mPassDlg;
+    bool        mBusy;
     Colormap    mColorMap;
-    int         mHidePassTimerId;
-    int         mCheckPassTimerId;
-    KProcess    mPassProc;
     KProcess    mHackProc;
-    bool        mCheckingPass;
     int         mRootWidth;
     int         mRootHeight;
     QString     mSaverExec;
-    QString	mSaver;
-    QString	mXdmFifoName;
+    QString     mSaver;
+    QString     mXdmFifoName;
     bool        child_saver;
     QValueList<int> child_sockets;
     int         parent;

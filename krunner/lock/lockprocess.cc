@@ -14,6 +14,14 @@
 //crashes (e.g. because it's set to multiple wallpapers and
 //some image will be corrupted).
 
+
+// This stuff should be probably rewritten to use override_redirect
+// (WX11BypassWM) windows. This process grabs the mouse and the keyboard,
+// and basically pretends there's no WM anyway. If there will be some
+// more problems with focus, window showing or whatever related,
+// tell KWin developers.
+// See also PasswordDlg::show().
+
 #include <config.h>
 
 #include <stdlib.h>
@@ -36,6 +44,7 @@
 
 #include "lockprocess.h"
 #include "lockprocess.moc"
+#include "lockdlg.h"
 
 #ifdef HAVE_SETPRIORITY
 #include <sys/time.h>
@@ -47,10 +56,8 @@
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
 
-#define PASSDLG_HIDE_TIMEOUT        10000
 #define LOCK_GRACE_DEFAULT          5000
 
-int ignoreXError(Display *, XErrorEvent *);
 static Window gVRoot = 0;
 static Window gVRootData = 0;
 static Atom   gXA_VROOT;
@@ -95,11 +102,6 @@ LockProcess::LockProcess(bool child)
                                      KGlobal::dirs()->kde_default("apps") +
                                      relPath);
 
-    mState = Saving;
-    mPassDlg = 0;
-    mHidePassTimerId = 0;
-    mCheckPassTimerId = 0;
-    mCheckingPass = false;
     mLockOnce = false;
 
     // virtual root property
@@ -110,15 +112,13 @@ LockProcess::LockProcess(bool child)
     XGetWindowAttributes(qt_xdisplay(), winId(), &attrs);
     mColorMap = attrs.colormap;
 
-    connect(&mPassProc, SIGNAL(processExited(KProcess *)),
-                        SLOT(passwordChecked(KProcess *)));
     connect(&mHackProc, SIGNAL(processExited(KProcess *)),
                         SLOT(hackExited(KProcess *)));
 
     QStringList dmopt =
         QStringList::split( QChar( ',' ),
                             QString::fromLatin1( ::getenv( "XDM_MANAGED" ) ) );
-    if ( dmopt.isEmpty() || dmopt.first()[0] != QChar( '/' ) )
+    if (dmopt.findIndex( "rsvd" ) < 0)
         mXdmFifoName = QString::null;
     else
         mXdmFifoName = dmopt.first();
@@ -132,7 +132,6 @@ LockProcess::LockProcess(bool child)
 //
 LockProcess::~LockProcess()
 {
-    hidePassDlg();
 }
 
 static int sigterm_pipe[ 2 ];
@@ -206,10 +205,7 @@ void LockProcess::dontLock()
 //---------------------------------------------------------------------------
 void LockProcess::quitSaver()
 {
-    if (mState == Saving)
-    {
-        stopSaver();
-    }
+    stopSaver();
     kapp->quit();
 }
 
@@ -240,10 +236,7 @@ void LockProcess::configure()
                                           
         QTimer::singleShot(lockGrace, this, SLOT(actuallySetLock()));
     }
-    else
-    {
-        mLock = false;
-    }
+    mLock = false;
     
     mPriority = config.readNumEntry("Priority", 19);
     if (mPriority < 0) mPriority = 0;
@@ -307,7 +300,7 @@ void LockProcess::createSaverWindow()
         attr.colormap = DefaultColormapOfScreen(
                                 ScreenOfDisplay(qt_xdisplay(), qt_xscreen()));
     }
-    attr.event_mask = KeyPressMask | ButtonPressMask | MotionNotify |
+    attr.event_mask = KeyPressMask | ButtonPressMask | PointerMotionMask |
                         VisibilityChangeMask | ExposureMask;
     XChangeWindowAttributes(qt_xdisplay(), winId(),
                             CWEventMask | CWColormap, &attr);
@@ -342,6 +335,12 @@ void LockProcess::hideSaverWindow()
       gVRoot = 0;
   }
   XSync(qt_xdisplay(), False);
+}
+
+//---------------------------------------------------------------------------
+static int ignoreXError(Display *, XErrorEvent *)
+{
+    return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -441,6 +440,9 @@ bool LockProcess::grabKeyboard()
     return (rv == GrabSuccess);
 }
 
+#define GRABEVENTS ButtonPressMask | ButtonReleaseMask | PointerMotionMask | \
+		   EnterWindowMask | LeaveWindowMask
+
 //---------------------------------------------------------------------------
 //
 // Grab the mouse.  Returns true on success
@@ -448,13 +450,8 @@ bool LockProcess::grabKeyboard()
 bool LockProcess::grabMouse()
 {
     int rv = XGrabPointer( qt_xdisplay(), QApplication::desktop()->winId(),
-            True, ButtonPressMask
-            | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask
-            | PointerMotionMask | PointerMotionHintMask | Button1MotionMask
-            | Button2MotionMask | Button3MotionMask | Button4MotionMask
-            | Button5MotionMask | ButtonMotionMask | KeymapStateMask,
-            GrabModeAsync, GrabModeAsync, None, blankCursor.handle(),
-            CurrentTime );
+            True, GRABEVENTS, GrabModeAsync, GrabModeAsync, None, 
+            blankCursor.handle(), CurrentTime );
 
     return (rv == GrabSuccess);
 }
@@ -500,17 +497,21 @@ void LockProcess::ungrabInput()
 
 //---------------------------------------------------------------------------
 //
-// Send KDM (or XDM, if it gets adapted) a command if we lock the screen
+// Send KDM (or XDM, if it gets adapted) a command
 //
 void LockProcess::xdmFifoCmd(const char *cmd)
 {
-    if (!mXdmFifoName.isNull() && (mLock || mLockOnce)) {
-	QFile fifo(mXdmFifoName);
-	if (fifo.open(IO_WriteOnly | IO_Raw)) {
-            fifo.writeBlock( cmd, ::strlen(cmd) );
-            fifo.close();
-	}
+    QFile fifo(mXdmFifoName);
+    if (fifo.open(IO_WriteOnly | IO_Raw)) {
+        fifo.writeBlock( cmd, ::strlen(cmd) );
+        fifo.close();
     }
+}
+
+void LockProcess::xdmFifoLockCmd(const char *cmd)
+{
+    if (!mXdmFifoName.isNull() && (mLock || mLockOnce))
+	xdmFifoCmd(cmd);
 }
 
 //---------------------------------------------------------------------------
@@ -524,14 +525,12 @@ void LockProcess::startSaver()
         kdWarning(1204) << "LockProcess::startSaver() grabInput() failed!!!!" << endl;
         return;
     }
-    mState = Saving;
+    mBusy = false;
 
     saveVRoot();
 
     if (parent) {
         QSocketNotifier *notifier = new QSocketNotifier(parent, QSocketNotifier::Read, this, "notifier");
-        connect(notifier, SIGNAL( activated (int)), SLOT( quitSaver()));
-        notifier = new QSocketNotifier(parent, QSocketNotifier::Exception, this, "notifier_ex");
         connect(notifier, SIGNAL( activated (int)), SLOT( quitSaver()));
     }
     createSaverWindow();
@@ -542,7 +541,7 @@ void LockProcess::startSaver()
     raise();
     XSync(qt_xdisplay(), False);
     if (!child_saver)
-        xdmFifoCmd("lock\n");
+        xdmFifoLockCmd("lock\n");
     slotStart();
 }
 
@@ -568,16 +567,20 @@ void LockProcess::stopSaver()
 {
     kdDebug(1204) << "LockProcess: stopping saver" << endl;
     stopHack();
-    xdmFifoCmd("unlock\n");
     hideSaverWindow();
-    hidePassDlg();
     if (!child_saver) {
+        xdmFifoLockCmd("unlock\n");
         ungrabInput();
         const char *out = "GOAWAY!";
         for (QValueList<int>::ConstIterator it = child_sockets.begin(); it != child_sockets.end(); ++it)
             write(*it, out, sizeof(out));
     }
     mLockOnce = false;
+}
+
+void LockProcess::actuallySetLock()
+{
+    mLock = true;
 }
 
 //---------------------------------------------------------------------------
@@ -652,64 +655,25 @@ void LockProcess::hackExited( KProcess * )
 //
 // Show the password dialog
 //
-void LockProcess::showPassDlg()
+bool LockProcess::checkPass()
 {
-    if (mPassDlg)
-    {
-        hidePassDlg();
-    }
-    mPassDlg = new PasswordDlg(this);
+    PasswordDlg passDlg(this, !mXdmFifoName.isNull());
+    connect(&passDlg, SIGNAL(startNewSession()), SLOT(startNewSession()));
+
     QDesktopWidget *desktop = KApplication::desktop();
-
-    QRect rect = mPassDlg->geometry();
-    if (child_sockets.isEmpty()) {
+    QRect rect = passDlg.geometry();
+    if (child_sockets.isEmpty())
         rect.moveCenter( desktop->screenGeometry(desktop->screenNumber(QCursor::pos())).center());
-    } else
+    else
         rect.moveCenter( desktop->screenGeometry(qt_xscreen()).center());
-    mPassDlg->move(rect.topLeft() );
+    passDlg.move(rect.topLeft() );
 
-    mPassDlg->show();
-    setPassDlgTimeout(PASSDLG_HIDE_TIMEOUT);
-}
-
-//---------------------------------------------------------------------------
-//
-// Hide the password dialog
-//
-void LockProcess::hidePassDlg()
-{
-    if (mPassDlg)
-    {
-        delete mPassDlg;
-        mPassDlg = 0;
-        killPassDlgTimeout();
-    }
-}
-
-//---------------------------------------------------------------------------
-//
-// Hide the password dialog in "t" seconds.
-//
-void LockProcess::setPassDlgTimeout(int t)
-{
-    if (mHidePassTimerId)
-    {
-        killTimer(mHidePassTimerId);
-    }
-    mHidePassTimerId = startTimer(t);
-}
-
-//---------------------------------------------------------------------------
-//
-// Kill the password dialog hide timer.
-//
-void LockProcess::killPassDlgTimeout()
-{
-    if (mHidePassTimerId)
-    {
-        killTimer(mHidePassTimerId);
-        mHidePassTimerId = 0;
-    }
+    XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
+	     arrowCursor.handle(), CurrentTime);
+    bool rt = passDlg.exec();
+    XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
+	     blankCursor.handle(), CurrentTime);
+    return rt;
 }
 
 //---------------------------------------------------------------------------
@@ -720,25 +684,25 @@ bool LockProcess::x11Event(XEvent *event)
 {
     switch (event->type)
     {
-        case KeyPress:
-            return handleKeyPress((XKeyEvent *)event);
+        case FocusIn:
+        case FocusOut:
+            // Hack to tell dialogs to take focus when the keyboard is grabbed
+            event->xfocus.mode = NotifyNormal;
+            break;
 
+        case KeyPress:
         case ButtonPress:
         case MotionNotify:
-            if (mState == Saving)
+            if (mBusy)
+		break;
+            mBusy = true;
+            if (!(mLock || mLockOnce) || checkPass())
             {
-                if (mLock || mLockOnce)
-                {
-                    showPassDlg();
-                    mState = Password;
-                }
-                else
-                {
-                    stopSaver();
-		    kapp->quit();
-                }
+                stopSaver();
+                kapp->quit();
             }
-            break;
+            mBusy = false;
+            return true;
 
         case VisibilityNotify:
             if (event->xvisibility.state != VisibilityUnobscured &&
@@ -754,175 +718,16 @@ bool LockProcess::x11Event(XEvent *event)
 //            if (event->xconfigure.window != event->xconfigure.event)
 //                return true;
 
-            if (mState == Saving || mState == Password)
-            {
-                raise();
-                QApplication::flushX();
-            }
+            raise();
+            QApplication::flushX();
             break;
     }
 
     return false;
 }
 
-//---------------------------------------------------------------------------
-//
-// Handle key press event.
-//
-bool LockProcess::handleKeyPress(XKeyEvent *xke)
+void LockProcess::startNewSession()
 {
-    switch (mState)
-    {
-        case Password:
-            if (!mCheckingPass)
-            {
-                KeySym keysym = XLookupKeysym(xke, 0);
-                switch (keysym)
-                {
-                    case XK_Escape:
-                        hidePassDlg();
-                        mState = Saving;
-                        break;
-
-                    case XK_Return:
-                    case XK_KP_Enter:
-                        startCheckPassword();
-                        break;
-
-                    default:
-                        setPassDlgTimeout(PASSDLG_HIDE_TIMEOUT);
-                        mPassDlg->keyPressed(xke);
-                }
-            }
-	    break;
-
-        case Saving:
-            if (mLock || mLockOnce)
-            {
-                showPassDlg();
-                mState = Password;
-            }
-            else
-            {
-                stopSaver();
-		kapp->quit();
-            }
-	    break;
-    }
-    return true;
-}
-
-//---------------------------------------------------------------------------
-//
-// Starts the kcheckpass process to check the user's password.
-//
-// Serge Droz <serge.droz@pso.ch> 10.2000
-// Define ACCEPT_ENV if you want to pass an environment variable to
-// kcheckpass. Define ACCEPT_ARGS if you want to pass command line
-// arguments to kcheckpass
-#define ACCEPT_ENV
-//#define ACCEPT_ARGS
-void LockProcess::startCheckPassword()
-{
-    const char *passwd = mPassDlg->password().ascii();
-    if (passwd)
-    {
-        QString kcp_binName = KStandardDirs::findExe("kcheckpass");
-
-        mPassProc.clearArguments();
-        mPassProc << kcp_binName;
-
-#ifdef HAVE_PAM
-# ifdef ACCEPT_ENV
-        setenv("KDE_PAM_ACTION", KSCREENSAVER_PAM_SERVICE, 1);
-# elif defined(ACCEPT_ARGS)
-        mPassProc << "-c" << KSCREENSAVER_PAM_SERVICE;
-# endif
-#endif
-	bool ret = mPassProc.start(KProcess::NotifyOnExit, KProcess::Stdin);
-#ifdef HAVE_PAM
-# ifdef ACCEPT_ENV
-        unsetenv("KDE_PAM_ACTION");
-# endif
-#endif
-	if (ret == false)
-        {
-            kdDebug(1204) << "kcheckpass failed to start" << endl;
-            return;
-        }
-
-        // write Password to stdin
-        mPassProc.writeStdin(passwd, strlen(passwd));
-        mPassProc.closeStdin();
-
-        killPassDlgTimeout();
-
-        mCheckingPass = true;
-    }
-}
-
-//---------------------------------------------------------------------------
-//
-// The kcheckpass process has exited.
-//
-void LockProcess::passwordChecked(KProcess *proc)
-{
-    if (proc == &mPassProc)
-    {
-	    /* the exit codes of kcheckpass:
-	       0: everything fine
-		   1: authentification failed
-		   2: passwd access failed [permissions/misconfig]
-	    */
-        if (mPassProc.normalExit() && (mPassProc.exitStatus() != 1))
-        {
-            stopSaver();
-	    if ( mPassProc.exitStatus() == 2 )
-	    {
-		KMessageBox::error(0,
-		  i18n( "<h1>Screen Locking Failed!</h1>"
-		  "Your screen was not locked because the <i>kcheckpass</i> "
-		  "program was not able to check your password. This is "
-		  "usually the result of kcheckpass not being installed "
-		  "correctly. If you installed KDE yourself, reinstall "
-		  "kcheckpass as root. If you are using a pre-compiled "
-		  "package, contact the packager." ),
-		  i18n( "Screen Locking Failed" ) );
-	    }
-	    kapp->quit();
-        }
-        else
-        {
-            mPassDlg->showFailed();
-            mPassDlg->resetPassword();
-            setPassDlgTimeout(PASSDLG_HIDE_TIMEOUT);
-        }
-
-        mCheckingPass = false;
-    }
-}
-
-//---------------------------------------------------------------------------
-//
-// Handle our timer events.
-//
-void LockProcess::timerEvent(QTimerEvent *ev)
-{
-    if (ev->timerId() == mHidePassTimerId && !mCheckingPass)
-    {
-        hidePassDlg();
-        mState = Saving;
-    }
-}
-
-//---------------------------------------------------------------------------
-int ignoreXError(Display *, XErrorEvent *)
-{
-    return 0;
-}
-
-void LockProcess::actuallySetLock()
-{
-    mLock = true;
+    xdmFifoCmd("reserve\n");
 }
 

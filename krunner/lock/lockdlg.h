@@ -8,62 +8,48 @@
 #ifndef __LOCKDLG_H__
 #define __LOCKDLG_H__
 
-#include <qframe.h>
-#include <qlabel.h>                                                             
+#include <qlabel.h>
+#include <qdialog.h>
+#include <kprocess.h>
 #include <X11/Xlib.h>
+
+class KPasswordEdit;
+class QPushButton;
 
 //===========================================================================
 //
 // Simple dialog for entering a password.
 // It does not handle password validation.
 //
-class PasswordDlg : public QFrame
+class PasswordDlg : public QDialog
 {
     Q_OBJECT
+
 public:
-    PasswordDlg(QWidget *parent);
+    PasswordDlg(QWidget *parent, bool msess);
+    virtual void show();
 
-    //-----------------------------------------------------------------------
-    //
-    // Reset the password to ""
-    //
-    void resetPassword();
-
-    //-----------------------------------------------------------------------
-    //
-    // Show "Failed" in the dialog for 1.5 seconds
-    //
-    void showFailed();
-
-    //-----------------------------------------------------------------------
-    //
-    // Keyboard events should be passed to this function directly.
-    // We accept key presses this way because the keyboard is grabbed, so we
-    // don't get any events.  There's nicer ways of handling this, but this
-    // is simplest.
-    //
-    void keyPressed(XKeyEvent *);
-
-    //-----------------------------------------------------------------------
-    //
-    // return the password the user entered.
-    //
-    QString password() const { return mPassword; }
+signals:
+    void startNewSession();
 
 protected:
-    void drawStars();
-    QString currentUser();
-    QString passwordQueryMsg(bool name);
     virtual void timerEvent(QTimerEvent *);
+    virtual bool eventFilter(QObject *, QEvent *);
+
+protected slots:
+    void passwordChecked(KProcess *);
 
 private:
+    void startCheckPassword();
+    QString currentUser();
+    QString passwordQueryMsg();
+
     int         mFailedTimerId;
-    int         mBlinkTimerId;
+    int         mTimeoutTimerId;
     QLabel      *mLabel;
-    QLabel      *mEntry;
-    QString     mPassword;
-    int         mStars;
-    bool        mBlink;
+    KPasswordEdit      *mEntry;
+    QPushButton	*mButton;
+    KProcess    mPassProc;
 };
 
 #endif

@@ -93,7 +93,7 @@ int main( int argc, char **argv )
 
             if (putenv(strdup(env.data()))) {
                 fprintf(stderr,
-                        "%s: WARNING: unable to set DISPLAY environment vairable\n",
+                        "%s: WARNING: unable to set DISPLAY environment variable\n",
                         argv[0]);
                 perror("putenv()");
             }
