@@ -170,10 +170,8 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     QBoxLayout *lay = new QVBoxLayout(tab2, KDialog::marginHint(),
               KDialog::spacingHint());
 
-    accel = new KDoubleNumInput(2, tab2);
+    accel = new KDoubleNumInput(1, 20, 2, 0.1, 1, tab2);
     accel->setLabel(i18n("Pointer acceleration:"));
-    accel->setPrecision(1);
-    accel->setRange(1,20);
     accel->setSuffix("x");
     lay->addWidget(accel);
     connect(accel, SIGNAL(valueChanged(double)), this, SLOT(changed()));
