@@ -123,6 +123,8 @@ extern "C"
     KGlobal::locale()->insertCatalogue("kcmkicker");
     KGlobal::dirs()->addResourceType("tiles", KStandardDirs::kde_default("data") +
                                      "kicker/tiles");
+	KGlobal::dirs()->addResourceType("hb_pics", KStandardDirs::kde_default("data") +
+                                     "kcmkicker/pics");
     return new KickerConfig(parent, name);
   };
 }

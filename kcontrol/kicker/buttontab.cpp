@@ -423,6 +423,7 @@ void ButtonTab::load()
   url_group->setEnabled(tiles);
   exe_group->setEnabled(tiles);
   browser_group->setEnabled(tiles);
+  wl_group->setEnabled(tiles);
   drawer_group->setEnabled(tiles);
   
   c->setGroup("button_tiles");

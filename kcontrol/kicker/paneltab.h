@@ -23,6 +23,7 @@
 #define __paneltab_h__
 
 #include <qwidget.h>
+#include <qpixmap.h>
 
 class QGridLayout;
 class QButtonGroup;
@@ -35,7 +36,7 @@ class KIntNumInput;
 
 class PanelTab : public QWidget
 {
-  Q_OBJECT
+  Q_OBJECT;
 
  public:
   PanelTab( QWidget *parent=0, const char* name=0 );
@@ -73,6 +74,8 @@ class PanelTab : public QWidget
   QGroupBox    *hb_group;
   KIntNumInput *hb_input;
   QCheckBox    *show_hbs, *highlight_hbs;
+  QLabel       *hb_preview;
+  QPixmap      hb_default, hb_disabled, hb_large, hb_small;
 
   // auto-hide group
   QGroupBox    *ah_group;

@@ -1,3 +1,5 @@
+SUBDIRS = . pics
+
 lib_LTLIBRARIES = libkcm_kicker.la
 
 libkcm_kicker_la_SOURCES = paneltab.cpp lnftab.cpp menutab.cpp buttontab.cpp main.cpp

@@ -25,7 +25,7 @@
 #include <qwhatsthis.h>
 #include <qslider.h>
 #include <qlabel.h>
-#include <qhbox.h>
+#include <qvbox.h>
 
 #include <kconfig.h>
 #include <kdialog.h>
@@ -33,6 +33,7 @@
 #include <klocale.h>
 #include <knuminput.h>
 #include <klineedit.h>
+#include <kstddirs.h>
 
 #include "paneltab.h"
 #include "paneltab.moc"
@@ -99,17 +100,32 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
 			 KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  show_hbs = new QCheckBox(i18n("&Enabled"), hb_group);
+  QHBox *hbox2 = new QHBox(hb_group);
+  QVBox *vbox2 = new QVBox(hbox2);
+  
+
+  show_hbs = new QCheckBox(i18n("&Enabled"), vbox2);
   connect(show_hbs, SIGNAL(clicked()), SLOT(show_hbs_clicked()));
   QWhatsThis::add( show_hbs, i18n("If this option is enabled, the panel"
     " will have buttons on both ends that can be used to hide it. The"
     " panel will slide away, leaving more room for applications. There"
     " only remains a small button which can be used to show the panel again.") );
 
-  highlight_hbs = new QCheckBox(i18n("Highlight on mouse &over."), hb_group);
+  highlight_hbs = new QCheckBox(i18n("Highlight on mouse &over."), vbox2);
   connect(highlight_hbs, SIGNAL(clicked()), SIGNAL(changed()));
   QWhatsThis::add( highlight_hbs, i18n("If this option is enabled, the"
     " hide buttons are highlighted when the mouse cursor is moved over them.") );
+
+  hb_default.load(KGlobal::dirs()->findResource("hb_pics", "hb_default.png"));
+  hb_disabled.load(KGlobal::dirs()->findResource("hb_pics", "hb_disabled.png"));
+  hb_large.load(KGlobal::dirs()->findResource("hb_pics", "hb_large.png"));
+  hb_small.load(KGlobal::dirs()->findResource("hb_pics", "hb_small.png"));
+
+  hb_preview = new QLabel(hbox2);
+  hb_preview->setPixmap(hb_default);
+
+  hbox2->setStretchFactor(hb_preview, 1);
+  hbox2->setStretchFactor(vbox2, 2);
 
   hb_input = new KIntNumInput(10, hb_group);
   hb_input->setRange(3, 24, 1, true);
@@ -118,8 +134,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   QString wtstr = i18n("Here you can change the size of the hide buttons.");
   QWhatsThis::add( hb_input, wtstr );
 
-  vbox->addWidget(show_hbs);
-  vbox->addWidget(highlight_hbs);
+  vbox->addWidget(hbox2);
   vbox->addWidget(hb_input);
   layout->addWidget(hb_group, 0, 1);
 
@@ -192,11 +207,31 @@ void PanelTab::show_hbs_clicked()
   highlight_hbs->setEnabled(showHBs);
   hb_input->setEnabled(showHBs);
 
+  if (showHBs && hb_input->value() <= 5)
+	hb_preview->setPixmap(hb_small);
+  else if (showHBs && hb_input->value() >= 16)
+	hb_preview->setPixmap(hb_large);
+  else if (showHBs)
+	hb_preview->setPixmap(hb_default);
+  else
+	hb_preview->setPixmap(hb_disabled);
+
   emit changed();
 }
 
 void PanelTab::hbs_input_changed(int)
 {
+  bool showHBs = show_hbs->isChecked();
+
+  if (showHBs && hb_input->value() <= 5)
+	hb_preview->setPixmap(hb_small);
+  else if (showHBs && hb_input->value() >= 16)
+	hb_preview->setPixmap(hb_large);
+  else if (showHBs)
+	hb_preview->setPixmap(hb_default);
+  else
+	hb_preview->setPixmap(hb_disabled);
+
   emit changed();
 }
 
@@ -290,4 +325,3 @@ void PanelTab::defaults()
   ah_input->setValue(3);
   ah_input->setEnabled(false);
 }
-
