@@ -25,6 +25,15 @@
 #ifndef _XFTINT_H_
 #define _XFTINT_H_
 
+/* CPD 21/09/2001 - Redfine Kfi overloaded functions... */
+#define XftConfigparse     KfiXftConfigparse
+#define XftConfigAddDir    KfiXftConfigAddDir
+#define XftConfigAddEdit   KfiXftConfigAddEdit
+#define XftConfigPushInput KfiXftConfigPushInput
+#define XftConfigdebug     KfiXftConfigdebug
+#define XftConfigerror     KfiXftConfigerror
+#define XftConfigwrap      KfiXftConfigwrap
+
 /* CPD 09/06/2001 */
 #ifdef __cplusplus
 extern "C"
@@ -37,7 +46,7 @@ extern "C"
 #else
 #include "X11/Xft/Xft.h"           /* CPD 31/05/2001 -- Added X11/Xft/ */
 #endif
-#define yylval XftConfiglval       /* CPD 06/06/2001 */
+#define yylval KfiXftConfiglval    /* CPD 06/06/2001 */
 
 typedef struct _XftMatcher {
     char    *object;

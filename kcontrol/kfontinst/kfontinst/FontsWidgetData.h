@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'FontsWidget.ui'
 **
-** Created: Tue Sep 18 12:00:39 2001
+** Created: Fri Sep 21 00:08:56 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -146,8 +146,8 @@ DISTCLEANFILES = $(kfontinst_METASOURCES)
 
 xftparser: $(xftparserfiles)
 	cd $(srcdir); \
-	flex -PXftConfig -oxftlex.c xftlex.l ;\
-	bison -pXftConfig -t -d -o xftgram.c xftgram.y
+	flex -PKfiXftConfig -oxftlex.c xftlex.l ;\
+	bison -pKfiXftConfig -t -d -o xftgram.c xftgram.y
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kfontinst.pot

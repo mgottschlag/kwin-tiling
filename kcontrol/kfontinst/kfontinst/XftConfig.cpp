@@ -31,6 +31,7 @@
 
 #ifdef HAVE_XFT
 #include <qstring.h>
+#include <qglobal.h>
 #include <fstream.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -43,20 +44,7 @@ static CXftConfig *xft;  // Needed so C functions can access class instance...
 
 extern "C"
 {
-#ifndef YYPARSE_RETURN_TYPE
-#define YYPARSE_RETURN_TYPE int
-#endif
-
-/* Prevent warning if -Wstrict-prototypes.  */
-#ifdef __GNUC__
-#ifdef YYPARSE_PARAM
-YYPARSE_RETURN_TYPE
-XftConfigparse (void *);
-#else
-YYPARSE_RETURN_TYPE
-XftConfigparse (void);
-#endif
-#endif
+#include "xftint.h"
 
 #define _XftStrCmpIgnoreCase(A,B) CMisc::stricmp(A,B)
 
@@ -99,7 +87,10 @@ _XftNameConstantLookup (char *string)
             return &XftConstants[i];
     return 0;
 }
- 
+
+#if QT_VERSION < 300
+//
+// Qt links against Xft, so these functions no longer need to be defined...
 Bool
 XftNameConstant (char *string, int *result)
 {
@@ -124,6 +115,7 @@ _XftSaveString (const char *s)
     strcpy (r, s);
     return r;
 }
+#endif
 
 // Re-defined functions...
 Bool
@@ -462,7 +454,7 @@ bool CXftConfig::read(const QString &f)
         xft=this;
         XftConfigLexFile((char *)f.local8Bit().data());
         itsMadeChanges=true;
-        retVal=XftConfigparse() ? false : true;
+        retVal=KfiXftConfigparse() ? false : true;
     }
     else
         if(CMisc::dWritable(CMisc::getDir(f)))
@@ -573,7 +565,7 @@ bool CXftConfig::getExcludeRange(double &from, double &to)
     if(entry)
     {
         double first=XftTypeDouble==entry->test->value.type ? entry->test->value.u.d : entry->test->value.u.i,
-               second=entry->test->value.type ? entry->test->next->value.u.d : entry->test->next->value.u.i;
+               second=XftTypeDouble==entry->test->next->value.type ? entry->test->next->value.u.d : entry->test->next->value.u.i;
 
         if(first<second)
         {

@@ -43,4 +43,4 @@ typedef union {
 #define	NOT	287
 
 
-extern YYSTYPE XftConfiglval;
+extern YYSTYPE KfiXftConfiglval;

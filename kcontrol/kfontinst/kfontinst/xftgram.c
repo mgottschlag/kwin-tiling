@@ -4,13 +4,13 @@
 
 #define YYBISON 1  /* Identify Bison output.  */
 
-#define yyparse XftConfigparse
-#define yylex XftConfiglex
-#define yyerror XftConfigerror
-#define yylval XftConfiglval
-#define yychar XftConfigchar
-#define yydebug XftConfigdebug
-#define yynerrs XftConfignerrs
+#define yyparse KfiXftConfigparse
+#define yylex KfiXftConfiglex
+#define yyerror KfiXftConfigerror
+#define yylval KfiXftConfiglval
+#define yychar KfiXftConfigchar
+#define yydebug KfiXftConfigdebug
+#define yynerrs KfiXftConfignerrs
 #define	INTEGER	257
 #define	DOUBLE	258
 #define	STRING	259

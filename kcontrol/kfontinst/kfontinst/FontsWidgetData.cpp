@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'FontsWidget.ui'
 **
-** Created: Tue Sep 18 12:00:39 2001
+** Created: Fri Sep 21 00:08:56 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -36,7 +36,7 @@ CFontsWidgetData::CFontsWidgetData( QWidget* parent,  const char* name, WFlags f
     CFontsWidgetDataLayout->setMargin( 11 );
 
     itsBox = new QGroupBox( this, "itsBox" );
-    itsBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)1, 0, 0, itsBox->sizePolicy().hasHeightForWidth() ) );
+    itsBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, 0, 0, itsBox->sizePolicy().hasHeightForWidth() ) );
     itsBox->setTitle( QT_KDE_I18N( "Preview:", "" ) );
     itsBox->setColumnLayout(0, Qt::Vertical );
     itsBox->layout()->setSpacing( 0 );
@@ -128,7 +128,7 @@ CFontsWidgetData::CFontsWidgetData( QWidget* parent,  const char* name, WFlags f
     CFontsWidgetDataLayout->addWidget( itsBox, 1, 0 );
 
     itsSplitter = new QSplitter( this, "itsSplitter" );
-    itsSplitter->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0, itsSplitter->sizePolicy().hasHeightForWidth() ) );
+    itsSplitter->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, itsSplitter->sizePolicy().hasHeightForWidth() ) );
 
     CFontsWidgetDataLayout->addWidget( itsSplitter, 0, 0 );
 
