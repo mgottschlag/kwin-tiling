@@ -16,6 +16,8 @@ if test ! -z "$X_SERVER"; then
 fi
 AC_SUBST(XBINDIR)
 
+KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please make sure it's in PATH!])])
+
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
 AC_CACHE_VAL(kde_cv_defines_imake,
@@ -43,12 +45,12 @@ acimake:
 	@echo NEED_VARARGS_PROTOTYPES=1
 #endif
 EOF
-    xmkmf > /dev/null 2> /dev/null 
+    $XMKMF >&5 2>&1
     if test -f Makefile; then
 	kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep -v make | tr % \"`
 	kde_cv_defines_imake=`echo $kde_cv_defines_imake`
     else
-	AC_MSG_ERROR([xmkmf (imake) failed])
+	AC_MSG_ERROR([$XMKF (imake) failed])
     fi
     cd ..
     rm -fr conftestdir
