@@ -25,7 +25,7 @@
 #include <kmessagebox.h>
 #include <kcursor.h>
 #include <kglobalsettings.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <kstandarddirs.h>
 #include <kipc.h>
 #include <kcolorbutton.h>
@@ -489,23 +489,20 @@ void KColorScheme::slotAdd()
     if (sList->currentItem() >= nSysSchemes)
        sName = sList->currentText();
 
-    KLineEditDlg dlg(i18n("Enter a name for the color scheme:"), sName, this);
-    dlg.setCaption(i18n("Save Color Scheme"));
-
     QString sFile;
 
     bool valid = false;
+    bool ok;
     int exists = -1;
 
     while (!valid)
     {
-        if (!dlg.exec())
+        sName = KInputDialog::getText( i18n( "Save Color Scheme" ),
+            i18n( "Enter a name for the color scheme:" ), sName, &ok, this );
+        if (!ok)
             return;
 
-        sName = dlg.text();
         sName = sName.simplifyWhiteSpace();
-        if (sName.isEmpty())
-            return;
         sFile = sName;
 
         int i = 0;
