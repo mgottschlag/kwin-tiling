@@ -501,47 +501,47 @@ static void drawText(QPainter &painter, int x, int y, int width, const QString &
 
 void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
 {
-    static const struct
-    {
-        int height,
-            titleFont,
-            font, 
-            offset,
-            space;
-    } sizes[] = { {  16,  0,  10, 2, 0 },
-                  {  32,  0,  12, 2, 0 },
-                  {  48,  0,  18, 2, 3 }, // { 48,  10, 10, 1, 3 },
-                  {  64,  0,  26, 3, 3 }, // { 64,  12, 14, 1, 3 },
-                  {  96,  0,  34, 3, 3 }, // { 96,  12, 26, 2, 3 },
-                  { 128,  0,  48, 4, 3 }, // { 128, 12, 40, 2, 3 },
-                  {   0, 12,  28, 4, 8 }
-                };
-
-    int s;
-    
-    for(s=0; sizes[s].height && height>sizes[s].height; ++s)
-        ;
-
     FT_Face        face;
     FT_Size        size;
     FTC_Image_Desc font;
+    bool           thumb=width==height && height<=128;
+    int            fontSize=28,
+                   offset=4,
+                   space=8;
+
+    if(thumb)
+    {
+        if(height<=32)
+        {
+            offset=2;
+            space=0;
+            fontSize=(height-(offset*2))-2;
+        }
+        else
+        {
+            offset=3;
+            space=3;
+            fontSize=((height-(offset*3))-6)/2;
+        }
+    }
 
     font.font.face_id=getId(itsPath, faceNo);
-    font.font.pix_width=font.font.pix_height=BITMAP==itsType ? itsPixelSize : point2Pixel(sizes[s].font);
+    font.font.pix_width=font.font.pix_height=BITMAP==itsType ? itsPixelSize : thumb ? fontSize : point2Pixel(fontSize);
     font.image_type=ftc_image_grays;
 
-    FT_F26Dot6 startX=sizes[s].offset,
-               startY=sizes[s].offset+font.font.pix_height,
+    FT_F26Dot6 startX=offset,
+               startY=offset+font.font.pix_height,
                x=startX,
                y=startY;
 
     pix.resize(width, height);
-    width-=sizes[s].offset;
+    width-=offset;
+    height-=offset;
     pix.fill(Qt::white);
 
     QPainter painter(&pix);
 
-    if(sizes[s].titleFont)
+    if(!thumb)
     {
         QString name(itsFullName),
                 info;
@@ -555,20 +555,20 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
             name=name.left(pos);
         }
 
-        title.setPixelSize(sizes[s].titleFont);
+        title.setPixelSize(12);
         painter.setFont(title);
         painter.setPen(Qt::black);
         y=painter.fontMetrics().height();
         drawText(painter, x, y, width, name);
 
-        if(BITMAP==itsType && 0==sizes[s].height)   // Don't show encoding in thumbnails - too small
+        if(BITMAP==itsType)
         {
             y+=2+painter.fontMetrics().height();
             drawText(painter, x, y, width, info);
         }
 
         y+=4;
-        painter.drawLine(sizes[s].offset, y, width-(sizes[s].offset*2), y);
+        painter.drawLine(offset, y, width-offset, y);
         y+=2;
         y+=startY;
     }
@@ -576,9 +576,9 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
     if(!FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
     {
         int        i;
-        FT_F26Dot6 stepY=size->metrics.y_ppem /*(size->metrics.height>>6)*/ + sizes[s].offset;
+        FT_F26Dot6 stepY=size->metrics.y_ppem+offset;
 
-        if(0==sizes[s].height)
+        if(!thumb)
         {
             QString  quote(i18n("A sentence that uses all of the letters of the alphabet", "The quick brown fox jumps over the lazy dog"));
             bool     foundCmap=getCharMap(face, quote);
@@ -589,16 +589,16 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
 
                 for(ch=0; ch<quote.length(); ++ch)
                     if(drawGlyph(pix, font, FT_Get_Char_Index(face, quote[ch].unicode()),
-                       x, y, width, height, startX, stepY, sizes[s].space))
+                       x, y, width, height, startX, stepY, space))
                         break;
             }
 
             if(BITMAP!=itsType)
-                font.font.pix_width=font.font.pix_height=point2Pixel((int)(sizes[s].font*0.75));
+                font.font.pix_width=font.font.pix_height=point2Pixel((int)(fontSize*0.75));
 
             if(y<height && !FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
             {
-                FT_F26Dot6 stepY=size->metrics.y_ppem /*(size->metrics.height>>6)*/ + sizes[s].offset;
+                FT_F26Dot6 stepY=size->metrics.y_ppem+offset;
 
                 if(foundCmap)
                 {
@@ -699,7 +699,7 @@ static QCString getName(FT_Face face, int nid)
     return str;
 }
 
-static const char * const constDefaultFoundry = "misc";
+static const char * const constDefaultFoundry = "Misc";
 
 static const char * getFoundry(const char *notice, bool retNull=false)
 {
@@ -711,21 +711,21 @@ static const char * getFoundry(const char *notice, bool retNull=false)
 
     static const Map map[]=   // These are (mainly) taken from type1inst
     {
-        { "Bigelow",                            "b&h"},
-        { "Adobe",                              "adobe"},
-        { "Bitstream",                          "bitstream"},
-        { "Monotype",                           "monotype"},
-        { "Linotype",                           "linotype"},
-        { "LINOTYPE-HELL",                      "linotype"},
-        { "IBM",                                "ibm"},
-        { "URW",                                "urw"},
-        { "International Typeface Corporation", "itc"},
-        { "Tiro Typeworks",                     "tiro"},
-        { "XFree86",                            "xfree86"},
-        { "Microsoft",                          "microsoft"},
-        { "Omega",                              "omega"},
-        { "Font21",                             "hwan"},
-        { "HanYang System",                     "hanyang"},
+        { "Bigelow",                            "B&H"},
+        { "Adobe",                              "Adobe"},
+        { "Bitstream",                          "Bitstream"},
+        { "Monotype",                           "Monotype"},
+        { "Linotype",                           "Linotype"},
+        { "LINOTYPE-HELL",                      "Linotype"},
+        { "IBM",                                "IBM"},
+        { "URW",                                "URW"},
+        { "International Typeface Corporation", "ITC"},
+        { "Tiro Typeworks",                     "Tiro"},
+        { "XFree86",                            "XFree86"},
+        { "Microsoft",                          "Microsoft"},
+        { "Omega",                              "Omega"},
+        { "Font21",                             "Hwan"},
+        { "HanYang System",                     "Hanyang"},
         { "Richard Mitchell",                   "Mitchell" },
         { "Doug Miles",                         "Miles" },
         { "Hank Gillette",                      "Gillette" },
@@ -780,7 +780,7 @@ static const char * getFoundry(const FT_Face face)
     // Shortened quite a few entires to help with StarOffice
     static const Map map[]=
     {
-        { "ADBE", "adobe"},
+        { "ADBE", "Adobe"},
         { "AGFA", "Agfa"},
         { "ALTS", "Altsys"},
         { "APPL", "Apple"},
@@ -794,7 +794,7 @@ static const char * getFoundry(const FT_Face face)
         { "FJ",   "Fujitsu"},
         { "IBM",  "IBM"},
         { "ITC",  "ITC"},
-        { "IMPR", "impress"},
+        { "IMPR", "Impress"},
         { "LARA", "LarabieFonts"},
         { "LEAF", "Interleaf"},
         { "LETR", "letraset"},
@@ -809,7 +809,6 @@ static const char * getFoundry(const FT_Face face)
         { "RICO", "Ricoh"},
         { "URW",  "URW"},
         { "Y&Y" , "Z&Y"},
-
         { "2REB", "2Rebels"}, 
         { "3IP" , "3ip"},
         { "ABC" , "AltekInst"},
@@ -856,7 +855,7 @@ static const char * getFoundry(const FT_Face face)
         { "HY",   "HanYangSys"},
         { "HILL", "Hill Sys"},
         { "HOUS", "HouseInd"},
-        { "HP",   "hp"},
+        { "HP",   "HP"},
         { "IDEE", "IDEE"},
         { "IDF",  "IntDigital"},
         { "ILP",  "IndLang"},

@@ -32,7 +32,6 @@
 #include "XConfig.h"
 #include <qdir.h>
 #include <qfile.h>
-#include <qregexp.h>
 #include <kapplication.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -61,7 +60,7 @@ static QString getDir(const QString &entry, const QString *posibilities, const Q
     {
         int d;
 
-        for(d=0; !posibilities[d].isNull(); ++d)
+        for(d=0; !posibilities[d].isEmpty(); ++d)
             if(CMisc::dExists(base+posibilities[d]))
                 break;
 
@@ -77,7 +76,7 @@ static const QString & getFile(const QString &entry, const QString *posibilities
     {
         int f;
 
-        for(f=0; !posibilities[f].isNull(); ++f)
+        for(f=0; !posibilities[f].isEmpty(); ++f)
             if(CMisc::fExists(posibilities[f]))
                 break;
 
@@ -105,7 +104,7 @@ static QString locateFile(const QString &dir, const QString file, int level=0)
                     if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                         if(fInfo->isDir())
                         {
-                            if(!(str=locateFile(fInfo->filePath()+"/", file, level+1)).isNull())
+                            if(!(str=locateFile(fInfo->filePath()+"/", file, level+1)).isEmpty())
                                 return str;
                         }
                         else
@@ -123,8 +122,8 @@ static QString locateFile(const QString &file, const QString *dirs)
     int     d;
     QString str;
 
-    for(d=0; !dirs[d].isNull(); ++d)
-        if(!(str=locateFile(dirs[d], file)).isNull())
+    for(d=0; !dirs[d].isEmpty(); ++d)
+        if(!(str=locateFile(dirs[d], file)).isEmpty())
             return str;
 
     return QString::null;
@@ -296,7 +295,7 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
     }
 
     // Now check the read in data...
-    if(!(sysX11FontsDir=getDir(sysX11FontsDir, constSysX11FontsDirs)).isNull())
+    if(!(sysX11FontsDir=getDir(sysX11FontsDir, constSysX11FontsDirs)).isEmpty())
         itsSysFontsDirs.append(sysX11FontsDir);
 
     if(root) // For root, these are *always* the same
@@ -319,7 +318,7 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
         itsSysXfsConfigFile=getFile(itsSysXfsConfigFile, constXfsConfigFiles);
 
         // If found xfs, but not X - then assume that xfs is being used...
-        if(!itsSysXfsConfigFile.isNull() && itsSysXConfigFile.isNull())
+        if(!itsSysXfsConfigFile.isEmpty() && itsSysXConfigFile.isEmpty())
             itsSysXfs=true;
 
         //
@@ -339,7 +338,7 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
         {
             if(root)
             {
-                if(itsGhostscriptFile.isNull() || !CMisc::fExists(itsGhostscriptFile))
+                if(itsGhostscriptFile.isEmpty() || !CMisc::fExists(itsGhostscriptFile))
                     itsGhostscriptFile=locateFile("Fontmap", constGhostscriptDirs);
             }
 
@@ -357,9 +356,9 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
 
             for(it=itsSysFontsDirs.begin(); it!=itsSysFontsDirs.end() && (!foundTT || !foundT1); ++it)
             {
-                if(!foundTT && !(itsSysTTSubDir=getDir(constDefaultSysTTSubDir, constTTSubDirs, *it)).isNull())
+                if(!foundTT && !(itsSysTTSubDir=getDir(constDefaultSysTTSubDir, constTTSubDirs, *it)).isEmpty())
                     foundTT=true;
-                if(!foundT1 && !(itsSysT1SubDir=getDir(constDefaultSysT1SubDir, constT1SubDirs, *it)).isNull())
+                if(!foundT1 && !(itsSysT1SubDir=getDir(constDefaultSysT1SubDir, constT1SubDirs, *it)).isEmpty())
                     foundT1=true;
 
             }
@@ -368,13 +367,13 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
 #ifndef HAVE_FONT_ENC
             if(!CMisc::dExists(itsEncodingsDir))
             {
-                QString top[]={ sysX11FontsDir.isNull() ? constDefaultSysX11FontsDir : sysX11FontsDir, "/usr/share/", "/usr/local/share/", QString::null };
+                QString top[]={ sysX11FontsDir.isEmpty() ? constDefaultSysX11FontsDir : sysX11FontsDir, "/usr/share/", "/usr/local/share/", QString::null };
                 bool    found=false;
                 int     t,
                         s;
 
-                for(t=0; !top[t].isNull() && !found; ++t)
-                    for(s=0; !constEncodingsSubDirs[s].isNull() && !found; ++s)
+                for(t=0; !top[t].isEmpty() && !found; ++t)
+                    for(s=0; !constEncodingsSubDirs[s].isEmpty() && !found; ++s)
                         if(CMisc::dExists(top[t]+constEncodingsSubDirs[s]))
                         {
                             itsEncodingsDir=top[t]+constEncodingsSubDirs[s];
@@ -444,24 +443,7 @@ void CKfiConfig::checkAndModifyXConfigFile()
             QString file=itsSysXConfigFile.mid(slashPos+1);
 
             if(file.find("XF86Config")!=-1)
-            {
-                CXConfig    xcfg(CXConfig::XF86, itsSysXConfigFile);
-                QStringList dirs;
-
-                itsSysXfs=false;
-                if(xcfg.getDirs(dirs, false) && dirs.count()>0)
-                {
-                    QStringList::Iterator it;
-
-                    for(it=dirs.begin(); it!=dirs.end(); ++it)
-                        if((*it).replace(QRegExp("\\s*"), "").find("unix/:")==0)
-                        {
-                            if(!itsSysXfsConfigFile.isEmpty())
-                                itsSysXfs=true;
-                            break;
-                        }
-                }
-            }
+                itsSysXfs=!itsSysXfsConfigFile.isEmpty() && CXConfig(CXConfig::XF86, itsSysXConfigFile).xfsInPath();
         }
     }
 }

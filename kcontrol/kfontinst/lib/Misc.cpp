@@ -59,7 +59,7 @@ QString CMisc::linkedTo(const QString &i)
 
 QString CMisc::dirSyntax(const QString &d)
 {
-    if(!d.isNull())
+    if(!d.isEmpty())
     {
         QString ds(d);
 
@@ -78,7 +78,7 @@ QString CMisc::dirSyntax(const QString &d)
 
 QString CMisc::xDirSyntax(const QString &d)
 {
-    if(!d.isNull())
+    if(!d.isEmpty())
     {
         QString ds(d);
         int     slashPos=ds.findRev('/');
@@ -121,11 +121,11 @@ bool CMisc::doCmd(const QString &cmd, const QString &p1, const QString &p2, cons
 
     proc << cmd;
 
-    if(!p1.isNull())
+    if(!p1.isEmpty())
         proc << p1;
-    if(!p2.isNull())
+    if(!p2.isEmpty())
         proc << p2;
-    if(!p3.isNull())
+    if(!p3.isEmpty())
         proc << p3;
 
     proc.start(KProcess::Block);
@@ -206,7 +206,7 @@ QString CMisc::getName(const QString &f)
 {
     //
     // Ensure there is no trailing /, and no double //'s
-    if(!f.isNull())
+    if(!f.isEmpty())
     {
         QString nf(f);
 
@@ -271,7 +271,7 @@ time_t CMisc::getTimeStamp(const QString &item)
 {
     KDE_struct_stat info;
 
-    return !item.isNull() && 0==KDE_lstat(QFile::encodeName(item), &info) ? info.st_mtime : 0;
+    return !item.isEmpty() && 0==KDE_lstat(QFile::encodeName(item), &info) ? info.st_mtime : 0;
 }
 
 void CMisc::setTimeStamps(const QString &ds)

@@ -160,10 +160,10 @@ static QString createName(const QString &family, const QString &weight, const ch
     QTextOStream str(&name);
 
     str << family;
-    if(!weight.isNull() || NULL!=italic)
+    if(!weight.isEmpty() || NULL!=italic)
     {
         str << '-';
-        if(!weight.isNull())
+        if(!weight.isEmpty())
             str << weight;
         if(NULL!=italic)
             str << italic;
@@ -334,7 +334,7 @@ void CFontmap::createTopLevel()
                     if(!f.eof() && parseLine(line, ps, fname, isAlias) && !fname.contains('/'))
                         if(isAlias)
                         {
-                            if(!lastPsName.isNull() && fname==lastPsName)
+                            if(!lastPsName.isEmpty() && fname==lastPsName)
                                 addAliasEntry(entries, ps, fname);  // fname => real Ps name
                         }
                         else
@@ -363,7 +363,7 @@ void CFontmap::createTopLevel()
 
         CMisc::setTimeStamps(CGlobal::cfg().getFontmapDir());
 
-        if(CMisc::root() && !CGlobal::cfg().getGhostscriptFile().isNull())  // Now ensure GS's Fontmap file .runlibfile's our Fontmap file!
+        if(CMisc::root() && !CGlobal::cfg().getGhostscriptFile().isEmpty())  // Now ensure GS's Fontmap file .runlibfile's our Fontmap file!
         {
             const int constMaxLineLen=1024;
             const char *constRLF=".runlibfile";
@@ -494,7 +494,7 @@ CFontmap::CFile::CFile(const QString &dir)
 
                     TEntry *entry=getEntry(&current, fname, isAlias);
 
-                    if(!isAlias && entry->psName.isNull())
+                    if(!isAlias && entry->psName.isEmpty())
                         entry->psName=ps;
 
                     if(entry)

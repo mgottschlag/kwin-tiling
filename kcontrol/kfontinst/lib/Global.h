@@ -40,6 +40,7 @@ class KXftConfig;
 #define KIO_FONTS_PROTOCOL "fonts"
 #define KIO_FONTS_USER     I18N_NOOP("Personal")
 #define KIO_FONTS_SYS      I18N_NOOP("System")
+#define KIO_FONTS_DISABLED I18N_NOOP(" (Disabled)")
 
 class CGlobal
 {

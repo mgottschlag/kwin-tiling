@@ -36,6 +36,7 @@
 #include <qptrlist.h>
 #include <qstring.h>
 #include <qstringlist.h>
+#include <time.h>
 
 class CXConfig
 {
@@ -43,14 +44,23 @@ class CXConfig
 
     struct TPath
     {
-        TPath(const QString &d, bool u, bool dis, bool o=false)
-           : dir(CMisc::dirSyntax(d)), unscaled(u), origUnscaled(u), disabled(dis), orig(o) {}
+        enum EType
+        {
+            DIR,
+            FONT_SERVER
+            // NOTE: In future XF86Config may allow "fontconfig" to be specified as a path!
+        };
+
+        TPath(const QString &d, bool u, EType t, bool o)
+           : dir(CMisc::dirSyntax(d)), unscaled(u), toBeRemoved(false), orig(o), type(t) {}
+
+        static EType getType(const QString &d);
 
         QString dir;
         bool    unscaled,
-                origUnscaled,
-                disabled,   // Whether dir should be disabled when saving file
-                orig;       // Was dir in file when read?
+                toBeRemoved,   // Whether dir should be removed when saving file
+                orig;          // Was dir in file when read?
+        EType   type;
     };
 
     class CFontsFile
@@ -107,13 +117,10 @@ class CXConfig
     bool madeChanges();
     bool inPath(const QString &dir);
     bool subInPath(const QString &dir);
-#if 0
-    bool isUnscaled(const QString &dir);
-    void setUnscaled(const QString &dir, bool unscaled);
-#endif
     void addPath(const QString &dir, bool unscaled=false);
     void removePath(const QString &dir);
-    bool getDirs(QStringList &list, bool checkExists=true);
+    bool getDirs(QStringList &list);
+    bool xfsInPath();
     void refreshPaths();
     void restart();
 
@@ -140,6 +147,7 @@ class CXConfig
                     itsInsertPos;
     bool            itsOk,
                     itsWritable;
+    time_t          itsTime;
 };
 
 #endif

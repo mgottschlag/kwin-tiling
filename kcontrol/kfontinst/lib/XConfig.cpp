@@ -33,6 +33,7 @@
 #include <fstream>
 #include <string.h>
 #include <qdir.h>
+#include <qregexp.h>
 #include <klocale.h>
 
 extern "C" unsigned int kfi_getPid(const char *proc, unsigned int ppid);
@@ -98,18 +99,37 @@ bool CXConfig::writeConfig()
 {
     bool written=false;
 
-    switch(itsType)
+    //
+    // Check if file has been written since we last read it. If so, then re-read
+    // and add any new paths that we've added...
+    if(CMisc::getTimeStamp(itsFileName)!=itsTime)
     {
-        case XFS:
-            written=processXfs(false);
-            break;
-        case XF86:
-            written=processXf86(false);
-            break;
-        case KFI:
-            written=writeFontpaths();
-            break;
+        CXConfig newConfig(itsType, itsFileName);
+
+        if(newConfig.ok())
+        {
+            TPath *path;
+
+            for(path=itsPaths.first(); path; path=itsPaths.next())
+                if(TPath::DIR==path->type && !path->orig)
+                    newConfig.addPath(path->dir, path->unscaled);
+
+            written=newConfig.madeChanges() ? newConfig.writeConfig() : true;
+        }
     }
+    else
+        switch(itsType)
+        {
+            case XFS:
+                written=processXfs(false);
+                break;
+            case XF86:
+                written=processXf86(false);
+                break;
+            case KFI:
+                written=writeFontpaths();
+                break;
+        }
     if(written)
         readConfig();
 
@@ -123,7 +143,7 @@ bool CXConfig::madeChanges()
         TPath *path;
  
         for(path=itsPaths.first(); path; path=itsPaths.next())
-            if(!path->orig || path->disabled || path->unscaled!=path->origUnscaled)
+            if(!path->orig || path->toBeRemoved)
                 return true;
     }
 
@@ -134,7 +154,7 @@ bool CXConfig::inPath(const QString &dir)
 {
     TPath *path=findPath(dir);
  
-    return NULL==path || path->disabled ? false : true;
+    return NULL==path || path->toBeRemoved ? false : true;
 }
 
 bool CXConfig::subInPath(const QString &dir)
@@ -155,23 +175,6 @@ bool CXConfig::subInPath(const QString &dir)
     return false;
 }
 
-#if 0
-bool CXConfig::isUnscaled(const QString &dir)
-{
-    TPath *path=findPath(dir);
- 
-    return NULL==path || !path->unscaled ? false : true;
-}
-
-void CXConfig::setUnscaled(const QString &dir, bool unscaled) 
-{
-    TPath *path=findPath(dir);
-
-    if(NULL!=path)
-        path->unscaled=unscaled;
-}
-#endif
-
 void CXConfig::addPath(const QString &dir, bool unscaled)
 {
     if(itsWritable)
@@ -180,10 +183,10 @@ void CXConfig::addPath(const QString &dir, bool unscaled)
         TPath   *path=findPath(ds);
 
         if(NULL==path)
-            itsPaths.append(new TPath(ds, unscaled, false, false));
+            itsPaths.append(new TPath(ds, unscaled, TPath::DIR, false));
         else
-            if(path->disabled)
-                path->disabled=false;
+            if(path->toBeRemoved)
+                path->toBeRemoved=false;
     }
 }
 
@@ -196,26 +199,40 @@ void CXConfig::removePath(const QString &dir)
  
         if(NULL!=path)
             if(path->orig)
-                path->disabled=true;
+                path->toBeRemoved=true;
             else
                 itsPaths.removeRef(path);
     }
 }
 
-bool CXConfig::getDirs(QStringList &list, bool checkExists)
+bool CXConfig::getDirs(QStringList &list)
 {
     if(itsOk)
     {
         TPath *path=NULL;
  
         for(path=itsPaths.first(); path; path=itsPaths.next())
-            if(!path->disabled && (!checkExists || CMisc::dExists(path->dir)))
+            if(!path->toBeRemoved && TPath::DIR==path->type && CMisc::dExists(path->dir))
                 list.append(path->dir);
 
         return true;
     }
     else
         return false;
+}
+
+bool CXConfig::xfsInPath()
+{
+    if(itsOk && XF86==itsType)
+    {
+        TPath *path=NULL;
+
+        for(path=itsPaths.first(); path; path=itsPaths.next())
+            if(TPath::FONT_SERVER==path->type)
+                return true;
+    }
+
+    return false;
 }
 
 void CXConfig::refreshPaths()
@@ -232,7 +249,7 @@ void CXConfig::refreshPaths()
 
             if(path->orig)
                 CMisc::doCmd("xset", "fp-", dir); // Remove path...
-            if(!path->disabled && CMisc::dExists(path->dir) && CMisc::fExists(path->dir+"fonts.dir"))
+            if(!path->toBeRemoved && CMisc::dExists(path->dir) && CMisc::fExists(path->dir+"fonts.dir"))
             {
                 ifstream in(QFile::encodeName(path->dir+"fonts.dir"));
 
@@ -305,6 +322,8 @@ bool CXConfig::readFontpaths()
 
     if(cfg)
     {
+        itsTime=CMisc::getTimeStamp(itsFileName);
+
         static const int constMaxLineLen=1024;  // Should be enough for 1 line!
  
         char line[constMaxLineLen];
@@ -328,7 +347,7 @@ bool CXConfig::readFontpaths()
                     processPath(line, path, unscaled);
 
                     if(NULL==findPath(path))
-                        itsPaths.append(new TPath(KXftConfig::expandHome(path), false, false, true));
+                        itsPaths.append(new TPath(KXftConfig::expandHome(path), false, TPath::DIR, true));
                 }
             }
         }
@@ -354,7 +373,7 @@ bool CXConfig::writeFontpaths()
         status=true;
         cfg << constFontpaths << endl;
         for(path=itsPaths.first(); path; path=itsPaths.next())
-            if(!path->disabled && CMisc::dExists(path->dir))
+            if(!path->toBeRemoved && CMisc::dExists(path->dir))
                 cfg << QFile::encodeName(KXftConfig::contractHome(CMisc::xDirSyntax(path->dir))) << endl;
 
         cfg.close();
@@ -540,6 +559,8 @@ bool CXConfig::processXf86(bool read)
 
     if(xf86)
     {
+        itsTime=CMisc::getTimeStamp(itsFileName);
+
         bool closed=false;
 
         xf86.seekg(0, ios::end);
@@ -580,7 +601,7 @@ bool CXConfig::processXf86(bool read)
                                 processPath(item, path, unscaled);
 
                                 if(NULL==findPath(path))
-                                    itsPaths.append(new TPath(path, unscaled, false, true));
+                                    itsPaths.append(new TPath(path, unscaled, TPath::getType(path), true));
 
                             }
 
@@ -622,7 +643,7 @@ bool CXConfig::processXf86(bool read)
                                 of.write(from, filesEnd-from);
 
                                 for(path=itsPaths.first(); path; path=itsPaths.next())
-                                    if(!path->disabled && CMisc::dExists(path->dir))
+                                    if(!path->toBeRemoved && (TPath::DIR!=path->type || CMisc::dExists(path->dir)))
                                     {
                                         of << "    FontPath \t\"";
                                         of << QFile::encodeName(CMisc::xDirSyntax(path->dir));
@@ -753,6 +774,8 @@ bool CXConfig::processXfs(bool read)
  
     if(xfs)
     {
+        itsTime=CMisc::getTimeStamp(itsFileName);
+
         bool closed=false;
  
         xfs.seekg(0, ios::end);
@@ -820,7 +843,7 @@ bool CXConfig::processXfs(bool read)
                                                             processPath(path, str, unscaled);
  
                                                             if(NULL==findPath(path))
-                                                                itsPaths.append(new TPath(str, unscaled, false, true));
+                                                                itsPaths.append(new TPath(str, unscaled, TPath::DIR, true));
                                                         }
  
                                                     if(!read) // then must be write...
@@ -837,7 +860,7 @@ bool CXConfig::processXfs(bool read)
                                                             of.write(buffer, cat-buffer);
                                                             of << ' ';
                                                             for(p=itsPaths.first(); p; p=itsPaths.next())
-                                                                if(!p->disabled && CMisc::dExists(p->dir))
+                                                                if(!p->toBeRemoved && CMisc::dExists(p->dir))
                                                                 {
                                                                     if(!first)
                                                                     {
@@ -1028,6 +1051,15 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
     return status;
 }
 
+CXConfig::TPath::EType CXConfig::TPath::getType(const QString &d)
+{
+    QString str(d);
+
+    return str.replace(QRegExp("\\s*"), "").find("unix/:")==0
+               ? FONT_SERVER
+               : DIR;
+}
+
 CXConfig::CFontsFile::CFontsFile(const char *file)
 {
     ifstream f(file);
@@ -1075,7 +1107,7 @@ CXConfig::CFontsFile::CFontsFile(const char *file)
                     TEntry *entry=getEntry(&current, fname);
 
                     if(entry)
-                        if(mod.isNull())
+                        if(mod.isEmpty())
                             entry->xlfds.append(entry->filename+" "+xlfd);
                         else
                             entry->xlfds.append(mod+entry->filename+" "+xlfd);
