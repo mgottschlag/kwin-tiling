@@ -364,7 +364,7 @@
                                                 <cstring>TextLabel3</cstring>
                                             </property>
                                             <property name="text">
-                                                <string>&amp;Folder:</string>
+                                                <string>&amp;Directory:</string>
                                             </property>
                                             <property name="buddy" stdset="0">
                                                 <cstring>directoryLine</cstring>
