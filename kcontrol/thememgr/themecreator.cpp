@@ -79,7 +79,7 @@ bool ThemeCreator::create(const QString aThemeName)
   mPreviewFile = QString::null;
   mPreview.resize(0,0);
 
-  mConfig = new KSimpleConfig(mThemercFile);  
+  mConfig = new KSimpleConfig(mThemercFile);
   return true;
 }
 
@@ -117,7 +117,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
 {
   QString value, cfgFile, cfgGroup, appDir, group, emptyValue, mapValue, str;
   QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd;
-  bool absPath, doCopyFile;
+  bool absPath = false, doCopyFile;
   KSimpleConfig* cfg = 0;
   int len, i, extracted = 0;
   const char* missing = 0;
@@ -208,7 +208,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
 	cfgKey = mapValue.left(i);
 	cfgValue = mapValue.mid(i+1, 1024);
       }
-      else 
+      else
       {
 	cfgKey = mapValue;
 	cfgValue = QString::null;
@@ -234,9 +234,9 @@ int ThemeCreator::extractGroup(const char* aGroupName)
       // Set config entry
       if (value == emptyValue) value = "";
       kdDebug() << key << "=" << value << endl;
-      if (value.isEmpty()) 
+      if (value.isEmpty())
          mConfig->deleteEntry(key, false);
-      else 
+      else
          mConfig->writeEntry(key, value);
     }
 
@@ -282,7 +282,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
   QFile srcFile, destFile;
   char buf[32768];
   QString fname, ext, str;
-  int len, i, j, num;
+  int len, i;
 
   if (!finfo.exists() || !finfo.isFile())
   {
@@ -297,7 +297,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
     kdDebug() << "Checking for " << mThemePath+fname << endl;
     if (!finfo.exists()) break;
     i = fname.findRev('.');
-    if (i >= 0) 
+    if (i >= 0)
     {
       ext = fname.mid(i, 255);
       fname.truncate(i);
@@ -314,7 +314,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
        num = 10*num + (fname[j].latin1() - '0');
        j++;
     }
-    
+
     num++;
     fname.truncate(h);
     fname = QString("%1%2%3").arg(fname).arg(num).arg(ext);
@@ -332,7 +332,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
   destFile.setName(mThemePath + fname);
   if (!destFile.open(IO_WriteOnly))
   {
-    kdWarning() << "Cannot open file " << mThemePath << fname << " for writing" << endl; 
+    kdWarning() << "Cannot open file " << mThemePath << fname << " for writing" << endl;
     return 0;
   }
 

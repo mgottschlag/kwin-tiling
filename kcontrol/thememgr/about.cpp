@@ -36,7 +36,7 @@ About::About (QWidget * aParent, const char *aName, bool aInit)
 
   lblTheme = new QLabel(" ", this);
   fnt = lblTheme->font();
-  fnt.setPointSize(fnt.pointSize() * 1.2);
+  fnt.setPointSize(int(fnt.pointSize() * 1.2));
   lblTheme->setFont(fnt);
   box->addWidget(lblTheme);
 
@@ -90,7 +90,7 @@ void About::slotThemeChanged()
 
   // Version
   value = theme->version();
-  if (value.isEmpty()) 
+  if (value.isEmpty())
      str = "";
   else
      str = i18n("Version %1").arg(value);
