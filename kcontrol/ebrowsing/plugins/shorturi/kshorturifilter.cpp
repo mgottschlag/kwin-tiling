@@ -52,9 +52,9 @@ KShortURIFilter::KShortURIFilter( QObject *parent, const char *name )
                  DCOPObject("KShortURIFilterIface")
 {
     // TODO: Make this configurable.  Should go into control module...
-    m_urlHints.insert(QFL1("www."), QFL1("http://"));
-    m_urlHints.insert(QFL1("ftp."), QFL1("ftp://"));
-    m_urlHints.insert(QFL1("news."), QFL1("news://"));
+    m_urlHints.insert(QFL1("www"), QFL1("http://"));
+    m_urlHints.insert(QFL1("ftp"), QFL1("ftp://"));
+    m_urlHints.insert(QFL1("news"), QFL1("news://"));
 }
 
 bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
@@ -86,6 +86,7 @@ bool KShortURIFilter::expandEnivVar( QString& cmd ) const
 bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 {
     QString cmd = data.uri().url();
+    //kdDebug() << "KShortURIFilter::filterURI " << cmd << endl;
 
     // We process SMB first because it can be
     // represented with a special format.
@@ -135,11 +136,13 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     if( QRegExp( QFL1(FQDN_PATTERN) ).match(cmd) == 0 )
     {
         host = cmd.left(cmd.find('.'));
+        //kdDebug() << "host=" << host << endl;
         // Check if it's one of the urlHints and qualify the URL
         QString proto = m_urlHints[host.lower()];
-        if( proto.length() != 0 )
+        if( !proto.isEmpty() )
         {
             cmd.insert(0, proto);
+            //kdDebug() << "Inserting protocol " << proto << " result=" << cmd << endl;
             setFilteredURI( data, cmd );
             setURIType( data, KURIFilterData::NET_PROTOCOL );
             return data.hasBeenFiltered();
