@@ -122,30 +122,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // executable and only the argument part, if any, changed!
 
   int temp_int(0);
-  // Handle SMB Protocol shortcuts ...
-  //Hmm, don't handle them ! (aleXXX)
-  /*int temp_int = cmd.find( QFL1("smb:"), 0, false );
-  if ( temp_int == 0 || cmd.find( QFL1("\\\\") ) == 0 )
-  {
-    if( temp_int == 0 )
-      cmd = QDir::cleanDirPath( cmd.mid( 4 ) );
-    else
-    {
-      temp_int = 0;
-      while( cmd[temp_int] == '\\' ) temp_int++;
-      cmd = cmd.mid( temp_int );
-    }
-
-    for (uint i=0; i < cmd.length(); i++)
-    {
-      if (cmd[i]=='\\')
-        cmd[i]='/';
-    }
-    cmd[0] == '/' ? cmd.prepend( QFL1("smb:") ) : cmd.prepend( QFL1("smb:/") );
-    setFilteredURI( data, cmd );
-    setURIType( data, KURIFilterData::NET_PROTOCOL );
-    return true;
-  }*/
 
   // Handle MAN & INFO pages shortcuts...
   QString man_proto = QFL1("man:");
@@ -154,16 +130,14 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       cmd.find( man_proto, 0, true ) == 0 ||
       cmd.find( info_proto, 0, true ) == 0 )
   {
-    temp_int = cmd.length();
     if( cmd.left(2) == QFL1("##") )
-      cmd = QFL1("info:/") + ( temp_int == 2 ? QFL1("dir") : cmd.mid(2));
+      cmd = QFL1("info:/") + cmd.mid(2);
     else if ( cmd[0] == '#' )
       cmd = QFL1("man:/") + cmd.mid(1);
 
-    else if ( temp_int == (int)man_proto.length() && cmd.contains(QFL1("man:")))
-      cmd += '/';
-    else if ( temp_int == (int)info_proto.length() && cmd.contains(QFL1("info:")))
-      cmd += QFL1( "/dir" );
+    else if ((cmd==info_proto) || (cmd==man_proto))
+       cmd+='/';
+
     setFilteredURI( data, cmd );
     setURIType( data, KURIFilterData::HELP );
     return true;
