@@ -18,5 +18,5 @@ noinst_HEADERS = info.h memory.h info.cpp info_fbsd.cpp \
 main.cpp: info.cpp
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x ../../../kdelibs/po/kde.pot *.cpp && mv messages.po ../../po/kcminfo.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot *.cpp && mv messages.po ../../po/kcminfo.pot
 

@@ -23,4 +23,4 @@ noinst_HEADERS = backgnd.h display.h colorscm.h savescm.h scrnsave.h general.h w
 EXTRA_DIST = README
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x ../../../kdelibs/po/kde.pot $(kcmdisplay_SOURCES) && mv messages.po ../../po/kcmdisplay.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmdisplay_SOURCES) && mv messages.po ../../po/kcmdisplay.pot

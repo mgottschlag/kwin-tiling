@@ -16,3 +16,6 @@ kcheckpass_SOURCES = kcheckpass.c \
 noinst_HEADERS = kcheckpass.h
 
 EXTRA_DIST = README
+
+messages:
+
