@@ -40,7 +40,8 @@ acimake:
 	@echo NEED_VARARGS_PROTOTYPES=1\;
 #endif
 EOF
-    if (xmkmf) > /dev/null 2> /dev/null && test -f Makefile; then
+    xmkmf > /dev/null 2> /dev/null 
+    if test -f Makefile; then
 	eval `${MAKE-make} acimake 2> /dev/null | grep -v make | tr ^ \"`
     else
 	AC_MSG_ERROR([xmkmf (imake) failed])
