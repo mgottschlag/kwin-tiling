@@ -78,7 +78,10 @@ extern "C" {
 KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     : QListView(parent, name)
 {
-    kconfig = new KConfig("kcmdisplayrc");
+    kconfig = new KConfig("kstylerc");
+
+    curItem = 0;
+    defItem = 0;
 
     addColumn(i18n("Name:"));
     addColumn(i18n("Description:"));
@@ -90,7 +93,7 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
 
     setFixedHeight(120);
 
-    if (!currentItem())
+    if (!currentItem() )
         setSelected(firstChild(), true);
 
     ensureItemVisible(currentItem());
@@ -109,8 +112,8 @@ void KThemeListBox::readThemeDir(const QString &directory)
     QString name, desc;
 
     kconfig->setGroup("KDE");
-    QString defName = "Default";
-    QString curName = kconfig->readEntry("widgetStyleName", defName);
+    QString defName = "KDE default";
+    QString curName = kconfig->readEntry("widgetStyle", defName);
 
     QDir dir(directory, "*.themerc");
     if (!dir.exists())
@@ -124,8 +127,10 @@ void KThemeListBox::readThemeDir(const QString &directory)
     config.setGroup("Misc");
     name = config.readEntry("Name", fi->baseName());
     desc = config.readEntry("Comment", i18n("No description available."));
+    config.setGroup( "KDE" );
+    QString style = config.readEntry( "widgetStyle" );
     QListViewItem *item = new QListViewItem(this, name, desc, fi->absFilePath());
-    if (name == curName) {
+    if (style == curName) {
         curItem = item;
         setSelected(item, true);
         ensureItemVisible(item);
@@ -140,12 +145,14 @@ void KThemeListBox::readThemeDir(const QString &directory)
 void KThemeListBox::defaults()
 {
     setSelected(defItem, true);
+    ensureItemVisible( defItem );
 }
 
 
 void KThemeListBox::load()
 {
     setSelected(curItem, true);
+    ensureItemVisible( curItem );
 }
 
 
