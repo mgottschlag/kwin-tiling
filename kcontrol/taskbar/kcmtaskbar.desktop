@@ -41,6 +41,7 @@ Name[ta]=¦ºÂøÀð¨¼
 Name[tr]=Görev Çubuğu
 Name[uk]=Смужка задач
 Name[zh_CN.GB2312]=任务条
+Name[zh_TW.Big5]=工作列
 
 Comment=You can configure the panel taskbar here
 Comment[ca]=Aquí podeu configurar l'aspecte del plafó barra de tasques
@@ -71,13 +72,15 @@ Comment[ro]=Configurează bara de procese a panoului KDE
 Comment[ru]=Здесь вы можете настроить панель задач
 Comment[sk]=Tu môžete nastaviť vlastnosti panelu úloh
 Comment[sl]=Tu lahko nastavite pult
+Comment[sr]=Ovde možete podesiti taskbar panel
 Comment[sv]=Här kan du anpassa panelens aktivitetsfält
 Comment[ta]=ÀÄ¸õ ¦ºÂøÀð¨¼¨Â ­í§¸ ¿£í¸û ÅÊÅ¨Áì¸Ä¡õ
 Comment[tr]=Görev Çubuğunu buradan yapılandırabilirsiniz
 Comment[uk]=Тут Ви можете настроїти вигляд смужки задач
 Comment[zh_CN.GB2312]=可以在这里配置面板任务条的外观
+Comment[zh_TW.Big5]=你可在此設定面板工作列
 
-Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar
+Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar,windows
 Keywords[ca]=kicker,plafó,kpanel,barra de tasques,barra d'inici,barra d'engegar
 Keywords[cs]=kicker,Panel,kpanel,Pruh úloh,Startovací lišta,Spouštěcí lišta
 Keywords[da]=kicker,panel,kpanel,opgavebjælke,startbjælke,kørebjælke

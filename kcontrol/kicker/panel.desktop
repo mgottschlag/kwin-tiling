@@ -34,6 +34,7 @@ Name[sv]=Panelen
 Name[ta]=ÀÄ¸õ
 Name[uk]=Панель
 Name[zh_CN.GB2312]=面板
+Name[zh_TW.Big5]=面板
 
 Comment=You can configure the appearance of the panel here
 Comment[bg]=Íàñòðîéêà âèíùåí âèä íà ïàíåë
@@ -66,13 +67,15 @@ Comment[ro]=Configurează aspectul panoului KDE
 Comment[ru]=Здесь вы можете настроить панель
 Comment[sk]=Tu môžete nastaviť vlastnosti panelu
 Comment[sl]=Tu lahko nastavite videz pulta
+Comment[sr]=Konfiguracija panela
 Comment[sv]=Här kan du anpassa panelens utseende
 Comment[ta]=ÀÄ¸ò¾¢ý §¾¡üÈò¨¾ ¿£í¸û ­í§¸ ÅÊÅ¨Áì¸Ä¡õ
 Comment[tr]=Panelin görünümünü buradan yapılandırabilirsiniz
 Comment[uk]=Тут Ви можете настроїти вигляд панелі
 Comment[zh_CN.GB2312]=可以在这里配置面板的外观
+Comment[zh_TW.Big5]=你可在此設定面板的外觀
 
-Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar
+Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,Terminal application,auto hide,hide,buttons,animation,background theme,theme,menue cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup
 Keywords[ca]=kicker,plafó,kpanel,barra de tasques,barra d'inici,barra d'engegar
 Keywords[cs]=kicker,Panel,kpanel,Pruh úloh,Startovací lišta,Spouštěcí lišta
 Keywords[da]=kicker,panel,kpanel,opgavebjælke,startbjælke,kørebjælke
