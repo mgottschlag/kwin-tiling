@@ -23,7 +23,8 @@
 #include <kspell.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
-
+#include <kapplication.h>
+#include <dcopclient.h>
 #include "spellchecking.h"
 
 typedef KGenericFactory<KSpellCheckingConfig, QWidget > SpellFactory;
@@ -52,6 +53,10 @@ void KSpellCheckingConfig::load()
 void KSpellCheckingConfig::save()
 {
     spellConfig->writeGlobalSettings();
+    QByteArray data;
+    if ( !kapp->dcopClient()->isAttached() )
+        kapp->dcopClient()->attach();
+    kapp->dcopClient()->send( "konqueror*", "KonquerorIface", "reparseConfiguration()", data );
 }
 
 void KSpellCheckingConfig::defaults()
