@@ -31,7 +31,7 @@ Number of commands=2
 [Action_3]
 Action description=Text File
 Action regexp=^\\/.+\\.txt$
-Command_0: commandline=kedit %s
+Command_0: commandline=kedit "%s"
 Command_0: description=Launch K&Edit
 Command_0: enabled=true
 Command_1: commandline=kwrite "%s"
