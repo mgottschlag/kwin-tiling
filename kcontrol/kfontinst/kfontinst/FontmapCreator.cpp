@@ -268,7 +268,7 @@ void CFontmapCreator::outputAlias(CBufferedFile &file, const QString &family, co
 
         str+=name;
         str+=" /"; 
-        str+=alias.latin1();;
+        str+=alias.latin1();
         str+=" ;";
         file.write(str);
     }

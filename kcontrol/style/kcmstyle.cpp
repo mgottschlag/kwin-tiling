@@ -711,7 +711,7 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 
 	// Find out which style is currently being used
 	config.setGroup("General");
-	QString defaultStyle = KStyle::defaultStyle();;
+	QString defaultStyle = KStyle::defaultStyle();
 	QString cfgStyle = config.readEntry("widgetStyle", defaultStyle);
 
 	// Find the current style in the list

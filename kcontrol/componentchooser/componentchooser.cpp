@@ -81,7 +81,7 @@ void CfgComponent::load(KConfig *cfg) {
         {
 		ComponentSelector->insertItem((*tit)->name());
 		m_lookupDict.insert((*tit)->name(),new QString((*tit)->desktopEntryName()));
-		m_revLookupDict.insert((*tit)->desktopEntryName(),new QString((*tit)->name()));;
+		m_revLookupDict.insert((*tit)->desktopEntryName(),new QString((*tit)->name()));
 	}
 
 	KConfig *store = new KConfig(cfg->readEntry("storeInFile","null"));
