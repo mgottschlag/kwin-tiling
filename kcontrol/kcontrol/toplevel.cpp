@@ -28,7 +28,7 @@
 #include <kbugreport.h>
 #include <kaboutdata.h>
 
-#include <qsplitter.h>
+#include <qhbox.h>
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
 
@@ -36,7 +36,7 @@
 #include <kstdaction.h>
 #include <klocale.h>
 #include <kmenubar.h>
-
+#include <kseparator.h>
 
 #include "indexwidget.h"
 #include "searchwidget.h"
@@ -86,11 +86,12 @@ TopLevel::TopLevel(const char* name)
   for ( ConfigModule* m = _modules->first(); m; m = _modules->next() )
       connect( m, SIGNAL( helpRequest() ), this, SLOT( slotHelpRequest() ) );
 
-  // create the splitter
-  _splitter = new QSplitter(this);
+  // create the layout box
+  QHBox *hbox = new QHBox(this);
+  hbox->setSpacing(5);
 
   // create the left hand side (the tab view)
-  _tab = new QTabWidget(_splitter);
+  _tab = new QTabWidget(hbox);
 
   QWhatsThis::add( _tab, i18n("Choose between Index, Search and Quick Help") );
 
@@ -115,12 +116,13 @@ TopLevel::TopLevel(const char* name)
   _tab->setMinimumWidth(_tab->sizeHint().width());
   _tab->setMaximumWidth(_tab->sizeHint().width());
 
-  // set a reasonable resize mode
-  _splitter->setResizeMode(_tab, QSplitter::KeepSize);
-  _splitter->setOpaqueResize(true);
-
+  // add a seperator
+  KSeparator *sep = new KSeparator( hbox );
+  sep->setFocusPolicy(QWidget::NoFocus);
+  sep->setOrientation( QFrame::VLine );
+  
   // set up the right hand side (the docking area)
-  _dock = new DockContainer(_splitter);
+  _dock = new DockContainer(hbox);
   connect(_dock, SIGNAL(newModule(const QString&, const QString&, const QString&)),
                   this, SLOT(newModule(const QString&, const QString&, const QString&)));
 
@@ -128,8 +130,13 @@ TopLevel::TopLevel(const char* name)
   AboutWidget *aw = new AboutWidget(this);
   _dock->setBaseWidget(aw);
 
+  // set a reasonable resize mode
+  hbox->setStretchFactor(_tab, 0);
+  hbox->setStretchFactor(sep, 0);
+  hbox->setStretchFactor(_dock, 1);
+
   // set the main view
-  setCentralWidget(_splitter);
+  setCentralWidget(hbox);
 
   // initialize the GUI actions
   setupActions();

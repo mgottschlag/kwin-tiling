@@ -24,7 +24,6 @@
 #include <kmainwindow.h>
 
 class QTabWidget;
-class QSplitter;
 
 class KToggleAction;
 class KAction;
@@ -69,7 +68,6 @@ protected slots:
 private:
   QTabWidget     *_tab;
   DockContainer  *_dock;
-  QSplitter      *_splitter;
 
   KToggleAction *tree_view, *icon_view;
   KToggleAction *icon_small, *icon_medium, *icon_large;
