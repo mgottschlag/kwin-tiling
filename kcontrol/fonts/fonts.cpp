@@ -405,6 +405,7 @@ void FontAASettings::enableWidgets()
 
 void FontAASettings::changed()
 {
+    enableWidgets();
     enableButtonOK(true);
 }
 
