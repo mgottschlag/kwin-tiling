@@ -1,8 +1,8 @@
 # forcibly remove thread-related defines & flags
 AUTOMAKE_OPTIONS = foreign
 CPPFLAGS = $(USER_INCLUDES) $(X_INCLUDES) $(KRB4_INCS) $(KRB5_INCS) \
-    $(XDM_DEFINES) -I$(srcdir)/../kfrontend
-CFLAGS = $(XDM_CFLAGS) -I$(top_builddir)/kdm/kfrontend
+    $(XDM_DEFINES) -I../kfrontend
+CFLAGS = $(XDM_CFLAGS)
 LDFLAGS = $(USER_LDFLAGS) $(X_LDFLAGS) $(X_RPATH) $(KRB4_RPATH) $(KRB5_RPATH)
 LDADD = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSWDLIBS) \
     $(LIB_LIBS) $(KRB4_LIBS) $(KRB5_LIBS) $(LIBSOCKET) $(LIBRESOLV) \
