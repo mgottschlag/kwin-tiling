@@ -28,6 +28,7 @@ services_DATA = \
 		feedster.desktop \
 		foldoc.desktop \
 		fr2en.desktop \
+		freedb.desktop \
 		freshmeat.desktop \
 		froogle.desktop \
 		google_advanced.desktop \
@@ -36,6 +37,7 @@ services_DATA = \
 		google_images.desktop \
 		google_lucky.desktop \
 		google_news.desktop \
+		gracenote.desktop \
 		hotbot.desktop \
 		hyperdictionary.desktop \
 		hyperdictionary_thesaurus.desktop \

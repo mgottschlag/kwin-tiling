@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=FreeDB
+ServiceTypes=SearchProvider
+Keys=fdb,freedb
+Query=http://www.freedb.org/freedb_search.php?words=\\{@}
+Charset=utf8
