@@ -15,7 +15,7 @@ messages:
 	$(XGETTEXT) $(kcm_fileshare_la_SOURCES) -o $(podir)/kcmfileshare.pot
 
 data_DATA = fileshare.desktop
-datadir = $(kde_appsdir)/Settings/System
+datadir = $(kde_appsdir)/Settings/FileBrowsing
 
 sbin_SCRIPTS = fileshareset
 install-exec-hook:
