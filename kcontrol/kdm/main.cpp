@@ -166,7 +166,7 @@ QString KDModule::quickHelp() const
                     "will offer you for logging in."
                     "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
 		    "users not needing to provide a password to log in, and other features ideal for "
-		    "lazy people. ;-)<br>"
+		    "lazy people.<br>"
 		    "Note, that these settings are security holes by their nature, so use them very carefully.");
 }
 
