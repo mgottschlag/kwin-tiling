@@ -140,10 +140,11 @@ void DockContainer::removeModule()
 
   resizeEvent(0L);
 
-  setMinimumSize( _basew->minimumSize() );
-
   if (_basew)
+  {
+    setMinimumSize( _basew->minimumSize() );
 	emit newModule(_basew->caption(), "", "");
+  }
   else
 	emit newModule("", "", "");
 }
@@ -164,7 +165,7 @@ void DockContainer::resizeEvent(QResizeEvent *)
 	  _module->module()->resize(size());
 	  _basew->hide();
 	}
-  else
+  else if (_basew)
 	{
 	  _basew->resize(size());
 	  _basew->show();
