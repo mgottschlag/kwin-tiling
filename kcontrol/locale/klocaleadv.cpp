@@ -26,9 +26,6 @@
 KLocaleAdvanced::KLocaleAdvanced( const QString& catalogue )
   : KLocale( catalogue )
 {
-  _time =   KLocale::time();
-  _money =  KLocale::money();
-  _number = KLocale::number();
 }
 
 KLocaleAdvanced::~KLocaleAdvanced()
@@ -68,6 +65,11 @@ QString KLocaleAdvanced::dateFormatShort() const
 QString KLocaleAdvanced::timeFormat() const
 {
   return _timefmt;
+}
+
+QString KLocaleAdvanced::country() const
+{
+  return _country;
 }
 
 void KLocaleAdvanced::setDecimalSymbol(const QString &symb)
@@ -130,29 +132,8 @@ void KLocaleAdvanced::setCurrencySymbol(const QString &symbol)
   _currencySymbol = symbol;
 }
 
-QString KLocaleAdvanced::money() const
-{
-    return _money;
-}
-
-QString KLocaleAdvanced::number() const
-{
-    return _number;
-}
-
-QString KLocaleAdvanced::time() const
-{
-    return _time;
-}
-
-void KLocaleAdvanced::setCountry(const QString &number, const QString &money, const QString &time)
-{
-  if (!number.isNull()) _number = number;
-  if (!money.isNull()) _money = money;
-  if (!time.isNull()) _time = time;
-}
-
 void KLocaleAdvanced::setCountry(const QString &country)
 {
-  setCountry(country, country, country);
+  _country = country;
 }
+

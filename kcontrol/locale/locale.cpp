@@ -66,37 +66,12 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     labLang = new QLabel(this, I18N_NOOP("Language:"));
     comboLang = new KLanguageCombo(this);
     comboLang->setFixedHeight(comboLang->sizeHint().height());
-    //    labLang->setBuddy(comboLang);
     connect( comboLang, SIGNAL(activated(int)),
 	     this, SLOT(changedLanguage(int)) );
-
-#ifdef BLOAT
-    labNumber = new QLabel(this, I18N_NOOP("Numbers:"));
-    comboNumber = new KLanguageCombo(this);
-    comboNumber->setFixedHeight(comboNumber->sizeHint().height());
-    //labNumber->setBuddy(comboNumber);
-    connect( comboNumber, SIGNAL(activated(int)),
-	     this, SLOT(changedNumber(int)) );
-
-    labMoney = new QLabel(this, I18N_NOOP("Money:"));
-    comboMoney = new KLanguageCombo(this);
-    comboMoney->setFixedHeight(comboMoney->sizeHint().height());
-    //labMoney->setBuddy(comboMoney);
-    connect( comboMoney, SIGNAL(activated(int)),
-	     this, SLOT(changedMoney(int)) );
-
-    labDate = new QLabel(this, I18N_NOOP("Date and time:"));
-    comboDate = new KLanguageCombo(this);
-    comboDate->setFixedHeight(comboDate->sizeHint().height());
-    //labDate->setBuddy(comboDate);
-    connect( comboDate, SIGNAL(activated(int)),
-	     this, SLOT(changedTime(int)) );
-#endif
 
     labChset = new QLabel(this, I18N_NOOP("Charset:"));
     comboChset = new KLanguageCombo(this);
     comboChset->setFixedHeight(comboChset->sizeHint().height());
-    //labChset->setBuddy(comboChset);
     connect( comboChset, SIGNAL(activated(int)),
 	     this, SLOT(changedCharset(int)) );
 
@@ -171,21 +146,20 @@ void KLocaleConfig::load()
   KConfig *config = KGlobal::config();
   config->setGroup(QString::fromLatin1("Locale"));
 
-  QString country = config->readEntry(QString::fromLatin1("Country"));
-
   QString lang = config->readEntry(QString::fromLatin1("Language"));
   lang = lang.left(lang.find(':')); // only use  the first lang
   locale->setLanguage(lang);
 
-  QString number = config->readEntry(QString::fromLatin1("Numeric"));
-  QString money = config->readEntry(QString::fromLatin1("Monetary"));
-  QString time = config->readEntry(QString::fromLatin1("Time"));
-  locale->setCountry(number, money, time);
+  QString country = config->readEntry(QString::fromLatin1("Country"));
+  locale->setCountry(country);
 
-  QString charset = config->readEntry(QString::fromLatin1("Charset"), QString::fromLatin1("iso-8859-1"));
+  QString charset = config->readEntry(QString::fromLatin1("Charset"),
+				      QString::fromLatin1("iso-8859-1"));
   emit chsetChanged();
 
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + country + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale",
+			   QString::fromLatin1("l10n/%1/entry.desktop")
+			   .arg(country)), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
   QStringList langs = ent.readListEntry(QString::fromLatin1("Languages"));
   if (langs.isEmpty()) langs = QString::fromLatin1("C");
@@ -193,19 +167,9 @@ void KLocaleConfig::load()
   // load lists into widgets
   loadLocaleList(comboLang, QString::null, langs);
   loadLocaleList(comboCountry, QString::fromLatin1("l10n/"), QStringList());
-#ifdef BLOAT
-  loadLocaleList(comboNumber, QString::fromLatin1("l10n/"), QStringList());
-  loadLocaleList(comboMoney, QString::fromLatin1("l10n/"), QStringList());
-  loadLocaleList(comboDate, QString::fromLatin1("l10n/"), QStringList());  
-#endif
 
   // update widgets
   comboLang->setCurrentItem(locale->language());
-#ifdef BLOAT
-  comboNumber->setCurrentItem(number);
-  comboMoney->setCurrentItem(money);
-  comboDate->setCurrentItem(time);
-#endif
   comboCountry->setCurrentItem(country);
   comboChset->setCurrentItem(charset);
 }
@@ -233,11 +197,6 @@ void KLocaleConfig::save()
 
   config->writeEntry(QString::fromLatin1("Country"), comboCountry->currentTag(), true, true);
   config->writeEntry(QString::fromLatin1("Language"), comboLang->currentTag(), true, true);
-#ifdef BLOAT
-  config->writeEntry(QString::fromLatin1("Numeric"), comboNumber->currentTag(), true, true);
-  config->writeEntry(QString::fromLatin1("Monetary"), comboMoney->currentTag(), true, true);
-  config->writeEntry(QString::fromLatin1("Time"), comboDate->currentTag(), true, true);
-#endif
   config->writeEntry(QString::fromLatin1("Charset"), comboChset->currentTag(), true, true);
 
   config->sync();
@@ -254,11 +213,6 @@ void KLocaleConfig::defaults()
 
   comboCountry->setCurrentItem(C);
   comboLang->setCurrentItem(C);
-#ifdef BLOAT
-  comboNumber->setCurrentItem(C);
-  comboMoney->setCurrentItem(C);
-  comboDate->setCurrentItem(C);
-#endif
   comboChset->setCurrentItem(QString::fromLatin1("iso-8859-1"));
 
   emit resample();
@@ -304,11 +258,6 @@ void KLocaleConfig::changedCountry(int i)
   loadLocaleList(comboLang, QString::null, langs);
 
   comboLang->setCurrentItem(lang);
-#ifdef BLOAT
-  comboNumber->setCurrentItem(country);
-  comboMoney->setCurrentItem(country);
-  comboDate->setCurrentItem(country);
-#endif
 
   emit countryChanged();
   emit resample();
@@ -320,40 +269,9 @@ void KLocaleConfig::changedLanguage(int i)
 
   reTranslateLists();
 
+  emit languageChanged();
   emit resample();
 }
-
-#ifdef BLOAT
-void KLocaleConfig::changedNumber(int i)
-{
-  locale->setCountry(comboNumber->tag(i),
-                     QString::null,
-                     QString::null);
-
-  emit numberChanged();
-  emit resample();
-}
-
-void KLocaleConfig::changedMoney(int i)
-{
-  locale->setCountry(QString::null,
-                     comboMoney->tag(i),
-                     QString::null);
-
-  emit moneyChanged();
-  emit resample();
-}
-
-void KLocaleConfig::changedTime(int i)
-{
-  locale->setCountry(QString::null,
-                      QString::null,
-                      comboDate->tag(i));
-
-  emit timeChanged();
-  emit resample();
-}
-#endif
 
 void KLocaleConfig::changedCharset(int)
 {
@@ -370,11 +288,6 @@ void KLocaleConfig::reTranslateLists()
   {
     readLocale(comboCountry->tag(j), name, QString::fromLatin1("l10n/"));
     comboCountry->changeLanguage(name, j);
-#ifdef BLOAT
-    comboNumber->changeLanguage(name, j);
-    comboMoney->changeLanguage(name, j);
-    comboDate->changeLanguage(name, j);
-#endif
   }
 
   for (j = 0; j < comboLang->count(); j++)
@@ -397,17 +310,6 @@ void KLocaleConfig::reTranslate()
   QToolTip::add(comboLang, locale->translate
 		( "All KDE programs will be displayed in this language (if "
 		  "available).") );
-#ifdef BLOAT
-  QToolTip::add(comboNumber, locale->translate
-		( "The rules of this country will be used to localize "
-		  "numbers.") );
-  QToolTip::add(comboMoney, locale->translate
-		( "The rules of this country will be used to localize "
-		  "money.") );
-  QToolTip::add(comboDate, locale->translate
-		( "The rules of this country will be used to display time "
-		  "and dates.") );
-#endif
   QToolTip::add(comboChset, locale->translate
 		( "The prefered charset for fonts.") );
 
@@ -429,27 +331,6 @@ void KLocaleConfig::reTranslate()
       "fall back to the default language, i.e. US English." );
   QWhatsThis::add( labLang, str );
   QWhatsThis::add( comboLang, str );            
-
-#ifdef BLOAT
-  str = locale->translate
-    ( "Here you can choose a national setting to display "
-      "numbers. You can also customize this using the 'Numbers' tab." );
-  QWhatsThis::add( labNumber, str );
-  QWhatsThis::add( comboNumber, str );
-
-  str = locale->translate
-    ( "Here you can choose a national setting to display"
-      " monetary values. You can also customize this using the 'Money' "
-      "tab." );
-  QWhatsThis::add( labMoney, str );
-  QWhatsThis::add( comboMoney, str );    
-
-  str = locale->translate
-    ( "Here you can choose a national setting to display date and time. You "
-      "can also customize this using the 'Time & dates' tab." );
-  QWhatsThis::add( labDate, str );
-  QWhatsThis::add( comboDate, str );          
-#endif
 
   str = locale->translate
     ( "Here you can choose the charset KDE uses to display "

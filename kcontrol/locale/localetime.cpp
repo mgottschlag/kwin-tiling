@@ -76,10 +76,16 @@ KLocaleConfigTime::~KLocaleConfigTime()
  */
 void KLocaleConfigTime::load()
 {
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
   KConfig *config = KGlobal::config();
   KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
 
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time() + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale",
+			   QString::fromLatin1("l10n/%1/entry.desktop")
+			   .arg(locale->country())), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   // different tmp variables
@@ -106,10 +112,17 @@ void KLocaleConfigTime::load()
   edTimeFmt->setText(locale->timeFormat());
   edDateFmt->setText(locale->dateFormat());
   edDateFmtShort->setText(locale->dateFormatShort());
+
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 }
 
 void KLocaleConfigTime::save()
 {
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
   KSimpleConfig *c = new KSimpleConfig(QString::fromLatin1("kdeglobals"), false);
   c->setGroup(QString::fromLatin1("Locale"));
   // Write something to the file to make it dirty
@@ -123,7 +136,9 @@ void KLocaleConfigTime::save()
   KConfigBase *config = new KConfig;
   config->setGroup(QString::fromLatin1("Locale"));
 
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time() + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale",
+			   QString::fromLatin1("l10n/%1/entry.desktop")
+			   .arg(locale->country())), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   QString str;
@@ -144,6 +159,9 @@ void KLocaleConfigTime::save()
     config->writeEntry(QString::fromLatin1("DateFormatShort"), locale->dateFormatShort(), true, true);
 
   delete config;
+
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 }
 
 void KLocaleConfigTime::defaults()
@@ -171,7 +189,13 @@ void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 
 void KLocaleConfigTime::reset()
 {
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time() + QString::fromLatin1("/entry.desktop")), true);
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
+  KSimpleConfig ent(locate("locale",
+			   QString::fromLatin1("l10n/%1/entry.desktop")
+			   .arg(locale->country())), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   locale->setTimeFormat(ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p")));
@@ -181,6 +205,9 @@ void KLocaleConfigTime::reset()
   edTimeFmt->setText(locale->timeFormat());
   edDateFmt->setText(locale->dateFormat());
   edDateFmtShort->setText(locale->dateFormatShort());
+
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 }
 
 void KLocaleConfigTime::reTranslate()

@@ -54,6 +54,7 @@ public slots:
 signals:
   void translate();
   void resample();
+  void languageChanged();
   void countryChanged();
   void chsetChanged();
 
