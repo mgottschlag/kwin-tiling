@@ -16,6 +16,7 @@
 #include <qpushbutton.h>
 #include <qtooltip.h>
 #include <qvbox.h>
+#include <qwhatsthis.h>
 
 #include <kaboutdialog.h>
 #include <kiconloader.h>
@@ -91,8 +92,16 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     box->setStretchFactor( dummy, 10 );
 
     editListBox = new KEditListBox( i18n("Disable actions for windows of type WM_CLASS:"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
+    QWhatsThis::add( editListBox,
+          i18n("<qt>This lets you specify windows in which klipper should<br>"
+	       "not invoke \"actions\". Use"
+	       "<center><b>xprop | grep WM_CLASS</b></center>"
+	       "in a terminal to find out the WM_CLASS of a window.<br>"
+	       "Next, click on the window you want to examine. The<br>"
+	       "first string it outputs after the equal sign is the one<br>"
+	       "you need to enter here.</qt>"));
 
-    
+
 #ifdef __GNUC__
 #warning Qt Bug, remove these setOrientation lines when fixed
 #endif
