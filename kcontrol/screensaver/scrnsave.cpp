@@ -304,8 +304,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
 
     groupLayout->addStretch(1);
 
-    setMonitor();
-
     // finding the savers can take some time, so defer loading until
     // we've started up.
     mNumLoaded = 0;
@@ -493,9 +491,6 @@ void KScreenSaver::findSavers()
                 mSelected = mSaverListBox->count()-1;
         }
 
-        connect( mSaverListBox, SIGNAL( highlighted( int ) ),
-                 this, SLOT( slotScreenSaver( int ) ) );
-
         if ( mSelected >= 0 )
         {
             mSaverListBox->setCurrentItem(mSelected);
@@ -505,6 +500,10 @@ void KScreenSaver::findSavers()
                                  !mSaverList.at(mSelected)->setup().isEmpty());
             mTestBt->setEnabled(mEnabled);
         }
+
+        connect( mSaverListBox, SIGNAL( highlighted( int ) ),
+                 this, SLOT( slotScreenSaver( int ) ) );
+
         setMonitor();
     } else {
         mSaverList.sort();
