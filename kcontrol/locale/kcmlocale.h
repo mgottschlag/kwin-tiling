@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __KCMLOCALE_H__
-#define __KCMLOCALE_H__
+#ifndef KCMLOCALE_H
+#define KCMLOCALE_H
 
 #include <qwidget.h>
 
