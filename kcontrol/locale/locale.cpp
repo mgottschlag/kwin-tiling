@@ -155,9 +155,7 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
         }
 	KSimpleConfig entry(*it);
 	entry.setGroup("KCM Locale");
-	name = entry.readEntry("Name");
-	if (name.isEmpty())
-	    name = "without name!";
+	name = entry.readEntry("Name", i18n("without name"));
 	
 	QString path = *it;
 	int index = path.findRev('/');
@@ -210,7 +208,7 @@ void KLocaleConfig::readLocale(const QString &path, QString &name, const QString
 {
   KSimpleConfig entry(locate("locale", sub + path + "/entry.desktop"));
   entry.setGroup("KCM Locale");
-  name = entry.readEntry("Name", "without name");
+  name = entry.readEntry("Name", i18n("without name"));
 }
 
 void KLocaleConfig::applySettings()
@@ -247,11 +245,8 @@ void KLocaleConfig::defaultSettings()
                       "C",
                       "C",
                       "C");
-  loadLocaleList(comboCountry, "l10n/", QStringList());
+  reTranslateLists();
   loadLocaleList(comboLang, 0, QStringList());
-  loadLocaleList(comboNumber, "l10n/", QStringList());
-  loadLocaleList(comboMoney, "l10n/", QStringList());
-  loadLocaleList(comboDate, "l10n/", QStringList());
 
   comboCountry->setCurrentItem("C");
   comboLang->setCurrentItem("C");
@@ -284,7 +279,7 @@ void KLocaleConfig::changedCountry(int i)
   reTranslateLists();
   loadLocaleList(comboLang, 0, langs);
 
-  comboLang->setCurrentItem((*langs.at(0)).isNull()?QString::fromLatin1("C"):*langs.at(0));
+  comboLang->setCurrentItem(*langs.at(0));
   comboNumber->setCurrentItem(country);
   comboMoney->setCurrentItem(country);
   comboDate->setCurrentItem(country);
@@ -344,6 +339,7 @@ void KLocaleConfig::changedTime(int i)
                       QString::null,
                       QString::null,
                       comboDate->tag(i));
+  ((KLocaleApplication*)kapp)->resetTime();
   ((KLocaleApplication*)kapp)->updateSample();
 }
 
