@@ -28,6 +28,7 @@
 #include <qlabel.h>
 #include <qcombobox.h>
 
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <knuminput.h>
