@@ -26,13 +26,7 @@
 	be copied to kde/applnk/Settings/Information !!
 
 
-	Last modified:	by:
-	21.05.1999	deller
-			minor fixes, sprintf()->arg() for QT 2.x
-	24.04.1999	deller
-			changed i18n()'s in Get_X_Server, because there was 
-			some really ugly layout-problems in some languages !
-	01.11.1998	first version [Helge Deller, deller@gmx.de]
+	written 1998-1999 by Helge Deller [deller@gmx.de]
 	
 */
 
@@ -223,7 +217,6 @@ KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name,
                                  bool _getlistbox(QListView *lbox))
     : KCModule(parent, name)
 {   
-    int pos;
     getlistbox 	= _getlistbox;
     lBox 	= 0;
     NoInfoText  = 0;

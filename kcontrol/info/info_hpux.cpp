@@ -2,7 +2,7 @@
 	
 	!!!!! this file will be included by info.cpp !!!!!
 	
-	Mostly written by Helge Deller (deller@gmx.de),
+	Mostly written 1998-1999 by Helge Deller (deller@gmx.de),
 	with some pieces of code from Aubert Pierre.
 
 	Last modified:	done:
@@ -75,7 +75,7 @@ enum V_ENTRIES
 	V_2x0, 
 	V_LAST };
 
-static const char PA_REVISION[V_LAST][8]
+static const char PA_REVISION[V_LAST][7]
     = { "1.0", 
         "1.1", "1.1a", "1.1b", "1.1c", "1.1d", "1.1e",
 	"2.0" };
@@ -87,7 +87,7 @@ enum PA_ENTRIES
 	PA8000, PA8200,   PA8500,
 	PARISC_PA_LAST };
 			
-static const char PA_NAME[PARISC_PA_LAST][12]
+static const char PA_NAME[PARISC_PA_LAST][11]
     = { "PA7000",
 	"PA7100", "PA7100LC", "PA7200", "PA7300",
 	"PA8000", "PA8200",   "PA8500" };
@@ -359,7 +359,7 @@ bool GetInfo_CPU( QListView *lBox )
   struct utsname	info;
   QString str,str2;
   QListViewItem* olditem = 0;
-  int	maxwidth,m,i;
+  int	maxwidth,i;
 			
   if((pstat_getstatic(&pst, sizeof(pst), (size_t)1, 0) == -1) ||
      (pstat_getdynamic(&psd, sizeof(psd), (size_t)1, 0)== -1)) {
@@ -447,7 +447,7 @@ bool GetInfo_CPU( QListView *lBox )
   return true;
 }
 
-bool GetInfo_ReadfromFile( QListView *lBox, char *Name )
+bool GetInfo_ReadfromFile( QListView *lBox, const char *Name )
 {
   char buf[2048];
 
@@ -470,7 +470,7 @@ bool GetInfo_ReadfromFile( QListView *lBox, char *Name )
 }
 
 
-static bool GetInfo_ReadfromPipe( QListView *lBox, char *FileName )
+static bool GetInfo_ReadfromPipe( QListView *lBox, const char *FileName )
 {
     FILE *pipe;
     QFile *devices = new QFile(FileName);
@@ -537,8 +537,6 @@ bool GetInfo_SCSI( QListView *lBox )
 {	
     return GetInfo_Devices( lBox );
 }
-
-
 /* Parts taken from fsusage.c from the Midnight Commander (mc)
 
    Copyright (C) 1991, 1992 Free Software Foundation, In
@@ -665,7 +663,7 @@ bool GetInfo_Sound( QListView *lBox )
 
 #include "Alib.h"
 
-static const char formatNames[6][16] = {  
+static const char formatNames[6][15] = {  
     "ADFUnknown",	"ADFMuLaw",	"ADFALaw",
     "ADFLin16",  	"ADFLin8",  	"ADFLin8Offset" };
 
@@ -684,7 +682,6 @@ bool GetInfo_Sound( QListView *lBox )
 
     QString 	str,str2;
     QListViewItem* olditem = 0;
-    int		maxwidth;
 
     // server = Hostname....
     server[0] = 0;    

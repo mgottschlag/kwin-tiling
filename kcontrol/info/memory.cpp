@@ -1,6 +1,9 @@
 /* $Id$ 
  *
  * $Log$
+ * Revision 1.17  1999/11/13 18:29:58  granroth
+ * no more .moc files
+ *
  * Revision 1.16  1999/11/13 11:04:49  hoelzer
  * Moved to the new module schema.
  *
@@ -72,7 +75,7 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
     QFont	generalfont  = KGlobal::generalFont();
     QFontInfo	*fontinfo;
     QString	title,initial_str;
-    QLabel	*titleWidget;
+    QLabel	*titleWidget = 0;
     int 	i,xs;  
 
     setButtons(Ok|Help);
