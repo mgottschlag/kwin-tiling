@@ -40,6 +40,7 @@
 #include <qlayout.h>
 #include <qwhatsthis.h>
 #include <qvbuttongroup.h>
+#include <qradiobutton.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <knuminput.h>
