@@ -373,7 +373,9 @@ void MouseConfig::load()
 
   doubleClick->setChecked(!settings->singleClick);
 
+#ifdef QT_AUTO_COPY_TO_CLIPBOARD
   cbAutoCopy->setChecked( settings->autoCopy );
+#endif
   cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
   if ( settings->autoSelectDelay < 0 )
      slAutoSelect->setValue( 0 );
@@ -397,7 +399,9 @@ void MouseConfig::save()
   settings->wheelScrollLines = wheelScrollLines->value();
   settings->singleClick = !doubleClick->isChecked();
   settings->autoSelectDelay = cbAutoSelect->isChecked()?slAutoSelect->value():-1;
+#ifdef QT_AUTO_COPY_TO_CLIPBOARD
   settings->autoCopy = cbAutoCopy->isChecked();
+#endif
   settings->visualActivate = cbVisualActivate->isChecked();
   settings->changeCursor = cbCursor->isChecked();
   settings->largeCursor = cbLargeCursor->isChecked();
@@ -425,7 +429,9 @@ void MouseConfig::defaults()
     wheelScrollLines->setValue(3);
     doubleClick->setChecked( !KDE_DEFAULT_SINGLECLICK );
     cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
+#ifdef QT_AUTO_COPY_TO_CLIPBOARD
     cbAutoCopy->setChecked( false );
+#endif
     slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
     cbCursor->setChecked( KDE_DEFAULT_CHANGECURSOR );
     cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
