@@ -244,6 +244,7 @@ Enabled=true
 
 [Action_1/Command_1]
 Commandline=ps x |grep -q '[m]ozilla' && mozilla -remote openURL\(%s, new-window\) || mozilla %s
+Icon=mozilla
 Description=Open with &Mozilla
 Description[af]=Open met Mozilla
 Description[ar]=فتح ب&موزيلا
@@ -480,6 +481,7 @@ Description[tg]=Адреси почтоӣ
 Description[th]=ตำแหน่ง URL ของจดหมาย
 Description[tr]=URL postala
 Description[uk]=URL пошти
+Description[uz]=Хат-URL
 Description[ven]=Meili-URL
 Description[wa]=Hårdêye emile
 Description[xh]=Iposi-URL

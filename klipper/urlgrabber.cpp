@@ -371,7 +371,7 @@ void URLGrabber::slotKillPopupMenu()
 ////////
 
 ClipCommand::ClipCommand(const QString &_command, const QString &_description,
-                         bool _isEnabled)
+                         bool _isEnabled, const QString &_icon)
     : command(_command),
       description(_description),
       isEnabled(_isEnabled)
@@ -379,11 +379,17 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
     int len = command.find(" ");
     if (len == -1)
         len = command.length();
+
+    if (!_icon.isEmpty())
+        pixmap = _icon;
+    else
+    {
     KService::Ptr service= KService::serviceByDesktopName(command.left(len));
     if (service)
         pixmap = service->icon();
     else
         pixmap = QString::null;
+    }
 }
 
 
@@ -424,7 +430,8 @@ ClipAction::ClipAction( KConfig *kc )
 
         addCommand( kc->readPathEntry( "Commandline" ),
                     kc->readEntry( "Description" ), // i18n'ed
-                    kc->readBoolEntry( "Enabled" ) );
+                    kc->readBoolEntry( "Enabled" ),
+                    kc->readEntry( "Icon") );
     }
 }
 
@@ -435,12 +442,12 @@ ClipAction::~ClipAction()
 
 
 void ClipAction::addCommand( const QString& command,
-                             const QString& description, bool enabled )
+                             const QString& description, bool enabled, const QString& icon )
 {
     if ( command.isEmpty() )
         return;
 
-    struct ClipCommand *cmd = new ClipCommand( command, description, enabled );
+    struct ClipCommand *cmd = new ClipCommand( command, description, enabled, icon );
     //    cmd->id = myCommands.count(); // superfluous, I think...
     myCommands.append( cmd );
 }

@@ -95,7 +95,7 @@ signals:
 
 struct ClipCommand
 {
-    ClipCommand( const QString &, const QString &, bool = true );
+    ClipCommand( const QString &, const QString &, bool = true, const QString & = "" );
     QString command;
     QString description;
     bool isEnabled;
@@ -130,7 +130,7 @@ public:
    */
   void clearCommands() { myCommands.clear(); }
 
-  void  addCommand( const QString& command, const QString& description, bool );
+  void  addCommand( const QString& command, const QString& description, bool, const QString& icon = "" );
   const QPtrList<ClipCommand>& commands() 	const { return myCommands; }
 
   /**
