@@ -1040,7 +1040,7 @@ void KXftConfig::outputNewDirs(std::ofstream &f)
     ListItem *item;
 
     for(item=m_dirs.first(); item; item=m_dirs.next())
-        if(!item->toBeRemoved)
+        if(!item->toBeRemoved && NULL==item->start)
             outputDir(f, item->str);
     m_dirs.clear();
 }
@@ -1055,7 +1055,7 @@ void KXftConfig::outputNewSymbolFamilies(ofstream &f)
     ListItem *item;
 
     for(item=m_symbolFamilies.first(); item; item=m_symbolFamilies.next())
-        if(!item->toBeRemoved)
+        if(!item->toBeRemoved && NULL==item->start)
             outputSymbolFamily(f, item->str);
     m_symbolFamilies.clear();
 }
