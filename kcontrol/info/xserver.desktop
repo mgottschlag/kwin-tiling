@@ -3,7 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell xserver
 Icon=kcmx
 Type=Application
-DocPath=xserver/index.html
+DocPath=kinfocenter/xserver/index.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=info

@@ -3,7 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell memory
 Icon=kcmmemory
 Type=Application
-DocPath=memory/index.html
+DocPath=kinfocenter/memory/index.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=info

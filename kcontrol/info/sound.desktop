@@ -3,7 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell sound
 Icon=kcmsound
 Type=Application
-DocPath=sound/index.html
+DocPath=kinfocenter/sound/index.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=info

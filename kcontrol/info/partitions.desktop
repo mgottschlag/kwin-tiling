@@ -3,7 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell partitions
 Icon=kcmpartitions
 Type=Application
-DocPath=partitions/index.html
+DocPath=kinfocenter/partitions/index.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=info

@@ -3,7 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell processor
 Icon=kcmprocessor
 Type=Application
-DocPath=processor/index.html
+DocPath=kinfocenter/processor/index.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=info

@@ -3,7 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell scsi
 Icon=kcmscsi
 Type=Application
-DocPath=scsi/index.html
+DocPath=kinfocenter/scsi/index.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=info

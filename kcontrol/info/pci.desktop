@@ -3,7 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell pci
 Icon=kcmpci
 Type=Application
-DocPath=pci/index.html
+DocPath=kinfocenter/pci/index.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=info
