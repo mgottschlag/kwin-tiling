@@ -422,14 +422,20 @@ The following programs are run by &kdm; at various stages of a session.
 They typically are shell scripts.
 </para>
 
+<para>
+The Setup, Startup and Reset programs are run as
+<systemitem class="username">root</systemitem>, so they should be careful
+about security.
+Their first argument is <literal>auto</literal> if the session results
+from an automatic login, otherwise no arguments are passed to them.
+</para>
+
 <sect2 id="kdmrc-xsetup">
 <title>Setup program</title>
 
 <para>
 The <filename>Xsetup</filename> program is run after the &X-Server; is
 started or reset, but before the greeter is offered.
-It is run as <systemitem class="username">root</systemitem>, so it should
-be careful about security.
 This is the place to change the root background (if
 <option>UseBackground</option> is disabled) or bring up other windows that
 should appear on the screen along with the greeter.
@@ -455,6 +461,10 @@ the following environment variables are passed:</para>
   <term>XAUTHORITY</term>
   <listitem><para>may be set to an authority file</para></listitem>
  </varlistentry>
+ <varlistentry>
+  <term>DM_CONTROL</term>
+  <listitem><para>the value of <option>FifoDir</option></para></listitem>
+ </varlistentry>
 </variablelist>
 
 <para> Note that since &kdm; grabs the keyboard, any other windows will not be
@@ -472,8 +482,6 @@ at all. Resources for this program can be put into the file named by
 
 <para>The <filename>Xstartup</filename> program is run as
 <systemitem class="username">root</systemitem> when the user logs in.
-Since it is run as <systemitem class="username">root</systemitem>, it should
-be very careful about security.
 This is the place to put commands which add entries to
 <filename>utmp</filename> (the <command>sessreg</command> program
 may be useful here), mount users' home directories from file servers,
@@ -512,12 +520,15 @@ the following environment variables are passed:</para>
   <term>XAUTHORITY</term>
   <listitem><para>may be set to an authority file</para></listitem>
  </varlistentry>
+ <varlistentry>
+  <term>DM_CONTROL</term>
+  <listitem><para>the value of <option>FifoDir</option></para></listitem>
+ </varlistentry>
 </variablelist>
 
-<para>No arguments are passed to the script. &kdm; waits until this script
-exits before starting the user session. If the exit value of this script is
-non-zero, &kdm; discontinues the session and starts another authentication
-cycle.</para>
+<para>&kdm; waits until this program exits before starting the user session.
+If the exit value of this program is non-zero, &kdm; discontinues the session
+and starts another authentication cycle.</para>
 
 </sect2>
 
@@ -573,6 +584,10 @@ the following environment variables are passed:</para>
   <term>KRB5CCNAME</term>
   <listitem><para>may be set to a Kerberos5 credentials cache name</para>
   </listitem>
+ </varlistentry>
+ <varlistentry>
+  <term>DM_CONTROL</term>
+  <listitem><para>the value of <option>FifoDir</option></para></listitem>
  </varlistentry>
  <varlistentry>
   <term>XDM_MANAGED</term>
