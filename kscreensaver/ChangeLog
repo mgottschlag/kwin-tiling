@@ -1,3 +1,10 @@
+1999-04-28  Christophe Prud'homme  <Christophe.Prudhomme@ann.jussieu.fr>
+
+	* bouboule.cpp: the global variable initialized in bouboule is
+	used also in qt2. I just renamed the variable to
+	bouboule_initialized. However it is just a hack, and I think that
+	such global variables are C pratice and not C++
+
 1998-12-13  Christian Esken  <esken@kde.org>
 
 	* Calling kcheckpass (only on Shadow systems). This checks if the password

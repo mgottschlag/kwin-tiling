@@ -89,7 +89,7 @@
 #define POSCANRAND    80	/* percentage of changes for the speed of
 				   * change of the x and y values */
 int maxsize;
-int initialized=0;
+int bouboule_initialized=0;
 int colorchange;
 bool use3d;
 
@@ -486,7 +486,7 @@ initbouboule(Window win)
 	sp->rect_time = 0;
 	sp->xarc_time = 0;
 #endif
-	initialized=1;
+	bouboule_initialized=1;
 
 }
 
@@ -503,7 +503,7 @@ drawbouboule(Window win)
 	Star       *star;
 	XArc       *arc = NULL, *arcleft = NULL;
 
-	if(!initialized)
+	if(!bouboule_initialized)
 		return;
 
 #if (ADAPT_ERASE == 1)
@@ -754,10 +754,10 @@ drawbouboule(Window win)
 void
 release_bouboule()
 {
-	if (!initialized)
+	if (!bouboule_initialized)
 		return;
 	else
-		initialized=0;
+		bouboule_initialized=0;
 
 //	if (starfield != NULL) {
 //		int         screen;
