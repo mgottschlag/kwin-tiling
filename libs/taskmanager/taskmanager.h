@@ -30,11 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qpoint.h>
 #include <qobject.h>
 #include <qvaluelist.h>
-#if QT_VERSION < 300
-#include <qlist.h>
-#else
 #include <qptrlist.h>
-#endif
 #include <qpixmap.h>
 
 #include <dcopobject.h>
@@ -400,13 +396,9 @@ private:
     class StartupPrivate *d;
 };
 
-#if QT_VERSION < 300
-typedef QList<Task> TaskList;
-typedef QList<Startup> StartupList;
-#else
 typedef QPtrList<Task> TaskList;
 typedef QPtrList<Startup> StartupList;
-#endif
+
 
 /**
  * A generic API for task managers. This class provides an easy way to

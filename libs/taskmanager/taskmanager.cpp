@@ -38,11 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskmanager.h"
 #include "taskmanager.moc"
 
-#if QT_VERSION < 300
-template class QList<Task>;
-#else
 template class QPtrList<Task>;
-#endif
 KWinModule* kwin_module = 0;
 
 TaskManager::TaskManager(QObject *parent, const char *name)
@@ -535,23 +531,7 @@ bool Task::idMatch( const QString& id1, const QString& id2 )
   if ( id2.contains( id1 ) > 0 )
     return true;
 
-  // add hacks here ;-)
-    if ( ( id1 == "navigator" && id2 == "netscape")
-	 || ( id1 == "netscape" && id2 == "navigator")
-	 || ( id1 == "kfmclient" && id2 == "konqueror")
-	 || ( id1 == "konqueror" && id2 == "kfmclient")
-	 || ( id1 == "command_shell" && id2 == "ddd" )
-	 || ( id1 == "ddd" && id2 == "command_shell" )
-	 || ( id1 == "gimp_startup" && id2 == "toolbox" )
-	 || ( id1 == "toolbox" && id2 == "gimp_startup" )
-	 || ( id1 == "gimp" && id2 == "toolbox" )
-	 || ( id1 == "toolbox" && id2 == "gimp" )
-	 || ( id1 == "xmms" && id2 == "xmms_player" )
-	 || ( id1 == "xmms_player" && id2 == "xmms" )
-	)
-      return true;
-
-    return false;
+  return false;
 }
 
 
