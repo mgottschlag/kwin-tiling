@@ -54,7 +54,7 @@ from the X Consortium.
 #include <pwd.h>
 #include <grp.h>
 #include <sys/types.h>
-#ifdef AIXV3
+#ifdef _AIX
 # include <usersec.h>
 #endif
 #ifdef HAVE_CRYPT_H
@@ -783,7 +783,7 @@ StartClient (verify, d, pidp, name, passwd)
 	while(*e)
 	  verify->userEnviron = putEnv(*e++, verify->userEnviron);
 #else
-#ifdef AIXV3
+#ifdef _AIX
 	/*
 	 * Set the user's credentials: uid, gid, groups,
 	 * audit classes, user limits, and umask.
@@ -793,7 +793,46 @@ StartClient (verify, d, pidp, name, passwd)
 	    LogError("setpcred for \"%s\" failed, errno=%d\n", name, errno);
 	    return (0);
 	}
-#else /* AIXV3 */
+	{ 
+	  char *usrTag, *sysTag;
+	  extern char **newenv; /* from libs.a, this is set up by setpenv */
+
+	 /*
+	  * Save pointers to tags. Note: changes to the locations of these
+	  * tags in verify.c must be reflected here by adjusting SYS_ENV_TAG
+	  * or USR_ENV_TAG.
+	  */
+	  #define SYS_ENV_TAG 0
+	  #define USR_ENV_TAG 3
+
+	  sysTag = verify->userEnviron[SYS_ENV_TAG];
+	  usrTag = verify->userEnviron[USR_ENV_TAG];
+
+	 /*
+	  * Set the users process environment. Store protected variables and
+	  * obtain updated user environment list. This call will initialize
+	  * global 'newenv'. 
+	  */
+	  if (setpenv(name, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
+	              verify->userEnviron, NULL) != 0) {
+
+	      Debug("Can't set process environment (user=%s)\n",name);
+	      return(0);
+	  }
+
+	 /*
+	  * Restore pointers to tags (in order to be properly freed).
+	  */
+	  verify->userEnviron[SYS_ENV_TAG] = sysTag;
+	  verify->userEnviron[USR_ENV_TAG] = usrTag;
+
+	 /*
+	  * Free old userEnviron and replace with newenv from setpenv().
+	  */
+	  freeEnv(verify->userEnviron);
+	  verify->userEnviron = newenv;
+	}
+#else /* _AIX */
 #ifdef NGROUPS_MAX
 	if (setgid(verify->groups[0]) < 0)
 	{
@@ -827,7 +866,7 @@ StartClient (verify, d, pidp, name, passwd)
 		     verify->uid, name, errno);
 	    return (0);
 	}
-#endif /* AIXV3 */
+#endif /* _AIX */
 #endif /* HAVE_SETUSERCONTEXT */
 
 	/*

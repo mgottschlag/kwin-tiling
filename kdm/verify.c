@@ -94,6 +94,32 @@ static char *envvars[] = {
     NULL
 };
 
+#ifdef _AIX
+char **
+defaultUserEnv (user)
+char *user;
+{
+    char    **env, **exp, *value;
+    extern char **setEnv ();
+
+    env = 0;
+
+    /* we need the tags SYSENVIRON: and USRENVIRON: in the call to setpenv() */
+    env = setEnv(env,"SYSENVIRON:","");  /* SYS_ENV_TAG */
+    env = setEnv(env,"LOGNAME",user);
+    env = setEnv(env,"LOGIN",user);
+    env = setEnv(env,"USRENVIRON:","");  /* USR_ENV_TAG */
+
+    for (exp = exportList; exp && *exp; ++exp)
+    {
+      value = getenv (*exp);
+      if (value)
+          env = setEnv (env, *exp, value);
+    }
+    return env;
+}
+#endif /* _AIX */
+
 static char **
 userEnv (d, useSystemPath, user, home, shell)
 struct display	*d;
@@ -105,7 +131,11 @@ char	*user, *home, *shell;
     char	*str;
     extern char **defaultEnv (), **setEnv ();
     
+#ifdef _AIX
+    env = defaultUserEnv (user);
+#else
     env = defaultEnv ();
+#endif
     env = setEnv (env, "DISPLAY", d->name);
     env = setEnv (env, "HOME", home);
     env = setEnv (env, "USER", user);

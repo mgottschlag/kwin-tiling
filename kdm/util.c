@@ -81,6 +81,12 @@ char	*value;
 		LogOutOfMem ("makeEnv");
 		return 0;
 	}
+#ifdef _AIX
+	/* setpenv() depends on "SYSENVIRON:", not "SYSENVIRON:=" */
+	if ( !(value && *value) )
+		sprintf (result, "%s", name);
+	else 
+#endif
 	sprintf (result, "%s=%s", name, value);
 	return result;
 }
