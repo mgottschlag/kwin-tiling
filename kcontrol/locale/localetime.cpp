@@ -26,6 +26,7 @@
 #include <qlineedit.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
+#include <qcombobox.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -42,6 +43,7 @@
 QMap<QChar, QString> KLocaleConfigTime::timeMap() const
 {
   QMap<QChar, QString> map;
+
   map['H'] = m_locale->translate("HH");
   map['k'] = m_locale->translate("hH");
   map['I'] = m_locale->translate("PH");
@@ -59,12 +61,12 @@ QMap<QChar, QString> KLocaleConfigTime::dateMap() const
 
   map['Y'] = m_locale->translate("YYYY");
   map['y'] = m_locale->translate("YY");
-  map['m'] = m_locale->translate("mM");
-  map['n'] = m_locale->translate("MM");
+  map['n'] = m_locale->translate("mM");
+  map['m'] = m_locale->translate("MM");
   map['b'] = m_locale->translate("SHORTMONTH");
   map['B'] = m_locale->translate("MONTH");
-  map['d'] = m_locale->translate("dD");
-  map['e'] = m_locale->translate("DD");
+  map['e'] = m_locale->translate("dD");
+  map['d'] = m_locale->translate("DD");
   map['a'] = m_locale->translate("SHORTWEEKDAY");
   map['A'] = m_locale->translate("WEEKDAY");
 
@@ -150,16 +152,20 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   lay->setAutoAdd(TRUE);
 
   m_labTimeFmt = new QLabel(this, I18N_NOOP("Time format:"));
-  m_edTimeFmt = new QLineEdit(this);
-  connect( m_edTimeFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotTimeFmtChanged(const QString &) ) );
+  m_comboTimeFmt = new QComboBox(true, this);
+  //m_edTimeFmt = m_comboTimeFmt->lineEdit();
+  //m_edTimeFmt = new QLineEdit(this);
+  connect( m_comboTimeFmt, SIGNAL( textChanged(const QString &) ),
+	   this, SLOT( slotTimeFmtChanged(const QString &) ) );
 
   m_labDateFmt = new QLabel(this, I18N_NOOP("Date format:"));
-  m_edDateFmt = new QLineEdit(this);
-  connect( m_edDateFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtChanged(const QString &) ) );
+  m_comboDateFmt = new QComboBox(true, this);
+  connect( m_comboDateFmt, SIGNAL( textChanged(const QString &) ),
+	   this, SLOT( slotDateFmtChanged(const QString &) ) );
 
   m_labDateFmtShort = new QLabel(this, I18N_NOOP("Short date format:"));
-  m_edDateFmtShort = new QLineEdit(this);
-  connect( m_edDateFmtShort, SIGNAL( textChanged(const QString &) ),
+  m_comboDateFmtShort = new QComboBox(true, this);
+  connect( m_comboDateFmtShort, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotDateFmtShortChanged(const QString &) ) );
 
   m_labWeekStartsMonday = new QLabel(this, I18N_NOOP("Start week on Monday:"));
@@ -222,11 +228,13 @@ void KLocaleConfigTime::save()
 void KLocaleConfigTime::slotLocaleChanged()
 {
   //  m_edTimeFmt->setText( m_locale->timeFormat() );
-  m_edTimeFmt->setText( storeToUser( timeMap(), m_locale->timeFormat() ) );
+  m_comboTimeFmt->setEditText( storeToUser( timeMap(),
+					    m_locale->timeFormat() ) );
   // m_edDateFmt->setText( m_locale->dateFormat() );
-  m_edDateFmt->setText( storeToUser( dateMap(), m_locale->dateFormat() ) );
+  m_comboDateFmt->setEditText( storeToUser( dateMap(),
+					    m_locale->dateFormat() ) );
   //m_edDateFmtShort->setText( m_locale->dateFormatShort() );
-  m_edDateFmtShort->setText( storeToUser( dateMap(),
+  m_comboDateFmtShort->setEditText( storeToUser( dateMap(),
 					  m_locale->dateFormatShort() ) );
   m_chWeekStartsMonday->setChecked( m_locale->weekStartsMonday() );
 
@@ -270,6 +278,37 @@ void KLocaleConfigTime::slotTranslate()
 {
   QString str;
 
+  QString sep = QString::fromLatin1("\n");
+
+  QString old;
+
+  // clear() and insertStringList also changes the current item, so
+  // we better use save and restore here..
+  old = m_comboTimeFmt->currentText();
+  m_comboTimeFmt->clear();
+  str = i18n("some reasonable time formats for the language",
+	     "HH:MM:SS\n"
+	     "pH:MM:SS AMPM");
+  m_comboTimeFmt->insertStringList(QStringList::split(sep, str));
+  m_comboTimeFmt->setEditText(old);
+
+  old = m_comboDateFmt->currentText();
+  m_comboDateFmt->clear();
+  str = i18n("some reasonable date formats for the language",
+	     "WEEKDAY MONTH dD YYYY\n"
+	     "SHORTWEEKDAY MONTH dD YYYY");
+  m_comboDateFmt->insertStringList(QStringList::split(sep, str));
+  m_comboDateFmt->setEditText(old);
+  
+  old = m_comboDateFmtShort->currentText();
+  m_comboDateFmtShort->clear();
+  str = i18n("some resasonable short date formats for the language",
+	     "YYYY-MM-DD\n"
+	     "dD.mM.YYYY\n"
+	     "DD.MM.YYYY");
+  m_comboDateFmtShort->insertStringList(QStringList::split(sep, str));
+  m_comboDateFmtShort->setEditText(old);
+
   str = m_locale->translate
     ("<p>The text in this textbox will be used to format "
      "time strings. The sequences below will be replaced:</p>"
@@ -291,7 +330,7 @@ void KLocaleConfigTime::slotTranslate()
      "</td></tr>"
      "</table>");
   QWhatsThis::add( m_labTimeFmt, str );
-  QWhatsThis::add( m_edTimeFmt,  str );
+  QWhatsThis::add( m_comboTimeFmt,  str );
 
   QString datecodes = m_locale->translate(
     "<table>"
@@ -318,14 +357,14 @@ void KLocaleConfigTime::slotTranslate()
     ( "<p>The text in this textbox will be used to format long "
       "dates. The sequences below will be replaced:</p>") + datecodes;
   QWhatsThis::add( m_labDateFmt, str );
-  QWhatsThis::add( m_edDateFmt,  str );
+  QWhatsThis::add( m_comboDateFmt,  str );
   
   str = m_locale->translate
     ( "<p>The text in this textbox will be used to format short "
       "dates. For instance, this is used when listing files. "
       "The sequences below will be replaced:</p>") + datecodes;
   QWhatsThis::add( m_labDateFmtShort, str );
-  QWhatsThis::add( m_edDateFmtShort,  str );
+  QWhatsThis::add( m_comboDateFmtShort,  str );
 
   str = m_locale->translate
     ("If this option is checked, calendars will be printed "

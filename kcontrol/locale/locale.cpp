@@ -308,8 +308,11 @@ void KLocaleConfig::save()
   config->setGroup("Locale");
 
   config->writeEntry("Country", m_locale->country(), true, true);
-  config->writeEntry("Language",
-		     m_locale->languageList(), ':', true, true);
+  if ( m_locale->languageList().isEmpty() )
+    config->writeEntry("Language", QString::fromLatin1(""), true, true);
+  else
+    config->writeEntry("Language",
+		       m_locale->languageList(), ':', true, true);
 
   config->sync();
 }
@@ -414,7 +417,6 @@ void KLocaleConfig::changedCountry(int i)
     }
   m_locale->setLanguage( newLanguageList );
 
-  emit languageChanged();
   emit localeChanged();
+  emit languageChanged();
 }
-

@@ -1,3 +1,4 @@
+#undef NDEBUG
 /*
   toplevel.cpp - A KControl Application
 
@@ -186,6 +187,8 @@ void KLocaleApplication::save()
 void KLocaleApplication::defaults()
 {
   *m_locale = KLocale(QString::fromLatin1("kcmlocale"), m_nullConfig);
+
+  kdDebug() << "defaults: " << m_locale->languages() << endl;
 
   emit localeChanged();
   emit languageChanged();

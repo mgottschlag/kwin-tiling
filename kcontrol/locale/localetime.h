@@ -79,11 +79,14 @@ private:
 
   // Time & dates
   QLabel *m_labTimeFmt;
-  QLineEdit *m_edTimeFmt;
+  //QLineEdit *m_edTimeFmt;
+  QComboBox *m_comboTimeFmt;
   QLabel *m_labDateFmt;
-  QLineEdit *m_edDateFmt;
+  //QLineEdit *m_edDateFmt;
+  QComboBox * m_comboDateFmt;
   QLabel *m_labDateFmtShort;
-  QLineEdit *m_edDateFmtShort;
+  //QLineEdit *m_edDateFmtShort;
+  QComboBox * m_comboDateFmtShort;
   QLabel *m_labWeekStartsMonday;
   QCheckBox *m_chWeekStartsMonday;
 };
