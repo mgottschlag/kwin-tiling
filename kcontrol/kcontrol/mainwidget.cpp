@@ -4,6 +4,7 @@
    Date:   September '97         */
 
 
+#include <unistd.h>
 #include <stdio.h>
 
 #include <kglobal.h>
@@ -13,7 +14,6 @@
 
 #include "mainwidget.moc"
 #include "mainwidget.h"
-
 
 mainWidget::mainWidget(QWidget *parent , const char *name)
   : QWidget(parent, name)
@@ -55,7 +55,7 @@ void mainWidget::paintEvent(QPaintEvent *)
   p.setFont(boldFont);
   p.drawText(60,90, i18n("User: "));
   p.setFont(normalFont);
-  str = cuserid(NULL);
+  str = getlogin();
   p.drawText(180,90, str);
 
   p.setFont(boldFont);
