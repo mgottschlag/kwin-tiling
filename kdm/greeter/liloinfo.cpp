@@ -475,7 +475,7 @@ bool LiloInfo::getNextOptionFromLilo()
  * Note that probably the default option will always be on the first line, but I don't use
  * that, so it that changes, this will keep working.
  */
-void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int )
+void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int len)
 {
 	bool ready = false, // indicates whether the entire input has been parsed
 		curIsDefault = false; // true if the current line contains the default option
@@ -485,6 +485,7 @@ void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int )
 		defaultOption; // contains the default option
 
 	// Copy the received string into a QString, and add a '\n'.
+	buffer[len ? len-1 : 0] = '\0';
 	QString outString = QString::fromLatin1(buffer) + '\n';
 
 	if ( debug ) cerr << "[LiloInfo]     Received on standard output: \"" << outString.latin1() << "\"" << endl;
@@ -548,8 +549,9 @@ void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int )
  * Parse the output of Lilo to find the next option. The shell command, i.e. the output
  * of Lilo piped through sed scripts, is either empty or contains the next boot option.
  */
-void LiloInfo::getNextOptionFromStdout ( KProcess *, char *buffer, int )
+void LiloInfo::getNextOptionFromStdout ( KProcess *, char *buffer, int len )
 {
+	buffer[len ? len-1 : 0] = '\0';
 	QString nextOption = QString::fromLatin1(buffer);
 
 	if ( debug ) cerr << "[LiloInfo]     Received on standard output: \"" << nextOption.latin1() << "\"" << endl;
@@ -585,16 +587,17 @@ void LiloInfo::getNextOptionFromStdout ( KProcess *, char *buffer, int )
  * map file, Lilo says "Ignoring entry 'map'". This is not an error, so we skip that.
  * BTW: we assume that this ignore message is always the first line on stderr.
  */
-void LiloInfo::processStderr ( KProcess *, char *buffer, int  )
+void LiloInfo::processStderr ( KProcess *, char *buffer, int len )
 {
 	// Copy the received string into a QString
+	buffer[len ? len-1 : 0] = '\0';
 	QString errString = QString::fromLatin1(buffer) + '\n';
 
 	if ( debug ) cerr << "[LiloInfo]     Received on standard error: \"" << errString.latin1() << "\"" << endl;
 
 	// If the string starts with "Ignoring entry ...", remove the first line
 	if ( errString.left ( 8 ) == QString::fromLatin1("Ignoring") )
-		errString.remove(0, errString.find ( '\n' ) - 1 );
+		errString.remove(0, errString.find ( '\n' ) + 1 );
 
 	if ( !errString.isEmpty() )
 	{
