@@ -533,14 +533,14 @@ KDMSlimShutdown::slotSched()
 void
 KDMSlimShutdown::slotHalt()
 {
-    if (checkShutdown())
+    if (checkShutdown( SHUT_HALT ))
 	doShutdown( SHUT_HALT );
 }
 
 void
 KDMSlimShutdown::slotReboot()
 {
-    if (checkShutdown()) {
+    if (checkShutdown( SHUT_REBOOT )) {
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
         if (_useLilo)
 	    applyTarget();
@@ -550,13 +550,13 @@ KDMSlimShutdown::slotReboot()
 }
 
 bool
-KDMSlimShutdown::checkShutdown()
+KDMSlimShutdown::checkShutdown( int type )
 {
     reject();
     dpySpec *sess = fetchSessions( 0 );
     if (!sess && _allowShutdown != SHUT_ROOT)
 	return true;
-    int ret = KDMConfShutdown( -1, sess ).exec();
+    int ret = KDMConfShutdown( -1, sess, type ).exec();
     disposeSessions( sess );
     if (ret == Schedule) {
 	KDMShutdown::scheduleShutdown();
@@ -569,7 +569,7 @@ void
 KDMSlimShutdown::externShutdown( int type, int uid )
 {
     dpySpec *sess = fetchSessions( 0 );
-    int ret = KDMConfShutdown( uid, sess ).exec();
+    int ret = KDMConfShutdown( uid, sess, type ).exec();
     disposeSessions( sess );
     if (ret == Schedule)
 	KDMShutdown( uid ).exec();
@@ -578,9 +578,18 @@ KDMSlimShutdown::externShutdown( int type, int uid )
 }
 
 
-KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, QWidget *_parent )
+KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, QWidget *_parent )
     : inherited( _uid, _parent )
 {
+    QLabel *title = new QLabel(
+                      QString("<qt><center><b><nobr>"
+                              "%1"
+                              "</nobr></b></center><br></qt>")
+                        .arg((type == SHUT_HALT) ?
+                             i18n("Turn Off Computer") :
+                             i18n("Restart Computer")), this );
+    box->addWidget( title );
+
     if (sess) {
 	if (_scheduledSd != SHUT_NEVER)
 	    maySched = true;

@@ -160,7 +160,7 @@ private slots:
     void slotSched();
 
 private:
-    bool checkShutdown();
+    bool checkShutdown( int type );
 
 };
 
@@ -169,7 +169,7 @@ class KDMConfShutdown : public KDMShutdownBase {
     typedef KDMShutdownBase inherited;
 
 public:
-    KDMConfShutdown( int _uid, struct dpySpec *sess, QWidget *_parent = 0 );
+    KDMConfShutdown( int _uid, struct dpySpec *sess, int type, QWidget *_parent = 0 );
 };
 
 class KDMCancelShutdown : public KDMShutdownBase {
