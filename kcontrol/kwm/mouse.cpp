@@ -77,7 +77,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Maximize"));
   combo->insertItem(i18n("Shade"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addMultiCellWidget(combo, 0, 0, 2, 32);
+  layout->addMultiCellWidget(combo, 0, 0, 2, 3);
   coTiDbl = combo;
   QWhatsThis::add(combo, "Behavior on <em>double</em> click into the titlebar.");
 
