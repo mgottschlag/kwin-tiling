@@ -44,6 +44,7 @@ genkdmconf_LDFLAGS = $(X_LDFLAGS) $(X_RPATH)
 genkdmconf_LDADD = $(LIB_X11)
 
 kdmctl_SOURCES = kdmctl.c
+kdmctl_LDADD = $(LIBSOCKET)
 
 install-data-local: genkdmconf
 	./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm --face-src $(srcdir)/pics $(GENKDMCONF_FLAGS)
