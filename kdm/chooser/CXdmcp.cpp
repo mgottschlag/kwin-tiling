@@ -87,7 +87,15 @@ extern "C" {
 #  include <sync/sema.h>
 # endif
 # ifndef __GNU__
+#ifdef USE_SOLARIS
+/* net/if.h is incompatible with STL on Solaris 2.6 - 2.8, redefine
+   map in the header file because we don't need it. -- Simon Josefsson */
+#define map junkmap
+#endif
 #  include <net/if.h>
+#ifdef USE_SOLARIS
+#undef map
+#endif
 # endif				/* __GNU__ */
 #endif				/* hpux */
 
