@@ -8,8 +8,8 @@
 #ifndef __BLANKSCRN_H__
 #define __BLANKSCRN_H__
 
-#include <qdialog.h>
 #include <qcolor.h>
+#include <kdialogbase.h>
 #include <kscreensaver.h>
 
 class KColorButton;
@@ -32,7 +32,7 @@ private:
 	QColor color;
 };
 
-class KBlankSetup : public QDialog
+class KBlankSetup : public KDialogBase
 {
 	Q_OBJECT
 public:
@@ -48,7 +48,6 @@ private slots:
 private:
 	QWidget *preview;
 	KBlankSaver *saver;
-	KColorButton *colorPush;
 
 	QColor color;
 };

@@ -42,51 +42,37 @@ extern "C"
 // dialog to setup screen saver parameters
 //
 KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
-	: QDialog( parent, name, TRUE )
+	: KDialogBase( parent, name, true, i18n( "Setup Blank Screen Saver" ),
+		Ok|Cancel, Ok, true )
 {
 	readSettings();
 
-	QLabel *label;
-	QPushButton *button;
+	QFrame *main = makeMainWidget();
+	QGridLayout *grid = new QGridLayout(main, 4, 2, 0, spacingHint() );
 
-	setCaption( i18n("Setup Blank Screen Saver") );
+	QLabel *label = new QLabel( i18n("Color:"), main );
+	grid->addWidget(label, 0, 0);
 
-	QVBoxLayout *tl = new QVBoxLayout(this, 10);
-	QHBoxLayout *tl1 = new QHBoxLayout;
-	tl->addLayout(tl1);
-
-	QVBoxLayout *tl11 = new QVBoxLayout(5);
-	tl1->addLayout(tl11);
-
-	label = new QLabel( i18n("Color:"), this );
-	tl11->addWidget(label);
-
-	colorPush = new KColorButton( color, this );
+	KColorButton *colorPush = new KColorButton( color, main );
 	colorPush->setMinimumWidth(80);
 	connect( colorPush, SIGNAL( changed(const QColor &) ),
 		SLOT( slotColor(const QColor &) ) );
-	tl11->addWidget(colorPush);
-	tl11->addStretch(1);
+	grid->addWidget(colorPush, 1, 0);
 
-	preview = new QWidget( this );
-	preview->setFixedSize( 220, 170 );
+	preview = new QWidget( main );
+	preview->setFixedSize( 220, 165 );
 	preview->setBackgroundColor( black );
 	preview->show();    // otherwise saver does not get correct size
 	saver = new KBlankSaver( preview->winId() );
-	tl1->addWidget(preview);
+	grid->addMultiCellWidget(preview, 0, 2, 1, 1);
 
-	KButtonBox *bbox = new KButtonBox(this);	
-	bbox->addStretch(1);
+	grid->setRowStretch( 2, 10 );
+	grid->setRowStretch( 3, 20 );
 
-	button = bbox->addButton( i18n("&OK"));
-	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
+	setMinimumSize( sizeHint() );
 
-	button = bbox->addButton(i18n("&Cancel"));
-	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
-	bbox->layout();
-	tl->addWidget(bbox);
-
-	tl->freeze();
+	connect( this, SIGNAL( okClicked() ), SLOT( slotOkPressed() ) );
+	connect( this, SIGNAL( cancelClicked() ), SLOT( reject() ) );
 }
 
 // read settings from config file
@@ -109,9 +95,7 @@ void KBlankSetup::slotOkPressed()
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
-
 	config->writeEntry( "Color", color );
-
 	config->sync();
 
 	accept();
@@ -123,7 +107,6 @@ void KBlankSetup::slotOkPressed()
 KBlankSaver::KBlankSaver( WId id ) : KScreenSaver( id )
 {
 	readSettings();
-
 	blank();
 }
 

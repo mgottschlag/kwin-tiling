@@ -1,4 +1,3 @@
-# $Id$
 # Makefile.am for kscreensaver.
 #
 
