@@ -33,7 +33,6 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <stdio.h>
-#include <iostream.h>
 
 #include <libraw1394/csr.h>
 #define CONFIGROM_BASE 0x00
@@ -98,7 +97,6 @@ QString View1394::quickHelp() const
 
 bool View1394::readConfigRom(raw1394handle_t handle, nodeid_t nodeid, quadlet_t& firstQuad, quadlet_t& cap, octlet_t& guid)
 {
-   cerr<<"readConfigRom()"<<endl;
    quadlet_t q=0;
    firstQuad=0;
    cap=0;
@@ -119,48 +117,37 @@ bool View1394::readConfigRom(raw1394handle_t handle, nodeid_t nodeid, quadlet_t&
       select(0,0,0,0,&tv);
    }
    if (firstQuad==0)
-   {
-      cerr<<"readConfigRom() done 0"<<endl;
       return false;
-   }
+
    addr=CSR_REGISTER_BASE + CSR_CONFIG_ROM + CONFIGROM_CAP;
    if (raw1394_read(handle, nodeid|0xffc0, addr, sizeof(q), &q)!=0)
-   {
-      cerr<<"readConfigRom() done 1"<<endl;
       return false;
-   }
+
    cap=ntohl(q);
 
    addr=CSR_REGISTER_BASE + CSR_CONFIG_ROM + CONFIGROM_GUID_HI;
    if (raw1394_read(handle, nodeid|0xffc0, addr, sizeof(q), &q)!=0)
-   {
-      cerr<<"readConfigRom() done 2"<<endl;
       return false;
-   }
+
    guid=octlet_t(ntohl(q))<<32;
 
    addr=CSR_REGISTER_BASE + CSR_CONFIG_ROM + CONFIGROM_GUID_LO;
    if (raw1394_read(handle, nodeid|0xffc0, addr, sizeof(q), &q)!=0)
-   {
-      cerr<<"readConfigRom() done 3"<<endl;
       return false;
-   }
+
    guid=guid|ntohl(q);
 
-   cerr<<"readConfigRom() done 4"<<endl;
    return true;
 }
 
 void View1394::callRaw1394EventLoop(int fd)
 {
-   cerr<<"callEventLoop()"<<endl;
    for (QValueList<raw1394handle_t>::iterator it= m_handles.begin(); it!=m_handles.end(); ++it)
       if (raw1394_get_fd(*it)==fd)
       {
          raw1394_loop_iterate(*it);
          break;
       }
-   cerr<<"callEventLoop() done"<<endl;
 }
 
 void View1394::rescanBus()
@@ -173,7 +160,6 @@ void View1394::rescanBus()
    m_insideRescanBus=true;
    static int depth=0;
    depth++;
-   cerr<<"rescanBus() "<<depth<<endl;
    m_notifiers.clear();
    for (QValueList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
       raw1394_destroy_handle(*it);
@@ -280,15 +266,12 @@ void View1394::rescanBus()
    }
    depth--;
    m_insideRescanBus=false;
-   cerr<<"rescanBus() done"<<endl;
 }
 
 void View1394::generateBusReset()
 {
-   cerr<<"genBusReset()"<<endl;
    for (QValueList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
       raw1394_reset_bus(*it);
-   cerr<<"genBusReset() done"<<endl;
 }
 
 // ------------------------------------------------------------------------
