@@ -30,6 +30,7 @@
 #include <dcopclient.h>
 
 #include "main.h"
+#include "main.moc"
 #include "paneltab.h"
 #include "lnftab.h"
 #include "menutab.h"
