@@ -39,6 +39,7 @@ class KBackgroundRenderer;
 class KGlobalBackgroundSettings;
 class KConfig;
 class KStandardDirs;
+class KAboutData;
 
 
 /**
@@ -76,6 +77,7 @@ public:
     virtual void defaults();
 
     QString quickHelp() const;
+    const KAboutData* aboutData() const;
 
 signals:
     void changed(bool);
