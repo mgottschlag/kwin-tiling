@@ -72,6 +72,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <knotifyclient.h>
 #include <kstaticdeleter.h>
 #include <dcopclient.h>
+#include <dcopref.h>
 
 #include "server.h"
 #include "global.h"
@@ -230,11 +231,7 @@ void KSMServer::startApplication( const QStringList& command )
     QValueList<QCString> argList;
     for ( int i=1; i < n; i++)
        argList.append( QCString(command[i].latin1()));
-
-      QByteArray params;
-      QDataStream stream(params, IO_WriteOnly);
-      stream << app << argList;
-      kapp->dcopClient()->send(launcher, launcher, "exec_blind(QCString,QValueList<QCString>)", params);
+    DCOPRef( launcher ).send( "exec_blind", app, DCOPArg( argList, "QValueList<QCString>" ) );
 }
 
 /*! Utility function to execute a command on the local machine. Used
@@ -832,12 +829,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         fclose(f);
         setenv( "SESSION_MANAGER", session_manager, true  );
        // Pass env. var to kdeinit.
-       QCString name = "SESSION_MANAGER";
-       QCString value = session_manager;
-       QByteArray params;
-       QDataStream stream(params, IO_WriteOnly);
-       stream << name << value;
-       kapp->dcopClient()->send(launcher, launcher, "setLaunchEnv(QCString,QCString)", params);
+       DCOPRef( launcher ).send( "setLaunchEnv", "SESSION_MANAGER", (const char*) session_manager );
     }
 
     if (only_local) {
@@ -1389,9 +1381,9 @@ void KSMServer::restoreSession( QString sessionName )
         wmCommand << wm;
 
     publishProgress( appsToStart, true );
-    connectDCOPSignal( "klauncher", "klauncher", "autoStartDone()",
+    connectDCOPSignal( launcher, launcher, "autoStartDone()",
                        "restoreSessionInternal()", true);
-    connectDCOPSignal( "klauncher", "klauncher", "autoStart2Done()",
+    connectDCOPSignal( launcher, launcher, "autoStart2Done()",
                        "restoreSessionDoneInternal()", true);
     upAndRunning( "ksmserver" );
 
@@ -1416,9 +1408,9 @@ void KSMServer::startDefaultSession()
 {
     publishProgress( 0, true );
     upAndRunning( "ksmserver" );
-    connectDCOPSignal( "klauncher", "klauncher", "autoStartDone()",
+    connectDCOPSignal( launcher, launcher, "autoStartDone()",
                        "autoStart2()", true);
-    connectDCOPSignal( "klauncher", "klauncher", "autoStart2Done()",
+    connectDCOPSignal( launcher, launcher, "autoStart2Done()",
                        "restoreSessionDoneInternal()", true);
     startApplication( wm );
     QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
@@ -1438,11 +1430,7 @@ void KSMServer::autoStart()
     if ( beenThereDoneThat )
         return;
     beenThereDoneThat = true;
-
-    QByteArray data;
-    QDataStream arg(data, IO_WriteOnly);
-    arg << (int)1;
-    kapp->dcopClient()->send("klauncher", "klauncher", "autoStart(int)", data);
+    DCOPRef( launcher ).send( "autoStart", (int) 1 );
 }
 
 void KSMServer::autoStart2()
@@ -1451,11 +1439,7 @@ void KSMServer::autoStart2()
     if ( beenThereDoneThat )
         return;
     beenThereDoneThat = true;
-
-    QByteArray data;
-    QDataStream arg(data, IO_WriteOnly);
-    arg << (int)2;
-    kapp->dcopClient()->send("klauncher", "klauncher", "autoStart(int)", data);
+    DCOPRef( launcher ).send( "autoStart", (int) 2 );
 }
 
 
@@ -1474,7 +1458,7 @@ void KSMServer::clientRegistered( const char* previousId )
 
 void KSMServer::restoreSessionInternal()
 {
-    disconnectDCOPSignal( "klauncher", "klauncher", "autoStartDone()",
+    disconnectDCOPSignal( launcher, launcher, "autoStartDone()",
                           "restoreSessionInternal()");
     lastAppStarted = 0;
     lastIdStarted = QString::null;
@@ -1516,23 +1500,20 @@ void KSMServer::restoreNextInternal()
 
 void KSMServer::restoreSessionDoneInternal()
 {
-    disconnectDCOPSignal( "klauncher", "klauncher", "autoStart2Done()",
+    disconnectDCOPSignal( launcher, launcher, "autoStart2Done()",
                           "restoreSessionDoneInternal()");
     upAndRunning( "session ready" );
 }
 
 void KSMServer::publishProgress( int progress, bool max  )
 {
-    QByteArray data;
-    QDataStream arg(data, IO_WriteOnly);
-    arg << progress;
-    kapp->dcopClient()->send("ksplash", "", max ? "setMaxProgress(int)" : "setProgress(int)", data );
+    DCOPRef( "ksplash" ).send( max ? "setMaxProgress" : "setProgress", progress );
 }
 
 
 void KSMServer::upAndRunning( const QString& msg )
 {
-    kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)", msg );
+    DCOPRef( "ksplash" ).send( "upAndRunning", msg );
 }
 
 
