@@ -128,14 +128,14 @@ const KAboutData* KThemeMgr::aboutData() const
 {
 
     KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmthememgr"), I18N_NOOP("KDE Theming Manager"),
+    new KAboutData(I18N_NOOP("kcmthememgr"), I18N_NOOP("KDE Theme Manager"),
                   KTHEME_VERSION, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 1998 - 2001 The KDE Theme Manager authors"));
 
     about->addAuthor("Stefan Taferner", 0, "taferner@kde.org");
     about->addAuthor("Waldo Bastian", 0, "bastian@kde.org");
     about->addCredit("Divide by Zero", 
-                     I18N_NOOP("Support for M$-Windows' Themes"), 
+                     I18N_NOOP("Support for MS Windows' Themes"), 
 						   "divide@priv.onet.pl" );
 
     return about;
