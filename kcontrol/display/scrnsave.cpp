@@ -161,25 +161,24 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     
     findSavers();
     
-    QBoxLayout *topLayout = new QVBoxLayout(this, 10, 10);
-    
-    mMonitorLabel = new QLabel( this );
-    mMonitorLabel->setAlignment( AlignCenter );
-    mMonitorLabel->setPixmap( QPixmap(locate("data",
-					     "kcontrol/pics/monitor.png"))); 
-    topLayout->addWidget(mMonitorLabel, 0);
-    
-    QBoxLayout *hLayout = new QHBoxLayout(this, 0, 10);
-    topLayout->addLayout(hLayout);
+    QBoxLayout *topLayout = new QHBoxLayout(this, 10, 10);
 
+    // left column
+    QBoxLayout *vLayout = new QVBoxLayout(this, 0, 10);
+    topLayout->addLayout(vLayout);
+
+    mEnableCheckBox = new QCheckBox( i18n("&Enable screensaver"), this );
+    mEnableCheckBox->setChecked( mEnabled );
+    connect( mEnableCheckBox, SIGNAL( toggled( bool ) ), 
+	     this, SLOT( slotEnable( bool ) ) );
+    vLayout->addWidget(mEnableCheckBox);
+    
     QGroupBox *group = new QGroupBox(i18n("Screen Saver"), this );
-    hLayout->addWidget(group);
+    vLayout->addWidget(group);
     QBoxLayout *groupLayout = new QVBoxLayout( group, 10 );
     groupLayout->addSpacing(10);		
     
     mSaverListBox = new QListBox( group );
-    mSaverListBox->insertItem( i18n("No screensaver"), 0 );
-    mSaverListBox->setCurrentItem( 0 );
     /* mSaverListBox->setFixedHeight(120); */
 
     SaverConfig *saver;
@@ -187,14 +186,13 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     for (saver = mSaverList.first(); saver != 0; saver = mSaverList.next())
     {
         mSaverListBox->insertItem(saver->name());
-        if (saver->file() == mSaver && mEnabled) 
+        if (saver->file() == mSaver) 
             mSelected = mSaverListBox->count()-1;
     }
-    if (mSelected == 0) 
-        mEnabled = false;
-    
+
     mSaverListBox->setCurrentItem(mSelected);
     mSaverListBox->setTopItem(mSaverListBox->currentItem());
+    mSaverListBox->setEnabled(mEnabled);
     mSelected = mSaverListBox->currentItem();
     connect( mSaverListBox, SIGNAL( highlighted( int ) ),
              this, SLOT( slotScreenSaver( int ) ) );
@@ -204,7 +202,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mSetupBt = new QPushButton(  i18n("&Setup ..."), group );
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
     mSetupBt->setEnabled(mEnabled &&
-                         !mSaverList.at(mSelected-1)->setup().isEmpty());
+                         !mSaverList.at(mSelected)->setup().isEmpty());
     hlay->addWidget( mSetupBt );
     
     mTestBt = new QPushButton(  i18n("&Test"), group );
@@ -212,8 +210,18 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mTestBt->setEnabled(mEnabled);
     hlay->addWidget( mTestBt );
 
+    // right column
+    vLayout = new QVBoxLayout(this, 0, 10);
+    topLayout->addLayout(vLayout);
+
+    mMonitorLabel = new QLabel( this );
+    mMonitorLabel->setAlignment( AlignCenter );
+    mMonitorLabel->setPixmap( QPixmap(locate("data",
+					     "kcontrol/pics/monitor.png"))); 
+    vLayout->addWidget(mMonitorLabel, 0);
+
     group = new QGroupBox( i18n("Settings"), this );
-    hLayout->addWidget( group );
+    vLayout->addWidget( group );
     groupLayout = new QVBoxLayout( group, 10, 10 );
     groupLayout->addSpacing(10);
 
@@ -226,18 +234,21 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mWaitEdit->setRange(1, 120);
     mWaitEdit->setSuffix(i18n(" min."));
     mWaitEdit->setValue(mTimeout/60);
+    mWaitEdit->setEnabled(mEnabled);
     connect(mWaitEdit, SIGNAL(valueChanged(int)), SLOT(slotTimeoutChanged(int)));
     lbl->setBuddy(mWaitEdit);
     hbox->addWidget(mWaitEdit);
 
     mLockCheckBox = new QCheckBox( i18n("&Require password"), group );
     mLockCheckBox->setChecked( mLock );
+    mLockCheckBox->setEnabled( mEnabled );
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ), 
 	     this, SLOT( slotLock( bool ) ) );
     groupLayout->addWidget(mLockCheckBox);
 
     mStarsCheckBox = new QCheckBox( i18n("Show p&assword as stars"), group );
     mStarsCheckBox->setChecked(mPasswordStars);
+    mStarsCheckBox->setEnabled(mEnabled);
     connect( mStarsCheckBox, SIGNAL( toggled( bool ) ), 
 	     this, SLOT( slotStars( bool ) ) );
     groupLayout->addWidget(mStarsCheckBox);
@@ -253,6 +264,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mPrioritySlider->setRange(0, 19);
     mPrioritySlider->setSteps(1, 5);
     mPrioritySlider->setValue(19 - mPriority);
+    mPrioritySlider->setEnabled( mEnabled );
     connect(mPrioritySlider, SIGNAL( valueChanged(int)),
 	    SLOT(slotPriorityChanged(int)));
     lbl->setBuddy(mPrioritySlider);
@@ -324,7 +336,7 @@ void KScreenSaver::load()
     SaverConfig *saver;
     mSelected = 0;
     for (saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
-        if (saver->file() == mSaver && mEnabled) 
+        if (saver->file() == mSaver) 
             mSelected = mSaverListBox->count()-1;
     }
     mSaverListBox->setCurrentItem(mSelected);
@@ -364,6 +376,7 @@ void KScreenSaver::updateValues()
     mLockCheckBox->setChecked(mLock);
     mStarsCheckBox->setChecked(mPasswordStars);
     mPrioritySlider->setValue(mPriority);
+    mEnableCheckBox->setChecked( mEnabled );
 }
 
 //---------------------------------------------------------------------------
@@ -373,6 +386,7 @@ void KScreenSaver::defaults()
     slotScreenSaver( 0 );
     mSaverListBox->setCurrentItem( 0 );
     mSaverListBox->centerCurrentItem();
+    slotEnable( false );
     slotTimeoutChanged( 1 );
     slotPriorityChanged( 0 );
     slotLock( false );
@@ -465,7 +479,7 @@ void KScreenSaver::slotPreviewExited(KProcess *)
     if (mEnabled) {
         mPreviewProc->clearArguments();
         
-        QString saver = mSaverList.at(mSelected-1)->saver();
+        QString saver = mSaverList.at(mSelected)->saver();
         QTextStream ts(&saver, IO_ReadOnly);
         
         QString word;
@@ -495,19 +509,44 @@ void KScreenSaver::slotPreviewExited(KProcess *)
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::slotScreenSaver(int indx)
+void KScreenSaver::slotEnable(bool e)
 {
-    if ( indx == 0 ) {
+    if ( !e ) {
 	mSetupBt->setEnabled( false );
-	mTestBt->setEnabled( false );
 	mEnabled = false;
     } else {
 	if (!mSetupProc->isRunning())
-	    mSetupBt->setEnabled(!mSaverList.at(indx - 1)->setup().isEmpty());
-	mTestBt->setEnabled(true);
-	mSaver = mSaverList.at(indx - 1)->file();
+	    mSetupBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
 	mEnabled = true;
     }
+
+    mSaverListBox->setEnabled( e );
+    mTestBt->setEnabled( e );
+    mWaitEdit->setEnabled( e );
+    mLockCheckBox->setEnabled( e );
+    mStarsCheckBox->setEnabled( e );
+#ifdef HAVE_SETPRIORITY
+    mPrioritySlider->setEnabled( e );
+#endif
+
+    mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
+    setMonitor();
+    mChanged = true;
+    emit changed(true);
+}
+
+//---------------------------------------------------------------------------
+//
+void KScreenSaver::slotScreenSaver(int indx)
+{
+    if (!mEnabled)
+        return;
+
+    if (!mSetupProc->isRunning())
+        mSetupBt->setEnabled(!mSaverList.at(indx)->setup().isEmpty());
+    mTestBt->setEnabled(true);
+    mSaver = mSaverList.at(indx)->file();
+    mEnabled = true;
     
     mSelected = indx;
     
@@ -528,7 +567,7 @@ void KScreenSaver::slotSetup()
 	
     mSetupProc->clearArguments();
 
-    QString saver = mSaverList.at(mSelected-1)->setup();
+    QString saver = mSaverList.at(mSelected)->setup();
     QTextStream ts(&saver, IO_ReadOnly);
 
     QString word;
@@ -561,7 +600,7 @@ void KScreenSaver::slotTest()
     }
 
     mTestProc->clearArguments();
-    QString saver = mSaverList.at(mSelected-1)->saver();
+    QString saver = mSaverList.at(mSelected)->saver();
     QTextStream ts(&saver, IO_ReadOnly);
 
     QString word;

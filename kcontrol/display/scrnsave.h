@@ -99,6 +99,7 @@ signals:
     void changed(bool);
 
 protected slots:
+    void slotEnable( bool );
     void slotScreenSaver( int );
     void slotSetup();
     void slotTest();
@@ -134,6 +135,7 @@ protected:
     QSlider     *mPrioritySlider;
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;
+    QCheckBox   *mEnableCheckBox;
     QLabel      *mMonitorLabel;
     SaverList   mSaverList;
 
