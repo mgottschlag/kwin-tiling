@@ -326,7 +326,10 @@ void BGDialog::setWallpaper(const QString &s)
 {
    KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
    comboWallpaper->blockSignals(true);
-   if (s.isEmpty())
+   bool noWallpaper = s.isEmpty();
+   setBlendingEnabled(!noWallpaper);
+
+   if (noWallpaper)
    {
       comboWallpaper->setCurrentItem(0);
    }
@@ -434,7 +437,6 @@ void BGDialog::updateUI()
     m_comboPattern->blockSignals(false);
 
     m_colorSecondary->setEnabled(bSecondaryEnabled);
-    m_lblColorSecondary->setEnabled(bSecondaryEnabled);
 
     int mode = r->blendMode();
 
@@ -457,7 +459,7 @@ void BGDialog::updateUI()
     m_sliderBlend->blockSignals(false);
 
     // turn it off if there is no background picture set!
-    m_blendGroup->setEnabled(m_urlWallpaper->comboBox()->currentItem() > 0);
+    setBlendingEnabled(m_urlWallpaper->comboBox()->currentItem() > 0);
 
     // Start preview render
     r->setPreview(m_pMonitor->size());
@@ -554,11 +556,20 @@ void BGDialog::slotWallpaper(int i)
       r->setWallpaper(uri);
    }
 
-   m_blendGroup->setEnabled(i > 0);
+   setBlendingEnabled(i > 0);
 
    r->start();
    m_copyAllDesktops = true;
    emit changed(true);
+}
+
+void BGDialog::setBlendingEnabled(bool enable)
+{
+   m_lblBlending->setEnabled(enable);
+   m_comboBlend->setEnabled(enable);
+   m_lblBlendBalance->setEnabled(enable);
+   m_sliderBlend->setEnabled(enable);
+   m_cbBlendReverse->setEnabled(enable);
 }
 
 void BGDialog::slotWallpaperPos(int mode)
@@ -647,7 +658,6 @@ void BGDialog::slotPattern(int pattern)
    }
    r->start();
    m_colorSecondary->setEnabled(bSecondaryEnabled);
-   m_lblColorSecondary->setEnabled(bSecondaryEnabled);
 
    m_copyAllDesktops = true;
    emit changed(true);

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>458</width>
-            <height>375</height>
+            <width>491</width>
+            <height>333</height>
         </rect>
     </property>
     <property name="caption">
@@ -137,113 +137,6 @@
                 <string>Click this button to set the icon text colors, set up a program to run for the background picture or control the size of the background cache.</string>
             </property>
         </widget>
-        <widget class="QGroupBox" row="2" column="0" rowspan="3" colspan="1">
-            <property name="name">
-                <cstring>groupBox3</cstring>
-            </property>
-            <property name="title">
-                <string>Background Color</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>m_lblColorSecondary</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Secondary color:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_colorSecondary</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click the button to choose the secondary background color. If no secondary color is required by the pattern selected the button will be disabled.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Primary co&amp;lor:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_colorPrimary</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click the button to choose the primary background color.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>textLabel5</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Pa&amp;ttern:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_comboPattern</cstring>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_comboPattern</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>1</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                </widget>
-                <widget class="KColorButton" row="1" column="1">
-                    <property name="name">
-                        <cstring>m_colorPrimary</cstring>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click to choose the primary background color.</string>
-                    </property>
-                </widget>
-                <widget class="KColorButton" row="2" column="1">
-                    <property name="name">
-                        <cstring>m_colorSecondary</cstring>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click to choose the secondary background color. If no secondary color is required by the pattern selected this button will be disabled.</string>
-                    </property>
-                </widget>
-                <spacer row="1" column="2" rowspan="2" colspan="1">
-                    <property name="name">
-                        <cstring>spacer5</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>101</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </grid>
-        </widget>
         <widget class="QGroupBox" row="1" column="0">
             <property name="name">
                 <cstring>groupBox2</cstring>
@@ -288,56 +181,21 @@
                         <string>Click to choose a picture to use as the background picture from the list. You may add a new picture by clicking on the button beside the list.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>m_lblWallpaperPos</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Positio&amp;ning:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_comboWallpaperPos</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>&lt;qt&gt;You can choose here how a background picture is shown on the desktop:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;Centered:&lt;/em&gt; Center the picture on the desktop.&lt;/li&gt;
- &lt;li&gt;&lt;em&gt;Tiled:&lt;/em&gt; Tile the picture beginning at the top left of the desktop, so the desktop is totally covered up.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Center Tiled:&lt;/em&gt; Center the picture on the desktop and then tile around it so that the background is totally covered up.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Centered Maxpect:&lt;/em&gt; Magnify the picture without distorting it until it fills either the width or height of the desktop, and then center it on the desktop.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Scaled:&lt;/em&gt;Magnify the picture, until the entire desktop is covered. This may result in some distortion of the picture.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Centered Auto Fit:&lt;/em&gt; If the picture fits the desktop this mode works like the Centered option. If the picture is larger than the desktop it is scaled down to fit while keeping the aspect ratio.&lt;/li&gt;
-&lt;/ul&gt;&lt;/qt&gt;</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="2" column="1">
+                <widget class="QPushButton" row="1" column="1">
                     <property name="name">
                         <cstring>m_buttonSetupWallpapers</cstring>
                     </property>
                     <property name="text">
                         <string>Set Up Slide Sho&amp;w...</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+W</string>
+                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Click this button to select a set of images to be used as background pictures. One picture at a time will be shown for a specified amount of time, after which another image from the set will be shown. Images can be shown at random or in the order you specify them.</string>
                     </property>
                 </widget>
-                <widget class="QComboBox" row="1" column="1">
-                    <property name="name">
-                        <cstring>m_comboWallpaperPos</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>&lt;qt&gt;You can choose here how a background picture is shown on the desktop:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;Centered:&lt;/em&gt; Center the picture on the desktop.&lt;/li&gt;
- &lt;li&gt;&lt;em&gt;Tiled:&lt;/em&gt; Tile the picture beginning at the top left of the desktop, so the desktop is totally covered up.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Center Tiled:&lt;/em&gt; Center the picture on the desktop and then tile around it so that the background is totally covered up.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Centered Maxpect:&lt;/em&gt; Magnify the picture without distorting it until it fills either the width or height of the desktop, and then center it on the desktop.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Scaled:&lt;/em&gt;Magnify the picture, until the entire desktop is covered. This may result in some distortion of the picture.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Centered Auto Fit:&lt;/em&gt; If the picture fits the desktop this mode works like the Centered option. If the picture is larger than the desktop it is scaled down to fit while keeping the aspect ratio.&lt;/li&gt;
-&lt;/ul&gt;&lt;/qt&gt;</string>
-                    </property>
-                </widget>
-                <spacer row="1" column="2" rowspan="2" colspan="1">
+                <spacer row="1" column="2">
                     <property name="name">
                         <cstring>spacer6</cstring>
                     </property>
@@ -349,8 +207,8 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>91</width>
-                            <height>50</height>
+                            <width>187</width>
+                            <height>20</height>
                         </size>
                     </property>
                 </spacer>
@@ -369,11 +227,11 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>170</height>
+                    <height>220</height>
                 </size>
             </property>
         </spacer>
-        <spacer row="6" column="0">
+        <spacer row="5" column="0">
             <property name="name">
                 <cstring>spacer12</cstring>
             </property>
@@ -386,19 +244,16 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>16</height>
+                    <height>160</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QGroupBox" row="5" column="0">
+        <widget class="QGroupBox" row="2" column="0" rowspan="3" colspan="1">
             <property name="name">
-                <cstring>m_blendGroup</cstring>
+                <cstring>groupBox3</cstring>
             </property>
             <property name="title">
-                <string>Blend Picture With Background Color</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Using the controls in this area you can control how the background picture and colors are blended together, if at all.</string>
+                <string>Options</string>
             </property>
             <grid>
                 <property name="name">
@@ -407,7 +262,88 @@
                 <property name="margin">
                     <number>11</number>
                 </property>
-                <widget class="QComboBox" row="0" column="1">
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>m_lblWallpaperPos</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Positio&amp;n:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_comboWallpaperPos</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;You can choose here how a background picture is shown on the desktop:
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Centered:&lt;/em&gt; Center the picture on the desktop.&lt;/li&gt;
+ &lt;li&gt;&lt;em&gt;Tiled:&lt;/em&gt; Tile the picture beginning at the top left of the desktop, so the desktop is totally covered up.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Center Tiled:&lt;/em&gt; Center the picture on the desktop and then tile around it so that the background is totally covered up.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Centered Maxpect:&lt;/em&gt; Magnify the picture without distorting it until it fills either the width or height of the desktop, and then center it on the desktop.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Scaled:&lt;/em&gt;Magnify the picture, until the entire desktop is covered. This may result in some distortion of the picture.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Centered Auto Fit:&lt;/em&gt; If the picture fits the desktop this mode works like the Centered option. If the picture is larger than the desktop it is scaled down to fit while keeping the aspect ratio.&lt;/li&gt;
+&lt;/ul&gt;&lt;/qt&gt;</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_comboWallpaperPos</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;You can choose here how a background picture is shown on the desktop:
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Centered:&lt;/em&gt; Center the picture on the desktop.&lt;/li&gt;
+ &lt;li&gt;&lt;em&gt;Tiled:&lt;/em&gt; Tile the picture beginning at the top left of the desktop, so the desktop is totally covered up.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Center Tiled:&lt;/em&gt; Center the picture on the desktop and then tile around it so that the background is totally covered up.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Centered Maxpect:&lt;/em&gt; Magnify the picture without distorting it until it fills either the width or height of the desktop, and then center it on the desktop.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Scaled:&lt;/em&gt;Magnify the picture, until the entire desktop is covered. This may result in some distortion of the picture.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Centered Auto Fit:&lt;/em&gt; If the picture fits the desktop this mode works like the Centered option. If the picture is larger than the desktop it is scaled down to fit while keeping the aspect ratio.&lt;/li&gt;
+&lt;/ul&gt;&lt;/qt&gt;</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="5" column="0">
+                    <property name="name">
+                        <cstring>m_lblBlending</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Blendin&amp;g:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_comboBlend</cstring>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget" row="3" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>layout2</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="KColorButton">
+                            <property name="name">
+                                <cstring>m_colorPrimary</cstring>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Click to choose the primary background color.</string>
+                            </property>
+                        </widget>
+                        <widget class="KColorButton">
+                            <property name="name">
+                                <cstring>m_colorSecondary</cstring>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Click to choose the secondary background color. If no secondary color is required by the pattern selected this button will be disabled.</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QComboBox" row="5" column="1" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>m_comboBlend</cstring>
                     </property>
@@ -415,72 +351,134 @@
                         <string>If you have selected to use a background picture you can choose various methods of blending the background colors with the picture. The default option of "No Blending" means that the picture simply obscures the background colors below.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
+                <widget class="QComboBox" row="2" column="1" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>m_lblBlendBalance</cstring>
+                        <cstring>m_comboPattern</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel5</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Blend balance:</string>
+                        <string>Co&amp;lors:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>m_sliderBlend</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>You can use this slider to control the degree of blending. You can experiment by moving the slider and looking at the effects in the preview image.</string>
+                        <cstring>m_comboPattern</cstring>
                     </property>
                 </widget>
-                <widget class="QSlider" row="1" column="1">
+                <spacer row="4" column="2">
                     <property name="name">
-                        <cstring>m_sliderBlend</cstring>
-                    </property>
-                    <property name="minValue">
-                        <number>-20</number>
-                    </property>
-                    <property name="maxValue">
-                        <number>20</number>
-                    </property>
-                    <property name="pageStep">
-                        <number>1</number>
+                        <cstring>spacer6_2</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Vertical</enum>
                     </property>
-                    <property name="tickmarks">
-                        <enum>NoMarks</enum>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
                     </property>
-                    <property name="tickInterval">
-                        <number>10</number>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>16</height>
+                        </size>
                     </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>You can use this slider to control the degree of blending. You can experiment by moving the slider and looking at the effects in the preview image.</string>
+                </spacer>
+                <spacer row="1" column="1">
+                    <property name="name">
+                        <cstring>spacer6_2_2</cstring>
                     </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLayoutWidget" row="6" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>layout4</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>m_lblBlendBalance</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Balance:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>m_sliderBlend</cstring>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>You can use this slider to control the degree of blending. You can experiment by moving the slider and looking at the effects in the preview image.</string>
+                            </property>
+                        </widget>
+                        <widget class="QSlider">
+                            <property name="name">
+                                <cstring>m_sliderBlend</cstring>
+                            </property>
+                            <property name="minValue">
+                                <number>-20</number>
+                            </property>
+                            <property name="maxValue">
+                                <number>20</number>
+                            </property>
+                            <property name="pageStep">
+                                <number>1</number>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="tickmarks">
+                                <enum>NoMarks</enum>
+                            </property>
+                            <property name="tickInterval">
+                                <number>10</number>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>You can use this slider to control the degree of blending. You can experiment by moving the slider and looking at the effects in the preview image.</string>
+                            </property>
+                        </widget>
+                    </hbox>
                 </widget>
-                <widget class="QCheckBox" row="2" column="1">
+                <widget class="QCheckBox" row="7" column="1" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>m_cbBlendReverse</cstring>
                     </property>
                     <property name="text">
                         <string>R&amp;everse roles</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+E</string>
+                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>For some types of blending, you can reverse the role of the background and the picture by checking this option.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>textLabel1_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Blend &amp;mode:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_comboBlend</cstring>
                     </property>
                 </widget>
             </grid>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <tabstops>
     <tabstop>m_comboDesktop</tabstop>
     <tabstop>m_urlWallpaper</tabstop>
@@ -502,11 +500,6 @@
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kurlrequester.h</includehint>
-    <includehint>kcombobox.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>
