@@ -58,7 +58,7 @@
 // Simple dialog for entering a password.
 //
 PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool nsess)
-    : QDialog(parent, "password dialog", true, WX11BypassWM), 
+    : QDialog(parent, "password dialog", true, WX11BypassWM),
       mPlugin( plugin ),
       mCapsLocked(-1),
       mUnlockingFailed(false)
@@ -89,22 +89,22 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool 
 
     greet = plugin->info->create( this, this, mLayoutButton, QString::null,
               KGreeterPlugin::Authenticate, KGreeterPlugin::ExUnlock );
-            
 
-    QVBoxLayout *unlockDialogLayout = new QVBoxLayout( this ); 
+
+    QVBoxLayout *unlockDialogLayout = new QVBoxLayout( this );
     unlockDialogLayout->addWidget( frame );
 
-    QHBoxLayout *layStatus = new QHBoxLayout( 0, 0, KDialog::spacingHint()); 
+    QHBoxLayout *layStatus = new QHBoxLayout( 0, 0, KDialog::spacingHint());
     layStatus->addWidget( mStatusLabel );
     layStatus->addWidget( mLayoutButton );
 
-    QHBoxLayout *layButtons = new QHBoxLayout( 0, 0, KDialog::spacingHint()); 
+    QHBoxLayout *layButtons = new QHBoxLayout( 0, 0, KDialog::spacingHint());
     layButtons->addWidget( mNewSessButton );
     layButtons->addStretch();
     layButtons->addWidget( ok );
     layButtons->addWidget( cancel );
 
-    frameLayout = new QGridLayout( frame, 1, 1, KDialog::marginHint(), KDialog::spacingHint() ); 
+    frameLayout = new QGridLayout( frame, 1, 1, KDialog::marginHint(), KDialog::spacingHint() );
     frameLayout->addMultiCellWidget( pixLabel, 0, 2, 0, 0, AlignTop );
     frameLayout->addWidget( greetLabel, 0, 1 );
     frameLayout->addItem( greet->getLayoutItem(), 1, 1 );
@@ -143,10 +143,11 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool 
     }
     // no kxkb running or not working :(
     mLayoutButton->hide();
+    capsLocked();
 }
 
 PasswordDlg::~PasswordDlg()
-{                
+{
     hide();
     frameLayout->removeItem( greet->getLayoutItem() );
     delete greet;
@@ -310,7 +311,7 @@ bool PasswordDlg::GRecvArr (char **ret)
 void PasswordDlg::reapVerify()
 {
     ::close( sFd );
-    int status;      
+    int status;
     ::waitpid( sPid, &status, 0 );
     if (WIFEXITED(status))
         switch (WEXITSTATUS(status)) {
@@ -379,7 +380,7 @@ void PasswordDlg::handleVerify()
     }
     reapVerify();
 }
-                                
+
 ////// greeter plugin callbacks
 
 void PasswordDlg::gplugReturnText( const char *text, int tag )
@@ -412,7 +413,7 @@ void PasswordDlg::gplugSetUser( const QString & )
 void PasswordDlg::cantCheck()
 {
     greet->failed();
-    static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Critical, 
+    static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Critical,
         i18n("Cannot unlock the screen, as the authentication system fails to work.\n"
              "You must kill kdesktop_lock (pid %1) manually.").arg(getpid()) );
     greet->revive();
@@ -426,7 +427,7 @@ void PasswordDlg::gplugStart()
 {
     int sfd[2];
     char fdbuf[16];
-    
+
     if (::socketpair(AF_LOCAL, SOCK_STREAM, 0, sfd)) {
         cantCheck();
         return;
