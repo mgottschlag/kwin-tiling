@@ -388,7 +388,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Prefered terminal application:</string>
+                        <string>Preferred terminal application:</string>
                     </property>
                 </widget>
                 <widget>
