@@ -13,7 +13,7 @@
 #define INFO_CPU_AVAILABLE
 #define INFO_IRQ_AVAILABLE
 #define INFO_DMA_AVAILABLE
-//#define INFO_PCI_AVAILABLE
+#define INFO_PCI_AVAILABLE
 #define INFO_IOPORTS_AVAILABLE
 #define INFO_SOUND_AVAILABLE
 #define INFO_DEVICES_AVAILABLE
@@ -219,6 +219,36 @@ bool GetInfo_SCSI (QListView *lbox)
 	if (!lbox->childCount())
 		return false;
 
+	return true;
+}
+
+bool GetInfo_PCI (QListView *lbox)
+{
+	FILE *pipe;
+	QFile *pcicontrol;
+	QTextStream *t;
+	QString s, cmd;
+	QListViewItem *olditem = 0;
+
+	pcicontrol = new QFile("/usr/X11R6/bin/scanpci");
+	if (pcicontrol->exists()) {
+		cmd = "/usr/X11R6/bin/scanpci";
+		if  ((pipe = popen(cmd.latin1(), "r")) != NULL) {
+			t = new QTextStream(pipe, IO_ReadOnly);
+
+			while (true) {
+				s = t->readLine();
+				if ( s.isEmpty() )
+					break;
+				olditem = new QListViewItem(lbox, olditem, s);
+			}
+			delete t;
+			pclose(pipe);
+		}
+	}
+	if (!lbox->childCount()) {
+		return false;
+	}
 	return true;
 }
 
