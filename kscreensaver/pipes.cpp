@@ -318,7 +318,7 @@ int setupScreenSaver()
 
 #include "stdio.h"
 #include "stdlib.h"
-#include "qtimer.h"
+#include <qtimer.h>
 
 #include <time.h>
 

@@ -24,6 +24,9 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <config.h>
 #endif
 
+#include "shutdown.moc"
+
+
 KSMShutdown::KSMShutdown()
     : QDialog( 0, 0, TRUE, WStyle_Customize | WStyle_NoBorder ) //WType_Popup )
 {

@@ -73,6 +73,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "global.h"
 #include "shutdown.h"
 
+#include "server.moc"
+
 extern "C" {
     int umask(...);
 
