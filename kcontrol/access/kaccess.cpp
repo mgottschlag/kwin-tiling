@@ -365,41 +365,41 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
         case 0:
            return;
         case XkbSlowKeysMask:
-           message = i18n("Slow keys is now enabled.");
-           explanation = i18n("This may be because you hold down the Shift key for 8 seconds "
-           "or because some application has enabed this feature.\n"
-           "You can configure slow keys and similar features in the "
+           message = i18n("\"Slow keys \"is now enabled.");
+           explanation = i18n("This may be because you held down the Shift key for 8 seconds "
+           "or because an application has enabled this feature.\n"
+           "You can configure \"slow keys\" and other accessibility features in the "
            "Regional & Accessibility->Accessibility module of the "
            "KDE Control Center.\n"
            "To quickly disable slow keys, press the Shift key for another 8 seconds.");
            break;
         case XkbBounceKeysMask:
-           message = i18n("Bounce keys is now enabled.");
-           explanation = i18n("This may be because some application has enabed this feature.\n"
-           "You can configure bounce keys and similar features in the "
+           message = i18n("\"Bounce keys\" is now enabled.");
+           explanation = i18n("This may be because an application has enabled this feature.\n"
+           "You can configure \"bounce keys\" and other accessibility features in the "
            "Regional & Accessibility->Accessibility module of the "
            "KDE Control Center.");
            break;
         case XkbStickyKeysMask:
-           message = i18n("Sticky keys is now enabled.");
+           message = i18n("\"Sticky keys\" is now enabled.");
            explanation = i18n("This may be because you pressed the Shift key 5 consecutive "
-           "times or because some application has enabed this feature.\n"
-           "You can configure sticky keys and similar features in the "
+           "times or because an application has enabled this feature.\n"
+           "You can configure \"sticky keys\" and other accessibility features in the "
            "Regional & Accessibility->Accessibility module of the "
            "KDE Control Center.\n"
            "To quickly disable sticky keys, press the Shift key for another 5 times.");
            break;
         case XkbMouseKeysMask: {
-           message = i18n("Mouse keys is now enabled.");
+           message = i18n("\"Mouse keys\" is now enabled.");
            QString shortcut = mouseKeysShortcut(qt_xdisplay());
            if (shortcut.isEmpty())
-              explanation = i18n("This may be because some application has enabed this feature.\n"
-              "You can configure mouse keys in the Peripherals->Mouse "
+              explanation = i18n("This may be because an application has enabled this feature.\n"
+              "You can configure \"mouse keys\" in the Peripherals->Mouse "
               "module of the KDE Control Center.");
            else
               explanation = i18n("This may be because you pressed %1 "
-              "or because some application has enabed this feature.\n"
-              "You can configure mouse keys in the Peripherals->Mouse "
+              "or because an application has enabled this feature.\n"
+              "You can configure \"mouse keys\" in the Peripherals->Mouse "
               "module of the KDE Control Center.\n"
               "To quickly disable mouse keys, press %2 again.")
               .arg(shortcut).arg(shortcut);
@@ -407,7 +407,7 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
            break;
         default:
            message = i18n("Multiple AccessX features have been enabled.");
-           explanation = i18n("This may be because some application has enabed these features.\n"
+           explanation = i18n("This may be because an application has enabled these features.\n"
            "You can configure them in the "
            "Regional & Accessibility->Accessibility module of the "
            "KDE Control Center.");
@@ -416,45 +416,45 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
      else if (enabled == 0) {
         switch (disabled) {
         case XkbSlowKeysMask:
-           message = i18n("Slow keys is now disabled.");
-           explanation = i18n("This may be because you hold down the Shift key for 8 seconds "
-           "or because some application has disabed this feature.\n"
-           "You can configure slow keys and similar features in the "
+           message = i18n("\"Slow keys\" is now disabled.");
+           explanation = i18n("This may be because you held down the Shift key for 8 seconds "
+           "or because an application has disabled this feature.\n"
+           "You can configure \"slow keys\" and other accessibility features in the "
            "Regional & Accessibility->Accessibility module of the "
            "KDE Control Center.");
            break;
         case XkbBounceKeysMask:
-           message = i18n("Bounce keys is now disabled.");
-           explanation = i18n("This may be because some application has disabed this feature.\n"
-           "You can configure bounce keys and similar features in the "
+           message = i18n("\"Bounce keys\" is now disabled.");
+           explanation = i18n("This may be because an application has disabled this feature.\n"
+           "You can configure bounce keys and other accessibility features in the "
            "Regional & Accessibility->Accessibility module of the "
            "KDE Control Center.");
            break;
         case XkbStickyKeysMask:
-           message = i18n("Sticky keys is now disabled.");
+           message = i18n("\"Sticky keys\" is now disabled.");
            explanation = i18n("This may be because you pressed the Shift key 5 consecutive "
-           "times or because some application has disabed this feature.\n"
-           "You can configure sticky keys and similar features in the "
+           "times or because an application has disabled this feature.\n"
+           "You can configure sticky keys and other accessibility features in the "
            "Regional & Accessibility->Accessibility module of the "
            "KDE Control Center.");
            break;
         case XkbMouseKeysMask: {
-           message = i18n("Mouse keys is now disabled.");
+           message = i18n("\"Mouse keys\" is now disabled.");
            QString shortcut = mouseKeysShortcut(qt_xdisplay());
            if (shortcut.isEmpty())
-              explanation = i18n("This may be because some application has disabed this feature.\n"
-              "You can configure mouse keys in the Peripherals->Mouse "
+              explanation = i18n("This may be because an application has disabled this feature.\n"
+              "You can configure \"mouse keys\" in the Peripherals->Mouse "
               "module of the KDE Control Center.");
            else
               explanation = i18n("This may be because you pressed %1 "
-              "or because some application has disabed this feature.\n"
-              "You can configure mouse keys in the Peripherals->Mouse "
+              "or because an application has disabled this feature.\n"
+              "You can configure \"mouse keys\" in the Peripherals->Mouse "
               "module of the KDE Control Center.").arg(shortcut);
            }
            break;
         default:
            message = i18n("Multiple AccessX features have been disabled.");
-           explanation = i18n("This may be because some application has disabed these features.\n"
+           explanation = i18n("This may be because an application has disabled these features.\n"
            "You can configure them in the "
            "Regional & Accessibility->Accessibility module of the "
            "KDE Control Center.");
@@ -462,7 +462,7 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
      }
      else {
         message = i18n("Multiple AccessX features have been changed.");
-        explanation = i18n("This may be because some application has changed these features.\n"
+        explanation = i18n("This may be because an application has changed these features.\n"
         "You can configure them in the "
         "Regional & Accessibility->Accessibility module of the "
         "KDE Control Center.");
