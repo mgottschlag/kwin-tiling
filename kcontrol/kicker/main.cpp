@@ -35,6 +35,7 @@
 #include "lnftab.h"
 #include "menutab.h"
 #include "buttontab.h"
+#include "applettab.h"
 
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
@@ -59,16 +60,18 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
   tab->addTab(buttontab, i18n("&Buttons"));
   connect(buttontab, SIGNAL(changed()), this, SLOT(configChanged()));
 
+  applettab = new AppletTab(this);
+  tab->addTab(applettab, i18n("&Applets"));
+  connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
+
+
   load();
 }
-
-KickerConfig::~KickerConfig() {}
 
 void KickerConfig::configChanged()
 {
   emit changed(true);
 }
-
 
 void KickerConfig::load()
 {
@@ -76,6 +79,7 @@ void KickerConfig::load()
   lnftab->load();
   menutab->load();
   buttontab->load();
+  applettab->load();
   emit changed(false);
 }
 
@@ -85,6 +89,7 @@ void KickerConfig::save()
   lnftab->save();
   menutab->save();
   buttontab->save();
+  applettab->save();
 
   emit changed(false);
 
@@ -101,6 +106,7 @@ void KickerConfig::defaults()
   lnftab->defaults();
   menutab->defaults();
   buttontab->defaults();
+  applettab->defaults();
   emit changed(true);
 }
 

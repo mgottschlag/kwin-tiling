@@ -1,5 +1,5 @@
 /*
- *  main.h
+ * applettab.h
  *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  *
@@ -17,40 +17,33 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#ifndef __main_h__
-#define __main_h__
 
-#include <kcmodule.h>
+#ifndef __applettab_h__
+#define __applettab_h__
 
-class QTabWidget;
-class PanelTab;
-class LnFTab;
-class MenuTab;
-class ButtonTab;
-class AppletTab;
+#include <qwidget.h>
 
-class KickerConfig : public KCModule
+class QGridLayout;
+class QGroupBox;
+class QCheckBox;
+class KIntNumInput;
+
+class AppletTab : public QWidget
 {
-  Q_OBJECT
-
- public:
-  KickerConfig(QWidget *parent = 0L, const char *name = 0L);
+  Q_OBJECT;
   
+ public:
+  AppletTab( QWidget *parent=0, const char* name=0 );
+
   void load();
   void save();
   void defaults();
+
   QString quickHelp();
 
- public slots:
-  void configChanged();
- 
- private:
-  QTabWidget   *tab;
-  PanelTab     *paneltab;
-  LnFTab       *lnftab;
-  MenuTab      *menutab;
-  ButtonTab    *buttontab;
-  AppletTab    *applettab;
+ signals:
+  void changed();
 };
 
-#endif // __main_h__
+#endif
+

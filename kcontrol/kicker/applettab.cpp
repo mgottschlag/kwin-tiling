@@ -1,5 +1,5 @@
 /*
- *  main.h
+ *  applettab.cpp
  *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  *
@@ -17,40 +17,47 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#ifndef __main_h__
-#define __main_h__
+#include <qlayout.h>
+#include <qwhatsthis.h>
 
-#include <kcmodule.h>
+#include <kconfig.h>
+#include <kglobal.h>
+#include <klocale.h>
 
-class QTabWidget;
-class PanelTab;
-class LnFTab;
-class MenuTab;
-class ButtonTab;
-class AppletTab;
+#include "applettab.h"
+#include "applettab.moc"
 
-class KickerConfig : public KCModule
+
+AppletTab::AppletTab( QWidget *parent, const char* name )
+  : QWidget (parent, name)
 {
-  Q_OBJECT
+  load();
+}
 
- public:
-  KickerConfig(QWidget *parent = 0L, const char *name = 0L);
+void AppletTab::load()
+{
+  KConfig *c = new KConfig("kickerrc", false, false);
   
-  void load();
-  void save();
-  void defaults();
-  QString quickHelp();
+  c->setGroup("applets");
 
- public slots:
-  void configChanged();
- 
- private:
-  QTabWidget   *tab;
-  PanelTab     *paneltab;
-  LnFTab       *lnftab;
-  MenuTab      *menutab;
-  ButtonTab    *buttontab;
-  AppletTab    *applettab;
-};
+  delete c;
+}
 
-#endif // __main_h__
+void AppletTab::save()
+{
+  KConfig *c = new KConfig("kickerrc", false, false);
+  
+  c->setGroup("applets");
+  c->sync();
+
+  delete c;
+}
+
+void AppletTab::defaults()
+{
+}
+
+QString AppletTab::quickHelp()
+{
+  return i18n("");
+}
