@@ -8,7 +8,7 @@ X-KDE-ModuleType=Library
 X-KDE-Library=launch
 X-KDE-FactoryName=launch
 
-Name=Launch feedback
+Name=Launch Feedback
 
 Comment=Choose application-launch feedback style
 Keywords=application,start,launch,busy,cursor,feedback,mouse,pointer,rotating,spinning,disk,startup,program,report
