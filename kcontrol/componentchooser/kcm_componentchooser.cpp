@@ -16,7 +16,7 @@
 #include <kaboutdata.h>
 
 #include "kcm_componentchooser.h"
-#include <kcm_componentchooser.moc>
+#include "kcm_componentchooser.moc"
 #include <qlayout.h>
 #include <kglobal.h>
 

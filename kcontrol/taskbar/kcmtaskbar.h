@@ -20,7 +20,7 @@
 #define __kcmtaskbar_h__
 
 #include <kcmodule.h>
-#include <kcmtaskbarui.h>
+#include "kcmtaskbarui.h"
 
 class QCheckBox;
 class QButtonGroup;

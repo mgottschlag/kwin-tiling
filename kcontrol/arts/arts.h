@@ -37,8 +37,8 @@
 
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
-#include <arts_general.h>
-#include <arts_soundio.h>
+#include "arts_general.h"
+#include "arts_soundio.h"
 
 
 class KProcess;

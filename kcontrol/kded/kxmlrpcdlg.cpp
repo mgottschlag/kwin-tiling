@@ -24,7 +24,7 @@
 #include "kxmlrpcdlg.h"
 #include "kxmlrpcdlg.moc"
 
-#include <kxmlrpcdlgbase.h>
+#include "kxmlrpcdlgbase.h"
 
 KXmlRpcDialog::KXmlRpcDialog(QWidget* parent, const char* name)
  : KDialogBase(parent, name, true, QString::null,
