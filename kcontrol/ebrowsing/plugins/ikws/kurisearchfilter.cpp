@@ -89,10 +89,9 @@ KURISearchFilterFactory::~KURISearchFilterFactory()
     delete s_instance;
 }
 
-QObject *KURISearchFilterFactory::create( QObject *parent, const char *name, const char*, const QStringList & )
+QObject *KURISearchFilterFactory::createObject( QObject *parent, const char *name, const char*, const QStringList & )
 {
     QObject *obj = new KURISearchFilter( parent, name );
-    emit objectCreated( obj );
     return obj;
 }
 
