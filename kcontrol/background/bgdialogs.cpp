@@ -635,6 +635,7 @@ KMultiWallpaperList::KMultiWallpaperList(QWidget *parent, char *name)
 	: QListBox(parent, name)
 {
     setAcceptDrops(true);
+    setSelectionMode(QListBox::Multi);
 }
 
 
@@ -732,10 +733,16 @@ void KMultiWallpaperDialog::slotAdd()
 
 void KMultiWallpaperDialog::slotRemove()
 {
-    int item = m_pListBox->currentItem();
-    if (item == -1)
-	return;
-    m_pListBox->removeItem(item);
+    for ( int i = 0; i <m_pListBox->count();)
+    {
+        QListBoxItem * item = m_pListBox->item( i );
+        if ( item && item->isSelected())
+        {
+            m_pListBox->removeItem(i);
+        }
+        else
+            i++;
+    }
     pbutRemove->setEnabled(m_pListBox->count()>0);
 }
 
