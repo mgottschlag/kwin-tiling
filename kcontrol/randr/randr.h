@@ -44,7 +44,7 @@ public:
 		ReflectX		= 0x5,
 		ReflectY		= 0x6,
 		ReflectMask		= 48,
-		OrientationMask	= 64,
+		OrientationMask	= 63,
 		OrientationCount = 6
 	};
 

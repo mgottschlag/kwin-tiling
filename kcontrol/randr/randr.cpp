@@ -98,9 +98,9 @@ void RandRScreen::setOriginal()
 
 bool RandRScreen::applyProposed()
 {
-	//kdDebug() << k_funcinfo << " size " << proposedSize << ", rotation " << proposedRotation << ", refresh " << refreshRateIndexToHz(m_proposedSize, proposedRefreshRate) << endl;
+	//kdDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) << endl;
 
-	Status status = XRRSetScreenConfigAndRate(qt_xdisplay(), d->config, DefaultRootWindow (qt_xdisplay()), (SizeID)m_proposedSize, (Rotation)m_proposedRotation, refreshRateIndexToHz(m_proposedSize, m_proposedRefreshRate), CurrentTime);
+	Status status = XRRSetScreenConfigAndRate(qt_xdisplay(), d->config, DefaultRootWindow(qt_xdisplay()), (SizeID)proposedSize(), (Rotation)proposedRotation(), refreshRateIndexToHz(proposedSize(), proposedRefreshRate()), CurrentTime);
 
 	//kdDebug() << "New size: " << WidthOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << ", " << HeightOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << endl;
 
@@ -470,7 +470,7 @@ void RandRScreen::load(KConfig& config)
 	config.setGroup(QString("Screen%1").arg(m_screen));
 
 	if (proposeSize(sizeIndex(QSize(config.readNumEntry("width", currentPixelWidth()), config.readNumEntry("height", currentPixelHeight())))))
-		proposeRefreshRate(config.readNumEntry("refresh", refreshRateHzToIndex(currentSize(), currentRefreshRate())));
+		proposeRefreshRate(refreshRateHzToIndex(proposedSize(), config.readNumEntry("refresh", currentRefreshRate())));
 
 	proposeRotation((config.readNumEntry("rotation", currentRotation()) / 90) + 1 + (config.readBoolEntry("reflectX") ? ReflectX : 0) + (config.readBoolEntry("reflectY") ? ReflectY : 0));
 }
