@@ -17,7 +17,7 @@
     </property>
     <property stdset="1">
         <name>caption</name>
-        <string>E-Mail</string>
+        <string>Email</string>
     </property>
     <property>
         <name>layoutMargin</name>
@@ -69,7 +69,7 @@
             </property>
             <property>
                 <name>whatsThis</name>
-                <string>This is the protocol used for sending mails. Your e-mail provider should have supplied this information. If you use dial-up networking, you are probably using an SMTP server.</string>
+                <string>This is the protocol used for sending mails. Your email provider should have supplied this information. If you use dial-up networking, you are probably using an SMTP server.</string>
             </property>
             <widget>
                 <class>QWidget</class>
@@ -117,7 +117,7 @@
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
-                                    <string>You can set a reply address if you want replies to your e-mail messages to go to a different address than the e-mail address above. Most likely, you should leave the reply address blank, so replies go to the e-mail address you entered above.&lt;p&gt;&lt;em&gt; Please note:&lt;/em&gt; &lt;ul&gt;&lt;li&gt;You do not need to enter the same email address as above.&lt;/li&gt;&lt;li&gt;You should not use a reply address if you frequently use discussion mailing lists.&lt;/li&gt;&lt;/ul&gt;</string>
+                                    <string>You can set a reply address if you want replies to your email messages to go to a different address than the email address above. Most likely, you should leave the reply address blank, so replies go to the email address you entered above.&lt;p&gt;&lt;em&gt; Please note:&lt;/em&gt; &lt;ul&gt;&lt;li&gt;You do not need to enter the same email address as above.&lt;/li&gt;&lt;li&gt;You should not use a reply address if you frequently use discussion mailing lists.&lt;/li&gt;&lt;/ul&gt;</string>
                                 </property>
                             </widget>
                             <widget row="2"  column="1" >
@@ -208,7 +208,7 @@ marks).  Some people like to provide a nick name only. You can leave this field 
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>&amp;E-Mail Address:</string>
+                                    <string>&amp;Email Address:</string>
                                 </property>
                                 <property>
                                     <name>buddy</name>
@@ -225,7 +225,7 @@ marks).  Some people like to provide a nick name only. You can leave this field 
                         </property>
                         <property stdset="1">
                             <name>title</name>
-                            <string>Preferred E-Mail Client</string>
+                            <string>Preferred Email Client</string>
                         </property>
                         <property>
                             <name>whatsThis</name>
@@ -313,7 +313,7 @@ marks).  Some people like to provide a nick name only. You can leave this field 
                 </property>
                 <attribute>
                     <name>title</name>
-                    <string>&amp;Incoming E-Mail</string>
+                    <string>&amp;Incoming Email</string>
                 </attribute>
                 <grid>
                     <property stdset="1">
@@ -339,7 +339,7 @@ marks).  Some people like to provide a nick name only. You can leave this field 
                         </property>
                         <property>
                             <name>whatsThis</name>
-                            <string>This is the protocol used by your incoming e-mail server. Your e-mail provider should have supplied this information. If you use dial-up networking, you are probably using a POP3 server.</string>
+                            <string>This is the protocol used by your incoming email server. Your email provider should have supplied this information. If you use dial-up networking, you are probably using a POP3 server.</string>
                         </property>
                         <vbox>
                             <property stdset="1">
@@ -448,7 +448,7 @@ marks).  Some people like to provide a nick name only. You can leave this field 
                 </property>
                 <attribute>
                     <name>title</name>
-                    <string>&amp;Outgoing E-Mail</string>
+                    <string>&amp;Outgoing Email</string>
                 </attribute>
                 <grid>
                     <property stdset="1">

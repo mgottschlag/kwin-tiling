@@ -72,7 +72,7 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name)
        " Please <em>do not</em> use this option if you are working in an insecure environment,"
        " for example, on a workstation that is located in a publicly accessible area.<p>"
        " This option does not affect passwords explicitly set in other applications, for example,"
-       " your e-mail account password in KMail.") );
+       " your email account password in KMail.") );
     connect(m_KeepBut, SIGNAL(toggled(bool)), SLOT(slotKeep(bool)));
     top->addWidget(m_KeepBut);
     QHBoxLayout *hbox = new QHBoxLayout();

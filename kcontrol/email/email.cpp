@@ -209,7 +209,7 @@ void topKCMEmail::clearData()
 void topKCMEmail::slotNewProfile()
 {
 	KDialog *dlgAskName = new KDialog(this, "noname", true);
-	dlgAskName->setCaption(i18n("New E-Mail Profile"));
+	dlgAskName->setCaption(i18n("New Email Profile"));
 
 	QVBoxLayout *vlayout = new QVBoxLayout(dlgAskName, KDialog::marginHint(), KDialog::spacingHint());
 
@@ -241,7 +241,7 @@ void topKCMEmail::slotNewProfile()
 		if (txtName->text().isEmpty()) {
 			KMessageBox::sorry(this, i18n("Oops, you need to enter a name please. Thanks."));
 		} else if (m_email->cmbCurProfile->currentText().contains(txtName->text()))
-			KMessageBox::sorry(this, i18n("This e-mail profile already exists, and cannot be created again"), i18n("Oops"));
+			KMessageBox::sorry(this, i18n("This email profile already exists, and cannot be created again"), i18n("Oops"));
 		else {
 			pSettings->setProfile(txtName->text());
 			m_email->cmbCurProfile->insertItem(txtName->text());
@@ -365,11 +365,11 @@ void topKCMEmail::defaults()
 
 QString topKCMEmail::quickHelp() const
 {
-	return i18n("<h1>e-mail</h1> This module allows you to enter basic e-mail"
+	return i18n("<h1>email</h1> This module allows you to enter basic email"
 	            " information for the current user. The information here is used,"
 	            " among other things, for sending bug reports to the KDE developers"
 	            " when you use the bug report dialog.<p>"
-	            " Note that e-mail programs like KMail and Empath offer many more"
+	            " Note that email programs like KMail and Empath offer many more"
 	            " features, but they provide their own configuration facilities.");
 }
 

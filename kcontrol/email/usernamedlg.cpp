@@ -80,8 +80,8 @@ UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 	lblUsername->setBuddy(txtUsername);
 	layUsername->addWidget(lblUsername);
 	layUsername->addWidget(txtUsername);
-	wtstr = i18n(	"The user name you use to login to your e-mail server (sometimes just called \"login\")."
-			" Your e-mail provider should have supplied this information. Your login name is often (but"
+	wtstr = i18n(	"The user name you use to login to your email server (sometimes just called \"login\")."
+			" Your email provider should have supplied this information. Your login name is often (but"
 			" not always) identical to the part of your email address that comes before the \"@\".");
 	QWhatsThis::add(lblUsername, wtstr);
 	QWhatsThis::add(txtUsername, wtstr);
