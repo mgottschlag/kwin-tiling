@@ -100,13 +100,12 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     // konqy
     QFrame* lfrm = new QFrame( frame );
     lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-    lfrm->setPaletteBackgroundColor( lfrm->colorGroup().midlight() );
     hbox->addWidget( lfrm, AlignCenter );
-    QVBoxLayout* iconlay = new QVBoxLayout( lfrm );
 
     QLabel* icon = new QLabel( lfrm );
     icon->setPixmap( UserIcon( "shutdownkonq" ) );
-    iconlay->addWidget( icon );
+    lfrm->setFixedSize( icon->sizeHint());
+    icon->setFixedSize( icon->sizeHint());
 
     // right column (buttons)
     QVBoxLayout* buttonlay = new QVBoxLayout( hbox, 2 * KDialog::spacingHint() );
