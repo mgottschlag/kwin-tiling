@@ -164,11 +164,19 @@ void CfgEmailClient::selectEmailClient()
 {
 	KURL::List urlList;
 	KOpenWithDlg dlg(urlList, i18n("Select preferred email client:"), QString::null, this);
+	// hide "Do not &close when command exits" here, we don't need it for a mail client
+	dlg.hideNoCloseOnExit();
 	if (dlg.exec() != QDialog::Accepted) return;
 	QString client = dlg.text();
 
-	bool b = client.left(11) == "konsole -e ";
-	if (b) client = client.mid(11);
+	// get the preferred Terminal Application 
+	KConfigGroup confGroup( KGlobal::config(), QString::fromLatin1("General") );
+	QString preferredTerminal = confGroup.readEntry(QString::fromLatin1("TerminalApplication"), QString::fromLatin1("konsole"));
+	preferredTerminal += QString::fromLatin1(" -e ");
+	
+	int len = preferredTerminal.length();
+	bool b = client.left(len) == preferredTerminal;
+	if (b) client = client.mid(len);
 	if (!client.isEmpty())
 	{
 		chkRunTerminal->setChecked(b);
