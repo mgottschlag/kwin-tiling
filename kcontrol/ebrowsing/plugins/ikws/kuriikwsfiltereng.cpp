@@ -20,8 +20,6 @@
 
 #include <unistd.h>
 
-#include <qregexp.h>
-
 #include <kurl.h>
 #include <kdebug.h>
 #include <ksimpleconfig.h>
@@ -231,7 +229,9 @@ QString KURISearchFilterEngine::formatResult( const QString& query, const QStrin
           newurl = newurl.replace(pct, 2, "utf-8");
 
         QString userquery = url;
-        userquery = userquery.replace( QRegExp(" "), "+" ).utf8();
+        int space_pos;
+        while( (space_pos=userquery.find(" ")) != -1 )
+            userquery.replace( space_pos, 1, "+" );
 
         if( isMalformed )
             userquery = KURL::encode_string(userquery);
@@ -259,6 +259,7 @@ void KURISearchFilterEngine::loadConfig()
     KConfig config( name() + "rc", false, false );
     QStringList engines;
     QString selIKWSEngine, selIKWSFallback;
+    config.setGroup( "General" );
 
     if( !config.hasKey("InternetKeywordsEnabled") &&
         config.hasKey("NavEnabled") )
@@ -274,7 +275,6 @@ void KURISearchFilterEngine::loadConfig()
     else
     {
         kdDebug(7023) << "(" << getpid() << ") Config file has the NEW format..." << endl;
-        config.setGroup("General");
         m_bInternetKeywordsEnabled = config.readBoolEntry("InternetKeywordsEnabled", true);
         selIKWSEngine = config.readEntry("InternetKeywordsSelectedEngine", IKW_REALNAMES);
         selIKWSFallback = config.readEntry("InternetKeywordsSearchFallback");
@@ -379,8 +379,6 @@ void KURISearchFilterEngine::saveConfig() const
 	  if (!(*nit).m_strQueryWithSearch.isEmpty())
 	    config.writeEntry("QueryWithSearch", (*nit).m_strQueryWithSearch);
     }
-
-    config.sync();  // Flush to disk the search engine stuff
 
     config.setGroup("General");
     config.writeEntry("InternetKeywordsEnabled", m_bInternetKeywordsEnabled);
