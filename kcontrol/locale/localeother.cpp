@@ -58,8 +58,8 @@ KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
   lay->addWidget(m_labMeasureSystem, 1, 0);
   m_combMeasureSystem = new QComboBox(this);
   lay->addWidget(m_combMeasureSystem, 1, 1);
-  connect( m_combPageSize, SIGNAL( activated(int) ),
-	   SLOT( slotPageSizeChanged(int) ) );
+  connect( m_combMeasureSystem, SIGNAL( activated(int) ),
+	   SLOT( slotMeasureSystemChanged(int) ) );
 
   m_combPageSize->insertItem(QString::null);
   m_combPageSize->insertItem(QString::null);
