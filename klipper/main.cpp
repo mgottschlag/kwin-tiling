@@ -6,6 +6,8 @@
 
    Generated with the KDE Application Generator
 
+   Licensed under the Artistic License
+
  ------------------------------------------------------------- */
 
 #include <stdio.h>
@@ -42,6 +44,10 @@ extern "C" int kdemain(int argc, char *argv[])
   aboutData.addAuthor("Patrick Dubroy",
                       I18N_NOOP("Contributor"),
                       "patrickdu@corel.com");
+
+  aboutData.addAuthor( "Luboš Luňák",
+                      I18N_NOOP("Bugfixes and optimizations"),
+                      "l.lunak@kde.org");
 
   KCmdLineArgs::init( argc, argv, &aboutData );
   KUniqueApplication::addCmdLineOptions();
