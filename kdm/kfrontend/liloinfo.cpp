@@ -177,9 +177,9 @@ bool LiloInfo::getOptionsFromLilo()
 	// by getOptionsFromStdout() and by receivedStderr(). The former receives the boot
 	// options, the latter the error messages.
 	connect ( &liloproc, SIGNAL(receivedStdout(KProcess *, char *, int)),
-	          this, SLOT(getOptionsFromStdout(KProcess *, char *, int)) );
+	          SLOT(getOptionsFromStdout(KProcess *, char *, int)) );
 	connect ( &liloproc, SIGNAL(receivedStderr(KProcess *, char *, int)),
-	          this, SLOT(processStderr(KProcess *, char *, int)) );
+	          SLOT(processStderr(KProcess *, char *, int)) );
 
 	// Run the command. It is run in blocking mode, which means that the calling process
 	// blocks until Lilo is finished. Furthermore, we want to receive both Stdout and Stderr.
@@ -230,9 +230,9 @@ bool LiloInfo::getNextOptionFromLilo()
 	// Connect to the standard output and error signals. This time standard output is
 	// received by getNextOptionFromStdout().
 	connect ( &liloproc, SIGNAL(receivedStdout(KProcess *, char *, int)),
-	          this, SLOT(getNextOptionFromStdout(KProcess *, char *, int)) );
+	          SLOT(getNextOptionFromStdout(KProcess *, char *, int)) );
 	connect ( &liloproc, SIGNAL(receivedStderr(KProcess *, char *, int)),
-	          this, SLOT(processStderr(KProcess *, char *, int)) );
+	          SLOT(processStderr(KProcess *, char *, int)) );
 
 	// Run the command, again in blocking mode and with Stdout and Stderr.
 	if ( !liloproc.start ( KProcess::Block,
@@ -443,7 +443,8 @@ int LiloInfo::setNextBootOption ( int nextBootOptionIndex)
 
 	// Connect to standard error. We don't expect standard output, so we don't connect to
 	// that.
-	connect ( &liloproc, SIGNAL(receivedStderr(KProcess *, char *, int)), this, SLOT(processStderr(KProcess *, char *, int)) );
+	connect ( &liloproc, SIGNAL(receivedStderr(KProcess *, char *, int)), 
+		  SLOT(processStderr(KProcess *, char *, int)) );
 
 	// Run Lilo, again in blocking mode, but this time only receiving standard output.
 	// Which we should not get, because we checked that the string was correct already.

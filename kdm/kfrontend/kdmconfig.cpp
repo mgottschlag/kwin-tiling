@@ -136,7 +136,9 @@ KDMConfig::KDMConfig()
     KGlobal::locale()->setLanguage (GetCfgQStr (C_Language));
     qApp->setDefaultCodec(QTextCodec::codecForName(KGlobal::locale()->language().latin1()));
 
-    _allowShutdown = GetCfgInt (C_AllowShutdown);
+    _allowShutdown = GetCfgInt (C_allowShutdown);
+    _allowNuke = GetCfgInt (C_allowNuke);
+    _defSdMode = GetCfgInt (C_defSdMode);
 
     if (GetCfgInt (C_GreeterPosFixed)) {
 	_greeterPosX = GetCfgInt (C_GreeterPosX);

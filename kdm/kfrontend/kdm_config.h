@@ -77,10 +77,6 @@
 # define ECHO_ONE	0	/* HACK! This must be equal to KPasswordEdit::EchoModes (kpassdlg.h) */
 # define ECHO_THREE	1
 # define ECHO_NONE	2
-#define C_AllowShutdown		(C_TYPE_INT | 0x1026)
-# define SHUT_NONE	0
-# define SHUT_ROOT	1
-# define SHUT_ALL	2
 
 #define C_BackgroundMode	(C_TYPE_STR | 0x1100)
 #define C_BlendBalance		(C_TYPE_INT | 0x1101)

@@ -25,88 +25,64 @@
  
 #include <qfile.h>
 #include <qcombobox.h>
+#include <qvbuttongroup.h>
+#include <qstyle.h>
 
 #include <kapp.h>
 #include <klocale.h>
 #include <kseparator.h>
 
 #include "kdmshutdown.h"
-#include "kdmconfig.h" // for shutdown-modes
+#include "kdmconfig.h"
 #include "liloinfo.h"
 #include "kdm_greet.h"
 
 
-static inline void
-set_min( QWidget* w)
-{
-    w->adjustSize();
-    w->setMinimumSize( w->size());
-}
-
-static inline void
-set_fixed( QWidget* w)
-{
-    w->adjustSize();
-    w->setFixedSize( w->size());
-}
-
 KDMShutdown::KDMShutdown( QWidget* _parent)
     : FDialog( _parent, "Shutdown", true)
 {
-    int h = 10, w = 0;
     QComboBox *targets = 0;
     QFrame* winFrame = new QFrame( this);
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised);
-    QBoxLayout* box = new QBoxLayout( winFrame, QBoxLayout::TopToBottom, 
-				      10, 10);
-    QString shutdownmsg =  i18n( "Shutdown or reboot?");
-    if( kdmcfg->_allowShutdown == SHUT_ROOT)
-	shutdownmsg += '\n' + i18n( "(Enter Root Password)");
+    QGridLayout* box = new QGridLayout( winFrame, 3, 2, 
+			KDialog::spacingHint() * 2, KDialog::spacingHint());
 
-    label = new QLabel( shutdownmsg, winFrame);
-    set_fixed( label);
-    h += label->height() + 10;
-    w = label->width();
+    howGroup = new QVButtonGroup( i18n("Shutdown type"), winFrame);
+    box->addWidget( howGroup, 0, 0, AlignTop);
 
-    box->addWidget( label, 0, AlignCenter);
+//    QGridLayout *grid = new QGridLayout(howGroup, 2, 2);
 
-
-    KSeparator* sep = new KSeparator( KSeparator::HLine, winFrame);
-    h += sep->height(); 
-    box->addWidget( sep);
-
-    btGroup = new QButtonGroup( /* this */);
-     
     QRadioButton *rb;
-    rb = new QRadioButton( winFrame /*btGroup*/);
-    rb->setText( i18n("&Shutdown"));
+    rb = new QRadioButton( i18n("&Halt"), howGroup);
     set_min( rb);
-    rb->setFocusPolicy( StrongFocus);
     // Default action
     rb->setChecked( true);
     rb->setFocus();
 
-    h += rb->height() + 10;
-    w = QMAX( rb->width(), w);
+//    grid->addWidget( rb, 0, 0);
+//    howGroup->insert( rb);
 
-    box->addWidget( rb);
-    btGroup->insert( rb);
-
-    QHBoxLayout *hbox = new QHBoxLayout(box);
-
-    restart_rb = new QRadioButton( winFrame /*btGroup*/);
-    restart_rb->setText( i18n("&Reboot"));
+    restart_rb = new QRadioButton( i18n("&Reboot"), howGroup);
     set_min( restart_rb);
-    restart_rb->setFocusPolicy( StrongFocus);
-    h += restart_rb->height() + 10;
-    w = QMAX( restart_rb->width(), w);
 
-    hbox->addWidget(restart_rb);
+//    grid->addWidget(restart_rb, 1, 0);
 
 #if defined(__linux__) && defined(__i386__)
     if ( kdmcfg->_useLilo ) {
-	targets = new QComboBox(winFrame);
-	hbox->addWidget(targets);
+	QWidget *hlp = new QWidget (howGroup);
+	QHBoxLayout *hb = new QHBoxLayout (hlp);
+#if QT_VERSION >= 300
+	int spc = kapp->style().pixelMetric(QStyle::PM_ExclusiveIndicatorWidth)
+	    + howGroup->insideSpacing();
+#else
+	int spc = kapp->style().exclusiveIndicatorSize().width()
+	    + KDialog::spacingHint();
+#endif
+	hb->addSpacing (spc);
+	targets = new QComboBox( hlp);
+	set_fixed (targets);
+	hlp->setFixedSize (targets->width() + spc, targets->height());
+	hb->addWidget( targets);
 
 	// fill combo box with contents of lilo config
 	LiloInfo info(kdmcfg->_liloCmd, kdmcfg->_liloMap);
@@ -116,58 +92,89 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
 	    targets->insertStringList(list);
             liloTarget = info.getDefaultBootOptionIndex();
 	    targets->setCurrentItem(liloTarget);
-	    connect(targets,SIGNAL(activated(int)),this,SLOT(target_changed(int)));
+	    connect(targets, SIGNAL(activated(int)),
+		    SLOT(target_changed(int)));
 	}
     }
 #endif
-    w = QMAX( restart_rb->width()
-	     + (targets ? targets->sizeHint().width()+10 : 0), w);
 
-    btGroup->insert( restart_rb);
+//    howGroup->insert( restart_rb);
+    set_fixed (howGroup);
 
+
+    whenGroup = new QVButtonGroup( i18n("Shutdown mode"), winFrame);
+    box->addWidget( whenGroup, 0, 1, AlignTop);
+
+    rb = new QRadioButton( i18n("verb!", "&Schedule"), whenGroup);
+    set_min( rb);
+    if (kdmcfg->_defSdMode == SHUT_SCHEDULE)
+	rb->setChecked( true);
+
+    force_rb = new QRadioButton( i18n("&Force Now"), whenGroup);
+    set_min( force_rb);
+    // Default action
+    if (kdmcfg->_defSdMode == SHUT_FORCENOW)
+	force_rb->setChecked( true);
+
+    try_rb = new QRadioButton( i18n("&Try Now"), whenGroup);
+    set_min( try_rb);
+    if (kdmcfg->_defSdMode == SHUT_TRYNOW)
+	try_rb->setChecked( true);
+
+    if (kdmcfg->_allowNuke == SHUT_NONE)
+	force_rb->setEnabled (false);
+
+    connect(whenGroup, SIGNAL(clicked(int)), SLOT(when_changed(int)));
+
+    set_fixed (whenGroup);
+
+
+    QWidget *qwd = new QWidget (winFrame);
     // Passwd line edit
-    if( kdmcfg->_allowShutdown == SHUT_ROOT) {
-	pswdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode);
-	pswdEdit->setFocusPolicy( StrongFocus);
-	pswdEdit->setFocus();
-	h+= pswdEdit->height() + 10;
-	box->addWidget( pswdEdit);
-	timer = new QTimer( this );
-	connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
-    } else {
-	pswdEdit = 0;
-	timer = 0;
-    }
+    pswdEdit = new KPasswordEdit( qwd/*winFrame*/, "edit", kdmcfg->_echoMode);
+    pswdEdit->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred));
+//    set_fixed (pswdEdit);
 
-    QBoxLayout* box3 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
-    box->addLayout( box3);
+    QLabel *plb = new QLabel (pswdEdit, i18n("Root &Password:"), qwd/*winFrame*/);
+    set_fixed (plb);
+
+    timer = new QTimer( this );
+    connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
+
+    
+    QHBoxLayout *qhb = new QHBoxLayout (qwd);
+    qhb->setResizeMode (QLayout::FreeResize);
+    qhb->addWidget( plb);
+    qhb->addSpacing(KDialog::spacingHint());
+    qhb->addWidget( pswdEdit);
+
+    qwd->setMinimumSize (qhb->sizeHint());
+//    box->addMultiCellLayout( qhb, 1,1, 0,1);
+    box->addMultiCellWidget( qwd, 1,1, 0,1);
+//    QBoxLayout* box3 = new QBoxLayout( box, QBoxLayout::LeftToRight, 10);
 
     okButton = new QPushButton( i18n("&OK"), winFrame);
-    set_min( okButton);
+    set_fixed( okButton);
     okButton->setDefault( true);
-    okButton->setFocusPolicy( StrongFocus);
     cancelButton = new QPushButton( i18n("&Cancel"), winFrame);
-    set_min( cancelButton);
-    cancelButton->setFocusPolicy( StrongFocus);
-    h += cancelButton->height() + 10;
-    w = QMAX( (okButton->width() + 10 + cancelButton->width()), w);
+    set_fixed( cancelButton);
 
-    box3->addWidget( okButton);
-    box3->addWidget( cancelButton);
+    box->addWidget( okButton, 2, 0);
+    box->addWidget( cancelButton, 2, 1);
 
     connect( okButton, SIGNAL(clicked()), SLOT(bye_bye()));
     connect( cancelButton, SIGNAL(clicked()), SLOT(reject()));
 
-    resize( 20 + w, h);
-    winFrame->setGeometry( 0, 0, width(), height());
+    set_fixed (winFrame);
+    when_changed (0);
 }
 
 void
 KDMShutdown::timerDone()
 {
-    pswdEdit->setEnabled( true);
     okButton->setEnabled( true);
-    pswdEdit->setFocus();
+    cancelButton->setEnabled( true);
+    when_changed (0);
 }
 
 void
@@ -180,9 +187,20 @@ KDMShutdown::target_changed(int id)
 }
 
 void
+KDMShutdown::when_changed(int)
+{
+    needRoot = kdmcfg->_allowShutdown == SHUT_ROOT ||
+	       (kdmcfg->_allowNuke == SHUT_ROOT && force_rb->isChecked());
+    bool can = needRoot && !timer->isActive();
+    pswdEdit->setEnabled (can);
+    if (can)
+	pswdEdit->setFocus();
+}
+
+void
 KDMShutdown::bye_bye()
 {
-    if( pswdEdit) {
+    if( needRoot) {
 	GSendInt (G_Verify);
 	GSendStr ("root");
 	GSendStr (pswdEdit->password());
@@ -190,6 +208,7 @@ KDMShutdown::bye_bye()
 	    pswdEdit->erase();
 	    pswdEdit->setEnabled( false);
 	    okButton->setEnabled( false);
+	    cancelButton->setEnabled( false);
 	    timer->start( 1500 + kapp->random()/(RAND_MAX/1000), true );
 	    return;
 	}
@@ -200,7 +219,11 @@ KDMShutdown::bye_bye()
 	info.setNextBootOption(liloTarget);
     }
 #endif
-    SessionExit (restart_rb->isChecked() ? EX_REBOOT : EX_HALT);
+    GSendInt (G_Shutdown);
+    GSendInt (restart_rb->isChecked() ? SHUT_REBOOT : SHUT_HALT);
+    GSendInt (force_rb->isChecked() ? SHUT_FORCENOW :
+	      try_rb->isChecked() ? SHUT_TRYNOW : SHUT_SCHEDULE);
+    accept ();
 }
 
 #include "kdmshutdown.moc"

@@ -180,11 +180,10 @@ KGreeter::insertUsers( QIconView *iconview)
 
 #undef CHECK_STRING
 
-static void
-inserten (QPopupMenu *mnu, const QString& txt,
-	  const QObject *receiver, const char *member)
+void
+KGreeter::Inserten (QPopupMenu *mnu, const QString& txt, const char *member)
 {
-    mnu->insertItem(txt, receiver, member, QAccel::shortcutKey(txt));
+    mnu->insertItem(txt, this, member, QAccel::shortcutKey(txt));
 }
 
 KGreeter::KGreeter(QWidget *parent, const char *t)
@@ -295,16 +294,16 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     optMenu->setCheckable(false);
 
     if (dhasConsole)
-	inserten (optMenu, i18n("Co&nsole Login"),
-		  this, SLOT(console_button_clicked()));
+	Inserten (optMenu, i18n("Co&nsole Login"),
+		  SLOT(console_button_clicked()));
 
-/*    inserten (optMenu, i18n("&Remote Login"),
-	      this, SLOT(chooser_button_clicked()));
+/*    Inserten (optMenu, i18n("&Remote Login"),
+	      SLOT(chooser_button_clicked()));
 */
-    inserten (optMenu, disLocal ?
+    Inserten (optMenu, disLocal ?
 		       i18n("R&estart X Server") :
 		       i18n("Clos&e Connection"),
-	      this, SLOT(quit_button_clicked()));
+	      SLOT(quit_button_clicked()));
 
     menuButton = new QPushButton( i18n("&Menu"), this);
     menuButton->setPopup(optMenu);
@@ -664,7 +663,7 @@ extern "C" void
 kg_main(int argc, char **argv)
 {
     kde_have_kipc = false;
-    KApplication::disableAutoDcopRegistration();
+//    KApplication::disableAutoDcopRegistration();
     MyApp myapp(argc, argv);
 
     kdmcfg = new KDMConfig();

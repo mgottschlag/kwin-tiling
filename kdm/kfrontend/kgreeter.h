@@ -95,6 +95,7 @@ private:
     void set_wm(const char *);
     void insertUsers( QIconView *);
     void MsgBox(QMessageBox::Icon typ, QString msg);
+    void Inserten (QPopupMenu *mnu, const QString& txt, const char *member);
     bool verifyUser( bool);
 
     enum WmStat { WmNone, WmPrev, WmSel };

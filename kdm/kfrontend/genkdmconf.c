@@ -53,7 +53,8 @@ static const char *newdir = KDMCONF, *oldxdm, *oldkde;
 
 
 #define NO_LOGGER
-#define USE_CONST
+#define CONST const
+#define STATIC static
 #include <printf.c>
 
 typedef struct {
@@ -310,6 +311,12 @@ Ent entsGeneral[] = {
 { "# Where KDM should fetch entropy from. Default is /dev/mem.\n", 
 "RandomFile",	"", 0 },
 #endif
+{ "# Where the command FiFos should be created. Make it empty to disable\n"
+"# the FiFos. Default is /var/run/xdmctl\n", 
+"FifoDir",	"/tmp", 0 },
+{ "# To which group the command FiFos should belong.\n"
+"# Default is -1 (effectively root)\n", 
+"FifoGroup",	"xdmctl", 0 },
 };
 
 Ent entsXdmcp[] = {
@@ -345,7 +352,10 @@ Ent entsShutdown[] = {
 "HaltCmd",	"", 0 },
 { "# The command to run to reboot the system. Default is " REBOOT_CMD "\n", 
 "RebootCmd",	"", 0 },
-#ifdef __linux__
+{ "# Whether one can shut down the system via the global command FiFo.\n"
+"# Default is false\n",
+"AllowFifo",	"true", 0 },
+#if defined(__linux__) && defined(__i386__)
 { "# Offer LiLo boot options in shutdown dialog. Default is false\n", 
 "UseLilo",	"true", 0 },
 { "# The location of the LiLo binary. Default is /sbin/lilo\n", 
@@ -442,17 +452,23 @@ Ent entsAnyCore[] = {
 "AllowRootLogin",	"false", 1 },
 { "# Allow to log in, when user has set an empty password? Default is true\n", 
 "AllowNullPasswd",	"false", 1 },
+{ "# Who is allowed to shut down the system. This applies both to the\n"
+"# greeter and to the command FiFo. Default is All\n"
+"# \"None\" - no \"Shutdown...\" button is shown at all\n"
+"# \"Root\" - the root password must be entered to shut down\n"
+"# \"All\" - everybody can shut down the machine (Default)\n", 
+"AllowShutdown",	"Root", 1 },
+{ "# Who is allowed to abort all still running sessions when shutting down.\n"
+"# Same options as for AllowShutdown. Default is All\n",
+"AllowSdForceNow",	"Root", 0 },
+{ "# The shutdown condition/timing choosen by default. Default is Schedule\n"
+"# \"Schedule\" - shutdown after all sessions exit (possibly at once)\n"
+"# \"TryNow\" - shutdown, if no sessions are open, otherwise do nothing\n"
+"# \"ForceNow\" - shutdown unconditionally\n",
+"DefaultSdMode",	"ForceNow", 0}, 
 { "# Where (relatively to the user's home directory) to store the last\n"
 "# selected session. Default is .wmrc\n", 
 "SessSaveFile",	"", 0 },
-{ "# Command FiFo options.\n"
-"# XXX these options will probably change ...\n"
-"# Default is false\n", 
-"FifoCreate",	"true", 0 },
-{ "# Default is -1\n", 
-"FifoOwner",		"", 0 },
-{ "# Default is -1\n", 
-"FifoGroup",		"", 0 },
 };
 
 Ent entsAnyGreeter[] = {
@@ -532,11 +548,6 @@ Ent entsAnyGreeter[] = {
 "# \"OneStar\" - \"*\" is shown for every typed letter (Default)\n"
 "# \"ThreeStars\" - \"***\" is shown for every typed letter\n", 
 "EchoMode",	"NoEcho", 0 },
-{ "# Who is allowed to shut down the system.\n"
-"# \"None\" - no \"Shutdown...\" button is shown at all\n"
-"# \"Root\" - the root password must be entered to shut down\n"
-"# \"All\" - everybody can shut down the machine (Default)\n", 
-"AllowShutdown",	"Root", 1 },
 { "# Hold the X-server grabbed the whole time the greeter is visible.\n"
 "# This may be more secure, but will disable any background. Default is false\n", 
 "GrabServer",	"true", 0 },
@@ -1157,7 +1168,7 @@ mergeKdmRc (const char *path)
 	cpyval ("AutoLogin1st", 0);
     }
 
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
     if (cfgSGroup ("Lilo")) {
 	setsect("Shutdown");
 	cpyval ("UseLilo", "Lilo");

@@ -50,19 +50,34 @@ public:
 private slots:
     void bye_bye();
     void target_changed(int);
+    void when_changed(int);
     void timerDone();
 
 private:
     QLabel		*label;
-    QButtonGroup	*btGroup;
+    QButtonGroup	*howGroup, *whenGroup;
     QPushButton		*okButton;
     QPushButton		*cancelButton;
     KPasswordEdit	*pswdEdit;
-    QRadioButton	*restart_rb;
+    QRadioButton	*restart_rb, *force_rb, *try_rb;
     QTimer		*timer;
+    bool		needRoot;
 #if defined(__linux__) && (__i386__)
     int			liloTarget;
 #endif
+
+    void set_min( QWidget* w)
+    {
+	w->adjustSize();
+	w->setMinimumSize( w->size());
+    }
+
+    void set_fixed( QWidget* w)
+    {
+	w->adjustSize();
+	w->setFixedSize( w->size());
+    }
+
 };
 
 #endif /* KDMSHUTDOWN_H */

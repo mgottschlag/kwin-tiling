@@ -36,6 +36,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <netdb.h>
+#include <grp.h>
 
 #define KDMCONF KDE_CONFDIR "/kdm"
 
@@ -112,10 +113,10 @@ typedef struct ValArr {
 #endif
 
 #define LOG_NAME "kdm_config"
-#define LOG_LOCAL
 #define LOG_DEBUG_MASK DEBUG_CONFIG
 #define LOG_PANIC_EXIT 1
-#define USE_CONST
+#define CONST const
+#define STATIC static
 #include <printf.c>
 
 
@@ -320,9 +321,11 @@ static int daemonize = -1, autolog = 1;
 static Value VnoPassEnable, VautoLoginEnable, VxdmcpEnable,
 	VXaccess, VXservers;
 
-#define C_PATH		0x10000000	/* C_TYPE_STR is a path spec */
-#define C_BOOL		0x10000000	/* C_TYPE_INT is a boolean */
-#define C_ENUM		0x20000000	/* C_TYPE_INT is an enum (option) */
+#define C_MTYPE_MASK	0x30000000
+# define C_PATH		0x10000000	/* C_TYPE_STR is a path spec */
+# define C_BOOL		0x10000000	/* C_TYPE_INT is a boolean */
+# define C_ENUM		0x20000000	/* C_TYPE_INT is an enum (option) */
+# define C_GRP		0x30000000	/* C_TYPE_INT is a group spec */
 #define C_INTERNAL	0x40000000	/* don't expose to core */
 #define C_CONFIG	0x80000000	/* process only for finding deps */
 
@@ -384,7 +387,6 @@ PautoLoginX (Value *retval)
     return 0;
 }
 
-
 #ifndef HALT_CMD
 # ifdef BSD
 #  define HALT_CMD	"/sbin/shutdown -h now"
@@ -428,7 +430,8 @@ static const char
     *showusers[] = { "All", "Selected", "None", 0 },
     *preseluser[] = { "None", "Previous", "Default", 0 },
     *echomode[] = { "OneStar", "ThreeStars", "NoEcho", 0 },
-    *shut_down[] = { "None", "Root", "All", 0 };
+    *sd_who[] = { "None", "Root", "All", 0 },
+    *sd_mode[] = { "Schedule", "TryNow", "ForceNow", 0 };
 
 Ent entsGeneral[] = {
 { "DaemonMode",		C_daemonMode | C_BOOL,	(void *)PdaemonMode,	"true" },
@@ -442,6 +445,8 @@ Ent entsGeneral[] = {
 { "RandomFile",		C_randomFile,		0,	"/dev/mem" },
 #endif
 { "AutoLogin",		C_autoLogin | C_BOOL,	(void *)PautoLogin,	"true" },
+{ "FifoDir",		C_fifoDir | C_PATH,	0,	"/var/run/xdmctl" },
+{ "FifoGroup",		C_fifoGroup | C_GRP,	0,	"0" },
 };
 
 Ent entsXdmcp[] = {
@@ -458,6 +463,8 @@ Ent entsXdmcp[] = {
 Ent entsShutdown[] = {
 { "HaltCmd",		C_cmdHalt,		0,	HALT_CMD },
 { "RebootCmd",		C_cmdReboot,		0,	REBOOT_CMD },
+{ "AllowFifo",		C_fifoAllowShutdown | C_BOOL,	0,	"false" },
+{ "AllowFifoNow",	C_fifoAllowNuke | C_BOOL,	0,	"true" },
 #ifdef __linux__
 { "UseLilo",		C_useLilo | C_BOOL,	0,	"false" },
 { "LiloCmd",		C_liloCmd,		0,	"/sbin/lilo" },
@@ -481,9 +488,6 @@ Ent entsCore[] = {
 { "Authorize",		C_authorize | C_BOOL,	0,	"true" },
 { "AuthNames",		C_authNames,		0,	DEF_AUTH_NAME },
 { "AuthFile",		C_clientAuthFile,	0,	"" },
-{ "FifoCreate",		C_fifoCreate | C_BOOL,	0,	"false" },
-{ "FifoOwner",		C_fifoOwner,		0,	"-1" },
-{ "FifoGroup",		C_fifoGroup,		0,	"-1" },
 { "StartInterval",	C_startInterval,	0,	"30" },
 { "Resources",		C_resources,		0,	"" },
 { "Xrdb",		C_xrdb,			0,	XBINDIR "/xrdb" },
@@ -508,6 +512,9 @@ Ent entsCore[] = {
 { "AllowNullPasswd",	C_allowNullPasswd | C_BOOL, 0,	"true" },
 { "AllowRootLogin",	C_allowRootLogin | C_BOOL, 0,	"true" },
 { "SessSaveFile",	C_sessSaveFile,		0,	".wmrc" },
+{ "AllowShutdown",	C_allowShutdown | C_ENUM, sd_who, "All" },
+{ "AllowSdForceNow",	C_allowNuke | C_ENUM, sd_who,	"All" },
+{ "DefaultSdMode",	C_defSdMode | C_ENUM, sd_mode, "Schedule" },
 };
 
 Ent entsGreeter[] = {
@@ -533,7 +540,6 @@ Ent entsGreeter[] = {
 { "DefaultUser",	C_DefaultUser,		0,	"" },
 { "FocusPasswd",	C_FocusPasswd | C_BOOL, 0,	"false" },
 { "EchoMode",		C_EchoMode | C_ENUM, echomode, "OneStar" },
-{ "AllowShutdown",	C_AllowShutdown | C_ENUM, shut_down, "All" },
 { "GrabServer",		C_grabServer | C_BOOL,	0,	"false" },
 { "GrabTimeout",	C_grabTimeout,		0,	"3" },
 { "AuthComplain",	C_authComplain | C_BOOL, 0,	"true" },
@@ -880,7 +886,7 @@ CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 	    for (i = 0; i < vallen && i < (int)sizeof(buf) - 1; i++)
 		buf[i] = tolower (val[i]);
 	    buf[i] = 0;
-	    if (et->id & C_BOOL) {
+	    if ((et->id & C_MTYPE_MASK) == C_BOOL) {
 		if (!strcmp (buf, "true") ||
 		    !strcmp (buf, "on") ||
 		    !strcmp (buf, "yes") ||
@@ -893,23 +899,29 @@ CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 			    retval->ptr = (char *)0;
 		else
 		    return "boolean";
-	    } else if (et->id & C_ENUM) {
+		return 0;
+	    } else if ((et->id & C_MTYPE_MASK) == C_ENUM) {
 		for (i = 0; eopts[i]; i++)
 		    if (!memcmp (eopts[i], val, vallen) && !eopts[i][vallen]) {
 			retval->ptr = (char *)i;
 			return 0;
 		    }
 		return "option";
-	    } else {
-		retval->ptr = 0;
-		if (sscanf (buf, "%i", (int *)&retval->ptr) != 1)
-		    return "integer";
+	    } else if ((et->id & C_MTYPE_MASK) == C_GRP) {
+		struct group *ge;
+		if ((ge = getgrnam (buf))) {
+		    retval->ptr = (char *)ge->gr_gid;
+		    return 0;
+		}
 	    }
+	    retval->ptr = 0;
+	    if (sscanf (buf, "%i", (int *)&retval->ptr) != 1)
+		return "integer";
 	    return 0;
 	case C_TYPE_STR:
 	    retval->ptr = val;
 	    retval->len = vallen + 1;
-	    if (et->id & C_PATH)
+	    if ((et->id & C_MTYPE_MASK) == C_PATH)
 		if (vallen && val[vallen-1] == '/')
 		    retval->len--;
 	    return 0;
@@ -966,7 +978,7 @@ GetValue (Ent *et, DSpec *dspec, Value *retval, char **eopts)
 		  errs, ent->vallen, ent->val, kdmrc, ent->line);
     }
     if ((errs = CvtValue (et, retval, strlen (et->def), et->def, eopts)))
-	LogError ("Internal error: invalid default %s value '%s' for key %s", 
+	LogError ("Internal error: invalid default %s value '%s' for key %s\n", 
 		  errs, et->def, et->name);
 }
 
@@ -1015,7 +1027,8 @@ CopyValues (ValArr *va, Sect *sec, DSpec *dspec, int isconfig)
 	else if (sec->ents[i].id & C_INTERNAL) {
 	    GetValue (sec->ents + i, dspec, ((Value *)sec->ents[i].ptr), 0);
 	} else {
-	    if ((sec->ents[i].id & C_ENUM) || !sec->ents[i].ptr ||
+	    if (((sec->ents[i].id & C_MTYPE_MASK) == C_ENUM) || 
+		!sec->ents[i].ptr ||
 		!((int (*)(Value *))sec->ents[i].ptr)(&val)) {
 		GetValue (sec->ents + i, dspec, &val, 
 			  (char **)sec->ents[i].ptr);
@@ -1359,8 +1372,8 @@ static struct displayMatch {
 	const char	*name;
 	int		len, type;
 } displayTypes[] = {
-	{ "local", 5,	Local | Permanent | FromFile },
-	{ "foreign", 7,	Foreign | Permanent | FromFile },
+	{ "local", 5,	dLocal | dPermanent | dFromFile },
+	{ "foreign", 7,	dForeign | dPermanent | dFromFile },
 };
 
 #define def_type (Local | Permanent | FromFile)
@@ -1452,9 +1465,15 @@ Debug ("read display class %s\n", word);
 Debug ("read display type %s\n", word);
 	(*serverPtr)->console = atPos;
 Debug ("read console %s\n", atPos);
+	word = ReadWord (&file, &len, TRUE);
+	if (word && !strcmp (word, "reserve")) {
+Debug ("display is reserve\n");
+	    (*serverPtr)->type = (*serverPtr)->type & ~d_lifetime | dReserve;
+	    word = ReadWord (&file, &len, TRUE);
+	}
 	(*serverPtr)->argc = 0;
 	argp = &(*serverPtr)->argv;
-	while ((word = ReadWord (&file, &len, TRUE))) {
+	while (word) {
 Debug ("read server arg %s\n", word);
 	    if (!(*argp = (ArgV *) malloc (sizeof (ArgV)))) {
 		LogOutOfMem ("ReadServerFile");
@@ -1463,8 +1482,9 @@ Debug ("read server arg %s\n", word);
 	    (*argp)->str = word;
 	    argp = &(*argp)->next;
 	    (*serverPtr)->argc++;
+	    word = ReadWord (&file, &len, TRUE);
 	}
-	if (((*serverPtr)->type & d_location) == Local) {
+	if (((*serverPtr)->type & d_location) == dLocal) {
 	    if (!(*serverPtr)->argc) {
 		LogError ("Missing arguments to local server %s in file %s\n",
 			  (*serverPtr)->name, fname);

@@ -45,7 +45,8 @@
 #define LOG_NAME "kdm_greet"
 #define LOG_DEBUG_MASK DEBUG_GREET
 #define LOG_PANIC_EXIT EX_UNMANAGE_DPY
-#define USE_CONST
+#define CONST const
+#define STATIC
 #include <printf.c>
 
 
@@ -394,7 +395,7 @@ main (int argc, char **argv)
     dgrabTimeout = GetCfgInt (C_grabTimeout);
 /*    dpingInterval = GetCfgInt (C_pingInterval);*/	/* XXX not here */
 /*    dpingTimeout = GetCfgInt (C_pingTimeout);*/
-    disLocal = (GetCfgInt (C_displayType) & d_location) == Local;
+    disLocal = (GetCfgInt (C_displayType) & d_location) == dLocal;
     if ((ci = GetCfgStr (C_console))) {
 	dhasConsole = ci[0] != 0;
 	free (ci);

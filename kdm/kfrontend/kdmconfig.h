@@ -72,7 +72,7 @@ public:
      
     QStringList	_sessionTypes;
 
-    int		_allowShutdown;
+    int		_allowShutdown, _allowNuke, _defSdMode;
 
 #if defined(__linux__) && defined(__i386)
     bool	_useLilo;
