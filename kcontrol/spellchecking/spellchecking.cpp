@@ -23,6 +23,7 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kspell.h>
+#include <kdialog.h>
 #include <kgenericfactory.h>
 
 #include "spellchecking.h"
