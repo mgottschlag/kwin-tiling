@@ -281,9 +281,9 @@ void TreeView::copyFile(const QString& src, const QString& dest, bool moving )
 	    QMap<QString, QString> map = s.entryMap(*it);
 
 	    // iterate through the map and write out key/value pairs to the dest file
-	    QMap<QString, QString>::ConstIterator it;
-	    for (it = map.begin(); it != map.end(); ++it)
-		d.writeEntry(it.key(), it.data());
+	    QMap<QString, QString>::ConstIterator iter;
+	    for (iter = map.begin(); iter != map.end(); ++iter)
+		d.writeEntry(iter.key(), iter.data());
 	}
 
     // unset "Hidden"
