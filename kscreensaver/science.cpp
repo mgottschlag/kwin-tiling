@@ -48,9 +48,6 @@
 #define SCI_MAX_SPEED           100
 #define SCI_MAX_MOVE             20
 
-#undef i18n
-#define i18n(x) glocale->translate(x)
-
 static KScienceSaver *saver = 0;
 extern KLocale *glocale;
 
@@ -277,10 +274,10 @@ void KScienceSaver::initialize()
 	ycoord = (int) y;		
 
 	switch( bpp ) {
-		case 1 : applyLens = &applyLens8bpp;  break;
-		case 2 : applyLens = &applyLens16bpp; break;
-		case 3 : applyLens = &applyLens24bpp; break;
-		case 4 : applyLens = &applyLens32bpp; break;
+		case 1 : applyLens = &KScienceSaver::applyLens8bpp;  break;
+		case 2 : applyLens = &KScienceSaver::applyLens16bpp; break;
+		case 3 : applyLens = &KScienceSaver::applyLens24bpp; break;
+		case 4 : applyLens = &KScienceSaver::applyLens32bpp; break;
 		default: myAssert( false, "unsupported colordepth "\
 		                   "(only 8, 16, 24, 32 bpp supported)" );
 	}
