@@ -10,6 +10,8 @@
 #include "advanceddialogimpl.h"
 #include "stdlib.h"
 
+#include "advanceddialog.moc"
+
 KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent, const char* name)
  : KDialogBase( parent, name, true, i18n( "Advanced Options" ),
                 Ok | Cancel, Ok, true )

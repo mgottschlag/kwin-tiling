@@ -10,3 +10,4 @@ TestWin::TestWin()
     KWin::setState( winId(), NET::StaysOnTop );
 }
 
+#include "testwin.moc"

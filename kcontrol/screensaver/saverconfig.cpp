@@ -10,6 +10,8 @@ SaverConfig::SaverConfig()
 bool SaverConfig::read(const QString &file)
 {
     KDesktopFile config(file, true);
+    if( !config.tryExec())
+      return false;
     mExec = config.readPathEntry("Exec");
     mName = config.readEntry("Name");
     mCategory = i18n("Screen saver category", // Must be same in Makefile.am
