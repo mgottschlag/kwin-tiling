@@ -5,7 +5,7 @@ DataCount=1
 Comment=Basic Konqueror gestures.\n
 DataCount=14
 Enabled=true
-Name=Konqueror gestures
+Name=Konqueror Gestures
 SystemGroup=0
 Type=ACTION_DATA_GROUP
 
