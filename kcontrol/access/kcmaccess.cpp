@@ -141,7 +141,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
 
   connect(durationSlider, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
 
-  vvbox->addStretch();
+  vbox->addStretch();
 
   // -----------------------------------------------------
 
@@ -214,7 +214,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   connect(bounceKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(bounceKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
 
-  vvbox->addStretch();
+  vbox->addStretch();
 
   tab->addTab(keys, i18n("&Keyboard"));
 
@@ -281,7 +281,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   connect(mk_max_speed, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
   connect(mk_curve, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
 
-  vvbox->addStretch();
+  vbox->addStretch();
 
   tab->addTab(mouse, i18n("&Mouse"));
 
