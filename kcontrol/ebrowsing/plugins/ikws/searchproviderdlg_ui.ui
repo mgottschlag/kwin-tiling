@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>399</width>
-            <height>204</height>
+            <height>206</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>SearchProviderDlgUI</string>
     </property>
     <grid>
         <property name="name">
@@ -105,7 +108,7 @@ The shortcuts entered here can be used as a pseudo-URI scheme in KDE. For exampl
             <property name="whatsThis" stdset="0">
                 <string>&lt;qt&gt;
 Enter the URI that is used to do a search on the search engine here.&lt;br/&gt;The whole text to be searched for can be specified as \{@} or \{0}.&lt;br/&gt;
-Recommended is \{@}, since it removes all query variables (name=value) from the resulting string whereas \{0} will be substituted with the unmodified query string.&lt;br/&gt;You can use \{1} ... \{n} to specify certain words from the query and \{name} to specify a value given by 'name=value' in the user query.&lt;br/&gt;In addition it is possible to specify multiple references (names, numbers and strings) at once (\{name1,name2,...,"string"}).&lt;br\&gt;The first matching value (from the left) will be used as substitution value for the resulting URI.&lt;br/&gt;A quoted string can be used as default value if nothing matches from the left of the reference list.
+Recommended is \{@}, since it removes all query variables (name=value) from the resulting string whereas \{0} will be substituted with the unmodified query string.&lt;br/&gt;You can use \{1} ... \{n} to specify certain words from the query and \{name} to specify a value given by 'name=value' in the user query.&lt;br/&gt;In addition it is possible to specify multiple references (names, numbers and strings) at once (\{name1,name2,...,"string"}).&lt;br/&gt;The first matching value (from the left) will be used as substitution value for the resulting URI.&lt;br/&gt;A quoted string can be used as default value if nothing matches from the left of the reference list.
 &lt;/qt&gt;</string>
             </property>
         </widget>
@@ -119,6 +122,8 @@ Recommended is \{@}, since it removes all query variables (name=value) from the 
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <tabstops>
     <tabstop>leName</tabstop>
     <tabstop>leQuery</tabstop>
@@ -126,4 +131,10 @@ Recommended is \{@}, since it removes all query variables (name=value) from the 
     <tabstop>cbCharset</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kcombobox.h</includehint>
+</includehints>
 </UI>
