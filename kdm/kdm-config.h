@@ -101,4 +101,8 @@ int LogOutOfMem( char*, ...);
 }
 #endif
 
+#ifdef SVR4
+#define NeedVarargsPrototypes  1
+#endif
+
 #endif /* KDM_CONFIG_H */
