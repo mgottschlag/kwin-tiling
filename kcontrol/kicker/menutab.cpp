@@ -107,6 +107,12 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
                                  "merge these different locations into a "
                                  "single logical tree of programs."));
 
+  show_bookmarks_cb = new QCheckBox(i18n("Show bookmarks submenu"), kmenu_group);
+  connect(show_bookmarks_cb, SIGNAL(clicked()), SIGNAL(changed()));
+  vbox->addWidget(show_bookmarks_cb);
+  QWhatsThis::add( show_bookmarks_cb, i18n("Enabling this option will make the panel show"
+					   " a bookmarks menu in your KDE menu" ) );
+  
   show_recent_cb = new QCheckBox(i18n("Show recent documents submenu"), kmenu_group);
   connect(show_recent_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(show_recent_cb);
@@ -161,6 +167,7 @@ void MenuTab::load()
   max_entries_input->setValue(c->readNumEntry("MaxEntries", 200));
 
   merge_cb->setChecked(c->readBoolEntry("MergeKDEDirs", true));
+  show_bookmarks_cb->setChecked(c->readBoolEntry("UseBookmarks", true));
   show_recent_cb->setChecked(c->readBoolEntry("UseRecent", true));
   show_qb_cb->setChecked(c->readBoolEntry("UseBrowser", true));
 
@@ -179,6 +186,7 @@ void MenuTab::save()
   c->writeEntry("MenuCacheTime", cache_time_input->value() * 1000);
   c->writeEntry("MaxEntries", max_entries_input->value());
   c->writeEntry("MergeKDEDirs", merge_cb->isChecked());
+  c->writeEntry("UseBookmarks", show_bookmarks_cb->isChecked());
   c->writeEntry("UseRecent", show_recent_cb->isChecked());
   c->writeEntry("UseBrowser", show_qb_cb->isChecked());
   c->writeEntry("ShowHiddenFiles", show_hidden_cb->isChecked());

@@ -65,7 +65,7 @@ class MenuTab : public QWidget
 
   // kmenu group
   QGroupBox    *kmenu_group;
-  QCheckBox    *merge_cb, *show_recent_cb, *show_qb_cb;
+  QCheckBox    *merge_cb, *show_bookmarks_cb, *show_recent_cb, *show_qb_cb;
 };
 
 #endif
