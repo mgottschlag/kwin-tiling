@@ -126,7 +126,7 @@ no)
   KERBEROS_LIBS="-L${KERBEROS_ROOT}/lib -lkrb -ldes"
   KRB_RPATH=
   if test "$USE_RPATH" = "yes" ; then
-    KRB_RPATH="-rpath ${KERBEROS_ROOT}/lib"
+    KRB_RPATH="-R ${KERBEROS_ROOT}/lib"
   fi
   AC_CHECK_LIB(resolv, dn_expand, KERBEROS_LIBS="$KERBEROS_LIBS -lresolv")
   dnl Check whether or not the AFS lifetime conversion routines exist.
