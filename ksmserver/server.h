@@ -102,10 +102,10 @@ private slots:
     void restoreSessionInternal();
 
     void protectionTimeout();
+    void cancelShutdown();
 
 private:
     void handlePendingInteractions();
-    void cancelShutdown();
     void completeShutdown();
     void completeKilling();
 

@@ -4,6 +4,7 @@ ksmserver - the KDE session management server
 Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 ******************************************************************/
 
+#include <config.h>
 
 #include "shutdown.h"
 #include <qapplication.h>
@@ -18,18 +19,50 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <klocale.h>
 #include <kapp.h>
+#include <kdebug.h>
 #include <kwin.h>
 
 #include <X11/Xlib.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "shutdown.moc"
 
+KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
-KSMShutdown::KSMShutdown( QWidget* parent )
+KSMShutdownFeedback::KSMShutdownFeedback()
+ : QWidget( 0L )
+{
+    setBackgroundMode( QWidget::NoBackground );
+    setGeometry( QApplication::desktop()->geometry() );
+    showFullScreen();
+    KWin::setState( winId(), NET::StaysOnTop );
+    KWin::setOnAllDesktops( winId(), TRUE );
+
+    QPainter p;
+    QBrush b( Qt::Dense4Pattern );
+    p.begin( this );
+    p.fillRect( rect(), b);
+    p.end();
+}
+
+void KSMShutdownFeedback::start() //static
+{
+    (void) self();
+}
+
+void KSMShutdownFeedback::keyPressEvent( QKeyEvent * event )
+{
+    if ( event->key() == Key_Escape )
+    {
+        kdDebug() << "Esc pressed -> aborting shutdown" << endl;
+        emit aborted();
+    }
+    else
+        QWidget::keyPressEvent( event );
+}
+
+//////
+
+KSMShutdownDlg::KSMShutdownDlg( QWidget* parent )
     : QDialog( parent, 0, TRUE, WStyle_Customize | WStyle_NoBorderEx | WStyle_StaysOnTop ) //WType_Popup )
 {
     QVBoxLayout* vbox = new QVBoxLayout( this );
@@ -59,42 +92,42 @@ KSMShutdown::KSMShutdown( QWidget* parent )
     connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
     hbox->addWidget( cancel );
 
-
     QTimer::singleShot( 0, this, SLOT( requestFocus() ) );
     checkbox->setFocus();
 }
 
-KSMShutdown::~KSMShutdown()
-{
-}
-
-
-void KSMShutdown::requestFocus()
+void KSMShutdownDlg::requestFocus()
 {
     XSetInputFocus( qt_xdisplay(), winId(), RevertToParent, CurrentTime );
 }
 
-bool KSMShutdown::shutdown( bool& saveSession )
+bool KSMShutdownDlg::confirmShutdown( bool& saveSession )
 {
     kapp->enableStyles();
-    QWidget* w = new QWidget;
-    w->setBackgroundMode( QWidget::NoBackground );
-    w->setGeometry( QApplication::desktop()->geometry() );
-    w->showFullScreen();
-    KWin::setState( w->winId(), NET::StaysOnTop );
-    KWin::setOnAllDesktops( w->winId(), TRUE );
-    QPainter p;
-    QBrush b( Dense4Pattern );
-    p.begin( w );
-    p.fillRect( w->rect(), b);
-    p.end();
-    KSMShutdown* l = new KSMShutdown( w );;
+    KSMShutdownDlg* l = new KSMShutdownDlg( KSMShutdownFeedback::self() );
     l->checkbox->setChecked( saveSession );
+
+    // Show dialog (will save the background in showEvent)
     l->show();
     saveSession = l->checkbox->isChecked();
     bool result = l->result();
+    l->hide();
+
+    // Restore background
+    bitBlt( KSMShutdownFeedback::self(), l->x(), l->y(), &l->pixmap() );
+
     delete l;
-    delete w;
+
     kapp->disableStyles();
     return result;
 }
+
+void KSMShutdownDlg::showEvent( QShowEvent * )
+{
+    // Save background
+    //kdDebug() << "showEvent => grabWindow "
+    //          << x() << "," << y() << " " << width() << "x" << height() << endl;
+    pm = QPixmap::grabWindow( KSMShutdownFeedback::self()->winId(),
+                              x(), y(), width(), height() );
+}
+

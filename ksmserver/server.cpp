@@ -896,7 +896,7 @@ void KSMServer::processData( int /*socket*/ )
 	QListIterator<KSMClient> it ( clients );
 	while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
 	    ++it;
-	
+
 	if ( it.current() ) {
 	    SmsConn smsConn = it.current()->connection();
 	    deleteClient( it.current() );
@@ -962,14 +962,18 @@ void KSMServer::shutdown()
     if ( dialogActive )
         return;
     dialogActive = true;
+
+    KSMShutdownFeedback::start(); // make the screen gray
+    connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ), SLOT( cancelShutdown() ) );
+
     // don't use KGlobal::config here! config may have changed!
     KConfig *cfg = new KConfig("ksmserverrc", false, false);
     cfg->setGroup("General" );
-    bool old_saveSession = saveSession = 
+    bool old_saveSession = saveSession =
 	cfg->readBoolEntry( "saveSession", FALSE );
     bool confirmLogout = cfg->readBoolEntry( "confirmLogout", TRUE );
     delete cfg;
-    if ( !confirmLogout || KSMShutdown::shutdown( saveSession ) ) {
+    if ( !confirmLogout || KSMShutdownDlg::confirmShutdown( saveSession ) ) {
 	KNotifyClient::event( "exitkde" ); // KDE says good bye
 	if (saveSession != old_saveSession) {
 	    KConfig* config = KGlobal::config();
@@ -988,6 +992,8 @@ void KSMServer::shutdown()
 	if ( clients.isEmpty() )
 	    completeShutdown();
     }
+    else
+        KSMShutdownFeedback::stop(); // so that the screen becomes normal again
     dialogActive = false;
 }
 
@@ -1058,10 +1064,12 @@ void KSMServer::handlePendingInteractions()
 
 void KSMServer::cancelShutdown()
 {
+    kdDebug() << "cancelShutdown!" << endl;
     clientInteracting = 0;
     for ( KSMClient* c = clients.first(); c; c = clients.next() )
  	SmsShutdownCancelled( c->connection() );
     state = Idle;
+    KSMShutdownFeedback::stop(); // so that the screen becomes normal again
 }
 
 /*

@@ -27,6 +27,12 @@ noinst_HEADERS = global.h server.h shutdown.h
 ksmserver_METASOURCES = AUTO
 ksmserver_SOURCES = server.cpp shutdown.cpp main.cpp
 
+check_PROGRAMS = testsh
+testsh_SOURCES = test.cpp shutdown.cpp
+
+testsh_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+testsh_LDADD = $(LIB_KDECORE)
+
 messages:
 	$(XGETTEXT) $(ksmserver_SOURCES) -o $(podir)/ksmserver.pot
 
