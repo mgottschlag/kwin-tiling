@@ -117,7 +117,7 @@ void KLocaleConfig::slotAddLanguage(int i)
   if ( oldPos != -1 )
     languageList.remove( languageList.at(oldPos) );
 
-  if ( oldPos < pos )
+  if ( oldPos != -1 && oldPos < pos )
     --pos;
 
   QStringList::Iterator it = languageList.at( pos );
