@@ -166,6 +166,7 @@ void ShortcutsModule::initGUI()
 	pHLayout->addStretch( 1 );
 
 	m_pTab = new QTabWidget( this );
+	m_pTab->setMargin( KDialog::marginHint() );
 	pVLayout->addWidget( m_pTab );
 
 	m_pListGeneral = new KAccelShortcutList( m_actionsGeneral, true );
