@@ -98,7 +98,7 @@ TopLevel::TopLevel(const char* name)
   _indextab = new IndexWidget(_modules, _tab);
   connect(_indextab, SIGNAL(moduleActivated(ConfigModule*)),
                   this, SLOT(moduleActivated(ConfigModule*)));
-  _tab->addTab(_indextab, i18n("In&dex"));
+  _tab->addTab(_indextab, i18n("&Index"));
 
   connect(_indextab, SIGNAL(categorySelected(QListViewItem*)),
                   this, SLOT(categorySelected(QListViewItem*)));
