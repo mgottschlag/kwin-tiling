@@ -39,7 +39,7 @@ template class QList<Task>;
 KWinModule* kwin_module = 0;
 
 TaskManager::TaskManager(QObject *parent, const char *name)
-  : QObject(parent, name)
+    : QObject(parent, name), _active(0)
 {
     // create and connect kwin module
     kwin_module = new KWinModule(this);
