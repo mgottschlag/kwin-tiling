@@ -406,7 +406,9 @@ Ent entsGeneral[] = {
 { "AuthDir",		C_authDir	,	0,	"/var/lib/kdm" },
 { "AutoRescan",		C_autoRescan | C_BOOL,	0,	"true" },
 { "ExportList",		C_exportList,		0,	"" },
+#if !defined(__linux__) && !defined(__OpenBSD__)
 { "RandomFile",		C_randomFile,		0,	"/dev/mem" },
+#endif
 { "AutoLogin",		C_autoLogin | C_BOOL,	PautoLogin,	"true" },
 };
 
@@ -418,7 +420,7 @@ Ent entsXdmcp[] = {
 { "ChoiceTimeout",	C_choiceTimeout,	0,	"15" },
 { "RemoveDomainname",	C_removeDomainname | C_BOOL, 0,	"true" },
 { "SourceAddress",	C_sourceAddress | C_BOOL, 0,	"false" },
-{ "Xwilling",		C_willing,		0,	"" },
+{ "Willing",		C_willing,		0,	"" },
 };
 
 Ent entsShutdown[] = {
@@ -433,7 +435,7 @@ Ent entsShutdown[] = {
 
 Ent entsCore[] = {
 { "ServerAttempts",	C_serverAttempts,	0,	"1" },
-{ "ServerTimeout",	C_serverTimeout,	0,	"1" },
+{ "ServerTimeout",	C_serverTimeout,	0,	"15" },
 { "OpenDelay",		C_openDelay,		0,	"15" },
 { "OpenRepeat",		C_openRepeat,		0,	"5" },
 { "OpenTimeout",	C_openTimeout,		0,	"120" },
