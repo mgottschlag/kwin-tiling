@@ -972,7 +972,9 @@ StartClient (struct display *d)
 	    exit (1);
 	}
 	/* pass in environment variables set by libpam and modules it called */
+#ifndef _AIX
 	pam_env = pam_getenvlist(pamh);
+#endif
 	ReInitErrorLog ();
 	if (pam_env)
 	    for(; *pam_env; pam_env++)
