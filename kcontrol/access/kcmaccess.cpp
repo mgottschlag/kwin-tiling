@@ -31,6 +31,7 @@
 #include <kcolorbtn.h>
 #include <kfiledialog.h>
 #include <knuminput.h>
+#include <kapp.h>
 
 
 #include "kcmaccess.moc"
@@ -404,8 +405,7 @@ void KAccessConfig::save()
   delete config;
 
   // restart kaccess
-  // TODO: This is more than dirty
-  system("killall kaccess; kaccess");
+  kapp->startServiceByDesktopName("kaccess");
 
   emit changed(false);
 }
@@ -498,7 +498,7 @@ extern "C"
   {
     bool run=false;
 
-    KConfig *config = new KConfig("kaccessrc");
+    KConfig *config = new KConfig("kaccessrc", true, false);
 
     config->setGroup("Bell");
 
@@ -509,10 +509,8 @@ extern "C"
     if (config->readBoolEntry("VisibleBell", false))
       run = true;
 
+    delete config;
     if (run)
-      {
-        // TODO: This is more than dirty
-        system("kaccess &");
-      }
+      kapp->startServiceByDesktopName("kaccess");
   }
 }

@@ -220,5 +220,3 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
     KAudioPlayer::play(_artsBellFile);
 }
 
-
-

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=KDE accessibility tool
+Exec=kaccess
+X-DCOP-ServiceType=Unique
+ServiceTypes=Daemon
