@@ -13,3 +13,6 @@ messages:
 
 data_DATA = keys.desktop
 datadir = $(kde_appsdir)/Settings/LookNFeel
+
+scheme_DATA = Unix.kksrc
+schemedir = $(kde_datadir)/kcmkeys/standard
