@@ -10,7 +10,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qapplication.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
-#include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qvbuttongroup.h>
 #include <qlabel.h>
@@ -61,9 +60,8 @@ void KSMShutdownFeedback::paintEvent( QPaintEvent* )
 //////
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
-  bool saveSession,
-  bool maysd, bool maynuke,
-  KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode )
+				bool maysd, bool /*maynuke*/,
+				KApplication::ShutdownType sdtype, KApplication::ShutdownMode /*sdmode*/ )
     : QDialog( parent, 0, TRUE, WType_Popup )
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
@@ -127,8 +125,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
  #endif
     }
 
-    checkbox = new QCheckBox( i18n("&Save session for future logins"), frame );
-    vbox->addWidget( checkbox, 0, AlignCenter  );
     vbox->addStretch();
 
     QHBoxLayout* hbox = new QHBoxLayout( vbox );
@@ -146,7 +142,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     hbox->addWidget( cancel );
     hbox->addStretch();
 
-    checkbox->setChecked( saveSession );
     if (maysd)
     {
         if (sdtype == KApplication::ShutdownTypeHalt)
@@ -175,10 +170,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
             rForce->setChecked( true );
 #endif
     }
-    else
-    {
-        checkbox->setFocus();
-    }
 }
 
 void KSMShutdownDlg::slotSdMode(int)
@@ -188,14 +179,12 @@ void KSMShutdownDlg::slotSdMode(int)
 #endif
 }
 
-bool KSMShutdownDlg::confirmShutdown( bool& saveSession,
-				      bool maysd, bool maynuke,
+bool KSMShutdownDlg::confirmShutdown( bool maysd, bool maynuke,
 				      KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode )
 {
     kapp->enableStyles();
     KSMShutdownDlg* l = new KSMShutdownDlg( 0,
 					    //KSMShutdownFeedback::self(),
-                                            saveSession,
 					    maysd, maynuke, sdtype, sdmode );
 
     // Show dialog (will save the background in showEvent)
@@ -218,7 +207,6 @@ bool KSMShutdownDlg::confirmShutdown( bool& saveSession,
                                           KApplication::ShutdownModeForceNow;
 #endif
     }
-    saveSession = l->checkbox->isChecked();
 
     delete l;
 

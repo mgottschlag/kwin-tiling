@@ -41,7 +41,7 @@ class KSMShutdownDlg : public QDialog
     Q_OBJECT
 
 public:
-    static bool confirmShutdown( bool& saveSession, bool maysd, bool maynuke, KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode );
+    static bool confirmShutdown( bool maysd, bool maynuke, KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode );
 
 public slots:
     void slotSdMode(int);
@@ -50,8 +50,7 @@ protected:
     ~KSMShutdownDlg() {};
 
 private:
-    KSMShutdownDlg( QWidget* parent, bool saveSession, bool maysd, bool maynuke, KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode );
-    QCheckBox* checkbox;
+    KSMShutdownDlg( QWidget* parent, bool maysd, bool maynuke, KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode );
     QRadioButton *rLogout, *rHalt, *rReboot;
 #if 0
     , *rSched, *rTry, *rForce;

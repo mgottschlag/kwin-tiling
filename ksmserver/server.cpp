@@ -770,7 +770,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     the_server = this;
     clean = false;
     wm = windowManager;
-    sessionGroup = "Session";
+    sessionGroup = QString( "Session: " ) + SESSION_PREVIOUS_LOGOUT;
 
     progress = 0;
 
@@ -1018,25 +1018,23 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 	    defsdmode = KApplication::ShutdownModeSchedule;
     }
 
-    // don't use KGlobal::config here! config may have changed!
-    KConfig *cfg = new KConfig("ksmserverrc", false, false);
-    cfg->setGroup("General" );
-    bool old_saveSession = saveSession =
-			   cfg->readBoolEntry( "saveSession", true );
+    KConfig *config = KGlobal::config();
+    config->reparseConfiguration(); // config may have changed in the KControl module
+
+    config->setGroup("General" );
     bool logoutConfirmed =
 	(confirm == KApplication::ShutdownConfirmYes) ? false :
        (confirm == KApplication::ShutdownConfirmNo) ? true :
-		  !cfg->readBoolEntry( "confirmLogout", true );
+		  !config->readBoolEntry( "confirmLogout", true );
     KApplication::ShutdownType old_sdtype = (KApplication::ShutdownType)
-					    cfg->readNumEntry( "shutdownType",
+					    config->readNumEntry( "shutdownType",
 							       (int)KApplication::ShutdownTypeNone );
     if (sdtype == KApplication::ShutdownTypeDefault)
 	sdtype = old_sdtype;
     KApplication::ShutdownMode old_sdmode = (KApplication::ShutdownMode)
-					    cfg->readNumEntry( "shutdownMode", (int)defsdmode );
+					    config->readNumEntry( "shutdownMode", (int)defsdmode );
     if (sdmode == KApplication::ShutdownModeDefault)
 	sdmode = old_sdmode;
-    delete cfg;
 
     if (!maysd)
 	sdtype = KApplication::ShutdownTypeNone;
@@ -1046,8 +1044,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     if ( !logoutConfirmed ) {
   	KSMShutdownFeedback::start(); // make the screen gray
 	logoutConfirmed =
-	    KSMShutdownDlg::confirmShutdown( saveSession,
-					     maysd, maynuke, sdtype, sdmode );
+	    KSMShutdownDlg::confirmShutdown( maysd, maynuke, sdtype, sdmode );
 	// ###### We can't make the screen remain gray while talking to the apps,
 	// because this prevents interaction ("do you want to save", etc.)
 	// TODO: turn the feedback widget into a list of apps to be closed,
@@ -1056,15 +1053,20 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     }
 
     if ( logoutConfirmed ) {
+	
+	// shall we save the session on logout?
+	saveSession = ( config->readEntry( "loginMode" ) == "restorePreviousLogout" );
+
+	if ( saveSession )
+	    sessionGroup = QString("Session: ") + SESSION_PREVIOUS_LOGOUT;
+	
 	// Set the real desktop background to black so that exit looks
 	// clean regardless of what was on "our" desktop.
 	kapp->desktop()->setBackgroundColor( Qt::black );
 	KNotifyClient::event( "exitkde" ); // KDE says good bye
-	if (saveSession != old_saveSession ||
-	    sdtype != old_sdtype || sdmode != old_sdmode) {
+	if (sdtype != old_sdtype || sdmode != old_sdmode) {
 	    KConfig* config = KGlobal::config();
 	    config->setGroup("General" );
-	    config->writeEntry( "saveSession", saveSession);
 	    config->writeEntry( "shutdownType", (int)sdtype);
 	    config->writeEntry( "shutdownMode", (int)sdmode);
 	}
@@ -1100,13 +1102,17 @@ QString KSMServer::currentSession()
 {
     if ( sessionGroup.startsWith( "Session: " ) )
         return sessionGroup.mid( 9 );
-    return "default";
+    return ""; // empty, not null, since used for KConfig::setGroup
 }
 
 void KSMServer::saveCurrentSession()
 {
     if ( state != Idle || dialogActive )
 	return;
+
+    if ( currentSession().isEmpty() || currentSession() == SESSION_PREVIOUS_LOGOUT )
+	sessionGroup = QString("Session: ") + SESSION_BY_USER;
+
     state = Checkpoint;
     saveSession = true;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
@@ -1121,7 +1127,7 @@ void KSMServer::saveCurrentSessionAs( QString session )
 {
     if ( state != Idle || dialogActive )
 	return;
-    sessionGroup = session == "default" ? "Session" : "Session: " + session;
+    sessionGroup = "Session: " + session;
     saveCurrentSession();
 }
 
@@ -1305,7 +1311,7 @@ void KSMServer::discardSession()
 {
     KConfig* config = KGlobal::config();
     config->setGroup( sessionGroup );
-    int count =  config->readNumEntry( "count" );
+    int count =  config->readNumEntry( "count", 0 );
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
         QStringList discardCommand = c->discardCommand();
         if ( discardCommand.isEmpty())
@@ -1341,7 +1347,7 @@ void KSMServer::storeSession()
             continue;
         executeCommand( discardCommand );
     }
-    config->deleteGroup( sessionGroup );
+    config->deleteGroup( sessionGroup ); //### does not work with global config object...
     config->setGroup( sessionGroup );
     count =  0;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
@@ -1379,10 +1385,7 @@ void KSMServer::restoreSession( QString sessionName )
     upAndRunning( "restore session");
     KConfig* config = KGlobal::config();
 
-    if ( !sessionName.isEmpty() && sessionName != "default" )
-        sessionGroup = "Session: " + sessionName;
-    else
-        sessionGroup = "Session";
+    sessionGroup = "Session: " + sessionName;
 
     config->setGroup( sessionGroup );
     int count =  config->readNumEntry( "count" );

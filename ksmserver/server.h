@@ -35,6 +35,9 @@ extern "C" {
 
 #include "KSMServerInterface.h"
 
+#define SESSION_PREVIOUS_LOGOUT "saved at previous logout"
+#define SESSION_BY_USER  "saved by user"
+
 typedef QValueList<QCString> QCStringList;
 class KSMListener;
 class KSMConnection;

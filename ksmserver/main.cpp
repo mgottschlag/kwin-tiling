@@ -31,8 +31,6 @@ static const char *description = I18N_NOOP( "The reliable KDE session manager th
 
 static const KCmdLineOptions options[] =
 {
-   { "r", 0, 0 },
-   { "restore <sessionName>", I18N_NOOP("Restores the session with name <sessionName> if available."), "default" },
    { "w", 0, 0 },
    { "windowmanager <wm>", I18N_NOOP("Starts 'wm' in case no other window manager is \nparticipating in the session. Default is 'kwin'"), 0},
    { "nolocal", I18N_NOOP("Also allow remote connections."), 0},
@@ -203,7 +201,7 @@ int main( int argc, char* argv[] )
 
     KSMServer *server = new KSMServer( QString::fromLatin1(wm), only_local);
     kapp->dcopClient()->setDefaultObject( server->objId() );
-    
+
     IceSetIOErrorHandler( IoErrorHandler );
 
     KConfig *config = KGlobal::config();
@@ -213,11 +211,16 @@ int main( int argc, char* argv[] )
     bool screenCountChanged =
          ( config->readNumEntry( "screenCount", realScreenCount ) != realScreenCount );
 
-    if ( args->isSet("restore") && ! screenCountChanged )
-	server->restoreSession( args->getOption( "restore" ) );
+    QString loginMode = config->readEntry( "loginMode", "default" );
+
+    if ( loginMode == "default" || screenCountChanged )
+	server->startDefaultSession();
+    else if ( loginMode == "restorePreviousLogout" )
+	server->restoreSession( SESSION_PREVIOUS_LOGOUT );
+    else if ( loginMode == "restoreSavedSession" )
+	server->restoreSession( SESSION_BY_USER );
     else
 	server->startDefaultSession();
-
     return a.exec();
 }
 
