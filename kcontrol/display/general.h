@@ -10,9 +10,9 @@
 
 #include <qdict.h>
 #include <qwidget.h>
-#include <qlistview.h>
 #include <qgroupbox.h>
 
+#include <klistview.h>
 #include <kcmodule.h>
 
 class QCheckBox;
@@ -26,7 +26,7 @@ class KAboutData;
 /**
  * Mosfet's themelist box.
  */
-class KThemeListBox : public QListView
+class KThemeListBox : public KListView
 {
     Q_OBJECT
 

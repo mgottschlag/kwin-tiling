@@ -101,8 +101,11 @@ extern "C" {
 
 // mosfet's style stuff 04/26/99 (mosfet)
 KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
-    : QListView(parent, name)
+    : KListView(parent, name)
 {
+    setFullWidth(true);
+    setResizeMode(LastColumn);
+
     KConfig kconfig("kstylerc");
     kconfig.setGroup("KDE");
     defName = QString::fromLatin1("KDE default");
