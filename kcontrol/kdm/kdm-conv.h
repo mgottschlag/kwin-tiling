@@ -1,5 +1,7 @@
 /* This file is part of the KDE Display Manager Configuration package
-    Copyright (C) 1997 Thomas Tanghus (tanghus@earthling.net)
+
+    Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
+    Based on several other files.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public
@@ -17,8 +19,8 @@
     Boston, MA 02111-1307, USA.
 */  
 
-#ifndef __KDMUSERS_H__
-#define __KDMUSERS_H__
+#ifndef __KDMCONV_H__
+#define __KDMCONV_H__
 
 #include <qlist.h>
 #include <qstring.h>
@@ -36,47 +38,35 @@
 #include <kcmodule.h>
 
 
-class KDMUsersWidget : public KCModule
+class KDMConvenienceWidget : public KCModule
 {
 	Q_OBJECT
 
 public:
-	KDMUsersWidget(QWidget *parent=0, const char *name=0, QStringList *show_users=0);
+	KDMConvenienceWidget(QWidget *parent=0, const char *name=0, QStringList *show_users=0);
 
         void load(QStringList *show_users=0);
         void save();
 	void defaults();
 
-	bool eventFilter(QObject *o, QEvent *e);
-
-protected:
-	void userButtonDragEnterEvent(QDragEnterEvent *e);
-	void userButtonDropEvent(QDropEvent *e);
-
 private slots:
-        void slotUserSelected(const QString &user);
-        void slotAllToNo();
-        void slotAllToUsr();
-        void slotUsrToAll();
-        void slotNoToAll();
-        void slotUserPixChanged(QString);
+        void addShowUser(const QString &user);
+        void removeShowUser(const QString &user);
+	void slotWpToNp();
+	void slotNpToWp();
+        void slotEnALChanged();
+        void slotEnPLChanged();
 	void slotChanged();
 
-signals:
-	void show_user_add(const QString &user);
-	void show_user_remove(const QString &user);
-
 private:
+	void removeText(QListBox *lb, const QString &user);
 
-        KIconLoader *iconloader;
-	QButtonGroup *usrGroup, *shwGroup;
-        QRadioButton *rbnoneusr, *rbselusr, *rballusr;
-        QCheckBox    *cbusrsrt;
-        KIconButton *userbutton;
-        QLabel       *userlabel;
-	KListBox     *remuserlb, *nouserlb, *userlb;
-	QString      m_userPixDir;
-	QString      m_defaultText;
+	QGroupBox	*alGroup, *npGroup;
+	QButtonGroup	*btGroup;
+	QCheckBox	*cbalen, *cbal1st, *cbplen, *cbarlen, *cbshwen;
+	KListBox	*userlb, *wpuserlb, *npuserlb;
+	QPushButton	*np_to_wp, *wp_to_np;
+	QLabel		*u_label, *w_label, *n_label;
 };
 
 #endif

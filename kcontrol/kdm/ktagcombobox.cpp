@@ -31,7 +31,6 @@
 
 #include <kdebug.h>
 
-#include "ktagcombobox.h"
 #include "ktagcombobox.moc"
 
 KTagComboBox::~KTagComboBox ()

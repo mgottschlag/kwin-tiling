@@ -1,3 +1,4 @@
+#include <stdio.h>
 /*
   $id: $
   This file is part of the KDE Display Manager Configuration package
@@ -100,16 +101,20 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( logoRadio, wtstr );
   QWhatsThis::add( clockRadio, wtstr );
 
+//  QFileInfo fi(locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") ));
+//  KGlobal::dirs()->addResourceDir("icon", fi.dirPath(true));
+//printf("dirsadd=%s\n", fi.dirPath(true).latin1());
+
   logoLabel = new QLabel(i18n("&KDM logo:"), group);
-  logopath = "kdelogo.png";
+//  logopath = "kdelogo.png";
   logobutton = new KIconButton(group);
   logoLabel->setBuddy( logobutton );
   logobutton->setAutoDefault(false);
   logobutton->setAcceptDrops(true);
   logobutton->installEventFilter(this); // for drag and drop
-  logobutton->setMinimumSize(24,24);
-  logobutton->setMaximumSize(80,80);
-  logobutton->setIcon("kdelogo");
+  logobutton->setMinimumSize(24, 24);
+  logobutton->setMaximumSize(80, 80);
+//  logobutton->setIcon("kdelogo");
   connect(logobutton, SIGNAL(iconChanged(QString)),
       this, SLOT(slotLogoPixChanged(QString)));
   connect(logobutton, SIGNAL(iconChanged(QString)),
@@ -122,7 +127,6 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
            "(e.g. from Konqueror).");
   QWhatsThis::add( logoLabel, wtstr );
   QWhatsThis::add( logobutton, wtstr );
-
 
 
   label = new QLabel(i18n("GUI &Style:"), group);
@@ -263,10 +267,12 @@ void KDMAppearanceWidget::loadLocaleList(KLanguageCombo *combo, const QString &s
 
 void KDMAppearanceWidget::setLogo(QString logo)
 {
-  logopath = logo;
-  logobutton->setIcon(logo);
-  logobutton->adjustSize();
-  resize(width(), height());
+    logopath = logo;
+    logobutton->setIcon(logo.isEmpty() ? 
+	locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") ) :
+	logo);
+    logobutton->adjustSize();
+    resize(width(), height());
 }
 
 
@@ -377,10 +383,9 @@ void KDMAppearanceWidget::save()
   // write logo or clock
   QString logoArea = logoRadio->isChecked() ? "KdmLogo" : "KdmClock";
   c->writeEntry("LogoArea", logoArea );
-  kdDebug () << "WRITE: logoArea=" <<  logoArea.latin1() << endl;
 
   // write logo path
-  c->writeEntry("LogoPixmap", logopath, true);
+  c->writeEntry("LogoPixmap", KGlobal::iconLoader()->iconPath(logopath, KIcon::Desktop, true));
 
   // write GUI style
   if (guicombo->currentItem() == 0)
@@ -420,7 +425,6 @@ void KDMAppearanceWidget::load()
 
   // Regular logo or clock
   QString logoArea = c->readEntry("LogoArea", "KdmLogo" );
-  kdDebug () << "READ: logoArea="<<  logoArea.latin1() << endl;
 
   int mode = logoArea == "KdmLogo" ? KdmLogo : KdmClock;
   logoRadio->setChecked( mode == KdmLogo );
@@ -428,17 +432,7 @@ void KDMAppearanceWidget::load()
   slotRadioClicked(mode);
 
   // See if we use alternate logo
-  QString logopath = c->readEntry("LogoPixmap");
-  if(!logopath.isEmpty())
-  {
-    QFileInfo fi(logopath);
-    if(fi.exists())
-    {
-      QString lpath = fi.dirPath(true);
-      KGlobal::dirs()->addResourceDir("icon", lpath);
-    }
-  }
-  setLogo(logopath);
+  setLogo( c->readEntry("LogoPixmap", "kdelogo"));
 
   // Check the GUI type
   QString guistr = c->readEntry("GUIStyle", "Motif");
@@ -449,9 +443,9 @@ void KDMAppearanceWidget::load()
 
   // Check the echo mode
   QString echostr = c->readEntry("EchoMode", "OneStar").lower();
-  if ((echostr == "noecho") || (echostr == "nostars"))
+  if ((echostr == "NoEcho") || (echostr == "NoStars"))
     echocombo->setCurrentItem(0);
-  else if (echostr == "threestars")
+  else if (echostr == "ThreeStars")
     echocombo->setCurrentItem(2);
   else // "onestar"
     echocombo->setCurrentItem(1);
@@ -476,7 +470,7 @@ void KDMAppearanceWidget::defaults()
   logoRadio->setChecked( true );
   clockRadio->setChecked( false );
   slotRadioClicked( KdmLogo );
-  setLogo("kdelogo");
+  setLogo("");
   guicombo->setCurrentItem(0);
   echocombo->setCurrentItem(1);
   langcombo->setCurrentItem("C");

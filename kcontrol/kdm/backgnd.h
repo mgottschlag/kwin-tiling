@@ -69,7 +69,7 @@ class KBackground: public KCModule
     Q_OBJECT
 
 public:
-    KBackground(QWidget *parent, const char *name);
+    KBackground(QWidget *parent=0, const char *name=0);
 
     virtual void load();
     virtual void save();

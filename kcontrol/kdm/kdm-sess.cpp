@@ -256,7 +256,7 @@ void KDMSessionsWidget::save()
   c->setGroup("KDM");
 
   if(!shutdown_lined->text().isEmpty())
-    c->writeEntry("ShutDown", shutdown_lined->text(), true);
+    c->writeEntry("Shutdown", shutdown_lined->text(), true);
   if(!restart_lined->text().isEmpty())
     c->writeEntry("Restart", restart_lined->text(), true);
   if(!console_lined->text().isEmpty())
@@ -266,16 +266,16 @@ void KDMSessionsWidget::save()
   switch ( sdMode )
   {
     case Non:
-    c->writeEntry( "ShutDownButton", "None" );
+    c->writeEntry( "ShutdownButton", "None" );
     break;
     case All:
-    c->writeEntry( "ShutDownButton", "All" );
+    c->writeEntry( "ShutdownButton", "All" );
     break;
     case RootOnly:
-    c->writeEntry( "ShutDownButton", "RootOnly" );
+    c->writeEntry( "ShutdownButton", "RootOnly" );
     break;
     case ConsoleOnly:
-    c->writeEntry( "ShutDownButton", "ConsoleOnly" );
+    c->writeEntry( "ShutdownButton", "ConsoleOnly" );
     break;
     default:
     break;
@@ -309,7 +309,7 @@ void KDMSessionsWidget::load()
   shutdown_lined->setText(c->readEntry("Shutdown", "/sbin/halt"));
   console_lined->setText(c->readEntry("ConsoleMode", "/sbin/init 3"));
 
-  str = c->readEntry("ShutDownButton", "All");
+  str = c->readEntry("ShutdownButton", "All");
   if(str == "All")
     sdMode = All;
   else if(str == "None")

@@ -39,7 +39,7 @@
 #include "kdm-users.moc"
 
 
-KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
+KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *show_users)
     : KCModule(parent, name)
 {
     // WABA: This is ugly!
@@ -51,7 +51,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     QHBoxLayout *main = new QHBoxLayout(this, 10);
     QGridLayout *rLayout = new QGridLayout(main, 4, 3, 10);
 
-    QLabel *a_label = new QLabel(i18n("All users"), this);
+    QLabel *a_label = new QLabel(i18n("Remaining users"), this);
     rLayout->addWidget(a_label, 0, 0);
 
     QLabel *s_label = new QLabel(i18n("Selected users"), this);
@@ -100,12 +100,11 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 
     rLayout->setRowStretch(7, 1);
 
-    alluserlb = new KListBox(this);
-    rLayout->addMultiCellWidget(alluserlb, 1, 7, 0, 0);
+    remuserlb = new KListBox(this);
+    rLayout->addMultiCellWidget(remuserlb, 1, 7, 0, 0);
     wtstr = i18n("This is the list of users for which no explicit show policy has been set,"
-      " i.e. they will only be shown by KDM if the option \"Show all users but no-show users\""
-      " has been set.");
-    QWhatsThis::add( alluserlb, wtstr );
+      " i.e. they will only be shown by KDM if \"Show users\" is \"all but no-show\".");
+    QWhatsThis::add( remuserlb, wtstr );
     QWhatsThis::add( a_label, wtstr );
 
     userlb = new KListBox(this);
@@ -122,7 +121,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 
     connect( userlb, SIGNAL( highlighted( const QString & ) ),
              SLOT( slotUserSelected( const QString & ) ) );
-    connect( alluserlb, SIGNAL( highlighted( const QString & ) ),
+    connect( remuserlb, SIGNAL( highlighted( const QString & ) ),
              SLOT( slotUserSelected( const QString & ) ) );
     connect( nouserlb, SIGNAL( highlighted( const QString & ) ),
              SLOT( slotUserSelected( const QString & ) ) );
@@ -149,20 +148,30 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     QWhatsThis::add( userlabel, wtstr );
     QWhatsThis::add( userbutton, wtstr );
 
-    usrGroup = new QButtonGroup( this );
-    usrGroup->setExclusive( TRUE );
-    QVBoxLayout *usrGLayout = new QVBoxLayout( usrGroup, 10 );
+    usrGroup = new QButtonGroup(i18n("Show users"),  this );
+//    usrGroup->setExclusive( TRUE );
+    QVBoxLayout *usrGLayout = new QVBoxLayout( usrGroup, 10, 10 );
+    usrGLayout->addSpacing(10);
 
-    rbselusr = new QRadioButton(i18n("Show only\n&selected users"), usrGroup );
-    usrGroup->insert( rbselusr );
+    rbnoneusr = new QRadioButton(i18n("&None"), usrGroup );
+//    usrGroup->insert( rbnoneusr );
+    usrGLayout->addWidget( rbnoneusr );
+    connect(rbnoneusr, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    QWhatsThis::add(rbnoneusr, i18n("If this option is selected, KDM will not show any users."
+      " If one of the alternative radio buttons is selected, KDM will show a list of users in its"
+      " login dialog, so users can click on their name and image rather than typing"
+      " in their login."));
+
+    rbselusr = new QRadioButton(i18n("Select&ed only"), usrGroup );
+//    usrGroup->insert( rbselusr );
     usrGLayout->addWidget( rbselusr );
     connect(rbselusr, SIGNAL(clicked()), this, SLOT(slotChanged()));
     QWhatsThis::add(rbselusr, i18n("If this option is selected, KDM will only show the users listed"
       " in the \"selected users\" listbox in its login dialog."));
 
-    rballusr = new QRadioButton( i18n("Show all users\nbut &no-show users"), usrGroup );
-    rballusr->setGeometry( 10, 50, 140, 25 );
-    usrGroup->insert( rballusr );
+    rballusr = new QRadioButton( i18n("A&ll but no-show"), usrGroup );
+//    rballusr->setGeometry( 10, 50, 140, 25 );
+//    usrGroup->insert( rballusr );
     usrGLayout->addWidget( rballusr );
     connect(rballusr, SIGNAL(clicked()), this, SLOT(slotChanged()));
     QWhatsThis::add( rballusr, i18n("If this option is selected, KDM will show all users but those"
@@ -173,16 +182,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     shwGroup = new QButtonGroup( this );
     QVBoxLayout *shwGLayout = new QVBoxLayout( shwGroup, 10 );
 
-    cbusrshw = new QCheckBox(i18n("S&how users"), shwGroup);
-    shwGroup->insert( cbusrshw );
-    shwGLayout->addWidget( cbusrshw );
-    connect(cbusrshw, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
-    QWhatsThis::add(cbusrshw, i18n("If this option is selected, KDM will show a list of users in its"
-      " login dialog, so users can click on their name and image rather than typing"
-      " in their login."));
-
-    cbusrsrt = new QCheckBox(i18n("S&ort users"), shwGroup);
-    shwGroup->insert( cbusrsrt );
+    cbusrsrt = new QCheckBox(i18n("Sor&t users"), shwGroup);
+//    shwGroup->insert( cbusrsrt );
     shwGLayout->addWidget( cbusrsrt );
     connect(cbusrsrt, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
     QWhatsThis::add(cbusrsrt, i18n("This option tells KDM to alphabetically sort the users"
@@ -191,23 +192,21 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     lLayout->addWidget( shwGroup );
     lLayout->addStretch( 1 );
 
-    load();
+    load(show_users);
 
     // read only mode
     if (getuid() != 0)
       {
-    usrGroup->setEnabled(false);
-    shwGroup->setEnabled(false);
-    cbusrshw->setEnabled(false);
-    cbusrsrt->setEnabled(false);
-    userbutton->setEnabled(false);
-    alluserlb->setEnabled(false);
-    nouserlb->setEnabled(false);
-    userlb->setEnabled(false);
-    all_to_usr->setEnabled(false);
-    usr_to_all->setEnabled(false);
-    no_to_all->setEnabled(false);
-    all_to_no->setEnabled(false);
+	usrGroup->setEnabled(false);
+	shwGroup->setEnabled(false);
+	userbutton->setEnabled(false);
+	remuserlb->setEnabled(false);
+	nouserlb->setEnabled(false);
+	userlb->setEnabled(false);
+	all_to_usr->setEnabled(false);
+	usr_to_all->setEnabled(false);
+	no_to_all->setEnabled(false);
+	all_to_no->setEnabled(false);
       }
 }
 
@@ -311,15 +310,16 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
 
 void KDMUsersWidget::slotAllToNo()
 {
-    int id = alluserlb->currentItem();
+    int id = remuserlb->currentItem();
     if (id < 0)
        return;
-    QString user = alluserlb->currentText();
+    QString user = remuserlb->currentText();
     if (user == m_defaultText)
        return;
     nouserlb->insertItem(user);
     nouserlb->sort();
-    alluserlb->removeItem(id);
+    remuserlb->removeItem(id);
+    emit show_user_remove (user);
 }
 
 
@@ -329,23 +329,24 @@ void KDMUsersWidget::slotNoToAll()
     if (id < 0)
        return;
     QString user = nouserlb->currentText();
-    alluserlb->insertItem(user);
-    alluserlb->sort();
+    remuserlb->insertItem(user);
+    remuserlb->sort();
     nouserlb->removeItem(id);
+    emit show_user_add (user);
 }
 
 
 void KDMUsersWidget::slotAllToUsr()
 {
-    int id = alluserlb->currentItem();
+    int id = remuserlb->currentItem();
     if (id < 0)
        return;
-    QString user = alluserlb->currentText();
+    QString user = remuserlb->currentText();
     if (user == m_defaultText)
        return;
     userlb->insertItem(user);
     userlb->sort();
-    alluserlb->removeItem(id);
+    remuserlb->removeItem(id);
 }
 
 
@@ -355,8 +356,8 @@ void KDMUsersWidget::slotUsrToAll()
     if (id < 0)
        return;
     QString user = userlb->currentText();
-    alluserlb->insertItem(user);
-    alluserlb->sort();
+    remuserlb->insertItem(user);
+    remuserlb->sort();
     userlb->removeItem(id);
 }
 
@@ -372,7 +373,7 @@ void KDMUsersWidget::slotUserSelected(const QString &user)
       name = m_userPixDir + user + ".png";
    QPixmap p( name );
    if(p.isNull())
-      p = QPixmap(m_userPixDir+"default.png");
+      p = QPixmap(m_userPixDir + "default.png");
    userbutton->setPixmap(p);
    userbutton->adjustSize();
 }
@@ -380,94 +381,100 @@ void KDMUsersWidget::slotUserSelected(const QString &user)
 
 void KDMUsersWidget::save()
 {
-    KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
-
+    KSimpleConfig *c = new KSimpleConfig(locate("config", QString::fromLatin1("kdmrc")));
     c->setGroup("KDM");
 
-    c->writeEntry( "UserView", cbusrshw->isChecked() );
     c->writeEntry( "SortUsers", cbusrsrt->isChecked() );
 
-    showallusers = rballusr->isChecked();
+    c->writeEntry( "ShowUsers", 
+	rballusr->isChecked() ? "All" :
+	rbselusr->isChecked() ? "Selected" : "None");
 
-    if(nouserlb->count() > 0) {
-        QString nousrstr;
-        for(uint i = 0; i < nouserlb->count(); i++) {
-            nousrstr.append(nouserlb->text(i));
-            nousrstr.append(",");
-        }
-        c->writeEntry( "NoUsers", nousrstr );
+    QString nousrstr;
+    for(uint i = 0, j = nouserlb->count(); i < j; i++) {
+        nousrstr.append(nouserlb->text(i));
+        nousrstr.append(",");
     }
+    c->writeEntry( "NoUsers", nousrstr );
 
-    if((userlb->count() > 0) && (!showallusers)) {
-        QString usrstr;
-        for(uint i = 0; i < userlb->count(); i++) {
-            usrstr.append(userlb->text(i));
-            usrstr.append(",");
-        }
-        c->writeEntry( "Users", usrstr );
+    QString usrstr;
+    for(uint i = 0, j = userlb->count(); i < j; i++) {
+        usrstr.append(userlb->text(i));
+        usrstr.append(",");
     }
+    c->writeEntry( "Users", usrstr );
 
     delete c;
 }
 
+#define CHECK_STRING( x) (x != 0 && x[0] != 0)
 
-void KDMUsersWidget::load()
+void KDMUsersWidget::load(QStringList *show_users)
 {
     iconloader = KGlobal::iconLoader();
     QString str;
 
     // Get config object
-    KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
+    KSimpleConfig *c = new KSimpleConfig(locate("config", 
+					QString::fromLatin1("kdmrc")));
     c->setGroup("KDM");
 
-    // Read users from kdmrc and /etc/passwd
-    QStringList users, no_users;
-    users = c->readListEntry( "Users");
-    showallusers = users.isEmpty();
-    no_users = c->readListEntry( "NoUsers");
+    QString su = c->readEntry( "ShowUsers");
+    if (su == QString::fromLatin1("None"))
+	rbnoneusr->setChecked(true);
+    else if (su == QString::fromLatin1("Selected"))
+	rbselusr->setChecked(true);
+    else
+	rballusr->setChecked(true);
 
+    // Read users from kdmrc and /etc/passwd
+    QStringList users = c->readListEntry( "Users");
     userlb->clear();
     userlb->insertStringList(users);
+
+    QStringList no_users = c->readListEntry( "NoUsers");
     nouserlb->clear();
     nouserlb->insertStringList(no_users);
 
-    QStringList allusers;
-    allusers.append(m_defaultText);
+    QStringList rem_users;
+
     struct passwd *ps;
-#define CHECK_STRING( x) (x != 0 && x[0] != 0)
-    setpwent();
-
-    // kapp->processEvents(50) makes layout calculation to fail
-    // do we really need them here?
-
-    while( (ps = getpwent()) != 0) {
-        //  kapp->processEvents(50);
+    for( setpwent(); (ps = getpwent()) != 0; ) {
         if( CHECK_STRING(ps->pw_dir) && CHECK_STRING(ps->pw_shell) &&
-            ( no_users.contains( ps->pw_name) == 0)) {
+            ( no_users.contains( ps->pw_name) == 0)
+	) {
+	    // kapp->processEvents(50) makes layout calculation to fail
+	    // do we really need them here?
             //  kapp->processEvents(50);
-            // we might have a real user, insert him/her
-            allusers.append( QString::fromLocal8Bit(ps->pw_name));
+
+	    // "Convenience" tab -> Auto-login-able users
+    	    show_users->append( QString::fromLocal8Bit(ps->pw_name));
+
+            if ( users.contains( ps->pw_name) == 0)
+        	rem_users.append( QString::fromLocal8Bit(ps->pw_name));
         }
     }
     endpwent();
-#undef CHECK_STRING
-    allusers.sort();
-    alluserlb->clear();
-    alluserlb->insertStringList(allusers);
 
-    cbusrsrt->setChecked(c->readNumEntry("SortUsers", true));
-    cbusrshw->setChecked(c->readNumEntry("UserView", true));
-    if (showallusers) rballusr->setChecked(true);
-    else rbselusr->setChecked(true);
+    // "Users" tab
+    rem_users.append(m_defaultText);
+    rem_users.sort();
+    remuserlb->clear();
+    remuserlb->insertStringList(rem_users);
+
+    cbusrsrt->setChecked(c->readBoolEntry("SortUsers", true));
 
     delete c;
-    alluserlb->setCurrentItem(0);
-    slotUserSelected(alluserlb->currentText());
+    remuserlb->setCurrentItem(0);
+    slotUserSelected(remuserlb->currentText());
 }
 
+#undef CHECK_STRING
 
 void KDMUsersWidget::defaults()
 {
+    cbusrsrt->setChecked(true);
+    rballusr->setChecked(true);
 }
 
 

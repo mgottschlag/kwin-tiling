@@ -36,6 +36,7 @@ class KDMFontWidget;
 class KDMLiloWidget;
 class KDMSessionsWidget;
 class KDMUsersWidget;
+class KDMConvenienceWidget;
 
 
 class KDModule : public KCModule
@@ -64,14 +65,15 @@ protected slots:
 
 private:
 
-  QTabWidget          *tab;
+  QTabWidget		*tab;
 
-  KDMAppearanceWidget *appearance;
-  KBackground         *background;
-  KDMFontWidget       *font;
-  KDMLiloWidget       *lilo;
-  KDMSessionsWidget   *sessions;
-  KDMUsersWidget      *users;
+  KDMAppearanceWidget	*appearance;
+  KBackground		*background;
+  KDMFontWidget		*font;
+  KDMLiloWidget		*lilo;
+  KDMSessionsWidget	*sessions;
+  KDMUsersWidget	*users;
+  KDMConvenienceWidget	*convenience;
 
 };
 
