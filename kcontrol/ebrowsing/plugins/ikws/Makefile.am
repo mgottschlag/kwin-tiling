@@ -18,6 +18,3 @@ rcdir = $(kde_confdir)
 
 METASOURCES = AUTO
 
-messages:
-	$(XGETTEXT) *.h *.cc -o $(podir)/kuriikwsfilter.pot
-
