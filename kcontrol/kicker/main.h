@@ -39,7 +39,8 @@ class KickerConfig : public KCModule
   void load();
   void save();
   void defaults();
-  
+  QString quickHelp();
+
  public slots:
   void configChanged();
  
