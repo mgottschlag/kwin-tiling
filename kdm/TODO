@@ -24,7 +24,6 @@ save these options to .dmrc?
 
 - merge sessreg into the core? take care of #47151 then.
 
-- handle _all_ config changes on the fly, including xdmcp & fifo
 - make config position independent
 - parse /etc/kderc?
 - genkdmconf: treat backgroundrc as an ini file, not as a text blob
@@ -54,8 +53,8 @@ save these options to .dmrc?
 
 - Move clock from greeter dialog to desktop
 - add more clock types (#18178)
+- add icons to action menu. icon theme selection!
 
-- merge ipv6 xdmcp support from xdm
 - Add XDMCP _client_ to core (for remote login like in dtlogin).
   Currently this is simply done by restarting the x-server with -query.
 
@@ -88,8 +87,6 @@ save these options to .dmrc?
 - lilo boot option <default>, i.e., -R with no argument
 - support lilo -A mode
 - support grub (#63800)
-
-- disable autologin if some modifier (shift, like lilo?) is pressed (#60111)
 
 - set LC_ALL in the backend for i18n-capable PAM libs - does one exist?
   alternative hack: interpret PAM's messages. generalizing that to the
@@ -183,7 +180,6 @@ and the session. .dmrc later affects only the session, not the greeter.
 - speedup login by prefetching files with session-specific scripts (#63789)
 
 internal stuff:
-- pass FamilyBroadcast instead of hostname BROADCAST to chooser
 - improve signal handling in the subdaemon, it's incredibly racy (GOpen/GClose).
   depends on proper main loop.
 - alternative extreme measure: launch greeter from master daemon? problem:
@@ -217,4 +213,8 @@ thoughts (not really todo):
   in a separate directory.
 - consider making the menu an actions-only menu again and put an "options >>"
   button somewhere. relates #63401, #61492
-- pipe .xsession-errors through the daemon and put a size limit on it
+- pipe .xsession-errors through the daemon and put a size limit on it.
+  remove old logs in disk-full situation.
+
+
+last sync with XFree86 HEAD: 2004-04-02

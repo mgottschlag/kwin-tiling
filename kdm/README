@@ -1,5 +1,7 @@
-This is the KDE Display Manager (KDM) v0.95 for KDE 3.2,
+This is the K Display Manager (KDM) v0.96 for KDE 3.3,
 the KDE replacement for the X Display Manager (XDM).
+
+Semi-official home page: http://devel-home.kde.org/~ossi/sw/kdm.html
 
 
 configure options that affect KDM
@@ -44,6 +46,7 @@ configure options that affect KDM
 
 KDM's file system layout
 ------------------------
+
 ${kde_confdir} is usually ${prefix}/share/config
 ${kde_datadir} is usually ${prefix}/share/apps
 The indented locations are envisioned for a configuration shared with GDM.
@@ -260,22 +263,28 @@ KDM accepts two command line options related to logging:
     <n> is a decimal or hexadecimal (prefix 0x) number.
     The number is a bitfield, i.e., it is formed by summing up the
     required values from this table:
-    1 (0x1) - core debugging. probably the most useful one.
+    1 (0x1) - core debugging. Probably the most useful one.
     2 (0x2) - config reader debugging.
     4 (0x4) - greeter debugging.
-    8 (0x8) - ipc debugging. this logs _all_ communication between the
+    8 (0x8) - IPC debugging. This logs _all_ communication between the
 	      core, the config reader and the greeter - including the
-	      passwords you type - so edit the log before showing it to
+	      passwords you type, so edit the log before showing it to
 	      somebody.
+	      This attempts to synchronize the processes to interleave the
+	      log messages optimally, but will probably fail unless you use
+	      -debug 0x80 as well.
     16 (0x10) - wait after forking session sub-daemon.
     32 (0x20) - wait after starting config reader.
     64 (0x40) - wait after starting greeter.
-	the wait options are only useful, if you need to attach a debugger
-	to a process but it crashes before you are able to do so without
-	the delay. see below.
+	The wait options are only useful if you need to attach a debugger
+	to a process, but it crashes before you are able to do so without
+	the delay. See below.
+    128 (0x80) - don't use syslog for internally generated messages.
     256 (0x100) - core Xauth debugging.
     512 (0x200) - don't fork session sub-daemon, but manage one session
-	in the master daemon. not for real-world use.
+		  in the master daemon. not for real-world use.
+    1024 (0x400) - run config reader and greeter through valgrind.
+    2048 (0x800) - run config reader and greeter through strace.
 
     Logs from "-debug 7" are usually a good start.
 
@@ -316,7 +325,7 @@ crashes:
   The PPID will be the master daemon as well.
   # gdb kdm_config $(pidof kdm_config)
   (gdb) cont
-- greeter. If it's to fast, add 64 to -debug. The PPID will be the subdaemon.
+- greeter. If it's too fast, add 64 to -debug. The PPID will be the subdaemon.
   # gdb kdm_greet $(pidof kdm_greet)
   (gdb) cont
   The simplification with "pidof" works only if you have only one display,
@@ -331,7 +340,7 @@ I might request a backtrace even if nothing crashes, but instead hangs. In
 this case don't use "cont" after attaching, but use "bt" right away. If the
 process is already running, interrupt it with ctrl-c.
 For obvious reasons you have to run gdb on a different virtual terminal than
-the X server run. To get there, press alt-ctrl-f1 and log in as root. To
+the X server. To get there, press alt-ctrl-f1 and log in as root. To
 switch to the X server's vt, press alt-ctrl-f7 (the exact function key may
 be different on your system). You may also use a remote login from a
 second machine. In any case it is advantageous to have mouse support on the
@@ -352,7 +361,7 @@ Since version 0.90 (KDE 2.1) copyright:
 	(C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
 
 The files in the backend directory are licensed under the X licence
-(see www.xfree86.org for more info).
+(see http://www.x.org/Downloads_terms.html for more info).
 The files in the kfrontend directory are licensed under the GNU GPL.
 
 Thanks to (in no particular order):
