@@ -241,7 +241,10 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
             return;
 
         KProcess proc;
-        proc.setUseShell(true);
+        const char *shell = getenv("KLIPPER_SHELL");
+        if (shell==NULL) shell = getenv("SHELL");
+        proc.setUseShell(true,shell);
+
         proc << cmdLine.stripWhiteSpace();
 
         if ( !proc.start(KProcess::DontCare, KProcess::NoCommunication ))
