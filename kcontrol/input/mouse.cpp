@@ -77,8 +77,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 {
     QString wtstr;
 
-    QBoxLayout *top = new QVBoxLayout(this, KDialog::marginHint(),
-				      KDialog::spacingHint());
+    QBoxLayout *top = new QVBoxLayout(this);
   
     tabwidget = new QTabWidget(this);
     top->addWidget(tabwidget);
