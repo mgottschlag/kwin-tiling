@@ -41,6 +41,7 @@
 #include <ksimpleconfig.h>
 #include <kcmdlineargs.h>
 
+#undef Unsorted // x headers suck - make qdir.h work with --enable-final
 #include <qdir.h>
 #include <qfile.h>
 #include <qimage.h>
