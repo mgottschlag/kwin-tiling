@@ -754,6 +754,7 @@ void TreeView::newitem()
     c.setDesktopGroup();
     c.writeEntry("Name", filename);
     c.writeEntry("Icon", filename);
+    c.writeEntry("Type", "Application");
     c.sync();
 }
 
