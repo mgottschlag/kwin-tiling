@@ -95,6 +95,24 @@ int kdemain(int argc, char **argv)
     return 0;
 }
 
+static bool containsGsUseableFonts(const QString &ds)
+{
+    QDir                dir(ds);
+    const QFileInfoList *files=dir.entryInfoList(QDir::Files);
+
+    if(files)
+    {
+        QFileInfoListIterator it(*files);
+        QFileInfo             *fInfo;
+
+        for(; NULL!=(fInfo=it.current()); ++it)
+            if("."!=fInfo->fileName() && ".."!=fInfo->fileName() &&
+               CFontEngine::hasAfmInfo(QFile::encodeName(fInfo->fileName())))
+                return true;
+    }
+    return false;
+}
+
 enum ExistsType
 {
     EXISTS_DIR,
@@ -1562,7 +1580,9 @@ void CKioFonts::cfgDir(const QString &ds, const QString &sub)
             doTs=true;
         }
 
-        if (!CMisc::fExists(ds+"Fontmap") || dTs!=CMisc::getTimeStamp(ds+"Fontmap"))
+        bool fmExists=CMisc::fExists(ds+"Fontmap");
+
+        if ((!fmExists && containsGsUseableFonts(ds)) || (fmExists && dTs!=CMisc::getTimeStamp(ds+"Fontmap")))
         {
             infoMessage(i18n("Configuring out of date font folder (%1).").arg(sub));
 
