@@ -177,7 +177,10 @@ X-KDE-RootOnly
 
 	If this is set to "true", the module must be executed
 	with root permissions. The control center will then show
-    the module only if run in system mode. (kcontrol --system)
+   the module in greyed-out (disabled) state with a warning 
+   until the "modify" button is pressed which allows running
+   the module in an root environment using kdesu and QXEmbed.
+   
 
 X-KDE-Group
 
@@ -218,7 +221,7 @@ center. You can no longer call the module, as it is a library
 now. Instead, call "kcmshell module". For example, to get the
 font and the desktop color settings, use
 
-  kcmshell Desktop/fonts Desktop/colors
+  kcmshell fonts colors
 
 - multiple instances of kcontrol
 
