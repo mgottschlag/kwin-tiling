@@ -19,13 +19,12 @@
 #include <qfiledlg.h>
 #include <qslider.h>
 #include <qradiobt.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include <qscrbar.h>
 #include <qdrawutl.h>
 #include <qchkbox.h>
 #include <qcombo.h>
 #include <kapp.h>
-#include <kmsgbox.h>
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -370,16 +369,18 @@ void KColorScheme::slotSave()
     // against dereferencing null pointers
 		
     if ( str == "KDE Default" ) {
-      KMsgBox::message(0,  i18n("Error"), 
-		       i18n( "You have chosen a name used by a supplied color scheme"), 2 );
+      QMessageBox::warning(0,  i18n("Theme Setup - Error"), 
+		       i18n("You have chosen a name used by a "
+			    "supplied color scheme"), i18n("&Ok"));
       return;
     }
 		
     int i;
     for ( i = 1; it.current(); ++it ) {
       if ( str == it.current() && i <= SUPPLIED_SCHEMES) {
-	KMsgBox::message(0, i18n("Error"), 
-	i18n( "You have chosen a name used by a supplied color scheme"), 2 );
+	QMessageBox::warning(0, i18n("Theme Setup - Error"), 
+			     i18n("You have chosen a name used by a "
+				  "supplied color scheme"), i18n("&Ok"));
 	return;
       }
       i++;
@@ -690,10 +691,10 @@ void KColorScheme::readSettings( int )
   else {
     schemes = 0;
     if(
-       QMessageBox::query(i18n("Display Setup"),
+       QMessageBox::query(i18n("Theme Setup"),
 			  i18n("No desktop color schemes were found.\nDo you want to install the default color schemes now ?"), 
-			  i18n("Yes"), 
-			  i18n("No") )
+			  i18n("&Yes"), 
+			  i18n("&No") )
        ) {
       installSchemes();
       config = KApplication::getKApplication()->getConfig();

@@ -21,9 +21,10 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <qmessagebox.h>
+
 #include <kimgio.h>
 #include <kslider.h>
-#include <kmsgbox.h>
 
 #define private public
 #include <kcontrol.h>
@@ -148,16 +149,16 @@ static void msgHandler(QtMsgType aType, const char* aMsg)
 	strncmp(aMsg,"QPixmap:",8) != 0 &&
 	strncmp(aMsg,"QFile:", 6) != 0)
     {
-      KMsgBox::message(NULL, appName+" "+i18n("warning"), msg.data(),
-		       KMsgBox::EXCLAMATION);
+      QMessageBox::warning(0, appName+" "+i18n("warning"), msg,
+			   i18n("&Ok"));
     }
     else kdebug(KDEBUG_INFO, 0, msg);
     break;
 
   case QtFatalMsg:
     fprintf(stderr, appName+" "+i18n("fatal error")+": %s\n", msg.data());
-    KMsgBox::message(NULL, appName+" "+i18n("fatal error"),
-		     aMsg, KMsgBox::STOP);
+    QMessageBox::critical(0, appName+" "+i18n("fatal error"),
+			  aMsg, i18n("&Ok"));
     abort();
   }
 }

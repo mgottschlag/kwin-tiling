@@ -17,10 +17,15 @@
     Boston, MA 02111-1307, USA.
 */  
 
+
+#include <qmessagebox.h>
+
 #include "utils.h"
 #include <kio_job.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <klined.h>
+
 #include "kdm-appear.moc"
 
 
@@ -73,14 +78,14 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
       QLabel *label = new QLabel(i18n("Greeting string:"), group);
       label->move( 10, 20 );
 
-      greetstr_lined = new QLineEdit(group);
+      greetstr_lined = new KLineEdit(group);
       greetstr_lined->setText(greetstr.data());
       greetstr_lined->setGeometry(label->width()+10, 20,
                        pw->width()-(label->width()+50), label->height());
 
       label = new QLabel(i18n("KDM logo:"), group);
       label->move(10, greetstr_lined->height()+30);
-      logo_lined = new QLineEdit( group);
+      logo_lined = new KLineEdit( group);
       logo_lined->setText(logopath.data());
       logo_lined->setGeometry(greetstr_lined->x(), greetstr_lined->height()+30,
                        greetstr_lined->width(), greetstr_lined->height());
@@ -170,7 +175,8 @@ void KDMAppearanceWidget::slotLogoPixTextChanged()
     msg  = i18n("There was an error loading the image:\n>");
     msg += pix;
     msg += i18n("<");
-    KMsgBox::message(this, i18n("ERROR"), msg);
+    QMessageBox::warning(this, i18n("KDM Setup - Error"), msg,
+			 i18n("&Ok"));
   }
 }
 
@@ -189,7 +195,7 @@ void KDMAppearanceWidget::slotLogoPixChanged(const char *icon)
     msg  = i18n("There was an error saving the image:\n>");
     msg += pix;
     msg += i18n("<");
-    KMsgBox::message(this, i18n("ERROR"), msg);
+    QMessageBox::warning(this, i18n("KDM Setup - Error"), msg, i18n("&Ok"));
   }
   else
     logo_lined->setText(pix.data());
@@ -224,7 +230,8 @@ void KDMAppearanceWidget::slotPixDropped(KDNDDropZone *zone)
     msg += i18n("\ndoes not seem to be an image file");
     msg += i18n("\nPlease use files with these extensions\n");
     msg += ext;
-    KMsgBox::message( this, i18n("Improper File Extension"), msg);
+    QMessageBox::warning( this, i18n("KDM Setup - Improper File Extension"), msg,
+			  i18n("&Ok"));
   }
   else
   {
@@ -254,7 +261,8 @@ void KDMAppearanceWidget::slotPixDropped(KDNDDropZone *zone)
         msg  = i18n("There was an error loading the image:\n>");
         msg += url.path();
         msg += i18n("<\nIt will not be saved...");
-        KMsgBox::message(this, i18n("ERROR"), msg);
+        QMessageBox::warning(this, i18n("KDM Setup - Error"), msg,
+			     i18n("&Ok"));
       }
     }
   }

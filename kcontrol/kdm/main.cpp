@@ -20,6 +20,9 @@
 
 
 #include "utils.h"
+
+#include <qmessagebox.h>
+
 #include "kdm-appear.h"
 #include "kdm-font.h"
 #include "kdm-bgnd.h"
@@ -149,7 +152,8 @@ int main(int argc, char **argv)
     {
       QString msg = i18n("Sorry, but you don't have read/write\n"
 				       "permission to the KDM setup file.");
-      KMsgBox::message( 0, i18n("Missing privileges"), msg);
+      QMessageBox::warning( 0, i18n("KDM Setup - Missing privileges"), msg,
+			    i18n("&Ok"));
     }
   }
   else

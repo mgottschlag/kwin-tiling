@@ -29,8 +29,8 @@
 
 #include <qdir.h>
 #include <qlayout.h> //CT 21Oct1998
-#include <kmsgbox.h> 
-#include <kmsgbox.h>
+#include <qmessagebox.h>
+
 #include <kapp.h>
 #include <kiconloaderdialog.h>
 #include <kiconloader.h>
@@ -494,12 +494,11 @@ void KTitlebarButtons::drawPreview(bool draw)
 	{
 
 	  // can't place max on left
-	  KMsgBox::message(this,i18n("Warning"),
-			   i18n("The left side of the titlebar "
-					      "is full... disabling the 'maximise' "
-					      "button\n"),
-			   KMsgBox::EXCLAMATION,
-			   i18n("Close") );
+	  QMessageBox::warning(this,i18n("Window Manager Setup - Warning"),
+			       i18n("The left side of the titlebar "
+				    "is full... disabling the 'maximize' "
+				    "button\n"),
+			       i18n("&Ok"));
 	  maxRB[0]->setChecked(FALSE);
 	  maxRB[2]->setChecked(TRUE);
 	  left--;
@@ -527,12 +526,11 @@ void KTitlebarButtons::drawPreview(bool draw)
       else
 	{
 	  // can't place max on right
-	  KMsgBox::message(this,i18n("Warning"),
-			   i18n("The right side of the titlebar "
-					      "is full... disabling the 'maximise' "
-					      "button\n"),
-			   KMsgBox::EXCLAMATION,
-			   i18n("Close") );
+	  QMessageBox::warning(this,i18n("Window Manager Setup - Warning"),
+			       i18n("The right side of the titlebar "
+				    "is full... disabling the 'maximise' "
+				    "button\n"),
+			       i18n("&Ok"));
 	  maxRB[1]->setChecked(FALSE);
 	  maxRB[2]->setChecked(TRUE);
 	  right--;
@@ -567,12 +565,11 @@ void KTitlebarButtons::drawPreview(bool draw)
       else
 	{
 	  // left side is full
-	  KMsgBox::message(this,i18n("Warning"),
-			   i18n("The left side of the titlebar "
-					      "is full... disabling the 'minimise' "
-					      "button\n"),
-			   KMsgBox::EXCLAMATION,
-			   i18n("Close") );
+	  QMessageBox::warning(this,i18n("Window Manager Setup - Warning"),
+			       i18n("The left side of the titlebar "
+				    "is full... disabling the 'minimize' "
+				    "button\n"),
+			       i18n("&Ok"));
 	  minRB[0]->setChecked(FALSE);
 	  minRB[2]->setChecked(TRUE);
 	  left--;
@@ -600,12 +597,11 @@ void KTitlebarButtons::drawPreview(bool draw)
       else
 	{
 	  // can't place min on right
-	  KMsgBox::message(this,i18n("Warning"),
+	  QMessageBox::warning(this,i18n("Window Manager Setup - Warning"),
 			   i18n("The right side of the titlebar "
-					      "is full... disabling the 'minimise' "
-					      "button\n"),
-			   KMsgBox::EXCLAMATION,
-			   i18n("Close") );
+				"is full... disabling the 'minimize' "
+				"button\n"),
+			   i18n("&Ok"));
 	  minRB[1]->setChecked(FALSE);
 	  minRB[2]->setChecked(TRUE);
 	  right--;
@@ -1390,9 +1386,10 @@ void KTitlebarAppearance::SaveSettings( void )
 
     //and a little check
     if ( !( a_saved && i_saved ) ) {
-      QMessageBox::critical(this, i18n("Window manager setup - ERROR"),
+      QMessageBox::critical(this, i18n("Window manager setup - Error"),
 			    i18n("There was an error while saving\n"
-			    "the titlebar pixmaps! Please check permissions.") );
+				 "the titlebar pixmaps! Please check permissions."),
+			    i18n("&Ok"));
     }
   }
   //CT

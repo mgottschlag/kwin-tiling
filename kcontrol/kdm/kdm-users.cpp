@@ -17,6 +17,8 @@
     Boston, MA 02111-1307, USA.
 */  
 
+#include <qmessagebox.h>
+
 #include "utils.h"
 #include <kio_job.h>
 #include <klocale.h>
@@ -182,8 +184,9 @@ void KDMUsersWidget::slotUserPixChanged(const char*)
   QString msg, user(userlabel->text());
   if(user.isEmpty())
   {
-    if(KMsgBox::yesNo(this, i18n("No user selected"),
-       i18n("Save image as default image?")))
+    if (!QMessageBox::information(this, i18n("KDM Setup - No user selected"),
+				  i18n("Save image as default image?"),
+				  i18n("&Yes"), i18n("&No"), 0))
       user = "default";
     else
       return;
@@ -197,7 +200,8 @@ void KDMUsersWidget::slotUserPixChanged(const char*)
     msg  = i18n("There was an error saving the image:\n>");
     msg += userpix;
     msg += i18n("<");
-    KMsgBox::message(this, i18n("ERROR"), msg);
+    QMessageBox::warning(this, i18n("KDM Setup - Error"), msg,
+			 i18n("&Ok"));
   }
   userbutton->adjustSize();
 }
@@ -232,7 +236,8 @@ void KDMUsersWidget::slotPixDropped(KDNDDropZone *zone)
     msg += i18n("\ndoes not seem to be an image file");
     msg += i18n("\nPlease use files with these extensions\n");
     msg += ext;
-    KMsgBox::message( this, i18n("Improper File Extension"), msg);
+    QMessageBox::warning( this, i18n("KDM Setup - Improper File Extension"), msg,
+			  i18n("&Ok"));
   }
   else
   {
@@ -251,8 +256,9 @@ void KDMUsersWidget::slotPixDropped(KDNDDropZone *zone)
     {
       if(user.isEmpty())
       {
-        if(KMsgBox::yesNo(this, i18n("No user selected"),
-           i18n("Save image as default image?")))
+	if (!QMessageBox::information(this, i18n("KDM Setup - No user selected"),
+				      i18n("Save image as default image?"),
+				      i18n("&Yes"), i18n("&No"), 0))
           user = "default";
         else
           return;
@@ -279,7 +285,8 @@ void KDMUsersWidget::slotPixDropped(KDNDDropZone *zone)
         msg  = i18n("There was an error loading the image:\n>");
         msg += url.path();
         msg += i18n("<\nIt will not be saved...");
-        KMsgBox::message(this, i18n("ERROR"), msg);
+        QMessageBox::warning(this, i18n("KDM Setup - Error"), msg, 
+			     i18n("&Ok"));
       }
     }
   }

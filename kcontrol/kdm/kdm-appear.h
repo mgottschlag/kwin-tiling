@@ -29,6 +29,7 @@
 
 #include "klangcombo.h"
 
+class KLineEdit;
 
 class KDMAppearanceWidget : public KConfigWidget
 {
@@ -52,7 +53,7 @@ private:
 	KDNDDropZone *logopixdrop;
         KIconLoader *iconloader;
         KIconLoaderButton *logobutton;
-        QLineEdit    *greetstr_lined, *logo_lined;
+        KLineEdit    *greetstr_lined, *logo_lined;
 	QComboBox    *guicombo;
 	QString      greetstr, logopath, logofile, guistr;
         bool         gui;

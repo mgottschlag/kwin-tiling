@@ -26,6 +26,8 @@
 #include <qlistbox.h>
 #include <kdbtn.h>
 
+class QLineEdit;
+
 class MyListBox : public QListBox
 {
 public:

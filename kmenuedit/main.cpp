@@ -24,12 +24,12 @@
 #include <qapplication.h>
 #include <qdir.h>
 #include <qfileinfo.h>
+#include <qmessagebox.h>
 
 #include <kapp.h>
 #include <drag.h>
 #include <kiconloader.h>
 #include <kiconloaderdialog.h>
-#include <kmsgbox.h>
 #include <kstddirs.h>
 
 #include "IconPathDialog.h"
@@ -79,8 +79,9 @@ int main( int argc, char **argv )
   bool error = FALSE;
   if( !(fi.exists() && fi.isDir()) )
     {
-      if( KMsgBox::yesNo( NULL, i18n("KMenuedit"), 
-			  i18n("The directory for your personal menu does not exist.\n Do you want to create it now ?")) == 1 )
+      if(!QMessageBox::information(0, i18n("KMenuedit"), 
+				   i18n("The directory for your personal menu does not exist.\n Do you want to create it now ?"),
+				   i18n("&Yes"), i18n("&No")))
 	{
 	  QDir dir( fi.dirPath() );
 	  if( !dir.mkdir(fi.fileName()) )
@@ -92,8 +93,9 @@ int main( int argc, char **argv )
 	}
       if( error )
 	{
-	  KMsgBox::message( NULL, i18n("KMenuedit"), 
-			    i18n("Unable to create directory for personal menu.\n Select OK to exit KMenuedit."));
+	  QMessageBox::critical(0, i18n("KMenuedit"), 
+				i18n("Unable to create directory for personal menu.\n Select OK to exit KMenuedit."),
+				i18n("&Ok"));
 	  exit(1);
 	}
     }

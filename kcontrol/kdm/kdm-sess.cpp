@@ -20,6 +20,7 @@
 #include <qdir.h>
 #include <kdbtn.h>
 #include "utils.h"
+#include <klined.h>
 #include <klocale.h>
 #include "kdm-sess.moc"
 
@@ -64,14 +65,14 @@ void KDMSessionsWidget::setupPage(QWidget *)
       QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
       QLabel *shutdown_label = new QLabel(i18n("Shutdown"), group1);
       shutdown_label->setFixedSize(shutdown_label->sizeHint());
-      shutdown_lined = new QLineEdit(group1);
+      shutdown_lined = new KLineEdit(group1);
       shutdown_lined->setFixedHeight(shutdown_lined->sizeHint().height());
       shutdown_lined->setText(shutdownstr);
 
       QLabel *restart_label = new QLabel(i18n("Restart"), group1);
       restart_label->setFixedSize(restart_label->sizeHint());
 
-      restart_lined = new QLineEdit(group1);
+      restart_lined = new KLineEdit(group1);
       restart_lined->setFixedHeight(shutdown_lined->height());
       restart_lined->setText(restartstr);
 
@@ -80,7 +81,7 @@ void KDMSessionsWidget::setupPage(QWidget *)
       QLabel *type_label = new QLabel(i18n("New type"), group2);
       type_label->setFixedSize(type_label->sizeHint());
 
-      session_lined = new QLineEdit(group2);
+      session_lined = new KLineEdit(group2);
       session_lined->setFixedHeight(session_lined->sizeHint().height());
       connect(session_lined, SIGNAL(textChanged(const char*)),
               SLOT(slotCheckNewSession(const char*)));

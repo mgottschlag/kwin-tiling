@@ -26,12 +26,12 @@
 #include <qdialog.h>
 #include <qpushbutton.h>
 #include <qbitmap.h>
+#include <qmessagebox.h>
 
 #include "xautolock.h"
 #include "saver.h"
 #include "main.h"
 #include "main.moc"
-#include <kmsgbox.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -415,9 +415,8 @@ int main( int argc, char *argv[] )
 			              "Your system uses shadow passwords.\n"
 			              "Please contact your system administrator.\n"
 			              "Tell him that you need suid for the kcheckpass program!");
-			KMsgBox::message(NULL, 
-				 glocale->translate("Shadow Passwords"), 
-				 tmp, KMsgBox::EXCLAMATION);
+			QMessageBox::warning(0, glocale->translate("Shadow Passwords"),
+					     tmp, glocale->translate("&Ok"));
 		}
 		setLock("install");
 
