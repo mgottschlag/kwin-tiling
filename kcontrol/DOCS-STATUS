@@ -14,7 +14,7 @@ as proof-read. Thanks.
                         Ready   WhatsThis   proof-read    Manual
 arts                     [ ]        [ ]         [ ]         [ ]
 bell                     [ ]        [ ]         [ ]         [ ]
-clock                    [ ]        [ ]         [ ]         [ ]
+clock                    [ ]        [s]         [ ]         [ ]
 display                    
   advanced.cpp           [ ]        [ ]         [ ]         [ ]
   backgnd.cpp            [ ]        [x]         [ ]         [ ]

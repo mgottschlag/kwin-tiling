@@ -27,6 +27,7 @@
 #include <qpainter.h> 
 #include <qlayout.h> 
 #include <qlabel.h> 
+#include <qwhatsthis.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
@@ -56,14 +57,17 @@ Dtime::Dtime(QWidget * parent, const char *name)
   connect( month, SIGNAL(activated(int)), SLOT(set_month(int)) );
   month->setSizeLimit( 12 );
   l1->addWidget( month, 0, 0 );
+  QWhatsThis::add( month, i18n("Here you can change the system date's month.") );
   
   year = new QSpinBox( 1970, 3000, 1, frame1 );
   year->setButtonSymbols( QSpinBox::PlusMinus );
   connect(year, SIGNAL(valueChanged(int)), this, SLOT(set_year(int)) );
   l1->addWidget( year, 0, 2 );
+  QWhatsThis::add( year, i18n("Here you can change the system date's year.") );
   
   cal = new KDateTable( this );
   l1->addMultiCellWidget( cal, 1, 1, 0, 2 );
+  QWhatsThis::add( cal, i18n("Here you can change the day of month.") );
 
   // Time frame
 
@@ -75,6 +79,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
   kclock = new Kclock( frame2, "kclock" );
   kclock->setMinimumHeight(150);
   v2->addWidget( kclock );
+  QWhatsThis::add( kclock, i18n("") );
   
   QGridLayout *v3 = new QGridLayout( 2, 9 );
 
@@ -127,6 +132,15 @@ Dtime::Dtime(QWidget * parent, const char *name)
   connect( minusPB, SIGNAL(pressed()), this, SLOT(dec_time()) );
   minusPB->setAutoRepeat( TRUE );
   v3->addWidget(minusPB, 1, 7 );
+
+  QString wtstr = i18n("Here you can change system time. Click into the "
+    " hours, minutes or seconds field to change the according value, either"
+    " using the up and down buttons to the right or by entering a new value.");
+  QWhatsThis::add( minusPB, wtstr );
+  QWhatsThis::add( plusPB, wtstr );
+  QWhatsThis::add( hour, wtstr );
+  QWhatsThis::add( minute, wtstr );
+  QWhatsThis::add( second, wtstr );
 
   plusPB->setFixedSize( 20, hour->height()/2 );
   minusPB->setFixedSize( 20, hour->height()/2 );
