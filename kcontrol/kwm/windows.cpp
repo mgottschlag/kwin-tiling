@@ -146,7 +146,7 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
 
     alabel = new QLabel(i18n("Delay (ms)"), fcsBox);
     alabel->setAlignment(AlignVCenter|AlignHCenter);
-    fLay->addWidget(alabel,2,1,AlignLeft);
+    fLay->addWidget(alabel,3,0,AlignLeft);
 
     s = new QLCDNumber (4, fcsBox);
     s->setFrameStyle( QFrame::NoFrame );
@@ -432,11 +432,6 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
                                           " while resizing it, instead of just showing a window 'skeleton'. The result may not be satisfying"
                                           " on slow machines.") );
 
-    animateShade = new QCheckBox(i18n("Animate window shading"), windowsBox);
-    QWhatsThis::add(animateShade, i18n("Animate the action of reducing the window to its titlebar (shading)"
-                                       " as well as the expansion of a shaded window") );
-    bLay->addWidget(animateShade);
-
     QGridLayout *rLay = new QGridLayout(2,3);
     bLay->addLayout(rLay);
     rLay->setColStretch(0,0);
@@ -531,31 +526,37 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
 
     //lay->addWidget(plcBox);
 
-    shBox = new QButtonGroup(i18n("Shade Hover"), this);
+    shBox = new QButtonGroup(i18n("Shading"), this);
     QGridLayout *shLay = new QGridLayout(shBox, 3, 3,
                                          KDialog::marginHint(),
-										 KDialog::spacingHint());
-    shLay->addRowSpacing(0,10);
-    shadeHoverOn = new QCheckBox(i18n("Enable Shade Hover"), shBox);
-    shLay->addWidget(shadeHoverOn, 1, 0);
+                                         KDialog::spacingHint());
+
+    shLay->addRowSpacing(0,fontMetrics().lineSpacing());
+    animateShade = new QCheckBox(i18n("Animate"), shBox);
+    QWhatsThis::add(animateShade, i18n("Animate the action of reducing the window to its titlebar (shading)"
+                                       " as well as the expansion of a shaded window") );
+    shLay->addWidget(animateShade, 1, 0);
+
+    shadeHoverOn = new QCheckBox(i18n("Enable Hover"), shBox);
+    shLay->addWidget(shadeHoverOn, 2, 0);
 
     connect(shadeHoverOn, SIGNAL(toggled(bool)), this, SLOT(shadeHoverChanged(bool)));
 
-    shlabel = new QLabel(i18n("Shade Hover Delay"), shBox);
+    shlabel = new QLabel(i18n("Delay (ms)"), shBox);
     shlabel->setAlignment(AlignVCenter | AlignHCenter);
-    shLay->addWidget(shlabel, 2, 0, AlignLeft);
+    shLay->addWidget(shlabel, 3, 0, AlignLeft);
 
     shadeHoverNum = new QLCDNumber (4, shBox);
     shadeHoverNum->setFrameStyle( QFrame::NoFrame );
     shadeHoverNum->setFixedHeight(30);
     shadeHoverNum->adjustSize();
     shadeHoverNum->setMinimumSize(shadeHoverNum->size());
-    shLay->addWidget(shadeHoverNum, 1, 2);
+    shLay->addWidget(shadeHoverNum, 2, 2);
 
     shadeHover = new KIntNumInput(500, shBox);
     shadeHover->setRange(0, 3000, 100, true);
     shadeHover->setSteps(100, 100);
-    shLay->addMultiCellWidget(shadeHover, 2, 2, 1, 2);
+    shLay->addMultiCellWidget(shadeHover, 3, 3, 1, 2);
     connect(shadeHover, SIGNAL(valueChanged(int)), shadeHoverNum, SLOT(display(int)));
 
     QWhatsThis::add(shadeHoverOn, i18n("If Shade Hover is enabled, a shaded window will un-shade automatically "
@@ -817,9 +818,9 @@ void KAdvancedConfig::save( void )
     config->writeEntry(KWIN_MOVE_RESIZE_MAXIMIZED, moveResizeMaximized->isChecked());
 
     if (shadeHoverOn->isChecked())
-	config->writeEntry(KWIN_SHADEHOVER, "on");
+        config->writeEntry(KWIN_SHADEHOVER, "on");
     else
-	config->writeEntry(KWIN_SHADEHOVER, "off");
+        config->writeEntry(KWIN_SHADEHOVER, "off");
 
     v = getShadeHoverInterval();
     if (v<0) v = 0;
