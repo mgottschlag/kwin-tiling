@@ -61,6 +61,7 @@
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
+#include <kaboutdata.h>
 
 #include <config.h>
 
@@ -397,6 +398,19 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
   config = new KConfig("kcminputrc");
   load();
+
+  KAboutData* about = new KAboutData("kcmmouse", I18N_NOOP("Mouse"), 0,
+        I18N_NOOP("Mouse Control Panel Module"),
+        KAboutData::License_GPL, 0, 0, 0); 
+  about->addAuthor("Patrick Dowler", 0, 0);
+  about->addAuthor("Dirk A. Mueller", 0, 0);
+  about->addAuthor("David Faure", 0, 0);
+  about->addAuthor("Bernd Gehrmann", 0, 0);
+  about->addAuthor("Rik Hemsley", 0, 0);
+  about->addAuthor("Brad Hughes", 0, 0);
+  about->addAuthor("Ralf Nolden", 0, 0);
+  about->addAuthor("Brad Hards", 0, 0);
+  setAboutData( about );
 }
 
 void MouseConfig::checkAccess()
