@@ -231,7 +231,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     label->setText(i18n("High Contrast", "High"));
     groupLayout->addWidget( label );
 
-    cbExportColors = new QCheckBox(i18n("Apply colors to &non-KDE applications."), this);
+    cbExportColors = new QCheckBox(i18n("Apply colors to &non-KDE applications"), this);
     topLayout->addMultiCellWidget( cbExportColors, 2, 2, 0, 1 );
     connect(cbExportColors, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
 
