@@ -75,14 +75,8 @@ bool KShortURIFilter::expandEnivVar( QString& cmd ) const
     {
         env_loc = QRegExp( ENV_VAR_PATTERN ).match( cmd, env_loc, &env_len );
         if( env_loc == -1 ) break;
-        const char* exp = getenv( cmd.mid( env_loc + 1, env_len - 1 ).latin1() );
-        if( exp == 0 )
-	 env_loc = env_len; // Avoid a big infinite loop :)
-        else
-        {
-	   cmd.replace( env_loc, env_len, exp );
-	   env_loc = 0;  // clear out the previous location since text size changed :)
-	}
+        const char* exp = getenv( cmd.mid( env_loc + 1, env_len - 1 ).local8Bit().data() );
+	cmd.replace( env_loc, env_len, QString::fromLocal8Bit(exp) );
     }
     return ( env_len ) ? true : false;
 }
