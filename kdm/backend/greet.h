@@ -121,6 +121,7 @@ from the copyright holder.
 #define G_Shutdown      101 /* 5*int; async */
 # define SHUT_REBOOT      1	/* how */
 # define SHUT_HALT        2
+# define SHUT_CONSOLE     -1 /* pseudo-code */
 # define SHUT_SCHEDULE    0	/* when; config only */
 # define SHUT_TRYNOW      1
 # define SHUT_FORCENOW    2

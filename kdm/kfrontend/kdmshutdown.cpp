@@ -550,7 +550,7 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, QWidget *_p
 	: inherited( _uid, _parent )
 {
 #ifdef HAVE_VTS
-	if (type == -1)
+	if (type == SHUT_CONSOLE)
 		willShut = false;
 #endif
 	box->addWidget( new QLabel( QString( "<qt><center><b><nobr>"
@@ -559,7 +559,7 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, QWidget *_p
 	                            .arg( (type == SHUT_HALT) ?
 	                                  i18n("Turn Off Computer") :
 #ifdef HAVE_VTS
-	                                  (type == -1) ?
+	                                  (type == SHUT_CONSOLE) ?
 	                                  i18n("Switch to Console") :
 #endif
 	                                  i18n("Restart Computer") ), this ) );
