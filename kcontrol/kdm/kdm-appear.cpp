@@ -256,7 +256,9 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
 void KDMAppearanceWidget::makeReadOnly()
 {
-    logobutton->setEnabled(false);
+    disconnect( logobutton, SIGNAL(clicked()),
+		this, SLOT(slotLogoButtonClicked()) );
+    logobutton->setAcceptDrops(false);
     greetstr_lined->setReadOnly(true);
     noneRadio->setEnabled(false);
     clockRadio->setEnabled(false);
