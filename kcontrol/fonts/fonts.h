@@ -84,7 +84,6 @@ protected slots:
     void fontChanged();
     void slotApplyFontDiff(); 
     void slotUseAntiAliasing();
-    void slotAaToggle(bool);
     void slotAaChange();
 
 private:
