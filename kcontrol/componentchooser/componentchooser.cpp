@@ -271,6 +271,8 @@ void CfgTerminalEmulator::selectTerminalApp()
 {
 	KURL::List urlList;
 	KOpenWithDlg dlg(urlList, i18n("Select preferred terminal application:"), QString::null, this);
+	// hide "Run in &terminal" here, we don't need it for a Terminal Application
+	dlg.hideRunInTerminal();
 	if (dlg.exec() != QDialog::Accepted) return;
 	QString client = dlg.text();
 
