@@ -126,7 +126,7 @@
                         <cstring>btnCreate</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Create New Theme...</string>
+                        <string>Create &amp;New Theme...</string>
                     </property>
                     <property name="accel">
                         <string>Alt+C</string>
