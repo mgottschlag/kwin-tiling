@@ -151,6 +151,7 @@ void SchemaEditor::setSchema(QString sch)
 
 SchemaEditor::~SchemaEditor()
 {
+    delete spix;
 }
 
 
