@@ -39,6 +39,9 @@
 #include <qradiobutton.h>
 #include <artsconfig.h>
 
+
+class KProcess;
+
 class KArtsModule : public KCModule
 {
   Q_OBJECT
@@ -59,6 +62,8 @@ private slots:
 
   void slotChanged();
   void slotTestSound();
+  void slotArtsdExited(KProcess* proc);
+  void slotProcessArtsdOutput(KProcess* p, char* buf, int len);
  
 
 private:

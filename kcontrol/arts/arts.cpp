@@ -37,12 +37,15 @@
 #include <qslider.h>
 #include <qdir.h>
 #include <qwhatsthis.h>
+#include <qregexp.h>
 
 #include <ksimpleconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kgenericfactory.h>
+#include <kprocess.h>
+#include <kdebug.h>
 
 #include "arts.h"
 #include <kaboutdata.h>
@@ -84,32 +87,41 @@ K_EXPORT_COMPONENT_FACTORY( kcm_arts, KArtsModuleFactory( "kcmarts" ) );
  */
 void KArtsModule::initAudioIOList()
 {
-	//audioIOList.setAutoDelete(true);
+	KProcess* artsd = new KProcess();
+	*artsd << "artsd";
+	*artsd << "-A";
 
-	FILE *artsd = popen("artsd -A 2>&1","r");
-	char line[1024];
-	if(artsd)
-	{
-		while (fgets(line, 1024, artsd))
-		{
-			// well: don't change the output format ;-)
-			if(line[0] == ' ' && line[1] == ' ')
-			{
-				char *name = strtok(line+2," \n");
-				if(name && name[0])
-				{
-					char *fullName = strtok(0, "\n");
-					if(fullName && fullName[0])
-					{
-						while(fullName[0] == ' ') {
-							fullName++;
-						}
-						audioIOList.append(new AudioIOElement(QString::fromLatin1(name), QString::fromLatin1(fullName)));
-					}
-		  		}
-			}
-	  	}
-		fclose(artsd);
+	connect(artsd, SIGNAL(processExited(KProcess*)),
+	        this, SLOT(slotArtsdExited(KProcess*)));
+	connect(artsd, SIGNAL(receivedStderr(KProcess*, char*, int)),
+	        this, SLOT(slotProcessArtsdOutput(KProcess*, char*, int)));
+
+	if (!artsd->start(KProcess::Block, KProcess::Stderr)) {
+		KMessageBox::error(0, i18n("Can't start aRts sound server to retrive "
+		                           "possible sound I/O methods"));
+	}
+}
+
+void KArtsModule::slotArtsdExited(KProcess* proc)
+{
+	delete proc;
+}
+
+void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
+{
+	// XXX(gioele): I suppose this will be called just once, am I wrong?
+
+	QStringList availableIOs = QStringList::split("\n", QCString(buf, len));
+	// valid entries have two leading spaces
+	availableIOs = availableIOs.grep(QRegExp("^ {2}"));
+	availableIOs.sort(); // FIXME(gioele): null method should be the last one
+
+	QString name, fullName;
+	QStringList::Iterator it;
+	for (it = availableIOs.begin(); it != availableIOs.end(); ++it) {
+		name = (*it).left(12).stripWhiteSpace();
+		fullName = (*it).mid(12).stripWhiteSpace();
+		audioIOList.append(new AudioIOElement(name, fullName));
 	}
 }
 
