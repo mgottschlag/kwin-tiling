@@ -606,12 +606,11 @@ void KColorScheme::readSchemeNames( )
 {
   QStringList list = KGlobal::dirs()->findAllResources("data", "kdisplay/color-schemes/*");
   QStringList dirList, localdirList;
-  int i=0;
+  unsigned int i=0;
   QString local_prefix = locateLocal("data", "test");
   local_prefix = local_prefix.left(local_prefix.findRev('/'));
   for(QStringList::Iterator it = list.begin(); it != list.end(); it++) {
-    QString temp_s = *it;
-    temp_s = (*it).left(temp_s.findRev('/'));
+    QString temp_s = (*it).left( (*it).findRev('/') );
     if (temp_s.find(local_prefix) == -1) {
       if (dirList.find(temp_s) == dirList.end())
         dirList.append(temp_s);

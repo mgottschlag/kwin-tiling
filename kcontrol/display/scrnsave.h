@@ -102,7 +102,6 @@ protected:
 	QLabel *monitorLabel;
 	QStringList saverList;
 	QStringList saverNames;
-	QString saverLocation;
 	QString saverFile;
 	int lock;
 	int priority;

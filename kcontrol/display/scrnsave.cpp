@@ -42,7 +42,6 @@
 #include <kglobal.h>
 #include "scrnsave.moc"
 
-#define SCREENSAVER_DIR	"/usr/local/kde/bin"
 #define CORNER_SIZE		15
 
 CornerButton::CornerButton( QWidget *parent, int num, char _action )
@@ -186,21 +185,16 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 
 	ssList = new QListBox( group );
 	ssList->insertItem( i18n("No screensaver"), 0 );
-	ssList->setCurrentItem( 0 );
 	getSaverNames();
 	ssList->adjustSize();
 	ssList->setMinimumSize(ssList->size());
 	ssList->insertStringList( saverNames );
-/*
-	QStringList::Iterator it = saverList.begin();
-	for ( int i = 1; !it->isNull(); ++it )
-	{
-		ssList->insertItem( *saverNames.at( i - 1 ), i );
+
+	for (QStringList::Iterator it = saverList.begin(); it != saverList.end(); ++it )
 		if ( saverFile == *it )
 			ssList->setCurrentItem( i );
-		i++;
 	}
-*/
+
 	ssList->setTopItem( ssList->currentItem() );
 	connect( ssList, SIGNAL( highlighted( int ) ),
 			SLOT( slotScreenSaver( int ) ) );
@@ -352,7 +346,6 @@ void KScreenSaver::readSettings( int )
 	       &xprefer_blanking, &xallow_exposures );
 
 	QString str;
-	saverLocation = SCREENSAVER_DIR;
 
 //Antonio - Added support to parse the old config file for KDE 1.0 users
 
@@ -365,12 +358,7 @@ void KScreenSaver::readSettings( int )
 		first_time = true;
 		config= new KConfig("kdisplayrc");
 		config->setGroup( "ScreenSaver" );
-	};
-
-//Antonio
-
-
-	saverLocation = config->readEntry( "Location", kapp->kde_bindir() );
+	}
 
 	bUseSaver = config->readBoolEntry( "UseSaver", false );
 	if( bUseSaver ) {
@@ -484,11 +472,8 @@ void KScreenSaver::writeSettings()
 
 void KScreenSaver::findSavers()
 {
-	static QDir d( saverLocation );
-
-	d.setFilter( QDir::Executable | QDir::Files );
-
-	saverList = d.entryList( "*.kss" );
+	// Simple, huh?
+	saverList = KGlobal::dirs()->findAllResources("exe", "*.kss");
 }
 
 void KScreenSaver::getSaverNames()
@@ -501,12 +486,13 @@ void KScreenSaver::getSaverNames()
 	QStringList::Iterator it = saverList.begin();
 	for ( ; it != saverList.end(); ++it )
 	{
-		QString name = config->readEntry( *it );
+		QString saverName = (*it).right( (*it).length() - (*it).findRev('/') - 1 );
+		QString name = config->readEntry( saverName );
 
 		if ( name.isEmpty() )
 		{
 			char buffer[80];
-			QString cmd = saverLocation + '/' + *it + " -desc";
+			QString cmd = *it + " -desc";
 			FILE *fp = popen( cmd.ascii(), "r");
 			if ( fp )
 			{
@@ -515,7 +501,7 @@ void KScreenSaver::getSaverNames()
 					*strchr( buffer, '\n' ) = '\0';
 				pclose( fp );
 				name = buffer;
-				config->writeEntry( *it, buffer, true, false, true );
+				config->writeEntry( saverName, buffer, true, false, true );
 			}
 			else
 				name = "";
@@ -578,7 +564,7 @@ void KScreenSaver::apply( bool force )
 		sDelay.setNum( xtimeout/60 );
 		QString sPriority;
 		sPriority.setNum( priority );
-		QString path = saverLocation + '/' + saverFile;
+		QString path = saverFile;
 
 		execl( path.data(), path.data(), "-delay", sDelay.data(), "-install",
 				"-corners", cornerAction, "-nice", sPriority.data(),
@@ -599,7 +585,7 @@ void KScreenSaver::setMonitor()
 
 void KScreenSaver::slotPreviewExited(KProcess *)
 {
-    QString path = saverLocation + '/' + saverFile;
+    QString path = saverFile;
     QString id;
 
     monitor->setBackgroundColor( black );
@@ -656,7 +642,7 @@ void KScreenSaver::slotSetup()
 	setupBt->setEnabled( FALSE );
 	kapp->flushX();
 
-	path =  saverLocation + '/' + saverFile;
+	path =  saverFile;
 
 //	connect(ssSetup, SIGNAL(processExited(KProcess *)),
 //	    this, SLOT(slotSetupDone(KProcess *)));
@@ -670,7 +656,7 @@ void KScreenSaver::slotTest()
 {
 	KProcess proc;
 
-	QString path = saverLocation + '/' + saverFile;
+	QString path = saverFile;
 
 	testBt->setEnabled( FALSE );
 	kapp->flushX(); // CC: draw the disabled button _now_ 
