@@ -84,7 +84,7 @@ QString PasswordDlg::labelText(void)
 
     QString username = QString::fromLocal8Bit(current->pw_name);
 
-    return i18n("Enter password for user %1 (%2)").arg(fullname).arg(username);
+    return i18n("Enter the password for user %1 (%2)").arg(fullname).arg(username);
 }
 
 
