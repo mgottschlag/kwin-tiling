@@ -30,12 +30,13 @@
 #include "KfiMainWidget.h"
 #include "KfiGlobal.h"
 #include "Config.h"
-#include "SettingsWizard.h"
 #include "Misc.h"
 #include "XConfig.h"
 #include <qapplication.h>
 #include <qnamespace.h>
 #include <qfile.h>
+#include <kmessagebox.h>
+#include <klocale.h>
 #include <fstream.h>
 #include "kxftconfig.cpp" // CPD: Hack!!, this source file is located in kcontrol/fonts
 
@@ -47,13 +48,13 @@ CKfiMainWidget * CKfi::create(QWidget *parent)
  
     if(CKfiGlobal::cfg().firstTime())
     {
+        (void)CKfiGlobal::xcfg();
+        (void)CKfiGlobal::enc();
         if(CMisc::root())
-        {
-            QApplication::setOverrideCursor(Qt::arrowCursor);
-            CSettingsWizard *wiz=new CSettingsWizard(parent);
-            wiz->exec();
-            QApplication::restoreOverrideCursor();
-        }
+            KMessageBox::information(parent, i18n("As this is the first time this module has been run as \"root\", "
+                                                  "it has tried to guess appropriate settings for your system. "
+                                                  "When the module appears, please have a look at the \"Settings\" page and check that these are OK. "
+                                                  "If not, make the appropriate changes and press the \"Apply\" button"));
         else
         {
             if(CKfiGlobal::xcfg().ok() && CKfiGlobal::cfg().getModifiedDirs().count())

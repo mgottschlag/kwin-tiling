@@ -13,10 +13,10 @@ kcm_fontinst_la_SOURCES = \
         Encodings.cpp ErrorDialog.cpp FontEngine.cpp FontListWidget.cpp \
         FontPreview.cpp FontmapCreator.cpp FontSelectorWidget.cpp FontsWidget.cpp \
         Kfi.cpp KfiCmModule.cpp KfiGlobal.cpp KfiMainWidget.cpp \
-        MetaDialog.cpp Misc.cpp SettingsWidget.cpp SettingsWizard.cpp StarOfficeConfig.cpp \
+        MetaDialog.cpp Misc.cpp SettingsWidget.cpp StarOfficeConfig.cpp \
         SysConfigurer.cpp Ttf.cpp UiConfig.cpp XConfig.cpp \
         KfiMainWidgetData.ui \
-        SettingsWidgetData.ui SettingsWizardData.ui
+        SettingsWidgetData.ui
 
 EXTRA_DIST = \
 	$(desktop_DATA) \
@@ -42,7 +42,6 @@ EXTRA_DIST = \
 	BufferedFile.h \
 	StarOfficeConfig.h \
 	XConfig.h \
-	SettingsWizard.h \
 	FontPreview.h \
 	CompressedFile.h \
 	UiConfig.h \
