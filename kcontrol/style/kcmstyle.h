@@ -50,8 +50,13 @@ class QSettings;
 class QSpacerItem;
 class QLabel;
 class QSlider;
-class KListView;
+class KComboBox;
 
+struct StyleEntry {
+	QString name;
+	QString desc;
+	bool hidden;
+};
 
 class KCMStyle : public KCModule
 { 
@@ -83,7 +88,6 @@ protected slots:
 	void setToolbarsDirty();
 	void setStyleDirty();
 
-	void updateStyleTimer( QListViewItem* );
 	void styleChanged();
 	void menuEffectChanged( bool enabled );
 	void menuEffectChanged();
@@ -92,6 +96,7 @@ protected slots:
 private:
 	bool m_bMacDirty, m_bEffectsDirty, m_bStyleDirty, m_bToolbarsDirty;
 	int styleChangeDelay; 
+	QDict<StyleEntry> styleEntries;
 
 	QVBoxLayout* mainLayout;
 	QTabWidget* tabWidget;
@@ -102,7 +107,9 @@ private:
 
 	// Page1 widgets
 	QGroupBox* gbWidgetStyle;
-	KListView* lvStyle;
+	KComboBox* cbStyle;
+	QPushButton* pbConfigStyle;
+	QLabel *lblStyleDesc;
 	StylePreview* stylePreview;
 	QStyle* appliedStyle;
 	QPalette palette;
