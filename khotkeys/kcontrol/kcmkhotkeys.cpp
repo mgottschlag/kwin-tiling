@@ -271,6 +271,3 @@ void desktop_shortcut_dialog::key_changed()
         }
     }
 */
-
-#include "kcmkhotkeys.moc"
-
