@@ -238,7 +238,7 @@
                         <string>&amp;Hide automatically</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>If this option is selected, the panel will automatically hide after a period of time and reappear when you move the mouse to the screen edge where the panel is hidden. This is particularly useful for small screen resolutions, such as on laptops."</string>
+                        <string>If this option is selected, the panel will automatically hide after a period of time and reappear when you move the mouse to the screen edge where the panel is hidden. This is particularly useful for small screen resolutions, such as on laptops.</string>
                     </property>
                 </widget>
                 <widget class="KIntNumInput" row="2" column="1">
