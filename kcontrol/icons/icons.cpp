@@ -457,18 +457,25 @@ void KIconConfig::slotSize(int index)
 void KIconConfig::slotDPCheck(bool check)
 {
     Q_ASSERT(mUsage < KIcon::LastGroup);
-    mbDP[mUsage] = check;
+    if (mbDP[mUsage] != check)
+    {
+        mbDP[mUsage] = check;       
+        emit changed(true);
+        mbChanged[mUsage] = true;
+    }
     preview();
-    emit changed(true);
-    mbChanged[mUsage] = true;
+    
 }
 
 void KIconConfig::slotAnimatedCheck(bool check)
 {
     Q_ASSERT(mUsage < KIcon::LastGroup);
-    mbAnimated[mUsage] = check;
-    emit changed(true);
-    mbChanged[mUsage] = true;
+    if (mbAnimated[mUsage] != check)
+    {
+        mbAnimated[mUsage] = check;
+        emit changed(true);
+        mbChanged[mUsage] = true;
+    }
 }
 
 KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect, 
