@@ -970,7 +970,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
 #ifndef HAVE_FONTCONFIG
                                              if(CFontEngine::isATtf(QFile::encodeName(fInfo->fileName())) &&
                                                 CEncodings::constTTSymbol==*it &&
-                                                !find(symbolFamilies, family))
+                                                !symbolFamilies.contains(family))
                                                  symbolFamilies.append(family);
 #endif
                                          }
