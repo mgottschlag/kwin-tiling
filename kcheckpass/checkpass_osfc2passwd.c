@@ -1,6 +1,7 @@
 /*
  *
- * $Id$
+ * Copyright (C) 1999 Mark Davies <mark@MCS.VUW.AC.NZ>
+ * Copyright (C) 2003 Oswald Buddenhagen <ossi@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

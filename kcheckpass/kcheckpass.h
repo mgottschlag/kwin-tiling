@@ -29,6 +29,7 @@
  *
  *	Olaf Kirch <okir@caldera.de>      General Framework and PAM support
  *	Christian Esken <esken@kde.org>   Shadow and /etc/passwd support
+ *	Oswald Buddenhagen <ossi@kde.org> Binary server mode
  *
  *      Other parts were taken from kscreensaver's passwd.cpp
  *****************************************************************/

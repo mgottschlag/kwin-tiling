@@ -1,10 +1,11 @@
 /*
- * Wed Jan 27 14:25:45 MET 1999
+ * Copyright (C) 1998 Christian Esken <esken@kde.org>
+ * Copyright (C) 2003 Oswald Buddenhagen <ossi@kde.org>
  *
  * This is a modified version of checkpass_shadow.cpp
  *
  * Modifications made by Thorsten Kukuk <kukuk@suse.de>
- *                       Mathias kettner <kettner@suse.de>
+ *                       Mathias Kettner <kettner@suse.de>
  *
  * ------------------------------------------------------------
  *
@@ -21,8 +22,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- *      Copyright (C) 1998, Christian Esken <esken@kde.org>
  */
 
 #include "kcheckpass.h"
