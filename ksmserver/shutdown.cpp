@@ -107,7 +107,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         QLabel* icon = new QLabel( lfrm );
         icon->setPixmap( UserIcon( "shutdownkonq" ) );
         iconlay->addWidget( icon );
-        
+
         // right column (buttons)
         QVBoxLayout* buttonlay = new QVBoxLayout( hbox, 2 * KDialog::spacingHint() );
         buttonlay->setAlignment( Qt::AlignHCenter );
@@ -115,23 +115,23 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         QSpacerItem* item1 = new QSpacerItem(
             0, KDialog::marginHint(), QSizePolicy::MinimumExpanding );
         buttonlay->addItem( item1 );
-	
+
         // End session
-        QPushButton* btnLogout = new QPushButton( i18n("&End current session"), frame );
+        QPushButton* btnLogout = new QPushButton( i18n("&End Current Session"), frame );
         QFont btnFont = btnLogout->font();
         btnLogout->setIconSet( KGlobal::iconLoader()->loadIconSet(
             "undo", KIcon::NoGroup, KIcon::SizeSmall ) );
         buttonlay->addWidget( btnLogout );
 
         // Shutdown
-        QPushButton* btnHalt = new QPushButton( i18n("&Turn off computer"), frame );
+        QPushButton* btnHalt = new QPushButton( i18n("&Turn Off Computer"), frame );
         btnHalt->setFont( btnFont );
         btnHalt->setIconSet( KGlobal::iconLoader()->loadIconSet(
             "exit", KIcon::NoGroup, KIcon::SizeSmall ) );
         buttonlay->addWidget( btnHalt );
 
         // Reboot
-        QPushButton* btnReboot = new QPushButton( i18n("&Restart computer"), frame );
+        QPushButton* btnReboot = new QPushButton( i18n("&Restart Computer"), frame );
         btnReboot->setFont( btnFont );
         btnReboot->setIconSet( KGlobal::iconLoader()->loadIconSet(
             "reload", KIcon::NoGroup, KIcon::SizeSmall ) );
