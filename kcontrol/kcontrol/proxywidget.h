@@ -50,10 +50,8 @@ public slots:
 
   void helpClicked();
   void defaultClicked();
-  void resetClicked();
   void applyClicked();
-  void cancelClicked();
-  void okClicked();
+  void resetClicked();
   void rootClicked();
 
   void clientChanged(bool state);
@@ -69,7 +67,7 @@ signals:
 
 private:
 
-  QPushButton *_help, *_default, *_reset, *_apply, *_cancel, *_ok, *_root;
+  QPushButton *_help, *_default, *_apply, *_reset, *_root;
   QFrame      *_sep;
   KCModule    *_client;
 

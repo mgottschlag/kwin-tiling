@@ -78,38 +78,28 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   _sep->show();
 
   _help = new QPushButton(i18n("&Help"), this);
-  _default = new QPushButton(i18n("&Default"), this);
-  _reset = new QPushButton(i18n("&Reset"), this);
-  _cancel = new QPushButton(i18n("&Cancel"), this);
-  _ok = new QPushButton(i18n("&OK"), this);
+  _default = new QPushButton(i18n("Use &Defaults"), this);
   _apply = new QPushButton(i18n("&Apply"), this);
+  _reset = new QPushButton(i18n("&Reset"), this);
   _root = new QPushButton(i18n("&Modify"), this);
 
   // only enable the requested buttons
   int b = _client->buttons();
   setVisible(_help, b & KCModule::Help);
   setVisible(_default, !run_as_root && b & KCModule::Default);
-  setVisible(_reset, !run_as_root && b & KCModule::Reset);
-  setVisible(_cancel, b & KCModule::Cancel);
-  setVisible(_apply, !run_as_root && b & KCModule::Apply);
-  setVisible(_ok, b & KCModule::Ok);
+  setVisible(_apply, !run_as_root && (b & KCModule::Apply));
+  setVisible(_reset, !run_as_root && ((b & KCModule::Cancel) || (b & KCModule::Reset)));
   setVisible(_root, run_as_root);
 
   // disable initial buttons
+//  _apply->setEnabled(false);
   _reset->setEnabled(false);
-  _apply->setEnabled(false);
 
   connect(_help, SIGNAL(clicked()), this, SLOT(helpClicked()));
   connect(_default, SIGNAL(clicked()), this, SLOT(defaultClicked()));
-  connect(_reset, SIGNAL(clicked()), this, SLOT(resetClicked()));
-  connect(_cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(applyClicked()));
+  connect(_reset, SIGNAL(clicked()), this, SLOT(resetClicked()));
   connect(_root, SIGNAL(clicked()), this, SLOT(rootClicked()));
-
-  if (run_as_root)
-    connect(_ok, SIGNAL(clicked()), this, SLOT(cancelClicked()));
-  else
-    connect(_ok, SIGNAL(clicked()), this, SLOT(okClicked()));
 
   QVBoxLayout *top = new QVBoxLayout(this, 2, 4);
   top->addWidget(_client);
@@ -118,14 +108,14 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   QHBoxLayout *buttons = new QHBoxLayout(top, 4);
   buttons->addWidget(_help);
   buttons->addWidget(_default);
-  buttons->addWidget(_reset);
   buttons->addStretch(1);
-  buttons->addWidget(_ok);
   if (run_as_root)
     buttons->addWidget(_root);
   else
+  {
     buttons->addWidget(_apply);
-  buttons->addWidget(_cancel);
+    buttons->addWidget(_reset);
+  }
 
   top->activate();
 
@@ -157,29 +147,17 @@ void ProxyWidget::defaultClicked()
   clientChanged(true);
 }
 
-void ProxyWidget::resetClicked()
-{
-  _client->load();
-  clientChanged(false);
-}
-
-void ProxyWidget::cancelClicked()
-{
-  emit closed();
-}
-
 void ProxyWidget::applyClicked()
 {
   _client->save();
   clientChanged(false);
 }
 
-void ProxyWidget::okClicked()
+void ProxyWidget::resetClicked()
 {
-  _client->save();
-  emit closed();
+  _client->load();
+  clientChanged(false);
 }
-
 
 void ProxyWidget::rootClicked()
 {
@@ -191,9 +169,8 @@ void ProxyWidget::clientChanged(bool state)
 {
   // enable/disable buttons
     // int b = _client->buttons();
+//  _apply->setEnabled(state);
   _reset->setEnabled(state);
-  _apply->setEnabled(state);
-  //_ok->setEnabled(state);
 
   // forward the signal
   emit changed(state);
