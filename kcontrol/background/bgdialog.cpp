@@ -57,11 +57,11 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    m_pDirs = KGlobal::dirs();
    m_multidesktop = _multidesktop;
    m_previewUpdates = true;
-   m_copyAllDesktops = true;
 
    m_Max = m_multidesktop ? KWin::numberOfDesktops() : 1;
-   m_Desk = m_multidesktop ? (KWin::currentDesktop() - 1) : 0;
+   m_Desk = m_multidesktop ? KWin::currentDesktop() : 1;
    m_eDesk = m_pGlobals->commonBackground() ? 0 : m_Desk;
+   m_copyAllDesktops = true;
 
    m_comboWallpaperSpecial = -1;
 
@@ -103,12 +103,18 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    connect(m_buttonAdvanced, SIGNAL(clicked()),
            SLOT(slotAdvanced()));
 
-   m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max );
+   m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max + 1 );
    m_Renderer.setAutoDelete(true);
-   for (int i=0; i<m_Max; i++)
+
+   // set up the common desktop renderer
+   m_Renderer.insert(0, new KBackgroundRenderer(0, _config));
+   connect(m_Renderer[0], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
+
+   // set up all the other desktop renderers
+   for (int i = 0; i < m_Max; ++i) 
    {
-      m_Renderer.insert(i, new KBackgroundRenderer(i, _config));
-      connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
+      m_Renderer.insert(i + 1, new KBackgroundRenderer(i, _config));
+      connect(m_Renderer[i + 1], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
    }
 
    m_slideShowRandom = m_Renderer[m_eDesk]->multiWallpaperMode();
@@ -163,7 +169,6 @@ void BGDialog::makeReadOnly()
     m_cbBlendReverse->setEnabled( false );
 }
 
-
 void BGDialog::load()
 {
    m_pGlobals->readSettings();
@@ -184,8 +189,13 @@ void BGDialog::save()
 {
 //   kdDebug() << "Saving stuff..." << endl;
    m_pGlobals->writeSettings();
-   for (int i=0; i<m_Max; i++)
-      m_Renderer[i]->writeSettings();
+
+   // write out the common desktop or the "Desktop 1" settings
+   // depending on which are the real settings
+   // they both share Desktop[0] in the config file
+   m_Renderer[m_pGlobals->commonBackground() ? 0 : 1]->writeSettings();
+   for (int i = 1; i < m_Max; ++i)
+      m_Renderer[i + 1]->writeSettings();
 
    emit changed(false);
 }
@@ -249,10 +259,8 @@ QString BGDialog::quickHelp() const
 
 void BGDialog::initUI()
 {
-   int i;
-
    // Desktop names
-   for (i=0; i<m_Max; i++)
+   for (int i = 0; i < m_Max; ++i)
       m_comboDesktop->insertItem(m_pGlobals->deskName(i));
 
    // Patterns
@@ -277,7 +285,7 @@ void BGDialog::initUI()
    lst.sort();
    KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
    comboWallpaper->insertItem(i18n("<None>"));
-   for (i=0; i<(int)lst.count(); i++)
+   for (int i = 0; i < (int)lst.count(); ++i)
    {
       int n = lst[i].findRev('/');
       QString s = lst[i].mid(n+1);
@@ -342,11 +350,7 @@ void BGDialog::setWallpaper(const QString &s)
 void BGDialog::updateUI()
 {
    KBackgroundRenderer *r = m_Renderer[m_eDesk];
-
-   if (m_pGlobals->commonBackground())
-      m_comboDesktop->setCurrentItem(0);
-   else
-      m_comboDesktop->setCurrentItem(m_Desk+1);
+   m_comboDesktop->setCurrentItem(m_eDesk);
 
    m_colorPrimary->setColor(r->colorA());
    m_colorSecondary->setColor(r->colorB());
@@ -451,7 +455,8 @@ void BGDialog::slotPreviewDone(int desk_done)
 {
    kdDebug() << "Preview for desktop " << desk_done << " done" << endl;
 
-   if (m_eDesk != desk_done)
+   if (!m_pGlobals->commonBackground() &&
+       m_eDesk != desk_done + 1)
       return;
 
    if (!m_previewUpdates)
@@ -642,33 +647,34 @@ void BGDialog::slotSelectDesk(int desk)
    if (m_pGlobals->commonBackground() && (desk > 0) && m_copyAllDesktops)
    {
       // Copy stuff
-      for (int i=1; i<m_Max; i++)
+      for (int i = 0; i < m_Max; ++i)
       {
-         m_Renderer[i]->copyConfig(m_Renderer[0]);
+         m_Renderer[i + 1]->copyConfig(m_Renderer[0]);
       }
-
    }
-   m_copyAllDesktops = false;
 
+   if (desk == m_eDesk)
+   {
+      return; // Nothing to do
+   }
+
+   m_copyAllDesktops = false;
    if (desk == 0)
    {
       if (m_pGlobals->commonBackground())
          return; // Nothing to do
 
       m_pGlobals->setCommonBackground(true);
-      m_eDesk = m_Desk = 0;
+      emit changed(true);
    }
    else
    {
-      desk--;
-      if (desk == m_Desk && !m_pGlobals->commonBackground())
-         return; // Nothing to do
-
-      if (m_Renderer[m_Desk]->isActive())
-         m_Renderer[m_Desk]->stop();
+      if (m_Renderer[m_eDesk]->isActive())
+         m_Renderer[m_eDesk]->stop();
       m_pGlobals->setCommonBackground(false);
-      m_eDesk = m_Desk = desk;
    }
+
+   m_eDesk = desk;
    updateUI();
 }
 
@@ -755,7 +761,9 @@ void BGDialog::slotBlendReverse(bool b)
 
 void BGDialog::desktopResized()
 {
-    for (int i=0; i<m_Max; i++)
+    // since we now have a renderer just for All Desktops
+    // it is safe to allow i to equal m_Max
+    for (int i = 0; i <= m_Max; ++i)
     {
         KBackgroundRenderer* r = m_Renderer[ i ];
         if( r->isActive())
