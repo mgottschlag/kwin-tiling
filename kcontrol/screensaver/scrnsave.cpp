@@ -230,7 +230,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mEnabledCheckBox->setChecked(mEnabled);
     QWhatsThis::add( mEnabledCheckBox, i18n("When you check this option, the selected screen saver will be started"
                                             " automatically after a certain number of minutes of inactivity."
-                                            " This time out period can be defined in the spinbox below") );
+                                            " This timeout period can be set using the spinbox below.") );
     connect(mEnabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnable(bool)));
     groupLayout->addWidget(mEnabledCheckBox);
 

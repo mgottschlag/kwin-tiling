@@ -435,8 +435,8 @@ void KCMStyle::save()
 	}
 
 	QString warn_string( i18n("<qt>Selected style: <b>%1</b><br><br>"
-		"Some effects(s) that you have chosen could not be applied because the selected style "
-		"does not support these effects. They have therefore been disabled.<br>"
+		"One or more effects that you have chosen could not be applied because the selected "
+		"style does not support them; they have therefore been disabled.<br>"
 		"<br>" ).arg( lvStyle->currentItem()->text(2)) );
 	bool show_warning = false;
 
