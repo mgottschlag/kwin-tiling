@@ -44,6 +44,7 @@
 #include <ksimpleconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kiconloader.h>
 
 #include <qlistbox.h>
 
@@ -268,10 +269,10 @@ void KLocaleConfig::loadCountryList()
       tag = tag.mid(index+1);
       int menu_index = submenu.isEmpty() ? -1 : -2;
 
-      QPixmap flag( locate( "locale",
+      QString flag( locate( "locale",
 			    QString::fromLatin1( "l10n/%1/flag.png" )
 			    .arg(tag) ) );
-      QIconSet icon( flag );
+      QIconSet icon( KGlobal::iconLoader()->loadIconSet(flag, KIcon::Small) );
       m_comboCountry->insertItem( icon, name, tag, submenu, menu_index );
     }
 
