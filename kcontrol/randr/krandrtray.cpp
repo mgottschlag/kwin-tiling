@@ -48,9 +48,10 @@ void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
 		contextMenuAboutToShow(contextMenu());
 		contextMenu()->popup(e->globalPos());
 		e->accept();
-	} else {
-		KSystemTray::mouseReleaseEvent(e);
+		return;
 	}
+
+	KSystemTray::mousePressEvent(e);
 }
 
 void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
