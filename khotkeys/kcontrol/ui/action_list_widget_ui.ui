@@ -78,7 +78,7 @@
                                 <cstring>modify_button</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Modify..</string>
+                                <string>&amp;Modify...</string>
                             </property>
                         </widget>
                         <widget class="QPushButton">
