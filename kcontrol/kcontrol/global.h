@@ -20,12 +20,13 @@
 #ifndef __global_h__
 #define __global_h__
 
+#include <kicontheme.h>
+
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qcstring.h>
 
 enum IndexViewMode {Icon, Tree};
-enum IndexIconSize {Small, Medium, Large};
 
 class KCGlobal
 {
@@ -44,7 +45,7 @@ public:
   static QString systemVersion() { return _iversion; }
   static QString systemMachine() { return _imachine; }
   static IndexViewMode viewMode() { return _viewmode; }
-  static IndexIconSize iconSize() { return _iconsize; }
+  static KIcon::StdSizes iconSize() { return _iconsize; }
   static QString baseGroup();
 
   static void setIsInfoCenter(bool b) { _infocenter = b; }
@@ -58,7 +59,7 @@ public:
   static void setSystemVersion(const QString& n){ _iversion = n; }
   static void setSystemMachine(const QString& n){ _imachine = n; }
   static void setViewMode(IndexViewMode m) { _viewmode = m; }
-  static void setIconSize(IndexIconSize s) { _iconsize = s; }
+  static void setIconSize(KIcon::StdSizes s) { _iconsize = s; }
 
   static void repairAccels( QWidget * tw );
 
@@ -68,7 +69,7 @@ private:
   static QStringList _types;
   static QString _uname, _hname, _isystem, _irelease, _iversion, _imachine, _kdeversion;
   static IndexViewMode _viewmode;
-  static IndexIconSize _iconsize;
+  static KIcon::StdSizes _iconsize;
   static QString _baseGroup;
 };
 

@@ -61,11 +61,11 @@ TopLevel::TopLevel(const char* name)
 
   QString size = config->readEntry("IconSize", "Medium");
   if (size == "Small")
-    KCGlobal::setIconSize(Small);
+    KCGlobal::setIconSize(KIcon::SizeSmall);
   else if (size == "Large")
-    KCGlobal::setIconSize(Large);
+    KCGlobal::setIconSize(KIcon::SizeLarge);
   else
-    KCGlobal::setIconSize(Medium);
+    KCGlobal::setIconSize(KIcon::SizeMedium);
 
   // initialize the entries
   _modules = new ConfigModuleList();
@@ -166,13 +166,10 @@ TopLevel::~TopLevel()
 
   switch (KCGlobal::iconSize())
     {
-    case Small:
+    case KIcon::SizeSmall:
       config->writeEntry("IconSize", "Small");
       break;
-    case Medium:
-      config->writeEntry("IconSize", "Medium");
-      break;
-    case Large:
+    case KIcon::SizeLarge:
       config->writeEntry("IconSize", "Large");
       break;
     default:
@@ -257,10 +254,10 @@ void TopLevel::activateIconView()
 
   switch(KCGlobal::iconSize())
     {
-    case Small:
+    case KIcon::SizeSmall:
       icon_small->setChecked(true);
       break;
-    case Large:
+    case KIcon::SizeLarge:
       icon_large->setChecked(true);
       break;
     default:
@@ -281,19 +278,19 @@ void TopLevel::activateTreeView()
 
 void TopLevel::activateSmallIcons()
 {
-  KCGlobal::setIconSize(Small);
+  KCGlobal::setIconSize(KIcon::SizeSmall);
   _indextab->reload();
 }
 
 void TopLevel::activateMediumIcons()
 {
-  KCGlobal::setIconSize(Medium);
+  KCGlobal::setIconSize(KIcon::SizeMedium);
   _indextab->reload();
 }
 
 void TopLevel::activateLargeIcons()
 {
-  KCGlobal::setIconSize(Large);
+  KCGlobal::setIconSize(KIcon::SizeLarge);
   _indextab->reload();
 }
 

@@ -75,7 +75,7 @@ void ModuleIconView::makeVisible(ConfigModule *m)
   QString tmp = _modules->findModule(m);
   if (tmp.isEmpty())
      return;
-     
+
   _path = tmp;
   fill();
 }
@@ -84,34 +84,11 @@ void ModuleIconView::fill()
 {
   clear();
 
-  // some defines for code readibility
-  #define LoadSmall(x) KGlobal::iconLoader()->loadIcon(x, KIcon::Desktop, KIcon::SizeSmall)
-  #define LoadLarge(x) KGlobal::iconLoader()->loadIcon(x, KIcon::Desktop, KIcon::SizeLarge)
-  #define LoadMedium(x) KGlobal::iconLoader()->loadIcon(x, KIcon::Desktop, KIcon::SizeMedium)
-
   QPixmap icon;
   // add our "up" icon if we aren't top level
   if (_path != KCGlobal::baseGroup())
   {
-     if (KCGlobal::iconSize() == Small)
-     {
-        icon = LoadSmall("back");
-        if(icon.isNull())
-           icon = LoadSmall("folder");
-     }
-     else if (KCGlobal::iconSize() == Large)
-     {
-        icon = LoadLarge("back");
-        if(icon.isNull())
-           icon = LoadLarge("folder");
-     }
-     else
-     {
-        icon = LoadMedium("back");
-        if(icon.isNull())
-           icon = LoadMedium("folder");
-     }
-
+     icon = loadIcon( "back" );
      // go-back node
      ModuleIconItem *i = new ModuleIconItem(this, i18n("Back"), icon);
      i->setOrderNo(0);
@@ -131,24 +108,7 @@ void ModuleIconView::fill()
      if (!group || !group->isValid())
         continue;
 
-     if (KCGlobal::iconSize() == Small)
-     {
-        icon = LoadSmall(group->icon());
-        if(icon.isNull())
-           icon = LoadSmall("folder");
-     }
-     else if (KCGlobal::iconSize() == Large)
-     {
-        icon = LoadLarge(group->icon());
-        if(icon.isNull())
-           icon = LoadLarge("folder");
-     }
-     else
-     {
-        icon = LoadMedium(group->icon());
-        if(icon.isNull())
-           icon = LoadMedium("folder");
-     }
+     icon = loadIcon( group->icon() );
 
      ModuleIconItem *i = new ModuleIconItem(this, group->caption(), icon);
      i->setTag(path);
@@ -158,12 +118,7 @@ void ModuleIconView::fill()
   QPtrList<ConfigModule> moduleList = _modules->modules(_path);
   for (ConfigModule *module=moduleList.first(); module != 0; module=moduleList.next())
   {
-     if (KCGlobal::iconSize() == Small)
-        icon = LoadSmall(module->icon());
-     else if (KCGlobal::iconSize() == Large)
-        icon = LoadLarge(module->icon());
-     else
-        icon = LoadMedium(module->icon());
+     icon = loadIcon( module->icon() );
 
      ModuleIconItem *i = new ModuleIconItem(this, module->moduleName(), icon, module);
      i->setOrderNo(++c);
@@ -200,4 +155,14 @@ void ModuleIconView::keyPressEvent(QKeyEvent *e)
   {
      KListView::keyPressEvent(e);
   }
+}
+
+QPixmap ModuleIconView::loadIcon( const QString &name )
+{
+  QPixmap icon = DesktopIcon( name, KCGlobal::iconSize() );
+
+  if(icon.isNull())
+     icon = DesktopIcon( "folder", KCGlobal::iconSize() );
+
+  return icon;
 }

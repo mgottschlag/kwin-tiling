@@ -67,7 +67,8 @@ protected slots:
   void slotItemSelected(QListViewItem*);
 
 protected:
- void keyPressEvent(QKeyEvent *);
+  void keyPressEvent(QKeyEvent *);
+  QPixmap loadIcon( const QString &name );
   
 private:
   QString           _path; 
