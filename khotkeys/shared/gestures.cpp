@@ -63,6 +63,7 @@ void Gesture::enable( bool enabled_P )
     if( _enabled == enabled_P )
         return;
     _enabled = enabled_P;
+    assert( button != 0 );
     if( _enabled )
         {
         kapp->installX11EventFilter( this );
