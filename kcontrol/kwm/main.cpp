@@ -100,7 +100,7 @@ QString KWinOptions::quickHelp() const
     " policy for new windows. "
     " <p>Please note that this configuration will not take effect if you don't use"
     " KWin as your window manager. If you do use a different window manager, please refer to its documentation"
-    " for how to customize mouse behavior.");
+    " for how to customize window behavior.");
 }
 
 void KWinOptions::moduleChanged(bool state)

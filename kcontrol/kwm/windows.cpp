@@ -499,9 +499,6 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     //placementCombo->insertItem(i18n("Manual"), MANUAL_PLACEMENT);
     placementCombo->setCurrentItem(SMART_PLACEMENT);
 
-    connect(placementCombo, SIGNAL(activated(int)),this,
-            SLOT(ifPlacementIsInteractive()) );
-
     // FIXME, when more policies have been added to KWin
     wtstr = i18n("The placement policy determines where a new window"
                  " will appear on the desktop. For now, there are three different policies:"
