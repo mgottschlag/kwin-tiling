@@ -41,7 +41,6 @@
 #include <errno.h>
 #include <pwd.h>
 #include <time.h>
-#include <errno.h>
 #include <limits.h>
 #include <sys/stat.h>
 #include <sys/param.h>
@@ -2224,7 +2223,7 @@ static Ent entsGreeter[] = {
 "# entry exists in Xservers). Default is true\n" },
 { "AllowClose",		0, 0,
 "# Show the \"Restart X Server\"/\"Close Connection\" action in the greeter.\n"
-"# Default is false\n" },
+"# Default is true\n" },
 };
 
 static Sect
@@ -2394,7 +2393,6 @@ static DEnt dEntsAnyGreeter[] = {
 { "PluginsShutdown",	"modern", 0 },
 { "PluginOptions",	"SomeKey=randomvalue,Foo=bar", 0 },
 { "AllowConsole",	"false", 0 },
-{ "AllowClose",	        "true", 0 },
 };
 
 static DEnt dEntsLocalCore[] = {
@@ -2412,6 +2410,7 @@ static DEnt dEntsLocalGreeter[] = {
 { "GreeterScreen",	"-1", 0 },
 { "LoginMode",		"DefaultLocal", 1 },
 { "ChooserHosts",	"*,ugly,sky,dino,kiste.local,login.crap.com", 0 },
+{ "AllowClose",	        "false", 1 },
 };
 
 static DEnt dEnts0Core[] = {
