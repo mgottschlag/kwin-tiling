@@ -157,20 +157,16 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         return data.hasBeenFiltered();
     }
 
-/*
-    // TODO: once the issue with khelpcenter is finialized enable this filtering.
-    // Is it to be invoked with kdehelp? btw: how to invoke the man/info browser in KDE 2?
-    if( cmd.left(5) == "info:" || cmd.left(4) == "man:" || cmd[0] == '#' )
+    if( cmd[0] == '#' )
     {
         if( cmd.left(2) == "##" )
-            cmd = "info:" + ( cmd.length() == 2 ? QString("(dir)" ) : cmd.mid(2));
+            cmd = "info:/" + ( cmd.length() == 2 ? QString::fromLatin1("dir" ) : cmd.mid(2));
         else if ( cmd[0] == '#' )
-            cmd = "man" + (cmd.length() == 1 ? QString("(index)") : cmd.mid(1));
+            cmd = "man:/" + cmd.mid(1);
         setFilteredURI( data, cmd );
-        setURIType( data, KURIFilterData::HELP );
-        return;
+        setURIType( data, KURIFilterData::NET_PROTOCOL );
+        return data.hasBeenFiltered();
     }
-*/
 
     if( !data.uri().isMalformed() && data.uri().isLocalFile() )
     {
