@@ -857,16 +857,6 @@ kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   QVBoxLayout *tl11 = new QVBoxLayout(5);
   tl1->addLayout(tl11);
 
-  mCboDir = new QComboBox(false, this);
-  mCboDir->insertItem(i18n("Select..."));
-  mCboDir->setMaxCount(21);
-  mCboDir->setSizeLimit(20);
-  minSize(mCboDir);
-  mCboDir->setMaximumWidth(32767);
-  connect(mCboDir, SIGNAL(activated(int)), SLOT(slotDirSelected(int)));
-  tl11->addWidget(mCboDir);
-  tl11->addSpacing(5);
-
   mCbxZoom = new QCheckBox(i18n("Zoom pictures"), this);
   connect(mCbxZoom, SIGNAL(clicked()), SLOT(writeSettings()));
   minSize(mCbxZoom);
@@ -905,6 +895,16 @@ kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   mPreview->show();    // otherwise saver does not get correct size
   mSaver = new kSlideShowSaver(mPreview->winId());
   tl1->addWidget(mPreview);
+
+  mCboDir = new QComboBox(false, this);
+  mCboDir->insertItem(i18n("Select..."));
+  mCboDir->setMaxCount(21);
+  mCboDir->setSizeLimit(20);
+  minSize(mCboDir);
+  mCboDir->setMaximumWidth(32767);
+  connect(mCboDir, SIGNAL(activated(int)), SLOT(slotDirSelected(int)));
+  tl->addWidget(mCboDir);
+  //  tl->addSpacing(5);
 
   KButtonBox *bbox = new KButtonBox(this);	
   button = bbox->addButton(i18n("About"));
@@ -953,7 +953,7 @@ void kSlideShowSetup::readSettings()
     if (!value.isEmpty())
     {
       if (cur < 0 && value == curDir) cur = i;
-      if (!value.isEmpty()) mCboDir->insertItem(value);
+      mCboDir->insertItem(value);
     }
   }
   if (cur < 0 && !curDir.isEmpty())
@@ -982,11 +982,12 @@ void kSlideShowSetup::writeSettings()
   if (mCboDir->currentItem() >= 1)
     config->writeEntry("Directory", mCboDir->currentText());
 
+  config->setGroup("Slide Show");
+
   num = mCboDir->count() - 1;
   if (num > 20) num = 20;
   config->writeEntry("Count", num);
 
-  config->setGroup("Slide Show");
   for (i=0; i<num; i++)
   {
     key = QString::fromLatin1("Dir%1").arg(i);
