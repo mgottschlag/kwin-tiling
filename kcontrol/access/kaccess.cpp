@@ -404,9 +404,9 @@ void KAccessApp::createDialogContents() {
       showModeCombobox = new KComboBox (contents);
       hlay->addWidget( showModeCombobox );
       showModeLabel->setBuddy(showModeCombobox);
-      showModeCombobox->insertItem ( i18n("Change settings without asking"), 0);
-      showModeCombobox->insertItem ( i18n("Show this confirmation dialog"), 1);
-      showModeCombobox->insertItem ( i18n("Deactivate all AccessX features and gestures"), 2);
+      showModeCombobox->insertItem ( i18n("Change Settings Without Asking"), 0);
+      showModeCombobox->insertItem ( i18n("Show This Confirmation Dialog"), 1);
+      showModeCombobox->insertItem ( i18n("Deactivate All AccessX Features & Gestures"), 2);
       showModeCombobox->setCurrentItem (1);
 
       dialog->setMainWidget(topcontents);
