@@ -106,7 +106,7 @@ static QPixmap appIcon(const QString &iconName)
 {
     QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, KIcon::Small, 0, KIcon::DefaultState, 0L, true);
     // make sure they are not larger than 20x20
-    if (normal.width() > 20 || normal.height() > 20) 
+    if (normal.width() > 20 || normal.height() > 20)
     {
        QImage tmp = normal.convertToImage();
        tmp = tmp.smoothScale(20, 20);
@@ -745,7 +745,8 @@ QDragObject *TreeView::dragObject()
     if(item == 0) return 0;
 
     QTextDrag *d = new QTextDrag(item->file(), (QWidget*)this);
-    d->setPixmap(*item->pixmap(0));
+    if ( item->pixmap(0) )
+        d->setPixmap(*item->pixmap(0));
     return d;
 }
 
