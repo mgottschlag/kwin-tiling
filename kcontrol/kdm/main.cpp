@@ -84,6 +84,9 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   , maxshowuid(0)
   , updateOK(false)
 {
+
+  KGlobal::locale()->insertCatalogue("kcmbackground");
+
   struct passwd *ps;
   for (setpwent(); (ps = getpwent()); )
     usermap.insert( QString::fromLocal8Bit( ps->pw_name ), ps->pw_uid );
