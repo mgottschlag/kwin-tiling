@@ -145,7 +145,7 @@ QString change_shortcut_internal( const QString& entry_P,
         }
     else    
         pos->shortcut = KAccel::keyToString(    // make sure the shortcut
-            KAccel::stringToKey( shortcut_P )); // is valid
+            KAccel::stringToKey( shortcut_P ), false); // is valid
     if( !save_if_edited_P )
         return pos->shortcut;
     if( pos->shortcut.isEmpty())
@@ -227,7 +227,7 @@ bool desktop_shortcut_dialog::dlg_exec()
     if( exec() == Accepted )
         {
         item->shortcut
-            = KAccel::keyToString( map[ action_name ].aConfigKeyCode );
+            = KAccel::keyToString( map[ action_name ].aConfigKeyCode, false );
         return true;
         }
     return false;    
