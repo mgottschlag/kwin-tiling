@@ -1,7 +1,7 @@
 /*
 
 Copyright 1988, 1998  The Open Group
-Copyright 2001-2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2001-2005 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -232,15 +232,15 @@ chownCtrl( CtrlRec *cr, int uid, int gid )
 void
 updateCtrl( void )
 {
-	char *ffp;
-	unsigned ffl;
+	unsigned ffl, slc;
 
-	if (ctrl.path) {
-		ffp = ctrl.path;
-		ffl = strrchr( ffp, '/' ) - ffp;
-	} else
-		ffl = 0;
-	if (ffl != strlen( fifoDir ) || memcmp( fifoDir, ffp, ffl ) ||
+	ffl = 0;
+	if (ctrl.path)
+		for (ffl = strlen( ctrl.path ), slc = 2; ;)
+			if (ctrl.path[--ffl] == '/')
+				if (!--slc)
+					break;
+	if (ffl != strlen( fifoDir ) || memcmp( fifoDir, ctrl.path, ffl ) ||
 	    ctrl.gid != fifoGroup)
 	{
 		closeCtrl( 0 );
