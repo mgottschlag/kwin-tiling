@@ -120,7 +120,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   BrdrSnap = new KIntNumInput(10, MagicBox);
   BrdrSnap->setRange( 0, MAX_BRDR_SNAP);
   BrdrSnap->setLabel(i18n("Border Snap Zone:"));
-  BrdrSnap->setSuffix(i18n("pixels"));
+  BrdrSnap->setSuffix(i18n(" pixels"));
   BrdrSnap->setSteps(1,1);
   eLay->addWidget(BrdrSnap,1,2);
   eLay->addRowSpacing(0,5);
@@ -128,7 +128,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   WndwSnap = new KIntNumInput(10, MagicBox);
   WndwSnap->setRange( 0, MAX_WNDW_SNAP);
   WndwSnap->setLabel(i18n("Window Snap Zone:"));
-  WndwSnap->setSuffix( i18n("pixels"));
+  WndwSnap->setSuffix( i18n(" pixels"));
   BrdrSnap->setSteps(1,1);
   eLay->addWidget(WndwSnap,3,2);
   lay->addWidget(MagicBox,5);
