@@ -33,6 +33,7 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qspinbox.h>
+#include <qtabwidget.h>
 
 typedef KGenericFactory<KCMKonsole, QWidget> ModuleFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_konsole, ModuleFactory("kcmkonsole") );
@@ -57,6 +58,7 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     connect(dialog->startKwritedCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->line_spacingSB,SIGNAL(valueChanged(int)),this,SLOT(configChanged()));
     connect(dialog->word_connectorLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
+    connect(dialog->SchemaEditor1, SIGNAL(changed()), this, SLOT(configChanged()));
 }
 
 void KCMKonsole::load()
@@ -111,6 +113,12 @@ void KCMKonsole::configChanged()
 
 void KCMKonsole::save()
 {
+    if (dialog->SchemaEditor1->isModified())
+    {
+       dialog->TabWidget2->showPage(dialog->tab_2);
+       dialog->SchemaEditor1->querySave();
+    }
+
     KConfig *config = new KConfig("konsolerc");
     config->setDesktopGroup();
 

@@ -39,6 +39,7 @@
 #include <qtoolbutton.h>
 #include <kmessagebox.h>
 #include <ksharedpixmap.h>
+#include <kstdguiitem.h>
 #include <kimageeffect.h>
 #include <qimage.h>
 
@@ -97,6 +98,7 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     connect(boldCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
     connect(colorButton, SIGNAL(changed(const QColor&)), this, SLOT(schemaModified()));
 
+    connect(defaultSchemaCB, SIGNAL(toggled(bool)), this, SIGNAL(changed()));
 }
 
 
@@ -391,6 +393,7 @@ void SchemaEditor::saveCurrent()
 void SchemaEditor::schemaModified()
 {
     schMod=true;
+    emit changed();
 }
 
 QString SchemaEditor::readSchemaTitle(const QString & file)
@@ -425,6 +428,20 @@ QString SchemaEditor::readSchemaTitle(const QString & file)
     return 0;
 }
 
+void SchemaEditor::querySave()
+{
+    int result = KMessageBox::questionYesNo(this, 
+                         i18n("The schema has been modified.\n"
+			"Do you want to save the changes ?"),
+			i18n("Schema Modified"),
+			KStdGuiItem::save(),
+			KStdGuiItem::discard());
+    if (result == KMessageBox::Yes)
+    {
+        saveCurrent();
+    }
+}
+
 void SchemaEditor::readSchema(int num)
 {
     /*
@@ -441,23 +458,14 @@ void SchemaEditor::readSchema(int num)
 
 	}
 
-    if(schMod) {
+	if(schMod) {
 	    disconnect(schemaList, SIGNAL(highlighted(int)), this, SLOT(readSchema(int)));
-
 	    schemaList->setCurrentItem(oldSchema);
-	    if(KMessageBox::questionYesNo(this, i18n("The schema has been modified.\n"
-				"Do you want to save the changes ?"),
-		   i18n("Schema Modified"))==KMessageBox::Yes)
-
-		    saveCurrent();
-
+	    querySave();
 	    schemaList->setCurrentItem(num);
 	    connect(schemaList, SIGNAL(highlighted(int)), this, SLOT(readSchema(int)));
 	    schMod=false;
-
-    }
-
-
+	}
 
     }
 
@@ -603,3 +611,4 @@ void SchemaEditor::readSchema(int num)
     schMod=false;
     return;
 }
+

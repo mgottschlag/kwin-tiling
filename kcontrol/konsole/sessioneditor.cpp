@@ -30,6 +30,7 @@
 #include <kfiledialog.h>
 #include <qtoolbutton.h>
 #include <kicondialog.h>
+#include <kstdguiitem.h>
 #include <kmessagebox.h>
 
 SessionEditor::SessionEditor(QWidget * parent, const char *name)
@@ -217,7 +218,9 @@ void SessionEditor::readSession(int num)
         sessionList->setCurrentItem(oldSession);
         if(KMessageBox::questionYesNo(this, i18n("The session has been modified.\n"
                                                  "Do you want to save the changes ?"),
-                                      i18n("Session Modified"))==KMessageBox::Yes)
+                                      i18n("Session Modified"),
+                                      KStdGuiItem::save(),
+                                      KStdGuiItem::discard())==KMessageBox::Yes)
             saveCurrent();
 
         sessionList->setCurrentItem(num);

@@ -42,6 +42,11 @@ class SchemaEditor : public SchemaDialog
 
     QString schema();
     void setSchema(QString);
+    bool isModified() const { return schMod; }
+    void querySave();
+
+  signals:
+  	void changed();
 
   public slots:
   	void slotColorChanged(int);
