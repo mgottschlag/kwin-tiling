@@ -429,9 +429,6 @@ void KBackground::init()
     m_pBlendBox->insertItem(i18n("Contrast Blending"));
     m_pBlendBox->insertItem(i18n("Hue Shift Blending"));
 
-    // Use this as a common size for the combo boxen
-    int width = m_pBackgroundBox->sizeHint().width();
-
     // Wallpapers
     QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
     for (i=0; i<(int)lst.count(); i++) {
@@ -447,7 +444,6 @@ void KBackground::init()
     m_pArrangementBox->insertItem(i18n("Center Tiled"));
     m_pArrangementBox->insertItem(i18n("Centered Maxpect"));
     m_pArrangementBox->insertItem(i18n("Scaled"));
-    m_pArrangementBox->setFixedWidth(width);
 }
 
 
