@@ -44,7 +44,6 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
-#include <kalphalabel.h>
 #include <kdebug.h>
 #include <kcolorbtn.h>
 #include <klocale.h>
@@ -158,11 +157,10 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QHBoxLayout *hbox = new QHBoxLayout();
     top->addLayout(hbox, 0, 1);
     QLabel *lbl = new QLabel(this);
-    KAlphaLabel *lbla = new KAlphaLabel(this);
-    lbla->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
-    lbla->setFixedSize(lbla->sizeHint());
-    hbox->addWidget(lbla);
-    m_pMonitor = new KBGMonitor(lbla, "preview monitor");
+    lbl->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
+    lbl->setFixedSize(lbl->sizeHint());
+    hbox->addWidget(lbl);
+    m_pMonitor = new KBGMonitor(lbl, "preview monitor");
     m_pMonitor->setGeometry(23, 14, 151, 115);
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
     QWhatsThis::add( m_pMonitor, i18n("In this monitor, you can preview how your settings will look like on a \"real\" desktop.") );
