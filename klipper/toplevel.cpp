@@ -39,7 +39,7 @@
 #define CONFIG_ITEM  60
 #define EMPTY_ITEM   80
 
-#define MENU_ITEMS   7
+#define MENU_ITEMS   8
 // the <clipboard empty> item
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
@@ -459,11 +459,11 @@ void TopLevel::setURLGrabberEnabled( bool enable )
     if ( !bURLGrabber ) {
         delete myURLGrabber;
         myURLGrabber = 0L;
-	toggleURLGrabAction->setText(i18n("Enable &Actions"));
+        toggleURLGrabAction->setText(i18n("Enable &Actions"));
     }
 
     else {
-	toggleURLGrabAction->setText(i18n("&Actions Enabled"));
+        toggleURLGrabAction->setText(i18n("&Actions Enabled"));
         if ( !myURLGrabber ) {
             myURLGrabber = new URLGrabber();
             connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
