@@ -840,6 +840,8 @@ void TreeView::paste()
 
 
     fillBranch(newitem->file(), newitem);
+    setSelected ( newitem, true);
+    itemSelected( newitem);
 }
 
 void TreeView::del()
