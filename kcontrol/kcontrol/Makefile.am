@@ -70,7 +70,7 @@ datadir = $(kde_appsdir)/Settingsmenu
 install-data-local: KControl_NoDisplay.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)
 	$(INSTALL_DATA) $(srcdir)/KControl_NoDisplay.desktop $(DESTDIR)$(kde_appsdir)/KControl.desktop
-	@-rm $(DESTDIR)$(kde_bindir)/kinfocenter
+	@-rm -f $(DESTDIR)$(kde_bindir)/kinfocenter
 	@$(LN_S) kcontrol $(DESTDIR)$(kde_bindir)/kinfocenter
 	$(INSTALL_DATA) $(srcdir)/kinfocenter.desktop $(DESTDIR)$(kde_appsdir)/System/
 
