@@ -3,8 +3,8 @@
     Greeter module for xdm
     $Id$
 
-    Copyright (C) 1997, 1998 Steffen Hansen
-                             stefh@mip.ou.dk
+    Copyright (C) 1997, 1998, 2000 Steffen Hansen
+                                   hansen@kde.org
 
 
     This program is free software; you can redistribute it and/or modify
@@ -254,13 +254,12 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      sessionargBox = new QComboBox( false, this);
 
      sessionargBox->insertStringList( kdmcfg->sessionTypes() );
-     //set_fixed( sessionargBox);
+
      hbox2->addWidget( sessionargBox);
      
      goButton = new QPushButton( i18n("Go!"), this);
      connect( goButton, SIGNAL( clicked()), SLOT(go_button_clicked()));
 
-     //set_fixed( goButton);
      hbox2->addWidget( goButton, AlignBottom);
 
 #if 0
@@ -763,7 +762,7 @@ KGreeter::ReturnPressed()
      }
 }
 
-static void 
+static int
 DoIt()
 {
      // First initialize display:
@@ -792,10 +791,11 @@ DoIt()
 		    ::d->name);
 	  SessionExit (::d, RESERVER_DISPLAY, FALSE);	 
      }
-     qApp->exec();
+     int status = qApp->exec();
      // Give focus to root window:
      QApplication::desktop()->setActiveWindow();
      delete kgreeter;
+     return status;
 }
 
 #include "kgreeter.moc"
@@ -882,8 +882,11 @@ GreetUser(
      
      sigaction(SIGCHLD, &sig, NULL);
 
-     DoIt();
-     
+     int errcode = DoIt();
+     if( errcode != 0) {
+	  // Dont login. Shutdown, restart or something instead	  
+	  SessionExit( ::d, errcode, TRUE);
+     }
      /*
       * Run system-wide initialization file
       */

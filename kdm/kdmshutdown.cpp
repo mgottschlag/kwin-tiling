@@ -3,8 +3,8 @@
     Shutdown dialog
     $Id$
 
-    Copyright (C) 1997, 1998 Steffen Hansen
-                             stefh@mip.ou.dk
+    Copyright (C) 1997, 1998, 2000 Steffen Hansen
+                             hansen@kde.org
 
 
     This program is free software; you can redistribute it and/or modify
@@ -395,12 +395,12 @@ KDMShutdown::bye_bye()
 
 	       sleep(1);
 	       system( QFile::encodeName( cur_action ).data() );
-	       exit( UNMANAGE_DISPLAY);
+	       QApplication::exit( UNMANAGE_DISPLAY);
 	  } else {
-	       exit( UNMANAGE_DISPLAY);
+	       QApplication::exit( UNMANAGE_DISPLAY);
 	  }
      } else
-	  exit( RESERVER_DISPLAY);
+	  QApplication::exit( RESERVER_DISPLAY);
 }
 
 #include "kdmshutdown.moc"

@@ -38,7 +38,7 @@ Random rambings and license information
 Version 0.1 of kdm is copyright
 	Matthias Ettrich <ettrich@informatik.uni-tuebingen.de>
 All later versions copyright:
-	(C) 1997 Steffen Hansen <stefh@dit.ou.dk>
+	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
 
 Thanks to (in no particular order):
 Michael Bach Jensen and Torsten Rahn for drawing icons.
@@ -57,7 +57,7 @@ particular purpose.
 
 Have fun with it (and feel free to comment),
 
-	Steffen <stefh@dit.ou.dk>
+	Steffen <hansen@kde.org>
 
 Differences from xdm
 --------------------
@@ -79,3 +79,4 @@ brand new graphically login to your workstation,
    Matthias <ettrich@informatik.uni-tuebingen.de>
 
 Fri Jul 11 14:27:02 1997 -- Steffen Hansen
+Sat Sep 30 23:06:02 2000 -- Steffen Hansen
