@@ -813,13 +813,14 @@ kg_main( int argc, char **argv )
     }
 
     GSendInt( G_Ready );
-    XUndefineCursor( dpy, RootWindow( dpy, DefaultScreen( dpy ) ) );
+
+    QDesktopWidget *dsk = kapp->desktop();
+    dsk->setCursor( Qt::ArrowCursor );
 
   redo:
     app.setOverrideCursor( Qt::WaitCursor );
     bool greet = GRecvInt() == G_Greet;	// alt: G_Choose
 
-    QDesktopWidget *dsk = kapp->desktop();
     QRect scr = dsk->screenGeometry(
 	kdmcfg->_greeterScreen == -1 ?
 	    dsk->screenNumber( QPoint( 0, 0 ) ) :
