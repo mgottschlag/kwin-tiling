@@ -440,17 +440,17 @@ void KlipperWidget::slotConfigure()
 	maxClipItems = dlg->maxItems();
 	trimClipHistory( maxClipItems );
 	
-        // KClipboard configuration
+        // KClipboardSynchronizer configuration
         m_config->setGroup("General");
         m_config->writeEntry("SynchronizeClipboardAndSelection",
                              dlg->synchronize(), true, true );
 
         writeConfiguration( m_config ); // syncs
 
-        // notify all other apps about new KClipboard configuration
+        // notify all other apps about new KClipboardSynchronizer configuration
         int message = 0;
         if ( dlg->synchronize() )
-            message |= KClipboard::Synchronize;
+            message |= KClipboardSynchronizer::Synchronize;
 
         KIPC::sendMessageAll( KIPC::ClipboardConfigChanged, message );
     }
@@ -705,7 +705,7 @@ void KlipperWidget::setClipboard( const QString& text, int mode )
     bool blocked = clip->signalsBlocked();
     clip->blockSignals( true ); // ### this might break other kicker applets
 
-    KClipboard *klip = KClipboard::self();
+    KClipboardSynchronizer *klip = KClipboardSynchronizer::self();
     bool selection = klip->isReverseSynchronizing();
     bool synchronize = klip->isSynchronizing();
     klip->setReverseSynchronizing( false );

@@ -139,7 +139,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
              "something and the clipboard when choosing e.g. \"Copy\" "
              "in a menubar.") );
 
-    cbSynchronize->setChecked( KClipboard::isSynchronizing() );
+    cbSynchronize->setChecked( KClipboardSynchronizer::isSynchronizing() );
     cbSeparate->setChecked( !cbSynchronize->isChecked() );
 
     popupTimeout = new KIntNumInput( this );
@@ -154,10 +154,10 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     connect( maxItems, SIGNAL( valueChanged( int )),
              SLOT( historySizeChanged( int ) ));
 
-    connect( group, SIGNAL( clicked( int )), 
+    connect( group, SIGNAL( clicked( int )),
              SLOT( slotClipConfigChanged() ));
-    slotClipConfigChanged(); 
-    
+    slotClipConfigChanged();
+
     // Add some spacing at the end
     QWidget *dummy = new QWidget( this );
     setStretchFactor( dummy, 1 );
