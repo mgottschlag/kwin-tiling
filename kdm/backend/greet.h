@@ -66,17 +66,18 @@ from The Open Group.
 #define stringify(x) __stringify(x)
 
 /*
- * Exit codes for fork()ed session process and greeter
+ * Exit codes for fork()ed session process, greeter, and config reader
  */
-#define EX_NORMAL		0	/* do whatever seems appropriate */
-#define EX_REMANAGE_DPY		1	/* force remanage; same as EX_NORMAL, but cannot return to reserve mode immediately */
-#define EX_UNMANAGE_DPY		2	/* force deletion */
-#define EX_RESERVER_DPY		3	/* force server termination */
-#define EX_AL_RESERVER_DPY	4	/* reserver; maybe, auto-(re-)login */
-#define EX_OPENFAILED_DPY	5	/* XOpenDisplay failed, retry */
-#define EX_TEXTLOGIN		6	/* start console login */
-#define EX_RESERVE		7	/* put in reserve mode */
-#define EX_REMOTE		8	/* start -query-ing X-server */
+#define EX_NORMAL		30	/* do whatever seems appropriate */
+#define EX_REMANAGE_DPY		31	/* force remanage; same as EX_NORMAL, but cannot return to reserve mode immediately */
+#define EX_UNMANAGE_DPY		32	/* force deletion */
+#define EX_RESERVER_DPY		33	/* force server termination */
+#define EX_AL_RESERVER_DPY	34	/* reserver; maybe, auto-(re-)login */
+#define EX_OPENFAILED_DPY	35	/* XOpenDisplay failed, retry */
+#define EX_TEXTLOGIN		36	/* start console login */
+#define EX_RESERVE		37	/* put in reserve mode */
+#define EX_REMOTE		38	/* start -query-ing X-server */
+#define EX_MAX EX_REMOTE
 
 /*
  * Command codes core -> greeter

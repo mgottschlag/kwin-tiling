@@ -61,7 +61,7 @@
 #define PRINT_ARRAYS
 #define LOG_NAME "kdm_greet"
 #define LOG_DEBUG_MASK DEBUG_GREET
-#define LOG_PANIC_EXIT EX_UNMANAGE_DPY
+#define LOG_PANIC_EXIT 1
 #define STATIC
 #include <printf.c>
 
@@ -266,14 +266,6 @@ GetCfgStrArr (int id, int *len)
     return GRecvStrArr (len);
 }
 
-void
-SessionExit (int ret)
-{
-    GSendInt (G_SessionExit);
-    GSendInt (ret);
-    exit (0);
-}
-
 
 static int
 ignoreErrors (Display *dpy ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED)
@@ -360,7 +352,7 @@ SecureDisplay (Display *dpy)
     (void) signal (SIGALRM, syncTimeout);
     if (setjmp (syncJump)) {
 	LogError ("Display %s could not be secured\n", dname);
-	SessionExit (EX_RESERVER_DPY);
+	exit (EX_RESERVER_DPY);
     }
     (void) alarm ((unsigned) dgrabTimeout);
     Debug ("Before XGrabServer %s\n", dname);
@@ -373,7 +365,7 @@ SecureDisplay (Display *dpy)
 	(void) signal (SIGALRM, SIG_DFL);
 	LogError ("Keyboard on display %s could not be secured\n", dname);
 	sleep (10);
-	SessionExit (EX_RESERVER_DPY);
+	exit (EX_RESERVER_DPY);
     }
     (void) alarm (0);
     (void) signal (SIGALRM, SIG_DFL);
@@ -633,7 +625,7 @@ setCursor( Display *mdpy, int window, int shape )
 static void
 sigterm( int n ATTR_UNUSED )
 {
-    exit( 0 );
+    exit( EX_NORMAL );
 }
 
 static char *savhome;
@@ -709,5 +701,5 @@ main (int argc ATTR_UNUSED, char **argv)
 
     kg_main (argv[0]);
 
-    return 0;
+    return EX_NORMAL;
 }

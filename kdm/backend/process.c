@@ -362,11 +362,12 @@ GClose (GProc *proc, int force)
 	TerminateProcess (proc->pid, SIGTERM);
     ret = Wait4 (proc->pid);
     proc->pid = 0;
-    if (ret && WaitSig(ret) != SIGTERM)
+    if (WaitSig(ret) ? WaitSig(ret) != SIGTERM :
+        (WaitCode(ret) < EX_NORMAL || WaitCode(ret) > EX_MAX))
 	LogError ("Abnormal termination of %s, code %d, signal %d\n", 
-		  curtalk->pipe->who, WaitCode(ret), WaitSig(ret));
-    free (curtalk->pipe->who);
-    curtalk->pipe->who = 0;
+		  proc->pipe.who, WaitCode(ret), WaitSig(ret));
+    free (proc->pipe.who);
+    proc->pipe.who = 0;
     return ret;
 }
 

@@ -128,7 +128,7 @@ KGVerify::selectPlugin( int id )
 {
     if (pluginList.isEmpty()) {
 	MsgBox( errorbox, i18n("No greeter widget plugin loaded. Check the configuration.") );
-	exit( 1 );
+	::exit( EX_UNMANAGE_DPY );
     }
     curPlugin = id;
     greet = greetPlugins[pluginList[id]].info->create( this, parent, predecessor, fixedEntity, func, ctx );

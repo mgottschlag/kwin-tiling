@@ -36,7 +36,7 @@
 #include <qtimer.h>
 #include <qcursor.h>
 
-#include <stdlib.h> // free()
+#include <stdlib.h> // free(), exit()
 #include <unistd.h> // alarm()
 
 #include <X11/Xlib.h>
@@ -70,8 +70,9 @@ GreeterApp::GreeterApp()
 void
 GreeterApp::timerEvent( QTimerEvent * )
 {
+    alarm( 0 );
     if (!PingServer( qt_xdisplay() ))
-	SessionExit( EX_RESERVER_DPY );
+	::exit( EX_RESERVER_DPY );
     alarm( pingInterval * 70 );	// sic! give the "proper" pinger enough time
 }
 

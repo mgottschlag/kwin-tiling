@@ -1612,5 +1612,5 @@ int main(int argc ATTR_UNUSED, char **argv)
     }
 
 /*    Debug ("Config reader exiting ...");*/
-    return 0;
+    return EX_NORMAL;
 }

@@ -37,6 +37,8 @@
 #include <qapplication.h>
 #include <qcursor.h>
 
+#include <stdlib.h>
+
 KGDialog::KGDialog() : inherited( (QWidget *)0, (const char*)0, true )
 {
 #ifdef WITH_KDM_XCONSOLE
@@ -115,7 +117,7 @@ KGDialog::slotActivateMenu( int id )
 void
 KGDialog::slotExit()
 {
-    SessionExit( EX_RESERVER_DPY );
+    ::exit( EX_RESERVER_DPY );
 }
 
 void
@@ -133,7 +135,7 @@ KGDialog::slotReallySwitch()
 void
 KGDialog::slotConsole()
 {
-    SessionExit( EX_TEXTLOGIN );
+    ::exit( EX_TEXTLOGIN );
 }
 
 void

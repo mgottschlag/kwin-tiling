@@ -45,8 +45,6 @@ int GetCfgInt (int id);
 char *GetCfgStr (int id);
 char **GetCfgStrArr (int id, int *len);
 
-void SessionExit (int ret) ATTR_NORETURN;
-
 void Debug (const char *fmt, ...);
 void LogInfo (const char *fmt, ...);
 void LogError (const char *fmt, ...);

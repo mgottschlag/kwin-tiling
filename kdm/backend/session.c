@@ -213,7 +213,7 @@ GTalk mstrtalk;	/* make static; see dm.c */
 int
 CtrlGreeterWait (int wreply)
 {
-    int		i, j, cmd, type, exitCode;
+    int		i, j, cmd, type;
     char	*name, *pass, **avptr;
 #ifdef XDMCP
     ARRAY8Ptr	aptr;
@@ -324,13 +324,6 @@ CtrlGreeterWait (int wreply)
 	    free (pass);
 	    free (name);
 	    break;
-	case G_SessionExit:
-	    Debug ("G_SessionExit\n");
-	    exitCode = GRecvInt ();
-	    Debug (" code %d\n", exitCode);
-	    CloseGreeter (FALSE);
-	    SessionExit (exitCode);
-	    break;
 	case G_Verify:
 	    Debug ("G_Verify\n");
 	    if (curuser) { free (curuser); curuser = 0; }
@@ -368,7 +361,7 @@ CtrlGreeterWait (int wreply)
 	if (!wreply)
 	    return -1;
     }
-    LogError ("Lost connection to greeter\n");
+    Debug ("lost connection to greeter\n");
     return -2;
 }
 
@@ -406,7 +399,8 @@ OpenGreeter ()
 	SessionExit (EX_UNMANAGE_DPY);
     freeStrArr (env);
     if ((cmd = CtrlGreeterWait (TRUE))) {
-	LogError ("Received unknown or unexpected command %d from greeter\n", cmd);
+	if (cmd != -2)
+	    LogError ("Received unknown or unexpected command %d from greeter\n", cmd);
 	CloseGreeter (TRUE);
 	SessionExit (EX_UNMANAGE_DPY);
     }
@@ -424,6 +418,10 @@ CloseGreeter (int force)
     greeter = 0;
     ret = GClose (&grtproc, force);
     Debug ("greeter for %s stopped\n", td->name);
+    if (WaitCode(ret) > EX_NORMAL && WaitCode(ret) <= EX_MAX) {
+	Debug ("greeter-initiated session exit, code %d\n", WaitCode(ret));
+	SessionExit (WaitCode(ret));
+    }
     return ret;
 }
 

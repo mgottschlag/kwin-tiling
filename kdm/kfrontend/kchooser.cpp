@@ -151,7 +151,7 @@ void ChooserDlg::accept()
 	if (item) {
 	    GSendInt (G_Ready);
 	    GSendInt (((ChooserListViewItem *)item)->id);
-	    SessionExit(EX_NORMAL);
+	    ::exit (EX_NORMAL);
 	}
     }
 }
