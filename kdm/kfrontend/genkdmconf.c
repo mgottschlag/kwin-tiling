@@ -527,6 +527,7 @@ wrconf (FILE *f)
 # define DEF_SERVER_LINES DEF_SERVER_LINE "\n"
 #endif
 
+#ifdef XDMCP
 static const char def_xaccess[] = 
 "# Xaccess - Access control file for XDMCP connections\n"
 "#\n"
@@ -594,6 +595,7 @@ static const char def_xaccess[] =
 "#%hostlist	host-a host-b\n"
 "\n"
 "#*		CHOOSER %hostlist	#\n";
+#endif
 
 /* XXX
 #define XSERVERS_MAJOR 2
@@ -620,6 +622,7 @@ static const char def_xservers[] =
 "\n" DEF_SERVER_LINES "\n"
 "\n" XSERVERS_VERSION;
 
+#ifdef XDMCP
 static const char def_willing[] = 
 "#! /bin/sh\n"
 "# The output of this script is displayed in the chooser window\n"
@@ -630,6 +633,7 @@ static const char def_willing[] =
 "s=\"\"; [ \"$nrusers\" != 1 ] && s=s\n"
 "\n"
 "echo \"${nrusers} user${s}, load: ${load}\"\n";
+#endif
 
 static const char def_setup[] = 
 "#! /bin/sh\n"
@@ -1382,6 +1386,7 @@ mk_xservers(Entry *ce, Section *cs ATTR_UNUSED)
 	    goto mkdef;
 }
 
+#ifdef XDMCP
 static void
 cp_keyfile(Entry *ce, Section *cs ATTR_UNUSED)
 {
@@ -1425,6 +1430,7 @@ mk_willing(Entry *ce, Section *cs ATTR_UNUSED)
 	}
     }
 }
+#endif
 
 /*
 static int
@@ -1836,6 +1842,7 @@ static Ent entsGeneral[] = {
 "# with AFS). Default is \"\"\n" },
 };
 
+#ifdef XDMCP
 static Ent entsXdmcp[] = {
 { "Enable",		0, 0, 
 "# Whether KDM should listen to XDMCP requests. Default is true.\n" },
@@ -1863,6 +1870,7 @@ static Ent entsXdmcp[] = {
 "# BroadcastQuery requests.\n"
 "# By default no program is invoked and \"Willing to manage\" is sent.\n" },
 };
+#endif
 
 static Ent entsShutdown[] = {
 { "HaltCmd",		0, 0, 
@@ -2129,6 +2137,7 @@ static Ent entsGreeter[] = {
 { "AuthComplain",	0, 0, 
 "# Warn, if local X-authorization cannot be created. Default is true\n"
 "# XXX this is a dummy currently\n" },
+#ifdef XDMCP
 { "LoginMode",	0, 0, 
 "# Specify whether the greeter of local displays should start up in host chooser\n"
 "# (remote) or login (local) mode and whether it is allowed to switch to the\n"
@@ -2140,6 +2149,7 @@ static Ent entsGreeter[] = {
 { "ChooserHosts",	0, 0, 
 "# A list of hosts to be automatically added to the remote login menu. The\n"
 "# special name \"*\" means broadcast. Default is \"*\"\n" },
+#endif
 { "ForgingSeed",	0, upd_forgingseed,
 "# Use this number as a random seed when forging saved session types, etc. of\n"
 "# unknown users. This is used to avoid telling an attacker about existing users\n"
@@ -2172,12 +2182,21 @@ static Ent entsGreeter[] = {
 
 static Sect
     secGeneral	= { "General",	entsGeneral, as(entsGeneral) },
+#ifdef XDMCP
     secXdmcp	= { "Xdmcp",	entsXdmcp, as(entsXdmcp) },
+#endif
     secShutdown	= { "Shutdown",	entsShutdown, as(entsShutdown) },
     sec_Core	= { "-Core",	entsCore, as(entsCore) },
     sec_Greeter	= { "-Greeter",	entsGreeter, as(entsGreeter) },
-    *allSects[] = { &secGeneral, &secXdmcp, &secShutdown,
-		    &sec_Core, &sec_Greeter };
+    *allSects[] = {
+	&secGeneral,
+#ifdef XDMCP
+	&secXdmcp,
+#endif
+	&secShutdown,
+	&sec_Core,
+	&sec_Greeter
+    };
 
 static Sect *
 findSect (const char *name)
@@ -2240,6 +2259,7 @@ static DEnt dEntsGeneral[] = {
 { "DmrcDir",		"/nfs-shared/var/dmrcs", 0 },
 };
 
+#ifdef XDMCP
 DEnt dEntsXdmcp[] = {
 { "Enable",		"false", 1 },
 { "Port",		"177", 0 },
@@ -2250,6 +2270,7 @@ DEnt dEntsXdmcp[] = {
 { "SourceAddress",	"true", 0 },
 { "Willing",		"", 0 },
 };
+#endif
 
 static DEnt dEntsShutdown[] = {
 { "HaltCmd",		"", 0 },
@@ -2352,8 +2373,10 @@ static DEnt dEntsLocalCore[] = {
 static DEnt dEntsLocalGreeter[] = {
 { "AuthComplain",	"false", 0 },
 { "GreeterScreen",	"-1", 0 },
+#ifdef XDMCP
 { "LoginMode",		"DefaultLocal", 1 },
 { "ChooserHosts",	"*,ugly,sky,dino,kiste.local,login.crap.com", 0 },
+#endif
 { "AllowClose",	        "false", 1 },
 };
 
@@ -2421,7 +2444,9 @@ static DSect dAllSects[] = {
 "# The defaults refer to KDM's built-in values, not anything set in this file.\n"
 "#\n"
 "\n" },
+#ifdef XDMCP
 { "Xdmcp",		dEntsXdmcp, as(dEntsXdmcp), 1, 0 },
+#endif
 { "Shutdown",		dEntsShutdown, as(dEntsShutdown), 1, 0 },
 { "X-*-Core",		dEntsAnyCore, as(dEntsAnyCore), 1, 
 "# Rough estimations about how many seconds KDM will spend at most on\n"
@@ -2711,10 +2736,12 @@ applydefs (FDefs *chgdef, int ndefs, const char *path)
 	}
 }
 
+#ifdef XDMCP
 static FDefs kdmdefs_all[] = {
 { "Xdmcp",	"Xaccess",	"%s/kdm/Xaccess",	0		},
 { "Xdmcp",	"Willing",	"",			0		},
 };
+#endif
 
 static FDefs kdmdefs_eq_22[] = {
 { "General",	"Xservers",	"%s/kdm/Xservers", 	0		},
@@ -2725,6 +2752,7 @@ static FDefs kdmdefs_eq_22[] = {
 { "X-*-Core",	"Session",	"%s/kdm/Xsession", 	0		},
 };
 
+#ifdef XDMCP
 static int
 if_xdmcp (void)
 {
@@ -2734,6 +2762,7 @@ if_xdmcp (void)
 static FDefs kdmdefs_le_30[] = {
 { "Xdmcp",	"KeyFile",	"%s/kdm/kdmkeys",	if_xdmcp	},
 };
+#endif
 
 /* HACK: misused by is22conf() below */
 static FDefs kdmdefs_ge_30[] = {
@@ -2795,11 +2824,15 @@ mergeKdmRcNewer (const char *path)
     }
 
     cpygroup (&secGeneral);
+#ifdef XDMCP
     cpygroup (&secXdmcp);
+#endif
     cpygroup (&secShutdown);
 
+#ifdef XDMCP
     if (cfgSGroup ("Xdmcp"))
 	cpyfqval ("Xdmcp", "Willing", "Xwilling");
+#endif
 
     for (cursect = rootsect; cursect; cursect = cursect->next)
 	if (!strncmp (cursect->name, "X-", 2)) {
@@ -2815,13 +2848,17 @@ mergeKdmRcNewer (const char *path)
 		free (p2);
 		cpyval ("HiddenUsers", "NoUsers");
 		cpyval ("SelectedUsers", "Users");
+#ifdef XDMCP
 		if ((p = cfgEnt ("EnableChooser")))	/* from make_it_cool branch and SuSE 8.1 */
 		    putval ("LoginMode",
 			    isTrue (p) ? "DefaultLocal" : "LocalOnly");
+#endif
 	    }
 	}
 
+#ifdef XDMCP
     applydefs (kdmdefs_all, as(kdmdefs_all), path);
+#endif
     if (!*(cp = getfqval ("General", "ConfigVersion", ""))) {	/* < 3.1 */
 	mod_usebg = 1;
 	if (is22conf (path)) {
@@ -2832,8 +2869,10 @@ mergeKdmRcNewer (const char *path)
 	    applydefs (kdmdefs_ge_30, as(kdmdefs_ge_30), path);
 	    printf ("Information: old kdmrc is from kde 3.0\n");
 	}
+#ifdef XDMCP
 	/* work around minor <= 3.0.x defaults borkedness */
 	applydefs (kdmdefs_le_30, as(kdmdefs_le_30), path);
+#endif
     } else {
 	int ma, mi;
 	sscanf (cp, "%d.%d", &ma, &mi);
@@ -2945,6 +2984,7 @@ P_autoUser (const char *sect, char **value ATTR_UNUSED)
     putfqval (sect, "AutoLoginEnable", "true");
 }
 
+#ifdef XDMCP
 static void 
 P_requestPort (const char *sect, char **value)
 {
@@ -2954,6 +2994,7 @@ P_requestPort (const char *sect, char **value)
     } else
 	putfqval (sect, "Enable", "true");
 }
+#endif
 
 static int kdmrcmode = 0644;
 
@@ -2965,21 +3006,27 @@ P_autoPass (const char *sect ATTR_UNUSED, char **value ATTR_UNUSED)
 
 XResEnt globents[] = {
 { "servers", "General", "Xservers", 0 },
+#ifdef XDMCP
 { "requestPort", "Xdmcp", "Port", P_requestPort },
+#endif
 { "pidFile", "General", 0, 0 },
 { "lockPidFile", "General", 0, 0 },
 { "authDir", "General", 0, P_authDir },
 { "autoRescan", "General", 0, 0 },
+#ifdef XDMCP
 { "removeDomainname", "Xdmcp", 0, 0 },
 { "keyFile", "Xdmcp", 0, 0 },
 { "accessFile", "Xdmcp", "Xaccess", 0 },
+#endif
 { "exportList", "General", 0, P_List },
 #if !defined(__linux__) && !defined(__OpenBSD__)
 { "randomFile", "General", 0, 0 },
 #endif
+#ifdef XDMCP
 { "choiceTimeout", "Xdmcp", 0, 0 },
 { "sourceAddress", "Xdmcp", 0, 0 },
 { "willing", "Xdmcp", 0, 0 },
+#endif
 }, dpyents[] = {
 { "serverAttempts", "X-%s-Core", 0, 0 },
 { "openDelay", "X-%s-Core", 0, P_openDelay },
@@ -3075,8 +3122,10 @@ DumpEntry(
 }
 
 static FDefs xdmdefs[] = {
+#ifdef XDMCP
 { "Xdmcp",	"Xaccess",	"%s/Xaccess",		0	},
 { "Xdmcp",	"Willing",	"",			0	},
+#endif
 { "X-*-Core",	"Setup",	"",			0	},
 { "X-*-Core",	"Startup",	"",			0	},
 { "X-*-Core",	"Reset",	"",			0	},

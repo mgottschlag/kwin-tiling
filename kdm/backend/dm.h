@@ -222,8 +222,8 @@ struct display {
 	int		userSess;	/* -1=nobody, otherwise uid */
 	int		fifofd;		/* command fifo */
 	GPipe		pipe;		/* comm master <-> slave */
-	char		*remoteHost;	/* for X -query type remote login */
 #ifdef XDMCP
+	char		*remoteHost;	/* for X -query type remote login */
 	/* XDMCP state */
 	unsigned	sessionID;	/* ID of active session */
 	ARRAY8		peer;		/* display peer address */
@@ -267,9 +267,13 @@ struct display {
 	char		*autoPass;	/* his password. only for krb5 & sec_rpc */
 	char		**noPassUsers;	/* users allowed in without a password */
 	char		**sessionsDirs;	/* where session .desktop files are located */
+#ifdef XDMCP
 	char		**chooserHosts;	/* hosts to auto-add in "remote login" */
+#endif
 	char		*clientLogFile;	/* xsession-errors template */
+#ifdef XDMCP
 	int		loginMode;	/* whether to start chooser or login */
+#endif
 	int		autoReLogin;	/* auto-re-login after crash */
 	int		allowNullPasswd;/* allow null password on login */
 	int		allowRootLogin;	/* allow direct root login */

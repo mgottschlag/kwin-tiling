@@ -222,12 +222,14 @@ GSendNStr (const char *buf, int len)
     GWrite ("", 1);
 }
 
+#ifdef XDMCP
 static void
 GSendArr (int len, const char *data)
 {
     GWrite (&len, sizeof(len));
     GWrite (data, len);
 }
+#endif
 
 static int
 GRecvCmd (int *val)
@@ -340,8 +342,15 @@ freeBuf (File *file)
 }
 #endif
 
-static Value VnoPassEnable, VautoLoginEnable, VxdmcpEnable,
-	VXaccess, VXservers, Vdummy;
+static Value
+    VnoPassEnable,
+    VautoLoginEnable,
+#ifdef XDMCP
+    VxdmcpEnable,
+    VXaccess,
+#endif
+    VXservers,
+    Vdummy;
 
 #define C_MTYPE_MASK	0x30000000
 # define C_PATH		0x10000000	/* C_TYPE_STR is a path spec */
@@ -357,6 +366,7 @@ static Value VnoPassEnable, VautoLoginEnable, VxdmcpEnable,
 #define C_accessFile		( C_TYPE_STR | C_INTERNAL | C_CONFIG | 0x2003 )
 #define C_servers		( C_TYPE_STR | C_INTERNAL | C_CONFIG | 0x2004 )
 
+#ifdef XDMCP
 static int
 PrequestPort (Value *retval)
 {
@@ -366,6 +376,7 @@ PrequestPort (Value *retval)
     }
     return 0;
 }
+#endif
 
 static Value
     emptyStr = { "", 1 },
@@ -439,7 +450,9 @@ PautoLoginX (Value *retval)
 #endif
 
 static const char
+#ifdef XDMCP
     *loginmode[] = { "LocalOnly", "DefaultLocal", "DefaultRemote", "RemoteOnly", 0 },
+#endif
     *logoarea[] = { "None", "Logo", "Clock", 0 },
     *showusers[] = { "NotHidden", "Selected", 0 },
     *facesource[] = { "AdminOnly", "PreferAdmin", "PreferUser", "UserOnly", 0 },
@@ -467,6 +480,7 @@ Ent entsGeneral[] = {
 { "DmrcDir",		C_dmrcDir | C_PATH,	0,	"" },
 };
 
+#ifdef XDMCP
 Ent entsXdmcp[] = {
 { "Enable",		C_xdmcpEnable | C_BOOL,	&VxdmcpEnable,	"true" },
 { "Port",		C_requestPort,		(void *)PrequestPort,	"177" },
@@ -477,6 +491,7 @@ Ent entsXdmcp[] = {
 { "SourceAddress",	C_sourceAddress | C_BOOL, 0,	"false" },
 { "Willing",		C_willing,		0,	"" },
 };
+#endif
 
 Ent entsShutdown[] = {
 { "HaltCmd",		C_cmdHalt,		0,	HALT_CMD },
@@ -568,8 +583,10 @@ Ent entsGreeter[] = {
 { "AuthComplain",	C_authComplain | C_BOOL, 0,	"true" },
 { "UseBackground",	C_UseBackground | C_BOOL, 0,	"true" },
 { "BackgroundCfg",	C_BackgroundCfg,	0,	KDMCONF "/backgroundrc" },
+#ifdef XDMCP
 { "LoginMode",		C_loginMode | C_ENUM,	loginmode,	"LocalOnly" },
 { "ChooserHosts",	C_chooserHosts,		0,	"*" },
+#endif
 { "ForgingSeed",	C_ForgingSeed,		0,	"0" },
 #ifdef WITH_KDM_XCONSOLE
 { "ShowLog",		C_ShowLog | C_BOOL,	0,	"false" },
@@ -584,12 +601,21 @@ Ent entsGreeter[] = {
 
 Sect
  secGeneral	= { "General",	entsGeneral, as(entsGeneral) },
+#ifdef XDMCP
  secXdmcp	= { "Xdmcp",	entsXdmcp, as(entsXdmcp) },
+#endif
  secShutdown	= { "Shutdown",	entsShutdown, as(entsShutdown) },
  sec_Core	= { "-Core",	entsCore, as(entsCore) },
  sec_Greeter	= { "-Greeter",	entsGreeter, as(entsGreeter) },
- *allSects[]	= { &secGeneral, &secXdmcp, &secShutdown,
-		    &sec_Core, &sec_Greeter };
+ *allSects[] = {
+    &secGeneral,
+#ifdef XDMCP
+    &secXdmcp,
+#endif
+    &secShutdown,
+    &sec_Core,
+    &sec_Greeter
+ };
 
 static const char *kdmrc = KDMCONF "/kdmrc";
 
@@ -1147,6 +1173,7 @@ ReadWord (File *file, int *len, int EOFatEOL)
 }
 
 
+#ifdef XDMCP
 #define ALIAS_CHARACTER	    '%'
 #define NEGATE_CHARACTER    '!'
 #define CHOOSER_STRING	    "CHOOSER"
@@ -1459,6 +1486,7 @@ ReadAccessFile (const char *fname)
 	GSendInt (acList->flags);
     }
 }
+#endif
 
 
 static struct displayMatch {
@@ -1646,12 +1674,18 @@ int main(int argc ATTR_UNUSED, char **argv)
 /*	    Debug ("GC_Files\n");*/
 	    ReadConf ();
 	    CopyValues (0, &secGeneral, 0, C_CONFIG);
+#ifdef XDMCP
 	    CopyValues (0, &secXdmcp, 0, C_CONFIG);
 	    GSendInt ((VXservers.ptr[0] == '/') ? 3 : 2);
+#else
+	    GSendInt ((VXservers.ptr[0] == '/') ? 2 : 1);
+#endif
 	    GSendStr (kdmrc);
 		GSendInt (-1);
+#ifdef XDMCP
 	    GSendNStr (VXaccess.ptr, VXaccess.len - 1);
 		GSendInt (0);
+#endif
 	    if (VXservers.ptr[0] == '/') {
 		GSendNStr (VXservers.ptr, VXservers.len - 1);
 		    GSendInt (0);
@@ -1662,11 +1696,17 @@ int main(int argc ATTR_UNUSED, char **argv)
 		case GC_gDisplay:
 		    GSendInt (0);
 		    break;
+#ifdef XDMCP
 		case GC_gXaccess:
 		    GSendInt (1);
 		    break;
+#endif
 		case GC_gXservers:
+#ifdef XDMCP
 		    GSendInt ((VXservers.ptr[0] == '/') ? 2 : 0);
+#else
+		    GSendInt ((VXservers.ptr[0] == '/') ? 1 : 0);
+#endif
 		    break;
 		default:
 		    GSendInt (-1);
@@ -1683,7 +1723,9 @@ int main(int argc ATTR_UNUSED, char **argv)
 /*		Debug ("GC_gGlobal\n");*/
 		ReadConf ();
 		CopyValues (&va, &secGeneral, 0, 0);
+#ifdef XDMCP
 		CopyValues (&va, &secXdmcp, 0, 0);
+#endif
 		CopyValues (&va, &secShutdown, 0, 0);
 #ifdef USE_PAM
 		AddValue (&va, C_PAMService, &pamservice);
@@ -1708,9 +1750,11 @@ int main(int argc ATTR_UNUSED, char **argv)
 	    case GC_gXservers:
 		ReadServersFile (cfgfile);
 		break;
+#ifdef XDMCP
 	    case GC_gXaccess:
 		ReadAccessFile (cfgfile);
 		break;
+#endif
 	    default:
 		Debug ("Unsupported config cathegory %#x\n", what);
 	    }

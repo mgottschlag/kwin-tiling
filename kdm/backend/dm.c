@@ -569,6 +569,7 @@ SwitchToX (struct display *d)
 }
 
 
+#ifdef XDMCP
 static void
 StartRemoteLogin (struct display *d)
 {
@@ -607,6 +608,7 @@ StartRemoteLogin (struct display *d)
 
     d->status = remoteLogin;
 }
+#endif
 
 
 static void
@@ -1028,10 +1030,12 @@ ReapChildren (void)
 		Debug ("display exited with EX_TEXTLOGIN\n");
 		ExitDisplay (d, DS_TEXTMODE, 0, 0);
 		break;
+#ifdef XDMCP
 	    case EX_REMOTE:
 		Debug ("display exited with EX_REMOTE\n");
 		ExitDisplay (d, DS_REMOTE, 0, 0);
 		break;
+#endif
 #ifdef AUTO_RESERVE
 	    case EX_RESERVE:
 		Debug ("display exited with EX_RESERVE\n");
@@ -1464,8 +1468,10 @@ rStopDisplay (struct display *d, int endState)
 	SwitchToTty (d);
     else if (endState == DS_RESERVE)
 	d->status = reserve;
+#ifdef XDMCP
     else if (endState == DS_REMOTE)
 	StartRemoteLogin (d);
+#endif
     else
     {
 	SwitchToX (d);

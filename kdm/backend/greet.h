@@ -80,25 +80,33 @@ from the copyright holder.
 #define EX_OPENFAILED_DPY	35	/* XOpenDisplay failed, retry */
 #define EX_TEXTLOGIN		36	/* start console login */
 #define EX_RESERVE		37	/* put in reserve mode */
+#ifdef XDMCP
 #define EX_REMOTE		38	/* start -query-ing X-server */
 #define EX_MAX EX_REMOTE
+#else
+#define EX_MAX EX_RESERVE
+#endif
 
 /*
  * Command codes core -> greeter
  */
 #define G_Greet		1	/* get login; bidi */
 #define G_ErrorGreet	2	/* print failed auto-login */
+#ifdef XDMCP
 #define G_Choose	3	/* run chooser; bidi */
 # define G_Ch_AddHost		301
 # define G_Ch_ChangeHost	302
 # define G_Ch_RemoveHost	303
 # define G_Ch_BadHost		304
 # define G_Ch_Exit		305
+#endif
 #define G_SessMan	4	/* start "session manager" */
 
+#ifdef XDMCP
 #define G_Ch_Refresh		10	/* XXX change */
 #define G_Ch_RegisterHost	11	/* str name  XXX change */
 #define G_Ch_DirectChoice	12	/* str name  XXX change */
+#endif
 
 /*
  * Status/command codes greeter -> core
@@ -107,7 +115,9 @@ from the copyright holder.
 #define G_Cancel	1	/* abort login, etc. */
 
 #define G_DGreet	2	/* get login */
+#ifdef XDMCP
 #define G_DChoose	3	/* run chooser */
+#endif
 
 #define G_Shutdown	101	/* int how; int when; async */
 # define SHUT_REBOOT	1	/* how */
@@ -133,7 +143,9 @@ from the copyright holder.
 #define GC_GetConf	2	/* get a config group */
 # define GC_gGlobal	1	/* get global config array */
 # define GC_gXservers	2	/* get Xservers equivalent */
+#ifdef XDMCP
 # define GC_gXaccess	3	/* get Xaccess equivalent */
+#endif
 # define GC_gDisplay	4	/* get per-display config array */
 
 /*
@@ -218,12 +230,14 @@ from the copyright holder.
 
 #define C_authDir		(C_TYPE_STR | 0x01a)
 
+#ifdef XDMCP
 #define C_requestPort		(C_TYPE_INT | 0x01b)
 #define C_sourceAddress		(C_TYPE_INT | 0x01c)
 #define C_removeDomainname	(C_TYPE_INT | 0x01d)
 #define C_choiceTimeout		(C_TYPE_INT | 0x01e)
 #define C_keyFile		(C_TYPE_STR | 0x01f)
 #define C_willing		(C_TYPE_STR | 0x020)
+#endif
 
 #define C_fifoDir		(C_TYPE_STR | 0x028)
 #define C_fifoGroup		(C_TYPE_INT | 0x029)	
@@ -273,12 +287,14 @@ from the copyright holder.
 #define C_allowNuke		(C_TYPE_INT | 0x12d)	/* see previous */
 #define C_defSdMode		(C_TYPE_INT | 0x12e)	/* see G_Shutdown, but no SHUT_INTERACT */
 #define C_interactiveSd		(C_TYPE_INT | 0x12f)
+#ifdef XDMCP
 #define C_chooserHosts		(C_TYPE_ARGV | 0x130)
 #define C_loginMode		(C_TYPE_INT | 0x131)
 # define LOGIN_LOCAL_ONLY	0
 # define LOGIN_DEFAULT_LOCAL	1
 # define LOGIN_DEFAULT_REMOTE	2
 # define LOGIN_REMOTE_ONLY	3
+#endif
 #define C_sessionsDirs		(C_TYPE_ARGV | 0x132)
 #define C_clientLogFile		(C_TYPE_STR | 0x133)
 
@@ -288,6 +304,7 @@ from the copyright holder.
 #define C_displayType		(C_TYPE_INT | 0x202)
 #define C_serverArgv		(C_TYPE_ARGV | 0x203)
 #define C_serverPid		(C_TYPE_INT | 0x204)
+#ifdef XDMCP
 #define C_sessionID		(C_TYPE_INT | 0x205)
 #define C_peer			(C_TYPE_ARR | 0x206)
 #define C_from			(C_TYPE_ARR | 0x207)
@@ -295,6 +312,7 @@ from the copyright holder.
 #define C_useChooser		(C_TYPE_INT | 0x209)
 #define C_clientAddr		(C_TYPE_ARR | 0x20a)
 #define C_connectionType	(C_TYPE_INT | 0x20b)
+#endif
 #define C_console		(C_TYPE_STR | 0x20c)
 
 /**
@@ -310,10 +328,15 @@ from the copyright holder.
 #define dReserve	2	/* display not restarted when session exits */
 #define dTransient	0	/* display removed when session exits */
 
+#ifdef XDMCP
 #define d_origin	8
-#define dFromFile	8	/* started via entry in servers file */
-#define dFromXDMCP	0	/* started with XDMCP */
+#else
+#define d_origin	0	/* clever, huh? :) */
+#endif
+#define dFromXDMCP	8	/* started with XDMCP */
+#define dFromFile	0	/* started via entry in servers file */
 
+#ifdef XDMCP
 /**
  ** for xdmcp acls
  **/
@@ -333,5 +356,6 @@ from the copyright holder.
 #define HOST_PATTERN	2
 #define HOST_BROADCAST	3
 
+#endif
 
 #endif /* GREET_H */

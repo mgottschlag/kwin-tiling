@@ -240,7 +240,9 @@ Debug ("Removing display %s\n", d->name);
 	    IfFree (d->cfg.data);
 	    delStr (d->cfg.dep.name);
 	    freeStrArr (d->serverArgv);
+#ifdef XDMCP
 	    IfFree (d->remoteHost);
+#endif
 	    if (d->authorizations)
 	    {
 		for (i = 0; i < d->authNum; i++)

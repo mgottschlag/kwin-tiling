@@ -135,7 +135,14 @@ typedef struct CfgFile {
 static int numCfgFiles;
 static CfgFile *cfgFiles;
 
-static int cfgMapT[] = { GC_gGlobal, GC_gDisplay, GC_gXaccess, GC_gXservers };
+static int cfgMapT[] = {
+    GC_gGlobal,
+    GC_gDisplay,
+#ifdef XDMCP
+    GC_gXaccess,
+#endif
+    GC_gXservers
+};
 static int cfgMap[as(cfgMapT)];
 
 static int
@@ -354,14 +361,20 @@ FindCfgEnt (struct display *d, int id)
 }	    
 
 
+#ifdef XDMCP
 int	request_port;
+#endif
 char	*pidFile;
 int	lockPidFile;
+#ifdef XDMCP
 int	sourceAddress;
+#endif
 char	*authDir;
 int	autoRescan;
+#ifdef XDMCP
 int	removeDomainname;
 char	*keyFile;
+#endif
 char	**exportList;
 #ifndef ARC4_RANDOM
 # ifndef DEV_RANDOM
@@ -371,8 +384,10 @@ int	prngdPort;
 # endif
 char	*randomDevice;
 #endif
+#ifdef XDMCP
 char	*willing;
 int	choiceTimeout;
+#endif
 char	*cmdHalt;
 char	*cmdReboot;
 #ifdef USE_PAM
@@ -388,13 +403,17 @@ struct globVals {
 	int	id;
 	char	**off;
 } globVal[] = {
+#ifdef XDMCP
 { C_requestPort,	(char **) &request_port },
+#endif
 { C_pidFile,		&pidFile },
 { C_lockPidFile,	(char **) &lockPidFile },
 { C_authDir,		&authDir },
 { C_autoRescan,		(char **) &autoRescan },
+#ifdef XDMCP
 { C_removeDomainname,	(char **) &removeDomainname },
 { C_keyFile,		&keyFile },
+#endif
 { C_exportList,		(char **) &exportList },
 #ifndef ARC4_RANDOM
 # ifndef DEV_RANDOM
@@ -404,9 +423,11 @@ struct globVals {
 # endif
 { C_randomDevice,	&randomDevice },
 #endif
+#ifdef XDMCP
 { C_choiceTimeout,	(char **) &choiceTimeout },
 { C_sourceAddress,	(char **) &sourceAddress },
 { C_willing,		&willing },
+#endif
 { C_cmdHalt,		&cmdHalt },
 { C_cmdReboot,		&cmdReboot },
 #ifdef USE_PAM
@@ -487,8 +508,10 @@ struct dpyVals {
 { C_allowNuke,		boffset(allowNuke) },
 { C_defSdMode,		boffset(defSdMode) },
 { C_sessionsDirs,	boffset(sessionsDirs) },
+#ifdef XDMCP
 { C_chooserHosts,	boffset(chooserHosts) },
 { C_loginMode,		boffset(loginMode) },
+#endif
 { C_clientLogFile,	boffset(clientLogFile) },
 };
 
