@@ -1,36 +1,6 @@
 # KDE Config File
 [Color Scheme]
 Name=Atlas green
-Name[ca]=Vert Atlas
-Name[cs]=Atlasově zelená
-Name[de]=Atlasgrün
-Name[eo]=Atlasa verdo
-Name[es]=Atlas verde
-Name[et]=Atlasroheline
-Name[fi]=Atlaksenvihreä
-Name[fr]=Atlas vert
-Name[he]=קורי ינווג
-Name[hu]=Atlaszzöld
-Name[is]=Atlasgrænn
-Name[it]=Atlante verde
-Name[ja]=アトラス グリーン
-Name[ko]=아틀라스 푸른색
-Name[lt]=Žalia atlasinė
-Name[lv]=Atlasa zaļš
-Name[nl]=Atlasgroen
-Name[no]=Atlas grønt
-Name[no_NY]=Atlas grøn
-Name[pl]=Altasowa ziele�
-Name[pt]=Verde Atlas
-Name[pt_BR]=Verde atlas
-Name[ro]=Verde Atlas
-Name[sk]=Atlasová zelená
-Name[sl]=Zeleni atlas
-Name[sr]=Atlas zelena
-Name[sv]=Atlas grön
-Name[tr]=Atlas yeşili
-Name[uk]=Зелений атлас
-Name[zh_CN.GB2312]=地图绿
 background=#afb49f
 buttonBackground=#afb49f
 buttonForeground=#000000
