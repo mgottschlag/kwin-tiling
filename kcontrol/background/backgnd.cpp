@@ -63,6 +63,7 @@
 
 /* as late as possible, as it includes some X headers without protecting them */
 #include <kwin.h>
+#include <X11/Xlib.h>
 
 /**** DLL Interface ****/
 
@@ -133,10 +134,18 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_Max( KWin::numberOfDesktops() ),
     m_Renderer( m_Max )
 {
-
     KImageIO::registerFormats();
 
-    m_pConfig = new KConfig("kdesktoprc");
+    int screen_number = 0;
+    if (qt_xdisplay())
+	screen_number = DefaultScreen(qt_xdisplay());
+    QCString configname;
+    if (screen_number == 0)
+	configname = "kdesktoprc";
+    else
+	configname.sprintf("kdesktop-screen-%drc", screen_number);
+
+    m_pConfig = new KConfig(configname);
     m_pDirs = KGlobal::dirs();
 
     m_oldMode = KBackgroundSettings::Centred;
@@ -166,12 +175,12 @@ KBackground::KBackground(QWidget *parent, const char *name)
     vbox->addWidget(m_pCBCommon);
     connect(m_pCBCommon, SIGNAL(toggled(bool)), SLOT(slotCommonDesk(bool)));
     QWhatsThis::add( m_pDeskList, i18n("Choose the desktop whose background"
-      " you want to modify. If you want the same background settings to be"
-      " applied to all desktops, check the \"Common Background\" option, and"
-      " this list will be disabled.") );
+				       " you want to modify. If you want the same background settings to be"
+				       " applied to all desktops, check the \"Common Background\" option, and"
+				       " this list will be disabled.") );
     QWhatsThis::add( m_pCBCommon, i18n("Check this option if you want to have"
-      " the same background settings for all desktops. If this option is not"
-      " checked, the background settings can be customized for each desktop.") );
+				       " the same background settings for all desktops. If this option is not"
+				       " checked, the background settings can be customized for each desktop.") );
 
     // Preview monitor at (0,1)
     QHBoxLayout *hbox = new QHBoxLayout();
@@ -204,22 +213,22 @@ KBackground::KBackground(QWidget *parent, const char *name)
     lbl->setBuddy(m_pBackgroundBox);
     grid->addWidget(m_pBackgroundBox, 0, 1);
     QWhatsThis::add( m_pBackgroundBox, i18n("You can select the manner in which"
-      " the background is painted. The choices are:"
-      " <ul><li><em>Flat:</em> Use a solid color (\"Color 1\").</li>"
-      " <li><em>Pattern:</em> Use a two-color pattern. Click \"Setup\" to choose"
-      " the pattern.</li>"
-      " <li><em>Gradients:</em> Blend two colors using a predefined gradient"
-      " (horizontal, vertical, etc.).</li>"
-      " <li><em>Program:</em> Use an application which paints the background, for"
-      " example, with a day/night map of the world that is refreshed periodically."
-      " Click \"Setup\" to select and configure the program.</li></ul>") );
+					    " the background is painted. The choices are:"
+					    " <ul><li><em>Flat:</em> Use a solid color (\"Color 1\").</li>"
+					    " <li><em>Pattern:</em> Use a two-color pattern. Click \"Setup\" to choose"
+					    " the pattern.</li>"
+					    " <li><em>Gradients:</em> Blend two colors using a predefined gradient"
+					    " (horizontal, vertical, etc.).</li>"
+					    " <li><em>Program:</em> Use an application which paints the background, for"
+					    " example, with a day/night map of the world that is refreshed periodically."
+					    " Click \"Setup\" to select and configure the program.</li></ul>") );
 
     lbl = new QLabel(i18n("Color &1:"), m_pTab1);
     lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
     m_pColor1But = new KColorButton(m_pTab1);
     connect(m_pColor1But, SIGNAL(changed(const QColor &)),
-        SLOT(slotColor1(const QColor &)));
+	    SLOT(slotColor1(const QColor &)));
     grid->addWidget(m_pColor1But, 1, 1);
     lbl->setBuddy(m_pColor1But);
     QWhatsThis::add( m_pColor1But, i18n("Click to choose a color.") );
@@ -229,18 +238,18 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
     m_pColor2But = new KColorButton(m_pTab1);
     connect(m_pColor2But, SIGNAL(changed(const QColor &)),
-        SLOT(slotColor2(const QColor &)));
+	    SLOT(slotColor2(const QColor &)));
     grid->addWidget(m_pColor2But, 2, 1);
     lbl->setBuddy(m_pColor2But);
     QWhatsThis::add( m_pColor2But, i18n("Click to choose a second color. If the"
-      " background mode does not require a second color, this button is disabled.") );
+					" background mode does not require a second color, this button is disabled.") );
 
     m_pBGSetupBut = new QPushButton(i18n("&Setup..."), m_pTab1);
     m_pBGSetupBut->setFixedSize(bsize);
     grid->addWidget(m_pBGSetupBut, 3, 1, Qt::AlignLeft);
     connect(m_pBGSetupBut, SIGNAL(clicked()), SLOT(slotBGSetup()));
     QWhatsThis::add( m_pBGSetupBut, i18n("If the background mode you selected has"
-      " additional options to configure, click here.") );
+					 " additional options to configure, click here.") );
 
     // Wallpaper at Tab 2
     m_pTab2 = new QWidget(0L, "Wallpaper Tab");
@@ -254,9 +263,9 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_WallpaperType->setExclusive( true );
     m_WallpaperType->setFrameStyle( QFrame::NoFrame );
     QWhatsThis::add( m_WallpaperType, i18n("If you check this option, you can choose"
-      " a set of graphic files to be used as wallpaper, one at a time, for an"
-      " interval ranging from 5 minutes to 4 hours. You can also choose to have"
-      " the graphics selected at random or in the order you specified them.") );
+					   " a set of graphic files to be used as wallpaper, one at a time, for an"
+					   " interval ranging from 5 minutes to 4 hours. You can also choose to have"
+					   " the graphics selected at random or in the order you specified them.") );
     connect( m_WallpaperType, SIGNAL(clicked(int)), SLOT(slotWallpaperType(int)) );
     grid->addMultiCellWidget( m_WallpaperType, 0, 0, 0, 2 );
 
@@ -272,18 +281,18 @@ KBackground::KBackground(QWidget *parent, const char *name)
     lbl->setBuddy(m_pArrangementBox);
     grid->addWidget(m_pArrangementBox, 1, 1, Qt::AlignLeft);
     QWhatsThis::add( m_pArrangementBox, i18n("You can have a wallpaper (based on"
-      " a graphic) on top of your background. You can choose one of the following"
-      " methods for displaying the wallpaper:"
-      " <ul><li><em>Centered:</em> Center the graphic on the desktop.</li>"
-      " <li><em>Tiled:</em> Tile the graphic beginning at the top left of the"
-      " desktop, so the background is totally covered up.</li>"
-      " <li><em>Center Tiled:</em> Center the graphic on the desktop, and then"
-      " tile around it so that the background is totally covered up.</li>"
-      " <li><em>Centered Maxpect:</em> Magnify the graphic without distorting it"
-      " until it fills either the width or height of the desktop, and then center"
-      " it on the desktop.</li>"
-      " <li><em>Scaled:</em> Magnify the graphic, distorting it if necessary,"
-      " until the entire desktop is covered.</li></ul>") );
+					     " a graphic) on top of your background. You can choose one of the following"
+					     " methods for displaying the wallpaper:"
+					     " <ul><li><em>Centered:</em> Center the graphic on the desktop.</li>"
+					     " <li><em>Tiled:</em> Tile the graphic beginning at the top left of the"
+					     " desktop, so the background is totally covered up.</li>"
+					     " <li><em>Center Tiled:</em> Center the graphic on the desktop, and then"
+					     " tile around it so that the background is totally covered up.</li>"
+					     " <li><em>Centered Maxpect:</em> Magnify the graphic without distorting it"
+					     " until it fills either the width or height of the desktop, and then center"
+					     " it on the desktop.</li>"
+					     " <li><em>Scaled:</em> Magnify the graphic, distorting it if necessary,"
+					     " until the entire desktop is covered.</li></ul>") );
 
     lbl = new QLabel(i18n("&Wallpaper:"), m_pTab2);
     lbl->setFixedSize(lbl->sizeHint());
@@ -291,24 +300,24 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pWallpaperBox = new QComboBox(m_pTab2);
     lbl->setBuddy(m_pWallpaperBox);
     connect(m_pWallpaperBox, SIGNAL(activated(const QString &)),
-        SLOT(slotWallpaper(const QString &)));
+	    SLOT(slotWallpaper(const QString &)));
     grid->addWidget(m_pWallpaperBox, 2, 1);
     QWhatsThis::add( m_pWallpaperBox, i18n("Click to choose the graphic you want"
-      " to use as wallpaper.") );
+					   " to use as wallpaper.") );
 
     m_pBrowseBut = new QPushButton(i18n("&Browse..."), m_pTab2);
     grid->addWidget(m_pBrowseBut, 2, 2, Qt::AlignLeft);
     m_pBrowseBut->setFixedSize(bsize);
     connect(m_pBrowseBut, SIGNAL(clicked()), SLOT(slotBrowseWallpaper()));
     QWhatsThis::add( m_pBrowseBut, i18n("If the graphic you want is not in a standard"
-      " directory, you can still find it by clicking here.") );
+					" directory, you can still find it by clicking here.") );
 
     m_pMSetupBut = new QPushButton(i18n("S&etup Multiple..."), m_pTab2);
     m_pMSetupBut->setFixedSize(m_pMSetupBut->sizeHint());
     grid->addWidget(m_pMSetupBut, 3, 1, Qt::AlignLeft);
     connect(m_pMSetupBut, SIGNAL(clicked()), SLOT(slotSetupMulti()));
     QWhatsThis::add( m_pMSetupBut, i18n("Click here to select graphics to be used"
-      " for wallpaper, and to configure other options.") );
+					" for wallpaper, and to configure other options.") );
 
     // Tab 3: Advanced
     m_pTab3 = new QWidget(0L, "Advanced Tab");
@@ -325,9 +334,9 @@ KBackground::KBackground(QWidget *parent, const char *name)
     lbl->setBuddy(m_pBlendBox);
     grid->addWidget(m_pBlendBox, 0, 1);
     QWhatsThis::add( m_pBlendBox, i18n("If you have selected to wallpaper, you"
-      " can choose various methods of blending the background colors and patterns"
-      " with the wallpaper. The default option, \"No Blending\", means that the"
-      " wallpaper simply obscures the background below.") );
+				       " can choose various methods of blending the background colors and patterns"
+				       " with the wallpaper. The default option, \"No Blending\", means that the"
+				       " wallpaper simply obscures the background below.") );
 
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 1, 0);
@@ -340,15 +349,15 @@ KBackground::KBackground(QWidget *parent, const char *name)
     lbl->setBuddy(m_pBlendSlider);
     grid->addWidget(m_pBlendSlider, 1, 1);
     QWhatsThis::add( m_pBlendSlider, i18n("You can use this slider to control"
-      " the degree of blending. You can experiment by moving the slider and"
-      " looking at the effects in the preview image above.") );
+					  " the degree of blending. You can experiment by moving the slider and"
+					  " looking at the effects in the preview image above.") );
     m_pReverseBlending = new QCheckBox(i18n("&Reverse"), m_pTab3);
     m_pReverseBlending->setFixedSize(m_pReverseBlending->sizeHint());
     connect(m_pReverseBlending, SIGNAL(toggled(bool)),
-        SLOT(slotReverseBlending(bool)));
+	    SLOT(slotReverseBlending(bool)));
     grid->addWidget(m_pReverseBlending, 1, 2, Qt::AlignLeft);
     QWhatsThis::add( m_pReverseBlending, i18n("For some types of blending, you can"
-      " reverse the background and wallpaper layers by checking this option.") );
+					      " reverse the background and wallpaper layers by checking this option.") );
 
     m_pCBLimit = new QCheckBox(i18n("&Limit Pixmap Cache"), m_pTab3);
     QWhatsThis::add( m_pCBLimit, i18n( "Checking this box limits the amount of memory that KDE will use to save pixmap (raster graphics). It is advisable to do this, especially if you do not have lots of memory." ) );
@@ -373,8 +382,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_Desk = KWin::currentDesktop() - 1;
     m_pGlobals = new KGlobalBackgroundSettings();
     for (int i=0; i<m_Max; i++) {
-      m_Renderer[i] = new KBackgroundRenderer(i);
-      connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
+	m_Renderer[i] = new KBackgroundRenderer(i);
+	connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
     }
 
     // Doing this only in KBGMonitor only doesn't work, probably due to the
@@ -586,8 +595,18 @@ void KBackground::save()
     // reconfigure kdesktop. kdesktop will notify all clients
     DCOPClient *client = kapp->dcopClient();
     if (!client->isAttached())
-    client->attach();
-    client->send("kdesktop", "KBackgroundIface", "configure()", "");
+	client->attach();
+
+    int screen_number = 0;
+    if (qt_xdisplay())
+	screen_number = DefaultScreen(qt_xdisplay());
+    QCString appname;
+    if (screen_number == 0)
+	appname = "kdesktop";
+    else
+	appname.sprintf("kdesktop-screen-%d", screen_number);
+
+    client->send(appname, "KBackgroundIface", "configure()", "");
 
     emit changed(false);
 }
@@ -608,7 +627,7 @@ void KBackground::defaults()
     }
     else
         r->setBackgroundMode(KBackgroundSettings::Flat);
- 
+
     r->setColorA(_defColorA);
     r->setColorB(_defColorB);
     r->setWallpaperMode(_defWallpaperMode);
@@ -860,7 +879,7 @@ void KBackground::slotWallpaperType( int type )
 	    m_pBlendSlider->setEnabled(false);
 	    m_pReverseBlending->setEnabled(false);
 	    break;
-	
+
 	case 1:
 	    multi = false;
 	    if ( mode == KBackgroundSettings::NoWallpaper )

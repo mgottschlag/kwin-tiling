@@ -61,8 +61,8 @@ TaskManager::TaskManager(QObject *parent, const char *name)
 
     // application startup notification
     connectDCOPSignal(0, 0, "clientDied(pid_t)", "clientDied(pid_t)", false);
-    connectDCOPSignal(0, 0, "clientStarted(QString,QString,pid_t,QString,bool)",
-                      "clientStarted(QString,QString,pid_t,QString,bool)", false);
+    connectDCOPSignal(0, 0, "clientStarted(QString,QString,pid_t,QString,bool,int)",
+                      "clientStarted(QString,QString,pid_t,QString,bool,int)", false);
 }
 
 TaskManager::~TaskManager()
@@ -244,10 +244,20 @@ void TaskManager::currentDesktopChanged(int desktop)
     emit desktopChanged(desktop);
 }
 
-void TaskManager::clientStarted(QString name, QString icon, pid_t pid, QString bin, bool compliant)
+void TaskManager::clientStarted(QString name, QString icon, pid_t pid, QString bin,
+				bool compliant, int screennumber)
 {
-    if ((long)pid == 0) return;
-    //kdDebug() << "TM: clientStarted(" << name << ", " << icon << ", " << (long)pid << "d)" << endl;
+    if ((long)pid == 0)
+	return;
+
+    int this_screen_number = 0;
+    if (qt_xdisplay())
+	this_screen_number = DefaultScreen(qt_xdisplay());
+
+    if (this_screen_number != screennumber)
+	return;
+
+    // kdDebug() << "TM: clientStarted(" << name << ", " << icon << ", " << (long)pid << "d)" << endl;
 
     Startup * s = new Startup(name, icon, pid, bin, compliant, this);
     _startups.append(s);

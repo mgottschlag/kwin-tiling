@@ -316,7 +316,7 @@ void KBackgroundProgram::readSettings()
     m_PreviewCommand = m_pConfig->readEntry("PreviewCommand", m_Command);
     m_Refresh = m_pConfig->readNumEntry("Refresh", 300);
 }
-	
+
 
 void KBackgroundProgram::writeSettings()
 {
@@ -464,10 +464,19 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     #undef ADD_STRING
 
     m_pDirs = KGlobal::dirs();
-    if (config)
-      m_pConfig = config;
-    else
-      m_pConfig = new KConfig("kdesktoprc");
+    if (! config) {
+	int screen_number = 0;
+	if (qt_xdisplay())
+	    screen_number = DefaultScreen(qt_xdisplay());
+	QCString configname;
+	if (screen_number == 0)
+	    configname = "kdesktoprc";
+	else
+	    configname.sprintf("kdesktop-screen-%drc", screen_number);
+
+	m_pConfig = new KConfig(configname);
+    } else
+	m_pConfig = config;
 
     srand((unsigned int) time(0L));
 
@@ -760,7 +769,7 @@ void KBackgroundSettings::changeWallpaper(bool init)
 
     case Random:
 	m_CurrentWallpaper = (int) (((double) m_WallpaperFiles.count() * rand()) /
-	                     (1.0 + RAND_MAX));
+				    (1.0 + RAND_MAX));
 	break;
     default:
 	return;
@@ -769,7 +778,16 @@ void KBackgroundSettings::changeWallpaper(bool init)
     m_LastChange = (int) time(0L);
 
     // sync random config to file without syncing the rest
-    KConfig cfg("kdesktoprc");
+    int screen_number = 0;
+    if (qt_xdisplay())
+	screen_number = DefaultScreen(qt_xdisplay());
+    QCString configname;
+    if (screen_number == 0)
+	configname = "kdesktoprc";
+    else
+	configname.sprintf("kdesktop-screen-%drc", screen_number);
+
+    KConfig cfg(configname);
     cfg.setGroup(QString("Desktop%1").arg(m_Desk));
     cfg.writeEntry("CurrentWallpaper", m_CurrentWallpaper);
     cfg.writeEntry("LastChange", m_LastChange);
@@ -918,7 +936,16 @@ void KGlobalBackgroundSettings::setExportBackground(bool _export)
 
 void KGlobalBackgroundSettings::readSettings()
 {
-    KConfig cfg("kdesktoprc");
+    int screen_number = 0;
+    if (qt_xdisplay())
+	screen_number = DefaultScreen(qt_xdisplay());
+    QCString configname;
+    if (screen_number == 0)
+	configname = "kdesktoprc";
+    else
+	configname.sprintf("kdesktop-screen-%drc", screen_number);
+
+    KConfig cfg(configname);
     cfg.setGroup("Background Common");
     m_bCommon = cfg.readBoolEntry("CommonDesktop", _defCommon);
     m_bDock = cfg.readBoolEntry("Dock", _defDock);
@@ -930,7 +957,7 @@ void KGlobalBackgroundSettings::readSettings()
     NETRootInfo info( qt_xdisplay(), NET::DesktopNames | NET::NumberOfDesktops );
     for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
       m_Names.append( QString::fromUtf8(info.desktopName(i+1)) );
-    
+
     dirty = false;
 }
 
@@ -940,7 +967,16 @@ void KGlobalBackgroundSettings::writeSettings()
     if (!dirty)
 	return;
 
-    KConfig cfg("kdesktoprc");
+    int screen_number = 0;
+    if (qt_xdisplay())
+	screen_number = DefaultScreen(qt_xdisplay());
+    QCString configname;
+    if (screen_number == 0)
+	configname = "kdesktoprc";
+    else
+	configname.sprintf("kdesktop-screen-%drc", screen_number);
+
+    KConfig cfg(configname);
     cfg.setGroup("Background Common");
     cfg.writeEntry("CommonDesktop", m_bCommon);
     cfg.writeEntry("Dock", m_bDock);

@@ -36,6 +36,8 @@
 #include <bgsettings.h>
 #include <bgrender.h>
 
+#include <X11/Xlib.h>
+
 
 /**** KBackgroundRenderer ****/
 
@@ -45,10 +47,20 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 {
     m_State = 0;
 
-    if (config)
+    if (! config) {
+	int screen_number = 0;
+	if (qt_xdisplay())
+	    screen_number = DefaultScreen(qt_xdisplay());
+	QCString configname;
+	if (screen_number == 0)
+	    configname = "kdesktoprc";
+	else
+	    configname.sprintf("kdesktop-screen-%drc", screen_number);
+
+	m_pConfig = new KConfig(configname);
+    } else
 	m_pConfig = config;
-    else
-	m_pConfig = new KConfig("kdesktoprc");
+
     m_pDirs = KGlobal::dirs();
     m_rSize = m_Size = QApplication::desktop()->size();
     m_pBackground = 0L; m_pImage = 0L;
@@ -322,7 +334,7 @@ wp_out:
 	    xa = 0;
 	    ya = 0;
 	}
-	
+
 	if (m_pBackground->size() == m_Size) {
 
 	  if (blmode != NoBlending)
@@ -342,7 +354,7 @@ wp_out:
 	    m_pImage->create(tw, th, 32);
             tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
 	}
-	
+
 	for (y = ya; y < h; y += wh) {
 	    for (x = xa; x < w; x += ww) {
 		blend(m_pImage, QRect(x, y, ww, wh), &wp,
@@ -353,7 +365,7 @@ wp_out:
     }
 
     case Scaled:
-    {	
+    {
 	int w = m_Size.width();
 	int h = m_Size.height();
 	wp = wp.smoothScale(w, h);
@@ -538,14 +550,14 @@ wp_out:
 
 
 
-/* Alpha blend an area from <src> with offset <soffs> to rectangle <dr> of <dst> 
+/* Alpha blend an area from <src> with offset <soffs> to rectangle <dr> of <dst>
  * Default offset is QPoint(0, 0).
  */
 void KBackgroundRenderer::blend(QImage *dst, QRect dr, QImage *src, QPoint soffs)
-{   
+{
     int x, y, a;
     dr &= dst->rect();
- 
+
     for (y = 0; y < dr.height(); y++) {
 	if (dst->scanLine(dr.y() + y) && src->scanLine(soffs.y() + y)) {
 	    QRgb *b, *d;

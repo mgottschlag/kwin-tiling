@@ -38,6 +38,9 @@
 #include "applettab.moc"
 
 
+extern int kickerconfig_screen_number;
+
+
 AppletTab::AppletTab( QWidget *parent, const char* name )
   : QWidget (parent, name)
 {
@@ -126,7 +129,12 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
 
 void AppletTab::load()
 {
-  KConfig *c = new KConfig("kickerrc", false, false);
+  QCString configname;
+  if (kickerconfig_screen_number == 0)
+      configname = "kickerrc";
+  else
+      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+  KConfig *c = new KConfig(configname, false, false);
 
   c->setGroup("General");
 
@@ -186,7 +194,12 @@ void AppletTab::load()
 
 void AppletTab::save()
 {
-  KConfig *c = new KConfig("kickerrc", false, false);
+  QCString configname;
+  if (kickerconfig_screen_number == 0)
+      configname = "kickerrc";
+  else
+      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+  KConfig *c = new KConfig(configname, false, false);
 
   c->setGroup("General");
 

@@ -35,9 +35,19 @@
 #include "buttontab.h"
 #include "applettab.h"
 
+#include <X11/Xlib.h>
+
+
+// for multihead
+int kickerconfig_screen_number = 0;
+
+
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
+    if (qt_xdisplay())
+	kickerconfig_screen_number = DefaultScreen(qt_xdisplay());
+
     QVBoxLayout *layout = new QVBoxLayout(this);
     tab = new QTabWidget(this);
     layout->addWidget(tab);
@@ -95,7 +105,13 @@ void KickerConfig::save()
     if (!kapp->dcopClient()->isAttached())
         kapp->dcopClient()->attach();
     QByteArray data;
-    kapp->dcopClient()->send( "kicker", "Panel", "configure()", data );
+
+    QCString appname;
+    if (kickerconfig_screen_number == 0)
+	appname = "kicker";
+    else
+	appname.sprintf("kicker-screen-%d", kickerconfig_screen_number);
+    kapp->dcopClient()->send( appname, "Panel", "configure()", data );
 }
 
 void KickerConfig::defaults()

@@ -29,6 +29,10 @@
 #include "generaltab_impl.h"
 #include "generaltab_impl.moc"
 
+
+extern int kickerconfig_screen_number;
+
+
 GeneralTab::GeneralTab( QWidget *parent, const char* name )
   : GeneralTabBase (parent, name)
 {
@@ -67,7 +71,12 @@ GeneralTab::GeneralTab( QWidget *parent, const char* name )
 
 void GeneralTab::load()
 {
-    KConfig *c = new KConfig("kickerrc", false, false);
+    QCString configname;
+    if (kickerconfig_screen_number == 0)
+	configname = "kickerrc";
+    else
+	configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+    KConfig *c = new KConfig(configname, false, false);
 
     c->setGroup("General");
 
@@ -92,7 +101,12 @@ void GeneralTab::load()
 
 void GeneralTab::save()
 {
-    KConfig *c = new KConfig("kickerrc", false, false);
+    QCString configname;
+    if (kickerconfig_screen_number == 0)
+	configname = "kickerrc";
+    else
+	configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+    KConfig *c = new KConfig(configname, false, false);
 
     c->setGroup("General");
 

@@ -35,6 +35,10 @@
 #include "lookandfeeltab_impl.h"
 #include "lookandfeeltab_impl.moc"
 
+
+extern int kickerconfig_screen_number;
+
+
 LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   : LookAndFeelTabBase (parent, name)
 {
@@ -117,7 +121,12 @@ void LookAndFeelTab::browse_theme()
 
 void LookAndFeelTab::load()
 {
-    KConfig *c = new KConfig("kickerrc", false, false);
+    QCString configname;
+    if (kickerconfig_screen_number == 0)
+	configname = "kickerrc";
+    else
+	configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+    KConfig *c = new KConfig(configname, false, false);
 
     c->setGroup("General");
 
@@ -169,7 +178,12 @@ void LookAndFeelTab::load()
 
 void LookAndFeelTab::save()
 {
-    KConfig *c = new KConfig("kickerrc", false, false);
+    QCString configname;
+    if (kickerconfig_screen_number == 0)
+	configname = "kickerrc";
+    else
+	configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+    KConfig *c = new KConfig(configname, false, false);
 
     c->setGroup("General");
 

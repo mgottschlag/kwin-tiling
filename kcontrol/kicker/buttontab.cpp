@@ -40,6 +40,10 @@
 #include "buttontab.h"
 #include "buttontab.moc"
 
+
+extern int kickerconfig_screen_number;
+
+
 class TileLabel : public QFrame
 {
 public:
@@ -376,7 +380,12 @@ void ButtonTab::setLabel( TileLabel *label, const QString &t )
 
 void ButtonTab::load()
 {
-  KConfig *c = new KConfig("kickerrc", false, false);
+  QCString configname;
+  if (kickerconfig_screen_number == 0)
+      configname = "kickerrc";
+  else
+      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+  KConfig *c = new KConfig(configname, false, false);
 
   c->setGroup("buttons");
 
@@ -508,7 +517,12 @@ void ButtonTab::load()
 
 void ButtonTab::save()
 {
-  KConfig *c = new KConfig("kickerrc", false, false);
+  QCString configname;
+  if (kickerconfig_screen_number == 0)
+      configname = "kickerrc";
+  else
+      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+  KConfig *c = new KConfig(configname, false, false);
 
   c->setGroup("buttons");
 

@@ -288,17 +288,34 @@ void KColorScheme::save()
     QDataStream d(properties, IO_WriteOnly);
     d << createPalette() << KGlobalSettings::generalFont();
     Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
-    XChangeProperty(qt_xdisplay(),  qt_xrootwin(), a, a, 8, PropModeReplace,
-            (unsigned char*) properties.data(), properties.size());
-    QApplication::flushX();
-    // Notify non Qt apps ?
-    if (useRM) {
-        QApplication::setOverrideCursor( waitCursor );
-        KProcess proc;
-        proc.setExecutable("kcminit style");
-        proc.start(KProcess::Block);
-        QApplication::restoreOverrideCursor();
+
+    // do it for all root windows - multihead support
+    int screen_count = ScreenCount(qt_xdisplay());
+    for (int i = 0; i < screen_count; i++) {
+	XChangeProperty(qt_xdisplay(),  RootWindow(qt_xdisplay(), i),
+			a, a, 8, PropModeReplace,
+			(unsigned char*) properties.data(), properties.size());
+
+	// Notify non Qt apps ?
+	if (useRM) {
+	    QApplication::setOverrideCursor( waitCursor );
+	    KProcess proc;
+	    proc << "kcminit" << "style" << "-display";
+
+	    // display name
+	    QCString dpyname = XDisplayString(qt_xdisplay());
+	    int pos = dpyname.findRev('.');
+	    if (pos != -1)
+		dpyname.remove(pos, 10);
+	    dpyname.sprintf("%s.%d", dpyname.data(), i);
+	    proc << dpyname;
+
+	    proc.start(KProcess::Block);
+	    QApplication::restoreOverrideCursor();
+	}
     }
+
+    QApplication::flushX();
 
     m_bChanged = false;
     emit changed(false);

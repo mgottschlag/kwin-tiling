@@ -129,7 +129,7 @@ class TaskManager : public QObject, virtual public DCOPObject
     K_DCOP
 
     k_dcop:
-    void clientStarted(QString name, QString icon, pid_t pid, QString bin, bool compliant);
+    void clientStarted(QString name, QString icon, pid_t pid, QString bin, bool compliant, int screennumber);
     void clientDied(pid_t pid);
 
 public:

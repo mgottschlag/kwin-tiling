@@ -31,6 +31,10 @@
 #include "menutab_impl.h"
 #include "menutab_impl.moc"
 
+
+extern int kickerconfig_screen_number;
+
+
 const int knMinNum2Show  = 0;
 const int knMaxNum2Show = 20;
 
@@ -48,7 +52,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     connect(m_showBookmarks, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_showRecent, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_showQuickBrowser, SIGNAL(clicked()), SIGNAL(changed()));
-		
+
 		m_pEditNum2Show->setMaxLength(2);
 		m_pEditNum2Show->setValidator(
 				new QIntValidator(knMinNum2Show, knMaxNum2Show, m_pEditNum2Show));
@@ -108,7 +112,12 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
 void MenuTab::load()
 {
-  KConfig *c = new KConfig("kickerrc", false, false);
+  QCString configname;
+  if (kickerconfig_screen_number == 0)
+      configname = "kickerrc";
+  else
+      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+  KConfig *c = new KConfig(configname, false, false);
 
   c->setGroup("menus");
 
@@ -146,7 +155,12 @@ void MenuTab::load()
 
 void MenuTab::save()
 {
-  KConfig *c = new KConfig("kickerrc", false, false);
+  QCString configname;
+  if (kickerconfig_screen_number == 0)
+      configname = "kickerrc";
+  else
+      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+  KConfig *c = new KConfig(configname, false, false);
 
   c->setGroup("menus");
 

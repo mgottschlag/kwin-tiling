@@ -120,8 +120,13 @@ extern "C" {
         QDataStream d(properties, IO_WriteOnly);
         d << kapp->palette() << KGlobalSettings::generalFont();
         Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
-        XChangeProperty(qt_xdisplay(),  qt_xrootwin(), a, a, 8, PropModeReplace,
-               (unsigned char*) properties.data(), properties.size());
+
+	// do it for all root windows - multihead support
+	int screen_count = ScreenCount(qt_xdisplay());
+	for (int i = 0; i < screen_count; i++)
+	    XChangeProperty(qt_xdisplay(),  RootWindow(qt_xdisplay(), i),
+			    a, a, 8, PropModeReplace,
+			    (unsigned char*) properties.data(), properties.size());
 #endif
     }
 }
