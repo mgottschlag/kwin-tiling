@@ -486,10 +486,10 @@ CheckUtmp (void)
 	    {
 		struct display *d = utp->d;
 		Debug ("console login for %s at %s timed out\n", 
-		       utp->d->name, utp->line);
+		       d->name, utp->line);
 		*utpp = utp->next;
 		free (utp);
-		ExitDisplay (d, TRUE, TRUE, TRUE);
+		d->status = notRunning;
 		StartDisplays ();
 		continue;
 	    }
@@ -1017,7 +1017,7 @@ WaitForChild (void)
     omask = sigblock (sigmask (SIGCHLD) | sigmask (SIGHUP) | sigmask (SIGALRM));
     Debug ("signals blocked, mask was 0x%x\n", omask);
 # endif
-    if (!ChildReady && !Rescan)
+    if (!ChildReady && !Rescan && !StopAll && !ChkUtmp)
 # ifndef X_NOT_POSIX
 	sigsuspend(&omask);
 # else
