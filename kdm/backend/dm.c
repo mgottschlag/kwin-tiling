@@ -103,7 +103,7 @@ extern FILE    *fdopen();
 #endif
 
 static SIGVAL	SigHandler (int n);
-static void	RescanConfigs (void);
+static int	ScanConfigs (int force);
 static void	StartDisplays (void);
 #define XS_KEEP 0
 #define XS_RESTART 1
@@ -113,7 +113,7 @@ static void	rStopDisplay (struct display *d, int endState);
 static int	CheckUtmp (void);
 static void	SwitchToTty (struct display *d);
 static void	openFifo (int *fifofd, char **fifoPath, const char *dname);
-static void	closeFifo (int *fifofd, const char *fifoPath);
+static void	closeFifo (int *fifofd, char **fifoPath);
 static void	stoppen (int force);
 static void	ReapChildren (void);
 static void	MainLoop (void);
@@ -286,7 +286,7 @@ main (int argc, char **argv)
     /*
      * Step 1 - load configuration parameters
      */
-    if (!InitResources (opts) || !LoadDMResources (TRUE))
+    if (!InitResources (opts) || !ScanConfigs (FALSE))
 	LogPanic ("Config reader failed. Aborting ...\n");
 
     /* SUPPRESS 560 */
@@ -331,12 +331,8 @@ main (int argc, char **argv)
      * Step 2 - run a sub-daemon for each entry
      */
     openFifo (&fifoFd, &fifoPath, 0);
-#ifdef XDMCP
-    ScanAccessDatabase (0);
-#endif
-    ScanServers (0);
     MainLoop ();
-    closeFifo (&fifoFd, fifoPath);
+    closeFifo (&fifoFd, &fifoPath);
     if (sdAction)
     {
 	if (Fork() <= 0)
@@ -668,9 +664,8 @@ openFifo (int *fifofd, char **fifopath, const char *dname)
 	    }
 	} else
 	    chmod (fifoDir, 0755); /* override umask */
-	if (!*fifopath)
-	    StrApp (fifopath, fifoDir, dname ? "/xdmctl-" : "/xdmctl", 
-			 dname, (char *)0);
+	StrApp (fifopath, fifoDir, dname ? "/xdmctl-" : "/xdmctl", 
+		dname, (char *)0);
 	if (*fifopath) {
 	    unlink (*fifopath);
 	    if (mkfifo (*fifopath, 0) < 0)
@@ -693,13 +688,17 @@ openFifo (int *fifofd, char **fifopath, const char *dname)
 }
 
 static void
-closeFifo (int *fifofd, const char *fifopath)
+closeFifo (int *fifofd, char **fifopath)
 {
     if (*fifofd >= 0) {
 	UnregisterInput (*fifofd);
 	CloseNClearCloseOnFork (*fifofd);
 	*fifofd = -1;
-	unlink (fifopath);
+	unlink (*fifopath);
+	*strrchr (*fifopath, '/') = 0;
+	rmdir (*fifopath);
+	free (*fifopath);
+	*fifopath = 0;
     }
 }
 
@@ -954,6 +953,18 @@ processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 }
 
 
+static int
+ScanConfigs (int force)
+{
+    if (!LoadDMResources (force))
+	return FALSE;
+    ScanServers (force);
+#ifdef XDMCP
+    ScanAccessDatabase (force);
+#endif
+    return TRUE;
+}
+
 static void
 MarkDisplay (struct display *d)
 {
@@ -961,25 +972,29 @@ MarkDisplay (struct display *d)
 }
 
 static void
-RescanConfigs (void)
+UpdateFifo (void)
 {
-    LogInfo ("Rescanning all config files\n");
-    LoadDMResources (1);
-    ForEachDisplay (MarkDisplay);
-    ScanServers (1);
-#ifdef XDMCP
-    ScanAccessDatabase (1);
-#endif
+    char *ffp;
+    unsigned ffl;
+
+    if (fifoPath) {
+	ffp = fifoPath;
+	ffl = strrchr (ffp, '/') - ffp;
+    } else
+	ffl = 0;
+    if (ffl != strlen (fifoDir) || memcmp (fifoDir, ffp, ffl)) {
+	closeFifo (&fifoFd, &fifoPath);
+	openFifo (&fifoFd, &fifoPath, 0);
+    } else if (fifoPath)
+	chown (fifoPath, -1, fifoGroup);
 }
 
 static void
-RescanIfMod (void)
+RescanConfigs (int force)
 {
-    LoadDMResources (0);
-    ScanServers (0);
-#ifdef XDMCP
-    ScanAccessDatabase (0);
-#endif
+    if (ScanConfigs (force)) {
+	UpdateFifo ();
+    }
 }
 
 
@@ -999,13 +1014,13 @@ ReapChildren (void)
 	Debug ("manager wait returns  pid %d  sig %d  core %d  code %d\n",
 	       pid, waitSig(status), waitCore(status), waitCode(status));
 	if (autoRescan)
-	    RescanIfMod ();
+	    RescanConfigs (FALSE);
 	/* SUPPRESS 560 */
 	if ((d = FindDisplayByPid (pid))) {
 	    d->pid = -1;
 	    UnregisterInput (d->pipe.rfd);
 	    GClosen (&d->pipe);
-	    closeFifo (&d->fifofd, d->fifoPath);
+	    closeFifo (&d->fifofd, &d->fifoPath);
 	    switch (waitVal (status)) {
 	    case EX_TEXTLOGIN:
 		Debug ("display exited with EX_TEXTLOGIN\n");
@@ -1241,7 +1256,9 @@ MainLoop (void)
 		    stoppen (TRUE);
 		    break;
 		case SIGHUP:
-		    RescanConfigs ();
+		    LogInfo ("Rescanning all config files\n");
+		    ForEachDisplay (MarkDisplay);
+		    RescanConfigs (TRUE);
 		    break;
 		case SIGCHLD:
 		    ReapChildren ();
@@ -1408,7 +1425,7 @@ StartDisplayP2 (struct display *d)
 	ManageSession (d);
 	/* NOTREACHED */
     case -1:
-	closeFifo (&d->fifofd, d->fifoPath);
+	closeFifo (&d->fifofd, &d->fifoPath);
 	d->status = notRunning;
 	break;
     default:

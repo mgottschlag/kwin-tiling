@@ -252,7 +252,6 @@ Debug ("Removing display %s\n", d->name);
 		(void) unlink (d->authFile);
 		free (d->authFile);
 	    }
-	    IfFree (d->fifoPath);
 	    IfFree (d->authNameLens);
 #ifdef XDMCP
 	    XdmcpDisposeARRAY8 (&d->peer);
