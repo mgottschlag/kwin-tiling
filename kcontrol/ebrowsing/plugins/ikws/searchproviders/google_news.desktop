@@ -15,10 +15,12 @@ Name[el]=Google νέα
 Name[eo]=Google Novaĵoj
 Name[es]=Noticias de Google
 Name[fa]=اخبار گوگل
+Name[fi]=Googlen uutiset
 Name[fr]=Google Informations
+Name[fy]=Google-nijs
 Name[ga]=Nuacht Google
 Name[gl]=Novas de Google
-Name[he]=חדשות Google
+Name[he]=חדשות גוגל
 Name[hi]=गूगल समाचार
 Name[hr]=Google Vijesti
 Name[hu]=Google hírek
@@ -58,6 +60,9 @@ Keys=ggn,googlenews
 Query=http://news.google.com/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[en_GB]=http://news.google.co.uk/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[fr]=http://news.google.fr/news?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[fy]=http://news.google.nl/news?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[he]=http://news.google.co.il/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[nl]=http://news.google.nl/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[pt]=http://news.google.pt/news?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[ru]=http://news.google.ru/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Charset=utf8
