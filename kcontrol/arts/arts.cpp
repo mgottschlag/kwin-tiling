@@ -217,6 +217,12 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	connect(hardware->midiMapper, SIGNAL( textChanged( const QString& ) ),
 			this, SLOT( slotChanged() ) );
 
+	KAboutData *about =  new KAboutData(I18N_NOOP("kcmarts"),
+                  I18N_NOOP("The Sound Server Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1999 - 2001, Stefan Westerfeld"));
+	about->addAuthor("Stefan Westerfeld",I18N_NOOP("aRts Author") , "stw@kde.org");
+	setAboutData(about);
 }
 
 void KArtsModule::GetSettings( void )
@@ -447,19 +453,6 @@ QString KArtsModule::quickHelp() const
 		    " listening to an MP3 file or playing a game with background music. It also allows you"
 		    " to apply different effects to your system sounds and provides programmers with"
 		    " an easy way to achieve sound support.");
-}
-
-const KAboutData* KArtsModule::aboutData() const
-{
-   KAboutData *about =
-   new KAboutData(I18N_NOOP("kcmarts"),
-                  I18N_NOOP("The Sound Server Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1999 - 2001, Stefan Westerfeld"));
-
-   about->addAuthor("Stefan Westerfeld",I18N_NOOP("aRts Author") , "stw@kde.org");
-
-   return about;
 }
 
 void KArtsModule::calculateLatency()

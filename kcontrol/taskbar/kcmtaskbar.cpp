@@ -139,6 +139,14 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringLi
     connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
     connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT(slotUpdateComboBox()));
 
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmtaskbar"), I18N_NOOP("KDE Taskbar Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 2000 - 2001 Matthias Elter"));
+
+    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
+    setAboutData(about);
+
     load();
     m_moduleChanged = false;
 }
@@ -244,17 +252,4 @@ QString TaskbarConfig::quickHelp() const
                 " This includes options such as whether or not the taskbar should show all"
                 " windows at once or only those on the current desktop."
                 " You can also configure whether or not the Window List button will be displayed.");
-}
-
-const KAboutData* TaskbarConfig::aboutData() const
-{
-
-    KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmtaskbar"), I18N_NOOP("KDE Taskbar Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 2000 - 2001 Matthias Elter"));
-
-    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
-
-    return about;
 }
