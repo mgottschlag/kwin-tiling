@@ -36,7 +36,8 @@ class CBufferedFile
 {
     public:
 
-    CBufferedFile(const QCString &file, const QCString &guard, const char *insertPos=NULL, bool insertBefore=true, bool section=false);
+    CBufferedFile(const QCString &file, const QCString &guard, const char *insertPos=NULL, bool insertBefore=true, bool section=false,
+                  bool guardFirst=false);
     ~CBufferedFile();
 
     void write(const QCString &str);

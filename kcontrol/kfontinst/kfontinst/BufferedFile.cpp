@@ -34,7 +34,8 @@
 
 using namespace std;
 
-CBufferedFile::CBufferedFile(const QCString &file, const QCString &guard, const char *insertPos, bool insertBefore, bool section)
+CBufferedFile::CBufferedFile(const QCString &file, const QCString &guard, const char *insertPos, bool insertBefore, bool section,
+                             bool guardFirst)
              : itsData(NULL),
                itsSize(0),
                itsOffset(0),
@@ -58,7 +59,8 @@ CBufferedFile::CBufferedFile(const QCString &file, const QCString &guard, const 
                 const int constMaxLineLen=4096;
 
                 char         buffer[constMaxLineLen];
-                unsigned int offset=0;
+                unsigned int offset=0,
+                             guardStrlen=strlen(guard);
                 bool         error=false,
                              foundSection=false,
                              ignoreLine=false,
@@ -75,6 +77,7 @@ CBufferedFile::CBufferedFile(const QCString &file, const QCString &guard, const 
                         buffer[constMaxLineLen-1]='\0';
 
                         unsigned int dataLen=strlen(buffer);
+                        char         *gpos;
 
                         if(offset+dataLen>itsSize)
                         {
@@ -86,13 +89,15 @@ CBufferedFile::CBufferedFile(const QCString &file, const QCString &guard, const 
                             if(ignoreLine && useNextLine)
                                 ignoreLine=useNextLine=section=false;  // Also ignore section checking from now on...
                             else
-                                if(!foundSection && strstr(buffer, guard)==buffer)
+                                if(!foundSection && strstr(buffer, guard)==buffer && dataLen==guardStrlen)
                                     foundSection=ignoreLine=true;        // Ignore the next few lines, until guard is seen again
                                 else
-                                    if(foundSection && strstr(buffer, guard)==buffer)
+                                    if(foundSection && strstr(buffer, guard)==buffer && dataLen==guardStrlen)
                                         useNextLine=true;   // Next time around do-while, use the lines
 
-                        if(!ignoreLine && ('#'==buffer[0] || strstr(buffer, guard)==NULL))
+                        if(!ignoreLine &&
+                              ('#'==buffer[0] || (gpos=strstr(buffer, guard))==NULL || (!guardFirst && strlen(gpos)!=guardStrlen) ||
+                               (guardFirst && (!((gpos==buffer || isspace(gpos[-1])) && isspace(gpos[guardStrlen]))) ) ))
                         {
                             memcpy(&itsData[offset], buffer, dataLen);
                             itsData[offset+dataLen]='\n';
@@ -161,7 +166,7 @@ void CBufferedFile::close()
         if(itsData && itsOffset<itsSize && itsFile)
             itsFile.write(&itsData[itsOffset], itsSize-itsOffset);
 
-        delete itsData;
+        delete [] itsData;
         itsData=NULL;
     }
 
