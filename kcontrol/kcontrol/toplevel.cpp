@@ -59,7 +59,7 @@ TopLevel::TopLevel(const char* name)
   // read settings
   KConfig *config = KGlobal::config();
   config->setGroup("Index");
-  QString viewmode = config->readEntry("ViewMode", "Icon");
+  QString viewmode = config->readEntry("ViewMode", "Tree");
 
   if (viewmode == "Tree")
     KCGlobal::setViewMode(Tree);
