@@ -67,6 +67,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kconfig.h>
 #include <unistd.h>
 #include <kapp.h>
+#include <dcopclient.h>
 
 #include "server.h"
 #include "global.h"
@@ -178,21 +179,21 @@ QString KSMClient::userId() const
 /*! Utility function to execute a command on the local machine. Used
  to restart applications and to discard session data
  */
-static void executeCommand( const QStringList& command )
+void KSMServer::executeCommand( const QStringList& command )
 {
     if ( command.isEmpty() )
 	return;
-    QApplication::flushX();
-    if ( !vfork() ) {
-	int n = command.count();
-	char** arglist = (char **)malloc( (n+1)*sizeof(char *));
-	for ( int i=0; i < n; i++)
-	    arglist[i] = (char*) (*command.at(i)).latin1();
-	arglist[n]= 0;
-	setpgid(0,0);
-	execvp(arglist[0], arglist);
-	_exit(-1);
-    }
+    int n = command.count();
+    QCString app = command[0].latin1();
+    QValueList<QCString> argList;
+
+    for ( int i=1; i < n; i++)
+       argList.append( QCString(command[i].latin1()));
+
+    QByteArray params;
+    QDataStream stream(params, IO_WriteOnly);
+    stream << app << argList;
+    kapp->dcopClient()->send(launcher, launcher, "exec_blind(QCString,QValueList<QCString>)", params);
 }
 
 IceAuthDataEntry *authDataEntries = 0;
@@ -574,8 +575,12 @@ static void sighandler(int sig)
 	return;
     }
 
-    delete the_server;
-    exit(0);
+    if (the_server)
+    {
+       the_server->cleanUp();
+       delete the_server;
+    }
+    ::exit(0);
 }
 
 
@@ -636,6 +641,7 @@ static Status KSMNewClientProc ( SmsConn conn, SmPointer manager_data,
 KSMServer::KSMServer( const QString& windowManager )
 {
     the_server = this;
+    clean = false;
     wm = windowManager;
 
     state = Idle;
@@ -643,6 +649,9 @@ KSMServer::KSMServer( const QString& windowManager )
     config->setGroup("General" );
     saveSession = config->readBoolEntry( "saveSession", FALSE );
     clientInteracting = 0;
+
+    kapp->dcopClient()->registerAs("KSMServer");
+    launcher = KApplication::launcher();
 
     char 	errormsg[256];
     if (!SmsInitialize ( (char*) KSMVendorString, (char*) KSMReleaseString,
@@ -655,24 +664,34 @@ KSMServer::KSMServer( const QString& windowManager )
 
     if (!IceListenForConnections (&numTransports, &listenObjs,
 				  256, errormsg))
-	{
-	    fprintf (stderr, "%s\n", errormsg);
-	    exit (1);
-	} else {
-	    // publish available transports.
-	    QCString fName = ::getenv("HOME");
-	    fName += "/.KSMserver";
-	    FILE *f;
-	    f = ::fopen(fName.data(), "w+");
-	    char* session_manager = IceComposeNetworkIdList(numTransports, listenObjs);
-	    fprintf(f, session_manager);
-	    fprintf(f, "\n%i\n", getpid());
-	    fclose(f);
-	    setenv( "SESSION_MANAGER", session_manager, TRUE  );
-	}
+    {
+	fprintf (stderr, "%s\n", errormsg);
+	exit (1);
+    } 
+
+    {
+	// publish available transports.
+	QCString fName = ::getenv("HOME");
+	fName += "/.KSMserver";
+	FILE *f;
+	f = ::fopen(fName.data(), "w+");
+	char* session_manager = IceComposeNetworkIdList(numTransports, listenObjs);
+	fprintf(f, session_manager);
+	fprintf(f, "\n%i\n", getpid());
+	fclose(f);
+	setenv( "SESSION_MANAGER", session_manager, TRUE  );
+       // Pass env. var to kdeinit.
+       QCString name = "SESSION_MANAGER";
+       QCString value = session_manager;
+       QByteArray params;
+       QDataStream stream(params, IO_WriteOnly);
+       stream << name << value;
+       kapp->dcopClient()->send(launcher, launcher, "setLaunchEnv(QCString,QCString)", params);
+    }
 
     if (!SetAuthentication(numTransports, listenObjs, &authDataEntries))
 	qFatal("KSMSERVER: authentication setup failed.");
+
 
     IceAddConnectionWatch (KSMWatchProc, (IcePointer) this);
 
@@ -696,11 +715,14 @@ KSMServer::KSMServer( const QString& windowManager )
 
 KSMServer::~KSMServer()
 {
+    the_server = 0;
     cleanUp();
 }
 
 void KSMServer::cleanUp()
 {
+    if (clean) return;
+    clean = true;
     IceFreeListenObjs (numTransports, listenObjs);
 
     QCString fName = ::getenv("HOME");

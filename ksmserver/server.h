@@ -92,6 +92,7 @@ public:
 
 public slots:
     void shutdown();
+    void cleanUp();
 
 private slots:
     void newConnection( int socket );
@@ -100,7 +101,6 @@ private slots:
     void restoreSessionInternal();
 
     void protectionTimeout();
-    void cleanUp();
 
 private:
     void handlePendingInteractions();
@@ -114,6 +114,8 @@ private:
     void startProtection();
     void endProtection();
 
+    void executeCommand( const QStringList& command );
+
  private:
     QList<KSMListener> listener;
     QList<KSMClient> clients;
@@ -122,8 +124,10 @@ private:
     State state;
     bool saveSession;
 
+    bool clean;
     KSMClient* clientInteracting;
     QString wm;
+    QCString launcher;
     QTimer protection;
 };
 
