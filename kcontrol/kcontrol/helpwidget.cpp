@@ -38,15 +38,11 @@ HelpWidget::HelpWidget(QWidget *parent , const char *name)
 
   _browser = new QuickHelp(this);
   connect(_browser, SIGNAL(urlClick(const QString &)),
-		  SLOT(urlClicked(const QString &)));
+	  SLOT(urlClicked(const QString &)));
   connect(_browser, SIGNAL(mailClick(const QString &,const QString &)),
-		  SLOT(mailClicked(const QString &,const QString &)));
+	  SLOT(mailClicked(const QString &,const QString &)));
 
   l->addWidget(_browser);
-  
-  QPushButton* pb = new QPushButton( i18n("Full Help"), this );
-  connect( pb, SIGNAL( clicked() ), this, SLOT( fullHelp() ) );
-  l->addWidget( pb );
 
   setBaseText();
 }
@@ -55,23 +51,18 @@ void HelpWidget::setText( const QString& docPath, const QString& text)
 {
   docpath = docPath;
   if (text.isEmpty())
-	setBaseText();
+    setBaseText();
   else
-	_browser->setText(text);
-}
-
-
-void HelpWidget::fullHelp()
-{
-    kapp->invokeHelp( docpath, "" );
+    _browser->setText(text + i18n("<br><br>To read the full manual click <a href=\"%1\">here</a>.")
+		      .arg(docPath.local8Bit()));
 }
 
 void HelpWidget::setBaseText()
 {
   _browser->setText(i18n("<h1>KDE Control Center</h1>"
-						 "Sorry, there is no quick help available for the active control module."
-						 "<br><br>"
-						 "Click <a href = \"kcontrol/index.html\">here</a> to read the general control center manual.") );
+			 "Sorry, there is no quick help available for the active control module."
+			 "<br><br>"
+			 "Click <a href = \"kcontrol/index.html\">here</a> to read the general control center manual.") );
 }
 
 void HelpWidget::urlClicked(const QString & url)

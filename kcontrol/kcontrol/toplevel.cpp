@@ -269,7 +269,7 @@ void TopLevel::newModule(const QString &name, const QString& docPath, const QStr
     cap += " - [" + name +"]";
 
   setPlainCaption(cap);
-
+  
   _helptab->setText( docPath, quickhelp );
 }
 

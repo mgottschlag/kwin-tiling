@@ -37,8 +37,6 @@ public:
 protected slots:
   void urlClicked(const QString &);
   void mailClicked(const QString &,const QString &);
-    
- void fullHelp();
 
 private:
   QuickHelp *_browser;
