@@ -77,6 +77,14 @@ public slots:
     void slotConfigure();
 
 protected:
+    /**
+     * The selection modes
+     *
+     * Don't use 1, as I use that as a guard against passing
+     * a boolean true as a mode.
+     */
+    enum SelectionMode { Clipboard = 2, Selection = 4 };
+
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
     void readProperties(KConfig *);
@@ -142,12 +150,11 @@ private slots:
 
     void slotQuit();
     void slotAboutToHideMenu();
-    
+
     void slotClearOverflow();
     void slotCheckPending();
 
 private:
-    enum SelectionMode { Clipboard = 1, Selection = 2 };
 
     QClipboard *clip;
 

@@ -719,7 +719,7 @@ void KlipperWidget::checkClipData( bool selectionMode )
         // but we don't track that yet. We will....
         const HistoryItem* top = history()->first();
         if ( top ) {
-            setClipboard( *top, selectionMode );
+            setClipboard( *top, selectionMode ? Selection : Clipboard);
         }
         return;
     }
@@ -747,7 +747,7 @@ void KlipperWidget::checkClipData( bool selectionMode )
     kdDebug() << "\nselectionMode=" << selectionMode
               << "\nserialNo=" << clip->data()->serialNumber() << " (sel,cli)=(" << m_lastSelection << "," << m_lastClipboard << ")"
               << "\nowning (sel,cli)=(" << clip->ownsSelection() << "," << clip->ownsClipboard() << ")"
-              << "\ntext=" << clip->text() << endl;
+              << "\ntext=" << clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard) << endl;
 
 #endif
 #if 0
@@ -772,8 +772,12 @@ void KlipperWidget::checkClipData( bool selectionMode )
         const HistoryItem* top = history()->first();
         if ( top ) {
             // keep old clipboard after someone set it to null
-            setClipboard( *top, selectionMode );
+#ifdef NOISY_KLIPPER
+            kdDebug() << "Resetting clipboard (Prevent empty clipboard)" << endl;
+#endif
+            setClipboard( *top, selectionMode ? Selection : Clipboard );
         }
+        return;
     }
 
     // this must be below the "bNoNullClipboard" handling code!
@@ -819,8 +823,13 @@ void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
 {
     Ignore lock( locklevel );
 
+    Q_ASSERT( ( mode & 1 ) == 0 ); // Warn if trying to pass a boolean as a mode.
+
     if ( mode & Selection ) {
-        if ( clip->image().isNull() ) {
+#ifdef NOSIY_KLIPPER
+        kdDebug() << "Setting selection to <" << item.text() << ">" << endl;
+#endif
+        if ( item.image().isNull() ) {
             clip->setText( item.text(), QClipboard::Selection );
         } else {
             clip->setPixmap( item.image(), QClipboard::Selection );
@@ -828,7 +837,10 @@ void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
         m_lastSelection = clip->data()->serialNumber();
     }
     if ( mode & Clipboard ) {
-        if ( clip->image().isNull() ) {
+#ifdef NOSIY_KLIPPER
+        kdDebug() << "Setting clipboard to <" << item.text() << ">" << endl;
+#endif
+        if ( item.image().isNull() ) {
             clip->setText( item.text(), QClipboard::Clipboard );
         } else {
             clip->setPixmap( item.image(), QClipboard::Clipboard );
