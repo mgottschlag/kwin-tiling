@@ -13,7 +13,6 @@ class QPushButton;
 class QBoxLayout;
 class Theme;
 
-#define AboutInherited KCModule
 class About : public KCModule
 {
   Q_OBJECT

@@ -60,8 +60,8 @@ protected:
       is no file. */
   virtual const QString extractFile(const QString& aFile);
 
-  /** Set information of "General" group. */
-  virtual void setGroupGeneral(void);
+  /** Save information of "General" group. */
+  virtual void saveGroupGeneral(void);
 
   /** Do some special things */
   virtual void extractCmd(KSimpleConfig* aCfg, const QString& aCmd,

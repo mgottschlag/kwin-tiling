@@ -30,8 +30,7 @@
 
 class KConfig;
 
-#define ThemeInherited KSimpleConfig
-class Theme: public KSimpleConfig
+class Theme: public QObject
 {
   Q_OBJECT
 public:
@@ -60,33 +59,12 @@ public:
   /** Get preview pixmap. */
   const QPixmap& preview(void) const { return mPreview; }
 
-  /** Description */
-  const QString description(void) const { return mDescription; } virtual
-  void setDescription(const QString&);
-
-  /** Color scheme colors. */
-  QColor foregroundColor;
-  QColor backgroundColor;
-  QColor selectForegroundColor;
-  QColor selectBackgroundColor;
-  QColor activeForegroundColor;
-  QColor activeBackgroundColor;
-  QColor activeBlendColor;
-  QColor inactiveForegroundColor;
-  QColor inactiveBackgroundColor;
-  QColor inactiveBlendColor;
-  QColor windowForegroundColor;
-  QColor windowBackgroundColor;
-  int contrast;
 
   /** Theme packet installation options */
   bool instColors;
   bool instWallpapers;  
   bool instIcons;
   bool instOverwrite;
-
-  /** Clear config contents */
-  virtual void clear(void);
 
   /** Test if group with given name exists. If notEmpty is true the
       method also tests if the group is not empty. */
@@ -101,6 +79,10 @@ public:
   /** Uninstall files of last theme installation for given group */
   virtual void uninstallFiles(const char* groupName);
 
+  const QString themeName(void) const { return mName; } virtual
+  void setThemeName(const QString &name) { mName = name; }
+  const QString description(void) const { return mDescription; } virtual
+  void setDescription(const QString&description) { mDescription = description; }
   QString author() const { return mAuthor; }
   void setAuthor(const QString &author) { mAuthor = author; }
   QString email() const { return mEmail; }
@@ -118,18 +100,8 @@ signals:
   void apply();
 
 protected:
-  /** Write color entry to config file. */
-  void writeColorEntry(KConfigBase*, const char* key, const QColor& color);
-
-  /** Read color entry to config file. */
-  const QColor& readColorEntry(KConfigBase*, const char* key, 
-			       const QColor* pDefault=0L) const;
-
-  /** Read values from config file. */
-  virtual void readConfig(void);
-
-  /** Write values to config file. */
-  virtual void writeConfig(void);
+  /** Read information from config file. */
+  virtual void loadGroupGeneral(void);
 
   /** Create KConfig object and load fitting data. */
   virtual KConfig* openConfig(const QString &appName) const;
@@ -212,18 +184,21 @@ protected:
 protected:
   QString mFileName;       // Name+path
   QString mThemePath;      // Path to dir where theme files are stored
-  QString mDescription;
   QString mThemercFile;    // Name of the .themerc file
   QString mPreviewFile;    // Name of the preview image
   QString mRestartCmd;     // Shell command that restarts an app
   QPixmap mPreview;
   QString mConfigDir;
+
+  QString mName;
+  QString mDescription;
   QString mAuthor;
   QString mEmail;
   QString mHomePage;
   QString mVersion;
   
   KSimpleConfig* mMappings;
+  KSimpleConfig* mConfig;
   QStringList mCmdList;
   QStringList mInstFiles;     // List of installed files
   int mInstIcons;          // Number of installed icons

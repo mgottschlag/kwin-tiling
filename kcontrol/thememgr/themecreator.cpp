@@ -64,7 +64,7 @@ bool ThemeCreator::create(const QString aThemeName)
 
   kdDebug() << "Theme::create() started" << endl;
 
-  clear();
+  delete mConfig; mConfig = 0;
   cleanupWorkDir();
 
   mThemePath = workDir() + aThemeName + '/';
@@ -79,8 +79,7 @@ bool ThemeCreator::create(const QString aThemeName)
   mPreviewFile = QString::null;
   mPreview.resize(0,0);
 
-  backEnd->changeFileName(mThemercFile, "", false);
-  reparseConfiguration();
+  mConfig = new KSimpleConfig(mThemercFile);  
   return true;
 }
 
@@ -96,7 +95,7 @@ bool ThemeCreator::extract(void)
 {
   kdDebug() << "Theme::extract() started" << endl;
 
-  setGroupGeneral();
+  saveGroupGeneral();
 
   loadMappings();
 
@@ -108,7 +107,6 @@ bool ThemeCreator::extract(void)
   saveSettings();
   save(KGlobal::dirs()->saveLocation("themes") + fileName());
 
-  emit changed();
   return true;
 }
 
@@ -125,7 +123,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
 
   kdDebug() << "*** beginning with " << aGroupName << endl;
   group = aGroupName;
-  setGroup(group);
+  mConfig->setGroup(group);
 
   while (!group.isEmpty())
   {
@@ -236,8 +234,10 @@ int ThemeCreator::extractGroup(const char* aGroupName)
       // Set config entry
       if (value == emptyValue) value = "";
       kdDebug() << key << "=" << value << endl;
-      if (value.isEmpty()) deleteEntry(key, false);
-      else writeEntry(key, value);
+      if (value.isEmpty()) 
+         mConfig->deleteEntry(key, false);
+      else 
+         mConfig->writeEntry(key, value);
     }
 
     if (!instCmd.isEmpty()) extractCmd(cfg, instCmd, extracted);
@@ -357,14 +357,14 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
 
 
 //-----------------------------------------------------------------------------
-void ThemeCreator::setGroupGeneral(void)
+void ThemeCreator::saveGroupGeneral(void)
 {
-  setGroup("General");
-  writeEntry("name", name());
-  writeEntry("author", mAuthor);
-  writeEntry("email", mEmail);
-  writeEntry("homepage", mHomePage);
-  writeEntry("version", mVersion);
+  mConfig->setGroup("General");
+  mConfig->writeEntry("name", mName);
+  mConfig->writeEntry("author", mAuthor);
+  mConfig->writeEntry("email", mEmail);
+  mConfig->writeEntry("homepage", mHomePage);
+  mConfig->writeEntry("version", mVersion);
 }
 
 

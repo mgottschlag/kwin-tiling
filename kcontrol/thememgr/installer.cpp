@@ -50,8 +50,6 @@
 #include <kmessagebox.h>
 #include <kio/netaccess.h>
 
-static bool sSettingTheme = false;
-
 static QString findThemePath(const QString &name)
 {
     if (name.isEmpty()) 
@@ -195,12 +193,7 @@ void Installer::slotCreate()
   theme->savePreview(dlg.preview());
   theme->extract();
 
-  sSettingTheme = true;
   mThemesList->setCurrentItem(addTheme(name));
-  sSettingTheme = false;
-
-  mPreview->setText("");
-  mText->setText("");
 }
 
 
@@ -235,8 +228,6 @@ void Installer::slotSetTheme(int id)
 {
   bool enabled, isGlobal=false;
   QString name;
-
-  if (sSettingTheme) return;
 
   if (id < 0)
   {

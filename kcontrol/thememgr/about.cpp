@@ -23,7 +23,7 @@
 
 //-----------------------------------------------------------------------------
 About::About (QWidget * aParent, const char *aName, bool aInit)
-  : AboutInherited(aParent, aName)
+  : KCModule(aParent, aName)
 {
   QBoxLayout* box;
   QLabel* lbl;
@@ -63,7 +63,7 @@ About::About (QWidget * aParent, const char *aName, bool aInit)
   box->addWidget(lbl);
 
   str = i18n("Version %1\n\n"
-		   "Copyright (C) 1998-2000 by\n%2%3\n\n"
+		   "Copyright (C) 1998-2000 by\n%2\n%3\n\n"
 		   "Gnu Public License (GPL)")
 	      .arg(KTHEME_VERSION)
 	      .arg("Stefan Taferner <taferner@kde.org>")
@@ -87,8 +87,8 @@ void About::slotThemeChanged()
   QString str, value;
 
   // Theme name
-  value = theme->name();
-  str = i18n("%1 Theme").arg(value);
+  value = theme->themeName();
+  str = value;
   lblTheme->setText(str);
 
   // Version

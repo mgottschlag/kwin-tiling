@@ -67,14 +67,12 @@
 extern int dropError(Display *, XErrorEvent *);
 
 //-----------------------------------------------------------------------------
-Theme::Theme(): ThemeInherited(QString::null), mInstFiles()
+Theme::Theme()
 {
   int len;
 
-  setLocale();
-
   instOverwrite = false;
-
+  mConfig = 0;
   mConfigDir = KGlobal::dirs()->saveLocation("config");
   len = mConfigDir.length();
   if (len > 0 && mConfigDir[len-1] != '/') mConfigDir += '/';
@@ -108,13 +106,6 @@ void Theme::loadSettings(void)
 //-----------------------------------------------------------------------------
 void Theme::saveSettings(void)
 {
-}
-
-
-//-----------------------------------------------------------------------------
-void Theme::setDescription(const QString &aDescription)
-{
-  mDescription = aDescription;
 }
 
 //-----------------------------------------------------------------------------
@@ -179,7 +170,7 @@ bool Theme::load(const QString &aPath, QString &error)
   assert(!aPath.isEmpty());
   kdDebug() << "Theme::load()" << endl;
 
-  clear();
+  delete mConfig; mConfig = 0;
   cleanupWorkDir();
 
   mFileName = aPath;
@@ -250,11 +241,8 @@ bool Theme::load(const QString &aPath, QString &error)
   mPreviewFile = mThemePath+mPreviewFile;
 
   // read theme config file
-  setReadOnly(TRUE);
-  backEnd->changeFileName(mThemercFile, "", false);
-  reparseConfiguration();
-
-  readConfig();
+  mConfig = new KSimpleConfig(mThemercFile);
+  loadGroupGeneral();
 
   emit changed();
   return true;
@@ -265,11 +253,8 @@ bool Theme::load(const QString &aPath, QString &error)
 bool Theme::save(const QString &aPath)
 {
   emit apply();
-  writeConfig();
 
-  kdDebug() << "Saving " << backEnd->filename() << " dirty = " << isDirty() << endl;
-  sync();
-//  backEnd->sync(true); // true so that disk entries are merged.  Is this right?
+  mConfig->sync();
 
   QString path = aPath;
   if ((path.right(4) != ".tgz") && 
@@ -452,7 +437,7 @@ int Theme::installGroup(const char* aGroupName)
 
   kdDebug() << "*** beginning with " << aGroupName << endl;
   group = aGroupName;
-  setGroup(group);
+  mConfig->setGroup(group);
   
   if (!instOverwrite) uninstallFiles(aGroupName);
   else readInstFileList(aGroupName);
@@ -573,7 +558,7 @@ int Theme::installGroup(const char* aGroupName)
          oldValue = QString::null;
       }
 
-      themeValue = readEntry(key);
+      themeValue = mConfig->readEntry(key);
       if (cfgValue.isEmpty()) cfgValue = themeValue;
 
       // Install file
@@ -646,13 +631,13 @@ void Theme::preInstallCmd(KSimpleConfig* aCfg, const QString& aCmd)
 
   if (cmd == "stretchBorders")
   {
-    value = readEntry("ShapePixmapBottom");
+    value = mConfig->readEntry("ShapePixmapBottom");
     if (!value.isEmpty()) stretchPixmap(mThemePath + value, false);
-    value = readEntry("ShapePixmapTop");
+    value = mConfig->readEntry("ShapePixmapTop");
     if (!value.isEmpty()) stretchPixmap(mThemePath + value, false);
-    value = readEntry("ShapePixmapLeft");
+    value = mConfig->readEntry("ShapePixmapLeft");
     if (!value.isEmpty()) stretchPixmap(mThemePath + value, true);
-    value = readEntry("ShapePixmapRight");
+    value = mConfig->readEntry("ShapePixmapRight");
     if (!value.isEmpty()) stretchPixmap(mThemePath + value, true);
   }
   else
@@ -896,33 +881,19 @@ KConfig* Theme::openConfig(const QString &aAppName) const
 
 
 //-----------------------------------------------------------------------------
-void Theme::readConfig(void)
+void Theme::loadGroupGeneral(void)
 {
   QString fname;
   QColor col;
   col.setRgb(192,192,192);
 
-  setGroup("General");
-  mDescription = readEntry("description", QString(name()) + " Theme");
-  mAuthor = readEntry("author");
-  mEmail = readEntry("email");
-  mHomePage = readEntry("homepage");
-  mVersion = readEntry("version");
-
-  setGroup("Colors");
-  foregroundColor = readColorEntry(this, "foreground", &col);
-  backgroundColor = readColorEntry(this, "background", &col);
-  selectForegroundColor = readColorEntry(this, "selectForeground", &col);
-  selectBackgroundColor = readColorEntry(this, "selectBackground", &col);
-  activeForegroundColor = readColorEntry(this, "activeForeground", &col);
-  activeBackgroundColor = readColorEntry(this, "activeBackground", &col);
-  activeBlendColor = readColorEntry(this, "activeBlend", &col);
-  inactiveForegroundColor = readColorEntry(this, "inactiveForeground", &col);
-  inactiveBackgroundColor = readColorEntry(this, "inactiveBackground", &col);
-  inactiveBlendColor = readColorEntry(this, "inactiveBlend", &col);
-  windowForegroundColor = readColorEntry(this, "windowForeground", &col);
-  windowBackgroundColor = readColorEntry(this, "windowBackground", &col);
-  contrast = readNumEntry("Contrast", 7);
+  mConfig->setGroup("General");
+  mName = mConfig->readEntry("name", "<unknown>");
+  mDescription = mConfig->readEntry("description", mName + " Theme");
+  mAuthor = mConfig->readEntry("author");
+  mEmail = mConfig->readEntry("email");
+  mHomePage = mConfig->readEntry("homepage");
+  mVersion = mConfig->readEntry("version");
 
   if (!mPreviewFile.isEmpty())
   {
@@ -935,77 +906,15 @@ void Theme::readConfig(void)
   else mPreview.resize(0,0);
 }
 
-
-//-----------------------------------------------------------------------------
-void Theme::writeConfig(void)
-{
-  kdDebug() << "Theme::writeConfig() is broken" << endl;
-  return;
-
-  setGroup("General");
-  writeEntry("description", mDescription);
-
-#ifdef BROKEN
-  setGroup("Colors");
-  writeColorEntry(this, "BackgroundColor", backgroundColor);
-  writeColorEntry(this, "SelectColor", selectColor);
-  writeColorEntry(this, "TextColor", textColor);
-  writeColorEntry(this, "ActiveTitleTextColor", activeTextColor);
-  writeColorEntry(this, "InactiveTitleBarColor", inactiveTitleColor);
-  writeColorEntry(this, "ActiveTitleBarColor", activeTitleColor);
-  writeColorEntry(this, "InactiveTitleTextColor", inactiveTextColor);
-  writeColorEntry(this, "WindowTextColor", windowTextColor);
-  writeColorEntry(this, "WindowColor", windowColor);
-  writeColorEntry(this, "SelectTextColor", selectTextColor);
-  writeEntry("Contrast", contrast);
-#endif
-}
-
-
-//-----------------------------------------------------------------------------
-void Theme::writeColorEntry(KConfigBase* cfg, const char* aKey, 
-			    const QColor& aColor)
-{
-  QString str;   // !!! Changed from QString(32). It should be safe with Qt2.0 (ce) 
-  str.sprintf("#%02x%02x%02x", aColor.red(), aColor.green(), aColor.blue());
-  cfg->writeEntry(aKey, str);
-}
-
-
-//-----------------------------------------------------------------------------
-const QColor& Theme::readColorEntry(KConfigBase* cfg, const char* aKey,
-				    const QColor* aDefault) const
-{
-  static QColor col;
-  QString str = cfg->readEntry(aKey, QString::null);
-
-  if (!str.isEmpty()) col.setNamedColor(str);
-  else if (aDefault) col = *aDefault;
-
-  return col;
-}
-
-
-//-----------------------------------------------------------------------------
-void Theme::clear(void)
-{
-  QStringList gList(groupList());
-
-  for (QStringList::Iterator gIt(gList.begin()); gIt != gList.end(); ++gIt) {
-    deleteGroup(*gIt);
-  }
-}
-
-
 //-----------------------------------------------------------------------------
 bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 {
-  bool found = KSimpleConfig::hasGroup(aName);
+  bool found = mConfig->hasGroup(aName);
 
   if (!aNotEmpty)
     return found;
 
-  QMap<QString, QString> aMap = entryMap(aName);
+  QMap<QString, QString> aMap = mConfig->entryMap(aName);
   if (found && aNotEmpty) 
     found = !aMap.isEmpty();
 
