@@ -29,7 +29,7 @@ Query=http://foldoc.doc.ic.ac.uk/foldoc/foldoc.cgi?query=\\1
 
 [Freshmeat Search]
 Keys=fm,freshmeat
-Query=http://core.freshmeat.net/search/search.php3?query=\\1
+Query=http://freshmeat.net/search/?q=\\1
 
 [GO.com Search]
 Keys=go
