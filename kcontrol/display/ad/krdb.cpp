@@ -234,7 +234,7 @@ main( int argc, char ** argv )
 	QFileInfoList *sysList = 0;
 	QFileInfoListIterator *sysIt = 0;
 	QFileInfoList *userList = 0;
-	QStrList *userNames = 0;
+	QStringList *userNames = 0;
 	QFileInfoListIterator *userIt = 0;
 		
 	QString adPath = kapp->kde_datadir().copy();
@@ -259,7 +259,7 @@ main( int argc, char ** argv )
 		dUser.setSorting( QDir::Name );
 		dUser.setNameFilter("*.ad");
 		userList = new QFileInfoList( *dUser.entryInfoList() );
-		userNames = new QStrList( *dUser.entryList() );
+		userNames = new QStringList( *dUser.entryList() );
 	}
 
 	if ( !sysList && !userList ) {
@@ -294,11 +294,11 @@ main( int argc, char ** argv )
 		//debug("Found system list");
 	
 		while ( ( fi = sysIt->current() ) ) {
-			int result = -1;
-			if ( userList )
-				result = userNames->find( fi->fileName() );
+		    QStringList::Iterator result = userNames->end();
+		    if ( userList )
+			result = userNames->find( fi->fileName() );
 		
-			if ( result != -1 ) {
+			if ( result != userNames->end() ) {
 				//debug("System ad's overridden by user ads.");
 			} else {
 				

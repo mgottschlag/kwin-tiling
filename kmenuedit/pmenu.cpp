@@ -917,24 +917,22 @@ void PMenu::writeConfig( QDir base_dir, PMenuItem *parent_item)
     {
       return;
     }
-  QString name;
-  const QStrList *temp_list = base_dir.entryList("*", QDir::Files);
-  QStrList file_list;
-  file_list.setAutoDelete(TRUE);
-  QStrListIterator temp_it( *temp_list );
-  while( name = temp_it.current() )
+
+  const QStringList *temp_list = base_dir.entryList("*", QDir::Files);
+  QStringList file_list;
+  QStringList::ConstIterator temp_it = temp_list->begin();
+  while( !temp_it->isNull() )
     {
-      file_list.append(name);
-      ++temp_it;
+      file_list.append(*temp_it);
+      temp_it++;
     }
   temp_list = base_dir.entryList("*", QDir::Dirs);
-  QStrList dir_list;
-  dir_list.setAutoDelete(TRUE);
-  temp_it.toFirst();
-  while( name = temp_it.current() )
+  QStringList dir_list;
+  temp_it = temp_list->begin();
+  while( !temp_it->isNull() )
     {
-      if(name != "." && name != "..")
-	dir_list.append(name);
+      if (*temp_it != "." && *temp_it != "..")
+	  dir_list.append(*temp_it);
       ++temp_it;
     }
   QString sort_order;
@@ -976,28 +974,30 @@ void PMenu::writeConfig( QDir base_dir, PMenuItem *parent_item)
 	    }
 	}
     }
+  QStringList::Iterator temp_it2;
+
   // remove files not in pmenu
-  for( name = file_list.first(); name != 0; name = file_list.next() )
+  for( temp_it2 = file_list.begin(); !temp_it2->isNull(); temp_it2++ )
     {
-      if( isKdelnkFile(base_dir.absFilePath(name)) )
+      if( isKdelnkFile(base_dir.absFilePath(*temp_it2)) )
 	{
 	  //debug("will remove file: %s", (const char *) name );
-	  base_dir.remove(name);
+	  base_dir.remove(*temp_it);
 	}
     }
   // remove dirs not in pmenu
-  for( name = dir_list.first(); name != 0; name = dir_list.next() )
+  for( temp_it2 = dir_list.begin(); !temp_it2->isNull(); temp_it2++ )
     {
       //debug("will remove dir: %s", (const char *) name );
       QDir sub_dir(base_dir);
-      if(sub_dir.cd(name))
+      if(sub_dir.cd(*temp_it2))
 	{
 	  PMenu *new_menu = new PMenu;
 	  new_menu->writeConfig(sub_dir);
 	  delete new_menu;
 	  sub_dir.remove(".directory");	  
 	}
-      base_dir.rmdir(name);
+      base_dir.rmdir(*temp_it);
     }
   sort_order.truncate(sort_order.length()-1);
   QString file = base_dir.absPath();

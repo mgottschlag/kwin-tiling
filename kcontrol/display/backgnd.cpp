@@ -321,7 +321,7 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
 
   QString path = kapp->kde_wallpaperdir().copy();
   QDir d( path, "*", QDir::Name, QDir::Readable | QDir::Files );
-  const QStrList *list = d.entryList();
+  const QStringList *list = d.entryList();
 
   wpCombo = new QComboBox( false, group );
   wpCombo->insertItem( i18n("No wallpaper"), 0 );
@@ -331,11 +331,11 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
   grid->addMultiCellWidget( wpCombo, 1,1,0,2 );
   //  groupLayout->addStretch( 3 );
     
-  QStrListIterator it( *list );
-  for ( int i = 1; it.current(); ++it, i++ )
+  QStringList::ConstIterator it = list->begin();
+  for ( int i = 1; !it->isNull(); ++it, i++ )
     {
-      wpCombo->insertItem( it.current() );
-      if ( currentItem.wallpaper == it.current() )
+      wpCombo->insertItem( *it );
+      if ( currentItem.wallpaper == *it )
 	wpCombo->setCurrentItem( i );
     }
 

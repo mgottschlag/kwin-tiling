@@ -191,11 +191,11 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 	ssList->adjustSize();
 	ssList->setMinimumSize(ssList->size());
 //	ssList->insertStrList( &saverNames );
-	QStrListIterator it( *saverList );
-	for ( int i = 1; it.current(); ++it )
+	QStringList::ConstIterator it = saverList->begin();
+	for ( int i = 1; !it->isNull(); ++it )
 	{
-		ssList->insertItem( saverNames.at( i - 1 ), i );
-		if ( saverFile == it.current() )
+		ssList->insertItem( *saverNames.at( i - 1 ), i );
+		if ( saverFile == *it )
 			ssList->setCurrentItem( i );
 		i++;
 	}
@@ -497,15 +497,15 @@ void KScreenSaver::getSaverNames()
 
 	saverNames.clear();
 
-	QStrListIterator it( *saverList );
-	for ( ; it.current(); ++it )
+	QStringList::ConstIterator it = saverList->begin();
+	for ( ; it != saverList->end(); ++it )
 	{
-		QString name = config->readEntry( it.current() );
+		QString name = config->readEntry( *it );
 
 		if ( name.isEmpty() )
 		{
 			char buffer[80];
-			QString cmd = saverLocation + '/' + it.current() + " -desc";
+			QString cmd = saverLocation + '/' + *it + " -desc";
 			FILE *fp = popen( cmd, "r");
 			if ( fp )
 			{
@@ -514,7 +514,7 @@ void KScreenSaver::getSaverNames()
 					*strchr( buffer, '\n' ) = '\0';
 				pclose( fp );
 				name = buffer;
-				config->writeEntry( it.current(), buffer, true, false, true );
+				config->writeEntry( *it, buffer, true, false, true );
 			}
 			else
 				name = "";
@@ -627,8 +627,10 @@ void KScreenSaver::slotScreenSaver( int indx )
 	}
 	else
 	{
-		QStrListIterator it( *saverList );
-		saverFile = it += (indx - 1);
+		QStringList::ConstIterator it = saverList->begin();
+		int i = indx - 1;
+		while (i--) { it++; }
+		saverFile = *it;
 		if (!ssSetup->isRunning())
 			setupBt->setEnabled( TRUE );
 		testBt->setEnabled( TRUE );
@@ -748,11 +750,11 @@ void KScreenSaver::loadSettings()
   findSavers();
   getSaverNames();
 
-  QStrListIterator it( *saverList );
-  for ( int i = 1; it.current(); ++it )
+  QStringList::ConstIterator it = saverList->begin();
+  for ( int i = 1; it != saverList->end(); ++it )
     {
-	ssList->insertItem( saverNames.at( i - 1 ), i );
-	if ( saverFile == it.current() )
+	ssList->insertItem( *saverNames.at( i - 1 ), i );
+	if ( saverFile == *it )
            ssList->setCurrentItem( i );
         i++;
     }
