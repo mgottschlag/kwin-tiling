@@ -338,6 +338,8 @@ void MenuFile::moveMenu(const QString &oldMenu, const QString &newMenu)
       newMenuName += newMenuParts[j];
    }
 
+   if (oldMenuName == newMenuName) return; // Can happen
+
    elem = findMenu(m_doc.documentElement(), commonMenuName, true);
 
    // Add instructions for moving
