@@ -11,6 +11,7 @@
 
 #include <kcmodule.h>
 
+typedef unsigned long t_memsize;
 
 class KMemoryWidget : public KCModule
 {
@@ -25,15 +26,16 @@ private:
   QTimer *timer;
   
   void update();
-  int  Width_Info,
-       Width_Value,
-       Width_NoInfo;
+  bool Display_Graph( int widgetindex, bool highlight,
+		t_memsize total, t_memsize avail );
   
 public slots:
   void update_Values();
 
+/*
 protected:
   virtual void resizeEvent( QResizeEvent * );
+*/
 };
 
 
