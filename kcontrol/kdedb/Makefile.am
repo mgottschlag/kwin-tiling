@@ -17,6 +17,6 @@ kcmdata_DATA = kcmkdb.desktop
 
 kcmdatadir = $(kde_appsdir)/Settings/Databases
 
-
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot *.cpp -o $(podir)/kcmkdb.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmkdb.pot
+
