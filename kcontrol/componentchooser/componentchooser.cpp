@@ -9,8 +9,7 @@
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
+ *   the Free Software Foundation; either version 2 of the License         *
  *                                                                         *
  ***************************************************************************/
 
@@ -295,7 +294,7 @@ ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	if (!it) return;
 	if (somethingChanged) {
-		if (KMessageBox::questionYesNo(this,"<qt>You changed the default component of your choice, do want to save that change now ?<BR><BR>Selecting <B>No</B> will discard your changes</qt>")==KMessageBox::Yes) save();
+		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?<BR><BR>Selecting <B>No</B> will discard your changes</qt>"))==KMessageBox::Yes) save();
 	}
 	KSimpleConfig *cfg=new KSimpleConfig(static_cast<MyListBoxItem*>(it)->File);
 
