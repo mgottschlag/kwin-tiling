@@ -97,7 +97,7 @@
                         <cstring>TextLabel1_2_3</cstring>
                     </property>
                     <property name="text">
-                        <string>TrueType :</string>
+                        <string>TrueType:</string>
                     </property>
                 </widget>
                 <widget class="QComboBox" row="1" column="2">
