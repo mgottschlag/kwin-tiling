@@ -2,7 +2,7 @@
 //
 // KDE Display screen saver setup module
 //
-// Copyright (c)  Martin R. Jones 1996,1999
+// Copyright (c)  Martin R. Jones 1996,1999,2002
 //
 // Converted to a kcc module by Matthias Hoelzer 1997
 //
@@ -56,6 +56,13 @@
 #undef None
 
 template class QPtrList<SaverConfig>;
+
+const uint widgetEventMask =                 // X event mask
+(uint)(
+       ExposureMask |
+       PropertyChangeMask |
+       StructureNotifyMask
+      );
 
 //===========================================================================
 // DLL Interface for kcontrol
@@ -120,21 +127,7 @@ TestWin::TestWin()
 {
     setFocusPolicy(StrongFocus);
     KWin::setState( winId(), NET::StaysOnTop );
-    grabMouse();
 }
-
-void TestWin::mousePressEvent(QMouseEvent *)
-{
-    releaseMouse();
-    emit stopTest();
-}
-
-void TestWin::keyPressEvent(QKeyEvent *)
-{
-    releaseMouse();
-    emit stopTest();
-}
-
 
 //===========================================================================
 //
@@ -148,6 +141,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mTestProc = 0;
     mPrevSelected = -2;
     mMonitor = 0;
+    mTesting = false;
 
     // Add non-KDE path
     KGlobal::dirs()->addResourceType("scrsav",
@@ -332,6 +326,22 @@ void KScreenSaver::resizeEvent( QResizeEvent * )
       mMonitor->setGeometry( (mMonitorLabel->width()-200)/2+23,
                  (mMonitorLabel->height()-186)/2+14, 151, 115 );
     }
+}
+
+//---------------------------------------------------------------------------
+//
+void KScreenSaver::mousePressEvent( QMouseEvent *)
+{
+    if ( mTesting )
+	slotStopTest();
+}
+
+//---------------------------------------------------------------------------
+//
+void KScreenSaver::keyPressEvent( QKeyEvent *)
+{
+    if ( mTesting )
+	slotStopTest();
 }
 
 //---------------------------------------------------------------------------
@@ -566,6 +576,8 @@ void KScreenSaver::slotPreviewExited(KProcess *)
     mMonitor->setGeometry((mMonitorLabel->width()-200)/2+23,
                           (mMonitorLabel->height()-186)/2+14, 151, 115);
     mMonitor->show();
+    // So that hacks can XSelectInput ButtonPressMask
+    XSelectInput(qt_xdisplay(), mMonitor->winId(), widgetEventMask );
 
     if (mSelected >= 0) {
         mPreviewProc->clearArguments();
@@ -695,14 +707,16 @@ void KScreenSaver::slotTest()
             mTestWin->setBackgroundMode(QWidget::NoBackground);
             mTestWin->setGeometry(0, 0, kapp->desktop()->width(),
                                     kapp->desktop()->height());
-            connect(mTestWin, SIGNAL(stopTest()), SLOT(slotStopTest()));
         }
 
         mTestWin->show();
         mTestWin->raise();
         mTestWin->setFocus();
-        mTestWin->grabKeyboard();
-        mTestWin->grabMouse();
+	// So that hacks can XSelectInput ButtonPressMask
+	XSelectInput(qt_xdisplay(), mTestWin->winId(), widgetEventMask );
+
+	grabMouse();
+	grabKeyboard();
 
         mTestBt->setEnabled( FALSE );
 	mPreviewProc->kill();
@@ -717,6 +731,7 @@ void KScreenSaver::slotTest()
             (*mTestProc) << word;
         }
 
+	mTesting = true;
         mTestProc->start(KProcess::DontCare);
     }
 }
@@ -728,12 +743,13 @@ void KScreenSaver::slotStopTest()
     if (mTestProc->isRunning()) {
         mTestProc->kill();
     }
-    mTestWin->releaseMouse();
-    mTestWin->releaseKeyboard();
+    releaseMouse();
+    releaseKeyboard();
     mTestWin->hide();
     mTestBt->setEnabled(true);
     mPrevSelected = -1;
     setMonitor();
+    mTesting = false;
 }
 
 //---------------------------------------------------------------------------

@@ -71,13 +71,6 @@ class TestWin : public QXEmbed
     Q_OBJECT
 public:
     TestWin();
-
-signals:
-    void stopTest();
-
-protected:
-    void mousePressEvent(QMouseEvent *);
-    void keyPressEvent(QKeyEvent *);
 };
 
 //===========================================================================
@@ -123,6 +116,8 @@ protected:
     void setMonitor();
     void setDefaults();
     void resizeEvent( QResizeEvent * );
+    void mousePressEvent(QMouseEvent *);
+    void keyPressEvent(QKeyEvent *);
 
 protected:
     TestWin     *mTestWin;
@@ -150,6 +145,7 @@ protected:
     int         mPrevSelected;
     int		mNumLoaded;
     bool        mChanged;
+    bool	mTesting;
 
     // Settings
     int         mTimeout;
