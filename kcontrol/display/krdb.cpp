@@ -116,24 +116,8 @@ static QString color( const QColor& col )
 static void createGtkrc( const QFont& font, const QColorGroup& cg )
 {
     QCString filename = ::getenv("HOME");
-    filename += "/.gtkrc";
+    filename += "/.gtkrc-kde";
     QFile f( filename );
-    if ( f.open( IO_ReadOnly ) ) {
-        QTextStream t( &f );
-        QString s = t.readLine();
-        if ( !s.startsWith( "# created by KDE" ) ) {
-            QFile backup( filename + "-save" );
-            if ( backup.open( IO_WriteOnly ) ) {
-                QTextStream tbackup( &backup );
-                tbackup << s << endl;
-                while ( !t.eof() )
-                    tbackup << t.readLine() << endl;
-                backup.close();
-            }
-        }
-        f.close();
-    }
-
 
     if ( f.open( IO_WriteOnly) ) {
         QTextStream t( &f );
@@ -142,9 +126,6 @@ static void createGtkrc( const QFont& font, const QColorGroup& cg )
         t << "# If you do not want KDE to override your GTK settings, select" << endl;
         t << "# Themes/Styles in the control center and disable the checkbox " << endl;
         t << "# \"Apply fonts and colors to non-KDE apps\"" << endl;
-        t << "#" << endl;
-        t << "# If you had a ~/.gtkrc before starting KDE, its content is" << endl;
-        t << "# preserved in ~/.gtkrc-save" << endl;
         t << "#" << endl;
         t << endl;
         t << "style \"default\"" << endl;
