@@ -26,6 +26,7 @@
 #include <kstddirs.h>
 #include <klibloader.h>
 
+#include "config.h"
 #include "global.h"
 #include "modloader.h"
 
