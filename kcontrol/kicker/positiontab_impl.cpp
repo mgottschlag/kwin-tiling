@@ -111,10 +111,6 @@ void PositionTab::load()
     m_panelPos = c.readNumEntry("Position", PosBottom);
     m_panelAlign = c.readNumEntry("Alignment", QApplication::reverseLayout() ? AlignRight : AlignLeft);
 
-    /*
-     * TODO: set the panel to the right place
-     */
-
     int sizepercentage = c.readNumEntry( "SizePercentage", 100 );
     m_percentSlider->setValue( sizepercentage );
     m_percentSpinBox->setValue( sizepercentage );

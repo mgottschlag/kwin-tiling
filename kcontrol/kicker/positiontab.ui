@@ -794,14 +794,11 @@ how it is positioned on the screen and how much of the screen it should use.</st
                             <height>115</height>
                         </size>
                     </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>32767</height>
-                        </size>
-                    </property>
                     <property name="scaledContents">
                         <bool>true</bool>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignCenter</set>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>This preview image shows how the panel will appear on your screen with the settings you have chosen. Clicking the buttons around the image will move the positon of the panel, while moving the length slider and choosing different sizes will change the dimensions of the panel.</string>
