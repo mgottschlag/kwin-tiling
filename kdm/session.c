@@ -103,14 +103,14 @@ extern	void	endspent(void);
 
 static	int	runAndWait (char **args, char **environ);
 
-#if defined(CSRG_BASED) || defined(__osf__)
+#if defined(CSRG_BASED) || defined(__osf__) || defined(__FreeBSD__)
 # include <sys/types.h>
 # include <grp.h>
 #else
 /* should be in <grp.h> */
-extern	void	setgrent(void);
-extern	struct group	*getgrent(void);
-extern	void	endgrent(void);
+extern void    setgrent(void);
+extern struct group    *getgrent(void);
+extern void    endgrent(void);
 #endif
 
 #if defined(CSRG_BASED)

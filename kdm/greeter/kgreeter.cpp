@@ -109,7 +109,7 @@ char    **(*__xdm_parseArgs)(char **argv, char *string) = NULL;
 void    (*__xdm_printEnv)(char **e) = NULL;
 char    **(*__xdm_systemEnv)(struct display *d, char *user, char *home) = NULL;
 void    (*__xdm_LogOutOfMem)(char * fmt, ...) = NULL;
-void    (*__xdm_setgrent)(void) = NULL;
+SETGRENT_TYPE (*__xdm_setgrent)(void) = NULL;
 struct group    *(*__xdm_getgrent)(void) = NULL;
 void    (*__xdm_endgrent)(void) = NULL;
 #ifdef USESHADOW

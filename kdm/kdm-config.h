@@ -107,7 +107,7 @@
  * These values define what is called by KDM on Shutdown or Reboot
  * respectively. Default is /sbin/halt and /sbin/reboot
  */
-#ifdef __NetBSD__
+#if defined(__NetBSD__) || defined(__FreeBSD__)
 #define SHUTDOWN_CMD	"/sbin/shutdown -h now"
 #define REBOOT_CMD	"/sbin/shutdown -r now"
 #endif

@@ -43,7 +43,7 @@ extern "C" {
 /*
  * Do this rather than break a build over a const-mismatch
  */
-#if defined(__linux__) || defined(CSRG_BASED)
+#if defined(__linux__) || defined(CSRG_BASED) || defined(__FreeBSD__)
 #define CRYPT_ARGS    const char *s1, const char *s2
 #define GETSPNAM_ARGS const char *name
 #define GETPWNAM_ARGS const char *name
@@ -79,7 +79,7 @@ struct dlfuncs {
     void (*_printEnv)(char **e);
     char **(*_systemEnv)(struct display *d, char *user, char *home);
     void (*_LogOutOfMem)(char * fmt, ...);
-    SETGRENT_TYPE (*_setgrent)(void);		/* no longer used */
+    SETGRENT_TYPE (*_setgrent)(void);	/* no longer used */
     struct group *(*_getgrent)(void);	/* no longer used */
     void (*_endgrent)(void);		/* no longer used */
 #ifdef USESHADOW
@@ -175,7 +175,7 @@ extern	char    **(*__xdm_parseArgs)(char **argv, char *string);
 extern	void    (*__xdm_printEnv)(char **e);
 extern	char    **(*__xdm_systemEnv)(struct display *d, char *user, char *home);
 extern	void    (*__xdm_LogOutOfMem)(char * fmt, ...);
-extern	void    (*__xdm_setgrent)(void);
+extern	SETGRENT_TYPE (*__xdm_setgrent)(void);
 extern	struct group    *(*__xdm_getgrent)(void);
 extern	void    (*__xdm_endgrent)(void);
 #ifdef USESHADOW
