@@ -732,6 +732,7 @@ kg_main( int argc, char **argv )
 
     kde_have_kipc = false;
     KApplication::disableAutoDcopRegistration();
+    setenv( "KDE_DEBUG", "1", 1 );	// prevent KCrash installation
     GreeterApp app( argc, argv );
 
     Display *dpy = qt_xdisplay();

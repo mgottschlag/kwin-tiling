@@ -89,6 +89,7 @@ int main(int argc, char **argv)
     KCmdLineArgs::init(argc, argv, "chooser", description, version);
     KCmdLineArgs::addCmdLineOptions(options);
 
+    setenv( "KDE_DEBUG", "1", 1 );	// prevent KCrash installation
     MyApp app;
 
     CXdmcp *cxdmcp = new CXdmcp();
