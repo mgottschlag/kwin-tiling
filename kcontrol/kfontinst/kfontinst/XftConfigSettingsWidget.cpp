@@ -87,7 +87,7 @@ void CXftConfigSettingsWidget::fileButtonPressed()
             }
             else
                 KMessageBox::error(this, i18n("File does not exist "
-                                              "and directory is not writeable."), i18n("File error"));
+                                              "and folder is not writeable."), i18n("File error"));
         }
         else
         {
