@@ -99,6 +99,7 @@ void ModuleIconView::fill()
         i->setTag(_path.left(last_slash+1));
   }
 
+  int c = 0;
   QStringList submenus = _modules->submenus(_path);
   for (QStringList::Iterator it = submenus.begin(); it != submenus.end(); ++it )
   {
@@ -112,9 +113,10 @@ void ModuleIconView::fill()
 
      ModuleIconItem *i = new ModuleIconItem(this, group->caption(), icon);
      i->setTag(path);
+     i->setOrderNo(++c);
   }
 
-  int c = 0;
+  c = 0;
   QPtrList<ConfigModule> moduleList = _modules->modules(_path);
   for (ConfigModule *module=moduleList.first(); module != 0; module=moduleList.next())
   {

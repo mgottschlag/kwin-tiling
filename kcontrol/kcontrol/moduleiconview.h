@@ -39,7 +39,12 @@ public:
 
   void setConfigModule(ConfigModule* m) { _module = m; }
   void setTag(const QString& t) { _tag = t; }
-  void setOrderNo(int order) {  setText(1, QString::number(order)); };
+  void setOrderNo(int order)
+  {
+    QString s;
+    setText(1, s.sprintf( "%02d", order ) );
+  }
+
   ConfigModule* module() { return _module; }
   QString tag() { return _tag; }
 
