@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>627</width>
+            <width>890</width>
             <height>583</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>hardwareTab</string>
     </property>
     <vbox>
         <property name="name">
@@ -27,7 +30,7 @@
                 <enum>Sunken</enum>
             </property>
             <property name="title">
-                <string>Select and configure your audio device</string>
+                <string>Select &amp;&amp; Configure your Audio Device</string>
             </property>
             <grid>
                 <property name="name">
@@ -88,7 +91,7 @@
                                 <cstring>fullDuplex</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Full Duplex</string>
+                                <string>&amp;Full duplex</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
@@ -152,12 +155,12 @@
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>16 bits (high)</string>
+                                    <string>16 Bits (high)</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>8 bits (low)</string>
+                                    <string>8 Bits (low)</string>
                                 </property>
                             </item>
                             <property name="name">
@@ -216,7 +219,7 @@
                 <cstring>groupBox3</cstring>
             </property>
             <property name="title">
-                <string>Select your MIDI device</string>
+                <string>Select your MIDI Device</string>
             </property>
             <grid>
                 <property name="name">

@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>520</width>
-            <height>509</height>
+            <width>704</width>
+            <height>634</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>generalTab</string>
     </property>
     <vbox>
         <property name="name">
@@ -55,7 +58,7 @@ Recommended if you want sound.</string>
                 <bool>true</bool>
             </property>
             <property name="title">
-                <string>Networked sound</string>
+                <string>Networked Sound</string>
             </property>
             <vbox>
                 <property name="name">
@@ -87,7 +90,7 @@ Recommended if you want sound.</string>
                 <cstring>realtimeGroupBox</cstring>
             </property>
             <property name="title">
-                <string>Skip prevention</string>
+                <string>Skip Prevention</string>
             </property>
             <grid>
                 <property name="name">
@@ -164,7 +167,7 @@ Recommended if you want sound.</string>
                 <cstring>autoSuspendGroupBox</cstring>
             </property>
             <property name="title">
-                <string>Auto-suspend</string>
+                <string>Auto-Suspend</string>
             </property>
             <vbox>
                 <property name="name">
