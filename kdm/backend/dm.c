@@ -1621,13 +1621,16 @@ UnlockPidFile (void)
 
 void SetTitle (const char *name)
 {
+    char *p = NULL;
+    int left = 0;
+
     ASPrintf (&prog, "%s: %s", prog, name);
     ReInitErrorLog();
 #ifdef HAS_SETPROCTITLE
     setproctitle ("%s", name);
 #elif !defined(NOXDMTITLE)
-    char *p = Title;
-    int left = TitleLen;
+    p = Title;
+    left = TitleLen;
 
     *p++ = '-';
     --left;
