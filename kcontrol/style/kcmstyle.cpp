@@ -729,6 +729,10 @@ void KCMStyle::switchStyle(const QString& styleName)
 	QPixmapCache::clear();
 
 	setStyleRecursive( stylePreview, style );
+
+	// this flickers, but reliably draws the widgets corretly.
+	stylePreview->resize( stylePreview->sizeHint() );
+
 	delete appliedStyle;
 	appliedStyle = style;
 }
