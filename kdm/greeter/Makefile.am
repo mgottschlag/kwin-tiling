@@ -42,8 +42,8 @@ noinst_HEADERS = kdmshutdown.h kdmclock.h kgreeter.h liloinfo.h kfdialog.h kdmco
 install-data-local:
 	@if test ! -f $(DESTDIR)$(kde_confdir)/kdmrc; then \
 	    $(mkinstalldirs) $(DESTDIR)$(kde_confdir); \
-	    echo $(INSTALL_DATA) kdmrc $(DESTDIR)$(kde_confdir)/kdmrc; \
-	    $(INSTALL_DATA) kdmrc $(DESTDIR)$(kde_confdir)/kdmrc; \
+	    echo $(INSTALL_DATA) $(srcdir)/kdmrc $(DESTDIR)$(kde_confdir)/kdmrc; \
+	    $(INSTALL_DATA) $(srcdir)/kdmrc $(DESTDIR)$(kde_confdir)/kdmrc; \
 	fi
 
 EXTRA_DIST = kdmrc
