@@ -23,6 +23,7 @@
 
 class QListBox;
 class QListBoxItem;
+class QPushButton;
 
 class PluginConfig : public QWidget
 {
@@ -39,10 +40,14 @@ signals:
 
 private slots:
   void slotInfo();
+  void slotConfigure();
   void pluginSelected( QListBoxItem* );
- 
+  void slotItemChanged( const QString & );
+  
 private:
+  QPushButton *m_conf;
   QListBox *m_pluginList;
+  
 };
 
 #endif // __CONNECTIONCONFIG_H__

@@ -31,6 +31,7 @@
 #include <kdb/dbengine.h>
 #include <kdb/plugin.h>
 #include <kdb/plugininfodlg.h>
+#include <kdb/control.h>
 
 #include <pluginconfig.h>
 
@@ -46,11 +47,17 @@ PluginConfig::PluginConfig( QWidget* parent, const char* name )
   m_pluginList = new QListBox( this );
   m_pluginList->insertStringList( DBENGINE->pluginNames() );
   connect( m_pluginList, SIGNAL( doubleClicked( QListBoxItem* ) ), this, SLOT( pluginSelected( QListBoxItem* ) ) );
+  connect( m_pluginList, SIGNAL( highlighted( const QString & ) ), this, SLOT( slotItemChanged(const QString & ) ) );
   layout->addMultiCellWidget( m_pluginList, 0, 4, 0, 0 );
 
   QPushButton* btnInfo = new QPushButton( i18n( "Info..." ), this );
   layout->addWidget( btnInfo, 0, 1 );
   connect( btnInfo, SIGNAL( clicked() ), SLOT( slotInfo() ) );
+
+  m_conf = new QPushButton( i18n( "&Configure..." ), this );
+  m_conf->setEnabled(false);
+  layout->addWidget( m_conf, 1, 1 );
+  connect( m_conf, SIGNAL( clicked() ), SLOT( slotConfigure() ) );
 
   layout->setRowStretch( 3, 1 );
   layout->setColStretch( 0, 1 );
@@ -68,6 +75,19 @@ void PluginConfig::defaults()
 {
 }
 
+void PluginConfig::slotConfigure()
+{
+  int item = m_pluginList->currentItem();
+  if( item >= 0 ) {
+      Plugin* plugin = DBENGINE->findPlugin( m_pluginList->item( item )->text() );
+      if (plugin) {
+          KDB::Control * cntrl = static_cast<KDB::Control *>(plugin->createObject(KDB::CONFIG));
+          if (cntrl->showDialog(DBENGINE->config(), this))
+              emit changed();
+      }
+  }
+}
+
 void PluginConfig::slotInfo()
 {
   int item = m_pluginList->currentItem();
@@ -82,6 +102,16 @@ void PluginConfig::pluginSelected( QListBoxItem* item )
     if (plugin) {
         PluginInfoDialog::showInfo( plugin, this );
     } else {
-        qDebug( "Scheisse" ); // try i18n, could be interesting ;)
+        kdDebug() <<  "Scheisse" << endl; // try i18n, could be interesting ;)
     }
+}
+
+void
+PluginConfig::slotItemChanged(const QString &name)
+{
+    Plugin *plugin = DBENGINE->findPlugin(name);
+    if (plugin->provides(KDB::CONFIG))
+        m_conf->setEnabled(true);
+    else
+        m_conf->setEnabled(false);
 }

@@ -27,10 +27,13 @@
 
 #include <klocale.h>
 #include <kglobal.h>
+#include <kconfig.h>
 
 #include <kcmkdb.h>
 #include <pluginconfig.h>
 #include <connectionconfig.h>
+
+#include <kdb/dbengine.h>
 
 #include <kcmkdb.moc>
 
@@ -67,6 +70,7 @@ void KDBModule::save()
 {
   m_plugins->save();
   m_connections->save();
+  DBENGINE->config()->sync();
 }
 
 void KDBModule::defaults()
@@ -88,3 +92,5 @@ extern "C"
     return new KDBModule( parent, name );
   }
 }
+
+
