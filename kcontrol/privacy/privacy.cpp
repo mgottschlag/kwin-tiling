@@ -237,7 +237,7 @@ void Privacy::selectNone()
 void Privacy::cleanup()
 {
   cleaningDialog->statusTextEdit->clear();
-  cleaningDialog->statusTextEdit->setText(i18n("Starting cleanup.."));
+  cleaningDialog->statusTextEdit->setText(i18n("Starting cleanup..."));
 
   QCheckListItem *item;
   bool error = false;
@@ -246,11 +246,9 @@ void Privacy::cleanup()
   {
     if(item->isOn())
     {
-      QString statusText =  i18n("Clearing");
-              statusText += item->text();
-              statusText += "..";
+      QString statusText = i18n("Clearing %1...").arg(item->text());
       cleaningDialog->statusTextEdit->append(statusText);
-      
+
       if(item == clearRunCommandHistory)
         error = !m_privacymanager->clearRunCommandHistory();
 
@@ -280,10 +278,7 @@ void Privacy::cleanup()
 
       if(error)
       {
-        QString errorText =  i18n("Clearing of ");
-                errorText += item->text();
-                errorText += i18n(" failed.");
-
+        QString errorText =  i18n("Clearing of %1 failed").arg(item->text());
         cleaningDialog->statusTextEdit->append(errorText);
       }
     }
