@@ -367,10 +367,15 @@
 </connections>
 <tabstops>
     <tabstop>cboxHoverButtons</tabstop>
+    <tabstop>cboxToolbarsHighlight</tabstop>
+    <tabstop>cboxEnableTooltips</tabstop>
+    <tabstop>cbToolbarIcons</tabstop>
     <tabstop>cboxEnableGUIEffects</tabstop>
     <tabstop>cbMenuEffect</tabstop>
     <tabstop>cbComboEffect</tabstop>
     <tabstop>cbTooltipEffect</tabstop>
+    <tabstop>cboxIconSupport</tabstop>
+    <tabstop>cboxTearOffHandles</tabstop>
 </tabstops>
 <includes>
     <include location="global" impldecl="in declaration">kcmodule.h</include>
