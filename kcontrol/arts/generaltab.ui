@@ -12,9 +12,6 @@
             <height>634</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>generalTab</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
