@@ -403,9 +403,6 @@ void KWindowConfig::setClickRaise(bool on)
 
 void KWindowConfig::setAutoRaiseEnabled()
 {
-  // KWin doesn't read these settings => don't enable anything
-  return;
-
   // the auto raise related widgets are: autoRaise, alabel, s, sec
   if ( focusCombo->currentItem() != CLICK_TO_FOCUS )
     {
@@ -590,26 +587,25 @@ void KWindowConfig::save( void )
   else
     config->writeEntry(KWIN_RESIZE_OPAQUE, "Transparent");
 
- //CT: disabling is needed as long as functionality misses in kwin
 //   v = getMaximize();
 //   if (v == MAXIMIZE_VERT)
 //     config->writeEntry(KWIN_MAXIMIZE, "on");
 //   else
 //     config->writeEntry(KWIN_MAXIMIZE, "off");
 
-//   v = getAutoRaiseInterval();
-//   if (v <0) v = 0;
-//   config->writeEntry(KWIN_AUTORAISE_INTERVAL,v);
+   v = getAutoRaiseInterval();
+   if (v <0) v = 0;
+   config->writeEntry(KWIN_AUTORAISE_INTERVAL,v);
 
-//   if (autoRaiseOn->isChecked())
-//     config->writeEntry(KWIN_AUTORAISE, "on");
-//   else
-//     config->writeEntry(KWIN_AUTORAISE, "off");
+   if (autoRaiseOn->isChecked())
+     config->writeEntry(KWIN_AUTORAISE, "on");
+   else
+     config->writeEntry(KWIN_AUTORAISE, "off");
 
-//   if (clickRaiseOn->isChecked())
-//     config->writeEntry(KWIN_CLICKRAISE, "on");
-//   else
-//     config->writeEntry(KWIN_CLICKRAISE, "off");
+   if (clickRaiseOn->isChecked())
+     config->writeEntry(KWIN_CLICKRAISE, "on");
+   else
+     config->writeEntry(KWIN_CLICKRAISE, "off");
 
   config->sync();
 
