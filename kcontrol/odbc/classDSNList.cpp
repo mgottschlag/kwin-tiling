@@ -74,7 +74,7 @@ void classDSNList::Load( int nSource )
 	else
 	{
 		SQLSetConfigMode( ODBC_BOTH_DSN );
-		qsError.sprintf( "Could not load %s", szINI );
+		qsError.sprintf( "Could not load %s This is most likely caused because of lack of privs. Try running as root user the first time you run this app.", szINI );
 		QMessageBox::information(	this, "ODBC Config",  qsError );
 
 		while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
