@@ -206,7 +206,7 @@ void BGDialog::defaults()
    m_pGlobals->setCommonBackground(_defCommon);
    m_pGlobals->setLimitCache(_defLimitCache);
    m_pGlobals->setCacheSize(_defCacheSize);
-
+   m_comboWallpaperPos->setCurrentItem( 0 );
    m_eDesk = _defCommon ? 0 : m_Desk;
 
    KBackgroundRenderer *r = m_Renderer[m_eDesk];
