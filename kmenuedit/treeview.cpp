@@ -45,8 +45,20 @@ TreeItem::TreeItem(QListViewItem *parent, const QString& file)
   _file = file;
 }
 
+TreeItem::TreeItem(QListViewItem *parent, QListViewItem *after, const QString& file)
+  :QListViewItem(parent, after)
+{
+  _file = file;
+}
+
 TreeItem::TreeItem(QListView *parent, const QString& file)
   : QListViewItem(parent)
+{
+  _file = file;
+}
+
+TreeItem::TreeItem(QListView *parent, QListViewItem *after, const QString& file)
+  : QListViewItem(parent, after)
 {
   _file = file;
 }
@@ -184,9 +196,15 @@ void TreeView::slotDeleteCurrent()
   
   // is file a .directory or a .desktop file
   if(file.find(".directory") > 0)
-    deleteDir(file.mid(0, file.find("/.directory")));
+    {
+      deleteDir(file.mid(0, file.find("/.directory")));
+      delete item;
+    }
   else if (file.find(".desktop"))
-    deleteFile(file);
+    {
+      deleteFile(file);
+      delete item;
+    }
 }
 
 void TreeView::copyFile(const QString& src, const QString& dest)
@@ -197,6 +215,8 @@ void TreeView::copyFile(const QString& src, const QString& dest)
   // the merging. We then write out the destination .desktop file
   // in a writeable prefix we get using locateLocal().
 
+  if (src == dest) return;
+
   KConfig s(locate("apps", src));
   KSimpleConfig d(locateLocal("apps", dest));
 
@@ -204,8 +224,17 @@ void TreeView::copyFile(const QString& src, const QString& dest)
   QStringList groups = s.groupList();
   for (QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it)
     {
-      // set the dest group
-      d.setGroup(*it);
+      //continue;
+
+      if(*it == "<default>")
+	continue;
+      if(*it == "KDE")
+	continue;
+
+      if((*it).contains("Desktop Entry"))
+	d.setDesktopGroup();
+      else
+	d.setGroup(*it);
 
       // get a map of keys/value pairs
       QMap<QString, QString> map = s.entryMap(*it);
@@ -215,32 +244,53 @@ void TreeView::copyFile(const QString& src, const QString& dest)
       for (it = map.begin(); it != map.end(); ++it)
 	d.writeEntry(it.key(), it.data());
     }
+
+  // unset "Hidden"
+  d.setDesktopGroup();
+  d.writeEntry("Hidden", false);
+
+  d.sync();
 }
 
-void TreeView::copyDir(const QString& src, const QString& dest)
+void TreeView::copyDir(const QString& s, const QString& d)
 {
   // We create the destination directory in a writeable prefix returned
   // by locateLocal(), copy the .directory and the .desktop files over.
   // Then process the subdirs. 
+
+  QString src = s;
+  QString dest = d;
+
+  // truncate "/.directory"
+  int pos = src.findRev("/.directory");  
+  if (pos > 0) src.truncate(pos);
+  pos = dest.findRev("/.directory");  
+  if (pos > 0) dest.truncate(pos);
+
+  if (src == dest) return;
+
   cout << "copyDir: " << src.local8Bit() << " to " << dest.local8Bit() << endl;
 
   QStringList dirlist = dirList(src);
   QStringList filelist = fileList(src);
 
-  // create dir
-  QDir d;
-  d.mkdir(locateLocal("apps", dest));
-
   // copy .directory file
-  copyFile(src + "/.directory", dest + "/.directroy");
-
+  copyFile(src + "/.directory", dest + "/.directory");
+  
+  cout << "###" << dest.local8Bit() << endl;
   // copy files
   for (QStringList::ConstIterator it = filelist.begin(); it != filelist.end(); ++it)
-    copyFile(src + "/" + *it, dest + "/" + *it);
+    {
+      QString file = (*it).mid((*it).findRev('/'), (*it).length());
+      copyFile(src + "/" + file, dest + "/" + file);
+    }
 
   // process subdirs
   for (QStringList::ConstIterator it = dirlist.begin(); it != dirlist.end(); ++it)
-    copyDir(src + "/" + *it, dest + "/" + *it);
+    {
+     QString file = (*it).mid((*it).findRev('/'), (*it).length());
+     copyDir(src + "/" + file, dest + "/" + file);
+    }
 }
 
 void TreeView::deleteFile(const QString& deskfile)
@@ -276,7 +326,7 @@ void TreeView::deleteFile(const QString& deskfile)
     }
 }
 
-void TreeView::deleteDir(const QString& directory)
+void TreeView::deleteDir(const QString& d)
 {
   // We delete all .desktop files and then process with the subdirs.
   // Afterwards the .directory file gets deleted from all prefixes 
@@ -285,6 +335,12 @@ void TreeView::deleteDir(const QString& directory)
   // we add a .directory file with the "Hidden" flag set in a local
   // writeable dir return by locateLocal().
   bool allremoved = true;
+
+  QString directory = d;
+
+  // truncate "/.directory"
+  int pos = directory.findRev("/.directory");  
+  if (pos > 0) directory.truncate(pos);
 
   cout << "deleteDir: " << directory.local8Bit() << endl;
 
@@ -322,8 +378,14 @@ void TreeView::deleteDir(const QString& directory)
     }
 }
 
-QStringList TreeView::fileList(const QString& relativePath)
+QStringList TreeView::fileList(const QString& rPath)
 {
+  QString relativePath = rPath;
+
+  // truncate "/.directory"
+  int pos = relativePath.findRev("/.directory");  
+  if (pos > 0) relativePath.truncate(pos);
+
   QStringList filelist;
 
   // loop through all resource dirs and build a file list
@@ -358,11 +420,17 @@ QStringList TreeView::fileList(const QString& relativePath)
   return filelist;
 }
 
-QStringList TreeView::dirList(const QString& relativePath)
+QStringList TreeView::dirList(const QString& rPath)
 {
+  QString relativePath = rPath;
+
+  // truncate "/.directory"
+  int pos = relativePath.findRev("/.directory");  
+  if (pos > 0) relativePath.truncate(pos);
+
   QStringList dirlist;
 
-  // loop through all resource dirs and build a file and subdir list
+  // loop through all resource dirs and build a subdir list
   QStringList resdirlist = KGlobal::dirs()->resourceDirs("apps");
   for (QStringList::ConstIterator it = resdirlist.begin(); it != resdirlist.end(); ++it)
     {
@@ -402,25 +470,69 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *after)
 {
   if(!e) return;
 
+  // first move the item in the listview
+  TreeItem *item = (TreeItem*)selectedItem();
+  QListViewItem* parent = 0;
+
+  if(after){
+    if(after->isOpen()) {
+      parent = after;
+      after = 0;
+    }
+    else
+      parent = after->parent();
+  }
+  moveItem(item, parent, after);
+  setSelected(item, true);
+
+  // get source path from qdropevent
   QByteArray a = e->encodedData("text/plain");
   if (a.isEmpty()) return;
   QString src(a);
- 
-  if (after == 0) return; // FIXME;
 
-  TreeItem *item = (TreeItem*)after;
-  QString dest = item->file();
+  bool isDir = src.find(".directory") > 0;
 
-  int pos1 = dest.find("/.directory");
-  if (pos1 > 0) dest.truncate(pos1);
+  kdDebug() << "src: " << src.local8Bit() << endl;
 
-  int pos2 = dest.findRev('/');
-  if (pos2 < 0) pos2 = 0;
-  dest.truncate(pos2);
-
-  kdDebug() << dest.local8Bit() << endl;
-
+  // get source file
+  int pos = src.findRev('/');
+  if (isDir)
+    pos = src.findRev('/', pos-1);
+  QString srcfile;
   
+  if (pos < 0)
+    srcfile = src;
+  else
+    srcfile = src.mid(pos + 1, src.length());
+  
+  // get dest path
+  QString dest;
+  if (item->parent())
+    dest = ((TreeItem*)item->parent())->file();
+
+  // truncate file
+  pos = dest.findRev('/');  
+  if (pos > 0) dest.truncate(pos);
+
+  if(dest.isNull())
+    dest = srcfile;
+  else
+    dest += '/' + srcfile;
+
+  kdDebug() << "dest: " << dest.local8Bit() << endl;
+
+  if(isDir)
+    {
+      copyDir(src, dest);
+      deleteDir(src);
+    }
+  else
+    {
+      copyFile(src, dest);
+      deleteFile(src);
+    }
+
+  item->setFile(dest);
 }
 
 QDragObject *TreeView::dragObject() const

@@ -27,9 +27,12 @@ class TreeItem : public QListViewItem
   
 public:
   TreeItem(QListViewItem *parent, const QString& file);
+  TreeItem(QListViewItem *parent, QListViewItem *after, const QString& file);
   TreeItem(QListView *parent, const QString& file);
+  TreeItem(QListView *parent, QListViewItem* after, const QString& file);
 
   QString file() const { return _file; };
+  void setFile(const QString& file) { _file = file; }
 
 private:
   QString _file;
