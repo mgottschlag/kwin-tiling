@@ -111,7 +111,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    connect(m_Renderer[0], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
 
    // set up all the other desktop renderers
-   for (int i = 0; i < m_Max; ++i) 
+   for (int i = 0; i < m_Max; ++i)
    {
       m_Renderer.insert(i + 1, new KBackgroundRenderer(i, _config));
       connect(m_Renderer[i + 1], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
@@ -693,7 +693,8 @@ void BGDialog::slotAdvanced()
     else
        dlg.setCacheSize( 0 );
 
-    dlg.exec();
+    if( !dlg.exec())
+        return;
 
     int cacheSize = dlg.cacheSize();
     if (cacheSize)

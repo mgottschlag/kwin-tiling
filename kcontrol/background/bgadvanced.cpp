@@ -68,7 +68,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
                                    bool m_multidesktop)
     : KDialogBase(parent, "BGAdvancedDialog",
                   true, i18n("Advanced Background Settings"),
-                  Ok, Ok, true),
+                  Ok | Cancel, Ok, true),
       r(_r)
 {
    dlg = new BGAdvancedBase(this);
