@@ -595,7 +595,7 @@ static int jisx0201[CEncodings::T8Bit::NUM_MAP_ENTRIES]=
         -1,     -1,     -1,     -1,     -1,     -1,     -1,     -1
 };
 
-static const QString constBuiltin(" < B U I L T I N > ");
+static const char * constBuiltin=" < B U I L T I N > ";
 
 const QString CEncodings::constUnicodeStr("Unicode (iso10646-1)");
 const QString CEncodings::constT1Symbol("adobe-fontspecific");
@@ -631,7 +631,7 @@ bool CEncodings::createEncodingsDotDir(const QString &dir)
         of << (its8BitList.count() - itsNumBuiltin)+its16BitList.count() << std::endl;
 
         for(data8=first8Bit(); data8; data8=next8Bit())
-            if(data8->file!=constBuiltin)
+            if(!isBuiltin(*data8))
                 of << data8->name.local8Bit() << " " << data8->file.local8Bit() << std::endl;
 
         for(data16=first16Bit(); data16; data16=next16Bit())
@@ -766,7 +766,7 @@ QString CEncodings::getFile8Bit(const QString &enc)
 
 bool CEncodings::isBuiltin(const T8Bit &enc)
 {
-    return enc.file==constBuiltin;
+    return enc.file==QString(constBuiltin);
 }
 
 bool CEncodings::isAEncFile(const char *file)

@@ -37,6 +37,7 @@
 
 #ifdef HAVE_XFT
 #include <qvalidator.h>
+#include <qstring.h>
 #include "XftConfig.h"
 
 class QWidget;
@@ -109,6 +110,7 @@ class CXftConfigEditor : public CXftConfigEditorData
                 itsWeights;
     TValidators itsMatchValidators,
                 itsEditValidators;
+    QString     itsOtherText;
 };
 
 #endif

@@ -238,7 +238,7 @@ QString CMisc::removeSymbols(const QString &str)
     // Remove any non-alphanumeric (except ' ' & '_') chars from str
     //
  
-    static const QString constOk(" _");
+    QString constOk(" _");
 
     QString      modified; 
     unsigned int i,

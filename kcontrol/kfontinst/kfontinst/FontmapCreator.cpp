@@ -42,8 +42,8 @@
 #include <qregexp.h>
 #include <klocale.h>
 
-static const QString  constUnknown    ("_____");
-static const QCString constGSGuardStr ("% kfontinst ");
+static const char * constUnknown    = "_____";
+static const char * constGSGuardStr = "% kfontinst ";
 
 QString CFontmapCreator::getQtName(const QString &font)
 {
@@ -529,7 +529,7 @@ void CFontmapCreator::outputResults(CBufferedFile &file, const TListEntry *entry
         QString familyname=getQtName(entry->family.name);
 
         outputPsEntry(file, *entry);
-        if(familyname!=constUnknown)
+        if(familyname!=QString(constUnknown))
             outputAliasEntry(file, *entry, familyname);
 
         outputResults(file, entry->next);

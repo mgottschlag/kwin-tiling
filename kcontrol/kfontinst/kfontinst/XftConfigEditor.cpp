@@ -44,8 +44,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xft/Xft.h>
 
-static const QString constOther(i18n("Other..."));
-
 static XftOp strToOp(const QString &op)
 {
     if(">"==op)
@@ -80,11 +78,12 @@ CXftConfigEditor::TValidators::TValidators(QLineEdit *lineedit, QLineEdit *other
 }
 
 CXftConfigEditor::CXftConfigEditor(QWidget *parent, const char *name)
-                : CXftConfigEditorData(parent, name, true)
-                , itsMatchMode(COMBO),
+                : CXftConfigEditorData(parent, name, true),
+                  itsMatchMode(COMBO),
                   itsEditMode(COMBO),
                   itsMatchValidators(itsMatchString, itsMatchOther),
-                  itsEditValidators(itsEditString, itsEditOther)
+                  itsEditValidators(itsEditString, itsEditOther),
+                  itsOtherText(i18n("Other..."))
 {
     itsMatchQualCombo->insertItem("all");
     itsMatchQualCombo->insertItem("any");
@@ -145,7 +144,7 @@ CXftConfigEditor::CXftConfigEditor(QWidget *parent, const char *name)
 
 //    itsRgbs.append("vrgb");
 //    itsRgbs.append("vbgr");
-    itsRgbs.append(constOther);
+    itsRgbs.append(itsOtherText);
 
     itsSlants.append("italic");
     itsSlants.append("oblique");
@@ -154,14 +153,14 @@ CXftConfigEditor::CXftConfigEditor(QWidget *parent, const char *name)
     itsSpacings.append("proportional");
     itsSpacings.append("mono");
     itsSpacings.append("charcell");
-    itsSpacings.append(constOther);
+    itsSpacings.append(itsOtherText);
 
     itsWeights.append("light");
     itsWeights.append("medium");
     itsWeights.append("demibold");
     itsWeights.append("bold");
     itsWeights.append("black");
-    itsWeights.append(constOther);
+    itsWeights.append(itsOtherText);
 
     itsMatchOther->setValidator(itsMatchValidators.otherInt);
     itsEditOther->setValidator(itsEditValidators.otherInt);
@@ -182,7 +181,7 @@ CXftConfig::TEntry * CXftConfigEditor::display(CXftConfig::TEntry *entry)
 
     itsEncodings.append(CXftConfig::constSymbolEncoding);
     itsEncodings.sort();
-    itsEncodings.append(constOther);
+    itsEncodings.append(itsOtherText);
 
     itsMatchList->clear();
     itsMatchRemoveButton->setEnabled(false);
@@ -226,7 +225,7 @@ CXftConfig::TEntry * CXftConfigEditor::display(CXftConfig::TEntry *entry)
                     index=CMisc::findIndex(itsEditCombo, entry->edit->expr->u.sval);
                     if(index<0)
                     {
-                        index=CMisc::findIndex(itsEditCombo, constOther);
+                        index=CMisc::findIndex(itsEditCombo, itsOtherText);
                         itsEditOther->setText(entry->edit->expr->u.sval);
                         itsEditOther->setEnabled(true);
                     }
@@ -325,7 +324,7 @@ CXftConfig::TEntry * CXftConfigEditor::display(CXftConfig::TEntry *entry)
                         num.setNum(entry->edit->expr->u.ival);
                         itsEditOther->setText(num);
                         itsEditOther->setEnabled(true);
-                        index=CMisc::findIndex(itsEditCombo, constOther);
+                        index=CMisc::findIndex(itsEditCombo, itsOtherText);
                     }
                     itsEditCombo->setCurrentItem(index>-1 ? index : 0);
                 }
@@ -449,7 +448,7 @@ CXftConfig::TEntry * CXftConfigEditor::display(CXftConfig::TEntry *entry)
         if(LINEEDIT==itsEditMode)
             strVal=itsEditString->text();
         else
-            if(constOther==itsEditCombo->currentText())
+            if(itsOtherText==itsEditCombo->currentText())
                 strVal=itsEditOther->text();
             else
                 strVal=itsEditCombo->currentText();
@@ -501,15 +500,15 @@ void CXftConfigEditor::matchFieldSelected(const QString &str)
 
 void CXftConfigEditor::matchCombo(const QString &str)
 {
-    itsMatchOther->setEnabled(constOther==str);
-    if(constOther==str)
+    itsMatchOther->setEnabled(itsOtherText==str);
+    if(itsOtherText==str)
         itsMatchOther->setText("");
 }
 
 void CXftConfigEditor::editCombo(const QString &str)
 {
-    itsEditOther->setEnabled(constOther==str);
-    if(constOther==str)
+    itsEditOther->setEnabled(itsOtherText==str);
+    if(itsOtherText==str)
         itsEditOther->setText("");
 }
 
@@ -552,7 +551,7 @@ void CXftConfigEditor::addMatch()
             if(enc)
                 entry+='\"';
 
-            if(constOther==itsMatchCombo->currentText())   // Get from "other" text field...
+            if(itsOtherText==itsMatchCombo->currentText())   // Get from "other" text field...
                 entry+=itsMatchOther->text().latin1();
             else                                           // Get from combo box...
                 entry+=itsMatchCombo->currentText().latin1();
@@ -667,7 +666,7 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
     {
         int v=0;
 
-        if(constOther!=strVal && -1!=itsSpacings.findIndex(strVal))
+        if(itsOtherText!=strVal && -1!=itsSpacings.findIndex(strVal))
         {
             if("mono"==strVal)
                 v=XFT_MONO;
@@ -677,7 +676,7 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
                 v=XFT_CHARCELL;
         }
         else
-            if(constOther==strVal) // Its an integer...
+            if(itsOtherText==strVal) // Its an integer...
                 v=strVal.toInt();
 
         val.type=XftTypeInteger;
@@ -698,7 +697,7 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
     {
         int v=0;
  
-        if(constOther!=strVal && -1!=itsSlants.findIndex(strVal))
+        if(itsOtherText!=strVal && -1!=itsSlants.findIndex(strVal))
         {
             if("roman"==strVal)
                 v=XFT_SLANT_ROMAN;
@@ -708,7 +707,7 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
                 v=XFT_SLANT_OBLIQUE;
         }
         else
-            if(constOther==strVal) // Its an integer...
+            if(itsOtherText==strVal) // Its an integer...
                 v=strVal.toInt();
  
         val.type=XftTypeInteger;
@@ -718,7 +717,7 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
     {
         int v=0;
  
-        if(constOther!=strVal && -1!=itsWeights.findIndex(strVal))
+        if(itsOtherText!=strVal && -1!=itsWeights.findIndex(strVal))
         {
             if("light"==strVal)
                 v=XFT_WEIGHT_LIGHT;
@@ -732,7 +731,7 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
                 v=XFT_WEIGHT_BLACK;
         }
         else
-            if(constOther==strVal) // Its an integer...
+            if(itsOtherText==strVal) // Its an integer...
                 v=strVal.toInt();
 
         val.type=XftTypeInteger;
@@ -755,7 +754,7 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
         {
             int v=0;
  
-            if(constOther!=strVal)
+            if(itsOtherText!=strVal)
             {
                 if("none"==strVal)
                     v=XFT_RGBA_NONE;
@@ -765,7 +764,7 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
                     v=XFT_RGBA_BGR;
             }
             else
-                if(constOther==strVal) // Its an integer...
+                if(itsOtherText==strVal) // Its an integer...
                     v=strVal.toInt();
  
             val.type=XftTypeInteger;

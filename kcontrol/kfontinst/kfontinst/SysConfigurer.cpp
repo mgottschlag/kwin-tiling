@@ -41,7 +41,7 @@
 #include <qfileinfo.h>
 #include "XftConfig.h"
 
-static const QString constFinishedStr("Finished");
+static const char * constFinishedStr = "Finished";
 
 CSysConfigurer::CSysConfigurer(QWidget *parent)
               : QObject(parent, NULL),
@@ -299,7 +299,7 @@ void CSysConfigurer::status(const QString &str, const QString &errorMsg, bool er
         KMessageBox::error(itsParent, str+ (QString::null==errorMsg ? QString::null : "\n("+errorMsg+")"), i18n("Error"));
     }
     else
-        if(constFinishedStr!=str)
+        if(QString(constFinishedStr)!=str)
             emit progress(str);
         else
         {

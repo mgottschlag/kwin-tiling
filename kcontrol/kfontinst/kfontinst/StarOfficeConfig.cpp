@@ -44,9 +44,9 @@
 #include <qregexp.h>
 #include <klocale.h>
 
-static const QString  constAfmDir       ("fontmetrics/afm/");
-static const QCString constSOGuardStr   (" # kfontinst ");
-static const QString  constBackupProlog ("xprinter.prolog.kfontinst_backup");
+static const char * constAfmDir       = "fontmetrics/afm/";
+static const char * constSOGuardStr   = " # kfontinst ";
+static const char * constBackupProlog = "xprinter.prolog.kfontinst_backup";
 
 static QString xp3Directory()
 {
@@ -102,14 +102,15 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::go(const QString &path)
                             if(CMisc::fExists(path+afmName))  // Does the .afm exists in the X11 dir?
                             {
                                 QString soAfm=getAfmName(fInfo->filePath()),
+                                        afmDir(constAfmDir),
                                         cmd;
-                                cmd="\\cd "+xp3Dir+constAfmDir;
+                                cmd="\\cd "+xp3Dir+afmDir;
 
-                                if(CMisc::fExists(xp3Dir+constAfmDir+soAfm))   // Remove the old one
-                                    CMisc::removeFile(xp3Dir+constAfmDir+soAfm);
-                                CMisc::linkFile(path+afmName, xp3Dir+constAfmDir+soAfm);
+                                if(CMisc::fExists(xp3Dir+afmDir+soAfm))   // Remove the old one
+                                    CMisc::removeFile(xp3Dir+afmDir+soAfm);
+                                CMisc::linkFile(path+afmName, xp3Dir+afmDir+soAfm);
 
-                                if(CMisc::fExists(xp3Dir+constAfmDir+soAfm))
+                                if(CMisc::fExists(xp3Dir+afmDir+soAfm))
                                 {
                                      QCString ppdEntry("*Font ");
 
@@ -129,14 +130,16 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::go(const QString &path)
 
                 emit step(i18n("Setting up xprinter.prolog"));
 
-                backupExists=CMisc::fExists(xp3Dir+constBackupProlog);
+                QString backupProlog(constBackupProlog);
+
+                backupExists=CMisc::fExists(xp3Dir+backupProlog);
 
                 QString encFile(CMisc::locate("StarOffice/"+CKfiGlobal::cfg().getAfmEncoding()+".xpp"));
 
                 if(QString::null!=encFile && CMisc::fExists(encFile))
                 {
                     // Remove existing xprinter.prolog, or move to back-up
-                    status= (backupExists ? CMisc::removeFile(xp3Dir+"xprinter.prolog") : CMisc::moveFile(xp3Dir+"xprinter.prolog", xp3Dir+constBackupProlog))
+                    status= (backupExists ? CMisc::removeFile(xp3Dir+"xprinter.prolog") : CMisc::moveFile(xp3Dir+"xprinter.prolog", xp3Dir+backupProlog))
                                         ? SUCCESS : COULD_NOT_MODIFY_XPRINTER_DOT_PROLOG;
 
                     if(SUCCESS==status)  // Copy from encoding.xpp to xprinter.prolog
@@ -147,7 +150,7 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::go(const QString &path)
 
                 if(useStdProlog)
                     if(backupExists)  // Then xprinter.prolog was for an old encoding, move backup back to xprinter.prolog
-                        status=CMisc::removeFile(xp3Dir+"xprinter.prolog") && CMisc::moveFile(xp3Dir+constBackupProlog, xp3Dir+"xprinter.prolog")
+                        status=CMisc::removeFile(xp3Dir+"xprinter.prolog") && CMisc::moveFile(xp3Dir+backupProlog, xp3Dir+"xprinter.prolog")
                                             ? SUCCESS : COULD_NOT_RESTORE_XPRINTER_DOT_PROLOG;
             }
             else
@@ -167,10 +170,11 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::go(const QString &path)
 void CStarOfficeConfig::removeAfm(const QString &fname)
 {
     QString xp3Dir(xp3Directory()),
-            afm=getAfmName(fname);
+            afm=getAfmName(fname),
+            afmDir(constAfmDir);
  
-    if(CMisc::fExists(xp3Dir+constAfmDir+afm))
-        CMisc::removeFile(xp3Dir+constAfmDir+afm);
+    if(CMisc::fExists(xp3Dir+afmDir+afm))
+        CMisc::removeFile(xp3Dir+afmDir+afm);
 }
 
 CStarOfficeConfig::EStatus CStarOfficeConfig::outputToPsStdFonts(const QString &xDir, CBufferedFile &out, const QString &fileName, const QString &afm)
