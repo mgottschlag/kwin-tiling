@@ -35,6 +35,7 @@
 #include <kinstance.h>
 #include <qstring.h>
 #include <qstringlist.h>
+#include <qfile.h>
 #include <iostream>
 #include <unistd.h>
 #include <sys/types.h>
@@ -45,6 +46,116 @@
 #else
 #define XFT_CACHE_CMD "xftcache"
 #endif
+
+static int kfi_configure_dir(const char *dir)
+{
+    QString     ds(CMisc::dirSyntax(dir));
+#ifdef HAVE_FONTCONFIG
+    int         rv=CXConfig::configureDir(ds) ? 0 : -2;
+#else
+    QStringList x11SymFamilies;
+    int         rv=CXConfig::configureDir(ds, x11SymFamilies) ? 0 : -2;
+#endif
+
+    CFontmap::createLocal(ds);
+
+    if(0==rv)
+    {
+#ifndef HAVE_FONTCONFIG
+        QStringList           xftSymFamilies=CGlobal::xft().getSymbolFamilies();
+        QStringList::Iterator it;
+        bool                  saveXft=false;
+
+        for(it=x11SymFamilies.begin(); it!=x11SymFamilies.end(); ++it)
+            if(-1==xftSymFamilies.findIndex(*it))
+            {
+                CGlobal::xft().addSymbolFamily(*it);
+                saveXft=true;
+            }
+        if(saveXft)
+            CGlobal::xft().apply();
+#endif
+
+#ifdef HAVE_FONTCONFIG
+        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+#else
+        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(ds));
+#endif
+    }
+    CMisc::setTimeStamps(ds);
+
+    return rv;
+}
+
+//
+// Try to ensure both xftconfig/fonts.conf and X11 config have the same
+// direcories listed.
+static int kfi_sync_dirs()
+{
+    //
+    // *Always* ensure top-level folders are in path...
+    CGlobal::userXcfg().addPath(CGlobal::cfg().getUserFontsDir());
+    CGlobal::userXft().addDir(CGlobal::cfg().getUserFontsDir());
+
+    QStringList           xftDirs(CGlobal::userXft().getDirs()),
+                          x11Dirs,
+                          inXftNotX11,
+                          inX11NotXft;
+    QStringList::Iterator it;
+
+    CGlobal::userXcfg().getDirs(x11Dirs);
+
+    for(it=xftDirs.begin(); it!=xftDirs.end(); ++it)
+        if(!CGlobal::userXcfg().inPath(*it))
+            inXftNotX11.append(*it);
+
+    for(it=x11Dirs.begin(); it!=x11Dirs.end(); ++it)
+        if(!CGlobal::userXft().hasDir(*it))
+            inX11NotXft.append(*it);
+
+    if(inXftNotX11.count())
+        for(it=inXftNotX11.begin(); it!=inXftNotX11.end(); ++it)
+        {
+            CGlobal::userXcfg().addPath(*it);
+            kfi_configure_dir(QFile::encodeName(*it));
+        }
+
+    if(inX11NotXft.count())
+    {
+        for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
+            CGlobal::userXft().addDir(*it);
+        CGlobal::userXft().apply();
+#ifdef HAVE_FONTCONFIG
+        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+#else
+        for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*it));
+#endif
+        for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
+        {
+            CFontmap::createLocal(*it);
+            CMisc::setTimeStamps(*it);
+        }
+    }
+
+    if(inXftNotX11.count()||inX11NotXft.count())
+        CFontmap::createTopLevel();
+
+    if(CGlobal::userXcfg().madeChanges())
+        if(CGlobal::userXcfg().writeConfig())
+        {
+            if(CMisc::root())  // user cfg == sys cfg
+                CGlobal::cfg().storeSysXConfigFileTs();
+        }
+        else
+            CGlobal::userXcfg().readConfig();
+
+    if(CGlobal::userXft().changed()) // Would only happen if top-level added only
+    {
+        CGlobal::userXft().apply();
+        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+    }
+}
 
 static int kfi_rmdir(const char *dir)
 {
@@ -58,7 +169,8 @@ static int kfi_rmdir(const char *dir)
     {
         KInstance kinst("kfontinst");
 
-        CGlobal::create(false, true);
+        CGlobal::create(true, true);
+        kfi_sync_dirs();
 
         CGlobal::xcfg().addPath(CGlobal::cfg().getUserFontsDir());
         CGlobal::xcfg().removePath(ds);
@@ -90,7 +202,8 @@ static int kfi_mkdir(const char *dir, bool make=true)
     {
         KInstance kinst("kfontinst");
 
-        CGlobal::create(false, true);
+        CGlobal::create(true, true);
+        kfi_sync_dirs();
 
         chmod(dir, CMisc::DIR_PERMS);
         CGlobal::xcfg().addPath(CGlobal::cfg().getUserFontsDir());
@@ -128,43 +241,10 @@ static int kfi_cfgdir(const char *dir)
 {
     KInstance kinst("kfontinst");
 
-    CGlobal::create(true, false);
-    
-    QString     ds(CMisc::dirSyntax(dir));
-#ifdef HAVE_FONTCONFIG
-    int         rv=CXConfig::configureDir(ds) ? 0 : -2;
-#else
-    QStringList x11SymFamilies; 
-    int         rv=CXConfig::configureDir(ds, x11SymFamilies) ? 0 : -2;
-#endif
+    CGlobal::create(true, true);
+    kfi_sync_dirs();
 
-    CFontmap::createLocal(ds);
-
-    if(0==rv)
-    {
-#ifndef HAVE_FONTCONFIG
-        QStringList           xftSymFamilies=CGlobal::xft().getSymbolFamilies();
-        QStringList::Iterator it;
-        bool                  saveXft=false;  
-
-        for(it=x11SymFamilies.begin(); it!=x11SymFamilies.end(); ++it)
-            if(-1==xftSymFamilies.findIndex(*it))
-            {
-                CGlobal::xft().addSymbolFamily(*it);
-                saveXft=true;
-            }
-        if(saveXft)
-            CGlobal::xft().apply();
-#endif
-
-#ifdef HAVE_FONTCONFIG
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
-#else
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(ds));
-#endif 
-    }
-    CMisc::setTimeStamps(ds);
-
+    int rv=kfi_configure_dir(dir);
     CGlobal::destroy();
 
     return rv;
@@ -203,7 +283,8 @@ static int kfi_rename(const char *from, const char *to)
                   fromDs(CMisc::dirSyntax(from));
         KInstance kinst("kfontinst");
         
-        CGlobal::create(false, true);
+        CGlobal::create(true, true);
+        kfi_sync_dirs();
 
         CGlobal::xcfg().addPath(CGlobal::cfg().getUserFontsDir());
         CGlobal::xft().addDir(CGlobal::cfg().getUserFontsDir());
@@ -304,7 +385,6 @@ int main(int argc, char *argv[])
                   << "               rmfont    Remove a font, and associated files.\n"
                   << "               rename    Rename a font or directory.\n"
                   << "               install   Add a font to <to>.\n";
-
     return rv;
 }
 
