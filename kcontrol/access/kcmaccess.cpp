@@ -29,6 +29,7 @@
 #include <kshortcut.h>
 #include <kkeynative.h>
 
+#include <X11/Xlib.h>
 #include <X11/XKBlib.h>
 #define XK_MISCELLANY
 #define XK_XKB_KEYS
