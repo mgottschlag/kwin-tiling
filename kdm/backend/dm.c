@@ -822,7 +822,7 @@ processFifo (char *buf, int len, void *ptr ATTR_UNUSED)
 	}
 	if (when == SHUT_FORCENOW && !fifoAllowNuke)
 	{
-	    LogInfo ("Forced system shutdown command fifo forbidden\n");
+	    LogInfo ("Forced system shutdown via command fifo forbidden\n");
 	    return;
 	}
 	doShutdown (how, when);
@@ -911,14 +911,17 @@ ScanServers (int force)
 	    dtx = "new";
 	}
 	d->stillThere = 1;
-	Debug ("Found %s display: %s %s %s %[s\n",
+	Debug ("Found %s display: %s %s %s%s %[s\n",
 	       dtx, d->name, d->class2, 
-	       ((type & d_location) == dLocal) ? "local" : "foreign", argv);
+	       ((type & d_location) == dLocal) ? "local" : "foreign",
+	       ((type & d_lifetime) == dReserve) ? " reserve" : "", argv);
 	d->serverArgv = argv;
 	d->hstent->startTries = 0;
 	d->displayType = type;
 	if ((type & d_lifetime) == dReserve && d->status == notRunning)
 	    d->status = reserve;
+	else if ((type & d_lifetime) != dReserve && d->status == reserve)
+	    d->status = notRunning;
 	free (name);
 	if (class2)
 	    free (class2);
@@ -1121,7 +1124,8 @@ WaitForChild (void)
 		d->status = reserve;
 		break;
 	    case zombie:
-		Debug ("Zombie server reaped, attempting removing display %s\n", d->name);
+		Debug ("Zombie server reaped, attempting removing display %s\n",
+		       d->name);
 		StopDisplay (d);	/* d->pid could still be != -1 */
 		break;
 	    case phoenix:
@@ -1314,7 +1318,7 @@ StartDisplay (struct display *d)
 void
 rStopDisplay (struct display *d, int endState)
 {
-Debug ("Stopping display %s to state %d\n", d->name, endState);
+    Debug ("Stopping display %s to state %d\n", d->name, endState);
     closeFifo (&d->fifofd, d->fifoPath);
     if (d->pipefd[0] >= 0) {
 #ifdef HAS_SELECT_ON_FIFO
@@ -1332,7 +1336,7 @@ Debug ("Stopping display %s to state %d\n", d->name, endState);
 	    TerminateProcess (d->serverPid, d->termSignal);
 	d->status = (endState == DS_TEXTMODE) ? tzombie : 
 		    (endState == DS_RESERVE) ? rzombie : zombie;
-Debug (" zombiefied\n");
+	Debug (" zombiefied\n");
     }
     else if (endState == DS_TEXTMODE)
 	SwitchToTty (d);
@@ -1387,6 +1391,7 @@ ExitDisplay (
 	{
 	    if (d->serverPid != -1 && (forceReserver || d->terminateServer))
 	    {
+	    	Debug ("Killing X-server for %s\n", d->name);
 		TerminateProcess (d->serverPid, d->termSignal);
 		d->status = phoenix;
 	    }
