@@ -54,12 +54,14 @@ protected:
     KListBox *m_ioslavesLb;
     KTextBrowser *m_info;
     QCString helpData;
+    KIO::Job *m_tfj;
 
 protected slots:
 
     void showInfo(const QString& protocol);
     void showInfo(QListBoxItem *item);
     void slaveHelp( KIO::Job *, const QByteArray &data);
+    void slotResult( KIO::Job * );
 
 public slots:
     void configChanged();

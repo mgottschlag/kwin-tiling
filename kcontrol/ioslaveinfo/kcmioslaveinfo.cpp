@@ -1,7 +1,7 @@
 /*
  * kcmioslaveinfo.cpp
  *
- * Copyright 2001 Alexander Neundorf <alexander.neundorf@rz.tu-ilmenau.de>
+ * Copyright 2001 Alexander Neundorf <neundorf@kde.org>
  * Copyright 2001 George Staikos  <staikos@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
@@ -48,7 +48,7 @@ typedef KGenericFactory<KCMIOSlaveInfo, QWidget> SlaveFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_ioslaveinfo, SlaveFactory("kcmioslaveinfo") );
 
 KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringList &)
-               :KCModule(SlaveFactory::instance(), parent,name),m_ioslavesLb(0)
+               :KCModule(SlaveFactory::instance(), parent,name),m_ioslavesLb(0),m_tfj(0)
 {
    QVBoxLayout *layout=new QVBoxLayout(this,KDialog::marginHint(),KDialog::spacingHint());
 
@@ -129,16 +129,27 @@ void KCMIOSlaveInfo::slaveHelp( KIO::Job *, const QByteArray &data)
     helpData += data;
 }
 
+void KCMIOSlaveInfo::slotResult(KIO::Job *)
+{
+   m_tfj = 0;
+}
+
 void KCMIOSlaveInfo::showInfo(const QString& protocol)
 {
    QString file = QString("kioslave/%1.docbook").arg( protocol );
    file = KGlobal::locale()->langLookup( file );
+   if (m_tfj)
+   {
+      m_tfj->kill();
+      m_tfj = 0;
+   }
 
    if (!file.isEmpty())
    {
        helpData.truncate( 0 );
-       KIO::Job *tfj = KIO::get( QString("help:/kioslave/%1.html").arg( protocol ), true, false );
-       connect( tfj, SIGNAL( data( KIO::Job *, const QByteArray &) ), SLOT( slaveHelp( KIO::Job *, const QByteArray &) ) );
+       m_tfj = KIO::get( QString("help:/kioslave/%1.html").arg( protocol ), true, false );
+       connect( m_tfj, SIGNAL( data( KIO::Job *, const QByteArray &) ), SLOT( slaveHelp( KIO::Job *, const QByteArray &) ) );
+       connect( m_tfj, SIGNAL( result( KIO::Job * ) ), SLOT( slotResult( KIO::Job * ) ) );
        return;
    }
    m_info->setText(QString("Some info about protocol %1:/ ...").arg(protocol));
