@@ -702,6 +702,35 @@ KGreeter::accept()
 	verifyUser(true);
 }
 
+GreeterApp::GreeterApp( int& argc, char** argv )
+    : inherited( argc, argv, "kdmgreet" )
+{
+    pingInterval = GetCfgInt( C_pingInterval );
+    if (pingInterval) {
+	struct sigaction sa;
+	sigemptyset( &sa.sa_mask );
+	sa.sa_flags = 0;
+	sa.sa_handler = sigAlarm;
+	sigaction( SIGALRM, &sa, 0 );
+	alarm( pingInterval * 70 );	// sic! give the "proper" pinger enough time
+	startTimer( pingInterval * 60000 );
+    }
+}
+
+void
+GreeterApp::timerEvent( QTimerEvent * )
+{
+    if (!PingServer( qt_xdisplay() ))
+	SessionExit( EX_RESERVER_DPY );
+    alarm( pingInterval * 70 );	// sic! give the "proper" pinger enough time
+}
+
+void
+GreeterApp::sigAlarm( int )
+{
+    close( XConnectionNumber( qt_xdisplay() ) );
+}
+
 bool
 GreeterApp::x11EventFilter( XEvent * ev )
 {

@@ -53,8 +53,16 @@ class GreeterApp : public KApplication {
     typedef KApplication inherited;
 
 public:
-    GreeterApp( int& argc, char** argv ) : inherited( argc, argv, "kdmgreet" ) {}
+    GreeterApp( int& argc, char** argv );
     virtual bool x11EventFilter( XEvent * );
+
+protected:
+    virtual void timerEvent( QTimerEvent * );
+
+private:
+    static void sigAlarm( int );
+
+    int pingInterval;
 };
 
 

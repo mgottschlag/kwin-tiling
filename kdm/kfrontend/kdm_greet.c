@@ -351,7 +351,6 @@ UnsecureDisplay (Display *dpy)
     }
 }
 
-/*
 static jmp_buf	pingTime;
 
 static int
@@ -399,7 +398,6 @@ PingServer (Display *dpy)
     XSetIOErrorHandler (oldError);
     return 1;
 }
-*/
 
 /*
  * Modifier changing code based on kdebase/kxkb/kcmmisc.cpp
@@ -609,8 +607,7 @@ main (int argc, char **argv)
     dname = GetCfgStr (C_name);
     dgrabServer = GetCfgInt (C_grabServer);
     dgrabTimeout = GetCfgInt (C_grabTimeout);
-/*    dpingInterval = GetCfgInt (C_pingInterval);*/	/* XXX not here */
-/*    dpingTimeout = GetCfgInt (C_pingTimeout);*/
+    dpingTimeout = GetCfgInt (C_pingTimeout);
     disLocal = (GetCfgInt (C_displayType) & d_location) == dLocal;
     if ((ci = GetCfgStr (C_console))) {
 	dhasConsole = ci[0] != 0;
