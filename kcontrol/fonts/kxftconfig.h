@@ -2,7 +2,7 @@
 #define __KXFTCONFIG_H__
 
 /*
-   Copyright (c) 2002 Craig Drummond <Craig.Drummond@gmx.net>
+   Copyright (c) 2002 Craig Drummond <craig@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
