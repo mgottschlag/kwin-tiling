@@ -261,9 +261,3 @@ if test "x$with_krb4" != xno; then
 fi
 AC_MSG_RESULT([xdm CFLAGS: $XDM_CFLAGS])
 AC_SUBST(XDM_CFLAGS)
-
-dnl AC_OUTPUT(kdm/kfrontend/config/kdmrc)
-dnl AC_OUTPUT(kdm/kfrontend/config/Xservers)
-dnl AC_OUTPUT(kdm/kfrontend/config/Xsetup)
-dnl AC_OUTPUT(kdm/kfrontend/config/Xstartup)
-dnl AC_OUTPUT(kdm/kfrontend/config/Xreset)
