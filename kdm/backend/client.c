@@ -320,7 +320,7 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
     } else {
       opennew:
 	Debug ("opening new PAM handle\n");
-	if (pam_start (psrv, curuser, &pconv, &pamh) != PAM_SUCCESS)
+	if ((pretc = pam_start (psrv, curuser, &pconv, &pamh)) != PAM_SUCCESS)
 	    goto pam_bail2;
 	if ((pretc = pam_set_item (pamh, PAM_TTY, td->name)) != PAM_SUCCESS)
 	    goto pam_bail;
@@ -926,6 +926,23 @@ SetUser (const char *name, int uid, int gid)
     return SetGid (name, gid) && SetUid (name, uid);
 }
 
+#if defined(SECURE_RPC) || defined(K5AUTH)
+static void
+NukeAuth (int len, const char *name)
+{
+    int i;
+
+    for (i = 0; i < td->authNum; i++)
+	if (td->authorizations[i]->name_length == len &&
+	    !memcmp (td->authorizations[i]->name, name, len))
+	{
+	    memcpy (&td->authorizations[i], &td->authorizations[i+1],
+		    sizeof(td->authorizations[i]) * (--td->authNum - i));
+	    break;
+	}
+}
+#endif
+
 static void
 mergeSessionArgs (int cansave)
 {
@@ -1098,8 +1115,6 @@ StartClient ()
 	     * automatically when it reads the cache we are about
 	     * to point it at.
 	     */
-	    extern Xauth *Krb5GetAuthFor ();
-
 	    XauDisposeAuth (td->authorizations[i]);
 	    td->authorizations[i] =
 		Krb5GetAuthFor (14, "MIT-KERBEROS-5", td->name);
@@ -1290,21 +1305,7 @@ StartClient ()
 		}
 	    }
 	    if (!key_set_ok)
-	    {
-		/* remove SUN-DES-1 from authorizations list */
-		int i, j;
-		for (i = 0; i < td->authNum; i++)
-		{
-		    if (td->authorizations[i]->name_length == 9 &&
-			memcmp (td->authorizations[i]->name, "SUN-DES-1", 9) == 0)
-		    {
-			for (j = i+1; j < td->authNum; j++)
-			    td->authorizations[j-1] = td->authorizations[j];
-			td->authNum--;
-			break;
-		    }
-		}
-	    }
+		NukeAuth (9, "SUN-DES-1");
 	    bzero (secretkey, strlen (secretkey));
 	}
 #endif
@@ -1313,31 +1314,10 @@ StartClient ()
 	if (!curpass[0])
 	    LogInfo ("No password for Kerberos5 provided.\n");
 	else
-	{
-	    int i, j;
-	    int result;
-	    extern char *Krb5CCacheName ();
-
-	    result = Krb5Init (curuser, curpass, td);
-	    if (result == 0) {
-		/* point session clients at the Kerberos credentials cache */
-		userEnviron = setEnv (userEnviron,
-				      "KRB5CCNAME", Krb5CCacheName(td->name));
-	    } else {
-		for (i = 0; i < td->authNum; i++)
-		{
-		    if (td->authorizations[i]->name_length == 14 &&
-			!memcmp (td->authorizations[i]->name, "MIT-KERBEROS-5", 14))
-		    {
-			/* remove Kerberos from authorizations list */
-			for (j = i+1; j < td->authNum; j++)
-			    td->authorizations[j-1] = td->authorizations[j];
-			td->authNum--;
-			break;
-		    }
-		}
-	    }
-	}
+	    if ((str = Krb5Init (curuser, curpass, td->name)))
+		userEnviron = setEnv (userEnviron, "KRB5CCNAME", str);
+	    else
+		NukeAuth (14, "MIT-KERBEROS-5");
 #endif /* K5AUTH */
 	if (curpass)
 	    bzero (curpass, strlen (curpass));
@@ -1456,28 +1436,7 @@ SessionExit (int status)
 	SetUser (curuser, curuid, curgid);
 	RemoveUserAuthorization (td);
 #ifdef K5AUTH
-	/* do like "kdestroy" program */
-	{
-	    krb5_error_code code;
-	    krb5_ccache ccache;
-
-	    code = Krb5DisplayCCache (td->name, &ccache);
-	    if (code)
-		LogError ("%s while getting Krb5 ccache to destroy\n",
-			 error_message (code));
-	    else {
-		code = krb5_cc_destroy (ccache);
-		if (code) {
-		    if (code == KRB5_FCC_NOFILE)
-			Debug ("no Kerberos ccache file found to destroy\n");
-		    else
-			LogError ("%s while destroying Krb5 credentials cache\n",
-				  error_message (code));
-		} else
-		    Debug ("kerberos ccache destroyed\n");
-		krb5_cc_close (ccache);
-	    }
-	}
+	Krb5Destroy (td->name);
 #endif /* K5AUTH */
 #if !defined(USE_PAM) && !defined(AIXV3)
 # ifdef KERBEROS

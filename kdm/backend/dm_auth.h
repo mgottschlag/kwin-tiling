@@ -37,7 +37,7 @@ authorization.
 #ifndef _DM_AUTH_H_
 #define _DM_AUTH_H_ 1
 
-#include "dm.h"	/* for struct display */
+#include "dm.h"
 
 extern void	MitInitAuth (unsigned short name_len, const char *name);
 extern Xauth	*MitGetAuth (unsigned short namelen, const char *name);
@@ -62,12 +62,16 @@ extern int	XdmCheckAuthentication (
 
 #ifdef SECURE_RPC
 extern void	SecureRPCInitAuth (unsigned short name_len, const char *name);
-extern Xauth	*SecureRPCGetAuth (unsigned short namelen, const char *name);
+extern Xauth	*SecureRPCGetAuth (unsigned short name_len, const char *name);
 #endif
 
 #ifdef K5AUTH
 extern void	Krb5InitAuth (unsigned short name_len, const char *name);
-extern Xauth	*Krb5GetAuth (unsigned short namelen, const char *name);
+extern Xauth	*Krb5GetAuth (unsigned short name_len, const char *name);
+
+extern Xauth	*Krb5GetAuthFor (unsigned short name_len, const char *name, const char *dname);
+extern char *Krb5Init (const char *user, const char *passwd, const char *dname);
+extern void Krb5Destroy (const char *dname);
 #endif
 
 /* auth.c */
