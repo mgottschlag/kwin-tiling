@@ -325,10 +325,10 @@ void BGDialog::initUI()
       // just use the first line of said comment.
 
       KFileMetaInfo metaInfo(*it);
-      QString imageCaption = metaInfo.item("Comment").string().section('\n', 0, 0);
+      QString imageCaption;
 
-      if (imageCaption == "---")
-         imageCaption = QString::null;
+      if (metaInfo.item("Comment").isValid())
+         metaInfo.item("Comment").string().section('\n', 0, 0);
 
       if (imageCaption.isEmpty())
       {
@@ -613,11 +613,6 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       else
          r->setMultiWallpaperMode(KBackgroundSettings::NoMultiRandom);
 
-      r->setWallpaperMode(m_wallpaperPos);
-      m_comboWallpaperPos->blockSignals(true);
-      m_comboWallpaperPos->setCurrentItem(m_wallpaperPos-1);
-      m_comboWallpaperPos->blockSignals(false);
-
       int j = m_urlWallpaper->comboBox()->currentItem();
       QString uri;
       for(QMap<QString,int>::ConstIterator it = m_Wallpaper.begin();
@@ -630,6 +625,25 @@ void BGDialog::slotWallpaperTypeChanged(int i)
             break;
          }
       }
+
+      KFileMetaInfo metaInfo(uri);
+      if (metaInfo.item("Dimensions").isValid())
+      {
+         // If the image is greater than 800x600 default to using scaled mode,
+         // otherwise default to tiled.
+
+         QSize s = metaInfo.item("Dimensions").value().toSize();
+         if (s.width() >= 800 && s.height() >= 600)
+            m_wallpaperPos = KBackgroundSettings::Scaled;
+         else
+            m_wallpaperPos = KBackgroundSettings::Tiled;
+      }
+
+      r->setWallpaperMode(m_wallpaperPos);
+      m_comboWallpaperPos->blockSignals(true);
+      m_comboWallpaperPos->setCurrentItem(m_wallpaperPos-1);
+      m_comboWallpaperPos->blockSignals(false);
+
       r->setWallpaper(uri);
       m_urlWallpaper->fileDialog()->setURL(KURL( uri ));
    }
