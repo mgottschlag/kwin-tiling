@@ -61,6 +61,8 @@ KKWMApplication::KKWMApplication(int &argc, char **argv, const char *name)
   options = 0; buttons = 0; appearance = 0; desktop = 0; mouse = 0;
   advanced = 0;
 
+  ::config = new KConfig("kwmrc");
+
   if (runGUI())
     {
       if (!pages || pages->contains("options"))
@@ -121,9 +123,6 @@ void KKWMApplication::apply()
 
 int main(int argc, char **argv)
 {
-    static KInstance *instance = new KInstance( "kwm");
-    config = instance->config();
-    //config = new KConfig("kwmrc");
     KKWMApplication app(argc, argv, "kcmkwm");
     app.setTitle(i18n("Window manager style"));
     int result = 0;
