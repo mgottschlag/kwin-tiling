@@ -4,13 +4,13 @@ INCLUDES = $(all_includes)
 
 lib_LTLIBRARIES = libkcm_icons.la
 
-libkcm_icons_la_SOURCES = icnmain.cpp icngeneral.cpp icnlabel.cpp
+libkcm_icons_la_SOURCES = icons.cpp
 libkcm_icons_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_icons_la_LIBADD = $(LIB_KFILE)
-libkcm_icons_la_METASOURCES = icnmain.moc icngeneral.moc icnlabel.moc
+libkcm_icons_la_METASOURCES = icons.moc
 
 
-noinst_HEADERS = icnmain.h icngeneral.h icnlabel.h
+noinst_HEADERS = icons.h
 
 check_PROGRAMS = testicons
 testicons_SOURCES = testicons.cpp icons.cpp

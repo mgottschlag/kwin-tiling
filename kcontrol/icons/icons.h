@@ -5,14 +5,14 @@
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 2000 Geert Jansen <jansen@kde.org>
  * with minor additions and based on ideas from
- * Torsten Rahn <torsten@kde.org>                                               
- * 
+ * Torsten Rahn <torsten@kde.org>
+ *
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
-#ifndef __icngeneral_h__
-#define __icngeneral_h__
+#ifndef __icons_h__
+#define __icons_h__
 
 #include <kcmodule.h>
 #include <qvaluelist.h>
@@ -26,7 +26,7 @@ class QComboBox;
 class QListBox;
 class QSlider;
 class QLabel;
-class QIconView;                                                            
+class QIconView;
 
 class KConfig;
 class KIconEffect;
@@ -37,12 +37,12 @@ class KColorButton;
 /**
  * The General Icons tab in kcontrol.
  */
-class KIconConfigGeneral: public QWidget
+class KIconConfig: public KCModule
 {
     Q_OBJECT
 
 public:
-    KIconConfigGeneral(QWidget *parent=0, const char *name=0);
+    KIconConfig(QWidget *parent, const char *name=0);
     virtual void load();
     virtual void save();
     virtual void defaults();
@@ -60,7 +60,7 @@ private slots:
     void slotPreview(float &m_pEfColor);
     void slotDPCheck(bool check);
     void slotSTCheck(bool check);
-    
+
 private:
     void init();
     void read();

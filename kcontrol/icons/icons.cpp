@@ -41,12 +41,21 @@
 #include <kcolorbtn.h>
 #include <kbuttonbox.h>
 
-#include <icngeneral.h>
+#include <icons.h>
 
-/**** KIconConfigGeneral ****/
+/**** DLL Interface ****/
 
-KIconConfigGeneral::KIconConfigGeneral(QWidget *parent, const char *name)
-    : QWidget(parent, name)
+extern "C" {
+    KCModule *create_icons(QWidget *parent, const char *name) {
+        KGlobal::locale()->insertCatalogue("kcmicons");
+        return new KIconConfig(parent, name);
+    }
+}
+
+/**** KIconConfig ****/
+
+KIconConfig::KIconConfig(QWidget *parent, const char *name)
+    : KCModule(parent, name)
 {
     QGridLayout *top = new QGridLayout(this, 2, 2,
                                        KDialog::marginHint(),
@@ -131,7 +140,7 @@ KIconConfigGeneral::KIconConfigGeneral(QWidget *parent, const char *name)
     preview();
 }
 
-void KIconConfigGeneral::init()
+void KIconConfig::init()
 {
     mpLoader = KGlobal::iconLoader();
     mpConfig = KGlobal::config();
@@ -168,7 +177,7 @@ void KIconConfigGeneral::init()
     mStates += "Disabled";
 }
 
-void KIconConfigGeneral::read()
+void KIconConfig::read()
 {
     for (int i=0; i<KIcon::LastGroup; i++)
 	mAvSizes[i] = mpTheme->querySizes(i);
@@ -220,7 +229,7 @@ void KIconConfigGeneral::read()
     }
 }
 
-void KIconConfigGeneral::apply()
+void KIconConfig::apply()
 {
     mpUsageList->setCurrentItem(mUsage);
     mpStateList->setCurrentItem(mState);
@@ -253,7 +262,7 @@ void KIconConfigGeneral::apply()
 	    index = i;
 	    size = *it;
 	}
-	
+
     }
     if (index != -1)
     {
@@ -264,7 +273,7 @@ void KIconConfigGeneral::apply()
     mpDPCheck->setChecked(mbDP[mUsage]);
 }
 
-void KIconConfigGeneral::preview()
+void KIconConfig::preview()
 {
     // Apply effects ourselves because we don't want to sync
     // the configuration every preview.
@@ -282,7 +291,7 @@ void KIconConfigGeneral::preview()
     mpPreview->setPixmap(pm);
 }
 
-void KIconConfigGeneral::load()
+void KIconConfig::load()
 {
     read();
     apply();
@@ -292,7 +301,7 @@ void KIconConfigGeneral::load()
 }
 
 
-void KIconConfigGeneral::save()
+void KIconConfig::save()
 {
     int i, j;
     QStringList::ConstIterator it, it2;
@@ -343,7 +352,7 @@ void KIconConfigGeneral::save()
     }
 }
 
-void KIconConfigGeneral::defaults()
+void KIconConfig::defaults()
 {
     for (int i=0; i<KIcon::LastGroup; i++)
     {
@@ -369,7 +378,7 @@ void KIconConfigGeneral::defaults()
     emit changed(true);
 }
 
-void KIconConfigGeneral::slotUsage(int index)
+void KIconConfig::slotUsage(int index)
 {
     mUsage = index;
     mState = 0;
@@ -377,7 +386,7 @@ void KIconConfigGeneral::slotUsage(int index)
     preview();
 }
 
-void KIconConfigGeneral::slotPreview(float &m_pEfColor)
+void KIconConfig::slotPreview(float &m_pEfColor)
 {
     float tmp;
     tmp = mEffectValues[mUsage][mState];
@@ -386,7 +395,7 @@ void KIconConfigGeneral::slotPreview(float &m_pEfColor)
     mEffectValues[mUsage][mState] = tmp;
 }
 
-void KIconConfigGeneral::slotEffectSetup()
+void KIconConfig::slotEffectSetup()
 {
     QColor r;
     r = mEffectColors[mUsage][mState];
@@ -408,7 +417,7 @@ void KIconConfigGeneral::slotEffectSetup()
     preview();
 }
 
-void KIconConfigGeneral::slotState(int index)
+void KIconConfig::slotState(int index)
 {
     mState = index;
     switch (mEffects[mUsage][mState])
@@ -428,7 +437,7 @@ void KIconConfigGeneral::slotState(int index)
     preview();
 }
 
-void KIconConfigGeneral::slotEffect(int index)
+void KIconConfig::slotEffect(int index)
 {
     mEffects[mUsage][mState] = index;
 
@@ -450,7 +459,7 @@ void KIconConfigGeneral::slotEffect(int index)
     mbChanged[mUsage] = true;
 }
 
-void KIconConfigGeneral::slotSTCheck(bool tag)
+void KIconConfig::slotSTCheck(bool tag)
 {
     mEffectTrans[mUsage][mState] = tag;
     preview();
@@ -459,7 +468,7 @@ void KIconConfigGeneral::slotSTCheck(bool tag)
 }
 
 
-void KIconConfigGeneral::slotSize(int index)
+void KIconConfig::slotSize(int index)
 {
     mSizes[mUsage] = mAvSizes[mUsage][index];
     preview();
@@ -467,7 +476,7 @@ void KIconConfigGeneral::slotSize(int index)
     mbChanged[mUsage] = true;
 }
 
-void KIconConfigGeneral::slotDPCheck(bool check)
+void KIconConfig::slotDPCheck(bool check)
 {
     mbDP[mUsage] = check;
     preview();
@@ -552,4 +561,4 @@ void KIconEffectSetupDialog::slotOK()
     accept();
 }
 
-#include "icngeneral.moc"
+#include "icons.moc"
