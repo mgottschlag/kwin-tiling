@@ -745,7 +745,15 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     // Wallpaper mode (NoWallpaper, div. tilings)
     m_WallpaperMode = defWallpaperMode;
+
     m_Wallpaper = m_pConfig->readPathEntry("Wallpaper");
+    KGlobalBackgroundSettings * _global = new KGlobalBackgroundSettings();
+    if (!m_Wallpaper.isEmpty() && _global->commonBackground()) {
+        m_WallpaperList = m_Wallpaper;
+        updateWallpaperFiles();
+    }
+    delete _global;
+
     s = m_pConfig->readEntry("WallpaperMode", "invalid");
     if (m_WMMap.contains(s)) {
         int mode = m_WMMap[s];
@@ -782,8 +790,8 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("BlendMode", m_BlMRevMap[m_BlendMode]);
     m_pConfig->writeEntry("BlendBalance", m_BlendBalance);
     m_pConfig->writeEntry("ReverseBlending", m_ReverseBlending);
-    m_pConfig->writeEntry( "MinOptimizationDepth", m_MinOptimizationDepth );
-    m_pConfig->writeEntry( "UseSHM", m_bShm );
+    m_pConfig->writeEntry("MinOptimizationDepth", m_MinOptimizationDepth );
+    m_pConfig->writeEntry("UseSHM", m_bShm );
 
     m_pConfig->writeEntry("WallpaperList", m_WallpaperList);
     m_pConfig->writeEntry("ChangeInterval", m_Interval);
@@ -807,18 +815,18 @@ void KBackgroundSettings::updateWallpaperFiles()
         QString file = locate("wallpaper", *it);
         if (file.isEmpty())
             continue;
-	QFileInfo fi(file);
-	if (!fi.exists())
-	    continue;
-	if (fi.isFile() && fi.isReadable())
-	    m_WallpaperFiles.append(file);
-	if (fi.isDir()) {
-	    QDir dir(file);
-	    QStringList lst = dir.entryList(QDir::Files | QDir::Readable);
-	    QStringList::Iterator it;
-	    for (it=lst.begin(); it!=lst.end(); it++)
-		m_WallpaperFiles.append(dir.absFilePath(*it));
-	}
+        QFileInfo fi(file);
+        if (!fi.exists())
+            continue;
+        if (fi.isFile() && fi.isReadable())
+            m_WallpaperFiles.append(file);
+        if (fi.isDir()) {
+            QDir dir(file);
+            QStringList lst = dir.entryList(QDir::Files | QDir::Readable);
+            QStringList::Iterator it;
+            for (it=lst.begin(); it!=lst.end(); it++)
+                m_WallpaperFiles.append(dir.absFilePath(*it));
+        }
     }
 }
 
