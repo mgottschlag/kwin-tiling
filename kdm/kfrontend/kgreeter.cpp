@@ -40,6 +40,7 @@
 #include <kpassdlg.h>
 #include <klistview.h>
 #include <ksimpleconfig.h>
+#include <kcmdlineargs.h>
 
 #include <qdir.h>
 #include <qfile.h>
@@ -898,6 +899,9 @@ extern "C" void
 kg_main( const char *argv0 )
 {
     KProcess *proc = 0;
+
+    static char *argv[] = { (char *)"kdm_greet", 0 };
+    KCmdLineArgs::init( 1, argv, 0, 0, 0, 0, true );
 
     kde_have_kipc = false;
     KApplication::disableAutoDcopRegistration();
