@@ -260,7 +260,7 @@ KGreeter::insertUsers( QIconView *iconview)
 
 #undef CHECK_STRING
 
-KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0) 
+KGreeter::KGreeter(QWidget *parent, const char *t) 
   : QFrame( parent, t, WStyle_Customize | WStyle_NoBorder | WStyle_Tool)
 {
     setFrameStyle(QFrame::WinPanel| QFrame::Raised);

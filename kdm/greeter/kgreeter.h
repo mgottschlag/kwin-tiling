@@ -70,7 +70,7 @@ class KGreeter : public QFrame {
     Q_OBJECT
 
 public:
-    KGreeter(QWidget *parent, const char *t);
+    KGreeter(QWidget *parent = 0, const char *ti = 0);
     void ReturnPressed();
     void SetTimer();
 
