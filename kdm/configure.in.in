@@ -16,7 +16,7 @@ AC_SUBST(XMKMF)
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
-imkv=1
+imkv=2
 if test -n "$kde_cv_defines_imake" && test "$kde_cv_defines_imake_version" = $imkv; then
   _AS_ECHO_N([(cached) ])
 else
@@ -63,7 +63,7 @@ VERSION_DEFINES = -DOSMAJORVERSION=OSMajorVersion -DOSMINORVERSION=OSMinorVersio
 XDM_CFLAGS = $(BASIC_FLAGS) $(VERSION_DEFINES) $(SIGNAL_DEFINES) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(RANDOM_DEFINES) $(CRYPT_DEFINES) $(MKTMP_DEFINES)
 
 acimake:
-	@set crap $(XDM_CFLAGS); shift; XDM_CFLAGS=; for i in "$$@"; do XDM_CFLAGS="$$XDM_CFLAGS $$(echo "$$i" | sed "s,\\([ 	\`\"'\\]\\),\\\\\\1,g")"; done; echo "XDM_CFLAGS=$$(echo "$$XDM_CFLAGS" | sed "s,\\([ 	\`\"'\\]\\),\\\\\\1,g")"
+	@set crap $(XDM_CFLAGS); shift; se="s,\\([ 	\`\"'\\\\]\\),\\\\\\1,g"; for i in "$$@"; do echo "$$i" | sed "$$se"; done | tr '\n' ' ' | sed "s, \$$,,;$$se;s,^,XDM_CFLAGS=,"; echo
 #if HasXdmAuth
 	@echo HASXDMAUTH=1
 #endif
