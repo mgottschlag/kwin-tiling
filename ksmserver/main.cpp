@@ -56,7 +56,7 @@ int main( int argc, char* argv[] )
     KCmdLineArgs::init(argc, argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options );
 
-    KApplication a(false, false);
+    KApplication a(false);
     fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
