@@ -658,8 +658,11 @@ void Task::lower()
 void Task::activate()
 {
 //    kdDebug(1210) << "Task::activate():" << name() << endl;
+    WId w = _win;
+    if( _transients_demanding_attention.count() > 0 )
+        w = _transients_demanding_attention.last();
     NETRootInfo ri( qt_xdisplay(), 0 );
-    ri.setActiveWindow( _win );
+    ri.setActiveWindow( w );
 }
 
 void Task::activateRaiseOrIconify()
