@@ -61,7 +61,7 @@ KMenuEdit::~KMenuEdit()
 
 void KMenuEdit::setupActions()
 {
-    (void)new KAction(i18n("&New Submenu"), "filenew", 0, actionCollection(), "newsubmenu");
+    (void)new KAction(i18n("&New Submenu"), "menu_new", 0, actionCollection(), "newsubmenu");
     (void)new KAction(i18n("New &Item"), "filenew", 0, actionCollection(), "newitem");
     (void)new KAction(i18n("&Delete"), "editdelete", 0, actionCollection(), "delete");
 
