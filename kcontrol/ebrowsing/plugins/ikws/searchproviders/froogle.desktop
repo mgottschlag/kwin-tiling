@@ -2,6 +2,10 @@
 Encoding=UTF-8
 Type=Service
 Name=Froogle
+Name[fa]=فروگل
+Name[hi]=फ्रूगल
+Name[ta]=Google
+Name[xx]=xxFrooglexx
 ServiceTypes=SearchProvider
 Keys=froogle
 Query=http://froogle.google.com/froogle?q=\\{@}

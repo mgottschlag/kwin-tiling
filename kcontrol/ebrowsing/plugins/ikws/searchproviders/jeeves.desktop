@@ -6,12 +6,17 @@ Name[af]=Vra Jeeves
 Name[de]=Frag Jeeves
 Name[eo]=Demandu Jeeves
 Name[fo]=Spyr Jeeves
+Name[hi]=आस्क जीव्स
 Name[is]=Spyrja Jeeves
 Name[ko]=지브에게 묻기
 Name[lv]=Jautāt Džīvam
+Name[mn]=Frag Jeeves
 Name[nso]=Botsisa Jeeves
+Name[pl]=Ask Jeeves - zapytaj o coś
 Name[ss]=Buta Jeeves 
+Name[ta]=ஜீவசை கேள்
 Name[ven]=Vhudzisani Jeeves
+Name[xx]=xxAsk Jeevesxx
 ServiceTypes=SearchProvider
 Keys=ask,jeeves
 Query=http://www.ask.com/main/askJeeves.asp?origin=0&qSource=4&site_name=Jeeves&metasearch=yes&ask=\\{@}

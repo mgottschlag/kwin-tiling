@@ -2,8 +2,13 @@
 Encoding=UTF-8
 Type=Service
 Name=Hotbot
+Name[fa]=هات‌بات
+Name[hi]=हॉटबॉट
 Name[ko]=핫봇
+Name[pl]=Hotbot - wyszukiwarka stron WWW
+Name[ta]=ஹாட்பாட்
 Name[ven]=Bot yau fhisa
+Name[xx]=xxHotbotxx
 ServiceTypes=SearchProvider
 Keys=hb,hotbot
 Query=http://hotbot.lycos.com/?MT=\\{@}&SM=MC&DV=0&LG=any&DC=10&DE=2
