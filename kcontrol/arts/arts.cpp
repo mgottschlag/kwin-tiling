@@ -42,8 +42,8 @@
 #include <kstandarddirs.h>
 #include <kprocess.h>
 #include <kdialog.h>
+#include <kcmoduleloader.h>
 
-#include <kparts/componentfactory.h>
 #include "midi.h"
 #include "arts.h"
 
@@ -114,68 +114,6 @@ void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
 }
 
 
-static KCModule *load(QWidget *parent, const QString &libname, const QString &library, const QString &handle)
-{
-    KLibLoader *loader = KLibLoader::self();
-    // attempt to load modules with ComponentFactory, only if the symbol init_<lib> exists
-    // (this is because some modules, e.g. kcmkio with multiple modules in the library,
-    // cannot be ported to KGenericFactory)
-    KLibrary *lib = loader->library(QFile::encodeName(libname.arg(library)));
-    if (lib) {
-        QString initSym("init_");
-        initSym += libname.arg(library);
-
-        if ( lib->hasSymbol(QFile::encodeName(initSym)) )
-        {
-            // Reuse "lib" instead of letting createInstanceFromLibrary recreate it
-            //KCModule *module = KParts::ComponentFactory::createInstanceFromLibrary<KCModule>(QFile::encodeName(libname.arg(library)));
-            KLibFactory *factory = lib->factory();
-            if ( factory )
-            {
-                KCModule *module = KParts::ComponentFactory::createInstanceFromFactory<KCModule>( factory );
-                if (module)
-                    return module;
-            }
-        }
-
-	// get the create_ function
-	QString factory("create_%1");
-	void *create = lib->symbol(QFile::encodeName(factory.arg(handle)));
-
-	if (create)
-	    {
-		// create the module
-		KCModule* (*func)(QWidget *, const char *);
-		func = (KCModule* (*)(QWidget *, const char *)) create;
-		return  func(parent, 0);
-	    }
-
-        lib->unload();
-    }
-    return 0;
-}
-
-static KCModule *loadModule(QWidget *parent, const QString &module)
-{
-    KService::Ptr service = KService::serviceByDesktopName(module);
-    if (!service)
-       return 0;
-    QString library = service->library();
-
-    if (library.isEmpty())
-       return 0;
-
-    QString handle =  service->property("X-KDE-FactoryName").toString();
-    if (handle.isEmpty())
-       handle = library;
-
-    KCModule *kcm = load(parent, "kcm_%1", library, handle);
-    if (!kcm)
-       kcm = load(parent, "libkcm_%1", library, handle);
-    return kcm;
-}
-
-
 KArtsModule::KArtsModule(QWidget *parent, const char *name)
   : KCModule(parent, name), configChanged(false)
 {
@@ -189,7 +127,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
 	general = new ArtsGeneral(tab);
 	soundIO = new ArtsSoundIO(tab);
-	mixer = loadModule(tab, "kmixcfg");
+	mixer = KCModuleLoader::loadModule("kmixcfg", tab);
 	midi = new KMidConfig(tab, "kmidconfig");
 
 	general->layout()->setMargin( KDialog::marginHint() );
