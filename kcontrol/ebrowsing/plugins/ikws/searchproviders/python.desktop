@@ -62,9 +62,10 @@ Name[zh_TW]=Python 參考手冊
 Name[zu]=Incwadi yokuqondiwe ye-Python
 Query=http://www.google.com/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[en_GB]=http://www.google.co.uk/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
-Query[et]=http://www.google.com/search?hl=et&sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
+Query[es]=http://www.google.es/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[fr]=http://www.google.fr/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[fy]=http://www.google.nl/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
+Query[nb]=http://www.google.no/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[nl]=http://www.google.nl/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[pt]=http://www.google.pt/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[xx]=xxhttp://www.google.com/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.orgxx

@@ -18,5 +18,7 @@ Name[xx]=xxAltaVistaxx
 ServiceTypes=SearchProvider
 Keys=av,altavista
 Query=http://www.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}
+Query[es]=http://es.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}
+Query[nb]=http://no.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}
 Query[nn]=http://no.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}
 Query[xx]=xxhttp://www.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}xx

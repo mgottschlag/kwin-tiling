@@ -41,6 +41,7 @@ Name[pt]=Wikipedia - A Enciclopédia Livre
 Name[pt_BR]=Wikipedia - A Enciclopédia Livre
 Name[ro]=Wikipedia - Enciclopedia gratuită
 Name[ru]=Wikipedia - свободная энциклопедия
+Name[se]=Wikipedia – fridja leksikona
 Name[sk]=Wikipedia - voľne dostupná encyklopédia
 Name[sl]=Wikipedia - Prosta enciklopedija
 Name[sr]=Wikipedia - Слободна енциклопедија
@@ -59,4 +60,5 @@ Name[zh_TW]=Wikipedia - 免費的 Encyclopedia
 ServiceTypes=SearchProvider
 Keys=wp
 Query=http://en.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go 
+Query[es]=http://es.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go 
 Charset=utf8

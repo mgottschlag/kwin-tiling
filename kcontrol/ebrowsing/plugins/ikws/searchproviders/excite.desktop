@@ -19,4 +19,5 @@ ServiceTypes=SearchProvider
 Keys=ex,excite
 Query=http://search.excite.com/search.gw?search=\\{@}
 Query[en_GB]=http://www.excite.co.uk/search/web/results?q=\\{@}&c=web
+Query[es]=http://www.excite.es/search/web/results?q=\\{@}
 Query[xx]=xxhttp://search.excite.com/search.gw?search=\\{@}xx

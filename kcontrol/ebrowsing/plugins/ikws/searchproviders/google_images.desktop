@@ -72,6 +72,7 @@ ServiceTypes=SearchProvider
 Keys=ggi,images
 Query=http://images.google.com/images?q=\\{@}
 Query[en_GB]=http://images.google.co.uk/images?q=\\{@}
+Query[es]=http://images.google.es/images?q=\\{@}
 Query[fr]=http://images.google.fr/images?q=\\{@}
 Query[fy]=http://images.google.nl/images?q=\\{@}
 Query[he]=http://images.google.co.il/images?q=\\{@}
