@@ -81,7 +81,7 @@ public:
            KColorSchemeEntry *i2 = (KColorSchemeEntry*)item2;
            if (i1->local != i2->local)
               return i1->local ? -1 : 1;
-           return i1->name.compare(i2->name);
+           return i1->name.localeAwareCompare(i2->name);
         }
 };
 
