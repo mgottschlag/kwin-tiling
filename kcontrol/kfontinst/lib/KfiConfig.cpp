@@ -210,6 +210,16 @@ static const QString constGhostscriptDirs[]=
     QString::null
 };
 
+static QString kdeHome()
+{
+    QString kHome(getenv("KDEHOME"));
+
+    if(kHome.isEmpty())
+        kHome=QDir::homeDirPath()+"/.kde/";
+
+    return kHome;
+}
+
 CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
           : KConfig("kfontinstrc")
 {
@@ -243,11 +253,12 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
     
     if(!root)
     {
-        char * kdeHome=getenv("KDEHOME");
-        itsUserFontsDirs.append(QFile::encodeName(CMisc::dirSyntax(QDir::homeDirPath()+"/.fonts/")));
+        itsUserFontsDirs.append(CMisc::dirSyntax(QDir::homeDirPath()+"/.fonts/"));
 
-        if(kdeHome)
-            itsUserFontsDirs.append(QFile::encodeName(CMisc::dirSyntax(QString(kdeHome)+"/share/fonts/")));
+        QString kdeFontsDir(CMisc::dirSyntax(kdeHome()+"/share/fonts/"));
+
+        if(CMisc::dExists(kdeFontsDir))
+            itsUserFontsDirs.append(kdeFontsDir);
     }
 
     if(all)
