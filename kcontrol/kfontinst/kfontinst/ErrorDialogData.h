@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'ErrorDialog.ui'
 **
-** Created: Wed May 2 14:15:59 2001
+** Created: Wed Sep 26 18:43:55 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -30,6 +30,7 @@ public:
     QPushButton* buttonOk;
     QGroupBox* itsGroupBox;
     QListView* itsListView;
+
 
 protected:
     QGridLayout* ErrorDialogLayout;

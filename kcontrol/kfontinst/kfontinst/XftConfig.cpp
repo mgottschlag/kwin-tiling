@@ -648,7 +648,11 @@ void CXftConfig::setUseSubPixelHinting(bool use)
     itsMadeChanges=true;
 }
 
+#if QT_VERSION >= 300
+void CXftConfig::setEntries(QPtrList<TEntry> &list)
+#else
 void CXftConfig::setEntries(QList<TEntry> &list)
+#endif
 {
     //
     // The entries in 'list' may be duplicates of ones in itsList, or ones created by the editor...

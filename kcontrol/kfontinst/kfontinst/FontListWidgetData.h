@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'FontListWidget.ui'
 **
-** Created: Mon Sep 10 00:09:00 2001
+** Created: Wed Sep 26 18:47:05 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -31,6 +31,7 @@ public:
     QListView* itsList;
     QPushButton* itsButton2;
     QPushButton* itsButton1;
+
 
 public slots:
     virtual void selectionChanged();

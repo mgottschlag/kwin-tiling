@@ -178,7 +178,11 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName, const QString &en
     if(!CMisc::fExists(afmName) || encoding!=getEncoding(afmName))
     {
         CEncodings::T8Bit *enc=NULL; // CKfiGlobal::enc().get8Bit(CKfiGlobal::cfg().getAfmEncoding());
+#if QT_VERSION >= 300
+        QPtrList<TKerning> kerning;
+#else
         QList<TKerning>   kerning;
+#endif
         QStringList       composite,
                           chars;
         QValueList<int>   usedGlyphs;
@@ -349,7 +353,11 @@ static bool encContainsGlyph(CEncodings::T8Bit &enc, unsigned int glyph)
     return false;
 }
 
+#if QT_VERSION >= 300
+void CAfmCreator::readKerningAndComposite(const QString &font, QPtrList<TKerning> &kern, QStringList &comp, CEncodings::T8Bit *enc)
+#else
 void CAfmCreator::readKerningAndComposite(const QString &font, QList<TKerning> &kern, QStringList &comp, CEncodings::T8Bit *enc)
+#endif
 {
     if(CFontEngine::isAType1(font))
     {
@@ -387,7 +395,11 @@ void CAfmCreator::readKerningAndComposite(const QString &font, QList<TKerning> &
     else
         if(NULL!=enc && CFontEngine::isATtf(font))
         {
+#if QT_VERSION >= 300
+            QPtrList<CTtf::TKerning> *ttfList=CTtf::getKerningData(font);
+#else
             QList<CTtf::TKerning> *ttfList=CTtf::getKerningData(font);
+#endif
             CTtf::TKerning        *kd;
 
             if(ttfList)

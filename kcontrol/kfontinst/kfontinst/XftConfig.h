@@ -37,7 +37,12 @@
 
 #include <qstring.h>
 #include <qcstring.h>
+#include <qglobal.h>
+#if QT_VERSION >= 300
+#include <qptrlist.h>
+#else
 #include <qlist.h>
+#endif
 #include <qstringlist.h>
 #include <fstream>
 #include "xftint.h"
@@ -82,7 +87,11 @@ class CXftConfig
 
     bool madeChanges()                                     { return itsMadeChanges; }
 
+#if QT_VERSION >= 300
+    QPtrList<TEntry> & getEntries()                        { return itsList; }
+#else
     QList<TEntry> & getEntries()                           { return itsList; }
+#endif
     QStringList &   getIncludes()                          { return itsIncludes; }
     QStringList &   getIncludeIfs()                        { return itsIncludeIfs; }
     void            setIncludes(const QStringList &list)   { itsIncludes=list; itsMadeChanges=true; }
@@ -102,7 +111,11 @@ class CXftConfig
 
     private:
 
+#if QT_VERSION >= 300
+    QPtrList<TEntry> itsList;
+#else
     QList<TEntry> itsList;
+#endif
     QStringList   itsIncludes,
                   itsIncludeIfs;
     bool          itsMadeChanges;

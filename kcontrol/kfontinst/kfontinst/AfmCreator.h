@@ -31,7 +31,12 @@
 
 #include <qobject.h>
 #include <qstring.h>
+#include <qglobal.h>
+#if QT_VERSION >= 300
+#include <qptrlist.h>
+#else
 #include <qlist.h>
+#endif
 #include <qstringlist.h>
 #include "Encodings.h"
  
@@ -75,7 +80,11 @@ class CAfmCreator : public QObject
     static EStatus create(const QString &fName); 
     static EStatus create(const QString &fname, const QString &encoding, bool symEnc);
     static QString getEncoding(const QString &afm);
+#if QT_VERSION >= 300
+    static void    readKerningAndComposite(const QString &afm, QPtrList<TKerning> &kern, QStringList &comp, CEncodings::T8Bit *enc);
+#else
     static void    readKerningAndComposite(const QString &afm, QList<TKerning> &kern, QStringList &comp, CEncodings::T8Bit *enc);
+#endif
 };
 
 #endif

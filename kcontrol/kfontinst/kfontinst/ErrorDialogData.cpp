@@ -2,25 +2,25 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'ErrorDialog.ui'
 **
-** Created: Wed May 16 00:16:25 2001
+** Created: Wed Sep 26 18:43:56 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 #include "ErrorDialogData.h"
 
+#include <qvariant.h>   // first for gcc 2.7.2
 #include <qgroupbox.h>
 #include <qheader.h>
 #include <qlistview.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
-#include <qvariant.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 
 /* 
  *  Constructs a CErrorDialogData which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
+ *  name 'name' and widget flags set to 'f'.
  *
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  TRUE to construct a modal dialog.
@@ -31,7 +31,7 @@ CErrorDialogData::CErrorDialogData( QWidget* parent,  const char* name, bool mod
     if ( !name )
 	setName( "ErrorDialog" );
     resize( 297, 235 ); 
-    setCaption( i18n( "Errors" ) );
+    setCaption( QT_KDE_I18N( "Errors", "" ) );
     setSizeGripEnabled( FALSE );
     ErrorDialogLayout = new QGridLayout( this ); 
     ErrorDialogLayout->setSpacing( 6 );
@@ -44,7 +44,7 @@ CErrorDialogData::CErrorDialogData( QWidget* parent,  const char* name, bool mod
     Layout1->addItem( spacer );
 
     buttonOk = new QPushButton( this, "buttonOk" );
-    buttonOk->setText( i18n( "&OK" ) );
+    buttonOk->setText( QT_KDE_I18N( "&OK", "" ) );
     buttonOk->setAutoDefault( TRUE );
     buttonOk->setDefault( TRUE );
     Layout1->addWidget( buttonOk );
@@ -52,8 +52,8 @@ CErrorDialogData::CErrorDialogData( QWidget* parent,  const char* name, bool mod
     ErrorDialogLayout->addLayout( Layout1, 1, 0 );
 
     itsGroupBox = new QGroupBox( this, "itsGroupBox" );
-    itsGroupBox->setTitle( i18n( "12345678901234567890123456789012345678901234567890" ) );
-    itsGroupBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, itsGroupBox->sizePolicy().hasHeightForWidth() ) );
+    itsGroupBox->setTitle( QT_KDE_I18N( "12345678901234567890123456789012345678901234567890", "" ) );
+    itsGroupBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, 0, 0, itsGroupBox->sizePolicy().hasHeightForWidth() ) );
     itsGroupBox->setColumnLayout(0, Qt::Vertical );
     itsGroupBox->layout()->setSpacing( 0 );
     itsGroupBox->layout()->setMargin( 0 );
@@ -63,12 +63,12 @@ CErrorDialogData::CErrorDialogData( QWidget* parent,  const char* name, bool mod
     itsGroupBoxLayout->setMargin( 11 );
 
     itsListView = new QListView( itsGroupBox, "itsListView" );
-    itsListView->addColumn( i18n( "Item" ) );
+    itsListView->addColumn( QT_KDE_I18N( "Item", "" ) );
     itsListView->header()->setClickEnabled( FALSE, itsListView->header()->count() - 1 );
-    itsListView->addColumn( i18n( "Reason" ) );
+    itsListView->addColumn( QT_KDE_I18N( "Reason", "" ) );
     itsListView->header()->setClickEnabled( FALSE, itsListView->header()->count() - 1 );
     itsListView->setSelectionMode( QListView::NoSelection );
-    QWhatsThis::add(  itsListView, i18n( "Lists any errors associated with a font file." ) );
+    QWhatsThis::add( itsListView, QT_KDE_I18N( "Lists any errors associated with a font file.", "" ) );
 
     itsGroupBoxLayout->addWidget( itsListView, 0, 0 );
 

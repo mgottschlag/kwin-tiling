@@ -29,14 +29,20 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "XftConfigRulesData.h"
-#include <qpushbutton.h>
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
 #ifdef HAVE_XFT
+
+#include <qglobal.h>
+#if QT_VERSION >= 300
+#include <qptrlist.h>
+#else
+#include <qlist.h>
+#endif
+#include <qpushbutton.h>
+#include "XftConfigRulesData.h"
 #include "XftConfigIncludesWidget.h"
 #include "XftConfig.h"
 
@@ -57,8 +63,11 @@ class CXftConfigRules : public CXftConfigRulesData
     void editButtonPressed();
     void removeButtonPressed();
     void display(CXftConfig::TEntry *rule);
-
+#if QT_VERSION >= 300
+    QPtrList<CXftConfig::TEntry> & getList()    { return itsRulesList; }
+#else
     QList<CXftConfig::TEntry> & getList()       { return itsRulesList; }
+#endif
     QStringList                 getIncludes()   { return itsIncludes->getList(); }
     QStringList                 getIncludeIfs() { return itsIncludeIfs->getList(); }
 
@@ -68,7 +77,11 @@ class CXftConfigRules : public CXftConfigRulesData
 
     private:
 
+#if QT_VERSION >= 300
+    QPtrList<CXftConfig::TEntry> itsRulesList;
+#else
     QList<CXftConfig::TEntry> itsRulesList;
+#endif
     CXftConfigEditor          *itsEditor;
 };
 

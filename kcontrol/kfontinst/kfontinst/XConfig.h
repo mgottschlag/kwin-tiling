@@ -30,7 +30,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <qobject.h>
+#include <qglobal.h>
+#if QT_VERSION >= 300
+#include <qptrlist.h>
+#else
 #include <qlist.h>
+#endif
 #include <qstring.h>
 #include <qstringlist.h>
 
@@ -98,7 +103,11 @@ class CXConfig : public QObject
 
     private:
 
+#if QT_VERSION >= 300
+    QPtrList<TPath> itsPaths;
+#else
     QList<TPath> itsPaths;
+#endif
     EType        itsType;
     QString      itsInsertPos;
     bool         itsWritable;
