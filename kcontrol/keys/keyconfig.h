@@ -46,7 +46,7 @@ public slots:
 
 protected:
 	QListBox *sList;
-	QStrList *sFileList;
+	QStringList *sFileList;
 	QDict<int> *globalDict;
 	QPushButton *saveBt;
 	QPushButton *addBt;

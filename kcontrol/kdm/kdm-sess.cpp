@@ -204,13 +204,13 @@ void KDMSessionsWidget::moveSession(int d)
   int id = sessionslb->currentItem();
   QString str = sessionslb->text(id);
   sessionslb->removeItem(id);
-  sessionslb->insertItem(str.data(), id+d);
+  sessionslb->insertItem(str, id+d);
   sessionslb->setCurrentItem(id+d);
 }
 
 void KDMSessionsWidget::slotAddSessionType()
 {
-  if(strlen(session_lined->text()) > 0)
+  if(!session_lined->text().isEmpty())
   {
     sessionslb->insertItem(session_lined->text());
     session_lined->setText("");
@@ -236,11 +236,11 @@ void KDMSessionsWidget::applySettings()
 
   c->setGroup("KDM");
 
-  if(strlen(shutdown_lined->text()) > 0)
+  if(!shutdown_lined->text().isEmpty())
     c->writeEntry("ShutDown", shutdown_lined->text(), true);
-  if(strlen(restart_lined->text()) > 0)
+  if(!restart_lined->text().isEmpty())
     c->writeEntry("Restart", restart_lined->text(), true);
-  if(strlen(console_lined->text()) > 0)
+  if(!console_lined->text().isEmpty())
     c->writeEntry("ConsoleMode", console_lined->text(), true);
 
   // write shutdown auth
@@ -270,7 +270,7 @@ void KDMSessionsWidget::applySettings()
       sesstr.append(sessionslb->text(i));
       sesstr.append(";");
     }
-    c->writeEntry( "SessionTypes", sesstr.data() );
+    c->writeEntry( "SessionTypes", sesstr );
   }
 
   delete c;

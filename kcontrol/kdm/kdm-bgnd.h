@@ -69,7 +69,7 @@ protected slots:
 protected:
         void setMonitor();
         void showSettings();
-        int  loadWallpaper( const char *name, bool useContext = true);
+        int  loadWallpaper( const QString& name, bool useContext = true);
 
         KIconLoader *iconloader;
 	KBGMonitor  *monitor;
@@ -86,5 +86,3 @@ protected:
 
 
 #endif
-
-

@@ -90,7 +90,7 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 		return;
 
 	
-	setName( i18n("Energy") );
+	setName( i18n("Energy").ascii() );
 	
 	QBoxLayout *topLayout = new QVBoxLayout( this, 10 );
 	QBoxLayout *h1Layout= new QHBoxLayout();
@@ -277,19 +277,14 @@ void KEnergy::readSettings( int )
 	str = config->readEntry( "displayEnergySaving", "off" );
 	enabled= (str == "on");
 
-	char def[100];
+	str = config->readEntry( "displayStandby", QString::number(DFLT_STANDBY));
+	standby = str.toInt();
 
-	sprintf(def, "%d", DFLT_STANDBY);
-	str = config->readEntry( "displayStandby", def);
-	standby = atoi( str );  
+	str = config->readEntry( "displaySuspend", QString::number(DFLT_SUSPEND));
+	suspend = str.toInt();
 
-	sprintf(def, "%d", DFLT_SUSPEND);
-	str = config->readEntry( "displaySuspend", def);
-	suspend = atoi( str );  
-
-	sprintf(def, "%d", DFLT_OFF);
-	str = config->readEntry( "displayPowerOff", def);
-	off = atoi( str );  
+	str = config->readEntry( "displayPowerOff", QString::number(DFLT_OFF));
+	off = str.toInt();
 }
 
 

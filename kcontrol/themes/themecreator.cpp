@@ -64,11 +64,11 @@ bool ThemeCreator::create(const QString aThemeName)
   clear();
   cleanupWorkDir();
 
-  setName(aThemeName);
+  setName(aThemeName.ascii());
   mThemePath = workDir() + aThemeName + '/';
-  if (mkdir(mThemePath, 0755))
+  if (mkdir(mThemePath.ascii(), 0755))
   {
-    warning(i18n("Failed to create directory %1: %2").arg(mThemePath).arg(strerror(errno)));
+    warning(i18n("Failed to create directory %1: %2").arg(mThemePath).arg(strerror(errno)).ascii());
     return false;
   }
 
@@ -129,7 +129,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
   while (!group.isEmpty())
   {
     mMappings->setGroup(group);
-    debug("Mappings group [%s]", (const char*)group);
+    debug("Mappings group [%s]", group.ascii());
 
     // Read config settings
     value = mMappings->readEntry("ConfigFile");
@@ -155,8 +155,8 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     value = mMappings->readEntry("ConfigEmpty");
     if (!value.isEmpty()) emptyValue = value.copy();
     value = mMappings->readEntry("ConfigActivateCmd");
-    if (!value.isEmpty() && mCmdList.find(value) < 0)
-      mCmdList.append(value);
+    if (!value.isEmpty() && mCmdList.find(value.ascii()) < 0)
+      mCmdList.append(value.ascii());
 
     instCmd = mMappings->readEntry("ConfigInstallCmd").stripWhiteSpace();
 
@@ -167,8 +167,8 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     {
       warning(i18n("Internal error in theme mappings\n"
 		   "(file theme.mappings) in group %s:\n\n"
-		   "Entry `%s' is missing or has no value."),
-	      (const char*)group, missing);
+		   "Entry `%s' is missing or has no value.").ascii(),
+	      group.ascii(), missing);
       break;
     }
 
@@ -181,21 +181,21 @@ int ThemeCreator::extractGroup(const char* aGroupName)
 	cfg->sync();
 	delete cfg;
       }
-      debug("opening config file %s", (const char*)cfgFile);
+      debug("opening config file %s", cfgFile.ascii());
       cfg = new KSimpleConfig(cfgFile);
       oldCfgFile = cfgFile;
     }
 
     // Set group in config file
     cfg->setGroup(cfgGroup);
-    debug("%s: [%s]", (const char*)cfgFile, (const char*)cfgGroup);
+    debug("%s: [%s]", cfgFile.ascii(), cfgGroup.ascii());
     // Process all mapping entries for the group
 
     QMap<QString, QString> aMap = mMappings->entryMap(group);
     QMap<QString, QString>::Iterator aIt(aMap.begin());
     for (; aIt != aMap.end(); ++aIt) {
       key = aIt.key();
-      if (stricmp(key.left(6),"Config")==0) continue;
+      if (stricmp(key.left(6).ascii(),"Config")==0) continue;
       mapValue = (*aIt).stripWhiteSpace();
       len = mapValue.length();
       if (len>0 && mapValue[len-1]=='!')
@@ -237,7 +237,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
 
       // Set config entry
       if (value == emptyValue) value = "";
-      debug("%s=%s", (const char*)key, (const char*)value);
+      debug("%s=%s", key.ascii(), value.ascii());
       if (value.isEmpty()) deleteEntry(key, false);
       else writeEntry(key, value);
     }
@@ -284,10 +284,10 @@ void ThemeCreator::extractCmd(KSimpleConfig* aCfg, const QString& aCmd,
   else if (cmd == "panelBack")
   {
     value = aCfg->readEntry("Position");
-    if (stricmp(value,"right")==0 || stricmp(value,"left")==0)
+    if (stricmp(value.ascii(),"right")==0 || stricmp(value.ascii(),"left")==0)
     {
       value = readEntry("background");
-      debug("rotating %s", (const char*)value);
+      debug("rotating %s", value.ascii());
       rotateImage(mThemePath + value, 90);
     }
   }
@@ -307,7 +307,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
 
   if (!finfo.exists() || !finfo.isFile())
   {
-    debug("File %s does not exist or is no file.", (const char*)aFileName);
+    debug("File %s does not exist or is no file.", aFileName.ascii());
     return 0;
   }
 
@@ -328,25 +328,25 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
     j++;
     num++;
     fname[j] = '\0';
-    str.sprintf("%s%d%s", (const char*)fname, num, (const char*)ext);
+    str.sprintf("%s%d%s", fname.ascii(), num, ext.ascii());
     fname = str;
   }
 
-  debug("Extracting %s to %s", (const char*)aFileName,
-	(const char*)(mThemePath + fname));
+  debug("Extracting %s to %s", aFileName.ascii(),
+	(mThemePath + fname).ascii());
 
   srcFile.setName(aFileName);
   if (!srcFile.open(IO_ReadOnly))
   {
-    warning(i18n("Cannot open file %s for reading"), (const char*)aFileName);
+    warning(i18n("Cannot open file %s for reading").ascii(), aFileName.ascii());
     return 0;
   }
 
   destFile.setName(mThemePath + fname);
   if (!destFile.open(IO_WriteOnly))
   {
-    warning(i18n("Cannot open file %s for writing"), 
-	    (const char*)(mThemePath + fname));
+    warning(i18n("Cannot open file %s for writing").ascii(), 
+	    (mThemePath + fname).ascii());
     return 0;
   }
 
@@ -356,8 +356,8 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
     if (len <= 0) break;
     if (destFile.writeBlock(buf, len) != len)
     {
-      warning(i18n("Write error to %s:\n%s"), 
-	      (const char*)(mThemePath + fname), strerror(errno));
+      warning(i18n("Write error to %s:\n%s").ascii(), 
+	      (mThemePath + fname).ascii(), strerror(errno));
       return 0;
     }
   }

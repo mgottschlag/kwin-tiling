@@ -248,7 +248,7 @@ void KDMUsersWidget::slotPixDropped(KDNDDropZone *zone)
       pixurl += url.filename();
       KIOJob *iojob = new KIOJob(); // will autodelete itself
       iojob->setGUImode( KIOJob::NONE );
-      iojob->copy(url.url().data(), pixurl.data());
+      iojob->copy(url.url(), pixurl.ascii());
       url = pixurl;
       istmp = true;
     }
@@ -272,14 +272,14 @@ void KDMUsersWidget::slotPixDropped(KDNDDropZone *zone)
         userbutton->adjustSize();
         userpixurl += user;
         userpixurl += filename.right( filename.length()-(last_dot_idx) );
-        //debug("destination: %s", userpixurl.data());
+        //debug("destination: %s", userpixurl.ascii());
         // Copy the file. NB: network transparent
         KIOJob *iojob = new KIOJob(); // will autodelete itself
         iojob->setGUImode( KIOJob::NONE );
         if(istmp)
-          iojob->move(url.url(), userpixurl.data());
+          iojob->move(url.url(), userpixurl.ascii());
         else
-          iojob->copy(url.url(), userpixurl.data());
+          iojob->copy(url.url(), userpixurl.ascii());
       }
       else
       {
@@ -371,7 +371,7 @@ void KDMUsersWidget::slotUserSelected(int)
     // Therefore I have to use currentItem instead of the index emitted.
     lb = (QListBox*)w;
     name = user_pix_dir + lb->text(lb->currentItem()) + ".xpm";
-    QPixmap p( name.data());
+    QPixmap p( name );
     if(p.isNull())
       p = default_pix;
     userbutton->setPixmap(p);
@@ -400,7 +400,7 @@ void KDMUsersWidget::applySettings()
       nousrstr.append(nouserlb->text(i));
       nousrstr.append(";");
     }
-    c->writeEntry( "NoUsers", nousrstr.data() );
+    c->writeEntry( "NoUsers", nousrstr );
   }
 
   if((userlb->count() > 0) && (!showallusers))
@@ -411,7 +411,7 @@ void KDMUsersWidget::applySettings()
       usrstr.append(userlb->text(i));
       usrstr.append(";");
     }
-    c->writeEntry( "Users", usrstr.data() );
+    c->writeEntry( "Users", usrstr );
   }
 
   delete c;

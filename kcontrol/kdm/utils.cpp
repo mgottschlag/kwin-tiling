@@ -25,11 +25,11 @@ void semsplit( const QString& str, QStrList& result)
 {
      int i1 = 0, i2 = 0;
      while( ( i2 = str.find( ';', i1)) != -1) {
-	  result.append( str.mid(i1,i2-i1));
+	  result.append( str.mid(i1,i2-i1).ascii() );
 	  i1 = i2 + 1;
      }
      if( i1 != (int)str.length()) {
-	  result.append(str.mid(i1,str.length()));
+	  result.append( str.mid(i1,str.length()).ascii() );
      }
 }     
 

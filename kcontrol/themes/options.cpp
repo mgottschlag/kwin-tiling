@@ -102,7 +102,7 @@ Options::~Options()
 
 
 //-----------------------------------------------------------------------------
-QCheckBox* Options::newLine(const char* aGroupName, const char* aText,
+QCheckBox* Options::newLine(const char* aGroupName, const QString& aText,
 			    QLabel** aStatusPtr) 
 {
   QCheckBox* cbx = new QCheckBox(aText, this);
@@ -192,10 +192,10 @@ void Options::slotClear()
 //-----------------------------------------------------------------------------
 void Options::slotDetails()
 {
-  QString groupName = sender()->name();
+  const char * groupName = sender()->name();
   GroupDetails dlg(groupName);
 
-  if (groupName.isEmpty())
+  if (!groupName || !groupName[0])
   {
     warning("Empty group name ?!");
     return;
@@ -231,7 +231,7 @@ void Options::slotThemeChanged()
 //-----------------------------------------------------------------------------
 void Options::updateStatus(const char* aGroupName, QLabel* aLblStatus)
 {
-  const char* statusStr;
+  QString statusStr;
 
   assert(aGroupName!=0);
   assert(aLblStatus!=NULL);

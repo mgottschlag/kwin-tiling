@@ -57,7 +57,7 @@ KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmlocale [-init | language]\n"));
+          fprintf(stderr, i18n("usage: kcmlocale [-init | language]\n").ascii());
 	  justInit = TRUE;
         }
     }

@@ -36,14 +36,14 @@ public:
   NewThemeDlg();
   virtual ~NewThemeDlg();
 
-  const char* fileName(void) const { return mEdtFilename->text(); }
-  const char* themeName(void) const { return mEdtName->text(); }
-  const char* author(void) const { return mEdtAuthor->text(); }
-  const char* email(void) const { return mEdtEmail->text(); }
-  const char* homepage(void) const { return mEdtHomepage->text(); }
+  QString fileName(void) const { return mEdtFilename->text(); }
+  QString themeName(void) const { return mEdtName->text(); }
+  QString author(void) const { return mEdtAuthor->text(); }
+  QString email(void) const { return mEdtEmail->text(); }
+  QString homepage(void) const { return mEdtHomepage->text(); }
 
 protected:
-  virtual QLineEdit* newLine(const char* lbl);
+  virtual QLineEdit* newLine(const QString& lbl);
   virtual void setValues(void);
 
 protected:

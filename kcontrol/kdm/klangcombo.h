@@ -38,23 +38,21 @@ public:
   KLanguageCombo(QWidget *parent=0, const char *name=0);
   ~KLanguageCombo();
 
-  void insertLanguage(const char *lang);  
+  void insertLanguage(const QString& lang);  
 
   QString getLanguage();   
-  void setLanguage(QString tag);
+  void setLanguage(const QString& tag);
   
   void loadLanguageList();
 
 private:
   
-  QString tag(const char *lang);   
-  QString language(const char *lang);
+  QString tag(const QString& lang);   
+  QString language(const QString& lang);
   
-  QStrList languages;
-  QStrList tags;
+  QStringList languages;
+  QStringList tags;
     
 };
 
-
 #endif
-

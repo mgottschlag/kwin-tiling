@@ -89,7 +89,7 @@ KfmApplication::KfmApplication(int &argc, char **argv, const char *name)
     }
     else
     {
-      fprintf(stderr, i18n("usage: %s [-init | {font,color,misc,proxy,http,useragent,cookies,icons}]\n"), argv[0]);
+      fprintf(stderr, i18n("usage: %s [-init | {font,color,misc,proxy,http,useragent,cookies,icons}]\n").ascii(), argv[0]);
       justInit = true;
     }  
   }
@@ -165,7 +165,7 @@ void KfmApplication::apply()
   if ( fork() == 0 )
   { 
       // execute 'kfmclient configure'
-      execl(locate("exe", "kfmclient"),"kfmclient","configure",0);
+      execl(locate("exe", "kfmclient").ascii(), "kfmclient", "configure", 0);
       warning("Error launching 'kfmclient configure' !");
       exit(1);
   }

@@ -37,7 +37,7 @@ protected slots:
 
 protected:
   /** Creates a new options line */
-  virtual QCheckBox* newLine(const char* groupName, const char* text,
+  virtual QCheckBox* newLine(const char* groupName, const QString& text,
 			     QLabel** statusPtr);
 
   virtual void readConfig();

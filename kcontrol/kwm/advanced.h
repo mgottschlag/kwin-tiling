@@ -79,7 +79,7 @@ class myListBrowser : public QWidget {
 
  public:
 
-  myListBrowser(const char *, QWidget *, const char *);
+  myListBrowser(const QString& title, QWidget *, const char * name);
   ~myListBrowser();
 
   void feedList(QStrList *);

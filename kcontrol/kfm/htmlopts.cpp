@@ -176,7 +176,7 @@ void KFontOptions::addFont( QStrList &list, const char *xfont )
             if ( it.current() == font )
                 return;
     
-        list.append( font );
+        list.append( font.ascii() );
     }
 }
 
@@ -244,14 +244,14 @@ void KFontOptions::updateGUI()
     int i;
     for ( i = 0; sit.current(); ++sit, i++ )
     {
-        if ( !strcmp( stdName, sit.current() ) )
+        if ( stdName == sit.current() )
             m_pStandard->setCurrentItem( i );
     }
 
     QStrListIterator fit( fixedFonts );
     for ( i = 0; fit.current(); ++fit, i++ )
     {
-        if ( !strcmp( fixedName, fit.current() ) )
+        if ( fixedName == fit.current() )
             m_pFixed->setCurrentItem( i );
     }
     
@@ -273,7 +273,7 @@ void KFontOptions::saveSettings()
     g_pConfig->writeEntry( "StandardFont", stdName );
     g_pConfig->writeEntry( "FixedFont", fixedName );
     // If the user chose "Use language charset", write an empty string
-    if (!strcmp(charsetName,i18n("Use language charset")))
+    if (charsetName == i18n("Use language charset"))
         charsetName = "";
     g_pConfig->writeEntry( "DefaultCharset", charsetName );
     g_pConfig->sync();

@@ -133,15 +133,15 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   pLay->addRowSpacing(0,10);
 
   placementCombo = new QComboBox(FALSE, plcBox);
-  placementCombo->insertItem(i18n(i18n("Smart")),
+  placementCombo->insertItem(i18n("Smart"),
 			     SMART_PLACEMENT);
-  placementCombo->insertItem(i18n(i18n("Cascade")),
+  placementCombo->insertItem(i18n("Cascade"),
 			     CASCADE_PLACEMENT);
-  placementCombo->insertItem(i18n(i18n("Interactive")),
+  placementCombo->insertItem(i18n("Interactive"),
 			     INTERACTIVE_PLACEMENT);
-  placementCombo->insertItem(i18n(i18n("Random")),
+  placementCombo->insertItem(i18n("Random"),
 			     RANDOM_PLACEMENT);
-  placementCombo->insertItem(i18n(i18n("Manual")),
+  placementCombo->insertItem(i18n("Manual"),
 			     MANUAL_PLACEMENT);
   placementCombo->setCurrentItem(SMART_PLACEMENT);
   placementCombo->adjustSize();
@@ -153,8 +153,8 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   connect(placementCombo, SIGNAL(activated(int)),this,
 	  SLOT(ifPlacementIsInteractive()) );
 
-  iTLabel = new QLabel(i18n(i18n("  Allowed overlap:\n"
-					       "(% of desktop space)")),
+  iTLabel = new QLabel(i18n("  Allowed overlap:\n"
+					       "(% of desktop space)"),
 		       plcBox);
   iTLabel->adjustSize();
   iTLabel->setMinimumSize(iTLabel->size());
@@ -273,8 +273,6 @@ void KWindowConfig::setPlacement(int plac)
   placementCombo->setCurrentItem(plac);
 }
 
-
-
 int KWindowConfig::getFocus()
 {
     return focusCombo->currentItem();
@@ -337,7 +335,6 @@ int KWindowConfig::getAutoRaiseInterval()
 {
     return s->intValue();
 }
-
 
 void KWindowConfig::setAutoRaise(bool on)
 {

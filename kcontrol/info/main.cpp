@@ -122,7 +122,7 @@ KInfoApplication::KInfoApplication(int &argc, char **argv, const char *name)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcminfo [-init | {memory,processor,interrupts,dma,ioports,pci,sound,devices,scsi,partitions,xserver}]\n"));
+          fprintf(stderr, i18n("usage: kcminfo [-init | {memory,processor,interrupts,dma,ioports,pci,sound,devices,scsi,partitions,xserver}]\n").ascii());
           justInit = TRUE;
         }
 

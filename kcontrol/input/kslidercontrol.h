@@ -58,10 +58,10 @@ public:
     * @param parent parent QWidget
     * @param name internal name for this widget
     */
-  KSliderControl(const char *label, 
+  KSliderControl(const QString& label, 
 	  const int lower, const int upper,
 	  const int step, const int value,
-	  const char *units, 
+	  const QString& units, 
 	  QWidget *parent=0, const char *name=0);
   ~KSliderControl();
 

@@ -156,20 +156,20 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo)
   tags.clear();
 
   config->setGroup("KCM Locale");
-  config->readListEntry("Languages", tags);
+  tags = config->readListEntry("Languages");
 
-  for (const char *lang = tags.first(); lang; lang = tags.next())
+  for ( QStringList::Iterator it = tags.begin(); it != tags.end(); ++it )
     {
-      config->setGroup(lang);
+      config->setGroup(*it);
       name = config->readEntry("Name");
       if (!name.isEmpty())
         languages.append(name);
       else
         languages.append(i18n("without name!"));
              
-     combo->insertLanguage(QString(lang)+";"+name);
+     combo->insertLanguage(*it+";"+name);
 
-     if (strcmp(lang,"C")==0)
+     if (*it == "C")
        combo->setCurrentItem(combo->count()-1);
     }
 }
@@ -199,15 +199,15 @@ void KLocaleConfig::loadSettings()
         break;
     i++;
     switch (i) {
-      case 1: pos = tags.find(lang); 
+      case 1: pos = tags.findIndex(lang); 
               if (pos >= 0)
                 combo1->setCurrentItem(pos);
               break;
-      case 2: pos = tags.find(lang); 
+      case 2: pos = tags.findIndex(lang); 
               if (pos >= 0)
                 combo2->setCurrentItem(pos);
               break;
-      case 3: pos = tags.find(lang); 
+      case 3: pos = tags.findIndex(lang); 
               if (pos >= 0)
                 combo3->setCurrentItem(pos);
               break;        
@@ -223,9 +223,10 @@ void KLocaleConfig::applySettings()
 
   QString value;
 
-  value.sprintf("%s:%s:%s", tags.at(combo1->currentItem()),
-                            tags.at(combo2->currentItem()),
-                            tags.at(combo3->currentItem()));
+  value = QString("%1:%2:%3")
+                            .arg(*tags.at(combo1->currentItem()))
+                            .arg(*tags.at(combo2->currentItem()))
+                            .arg(*tags.at(combo3->currentItem()));
 
   config->setGroup("Locale");
   config->writeEntry("Language", value);  
@@ -235,7 +236,8 @@ void KLocaleConfig::applySettings()
     QMessageBox::information(this,i18n("Applying language settings"),
 			     i18n("Changed language settings apply only to newly started "
 				  "applications.\nTo change the language of all "
-				  "programs, you will have to logout first."));
+				  "programs, you will have to logout first."),
+                             i18n("OK"));
 
   changedFlag = FALSE;
 }

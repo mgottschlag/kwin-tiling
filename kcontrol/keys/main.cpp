@@ -88,7 +88,7 @@ KKeyApplication::KKeyApplication(int &argc, char **argv, const char *name)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmkeys [-init | {standard,global}]\n"));
+          fprintf(stderr, i18n("usage: kcmkeys [-init | {standard,global}]\n").ascii());
           justInit = TRUE;
         }
 

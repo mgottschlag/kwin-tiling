@@ -68,7 +68,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 
       QString s = kapp->kde_datadir();
       s += "/kdmconfig/pics/monitor.xpm";
-      QPixmap p(s.data()); // = iconloader->loadIcon("monitor.xpm");
+      QPixmap p(s); // = iconloader->loadIcon("monitor.xpm");
 
       tGroup = new QGroupBox( i18n("Preview"), this );
 
@@ -135,7 +135,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 
       QStringList list = KGlobal::dirs()->findAllResources("wallpaper");
       if(!wallpaper.isEmpty())
-        list.append( wallpaper.data() );
+        list.append( wallpaper );
 
       wpCombo = new QComboBox( false, rGroup );
 
@@ -270,10 +270,10 @@ void KDMBackgroundWidget::slotQDrop( QDropEvent *e )
   {
     monitor->setAllowDrop(false);
     s = list.first(); // we only want the first
-    //debug("slotQDropEvent - %s", s.data());
-    s = QUrlDrag::uriToLocalFile(s.data()); // a hack. should be improved
+    //debug("slotQDropEvent - %s", s.ascii());
+    s = QUrlDrag::uriToLocalFile(s.ascii()); // a hack. should be improved
     if(!s.isEmpty())
-      loadWallpaper(s.data());
+      loadWallpaper(s);
   } 
 }
 
@@ -380,7 +380,7 @@ void KDMBackgroundWidget::slotColorMode( int m )
 // Note that centred pixmaps are placed on a full screen image of background
 // color1, so if you want to save memory use a small tiled pixmap.
 //
-int KDMBackgroundWidget::loadWallpaper( const char *name, bool useContext )
+int KDMBackgroundWidget::loadWallpaper( const QString& name, bool useContext )
 {
   static int context = 0;
   QString filename;
@@ -396,7 +396,7 @@ int KDMBackgroundWidget::loadWallpaper( const char *name, bool useContext )
 
   filename = locate("wallpaper", name);
 
-  if ( wpMode == NoPic || tmp.load( filename.data() ) == TRUE )
+  if ( wpMode == NoPic || tmp.load( filename ) == TRUE )
   {
     wallpaper = filename;
     int w = QApplication::desktop()->width();
@@ -473,7 +473,7 @@ int KDMBackgroundWidget::loadWallpaper( const char *name, bool useContext )
   }
   else
   {
-    debug("KDMBackgroundWidget::loadWallpaper(): failed loading %s", filename.data());
+    debug("KDMBackgroundWidget::loadWallpaper(): failed loading %s", filename.ascii());
     wallpaper = "";
   }
 
@@ -508,7 +508,7 @@ void KDMBackgroundWidget::showSettings()
 
   if ( wpMode == NoPic || !wallpaper.isEmpty() ) // && wpCombo->currentItem() == 0 )
   {
-    loadWallpaper(wallpaper.data());
+    loadWallpaper(wallpaper);
     wpCombo->insertItem( wallpaper );
     wpCombo->setCurrentItem( wpCombo->count()-1 );
   }
@@ -570,7 +570,7 @@ void KDMBackgroundWidget::applySettings()
 
   if(!wallpaper.isEmpty())
   {
-    QFileInfo fi(wallpaper.data());
+    QFileInfo fi(wallpaper);
     if(fi.exists())
       c->writeEntry( "BackGroundPicture", wallpaper );
     else

@@ -140,7 +140,7 @@ static void msgHandler(QtMsgType aType, const char* aMsg)
   switch (aType)
   {
   case QtDebugMsg:
-    kdebug(KDEBUG_INFO, 0, msg);
+    kdebug(KDEBUG_INFO, 0, msg.ascii());
     break;
 
   case QtWarningMsg:
@@ -154,11 +154,11 @@ static void msgHandler(QtMsgType aType, const char* aMsg)
       QMessageBox::warning(0, appName+" "+i18n("warning"), msg,
 			   i18n("&Ok"));
     }
-    else kdebug(KDEBUG_INFO, 0, msg);
+    else kdebug(KDEBUG_INFO, 0, msg.ascii());
     break;
 
   case QtFatalMsg:
-    fprintf(stderr, appName+" "+i18n("fatal error")+": %s\n", msg.data());
+    fprintf(stderr, (appName+" "+i18n("fatal error")+": %s\n").ascii(), msg.ascii());
     QMessageBox::critical(0, appName+" "+i18n("fatal error"),
 			  aMsg, i18n("&Ok"));
     abort();
@@ -172,7 +172,7 @@ void init(void)
     oldMsgHandler = qInstallMsgHandler(msgHandler);
 
     KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + kapp->name() + "/Themes/");
-    if (!(Theme::mkdirhier(Theme::workDir()))) exit(1);
+    if (!(Theme::mkdirhier(Theme::workDir().ascii()))) exit(1);
 }
 
 

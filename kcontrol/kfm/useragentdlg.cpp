@@ -148,9 +148,9 @@ void UserAgentOptions::loadSettings()
           key.sprintf( "Entry%d", i );
           QString entry = g_pConfig->readEntry( key, "" );
           if (entry.left( 12 ) == "*:Konqueror/") // update version number
-            settingsList.append( QString("*:"+DEFAULT_USERAGENT_STRING) );
+            settingsList.append( QString("*:"+DEFAULT_USERAGENT_STRING).ascii() );
           else
-            settingsList.append( entry );
+            settingsList.append( entry.ascii() );
         }
   if( entries == 0 )
     defaultSettings();
@@ -188,10 +188,7 @@ void UserAgentOptions::saveSettings()
 
 void UserAgentOptions::textChanged( const char* )
 {
-  const char *login = loginasED->text();
-  const char *server = onserverED->text();
-
-  if( login && login[0] && server && server[0] )
+  if( !loginasED->text().isEmpty() && !onserverED->text().isEmpty() )
 	addPB->setEnabled( true );
   else
 	addPB->setEnabled( false );
@@ -207,7 +204,7 @@ void UserAgentOptions::addClicked()
   QString text = onserverED->text();
   text += ':';
   text += loginasED->text();
-  bindingsLB->insertItem( new QListBoxText( text.data() ), 0);
+  bindingsLB->insertItem( new QListBoxText( text ), 0);
   onserverED->setText( "" );
   loginasED->setText( "" );
   onserverED->setFocus();

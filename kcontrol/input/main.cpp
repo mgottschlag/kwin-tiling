@@ -62,7 +62,7 @@ KInputApplication::KInputApplication(int &argc, char **argv, const char *name)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcminput [-init | {mouse,keyboard}]\n"));
+          fprintf(stderr, i18n("usage: kcminput [-init | {mouse,keyboard}]\n").ascii());
           justInit = TRUE;
         }
 

@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.16  1999/06/18 16:49:13  kulow
+    adoting to new KConfig API
+
     Revision 1.15  1999/06/15 10:07:48  kulow
     fixes for --enable-final (had to change some defines in konqy to avoid clashes with
     enums)
@@ -341,7 +344,7 @@ void KSoundWidget::readConfig(){
 
   hlp = config->readEntry("EnableSounds","No");
 
-  if (!stricmp(hlp,"Yes")) 
+  if (!stricmp(hlp.ascii(),"Yes")) 
     sounds_enabled->setChecked(True);
   else
     sounds_enabled->setChecked(False);
@@ -374,7 +377,7 @@ void KSoundWidget::eventSelected(int index){
     found = 0;
     while ( (!found) && (i < (int)listlen) ) {
       hlp = soundlist->text(i);
-      if (!strcmp(hlp, *sname)) 
+      if (hlp == *sname) 
 	found = 1;
       else
 	i++;
@@ -418,12 +421,12 @@ void KSoundWidget::saveConfiguration(){
   for( lf = 0; lf < EVENT_COUNT; lf++) {
     sname = soundnames.at(lf);
 
-    if (!strcmp("", *sname)) 
+    if (sname->isEmpty()) 
       config->writeEntry(eventNames[0][lf],"(none)");
     else {
       // keep configuration files language--independent
 
-      if (!strcmp(i18n("(none)"), *sname))
+      if (i18n("(none)") == *sname)
 	config->writeEntry(eventNames[0][lf], "(none)");
       else
 	config->writeEntry(eventNames[0][lf], *sname);
@@ -476,22 +479,20 @@ void KSoundWidget::soundDropped(KDNDDropZone *zone){
 
     QString url = list.at(i);
 
-    if (strcmp("file:", url.left(5))) {
+    if ( "file:" == url.left(5) ) {
 
       // CC: for now, only file URLs are supported
 
       QMessageBox::warning(this, i18n("Unsupported URL"),
-        i18n(
-                 "Sorry, this type of URL is currently unsupported"\
-		 "by the KDE System Sound Module"
-		           )
-			   );
+        i18n("Sorry, this type of URL is currently unsupported"\
+             "by the KDE System Sound Module"),
+        i18n("OK"));
 
     } else {
 
       // CC: Now check for the ending ".wav"
 
-      if (stricmp(".WAV",url.right(4))) {
+      if ( stricmp(".WAV",url.right(4).ascii()) ) {
         msg = i18n("Sorry, but \n%1\ndoes not seem "\
 			 "to be a WAV--file.").arg(url);
 

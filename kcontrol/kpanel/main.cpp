@@ -86,7 +86,7 @@ KKPanelApplication::KKPanelApplication(int &argc, char **argv,
                 dialog->show();
 	    }
 	    else {
-		fprintf(stderr, i18n("usage: kcmkpanel [-init | {panel,options,desktops,disknav,theme}]\n"));
+		fprintf(stderr, i18n("usage: kcmkpanel [-init | {panel,options,desktops,disknav,theme}]\n").ascii());
 		justInit = true;
 	    }
 	

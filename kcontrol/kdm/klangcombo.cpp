@@ -46,16 +46,16 @@ KLanguageCombo::KLanguageCombo (QWidget * parent, const char *name)
 }
 
 
-void KLanguageCombo::insertLanguage(const char *lang)
+void KLanguageCombo::insertLanguage(const QString& lang)
 {
   QPainter p;
 
-  QString output = i18n(language(lang)) + " ("+tag(lang)+")";
+  QString output = i18n(language(lang).ascii()) + " ("+tag(lang)+")";
 
   int w = fontMetrics().width(output) + 24;
   QPixmap pm(w, 16);
 
-  QPixmap flag(locate("locale", tag(lang) + QString("/flag.png")));
+  QPixmap flag(locate("locale", tag(lang) + "/flag.png"));
   pm.fill(colorGroup().background());
   p.begin(&pm);
 
@@ -70,13 +70,13 @@ void KLanguageCombo::insertLanguage(const char *lang)
 
 QString KLanguageCombo::getLanguage()
 {
-  return tags.at(currentItem());
+  return *tags.at(currentItem());
 }
 
 
-void KLanguageCombo::setLanguage(QString tag)
+void KLanguageCombo::setLanguage(const QString& tag)
 {
-  int index = tags.find(tag);
+  int index = tags.findIndex(tag);
 
   if (index<0)
     index=0;
@@ -84,7 +84,7 @@ void KLanguageCombo::setLanguage(QString tag)
 }
 
 
-QString KLanguageCombo::tag(const char *lang)
+QString KLanguageCombo::tag(const QString& lang)
 {
   QString tag(lang);
 
@@ -96,7 +96,7 @@ QString KLanguageCombo::tag(const char *lang)
 }
 
 
-QString KLanguageCombo::language(const char *lang)
+QString KLanguageCombo::language(const QString& lang)
 {
   QString name(lang);
 
@@ -119,20 +119,20 @@ void KLanguageCombo::loadLanguageList()
   tags.clear();
 
   config.setGroup("KCM Locale");
-  config.readListEntry("Languages", tags);
+  tags = config.readListEntry("Languages");
 
-  for (const char *lang = tags.first(); lang; lang = tags.next())
+  for ( QStringList::Iterator it = tags.begin(); it != tags.end(); ++it )
     {
-      config.setGroup(lang);
+      config.setGroup(*it);
       name = config.readEntry("Name");
       if (!name.isEmpty())
         languages.append(name);
       else
         languages.append(i18n("without name!"));
              
-     insertLanguage(QString(lang)+";"+name);
+     insertLanguage((*it+";"+name).ascii());
 
-     if (strcmp(lang,"C")==0)
+     if (*it == "C")
        setCurrentItem(count()-1);
     }
 }

@@ -204,7 +204,7 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 	QString s;
 
 	if (setfsent() != 1) /* Try to open fstab */ {
-		kdebug(KDEBUG_ERROR, 0, i18n("Ahh couldn't open fstab!"));
+		kdebug(KDEBUG_ERROR, 0, "Ahh couldn't open fstab!");
 		return false;
 	}
 

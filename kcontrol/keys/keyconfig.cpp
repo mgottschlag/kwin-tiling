@@ -99,7 +99,7 @@ KKeyConfig::KKeyConfig( QWidget *parent, const char *name )
 	
 	pushLayout->addLayout( stackLayout, 20 );
 	
-	sFileList = new QStrList(); 
+	sFileList = new QStringList(); 
 	sList = new QListBox( this );
 	
 	sList->clear();
@@ -208,7 +208,7 @@ void KKeyConfig::slotRemove()
 	
 	uint ind = sList->currentItem();
 	
-	if ( !d.remove( sFileList->at( ind ) ) ) {
+	if ( !d.remove( *sFileList->at( ind ) ) ) {
 		QMessageBox::critical( 0, i18n("Error removing scheme"),
 		      i18n("This key scheme could not be removed.\n"
 			   "Perhaps you do not have permission to alter the file\n"
@@ -217,7 +217,7 @@ void KKeyConfig::slotRemove()
 	}
 	
 	sList->removeItem( ind );
-	sFileList->remove( ind );
+	sFileList->remove( sFileList->at(ind) );
 }
 
 void KKeyConfig::slotChanged( )
@@ -231,7 +231,7 @@ void KKeyConfig::slotChanged( )
 void KKeyConfig::slotSave( )
 {
 	KSimpleConfig *config = 
-			new KSimpleConfig( sFileList->at( sList->currentItem() ) );
+			new KSimpleConfig( *sFileList->at( sList->currentItem() ) );
 				
 	config->setGroup( KeyScheme );
 	
@@ -259,7 +259,7 @@ void KKeyConfig::readScheme( int index )
 		config  = kapp->getConfig();
 	} else {
 		config = 
-			new KSimpleConfig( sFileList->at( index ), true );
+			new KSimpleConfig( *sFileList->at( index ), true );
 	}
 
 	QMap<QString, QString> tmpMap;
@@ -309,7 +309,7 @@ void KKeyConfig::slotAdd()
 			return;
 			
 		sName = sName.simplifyWhiteSpace();
-		sFile.sprintf(sName);
+		sFile = sName;
 		
 		int ind = 0;
 		while ( ind < (int) sFile.length() ) {
@@ -330,7 +330,7 @@ void KKeyConfig::slotAdd()
 			
 			QString s = sFile.mid( ind, 1 );
 			s = s.upper();
-			sFile.replace( ind, 1, s.data() );
+			sFile.replace( ind, 1, s );
 			
 		}
 		
@@ -350,7 +350,7 @@ void KKeyConfig::slotAdd()
 	disconnect( sList, SIGNAL( highlighted( int ) ), this,
 			SLOT( slotPreviewScheme( int ) ) );
 	
-	sList->insertItem( sName.data() );
+	sList->insertItem( sName );
 	sList->setFocus();
 	sList->setCurrentItem( sList->count()-1 );
 	
@@ -358,9 +358,9 @@ void KKeyConfig::slotAdd()
 	
 	kksPath += "/.kde/share/apps/kcmkeys/";
 	
-	QDir d( kksPath.data() );
+	QDir d( kksPath );
 	if ( !d.exists() )
-		if ( !d.mkdir( kksPath.data() ) ) {
+		if ( !d.mkdir( kksPath ) ) {
 			warning("KKeyConfig: Could not make directory to store user info.");
 			return;
 		}
@@ -368,19 +368,19 @@ void KKeyConfig::slotAdd()
 	kksPath +=  KeyType ;
         kksPath += "/";
 	
-	d.setPath( kksPath.data() );
+	d.setPath( kksPath );
 	if ( !d.exists() )
-		if ( !d.mkdir( kksPath.data() ) ) {
+		if ( !d.mkdir( kksPath ) ) {
 			warning("KKeyConfig: Could not make directory to store user info.");
 			return;
 		}
 	
 	sFile.prepend( kksPath );
 	sFile += ".kksrc";
-	sFileList->append( sFile.data() );
+	sFileList->append( sFile );
 	
 	KSimpleConfig *config = 
-			new KSimpleConfig( sFile.data() );
+			new KSimpleConfig( sFile );
 			
 	config->setGroup( KeyScheme );
 	config->writeEntry( "SchemeName", sName );
@@ -442,7 +442,7 @@ void KKeyConfig::readSchemeNames( )
 				config->setGroup( KeyScheme );
 				str = config->readEntry( "SchemeName" );
 
-				sList->insertItem( str.data() );
+				sList->insertItem( str );
 				sFileList->append( fi->filePath() );
 
 				++sysIt;
@@ -475,7 +475,7 @@ void KKeyConfig::readSchemeNames( )
 				config.setGroup( KeyScheme );
 				str = config.readEntry( "SchemeName" );
 
-				sList->insertItem( str.data() );
+				sList->insertItem( str );
 				sFileList->append( fi->filePath() );
 
 				++userIt;

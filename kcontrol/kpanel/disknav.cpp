@@ -368,7 +368,7 @@ void KDiskNavConfig::saveSettings() {
       config->writeEntry("ShowOptionEntry",
                          (show_option_entry->isChecked() ? "on" : "off"));
 
-    if (config->hasKey("Terminal") || strcmp(show_recent_section->text(), "konsole"))
+    if (config->hasKey("Terminal") || show_recent_section->text() == "konsole")
       config->writeEntry("Terminal", terminal->text());
 
     config->sync();

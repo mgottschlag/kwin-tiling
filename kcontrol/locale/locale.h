@@ -59,7 +59,7 @@ private:
   QLabel *timeSample;
   QLabel *dateSample;
 
-  QStrList tags, languages;
+  QStringList tags, languages;
   bool changedFlag;
 
 private slots:

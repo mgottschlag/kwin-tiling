@@ -206,7 +206,7 @@ static void splitDomainAdvice(const char *configStr,
     else
     {
         domain = tmp.left(splitIndex);
-        advice = strToAdvice( tmp.mid( splitIndex+1, tmp.length()));
+        advice = strToAdvice( tmp.mid( splitIndex+1, tmp.length()).ascii() );
     }
 }                            
 
@@ -230,13 +230,14 @@ void KCookiesOptions::removeDomain(const char *domain)
 
 void KCookiesOptions::changePressed()
 {
-    const char *domain = le_domain->text();
+    QString domain = le_domain->text();
     const char *advice;
 
-    if (strlen(domain) == 0)
+    if (domain.isEmpty())
     {
     	QMessageBox::warning( 0, i18n("Error"),
-                              i18n("You must enter a domain first !") );
+                              i18n("You must enter a domain first !"),
+                              i18n("OK") );
         return;
     }
 

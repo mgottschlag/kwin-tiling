@@ -24,11 +24,11 @@
 
 #include <qpainter.h>
 #include <qpixmap.h>
-#include <qbitmap.h>
 #include <kiconloader.h>
 #include <kapp.h>
 #include <klocale.h>
-
+#include <ksimpleconfig.h>
+#include <kstddirs.h>
 
 #include "klangcombo.h"
 #include "klangcombo.moc"
@@ -45,18 +45,16 @@ KLanguageCombo::KLanguageCombo (QWidget * parent, const char *name)
 }
 
 
-void KLanguageCombo::insertLanguage(const char *lang)
+void KLanguageCombo::insertLanguage(const QString& lang)
 {
   QPainter p;
 
-  QString output = i18n(language(lang)) + " ("+tag(lang)+")";
+  QString output = i18n(language(lang).ascii()) + " ("+tag(lang)+")";
 
   int w = fontMetrics().width(output) + 24;
   QPixmap pm(w, 16);
 
-  KIconLoader iconLoader;
-  QPixmap flag(iconLoader.loadIcon(QString("flag_")+tag(lang)+".png"));
-  
+  QPixmap flag(locate("locale", tag(lang) + "/flag.png"));
   pm.fill(colorGroup().background());
   p.begin(&pm);
 
@@ -64,12 +62,11 @@ void KLanguageCombo::insertLanguage(const char *lang)
   if (!flag.isNull())
     p.drawPixmap(1,1,flag);
   p.end();
-
   insertItem(pm);
 }
 
 
-QString KLanguageCombo::tag(const char *lang)
+QString KLanguageCombo::tag(const QString& lang)
 {
   QString tag(lang);
 
@@ -81,7 +78,7 @@ QString KLanguageCombo::tag(const char *lang)
 }
 
 
-QString KLanguageCombo::language(const char *lang)
+QString KLanguageCombo::language(const QString& lang)
 {
   QString name(lang);
 

@@ -275,7 +275,7 @@ void KAdvancedConfig::applySettings() {
 myListBrowser::~myListBrowser() {
 }
 
-myListBrowser::myListBrowser(const char *title, QWidget *parent, const char *name)
+myListBrowser::myListBrowser(const QString& title, QWidget *parent, const char *name)
  : QWidget(parent,name) {
 
   victimList = new QStrList; //CT this is the pointer to the edited list
@@ -365,7 +365,7 @@ void myListBrowser::feedList(QStrList *thisList) {
 
   victimList->clear();
   for(unsigned int i = 0; i < bList->count(); i++) 
-    victimList->insert(i, bList->text(i));
+    victimList->insert(i, bList->text(i).ascii());
     
   bList->clear();
 
@@ -375,7 +375,7 @@ void myListBrowser::feedList(QStrList *thisList) {
 }
 
 void myListBrowser::bEditChanged(const QString &a) {
-  bool not_empty = a.length() > 0;
+  bool not_empty = !a.isEmpty();
   bAdd->setEnabled(not_empty);
   bDel->setEnabled(not_empty);
 }
@@ -383,7 +383,7 @@ void myListBrowser::bEditChanged(const QString &a) {
 void myListBrowser::addIt() {
   bAdd->setEnabled(FALSE);
   bDel->setEnabled(FALSE);
-  bList->insertItem((const char *)(bEdit->text()));
+  bList->insertItem(bEdit->text());
   bEdit->setText("");
   bList->clearSelection();
 }
@@ -398,7 +398,7 @@ void myListBrowser::deleteIt() {
 void myListBrowser::itemSelected() {
   bAdd->setEnabled(TRUE);
   bDel->setEnabled(TRUE);
-  bEdit->setText((const char *)(bList->text(bList->currentItem())));
+  bEdit->setText(bList->text(bList->currentItem()));
 }
 
 void myListBrowser::itemHilited() {

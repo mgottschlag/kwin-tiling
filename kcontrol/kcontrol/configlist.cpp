@@ -321,8 +321,8 @@ void KModuleListEntry::insertInit(QStrList *list)
 {
   // insert init command
   if (!getInit().isEmpty())
-    if (!list->contains(getInit()))
-      list->append(getInit());
+    if (!list->contains(getInit().ascii()))
+      list->append(getInit().ascii());
 
   // process children
   if (children)

@@ -27,10 +27,10 @@
 
 #include "kslidercontrol.h"
 
-KSliderControl::KSliderControl(const char *label, 
+KSliderControl::KSliderControl(const QString& label, 
 		 const int lower, const int upper,
 		 const int step, const int value,
-		 const char *units,
+		 const QString& units,
 		 QWidget *parent, const char *name)
   : QWidget( parent, name )
 {

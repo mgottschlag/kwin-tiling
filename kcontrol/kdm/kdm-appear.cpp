@@ -80,14 +80,14 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
       label->move( 10, 20 );
 
       greetstr_lined = new KLineEdit(group);
-      greetstr_lined->setText(greetstr.data());
+      greetstr_lined->setText(greetstr);
       greetstr_lined->setGeometry(label->width()+10, 20,
                        pw->width()-(label->width()+50), label->height());
 
       label = new QLabel(i18n("KDM logo:"), group);
       label->move(10, greetstr_lined->height()+30);
       logo_lined = new KLineEdit( group);
-      logo_lined->setText(logopath.data());
+      logo_lined->setText(logopath);
       logo_lined->setGeometry(greetstr_lined->x(), greetstr_lined->height()+30,
                        greetstr_lined->width(), greetstr_lined->height());
       connect(logo_lined, SIGNAL(returnPressed()),
@@ -96,14 +96,14 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
       logobutton = new KIconLoaderButton(iconloader, group);
       logobutton->setMaximumSize(80, 80);
       QPixmap p;
-      if(!p.load(logopath.data()))
+      if(!p.load(logopath))
       {
         logobutton->setIcon("kdelogo.xpm");
-        //debug("Error loading %s", logopath.data());
+        //debug("Error loading %s", logopath.ascii());
       }
       else
       {
-        logo_lined->setText(logopath.data());
+        logo_lined->setText(logopath);
         logobutton->setPixmap(p);
       }
       logobutton->move(logo_lined->x(), logo_lined->y()+logo_lined->height()+10);
@@ -199,7 +199,7 @@ void KDMAppearanceWidget::slotLogoPixChanged(const QString &iconstr)
     QMessageBox::warning(this, i18n("KDM Setup - Error"), msg, i18n("&Ok"));
   }
   else
-    logo_lined->setText(pix.data());
+    logo_lined->setText(pix);
   logobutton->adjustSize();
 }
 
@@ -226,23 +226,24 @@ void KDMAppearanceWidget::slotPixDropped(KDNDDropZone *zone)
 
   if( !ext.contains(filename.right(filename.length()-last_dot_idx), false) )
   {
-    msg =  i18n("Sorry, but \n");
-    msg += filename;
-    msg += i18n("\ndoes not seem to be an image file");
-    msg += i18n("\nPlease use files with these extensions\n");
-    msg += ext;
+    msg =  i18n("Sorry, but %1\n"
+                "does not seem to be an image file\n"
+                "Please use files with these extensions:\n"
+                "%2")
+                .arg(filename)
+                .arg(ext);
     QMessageBox::warning( this, i18n("KDM Setup - Improper File Extension"), msg,
 			  i18n("&Ok"));
   }
   else
   {
     // we gotta check if it is a non-local file and make a tmp copy at the hd.
-    if(strcmp(url.protocol(), "file") != 0)
+    if(url.protocol() != "file")
     {
       pixurl += url.filename();
       KIOJob *iojob = new KIOJob(); // will autodelete itself
       iojob->setGUImode( KIOJob::NONE );
-      iojob->copy(url.url().data(), pixurl.data());
+      iojob->copy(url.url().ascii(), pixurl.ascii());
       url = pixurl;
       istmp = true;
     }
@@ -255,7 +256,7 @@ void KDMAppearanceWidget::slotPixDropped(KDNDDropZone *zone)
         logobutton->setPixmap(p);
         logobutton->adjustSize();
         logopath = url.path();
-        logo_lined->setText(logopath.data());
+        logo_lined->setText(logopath);
       }
       else
       {
@@ -288,9 +289,9 @@ void KDMAppearanceWidget::applySettings()
   c->writeEntry("GreetString", greetstr_lined->text(), true);
 
   // write logo path
-  if(strlen(logo_lined->text()) > 0)
+  if(!logo_lined->text().isEmpty())
     logopath = logo_lined->text();
-  QFileInfo fi(logopath.data());
+  QFileInfo fi(logopath);
   if(fi.exists())
     c->writeEntry("LogoPixmap", logopath, true);
   else
@@ -317,13 +318,13 @@ void KDMAppearanceWidget::loadSettings()
 
   // Read the greeting string
   greetstr = "KDE System at HOSTNAME";
-  greetstr = c->readEntry("GreetString", greetstr.data());
+  greetstr = c->readEntry("GreetString", greetstr);
 
   // See if we use alternate logo
   logopath = c->readEntry("LogoPixmap");
   if(!logopath.isEmpty())
   {
-    QFileInfo fi(logopath.data());
+    QFileInfo fi(logopath);
     if(fi.exists())
     {
       //logofile = fi.fileName();

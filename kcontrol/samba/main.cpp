@@ -56,7 +56,7 @@ KSambaApplication::KSambaApplication(int &argc, char **argv,
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmsamba [-init | status]\n"));
+          fprintf(stderr, i18n("usage: kcmsamba [-init | status]\n").ascii());
           justInit = TRUE;
         }
     }

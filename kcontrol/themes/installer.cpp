@@ -186,10 +186,10 @@ void Installer::slotRemove()
   themeFile = mThemesList->text(cur);
   cmd.sprintf("rm -rf \"%s\"", themeFile.ascii());
   finfo.setFile(themeFile);
-  rc = system(cmd);
+  rc = system(cmd.ascii());
   if (rc || finfo.exists())
   {
-    warning(i18n("Failed to remove theme %1").arg(themeFile));
+    warning(i18n("Failed to remove theme %1").arg(themeFile).ascii());
     return;
   }
   mThemesList->removeItem(cur);
@@ -252,10 +252,10 @@ void Installer::slotImport()
   QString dir = KGlobal::dirs()->getSaveLocation("themes");
   // Copy theme package into themes directory
   cmd.sprintf("cp %s %s", fpath.ascii(), dir.ascii());
-  rc = system(cmd);
+  rc = system(cmd.ascii());
   if (rc)
   {
-    warning(i18n("Failed to copy theme %1\ninto themes directory %2").arg(fpath).arg(dir));
+    warning(i18n("Failed to copy theme %1\ninto themes directory %2").arg(fpath).arg(dir).ascii());
     return;
   }
 

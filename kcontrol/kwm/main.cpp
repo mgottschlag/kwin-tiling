@@ -86,7 +86,7 @@ KKWMApplication::KKWMApplication(int &argc, char **argv, const char *name)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmkwm [-init | {options,buttons,titlebar,borders,mouse,advanced}]\n"));
+          fprintf(stderr, i18n("usage: kcmkwm [-init | {options,buttons,titlebar,borders,mouse,advanced}]\n").ascii());
           justInit = TRUE;
         }
 

@@ -35,7 +35,7 @@
 
 //-----------------------------------------------------------------------------
 NewThemeDlg::NewThemeDlg(): 
-  NewThemeDlgInherited(0, i18n("Create New Theme"), true)
+  NewThemeDlgInherited(0, i18n("Create New Theme").ascii(), true)
 {
   QPushButton* btn;
   QHBoxLayout* bbox = new QHBoxLayout;
@@ -94,7 +94,7 @@ void NewThemeDlg::setValues(void)
 
 
 //-----------------------------------------------------------------------------
-QLineEdit* NewThemeDlg::newLine(const char* aLabelText)
+QLineEdit* NewThemeDlg::newLine(const QString& aLabelText)
 {
   QLabel* lbl;
   QLineEdit* edt;

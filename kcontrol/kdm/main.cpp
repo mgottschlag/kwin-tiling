@@ -97,7 +97,7 @@ KDMConfigApplication::KDMConfigApplication(int &argc, char **argv,
         dialog->show();
       else
 	  {
-	      fprintf(stderr, i18n("usage: kdmconfig [-init | {appearance,font,background,sessions,users,lilo}]\n"));
+	      fprintf(stderr, i18n("usage: kdmconfig [-init | {appearance,font,background,sessions,users,lilo}]\n").ascii());
 	      justInit = TRUE;
 	  }
       

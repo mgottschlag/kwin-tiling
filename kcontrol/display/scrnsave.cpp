@@ -358,7 +358,7 @@ void KScreenSaver::readSettings( int )
 //Antonio - Added support to parse the old config file for KDE 1.0 users
 
         bool first_time = false;
-	KConfig *config = kapp->getConfig();
+	KConfig *config = KGlobal::config();
  
 	config->setGroup( "ScreenSaver" );
 	
@@ -456,7 +456,7 @@ void KScreenSaver::writeSettings()
 	if ( !changed )
 		return;
 
-	KConfig *config = kapp->getConfig();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "ScreenSaver" );
 
 	config->writeEntry( "UseSaver", bUseSaver );
@@ -494,7 +494,7 @@ void KScreenSaver::findSavers()
 
 void KScreenSaver::getSaverNames()
 {
-	KConfig *config = kapp->getConfig();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Saver Names" );
 
 	saverNames.clear();

@@ -70,10 +70,11 @@ About::About (QWidget * aParent, const char *aName, bool aInit)
   lbl->setMinimumSize(lbl->sizeHint());
   box->addWidget(lbl);
 
-  str.sprintf(i18n("Version %s\n\n"
-		   "Copyright (C) 1998 by\n%s\n\n"
-		   "Gnu Public License (GPL)"),
-	      KTHEME_VERSION, "Stefan Taferner <taferner@kde.org>");
+  str = i18n("Version %1\n\n"
+		   "Copyright (C) 1998 by\n%2\n\n"
+		   "Gnu Public License (GPL)")
+	      .arg(KTHEME_VERSION)
+	      .arg("Stefan Taferner <taferner@kde.org>");
   lbl = new QLabel(str, this);
   lbl->setMinimumSize(lbl->sizeHint());
   box->addWidget(lbl);
@@ -103,19 +104,19 @@ void About::slotThemeChanged()
     value = theme->name();
     if (value.isEmpty()) value = i18n("Unknown");
   }
-  str.sprintf(i18n("%s Theme"), (const char*)value);
+  str = i18n("%1 Theme").arg(value);
   lblTheme->setText(str);
 
   // Version
   value = theme->readEntry("Version");
   if (value.isEmpty()) str = "";
-  else str.sprintf(i18n("Version %s"), (const char*)value);
+  else str = i18n("Version %1").arg(value);
   lblVersion->setText(str);
 
   // Author and email address
   value = theme->readEntry("Author");
   if (value.isEmpty()) value = i18n("Unknown");
-  str.sprintf(i18n("by %s"), (const char*)value);
+  str = i18n("by %2").arg(value);
 
   value = theme->readEntry("Email");
   if (!value.isEmpty())
