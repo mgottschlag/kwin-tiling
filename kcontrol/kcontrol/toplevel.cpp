@@ -188,6 +188,8 @@ TopLevel::~TopLevel()
 
   config->sync();
 
+  delete _modules;
+
   // Not used anymore, free the pixmaps to the X server
   AboutWidget::freePixmaps();
 }
