@@ -3,6 +3,8 @@
     Copyright (C) 2000 Stefan Westerfeld
                        stefan@space.twc.de
 
+    $Id$
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -23,13 +25,14 @@
 
     */
 
-#include <iostream.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
 #include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+
+#include <iostream.h>
 
 #include <qfileinfo.h>
 #include <qstring.h>
