@@ -9,10 +9,10 @@
 #define __WIDGETCANVAS_H__
 
 #include <qpixmap.h>
-#include <qdrawutl.h>
+#include <qdrawutil.h>
 #include <qcolor.h>
 #include <qpainter.h>
-#include <qscrbar.h>
+#include <qscrollbar.h>
 
 #include <kapp.h>
 #include <klocale.h>

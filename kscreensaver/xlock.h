@@ -34,7 +34,7 @@
  *
  */
 
-#include <qapp.h> // hack for qt-1.2
+#include <qapplication.h> // hack for qt-1.2
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>

@@ -9,8 +9,8 @@
 #define __KFM_MISC_OPTIONS_H
 
 #include <qstrlist.h>
-#include <qchkbox.h>
-#include <qlined.h>
+#include <qcheckbox.h>
+#include <qlineedit.h>
 
 #include <kconfig.h>
 #include <kcontrol.h>

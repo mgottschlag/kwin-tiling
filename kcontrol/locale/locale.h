@@ -27,7 +27,7 @@
 
 
 #include <kcontrol.h>
-#include <qgrpbox.h>
+#include <qgroupbox.h>
 
 #include "klangcombo.h"
 

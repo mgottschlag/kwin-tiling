@@ -47,11 +47,11 @@ typedef unsigned int    UINT32;                 // 32 bit unsigned
 #include <qpixmap.h>
 #include <qimage.h>
 #include <qpainter.h>
-#include <qpushbt.h>
-#include <qlined.h>
-#include <qcombo.h>
+#include <qpushbutton.h>
+#include <qlineedit.h>
+#include <qcombobox.h>
 #include <qlayout.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include <kapp.h>
 #include <kconfig.h>
 

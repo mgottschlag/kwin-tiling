@@ -26,11 +26,11 @@
 
 #include <qbutton.h>
 #include <qlabel.h>
-#include <qbttngrp.h>
-#include <qcombo.h> 
-#include <qchkbox.h> 
-#include <qlcdnum.h> 
-#include <qlined.h> 
+#include <qbuttongroup.h>
+#include <qcombobox.h> 
+#include <qcheckbox.h> 
+#include <qlcdnumber.h> 
+#include <qlineedit.h> 
 #include <qvalidator.h> 
 
 #include <kcontrol.h>

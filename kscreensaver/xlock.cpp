@@ -3,7 +3,7 @@
 // kscreensave
 //
 
-#include <qapp.h>
+#include <qapplication.h>
 #include "xlock.h"
 
 

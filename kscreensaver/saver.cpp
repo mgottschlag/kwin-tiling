@@ -1,14 +1,14 @@
 #include <pwd.h>
 #include <unistd.h>
-#include <qapp.h>
+#include <qapplication.h>
 #include <X11/Xlib.h>
 #include <qbitmap.h>
 #include <main.h>  // ssApp
 #include <kapp.h>  // for kde_bindir()
 #include <kcharsets.h>
 #include <kprocess.h>
-#include <qpushbt.h>
-#include <qlined.h>
+#include <qpushbutton.h>
+#include <qlineedit.h>
 #include <qframe.h>
 #include <qkeycode.h>
 #include "config.h"

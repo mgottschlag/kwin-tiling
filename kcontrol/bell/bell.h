@@ -27,11 +27,11 @@
 
 #include <kapp.h>
 
-#include <qlcdnum.h> 
+#include <qlcdnumber.h> 
 #include <qlabel.h> 
-#include <qbttngrp.h>
-#include <qpushbt.h>
-#include <qradiobt.h> 
+#include <qbuttongroup.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h> 
 
 #include <kcontrol.h>
 #include "kslidercontrol.h"

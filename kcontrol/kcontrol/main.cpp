@@ -20,8 +20,8 @@
   */
 
 
-#include <qapp.h>
-#include <qpushbt.h>
+#include <qapplication.h>
+#include <qpushbutton.h>
 #include <qstring.h>
 #include <kmsgbox.h>
 

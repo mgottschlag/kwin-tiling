@@ -1,7 +1,7 @@
 #ifndef __KGROUPBOX__H__
 #define __KGROUPBOX__H__
 
-#include <qgrpbox.h>
+#include <qgroupbox.h>
 #include <qwidget.h>
 
 class KGroupBox : public QGroupBox {

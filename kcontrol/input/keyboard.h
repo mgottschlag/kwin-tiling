@@ -25,10 +25,10 @@
 #define __KKEYBOARDCONFIG_H__
 
 #include <qlabel.h>
-#include <qradiobt.h>
-#include <qbttngrp.h>
-#include <qpushbt.h>
-#include <qlcdnum.h>
+#include <qradiobutton.h>
+#include <qbuttongroup.h>
+#include <qpushbutton.h>
+#include <qlcdnumber.h>
 #include <kapp.h>
 #include <kslider.h>
 

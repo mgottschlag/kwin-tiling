@@ -22,22 +22,22 @@
 #include <stdlib.h>
 #include <qfont.h>
 #include <qlist.h>
-#include <qcombo.h>
+#include <qcombobox.h>
 #include <qlabel.h>
-#include <qlined.h>
-#include <qscrbar.h>
-#include <qmsgbox.h>
-#include <qchkbox.h>
-#include <qapp.h>
+#include <qlineedit.h>
+#include <qscrollbar.h>
+#include <qmessagebox.h>
+#include <qcheckbox.h>
+#include <qapplication.h>
 #include <qpixmap.h>
 #include <qpainter.h>
-#include <qdrawutl.h>
+#include <qdrawutil.h>
 #include <qcursor.h>
 #include <qkeycode.h>
 #include <qstrlist.h>
 #include <qlistbox.h>
 #include <qobjcoll.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 
 #include <kiconloader.h>
 #include <kstatusbar.h>
@@ -601,7 +601,7 @@ void MenuButton::dndMouseMoveEvent( QMouseEvent *e )
 	    delete global_drop_buffer;
 	  global_drop_buffer = new PMenuItem( *pmenu_item );
 
-	  QString data = "kmenuedit:copyEntry";
+	  QCString data = "kmenuedit:copyEntry";
 	  QPoint p = mapToGlobal( e->pos() );
 	  QPixmap pix = *(pixmap());
 	  int dx = - pix.width() / 2;
@@ -724,7 +724,7 @@ void MenuButton::paint( QPainter *painter )
     {
       qDrawArrow( painter, RightArrow, style(), submenu_open,
 		  width() - 10,  height()/2-4,
-		  8, 8, g );
+		  8, 8, g , true);
     }
 }
 

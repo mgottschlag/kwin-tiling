@@ -25,6 +25,7 @@
  
 
 #include "kfdialog.h"
+#include <qapplication.h>
 #include <X11/Xlib.h>
 
 int

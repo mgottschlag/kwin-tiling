@@ -13,14 +13,14 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <qgrpbox.h>
-#include <qbttngrp.h>
+#include <qgroupbox.h>
+#include <qbuttongroup.h>
 #include <qlabel.h>
 #include <qpixmap.h>
-#include <qpushbt.h>
-#include <qfiledlg.h>
-#include <qradiobt.h>
-#include <qchkbox.h>
+#include <qpushbutton.h>
+#include <qfiledialog.h>
+#include <qradiobutton.h>
+#include <qcheckbox.h>
 #include <qslider.h>
 #include <qlayout.h>
 #include <kapp.h>
@@ -467,7 +467,7 @@ void KScreenSaver::writeSettings()
 	config->writeEntry( "Lock", lock ? "yes" : "no" );
 	config->writeEntry( "allowRoot", allowRoot );
 
-	str.detach();
+	
 	str.setNum( priority );
 	config->writeEntry( "Priority", str );
 
@@ -619,7 +619,7 @@ void KScreenSaver::slotScreenSaver( int indx )
 {
 	if ( indx == 0 )
 	{
-		saverFile.detach();
+		
 		saverFile.sprintf( i18n("No screensaver") );
 		setupBt->setEnabled( FALSE );
 		testBt->setEnabled( FALSE );

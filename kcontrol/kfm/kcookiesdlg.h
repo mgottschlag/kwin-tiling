@@ -7,13 +7,13 @@
 #define __KCOOKIESDLG_H
 
 #include <qdialog.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlined.h>
-#include <qpushbt.h>
-#include <qchkbox.h>
-#include <qbttngrp.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
+#include <qbuttongroup.h>
 
 #include <kkeydialog.h> // for ksplitlist
 #include <kcontrol.h>

@@ -16,15 +16,15 @@
 #endif
 
 #include <qimage.h>
-#include <qgrpbox.h>
+#include <qgroupbox.h>
 #include <qlabel.h>
 #include <qpixmap.h>
-#include <qfiledlg.h>
-#include <qradiobt.h>
-#include <qchkbox.h>
+#include <qfiledialog.h>
+#include <qradiobutton.h>
+#include <qcheckbox.h>
 #include <qpainter.h>
 #include <qlayout.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 
 #include <kapp.h>
 #include <kwm.h>
@@ -237,7 +237,7 @@ void KKeyConfig::slotSave( )
 	kc->aIt->toFirst();
 	while ( kc->aIt->current() ) {
 		config->writeEntry( kc->aIt->currentKey(), 
-			keyToString( kc->aIt->current()->aConfigKeyCode ) );
+			QString(keyToString( kc->aIt->current()->aConfigKeyCode )) );
 		++ ( *kc->aIt );
 	}
 	
@@ -286,7 +286,7 @@ void KKeyConfig::readScheme( int index )
 	  if ( globalDict->find( kc->aIt->currentKey() ) ) {
 	    kc->aIt->current()->aConfigKeyCode = *globalDict->find( kc->aIt->currentKey() );
 	    kc->aIt->current()->aCurrentKeyCode = kc->aIt->current()->aConfigKeyCode;
-	    //debug("Change: %s", kc->aIt->currentKey() );
+	    // debug("Change: %s", kc->aIt->currentKey().ascii() );
 	  }
 	  ++ ( *kc->aIt );
 	}

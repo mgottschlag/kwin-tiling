@@ -2,8 +2,8 @@
 #define SAVESCM_H
 
 #include <qdialog.h>
-#include <qlined.h>
-#include <qpushbt.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
 
 class SaveScm : public QDialog {
 	Q_OBJECT

@@ -11,10 +11,10 @@
 #include <stdlib.h>
 #include <qcolor.h>
 #include <qlabel.h>
-#include <qpushbt.h>
-#include <qscrbar.h>
+#include <qpushbutton.h>
+#include <qscrollbar.h>
 #include <kapp.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include <time.h>
 
 #include "kcolordlg.h"
@@ -309,7 +309,7 @@ void kLinesSetup::slotOkPressed(){
 	sspeed.setNum( speed );
 	config->writeEntry( "Speed", sspeed );
 
-        QString colName0(10), colName1(10), colName2(10);
+        QString colName0, colName1, colName2;
         colName0.sprintf("#%02x%02x%02x", colstart.red(),
 		         colstart.green(), colstart.blue() );
         config->writeEntry( "StartColor", colName0 );

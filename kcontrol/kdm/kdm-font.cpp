@@ -127,7 +127,7 @@ void KDMFontWidget::slotGetFont()
 {
   QApplication::setOverrideCursor( waitCursor );
 
-  KFontDialog *fontdlg = new KFontDialog(0L, 0L, TRUE, 0L);
+  KFontDialog *fontdlg = new KFontDialog(0, QString::null, TRUE, 0L);
   QApplication::restoreOverrideCursor( );
   fontdlg->getFont(tmpfont);
   switch (fontcombo->currentItem())

@@ -22,7 +22,7 @@
 
 #include <qdir.h>
 #include <qimage.h>
-#include <qfileinf.h>
+#include <qfileinfo.h>
 #include <kcolorbtn.h>
 #include <kfm.h>
 #include <kurl.h>

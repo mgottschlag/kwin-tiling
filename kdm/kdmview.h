@@ -31,7 +31,7 @@
 # include "kdm-config.h"
 
 #include <qlist.h>
-#include <qtablevw.h>
+#include <qtableview.h>
 #include <qpainter.h>
 #include <qpixmap.h>
 
@@ -62,7 +62,7 @@ class KVItemList : public QList<KDMViewItem>
 {
 public:
     ~KVItemList();
-    int compareItems( GCI i1, GCI i2);
+    int compareItems( Item i1, Item i2);
 };
 
 class KDMView : public QTableView {

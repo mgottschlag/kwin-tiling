@@ -23,7 +23,7 @@
 #ifndef _TOPLEVEL_H_
 #define _TOPLEVEL_H_
 
-#include <qapp.h>
+#include <qapplication.h>
 #include <qmenubar.h>
 #include <kapp.h>
 #include <ktopwidget.h>

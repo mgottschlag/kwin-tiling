@@ -21,11 +21,11 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <qscrbar.h>
-#include <qpushbt.h>
+#include <qscrollbar.h>
+#include <qpushbutton.h>
 #include <qframe.h>
 #include <qkeycode.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include <qdir.h>
 #include <qstrlist.h>
 

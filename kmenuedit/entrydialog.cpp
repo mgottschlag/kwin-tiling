@@ -19,11 +19,11 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <qcombo.h>
-#include <qchkbox.h>
+#include <qcombobox.h>
+#include <qcheckbox.h>
 #include <qframe.h>
-#include <qlined.h>
-#include <qpushbt.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
 #include <qlabel.h>
 #include <qpixmap.h>
 #include <qlistbox.h>

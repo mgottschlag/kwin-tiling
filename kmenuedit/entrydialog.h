@@ -25,7 +25,7 @@
 #define entrydialog_included
 
 #include <qdialog.h>
-#include <qlined.h>
+#include <qlineedit.h>
 
 #include <ktabctl.h>
 

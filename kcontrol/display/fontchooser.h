@@ -22,13 +22,13 @@
 #define __FONTCHOOSER_H__
 
 #include <qwidget.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qlistbox.h>
-#include <qlined.h>
+#include <qlineedit.h>
 #include <qlabel.h>
 #include <qtimer.h>
 #include <qpainter.h>
-#include <qchkbox.h>
+#include <qcheckbox.h>
 #include <kspinbox.h>
 #include <kcontrol.h>
 #include <X11/X.h>

@@ -5,8 +5,8 @@
 #include <qwidget.h>
 #include <qframe.h>
 #include <qlabel.h>
-#include <qtabdlg.h>
-#include <qpushbt.h>
+#include <qtabdialog.h>
+#include <qpushbutton.h>
 #include <qtimer.h>
 
 

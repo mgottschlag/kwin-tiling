@@ -4,8 +4,8 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlined.h>
-#include <qchkbox.h>
+#include <qlineedit.h>
+#include <qcheckbox.h>
  
 #include <kcontrol.h>
  

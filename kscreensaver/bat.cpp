@@ -417,10 +417,10 @@ XEraseImage(Display * display, Window win, GC gc, int x, int y, int xlast, int y
 
 // --------------------------------------------------------------------
 
-#include <qpushbt.h>
-#include <qchkbox.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
 #include <qcolor.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "kslider.h"

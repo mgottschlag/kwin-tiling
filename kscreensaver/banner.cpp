@@ -9,11 +9,11 @@
 #include <stdlib.h>
 #include <qcolor.h>
 #include <qlabel.h>
-#include <qscrbar.h>
-#include <qcombo.h>
-#include <qchkbox.h>
-#include <qgrpbox.h>
-#include <qmsgbox.h>
+#include <qscrollbar.h>
+#include <qcombobox.h>
+#include <qcheckbox.h>
+#include <qgroupbox.h>
+#include <qmessagebox.h>
 #include <kapp.h>
 
 #include <kgroupbox.h>
@@ -339,7 +339,7 @@ void KBannerSetup::slotOkPressed()
 	fsize.setNum( fontSize );
 	config->writeEntry( "FontSize", fsize );
 
-	QString colName(10);
+	QString colName;
 	colName.sprintf( "#%02x%02x%02x", fontColor.red(), fontColor.green(),
 		fontColor.blue() );
 	config->writeEntry( "FontColor", colName );

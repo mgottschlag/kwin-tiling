@@ -22,9 +22,9 @@
 #include <qmenubar.h>
 #include <qaccel.h>
 #include <qpainter.h>
-#include <qdrawutl.h>
-#include <qscrbar.h>				// qDrawArrow
-#include <qapp.h>
+#include <qdrawutil.h>
+#include <qscrollbar.h>				// qDrawArrow
+#include <qapplication.h>
 
 #include "cpopmenu.h"
 

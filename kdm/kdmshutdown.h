@@ -40,10 +40,10 @@ typedef unsigned int    UINT32;                 // 32 bit unsigned
 #include <stdlib.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qbttngrp.h>
-#include <qradiobt.h>
-#include <qpushbt.h>
-#include <qlined.h>
+#include <qbuttongroup.h>
+#include <qradiobutton.h>
+#include <qpushbutton.h>
+#include <qlineedit.h>
 #include "kfdialog.h"
 
 class KDMShutdown : public FDialog {

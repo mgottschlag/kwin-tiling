@@ -23,9 +23,9 @@
 #ifndef CONFMENU_H
 #define CONFMENU_H
 
-#include <qpopmenu.h>
+#include <qpopupmenu.h>
 #include <qlist.h>
-#include <qbttngrp.h>
+#include <qbuttongroup.h>
 #include <qframe.h>
 
 #include <drag.h>

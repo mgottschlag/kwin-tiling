@@ -14,8 +14,8 @@
 #define IconPathDialogData_included
 
 #include <qdialog.h>
-#include <qlined.h>
-#include <qpushbt.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
 
 class IconPathDialogData : public QDialog
 {

@@ -26,11 +26,11 @@
 #define __MOUSECONFIG_H__
 
 #include <qdialog.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qlabel.h>
-#include <qlcdnum.h>
-#include <qradiobt.h>
-#include <qbttngrp.h>
+#include <qlcdnumber.h>
+#include <qradiobutton.h>
+#include <qbuttongroup.h>
 
 #include <kapp.h>
 #include <kslider.h>

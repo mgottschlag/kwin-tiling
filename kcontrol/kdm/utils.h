@@ -31,11 +31,11 @@
 #include <qdir.h>
 
 #include <qstring.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qtooltip.h>
-#include <qfileinf.h>
+#include <qfileinfo.h>
 #include <qlabel.h>
-#include <qgrpbox.h>
+#include <qgroupbox.h>
 #include <qlayout.h>
 
 #include <kapp.h>

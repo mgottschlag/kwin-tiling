@@ -23,7 +23,7 @@
 #ifndef CPOPMENU_H
 #define CPOPMENU_H
 
-#include <qpopmenu.h>
+#include <qpopupmenu.h>
 
 class CPopupMenu: public QPopupMenu
 {

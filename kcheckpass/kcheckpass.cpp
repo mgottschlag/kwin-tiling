@@ -55,9 +55,8 @@
 
 #ifndef __FreeBSD__
 #include <malloc.h>
-#else
-#include <stdlib.h>
 #endif
+#include <stdlib.h>
 
 #include <errno.h>
 #include <time.h>

@@ -56,7 +56,7 @@ in this Software without prior written authorization from the X Consortium.
 // /stefh
 // Qt includes:
 #define QT_CLEAN_NAMESPACE
-#include    <qapp.h>
+#include    <qapplication.h>
 
 
 #include    <X11/Intrinsic.h>
@@ -1125,10 +1125,10 @@ CvtStringToARRAY8 ( XrmValuePtr args, Cardinal *num_args,
 // KDE GUI:
 #include "kfdialog.h"
 #include "kdmview.h"
-#include <qsocknot.h>
+#include <qsocketnotifier.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qtimer.h>
 
 static void 

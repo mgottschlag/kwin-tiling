@@ -26,7 +26,7 @@
 #define __KLANGCOMBO_H__
 
 
-#include <qcombo.h>
+#include <qcombobox.h>
 
 
 class KLanguageCombo : public QComboBox

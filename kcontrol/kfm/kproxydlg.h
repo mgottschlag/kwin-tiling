@@ -11,12 +11,12 @@
 #define __KPROXYDLG_H
 
 #include <qdialog.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlined.h>
-#include <qpushbt.h>
-#include <qchkbox.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
 
 #include <kcontrol.h>
 

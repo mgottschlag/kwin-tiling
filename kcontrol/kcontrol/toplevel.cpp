@@ -22,7 +22,7 @@
 
 #include <unistd.h>
 #include <qpixmap.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <kiconloader.h>
 #include <kmsgbox.h>
 #include "toplevel.moc"

@@ -21,11 +21,11 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <qdstream.h>
-#include <qtstream.h>
+#include <qdatastream.h>
+#include <qtextstream.h>
 #include <qpainter.h>
 #include <qpixmap.h>
-#include <qapp.h>
+#include <qapplication.h>
 #include <qfont.h>
 #include <qdir.h>
 #include <qpixmap.h>

@@ -24,9 +24,9 @@
 #include <qstring.h>
 #include <qimage.h>
 #include <qlistbox.h>
-#include <qbttngrp.h>
-#include <qradiobt.h>
-#include <qchkbox.h>
+#include <qbuttongroup.h>
+#include <qradiobutton.h>
+#include <qcheckbox.h>
 
 #include <kfm.h>
 #include <drag.h>

@@ -31,7 +31,7 @@
 #include <kmsgbox.h>
 #include <kiconloader.h>
 #include <kapp.h>
-#include <qfileinf.h>
+#include <qfileinfo.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

@@ -324,7 +324,7 @@ KDMShutdown::bye_bye()
 
 #ifdef TEST_KDM_SHUTDOWN
 
-#include <qapp.h>
+#include <qapplication.h>
 
 int main(int argc, char **argv)
 {

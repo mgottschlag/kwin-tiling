@@ -71,10 +71,10 @@ extern "C" {
 
 // Qt includes:
 
-#include <qpushbt.h>
-#include <qchkbox.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
 #include <qcolor.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include <qcombobox.h>
 
 #include "kslider.h"

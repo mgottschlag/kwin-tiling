@@ -10,13 +10,13 @@
 #ifndef __HTML_OPTIONS_H__
 #define __HTML_OPTIONS_H__
 
-#include <qtabdlg.h>
-#include <qcombo.h>
+#include <qtabdialog.h>
+#include <qcombobox.h>
 #include <qstrlist.h>
-#include <qchkbox.h>
+#include <qcheckbox.h>
 #include <kconfig.h>
 #include <kcolorbtn.h>
-#include <qradiobt.h>
+#include <qradiobutton.h>
 #include <kcharsets.h>
 
 #include <kcontrol.h>

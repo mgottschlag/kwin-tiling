@@ -9,14 +9,14 @@
 // End of the KControl port, added 'kfmclient configure' call.
 // (c) David Faure 1998
 
-#include <qbttngrp.h>
-#include <qchkbox.h>
+#include <qbuttongroup.h>
+#include <qcheckbox.h>
 #include <qcolor.h>
-#include <qcombo.h>
+#include <qcombobox.h>
 #include <qlabel.h>
 #include <qlayout.h>//CT - 12Nov1998
-#include <qpushbt.h>
-#include <qradiobt.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
 #include <kapp.h>
 #include <kconfig.h>
 #include <X11/Xlib.h>

@@ -372,28 +372,28 @@ QString KResourceMan::writeEntry( const QString& rKey, const QFont& rFont )
 		default:
 			aValue += "*-*";
 			break;
-		case QFont::Latin2:
+		case QFont::ISO_8859_2:
 			aValue += "iso8859-2";
 			break;
-		case QFont::Latin3:
+		case QFont::ISO_8859_3:
 			aValue += "iso8859-3";
 			break;
-		case QFont::Latin4:
+		case QFont::ISO_8859_4:
 			aValue += "iso8859-4";
 			break;
-		case QFont::Latin5:
+		case QFont::ISO_8859_5:
 			aValue += "iso8859-5";
 			break;
-		case QFont::Latin6:
+		case QFont::ISO_8859_6:
 			aValue += "iso8859-6";
 			break;
-		case QFont::Latin7:
+		case QFont::ISO_8859_7:
 			aValue += "iso8859-7";
 			break;
-		case QFont::Latin8:
+		case QFont::ISO_8859_8:
 			aValue += "iso8859-8";
 			break;
-		case QFont::Latin9:
+		case QFont::ISO_8859_9:
 			aValue += "iso8859-9";
 			break;
 	}

@@ -14,9 +14,9 @@
 #include <qlabel.h>
 #include <qframe.h>
 #include <qpainter.h>
-#include <qgrpbox.h>
-#include <qchkbox.h>
-#include <qpushbt.h>
+#include <qgroupbox.h>
+#include <qcheckbox.h>
+#include <qpushbutton.h>
 #include <qcombobox.h>
 #include <qlineedit.h>
 #include <qlistbox.h>

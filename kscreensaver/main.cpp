@@ -18,13 +18,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <kprocess.h>
-#include <qapp.h>
+#include <qapplication.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <qkeycode.h>
 #include <qdialog.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qbitmap.h>
 
 #include "xautolock.h"
@@ -63,6 +63,10 @@ void usage( char *name );
 
 ssApp *globalKapp;
 
+static int keypress_workaround = KeyPress;
+
+#undef KeyPress
+
 //----------------------------------------------------------------------------
 
 ssApp::ssApp( int &argc, char **argv ) : KApplication( argc, argv )
@@ -78,7 +82,7 @@ bool ssApp::x11EventFilter( XEvent *event )
 {
 	if ( passDlg )	// pass key presses to password dialog
 	{
-		if ( event->type == KeyPress )
+		if ( event->type == keypress_workaround )
 		{
 			XKeyEvent *xke = (XKeyEvent *) event;
 
@@ -105,7 +109,7 @@ bool ssApp::x11EventFilter( XEvent *event )
 
 			if ( buffer[0] != '\0' || key != 0 )
 			{
-			    QKeyEvent qke( Event_KeyPress, key, buffer[0], 0 );
+			    QKeyEvent qke( QEvent::KeyPress, key, buffer[0], 0 );
 			    passDlg->keyPressed( &qke );
 			}
 			return TRUE;
@@ -115,7 +119,7 @@ bool ssApp::x11EventFilter( XEvent *event )
 
 	if ( mode == MODE_INSTALL || mode == MODE_TEST )
 	{
-		if ( (event->type == KeyPress
+		if ( (event->type == keypress_workaround
 			|| event->type == ButtonPress
 			|| event->type == MotionNotify ) && !passDlg )
 		{
@@ -191,7 +195,7 @@ QWidget *createSaverWindow()
 	QWidget *w;
 
 	// WStyle_Customize sets override_redirect
-	w = new QWidget( NULL, "", WStyle_Customize );
+	w = new QWidget( NULL, "", Qt::WStyle_Customize );
 
 	/* set NoBackground so that the saver can capture the current
 	 * screen state if neccessary

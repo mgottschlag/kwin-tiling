@@ -30,12 +30,12 @@
 #include <qbutton.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qbttngrp.h>
-#include <qradiobt.h>
-#include <qcombo.h> 
-#include <qchkbox.h> 
+#include <qbuttongroup.h>
+#include <qradiobutton.h>
+#include <qcombobox.h> 
+#include <qcheckbox.h> 
 #include <kslider.h>
-#include <qlined.h>
+#include <qlineedit.h>
 
 class QButtonGroup;
 

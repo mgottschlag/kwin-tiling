@@ -16,12 +16,12 @@
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qlabel.h>
-#include <qpushbt.h>
-#include <qmsgbox.h> 
+#include <qpushbutton.h>
+#include <qmessagebox.h> 
 #include <qlistbox.h>
-#include <qchkbox.h>
-#include <qbttngrp.h>
-#include <qradiobt.h>
+#include <qcheckbox.h>
+#include <qbuttongroup.h>
+#include <qradiobutton.h>
 
 #include <qlayout.h>
 #include <kbuttonbox.h>
@@ -140,7 +140,7 @@ KPrepareDlg::KPrepareDlg( QWidget *parent ) : QWidget( parent )
 	QFont font( "helvetica", 18 );
 	KApplication::getKApplication()->getCharsets()->setQFont(font);
 
-	label = new QLabel( 0, frame );
+	label = new QLabel( QString(), frame );
 	label->setAlignment( AlignCenter );
 	label->setFont( font );
 	label->show();
@@ -1300,9 +1300,7 @@ void KScienceSetup::slotAbout()
 {
 	QString about;
 
-	about.sprintf( "%s 0.26.5\n\n%s Rene Beutler (1998)\nrbeutler@g26.ethz.ch",
-	               i18n( "Science Version"),
-	               i18n( "written by" ) );
+	about = i18n("Science Version 0.26.5\n\nwritten by Rene Beutler (1998)\nrbeutler@g26.ethz.ch");
 	QMessageBox::message( i18n("About Science"), 
 	                      (const char *) about,
 	                      i18n("OK") );

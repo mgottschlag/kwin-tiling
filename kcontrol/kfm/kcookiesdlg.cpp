@@ -4,8 +4,8 @@
 // This dialog box created by David Faure <faure@kde.org>
 
 #include <qlayout.h> //CT
-#include <qradiobt.h>
-#include <qmsgbox.h>
+#include <qradiobutton.h>
+#include <qmessagebox.h>
 
 #include <klocale.h>
 #include <kapp.h>

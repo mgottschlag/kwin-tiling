@@ -9,12 +9,12 @@
 #define __KEYCONFIG_H__
 
 #include <qwidget.h>
-#include <qpushbt.h>
-#include <qcombo.h>
+#include <qpushbutton.h>
+#include <qcombobox.h>
 #include <qlistbox.h>
-#include <qradiobt.h>
-#include <qlined.h>
-#include <qbttngrp.h>
+#include <qradiobutton.h>
+#include <qlineedit.h>
+#include <qbuttongroup.h>
 #include <kcontrol.h>
 
 #include "savescm.h"

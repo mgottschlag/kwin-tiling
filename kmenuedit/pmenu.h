@@ -26,7 +26,7 @@
 
 #include <qpixmap.h>
 #include <qlist.h>
-#include <qfileinf.h>
+#include <qfileinfo.h>
 
 #include <kapp.h>
 #include "cpopmenu.h"
@@ -44,8 +44,10 @@ class PMenuItem : public QObject
   friend PMenu;
 public:
   PMenuItem();
-  PMenuItem( EntryType e, QString t=0, QString c=0, QString n=0, PMenu *menu=0,
-	      QObject *receiver=0, char *member=0, CPopupMenu *cm=0, bool ro = FALSE );
+  PMenuItem( EntryType e, QString t=QString::null, QString c=QString::null,
+	     QString n=QString::null, PMenu *menu=0,
+	     QObject *receiver=0, char *member=0, 
+	     CPopupMenu *cm=0, bool ro = FALSE );
   PMenuItem( PMenuItem &item );
   ~PMenuItem ();
 

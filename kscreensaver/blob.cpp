@@ -19,10 +19,10 @@
 #include <stdlib.h>
 #include <qcolor.h>
 #include <qlabel.h>
-#include <qpushbt.h>
-#include <qscrbar.h>
-#include <qmsgbox.h>
-#include <qlined.h>
+#include <qpushbutton.h>
+#include <qscrollbar.h>
+#include <qmessagebox.h>
+#include <qlineedit.h>
 #include <qlistbox.h>
 #include <kapp.h>
 #include <time.h>

@@ -12,18 +12,18 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include <qgrpbox.h>
-#include <qbttngrp.h>
+#include <qgroupbox.h>
+#include <qbuttongroup.h>
 #include <qlabel.h>
 #include <qpixmap.h>
-#include <qpushbt.h>
-#include <qfiledlg.h>
+#include <qpushbutton.h>
+#include <qfiledialog.h>
 #include <qslider.h>
-#include <qradiobt.h>
-#include <qmsgbox.h>
-#include <qdrawutl.h>
-#include <qchkbox.h>
-#include <qcombo.h>
+#include <qradiobutton.h>
+#include <qmessagebox.h>
+#include <qdrawutil.h>
+#include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qlayout.h>
 #include <qcursor.h>
 #include <qbitmap.h>

@@ -22,14 +22,14 @@
 #ifndef __KKWMMOUSECONFIG_H__
 #define __KKWMMOUSECONFIG_H__
 
-#include <qlcdnum.h> 
+#include <qlcdnumber.h> 
 #include <qlabel.h>
 #include <qdialog.h>
-#include <qmsgbox.h>
-#include <qchkbox.h> 
-#include <qbttngrp.h>
-#include <qpushbt.h>
-#include <qcombo.h>
+#include <qmessagebox.h>
+#include <qcheckbox.h> 
+#include <qbuttongroup.h>
+#include <qpushbutton.h>
+#include <qcombobox.h>
 #include <kslider.h>
 
 #include <kcontrol.h>

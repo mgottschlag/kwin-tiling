@@ -58,7 +58,7 @@ KDiskNavConfig::KDiskNavConfig( QWidget *parent, const char* name )
     inLay->addColSpacing(4,20);
     //CT
 
-    edit_entries = new QLabel();
+    edit_entries = new QLabel(0);
     edit_entries->setText(i18n("Edit entries: (drag a folder and create a link)"));
 
     edit_personal = new QPushButton(i18n("Edit &Personal..."), hist_group);

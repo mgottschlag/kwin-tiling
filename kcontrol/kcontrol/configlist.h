@@ -27,7 +27,7 @@
 #include <qobject.h>
 #include <qpixmap.h>
 #include <qstring.h>
-#include <qtabdlg.h>
+#include <qtabdialog.h>
 #include <ktreelist.h>
 #include <qlist.h>
 #include <kprocess.h>

@@ -37,7 +37,7 @@
 #endif
 
 #include <qbitmap.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include <kstring.h>
 
 #include <X11/Xlib.h>
@@ -566,7 +566,7 @@ KGreeter::restrict_time()
      if (!pwd->pw_uid) return false;
 
      if(!auth_timeok(lc, time(NULL))) {
-         QMessageBox::critical(NULL, NULL,
+         QMessageBox::critical(this, QString::null,
 			       i18n("Logins not available right now."),
 			       i18n("&OK"));
          return true;
@@ -608,7 +608,7 @@ KGreeter::restrict_nologin()
      char *file;
      /* Note that <file> will be "" if there is no nologin capability */
      if ((file = login_getcapstr(lc, "nologin", "", NULL)) == NULL) {
-       QMessageBox::critical(NULL, NULL, i18n("login_getcapstr() failed."),
+       QMessageBox::critical(this, QString::null, i18n("login_getcapstr() failed."),
 	 i18n("&OK"));
        return true;
      }
@@ -635,7 +635,7 @@ KGreeter::restrict_nologin()
        while ( !t.eof() )
          s += t.readLine() + "\n";  
        f.close();
-       QMessageBox::critical(NULL, NULL, s, i18n("&OK"));
+       QMessageBox::critical(this, QString::null, s, i18n("&OK"));
 
        return true;
      }
@@ -661,7 +661,7 @@ KGreeter::restrict_expired(){
 #endif
      if (pwd->pw_expire)
 	  if (pwd->pw_expire <= time(NULL)) {
-	       QMessageBox::critical(NULL, NULL,
+	       QMessageBox::critical(this, QString::null,
 				     i18n("Sorry -- your account has expired."), 
 				     i18n("&OK"));
 	       return true;
@@ -669,7 +669,7 @@ KGreeter::restrict_expired(){
 	       QString str;
 	       ksprintf(&str, i18n("Warning: your account expires on %s"), 
 			   ctime(&pwd->pw_expire));  // use locales
-	       QMessageBox::critical(NULL, NULL,
+	       QMessageBox::critical(this, QString::null,
 				     str,
 				     i18n("&OK"));
 	  }
@@ -688,7 +688,7 @@ KGreeter::restrict_expired(){
      
      if (swd->sp_expire != -1)
 	 if (expiresec <= time(NULL)) {
-	     QMessageBox::critical(NULL, NULL,
+	     QMessageBox::critical(this, QString::null,
 				   i18n("Sorry -- your account has expired."),
 				   i18n("&OK"));
 	     return true;
@@ -696,7 +696,7 @@ KGreeter::restrict_expired(){
              QString str;
 	     ksprintf(&str, i18n("Warning: your account expires on %s"),
 			 ctime(&expiresec));  // use locales
-	     QMessageBox::critical(NULL, NULL,
+	     QMessageBox::critical(this, QString::null,
 				   str,
 				   i18n("&OK"));
 	 }
@@ -720,7 +720,7 @@ KGreeter::restrict_nohome(){
      seteuid(pwd->pw_uid);
      if (!*pwd->pw_dir || chdir(pwd->pw_dir) < 0) {
 	  if (login_getcapbool(lc, "requirehome", 0)) {
-	       QMessageBox::critical(NULL, NULL, 
+	       QMessageBox::critical(this, QString::null, 
 				     i18n("Home directory not available"), 
 				     i18n("&OK"));
 	       return true;
@@ -768,7 +768,7 @@ KGreeter::go_button_clicked()
      //qApp->desktop()->setCursor( waitCursor);
      qApp->setOverrideCursor( waitCursor);
      hide();
-     DeleteXloginResources( d, dpy);
+     DeleteXloginResources( d, *dpy);
      qApp->exit();
 }
 
@@ -852,17 +852,17 @@ GreetUser(
      struct sigaction sig;
  
      /* KApplication trashes xdm's signal handlers :-( */
-     sigaction(SIGCHLD,NULL,&sig);
+     sigaction(SIGCHLD, NULL, &sig);
  
      argv[2] = d->name;
      MyApp myapp( argc, argv );
      /*printf("LANG=%s, Domain=%s, appName=%s\n", getenv("LANG"), 
 	    klocale->language().data(), kapp->appName().data());*/
-     QApplication::setOverrideCursor( waitCursor );
+     QApplication::setOverrideCursor( Qt::waitCursor );
      kdmcfg = new KDMConfig( );
      
      myapp.setFont( *kdmcfg->normalFont());
-     myapp.setStyle( kdmcfg->style());
+     // TODO: myapp.setStyle( kdmcfg->style());
 
      *dpy = qt_xdisplay();
      
@@ -879,7 +879,7 @@ GreetUser(
      // we have to return RESERVER_DISPLAY to restart the server
      XSetIOErrorHandler(IOErrorHandler);
      
-     sigaction(SIGCHLD,&sig,NULL);
+     sigaction(SIGCHLD, &sig, NULL);
 
      DoIt();
      
@@ -894,7 +894,7 @@ GreetUser(
 		  "Please contact your system administrator.\n",
 		 d->startup);
 	  qApp->restoreOverrideCursor();
-	  QMessageBox::critical( 0, "Login aborted", buf, "Retry");
+	  QMessageBox::critical(0, "Login aborted", buf, "Retry");
 	  SessionExit (d, OBEYSESS_DISPLAY, FALSE);
      }
 

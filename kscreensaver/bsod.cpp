@@ -77,7 +77,7 @@ get_string_resource (const char *res_name, char *res_class)
 {
   KConfig *config = KApplication::getKApplication()->getConfig();
   config->setGroup("Default");
-  return (char*)config->readEntry(res_name,config->readEntry(res_class,0)).data();
+  return (char*)config->readEntry(res_name,config->readEntry(res_class)).ascii();
 }
 
 int 

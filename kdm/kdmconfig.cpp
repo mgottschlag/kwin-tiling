@@ -139,14 +139,17 @@ KDMConfig::getConfig()
                *_restart = "/sbin/reboot";
      } else
           _shutdownButton   = KNone;
+     
+     /* TODO: to be ported to QStyle
      if( kc->hasKey( "GUIStyle")) {
           if( kc->readEntry( "GUIStyle") == "Windows")
-               _style = WindowsStyle;
+               _style = Qt::WindowsStyle;
           else                        // Added this cause else users couldn't
                _style = MotifStyle;   // explicitly ask for motif-style. Th.
      } else {
           _style = MotifStyle;
      }
+     */
 
      // Logo
      if( logo_string.isNull()) // isEmpty() ?

@@ -51,6 +51,9 @@
 #include <config.h>
 #endif
 
+#include <qapplication.h>
+#include "xautolock.h"
+
 #if defined(hpux) || defined (__hpux)
 #ifndef _HPUX_SOURCE
 #define _HPUX_SOURCE
@@ -89,8 +92,7 @@
 #include <stdlib.h>
 #undef TrueColor
 
-#include <qapp.h>
-#include "xautolock.h"
+
 
 /*
  *  Usefull macros and customization stuff

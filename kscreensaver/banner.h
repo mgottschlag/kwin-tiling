@@ -11,8 +11,8 @@
 #include <qtimer.h>
 #include <qlist.h>
 #include <qdialog.h>
-#include <qlined.h>
-#include <qpushbt.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
 #include "saver.h"
 
 

@@ -25,18 +25,18 @@
 #define __KTITLEBARCONFIG_H__
 
 #include <qframe.h>
-#include <qpushbt.h>
-#include <qmsgbox.h>
+#include <qpushbutton.h>
+#include <qmessagebox.h>
 #include <qlabel.h>
-#include <qbttngrp.h>
-#include <qradiobt.h>
+#include <qbuttongroup.h>
+#include <qradiobutton.h>
 #include <qpixmap.h>
-#include <qgrpbox.h>
+#include <qgroupbox.h>
 #include <qpainter.h>
-#include <qbttngrp.h>
-#include <qlcdnum.h>
-#include <qcombo.h> //CT 11feb98
-#include <qchkbox.h> //CT 02Dec1998
+#include <qbuttongroup.h>
+#include <qlcdnumber.h>
+#include <qcombobox.h> //CT 11feb98
+#include <qcheckbox.h> //CT 02Dec1998
 
 #include <kslider.h>
 

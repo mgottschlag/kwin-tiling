@@ -80,7 +80,7 @@ void NetMon::slotReceivedData(KProcess *, char *buffer, int
     char s[250],*start,*end;
     size_t len;
     start = buffer;
-    while ((end = index(start,'\n'))) // look for '\n'
+    while ((end = strchr(start,'\n'))) // look for '\n'
     {
         len = end-start;
         strncpy(s,start,len);

@@ -10,9 +10,9 @@
 #ifndef __KFM_ROOT_OPTIONS_H
 #define __KFM_ROOT_OPTIONS_H
 
-#include <qtabdlg.h>
+#include <qtabdialog.h>
 #include <qstrlist.h>
-#include <qchkbox.h>
+#include <qcheckbox.h>
 #include <kspinbox.h>
 #include <kcolorbtn.h>
 

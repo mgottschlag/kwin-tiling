@@ -29,7 +29,7 @@
 #include <qimage.h>
 #include <qpainter.h>
 #include <qfile.h>
-#include <qtstream.h>
+#include <qtextstream.h>
 #include <qpainter.h>
 #include <kconfig.h>
 #include <kpixmap.h>
@@ -109,8 +109,8 @@ DesktopConfig::DesktopConfig()
 	  have_bg_pic = false;
      }
 
-     bgcolor1  = kc->readColorEntry( "BackGroundColor1", &darkCyan);
-     bgcolor2  = kc->readColorEntry( "BackGroundColor2", &darkBlue);
+     bgcolor1  = kc->readColorEntry( "BackGroundColor1", &Qt::darkCyan);
+     bgcolor2  = kc->readColorEntry( "BackGroundColor2", &Qt::darkBlue);
 }
 
 DesktopConfig::~DesktopConfig()

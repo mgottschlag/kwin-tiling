@@ -21,6 +21,12 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.6.4.1  1999/02/22 22:19:42  kulow
+    CVS_SILENT replaced old qt header names with new ones
+
+    Revision 1.6  1998/04/17 22:08:08  kulow
+    fixed typo
+
     Revision 1.5  1998/03/08 08:01:32  wuebben
     Bernd: implemented support for all sound events
 
@@ -34,10 +40,10 @@
 #include <qlabel.h>
 
 #include <qlistbox.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qlayout.h>
 #include <qdir.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 
 
 #include <klocale.h>

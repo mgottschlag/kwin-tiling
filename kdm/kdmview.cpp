@@ -29,7 +29,7 @@
 #include <qwmatrix.h>
 #include <qkeycode.h>
 
-int KVItemList::compareItems( GCI i1, GCI i2)
+int KVItemList::compareItems( Item i1, Item i2)
 {
     KDMViewItem *lbi1 = (KDMViewItem *)i1;
     KDMViewItem *lbi2 = (KDMViewItem *)i2;
@@ -53,10 +53,12 @@ KDMViewItem::paint( QPainter* p, KDMView* v, enum State s)
      QColorGroup g = v->colorGroup();
      if( s == Selected) {
 	  QColor   fc;                             // fill color
+	  /*
 	  GUIStyle style = v->style();
 	  switch( style) {
-	  case WindowsStyle:
-	       fc = darkBlue;                      // !!!hardcoded
+	  case Qt::WindowsStyle:
+	  */
+	       fc = Qt::darkBlue;                      // !!!hardcoded
 	       p->drawWinFocusRect( txtx - 3, pm.height(), 
 				    fm.width( text())+ 5,
 				    fm.lineSpacing() + 4);
@@ -66,8 +68,9 @@ KDMViewItem::paint( QPainter* p, KDMView* v, enum State s)
 				 fm.lineSpacing(), fc);
 		    p->setPen( g.base() );
 	       }
+	       /*
 	       break;
-	  default: /* Motif */
+	  default: 
 	       fc = g.text();
 	       p->fillRect( txtx - 1, pm.height() + 2, 
 			    fm.width( text()) + 1, 
@@ -81,6 +84,7 @@ KDMViewItem::paint( QPainter* p, KDMView* v, enum State s)
 	       p->setPen( g.base() );
 	       break;
 	  }
+     */
      } 
      p->drawText( txtx, pm.height()+fm.lineSpacing()-1, text());
      p->setBackgroundColor( g.base() );

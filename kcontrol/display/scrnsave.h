@@ -10,13 +10,13 @@
 
 #include <kprocess.h>
 #include <qwidget.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qlistbox.h>
-#include <qlined.h>
+#include <qlineedit.h>
 #include <qtimer.h>
 #include <qlabel.h>
-#include <qpopmenu.h>
-#include <qchkbox.h>
+#include <qpopupmenu.h>
+#include <qcheckbox.h>
 #include <qslider.h>
 
 #include "display.h"

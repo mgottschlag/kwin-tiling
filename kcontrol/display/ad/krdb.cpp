@@ -12,10 +12,10 @@
 *****************************************************************************/
 
 #include <qdir.h>
-#include <qdstream.h>
-#include <qdatetm.h>
+#include <qdatastream.h>
+#include <qdatetime.h>
 #include <qstring.h>
-#include <qtstream.h>
+#include <qtextstream.h>
 
 #include <stdlib.h>
 #include <time.h>
@@ -78,28 +78,28 @@ QString fontString( QFont rFont, FontStyle style )
 		default:
 			aValue += "*-*";
 			break;
-		case QFont::Latin2:
+		case QFont::ISO_8859_2:
 			aValue += "iso8859-2";
 			break;
-		case QFont::Latin3:
+		case QFont::ISO_8859_3:
 			aValue += "iso8859-3";
 			break;
-		case QFont::Latin4:
+		case QFont::ISO_8859_4:
 			aValue += "iso8859-4";
 			break;
-		case QFont::Latin5:
+		case QFont::ISO_8859_5:
 			aValue += "iso8859-5";
 			break;
-		case QFont::Latin6:
+		case QFont::ISO_8859_6:
 			aValue += "iso8859-6";
 			break;
-		case QFont::Latin7:
+		case QFont::ISO_8859_7:
 			aValue += "iso8859-7";
 			break;
-		case QFont::Latin8:
+		case QFont::ISO_8859_8:
 			aValue += "iso8859-8";
 			break;
-		case QFont::Latin9:
+		case QFont::ISO_8859_9:
 			aValue += "iso8859-9";
 			break;
 	}
@@ -123,32 +123,32 @@ main( int argc, char ** argv )
 	
 	config->setGroup( "General" );
 
-	col = config->readColorEntry( "foreground", &black );
+	col = config->readColorEntry( "foreground", &Qt::black );
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define FOREGROUND " );
 	preproc += s;
 	
-	backCol = config->readColorEntry( "background", &lightGray );
+	backCol = config->readColorEntry( "background", &Qt::lightGray );
 	s.sprintf("#%02x%02x%02x\n", backCol.red(), backCol.green(), backCol.blue());
 	s.prepend( "#define BACKGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "selectBackground", &darkBlue);
+	col = config->readColorEntry( "selectBackground", &Qt::darkBlue);
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define SELECT_BACKGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "selectForeground", &white );
+	col = config->readColorEntry( "selectForeground", &Qt::white );
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define SELECT_FOREGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "windowBackground", &white );
+	col = config->readColorEntry( "windowBackground", &Qt::white );
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define WINDOW_BACKGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "windowForeground", &black );
+	col = config->readColorEntry( "windowForeground", &Qt::black );
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define WINDOW_FOREGROUND " );
 	preproc += s;
@@ -179,32 +179,32 @@ main( int argc, char ** argv )
 	
 	config->setGroup( "WM" );
 	
-	col = config->readColorEntry( "inactiveBackground", &darkGray);
+	col = config->readColorEntry( "inactiveBackground", &Qt::darkGray);
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define INACTIVE_BACKGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "inactiveForeground", &lightGray );
+	col = config->readColorEntry( "inactiveForeground", &Qt::lightGray );
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define INACTIVE_FOREGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "inactiveBlend", &lightGray );
+	col = config->readColorEntry( "inactiveBlend", &Qt::lightGray );
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define INACTIVE_BLEND " );
 	preproc += s;
 
-	col = config->readColorEntry( "activeBackground", &darkBlue );
+	col = config->readColorEntry( "activeBackground", &Qt::darkBlue );
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define ACTIVE_BACKGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "activeForeground", &white );
+	col = config->readColorEntry( "activeForeground", &Qt::white );
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define ACTIVE_FOREGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "activeBlend", &black );
+	col = config->readColorEntry( "activeBlend", &Qt::black );
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define ACTIVE_BLEND " );
 	preproc += s;
@@ -325,7 +325,7 @@ main( int argc, char ** argv )
     				f.close();
 				}
 				tmp.writeBlock( propString.data(), propString.length() );
-				propString.resize(0);
+				propString = QString::null;
 			}
 			++*sysIt;
 		}
@@ -349,7 +349,7 @@ main( int argc, char ** argv )
     			f.close();
 			}
 			tmp.writeBlock( propString.data(), propString.length() );
-			propString.resize(0);
+			propString = QString::null;
 			++*userIt;
 		}
 	}

@@ -703,11 +703,11 @@ drawbouboule(Window win)
 		if (PARAM_INSTALLED)
 			XSetFunction(dsp, Scr[screen].gc, GXor);
 		// Used to be RED -- picked 4 at random
-		XSetForeground(dsp,Scr[screen].gc,red.pixel()); 
+		XSetForeground(dsp,Scr[screen].gc,Qt::red.pixel()); 
 		XFillArcs(dsp, win,Scr[screen].gc, sp->xarc, sp->NbStars); 
 		// Used to be BLUE -- picked 5 at random
 //		XSetForeground(dsp,Scr[screen].gc,Scr[screen].pixels[5]); 
-		XSetForeground(dsp,Scr[screen].gc,blue.pixel()); 
+		XSetForeground(dsp,Scr[screen].gc,Qt::blue.pixel()); 
 		XFillArcs(dsp,win, Scr[screen].gc,sp->xarcleft, sp->NbStars);
 
   		if (PARAM_INSTALLED) 
@@ -812,10 +812,10 @@ release_bouboule()
 
  
 
-#include <qpushbt.h>
-#include <qchkbox.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
 #include <qcolor.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include "kslider.h"
 
 #include "bouboule.h"

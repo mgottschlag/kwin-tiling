@@ -27,9 +27,9 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
-#include <qfileinf.h> 
+#include <qfileinfo.h> 
 #include <qstring.h>
-#include <qmsgbox.h> 
+#include <qmessagebox.h> 
 
 #include <kmsgbox.h> 
 #include "keyboard.h"

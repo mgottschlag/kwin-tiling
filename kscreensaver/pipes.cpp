@@ -263,10 +263,10 @@ void initGL(Window window)
 
 // K Screen Saver Interface ///////////////////////////////////////////////////
 
-#include <qpushbt.h>
-#include <qchkbox.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
 #include <qcolor.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include "kslider.h"
 
 #include "pipes.moc"
@@ -745,7 +745,6 @@ void kPipesSetup::slotAbout()
         "KPipes\nCopyright (c) 1998\nLars Doelle <lars.doelle@on-line.de>"),
            glocale->translate("OK"));
 }
-
 
 #endif
 

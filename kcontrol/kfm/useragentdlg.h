@@ -12,9 +12,9 @@
 #include <qdialog.h>
 #include <qstring.h>
 #include <qwidget.h>
-#include <qlined.h>
+#include <qlineedit.h>
 #include <qlabel.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qlistbox.h>
 
 #include <kcontrol.h>

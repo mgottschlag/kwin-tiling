@@ -20,10 +20,10 @@
 #ifndef __KDMBGND_H__
 #define __KDMBGND_H__
 
-#include <qfiledlg.h>
+#include <qfiledialog.h>
 #include <qimage.h>
-#include <qradiobt.h>
-#include <qbttngrp.h>
+#include <qradiobutton.h>
+#include <qbuttongroup.h>
 #include <kcolordlg.h>
 #include <kcolorbtn.h>
 #include <kpixmap.h>

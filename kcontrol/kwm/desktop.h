@@ -24,13 +24,13 @@
 #ifndef __KKWMDESKTOPCONFIG_H__
 #define __KKWMDESKTOPCONFIG_H__
 
-#include <qlcdnum.h> 
+#include <qlcdnumber.h> 
 #include <qlabel.h>
 #include <qdialog.h>
-#include <qmsgbox.h>
-#include <qchkbox.h> 
-#include <qbttngrp.h>
-#include <qpushbt.h>
+#include <qmessagebox.h>
+#include <qcheckbox.h> 
+#include <qbuttongroup.h>
+#include <qpushbutton.h>
 #include <kslider.h>
 
 #include <kcontrol.h>

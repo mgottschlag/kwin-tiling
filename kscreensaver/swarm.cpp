@@ -211,10 +211,10 @@ drawswarm(Window win)
 
 //-----------------------------------------------------------------------------
 
-#include <qpushbt.h>
-#include <qchkbox.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
 #include <qcolor.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include "kslider.h"
 
 #include "swarm.h"

@@ -25,7 +25,7 @@
 #include <qtimer.h>
 #include <qlist.h>
 #include <qdialog.h>
-#include <qlined.h>
+#include <qlineedit.h>
 #include "saver.h"
 
 

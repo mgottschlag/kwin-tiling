@@ -40,6 +40,7 @@
 #include <kconfig.h>
 
 #include "kdmview.h"
+#include <qnamespace.h>
 
 class KDMConfig {
 public:
@@ -56,7 +57,7 @@ public:
      QString*        restart()         { return _restart;}
      QString*        logo()            { return _logo;}
      KVItemList*     users()           { return _users;}
-     GUIStyle        style()           { return _style;}
+     // GUIStyle        style()           { return _style;}
 	// None is defined as a macro somewhere in an X header. GRRRR.
      enum { KNone, All, RootOnly, ConsoleOnly };
 private:
@@ -74,7 +75,7 @@ private:
      QString*       _restart;
      QString*       _logo;
      KVItemList*    _users;
-     GUIStyle       _style;
+     // GUIStyle       _style;
 };
 
 #endif /* KDMCONFIG_H */

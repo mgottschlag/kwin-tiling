@@ -1,6 +1,6 @@
 /* 
 
-    $Id:$
+    $Id$
 
     Copyright (C) 1997 Christian Czezatke (e9025461@student.tuwien.ac.at)
                   1998 Bernd Wuebben <wuebben@kde.org>
@@ -20,7 +20,13 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 
-    $Log:$
+    $Log$
+    Revision 1.2.4.1  1999/02/22 22:19:43  kulow
+    CVS_SILENT replaced old qt header names with new ones
+
+    Revision 1.2  1998/03/08 08:01:33  wuebben
+    Bernd: implemented support for all sound events
+
 
 */  
 
@@ -33,7 +39,7 @@
 #include <qlist.h>
 #include <qstring.h>
 #include <qlistbox.h>
-#include <qchkbox.h>
+#include <qcheckbox.h>
 
 #include <drag.h>
 #include <mediatool.h>

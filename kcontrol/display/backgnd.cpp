@@ -15,17 +15,17 @@
 
 #include <stdlib.h>
 
-#include <qgrpbox.h>
+#include <qgroupbox.h>
 #include <qlabel.h>
 #include <qpixmap.h>
 #include <qdir.h>
-#include <qradiobt.h>
-#include <qchkbox.h>
+#include <qradiobutton.h>
+#include <qcheckbox.h>
 #include <qpainter.h>
 #include <qlayout.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include <qfileinfo.h>
-#include <qlcdnum.h>
+#include <qlcdnumber.h>
 
 #include <kfiledialog.h>
 #include <kapp.h>
@@ -624,11 +624,11 @@ void KBackground::writeSettings( int num )
 
   config.setGroup( group );
 	
-  QString col1Name(10);
+  QString col1Name;
   col1Name.sprintf("#%02x%02x%02x", currentItem.color1.red(), currentItem.color1.green(), currentItem.color1.blue());
   config.writeEntry( "Color1", col1Name );
 	
-  QString col2Name(10);
+  QString col2Name;
   col2Name.sprintf("#%02x%02x%02x", currentItem.color2.red(), currentItem.color2.green(), currentItem.color2.blue());
   config.writeEntry( "Color2", col2Name );
 
@@ -932,7 +932,7 @@ bool KBackground::loadWallpaper( const char *name, bool useContext )
   else
     filename = name;
 	
-  if ( tmp.load( filename, 0, KPixmap::LowColor ) )
+  if ( tmp.load( filename, QString::null, KPixmap::LowColor ) )
     {
       int w = QApplication::desktop()->width();
       int h = QApplication::desktop()->height();

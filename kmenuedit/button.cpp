@@ -21,11 +21,11 @@
 
 #include <stdlib.h>
 
-#include <qapp.h>
+#include <qapplication.h>
 #include <qpixmap.h>
 #include <qpainter.h>
-#include <qscrbar.h>   // for qDrawArrow
-#include <qmsgbox.h>
+#include <qscrollbar.h>   // for qDrawArrow
+#include <qmessagebox.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -79,7 +79,7 @@ QSize EditButton::sizeHint()
 void EditButton::setText( const char *t )
 {
   btext = t;
-  btext.detach();
+  
   if( bpixmap.isNull() )
     {
       QButton::setText(btext);
