@@ -102,6 +102,9 @@ private:
 
   KService::Ptr _service;
 
+  class KCModuleInfoPrivate;
+  KCModuleInfoPrivate *d;
+  
 };
 
 #endif // KCMODULEINFO_H
