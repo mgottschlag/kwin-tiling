@@ -556,7 +556,7 @@ void KColorScheme::readScheme( int index )
     // define some KDE2 default colors
     QColor kde2Blue;
     if (QPixmap::defaultDepth() > 8)
-      kde2Blue.setRgb(11, 101, 146);
+      kde2Blue.setRgb(10, 95, 137);
     else
       kde2Blue.setRgb(0, 0, 192);
 
