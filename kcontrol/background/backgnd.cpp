@@ -103,6 +103,10 @@ void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 }
 
 /**** KBackground ****/
+KBackground::~KBackground( ){ 
+    delete m_pGlobals;
+    delete m_pConfig;
+}
 
 KBackground::KBackground(QWidget *parent, const char *name)
     : KCModule(parent, name),

@@ -50,7 +50,7 @@ class KBGMonitor : public QWidget
 public:
 
     KBGMonitor(QWidget *parent, const char *name=0L);
-	     
+
 signals:
     void imageDropped(QString);
 
@@ -69,7 +69,8 @@ class KBackground: public KCModule
 
 public:
     KBackground(QWidget *parent, const char *name);
-
+    ~KBackground();
+    
     virtual void load();
     virtual void save();
     virtual void defaults();
