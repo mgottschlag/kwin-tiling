@@ -14,11 +14,11 @@ Program=
 ReverseBlending=false
 Wallpaper=
 WallpaperList=
-WallpaperMode=Tiled 
+WallpaperMode=Tiled
 [KDM]
 GreetString=K Desktop Environment (HOSTNAME)
 #Users=root,johndoe
-NoUsers=adm,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ingres,kmem,lp,mail,mailnull,man,mta,news,nobody,nscd,operator,pop,postfix,reboot,rpc,rpcuser,sendmail,shutdown,sync,tty,uucp,xfs,xten
+NoUsers=adm,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ingres,kmem,lp,mail,mailnull,man,mta,news,nobody,nscd,operator,pop,postfix,postgres,reboot,rpc,rpcuser,sendmail,shutdown,sympa,sync,tty,uucp,xfs,xten
 #ShowUsers=All/Selected/None
 ShowUsers=All
 #MinShowUID=1000
