@@ -1,0 +1,22 @@
+Remaining known issues
+
+General
+	Not tested with Xinerama / multiple screens (but should support them)
+
+Qt
+	Font sizes on newly started apps after a resolution change are incorrect (X bug?)
+	Popup menus do not get properly constrained to the size of the new window
+
+Kwin
+	Move windows if they were partly off before and they are more off now
+	Resize maximised windows on other virtual desktops
+
+Kicker
+	Perhaps make it more friendly, responding to the screenchangedevent itself rather than requiring a restart via dcop?
+
+KDesktop
+	automatically make sure desktop icons are visible
+	
+RandR programs
+	Write a kded module (?) to retain a user-wide setting over logins
+	Make KTimerDialog a respectable candidate for kdeui inclusion

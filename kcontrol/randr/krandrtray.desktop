@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Resize and Rotate
+Comment=A panel applet for resizing and reorienting X screens.
+Exec=krandrtray
+Icon=kscreensaver
+Type=Application

@@ -35,21 +35,32 @@
 class RandRScreen
 {
 public:
-	RandRScreen(int screenIndex);
+	RandRScreen(int screenIndex, bool requestScreenChangeEvents = false);
 	~RandRScreen();
 	
 	void		loadSettings();
+	void		setOriginal();
+	
 	Status		applyProposed();
+	
+	// A return value of -1 means the user did not confirm in time, or cancelled.
+	Status		applyProposedAndConfirm();
+	bool		confirm();
+	
+	QString		changedMessage();
 
 	bool		changedFromOriginal();
 	void		proposeOriginal();
 	
 	bool		proposedChanged();
 	
-	static QString	rotationName(int rotation);
+	static QString	rotationName(int rotation, bool pastTense = false, bool capitalised = true);
+	static QPixmap	rotationIcon(int rotation);
+	QString		currentRotationDescription();
 	
 	int			proposedRefreshRateIndex;
 	QStringList refreshRates(SizeID size);
+	QString		currentRefreshRateDescription();
 	void		proposeRefreshRate(QString rateString);
 	
 	XRRScreenConfiguration	*config;
@@ -59,6 +70,9 @@ public:
 	
 	QMemArray<XRRScreenSize>	sizes;
 	Rotation					rotations;
+	
+	int			currentWidth();
+	int			currentHeight();
 	
 	Rotation	originalRotation;
 	SizeID		originalSize;
@@ -78,12 +92,21 @@ typedef QPtrList<RandRScreen> ScreenList;
 class RandRDisplay
 {
 public:
-	RandRDisplay();
+	RandRDisplay(bool requestScreenChangeEvents = false);
 	
-	bool isValid() const { return m_valid; };
-	QString errorCode() { return m_errorCode; };
+	bool	isValid() const { return m_valid; };
+	QString	errorCode() { return m_errorCode; };
 
 	QString	version() { return m_version; };
+	
+	inline int	eventBase() const { return m_eventBase; };
+	inline int	errorBase() const { return m_errorBase; };
+	
+	void	setScreen(int index);
+	int		widgetScreen(QWidget* widget);
+	int		currentScreenIndex() { return m_currentScreenIndex; };
+	
+	void	refresh();
 
 protected:
 	int				m_numScreens;
@@ -95,6 +118,9 @@ private:
 	bool			m_valid;
 	QString			m_errorCode;
 	QString			m_version;
+	
+	int				m_eventBase;
+	int				m_errorBase;
 };
 
 #endif

@@ -33,6 +33,7 @@
 #include <kcombobox.h>
 
 #include "krandrmodule.h"
+#include "krandrmodule.moc"
 
 // DLL Interface for kcontrol
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
@@ -78,6 +79,8 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	connect(m_refreshRates, SIGNAL(activated(const QString&)), SLOT(slotRefreshChanged(const QString&)));
 	
 	slotScreenChanged(DefaultScreen(qt_xdisplay()));
+	
+	layout()->addItem(new QSpacerItem(0,0));
 
 	setButtons(KCModule::Default | KCModule::Apply);
 }
@@ -103,9 +106,7 @@ void KRandRModule::load()
 
 void KRandRModule::slotScreenChanged(int screen)
 {
-	m_currentScreenIndex = screen;
-	m_currentScreen = m_screens.at(m_currentScreenIndex);
-	Q_ASSERT(m_currentScreen);
+	setScreen(screen);
 
 	// Clear resolutions
 	for (int i = m_sizeGroup->count() - 1; i >= 0; i--) {
@@ -232,18 +233,7 @@ void KRandRModule::apply()
 	if (m_changed) {
 		for (RandRScreen* screen = m_screens.first(); screen; screen = m_screens.next()) {
 			if (screen->proposedChanged()) {
-				switch (screen->applyProposed()) {
-					case RRSetConfigSuccess:
-						if (!confirm()) {
-							screen->proposeOriginal();
-							screen->applyProposed();
-						}
-						break;
-					case RRSetConfigInvalidConfigTime:
-					case RRSetConfigInvalidTime:
-					case RRSetConfigFailed:
-						break;
-				}
+				screen->applyProposedAndConfirm();
 			}
 		}
 		
@@ -277,40 +267,11 @@ void KRandRModule::update()
 			Q_ASSERT(m_currentScreen->proposedRotation & 15);
 			break;
 	}
-	m_rotationGroup->find(4)->setDown(m_currentScreen->proposedRotation && RR_Reflect_X);
-	m_rotationGroup->find(5)->setDown(m_currentScreen->proposedRotation && RR_Reflect_Y);
+	m_rotationGroup->find(4)->setDown(m_currentScreen->proposedRotation & RR_Reflect_X);
+	m_rotationGroup->find(5)->setDown(m_currentScreen->proposedRotation & RR_Reflect_Y);
 	m_rotationGroup->blockSignals(false);
 	
 	m_refreshRates->blockSignals(true);
 	m_refreshRates->setCurrentItem(m_currentScreen->proposedRefreshRateIndex);
 	m_refreshRates->blockSignals(false);
-}
-
-bool KRandRModule::confirm()
-{
-    // uncomment the line below and edit out the KTimerDialog stuff to get
-    // a version which works on today's kdelibs (no accept dialog is presented)
-
-    return true;
-
-    /*KTimerDialog *acceptDialog = new KTimerDialog(
-                                            15000,
-                                            KTimerDialog::CountDown,
-                                            this,
-                                            "mainKTimerDialog",
-                                            true,
-                                            i18n("Confirm display setting change"),
-                                            KTimerDialog::Ok|KTimerDialog::Cancel,
-                                            KTimerDialog::Cancel);
-
-    QLabel *label = new QLabel( i18n("Your screen orientation and size have "
-                                     "been changed to the requested settings.\n"
-                                     "Please indicate whether you wish to keep "
-                                     "this configuration.\nIn 15 seconds your "
-                                     "configuration will revert to normal."),
-                                acceptDialog, "userSpecifiedLabel" );
-
-    acceptDialog->setMainWidget( label );
-
-    return acceptDialog->exec();*/
 }

@@ -16,45 +16,39 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef KRANDRMODULE_H
-#define KRANDRMODULE_H
+#ifndef KRANDRTRAY_H
+#define KRANDRTRAY_H
+
+#include <ksystemtray.h>
 
 #include "randr.h"
 
-class QButtonGroup;
-class KComboBox;
- 
-class KRandRModule : public KCModule, public RandRDisplay
+class KRandRSystemTray :  public KSystemTray, public RandRDisplay
 {
 	Q_OBJECT
 	
 public:
-	KRandRModule(QWidget *parent, const char *name, const QStringList& _args);
+	KRandRSystemTray(QWidget* parent = 0, const char *name = 0);
 
-	virtual void load();
-	virtual void save();
-	virtual void defaults();
+	virtual void mousePressEvent(QMouseEvent* e);
+	virtual void contextMenuAboutToShow(KPopupMenu* menu);
+	
+	void configChanged();
 
 protected slots:
-	void slotScreenChanged(int screen);
-	void slotRotationChanged();
-	void slotSizeChanged();
-	void slotRefreshChanged(const QString& rate);
+	void slotDisplayInformation();
+	void slotSwitchScreen();
+	void slotResolutionChanged(int parameter);
+	void slotOrientationChanged(int parameter);
+	void slotRefreshRateChanged(int parameter);
 
-protected:
-	void apply();
-	void setChanged();
-	void update();
+private:
+	void populateMenu(KPopupMenu* menu);
 	
-	void addRotationButton(int thisRotation, bool checkbox);
-	void populateRefreshRates();
-		
-	KComboBox*		m_screenSelector;
-	QButtonGroup*	m_sizeGroup;
-	QButtonGroup*	m_rotationGroup;
-	KComboBox*		m_refreshRates;
+	bool eventFilter(QObject* watched, QEvent* e);
 	
-	bool			m_changed;
+	bool m_popupUp;
+	int m_resizeCount;
 };
 
 #endif

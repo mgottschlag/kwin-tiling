@@ -16,45 +16,24 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef KRANDRMODULE_H
-#define KRANDRMODULE_H
+#ifndef KRANDRAPP_H
+#define KRANDRAPP_H
 
-#include "randr.h"
+#include <kapplication.h>
 
-class QButtonGroup;
-class KComboBox;
- 
-class KRandRModule : public KCModule, public RandRDisplay
+class KRandRSystemTray;
+
+class KRandRApp : public KApplication
 {
 	Q_OBJECT
-	
+
 public:
-	KRandRModule(QWidget *parent, const char *name, const QStringList& _args);
-
-	virtual void load();
-	virtual void save();
-	virtual void defaults();
-
-protected slots:
-	void slotScreenChanged(int screen);
-	void slotRotationChanged();
-	void slotSizeChanged();
-	void slotRefreshChanged(const QString& rate);
-
-protected:
-	void apply();
-	void setChanged();
-	void update();
+	KRandRApp();
 	
-	void addRotationButton(int thisRotation, bool checkbox);
-	void populateRefreshRates();
-		
-	KComboBox*		m_screenSelector;
-	QButtonGroup*	m_sizeGroup;
-	QButtonGroup*	m_rotationGroup;
-	KComboBox*		m_refreshRates;
-	
-	bool			m_changed;
+	virtual bool x11EventFilter(XEvent * e);
+
+private:
+	KRandRSystemTray*	m_tray;
 };
 
 #endif
