@@ -199,13 +199,16 @@ void ModuleIconView::slotItemSelected(QIconViewItem* item)
   if (!item) return;
 
   if (static_cast<ModuleIconItem*>(item)->module())
+    {
         emit moduleSelected(static_cast<ModuleIconItem*>(item)->module());
+		ensureItemVisible( item );
+    }
   else
-        {
-          _path = static_cast<ModuleIconItem*>(item)->tag();
-          fill();
-      setCurrentItem(firstItem());
-        }
+    {
+        _path = static_cast<ModuleIconItem*>(item)->tag();
+        fill();
+        setCurrentItem(firstItem());
+    }
 }
 
 QDragObject *ModuleIconView::dragObject()

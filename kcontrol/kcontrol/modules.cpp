@@ -228,16 +228,16 @@ void ConfigModule::rootExited(KProcess *)
   emit childClosed();
 }
 
-
-ConfigModuleList::ConfigModuleList()
-{
-  setAutoDelete(true);
-}
-
 const KAboutData *ConfigModule::aboutData() const
 {
   if (!_module) return 0;
   return _module->aboutData();
+}
+
+
+ConfigModuleList::ConfigModuleList()
+{
+  setAutoDelete(true);
 }
 
 void ConfigModuleList::readDesktopEntries()
