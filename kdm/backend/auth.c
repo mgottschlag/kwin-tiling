@@ -266,7 +266,7 @@ fdOpenW (int fd)
 }
 
 
-#ifdef SYSV
+#if defined(SYSV) && !defined(SVR4)
 # define NAMELEN	14
 #else
 # define NAMELEN	255
@@ -316,12 +316,15 @@ SaveServerAuthorizations (
     int		    count)
 {
     FILE	*auth_file;
-    int		i, ret;
+    int		i, ret, mask;
 
     if (!d->authFile && d->clientAuthFile && *d->clientAuthFile)
 	StrDup (&d->authFile, d->clientAuthFile);
     if (d->authFile) {
-	if (!(auth_file = fopen (d->authFile, "w"))) {
+	mask = umask (0077);
+	auth_file = fopen (d->authFile, "w");
+	umask (mask);
+	if (!auth_file) {
 	    LogError ("Cannot open X server authorization file %s\n", d->authFile);
 	    free (d->authFile);
 	    d->authFile = NULL;
