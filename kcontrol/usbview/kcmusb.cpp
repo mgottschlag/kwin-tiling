@@ -88,7 +88,8 @@ void USBViewer::refresh()
 {
   QIntDict<QListViewItem> new_items;
 
-  USBDevice::parse("/proc/bus/usb/devices");
+  if (!USBDevice::parse("/proc/bus/usb/devices"))
+    USBDevice::parse("/proc/bus/usb/devices_please-use-sysfs-instead");
 
   int level = 0;
   bool found = true;

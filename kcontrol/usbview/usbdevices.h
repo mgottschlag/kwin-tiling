@@ -38,7 +38,7 @@ public:
 
   static QPtrList<USBDevice> &devices() { return _devices; };
   static USBDevice *find(int bus, int device);
-  static void parse(QString fname);
+  static bool parse(QString fname);
 
 
 private:

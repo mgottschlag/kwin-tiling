@@ -164,7 +164,7 @@ QString USBDevice::dump()
 }
 
 
-void USBDevice::parse(QString fname)
+bool USBDevice::parse(QString fname)
 {
   _devices.clear();
 
@@ -176,6 +176,9 @@ void USBDevice::parse(QString fname)
   // are pseudo files with zero length
   char buffer[256];
   int fd = ::open(QFile::encodeName(fname), O_RDONLY);
+  if (fd<0)
+	return false;
+
   if (fd >= 0)
     {
       ssize_t count;
@@ -201,5 +204,6 @@ void USBDevice::parse(QString fname)
 
       start = end+1;
     }
+  return true;
 }
 
