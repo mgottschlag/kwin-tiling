@@ -23,6 +23,6 @@ noinst_HEADERS = windows.h geom.h mouse.h
 messages:
 	$(XGETTEXT) $(libkcm_kwinmouse_la_SOURCES) $(libkcm_kwinoptions_la_SOURCES) -o $(podir)/kcmkwm.pot
 
-data_DATA = actions.desktop mouse.desktop 
+data_DATA = actions.desktop kwinmouse.desktop 
 datadir = $(kde_appsdir)/Settings/LookNFeel/Windows
 
