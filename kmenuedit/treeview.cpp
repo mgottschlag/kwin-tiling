@@ -39,6 +39,7 @@
 #include <kdebug.h>
 #include <kaction.h>
 
+#include "namedlg.h"
 #include "treeview.h"
 #include "treeview.moc"
 
@@ -132,6 +133,8 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
 	_ac->action("newitem")->plug(_rmb);
     if(_ac->action("newsubmenu"))
 	_ac->action("newsubmenu")->plug(_rmb);
+
+    _ndlg = new NameDialog(this);
     
     fill();
 }
@@ -605,6 +608,14 @@ void TreeView::slotRMBPressed(QListViewItem*, const QPoint& p)
 
 void TreeView::newsubmenu()
 {
+    _ndlg->setText(i18n("NewSubmenu"));
+    if (!_ndlg->exec()) return;
+    
+    QString dirname = _ndlg->text();
+    if (dirname.isEmpty())
+	dirname = "NewSubmenu";
+    
+	
     TreeItem *item = (TreeItem*)selectedItem();
 
     QListViewItem* parent = 0;
@@ -639,6 +650,8 @@ void TreeView::newsubmenu()
 	
 	    if (pos > 0)
 		dir.truncate(pos);
+	    else
+		dir = QString::null;
 	}
     else if (dir.find(".desktop"))
 	{
@@ -647,9 +660,14 @@ void TreeView::newsubmenu()
 	
 	    if (pos > 0)
 		dir.truncate(pos);
+	    else
+		dir = QString::null;
 	}
-    dir += "/NewSubmenu/.directory";
-	
+    if(!dir.isEmpty())
+	dir += '/';
+   
+    dir += dirname + "/.directory";
+    
     TreeItem* newitem;
 	
     if (!parent)
@@ -657,18 +675,25 @@ void TreeView::newsubmenu()
     else
 	newitem = new TreeItem(parent, after, dir);
 
-    newitem->setText(0, "New Submenu");
+    newitem->setText(0, dirname);
     newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("package", KIcon::Desktop, KIcon::SizeSmall));
 
-    KSimpleConfig c(locateLocal("apps", dir));
+    KConfig c(locateLocal("apps", dir));
     c.setDesktopGroup();
-    c.writeEntry("Name", "New Submenu");
+    c.writeEntry("Name", dirname);
     c.writeEntry("Icon", "package");
     c.sync();
 }
 
 void TreeView::newitem()
 {
+    _ndlg->setText(i18n("NewItem"));
+    if (!_ndlg->exec()) return;
+    
+    QString filename = _ndlg->text();
+    if (filename.isEmpty())
+	filename = "NewFile";
+    
     TreeItem *item = (TreeItem*)selectedItem();
 
     QListViewItem* parent = 0;
@@ -697,8 +722,12 @@ void TreeView::newitem()
 
     if (pos > 0)
 	dir.truncate(pos);
+    else
+	dir = QString::null;
 
-    dir += "/NewFile.desktop";
+    if(!dir.isEmpty())
+	dir += '/';
+    dir += filename + ".desktop";
 	
     TreeItem* newitem;
 	
@@ -707,13 +736,13 @@ void TreeView::newitem()
     else
 	newitem = new TreeItem(parent, after, dir);
 
-    newitem->setText(0, "New File");
+    newitem->setText(0, filename);
     newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("unkown", KIcon::Desktop, KIcon::SizeSmall));
 
-    KSimpleConfig c(locateLocal("apps", dir));
+    KConfig c(locateLocal("apps", dir));
     c.setDesktopGroup();
-    c.writeEntry("Name", "New File");
-    c.writeEntry("Icon", "file");
+    c.writeEntry("Name", filename);
+    c.writeEntry("Icon", filename);
     c.sync();
 }
 

@@ -5,9 +5,9 @@ lib_LTLIBRARIES = kmenuedit.la
 
 CLEANFILES = dummy.cpp
 
-kmenuedit_la_SOURCES = advancedtab.cpp basictab.cpp treeview.cpp desktopfileeditor.cpp \
+kmenuedit_la_SOURCES = namedlg.cpp advancedtab.cpp basictab.cpp treeview.cpp desktopfileeditor.cpp \
 			menueditview.cpp kmenuedit.cpp main.cpp
-kmenuedit_la_LIBADD = $(LIB_KDEUI) $(LIB_KFILE) 
+kmenuedit_la_LIBADD = $(LIB_KDEUI) $(LIB_KFILE)
 kmenuedit_la_LDFLAGS = $(all_libraries) -module -avid-version
 
 kmenuedit_SOURCES = dummy.cpp
@@ -15,7 +15,7 @@ kmenuedit_LDADD   = kmenuedit.la
 kmenuedit_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 noinst_HEADERS = kmenuedit.h menueditview.h treeview.h desktopfileeditor.h basictab.h \
-		advancedtab.h
+		advancedtab.h namedlg.h
 
 METASOURCES = kmenuedit.moc menueditview.moc treeview.moc desktopfileeditor.moc \
 		basictab.moc advancedtab.moc
