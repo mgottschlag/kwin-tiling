@@ -733,7 +733,7 @@
                                     <string></string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>If you enable this option some pop-up menus will show so called tear-off handles. If you click them, you get the menu inside a widget. This can be very helpfull when performing the same action multiple times.</string>
+                                    <string>If you enable this option some pop-up menus will show so called tear-off handles. If you click them, you get the menu inside a widget. This can be very helpful when performing the same action multiple times.</string>
                                 </property>
                             </widget>
                         </grid>
