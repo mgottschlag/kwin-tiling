@@ -111,7 +111,7 @@ TopLevel::TopLevel(const char* name)
   connect(_searchtab, SIGNAL(moduleSelected(const QString&)),
                   this, SLOT(activateModule(const QString&)));
 
-  _tab->addTab(_searchtab, i18n("S&earch"));
+  _tab->addTab(_searchtab, i18n("Sear&ch"));
 
   // help tab
   _helptab = new HelpWidget(_tab);
