@@ -155,8 +155,8 @@ void View1394::rescanBus()
       return;
    }
    m_insideRescanBus=true;
-   static int depth=0;
-   depth++;
+//   static int depth=0;
+//   depth++;
    m_notifiers.clear();
    for (QValueList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
       raw1394_destroy_handle(*it);
@@ -262,7 +262,7 @@ void View1394::rescanBus()
       }
       card->setOpen(true);
    }
-   depth--;
+//   depth--;
    m_insideRescanBus=false;
 }
 
