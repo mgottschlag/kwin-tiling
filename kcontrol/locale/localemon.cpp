@@ -50,7 +50,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
   // Money
-  QGridLayout *lay = new QGridLayout(this, 9, 2,
+  QGridLayout *lay = new QGridLayout(this, 5, 2,
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
 
@@ -80,7 +80,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
 	   SLOT( slotMonFraDigChanged(const QString &) ) );
 
   QWidget *hbox = new QHBox(this);
-  lay->addMultiCellWidget(hbox, 4, 8, 0, 1);
+  lay->addMultiCellWidget(hbox, 4, 4, 0, 1);
   QGroupBox *grp;
   grp = new QVGroupBox(hbox, I18N_NOOP("Positive"));
   grp->setColumns(2);
@@ -115,6 +115,9 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
   }
 
   lay->setColStretch(1, 1);
+  lay->addRowSpacing(5, 0);
+
+  adjustSize();
 }
 
 KLocaleConfigMoney::~KLocaleConfigMoney()
