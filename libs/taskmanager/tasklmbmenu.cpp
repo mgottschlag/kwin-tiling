@@ -21,6 +21,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
+#include <qregexp.h>
+
 #include "tasklmbmenu.h"
 #include "tasklmbmenu.moc"
 
@@ -36,7 +38,8 @@ void TaskLMBMenu::fillMenu( TaskList* tasks )
 	
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		Task* t = (*it);
-		int id = insertItem( QIconSet( t->pixmap() ), t->visibleNameWithState(),
+		int id = insertItem( QIconSet( t->pixmap() ), 
+                      t->visibleNameWithState().replace(QRegExp("&"), "&&"),
 		                t, SLOT( activateRaiseOrIconify() ) );
 		setItemChecked( id, t->isActive() );
 	}
