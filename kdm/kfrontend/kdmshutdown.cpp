@@ -597,7 +597,7 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, QWidget *_parent )
 	int ns = 0;
 	for (; sess; sess = sess->next, ns++ )
 	    itm = new QListViewItem( lv,
-		sess->user ?
+		*sess->user ?
 		    QString::fromLatin1( sess->user ) + ": " +  sess->session :
 		    i18n("Remote Login"),
 		sess->vt ?
