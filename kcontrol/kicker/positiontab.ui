@@ -55,7 +55,7 @@
                         </sizepolicy>
                     </property>
                     <property name="title">
-                        <string>Lo&amp;cation</string>
+                        <string>Location</string>
                     </property>
                     <property name="orientation">
                         <enum>Vertical</enum>
