@@ -595,7 +595,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       r->setWallpaperMode(m_wallpaperPos);
       m_comboWallpaperPos->blockSignals(true);
       m_comboWallpaperPos->setCurrentItem(m_wallpaperPos-1);
-      m_comboWallpaperPos->blockSignals(true);
+      m_comboWallpaperPos->blockSignals(false);
 
       int j = m_urlWallpaper->comboBox()->currentItem();
       QString uri;
