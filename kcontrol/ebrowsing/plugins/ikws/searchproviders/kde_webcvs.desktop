@@ -8,6 +8,7 @@ Name[ca]=WebCVS de KDE
 Name[cy]=WebCVS KDE
 Name[de]=KDE-WebCVS
 Name[es]=WebCVS de KDE
+Name[eu]=KDEren WebCVS-a
 Name[fa]=CVS وب KDE
 Name[fi]=KDE:n WebCVS
 Name[fr]=WebCVS de KDE
@@ -25,5 +26,5 @@ Name[wa]=WebCVS di KDE
 Name[xx]=xxKDE WebCVSxx
 ServiceTypes=SearchProvider
 Keys=webcvs,kdecvs,kcvs,kvs
-Query=http://webcvs.kde.org/cgi-bin/cvsweb.cgi/\\{@}?sortby=date#dirlist
+Query=http://webcvs.kde.org/\\{@}
 
