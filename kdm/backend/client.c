@@ -456,7 +456,7 @@ Verify( GConvFunc gconv, int rootok )
 # ifdef HAVE_GETUSERSHELL
 	char *s;
 # endif
-# if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
+# if defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || defined(USESHADOW)
 	int tim, expir, warntime, quietlog;
 # endif
 # ifdef USE_LOGIN_CAP
@@ -849,9 +849,9 @@ Verify( GConvFunc gconv, int rootok )
 
 
 /* restrict_expired; this MUST be the last one */
-# if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
+# if defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || defined(USESHADOW)
 
-#  if !defined(HAVE_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW))
+#  if !defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW))
 	if (sp)
 #  endif
 	{
@@ -874,7 +874,7 @@ Verify( GConvFunc gconv, int rootok )
 #	endif
 #  endif
 
-#  ifdef HAVE_PW_EXPIRE
+#  ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
 		if (p->pw_expire) {
 			expir = p->pw_expire / 86400L;
 #  else
@@ -901,7 +901,7 @@ Verify( GConvFunc gconv, int rootok )
 			}
 		}
 
-#  ifdef HAVE_PW_EXPIRE
+#  ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
 		if (p->pw_change) {
 			expir = p->pw_change / 86400L;
 #  else
@@ -947,7 +947,7 @@ Verify( GConvFunc gconv, int rootok )
 
 	}
 
-# endif /* HAVE_PW_EXPIRE || USESHADOW */
+# endif /* HAVE_STRUCT_PASSWD_PW_EXPIRE || USESHADOW */
 
 # ifdef USE_LOGIN_CAP
 	login_close( lc );

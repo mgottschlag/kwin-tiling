@@ -640,7 +640,7 @@ registerBroadcastForPing( void )
 # endif
 			in_addr = *((struct sockaddr_in *)&broad_addr);
 			in_addr.sin_port = htons( XDM_UDP_PORT );
-# ifdef BSD44SOCKETS
+# ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
 			in_addr.sin_len = sizeof(in_addr);
 # endif
 			registerHostaddr( (struct sockaddr *)&in_addr, sizeof(in_addr),
@@ -677,7 +677,7 @@ makeSockAddrs( const char *name, HostAddr **hosts )
 	}
 	in_addr.sin_family = AF_INET;
 	in_addr.sin_port = htons( XDM_UDP_PORT );
-# ifdef BSD44SOCKETS
+# ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
 	in_addr.sin_len = sizeof(in_addr);
 # endif
 	addHostaddr( hosts, (struct sockaddr *)&in_addr, sizeof(in_addr),
@@ -726,7 +726,7 @@ AddChooserHost(
 		in_addr.sin_family = AF_INET;
 		memmove( &in_addr.sin_addr, addr->data, 4 );
 		in_addr.sin_port = htons( XDM_UDP_PORT );
-#ifdef BSD44SOCKETS
+#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
 		in_addr.sin_len = sizeof(in_addr);
 #endif
 		registerHostaddr( (struct sockaddr *)&in_addr, sizeof(in_addr),

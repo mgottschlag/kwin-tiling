@@ -90,7 +90,7 @@ sendForward( CARD16 connectionType, ARRAY8Ptr address, char *closure )
 	case FamilyInternet:
 		addr = (struct sockaddr *)&in_addr;
 		bzero( (char *)&in_addr, sizeof(in_addr) );
-# ifdef BSD44SOCKETS
+# ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
 		in_addr.sin_len = sizeof(in_addr);
 # endif
 		in_addr.sin_family = AF_INET;
@@ -489,7 +489,7 @@ forward_respond ( struct sockaddr *from, int fromlen ATTR_UNUSED,
 					if (clientAddress.length != 4 || clientPort.length != 2)
 						goto badAddress;
 					bzero( (char *)&in_addr, sizeof(in_addr) );
-#ifdef BSD44SOCKETS
+#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
 					in_addr.sin_len = sizeof(in_addr);
 #endif
 					in_addr.sin_family = AF_INET;
@@ -535,7 +535,7 @@ forward_respond ( struct sockaddr *from, int fromlen ATTR_UNUSED,
 					memmove( un_addr.sun_path, clientAddress.data, clientAddress.length );
 					un_addr.sun_path[clientAddress.length] = '\0';
 					client = (struct sockaddr *)&un_addr;
-#if defined(BSD44SOCKETS) && !defined(__Lynx__) && defined(UNIXCONN)
+#if defined(HAVE_STRUCT_SOCKADDR_IN_SIN_LEN) && !defined(__Lynx__) && defined(UNIXCONN)
 					un_addr.sun_len = strlen( un_addr.sun_path );
 					clientlen = SUN_LEN( &un_addr );
 #else

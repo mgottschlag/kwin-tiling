@@ -170,7 +170,7 @@ CreateSocklistEntry( ARRAY8Ptr addr )
 	if (addr->length == 4) { /* IPv4 */
 		struct sockaddr_in *sin4;
 		sin4 = Calloc( 1, sizeof(struct sockaddr_in) );
-#ifdef BSD44SOCKETS
+#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
 		sin4->sin_len = sizeof(struct sockaddr_in);
 #endif
 		s->addr = (struct sockaddr *)sin4;

@@ -63,12 +63,9 @@ else
 fi
 
 AC_CHECK_MEMBERS([struct utmp.ut_user], , , [#include <utmp.h>])
-AC_CHECK_MEMBERS([struct passwd.pw_expire],
-	[AC_DEFINE(HAVE_PW_EXPIRE, 1, [Define if struct passwd has a pw_expire member])], ,
-[#include <pwd.h>])
-AC_CHECK_MEMBERS([struct sockaddr_in.sin_len],
-	[AC_DEFINE(BSD44SOCKETS, 1, [Define if struct sockaddr_in has a sin_len member])], ,
-[#include <sys/socket.h>
+AC_CHECK_MEMBERS([struct passwd.pw_expire], , , [#include <pwd.h>])
+AC_CHECK_MEMBERS([struct sockaddr_in.sin_len], , , [
+#include <sys/socket.h>
 #include <netinet/in.h>
 ])
 
