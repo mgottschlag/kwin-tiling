@@ -47,12 +47,12 @@
 class SearchProviderItem : public QListViewItem
 {
 public:
-    SearchProviderItem(QListView *parent, SearchProvider *provider) 
+    SearchProviderItem(QListView *parent, SearchProvider *provider)
     :QListViewItem(parent), m_provider(provider)
     {
       update();
     };
-    
+
     virtual ~SearchProviderItem()
     {
       delete m_provider;
@@ -63,7 +63,7 @@ public:
       setText(0, m_provider->name());
       setText(1, m_provider->keys().join(","));
     }
-    
+
     SearchProvider *provider() const { return m_provider; }
 
 private:
@@ -200,7 +200,7 @@ void FilterOptions::load()
     // Enable/Disable widgets accordingly.
     bool webShortcutsEnabled = config.readBoolEntry("EnableWebShortcuts", true);
     cb_enableWebShortcuts->setChecked( webShortcutsEnabled );
-
+    setWebShortcutState();
     if (lv_searchProviders->childCount())
       lv_searchProviders->setSelected(lv_searchProviders->firstChild(), true);
 }
@@ -275,13 +275,13 @@ void FilterOptions::save()
       service.writeEntry("Query", provider->query());
       service.writeEntry("Keys", provider->keys());
       service.writeEntry("Charset", provider->charset());
-      
+
       // we might be overwriting a hidden entry
       service.writeEntry("Hidden", false);
     }
   }
 
-  for (QStringList::ConstIterator it = m_deletedProviders.begin(); 
+  for (QStringList::ConstIterator it = m_deletedProviders.begin();
       it != m_deletedProviders.end(); ++it)
   {
       QStringList matches = kapp->dirs()->findAllResources("services", "searchproviders/" + *it + ".desktop");
