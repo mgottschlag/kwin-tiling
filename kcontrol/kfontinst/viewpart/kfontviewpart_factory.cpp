@@ -60,7 +60,7 @@ KFontViewPartFactory::~KFontViewPartFactory()
     s_instance=0L;
 }
 
-QObject * KFontViewPartFactory::createObject(QObject *parent, const char *name, const char *classname, const QStringList &)
+QObject * KFontViewPartFactory::createObject(QObject *parent, const char *name, const char *, const QStringList &)
 {
     if(parent && !parent->inherits("QWidget"))
     {
