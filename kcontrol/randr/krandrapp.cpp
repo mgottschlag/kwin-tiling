@@ -1,5 +1,5 @@
-/* 
- * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
+/*
+ * Copyright (c) 2002,2003 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 
 #include "krandrtray.h"
 
+#include <X11/Xlib.h>
+
 KRandRApp::KRandRApp()
 	: m_tray(new KRandRSystemTray(0L, "RANDRTray"))
 {
@@ -31,7 +33,7 @@ KRandRApp::KRandRApp()
 
 bool KRandRApp::x11EventFilter(XEvent* e)
 {
-	if (e->type == m_tray->eventBase() + RRScreenChangeNotify) {
+	if (e->type == m_tray->screenChangeNotifyEvent()) {
 		m_tray->configChanged();
 	}
 	return KApplication::x11EventFilter( e );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
+ * Copyright (c) 2002,2003 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,31 +26,37 @@
 #include <kcmodule.h>
 #include <kconfig.h>
 
-#include <X11/Xlib.h>
-#define INT8 _X11INT8
-#define INT32 _X11INT32
-#include <X11/Xproto.h>
-#undef INT8
-#undef INT32
-#include <X11/extensions/Xrandr.h>
-
 class KTimerDialog;
+class RandRScreenPrivate;
 
 class RandRScreen : public QObject
 {
 	Q_OBJECT
 
 public:
+	enum rotations {
+		Rotate0		= 0x1,
+		Rotate90	= 0x2,
+		Rotate180	= 0x3,
+		Rotate270	= 0x4,
+		RotateMask	= 0x5 - 1,
+		ReflectX	= 0x5,
+		ReflectY	= 0x6,
+		RotationMask = 0x7 - 1
+	};
+
 	RandRScreen(int screenIndex);
 	~RandRScreen();
 
 	void		loadSettings();
 	void		setOriginal();
 
-	Status		applyProposed();
+	bool		applyProposed();
 
-	// A return value of -1 means the user did not confirm in time, or cancelled.
-	Status		applyProposedAndConfirm();
+	/**
+	 * @returns false if the user did not confirm in time, or cancelled, or the change failed
+	 */
+	bool		applyProposedAndConfirm();
 
 public slots:
 	bool		confirm();
@@ -67,61 +73,94 @@ public:
 	QPixmap	        rotationIcon(int rotation) const;
 	QString			currentRotationDescription() const;
 
-	QStringList refreshRates(SizeID size) const;
+	/**
+	 * Refresh rate functions.
+	 */
+	QStringList refreshRates(int size) const;
 
 	QString		refreshRateDirectDescription(int rate) const;
-	QString		refreshRateIndirectDescription(SizeID size, int index) const;
-	QString		refreshRateDescription(SizeID size, int index) const;
+	QString		refreshRateIndirectDescription(int size, int index) const;
+	QString		refreshRateDescription(int size, int index) const;
 
 	int			currentRefreshRate() const;
 	QString		currentRefreshRateDescription() const;
 
-	int			proposedRefreshRate() const;
-	// NOTE this is an index, not a refresh rate in hz!
-	void		proposeRefreshRate(int index);
-
 	// Refresh rate hz <==> index conversion
-	int			refreshRateHzToIndex(SizeID size, int hz) const;
-	int			refreshRateIndexToHz(SizeID size, int index) const;
+	int			refreshRateHzToIndex(int size, int hz) const;
+	int			refreshRateIndexToHz(int size, int index) const;
 
-	int						numSizes() const;
-	const XRRScreenSize&	size(int index) const;
-	const Rotation			rotations() const;
+	/**
+	 * Screen size functions.
+	 */
+	int				numSizes() const;
+	const QSize&	pixelSize(int index) const;
+	const QSize&	mmSize(int index) const;
 
-	int			currentWidth() const;
-	int			currentHeight() const;
+	/**
+	 * Retrieve the index of a screen size with a specified pixel size.
+	 *
+	 * @param pixelSize dimensions of the screen in pixels
+	 * @returns the index of the requested screen size
+	 */
+	int				sizeIndex(QSize pixelSize) const;
 
-	Rotation	currentRotation() const;
-	SizeID		currentSize() const;
+	int			rotations() const;
 
-	Rotation	proposedRotation() const;
-	void		proposeRotation(Rotation newRotation);
+	/**
+	 * Current setting functions.
+	 */
+	int			currentPixelWidth() const;
+	int			currentPixelHeight() const;
+	int			currentMMWidth() const;
+	int			currentMMHeight() const;
 
-	SizeID		proposedSize() const;
-	void		proposeSize(SizeID newSize);
+	int			currentRotation() const;
+	int			currentSize() const;
 
+	/**
+	 * Proposed setting functions.
+	 */
+	int			proposedSize() const;
+	bool		proposeSize(int newSize);
+
+	int			proposedRotation() const;
+	void		proposeRotation(int newRotation);
+
+	int			proposedRefreshRate() const;
+	/**
+	 * Propose a refresh rate.
+	 * Please note that you must propose the target size first for this to work.
+	 *
+	 * @param index the index of the refresh rate (not a refresh rate in hz!)
+	 * @returns true if successful, false otherwise.
+	 */
+	bool		proposeRefreshRate(int index);
+
+	/**
+	 * Configuration functions.
+	 */
 	void		load(KConfig& config);
 	void		save(KConfig& config) const;
 
 private:
-	XRRScreenConfiguration	*m_config;
+	RandRScreenPrivate*	d;
 
 	int			m_screen;
-	Window		m_root;
 
-	QMemArray<XRRScreenSize>	m_sizes;
-	Rotation					m_rotations;
+	QValueList<QSize>	m_pixelSizes;
+	QValueList<QSize>	m_mmSizes;
+	int					m_rotations;
 
-	Rotation	m_originalRotation;
-	SizeID		m_originalSize;
+	int			m_originalRotation;
+	int			m_originalSize;
 	int			m_originalRefreshRate;
 
-	Rotation	m_currentRotation;
-	SizeID		m_currentSize;
+	int			m_currentRotation;
+	int			m_currentSize;
 	int			m_currentRefreshRate;
 
-	Rotation	m_proposedRotation;
-	SizeID		m_proposedSize;
+	int			m_proposedRotation;
+	int			m_proposedSize;
 	int			m_proposedRefreshRate;
 
 	KTimerDialog*	m_shownDialog;
@@ -143,6 +182,7 @@ public:
 	const QString&	version() const;
 
 	int		eventBase() const;
+	int		screenChangeNotifyEvent() const;
 	int		errorBase() const;
 
 	int		screenIndexOfWidget(QWidget* widget);
@@ -164,6 +204,8 @@ public:
 	 */
 	bool	loadDisplay(KConfig& config, bool loadScreens = true);
 	void	saveDisplay(KConfig& config, bool applyOnStartup);
+	
+	static bool isApplyOnStartup(KConfig& config);
 
 	void	applyProposed(bool confirm = true);
 

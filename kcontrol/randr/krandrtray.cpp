@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
+ * Copyright (c) 2002,2003 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 }
 
-void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
+void KRandRSystemTray::mouseReleaseEvent(QMouseEvent* e)
 {
 	// Popup the context menu with left-click
 	if (e->button() == LeftButton) {
@@ -46,7 +46,7 @@ void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
 		contextMenu()->popup(e->globalPos());
 		e->accept();
 	} else {
-		KSystemTray::mousePressEvent(e);
+		KSystemTray::mouseReleaseEvent(e);
 	}
 }
 
@@ -103,7 +103,7 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 	menu->insertTitle(SmallIcon("window_fullscreen"), i18n("Screen Size"));
 	
 	for (int i = 0; i < (int)currentScreen()->numSizes(); i++) {
-		lastIndex = menu->insertItem(i18n("%1 x %2").arg(currentScreen()->size(i).width).arg(currentScreen()->size(i).height));
+		lastIndex = menu->insertItem(i18n("%1 x %2").arg(currentScreen()->pixelSize(i).width()).arg(currentScreen()->pixelSize(i).height()));
 
 		if (currentScreen()->proposedSize() == i) {
 			menu->setItemChecked(lastIndex, true);
@@ -118,7 +118,7 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 
 	// Don't display the rotation options if there is no point (ie. none are supported)
 	// XFree86 4.3 does not include rotation support.
-	if (currentScreen()->rotations() != RR_Rotate_0) {
+	if (currentScreen()->rotations() != RandRScreen::Rotate0) {
 		menu->insertSeparator();
 		menu->insertTitle(SmallIcon("reload"), i18n("Orientation"));
 

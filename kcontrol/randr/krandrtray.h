@@ -30,7 +30,7 @@ class KRandRSystemTray :  public KSystemTray, public RandRDisplay
 public:
 	KRandRSystemTray(QWidget* parent = 0, const char *name = 0);
 
-	virtual void mousePressEvent(QMouseEvent* e);
+	virtual void mouseReleaseEvent(QMouseEvent* e);
 	virtual void contextMenuAboutToShow(KPopupMenu* menu);
 
 	void configChanged();

@@ -23,6 +23,15 @@
 
 class QButtonGroup;
 class KComboBox;
+class QCheckBox;
+
+// Currently Qt doesn't handle the DPI value change on resolution changes,
+// which means font sizes in pixels don't update.
+// As long as this is not changed, the initialization should be done very
+// early in the KDE startup sequence, even before kded is started.
+// Hopefully with Qt3.2 this won't be needed.
+#define XRANDR_STARTUP_HACK
+
 
 class KRandRModule : public KCModule, public RandRDisplay
 {
@@ -34,6 +43,8 @@ public:
 	virtual void load();
 	virtual void save();
 	virtual void defaults();
+	
+	static void performApplyOnStartup();
 
 protected slots:
 	void slotScreenChanged(int screen);

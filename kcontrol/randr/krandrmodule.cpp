@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
+ * Copyright (c) 2002,2003 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
+
 #include <qbuttongroup.h>
 #include <qlabel.h>
 #include <qradiobutton.h>
@@ -23,6 +23,8 @@
 #include <qvbuttongroup.h>
 #include <qcheckbox.h>
 #include <qhbox.h>
+#include <qvbox.h>
+#include <qdesktopwidget.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -30,7 +32,7 @@
 #include <kglobal.h>
 #include <kgenericfactory.h>
 #include <kcombobox.h>
-#include <kactivelabel.h>
+#include <kdialog.h>
 
 #include "krandrmodule.h"
 #include "krandrmodule.moc"
@@ -39,20 +41,27 @@
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
 K_EXPORT_COMPONENT_FACTORY (libkcm_randr, KSSFactory("randr") );
 
-
 extern "C"
 {
 	void init_randr()
 	{
-		// Load settings and apply appropriate config
-		RandRDisplay* display = new RandRDisplay();
-		KConfig randrConfig("kcmrandrrc", true);
-		if (display->loadDisplay(randrConfig))
-			display->applyProposed(false);
-		delete display;
+#ifndef XRANDR_STARTUP_HACK
+		KRandRModule::performApplyOnStartup();
+#endif
 	}
 }
 
+void KRandRModule::performApplyOnStartup()
+{
+	KConfig randrConfig("kcmrandrrc", true);
+	if( RandRDisplay::isApplyOnStartup(randrConfig))
+	{
+		// Load settings and apply appropriate config
+		RandRDisplay display;
+		if (display.loadDisplay(randrConfig))
+			display.applyProposed(false);
+	}
+}
 
 KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&)
     : KCModule(parent, name)
@@ -60,14 +69,15 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 {
 	if (!isValid()) {
 		QVBoxLayout *topLayout = new QVBoxLayout(this);
-		topLayout->addWidget(new KActiveLabel(i18n("Sorry, your X server does not support resizing and rotating the display. Please update to version 4.3 or greater.  You need the X Resize And Rotate extension (RANDR) version 1.1 or greater to use this feature.  Error code: %1").arg(errorCode()), this));
+		topLayout->addWidget(new QLabel(i18n("<qt>Sorry, your X server does not support resizing and rotating the display. Please update to version 4.3 or greater.  You need the X Resize And Rotate extension (RANDR) version 1.1 or greater to use this feature.  Error code: %1</qt>").arg(errorCode()), this));
 		return;
 	}
 
-	QVBoxLayout *topLayout = new QVBoxLayout(this);
-	topLayout->setAutoAdd(true);
+	QVBoxLayout* topLayout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+	//topLayout->setAutoAdd(true);
 
 	QHBox* screenBox = new QHBox(this);
+	topLayout->addWidget(screenBox);
 	new QLabel(i18n("Settings for screen:"), screenBox);
 	m_screenSelector = new KComboBox(screenBox);
 
@@ -83,24 +93,28 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 		m_screenSelector->setEnabled(false);
 
 	QHBox* sizeBox = new QHBox(this);
+	topLayout->addWidget(sizeBox);
 	new QLabel(i18n("Screen size:"), sizeBox);
 	m_sizeCombo = new KComboBox(sizeBox);
 	connect(m_sizeCombo, SIGNAL(activated(int)), SLOT(slotSizeChanged(int)));
 
-	m_rotationGroup = new QButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees anticlockwise)"), this);
-	m_rotationGroup->setRadioButtonExclusive(true);
-
 	QHBox* refreshBox = new QHBox(this);
+	topLayout->addWidget(refreshBox);
 	new QLabel(i18n("Refresh rate:"), refreshBox);
 	m_refreshRates = new KComboBox(refreshBox);
 	connect(m_refreshRates, SIGNAL(activated(int)), SLOT(slotRefreshChanged(int)));
 
+	m_rotationGroup = new QButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees anticlockwise)"), this);
+	topLayout->addWidget(m_rotationGroup);
+	m_rotationGroup->setRadioButtonExclusive(true);
+
 	m_applyOnStartup = new QCheckBox(i18n("Apply settings on KDE startup"), this);
+	topLayout->addWidget(m_applyOnStartup);
 	connect(m_applyOnStartup, SIGNAL(clicked()), SLOT(setChanged()));
 
-	slotScreenChanged(DefaultScreen(qt_xdisplay()));
+	topLayout->addStretch(1);
 
-	layout()->addItem(new QSpacerItem(0,0));
+	slotScreenChanged(QApplication::desktop()->primaryScreen());
 
 	setButtons(KCModule::Apply);
 
@@ -131,7 +145,7 @@ void KRandRModule::slotScreenChanged(int screen)
 
 	// Add new resolutions
 	for (int i = 0; i < currentScreen()->numSizes(); i++) {
-		m_sizeCombo->insertItem(i18n("%1 x %2 (%3mm x %4mm)").arg(currentScreen()->size(i).width).arg(currentScreen()->size(i).height).arg(currentScreen()->size(i).mwidth).arg(currentScreen()->size(i).mheight));
+		m_sizeCombo->insertItem(i18n("%1 x %2").arg(currentScreen()->pixelSize(i).width()).arg(currentScreen()->pixelSize(i).height()));
 
 		// Aspect ratio
 		/* , aspect ratio %5)*/
@@ -142,7 +156,7 @@ void KRandRModule::slotScreenChanged(int screen)
 	for (int i = m_rotationGroup->count() - 1; i >= 0; i--) {
 		m_rotationGroup->remove(m_rotationGroup->find(i));
 	}
-	
+
 	// Create rotations
 	for (int i = 0; i < 6; i++)
 		addRotationButton(1 << i, i > 3);
@@ -157,21 +171,21 @@ void KRandRModule::slotScreenChanged(int screen)
 void KRandRModule::slotRotationChanged()
 {
 	if (m_rotationGroup->find(0)->isOn())
-		currentScreen()->proposeRotation(RR_Rotate_0);
+		currentScreen()->proposeRotation(RandRScreen::Rotate0);
 	else if (m_rotationGroup->find(1)->isOn())
-		currentScreen()->proposeRotation(RR_Rotate_90);
+		currentScreen()->proposeRotation(RandRScreen::Rotate90);
 	else if (m_rotationGroup->find(2)->isOn())
-		currentScreen()->proposeRotation(RR_Rotate_180);
+		currentScreen()->proposeRotation(RandRScreen::Rotate180);
 	else {
 		Q_ASSERT(m_rotationGroup->find(3)->isOn());
-		currentScreen()->proposeRotation(RR_Rotate_270);
+		currentScreen()->proposeRotation(RandRScreen::Rotate270);
 	}
 
 	if (m_rotationGroup->find(4)->isOn())
-		currentScreen()->proposeRotation(RR_Reflect_X);
+		currentScreen()->proposeRotation(RandRScreen::ReflectX);
 
 	if (m_rotationGroup->find(5)->isOn())
-		currentScreen()->proposeRotation(RR_Reflect_Y);
+		currentScreen()->proposeRotation(RandRScreen::ReflectY);
 
 	setChanged();
 }
@@ -180,7 +194,7 @@ void KRandRModule::slotSizeChanged(int index)
 {
 	int oldProposed = currentScreen()->proposedSize();
 
-	currentScreen()->proposeSize(static_cast<SizeID>(index));
+	currentScreen()->proposeSize(index);
 
 	if (currentScreen()->proposedSize() != oldProposed) {
 		currentScreen()->proposeRefreshRate(0);
@@ -245,10 +259,10 @@ void KRandRModule::load()
 
 void KRandRModule::save()
 {
+	apply();
 	KConfig config("kcmrandrrc");
 	m_oldApply = m_applyOnStartup->isChecked();
 	saveDisplay(config, m_oldApply);
-	apply();
 	setChanged();
 }
 
@@ -287,17 +301,17 @@ void KRandRModule::update()
 	m_sizeCombo->blockSignals(false);
 
 	m_rotationGroup->blockSignals(true);
-	switch (currentScreen()->proposedRotation() & 15) {
-		case RR_Rotate_0:
+	switch (currentScreen()->proposedRotation() & RandRScreen::RotateMask) {
+		case RandRScreen::Rotate0:
 			m_rotationGroup->setButton(0);
 			break;
-		case RR_Rotate_90:
+		case RandRScreen::Rotate90:
 			m_rotationGroup->setButton(1);
 			break;
-		case RR_Rotate_180:
+		case RandRScreen::Rotate180:
 			m_rotationGroup->setButton(2);
 			break;
-		case RR_Rotate_270:
+		case RandRScreen::Rotate270:
 			m_rotationGroup->setButton(3);
 			break;
 		default:
@@ -305,8 +319,8 @@ void KRandRModule::update()
 			Q_ASSERT(currentScreen()->proposedRotation() & 15);
 			break;
 	}
-	m_rotationGroup->find(4)->setDown(currentScreen()->proposedRotation() & RR_Reflect_X);
-	m_rotationGroup->find(5)->setDown(currentScreen()->proposedRotation() & RR_Reflect_Y);
+	m_rotationGroup->find(4)->setDown(currentScreen()->proposedRotation() & RandRScreen::ReflectX);
+	m_rotationGroup->find(5)->setDown(currentScreen()->proposedRotation() & RandRScreen::ReflectY);
 	m_rotationGroup->blockSignals(false);
 
 	m_refreshRates->blockSignals(true);
