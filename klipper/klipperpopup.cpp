@@ -134,6 +134,8 @@ void KlipperPopup::slotAboutToShow() {
         if ( !m_filterWidget->text().isEmpty() ) {
             m_dirty = true;
             m_filterWidget->clear();
+            setItemVisible( m_filterWidgetId,  false );
+            m_filterWidget->hide();
         }
     }
     ensureClean();
