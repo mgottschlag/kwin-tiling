@@ -2,6 +2,13 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2003 by Lubos Lunak <l.lunak@kde.org>
+   clipboardpoll.cpp (part of Klipper - Cut & paste history for KDE)
+
+   (C) 2003 by Lubos Lunak <l.lunak@kde.org>
+
+   Licensed under the Artistic License
+
+ ------------------------------------------------------------- */
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -60,7 +67,7 @@ ClipboardPoll::ClipboardPoll( QWidget* parent )
         = { "_QT_SELECTION_SENTINEL",
             "_QT_CLIPBOARD_SENTINEL",
             "CLIPBOARD",
-            "TARGETS",
+            "TIMESTAMP",
             "KLIPPER_SELECTION_TIMESTAMP",
             "KLIPPER_CLIPBOARD_TIMESTAMP" };
     Atom atoms[ 6 ];
@@ -68,7 +75,7 @@ ClipboardPoll::ClipboardPoll( QWidget* parent )
     selection.sentinel_atom = atoms[ 0 ];
     clipboard.sentinel_atom = atoms[ 1 ];
     xa_clipboard = atoms[ 2 ];
-    xa_targets = atoms[ 3 ];
+    xa_timestamp = atoms[ 3 ];
     selection.timestamp_atom = atoms[ 4 ];
     clipboard.timestamp_atom = atoms[ 5 ];
     selection.atom = XA_PRIMARY;
@@ -79,7 +86,7 @@ ClipboardPoll::ClipboardPoll( QWidget* parent )
     kdDebug() << "(1) Setting last_owner for =" << "selection" << ":" << selection.last_owner << endl;
 #endif
     clipboard.last_owner = XGetSelectionOwner( qt_xdisplay(), xa_clipboard );
-#ifdef NOISY_KLIPPER_
+#ifdef NOISY_KLIPPER
     kdDebug() << "(2) Setting last_owner for =" << "clipboard" << ":" << clipboard.last_owner << endl;
 #endif
     selection.waiting_for_timestamp = false;
@@ -196,7 +203,7 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
         return false;
     }
     XDeleteProperty( qt_xdisplay(), winId(), data.timestamp_atom );
-    XConvertSelection( qt_xdisplay(), data.atom, xa_targets, data.timestamp_atom, winId(), qt_x_time );
+    XConvertSelection( qt_xdisplay(), data.atom, xa_timestamp, data.timestamp_atom, winId(), qt_x_time );
     data.waiting_for_timestamp = true;
     data.waiting_x_time = qt_x_time;
 #ifdef REALLY_NOISY_KLIPPER_
@@ -248,7 +255,7 @@ bool ClipboardPoll::changedTimestamp( SelectionData& data, const XEvent& ev )
 #endif
     if( timestamp != data.last_change || timestamp == CurrentTime )
     {
-#ifdef NOISY_KLIPPER_
+#ifdef NOISY_KLIPPER
         kdDebug() << "TIMESTAMP CHANGE:" << ( data.atom == XA_PRIMARY ) << endl;
 #endif
         data.last_change = timestamp;

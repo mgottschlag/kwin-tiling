@@ -56,7 +56,7 @@ class ClipboardPoll
         SelectionData selection;
         SelectionData clipboard;
         Atom xa_clipboard;
-        Atom xa_targets;
+        Atom xa_timestamp;
     };
-
+    
 #endif
