@@ -80,8 +80,9 @@ bool KHotKeys::init()
 
 void KHotKeys::cleanup()
 {
-    if( khotkeys_present )
+    if( khotkeys_inited )
         khotkeys_cleanup_2();
+    khotkeys_inited = false;
 }
 
 bool KHotKeys::present()
