@@ -1,18 +1,24 @@
 [Desktop Entry]
 Exec=khotkeys
 Name=KHotKeys
+Name[bg]=Жестове
 Name[cs]=Horké klávesy KDE
 Name[cy]=BysellauBrysKDE
+Name[eo]=Klavkombinoj
 Name[es]=Teclas rápidas de KDE
 Name[et]=KDE kiirklahvid
 Name[fi]=Pikanäppäimet
 Name[hi]=के-हाट-कीज़
 Name[hu]=Parancsbeállító (KHotKeys)
+Name[is]=Flýtilyklar KDE
+Name[ja]=KDE ホットキー
 Name[mn]=КДЭ-халуун тушаал
 Name[nn]=KDE-snøggtastar
-Name[pl]=Skróty klawiszowe KDE
+Name[pa]=ਕੇਹਾਟਕੀ
+Name[pl]=Skróty i gesty
 Name[pt_BR]=Teclas de atalho
 Name[ro]=Taste rapide
+Name[se]=KDE jođánisboalut
 Name[sv]=Khotkeys
 Name[ta]=Kஹாட்கீஸ்
 Name[uk]=Швидкі клавіші KDE

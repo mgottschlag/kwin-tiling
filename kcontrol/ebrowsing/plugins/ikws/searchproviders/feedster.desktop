@@ -2,8 +2,12 @@
 Encoding=UTF-8
 Type=Service
 Name=Feedster
+Name[bn]=ফীডস্টার
 Name[fa]=فیدستر
 Name[hi]=फीडस्टर
+Name[ja]=Feedster検索
+Name[pa]=ਫੀਡਸਟੀਰ
+Name[ta]=பீட்ஸ்டர்
 Name[xx]=xxFeedsterxx
 ServiceTypes=SearchProvider
 Keys=blog,rss,feedster
