@@ -32,6 +32,7 @@
 #include <kstandarddirs.h>
 #include <kdesktopfile.h>
 #include <kmessagebox.h>
+#include <kservice.h>
 
 #include <dcopclient.h>
 
@@ -139,7 +140,7 @@ void KDEDConfig::load() {
 	}
 
 	// Special case: kxmlrpcd
-	if (!kapp->dirs()->findResource("services", "kxmlrpcd.desktop").isEmpty())
+	if (KService::serviceByDesktopName("kxmlrpcd"))
 	{
 		clitem = new CheckListItem(_lvStartup, QString::null);
 		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
@@ -156,7 +157,7 @@ void KDEDConfig::load() {
 	}
 
 	// Special case: kalarmd
-	if (!kapp->dirs()->findResource("apps", ".hidden/kalarmd.desktop").isEmpty())
+	if (KService::serviceByDesktopName("kalarmd"))
 	{
 		clitem = new CheckListItem(_lvStartup, QString::null);
 		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
@@ -173,7 +174,7 @@ void KDEDConfig::load() {
 	}
 
 	// Special case: kwrited
-	if (!kapp->dirs()->findResource("services", "kwrited.desktop").isEmpty())
+	if (KService::serviceByDesktopName("kwrited"))
 	{
 		clitem = new CheckListItem(_lvStartup, QString::null);
 		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
