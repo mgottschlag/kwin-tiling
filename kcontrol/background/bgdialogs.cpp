@@ -706,7 +706,9 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
 
 void KMultiWallpaperDialog::slotAdd()
 {
-    KFileDialog fileDialog(QString::null, QString::null, this, "fileDialog", true);
+    KFileDialog fileDialog(locate("wallpaper", ""), 
+			   QString::null, this, 
+			   i18n("Select Wallpaper"), true);
 
     fileDialog.setCaption(i18n("Select"));
     KFile::Mode mode = static_cast<KFile::Mode> (KFile::Files |
