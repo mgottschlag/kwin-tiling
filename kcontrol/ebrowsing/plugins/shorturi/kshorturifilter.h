@@ -27,7 +27,7 @@
 
 #include <dcopobject.h>
 #include <klibloader.h>
-#include <kurifilterplugin.h>
+#include <kurifilter.h>
 
 class KInstance;
 

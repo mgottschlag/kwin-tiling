@@ -188,8 +188,8 @@ void KURISearchFilterEngine::loadConfig() {
     NavEntry rn = navEntryByName(IKW_REALNAMES);
     if (rn.m_strName == QString::null) {
 	rn.m_strName = IKW_REALNAMES;
-	rn.m_strQuery = "http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\2&providerid=132";
-	rn.m_strQueryWithSearch = "http://navigation.realnames.com/resolver.dll?action=navigation&realname=\\1&charset=\\2&providerid=132&fallbackuri=\\|";
+	rn.m_strQuery = "http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\2&providerid=180";
+	rn.m_strQueryWithSearch = "http://navigation.realnames.com/resolver.dll?action=navigation&realname=\\1&charset=\\2&providerid=180&fallbackuri=\\|";
 
 	if (rn.m_strName == selNavEngine) {
 	    m_currInternetKeywordsNavEngine = rn;

@@ -24,6 +24,13 @@
 
 template class QList<KURIFilterPlugin>;
 
+bool KURIFilterPlugin::filterURI( QString &uri ) {
+    KURL kuri(uri);
+    bool filtered = filterURI(kuri);
+    uri = kuri.url();
+    return filtered;
+}
+
 KURIFilter *KURIFilter::ms_pFilter = 0;
 
 KURIFilter::KURIFilter() {
