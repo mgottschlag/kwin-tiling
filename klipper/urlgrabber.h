@@ -118,7 +118,7 @@ public:
   ClipAction( KConfig *kc );
   ~ClipAction();
 
-  void  setRegExp( const QString& r) 	      { myRegExp = r; }
+  void  setRegExp( const QString& r) 	      { myRegExp = QRegExp( r ); }
   QString regExp() 			const { return myRegExp.pattern(); }
   inline bool matches( const QString& string ) const {
       return ( myRegExp.search( string ) != -1 );

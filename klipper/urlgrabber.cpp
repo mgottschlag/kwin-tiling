@@ -390,10 +390,9 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
 
 
 ClipAction::ClipAction( const QString& regExp, const QString& description )
+    : myRegExp( regExp ), myDescription( description )
 {
     myCommands.setAutoDelete( true );
-    myRegExp      = regExp;
-    myDescription = description;
 }
 
 
@@ -413,10 +412,10 @@ ClipAction::ClipAction( const ClipAction& action )
 
 
 ClipAction::ClipAction( KConfig *kc )
+    : myRegExp( kc->readEntry( "Regexp" ) ),
+      myDescription( kc->readEntry( "Description" ) )
 {
     myCommands.setAutoDelete( true );
-    myRegExp      = kc->readEntry( "Regexp" );
-    myDescription = kc->readEntry( "Description" ); // i18n'ed
     int num = kc->readNumEntry( "Number of commands" );
 
     // read the commands
