@@ -203,6 +203,9 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     QStringList list = KGlobal::dirs()->getResourceDirs("themes");
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
         readThemeDir(*it);
+
+    if (!currentItem())
+      setSelected(firstChild(), true);
 }
 
 void KThemeListBox::readThemeDir(const QString &directory)
