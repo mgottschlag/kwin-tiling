@@ -23,6 +23,8 @@
 #include <sys/stat.h>
 #include <linux/kernel.h>
 
+#include <ctype.h>
+
 #include <kapp.h>
 #include <ktablistbox.h>
 
@@ -64,7 +66,6 @@
 
 bool GetInfo_ReadfromFile( KTabListBox *lBox, const char *Name, char splitchar  )
 {
-  QString str;
   char buf[512];
 
   QFile *file = new QFile(Name);
@@ -79,7 +80,10 @@ bool GetInfo_ReadfromFile( KTabListBox *lBox, const char *Name, char splitchar  
       {  char *p=buf;
          if (splitchar!=0)    /* remove leading spaces between ':' and the following text */
 	     while (*p)
-	     {	if (*p==splitchar)
+	     {
+		if (!isgraph(*p))
+			*p = ' ';
+		if (*p==splitchar)
 	        { *p++ = ' ';
 		  while (*p==' ') ++p;
 		  *(--p) = splitchar;
@@ -87,6 +91,16 @@ bool GetInfo_ReadfromFile( KTabListBox *lBox, const char *Name, char splitchar  
 		}
 		else ++p;
 	     }
+	 else
+	 {
+		while (*p)
+		{
+		   if (!isgraph(*p))
+			*p = ' ';
+		   ++p;
+		}
+	 }
+
          lBox->setSeparator(splitchar);
          lBox->insertItem(buf);
       }
