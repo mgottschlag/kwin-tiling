@@ -45,87 +45,96 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   QString wizard = locate("data", "kcontrol/pics/wizard.png");
   QString kcontrol = locate("icon", "large/hicolor/apps/kcontrol.png");
 
-  QString text = i18n("<p>"
-                      "<table cellpadding=2 cellspacing=1 border=0  width=98% bgcolor=#EEEEFF>"
-                      "<tr>"
-                      "<td width=1%>"
-                      "<img src=\""
-                      + kcontrol +
-                      "\" border=\"0\">"
-                      "</td>"
-                      "<td width=90%>"
-                      "<b><big><big>KDE Control Center</big></big></b>"
-                      "<br>"
-                      "Configure your desktop environment."
-                      "</td></tr>"
-                      "</table>"
-                      "</p>"
-                      "<br>"
-                      "<p>"
-                      "Welcome to the \"KDE Control Center\", a central place to configure your "
-                      "desktop environment. "
-                      "Select a item from the index on the left to load a configuration module. "
-                      "Click on \"Desktop\" -> \"Background\" to configure the desktop background "
-                      "for example."
-                      "</p>"
-                      "<br>"
-                      "<p>"
-                      "<table cellpadding=2 cellspacing=1 border=0  width=100% bgcolor=#EEEEFF>"
-                      "<tr>"
-                      "<td>KDE version:</td>"
-                      "<td><b>"
-                      + KCGlobal::kdeVersion() +
-                      "</b></td>"
-                      "<td rowspan = 6 bgcolor=#FFFFFF>"
-                      "<img src=\""
-                      + wizard +
-                      "\" align=\"left\" border=\"0\">"
-                      "</td>"
-                      "</tr>"
-                      "<tr>"
-                      "<td>User:</td>"
-                      "<td><b>"
-                      + KCGlobal::userName() +
-                      "</td></b>"
-                      "</tr>"
-                      "<tr>"
-                      "<td>Hostname:</td>"
-                      "<td><b>"
-                      + KCGlobal::hostName() +
-                      "</td></b>"
-                      "</tr>"
-                      "<tr>"
-                      "<td>System:</td>"
-                      "<td><b>"
-                      + KCGlobal::systemName() +
-                      "</td></b>"
-                      "</tr>"
-                      "<tr>"
-                      "<td>Release:</td>"
-                      "<td><b>"
-                      + KCGlobal::systemRelease() +
-                      "</td></b>"
-                      "</tr>"
-                      "<tr>"
-                      "<td>Machine:</td>"
-                      "<td><b>"
-                      + KCGlobal::systemMachine() +
-                      "</td></b>"
-                      "</tr>"
-                      "<tr>"
-                      "<td colspan=2  bgcolor=#FFFFFF>"
-                      "<br>"
-                      "</td>"
-                      "</tr>"
-                      "<tr>"
-                      "<td colspan=2  bgcolor=#FFFFFF>"
-                      "Click on the \"Help\" tab on the left to browse a help text on the active "
-                      "control module. Use the \"Search\" tab if you are unsure where to look for "
-                      "a particular configuration option. "
-                      "</td>"
-                      "</tr>"
-                      "</table>"
-                      "</p>");
+  QString text = "<p>"
+    "<table cellpadding=2 cellspacing=1 border=0  width=98% bgcolor=#EEEEFF>"
+    "<tr>"
+    "<td width=1%>"
+    "<img src=\""
+    + kcontrol +
+    "\" border=\"0\">"
+    "</td>"
+    "<td width=90%>"
+    "<b><big><big>"
+    + i18n("KDE Control Center") +
+    "</big></big></b>"
+    "<br>"
+    + i18n("Configure your desktop environment.") +
+    "</td></tr>"
+    "</table>"
+    "</p>"
+    "<br>"
+    "<p>"
+    + i18n("Welcome to the \"KDE Control Center\", a central place to configure your "
+           "desktop environment. "
+           "Select a item from the index on the left to load a configuration module. "
+           "Click on \"Desktop\" -> \"Background\" to configure the desktop background "
+           "for example.") +
+    "</p>"
+    "<br>"
+    "<p>"
+    "<table cellpadding=2 cellspacing=1 border=0  width=100% bgcolor=#EEEEFF>"
+    "<tr>"
+    "<td>"
+    + i18n("KDE version:") +
+    "</td>"
+    "<td><b>"
+    + KCGlobal::kdeVersion() +
+    "</b></td>"
+    "<td rowspan=8 bgcolor=#FFFFFF>"
+    "<img src=\""
+    + wizard +
+    "\" align=\"left\" border=\"0\">"
+    "</td>"
+    "</tr>"
+    "<tr>"
+    "<td>"
+    + i18n("User:") +
+    "</td>"
+    "<td><b>"
+    + KCGlobal::userName() +
+    "</td></b>"
+    "</tr>"
+    "<tr>"
+    "<td>"
+    + i18n("Hostname:") +
+    "</td>"
+    "<td><b>"
+    + KCGlobal::hostName() +
+    "</td></b>"
+    "</tr>"
+    "<tr>"
+    "<td>"
+    + i18n("System:") +
+    "</td>"
+    "<td><b>"
+    + KCGlobal::systemName() +
+    "</td></b>"
+    "</tr>"
+    "<tr>"
+    "<td>"
+    + i18n("Release:") +
+    "</td>"
+    "<td><b>"
+    + KCGlobal::systemRelease() +
+    "</td></b>"
+    "</tr>"
+    "<tr>"
+    "<td>"
+    + i18n("Machine:") +
+    "</td>"
+    "<td><b>"
+    + KCGlobal::systemMachine() +
+    "</td></b>"
+    "</tr>"
+    "<tr>"
+    "<td colspan=2  bgcolor=#FFFFFF>"
+    + i18n("Click on the \"Help\" tab on the left to browse a help text on the active "
+           "control module. Use the \"Search\" tab if you are unsure where to look for "
+           "a particular configuration option.") +
+    "</td>"
+    "</tr>"
+    "</table>"
+    "</p>";
 
   browser->setText(text);
 }
