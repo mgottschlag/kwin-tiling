@@ -175,14 +175,20 @@ KDMConfig::KDMConfig()
     struct utsname tuname;
     uname (&tuname);
     QString gst = GetCfgQStr (C_GreetString);
-    int i, l = gst.length ();
+    int i, j, l = gst.length ();
     for (i = 0; i < l; i++) {
 	if (gst[i] == '%') {
 	    switch (gst[++i].cell()) {
 		case '%': _greetString += gst[i]; continue;
 		case 'd': ptr = dname; break;
 		case 'h': ptr = hostname; break;
-		case 'n': ptr = tuname.nodename; break;
+		case 'n': ptr = tuname.nodename;
+		    for (j = 0; ptr[j]; j++)
+			if (ptr[j] == '.') {
+			    ptr[j] = 0;
+			    break;
+			}
+		    break;
 		case 's': ptr = tuname.sysname; break;
 		case 'r': ptr = tuname.release; break;
 		case 'm': ptr = tuname.machine; break;
