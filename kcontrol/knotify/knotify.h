@@ -1,8 +1,8 @@
-/* 
-
+/*
     $Id$
 
-    Copyright (C) 2000 Charles Samuels <charles@altair.dhs.org>
+    Copyright (C) Charles Samuels <charles@altair.dhs.org>
+                  2000 Carsten Pfeiffer <pfeiffer@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public
@@ -19,117 +19,89 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 
-    $Log$
-    Revision 1.9  2000/05/31 22:30:07  charles
-    Report Bug on Module.
-
-    I can't test this quite yet, due to undefined references (which are not my fault)
-
-    But, they do compile and link and all that.
-
-    all the other modules to to be changes, an example is in knotify
-
-    Revision 1.8  2000/04/15 19:46:06  charles
-    Here's a commit. Happy David? :)
-
-    Oh. yeah. it does something.  It's done.  Well, unless you don't speak english.
-    I'm working on that now :)
-
-    Revision 1.7  2000/04/11 05:33:13  charles
-    Milestone 5.  Can't even remember how it's better, but it is (trust me).
-
-    Revision 1.6  2000/04/09 05:57:05  charles
-    Major milestone in progress of the new version of this applet.
-
-    Aren't ya all proud of me? :D
-
-    Revision 1.5  2000/04/08 22:50:45  charles
-    Totally broken for a change in design.
-    I'll start doing some "object oriented programming" now! Who would've
-    thought? :)
-
-    eventconfig.h will load up everything into memory, and then put it into
-    the lists box, and even do the rest of the goop.  ohh yeah.
-
-    Revision 1.4  2000/03/23 02:51:51  charles
-    Progressivly getting to the level of "usable" :)
-
-    Revision 1.3  2000/03/21 23:42:51  charles
-    Can anyone try to get the Layout to work properly? Is this a QT bug?
-    Is this my own fault?
-
-    It's horribly huge.
-
-    Oh, and it lists the programs properly (thanks coolo!).
-    That means that every program can/should now officially create
-    $KDEDIR/share/apps/appname/eventsrc
-
-    Or I shall stabilize the API first :D
-
-    Revision 1.2  2000/03/19 07:23:28  charles
-    the module actually "exists" now :D
-    Just wait until I start to DO something with it!
-
-    And how do you debug these darned things?
-    cd knotify
-    make --dammit it_work
-
-    Revision 1.1  2000/03/19 01:32:22  charles
-    A rediculously early commit so that I can rm -rf all I want :)
-    and, btw, applnk/Settings/System/Makefile.am is unchanged :)
-
-    This is all for the sake of KNotify.
-
-    I'm gonna finish this a lot sooner than I thought I would!
-
-*/  
+*/
 
 
 #ifndef _KNOTIFY_H
 #define _KNOTIFY_H
 
-#include "kcmodule.h"
-
-#include <qstringlist.h>
-#include <qstring.h>
 #include <qlistview.h>
-#include <qcheckbox.h>
+#include <qstring.h>
 
-#include <kaboutdata.h>
+#include <kcmodule.h>
 
-#include "eventview.h"
+#include "events.h"
 
-class Programs;
-
+class KAboutData;
+class KNCheckListItem;
+class KURLRequester;
 
 
 class KNotifyWidget : public KCModule
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-	KNotifyWidget(QWidget *parent, const char *name);
-	virtual ~KNotifyWidget();
+    KNotifyWidget(QWidget *parent, const char *name);
+    virtual ~KNotifyWidget();
 
-	void defaults();
-	virtual void save();
-	virtual QString quickHelp() const;
-	virtual const KAboutData *aboutData() const;
-		
+    void defaults();
+    virtual void save();
+    virtual QString quickHelp() const;
+    virtual const KAboutData *aboutData() const;
+
 private slots:
-	void changed();
-	/**
-	 * Load all the apps
-	 */
-	void loadAll();
-	
-protected:
-	QListView *apps;
-	QListView *events;
-	EventView *eventview;
+    void changed();
+    void loadAll();
 
-	Programs *applications;
-	
+    void slotItemActivated( QListViewItem * );
+    void slotFileChanged( const QString& text );
+    void playSound();
+
+private:
+    void updateView();
+
+    QListView *view;
+    KURLRequester *requester;
+    QPushButton *playButton;
+    Events *m_events;
+    KNCheckListItem *currentItem;
+
 };
+
+class KNListViewItem : public QObject, public QListViewItem
+{
+    Q_OBJECT
+
+public:
+    KNListViewItem( QListViewItem *parent, QListViewItem *after, KNEvent *e );
+    void itemChanged( KNCheckListItem * );
+
+signals:
+    void changed();
+    void soundActivated( KNEvent * );
+    void logActivated( KNEvent * );
+    void otherActivated( KNEvent * );
+
+private:
+    KNEvent *event;
+    KNCheckListItem *stderrItem, *msgboxItem, *soundItem, *logItem;
+
+};
+
+
+class KNCheckListItem : public QCheckListItem
+{
+public:
+    KNCheckListItem( QListViewItem *parent, KNEvent *e, int type,
+		     const QString& text );
+    const int type;
+    KNEvent *event;
+
+protected:
+    virtual void stateChange( bool on );
+
+};
+
 
 #endif
