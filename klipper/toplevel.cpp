@@ -89,7 +89,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
     // do NOT use UserIcon or appdata or something like that -- this breaks in
     // the kicker applet case!
-    m_pixmap = QPixmap( locate( "data", "klipper/pics/klipper_dock.png"  ));
+    m_pixmap = MainBarIcon( "klipper", 22 );
     adjustSize();
 
     globalKeys = new KGlobalAccel(this);

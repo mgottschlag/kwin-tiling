@@ -36,8 +36,6 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/klipperrc.desktop $(DESTDIR)$(kde_confdir)/klipperrc
 
 KDE_ICON = klipper
-dockicondir = $(kde_datadir)/klipper/pics
-dockicon_DATA = klipper_dock.png
 
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/klipper.pot
