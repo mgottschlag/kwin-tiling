@@ -1519,7 +1519,7 @@ QPixmap CFontEngine::createPixmapFt(const QString &str, int width, int height, i
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
 {
-    const int           constHeaderSize=328;
+    const int           constHeaderSize=420;
     const int           constShortNameOffset=298;
     const int           constShortNameNumBytes=16;
     const int           constSourceFontNameOffset=24;

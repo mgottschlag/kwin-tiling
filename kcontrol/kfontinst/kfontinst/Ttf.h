@@ -56,7 +56,7 @@ class CTtf
         unsigned short lower;
     };
  
-    typedef struct THead
+    struct THead
     {
         unsigned long  version,
                        fontRevision,
