@@ -57,8 +57,7 @@
 #include "FontEngine.h"
 #include "CompressedFile.h"
 #include "Misc.h"
-#include <kurl.h>
-#include <kconfig.h>
+#include <kglobal.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
@@ -98,27 +97,6 @@ namespace KFI
 //    GENERIC
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-static int fe_stricmp(const char *s1, const char *s2)
-{
-    char c1,
-         c2;
-
-    for(;;)
-    {
-        c1=*s1++;
-        c2=*s2++;
-        if(!c1 || !c2)
-            break;
-        if(isupper(c1))
-            c1=tolower (c1);
-        if(isupper(c2))
-            c2=tolower (c2);
-        if(c1!=c2)
-            break;
-    }
-    return (int)c2-(int)c1;
-}
 
 #ifdef HAVE_FONT_ENC
 CFontEngine::~CFontEngine()
@@ -289,33 +267,33 @@ CFontEngine::EWeight CFontEngine::strToWeight(const char *str)
 {
     if(NULL==str)
         return WEIGHT_MEDIUM; // WEIGHT_UNKNOWN;
-    else if(fe_stricmp(str, "Bold")==0)
+    else if(kasciistricmp(str, "Bold")==0)
         return WEIGHT_BOLD;
-    else if(fe_stricmp(str, "Black")==0)
+    else if(kasciistricmp(str, "Black")==0)
         return WEIGHT_BLACK;
-    else if(fe_stricmp(str, "ExtraBold")==0)
+    else if(kasciistricmp(str, "ExtraBold")==0)
         return WEIGHT_EXTRA_BOLD;
-    else if(fe_stricmp(str, "UltraBold")==0)
+    else if(kasciistricmp(str, "UltraBold")==0)
         return WEIGHT_ULTRA_BOLD;
-    else if(fe_stricmp(str, "ExtraLight")==0)
+    else if(kasciistricmp(str, "ExtraLight")==0)
         return WEIGHT_EXTRA_LIGHT;
-    else if(fe_stricmp(str, "UltraLight")==0)
+    else if(kasciistricmp(str, "UltraLight")==0)
         return WEIGHT_ULTRA_LIGHT;
-    else if(fe_stricmp(str, "Light")==0)
+    else if(kasciistricmp(str, "Light")==0)
         return WEIGHT_LIGHT;
-    else if(fe_stricmp(str, "Medium")==0 || fe_stricmp(str, "Normal")==0 || fe_stricmp(str, "Roman")==0)
+    else if(kasciistricmp(str, "Medium")==0 || kasciistricmp(str, "Normal")==0 || kasciistricmp(str, "Roman")==0)
         return WEIGHT_MEDIUM;
-    else if(fe_stricmp(str, "Regular")==0)
+    else if(kasciistricmp(str, "Regular")==0)
         return WEIGHT_MEDIUM; // WEIGHT_REGULAR;
-    else if(fe_stricmp(str, "Demi")==0)
+    else if(kasciistricmp(str, "Demi")==0)
         return WEIGHT_DEMI;
-    else if(fe_stricmp(str, "SemiBold")==0)
+    else if(kasciistricmp(str, "SemiBold")==0)
         return WEIGHT_SEMI_BOLD;
-    else if(fe_stricmp(str, "DemiBold")==0)
+    else if(kasciistricmp(str, "DemiBold")==0)
         return WEIGHT_DEMI_BOLD;
-    else if(fe_stricmp(str, "Thin")==0)
+    else if(kasciistricmp(str, "Thin")==0)
         return WEIGHT_THIN;
-    else if(fe_stricmp(str, "Book")==0)
+    else if(kasciistricmp(str, "Book")==0)
         return WEIGHT_BOOK;
     else
         return WEIGHT_MEDIUM; // WEIGHT_UNKNOWN;
@@ -1681,7 +1659,7 @@ bool CFontEngine::openFontSnf(const QString &file)
                                     name=buffer;
                                     value=readStrSnf(snf);
 
-                                    if(!foundXlfd && fe_stricmp(name, "FONT")==0 && strlen(value))
+                                    if(!foundXlfd && kasciistricmp(name, "FONT")==0 && strlen(value))
                                     {
                                         foundXlfd=true;
                                         itsFullName=value;
@@ -1809,7 +1787,7 @@ bool CFontEngine::openFontPcf(const QString &file)
                                             char tmp[constMaxStrLen];
 
                                             for(prop=0; prop<numProps && !foundXlfd; ++prop)
-                                                if(fe_stricmp(&str[props[prop].name], "FONT")==0)
+                                                if(kasciistricmp(&str[props[prop].name], "FONT")==0)
                                                 {
                                                     if(props[prop].isString && strlen(&str[props[prop].value]))
                                                     {
