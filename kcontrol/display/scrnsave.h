@@ -17,6 +17,7 @@
 #include <qpopupmenu.h>
 #include <qcheckbox.h>
 #include <qslider.h>
+#include <qspinbox.h>
 
 #include <kcmodule.h>
 #include <kprocess.h>
@@ -129,7 +130,7 @@ protected:
     QPushButton *mSetupBt;
     QPushButton *mTestBt;
     QListBox    *mSaverListBox;
-    KIntNumInput *mWaitEdit;
+    QSpinBox	*mWaitEdit;
     QSlider     *mPrioritySlider;
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;

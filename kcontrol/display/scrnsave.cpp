@@ -150,29 +150,26 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     
     findSavers();
     
-    QGridLayout *topLayout = new QGridLayout( this, 3, 2, 10 );
+    QBoxLayout *topLayout = new QVBoxLayout(this, 10, 10);
     
-    topLayout->setRowStretch(0,0);
-    topLayout->setRowStretch(1,70);
-    topLayout->setRowStretch(2,30);
-
     mMonitorLabel = new QLabel( this );
     mMonitorLabel->setAlignment( AlignCenter );
     mMonitorLabel->setPixmap( QPixmap(locate("data",
 					     "kcontrol/pics/monitor.png"))); 
+    topLayout->addWidget(mMonitorLabel, 0);
     
-    topLayout->addMultiCellWidget( mMonitorLabel, 0, 0, 0, 1 );
-    
+    QBoxLayout *hLayout = new QHBoxLayout(this, 0, 10);
+    topLayout->addLayout(hLayout);
+
     QGroupBox *group = new QGroupBox(i18n("Screen Saver"), this );
-	
-    topLayout->addMultiCellWidget( group, 1, 2, 0, 0 );
-	
+    hLayout->addWidget(group);
     QBoxLayout *groupLayout = new QVBoxLayout( group, 10 );
     groupLayout->addSpacing(10);		
     
     mSaverListBox = new QListBox( group );
     mSaverListBox->insertItem( i18n("No screensaver"), 0 );
     mSaverListBox->setCurrentItem( 0 );
+    mSaverListBox->setFixedHeight(120);
     
     SaverConfig *saver;
     mSelected = 0;
@@ -190,39 +187,37 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mSelected = mSaverListBox->currentItem();
     connect( mSaverListBox, SIGNAL( highlighted( int ) ),
              this, SLOT( slotScreenSaver( int ) ) );
-	
     groupLayout->addWidget( mSaverListBox, 10 );
 
     QBoxLayout* hlay = new QHBoxLayout(groupLayout, 10);
-    
     mSetupBt = new QPushButton(  i18n("&Setup ..."), group );
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
     mSetupBt->setEnabled(mEnabled &&
                          !mSaverList.at(mSelected-1)->setup().isEmpty());
-
     hlay->addWidget( mSetupBt );
     
     mTestBt = new QPushButton(  i18n("&Test"), group );
     connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
     mTestBt->setEnabled(mEnabled);
-    
     hlay->addWidget( mTestBt );
 
-    QBoxLayout *stackLayout = new QVBoxLayout;
-    topLayout->addLayout(stackLayout, 1, 1);
-
-    group = new QGroupBox(  i18n("Settings"), this );
-    stackLayout->addWidget( group );
-
-    groupLayout = new QVBoxLayout( group, 10 );
+    group = new QGroupBox( i18n("Settings"), this );
+    hLayout->addWidget( group );
+    groupLayout = new QVBoxLayout( group, 10, 10 );
     groupLayout->addSpacing(10);
 
-    mWaitEdit = new KIntNumInput(i18n("&Wait for"), 1, 120, 1, mTimeout/60,
-                                 i18n("min"), 10, false, group);
-    mWaitEdit->setLabelAlignment(AlignLeft);
-    connect( mWaitEdit, SIGNAL( valueChanged(int) ),
-             SLOT( slotTimeoutChanged(int) ) );
-    groupLayout->addWidget(mWaitEdit);
+    QBoxLayout *hbox = new QHBoxLayout();
+    groupLayout->addLayout(hbox);
+    QLabel *lbl = new QLabel(i18n("&Wait for"), group);
+    hbox->addWidget(lbl);
+    mWaitEdit = new QSpinBox(group);
+    mWaitEdit->setSteps(1, 10);
+    mWaitEdit->setRange(1, 120);
+    mWaitEdit->setSuffix(i18n(" min."));
+    mWaitEdit->setValue(mTimeout/60);
+    connect(mWaitEdit, SIGNAL(valueChanged(int)), SLOT(slotTimeoutChanged(int)));
+    lbl->setBuddy(mWaitEdit);
+    hbox->addWidget(mWaitEdit);
 
     mLockCheckBox = new QCheckBox( i18n("&Require password"), group );
     mLockCheckBox->setChecked( mLock );
@@ -230,43 +225,38 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
 	     this, SLOT( slotLock( bool ) ) );
     groupLayout->addWidget(mLockCheckBox);
 
-    mStarsCheckBox = new QCheckBox( i18n("Show &password as stars"), group );
+    mStarsCheckBox = new QCheckBox( i18n("Show p&assword as stars"), group );
     mStarsCheckBox->setChecked(mPasswordStars);
     connect( mStarsCheckBox, SIGNAL( toggled( bool ) ), 
 	     this, SLOT( slotStars( bool ) ) );
     groupLayout->addWidget(mStarsCheckBox);
 
-   
-    stackLayout = new QHBoxLayout;
-    topLayout->addLayout(stackLayout, 2, 1); 
-
-    group = new QGroupBox(  i18n("Priority"), this );
-    stackLayout->addWidget( group );
+    hbox = new QHBoxLayout();
+    groupLayout->addLayout(hbox);
     
-    groupLayout = new QHBoxLayout( group, 15, 5 );
-    
-    QLabel* label = new QLabel(i18n("High"), group );
-    groupLayout->addWidget(label);
+    lbl = new QLabel(i18n("&Priority"), group);
+    hbox->addWidget(lbl);
+    hbox->addSpacing(20);
 
     mPrioritySlider = new QSlider(QSlider::Horizontal, group);
-    label->setBuddy(mPrioritySlider);
     mPrioritySlider->setRange(0, 19);
     mPrioritySlider->setSteps(1, 5);
-    mPrioritySlider->setValue(mPriority);
+    mPrioritySlider->setValue(19 - mPriority);
     connect(mPrioritySlider, SIGNAL( valueChanged(int)),
 	    SLOT(slotPriorityChanged(int)));
-    groupLayout->addWidget(mPrioritySlider);
+    lbl->setBuddy(mPrioritySlider);
+    hbox->addWidget(mPrioritySlider);
 
 #ifndef HAVE_SETPRIORITY
-    label->setEnabled(false);
+    lbl->setEnabled(false);
     mPrioritySlider->setEnabled(false);
 #endif
     
-    label = new QLabel( i18n("Low"), group );
-    groupLayout->addWidget(label);
+    lbl = new QLabel(i18n("High"), group);
+    hbox->addWidget(lbl);
     
 #ifndef HAVE_SETPRIORITY
-    label->setEnabled(false);
+    lbl->setEnabled(false);
 #endif
 
     topLayout->activate();
@@ -647,9 +637,11 @@ void KScreenSaver::slotPriorityChanged( int val )
     if (val == mPriority)
 	return;
     
-    mPriority = val;
+    mPriority = 19 - val;
     if (mPriority > 19)
 	mPriority = 19;
+    else if (mPriority < 0)
+	mPriority = 0;
 
     mChanged = true;
     emit changed(true);
