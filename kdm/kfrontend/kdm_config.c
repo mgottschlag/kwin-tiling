@@ -320,6 +320,7 @@ static int daemonize = -1, autolog = 1;
 static Value VnoPassEnable, VautoLoginEnable, VxdmcpEnable,
 	VXaccess, VXservers;
 
+#define C_PATH		0x10000000	/* C_TYPE_STR is a path spec */
 #define C_BOOL		0x10000000	/* C_TYPE_INT is a boolean */
 #define C_ENUM		0x20000000	/* C_TYPE_INT is an enum (option) */
 #define C_INTERNAL	0x40000000	/* don't expose to core */
@@ -434,7 +435,7 @@ Ent entsGeneral[] = {
 { "Xservers",		C_servers,		&VXservers,	KDMCONF "/Xservers" },
 { "PidFile",		C_pidFile,		0,	"/var/run/xdm.pid" },
 { "LockPidFile",	C_lockPidFile | C_BOOL,	0,	"true" },
-{ "AuthDir",		C_authDir,		0,	"/var/lib/kdm" },
+{ "AuthDir",		C_authDir | C_PATH,	0,	"/var/run/xauth" },
 { "AutoRescan",		C_autoRescan | C_BOOL,	0,	"true" },
 { "ExportList",		C_exportList,		0,	"" },
 #if !defined(__linux__) && !defined(__OpenBSD__)
@@ -494,7 +495,7 @@ Ent entsCore[] = {
 { "SystemPath",		C_systemPath,		0,	DEF_SYSTEM_PATH },
 { "SystemShell",	C_systemShell,		0,	"/bin/sh" },
 { "FailsafeClient",	C_failsafeClient,	0,	XBINDIR "/xterm" },
-{ "UserAuthDir",	C_userAuthDir,		0,	"/tmp" },
+{ "UserAuthDir",	C_userAuthDir | C_PATH,	0,	"/tmp" },
 { "Chooser",		C_chooser,		0,	KDE_BINDIR "/chooser" },
 { "NoPassEnable",	C_noPassEnable | C_BOOL, &VnoPassEnable, "false" },
 { "NoPassUsers",	C_noPassUsers,	(void *)PnoPassUsers,	"" },
@@ -908,6 +909,9 @@ CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 	case C_TYPE_STR:
 	    retval->ptr = val;
 	    retval->len = vallen + 1;
+	    if (et->id & C_PATH)
+		if (vallen && val[vallen-1] == '/')
+		    retval->len--;
 	    return 0;
 	case C_TYPE_ARGV:
 	    if (!(ents = malloc (sizeof(Value) * (esiz = 10)))) {
