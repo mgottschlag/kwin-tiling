@@ -31,7 +31,7 @@
     <DisabledValue value="1" object="desktop" />
     <Animated value="0" object="mainToolbar" />
     <DoublePixels value="0" object="mainToolbar" />
-    <Size value="1" object="mainToolbar" />
+    <Size value="22" object="mainToolbar" />
     <ActiveEffect name="none" object="mainToolbar" />
     <ActiveSemiTransparent value="0" object="mainToolbar" />
     <ActiveValue value="1" object="mainToolbar" />
@@ -43,7 +43,7 @@
     <DisabledValue value="1" object="mainToolbar" />
     <Animated value="0" object="panel" />
     <DoublePixels value="0" object="panel" />
-    <Size value="1" object="panel" />
+    <Size value="32" object="panel" />
     <ActiveEffect name="togamma" object="panel" />
     <ActiveSemiTransparent value="0" object="panel" />
     <ActiveValue value="1" object="panel" />
@@ -55,7 +55,7 @@
     <DisabledValue value="1" object="panel" />
     <Animated value="0" object="small" />
     <DoublePixels value="0" object="small" />
-    <Size value="1" object="small" />
+    <Size value="16" object="small" />
     <ActiveEffect name="none" object="small" />
     <ActiveSemiTransparent value="0" object="small" />
     <ActiveValue value="1" object="small" />
@@ -67,7 +67,7 @@
     <DisabledValue value="1" object="small" />
     <Animated value="0" object="toolbar" />
     <DoublePixels value="0" object="toolbar" />
-    <Size value="1" object="toolbar" />
+    <Size value="22" object="toolbar" />
     <ActiveEffect name="none" object="toolbar" />
     <ActiveSemiTransparent value="0" object="toolbar" />
     <ActiveValue value="1" object="toolbar" />
