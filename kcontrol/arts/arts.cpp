@@ -402,6 +402,7 @@ void KArtsModule::save() {
 		configChanged = false;
 		saveParams();
 		restartServer();
+                updateWidgets();
 	}
 	if (mixer)
 		mixer->save();
