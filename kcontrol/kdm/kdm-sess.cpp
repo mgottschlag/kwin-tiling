@@ -67,10 +67,29 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
         " <li><em>Nobody:</em> nobody can shutdown the computer using KDM</li></ul>") );
 
 
+      QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
+
+      shutdown_lined = new KURLRequester(group1);
+      QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("H&alt:"), group1);
+      connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
+	      SLOT(changed()));
+      wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
+      QWhatsThis::add( shutdown_label, wtstr );
+      QWhatsThis::add( shutdown_lined, wtstr );
+
+      restart_lined = new KURLRequester(group1);
+      QLabel *restart_label = new QLabel(restart_lined, i18n("Reb&oot:"), group1);
+      connect(restart_lined, SIGNAL(textChanged(const QString&)),
+	      SLOT(changed()));
+      wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
+      QWhatsThis::add( restart_label, wtstr );
+      QWhatsThis::add( restart_lined, wtstr );
+
+
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       QGroupBox *group4 = new QGroupBox( i18n("LILO"), this );
 
-      lilo_check = new QCheckBox(i18n("Show boot opt&ions"), group4);
+      lilo_check = new QCheckBox(i18n("Sho&w boot options"), group4);
       connect(lilo_check, SIGNAL(toggled(bool)),
 	      SLOT(changed()));
       wtstr = i18n("Enable LILO boot options in the \"Shutdown...\" dialog.");
@@ -79,11 +98,13 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       QBoxLayout *main = new QVBoxLayout( this, 10 );
       QGridLayout *lgroup0 = new QGridLayout( group0, 3, 5, 10);
+      QGridLayout *lgroup1 = new QGridLayout( group1, 3, 5, 10);
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       QGridLayout *lgroup4 = new QGridLayout( group4, 3, 4, 10);
 #endif
 
       main->addWidget(group0);
+      main->addWidget(group1);
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       main->addWidget(group4);
 #endif
@@ -98,6 +119,15 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       lgroup0->addWidget(sdrlabel, 1, 3);
       lgroup0->addWidget(sdrcombo, 1, 4);
 
+      lgroup1->addRowSpacing(0, group1->fontMetrics().height()/2);
+      lgroup1->addColSpacing(2, KDialog::spacingHint() * 2);
+      lgroup1->setColStretch(1, 1);
+      lgroup1->setColStretch(4, 1);
+      lgroup1->addWidget(shutdown_label, 1, 0);
+      lgroup1->addWidget(shutdown_lined, 1, 1);
+      lgroup1->addWidget(restart_label, 1, 3);
+      lgroup1->addWidget(restart_lined, 1, 4);
+
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       lgroup4->addRowSpacing(0, group4->fontMetrics().height()/2);
       lgroup4->addWidget(lilo_check, 1, 0);
@@ -111,6 +141,12 @@ void KDMSessionsWidget::makeReadOnly()
 {
     sdlcombo->setEnabled(false);
     sdrcombo->setEnabled(false);
+
+    restart_lined->lineEdit()->setReadOnly(true);
+    restart_lined->button()->setEnabled(false);
+    shutdown_lined->lineEdit()->setReadOnly(true);
+    shutdown_lined->button()->setEnabled(false);
+
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
     lilo_check->setEnabled(false);
 #endif
@@ -135,8 +171,10 @@ void KDMSessionsWidget::save()
     config->setGroup("X-*-Core");
     writeSD(sdrcombo);
 
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
     config->setGroup("Shutdown");
+    config->writeEntry("HaltCmd", shutdown_lined->url(), true);
+    config->writeEntry("RebootCmd", restart_lined->url(), true);
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
     config->writeEntry("UseLilo", lilo_check->isChecked());
 #endif
 }
@@ -162,8 +200,10 @@ void KDMSessionsWidget::load()
   config->setGroup("X-*-Core");
   readSD(sdrcombo, "Root");
 
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
   config->setGroup("Shutdown");
+  restart_lined->setURL(config->readEntry("RebootCmd", "/sbin/reboot"));
+  shutdown_lined->setURL(config->readEntry("HaltCmd", "/sbin/halt"));
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
   lilo_check->setChecked(config->readBoolEntry("UseLilo", false));
 #endif
 }
@@ -172,6 +212,9 @@ void KDMSessionsWidget::load()
 
 void KDMSessionsWidget::defaults()
 {
+  restart_lined->setURL("/sbin/reboot");
+  shutdown_lined->setURL("/sbin/halt");
+
   sdlcombo->setCurrentItem(SdAll);
   sdrcombo->setCurrentItem(SdRoot);
 
