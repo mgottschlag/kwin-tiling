@@ -185,7 +185,7 @@ void IconThemesConfig::installNewTheme()
     // QStringList instead of bool?
     QString somethingWrong =
         i18n("A problem occurred during the installation process. "
-             "However, most of the themes in the archive had been installed");
+             "However, most of the themes in the archive have been installed");
     KMessageBox::error(this, somethingWrong);
   }
 
