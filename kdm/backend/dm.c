@@ -674,10 +674,13 @@ emitXSessG( struct display *di, struct display *d, void *ctx ATTR_UNUSED )
 #ifdef HAVE_VTS
 	GSendInt( di->serverVT );
 #endif
+#ifdef XDMCP
 	if (di->status == remoteLogin) {
 		GSendStr( "" );
 		GSendStr( d->remoteHost );
-	} else {
+	} else
+#endif
+	{
 		GSendStr( di->userName );
 		GSendStr( di->sessName );
 	}

@@ -362,10 +362,13 @@ emitXSessC( struct display *di, struct display *d, void *ctx )
 		bp += sprintf( bp, "vt%d", di->serverVT );
 #endif
 	*bp++ = ',';
+#ifdef XDMCP
 	if (di->status == remoteLogin) {
 		*bp++ = ',';
 		str_cat_l( &bp, di->remoteHost, sizeof(cbuf)/3 );
-	} else {
+	} else
+#endif
+	{
 		if (di->userName)
 			str_cat_l( &bp, di->userName, sizeof(cbuf)/5 );
 		*bp++ = ',';
