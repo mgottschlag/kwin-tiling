@@ -46,6 +46,7 @@
 #include <kio/netaccess.h>
 
 #include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
 #include "../krdb/krdb.h"
 
@@ -366,14 +367,7 @@ void KColorScheme::save()
     {
         // Undo the property xrdb has placed on the root window (if any),
         // i.e. remove all entries, including ours
-        Atom resource_manager;
-        resource_manager = XInternAtom( qt_xdisplay(), "RESOURCE_MANAGER", True);
-        if (resource_manager != None)
-          XDeleteProperty( qt_xdisplay(), qt_xrootwin(), resource_manager);
-        // and run xrdb with ~/.Xdefaults at least to get non-KDE defaults
-        KProcess proc;
-        proc << "xrdb" << ( QDir::homeDirPath() + "/.Xdefaults" );
-        proc.start( KProcess::Block, KProcess::Stdin );
+        XDeleteProperty( qt_xdisplay(), qt_xrootwin(), XA_RESOURCE_MANAGER );
     }
     runRdb( flags );	// Save the palette to qtrc for KStyles
 
