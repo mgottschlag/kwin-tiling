@@ -21,12 +21,14 @@
 #include <qheader.h>
 #include <qimage.h>
 #include <qpainter.h>
+#include <qbitmap.h>
 
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kservicegroup.h>
 #include <kdebug.h>
 #include <qwhatsthis.h>
+#include <qbitmap.h>
 
 #include "moduletreeview.h"
 #include "moduletreeview.moc"
@@ -35,15 +37,27 @@
 
 static QPixmap appIcon(const QString &iconName)
 {
-    QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, KIcon::Small, 0, KIcon::DefaultState, 0L, true);
-    // make sure they are not larger than KIcon::SizeSmall
-    if (normal.width() > KIcon::SizeSmall || normal.height() > KIcon::SizeSmall) 
-    {
-       QImage tmp = normal.convertToImage();
-       tmp = tmp.smoothScale(KIcon::SizeSmall, KIcon::SizeSmall);
-       normal.convertFromImage(tmp);
-    }
-    return normal;
+     QString path;
+     QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, KIcon::Small, 0, KIcon::DefaultState, &path, true);
+     if (!path.isEmpty())
+     {
+         // make sure they are not larger than KIcon::SizeSmall
+         if (normal.width() > KIcon::SizeSmall || normal.height() > KIcon::SizeSmall)
+         {
+             QImage tmp = normal.convertToImage();
+             tmp = tmp.smoothScale(KIcon::SizeSmall, KIcon::SizeSmall);
+             normal.convertFromImage(tmp);
+         }
+         return normal;
+     }
+     else
+     {
+         kdDebug() << "No pixmap for "<< iconName << ". Providing replacement!" << endl;
+         QPixmap pixmap(QSize(KIcon::SizeSmall, KIcon::SizeSmall));
+         pixmap.fill(Qt::color0);
+         pixmap.setMask(pixmap.createHeuristicMask());
+         return pixmap;
+     }
 }
 
 class ModuleTreeWhatsThis : public QWhatsThis
