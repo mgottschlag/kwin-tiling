@@ -1,5 +1,20 @@
 [General]
 Name=Eclipse
+Name[cs]=Zatmění
+Name[da]=Eklipse
+Name[eo]=Eklipso
+Name[fr]=Éclipse
+Name[is]=Sólmyrkvi
+Name[it]=Eclisse
+Name[lv]=Elipse
+Name[nl]=Eclips
+Name[ro]=Eclipsă
+Name[ru]=Затмение
+Name[sk]=Zatmenie
+Name[sv]=Solförmörkelse
+Name[tr]=Tutulma
+Name[uk]=Затемнення
+Name[zh_CN.GB2312]=日蚀
 author=Hagen Hoepfner
 email=
 info=
