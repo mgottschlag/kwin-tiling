@@ -744,14 +744,14 @@ StartClient (
 
 	{ 
 	    extern char **newenv; /* from libs.a, this is set up by setpenv */
-	    char *theenv[];
+	    char **theenv;
 	    int i;
 
 	    /*
 	     * Make a copy of the environment, because setpenv will trash it.
 	     */
 	    for (i = 0; verify->userEnviron[i++]; );
-	    if (!(theenv = malloc(i * sizeof(char *)))) {
+	    if (!(theenv = (char **)malloc(i * sizeof(char *)))) {
 		Debug("Out of memory\n");
 		return(0);
 	    }
