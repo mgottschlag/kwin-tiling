@@ -32,9 +32,10 @@
 #include <klocale.h>
 #include <klibloader.h>
 #include <kseparator.h>
+#include <kstdguiitem.h>
 
 #include <qpopupmenu.h>
-#include <qpushbutton.h>
+#include <kpushbutton.h>
 #include <qlayout.h>
 #include <qfile.h>
 #include <qlabel.h>
@@ -773,7 +774,7 @@ void
 KGVerify::updateStatus()
 {
     int nfls;
-    
+
     if (!enabled)
 	nfls = 0;
     else if (failed)
@@ -890,10 +891,10 @@ KGChTok::KGChTok( QWidget *_parent, const QString &user,
     , verify( 0 )
 {
     QSizePolicy fp( QSizePolicy::Fixed, QSizePolicy::Fixed );
-    okButton = new QPushButton( i18n("&OK"), winFrame );
+    okButton = new KPushButton( KStdGuiItem::ok(), winFrame );
     okButton->setSizePolicy( fp );
     okButton->setDefault( true );
-    cancelButton = new QPushButton( i18n("&Cancel"), winFrame );
+    cancelButton = new KPushButton( KStdGuiItem::cancel(), winFrame );
     cancelButton->setSizePolicy( fp );
 
     verify = new KGVerify( this, winFrame, cancelButton, user, pluginList, func, ctx );

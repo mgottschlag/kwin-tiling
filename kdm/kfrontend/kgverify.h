@@ -35,6 +35,7 @@
 
 #include <sys/time.h>
 #include <time.h>
+class KPushButton;
 
 // helper class, nuke when qt supports suspend()/resume()
 class QXTimer : public QObject {
@@ -177,7 +178,7 @@ public slots:
     void accept();
 
 private:
-    QPushButton		*okButton, *cancelButton;
+    KPushButton		*okButton, *cancelButton;
     KGVerify		*verify;
 
 public: // from KGVerifyHandler
