@@ -175,6 +175,16 @@ void KBellConfig::save()
   cfg.setGroup("General");
   cfg.writeEntry("UseSystemBell", m_useBell->isChecked());
   cfg.sync();
+  
+  if (!m_useBell->isChecked())
+  {
+    KConfig config("kaccessrc", false);
+
+    config.setGroup("Bell");
+    config.writeEntry("SystemBell", false);
+    config.writeEntry("ArtsBell", false);
+    config.writeEntry("VisibleBell", false);
+  }
 }
 
 void KBellConfig::ringBell()
