@@ -185,7 +185,7 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
 
   lay->addWidget( menuB, 13, 1, 10);
 
-  KGlobal::dirs()->addResourceType("kwm_pics", KStandardDirs::kde_default("data") + "/kwm/pics/");
+  KGlobal::dirs()->addResourceType("kwm_pics", KStandardDirs::kde_default("data") + "kwm/pics/");
 
   // pixmap labels to show which button is which
   minP = new QLabel("", this);
