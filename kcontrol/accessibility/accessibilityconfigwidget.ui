@@ -990,7 +990,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                             <bool>false</bool>
                                         </property>
                                         <property name="text">
-                                            <string>Aceleration &amp;profile:</string>
+                                            <string>Acceleration &amp;profile:</string>
                                         </property>
                                         <property name="alignment">
                                             <set>AlignVCenter|AlignRight</set>
