@@ -707,7 +707,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                             <cstring>mouseNavigationGroup</cstring>
                         </property>
                         <property name="title">
-                            <string>M&amp;ouse Navigation</string>
+                            <string>&amp;Navigation</string>
                         </property>
                         <vbox>
                             <property name="name">

@@ -16,3 +16,7 @@ void AccessibilityConfigWidget::configChanged()
 {
 
 }
+
+
+
+

@@ -21,34 +21,35 @@
 // $Id$
 
 // #include <stdlib.h>
-// 
+
 // #include <dcopref.h>
-// 
-// #include <qtabwidget.h>
+
+#include <qtabwidget.h>
 // #include <qlayout.h>
 // #include <qgroupbox.h>
 // #include <qlabel.h>
-// #include <qcheckbox.h>
+#include <qcheckbox.h>
 // #include <qlineedit.h>
 // #include <qpushbutton.h>
-// #include <qradiobutton.h>
-// #include <qslider.h>
+#include <qradiobutton.h>
+#include <qslider.h>
 // #include <qwhatsthis.h>
-// 
-// #include <kconfig.h>
+
+#include <kconfig.h>
 // #include <kglobal.h>
 // #include <kstandarddirs.h>
 // #include <klocale.h>
 // #include <krun.h>
 // #include <kurl.h>
 // #include <kinstance.h>
-// #include <kcolorbutton.h>
+#include <kcolorbutton.h>
 // #include <kfiledialog.h>
-// #include <knuminput.h>
+#include <knuminput.h> 
 // #include <kapplication.h>
 #include <kaboutdata.h>
 // #include <kdebug.h>
 #include <kgenericfactory.h>
+#include <kurlrequester.h>
 
 #include "accessibilityconfigwidget.h"
 
@@ -80,6 +81,7 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, cons
   : AccessibilityConfigWidget( parent, name){
    kdDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)" << endl;
    // TODO: set the KURL Dialog to open just audio files
+   connect( mainTab, SIGNAL(currentChanged(QWidget*)), this, SIGNAL(quickHelpChanged()) );
    load();
 }
 
@@ -127,8 +129,8 @@ void AccessibilityConfig::load(){
 
 void AccessibilityConfig::save(){
    kdDebug() << "Running: AccessibilityConfig::save()" << endl;
-//    KConfig *config= new KConfig("kaccessrc", false);
-// 
+   KConfig *config= new KConfig("accessibilityrc", false);
+ 
 //    config->setGroup("Bell");
 // 
 //    config->writeEntry("SystemBell", systemBell->isChecked());
@@ -180,45 +182,68 @@ void AccessibilityConfig::save(){
 
 void AccessibilityConfig::defaults(){
    kdDebug() << "Running: AccessibilityConfig::defaults()" << endl;
+   
+   // Bell
+   // Audibe Bell
 //    systemBell->setChecked(true);
-//    customBell->setChecked(false);
-//    soundEdit->setText("");
-// 
-//    visibleBell->setChecked(false);
-//    invertScreen->setChecked(true);
-//    flashScreen->setChecked(false);
-//    colorButton->setColor(QColor(Qt::red));
-// 
-//    durationSlider->setValue(500);
-// 
-//    slowKeys->setChecked(false);
-//    slowKeysDelay->setValue(500);
-// 
-//    bounceKeys->setChecked(false);
-//    bounceKeysDelay->setValue(500);
-// 
-//    stickyKeys->setChecked(true);
-//    stickyKeysLock->setChecked(true);
-// 
-//    checkAccess();
-// 
-//    emit changed(true);
+   customBell->setChecked(false);
+   soundToPlay->clear();
+
+   // Visible Bell
+   visibleBell->setChecked(false);
+   invertScreen->setChecked(true);
+   flashScreen->setChecked(false);
+   flashScreenColor->setColor(QColor(Qt::red));
+   visibleBellDuration->setValue(500);
+
+   // Keyboard
+   // Sticky Keys
+   stickyKeys->setChecked(false);
+   lockWithStickyKeys->setChecked(true);
+   
+   // Slow Keys
+   slowKeys->setChecked(false);
+   slowKeysDelay->setValue(500);
+   
+   // Bounce Keys
+   bounceKeys->setChecked(false);
+   bounceKeysDelay->setValue(500);
+   
+   // Mouse
+   // Navigation
+   accelerationDelay->setValue(160);
+   repeatInterval->setValue(5);
+   accelerationTime->setValue(1000);
+   maximumSpeed->setValue(500);
+   accelerationProfile->setValue(0);
 }
 
 QString AccessibilityConfig::quickHelp() const{
-    kdDebug() << "Running: AccessibilityConfig::quickHelp()"<< endl;
-    return i18n("<h1>Accessibility</h1>"); // ### fixme
+   kdDebug() << "Running: AccessibilityConfig::quickHelp()"<< endl;
+   kdDebug() << "mainTab->currentPageIndex=" << mainTab->currentPageIndex() << endl;
+   switch(mainTab->currentPageIndex()){
+      case 0:
+         return i18n("<h1>Bell</h1>"); // ### fixme
+         break;
+      case 1:
+         return i18n("<h1>Keyboard</h1>"); // ### fixme
+         break;
+      case 2:
+         return i18n("<h1>Mouse</h1>"); // ### fixme
+         break;
+   }
+   
 }
 
 const KAboutData* AccessibilityConfig::aboutData() const{
    kdDebug() << "Running: AccessibilityConfig::aboutData() const"<< endl;
-    KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
-                   0, 0, KAboutData::License_GPL,
-                   I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
+   KAboutData *about =
+   new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
  
-    about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
-    about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
+   about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
+   about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
  
-    return about;
+   return about;
 }
