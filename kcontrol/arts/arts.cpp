@@ -201,15 +201,18 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 //	connect(general->volumeSystray, SIGNAL(clicked()), this, SLOT(slotChanged()) );
 
 	connect(hardware->audioIO,SIGNAL(highlighted(int)),SLOT(slotChanged()));
+	connect(hardware->audioIO,SIGNAL(activated(int)),SLOT(slotChanged()));
 	connect(hardware->customOptions,SIGNAL(clicked()),SLOT(slotChanged()));
 	connect(hardware->addOptions,SIGNAL(textChanged(const QString&)),SLOT(slotChanged()));
 	connect(hardware->soundQuality,SIGNAL(highlighted(int)),SLOT(slotChanged()));
+	connect(hardware->soundQuality,SIGNAL(activated(int)),SLOT(slotChanged()));
 	connect(general->latencySlider,SIGNAL(valueChanged(int)),SLOT(slotChanged()));
 	connect(autoSuspend,SIGNAL(clicked()),SLOT(slotChanged()));
 	connect(suspendTime,SIGNAL(valueChanged(int)),SLOT(slotChanged()));
 	connect(general->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
 	connect(general->testMIDI,SIGNAL(clicked()),SLOT(slotTestMIDI()));
 	connect(hardware->midiDevice, SIGNAL( highlighted(int) ), this, SLOT( slotChanged() ) );
+	connect(hardware->midiDevice, SIGNAL( activated(int) ), this, SLOT( slotChanged() ) );
 	connect(hardware->midiUseMapper, SIGNAL( clicked() ), this, SLOT( slotChanged() ) );
 	connect(hardware->midiMapper, SIGNAL( textChanged( const QString& ) ),
 			this, SLOT( slotChanged() ) );
@@ -504,6 +507,22 @@ void KArtsModule::updateWidgets()
 		                              "missing or disabled"));
 	}
 	deviceName->setEnabled(customDevice->isChecked());
+	QString audioIO;
+	int item = hardware->audioIO->currentItem() - 1;	// first item: "default"
+	if (item >= 0)
+	{
+		audioIO = audioIOList.at(item)->name;
+		bool jack = (audioIO == QString::fromLatin1("jack"));
+		if(jack)
+		{
+			customRate->setChecked(false);
+			hardware->soundQuality->setCurrentItem(0);
+			autoSuspend->setChecked(false);
+		}
+		customRate->setEnabled(!jack);
+		hardware->soundQuality->setEnabled(!jack);
+		autoSuspend->setEnabled(!jack);
+	}
 	samplingRate->setEnabled(customRate->isChecked());
 	hardware->addOptions->setEnabled(hardware->customOptions->isChecked());
 	suspendTime->setEnabled(autoSuspend->isChecked());
@@ -518,7 +537,6 @@ void KArtsModule::updateWidgets()
 	general->autoSuspendGroupBox->setEnabled(startServerIsChecked);
 	hardware->setEnabled(startServerIsChecked);
 	hardware->midiMapper->setEnabled( hardware->midiUseMapper->isChecked() );
-
 }
 
 void KArtsModule::slotChanged()
@@ -677,6 +695,7 @@ QString KArtsModule::createArgs(bool netTrans,
 	I18N_NOOP("Portable Audio Library");
 	I18N_NOOP("Enlightened Sound Daemon");
 	I18N_NOOP("MAS Audio Input/Output");
+	I18N_NOOP("Jack Audio Connection Kit");
 #endif
 
 #include "arts.moc"
