@@ -169,7 +169,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     hbox = new QHBox(_uid_group);
     hbox->setSpacing(KDialog::spacingHint());
-    _uidLabel = new QLabel(i18n("&Username:"), hbox);
+    _uidLabel = new QLabel(i18n("&User name:"), hbox);
     _uidEdit = new KLineEdit(hbox);
 	_uidEdit->setAcceptDrops(false);
     _uidLabel->setBuddy(_uidEdit);

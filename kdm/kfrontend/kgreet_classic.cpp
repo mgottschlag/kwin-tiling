@@ -69,7 +69,7 @@ KClassicGreeter::KClassicGreeter(
 	if (fixedUser.isEmpty()) {
 	    loginEdit = new KLineEdit( parent );
 	    loginEdit->setContextMenuEnabled( false );
-	    loginLabel = new QLabel( loginEdit, i18n("&Username:"), parent );
+	    loginLabel = new QLabel( loginEdit, i18n("&User name:"), parent );
 	    connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotLoginLostFocus()) );
 	    if (pred) {
 		parent->setTabOrder( pred, loginEdit );
@@ -78,7 +78,7 @@ KClassicGreeter::KClassicGreeter(
 	    grid->addWidget( loginLabel, line, 0 );
 	    grid->addWidget( loginEdit, line++, 1 );
 	} else if (ctx != Login && ctx != Shutdown) {
-	    loginLabel = new QLabel( i18n("Username:"), parent );
+	    loginLabel = new QLabel( i18n("User name:"), parent );
 	    grid->addWidget( loginLabel, line, 0 );
 	    grid->addWidget( new QLabel( fixedUser, parent ), line++, 1 );
 	}
@@ -439,7 +439,7 @@ create(
 }
 
 kgreeterplugin_info kgreeterplugin_info = {
-    I18N_NOOP("Username + password (classic)"), "classic", kgreeterplugin_info::Local, init, done, create
+    I18N_NOOP("User name + password (classic)"), "classic", kgreeterplugin_info::Local, init, done, create
 };
 
 #include "kgreet_classic.moc"
