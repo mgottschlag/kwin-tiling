@@ -94,10 +94,10 @@ else
     AC_MSG_RESULT([no])
 fi
 
-AC_MSG_CHECKING([whether function prototypes with VarArgs are required])
+AC_MSG_CHECKING([whether function prototypes with Varargs are required])
 if test -n "$NEED_VARARGS_PROTOTYPES"; then
     AC_MSG_RESULT([yes])
-    AC_DEFINE(NeedVarargsPrototypes, 1, [Need function prototypes with VarArgs])
+    AC_DEFINE(NeedVarargsPrototypes, 1, [Need function prototypes with Varargs])
 else
     AC_MSG_RESULT([no])
 fi
@@ -107,45 +107,21 @@ AC_ARG_WITH(xdmdir,
 	[  --with-xdmdir[=PATH]    If the xdm config dir cannot be found automatically],
 	[ ac_xdmdir=$withval],
 	[ ac_xdmdir="no"])
-AC_MSG_CHECKING([for xdm config])
+AC_MSG_CHECKING([for xdm config directory])
 if test "$ac_xdmdir" = "no"; then
-    if test -n "$XDMDIR"; then
-	ac_xdmdir=$XDMDIR
-	dnl Check if Imake was right
-	if test -f $ac_xdmdir/xdm-config; then
-	    have_xdmdir=1
-	else
-	    dnl Here we must do something else
-	    dnl Maybe look for xdm-config in standard places, and
-	    dnl if that fails use a fresh copy in $KDEDIR/config/kdm/
-	    AC_FIND_FILE(xdm-config,/etc/X11/xdm /var/X11/xdm /usr/openwin/xdm /usr/X11R6/lib/X11/xdm,ac_xdmdir)
-	    if test -f $ac_xdmdir/xdm-config; then
-		have_xdmdir=1
-	    else
-		if test -f /etc/X11/kdm/kdm-config; then
-		    ac_xdmdir=/etc/X11/kdm
-		    have_xdmdir=1
-		else
-		    ac_xdmdir=$kdecfg/kdm
-		fi
-	    fi
+    ac_xdmdir=$kdecfg/kdm
+    dnl should /var/X11/xdm go before $XDMDIR?
+    for i in /etc/X11/kdm /etc/X11/xdm $XDMDIR /var/X11/xdm /usr/openwin/xdm /usr/X11R6/lib/X11/xdm; do
+	if test -d $i; then
+	    ac_xdmdir=$i
+	    break 2
 	fi
-    fi
-else
-    if test -f $ac_xdmdir/xdm-config -o -f $ac_xdmdir/kdm-config; then
-	have_xdmdir=1
-    fi
-fi
-if test -n "$have_xdmdir"; then
-    AC_MSG_RESULT([found in $ac_xdmdir])
-else
-    AC_MSG_RESULT([installing defaults in $ac_xdmdir])
-    xdmconfigsubdir=xdmconfig
+    done
 fi
 XDMDIR=$ac_xdmdir
+AC_MSG_RESULT([$XDMDIR])
 AC_SUBST(XDMDIR)
-AC_DEFINE_UNQUOTED(XDMDIR, "$ac_xdmdir", [Define where to find the XDM configurations])
-AC_SUBST(xdmconfigsubdir)
+AC_DEFINE_UNQUOTED(XDMDIR, "$XDMDIR", [Define where to find the XDM configuration])
 
 AC_PATH_PAM
 if test "x$no_pam" = "xyes"; then 

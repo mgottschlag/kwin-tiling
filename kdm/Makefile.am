@@ -1,6 +1,6 @@
 # $Id$
 
-SUBDIRS = greeter pics @xdmconfigsubdir@ @kdmchooserdir@
+SUBDIRS = greeter pics xdmconfig @kdmchooserdir@
 
 # Extra lib. Might be -lpam -dl or -lshadow or nothing
 PASSLIB = $(PASSWDLIB) $(PAMLIBS)
@@ -55,4 +55,4 @@ kdm_SOURCES = access.c \
 
 noinst_HEADERS = kdm-config.h dm.h dm_socket.h dm_error.h dm_auth.h greet.h
 
-EXTRA_DIST = chooser misc xdmconfig
+EXTRA_DIST = chooser misc
