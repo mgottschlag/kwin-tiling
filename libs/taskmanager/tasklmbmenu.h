@@ -27,7 +27,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <qpopupmenu.h>
 #include <qtimer.h>
-#include <kdemacros.h>
 
 #include "taskmanager.h"
 

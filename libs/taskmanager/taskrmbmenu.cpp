@@ -22,9 +22,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <klocale.h>
-#include <kiconloader.h>
 #include <assert.h>
+
+#include <kiconloader.h>
+#include <klocale.h>
 
 #include "taskrmbmenu.h"
 #include "taskrmbmenu.moc"

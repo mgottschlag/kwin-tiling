@@ -21,19 +21,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <kglobal.h>
-#include <klocale.h>
-#include <kdebug.h>
-#include <kconfig.h>
-#include <kiconloader.h>
-#include <kwinmodule.h>
-#include <kwin.h>
-#include <netwm.h>
-#include <qtimer.h>
-#include <qimage.h>
 #include <qapplication.h>
 #include <qdesktopwidget.h>
+#include <qimage.h>
+#include <qtimer.h>
 
+#include <kconfig.h>
+#include <kdebug.h>
+#include <kglobal.h>
+#include <kiconloader.h>
+#include <klocale.h>
+#include <kwin.h>
+#include <kwinmodule.h>
+#include <netwm.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>

@@ -27,17 +27,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <sys/types.h>
 
-#include <qpoint.h>
 #include <qobject.h>
-#include <qvaluelist.h>
-#include <qptrlist.h>
 #include <qpixmap.h>
+#include <qpoint.h>
+#include <qptrlist.h>
 #include <qrect.h>
+#include <qvaluelist.h>
 
 #include <dcopobject.h>
-#include <kwin.h>
 #include <kstartupinfo.h>
-#include <kdemacros.h>
+#include <kwin.h>
 
 class TaskManager;
 
