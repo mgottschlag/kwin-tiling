@@ -74,6 +74,9 @@ protected slots:
   bool queryClose();
 
 private:
+
+  QString handleAmpersand( QString ) const;
+  
   QTabWidget     *_tab;
   DockContainer  *_dock;
 

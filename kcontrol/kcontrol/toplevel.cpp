@@ -311,7 +311,7 @@ void TopLevel::newModule(const QString &name, const QString& docPath, const QStr
   if(name.isEmpty())
     report_bug->setText(i18n("&Report Bug..."));
   else
-    report_bug->setText(i18n("Report Bug on Module %1...").arg(name));
+    report_bug->setText(i18n("Report Bug on Module %1...").arg( handleAmpersand( name)));
 }
 
 void TopLevel::changedModule(ConfigModule *changed)
@@ -437,7 +437,8 @@ void TopLevel::activateModule(const QString& name)
 
         if (mod->aboutData())
         {
-           about_module->setText(i18n("Help menu->about <modulename>", "About %1").arg(mod->name()));
+           about_module->setText(i18n("Help menu->about <modulename>", "About %1").arg(
+               handleAmpersand( mod->name())));
            about_module->setIcon(mod->icon());
            about_module->setEnabled(true);
         }
@@ -499,3 +500,15 @@ void TopLevel::aboutModule()
     dlg.exec();
 }
 
+QString TopLevel::handleAmpersand( QString modulename ) const
+{
+   if( modulename.contains( '&' )) // double it
+   {
+      for( int i = modulename.length();
+           i >= 0;
+           --i )
+         if( modulename[ i ] == '&' )
+             modulename.insert( i, "&" );
+   }
+   return modulename;
+}
