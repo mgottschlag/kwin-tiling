@@ -20,6 +20,7 @@ class QRadioButton;
 class QButtonGroup;
 class QBoxLayout;
 class KConfig;
+class KAboutData;
 
 
 /**
