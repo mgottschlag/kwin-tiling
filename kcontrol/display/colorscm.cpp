@@ -662,12 +662,13 @@ void KColorScheme::readScheme( int index )
     cs->aTitle = config->readColorEntry("activeBackground", &darkBlue);
     cs->aTxt = config->readColorEntry("activeForeground", &white);
     cs->aBlend = config->readColorEntry("activeBlend", &black);
-    cs->aTitleBtn = config->readColorEntry("activeTitleBtnFg", &cs->back);
-    cs->iTitleBtn = config->readColorEntry("inactiveTitleBtnFg", &cs->back);
-    cs->aTitleBtnBack = config->readColorEntry("activeTitleBtnBg", &cs->back);
-    cs->iTitleBtnBack = config->readColorEntry("inactiveTitleBtnBg", &cs->back);
-    cs->aTitleBtnBlend = config->readColorEntry("activeTitleBtnBlend", &cs->back);
-    cs->iTitleBtnBlend = config->readColorEntry("inactiveTitleBtnBlend", &cs->back);
+    // hack - this is all going away. For now just set all to button bg
+    cs->aTitleBtn = config->readColorEntry("activeTitleBtnBg", &cs->back);
+    cs->iTitleBtn = config->readColorEntry("inactiveTitleBtnBg", &cs->back);
+    cs->aTitleBtnBack = cs->aTitleBtn;
+    cs->iTitleBtnBack = cs->iTitleBtn;
+    cs->aTitleBtnBlend = cs->aTitleBtn;
+    cs->iTitleBtnBlend = cs->iTitleBtn;
 
     if (index == 0)
 	config->setGroup( "KDE" );
