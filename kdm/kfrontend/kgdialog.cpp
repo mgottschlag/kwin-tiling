@@ -61,7 +61,7 @@ KGDialog::completeMenu()
 #ifdef HAVE_VTS
     if (_isLocal) {
 	dpyMenu = new QPopupMenu( winFrame );
-	inserten( i18n("Sess&ions"), ALT+Key_I, dpyMenu );
+	inserten( i18n("Sw&itch User"), ALT+Key_I, dpyMenu );
 	connect( dpyMenu, SIGNAL(activated(int)),
 		 SLOT(slotDisplaySelected(int)) );
 	connect( dpyMenu, SIGNAL(aboutToShow()),
