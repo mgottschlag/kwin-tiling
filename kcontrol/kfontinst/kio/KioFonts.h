@@ -39,8 +39,6 @@
 #include "Config.h"
 #include "Global.h"
 
-#define KIO_FONTS_USER_DIR "Personal"
-#define KIO_FONTS_SYS_DIR  "System"
 #define KIO_FONTS_PROTOCOL "fonts"
 
 class CKioFonts : public KIO::SlaveBase

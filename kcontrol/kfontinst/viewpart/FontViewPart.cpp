@@ -113,9 +113,9 @@ void CFontViewPart::install()
 {
     int resp=CMisc::root() ? KMessageBox::Yes
                            : KMessageBox::questionYesNoCancel(itsFrame, i18n("Where do you wish to install %1:%2?\n"
-                                                           KIO_FONTS_USER_DIR" - only accessible to you, or\n"
-                                                           KIO_FONTS_SYS_DIR" - accessible to all (requires administrator password)").arg(m_url.protocol()).arg(m_url.path()),
-                                            i18n("Install"), i18n(KIO_FONTS_USER_DIR), i18n(KIO_FONTS_SYS_DIR));
+                                                           "Personal - only accessible to you, or\n"
+                                                           "System - accessible to all (requires administrator password)").arg(m_url.protocol()).arg(m_url.path()),
+                                            i18n("Install"), i18n("Personal"), i18n("System"));
 
     if(KMessageBox::Cancel!=resp)
     {
@@ -136,7 +136,7 @@ void CFontViewPart::install()
                     break;
             }
 
-        QString       destDir(CMisc::root() ? sub : QString((KMessageBox::Yes==resp ? KIO_FONTS_USER_DIR : KIO_FONTS_SYS_DIR))+QChar('/')+sub);
+        QString       destDir(CMisc::root() ? sub : QString((KMessageBox::Yes==resp ? "Personal" : "System"))+QChar('/')+sub);
         KURL          destUrl(QString("fonts:/")+destDir+CMisc::getFile(m_url.path()));
         KIO::UDSEntry uds;
 

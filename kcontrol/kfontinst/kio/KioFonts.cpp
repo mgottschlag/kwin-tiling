@@ -221,35 +221,34 @@ static bool checkUrl(const KURL &u)
     {
         QString sect(CMisc::getSect(u.path()));
 
-        return i18n(KIO_FONTS_USER_DIR)==sect || i18n(KIO_FONTS_SYS_DIR)==sect;
+        return i18n("Personal")==sect || i18n("System")==sect;
     }
 }
 
 static bool nonRootSys(const KURL &u)
 {
-    return !CMisc::root() && i18n(KIO_FONTS_SYS_DIR)==CMisc::getSect(u.path());
+    return !CMisc::root() && i18n("System")==CMisc::getSect(u.path());
 }
 
 #define CHECK_URL(U) \
 if(!checkUrl(U))\
 { \
-    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"/"KIO_FONTS_USER_DIR"\" or \"/"KIO_FONTS_SYS_DIR"\".")); \
+    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"Personal\" or \"System\".")); \
     return; \
 }
 
 #define CHECK_URL_ROOT_OK(U) \
 if("/"!=url.path() && !checkUrl(U)) \
 { \
-    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"/\", \"/"KIO_FONTS_USER_DIR"\", or \"/"KIO_FONTS_SYS_DIR"\".")); \
+    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"/\", \"Personal\", or \"System\".")); \
     return; \
 }
 
 #define CHECK_ALLOWED(u) \
-if (u.path()==QString(QChar('/')+i18n(KIO_FONTS_USER_DIR)) || \
-    u.path()==QString(QChar('/')+i18n(KIO_FONTS_SYS_DIR)) ) \
+if (u.path()==QString(QChar('/')+i18n("Personal")) || \
+    u.path()==QString(QChar('/')+i18n("System")) ) \
 { \
-    error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, you cannot rename, move or delete either \"" \
-                                        KIO_FONTS_USER_DIR"\" or \""KIO_FONTS_SYS_DIR"\".")); \
+    error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, you cannot rename, move, or delete either \"Personal\" or \"System\".")); \
     return; \
 }
 
@@ -324,9 +323,9 @@ void CKioFonts::listDir(const KURL &url)
     {
         size=2;
         totalSize(size);
-        createDirEntry(entry, i18n(KIO_FONTS_USER_DIR), CGlobal::cfg().getRealTopDir(url.path()), false);
+        createDirEntry(entry, i18n("Personal"), CGlobal::cfg().getRealTopDir(url.path()), false);
         listEntry(entry, false);
-        createDirEntry(entry, i18n(KIO_FONTS_SYS_DIR), CGlobal::cfg().getRealTopDir(url.path()), true);
+        createDirEntry(entry, i18n("System"), CGlobal::cfg().getRealTopDir(url.path()), true);
         listEntry(entry, false);
         addDir(CGlobal::cfg().getUserFontsDir());
         cfgDir(CGlobal::cfg().getUserFontsDir());
@@ -339,7 +338,7 @@ void CKioFonts::listDir(const KURL &url)
         {
             size=getSize(CMisc::dirSyntax(top+CMisc::getSub(url.path())));
             totalSize(size);
-            listDir(top, CMisc::getSub(url.path()), i18n(KIO_FONTS_SYS_DIR)==CMisc::getSect(url.path()));
+            listDir(top, CMisc::getSub(url.path()), i18n("System")==CMisc::getSect(url.path()));
         }
     }
 
@@ -428,7 +427,7 @@ void CKioFonts::stat(const KURL &url)
     KDE_DBUG << "stat " << url.path() << endl;
     CHECK_URL_ROOT_OK(url)
 
-    QStringList   path(QStringList::split('/', url.encodedPathAndQuery(-1), false));
+    QStringList   path(QStringList::split('/', url.path(-1), false));
     KIO::UDSEntry entry;
     bool          err=false;
 
@@ -442,18 +441,18 @@ void CKioFonts::stat(const KURL &url)
             if(CMisc::root())
                 err=!createStatEntry(entry, url);
             else
-                if(i18n(KIO_FONTS_USER_DIR)==path[0])
-                    err=!createDirEntry(entry, i18n(KIO_FONTS_USER_DIR), CGlobal::cfg().getRealTopDir(url.path()), false);
-                else if(path[0]==i18n(KIO_FONTS_SYS_DIR))
-                    err=!createDirEntry(entry, i18n(KIO_FONTS_SYS_DIR), CGlobal::cfg().getRealTopDir(url.path()), true);
+                if(i18n("Personal")==path[0])
+                    err=!createDirEntry(entry, i18n("Personal"), CGlobal::cfg().getRealTopDir(url.path()), false);
+                else if(path[0]==i18n("System"))
+                    err=!createDirEntry(entry, i18n("System"), CGlobal::cfg().getRealTopDir(url.path()), true);
                 else
                 {
-                    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \""KIO_FONTS_USER_DIR"\" or \""KIO_FONTS_SYS_DIR"\"."));
+                    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"Personal\" or \"System\"."));
                     return;
                 }
             break;
         default:
-            err=!createStatEntry(entry, url, i18n(KIO_FONTS_SYS_DIR)==CMisc::getSect(url.path()));
+            err=!createStatEntry(entry, url, i18n("System")==CMisc::getSect(url.path()));
     }
 
     if(err)
@@ -479,7 +478,7 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, bool sys)
     if(d.exists())
     {
 //        return (QChar('.')==sub[0] || CGlobal::userXcfg().inPath(ds) || CGlobal::sysXcfg().inPath(ds)) &&
-//               createDirEntry(entry, CMisc::getName(url.path()), top+sub, !CMisc::root() && i18n(KIO_FONTS_SYS_DIR)==CMisc::getSect(url.path()));
+//               createDirEntry(entry, CMisc::getName(url.path()), top+sub, !CMisc::root() && i18n("System")==CMisc::getSect(url.path()));
 
         QString name(CMisc::getName(url.path()));
 
@@ -657,7 +656,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
             }
         }
         if(err)
-            error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \""KIO_FONTS_SYS_DIR"\" folder."));
+            error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"System\" folder."));
     }
     else if(putReal(destOrig, destOrigC, origExists, mode, resume))
         modifiedDir(CMisc::getDir(destOrig));
@@ -843,7 +842,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
             modifiedDir(CMisc::getDir(realDest), true);
         else
         {
-            error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \""KIO_FONTS_SYS_DIR"\" folder."));
+            error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"System\" folder."));
             return;
         }
     }
@@ -1079,7 +1078,7 @@ void CKioFonts::mkdir(const KURL &url, int)
                     finished();
                 }
                 else
-                    error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \""KIO_FONTS_SYS_DIR"\" folder."));
+                    error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"System\" folder."));
             }
             else
                 if (!exists && 0!=::mkdir(realPath.data(), 0777 /*umask will be applied*/ ))
@@ -1116,7 +1115,7 @@ void CKioFonts::chmod(const KURL &url, int permissions)
         cmd+=realPath;
 
         if(!doRootCmd(cmd))
-            error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \""KIO_FONTS_SYS_DIR"\" folder."));
+            error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"System\" folder."));
     }
     else
         if (-1==::chmod(realPath.data(), permissions))
@@ -1146,7 +1145,7 @@ void CKioFonts::del(const KURL &url, bool isFile)
             if(doRootCmd(cmd))
                 modifiedDir(CMisc::getDir(realPath), true);
             else
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \""KIO_FONTS_SYS_DIR"\" folder."));
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"System\" folder."));
         }
         else 
             if (0!=unlink(realPathC.data()))
@@ -1182,7 +1181,7 @@ void CKioFonts::del(const KURL &url, bool isFile)
                 deletedDir(realPath, true);
             }
             else
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \""KIO_FONTS_SYS_DIR"\" folder."));
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"System\" folder."));
         }
         else
         {
@@ -1640,35 +1639,35 @@ bool CKioFonts::confirmUrl(KURL &url)
     {
         QString sect(CMisc::getSect(url.path()));
 
-        if(i18n(KIO_FONTS_USER_DIR)!=sect && i18n(KIO_FONTS_SYS_DIR)!=sect)
+        if(i18n("Personal")!=sect && i18n("System")!=sect)
         {
             // No = 2nd button = System
-            if(KMessageBox::No==messageBox(QuestionYesNo, i18n("Do you wish to install the font into \""KIO_FONTS_USER_DIR"\" (in which case the "
-                                                               "font will only be usable by you), or \""KIO_FONTS_SYS_DIR"\" (the font will be usable "
+            if(KMessageBox::No==messageBox(QuestionYesNo, i18n("Do you wish to install the font into \"Personal\" (in which case the "
+                                                               "font will only be usable by you), or \"System\" (the font will be usable "
                                                                "by all users - but you will need to know the Administrator's password) ?"),
-                                           i18n("Where to install..."), i18n(KIO_FONTS_USER_DIR), i18n(KIO_FONTS_SYS_DIR)))
+                                           i18n("Where to install..."), i18n("Personal"), i18n("System")))
             {
                 switch(CFontEngine::getType(QFile::encodeName(url.path())))
                 {
                     case CFontEngine::TRUE_TYPE:
                     case CFontEngine::OPEN_TYPE:
                     case CFontEngine::TT_COLLECTION:
-                        url.setPath(QChar('/')+i18n(KIO_FONTS_SYS_DIR)+QChar('/')+CGlobal::cfg().getSysTTSubDir()+
+                        url.setPath(QChar('/')+i18n("System")+QChar('/')+CGlobal::cfg().getSysTTSubDir()+
                                     CMisc::getFile(url.path()));
                         break;
                     case CFontEngine::TYPE_1:
                     case CFontEngine::TYPE_1_AFM:
-                        url.setPath(QChar('/')+i18n(KIO_FONTS_SYS_DIR)+QChar('/')+CGlobal::cfg().getSysT1SubDir()+
+                        url.setPath(QChar('/')+i18n("System")+QChar('/')+CGlobal::cfg().getSysT1SubDir()+
                                     CMisc::getFile(url.path()));
                         break;
                     default:
                         error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, to install bitmap (.bdf, .pcf, .snf), or Speedo (.spd) "
-                                                           "fonts\n in the \"/"KIO_FONTS_SYS_DIR"\" folder you must specify a sub-folder."));
+                                                           "fonts\n in the \"System\" folder you must specify a sub-folder."));
                         return false;
                 }
             }
             else
-                url.setPath(QChar('/')+i18n(KIO_FONTS_USER_DIR)+QChar('/')+CMisc::getFile(url.path()));
+                url.setPath(QChar('/')+i18n("Personal")+QChar('/')+CMisc::getFile(url.path()));
 
             KDE_DBUG << "Changed URL to:" << url.path() << endl;
         }
@@ -1685,7 +1684,7 @@ QString CKioFonts::convertUrl(const KURL &url)
     {
         QString sect(CMisc::getSect(url.path()));
 
-        if(i18n(KIO_FONTS_USER_DIR)!=sect && i18n(KIO_FONTS_SYS_DIR)!=sect)
+        if(i18n("Personal")!=sect && i18n("System")!=sect)
             return url.path();
         else
             return CGlobal::cfg().getRealTopDir(url.path())+CMisc::getSub(url.path());

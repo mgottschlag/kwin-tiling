@@ -67,7 +67,7 @@ K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory)
 CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
             : KCModule(parent, "fontinst"),
               itsAboutData(NULL),
-              itsTop(CMisc::root() ? "fonts:/" : QString("fonts:/")+i18n(KIO_FONTS_USER_DIR)),
+              itsTop(CMisc::root() ? "fonts:/" : QString("fonts:/")+i18n("Personal")),
               itsConfig("kcmfontinstuirc")
 {
     KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
@@ -660,8 +660,8 @@ void CKCmFontInst::showFace(int)
 
 void CKCmFontInst::setUpAct()
 {
-    if(!CMisc::root() && (itsDirOp->url().path()==(QString("/")+i18n(KIO_FONTS_USER_DIR)) ||
-                          itsDirOp->url().path()==(QString("/")+i18n(KIO_FONTS_USER_DIR)+QString("/")) ) )
+    if(!CMisc::root() && (itsDirOp->url().path()==(QString("/")+i18n("Personal")) ||
+                          itsDirOp->url().path()==(QString("/")+i18n("Personal")+QString("/")) ) )
         itsUpAct->setEnabled(false);
 }
 
