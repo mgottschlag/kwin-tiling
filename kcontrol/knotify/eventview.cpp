@@ -61,6 +61,8 @@ EventView::EventView(QWidget *parent, const char *name):
 	
 	file->hide();
 	connect(eventslist, SIGNAL(highlighted(int)), SLOT(itemSelected(int)));
+	connect(enabled, SIGNAL(toggled(bool)), SLOT(itemToggled(bool)));
+	connect(file, SIGNAL(textChanged(QString)), SLOT(changed(textChanged(QString))));
 };
 
 EventView::~EventView()
@@ -69,15 +71,32 @@ EventView::~EventView()
 
 void EventView::defaults()
 {
-
+	emit changed();
 }
 
+void EventView::textChanged(const QString &str)
+{
+	// the filename lineedit has changed
+	int i=eventslist->currentItem();
+	switch (i)
+	{
+	case (0):
+		soundfile=str;
+		break;
+	case (1):
+		logfile=str;
+		break;
+	}
+
+	emit changed();
+}
 
 void EventView::itemSelected(int item)
 {
 	enabled->setChecked(false);
 	file->setEnabled(false);
-	
+	enabled->blockSignals(true);
+	file->blockSignals(true);
 	switch (item)
 	{
 	case (0):
@@ -110,6 +129,47 @@ void EventView::itemSelected(int item)
 		if (present & KNotifyClient::Stderr)
 			enabled->setChecked(true);
 	}
+	enabled->blockSignals(false);
+	file->blockSignals(false);
+}
+
+void EventView::itemToggled(bool on)
+{
+	enabled->blockSignals(true);
+	file->blockSignals(true);
+	eventslist->blockSignals(true);
+	
+	KNotifyClient::Presentation p;
+	switch(eventslist->currentItem())
+	{
+	case (0):
+		p=KNotifyClient::Sound;
+		break;
+	case (1):
+		p=KNotifyClient::Messagebox;
+		break;
+	case (2):
+		p=KNotifyClient::Logwindow;
+		break;
+	case (3):
+		p=KNotifyClient::Logfile;
+		break;
+	case (4):
+		p=KNotifyClient::Stderr;
+		break;
+	}
+
+	if (on)
+		present|=p;
+	else
+		present=present & (~p);
+
+	setPixmap(eventslist->currentItem(), on);
+	itemSelected(eventslist->currentItem());
+	emit changed();
+	enabled->blockSignals(false);
+	file->blockSignals(false);
+	eventslist->blockSignals(false);
 }
 
 void EventView::load(KConfig *config, const QString &section)
@@ -160,6 +220,9 @@ void EventView::setPixmap(int item, bool on)
 			KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small),
 			eventslist->text(item),
 			item);
+	else
+		eventslist->changeItem(eventslist->text(item), item);
+
 }
 
 void EventView::save()

@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.5  2000/03/25 06:37:24  charles
+    Slight rework so this isn't a pain in the butt to code :)
+
     Revision 1.4  2000/03/25 00:01:08  charles
     Now shows whether the events are toggled. and klined.h->klineedit.h
 
@@ -70,6 +73,9 @@ public slots:
 
 protected slots:
 	void setPixmap(int item, bool on);
+	void itemToggled(bool on);
+
+	void textChanged(const QString &str);
 
 signals:
 	void changed();
