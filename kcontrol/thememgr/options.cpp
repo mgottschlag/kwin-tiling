@@ -57,6 +57,7 @@ Options::Options (QWidget * aParent, const char *aName, bool aInit)
   // details dialog.
   mCbxColors = newLine("Colors", i18n("Colors"), &mStatColors);
   mCbxWallpapers = newLine("Display", i18n("Wallpapers"), &mStatWallpapers);
+  mCbxSounds = newLine("Sounds", i18n("Sound effects"), &mStatSounds);
   mCbxIcons = newLine("Icons", i18n("Icons"), &mStatIcons);
 
   btn = new QPushButton(i18n("Clear"), this);
@@ -132,6 +133,7 @@ void Options::save()
 {
   theme->instColors = mCbxColors->isChecked();
   theme->instWallpapers = mCbxWallpapers->isChecked();
+  theme->instSounds = mCbxSounds->isChecked();
   theme->instIcons = mCbxIcons->isChecked();
   theme->instOverwrite = !mCbxOverwrite->isChecked();
 }
@@ -142,6 +144,7 @@ void Options::slotInvert()
 {
   mCbxColors->setChecked(!mCbxColors->isChecked());
   mCbxWallpapers->setChecked(!mCbxWallpapers->isChecked());
+  mCbxSounds->setChecked(!mCbxSounds->isChecked());
   mCbxIcons->setChecked(!mCbxIcons->isChecked());
   save();
 }
@@ -152,6 +155,7 @@ void Options::slotClear()
 {
   mCbxColors->setChecked(false);
   mCbxWallpapers->setChecked(false);
+  mCbxSounds->setChecked(false);
   mCbxIcons->setChecked(false);
   save();
 }
@@ -220,6 +224,7 @@ void Options::updateStatus(void)
 {
   updateStatus("Colors", mStatColors);
   updateStatus("Display", mStatWallpapers);
+  updateStatus("Sounds", mStatSounds);
   updateStatus("Icons", mStatIcons);
 }
 
@@ -233,6 +238,7 @@ void Options::writeConfig()
   cfg->writeEntry("overwrite", !mCbxOverwrite->isChecked());
   cfg->writeEntry("colors", mCbxColors->isChecked());
   cfg->writeEntry("wallpapers", mCbxWallpapers->isChecked());
+  cfg->writeEntry("sounds", mCbxSounds->isChecked());
   cfg->writeEntry("icons", mCbxIcons->isChecked());
 }
 
@@ -246,6 +252,7 @@ void Options::readConfig()
   mCbxOverwrite->setChecked(!cfg->readBoolEntry("overwrite", false));
   mCbxColors->setChecked(cfg->readBoolEntry("colors", true));
   mCbxWallpapers->setChecked(cfg->readBoolEntry("wallpapers", true));
+  mCbxSounds->setChecked(cfg->readBoolEntry("sounds", true));
   mCbxIcons->setChecked(cfg->readBoolEntry("icons", true));
   save();
 }

@@ -63,6 +63,7 @@ public:
   /** Theme packet installation options */
   bool instColors;
   bool instWallpapers;  
+  bool instSounds;
   bool instIcons;
   bool instOverwrite;
 

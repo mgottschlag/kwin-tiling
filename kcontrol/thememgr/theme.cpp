@@ -673,21 +673,27 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
 		       int aInstalled)
 {
   QString grp = aCfg->group();
-  QString value, cmd;
-  bool flag;
-
-  cmd = aCmd.stripWhiteSpace();
+  QString cmd = aCmd.stripWhiteSpace();
 
   if (cmd == "setWallpaperMode")
   {
-    value = aCfg->readEntry("wallpaper",QString::null);
+    QString value = aCfg->readEntry("wallpaper",QString::null);
     aCfg->writeEntry("UseWallpaper", !value.isEmpty());
   }
   else if (cmd == "oneDesktopMode")
   {
-    flag = (aInstalled==1);
+    bool flag = (aInstalled==1);
     aCfg->writeEntry("CommonDesktop",  flag);
     if (flag) aCfg->writeEntry("DeskNum", 0);
+  }
+  else if (cmd == "setSound")
+  {
+    bool flag = (aInstalled==1);
+    if (flag)
+    {
+       int presentation = aCfg->readNumEntry("presentation",0);
+       aCfg->writeEntry("presentation", presentation | 1);
+    }
   }
   else
   {
@@ -871,6 +877,7 @@ void Theme::install(void)
 
   if (instWallpapers) installGroup("Display");
   if (instColors) installGroup("Colors");
+  if (instSounds) installGroup("Sounds");
   if (instIcons) installGroup("Icons");
 
   kdDebug() << "*** executing command list" << endl;
