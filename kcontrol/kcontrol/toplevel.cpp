@@ -293,8 +293,9 @@ void TopLevel::newModule(const QString &name, const QString& docPath, const QStr
 
 void TopLevel::moduleActivated(ConfigModule *module)
 {
+    if (!module) return;
     _active=module;
-    activateModule(module->name());
+    activateModule(module->fileName());
 }
 
 void TopLevel::showModule(QString desktopFile)
@@ -334,7 +335,7 @@ void TopLevel::activateModule(const QString& name)
   kdDebug() << "activate: " << name << endl;
   for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
         {
-          if (mod->name() == name)
+          if (mod->fileName() == name)
                 {
                   // tell the index to display the module
                   _indextab->makeVisible(mod);

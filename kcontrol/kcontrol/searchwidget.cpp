@@ -87,8 +87,8 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
   connect(_keyList, SIGNAL(highlighted(const QString&)),
           this, SLOT(slotKeywordSelected(const QString&)));
 
-  connect(_resultList, SIGNAL(selected(const QString&)),
-          this, SLOT(slotModuleSelected(const QString&)));
+  connect(_resultList, SIGNAL(selected(int)),
+          this, SLOT(slotModuleSelected(int)));
   connect(_resultList, SIGNAL(clicked(QListBoxItem *)),
           this, SLOT(slotModuleClicked(QListBoxItem *)));
 }
@@ -156,6 +156,7 @@ void SearchWidget::populateKeyListBox(const QString& s)
 void SearchWidget::populateResultListBox(const QString& s)
 {
   _resultList->clear();
+  _results.clear();
 
   QStringList results;
   QDict<ConfigModule> dict;
@@ -169,7 +170,8 @@ void SearchWidget::populateResultListBox(const QString& s)
           for(ConfigModule *m = modules.first(); m != 0; m = modules.next())
             {
               results.append(m->name());
-              dict.insert(m->name(), m);
+	      dict.insert(m->name(), m);
+	      _results += m->fileName();
             }
         }
     }
@@ -177,7 +179,10 @@ void SearchWidget::populateResultListBox(const QString& s)
   results.sort();
 
   for(QStringList::ConstIterator it = results.begin(); it != results.end(); it++)
-    _resultList->insertItem(KGlobal::iconLoader()->loadIcon((dict[*it])->icon(), KIcon::Desktop, KIcon::SizeSmall), *it);
+  {
+    _resultList->insertItem(KGlobal::iconLoader()->loadIcon(
+		(dict[*it])->icon(), KIcon::Desktop, KIcon::SizeSmall), *it);
+  }
 }
 
 void SearchWidget::slotSearchTextChanged(const QString & s)
@@ -192,13 +197,13 @@ void SearchWidget::slotKeywordSelected(const QString & s)
   populateResultListBox(s);
 }
 
-void SearchWidget::slotModuleSelected(const QString & s)
+void SearchWidget::slotModuleSelected(int i)
 {
-  emit moduleSelected(s);
+  emit moduleSelected(_results[i]);
 }
 
 void SearchWidget::slotModuleClicked(QListBoxItem *item)
 {
   if (item)
-    emit moduleSelected(item->text());
+    emit moduleSelected(_results[_resultList->index(item)]);
 }
