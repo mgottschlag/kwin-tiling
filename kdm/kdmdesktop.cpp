@@ -33,6 +33,7 @@
 #include <qpainter.h>
 #include <kconfig.h>
 #include <kpixmap.h>
+#include <kpixmapeffect.h>
 
 #include <config.h>
 #include <sys/types.h>
@@ -150,10 +151,12 @@ do_picture_background( DesktopConfig* dc)
        switch(dc->colorMode())
        {
          case Horizontal:
-           tmp.gradientFill(dc->bgcolor1, dc->bgcolor2, false);
+           KPixmapEffect::gradient(tmp, dc->bgcolor1, dc->bgcolor2, 
+			    KPixmapEffect::HorizontalGradient);
            break;
          case Vertical:
-           tmp.gradientFill(dc->bgcolor1, dc->bgcolor2, true);
+           KPixmapEffect::gradient(tmp, dc->bgcolor1, dc->bgcolor2,
+			    KPixmapEffect::HorizontalGradient);
            break;
          case Plain:
          default:

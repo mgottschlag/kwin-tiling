@@ -17,7 +17,7 @@ LDADD  = $(LIB_KIMGIO) $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) $(LIB_LIBS) \
 	$(LIBSOCKET) $(LIBCRYPT) $(LIBUCB) $(LIBUTIL) 
 
 # For kdmdesktop
-kdmdesktop_LDADD = $(LIB_KIMGIO) $(LIB_KDECORE)
+kdmdesktop_LDADD = $(LIB_KIMGIO) $(LIB_KDECORE) $(LIB_KDEUI)
 
 # Sources for xdm (both C and C++):
 kdmlib_source = access.c \
