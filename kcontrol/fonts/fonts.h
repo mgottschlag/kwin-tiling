@@ -15,7 +15,7 @@
 
 class QCheckBox;
 class QComboBox;
-class QLineEdit;
+class KDoubleNumInput;
 
 class FontUseItem : public QObject
 {
@@ -85,7 +85,7 @@ protected slots:
     void slotApplyFontDiff(); 
     void slotUseAntiAliasing();
     void slotAaToggle(bool);
-    void slotAaStrChange(const QString &);
+    void slotAaChange();
 
 private:
     void setAaWidgets();
@@ -100,8 +100,8 @@ private:
     KXftConfig xft;
     QCheckBox *aaExcludeRange;
     QCheckBox *aaUseSubPixel;
-    QLineEdit *aaExcludeFrom;
-    QLineEdit *aaExcludeTo;
+    KDoubleNumInput *aaExcludeFrom;
+    KDoubleNumInput *aaExcludeTo;
     QComboBox *aaSubPixelType;
 };
 

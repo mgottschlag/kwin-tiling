@@ -14,10 +14,9 @@
 #include <qtooltip.h>
 #include <qcheckbox.h>
 #include <qsettings.h>
-#include <qlineedit.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
-#include <qvalidator.h>
+#include <knuminput.h>
 
 // X11 headers
 #undef Bool
@@ -283,10 +282,10 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    QGroupBox *aaBox=new QGroupBox(i18n("Anti-Alias"), this);
 
    aaBox->setColumnLayout(0, Qt::Vertical);
-   aaBox->layout()->setSpacing(6);
-   aaBox->layout()->setMargin(11);
+   aaBox->layout()->setSpacing(KDialog::spacingHint());
+   aaBox->layout()->setMargin(KDialog::marginHint());
 
-   QGridLayout *aaLayout=new QGridLayout(aaBox->layout(), 3, 6);
+   QGridLayout *aaLayout=new QGridLayout(aaBox->layout(), 3, 5);
 
    cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ), aaBox);
 
@@ -296,32 +295,34 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 			 "fonts and some images."));
 
 
-   aaExcludeRange=new QCheckBox(i18n("Exclude range:"), aaBox),
-   aaUseSubPixel=new QCheckBox(i18n("Use sub-pixel hinting:"), aaBox);
-   aaExcludeFrom=new QLineEdit(aaBox),
-   aaExcludeTo=new QLineEdit(aaBox);
+   aaExcludeRange=new QCheckBox(i18n("E&xclude range:"), aaBox),
+   aaExcludeFrom=new KDoubleNumInput(aaBox),
+   aaExcludeFrom->setRange(0.0, 72.0, 1.0);
+   aaExcludeFrom->setPrecision(1);
+   aaExcludeFrom->setSuffix(i18n(" pt"));
+   aaExcludeTo=new KDoubleNumInput(aaBox);
+   aaExcludeTo->setRange(0.0, 72.0, 1.0);
+   aaExcludeTo->setPrecision(1);
+   aaExcludeTo->setSuffix(i18n(" pt"));
+   aaUseSubPixel=new QCheckBox(i18n("&Use sub-pixel hinting:"), aaBox);
    aaSubPixelType=new QComboBox(false, aaBox);
-
-   aaExcludeFrom->setValidator(new QDoubleValidator(aaExcludeFrom));
-   aaExcludeTo->setValidator(new QDoubleValidator(aaExcludeTo));
 
    for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
      aaSubPixelType->insertItem(KXftConfig::toStr((KXftConfig::SubPixel::Type)t));
 
    aaLayout->addMultiCellWidget(cbAA, 0, 0, 0, 4);
-   aaLayout->addItem(new QSpacerItem(16, 16, QSizePolicy::Minimum,
+   aaLayout->addItem(new QSpacerItem(16, 16, QSizePolicy::Fixed,
                                                QSizePolicy::Fixed), 
                        1, 0);
    aaLayout->addWidget(aaExcludeRange, 1, 1);
    aaLayout->addWidget(aaExcludeFrom, 1, 2);
-   aaLayout->addWidget(new QLabel(i18n("pt, to"), aaBox), 1, 3);
+   aaLayout->addWidget(new QLabel(i18n(" to "), aaBox), 1, 3);
    aaLayout->addWidget(aaExcludeTo, 1, 4);
-   aaLayout->addWidget(new QLabel(i18n("pt"), aaBox), 1, 5);
-   aaLayout->addItem(new QSpacerItem(16, 16, QSizePolicy::Minimum,
+   aaLayout->addItem(new QSpacerItem(16, 16, QSizePolicy::Fixed,
                                                QSizePolicy::Fixed),
                        2, 0);
    aaLayout->addWidget(aaUseSubPixel, 2, 1);
-   aaLayout->addMultiCellWidget(aaSubPixelType, 2, 2, 2, 5);
+   aaLayout->addMultiCellWidget(aaSubPixelType, 2, 2, 2, 4);
 
    setAaWidgets();
  
@@ -332,13 +333,15 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    connect(aaUseSubPixel, SIGNAL(toggled(bool)),
            aaSubPixelType, SLOT(setEnabled(bool)));
    connect(aaExcludeRange, SIGNAL(toggled(bool)),
-           this, SLOT(slotAaToggle(bool)));
+           this, SLOT(slotAaChange()));
    connect(aaUseSubPixel, SIGNAL(toggled(bool)),
-           this, SLOT(slotAaToggle(bool)));
-   connect(aaExcludeFrom, SIGNAL(textChanged(const QString &)),
-           this, SLOT(slotAaStrChange(const QString &)));
+           this, SLOT(slotAaChange()));
+   connect(aaExcludeFrom, SIGNAL(valueChanged(double)),
+           this, SLOT(slotAaChange()));
+   connect(aaExcludeTo, SIGNAL(valueChanged(double)),
+           this, SLOT(slotAaChange()));
    connect(aaSubPixelType, SIGNAL(activated(const QString &)),
-           this, SLOT(slotAaStrChange(const QString &)));
+           this, SLOT(slotAaChange()));
 
    layout->addWidget(aaBox);
 
@@ -373,8 +376,8 @@ void KFonts::defaults()
   cbAA->setChecked(useAA);
 
   aaExcludeRange->setChecked(true);
-  aaExcludeFrom->setText("8.0");
-  aaExcludeTo->setText("15.0");
+  aaExcludeFrom->setValue(8.0);
+  aaExcludeTo->setValue(15.0);
   aaUseSubPixel->setChecked(false);
 
   _changed = true;
@@ -437,8 +440,8 @@ void KFonts::save()
   KIPC::sendMessageAll(KIPC::FontChanged);
 
   if(aaExcludeRange->isChecked())
-      xft.setExcludeRange(aaExcludeFrom->text().toDouble(),
-                          aaExcludeTo->text().toDouble());
+      xft.setExcludeRange(aaExcludeFrom->value(),
+                          aaExcludeTo->value());
   else
       xft.setExcludeRange(0, 0);
 
@@ -483,13 +486,7 @@ void KFonts::slotUseAntiAliasing()
     emit changed(true);
 }
 
-void KFonts::slotAaToggle(bool)
-{
-    _changed = true;
-    emit changed(true);
-}
-
-void KFonts::slotAaStrChange(const QString &)
+void KFonts::slotAaChange()
 {
     _changed = true;
     emit changed(true);
@@ -511,10 +508,8 @@ void KFonts::setAaWidgets()
    aaExcludeFrom->setEnabled(aaExcludeRange->isChecked());
    aaExcludeTo->setEnabled(aaExcludeRange->isChecked());
 
-   QString aaStr;
-
-   aaExcludeFrom->setText(aaStr.setNum(aaFrom));
-   aaExcludeTo->setText(aaStr.setNum(aaTo));
+   aaExcludeFrom->setValue(aaFrom);
+   aaExcludeTo->setValue(aaTo);
 
    KXftConfig::SubPixel::Type aaSpType;
 
