@@ -238,7 +238,7 @@ void KLocaleConfig::applySettings()
                             .arg(*tags.at(combo3->currentItem()));
 
   config->setGroup("Locale");
-  config->writeEntry("Language", value);  
+  config->writeEntry("Language", value, true, true);
   config->sync();
 
   if (changedFlag)
