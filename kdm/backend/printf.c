@@ -460,6 +460,7 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 /*
  * Logging function for xdm and helper programs.
  */
+#ifndef NO_LOGGER
 
 #ifdef USE_SYSLOG
 # include <syslog.h>
@@ -640,3 +641,5 @@ LogPanic (const char *fmt, ...)
     exit (LOG_PANIC_EXIT);
 }
 #endif
+
+#endif /* NO_LOGGER */
