@@ -56,7 +56,7 @@
                         <cstring>lblCurrentProfile</cstring>
                     </property>
                     <property name="text">
-                        <string>C&amp;urrent Profile:</string>
+                        <string>C&amp;urrent profile:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>cmbCurProfile</cstring>
@@ -195,7 +195,7 @@ marks). Some people like to provide a nickname only. You can leave this field bl
                         <cstring>m_smtpLabel</cstring>
                     </property>
                     <property name="text">
-                        <string>SMTP Server:</string>
+                        <string>SMTP server:</string>
                     </property>
                 </widget>
                 <widget class="QLineEdit">
