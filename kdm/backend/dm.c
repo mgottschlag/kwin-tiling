@@ -582,6 +582,14 @@ StartRemoteLogin (struct display *d)
 	    !(argv = addStrArr (argv, "-query", 6)) ||
 	    !(argv = addStrArr (argv, d->remoteHost, -1)))
 	    exit (1);
+#ifdef HAVE_VTS
+	if (d->serverVT && !d->reqSrvVT) {
+	    char vtstr[8];
+	    if (!(argv = addStrArr (argv, vtstr, sprintf (vtstr, "vt%d",
+							  d->serverVT))))
+		exit (1);
+	}
+#endif
 	Debug ("exec %\"[s\n", argv);
 	(void) execv (argv[0], argv);
 	LogError ("X server %\"s cannot be executed\n", argv[0]);
@@ -897,7 +905,7 @@ ReapChildren (void)
 	    case zombie:
 		Debug ("zombie X server for display %s reaped\n", d->name);
 #ifdef HAVE_VTS
-		if (d->serverVT)
+		if (d->serverVT && d->zstatus != DS_REMOTE)
 		{
 		    if (d->follower)
 		    {
@@ -1196,7 +1204,7 @@ AllocateVT (struct display *d)
 			goto next;
 		    if (cd->serverVT == tvt)
 		    {
-			if (cd->status != zombie)
+			if (cd->status != zombie || cd->zstatus == DS_REMOTE)
 			    goto next;
 			if (!cd->follower)
 			{
