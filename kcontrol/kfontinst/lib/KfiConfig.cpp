@@ -39,20 +39,22 @@
 #include <klocale.h>
 #include <fstream>
 
-#define KCONFIG_GROUP "KFontinst"
+#define KCONFIG_GROUP                                "KFontinst"
+#define KFI_XF86CFG                                  "XF86Config"
+#define KFI_XORGCFG                                  "xorg.conf"
 
-static const QString constDefaultSysX11FontsDir     ("/usr/X11R6/lib/X11/fonts/");
-static const QString constDefaultSysTTSubDir        ("TrueType/");
-static const QString constDefaultSysT1SubDir        ("Type1/");
-static const QString constDefaultXConfigFile        ("/etc/X11/XF86Config-4");
-static const QString constDefaultXfsConfigFile      ("/etc/X11/fs/config");
+static const char * constDefaultSysX11FontsDir     = "/usr/X11R6/lib/X11/fonts/";
+static const char * constDefaultSysTTSubDir        = "TrueType/";
+static const char * constDefaultSysT1SubDir        = "Type1/";
+static const char * constDefaultXConfigFile        = "/etc/X11/"KFI_XF86CFG"-4";
+static const char * constDefaultXfsConfigFile      = "/etc/X11/fs/config";
 #ifndef HAVE_FONT_ENC
-static const QString constDefaultEncodingsDir       ("/usr/X11R6/lib/X11/fonts/encodings/");
+static const char * constDefaultEncodingsDir       = "/usr/X11R6/lib/X11/fonts/encodings/";
 #endif
-static const QString constDefaultGhostscriptDir     ("/usr/share/ghostscript/");
-static const QString constNonRootDefaultXConfigFile ("fontpaths");
+static const char * constDefaultGhostscriptDir     = "/usr/share/ghostscript/";
+static const char * constNonRootDefaultXConfigFile = "fontpaths";
 
-static QString getDir(const QString &entry, const QString *posibilities, const QString &base=QString::null)
+static const char * getDir(const char *entry, const char **posibilities, const QString &base=QString::null)
 {
     if(CMisc::dExists(base+entry))
         return entry;
@@ -60,7 +62,7 @@ static QString getDir(const QString &entry, const QString *posibilities, const Q
     {
         int d;
 
-        for(d=0; !posibilities[d].isEmpty(); ++d)
+        for(d=0; posibilities[d]; ++d)
             if(CMisc::dExists(base+posibilities[d]))
                 break;
 
@@ -68,7 +70,7 @@ static QString getDir(const QString &entry, const QString *posibilities, const Q
     }
 }
 
-static const QString & getFile(const QString &entry, const QString *posibilities)
+static const char * getFile(const char *entry, const char **posibilities)
 {
     if(CMisc::fExists(entry))
         return entry;
@@ -76,7 +78,7 @@ static const QString & getFile(const QString &entry, const QString *posibilities
     {
         int f;
 
-        for(f=0; !posibilities[f].isEmpty(); ++f)
+        for(f=0; posibilities[f]; ++f)
             if(CMisc::fExists(posibilities[f]))
                 break;
 
@@ -84,7 +86,7 @@ static const QString & getFile(const QString &entry, const QString *posibilities
     }
 }
 
-static QString locateFile(const QString &dir, const QString file, int level=0)
+static QString locateFile(const char *dir, const char *file, int level=0)
 {
     if(level<CMisc::MAX_SUB_DIRS)
     {
@@ -104,7 +106,7 @@ static QString locateFile(const QString &dir, const QString file, int level=0)
                     if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                         if(fInfo->isDir())
                         {
-                            if(!(str=locateFile(fInfo->filePath()+"/", file, level+1)).isEmpty())
+                            if(!(str=locateFile(QFile::encodeName(fInfo->filePath()+"/"), file, level+1)).isEmpty())
                                 return str;
                         }
                         else
@@ -117,27 +119,27 @@ static QString locateFile(const QString &dir, const QString file, int level=0)
     return QString::null;
 }
 
-static QString locateFile(const QString &file, const QString *dirs)
+static QString locateFile(const char *file, const char **dirs)
 {
     int     d;
     QString str;
 
-    for(d=0; !dirs[d].isEmpty(); ++d)
+    for(d=0; dirs[d]; ++d)
         if(!(str=locateFile(dirs[d], file)).isEmpty())
             return str;
 
     return QString::null;
 }
 
-static const QString constSysX11FontsDirs[]=
+static const char * constSysX11FontsDirs[]=
 {
     constDefaultSysX11FontsDir,
     "/usr/lib/X11/fonts/",
     "/usr/openwin/lib/X11/fonts/",
-    QString::null
+    NULL
 };
 
-static const QString constTTSubDirs[]=
+static const char * constTTSubDirs[]=
 {
     constDefaultSysTTSubDir,
     "truetype/",
@@ -152,10 +154,10 @@ static const QString constTTSubDirs[]=
     "True_type/",
     "ttf.st/typefaces/",
     "ttf.st/",
-    QString::null
+    NULL
 };
 
-static const QString constT1SubDirs[]=
+static const char * constT1SubDirs[]=
 {
     constDefaultSysT1SubDir,
     "type1/",
@@ -168,46 +170,52 @@ static const QString constT1SubDirs[]=
     "Pstype1/",
     "type1.st/typefaces/",
     "type1.st/",
-    QString::null
+    NULL
 };
 
 #ifndef HAVE_FONT_ENC
-static const QString constEncodingsSubDirs[]=
+static const char * constEncodingsSubDirs[]=
 {
     "encodings/",
     "Encodings/",
     "enc/",
-    QString::null
+    NULL
 };
 #endif
 
-static const QString constXConfigFiles[]=
+static const char * constXConfigFiles[]=
 {
     constDefaultXConfigFile,
-    "/etc/X11/XF86Config",
-    "/etc/XF86Config-4",
-    "/etc/XF86Config",
-    //"/usr/X11R6/etc/X11/XF86Config.$HOSTNAME"
-    "/usr/X11R6/etc/X11/XF86Config-4",
-    "/usr/X11R6/etc/X11/XF86Config",
-    //"/usr/X11R6/lib/X11/XF86Config.$HOSTNAME",
-    "/usr/X11R6/lib/X11/XF86Config-4",
-    "/usr/X11R6/lib/X11/XF86Config",
-    QString::null
+    "/etc/X11/"KFI_XF86CFG,
+    "/etc/"KFI_XF86CFG"-4",
+    "/etc/"KFI_XF86CFG,
+    "/usr/X11R6/etc/X11/"KFI_XF86CFG"-4",
+    "/usr/X11R6/etc/X11/"KFI_XF86CFG,
+    "/usr/X11R6/lib/X11/"KFI_XF86CFG"-4",
+    "/usr/X11R6/lib/X11/"KFI_XF86CFG,
+
+    // Support for X.org's X server...
+
+    "/etc/X11/"KFI_XORGCFG,
+    "/etc/"KFI_XORGCFG,
+    "/usr/X11R6/etc/X11/"KFI_XORGCFG,
+    "/usr/X11R6/lib/X11/"KFI_XORGCFG,
+
+    NULL
 };
 
-static const QString constXfsConfigFiles[]=
+static const char * constXfsConfigFiles[]=
 {
     constDefaultXfsConfigFile,
     "/usr/openwin/lib/X11/fonts/fontserver.cfg",
-    QString::null
+    NULL
 };
 
-static const QString constGhostscriptDirs[]=
+static const char * constGhostscriptDirs[]=
 {
     constDefaultGhostscriptDir,
     "/usr/local/share/ghostscript/",
-    QString::null
+    NULL
 };
 
 static QString kdeHome()
@@ -306,7 +314,7 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
     }
 
     // Now check the read in data...
-    if(!(sysX11FontsDir=getDir(sysX11FontsDir, constSysX11FontsDirs)).isEmpty())
+    if(!(sysX11FontsDir=getDir(QFile::encodeName(sysX11FontsDir), constSysX11FontsDirs)).isEmpty())
         itsSysFontsDirs.append(sysX11FontsDir);
 
     if(root) // For root, these are *always* the same
@@ -325,8 +333,8 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
         //
         // Try to determine location for X and xfs config files...
         // ...note on some systems (Solaris and HP-UX) only the xfs file will be found
-        itsSysXConfigFile=getFile(itsSysXConfigFile, constXConfigFiles);
-        itsSysXfsConfigFile=getFile(itsSysXfsConfigFile, constXfsConfigFiles);
+        itsSysXConfigFile=getFile(QFile::encodeName(itsSysXConfigFile), constXConfigFiles);
+        itsSysXfsConfigFile=getFile(QFile::encodeName(itsSysXfsConfigFile), constXfsConfigFiles);
 
         // If found xfs, but not X - then assume that xfs is being used...
         if(!itsSysXfsConfigFile.isEmpty() && itsSysXConfigFile.isEmpty())
@@ -443,7 +451,7 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
 void CKfiConfig::checkAndModifyXConfigFile()
 {
     //
-    // Check if XF86Config has been selected by CKfiConfig, and if so, have a look to see wether it has
+    // Check if X11 has been selected by CKfiConfig, and if so, have a look to see wether it has
     // 'unix/<hostname>:<port>' as the fontpath - if so then look for the fontserver 'config' file instead...
     if(!itsSysXConfigFile.isEmpty())
     {
@@ -453,8 +461,8 @@ void CKfiConfig::checkAndModifyXConfigFile()
         {
             QString file=itsSysXConfigFile.mid(slashPos+1);
 
-            if(file.find("XF86Config")!=-1)
-                itsSysXfs=!itsSysXfsConfigFile.isEmpty() && CXConfig(CXConfig::XF86, itsSysXConfigFile).xfsInPath();
+            if(file.find(KFI_XF86CFG)!=-1 || file.find(KFI_XORGCFG))
+                itsSysXfs=!itsSysXfsConfigFile.isEmpty() && CXConfig(CXConfig::X11, itsSysXConfigFile).xfsInPath();
         }
     }
 }

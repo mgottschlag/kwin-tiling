@@ -31,7 +31,7 @@
 #include "KfiConfig.h"
 #include "Encodings.h"
 #include "XConfig.h"
-#include "kxftconfig.h"   // CPD: This should really be a symlik!
+#include "kxftconfig.h"
 #include <stdio.h>
 
 CFontEngine * CGlobal::theirFontEngine=NULL;
@@ -105,7 +105,7 @@ CEncodings & CGlobal::enc()
 CXConfig & CGlobal::sysXcfg()
 {
     if(NULL==theirSysXcfg)
-        theirSysXcfg=new CXConfig(cfg().getSysXfs() ? CXConfig::XFS : CXConfig::XF86, cfg().getSysXConfigFile());
+        theirSysXcfg=new CXConfig(cfg().getSysXfs() ? CXConfig::XFS : CXConfig::X11, cfg().getSysXConfigFile());
     return *theirSysXcfg;
 }
 

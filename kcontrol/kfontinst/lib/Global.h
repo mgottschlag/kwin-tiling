@@ -43,7 +43,14 @@ class KXftConfig;
 #define KIO_FONTS_SYS      I18N_NOOP("System")
 #define KIO_FONTS_DISABLED I18N_NOOP(" (Disabled)")
 
+#define KFI_USE_STDERR
+#ifdef KFI_USE_STDERR
+#include <qtextstream.h>
+#include <stdio.h>
+static QTextOStream KFI_DBUG(stderr);
+#else
 #define KFI_DBUG kdDebug()
+#endif
 
 class CGlobal
 {

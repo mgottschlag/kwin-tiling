@@ -78,8 +78,8 @@ bool CXConfig::readConfig()
         case XFS:
             itsOk=processXfs(true);
             break;
-        case XF86:
-            itsOk=processXf86(true);
+        case X11:
+            itsOk=processX11(true);
             break;
         case KFI:
             itsOk=readFontpaths();
@@ -123,8 +123,8 @@ bool CXConfig::writeConfig()
             case XFS:
                 written=processXfs(false);
                 break;
-            case XF86:
-                written=processXf86(false);
+            case X11:
+                written=processX11(false);
                 break;
             case KFI:
                 written=writeFontpaths();
@@ -223,7 +223,7 @@ bool CXConfig::getDirs(QStringList &list)
 
 bool CXConfig::xfsInPath()
 {
-    if(itsOk && XF86==itsType)
+    if(itsOk && X11==itsType)
     {
         TPath *path=NULL;
 
@@ -564,19 +564,19 @@ static char * getItem(char **start, char **end, const char *key, unsigned int &s
     return NULL;
 }
 
-bool CXConfig::processXf86(bool read)
+bool CXConfig::processX11(bool read)
 {
-    ifstream xf86(QFile::encodeName(itsFileName));
+    ifstream x11(QFile::encodeName(itsFileName));
     bool     ok=false;
 
-    if(xf86)
+    if(x11)
     {
         itsTime=CMisc::getTimeStamp(itsFileName);
 
         bool closed=false;
 
-        xf86.seekg(0, ios::end);
-        unsigned int size=(streamoff) xf86.tellg();
+        x11.seekg(0, ios::end);
+        unsigned int size=(streamoff) x11.tellg();
 
         if(read)
             itsPaths.clear();
@@ -587,16 +587,16 @@ bool CXConfig::processXf86(bool read)
 
             if(buffer)
             {
-                xf86.seekg(0, ios::beg);
-                xf86.read(buffer, size);
+                x11.seekg(0, ios::beg);
+                x11.read(buffer, size);
 
-                if(xf86.good())
+                if(x11.good())
                 {
                     char *filesStart=NULL,
                          *filesEnd=NULL;
 
                     closed=true;
-                    xf86.close();
+                    x11.close();
                     buffer[size]='\0';
 
                     if(NULL!=(filesStart=locateSection(buffer, "\"Files\"")) && NULL!=(filesEnd=locateEndSection(filesStart)))
@@ -687,7 +687,7 @@ bool CXConfig::processXf86(bool read)
             }
         }
         if(!closed)
-            xf86.close();
+            x11.close();
     }
 
     return ok;

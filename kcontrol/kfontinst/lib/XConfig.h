@@ -48,7 +48,7 @@ class CXConfig
         {
             DIR,
             FONT_SERVER
-            // NOTE: In future XF86Config may allow "fontconfig" to be specified as a path!
+            // NOTE: In future X11 config may allow "fontconfig" to be specified as a path!
         };
 
         TPath(const QString &d, bool u, EType t, bool o)
@@ -98,7 +98,7 @@ class CXConfig
     enum EType
     {
         XFS,
-        XF86,
+        X11,
         KFI
     };
 
@@ -130,7 +130,7 @@ class CXConfig
 
     bool readFontpaths();
     bool writeFontpaths();
-    bool processXf86(bool read);
+    bool processX11(bool read);
     bool processXfs(bool read);
 
     TPath * findPath(const QString &dir);
