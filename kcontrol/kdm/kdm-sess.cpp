@@ -430,7 +430,7 @@ void KDMSessionsWidget::defaults()
 
   sessionslb->clear();
   sessionslb->insertItem("default");
-  sessionslb->insertItem("kde");
+  sessionslb->insertItem("kde2");
   sessionslb->insertItem("failsafe");
 
 #ifdef __linux__
