@@ -12,5 +12,5 @@ extern "C" {
 
 /*
 typedef KGenericFactory<KWidgetSettingsModule, QWidget> GeneralFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_style, GeneralFactory );
+K_EXPORT_COMPONENT_FACTORY( kcm_style, GeneralFactory )
 */
