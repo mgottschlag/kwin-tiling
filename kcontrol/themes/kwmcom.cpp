@@ -9,6 +9,7 @@
 //
 
 #include <kapp.h>
+#include <klocale.h>
 #include "kwmcom.h"
 
 Atom kwm_add_window;
