@@ -281,17 +281,7 @@ void KLocaleConfig::changedCountry(int i)
                       country,
                       country);
 
-  int j;
-  QString name;
-  for (j = 0; j < comboCountry->count(); j++)
-  {
-    readLocale(comboCountry->tag(j), name, "l10n/");
-    comboCountry->changeLanguage(name, j);
-    comboNumber->changeLanguage(name, j);
-    comboMoney->changeLanguage(name, j);
-    comboDate->changeLanguage(name, j);
-  }
-
+  reTranslateLists();
   loadLocaleList(comboLang, 0, langs);
 
   comboLang->setCurrentItem((*langs.at(0)).isNull()?QString::fromLatin1("C"):*langs.at(0));
@@ -313,25 +303,10 @@ void KLocaleConfig::changedLanguage(int i)
                       QString::null,
                       QString::null,
                       QString::null);
-  int j;
-  QString name;
-  for (j = 0; j < comboCountry->count(); j++)
-  {
-    readLocale(comboCountry->tag(j), name, "l10n/");
-    comboCountry->changeLanguage(name, j);
-    comboNumber->changeLanguage(name, j);
-    comboMoney->changeLanguage(name, j);
-    comboDate->changeLanguage(name, j);
-  }
+  reTranslateLists();
 
-  for (j = 0; j < comboLang->count(); j++)
-  {
-    readLocale(comboLang->tag(j), name, 0);
-    comboLang->changeLanguage(name, j);
-  }
-
-  ((KLocaleApplication*)kapp)->reTranslate();
   ((KLocaleApplication*)kapp)->updateSample();
+  ((KLocaleApplication*)kapp)->reTranslate();
 }
 
 void KLocaleConfig::changedNumber(int i)
@@ -375,4 +350,24 @@ void KLocaleConfig::changedTime(int i)
 void KLocaleConfig::updateSample()
 {
   sample->update();
+}
+
+void KLocaleConfig::reTranslateLists()
+{
+  int j;
+  QString name;
+  for (j = 0; j < comboCountry->count(); j++)
+  {
+    readLocale(comboCountry->tag(j), name, "l10n/");
+    comboCountry->changeLanguage(name, j);
+    comboNumber->changeLanguage(name, j);
+    comboMoney->changeLanguage(name, j);
+    comboDate->changeLanguage(name, j);
+  }
+
+  for (j = 0; j < comboLang->count(); j++)
+  {
+    readLocale(comboLang->tag(j), name, 0);
+    comboLang->changeLanguage(name, j);
+  }
 }

@@ -48,6 +48,7 @@ public slots:
   void applySettings();
   void defaultSettings();
   void updateSample();
+  void reTranslateLists();
     
 private:
   KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate;
