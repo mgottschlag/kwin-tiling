@@ -31,6 +31,7 @@
 #include "scrnsave.h"
 #include "general.h"
 #include "backgnd.h"
+#include "energy.h"
 #include <qfont.h>
 #include <kconfig.h>
 
@@ -52,6 +53,7 @@ private:
   KFonts *fonts;
   KGeneral *general;
   KBackground *background;
+  KEnergy *energy;
 };
 
 
@@ -59,6 +61,7 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
   : KControlApplication(argc, argv, name)
 {
   colors = 0; screensaver = 0; fonts = 0; general = 0; background = 0;
+  energy = 0;
 
   if (runGUI())
     {
@@ -78,12 +81,15 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
       if (!pages || pages->contains("style"))
 	addPage(general = new KGeneral(dialog, KDisplayModule::Setup),
 		i18n("&Style"), "kdisplay-7.html");
+      if (!pages || pages->contains("energy"))
+	addPage(energy = new KEnergy(dialog, KDisplayModule::Setup),
+		i18n("&Energy"), "kdisplay-8.html");
 
-      if (background || screensaver || colors || fonts || general)
+      if (background || screensaver || colors || fonts || general || energy)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmdisplay [-init | {background,screensaver,colors,fonts,style}]\n").ascii());
+          fprintf(stderr, i18n("usage: kcmdisplay [-init | {background,screensaver,colors,fonts,style,energy}]\n").ascii());
           justInit = TRUE;
         }
 

@@ -4,7 +4,7 @@
 SUBDIRS = mini
 
 icons_DATA = background.xpm colors.xpm logo.xpm monitor.xpm \
-	screensaver.xpm style.xpm fonts.xpm
+	screensaver.xpm style.xpm fonts.xpm energybig.xpm energy.xpm
 
 iconsdir = $(kde_icondir)
 
