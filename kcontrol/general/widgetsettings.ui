@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>541</width>
-            <height>420</height>
+            <height>347</height>
         </rect>
     </property>
     <property name="caption">
@@ -26,23 +26,6 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <spacer>
-            <property name="name" stdset="0">
-                <cstring>Spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
         <widget class="QGroupBox">
             <property name="name">
                 <cstring>gbMiscToolbarSet</cstring>
@@ -312,6 +295,23 @@
                 </property>
             </widget>
         </widget>
+        <spacer>
+            <property name="name" stdset="0">
+                <cstring>Spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
 <connections>
