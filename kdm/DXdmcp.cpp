@@ -194,7 +194,7 @@ ChooserDlg::ChooserDlg( CXdmcp *cxdmcp, QWidget *parent, const char *name,
 	hibox->addWidget( itxt);
 	hibox->addWidget( iline);
 	
-  QBoxLayout* hbox = new QHBoxLayout( vbox, 10 );
+  QBoxLayout* hbox = new QHBoxLayout( vbox, 20 );
   hbox->addWidget( accept);
   hbox->addWidget( ping);
 //     hbox->addWidget( willing);
