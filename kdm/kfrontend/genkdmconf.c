@@ -447,9 +447,61 @@ const char def_session[] =
 "# windowmanager not found, tell user\n"
 "exec xmessage -center -buttons OK:0 -default OK \"Sorry, $sess not found.\"\n";
 
+static void
+upd_language(char **p)
+{
+    if (!strcmp (*p, "C"))
+	*p = "en_US";
+}
+
+static void
+upd_greetstring(char **p)
+{
+    char *p2;
+    if ((p2 = strstr (*p, "HOSTNAME"))) {
+	strcpy (p2, "%n");
+	strcpy (p2 + 2, p2 + 8);
+    }
+}
+
+static void
+upd_echomode(char **p)
+{
+    if (!strcmp (*p, "NoStars"))
+	*p = "NoEcho";
+}
+
+static void
+upd_guistyle(char **p)
+{
+    if (!strcmp (*p, "Motif+"))
+	*p = "MotifPlus";
+    else if (!strcmp (*p, "KDE"))
+	*p = "Default";
+}
+
+static void
+upd_showusers(char **p)
+{
+    if (!strcmp (*p, "All"))
+	*p = "NotHidden";
+}
+
+static void
+upd_logoarea(char **p)
+{
+    if (!strcmp (*p, "KdmLogo"))
+	*p = "Logo";
+    else if (!strcmp (*p, "KdmClock"))
+	*p = "Clock";
+    else if (strcmp (*p, "Logo") && strcmp (*p, "Clock"))
+	*p = "None";
+}
+
 #define F_FILE644	1
 #define F_FILE755	2
 #define F_PATH		4
+#define F_UPDATE	8
 
 typedef struct Ent {
 	const char	*key;
@@ -467,9 +519,11 @@ static Ent entsDesktop[] = {
 { "Color2",		0, 0, 0 },
 { "CurrentWallpaper",	0, 0, 0 },
 { "LastChange",		0, 0, 0 },
+{ "MinOptimizationDepth",	0, 0, 0 },
 { "MultiWallpaperMode",	0, 0, 0 },
 { "Pattern",		0, 0, 0 },
 { "Program",		0, 0, 0 },
+{ "UseSHM",		0, 0, 0 },
 { "ReverseBlending",	0, 0, 0 },
 { "Wallpaper",		0, 0, 0 },
 { "WallpaperList",	0, 0, 0 },
@@ -549,6 +603,9 @@ static Ent entsShutdown[] = {
 { "AllowFifo",		0, 0, 
 "# Whether one can shut down the system via the global command FiFo.\n"
 "# Default is false\n" },
+{ "AllowFifoNow",	0, 0, 
+"# Whether one can abort still running sessions when shutting down the system\n"
+"# via the global command FiFo. Default is true\n" },
 #if defined(__linux__) && defined(__i386__)
 { "UseLilo",		0, 0, 
 "# Offer LiLo boot options in shutdown dialog. Default is false\n" },
@@ -696,10 +753,11 @@ static Ent entsGreeter[] = {
 "# Session types the users can select. It is advisable to have \"default\" and\n"
 "# \"failsafe\" listed herein, which is also the default.\n"
 "# Note, that the meaning of this value is entirely up to your Session program.\n" },
-{ "GUIStyle",		0, 0, 
+{ "GUIStyle",		F_UPDATE, (const char *)upd_guistyle, 
 "# Widget Style of the greeter:\n"
-"# KDE, Windows, Platinum, Motif, MotifPlus, CDE, SGI; Default is KDE\n" },
-{ "LogoArea",		0, 0, 
+"# Default, Windows, Platinum, Motif, MotifPlus, CDE, SGI, and any styles you\n"
+"# may have installed, e.g., HighColor; Default is \"Default\"\n" },
+{ "LogoArea",		F_UPDATE, (const char *)upd_logoarea, 
 "# What should be shown righthand of the input lines:\n"
 "# \"Logo\" - the image specified by LogoPixmap (Default)\n"
 "# \"Clock\" - a neat analog clock\n"
@@ -714,7 +772,7 @@ static Ent entsGreeter[] = {
 { "GreeterScreen",	0, 0,
 "# The screen the greeter should be displayed on in multi-headed setups.\n"
 "# Default is 0\n" },
-{ "GreetString",	0, 0, 
+{ "GreetString",	F_UPDATE, (const char *)upd_greetstring, 
 "# The headline in the greeter.\n"
 "# The following character pairs are replaced:\n"
 "# - %d -> current display\n"
@@ -731,10 +789,11 @@ static Ent entsGreeter[] = {
 "# The normal font used in the greeter. Default is helvetica,12\n" },
 { "FailFont",		0, 0, 
 "# The font used for the \"Login Failed\" message. Default is helvetica,12,bold\n" },
-{ "Language",		0, 0, 
-"# Language to use in the greeter.\n"
-"# Use the default C or coutry codes like de, en, pl, etc.\n" },
-{ "ShowUsers",		0, 0, 
+{ "AntiAliasing",	0, 0,
+"# Whether the fonts shown in the greeter should be antialiased. Default is false\n" },
+{ "Language",		F_UPDATE, (const char *)upd_language, 
+"# Language to use in the greeter. Default is en_US\n" },
+{ "ShowUsers",		F_UPDATE, (const char *)upd_showusers, 
 "# Specify, which user names (along with pictures) should be shown in the\n"
 "# greeter.\n"
 "# \"NotHidden\" - all users except those listed in HiddenUsers (Default)\n"
@@ -766,7 +825,7 @@ static Ent entsGreeter[] = {
 { "FocusPasswd",	0, 0, 
 "# If this is true, the password input line is focused automatically if\n"
 "# a user is preselected. Default is false\n" },
-{ "EchoMode",		0, 0, 
+{ "EchoMode",		F_UPDATE, (const char *)upd_echomode, 
 "# The password input fields cloak the typed in text. Specify, how to do it:\n"
 "# \"NoEcho\" - nothing is shown at all, the cursor doesn't move\n"
 "# \"OneStar\" - \"*\" is shown for every typed letter (Default)\n"
@@ -811,9 +870,11 @@ static DEnt dEntsDesktop[] = {
 { "Color2",		"192,192,192", 1 },
 { "CurrentWallpaper",	"0", 1 },
 { "LastChange",		"0", 1 },
+{ "MinOptimizationDepth",	"1", 1 },
 { "MultiWallpaperMode",	"NoMulti", 1 },
 { "Pattern",		"", 1 },
 { "Program",		"", 1 },
+{ "UseSHM",		"false", 1 },
 { "ReverseBlending",	"false", 1 },
 { "Wallpaper",		"default_blue.jpg", 1 },
 { "WallpaperList",	"", 1 },
@@ -905,7 +966,8 @@ static DEnt dEntsAnyGreeter[] = {
 { "GreetFont",		"charter,24,5,0,50,0", 0 },
 { "StdFont",		"helvetica,12,5,0,50,0", 0 },
 { "FailFont",		"helvetica,12,5,0,75,0", 0 },
-{ "Language",		"de", 0 },
+{ "AntiAliasing",	"true", 0 },
+{ "Language",		"de_DE", 0 },
 { "ShowUsers",		"None", 0 },
 { "SelectedUsers",	"root,johndoe", 0 },
 { "HiddenUsers",	"adm,alias,amanda,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ident,ingres,kmem,lp,mail,mailnull,man,mta,mysql,named,news,nfsnobody,nobody,nscd,ntp,operator,pcap,pop,postfix,postgres,qmaild,qmaill,qmailp,qmailq,qmailr,qmails,radvd,reboot,rpc,rpcuser,rpm,sendmail,shutdown,squid,sympa,sync,tty,uucp,xfs,xten", 1 },
@@ -1322,6 +1384,8 @@ wrconf (FILE *f)
 		handFile (ce);
 	    else if (ce->spec->flags & F_PATH)
 		addKdePath (ce);
+	    else if (ce->spec->flags & F_UPDATE)
+		((void (*)(const char **))ce->spec->param)(&ce->value);
 	    if (ce->spec->comment) {
 		cmt = ce->spec->comment;
 		for (sp = sl; sp; sp = sp->next)
@@ -1578,7 +1642,7 @@ isTrue (const char *val)
 static int
 mergeKdmRcOld (const char *path)
 {
-    char *p, *p2;
+    char *p;
 
     ASPrintf (&p, "%s/kdmrc", path);
     if (!p)
@@ -1623,25 +1687,9 @@ mergeKdmRcOld (const char *path)
 	cpyval ("Language", 0);
 
     if (cfgSGroup ("KDM")) {
-	if ((p = cfgEnt("GreetString"))) {
-	    if ((p2 = strstr (p, "HOSTNAME"))) {
-		strcpy (p2, "%n");
-		strcpy (p2 + 2, p2 + 8);
-	    }
-	    putval ("GreetString", p);
-	}
-	if ((p = cfgEnt("EchoMode"))) {
-	    if (!strcmp (p, "NoStars"))
-		putval ("EchoMode", "NoEcho");
-	    else
-		putval ("EchoMode", p);
-	}
-	if ((p = cfgEnt("GUIStyle"))) {
-	    if (!strcmp (p, "Motif+"))
-		putval ("GUIStyle", "MotifPlus");
-	    else
-		putval ("GUIStyle", p);
-	}
+	cpyval ("GreetString", 0);
+	cpyval ("EchoMode", 0);
+	cpyval ("GUIStyle", 0);
 	cpyval ("StdFont", 0);
 	cpyval ("GreetFont", 0);
 	cpyval ("FailFont", 0);
@@ -1651,12 +1699,7 @@ mergeKdmRcOld (const char *path)
 	cpyval ("SortUsers", 0);
 	cpyval ("SelectedUsers", "Users");
 	cpyval ("HiddenUsers", "NoUsers");
-	if ((p = cfgEnt ("ShowUsers"))) {
-	    if (!strcmp (p, "All"))
-		putval ("ShowUsers", "NotHidden");
-	    else
-		putval ("ShowUsers", p);
-	} else
+	cpyval ("ShowUsers", 0);
 	if ((p = cfgEnt ("UserView"))) {
 	    if (isTrue (p)) {
 		if (!(p = cfgEnt ("Users")) || !p[0])
@@ -1674,14 +1717,7 @@ mergeKdmRcOld (const char *path)
 		putval ("LogoArea", "Logo");
 	    }
 	}
-	if ((p = cfgEnt("LogoArea"))) {
-	    if (!strcmp (p, "Logo") || !strcmp (p, "KdmLogo"))
-		putval ("LogoArea", "Logo");
-	    else if (!strcmp (p, "Clock") || !strcmp (p, "KdmClock"))
-		putval ("LogoArea", "Clock");
-	    else
-		putval ("LogoArea", "None");
-	}
+	cpyval ("LogoArea", 0);
 	cpyval ("GreeterPosFixed", 0);
 	cpyval ("GreeterPosX", 0);
 	cpyval ("GreeterPosY", 0);
@@ -1781,18 +1817,6 @@ mergeKdmRcNewer (const char *path)
 			cpyfqval (p2, "AllowShutdown", 0);
 			free (p2);
 		    }
-		    if ((p = cfgEnt("GUIStyle"))) {
-			if (!strcmp (p, "Motif+"))
-			    putval ("GUIStyle", "MotifPlus");
-			else
-			    putval ("GUIStyle", p);
-		    }
-		    if ((p = cfgEnt("ShowUsers"))) {
-			if (!strcmp (p, "All"))
-			    putval ("ShowUsers", "NotHidden");
-			else
-			    putval ("ShowUsers", p);
-		    }
 		    cpyval ("HiddenUsers", "NoUsers");
 		    cpyval ("SelectedUsers", "Users");
 		}
@@ -1807,7 +1831,6 @@ mergeKdmRcNewer (const char *path)
 	if (!getfqval (chgdef[i].sect, chgdef[i].key, 0)) {
 	    ASPrintf (&p, chgdef[i].def, path);
 	    if (p) {
-printf("[%s] %s=%s\n", chgdef[i].sect, chgdef[i].key, p);
 		putfqval (chgdef[i].sect, chgdef[i].key, p);
 		free (p);
 	    }
