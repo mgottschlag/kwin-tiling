@@ -129,6 +129,10 @@ protected:
       with KApp::localkdedir(). Returns true on success. */
   virtual bool installFile(const QString& name, const QString& dest);
 
+  /** Search for a file in the theme.
+      returns the full path, or empty if not found. */
+  QString findFile(const QString& name);
+
   /** Installs directory. The source name is prepended
       with the theme work directory, the dest name is prepended
       with KApp::localkdedir(). Returns true on success. */

@@ -389,26 +389,10 @@ void Theme::removeFile(const QString& aName, const QString &aDirName)
   else QFile::remove( (aDirName + '/' + aName) );
 }
 
-
-//-----------------------------------------------------------------------------
-bool Theme::installFile(const QString& aSrc, const QString& aDest)
+QString Theme::findFile(const QString &aSrc)
 {
-  QString cmd, dest;
-  QString src(aSrc);
-  QFileInfo finfo;
-  QFile srcFile, destFile;
-  int len, i;
-  char buf[32768];
-  bool backupMade = false;
-
-  if (src.isEmpty()) return true;
-
-  assert(aDest[0] == '/');
-  dest = aDest;
-
-  src = mThemePath + src;
-
-  finfo.setFile(src);
+  QString src = mThemePath + aSrc;
+  QFileInfo finfo(src);
   if (!finfo.exists())
   {
     kdDebug() << "File " << src << " not found." << endl;
@@ -417,7 +401,7 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
     if (i == -1)
     {
        kdDebug() << "File " << aSrc << " is not in theme package." << endl;
-       return false;
+       return QString::null;
     }
     src = src.mid(i+1).lower();
     for(QStringList::ConstIterator it = mFileList.begin();
@@ -433,17 +417,39 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
     if (!finfo.exists())
     {
        kdDebug() << "File " << aSrc << " is not in theme package." << endl;
-       return false;
+       return QString::null;
     }
   }
 
   if (finfo.isDir())
   {
     kdDebug() << src << " is a direcotry instead of a file." << endl;
-    return false;
+    return QString::null;
   }
+  return src;
+}
 
-  finfo.setFile(dest);
+
+//-----------------------------------------------------------------------------
+bool Theme::installFile(const QString& aSrc, const QString& aDest)
+{
+  QString cmd, dest;
+  QString src(aSrc);
+  int len, i;
+  char buf[32768];
+  bool backupMade = false;
+
+  if (src.isEmpty()) return true;
+
+  assert(aDest[0] == '/');
+  dest = aDest;
+
+  src = findFile(src);
+  if (src.isEmpty())
+     return false;
+
+
+  QFileInfo finfo(dest);
   if (finfo.isDir())  // destination is a directory
   {
     len = dest.length();
@@ -460,14 +466,14 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
     backupMade = true;
   }
 
-  srcFile.setName(src);
+  QFile srcFile(src);
   if (!srcFile.open(IO_ReadOnly))
   {
     kdWarning() << "Cannot open file " << src << " for reading" << endl;
     return false;
   }
 
-  destFile.setName(dest);
+  QFile destFile(dest);
   if (!destFile.open(IO_WriteOnly))
   {
     kdWarning() << "Cannot open file " << dest << " for writing" << endl;
@@ -1154,15 +1160,29 @@ void Theme::loadGroupGeneral(void)
     mHomePage = mConfig->readEntry("homepage");
     mVersion = mConfig->readEntry("version");
   }
+  mPreview.resize(0,0);
   if (!mPreviewFile.isEmpty())
   {
-    if (!mPreview.load(mPreviewFile))
-    {
-      kdWarning() << "Failed to load preview image " << mPreviewFile << endl;
-      mPreview.resize(0,0);
-    }
+    mPreview.load(mPreviewFile);
   }
-  else mPreview.resize(0,0);
+  if (mPreview.isNull())
+  {
+     if (mThemeType == Theme_Windows) 
+     {
+        mConfig->setGroup("Control Panel/Desktop");
+        mPreviewFile = mConfig->readEntry("Wallpaper");
+        mPreviewFile.replace(QRegExp("%.+%"), QString::null);
+        mPreviewFile = findFile(mPreviewFile);
+        if (!mPreviewFile.isEmpty())
+        { 
+           QImage img(mPreviewFile);
+           if (!img.isNull())
+           {
+              mPreview = img.smoothScale(320,240);
+           }
+        }
+     }
+  }
 }
 
 //-----------------------------------------------------------------------------
