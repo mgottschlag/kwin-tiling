@@ -654,17 +654,6 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     m_ReverseBlending = m_pConfig->readBoolEntry( "ReverseBlending", defReverseBlending);
 
-    // Wallpaper mode (NoWallpaper, div. tilings)
-    m_WallpaperMode = defWallpaperMode;
-    m_Wallpaper = m_pConfig->readEntry("Wallpaper");
-    s = m_pConfig->readEntry("WallpaperMode", "invalid");
-    if (m_WMMap.contains(s)) {
-        int mode = m_WMMap[s];
-        // consistency check.
-        if ((mode == NoWallpaper) || !m_Wallpaper.isEmpty())
-            m_WallpaperMode = mode;
-    }
-
     // Multiple wallpaper config
     m_WallpaperList = m_pConfig->readListEntry("WallpaperList");
     updateWallpaperFiles();
@@ -680,6 +669,17 @@ void KBackgroundSettings::readSettings(bool reparse)
         // consistency check.
 	if ((mode == NoMulti) || m_WallpaperFiles.count())
 	    m_MultiMode = mode;
+    }
+
+    // Wallpaper mode (NoWallpaper, div. tilings)
+    m_WallpaperMode = defWallpaperMode;
+    m_Wallpaper = m_pConfig->readEntry("Wallpaper");
+    s = m_pConfig->readEntry("WallpaperMode", "invalid");
+    if (m_WMMap.contains(s)) {
+        int mode = m_WMMap[s];
+        // consistency check.
+        if ((mode == NoWallpaper) || !m_Wallpaper.isEmpty() || (m_MultiMode!=NoMulti))
+            m_WallpaperMode = mode;
     }
 
     dirty = false; hashdirty = true;
