@@ -47,7 +47,7 @@ extern void Debug	(const char *fmt, ...);
 extern void LogInfo	(const char *fmt, ...);
 extern void LogError	(const char *fmt, ...);
 extern void LogPanic	(const char *fmt, ...) ATTR_NORETURN;
-extern void LogOutOfMem	(const char *fkt);
+extern void LogOutOfMem	(void);
 extern void Panic	(const char *mesg) ATTR_NORETURN;
 extern void InitErrorLog(const char *errorLogFile);
 #ifdef USE_SYSLOG

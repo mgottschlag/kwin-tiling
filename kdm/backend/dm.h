@@ -500,6 +500,9 @@ extern Display *dpy;
 extern void CreateWellKnownSockets (void);
 
 /* in util.c */
+extern void *Calloc (size_t nmemb, size_t size);
+extern void *Malloc (size_t size);
+extern void *Realloc (void *ptr, size_t size);
 extern int StrCmp (const char *s1, const char *s2);
 extern int ReStrN (char **dst, const char *src, int len);
 extern int ReStr (char **dst, const char *src);

@@ -283,27 +283,21 @@ NewDisplay (const char *name, const char *class2)
     struct disphist	*hstent;
 
     if (!(hstent = FindHist (name))) {
-	if (!(hstent = calloc (1, sizeof (*hstent)))) {
-	    LogOutOfMem ("NewDisplay");
+	if (!(hstent = Calloc (1, sizeof (*hstent))))
 	    return 0;
-	}
 	if (!StrDup (&hstent->name, name)) {
 	    free (hstent);
-	    LogOutOfMem ("NewDisplay");
 	    return 0;
 	}
 	hstent->next = disphist; disphist = hstent;
     }
 
-    if (!(d = (struct display *) calloc (1, sizeof (*d)))) {
-	LogOutOfMem ("NewDisplay");
+    if (!(d = (struct display *) Calloc (1, sizeof (*d))))
 	return 0;
-    }
     d->next = displays;
     d->hstent = hstent;
     d->name = hstent->name;
     if (!StrDup (&d->class2, class2)) {
-	LogOutOfMem ("NewDisplay");
 	free ((char *) d);
 	return 0;
     }

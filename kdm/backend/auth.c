@@ -379,13 +379,13 @@ SetLocalAuthorization (struct display *d)
     d->authNameNum = i;
     if (d->authNameLens)
 	free ((char *) d->authNameLens);
-    d->authNameLens = (unsigned short *) malloc
+    d->authNameLens = (unsigned short *) Malloc
 				(d->authNameNum * sizeof (unsigned short));
     if (!d->authNameLens)
 	return;
     for (i = 0; i < d->authNameNum; i++)
 	d->authNameLens[i] = strlen (d->authNames[i]);
-    auths = (Xauth **) malloc (d->authNameNum * sizeof (Xauth *));
+    auths = (Xauth **) Malloc (d->authNameNum * sizeof (Xauth *));
     if (!auths)
 	return;
     j = 0;
@@ -489,15 +489,11 @@ saveEntry (Xauth *auth)
 {
 	struct addrList	*new;
 
-	new = (struct addrList *) malloc (sizeof (struct addrList));
-	if (!new) {
-		LogOutOfMem ("saveEntry");
+	if (!(new = (struct addrList *) Malloc (sizeof (struct addrList))))
 		return;
-	}
 	if ((new->address_length = auth->address_length) > 0) {
-		new->address = malloc (auth->address_length);
+		new->address = Malloc (auth->address_length);
 		if (!new->address) {
-			LogOutOfMem ("saveEntry");
 			free ((char *) new);
 			return;
 		}
@@ -505,9 +501,8 @@ saveEntry (Xauth *auth)
 	} else
 		new->address = 0;
 	if ((new->number_length = auth->number_length) > 0) {
-		new->number = malloc (auth->number_length);
+		new->number = Malloc (auth->number_length);
 		if (!new->number) {
-			LogOutOfMem ("saveEntry");
 			free (new->address);
 			free ((char *) new);
 			return;
@@ -516,9 +511,8 @@ saveEntry (Xauth *auth)
 	} else
 		new->number = 0;
 	if ((new->name_length = auth->name_length) > 0) {
-		new->name = malloc (auth->name_length);
+		new->name = Malloc (auth->name_length);
 		if (!new->name) {
-			LogOutOfMem ("saveEntry");
 			free (new->number);
 			free (new->address);
 			free ((char *) new);
@@ -953,10 +947,8 @@ setAuthNumber (Xauth *auth, const char *name)
 	    auth->number_length = dot - colon;
 	else
 	    auth->number_length = strlen (colon);
-	if (!StrNDup (&auth->number, colon, auth->number_length)) {
-	    LogOutOfMem ("setAuthNumber");
+	if (!StrNDup (&auth->number, colon, auth->number_length))
 	    auth->number_length = 0;
-	}
 	Debug ("setAuthNumber: %s\n", auth->number);
     }
 }

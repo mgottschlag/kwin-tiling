@@ -914,7 +914,7 @@ manage (
 		    goto abort;
 		}
 	    }
-	    if (!(from_save = (XdmcpNetaddr) malloc (fromlen)))
+	    if (!(from_save = (XdmcpNetaddr) Malloc (fromlen)))
 	    {
 		send_failed (from, fromlen, name, sessionID, "out of memory");
 		goto abort;
@@ -948,7 +948,7 @@ manage (
 	    XdmcpDisposeARRAY8 (&clientPort);
 	    if (pdpy->fileAuthorization)
 	    {
-		d->authorizations = (Xauth **) malloc (sizeof (Xauth *));
+		d->authorizations = (Xauth **) Malloc (sizeof (Xauth *));
 		if (!d->authorizations)
 		{
 		    free ((char *) from_save);

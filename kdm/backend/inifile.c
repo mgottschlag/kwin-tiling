@@ -57,8 +57,7 @@ iniLoad (const char *fname)
 	return 0;
     }
     len = lseek (fd, 0, SEEK_END);
-    if (!(data = malloc (len + 2))) {
-	LogOutOfMem ("iniLoad");
+    if (!(data = Malloc (len + 2))) {
 	close (fd);
 	return 0;
     }
@@ -132,12 +131,10 @@ iniEntry (char *data, const char *section, const char *key, const char *value)
 			goto insert;
 		    } else {
 			for (ce--; ce != cb && (*(ce - 1) == ' ' || *(ce - 1) == '\t'); ce--);
-			if (StrNDup (&p, cb, ce - cb))
-{Debug ("iniEntry(%s,%s,0) = %\"s\n", section, key, p);
-			    return p;
-}
-			LogOutOfMem ("iniEntry(read)");
-			return 0;
+			if (!StrNDup (&p, cb, ce - cb))
+			    return 0;
+Debug ("iniEntry(%s,%s,0) = %\"s\n", section, key, p);
+			return p;
 		    }
 		}
 	    }
@@ -169,10 +166,8 @@ iniEntry (char *data, const char *section, const char *key, const char *value)
   insert:
     vl = strlen (value);
     nlen = len - (ce - cb) + ll + sl + kl + vl + 1;
-    if (!(p = ndata = malloc (nlen + 1))) {
-	LogOutOfMem ("iniEntry(write)");
+    if (!(p = ndata = Malloc (nlen + 1)))
 	return data;
-    }
     apparr (p, data, cb - data);
     if (kl) {
 	if (sl) {
@@ -225,10 +220,8 @@ Debug("iniMerge: found comment %.10\"s\n", p);
 	    for (; *p != ']'; p++)
 		if (!*p || *p == '\n')	/* missing ] */
 		    goto bail;
-	    if (!ReStrN (&section, cb, p - cb)) {
-		LogOutOfMem ("iniMerge");
+	    if (!ReStrN (&section, cb, p - cb))
 		break;
-	    }
 	    p++;
 Debug("iniMerge: found section %\"s\n", section);
 	} else {
@@ -237,19 +230,15 @@ Debug("iniMerge: found section %\"s\n", section);
 		if (!*p || *p == '\n')	/* missing = */
 		    goto bail;
 	    for (ce = p; ce != cb && (*(ce - 1) == ' ' || *(ce - 1) == '\t'); ce--);
-	    if (!StrNDup (&key, cb, ce - cb)) {
-		LogOutOfMem ("iniMerge");
+	    if (!StrNDup (&key, cb, ce - cb))
 		break;
-	    }
 Debug("iniMerge: found key %\"s\n", key);
 	    for (p++; *p == ' ' || *p == '\t'; p++);
 	    cb = p;
 	    for (; *p && *p != '\n'; p++);
 	    for (ce = p; ce != cb && (*(ce - 1) == ' ' || *(ce - 1) == '\t'); ce--);
-	    if (!StrNDup (&value, cb, ce - cb)) {
-		LogOutOfMem ("iniMerge");
+	    if (!StrNDup (&value, cb, ce - cb))
 		break;
-	    }
 Debug("iniMerge: found value %\"s\n", value);
 	    if (section)
 		data = iniEntry (data, section, key, value);

@@ -54,6 +54,36 @@ from The Open Group.
 # include <sys/utsname.h>
 #endif
 
+void *
+Calloc (size_t nmemb, size_t size)
+{
+    void *ret;
+
+    if (!(ret = calloc (nmemb, size)))
+	LogOutOfMem ();
+    return ret;
+}
+
+void *
+Malloc (size_t size)
+{
+    void *ret;
+
+    if (!(ret = malloc (size)))
+	LogOutOfMem ();
+    return ret;
+}
+
+void *
+Realloc (void *ptr, size_t size)
+{
+    void *ret;
+
+    if (!(ret = realloc (ptr, size)) && size)
+	LogOutOfMem ();
+    return ret;
+}
+
 int
 StrCmp (const char *s1, const char *s2)
 {
@@ -86,7 +116,7 @@ ReStrN (char **dst, const char *src, int len)
 	    len = strlen (src);
 	if (*dst && !memcmp (*dst, src, len) && !(*dst)[len])
 	    return 1;
-	if (!(ndst = malloc (len + 1)))
+	if (!(ndst = Malloc (len + 1)))
 	    return 0;
 	memcpy (ndst, src, len);
 	ndst[len] = 0;
@@ -109,7 +139,7 @@ StrNDup (char **dst, const char *src, int len)
     if (src) {
 	if (len < 0)
 	    len = strlen (src);
-	if (!(*dst = malloc (len + 1)))
+	if (!(*dst = Malloc (len + 1)))
 	    return 0;
 	memcpy (*dst, src, len);
 	(*dst)[len] = 0;
@@ -143,7 +173,7 @@ StrApp (char **dst, ...)
 	len += strlen (pt);
     }
     va_end (va);
-    if (!(bk = malloc (len)))
+    if (!(bk = Malloc (len)))
 	return 0;
     dp = bk;
     if (*dst) {
@@ -172,7 +202,7 @@ char **
 initStrArr (char **arr)
 {
     if (!arr)
-	if ((arr = malloc (sizeof(char *))))
+	if ((arr = Malloc (sizeof(char *))))
 	    arr[0] = 0;
     return arr;
 }
@@ -193,7 +223,7 @@ extStrArr (char ***arr)
     int nu;
 
     nu = arrLen (*arr);
-    if ((rarr = realloc (*arr, sizeof (char *) * (nu + 2)))) {
+    if ((rarr = Realloc (*arr, sizeof (char *) * (nu + 2)))) {
 	*arr = rarr;
 	rarr[nu + 1] = 0;
 	return rarr + nu;
@@ -218,7 +248,7 @@ xCopyStrArr (int rn, char **arr)
     int nu;
 
     nu = arrLen (arr);
-    if ((rarr = calloc (sizeof(char *), nu + rn + 1)))
+    if ((rarr = Calloc (sizeof(char *), nu + rn + 1)))
 	memcpy (rarr + rn, arr, sizeof(char *) * nu);
     return rarr;
 }
@@ -293,18 +323,14 @@ setEnv (char **e, const char *name, const char *value)
 #ifdef AIXV3
     /* setpenv() depends on "SYSENVIRON:", not "SYSENVIRON:=" */
     if (!value) {
-	if (!StrDup (&newe, name)) {
-	    LogOutOfMem ("setEnv");
+	if (!StrDup (&newe, name))
 	    return e;
-	}
     } else
 #endif
     {
 	newe = 0;
-	if (!StrApp (&newe, name, "=", value, (char *)0)) {
-	    LogOutOfMem ("setEnv");
+	if (!StrApp (&newe, name, "=", value, (char *)0))
 	    return e;
-	}
     }
     envsize = 0;
     if (e) {
@@ -319,11 +345,10 @@ setEnv (char **e, const char *name, const char *value)
 	envsize = old - e;
     }
     if (!(new = (char **) 
-	    realloc ((char *) e,
+	    Realloc ((char *) e,
 		     (unsigned) ((envsize + 2) * sizeof (char *)))))
     {
 	free (newe);
-	LogOutOfMem ("setEnv");
 	return e;
     }
     new[envsize] = newe;
@@ -339,10 +364,7 @@ putEnv(const char *string, char **env)
     if (!(b = strchr(string, '=')))
 	return NULL;
     if (!StrNDup (&n, string, b - string))
-    {
-	LogOutOfMem ("putEnv");
 	return NULL;
-    }
     env = setEnv(env, n, b + 1);
     free(n);
     return env;

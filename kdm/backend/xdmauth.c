@@ -72,7 +72,7 @@ XdmGetAuthHelper (
     int	    includeRho)
 {
     Xauth   *new;
-    new = (Xauth *) malloc (sizeof (Xauth));
+    new = (Xauth *) Malloc (sizeof (Xauth));
 
     if (!new)
 	return (Xauth *) 0;
@@ -86,13 +86,13 @@ XdmGetAuthHelper (
     else
 	new->data_length = 8;
 
-    new->data = (char *) malloc (new->data_length);
+    new->data = (char *) Malloc (new->data_length);
     if (!new->data)
     {
 	free ((char *) new);
 	return (Xauth *) 0;
     }
-    new->name = (char *) malloc (namelen);
+    new->name = (char *) Malloc (namelen);
     if (!new->name)
     {
 	free ((char *) new->data);
@@ -140,7 +140,7 @@ XdmGetXdmcpAuth (
     xdmcpauth = XdmGetAuthHelper (authorizationNameLen, authorizationName, FALSE);
     if (!xdmcpauth)
 	return;
-    fileauth = (Xauth *) malloc (sizeof (Xauth));
+    fileauth = (Xauth *) Malloc (sizeof (Xauth));
     if (!fileauth)
     {
 	XauDisposeAuth(xdmcpauth);
@@ -148,8 +148,8 @@ XdmGetXdmcpAuth (
     }
     /* build the file auth from the XDMCP auth */
     *fileauth = *xdmcpauth;
-    fileauth->name = malloc (xdmcpauth->name_length);
-    fileauth->data = malloc (16);
+    fileauth->name = Malloc (xdmcpauth->name_length);
+    fileauth->data = Malloc (16);
     fileauth->data_length = 16;
     if (!fileauth->name || !fileauth->data)
     {

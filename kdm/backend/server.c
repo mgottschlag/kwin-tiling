@@ -64,10 +64,7 @@ StartServerOnce ()
 	if (d->authFile) {
 	    if (!(argv = addStrArr (argv, "-auth", 5)) ||
 		!(argv = addStrArr (argv, d->authFile, -1)))
-	    {
-		LogOutOfMem ("StartServerOnce");
 		exit (47);
-	    }
 	}
 	Debug ("exec %\"[s\n", argv);
 	/*

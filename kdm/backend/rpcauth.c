@@ -62,7 +62,7 @@ SecureRPCGetAuth (
     Xauth   *new;
     char    key[MAXNETNAMELEN+1];
 
-    new = (Xauth *) malloc (sizeof *new);
+    new = (Xauth *) Malloc (sizeof *new);
     if (!new)
 	return (Xauth *) 0;
     new->family = FamilyWild;
@@ -74,13 +74,13 @@ SecureRPCGetAuth (
     getnetname (key);
     Debug ("system netname %s\n", key);
     new->data_length = strlen(key);
-    new->data = (char *) malloc (new->data_length);
+    new->data = (char *) Malloc (new->data_length);
     if (!new->data)
     {
 	free ((char *) new);
 	return (Xauth *) 0;
     }
-    new->name = (char *) malloc (namelen);
+    new->name = (char *) Malloc (namelen);
     if (!new->name)
     {
 	free ((char *) new->data);

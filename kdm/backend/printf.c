@@ -550,6 +550,11 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
  */
 #ifndef NO_LOGGER
 
+#include <time.h>	/* XXX this will break on stone-age systems */
+#ifndef Time_t
+# define Time_t time_t
+#endif
+
 #ifdef USE_SYSLOG
 # include <syslog.h>
 # ifdef LOG_NAME
@@ -560,10 +565,6 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 static int lognums[] = { LOG_DEBUG, LOG_INFO, LOG_ERR, LOG_CRIT };
 #else
 # include <stdio.h>
-# include <time.h>	/* XXX this will break on stone-age systems */
-# ifndef Time_t
-#  define Time_t time_t
-# endif
 # define InitLog() while(0)
 static const char *lognams[] = { "debug", "info", "error", "panic" };
 
@@ -576,22 +577,33 @@ logTime (char *dbuf)
 }
 #endif
 
+#define OOMSTR "Out of memory. Expect problems.\n"
+
 STATIC void
-LogOutOfMem (const char *fkt)
+LogOutOfMem (void)
 {
+    static Time_t last;
+    Time_t now;
+
+    time (&now);
+    if (last + 100 > now) {	/* don't log bursts */
+	last = now;
+	return;
+    }
+    last = now;
 #ifdef USE_SYSLOG
-    syslog (LOG_CRIT, "Out of memory in %s()", fkt);
+    syslog (LOG_CRIT, OOMSTR);
 #else
     int el;
     char dbuf[24], sbuf[128];
     logTime (dbuf);
     el = sprintf (sbuf, "%s "
 # ifdef LOG_NAME
-	LOG_NAME "[%ld]: Out of memory in %s()\n", dbuf, 
+	LOG_NAME "[%ld]: " OOMSTR, dbuf, 
 # else
-	"%s[%ld]: Out of memory in %s()\n", dbuf, prog, 
+	"%s[%ld]: " OOMSTR, dbuf, prog, 
 # endif
-	(long)getpid(), fkt);
+	(long)getpid());
     write (2, sbuf, el);
 #endif
 }
@@ -637,12 +649,11 @@ OutChL (void *bp, char c)
 		oclbp->blen = 0;
 	    }
 	    nlen = oclbp->blen * 3 / 2 + 128;
-	    nbuf = realloc (oclbp->buf, nlen);
+	    nbuf = Realloc (oclbp->buf, nlen);
 	    if (nbuf) {
 		oclbp->buf = nbuf;
 		oclbp->blen = nlen;
 	    } else {
-		LogOutOfMem ("Logger");
 		OutChLFlush (oclbp);
 		oclbp->buf = oclbp->lmbuf;
 		oclbp->blen = sizeof(oclbp->lmbuf);
@@ -755,9 +766,8 @@ OutCh_OCF (void *bp, char c)
 	if (ocfbp->blen < 0)	
 	    return;
 	nlen = ocfbp->blen * 3 / 2 + 100;
-	nbuf = realloc (ocfbp->buf, nlen);
+	nbuf = Realloc (ocfbp->buf, nlen);
 	if (!nbuf) {
-	    LogOutOfMem ("FdPrintf");
 	    free (ocfbp->buf);
 	    ocfbp->blen = -1;
 	    ocfbp->buf = 0;
@@ -808,13 +818,12 @@ OutCh_OCA (void *bp, char c)
 	if (ocabp->blen < 0)	
 	    return;
 	nlen = ocabp->blen * 3 / 2 + 100;
-	nbuf = realloc (ocabp->buf, nlen);
+	nbuf = Realloc (ocabp->buf, nlen);
 	if (!nbuf) {
 	    free (ocabp->buf);
 	    ocabp->blen = -1;
 	    ocabp->buf = 0;
 	    ocabp->clen = 0;
-	    LogOutOfMem ("VASPrintf");
 	    return;
 	}
 	ocabp->blen = nlen;
@@ -830,7 +839,7 @@ VASPrintf (char **strp, const char *fmt, va_list args)
 
     DoPr(OutCh_OCA, &ocab, fmt, args);
     OutCh_OCA(&ocab, 0);
-    *strp = realloc (ocab.buf, ocab.clen);
+    *strp = Realloc (ocab.buf, ocab.clen);
     if (!*strp)
 	*strp = ocab.buf;
     return ocab.tlen;

@@ -105,10 +105,10 @@ NewProtoDisplay (
     Debug ("NewProtoDisplay\n");
     time (&date);
     TimeoutProtoDisplays (date);
-    pdpy = (struct protoDisplay *) malloc (sizeof *pdpy);
+    pdpy = (struct protoDisplay *) Malloc (sizeof *pdpy);
     if (!pdpy)
 	return NULL;
-    pdpy->address = (XdmcpNetaddr) malloc (addrlen);
+    pdpy->address = (XdmcpNetaddr) Malloc (addrlen);
     if (!pdpy->address)
     {
 	free ((char *) pdpy);

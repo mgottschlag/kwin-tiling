@@ -75,7 +75,7 @@ Krb5CCacheName (const char *dname)
     if (!tmpdir)
 	tmpdir = "/tmp";
     dnl = strlen (dname);
-    name = malloc (strlen(tmpdir) + dnl + 20);
+    name = Malloc (strlen(tmpdir) + dnl + 20);
     if (!name)
 	return NULL;
     nl = sprintf (name, "FILE:%s/K5C", tmpdir);
@@ -89,7 +89,7 @@ Krb5GetAuthFor (unsigned short namelen, const char *name, const char *dname)
     Xauth *new;
     char *filename;
 
-    if (!(new = (Xauth *) malloc (sizeof *new)))
+    if (!(new = (Xauth *) Malloc (sizeof *new)))
 	return (Xauth *) 0;
     new->family = FamilyWild;
     new->address_length = 0;
@@ -120,7 +120,7 @@ Krb5GetAuthFor (unsigned short namelen, const char *name, const char *dname)
 	new->data_length = 0;
     }
 
-    if (!(new->name = (char *) malloc (namelen)))
+    if (!(new->name = (char *) Malloc (namelen)))
     {
 	free ((char *) new->data);
 	free ((char *) new);

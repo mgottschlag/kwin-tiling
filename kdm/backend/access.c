@@ -125,12 +125,11 @@ ScanAccessDatabase (int force)
     accData->nAcls = GRecvInt ();
     nChars = GRecvInt ();
     if (!(accData->hostList = (HostEntry *)
-	    malloc (accData->nHosts * sizeof(HostEntry) +
+	    Malloc (accData->nHosts * sizeof(HostEntry) +
 		    accData->nAliases * sizeof(AliasEntry) +
 		    accData->nAcls * sizeof(AclEntry) +
 		    nChars)))
     {
-	LogOutOfMem ("ScanAccessDatabase");
 	CloseGetter ();
 	return;
     }

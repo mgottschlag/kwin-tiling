@@ -118,7 +118,7 @@ RememberIndirectClient (
 	if (XdmcpARRAY8Equal (clientAddress, &i->client) &&
 	    connectionType == i->connectionType)
 	    return 1;
-    i = (IndirectUsersPtr) malloc (sizeof (IndirectUsersRec));
+    i = (IndirectUsersPtr) Malloc (sizeof (IndirectUsersRec));
     if (!XdmcpCopyARRAY8 (clientAddress, &i->client))
     {
 	free ((char *) i);
@@ -240,7 +240,7 @@ RegisterIndirectChoice (
     if (!c)
     {
 	insert = 1;
-	c = (ChoicePtr) malloc (sizeof (ChoiceRec));
+	c = (ChoicePtr) Malloc (sizeof (ChoiceRec));
 	if (!c)
 	    return 0;
 	c->connectionType = connectionType;
@@ -373,7 +373,7 @@ addHostname(ARRAY8Ptr hostname, ARRAY8Ptr status,
 	    goto gotold;
 	}
     }
-    if (!(name = (HostName *) malloc(sizeof(*name))))
+    if (!(name = (HostName *) Malloc(sizeof(*name))))
 	return 0;
     if (hostname->length) {
 	switch (addr->sa_family) {
@@ -514,9 +514,9 @@ Debug("registering host %[*hhu, type %d\n", len, addr, type);
 		break;
 	    }
 Debug(" not dupe\n");
-    if (!(host = (HostAddr *) malloc(sizeof(*host))))
+    if (!(host = (HostAddr *) Malloc(sizeof(*host))))
 	return;
-    if (!(host->addr = (struct sockaddr *) malloc(len))) {
+    if (!(host->addr = (struct sockaddr *) Malloc(len))) {
 	free((char *) host);
 	return;
     }

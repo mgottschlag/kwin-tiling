@@ -240,7 +240,7 @@ Willing (
 #endif
     }
     status->length = strlen (statusBuf);
-    status->data = (CARD8Ptr) malloc (status->length);
+    status->data = (CARD8Ptr) Malloc (status->length);
     if (!status->data)
 	status->length = 0;
     else

@@ -105,6 +105,9 @@ typedef struct ValArr {
 } ValArr;
 
 
+static void *Malloc (size_t size);
+static void *Realloc (void *ptr, size_t size);
+
 #ifdef HAVE_VSYSLOG
 # define USE_SYSLOG
 #endif
@@ -114,6 +117,27 @@ typedef struct ValArr {
 #define LOG_PANIC_EXIT 1
 #define STATIC static
 #include <printf.c>
+
+
+static void *
+Malloc (size_t size)
+{
+    void *ret;
+
+    if (!(ret = malloc (size)))
+	LogOutOfMem ();
+    return ret;
+}
+
+static void *
+Realloc (void *ptr, size_t size)
+{
+    void *ret;
+
+    if (!(ret = realloc (ptr, size)) && size)
+	LogOutOfMem ();
+    return ret;
+}
 
 
 static void
@@ -267,8 +291,7 @@ readFile (File *file, const char *fn, const char *what)
 # endif
 #endif
     {
-	if (!(file->buf = malloc (flen + 1))) {
-	    LogOutOfMem ("readFile");
+	if (!(file->buf = Malloc (flen + 1))) {
 	    close (fd);
 	    return 0;
 	}
@@ -288,10 +311,8 @@ readFile (File *file, const char *fn, const char *what)
 static int
 copyBuf (File *file, const char *buf, int len)
 {
-    if (!(file->buf = malloc (len + 1))) {
-	LogOutOfMem ("copyBuf");
+    if (!(file->buf = Malloc (len + 1)))
 	return 0;
-    }
     memcpy (file->buf, buf, len);
     file->eof = (file->cur = file->buf) + len;
 #if defined(HAVE_MMAP) && defined(WANT_CLOSE)
@@ -677,10 +698,8 @@ Debug ("parsing config ...\n");
 		      nlen, nstr, kdmrc, line);
 	    continue;
 	  newsec:
-	    if (!(cursec = malloc (sizeof(*cursec)))) {
-		LogOutOfMem ("ReadConf");
+	    if (!(cursec = Malloc (sizeof(*cursec))))
 		return;
-	    }
 	    cursec->name = nstr;
 	    cursec->nlen = nlen;
 	    cursec->dname = dstr;
@@ -774,10 +793,8 @@ Debug ("parsing config ...\n");
 			  ce->name, cursec->nlen, cursec->name, kdmrc);
 		goto keyfnd;
 	    }
-	if (!(curent = malloc (sizeof (*curent)))) {
-	    LogOutOfMem ("ReadConf");
+	if (!(curent = Malloc (sizeof (*curent))))
 	    return;
-	}
 	curent->keyid = ce->id;
 	curent->line = line;
 	curent->val = st;
@@ -915,10 +932,8 @@ CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 		    retval->len--;
 	    return 0;
 	case C_TYPE_ARGV:
-	    if (!(ents = malloc (sizeof(Value) * (esiz = 10)))) {
-		LogOutOfMem ("CvtValue");
+	    if (!(ents = Malloc (sizeof(Value) * (esiz = 10))))
 		return 0;
-	    }
 	    for (nents = 0, tlen = 0, i = 0; ; i++) {
 		for (; i < vallen && isspace (val[i]); i++);
 		for (b = i; i < vallen && val[i] != ','; i++);
@@ -926,13 +941,11 @@ CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 		    break;
 		for (e = i; e > b && isspace (val[e - 1]); e--);
 		if (esiz < nents + 2) {
-		    Value *entsn = realloc (ents, 
+		    Value *entsn = Realloc (ents, 
 					sizeof(Value) * (esiz = esiz * 2 + 1));
-		    if (!nents) {
-			LogOutOfMem ("CvtValue");
+		    if (!nents)
 			break;
-		    } else
-			ents = entsn;
+		    ents = entsn;
 		}
 		ents[nents].ptr = val + b;
 		ents[nents].len = e - b;
@@ -978,11 +991,9 @@ AddValue (ValArr *va, int id, Value *val)
 
 /*    Debug ("Addig value %#x\n", id);*/
     if (va->nents == va->esiz) {
-	va->ents = realloc (va->ents, sizeof(Val) * (va->esiz += 50));
-	if (!va->ents) {
-	    LogOutOfMem ("AddValue");
+	va->ents = Realloc (va->ents, sizeof(Val) * (va->esiz += 50));
+	if (!va->ents)
 	    return 0;
-	}
     }
     va->ents[va->nents].id = id;
     va->ents[va->nents].val = *val;
@@ -1181,11 +1192,8 @@ ParseHost (int *nHosts, HostEntry ***hostPtr, int *nChars,
 {
     struct hostent  *hostent;
 
-    if (!(**hostPtr = (HostEntry *) malloc (sizeof (HostEntry))))
-    {
-	LogOutOfMem ("ParseHost");
+    if (!(**hostPtr = (HostEntry *) Malloc (sizeof (HostEntry))))
 	return 0;
-    }
     if (!strcmp (hostOrAlias, BROADCAST_STRING))
     {
 	(**hostPtr)->type = HOST_BROADCAST;
@@ -1212,9 +1220,8 @@ ParseHost (int *nHosts, HostEntry ***hostPtr, int *nChars,
 	    return 0;
 	}
 	if (!((**hostPtr)->entry.displayAddress.hostAddress = 
-	      malloc (hostent->h_length)))
+	      Malloc (hostent->h_length)))
 	{
-	    LogOutOfMem ("ParseHost");
 	    free ((char *) (**hostPtr));
 	    return 0;
 	}
@@ -1247,10 +1254,8 @@ ReadAccessFile (const char *fname)
     {
 	if (*displayOrAlias == ALIAS_CHARACTER)
 	{
-	    if (!(*aliasPtr = (AliasEntry *) malloc (sizeof (AliasEntry))))
+	    if (!(*aliasPtr = (AliasEntry *) Malloc (sizeof (AliasEntry))))
 	    {
-	      oom:
-		LogOutOfMem ("ReadAccessFile");
 		error = 1;
 		break;
 	    }
@@ -1269,8 +1274,11 @@ ReadAccessFile (const char *fname)
 	}
 	else
 	{
-	    if (!(*acPtr = (AclEntry *) malloc (sizeof (AclEntry))))
-		goto oom;
+	    if (!(*acPtr = (AclEntry *) Malloc (sizeof (AclEntry))))
+	    {
+		error = 1;
+		break;
+	    }
 	    (*acPtr)->flags = 0;
 	    if (*displayOrAlias == NEGATE_CHARACTER)
 	    {
@@ -1411,10 +1419,8 @@ ReadServersFile (const char *fname)
   haveit:
     while ((word = ReadWord (&file, &len, FALSE))) {
 Debug ("read display name %s\n", word);
-	if (!(*serverPtr = (ServerEntry *) malloc (sizeof (ServerEntry)))) {
-	    LogOutOfMem ("ReadServerFile");
+	if (!(*serverPtr = (ServerEntry *) Malloc (sizeof (ServerEntry))))
 	    break;
-	}
 	(*serverPtr)->name = word;
 	/*
 	 * extended syntax; if the second argument doesn't
@@ -1454,10 +1460,8 @@ Debug ("display is reserve\n");
 	argp = &(*serverPtr)->argv;
 	while (word) {
 Debug ("read server arg %s\n", word);
-	    if (!(*argp = (ArgV *) malloc (sizeof (ArgV)))) {
-		LogOutOfMem ("ReadServerFile");
+	    if (!(*argp = (ArgV *) Malloc (sizeof (ArgV))))
 		goto sendxs;
-	    }
 	    (*argp)->str = word;
 	    argp = &(*argp)->next;
 	    (*serverPtr)->argc++;

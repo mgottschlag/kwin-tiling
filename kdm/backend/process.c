@@ -297,14 +297,12 @@ GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
 	return -1;
     }
     if (!(margv = xCopyStrArr (1, argv))) {
-	LogOutOfMem ("GOpen");
 	if (cname)
 	     free (cname);
 	return -1;
     }
     if (!StrApp (margv, progpath, what, (char *)0)) {
 	free (margv);
-	LogOutOfMem ("GOpen");
 	if (cname)
 	     free (cname);
 	return -1;
@@ -474,11 +472,8 @@ iGRecvArr (int *rlen)
     GDebug (" -> %d bytes\n", len);
     if (!len)
 	return (char *)0;
-    if (!(buf = malloc (len)))
-    {
-	LogOutOfMem ("GRecvArr");
+    if (!(buf = Malloc (len)))
 	GErr ();
-    }
     GRead (buf, len);
     return buf;
 }
@@ -595,11 +590,8 @@ GRecvStrArr (int *rnum)
     *rnum = num;
     if (!num)
 	return (char **)0;
-    if (!(argv = malloc (num * sizeof(char *))))
-    {
-	LogOutOfMem ("GRecvStrArr");
+    if (!(argv = Malloc (num * sizeof(char *))))
 	GErr ();
-    }
     for (cargv = argv; --num >= 0; cargv++)
 	*cargv = GRecvStr ();
     return argv;

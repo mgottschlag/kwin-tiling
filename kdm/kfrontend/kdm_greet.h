@@ -49,7 +49,6 @@ void Debug (const char *fmt, ...);
 void LogInfo (const char *fmt, ...);
 void LogError (const char *fmt, ...);
 void LogPanic (const char *fmt, ...) ATTR_NORETURN;
-void LogOutOfMem (const char *fkt);
 
 struct _XDisplay;
 

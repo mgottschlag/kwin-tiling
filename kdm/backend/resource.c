@@ -87,10 +87,8 @@ newStr (char *str)
 	    cs->cnt++;
 	    return cs;
 	}
-    if (!(cs = malloc (sizeof (*cs)))) {
-	LogOutOfMem ("newStr");
+    if (!(cs = Malloc (sizeof (*cs))))
 	return 0;
-    }
     cs->cnt = 1;
     cs->str = str;
     cs->next = strs;
@@ -150,8 +148,7 @@ GetDeps ()
     OpenGetter ();
     GSendInt (GC_Files);
     ncf = GRecvInt ();
-    if (!(cf = malloc (ncf * sizeof (*cf)))) {
-	LogOutOfMem ("GetDeps");
+    if (!(cf = Malloc (ncf * sizeof (*cf)))) {
 	CloseGetter ();
 	return 0;
     }
@@ -244,11 +241,10 @@ LoadResources (CfgArr *conf)
     nptr = GRecvInt ();
     nint = GRecvInt ();
     nchr = GRecvInt ();
-    if (!(conf->data = malloc (conf->numCfgEnt * (sizeof(int) + sizeof(char *))
+    if (!(conf->data = Malloc (conf->numCfgEnt * (sizeof(int) + sizeof(char *))
 			       + nptr * sizeof(char *)
 			       + nint * sizeof(int)
 			       + nchr))) {
-	LogOutOfMem ("LoadResources");
 	CloseGetter ();
 	return;
     }

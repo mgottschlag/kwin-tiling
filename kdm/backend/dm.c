@@ -520,9 +520,8 @@ SwitchToTty (struct display *d)
 	d->status = notRunning;
 	return;
     }
-    if (!(utp = malloc (sizeof(*utp))))
+    if (!(utp = Malloc (sizeof(*utp))))
     {
-	LogOutOfMem("SwitchToTty");
 	d->status = notRunning;
 	return;
     }
@@ -665,9 +664,8 @@ openFifo (int *fifofd, char **fifopath, const char *dname)
 	} else
 	    chmod (fifoDir, 0755); /* override umask */
 	if (!*fifopath)
-	    if (!StrApp (fifopath, fifoDir, dname ? "/xdmctl-" : "/xdmctl", 
-			 dname, (char *)0))
-		LogOutOfMem("openFifo");
+	    StrApp (fifopath, fifoDir, dname ? "/xdmctl-" : "/xdmctl", 
+			 dname, (char *)0);
 	if (*fifopath) {
 	    unlink (*fifopath);
 	    if (mkfifo (*fifopath, 0) < 0)

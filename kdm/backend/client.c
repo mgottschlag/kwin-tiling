@@ -157,7 +157,7 @@ PAM_conv (int num_msg,
     struct pam_response *reply;
     struct pam_data *pd = (struct pam_data *)appdata_ptr;
 
-    if (!(reply = calloc(num_msg, sizeof(*reply))))
+    if (!(reply = Calloc(num_msg, sizeof(*reply))))
 	return PAM_CONV_ERR;
 
     ReInitErrorLog ();
@@ -248,7 +248,7 @@ PAM_conv_null (int num_msg,
     int count;
     struct pam_response *reply;
 
-    if (!(reply = calloc(num_msg, sizeof(*reply))))
+    if (!(reply = Calloc(num_msg, sizeof(*reply))))
 	return PAM_CONV_ERR;
 
     ReInitErrorLog ();
@@ -1175,10 +1175,8 @@ StartClient ()
 # endif
 # ifdef USE_PAM
 #  ifdef AIXV3
-	if (!(environ = initStrArr (0))) {
-	    LogOutOfMem("StartSession");
+	if (!(environ = initStrArr (0)))
 	    exit (1);
-	}
 #  endif
 	if ((pretc = pam_setcred (pamh, 0)) != PAM_SUCCESS) {
 	    ReInitErrorLog ();
@@ -1214,10 +1212,8 @@ StartClient ()
 	 * We need to do this before setusercontext() because that may
 	 * set or reset some environment variables.
 	 */
-	if (!(environ = initStrArr (0))) {
-	    LogOutOfMem("StartSession");
+	if (!(environ = initStrArr (0)))
 	    exit (1);
-	}
 
 	/*
 	 * Set the user's credentials: uid, gid, groups,
@@ -1514,7 +1510,7 @@ ReadDmrc ()
     if (Reader (pfd[0], &len, sizeof(int)) == sizeof(int)) {
 	if (len == -1)
 	    err = GE_Denied;
-	else if ((curdmrc = malloc(len + 1))) {
+	else if ((curdmrc = Malloc(len + 1))) {
 	    if (Reader (pfd[0], curdmrc, len + 1) == len + 1)
 		err = GE_Ok;
 	    else {

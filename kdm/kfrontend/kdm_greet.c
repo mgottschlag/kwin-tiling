@@ -53,6 +53,18 @@
 # include <X11/XKBlib.h>
 #endif
 
+extern void LogOutOfMem (void);
+
+static void *
+Realloc (void *ptr, size_t size)
+{
+    void *ret;
+
+    if (!(ret = realloc (ptr, size)) && size)
+	LogOutOfMem ();
+    return ret;
+}
+
 #ifdef HAVE_VSYSLOG
 # define USE_SYSLOG
 #endif
