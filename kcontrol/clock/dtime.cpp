@@ -214,8 +214,7 @@ void Dtime::save()
 
   kdDebug() << "Set date " << BufS << endl;
 
-  c_proc.setExecutable( "date" );
-  c_proc << BufS;
+  c_proc << "date" << BufS;
   c_proc.start( KProcess::Block );
   int result = c_proc.exitStatus();
   if (result != 0
@@ -229,8 +228,7 @@ void Dtime::save()
 
   // try to set hardware clock. We do not care if it fails
   KProcess hwc_proc;
-  hwc_proc.setExecutable( "hwclock" );
-  hwc_proc << "--systohc";
+  hwc_proc << "hwclock" << "--systohc";
   hwc_proc.start(KProcess::Block);
 
   // restart time
