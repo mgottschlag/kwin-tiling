@@ -15,6 +15,6 @@ messages:
 	$(XGETTEXT) $(libkcm_smserver_la_SOURCES) -o $(podir)/kcmsmserver.pot
 
 data_DATA = kcmsmserver.desktop
-datadir = $(kde_appsdir)/Settings/LookNFeel/
+datadir = $(kde_appsdir)/Settings/System/
 
 EXTRA_DIST = $(data_DATA)
