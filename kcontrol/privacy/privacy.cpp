@@ -97,15 +97,15 @@ Privacy::Privacy(QWidget *parent, const char *name)
   QWhatsThis::add(sw, i18n("Check all cleanup actions you would like to perform. These will be executed by pressing the button below"));
   QWhatsThis::add(cleaningDialog->cleanupButton, i18n("Immediately performs the cleanup actions selected above"));
 
-  clearRunCommandHistory->setText(1, "Clears the history of commands run through the Run Command tool on the desktop");
-  clearAllCookies->setText(1, "Clears all stored cookies set by websites");
-  clearWebHistory->setText(1, "Clears the history of visited websites");
-  clearSavedClipboardContents->setText(1, "Clears the clipboard contents stored by klipper");
-  clearWebCache->setText(1, "Clears the temporary cache of websites visited");
-  clearFormCompletion->setText(1, "Clears values which were entered into forms on websites");
-  clearRecentDocuments->setText(1, "Clears the list of recently used documents from the KDE applications menu");
-  clearQuickStartMenu->setText(1, "Clears the entries from the list of recently started applications");
-  clearFavIcons->setText(1, "Clears the FavIcons cached from visited websites");
+  clearRunCommandHistory->setText(1, i18n("Clears the history of commands run through the Run Command tool on the desktop"));
+  clearAllCookies->setText(1, i18n("Clears all stored cookies set by websites"));
+  clearWebHistory->setText(1, i18n("Clears the history of visited websites"));
+  clearSavedClipboardContents->setText(1, i18n("Clears the clipboard contents stored by klipper"));
+  clearWebCache->setText(1, i18n("Clears the temporary cache of websites visited"));
+  clearFormCompletion->setText(1, i18n("Clears values which were entered into forms on websites"));
+  clearRecentDocuments->setText(1, i18n("Clears the list of recently used documents from the KDE applications menu"));
+  clearQuickStartMenu->setText(1, i18n("Clears the entries from the list of recently started applications"));
+  clearFavIcons->setText(1, i18n("Clears the FavIcons cached from visited websites"));
 
   connect(sw, SIGNAL(selectionChanged()), SLOT(configChanged()));
 
