@@ -46,6 +46,8 @@ KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *name, co
 
 void KSpellCheckingConfig::load()
 {
+    spellConfig->readGlobalSettings();
+    setChanged( false );
 }
 
 void KSpellCheckingConfig::save()
@@ -55,6 +57,7 @@ void KSpellCheckingConfig::save()
     if ( !kapp->dcopClient()->isAttached() )
         kapp->dcopClient()->attach();
     kapp->dcopClient()->send( "konqueror*", "KonquerorIface", "reparseConfiguration()", data );
+    setChanged( false );
 }
 
 void KSpellCheckingConfig::defaults()
@@ -65,6 +68,7 @@ void KSpellCheckingConfig::defaults()
     spellConfig->setDictFromList(FALSE);
     spellConfig->setEncoding (KS_E_ASCII);
     spellConfig->setClient (KS_CLIENT_ISPELL);
+    setChanged( true );
 }
 
 QString KSpellCheckingConfig::quickHelp() const
