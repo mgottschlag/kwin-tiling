@@ -43,8 +43,8 @@ KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStr
   box->layout()->setSpacing( KDialog::spacingHint() );
   connect( box, SIGNAL( clicked( int )), this, SLOT(configChanged()));
   layout->addWidget(box);
-  noSharing=new QRadioButton( i18n("Do &not share"), box );
-  sharing=new QRadioButton( i18n("&Share"),  box);
+  noSharing=new QRadioButton( i18n("Do &not allow users to share files"), box );
+  sharing=new QRadioButton( i18n("&Allow users to share files from their HOME directory"),  box);
   info = new QLabel( this );
   layout->addWidget(info);
   layout->addStretch();
@@ -90,6 +90,7 @@ void KFileShareConfig::load()
     else
     {
         QString str(QCString(file.readAll()));
+        kdDebug() << "-" << str << "-" << endl;
         if ( str=="RESTRICT=yes")
         {
             sharing->setChecked( false );
