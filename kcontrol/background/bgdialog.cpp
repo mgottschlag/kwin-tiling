@@ -30,6 +30,7 @@
 #include <qslider.h>
 #include <qtimer.h>
 #include <qwhatsthis.h>
+#include <qapplication.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -134,6 +135,9 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
 
    initUI();
    updateUI();
+#ifdef XRANDR_SUPPORT
+   connect( qApp->desktop(), SIGNAL( resized( int )), SLOT( desktopResized())); // RANDR support
+#endif
 }
 
 BGDialog::~BGDialog()
@@ -745,5 +749,18 @@ void BGDialog::slotBlendReverse(bool b)
    m_Renderer[m_eDesk]->setReverseBlending(b);
    m_Renderer[m_eDesk]->start();
 }
+
+void BGDialog::desktopResized()
+{
+    for (int i=0; i<m_Max; i++)
+    {
+        KBackgroundRenderer* r = m_Renderer[ i ];
+        if( r->isActive())
+            r->stop();
+        r->desktopResized();
+    }
+    m_Renderer[m_eDesk]->start();
+}
+    
 
 #include "bgdialog.moc"

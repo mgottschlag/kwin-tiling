@@ -57,6 +57,18 @@ KBackgroundRenderer::~KBackgroundRenderer()
     m_Tempfile = 0;
 }
 
+/*
+ * Re-configure because the desktop has been resized.
+ */
+void KBackgroundRenderer::desktopResized()
+{
+    m_State = 0;
+    m_rSize = QApplication::desktop()->size();
+    if( !m_bPreview )
+        m_Size = m_rSize;
+}
+
+
 void KBackgroundRenderer::tile(QImage *dest, QRect rect, QImage *src)
 {
     rect &= dest->rect();

@@ -57,6 +57,7 @@ public:
 public slots:
     void start();
     void stop();
+    void desktopResized();
 
 signals:
     void imageDone(int desk);

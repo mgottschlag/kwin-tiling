@@ -69,6 +69,7 @@ protected slots:
    void slotBlendMode(int mode);
    void slotBlendBalance(int value);
    void slotBlendReverse(bool b);
+   void desktopResized();
 
 protected:
    KGlobalBackgroundSettings *m_pGlobals;
