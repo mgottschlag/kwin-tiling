@@ -37,6 +37,9 @@
 # upon copy. E.g. Kwm expects it's close button to have the name close.png,
 # so the value would be ":close"
 #
+# An asteriks (*) at the end indicates that a whole directory should be 
+# installed instead of a single file.
+#
 # The exclamation mark indicates that no file shall be installed. Used for
 # color settings, switches (on/off/yes/no), etc. Only values in the config
 # file are changed.
@@ -272,6 +275,7 @@ ItemTextBackground=ItemTextBackground!
 [Icons]
 ConfigAppDir=icons
 ConfigGroup=Icons
-ConfigAbsolutePaths=true
+ConfigActivateCmd=applyIcons
+ConfigAbsolutePaths=false
 ConfigFile=kdeglobals
-Icons=Theme
+Icons=Theme*

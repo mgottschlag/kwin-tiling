@@ -66,7 +66,7 @@ bool ThemeCreator::create(const QString aThemeName)
   clear();
   cleanupWorkDir();
 
-  setName(aThemeName.ascii());
+  setName(aThemeName);
   mThemePath = workDir() + aThemeName + '/';
   if (!KStandardDirs::makeDir(mThemePath))
   {
@@ -130,16 +130,16 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     value = mMappings->readEntry("ConfigFile");
     if (!value.isEmpty())
     {
-      cfgFile = value.copy();
+      cfgFile = value;
       if (cfgFile == "KDERC") cfgFile = QDir::homeDirPath() + "/.kderc";
       else if (cfgFile[0] != '/') cfgFile = mConfigDir + cfgFile;
     }
     value = mMappings->readEntry("ConfigGroup");
-    if (!value.isEmpty()) cfgGroup = value.copy();
+    if (!value.isEmpty()) cfgGroup = value;
     value = mMappings->readEntry("ConfigAppDir");
     if (!value.isEmpty())
     {
-      appDir = value.copy();
+      appDir = value;
 #if 0
       if (appDir[0] != '/') baseDir = kapp->localkdedir() + "/share/";
       else baseDir = QString::null;
@@ -150,10 +150,10 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     }
     absPath = mMappings->readBoolEntry("ConfigAbsolutePaths", absPath);
     value = mMappings->readEntry("ConfigEmpty");
-    if (!value.isEmpty()) emptyValue = value.copy();
+    if (!value.isEmpty()) emptyValue = value;
     value = mMappings->readEntry("ConfigActivateCmd");
-    if (!value.isEmpty() && mCmdList.find(value.ascii()) < 0)
-      mCmdList.append(value.ascii());
+    if (!value.isEmpty() && (mCmdList.findIndex(value) < 0))
+      mCmdList.append(value);
 
     instCmd = mMappings->readEntry("ConfigInstallCmd").stripWhiteSpace();
 
@@ -192,7 +192,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     QMap<QString, QString>::Iterator aIt(aMap.begin());
     for (; aIt != aMap.end(); ++aIt) {
       key = aIt.key();
-      if (stricmp(key.left(6).ascii(),"Config")==0) continue;
+      if (key.startsWith("Config")) continue;
       mapValue = (*aIt).stripWhiteSpace();
       len = mapValue.length();
       if (len>0 && mapValue[len-1]=='!')
@@ -281,7 +281,7 @@ void ThemeCreator::extractCmd(KSimpleConfig* aCfg, const QString& aCmd,
   else if (cmd == "panelBack")
   {
     value = aCfg->readEntry("Position");
-    if (stricmp(value.ascii(),"right")==0 || stricmp(value.ascii(),"left")==0)
+    if ((value.lower() == "right") || (value.lower() == "left"))
     {
       value = readEntry("background");
       kdDebug() << "rotating " << value << endl;

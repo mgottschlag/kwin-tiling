@@ -26,7 +26,7 @@
 #include <qstring.h>
 #include <ksimpleconfig.h>
 #include <qpixmap.h>
-#include <qstrlist.h>
+#include <qstringlist.h>
 
 class KConfig;
 
@@ -135,6 +135,11 @@ protected:
       with KApp::localkdedir(). Returns true on success. */
   virtual bool installFile(const QString& name, const QString& dest);
 
+  /** Installs directory. The source name is prepended
+      with the theme work directory, the dest name is prepended
+      with KApp::localkdedir(). Returns true on success. */
+  virtual bool installDirectory(const QString& name, const QString& dest);
+
   /** Removes given file. If dirName is given and name is
       no absolute path, then dirName+"/"+name is removed. Does
       nothing if name is empty or null. */
@@ -185,7 +190,7 @@ protected:
   void stretchPixmap(const QString filename, bool verticalStretch);
 
   /** Add file to list of installed files. */
-  virtual void addInstFile(const char* filename);
+  virtual void addInstFile(const QString &filename);
 
   /** Read list of installled files. */
   virtual void readInstFileList(const char* groupName);
@@ -195,6 +200,9 @@ protected:
 
   /** Run krdb if krdb-usage is enabled. */
   virtual void runKrdb(void) const;
+
+  /** Activate new icon theme. */
+  virtual void applyIcons(void);
 
   /** Returns filename of given file+path (name up to the last slash) */
   virtual const QString fileOf(const QString&) const;
@@ -212,8 +220,8 @@ protected:
   QPixmap mPreview;
   QString mConfigDir;
   KSimpleConfig* mMappings;
-  QStrList mCmdList;
-  QStrList mInstFiles;     // List of installed files
+  QStringList mCmdList;
+  QStringList mInstFiles;     // List of installed files
   int mInstIcons;          // Number of installed icons
 };
 

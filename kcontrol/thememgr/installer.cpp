@@ -295,7 +295,7 @@ void Installer::slotSaveAs()
   QString fname, fpath, cmd, themeFile, ext;
   static QString path;
   QFileInfo finfo;
-  int cur, i;
+  int cur;
 
   if (path.isEmpty()) path = QDir::homeDirPath();
 

@@ -50,9 +50,12 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kdesktopfile.h>
+#include <kicontheme.h>
 #include <kipc.h>
 #include <kdebug.h>
 #include "theme.h"
+
+#include <kio/netaccess.h>
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -64,7 +67,7 @@
 extern int dropError(Display *, XErrorEvent *);
 
 //-----------------------------------------------------------------------------
-Theme::Theme(): ThemeInherited(QString::null), mInstFiles(true)
+Theme::Theme(): ThemeInherited(QString::null), mInstFiles()
 {
   int len;
 
@@ -111,7 +114,7 @@ void Theme::saveSettings(void)
 //-----------------------------------------------------------------------------
 void Theme::setDescription(const QString aDescription)
 {
-  mDescription = aDescription.copy();
+  mDescription = aDescription;
 }
 
 
@@ -330,6 +333,12 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
     return false;
   }
 
+  if (finfo.isDir())
+  {
+    kdDebug() << aSrc << " is a direcotry instead of a file." << endl;
+    return false;
+  }
+
   finfo.setFile(dest);
   if (finfo.isDir())  // destination is a directory
   {
@@ -382,6 +391,61 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
   return true;
 }
 
+//-----------------------------------------------------------------------------
+bool Theme::installDirectory(const QString& aSrc, const QString& aDest)
+{
+  bool backupMade = false; // Not used ??
+
+  if (aSrc.isEmpty()) return true;
+
+  assert(aDest[0] == '/');
+  QString dest = aDest;
+
+  QString src = mThemePath + aSrc;
+
+  QFileInfo finfo(src);
+  if (!finfo.exists())
+  {
+    kdDebug() << "Directory " << aSrc << " is not in theme package." << endl;
+    return false;
+  }
+  if (!finfo.isDir())
+  {
+    kdDebug() << aSrc << " is not a directory." << endl;
+    return false;
+  }
+
+  if (finfo.exists()) // delete and/or make backup copy
+  {
+    if (instOverwrite)
+    {
+       KURL url;
+       url.setPath(dest);
+       KIO::NetAccess::del(url);
+    }
+    else
+    {
+       KURL url;
+       url.setPath(dest+'~');
+       KIO::NetAccess::del(url);
+       rename(QFile::encodeName(dest).data(), QFile::encodeName(dest+'~').data());
+       backupMade = true;
+    }
+  }
+
+  KURL url1;
+  KURL url2;
+  url1.setPath(src);
+  url2.setPath(dest);
+
+  KIO::NetAccess::dircopy(url1, url2);
+
+  addInstFile(dest.ascii());
+  kdDebug() << "Installed " << src << " to " << dest << ". Backup: backupMade" << endl;
+
+  return true;
+}
+
 
 //-----------------------------------------------------------------------------
 int Theme::installGroup(const char* aGroupName)
@@ -389,7 +453,7 @@ int Theme::installGroup(const char* aGroupName)
   QString value, oldValue, cfgFile, cfgGroup, appDir, group, emptyValue;
   QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd, baseDir;
   QString preInstCmd;
-  bool absPath = false, doInstall;
+  bool absPath = false;
   KSimpleConfig* cfg = NULL;
   int len, i, installed = 0;
   const char* missing = 0;
@@ -414,16 +478,16 @@ kdDebug() << ":: baseDir = " << baseDir << endl;
     value = mMappings->readEntry("ConfigFile");
     if (!value.isEmpty())
     {
-      cfgFile = value.copy();
+      cfgFile = value;
       if (cfgFile == "KDERC") cfgFile = QDir::homeDirPath() + "/.kderc";
       else if (cfgFile[0] != '/') cfgFile = mConfigDir + cfgFile;
     }
     value = mMappings->readEntry("ConfigGroup");
-    if (!value.isEmpty()) cfgGroup = value.copy();
+    if (!value.isEmpty()) cfgGroup = value;
     value = mMappings->readEntry("ConfigAppDir");
     if (!value.isEmpty() && (value[0] != '/'))
     {
-      appDir = value.copy();
+      appDir = value;
       appDir = baseDir + appDir;
 
       len = appDir.length();
@@ -431,10 +495,10 @@ kdDebug() << ":: baseDir = " << baseDir << endl;
     }
     absPath = mMappings->readBoolEntry("ConfigAbsolutePaths", absPath);
     value = mMappings->readEntry("ConfigEmpty");
-    if (!value.isEmpty()) emptyValue = value.copy();
+    if (!value.isEmpty()) emptyValue = value;
     value = mMappings->readEntry("ConfigActivateCmd");
-    if (!value.isEmpty() && mCmdList.find(value.ascii()) < 0)
-      mCmdList.append(value.ascii());
+    if (!value.isEmpty() && (mCmdList.findIndex(value) < 0))
+      mCmdList.append(value);
     instCmd = mMappings->readEntry("ConfigInstallCmd").stripWhiteSpace();
     preInstCmd = mMappings->readEntry("ConfigPreInstallCmd").stripWhiteSpace();
 
@@ -480,12 +544,21 @@ kdDebug() << ":: baseDir = " << baseDir << endl;
       if (stricmp(key.left(6).ascii(),"Config")==0) continue;
       value = (*aIt).stripWhiteSpace();
       len = value.length();
+      bool bInstallFile = false;
+      bool bInstallDir = false;
       if (len>0 && value[len-1]=='!')
       {
-	doInstall = false;
 	value.truncate(len - 1);
       }
-      else doInstall = true;
+      else if (len>0 && value[len-1]=='*')
+      {
+	value.truncate(len - 1);
+        bInstallDir = true;
+      }
+      else 
+      {
+        bInstallFile = true;
+      }
 
       // parse mapping
       i = value.find(':');
@@ -501,40 +574,59 @@ kdDebug() << ":: baseDir = " << baseDir << endl;
       }
       if (cfgKey.isEmpty()) cfgKey = key;
 
-      if (doInstall)
+      if (bInstallFile || bInstallDir)
       {
 	oldValue = cfg->readEntry(cfgKey);
 	if (!oldValue.isEmpty() && oldValue==emptyValue)
 	  oldValue = QString::null;
       }
-      else oldValue = QString::null;
+      else 
+      {
+         oldValue = QString::null;
+      }
 
       themeValue = readEntry(key);
       if (cfgValue.isEmpty()) cfgValue = themeValue;
 
       // Install file
-      if (doInstall)
+      if (bInstallFile)
       {
 	if (!themeValue.isEmpty())
 	{
           KStandardDirs::makeDir(appDir);
 	  if (installFile(themeValue, appDir + cfgValue))
 	    installed++;
-	  else doInstall = false;
+	  else bInstallFile = false;
+	}
+      }
+      // Install dir
+      if (bInstallDir)
+      {
+	if (!themeValue.isEmpty())
+	{
+          KStandardDirs::makeDir(appDir);
+	  if (installDirectory(themeValue, appDir + cfgValue))
+	    installed++;
+	  else bInstallDir = false;
 	}
       }
 
       // Determine config value
-      if (cfgValue.isEmpty()) cfgValue = emptyValue;
-      else if (doInstall && absPath) cfgValue = appDir + cfgValue;
+      if (cfgValue.isEmpty()) 
+         cfgValue = emptyValue;
+      else if ((bInstallFile || bInstallDir) && absPath) 
+         cfgValue = appDir + cfgValue;
  
       // Set config entry
       kdDebug() << cfgKey << "=" << cfgValue << endl;
-      if (cfgKey == "-") cfg->deleteEntry(key, false);
-      else cfg->writeEntry(cfgKey, cfgValue);
+      if (cfgKey == "-") 
+         cfg->deleteEntry(key, false);
+      else 
+         cfg->writeEntry(cfgKey, cfgValue);
     }
 
-    if (!instCmd.isEmpty()) installCmd(cfg, instCmd, installed);
+    if (!instCmd.isEmpty()) 
+       installCmd(cfg, instCmd, installed);
     group = mMappings->readEntry("ConfigNextGroup");
   }
 
@@ -641,16 +733,47 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
     aCfg->setGroup(grp);
 }
 
+void Theme::applyIcons()
+{
+  KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
+
+  config->setGroup("Icons");
+
+  QString theme = config->readEntry("Theme");
+
+  KIconTheme icontheme(theme);
+
+  const char *groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
+
+  for (int i=0; i<KIcon::LastGroup; i++)
+  {
+    if (groups[i] == 0L)
+      break;
+    config->setGroup(QString::fromLatin1(groups[i]) + "Icons");
+    config->writeEntry("Size", icontheme.defaultSize(i));
+  } 
+  delete config;
+  
+  for (int i=0; i<KIcon::LastGroup; i++)
+  {
+    KIPC::sendMessageAll(KIPC::IconChanged, i);
+  } 
+
+}
+
 
 //-----------------------------------------------------------------------------
 void Theme::doCmdList(void)
 {
   QString cmd, str, appName;
   //  int rc;
-  for (cmd=mCmdList.first(); !cmd.isNull(); cmd=mCmdList.next())
+  for (QStringList::ConstIterator it = mCmdList.begin();
+       it != mCmdList.end();
+       ++it)
   {
+    cmd = *it;
     kdDebug() << "do command: " << cmd << endl;
-    if (cmd.left(9) == "kfmclient")
+    if (cmd.startsWith("kfmclient"))
     {
       system(cmd.ascii());
     }
@@ -667,9 +790,13 @@ void Theme::doCmdList(void)
           client->attach();
        client->send("kdesktop", "KBackgroundIface", "configure()", "");
     }
-    else if (strncmp(cmd.ascii(), "restart", 7) == 0)
+    else if (cmd == "applyIcons")
     {
-      appName = cmd.mid(7,256).stripWhiteSpace();
+       applyIcons();
+    }
+    else if (cmd.startsWith("restart"))
+    {
+      appName = cmd.mid(7).stripWhiteSpace();
       str.sprintf(i18n("Restart %s to activate the new settings?").ascii(),
 		  appName.ascii());
       if (KMessageBox::questionYesNo(0, str) == KMessageBox::Yes) {
@@ -703,10 +830,10 @@ bool Theme::backupFile(const QString fname) const
 }
 
 //-----------------------------------------------------------------------------
-void Theme::addInstFile(const char* aFileName)
+void Theme::addInstFile(const QString &aFileName)
 {
-  if (aFileName && *aFileName && mInstFiles.find(aFileName) < 0)
-    mInstFiles.append(strdup(aFileName));
+  if (!aFileName.isEmpty() && (mInstFiles.findIndex(aFileName) < 0))
+    mInstFiles.append(aFileName);
 }
 
 
@@ -717,8 +844,7 @@ void Theme::readInstFileList(const char* aGroupName)
 
   assert(aGroupName!=0);
   cfg->setGroup("Installed Files");
-  mInstFiles.clear();
-  cfg->readListEntry(aGroupName, mInstFiles, ':');
+  mInstFiles = cfg->readListEntry(aGroupName, ':');
 }
 
 
@@ -740,19 +866,22 @@ void Theme::uninstallFiles(const char* aGroupName)
   QFileInfo finfo;
   bool reverted = false;
   int processed = 0;
-  QStrList fileList;
 
   kdDebug() << "*** beginning uninstall of " << aGroupName << endl;
 
   readInstFileList(aGroupName);
-  for (fname=mInstFiles.first(); !fname.isEmpty(); fname=mInstFiles.next())
+  for (QStringList::ConstIterator it=mInstFiles.begin(); 
+       it != mInstFiles.end();
+       ++it)
   {
+    fname = *it;
     reverted = false;
-    if (unlink(fname.ascii())==0) reverted = true;
+    if (unlink(QFile::encodeName(fname).data())==0) 
+       reverted = true;
     finfo.setFile(fname+'~');
     if (finfo.exists())
     {
-      if (rename((fname+'~').ascii(), fname.ascii()))
+      if (rename(QFile::encodeName(fname+'~').data(), QFile::encodeName(fname).data()))
 	warning(i18n("Failed to rename %s to %s~:\n%s").ascii(),
 		fname.ascii(), fname.ascii(),
 		strerror(errno));
