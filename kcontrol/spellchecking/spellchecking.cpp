@@ -10,27 +10,23 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
+  $Id$
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #include <qlayout.h>
-#include <qwhatsthis.h>
 #include <qgroupbox.h>
 
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kapp.h>
-#include <kdialog.h>
-#include <knotifyclient.h>
 #include <kspell.h>
 #include <ksconfig.h>
 
 #include "spellchecking.h"
-
-#include <X11/Xlib.h>
 
 extern "C"
 {
@@ -81,4 +77,3 @@ QString KSpellCheckingConfig::quickHelp() const
   return i18n("<h1>Spell Checking</h1><p>This control module allows you to configure the KDE spell checking system.  You can configure:<ul><li> which spell checking program to use<li> which types of spelling errors are identified<li> which dictionary is used by default.</ul><br>The KDE spell checking system (KSpell) provides support for two common spell checking utilities: ASpell and ISpell.  This allows you to share dictionaries between KDE applications and non-KDE applications.</p>"); }
 
 #include "spellchecking.moc"
-

@@ -17,7 +17,7 @@
 */
 
 #ifndef __spellchecking_h__
-#define __spellchecking_h__
+#define __spellchecking_h__ "$Id$"
 
 #include "kcmodule.h"
 
@@ -28,7 +28,7 @@ class KSpellCheckingConfig  : public KCModule
   Q_OBJECT
 
  public:
- KSpellCheckingConfig(QWidget *parent, const char *name);
+  KSpellCheckingConfig(QWidget *parent, const char *name);
 
   void load();
   void save();
@@ -38,8 +38,8 @@ class KSpellCheckingConfig  : public KCModule
  protected slots:
   void configChanged() { emit changed( true ); };
 
- private:
- KSpellConfig* spellConfig;
+ protected:
+  KSpellConfig *spellConfig;
 };
 
 #endif
