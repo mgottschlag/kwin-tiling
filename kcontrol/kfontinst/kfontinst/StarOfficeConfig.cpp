@@ -43,6 +43,8 @@ static const char * constAfmDir       = "fontmetrics/afm/";
 static const char * constSOGuardStr   = " # kfontinst ";
 static const char * constBackupProlog = "xprinter.prolog.kfontinst_backup";
 
+using namespace std;
+
 static QString xp3Directory()
 {
     if(CMisc::dExists(CKfiGlobal::cfg().getSODir() + "xp3/"))
