@@ -1,103 +1,25 @@
 [KCM Locale]
-Languages=C,br,ca,cs,da,de,el,en,en_UK,eo,es,et,fi,fr,he,hr,hu,is,it,ko,mk,nl,no,pl,pt,pt_BR,ro,ru,sk,sv,tr,zh_CN.GB2312,zh_TW.Big5
-
-[br]
-Name=Breton
-
-[ca]
-Name=Catalan
-
-[ro]
-Name=Romanian
+Languages=C
 
 [C]
-Name=Default language
-
-[de]
-Name=German
-
-[en_UK]
-Name=English - UK
-
-
-[en]
 Name=English - US
-
-[fr]
-Name=French
-
-[cs]
-Name=Czech
-
-[is]
-Name=Icelandic
-
-[sv]
-Name=Swedish
-
-[es]
-Name=Spanish
-
-[ru]
-Name=Russian
-
-[nl]
-Name=Dutch
-
-[hu]
-Name=Hungarian
-
-[da]
-Name=Danish
-
-[fi]
-Name=Finnish
-
-[it]
-Name=Italian
-
-[pt]
-Name=Portuguese
-
-[pl]
-Name=Polish
-
-[no]
-Name=Norwegian
-
-[el]
-Name=Greek
-
-[hr]
-Name=Croatian
-
-[sk]
-Name=Slovak
-
-[zh_TW.Big5]
-Name=Chinese
-
-[zh_CN.GB2312]
-Name=Simplified Chinese
-
-[pt_BR]
-Name=Brazil portuguese
-
-[eo]
-Name=Esperanto
-
-[mk]
-Name=Macedonian
-
-[ko]
-Name=Korean
-
-[tr]
-Name=Turkish
-
-[he]
-Name=Hebrew
-
-[et]
-Name=Estonian
-
+Name[ca]=AnglËs - US
+Name[cs]=Anglick˝ - US
+Name[da]=Engelsk - US
+Name[de]=Englisch - US
+Name[es]=InglÈs - US
+Name[fi]=Englanti - US
+Name[fr]=Anglais - US
+Name[hr]=Engleski - SAD
+Name[hu]=Angol - Amerikai
+Name[is]=Enska - BNA
+Name[it]=Inglese - US
+Name[no]=Engelsk - US
+Name[pl]=AmerykaÒski angielski
+Name[pt]=InglÍs - Estados Unidos
+Name[pt_BR]=InglÍs - EUA
+Name[ro]=Englez - SUA
+Name[ru]=·Õ≈“…À¡Œ”À…  ¡Œ«Ã… ”À… 
+Name[sk]=Anglick˝ - US
+Name[sl]=ameriπka angleπËina
+Name[sv]=Amerikansk engelska
