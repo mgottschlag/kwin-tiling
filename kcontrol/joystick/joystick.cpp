@@ -98,7 +98,7 @@ joystick::joystick(QWidget *parent, const char *name, const QStringList &)
   setMinimumSize(joyWidget->minimumSize());
 
   setButtons(KCModule::Default);
-};
+}
 
 //---------------------------------------------------------------------------------------------
 
