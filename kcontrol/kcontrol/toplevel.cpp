@@ -236,7 +236,7 @@ void TopLevel::setupActions()
      actionCollection(), "activate_largeicons");
   icon_large->setExclusiveGroup( "iconsize" );
 
-  about_module = new KAction(i18n("About the Current Module"), 0, this, SLOT(aboutModule()), actionCollection(), "help_about_module");
+  about_module = new KAction(i18n("About Current Module"), 0, this, SLOT(aboutModule()), actionCollection(), "help_about_module");
   about_module->setEnabled(false);
 
   // I need to add this so that each module can get a bug reported,
@@ -350,7 +350,7 @@ void TopLevel::categorySelected(QListViewItem *category)
       }
   }
   _dock->removeModule();
-  about_module->setText( i18n( "About the current Module" ) );
+  about_module->setText( i18n( "About Current Module" ) );
   about_module->setIconSet( QIconSet() );
   about_module->setEnabled( false );
 								   
@@ -444,7 +444,7 @@ void TopLevel::activateModule(const QString& name)
         }
         else
         {
-           about_module->setText(i18n("About the current Module"));
+           about_module->setText(i18n("About Current Module"));
            about_module->setIconSet(QIconSet());
            about_module->setEnabled(false);
         }
