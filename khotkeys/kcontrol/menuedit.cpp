@@ -56,7 +56,7 @@ Menuentry_shortcut_action_data* khotkeys_get_menu_entry_internal2(
         if( Menuentry_shortcut_action_data* entry
             = dynamic_cast< Menuentry_shortcut_action_data* >( *it ))
             {
-               KService::Ptr service = entry->action() ? entry->action()->service() : 0;
+               KService::Ptr service = entry->action() ? entry->action()->service() : KService::Ptr(0);
                if ( service && (service->storageId() == entry_P) )
                     return entry;
             }
