@@ -42,7 +42,6 @@ GeneralTab::GeneralTab( QWidget *parent, const char* name )
     connect(m_autoHide, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_delaySlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_delaySpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_terminalInput, SIGNAL(textChanged(const QString&)), SIGNAL(changed()));
     connect(m_percentSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_percentSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_expandCheckBox, SIGNAL(clicked()), SIGNAL(changed()));
@@ -101,10 +100,6 @@ void GeneralTab::load()
 
     m_expandCheckBox->setChecked( c->readBoolEntry( "ExpandSize", true ) );
 
-    c->setGroup("misc");
-
-    m_terminalInput->setText(c->readEntry("Terminal", "konsole"));
-
     delete c;
 }
 
@@ -126,10 +121,6 @@ void GeneralTab::save()
     c->writeEntry( "SizePercentage", m_percentSlider->value() );
     c->writeEntry( "ExpandSize", m_expandCheckBox->isChecked() );
 
-    c->setGroup("misc");
-
-    c->writeEntry("Terminal", m_terminalInput->text());
-
     c->sync();
 
     delete c;
@@ -148,5 +139,4 @@ void GeneralTab::defaults()
     m_expandCheckBox->setChecked( true );
     m_percentSlider->setValue( 100 );
     m_percentSpinBox->setValue( 100 );
-    m_terminalInput->setText("konsole");
 }

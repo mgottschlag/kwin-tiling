@@ -12,7 +12,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>563</width>
+            <width>559</width>
             <height>480</height>
         </rect>
     </property>
@@ -456,56 +456,6 @@
                 </widget>
             </vbox>
         </widget>
-        <widget>
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>m_miscGroup</cstring>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>4</vsizetype>
-                </sizepolicy>
-            </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>Misc&amp;ellaneous</string>
-            </property>
-            <hbox>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget>
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel7</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Preferred terminal application:</string>
-                    </property>
-                </widget>
-                <widget>
-                    <class>KLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>m_terminalInput</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>konsole</string>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
         <spacer>
             <property>
                 <name>name</name>
@@ -574,6 +524,5 @@
     <tabstop>m_autoHide</tabstop>
     <tabstop>m_delaySlider</tabstop>
     <tabstop>m_delaySpinBox</tabstop>
-    <tabstop>m_terminalInput</tabstop>
 </tabstops>
 </UI>
