@@ -24,6 +24,7 @@
 #include <kdebug.h>
 #include <netwm.h>
 #include <kstringhandler.h>
+#include <kmacroexpander.h>
 
 #include "urlgrabber.h"
 
@@ -224,31 +225,10 @@ void URLGrabber::slotItemSelected( int id )
 void URLGrabber::execute( const struct ClipCommand *command ) const
 {
     if ( command->isEnabled ) {
-        QString cmdLine = command->command;
-        QString escClipData = KProcess::quote(myClipData);
+        QMap<QChar,QString> map;
+        map.insert( 's', myClipData );
+        QString cmdLine = KMacroExpander::expandMacrosShellQuote( command->command, map );
 
-        // replace "%s", '%s' and %s with the clipboard contents
-        // the quotes have to be replaced as well as they might
-        // be part of config files from older klipper versions
-        // replace \%s to %s
-        int pos = 0;
-        while ( (pos = cmdLine.find("%s", pos)) >= 0 ) {
-            if ( pos > 0 && cmdLine.at( pos - 1 ) == '\\' ) {
-                cmdLine.remove( pos -1, 1 ); // \%s -> %s
-                pos++;
-            }
-            else if (pos > 0 && (cmdLine[pos - 1] == '\'' || cmdLine[pos - 1] == '"') &&
-                     pos + 2 < cmdLine.length() && cmdLine[pos + 2] == cmdLine[pos - 1]) {
-                cmdLine.replace ( pos - 1, 4, escClipData );
-                pos += escClipData.length();
-            }
-            else {
-                cmdLine.replace( pos, 2, escClipData );
-                pos += escClipData.length();
-            }
-        }
-
-        kdDebug() << "now starting " << cmdLine << endl;
         if ( cmdLine.isEmpty() )
             return;
 
