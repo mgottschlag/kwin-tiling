@@ -50,6 +50,11 @@ extern void	XdmGetXdmcpAuth (
     struct protoDisplay	*pdpy,
     unsigned short	authorizationNameLen,
     char		*authorizationName);
+extern int	XdmCheckAuthentication (
+    struct protoDisplay	*pdpy,
+    ARRAY8Ptr		displayID, 
+    ARRAY8Ptr		authenticationName, 
+    ARRAY8Ptr		authenticationData);
 # else
 #  define XdmGetXdmcpAuth NULL
 # endif

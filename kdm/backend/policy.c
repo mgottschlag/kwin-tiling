@@ -79,13 +79,6 @@ ChooseAuthentication (ARRAYofARRAY8Ptr authenticationNames)
     return &noAuthentication;
 }
 
-int XdmCheckAuthentication (
-    struct protoDisplay	*pdpy,
-    ARRAY8Ptr		displayID, 
-    ARRAY8Ptr		authenticationName, 
-    ARRAY8Ptr		authenticationData);
-
-
 int
 CheckAuthentication (
     struct protoDisplay	*pdpy,

@@ -154,7 +154,7 @@ RemoveDisplay (struct display *old)
     }
 }
 
-struct disphist *
+static struct disphist *
 FindHist (char *name)
 {
     struct disphist *hstent;
