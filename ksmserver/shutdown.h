@@ -9,8 +9,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <qpixmap.h>
 #include <qdialog.h>
+#include <qradiobutton.h>
 class QCheckBox;
-class QRadioButton;
 class QVButtonGroup;
 
 #include <kapplication.h>
@@ -33,6 +33,21 @@ private:
     void paintEvent( QPaintEvent* );
     static KSMShutdownFeedback * s_pSelf;
     KSMShutdownFeedback();
+};
+
+// A radiobutton with a dblclk signal
+class KSMRadioButton : public QRadioButton
+{
+	Q_OBJECT
+
+public:
+	KSMRadioButton (const QString &text, QWidget *parent, const char *name = 0L);
+
+private:
+	virtual void mouseDoubleClickEvent (QMouseEvent *pe);
+	
+signals:
+	void doubleClicked();
 };
 
 // The confirmation dialog

@@ -101,6 +101,18 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         grid->setAlignment( Qt::AlignTop );
 
         QLabel* whatNext = new QLabel( i18n("What do you want to do next?"), tgrp );
+        rLogout = new KSMRadioButton( i18n("&Login as different user"), tgrp );
+        rHalt = new KSMRadioButton( i18n("&Turn off computer"), tgrp );
+        rReboot = new KSMRadioButton( i18n("&Restart computer"), tgrp );
+
+        QObject::connect(rLogout, SIGNAL(doubleClicked()),
+                         this, SLOT(accept()));
+        QObject::connect(rHalt, SIGNAL(doubleClicked()),
+                         this, SLOT(accept()));
+        QObject::connect(rReboot, SIGNAL(doubleClicked()),
+                         this, SLOT(accept()));
+
+
         rLogout = new QRadioButton( i18n("&Login as different user"), tgrp );
         rHalt = new QRadioButton( i18n("&Turn off computer"), tgrp );
         rReboot = new QRadioButton( i18n("&Restart computer"), tgrp );
@@ -212,5 +224,16 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, bool maynuke,
 
     kapp->disableStyles();
     return result;
+}
+
+//	Specialized radio button impl.
+
+KSMRadioButton::KSMRadioButton (const QString &text, QWidget *parent, const char *name)
+	: QRadioButton(text, parent, name)
+{}
+
+void KSMRadioButton::mouseDoubleClickEvent (QMouseEvent *pe)
+{
+	emit doubleClicked();
 }
 
