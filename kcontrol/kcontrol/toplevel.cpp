@@ -27,6 +27,8 @@
 
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kconfig.h>
+#include <kmenubar.h>
 
 #include "toplevel.moc"
 
