@@ -102,7 +102,7 @@ void KLocaleConfigNumber::save()
   KConfigBase *config = new KConfig;
   config->setGroup(QString::fromLatin1("Locale"));
 
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->getNumber() + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->number() + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   QString str;
@@ -151,7 +151,7 @@ void KLocaleConfigNumber::slotMonNegSignChanged(const QString &t)
 
 void KLocaleConfigNumber::reset()
 {
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->getNumber() + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->number() + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   QString str;

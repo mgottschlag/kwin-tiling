@@ -151,7 +151,7 @@ void KLocaleConfigMoney::save()
   KConfigBase *config = new KConfig;
   config->setGroup(QString::fromLatin1("Locale"));
 
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->getMoney() + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->money() + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   QString str;
@@ -266,7 +266,7 @@ void KLocaleConfigMoney::slotMonNegMonSignPosChanged(int i)
 
 void KLocaleConfigMoney::reset()
 {
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->getMoney() + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->money() + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   locale->setCurrencySymbol(ent.readEntry(QString::fromLatin1("CurrencySymbol"), QString::fromLatin1("$")));

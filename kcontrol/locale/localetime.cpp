@@ -100,7 +100,7 @@ void KLocaleConfigTime::save()
   KConfigBase *config = new KConfig;
   config->setGroup(QString::fromLatin1("Locale"));
 
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->getTime() + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time() + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   QString str;
@@ -148,7 +148,7 @@ void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 
 void KLocaleConfigTime::reset()
 {
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->getTime() + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time() + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   locale->setTimeFormat(ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p")));

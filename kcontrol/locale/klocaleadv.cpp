@@ -32,21 +32,6 @@ KLocaleAdvanced::~KLocaleAdvanced()
 {
 }
 
-QString KLocaleAdvanced::getTime()
-{
-  return time;
-}
-
-QString KLocaleAdvanced::getNumber()
-{
-  return number;
-}
-
-QString KLocaleAdvanced::getMoney()
-{
-  return money;
-}
-
 void KLocaleAdvanced::setChset(const QString &chrset)
 {
   chset = chrset;

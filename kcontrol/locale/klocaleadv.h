@@ -30,10 +30,6 @@ public:
   KLocaleAdvanced( const QString& catalogue = QString::null );
   ~KLocaleAdvanced();
 
-  QString getTime();
-  QString getNumber();
-  QString getMoney();
-
   void setChset(const QString &chrset);
 
   // dates
