@@ -19,40 +19,61 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <iostream>
-#include <unistd.h>
+#include <assert.h>
 
 #include <qlayout.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
-#include <qhbox.h>
 #include <qlabel.h>
-#include <qlineedit.h>
-#include <qmessagebox.h>
 #include <qpushbutton.h>
-#include <qlistbox.h>
 #include <qlistview.h>
-#include <qhgroupbox.h>
-#include <qvgroupbox.h>
-#include <qvbox.h>
 #include <qwhatsthis.h>
+#include <qfile.h>
 
 #include <dcopclient.h>
 
 #include <kapp.h>
-#include <kbuttonbox.h>
 #include <klocale.h>
-#include <kglobal.h>
-#include <kstddirs.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
-#include <kdialog.h>
+#include <ksimpleconfig.h>
+#include <ktrader.h>
+#include <kstddirs.h>
+#include <kdebug.h>
 
 #include "ikwsopts.h"
+#include "kuriikwsfiltereng.h"
+#include "searchprovider.h"
+#include "searchproviderdlg.h"
 
 #define ITEM_NONE   (i18n("None"))
 #define searcher    KURISearchFilterEngine::self()
+
+class SearchProviderItem : public QListViewItem
+{
+public:
+    SearchProviderItem(QListView *parent, SearchProvider *provider)
+        : QListViewItem(parent),
+          m_provider(provider)
+    {
+        update();
+    };
+    virtual ~SearchProviderItem()
+    {
+        delete m_provider;
+    }
+
+    void update()
+    {
+        setText(0, m_provider->name());
+        setText(1, m_provider->keys().join(","));
+    }
+    SearchProvider *provider() const { return m_provider; }
+
+private:
+    SearchProvider *m_provider;
+};
 
 InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *name)
                         :KCModule(parent, name)
@@ -62,7 +83,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
 
     gb_keywords = new QGroupBox(this);
     QVBoxLayout *gbkLay = new QVBoxLayout( gb_keywords, KDialog::marginHint(), KDialog::spacingHint() );
-    
+
     cb_enableInternetKeywords = new QCheckBox(i18n("Enable Int&ernet Keywords"), gb_keywords);
     //cb_enableInternetKeywords->adjustSize();
     //cb_enableInternetKeywords->setMinimumSize(cb_enableInternetKeywords->size());
@@ -91,7 +112,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     igbopts_lay->addWidget( cmb_searchFallback, 1 );
     lb_searchFallback->setBuddy(cmb_searchFallback);
 
-    connect(cmb_searchFallback, SIGNAL(activated(const QString &)), this, SLOT(changeSearchFallback(const QString &)));
+    connect(cmb_searchFallback, SIGNAL(activated(const QString &)), this, SLOT(moduleChanged()));
     QString wtstr = i18n("Allows you to select a search provider that will be used in case what you "
                          "typed is not an <em>Internet Keyword</em>.  Select \"None\" if you do not "
                          "want to do a search in this case, and you will get a directory listing of"
@@ -102,7 +123,6 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
 
     lay->addWidget(gb_keywords);
 
-/*  Feature to consider after KDE 2.0...
     cb_enableSearchKeywords = new QCheckBox(i18n("Enable &Search Shortcuts"), this);
     //cb_enableSearchKeywords->adjustSize();
     //cb_enableSearchKeywords->setMinimumSize(cb_enableSearchKeywords->size());
@@ -113,95 +133,60 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
                                                   "the word <em>KDE</em> being searched using the URI defined by "
                                                   "the <em>shortcut</em>."));
     lay->addWidget( cb_enableSearchKeywords );
-*/
-    gb_search = new QGroupBox( i18n("Search"), this );
-    QGridLayout *gbsLay = new QGridLayout(gb_search, 11, 3, KDialog::marginHint(), KDialog::spacingHint());
 
-    gbsLay->addRowSpacing(0, 2* KDialog::spacingHint());
-    gbsLay->addRowSpacing(3, 2* KDialog::spacingHint());
-    gbsLay->addRowSpacing(4, 2* KDialog::spacingHint());
-    gbsLay->addRowSpacing(6, 2* KDialog::spacingHint());
-    gbsLay->addColSpacing(1, 2* KDialog::spacingHint());
-    gbsLay->setRowStretch(9, 1);
-    gbsLay->setColStretch(0, 3);
-    gbsLay->setColStretch(2, 4); 
+    gb_search = new QGroupBox( i18n("Search"), this );
+    QGridLayout *gbsLay = new QGridLayout(gb_search, 6, 2, KDialog::marginHint(), KDialog::spacingHint());
+
+    gbsLay->addRowSpacing(0, kapp->fontMetrics().height());
+    gbsLay->setRowStretch(1, 1);
+    gbsLay->setRowStretch(2, 1);
+    gbsLay->setRowStretch(3, 1);
+    gbsLay->setRowStretch(4, 1);
+    gbsLay->setRowStretch(5, 1);
 
     lv_searchProviders = new QListView( gb_search );
     lv_searchProviders->setMultiSelection(false);
     lv_searchProviders->addColumn(i18n("Name"));
     lv_searchProviders->addColumn(i18n("Shortcuts"));
     lv_searchProviders->setSorting(0);
-    //lv_searchProviders->setMinimumSize(lv_searchProviders->sizeHint() / 4);
     wtstr = i18n("This list contains the search providers that KDE knows about, and their associated pseudo-URI schemes, or shortcuts.");
     QWhatsThis::add(lv_searchProviders, wtstr);
 
     connect(lv_searchProviders, SIGNAL(selectionChanged(QListViewItem *)),
-           this, SLOT(updateSearchProvider(QListViewItem *)));
+           this, SLOT(updateSearchProvider()));
+    connect(lv_searchProviders, SIGNAL(doubleClicked(QListViewItem *)),
+           this, SLOT(changeSearchProvider()));
 
-    gbsLay->addMultiCellWidget(lv_searchProviders, 1, 9, 0, 0);
+    gbsLay->addMultiCellWidget(lv_searchProviders, 1, 5, 0, 0);
 
-    lb_searchProviderName = new QLabel(i18n("Search &Provider Name:"), gb_search);
-    //lb_searchProviderName->adjustSize();
-    //lb_searchProviderName->setMinimumSize(lb_searchProviderName->size());    
-    gbsLay->addWidget(lb_searchProviderName, 1, 2);
+    pb_addSearchProvider = new QPushButton(i18n("Add..."), gb_search);
+    QWhatsThis::add(pb_addSearchProvider, i18n("Click here to add a search provider."));
+    connect(pb_addSearchProvider, SIGNAL(clicked()), this, SLOT(addSearchProvider()));
+    gbsLay->addWidget(pb_addSearchProvider, 1, 1);
 
-    le_searchProviderName = new QLineEdit(gb_search);
-    //le_searchProviderName->adjustSize();
-    //le_searchProviderName->setMinimumSize(le_searchProviderName->size()); 
-    gbsLay->addWidget(le_searchProviderName, 2, 2);
-
-    lb_searchProviderName->setBuddy(le_searchProviderName);
-    connect(le_searchProviderName, SIGNAL(textChanged(const QString &)),
-         SLOT(textChanged(const QString &)));
-    wtstr = i18n("Enter the human readable name of the search provider here.");
-    QWhatsThis::add(lb_searchProviderName, wtstr);
-    QWhatsThis::add(le_searchProviderName, wtstr);
-
-    lb_searchProviderURI = new QLabel(i18n("Search &URI:"), gb_search);
-    //lb_searchProviderURI->adjustSize();
-    //lb_searchProviderURI->setMinimumSize(lb_searchProviderURI->size());
-    gbsLay->addWidget(lb_searchProviderURI, 3, 2); 
-    
-    le_searchProviderURI = new QLineEdit(gb_search);
-    //le_searchProviderURI->adjustSize();
-    //le_searchProviderURI->setMinimumSize(le_searchProviderURI->size());  
-    gbsLay->addWidget(le_searchProviderURI, 4, 2);
-
-    lb_searchProviderURI->setBuddy(le_searchProviderURI);
-    connect(le_searchProviderURI, SIGNAL(textChanged(const QString &)),
-         SLOT(textChanged(const QString &)));
-    wtstr = i18n("Enter the URI that is used to do a search on the search engine here. The text to be searched for can be specified as \\1.");
-    QWhatsThis::add(lb_searchProviderURI, wtstr);
-    QWhatsThis::add(le_searchProviderURI, wtstr);
-
-    lb_searchProviderShortcuts = new QLabel(i18n("UR&I Shortcuts:"), gb_search);
-    //lb_searchProviderShortcuts->adjustSize();
-    //lb_searchProviderShortcuts->setMinimumSize(lb_searchProviderShortcuts->size());
-    gbsLay->addWidget(lb_searchProviderShortcuts, 5, 2);
-
-    le_searchProviderShortcuts = new QLineEdit(gb_search);
-    //le_searchProviderShortcuts->adjustSize();
-    //le_searchProviderShortcuts->setMinimumSize(le_searchProviderShortcuts->size());
-    gbsLay->addWidget(le_searchProviderShortcuts, 6, 2);
-
-    lb_searchProviderShortcuts->setBuddy(le_searchProviderShortcuts);
-    connect(le_searchProviderShortcuts, SIGNAL(textChanged(const QString &)),
-         SLOT(textChanged(const QString &)));
-    wtstr = i18n("The shortcuts entered here can be used as a pseudo-URI scheme in KDE. For example, the shortcut <em>av<em> can be used as in <em>av</em>:<em>my search</em>.");
-    QWhatsThis::add(lb_searchProviderShortcuts, wtstr);
-    QWhatsThis::add(le_searchProviderShortcuts, wtstr);
-
-    KButtonBox *bbox = new KButtonBox( gb_search );
-    bbox->addStretch(20);
-    pb_chgSearchProvider = bbox->addButton(i18n("&Add"));
-    QWhatsThis::add(pb_chgSearchProvider, i18n("Click here to add/change a search provider."));
+    pb_chgSearchProvider = new QPushButton(i18n("Change..."), gb_search);
+    QWhatsThis::add(pb_chgSearchProvider, i18n("Click here to change a search provider."));
+    pb_chgSearchProvider->setEnabled(false);
     connect(pb_chgSearchProvider, SIGNAL(clicked()), this, SLOT(changeSearchProvider()));
-    pb_delSearchProvider = bbox->addButton(i18n("&Delete"));
+    gbsLay->addWidget(pb_chgSearchProvider, 2, 1);
+
+    pb_delSearchProvider = new QPushButton(i18n("Delete"), gb_search);
     QWhatsThis::add(pb_delSearchProvider, i18n("Click here to delete the currently selected search provider from the list."));
     pb_delSearchProvider->setEnabled(false);
     connect(pb_delSearchProvider, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));
-    gbsLay->addWidget(bbox, 7, 2);
-    bbox->layout();
+    gbsLay->addWidget(pb_delSearchProvider, 3, 1);
+
+    pb_impSearchProvider = new QPushButton(i18n("Import..."), gb_search);
+    QWhatsThis::add(pb_delSearchProvider, i18n("Click here to import a search provider from a file."));
+    connect(pb_impSearchProvider, SIGNAL(clicked()), this, SLOT(importSearchProvider()));
+    gbsLay->addWidget(pb_impSearchProvider, 4, 1);
+
+    pb_expSearchProvider = new QPushButton(i18n("Export..."), gb_search);
+    QWhatsThis::add(pb_expSearchProvider, i18n("Click here to export a search provider to a file."));
+    pb_expSearchProvider->setEnabled(false);
+    connect(pb_expSearchProvider, SIGNAL(clicked()), this, SLOT(exportSearchProvider()));
+    gbsLay->addWidget(pb_expSearchProvider, 5, 1);
+
     lay->addWidget( gb_search );
 
     // Load the options
@@ -224,31 +209,25 @@ void InternetKeywordsOptions::load()
     cmb_searchFallback->clear();
     cmb_searchFallback->insertItem(ITEM_NONE);
 
-    le_searchProviderName->clear();
-    le_searchProviderShortcuts->clear();
-    le_searchProviderURI->clear();
+    KConfig config( searcher->name() + "rc", false, false );
+    config.setGroup("General");
 
-    // Go!
-    searcher->loadConfig();
-
-    QString searchFallbackName = searcher->searchFallback();
-    QValueList<KURISearchFilterEngine::SearchEntry> lstSearchEngines = searcher->searchEngines();
-    QValueList<KURISearchFilterEngine::SearchEntry>::ConstIterator it = lstSearchEngines.begin();
-    QValueList<KURISearchFilterEngine::SearchEntry>::ConstIterator end = lstSearchEngines.end();
-
-    for (; it != end; ++it) {
-      displaySearchProvider(*it, searchFallbackName == (*it).m_strName);
+    QString searchFallback = config.readEntry("InternetKeywordsSearchFallback");
+    const KTrader::OfferList services = KTrader::self()->query("SearchProvider");
+    for (KTrader::OfferList::ConstIterator it = services.begin(); it != services.end(); ++it)
+    {
+        displaySearchProvider(new SearchProvider(*it),
+            (*it)->desktopEntryName() == searchFallback);
     }
 
     // Enable/Disable widgets accordingly.
-    bool ikwsEnabled = searcher->isInternetKeywordsEnabled();
+    bool ikwsEnabled = config.readBoolEntry("InternetKeywordsEnabled", true);
     cb_enableInternetKeywords->setChecked( ikwsEnabled );
     cmb_searchFallback->setEnabled( ikwsEnabled );
     lb_searchFallback->setEnabled( ikwsEnabled );
 
-    // Feature to be considered after KDE 2.0...
-    bool searchEnabled = searcher->isSearchKeywordsEnabled();
-    // cb_enableSearchKeywords->setChecked( searchEnabled );
+    bool searchEnabled = config.readBoolEntry("SearchEngineShortcutsEnabled", true);
+    cb_enableSearchKeywords->setChecked( searchEnabled );
     gb_search->setEnabled( searchEnabled );
 
     if (lv_searchProviders->childCount())
@@ -257,7 +236,88 @@ void InternetKeywordsOptions::load()
 
 void InternetKeywordsOptions::save()
 {
-    searcher->saveConfig();
+    KConfig config( searcher->name() + "rc", false, false );
+    config.setGroup("General");
+    config.writeEntry("InternetKeywordsEnabled", cb_enableInternetKeywords->isChecked());
+    config.writeEntry("SearchEngineShortcutsEnabled", cb_enableSearchKeywords->isChecked());
+    QString fallback = cmb_searchFallback->currentText();
+    if (fallback == ITEM_NONE)
+        config.writeEntry("InternetKeywordsSearchFallback", QString::null);
+
+    QString path = kapp->dirs()->saveLocation("services", "searchproviders/");
+    for (QListViewItemIterator it(lv_searchProviders); it.current(); ++it)
+    {
+        SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(it.current());
+        assert(item);
+        SearchProvider *provider = item->provider();
+        QString name = provider->desktopEntryName();
+        if (provider->isDirty())
+        {
+            if (name.isEmpty())
+            {
+                // New provider
+                // Take the longest search shortcut as filename,
+                // if such a file already exists, append a number and increase it
+                // until the name is unique
+                for (QStringList::ConstIterator it = provider->keys().begin(); it != provider->keys().end(); ++it)
+                {
+                    if ((*it).length() > name.length())
+                        name = (*it).lower();
+                }
+                for (int suffix = 0; ; ++suffix)
+                {
+                    QString located, check = name;
+                    if (suffix)
+                        check += QString().setNum(suffix);
+                    if ((located = locate("services", "searchproviders/" + check + ".desktop")).isEmpty())
+                    {
+                        name = check;
+                        break;
+                    }
+                    else if (located.left(path.length()) == path)
+                    {
+                        // If it's a deleted (hidden) entry, overwrite it
+                        if (KService(located).isDeleted())
+                            break;
+                    }
+                }
+            }
+            KSimpleConfig service(path + name + ".desktop");
+            service.setGroup("Desktop Entry");
+            service.writeEntry("Type", "Service");
+            service.writeEntry("ServiceTypes", "SearchProvider");
+            service.writeEntry("Name", provider->name());
+            service.writeEntry("Query", provider->query());
+            service.writeEntry("Keys", provider->keys());
+            service.writeEntry("Charset", provider->charset());
+            // we might be overwriting a hidden entry
+            service.writeEntry("Hidden", false);
+        }
+        if (fallback == provider->name())
+            config.writeEntry("InternetKeywordsSearchFallback", name);
+    }
+    for (QStringList::ConstIterator it = m_deletedProviders.begin(); it != m_deletedProviders.end(); ++it)
+    {
+        QStringList matches = kapp->dirs()->findAllResources("services", "searchproviders/" + *it + ".desktop");
+        // Shouldn't happen
+        if (!matches.count())
+            continue;
+
+        if (matches.count() == 1 && matches[0].left(path.length()) == path)
+        {
+            // If only the local copy existed, unlink it
+            // TODO: error handling
+            QFile::remove(matches[0]);
+            continue;
+        }
+        KSimpleConfig service(path + *it + ".desktop");
+        service.setGroup("Desktop Entry");
+        service.writeEntry("Type", "Service");
+        service.writeEntry("ServiceTypes", "SearchProvider");
+        service.writeEntry("Hidden", true);
+    }
+    config.sync();
+
     QByteArray data;
     kapp->dcopClient()->send("*", "KURIIKWSFilterIface", "configure()", data);
     kapp->dcopClient()->send("*", "KURISearchFilterIface", "configure()", data);
@@ -268,9 +328,11 @@ void InternetKeywordsOptions::defaults()
     load();
 }
 
-void InternetKeywordsOptions::moduleChanged(bool state)
+void InternetKeywordsOptions::moduleChanged()
 {
-    emit changed(state);
+    // Removed the bool parameter, this way this can be directly connected
+    // as it was alwayw called with true as argument anyway (malte)
+    emit changed(true);
 }
 
 void InternetKeywordsOptions::changeInternetKeywordsEnabled()
@@ -278,199 +340,129 @@ void InternetKeywordsOptions::changeInternetKeywordsEnabled()
     bool use_keywords = cb_enableInternetKeywords->isChecked();
     cmb_searchFallback->setEnabled(use_keywords);
     lb_searchFallback->setEnabled(use_keywords);
-    searcher->setInternetKeywordsEnabled(use_keywords);
-    moduleChanged(true);
+    moduleChanged();
 }
 
 void InternetKeywordsOptions::changeSearchKeywordsEnabled()
 {
-/* Feature to consider for after KDE 2.0...
     bool use_keywords = cb_enableSearchKeywords->isChecked();
     gb_search->setEnabled(use_keywords);
-    searcher->setSearchKeywordsEnabled(use_keywords);
-    moduleChanged(true);
-*/
+    moduleChanged();
 }
 
-void InternetKeywordsOptions::changeSearchFallback(const QString &name)
+void InternetKeywordsOptions::addSearchProvider()
 {
-    searcher->setSearchFallback(name == ITEM_NONE ? QString::null : name);
-    moduleChanged(true);
-}
-
-void InternetKeywordsOptions::textChanged(const QString &)
-{
-    QString provider = le_searchProviderName->text();
-    QString uri = le_searchProviderURI->text();
-    QString shortcuts = le_searchProviderShortcuts->text();
-    bool known = false;
-    bool same = false;
-
-    KURISearchFilterEngine::SearchEntry e = searcher->searchEntryByName(provider);
-    if (known = (!e.m_strName.isNull()))
+    SearchProviderDialog dlg(0, this);
+    if (dlg.exec())
     {
-      pb_chgSearchProvider->setText(i18n("Ch&ange"));
-      same = e.m_strQuery == uri && e.m_lstKeys.join(", ") == shortcuts;
+        lv_searchProviders->setSelected(displaySearchProvider(dlg.provider()), true);
+        moduleChanged();
     }
-    else
-    {
-      pb_chgSearchProvider->setText(i18n("&Add"));
-    }
-
-    if (!same && !provider.isEmpty() && !uri.isEmpty())
-    {
-      pb_chgSearchProvider->setEnabled(true);
-    }
-    else
-    {
-      pb_chgSearchProvider->setEnabled(false);
-    }
-
-    pb_delSearchProvider->setEnabled(known);
 }
 
 void InternetKeywordsOptions::changeSearchProvider()
 {
-    QString provider = le_searchProviderName->text();
-    QString uri = le_searchProviderURI->text();
-
-    if( provider.isEmpty() )
+    SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(lv_searchProviders->currentItem());
+    assert(item);
+    SearchProviderDialog dlg(item->provider(), this);
+    if (dlg.exec())
     {
-        KMessageBox::error( 0, i18n("You must enter a search provider name first!") );
-        return;
+        lv_searchProviders->setSelected(displaySearchProvider(dlg.provider()), true);
+        moduleChanged();
     }
-    if( uri.isEmpty() )
-    {
-        KMessageBox::error( 0, i18n("You must enter a search provider URI first!") );
-        return;
-    }
-
-    if (!uri.isEmpty())
-    {
-      QString tmp(uri);
-      if (tmp.find("\\1") < 0)
-      {
-        if (KMessageBox::warningContinueCancel(0,
-            i18n("The URI does not contain a \\1 placeholder for the user query.\nThis means that the same page is always going to be visited, \nregardless of what the user types..."), QString::null, i18n("Keep It")) == KMessageBox::Cancel)
-        {
-            return;
-        }
-      }
-    }
-
-    KURISearchFilterEngine::SearchEntry entry;
-
-    entry.m_strName = provider;
-    entry.m_strQuery = uri;
-    entry.m_lstKeys = QStringList::split(", ", le_searchProviderShortcuts->text());
-
-    searcher->insertSearchEngine(entry);
-    lv_searchProviders->setSelected(displaySearchProvider(entry), true);
-
-    pb_chgSearchProvider->setEnabled(false);
-    pb_delSearchProvider->setEnabled(true);
-
-    moduleChanged(true);
 }
 
 void InternetKeywordsOptions::deleteSearchProvider()
 {
-    const QString &provider = le_searchProviderName->text();
-    searcher->removeSearchEngine(provider);
-
-    QListViewItemIterator lvit(lv_searchProviders), lvpit;
-    for (; lvit.current(); ++lvit)
-    {
-      const QString &name = lvit.current()->text(0);
-      if (name == provider)
-      {
-        lv_searchProviders->removeItem(lvit.current());
-        lv_searchProviders->setSelected(lvit.current(), true);
-        break;
-      }
-    }
-
+    SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(lv_searchProviders->currentItem());
+    assert(item);
     // Update the combo box to go to None if the fallback was deleted.
     int current = cmb_searchFallback->currentItem();
     for (int i = 1, count = cmb_searchFallback->count(); i < count; ++i)
     {
-      if (cmb_searchFallback->text(i) == provider)
+      if (cmb_searchFallback->text(i) == item->provider()->name())
       {
         cmb_searchFallback->removeItem(i);
-        if (current >= i)
-        {
-          if (i == current)
-            searcher->setSearchFallback(QString::null);
+        if (i == current)
+          cmb_searchFallback->setCurrentItem(0);
+        else if (current > i)
           cmb_searchFallback->setCurrentItem(current - 1);
-        }
-        cmb_searchFallback->update();
+
         break;
       }
     }
 
-    pb_delSearchProvider->setEnabled(lv_searchProviders->childCount());
-    moduleChanged(true);
+    if (item->nextSibling())
+        lv_searchProviders->setSelected(item->nextSibling(), true);
+    else if (item->itemAbove())
+        lv_searchProviders->setSelected(item->itemAbove(), true);
+
+    if (!item->provider()->desktopEntryName().isEmpty())
+        m_deletedProviders.append(item->provider()->desktopEntryName());
+    delete item;
+    updateSearchProvider();
+    moduleChanged();
 }
 
-void InternetKeywordsOptions::updateSearchProvider(QListViewItem *lvi)
+void InternetKeywordsOptions::importSearchProvider()
 {
-    QString provider, uri, shortcuts;
-
-    if (lvi)
-    {
-      const KURISearchFilterEngine::SearchEntry &e = searcher->searchEntryByName(lvi->text(0));
-      provider = lvi->text(0);
-      shortcuts = lvi->text(1);
-      uri = e.m_strQuery;
-    }
-
-    le_searchProviderName->setText(provider);
-    le_searchProviderURI->setText(uri);
-    le_searchProviderShortcuts->setText(shortcuts);
-    textChanged("");
-    pb_delSearchProvider->setEnabled(lvi);
+    KMessageBox::sorry(this, i18n("Importing Search Providers is not implemented yet."));
 }
 
-QListViewItem *InternetKeywordsOptions::displaySearchProvider(const KURISearchFilterEngine::SearchEntry &e, bool fallback) {
+void InternetKeywordsOptions::exportSearchProvider()
+{
+    KMessageBox::sorry(this, i18n("Exporting Search Providers is not implemented yet."));
+}
+
+void InternetKeywordsOptions::updateSearchProvider()
+{
+    pb_chgSearchProvider->setEnabled(lv_searchProviders->currentItem());
+    pb_delSearchProvider->setEnabled(lv_searchProviders->currentItem());
+    pb_expSearchProvider->setEnabled(lv_searchProviders->currentItem());
+}
+
+SearchProviderItem *InternetKeywordsOptions::displaySearchProvider(SearchProvider *p, bool fallback)
+{
 
     // Show the provider in the list.
-    QListViewItem *item = 0L;
+    SearchProviderItem *item = 0L;
 
     QListViewItemIterator it(lv_searchProviders);
     for (; it.current(); ++it)
     {
-      if (it.current()->text(0) == e.m_strName)
+      if (it.current()->text(0) == p->name())
       {
-        item = it.current();
+        item = dynamic_cast<SearchProviderItem *>(it.current());
+        assert(item);
         break;
       }
     }
 
     if (!item)
     {
-      item = new QListViewItem(lv_searchProviders);
+      item = new SearchProviderItem(lv_searchProviders, p);
       // Put the name in the combo box.
       int i, count = cmb_searchFallback->count();
       for (i = 1; i < count; ++i)
       {
-        if (cmb_searchFallback->text(i) > e.m_strName)
+        if (cmb_searchFallback->text(i) > p->name())
         {
           int current = cmb_searchFallback->currentItem();
-          cmb_searchFallback->insertItem(e.m_strName, i);
+          cmb_searchFallback->insertItem(p->name(), i);
           if (current >= i)
             cmb_searchFallback->setCurrentItem(current + 1);
           break;
         }
       }
       if (i == count)
-        cmb_searchFallback->insertItem(e.m_strName);
+        cmb_searchFallback->insertItem(p->name());
 
       if (fallback)
         cmb_searchFallback->setCurrentItem(i);
     }
+    else
+        item->update();
 
-    item->setText(0, e.m_strName);
-    item->setText(1, e.m_lstKeys.join(", "));
     if (!it.current())
         lv_searchProviders->sort();
 

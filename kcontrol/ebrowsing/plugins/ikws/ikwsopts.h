@@ -28,7 +28,7 @@
 
 #include <kcmodule.h>
 
-#include <kuriikwsfiltereng.h>
+#include <kservice.h>
 
 class QCheckBox;
 class QComboBox;
@@ -36,9 +36,10 @@ class QGroupBox;
 class QPushButton;
 class QLabel;
 class QLineEdit;
-class QListBox;
 class QListView;
 class QListViewItem;
+class SearchProvider;
+class SearchProviderItem;
 
 class InternetKeywordsOptions : public KCModule {
     Q_OBJECT
@@ -52,23 +53,26 @@ public:
 
     QString quickHelp() const;
 
-protected:
-
 protected slots:
-    void moduleChanged(bool state);
+    void moduleChanged();
 
     void changeInternetKeywordsEnabled();
     void changeSearchKeywordsEnabled();
-    void changeSearchFallback(const QString &name);
 
-    void textChanged(const QString &);
-
+    void addSearchProvider();
     void changeSearchProvider();
     void deleteSearchProvider();
-    void updateSearchProvider(QListViewItem *);
+    void importSearchProvider();
+    void exportSearchProvider();
+    void updateSearchProvider();
 
 private:
-    QListViewItem *displaySearchProvider(const KURISearchFilterEngine::SearchEntry &e, bool fallback = false);
+    SearchProviderItem *displaySearchProvider(SearchProvider *p, bool fallback = false);
+
+    // The names of the providers that the user deleted,
+    // these are marked as deleted in the user's homedirectory on save
+    // if a global service file exists for it.
+    QStringList m_deletedProviders;
 
     // Internet Keywords.
     QGroupBox *gb_keywords;
@@ -90,8 +94,11 @@ private:
     QLabel *lb_searchProviderURI;
     QLineEdit *le_searchProviderURI;
 
+    QPushButton *pb_addSearchProvider;
     QPushButton *pb_chgSearchProvider;
     QPushButton *pb_delSearchProvider;
+    QPushButton *pb_impSearchProvider;
+    QPushButton *pb_expSearchProvider;
 };
 
 #endif

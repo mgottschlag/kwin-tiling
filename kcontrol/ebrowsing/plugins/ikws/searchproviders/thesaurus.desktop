@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=Merriam-Webster Thesaurus
+ServiceTypes=SearchProvider
+Keys=ths,thesaurus
+Query=http://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=\\1

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=ServiceType
+X-KDE-ServiceType=SearchProvider
+Comment=Search Engine
+
+[PropertyDef::Keys]
+Type=QStringList
+
+[PropertyDef::Query]
+Type=QString
+
+[PropertyDef::Charset]
+Type=QString

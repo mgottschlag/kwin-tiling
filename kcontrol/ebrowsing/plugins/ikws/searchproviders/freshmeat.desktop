@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=Freshmeat
+ServiceTypes=SearchProvider
+Keys=fm,freshmeat
+Query=http://freshmeat.net/search/?q=\\1

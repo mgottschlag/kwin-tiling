@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=Free On-Line Dictionary Of Computing
+ServiceTypes=SearchProvider
+Keys=fd,foldoc
+Query=http://foldoc.doc.ic.ac.uk/foldoc/foldoc.cgi?query=\\1

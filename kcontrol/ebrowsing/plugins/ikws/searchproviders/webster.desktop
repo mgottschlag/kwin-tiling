@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=Merriam-Webster Dictionary
+ServiceTypes=SearchProvider
+Keys=dict,webster
+Query=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\1

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=RPM-Find
+ServiceTypes=SearchProvider
+Keys=rf,rpmfind
+Query=http://rpmfind.com/RPM/\\1.html

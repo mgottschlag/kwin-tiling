@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=Excite
+ServiceTypes=SearchProvider
+Keys=ex,excite
+Query=http://search.excite.com/search.gw?search=\\1

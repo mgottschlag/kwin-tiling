@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=Open Directory
+ServiceTypes=SearchProvider
+Keys=dmoz,odp
+Query=http://search.dmoz.org/cgi-bin/search?search=\\1

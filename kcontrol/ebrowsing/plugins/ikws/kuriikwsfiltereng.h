@@ -25,20 +25,14 @@
 #include <qvaluelist.h>
 #include <qstringlist.h>
 
+#include <kservice.h>
+
 class KURL;
 
 class KURISearchFilterEngine
 {
 
 public:
-
-    struct SearchEntry
-    {
-	  QString m_strName;
-	  QString m_strQuery;
-	  QString m_strCharset;
-	  QStringList m_lstKeys;
-    };
 
     struct IKWSEntry
     {
@@ -52,30 +46,16 @@ public:
     ~KURISearchFilterEngine() {};
 
     QCString name() const;
-    void insertSearchEngine(SearchEntry e);
-    void removeSearchEngine(const QString & name);
-
-    QValueList<SearchEntry> searchEngines() const { return m_lstSearchEngine; }
     QValueList<IKWSEntry> ikwsEngines() const { return m_lstInternetKeywordsEngine; }
 
     QString searchQuery( const KURL& ) const;
     QString ikwsQuery( const KURL& ) const;
 
-    void setInternetKeywordsEnabled(bool);
-    void setSearchKeywordsEnabled(bool);
-    bool isInternetKeywordsEnabled() const;
-    bool isSearchKeywordsEnabled() const;
-
-    QString searchFallback() const;
-    void setSearchFallback(const QString &name);
-
-    SearchEntry searchEntryByName(const QString & name) const;
     IKWSEntry ikwsEntryByName(const QString & name) const;
 
     bool verbose() const { return m_bVerbose; }
 
     void loadConfig();
-    void saveConfig() const;
 
     static void incRef();
     static void decRef();
@@ -85,14 +65,14 @@ protected:
     QString formatResult( const QString& query, const QString& cset1, const QString& cset2, const QString& url, bool ) const;
 
 private:
+
     bool m_bSearchKeywordsEnabled;
-    QValueList<SearchEntry> m_lstSearchEngine;
 
     bool m_bInternetKeywordsEnabled;
     QValueList<IKWSEntry> m_lstInternetKeywordsEngine;
 
     IKWSEntry m_currInternetKeywordsEngine;
-    SearchEntry m_currSearchKeywordsEngine;
+    QString m_searchFallback;
 
     bool m_bVerbose;
 

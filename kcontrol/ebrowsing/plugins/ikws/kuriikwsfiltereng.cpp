@@ -24,15 +24,18 @@
 
 #include <kurl.h>
 #include <kdebug.h>
-#include <ksimpleconfig.h>
 #include <kprotocolinfo.h>
+#include <kconfig.h>
+#include <ksimpleconfig.h>
+#include <kapp.h>
+#include <kstddirs.h>
 
 #include "kuriikwsfiltereng.h"
+#include "searchprovider.h"
 
 unsigned long KURISearchFilterEngine::s_refCnt = 0;
 KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0L;
 
-#define SEARCH_SUFFIX	" " "Search"
 #define IKW_KEY         "Internet Keywords"
 #define IKW_SUFFIX      " " IKW_KEY
 #define IKW_REALNAMES	"RealNames"
@@ -40,47 +43,6 @@ KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0L;
 KURISearchFilterEngine::KURISearchFilterEngine()
 {
     loadConfig();
-}
-
-void KURISearchFilterEngine::insertSearchEngine(SearchEntry e)
-{
-    QValueList<SearchEntry>::Iterator it = m_lstSearchEngine.begin();
-    QValueList<SearchEntry>::Iterator end = m_lstSearchEngine.end();
-    for (; it != end; ++it)
-	{
-	    if ((*it).m_strName == e.m_strName)
-		{
-		    m_lstSearchEngine.remove(it);
-		    break;
-		}
-	}
-    m_lstSearchEngine.append(e);
-}
-
-void KURISearchFilterEngine::removeSearchEngine(const QString &name)
-{
-    QValueList<SearchEntry>::Iterator it = m_lstSearchEngine.begin();
-    QValueList<SearchEntry>::Iterator end = m_lstSearchEngine.end();
-    for (; it != end; ++it)
-	{
-	    if ((*it).m_strName == name)
-		{
-		    m_lstSearchEngine.remove(it);
-		    break;
-		}
-	}
-}
-
-KURISearchFilterEngine::SearchEntry KURISearchFilterEngine::searchEntryByName(const QString &name) const
-{
-    QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngine.begin();
-    QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngine.end();
-    for (; it != end; ++it)
-	{
-	    if ((*it).m_strName == name)
-		return *it;
-	}
-    return SearchEntry();
 }
 
 QString KURISearchFilterEngine::searchQuery( const KURL &url ) const
@@ -103,13 +65,10 @@ QString KURISearchFilterEngine::searchQuery( const KURL &url ) const
 	    if( KProtocolInfo::isKnownProtocol( key ) || key.isEmpty() )
 		return QString::null;
 
-	    QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngine.begin();
-	    QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngine.end();
-	    for (; it != end; ++it)
-		{
-		    if ((*it).m_lstKeys.contains(key))
-			return formatResult((*it).m_strQuery, (*it).m_strCharset, QString::null, _url.mid(pos + 1), url.isMalformed() );
-		}
+            SearchProvider *provider = SearchProvider::findByKey(key);
+            if (provider)
+                return formatResult(provider->query(), provider->charset(),
+                                    QString::null, _url.mid(pos + 1), url.isMalformed());
 	}
     return QString::null;
 }
@@ -130,32 +89,33 @@ QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
 	    if( KProtocolInfo::isKnownProtocol(key) ) {
 		return QString::null;
 	    }
-	    
-	    QString search = m_currSearchKeywordsEngine.m_strQuery;
-	    if (!search.isEmpty())
-		{
-		    /*
-		     * As a special case, if there is a question mark
-		     * at the beginning of the query, we'll force the
-		     * use of the search fallback without going through
-		     * the Internet Keywords engine.
-		     *
-		     */
 
-		    QRegExp question("^[ \t]*\\?[ \t]*");
-		    if (url.isMalformed() && _url.find(question) == 0) {
-			_url = _url.replace(question, "");
-			return formatResult(search, m_currSearchKeywordsEngine.m_strCharset, QString::null, _url, true);
-		    } else {
-			int pct = m_currInternetKeywordsEngine.m_strQueryWithSearch.find("\\|");
-			if (pct >= 0)
-			    {
-				search = KURL::encode_string( search );
-				QString res = m_currInternetKeywordsEngine.m_strQueryWithSearch;
-				return formatResult( res.replace(pct, 2, search), m_currSearchKeywordsEngine.m_strCharset, QString::null, _url, url.isMalformed() );
-			    }
-		    }
-		}
+            SearchProvider *fallback = SearchProvider::findByDesktopName(m_searchFallback);
+            if (fallback)
+            {
+                QString search = fallback->query();
+                /*
+                * As a special case, if there is a question mark
+                * at the beginning of the query, we'll force the
+                * use of the search fallback without going through
+                * the Internet Keywords engine.
+                *
+                */
+
+                QRegExp question("^[ \t]*\\?[ \t]*");
+                if (url.isMalformed() && _url.find(question) == 0) {
+                        _url = _url.replace(question, "");
+                        return formatResult(search, fallback->charset(), QString::null, _url, true);
+                } else {
+                        int pct = m_currInternetKeywordsEngine.m_strQueryWithSearch.find("\\|");
+                        if (pct >= 0)
+                        {
+                                search = KURL::encode_string( search );
+                                QString res = m_currInternetKeywordsEngine.m_strQueryWithSearch;
+                                return formatResult( res.replace(pct, 2, search), fallback->charset(), QString::null, _url, url.isMalformed() );
+                        }
+                }
+            }
 
 	    return formatResult( m_currInternetKeywordsEngine.m_strQuery, m_currInternetKeywordsEngine.m_strCharset, QString::null, _url, url.isMalformed() );
 	}
@@ -172,36 +132,6 @@ KURISearchFilterEngine::IKWSEntry KURISearchFilterEngine::ikwsEntryByName(const 
 		return *it;
 	}
     return IKWSEntry();
-}
-
-void KURISearchFilterEngine::setInternetKeywordsEnabled(bool flag)
-{
-    m_bInternetKeywordsEnabled = flag;
-}
-
-void KURISearchFilterEngine::setSearchKeywordsEnabled(bool flag)
-{
-    m_bSearchKeywordsEnabled = flag;
-}
-
-bool KURISearchFilterEngine::isInternetKeywordsEnabled() const
-{
-    return m_bInternetKeywordsEnabled;
-}
-
-bool KURISearchFilterEngine::isSearchKeywordsEnabled() const
-{
-    return m_bSearchKeywordsEnabled;
-}
-
-QString KURISearchFilterEngine::searchFallback() const
-{
-    return m_currSearchKeywordsEngine.m_strName;
-}
-
-void KURISearchFilterEngine::setSearchFallback(const QString &name)
-{
-    m_currSearchKeywordsEngine = searchEntryByName( name );
 }
 
 QCString KURISearchFilterEngine::name() const
@@ -291,39 +221,93 @@ QString KURISearchFilterEngine::formatResult( const QString& query, const QStrin
 
 void KURISearchFilterEngine::loadConfig()
 {
-    bool oldConfigFormat = false;
+    // Migrate from the old format,
+    // this block should remain until we can assume "every"
+    // user has upgraded to a KDE version that contains the
+    // sycoca based search provider configuration (malte)
+    {
+        KSimpleConfig oldConfig(kapp->dirs()->saveLocation("config") + QString(name()) + "rc");
+        oldConfig.setGroup("General");
+        if (oldConfig.hasKey("SearchEngines"))
+        {
+            // User has an old config file in his local config dir
+            kdDebug(7023) << "Migrating config file to .desktop files..." << endl;
+            QString fallback = oldConfig.readEntry("InternetKeywordsSearchFallback");
+            QStringList engines = oldConfig.readListEntry("SearchEngines");
+            for (QStringList::ConstIterator it = engines.begin(); it != engines.end(); ++it)
+            {
+                if (!oldConfig.hasGroup(*it + " Search"))
+                    continue;
+                oldConfig.setGroup(*it + " Search");
+                QString query = oldConfig.readEntry("Query");
+                QStringList keys = oldConfig.readListEntry("Keys");
+                QString charset = oldConfig.readEntry("Charset");
+                oldConfig.deleteGroup(*it + " Search");
+                QString name;
+                for (QStringList::ConstIterator key = keys.begin(); key != keys.end(); ++key)
+                {
+                    // take the longest key as name for the .desktop file
+                    if ((*key).length() > name.length())
+                        name = *key;
+                }
+                if (*it == fallback)
+                    fallback = name;
+                SearchProvider *provider = SearchProvider::findByKey(name);
+                if (provider)
+                {
+                    // If this entry has a corresponding global entry
+                    // that comes with KDE's default configuration,
+                    // compare both and if thei're equal, don't
+                    // create a local copy
+                    if (provider->name() == *it
+                        && provider->query() == query
+                        && provider->keys() == keys
+                        && (provider->charset() == charset || (provider->charset().isEmpty() && charset.isEmpty())))
+                    {
+                        kdDebug(7023) << *it << " is unchanged, skipping" << endl;
+                        continue;
+                    }
+                    delete provider;
+                }
+                KSimpleConfig desktop(kapp->dirs()->saveLocation("services", "searchproviders/") + name + ".desktop");
+                desktop.setGroup("Desktop Entry");
+                desktop.writeEntry("Type", "Service");
+                desktop.writeEntry("ServiceTypes", "SearchProvider");
+                desktop.writeEntry("Name", *it);
+                desktop.writeEntry("Query", query);
+                desktop.writeEntry("Keys", keys);
+                desktop.writeEntry("Charset", charset);
+                kdDebug(7023) << "Created searchproviders/" << name << ".desktop for " << *it << endl;
+            }
+            oldConfig.deleteEntry("SearchEngines", false);
+            oldConfig.setGroup("General");
+            oldConfig.writeEntry("InternetKeywordsSearchFallback", fallback);
+            kdDebug(7023) << "...completed" << endl;
+        }
+    }
+    
     kdDebug(7023) << "(" << getpid() << ") Keywords Engine: Loading config..." << endl;
     // First empty any current config we have.
-    m_lstSearchEngine.clear();
     m_lstInternetKeywordsEngine.clear();
 
     // Load the config.
     KConfig config( name() + "rc", false, false );
     QStringList engines;
-    QString selIKWSEngine, selIKWSFallback;
+    QString selIKWSEngine;
     config.setGroup( "General" );
 
-    if( !config.hasKey("InternetKeywordsEnabled") && config.hasGroup(IKW_KEY)) {
-	// Read the old settings
-	kdDebug(7023) << "(" << getpid() << ") Config file has the OLD format..." << endl;
-	oldConfigFormat = true;
-	config.setGroup(IKW_KEY);
-	m_bInternetKeywordsEnabled = config.readBoolEntry("NavEnabled", true);
-	selIKWSEngine = config.readEntry("NavSelectedEngine", IKW_REALNAMES);
-	selIKWSFallback = config.readEntry("NavSearchFallback");
-	engines = config.readListEntry("NavEngines");
-    } else {
-	kdDebug(7023) << "(" << getpid() << ") Config file has the NEW format..." << endl;
-	m_bInternetKeywordsEnabled = config.readBoolEntry("InternetKeywordsEnabled", true);
-	selIKWSEngine = config.readEntry("InternetKeywordsSelectedEngine", IKW_REALNAMES);
-	selIKWSFallback = config.readEntry("InternetKeywordsSearchFallback");
-	engines = config.readListEntry("InternetKeywordsEngines");
-    }
+    m_bInternetKeywordsEnabled = config.readBoolEntry("InternetKeywordsEnabled", true);
+    selIKWSEngine = config.readEntry("InternetKeywordsSelectedEngine", IKW_REALNAMES);
+    m_searchFallback = config.readEntry("InternetKeywordsSearchFallback");
+
+    m_bVerbose = config.readBoolEntry("Verbose");
+    m_bSearchKeywordsEnabled = config.readBoolEntry("SearchEngineShortcutsEnabled", true);
 
     kdDebug(7023) << "(" << getpid() << ") Internet Keyword Enabled: " << m_bInternetKeywordsEnabled << endl;
     kdDebug(7023) << "(" << getpid() << ") Selected IKWS Engine(s): " << selIKWSEngine << endl;
-    kdDebug(7023) << "(" << getpid() << ") Internet Keywords Fallback Search Engine: " << selIKWSFallback << endl;
+    kdDebug(7023) << "(" << getpid() << ") Internet Keywords Fallback Search Engine: " << m_searchFallback << endl;
 
+    engines = config.readListEntry("InternetKeywordsEngines");
     QStringList::ConstIterator gIt = engines.begin();
     QStringList::ConstIterator gEnd = engines.end();
     for (; gIt != gEnd; ++gIt) {
@@ -336,7 +320,7 @@ void KURISearchFilterEngine::loadConfig()
 	    e.m_strQueryWithSearch = config.readEntry("QueryWithSearch");
 	    e.m_strCharset = config.readEntry("Charset");
 	    m_lstInternetKeywordsEngine.append(e);
-	    if (selIKWSEngine == (oldConfigFormat ? grpName : e.m_strName)) {
+	    if (selIKWSEngine == (e.m_strName)) {
 		m_currInternetKeywordsEngine = e;
 	    }
 	}
@@ -353,82 +337,5 @@ void KURISearchFilterEngine::loadConfig()
 
 	m_lstInternetKeywordsEngine.append(rn);
     }
-
-    // Load the Search engines
-
-    config.setGroup("General");
-    m_bVerbose = config.readBoolEntry("Verbose");
-    engines = config.readListEntry("SearchEngines");
-    m_bSearchKeywordsEnabled = config.readBoolEntry("SearchEngineShortcutsEnabled", true);
-
-    gIt = engines.begin();
-    gEnd = engines.end();
-    for (; gIt != gEnd; ++gIt) {
-	QString grpName = *gIt + SEARCH_SUFFIX;
-	if (!config.hasGroup(grpName)) {
-	    grpName = *gIt;
-	} else {
-	    grpName = *gIt + SEARCH_SUFFIX;
-	}
-
-	config.setGroup( grpName );
-	SearchEntry e;
-	e.m_strName = *gIt;
-	e.m_lstKeys = config.readListEntry("Keys");
-	e.m_strQuery = config.readEntry("Query");
-	e.m_strCharset = config.readEntry("Charset");
-	m_lstSearchEngine.append(e);
-	if (selIKWSFallback == (oldConfigFormat ? grpName : e.m_strName)) {
-	    m_currSearchKeywordsEngine = e;
-	}
-    }
 }
 
-void KURISearchFilterEngine::saveConfig() const
-{
-    KSimpleConfig config(name() + "rc");
-    QStringList search_engines, ikws_engines;
-
-    // Remove the OLD group [Internet Keywords].
-    // Instead all generic info that has to do with
-    // shortcuts will be saved under [General].
-    if( config.hasGroup(IKW_KEY) )
-	config.deleteGroup( IKW_KEY );
-
-    // DUMP OUT THE SEARCH ENGINE INFO
-    QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngine.begin();
-    QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngine.end();
-    for (; it != end; ++it)
-	{
-	    search_engines.append((*it).m_strName);
-	    config.setGroup((*it).m_strName + SEARCH_SUFFIX);
-	    config.writeEntry("Keys", (*it).m_lstKeys);
-	    config.writeEntry("Query", (*it).m_strQuery);
-	    config.writeEntry("Charset", (*it).m_strCharset);
-	}
-
-    // DUMP OUT THE INTERNET KEYWORD INFO
-    QValueList<IKWSEntry>::ConstIterator nit = m_lstInternetKeywordsEngine.begin();
-    QValueList<IKWSEntry>::ConstIterator nend = m_lstInternetKeywordsEngine.end();
-    for (; nit != nend; ++nit)
-	{
-	    ikws_engines.append((*nit).m_strName);
-	    config.setGroup((*nit).m_strName + IKW_SUFFIX);
-	    config.writeEntry("Query", (*nit).m_strQuery);
-	    config.writeEntry("Charset", (*nit).m_strCharset);
-	    if (!(*nit).m_strQueryWithSearch.isEmpty())
-		config.writeEntry("QueryWithSearch", (*nit).m_strQueryWithSearch);
-	}
-
-    config.setGroup("General");
-    config.writeEntry("InternetKeywordsEnabled", m_bInternetKeywordsEnabled);
-    config.writeEntry("InternetKeywordsEngines", ikws_engines);
-    config.writeEntry("InternetKeywordsSelectedEngine", m_currInternetKeywordsEngine.m_strName);
-    config.writeEntry("InternetKeywordsSearchFallback", m_currSearchKeywordsEngine.m_strName);
-    config.writeEntry("SearchEngineShortcutsEnabled",m_bSearchKeywordsEnabled );
-    config.writeEntry("SearchEngines", search_engines);
-    if (m_bVerbose)
-	config.writeEntry("Verbose", m_bVerbose);
-
-    config.sync(); // Dump out the general config stuff
-}

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=LEO-Translate
+ServiceTypes=SearchProvider
+Keys=leo
+Query=http://dict.leo.org/?search=\\1

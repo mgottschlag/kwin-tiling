@@ -1,93 +1,9 @@
 [General]
-SearchEngines=Open Directory,Freshmeat,AltaVista,Google,Lycos,Voila,Yahoo,Merriam-Webster Dictionary,Merriam-Webster Thesaurus,RPM-Find,LEO-Translate,AustroNaut,Excite,Ask Jeeves,Free On-Line Dictionary Of Computing,GO.com,Hotbot,Mamma - Mother of all Search Engines,MetaCrawler,Acronym Database,RealNames
 InternetKeywordsEnabled=true
-InternetKeywordsSearchFallback=Google
-
-[Acronym Database Search]
-Keys=ad,acro,acronym
-Query=http://www.chemie.de/tools/acronym.php3?language=e&acronym=\\1
-
-[AltaVista Search]
-Keys=av,altavista
-Query=http://www.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\1
-
-[Ask Jeeves Search]
-Keys=ask,jeeves
-Query=http://www.ask.com/main/askJeeves.asp?origin=0&qSource=4&site_name=Jeeves&metasearch=yes&ask=\\1
-
-[AustroNaut Search]
-Keys=austro,austronaut
-Query=http://AustroNaut.at/query.ims?wo=at&suche=\\1
-
-[Excite Search]
-Keys=ex,excite
-Query=http://search.excite.com/search.gw?search=\\1
-
-[Free On-Line Dictionary Of Computing Search]
-Keys=fd,foldoc
-Query=http://foldoc.doc.ic.ac.uk/foldoc/foldoc.cgi?query=\\1
-
-[Freshmeat Search]
-Keys=fm,freshmeat
-Query=http://freshmeat.net/search/?q=\\1
-
-[GO.com Search]
-Keys=go
-Query=http://www.go.com/Titles?col=WW&qt=\\1&svx=home_searchbox&sv=IS&lk=noframeso
-
-[Google Search]
-Keys=gg,google
-Query=http://www.google.com/search?q=\\1
-
-[Hotbot Search]
-Keys=hb,hotbot
-Query=http://hotbot.lycos.com/?MT=\\1&SM=MC&DV=0&LG=any&DC=10&DE=2
-
-[LEO-Translate Search]
-Keys=leo
-Query=http://dict.leo.org/?search=\\1
-
-[Lycos Search]
-Keys=lycos,ly
-Query=http://www.lycos.com/cgi-bin/pursuit?cat=dir&query=\\1
-
-[Mamma - Mother of all Search Engines Search]
-Keys=mm,mamma
-Query=http://www.mamma.com/Mamma?lang=1&timeout=4&qtype=0&query=\\1
-
-[Merriam-Webster Dictionary Search]
-Keys=dict,webster
-Query=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\1
-
-[Merriam-Webster Thesaurus Search]
-Keys=ths,thesaurus
-Query=http://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=\\1
-
-[MetaCrawler Search]
-Keys=mc,meta,metacrawler
-Query=http://search.metacrawler.com/crawler?general=\\1&method=0&cat=Web&target=metaworld&redirect=web&rpp=20&hpe=10&region=0&timeout=0&sort=0&format=beta99&theme=classic&refer=mc-search&refer=mc-search
-
-[Open Directory Search]
-Keys=dmoz,odp
-Query=http://search.dmoz.org/cgi-bin/search?search=\\1
-
-[RPM-Find Search]
-Keys=rf,rpmfind
-Query=http://rpmfind.com/RPM/\\1.html
+InternetKeywordsSearchFallback=google
 
 [RealNames Internet Keywords]
 Query=http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\2&responsecharset=\\3&providerid=180
 Charset=utf-8
 QueryWithSearch=http://navigation.realnames.com/resolver.dll?action=navigation&realname=\\1&charset=\\2&providerid=180&fallbackuri=\\|
 
-[RealNames Search]
-Keys=rn,realnames
-Query=http://navigation.us.realnames.com/resolver.dll?realname=\\1
-
-[Voila Search]
-Keys=voila
-Query=http://www.voila.com/S/www?an=1&kw=\\1&dt=*
-
-[Yahoo Search]
-Keys=ya,yahoo
-Query=http://search.yahoo.com/bin/search?p=\\1

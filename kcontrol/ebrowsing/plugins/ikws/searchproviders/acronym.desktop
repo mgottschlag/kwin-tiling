@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+Name=Acronym Database
+Name[de]=Akronym-Datenbank
+ServiceTypes=SearchProvider
+Keys=ad,acro,acronym
+Query=http://www.chemie.de/tools/acronym.php3?language=e&acronym=\\1
+Query[de]=http://www.chemie.de/tools/acronym.php3?language=d&acronym=\\1

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=AustroNaut
+ServiceTypes=SearchProvider
+Keys=austro,austronaut
+Query=http://AustroNaut.at/query.ims?wo=at&suche=\\1
