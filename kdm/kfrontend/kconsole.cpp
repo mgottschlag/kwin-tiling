@@ -83,6 +83,7 @@ KConsole::~KConsole()
 int
 KConsole::OpenConsole()
 {
+    static const char on = 1;
     if (!source.isEmpty()) {
 	if ((fd = open( source.latin1(), O_RDONLY | O_NONBLOCK )) >= 0)
 	    goto gotcon;
@@ -98,7 +99,6 @@ KConsole::OpenConsole()
     }
 
 #ifdef TIOCCONS
-    static const char on = 1;
     if (ioctl(pty->slaveFd(), TIOCCONS, &on) < 0) {
 	perror("ioctl TIOCCONS");
 	delete pty;
