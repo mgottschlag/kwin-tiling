@@ -200,6 +200,7 @@ extern "C"
 {
   KCModule *create_email(QWidget *parent, const char *name)
   {
+    KGlobal::locale()->insertCatalogue("kcmemail");
     return new KEmailConfig(parent, name);
   };
 }
