@@ -190,6 +190,12 @@ void MenuTab::save()
 
 void MenuTab::defaults()
 {
+    //disable all
+    QListViewItem *item(0);
+    for (item = m_subMenus->firstChild(); item; item = item->nextSibling())
+    {
+         static_cast<kSubMenuItem*>( item )->setOn( false );
+    }
   m_showPixmap->setChecked(true);
   m_maxQuickBrowserItems->setValue(30);
   m_formDescName->setChecked(true);
