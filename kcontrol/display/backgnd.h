@@ -21,8 +21,6 @@
 #include <kcolorbtn.h>
 #include <kcontrol.h>
 #include <kslider.h>
-#include <drag.h>
-
 
 #include "display.h"
 
@@ -196,12 +194,13 @@ protected:
   void addToPicList( QString pic );
   void readSettings();
   void copyCurrent();
+  virtual void dropEvent(QDropEvent *event);
+  virtual void dragEnterEvent( QDragEnterEvent *);
 
 protected slots:
   void selected( int index );
   void slotDelete();
   void slotAdd();
-  void picDropped(KDNDDropZone *zone);
   void changeDir();
   void slotBrowse ();
 
@@ -219,7 +218,6 @@ private:
   QPushButton *dirPushButton;
 
   KIntLineEdit *timerLined;
-  KDNDDropZone *picdrop;
 
   KBackground *kb;
   QList<KItem> ItemList;
@@ -274,10 +272,7 @@ protected slots:
   void slotToggleRandom();
   void slotToggleOneDesktop();
   void slotToggleDock();
-  void slotDropped(KDNDDropZone *zone);
-  void slotDropped( QDropEvent *e);
-
-  void resizeEvent( QResizeEvent * );
+  void slotDropped(QDropEvent *event);
 
 protected:
   void getDeskNameList();
@@ -288,6 +283,8 @@ protected:
   bool loadWallpaper( const QString& filename, bool useContext = TRUE );
   void retainResources();
   void setDefaults();
+
+  void resizeEvent( QResizeEvent * );
 
   bool setNew( QString pic, int item );
 
@@ -332,7 +329,6 @@ protected:
 
   QLabel *monitorLabel;
   KBGMonitor* monitor;
-  KDNDDropZone *monitorDrop;
 
   QPixmap wpPixmap;
   QString deskName;

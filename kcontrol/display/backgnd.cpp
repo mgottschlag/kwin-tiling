@@ -36,16 +36,16 @@
 #include <kbuttonbox.h>
 #include <kpixmap.h>
 #include <kimgio.h>
+#include <klocale.h>
+#include <kconfig.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 
 #include <X11/Xlib.h>
 
 #include "backgnd.h"
 #include "backgnd.moc"
 #include "../../kdesktop/defaults.h"
-#include <klocale.h>
-#include <kconfig.h>
-#include <kglobal.h>
-#include <kstddirs.h>
 
 void KBGMonitor::dropEvent( QDropEvent *e)
 {
@@ -54,14 +54,14 @@ void KBGMonitor::dropEvent( QDropEvent *e)
    * the picture later.
    * (maybe we should accept image drags, and then ask for a filename?)
    */
-  if( QUrlDrag::canDecode( e)) {
-    emit imageDropped( e);
+  if (QUrlDrag::canDecode(e)) {
+    emit imageDropped(e);
   }
 }
 
 void KBGMonitor::dragEnterEvent( QDragEnterEvent *e)
 {
-  e->accept( QImageDrag::canDecode( e)|| QUrlDrag::canDecode( e));  
+  e->accept( QImageDrag::canDecode( e)|| QUriDrag::canDecode( e));  
 }
 
 KRenameDeskDlg::KRenameDeskDlg( const QString& t, QWidget *parent )
@@ -144,7 +144,7 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     maxDesks = 1;
 
 
-  KConfig *config = kapp->getConfig();
+  KConfig *config = KGlobal::config();
   config->setGroup( "Desktop Common" );
   oneDesktopMode = config->readBoolEntry( "OneDesktopMode",
                                          DEFAULT_ENABLE_COMMON_BGND );
@@ -229,10 +229,6 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
   monitorLabel->setMinimumSize(monitorLabel->size());
 	
   topLayout->addMultiCellWidget( monitorLabel, 1, 1, 2, 4 );
-
-  monitorDrop = new KDNDDropZone(monitorLabel, DndURL);
-  connect(monitorDrop, SIGNAL(dropAction(KDNDDropZone*)), 
-	  SLOT(slotDropped(KDNDDropZone*)));
 
   monitor = new KBGMonitor( monitorLabel );
   monitor->resize( 157, 111 );
@@ -714,7 +710,7 @@ void KBackground::writeSettings( int num )
 
   changed = false;
 
-  KConfig *config2 = kapp->getConfig();
+  KConfig *config2 = KGlobal::config();
   config2->setGroup( "Desktop Common" );
   config2->writeEntry( "OneDesktopMode", oneDesktopMode );
   config2->writeEntry( "DeskNum", deskNum );
@@ -818,7 +814,7 @@ void KBackground::showSettings()
 void KBackground::slotApply()
 {
   writeSettings( deskNum );
-  KApplication::getKApplication()->getConfig()->sync();
+  KGlobal::config()->sync();
   apply( true );
 }
 
@@ -1405,36 +1401,15 @@ bool KBackground::setNew( QString pic, int item )
   return true;
 }
 
-
-void KBackground::slotDropped (KDNDDropZone *zone)
-{
-  QStrList &list = zone->getURLList();;
-
-  if ( list.count() > 0 ) {
-
-    QString url = list.first();
-
-    if ("file:" != url.left(5))  // for now, only file URLs are supported
-      QMessageBox::warning(this, i18n("Unsupported URL"),
-        i18n( "Sorry, this type of URL is currently unsupported"\
-		 "by the KDE Display Module" ), i18n("OK") );
-    else {
-      url = url.right(url.length()-5); // strip the leading "file:"
-
-      setNew( url, random );
-    }
-  }
-}
-
 void KBackground::slotDropped( QDropEvent *e)
 {
-  QStringList urls;
+  QStringList uris;
   // Only local files are supported
-  if( QUrlDrag::decodeLocalFiles( e, urls) && (urls.count() > 0)) {
-    QString url = *urls.begin();
-    printf( "Url=\"%s\"\n", url.data());
-    url.prepend('/');
-    setNew( url, random );
+  if( QUriDrag::decodeLocalFiles( e, uris) && (uris.count() > 0)) {
+    QString uri = *uris.begin();
+    debug( "KBackground drop, url=\"%s\"\n", uri.data());
+    uri.prepend('/');
+    setNew( uri, random );
   }
 }
 
@@ -1460,7 +1435,7 @@ KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, uint *p, int *orient,
 	
   setCaption( i18n( "Two color backgrounds" ) );
 
-  KConfig *config = kapp->getConfig();
+  KConfig *config = KGlobal::config();
   QString group = config->group();
   config->setGroup( "Defined Pattern" );
   int count = config->readNumEntry( "Count" );
@@ -1642,7 +1617,7 @@ void KBPatternDlg::slotMode( int m )
 }
 
 int KBPatternDlg::savePatterns() {
-  KConfig *config = kapp->getConfig();
+  KConfig *config = KGlobal::config();
 
   config->writeEntry("Name0", i18n("Filled"), true, false, true);
   config->writeEntry("Pattern0", "255,255,255,255,255,255,255,255,");
@@ -1722,6 +1697,8 @@ void KBPatternDlg::done( int r )
 KRandomDlg::KRandomDlg(int _desktop, KBackground *_kb, char *name)
   : QDialog( 0, name ), kb( _kb ), desktop( _desktop )
 {
+
+  setAcceptDrops(true);
 
   ItemList.setAutoDelete( true );
 
@@ -1818,10 +1795,6 @@ KRandomDlg::KRandomDlg(int _desktop, KBackground *_kb, char *name)
 	
   toplevelHL->addWidget( listBox, 5 );
 	
-  picdrop = new KDNDDropZone(listBox, DndURL);
-  connect(picdrop, SIGNAL(dropAction(KDNDDropZone*)), 
-	  SLOT(picDropped(KDNDDropZone*)));
-
   tmpQFrame = new QFrame( this );
   tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
   tmpQFrame->setMinimumHeight( tmpQFrame->sizeHint().height() );
@@ -1887,27 +1860,27 @@ void KRandomDlg::slotBrowse()
   dirLined->setText( tmp );
 }
 
-
-void KRandomDlg::picDropped( KDNDDropZone *zone )
-{ 
-  QStrList &list = zone->getURLList();;
-  int len = list.count();
-
-  for ( int i = 0; i < len; i++) {
-    
-    QString url = list.at(i);
-
-    if ("file:" != url.left(5))  // for now, only file URLs are supported
-      QMessageBox::warning(this, i18n("Unsupported URL"),
-        i18n( "Sorry, this type of URL is currently unsupported"\
-		 "by the KDE Display Module" ), i18n("OK") );
-    else {
-      url = url.right(url.length()-5); // strip the leading "file:"
-      addToPicList( url );
-    }
-  }
+void KRandomDlg::dragEnterEvent( QDragEnterEvent *e)
+{
+  e->accept(QUriDrag::canDecode(e));  
 }
 
+void KRandomDlg::dropEvent(QDropEvent *e)
+{
+  QStringList uris;
+  // Only local files are supported
+  if( QUriDrag::decodeLocalFiles( e, uris) && (uris.count() > 0)) {
+    QString uri = *uris.begin();
+    debug( "KRandomDlg drop, url=\"%s\"\n", uri.data());
+    uri.prepend('/');
+    addToPicList(uri);
+  } else {
+    QMessageBox::warning(this, i18n("Unsupported URL"),
+			 i18n("Sorry, this type of URL is currently unsupported"
+			      " by the KDE Display Module"),
+			 i18n("&OK"));
+  }
+}
 
 void KRandomDlg::addToPicList( QString pic )
 {
