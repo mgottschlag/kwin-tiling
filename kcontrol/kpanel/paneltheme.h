@@ -33,7 +33,7 @@ protected slots:
     void slotResetAll();
 protected:
     QString pixNames[4];
-    KIconLoader ldr;
+    KIconLoader *ldr;
     QLabel *pixLbl;
     KIconLoaderButton *pixBtn;
     KColorButton *colorBtn;

@@ -12,6 +12,7 @@
 #include <kconfigbase.h>
 #include <kwm.h>
 #include <kglobal.h>
+#include <kstddirs.h>
 
 extern KConfigBase *config;
 
@@ -42,13 +43,13 @@ void KPanelTheme::loadSettings()
         config->readEntry("TaskbarTexture", QString::null);
 
     canvas->pixmaps[WidgetCanvas::C_Panel] =
-        ldr.loadIcon(pixNames[WidgetCanvas::C_Panel]);
+        ldr->loadIcon(pixNames[WidgetCanvas::C_Panel]);
     canvas->pixmaps[WidgetCanvas::C_Icon] =
-        ldr.loadIcon(pixNames[WidgetCanvas::C_Icon]);
+        ldr->loadIcon(pixNames[WidgetCanvas::C_Icon]);
     canvas->pixmaps[WidgetCanvas::C_TBar] =
-        ldr.loadIcon(pixNames[WidgetCanvas::C_TBar]);
+        ldr->loadIcon(pixNames[WidgetCanvas::C_TBar]);
     canvas->pixmaps[WidgetCanvas::C_TBtn] =
-        ldr.loadIcon(pixNames[WidgetCanvas::C_TBtn]);
+        ldr->loadIcon(pixNames[WidgetCanvas::C_TBtn]);
 
     canvas->boxSize = config->readNumEntry("BoxWidth", 45);
 }
@@ -104,10 +105,10 @@ void KPanelTheme::slotPixmap(const QString &p)
     if(wCombo->currentItem() == WidgetCanvas::C_TText)
         return;
     pixNames[wCombo->currentItem()] = p;
-    canvas->pixmaps[wCombo->currentItem()] = ldr.loadIcon(p);
+    canvas->pixmaps[wCombo->currentItem()] = ldr->loadIcon(p);
 
     pixBtn->setIcon(p);
-    pixBtn->setPixmap(ldr.loadIcon(p)); // hack
+    pixBtn->setPixmap(ldr->loadIcon(p)); // hack
     canvas->drawSampleWidgets();
     canvas->repaint();
 }
@@ -170,19 +171,16 @@ void KPanelTheme::slotResetAll()
 KPanelTheme::KPanelTheme(QWidget *parent, const char *name)
     :KConfigWidget(parent, name)
 {
-    ldr.getDirList().clear();
-    ldr.insertDirectory(0, kapp->kde_datadir()+"/kpanel/pics");
-    ldr.insertDirectory(1, kapp->localkdedir()+"/share/apps/kpanel/pics");
-
+    ldr = new KIconLoader();
+    ldr->setIconType("kpanel_pics");
+    KGlobal::dirs()->addResourceType("kpanel_pics", KStandardDirs::kde_data_relative() + "/kpanel/pics");
+  
     QGroupBox *optionBox = new QGroupBox(i18n("Options"), this);
     colorBtn = new KColorButton(optionBox);
     colorBtn->setMinimumSize(QSize(64,64));
-    pixBtn = new KIconLoaderButton(&ldr, optionBox);
+    pixBtn = new KIconLoaderButton(ldr, optionBox);
     pixBtn->setMinimumSize(colorBtn->size());
-    QStringList pixDirList;
-    pixDirList.append(kapp->kde_datadir()+"/kpanel/pics");
-    pixDirList.append(kapp->localkdedir()+"/share/apps/kpanel/pics");
-    pixBtn->iconLoaderDialog()->changeDirs(pixDirList);
+    pixBtn->iconLoaderDialog()->changeDirs(KGlobal::dirs()->getResourceDirs("kpanel_pics"));
     wCombo = new QComboBox(optionBox);
     wCombo->insertItem(i18n("Panel"), WidgetCanvas::C_Panel);
     wCombo->insertItem(i18n("Icon Background"), WidgetCanvas::C_Icon);

@@ -32,7 +32,7 @@
 #include <kwm.h>
 #include <klocale.h>
 #include <kglobal.h>
-
+#include <kstddirs.h>
 
 class KDMConfigApplication : public KControlApplication
 {
@@ -73,15 +73,8 @@ KDMConfigApplication::KDMConfigApplication(int &argc, char **argv, const char *n
     if(fi.isReadable() && fi.isWritable())
     {
       kimgioRegister();
-
-      KIconLoader *iconloader = KGlobal::iconLoader();
-      if(iconloader)
-      {
-        QString idir(kapp->kde_datadir() + "/kdm/pics/users");
-        iconloader->insertDirectory(0, idir.data());
-        idir = kapp->kde_datadir() + "/kdm/pics";
-        iconloader->insertDirectory(0, idir.data());
-      }
+      KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_data_relative() + "/kdm/pics/users");
+      KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_data_relative() + "/kdm/pics");
 
       if (!pages || pages->contains("appearance"))
 	  addPage(appearance = new KDMAppearanceWidget(dialog, "appearance", FALSE),

@@ -632,7 +632,7 @@ void KDMBackgroundWidget::loadSettings()
     QFileInfo fi(str.data());
     if(fi.exists())
     {
-      iconloader->insertDirectory(0, fi.dirPath(true));
+      KGlobal::dirs()->addResourceDir("icon", fi.dirPath(true));
       wallpaper = str;
     }
     else wallpaper = "";

@@ -40,6 +40,8 @@
 #include "geom.h"
 #include <klocale.h>
 #include <kconfig.h>
+#include <kstddirs.h>
+#include <kglobal.h>
 
 extern KConfig *config;
 
@@ -1164,16 +1166,9 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   //the icon loader for the buttons
   iconLoader = new KIconLoader();
-
-  iconLoader->getDirList().clear();
-   
-  iconLoader->insertDirectory(0, kapp->localkdedir()+"/share/apps/kwm/pics");
-  iconLoader->insertDirectory(1, kapp->kde_datadir()+"/kwm/pics");
-  iconLoader->insertDirectory(2, kapp->localkdedir()+"/share/apps/kwm/toolbar");
-  iconLoader->insertDirectory(3, kapp->kde_datadir()+"/kwm/toolbar");
-  iconLoader->insertDirectory(4, kapp->localkdedir()+"/share/toolbar");
-  iconLoader->insertDirectory(5, kapp->kde_toolbardir());
-
+  iconLoader->setIconType("kwm_pics");
+  KGlobal::dirs()->addResourceType("kwm_pics", KStandardDirs::kde_data_relative() + "/kwm/pics");
+  
   GetSettings();
 }
 

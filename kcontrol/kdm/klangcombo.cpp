@@ -55,10 +55,7 @@ void KLanguageCombo::insertLanguage(const char *lang)
   int w = fontMetrics().width(output) + 24;
   QPixmap pm(w, 16);
 
-  KIconLoader iconLoader;
-  iconLoader.insertDirectory(0,kapp->kde_datadir()+"/kcmlocale/pics");
-  QPixmap flag(iconLoader.loadIcon(QString("flag_")+tag(lang)+".png"));
-  
+  QPixmap flag(locate("locale", tag(lang) + QString("/flag.png")));
   pm.fill(colorGroup().background());
   p.begin(&pm);
 

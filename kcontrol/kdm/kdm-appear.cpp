@@ -25,6 +25,7 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <klined.h>
+#include <kstddirs.h>
 
 #include "kdm-appear.moc"
 
@@ -328,7 +329,7 @@ void KDMAppearanceWidget::loadSettings()
     {
       //logofile = fi.fileName();
       QString lpath = fi.dirPath(true);
-      iconloader->insertDirectory(0, lpath.data());
+      KGlobal::dirs()->addResourceDir("icon", lpath);
     }
   }
 
