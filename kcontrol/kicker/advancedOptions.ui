@@ -91,10 +91,10 @@
         </widget>
         <widget class="QCheckBox" row="4" column="0">
             <property name="name">
-                <cstring>resizableHandle</cstring>
+                <cstring>resizeableHandle</cstring>
             </property>
             <property name="text">
-                <string>&amp;Resizable handle</string>
+                <string>&amp;Resizeable handle</string>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>With this option enabled you can can click and drag the edge of the panel to freely resize it. The panel's size has to be set to "Custom". This option can also be set in the panel's context menu.</string>

@@ -55,7 +55,7 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
             this, SLOT(changed()));
     connect(m_advancedWidget->hideButtonSize, SIGNAL(valueChanged(int)),
             this, SLOT(changed()));
-    connect(m_advancedWidget->resizableHandle, SIGNAL(toggled(bool)),
+    connect(m_advancedWidget->resizeableHandle, SIGNAL(toggled(bool)),
             this, SLOT(changed()));
     load();
 }
@@ -72,8 +72,8 @@ void advancedDialog::load()
     m_advancedWidget->fadeOutHandles->setChecked(fadedOut);
     int defaultHideButtonSize = c.readNumEntry("HideButtonSize", 14);
     m_advancedWidget->hideButtonSize->setValue(defaultHideButtonSize);
-    bool resizableHandle = c.readBoolEntry( "ResizableHandle", false);
-    m_advancedWidget->resizableHandle->setChecked(resizableHandle);
+    bool resizeableHandle = c.readBoolEntry( "ResizeableHandle", false);
+    m_advancedWidget->resizeableHandle->setChecked(resizeableHandle);
     actionButton(Apply)->setEnabled(false);
 }
 
@@ -110,8 +110,8 @@ void advancedDialog::save()
                              m_advancedWidget->hideButtonSize->value());
         extConfig.sync();
     }
-    c.writeEntry("ResizableHandle",
-                 m_advancedWidget->resizableHandle->isChecked());
+    c.writeEntry("ResizeableHandle",
+                 m_advancedWidget->resizeableHandle->isChecked());
     c.sync();
 
     KickerConfig::notifyKicker();
