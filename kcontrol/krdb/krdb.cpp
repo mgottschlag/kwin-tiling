@@ -441,7 +441,7 @@ void runRdb( uint flags )
 #ifndef NDEBUG
   proc << "xrdb" << "-merge" << tmpFile.name();
 #else
-  proc << "xrdb" << "-quiet -merge" << tmpFile.name();
+  proc << "xrdb" << "-quiet" << "-merge" << tmpFile.name();
 #endif
   proc.start( KProcess::Block, KProcess::Stdin );
 
