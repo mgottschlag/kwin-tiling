@@ -56,7 +56,7 @@ static const bool KWRITED_DEFAULT = true;
 KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	KCModule( KDEDFactory::instance(), parent, name )
 {
-	QVBoxLayout *lay = new QVBoxLayout( this );
+	QVBoxLayout *lay = new QVBoxLayout( this, 0, KDialog::spacingHint() );
 
 	QGroupBox *gb = new QVGroupBox(i18n("Load-on-Demand Services"), this );
 	QWhatsThis::add(gb, i18n("This is a list of available KDE services which will "

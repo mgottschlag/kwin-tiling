@@ -27,8 +27,7 @@
 #include "kxmlrpcdlgbase.h"
 
 KXmlRpcDialog::KXmlRpcDialog(QWidget* parent, const char* name)
- : KDialogBase(parent, name, true, QString::null,
-                 KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, false)
+ : KDialogBase(parent, name, true, QString::null, Ok|Cancel, Ok, false)
 {
   mWidget = new KXmlRpcDialogBase(this);
   setMainWidget(mWidget);
