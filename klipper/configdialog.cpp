@@ -109,7 +109,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
                                     this );
     cbReplayAIH = new QCheckBox( i18n("&Replay actions on an item selected from history"),
                                     this );
-    cbSynchronize = new QCheckBox( i18n("Sy&nchronize contents of the clipboard and the selection."),
+    cbSynchronize = new QCheckBox( i18n("Sy&nchronize contents of the clipboard and the selection"),
                                     this );
     QWhatsThis::add( cbSynchronize,
      i18n("<qt>There are two different clipboard buffers available:<br><br>"
