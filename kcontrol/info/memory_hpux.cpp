@@ -1,28 +1,85 @@
+//
+// This file will be included by memory.cpp !
+//
+// HP-UX is really ugly to retrieve information from !
+// Implemented on 24.04.1999 by Helge Deller (deller@gmx.de)
+// Tested on an HP9000/715/64 under HPUX-10.20.
+//
+// Sorry, but I don't know, who implemented the first (little) version of 
+// update(), but it showed wrong sizes !
+//
+// Many thanks goes also to Mike Romberg, who implemented such functions in
+// the program "xosview". Here's his copyright:
+//  Copyright (c) 1994, 1995 by Mike Romberg ( romberg@fsl.noaa.gov )
+
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/param.h>
 #include <sys/pstat.h>
 
 
+#define MAX_SWAP_AREAS 16
+
 void KMemoryWidget::update()
 {
-  long page_size;
-  struct pst_dynamic psd;
-  struct pst_static  pst;
-  
-  if( pstat_getstatic(&pst, sizeof(pst), (size_t)1, 0) == -1 )
-    perror("pstat_getstatic");
+  int  	page_size;
+  long 	total_mem, total_free,
+	total_physical, total_swap, free_physical,
+	used_physical,  used_swap,  free_swap;
 
-  if( pstat_getdynamic(&psd, sizeof(pst), (size_t)1, 0) == -1 )
-    perror("pstat_getstatic");
-  
-  page_size = pst.page_size*pst.page_size/1024;
-  
-     totalMem->setText(format(psd.psd_rm*page_size));
-      freeMem->setText(format(psd.psd_free*page_size));
-    bufferMem->setText(i18n("Not Available"));
-      swapMem->setText(i18n("Not Available"));
-  freeSwapMem->setText(i18n("Not Available"));
-    sharedMem->setText(i18n("Not Available"));
+  struct pst_static pststatic;
+  struct pst_dynamic stats;
+  struct pst_vminfo vmstats;
+  long   fields_[4];
+  struct pst_swapinfo swapinfo;
+
+  pstat_getstatic( &pststatic, sizeof( struct pst_static ), (size_t)1, 0);
+  total_physical = pststatic.physical_memory;
+  page_size = (int)pststatic.page_size;
+
+  pstat_getdynamic(&stats, sizeof( pst_dynamic ), (size_t)1, 0);
+  pstat_getvminfo(&vmstats, sizeof(vmstats), (size_t)1, 0);
+
+  fields_[0] = stats.psd_rmtxt + stats.psd_arm;  // TEXT
+  fields_[1] = stats.psd_rm - stats.psd_rmtxt;	 // USED
+  fields_[2] = total_physical - fields_[0] - fields_[1] - stats.psd_free; //OTHER
+  fields_[3] = stats.psd_free;	// FREE
+
+  used_physical   = (total_physical - fields_[3]) * page_size;
+  total_physical *= page_size;
+  free_physical  = (total_physical - used_physical);
+
+
+  /* Now check the SWAP-AREAS !! */
+
+  total_swap = 0;
+  free_swap  = 0;
+
+  for (int i = 0 ; i < MAX_SWAP_AREAS ; ++i)
+  {
+      pstat_getswap(&swapinfo, sizeof(swapinfo), (size_t)1, i);
+      if (swapinfo.pss_idx == (unsigned)i)
+      {
+          total_swap += (swapinfo.pss_nblksenabled * 1024);
+          free_swap  += (swapinfo.pss_nfpgs * 4 * 1024);
+      }
+  }
+
+  used_swap = total_swap - free_swap;
+
+
+  /* Now display the results */
+
+  total_mem  = total_physical + total_swap;
+  total_free = (total_physical - used_physical) + free_swap;
+
+     totalMem->setText(format(total_mem));
+      freeMem->setText(format(total_free));
+    sharedMem->setText(i18n("Not available")); 		/* FIXME ?? */
+    bufferMem->setText(format(fields_[2]*page_size));	/* FIXME ?? */
+
+      swapMem->setText(format(total_swap));
+  freeSwapMem->setText(format(free_swap));
 
 }
