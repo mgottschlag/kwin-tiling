@@ -346,6 +346,11 @@ bool Task::staysOnTop() const
     return (_info.state & NET::StaysOnTop);
 }
 
+bool Task::shaded() const
+{
+    return (_info.state & NET::Shaded);
+}
+
 bool Task::onCurrentDesktop() const
 {
     return (_info.onAllDesktops || _info.desktop == kwin_module->currentDesktop());
@@ -431,6 +436,15 @@ void Task::stayOnTop(bool stay)
         ni.setState( NET::StaysOnTop, NET::StaysOnTop );
     else
         ni.setState( 0, NET::StaysOnTop );
+}
+
+void Task::shade(bool shade)
+{
+    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
+    if(shade)
+        ni.setState( NET::Shaded, NET::Shaded );
+    else
+        ni.setState( 0, NET::Shaded );
 }
 
 void Task::publishIconGeometry(QRect rect)

@@ -55,6 +55,7 @@ public:
     bool onCurrentDesktop() const;
     bool onAllDesktops() const;
     bool staysOnTop() const;
+    bool shaded() const;
     bool active() const;
     int desktop() const { return _info.desktop; }
 
@@ -66,6 +67,7 @@ public:
     void raise();
     void activate();
     void stayOnTop(bool);
+    void shade(bool);
     void toDesktop(int);
     void toCurrentDesktop();
     void publishIconGeometry(QRect);
