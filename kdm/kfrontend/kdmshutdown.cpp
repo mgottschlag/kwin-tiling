@@ -50,13 +50,13 @@ KDMShutdown::KDMShutdown( QWidget* _parent )
     hlay->addWidget( howGroup, 0, AlignTop );
 
     QRadioButton *rb;
-    rb = new QRadioButton( i18n("&Halt"), howGroup );
+    rb = new QRadioButton( i18n("&Turn off computer"), howGroup );
     set_min( rb );
     // Default action
     rb->setChecked( true );
     rb->setFocus();
 
-    restart_rb = new QRadioButton( i18n("&Reboot"), howGroup );
+    restart_rb = new QRadioButton( i18n("&Restart computer"), howGroup );
     set_min( restart_rb );
 
 #if defined(__linux__) && defined(__i386__)
