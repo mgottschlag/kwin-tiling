@@ -117,7 +117,7 @@ void USBViewer::refresh()
 	      }
 	    else
 	      {
-		QListViewItem *parent = _items.find(it.current()->bus()*256+1);
+		QListViewItem *parent = new_items.find(it.current()->bus()*256+it.current()->parent());
 		if (parent)
 		  {
 		    QListViewItem *item = _items.find(it.current()->bus()*256+it.current()->device());
@@ -139,7 +139,7 @@ void USBViewer::refresh()
       ++level;
     }
 
-    // delete all items not in new_list
+    // delete all items not in new_items
     {
         QIntDictIterator<QListViewItem> it(_items);
         for (; it.current(); ++it) {
