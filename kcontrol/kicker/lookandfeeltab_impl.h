@@ -45,11 +45,18 @@ class LookAndFeelTab : public LookAndFeelTabBase
 
  protected:
   void fillTileCombos();
+  void previewBackground(const QString& themepath, bool isNew);
 
  protected slots:
   void browseTheme(const QString&);
   void launchAdvancedDialog();
   void enableTransparency( bool );
+  void kmenuTileChanged(int i);
+  void desktopTileChanged(int i);
+  void browserTileChanged(int i);
+  void urlTileChanged(int i);
+  void exeTileChanged(int i);
+  void wlTileChanged(int i);
 
  private:
   QString theme;

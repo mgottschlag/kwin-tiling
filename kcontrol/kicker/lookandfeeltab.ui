@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>LookAndFeelTabBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>451</width>
-            <height>474</height>
+            <height>414</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>LookAndFeelTabBase</string>
     </property>
     <property name="whatsThis" stdset="0">
         <string>If this option is selected, informational tooltips will appear when the mouse cursor moves over the icons, buttons and applets in the panel.</string>
@@ -46,6 +49,9 @@
                     <property name="text">
                         <string>Enable icon &amp;zooming</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+Z</string>
+                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>When this option is selected the button icons are zoomed when the mouse cursor is moved over them.</string>
                     </property>
@@ -68,26 +74,12 @@
                 <cstring>GroupBox9</cstring>
             </property>
             <property name="title">
-                <string>B&amp;utton Background</string>
+                <string>B&amp;utton Backgrounds</string>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>TextLabel6</cstring>
-                    </property>
-                    <property name="text">
-                        <string>De&amp;sktop access:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_desktopTile</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose a tile image for desktop access buttons.</string>
-                    </property>
-                </widget>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">
                         <cstring>TextLabel1</cstring>
@@ -100,20 +92,6 @@
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Choose a tile image for the K menu.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>TextLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Legacy applications:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_exeTile</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose a tile image for legacy application buttons.</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="3" column="0">
@@ -130,62 +108,15 @@
                         <string>Choose a tile image for Quick Browser buttons.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="5" column="0">
-                    <property name="name">
-                        <cstring>TextLabel5</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Window list:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_wlTile</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose a tile image for window list buttons.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0">
-                    <property name="name">
-                        <cstring>TextLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Applicatio&amp;ns:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_urlTile</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose a tile image for buttons that launch applications.</string>
-                    </property>
-                </widget>
-                <widget class="KComboBox" row="2" column="1">
+                <widget class="KComboBox" row="3" column="1">
                     <item>
                         <property name="text">
                             <string>Default</string>
                         </property>
                     </item>
-                    <property name="name">
-                        <cstring>m_exeTile</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="insertionPolicy">
-                        <enum>NoInsertion</enum>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose a tile image for legacy application buttons.</string>
-                    </property>
-                </widget>
-                <widget class="KComboBox" row="3" column="1">
                     <item>
                         <property name="text">
-                            <string>Default</string>
+                            <string>Custom Color</string>
                         </property>
                     </item>
                     <property name="name">
@@ -206,82 +137,15 @@
                         <string>Choose a tile image for Quick Browser buttons.</string>
                     </property>
                 </widget>
-                <widget class="KComboBox" row="4" column="1">
-                    <item>
-                        <property name="text">
-                            <string>Default</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>m_urlTile</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="insertionPolicy">
-                        <enum>NoInsertion</enum>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose a tile image for buttons that launch applications.</string>
-                    </property>
-                </widget>
-                <widget class="KComboBox" row="5" column="1">
-                    <item>
-                        <property name="text">
-                            <string>Default</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>m_wlTile</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="insertionPolicy">
-                        <enum>NoInsertion</enum>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose a tile image for window list buttons.</string>
-                    </property>
-                </widget>
-                <widget class="KComboBox" row="1" column="1">
-                    <item>
-                        <property name="text">
-                            <string>Default</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>m_desktopTile</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="insertionPolicy">
-                        <enum>NoInsertion</enum>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose a tile image for desktop access buttons.</string>
-                    </property>
-                </widget>
                 <widget class="KComboBox" row="0" column="1">
                     <item>
                         <property name="text">
                             <string>Default</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Custom Color</string>
                         </property>
                     </item>
                     <property name="name">
@@ -302,7 +166,245 @@
                         <string>Choose a tile image for the K menu.</string>
                     </property>
                 </widget>
-                <spacer row="2" column="2">
+                <widget class="KColorButton" row="3" column="2">
+                    <property name="name">
+                        <cstring>m_browserColor</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>When the Custom Color option is selected, use this button to pick a color for quick browser tile backgrounds</string>
+                    </property>
+                </widget>
+                <widget class="KColorButton" row="0" column="2">
+                    <property name="name">
+                        <cstring>m_kmenuColor</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>When the Custom Color option is selected, use this button to pick a color for the K menu tile background</string>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="4" column="1">
+                    <item>
+                        <property name="text">
+                            <string>Default</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Custom Color</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>m_wlTile</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for window list buttons.</string>
+                    </property>
+                </widget>
+                <widget class="KColorButton" row="4" column="2">
+                    <property name="name">
+                        <cstring>m_wlColor</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>When the Custom Color option is selected, use this button to pick a color for window list tile backgrounds</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>TextLabel5</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Window list:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_wlTile</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for window list buttons.</string>
+                    </property>
+                </widget>
+                <widget class="KColorButton" row="5" column="2">
+                    <property name="name">
+                        <cstring>m_exeColor</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>When the Custom Color option is selected, use this button to pick a color for non-KDE application tile backgrounds</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="5" column="0">
+                    <property name="name">
+                        <cstring>TextLabel4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Non-KDE app&amp;lications:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_exeTile</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for legacy application buttons.</string>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="5" column="1">
+                    <item>
+                        <property name="text">
+                            <string>Default</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Custom Color</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>m_exeTile</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for legacy application buttons.</string>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="2" column="1">
+                    <item>
+                        <property name="text">
+                            <string>Default</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Custom Color</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>m_desktopTile</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for desktop access buttons.</string>
+                    </property>
+                </widget>
+                <widget class="KColorButton" row="2" column="2">
+                    <property name="name">
+                        <cstring>m_desktopColor</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>When the Custom Color option is selected, use this button to pick a color for the desktop tile background</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel6</cstring>
+                    </property>
+                    <property name="text">
+                        <string>De&amp;sktop access:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_desktopTile</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for desktop access buttons.</string>
+                    </property>
+                </widget>
+                <widget class="KColorButton" row="1" column="2">
+                    <property name="name">
+                        <cstring>m_urlColor</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>When the Custom Color option is selected, use this button to pick a color for application tile backgrounds</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Applicatio&amp;ns:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_urlTile</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for buttons that launch applications.</string>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="1" column="1">
+                    <item>
+                        <property name="text">
+                            <string>Default</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Custom Color</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>m_urlTile</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="insertionPolicy">
+                        <enum>NoInsertion</enum>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose a tile image for buttons that launch applications.</string>
+                    </property>
+                </widget>
+                <spacer row="0" column="3" rowspan="6" colspan="1">
                     <property name="name">
                         <cstring>Spacer48</cstring>
                     </property>
@@ -314,8 +416,8 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>20</width>
-                            <height>0</height>
+                            <width>80</width>
+                            <height>160</height>
                         </size>
                     </property>
                 </spacer>
@@ -328,11 +430,11 @@
             <property name="title">
                 <string>Panel Background</string>
             </property>
-            <vbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox">
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>m_transparent</cstring>
                     </property>
@@ -343,146 +445,145 @@
                         <string>If this option is selected, you can choose a background image that will be displayed on the panel. If it is not selected, the default colors will be used, see the 'Colors' control module.</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox">
+                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>m_backgroundImage</cstring>
                     </property>
                     <property name="text">
                         <string>Enable &amp;background image</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+B</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>If this option is selected, you can choose a background image that will be displayed on the panel. If it is not selected, the default colors will be used, see the 'Colors' control module.</string>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget">
+                <spacer row="2" column="0" rowspan="2" colspan="1">
                     <property name="name">
-                        <cstring>layout1</cstring>
+                        <cstring>spacer5</cstring>
                     </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="KURLRequester">
-                            <property name="name">
-                                <cstring>m_backgroundInput</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>5</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>1</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Here you can choose a theme to be displayed by the panel. Press the 'Browse' button to choose a theme using the file dialog.&lt;p&gt; This option is only active if 'Enable background image' is selected.</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>m_backgroundLabel</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>50</width>
-                                    <height>50</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>50</width>
-                                    <height>50</height>
-                                </size>
-                            </property>
-                            <property name="frameShape">
-                                <enum>Panel</enum>
-                            </property>
-                            <property name="frameShadow">
-                                <enum>Sunken</enum>
-                            </property>
-                            <property name="scaledContents">
-                                <bool>true</bool>
-                            </property>
-                            <property name="alignment">
-                                <set>AlignCenter</set>
-                            </property>
-                            <property name="hAlign" stdset="0">
-                            </property>
-                            <property name="vAlign" stdset="0">
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>This is a preview for the selected background image.</string>
-                            </property>
-                        </widget>
-                    </hbox>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QCheckBox" row="3" column="1">
+                    <property name="name">
+                        <cstring>m_colorizeImage</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string>Colorize to &amp;match the desktop color scheme</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+M</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
                 </widget>
-            </vbox>
+                <widget class="QLabel" row="0" column="2" rowspan="2" colspan="1">
+                    <property name="name">
+                        <cstring>m_backgroundLabel</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>50</width>
+                            <height>50</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>50</width>
+                            <height>50</height>
+                        </size>
+                    </property>
+                    <property name="frameShape">
+                        <enum>Panel</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="scaledContents">
+                        <bool>true</bool>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignCenter</set>
+                    </property>
+                    <property name="hAlign" stdset="0">
+                    </property>
+                    <property name="vAlign" stdset="0">
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This is a preview for the selected background image.</string>
+                    </property>
+                </widget>
+                <widget class="KURLRequester" row="2" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_backgroundInput</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Here you can choose a theme to be displayed by the panel. Press the 'Browse' button to choose a theme using the file dialog.&lt;p&gt; This option is only active if 'Enable background image' is selected.</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout2</cstring>
+                <cstring>layout3</cstring>
             </property>
-            <grid>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QPushButton" row="1" column="0">
+                <widget class="QPushButton">
                     <property name="name">
                         <cstring>advancedOptionsButton</cstring>
                     </property>
                     <property name="text">
                         <string>Advanc&amp;ed Options...</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+E</string>
+                    </property>
                 </widget>
-                <spacer row="0" column="0">
-                    <property name="name">
-                        <cstring>Spacer4_2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>MinimumExpanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>16</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <spacer row="2" column="0">
-                    <property name="name">
-                        <cstring>Spacer9_2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <spacer row="1" column="1">
+                <spacer>
                     <property name="name">
                         <cstring>Spacer4</cstring>
                     </property>
@@ -494,17 +595,32 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>260</width>
+                            <width>289</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
-            </grid>
+            </hbox>
         </widget>
+        <spacer>
+            <property name="name">
+                <cstring>Spacer9_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>28</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>m_backgroundImage</sender>
@@ -542,6 +658,12 @@
         <receiver>LookAndFeelTabBase</receiver>
         <slot>enableTransparency(bool)</slot>
     </connection>
+    <connection>
+        <sender>m_backgroundImage</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_colorizeImage</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>m_zoom_cb</tabstop>
@@ -569,8 +691,4 @@
 </slots>
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-<includehints>
-    <includehint>klineedit.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
 </UI>

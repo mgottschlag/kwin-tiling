@@ -22,6 +22,7 @@
 #include <qlabel.h>
 #include <qregexp.h>
 
+#include <kcolorbutton.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <kimageio.h>
@@ -34,6 +35,9 @@
 #include "advancedDialog.h"
 #include "lookandfeeltab_impl.h"
 #include "lookandfeeltab_impl.moc"
+
+#include <iostream>
+using namespace std;
 
 LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   : LookAndFeelTabBase (parent, name)
@@ -48,8 +52,23 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   connect(m_exeTile, SIGNAL(activated(int)), SIGNAL(changed()));
   connect(m_wlTile, SIGNAL(activated(int)), SIGNAL(changed()));
 
+  connect(m_kmenuTile, SIGNAL(activated(int)), SLOT(kmenuTileChanged(int)));
+  connect(m_desktopTile, SIGNAL(activated(int)), SLOT(desktopTileChanged(int)));
+  connect(m_browserTile, SIGNAL(activated(int)), SLOT(browserTileChanged(int)));
+  connect(m_urlTile, SIGNAL(activated(int)), SLOT(urlTileChanged(int)));
+  connect(m_exeTile, SIGNAL(activated(int)), SLOT(exeTileChanged(int)));
+  connect(m_wlTile, SIGNAL(activated(int)), SLOT(wlTileChanged(int)));
+
+  connect(m_kmenuColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
+  connect(m_desktopColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
+  connect(m_browserColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
+  connect(m_urlColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
+  connect(m_exeColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
+  connect(m_wlColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
+
   connect(m_backgroundImage, SIGNAL(clicked()), SIGNAL(changed()));
   connect(m_transparent, SIGNAL(clicked()), SIGNAL(changed()));
+  connect(m_colorizeImage, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
   m_backgroundInput->fileDialog()->setFilter(KImageIO::pattern(KImageIO::Reading));
   m_backgroundInput->fileDialog()->setCaption(i18n("Select Image File"));
@@ -62,23 +81,15 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
 void LookAndFeelTab::browseTheme(const QString& newtheme)
 {
     if (theme == newtheme) return;
-    if (newtheme.isEmpty()) return;
-
-    QImage tmpImg(newtheme);
-    if( !tmpImg.isNull() ) {
-        tmpImg = tmpImg.smoothScale(m_backgroundLabel->contentsRect().width(),
-                                    m_backgroundLabel->contentsRect().height());
-        theme_preview.convertFromImage(tmpImg);
-        if( !theme_preview.isNull() ) {
-            theme = newtheme;
-            m_backgroundInput->lineEdit()->setText(theme);
-            m_backgroundLabel->setPixmap(theme_preview);
-            emit changed();
-            return;
-        }
+    if (newtheme.isEmpty())
+    {
+        m_backgroundInput->clear();
+        m_backgroundLabel->setPixmap(QPixmap());
+        emit changed();
+        return;
     }
 
-    KMessageBox::error(this, i18n("Failed to load image file."), i18n("Failed to Load Image File"));
+    previewBackground(newtheme, true);
 }
 
 void LookAndFeelTab::launchAdvancedDialog()
@@ -96,31 +107,13 @@ void LookAndFeelTab::enableTransparency( bool enable )
     m_backgroundLabel->setDisabled( enable || !b );
 }
 
-void LookAndFeelTab::load()
+void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)
 {
-  KConfig c(KickerConfig::configName(), false, false);
+    QString theme = themepath;
+    if (theme[0] != '/')
+        theme = locate("data", "kicker/" + theme);
 
-  c.setGroup("General");
-
-  bool use_theme = c.readBoolEntry("UseBackgroundTheme", false);
-  theme = c.readEntry("BackgroundTheme").stripWhiteSpace();
-
-  bool transparent = c.readBoolEntry( "Transparent", false );
-
-  m_backgroundImage->setChecked(use_theme);
-  m_backgroundInput->setEnabled(use_theme);
-  m_backgroundLabel->setEnabled(use_theme);
-  m_backgroundInput->lineEdit()->setText( QString::null );
-  m_transparent->setChecked( transparent );
-  m_backgroundLabel->clear();
-  if (theme.length() > 0)
-  {
-    QString themepath;
-    if (theme[0] == '/')
-        themepath = theme;
-    else
-        themepath = locate("data", "kicker/"+theme);
-    QImage tmpImg(themepath);
+    QImage tmpImg(theme);
     if(!tmpImg.isNull())
     {
         tmpImg = tmpImg.smoothScale(m_backgroundLabel->contentsRect().width(),
@@ -129,18 +122,41 @@ void LookAndFeelTab::load()
         if(!theme_preview.isNull()) {
             m_backgroundInput->lineEdit()->setText(theme);
             m_backgroundLabel->setPixmap(theme_preview);
-        }
-        else
-        {
-            m_backgroundInput->lineEdit()->setText(i18n("Error loading theme image file. '%1' '%2'")
-                                                                                .arg(theme).arg(themepath));
+            if (isNew)
+                emit changed();
+            return;
         }
     }
-    else
-    {
-        m_backgroundInput->lineEdit()->setText(i18n("Error loading theme image file. '%1' '%2'")
-                                                                            .arg(theme).arg(themepath));
-    }
+
+    KMessageBox::error(this,
+                       i18n("Error loading theme image file. '%1' '%2'")
+                            .arg(theme, themepath));
+    m_backgroundInput->clear();
+    m_backgroundLabel->setPixmap(QPixmap());
+}
+
+void LookAndFeelTab::load()
+{
+  KConfig c(KickerConfig::configName(), false, false);
+
+  c.setGroup("General");
+
+  bool use_theme = c.readBoolEntry("UseBackgroundTheme", true);
+  theme = c.readEntry("BackgroundTheme", "wallpapers/default.png").stripWhiteSpace();
+
+  bool transparent = c.readBoolEntry( "Transparent", false );
+
+  m_backgroundImage->setChecked(use_theme);
+  m_backgroundInput->setEnabled(use_theme);
+  m_backgroundLabel->setEnabled(use_theme);
+  m_colorizeImage->setChecked(c.readBoolEntry("ColorizeBackground", true));
+  m_colorizeImage->setEnabled(use_theme);
+  m_backgroundInput->lineEdit()->setText( QString::null );
+  m_transparent->setChecked( transparent );
+  m_backgroundLabel->clear();
+  if (theme.length() > 0)
+  {
+    previewBackground(theme, false);
   }
 
   m_showToolTips->setChecked( c.readBoolEntry( "ShowToolTips", true ) );
@@ -153,6 +169,18 @@ void LookAndFeelTab::load()
   QString tile;
   c.setGroup("buttons");
 
+  m_kmenuTile->setCurrentItem(0);
+  m_desktopTile->setCurrentItem(0);
+  m_urlTile->setCurrentItem(0);
+  m_browserTile->setCurrentItem(0);
+  m_exeTile->setCurrentItem(0);
+  m_wlTile->setCurrentItem(0);
+  m_kmenuColor->setEnabled(false);
+  m_desktopColor->setEnabled(false);
+  m_urlColor->setEnabled(false);
+  m_browserColor->setEnabled(false);
+  m_exeColor->setEnabled(false);
+  m_wlColor->setEnabled(false);
   if (c.readBoolEntry("EnableTileBackground", false))
   {
     c.setGroup("button_tiles");
@@ -161,70 +189,49 @@ void LookAndFeelTab::load()
     {
       tile = c.readEntry("KMenuTile", "solid_blue");
       m_kmenuTile->setCurrentItem(m_tilename.findIndex(tile));
-    }
-    else
-    {
-      m_kmenuTile->setCurrentItem(0);
+      m_kmenuColor->setColor(c.readColorEntry("KMenuTileColor"));
+      m_kmenuColor->setEnabled(tile == "Colorize");
     }
 
     if (c.readBoolEntry("EnableDesktopButtonTiles", false))
     {
       tile = c.readEntry("DesktopButtonTile", "solid_orange");
       m_desktopTile->setCurrentItem(m_tilename.findIndex(tile));
-    }
-    else
-    {
-      m_desktopTile->setCurrentItem(0);
+      m_desktopColor->setColor(c.readColorEntry("KMenuTileColor"));
+      m_desktopColor->setEnabled(tile == "Colorize");
     }
 
     if (c.readBoolEntry("EnableURLTiles", false))
     {
       tile = c.readEntry("URLTile", "solid_gray");
       m_urlTile->setCurrentItem(m_tilename.findIndex(tile));
-    }
-    else
-    {
-      m_urlTile->setCurrentItem(0);
+      m_urlColor->setColor(c.readColorEntry("KMenuTileColor"));
+      m_urlColor->setEnabled(tile == "Colorize");
     }
 
     if (c.readBoolEntry("EnableBrowserTiles", false))
     {
       tile = c.readEntry("BrowserTile", "solid_green");
       m_browserTile->setCurrentItem(m_tilename.findIndex(tile));
-    }
-    else
-    {
-      m_browserTile->setCurrentItem(0);
+      m_browserColor->setColor(c.readColorEntry("KMenuTileColor"));
+      m_browserColor->setEnabled(tile == "Colorize");
     }
 
     if (c.readBoolEntry("EnableExeTiles", false))
     {
       tile = c.readEntry("ExeTile", "solid_red");
       m_exeTile->setCurrentItem(m_tilename.findIndex(tile));
-    }
-    else
-    {
-      m_exeTile->setCurrentItem(0);
+      m_exeColor->setColor(c.readColorEntry("KMenuTileColor"));
+      m_exeColor->setEnabled(tile == "Colorize");
     }
 
     if (c.readBoolEntry("EnableWindowListTiles", false))
     {
       tile = c.readEntry("WindowListTile", "solid_green");
       m_wlTile->setCurrentItem(m_tilename.findIndex(tile));
+      m_wlColor->setColor(c.readColorEntry("KMenuTileColor"));
+      m_wlColor->setEnabled(tile == "Colorize");
     }
-    else
-    {
-      m_wlTile->setCurrentItem(0);
-    }
-  }
-  else
-  {
-    m_kmenuTile->setCurrentItem(0);
-    m_desktopTile->setCurrentItem(0);
-    m_urlTile->setCurrentItem(0);
-    m_browserTile->setCurrentItem(0);
-    m_exeTile->setCurrentItem(0);
-    m_wlTile->setCurrentItem(0);
   }
 }
 
@@ -234,6 +241,7 @@ void LookAndFeelTab::save()
 
   c.setGroup("General");
   c.writeEntry("UseBackgroundTheme", m_backgroundImage->isChecked());
+  c.writeEntry("ColorizeBackground", m_colorizeImage->isChecked());
   c.writeEntry("Transparent", m_transparent->isChecked());
   c.writeEntry("BackgroundTheme", theme);
   c.writeEntry( "ShowToolTips", m_showToolTips->isChecked() );
@@ -244,8 +252,9 @@ void LookAndFeelTab::save()
   if (tile > 0)
   {
     enableTiles = true;
-    c.writeEntry("EnableKMenuTiles", tile > 0);
+    c.writeEntry("EnableKMenuTiles", true);
     c.writeEntry("KMenuTile", m_tilename[m_kmenuTile->currentItem()]);
+    c.writeEntry("KMenuTileColor", m_kmenuColor->color());
   }
   else
   {
@@ -256,8 +265,9 @@ void LookAndFeelTab::save()
   if (tile > 0)
   {
     enableTiles = true;
-    c.writeEntry("EnableDesktopButtonTiles", tile > 0);
+    c.writeEntry("EnableDesktopButtonTiles", true);
     c.writeEntry("DesktopButtonTile", m_tilename[m_desktopTile->currentItem()]);
+    c.writeEntry("DesktopButtonTileColor", m_desktopColor->color());
   }
   else
   {
@@ -270,6 +280,7 @@ void LookAndFeelTab::save()
     enableTiles = true;
     c.writeEntry("EnableURLTiles", tile > 0);
     c.writeEntry("URLTile", m_tilename[m_urlTile->currentItem()]);
+    c.writeEntry("URLTileColor", m_urlColor->color());
   }
   else
   {
@@ -282,6 +293,7 @@ void LookAndFeelTab::save()
     enableTiles = true;
     c.writeEntry("EnableBrowserTiles", tile > 0);
     c.writeEntry("BrowserTile", m_tilename[m_browserTile->currentItem()]);
+    c.writeEntry("BrowserTileColor", m_browserColor->color());
   }
   else
   {
@@ -294,6 +306,7 @@ void LookAndFeelTab::save()
     enableTiles = true;
     c.writeEntry("EnableExeTiles", tile > 0);
     c.writeEntry("ExeTile", m_tilename[m_exeTile->currentItem()]);
+    c.writeEntry("ExeTileColor", m_exeColor->color());
   }
   else
   {
@@ -306,6 +319,7 @@ void LookAndFeelTab::save()
     enableTiles = true;
     c.writeEntry("EnableWindowListTiles", tile > 0);
     c.writeEntry("WindowListTile", m_tilename[m_wlTile->currentItem()]);
+    c.writeEntry("WindowListTileColor", m_wlColor->color());
   }
   else
   {
@@ -331,20 +345,36 @@ void LookAndFeelTab::defaults()
   m_wlTile->setCurrentItem(0);
   m_desktopTile->setCurrentItem(0);
 
-  theme = QString::null;
+  m_kmenuColor->setColor(QColor());
+  m_kmenuColor->setEnabled(false);
+  m_urlColor->setColor(QColor());
+  m_urlColor->setEnabled(false);
+  m_desktopColor->setColor(QColor());
+  m_desktopColor->setEnabled(false);
+  m_browserColor->setColor(QColor());
+  m_browserColor->setEnabled(false);
+  m_wlColor->setColor(QColor());
+  m_wlColor->setEnabled(false);
+  m_exeColor->setColor(QColor());
+  m_exeColor->setEnabled(false);
 
-  m_backgroundImage->setChecked(false);
+  theme = "wallpapers/default.png";
+
+  m_backgroundImage->setChecked(true);
   m_transparent->setChecked(false);
   m_backgroundInput->lineEdit()->setText(theme);
   m_backgroundLabel->clear();
+  m_colorizeImage->setChecked(true);
 
-  m_backgroundInput->setEnabled(false);
-  m_backgroundLabel->setEnabled(false);
+  m_backgroundInput->setEnabled(true);
+  m_backgroundLabel->setEnabled(true);
+  m_colorizeImage->setEnabled(true);
+  previewBackground(theme, false);
 }
 
 void LookAndFeelTab::fillTileCombos()
 {
-  m_kmenuTile->clear();
+/*  m_kmenuTile->clear();
   m_kmenuTile->insertItem(i18n("Default"));
   m_desktopTile->clear();
   m_desktopTile->insertItem(i18n("Default"));
@@ -355,9 +385,9 @@ void LookAndFeelTab::fillTileCombos()
   m_exeTile->clear();
   m_exeTile->insertItem(i18n("Default"));
   m_wlTile->clear();
-  m_wlTile->insertItem(i18n("Default"));
+  m_wlTile->insertItem(i18n("Default"));*/
   m_tilename.clear();
-  m_tilename << "";
+  m_tilename << "" << "Colorize";
 
   QStringList list = KGlobal::dirs()->findAllResources("tiles","*_tiny_up.png");
   int minHeight = 0;
@@ -398,4 +428,34 @@ void LookAndFeelTab::fillTileCombos()
   m_browserTile->setMinimumHeight(minHeight);
   m_exeTile->setMinimumHeight(minHeight);
   m_wlTile->setMinimumHeight(minHeight);
+}
+
+void LookAndFeelTab::kmenuTileChanged(int i)
+{
+    m_kmenuColor->setEnabled(i == 1);
+}
+
+void LookAndFeelTab::desktopTileChanged(int i)
+{
+    m_desktopColor->setEnabled(i == 1);
+}
+
+void LookAndFeelTab::browserTileChanged(int i)
+{
+    m_browserColor->setEnabled(i == 1);
+}
+
+void LookAndFeelTab::urlTileChanged(int i)
+{
+    m_urlColor->setEnabled(i == 1);
+}
+
+void LookAndFeelTab::exeTileChanged(int i)
+{
+    m_exeColor->setEnabled(i == 1);
+}
+
+void LookAndFeelTab::wlTileChanged(int i)
+{
+    m_wlColor->setEnabled(i == 1);
 }
