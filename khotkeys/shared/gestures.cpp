@@ -33,6 +33,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kxerrorhandler.h>
+#include <kkeynative.h>
 
 #include "input.h"
 
@@ -168,16 +169,30 @@ void Gesture::grab_mouse( bool grab_P )
     {
     if( grab_P )
         {
-        // CHECKME podle nastaveni
         KXErrorHandler handler;
         static int mask[] = { 0, Button1MotionMask, Button2MotionMask, Button3MotionMask,
             Button4MotionMask, Button5MotionMask, ButtonMotionMask, ButtonMotionMask,
             ButtonMotionMask, ButtonMotionMask };
-        int ret = XGrabButton( qt_xdisplay(), button, AnyModifier, qt_xrootwin(), False,
-            ButtonPressMask | ButtonReleaseMask | mask[ button ], GrabModeAsync, GrabModeAsync,
-            None, None );
+#define XCapL KKeyNative::modXLock()
+#define XNumL KKeyNative::modXNumLock()
+#define XScrL KKeyNative::modXScrollLock()
+        unsigned int mods[ 8 ] = 
+            {
+            0, XCapL, XNumL, XNumL | XCapL,
+            XScrL, XScrL | XCapL,
+            XScrL | XNumL, XScrL | XNumL | XCapL
+            };
+#undef XCapL
+#undef XNumL
+#undef XScrL
+        for( int i = 0;
+             i < 8;
+             ++i )
+            XGrabButton( qt_xdisplay(), button, mods[ i ], qt_xrootwin(), False,
+                ButtonPressMask | ButtonReleaseMask | mask[ button ], GrabModeAsync, GrabModeAsync,
+                None, None );
         bool err = handler.error( true );
-        kdDebug( 1217 ) << "Gesture grab:" << ret << ":" << err << endl;
+        kdDebug( 1217 ) << "Gesture grab:" << err << endl;
         }
     else
         {
