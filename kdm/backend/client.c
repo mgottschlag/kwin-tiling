@@ -201,10 +201,12 @@ PAM_conv (int num_msg,
 		    Debug( " PAM_PROMPT_ECHO_OFF: %s\n", msg[count]->msg );
 		    reply[count].resp = pd->gconv (GCONV_HIDDEN, msg[count]->msg);
 		    break;
+#ifdef PAM_BINARY_PROMPT
 		case PAM_BINARY_PROMPT:
 		    Debug( " PAM_BINARY_PROMPT\n" );
 		    reply[count].resp = pd->gconv (GCONV_BINARY, msg[count]->msg);
 		    break;
+#endif
 		default:
 		    LogError( "Unknown PAM message style <%d>\n", msg[count]->msg_style );
 		    goto conv_err;
@@ -227,7 +229,9 @@ PAM_conv (int num_msg,
 	    switch (msg[count]->msg_style) {
 	    case PAM_PROMPT_ECHO_ON:
 	    case PAM_PROMPT_ECHO_OFF: /* could wipe ... */
+#ifdef PAM_BINARY_PROMPT
 	    case PAM_BINARY_PROMPT: /* ... that too ... */
+#endif
 		free(reply[count].resp);
 		break;
 	    }
