@@ -130,7 +130,7 @@ void ThemePage::save()
 
 	KConfig c( "kdeglobals" );
 	c.setGroup( "KDE" );
-	c.writeEntry( "cursorTheme", selectedTheme );
+	c.writeEntry( "cursorTheme", selectedTheme != "none" ? selectedTheme : "" );
 
 	KMessageBox::information( this, i18n("You have to restart KDE for these "
 				"changes to take effect."), i18n("Cursor Settings Changed"),
@@ -144,12 +144,14 @@ void ThemePage::load()
 {
 	// Get the name of the theme libXcursor currently uses
 	const char *theme = XcursorGetTheme( x11Display() );
-	currentTheme = theme ? theme : "default";
+	currentTheme = theme;
 
 	// Get the name of the theme KDE is configured to use
 	KConfig *c = KGlobal::config();
 	c->setGroup( "KDE" );
 	currentTheme = c->readEntry( "cursorTheme", currentTheme );
+        if( currentTheme.isEmpty())
+            currentTheme = "none";
 
 	// Find the theme in the listview and select it
 	QListViewItem *item = listview->findItem( currentTheme, DirColumn );
@@ -188,7 +190,7 @@ void ThemePage::selectionChanged( QListViewItem *item )
 	if ( preview )
 		preview->setTheme( selectedTheme );
 
-	removeButton->setEnabled( themeInfo[ selectedTheme ]->writable );
+	removeButton->setEnabled( themeInfo[ selectedTheme ] && themeInfo[ selectedTheme ]->writable );
 
 	emit changed( currentTheme != selectedTheme );
 }
@@ -517,6 +519,10 @@ void ThemePage::insertThemes()
 
 	// Sort the theme list
 	listview->sort();
+
+	KListViewItem *item = new KListViewItem( listview, i18n( "No theme" ), i18n( "The old classic X cursors") , /*hidden*/ "none" );
+	listview->insertItem( item );
+        // no ThemeInfo object for this one
 }
 
 

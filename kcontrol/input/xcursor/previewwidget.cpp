@@ -121,6 +121,9 @@ void PreviewCursor::load( const QString &name, const QString &theme )
 
 	if ( m_pict ) XRenderFreePicture( dpy, m_pict );
 	if ( m_handle ) XFreeCursor( dpy, m_handle );
+        m_pict = 0;
+        m_handle = 0;
+        m_width = m_height = 0;
 
 	// Load the preview cursor image
 	XcursorImage *image =
@@ -130,7 +133,7 @@ void PreviewCursor::load( const QString &name, const QString &theme )
 	if ( !image )
 		image = XcursorLibraryLoadImage( "left_ptr", theme.latin1(), previewSize );
 
-	// Should never happen
+	// TODO The old classic X cursors
 	if ( !image )
 		return;
 
