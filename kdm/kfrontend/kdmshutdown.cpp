@@ -38,7 +38,7 @@
 #include "kdm_greet.h"
 
 
-KDMShutdown::KDMShutdown( QWidget* _parent )
+KDMShutdown::KDMShutdown( QWidget *_parent )
     : inherited( _parent, "Shutdown" )
 {
     QComboBox *targets = 0;
@@ -50,14 +50,17 @@ KDMShutdown::KDMShutdown( QWidget* _parent )
     hlay->addWidget( howGroup, 0, AlignTop );
 
     QRadioButton *rb;
-    rb = new QRadioButton( i18n("&Turn off computer"), howGroup );
+    rb = new KDMRadioButton( i18n("&Turn off computer"), howGroup );
     set_min( rb );
     // Default action
     rb->setChecked( true );
     rb->setFocus();
 
-    restart_rb = new QRadioButton( i18n("&Restart computer"), howGroup );
+    restart_rb = new KDMRadioButton( i18n("&Restart computer"), howGroup );
     set_min( restart_rb );
+
+    connect( rb, SIGNAL(doubleClicked()), SLOT(bye_bye()) );
+    connect( restart_rb, SIGNAL(doubleClicked()), SLOT(bye_bye()) );
 
 #if defined(__linux__) && defined(__i386__)
     if (kdmcfg->_useLilo) {
@@ -72,7 +75,7 @@ KDMShutdown::KDMShutdown( QWidget* _parent )
 	hb->addWidget( targets );
 
 	// fill combo box with contents of lilo config
-	LiloInfo info(kdmcfg->_liloCmd, kdmcfg->_liloMap);
+	LiloInfo info( kdmcfg->_liloCmd, kdmcfg->_liloMap );
 
 	QStringList list;
 	if (info.getBootOptions( &list ) == 0) {
@@ -210,6 +213,17 @@ KDMShutdown::bye_bye()
 	      force_rb->isChecked() ? SHUT_FORCENOW :
 	      try_rb->isChecked() ? SHUT_TRYNOW : SHUT_SCHEDULE );
     accept();
+}
+
+KDMRadioButton::KDMRadioButton( const QString &label, QWidget *parent )
+    : inherited( label, parent )
+{
+}
+
+void
+KDMRadioButton::mouseDoubleClickEvent( QMouseEvent * )
+{
+    emit doubleClicked();
 }
 
 #include "kdmshutdown.moc"

@@ -46,12 +46,12 @@ class KDMShutdown : public FDialog {
     typedef FDialog inherited;
 
 public:
-    KDMShutdown( QWidget* _parent=0);
+    KDMShutdown( QWidget *_parent = 0 );
 
 private slots:
     void bye_bye();
-    void target_changed(int);
-    void when_changed(int);
+    void target_changed( int );
+    void when_changed( int );
     void timerDone();
 
 private:
@@ -67,8 +67,24 @@ private:
     int			liloTarget;
 #endif
 
-    void set_min( QWidget* w) { w->setMinimumSize( w->sizeHint()); }
-    void set_fixed( QWidget* w) { w->setFixedSize( w->sizeHint()); }
+    void set_min( QWidget *w ) { w->setMinimumSize( w->sizeHint() ); }
+    void set_fixed( QWidget *w ) { w->setFixedSize( w->sizeHint() ); }
+
+};
+
+class KDMRadioButton : public QRadioButton
+{
+    Q_OBJECT
+    typedef QRadioButton inherited;
+
+public:
+    KDMRadioButton( const QString &label, QWidget *parent );
+
+private:
+    virtual void mouseDoubleClickEvent( QMouseEvent * );
+
+signals:
+    void doubleClicked();
 
 };
 
