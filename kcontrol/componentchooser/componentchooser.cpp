@@ -261,6 +261,7 @@ void CfgTerminalEmulator::save(KConfig *) {
 	config->sync();
 	delete config;
 
+	KIPC::sendMessageAll(KIPC::SettingsChanged);
 	kapp->dcopClient()->send("klauncher", "klauncher","reparseConfiguration()", QString::null);
 
 	emit changed(false);
