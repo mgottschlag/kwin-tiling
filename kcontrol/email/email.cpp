@@ -46,9 +46,9 @@
 #include <klocale.h>
 #include <kdialog.h>
 #include <kcombobox.h>
+#include <kio/emailsettings.h>
 
 #include "email.h"
-#include "emailsettings.h"
 
 KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
