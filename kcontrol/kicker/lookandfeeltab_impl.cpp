@@ -170,9 +170,9 @@ void LookAndFeelTab::load()
     m_manualHideAnimation->setChecked(hideanim);
     m_autoHideAnimation->setChecked(autohideanim);
 
-    bool showLHB = c->readBoolEntry("ShowLeftHideButton", true);    
+    bool showLHB = c->readBoolEntry("ShowLeftHideButton", false);
     bool showRHB = c->readBoolEntry("ShowRightHideButton", true);
-    
+
     if (showLHB)
         if (showRHB)
             m_hideButtons->setCurrentItem(0);
@@ -206,17 +206,17 @@ void LookAndFeelTab::save()
     c->writeEntry("AutoHideAnimation", m_autoHideAnimation->isChecked());
     c->writeEntry("HideAnimationSpeed", m_manualHideSlider->value());
     c->writeEntry("AutoHideAnimationSpeed", m_autoHideSlider->value());
-    
+
     if (m_hideButtons->currentItem() == 0 || m_hideButtons->currentItem() == 1)
         c->writeEntry("ShowLeftHideButton", "true");
     else
         c->writeEntry("ShowLeftHideButton", "false");
-    
+
     if (m_hideButtons->currentItem() == 0 || m_hideButtons->currentItem() == 2)
         c->writeEntry("ShowRightHideButton", "true");
     else
         c->writeEntry("ShowRightHideButton", "false");
-    
+
     c->writeEntry("HideButtonSize", m_hideButtonSlider->value());
     c->sync();
 
@@ -273,6 +273,6 @@ void LookAndFeelTab::show()
             m_hideButtons->changeItem(i18n("Enable Top Hide Button Only"), 1);
             m_hideButtons->changeItem(i18n("Enable Bottom Hide Button Only"), 2);
     }
-    
+
     QWidget::show();
 }

@@ -43,6 +43,9 @@ GeneralTab::GeneralTab( QWidget *parent, const char* name )
     connect(m_delaySlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_delaySpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_terminalInput, SIGNAL(textChanged(const QString&)), SIGNAL(changed()));
+    connect(m_percentSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+    connect(m_percentSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+    connect(m_expandCheckBox, SIGNAL(clicked()), SIGNAL(changed()));
 
     // whats this help
     QWhatsThis::add(m_locationGroup, i18n("This sets the position of the panel"
@@ -92,6 +95,12 @@ void GeneralTab::load()
     m_delaySlider->setEnabled(ah);
     m_delaySpinBox->setEnabled(ah);
 
+    int sizepercentage = c->readNumEntry( "SizePercentage", 100 );
+    m_percentSlider->setValue( sizepercentage );
+    m_percentSpinBox->setValue( sizepercentage );
+
+    m_expandCheckBox->setChecked( c->readBoolEntry( "ExpandSize", true ) );
+
     c->setGroup("misc");
 
     m_terminalInput->setText(c->readEntry("Terminal", "konsole"));
@@ -114,6 +123,8 @@ void GeneralTab::save()
     c->writeEntry("Position", m_locationGroup->id(m_locationGroup->selected()));
     c->writeEntry("AutoHidePanel", m_autoHide->isChecked());
     c->writeEntry("AutoHideDelay", m_delaySlider->value());
+    c->writeEntry( "SizePercentage", m_percentSlider->value() );
+    c->writeEntry( "ExpandSize", m_expandCheckBox->isChecked() );
 
     c->setGroup("misc");
 
@@ -134,4 +145,7 @@ void GeneralTab::defaults()
     m_delaySpinBox->setValue(3);
     m_delaySlider->setEnabled(false);
     m_delaySpinBox->setEnabled(false);
+    m_expandCheckBox->setChecked( true );
+    m_percentSlider->setValue( 100 );
+    m_percentSpinBox->setValue( 100 );
 }

@@ -12,7 +12,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>571</width>
+            <width>563</width>
             <height>480</height>
         </rect>
     </property>
@@ -33,7 +33,7 @@
             <class>QLayoutWidget</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>Layout44</cstring>
+                <cstring>Layout4</cstring>
             </property>
             <hbox>
                 <property stdset="1">
@@ -51,15 +51,15 @@
                         <cstring>m_locationGroup</cstring>
                     </property>
                     <property stdset="1">
-                        <name>title</name>
-                        <string>Panel Lo&amp;cation</string>
-                    </property>
-                    <property stdset="1">
                         <name>sizePolicy</name>
                         <sizepolicy>
                             <hsizetype>1</hsizetype>
                             <vsizetype>4</vsizetype>
                         </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>title</name>
+                        <string>Panel Lo&amp;cation</string>
                     </property>
                     <vbox>
                         <property stdset="1">
@@ -77,15 +77,15 @@
                                 <cstring>m_leftButton</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>&amp;Left</string>
-                            </property>
-                            <property stdset="1">
                                 <name>sizePolicy</name>
                                 <sizepolicy>
                                     <hsizetype>1</hsizetype>
                                     <vsizetype>0</vsizetype>
                                 </sizepolicy>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>&amp;Left</string>
                             </property>
                         </widget>
                         <widget>
@@ -95,8 +95,8 @@
                                 <cstring>m_rightButton</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>&amp;Right</string>
+                                <name>enabled</name>
+                                <bool>true</bool>
                             </property>
                             <property stdset="1">
                                 <name>sizePolicy</name>
@@ -106,8 +106,8 @@
                                 </sizepolicy>
                             </property>
                             <property stdset="1">
-                                <name>enabled</name>
-                                <bool>true</bool>
+                                <name>text</name>
+                                <string>&amp;Right</string>
                             </property>
                         </widget>
                         <widget>
@@ -149,15 +149,15 @@
                         <cstring>m_sizeGroup</cstring>
                     </property>
                     <property stdset="1">
-                        <name>title</name>
-                        <string>Panel &amp;Size</string>
-                    </property>
-                    <property stdset="1">
                         <name>sizePolicy</name>
                         <sizepolicy>
                             <hsizetype>1</hsizetype>
                             <vsizetype>1</vsizetype>
                         </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>title</name>
+                        <string>Panel &amp;Style</string>
                     </property>
                     <vbox>
                         <property stdset="1">
@@ -186,15 +186,15 @@
                                 <cstring>m_small</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>S&amp;mall</string>
-                            </property>
-                            <property stdset="1">
                                 <name>sizePolicy</name>
                                 <sizepolicy>
                                     <hsizetype>1</hsizetype>
                                     <vsizetype>1</vsizetype>
                                 </sizepolicy>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>S&amp;mall</string>
                             </property>
                         </widget>
                         <widget>
@@ -204,19 +204,19 @@
                                 <cstring>m_normal</cstring>
                             </property>
                             <property stdset="1">
+                                <name>sizePolicy</name>
+                                <sizepolicy>
+                                    <hsizetype>1</hsizetype>
+                                    <vsizetype>1</vsizetype>
+                                </sizepolicy>
+                            </property>
+                            <property stdset="1">
                                 <name>text</name>
                                 <string>Me&amp;dium</string>
                             </property>
                             <property stdset="1">
                                 <name>checked</name>
                                 <bool>true</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>sizePolicy</name>
-                                <sizepolicy>
-                                    <hsizetype>1</hsizetype>
-                                    <vsizetype>1</vsizetype>
-                                </sizepolicy>
                             </property>
                         </widget>
                         <widget>
@@ -226,20 +226,122 @@
                                 <cstring>m_large</cstring>
                             </property>
                             <property stdset="1">
-                                <name>text</name>
-                                <string>Lar&amp;ge</string>
-                            </property>
-                            <property stdset="1">
                                 <name>sizePolicy</name>
                                 <sizepolicy>
                                     <hsizetype>1</hsizetype>
                                     <vsizetype>1</vsizetype>
                                 </sizepolicy>
                             </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Lar&amp;ge</string>
+                            </property>
                         </widget>
                     </vbox>
                 </widget>
             </hbox>
+        </widget>
+        <widget>
+            <class>QButtonGroup</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>m_rsizeGroup</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>Panel Si&amp;ze</string>
+            </property>
+            <vbox>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget>
+                    <class>QLayoutWidget</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Layout3</cstring>
+                    </property>
+                    <hbox>
+                        <property stdset="1">
+                            <name>margin</name>
+                            <number>0</number>
+                        </property>
+                        <property stdset="1">
+                            <name>spacing</name>
+                            <number>6</number>
+                        </property>
+                        <widget>
+                            <class>QLabel</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>TextLabel1</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>&amp;Percent of desktop width/height to be used:</string>
+                            </property>
+                            <property>
+                                <name>buddy</name>
+                                <cstring>m_percentSlider</cstring>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QSlider</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>m_percentSlider</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>minValue</name>
+                                <number>1</number>
+                            </property>
+                            <property stdset="1">
+                                <name>maxValue</name>
+                                <number>100</number>
+                            </property>
+                            <property stdset="1">
+                                <name>orientation</name>
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property stdset="1">
+                                <name>tickmarks</name>
+                                <enum>Right</enum>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QSpinBox</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>m_percentSpinBox</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>maxValue</name>
+                                <number>100</number>
+                            </property>
+                            <property stdset="1">
+                                <name>minValue</name>
+                                <number>1</number>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget>
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_expandCheckBox</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>E&amp;xpand to fit required size</string>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
         <widget>
             <class>QGroupBox</class>
@@ -248,15 +350,15 @@
                 <cstring>m_autoHideGroup</cstring>
             </property>
             <property stdset="1">
-                <name>title</name>
-                <string>&amp;Automatic Hide</string>
-            </property>
-            <property stdset="1">
                 <name>sizePolicy</name>
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
                     <vsizetype>4</vsizetype>
                 </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>&amp;Automatic Hide</string>
             </property>
             <vbox>
                 <property stdset="1">
@@ -311,16 +413,8 @@
                                 <cstring>m_delaySlider</cstring>
                             </property>
                             <property stdset="1">
-                                <name>orientation</name>
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property stdset="1">
                                 <name>enabled</name>
                                 <bool>false</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>tickmarks</name>
-                                <enum>Right</enum>
                             </property>
                             <property stdset="1">
                                 <name>minValue</name>
@@ -329,6 +423,14 @@
                             <property stdset="1">
                                 <name>maxValue</name>
                                 <number>100</number>
+                            </property>
+                            <property stdset="1">
+                                <name>orientation</name>
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property stdset="1">
+                                <name>tickmarks</name>
+                                <enum>Right</enum>
                             </property>
                         </widget>
                         <widget>
@@ -342,12 +444,12 @@
                                 <bool>false</bool>
                             </property>
                             <property stdset="1">
-                                <name>minValue</name>
-                                <number>1</number>
-                            </property>
-                            <property stdset="1">
                                 <name>maxValue</name>
                                 <number>100</number>
+                            </property>
+                            <property stdset="1">
+                                <name>minValue</name>
+                                <number>1</number>
                             </property>
                         </widget>
                     </hbox>
@@ -361,15 +463,15 @@
                 <cstring>m_miscGroup</cstring>
             </property>
             <property stdset="1">
-                <name>title</name>
-                <string>Misc&amp;ellaneous</string>
-            </property>
-            <property stdset="1">
                 <name>sizePolicy</name>
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
                     <vsizetype>4</vsizetype>
                 </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>Misc&amp;ellaneous</string>
             </property>
             <hbox>
                 <property stdset="1">
@@ -424,13 +526,6 @@
                     <height>20</height>
                 </size>
             </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
         </spacer>
     </vbox>
 </widget>
@@ -457,6 +552,18 @@
         <sender>m_delaySpinBox</sender>
         <signal>valueChanged(int)</signal>
         <receiver>m_delaySlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_percentSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>m_percentSpinBox</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_percentSpinBox</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>m_percentSlider</receiver>
         <slot>setValue(int)</slot>
     </connection>
 </connections>
