@@ -317,7 +317,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // moved to the config dialog so that people can configure this
   // stuff.  This is perhaps one of those unecessary but somewhat
   // useful features that usually makes people go WHOO and WHAAA.
-  if ( cmd.find( ' ' ) != -1 )
+  if ( !cmd.contains( ' ' ) )
   {
     QRegExp match;
     QValueList<URLHint>::ConstIterator it;
