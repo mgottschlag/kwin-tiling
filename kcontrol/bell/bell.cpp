@@ -32,6 +32,7 @@
 #include <kdialog.h>
 #include <knotifyclient.h>
 #include <knuminput.h>
+#include <kseparator.h>
 
 #include "bell.h"
 #include "bell.moc"
@@ -119,8 +120,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   QWhatsThis::add( m_duration, i18n("Here you can customize the duration of the system bell. For further"
     " customization of the bell, see the \"Accessibility\" control module.") );
 
-  QFrame *hLine = new QFrame(box);
-  hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
+  QFrame *hLine = new KSeparator(KSeparator::HLine, box);
   row++;
   grid->addMultiCellWidget(hLine, row, row, 0, 1);
 
