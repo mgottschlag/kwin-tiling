@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Keys=bp,backports
+Name=Debian Backports Search
+Query=http://www.backports.org/package.php?search=\\{@}
+ServiceTypes=SearchProvider
+Type=Service

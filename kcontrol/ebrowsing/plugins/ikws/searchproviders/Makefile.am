@@ -7,6 +7,7 @@ services_DATA = \
 		altavista.desktop \
 		appsy.desktop \
 		austronaut.desktop \
+		backports.desktop \
 		bugft.desktop \
 		bugno.desktop \
 		call.desktop \
@@ -16,6 +17,7 @@ services_DATA = \
 		ctan.desktop \
 		dbug.desktop \
 		de2en.desktop \
+		deb.desktop \
 		dmoz.desktop \
 		docbook.desktop \
 		doi.desktop \

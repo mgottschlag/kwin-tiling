@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Keys=deb
+Name=Debian Package Search
+Query=http://packages.debian.org/cgi-bin/search_packages.pl?keywords=\\{@}&searchon=names&subword=1&version=all&release=all
+ServiceTypes=SearchProvider
+Type=Service
