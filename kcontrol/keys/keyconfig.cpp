@@ -440,7 +440,7 @@ void KKeyModule::readSchemeNames( )
     // KPersonalizer relies on .kksrc files containing all the keyboard shortcut
     //  schemes for various setups.  It also requires the KDE defaults to be in
     //  a .kksrc file.  The KDE defaults shouldn't be listed here.
-    if( r.match( *it ) != -1 )
+    if( r.search( *it ) != -1 )
        continue;
 
     KSimpleConfig config( *it, true );
