@@ -369,7 +369,6 @@ void SplashInstaller::slotSetTheme(int id)
         mPreview->setPixmap(QPixmap(url.path()));
       else
         mPreview->setText(i18n("No preview available."));
-      // TODO: Show information about the theme in the text box at the bottom.
       emit changed(true);
     }
   }
