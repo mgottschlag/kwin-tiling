@@ -27,11 +27,15 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <qcheckbox.h>
+#include <kgenericfactory.h>
 
 #include "kcmsmserver.h"
 #include "smserverconfigimpl.h"
 
-SMServerConfig::SMServerConfig( QWidget *parent, const char* name )
+typedef KGenericFactory<SMServerConfig, QWidget > SMSFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_smserver, SMSFactory );
+
+SMServerConfig::SMServerConfig( QWidget *parent, const char* name, const QStringList & )
   : KCModule (parent, name)
 {
     QVBoxLayout *topLayout = new QVBoxLayout(this);
@@ -92,7 +96,7 @@ QString SMServerConfig::quickHelp() const
     " should be confirmed and if the previous session should be restored"
     " when logging in.");
 }
-
+/*
 extern "C"
 {
   KCModule *create_smserver(QWidget *parent, const char *name)
@@ -101,5 +105,6 @@ extern "C"
     return new SMServerConfig(parent, name);
   };
 }
+*/
 #include "kcmsmserver.moc"
 

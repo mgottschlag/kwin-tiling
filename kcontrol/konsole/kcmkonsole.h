@@ -18,6 +18,7 @@
 #ifndef KCMKONSOLE_H
 #define KCMKONSOLE_H
 
+#include <qstringlist.h>
 #include <kcmodule.h>
 #include <kaboutdata.h>
 #include "kcmkonsoledialog.h"
@@ -29,7 +30,7 @@ class KCMKonsole
 	Q_OBJECT
 
 public:
-	KCMKonsole (QWidget *parent = 0, const char *name = 0);
+	KCMKonsole (QWidget *parent = 0, const char *name = 0, const QStringList& = 0);
 	
 	void load();
 	void load(const QString &);

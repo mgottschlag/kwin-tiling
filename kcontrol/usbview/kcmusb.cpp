@@ -22,14 +22,16 @@
 
 #include <klocale.h>
 #include <kglobal.h>
-
+#include <kgenericfactory.h>
 
 #include "usbdevices.h"
 #include <kaboutdata.h>
 #include "kcmusb.moc"
 
+typedef KGenericFactory<USBViewer, QWidget > USBFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_usb, USBFactory );
 
-USBViewer::USBViewer(QWidget *parent, const char *name)
+USBViewer::USBViewer(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)
 {
   setButtons(Help);
@@ -167,7 +169,7 @@ const KAboutData* USBViewer::aboutData() const
  
     return about;
 }
-
+/*
 extern "C"
 {
   KCModule *create_usb(QWidget *parent, const char *name)
@@ -176,3 +178,4 @@ extern "C"
     return new USBViewer(parent, name);
   };
 }
+*/

@@ -21,7 +21,7 @@ class KPasswordConfig : public KCModule
     Q_OBJECT
 
 public:
-    KPasswordConfig(QWidget *parent=0, const char *name=0);
+    KPasswordConfig(QWidget *parent=0, const char *name=0, const QStringList &list=QStringList());
     ~KPasswordConfig();
 
     virtual void load();

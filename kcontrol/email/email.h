@@ -58,7 +58,7 @@ class topKCMEmail
 	Q_OBJECT
 
 public:
-	topKCMEmail (QWidget *parent = 0, const char *name = 0);
+	topKCMEmail (QWidget *parent = 0, const char *name = 0, const QStringList &list =QStringList() );
 	~topKCMEmail ();
 
 	KCMEmailBase *m_email;

@@ -39,7 +39,7 @@ class KWinOptions : public KCModule
 
 public:
 
-  KWinOptions(QWidget *parent, const char *name);
+  KWinOptions(QWidget *parent, const char *name, const QStringList &);
 
   void load();
   void save();

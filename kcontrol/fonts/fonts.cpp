@@ -25,6 +25,7 @@
 #include <kipc.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
+#include <kgenericfactory.h>
 #include <stdlib.h>
 
 #include "fonts.h"
@@ -34,14 +35,17 @@
 #include <qpushbutton.h>
 
 /**** DLL Interface ****/
+typedef KGenericFactory<KFonts, QWidget> FontFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_fonts, FontFactory );
 
+/*
 extern "C" {
   KCModule *create_fonts(QWidget *parent, const char *name) {
     KGlobal::locale()->insertCatalogue("kcmfonts");
     return new KFonts(parent, name);
   }
 }
-
+*/
 
 /**** FontUseItem ****/
 
@@ -159,7 +163,7 @@ void FontUseItem::updateLabel()
 
 /**** KFonts ****/
 
-KFonts::KFonts(QWidget *parent, const char *name)
+KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     :   KCModule(parent, name),
         _changed(false)
 {

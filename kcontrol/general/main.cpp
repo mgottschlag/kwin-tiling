@@ -1,5 +1,7 @@
 #include <kglobal.h>
 #include <klocale.h>
+#include <kgenericfactory.h>
+
 #include "widgetsettings.h"
 
 extern "C" {
@@ -8,3 +10,8 @@ extern "C" {
       return new KWidgetSettingsModule(parent, name);
     }
 }
+
+/*
+typedef KGenericFactory<KWidgetSettingsModule, QWidget> GeneralFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_widgetsettings, GeneralFactory );
+*/

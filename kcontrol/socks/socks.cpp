@@ -32,11 +32,15 @@
 #include <kurlrequester.h>
 #include <ksocks.h>
 #include <kapplication.h>
+#include <kgenericfactory.h>
 
 #include "socks.h"
 #include <kaboutdata.h>
 
-KSocksConfig::KSocksConfig(QWidget *parent, const char *name)
+typedef KGenericFactory<KSocksConfig, QWidget > SocksFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_socks, SocksFactory );
+
+KSocksConfig::KSocksConfig(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)
 {
 
@@ -277,7 +281,7 @@ const KAboutData* KSocksConfig::aboutData() const
  
     return about;
 }
-
+/*
 extern "C"
 {
   KCModule *create_socks(QWidget *parent, const char *name)
@@ -286,7 +290,7 @@ extern "C"
     return new KSocksConfig(parent, name);
   };
 }
-
+*/
 
 #include "socks.moc"
 

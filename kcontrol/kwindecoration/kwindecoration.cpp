@@ -32,6 +32,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
 #include <kaboutdata.h>
 #include <dcopclient.h>
 
@@ -40,6 +41,9 @@
 
 // KCModule plugin interface
 // =========================
+typedef KGenericFactory<KWinDecorationModule, QWidget> KWinDecoFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_kwindecoration, KWinDecoFactory );
+/*
 extern "C"
 {
 	KCModule* create_kwindecoration(QWidget* parent, const char* name)
@@ -48,9 +52,9 @@ extern "C"
 		return new KWinDecorationModule(parent, name);
 	}
 }
+*/
 
-
-KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
+KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name, const QStringList &)
 	: KCModule(parent, name), DCOPObject("KWinClientDecoration")
 {
 	KConfig kwinConfig("kwinrc");
@@ -488,3 +492,4 @@ void KWinDecorationModule::resetKWin()
 
 #include "kwindecoration.moc"
 // vim: ts=4
+

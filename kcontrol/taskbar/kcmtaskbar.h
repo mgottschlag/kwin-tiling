@@ -30,7 +30,7 @@ class TaskbarConfig : public KCModule
     Q_OBJECT
 
 public:
-    TaskbarConfig( QWidget *parent=0, const char* name=0 );
+    TaskbarConfig( QWidget *parent=0, const char* name=0 , const QStringList &list = QStringList() );
     virtual ~TaskbarConfig();
 
     void load();

@@ -42,6 +42,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <kaboutdata.h>
+#include <kgenericfactory.h>
+
+typedef KGenericFactory<KDModule, QWidget> KDMFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_kdm, KDMFactory );
 
 KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 {
@@ -71,7 +75,7 @@ KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 
 KSimpleConfig *c;
 
-KDModule::KDModule(QWidget *parent, const char *name)
+KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)
 {
   QStringList show_users;
@@ -207,7 +211,7 @@ void KDModule::resizeEvent(QResizeEvent *)
   tab->setGeometry(0,0,width(),height());
 }
 
-
+/*
 extern "C"
 {
   KCModule *create_kdm(QWidget *parent, const char *name)
@@ -216,6 +220,6 @@ extern "C"
     return new KDModule(parent, name);
   }
 }
-
+*/
 
 #include "main.moc"

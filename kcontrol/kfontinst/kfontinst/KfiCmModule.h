@@ -39,7 +39,7 @@ class CKfiCmModule : public KCModule
 
     public:
 
-    CKfiCmModule(QWidget *parent=NULL, const char *name=NULL);
+    CKfiCmModule(QWidget *parent=NULL, const char *name=NULL, const QStringList &list=QStringList() );
     virtual ~CKfiCmModule();
 
     const KAboutData * aboutData() const;

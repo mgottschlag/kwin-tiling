@@ -48,6 +48,7 @@
 #include <kglobal.h>
 #include <dcopclient.h>
 #include <kservicegroup.h>
+#include <kgenericfactory.h>
 
 #include <X11/Xlib.h>
 
@@ -57,13 +58,16 @@ template class QPtrList<SaverConfig>;
 
 //===========================================================================
 // DLL Interface for kcontrol
-
+typedef KGenericFactory<KScreenSaver, QWidget > KSSFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_screensaver, KSSFactory );
+/*
 extern "C" {
     KCModule *create_screensaver(QWidget *parent, const char *name) {
     KGlobal::locale()->insertCatalogue("kcmscreensaver");
     return new KScreenSaver(parent, name);
     }
 }
+*/
 
 static QString findExe(const QString &exe) {
     QString result = locate("exe", exe);
@@ -140,7 +144,7 @@ void TestWin::keyPressEvent(QKeyEvent *)
 //===========================================================================
 //
 
-KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
+KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&)
     : KCModule(parent, name)
 {
     mSetupProc = 0;

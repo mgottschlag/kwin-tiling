@@ -25,23 +25,26 @@
 
 #include <kglobal.h>
 #include <klocale.h>
+#include <kgenericfactory.h>
 
 #include "icons.h"
 #include "iconthemes.h"
 #include "main.h"
 
 /**** DLL Interface ****/
-
+typedef KGenericFactory<IconModule, QWidget> IconsFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_icons, IconsFactory );
+/*
 extern "C" {
     KCModule *create_icons(QWidget *parent, const char *name) {
         KGlobal::locale()->insertCatalogue("kcmicons");
         return new IconModule(parent, name);
     }
 }
-
+*/
 /**** IconModule ****/
 
-IconModule::IconModule(QWidget *parent, const char *name)
+IconModule::IconModule(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)
 {
   QVBoxLayout *layout = new QVBoxLayout(this);

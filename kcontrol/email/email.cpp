@@ -51,11 +51,14 @@
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kemailsettings.h>
+#include <kgenericfactory.h>
 
 #include "email.h"
 
+typedef KGenericFactory<topKCMEmail, QWidget> EMailFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_email, EMailFactory );
 
-topKCMEmail::topKCMEmail (QWidget *parent,  const char *name)
+topKCMEmail::topKCMEmail (QWidget *parent,  const char *name, const QStringList &)
 	: KCModule (parent, name)
 {
 	QVBoxLayout *topLayout = new QVBoxLayout(this, 0, KDialog::spacingHint());
@@ -299,7 +302,7 @@ void topKCMEmail::slotComboChanged(const QString &name)
 	load(name);
 }
 
-
+/*
 extern "C"
 {
 	KCModule *create_email(QWidget *parent, const char *name) {
@@ -307,5 +310,6 @@ extern "C"
 		return new topKCMEmail(parent, name);
 	};
 }
+*/
 
 #include "email.moc"

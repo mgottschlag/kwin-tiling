@@ -41,7 +41,7 @@ class KDModule : public KCModule
 
 public:
 
-  KDModule(QWidget *parent, const char *name);
+  KDModule(QWidget *parent, const char *name, const QStringList &);
   ~KDModule();
 
   void load();

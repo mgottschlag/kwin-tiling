@@ -494,12 +494,15 @@ void KAccessConfig::checkAccess()
 
 extern "C"
 {
-  KCModule *create_access(QWidget *parent, const char *name)
+  /* KCModule *create_access(QWidget *parent, const char *name)
   {
     KGlobal::locale()->insertCatalogue("kcmaccess");
     return new KAccessConfig(parent, name);
   };
+  */
+  /* This one gets called by kcminit
 
+   */
   void init_access()
   {
     bool run=false;
@@ -520,3 +523,5 @@ extern "C"
       kapp->startServiceByDesktopName("kaccess");
   }
 }
+
+

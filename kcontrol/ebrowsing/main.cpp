@@ -34,13 +34,17 @@
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kurifilter.h>
+#include <kgenericfactory.h>
 
 #include "filteropts.h"
 #include "main.h"
 
+typedef KGenericFactory<KURIFilterModule, QWidget> KURIFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_kurifilt, KURIFactory );
+
 class FilterOptions;
 
-KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
+KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name, const QStringList &)
                  :KCModule(parent, name)
 {
 
@@ -129,7 +133,7 @@ void KURIFilterModule::resizeEvent(QResizeEvent *)
 {
     tab->setGeometry(0,0,width(),height());
 }
-
+/*
 extern "C"
 {
   KCModule *create_kurifilt(QWidget *parent, const char *name)
@@ -138,5 +142,5 @@ extern "C"
     return new KURIFilterModule(parent, name);
   }
 }
-
+*/
 #include "main.moc"

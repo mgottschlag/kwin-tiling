@@ -45,7 +45,7 @@ class KNotifyWidget : public KCModule
     Q_OBJECT
 
 public:
-    KNotifyWidget(QWidget *parent, const char *name);
+    KNotifyWidget(QWidget *parent, const char *name, const QStringList &);
     virtual ~KNotifyWidget();
 
     void defaults();

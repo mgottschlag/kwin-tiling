@@ -15,6 +15,7 @@
 #include <kcolorbutton.h>
 #include <kfontdialog.h>
 #include <kurlrequester.h>
+#include <kgenericfactory.h>
 
 #include "cssconfig.h"
 #include "template.h"
@@ -23,8 +24,10 @@
 
 #include "kcmcss.h"
 
+typedef KGenericFactory<CSSConfig, QWidget> CSSFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_css, CSSFactory );
 
-CSSConfig::CSSConfig(QWidget *parent, const char *name)
+CSSConfig::CSSConfig(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)
 {
   dialog = new CSSConfigDialog(this);
@@ -396,7 +399,7 @@ void CSSConfig::preview()
   delete dlg;
 }
 
-
+/*
 extern "C" {
 
   KCModule *create_kcmcss(QWidget *parent, const char *name)
@@ -406,6 +409,6 @@ extern "C" {
   }
 
 }
-
+*/
 #include "kcmcss.moc"
 

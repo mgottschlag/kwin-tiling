@@ -24,10 +24,14 @@
 
 #include <kglobal.h>
 #include <klocale.h>
+#include <kgenericfactory.h>
 
 #include "knotify.h"
 
 
+typedef KGenericFactory<KNotifyWidget, QWidget> NotifyFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_knotify, NotifyFactory );
+/*
 extern "C"
 {
 	KCModule *create_knotify(QWidget *parent, const char *name)
@@ -36,3 +40,4 @@ extern "C"
 		return new KNotifyWidget(parent, name);
 	}
 }
+*/

@@ -42,8 +42,12 @@
 #include <kio/job.h>
 #include <kdebug.h>
 #include <qtextcodec.h>
+#include <kgenericfactory.h>
 
-KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name)
+typedef KGenericFactory<KCMIOSlaveInfo, QWidget> SlaveFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_ioslaveinfo, SlaveFactory );
+
+KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringList &)
                :KCModule(parent,name),m_ioslavesLb(0)
 {
    QVBoxLayout *layout=new QVBoxLayout(this,KDialog::marginHint(),KDialog::spacingHint());
@@ -147,7 +151,7 @@ void KCMIOSlaveInfo::showInfo(QListBoxItem *item)
    showInfo( item->text() );
 }
 
-
+/*
 extern "C"
 {
 
@@ -157,5 +161,6 @@ extern "C"
     return new KCMIOSlaveInfo(parent, name);
   }
 }
-
+*/
 #include "kcmioslaveinfo.moc"
+

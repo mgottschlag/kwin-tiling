@@ -27,10 +27,14 @@
 #include <kdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kgenericfactory.h>
 #include <dcopclient.h>
 
 #include "kcmlaunch.h"
 
+typedef KGenericFactory<LaunchConfig, QWidget> LaunchFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_launch, LaunchFactory );
+/*
 extern "C"
 {
   KCModule * create_launch(QWidget * parent, const char * name)
@@ -40,8 +44,9 @@ extern "C"
     return new LaunchConfig(parent, name);
   }
 }
+*/
 
-LaunchConfig::LaunchConfig(QWidget * parent, const char * name)
+LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringList &)
   : KCModule(parent, name)
 {
     if ( !name )

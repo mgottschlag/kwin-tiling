@@ -26,11 +26,17 @@
 #include <qlayout.h>
 
 #include <kcmodule.h>
+#include <kgenericfactory.h>
+
+class SambaContainer; // damn forward declaration :( but I want the factory first zecke
+
+typedef KGenericFactory<SambaContainer, QWidget > SambaFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_samba, SambaFactory );
 
 class SambaContainer:public KCModule
 {
    public:
-      SambaContainer(QWidget *parent=0, const char * name=0);
+      SambaContainer(QWidget *parent=0, const char * name=0, const QStringList &list = QStringList() );
       virtual ~SambaContainer();
       virtual void loadSettings();
       virtual void saveSettings();
@@ -47,7 +53,7 @@ class SambaContainer:public KCModule
       StatisticsView statisticsView;
 };
 
-SambaContainer::SambaContainer(QWidget *parent, const char* name)
+SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringList&)
 :KCModule(parent,name)
 ,layout(this)
 ,config("kcmsambarc",false,true)
@@ -108,7 +114,7 @@ QString SambaContainer::quickHelp() const
      " showmount in your PATH.");
 }
 
-
+/*
 extern "C"
 {
 
@@ -118,3 +124,5 @@ extern "C"
     return new SambaContainer(parent, name);
   }
 }
+
+*/

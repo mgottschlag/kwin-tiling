@@ -27,10 +27,14 @@
 #include <klocale.h>
 #include <libkmid/deviceman.h>
 #include <kurlrequester.h>
+#include <kgenericfactory.h>
 
 #include "midi.h"
 
-KMidConfig::KMidConfig(QWidget *parent, const char *name)
+typedef KGenericFactory<KMidConfig, QWidget > KMidFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_midi, KMidFactory );
+
+KMidConfig::KMidConfig(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)
 {
   QVBoxLayout *topLayout = new QVBoxLayout(this,5);
@@ -131,7 +135,7 @@ void KMidConfig::defaults()
   emit changed(true);
 }
 
-
+/*
 extern "C"
 {
   KCModule *create_midi(QWidget *parent, const char *name)
@@ -140,4 +144,5 @@ extern "C"
     return new KMidConfig(parent, name);
   };
 }
+*/
 #include "midi.moc"

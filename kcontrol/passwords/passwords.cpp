@@ -20,6 +20,7 @@
 #include <klocale.h>
 #include <kcmodule.h>
 #include <kpassdlg.h>
+#include <kgenericfactory.h>
 
 #include <kdesu/defaults.h>
 #include <kdesu/client.h>
@@ -29,17 +30,21 @@
 /**
  * DLL interface.
  */
+typedef KGenericFactory<KPasswordConfig, QWidget > PassFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_passwords, PassFactory );
+
+/*
 extern "C" {
     KCModule *create_passwords(QWidget *parent, const char *name) {
     KGlobal::locale()->insertCatalogue("passwords");
     return new KPasswordConfig(parent, name);
     }
 }
-
+*/
 
 /**** KPasswordConfig ****/
 
-KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name)
+KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStringList &)
     : KCModule(parent, name)
 {
     QVBoxLayout *top = new QVBoxLayout(this, 10, 10);

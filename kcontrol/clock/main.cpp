@@ -27,6 +27,7 @@
 #include <kapplication.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kgenericfactory.h>
 
 #include "main.h"
 #include "main.moc"
@@ -35,9 +36,13 @@
 #include "dtime.h"
 #include <kaboutdata.h>
 
-KclockModule::KclockModule(QWidget *parent, const char *name)
+typedef KGenericFactory<KclockModule, QWidget> KlockModuleFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_clock, KlockModuleFactory);
+
+KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)
 {
+qWarning("new");
   QVBoxLayout *layout = new QVBoxLayout(this);
 
   dtime = new Dtime(this);
@@ -106,7 +111,7 @@ void KclockModule::moduleChanged(bool state)
 {
   emit changed(state);
 }
-
+/*
 extern "C"
 {
   KCModule *create_clock(QWidget *parent, const char *name)
@@ -115,5 +120,5 @@ extern "C"
     return new KclockModule(parent, name);
   }
 }
-
+*/
 

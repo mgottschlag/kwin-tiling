@@ -23,9 +23,13 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kspell.h>
+#include <kgenericfactory.h>
 
 #include "spellchecking.h"
 
+typedef KGenericFactory<KSpellCheckingConfig, QWidget > SpellFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_spellchecking, SpellFactory );
+/*
 extern "C"
 {
   KCModule *create_spellchecking(QWidget *parent, const char *name)
@@ -34,8 +38,10 @@ extern "C"
     return new KSpellCheckingConfig(parent, name);
   }
 }
+*/
 
-KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *name):
+
+KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *name, const QStringList &):
     KCModule(parent, name)
 {
   QBoxLayout *layout = new QVBoxLayout(this,

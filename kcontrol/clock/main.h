@@ -27,12 +27,13 @@ class Dtime;
 class Tzone;
 class QTabWidget;
 
+
 class KclockModule : public KCModule
 {
   Q_OBJECT
 
 public:
-  KclockModule(QWidget *parent, const char *name);
+  KclockModule(QWidget *parent, const char *name, const QStringList &);
   
   QString quickHelp() const;
   const KAboutData* aboutData() const;

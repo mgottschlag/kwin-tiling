@@ -47,7 +47,7 @@
 
 static const int COL_FILENAME = 1;
 
-KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
+KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringList & ):
     KCModule(parent, name)
 {
     updating = true;

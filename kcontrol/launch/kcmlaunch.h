@@ -30,7 +30,7 @@ class LaunchConfig : public KCModule
 
   public:
 
-    LaunchConfig(QWidget * parent = 0, const char * name = 0);
+    LaunchConfig(QWidget * parent = 0, const char * name = 0, const QStringList &list = QStringList() );
 
     virtual ~LaunchConfig();
 

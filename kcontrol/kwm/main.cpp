@@ -25,12 +25,16 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kgenericfactory.h>
 
 #include "mouse.h"
 #include "windows.h"
 
 #include "main.h"
 
+typedef KGenericFactory<KWinOptions, QWidget> KWinOptFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_kwinoptions, KWinOptFactory );
+/*
 extern "C" {
   KCModule *create_kwinoptions ( QWidget *parent, const char* name)
   {
@@ -39,8 +43,8 @@ extern "C" {
     return new KWinOptions( parent, name);
   }
 }
-
-KWinOptions::KWinOptions(QWidget *parent, const char *name)
+*/
+KWinOptions::KWinOptions(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)
 {
   mConfig = new KConfig("kwinrc", false, true);

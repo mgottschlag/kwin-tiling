@@ -33,7 +33,7 @@ class KCMNic:public KCModule
 {
    Q_OBJECT
    public:
-      KCMNic(QWidget *parent=0, const char * name=0);
+      KCMNic(QWidget *parent=0, const char * name=0, const QStringList &list = QStringList( ));
       virtual ~KCMNic() {};
 
    protected slots:

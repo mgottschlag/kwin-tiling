@@ -42,7 +42,7 @@
 #include <kcarddb.h>
 
 #include <kdebug.h>
-KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
+KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)
 {
 

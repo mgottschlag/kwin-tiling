@@ -41,7 +41,7 @@ class KCMIOSlaveInfo : public KCModule
 {
     Q_OBJECT
 public:
-    KCMIOSlaveInfo(QWidget *parent = 0L, const char *name = 0L);
+    KCMIOSlaveInfo(QWidget *parent = 0L, const char *name = 0L, const QStringList &lits=QStringList() );
     virtual ~KCMIOSlaveInfo();
 
     void load();

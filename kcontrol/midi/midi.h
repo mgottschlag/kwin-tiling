@@ -37,7 +37,7 @@ class KMidConfig : public KCModule
   Q_OBJECT
 
 public:
-  KMidConfig(QWidget *parent = 0L, const char *name = 0L);
+  KMidConfig(QWidget *parent = 0L, const char *name = 0L, const QStringList &list=QStringList() );
   virtual ~KMidConfig();
   
   void load();

@@ -36,7 +36,8 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kstddirs.h>
-#include <kapp.h>
+#include <kapplication.h>
+#include <kgenericfactory.h>
 
 ThemeCreator* theme = NULL;
 
@@ -45,7 +46,7 @@ class KThemeMgr : public KCModule
 {
 public:
 
-  KThemeMgr(QWidget *parent, const char *name);
+  KThemeMgr(QWidget *parent, const char *name, const QStringList &);
   ~KThemeMgr();
 
   virtual void init();
@@ -59,10 +60,11 @@ private:
   About* mAbout;
 };
 
-
+typedef KGenericFactory<KThemeMgr, QWidget > ThemeTimeFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_themes, ThemeTimeFactory );
 
 //-----------------------------------------------------------------------------
-KThemeMgr::KThemeMgr(QWidget *parent, const char *name)
+KThemeMgr::KThemeMgr(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)
 {
   init();
@@ -124,7 +126,7 @@ void KThemeMgr::load()
   mOptions->load();
   mAbout->load();
 }
-
+/*
 extern "C"
 {
   KCModule *create_themes(QWidget *parent, const char *name)
@@ -134,5 +136,5 @@ extern "C"
   }
 
 }
-
+*/
 

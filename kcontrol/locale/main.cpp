@@ -21,10 +21,15 @@
 
 #include "toplevel.h"
 #include <klocale.h>
+#include <kgenericfactory.h>
 
+typedef KGenericFactory<KLocaleApplication, QWidget > KLocaleFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_locale, KLocaleFactory );
+/*
 extern "C" {
   KCModule *create_locale(QWidget *parent, const char* name) {
     KLocale::setMainCatalogue("kcmlocale");
     return new KLocaleApplication(parent, name);
   }
 }
+*/

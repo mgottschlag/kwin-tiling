@@ -23,6 +23,7 @@
 
 #include <klocale.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
 
 #include <qptrlist.h>
 #include <qstring.h>
@@ -39,6 +40,9 @@
 #include <net/if.h>
 #include <sys/ioctl.h>
 
+typedef KGenericFactory<KCMNic, QWidget > KCMNicFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_nic, KCMNicFactory );
+
 struct MyNIC
 {
    QString name;
@@ -52,7 +56,7 @@ typedef QPtrList<MyNIC> NICList;
 
 NICList* findNICs();
 
-KCMNic::KCMNic(QWidget *parent, const char * name)
+KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
    :KCModule(parent,name)
 {
    QVBoxLayout *box=new QVBoxLayout(this);
@@ -163,7 +167,7 @@ NICList* findNICs()
    }
    return nl;
 };
-
+/*
 extern "C"
 {
 
@@ -173,7 +177,7 @@ extern "C"
     return new KCMNic(parent, name);
   }
 }
-
+*/
 
 
 #include "nic.moc"

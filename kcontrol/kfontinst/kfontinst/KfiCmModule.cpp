@@ -38,12 +38,16 @@
 #include <kmessagebox.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
+#include <kgenericfactory.h>
+
+typedef KGenericFactory<CKfiCmModule, QWidget> FontInstallFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_fontinst, FontInstallFactory );
 
 static bool firstTime=true;
 
 CKfiCmModule * CKfiCmModule::theirInstance=NULL;
 
-CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name)
+CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name, const QStringList&)
             : KCModule(parent, name),
               itsAboutData(NULL)
 {
@@ -142,7 +146,7 @@ QString CKfiCmModule::quickHelp() const
 
     return CMisc::root() ? help : help+rootHelp;
 }
-
+/*
 extern "C"
 {
     KCModule * create_fontinst(QWidget *parent, const char *name)
@@ -150,4 +154,5 @@ extern "C"
         return new CKfiCmModule(parent, name);
     };
 }
+*/
 #include "KfiCmModule.moc"

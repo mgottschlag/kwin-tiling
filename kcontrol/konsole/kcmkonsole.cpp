@@ -19,17 +19,19 @@
 
 #include <kfontdialog.h>
 #include <qlayout.h>
+#include <qstringlist.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kgenericfactory.h>
 #include "schemaeditor.h"
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qspinbox.h>
 
-KCMKonsole::KCMKonsole(QWidget * parent, const char *name)
+KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
 :KCModule(parent, name)
 {
     QVBoxLayout *topLayout = new QVBoxLayout(this);
@@ -201,6 +203,11 @@ const KAboutData * KCMKonsole::aboutData() const
 
 }
 
+typedef KGenericFactory<KCMKonsole, QWidget> ModuleFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_konsole, ModuleFactory );
+
+
+/*
 extern "C" {
     KCModule *create_konsole(QWidget * parent, const char *name) {
 	KGlobal::locale()->insertCatalogue("kcmkonsole");
@@ -208,6 +215,7 @@ extern "C" {
     };
 }
 
+*/
 
 
 #include "kcmkonsole.moc"

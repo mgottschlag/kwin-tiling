@@ -64,7 +64,7 @@ class KFonts : public KCModule
     Q_OBJECT
 
 public:
-    KFonts(QWidget *parent, const char *name);
+    KFonts(QWidget *parent, const char *name, const QStringList &);
     ~KFonts();
 
     virtual void load();

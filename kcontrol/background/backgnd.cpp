@@ -51,6 +51,7 @@
 #include <kpixmap.h>
 #include <dcopclient.h>
 #include <kimageio.h>
+#include <kgenericfactory.h>
 
 #include <bgdefaults.h>
 #include <bgsettings.h>
@@ -63,14 +64,16 @@
 #include <X11/Xlib.h>
 
 /**** DLL Interface ****/
-
+typedef KGenericFactory<KBackground, QWidget> KBackGndFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_background, KBackGndFactory);
+/*
 extern "C" {
     KCModule *create_background(QWidget *parent, const char *name) {
     KGlobal::locale()->insertCatalogue("kcmbackground");
     return new KBackground(parent, name);
     }
 }
-
+*/
 
 /**** KBGMonitor ****/
 
@@ -108,7 +111,7 @@ KBackground::~KBackground( ){
     delete m_pConfig;
 }
 
-KBackground::KBackground(QWidget *parent, const char *name)
+KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/* */)
     : KCModule(parent, name),
     m_Max( KWin::numberOfDesktops() ),
     m_Renderer( m_Max )

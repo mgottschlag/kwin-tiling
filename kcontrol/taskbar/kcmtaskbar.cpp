@@ -28,11 +28,15 @@
 #include <kdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kgenericfactory.h>
 
 #include "kcmtaskbar.h"
 #include <kaboutdata.h>
 #include "kcmtaskbar.moc"
 
+typedef KGenericFactory<TaskbarConfig, QWidget > TaskBarFactory;
+K_EXPORT_COMPONENT_FACTORY (libkcm_taskbar, TaskBarFactory );
+/*
 extern "C"
 {
     KCModule *create_taskbar(QWidget *parent, const char *name)
@@ -41,8 +45,9 @@ extern "C"
 	return new TaskbarConfig(parent, name);
     };
 }
+*/
 
-TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
+TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringList & )
   : KCModule (parent, name)
 {
     ui = new TaskbarConfigUI(this);
