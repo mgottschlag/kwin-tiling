@@ -745,7 +745,9 @@ static int
 initXDMCP()
 {
     XdmcpHeader header;
+#if 0
     int i;
+#endif
 #ifndef STREAMSCONN
 #ifdef SO_BROADCAST
     int soopts;
