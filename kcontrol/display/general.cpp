@@ -102,7 +102,7 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
     lbl = new QLabel(i18n("Other"), this);
     grid->addWidget(lbl, 4, 0);
     kdeGroup = new QButtonGroup();
-    connect(kdeGroup, SIGNAL(clicked(int)), SLOT(slotKDE(int)));
+    connect(kdeGroup, SIGNAL(clicked(int)), this, SLOT(slotKDE(int)));
     rb = new QRadioButton(this);
     kdeGroup->insert(rb);
     grid->addWidget(rb, 4, 1);
@@ -122,7 +122,7 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
 
     grid->addMultiCellWidget(singleClick, 6, 6, 0, 3);
 
-    config = new KConfig("kcmdisplayrc");
+    config = new KConfig(QString::fromLatin1("kcmdisplayrc"));
     load();
 }
 
@@ -135,27 +135,32 @@ KIconStyle::~KIconStyle()
 
 void KIconStyle::load()
 {
-    config->setGroup("KDE");
+    static QString large  = QString::fromLatin1("Large");
+    static QString normal = QString::fromLatin1("Normal");
+    static QString small  = QString::fromLatin1("Small");
+
+    config->setGroup(QString::fromLatin1("KDE"));
     
-    QString s = config->readEntry("kpanelIconStyle", "Normal");
+    QString s;
+    s = config->readEntry(QString::fromLatin1("kpanelIconStyle"), normal);
     m_PanelStyle = 1;
-    if (s == "Large") m_PanelStyle = 0;
-    if (s == "Small") m_PanelStyle = 2;
+    if (s == large) m_PanelStyle = 0;
+    if (s == small) m_PanelStyle = 2;
     panelGroup->setButton(m_PanelStyle);
 
-    s = config->readEntry("kfmIconStyle", "Normal");
+    s = config->readEntry(QString::fromLatin1("kfmIconStyle"), normal);
     m_KonqStyle = 1;
-    if (s == "Large") m_KonqStyle = 0;
-    if (s == "Small") m_KonqStyle = 2;
+    if (s == large) m_KonqStyle = 0;
+    if (s == small) m_KonqStyle = 2;
     konqGroup->setButton(m_KonqStyle);
 
-    s = config->readEntry("KDEIconStyle", "Normal");
+    s = config->readEntry(QString::fromLatin1("KDEIconStyle"), normal);
     m_KDEStyle = 1;
-    if (s == "Large") m_KDEStyle = 0;
-    if (s == "Small") m_KDEStyle = 2;
+    if (s == large) m_KDEStyle = 0;
+    if (s == small) m_KDEStyle = 2;
     kdeGroup->setButton(m_KDEStyle);
 
-    bool b = config->readBoolEntry("SingleClick", true);
+    bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), true);
     singleClick->setChecked(b);
 
     bChanged = false;
@@ -167,57 +172,61 @@ void KIconStyle::save()
     if (!bChanged)
 	return;
 
-    config->setGroup("KDE");
+    static QString large  = QString::fromLatin1("Large");
+    static QString normal = QString::fromLatin1("Normal");
+    static QString small  = QString::fromLatin1("Small");
+
+    config->setGroup(QString::fromLatin1("KDE"));
 
     // TODO: notify kicker
     QString entry;
     switch (m_PanelStyle)
     {
     case 0:
-        entry = "Large";
+        entry = large;
         break;
     case 2:
-        entry = "Small";
+        entry = small;
         break;
     case 1:
     default:
-        entry = "Normal";
+        entry = normal;
         break;
     }
-    config->writeEntry("kpanelIconStyle", entry);
+    config->writeEntry(QString::fromLatin1("kpanelIconStyle"), entry, true, true);
 
     // TODO: notify konqy
     switch (m_KonqStyle)
     {
     case 0:
-        entry = "Large";
+        entry = large;
         break;
     case 2:
-        entry = "Small";
+        entry = small;
         break;
     case 1:
     default:
-        entry = "Normal";
+        entry = normal;
         break;
     }
-    config->writeEntry("konqIconStyle", entry);
+    config->writeEntry(QString::fromLatin1("konqIconStyle"), entry, true, true);
 
     switch (m_KDEStyle)
     {
     case 0:
-        entry = "Large";
+        entry = large;
         break;
     case 2:
-        entry = "Small";
+        entry = small;
         break;
     case 1:
     default:
-        entry = "Normal";
+        entry = normal;
         break;
     }
-    config->writeEntry("KDEIconStyle", entry);
+    config->writeEntry(QString::fromLatin1("KDEIconStyle"), entry, true, true);
 
-    config->writeEntry("SingleClick", singleClick->isChecked(), true, true);
+    config->writeEntry(QString::fromLatin1("SingleClick"), singleClick->isChecked(), true, true);
 
     KMessageBox::information(0L, i18n("The icon style change will "
 	    "not all be applied until you restart KDE."));
@@ -578,7 +587,7 @@ void KGeneral::save()
 	    true, true);
 
     config->setGroup("X11");
-    config->writeEntry("useResourceManager", useRM);
+    config->writeEntry("useResourceManager", useRM, true, true);
     config->sync();
     
     if (useRM) {
