@@ -135,7 +135,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
     xoffset = 25;
     yoffset = 184 + 50;
-    int bheight = height() - 184 - 50 - 25;
+    int bheight = height() - 184 - 50 - 40;
     int bwidth = width() - _part3.width() + 60;
 
     if (bheight < 0) bheight = 0;
@@ -151,7 +151,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     pb.drawPixmap(xoffset3 - xoffset, yoffset3 - yoffset, _part3);
     pb.end();
 
-    box = KPixmapEffect::fade(box, 0.8, white);
+    box = KPixmapEffect::fade(box, 0.75, white);
 
     p.drawPixmap(xoffset, yoffset, box);
 
@@ -161,7 +161,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
     // draw info text
     xoffset = 10;
-    yoffset = 20;
+    yoffset = 30;
 
     int fheight = fontMetrics().height();
     int xadd = 120;
@@ -223,7 +223,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
     // draw use text
     bheight = bheight - yoffset - 10;
-    bwidth = bwidth - xoffset;
+    bwidth = bwidth - xoffset - 10;
 
     p.setFont(f1);
     p.drawText(xoffset, yoffset, bwidth, bheight, AlignLeft | AlignVCenter | WordBreak, use_text);
