@@ -44,6 +44,10 @@ public:
 
    void setCacheSize(int s);
    int cacheSize();
+   QColor textColor();
+   void setTextColor(QColor color);
+   QColor textBackgroundColor();
+   void setTextBackgroundColor(QColor color);
 
    void updateUI();
 
@@ -62,10 +66,6 @@ protected slots:
    void slotProgramItemDoubleClicked(QListViewItem *item);
    void slotProgramChanged();
    void slotEnableProgram(bool b);
-   void slotBlendMode(int mode);
-   void slotBlendBalance(int value);
-   void slotBlendReverse(bool b);
-   void slotPreviewDone();
 
 private:
    KBackgroundRenderer *r;

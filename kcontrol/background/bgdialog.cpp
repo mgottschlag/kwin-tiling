@@ -1,4 +1,4 @@
-/* 
+/*
    This file is part of the KDE libraries
 
    Copyright (c) 2003 Waldo Bastian <bastian@kde.org>
@@ -27,6 +27,8 @@
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qpainter.h>
+#include <qslider.h>
+#include <qtimer.h>
 #include <qwhatsthis.h>
 
 #include <kconfig.h>
@@ -44,25 +46,8 @@
 #include "bgadvanced.h"
 #include "bgdialog.h"
 
-#include <X11/Xlib.h>
-
-#define NR_PREDEF_PATTERNS	6
-#define SLIDE_SHOW		i18n("<Slide Show>")
-
-static QCString desktopConfigname()
-{
-	int desktop=0;
-	if (qt_xdisplay())
-		desktop = DefaultScreen(qt_xdisplay());
-	QCString name;
-	if (desktop == 0)
-		name = "kdesktoprc";
-    else
-		name.sprintf("kdesktop-screen-%drc", desktop);
-
-	return name;
-}
-
+#define NR_PREDEF_PATTERNS 6
+#define SLIDE_SHOW	i18n("<Slide Show>")
 
 BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
   : BGDialog_UI(parent, "BGDialog")
@@ -78,20 +63,12 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    m_eDesk = m_pGlobals->commonBackground() ? 0 : m_Desk;
 
    m_comboWallpaperSpecial = -1;
-   
+
    if (!m_multidesktop)
    {
       m_pDesktopLabel->hide();
       m_comboDesktop->hide();
       m_buttonSetupWallpapers->hide();
-      m_groupIconText->hide();
-   }
-   else
-   {
-      KConfig cfg(desktopConfigname(), false, false);
-      cfg.setGroup( "General" );
-      if (!cfg.readBoolEntry( "Enabled", true ))
-         m_groupIconText->hide();
    }
 
    m_monitorImage->setText(QString::null);
@@ -114,6 +91,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    connect(m_buttonSetupWallpapers, SIGNAL(clicked()),
            SLOT(slotSetupMulti()));
 
+   // set up the background colour stuff
    connect(m_colorPrimary, SIGNAL(changed(const QColor &)),
            SLOT(slotPrimaryColor(const QColor &)));
    connect(m_colorSecondary, SIGNAL(changed(const QColor &)),
@@ -121,16 +99,9 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    connect(m_comboPattern, SIGNAL(activated(int)),
            SLOT(slotPattern(int)));
 
-   connect(m_colorText, SIGNAL(changed(const QColor &)),
-           SLOT(slotTextColor()));
-   connect(m_colorTextBackground, SIGNAL(changed(const QColor &)),
-           SLOT(slotTextColor()));
-   connect(m_cbSolidTextBackground, SIGNAL(toggled(bool)),
-           SLOT(slotTextColor()));
-
    connect(m_buttonAdvanced, SIGNAL(clicked()),
            SLOT(slotAdvanced()));
-           
+
    m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max );
    m_Renderer.setAutoDelete(true);
    for (int i=0; i<m_Max; i++) 
@@ -144,43 +115,22 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    if (m_wallpaperPos == KBackgroundSettings::NoWallpaper)
       m_wallpaperPos = KBackgroundSettings::Centred; // Default
 
-   QWhatsThis::add( m_comboDesktop, i18n("Choose the desktop whose background"
-	" you want to modify.") );
+   // Blend modes: make sure these match with kdesktop/bgrender.cc !!
+   m_comboBlend->insertItem(i18n("No Blending"));
+   m_comboBlend->insertItem(i18n("Horizontal"));
+   m_comboBlend->insertItem(i18n("Vertical"));
+   m_comboBlend->insertItem(i18n("Pyramid"));
+   m_comboBlend->insertItem(i18n("Pipecross"));
+   m_comboBlend->insertItem(i18n("Elliptic"));
+   m_comboBlend->insertItem(i18n("Intensity"));
+   m_comboBlend->insertItem(i18n("Saturatation"));
+   m_comboBlend->insertItem(i18n("Contrast"));
+   m_comboBlend->insertItem(i18n("Hue Shift"));
 
-   QWhatsThis::add( m_pMonitor, i18n("In this monitor, you can preview how your settings will look like on a \"real\" desktop.") );
-
-   QWhatsThis::add( m_colorPrimary, i18n("Click to choose the primary background color.") );
-   QWhatsThis::add( m_colorSecondary, i18n("Click to choose the secondary background color. If no"
-					" secondary color is used, this button is disabled.") );
-   QWhatsThis::add( m_buttonSetupWallpapers, i18n("With this button you can choose"
-					   " a set of images to be used as background picture. "
-					   " One picture at a time will be shown for the specified time,"
-					   " after which another image from the set is shown."
-					   " Images can be shown at random or in the order you specified them.") );
-
-   QWhatsThis::add( m_comboWallpaperPos, i18n("You can choose here how a background picture is shown on the desktop:"
-					     " <ul><li><em>Centered:</em> Center the picture on the desktop.</li>"
-					     " <li><em>Tiled:</em> Tile the picture beginning at the top left of the"
-					     " desktop, so the desktop is totally covered up.</li>"
-					     " <li><em>Center Tiled:</em> Center the picture on the desktop, and then"
-					     " tile around it so that the background is totally covered up.</li>"
-					     " <li><em>Centered Maxpect:</em> Magnify the picture without distorting it"
-					     " until it fills either the width or height of the desktop, and then center"
-					     " it on the desktop.</li>"
-					     " <li><em>Scaled:</em> Magnify the picture, distorting it if necessary,"
-					     " until the entire desktop is covered.</li>"
-                                             " <li><em>Centered Auto Fit:</em> If the picture fits the desktop,"
-                                             " this mode works like Centered. If the picture is larger"
-                                             " than the desktop, it's scalled down to fit while keeping the aspect"
-                                             " ratio.</li></ul>") );
-
-   QWhatsThis::add( m_urlWallpaper->comboBox(), 
-   		i18n("Click to choose from the list a graphic that you want"
-		     " to use as background picture.") );
-
-   QWhatsThis::add( m_urlWallpaper, 
-   		i18n("Click here to freely choose a graphic or photo that you want"
-		     " to use as background picture.") );
+   connect( m_comboBlend, SIGNAL(activated(int)), SLOT(slotBlendMode(int)));
+   // connect( m_comboBlend->listBox(),SIGNAL(highlighted ( int  )), SLOT(slotBlendMode(int)));
+   connect( m_sliderBlend, SIGNAL(valueChanged(int)), SLOT(slotBlendBalance(int)));
+   connect( m_cbBlendReverse, SIGNAL(toggled(bool)), SLOT(slotBlendReverse(bool)));
 
    initUI();
    updateUI();
@@ -225,7 +175,7 @@ void BGDialog::load()
 
 void BGDialog::save()
 {
-   kdDebug() << "Saving stuff..." << endl;
+//   kdDebug() << "Saving stuff..." << endl;
    m_pGlobals->writeSettings();
    for (int i=0; i<m_Max; i++)
       m_Renderer[i]->writeSettings();
@@ -320,7 +270,7 @@ void BGDialog::initUI()
    lst.sort();
    KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
    comboWallpaper->insertItem(i18n("<None>"));
-   for (i=0; i<(int)lst.count(); i++) 
+   for (i=0; i<(int)lst.count(); i++)
    {
       int n = lst[i].findRev('/');
       QString s = lst[i].mid(n+1);
@@ -385,15 +335,15 @@ void BGDialog::setWallpaper(const QString &s)
 void BGDialog::updateUI()
 {
    KBackgroundRenderer *r = m_Renderer[m_eDesk];
-   
+
    if (m_pGlobals->commonBackground())
       m_comboDesktop->setCurrentItem(0);
    else
       m_comboDesktop->setCurrentItem(m_Desk+1);
-       
+
    m_colorPrimary->setColor(r->colorA());
    m_colorSecondary->setColor(r->colorB());
-   
+
    if (r->backgroundMode() == KBackgroundSettings::Program)
    {
       m_colorPrimary->setEnabled(false);
@@ -407,6 +357,7 @@ void BGDialog::updateUI()
 
    int wallpaperMode = r->wallpaperMode();
    int multiMode = r->multiWallpaperMode();
+
    if (wallpaperMode == KBackgroundSettings::NoWallpaper )
    {
       m_comboWallpaperPos->setEnabled(false);
@@ -461,36 +412,33 @@ void BGDialog::updateUI()
     m_colorSecondary->setEnabled(bSecondaryEnabled);
     m_lblColorSecondary->setEnabled(bSecondaryEnabled);
 
-    m_colorText->blockSignals(true);
-    m_colorTextBackground->blockSignals(true);
-    m_cbSolidTextBackground->blockSignals(true);
-        
-    m_colorText->setColor(r->textColor());
-    if (r->textBackgroundColor().isValid())
-    {
-       m_cbSolidTextBackground->setChecked(true);
-       m_colorTextBackground->setColor(r->textBackgroundColor());
-       m_colorTextBackground->setEnabled(true);
-       m_lblTextBackground->setEnabled(true);
-    }
-    else
-    {
-       m_cbSolidTextBackground->setChecked(false);
-       m_colorTextBackground->setColor(Qt::white);
-       m_colorTextBackground->setEnabled(false);
-       m_lblTextBackground->setEnabled(false);
-    }
+    int mode = r->blendMode();
 
-    m_colorText->blockSignals(false);
-    m_colorTextBackground->blockSignals(false);
-    m_cbSolidTextBackground->blockSignals(false);
+    m_comboBlend->blockSignals(true);
+    m_sliderBlend->blockSignals(true);
 
+    m_comboBlend->setCurrentItem(mode);
+    bool b = !(mode == KBackgroundSettings::NoBlending);
+    m_sliderBlend->setEnabled( b );
+    m_lblBlendBalance->setEnabled( b );
+
+    b = !(mode < KBackgroundSettings::IntensityBlending);
+    m_cbBlendReverse->setEnabled(b);
+
+    m_cbBlendReverse->setChecked(r->reverseBlending());
+
+    m_sliderBlend->setValue( r->blendBalance() / 10 );
+
+    m_comboBlend->blockSignals(false);
+    m_sliderBlend->blockSignals(false);
+
+    // turn it off if there is no background picture set!
+    m_blendGroup->setEnabled(m_urlWallpaper->comboBox()->currentItem() > 0);
 
     // Start preview render
     r->setPreview(m_pMonitor->size());
     r->start();
 }
-
 
 void BGDialog::slotPreviewDone(int desk_done)
 {
@@ -545,7 +493,6 @@ void BGDialog::slotWallpaper(int i)
    }
    else if (i == m_comboWallpaperSpecial)
    {
-
       if (m_urlWallpaper->comboBox()->currentText() == SLIDE_SHOW)
       {
          m_comboWallpaperPos->setEnabled(true);
@@ -581,6 +528,8 @@ void BGDialog::slotWallpaper(int i)
       r->setWallpaperMode(m_wallpaperPos);
       r->setWallpaper(uri);
    }
+
+   m_blendGroup->setEnabled(i > 0);
 
    r->start();
    m_copyAllDesktops = true;
@@ -645,26 +594,6 @@ void BGDialog::slotSecondaryColor(const QColor &color)
    r->stop();
    r->setColorB(color);
    r->start();
-   m_copyAllDesktops = true;
-   emit changed(true);
-}
-
-void BGDialog::slotTextColor()
-{
-   KBackgroundRenderer *r = m_Renderer[m_eDesk];
-   r->setTextColor(m_colorText->color());
-   if (m_cbSolidTextBackground->isChecked())
-   {
-      r->setTextBackgroundColor(m_colorTextBackground->color());
-      m_lblTextBackground->setEnabled(true);
-      m_colorTextBackground->setEnabled(true);
-   }
-   else
-   {
-      r->setTextBackgroundColor(QColor());
-      m_lblTextBackground->setEnabled(false);
-      m_colorTextBackground->setEnabled(false);
-   }
    m_copyAllDesktops = true;
    emit changed(true);
 }
@@ -742,12 +671,15 @@ void BGDialog::slotAdvanced()
 
     m_previewUpdates = false;
     BGAdvancedDialog dlg(r, topLevelWidget(), m_multidesktop);
-    
+
+    dlg.setTextColor(m_pGlobals->textColor());
+    dlg.setTextBackgroundColor(m_pGlobals->textBackgroundColor());
+
     if (m_pGlobals->limitCache())
        dlg.setCacheSize( m_pGlobals->cacheSize() );
     else
        dlg.setCacheSize( 0 );
-    
+
     dlg.exec();
 
     int cacheSize = dlg.cacheSize();
@@ -760,14 +692,58 @@ void BGDialog::slotAdvanced()
     {
        m_pGlobals->setLimitCache(false);
     }
-    
+
+    m_pGlobals->setTextColor(dlg.textColor());
+    m_pGlobals->setTextBackgroundColor(dlg.textBackgroundColor());
+
     r->stop();
     m_previewUpdates = true;
-    
     r->start();
+
     updateUI();
     m_copyAllDesktops = true;
     emit changed(true);
+}
+
+void BGDialog::slotBlendMode(int mode)
+{
+   if (mode == m_Renderer[m_eDesk]->blendMode())
+      return;
+
+   bool b = !(mode == KBackgroundSettings::NoBlending);
+   m_sliderBlend->setEnabled( b );
+   m_lblBlendBalance->setEnabled( b );
+
+   b = !(mode < KBackgroundSettings::IntensityBlending);
+   m_cbBlendReverse->setEnabled(b);
+   emit changed(true);
+
+   m_Renderer[m_eDesk]->stop();
+   m_Renderer[m_eDesk]->setBlendMode(mode);
+   m_Renderer[m_eDesk]->start();
+}
+
+void BGDialog::slotBlendBalance(int value)
+{
+   value = value*10;
+   if (value == m_Renderer[m_eDesk]->blendBalance())
+      return;
+   emit changed(true);
+
+   m_Renderer[m_eDesk]->stop();
+   m_Renderer[m_eDesk]->setBlendBalance(value);
+   m_Renderer[m_eDesk]->start();
+}
+
+void BGDialog::slotBlendReverse(bool b)
+{
+   if (b == m_Renderer[m_eDesk]->reverseBlending())
+      return;
+   emit changed(true);
+
+   m_Renderer[m_eDesk]->stop();
+   m_Renderer[m_eDesk]->setReverseBlending(b);
+   m_Renderer[m_eDesk]->start();
 }
 
 #include "bgdialog.moc"

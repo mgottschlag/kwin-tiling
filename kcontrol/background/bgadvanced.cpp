@@ -32,21 +32,44 @@
 #include <qspinbox.h>
 #include <qwhatsthis.h>
 
+#include <kconfig.h>
+#include <kcolorbutton.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpixmap.h>
 #include <kstandarddirs.h>
+#include <kwin.h>
 
 #include "bgrender.h"
 #include "bgadvanced.h"
 #include "bgadvanced_ui.h"
 
+#include <X11/Xlib.h>
+
 /**** BGAdvancedDialog ****/
 
+static QCString desktopConfigname()
+{
+    int desktop=0;
+    if (qt_xdisplay())
+        desktop = DefaultScreen(qt_xdisplay());
+    QCString name;
+    if (desktop == 0)
+        name = "kdesktoprc";
+    else
+        name.sprintf("kdesktop-screen-%drc", desktop);
+
+    return name;
+}
+
+
 BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
-	QWidget *parent, bool m_multidesktop)
-	: KDialogBase(parent, "BGAdvancedDialog", true, i18n("Advanced Background Settings"),
-	Ok, Ok, true), r(_r)
+                                   QWidget *parent,
+                                   bool m_multidesktop)
+    : KDialogBase(parent, "BGAdvancedDialog",
+                  true, i18n("Advanced Background Settings"),
+                  Ok, Ok, true),
+      r(_r)
 {
    dlg = new BGAdvancedBase(this);
    setMainWidget(dlg);
@@ -73,10 +96,18 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
       QStringList::Iterator it;
       for (it=lst.begin(); it != lst.end(); it++)
          addProgram(*it);
+
+      KConfig cfg(desktopConfigname(), false, false);
+      cfg.setGroup( "General" );
+      if (!cfg.readBoolEntry( "Enabled", true ))
+      {
+         dlg->m_groupIconText->hide();
+      }
    }
    else
    {
       dlg->m_groupProgram->hide();
+      dlg->m_groupIconText->hide();
    }
 
    dlg->m_spinCache->setSteps(512, 1024);
@@ -84,61 +115,8 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    dlg->m_spinCache->setSpecialValueText(i18n("Unlimited"));
    dlg->m_spinCache->setSuffix(i18n(" KB"));
 
-   // Blend modes: make sure these match with kdesktop/bgrender.cc !!
-   dlg->m_comboBlend->insertItem(i18n("No Blending"));
-   dlg->m_comboBlend->insertItem(i18n("Horizontal Blending"));
-   dlg->m_comboBlend->insertItem(i18n("Vertical Blending"));
-   dlg->m_comboBlend->insertItem(i18n("Pyramid Blending"));
-   dlg->m_comboBlend->insertItem(i18n("Pipecross Blending"));
-   dlg->m_comboBlend->insertItem(i18n("Elliptic Blending"));
-   dlg->m_comboBlend->insertItem(i18n("Intensity Blending"));
-   dlg->m_comboBlend->insertItem(i18n("Saturate Blending"));
-   dlg->m_comboBlend->insertItem(i18n("Contrast Blending"));
-   dlg->m_comboBlend->insertItem(i18n("Hue Shift Blending"));
-
-   connect( dlg->m_comboBlend, SIGNAL(activated(int)), SLOT(slotBlendMode(int)));
-   // connect( dlg->m_comboBlend->listBox(),SIGNAL(highlighted ( int  )), SLOT(slotBlendMode(int)));
-
-   connect( dlg->m_sliderBlend, SIGNAL(valueChanged(int)), SLOT(slotBlendBalance(int)));
-
-   connect( dlg->m_cbBlendReverse, SIGNAL(toggled(bool)), SLOT(slotBlendReverse(bool)));
-
    connect( dlg->m_cbProgram, SIGNAL(toggled(bool)),
             SLOT(slotEnableProgram(bool)));
-
-   dlg->m_monitorImage->setText(QString::null);
-   dlg->m_monitorImage->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
-   dlg->m_monitorImage->setFixedSize(dlg->m_monitorImage->sizeHint());
-   m_pMonitor = new QWidget(dlg->m_monitorImage, "preview monitor");
-   m_pMonitor->setGeometry(23, 14, 151, 115);
-
-   connect(r, SIGNAL(imageDone(int)), SLOT(slotPreviewDone()));
-
-   QString wtstr;
-   wtstr = i18n( "In this box you can enter how much memory KDE should use for caching the background(s)."
-                 " If you have different backgrounds for the different desktops caching can make"
-                 " switching desktops smoother at the expense of higher memory use.");
-   QWhatsThis::add( dlg->m_lblCache, wtstr );
-   QWhatsThis::add( dlg->m_spinCache, wtstr );
-
-   wtstr = i18n("If you have selected to use wallpaper, you"
-	       " can choose various methods of blending the background colors and patterns"
-	       " with the wallpaper. The default option, \"No Blending\", means that the"
-	       " wallpaper simply obscures the background below.");
-   QWhatsThis::add( dlg->m_lblBlend, wtstr );
-   QWhatsThis::add( dlg->m_comboBlend, wtstr );
-
-   wtstr = i18n("You can use this slider to control"
-	        " the degree of blending. You can experiment by moving the slider and"
-		" looking at the effects in the preview image besides.");
-   QWhatsThis::add( dlg->m_lblBlendBalance, wtstr );
-   QWhatsThis::add( dlg->m_sliderBlend, wtstr );
-
-   QWhatsThis::add( dlg->m_cbBlendReverse,
-           i18n("For some types of blending, you can reverse the role"
-	        " of the background and the picture by checking this option.") );
-
-   QWhatsThis::add( m_pMonitor, i18n("In this monitor, you can preview how your settings will look like on a \"real\" desktop.") );
 
    m_oldBackgroundMode = r->backgroundMode();
    if (m_oldBackgroundMode == KBackgroundSettings::Program)
@@ -157,84 +135,60 @@ int BGAdvancedDialog::cacheSize()
    return dlg->m_spinCache->value();
 }
 
+QColor BGAdvancedDialog::textColor()
+{
+    return dlg->m_colorText->color();
+}
+
+void BGAdvancedDialog::setTextColor(QColor color)
+{
+    dlg->m_colorText->setColor(color);
+}
+
+QColor BGAdvancedDialog::textBackgroundColor()
+{
+    return dlg->m_cbSolidTextBackground->isChecked() ?
+           dlg->m_colorTextBackground->color() : QColor();
+}
+
+void BGAdvancedDialog::setTextBackgroundColor(QColor color)
+{
+    dlg->m_colorTextBackground->blockSignals(true);
+    dlg->m_cbSolidTextBackground->blockSignals(true);
+    if (color.isValid())
+    {
+        dlg->m_cbSolidTextBackground->setChecked(true);
+        dlg->m_colorTextBackground->setColor(color);
+        dlg->m_colorTextBackground->setEnabled(true);
+    }
+    else
+    {
+        dlg->m_cbSolidTextBackground->setChecked(false);
+        dlg->m_colorTextBackground->setColor(Qt::white);
+        dlg->m_colorTextBackground->setEnabled(false);
+    }
+    dlg->m_colorTextBackground->blockSignals(false);
+    dlg->m_cbSolidTextBackground->blockSignals(false);
+}
+
 void BGAdvancedDialog::updateUI()
 {
-   int mode = r->blendMode();
+    QString prog = r->KBackgroundProgram::name();
 
-   dlg->m_comboBlend->blockSignals(true);
-   dlg->m_sliderBlend->blockSignals(true);
-
-   dlg->m_comboBlend->setCurrentItem(mode);
-   bool b = !(mode == KBackgroundSettings::NoBlending);
-   dlg->m_sliderBlend->setEnabled( b );
-   dlg->m_lblBlendBalance->setEnabled( b );
-
-   b = !(mode < KBackgroundSettings::IntensityBlending);
-   dlg->m_cbBlendReverse->setEnabled(b);
-
-   dlg->m_cbBlendReverse->setChecked(r->reverseBlending());
-
-   dlg->m_sliderBlend->setValue( r->blendBalance() / 10 );
-
-   dlg->m_comboBlend->blockSignals(false);
-   dlg->m_sliderBlend->blockSignals(false);
-
-   dlg->m_cbProgram->blockSignals(true);
-
-   QString prog = r->KBackgroundProgram::name();
-   if ((r->backgroundMode() == KBackgroundSettings::Program)
-       && !prog.isEmpty())
-   {
-      dlg->m_cbProgram->setChecked(true);
-      dlg->m_listPrograms->setEnabled(true);
-      selectProgram(prog);
-   }
-   else
-   {
-      dlg->m_cbProgram->setChecked(false);
-      dlg->m_listPrograms->setEnabled(false);
-   }
-   dlg->m_cbProgram->blockSignals(false);
-
-   slotPreviewDone();
-}
-
-void BGAdvancedDialog::slotBlendMode(int mode)
-{
-   if (mode == r->blendMode())
-      return;
-
-   bool b = !(mode == KBackgroundSettings::NoBlending);
-   dlg->m_sliderBlend->setEnabled( b );
-   dlg->m_lblBlendBalance->setEnabled( b );
-
-   b = !(mode < KBackgroundSettings::IntensityBlending);
-   dlg->m_cbBlendReverse->setEnabled(b);
-
-   r->stop();
-   r->setBlendMode(mode);
-   r->start();
-}
-
-void BGAdvancedDialog::slotBlendBalance(int value)
-{
-   value = value*10;
-   if (value == r->blendBalance())
-      return;
-
-   r->stop();
-   r->setBlendBalance(value);
-   r->start();
-}
-
-void BGAdvancedDialog::slotBlendReverse(bool b)
-{
-   if (b == r->reverseBlending())
-      return;
-
-   r->stop();
-   r->setReverseBlending(b);
-   r->start();
+    dlg->m_cbProgram->blockSignals(true);
+    if ((r->backgroundMode() == KBackgroundSettings::Program)
+        && !prog.isEmpty())
+    {
+        dlg->m_cbProgram->setChecked(true);
+        dlg->m_listPrograms->setEnabled(true);
+        selectProgram(prog);
+    }
+    else
+    {
+        dlg->m_cbProgram->setChecked(false);
+        dlg->m_listPrograms->setEnabled(false);
+    }
+    dlg->m_cbProgram->blockSignals(false);
 }
 
 void BGAdvancedDialog::removeProgram(const QString &name)
@@ -378,21 +332,6 @@ void BGAdvancedDialog::slotEnableProgram(bool b)
       slotProgramChanged();
    }
 }
-
-void BGAdvancedDialog::slotPreviewDone()
-{
-   QImage *img = r->image();
-   if (!img)
-      return;
-   KPixmap pm;
-   if (QPixmap::defaultDepth() < 15)
-      pm.convertFromImage(*img, KPixmap::LowColor);
-   else
-      pm.convertFromImage(*img);
-
-   m_pMonitor->setBackgroundPixmap(pm);
-}
-
 
 /**** KProgramEditDialog ****/
 

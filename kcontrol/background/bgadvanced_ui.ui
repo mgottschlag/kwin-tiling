@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>552</width>
-            <height>514</height>
+            <width>523</width>
+            <height>330</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,59 +19,6 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QButtonGroup">
-            <property name="name">
-                <cstring>buttonGroup3</cstring>
-            </property>
-            <property name="title">
-                <string>General Options</string>
-            </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout3</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>m_lblCache</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Size of background cache:</string>
-                            </property>
-                        </widget>
-                        <widget class="QSpinBox">
-                            <property name="name">
-                                <cstring>m_spinCache</cstring>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer2</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </hbox>
-                </widget>
-            </vbox>
-        </widget>
         <widget class="QButtonGroup">
             <property name="name">
                 <cstring>m_groupProgram</cstring>
@@ -87,6 +34,9 @@
                     <property name="name">
                         <cstring>m_buttonAdd</cstring>
                     </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
                     <property name="text">
                         <string>&amp;Add...</string>
                     </property>
@@ -95,6 +45,9 @@
                     <property name="name">
                         <cstring>m_buttonRemove</cstring>
                     </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
                     <property name="text">
                         <string>&amp;Remove</string>
                     </property>
@@ -102,6 +55,9 @@
                 <widget class="QPushButton" row="3" column="1">
                     <property name="name">
                         <cstring>m_buttonModify</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
                     </property>
                     <property name="text">
                         <string>&amp;Modify...</string>
@@ -161,10 +117,13 @@
                     <property name="name">
                         <cstring>m_listPrograms</cstring>
                     </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
                     <property name="minimumSize">
                         <size>
                             <width>400</width>
-                            <height>120</height>
+                            <height>0</height>
                         </size>
                     </property>
                 </widget>
@@ -178,104 +137,132 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QLayoutWidget">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>layout3</cstring>
+                <cstring>m_groupIconText</cstring>
+            </property>
+            <property name="title">
+                <string>Background Icon Text</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel6</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Text color:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_colorText</cstring>
+                    </property>
+                </widget>
+                <widget class="KColorButton" row="1" column="1">
+                    <property name="name">
+                        <cstring>m_colorTextBackground</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0">
+                    <property name="name">
+                        <cstring>m_cbSolidTextBackground</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Use solid color behind text:</string>
+                    </property>
+                </widget>
+                <widget class="KColorButton" row="0" column="1">
+                    <property name="name">
+                        <cstring>m_colorText</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <spacer row="0" column="2" rowspan="2" colspan="1">
+                    <property name="name">
+                        <cstring>spacer7</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>60</width>
+                            <height>60</height>
+                        </size>
+                    </property>
+                </spacer>
+            </grid>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup3</cstring>
+            </property>
+            <property name="title">
+                <string>Memory Usage</string>
             </property>
             <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QButtonGroup">
-                    <property name="name">
-                        <cstring>buttonGroup1</cstring>
-                    </property>
-                    <property name="title">
-                        <string>Blending</string>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>m_lblBlend</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Blend picture with background:</string>
-                            </property>
-                        </widget>
-                        <widget class="QComboBox">
-                            <property name="name">
-                                <cstring>m_comboBlend</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>m_lblBlendBalance</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Blend balance:</string>
-                            </property>
-                        </widget>
-                        <widget class="QSlider">
-                            <property name="name">
-                                <cstring>m_sliderBlend</cstring>
-                            </property>
-                            <property name="minValue">
-                                <number>-20</number>
-                            </property>
-                            <property name="maxValue">
-                                <number>20</number>
-                            </property>
-                            <property name="pageStep">
-                                <number>1</number>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="tickmarks">
-                                <enum>Left</enum>
-                            </property>
-                            <property name="tickInterval">
-                                <number>10</number>
-                            </property>
-                        </widget>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>m_cbBlendReverse</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Reverse roles</string>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
                 <widget class="QLabel">
                     <property name="name">
-                        <cstring>m_monitorImage</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>100</width>
-                            <height>0</height>
-                        </size>
+                        <cstring>m_lblCache</cstring>
                     </property>
                     <property name="text">
-                        <string>Monitor</string>
+                        <string>Size of background cache:</string>
                     </property>
-                    <property name="alignment">
-                        <set>AlignCenter</set>
+                    <property name="whatsThis" stdset="0">
+                        <string>In this box you can enter how much memory KDE should use for caching the background(s). If you have different backgrounds for the different desktops caching can make switching desktops smoother at the expense of higher memory use.</string>
                     </property>
                 </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>m_spinCache</cstring>
+                    </property>
+                    <property name="suffix">
+                        <string> k</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>In this box you can enter how much memory KDE should use for caching the background(s). If you have different backgrounds for the different desktops caching can make switching desktops smoother at the expense of higher memory use.</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>258</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
             </hbox>
         </widget>
         <spacer>
@@ -291,11 +278,59 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>20</height>
+                    <height>16</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>m_cbProgram</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_buttonAdd</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_cbProgram</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_buttonRemove</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_cbProgram</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_buttonModify</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_cbProgram</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_listPrograms</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_cbSolidTextBackground</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_colorTextBackground</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>m_cbProgram</tabstop>
+    <tabstop>m_listPrograms</tabstop>
+    <tabstop>m_buttonAdd</tabstop>
+    <tabstop>m_buttonRemove</tabstop>
+    <tabstop>m_buttonModify</tabstop>
+    <tabstop>m_colorText</tabstop>
+    <tabstop>m_cbSolidTextBackground</tabstop>
+    <tabstop>m_colorTextBackground</tabstop>
+    <tabstop>m_spinCache</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>qwidget.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+</includehints>
 </UI>

@@ -1,4 +1,4 @@
-/* 
+/*
    This file is part of the KDE libraries
    Copyright (c) 2003 Waldo Bastian <bastian@kde.org>
    
@@ -63,10 +63,12 @@ protected slots:
    void slotPrimaryColor(const QColor &color);
    void slotSecondaryColor(const QColor &color);
    void slotPattern(int pattern);
-   void slotTextColor();
    void slotImageDropped(const QString &uri);
    void slotPreviewDone(int);
    void slotAdvanced();
+   void slotBlendMode(int mode);
+   void slotBlendBalance(int value);
+   void slotBlendReverse(bool b);
 
 protected:
    KGlobalBackgroundSettings *m_pGlobals;

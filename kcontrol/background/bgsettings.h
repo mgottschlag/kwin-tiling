@@ -223,12 +223,6 @@ public:
     void setUseShm( bool use );
     bool useShm() const { return m_bShm; }
 
-    void setTextColor(QColor _color);
-    QColor textColor() const { return m_TextColor; }
-
-    void setTextBackgroundColor(QColor _color);
-    QColor textBackgroundColor() const { return m_TextBackgroundColor; }
-
     void changeWallpaper(bool init=false);
     void updateWallpaperFiles();
 
@@ -264,9 +258,6 @@ private:
     bool m_ReverseBlending, defReverseBlending;
     int m_MinOptimizationDepth;
     bool m_bShm;
-
-    QColor m_TextColor;
-    QColor m_TextBackgroundColor;
 
     int m_MultiMode, defMultiMode;
     int m_Interval, m_LastChange;
@@ -315,6 +306,12 @@ public:
     bool exportBackground() {return m_bExport; }
     void setExportBackground(bool _export);
 
+    void setTextColor(QColor _color);
+    QColor textColor() const { return m_TextColor; }
+
+    void setTextBackgroundColor(QColor _color);
+    QColor textBackgroundColor() const { return m_TextBackgroundColor; }
+
     void readSettings();
     void writeSettings();
 
@@ -324,6 +321,9 @@ private:
     bool m_bLimitCache, m_bExport;
     int m_CacheSize;
     QStringList m_Names;
+
+    QColor m_TextColor;
+    QColor m_TextBackgroundColor;
 
     KConfig *m_pConfig;
     bool m_bDeleteConfig;

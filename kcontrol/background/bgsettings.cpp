@@ -21,6 +21,7 @@
 #include <qdir.h>
 #include <qpixmap.h>
 
+#include <dcopclient.h>
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
@@ -545,8 +546,6 @@ void KBackgroundSettings::copyConfig(const KBackgroundSettings *settings)
     m_ReverseBlending = settings->m_ReverseBlending;
     m_MinOptimizationDepth = settings->m_MinOptimizationDepth;
     m_bShm = settings->m_bShm;
-    m_TextColor = settings->m_TextColor;
-    m_TextBackgroundColor = settings->m_TextBackgroundColor;
     m_MultiMode = settings->m_MultiMode;
     m_Interval = settings->m_Interval;
     m_CurrentWallpaper = settings->m_CurrentWallpaper;
@@ -724,23 +723,6 @@ void KBackgroundSettings::setUseShm(bool use)
     m_bShm = use;
 }
 
-void KBackgroundSettings::setTextColor(QColor _color)
-{
-    if (_color == m_TextColor)
-	return;
-    dirty = true;
-    m_TextColor = _color;
-}
-
-void KBackgroundSettings::setTextBackgroundColor(QColor _color)
-{
-    if (_color == m_TextBackgroundColor)
-	return;
-    dirty = true;
-    m_TextBackgroundColor = _color;
-}
-
-
 void KBackgroundSettings::readSettings(bool reparse)
 {
     if (reparse)
@@ -818,10 +800,6 @@ void KBackgroundSettings::readSettings(bool reparse)
         _defMinOptimizationDepth );
     m_bShm = m_pConfig->readBoolEntry( "UseSHM", _defShm );
 
-    m_TextColor = KGlobalSettings::textColor();
-    m_TextColor = m_pConfig->readColorEntry("TextColor", &m_TextColor);
-    m_TextBackgroundColor = m_pConfig->readColorEntry("TextBackgroundColor");
-
     dirty = false; hashdirty = true;
 }
 
@@ -853,14 +831,11 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("ChangeInterval", m_Interval);
     m_pConfig->writeEntry("LastChange", m_LastChange);
     m_pConfig->writeEntry("CurrentWallpaper", m_CurrentWallpaper);
-    m_pConfig->writeEntry("TextColor", m_TextColor);
-    m_pConfig->writeEntry("TextBackgroundColor", m_TextBackgroundColor);
 
     m_pConfig->sync();
 
     dirty = false;
 }
-
 
 /*
  * (re)Build m_WallpaperFiles from m_WallpaperList
@@ -1051,7 +1026,7 @@ void KGlobalBackgroundSettings::setCommonBackground(bool common)
 void KGlobalBackgroundSettings::setDockPanel(bool dock)
 {
     if (dock == m_bDock)
-	return;
+        return;
     dirty = true;
     m_bDock = dock;
 }
@@ -1060,11 +1035,26 @@ void KGlobalBackgroundSettings::setDockPanel(bool dock)
 void KGlobalBackgroundSettings::setExportBackground(bool _export)
 {
     if (_export == m_bExport)
-	return;
+        return;
     dirty = true;
     m_bExport = _export;
 }
 
+void KGlobalBackgroundSettings::setTextColor(QColor _color)
+{
+    if (_color == m_TextColor)
+        return;
+    dirty = true;
+    m_TextColor = _color;
+}
+
+void KGlobalBackgroundSettings::setTextBackgroundColor(QColor _color)
+{
+    if (_color == m_TextBackgroundColor)
+        return;
+    dirty = true;
+    m_TextBackgroundColor = _color;
+}
 
 void KGlobalBackgroundSettings::readSettings()
 {
@@ -1075,6 +1065,11 @@ void KGlobalBackgroundSettings::readSettings()
     m_bLimitCache = m_pConfig->readBoolEntry("LimitCache", _defLimitCache);
     m_CacheSize = m_pConfig->readNumEntry("CacheSize", _defCacheSize);
 
+    m_TextColor = KGlobalSettings::textColor();
+    m_pConfig->setGroup("FMSettings");
+    m_TextColor = m_pConfig->readColorEntry("NormalTextColor", &m_TextColor);
+    m_TextBackgroundColor = m_pConfig->readColorEntry("ItemTextBackground");
+
     m_Names.clear();
     NETRootInfo info( qt_xdisplay(), NET::DesktopNames | NET::NumberOfDesktops );
     for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
@@ -1083,11 +1078,10 @@ void KGlobalBackgroundSettings::readSettings()
     dirty = false;
 }
 
-
 void KGlobalBackgroundSettings::writeSettings()
 {
     if (!dirty)
-	return;
+        return;
 
     m_pConfig->setGroup("Background Common");
     m_pConfig->writeEntry("CommonDesktop", m_bCommon);
@@ -1095,8 +1089,15 @@ void KGlobalBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("Export", m_bExport);
     m_pConfig->writeEntry("LimitCache", m_bLimitCache);
     m_pConfig->writeEntry("CacheSize", m_CacheSize);
-    m_pConfig->sync();
 
+    m_pConfig->setGroup("FMSettings");
+    m_pConfig->writeEntry("NormalTextColor", m_TextColor);
+    m_pConfig->writeEntry("ItemTextBackground", m_TextBackgroundColor);
+    m_pConfig->sync();
     dirty = false;
+
+    // tell kdesktop to get it's butt in gear and pick up the new settings
+    QByteArray data;
+    bool returnStatus = kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", data);
 }
 
