@@ -155,6 +155,13 @@ void KTagComboBox::insertItem(const QIconSet& icon, const QString &text, const Q
   tags->append(tag);
 }
 
+void KTagComboBox::insertItem(const QString &text, const QString &tag, const QString &submenu, int index )
+{
+  QPopupMenu *pi = checkInsertIndex(popup, tags, submenu, &index);
+  pi->insertItem(text, count(), index);
+  tags->append(tag);
+}
+
 void KTagComboBox::insertSeparator(const QString &submenu, int index)
 {
   QPopupMenu *pi = checkInsertIndex(popup, tags, submenu, &index);

@@ -110,7 +110,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 
     QStringList list = KGlobal::charsets()->availableCharsetNames();
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
-       comboChset->insertItem(QIconSet(), *it, *it);
+       comboChset->insertItem(*it, *it);
 
     tl1->setRowStretch(7, 1);
     load();

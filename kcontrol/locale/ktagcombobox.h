@@ -42,6 +42,7 @@ public:
   ~KTagComboBox();
 
   void insertItem(const QIconSet& icon, const QString &text, const QString &tag, const QString &submenu = QString::null, int index=-1 );
+  void insertItem(const QString &text, const QString &tag, const QString &submenu = QString::null, int index=-1 );
   void insertSeparator(const QString &submenu = QString::null, int index=-1 );
   void insertSubmenu(const QString &text, const QString &tag, const QString &submenu = QString::null, int index=-1);
   void changeItem( const QString &text, int index );
