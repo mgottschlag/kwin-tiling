@@ -17,7 +17,9 @@
 #ifndef DXDCMP_H
 #define DXDCMP_H
 
+#ifndef QT_CLEAN_NAMESPACE
 #define QT_CLEAN_NAMESPACE
+#endif
 #include <qlistview.h>
 #include <qlineedit.h>
 

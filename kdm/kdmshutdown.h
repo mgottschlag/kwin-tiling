@@ -29,7 +29,9 @@
 
 #include "kdm-config.h"
 
+#ifndef QT_CLEAN_NAMESPACE
 #define QT_CLEAN_NAMESPACE
+#endif
 #include <qglobal.h>
 
 #include <X11/Xmd.h>
