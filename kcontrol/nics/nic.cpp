@@ -52,7 +52,7 @@ typedef QPtrList<MyNIC> NICList;
 
 NICList* findNICs();
 
-KCMNic::KCMNic(QWidget *parent=0, const char * name)
+KCMNic::KCMNic(QWidget *parent, const char * name)
    :KCModule(parent,name)
 {
    QVBoxLayout *box=new QVBoxLayout(this);
