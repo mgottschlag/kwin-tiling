@@ -65,6 +65,11 @@
 #endif
 #endif
 
+#ifndef	HAVE_SOCKADDR_SA_LEN
+	#undef HAVE_GETNAMEINFO
+	#undef HAVE_GETIFADDRS
+#endif
+
 #if defined(HAVE_GETNAMEINFO) && defined(HAVE_GETIFADDRS)
 	#include <ifaddrs.h>
 	#include <netdb.h>
