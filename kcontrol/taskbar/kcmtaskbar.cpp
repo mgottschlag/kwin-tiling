@@ -85,7 +85,7 @@ void TaskbarConfig::configChanged()
 
 void TaskbarConfig::load()
 {
-    KConfig *c = new KConfig("ktaskbarappletrc", false, false);
+    KConfig *c = new KConfig("ktaskbarrc", false, false);
     { // group for the benefit of the group saver
         KConfigGroupSaver saver(c, "General");
 
@@ -99,7 +99,7 @@ void TaskbarConfig::load()
 
 void TaskbarConfig::save()
 {
-    KConfig *c = new KConfig("ktaskbarappletrc", false, false);
+    KConfig *c = new KConfig("ktaskbarrc", false, false);
     { // group for the benefit of the group saver
         KConfigGroupSaver saver(c, "General");
 
