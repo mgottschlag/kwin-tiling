@@ -103,13 +103,13 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 	void func(QListView *, QCString s, void **, bool))
 {
         QFile *dmesg = new QFile("/var/run/dmesg.boot");
-	bool usepipe=false;
-	FILE *pipe=NULL;
+	bool usepipe = false;
+	FILE *pipe = NULL;
 	QTextStream *t;
-	bool seencpu=false;
-	void *opaque=NULL;
+	bool seencpu = false;
+	void *opaque = NULL;
 	QCString s;
-	bool found=false;
+	bool found = false;
 
 	if (dmesg->exists() && dmesg->open(IO_ReadOnly)) {
 		t = new QTextStream(dmesg);
@@ -161,34 +161,24 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 	return found;
 }
 
-void AddIRQLine(QListView *lBox, QCString s, void **opaque, bool ending)
+
+void AddIRQLine(QListView *lBox, QCString s, void **opaque, bool final)
 {
-	QStrList *strlist = (QStrList *) *opaque;
-	const char *str, *p = s.data();
-	int pos, irqnum=0;
+	if (!final) {
+		char str[3];
+		const char *p = s.data();
+		int pos = s.find(" irq ");
+		int irq = (pos<0) ? 0 : atoi(p+pos+5);
 
-	if (!strlist) {
-		strlist = new QStrList();
-		*opaque = (void *) strlist;
-	}
-	if (ending) {
-		str = strlist->first();
-		for(;str; str = strlist->next()) {
-			new QListViewItem(lBox, str);
+		if (irq) {
+			sprintf(str, "%2d", irq);
 		}
-		delete strlist;
-		return;
+		else {
+			str[0] = str[1] = '?';
+			str[2] = 0;
+		}
+		new QListViewItem(lBox, str, p);
 	}
-
-	pos = s.find(" irq ");
-	irqnum = (pos < 0) ? 0 : atoi(p+pos+5);
-	if (irqnum) {
-		s.sprintf("%02d%s", irqnum, p);
-	}
-	else {
-		s.sprintf("??%s", p);
-	}
-	strlist->inSort(s.data());
 }
 
 bool GetInfo_IRQ (QListView *lBox)
@@ -196,12 +186,14 @@ bool GetInfo_IRQ (QListView *lBox)
 	lBox->addColumn(i18n("IRQ"));
 	lBox->addColumn(i18n("Device"));
 	(void) GetDmesgInfo(lBox, " irq ", AddIRQLine);
+	sorting_allowed = true;
+	lBox->setSorting(1);
 	return true;
 }
 
 bool GetInfo_DMA (QListView *)
 {
-  return false;
+	return false;
 }
 
 bool GetInfo_PCI (QListView *lbox)
