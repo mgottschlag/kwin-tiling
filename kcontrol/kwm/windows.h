@@ -50,9 +50,6 @@ class KIntNumInput;
 #define RESIZE_TRANSPARENT  0
 #define RESIZE_OPAQUE       1
 
-#define MAXIMIZE_FULL 0
-#define MAXIMIZE_VERT 1
-
 #define SMART_PLACEMENT       0
 #define CASCADE_PLACEMENT     1
 #define RANDOM_PLACEMENT      2
@@ -91,29 +88,29 @@ private slots:
 private:
 
   int getMove( void );
-//   int getResizeAnim( void );
+  bool getMinimizeAnim( void );
+  int getMinimizeAnimSpeed( void );
   int getResizeOpaque ( void );
   int getPlacement( void ); //CT
   int getFocus( void );
-  int getMaximize( void );
   int getAutoRaiseInterval( void );
 
   void setMove(int);
-//   void setResizeAnim(int);
+  void setMinimizeAnim(bool,int);
   void setResizeOpaque(int);
   void setPlacement(int); //CT
   void setFocus(int);
-  void setMaximize(int);
   void setAutoRaiseInterval(int);
   void setAutoRaise(bool);
   void setClickRaise(bool);
 
   QButtonGroup *windowsBox;
-  QCheckBox *opaque, *vertOnly;
+  QCheckBox *opaque;
 
   QCheckBox *resizeOpaqueOn;
-//   QSlider *resizeAnimSlider;
-//   QLabel *resizeAnimTitleLabel, *resizeAnimNoneLabel, *resizeAnimFastLabel;
+  QCheckBox* minimizeAnimOn;
+  QSlider *minimizeAnimSlider;
+  QLabel *minimizeAnimSlowLabel, *minimizeAnimFastLabel;
 
   //CT 19jan98; 21Oct1998
   QButtonGroup *plcBox;

@@ -53,8 +53,8 @@
 #define KWIN_FOCUS     "FocusPolicy"
 #define KWIN_PLACEMENT "Placement"
 #define KWIN_MOVE      "MoveMode"
-#define KWIN_MAXIMIZE  "MaximizeOnlyVertically"
-#define KWIN_RESIZE_ANIM    "ResizeAnimation"
+#define KWIN_MINIMIZE_ANIM    "AnimateMinimize"
+#define KWIN_MINIMIZE_ANIM_SPEED    "AnimateMinimizeSpeed"
 #define KWIN_RESIZE_OPAQUE    "ResizeMode"
 #define KWIN_AUTORAISE_INTERVAL "AutoRaiseInterval"
 #define KWIN_AUTORAISE "AutoRaise"
@@ -95,15 +95,6 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   rLay->setColStretch(0,0);
   rLay->setColStretch(1,1);
 
-  //CT checkboxes: maximize, move, resize behaviour
-  vertOnly = new QCheckBox(i18n("Vertical maximization only by default"), windowsBox);
-  QWhatsThis::add( vertOnly, i18n("If this option is enabled, windows will only be maximized"
-    " vertically while keeping there width.") );
-
-  // CT: disabling is needed as long as functionality misses in kwin
-  vertOnly->setEnabled(false);
-  bLay->addWidget(vertOnly);
-
   opaque = new QCheckBox(i18n("Display content in moving windows"), windowsBox);
   bLay->addWidget(opaque);
   QWhatsThis::add( opaque, i18n("Enable this option if you want a window's content to be fully shown"
@@ -116,34 +107,29 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     " while resizing it, instead of just showing a window 'skeleton'. The result may not be satisfying"
     " on slow machines.") );
 
-//   // resize animation - CT 27May98; 19Oct1998
-//   resizeAnimTitleLabel = new QLabel(i18n("Resize animation:"),
-//                     windowsBox);
-//   rLay->addWidget(resizeAnimTitleLabel,0,0);
+   minimizeAnimOn = new QCheckBox(i18n("Minimize animation"),
+                     windowsBox);
+   QWhatsThis::add( minimizeAnimOn, i18n("Enable this option if you want an animation shown when"
+    " windows are minimized or restored." ) );
+   rLay->addWidget(minimizeAnimOn,0,0);
 
-//   resizeAnimSlider = new QSlider(0,10,10,0,QSlider::Horizontal, windowsBox);
-//   resizeAnimSlider->setSteps(10,1);
-//   rLay->addMultiCellWidget(resizeAnimSlider,0,0,1,2);
+   minimizeAnimSlider = new QSlider(0,10,10,0,QSlider::Horizontal, windowsBox);
+   minimizeAnimSlider->setSteps(10,1);
+   rLay->addMultiCellWidget(minimizeAnimSlider,0,0,1,2);
 
-//   resizeAnimNoneLabel= new QLabel(i18n("None"),windowsBox);
-//   resizeAnimNoneLabel->setAlignment(AlignTop|AlignLeft);
-//   rLay->addWidget(resizeAnimNoneLabel,1,1);
+   minimizeAnimSlowLabel= new QLabel(i18n("Slow"),windowsBox);
+   minimizeAnimSlowLabel->setAlignment(AlignTop|AlignLeft);
+   rLay->addWidget(minimizeAnimSlowLabel,1,1);
 
-//   resizeAnimFastLabel= new QLabel(i18n("Fast"),windowsBox);
-//   resizeAnimFastLabel->setAlignment(AlignTop|AlignRight);
-//   rLay->addWidget(resizeAnimFastLabel,1,2);
+   minimizeAnimFastLabel= new QLabel(i18n("Fast"),windowsBox);
+   minimizeAnimFastLabel->setAlignment(AlignTop|AlignRight);
+   rLay->addWidget(minimizeAnimFastLabel,1,2);
 
-//   wtstr = i18n("Here you can set the speed for the resize animation shown when windows are"
-//     " maximized or minimized. Drag the slider to the left edge to avoid a resize animation.");
-//   QWhatsThis::add( resizeAnimTitleLabel, wtstr );
-//   QWhatsThis::add( resizeAnimSlider, wtstr );
-//   QWhatsThis::add( resizeAnimNoneLabel, wtstr );
-//   QWhatsThis::add( resizeAnimFastLabel, wtstr );
-
-//   resizeAnimTitleLabel->setEnabled(false);
-//   resizeAnimSlider->setEnabled(false);
-//   resizeAnimNoneLabel->setEnabled(false);
-//   resizeAnimFastLabel->setEnabled(false);
+   wtstr = i18n("Here you can set the speed for the animation shown when windows are"
+     " minimized and restored. ");
+   QWhatsThis::add( minimizeAnimSlider, wtstr );
+   QWhatsThis::add( minimizeAnimSlowLabel, wtstr );
+   QWhatsThis::add( minimizeAnimFastLabel, wtstr );
 
   lay->addWidget(windowsBox);
 
@@ -274,10 +260,10 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   lay->addWidget(fcsBox);
 
   // Any changes goes to slotChanged()
-  connect(vertOnly, SIGNAL(clicked()), this, SLOT(slotChanged()));
   connect(opaque, SIGNAL(clicked()), this, SLOT(slotChanged()));
   connect(resizeOpaqueOn, SIGNAL(clicked()), this, SLOT(slotChanged()));
-//   connect(resizeAnimSlider, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+  connect(minimizeAnimOn, SIGNAL(clicked() ), SLOT(slotChanged()));
+  connect(minimizeAnimSlider, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
   connect(placementCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   connect(focusCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   connect(fcsBox, SIGNAL(clicked(int)), this, SLOT(slotChanged()));
@@ -333,15 +319,24 @@ void KWindowConfig::setFocus(int foc)
   setAutoRaiseEnabled();
 }
 
-// int KWindowConfig::getResizeAnim()
-// {
-//   return resizeAnimSlider->value();
-// }
+bool KWindowConfig::getMinimizeAnim()
+{
+   return minimizeAnimOn->isChecked();
+}
 
-// void KWindowConfig::setResizeAnim(int anim)
-// {
-//   resizeAnimSlider->setValue(anim);
-// }
+ int KWindowConfig::getMinimizeAnimSpeed()
+{
+   return minimizeAnimSlider->value();
+}
+
+void KWindowConfig::setMinimizeAnim(bool anim, int speed)
+{
+   minimizeAnimOn->setChecked( anim );
+   minimizeAnimSlider->setValue(speed);
+   minimizeAnimSlider->setEnabled( anim );
+   minimizeAnimSlowLabel->setEnabled( anim );
+   minimizeAnimFastLabel->setEnabled( anim );
+}
 
 int KWindowConfig::getResizeOpaque()
 {
@@ -357,22 +352,6 @@ void KWindowConfig::setResizeOpaque(int opaque)
     resizeOpaqueOn->setChecked(true);
   else
     resizeOpaqueOn->setChecked(false);
-}
-
-void KWindowConfig::setMaximize(int tb)
-{
-  if (tb == MAXIMIZE_FULL)
-    vertOnly->setChecked(false);
-  else
-    vertOnly->setChecked(true);
-}
-
-int KWindowConfig::getMaximize()
-{
-  if (vertOnly->isChecked())
-    return MAXIMIZE_VERT;
-  else
-    return MAXIMIZE_FULL;
 }
 
 void KWindowConfig::setAutoRaiseInterval(int tb)
@@ -459,18 +438,18 @@ void KWindowConfig::load( void )
     setMove(OPAQUE);
 
   //CT 17Jun1998 - variable animation speed from 0 (none!!) to 10 (max)
-  // CT: disabling is needed as long as functionality misses in kwin
-//   int anim = 1;
-//   if (config->hasKey(KWIN_RESIZE_ANIM)) {
-//     anim = config->readNumEntry(KWIN_RESIZE_ANIM);
-//     if( anim < 1 ) anim = 0;
-//     if( anim > 10 ) anim = 10;
-//     setResizeAnim(anim);
-//   }
-//   else{
-//     setResizeAnim(1);
-//     config->writeEntry(KWIN_RESIZE_ANIM, 1);
-//   }
+  int anim = 1;
+  if (config->hasKey(KWIN_MINIMIZE_ANIM_SPEED)) {
+      anim = config->readNumEntry(KWIN_MINIMIZE_ANIM_SPEED);
+      if( anim < 1 ) anim = 0;
+      if( anim > 10 ) anim = 10;
+      setMinimizeAnim( config->readBoolEntry("KWIN_MINIMIZE_ANIM", true ), anim );
+  }
+  else{
+      config->writeEntry(KWIN_MINIMIZE_ANIM, true );
+      config->writeEntry(KWIN_MINIMIZE_ANIM_SPEED, 5);
+      setMinimizeAnim(true, 5);
+  }
 
   // DF: please keep the default consistent with kwin (options.cpp line 145)
   key = config->readEntry(KWIN_RESIZE_OPAQUE, "Opaque");
@@ -518,12 +497,6 @@ void KWindowConfig::load( void )
     setFocus(FOCUS_UNDER_MOUSE);
   else if(key == "FocusStrictlyUnderMouse")
     setFocus(FOCUS_STRICTLY_UNDER_MOUSE);
-
-  key = config->readEntry(KWIN_MAXIMIZE);
-  if( key == "on")
-    setMaximize(MAXIMIZE_VERT);
-  else if( key == "off")
-    setMaximize(MAXIMIZE_FULL);
 
   int k = config->readNumEntry(KWIN_AUTORAISE_INTERVAL,0);
   setAutoRaiseInterval(k);
@@ -579,7 +552,11 @@ void KWindowConfig::save( void )
     config->writeEntry(KWIN_FOCUS,"FocusFollowsMouse");
 
   //CT - 17Jun1998
-  //  config->writeEntry(KWIN_RESIZE_ANIM, getResizeAnim());
+  config->writeEntry(KWIN_MINIMIZE_ANIM, getMinimizeAnim());
+  config->writeEntry(KWIN_MINIMIZE_ANIM_SPEED, getMinimizeAnimSpeed());
+
+  if ( getMinimizeAnim() > 0 )
+      config->writeEntry("AnimateMinimize", true );
 
 
   v = getResizeOpaque();
@@ -588,11 +565,6 @@ void KWindowConfig::save( void )
   else
     config->writeEntry(KWIN_RESIZE_OPAQUE, "Transparent");
 
-//   v = getMaximize();
-//   if (v == MAXIMIZE_VERT)
-//     config->writeEntry(KWIN_MAXIMIZE, "on");
-//   else
-//     config->writeEntry(KWIN_MAXIMIZE, "off");
 
    v = getAutoRaiseInterval();
    if (v <0) v = 0;
