@@ -95,7 +95,7 @@ ProxyWidget *ConfigModule::module()
 void ConfigModule::deleteClient()
 {
   if (_embedWidget)
-    XDestroyWindow(qt_xdisplay(), _embedWidget->embeddedWinId());
+    XKillClient(qt_xdisplay(), _embedWidget->embeddedWinId());
 
   delete _rootProcess;
   _rootProcess = 0;
