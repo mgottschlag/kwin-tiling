@@ -332,6 +332,8 @@ void KNotifyWidget::slotRequesterClicked( KURLRequester *requester )
     static bool init = true;
     if ( !init )
 	return;
+
+    init = false;
     
     // find the first "sound"-resource that contains files
     QStringList soundDirs = KGlobal::dirs()->resourceDirs( "sound" );
