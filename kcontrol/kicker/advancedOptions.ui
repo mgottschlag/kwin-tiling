@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>advancedKickerOptions</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>254</width>
-            <height>107</height>
+            <height>149</height>
         </rect>
     </property>
     <property name="caption">
@@ -33,23 +33,6 @@
                 <string>&lt;b&gt;Advanced Options&lt;/b&gt;</string>
             </property>
         </widget>
-        <spacer row="2" column="2" rowspan="2" colspan="1">
-            <property name="name">
-                <cstring>Spacer5</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>139</width>
-                    <height>0</height>
-                </size>
-            </property>
-        </spacer>
         <widget class="QLabel" row="2" column="0">
             <property name="name">
                 <cstring>TextLabel2</cstring>
@@ -95,7 +78,46 @@
                 <enum>Horizontal</enum>
             </property>
         </widget>
-        <spacer row="4" column="2">
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>fadeOutHandles</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Fade out applet handles</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>All applets that appear on the KDE panel have a small handle associated with them. By selecting this option these handles will be faded out and not shown by default.</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0">
+            <property name="name">
+                <cstring>resizableHandle</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Resizable handle</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>With this option enabled you can can click and drag the edge of the panel to freely resize it. The panel's size has to be set to "Custom". This option can also be set in the panel's context menu.</string>
+            </property>
+        </widget>
+        <spacer row="5" column="0">
+            <property name="name">
+                <cstring>Spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>0</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="5" column="2">
             <property name="name">
                 <cstring>Spacer6</cstring>
             </property>
@@ -112,31 +134,20 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+        <spacer row="3" column="2">
             <property name="name">
-                <cstring>fadeOutHandles</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Fade out applet handles</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>All applets that appear on the KDE panel have a small handle associated with them. By selecting this option these handles will be faded out and not shown by default.</string>
-            </property>
-        </widget>
-        <spacer row="5" column="1">
-            <property name="name">
-                <cstring>Spacer4</cstring>
+                <cstring>Spacer5</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Horizontal</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>0</width>
-                    <height>16</height>
+                    <width>139</width>
+                    <height>0</height>
                 </size>
             </property>
         </spacer>
