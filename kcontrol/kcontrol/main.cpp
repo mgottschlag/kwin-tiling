@@ -81,7 +81,7 @@ int MyApplication::newInstance()
 int main(int argc, char *argv[])
 {
   KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Centre"), 
-    "v2.0pre", "The KDE Control Centre", KAboutData::GPL, 
+    "v2.0pre", "The KDE Control Centre", KAboutData::License_GPL, 
     "(c) 1998-2000, The KDE Control Centre Developers");
   aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
   KCmdLineArgs::init( argc, argv, &aboutData );
