@@ -355,7 +355,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   if( isLocalFullPath && !exists )
   {
     //kdDebug() << "fileNotFound -> ERROR" << endl;
-    setErrorMsg( data, QString::null );
+    setErrorMsg( data, i18n( "<qt>The file or directory <b>%1</b> does not exist." ).arg( data.uri().prettyURL() ) );
     setURIType( data, KURIFilterData::ERROR );
     return true;
   }
