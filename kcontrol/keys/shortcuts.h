@@ -1,5 +1,5 @@
 /*
- * main.h
+ * shortcuts.h
  *
  * Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  *
@@ -21,20 +21,23 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __keys_main_h
-#define __keys_main_h
+#ifndef __SHORTCUTS_MODULE_H
+#define __SHORTCUTS_MODULE_H
 
+#include <qbuttongroup.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
 #include <qtabwidget.h>
+#include <kaccelbase.h>
 #include <kcmodule.h>
+#include <kcombobox.h>
+#include <kkeydialog.h>
 
-class ShortcutsModule;
-class ModifiersModule;
-
-class KeyModule : public KCModule
+class ShortcutsModule : public KCModule
 {
 	Q_OBJECT
  public:
-	KeyModule( QWidget *parent, const char *name );
+	ShortcutsModule( QWidget *parent = 0, const char *name = 0 );
 
 	void load();
 	void save();
@@ -43,15 +46,29 @@ class KeyModule : public KCModule
 
  protected:
 	void initGUI();
-	void resizeEvent( QResizeEvent* );
+	void createActionsGeneral();
+	void createActionsSequence();
+	void createActionsApplication();
+	void readSchemeNames();
+	void saveScheme();
+	void resizeEvent(QResizeEvent *e);
 
  protected slots:
-	void slotModuleChanged( bool state );
+	void slotSchemeCur();
+	void slotKeyChange();
+	void slotSelectScheme( int iItem );
+	void slotSaveSchemeAs();
+	void slotRemoveScheme();
 
  private:
 	QTabWidget* m_pTab;
-	ShortcutsModule* m_pShortcuts;
-	ModifiersModule* m_pModifiers;
+	QRadioButton *m_prbCur, *m_prbNew, *m_prbPre;
+	KComboBox* m_pcbSchemes;
+	QPushButton* m_pbtnSave, * m_pbtnRemove;
+	int m_nSysSchemes;
+	QStringList m_rgsSchemeFiles;
+	KAccelActions m_actionsGeneral, m_actionsSequence, m_actionsApplication;
+	KKeyChooser* m_pkcGeneral, * m_pkcSequence, * m_pkcApplication;
 };
 
-#endif
+#endif // __SHORTCUTS_MODULE_H
