@@ -151,13 +151,6 @@ class CXdmcp:public QObject {
     void registerHostaddr(struct sockaddr *addr, int len, xdmOpCode type);
     int initXDMCP();
 
-#ifdef MINIX
-    char read_buffer[XDM_MAX_MSGLEN + sizeof(udp_io_hdr_t)];
-    int read_inprogress;
-    int read_size;
-    void read_cb(nbio_ref_t ref, int res, int err);
-#endif
-
     int fromHex(char *s, char *d, int len);
 
 
