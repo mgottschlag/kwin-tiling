@@ -410,17 +410,19 @@ void KDMUsersWidget::slotAddUsers(const QMap<QString,int> &users)
     }
     optinlv->sort();
     optoutlv->sort();
-    usercombo->listBox()->sort();
+    if (usercombo->listBox())
+        usercombo->listBox()->sort();
 }
 
 void KDMUsersWidget::slotDelUsers(const QMap<QString,int> &users)
 {
     QMapConstIterator<QString,int> it;
     for (it = users.begin(); it != users.end(); ++it) {
-	const QString *name = &it.key();
-	delete usercombo->listBox()->findItem( *name, ExactMatch | CaseSensitive );
-	delete optinlv->findItem( *name, 0 );
-	delete optoutlv->findItem( *name, 0 );
+        const QString *name = &it.key();
+        if (usercombo->listBox())
+            delete usercombo->listBox()->findItem( *name, ExactMatch | CaseSensitive );
+        delete optinlv->findItem( *name, 0 );
+        delete optoutlv->findItem( *name, 0 );
     }
 }
 

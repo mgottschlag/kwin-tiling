@@ -299,18 +299,23 @@ void KDMConvenienceWidget::slotAddUsers(const QMap<QString,int> &users)
 {
     QMapConstIterator<QString,int> it;
     for (it = users.begin(); it != users.end(); ++it) {
-	if (it.data() != 0) {
-	    const QString *name = &it.key();
-	    if (*name != autoUser)
-		userlb->insertItem(*name);
-	    if (*name != preselUser)
-		puserlb->insertItem(*name);
-	    (new QCheckListItem(npuserlv, *name, QCheckListItem::CheckBox))->
-	      setOn(noPassUsers.find(*name) != noPassUsers.end());
-	}
+        if (it.data() != 0) {
+            const QString *name = &it.key();
+            if (*name != autoUser)
+                userlb->insertItem(*name);
+            if (*name != preselUser)
+                puserlb->insertItem(*name);
+            (new QCheckListItem(npuserlv, *name, QCheckListItem::CheckBox))->
+            setOn(noPassUsers.find(*name) != noPassUsers.end());
+        }
     }
-    userlb->listBox()->sort();
-    puserlb->listBox()->sort();
+
+    if (userlb->listBox())
+        userlb->listBox()->sort();
+
+    if (puserlb->listBox())
+        puserlb->listBox()->sort();
+
     npuserlv->sort();
     userlb->setCurrentItem(autoUser);
     puserlb->setCurrentItem(preselUser);
@@ -322,10 +327,10 @@ void KDMConvenienceWidget::slotDelUsers(const QMap<QString,int> &users)
     for (it = users.begin(); it != users.end(); ++it) {
 	if (it.data() != 0) {
 	    const QString *name = &it.key();
-	    if (*name != autoUser)
+	    if (*name != autoUser && userlb->listBox())
 	        delete userlb->listBox()->
 		  findItem( *name, ExactMatch | CaseSensitive );
-	    if (*name != preselUser)
+	    if (*name != preselUser && puserlb->listBox())
 	        delete puserlb->listBox()->
 		  findItem( *name, ExactMatch | CaseSensitive );
 	    delete npuserlv->findItem( *name, 0 );
