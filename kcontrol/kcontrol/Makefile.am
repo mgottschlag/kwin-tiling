@@ -17,14 +17,14 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 # 
 
-INCLUDES= $(all_includes)
+AM_CPPFLAGS= $(all_includes)
 METASOURCES = AUTO
 
 SUBDIRS = . pics
 
 bin_PROGRAMS =
 lib_LTLIBRARIES =
-kdeinit_LTLIBRARIES = kcontrol.la kcmshell.la
+kdeinit_LTLIBRARIES = kcontrol.la
 
 noinst_LTLIBRARIES = libkcontrolcommon.la libkcontrolglobal.la
 # global.cpp is used by two targets
@@ -41,10 +41,6 @@ kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
 
 kcontrol_la_LIBADD  = libkcontrolcommon.la $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
-
-kcmshell_la_SOURCES = kcmshell.cpp kcdialog.cpp kcdialog.skel kcmshell.skel
-kcmshell_la_LIBADD = libkcontrolcommon.la $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
-kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 rccontroldir = $(kde_datadir)/kcontrol
 rccontrol_DATA = kcontrolui.rc
