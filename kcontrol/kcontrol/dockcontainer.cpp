@@ -17,6 +17,8 @@
 
 */
 
+#include <qapp.h>
+
 #include <kmessagebox.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -49,16 +51,22 @@ void DockContainer::dockModule(ConfigModule *module)
   if (_module == module)
     return;
   
+  QApplication::setOverrideCursor( waitCursor );
   ProxyWidget *widget = module->module();
+  QApplication::restoreOverrideCursor();
   
   if (widget)
     {
       if (_module && _module->isChanged())
         {	  	  
-          int res = KMessageBox::warningYesNo(0, i18n("There are unsaved changes in the active module.\n"
-                                                      "Do you want to apply the changes before running\n"
+          int res = KMessageBox::warningYesNo(0,i18n("There are unsaved changes in the "
+                                                     "active module.\n"
+                                                     "Do you want to apply the changes "
+                                                     "before running\n"
                                                       "the new module or forget the changes?"),
-                                              i18n("Unsaved changes"), i18n("&Apply"), i18n("&Forget"));
+                                              i18n("Unsaved changes"),
+                                              i18n("&Apply"),
+                                              i18n("&Forget"));
           if (res == KMessageBox::Yes)
             _module->module()->applyClicked();
           
