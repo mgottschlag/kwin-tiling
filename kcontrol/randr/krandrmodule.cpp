@@ -68,7 +68,10 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	if (m_screens.count() <= 1)
 		m_screenSelector->setEnabled(false);
 	
-	m_sizeGroup = new QVButtonGroup(i18n("Screen Size"), this);
+	QHBox* sizeBox = new QHBox(this);
+	new QLabel(i18n("Screen Size"), sizeBox);
+	m_sizeCombo = new KComboBox(sizeBox);
+	connect(m_sizeCombo, SIGNAL(activated(int)), SLOT(slotSizeChanged(int)));
 
 	m_rotationGroup = new QButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees anticlockwise)"), this);
 	m_rotationGroup->setRadioButtonExclusive(true);
@@ -109,15 +112,11 @@ void KRandRModule::slotScreenChanged(int screen)
 	setScreen(screen);
 
 	// Clear resolutions
-	for (int i = m_sizeGroup->count() - 1; i >= 0; i--) {
-		m_sizeGroup->remove(m_sizeGroup->find(i));
-	}
+	m_sizeCombo->clear();
 	
 	// Add new resolutions
 	for (int i = 0; i < (int)m_currentScreen->sizes.count(); i++) {
-		QRadioButton* thisButton = new QRadioButton(i18n("%1 x %2 (%3mm x %4mm)").arg(m_currentScreen->sizes[i].width).arg(m_currentScreen->sizes[i].height).arg(m_currentScreen->sizes[i].mwidth).arg(m_currentScreen->sizes[i].mheight), m_sizeGroup);
-		m_sizeGroup->insert(thisButton);
-		connect(thisButton, SIGNAL(clicked()), SLOT(slotSizeChanged()));
+		m_sizeCombo->insertItem(i18n("%1 x %2 (%3mm x %4mm)").arg(m_currentScreen->sizes[i].width).arg(m_currentScreen->sizes[i].height).arg(m_currentScreen->sizes[i].mwidth).arg(m_currentScreen->sizes[i].mheight));
 	}
 
 	// Clear rotations
@@ -158,11 +157,11 @@ void KRandRModule::slotRotationChanged()
 	setChanged();
 }
 
-void KRandRModule::slotSizeChanged()
+void KRandRModule::slotSizeChanged(int index)
 {
 	int oldProposed = m_currentScreen->proposedSize;
 	
-	m_currentScreen->proposedSize = static_cast<SizeID>(m_sizeGroup->id(m_sizeGroup->selected()));
+	m_currentScreen->proposedSize = static_cast<SizeID>(index);
 	
 	if (m_currentScreen->proposedSize != oldProposed) {
 		m_currentScreen->proposedRefreshRate = m_currentScreen->indexToRefreshRate(0);
@@ -250,9 +249,9 @@ void KRandRModule::apply()
 
 void KRandRModule::update()
 {
-	m_sizeGroup->blockSignals(true);
-	m_sizeGroup->setButton(m_currentScreen->proposedSize);
-	m_sizeGroup->blockSignals(false);
+	m_sizeCombo->blockSignals(true);
+	m_sizeCombo->setCurrentItem(m_currentScreen->proposedSize);
+	m_sizeCombo->blockSignals(false);
 
 	m_rotationGroup->blockSignals(true);
 	switch (m_currentScreen->proposedRotation & 15) {

@@ -1,0 +1,25 @@
+Ok, as more people are beginning to discover the joys of RANDR I'd better explain what's
+happening.  I have submitted a patch to Trolltech for core support of RANDR, which
+mostly deals with not letting popups go off the screen.  I have also written patches
+for kwin, kdesktop, kicker etc. to get an (almost) completely well behaved KDE+RANDR.
+
+However, the patch to Qt will appear in 3.2 and I don't think it's a great idea to
+have everyone patching their Qts with my version of the patch, unless Trolltech
+release the official patch beforehand (I haven't asked, you certainly may.) Still,
+if you are desperate for this then please write to me at meddie@yoyo.its.monash.edu.au
+and I will send you the requisite patches.
+
+Also, these patches don't deal with the font sizes being off for newly started apps after
+a screen change.  Probably a Qt issue, which is why I'm letting them deal with it.
+
+So, to sum it up, you can use these components but without the additional patches
+your kicker won't behave, nor will your windows be resized.  restart kicker with
+"dcop kicker kicker restart" to get by for now.
+
+I may put these patches in CVS if there are enough requests, or if one day I get time
+and inspiration.
+
+For now, I would appreciate comments on the UI to the same email address above.
+
+Cheers,
+Hamish.

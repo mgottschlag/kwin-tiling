@@ -38,7 +38,7 @@ public:
 protected slots:
 	void slotScreenChanged(int screen);
 	void slotRotationChanged();
-	void slotSizeChanged();
+	void slotSizeChanged(int index);
 	void slotRefreshChanged(int index);
 
 protected:
@@ -50,7 +50,7 @@ protected:
 	void populateRefreshRates();
 		
 	KComboBox*		m_screenSelector;
-	QButtonGroup*	m_sizeGroup;
+	KComboBox*		m_sizeCombo;
 	QButtonGroup*	m_rotationGroup;
 	KComboBox*		m_refreshRates;
 	
