@@ -67,6 +67,7 @@ from The Open Group.
 #  undef _POSIX_SOURCE
 # endif
 #endif
+
 #ifdef X_NOT_STDC_ENV
 # define Time_t long
 extern Time_t time ();
@@ -261,6 +262,7 @@ struct display {
 struct disphist {
 	struct disphist	*next;
 	char		*name;
+	Time_t		lastStart;	/* time of last display start */
 	Time_t		lastExit;	/* time of last display exit */
 	int		goodExit;	/* was the last exit "peaceful"? */
 	int		startTries;	/* current start try */

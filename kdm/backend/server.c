@@ -219,8 +219,7 @@ serverPause (unsigned t, int serverPid)
     (void) Signal (SIGALRM, SIG_DFL);
     (void) Signal (SIGUSR1, CatchUsr1);
     if (serverPauseRet) {
-	Debug ("Server died\n");
-	LogError ("server unexpectedly died\n");
+	LogError ("Server unexpectedly died\n");
     }
     return serverPauseRet;
 }

@@ -39,53 +39,6 @@ from The Open Group.
 
 int parseDisplayType (char *string, int *usedDefault, char **atPos);
 
-/* XXX nearly parseArgs */
-static char **
-splitIntoWords (char *s)
-{
-    char    **args, **newargs;
-    char    *wordStart;
-    int	    nargs;
-
-    args = 0;
-    nargs = 0;
-    for (;;)
-    {
-	for(;; s++)
-	{
-	    if (!*s || *s == '\n' || *s == '#')
-		return args;
-	    if (!isspace (*s))
-		break;
-	}
-	for (wordStart = s; *s && *s != '#' && !isspace (*s); s++);
-	if (!args)
-	{
-    	    if (!(args = (char **) malloc (2 * sizeof (char *))))
-	    	return NULL;
-	}
-	else
-	{
-	    if (!(newargs = (char **) realloc ((char *) args,
-						(nargs+2) * sizeof (char *))))
-	    {
-	    	freeStrArr (args);
-	    	return NULL;
-	    }
-	    args = newargs;
-	}
-	if (!(args[nargs] = malloc (s - wordStart + 1)))
-	{
-	    freeStrArr (args);
-	    return NULL;
-	}
-	memcpy (args[nargs], wordStart, s - wordStart);
-	args[nargs][s-wordStart] = '\0';
-	++nargs;
-	args[nargs] = NULL;
-    }
-}
-
 static char **
 copyArgs (char **args)
 {
@@ -126,7 +79,7 @@ ParseDisplay (char *source)
     int			usedDefault;
     int			displayType;
 
-    if (!(args = splitIntoWords (source)))
+    if (!(args = parseArgs (0, source)))
 	return;
     if (!args[0])
     {
@@ -175,13 +128,11 @@ ParseDisplay (char *source)
 	StrDup (&d->console, atPos);
 	dtx = "new";
     }
-    Debug ("Found %s display: %s %s %s",
-	   dtx, d->name, d->class2 ? d->class2 : "", type);
+    Debug ("Found %s display: %s %s %s %[s\n",
+	   dtx, d->name, d->class2 ? d->class2 : "", type, argv);
+    d->hstent->startTries = 0;
     d->displayType = displayType;
     d->serverArgv = copyArgs (argv);
-    for (a = d->serverArgv; a && *a; a++)
-	Debug (" %s", *a);
-    Debug ("\n");
     freeSomeArgs (args, argv - args);
 }
 
@@ -198,20 +149,18 @@ static struct displayMatch {
 int
 parseDisplayType (char *string, int *usedDefault, char **atPos)
 {
-	struct displayMatch	*d;
+    struct displayMatch *d;
 
-	*atPos = 0;
-	for (d = displayTypes; d->name; d++)
-	{
-		if (!memcmp (d->name, string, d->len) && 
-		    (!string[d->len] || string[d->len] == '@'))
-		{
-			if (string[d->len] == '@')
-			    *atPos = string + d->len + 1;
-			*usedDefault = 0;
-			return d->type;
-		}
+    *atPos = 0;
+    for (d = displayTypes; d->name; d++) {
+	if (!memcmp (d->name, string, d->len) &&
+	    (!string[d->len] || string[d->len] == '@')) {
+	    if (string[d->len] == '@')
+		*atPos = string + d->len + 1;
+	    *usedDefault = 0;
+	    return d->type;
 	}
-	*usedDefault = 1;
-	return d->type;
+    }
+    *usedDefault = 1;
+    return d->type;
 }

@@ -41,51 +41,51 @@ static struct disphist	*disphist;
 int
 AnyDisplaysLeft (void)
 {
-	return displays != (struct display *) 0;
+    return displays != (struct display *) 0;
 }
 
 void
 ForEachDisplay (void (*f)(struct display *))
 {
-	struct display	*d, *next;
+    struct display *d, *next;
 
-	for (d = displays; d; d = next) {
-		next = d->next;
-		(*f) (d);
-	}
+    for (d = displays; d; d = next) {
+	next = d->next;
+	(*f) (d);
+    }
 }
 
 struct display *
 FindDisplayByName (char *name)
 {
-	struct display	*d;
+    struct display *d;
 
-	for (d = displays; d; d = d->next)
-		if (!strcmp (name, d->name))
-			return d;
-	return 0;
+    for (d = displays; d; d = d->next)
+	if (!strcmp (name, d->name))
+	    return d;
+    return 0;
 }
 
 struct display *
 FindDisplayByPid (int pid)
 {
-	struct display	*d;
+    struct display *d;
 
-	for (d = displays; d; d = d->next)
-		if (pid == d->pid)
-			return d;
-	return 0;
+    for (d = displays; d; d = d->next)
+	if (pid == d->pid)
+	    return d;
+    return 0;
 }
 
 struct display *
 FindDisplayByServerPid (int serverPid)
 {
-	struct display	*d;
+    struct display *d;
 
-	for (d = displays; d; d = d->next)
-		if (serverPid == d->serverPid)
-			return d;
-	return 0;
+    for (d = displays; d; d = d->next)
+	if (serverPid == d->serverPid)
+	    return d;
+    return 0;
 }
 
 #ifdef XDMCP

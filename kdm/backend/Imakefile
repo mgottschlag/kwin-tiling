@@ -58,22 +58,27 @@ KRB5OBJS = krb5auth.o
 KRB5SRCS = krb5auth.c
 #endif
 
-/* This is correct for Linux and FreeBSD */
 #ifdef USEPAM
 #undef HasPam
 #define HasPam USEPAM
 #endif
+
+/* This is correct for Linux and FreeBSD */
 #if HasPam
 PAM_LIBRARIES = PamLibraries
 PAM_DEFINES = -DUSE_PAM
-#ifdef PamIncludes
-PAM_INCLUDES = PamIncludes
-#endif
 #endif
 
 #ifdef USESHADOW
 #undef HasShadowPasswd
 #define HasShadowPasswd USESHADOW
+#endif
+
+#if HasPam
+#undef HasShadowPasswd
+#define HasShadowPasswd NO
+#undef HasLibCrypt
+#define HasLibCrypt NO
 #endif
 
 #if SystemV4 || HasShadowPasswd
@@ -136,11 +141,11 @@ SYS_LIBRARIES1 = -lutil
 
   SYS_LIBRARIES = $(SYS_LIBRARIES1) $(SYS_LIBRARIES2) $(SYS_LIBRARIES3)
 
-INCLUDES = $(PAM_INCLUDES) $(KRBIV_INCLUDES) $(KRB5_INCLUDE)
-DEPLIBS = $(DEPXLIB) $(DEPXAUTHLIB) $(DEPXDMCPLIB) $(XINDEPLIBS)
-LOCAL_LIBRARIES = $(XLIB) $(XAUTHLIB) \
-	$(XDMCPLIB) $(RPCLIB) $(PAM_LIBRARIES) \
-	$(CRYPT_LIBRARIES) $(KRBIVLIB) $(XINLIBS)
+  INCLUDES = $(KRBIV_INCLUDES) $(KRB5_INCLUDE)
+   DEPLIBS = $(DEPXLIB) $(DEPXAUTHLIB) $(DEPXDMCPLIB) $(XINDEPLIBS)
+   LOCAL_LIBRARIES = $(XLIB) $(XAUTHLIB) \
+ $(XDMCPLIB) $(RPCLIB) $(PAM_LIBRARIES) \
+ $(CRYPT_LIBRARIES) $(KRBIVLIB) $(XINLIBS)
 
           SRCS = auth.c daemon.c server.c dpylist.c dm.c error.c file.c \
 		 netaddr.c reset.c resource.c protodpy.c policy.c \
@@ -180,5 +185,3 @@ SpecialCObjectRule(auth,$(ICONFIGFILES),$(SOCK_DEFINES))
 SpecialCObjectRule(policy,$(ICONFIGFILES),$(_NOOP_))
 SpecialCObjectRule(socket,$(ICONFIGFILES),$(SOCK_DEFINES))
 SpecialCObjectRule(xdmcp,$(ICONFIGFILES),$(SOCK_DEFINES))
-
-$(OBJS): Makefile

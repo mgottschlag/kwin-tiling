@@ -710,7 +710,7 @@ WaitForChild (void)
 # endif
 #endif
     {
-	Debug ("Manager wait returns pid: %d sig %d core %d code %d\n",
+	Debug ("Manager wait returns  pid %d  sig %d  core %d  code %d\n",
 	       pid, waitSig(status), waitCore(status), waitCode(status));
 	if (autoRescan)
 	    RescanIfMod ();
@@ -744,14 +744,10 @@ WaitForChild (void)
 		ExitDisplay (d, TRUE, FALSE, TRUE);
 		break;
 	    default:
-		Debug ("Display exited with unknown status %d\n", waitVal(status));
-		LogError ("Unknown session exit code %d from process %d\n",
-			  waitVal (status), pid);
+		LogError ("Unknown session exit code from manager process\n");
 		ExitDisplay (d, FALSE, FALSE, TRUE);
 		break;
 	    case EX_OPENFAILED_DPY:
-		Debug ("Display exited with EX_OPENFAILED_DPY, try %d of %d\n",
-		       d->hstent->startTries, d->startAttempts);
 		LogError ("Display %s cannot be opened\n", d->name);
 		/*
 		 * no display connection was ever made, tell the
@@ -804,8 +800,8 @@ WaitForChild (void)
 		d->status = notRunning;
 		break;
 	    case running:
-		Debug ("Server for display %s terminated unexpectedly, status %d\n", d->name, waitVal (status));
-		LogError ("Server for display %s terminated unexpectedly: %d\n", d->name, waitVal (status));
+		LogError ("Server for display %s terminated unexpectedly\n", 
+			  d->name);
 		if (d->pid != -1)
 		{
 		    Debug ("Terminating session pid %d\n", d->pid);
@@ -813,13 +809,14 @@ WaitForChild (void)
 		}
 		break;
 	    case notRunning:
-		Debug ("Server exited for notRunning session on display %s\n", d->name);
+		Debug ("Server exited for notRunning session on display %s\n", 
+		       d->name);
 		break;
 	    }
 	}
 	else
 	{
-	    Debug ("Unknown child termination, status %d\n", waitVal (status));
+	    Debug ("Unknown child termination\n");
 	}
     }
     StartDisplays ();
@@ -850,8 +847,10 @@ StartDisplay (struct display *d)
 {
     char	buf[100];
     int		pid;
+    Time_t	curtime;
 
-    Debug ("StartDisplay %s\n", d->name);
+    Debug ("StartDisplay %s, try %d\n", d->name, d->hstent->startTries + 1);
+
     if (!LoadDisplayResources (d))
     {
 	LogError ("Unable to read configuration for display %s; stopping it.\n", 
@@ -859,12 +858,25 @@ StartDisplay (struct display *d)
 	StopDisplay (d);
 	return;
     }
-    if (d->hstent->startTries >= d->startAttempts)
+
+    time (&curtime);
+    if (d->hstent->lastStart + d->startInterval < curtime)
+	d->hstent->startTries = 0;
+    else if (d->hstent->startTries > d->startAttempts)
     {
-	LogInfo ("Trying to start disabled display %s; ignoring it.\n", d->name);
+	Debug ("Ignoring disabled display %s\n", d->name);
+	StopDisplay (d);
+	return;
+    } 
+    if (++d->hstent->startTries > d->startAttempts)
+    {
+	LogError ("Display %s is being disabled (restarting too fast)\n",
+		  d->name);
 	StopDisplay (d);
 	return;
     }
+    d->hstent->lastStart = curtime;
+
     if ((d->displayType & location) == Local)
     {
 	/* don't bother pinging local displays; we'll
@@ -1027,19 +1039,9 @@ ExitDisplay (
     int			forceReserver,
     int			goodExit)
 {
-    Time_t	curtime;
-
     Debug ("Recording exit of %s (GoodExit=%d)\n", d->name, goodExit);
 
-    time (&curtime);
-    if (d->hstent->lastExit + d->startInterval < curtime)
-	d->hstent->startTries = 0;
-    else if (++d->hstent->startTries >= d->startAttempts) {
-	LogError ("Display %s is being disabled (exit frequency too high)\n", d->name);
-	doRestart = FALSE;
-    }
-    d->hstent->lastExit = curtime;
-
+    time (&d->hstent->lastExit);
     d->hstent->goodExit = goodExit;
     ClrnLog (d);
     if (d->pipefd[0] >= 0)

@@ -204,19 +204,18 @@ freeStrArr (char **arr)
 }
 
 
-# define isblank(c)	((c) == ' ' || c == '\t')
-
 char **
 parseArgs (char **argv, char *string)
 {
-    char *word;
+    char *word, ch;
 
     argv = initStrArr (argv);
     for (word = string; ; ++string) {
-	if (!*string || isblank (*string)) {
+	ch = *string;
+	if (!ch || ch == '\n' || ch == '#' || ch == ' ' || ch == '\t') {
 	    if (word != string)
 		argv = addStrArr (argv, word, string - word);
-	    if (!*string)
+	    if (!ch || ch == '\n' || ch == '#')
 		return argv;
 	    word = string + 1;
 	}
