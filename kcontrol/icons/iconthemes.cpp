@@ -404,10 +404,14 @@ void IconThemesConfig::save()
   if (!selected)
      return;
 
-  KConfig *config = KGlobal::config();
-  KConfigGroupSaver saver(config, "Icons");
+  KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
+
+  config->setGroup("Icons");
+
   config->writeEntry("Theme", m_themeNames[selected->text(0)]);
   emit changed(false);
+
+  delete config;
 
   for (int i=0; i<KIcon::LastGroup; i++)
   {
