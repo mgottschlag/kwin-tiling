@@ -319,6 +319,9 @@ public:
     void setShadowEnabled(bool enabled);
     bool shadowEnabled() const { return m_shadowEnabled; }
 
+    void setTextLines(int lines);
+    int textLines() const { return m_textLines; }
+
     void readSettings();
     void writeSettings();
 
@@ -332,6 +335,7 @@ private:
     QColor m_TextColor;
     QColor m_TextBackgroundColor;
     bool m_shadowEnabled;
+    int m_textLines;
 
     KConfig *m_pConfig;
     bool m_bDeleteConfig;

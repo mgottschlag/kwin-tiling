@@ -1141,6 +1141,14 @@ void KGlobalBackgroundSettings::setShadowEnabled(bool enabled)
     m_shadowEnabled = enabled;
 }
 
+void KGlobalBackgroundSettings::setTextLines(int lines)
+{
+    if (lines == m_textLines)
+        return;
+    dirty = true;
+    m_textLines = lines;
+}
+
 void KGlobalBackgroundSettings::readSettings()
 {
     m_pConfig->setGroup("Background Common");
@@ -1155,6 +1163,7 @@ void KGlobalBackgroundSettings::readSettings()
     m_TextColor = m_pConfig->readColorEntry("NormalTextColor", &m_TextColor);
     m_TextBackgroundColor = m_pConfig->readColorEntry("ItemTextBackground");
     m_shadowEnabled = m_pConfig->readBoolEntry("ShadowEnabled", true);
+    m_textLines = m_pConfig->readNumEntry("TextHeight", 2);
 
     m_Names.clear();
     NETRootInfo info( qt_xdisplay(), NET::DesktopNames | NET::NumberOfDesktops );
@@ -1180,6 +1189,7 @@ void KGlobalBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("NormalTextColor", m_TextColor);
     m_pConfig->writeEntry("ItemTextBackground", m_TextBackgroundColor);
     m_pConfig->writeEntry("ShadowEnabled", m_shadowEnabled);
+    m_pConfig->writeEntry("TextHeight", m_textLines);
     m_pConfig->sync();
     dirty = false;
 

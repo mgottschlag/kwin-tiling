@@ -192,6 +192,16 @@ void BGAdvancedDialog::setShadowEnabled(bool enabled)
     dlg->m_cbShadow->setChecked(enabled);
 }
 
+void BGAdvancedDialog::setTextLines(int lines)
+{
+    dlg->m_spinTextLines->setValue(lines);
+}
+
+int BGAdvancedDialog::textLines() const
+{
+    return dlg->m_spinTextLines->value();
+}
+
 void BGAdvancedDialog::updateUI()
 {
     QString prog = r->KBackgroundProgram::name();

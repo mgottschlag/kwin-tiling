@@ -50,6 +50,8 @@ public:
    void setTextBackgroundColor(const QColor &color);
    bool shadowEnabled();
    void setShadowEnabled(bool enabled);
+   void setTextLines(int lines);
+   int textLines() const;
 
    void updateUI();
 
