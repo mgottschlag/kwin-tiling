@@ -133,28 +133,8 @@ class CFontEngine
         TEST       = 0x0,    // Justr try to open font - used for checking if font is valid...
         NAME       = 0x1,    // Read name
         PROPERTIES = 0x2,    // Read weight, familiy, and postscript names
-        XLFD       = 0x4    // Read extra details only needed for xlfd (i.e. foundry, width, and spacing)
-#ifdef KFONTINST_AFM
-        ,AFM        = NAME|PROPERTIES|XLFD   // For AFM, just read all properties...
-#endif
+        XLFD       = 0x4     // Read extra details only needed for xlfd (i.e. foundry, width, and spacing)
     };
-
-#ifdef KFONTINST_AFM
-    struct TGlyphInfo
-    {
-        enum EConstants
-        {
-            MAX_NAME_LEN = 255
-        };
-
-        char name[MAX_NAME_LEN+1];
-        int  scaledWidth,
-             xMin,
-             xMax,
-             yMin,
-             yMax;
-    };
-#endif
 
     private:
 
@@ -191,7 +171,8 @@ class CFontEngine
         int           width,
                       height,
                       greys,
-                      mod;
+                      pitch;
+        bool          mono;
         unsigned char *buffer;
     };
 
@@ -259,23 +240,6 @@ class CFontEngine
     {
         return (point* /*QPaintDevice::x11AppDpiX()*/ 75 +36)/72;
     }
-#endif
-
-#ifdef KFONTINST_AFM
-    //
-    // Metric accsessing functions...  (only work for TrueType & Type1)
-    //
-    int                scaleMetric(int metric);
-    float              getItalicAngle();
-    int                getAscender();
-    int                getDescender();
-    int                getUnderlineThickness();
-    int                getUnderlinePosition(); 
-    int                getBBoxXMin();
-    int                getBBoxXMax();
-    int                getBBoxYMin();
-    int                getBBoxYMax();
-    const TGlyphInfo * getGlyphInfo(unsigned long glyph);
 #endif
 
     //
@@ -351,7 +315,7 @@ class CFontEngine
     bool       getGlyphBitmap(FTC_Image_Desc &font, FT_ULong index, Bitmap &target, int &left, int &top,
                              int &xAdvance, FT_Pointer *ptr);
     void       align32(Bitmap &bmp);
-    bool       drawGlyph(QPixmap &pix, FTC_Image_Desc &font, FT_Size &size, int glyphNum, FT_F26Dot6 &x, FT_F26Dot6 &y,
+    bool       drawGlyph(QPixmap &pix, FTC_Image_Desc &font, int glyphNum, FT_F26Dot6 &x, FT_F26Dot6 &y,
                          FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0);
 #endif
 
@@ -371,7 +335,8 @@ class CFontEngine
                    itsFoundry,
                    itsPath;
     float          itsItalicAngle;
-    int            itsNumFaces;
+    int            itsNumFaces,
+                   itsPixelSize;   // Used for Bitmap fonts
     TFtData        itsFt;
 };
 
