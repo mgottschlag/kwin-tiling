@@ -69,6 +69,8 @@ protected:
 	QCheckBox*		m_syncTrayApp;
 	bool			m_oldApply;
 	bool			m_oldSyncTrayApp;
+
+	bool			m_changed;
 };
 
 #endif
