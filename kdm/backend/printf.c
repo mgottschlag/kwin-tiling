@@ -127,7 +127,7 @@ fmtint (OutCh dopr_outch, void *bp,
     ctab = (flags & DP_F_UPCASE) ? "0123456789ABCDEF" : "0123456789abcdef";
     do {
 	convert[place++] = ctab[uvalue % (unsigned) base];
-	uvalue = (uvalue / (unsigned) base);
+	uvalue = uvalue / (unsigned) base;
     } while (uvalue);
 
     zpadlen = max - place;
@@ -284,14 +284,14 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
     arlen = 0;
 #endif
     for (;;) {
-	flags = cflags = min = 0;
-	max = -1;   
 	for (;;) {
 	    NCHR;
 	    if (ch == '%')
 		break;
 	    dopr_outch (bp, ch);
 	}
+	flags = cflags = min = 0;
+	max = -1;   
 	for (;;) {
 	    NCHR;
 	    switch (ch) {
@@ -430,11 +430,20 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 			    strvalue = ((char **)arptr)[aridx];
 			    fmtstr (dopr_outch, bp, strvalue, flags, min, max);
 			} else {
-			    switch (cflags) {
-			    case DP_C_BYTE: value = ((unsigned char *)arptr)[aridx]; break;
-			    case DP_C_SHORT: value = ((unsigned short int *)arptr)[aridx]; break;
-			    case DP_C_LONG: value = ((unsigned long int *)arptr)[aridx]; break;
-			    default: value = ((unsigned int *)arptr)[aridx]; break;
+			    if (flags & DP_F_UNSIGNED) {
+				switch (cflags) {
+				case DP_C_BYTE: value = ((unsigned char *)arptr)[aridx]; break;
+				case DP_C_SHORT: value = ((unsigned short int *)arptr)[aridx]; break;
+				case DP_C_LONG: value = ((unsigned long int *)arptr)[aridx]; break;
+				default: value = ((unsigned int *)arptr)[aridx]; break;
+				}
+			    } else {
+				switch (cflags) {
+				case DP_C_BYTE: value = ((signed char *)arptr)[aridx]; break;
+				case DP_C_SHORT: value = ((short int *)arptr)[aridx]; break;
+				case DP_C_LONG: value = ((long int *)arptr)[aridx]; break;
+				default: value = ((int *)arptr)[aridx]; break;
+				}
 			    }
 			    fmtint (dopr_outch, bp, value, radix, min, max, flags);
 			}
@@ -448,9 +457,16 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 		    fmtstr (dopr_outch, bp, strvalue, flags, min, max);
 		} else {
 #endif
-		    switch (cflags) {
-		    case DP_C_LONG: value = va_arg (args, unsigned long int); break;
-		    default: value = va_arg (args, unsigned int); break;
+		    if (flags & DP_F_UNSIGNED) {
+			switch (cflags) {
+			case DP_C_LONG: value = va_arg (args, unsigned long int); break;
+			default: value = va_arg (args, unsigned int); break;
+			}
+		    } else {
+			switch (cflags) {
+			case DP_C_LONG: value = va_arg (args, long int); break;
+			default: value = va_arg (args, int); break;
+			}
 		    }
 		    fmtint (dopr_outch, bp, value, radix, min, max, flags);
 #ifdef PRINT_ARRAYS
