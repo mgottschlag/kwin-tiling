@@ -83,7 +83,7 @@ void CXftConfigSettingsWidget::fileButtonPressed()
                 ok=KMessageBox::questionYesNo(this, i18n("File does not exist,\n"
                                                          "create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
                 if(ok)
-                    CKfiGlobal::xft().init();
+                    CKfiGlobal::xft().newFile();
             }
             else
                 KMessageBox::error(this, i18n("File does not exist,\n"
@@ -108,6 +108,7 @@ void CXftConfigSettingsWidget::fileButtonPressed()
         if(ok)
         {
             CKfiGlobal::cfg().setXftConfigFile(file);
+            emit madeChanges();
             setWidgets();
         }
     }
@@ -214,10 +215,6 @@ void CXftConfigSettingsWidget::saveButtonPressed()
         KMessageBox::error(this, i18n("Could not save file"), i18n("Error"));
 }
 
-#else
-CXftConfigSettingsWidget::CXftConfigSettingsWidget(QWidget *parent, const char *name)
-                        : CXftConfigSettingsWidgetData(parent, name)
-{
-}
-#endif
 #include "XftConfigSettingsWidget.moc"
+
+#endif

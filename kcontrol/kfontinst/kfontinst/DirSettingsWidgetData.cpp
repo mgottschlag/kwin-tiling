@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DirSettingsWidget.ui'
 **
-** Created: Sun Jul 8 16:09:45 2001
+** Created: Fri Sep 7 00:45:22 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -28,7 +28,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
 {
     if ( !name )
 	setName( "CDirSettingsWidgetData" );
-    resize( 486, 466 ); 
+    resize( 482, 466 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, sizePolicy().hasHeightForWidth() ) );
     setCaption( i18n( "Form1" ) );
     CDirSettingsWidgetDataLayout = new QGridLayout( this ); 
@@ -88,7 +88,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsFontsDirText->setFrameShape( QLabel::Panel );
     itsFontsDirText->setFrameShadow( QLabel::Sunken );
     itsFontsDirText->setText( i18n( "TextLabel1" ) );
-    itsFontsDirText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    itsFontsDirText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
     QWhatsThis::add(  itsFontsDirText, i18n( "This is the top level X11 fonts folder. Located\nwithin this will be the folders containing your\nfonts, and encodings files. Usually this will be\n(for Linux) either:\n\n    ~/.kde/share/config/fonts/    (Normal users)\n    /usr/X11R6/lib/X11/fonts/    (Root)" ) );
 
     GroupBox4_3Layout->addWidget( itsFontsDirText, 0, 1 );
@@ -127,7 +127,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsEncodingsDirText->setFrameShape( QLabel::Panel );
     itsEncodingsDirText->setFrameShadow( QLabel::Sunken );
     itsEncodingsDirText->setText( i18n( "TextLabel1" ) );
-    itsEncodingsDirText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    itsEncodingsDirText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
     QWhatsThis::add(  itsEncodingsDirText, i18n( "This is the folder containing XFree86 encoding\nfiles. These files (which usually have the suffix\n.enc or .ec.gz) are used to enable X to have\naccess to more encoding shemes (such as\ncp12525).\n\nThis folder is normaly a sub-folder of the system\nX11 fonts folder - and is usually named 'Encodings'\nor 'encodings'. As an example, on SuSE Linux\n7.1 - the folder is:\n\n/usr/X11R6/lib/X11/fonts/encodings/" ) );
 
     GroupBox4_3Layout->addWidget( itsEncodingsDirText, 7, 1 );
@@ -144,7 +144,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsXConfigFileText->setFrameShape( QLabel::Panel );
     itsXConfigFileText->setFrameShadow( QLabel::Sunken );
     itsXConfigFileText->setText( i18n( "TextLabel2" ) );
-    itsXConfigFileText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    itsXConfigFileText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
     QWhatsThis::add(  itsXConfigFileText, i18n( "This is the configuration file used by X to\ndetermine where to look for fonts.\n\nFor normal (non-root) users, this file will\nusually be called:\n    ~/.kde/share/config/fonts/fontpaths\n\nFor root, on Linux with XFree86, this file will\nusually be called XF86Config.\n\nIf the file is not specified, is of an unrecognized\nformat, or the Font Installer cannot write to the\nspecified file, then you will not be able to add,\nremove, or disable folders in the Advanced\nmode." ) );
 
     GroupBox4_3Layout->addWidget( itsXConfigFileText, 3, 1 );
@@ -177,7 +177,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsGhostscriptFileText->setFrameShape( QLabel::Panel );
     itsGhostscriptFileText->setFrameShadow( QLabel::Sunken );
     itsGhostscriptFileText->setText( i18n( "TextLabel2" ) );
-    itsGhostscriptFileText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    itsGhostscriptFileText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
     QWhatsThis::add(  itsGhostscriptFileText, i18n( "This file is used by Ghostscript to map the\nnames of fonts within Postscript files, to\nthe physical fonts located on disk.\n\n(Most UNIX/Linux programs produce\nPostscript files when printing - and these\nare passed on to Ghostscript, which does\nthe actual work.)\n\nFor normal (non-root) users, this file will\nusually be:\n    ~/.kde/share/config/fonts/Fontmap\n\n...and for root, usually the system-wide\nFontmap will be selected, and this would\nnormally be something like:\n    /usr/share/ghostscript/5.50/Fontmap" ) );
 
     CDirSettingsWidgetDataLayout->addWidget( itsGhostscriptFileText, 2, 1 );

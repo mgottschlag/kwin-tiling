@@ -461,13 +461,14 @@ bool CXftConfig::read(const QString &f)
         init();
         xft=this;
         XftConfigLexFile((char *)f.local8Bit().data());
+        itsMadeChanges=true;
         retVal=XftConfigparse() ? false : true;
     }
     else
         if(CMisc::dWritable(CMisc::getDir(f)))
         {
             init();
-            retVal=true;
+            retVal=itsMadeChanges=true;
         }
         else
             retVal=false;

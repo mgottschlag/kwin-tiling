@@ -71,6 +71,8 @@ class CXftConfig
     bool read(const QString &f);
     bool save(const QString &f, const QStringList &dirs);
 
+    void newFile()                                         { init(); itsMadeChanges=true; }
+
     bool getExcludeRange(double &from, double &to);
     bool getUseSubPixelHinting()                           { return getUseSubPixelHintingEntry() ? true : false; }
 

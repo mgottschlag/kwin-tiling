@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'InstUninstSettingsWidget.ui'
 **
-** Created: Sun May 13 16:24:25 2001
+** Created: Fri Sep 7 00:50:15 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -41,7 +41,6 @@
 #include "XftConfig.h"
 
 class CXftConfigEditor;
-#endif
 
 class CXftConfigRules : public CXftConfigRulesData
 {
@@ -52,7 +51,6 @@ class CXftConfigRules : public CXftConfigRulesData
     CXftConfigRules(QWidget *parent, const char *name=NULL);
     virtual ~CXftConfigRules() {}
 
-#ifdef HAVE_XFT
     bool display();
     void itemSelected(QListViewItem *);
     void addButtonPressed();
@@ -64,17 +62,16 @@ class CXftConfigRules : public CXftConfigRulesData
     QStringList                 getIncludes()   { return itsIncludes->getList(); }
     QStringList                 getIncludeIfs() { return itsIncludeIfs->getList(); }
 
-#endif
     public slots:
 
     void enableOk() { itsOkButton->setEnabled(true); }
 
-#ifdef HAVE_XFT
     private:
 
     QList<CXftConfig::TEntry> itsRulesList;
     CXftConfigEditor          *itsEditor;
-#endif
 };
+
+#endif
 
 #endif 

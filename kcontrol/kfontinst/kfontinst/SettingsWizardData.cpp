@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'SettingsWizard.ui'
 **
-** Created: Fri Aug 3 18:49:35 2001
+** Created: Fri Sep 7 00:44:54 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -32,7 +32,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
 {
     if ( !name )
 	setName( "CSettingsWizardData" );
-    resize( 637, 436 ); 
+    resize( 685, 436 ); 
     setCaption( i18n( "Settings Wizard" ) );
 
     itsIntroPage = new QWidget( this, "itsIntroPage" );

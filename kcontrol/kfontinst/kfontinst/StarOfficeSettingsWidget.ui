@@ -38,7 +38,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>442</width>
+            <width>438</width>
             <height>216</height>
         </rect>
     </property>
@@ -143,7 +143,7 @@
             </property>
             <property stdset="1">
                 <name>alignment</name>
-                <set>WordBreak|AlignVCenter|AlignLeft</set>
+                <set>AlignVCenter|AlignLeft</set>
             </property>
             <property>
                 <name>vAlign</name>

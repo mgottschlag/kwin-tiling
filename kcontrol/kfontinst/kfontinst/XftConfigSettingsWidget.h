@@ -29,24 +29,32 @@
 // (C) Craig Drummond, 2001
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "XftConfigSettingsWidgetData.h"
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#include <qpushbutton.h>
 #endif
 
 #ifdef HAVE_XFT
+#include <qpushbutton.h>
+#include "XftConfigSettingsWidgetData.h"
+
 class CXftConfigRules;
 #endif
 
+//
+// Can't #ifdef this class out completely, as it's used in the SettingsWizard.ui file
+//
 class CXftConfigSettingsWidget : public CXftConfigSettingsWidgetData
 {
     Q_OBJECT
 
     public:
 
-    CXftConfigSettingsWidget(QWidget *parent, const char *name=NULL);
+    CXftConfigSettingsWidget(QWidget *parent, const char *name=NULL)
+#ifdef HAVE_XFT
+        ;
+#else
+        {}
+#endif
     virtual ~CXftConfigSettingsWidget() {}
 
 #ifdef HAVE_XFT
@@ -58,7 +66,6 @@ class CXftConfigSettingsWidget : public CXftConfigSettingsWidgetData
     void advancedButtonPressed();
     void saveButtonPressed();
 
-#endif
     public slots:
 
     void disableSaveButton() { itsSaveButton->setEnabled(false); }
@@ -68,7 +75,6 @@ class CXftConfigSettingsWidget : public CXftConfigSettingsWidgetData
     void madeChanges();
     void savedChanges();
 
-#ifdef HAVE_XFT
     private:
 
     void setWidgets();

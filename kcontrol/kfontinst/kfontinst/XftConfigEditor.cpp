@@ -79,18 +79,13 @@ CXftConfigEditor::TValidators::TValidators(QLineEdit *lineedit, QLineEdit *other
     lineeditDouble=new QDoubleValidator(lineedit);
 }
 
-#endif
-
 CXftConfigEditor::CXftConfigEditor(QWidget *parent, const char *name)
                 : CXftConfigEditorData(parent, name, true)
-#ifdef HAVE_XFT
                 , itsMatchMode(COMBO),
                   itsEditMode(COMBO),
                   itsMatchValidators(itsMatchString, itsMatchOther),
                   itsEditValidators(itsEditString, itsEditOther)
-#endif
 {
-#ifdef HAVE_XFT
     itsBooleans.append("true");
     itsBooleans.append("false");
     itsRgbs.append("rgb");
@@ -115,10 +110,8 @@ CXftConfigEditor::CXftConfigEditor(QWidget *parent, const char *name)
 
     itsMatchOther->setValidator(itsMatchValidators.otherInt);
     itsEditOther->setValidator(itsEditValidators.otherInt);
-#endif
 }
 
-#ifdef HAVE_XFT
 CXftConfig::TEntry * CXftConfigEditor::display(CXftConfig::TEntry *entry)
 {
     const CEncodings::T8Bit  *enc8;

@@ -55,23 +55,16 @@ class CXftConfigListViewItem : public QListViewItem
     CXftConfig::TEntry *itsRule;
 };
 
-#endif
-
 CXftConfigRules::CXftConfigRules(QWidget *parent, const char *name)
-               : CXftConfigRulesData(parent, name, true)
-#ifdef HAVE_XFT
-       , itsEditor(NULL)
-#endif
+               : CXftConfigRulesData(parent, name, true),
+                 itsEditor(NULL)
 {
-#ifdef HAVE_XFT
     itsIncludes->setName(i18n("Include:"));
     itsIncludeIfs->setName(i18n("Include If:"));
     connect(itsIncludes, SIGNAL(changed()), SLOT(enableOk()));
     connect(itsIncludeIfs, SIGNAL(changed()), SLOT(enableOk()));
-#endif
 }
 
-#ifdef HAVE_XFT
 bool CXftConfigRules::display()
 {
     CXftConfig::TEntry *entry;
@@ -181,5 +174,6 @@ void CXftConfigRules::display(CXftConfig::TEntry *rule)
     new CXftConfigListViewItem(rule, itsList, test, edit);
 }
 
-#endif
 #include "XftConfigRules.moc"
+
+#endif

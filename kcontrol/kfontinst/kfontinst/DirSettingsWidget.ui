@@ -38,7 +38,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>486</width>
+            <width>482</width>
             <height>466</height>
         </rect>
     </property>
@@ -232,7 +232,7 @@
                     </property>
                     <property stdset="1">
                         <name>alignment</name>
-                        <set>WordBreak|AlignVCenter|AlignLeft</set>
+                        <set>AlignVCenter|AlignLeft</set>
                     </property>
                     <property>
                         <name>whatsThis</name>
@@ -421,7 +421,7 @@ fonts, and encodings files. Usually this will be
                     </property>
                     <property stdset="1">
                         <name>alignment</name>
-                        <set>WordBreak|AlignVCenter|AlignLeft</set>
+                        <set>AlignVCenter|AlignLeft</set>
                     </property>
                     <property>
                         <name>whatsThis</name>
@@ -501,7 +501,7 @@ or 'encodings'. As an example, on SuSE Linux
                     </property>
                     <property stdset="1">
                         <name>alignment</name>
-                        <set>WordBreak|AlignVCenter|AlignLeft</set>
+                        <set>AlignVCenter|AlignLeft</set>
                     </property>
                     <property>
                         <name>whatsThis</name>
@@ -624,7 +624,7 @@ of Ghostscript.</string>
             </property>
             <property stdset="1">
                 <name>alignment</name>
-                <set>WordBreak|AlignVCenter|AlignLeft</set>
+                <set>AlignVCenter|AlignLeft</set>
             </property>
             <property>
                 <name>whatsThis</name>

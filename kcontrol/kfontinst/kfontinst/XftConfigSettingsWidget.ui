@@ -38,7 +38,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>502</width>
+            <width>498</width>
             <height>361</height>
         </rect>
     </property>
@@ -188,7 +188,7 @@ This may be of use if you have an LCD screen.</string>
             </property>
             <property stdset="1">
                 <name>alignment</name>
-                <set>WordBreak|AlignVCenter|AlignLeft</set>
+                <set>AlignVCenter|AlignLeft</set>
             </property>
             <property>
                 <name>whatsThis</name>

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'SettingsWizard.ui'
 **
-** Created: Fri Aug 3 18:49:35 2001
+** Created: Fri Sep 7 00:44:54 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

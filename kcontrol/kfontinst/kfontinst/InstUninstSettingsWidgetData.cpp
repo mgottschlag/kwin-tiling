@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'InstUninstSettingsWidget.ui'
 **
-** Created: Tue Jul 31 21:01:28 2001
+** Created: Fri Sep 7 00:50:15 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -29,7 +29,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
 {
     if ( !name )
 	setName( "CInstUninstSettingsWidgetData" );
-    resize( 315, 187 ); 
+    resize( 311, 187 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, sizePolicy().hasHeightForWidth() ) );
     setCaption( i18n( "Form2" ) );
     CInstUninstSettingsWidgetDataLayout = new QGridLayout( this ); 
@@ -93,7 +93,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     itsUninstallDirText->setFrameShape( QLabel::Panel );
     itsUninstallDirText->setFrameShadow( QLabel::Sunken );
     itsUninstallDirText->setText( i18n( "TextLabel4" ) );
-    itsUninstallDirText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    itsUninstallDirText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
 
     ButtonGroup1Layout->addWidget( itsUninstallDirText, 0, 2 );
 

@@ -38,7 +38,6 @@
 #ifdef HAVE_XFT
 #include <qvalidator.h>
 #include "XftConfig.h"
-#endif
 
 class QWidget;
 class QComboBox;
@@ -46,7 +45,6 @@ class QLineEdit;
 
 class CXftConfigEditor : public CXftConfigEditorData
 {
-#ifdef HAVE_XFT
     private:
 
     enum EMode
@@ -80,14 +78,11 @@ class CXftConfigEditor : public CXftConfigEditorData
         QDoubleValidator *lineeditDouble;
     };
    
-#endif
-
     public:
 
     CXftConfigEditor(QWidget *parent, const char *name=NULL);
     virtual ~CXftConfigEditor() {}
   
-#ifdef HAVE_XFT 
     CXftConfig::TEntry * display(CXftConfig::TEntry *entry); 
     void                 matchFieldSelected(const QString &str);
     void                 matchCombo(const QString &str);
@@ -114,7 +109,8 @@ class CXftConfigEditor : public CXftConfigEditorData
                 itsWeights;
     TValidators itsMatchValidators,
                 itsEditValidators;
-#endif
 };
+
+#endif
 
 #endif

@@ -1571,14 +1571,13 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
         spd.read(hdr, sizeof(char)*constHeaderSize);
         if(spd.good())
         {
-            static const char *constNumbers="0123456789";
             //
             // The first 4 bytes of s Speedo font are assumed to be:
             //    1. 'D' (or maybe 'd' ?)
             //    2. A number (usually 1 or 4)
             //    3. Decimal point
             //    4. A number (usually 0)
-            if((hdr[0]=='D' || hdr[0]=='d') && NULL!=strchr(constNumbers, hdr[1]) && hdr[2]=='.' && NULL!=strchr(constNumbers, hdr[3]))
+            if((hdr[0]=='D' || hdr[0]=='d') && isdigit(hdr[1]) && hdr[2]=='.' && isdigit(hdr[3]))
             {
                 char shortName[constShortNameNumBytes+1];
                 memcpy(shortName, &hdr[constShortNameOffset], constShortNameNumBytes);

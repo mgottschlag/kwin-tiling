@@ -189,6 +189,8 @@ const QString CConfig::constTTSubDirs[]=
     "ttf/", 
     "TTF/", 
     "Ttf/", 
+    "tt",
+    "TT",
     "True_Type/", 
     "true_type/", 
     QString::null 

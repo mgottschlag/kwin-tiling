@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'StarOfficeSettingsWidget.ui'
 **
-** Created: Wed Jul 18 23:21:10 2001
+** Created: Fri Sep 7 00:50:45 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ CStarOfficeSettingsWidgetData::CStarOfficeSettingsWidgetData( QWidget* parent,  
 {
     if ( !name )
 	setName( "CStarOfficeSettingsWidgetData" );
-    resize( 442, 216 ); 
+    resize( 438, 216 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, sizePolicy().hasHeightForWidth() ) );
     setCaption( i18n( "Form4" ) );
     CStarOfficeSettingsWidgetDataLayout = new QGridLayout( this ); 
@@ -50,7 +50,7 @@ CStarOfficeSettingsWidgetData::CStarOfficeSettingsWidgetData( QWidget* parent,  
     itsDirText->setFrameShadow( QLabel::Sunken );
     itsDirText->setMargin( 0 );
     itsDirText->setText( i18n( "TextLabel3" ) );
-    itsDirText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    itsDirText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
 
     CStarOfficeSettingsWidgetDataLayout->addWidget( itsDirText, 2, 1 );
 

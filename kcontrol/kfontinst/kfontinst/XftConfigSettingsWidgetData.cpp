@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'XftConfigSettingsWidget.ui'
 **
-** Created: Tue Jul 31 20:59:21 2001
+** Created: Fri Sep 7 00:51:09 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
 {
     if ( !name )
 	setName( "CXftConfigSettingsWidgetData" );
-    resize( 502, 361 ); 
+    resize( 498, 361 ); 
     setCaption( i18n( "Form1" ) );
     CXftConfigSettingsWidgetDataLayout = new QGridLayout( this ); 
     CXftConfigSettingsWidgetDataLayout->setSpacing( 6 );
@@ -75,7 +75,7 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
     itsConfigFileText->setFrameShape( QLabel::Panel );
     itsConfigFileText->setFrameShadow( QLabel::Sunken );
     itsConfigFileText->setText( i18n( "TextLabel2" ) );
-    itsConfigFileText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    itsConfigFileText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
     QWhatsThis::add(  itsConfigFileText, i18n( "This is the configuration file used by the XRender\nextension. Under Linux/XFree86 this file will usually\nbe either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide\nsettings (usually only \"root\" can alter this file)." ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( itsConfigFileText, 2, 2, 2, 4 );
