@@ -598,8 +598,8 @@ void CXdmcp::registerHostname(const char *name)
 
 		    if (ioctl(ipfd, I_STR, (char *) &ioc) != -1)
 #else				/* WINTCP */
-		    if (ifioctl(socketFD, SIOCGIFBRDADDR, &broad_req) !=
-			-1)
+		    if (ifioctl(socketFD, SIOCGIFBRDADDR, (char *) &broad_req) 
+			!= -1)
 #endif				/* WINTCP */
 			broad_addr = broad_req.ifr_addr;
 		    else
