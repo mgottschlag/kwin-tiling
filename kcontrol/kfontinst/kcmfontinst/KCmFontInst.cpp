@@ -50,6 +50,8 @@
 #include <kio/job.h>
 #include <kio/netaccess.h>
 #include <kdirlister.h>
+#include <kpushbutton.h>
+#include <kguiitem.h>
 #include <qsplitter.h>
 
 #define CFG_GROUP          "Main Settings"
@@ -171,7 +173,14 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsDirOp->setMimeFilter(mimeTypes);
     itsDirOp->dirLister()->setMainWindow(this);
-    fontsLayout->addWidget(itsDirOp, 0, 0);
+    itsDirOp->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    fontsLayout->addMultiCellWidget(itsDirOp, 0, 0, 0, 1);
+
+    KPushButton *button=new KPushButton(KGuiItem(i18n("Add Fonts..."), "newfont"), fontsFrame);
+    connect(button, SIGNAL(clicked()), SLOT(addFonts()));
+    button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    fontsLayout->addWidget(button, 1, 0);
+    fontsLayout->addItem(new QSpacerItem(4, 4, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
     layout->addWidget(toolbar);
     layout->addWidget(urlFrame);
@@ -607,13 +616,13 @@ void CKCmFontInst::removeFonts()
             case 1:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
                            i18n("<qt>Do you really want to delete\n <b>'%1'</b>?</qt>").arg(files.first()),
-                           i18n("Delete Item"), KGuiItem( i18n("Delete"), "editdelete"));
+                           i18n("Delete Item"), KGuiItem(i18n("Delete"), "editdelete"));
             break;
             default:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
                            i18n("translators: not called for n == 1", "Do you really want to delete these %n items?",
                                 files.count()),
-                           files, i18n("Delete Items"), KGuiItem( i18n("Delete"), "editdelete"));
+                           files, i18n("Delete Items"), KGuiItem(i18n("Delete"), "editdelete"));
         }
 
         if(doIt)
@@ -785,7 +794,7 @@ void CKCmFontInst::enableItems(bool enable)
                        enable ? i18n("<qt>Do you really want to enable\n <b>'%1'</b>?</qt>").arg(files.first())
                               : i18n("<qt>Do you really want to disable\n <b>'%1'</b>?</qt>").arg(files.first()),
                        enable ? i18n("Enable Item") : i18n("Disable Item"),
-                       enable ? KGuiItem( i18n("Enable"), "button_ok") : KGuiItem( i18n("Disable"), "button_cancel"));
+                       enable ? KGuiItem(i18n("Enable"), "button_ok") : KGuiItem(i18n("Disable"), "button_cancel"));
             break;
         default:
             doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
@@ -795,7 +804,7 @@ void CKCmFontInst::enableItems(bool enable)
                                      files.count()),
                        files,
                        enable ? i18n("Enable Items") : i18n("Disable Items"),
-                       enable ? KGuiItem( i18n("Enable"), "button_ok") : KGuiItem( i18n("Disable"), "button_cancel"));
+                       enable ? KGuiItem(i18n("Enable"), "button_ok") : KGuiItem(i18n("Disable"), "button_cancel"));
     }
 
     if(doIt)
