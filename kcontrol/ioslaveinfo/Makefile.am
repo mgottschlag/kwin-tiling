@@ -15,7 +15,7 @@ messages:
 	$(XGETTEXT) $(libkcm_ioslaveinfo_la_SOURCES) -o $(podir)/kcmioslaveinfo.pot
 
 data_DATA = ioslaveinfo.desktop
-datadir = $(kde_appsdir)/Settings/Network
+datadir = $(kde_appsdir)/Settings/Information
 
 install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(kde_appsdir)/Settings/Network
