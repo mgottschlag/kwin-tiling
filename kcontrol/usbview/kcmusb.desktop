@@ -6,7 +6,7 @@ DocPath=kinfocenter/usb/index.html
 Exec=kcmshell kcmusb
 X-KDE-ModuleType=Library
 X-KDE-Library=usb
-X-KDE-ParentApp=kcontrol
+X-KDE-ParentApp=kinfocenter
 
 Name=USB Devices
 Name[af]=usb toestelle

@@ -8,7 +8,7 @@ DocPath=kinfocenter/smb/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=samba
 X-KDE-FactoryName=samba
-X-KDE-ParentApp=kcontrol
+X-KDE-ParentApp=kinfocenter
 
 Name=Samba Status
 Name[af]=samba status
