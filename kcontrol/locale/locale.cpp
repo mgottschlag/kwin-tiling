@@ -384,8 +384,20 @@ void KLocaleConfig::changedCountry(int i)
 {
   m_locale->setCountry(m_comboCountry->tag(i));
 
-  // change to the prefered languages in that country
-  m_locale->setLanguage( languageList() );
+  // change to the prefered languages in that country, installed only
+  QStringList languages = languageList();
+  QStringList newLanguageList;
+  for ( QStringList::Iterator it = languages.begin();
+	it != languages.end();
+	++it )
+    {
+      QString name;
+      readLocale(*it, name, QString::null);
+
+      if (!name.isEmpty())
+	newLanguageList += *it;
+    }
+  m_locale->setLanguage( newLanguageList );
 
   emit languageChanged();
   emit localeChanged();
