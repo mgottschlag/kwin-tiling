@@ -55,7 +55,7 @@
 #include <backgnd.h>
 
 /* as late as possible, as it includes some X headers without protecting them */
-#include <netwm.h>
+#include <kwin.h>
 
 /**** DLL Interface ****/
 
@@ -318,10 +318,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QWhatsThis::add( m_pReverseBlending, i18n("For some types of blending, you can"
       " reverse the background and wallpaper layers by checking this option.") );
 
-    NETRootInfo rin(qt_xdisplay(), NET::CurrentDesktop | NET::NumberOfDesktops);
-    rin.activate();
-    m_Desk = rin.currentDesktop() - 1;
-    m_Max = rin.numberOfDesktops();
+    m_Desk = KWin::currentDesktop() - 1;
+    m_Max = KWin::numberOfDesktops();
     m_pGlobals = new KGlobalBackgroundSettings();
     for (int i=0; i<m_Max; i++) {
 	m_Renderer[i] = new KBackgroundRenderer(i);
