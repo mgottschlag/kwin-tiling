@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=KFontView
+Exec=kfontview %u
+Icon=kfontview
+X-KDE-StartupNotify=true
+Type=Application
+MimeType=application/x-font-ttf;application/x-font-type1;application/x-font-otf;application/x-font-ttc;application/x-font-pcf;application/x-font-bdf
+GenericName=Font Viewer
+Terminal=0
+InitialPreference=1
+Categories=Qt;KDE;Utility;X-KDE-More

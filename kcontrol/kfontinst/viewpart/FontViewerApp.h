@@ -1,12 +1,12 @@
-#ifndef __FONT_VIEW_PART_H__
-#define __FONT_VIEW_PART_H__
+#ifndef __FONT_VIEWER_APP_H__
+#define __FONT_VIEWER_APP_H__
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontViewPart
+// Class Name    : CFontViewerApp, CFontViewAppMainWindow
 // Author        : Craig Drummond
 // Project       : K Font Installer (kfontinst-kcontrol)
-// Creation Date : 03/08/2002
+// Creation Date : 30/04/2004
 // Version       : $Revision$ $Date$
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,56 +26,38 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2002, 2003
+// (C) Craig Drummond, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <kapplication.h>
 #include <kparts/part.h>
+#include <kparts/mainwindow.h>
 
-class CFontPreview;
-class QPushButton;
-class QFrame;
-class QLabel;
-class KIntNumInput;
-class KAction;
-class KToggleAction;
-class KURL;
-
-class CFontViewPart : public KParts::ReadOnlyPart
+class CFontViewerAppMainWindow : public KParts::MainWindow
 {
     Q_OBJECT
 
     public:
 
-    CFontViewPart(QWidget *parent=0, const char *name=0);
-    virtual ~CFontViewPart();
+    CFontViewerAppMainWindow();
+    virtual ~CFontViewerAppMainWindow();
 
-    protected:
+    public slots:
 
-    bool openURL(const KURL &url);
-    bool openFile();
-
-    private slots:
-
-    void previewStatus(bool st);
-    void install();
-    void zoomIn();
-    void zoomOut();
-    void changeText();
-    void toggleWaterfall();
+    void fileOpen();
 
     private:
 
-    CFontPreview  *itsPreview;
-    QPushButton   *itsInstallButton;
-    QFrame        *itsFrame,
-                  *itsToolsFrame;
-    QLabel        *itsFaceLabel;
-    KIntNumInput  *itsFaceSelector;
-    KAction       *itsZoomInAction,
-                  *itsZoomOutAction,
-                  *itsChangeTextAction;
-    KToggleAction *itsToggleWaterfallAction;
-    bool          itsShowInstallButton;
+    KParts::ReadOnlyPart *itsPreview;
+
+};
+
+class CFontViewerApp : public KApplication
+{
+    public:
+
+    CFontViewerApp();
+    virtual ~CFontViewerApp() {}
 };
 
 #endif

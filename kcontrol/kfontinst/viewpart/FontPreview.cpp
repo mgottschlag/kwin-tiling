@@ -36,13 +36,12 @@
 #include <qimage.h>
 #include <stdlib.h>
 
-CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str, int size, bool wf)
+CFontPreview::CFontPreview(QWidget *parent, const char *name, int size, bool wf)
             : QWidget(parent, name),
               itsCurrentFace(1),
               itsLastWidth(0),
               itsLastHeight(0),
               itsSize(size),
-              itsString(str.isEmpty() ? i18n(" No preview available") : str),
               itsBgndCol(eraseColor()),
               itsWaterfall(wf)
 {
@@ -77,7 +76,7 @@ void CFontPreview::showFont()
     itsLastWidth=width();
     itsLastHeight=height();
 
-    if(!itsCurrentUrl.isEmpty() && CGlobal::fe().openFont(itsCurrentUrl, CFontEngine::NAME, true, itsCurrentFace-1))
+    if(!itsCurrentUrl.isEmpty() && CGlobal::fe().openFont(itsCurrentUrl, CFontEngine::XLFD, true, itsCurrentFace-1))
     {
         setEraseColor(Qt::white);
         CGlobal::fe().createPreview(itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1, itsSize, false,
@@ -103,7 +102,7 @@ void CFontPreview::paintEvent(QPaintEvent *)
     if(itsPixmap.isNull())
     {
         paint.setPen(kapp->palette().active().text());
-        paint.drawText(rect(), AlignCenter, itsString);
+        paint.drawText(rect(), AlignCenter, i18n(" No preview available"));
     }
     else
     {

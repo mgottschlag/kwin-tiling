@@ -42,8 +42,7 @@ class CFontPreview : public QWidget
 
     public:
 
-    CFontPreview(QWidget *parent, const char *name=NULL, const QString &str=QString::null, int size=-1,
-                 bool wf=false);
+    CFontPreview(QWidget *parent, const char *name=NULL, int size=-1, bool wf=false);
     virtual ~CFontPreview() {}
 
     void            paintEvent(QPaintEvent *);
@@ -73,7 +72,6 @@ class CFontPreview : public QWidget
             itsLastWidth,
             itsLastHeight,
             itsSize;
-    QString itsString;
     QColor  itsBgndCol;
     bool    itsWaterfall;
 };
