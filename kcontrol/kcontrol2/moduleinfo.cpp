@@ -36,30 +36,30 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 
   // find out about the type of the module
   ModuleType t = Executable;
-  if (desktop.readEntry("ModuleType", "Executable") == "Library")
+  if (desktop.readEntry("X-KDE-ModuleType", "Executable") == "Library")
     t = Library;
   setType(t);
 
   if (t == Library)
     {
-      setLibrary(desktop.readEntry("LibraryName"));
-      setHandle(desktop.readEntry("FactoryName", library()));
+      setLibrary(desktop.readEntry("X-KDE-LibraryName"));
+      setHandle(desktop.readEntry("X-KDE-FactoryName", library()));
     }
   else
     setExecutable(desktop.readEntry("Exec"));
 
   // executable only with root access?
-  setOnlyRoot(desktop.readBoolEntry("RootOnly", false));
+  setOnlyRoot(desktop.readBoolEntry("X-KDE-RootOnly", false));
 
   // user or system settings?
-  setLocalUser(desktop.readBoolEntry("LocalUser", true));
+  setLocalUser(desktop.readBoolEntry("X-KDE-LocalUser", true));
 
   // set the modules' simple attributes
   setName(desktop.readName());
   setIcon(desktop.readIcon());
   
   // try to find out the modules' groups
-  QString group = desktop.readEntry("Group");
+  QString group = desktop.readEntry("X-KDE-Group");
   if (group.isEmpty())
     {	  
       group = desktopFile; 
