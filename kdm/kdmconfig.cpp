@@ -94,7 +94,10 @@ void KDMConfig::getConfig()
     QString normal_font = kc->readEntry( QString::fromLatin1("StdFont") );
     QString fail_font   = kc->readEntry( QString::fromLatin1("FailFont") );
     QString greet_font  = kc->readEntry( QString::fromLatin1("GreetFont") );
-    
+
+	// Read low user ID
+   QString low_user_id = kc->readEntry( QString::fromLatin1("UserIDLow") );
+
     QString greet_string = kc->readEntry( QString::fromLatin1("GreetString"));
     _sessionTypes = kc->readListEntry( QString::fromLatin1("SessionTypes"));
 
