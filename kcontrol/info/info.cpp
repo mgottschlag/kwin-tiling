@@ -65,7 +65,7 @@ QString	GetInfo_ErrorString;
 #define SEPERATOR 	"\t"
 #define SEPERATOR_CHAR	'\t'
 
-#define PIXEL_ADD	10	// add x Pixel to multicolumns
+#define PIXEL_ADD	20	// add x Pixel to multicolumns..
 
 static QString Value( int val, int numbers=1 )
 {	return QString("%1").arg(val,numbers);

@@ -54,6 +54,7 @@
 
 #define INFO_PARTITIONS_AVAILABLE
 #define INFO_PARTITIONS "/proc/partitions"
+#define INFO_MOUNTED_PARTITIONS "/etc/mtab"	// on Linux...
 #define INFO_PARTITIONS_FULL_INFO	// define, to show complete info !
 
 #define INFO_XSERVER_AVAILABLE
@@ -172,22 +173,39 @@ bool GetInfo_Partitions( KTabListBox *lBox )
 bool GetInfo_Partitions (KTabListBox *lbox)
 {
 	#define NUMCOLS 6
-	int maxwidth[NUMCOLS]={0,0,0,0,0,0};
-	QString Title[NUMCOLS];
-	int n;
+	int 		maxwidth[NUMCOLS]={0,0,0,0,0,0};
+	QString 	Title[NUMCOLS];
+	QStringList	Mounted_Partitions;
+	bool		found_in_List;
+	int 		n;
 	
-	struct fstab *fstab_ent;
- 	struct statfs sfs;
-	/* struct stat st; */
-	unsigned long total,avail;
-	QFontMetrics fm(lbox->tableFont());
-	QString str;
-	QString MB(i18n("MB"));	// "MB" = "Mega-Byte"
-	QString TAB(SEPERATOR);
+	struct fstab 	*fstab_ent;
+ 	struct statfs 	sfs;
+	unsigned long 	total,avail;
+	QFontMetrics 	fm(lbox->tableFont());
+	QString 	str;
+	QString 	MB(i18n("MB"));	// "MB" = "Mega-Byte"
+	QString 	TAB(SEPERATOR);
 
 	if (setfsent() != 0) // Try to open fstab
 	    return FALSE;
 
+	// read the list of already mounted file-systems..
+	QFile *file = new QFile(INFO_MOUNTED_PARTITIONS);
+	if (file->open(IO_ReadOnly)) {
+    	    while (file->readLine(str,1024) > 0) {
+		if (str.length()) {
+		    int p = str.find(' ');	// find first space.
+		    if (p) str.remove(p,1024);	// erase all chars including space.
+		    Mounted_Partitions.append(str);
+		    fprintf(stderr,"%s len= %i\r\n",str.ascii(),str.length());
+		}
+	    }
+	    file->close();
+	}
+        delete file;
+
+	// create the header-tables
 	MB = QString(" ") + MB;
 	Title[0] = i18n("Device");
 	Title[1] = i18n("Mount Point");
@@ -200,9 +218,12 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 	lbox->setSeparator(SEPERATOR_CHAR);
 	for (n=0; n<NUMCOLS; ++n)
         {	maxwidth[n]=fm.width(Title[n]);
-		lbox->setColumn(n,Title[n],maxwidth[n] );
+		lbox->setColumn(n,Title[n],maxwidth[n],
+		KTabListBox::TextColumn,
+		KTabListBox::SimpleOrder );
 	}
 
+	// loop through all partitions...
 	while ((fstab_ent=getfsent())!=NULL) {
 		if ( (n=fm.width(fstab_ent->fs_spec)) > maxwidth[0])
 			maxwidth[0]=n;
@@ -223,8 +244,9 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 		    +  QString(fstab_ent->fs_file) + TAB 
 		    +  QString(fstab_ent->fs_vfstype) + TAB;
 
-		total = avail = 0;
-		if (statfs(fstab_ent->fs_file,&sfs)==0) {
+		total = avail = 0;	// initialize size..
+		found_in_List = (Mounted_Partitions.contains(fstab_ent->fs_spec)>0);
+		if (found_in_List && statfs(fstab_ent->fs_file,&sfs)==0) {
     		    total = sfs.f_blocks * sfs.f_bsize;
 		    avail = (getuid() ? sfs.f_bavail : sfs.f_bfree) * sfs.f_bsize;
 		};
@@ -236,9 +258,9 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 		*/
 		if (total)
 		    str += TAB
-			+  Value((total/1024+512)/1024,6) + MB 
+			+  Value(((total/1024)+512)/1024,6) + MB 
 			+  TAB
-			+  Value((avail/1024+512)/1024,6) + MB;
+			+  Value(((avail/1024)+512)/1024,6) + MB;
 		else
 		    str += " " + TAB + " " + TAB;
 
@@ -250,6 +272,8 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 
 	for (n=0; n<NUMCOLS; ++n)
 	    lbox->setColumnWidth(n, maxwidth[n] + PIXEL_ADD);
+
+	lbox->changeMode(1); // sort ktablistbox via mount-point as default !
 	    
 	return TRUE;
 }

@@ -67,7 +67,7 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 	    case FREE_MEM:	title = i18n("Free physical memory");	break;
 	    case SHARED_MEM:	title = i18n("Shared memory");		break;
 	    case BUFFER_MEM:	title = i18n("Buffer memory");		break;
-	    case SWAP_MEM:	title = i18n("Swap memory");		break;
+	    case SWAP_MEM:	title = i18n("Total swap memory");	break;
 	    case FREESWAP_MEM:	title = i18n("Free swap memory");	break;
 	    default:		title = "";				break;
 	};
