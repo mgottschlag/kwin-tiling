@@ -163,7 +163,7 @@ void AppletTab::load()
 
   if(c->hasKey("TrustedApplets"))
     {
-      QStringList list = c->readListEntry("TrustedApplets", ' ');
+      QStringList list = c->readListEntry("TrustedApplets");
       for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
         {
           if(available.contains(*it))
@@ -197,7 +197,7 @@ void AppletTab::save()
   else if (all_rb->isChecked()) level = 2;
 
   c->writeEntry("SecurityLevel", level);
-  c->writeEntry("TrustedApplets", l_trusted, ' ');
+  c->writeEntry("TrustedApplets", l_trusted);
   c->sync();
 
   delete c;
