@@ -106,6 +106,7 @@ public:
 
     QString text() const { return _text; }
     QString bin() const { return _bin; }
+    QString icon() const { return _icon; }
 
     pid_t pid() const { return _pid; }
     bool compliant() const { return _compliant; }
@@ -121,6 +122,7 @@ private:
     QString     _text;
     pid_t       _pid;
     bool        _compliant;
+    QString     _icon;
 };
 
 class TaskManager : public QObject, virtual public DCOPObject

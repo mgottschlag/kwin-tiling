@@ -501,9 +501,9 @@ void Task::publishIconGeometry(QRect rect)
     ni.setIconGeometry(r);
 }
 
-Startup::Startup(const QString& text, const QString& /*icon*/, pid_t pid,
+Startup::Startup(const QString& text, const QString& icon, pid_t pid,
                  const QString& bin, bool compliant, QObject * parent, const char *name)
-    : QObject(parent, name), _bin(bin), _text(text), _pid(pid),_compliant(compliant)
+    : QObject(parent, name), _bin(bin), _text(text), _pid(pid),_compliant(compliant),_icon(icon)
 {
     // go away after 20s if we weren't removed before.
     startTimer(20000);
