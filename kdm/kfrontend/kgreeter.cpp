@@ -79,7 +79,7 @@ KLoginLineEdit::focusOutEvent( QFocusEvent *e)
 class MyApp : public KApplication {
 
 public:
-    MyApp(int& argc, char** argv) : KApplication(argc, argv, "kgreeter") {};
+    MyApp(int& argc, char** argv) : KApplication(argc, argv, "kdmgreet") {};
     virtual bool x11EventFilter( XEvent * );
 };
 
