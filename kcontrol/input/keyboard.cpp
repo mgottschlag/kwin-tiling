@@ -40,35 +40,25 @@
 
 #include "keyboard.h"
 #include <X11/Xlib.h>
-#include "geom.h"
 
 
-KeyboardConfig::~KeyboardConfig ()
+KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name)
+    : KCModule (parent, name)
 {
-    if (GUI) {
-        delete click;
-    }
-}
+  QBoxLayout* lay = new QVBoxLayout(this, 10);
 
-KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name, bool init)
-    : KConfigWidget (parent, name)
-{
-    GUI = !init;
-    
-    if (GUI) {
-        QBoxLayout* lay = new QVBoxLayout(this, 10);
+  repeatBox = new QCheckBox(i18n("Keyboard repeat"), this);
+  lay->addWidget(repeatBox);
+  connect(repeatBox, SIGNAL(clicked()), this, SLOT(changed()));
 
-        repeatBox = new QCheckBox(i18n("Keyboard repeat"), this);
-        lay->addWidget(repeatBox);
-        
-        click = new KIntNumInput(i18n("Key click volume"), 0, 100, 10, 100,
-                                 "%", 10, true, this);
-        click->setSteps(5,25);
-        lay->addWidget(click);
-    }
-    config = kapp->config();
-    
-    GetSettings();
+  click = new KIntNumInput(i18n("Key click volume"), 0, 100, 10, 100,
+			   "%", 10, true, this);
+  click->setSteps(5,25);
+  connect(click, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+  lay->addWidget(click);
+  
+  load();
 }
 
 int  KeyboardConfig::getClick()
@@ -87,8 +77,10 @@ void KeyboardConfig::setClick(int v)
     click->setValue(v);
 }
 
-void KeyboardConfig::GetSettings( void )
+void KeyboardConfig::load()
 {
+  KConfig *config = new KConfig("kcminput");
+
     XKeyboardState kbd;
     
     XGetKeyboardControl(kapp->getDisplay(), &kbd);
@@ -98,21 +90,20 @@ void KeyboardConfig::GetSettings( void )
     keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
     clickVolume = config->readNumEntry("ClickVolume", kbd.key_click_percent);
     
-    // the GUI should reflect the real values
-    if (GUI) {
-        setClick(kbd.key_click_percent);
-        setRepeat(kbd.global_auto_repeat);
-    }
+    setClick(kbd.key_click_percent);
+    setRepeat(kbd.global_auto_repeat);
+
+  delete config;
 }
 
-void KeyboardConfig::saveParams( void )
+void KeyboardConfig::save()
 {
+  KConfig *config = new KConfig("kcminput");
+
     XKeyboardControl kbd;
     
-    if (GUI) {
-        clickVolume = getClick();
-        keyboardRepeat = repeatBox->isChecked() ? AutoRepeatModeOn : AutoRepeatModeOff;
-    }
+    clickVolume = getClick();
+    keyboardRepeat = repeatBox->isChecked() ? AutoRepeatModeOn : AutoRepeatModeOff;
     
     kbd.key_click_percent = clickVolume;
     kbd.auto_repeat_mode = keyboardRepeat;
@@ -124,22 +115,21 @@ void KeyboardConfig::saveParams( void )
     config->writeEntry("ClickVolume",clickVolume);
     config->writeEntry("KeyboardRepeat", (keyboardRepeat == AutoRepeatModeOn));
     config->sync();
+
+  delete config;
 }
 
-void KeyboardConfig::loadSettings()
-{
-    GetSettings();
-}
 
-void KeyboardConfig::applySettings()
-{
-    saveParams();
-}
-
-void KeyboardConfig::defaultSettings()
+void KeyboardConfig::defaults()
 {
     setClick(50);
     setRepeat(true);
+}
+
+
+void KeyboardConfig::changed()
+{
+  emit KCModule::changed(true);
 }
 
 

@@ -24,27 +24,32 @@
 #ifndef __KKEYBOARDCONFIG_H__
 #define __KKEYBOARDCONFIG_H__
 
+
 #include <kapp.h>
-#include <kcontrol.h>
+#include <kcmodule.h>
+
 
 class KIntNumInput;
 class KConfig;
 class QCheckBox;
 
-class KeyboardConfig : public KConfigWidget
+
+class KeyboardConfig : public KCModule
 {
   Q_OBJECT
 public:
-  KeyboardConfig( QWidget *parent=0, const char* name=0, bool init=FALSE );
-  ~KeyboardConfig( );
-  void saveParams( void );
+  KeyboardConfig( QWidget *parent=0, const char* name=0);
 
-  void loadSettings();
-  void applySettings();
-  void defaultSettings();
+  void save();
+  void load();
+  void defaults();
+
+private slots:
+
+  void changed();
+
       
 private:
-  void GetSettings( void );
 
   void setClick( int );
   void setRepeat( int );
@@ -56,10 +61,7 @@ private:
   QCheckBox *repeatBox;
   KIntNumInput *click;
 
-  KConfig *config;
   int clickVolume, keyboardRepeat;
-
-  bool GUI;
 };
 
 #endif

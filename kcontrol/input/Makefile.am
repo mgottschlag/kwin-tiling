@@ -1,18 +1,13 @@
-# $Id$
-# kdebase/kcontrol/input
+lib_LTLIBRARIES = libkcm_input.la
 
-SUBDIRS = pics
+libkcm_input_la_SOURCES = main.cpp keyboard.cpp mouse.cpp
 
-INCLUDES = $(all_includes) 
-LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD =       $(LIB_KDEUI) 
+libkcm_input_la_LDFLAGS  = $(all_libraries) -module -avoid-version 
+libkcm_input_la_LIBADD = -lkdeui
 
-bin_PROGRAMS = kcminput
+INCLUDES= $(all_includes)
 
-kcminput_SOURCES = main.cpp mouse.cpp keyboard.cpp 
-METASOURCES = mouse.moc keyboard.moc 
-noinst_HEADERS = mouse.h keyboard.h geom.h 
+libkcm_input_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcminput_SOURCES) && mv messages.po ../../po/kcminput.pot
-
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_imput_SOURCES) -o ../po/kcminput.pot

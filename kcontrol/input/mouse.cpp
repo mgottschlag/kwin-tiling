@@ -46,48 +46,34 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "geom.h"
 
-MouseConfig::~MouseConfig ()
+MouseConfig::MouseConfig (QWidget * parent, const char *name)
+  : KCModule(parent, name)
 {
-    if (GUI) {
-        delete accel;
-        delete thresh;
-        delete leftHanded;
-        delete rightHanded;
-        delete handedBox;
-    }
-}
-
-MouseConfig::MouseConfig (QWidget * parent, const char *name, bool init)
-  : KConfigWidget (parent, name)
-{
-    GUI = !init;
-
-  if (GUI) {
-      QBoxLayout* lay = new QVBoxLayout(this, 10);
+  QBoxLayout* lay = new QVBoxLayout(this, 10);
       
-      accel = new KIntNumInput(i18n("Acceleration"), 1,20,2,20, "x", 
+  accel = new KIntNumInput(i18n("Acceleration"), 1,20,2,20, "x", 
                                10, true, this);
-      accel->setSteps(1,20);
-      lay->addWidget(accel);
-      
-      thresh = new KIntNumInput(i18n("Threshold"), 1,20,2,20,
-                                i18n("pixels"), 10, true, this);
-      thresh->setSteps(1,20);
-      lay->addWidget(thresh);
-      
-      handedBox = new QHButtonGroup(i18n("Button mapping"), this, "handed");
-      rightHanded = new QRadioButton(i18n("Right handed"), handedBox, "R");
-      leftHanded = new QRadioButton(i18n("Left handed"), handedBox, "L");
+  accel->setSteps(1,20);
+  lay->addWidget(accel);
+  connect(accel, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
-      lay->addWidget(handedBox);
-  }
+  thresh = new KIntNumInput(i18n("Threshold"), 1,20,2,20,
+			    i18n("pixels"), 10, true, this);
+  thresh->setSteps(1,20);
+  lay->addWidget(thresh);
+  connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+  handedBox = new QHButtonGroup(i18n("Button mapping"), this, "handed");
+  rightHanded = new QRadioButton(i18n("Right handed"), handedBox, "R");
+  leftHanded = new QRadioButton(i18n("Left handed"), handedBox, "L");
+  connect(handedBox, SIGNAL(clicked(int)), this, SLOT(changed()));
+
+  lay->addWidget(handedBox);
 
   handedEnabled = true;
-  config = kapp->config();
 
-  GetSettings();
+  load();
 }
 
 int MouseConfig::getAccel()
@@ -129,8 +115,10 @@ void MouseConfig::setHandedness(int val)
     leftHanded->setChecked(true);
 }
 
-void MouseConfig::GetSettings( void )
+void MouseConfig::load()
 {
+  KConfig *config = new KConfig("kcminput");
+
   int accel_num, accel_den, threshold;
   XGetPointerControl( kapp->getDisplay(), 
 		      &accel_num, &accel_den, &threshold );
@@ -145,12 +133,9 @@ void MouseConfig::GetSettings( void )
     {
     case 1:
       /* disable button remapping */
-      if (GUI)
-	{
-	  rightHanded->setEnabled(false);
-	  leftHanded->setEnabled(false);
-	  handedEnabled = false;
-	}
+      rightHanded->setEnabled(false);
+      leftHanded->setEnabled(false);
+      handedEnabled = false;
       break;
     case 2:
       if ( (int)map[0] == 1 && (int)map[1] == 2 )
@@ -160,11 +145,8 @@ void MouseConfig::GetSettings( void )
       else
 	{
 	  /* custom button setup: disable button remapping */
-	  if (GUI)
-	    {
-	      rightHanded->setEnabled(false);
-	      leftHanded->setEnabled(false);
-	    }
+	  rightHanded->setEnabled(false);
+	  leftHanded->setEnabled(false);
 	}
       break;
     case 3:
@@ -176,22 +158,16 @@ void MouseConfig::GetSettings( void )
       else
 	{
 	  /* custom button setup: disable button remapping */
-	  if (GUI)
-	    {
-	      rightHanded->setEnabled(false);
-	      leftHanded->setEnabled(false);
-	      handedEnabled = false;
-	    }
-	}
-      break;
-    default:
-      /* custom setup with > 3 buttons: disable button remapping */
-      if (GUI)
-	{
 	  rightHanded->setEnabled(false);
 	  leftHanded->setEnabled(false);
 	  handedEnabled = false;
 	}
+      break;
+    default:
+      /* custom setup with > 3 buttons: disable button remapping */
+      rightHanded->setEnabled(false);
+      leftHanded->setEnabled(false);
+      handedEnabled = false;
       break;
     }
 
@@ -217,21 +193,20 @@ void MouseConfig::GetSettings( void )
     handed = h;
 
   // the GUI should always show the real values
-  if (GUI)
-    {
-      setAccel(accel_num);
-      setThreshold(threshold);
-      setHandedness(h);
-    }
+  setAccel(accel_num);
+  setThreshold(threshold);
+  setHandedness(h);
+
+  delete config;
 }
 
-void MouseConfig::saveParams( void )
+void MouseConfig::save()
 {
-  if (GUI) {
-      accelRate = getAccel();
-      thresholdMove = getThreshold();
-      handed = getHandedness();
-  }
+  KConfig *config = new KConfig("kcminput");
+
+  accelRate = getAccel();
+  thresholdMove = getThreshold();
+  handed = getHandedness();
   
   XChangePointerControl( kapp->getDisplay(),
                          true, true, accelRate, 1, thresholdMove);
@@ -309,23 +284,22 @@ void MouseConfig::saveParams( void )
       config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
   
   config->sync();
+
+  delete config;
 }
 
-void MouseConfig::loadSettings()
-{
-    GetSettings();
-}
 
-void MouseConfig::applySettings()
-{
-    saveParams();
-}
-
-void MouseConfig::defaultSettings()
+void MouseConfig::defaults()
 {
     setThreshold(2);
     setAccel(2);
     setHandedness(RIGHT_HANDED);
+}
+
+
+void MouseConfig::changed()
+{
+  emit KCModule::changed(true);
 }
 
 

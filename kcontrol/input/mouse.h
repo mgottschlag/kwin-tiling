@@ -35,25 +35,27 @@
 #include <kapp.h>
 #include <knuminput.h>
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 #define RIGHT_HANDED 0
 #define LEFT_HANDED  1
 
-class MouseConfig : public KConfigWidget
+class MouseConfig : public KCModule
 {
   Q_OBJECT
 public:
-  MouseConfig( QWidget *parent=0, const char* name=0, bool init=FALSE);
-  ~MouseConfig();
-  void saveParams( void );
+  MouseConfig( QWidget *parent=0, const char* name=0);
 
-  void loadSettings();
-  void applySettings();
-  void defaultSettings();
+  void save( void );
+  void load();
+  void defaults();
+
+private slots:
+
+  void changed();
+
     
 private:
-  void GetSettings( void );
 
   int getAccel();
   int getThreshold();
@@ -72,10 +74,8 @@ private:
   int middle_button;
   bool handedEnabled;
 
-  KConfig *config;
   int accelRate, thresholdMove, handed;
 
-  bool GUI;
 };
 
 #endif
