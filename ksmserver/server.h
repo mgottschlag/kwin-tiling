@@ -17,6 +17,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qqueue.h>
 #include <qptrdict.h>
 #include <qapplication.h>
+#include <qtimer.h>
 
 #define INT32 QINT32
 #include <X11/Xlib.h>
@@ -81,7 +82,7 @@ public:
     void interactRequest( KSMClient* client, int dialogType );
     void interactDone( KSMClient* client, bool cancelShutdown );
     void phase2Request( KSMClient* client );
-    
+
     // error handling
     void ioError( IceConn iceConn );
 
@@ -97,6 +98,9 @@ private slots:
     void processData( int socket );
     void timeoutQuit();
     void restoreSessionInternal();
+
+    void protectionTimeout();
+    void cleanUp();
 
 private:
     void handlePendingInteractions();
@@ -117,6 +121,8 @@ private:
 
     KSMClient* clientInteracting;
     QString wm;
+    QTimer protection;
 };
 
 #endif
+

@@ -63,6 +63,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <kconfig.h>
 #include <unistd.h>
+#include <kapp.h>
 
 #include "server.h"
 #include "global.h"
@@ -210,7 +211,6 @@ void KSMInteractRequestProc (
     int			dialogType
 )
 {
-//     qDebug("KSMInteractRequestProc");
     the_server->interactRequest( (KSMClient*) managerData, dialogType );
 }
 
@@ -220,7 +220,6 @@ void KSMInteractDoneProc (
     Bool			cancelShutdown
 )
 {
-//     qDebug("KSMInteractDoneProc");
     the_server->interactDone( (KSMClient*) managerData, cancelShutdown );
 }
 
@@ -234,7 +233,6 @@ void KSMSaveYourselfRequestProc (
     Bool		/* global */
 )
 {
-//     qDebug("KSMSaveYourselfRequestProc");
     the_server->shutdown();
 }
 
@@ -243,7 +241,6 @@ void KSMSaveYourselfPhase2RequestProc (
     SmPointer		managerData
 )
 {
-//     qDebug("KSMSaveYourselfPhase2RequestProc");
     the_server->phase2Request( (KSMClient*) managerData );
 }
 
@@ -253,7 +250,6 @@ void KSMSaveYourselfDoneProc (
     Bool		success
 )
 {
-//     qDebug("KSMSaveYourselfDoneProc");
     the_server->saveYourselfDone( (KSMClient*) managerData, success );
 }
 
@@ -264,7 +260,6 @@ void KSMCloseConnectionProc (
     char **		reasonMsgs
 )
 {
-//     qDebug("KSMCloseConnectionProc %p", managerData);
     the_server->deleteClient( ( KSMClient* ) managerData );
     if ( count )
 	SmFreeReasons( count, reasonMsgs );
@@ -312,7 +307,6 @@ void KSMGetPropertiesProc (
     SmPointer		managerData
 )
 {
-//     qDebug("KSMGetPropertiesProc");
     KSMClient* client = ( KSMClient* ) managerData;
     SmProp** props = new SmProp*[client->properties.count()];
     int i = 0;
@@ -559,17 +553,6 @@ void FreeAuthenticationData(int count, IceAuthDataEntry *authDataEntries)
     free(remAuthFile);
 }
 
-static void CloseListeners ()
-{
-    IceFreeListenObjs (numTransports, listenObjs);
-
-    QCString fName = ::getenv("HOME");
-    fName += "/.KSMserver";
-    unlink(fName.data());
-
-    FreeAuthenticationData(numTransports, authDataEntries);
-}
-
 static void sighandler(int sig)
 {
     if (sig == SIGHUP) {
@@ -577,7 +560,7 @@ static void sighandler(int sig)
 	return;
     }
 
-    CloseListeners();
+    delete the_server;
     exit(0);
 }
 
@@ -597,9 +580,6 @@ void KSMWatchProc ( IceConn iceConn, IcePointer client_data, Bool opening, IcePo
 static Status KSMNewClientProc ( SmsConn conn, SmPointer manager_data,
 				 unsigned long* mask_ret, SmsCallbacks* cb, char** failure_reason_ret)
 {
-//     qDebug("KSMNewClientProc");
-
-    //     *failure_reason_ret = qstrdup("some failure" );
     *failure_reason_ret = 0;
 
     void* client =  ((KSMServer*) manager_data )->newClient( conn );
@@ -677,11 +657,10 @@ KSMServer::KSMServer( const QString& windowManager )
 	    setenv( "SESSION_MANAGER", session_manager, TRUE  );
 	}
 
-    if (!SetAuthentication(numTransports, listenObjs, &authDataEntries)) {
-	qFatal("ksmserver could not set authorization");
-    }
+    if (!SetAuthentication(numTransports, listenObjs, &authDataEntries))
+	qFatal("KSMSERVER: authentication setup failed.");
 
-  IceAddConnectionWatch (KSMWatchProc, (IcePointer) this);
+    IceAddConnectionWatch (KSMWatchProc, (IcePointer) this);
 
     listener.setAutoDelete( TRUE );
     KSMListener* con;
@@ -695,12 +674,28 @@ KSMServer::KSMServer( const QString& windowManager )
     signal(SIGTERM, sighandler);
     signal(SIGINT, sighandler);
     signal(SIGPIPE, SIG_IGN);
+
+    connect( &protection, SIGNAL( timeout() ), this, SLOT( protectionTimeout() ) );
+    connect( kapp, SIGNAL( shutDown() ), this, SLOT( cleanUp() ) );
 }
 
 KSMServer::~KSMServer()
 {
-    CloseListeners();
+    cleanUp();
 }
+
+void KSMServer::cleanUp()
+{
+    IceFreeListenObjs (numTransports, listenObjs);
+
+    QCString fName = ::getenv("HOME");
+    fName += "/.KSMserver";
+    ::unlink(fName.data());
+
+    FreeAuthenticationData(numTransports, authDataEntries);
+}
+
+
 
 void* KSMServer::watchConnection( IceConn iceConn )
 {
@@ -715,7 +710,7 @@ void KSMServer::removeConnection( KSMConnection* conn )
 }
 
 
-/*! 
+/*!
   Called from our IceIoErrorHandler
  */
 void KSMServer::ioError( IceConn iceConn )
@@ -767,6 +762,17 @@ void KSMServer::newConnection( int /*socket*/ )
     IceAcceptStatus status;
     IceConn iceConn = IceAcceptConnection( ((KSMListener*)sender())->listenObj, &status);
     IceSetShutdownNegotiation( iceConn, False );
+    IceConnectStatus cstatus;
+    while ((cstatus = IceConnectionStatus (iceConn))==IceConnectPending) {
+	qApp->processOneEvent();
+    }
+    if (cstatus != IceConnectAccepted) {
+	if (cstatus == IceConnectIOError)
+	    qWarning ("IO error opening ICE Connection!\n");
+	else
+	    qWarning ("ICE Connection rejected!\n");
+	IceCloseConnection (iceConn);
+    }
 }
 
 
@@ -781,6 +787,7 @@ void KSMServer::shutdown()
 	if ( saveSession )
 	    discardSession();
 	state = Shutdown;
+	protection.start( 4000 );
 	for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	    c->resetState();
 	    SmsSaveYourself( c->connection(), saveSession?SmSaveBoth: SmSaveGlobal,
@@ -814,7 +821,7 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
     } else {
 	cancelShutdown();
     }
-
+    protection.start( 4000 );
 }
 
 void KSMServer::interactRequest( KSMClient* client, int /*dialogType*/ )
@@ -858,8 +865,12 @@ void KSMServer::handlePendingInteractions()
 	    break;
 	}
     }
-    if ( clientInteracting )
+    if ( clientInteracting ) {
+	protection.stop();
 	SmsInteract( clientInteracting->connection() );
+    } else {
+	protection.start( 4000 );
+    }
 }
 
 
@@ -876,6 +887,24 @@ void KSMServer::cancelShutdown()
  	SmsShutdownCancelled( c->connection() );
     }
     state = Idle;
+}
+
+/* 
+   Internal protection slot, invoked when clients do not react during
+  shutdown.
+ */
+void KSMServer::protectionTimeout()
+{
+    protection.stop();
+    if ( state != Shutdown || clientInteracting )
+	return;
+    
+    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	if ( !c->saveYourselfDone && !c->waitForPhase2 )
+	    c->saveYourselfDone = TRUE;
+    }
+    completeShutdown();
+    protection.start( 4000 );
 }
 
 void KSMServer::completeShutdown()
