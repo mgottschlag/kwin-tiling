@@ -18,7 +18,7 @@
 */
 
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <qvgroupbox.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -47,14 +47,12 @@ KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *name, co
   QBoxLayout *layout = new QVBoxLayout(this,
 				       KDialog::marginHint(),
 				       KDialog::spacingHint());
-  QGroupBox *box = new QGroupBox( i18n("Spell Checking Settings"), this );
+  QGroupBox *box = new QVGroupBox( i18n("Spell Checking Settings"), this );
+  box->layout()->setSpacing( KDialog::spacingHint() );
   layout->addWidget(box);
-  QGridLayout *grid = new QGridLayout(box, 1, 1);
-  grid->setSpacing(KDialog::spacingHint());
-  grid->setMargin(KDialog::marginHint()+fontMetrics().height() + 5);
-  spellConfig  = new KSpellConfig(box, 0L ,0L, false );
-  grid->addWidget(spellConfig,0,0);
-  layout->addStretch();
+
+  spellConfig = new KSpellConfig(box, 0L ,0L, false );
+  layout->addStretch(1);
   connect(spellConfig,SIGNAL(configChanged()),this,SLOT(configChanged()));
 }
 
