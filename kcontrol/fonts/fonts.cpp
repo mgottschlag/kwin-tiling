@@ -294,13 +294,9 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 
 
    aaExcludeRange=new QCheckBox(i18n("E&xclude range:"), aaBox),
-   aaExcludeFrom=new KDoubleNumInput(aaBox),
-   aaExcludeFrom->setRange(0, 72, 1);
-   aaExcludeFrom->setPrecision(1);
+   aaExcludeFrom=new KDoubleNumInput(0, 72, 8.0, 1, 1, aaBox),
    aaExcludeFrom->setSuffix(i18n(" pt"));
-   aaExcludeTo=new KDoubleNumInput(aaBox);
-   aaExcludeTo->setRange(0, 72, 1);
-   aaExcludeTo->setPrecision(1);
+   aaExcludeTo=new KDoubleNumInput(0, 72, 15.0, 1, 1, aaBox);
    aaExcludeTo->setSuffix(i18n(" pt"));
    aaUseSubPixel=new QCheckBox(i18n("&Use sub-pixel hinting:"), aaBox);
    aaSubPixelType=new QComboBox(false, aaBox);
