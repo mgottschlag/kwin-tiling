@@ -168,7 +168,7 @@ void KLanguageButton::clear()
   setPopup( m_popup );
 
   connect( m_popup, SIGNAL( activated( int ) ),
-                        SIGNAL( activated( int ) ) );
+                        SLOT( slotActivated( int ) ) );
   connect( m_popup, SIGNAL( highlighted( int ) ),
                         SIGNAL( highlighted( int ) ) );
 
