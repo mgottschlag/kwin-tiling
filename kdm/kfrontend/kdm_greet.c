@@ -100,7 +100,7 @@ GSendInt (int val)
 void
 GSendStr (const char *buf)
 {
-    int len = strlen (buf) + 1;
+    int len = buf ? strlen (buf) + 1 : 0;
     GWrite (&len, sizeof(len));
     GWrite (buf, len);
 }
