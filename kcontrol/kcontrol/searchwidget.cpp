@@ -23,6 +23,8 @@
 #include <qlayout.h>
 #include <qstringlist.h>
 #include <qregexp.h>
+#include <qdict.h>
+#include <qpixmap.h>
 
 #include <kglobal.h>
 #include <klocale.h>
@@ -53,6 +55,7 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
 
   // input
   _input = new QLineEdit(this);
+  _input->setFocus();
   QLabel *inputl = new QLabel(_input, i18n("Se&arch:"), this);
 
   l->addWidget(inputl);
@@ -72,15 +75,19 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
   l->addWidget(resultl);
   l->addWidget(_resultList);
 
+  // set stretch factors
+  l->setStretchFactor(_resultList, 1);
+  l->setStretchFactor(_keyList, 2);
+
 
   connect(_input, SIGNAL(textChanged(const QString&)),
-	  this, SLOT(slotSearchTextChanged(const QString&)));
+          this, SLOT(slotSearchTextChanged(const QString&)));
 
   connect(_keyList, SIGNAL(highlighted(const QString&)),
-	  this, SLOT(slotKeywordSelected(const QString&)));
+          this, SLOT(slotKeywordSelected(const QString&)));
 
   connect(_resultList, SIGNAL(highlighted(const QString&)),
-	  this, SLOT(slotModuleSelected(const QString&)));
+          this, SLOT(slotModuleSelected(const QString&)));
 }
 
 void SearchWidget::populateKeywordList(ConfigModuleList *list)
@@ -91,45 +98,45 @@ void SearchWidget::populateKeywordList(ConfigModuleList *list)
   for (module=list->first(); module != 0; module=list->next())
     {
       if (module->library().isEmpty())
-	continue;
+        continue;
       
       if (KCGlobal::system()) {
-	  if (!module->onlyRoot())
-	    continue;
-	}
+        if (!module->onlyRoot())
+          continue;
+      }
       else {
-	  if (module->onlyRoot() && !KCGlobal::root())
-	    continue;
-	}
+        if (module->onlyRoot() && !KCGlobal::root())
+          continue;
+      }
       
       // get the modules keyword list
       QStringList kw = module->keywords();
 
       // loop through the keyword list to populate _keywords
       for(QStringList::ConstIterator it = kw.begin(); it != kw.end(); it++)
-	{
-	  QString name = (*it).lower();
-	  bool found = false;
+        {
+          QString name = (*it).lower();
+          bool found = false;
 
-	  // look if _keywords already has an entry for this keyword
-	  for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
-	    {
-	      // if there is an entry for this keyword, add the module to the entries modul list
-	      if (k->name() == name)
-		{
-		  k->addModule(module);
-		  found = true;
-		  break;
-		}
-	    }
+          // look if _keywords already has an entry for this keyword
+          for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
+            {
+              // if there is an entry for this keyword, add the module to the entries modul list
+              if (k->name() == name)
+                {
+                  k->addModule(module);
+                  found = true;
+                  break;
+                }
+            }
 
-	  // if there is entry for this keyword, create a new one
-	  if (!found)
-	    {
-	      KeywordListEntry *k = new KeywordListEntry(name, module);
-	      _keywords.append(k);
-	    }
-	}
+          // if there is entry for this keyword, create a new one
+          if (!found)
+            {
+              KeywordListEntry *k = new KeywordListEntry(name, module);
+              _keywords.append(k);
+            }
+        }
     }
   populateKeyListBox("*");
 }
@@ -143,13 +150,13 @@ void SearchWidget::populateKeyListBox(const QString& s)
   for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
     {
       if ( QRegExp(s, false, true).match(k->name()) >= 0)   
-	  matches.append(k->name());
+        matches.append(k->name());
     }
 
   matches.sort();
 
   for(QStringList::ConstIterator it = matches.begin(); it != matches.end(); it++)
-      _keyList->insertItem(*it);
+    _keyList->insertItem(*it);
 }
 
 void SearchWidget::populateResultListBox(const QString& s)
@@ -157,22 +164,26 @@ void SearchWidget::populateResultListBox(const QString& s)
   _resultList->clear();
 
   QStringList results;
+  QDict<ConfigModule> dict;
 
   for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
     {
       if (k->name() == s)
-	{
-	  QList<ConfigModule> modules = k->modules();
-
-	  for(ConfigModule *m = modules.first(); m != 0; m = modules.next())
-	    results.append(m->name());
-	}
+        {
+          QList<ConfigModule> modules = k->modules();
+          
+          for(ConfigModule *m = modules.first(); m != 0; m = modules.next())
+            {
+              results.append(m->name());
+              dict.insert(m->name(), m);
+            }
+        }
     }
 
   results.sort();
 
   for(QStringList::ConstIterator it = results.begin(); it != results.end(); it++)
-    _resultList->insertItem(*it);
+    _resultList->insertItem((dict[*it])->icon(), *it);
 }
 
 void SearchWidget::slotSearchTextChanged(const QString & s)

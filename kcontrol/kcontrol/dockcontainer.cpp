@@ -37,7 +37,7 @@ DockContainer::DockContainer(QWidget *parent, const char *name)
 void DockContainer::setBaseWidget(QWidget *widget)
 {
   if (!widget) return;
-
+  
   _basew = widget;
   _basew->reparent(this, 0 , QPoint(0,0), true);
   resize(_basew->sizeHint());
@@ -54,22 +54,22 @@ void DockContainer::dockModule(ConfigModule *module)
   if (widget)
     {
       if (_module && _module->isChanged())
-	{	  	  
-	  int res = KMessageBox::warningYesNo(0, i18n("There are unsaved changes in the active module.\n"
-							    "Do you want to apply the changes before running\n"
-							    "the new module or forget the changes?"),
-					      i18n("Unsaved changes"), i18n("&Apply"), i18n("&Forget"));
-	  if (res == KMessageBox::Yes)
-	    _module->module()->applyClicked();
-
-	  _module->deleteClient();
-	}
+        {	  	  
+          int res = KMessageBox::warningYesNo(0, i18n("There are unsaved changes in the active module.\n"
+                                                      "Do you want to apply the changes before running\n"
+                                                      "the new module or forget the changes?"),
+                                              i18n("Unsaved changes"), i18n("&Apply"), i18n("&Forget"));
+          if (res == KMessageBox::Yes)
+            _module->module()->applyClicked();
+          
+          _module->deleteClient();
+        }
       else if (_module)
-	_module->deleteClient();
+        _module->deleteClient();
       
       _module = module;
       connect(_module, SIGNAL(childClosed()),
-	      this, SLOT(removeModule()));
+              this, SLOT(removeModule()));
       
       widget->reparent(this, 0 , QPoint(0,0), true);
       resize(widget->sizeHint());
@@ -77,21 +77,21 @@ void DockContainer::dockModule(ConfigModule *module)
       
       QString quickhelp = "";
       if (_module && _module->module())
-	quickhelp = _module->module()->quickHelp();
+        quickhelp = _module->module()->quickHelp();
       
       emit newModule(widget->caption(), quickhelp);
     }
   else
     KMessageBox::sorry(0, i18n("Sorry, the control module \"%1\" could not be loaded.\n"
-			       "Perhaps it is not installed.").arg(module->name())
-		       , i18n("Could not load control module."));
+                               "Perhaps it is not installed.").arg(module->name())
+                       , i18n("Could not load control module."));
 }
 
 void DockContainer::removeModule()
 {
   _module = 0L;
   resizeEvent(0L);
-
+  
   if (_basew)
 	emit newModule(_basew->caption(), "");
   else
