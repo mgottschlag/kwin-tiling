@@ -256,7 +256,6 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      hbox2->addWidget( sessionargLabel);
      sessionargBox = new QComboBox( false, winFrame);
 
-     QStrListIterator it ( *kdmcfg->sessionTypes());
      sessionargBox->insertStrList( *kdmcfg->sessionTypes() );
      set_fixed( sessionargBox);
      hbox2->addWidget( sessionargBox);
@@ -795,7 +794,6 @@ int main(int argc, char **argv)
 
      kdmcfg = new KDMConfig();
 
-     app.setStyle( WindowsStyle);
      app.setFont( *kdmcfg->normalFont());
 
      kgreeter = new KGreeter;
