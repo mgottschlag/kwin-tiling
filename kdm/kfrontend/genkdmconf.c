@@ -1776,6 +1776,19 @@ upd_forgingseed(Entry *ce, Section *cs ATTR_UNUSED)
 }
 
 static void
+upd_fifodir(Entry *ce, Section *cs ATTR_UNUSED)
+{
+    const char *dir;
+    struct stat st;
+
+    if (use_destdir)
+	return;
+    dir = ce->active ? ce->value : "/var/run/xdmctl";
+    stat (dir, &st);
+    chmod (dir, st.st_mode | 0755);
+}
+
+static void
 upd_datadir(Entry *ce, Section *cs ATTR_UNUSED)
 {
     char *oldsts, *newsts;
@@ -1879,7 +1892,7 @@ static Ent entsGeneral[] = {
 { "RandomFile",		0, 0, 
 "# Where KDM should fetch entropy from. Default is /dev/mem.\n" },
 #endif
-{ "FifoDir",		0, 0, 
+{ "FifoDir",		0, upd_fifodir, 
 "# Where the command FiFos should be created. Make it empty to disable\n"
 "# the FiFos. Default is /var/run/xdmctl\n" },
 { "FifoGroup",		0, 0, 
