@@ -1238,7 +1238,7 @@ void KXftConfig::outputSubPixelType(std::ofstream &f, bool ifNew)
 
 void KXftConfig::outputExcludeRange(std::ofstream &f, bool ifNew, bool pixel)
 {
-    ExcludeRange &range=pixel ? m_excludePixelRange : m_excludeRange;
+    Exclude &range=pixel ? m_excludePixelRange : m_excludeRange;
 
     if(((ifNew && NULL==range.end) || (!ifNew && NULL!=range.end)) &&
        (!equal(range.from,0) || !equal(range.to,0)))
