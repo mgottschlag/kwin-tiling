@@ -139,6 +139,7 @@ void
 KGDialog::slotSwitch()
 {
 #ifdef XDMCP
+    // workaround for Qt bug
     QTimer::singleShot( 0, this, SLOT(slotReallySwitch()) );
 #endif
 }
