@@ -28,6 +28,7 @@
 
 #include <unistd.h>
 #include <sys/utsname.h>
+#include <stdlib.h>
 
 
 #include <qlayout.h>
@@ -52,9 +53,10 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
 
   setCaption(i18n("About"));
 
-  QGridLayout *grid = new QGridLayout(this, 0, 0, 2);
+  QGridLayout *grid = new QGridLayout(this, 0, 0, 6, 6);
   
   QLabel *label = new QLabel(i18n("KDE Control Center"), this);
+  label->setFont(QFont("times", 24, QFont::Bold, true));
   grid->addMultiCellWidget(label, 0,0, 0,2, AlignCenter);
 
   label = new QLabel(i18n("KDE Version:"), this);
@@ -64,7 +66,17 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
 
   label = new QLabel(i18n("User:"), this);
   grid->addWidget(label, 3,0);
-  label = new QLabel(getlogin(), this);
+
+  QString str;
+  char *login = getlogin();
+  if (!login)
+    login = getenv("LOGNAME");
+  if (!login)
+    str = i18n("Unknown");
+  else 
+    str = login;
+
+  label = new QLabel(str, this);
   grid->addWidget(label, 3,2);
 
   uname(&info);
