@@ -320,7 +320,7 @@ str_cat( char **bp, const char *str )
 }
 
 static void
-sd_cat( char **bp, SdRec *sdr, BoRec *bor )
+sd_cat( char **bp, SdRec *sdr )
 {
 	if (sdr->how == SHUT_HALT)
 		str_cat( bp, "halt," );
@@ -342,7 +342,7 @@ sd_cat( char **bp, SdRec *sdr, BoRec *bor )
 		str_cat( bp, "forcemy" );
 	else
 		str_cat( bp, "cancel" );
-	*bp += sprintf( *bp, ",%d,%s", sdr->uid, bor->name ? bor->name : "-" );
+	*bp += sprintf( *bp, ",%d,%s", sdr->uid, sdr->osname ? sdr->osname : "-" );
 }
 
 static void
@@ -352,7 +352,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 
 	struct display *di;
 	const char *word;
-	char **ar, *args, *bp;
+	char **ar, **ap, *args, *bp;
 	SdRec sdr;
 	char cbuf[1024];
 
@@ -412,7 +412,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					Writer( fd, cbuf, sprintf( cbuf, "reserve %d\t",
 					                           idleReserveDisplays() ) );
 #ifdef HAVE_VTS
-				Reply( "login\nactivate\t" );
+				Reply( "login\tactivate\n" );
 #else
 				Reply( "login\n" );
 #endif
@@ -523,103 +523,114 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			}
 #endif
 		} else if (!strcmp( ar[0], "shutdown" )) {
-			if (!ar[1])
+			ap = ar;
+			if (!*++ap)
 				goto miss;
 			sdr.force = SHUT_CANCEL;
-			if (!strcmp( ar[1], "status" )) {
+			sdr.osname = 0;
+			if (!strcmp( *ap, "status" )) {
 				if (fd < 0)
 					goto bust;
-				if (ar[2])
+				if (*++ap)
 					goto exce;
 				bp = cbuf;
 				*bp++ = 'o';
 				*bp++ = 'k';
 				if (sdRec.how) {
 					str_cat( &bp, "\tglobal," );
-					sd_cat( &bp, &sdRec, &boRec );
+					sd_cat( &bp, &sdRec );
 				}
 				if (d && d->hstent->sdRec.how) {
 					str_cat( &bp, "\tlocal," );
-					sd_cat( &bp, &d->hstent->sdRec, &d->hstent->boRec );
+					sd_cat( &bp, &d->hstent->sdRec );
 				}
 				*bp++ = '\n';
 				Writer( fd, cbuf, bp - cbuf );
 				goto bust;
-			} else if (!strcmp( ar[1], "cancel" )) {
+			} else if (!strcmp( *ap, "cancel" )) {
 				sdr.how = 0;
 				sdr.start = 0;
-				if (ar[2]) {
+				if (ap[1]) {
 					if (!d)
 						goto exce;
-					if (!strcmp( ar[2], "global" ))
+					if (!strcmp( *++ap, "global" ))
 						sdr.start = TO_INF;
-					else if (strcmp( ar[2], "local" )) {
-						fLog( d, fd, "bad", "invalid cancel scope %\"s", ar[2] );
+					else if (strcmp( *ap, "local" )) {
+						fLog( d, fd, "bad", "invalid cancel scope %\"s", *ap );
 						goto bust;
 					}
-					if (ar[3])
-						goto exce;
 				}
 			} else {
-				if (!strcmp( ar[1], "reboot" ))
+				if (!strcmp( *ap, "reboot" ))
 					sdr.how = SHUT_REBOOT;
-				else if (!strcmp( ar[1], "halt" ))
+				else if (!strcmp( *ap, "halt" ))
 					sdr.how = SHUT_HALT;
 				else {
-					fLog( d, fd, "bad", "invalid type %\"s", ar[1] );
+					fLog( d, fd, "bad", "invalid type %\"s", *ap );
 					goto bust;
 				}
 				sdr.uid = -1;
-				if (!ar[2])
+				if (!*++ap)
 					goto miss;
-				sdr.start = strtol( ar[2], &bp, 10 );
-				if (bp != ar[2] && !*bp) {
-					if (*ar[2] == '+')
-						sdr.start += now;
-					if (!ar[3])
+				if (**ap == '=') {
+					switch (setBootOption( *ap + 1, &sdr )) {
+					case BO_NOMAN:
+						fLog( d, fd, "notsup", "boot options unavailable" );
+						goto bust;
+					case BO_NOENT:
+						fLog( d, fd, "noent", "no such boot option" );
+						goto bust;
+					case BO_IO:
+						fLog( d, fd, "io", "io error" );
+						goto bust;
+					}
+					if (!*++ap)
 						goto miss;
-					sdr.timeout = strtol( ar[3], &bp, 10 );
-					if (bp == ar[3] || *bp) {
+				}
+				sdr.start = strtol( *ap, &bp, 10 );
+				if (bp != *ap && !*bp) {
+					if (**ap == '+')
+						sdr.start += now;
+					if (!*++ap)
+						goto miss;
+					sdr.timeout = strtol( *ap, &bp, 10 );
+					if (bp == *ap || *bp) {
 						fLog( d, fd, "bad", "invalid timeout %\"s", ar[3] );
 						goto bust;
 					}
-					if (*ar[3] == '+')
+					if (**ap == '+')
 						sdr.timeout += sdr.start ? sdr.start : now;
-					if (sdr.timeout < 0) {
+					if (sdr.timeout < 0)
 						sdr.timeout = TO_INF;
-						if (ar[4])
-							goto exce;
-					} else {
-						if (!ar[4])
+					else {
+						if (!*++ap)
 							goto miss;
-						if (!strcmp( ar[4], "force" ))
+						if (!strcmp( *ap, "force" ))
 							sdr.force = SHUT_FORCE;
-						else if (d && !strcmp( ar[4], "forcemy" ))
+						else if (d && !strcmp( *ap, "forcemy" ))
 							sdr.force = SHUT_FORCEMY;
-						else if (strcmp( ar[4], "cancel" )) {
+						else if (strcmp( *ap, "cancel" )) {
 							fLog( d, fd, "bad", "invalid timeout action %\"s",
-							      ar[4] );
+							      *ap );
 							goto bust;
 						}
-						if (ar[5])
-							goto exce;
 					}
 				} else {
 					sdr.timeout = 0;
-					if (d && !strcmp( ar[2], "ask" ))
+					if (d && !strcmp( *ap, "ask" ))
 						sdr.force = SHUT_ASK;
-					else if (!strcmp( ar[2], "forcenow" ))
+					else if (!strcmp( *ap, "forcenow" ))
 						sdr.force = SHUT_FORCE;
-					else if (!strcmp( ar[2], "schedule" ))
+					else if (!strcmp( *ap, "schedule" ))
 						sdr.timeout = TO_INF;
-					else if (strcmp( ar[2], "trynow" )) {
-						fLog( d, fd, "bad", "invalid mode %\"s", ar[2] );
+					else if (strcmp( *ap, "trynow" )) {
+						fLog( d, fd, "bad", "invalid mode %\"s", *ap );
 						goto bust;
 					}
-					if (ar[3])
-						goto exce;
 				}
 			}
+			if (*++ap)
+				goto exce;
 			if (d) {
 				sdr.uid = d->userSess >= 0 ? d->userSess : 0;
 				if (d->allowShutdown == SHUT_NONE ||
@@ -629,9 +640,11 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					fLog( d, fd, "perm", "shutdown forbidden" );
 					goto bust;
 				}
-				if (!sdr.how && !sdr.start)
+				if (!sdr.how && !sdr.start) {
+					if (d->hstent->sdRec.osname)
+						free( d->hstent->sdRec.osname );
 					d->hstent->sdRec = sdr;
-				else {
+				} else {
 					if (sdRec.how && sdRec.force == SHUT_FORCE &&
 					    ((d->allowNuke == SHUT_NONE && sdRec.uid != sdr.uid) ||
 					     (d->allowNuke == SHUT_ROOT && sdr.uid)))
@@ -646,13 +659,18 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 						fLog( d, fd, "perm", "forced shutdown forbidden" );
 						goto bust;
 					}
-					if (!sdr.start)
+					if (!sdr.start) {
+						if (d->hstent->sdRec.osname)
+							free( d->hstent->sdRec.osname );
 						d->hstent->sdRec = sdr;
-					else {
+					} else {
 						if (!sdr.how)
 							cancelShutdown();
-						else
+						else {
+							if (sdRec.osname)
+								free( sdRec.osname );
 							sdRec = sdr;
+						}
 					}
 				}
 			} else {
@@ -681,6 +699,8 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 						}
 					}
 					sdr.uid = -1;
+					if (sdRec.osname)
+						free( sdRec.osname );
 					sdRec = sdr;
 				}
 			}
@@ -711,25 +731,6 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			freeStrArr( opts );
 			Writer( fd, cbuf, sprintf( cbuf, "\t%d\t%d\n", def, cur ) );
 			goto bust;
-		} else if (!strcmp( ar[0], "setbootoption" )) {
-			if (ar[1] && ar[2])
-				goto exce;
-			if (d && sdRec.how && sdRec.uid != -1) {
-				fLog( d, fd, "perm", "overriding boot option forbidden" );
-				goto bust;
-			}
-			/* no permission checks - it depends on shutdown anyway */
-			switch (setBootOption( ar[1], d ? &d->hstent->boRec : &boRec )) {
-			case BO_NOMAN:
-				fLog( d, fd, "notsup", "boot options unavailable" );
-				goto bust;
-			case BO_NOENT:
-				fLog( d, fd, "noent", "no such boot option" );
-				goto bust;
-			case BO_IO:
-				fLog( d, fd, "io", "io error" );
-				goto bust;
-			}
 		} else if (d) {
 			if (!strcmp( ar[0], "lock" )) {
 				if (ar[1])
@@ -804,6 +805,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				goto bust;
 			}
 		}
+			fLog( d, fd, "hoho", "done command, fd is %d", fd );
 		if (fd >= 0)
 			Reply( "ok\n" );
 	}

@@ -180,6 +180,7 @@ private:
 
     KApplication::ShutdownType shutdownType;
     KApplication::ShutdownMode shutdownMode;
+    QString bootOption;
 
     bool clean;
     KSMClient* clientInteracting;

@@ -181,7 +181,8 @@ void KSMShutdownDlg::slotLogout()
 
 void KSMShutdownDlg::slotReboot()
 {
-    // no boot option selected -> current/default
+    // no boot option selected -> current
+    m_bootOption = QString::null;
     m_shutdownType = KApplication::ShutdownTypeReboot;
     accept();
 }
@@ -189,8 +190,7 @@ void KSMShutdownDlg::slotReboot()
 void KSMShutdownDlg::slotReboot(int opt)
 {
     if (int(rebootOptions.size()) > opt)
-      DM().setBootOption( rebootOptions[opt] );
-  
+        m_bootOption = rebootOptions[opt];
     m_shutdownType = KApplication::ShutdownTypeReboot;
     accept();
 }
@@ -198,12 +198,13 @@ void KSMShutdownDlg::slotReboot(int opt)
 
 void KSMShutdownDlg::slotHalt()
 {
+    m_bootOption = QString::null;
     m_shutdownType = KApplication::ShutdownTypeHalt;
     accept();
 }
 
 
-bool KSMShutdownDlg::confirmShutdown( bool maysd, KApplication::ShutdownType& sdtype )
+bool KSMShutdownDlg::confirmShutdown( bool maysd, KApplication::ShutdownType& sdtype, QString& bootOption )
 {
     kapp->enableStyles();
     KSMShutdownDlg* l = new KSMShutdownDlg( 0,
@@ -218,6 +219,7 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, KApplication::ShutdownType& sd
             rect.y() + (rect.height() - sh.height())/2);
     bool result = l->exec();
     sdtype = l->m_shutdownType;
+    bootOption = l->m_bootOption;
 
     delete l;
 

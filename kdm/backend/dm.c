@@ -99,8 +99,7 @@ static int TitleLen;
 static int StorePid( void );
 
 static int Stopping;
-SdRec sdRec = { 0, 0, 0, TO_INF, TO_INF };
-BoRec boRec;
+SdRec sdRec = { 0, 0, 0, TO_INF, TO_INF, 0, 0, 0 };
 
 time_t now;
 
@@ -732,7 +731,7 @@ processGPipe( struct display *d )
 		sdRec.force = GRecvInt();
 		sdRec.uid = GRecvInt();
 		option = GRecvStr();
-		setBootOption( option, &boRec );
+		setBootOption( option, &sdRec );
 		if (option)
 			free( option );
 		break;
@@ -742,7 +741,7 @@ processGPipe( struct display *d )
 		GSendInt( sdRec.timeout );
 		GSendInt( sdRec.force );
 		GSendInt( sdRec.uid );
-		GSendStr( boRec.name );
+		GSendStr( sdRec.osname );
 		break;
 	case G_List:
 		flags = GRecvInt();
@@ -820,6 +819,10 @@ void
 cancelShutdown( void )
 {
 	sdRec.how = 0;
+	if (sdRec.osname) {
+		free( sdRec.osname );
+		sdRec.osname = 0;
+	}
 	Stopping = 0;
 	RescanConfigs( TRUE );
 }
@@ -1476,20 +1479,16 @@ ExitDisplay(
 			    !((d->allowNuke == SHUT_NONE && sdRec.uid != he->sdRec.uid) ||
 			      (d->allowNuke == SHUT_ROOT && he->sdRec.uid)))
 			{
+				if (sdRec.osname)
+					free( sdRec.osname );
 				sdRec = he->sdRec;
-				if (boRec.name)
-					free( boRec.name );
-				boRec = he->boRec;
 				if (now < sdRec.timeout || wouldShutdown())
 					endState = DS_REMOVE;
-			} else if (he->boRec.name)
-				free( he->boRec.name );
+			} else if (he->sdRec.osname)
+				free( he->sdRec.osname );
 			he->sdRec.how = 0;
-			he->boRec.name = 0;
+			he->sdRec.osname = 0;
 		}
-	} else if (he->boRec.name) {
-		free( he->boRec.name );
-		he->boRec.name = 0;
 	}
 	if (d->status == zombie)
 		rStopDisplay( d, d->zstatus );

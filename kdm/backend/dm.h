@@ -329,13 +329,10 @@ typedef struct {
 	int uid;
 	int start;
 	int timeout;
+	char *osname;
+	time_t bmstamp;
+	int osindex;
 } SdRec;
-
-typedef struct BoRec {
-	char *name;
-	time_t stamp;
-	int index;
-} BoRec;
 
 struct disphist {
 	struct disphist *next;
@@ -345,7 +342,6 @@ struct disphist {
 	         lock:1,      /* screen locker running */
 	         goodExit:1;  /* was the last exit "peaceful"? */
 	SdRec sdRec;
-	BoRec boRec;
 	char *nuser, *npass, *nargs;
 };
 
@@ -395,7 +391,6 @@ void BecomeDaemon( void );
 extern char *prog, *progpath;
 extern time_t now;
 extern SdRec sdRec;
-extern BoRec boRec;
 void StartDisplay( struct display *d );
 void StartDisplayP2( struct display *d );
 void StopDisplay( struct display *d );
@@ -585,7 +580,7 @@ char *iniMerge( char *data, const char *newdata );
 
 /* in bootman.c */
 int getBootOptions( char ***opts, int *def, int *cur );
-int setBootOption( const char *opt, BoRec *bo );
+int setBootOption( const char *opt, SdRec *sdr );
 void commitBootOption( void );
 
 #ifdef XDMCP

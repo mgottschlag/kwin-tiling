@@ -46,7 +46,7 @@ class KSMShutdownDlg : public QDialog
     Q_OBJECT
 
 public:
-    static bool confirmShutdown( bool maysd, KApplication::ShutdownType& sdtype );
+    static bool confirmShutdown( bool maysd, KApplication::ShutdownType& sdtype, QString& bopt );
 
 public slots:
     void slotLogout();
@@ -60,6 +60,7 @@ protected:
 private:
     KSMShutdownDlg( QWidget* parent, bool maysd, KApplication::ShutdownType sdtype );
     KApplication::ShutdownType m_shutdownType;
+    QString m_bootOption;
     QPopupMenu *targets;
     QStringList rebootOptions;
 };
