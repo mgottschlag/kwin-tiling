@@ -334,7 +334,7 @@ void CfgBrowser::load(KConfig *) {
 	   }
 	}
 	
-	lineExec->setText(exec);
+	lineExec->setText(m_browserExec);
 	delete config;
 
 	emit changed(false);
