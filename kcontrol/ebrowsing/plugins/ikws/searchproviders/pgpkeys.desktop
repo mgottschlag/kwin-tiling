@@ -1,0 +1,6 @@
+[Desktop Entry]
+Keys=pgp,pgpkeys
+Name=OpenPGP Key Search
+Query=http://pgp.dtype.org:11371/pks/lookup?search=\\{@}&op=vindex
+ServiceTypes=SearchProvider
+Type=Service
