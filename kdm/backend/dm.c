@@ -73,7 +73,11 @@ from The Open Group.
 # endif
 #endif
 
-#if defined(CSRG_BASED) || !defined(sun)
+#if defined(CSRG_BASED) || defined(__DARWIN__)
+# define BSD_UTMP
+#endif
+
+#if defined(BSD_UTMP) || !defined(sun)
 # include <utmp.h>
 # ifndef UTMP_FILE
 #  define UTMP_FILE _PATH_UTMP
@@ -403,7 +407,7 @@ struct utmps {
     time_t time;
     enum utState state;
     int hadSess;
-#ifdef CSRG_BASED
+#ifdef BSD_UTMP
     int checked;
 #endif
 };
@@ -421,7 +425,7 @@ CheckUtmp (void)
     time_t now;
     struct utmps *utp, **utpp;
     struct stat st;
-#ifdef CSRG_BASED
+#ifdef BSD_UTMP
     struct utmp ut[1];
 #elif defined(sun)
     struct utmpx *ut;
@@ -439,12 +443,12 @@ CheckUtmp (void)
     time(&now);
     if (modtim != st.st_mtime)
     {
-#ifdef CSRG_BASED
+#ifdef BSD_UTMP
 	int fd;
 #endif
 
 	Debug ("rescanning " LOGSTAT_FILE "\n");
-#ifdef CSRG_BASED
+#ifdef BSD_UTMP
 	for (utp = utmpList; utp; utp = utp->next)
 	    utp->checked = 0;
 	if ((fd = open (UTMP_FILE, O_RDONLY)) < 0)
@@ -464,7 +468,7 @@ CheckUtmp (void)
 	    for (utp = utmpList; utp; utp = utp->next)
 		if (!strncmp(utp->line, ut->ut_line, UT_LINESIZE))
 		{
-#ifdef CSRG_BASED
+#ifdef BSD_UTMP
 		    utp->checked = 1;
 #else
 		    if (ut->ut_type == LOGIN_PROCESS)
@@ -486,7 +490,7 @@ CheckUtmp (void)
 		    break;
 		}
 	}
-#ifdef CSRG_BASED
+#ifdef BSD_UTMP
 	close (fd);
 	for (utp = utmpList; utp; utp = utp->next)
 	    if (!utp->checked && utp->state == UtActive)
@@ -524,7 +528,7 @@ CheckUtmp (void)
 		nck = remains;
 	}
 	else
-#ifdef CSRG_BASED
+#ifdef BSD_UTMP
 	    nck = (TIME_RELOG + 5) / 3;
 #else
 	    nck = TIME_RELOG;
