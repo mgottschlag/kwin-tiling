@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+Name=applies KDE colors and styles to X and GTK settings
+Exec=krdb
+# The following is not true, it's a hack to let the startService call
+# wait till krdb terminates.
+X-DCOP-ServiceType=Unique
+ServiceTypes=Daemon
