@@ -112,28 +112,28 @@ KGreeter::KGreeter()
     stsFile->setGroup( "PrevUser" );
 
 #ifdef WITH_KDM_XCONSOLE
-    QGridLayout* main_grid = new QGridLayout( 1, 1, 10 );
-    layout->addLayout( main_grid, 0, 0 );
+    QBoxLayout *main_box = new QHBoxLayout( 10 );
+    layout->addLayout( main_box, 0, 0 );
 #else
-    QGridLayout* main_grid = new QGridLayout( winFrame, 1, 1, 10, 10 );
+    QBoxLayout *main_box = new QHBoxLayout( winFrame, 10, 10 );
 #endif
 
-    grid = new QGridLayout( 1, 1, 5 );
-    main_grid->addLayout( grid, 2, 1 );
+    if (_userList) {
+	userView = new UserListView( winFrame );
+	main_box->addWidget(userView);
+	connect( userView, SIGNAL(clicked( QListViewItem * )),
+		 SLOT(slotUserClicked( QListViewItem * )) );
+	connect( userView, SIGNAL(doubleClicked( QListViewItem * )),
+		 SLOT(accept()) );
+    }
+
+    QBoxLayout *inner_box = new QVBoxLayout( main_box, 10 );
 
     if (!_greetString.isEmpty()) {
 	QLabel* welcomeLabel = new QLabel( _greetString, winFrame );
 	welcomeLabel->setAlignment( AlignCenter );
 	welcomeLabel->setFont( _greetFont );
-	main_grid->addWidget( welcomeLabel, 0, 1 );
-    }
-    if (_userList) {
-	userView = new UserListView( winFrame );
-	main_grid->addMultiCellWidget(userView, 0, 3, 0, 0);
-	connect( userView, SIGNAL(clicked( QListViewItem * )),
-		 SLOT(slotUserClicked( QListViewItem * )) );
-	connect( userView, SIGNAL(doubleClicked( QListViewItem * )),
-		 SLOT(accept()) );
+	inner_box->addWidget( welcomeLabel );
     }
     if (_userCompletion)
 	userList = new QStringList;
@@ -161,31 +161,15 @@ KGreeter::KGreeter()
 
     if (userView) {
 	if (clock)
-	    main_grid->addWidget( clock, 1, 1, AlignCenter );
+	    inner_box->addWidget( clock, 0, AlignCenter );
 	else if (pixLabel)
-	    main_grid->addWidget( pixLabel, 1, 1, AlignCenter );
+	    inner_box->addWidget( pixLabel, 0, AlignCenter );
     } else {
-#if 0
 	if (clock)
-	    main_grid->addMultiCellWidget( clock, 0,3, 2,2, AlignCenter );
+	    main_box->addWidget( clock, 0, AlignCenter );
 	else if (pixLabel)
-	    main_grid->addMultiCellWidget( pixLabel, 0,3, 2,2, AlignCenter );
-#else
-	if (clock)
-	    grid->addMultiCellWidget( clock, 0,3, 4,4, AlignTop );
-	else if (pixLabel)
-	    grid->addMultiCellWidget( pixLabel, 0,3, 4,4, AlignTop );
-#endif
+	    main_box->addWidget( pixLabel, 0, AlignCenter );
     }
-
-    KSeparator* sep = new KSeparator( KSeparator::HLine, winFrame );
-#if 0
-    grid->addMultiCellWidget( sep, 4,4, 0,3 );
-#else
-    grid->addMultiCellWidget( sep, 4,4, 0,
-	(userView || _logoArea == LOGO_NONE) ? 3 : 4 );
-#endif
-    grid->setColStretch( 3, 1 );
 
     goButton = new QPushButton( i18n("L&ogin"), winFrame );
     goButton->setDefault( true );
@@ -194,14 +178,6 @@ KGreeter::KGreeter()
     connect( clearButton, SIGNAL(clicked()), SLOT(reject()) );
     QPushButton *menuButton = new QPushButton( i18n("&Menu"), winFrame );
     //helpButton
-
-    QBoxLayout* hbox2 = new QHBoxLayout( 10 );
-    main_grid->addItem( hbox2, 3, 1 );
-    hbox2->addWidget( goButton );
-    hbox2->addWidget( clearButton );
-    hbox2->addStretch( 1 );
-    hbox2->addWidget( menuButton );
-    hbox2->addStretch( 1 );
 
     QWidget *prec;
     if (userView)
@@ -219,8 +195,17 @@ KGreeter::KGreeter()
     verify = new KGVerify( this, winFrame, prec, QString::null,
 			   pluginList, KGreeterPlugin::Authenticate,
 			   KGreeterPlugin::Login );
-    grid->addMultiCellLayout( verify->getLayout(), 0,3, 0,3, AlignCenter );
+    inner_box->addLayout( verify->getLayout() );
     verify->selectPlugin( curPlugin );
+
+    inner_box->addWidget( new KSeparator( KSeparator::HLine, winFrame ) );
+
+    QBoxLayout* hbox2 = new QHBoxLayout( inner_box, 10 );
+    hbox2->addWidget( goButton );
+    hbox2->addWidget( clearButton );
+    hbox2->addStretch( 1 );
+    hbox2->addWidget( menuButton );
+    hbox2->addStretch( 1 );
 
     sessMenu = new QPopupMenu( winFrame );
     connect( sessMenu, SIGNAL(activated(int)),

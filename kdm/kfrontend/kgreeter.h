@@ -39,7 +39,6 @@ class QLabel;
 class QPushButton;
 class QPopupMenu;
 class QListViewItem;
-class QGridLayout;
 
 struct SessType {
     QString name, type;
@@ -88,7 +87,6 @@ private:
     QStringList		*userList;
     KdmClock		*clock;
     QLabel		*pixLabel;
-    QGridLayout		*grid;
     KGVerify    	*verify;
     QPushButton		*goButton, *clearButton;
     QPopupMenu		*sessMenu;

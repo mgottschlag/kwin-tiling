@@ -73,6 +73,7 @@ KGVerify::KGVerify( KGVerifyHandler *_handler, QWidget *_parent,
   , failed( false )
 {
     grid = new QGridLayout;
+    grid->setAlignment( AlignCenter );
 
     failedLabel = new QLabel( parent );
     failedLabel->setFont( _failFont );
