@@ -66,7 +66,6 @@ extern "C" {
 #endif
 #endif
 
-
 static const int DFLT_STANDBY   = 0;
 static const int DFLT_SUSPEND   = 30;
 static const int DFLT_OFF   = 60;
@@ -81,6 +80,7 @@ extern "C" {
     }
 
     void init_energy() {
+#ifdef HAVE_DPMS
         KConfig *cfg = new KConfig("kcmdisplayrc", true /*readonly*/, false /*no globals*/);
         cfg->setGroup("DisplayEnergy");
 
@@ -115,6 +115,7 @@ extern "C" {
         delete cfg;
 
         KEnergy::applySettings(enabled, standby, suspend, off);
+#endif
     }
 }
 

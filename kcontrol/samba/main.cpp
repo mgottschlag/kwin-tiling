@@ -28,11 +28,6 @@
 #include <kgenericfactory.h>
 #include <kdialog.h>
 
-class SambaContainer; // damn forward declaration :( but I want the factory first zecke
-
-typedef KGenericFactory<SambaContainer, QWidget > SambaFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_samba, SambaFactory("kcmsamba") )
-
 class SambaContainer:public KCModule
 {
    public:
@@ -52,6 +47,9 @@ class SambaContainer:public KCModule
       LogView logView;
       StatisticsView statisticsView;
 };
+
+typedef KGenericFactory<SambaContainer, QWidget > SambaFactory;
+K_EXPORT_COMPONENT_FACTORY (kcm_samba, SambaFactory("kcmsamba") )
 
 SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringList&)
 :KCModule(SambaFactory::instance(), parent,name)
