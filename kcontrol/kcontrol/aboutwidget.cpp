@@ -151,7 +151,7 @@ void AboutWidget::updatePixmap()
     }
     else
     {
-        content += _caption;
+        content += "<div id=\"tableTitle\">" + _caption + "</div>";
 
         content += "<table class=\"kc_table\">\n";
         // traverse the list

@@ -23,6 +23,11 @@
   font-size: x-small;
 }
 
+#tableTitle {
+  font-weight: bold;
+  margin-bottom: 1ex;
+}
+
 .kc_table {
   font-size: x-small;
   width: 100%;
@@ -42,6 +47,7 @@
 }
 
 .kcm_link {
+  color: #000;
 }
 
 /* vim:set sw=2 et nocindent smartindent: */
