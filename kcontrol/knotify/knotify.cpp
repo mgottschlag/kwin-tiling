@@ -246,9 +246,8 @@ void PlayerSettingsDialog::load()
     cbExternal->setChecked( config.readBoolEntry( "Use external player",
                                                   false ));
     reqExternal->setURL( config.readPathEntry( "External player" ));
-    reqExternal->setEnabled( cbExternal->isChecked() );
     volumeSlider->setValue( config.readNumEntry( "Volume", 100 ) );
-    volumeSlider->parentWidget()->setEnabled( !cbExternal->isChecked() );
+    externalToggled( cbExternal->isChecked() );
 }
 
 void PlayerSettingsDialog::save()
@@ -294,6 +293,8 @@ void PlayerSettingsDialog::externalToggled( bool on )
 
     if ( on )
         reqExternal->setFocus();
+    else
+        reqExternal->clearFocus();
 }
 
 #include "knotify.moc"
