@@ -343,8 +343,8 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg )
         t << "  base[NORMAL] = " << color( cg.base() ) << endl;
         t << "  base[SELECTED] = " << color( cg.highlight() ) << endl;
         t << "  base[INSENSITIVE] = " << color( cg.background() ) << endl;
-        t << "  base[ACTIVE] = " << color( cg.base() ) << endl;
-        t << "  base[PRELIGHT] = " << color( cg.base() ) << endl;
+        t << "  base[ACTIVE] = " << color( cg.highlight() ) << endl;
+        t << "  base[PRELIGHT] = " << color( cg.highlight() ) << endl;
         t << endl;
         t << "  text[NORMAL] = " << color( cg.text() ) << endl;
         t << "  text[SELECTED] = " << color( cg.highlightedText() ) << endl;
