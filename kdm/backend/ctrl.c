@@ -506,7 +506,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    goto miss;
 		sdr.start = strtol (ar[2], &bp, 10);
 		if (bp != ar[2] && !*bp) {
-		    if (*ar[2] == '+')
+		    if (!sdr.start || *ar[2] == '+')
 			sdr.start += now;
 		    if (!ar[3])
 			goto miss;
