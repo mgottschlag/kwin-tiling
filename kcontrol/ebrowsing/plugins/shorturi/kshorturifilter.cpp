@@ -120,8 +120,10 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // is no need to make comparisons if the supplied data is a local
   // executable and only the argument part, if any, changed!
 
+  int temp_int(0);
   // Handle SMB Protocol shortcuts ...
-  int temp_int = cmd.find( QFL1("smb:"), 0, false );
+  //Hmm, don't handle them ! (aleXXX)
+  /*int temp_int = cmd.find( QFL1("smb:"), 0, false );
   if ( temp_int == 0 || cmd.find( QFL1("\\\\") ) == 0 )
   {
     if( temp_int == 0 )
@@ -142,7 +144,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     setFilteredURI( data, cmd );
     setURIType( data, KURIFilterData::NET_PROTOCOL );
     return true;
-  }
+  }*/
 
   // Handle MAN & INFO pages shortcuts...
   QString man_proto = QFL1("man:");
