@@ -5,11 +5,10 @@
 #include <qframe.h>
 
 #include <kmessagebox.h>
+#include <kstddirs.h>
 
 #include "classAbout.h"
 #include "classAbout.moc"
-
-#include "info.xpm"
 
 classAbout::classAbout( QWidget* parent, const char* name )
 	: KConfigWidget( parent, name )
@@ -87,7 +86,7 @@ classAbout::classAbout( QWidget* parent, const char* name )
 	qtarch_Label_2->setGeometry( 30, 210, 32, 32 );
 	qtarch_Label_2->setMinimumSize( 32, 32 );
 	qtarch_Label_2->setMaximumSize( 32, 32 );
-	qtarch_Label_2->setBackgroundPixmap( QPixmap( info_xpm ) );
+	qtarch_Label_2->setBackgroundPixmap( QPixmap( locate("icon", "icon.png") ) );
 	qtarch_Label_2->setFocusPolicy( QWidget::NoFocus );
 	qtarch_Label_2->setFontPropagation( QWidget::NoChildren );
 	qtarch_Label_2->setPalettePropagation( QWidget::NoChildren );

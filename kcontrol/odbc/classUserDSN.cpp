@@ -3,10 +3,10 @@
 #include <qlabel.h>
 #include <qframe.h>
 
+#include <kstddirs.h>
+
 #include "classUserDSN.h"
 #include "classUserDSN.moc"
-
-#include "person.xpm"
 
 classUserDSN::classUserDSN( QWidget* parent, const char* name )
 	: KConfigWidget( parent, name )
@@ -76,7 +76,7 @@ classUserDSN::classUserDSN( QWidget* parent, const char* name )
 	qtarch_Label_2->setGeometry( 30, 230, 32, 32 );
 	qtarch_Label_2->setMinimumSize( 32, 32 );
 	qtarch_Label_2->setMaximumSize( 32, 32 );
-	qtarch_Label_2->setBackgroundPixmap( QPixmap( person_xpm ) );
+	qtarch_Label_2->setBackgroundPixmap( QPixmap( locate("icons", "person.png") ) );
 	qtarch_Label_2->setFocusPolicy( QWidget::NoFocus );
 	qtarch_Label_2->setFontPropagation( QWidget::NoChildren );
 	qtarch_Label_2->setPalettePropagation( QWidget::NoChildren );

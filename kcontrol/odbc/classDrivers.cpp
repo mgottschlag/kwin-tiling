@@ -4,11 +4,10 @@
 #include <qframe.h>
 
 #include <kmessagebox.h>
+#include <kstddirs.h>
 
 #include "classDrivers.h"
 #include "classDrivers.moc"
-
-#include "driver.xpm"
 
 classDrivers::classDrivers( QWidget* parent, const char* name )
 	: KConfigWidget( parent, name )
@@ -109,7 +108,7 @@ classDrivers::classDrivers( QWidget* parent, const char* name )
 	qtarch_Label_2->setGeometry( 30, 230, 32, 32 );
 	qtarch_Label_2->setMinimumSize( 32, 32 );
 	qtarch_Label_2->setMaximumSize( 32, 32 );
-	qtarch_Label_2->setBackgroundPixmap( QPixmap( driver_xpm ) );
+	qtarch_Label_2->setBackgroundPixmap( QPixmap( locate("icon", "driver.png") ) );
 	qtarch_Label_2->setFocusPolicy( QWidget::NoFocus );
 	qtarch_Label_2->setFontPropagation( QWidget::NoChildren );
 	qtarch_Label_2->setPalettePropagation( QWidget::NoChildren );

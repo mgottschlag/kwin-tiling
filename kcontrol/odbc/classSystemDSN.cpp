@@ -3,10 +3,10 @@
 #include <qlabel.h>
 #include <qframe.h>
 
+#include <kstddirs.h>
+
 #include "classSystemDSN.h"
 #include "classSystemDSN.moc"
-
-#include "server.xpm"
 
 classSystemDSN::classSystemDSN( QWidget* parent, const char* name )
 	: KConfigWidget( parent, name )
@@ -76,7 +76,7 @@ classSystemDSN::classSystemDSN( QWidget* parent, const char* name )
 	qtarch_Label_2->setGeometry( 30, 230, 32, 32 );
 	qtarch_Label_2->setMinimumSize( 32, 32 );
 	qtarch_Label_2->setMaximumSize( 32, 32 );
-	qtarch_Label_2->setBackgroundPixmap( QPixmap( server_xpm ) );
+	qtarch_Label_2->setBackgroundPixmap( QPixmap( locate("icon", "server.png") ) );
 	qtarch_Label_2->setFocusPolicy( QWidget::NoFocus );
 	qtarch_Label_2->setFontPropagation( QWidget::NoChildren );
 	qtarch_Label_2->setPalettePropagation( QWidget::NoChildren );

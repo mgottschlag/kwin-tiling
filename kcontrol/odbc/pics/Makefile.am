@@ -1,3 +1,3 @@
 
-KDE_ICON = odbc
+KDE_ICON = odbc driver info person server
 
