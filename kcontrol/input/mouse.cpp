@@ -61,10 +61,11 @@
 MouseConfig::MouseConfig (QWidget * parent, const char *name)
   : KCModule(parent, name)
 {
-  QBoxLayout* lay = new QVBoxLayout(this, 10);
+  QBoxLayout* lay = new QVBoxLayout(this, KDialog::marginHint(),
+				    KDialog::spacingHint());
 
   accel = new KIntNumInput(20, this);
-  accel->setLabel(i18n("Acceleration"));
+  accel->setLabel(i18n("Pointer Acceleration"));
   accel->setRange(1,20,2);
   accel->setSuffix("x");
   accel->setSteps(1,20);
@@ -72,14 +73,14 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   connect(accel, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
   thresh = new KIntNumInput(accel, 20, this);
-  thresh->setLabel(i18n("Threshold"));
+  thresh->setLabel(i18n("Drag Threshold"));
   thresh->setRange(1,20,2);
   thresh->setSuffix(i18n("pixels"));
   thresh->setSteps(1,20);
   lay->addWidget(thresh);
   connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
-  handedBox = new QHButtonGroup(i18n("Button mapping"), this, "handed");
+  handedBox = new QHButtonGroup(i18n("Button Mapping"), this, "handed");
   rightHanded = new QRadioButton(i18n("Right handed"), handedBox, "R");
   leftHanded = new QRadioButton(i18n("Left handed"), handedBox, "L");
   connect(handedBox, SIGNAL(clicked(int)), this, SLOT(changed()));
@@ -90,47 +91,47 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
   // SC/DC/AutoSelect/ChangeCursor
 
-    singleClick = new QCheckBox(i18n("Single &click to activate"), this);
-    connect(singleClick, SIGNAL(clicked()), SLOT(changed()));
-    lay->addWidget(singleClick);
+  singleClick = new QCheckBox(i18n("Single &click activates/opens"), this);
+  connect(singleClick, SIGNAL(clicked()), SLOT(changed()));
+  lay->addWidget(singleClick);
 
-    cbAutoSelect = new QCheckBox(i18n("&Automatically select icons"), this);
-    lay->addWidget(cbAutoSelect);
-    connect(cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
+  cbAutoSelect = new QCheckBox(i18n("&Automatically select icons"), this);
+  lay->addWidget(cbAutoSelect);
+  connect(cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
 
-    //----------
-    QGridLayout* grid = new QGridLayout(lay, 2 /*rows*/, 3 /*cols*/ );
+  //----------
+  QGridLayout* grid = new QGridLayout(lay, 2 /*rows*/, 3 /*cols*/ );
 
-    int row = 0;
-    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, this);
-    slAutoSelect->setSteps( 125, 125 );
-    slAutoSelect->setTickmarks( QSlider::Below );
-    slAutoSelect->setTickInterval( 250 );
-    slAutoSelect->setTracking( true );
-    grid->addMultiCellWidget(slAutoSelect,row,row,1,2);
-    connect(slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+  int row = 0;
+  slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, this);
+  slAutoSelect->setSteps( 125, 125 );
+  slAutoSelect->setTickmarks( QSlider::Below );
+  slAutoSelect->setTickInterval( 250 );
+  slAutoSelect->setTracking( true );
+  grid->addMultiCellWidget(slAutoSelect,row,row,1,2);
+  connect(slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+  
+  lDelay = new QLabel(slAutoSelect, i18n("De&lay:"), this);
+  lDelay->adjustSize();
+  grid->addWidget(lDelay, row, 0);
 
-    lDelay = new QLabel(slAutoSelect, i18n("De&lay:"), this);
-    lDelay->adjustSize();
-    grid->addWidget(lDelay, row, 0);
+  row++;
+  QLabel * label = new QLabel(i18n("Small"), this);
+  grid->addWidget(label,row,1);
 
-    row++;
-    QLabel * label = new QLabel(i18n("Small"), this);
-    grid->addWidget(label,row,1);
+  label = new QLabel(i18n("Large"), this);
+  grid->addWidget(label,row,2, Qt::AlignRight);
 
-    label = new QLabel(i18n("Large"), this);
-    grid->addWidget(label,row,2, Qt::AlignRight);
+  //lay->addLayout( grid );
+  //----------
 
-    //lay->addLayout( grid );
-    //----------
-
-    cbCursor = new QCheckBox(i18n("&Change cursor shape when over an icon"), this);
-    lay->addWidget(cbCursor,Qt::AlignLeft);
-    connect(cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
-
-    connect( singleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
-    connect( cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
-
+  cbCursor = new QCheckBox(i18n("&Pointer shape changes when over an icon"), this);
+  lay->addWidget(cbCursor,Qt::AlignLeft);
+  connect(cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
+  
+  connect( singleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+  connect( cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+  
   lay->addStretch(10);
   load();
 }
