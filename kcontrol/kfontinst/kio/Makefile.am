@@ -1,3 +1,5 @@
+AM_CPPFLAGS = -D_LARGEFILE64_SOURCE
+
 kde_module_LTLIBRARIES = kio_fonts.la
 kio_fonts_la_SOURCES = \
 KioFonts.cpp

@@ -1,3 +1,5 @@
+AM_CPPFLAGS = -D_LARGEFILE64_SOURCE
+
 noinst_LTLIBRARIES = libkxftconfig.la
 
 libkxftconfig_la_SOURCES = kxftconfig.cpp
