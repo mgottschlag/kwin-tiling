@@ -19,8 +19,10 @@
 */
 
 #include <iostream.h>
-
 #include <stdlib.h>
+
+#include <qfile.h>
+
 #include <kapp.h>
 #include <kglobal.h>
 #include <kdebug.h>
@@ -82,8 +84,8 @@ int main(int _argc, char *_argv[])
 	QString verylong = vl;
 
 	for (uint i = 0; i < modules.count(); i++) {
-	    cout << (*modules.at(i)).latin1();
-	    cout << verylong.left(maxwidth - (*modules.at(i)).length());
+	    cout << (*modules.at(i)).local8Bit();
+	    cout << verylong.left(maxwidth - (*modules.at(i)).length()).local8Bit();
 	    cout << " - ";
 	    cout << (*descriptions.at(i)).local8Bit();
 	    cout << endl;
@@ -117,10 +119,10 @@ int main(int _argc, char *_argv[])
         // Path didn't work. Trying as a name
         KService::Ptr serv = KService::serviceByDesktopName( arg );
         if ( serv )
-            path = serv->entryPath();
+            path = QFile::encodeName(serv->entryPath());
         else
         {
-            cerr << i18n("Module %1 not found!").arg(arg) << endl;
+            cerr << i18n("Module %1 not found!").arg(arg).local8Bit() << endl;
             return -1;
         }
     }

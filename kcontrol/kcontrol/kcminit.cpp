@@ -17,6 +17,8 @@
  
 */                                                                            
 
+#include <qfile.h>
+
 #include <kapp.h>
 #include <kcmodule.h>
 #include <kservice.h>
@@ -44,12 +46,12 @@ int main(int argc, char *argv[])
         continue; // Skip
      // try to load the library
      QString libName = QString("libkcm_%1").arg(service->library());
-     KLibrary *lib = loader->library(libName);
+     KLibrary *lib = loader->library(QFile::encodeName(libName));
      if (lib)
      {
         // get the init_ function
 	QString factory = QString("init_%1").arg(service->init());
-	void *init = lib->symbol(factory);
+	void *init = lib->symbol(factory.utf8());
         if (init)
 	{
 	   // initialize the module
@@ -58,7 +60,7 @@ int main(int argc, char *argv[])
 	   void (*func)() = (void(*)())init;
 	   func();
 	}
-        loader->unloadLibrary(libName);
+        loader->unloadLibrary(QFile::encodeName(libName));
      }
   }
 

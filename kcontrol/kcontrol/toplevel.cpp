@@ -348,7 +348,7 @@ void TopLevel::reportBug()
 	  else
 		{
 		  sprintf(buffer, "kcm%s", _active->library().latin1());
-		  dummyAbout = new KAboutData(buffer, _active->name(), "2.0");
+		  dummyAbout = new KAboutData(buffer, _active->name().utf8(), "2.0");
 		  deleteit = true;
 		}
     }

@@ -19,6 +19,7 @@
 */                                                                            
 
 #include <qstringlist.h>
+#include <qfile.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -41,12 +42,12 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod)
   
   // try to load the library
   QString libname("libkcm_%1");
-  KLibrary *lib = loader->library(libname.arg(mod.library()));
+  KLibrary *lib = loader->library(QFile::encodeName(libname.arg(mod.library())));
   if (lib)
     {
       // get the create_ function
       QString factory("create_%1");
-      void *create = lib->symbol(factory.arg(mod.handle()));
+      void *create = lib->symbol(QFile::encodeName(factory.arg(mod.handle())));
 
       if (create)
 	{  
@@ -73,5 +74,5 @@ void ModuleLoader::unloadModule(const ModuleInfo &mod)
 
   // try to unload the library
   QString libname("libkcm_%1");
-  loader->unloadLibrary(libname.arg(mod.library()));
+  loader->unloadLibrary(QFile::encodeName(libname.arg(mod.library())));
 }
