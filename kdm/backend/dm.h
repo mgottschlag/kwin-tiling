@@ -448,7 +448,7 @@ extern int runAndWait (char **args, char **env);
 extern void TerminateProcess (int pid, int sig);
 
 extern void GSet (GTalk *talk);	/* call before GOpen! */
-extern int GFork (GPipe *pajp, char *pname, char *cname);
+extern int GFork (GPipe *pajp, const char *pname, char *cname);
 extern void GClosen (GPipe *pajp);
 extern int GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname);
 extern int GClose (GProc *proc, int force);

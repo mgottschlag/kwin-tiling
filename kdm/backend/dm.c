@@ -1368,7 +1368,7 @@ StartDisplayP2 (struct display *d)
 #endif
 	Debug ("forking session\n");
 	ASPrintf (&cname, "sub-daemon for display %s", d->name);
-	pid = GFork (&d->pipe, (char *)"master daemon", cname);
+	pid = GFork (&d->pipe, "master daemon", cname);
 #ifdef nofork_session
     } else {
 	Debug ("not forking session\n");

@@ -234,18 +234,22 @@ GSet (GTalk *tlk)
 }
 
 int
-GFork (GPipe *pajp, char *pname, char *cname)
+GFork (GPipe *pajp, const char *pname, char *cname)
 {
     int opipe[2], ipipe[2], pid;
 
     if (pipe (opipe)) {
 	LogError ("Cannot start %s, pipe() failed", cname);
+	if (cname)
+	     free (cname);
 	return -1;
     }
     if (pipe (ipipe)) {
 	close (opipe[0]);
 	close (opipe[1]);
 	LogError ("Cannot start %s, pipe() failed", cname);
+	if (cname)
+	     free (cname);
 	return -1;
     }
     RegisterCloseOnFork (opipe[1]);
@@ -257,13 +261,15 @@ GFork (GPipe *pajp, char *pname, char *cname)
 	CloseNClearCloseOnFork (opipe[1]);
 	CloseNClearCloseOnFork (ipipe[0]);
 	LogError ("Cannot start %s, fork() failed\n", cname);
+	if (cname)
+	     free (cname);
 	return -1;
     case 0:
 	pajp->wfd = ipipe[1];
 	RegisterCloseOnFork (ipipe[1]);
 	pajp->rfd = opipe[0];
 	RegisterCloseOnFork (opipe[0]);
-	pajp->who = pname;
+	pajp->who = (char *)pname;
 	break;
     default:
 	close (opipe[0]);
@@ -286,19 +292,27 @@ GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
 /* ###   GSet (proc->pipe); */
     if (proc->pid) {
 	LogError ("%s already running\n", cname);
+	if (cname)
+	     free (cname);
 	return -1;
     }
     if (!(margv = xCopyStrArr (1, argv))) {
 	LogOutOfMem ("GOpen");
+	if (cname)
+	     free (cname);
 	return -1;
     }
     if (!StrApp (margv, progpath, what, (char *)0)) {
 	free (margv);
 	LogOutOfMem ("GOpen");
+	if (cname)
+	     free (cname);
 	return -1;
     }
     if (pipe (pip)) {
 	LogError ("Cannot start %s, pipe() failed\n", cname);
+	if (cname)
+	     free (cname);
 	goto fail;
     }
     switch (proc->pid = GFork (&proc->pipe, 0, cname)) {
@@ -325,6 +339,7 @@ GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
 	if (Reader (pip[0], coninfo, 1)) {
 	    Wait4 (proc->pid);
 	    LogError ("Cannot execute %\"s (%s)\n", margv[0], cname);
+	    GClosen (&proc->pipe);
 	    goto fail1;
 	}
 	close (pip[0]);
@@ -348,7 +363,8 @@ void
 GClosen (GPipe *pajp)
 {
     iGClosen (pajp);
-    free (pajp->who);
+    if (pajp->who)
+	free (pajp->who);
     pajp->who = 0;
 }
 
@@ -370,7 +386,8 @@ GClose (GProc *proc, int force)
         (WaitCode(ret) < EX_NORMAL || WaitCode(ret) > EX_MAX))
 	LogError ("Abnormal termination of %s, code %d, signal %d\n", 
 		  proc->pipe.who, WaitCode(ret), WaitSig(ret));
-    free (proc->pipe.who);
+    if (proc->pipe.who)
+	free (proc->pipe.who);
     proc->pipe.who = 0;
     return ret;
 }
