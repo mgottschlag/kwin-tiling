@@ -64,7 +64,7 @@
                 <widget class="KListView" row="0" column="2" rowspan="4" colspan="1">
                     <column>
                         <property name="text">
-                            <string>Optional Sub Menus</string>
+                            <string>Optional Menus</string>
                         </property>
                         <property name="clickable">
                             <bool>true</bool>
