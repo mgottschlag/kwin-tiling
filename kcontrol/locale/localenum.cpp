@@ -63,7 +63,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 	   this, SLOT( slotThoSepChanged(const QString &) ) );
   m_labThoSep->setBuddy(m_edThoSep);
 
-  m_labMonPosSign = new QLabel(this, I18N_NOOP("&Positive sign:"));
+  m_labMonPosSign = new QLabel(this, I18N_NOOP("Positive si&gn:"));
   m_edMonPosSign = new QLineEdit(this);
   connect( m_edMonPosSign, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotMonPosSignChanged(const QString &) ) );
