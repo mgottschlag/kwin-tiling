@@ -422,10 +422,9 @@ void KCMStyle::save()
 		(comboMenuEffect->currentItem() == 3) )	// Make Translucent
     {
 		KMessageBox::information( this,
-			i18n("This module has detected that the currently selected style (") +
-			lvStyle->currentItem()->text(2) +
-			i18n(") does not support Menu Translucency, therefore "
-			"this Menu Effect has been disabled.") );
+			i18n("This module has detected that the currently selected style (%1) "
+			"does not support Menu Translucency, therefore "
+			"this Menu Effect has been disabled.").arg( lvStyle->currentItem()->text( 2 ) ) );
 			comboMenuEffect->setCurrentItem(0);    // Disable menu effect.
 	}
 
