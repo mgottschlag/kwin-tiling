@@ -38,6 +38,7 @@
 #include <kcmodule.h>
 #include <klocale.h>
 #include <kstdaccel.h>
+#include <qtabwidget.h>
 
 
 #include "toplevel.h"
@@ -69,9 +70,10 @@ TopLevel::TopLevel(const char* name)
   connect(_container, SIGNAL(newModule(const QString&)), this, SLOT(newModule(const QString&)));
 
   // insert the about widget
-  QPixmap about = kapp->miniIcon();
-  _container->addWidget(new AboutWidget(this), about);
-  
+  AboutWidget *aw = new AboutWidget(this);
+  _container->addWidget(aw, kapp->miniIcon());
+  _container->showPage(aw);
+
   // set the main view
   setView(splitter);
 
