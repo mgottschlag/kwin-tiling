@@ -31,7 +31,7 @@ static KCmdLineOptions options[] =
 #undef I18N_NOOP
 #define I18N_NOOP(x) ""
    { "forcelock", I18N_NOOP("Force screen locking"), 0 },
-   { "dontlock", I18N_NOOP("Start only screensaver"), 0 },
+   { "dontlock", I18N_NOOP("Only start screensaver"), 0 },
    { 0, 0, 0 }
 #undef I18N_NOOP
 };
