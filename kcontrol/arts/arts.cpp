@@ -572,6 +572,7 @@ QString createArgs(bool netTrans,
 	I18N_NOOP("No Audio Input/Output");
 	I18N_NOOP("Advanced Linux Sound Architecture");
 	I18N_NOOP("Open Sound System");
+	I18N_NOOP("Threaded Open Sound System");
 #endif
 
 #include "arts.moc"
