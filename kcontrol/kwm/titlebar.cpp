@@ -37,7 +37,7 @@
 #include <kconfig.h>
 #include <kstddirs.h>
 #include <kglobal.h>
-#include <kiconloaderdialog.h>
+#include <kicondialog.h>
 #include <kiconloader.h>
 #include <knuminput.h>
 #include <kpixmapeffect.h>
@@ -1271,7 +1271,7 @@ void KTitlebarAppearance::titlebarChanged()
 
 void KTitlebarAppearance::activePressed()
 {
-  KIconLoaderDialog dlg(iconLoader, this);
+  KIconDialog dlg(iconLoader, this);
   QString name ;//CT= sPixmapActive;
   //CT  QPixmap map;
 
@@ -1286,7 +1286,7 @@ void KTitlebarAppearance::activePressed()
 
 void KTitlebarAppearance::inactivePressed()
 {
-  KIconLoaderDialog dlg(iconLoader, this);
+  KIconDialog dlg(iconLoader, this);
   QString name ;//CT= sPixmapInactive;
   //CT  QPixmap map;
 
