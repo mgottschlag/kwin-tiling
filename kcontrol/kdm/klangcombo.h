@@ -1,7 +1,7 @@
 /*
- * klangcombo.h - A combobox to select a language
+ * klangcombo.h - Adds some methods for inserting languages.
  *
- * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
+ * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -25,34 +25,23 @@
 #ifndef __KLANGCOMBO_H__
 #define __KLANGCOMBO_H__
 
+#include "ktagcombobox.h"
 
-#include <qcombobox.h>
-
-
-class KLanguageCombo : public QComboBox
+/*
+ * Extends KTagCombo to support adding and changing languages.
+ *
+ * It has also support for sub menues.
+ */
+class KLanguageCombo : public KTagComboBox
 {
   Q_OBJECT
 
 public:
-
   KLanguageCombo(QWidget *parent=0, const char *name=0);
   ~KLanguageCombo();
 
-  void insertLanguage(const QString& lang);  
-
-  QString getLanguage();   
-  void setLanguage(const QString& tag);
-  
-  void loadLanguageList();
-
-private:
-  
-  QString tag(const QString& lang);   
-  QString language(const QString& lang);
-  
-  QStringList languages;
-  QStringList tags;
-    
+  void insertLanguage(const QString& path, const QString& name, const QString& sub = QString::null, const QString &submenu = QString::null);
+  void changeLanguage(const QString& name, int i);
 };
 
 #endif

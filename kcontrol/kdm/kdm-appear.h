@@ -60,6 +60,7 @@ protected:
 private slots:
         void slotLogoPixChanged(const QString &);
         void changed();
+        void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
  
 private:
         KIconLoaderButton *logobutton;
@@ -70,5 +71,3 @@ private:
 };
 
 #endif
-
-

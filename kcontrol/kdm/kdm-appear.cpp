@@ -20,6 +20,7 @@
 
 #include <qdragobject.h>
 #include <qlayout.h>
+#include <qcombobox.h>
 
 #include "utils.h"
 #include <kio/job.h>
@@ -101,9 +102,56 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
   vbox->addStretch(1);
 
+  loadLocaleList(langcombo, QString::null, QStringList());
   load();
 }
 
+void KDMAppearanceWidget::loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first)
+{
+  // clear the list
+  combo->clear();
+
+  QStringList prilang;
+  // add the primary languages for the country to the list
+  for ( QStringList::ConstIterator it = first.begin(); it != first.end(); ++it )
+    {
+        QString str = locate("locale", sub + *it + QString::fromLatin1("/entry.desktop"));
+        if (!str.isNull())
+          prilang << str;
+    }
+
+  // add all languages to the list
+  QStringList alllang = KGlobal::dirs()->findAllResources("locale",
+							   sub + QString::fromLatin1("*/entry.desktop"));
+  alllang.sort();
+  QStringList langlist = prilang;
+  if (langlist.count() > 0)
+    langlist << QString::null; // separator
+  langlist += alllang;
+
+  QString submenu, name; // we are working on this menu
+  for ( QStringList::ConstIterator it = langlist.begin();
+	it != langlist.end(); ++it )
+    {
+        if ((*it).isNull())
+        {
+	  combo->insertSeparator();
+	  submenu = QString::fromLatin1("other");
+	  combo->insertSubmenu(i18n("Other"), submenu);
+          continue;
+        }
+	KSimpleConfig entry(*it);
+	entry.setGroup(QString::fromLatin1("KCM Locale"));
+	name = entry.readEntry(QString::fromLatin1("Name"), i18n("without name"));
+	
+	QString path = *it;
+	int index = path.findRev('/');
+	path = path.left(index);
+	index = path.findRev('/');
+	path = path.mid(index+1);
+	combo->insertLanguage(path, name, sub, submenu);
+    }
+}
 
 void KDMAppearanceWidget::setLogo(QString logo)
 {
@@ -240,7 +288,7 @@ void KDMAppearanceWidget::save()
 
   // write language
   c->setGroup("Locale");
-  c->writeEntry("Language", langcombo->getLanguage());
+  c->writeEntry("Language", langcombo->currentTag());
 
   delete c;
 }
@@ -281,7 +329,7 @@ void KDMAppearanceWidget::load()
   int index = lang.find(':');
   if (index>0)
     lang.truncate(index);
-  langcombo->setLanguage(lang);
+  langcombo->setCurrentItem(lang);
 }
 
 
@@ -290,7 +338,7 @@ void KDMAppearanceWidget::defaults()
   greetstr_lined->setText("KDE System at [HOSTNAME]");
   setLogo("kdelogo.png");
   guicombo->setCurrentItem(0);
-  langcombo->setLanguage("C");
+  langcombo->setCurrentItem("C");
 }
 
 
