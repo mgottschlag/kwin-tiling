@@ -32,6 +32,7 @@ class KHotKeysApp
         KGlobalAccel* accel;
         KHotData_dict data;
         void start_general( const QString& action_P );
+        QString get_desktop_file( const QString& action_P );
         void start_menuentry( const QString& action_P );
     protected slots:
         void accel_activated( const QString& action_P, const QString&, const KKeySequence& );

@@ -19,14 +19,13 @@
 #include <ksimpleconfig.h>
 #include <kurifilter.h>
 #include <kstandarddirs.h>
-#include <kdebug.h>
 
 #include "khotkeys.h"
 
 KHotKeysApp::KHotKeysApp()
     : KUniqueApplication( false, true ) // no styles
     {
-    accel = new KGlobalAccel( this );
+    accel = 0;
     reread_configuration();
     }
 
@@ -94,14 +93,13 @@ void KHotKeysApp::start_general( const QString& action_P )
     current->timeout.start( 1000, true ); // 1sec timeout
     }
 
-// start menuentry configured by kmenuedit
-void KHotKeysApp::start_menuentry( const QString& action_P )
+QString KHotKeysApp::get_desktop_file( const QString& action_P )
     {
     KHotData* current = data[ action_P ];
     if( current->run.isEmpty())
-        return;
+        return QString::null;
     if( current->run.right( 8 ) != ".desktop" )
-        return;
+        return QString::null;
     bool needs_search = false;
     if( KGlobal::dirs()->findResource( "apps", current->run )
         == QString::null )
@@ -127,7 +125,7 @@ void KHotKeysApp::start_menuentry( const QString& action_P )
             data.remove( action_P );
             KSimpleConfig cfg( CONFIG_FILE, false );
             data.write_config( cfg );
-            return;
+            return QString::null;
             }
         desktop_file = "";
         for( QStringList::Iterator it = possibilities.begin();
@@ -142,15 +140,24 @@ void KHotKeysApp::start_menuentry( const QString& action_P )
                 }
             }
         if( desktop_file.isEmpty())
-            return;
+            return QString::null;
         desktop_file = get_menu_entry_from_path( desktop_file );
         current->run = desktop_file;
         KSimpleConfig cfg( CONFIG_FILE, false );
         data.write_config( cfg );
         }
+    return current->run;
+    }
+
+// start menuentry configured by kmenuedit
+void KHotKeysApp::start_menuentry( const QString& action_P )
+    {
+    QString desktop_file = get_desktop_file( action_P );
+    if( desktop_file.isEmpty() )
+        return;
     // run the menu entry's .desktop file
-    ( void ) new KRun( KGlobal::dirs()->findResource( "apps", current->run ));
-    current->timeout.start( 1000, true ); // 1sec timeout
+    ( void ) new KRun( KGlobal::dirs()->findResource( "apps", desktop_file ));
+    data[ action_P ]->timeout.start( 1000, true ); // 1sec timeout
     }
 
 void KHotKeysApp::reread_configuration()
@@ -164,7 +171,16 @@ void KHotKeysApp::reread_configuration()
          it.current();
          ++it )
         {
-        accel->insert( it.currentKey(), it.currentKey(), QString::null,
+        QString desktop_file = get_desktop_file( it.currentKey() );
+        QString label;
+        if( !desktop_file.isEmpty() )
+            {
+            KDesktopFile cfg( desktop_file, true );
+            label = cfg.readEntry( "Name" );
+            }
+        if( label.isEmpty() )
+            label = it.currentKey();
+        accel->insert( it.currentKey(), label, QString::null,
             KShortcut(it.current()->shortcut), KShortcut(it.current()->shortcut),
             this, SLOT( accel_activated( const QString&, const QString&, const KKeySequence& )));
         }
