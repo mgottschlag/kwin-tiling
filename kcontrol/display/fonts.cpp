@@ -149,7 +149,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
     fontUseList.append( item );
 
     item = new FontUseItem( i18n("Menu font"),
-			    QFont( "helvetica", 12 ) );
+			    QFont( "helvetica", 10, QFont::Bold ) );
     item->setRC( "General", "menuFont" );
     fontUseList.append( item );
 
