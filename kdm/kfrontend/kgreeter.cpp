@@ -410,7 +410,7 @@ KGreeter::slotUserEntered()
 	QListViewItem *item;
 	for (item = userView->firstChild(); item; item = item->nextSibling())
 	    if (((UserListViewItem *)item)->login == curUser) {
-		userView->setCurrentItem( item );
+		userView->setSelected( item, true );
 		userView->ensureItemVisible( item );
 		goto oke;
 	    }
