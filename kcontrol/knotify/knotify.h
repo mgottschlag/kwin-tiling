@@ -93,6 +93,7 @@ private:
     QCheckBox *cbExternal;
     KURLRequester *reqExternal;
     QSlider *volumeSlider;
+    QLabel *volumeLabel;
     bool dataChanged;
 
 };

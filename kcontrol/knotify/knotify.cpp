@@ -53,9 +53,7 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
 {
     setButtons( Help | Default | Apply );
 
-    QVBoxLayout *layout = new QVBoxLayout( this );
-    // layout->setMargin( KDialog::marginHint() );
-    layout->setSpacing( KDialog::spacingHint() );
+    QVBoxLayout *layout = new QVBoxLayout( this, 0, KDialog::spacingHint() );
 
     m_appCombo = new KComboBox( false, this, "app combo" );
 
@@ -212,30 +210,34 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
     : KDialogBase( parent, "player settings dialog", modal,
                    i18n("Player Settings"), Ok|Apply|Cancel, Ok, true )
 {
-    QVBox *box = new QVBox( this );
-    setMainWidget( box );
+    QFrame *frame = makeMainWidget();
 
-    QHBox *hbox = new QHBox( box );
-    hbox->setSpacing( KDialog::spacingHint() );
-    cbExternal = new QCheckBox( i18n("Use e&xternal player: "), hbox );
-    reqExternal = new KURLRequester( hbox );
+    QVBoxLayout *topLayout = new QVBoxLayout( frame, 0, 
+        KDialog::spacingHint() );
+
+    QHBoxLayout *hbox = new QHBoxLayout( topLayout, KDialog::spacingHint() );
+    cbExternal = new QCheckBox( i18n("Use e&xternal player: "), frame );
+    reqExternal = new KURLRequester( frame );
     reqExternal->completionObject()->setMode( KURLCompletion::ExeCompletion );
     connect( cbExternal, SIGNAL( toggled( bool )),
              SLOT( externalToggled( bool )));
+    hbox->addWidget( cbExternal );
+    hbox->addWidget( reqExternal );
 
-    hbox = new QHBox( box );
-    hbox->setSpacing( KDialog::spacingHint() );
-    QLabel *l = new QLabel( i18n( "&Volume: " ), hbox );
-    volumeSlider = new QSlider( hbox );
+    hbox = new QHBoxLayout( topLayout, KDialog::spacingHint() );
+    volumeLabel = new QLabel( i18n( "&Volume: " ), frame );
+    volumeSlider = new QSlider( frame );
     volumeSlider->setOrientation( Horizontal );
     volumeSlider->setRange( 0, 100 );
-    l->setBuddy( volumeSlider );
+    volumeLabel->setBuddy( volumeSlider );
+    hbox->addWidget( volumeLabel );
+    hbox->addWidget( volumeSlider );
+
     load();
     dataChanged = false;
     enableButton(Apply, false);
     connect( cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
     connect( volumeSlider, SIGNAL( valueChanged ( int ) ), this, SLOT( slotChanged() ) );
-    connect( reqExternal, SIGNAL( urlSelected( const QString& ) ), this, SLOT( slotChanged() ) );
     connect( reqExternal, SIGNAL( textChanged( const QString& ) ), this, SLOT( slotChanged() ) );
 }
 
@@ -289,7 +291,8 @@ void PlayerSettingsDialog::slotChanged()
 void PlayerSettingsDialog::externalToggled( bool on )
 {
     reqExternal->setEnabled( on );
-    volumeSlider->parentWidget()->setEnabled( !on );
+    volumeSlider->setEnabled( !on );
+    volumeLabel->setEnabled( !on );
 
     if ( on )
         reqExternal->setFocus();
