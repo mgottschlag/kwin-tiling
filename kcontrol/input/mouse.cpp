@@ -163,7 +163,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
               KDialog::spacingHint());
 
     accel = new KIntNumInput(20, tab2);
-    accel->setLabel(i18n("Pointer Acceleration"));
+    accel->setLabel(i18n("Pointer Acceleration:"));
     accel->setRange(1,20,2);
     accel->setSuffix("x");
     accel->setSteps(1,1);
@@ -186,9 +186,9 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     QWhatsThis::add( accel, wtstr );
 
     thresh = new KIntNumInput(accel, 20, tab2);
-    thresh->setLabel(i18n("Pointer Threshold"));
+    thresh->setLabel(i18n("Pointer Threshold:"));
     thresh->setRange(1,20,2);
-    thresh->setSuffix(i18n("pixels"));
+    thresh->setSuffix(i18n(" pixels"));
     thresh->setSteps(1,1);
     lay->addWidget(thresh);
     connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(changed()));
@@ -210,9 +210,9 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     // It would be nice if the user had a test field.
     // Selecting such values in milliseconds is not intuitive
     doubleClickInterval = new KIntNumInput(thresh, 2000, tab2);
-    doubleClickInterval->setLabel(i18n("Double Click Interval"));
+    doubleClickInterval->setLabel(i18n("Double Click Interval:"));
     doubleClickInterval->setRange(0, 2000, 100);
-    doubleClickInterval->setSuffix(i18n("ms"));
+    doubleClickInterval->setSuffix(i18n(" ms"));
     doubleClickInterval->setSteps(100, 100);
     lay->addWidget(doubleClickInterval);
     connect(doubleClickInterval, SIGNAL(valueChanged(int)), this, SLOT(changed()));
@@ -225,12 +225,13 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " separate clicks.");
     QWhatsThis::add( doubleClickInterval, wtstr );
 
-    dragStartTime = new KIntNumInput(doubleClickInterval, 2000, tab2);
-    dragStartTime->setLabel(i18n("Drag Start Time"));
-    dragStartTime->setRange(0, 2000, 100);
-    dragStartTime->setSuffix(i18n("ms"));
-    dragStartTime->setSteps(100, 100);
     lay->addSpacing(15);
+
+    dragStartTime = new KIntNumInput(doubleClickInterval, 2000, tab2);
+    dragStartTime->setLabel(i18n("Drag Start Time:"));
+    dragStartTime->setRange(0, 2000, 100);
+    dragStartTime->setSuffix(i18n(" ms"));
+    dragStartTime->setSteps(100, 100);
     lay->addWidget(dragStartTime);
     connect(dragStartTime, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
@@ -240,9 +241,9 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     QWhatsThis::add( dragStartTime, wtstr );
 
     dragStartDist = new KIntNumInput(dragStartTime, 20, tab2);
-    dragStartDist->setLabel(i18n("Drag Start Distance"));
+    dragStartDist->setLabel(i18n("Drag Start Distance:"));
     dragStartDist->setRange(1, 20, 2);
-    dragStartDist->setSuffix(i18n("pixels"));
+    dragStartDist->setSuffix(i18n(" pixels"));
     dragStartDist->setSteps(1,1);
     lay->addWidget(dragStartDist);
     connect(dragStartDist, SIGNAL(valueChanged(int)), this, SLOT(changed()));
@@ -253,7 +254,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     QWhatsThis::add( dragStartDist, wtstr);
 
     wheelScrollLines = new KIntNumInput(dragStartDist, 3, tab2);
-    wheelScrollLines->setLabel(i18n("Mouse Wheel Scrolls By"));
+    wheelScrollLines->setLabel(i18n("Mouse Wheel Scrolls By:"));
     wheelScrollLines->setRange(1, 12, 2);
     wheelScrollLines->setSuffix(i18n(" lines"));
     wheelScrollLines->setSteps(1,1);
