@@ -69,7 +69,6 @@ void kSubMenuItem::stateChange(bool state)
 
 MenuTab::MenuTab( QWidget *parent, const char* name )
   : MenuTabBase (parent, name),
-    m_preferencesMenu(0),
     m_bookmarkMenu(0),
     m_quickBrowserMenu(0),
     m_recentDocumentsMenu(0)
@@ -126,14 +125,6 @@ void MenuTab::load()
     }
 
     m_subMenus->clear();
-
-    // show the preferences menu?
-    m_preferencesMenu = new kSubMenuItem(m_subMenus,
-                                         i18n("Preferences"),
-                                         QString::null,
-                                         SmallIcon("package_settings"),
-                                         c.readBoolEntry("UsePreferences", true));
-    connect(m_preferencesMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
     // show the bookmark menu?
     m_bookmarkMenu = new kSubMenuItem(m_subMenus, 
@@ -215,11 +206,7 @@ void MenuTab::save()
     for (item = m_subMenus->firstChild(); item; item = item->nextSibling())
     {
         bool isOn = static_cast<kSubMenuItem*>(item)->isOn();
-        if( item == m_preferencesMenu )
-	{
-       	    c.writeEntry("UsePreferences", isOn);
-        }
-        else if (item == m_bookmarkMenu)
+        if (item == m_bookmarkMenu)
         {
             c.writeEntry("UseBookmarks", isOn);
         }
@@ -248,7 +235,6 @@ void MenuTab::defaults()
   m_formatNameDesc->setChecked(true);
   m_showRecent->setChecked(true);
   m_hiddenFiles->setChecked(false);
-  m_preferencesMenu->setOn(false);
   m_bookmarkMenu->setOn(true);
   m_quickBrowserMenu->setOn(true);
   m_recentDocumentsMenu->setOn(true);
