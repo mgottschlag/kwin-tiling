@@ -26,6 +26,8 @@
 #include "desktops.h"
 #include "options.h"
 #include "disknav.h"
+#include "colors.h"
+#include "pixmaps.h"
 #include <ksimpleconfig.h>
 
 KConfigBase *config;
@@ -45,6 +47,8 @@ private:
     KDesktopsConfig *desktops;
     KOptionsConfig *options;
     KDiskNavConfig *disknav;
+    KColorConfig *colors;
+    KPixmapConfig *pixmaps;
 };
 
 void sd(const QSize& r) {
@@ -55,7 +59,7 @@ KKPanelApplication::KKPanelApplication(int &argc, char **argv,
 				       const char *name)
     : KControlApplication(argc, argv, name)
 {
-    panel = 0; desktops = 0; options = 0, disknav = 0;
+    panel = 0; desktops = 0; options = 0, disknav = 0, colors = 0, pixmaps = 0;
 
     if (runGUI())
 	{
@@ -71,12 +75,18 @@ KKPanelApplication::KKPanelApplication(int &argc, char **argv,
 	    if (!pages || pages->contains("disknav"))
 		addPage(disknav = new KDiskNavConfig(dialog, "disknav"),
 			i18n("Disk &Navigator"), "../../kdisknav/kdisknav.html");
+	    if (!pages || pages->contains("colors"))
+		addPage(colors = new KColorConfig(dialog, "colors"),
+			i18n("&Colors"), "");
+	    if (!pages || pages->contains("pixmaps"))
+		addPage(pixmaps = new KPixmapConfig(dialog, "pixmaps"),
+			i18n("&Pixmaps"), "");
 	
-	    if (panel || desktops || options || disknav) {
+	    if (panel || desktops || options || disknav || colors || pixmaps){
 		dialog->show();
 	    }
 	    else {
-		fprintf(stderr, i18n("usage: kcmkpanel [-init | {panel,options,desktops,disknav}]\n"));
+		fprintf(stderr, i18n("usage: kcmkpanel [-init | {panel,options,desktops,disknav,colors,pixmaps}]\n"));
 		justInit = true;
 	    }
 	
@@ -93,11 +103,15 @@ void KKPanelApplication::apply()
 	panel->saveSettings();
     if (options)
 	options->saveSettings();
+    if (colors)
+        colors->saveSettings();
+    if (pixmaps)
+        pixmaps->saveSettings();
     bool restarted = false;
     if (desktops) // desktop restarts kpanel by it's own
 	restarted = desktops->justSave();
     if (disknav)
-	disknav->saveSettings();
+        disknav->saveSettings();
     if (!restarted)
 	KWM::sendKWMCommand("kpanel:restart");
     QApplication::syncX();
