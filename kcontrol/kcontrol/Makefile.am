@@ -5,7 +5,7 @@ bin_PROGRAMS = kcontrol kcmshell kcminit
 kcontrol_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
 	helpwidget.cpp moduleinfo.cpp utils.cpp modules.cpp proxywidget.cpp \
 	modloader.cpp dockcontainer.cpp aboutwidget.cpp kcdialog.cpp global.cpp \
-	quickhelp.cpp
+	quickhelp.cpp moduletreeview.cpp moduleiconview.cpp
 
 kcontrol_LDADD   = $(LIB_KDEUI)
 

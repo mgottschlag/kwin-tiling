@@ -60,6 +60,7 @@ private:
   SearchWidget *_searchtab;
   HelpWidget   *_helptab;
 
+  ConfigModule     *_active;
   ConfigModuleList *_modules;
 };
 

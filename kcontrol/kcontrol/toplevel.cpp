@@ -43,6 +43,7 @@
 
 TopLevel::TopLevel(const char* name)
   : KTMainWindow( name )
+  , _active(0)
 {
   // initialize the entries
   _modules = new ConfigModuleList();
@@ -135,13 +136,16 @@ void TopLevel::showModule(QString desktopFile)
   for (it = files.begin(); it != files.end(); ++it)
     {
       for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
-		if (mod->fileName() == *it)
+		if (mod->fileName() == *it && mod != _active)
 		  {
 			// tell the index to display the module
 			_indextab->makeVisible(mod);
 			
 			// tell the index to mark this module as loaded
-			_indextab->moduleChanged(mod);
+			_indextab->makeSelected(mod);
+
+			// dock it
+			_dock->dockModule(mod);
 	  }
     }
 }
@@ -155,10 +159,13 @@ void TopLevel::activateModule(const QString& name)
 		{
 		  // tell the index to display the module
 		  _indextab->makeVisible(mod);
-			
-		  // tell the index to mark this module as loaded
-		  _indextab->moduleChanged(mod);
 
+		  // tell the index to mark this module as loaded
+		  _indextab->makeSelected(mod);
+		  
+		  // dock it
+		  _dock->dockModule(mod);
+		  
 		  break;
 		}
 	}

@@ -1,5 +1,4 @@
 /*
-  Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
@@ -18,45 +17,51 @@
  
 */                                                                            
 
-#ifndef __indexwidget_h__
-#define __indexwidget_h__
+#ifndef __moduleiconview_h__
+#define __moduleiconview_h__
 
-#include <qwidget.h>
+#include <qiconview.h>
 
-class ConfigModuleList;
 class ConfigModule;
-class ModuleTreeView;
-class ModuleIconView;
-class QPushButton;
+class ConfigModuleList;
 
-class IndexWidget : public QWidget
-{  
-  Q_OBJECT    
-  
-public:   
-  IndexWidget(ConfigModuleList *list, QWidget *parent, const char *name=0);	
+class ModuleIconItem : public QIconViewItem
+{
 
-public slots:
-  void makeVisible(ConfigModule *module);
-  void makeSelected(ConfigModule *module);
+public:
+  ModuleIconItem(QIconView *parent, const QString& text, const QPixmap& pm, ConfigModule *m = 0)
+	: QIconViewItem(parent, text, pm)
+	, _module(m)
+	{}
 
-protected slots:
-  void moduleSelected(ConfigModule *);
-  void treeButtonClicked();
-  void iconButtonClicked();
-
-signals:
-  void moduleActivated(ConfigModule *module);
-
-protected:
-  void resizeEvent(QResizeEvent *);
+  void setConfigModule(ConfigModule* m) { _module = m; }
+  ConfigModule* module() { return _module; }
 
 private:
-  ModuleTreeView   *_tree;
-  ModuleIconView   *_icon;
-  QPushButton      *_treebtn, *_iconbtn;
-  ConfigModuleList *_modules;
-
+  ConfigModule* _module;
 };
+
+class ModuleIconView : public QIconView
+{
+  Q_OBJECT;
+
+public:
+  ModuleIconView(ConfigModuleList *list, QWidget * parent = 0, const char * name = 0);
+  
+  void makeSelected(ConfigModule* module);
+  void makeVisible(ConfigModule *module);
+  void fill();
+
+signals:
+  void moduleSelected(ConfigModule*);
+
+protected slots:
+  void slotItemSelected(QIconViewItem*);
+  
+private:
+  ConfigModuleList *_modules;
+};
+
+
 
 #endif

@@ -18,6 +18,8 @@
  
 */                                                                            
 
+#include <qimage.h>
+
 #include <kiconloader.h>
 #include <kdesktopfile.h>
 
@@ -79,10 +81,9 @@ QPixmap ModuleInfo::icon()
 
 QPixmap ModuleInfo::largeIcon()
 {
-  QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Large, 0, true);
+  QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Medium, 0, true);
   if(icon.isNull())
-	icon = KGlobal::iconLoader()->loadIcon("package.png", KIconLoader::Large);
-  
+	icon = KGlobal::iconLoader()->loadIcon("package.png", KIconLoader::Medium);  
   return icon;
 }
 

@@ -45,6 +45,9 @@ void DockContainer::setBaseWidget(QWidget *widget)
 
 void DockContainer::dockModule(ConfigModule *module)
 {
+  if (_module == module)
+	return;
+
   ProxyWidget *widget = module->module();
 
   if (widget)
