@@ -112,12 +112,12 @@ class CFontItem : public CFontListWidget::CListViewItem
 {
     public:
 
-    CFontItem(QListView *parent, const QString &name, EType type) 
+    CFontItem(QListView *parent, const QString &name) 
         : CFontListWidget::CListViewItem(parent, name, CFontListWidget::CListViewItem::FONT)
     {
     }
 
-    CFontItem(QListViewItem *parent, const QString &name, EType type)
+    CFontItem(QListViewItem *parent, const QString &name)
         : CFontListWidget::CListViewItem(parent, name, CFontListWidget::CListViewItem::FONT)
     {
     }
@@ -136,7 +136,7 @@ class CAdvancedFontItem : public CFontItem
     public:
  
     CAdvancedFontItem(CDirectoryItem *parent, const QString &fileName)
-        : CFontItem(parent, fileName, CFontListWidget::CListViewItem::FONT),
+        : CFontItem(parent, fileName),
           itsParentDir(parent)
     {
         setupDisplay();
@@ -171,7 +171,7 @@ class CBasicFontItem : public CFontItem
     public:
 
     CBasicFontItem(QListView *parent, const QString &fileName, const QString &path)
-        : CFontItem(parent, fileName, CFontListWidget::CListViewItem::FONT),
+        : CFontItem(parent, fileName),
           itsFileName(fileName),
           itsPath(path)
     {

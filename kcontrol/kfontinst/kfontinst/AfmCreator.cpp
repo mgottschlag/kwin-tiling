@@ -240,7 +240,14 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName, const QString &en
                 << "UnderlinePosition " << CKfiGlobal::fe().getUnderlinePosition() << endl
                 << "UnderlineThickness " << CKfiGlobal::fe().getUnderlineThickness() << endl 
                 << "Version 001.00" << endl
-                << "EncodingScheme FontSpecific" << endl
+                << "EncodingScheme ";
+
+            if(CFontEngine::isAType1(fName.local8Bit()) && QString::null!=CKfiGlobal::fe().getAfmEncodingT1())
+                afm << CKfiGlobal::fe().getAfmEncodingT1().latin1();
+            else
+                afm << "FontSpecific";
+
+            afm << endl
                 << "FontBBox " << xMin << ' ' << yMin << ' ' << xMax << ' ' << yMax << endl
                 << "Descender " << CKfiGlobal::fe().getDescender() << endl
                 << "Ascender " << CKfiGlobal::fe().getAscender() << endl;

@@ -12,6 +12,7 @@
 8.  Add checkbox to enable overwriting of existing AFMs
 9.  Remember open directories in advanced mode
 10. Add support for .Z compressed Bitmap fonts
+11. Read Type1 encodings from .afm files if listed as "array" in pfa/pfb
 
 0.10b11->0.10
 =============

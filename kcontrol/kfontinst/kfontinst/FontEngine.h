@@ -215,6 +215,7 @@ class CFontEngine
     QStringList     getEncodingsT1();
     QStringList     get8BitEncodingsT1();
     bool            getIsArrayEncodingT1();
+    QString &       getAfmEncodingT1()                   { return itsAfmEncoding; }
 
     //
     // TrueType functions...
@@ -273,8 +274,9 @@ class CFontEngine
     QString        itsFullName,
                    itsFamily,
                    itsPsName,
-                   itsEncoding, // Used for Bitmap & Type1 fonts
-                   itsXlfd;     // Used for Bitmap fonts
+                   itsEncoding,    // Used for Bitmap & Type1 fonts
+                   itsAfmEncoding, // Used only for Type1 fonts
+                   itsXlfd;        // Used for Bitmap fonts
     float          itsItalicAngle;
     TFtData        itsFt;
     const char     *itsFoundry;

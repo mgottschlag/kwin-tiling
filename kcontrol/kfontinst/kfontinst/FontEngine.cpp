@@ -344,7 +344,7 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask)
     itsSpacing=SPACING_PROPORTIONAL;
     itsItalicAngle=0;
     itsItalic=ITALIC_NONE;
-    itsEncoding=QString::null;
+    itsEncoding=itsAfmEncoding=QString::null;
     itsFt.open=false;
 
     switch(itsType)
@@ -946,7 +946,8 @@ const char * CFontEngine::getTokenT1(const char *str, const char *key)
 bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
 {
     const int constHeaderMaxLen=4096;  // Read in the first X bytes, this should be enough for just the header data.
- 
+
+    char data[constHeaderMaxLen];
     bool status=false;
 
     if(TEST==mask || mask&PREVIEW || mask&XLFD)
@@ -965,7 +966,6 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
  
         if(f)
         {
-            char          data[constHeaderMaxLen];
             unsigned char *hdr=(unsigned char *)data;
 
             int bytesRead=f.read(data, constHeaderMaxLen);
@@ -1105,6 +1105,43 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
         }
     }
 
+    if(status && (mask&XLFD || mask&AFM) && getIsArrayEncodingT1()) // Read encoding from .afm, if it exists...
+    {
+        QString afm(CMisc::afmName(file));
+
+        if(CMisc::fExists(afm))
+        {
+            ifstream f(afm.local8Bit());
+ 
+            if(f)
+            {
+                const int  constMaxLen=512;
+                const char *contEncStr="EncodingScheme";
+ 
+                char line[constMaxLen],
+                     enc[constMaxLen],
+                     *pos;
+ 
+                do
+                {
+                    f.getline(line, constMaxLen);
+ 
+                    if(f.good())
+                    {
+                        line[constMaxLen-1]='\0';
+                        if(NULL!=(pos=strstr(line, contEncStr)) && strlen(pos)>(strlen(contEncStr)+1) && 1==sscanf(&(pos[strlen(contEncStr)]), "%s", enc))
+                        {
+                            itsAfmEncoding=enc;
+                            break;
+                        }
+                   }
+                }
+                while(!f.eof());
+                f.close();
+            }
+        }
+    }
+
     return status;
 }
 
@@ -1113,7 +1150,12 @@ QStringList CFontEngine::getEncodingsT1()
     QStringList enc;
 
     if(getIsArrayEncodingT1())
+    {
+        if(QString::null!=itsAfmEncoding && NULL!=CKfiGlobal::enc().get8Bit(itsAfmEncoding))
+            enc.append(itsAfmEncoding);
+
         enc.append(CEncodings::constT1Symbol);
+    }
     else
         enc=getEncodingsFt();
 
