@@ -790,10 +790,10 @@ void KColorScheme::readSchemeNames()
        sList->insertItem(entry->name);
     }
 
-    int b = (int)nSysSchemes;
-    for (uint i = 0; i < (b + mSchemeList->count()); i++) 
+    for (uint i = 0; i < (nSysSchemes + mSchemeList->count()); i++)
     {
-       readScheme( i );
+       sList->setCurrentItem(i);
+       readScheme(i);
        QPixmap preview = mkColorPreview(cs);
        sList->changeItem(preview, sList->text(i), i);
     }
