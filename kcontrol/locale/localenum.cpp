@@ -55,15 +55,15 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
   labDecSym->setBuddy(edDecSym);
 
-  labThoSep = new QLabel(this, I18N_NOOP("Thousands separator"));
+  labThoSep = new QLabel(this, I18N_NOOP("Thousands separator:"));
   edThoSep = new QLineEdit(this);
   connect( edThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotThoSepChanged(const QString &) ) );
 
-  labMonPosSign = new QLabel(this, I18N_NOOP("Positive sign"));
+  labMonPosSign = new QLabel(this, I18N_NOOP("Positive sign:"));
   edMonPosSign = new QLineEdit(this);
   connect( edMonPosSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonPosSignChanged(const QString &) ) );
 
-  labMonNegSign = new QLabel(this, I18N_NOOP("Negative sign"));
+  labMonNegSign = new QLabel(this, I18N_NOOP("Negative sign:"));
   edMonNegSign = new QLineEdit(this);
   connect( edMonNegSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonNegSignChanged(const QString &) ) );
 

@@ -56,42 +56,42 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 				       KDialog::spacingHint());
     lay->setAutoAdd(TRUE);
 
-    labCountry = new QLabel(this, I18N_NOOP("&Country"));
+    labCountry = new QLabel(this, I18N_NOOP("Country:"));
     comboCountry = new KLanguageCombo(this);
     comboCountry->setFixedHeight(comboCountry->sizeHint().height());
     labCountry->setBuddy(comboCountry);
     connect( comboCountry, SIGNAL(activated(int)),
 	     this, SLOT(changedCountry(int)) );
 
-    labLang = new QLabel(this, I18N_NOOP("&Language"));
+    labLang = new QLabel(this, I18N_NOOP("Language:"));
     comboLang = new KLanguageCombo(this);
     comboLang->setFixedHeight(comboLang->sizeHint().height());
     labLang->setBuddy(comboLang);
     connect( comboLang, SIGNAL(activated(int)),
 	     this, SLOT(changedLanguage(int)) );
 
-    labNumber = new QLabel(this, I18N_NOOP("&Numbers"));
+    labNumber = new QLabel(this, I18N_NOOP(N&umbers:"));
     comboNumber = new KLanguageCombo(this);
     comboNumber->setFixedHeight(comboNumber->sizeHint().height());
     labNumber->setBuddy(comboNumber);
     connect( comboNumber, SIGNAL(activated(int)),
 	     this, SLOT(changedNumber(int)) );
 
-    labMoney = new QLabel(this, I18N_NOOP("&Money"));
+    labMoney = new QLabel(this, I18N_NOOP(Mon&ey:"));
     comboMoney = new KLanguageCombo(this);
     comboMoney->setFixedHeight(comboMoney->sizeHint().height());
     labMoney->setBuddy(comboMoney);
     connect( comboMoney, SIGNAL(activated(int)),
 	     this, SLOT(changedMoney(int)) );
 
-    labDate = new QLabel(this, I18N_NOOP("&Date and time"));
+    labDate = new QLabel(this, I18N_NOOP("Date and time:"));
     comboDate = new KLanguageCombo(this);
     comboDate->setFixedHeight(comboDate->sizeHint().height());
     labDate->setBuddy(comboDate);
     connect( comboDate, SIGNAL(activated(int)),
 	     this, SLOT(changedTime(int)) );
 
-    labChset = new QLabel(this, I18N_NOOP("C&harset"));
+    labChset = new QLabel(this, I18N_NOOP("Charset:"));
     comboChset = new KLanguageCombo(this);
     comboChset->setFixedHeight(comboChset->sizeHint().height());
     labChset->setBuddy(comboChset);

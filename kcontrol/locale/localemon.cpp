@@ -53,35 +53,35 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
 				     KDialog::spacingHint());
   lay->setAutoAdd(TRUE);
 
-  labMonCurSym = new QLabel(this, I18N_NOOP("Currency symbol"));
+  labMonCurSym = new QLabel(this, I18N_NOOP("Currency symbol:"));
   edMonCurSym = new QLineEdit(this);
   connect( edMonCurSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonCurSymChanged(const QString &) ) );
 
-  labMonDecSym = new QLabel(this, I18N_NOOP("Decimal symbol"));
+  labMonDecSym = new QLabel(this, I18N_NOOP("Decimal symbol:"));
   edMonDecSym = new QLineEdit(this);
   connect( edMonDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonDecSymChanged(const QString &) ) );
 
-  labMonThoSep = new QLabel(this, I18N_NOOP("Thousands separator"));
+  labMonThoSep = new QLabel(this, I18N_NOOP("Thousands separator:"));
   edMonThoSep = new QLineEdit(this);
   connect( edMonThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonThoSepChanged(const QString &) ) );
 
-  labMonFraDig = new QLabel(this, I18N_NOOP("Fract digits"));
+  labMonFraDig = new QLabel(this, I18N_NOOP("Fract digits:"));
   edMonFraDig = new QLineEdit(this);
   connect( edMonFraDig, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonFraDigChanged(const QString &) ) );
 
-  labMonPosPreCurSym =new QLabel(this, I18N_NOOP("Positive currency prefix"));
+  labMonPosPreCurSym =new QLabel(this, I18N_NOOP("Positive currency prefix:"));
   chMonPosPreCurSym = new QCheckBox(this);
   connect( chMonPosPreCurSym, SIGNAL( clicked() ), this, SLOT( slotMonPosPreCurSymChanged() ) );
 
-  labMonNegPreCurSym =new QLabel(this, I18N_NOOP("Negative currency prefix"));
+  labMonNegPreCurSym =new QLabel(this, I18N_NOOP("Negative currency prefix:"));
   chMonNegPreCurSym = new QCheckBox(this);
   connect( chMonNegPreCurSym, SIGNAL( clicked() ), this, SLOT( slotMonNegPreCurSymChanged() ) );
 
-  labMonPosMonSignPos =new QLabel(this, I18N_NOOP("Sign position, positive"));
+  labMonPosMonSignPos =new QLabel(this, I18N_NOOP("Sign position, positive:"));
   cmbMonPosMonSignPos = new QComboBox(this, "signpos");
   connect( cmbMonPosMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonPosMonSignPosChanged(int) ) );
 
-  labMonNegMonSignPos =new QLabel(this, I18N_NOOP("Sign position, negative"));
+  labMonNegMonSignPos =new QLabel(this, I18N_NOOP("Sign position, negative:"));
   cmbMonNegMonSignPos = new QComboBox(this, "signpos");
   connect( cmbMonNegMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonNegMonSignPosChanged(int) ) );
 
