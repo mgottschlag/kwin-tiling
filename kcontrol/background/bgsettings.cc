@@ -476,7 +476,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
 	else
 	    configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-	m_pConfig = new KConfig(configname);
+	m_pConfig = new KConfig(configname, false, false);
     } else
 	m_pConfig = config;
 
@@ -596,10 +596,16 @@ void KBackgroundSettings::setWallpaperMode(int mode)
 
 void KBackgroundSettings::setWallpaperList(QStringList list)
 {
+    KStandardDirs *d = KGlobal::dirs();
     if (m_WallpaperList == list)
 	return;
     dirty = hashdirty = true;
-    m_WallpaperList = list;
+    m_WallpaperList.clear();
+    for(QStringList::ConstIterator it = list.begin();
+        it != list.end(); ++it)
+    {
+       m_WallpaperList.append(d->relativeLocation("wallpaper", *it));
+    }
     updateWallpaperFiles();
     changeWallpaper(true);
 }
@@ -740,17 +746,20 @@ void KBackgroundSettings::updateWallpaperFiles()
     QStringList::Iterator it;
     m_WallpaperFiles.clear();
     for (it=m_WallpaperList.begin(); it!=m_WallpaperList.end(); it++) {
-	QFileInfo fi(*it);
+        QString file = locate("wallpaper", *it);
+        if (file.isEmpty())
+            continue;
+	QFileInfo fi(file);
 	if (!fi.exists())
 	    continue;
 	if (fi.isFile() && fi.isReadable())
-	    m_WallpaperFiles.append(*it);
+	    m_WallpaperFiles.append(file);
 	if (fi.isDir()) {
-	    QDir dir(*it);
+	    QDir dir(file);
 	    QStringList lst = dir.entryList(QDir::Files | QDir::Readable);
 	    QStringList::Iterator it;
 	    for (it=lst.begin(); it!=lst.end(); it++)
-		m_WallpaperFiles.append(dir.absFilePath(*it));
+		m_WallpaperFiles.append(dir.absFilePath(file));
 	}
 
     }
@@ -789,7 +798,7 @@ void KBackgroundSettings::changeWallpaper(bool init)
     else
 	configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-    KConfig cfg(configname);
+    KConfig cfg(configname, false, false);
     cfg.setGroup(QString("Desktop%1").arg(m_Desk));
     cfg.writeEntry("CurrentWallpaper", m_CurrentWallpaper);
     cfg.writeEntry("LastChange", m_LastChange);
@@ -947,7 +956,7 @@ void KGlobalBackgroundSettings::readSettings()
     else
 	configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-    KConfig cfg(configname);
+    KConfig cfg(configname, true, false);
     cfg.setGroup("Background Common");
     m_bCommon = cfg.readBoolEntry("CommonDesktop", _defCommon);
     m_bDock = cfg.readBoolEntry("Dock", _defDock);
@@ -978,7 +987,7 @@ void KGlobalBackgroundSettings::writeSettings()
     else
 	configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-    KConfig cfg(configname);
+    KConfig cfg(configname, false, false);
     cfg.setGroup("Background Common");
     cfg.writeEntry("CommonDesktop", m_bCommon);
     cfg.writeEntry("Dock", m_bDock);

@@ -58,7 +58,7 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 	else
 	    configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-	m_pConfig = new KConfig(configname);
+	m_pConfig = new KConfig(configname, false, true);
     } else
 	m_pConfig = config;
 
