@@ -71,12 +71,9 @@ static void applyGtkStyles(bool active)
 
 // -----------------------------------------------------------------------------
 
-static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
+static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings, QPalette& newPal )
 {
   QStringList actcg, inactcg, discg;
-
-  // Rebuild the application palette that is about to be set.
-  QPalette newPal = KApplication::createApplicationPalette();
 
   /* export kde color settings */
   int i;
@@ -352,12 +349,15 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg )
 
 void runRdb( uint flags )
 {
+  // Obtain the application palette that is about to be set.
+  QPalette newPal = KApplication::createApplicationPalette();
+
   // Export colors to non-(KDE/Qt) apps (e.g. Motif, GTK+ apps)
   if (flags & KRdbExportColors)
   {
 
     KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
-    QColorGroup cg = kapp->palette().active();
+    QColorGroup cg = newPal.active();
     KGlobal::locale()->insertCatalogue("krdb");
     createGtkrc( true, cg );
 
@@ -447,13 +447,13 @@ void runRdb( uint flags )
   if ( exportQtColors || exportQtSettings )
   {
     QSettings* settings = new QSettings;
-    KSimpleConfig kglobals("kdeglobals", true); /* open read-only */
+    KSimpleConfig kglobals("kdeglobals", true);        /* open read-only */
 
     if ( exportQtColors )
-      applyQtColors( kglobals, *settings );    // For kcmcolors
+      applyQtColors( kglobals, *settings, newPal );    // For kcmcolors
 
     if ( exportQtSettings )
-      applyQtSettings( kglobals, *settings );  // For kcmstyle
+      applyQtSettings( kglobals, *settings );          // For kcmstyle
     
     delete settings;
     QApplication::flushX();
