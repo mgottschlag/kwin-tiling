@@ -764,9 +764,6 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
          MenuFolderInfo *oldParentFolderInfo = oldParentItem ? oldParentItem->folderInfo() : m_rootFolder;
          oldParentFolderInfo->take(folderInfo);
 
-         // Delete old menu
-         m_menuFile->pushAction(MenuFile::REMOVE_MENU, m_dragItem->directory(), QString::null);
-
          // Move menu
          QString oldFolder = folderInfo->fullId;
          QString folderName = folderInfo->id;
