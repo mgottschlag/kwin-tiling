@@ -9,7 +9,7 @@
 #define __COLORSCM_H__
 
 #include <qlistbox.h>
-#include <qslider.h> 
+#include <qslider.h>
 
 #include "kcolorbtn.h"
 #include "savescm.h"
@@ -19,6 +19,8 @@
 #include <X11/X.h>
 #include <kcontrol.h>
 #include <kconfig.h>
+
+extern bool runResourceManager;
 
 class KColorScheme : public KDisplayModule
 {
@@ -59,7 +61,7 @@ protected:
 	void readScheme( int index = 0 );
 	void writeScheme();
 	void setDefaults();
-    
+
 	
 protected:
 	QSlider *sb;

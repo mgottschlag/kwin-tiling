@@ -1,7 +1,7 @@
 /*
-  main.cpp - A sample KControl Application
+  main.cpp 
 
-  written 1997 by Matthias Hoelzer
+  written 1997-1999  by Mark Donohoe, Martin Jones, Matthias Hoelzer, Matthias Ettrich
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,11 @@
 #include <qfont.h>
 #include <kconfig.h>
 #include <kglobal.h>
+#include <kprocess.h>
 #include <X11/Xlib.h>
+
+
+bool runResourceManager = FALSE;
 
 class KDisplayApplication : public KControlApplication
 {
@@ -101,7 +105,6 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
 void KDisplayApplication::init()
 {
   KColorScheme *colors = new KColorScheme(0, KDisplayModule::Init);
-  writeQDesktopProperties( colors->createPalette(), KGlobal::generalFont() );
   delete colors;
   KBackground *background =  new KBackground(0, KDisplayModule::Init);
   delete background;
@@ -111,6 +114,9 @@ void KDisplayApplication::init()
   delete energy;
   KFonts *fonts = new KFonts(0, KDisplayModule::Init);
   delete fonts;
+  
+  writeQDesktopProperties( colors->createPalette(), KGlobal::generalFont() );
+  
   KGeneral *general = new KGeneral(0, KDisplayModule::Init);
   delete general;
 
@@ -127,7 +133,6 @@ void KDisplayApplication::init()
 
 void KDisplayApplication::apply()
 {
-    debug("Applying settings");
   if (colors)
     colors->applySettings();
   if (background)
@@ -150,6 +155,15 @@ void KDisplayApplication::apply()
       QFont font = KGlobal::generalFont();
       font = config->readFontEntry( "font", &font);
       writeQDesktopProperties( pal, font);
+  }
+  
+  if ( runResourceManager ) {
+      QApplication::setOverrideCursor( waitCursor );
+      KProcess proc;
+      proc.setExecutable("krdb");
+      proc.start( KProcess::Block );
+      QApplication::restoreOverrideCursor();
+      runResourceManager = FALSE;
   }
 }
 

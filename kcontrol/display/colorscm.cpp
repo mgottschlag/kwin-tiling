@@ -24,7 +24,7 @@
 #include <qbitmap.h>
 #include <qstringlist.h>
 
-#include "colorscm.h"  
+#include "colorscm.h"
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/types.h>
-#include <sys/wait.h> 
+#include <sys/wait.h>
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -50,7 +50,6 @@
 #include "kcolordlg.h"
 
 #include "widgetcanvas.h"
-#include "kresourceman.h"
 
 #include "colorscm.moc"
 
@@ -512,7 +511,7 @@ KColorScheme::~KColorScheme()
 void KColorScheme::readScheme( int index )
 {
   KConfigBase* config;
-  
+
   if( index == 1 ) {
     cs->back = lightGray;
     cs->txt = black;
@@ -527,7 +526,7 @@ void KColorScheme::readScheme( int index )
     cs->aTxt = white;
     cs->aBlend = black;
     cs->contrast = 7;
-    
+
     return;
   } if ( index == 0 ) {
     config  = kapp->getConfig();
@@ -535,52 +534,52 @@ void KColorScheme::readScheme( int index )
     config =
       new KSimpleConfig( sFileList->at( index ), true );
   }
-  
+
   if ( index == 0 )
     config->setGroup( "General" );
   else
     config->setGroup( "Color Scheme" );
-  
+
   cs->txt =
     config->readColorEntry( "foreground", &black );
-  
+
   cs->back =
     config->readColorEntry( "background", &lightGray );
-  
+
   cs->select =
     config->readColorEntry( "selectBackground", &darkBlue);
-  
+
   cs->selectTxt =
     config->readColorEntry( "selectForeground", &white );
-  
+
   cs->window =
     config->readColorEntry( "windowBackground", &white );
-  
+
   cs->windowTxt =
     config->readColorEntry( "windowForeground", &black );
-  
+
   if ( index == 0 ) config->setGroup( "WM" );
-  
+
   cs->iaTitle =
     config->readColorEntry( "inactiveBackground", &darkGray);
-  
+
   cs->iaTxt =
     config->readColorEntry( "inactiveForeground", &lightGray );
-  
+
   cs->iaBlend =
     config->readColorEntry( "inactiveBlend", &lightGray );
-  
+
   cs->aTitle =
     config->readColorEntry( "activeBackground", &darkBlue );
-  
+
   cs->aTxt =
     config->readColorEntry( "activeForeground", &white );
-  
+
   cs->aBlend =
     config->readColorEntry( "activeBlend", &black );
-  
+
   if ( index == 0 ) config->setGroup( "KDE" );
-  
+
   cs->contrast =
     config->readNumEntry( "contrast", 7 );
 }
@@ -601,7 +600,7 @@ void KColorScheme::readSchemeNames( )
       }
     }
   }
-  
+
   nSysSchemes = 2;
   QDir d;
   for(QStringList::Iterator it = list.begin(); it != list.end(); it++) {
@@ -648,9 +647,9 @@ void KColorScheme::writeSettings()
 {
   if ( !changed )
     return;
-  
+
   KConfig* sys = kapp->getConfig();
-  
+
   sys->setGroup( "General" );
   sys->writeEntry("background", cs->back, true, true);
   sys->writeEntry("selectBackground", cs->select, true, true);
@@ -658,7 +657,7 @@ void KColorScheme::writeSettings()
   sys->writeEntry("windowForeground", cs->windowTxt, true, true);
   sys->writeEntry("windowBackground", cs->window, true, true);
   sys->writeEntry("selectForeground", cs->selectTxt, true, true);
-  
+
   sys->setGroup( "WM" );
   sys->writeEntry("activeForeground", cs->aTxt, true, true);
   sys->writeEntry("inactiveBackground", cs->iaTitle, true, true);
@@ -666,43 +665,14 @@ void KColorScheme::writeSettings()
   sys->writeEntry("activeBackground", cs->aTitle, true, true);
   sys->writeEntry("activeBlend", cs->aBlend, true, true);
   sys->writeEntry("inactiveForeground", cs->iaTxt, true, true);
-  
+
   sys->setGroup( "KDE" );
   sys->writeEntry("contrast", cs->contrast, true, true);
   sys->sync();
+  
+  if ( useRM )
+      runResourceManager = TRUE;
 	
-  if ( useRM ) {
-    QApplication::setOverrideCursor( waitCursor );
-    //Matthias: krdb seems to be more advanced then the kresourceman....
-    // so simply use krdb
-    KProcess proc;
-    proc.setExecutable("krdb");
-    proc.start( KProcess::Block );
-    
-    // 		KResourceMan *krdb = new KResourceMan();
-    
-    // 		krdb->setGroup( "General" );
-    // 		krdb->writeEntry("background", cs->back );
-    // 		krdb->writeEntry("selectBackground", cs->select );
-    // 		krdb->writeEntry("foreground", cs->txt );
-    // 		krdb->writeEntry("windowForeground", cs->windowTxt );
-    // 		krdb->writeEntry("windowBackground", cs->window );
-    // 		krdb->writeEntry("selectForeground", cs->selectTxt );
-    
-    // 		krdb->setGroup( "WM" );
-    // 		krdb->writeEntry("activeForeground", cs->aTxt );
-    // 		krdb->writeEntry("inactiveBackground", cs->iaTitle );
-    // 		krdb->writeEntry("inactiveBlend", cs->iaBlend );
-    // 		krdb->writeEntry("activeBackground", cs->aTitle );
-    // 		krdb->writeEntry("activeBlend", cs->aBlend );
-    // 		krdb->writeEntry("inactiveForeground", cs->iaTxt );
-    
-    // 		krdb->setGroup( "KDE" );
-    // 		krdb->writeEntry("contrast", cs->contrast );
-    //     	krdb->sync();
-    
-    QApplication::restoreOverrideCursor();
-  }
 }
 
 void KColorScheme::apply()
@@ -711,11 +681,11 @@ void KColorScheme::apply()
   unsigned int i, nrootwins;
   Window dw1, dw2, *rootwins;
   int (*defaultHandler)(Display *, XErrorEvent *);
-  
+
   defaultHandler=XSetErrorHandler(dropError);
-  
+
   XQueryTree(kde_display, root, &dw1, &dw2, &rootwins, &nrootwins);
-  
+
   // Matthias
   Atom a = XInternAtom(qt_xdisplay(), "KDE_DESKTOP_WINDOW", False);
   for (i = 0; i < nrootwins; i++) {
@@ -727,23 +697,23 @@ void KColorScheme::apply()
       ev.xclient.window = rootwins[i];
       ev.xclient.message_type = KDEChangePalette;
       ev.xclient.format = 32;
-      
+
       XSendEvent(kde_display, rootwins[i] , False, 0L, &ev);
     }
   }
-  
+
   XFlush(kde_display);
   XSetErrorHandler(defaultHandler);
-  
+
   XFree((char *) rootwins);
 }
 
 void KColorScheme::slotPreviewScheme( int indx )
 {
   readScheme( indx );
-  
+
   // Set various appropriate for the scheme
-  
+
   cs->drawSampleWidgets();
   sb->setValue( cs->contrast );
   slotWidgetColor( 0 );
@@ -768,55 +738,55 @@ void KColorScheme::applySettings()
 
 
 
-/* this function should dissappear: colorscm should work directly on a Qt palette, since 
+/* this function should dissappear: colorscm should work directly on a Qt palette, since
    this will give us much more cusomization with qt-2.0.
    */
 QPalette KColorScheme::createPalette()
 {
-  
+
   KConfigBase* config;
   config  = kapp->getConfig();
   config->setGroup( "General" );
-  QColor buttonText = 
+  QColor buttonText =
     config->readColorEntry( "foreground", &black );
-  
-  QColor background = 
+
+  QColor background =
     config->readColorEntry( "background", &lightGray );
-  
+
   QColor highlight =
     config->readColorEntry( "selectBackground", &darkBlue);
-  
+
   QColor highlightedText =
     config->readColorEntry( "selectForeground", &white );
-  
-  QColor base = 
+
+  QColor base =
     config->readColorEntry( "windowBackground", &white );
-  
+
   QColor foreground =
     config->readColorEntry( "windowForeground", &black );
-  
-  
+
+
   int contrast =
     config->readNumEntry( "contrast", 7 );
-  
+
   int highlightVal, lowlightVal;
-  
+
   highlightVal=100+(2*contrast+4)*16/10;
   lowlightVal=100+(2*contrast+4)*10;
-  
-  
+
+
   QColorGroup disabledgrp( foreground, background,
 			   background.light(150),
 			   background.dark(),
 			   background.dark(120),
 			   background.dark(120), base );
-  
+
   QColorGroup colgrp( foreground, background,
 		      background.light(150),
 		      background.dark(),
 		      background.dark(120),
 		      foreground, base );
-  
+
   colgrp.setColor( QColorGroup::Highlight, highlight);
   colgrp.setColor( QColorGroup::HighlightedText, highlightedText);
   colgrp.setColor( QColorGroup::ButtonText, buttonText);

@@ -30,6 +30,8 @@ class QBoxLayout;
 // It's separated from the KGeneral class, in case it has to be moved
 // somewhere else later.
 
+extern bool runResourceManager;
+
 class KIconStyle // : public KDisplayModule
 {
     //Q_OBJECT
@@ -115,7 +117,7 @@ protected:
 
 	int tbUseText;
 	bool tbUseHilite, tbMoveTransparent;
-       
+
     KIconStyle * iconStyle;
     KThemeListBox *themeList;
 };

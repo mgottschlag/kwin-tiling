@@ -1,7 +1,7 @@
 # $Id$
 # kdebase/kcontrol/display
 
-INCLUDES = $(all_includes) 
+INCLUDES = $(all_includes)
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD =  $(LIB_KFILE) $(LIB_KIMGIO) $(DPMSLIB)
 
@@ -12,14 +12,14 @@ bin_PROGRAMS = kcmdisplay
 kcmdisplay_SOURCES = backgnd.cpp display.cpp \
 		colorscm.cpp savescm.cpp scrnsave.cpp \
 		general.cpp main.cpp widgetcanvas.cpp \
-		kresourceman.cpp fonts.cpp energy.cpp
+		fonts.cpp energy.cpp
 
 METASOURCES = backgnd.moc display.moc colorscm.moc savescm.moc \
 		scrnsave.moc general.moc widgetcanvas.moc \
-		kresourceman.moc fonts.moc energy.moc
+		fonts.moc energy.moc
 
 noinst_HEADERS = backgnd.h display.h colorscm.h savescm.h scrnsave.h \
-		general.h widgetcanvas.h kresourceman.h fonts.h energy.h
+		general.h widgetcanvas.h fonts.h energy.h
 
 EXTRA_DIST = README
 

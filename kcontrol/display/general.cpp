@@ -40,7 +40,6 @@
 #include <kwm.h>
 #include <kcolordlg.h>
 
-#include "kresourceman.h"
 #include "fonts.h"
 
 #include "general.h"
@@ -66,37 +65,37 @@ KIconStyle::KIconStyle( QWidget *parent, QBoxLayout * topLayout )
     QString appTitle [] = { i18n("Panel"),
                             i18n("Konqueror"),
                             i18n("Other") };
-    
+
     m_dictCBNormal.setAutoDelete(true);
     m_dictCBLarge.setAutoDelete(true);
     m_dictSettings.setAutoDelete(true);
-    
+
     QGroupBox * gb = new QGroupBox ( i18n("Icon style"), parent );
     topLayout->addWidget( gb );
-    
+
     // The layout containing the checkboxes
     QGridLayout * gLayout = new QGridLayout( gb, 1+nApp, 4, 10 /*autoborder*/);
     gLayout->setColStretch(3, 20); // avoid cb moving when resizing
-    
+
     // The two labels on row 0
     QLabel * label = new QLabel( i18n("Normal"), gb );
     gLayout->addWidget( label, 0, 1 );
-    
+
     label = new QLabel( i18n("Large"), gb );
     gLayout->addWidget( label, 0, 2 );
-    
+
     // The label + 2 checkboxes on each row
     QRadioButton * cb;
     for (int i = 0 ; i < nApp ; i++) {
         QButtonGroup * group = new QButtonGroup( );
         label = new QLabel( appTitle[i], gb );
         gLayout->addWidget( label, i+1, 0 );
-        
+
         cb = new QRadioButton( gb, "" );
         group->insert(cb);
         gLayout->addWidget( cb, i+1, 1 );
         m_dictCBNormal.insert( appName[i], cb ); // store the cb in the dict
-        
+
         cb = new QRadioButton( gb, "" );
         group->insert(cb);
         gLayout->addWidget( cb, i+1, 2 );
@@ -133,7 +132,7 @@ void KIconStyle::apply()
 void KIconStyle::readSettings()
 {
     KConfig *config = kapp->getConfig();
-    
+
     KConfigGroupSaver saver(config, "KDE");
     for (int i = 0 ; i < nApp ; i++) {
         QString s = config->readEntry( QString(appName[i])+"IconStyle", "Normal" );
@@ -142,19 +141,19 @@ void KIconStyle::readSettings()
         char * setting = new char [s.length()];
         strcpy( setting, s.ascii() );
         m_dictSettings.insert( appName[i], setting ); // store initial value
-    }    
+    }
 }
 
 void KIconStyle::writeSettings()
 {
     KConfig *cfg = kapp->getConfig();
-    
+
     KConfigGroupSaver saver(cfg, "KDE");
     for (int i = 0 ; i < nApp ; i++) {
         QString s = m_dictCBNormal[ appName[i] ] -> isChecked() ? "Normal" : "Large";
-        cfg->writeEntry( QString(appName[i])+"IconStyle", s, 
+        cfg->writeEntry( QString(appName[i])+"IconStyle", s,
                          true, true /* global setting */ );
-        
+
         if (!strcmp(appName[i], "kpanel")) {
             KConfig * config = new KConfig("kpanelrc");
             config->setGroup("kpanel");
@@ -217,7 +216,7 @@ void KThemeListBox::readThemeDir(const QString &directory)
     kconfig->setGroup("Misc");
     curName = kconfig->readEntry("Name", "");
     kconfig->setGroup(oldGroup);
-    
+
     QDir dir(directory, "*.themerc");
     if(dir.exists()){
         const QFileInfoList *list = dir.entryInfoList();
@@ -269,7 +268,7 @@ KGeneral::KGeneral(QWidget *parent, Mode m)
 	changed = false;
 	useRM = true;
 	macStyle = false;
-    
+
 	// if we are just initialising we don't need to create setup widget
 	if (mode() == Init)
 		return;
@@ -278,21 +277,21 @@ KGeneral::KGeneral(QWidget *parent, Mode m)
 	KDEChangeGeneral = XInternAtom( kde_display, "KDEChangeGeneral", False);
 	screen = DefaultScreen(kde_display);
 	root = RootWindow(kde_display, screen);
-    
+
     setName( i18n("Style") );
-    
+
 	readSettings();
 	
 	QBoxLayout *topLayout = new QVBoxLayout( this, 10 );
-    
+
     // my little style list (mosfet 04/26/99)
     QBoxLayout *lay = new QHBoxLayout( 10);
     QGroupBox *themeBox = new QGroupBox(i18n("Widget style and theme:"), this);
     lay->addWidget(themeBox);
     lay->setStretchFactor(themeBox, 1);
-    
+
     QBoxLayout *themeLayout = new QVBoxLayout(themeBox, 10);
-    
+
     themeList = new KThemeListBox(themeBox);
     themeList->setMinimumSize(QSize(100,100));
     themeLayout->addSpacing(10);
@@ -307,10 +306,10 @@ KGeneral::KGeneral(QWidget *parent, Mode m)
 
     styles = new QButtonGroup ( i18n( "Other settings for drawing:" ), this );
 	topLayout->addWidget(styles, 10);
-    
+
 	QBoxLayout *vlay = new QVBoxLayout (styles, 10);
 	vlay->addSpacing(10);
-    
+
 	cbMac = new QCheckBox( i18n( "&Menubar on top of the screen in "
                                  "the style of MacOS" ), styles);
     cbMac->setChecked( macStyle );
@@ -336,8 +335,8 @@ KGeneral::KGeneral(QWidget *parent, Mode m)
 	tbText   = new QRadioButton( i18n( "&Text only" ), tbStyle);
 	tbAside  = new QRadioButton( i18n( "Text a&side icons" ), tbStyle);
 	tbUnder  = new QRadioButton( i18n( "Text &under icons" ), tbStyle);
-    
-	tbHilite = new QCheckBox( i18n( "&Highlight buttons under mouse" ), 
+
+	tbHilite = new QCheckBox( i18n( "&Highlight buttons under mouse" ),
                               tbStyle);
 	tbTransp = new QCheckBox( i18n( "Tool&bars are transparent when"
                                     " moving" ), tbStyle);
@@ -358,7 +357,7 @@ KGeneral::KGeneral(QWidget *parent, Mode m)
     default:
         tbIcon->setChecked(true);
     }
-    
+
 	connect( tbIcon , SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
 	connect( tbText , SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
 	connect( tbAside, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
@@ -366,15 +365,15 @@ KGeneral::KGeneral(QWidget *parent, Mode m)
 
     tbHilite->setChecked( tbUseHilite );
     tbTransp->setChecked( tbMoveTransparent );
-    
+
 	lay->addWidget(tbIcon, 10);
 	lay->addWidget(tbText, 10);
 	lay->addWidget(tbAside, 10);
 	lay->addWidget(tbUnder, 10);
-    
+
 	vlay->addWidget(tbHilite, 10);
 	vlay->addWidget(tbTransp, 10);
-    
+
 	topLayout->addStretch( 100 );
 	changed = false;
 }
@@ -421,7 +420,7 @@ KGeneral::~KGeneral()
 void KGeneral::readSettings( int )
 {		
 	QString str;
-    
+
 	KConfig *config = KGlobal::config();
 	KConfigGroupSaver saver(config, "KDE");
 
@@ -432,7 +431,7 @@ void KGeneral::readSettings( int )
         applicationStyle = WindowsStyle;
 	else
         applicationStyle = MotifStyle;
-    
+
 	macStyle = config->readBoolEntry( "macStyle", false);
 
 	config->setGroup( "Toolbar style" );
@@ -454,7 +453,7 @@ void KGeneral::setDefaults()
 	macStyle = false;
 	slotMacStyle();
 	iconStyle->setDefaults();
-    
+
 	tbUseText = 0;
 	tbUseHilite = true;
 	tbMoveTransparent = true;
@@ -479,9 +478,9 @@ void KGeneral::writeSettings()
 		
 	KConfig *config = kapp->getConfig();
 	KConfigGroupSaver saver(config, "KDE");
-    
+
 	QString str;
-        
+
 	config->writeEntry( "macStyle", macStyle);
 
 	config->setGroup( "Toolbar style" );
@@ -494,28 +493,11 @@ void KGeneral::writeSettings()
 
 	config->sync();
 	
-	if ( useRM ) {
-		QApplication::setOverrideCursor( waitCursor );
-        
-		// the krdb run is for colors and other parameters (Matthias)
-		KProcess proc;
-		proc.setExecutable("krdb");
-		proc.start( KProcess::Block );
-        
-		// still some KResourceMan stuff stuff. We need to
-		// clean this up.  The best thing would be to use
-		// KResourceMan always for KDE applications to make
-		// the desktop settings machine independent but
-		// per-display (Matthias)
-        KResourceMan *krdb = new KResourceMan();
-        
-        krdb->sync();
-        
-		QApplication::restoreOverrideCursor();
-	}
+	if ( useRM )
+	    runResourceManager = TRUE;
 	
-    KWM::sendKWMCommand((macStyle ? "macStyleOn" : "macStyleOff"));
-    
+	KWM::sendKWMCommand((macStyle ? "macStyleOn" : "macStyleOff"));
+
 	QApplication::syncX();
 }
 
@@ -525,7 +507,7 @@ int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p)
     int format;
     unsigned long n, extra;
     int status;
-    
+
     status = XGetWindowProperty(qt_xdisplay(), w, a, 0L, len, False, type, &real_type, &format, &n, &extra, p);
     if (status != Success || *p == 0)
         return -1;
@@ -537,11 +519,11 @@ int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p)
 bool getSimpleProperty(Window w, Atom a, long &result)
 {
     long *p = 0;
-    
+
     if (_getprop(w, a, a, 1L, (unsigned char**)&p) <= 0){
         return false;
     }
-    
+
     result = p[0];
     XFree((char *) p);
     return true;
@@ -549,8 +531,8 @@ bool getSimpleProperty(Window w, Atom a, long &result)
 
 void KGeneral::apply()
 {
-    iconStyle->apply(); 
-    themeList->apply(); 
+    iconStyle->apply();
+    themeList->apply();
 	if ( !changed )
 		return;
 	
@@ -558,7 +540,7 @@ void KGeneral::apply()
 	unsigned int i, nrootwins;
 	Window dw1, dw2, *rootwins;
 	int (*defaultHandler)(Display *, XErrorEvent *);
-    
+
 	defaultHandler=XSetErrorHandler(dropError);
 	
 	XQueryTree(kde_display, root, &dw1, &dw2, &rootwins, &nrootwins);
@@ -573,11 +555,11 @@ void KGeneral::apply()
             ev.xclient.window = rootwins[i];
             ev.xclient.message_type = KDEChangeGeneral;
             ev.xclient.format = 32;
-            
+
             XSendEvent(kde_display, rootwins[i] , False, 0L, &ev);
         }
 	}
-    
+
 	XFlush(kde_display);
 	XSetErrorHandler(defaultHandler);
 	

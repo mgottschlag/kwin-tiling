@@ -15,6 +15,8 @@
 
 #include <X11/X.h>
 
+extern bool runResourceManager;
+
 class FontUseItem
 {
 public:

@@ -18,7 +18,6 @@
 #include <X11/Xatom.h>
 
 #include "fonts.h"
-#include "kresourceman.h"
 
 #include "fonts.moc"
 
@@ -73,21 +72,16 @@ void FontUseItem::writeFont()
 {
 	KConfigBase *config;
 	if ( _rcfile.isEmpty() ) {
-	  config  = kapp->getConfig();
+	    config  = kapp->getConfig();
+	    config->setGroup( _rcgroup );
+	    config->writeEntry( _rckey, _font, true, true );
 	} else {
 	  config = new KSimpleConfig( locate("config", _rcfile) );
+	  config->setGroup( _rcgroup );
+	  config->writeEntry( _rckey, _font );
+	  config->sync();
+	  delete config;
 	}
-	
-	config->setGroup( _rcgroup );
-	if ( _rcfile.isEmpty() ) {
-		 config->writeEntry( _rckey, _font, true, true );
-	} else {
-		config->writeEntry( _rckey, _font );
-	}
-	
-	 config->sync();
-	
-	//delete config;
 }
 
 //------------------------------------------------------------------
@@ -131,7 +125,6 @@ KFonts::KFonts(QWidget *parent, Mode m)
 	item->setRC( "General", "fixedFont" );
 	fontUseList.append( item );
 	
-	//CT 03Nov1998 - this code was here already. Only reactivated
 	item = new FontUseItem( i18n("Window title font"),
 				QFont( "helvetica", 12, QFont::Bold ) );
 	item->setRC( "WM", "titleFont" );
@@ -209,23 +202,6 @@ void KFonts::writeSettings()
 	for ( int i = 0; i < (int) fontUseList.count(); i++ )
 		fontUseList.at( i )->writeFont();	
 	
-
-	if ( useRM ) {
-		QApplication::setOverrideCursor( waitCursor );
-
-		KResourceMan *krdb = new KResourceMan();
-		for ( int i = 0; i < (int) fontUseList.count(); i++ ) {
-			FontUseItem *it = fontUseList.at( i );
-			if ( !it->rcFile() ) {
-				krdb->setGroup( it->rcGroup() );
-				krdb->writeEntry( it->rcKey(), it->font() );
-			}
-		}
-		krdb->sync();
-
-		QApplication::restoreOverrideCursor();
-	}
-	
 	fontUseList.at( lbFonts->currentItem() );
 }
 
@@ -264,6 +240,9 @@ void KFonts::apply()
 	XSetErrorHandler(defaultHandler);
 	
 	XFree((char *) rootwins);
+	
+	if ( useRM )
+	    runResourceManager = TRUE;
 }
 
 void KFonts::slotSetFont(const QFont &fnt)
@@ -282,7 +261,6 @@ void KFonts::applySettings()
 {
     if (changed)
     {
-        debug("KFonts::applySettings");
         writeSettings();
         apply();
         changed = false;
