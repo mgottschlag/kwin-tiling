@@ -36,6 +36,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kapp.h>
+#include <kprocess.h>
 
 #include "klocaleadv.h"
 #include "locale.h"
@@ -112,6 +113,13 @@ void KLocaleApplication::save()
 			      "language of all programs, you will have to "
 			      "logout first."),
                              locale->translate("Applying language settings"));
+
+    // rebuild the date base
+    // TODO: check if the _language_ was changed?
+    KProcess proc;
+    proc << QString::fromLatin1("kbuildsycoca");
+    proc.start(KProcess::DontCare);
+
     // restore the old global locale
     KGlobal::_locale = lsave;
 }
