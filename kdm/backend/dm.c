@@ -569,8 +569,6 @@ StartRemoteLogin( struct display *d )
 
 	Debug( "StartRemoteLogin for %s\n", d->name );
 	/* HACK: omitting LoadDisplayResources( d ) here! */
-	if (d->authorize)
-		SetLocalAuthorization( d );
 	switch (pid = Fork()) {
 	case 0:
 		argv = PrepServerArgv( d, d->serverArgsRemote );
