@@ -45,7 +45,7 @@ QStringList qldd = KGlobal::dirs()->findAllResources("data","drkonqi/presets/*rc
 for (QStringList::Iterator it = qldd.begin();  it != qldd.end(); ++it)
 {
 // Read the configuration titles
-KConfig config ((*it).latin1(), true, true, "data");
+KConfig config (*it, true, true, "data");
 
 config.setGroup("General");
 
@@ -140,12 +140,12 @@ QStringList qldd = KGlobal::dirs()->findAllResources("data","drkonqi/presets/*rc
 for (QStringList::Iterator it = qldd.begin();  it != qldd.end(); ++it)
 {
 // Read the configuration titles
-KConfig config ((*it).latin1(), true, true, "data");
+KConfig config (*it, true, true, "data");
 
 config.setGroup("General");
 
 QString ConfigNames = config.readEntry(QString::fromLatin1("Name"),QString::fromLatin1("unknown"));
-lb_PresetList->insertItem(ConfigNames.latin1());
+lb_PresetList->insertItem(ConfigNames);
 }
 
 connect(lb_PresetList, SIGNAL(selectionChanged()), SLOT(updateControls()));
