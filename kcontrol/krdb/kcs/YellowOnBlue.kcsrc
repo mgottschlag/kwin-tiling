@@ -1,5 +1,7 @@
 [Color Scheme]
 Name=Yellow on Blue
+Name[da]=Gult på blåt
+Name[hu]=Sárga-kék
 Name[sv]=Gul på blå
 activeBackground=255,255,0
 activeBlend=255,255,0

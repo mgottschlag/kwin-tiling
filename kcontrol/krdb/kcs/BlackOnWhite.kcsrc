@@ -1,5 +1,7 @@
 [Color Scheme]
 Name=Black on White
+Name[da]=Sort på hvidt
+Name[hu]=Fekete-fehér
 Name[sv]=Svart på vit
 activeBackground=0,0,0
 activeBlend=0,0,0
