@@ -1,5 +1,6 @@
 [Settings]
 Name=A WindowMaker-like Alternative (for 3 Modifier Keys)
+Name[pt_BR]=WindowMaker como Alternativa (para 3 Teclas Modificadoras)
 
 [Global Shortcuts]
 Desktop Screenshot=Ctrl+Print
