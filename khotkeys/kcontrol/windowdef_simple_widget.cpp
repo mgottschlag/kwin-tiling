@@ -20,11 +20,13 @@
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
+#include <kdebug.h>
 
 #include <windows.h>
 
 #include "windowdef_list_widget.h"
 #include "kcmkhotkeys.h"
+#include "windowselector.h"
 
 namespace KHotKeys
 {
@@ -35,8 +37,7 @@ Windowdef_simple_widget::Windowdef_simple_widget( QWidget* parent_P, const char*
     window_title_lineedit->setEnabled( false );
     window_class_lineedit->setEnabled( false );
     window_role_lineedit->setEnabled( false );
-    connect( autodetect_button, SIGNAL( clicked()), SIGNAL( autodetect_signal()));
-    autodetect_button->setEnabled( false );
+    connect( autodetect_button, SIGNAL( clicked()), SLOT( autodetect_clicked()));
     clear_data();
     // KHotKeys::Module::changed()
     connect( window_title_combo, SIGNAL( activated( int )),
@@ -141,7 +142,6 @@ void Windowdef_simple_widget::set_autodetect( QObject* obj_P, const char* slot_P
     disconnect( SIGNAL( autodetect_signal()));
     if( obj_P != NULL )
         connect( this, SIGNAL( autodetect_signal()), obj_P, slot_P );
-    autodetect_button->setEnabled( obj_P != NULL );
     }
     
 void Windowdef_simple_widget::autodetect_clicked()
@@ -152,9 +152,27 @@ void Windowdef_simple_widget::autodetect_clicked()
     
 void Windowdef_simple_widget::autodetect()
     {
-    // CHECKME TODO
+    WindowSelector* sel = new WindowSelector( this, SLOT( autodetect_window_selected( WId )));
+    sel->select();
     }
-    
+
+void Windowdef_simple_widget::autodetect_window_selected( WId window )
+    {
+    if( window )
+        {
+        Window_data data( window );
+        window_title_lineedit->setText( data.title );
+        window_role_lineedit->setText( data.role );
+        window_class_lineedit->setText( data.wclass );
+        type_normal_checkbox->setChecked( data.type == NET::Normal );
+        type_dialog_checkbox->setChecked( data.type == NET::Dialog );
+        type_dock_checkbox->setChecked( data.type == NET::Dock );
+//      type_tool_checkbox->setChecked( data_P->type_match( Windowdef_simple::WINDOW_TYPE_TOOL ));
+//      type_menu_checkbox->setChecked( data_P->type_match( Windowdef_simple::WINDOW_TYPE_MENU ));
+        type_desktop_checkbox->setChecked( data.type == NET::Desktop );
+        }
+    }
+
 } // namespace KHotKeys
 
 #include "windowdef_simple_widget.moc"

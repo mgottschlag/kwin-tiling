@@ -37,6 +37,7 @@ class Windowdef_simple_widget
         virtual void window_role_combo_changed( int item_P );
         virtual void window_class_combo_changed( int item_P );
         virtual void window_title_combo_changed( int item_P );
+        void autodetect_window_selected( WId window );
     signals:
         void autodetect_signal();
     };

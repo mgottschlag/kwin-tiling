@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>KHotKeys::Windowdef_simple_widget_ui</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>588</width>
-            <height>494</height>
+            <height>497</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Windowdef_simple_widget_ui</string>
     </property>
     <vbox>
         <property name="name">
@@ -358,7 +361,10 @@
                         <cstring>autodetect_button</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Autodetect...</string>
+                        <string>&amp;Autodetect</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
                     </property>
                 </widget>
                 <spacer>
