@@ -194,6 +194,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(bEmailClient, SIGNAL(clicked()), this, SLOT(selectEmailClient()));
 
   cTerminalClient = new QCheckBox(i18n("Run in &terminal"), uBox);
+  connect(cTerminalClient, SIGNAL(clicked()), this, SLOT(configChanged()));
 
   wtstr = i18n("Enter the path to your preferred email client (KMail, Mutt, etc.) here or"
         " choose it with the <em>Browse...</em> button. If no client is specified here,"
