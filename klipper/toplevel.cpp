@@ -121,6 +121,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
 KlipperWidget::~KlipperWidget()
 {
+    delete menuTimer;
     delete m_popup;
     delete myURLGrabber;
     if( m_config != kapp->config())
