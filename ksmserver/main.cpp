@@ -31,6 +31,8 @@ static const char *description = I18N_NOOP( "The reliable KDE session manager th
 
 static const KCmdLineOptions options[] =
 {
+   { "r", 0, 0 },
+   { "restore", I18N_NOOP("Restores the saved user session if available"), 0},
    { "w", 0, 0 },
    { "windowmanager <wm>", I18N_NOOP("Starts 'wm' in case no other window manager is \nparticipating in the session. Default is 'kwin'"), 0},
    { "nolocal", I18N_NOOP("Also allow remote connections."), 0},
@@ -213,7 +215,9 @@ int main( int argc, char* argv[] )
 
     QString loginMode = config->readEntry( "loginMode", "restorePreviousLogout" );
 
-    if ( loginMode == "default" || screenCountChanged )
+    if ( args->isSet("restore") && ! screenCountChanged )
+	server->restoreSession( SESSION_BY_USER );
+    else if ( loginMode == "default" || screenCountChanged )
 	server->startDefaultSession();
     else if ( loginMode == "restorePreviousLogout" )
 	server->restoreSession( SESSION_PREVIOUS_LOGOUT );
