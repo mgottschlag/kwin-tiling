@@ -33,10 +33,9 @@ KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent, const ch
 		this, SLOT(slotChangeTopLeftCorner(int)));
 
 #ifndef HAVE_SETPRIORITY
-    dialog->qcbPriority->setEnabled(false);
+    dialog->qgbPriority->setEnabled(false);
 #endif
 }
-
 
 void KScreenSaverAdvancedDialog::readSettings()
 {
