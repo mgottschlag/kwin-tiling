@@ -455,7 +455,7 @@ void KWindowConfig::save( void )
   int v;
 
   KConfig *config = new KConfig("kwinrc", false, false);
-  config->setGroup( "General" );
+  config->setGroup( "Windows" );
 
   v = getMove();
   if (v == TRANSPARENT)
