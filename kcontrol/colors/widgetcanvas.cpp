@@ -534,7 +534,7 @@ void WidgetCanvas::drawSampleWidgets()
     cg2.setColor(QColorGroup::Background, window);
     //qDrawWinButton(&paint, xpos, ypos, textLen+32, 28, cg, false, &brush);
 	kapp->style().drawPrimitive(QStyle::PE_ButtonCommand, &paint,
-			QRect(xpos, ypos, textLen+32, 28), cg2, QStyle::Style_Enabled);
+			QRect(xpos, ypos, textLen+32, 28), cg2, QStyle::Style_Enabled | QStyle::Style_Raised);
     paint.setPen(buttonTxt);
     paint.drawText(xpos, ypos, textLen+32, 28, AlignCenter,
                    i18n("Push Button"));
