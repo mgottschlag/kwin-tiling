@@ -1,0 +1,47 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/knotify
+Icon=knotify
+Type=Application
+DocPath=kcontrol/knotify/knotify-1.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=knotify
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=System Notifications
+Name[ca]=Notificacions del sistema
+Name[de]=System-Nachrichten
+Name[he]=תכרעמ תועדוה
+Name[hu]=Rendszer figyelmeztető
+Name[no]=Systemvarsler
+Name[no_NY]=Systempåminningar
+Name[pt]=Mensagens do Sistema
+Name[ro]=Notificări sistem
+Name[sl]=Sistemska obvestila
+Name[ta]=¸½¢ô¦À¡È¢ «È¢Å¢ôÒ¸û
+
+Comment=System Notification Configuration
+Comment[ca]=Configuració de les notificacions del sistema
+Comment[de]=Einstellung der Systemnachrichten
+Comment[he]=תכרעמ תועדוה תורדגה
+Comment[hu]=Rendszer figyelmeztető beállítása
+Comment[it]=Configurazione avvisi di sistema
+Comment[no]=Systemvarslingsinnstillinger
+Comment[no_NY]=Oppsett av systempåminningar
+Comment[pt]=Configuração das mensagens do sistema
+Comment[ro]=Configurează notificarea sistemului
+Comment[sl]=Ukrojitev sistemskih obvestil
+Comment[ta]=¸½¢ô¦À¡È¢ «È¢Å¢ôÒ¸û ÅÊÅ¨ÁôÒ
+
+Keywords=System sounds,Audio,Sound,Notify,Alerts,Notification
+Keywords[ca]=Sons del sistema,Àudio,So,Notifica,Alertes,Notificació
+Keywords[de]=systemklänge,audio,sound,benachrichtigung,alarm,beep
+Keywords[hu]=rendszerhangok,audió,hang,figyelmeztető,vészjelző
+Keywords[no]=Systemlyd,Lyd,Varsle,Advarsel,Varsling
+Keywords[no_NY]=Systemlydar,lyd,påminning,varsel,alarm
+Keywords[pt]=sons de sistema,audio,som,notificar,alertas,notificação
+Keywords[ro]=sunete de sistem,audio,sunet,notifică,alertă,notificare
+Keywords[sl]=sistemski zvoki,avdio,zvok,obvestila,alarmi
+
+

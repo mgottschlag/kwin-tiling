@@ -15,3 +15,6 @@ DISTCLEANFILES = $(lib_arts_METASOURCES)
 
 messages:
 	$(XGETTEXT) $(libkcm_arts_la_SOURCES) -o $(podir)/kcmarts.pot
+
+data_DATA = arts.desktop
+datadir = $(kde_appsdir)/Settings/Sound

@@ -15,3 +15,6 @@ DISTCLEANFILES = $(lib_syssound_METASOURCES)
 
 messages:
 	$(XGETTEXT) $(libkcm_syssound_la_SOURCES) -o $(podir)/kcmsyssound.pot
+
+data_DATA = syssound.desktop
+datadir = $(kde_appsdir)/Settings/Sound

@@ -1,0 +1,45 @@
+[Desktop Entry]
+Exec=kcmshell Sound/arts
+Icon=arts
+Type=Application
+DocPath=kcontrol/kcmarts/arts-1.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=arts
+X-KDE-Init=arts
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Soundserver
+Name[ca]=Servidor de so
+Name[fi]=Äänipalvelin
+Name[hu]=Hangkiszolgáló
+Name[it]=Server sonoro
+Name[ja]=サウンドサーバ
+Name[no]=Lydtjener
+Name[no_NY]=Lydtenar
+Name[pt]=Servidor de Som
+Name[ro]=Server de sunet
+Name[sl]=Zvočni strežnik
+Name[ta]=´Ä¢ §º¨ÅÂ¸õ
+
+Comment=Soundserver Configuration
+Comment[ca]=Configuració del servidor de so
+Comment[fi]=Järjestelmän äänipalvelimen asetukset
+Comment[hu]=Hangkiszolgáló beállításai
+Comment[it]=Configurazione del server sonoro
+Comment[ja]=サウンドサーバの設定
+Comment[no]=Konfigurasjon av lydtjener
+Comment[no_NY]=Oppsett av lydtenar
+Comment[pt]=Configuração do servidor de som
+Comment[ro]=Configurează server-ul de sunet
+Comment[sl]=Ukrojitev zvočnega strežnika
+Comment[ta]=¸½¢ô¦À¡È¢ ´Ä¢ ÅÊÅ¨ÁôÒ
+
+Keywords=aRts,Soundserver,artsd,Audio,Sound
+Keywords[hu]=aRts,hangkiszolgáló,artsd,audió,hang
+Keywords[no]=aRts,lydtjener,artsd,lyd
+Keywords[no_NY]=aRts,lydtenar,artsd,lyd
+Keywords[pt]=aRts,servidor de som,artsd,audio,som
+Keywords[ro]=aRts,server de sunet,artsd,audio,sunet
+

@@ -1,0 +1,54 @@
+[Desktop Entry]
+Exec=kcmshell Sound/syssound
+Icon=kcmsyssound
+Type=Application
+DocPath=kcontrol/kcmsyssound/syssound-1.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=syssound
+X-KDE-Init=sound
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=System Sounds
+Name[ca]=Sons del sistema
+Name[cs]=Systémové zvuky
+Name[de]=Systemklänge
+Name[eo]=Sonoroj
+Name[fi]=Järjestelmän äänet
+Name[fr]=Sons du système
+Name[hu]=Rendszer Hangok
+Name[it]=Suoni di sistema
+Name[ja]=システムサウンド
+Name[no]=Systemlyd
+Name[no_NY]=Systemlydar
+Name[pt]=Som
+Name[ro]=Sunete de sistem
+Name[sl]=Sistemski zvoki
+Name[sv]=Systemljud
+Name[ta]=¸½¢ô¦À¡È¢ ´Ä¢¸û
+
+Comment=System Sound Configuration
+Comment[ca]=Configuració dels sons del sistema
+Comment[cs]=Nastavení systémových zvuků
+Comment[de]=Einstellungen für Systemklänge
+Comment[eo]=Sonoragordaĵo
+Comment[fi]=Järjestelmän äänien asetukset
+Comment[fr]=Configuration des sons du système
+Comment[hu]=Rendszer hangok beállítása
+Comment[it]=Configurazione suoni di sistema
+Comment[ja]=システムサウンドの設定
+Comment[no]=Systemlyd-innstillinger
+Comment[no_NY]=Systemlyd-innstillingar
+Comment[pt]=Configuração dos som
+Comment[ro]=Configurează sunetele de sistem
+Comment[sl]=Ukrojitev sistemskih zvokov
+Comment[sv]=Anpassning av systemljud
+Comment[ta]=¸½¢ô¦À¡È¢ ´Ä¢ ÅÊÅ¨ÁôÒ
+
+Keywords=System sounds,Audio,Sound
+Keywords[hu]=rendszerhangok,audió,hang
+Keywords[no]=Systemlyd,lyd
+Keywords[no_NY]=systemlydar,lyd
+Keywords[pt]=sons de sistema,audio,som
+Keywords[ro]=sunete de sistem,audio,sunet
