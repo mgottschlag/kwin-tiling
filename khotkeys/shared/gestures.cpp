@@ -70,7 +70,9 @@ void Gesture::enable( bool enabled_P )
 void Gesture::set_exclude( Windowdef_list* windows_P )
     {
     delete exclude;
-    if( windows_P != NULL )
+    // check for count() > 0 - empty exclude list means no window is excluded,
+    // but empty Windowdef_list matches everything
+    if( windows_P != NULL && windows_P->count() > 0 )
         exclude = windows_P->copy();
     else
         exclude = NULL;
