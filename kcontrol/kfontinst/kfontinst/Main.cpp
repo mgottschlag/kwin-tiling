@@ -282,10 +282,10 @@ static int kfi_cfgdir(const char *dir)
 
 static int kfi_install(const char *from, const char *to)
 {
-    KInstance kinst("kfontinst");
+//    KInstance kinst("kfontinst");
     int       rv=-2;
         
-    CGlobal::create(true, true);
+//    CGlobal::create(true, true);
 
     QString dir(CMisc::getDir(to));
 
@@ -298,7 +298,7 @@ static int kfi_install(const char *from, const char *to)
         rv=0;
     }
 
-    CGlobal::destroy();
+//    CGlobal::destroy();
 
     return rv;
 }
