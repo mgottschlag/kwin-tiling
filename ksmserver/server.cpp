@@ -33,6 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <config.h>
 #endif
 
+#include <pwd.h>
 #include <sys/types.h>
 #include <sys/param.h>
 #include <sys/stat.h>
@@ -236,10 +237,24 @@ QString KSMClient::userId() const
 /*! Utility function to execute a command on the local machine. Used
  * to restart applications.
  */
-void KSMServer::startApplication( const QStringList& command )
+void KSMServer::startApplication( QStringList command, const QString& clientMachine,
+    const QString& userId )
 {
     if ( command.isEmpty() )
         return;
+    if ( !userId.isEmpty()) {
+        struct passwd* pw = getpwuid( getuid());
+        if( pw != NULL && userId != QString::fromLocal8Bit( pw->pw_name )) {
+            command.prepend( "--" );
+            command.prepend( userId );
+            command.prepend( "-u" );
+            command.prepend( "kdesu" );
+        }
+    }
+    if ( !clientMachine.isEmpty() && clientMachine != "localhost" ) {
+        command.prepend( clientMachine );
+	command.prepend( "xon" );
+    }
     int n = command.count();
     QCString app = command[0].latin1();
     QValueList<QCString> argList;
@@ -1505,7 +1520,9 @@ void KSMServer::restoreNextInternal()
         }
         if ( wm == config->readEntry( QString("program")+n ) )
             continue;
-        startApplication( restartCommand );
+        startApplication( restartCommand,
+                          config->readEntry( QString("clientMachine")+n ),
+                          config->readEntry( QString("userId")+n ));
         lastIdStarted = config->readEntry( QString("clientId")+n );
         if ( !lastIdStarted.isEmpty() ) {
             restoreTimer.start( 2000, TRUE );
@@ -1784,14 +1801,9 @@ void KSMServer::restoreLegacySessionInternal( KConfig* config, char sep )
     for ( int i = 1; i <= count; i++ ) {
         QString n = QString::number(i);
         QStringList wmCommand = config->readListEntry( QString("command")+n, sep );
-        QString wmClientMachine = config->readEntry( QString("clientMachine")+n );
-        if ( !wmCommand.isEmpty() && !wmClientMachine.isEmpty() ) {
-            if ( wmClientMachine != "localhost" ) {
-		wmCommand.prepend( wmClientMachine );
-		wmCommand.prepend( "xon" );
-	    }
-	startApplication( wmCommand );
-        }
+        startApplication( wmCommand,
+                          config->readEntry( QString("clientMachine")+n ),
+                          config->readEntry( QString("userId")+n ));
     }
 }
     
