@@ -20,6 +20,7 @@
 
 #include "lockprocess.h"
 #include "main.h"
+#include "kdesktopsettings.h"
 
 #include <kcmdlineargs.h>
 #include <klocale.h>
@@ -134,6 +135,9 @@ int main( int argc, char **argv )
     MyApp app;
     kdDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
     app.disableSessionManagement();
+
+    // we need to read from the right rc file - possibly taking screen number in account
+    KDesktopSettings::instance("kdesktoprc");
 
     LockProcess process(child, args->isSet( "blank" ));
     if (!child)
