@@ -10,7 +10,6 @@
 #include <qradiobutton.h>
 #include <qvbuttongroup.h>
 #include <qstring.h>
-#include <qspinbox.h>
 #include <qlabel.h>
 #include <qwhatsthis.h>
 
@@ -21,6 +20,7 @@
 #include <kcmodule.h>
 #include <kpassdlg.h>
 #include <kgenericfactory.h>
+#include <knuminput.h>
 
 #include <kdesu/defaults.h>
 #include <kdesu/client.h>
@@ -71,25 +71,19 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStrin
     top->addWidget(m_KeepBut);
     QHBoxLayout *hbox = new QHBoxLayout();
     top->addLayout(hbox);
-    m_lblTimeout = new QLabel(i18n("&Timeout:"), this);
-    m_lblTimeout->setFixedSize(m_lblTimeout->sizeHint());
     hbox->addSpacing(20);
-    hbox->addWidget(m_lblTimeout);
-    m_TimeoutEdit = new QSpinBox(this);
+    m_TimeoutEdit = new KIntNumInput(this);
     QString wtstr = i18n("You can specify how long kdesu will remember your"
        " passwords. A short timeout is more secure than a long timeout.");
-    QWhatsThis::add( m_lblTimeout, wtstr );
     QWhatsThis::add( m_TimeoutEdit, wtstr );
-    m_lblTimeout->setBuddy(m_TimeoutEdit);
+    m_TimeoutEdit->setLabel( i18n( "&Timeout:" ), AlignVCenter );
     m_TimeoutEdit->setRange(5, 1200);
-    m_TimeoutEdit->setSteps(5, 10);
-    m_TimeoutEdit->setSuffix(i18n(" minutes"));
-    m_TimeoutEdit->setFixedSize(m_TimeoutEdit->sizeHint());
+    m_TimeoutEdit->setSteps(5, 20);
+    m_TimeoutEdit->setSuffix(i18n(" min"));
 
     connect(m_TimeoutEdit,SIGNAL(valueChanged ( int )),this,SLOT(configChanged()));
 
     hbox->addWidget(m_TimeoutEdit);
-    hbox->addStretch();
 
     top->addStretch();
 
@@ -186,7 +180,6 @@ void KPasswordConfig::slotEchoMode(int i)
 void KPasswordConfig::slotKeep(bool keep)
 {
     m_bKeep = keep;
-    m_lblTimeout->setEnabled(keep);
     m_TimeoutEdit->setEnabled(keep);
     emit changed(true);
 }

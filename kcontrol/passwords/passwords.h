@@ -11,8 +11,9 @@
 
 class QButtonGroup;
 class QCheckBox;
-class QSpinBox;
+
 class KConfig;
+class KIntNumInput;
 
 #include <kcmodule.h>
 
@@ -42,9 +43,8 @@ private slots:
     void configChanged(){emit changed(true);}
 private:
     QButtonGroup *m_EMGroup;
-    QLabel *m_lblTimeout;
     QCheckBox *m_KeepBut;
-    QSpinBox *m_TimeoutEdit;
+    KIntNumInput *m_TimeoutEdit;
     KConfig *m_pConfig;
 
     int m_Echo, m_Timeout;
