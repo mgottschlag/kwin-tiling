@@ -1049,7 +1049,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     if ( logoutConfirmed ) {
 
         // shall we save the session on logout?
-        saveSession = ( config->readEntry( "loginMode" ) == "restorePreviousLogout" );
+        saveSession = ( config->readEntry( "loginMode", "restorePreviousLogout" ) == "restorePreviousLogout" );
 
         if ( saveSession )
             sessionGroup = QString("Session: ") + SESSION_PREVIOUS_LOGOUT;
