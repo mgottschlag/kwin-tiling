@@ -205,9 +205,11 @@ int main( int argc, char* argv[] )
     IceSetIOErrorHandler( IoErrorHandler );
 
     KConfig *config = KGlobal::config();
+    config->setGroup( "General" );
 
+    int realScreenCount = ScreenCount( qt_xdisplay() );
     bool screenCountChanged =
-         (config->readNumEntry("screenCount") != ScreenCount(qt_xdisplay()));
+         ( config->readNumEntry( "screenCount", realScreenCount ) != realScreenCount );
 
     if ( args->isSet("restore") && ! screenCountChanged )
 	server->restoreSession();
