@@ -191,20 +191,20 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
      QGridLayout* grid = new QGridLayout( 4, 2, 5);
 
-     QLabel* welcomeLabel = new QLabel( kdmcfg->greetString()->data(), this);
+     QLabel* welcomeLabel = new QLabel( kdmcfg->greetString()->data(), winFrame);
      welcomeLabel->setAlignment(AlignCenter);
      welcomeLabel->setFont( *kdmcfg->greetFont());
      set_min( welcomeLabel);
      vbox->addWidget( welcomeLabel);
      if( kdmcfg->users()) {
-	  user_view = new KDMView( this);
+	  user_view = new KDMView( winFrame);
 	  user_view->insertItemList( kdmcfg->users());
 	  vbox->addWidget( user_view, 3);
      } else {
 	  user_view = NULL;
      }
 
-     pixLabel = new QLabel( this);
+     pixLabel = new QLabel( winFrame);
      pixLabel->setFrameStyle( QFrame::Panel| QFrame::Sunken);
      pixLabel->setAutoResize( true);
      pixLabel->setMargin( 0);
@@ -219,9 +219,9 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      pixLabel->setPixmap( pixmap);
      pixLabel->setFixedSize( pixLabel->width(), pixLabel->height());
 
-     loginLabel = new QLabel( i18n("Login:"), this);
+     loginLabel = new QLabel( i18n("Login:"), winFrame);
      set_min( loginLabel);
-     loginEdit = new QLineEdit( this);
+     loginEdit = new QLineEdit( winFrame);
 
      // The line-edit look _very_ bad if you don't give them 
      // a resonal height that observes a proportional aspect.
@@ -231,9 +231,9 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      loginEdit->setFixedHeight( leheight);
      loginEdit->setFocus();
 
-     passwdLabel = new QLabel( i18n("Password:"), this);
+     passwdLabel = new QLabel( i18n("Password:"), winFrame);
      set_min( passwdLabel);
-     passwdEdit = new QLineEdit( this);
+     passwdEdit = new QLineEdit( winFrame);
 
      int pweheight;
      pweheight = QMAX( 30,passwdEdit->sizeHint().height());
@@ -245,7 +245,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      hbox1->addWidget( pixLabel, 0, AlignTop);
      hbox1->addLayout( grid, 3);
      
-     QFrame* sepFrame = new QFrame( this);
+     QFrame* sepFrame = new QFrame( winFrame);
      sepFrame->setFrameStyle( QFrame::HLine| QFrame::Sunken);
      sepFrame->setFixedHeight( sepFrame->sizeHint().height());
 
@@ -256,18 +256,18 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      grid->addMultiCellWidget( sepFrame, 3, 3, 0, 1);
      grid->setColStretch( 1, 4);
 
-     failedLabel = new QLabel( i18n("Login failed!"), this);
+     failedLabel = new QLabel( i18n("Login failed!"), winFrame);
      failedLabel->setFont( *kdmcfg->failFont());
      set_min( failedLabel);
      failedLabel->hide();
      hbox2->addWidget( failedLabel);
 
      QLabel* sessionargLabel = new QLabel(i18n("Session Type:"),
-					  this);
+					  winFrame);
      set_min( sessionargLabel);
      sessionargLabel->setAlignment( AlignRight|AlignVCenter);
      hbox2->addWidget( sessionargLabel);
-     sessionargBox = new QComboBox( false, this);
+     sessionargBox = new QComboBox( false, winFrame);
 
      QStrListIterator it ( *kdmcfg->sessionTypes());
      sessiontags.clear();
@@ -309,13 +309,13 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      set_fixed( sessionargBox);
      hbox2->addWidget( sessionargBox);
      
-     goButton = new QPushButton( i18n("Go!"), this);
+     goButton = new QPushButton( i18n("Go!"), winFrame);
      connect( goButton, SIGNAL( clicked()), SLOT(go_button_clicked()));
 
      set_fixed( goButton);
      hbox2->addWidget( goButton, AlignBottom);
 
-     cancelButton = new QPushButton( i18n("Cancel"), this);
+     cancelButton = new QPushButton( i18n("Cancel"), winFrame);
      connect( cancelButton, SIGNAL(clicked()), SLOT(cancel_button_clicked()));
      set_fixed( cancelButton);
      hbox2->addWidget( cancelButton, AlignBottom);
@@ -326,7 +326,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 	 && ( kdmcfg->shutdownButton() != KDMConfig::ConsoleOnly 
 	 || d->displayType.location == Local)) {
 	  shutdownButton = new QPushButton( i18n("Shutdown..."),
-					    this);
+					    winFrame);
 	  connect( shutdownButton, SIGNAL(clicked()), 
 		   SLOT(shutdown_button_clicked()));
 	  set_fixed( shutdownButton);
@@ -336,20 +336,6 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 #endif
 	  sbw = 0;
      vbox->activate();
-     int w = QMAX( 
-	  QMAX( 
-	       QMAX( loginLabel->width(), passwdLabel->width()) + 
-	       pixLabel->width(), welcomeLabel->width()), 
-	  failedLabel->width() + sessionargLabel->width() 
-	  + sessionargBox->width() + goButton->width() + 
-	  cancelButton->width() + sbw);
-     if( user_view) {
-	  int tmp = user_view->sizeHintHeight( w);
-	  tmp = QMIN( tmp, winFrame->minimumSize().height());
-	  user_view->setMinimumSize( w, tmp);
-     }
-     vbox->activate();
-     setMinimumSize( winFrame->minimumSize());
      timer = new QTimer( this );
      // Signals/Slots
      connect( timer, SIGNAL(timeout()),
@@ -357,6 +343,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      if( user_view)
 	  connect( user_view, SIGNAL(selected(int)), 
 		   this, SLOT(slot_user_name( int)));
+     winFrame->adjustSize();
      adjustSize();
      // Center on screen:
      move( QApplication::desktop()->width()/2  - width()/2,
