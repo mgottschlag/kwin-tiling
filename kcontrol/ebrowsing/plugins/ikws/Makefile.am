@@ -6,7 +6,7 @@ LDFLAGS   = $(all_libraries)
 lib_LTLIBRARIES = libkuriikwsfilter.la
 
 libkuriikwsfilter_la_LDFLAGS = -version-info 1:0:0 -module
-libkuriikwsfilter_la_LIBADD = ../../kurifilter/libkurifilter.la -lkdeui
+libkuriikwsfilter_la_LIBADD = ../../kurifilter/libkurifilter.la $(LIB_KDEUI)
 
 libkuriikwsfilter_la_SOURCES = kuriikwsfiltereng.cpp kuriikwsfilter.skel kuriikwsfilter.cpp ikwsopts.cpp
 

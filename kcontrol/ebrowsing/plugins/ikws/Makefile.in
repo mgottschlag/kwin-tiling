@@ -133,6 +133,7 @@ LIB_KIMGIO = @LIB_KIMGIO@
 LIB_KIO = @LIB_KIO@
 LIB_KPARTS = @LIB_KPARTS@
 LIB_KSPELL = @LIB_KSPELL@
+LIB_KSYCOCA = @LIB_KSYCOCA@
 LIB_LIBS = @LIB_LIBS@
 LIB_MEDIATOOL = @LIB_MEDIATOOL@
 LIB_QT = @LIB_QT@
@@ -213,12 +214,12 @@ x_libraries = @x_libraries@
 xdmconfigsubdir = @xdmconfigsubdir@
 
 INCLUDES = -I$(srcdir)/../../kurifilter $(all_includes)
-LDFLAGS = $(KDE_RPATH) $(all_libraries)
+LDFLAGS = $(all_libraries)
 
 lib_LTLIBRARIES = libkuriikwsfilter.la
 
 libkuriikwsfilter_la_LDFLAGS = -version-info 1:0:0 -module
-libkuriikwsfilter_la_LIBADD = ../../kurifilter/libkurifilter.la -lkdeui
+libkuriikwsfilter_la_LIBADD = ../../kurifilter/libkurifilter.la $(LIB_KDEUI)
 
 libkuriikwsfilter_la_SOURCES = kuriikwsfiltereng.cpp kuriikwsfilter.skel kuriikwsfilter.cpp ikwsopts.cpp
 
