@@ -28,7 +28,7 @@
 #include <qtimer.h>
 #include <qvalidator.h>
 
-#include <kdatetbl.h>
+#include <kdatepicker.h>
 
 class Kclock;
 
@@ -51,13 +51,11 @@ signals:
   void	inc_time();
   void	dec_time();
   void	joke(QLineEdit* edit,int incr,int Max,int Min,bool refr);
-  void	set_month(int);
-  void	set_year(int);
   void	set_time();
   void	changeDate(QDate);
 
 private:
-  KDateTable	*cal;
+  KDatePicker	*cal;
   QComboBox	*month;
   QSpinBox	*year;
 

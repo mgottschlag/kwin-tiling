@@ -49,23 +49,11 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // Date box
   QGroupBox* dateBox = new QGroupBox( this, "dateBox" );
 
-  QGridLayout *l1 = new QGridLayout( dateBox, 2, 3, 10 );
+  QVBoxLayout *l1 = new QVBoxLayout( dateBox, 10 );
 
-  month = new QComboBox( FALSE, dateBox, "ComboBox_1" );
-  connect( month, SIGNAL(activated(int)), SLOT(set_month(int)) );
-  month->setSizeLimit( 12 );
-  l1->addWidget( month, 0, 0 );
-  QWhatsThis::add( month, i18n("Here you can change the system date's month.") );
-
-  year = new QSpinBox( 1970, 3000, 1, dateBox );
-  year->setButtonSymbols( QSpinBox::PlusMinus );
-  connect(year, SIGNAL(valueChanged(int)), this, SLOT(set_year(int)) );
-  l1->addWidget( year, 0, 2 );
-  QWhatsThis::add( year, i18n("Here you can change the system date's year.") );
-
-  cal = new KDateTable( dateBox );
-  l1->addMultiCellWidget( cal, 1, 1, 0, 2 );
-  QWhatsThis::add( cal, i18n("Here you can change the system date's day of the month.") );
+  cal = new KDatePicker( dateBox );
+  l1->addWidget( cal );
+  QWhatsThis::add( cal, i18n("Here you can change the system date's day of the month, month and year.") );
 
   // Time frame
   QGroupBox* timeBox = new QGroupBox( this, "timeBox" );
@@ -165,9 +153,6 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // End Dialog
   // *************************************************************
 
-  for (int i=1; i<13; i++)
-      month->insertItem(KGlobal::locale()->monthName(i, false /*short*/));
-
   connect( cal, SIGNAL(dateChanged(QDate)), SLOT(changeDate(QDate)));
 
   connect( &internalTimer, SIGNAL(timeout()), SLOT(timeout()) );
@@ -177,8 +162,6 @@ Dtime::Dtime(QWidget * parent, const char *name)
   if (getuid() != 0)
     {
       cal->setEnabled(false);
-      month->setEnabled(false);
-      year->setEnabled(false);
       hour->setReadOnly(true);
       minute->setReadOnly(true);
       second->setReadOnly(true);
@@ -187,14 +170,6 @@ Dtime::Dtime(QWidget * parent, const char *name)
       minusPB->setEnabled(false);
     }
 
-}
-
-void Dtime::set_year(int y)
-{
-  if ( !date.setYMD(y, date.month(), date.day()) )
-    date.setYMD(1970,date.month(),date.day());
-  cal->setDate(date);
-  emit timeChanged(TRUE);
 }
 
 void Dtime::set_time()
@@ -216,21 +191,11 @@ void Dtime::changeDate(QDate d)
   emit timeChanged( TRUE );
 }
 
-void Dtime::set_month(int m)
-{
-  if ( !date.setYMD(date.year(),m+1,date.day()) )
-    date.setYMD(date.year(),m+1,1);
-  cal->setDate(date);
-  emit timeChanged(TRUE);
-}
-
 void Dtime::load()
 {
   // Reset to the current date and time
   time = QTime::currentTime();
   date = QDate::currentDate();
-  month->setCurrentItem(date.month()-1);
-  year->setValue(date.year());
   cal->setDate(date);
 
   // start internal timer
