@@ -44,6 +44,7 @@ protected slots:
 private:
     QCheckBox    *showAllCheck;
     QCheckBox    *m_pShowListBtn;
+    QCheckBox 	 *groupCheck;
 };
 
 #endif

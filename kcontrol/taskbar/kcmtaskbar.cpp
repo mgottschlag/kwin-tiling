@@ -63,8 +63,12 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
                                          " the taskbar to display a small popup which gives you easy access"
                                          " to all applications on other desktops and some further options."));
 
+    groupCheck = new QCheckBox(i18n("Group similar tasks"), taskbar_group);
+    connect(groupCheck, SIGNAL(clicked()), SLOT(configChanged()));
+
     vbox->addWidget(showAllCheck);
     vbox->addWidget(m_pShowListBtn);
+    vbox->addWidget(groupCheck);
 
     QVBoxLayout *top_layout = new QVBoxLayout(this, KDialog::marginHint(),
                                               KDialog::spacingHint());
@@ -89,8 +93,9 @@ void TaskbarConfig::load()
     { // group for the benefit of the group saver
         KConfigGroupSaver saver(c, "General");
 
-        showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", false));
+        showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", true));
 	m_pShowListBtn->setChecked(c->readBoolEntry("ShowWindowListBtn", true));
+	groupCheck->setChecked(c->readBoolEntry("GroupTasks", true));
     }
 
     delete c;
@@ -105,6 +110,7 @@ void TaskbarConfig::save()
 
         c->writeEntry("ShowAllWindows", showAllCheck->isChecked());
 	c->writeEntry("ShowWindowListBtn", m_pShowListBtn->isChecked());
+	c->writeEntry("GroupTasks", groupCheck->isChecked());
 	c->sync();
     }
 
@@ -121,8 +127,9 @@ void TaskbarConfig::save()
 
 void TaskbarConfig::defaults()
 {
-    showAllCheck->setChecked(false);
+    showAllCheck->setChecked(true);
     m_pShowListBtn->setChecked(true);
+    groupCheck->setChecked(true);
     emit changed(true);
 }
 
