@@ -43,7 +43,6 @@
 #include <kcharsets.h>
 #include <klocale.h>
 #include "info.h"		/* include the forward declares... */
-#include "info.moc"
 
 #include <X11/Xlib.h>
 

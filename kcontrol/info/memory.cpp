@@ -1,6 +1,9 @@
 /* $Id$ 
  *
  * $Log$
+ * Revision 1.16  1999/11/13 11:04:49  hoelzer
+ * Moved to the new module schema.
+ *
  * Revision 1.15  1999/08/26 04:09:40  corey
  * Give it a proper height; couldn't see anything before.
  *
@@ -20,7 +23,6 @@
 #include "memory.h"
 #include <klocale.h>
 #include <kglobal.h>
-#include "memory.moc"
 
 #define OFFSET_DX 20
 #define STARTY    20
