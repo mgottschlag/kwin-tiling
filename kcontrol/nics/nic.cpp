@@ -18,6 +18,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "config.h"
 
 #include "nic.h"
 
@@ -30,6 +31,10 @@
 #include <qlayout.h>
 
 #include <qtimer.h>
+
+#ifdef HAVE_SYS_SOCKIO_H
+#include <sys/sockio.h>
+#endif
 
 #include <sys/types.h>
 #include <netinet/in.h>
