@@ -244,7 +244,7 @@ void TaskManager::currentDesktopChanged(int desktop)
 void TaskManager::clientStarted(QString name, QString icon, pid_t pid, QString bin, bool compliant)
 {
     if ((long)pid == 0) return;
-    kdDebug(1210) << "clientStarted(" << name << ", " << icon << ", " << (long)pid << "d)" << endl;
+    kdDebug() << "TM: clientStarted(" << name << ", " << icon << ", " << (long)pid << "d)" << endl;
 
     Startup * s = new Startup(name, icon, pid, bin, compliant, this);
     _startups.append(s);
