@@ -144,8 +144,7 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
             if( ev.xselection.property == None )
             {
 //                kdDebug() << "REFUSED:" << ( data.atom == XA_PRIMARY ) << endl;
-                signal = true;
-                break;
+                return true;
             }
             Atom type;
             int format;
@@ -160,19 +159,17 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
 //                kdDebug() << "BAD PROPERTY:" << ( data.atom == XA_PRIMARY ) << endl;
                 if( prop != NULL )
                     XFree( prop );
-                signal = true;
-                break;
+                return true;
             }
             Time timestamp = reinterpret_cast< long* >( prop )[ 0 ];
             XFree( prop );
-            if( timestamp != data.last_change || timestamp == CurrentTime )
+            if( timestamp != data.last_change || timestamp == CurrentTime || signal )
             {
 //                kdDebug() << "TIMESTAMP CHANGE:" << ( data.atom == XA_PRIMARY ) << endl;
-                signal = true;
                 data.last_change = timestamp;
-                break;
+                return true;
             }
-            break; // ok, same timestamp
+            return false; // ok, same timestamp
         }
         struct timespec tm;
         tm.tv_sec = 0;
@@ -181,8 +178,8 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
     }
     if( timeout == 0 )
         {
-        signal = true;
 //        kdDebug() << "TIMEOUT" << endl;
+        return true;
         }
     return signal;
 }
