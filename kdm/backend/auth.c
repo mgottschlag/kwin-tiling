@@ -635,7 +635,7 @@ ifioctl (int fd, int cmd, char *arg)
 # include <ifaddrs.h>
 
 static void
-DefineSelf( int fd, FILE *file, Xauth *auth )
+DefineSelf( FILE *file, Xauth *auth )
 {
 	struct ifaddrs *ifap, *ifr;
 	char *addr;
@@ -644,7 +644,6 @@ DefineSelf( int fd, FILE *file, Xauth *auth )
 	if (getifaddrs( &ifap ) < 0)
 		return;
 	for (ifr = ifap; ifr; ifr = ifr->ifa_next) {
-		len = sizeof(*(ifr->ifa_addr));
 		family = ConvertAddr( (XdmcpNetaddr)(ifr->ifa_addr), &len, &addr );
 		if (family == -1 || family == FamilyLocal)
 			continue;
@@ -1012,34 +1011,37 @@ setAuthNumber( Xauth *auth, const char *name )
 static void
 writeLocalAuth( FILE *file, Xauth *auth, const char *name )
 {
-#ifdef XDMCP
+#if defined(XDMCP) && (defined(STREAMSCONN) || !defined(HAVE_GETIFADDRS))
 	int fd;
 #endif
 
 	Debug( "writeLocalAuth: %s %.*s\n", name, auth->name_length, auth->name );
 	setAuthNumber( auth, name );
 #ifdef XDMCP
-#ifdef STREAMSCONN
+# ifdef STREAMSCONN
 	fd = t_open( "/dev/tcp", O_RDWR, 0 );
 	t_bind( fd, NULL, NULL );
 	DefineSelf( fd, file, auth );
 	t_unbind( fd );
 	t_close( fd );
-#endif
-#ifdef TCPCONN
-#if defined(IPv6) && defined(AF_INET6)
+# elif defined(HAVE_GETIFADDRS)
+	DefineSelf( file, auth );
+# else
+#  ifdef TCPCONN
+#   if defined(IPv6) && defined(AF_INET6)
 	fd = socket( AF_INET6, SOCK_STREAM, 0 );
 	if (fd < 0)
-#endif
+#   endif
 	fd = socket( AF_INET, SOCK_STREAM, 0 );
 	DefineSelf( fd, file, auth );
 	close( fd );
-#endif
-#ifdef DNETCONN
+#  endif
+#  ifdef DNETCONN
 	fd = socket( AF_DECnet, SOCK_STREAM, 0 );
 	DefineSelf( fd, file, auth );
 	close( fd );
-#endif
+#  endif
+# endif /* HAVE_GETIFADDRS */
 #endif /* XDMCP */
 	DefineLocal( file, auth );
 }
