@@ -59,6 +59,8 @@ private:
   QCheckBox *cb_WhatToDo;
   QCheckBox *cb_ShowBugReport;
 
+  QPushButton *bt_ChangeTexts;
+  QPushButton *bt_Preview;
 
 };
 

@@ -34,12 +34,13 @@
 KDrKonqiCustomize::KDrKonqiCustomize(KConfig *config, QString group, QWidget *parent, const char *name)
   : KCModule(parent, name), g_pConfig(config), groupname(group)
 {
-  QVBoxLayout *layout = new QVBoxLayout(this, KDialog::marginHint(),
+  QGridLayout *layout = new QGridLayout(this, 2,2,
+                                              KDialog::marginHint(),
                                               KDialog::spacingHint());     
 
   gb_Presets = new QGroupBox(i18n("Presets"), this);
 
-  layout->addWidget(gb_Presets);
+  layout->addMultiCellWidget(gb_Presets,0,0,0,1,0);
 
   QGridLayout *grid = new QGridLayout(gb_Presets,2,3,
 					KDialog::marginHint(),
@@ -65,7 +66,7 @@ KDrKonqiCustomize::KDrKonqiCustomize(KConfig *config, QString group, QWidget *pa
 
   
   gb_Show = new QGroupBox(i18n("Show"), this);
-  layout->addWidget(gb_Show);
+  layout->addWidget(gb_Show,2,0);
 
   QGridLayout *grid2 = new QGridLayout(gb_Show,5,2,
                                        KDialog::marginHint(),
@@ -92,7 +93,18 @@ KDrKonqiCustomize::KDrKonqiCustomize(KConfig *config, QString group, QWidget *pa
 
   grid2->setColStretch(0,1);
   grid2->setColStretch(1,10);
-  layout->addStretch(0);
+
+
+  QVBoxLayout *subLayout = new QVBoxLayout(layout, -1, "none");
+  
+  bt_Preview = new QPushButton(i18n("Preview"), this);
+  subLayout->insertSpacing(0,100);
+  subLayout->addWidget(bt_Preview,0,AlignBottom);
+
+
+  bt_ChangeTexts = new QPushButton(i18n("Change texts"), this);
+  subLayout->addWidget(bt_ChangeTexts,0,AlignBottom);
+
   layout->activate();         
 /*  bGrp = new QButtonGroup(1, Qt::Vertical,
 						  i18n("Sample optionss"), this);
