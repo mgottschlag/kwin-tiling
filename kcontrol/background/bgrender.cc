@@ -311,7 +311,7 @@ wp_out:
     int ww = wp.width();	// wallpaper width/height
     int wh = wp.height();
 
-    QRect d;	// to be filled destination rectangle; may exceed screen!
+    QRect d;	// to be filled destination rectangle; may exceed desktop!
 
     switch (wpmode)
     {
@@ -345,28 +345,19 @@ wp_out:
 	    break;
     }
 
-    // copy background to m_pImage (whole desktop or just a preview tile?)
+
+    // copy background to m_pImage
     if (m_pBackground->size() == m_Size) {
-	if (blmode != NoBlending)
-	    *m_pImage = m_pBackground->copy();
-	else
-	    tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
+	*m_pImage = m_pBackground->copy();
 
 	if (m_pImage->depth() < 32)
 	    *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
 
     } else {
-	int tw = w, th = h;
-	int bw = m_pBackground->width(), bh = m_pBackground->height();
-	if (bTile) {
-	    tw = QMIN(bw * ((ww + bw - 1) / bw), w);
-	    th = QMIN(bh * ((wh + bh - 1) / bh), h);
-	}
-	
-	m_pImage->create(tw, th, 32);
-        tile(m_pImage, QRect(0, 0, tw, th), m_pBackground);
+	m_pImage->create(w, h, 32);
+	tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
     }
-   
+
     // blend wallpaper to destination rectangle of m_pImage
     if (d.isValid())
         for (int y = d.top(); y < d.bottom(); y += wh) {
