@@ -30,6 +30,7 @@
 #include <kbuttonbox.h>
 #include <kcolordlg.h>
 #include <kconfig.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <krandomsequence.h>
 
@@ -53,7 +54,7 @@ static const QString inserts[] = { "top", "bottom", "both" };
 void KMatrixSaverCfg::readSettings() {
   QString str;
 
-  KConfig *config = kapp->sessionConfig();
+  KConfig *config = KGlobal::config();
   config->setGroup("Settings");
 
   str = config->readEntry("BackgroundColor");
@@ -86,7 +87,7 @@ void KMatrixSaverCfg::readSettings() {
 }
 
 void KMatrixSaverCfg::writeSettings() {
-  KConfig *config = kapp->sessionConfig();
+  KConfig *config = KGlobal::config();
   config->setGroup( "Settings" );
 
   QString str;
