@@ -42,6 +42,7 @@
 #include <kconfig.h>
 #include <kstddirs.h>
 #include <kglobal.h>
+#include <kstddirs.h>
 
 extern KConfig *config;
 
@@ -1314,27 +1315,20 @@ void KTitlebarAppearance::SaveSettings( void )
 
   //CT 18Oct1998 - save the pixmaps
   if (t == TITLEBAR_PIXMAP ) {
-    QString kwmdir = kapp->localkdedir() + "/share/apps/kwm";
-    QString kwmpicsdir = kwmdir + "/pics";
-
-    QDir dir("/");
-    if( !dir.exists( (const char *)kwmdir ) )
-        dir.mkdir( (const char *)kwmdir );
-    if( !dir.exists( (const char *)kwmpicsdir ) )
-        dir.mkdir( (const char *)kwmpicsdir );
+    QString kwmpicsdir = locateLocal("data", "kwm/");
 
     //first, a backup
     sPixmapActive   = kwmpicsdir + "/oldactivetitlebar.xpm";
     sPixmapInactive = kwmpicsdir + "/oldinactivetitlebar.xpm";   
  
     if (!pixmapActiveOld.isNull()) {
-      QFile( (const char *)sPixmapActive ).remove();
+      QFile( sPixmapActive ).remove();
       pixmapActiveOld.save(sPixmapActive,"XPM");
       iconLoader->flush( "oldactivetitlebar.xpm" );
     }
 
     if (!pixmapInactiveOld.isNull()) {
-      QFile( (const char *)sPixmapInactive ).remove();
+      QFile( sPixmapInactive ).remove();
       pixmapInactiveOld.save(sPixmapInactive,"XPM");
       iconLoader->flush( "oldinactivetitlebar" );
     }
@@ -1345,13 +1339,13 @@ void KTitlebarAppearance::SaveSettings( void )
 
     bool a_saved = true, i_saved = true;
     if (!pixmapActive.isNull()) {
-      QFile( (const char *)sPixmapActive ).remove();
+      QFile( sPixmapActive ).remove();
       a_saved = pixmapActive.save(sPixmapActive,"XPM");
       iconLoader->flush( "activetitlebar.xpm" );
     }
 
     if (!pixmapInactive.isNull()) {
-      QFile( (const char *)sPixmapInactive ).remove();
+      QFile( sPixmapInactive ).remove();
       i_saved = pixmapInactive.save(sPixmapInactive,"XPM");
       iconLoader->flush( "inactivetitlebar.xpm" );
     }
