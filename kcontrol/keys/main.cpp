@@ -78,6 +78,8 @@ void KeyModule::load()
 	kdDebug(125) << "KeyModule::load()" << endl;
 	m_pShortcuts->load();
 	m_pCommandShortcuts->load();
+	m_pModifiers->load();
+	setChanged( false );
 }
 
 // When [Apply] or [OK] are clicked.
@@ -87,6 +89,7 @@ void KeyModule::save()
 	m_pShortcuts->save();
 	m_pCommandShortcuts->save();
 	m_pModifiers->save();
+	setChanged( false );
 }
 
 void KeyModule::defaults()
@@ -95,6 +98,7 @@ void KeyModule::defaults()
 	m_pShortcuts->defaults();
 	m_pCommandShortcuts->defaults();
 	m_pModifiers->defaults();
+	setChanged( true );
 }
 
 QString KeyModule::quickHelp() const

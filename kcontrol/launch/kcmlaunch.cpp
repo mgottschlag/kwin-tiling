@@ -176,7 +176,7 @@ LaunchConfig::load()
   slotBusyCursor( cb_busyCursor->currentItem() );
   slotTaskbarButton( taskbarButton );
 
-  emit(changed(false));
+  setChanged( false );
 }
 
   void
@@ -198,7 +198,7 @@ LaunchConfig::save()
 
   c.sync();
 
-  emit(changed(false));
+  setChanged( false );
 
   if (!kapp->dcopClient()->isAttached())
      kapp->dcopClient()->attach();
@@ -254,10 +254,7 @@ LaunchConfig::checkChanged()
   
   unsigned int newTaskbarTimeout = sb_taskbarTimeout->value();
   
-  emit
-    (
-     changed
-     (
+  setChanged(
       savedBusyCursor     != newBusyCursor
       ||
       savedTaskbarButton  != newTaskbarButton
@@ -269,7 +266,6 @@ LaunchConfig::checkChanged()
       savedBusyBlinking != newBusyBlinking
       ||
       savedBusyBouncing != newBusyBouncing
-     )
     );
 }
 
