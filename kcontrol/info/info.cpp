@@ -31,6 +31,7 @@
 
 #include <qheader.h>
 #include <qwhatsthis.h>
+#include <qlayout.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -326,60 +327,40 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 #include <qwidgetlist.h>
 
 
-#define SCREEN_XY_OFFSET 20
-
-void KInfoListWidget::defaults()
+void KInfoListWidget::load()
 {
     bool ok = false;
 
-    delete lBox;
-    lBox  = new QListView(this);
-    QWhatsThis::add( lBox, i18n( "This list displays system information on the selected category." ) );
+    lBox->clear();
 
-    if (lBox) {
-	lBox->setFont(KGlobalSettings::generalFont()); /* default font */
-        lBox->setAllColumnsShowFocus(true);
-        setMinimumSize( 200,6*SCREEN_XY_OFFSET );
-        lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
-                          width() -2*SCREEN_XY_OFFSET,
-                          height()-2*SCREEN_XY_OFFSET);
-
-	/*  Delete the user-visible ErrorString, before calling the
-	    retrieve-function. If the function wants the widget to show
-	    another string, then it change *GetInfo_ErrorString ! */
-        ErrorString = i18n("Sorry, no information available about %1!").arg(title)
+    /*  Delete the user-visible ErrorString, before calling the
+        retrieve-function. If the function wants the widget to show
+        another string, then it change *GetInfo_ErrorString ! */
+    ErrorString = i18n("Sorry, no information available about %1!").arg(title)
 		    + QString("\n\n") + DEFAULT_ERRORSTRING;
-	GetInfo_ErrorString = &ErrorString;  /* save the adress of ErrorString */
+    GetInfo_ErrorString = &ErrorString;  /* save the adress of ErrorString */
 
-	sorting_allowed = true; 	/* the functions may set that */
-        lBox->setSorting(-1);   	/* No Sorting per default */
+    sorting_allowed = true; 	/* the functions may set that */
+    lBox->setSorting(-1);   	/* No Sorting per default */
 
-        if (getlistbox)
-            ok = (*getlistbox)(lBox);	/* retrieve the information */
+    if (getlistbox)
+        ok = (*getlistbox)(lBox);	/* retrieve the information */
 
-        if (lBox->header()->count()<=1)
-            lBox->addColumn(title);	/* set default title */
-        if (ok)
-            lBox->show();
+    if (lBox->header()->count()<=1)
+        lBox->addColumn(title);	/* set default title */
 
-	/* is the user allowed to use sorting ? */
-        lBox->header()->setClickEnabled(sorting_allowed);
-	lBox->setShowSortIndicator(sorting_allowed);
+    /* is the user allowed to use sorting ? */
+    lBox->header()->setClickEnabled(sorting_allowed);
+    lBox->setShowSortIndicator(sorting_allowed);
+
+    if (ok)
+    {
+        widgetStack->raiseWidget(lBox);
     }
-
-    if (!ok) {
-        if (lBox) {
-            delete lBox;
-            lBox = 0;
-        }
-        if (NoInfoText)
-            NoInfoText->setText(ErrorString);
-        else
-            NoInfoText = new QLabel(ErrorString,this);
-        NoInfoText->setAutoResize(true);
-        NoInfoText->setAlignment(AlignCenter); //  | WordBreak);
-        NoInfoText->move( width()/2,height()/2 ); // -120 -30
-        NoInfoText->adjustSize();
+    else 
+    {
+        NoInfoText->setText(ErrorString);
+        widgetStack->raiseWidget(NoInfoText);
     }
 }
 
@@ -395,28 +376,23 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
     : KCModule(parent, name),
       title(_title)
 {
+    setButtons(Help);
     getlistbox 	= _getlistbox;
-    lBox 	= 0;
-    NoInfoText  = 0;
     GetInfo_ErrorString = 0;
-    defaults();
-
-    setButtons(Ok|Help);
-}
-
-
-void KInfoListWidget::resizeEvent( QResizeEvent *re )
-{
-    QSize size = re->size();
-    if (lBox)
-        lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
-                          size.width() -2*SCREEN_XY_OFFSET,
-                          size.height()-2*SCREEN_XY_OFFSET);
-    if (NoInfoText) {
-        QSize s = NoInfoText->sizeHint();
-    	NoInfoText->move(   (size.width()-s.width())/2,
-                            (size.height()-s.height())/2 );
-    }
+    QHBoxLayout *layout = new QHBoxLayout(this, 10);
+    widgetStack = new QWidgetStack(this);
+    layout->addWidget(widgetStack);
+    lBox 	= new QListView(widgetStack);
+    widgetStack->addWidget(lBox, 0);
+    lBox->setMinimumSize(200,120);
+    lBox->setFont(KGlobalSettings::generalFont()); /* default font */
+    lBox->setAllColumnsShowFocus(true);
+    QWhatsThis::add( lBox, i18n( "This list displays system information on the selected category." ) );
+    NoInfoText  = new QLabel(widgetStack);
+    widgetStack->addWidget(NoInfoText, 1);
+    NoInfoText->setAlignment(AlignCenter); //  | WordBreak);
+    widgetStack->raiseWidget(NoInfoText);
+    load();
 }
 
 /*

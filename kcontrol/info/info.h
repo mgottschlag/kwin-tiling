@@ -2,6 +2,7 @@
 #define _INFO_H_
 
 #include <qwidget.h>
+#include <qwidgetstack.h>
 #include <qframe.h>
 #include <qlabel.h>
 #include <qtabdialog.h>
@@ -33,7 +34,7 @@ class KInfoListWidget : public KCModule
 public:
   KInfoListWidget(const QString &_title, QWidget *parent, const char *name=0, bool _getlistbox (QListView *)=0);
 
-  virtual void defaults();
+  virtual void load();
 
   QString quickHelp() const;
   
@@ -44,9 +45,7 @@ private:
   
   QLabel	*NoInfoText;
   QString	ErrorString;
-
-protected:
-  virtual void resizeEvent( QResizeEvent * );
+  QWidgetStack  *widgetStack;
 };
 
 #endif

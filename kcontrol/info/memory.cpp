@@ -94,7 +94,7 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
     QLabel	*Widget = 0;
     int 	i,j;
 
-    setButtons(Ok|Help);
+    setButtons(Help);
 
     /* default string for no Information... */
     Not_Available_Text = i18n("Not available.");
