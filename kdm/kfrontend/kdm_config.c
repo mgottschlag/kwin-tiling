@@ -23,8 +23,6 @@
 
     */
 
-#include <config.h>
-
 #include "kdm_config.h"
 
 #include <stdio.h>
@@ -544,7 +542,7 @@ Ent entsGreeter[] = {
 { "LoginMode",		C_loginMode | C_ENUM,	loginmode,	"LocalOnly" },
 { "ChooserHosts",	C_chooserHosts,		0,	"*" },
 { "ForgingSeed",	C_ForgingSeed,		0,	"0" },
-#ifdef BUILTIN_XCONSOLE
+#ifdef WITH_KDM_XCONSOLE
 { "ShowLog",		C_ShowLog | C_BOOL,	0,	"false" },
 { "LogSource",		C_LogSource,		0,	"" },
 #endif

@@ -27,6 +27,8 @@
 #ifndef KGREETER_H
 #define KGREETER_H
 
+#include <config.h>
+
 #include "kfdialog.h"
 
 #include <kapplication.h>
@@ -166,7 +168,7 @@ private:
     bool		prevvalid;
     int			capslocked;
     bool		loginfailed;
-#ifdef BUILTIN_XCONSOLE
+#ifdef WITH_KDM_XCONSOLE
     KConsole		*consoleView;
 #endif
 };

@@ -1,6 +1,5 @@
-#XCONSOLE_SRC = kconsole.cpp
-#XCONSOLE_CPPFLAGS = -DBUILTIN_XCONSOLE
-#XCONSOLE_LDADD = $(LIBUTIL)
+# use 'make GENKDMCONF_FLAGS=... install' to override
+GENKDMCONF_FLAGS =
 
 SUBDIRS = pics sessions
 
@@ -11,11 +10,6 @@ bin_PROGRAMS = kdm_config kdm_greet krootimage genkdmconf
 kdm_config_SOURCES = kdm_config.c
 kdm_config_LDADD = $(LIBRESOLV) $(LIBSOCKET)
 
-AM_CPPFLAGS = $(XCONSOLE_CPPFLAGS)
-EXTRA_DIST = kconsole.cpp
-
-KDE_OPTIONS = nofinal
-
 kdm_greet_SOURCES = \
     kdm_greet.c \
     liloinfo.cpp \
@@ -23,11 +17,11 @@ kdm_greet_SOURCES = \
     kdmshutdown.cpp \
     kfdialog.cpp \
     kdmclock.cpp \
-    $(XCONSOLE_SRC) \
+    kconsole.cpp \
     kchooser.cpp \
     kgreeter.cpp
 kdm_greet_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-kdm_greet_LDADD = $(LIB_KDEUI) $(XTESTLIB) $(XCONSOLE_LDADD)
+kdm_greet_LDADD = $(LIB_KDEUI) $(XTESTLIB)
 
 krootimage_SOURCES = krootimage.cpp
 krootimage_LDFLAGS = $(all_libraries) $(KDE_RPATH)

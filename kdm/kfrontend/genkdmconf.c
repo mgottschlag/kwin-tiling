@@ -2198,7 +2198,7 @@ static Ent entsGreeter[] = {
 "# unknown users. This is used to avoid telling an attacker about existing users\n"
 "# by reverse conclusion. This value should be random but constant across the\n"
 "# login domain. Default is 0\n" },
-#ifdef BUILTIN_XCONSOLE
+#ifdef WITH_KDM_XCONSOLE
 { "ShowLog",		0, 0, 
 "# Enable KDM's built-in xconsole. Note, that this can be enabled for only\n"
 "# one display at a time. Default is false\n" },
@@ -2397,7 +2397,7 @@ static DEnt dEnts0Core[] = {
 static DEnt dEnts0Greeter[] = {
 { "PreselectUser",	"Default", 0 },
 { "DefaultUser",	"johndoe", 0 },
-#ifdef BUILTIN_XCONSOLE
+#ifdef WITH_KDM_XCONSOLE
 { "ShowLog",		"true", 1 },
 { "LogSource",		"/dev/xconsole", 1 },
 #endif

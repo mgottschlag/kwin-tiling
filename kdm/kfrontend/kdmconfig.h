@@ -27,6 +27,8 @@
 #ifndef KDMCONFIG_H
 #define KDMCONFIG_H
 
+#include <config.h>
+
 #include <qnamespace.h>
 #include <qstring.h>
 #include <qstringlist.h>
@@ -86,7 +88,7 @@ public:
 
     int		_forgingSeed;
 
-#ifdef BUILTIN_XCONSOLE
+#ifdef WITH_KDM_XCONSOLE
     bool	_showLog;
     QString	_logSource;
 #endif

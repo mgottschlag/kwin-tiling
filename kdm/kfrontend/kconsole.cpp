@@ -24,6 +24,8 @@
 
 #include <config.h>
 
+#ifdef WITH_KDM_XCONSOLE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -175,3 +177,5 @@ KConsole::slotData()
 }
 
 #include "kconsole.moc"
+
+#endif

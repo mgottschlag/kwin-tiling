@@ -26,6 +26,8 @@
 #ifndef _KDM_CONFIG_H_
 #define _KDM_CONFIG_H_
 
+#include <config.h>
+
 #include <greet.h>
 
 #define C_grabServer		(C_TYPE_INT | 0x1000)
@@ -83,7 +85,7 @@
 #define C_ColorScheme		(C_TYPE_STR | 0x102d)
 #define C_ForgingSeed		(C_TYPE_INT | 0x102e)
 
-#ifdef BUILTIN_XCONSOLE
+#ifdef WITH_KDM_XCONSOLE
 # define C_ShowLog		(C_TYPE_INT | 0x2000)
 # define C_LogSource		(C_TYPE_STR | 0x2001)
 #endif

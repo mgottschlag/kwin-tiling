@@ -105,14 +105,9 @@ AC_CHECK_LIB(Xau, main, [:],
 	  $X_LDFLAGS -lX11 $LIBSOCKET)
 
 AC_ARG_WITH(xdmcp,
-	[  --without-xdmcp         build kdm without xdmcp support [default=with xdmcp]],
-	[ if test "$withval" = yes; then
-	    XDMCP=1
-	  else
-	    XDMCP=
-	  fi
-	], [XDMCP=1])
-if test -n "$XDMCP"; then
+	[  --without-xdmcp         build kdm without xdmcp support [default=with xdmcp]], ,
+	[with_xdmcp=yes])
+if test "x$with_xdmcp" = xyes; then
   AC_CHECK_LIB(Xdmcp, main, [LIBXDMCP="-lXdmcp"], , $X_LDFLAGS -lX11 $LIBSOCKET)
   if test -n "$LIBXDMCP"; then
     ac_cpp_safe=$ac_cpp
@@ -131,11 +126,7 @@ AC_SUBST(LIBXDMCP)
 AC_MSG_CHECKING(whether to use Kerberos v4)
 AC_ARG_WITH(krb4,
 [  --with-krb4[=PATH]      Compile in Kerberos v4 support.],
-[ case "$withval" in
-  yes)
-    with_krb4=/usr/kerberos
-    ;;
-  esac ],
+[ test "x$with_krb4" = xyes && with_krb4=/usr/kerberos ],
 [ with_krb4=no ]
 )
 case "$with_krb4" in
@@ -246,7 +237,7 @@ if test "x$use_pam" = xyes; then
 elif test "x$use_shadow" = xyes; then
     XDM_CFLAGS="$XDM_CFLAGS -DUSESHADOW"
 fi
-if test "x$XDMCP" != x; then
+if test "x$with_xdmcp" = xyes; then
     XDM_CFLAGS="$XDM_CFLAGS -DXDMCP"
 fi
 if test "x$with_krb4" != xno; then
@@ -258,3 +249,10 @@ fi
 XDM_CFLAGS="$XDM_CFLAGS $(echo "$CFLAGS" | sed 's/ -D_XOPEN_SOURCE=[[0-9]]*//;s/ -D_BSD_SOURCE//;s/ -D_GNU_SOURCE//')"
 AC_MSG_RESULT([xdm CFLAGS: $XDM_CFLAGS])
 AC_SUBST(XDM_CFLAGS)
+
+AC_ARG_WITH(kdm-xconsole,
+	[  --with-kdm-xconsole     build kdm with built-in xconsole [default=no]], ,
+	[with_kdm_xconsole=no])
+if test "x$with_kdm_xconsole" = xyes; then
+    AC_DEFINE(WITH_KDM_XCONSOLE, 1, [Build kdm with built-in xconsole])
+fi

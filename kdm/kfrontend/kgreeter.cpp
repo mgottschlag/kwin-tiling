@@ -23,12 +23,11 @@
 
     */
 
-#include <config.h>
-
 #include "kgreeter.h"
 #include "kdmshutdown.h"
 #include "kdmconfig.h"
 #include "kdmclock.h"
+#include "kconsole.h"
 #include "kchooser.h"
 #include "kdm_greet.h"
 #include "kdm_config.h"
@@ -261,7 +260,7 @@ KGreeter::KGreeter()
 
 //helpButton
 
-#ifdef BUILTIN_XCONSOLE
+#ifdef WITH_KDM_XCONSOLE
     if (kdmcfg->_showLog) {
 	consoleView = new KConsole( this, kdmcfg->_logSource );
 	main_grid->addMultiCellWidget( consoleView, 4,4, 0,1 );
