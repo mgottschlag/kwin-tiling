@@ -333,7 +333,7 @@ void KThemeListBox::readThemeDir(const QString &directory)
             KSimpleConfig config(fi->absFilePath());
             config.setGroup("Misc");
             name = config.readEntry("Name", fi->baseName());
-            desc = config.readEntry("Description",
+            desc = config.readEntry("Comment",
                                     i18n("No description available."));
             insertItem(name + "\t" + desc);
             fileList.append(fi->absFilePath().ascii());
