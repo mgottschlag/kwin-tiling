@@ -36,6 +36,7 @@
 #include "localetime.h"
 #include "klocalesample.h"
 #include "main.h"
+#include "main.moc"
 
 
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)

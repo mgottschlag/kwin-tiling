@@ -8,9 +8,8 @@ SUBDIRS = pics default
 lib_LTLIBRARIES = libkcm_locale.la
 libkcm_locale_la_SOURCES = main.cpp locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp
 
-METASOURCES = locale.moc klangcombo.moc localenum.moc localemon.moc localetime.moc
+METASOURCES = main.moc locale.moc klangcombo.moc localenum.moc localemon.moc localetime.moc
 noinst_HEADERS = main.h locale.h klangcombo.h klocalesample.h localenum.h localemon.h localetime.h
-EXTRA_DIST = kcmlocalerc 
 
 libkcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) $(KDE_RPATH)
 

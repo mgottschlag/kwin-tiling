@@ -19,6 +19,9 @@
    
   */
 
+#ifndef __MAIN_H__
+#define __MAIN_H__
+
 #include <qtabwidget.h>
 #include <qgroupbox.h>
 
@@ -33,6 +36,8 @@ class KLocaleSample;
 
 class KLocaleApplication : public KCModule
 {
+  Q_OBJECT
+
 public:
   KLocaleApplication(QWidget *parent, const char *name);
 
@@ -46,7 +51,7 @@ public slots:
   void reTranslate();
   void reset();
   void updateSample();
-  void update() { reset(); reTranslate(); updateSample(); };
+  void update() { reTranslate(); updateSample(); };
 
 private:
   QTabWidget          *tab;
@@ -58,3 +63,5 @@ private:
   QGroupBox           *gbox;
   KLocaleSample       *sample;
 };
+
+#endif
