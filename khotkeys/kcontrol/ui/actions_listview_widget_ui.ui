@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>KHotKeys::Actions_listview_widget_ui</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>592</width>
-            <height>480</height>
+            <height>495</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Actions_listview_widget_ui</string>
     </property>
     <vbox>
         <property name="name">
@@ -39,7 +42,7 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="KHotKeys::KHListView">
+                <widget class="KHotKeys::Actions_listview">
                     <property name="name">
                         <cstring>actions_listview</cstring>
                     </property>
@@ -50,8 +53,8 @@
 </widget>
 <customwidgets>
     <customwidget>
-        <class>KHotKeys::KHListView</class>
-        <header location="global">khlistview.h</header>
+        <class>KHotKeys::Actions_listview</class>
+        <header location="global">actions_listview_widget.h</header>
         <sizehint>
             <width>-1</width>
             <height>-1</height>
@@ -64,7 +67,6 @@
             <verstretch>0</verstretch>
         </sizepolicy>
         <pixmap>image0</pixmap>
-        <signal>current_changed(QListViewItem*)</signal>
     </customwidget>
 </customwidgets>
 <images>
@@ -77,10 +79,11 @@
 </forwards>
 <includes>
     <include location="global" impldecl="in implementation">kdialog.h</include>
+    <include location="global" impldecl="in implementation">config.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
-    <includehint>khotkeys::khlistview.h</includehint>
+    <includehint>khotkeys::actions_listview.h</includehint>
 </includehints>
 </UI>

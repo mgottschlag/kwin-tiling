@@ -13,15 +13,13 @@
 
 #include <qtimer.h>
 
-#include <qlistview.h>
+#include <klistview.h>
 
 namespace KHotKeys
 {
 
 class KHListView
-    : public QListView
-    // use QListView rather than KListView ... why the hell should a listview
-    // obey single/double click settings?
+    : public KListView
     {
     Q_OBJECT
     Q_PROPERTY( bool forceSelect READ forceSelect WRITE setForceSelect )

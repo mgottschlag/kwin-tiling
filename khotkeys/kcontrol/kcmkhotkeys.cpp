@@ -179,6 +179,7 @@ namespace KHotKeys {
 
 void check_tree( Action_data_group* b, int lev_P = 0 )
     {
+    using namespace std;
     cerr << setw( lev_P ) << "" << b << ":Group:" << b->name().latin1() << ":" << b->parent() << endl;
     for( Action_data_group::Iterator it = b->first_child();
          it;
