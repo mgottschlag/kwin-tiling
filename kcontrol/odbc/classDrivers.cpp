@@ -47,7 +47,7 @@ classDrivers::classDrivers( QWidget* parent, const char* name )
 	pbConfigure->setText( "&Configure..." );
 	pbConfigure->setAutoRepeat( FALSE );
 	pbConfigure->setAutoResize( FALSE );
-    pbConfigure->hide();
+	pbConfigure->hide();
 
 	lvwDrivers = new QListView( this, "lvwDrivers" );
 	lvwDrivers->setGeometry( 10, 10, 270, 190 );
@@ -217,7 +217,7 @@ void classDrivers::Add()
 			delete pProperties;
 			FreeProperties( &hFirstProperty );
 			qsError.sprintf( "Could not write to (%s). Try running this program as root when working with Drivers or System DSN's.", szINI );
-			KMessageBox::information( this, "ODBC Config",  qsError );
+			KMessageBox::information( this, qsError );
 			return;
 		}
 
@@ -258,7 +258,7 @@ void classDrivers::Edit()
 		qsName		= pListViewItem->text( 0 );
 	else
 	{
-		KMessageBox::information( this, "ODBC Config",  "Please select a Driver from the list first." );
+		KMessageBox::information( this, "Please select a Driver from the list first." );
 		return;
 	}
 
@@ -334,7 +334,7 @@ void classDrivers::Edit()
 			delete pProperties;
 			FreeProperties( &hFirstProperty );
 			qsError.sprintf( "Could not write to (%s)", szINI );
-			KMessageBox::information( this, "ODBC Config",  qsError );
+			KMessageBox::information( this, qsError );
 			return;
 		}
 
@@ -370,7 +370,7 @@ void classDrivers::Delete()
 	}
 	else
 	{
-		KMessageBox::information( this, "ODBC Config",  "Please select a Driver from the list first" );
+		KMessageBox::information( this, "Please select a Driver from the list first" );
 		return;
 	}
 
@@ -378,9 +378,9 @@ void classDrivers::Delete()
 	if ( SQLWritePrivateProfileString( pszName, NULL, NULL, szINI ) == FALSE )
 	{
 		qsError.sprintf( "Could not write property list for (%s)", pszName );
-		KMessageBox::information( this, "ODBC Config",  qsError );
-		while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, FILENAME_MAX, NULL ) == SQL_SUCCESS )
-			KMessageBox::information( this, "ODBC Config",  szErrorMsg );
+		KMessageBox::information( this, qsError );
+		//while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, FILENAME_MAX, NULL ) == SQL_SUCCESS )
+		//	KMessageBox::information( this, szErrorMsg );
 	}
 	
 	// RELOAD (slow but safe)

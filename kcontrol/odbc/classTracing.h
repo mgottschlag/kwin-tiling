@@ -13,6 +13,8 @@
 #include <qpushbutton.h>
 #include <qpixmap.h>
 
+#include <kmessagebox.h>
+
 #include "classFileSelector.h"
 
 class classTracing : public QWidget

@@ -99,7 +99,7 @@ void classTracing::apply()
 
 	if ( !SQLWritePrivateProfileString( "ODBC", "Trace", szTracing, "odbcinst.ini" ) )
 	{
-		QMessageBox::warning( this, "ODBC Config", "Could not apply. Ensure that you are operating as 'root' user." );
+		KMessageBox::information( this, "Could not apply. Ensure that you are operating as 'root' user." );
 		return;
 	}
 	else		
@@ -110,6 +110,6 @@ void classTracing::apply()
 
 
 	if ( pTracing->isChecked() )
-		QMessageBox::information( this, "ODBC Config", "Tracing is turned on. Tracing uses up disk space as all calls are logged. Ensure that you turn it off as soon as possible." );
+		KMessageBox::information( this, "Tracing is turned on. Tracing uses up disk space as all calls are logged. Ensure that you turn it off as soon as possible." );
 }
 
