@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libodbcdrvcfg2S.la
 
-INCLUDES = -I../
+INCLUDES = -I../ $(all_includes)
 
 DEFS = -DUNIXODBC @DEFS@
 
