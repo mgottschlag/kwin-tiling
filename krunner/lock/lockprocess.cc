@@ -656,6 +656,8 @@ void LockProcess::hackExited( KProcess * )
 //
 bool LockProcess::checkPass()
 {
+    setBackgroundColor(black);
+    stopHack();
     PasswordDlg passDlg(this, !mXdmFifoName.isNull());
     connect(&passDlg, SIGNAL(startNewSession()), SLOT(startNewSession()));
 
@@ -675,6 +677,10 @@ bool LockProcess::checkPass()
     bool rt = passDlg.exec();
     XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
 	     blankCursor.handle(), CurrentTime);
+    if (!rt)
+    {
+        startHack();
+    }
     return rt;
 }
 
