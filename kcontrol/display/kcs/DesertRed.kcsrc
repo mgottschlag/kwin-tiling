@@ -2,6 +2,7 @@
 [Color Scheme]
 Name=Desert red
 Name[af]=woestyn rooi
+Name[ar]=أحمر صحراوي
 Name[az]=Çöl qırmızısı
 Name[bs]=Crvena
 Name[ca]=Roig desert
@@ -41,6 +42,7 @@ Name[xh]=Bomvu krwe
 Name[xx]=xx
 Name[zh_CN.GB2312]=沙漠红
 Name[zh_TW.Big5]=沙漠紅
+Name[zu]=Ugwadule olubomvu
 background=214,205,187
 buttonBackground=214,205,187
 buttonForeground=0,0,0

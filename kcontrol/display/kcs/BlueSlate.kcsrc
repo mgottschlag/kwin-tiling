@@ -2,6 +2,7 @@
 [Color Scheme]
 Name=Blue slate
 Name[af]=blou slyk
+Name[ar]=رخام أزرق
 Name[az]=Göy daş taxta
 Name[ca]=Blau pissarra
 Name[cs]=Modrá plískanice
@@ -40,6 +41,7 @@ Name[xh]=isileyiti esiluhlaza (okwesibhaka-bhaka)
 Name[xx]=xx
 Name[zh_CN.GB2312]=蓝灰
 Name[zh_TW.Big5]=藍灰
+Name[zu]=isileyiti esiluhlaza (okwesibhaka-bhaka)
 background=#9db9c8
 buttonBackground=#9db9c8
 buttonForeground=#000000

@@ -2,6 +2,7 @@
 [Color Scheme]
 Name=Pale gray
 Name[af]=bleek grys
+Name[ar]=رمادي غامق
 Name[az]=Açıq boz
 Name[bs]=Pale zelena
 Name[ca]=Gris pàl·lid
@@ -43,6 +44,7 @@ Name[xh]=ngwevu bumbatsha
 Name[xx]=xx
 Name[zh_CN.GB2312]=灰白
 Name[zh_TW.Big5]=灰白
+Name[zu]=Okugqunqile kugreyi
 background=#d6d6d6
 buttonBackground=#d6d6d6
 buttonForeground=#000000

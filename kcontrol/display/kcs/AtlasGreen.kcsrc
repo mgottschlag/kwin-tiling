@@ -2,6 +2,7 @@
 [Color Scheme]
 Name=Atlas green
 Name[af]=atlas groen
+Name[ar]=Atals Green
 Name[az]=Atlas yaşılı
 Name[ca]=Vert Atlas
 Name[cs]=Atlasově zelená
@@ -39,6 +40,7 @@ Name[xh]=Luhlaza okwe Atlas (okwengca)
 Name[xx]=xx
 Name[zh_CN.GB2312]=地图绿
 Name[zh_TW.Big5]=Atlas 綠
+Name[zu]=I Atlasi elihlaza
 background=#afb49f
 buttonBackground=#afb49f
 buttonForeground=#000000
