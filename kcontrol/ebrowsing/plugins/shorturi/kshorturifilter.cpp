@@ -98,6 +98,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
             while( cmd[match] == '\\' ) match++;
             cmd = cmd.mid( match );
         }
+        for (int i=0; i<cmd.length(); i++) if (cmd[i]=='\\') cmd[i]='/';
         cmd[0] == '/' ? cmd.prepend( "smb:" ) : cmd.prepend( "smb:/" );
         setFilteredURI( data, cmd );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
