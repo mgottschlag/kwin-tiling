@@ -27,6 +27,8 @@
  *  $Id$ 
  */
 
+#include <sys/param.h>	/* for BSD */
+
 #include <qtabbar.h>
 #include <qlayout.h>
 #include <qpainter.h>
@@ -36,12 +38,16 @@
 
 #include "memory.h"
 
-
 enum { 			/* entries for Memory_Info[] */
     TOTAL_MEM = 0,	/* total physical memory (without swaps) */
     FREE_MEM,		/* total free physical memory (without swaps) */
+#ifndef __NetBSD__
     SHARED_MEM,
     BUFFER_MEM,
+#else
+    ACTIVE_MEM,
+    INACTIVE_MEM,
+#endif
     SWAP_MEM,		/* total size of all swap-partitions */
     FREESWAP_MEM,	/* free memory in swap-partitions */
     MEM_LAST_ENTRY };
@@ -117,8 +123,13 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 	switch (i) {
 	    case TOTAL_MEM: 	title = i18n("Total physical memory");	break;
 	    case FREE_MEM:	title = i18n("Free physical memory");	break;
+#ifndef __NetBSD__
 	    case SHARED_MEM:	title = i18n("Shared memory");		break;
 	    case BUFFER_MEM:	title = i18n("Buffer memory");		break;
+#else
+	    case ACTIVE_MEM:	title = i18n("Active memory");		break;
+	    case INACTIVE_MEM:	title = i18n("Inactive memory");	break;
+#endif
 	    case SWAP_MEM:	vbox->addSpacing(SPACING);
 				title = i18n("Total swap memory");	break;
 	    case FREESWAP_MEM:	title = i18n("Free swap memory");	break;
@@ -300,6 +311,8 @@ void KMemoryWidget::update_Values()
 #include "memory_fbsd.cpp"
 #elif hpux
 #include "memory_hpux.cpp"
+#elif __NetBSD__
+#include "memory_netbsd.cpp"
 #else
 
 /* Default for unsupported systems */
@@ -307,8 +320,13 @@ void KMemoryWidget::update()
 {
     Memory_Info[TOTAL_MEM]    = NO_MEMORY_INFO; // total physical memory (without swaps)
     Memory_Info[FREE_MEM]     = NO_MEMORY_INFO;	// total free physical memory (without swaps)
+#ifndef __NetBSD__
     Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO; 
     Memory_Info[BUFFER_MEM]   = NO_MEMORY_INFO; 
+#else
+    Memory_Info[ACTIVE_MEM]   = NO_MEMORY_INFO; 
+    Memory_Info[INACTIVE_MEM] = NO_MEMORY_INFO; 
+#endif
     Memory_Info[SWAP_MEM]     = NO_MEMORY_INFO; // total size of all swap-partitions
     Memory_Info[FREESWAP_MEM] = NO_MEMORY_INFO; // free memory in swap-partitions
 }
