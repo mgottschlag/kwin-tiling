@@ -82,12 +82,12 @@ int View1394::buttons ()
 
 QString View1394::quickHelp() const
 {
-   return i18n("On the right side you can see some information about "
+   return i18n("On the right hand side you can see some information about "
                "your IEEE 1394 configuration.<br>"
                "The meaning of the columns:<br>"
                "<b>Name</b>: port or node name, the number can change with each bus reset<br>"
                "<b>GUID</b>: the 64 bit GUID of the node<br>"
-               "<b>Local</b>: checked if the node is a IEEE 1394 port of your computer<br>"
+               "<b>Local</b>: checked if the node is an IEEE 1394 port of your computer<br>"
                "<b>IRM</b>: checked if the node is isochronous resource manager capable<br>"
                "<b>CRM</b>: checked if the node is cycle master capable<br>"
                "<b>ISO</b>: checked if the node supports isochronous transfers<br>"
