@@ -58,7 +58,7 @@ bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
   // Loose many of the QRegExp matches as they tend
   // to slow things down.  They are also unnecessary!! (DA)
     if ( cmd[cmd.length()-1] == '&' ||     // must not end with '&'
-       (!cmd.contains('.') && !cmd.contains(':')) ||             // must contain either '.' or ':'
+       (!cmd.contains('.') && !cmd.contains(':') && !cmd.contains('@')) ||             // must contain either '.' or ':' or '@'
        cmd.contains(QFL1("||")) || cmd.contains(QFL1("&&")) ||   // must not look like shell
        cmd.contains(QRegExp(QFL1("[ ;<>]"))) )  // must not contain space, ;, < or >
        return false;
@@ -140,6 +140,12 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   QString ref;
   if (KURL::isRelativeURL(cmd))
   {
+     if (cmd.contains('@'))
+     {
+        setFilteredURI( data, QString::fromLatin1("mailto:") + cmd );
+        setURIType( data, KURIFilterData::NET_PROTOCOL );
+        return true;
+     }
      path = cmd;
   }
   else
