@@ -673,7 +673,7 @@ KSMServer::KSMServer( const QString& windowManager )
     clean = false;
     wm = windowManager;
 
-    informKSplashCounter = 0;
+    progress = 0;
 
     state = Idle;
     KConfig* config = KGlobal::config();
@@ -826,15 +826,11 @@ KSMClient* KSMServer::newClient( SmsConn conn )
 {
     KSMClient* client = new KSMClient( conn );
     clients.append( client );
-    if ( informKSplashCounter ) {
-	informKSplashCounter--;
-	QByteArray data;
-	QDataStream arg(data, IO_WriteOnly);
-	arg << informKSplashCounter;
-	kapp->dcopClient()->send("ksplash", "", "setProgress(int)", data );
-	if ( informKSplashCounter == 0 ) {
-	    kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)", QString("session ready") );
-	}
+    if ( progress ) {
+	progress--;
+	publishProgress( progress );
+	if ( progress == 0 )
+	    upAndRunning( "session ready" );
     }
     return client;
 }
@@ -1119,66 +1115,38 @@ void KSMServer::storeSesssion()
  */
 void KSMServer::restoreSession()
 {
-    kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)", QString("restore session") );
+    upAndRunning( "restore session");
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
     int count =  config->readNumEntry( "count" );
-    informKSplashCounter = count;
+    progress = count;
 
     QStringList wmCommand = wm;
     if ( !wm.isEmpty() ) {
 	// when we have a window manager, we start it first and give
 	// it some time before launching other processes. Results in a
 	// visually more appealing startup.
-	informKSplashCounter++;
+	progress++;
 	for ( int i = 1; i <= count; i++ ) {
 	    QString n = QString::number(i);
 	    if ( wm == config->readEntry( QString("program")+n ) ) {
-		informKSplashCounter--;
+		progress--;
 		wmCommand = config->readListEntry( QString("restartCommand")+n );
 		break;
 	    }
 	}
     }
 
-    // windowmanager *MUST* have kmapnotify disabled!
-    if ( !wmCommand.isEmpty() ) {
-	{
-	    QByteArray params;
-	    QDataStream stream(params, IO_WriteOnly);
-	    QCString replyType;
-	    QByteArray replyData;
-	    stream << QCString("KDE_DISABLE_KMAPNOTIFY") << "1";
-	    kapp->dcopClient()->call(launcher, launcher,
-				     "setLaunchEnv(QCString,QCString)", params, replyType,
-				     replyData);
-	}
-	
+    publishProgress( progress, true );
+    
+    if ( wmCommand.isEmpty() ) {
+	restoreSessionInternal();
+    } else {
+	enableMapNotify( false );
 	startApplication( wmCommand );
-    }
-	
-    {
-	QByteArray data;
-	QDataStream arg(data, IO_WriteOnly);
-	arg << informKSplashCounter;
-	kapp->dcopClient()->send("ksplash", "", "setMaxProgress(int)", data );
-    }
-
-    // re-enable kmapnotify for other apps
-    if ( !wmCommand.isEmpty() ) {
-	QByteArray params;
-	QDataStream stream(params, IO_WriteOnly);
-	QCString replyType;
-	QByteArray replyData;
-	stream << QCString("KDE_DISABLE_KMAPNOTIFY") << "0";
-	kapp->dcopClient()->call(launcher, launcher,
-				 "setLaunchEnv(QCString,QCString)", params, replyType,
-				 replyData);
+	enableMapNotify( true );
 	QTimer::singleShot( 2000, this, SLOT( restoreSessionInternal() ) );
-	return;
     }
-
-    restoreSessionInternal();
 }
 
 /*!
@@ -1188,38 +1156,12 @@ void KSMServer::restoreSession()
  */
 void KSMServer::startDefaultSession()
 {
-    kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)", QString("start session") );
-
-    // windowmanager *MUST* have kmapnotify disabled!
-    {
-        QByteArray params;
-        QDataStream stream(params, IO_WriteOnly);
-        QCString replyType;
-        QByteArray replyData;
-        stream << QCString("KDE_DISABLE_KMAPNOTIFY") << "1";
-        kapp->dcopClient()->call(launcher, launcher,
-        "setLaunchEnv(QCString,QCString)", params, replyType,
-         replyData);
-    }
-
-    informKSplashCounter = 1;
-    QByteArray data;
-    QDataStream arg(data, IO_WriteOnly);
-    arg << informKSplashCounter;
-    kapp->dcopClient()->send("ksplash", "", "setMaxProgress(int)", data );
+    upAndRunning( "start session" );
+    progress = 1;
+    publishProgress( progress, true );
+    enableMapNotify( false );
     startApplication( wm );
-
-    // re-enable kmapnotify for other apps
-    {
-        QByteArray params;
-        QDataStream stream(params, IO_WriteOnly);
-        QCString replyType;
-        QByteArray replyData;
-        stream << QCString("KDE_DISABLE_KMAPNOTIFY") << "0";
-        kapp->dcopClient()->call(launcher, launcher,
-        "setLaunchEnv(QCString,QCString)", params, replyType,
-         replyData);
-    }
+    enableMapNotify( true );
 }
 
 
@@ -1236,3 +1178,30 @@ void KSMServer::restoreSessionInternal()
     }
 }
 
+
+void KSMServer::enableMapNotify( bool enable )
+{
+    QByteArray params;
+    QDataStream stream(params, IO_WriteOnly);
+    QCString replyType;
+    QByteArray replyData;
+    stream << QCString("KDE_DISABLE_KMAPNOTIFY") << ( enable? "0" : "1" );
+    kapp->dcopClient()->call(launcher, launcher,
+			     "setLaunchEnv(QCString,QCString)", params, replyType,
+			     replyData);
+}
+
+
+void KSMServer::publishProgress( int progress, bool max  )
+{
+    QByteArray data;
+    QDataStream arg(data, IO_WriteOnly);
+    arg << progress;
+    kapp->dcopClient()->send("ksplash", "", max ? "setMaxProgress(int)" : "setProgress(int)", data );
+}
+
+
+void KSMServer::upAndRunning( const QString& msg )
+{
+    kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)", msg );
+}
