@@ -32,16 +32,16 @@ kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
 	quickhelp.cpp moduletreeview.cpp moduleiconview.cpp \
 	kcrootonly.cpp moduleIface.cpp moduleIface.skel
 
-kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KSYCOCA) -lkutils 
+kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
 kcmshell_la_SOURCES = kcmshell.cpp proxywidget.cpp \
 	                  kcdialog.cpp global.cpp kcdialog.skel
-kcmshell_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) -lkutils 
+kcmshell_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 
 kcminit_la_SOURCES = kcminit.cpp global.cpp
-kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA) -lkutils
+kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 rccontroldir = $(kde_datadir)/kcontrol
