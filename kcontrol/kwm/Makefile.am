@@ -29,3 +29,6 @@ messages:
 
 data_DATA = actions.desktop mouse.desktop 
 datadir = $(kde_appsdir)/Settings/LookNFeel/Windows
+
+border_DATA = borders.desktop
+borderdir = $(kde_appsdir)/Settings/LookNFeel/Desktop
