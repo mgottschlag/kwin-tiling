@@ -95,7 +95,7 @@ int main( int argc, char **argv )
 	  exit(1);
 	}
     }
-  global_pix_loader = KApplication::getKApplication()->getIconLoader();
+  global_pix_loader =KGlobal::iconLoader();
   global_pix_sel = new KIconLoaderDialog;
   global_pix_sel2 = new KIconLoaderDialog;
   QStringList icon_sel_list;
