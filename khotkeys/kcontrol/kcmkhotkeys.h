@@ -26,15 +26,15 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
 // creates a dialog for assigning a shortcut to the menu entry,
 // with shortcut_P as default, if save_if_edited_P is true
 // and user doesn't cancel the dialog, config file is updated
-QString khotkeys_edit_menu_entry_shortcut( const QString& entry_P,
-    const QString& shortcut_P, bool save_if_edited_P );
+//QString khotkeys_edit_menu_entry_shortcut( const QString& entry_P,
+//    const QString& shortcut_P, bool save_if_edited_P );
 // menu entry was moved in K Menu
 bool khotkeys_menu_entry_moved( const QString& new_P, const QString& old_P );
 // menu entry was removed
 void khotkeys_menu_entry_deleted( const QString& entry_P );
     } // extern "C"
 
-class desktop_shortcut_dialog
+/*class desktop_shortcut_dialog
     : public KDialogBase
     {
     Q_OBJECT
@@ -50,6 +50,6 @@ class desktop_shortcut_dialog
         KHotData* item;
         QString action_name;
         KKeyChooser* keychooser;
-    };
+    };*/
 
 #endif

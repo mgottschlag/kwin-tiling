@@ -14,7 +14,7 @@
 #include <config.h>
 #endif
 
-#include <kaccelaction.h>
+//#include <kaccelaction.h>
 #include <krun.h>
 #include <kdesktopfile.h>
 #include <ksimpleconfig.h>
@@ -156,7 +156,7 @@ void KHotKeysApp::start_menuentry( const QString& action_P )
 
 void KHotKeysApp::reread_configuration()
     {
-    accel->actions().clear();
+    accel->clear();
     data.clear();
     KSimpleConfig cfg( CONFIG_FILE, true );
     data.read_config( cfg );

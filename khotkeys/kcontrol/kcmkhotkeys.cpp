@@ -15,7 +15,6 @@
 #endif
 
 #include <ksimpleconfig.h>
-#include <kaccelaction.h>
 #include <kdialogbase.h>
 #include <dcopclient.h>
 #include <kkeydialog.h>
@@ -26,13 +25,14 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
+#include <kshortcut.h>
 #include "khotkeysglobal.h"
 
 #include "kcmkhotkeys.h"
 
 static void write_conf( KHotData_dict& data_P );
-static bool edit_shortcut( const QString& action_name_P, KHotData* data_P,
-    KHotData_dict& data_P1, const QString& shortcut_P );
+//static bool edit_shortcut( const QString& action_name_P, KHotData* data_P,
+//    KHotData_dict& data_P1, const QString& shortcut_P );
 static QString change_shortcut_internal( const QString& file_P,
     const QString& shortcut_P, bool save_P, bool edit_P );
 
@@ -103,12 +103,13 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
     return change_shortcut_internal( entry_P, shortcut_P, true, false );
     }
 
-QString khotkeys_edit_menu_entry_shortcut( const QString& entry_P,
+/*QString khotkeys_edit_menu_entry_shortcut( const QString& entry_P,
     const QString& shortcut_P, bool save_if_edited_P )
     {
     return change_shortcut_internal( entry_P, shortcut_P, save_if_edited_P,
         true );
     }
+*/
 
 QString change_shortcut_internal( const QString& entry_P,
     const QString& shortcut_P, bool save_if_edited_P, bool edit_P )
@@ -138,14 +139,13 @@ QString change_shortcut_internal( const QString& entry_P,
         pos = new KHotData( "", entry_P, true );
         new_data = true;
         }
-    if( edit_P )
+    /*if( edit_P )
         {
         if( !edit_shortcut( name, pos, data, shortcut_P ))
             return shortcut_P;
         }
-    else
-        //pos->shortcut = KKey::keyToString(    // make sure the shortcut
-        //    KKey::stringToKeyQt( shortcut_P ), false); // is valid
+    else*/
+        // make sure the shortcut is valid
         pos->shortcut = (KShortcut( shortcut_P )).toStringInternal();
     if( !save_if_edited_P )
         return pos->shortcut;
@@ -173,6 +173,7 @@ void write_conf( KHotData_dict& data_P )
       // tell daemon to reread cfg file
     }
 
+/*
 bool edit_shortcut( const QString& action_name_P, KHotData* item_P,
     KHotData_dict& data_P, const QString& shortcut_P )
     {
@@ -183,7 +184,9 @@ bool edit_shortcut( const QString& action_name_P, KHotData* item_P,
     delete dlg;
     return ret;
     }
-    
+*/
+
+/*
 desktop_shortcut_dialog::desktop_shortcut_dialog(
     const QString& action_name_P, KHotData* item_P, KHotData_dict& data_P,
     QString shortcut_P )
@@ -264,6 +267,7 @@ void desktop_shortcut_dialog::key_changed()
             }
         }
     }
+*/
 
 #include "kcmkhotkeys.moc"
 
