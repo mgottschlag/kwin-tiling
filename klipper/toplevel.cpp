@@ -40,7 +40,7 @@
 
 #define MENU_ITEMS   7
 // the <clipboard empty> item
-#define EMPTY (pQPMmenu->count() - MENU_ITEMS)
+#define EMPTY (m_popup->count() - MENU_ITEMS)
 
 
 /* XPM */
@@ -90,23 +90,23 @@ TopLevel::TopLevel()
     readConfiguration( kc );
     setURLGrabberEnabled( bURLGrabber );
 
-    QSlast = "";
-    pQPMmenu = new KPopupMenu(0x0, "main_menu");
-    connect(pQPMmenu, SIGNAL(activated(int)),
+    m_lastString = "";
+    m_popup = new KPopupMenu(0L, "main_menu");
+    connect(m_popup, SIGNAL(activated(int)),
             this, SLOT(clickedMenu(int)));
 
-    pQIDclipData = new QIntDict<QString>();
-    pQIDclipData->setAutoDelete(TRUE);
+    m_clipDict = new QIntDict<QString>();
+    m_clipDict->setAutoDelete(TRUE);
 
     readProperties(kapp->config());
     connect(kapp, SIGNAL(saveYourself()), SLOT(saveProperties()));
 
-    pQTcheck = new QTimer(this, "timer");
-    pQTcheck->start(1000, FALSE);
-    connect(pQTcheck, SIGNAL(timeout()),
+    m_checkTimer = new QTimer(this, "timer");
+    m_checkTimer->start(1000, FALSE);
+    connect(m_checkTimer, SIGNAL(timeout()),
             this, SLOT(newClipData()));
-    pQPpic = new QPixmap(mouse);
-    resize( pQPpic->size() );
+    m_pixmap = new QPixmap(mouse);
+    resize( m_pixmap->size() );
 
     globalKeys = new KGlobalAccel();
     KGlobalAccel* keys = globalKeys;
@@ -128,27 +128,27 @@ TopLevel::TopLevel()
 TopLevel::~TopLevel()
 {
     delete globalKeys;
-    delete pQTcheck;
-    delete pQPMmenu;
-    delete pQIDclipData;
-    delete pQPpic;
+    delete m_checkTimer;
+    delete m_popup;
+    delete m_clipDict;
+    delete m_pixmap;
     delete myURLGrabber;
 }
 
 void TopLevel::mousePressEvent(QMouseEvent *e)
 {
     if ( e->button() == LeftButton || e->button() == RightButton )
-        showPopupMenu( pQPMmenu );
+        showPopupMenu( m_popup );
 }
 
 void TopLevel::paintEvent(QPaintEvent *)
 {
   QPainter p(this);
-  int x = (width() - pQPpic->width()) / 2;
-  int y = (height() - pQPpic->height()) / 2;
+  int x = (width() - m_pixmap->width()) / 2;
+  int y = (height() - m_pixmap->height()) / 2;
   if ( x < 0 ) x = 0;
   if ( y < 0 ) y = 0;
-  p.drawPixmap(x , y, *pQPpic);
+  p.drawPixmap(x , y, *m_pixmap);
   p.end();
 }
 
@@ -158,14 +158,14 @@ void TopLevel::newClipData()
     // If the string is null bug out
     if(clipData.isEmpty()) {
 	if (pSelectedItem != -1) {
-            pQPMmenu->setItemChecked(pSelectedItem, false);
+            m_popup->setItemChecked(pSelectedItem, false);
 	    pSelectedItem = -1;
 	}
         return;
     }
 
-    if(clipData != QSlast) {
-        QSlast = clipData.copy();
+    if(clipData != m_lastString) {
+        m_lastString = clipData.copy();
 
         QString *data = new QString(clipData);
 
@@ -177,8 +177,8 @@ void TopLevel::newClipData()
         if (bClipEmpty) { // remove <clipboard empty> from popupmenu and dict
             if (*data != QSempty) {
                 bClipEmpty = false;
-                pQPMmenu->removeItemAt(EMPTY);
-                pQIDclipData->clear();
+                m_popup->removeItemAt(EMPTY);
+                m_clipDict->clear();
             }
         }
 
@@ -188,23 +188,23 @@ void TopLevel::newClipData()
             clipData.truncate(47);
             clipData.append("...");
         }
-        long int id = pQPMmenu->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace(), 45), -2, 1); // -2 means unique id, 1 means first location
-        pQIDclipData->insert(id, data);
+        long int id = m_popup->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace(), 45), -2, 1); // -2 means unique id, 1 means first location
+        m_clipDict->insert(id, data);
 
         if (pSelectedItem != -1)
 	{
-            pQPMmenu->setItemChecked(pSelectedItem, false);
+            m_popup->setItemChecked(pSelectedItem, false);
 	}
         pSelectedItem = id;
 
 	if ( bClipEmpty )
 	{
 	    clip->clear();
-	    pQPMmenu->setItemEnabled(pSelectedItem, false);
+	    m_popup->setItemEnabled(pSelectedItem, false);
 	}
 	else
 	{
-	    pQPMmenu->setItemChecked(pSelectedItem, true);
+	    m_popup->setItemChecked(pSelectedItem, true);
 	}
     }
 }
@@ -238,15 +238,15 @@ void TopLevel::clickedMenu(int id)
     case EMPTY_ITEM:
 	if ( !bClipEmpty )
 	{
-	    pQTcheck->stop();
+	    m_checkTimer->stop();
 
 	    trimClipHistory(0);
-	    pQIDclipData->clear();
+	    m_clipDict->clear();
 	
 	    bClipEmpty = true;
 	    clip->setText(QSempty);
 	    newClipData();
-	    pQTcheck->start(1000);
+	    m_checkTimer->start(1000);
 	}
 	break;
     default:
@@ -256,20 +256,20 @@ void TopLevel::clickedMenu(int id)
 	}
 	else if ( !bClipEmpty )
 	{
-	    pQTcheck->stop();
+	    m_checkTimer->stop();
 	    //CT mark up the currently put into clipboard - so that user can see later
-	    pQPMmenu->setItemChecked(pSelectedItem, false);
+	    m_popup->setItemChecked(pSelectedItem, false);
 	    pSelectedItem = id;
-	    pQPMmenu->setItemChecked(pSelectedItem, true);
-	    QString *data = pQIDclipData->find(id);
+	    m_popup->setItemChecked(pSelectedItem, true);
+	    QString *data = m_clipDict->find(id);
 	    if(data != 0x0 && *data != QSempty){
 		clip->setText(*data);
 		if (bURLGrabber && bReplayActionInHistory)
 		    myURLGrabber->checkNewData(*data);
-		QSlast = data->copy();
+		m_lastString = data->copy();
 	    }
 
-	    pQTcheck->start(1000);
+	    m_checkTimer->start(1000);
 	}
     }
 }
@@ -311,8 +311,8 @@ void TopLevel::readProperties(KConfig *kc)
   QStringList dataList;
   long int id;
 
-  pQPMmenu->clear();
-  pQPMmenu->insertTitle(kapp->miniIcon(), i18n("Klipper - Clipboard Tool"));
+  m_popup->clear();
+  m_popup->insertTitle(kapp->miniIcon(), i18n("Klipper - Clipboard Tool"));
 
   if (bKeepContents) { // load old clipboard if configured
       KConfigGroupSaver groupSaver(kc, "General");
@@ -321,23 +321,23 @@ void TopLevel::readProperties(KConfig *kc)
       for (QStringList::ConstIterator it = dataList.begin();
            it != dataList.end(); ++it)
       {
-          id = pQPMmenu->insertItem( KStringHandler::csqueeze(*it, 45), -2, -1 );
-          pQIDclipData->insert( id, new QString( *it ));
+          id = m_popup->insertItem( KStringHandler::csqueeze(*it, 45), -2, -1 );
+          m_clipDict->insert( id, new QString( *it ));
       }
   }
 
-  bClipEmpty = ((QString)clip->text()).simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
+  bClipEmpty = clip->text().simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
 
-  pQPMmenu->insertSeparator();
-  toggleURLGrabAction->plug( pQPMmenu, -1 );
-  URLGrabItem = pQPMmenu->idAt( pQPMmenu->count() - 1 );
+  m_popup->insertSeparator();
+  toggleURLGrabAction->plug( m_popup, -1 );
+  URLGrabItem = m_popup->idAt( m_popup->count() - 1 );
 
-  pQPMmenu->insertItem( SmallIcon("fileclose"),
+  m_popup->insertItem( SmallIcon("fileclose"),
 			i18n("&Clear Clipboard History"), EMPTY_ITEM );
-  pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."),
+  m_popup->insertItem(SmallIcon("configure"), i18n("&Preferences..."),
 		       CONFIG_ITEM);
-  pQPMmenu->insertSeparator();
-  pQPMmenu->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
+  m_popup->insertSeparator();
+  m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
 
   if(bClipEmpty)
     clip->setText(QSempty);
@@ -379,7 +379,7 @@ void TopLevel::saveProperties()
       QStringList dataList;
       KConfig  *kc = kapp->config();
       KConfigGroupSaver groupSaver(kc, "General");
-      QIntDictIterator<QString> it( *pQIDclipData );
+      QIntDictIterator<QString> it( *m_clipDict );
       if ( !bClipEmpty )
       {
 	  while ( (data = it.current()) ) {
@@ -445,7 +445,7 @@ void TopLevel::slotRepeatAction()
 		 SLOT( showPopupMenu( QPopupMenu * )) );
     }
 
-    myURLGrabber->invokeAction( QSlast );
+    myURLGrabber->invokeAction( m_lastString );
 }
 
 void TopLevel::setURLGrabberEnabled( bool enable )
@@ -480,11 +480,11 @@ void TopLevel::toggleURLGrabber()
 
 void TopLevel::trimClipHistory( int new_size )
 {
-    while(pQPMmenu->count() - MENU_ITEMS > (unsigned)new_size){
-	int id = pQPMmenu->idAt(EMPTY);
+    while(m_popup->count() - MENU_ITEMS > (unsigned)new_size){
+        int id = m_popup->idAt(EMPTY);
 
-	pQIDclipData->remove(id);
-	pQPMmenu->removeItemAt(EMPTY);
+        m_clipDict->remove(id);
+        m_popup->removeItemAt(EMPTY);
     }
 }
 #include "toplevel.moc"

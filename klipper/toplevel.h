@@ -42,7 +42,7 @@ protected:
     void writeConfiguration(KConfig *);
 
 protected slots:
-    void slotPopupMenu() { showPopupMenu( pQPMmenu ); }
+    void slotPopupMenu() { showPopupMenu( m_popup ); }
     void showPopupMenu( QPopupMenu * );
     void saveProperties();
     void slotRepeatAction();
@@ -57,12 +57,12 @@ private slots:
 private:
     QClipboard *clip;
 
-    QString QSlast;
-    KPopupMenu *pQPMmenu;
+    QString m_lastString;
+    KPopupMenu *m_popup;
     KToggleAction *toggleURLGrabAction;
-    QIntDict<QString> *pQIDclipData;
-    QTimer *pQTcheck;
-    QPixmap *pQPpic;
+    QIntDict<QString> *m_clipDict;
+    QTimer *m_checkTimer;
+    QPixmap *m_pixmap;
     bool bPopupAtMouse, bClipEmpty, bKeepContents, bURLGrabber, bReplayActionInHistory;
     QString QSempty;
     URLGrabber *myURLGrabber;
