@@ -216,7 +216,10 @@ void NetMon::update()
    //kdDebug()<<"starting kill timer with 5 seconds"<<endl;
    connect(showmountProc,SIGNAL(processExited(KProcess*)),this,SLOT(killShowmount()));
    if (!showmountProc->start(KProcess::NotifyOnExit,KProcess::Stdout)) // run showmount
-      version->setText(version->text()+i18n(" Error: Unable to run showmount"));
+   {
+      delete showmountProc;
+      showmountProc=0;
+   }
    //delete showmountProc;
    //showmountProc=0;
 
