@@ -59,7 +59,7 @@ TopLevel::TopLevel(const char* name)
   _indextab = new IndexWidget(_modules, _tab);
   connect(_indextab, SIGNAL(moduleActivated(ConfigModule*)),
 		  this, SLOT(moduleActivated(ConfigModule*)));
-  _tab->addTab(_indextab, "In&dex");
+  _tab->addTab(_indextab, i18n("In&dex"));
 
   // search tab
   _searchtab = new SearchWidget(_tab);
@@ -67,11 +67,11 @@ TopLevel::TopLevel(const char* name)
   connect(_searchtab, SIGNAL(moduleSelected(const QString&)),
 		  this, SLOT(activateModule(const QString&)));
 
-  _tab->addTab(_searchtab, "S&earch");
+  _tab->addTab(_searchtab, i18n("S&earch"));
 
   // help tab
   _helptab = new HelpWidget(_tab);
-  _tab->addTab(_helptab, "Hel&p");
+  _tab->addTab(_helptab, i18n("Hel&p"));
   
   // set a reasonable resize mode
   _splitter->setResizeMode(_tab, QSplitter::KeepSize);
