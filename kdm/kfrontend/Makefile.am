@@ -1,7 +1,7 @@
 # use 'make GENKDMCONF_FLAGS=... install' to override
 GENKDMCONF_FLAGS =
 
-SUBDIRS = themer themes pics sessions
+SUBDIRS = . themer themes pics sessions
 
 AM_CPPFLAGS = -I$(srcdir)/../backend -I$(top_srcdir)/kcontrol/background \
     $(all_includes) $(XDM_DEFINES)
