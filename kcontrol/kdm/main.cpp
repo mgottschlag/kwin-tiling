@@ -127,7 +127,7 @@ QString KDModule::quickHelp() const
                     "the look and feel as well as the users that can be "
                     "selected for login. Note that you can only make changes "
                     "if you run the module with superuser rights. If you haven't started the KDE "
-                    "Control Center with superuser rights (which is the completely right thing to "
+                    "Control Center with superuser rights (which is absolutely the right thing to "
                     "do, by the way), click on the <em>Modify</em> button to acquire "
                     "superuser rights. You will be asked for the superuser password."
                     "<h2>Appearance</h2> On this tab page, you can configure how "
@@ -146,7 +146,7 @@ QString KDModule::quickHelp() const
                     "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
 		    "users not needing to provide a password to log in, and other features ideal for "
 		    "lazy people. ;-)<br>"
-		    "Note, that these settings are security holes by their nature, so use them very thoughtfully.");
+		    "Note, that these settings are security holes by their nature, so use them very carefully.");
 }
 
 const KAboutData* KDModule::aboutData() const
