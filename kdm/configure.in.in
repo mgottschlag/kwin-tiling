@@ -197,5 +197,6 @@ AC_SUBST(IMAKEFLAGS)
 
 dnl AC_OUTPUT(kdm/kfrontend/config/kdmrc)
 dnl AC_OUTPUT(kdm/kfrontend/config/Xservers)
+dnl AC_OUTPUT(kdm/kfrontend/config/Xsetup)
 dnl AC_OUTPUT(kdm/kfrontend/config/Xstartup)
 dnl AC_OUTPUT(kdm/kfrontend/config/Xreset)
