@@ -160,7 +160,7 @@ void KNApplication::loadEvents()
 	    else { // load the event
 		int default_rep = kc->readNumEntry("default_presentation", 0 );
                 QString default_logfile = kc->readEntry("default_logfile");
-                QString default_soundfile = kc->readEntry("default_soundfile");
+                QString default_soundfile = kc->readEntry("default_sound");
                 config->setGroup(*it);
 		e->presentation = config->readNumEntry("presentation", default_rep);
 		e->dontShow = config->readNumEntry("nopresentation", 0 );
