@@ -114,24 +114,28 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 		if (m_currentScreen->sizes.count() == 1) menu->setItemEnabled(lastIndex, false);
 	}
 	
-	menu->insertSeparator();
-	menu->insertTitle(SmallIcon("reload"), i18n("Orientation"));
+	// Don't display the rotation options if there is no point (ie. none are supported)
+	// XFree86 4.3 does not include rotation support.
+	if (m_currentScreen->rotations != RR_Rotate_0) {
+		menu->insertSeparator();
+		menu->insertTitle(SmallIcon("reload"), i18n("Orientation"));
 
-	for (int i = 0; i < 6; i++) {
-		if ((1 << i) & m_currentScreen->rotations) {
-			lastIndex = menu->insertItem(m_currentScreen->rotationIcon(1 << i), RandRScreen::rotationName(1 << i));
-			
-			if (m_currentScreen->proposedRotation & (1 << i)) {
-				menu->setItemChecked(lastIndex, true);
-				if (i < 4)
-					menu->setItemEnabled(lastIndex, false);
+		for (int i = 0; i < 6; i++) {
+			if ((1 << i) & m_currentScreen->rotations) {
+				lastIndex = menu->insertItem(m_currentScreen->rotationIcon(1 << i), RandRScreen::rotationName(1 << i));
+
+				if (m_currentScreen->proposedRotation & (1 << i)) {
+					menu->setItemChecked(lastIndex, true);
+					if (i < 4)
+						menu->setItemEnabled(lastIndex, false);
+				}
+
+				menu->setItemParameter(lastIndex, 1 << i);
+				menu->connectItem(lastIndex, this, SLOT(slotOrientationChanged(int)));
 			}
-			
-			menu->setItemParameter(lastIndex, 1 << i);
-			menu->connectItem(lastIndex, this, SLOT(slotOrientationChanged(int)));
 		}
 	}
-		
+	
 	menu->insertSeparator();
 	menu->insertTitle(SmallIcon("clock"), i18n("Refresh Rate"));
 	
