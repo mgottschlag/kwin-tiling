@@ -263,7 +263,7 @@ void Module::import()
     if( file.isEmpty())
         return;
     KSimpleConfig cfg( file, true );
-    if( !settings.import( cfg ))
+    if( !settings.import( cfg, true ))
         {
         KMessageBox::error( topLevelWidget(),
             i18n( "Import of the specified file failed. Most probably the file is not a valid "

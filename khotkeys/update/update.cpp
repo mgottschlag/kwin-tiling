@@ -50,7 +50,7 @@ int main( int argc, char* argv[] )
     Settings settings;
     settings.read_settings( true );
     KConfig cfg( file, true );
-    if( !settings.import( cfg ))
+    if( !settings.import( cfg, false ))
         {
         kdWarning() << "Import of " << id << " failed!" << endl;
         return 2;

@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kaccel.h>
 #include <kglobal.h>
+#include <kmessagebox.h>
 
 #include "triggers.h"
 #include "conditions.h"
@@ -40,15 +41,15 @@ Settings::Settings()
 bool Settings::read_settings( bool include_disabled_P )
     {
     KConfig cfg( KHOTKEYS_CONFIG_FILE, true );
-    return read_settings( cfg, include_disabled_P, false );
+    return read_settings( cfg, include_disabled_P, ImportNone );
     }
 
-bool Settings::import( KConfig& cfg_P )
+bool Settings::import( KConfig& cfg_P, bool ask_P )
     {
-    return read_settings( cfg_P, true, true );
+    return read_settings( cfg_P, true, ask_P ? ImportAsk : ImportSilent );
     }
 
-bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, bool import_P )
+bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P )
     {
     if( actions == NULL )
         actions = new Action_data_group( NULL, "should never see", "should never see",
@@ -56,6 +57,33 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, bool impo
     if( cfg_P.groupList().count() == 0 ) // empty
         return false;
     cfg_P.setGroup( "Main" ); // main group
+    if( import_P == ImportNone ) // reading main cfg file
+        already_imported = cfg_P.readListEntry( "AlreadyImported" );
+    else
+        {
+        QString import_id = cfg_P.readEntry( "ImportId" );
+        if( !import_id.isEmpty())
+            {
+            if( already_imported.contains( import_id ))
+                {
+                if( import_P == ImportSilent
+                    || KMessageBox::warningContinueCancel( NULL,
+                        i18n( "This actions file has been already imported before. "
+                              "Are you sure you want to import it again?" )) != KMessageBox::Continue )
+                    return true; // import "successful"
+                }
+            already_imported.append( import_id );
+            }
+        else
+            {
+            if( import_P != ImportSilent
+                && KMessageBox::warningContinueCancel( NULL,
+                    i18n( "This actions file has no ImportId field, and therefore it cannot be checked "
+                          "if it hasn't been imported already. Are you sure you want to import it?" ))
+                    == KMessageBox::Cancel )
+                return true;
+            }
+        }
     int version = cfg_P.readNumEntry( "Version", -1234576 );
     switch( version )
         {
@@ -73,7 +101,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, bool impo
                 return false;
           break;
         }
-    if( import_P )
+    if( import_P != ImportNone )
         return true; // don't read global settings
     cfg_P.setGroup( "Main" ); // main group
     daemon_disabled = cfg_P.readBoolEntry( "Disabled", false );
@@ -96,6 +124,7 @@ void Settings::write_settings()
         cfg.deleteGroup( *it );
     cfg.setGroup( "Main" ); // main group
     cfg.writeEntry( "Version", 2 ); // now it's version 2 cfg. file
+    cfg.writeEntry( "AlreadyImported", already_imported );
     cfg.setGroup( "Data" );
     int cnt = write_actions_recursively_v2( cfg, actions, true );
     cfg.setGroup( "Main" );

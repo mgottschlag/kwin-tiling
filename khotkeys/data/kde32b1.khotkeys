@@ -416,3 +416,4 @@ Timeout=1000
 Autostart=true
 Disabled=false
 Version=2
+ImportId=kde32b1
