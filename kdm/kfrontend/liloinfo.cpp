@@ -231,7 +231,8 @@ bool LiloInfo::getNextOptionFromLilo()
 
 	// Create the process handle
 	liloproc << liloloc;
-	liloproc << QString::fromLatin1("-w") << QString::fromLatin1("-q") << QString::fromLatin1("-v") << QString::fromLatin1("-m") << bootmaploc << QString::fromLatin1("|") << QString::fromLatin1("sed") << QString::fromLatin1("-n") << QString::fromLatin1("'s/\"[^\"]*$//;/Default boot command/s/.*\"//p'") << QString::fromLatin1("|") << QString::fromLatin1("sed 's/ .*//'");
+	liloproc << QString::fromLatin1("-w -q -v -m ") << KProcess::quote(bootmaploc) 
+                 << QString::fromLatin1(" | sed -n 's/\"[^\"]*$//;/Default boot command/s/.*\"//p'|sed 's/ .*//'");
 
 	// Connect to the standard output and error signals. This time standard output is
 	// received by getNextOptionFromStdout().
