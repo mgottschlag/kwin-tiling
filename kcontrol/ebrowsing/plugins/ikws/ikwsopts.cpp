@@ -347,7 +347,12 @@ void InternetKeywordsOptions::changeInternetKeywordsEnabled()
 void InternetKeywordsOptions::changeSearchKeywordsEnabled()
 {
     bool use_keywords = cb_enableSearchKeywords->isChecked();
-    gb_search->setEnabled(use_keywords);
+    lv_searchProviders->setEnabled(use_keywords);
+    pb_addSearchProviders->setEnabled(use_keywords);
+    pb_chgSearchProviders->setEnabled(use_keywords);
+    pb_delSearchProviders->setEnabled(use_keywords);
+    pb_impSearchProviders->setEnabled(use_keywords);
+    pb_expSearchProviders->setEnabled(use_keywords);
     moduleChanged();
 }
 
