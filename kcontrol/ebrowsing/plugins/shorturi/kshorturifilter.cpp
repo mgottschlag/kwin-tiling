@@ -34,19 +34,24 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 
+//#include "kshorturiopts.h"
 #include "kshorturifilter.h"
 #include "kshorturifilter.moc"
 
-KInstance *KShortURIFilterFactory::s_instance = 0L;
+#define FQDN_PATTERN    "[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]"
+#define ENV_VAR_PATTERN "$[a-zA-Z_][a-zA-Z0-9_]*"
+#define IPv4_PATTERN    "[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?:?[0-9]?[0-9]?[0-9]?/?"
+
+KInstance *KShortURIFilterFactory::s_instance = 0;
 
 KShortURIFilter::KShortURIFilter( QObject *parent, const char *name )
                 :KURIFilterPlugin( parent, name ? name : "shorturi", 1.0),
                  DCOPObject("KShortURIFilterIface")
 {
     // TODO: Make this configurable.  Should go into control module...
-    m_urlHints.insert("www", "http://");
-    m_urlHints.insert("ftp", "ftp://");
-    m_urlHints.insert("news", "news://");
+    m_urlHints.insert("www.", "http://");
+    m_urlHints.insert("ftp.", "ftp://");
+    m_urlHints.insert("news.", "news://");
 }
 
 bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
@@ -67,16 +72,16 @@ bool KShortURIFilter::expandEnivVar( QString& cmd ) const
     int env_loc = 0;
     while( 1 )
     {
-        env_loc = QRegExp( "$[a-zA-Z_][a-zA-Z0-9_]*" ).match( cmd, env_loc, &env_len );
+        env_loc = QRegExp( ENV_VAR_PATTERN ).match( cmd, env_loc, &env_len );
         if( env_loc == -1 ) break;
         const char* exp = getenv( cmd.mid( env_loc + 1, env_len - 1 ).latin1() );
         if( exp == 0 )
-        	env_loc = env_len; // Avoid a big infinite loop :)
+	 env_loc = env_len; // Avoid a big infinite loop :)
         else
         {
-			cmd.replace( env_loc, env_len, exp );
-			env_loc = 0;  // clear out the previous location since text size changed :)
-		}
+	   cmd.replace( env_loc, env_len, exp );
+	   env_loc = 0;  // clear out the previous location since text size changed :)
+	}
     }
     return ( env_len ) ? true : false;
 }
@@ -98,7 +103,11 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
             while( cmd[match] == '\\' ) match++;
             cmd = cmd.mid( match );
         }
-        for (int i=0; i<cmd.length(); i++) if (cmd[i]=='\\') cmd[i]='/';
+        for (uint i=0; i < cmd.length(); i++)
+        {
+            if (cmd[i]=='\\')
+                cmd[i]='/';
+        }
         cmd[0] == '/' ? cmd.prepend( "smb:" ) : cmd.prepend( "smb:/" );
         setFilteredURI( data, cmd );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
@@ -122,7 +131,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
     // See if the beginning of cmd looks like a valid FQDN.
     QString host;
-    if( QRegExp("[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]").match(cmd) == 0 )
+    if( QRegExp( FQDN_PATTERN ).match(cmd) == 0 )
     {
         host = cmd.left(cmd.find('.'));
         // Check if it's one of the urlHints and qualify the URL
@@ -138,7 +147,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     // Assume http if cmd starts with <IP>/
     // Will QRegExp support ([0-9]{1,3}\.){3}[0-9]{1,3} some time?
     // TODO : ADD LITERAL IPv6 support - See RFC 2373 Appendix B
-    if ( QRegExp("[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?/").match(cmd) == 0 )
+    if ( QRegExp( IPv4_PATTERN ).match(cmd) == 0 )
     {
         cmd.insert(0, "http://");
         setFilteredURI( data, cmd );
@@ -184,7 +193,8 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
                 cmd.replace (0, len, dir->pw_dir);
             else
             {
-                QString msg = dir ? i18n("<qt><b>%1</b> doesn't have a home directory!</qt>").arg(user) : i18n("<qt>There is no user called <b>%1</b>.</qt>").arg(user);
+                QString msg = dir ? i18n("<qt><b>%1</b> doesn't have a home directory!</qt>").arg(user) :
+                                    i18n("<qt>There is no user called <b>%1</b>.</qt>").arg(user);
                 setErrorMsg( data, msg );
                 setURIType( data, KURIFilterData::ERROR );
                 return data.hasBeenFiltered();
@@ -227,8 +237,8 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         return data.hasBeenFiltered();
     }
 
-    // If cmd is NOT a local resource check for a  valid "shortURL"
-    // candidate, append "http://" as the default protocol.
+    // If cmd is NOT a local resource, check for a valid "shortURL"
+    // candidate and append "http://" as the default protocol.
     // FIXME: Make this option configurable !! (Dawit A.)
     if( (!host.isEmpty() && isValidShortURL ( cmd )) || cmd == "localhost" )
     {
@@ -238,13 +248,22 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         return data.hasBeenFiltered();
     }
     // TODO: Detect executables when arguments are given
-    setURIType( data, KURIFilterData::SHELL );
+    setURIType( data, KURIFilterData::UNKNOWN );
     return data.hasBeenFiltered();
 }
 
 KCModule* KShortURIFilter::configModule( QWidget*, const char* ) const
 {
-	return 0;
+	return 0; //new KShortURIOptions( parent, name );
+}
+
+QString KShortURIFilter::configName() const
+{
+    return i18n("&ShortURLs");
+}
+
+void KShortURIFilter::configure()
+{
 }
 
 /***************************************** KShortURIFilterFactory *******************************************/

@@ -30,7 +30,6 @@
 #include <klibloader.h>
 #include <kurifilter.h>
 
-
 class KInstance;
 
 /**
@@ -81,13 +80,19 @@ public:
      *
      * @return the name of the config module.
      */
-    virtual QString configName() const { return i18n("ShortURIFilter"); }
-	
+    virtual QString configName() const;
+    
+    /**
+     * Returns an instance of the module used to configure
+     * this object.
+	 *
+	 * @return the config module
+	 */
     virtual KCModule* configModule( QWidget*, const char* ) const;
 
 public:
 k_dcop:
-    virtual void configure() { return; }
+    virtual void configure();
 
 protected:
 
