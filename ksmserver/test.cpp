@@ -11,12 +11,16 @@ main(int argc, char *argv[])
 
    KApplication a;
    KSMShutdownFeedback::start();
-   QObject::connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ), &a, SLOT( quit() ) );
 
    bool saveSession;
    KApplication::ShutdownType sdtype = KApplication::ShutdownTypeNone;
-   KApplication::ShutdownMode sdmode = KApplication::ShutdownModeDefault;
+   KApplication::ShutdownMode sdmode = KApplication::ShutdownModeSchedule;
+   (void)KSMShutdownDlg::confirmShutdown( saveSession, false, false,
+                                          sdtype, sdmode );
+   (void)KSMShutdownDlg::confirmShutdown( saveSession, true, false,
+                                          sdtype, sdmode );
    (void)KSMShutdownDlg::confirmShutdown( saveSession, true, true,
                                           sdtype, sdmode );
+
    KSMShutdownFeedback::stop();
 }
