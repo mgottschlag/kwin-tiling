@@ -117,7 +117,7 @@ const char *eventNames[2][29] = {
 
 
 KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
-  KConfigWidget(parent, name), selected_event(0){
+  KCModule(parent, name), selected_event(0){
 
   QBoxLayout *top_layout, *status_layout;
   QGridLayout *grid_layout;
@@ -181,6 +181,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   
   sounds_enabled = new QCheckBox(this);
   sounds_enabled->setText(i18n("E&nable system sounds"));
+  connect(sounds_enabled, SIGNAL(clicked()), this, SLOT(changed()));
 
   btn_test = new QPushButton(this);
   btn_test->setText(i18n("&Test"));
@@ -216,7 +217,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   
   setUpdatesEnabled(TRUE);
   
-  readConfig();
+  load();
 
   connect(eventlist, SIGNAL(highlighted(int)), this, SLOT(eventSelected(int)));
   connect(soundlist, SIGNAL(highlighted(const QString &)), 
@@ -231,14 +232,13 @@ KSoundWidget::~KSoundWidget(){
 
 }
 
-void KSoundWidget::readConfig(){
+void KSoundWidget::load(){
 
   QString *str;
   QString hlp;
   KConfig *config;
   int lf;
   
-
   // CC: we need to read/write the config file of "kwmsound" and not 
   // our own (that would be called syssoundrc)
 
@@ -246,6 +246,7 @@ void KSoundWidget::readConfig(){
 
   config->setGroup("SoundConfiguration");  
 
+  soundnames.clear();
   for( lf = 0; lf < EVENT_COUNT; lf++) {
 
     str = new QString;
@@ -256,7 +257,6 @@ void KSoundWidget::readConfig(){
       // sound directory-> add it to the soundlist too
 
       addToSoundList(*str);
-
     }
 
     soundnames.append(str);
@@ -276,6 +276,8 @@ void KSoundWidget::readConfig(){
 
   delete config;
 
+  eventlist->setCurrentItem(0);
+  soundlist->setCurrentItem(0);
 }
 
 
@@ -327,11 +329,13 @@ void KSoundWidget::soundSelected(const QString &filename)
   if (selected_event > 0) {
     snd = soundnames.at(selected_event-1);
     *snd= filename;
+
+    emit KCModule::changed(true);
   }
 }
 
 
-void KSoundWidget::saveConfiguration(){
+void KSoundWidget::save(){
 
   KConfig *config;
   QString *sname, helper;
@@ -483,15 +487,22 @@ bool KSoundWidget::addToSoundList(QString sound){
 }
 
 
-void KSoundWidget::loadSettings(){
+void KSoundWidget::defaults()
+{
+  QString none("none");
 
-  readConfig();
+  soundnames.clear();
+  for (int lf = 0; lf < EVENT_COUNT; lf++)
+    soundnames.append(&none);
 
+  sounds_enabled->setChecked(False);
+
+  eventlist->setCurrentItem(0);
+  soundlist->setCurrentItem(0);
 }
 
 
-void KSoundWidget::applySettings(){
-
-  saveConfiguration();
-
+void KSoundWidget::changed()
+{
+  emit KCModule::changed(true);
 }

@@ -1,34 +1,17 @@
+lib_LTLIBRARIES = libkcm_syssound.la
 
-# just set the variable
-#APPSDIR = $(kde_appsdir)/Settings/Sound
-# set the include path for X, qt and KDE
+libkcm_syssound_la_SOURCES = main.cpp syssound.cpp
+
+libkcm_syssound_la_LDFLAGS = $(all_libraries) -module -avoid-version 
+libkcm_syssound_la_LIBADD = -lkdeui -lmediatool
+
 INCLUDES= $(all_includes)
+ 
+libkcm_syssound_la_METASOURCES = AUTO
 
-SUBDIRS = sounds
+KDE_ICON = ksyssound
 
-bin_PROGRAMS = 	kcmsyssound
+DISTCLEANFILES = $(lib_syssound_METASOURCES)
 
-kcmsyssound_SOURCES	= main.cpp syssound.cpp
-
-kcmsyssound_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-
-# the libraries to link against. Be aware of the order. First the libraries,
-# that depend on the following ones.
-kcmsyssound_LDADD   =   -lmediatool $(LIB_KDEUI)
-
-# this option you can leave out. Just, if you use "make dist", you need it
-noinst_HEADERS = syssound.h
-
-# just to make sure, automake makes them 
-METASOURCES =	syssound.moc
-
-KDE_ICON = kcmsyssound
-
-kde_conf_DATA = kwmsoundrc
-
-EXTRA_DIST = CHANGES
-
-# make messages.po. Move this one to ../po/ and "make merge" in po
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmsyssound_SOURCES) && mv messages.po ../../po/kcmsyssound.pot
-
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_syssound_la_SOURCES) -o ../../po/libkcm_syssound.pot

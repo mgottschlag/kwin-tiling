@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.5  1999/07/13 23:49:50  pbrown
+    KDND is dead, long live Xdnd.
+
     Revision 1.4  1999/03/12 18:40:58  dfaure
     Squashed more ksprintf and did some more Qt2.0 porting
 
@@ -40,7 +43,7 @@
 #ifndef __SYSSOUND_H__
 #define __SYSSOUND_H__
 
-#include "kcontrol.h"
+#include "kcmodule.h"
 
 #include <qlist.h>
 #include <qstring.h>
@@ -51,7 +54,7 @@
 #include <kaudio.h>
 
 
-class KSoundWidget : public KConfigWidget{
+class KSoundWidget : public KCModule{
 
 	Q_OBJECT;
 
@@ -59,10 +62,11 @@ public:
 
 	KSoundWidget(QWidget *parent, const char *name);
 	virtual ~KSoundWidget();
-	void readConfig();
 
-        void loadSettings();
-        void applySettings();
+        void load();
+        void save();
+	void defaults();
+	
 	bool eventFilter(QObject *o, QEvent *e);
 
 protected:
@@ -72,8 +76,8 @@ protected:
 private slots:
 	void eventSelected(int index);
         void soundSelected(const QString &filename);
-	void saveConfiguration();
 	void playCurrentSound();
+	void changed();
 
 private:
 
