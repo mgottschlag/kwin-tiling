@@ -309,7 +309,7 @@ void PositionTab::movePanel(int whichButton)
 	   setPositionButtons();
 	   return;
 	}
-        m_panelAlign = AlignRight;
+        m_panelAlign = kapp->reverseLayout() ? AlignLeft : AlignRight;
         m_panelPos = PosBottom;
     }
     else if (pushed == locationRightTop)
