@@ -60,26 +60,26 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 	menu->insertTitle(SmallIcon("kscreensaver"), i18n("Display Configuration"), 0, 0);
 
 	if (!isValid()) {
-		lastIndex = menu->insertItem(i18n("Required extension not available"));
+		lastIndex = menu->insertItem(i18n("Required X extension not available"));
 		menu->setItemEnabled(lastIndex, false);
-		return;
-	}
-
-	for (int s = 0; s < m_numScreens; s++) {
-		setScreen(s);
-		if (s == widgetScreen(this)) {
-			lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
-			menu->setItemEnabled(lastIndex, false);
-		} else {
-			KPopupMenu* subMenu = new KPopupMenu(menu, QString("screen%1").arg(s+1).latin1());
-			populateMenu(subMenu);
-			menu->insertItem(i18n("Screen %1").arg(s+1), subMenu);
-			connect(subMenu, SIGNAL(activated(int)), SLOT(slotActivated(int)));
-		}
-	}
 	
-	setScreen(widgetScreen(this));
-	populateMenu(menu);
+	} else {
+		for (int s = 0; s < m_numScreens; s++) {
+			setScreen(s);
+			if (s == widgetScreen(this)) {
+				lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
+				menu->setItemEnabled(lastIndex, false);
+			} else {
+				KPopupMenu* subMenu = new KPopupMenu(menu, QString("screen%1").arg(s+1).latin1());
+				populateMenu(subMenu);
+				menu->insertItem(i18n("Screen %1").arg(s+1), subMenu);
+				connect(subMenu, SIGNAL(activated(int)), SLOT(slotActivated(int)));
+			}
+		}
+
+		setScreen(widgetScreen(this));
+		populateMenu(menu);
+	}
 	
 	menu->insertSeparator();
 	KAction *action = actionCollection()->action(KStdAction::name(KStdAction::Quit));

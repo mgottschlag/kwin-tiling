@@ -30,6 +30,7 @@
 #include <kglobal.h>
 #include <kgenericfactory.h>
 #include <kcombobox.h>
+#include <kactivelabel.h>
 
 #include "krandrmodule.h"
 #include "krandrmodule.moc"
@@ -45,7 +46,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 {
 	if (!isValid()) {
 		QVBoxLayout *topLayout = new QVBoxLayout(this);
-		topLayout->addWidget(new QLabel(i18n("Sorry, your X server does not support resizing and rotating the display. Please update to version 4.3 or greater.  You need the X Resize And Rotate extension (RANDR) version 1.1 or greater to use this feature.  Error code: %1").arg(errorCode()), this));
+		topLayout->addWidget(new KActiveLabel(i18n("Sorry, your X server does not support resizing and rotating the display. Please update to version 4.3 or greater.  You need the X Resize And Rotate extension (RANDR) version 1.1 or greater to use this feature.  Error code: %1").arg(errorCode()), this));
 		return;
 	}
 	
