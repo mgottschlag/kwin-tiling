@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>KMouseDlg</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>522</width>
-            <height>454</height>
+            <width>630</width>
+            <height>461</height>
         </rect>
     </property>
     <property name="caption">
@@ -66,6 +66,12 @@
                     <property name="sizeType">
                         <enum>Expanding</enum>
                     </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
                 </spacer>
                 <spacer row="2" column="0">
                     <property name="name">
@@ -76,6 +82,12 @@
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
                     </property>
                 </spacer>
                 <widget class="QRadioButton" row="0" column="0">
@@ -128,270 +140,225 @@
             <property name="title">
                 <string>Icons</string>
             </property>
-            <widget class="QRadioButton">
+            <vbox>
                 <property name="name">
-                    <cstring>singleClick</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>21</y>
-                        <width>478</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>&amp;Single-click to open files and folders</string>
-                </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
-            </widget>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>Layout11</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>49</y>
-                        <width>478</width>
-                        <height>127</height>
-                    </rect>
-                </property>
-                <grid>
+                <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>doubleClick</cstring>
                     </property>
-                    <property name="margin">
-                        <number>0</number>
+                    <property name="text">
+                        <string>Double-click to open files and folders (select icons on first click)</string>
                     </property>
-                    <property name="spacing">
-                        <number>6</number>
+                    <property name="checked">
+                        <bool>false</bool>
                     </property>
-                    <spacer row="2" column="0">
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>singleClick</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Single-click to open files and folders</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout11</cstring>
+                    </property>
+                    <grid>
                         <property name="name">
-                            <cstring>Spacer6</cstring>
+                            <cstring>unnamed</cstring>
                         </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
+                        <property name="margin">
+                            <number>0</number>
                         </property>
-                        <property name="sizeType">
-                            <enum>Fixed</enum>
+                        <property name="spacing">
+                            <number>6</number>
                         </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QCheckBox" row="0" column="1">
-                        <property name="name">
-                            <cstring>cb_pointershape</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Change pointer shape over icons</string>
-                        </property>
-                        <property name="checked">
-                            <bool>true</bool>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget" row="2" column="1">
-                        <property name="name">
-                            <cstring>Layout10</cstring>
-                        </property>
-                        <grid>
+                        <spacer row="2" column="0">
                             <property name="name">
-                                <cstring>unnamed</cstring>
+                                <cstring>Spacer6</cstring>
                             </property>
-                            <property name="margin">
-                                <number>0</number>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
                             </property>
-                            <property name="spacing">
-                                <number>6</number>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
                             </property>
-                            <widget class="QLabel" row="0" column="1" rowspan="1" colspan="2">
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox" row="0" column="1">
+                            <property name="name">
+                                <cstring>cb_pointershape</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Change pointer shape over icons</string>
+                            </property>
+                            <property name="checked">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="QLayoutWidget" row="2" column="1">
+                            <property name="name">
+                                <cstring>Layout10</cstring>
+                            </property>
+                            <grid>
                                 <property name="name">
-                                    <cstring>lDelay</cstring>
+                                    <cstring>unnamed</cstring>
                                 </property>
-                                <property name="text">
-                                    <string>De&amp;lay:</string>
+                                <property name="margin">
+                                    <number>0</number>
                                 </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>slAutoSelect</cstring>
+                                <property name="spacing">
+                                    <number>6</number>
                                 </property>
-                            </widget>
-                            <spacer row="1" column="0">
-                                <property name="name">
-                                    <cstring>Spacer3</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Fixed</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>21</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QLabel" row="2" column="1">
-                                <property name="name">
-                                    <cstring>lb_short</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Short</string>
-                                </property>
-                            </widget>
-                            <widget class="QSlider" row="1" column="1" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>slAutoSelect</cstring>
-                                </property>
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>250</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                                <property name="maxValue">
-                                    <number>2000</number>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="2">
-                                <property name="name">
-                                    <cstring>lb_long</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Long</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>AlignVCenter|AlignRight</set>
-                                </property>
-                                <property name="hAlign" stdset="0">
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <spacer row="2" column="2">
-                        <property name="name">
-                            <cstring>Spacer8</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                    </spacer>
-                    <widget class="QCheckBox" row="1" column="1">
-                        <property name="name">
-                            <cstring>cbAutoSelect</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Automatically select icons</string>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
-            <widget class="QRadioButton">
-                <property name="name">
-                    <cstring>doubleClick</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>182</y>
-                        <width>478</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Double-click to open files and folders (select icons on first click)</string>
-                </property>
-                <property name="checked">
-                    <bool>false</bool>
-                </property>
-            </widget>
-            <widget class="Line">
-                <property name="name">
-                    <cstring>Line1</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>210</y>
-                        <width>478</width>
-                        <height>16</height>
-                    </rect>
-                </property>
-                <property name="frameShape">
-                    <enum>HLine</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-                <property name="orientation">
-                    <enum>Horizontal</enum>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>cbVisualActivate</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>219</y>
-                        <width>478</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>&amp;Visual feedback on activation</string>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>cbLargeCursor</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>247</y>
-                        <width>478</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>&amp;Large cursor</string>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>cbWhiteCursor</cstring>
-                </property>
-                <property name="enabled">
-                    <bool>true</bool>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>275</y>
-                        <width>480</width>
-                        <height>27</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>&amp;White cursor</string>
-                </property>
-            </widget>
+                                <widget class="QLabel" row="0" column="1" rowspan="1" colspan="2">
+                                    <property name="name">
+                                        <cstring>lDelay</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>De&amp;lay:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>slAutoSelect</cstring>
+                                    </property>
+                                </widget>
+                                <spacer row="1" column="0">
+                                    <property name="name">
+                                        <cstring>Spacer3</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Fixed</enum>
+                                    </property>
+                                    <property name="sizeHint">
+                                        <size>
+                                            <width>20</width>
+                                            <height>21</height>
+                                        </size>
+                                    </property>
+                                </spacer>
+                                <widget class="QLabel" row="2" column="1">
+                                    <property name="name">
+                                        <cstring>lb_short</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Short</string>
+                                    </property>
+                                </widget>
+                                <widget class="QSlider" row="1" column="1" rowspan="1" colspan="2">
+                                    <property name="name">
+                                        <cstring>slAutoSelect</cstring>
+                                    </property>
+                                    <property name="minimumSize">
+                                        <size>
+                                            <width>250</width>
+                                            <height>0</height>
+                                        </size>
+                                    </property>
+                                    <property name="maxValue">
+                                        <number>2000</number>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel" row="2" column="2">
+                                    <property name="name">
+                                        <cstring>lb_long</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Long</string>
+                                    </property>
+                                    <property name="alignment">
+                                        <set>AlignVCenter|AlignRight</set>
+                                    </property>
+                                    <property name="hAlign" stdset="0">
+                                    </property>
+                                </widget>
+                            </grid>
+                        </widget>
+                        <spacer row="2" column="2">
+                            <property name="name">
+                                <cstring>Spacer8</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox" row="1" column="1">
+                            <property name="name">
+                                <cstring>cbAutoSelect</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Automatically select icons</string>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="Line">
+                    <property name="name">
+                        <cstring>Line1</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>cbVisualActivate</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Visual feedback on activation</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>cbLargeCursor</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Large cursor</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>cbWhiteCursor</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string>&amp;White cursor</string>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
         <spacer>
             <property name="name">
@@ -402,6 +369,12 @@
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
             </property>
         </spacer>
     </vbox>
