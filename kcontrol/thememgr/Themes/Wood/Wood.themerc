@@ -36,16 +36,20 @@ email=russell@kde.org
 info=
 Comment=A wooden look for your desktop!\nBy Georg Russell <russell@kde.org>
 Comment[az]=Masa üstünüz üçün təbii bir görünüş!\nGeorg Russell <russell@kde.org>
+Comment[cs]=Vzhled ve stylu dřeva!\nVytvořil Georg Russell <russell@kde.org>
+Comment[da]=Et træagtigt udseende for dit skrivebord!\nAf Georg Russell <russell@kde.org>
 Comment[de]=Eine Holz-Optik für Ihre Arbeitsumgebunga\nvon Georg Russell <russell@kde.org>.
 Comment[eo]=Ligneca etoso por via tabulo!\nde Georg Russell <russell@kde.org>
 Comment[es]=¡Un aspecto de madera para su escritorio!a\nPor Georg Russell <russell@kde.org>
 Comment[he]=!ךלש הדובעה ןחלושל ץע לש הארמ\n<russell@kde.org> לסאר גרואג תאמ
 Comment[hu]=Famintázatú munkaasztal!\nKészítette: Georg Russell (<russell@kde.org>)
 Comment[ja]=あなたのデスクトップに木の味わいを！\nGeorg Russell <russell@kde.org> 作
+Comment[lt]=Medžio išvaizda jūsų darbastaliui!\nGeorg Russell <russell@kde.org>
 Comment[lv]=Darbvirsmas apdare kokā!\nNo Georg Russell <russell@kde.org>
 Comment[mt]=Dehra tal-injam għad-desktop tiegħek\nMinn Georg Russell <russell@kde.org>
 Comment[pl]=Wygląd biurka imitujacy drewno!\nAutorstwa Georga Russella <russell@kde.org>
 Comment[sk]=Drevená plocha!\nOd Georga Russella <russell@kde.org>
+Comment[uk]=Обрамлення Вашої стільниці деревом!\nАвтор: Georg Russell <russell@kde.org>
 [Panel]
 background=panel.png
 [Filemanager]
