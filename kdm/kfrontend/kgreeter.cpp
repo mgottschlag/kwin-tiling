@@ -113,7 +113,7 @@ MyApp::x11EventFilter( XEvent * ev)
 
 void KGreeter::keyPressEvent( QKeyEvent *e )
 {
-    if ( e->state() == 0 || ( e->state() & Keypad && e->key() == Key_Enter ) ) {
+    if ( e->state() == 0)
 	switch ( e->key() ) {
 	    case Key_Enter:
 	    case Key_Return:
@@ -123,6 +123,13 @@ void KGreeter::keyPressEvent( QKeyEvent *e )
 		clearButton->animateClick();
 		return;
 	}
+    else if ( e->state() & Keypad && e->key() == Key_Enter ) {
+	ReturnPressed();
+	return;
+    } else if ( !(~e->state() & (AltButton | ControlButton)) &&
+	        e->key() == Key_Delete ) {
+	shutdown_button_clicked();
+	return;
     }
     e->ignore();
 }
@@ -355,21 +362,6 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	load_wm();
     }
     Debug("preset user; leaving constructor\n");
-}
-
-void
-KGreeter::showEvent (QShowEvent *ev)
-{
-    QFrame::showEvent (ev);
-//    kapp->desktop()->setFocusProxy (this);
-//    setFocusPolicy(StrongFocus);
-}
-
-void
-KGreeter::hideEvent (QHideEvent *ev)
-{
-//    kapp->desktop()->setFocusProxy (0);
-    QFrame::hideEvent (ev);
 }
 
 void

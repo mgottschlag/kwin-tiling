@@ -83,14 +83,10 @@ public slots:
     void slot_user_name( QIconViewItem *);
     void slot_session_selected( );
     void load_wm();
-//    void show ();
-//    void hide ();
 
 protected:
     void timerEvent( QTimerEvent *) {};
     void keyPressEvent( QKeyEvent *);
-    void showEvent (QShowEvent *);
-    void hideEvent (QHideEvent *);
 
 private:
     void set_wm(const char *);
