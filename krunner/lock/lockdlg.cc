@@ -23,7 +23,7 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 
-#define MAX_PASSWORD_LENGTH     20
+#define MAX_PASSWORD_LENGTH     80
 
 //===========================================================================
 //
