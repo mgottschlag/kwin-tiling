@@ -412,13 +412,22 @@ void KIconConfig::slotUsage(int index)
     preview();
 }
 
-void KIconConfig::slotPreview(float &m_pEfColor)
+void KIconConfig::slotPreview(float &m_pEfValue)
 {
     float tmp;
     tmp = mEffectValues[mUsage][mState];
-    mEffectValues[mUsage][mState] = m_pEfColor;
+    mEffectValues[mUsage][mState] = m_pEfValue;
     preview();
     mEffectValues[mUsage][mState] = tmp;
+}
+
+void KIconConfig::slotPreview(QColor &m_pEfColor)
+{
+    QColor tmp;
+    tmp = mEffectColors[mUsage][mState];
+    mEffectColors[mUsage][mState] = m_pEfColor;
+    preview();
+    mEffectColors[mUsage][mState] = tmp;
 }
 
 void KIconConfig::slotEffectSetup()
@@ -432,6 +441,7 @@ void KIconConfig::slotEffectSetup()
 
     KIconEffectSetupDialog dlg(r,s,t);
     connect(&dlg, SIGNAL(changeView(float &)), SLOT(slotPreview(float &)));
+    connect(&dlg, SIGNAL(changeView(QColor &)), SLOT(slotPreview(QColor &)));
 
     if (dlg.exec() == QDialog::Accepted)
     {
@@ -560,6 +570,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(QColor ecolor, float m_pEfValue,
     connect(pbut, SIGNAL(clicked()), SLOT(reject()));
     top->addWidget(bbox,2,0);
     emit changeView(m_pEfValue);
+    emit changeView(m_pEfColor);
 }
 
 void KIconEffectSetupDialog::slotEffectValue(int value)
@@ -575,6 +586,7 @@ void KIconEffectSetupDialog::slotEffectColor(const QColor &col)
 //    preview();
 
      m_pEfColor = col;
+     emit changeView(m_pEfColor);
 }
 
 

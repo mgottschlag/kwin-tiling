@@ -59,7 +59,8 @@ private slots:
     void slotState(int index);
     void slotEffect(int index);
     void slotSize(int index);
-    void slotPreview(float &m_pEfColor);
+    void slotPreview(float &m_pEfValue);
+    void slotPreview(QColor &m_pEfColor);
     void slotDPCheck(bool check);
     void slotSTCheck(bool check);
 
@@ -110,6 +111,7 @@ class KIconEffectSetupDialog: public QDialog
 signals:
     void changed(bool);
     void changeView(float &);
+    void changeView(QColor &);
 
 
 public slots:
