@@ -1,4 +1,7 @@
+File to keep track of the progress of the control modules docs.
+Maybe not all modules added yet or doublets.
 Please help keeping this file up-to-date. Thanks.
+
 [ ] not started
 [s] started
 [x] done
@@ -12,6 +15,14 @@ arts             [ ]         [ ]         [ ]
 bell             [ ]         [ ]         [ ]
 clock            [ ]         [ ]         [ ]
 display          [s]         [ ]         [ ]
+- advanced       [ ]         [ ]         [ ]
+- backgnd        [ ]         [ ]         [ ]
+- borders        [ ]         [ ]         [ ]
+- colors         [x]         [ ]         [ ]
+- desktop        [ ]         [ ]         [ ]
+- fonts          [s]         [ ]         [ ]
+- icons          [ ]         [ ]         [ ]
+- energy         [ ]         [ ]         [ ]
 drkonqi          [ ]         [ ]         [ ]
 ebrowsing        [ ]         [ ]         [ ]
 email            [x]         [ ]         [ ]
@@ -34,4 +45,5 @@ root             [ ]         [ ]         [ ]
 samba            [ ]         [ ]         [ ]
 syssound         [ ]         [ ]         [ ]
 themes           [ ]         [ ]         [ ]
+
 

@@ -13,6 +13,7 @@
 #include <qlistbox.h>
 #include <qlabel.h>
 #include <qapplication.h>
+#include <qwhatsthis.h>
 
 // X11 headers
 #undef Bool
@@ -71,7 +72,7 @@ void FontUseItem::setDefault()
 void FontUseItem::readFont()
 {
     KConfigBase *config;
-    
+
     bool deleteme = false;
     if (_rcfile.isEmpty())
 	config = KGlobal::config();
@@ -117,16 +118,16 @@ KFonts::KFonts(QWidget *parent, const char *name)
     KConfig *cfg = KGlobal::config();
     cfg->setGroup("X11");
     useRM = cfg->readBoolEntry("useResourceManager", true);
-    
+
     QBoxLayout *topLayout = new QVBoxLayout(this, 10, 10);
     QBoxLayout *pushLayout = new QHBoxLayout( 5 );
     topLayout->addLayout( pushLayout );
-    
+
     FontUseItem *item = new FontUseItem( i18n("General font"),
 			    QFont( "helvetica", 12 ) );
     item->setRC( "General", "font" );
     fontUseList.append( item );
-    
+
     item = new FontUseItem( i18n("Fixed font"),
 			    QFont( "fixed", 12 ), true );
     item->setRC( "General", "fixedFont" );
@@ -151,40 +152,55 @@ KFonts::KFonts(QWidget *parent, const char *name)
 			    QFont( "helvetica", 12 ) );
     item->setRC( "General", "menuFont" );
     fontUseList.append( item );
-  
+
     item = new FontUseItem( i18n("Window title font"),
 			    QFont( "helvetica", 12, QFont::Bold ) );
     item->setRC( "WM", "titleFont" );
     fontUseList.append( item );
-			    
+
     item = new FontUseItem( i18n("Panel button font"),
 			    QFont( "helvetica", 12 )  );
     item->setRC( "kpanel", "DesktopButtonFont", "kpanelrc" );
     fontUseList.append( item );
-    
+
     item = new FontUseItem( i18n("Panel clock font"),
 			    QFont( "helvetica", 12, QFont::Normal) );
     item->setRC( "kpanel", "DateFont", "kpanelrc" );
     fontUseList.append( item );
-    
+
     for ( i = 0; i < (int) fontUseList.count(); i++ )
 	fontUseList.at( i )->readFont();
-    
+
     lbFonts = new QListBox( this );
     for ( i=0; i < (int) fontUseList.count(); i++ )
 	 lbFonts->insertItem( fontUseList.at( i )->text() );
     lbFonts->adjustSize();
     lbFonts->setMinimumSize(lbFonts->size());
-    
+
     connect( lbFonts, SIGNAL( highlighted( int ) ),
 	     SLOT( slotPreviewFont( int ) ) );
     pushLayout->addWidget(lbFonts, 2);
-    
+
+    // FIXME: are all of these still used?
+    // FIXME: add QWhatsThis to KFontChoser
+
+    QWhatsThis::add( lbFonts, i18n("The entries in this list each describe"
+      " a certain kind of text that a font can be assigned to. Select one"
+      " to change its settings on the right.<ul><li><em>General font:</em> the font used for normal text</li>"
+      " <li><em>Fixed font:</em> a non-proportional font (i.e. typewriter font)</li>"
+      " <li><em>Desktop icon font:</em> used to display the icon names on the desktop</li>"
+      " <li><em>File Manager font:</em> used by the Konqueror file manager</li>"
+      " <li><em>Toolbar font:</em> used by the toolbar, if text toolbars are turned on</li>"
+      " <li><em>Menu font:</em> used in menu bars and popup menus</li>"
+      " <li><em>Window title font:</em> used in the window titles. Note that this probably depends on you using KWin as window manager</li>"
+      " <li><em>Panel button font:</em> used for the panel's buttons</li>"
+      " <li><em>Panel clock font:</em> used by the panel's clock applet</li></ul>") );
+
     fntChooser = new KFontChooser( this );
     connect( fntChooser, SIGNAL( fontSelected(const QFont &) ), this,
 	     SLOT( slotSetFont(const QFont &) ) );
     pushLayout->addWidget(fntChooser, 5);
-    
+
     lbFonts->setCurrentItem( 0 );
 }
 
@@ -205,8 +221,17 @@ void KFonts::defaults()
     emit changed(true);
 }
 
+QString KFonts::quickHelp()
+{
+    return i18n( "<h1>Fonts</h1> In KDE you can freely choose which fonts will be"
+      " used to display text. In this module you can assign a font (consisting"
+      " of a font family like <em>helvetica</em> and attributes like <em>bold</em>)"
+      " to a type of text (e.g. toolbar text). Just select a type of text in the box"
+      " on the left, then change the settings." );
+}
+
 void KFonts::load()
-{	
+{
     int ci = lbFonts->currentItem();
     for ( int i = 0; i < (int) fontUseList.count(); i++ )
 	fontUseList.at( i )->readFont();

@@ -61,9 +61,10 @@ public:
     virtual void load();
     virtual void save();
     virtual void defaults();
+    virtual QString quickHelp();
 
     int buttons();
-	
+
 signals:
     void changed(bool);
 
