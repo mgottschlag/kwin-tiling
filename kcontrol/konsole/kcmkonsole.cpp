@@ -82,7 +82,7 @@ void KCMKonsole::load()
     emit changed(false);
 }
 
-void KCMKonsole::load(const QString & s)
+void KCMKonsole::load(const QString & /*s*/)
 {
 
 }
