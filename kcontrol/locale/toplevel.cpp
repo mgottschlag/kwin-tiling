@@ -106,7 +106,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name,
   connect(m_localetime, SIGNAL(localeChanged()),
           m_sample, SLOT(slotLocaleChanged()));
   // No examples for this yet
-  //connect(m_localetime, SIGNAL(slotLocaleChanged()),
+  //connect(m_localeother, SIGNAL(slotLocaleChanged()),
   //m_sample, SLOT(slotLocaleChanged()));
   connect(this, SIGNAL(localeChanged()),
           m_sample, SLOT(slotLocaleChanged()));
