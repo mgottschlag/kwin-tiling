@@ -372,7 +372,9 @@ int	removeDomainname;
 char	*keyFile;
 char	*accessFile;
 char	**exportList;
+#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
 char	*randomFile;
+#endif
 char	*willing;
 int	choiceTimeout;
 int	autoLogin;
@@ -395,7 +397,9 @@ struct globVals {
 { C_removeDomainname,	(char **) &removeDomainname },
 { C_keyFile,		&keyFile },
 { C_exportList,		(char **) &exportList },
+#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
 { C_randomFile,		&randomFile },
+#endif
 { C_choiceTimeout,	(char **) &choiceTimeout },
 { C_sourceAddress,	(char **) &sourceAddress },
 { C_willing,		&willing },
