@@ -230,7 +230,7 @@ void TaskbarConfig::save()
     delete c;
 
     QByteArray data;
-    kapp->dcopClient()->emitDCOPSignal("kdeTaskbarConfigChanged()", data);
+    kapp->dcopClient()->emitDCOPSignal("kdeTaskBarConfigChanged()", data);
 }
 
 void TaskbarConfig::defaults()
