@@ -704,7 +704,9 @@ static Status KSMNewClientProc ( SmsConn conn, SmPointer manager_data,
 };
 
 
+#ifdef HAVE__ICETRANSNOLISTEN
 extern "C" int _IceTransNoListen(const char * protocol);
+#endif
 
 KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 {
@@ -721,8 +723,12 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     clientInteracting = 0;
 
     only_local = _only_local;
+#ifdef HAVE__ICETRANSNOLISTEN
     if (only_local)
 	_IceTransNoListen("tcp");
+#else
+    only_local = false;
+#endif
 
     kapp->dcopClient()->attach();
     launcher = KApplication::launcher();

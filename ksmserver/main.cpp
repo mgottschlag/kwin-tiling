@@ -4,6 +4,8 @@ ksmserver - the KDE session management server
 Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 ******************************************************************/
 
+#include <config.h>
+
 #include <kapp.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
@@ -24,7 +26,9 @@ static const KCmdLineOptions options[] =
    { "restore", I18N_NOOP("Restores the previous session if available"), 0},
    { "w", 0, 0 },
    { "windowmanager <wm>", I18N_NOOP("Starts 'wm' in case no other window manager is \nparticipating in the session. Default is 'kwin'"), 0},
+#ifndef HAVE__ICETRANSNOLISTEN
    { "nolocal", I18N_NOOP("Allow also remote connections."), 0},
+#endif
    { 0, 0, 0 }
 };
 
