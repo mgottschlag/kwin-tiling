@@ -6,6 +6,7 @@ Name[es]=WindowMaker (3 teclas modificadoras)
 Name[pt_BR]=WindowMaker (para 3 Teclas Modificadoras)
 Name[sr]=WindowMaker (3 modifikatorska tastera)
 Name[sv]=WindowMaker (3 väljartangenter)
+Name[xx]=xxWindowMaker (3 Modifier Keys)xx
 
 [Global Shortcuts]
 Desktop Screenshot=Ctrl+Print
