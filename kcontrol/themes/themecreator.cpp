@@ -145,7 +145,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     {
       appDir = value.copy();
       if (appDir[0] != '/') baseDir = kapp->localkdedir() + "/share/";
-      else baseDir = 0;
+      else baseDir = QString::null;
       appDir = baseDir + appDir;
       len = appDir.length();
       if (len > 0 && appDir[len-1]!='/') appDir += '/';
