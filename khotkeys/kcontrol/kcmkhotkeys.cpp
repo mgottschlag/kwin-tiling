@@ -23,9 +23,9 @@
 
 #include <kcmodule.h>
 #include <klocale.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <dcopclient.h>
 #include <kdebug.h>
 #include <kmessagebox.h>

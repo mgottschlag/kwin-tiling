@@ -26,7 +26,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kshortcut.h>
 #include <kconfig.h>
 #include <kshortcutlist.h>
