@@ -128,7 +128,6 @@ static SIGVAL ChildNotify (int n);
 
 static int StorePid (void);
 
-static int parent_pid = -1;	/* PID of parent xdm process */
 
 #define A_NONE	 0
 #define A_HALT	 1
@@ -280,7 +279,6 @@ main (int argc, char **argv)
 #else
     Debug ("not compiled for XDMCP\n");
 #endif
-    parent_pid = getpid ();
     (void) Signal (SIGTERM, StopAll);
     (void) Signal (SIGINT, StopAll);
 
@@ -622,20 +620,6 @@ RescanIfMod (void)
 static SIGVAL
 StopAll (int n)
 {
-    if (parent_pid != getpid())
-    {
-	/* 
-	 * We are a child xdm process that was killed by the
-	 * master xdm before we were able to return from fork()
-	 * and remove this signal handler.
-	 *
-	 * See defect XWSog08655 for more information.
-	 */
-	Debug ("Child xdm caught SIGTERM before it removed that signal.\n");
-	(void) Signal (n, SIG_DFL);
-	TerminateProcess (getpid(), SIGTERM);
-	return;
-    }
     Debug ("Shutting down entire manager\n");
 #ifdef XDMCP
     DestroyWellKnownSockets ();
@@ -732,8 +716,11 @@ WaitForChild (void)
 		break;
 	    case EX_TEXTLOGIN:
 		Debug ("Display exited with EX_TEXTLOGIN\n");
-		d->status = suspended;
-		TerminateProcess (d->serverPid, d->termSignal);
+		if (d->serverPid != -1) {
+		    d->status = suspended;
+		    TerminateProcess (d->serverPid, d->termSignal);
+		} else	/* Something is _really_ wrong if we get here */
+		    ExitDisplay (d, FALSE, FALSE, FALSE);
 		break;
 	    case EX_UNMANAGE_DPY:
 		Debug ("Display exited with EX_UNMANAGE_DPY\n");

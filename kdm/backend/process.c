@@ -126,15 +126,18 @@ CloseOnFork (void)
 int
 Fork ()
 {
-    int pid = fork();
-    if (!pid) {
+    int pid;
+
 #ifndef X_NOT_POSIX
-	sigset_t ss; 
-	sigemptyset(&ss);
-	sigprocmask(SIG_SETMASK, &ss, NULL);
+    sigset_t ss, oss; 
+    sigemptyset(&ss);
+    sigfillset(&ss);
+    sigprocmask(SIG_SETMASK, &ss, &oss);
 #else
-	sigsetmask (0);
+    int omask = sigsetmask (-1);
 #endif
+
+    if (!(pid = fork())) {
 #ifdef SIGCHLD
 	(void) Signal (SIGCHLD, SIG_DFL);
 #endif
@@ -143,9 +146,23 @@ Fork ()
 	(void) Signal (SIGPIPE, SIG_DFL);
 	(void) Signal (SIGALRM, SIG_DFL);
 	(void) Signal (SIGHUP, SIG_DFL);
+#ifndef X_NOT_POSIX
+	sigemptyset(&ss);
+	sigprocmask(SIG_SETMASK, &ss, NULL);
+#else
+	sigsetmask (0);
+#endif
 	CloseOnFork ();
 	gpid = 0;
+	return 0;
     }
+
+#ifndef X_NOT_POSIX
+    sigprocmask(SIG_SETMASK, &oss, 0);
+#else
+    sigsetmask (omask);
+#endif
+
     return pid;
 }
 
