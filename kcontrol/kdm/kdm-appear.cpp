@@ -48,6 +48,8 @@
 
 extern KSimpleConfig *c;
 
+const char *styles[] = {"KDE", "Motif", "Windows", /* "Platinum", "CDE", */};
+
 KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
@@ -129,10 +131,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   label = new QLabel(i18n("GUI &Style:"), group);
   guicombo = new QComboBox(false, group);
   label->setBuddy( guicombo );
-  guicombo->insertItem(i18n("Motif"), 0);
-  guicombo->insertItem(i18n("Windows"), 1);
-  //guicombo->insertItem(i18n("Platinum"), 2);
-  //guicombo->insertItem(i18n("CDE"), 3);
+  for (unsigned i = 0; i < sizeof(styles) / sizeof(styles[0]); i++)
+    guicombo->insertItem(QString::fromLatin1(styles[i]), i);
   connect(guicombo, SIGNAL(activated(int)), this, SLOT(changed()));
   grid->addWidget(label, 4,0);
   grid->addWidget(guicombo, 4, 1);
@@ -145,8 +145,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   echocombo = new QComboBox(false, group);
   label->setBuddy( echocombo );
   echocombo->insertItem(i18n("No echo"));
-  echocombo->insertItem(i18n("Stars"));
-  echocombo->insertItem(i18n("Many Stars"));
+  echocombo->insertItem(i18n("One Star"));
+  echocombo->insertItem(i18n("Three Stars"));
   connect(echocombo, SIGNAL(activated(int)), this, SLOT(changed()));
   grid->addWidget(label, 5,0);
   grid->addWidget(echocombo, 5, 1);
@@ -373,7 +373,7 @@ void KDMAppearanceWidget::save()
   c->setGroup("KDM");
 
   // write greeting string
-  c->writeEntry("GreetString", greetstr_lined->text(), true);
+  c->writeEntry("GreetString", greetstr_lined->text());
 
   // write logo or clock
   QString logoArea = logoRadio->isChecked() ? "KdmLogo" : "KdmClock";
@@ -383,18 +383,15 @@ void KDMAppearanceWidget::save()
   c->writeEntry("LogoPixmap", KGlobal::iconLoader()->iconPath(logopath, KIcon::Desktop, true));
 
   // write GUI style
-  if (guicombo->currentItem() == 0)
-    c->writeEntry("GUIStyle", "Motif", true);
-  else
-    c->writeEntry("GUIStyle", "Windows", true);
+  c->writeEntry("GUIStyle", styles[guicombo->currentItem()]);
 
   // write echo mode
   if (echocombo->currentItem() == 0)
-    c->writeEntry("EchoMode", "NoEcho", true);
+    c->writeEntry("EchoMode", "NoEcho");
   else if (echocombo->currentItem() == 1)
-    c->writeEntry("EchoMode", "OneStar", true);
+    c->writeEntry("EchoMode", "OneStar");
   else
-    c->writeEntry("EchoMode", "ThreeStars", true);
+    c->writeEntry("EchoMode", "ThreeStars");
 
   // write language
   c->setGroup("Locale");
@@ -426,20 +423,21 @@ void KDMAppearanceWidget::load()
   setLogo( c->readEntry("LogoPixmap", "kdelogo"));
 
   // Check the GUI type
-  QString guistr = c->readEntry("GUIStyle", "Motif");
-  if(guistr == "Windows")
-    guicombo->setCurrentItem(1);
-  else
-    guicombo->setCurrentItem(0);
+  QString guistr = c->readEntry("GUIStyle", "KDE");
+  for (unsigned i = 0; i < sizeof(styles) / sizeof(styles[0]); i++)
+    if (guistr == QString::fromLatin1(styles[i])) {
+      guicombo->setCurrentItem(i);
+      break;
+    }
 
   // Check the echo mode
-  QString echostr = c->readEntry("EchoMode", "OneStar").lower();
-  if ((echostr == "NoEcho") || (echostr == "NoStars"))
-    echocombo->setCurrentItem(0);
-  else if (echostr == "ThreeStars")
+  QString echostr = c->readEntry("EchoMode", "OneStar");
+  if (echostr == "ThreeStars")
     echocombo->setCurrentItem(2);
-  else // "onestar"
+  else if (echostr == "OneStar")
     echocombo->setCurrentItem(1);
+  else  // "NoEcho"
+    echocombo->setCurrentItem(0);
 
   // get the language
   c->setGroup("Locale");
