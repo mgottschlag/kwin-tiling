@@ -4,6 +4,7 @@
 // HP-UX is really ugly to retrieve information from !
 // Implemented on 24.04.1999 by Helge Deller (deller@gmx.de)
 // Tested on an HP9000/715/64 under HPUX-10.20.
+// Updated for QT 2.0 on 27.04.1999 (deller)
 //
 // Sorry, but I don't know, who implemented the first (little) version of 
 // update(), but it showed wrong sizes !

@@ -3,7 +3,7 @@
 	!!!!! this file will be included by info.cpp !!!!!
 
 	Last modified:	by:
-	25.04.1999	Helge Deller (deller@gmx.de)
+	27.04.1999	Helge Deller (deller@gmx.de)
 			[tested with HP-UX 10.20 (HP9000/715/64-EISA)]
 			added support for nearly all categories (means: not finished!)
 	01.11.1998	first (nearly empty) version [Helge Deller]
@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <qfile.h>
 #include <qfontmetrics.h>
+#include <qtextstream.h>
 
 
 #define INFO_CPU_AVAILABLE
@@ -332,7 +333,7 @@ bool GetInfo_CPU( KTabListBox *lBox )
   delete model;
   
   I18N_MAX(str,i18n("Machine Identification Number"),fm,maxwidth);
-  str += TAB + QString(strlen(info.__idnumber) ? info.__idnumber : i18n("(none)") );
+  str += TAB + (strlen(info.__idnumber) ? QString(info.__idnumber) : i18n("(none)") );
   lBox->insertItem( str );
 
   lBox->insertItem( "" );
@@ -594,7 +595,7 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 		str =  QString(fstab_ent->fs_spec) + TAB
 		    +  QString(fstab_ent->fs_file) + TAB 
 		    +  QString("  ")
-		    +  QString(svfs.f_basetype[0] ? svfs.f_basetype : i18n("n/a"));
+		    +  (svfs.f_basetype[0] ? QString(svfs.f_basetype) : QString(i18n("n/a")));
 		if (svfs.f_basetype[0])
 		    str += TAB
 			+  Value((total+512)/1024,6) + MB + TAB
