@@ -50,6 +50,7 @@
 #include <kstringhandler.h>
 #include <kurlrequester.h>
 #include <kwin.h>
+#include <kimagefilepreview.h>
 
 #include "bgmonitor.h"
 #include "bgwallpaper.h"
@@ -472,6 +473,9 @@ void BGDialog::slotWallpaperSelection()
 {
    KFileDialog dlg( QString::null, QString::null, this,
                     "file dialog", true );
+
+   KImageFilePreview* previewWidget = new KImageFilePreview(&dlg);
+   dlg.setPreviewWidget(previewWidget);
 
    QString pattern = KImageIO::pattern();
 #ifdef HAVE_LIBART
