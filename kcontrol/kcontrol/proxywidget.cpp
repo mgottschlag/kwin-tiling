@@ -93,7 +93,7 @@ RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
     setFrameShape(QFrame::Box);
     setFrameShadow(QFrame::Raised);
 
-    setText(i18n("<b>Changes in this module require root access!</b><br>"
+    setText(i18n("<b>Changes in this module require root access.</b><br>"
                       "Click the \"Administrator Mode\" button to "
                       "allow modifications in this module."));
 
