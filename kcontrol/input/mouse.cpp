@@ -111,7 +111,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     lay->addSpacing(15);
     lay->addWidget(singleClick);
 
-    wtstr = i18n("The default behaviour in KDE is to select and activate"
+    wtstr = i18n("The default behavior in KDE is to select and activate"
          " icons with a single click of the left button on your pointing"
          " device. This behavior is consistent with what you would expect"
          " when you click links in most web browsers. If you would prefer"
