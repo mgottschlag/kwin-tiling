@@ -33,6 +33,12 @@
 #include <string.h>
 #include <sys/types.h>
 
+#ifndef __cplusplus
+#define bool unsigned int
+#define false 0
+#define true (!false)
+#endif
+
 #define BUFSIZE 1024
 #define PROCDIR "/proc"
 
@@ -42,7 +48,7 @@
     Implemented for:
 
         Linux         Tested on Linux 2.4
-        FreeBSD
+        FreeBSD       Tested on FreeBSD 5.1 by Brian Ledbetter <brian@shadowcom.net>
         NetBSD
         Irix
         Solaris
@@ -51,11 +57,27 @@
         ...else parse output of "ps -eaf"
 
 
-    Some sections of this code are copied from / inspired by ksysguard, Copyright (c) 1999 - 2001 Chris Schlaeger <cs@kde.org>
+    Some sections of this code are copied from / inspired by ksysguard,
+    Copyright (c) 1999 - 2001 Chris Schlaeger <cs@kde.org>
+
+    To test this file, do the following:
+
+    1. Compile this file as follows:
+
+           gcc GetPid.c -DTEST_GETPID -DOS_Linux -o tst
+
+       ...replace OS_Linux with your particular OS type: OS_FreeBSD, OS_NetBSD, OS_Irix, OS_Solaris,
+       OS_HPUX, or OS_AIX
+
+    2. Start a program - such as "vi"
+    3. Do a "ps -eaf" to ensure there is *only one* process called "vi"
+    4. Get the parent process ID of your "vi" above
+    5. Call tst with that value -e.g. vi ppid=23 then ./tst vi 23
+       ...this should then print out the process ID of "vi"
+    6. Email me and let me know if it works!
 */
 
-
-#ifdef OS_Linux
+#if defined OS_Linux || defined __Linux__
 
 #include <dirent.h>
 
@@ -130,7 +152,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
     return error ? 0 : pid;
 }
 
-#elif defined OS_FreeBSD || defined OS_NetBSD
+#elif defined OS_FreeBSD || defined OS_NetBSD || defined __FreeBSD__ || defined __NetBSD__
 
 #include <ctype.h>
 #include <dirent.h>
@@ -146,12 +168,12 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
 #include <unistd.h>
 static unsigned int getPid(const char *proc, unsigned int ppid)
 {
-    bool         error=false;
-    unsigned int pid=0;
-    int          mib[4];
-    size_t       len,
-                 num;
-    struct       kinfo_proc *p;
+    bool              error=false;
+    unsigned int      pid=0;
+    int               mib[4];
+    size_t            len,
+                      num;
+    struct kinfo_proc *p;
 
     mib[0] = CTL_KERN;
     mib[1] = KERN_PROC;
@@ -163,7 +185,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
     for(num=0; num < len / sizeof(struct kinfo_proc)  && !error; num++)
     {
         struct kinfo_proc proc_p;
-        size_t len;
+        size_t            len;
 
         mib[0] = CTL_KERN;
         mib[1] = KERN_PROC;
@@ -179,14 +201,14 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
             break;
         else
         {
-#ifdef __FreeBSD_version
+#if __FreeBSD_version >= 500015
             if(proc_p.ki_ppid==ppid && p[num].ki_comm && 0==strcmp(p[num].ki_comm, proc))
                 if(pid)
                     error=true;
                 else
                     pid=p[num].ki_pid;
 #else
-            if(proc_p.kp_eproc.e_ppid==pid && p.kp_proc.p_comm && 0==strcmp(p.kp_proc.p_comm, proc))
+            if(proc_p.kp_eproc.e_ppid==ppid && p[num].kp_proc.p_comm && 0==strcmp(p[num].kp_proc.p_comm, proc))
                 if(pid)
                     error=true;
                 else
@@ -328,6 +350,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
 }
 
 #else
+#warning "Unable to determine operating system version!  This may cause the getPid() function to fail at random!"
 
 /* Default to reading "ps -eaf" output */
 
@@ -371,7 +394,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
     else
         strcpy(cmd, "ps -eaf");
 
-    if(NULL!=(p=popen("ps -eaf", "r")))
+    if(NULL!=(p=popen(cmd, "r")))
     {
         char line[BUFSIZE+1];
         int  c=0;
@@ -445,4 +468,15 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
     return error ? 0 : pid;
 }
 
+#endif
+
+#ifdef TEST_GETPID
+int main(int argc, char *argv[])
+{
+    if(3==argc)
+        printf("PID %u\n", getPid(argv[1], atoi(argv[2])));
+    else
+        printf("Usage: %s <process> <parent-process-id>\n", argv[0]);
+    return 0;
+}
 #endif
