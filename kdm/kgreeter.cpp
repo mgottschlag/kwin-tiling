@@ -778,6 +778,8 @@ DoIt()
      kgreeter = new KGreeter;		   
      kgreeter->show();
      QApplication::restoreOverrideCursor();
+     XUngrabKeyboard(qt_xdisplay(), CurrentTime);
+     kgreeter->setActiveWindow();
      qApp->exec();
      // Give focus to root window:
      QApplication::desktop()->setActiveWindow();
