@@ -1,6 +1,9 @@
 # KDE Config File
 [Color Scheme]
 Name=Atlas green
+Name[cs]=Atlasově zelená
+Name[fi]=Atlaksenvihreä
+Name[nl]=Atlas-groen
 background=#afb49f
 buttonBackground=#afb49f
 buttonForeground=#000000

@@ -1,6 +1,8 @@
 # KDE Config File
 [Color Scheme]
 Name=Blue slate
+Name[cs]=Modrá plískanice
+Name[nl]=Blauwe leisteen
 background=#9db9c8
 buttonBackground=#9db9c8
 buttonForeground=#000000

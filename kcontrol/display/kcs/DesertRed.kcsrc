@@ -1,6 +1,9 @@
 # KDE Config File
 [Color Scheme]
 Name=Desert red
+Name[cs]=Pouštní červená
+Name[fi]=Aavikon punainen
+Name[nl]=Woestijnrood
 background=214,205,187
 buttonBackground=214,205,187
 buttonForeground=0,0,0
