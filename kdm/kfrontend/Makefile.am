@@ -28,14 +28,14 @@ kdm_greet_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kdm_greet_LDADD = $(LIB_KDEUI) $(XTESTLIB) $(XCONSOLE_LDADD)
 
 krootimage_SOURCES = krootimage.cpp
-krootimage_LDFLAGS = $(KDE_RPATH) $(all_libraries)
+krootimage_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 krootimage_LDADD = $(top_builddir)/kcontrol/background/libbgnd.la $(LIB_KIO)
 
 METASOURCES = AUTO
 
 noinst_PROGRAMS = genkdmconf
 genkdmconf_SOURCES = genkdmconf.c
-genkdmconf_LDFLAGS = -L$(x_libraries)
+genkdmconf_LDFLAGS = $(X_LDFLAGS) $(X_RPATH)
 genkdmconf_LDADD = $(LIB_X11)
 
 install-data-local: genkdmconf
