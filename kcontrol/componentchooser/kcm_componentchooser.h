@@ -18,6 +18,9 @@
 
 #include <kcmodule.h>
 #include <componentchooser.h>
+
+class KAboutData;
+
 class KCMComponentChooser : public KCModule
 {
     Q_OBJECT
@@ -27,6 +30,8 @@ public:
     void load();
     void save();
     void defaults();
+    const KAboutData* aboutData() const;
+
 
 private:
     ComponentChooser  *m_chooser;

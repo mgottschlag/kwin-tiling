@@ -13,6 +13,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <kaboutdata.h>
+#include <klocale.h>
+
 #include <kcm_componentchooser.h>
 #include <kcm_componentchooser.moc>
 #include <qlayout.h>
@@ -38,6 +41,19 @@ void KCMComponentChooser::save(){
 void KCMComponentChooser::defaults(){
 	m_chooser->restoreDefault();
 }
+
+const KAboutData* KCMComponentChooser::aboutData() const
+{
+   KAboutData *about =
+   new KAboutData(I18N_NOOP("kcmcomponentchooser"), I18N_NOOP("Component Chooser"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c), 2002 Joseph Wenninger"));
+
+   about->addAuthor("Joseph Wenninger", 0 , "jowenn@kde.org");
+
+   return about;
+}
+
 
 extern "C"
 {
