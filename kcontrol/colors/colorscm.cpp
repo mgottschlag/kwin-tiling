@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <qdir.h>
 #include <qvgroupbox.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
@@ -333,7 +334,7 @@ void KColorScheme::save()
 
     // KDE-1.x support
     KSimpleConfig *config =
-    new KSimpleConfig( QCString(::getenv("HOME")) + "/.kderc" );
+    new KSimpleConfig( QDir::homeDirPath() + "/.kderc" );
     config->setGroup( "General" );
     config->writeEntry("background", cs->back );
     config->writeEntry("selectBackground", cs->select );
