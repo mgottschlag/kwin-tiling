@@ -67,7 +67,7 @@ KIconConfigGeneral::KIconConfigGeneral(QWidget *parent, const char *name)
 
 
     // Effects
-    gbox = new QGroupBox(i18n("Effects for States"), this);
+    gbox = new QGroupBox(i18n("Effects"), this);
     top->addWidget(gbox, 1, 0);
     g_lay = new QVBoxLayout(gbox, KDialog::marginHint(),
                             KDialog::spacingHint());
@@ -91,7 +91,7 @@ KIconConfigGeneral::KIconConfigGeneral(QWidget *parent, const char *name)
     connect(mpESetupBut, SIGNAL(clicked()), SLOT(slotEffectSetup()));
     grid->addWidget(mpESetupBut, 1, 0);
 
-    mpSTCheck = new QCheckBox(i18n("SemiTransparent"), gbox);
+    mpSTCheck = new QCheckBox(i18n("Semi-transparent"), gbox);
     connect(mpSTCheck, SIGNAL(toggled(bool)), SLOT(slotSTCheck(bool)));
     grid->addWidget(mpSTCheck, 1, 1);
 
