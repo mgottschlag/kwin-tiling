@@ -115,14 +115,12 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
 
 bool CFontViewPart::openURL(const KURL &url)
 {
-printf("openURLx \"%s\"\n", url.prettyURL().latin1());
     if (!url.isValid() || !closeURL())
         return false;
 
     if(KFI_KIO_FONTS_PROTOCOL==url.protocol() || url.isLocalFile())
     {
         m_url=url;
-printf("m_url.protocol():\"%s\", path:\"%s\"\n", m_url.protocol().latin1(), m_url.path().latin1());
         emit started(0);
         m_file = m_url.path();
         bool ret=openFile();
