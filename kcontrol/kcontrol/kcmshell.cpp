@@ -121,7 +121,7 @@ int main(int _argc, char *_argv[])
 
     if (module) {
 	// create the dialog
-	KCDialog dlg(module, QString::null, 0, 0, true);
+	KCDialog dlg(module, info.docPath(), 0, 0, true);
 	dlg.setCaption(info.name());
 	
 	// run the dialog
