@@ -214,7 +214,7 @@ void KLocaleConfig::load()
   comboDate->setCurrentItem(str);
 
   // Charset
-  str = config->readEntry(QString::fromLatin1("Charset"), QString::fromLatin1("unicode"));
+  str = config->readEntry(QString::fromLatin1("Charset"), QString::fromLatin1("iso-8859-1"));
   comboChset->setCurrentItem(str);
 }
 
