@@ -23,7 +23,6 @@
  */
 #include <qdir.h>
 #include <qstrlist.h>
-#include <qfiledlg.h>
 #include <qbttngrp.h>
 #include <qframe.h>
 #include <qgrpbox.h>

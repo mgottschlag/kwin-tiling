@@ -20,7 +20,7 @@
    
   */
 
-
+#include <qdir.h>
 #include <kwm.h>
 #include <kcontrol.h>
 #include "windows.h"

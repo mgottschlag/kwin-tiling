@@ -19,7 +19,7 @@
    
   */
 
-
+#include <qdir.h>
 #include <kwm.h>
 #include <klocale.h>
  

@@ -54,6 +54,7 @@
 #include <X11/Xos.h>
 #include <klocale.h>
 
+extern int dropError(Display *, XErrorEvent *);
 
 //-----------------------------------------------------------------------------
 Theme::Theme(): ThemeInherited(QString::null), mInstFiles(true)
@@ -1221,13 +1222,6 @@ bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
     found = aMap.isEmpty();
 
   return found;
-}
-
-
-//-----------------------------------------------------------------------------
-static int dropError(Display *, XErrorEvent *)
-{
-  return 0;
 }
 
 

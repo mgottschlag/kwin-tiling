@@ -16,7 +16,6 @@
 #include <qlabel.h>
 #include <qpixmap.h>
 #include <qpushbt.h>
-#include <qfiledlg.h>
 #include <qslider.h>
 #include <qradiobt.h>
 #include <qmsgbox.h>

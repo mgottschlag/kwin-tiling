@@ -22,7 +22,6 @@
  */
 #include <qdir.h>
 #include <qstrlist.h>
-#include <qfiledlg.h>
 #include <qbttngrp.h>
 #include <qframe.h>
 #include <qgrpbox.h>
@@ -32,6 +31,9 @@
 #include <qradiobt.h>
 #include <qchkbox.h>
 #include <qfileinfo.h>
+#ifdef index
+#undef index
+#endif
 #include <qlistbox.h>
 #include <qmultilinedit.h>
 #include <kbuttonbox.h>

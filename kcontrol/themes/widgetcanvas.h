@@ -27,9 +27,6 @@
 #include <X11/X.h>
 #include <kcontrol.h>
 
-#include <qlistbox.h>
-#include <kslider.h>
-
 #define MAX_HOTSPOTS   13
 
 class HotSpot

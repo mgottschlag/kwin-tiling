@@ -23,6 +23,7 @@
   */
 
 
+#include <qdir.h>
 //#include <kapp.h>
 //#include <qobject.h>
 #include <kslider.h>

@@ -19,6 +19,7 @@
 
   */
 
+#include <qdir.h>
 #include <stdio.h>
 
 #include <kwm.h>
