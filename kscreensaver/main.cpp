@@ -381,9 +381,9 @@ int main( int argc, char *argv[] )
 		    nice( atoi( argv[++i] ) );
 #else
 		    warning(glocale->translate(
-					       "Option %s is not support on "
-					       "this plattform!"), 
-			    strings[arg_nice]);
+					       "Option %1 is not support on "
+					       "this plattform!")
+			    .arg(strings[arg_nice]);
 #endif
 		    break;
 #if 0 // Not supported by kcheckpass
@@ -569,8 +569,8 @@ static void cleanup( int id )
 void usage( char *name )
 {
 	printf( glocale->translate(
-	   "Usage: %s -install|-setup|-test|-desc|-preview wid|-inroot\n"\
-	   "       [-corners xxxx] [-delay num] [-lock] [-allow-root] [-nice num]\n"), name ); 
+	   "Usage: %1 -install|-setup|-test|-desc|-preview wid|-inroot\n"\
+	   "       [-corners xxxx] [-delay num] [-lock] [-allow-root] [-nice num]\n").arg(name)); 
 	printf( glocale->translate(
 	"  -corners xxxx     Placing cursor in corner performs action:\n"\
 	"                     x = i  no action (ignore)\n"\
