@@ -77,9 +77,6 @@ public:
 
     int buttons();
 
-signals:
-    void changed(bool);
-
 protected slots:
     void fontChanged();
     void slotApplyFontDiff(); 
