@@ -28,5 +28,5 @@ include_HEADERS =
 noinst_HEADERS = global.h server.h shutdown.h
 
 ksmserver_METASOURCES = AUTO
-ksmserver_SOURCES = server.cpp shutdown.cpp 
+ksmserver_SOURCES = server.cpp shutdown.cpp main.cpp
 

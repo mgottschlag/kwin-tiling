@@ -59,14 +59,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qmessagebox.h>
 #include <qguardedptr.h>
 #include <qtimer.h>
-#include <kapp.h>
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <unistd.h>
-#include <fcntl.h>
 
 #include "server.h"
 #include "global.h"
@@ -191,13 +187,10 @@ static char *remAuthFile = 0;
 
 static IceListenObj *listenObjs = 0;
 int numTransports = 0;
-static IceIOErrorHandler prev_handler;
 
 static Bool HostBasedAuthProc ( char* /*hostname*/)
 {
-    qDebug("HostBasedAuthProc");
-    return true; // ###### TODO
-    return false; // no host based authentication
+    return FALSE; // no host based authentication
 }
 
 
@@ -363,35 +356,34 @@ class KSMConnection : public QSocketNotifier
 /* for printing hex digits */
 static void fprintfhex (FILE *fp, unsigned int len, char *cp)
 {
-  static char hexchars[] = "0123456789abcdef";
+    static char hexchars[] = "0123456789abcdef";
 
-  for (; len > 0; len--, cp++) {
-    unsigned char s = *cp;
-    putc(hexchars[s >> 4], fp);
-    putc(hexchars[s & 0x0f], fp);
-  }
+    for (; len > 0; len--, cp++) {
+	unsigned char s = *cp;
+	putc(hexchars[s >> 4], fp);
+	putc(hexchars[s & 0x0f], fp);
+    }
 }
 
 /*
  * We use temporary files which contain commands to add/remove entries from
  * the .ICEauthority file.
  */
-static void
-write_iceauth (FILE *addfp, FILE *removefp, IceAuthDataEntry *entry)
+static void write_iceauth (FILE *addfp, FILE *removefp, IceAuthDataEntry *entry)
 {
-  fprintf (addfp,
-	   "add %s \"\" %s %s ",
-	   entry->protocol_name,
-	   entry->network_id,
-	   entry->auth_name);
-  fprintfhex (addfp, entry->auth_data_length, entry->auth_data);
-  fprintf (addfp, "\n");
+    fprintf (addfp,
+	     "add %s \"\" %s %s ",
+	     entry->protocol_name,
+	     entry->network_id,
+	     entry->auth_name);
+    fprintfhex (addfp, entry->auth_data_length, entry->auth_data);
+    fprintf (addfp, "\n");
 
-  fprintf (removefp,
-	   "remove protoname=%s protodata=\"\" netid=%s authname=%s\n",
-	   entry->protocol_name,
-	   entry->network_id,
-	   entry->auth_name);
+    fprintf (removefp,
+	     "remove protoname=%s protodata=\"\" netid=%s authname=%s\n",
+	     entry->protocol_name,
+	     entry->network_id,
+	     entry->auth_name);
 }
 
 
@@ -403,172 +395,170 @@ static char *unique_filename (const char *path, const char *prefix, int *pFd)
 {
 #ifndef HAVE_MKSTEMP
 #ifndef X_NOT_POSIX
-  return ((char *) tempnam (path, prefix));
+    return ((char *) tempnam (path, prefix));
 #else
-  char tempFile[PATH_MAX];
-  char *tmp;
+    char tempFile[PATH_MAX];
+    char *tmp;
 
-  sprintf (tempFile, "%s/%sXXXXXX", path, prefix);
-  tmp = (char *) mktemp (tempFile);
-  if (tmp)
-    {
-      char *ptr = (char *) malloc (strlen (tmp) + 1);
-      strcpy (ptr, tmp);
-      return (ptr);
-    }
-  else
-    return (NULL);
+    sprintf (tempFile, "%s/%sXXXXXX", path, prefix);
+    tmp = (char *) mktemp (tempFile);
+    if (tmp)
+	{
+	    char *ptr = (char *) malloc (strlen (tmp) + 1);
+	    strcpy (ptr, tmp);
+	    return (ptr);
+	}
+    else
+	return (NULL);
 #endif
 #else
-  char tempFile[PATH_MAX];
-  char *ptr;
+    char tempFile[PATH_MAX];
+    char *ptr;
 
-  sprintf (tempFile, "%s/%sXXXXXX", path, prefix);
-  ptr = (char *)malloc(strlen(tempFile) + 1);
-  if (ptr != NULL)
-    {
-      strcpy(ptr, tempFile);
-      *pFd =  mkstemp(ptr);
-    }
-  return ptr;
+    sprintf (tempFile, "%s/%sXXXXXX", path, prefix);
+    ptr = (char *)malloc(strlen(tempFile) + 1);
+    if (ptr != NULL)
+	{
+	    strcpy(ptr, tempFile);
+	    *pFd =  mkstemp(ptr);
+	}
+    return ptr;
 #endif
 }
 
 #define MAGIC_COOKIE_LEN 16
 
-Status
-SetAuthentication (int count, IceListenObj *listenObjs,
-		   IceAuthDataEntry **authDataEntries)
+Status SetAuthentication (int count, IceListenObj *listenObjs,
+			  IceAuthDataEntry **authDataEntries)
 {
-  FILE        *addfp = NULL;
-  FILE        *removefp = NULL;
-  const char  *path;
-  int         original_umask;
-  char        command[256];
-  int         i;
+    FILE        *addfp = NULL;
+    FILE        *removefp = NULL;
+    const char  *path;
+    int         original_umask;
+    char        command[256];
+    int         i;
 #ifdef HAVE_MKSTEMP
-  int         fd;
+    int         fd;
 #endif
 
-  original_umask = ::umask (0077);      /* disallow non-owner access */
+    original_umask = ::umask (0077);      /* disallow non-owner access */
 
-  path = getenv ("KSM_SAVE_DIR");
-  if (!path)
-    path = "/tmp";
+    path = getenv ("KSM_SAVE_DIR");
+    if (!path)
+	path = "/tmp";
 #ifndef HAVE_MKSTEMP
-  if ((addAuthFile = unique_filename (path, "ksm")) == NULL)
-    goto bad;
+    if ((addAuthFile = unique_filename (path, "ksm")) == NULL)
+	goto bad;
 
-  if (!(addfp = fopen (addAuthFile, "w")))
-    goto bad;
+    if (!(addfp = fopen (addAuthFile, "w")))
+	goto bad;
 
-  if ((remAuthFile = unique_filename (path, "ksm")) == NULL)
-    goto bad;
+    if ((remAuthFile = unique_filename (path, "ksm")) == NULL)
+	goto bad;
 
-  if (!(removefp = fopen (remAuthFile, "w")))
-    goto bad;
+    if (!(removefp = fopen (remAuthFile, "w")))
+	goto bad;
 #else
-  if ((addAuthFile = unique_filename (path, "ksm", &fd)) == NULL)
-    goto bad;
+    if ((addAuthFile = unique_filename (path, "ksm", &fd)) == NULL)
+	goto bad;
 
-  if (!(addfp = fdopen(fd, "wb")))
-    goto bad;
+    if (!(addfp = fdopen(fd, "wb")))
+	goto bad;
 
-  if ((remAuthFile = unique_filename (path, "ksm", &fd)) == NULL)
-    goto bad;
+    if ((remAuthFile = unique_filename (path, "ksm", &fd)) == NULL)
+	goto bad;
 
-  if (!(removefp = fdopen(fd, "wb")))
-    goto bad;
+    if (!(removefp = fdopen(fd, "wb")))
+	goto bad;
 #endif
 
-  if ((*authDataEntries = (IceAuthDataEntry *) malloc (
-						       count * 2 * sizeof (IceAuthDataEntry))) == NULL)
-    goto bad;
+    if ((*authDataEntries = (IceAuthDataEntry *) malloc (
+			 count * 2 * sizeof (IceAuthDataEntry))) == NULL)
+	goto bad;
 
-  for (i = 0; i < numTransports * 2; i += 2) {
-    (*authDataEntries)[i].network_id =
-      IceGetListenConnectionString (listenObjs[i/2]);
-    (*authDataEntries)[i].protocol_name = (char *) "ICE";
-    (*authDataEntries)[i].auth_name = (char *) "MIT-MAGIC-COOKIE-1";
+    for (i = 0; i < numTransports * 2; i += 2) {
+	(*authDataEntries)[i].network_id =
+	    IceGetListenConnectionString (listenObjs[i/2]);
+	(*authDataEntries)[i].protocol_name = (char *) "ICE";
+	(*authDataEntries)[i].auth_name = (char *) "MIT-MAGIC-COOKIE-1";
 
-    (*authDataEntries)[i].auth_data =
-      IceGenerateMagicCookie (MAGIC_COOKIE_LEN);
-    (*authDataEntries)[i].auth_data_length = MAGIC_COOKIE_LEN;
+	(*authDataEntries)[i].auth_data =
+	    IceGenerateMagicCookie (MAGIC_COOKIE_LEN);
+	(*authDataEntries)[i].auth_data_length = MAGIC_COOKIE_LEN;
 
-    (*authDataEntries)[i+1].network_id =
-      IceGetListenConnectionString (listenObjs[i/2]);
-    (*authDataEntries)[i+1].protocol_name = (char *) "XSM";
-    (*authDataEntries)[i+1].auth_name = (char *) "MIT-MAGIC-COOKIE-1";
+	(*authDataEntries)[i+1].network_id =
+	    IceGetListenConnectionString (listenObjs[i/2]);
+	(*authDataEntries)[i+1].protocol_name = (char *) "XSMP";
+	(*authDataEntries)[i+1].auth_name = (char *) "MIT-MAGIC-COOKIE-1";
 
-    (*authDataEntries)[i+1].auth_data =
-      IceGenerateMagicCookie (MAGIC_COOKIE_LEN);
-    (*authDataEntries)[i+1].auth_data_length = MAGIC_COOKIE_LEN;
+	(*authDataEntries)[i+1].auth_data =
+	    IceGenerateMagicCookie (MAGIC_COOKIE_LEN);
+	(*authDataEntries)[i+1].auth_data_length = MAGIC_COOKIE_LEN;
 
-    write_iceauth (addfp, removefp, &(*authDataEntries)[i]);
-    write_iceauth (addfp, removefp, &(*authDataEntries)[i+1]);
+	write_iceauth (addfp, removefp, &(*authDataEntries)[i]);
+	write_iceauth (addfp, removefp, &(*authDataEntries)[i+1]);
 
-    IceSetPaAuthData (2, &(*authDataEntries)[i]);
+	IceSetPaAuthData (2, &(*authDataEntries)[i]);
 
-    IceSetHostBasedAuthProc (listenObjs[i/2], HostBasedAuthProc);
-  }
+	IceSetHostBasedAuthProc (listenObjs[i/2], HostBasedAuthProc);
+    }
 
-  fclose (addfp);
-  fclose (removefp);
+    fclose (addfp);
+    fclose (removefp);
 
-  umask (original_umask);
+    umask (original_umask);
 
-  sprintf (command, "iceauth source %s", addAuthFile);
-  system (command);
+    sprintf (command, "iceauth source %s", addAuthFile);
+    system (command);
 
-  unlink (addAuthFile);
+    unlink (addAuthFile);
 
-  return (1);
+    return (1);
 
  bad:
 
-  if (addfp)
-    fclose (addfp);
+    if (addfp)
+	fclose (addfp);
 
-  if (removefp)
-    fclose (removefp);
+    if (removefp)
+	fclose (removefp);
 
-  if (addAuthFile) {
-    unlink(addAuthFile);
-    free(addAuthFile);
-  }
-  if (remAuthFile) {
-    unlink(remAuthFile);
-    free(remAuthFile);
-  }
+    if (addAuthFile) {
+	unlink(addAuthFile);
+	free(addAuthFile);
+    }
+    if (remAuthFile) {
+	unlink(remAuthFile);
+	free(remAuthFile);
+    }
 
-  return (0);
+    return (0);
 }
 
 /*
  * Free up authentication data.
  */
-void
-FreeAuthenticationData(int count, IceAuthDataEntry *authDataEntries)
+void FreeAuthenticationData(int count, IceAuthDataEntry *authDataEntries)
 {
-  /* Each transport has entries for ICE and XSMP */
+    /* Each transport has entries for ICE and XSMP */
 
-  char command[256];
-  int i;
+    char command[256];
+    int i;
 
-  for (i = 0; i < count * 2; i++) {
-    free (authDataEntries[i].network_id);
-    free (authDataEntries[i].auth_data);
-  }
+    for (i = 0; i < count * 2; i++) {
+	free (authDataEntries[i].network_id);
+	free (authDataEntries[i].auth_data);
+    }
 
-  free (authDataEntries);
+    free (authDataEntries);
 
-  sprintf (command, "iceauth source %s", remAuthFile);
-  system(command);
+    sprintf (command, "iceauth source %s", remAuthFile);
+    system(command);
 
-  unlink(remAuthFile);
+    unlink(remAuthFile);
 
-  free(addAuthFile);
-  free(remAuthFile);
+    free(addAuthFile);
+    free(remAuthFile);
 }
 
 static void CloseListeners ()
@@ -580,28 +570,6 @@ static void CloseListeners ()
     unlink(fName.data());
 
     FreeAuthenticationData(numTransports, authDataEntries);
-}
-
-void MyIoErrorHandler ( IceConn iceConn )
-
-{
-//     if ( TRUE ) {
-// 	CloseListeners();
-// 	exit( -1 );
-//     }
-    if ( prev_handler)
-	(*prev_handler) (iceConn);
-}
-
-void InstallIOErrorHandler ()
-
-{
-    IceIOErrorHandler default_handler;
-
-    prev_handler = IceSetIOErrorHandler (NULL);
-    default_handler = IceSetIOErrorHandler (MyIoErrorHandler);
-    if (prev_handler == default_handler)
-	prev_handler = NULL;
 }
 
 static void sighandler(int sig)
@@ -1049,46 +1017,5 @@ void KSMServer::restoreSessionInternal()
 	    executeCommand( config->readListEntry( QString("restartCommand")+n ) );
 	}
     }
-}
-
-static const char *version = "0.4";
-static const char *description = I18N_NOOP( "The reliable KDE session manager that talks the standard X11R6 \nsession management protocol (XSMP)." );
-
-static const KCmdLineOptions options[] =
-{
-   { "r", 0, 0 },
-   { "restore", I18N_NOOP("Restores the previous session if available"), 0},
-   { "w", 0, 0 },
-   { "windowmanager <wm>", I18N_NOOP("Starts 'wm' in case no other window manager is \nparticipating in the session. Default is 'kwin'"), 0},
-   { 0, 0, 0 }
-};
-
-int main( int argc, char* argv[] )
-{
-    KAboutData aboutData( "ksmserver", I18N_NOOP("The KDE Session Manager"),
-       version, description, KAboutData::License_BSD,
-       "(c) 1999-2000, The KDE Developers");
-    aboutData.addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
-
-    KCmdLineArgs::init(argc, argv, &aboutData);
-    KCmdLineArgs::addCmdLineOptions( options );
-
-     KApplication a;
-    fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
-
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    QCString wm = args->getOption("windowmanager");
-    if ( wm.isEmpty() )
-	wm = "kwin";
-
-    KSMServer server ( QString::fromLatin1(wm) );
-    InstallIOErrorHandler();
-
-    if ( args->isSet("restore") )
-	server.restoreSession();
-    else
-	server.startDefaultSession();
-
-    return a.exec();
 }
 
