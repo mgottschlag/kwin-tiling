@@ -116,8 +116,7 @@ void KLocaleApplication::moduleChanged(bool state)
 void KLocaleApplication::updateSample()
 {
     sample->update();
-    //CT is this the right place?
-    emit moduleChanged(true);
+    moduleChanged(true);
 }
 
 void KLocaleApplication::reTranslate()
