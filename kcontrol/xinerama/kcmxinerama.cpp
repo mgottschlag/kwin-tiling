@@ -41,7 +41,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
   : KCModule(parent, name) {
 	_indicators.setAutoDelete(true);
 
-	config = KGlobal::config();
+	config = new KConfig("kdeglobals", false, false);
 
 	connect(&_timer, SIGNAL(timeout()), this, SLOT(clearIndicator()));
 
@@ -93,8 +93,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 
 KCMXinerama::~KCMXinerama() {
 	_timer.stop();
-	//Don't delete KGlobal::config()
-	//delete config;
+	delete config;
 	config = 0;
 	clearIndicator();
 }
