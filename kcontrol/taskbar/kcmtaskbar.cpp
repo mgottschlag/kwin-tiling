@@ -171,7 +171,7 @@ void TaskbarConfig::slotUpdateComboBox()
 
 void TaskbarConfig::load()
 {
-    KConfig *c = new KConfig("ktaskbarrc", false, false);
+    KConfig *c = new KConfig("ktaskbarrc", true, false);
     { // group for the benefit of the group saver
         KConfigGroupSaver saver(c, "General");
 
