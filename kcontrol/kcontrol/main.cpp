@@ -19,6 +19,20 @@
 */                                                                            
 
 
+/**
+ * Howto debug:
+ *    start "kcontrol --nofork" in a debugger.
+ *    
+ * If you want to test with command line arguments you need
+ * -after you have started kcontrol in the debugger-
+ * open another shell and run kcontrol with the desired
+ * command line arguments.
+ *
+ * The command line arguments will be passed to the version of
+ * kcontrol in the debugger via DCOP and will cause a call
+ * to newInstance().
+ */
+
 
 #include <kapp.h>
 #include <dcopclient.h>
@@ -29,8 +43,8 @@
 #include "toplevel.h"
 
 
-MyApplication::MyApplication(int argc, char *argv[])
-  : KUniqueApplication(argc, argv, "kcontrol"), toplevel(0)
+MyApplication::MyApplication(int argc, char *argv[], const QCString &appName)
+  : KUniqueApplication(argc, argv, appName), toplevel(0)
 {
   if (isRestored())
     RESTORE(TopLevel)
@@ -59,17 +73,10 @@ int MyApplication::newInstance(QValueList<QCString> params)
 
 int main(int argc, char *argv[])
 {
-  MyApplication app(argc, argv);
+  if (!MyApplication::start(argc, argv, "kcontrol"))
+      exit(0); // Don't do anything if we are already running
 
-  // process command line parameters
-  QValueList<QCString> params;
-  for (int i=0; i<argc; i++)
-    params.append(argv[i]);
-  app.newInstance(params);
-
-  // register as kcontrol
-  app.dcopClient()->attach();
-  app.dcopClient()->registerAs("kcontrol");
+  MyApplication app(argc, argv, "kcontrol");
 
   // show the whole stuff
   app.mainWidget()->show();
