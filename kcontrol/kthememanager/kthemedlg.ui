@@ -63,7 +63,7 @@
                 <cstring>btnInstall</cstring>
             </property>
             <property name="text">
-                <string>&amp;Install new theme...</string>
+                <string>&amp;Install New Theme...</string>
             </property>
             <property name="accel">
                 <string>Alt+I</string>
@@ -74,7 +74,7 @@
                 <cstring>btnRemove</cstring>
             </property>
             <property name="text">
-                <string>&amp;Remove theme</string>
+                <string>&amp;Remove Theme</string>
             </property>
             <property name="accel">
                 <string>Alt+R</string>
@@ -141,7 +141,7 @@
                 <cstring>btnCreate</cstring>
             </property>
             <property name="text">
-                <string>&amp;Create new theme...</string>
+                <string>&amp;Create New Theme...</string>
             </property>
             <property name="accel">
                 <string>Alt+C</string>
