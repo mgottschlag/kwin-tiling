@@ -84,26 +84,26 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     addColumn("");
     header()->hide();
 
-    connect(this, SIGNAL(dropped(QDropEvent*, QListViewItem*)),
-	    SLOT(slotDropped(QDropEvent*, QListViewItem*)));
+    connect(this, SIGNAL(dropped(QDropEvent*, QListViewItem*, QListViewItem*)),
+	    SLOT(slotDropped(QDropEvent*, QListViewItem*, QListViewItem*)));
 
     connect(this, SIGNAL(clicked( QListViewItem* )),
 	    SLOT(itemSelected( QListViewItem* )));
 
     connect(this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
 	    SLOT(slotRMBPressed(QListViewItem*, const QPoint&)));
-    
+
     // connect actions
-    connect(_ac->action("newitem"), SIGNAL(activated()), SLOT(newitem())); 
+    connect(_ac->action("newitem"), SIGNAL(activated()), SLOT(newitem()));
     connect(_ac->action("newsubmenu"), SIGNAL(activated()), SLOT(newsubmenu()));
     connect(_ac->action("edit_cut"), SIGNAL(activated()), SLOT(cut()));
     connect(_ac->action("edit_copy"), SIGNAL(activated()), SLOT(copy()));
     connect(_ac->action("edit_paste"), SIGNAL(activated()), SLOT(paste()));
     connect(_ac->action("delete"), SIGNAL(activated()), SLOT(del()));
-    
+
     // setup rmb menu
     _rmb = new QPopupMenu(this);
-    
+
     if(_ac->action("edit_cut"))
 	{
 	    _ac->action("edit_cut")->plug(_rmb);
@@ -119,15 +119,15 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
 	    _ac->action("edit_paste")->plug(_rmb);
 	    _ac->action("edit_paste")->setEnabled(false);
 	}
-    
+
     _rmb->insertSeparator();
-    
+
     if(_ac->action("delete"))
 	{
 	    _ac->action("delete")->plug(_rmb);
 	    _ac->action("delete")->setEnabled(false);
 	}
-    
+
     _rmb->insertSeparator();
 
     if(_ac->action("newitem"))
@@ -136,7 +136,7 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
 	_ac->action("newsubmenu")->plug(_rmb);
 
     _ndlg = new NameDialog(this);
-    
+
     fill();
 }
 
@@ -200,6 +200,7 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 		    item->setText(0, *it);
 		    item->setPixmap(0, KGlobal::iconLoader()->
 				    loadIcon("package",KIcon::Desktop, KIcon::SizeSmall));
+                    item->setExpandable(true);
 		}
 	    else
 		{
@@ -211,10 +212,11 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 			item = new TreeItem(this,  *it + "/.directory");
 		    else
 			item = new TreeItem(parent, *it + "/.directory");
-	
+
 		    item->setText(0, df.readName());
 		    item->setPixmap(0, KGlobal::iconLoader()
 				    ->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+                    item->setExpandable(true);
 		}
 	    fillBranch(*it, item);
 	}
@@ -227,7 +229,7 @@ void TreeView::itemSelected(QListViewItem *item)
     _ac->action("edit_cut")->setEnabled(selectedItem());
     _ac->action("edit_copy")->setEnabled(selectedItem());
     _ac->action("delete")->setEnabled(selectedItem());
-    
+
     if(!item) return;
 
     emit entrySelected(((TreeItem*)item)->file());
@@ -255,7 +257,7 @@ void TreeView::copyFile(const QString& src, const QString& dest, bool moving )
 
     if (src == dest) return;
 
-    cout << "copyFile: " << src.local8Bit() << " to " << dest.local8Bit() << endl;		
+    cout << "copyFile: " << src.local8Bit() << " to " << dest.local8Bit() << endl;
 
     // read-only + don't merge in kdeglobals
     KConfig s(locate("apps", src), true, false);
@@ -291,7 +293,7 @@ void TreeView::copyFile(const QString& src, const QString& dest, bool moving )
     d.writeEntry("Hidden", false);
 
     d.sync();
-    
+
     if( moving && KHotKeys::present()) // tell khotkeys this menu entry has moved
         KHotKeys::menuEntryMoved( dest, src );
 }
@@ -503,7 +505,7 @@ QStringList TreeView::dirList(const QString& rPath)
 		    if ((*it) == "." || (*it) == "..") continue;
 		    // does not work?!
 		    // if (dirlist.contains(*it)) continue;
-	
+
 		    if (relativePath == "")
 			{
 			    dirlist.remove(*it); //hack
@@ -524,22 +526,13 @@ bool TreeView::acceptDrag(QDropEvent* event) const
     return (QString(event->format()).contains("text/plain"));
 }
 
-void TreeView::slotDropped (QDropEvent * e, QListViewItem *after)
+void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem*after)
 {
     if(!e) return;
 
     // first move the item in the listview
     TreeItem *item = (TreeItem*)selectedItem();
-    QListViewItem* parent = 0;
 
-    if(after){
-	if(after->isOpen()) {
-	    parent = after;
-	    after = 0;
-	}
-	else
-	    parent = after->parent();
-    }
     moveItem(item, parent, after);
     setSelected(item, true);
 
@@ -621,12 +614,12 @@ void TreeView::newsubmenu()
 {
     _ndlg->setText(i18n("NewSubmenu"));
     if (!_ndlg->exec()) return;
-    
+
     QString dirname = _ndlg->text();
     if (dirname.isEmpty())
 	dirname = "NewSubmenu";
-    
-	
+
+
     TreeItem *item = (TreeItem*)selectedItem();
 
     QListViewItem* parent = 0;
@@ -643,7 +636,7 @@ void TreeView::newsubmenu()
 		parent = item->parent();
 		after = item;
 	    }
-	
+
 	sfile = item->file();
     }
 
@@ -652,13 +645,13 @@ void TreeView::newsubmenu()
     if(sfile.find(".directory") > 0)
 	{
 	    // truncate "blah/.directory"
-	
+
 	    int pos = dir.findRev('/');
 	    int pos2 = dir.findRev('/', pos-1);
-	
+
 	    if (pos2 >= 0)
 		pos = pos2;
-	
+
 	    if (pos > 0)
 		dir.truncate(pos);
 	    else
@@ -668,7 +661,7 @@ void TreeView::newsubmenu()
 	{
 	    // truncate "blah.desktop"
 	    int pos = dir.findRev('/');
-	
+
 	    if (pos > 0)
 		dir.truncate(pos);
 	    else
@@ -676,11 +669,11 @@ void TreeView::newsubmenu()
 	}
     if(!dir.isEmpty())
 	dir += '/';
-   
+
     dir += dirname + "/.directory";
-    
+
     TreeItem* newitem;
-	
+
     if (!parent)
 	newitem = new TreeItem(this, after, dir);
     else
@@ -700,11 +693,11 @@ void TreeView::newitem()
 {
     _ndlg->setText(i18n("NewItem"));
     if (!_ndlg->exec()) return;
-    
+
     QString filename = _ndlg->text();
     if (filename.isEmpty())
 	filename = "NewFile";
-    
+
     TreeItem *item = (TreeItem*)selectedItem();
 
     QListViewItem* parent = 0;
@@ -715,13 +708,13 @@ void TreeView::newitem()
     if(item){
 	if(item->childCount() > 0) {
 	    parent = item;
-	}	
+	}
 	else
 	    {
 		parent = item->parent();
 		after = item;
-	    }		
-	
+	    }
+
 	sfile = item->file();
     }
 
@@ -739,9 +732,9 @@ void TreeView::newitem()
     if(!dir.isEmpty())
 	dir += '/';
     dir += filename + ".desktop";
-	
+
     TreeItem* newitem;
-	
+
     if (!parent)
 	newitem = new TreeItem(this, after, dir);
     else
@@ -785,7 +778,7 @@ void TreeView::copy( bool moving )
     if(file.find(".directory") > 0)
 	{
 	    _clipboard = file;
-		
+
 	    // truncate path
 	    int pos = _clipboard.findRev('/');
 	    int pos2 = _clipboard.findRev('/', pos-1);
@@ -793,21 +786,21 @@ void TreeView::copy( bool moving )
 		pos = pos2+1;
 	    else
 		pos = 0;
-	
+
 	    if (pos > 0)
 		_clipboard = _clipboard.mid(pos, _clipboard.length());
-	
+
 	    copyDir(file, QString(clipboard_prefix) + _clipboard, moving );
 	}
     else if (file.find(".desktop"))
 	{
 	    _clipboard = file;
-		
+
 	    // truncate path
 	    int pos = _clipboard.findRev('/');
 	    if (pos >= 0)
 		_clipboard = _clipboard.mid(pos+1, _clipboard.length());
-	
+
 	    copyFile(file, QString(clipboard_prefix) + _clipboard, moving );
 	}
     _ac->action("edit_paste")->setEnabled(true);
@@ -839,7 +832,7 @@ void TreeView::paste()
     if (pos > 0)
 	{
 	    dest.truncate(pos);
-	
+
 	    // truncate file name
 	    pos = dest.findRev('/');
 	    if (pos < 0) pos = 0;
@@ -868,17 +861,17 @@ void TreeView::paste()
 	    item = 0;
 	}
 	else
-	    parent = item->parent();	
+	    parent = item->parent();
     }
-	
+
     TreeItem* newitem;
     if (!parent)
 	newitem = new TreeItem(this, item, "");
     else
 	newitem = new TreeItem(parent, item, "");
-	
+
     KDesktopFile df(locateLocal("apps", dest + '/' + _clipboard));
-	
+
     newitem->setText(0, df.readName());
     if(!dest.isEmpty())
 	newitem->setFile(dest + '/' + _clipboard);
@@ -891,7 +884,7 @@ void TreeView::paste()
 }
 
 void TreeView::del()
-{	
+{
     TreeItem *item = (TreeItem*)selectedItem();
 
     // nil selected? -> nil to delete
@@ -910,7 +903,7 @@ void TreeView::del()
 	    deleteFile(file);
 	    delete item;
 	}
-    
+
     _ac->action("edit_cut")->setEnabled(false);
     _ac->action("edit_copy")->setEnabled(false);
     _ac->action("delete")->setEnabled(false);

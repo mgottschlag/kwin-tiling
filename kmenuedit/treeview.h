@@ -58,9 +58,9 @@ signals:
 
 protected slots:
     void itemSelected(QListViewItem *);
-    void slotDropped(QDropEvent *, QListViewItem *);
+    void slotDropped(QDropEvent *, QListViewItem *, QListViewItem *);
     void slotRMBPressed(QListViewItem*, const QPoint&);
-    
+
     void newsubmenu();
     void newitem();
 
@@ -72,7 +72,7 @@ protected slots:
 protected:
     void fill();
     void fillBranch(const QString& relPath, TreeItem* parent);
-    
+
     // moving = src will be removed later
     void copy( bool moving );
 
