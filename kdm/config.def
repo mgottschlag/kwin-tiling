@@ -1236,12 +1236,6 @@ Description:
  </para><para>
  This will have no effect unless <option>AllowFifo</option> is enabled.
 
-<legacy>
-If: defined(__linux__) && (defined(__i386__) || defined(__amd64__))
-Proc: absorb_uselilo
-Source: kdm:Shutdown/UseLilo
-</legacy>
-
 Key: BootManager
 Type: enum
  None/BO_NONE: no boot manager
@@ -1251,6 +1245,7 @@ Default: None
 User: core
 User: greeter
 Instance: #Grub
+Merge: kdm:UseLilo(P_UseLilo)
 Comment: &
 Description:
  The boot manager &kdm; should use for offering boot options in the

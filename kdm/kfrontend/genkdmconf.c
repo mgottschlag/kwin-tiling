@@ -1330,15 +1330,6 @@ upd_consolettys( Entry *ce, Section *cs ATTR_UNUSED )
 }
 #endif
 
-#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
-static void
-absorb_uselilo( const char *sect ATTR_UNUSED, char **value )
-{
-	if (isTrue( *value ))
-		putfqval( "Shutdown", "BootManager", "Lilo" );
-}
-#endif
-
 #ifdef XDMCP
 static void
 cp_keyfile( Entry *ce, Section *cs ATTR_UNUSED )
@@ -2178,6 +2169,12 @@ P_EnableChooser( const char *sect ATTR_UNUSED, char **value )
 	*value = (char *)(isTrue( *value ) ? "DefaultLocal" : "LocalOnly");
 }
 #endif
+
+static void
+P_UseLilo( const char *sect ATTR_UNUSED, char **value )
+{
+	*value = (char *)(isTrue( *value ) ? "Lilo" : "None");
+}
 
 CONF_GEN_KMERGE
 
