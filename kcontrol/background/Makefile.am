@@ -23,6 +23,6 @@ messages:
 	$(XGETTEXT) -kni18n *.cc *.cpp -o $(podir)/kcmbackground.pot
 
 desktop_DATA =  background.desktop
-desktopdir = $(kde_appsdir)/Settings/LookNFeel/Desktop
+desktopdir = $(kde_appsdir)/Settings/LookNFeel
 
 EXTRA_DIST = $(desktop_DATA)
