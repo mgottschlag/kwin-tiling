@@ -21,6 +21,7 @@
 */
 
 #include <qdir.h>
+#include <qglobal.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
@@ -194,8 +195,10 @@ void KNotifyWidget::playSound()
 
 void KNotifyWidget::loadAll()
 {
-    // FIXME, Qt Bug, uncomment this when fixed
-    //    setEnabled( false );
+    // Qt Bug, fixed in 2.2.1
+#if QT_VERSION > 220
+    setEnabled( false );
+#endif
     setCursor( KCursor::waitCursor() );
     m_events->load();
     updateView();
