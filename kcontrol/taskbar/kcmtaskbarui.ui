@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>605</width>
+            <width>601</width>
             <height>454</height>
         </rect>
     </property>
@@ -83,7 +83,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Show windows list &amp;button</string>
+                        <string>Show window list &amp;button</string>
                     </property>
                     <property stdset="1">
                         <name>checked</name>
@@ -121,7 +121,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Sort tasks by &amp;desktop</string>
+                        <string>Sort tasks by virtual &amp;desktop</string>
                     </property>
                     <property stdset="1">
                         <name>checked</name>
