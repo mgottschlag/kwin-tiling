@@ -131,7 +131,7 @@ extern "C"
   {
     KGlobal::locale()->insertCatalogue("kcmsmartcard");
     return new KSmartcardConfig(parent, name);
-  };
+  }
 
   void init_smartcard()
   {
@@ -140,10 +140,15 @@ extern "C"
     delete config;
 
     if (start) {
-	bool _ok;
-	kapp->dcopClient()->remoteInterfaces("kded", "kardsvc", &_ok);
+	QByteArray data, retval;
+	QCString rettype;
+	QDataStream arg(data, IO_WriteOnly);
+	QCString modName = "kardsvc";
+	arg << modName;
+	kapp->dcopClient()->call("kded", "kded", "loadModule(QCString)", 
+			         data, rettype, retval);
     }
-  };
+  }
 }
 
 
