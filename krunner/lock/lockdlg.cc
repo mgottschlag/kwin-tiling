@@ -41,7 +41,7 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
     frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
     frame->setLineWidth(2);
 
-    pixlabel->setPixmap(DesktopIcon("kmenu"));
+    pixlabel->setPixmap(DesktopIcon("lock"));
 
     mLabel->setText(labelText());
 
