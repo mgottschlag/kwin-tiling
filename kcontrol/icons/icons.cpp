@@ -137,6 +137,7 @@ void KIconConfig::init()
     mpUsageList->insertItem(i18n("Main Toolbar"));
     mpUsageList->insertItem(i18n("Small Icons"));
     mpUsageList->insertItem(i18n("Panel"));
+    mpUsageList->insertItem(i18n("All Icons"));
 
     // For reading the configuration
     mGroups += "Desktop";
@@ -253,40 +254,45 @@ void KIconConfig::apply()
     int delta = 1000, dw, index = -1, size = 0, i;
     QValueList<int>::Iterator it;
     mpSizeBox->clear();
-    for (it=mAvSizes[mUsage].begin(), i=0; it!=mAvSizes[mUsage].end(); it++, i++)
-    {
-	mpSizeBox->insertItem(QString().setNum(*it));
-	dw = abs(mSizes[mUsage] - *it);
-	if (dw < delta)
-	{
-	    delta = dw;
-	    index = i;
-	    size = *it;
-	}
+    if (mUsage < KIcon::LastGroup) {
+        for (it=mAvSizes[mUsage].begin(), i=0; it!=mAvSizes[mUsage].end(); it++, i++)
+        {
+            mpSizeBox->insertItem(QString().setNum(*it));
+            dw = abs(mSizes[mUsage] - *it);
+            if (dw < delta)
+            {
+                delta = dw;
+                index = i;
+                size = *it;
+            }
 
+        }
+        if (index != -1)
+        {
+            mpSizeBox->setCurrentItem(index);
+            mSizes[mUsage] = size; // best or exact match
+        }
+        mpDPCheck->setChecked(mbDP[mUsage]);
+        mpAnimatedCheck->setChecked(mbAnimated[mUsage]);
     }
-    if (index != -1)
-    {
-	mpSizeBox->setCurrentItem(index);
-	mSizes[mUsage] = size; // best or exact match
-    }
-    mpDPCheck->setChecked(mbDP[mUsage]);
-    mpAnimatedCheck->setChecked(mbAnimated[mUsage]);
 }
 
 void KIconConfig::preview(int i)
 {
     // Apply effects ourselves because we don't want to sync
     // the configuration every preview.
-    QPixmap pm = mpLoader->loadIcon(mExample, KIcon::NoGroup, mSizes[mUsage]);
+
+    int viewedGroup = (mUsage == KIcon::LastGroup) ? KIcon::FirstGroup : mUsage;
+    
+    QPixmap pm = mpLoader->loadIcon(mExample, KIcon::NoGroup, mSizes[viewedGroup]);
     QImage img = pm.convertToImage();
-    if (mbDP[mUsage])
+    if (mbDP[viewedGroup])
     {
 	int w = img.width() * 2;
 	img = img.smoothScale(w, w);
     }
 
-    Effect &effect = mEffects[mUsage][i]; 
+    Effect &effect = mEffects[viewedGroup][i]; 
 
     img = mpEffect->apply(img, effect.type,
 	    effect.value, effect.color, effect.transparant);
@@ -375,8 +381,9 @@ void KIconConfig::defaults()
 
 void KIconConfig::slotUsage(int index)
 {
+    kdWarning() << KIcon::LastGroup << "::" << index << endl;
     mUsage = index;
-    if ( mUsage == KIcon::Panel )
+    if ( mUsage == KIcon::Panel || mUsage == KIcon::LastGroup )
     {
         mpSizeBox->setEnabled(false);
         mpDPCheck->setEnabled(false);
@@ -386,7 +393,7 @@ void KIconConfig::slotUsage(int index)
     {
         mpSizeBox->setEnabled(true);
         mpDPCheck->setEnabled(true);
-	mpAnimatedCheck->setEnabled( mUsage==KIcon::Desktop );
+	mpAnimatedCheck->setEnabled( mUsage == KIcon::Desktop );
     }
 
     apply();
@@ -395,9 +402,11 @@ void KIconConfig::slotUsage(int index)
 
 void KIconConfig::EffectSetup(int state)
 {
-    QPixmap pm = mpLoader->loadIcon(mExample, KIcon::NoGroup, mSizes[mUsage]);
+    int viewedGroup = (mUsage == KIcon::LastGroup) ? KIcon::FirstGroup : mUsage;
+
+    QPixmap pm = mpLoader->loadIcon(mExample, KIcon::NoGroup, mSizes[viewedGroup]);
     QImage img = pm.convertToImage();
-    if (mbDP[mUsage])
+    if (mbDP[viewedGroup])
     {
 	int w = img.width() * 2;
 	img = img.smoothScale(w, w);
@@ -411,19 +420,35 @@ void KIconConfig::EffectSetup(int state)
     case 2 : caption = i18n("Setup Disabled Icon Effect"); break;
     }
    
-    KIconEffectSetupDialog dlg(mEffects[mUsage][state], mDefaultEffect[state], caption, img);
+    KIconEffectSetupDialog dlg(mEffects[viewedGroup][state], mDefaultEffect[state], caption, img);
 
     if (dlg.exec() == QDialog::Accepted)
     {
-        mEffects[mUsage][state] = dlg.effect();
+        if (mUsage == KIcon::LastGroup) {
+            for (int i=0; i<KIcon::LastGroup; i++)
+                mEffects[i][state] = dlg.effect();
+        } else {
+            mEffects[mUsage][state] = dlg.effect();
+        }
+
+        // AK - can this call be moved therefore removing
+        //      code duplication?
+
         emit changed(true);
-        mbChanged[mUsage] = true;
+
+        if (mUsage == KIcon::LastGroup) {
+            for (int i=0; i<KIcon::LastGroup; i++)
+                mbChanged[i] = true;
+        } else {
+            mbChanged[mUsage] = true;
+        }
     }
     preview(state);
 }
 
 void KIconConfig::slotSize(int index)
 {
+    Q_ASSERT(mUsage < KIcon::LastGroup);
     mSizes[mUsage] = mAvSizes[mUsage][index];
     preview();
     emit changed(true);
@@ -432,6 +457,7 @@ void KIconConfig::slotSize(int index)
 
 void KIconConfig::slotDPCheck(bool check)
 {
+    Q_ASSERT(mUsage < KIcon::LastGroup);
     mbDP[mUsage] = check;
     preview();
     emit changed(true);
@@ -440,6 +466,7 @@ void KIconConfig::slotDPCheck(bool check)
 
 void KIconConfig::slotAnimatedCheck(bool check)
 {
+    Q_ASSERT(mUsage < KIcon::LastGroup);
     mbAnimated[mUsage] = check;
     emit changed(true);
     mbChanged[mUsage] = true;
