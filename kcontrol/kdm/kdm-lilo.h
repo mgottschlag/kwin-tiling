@@ -26,30 +26,31 @@
 #include <qlineedit.h>
 
 
-class KDMLiloWidget : public KConfigWidget
+#include <kcmodule.h>
+
+
+class KDMLiloWidget : public KCModule
 {
   Q_OBJECT
 
 public:
 	
-  KDMLiloWidget(QWidget *parent, const char *name, bool init = false);
-  ~KDMLiloWidget();
+  KDMLiloWidget(QWidget *parent=0, const char *name=0);
 
-  void loadSettings();
-  void applySettings();
-  void setupPage(QWidget*);
-
+  void load();
+  void save();
+  void defaults();
   
 private slots:
 	
   void liloClicked();
+  void changed();
 
+ 
 private:
 
   QCheckBox *useLilo;
   QLineEdit *liloCmd, *liloMap;
-
-  bool gui;
 
 };
 

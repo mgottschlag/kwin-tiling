@@ -41,7 +41,7 @@ protected:
 	bool allowdrop;
 };
 
-class KDMBackgroundWidget : public KConfigWidget
+class KDMBackgroundWidget : public QWidget
 {
 	Q_OBJECT
 

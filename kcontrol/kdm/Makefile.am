@@ -1,19 +1,17 @@
+lib_LTLIBRARIES = libkcm_kdm.la
 
-INCLUDES = $(all_includes) 
-LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD = $(LIB_KIMGIO) $(LIB_KFILE) $(LIB_KIO)
-SUBDIRS = pics 
+libkcm_kdm_la_SOURCES = kdm-appear.cpp kdm-font.cpp kdm-sess.cpp \
+	kdropsite.cpp utils.cpp backgnd.cpp kdm-lilo.cpp kdm-users.cpp \
+ 	klangcombo.cpp main.cpp bgdialogs.cpp
 
-bin_PROGRAMS = kdmconfig
+libkcm_kdm_la_LDFLAGS  = $(all_libraries) -module -avoid-version 
+libkcm_kdm_la_LIBADD = -lkdeui -lkio -lkfile $(top_builddir)/kdesktop/libbgnd.la -lkimgio
 
-kdmconfig_SOURCES = main.cpp utils.cpp kdm-appear.cpp kdm-font.cpp kdm-bgnd.cpp \
-	kdm-users.cpp kdm-sess.cpp klangcombo.cpp kdropsite.cpp kdm-lilo.cpp
-kdmconfig_LDADD = $(LDADD)
-#kdmconfig_LDFLAGS = -g
-METASOURCES =  kdm-appear.moc kdm-font.moc kdm-bgnd.moc kdm-users.moc kdm-sess.moc \
-	klangcombo.moc kdropsite.moc kdm-lilo.moc
-noinst_HEADERS = kdm-appear.h kdm-font.h kdm-bgnd.h kdm-users.h kdm-sess.h klangcombo.h \
-	utils.h kdropsite.h kdm-lilo.h
+INCLUDES= $(all_includes) -I$(top_srcdir)/kdesktop
+
+libkcm_kdm_la_METASOURCES = AUTO
+
+DISTCLEANFILES = $(lib_bell_METASOURCES)
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kdmconfig_SOURCES) && mv messages.po ../../po/kdmconfig.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_kdm_SOURCES) -o ../po/libkcm_kdm.pot

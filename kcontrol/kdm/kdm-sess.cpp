@@ -28,22 +28,9 @@
 
 #include "kdm-sess.moc"
 
-// Destructor
-KDMSessionsWidget::~KDMSessionsWidget()
-{
-  // All widgets are destroyed by their layouts
-}
 
-KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name, bool init)
-  : KConfigWidget(parent, name)
-{
-      gui = !init;
-      loadSettings();      
-      if(gui)
-        setupPage(parent);
-}
-
-void KDMSessionsWidget::setupPage(QWidget *)
+KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
+  : KCModule(parent, name)
 {
       QGroupBox *group0 = new QGroupBox( i18n("Allow to shutdown"), this );
 
@@ -53,21 +40,24 @@ void KDMSessionsWidget::setupPage(QWidget *)
       sdcombo->insertItem(i18n("All"), 1);
       sdcombo->insertItem(i18n("Root Only"), 2);
       sdcombo->insertItem(i18n("Console Only"), 3);
-      sdcombo->setCurrentItem(sdMode);
+      connect(sdcombo, SIGNAL(activated(int)), this, SLOT(changed()));
 
       QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
 
       QLabel *shutdown_label = new QLabel(i18n("Shutdown"), group1);
       shutdown_lined = new KLineEdit(group1);
-      shutdown_lined->setText(shutdownstr);
+      connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
+	      this, SLOT(changed()));
 
       QLabel *restart_label = new QLabel(i18n("Restart"), group1);
       restart_lined = new KLineEdit(group1);
-      restart_lined->setText(restartstr);
+      connect(restart_lined, SIGNAL(textChanged(const QString&)),
+	      this, SLOT(changed()));
 
       QLabel *console_label = new QLabel(i18n("Console mode"), group1);
       console_lined = new QLineEdit(group1);
-      console_lined->setText(consolestr);
+      connect(console_lined, SIGNAL(textChanged(const QString&)),
+	      this, SLOT(changed()));
 
       QGroupBox *group2 = new QGroupBox( i18n("Session types"), this );
       
@@ -77,29 +67,34 @@ void KDMSessionsWidget::setupPage(QWidget *)
               SLOT(slotCheckNewSession(const QString&)));
       connect(session_lined, SIGNAL(returnPressed()),
               SLOT(slotAddSessionType()));
+      connect(session_lined, SIGNAL(returnPressed()),
+	      this, SLOT(changed()));
 
       QLabel *types_label = new QLabel(i18n("Available types"), group2);
 
       sessionslb = new MyListBox(group2);
       connect(sessionslb, SIGNAL(highlighted(int)), 
               SLOT(slotSessionHighlighted(int)));
-      sessionslb->insertStrList(&sessions);
 
       btnrm = new QPushButton( i18n("Remove"), group2 );
       btnrm->setEnabled(false);
       connect( btnrm, SIGNAL( clicked() ), SLOT( slotRemoveSessionType() ) );
+      connect( btnrm, SIGNAL( clicked() ), SLOT( changed() ) );
 
       btnadd = new QPushButton( i18n("Add"), group2 );
       btnadd->setEnabled(false);
+      connect( btnadd, SIGNAL( clicked() ), SLOT( changed() ) );
       connect( btnadd, SIGNAL( clicked() ), SLOT( slotAddSessionType() ) );
 
       btnup = new KDirectionButton(UpArrow, group2);
       btnup->setEnabled(false);
       connect(btnup, SIGNAL( clicked() ), SLOT( slotSessionUp() ));
+      connect(btnup, SIGNAL( clicked() ), SLOT( changed() ));
       btndown = new KDirectionButton(DownArrow, group2);
       btndown->setEnabled(false);
       btndown->setFixedSize(20, 20);
       connect(btndown,SIGNAL( clicked() ), SLOT( slotSessionDown() ));
+      connect(btndown,SIGNAL( clicked() ), SLOT( changed() ));
 
       QBoxLayout *main = new QVBoxLayout( this, 10 );
       QBoxLayout *lgroup0 = new QVBoxLayout( group0, 10 );
@@ -137,6 +132,8 @@ void KDMSessionsWidget::setupPage(QWidget *)
       lgroup2->setRowStretch(5, 1);
         
       main->activate();
+
+      load();
 }
 
 void KDMSessionsWidget::slotSessionHighlighted(int s)
@@ -194,7 +191,7 @@ void KDMSessionsWidget::slotSetAllowShutdown(int s)
   sdMode = s;
 }
 
-void KDMSessionsWidget::applySettings()
+void KDMSessionsWidget::save()
 {
   //debug("KDMSessionsWidget::applySettings()");
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
@@ -241,18 +238,20 @@ void KDMSessionsWidget::applySettings()
   delete c;
 }
 
-void KDMSessionsWidget::loadSettings()
+
+void KDMSessionsWidget::load()
 {
   QString str;
+  QStrList sessions;
   
   // Get config object
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
   c->setGroup("KDM");
 
   // read restart and shutdown cmds
-  restartstr = c->readEntry("Restart", "/sbin/reboot");
-  shutdownstr = c->readEntry("Shutdown", "/sbin/halt");
-  consolestr = c->readEntry("ConsoleMode", "/sbin/init 3");
+  restart_lined->setText(c->readEntry("Restart", "/sbin/reboot"));
+  shutdown_lined->setText(c->readEntry("Shutdown", "/sbin/halt"));
+  console_lined->setText(c->readEntry("ConsoleMode", "/sbin/init 3"));
 
   str = c->readEntry("ShutDownButton", "All");
   if(str == "All")
@@ -263,15 +262,35 @@ void KDMSessionsWidget::loadSettings()
     sdMode = RootOnly;
   else
     sdMode = ConsoleOnly;
+  sdcombo->setCurrentItem(sdMode);
 
   str = c->readEntry( "SessionTypes");
   if(!str.isEmpty())
     semsplit( str, sessions);	  
-  //for(uint i = 0; i < sessions.count(); i++)
-    //debug("session type: %s", sessions.at(i));
+  sessionslb->clear();
+  sessionslb->insertStrList(&sessions);
 
   delete c;
 }
 
 
 
+void KDMSessionsWidget::defaults()
+{
+  restart_lined->setText("/sbin/reboot");
+  shutdown_lined->setText("/sbin/halt");
+  console_lined->setText("/sbin/init 3");
+
+  sdMode = All;
+  sdcombo->setCurrentItem(sdMode);
+
+  sessionslb->clear();
+  sessionslb->insertItem("kde");
+  sessionslb->insertItem("failsave");
+}
+
+
+void KDMSessionsWidget::changed()
+{
+  emit KCModule::changed(true);
+}

@@ -54,7 +54,7 @@ KDMBackgroundWidget::~KDMBackgroundWidget()
 
 
 KDMBackgroundWidget::KDMBackgroundWidget(QWidget *parent, const char *name, bool init)
-  : KConfigWidget(parent, name)
+  : QWidget(parent, name)
 {
       gui = !init;
       loadSettings();

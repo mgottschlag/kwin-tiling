@@ -33,17 +33,20 @@
 
 #include <pwd.h>
 
-class KDMUsersWidget : public KConfigWidget
+#include <kcmodule.h>
+
+
+class KDMUsersWidget : public KCModule
 {
 	Q_OBJECT
 
 public:
-	KDMUsersWidget(QWidget *parent, const char *name, bool init = false);
-	~KDMUsersWidget();
+	KDMUsersWidget(QWidget *parent=0, const char *name=0);
 
-        void loadSettings();
-        void applySettings();
-	void setupPage(QWidget*);
+        void load();
+        void save();
+	void defaults();
+
 	bool eventFilter(QObject *o, QEvent *e);
 
 protected:
@@ -52,14 +55,12 @@ protected:
 	
 private slots:
         void slotUserSelected(int);
-        void slotUserShowMode(int);
-        void slotUserShow(bool);
-        void slotUserSort(bool);
         void slotAllToNo();
         void slotAllToUsr();
         void slotUsrToAll();
         void slotNoToAll();
         void slotUserPixChanged(const QString&);
+	void slotChanged();
 
 private:
 
@@ -69,8 +70,8 @@ private:
         KIconLoaderButton *userbutton;
         QLabel       *userlabel;
 	QListBox     *alluserlb, *nouserlb, *userlb;
-        QStrList     no_users, users, allusers;
-        bool         showallusers, showusers, sortusers, changed, gui;
+	bool         showallusers;
+
 };
 
 #endif

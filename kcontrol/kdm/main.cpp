@@ -1,165 +1,122 @@
 /*
-  This file is part of the KDE Display Manager Configuration package
-  Copyright (C) 1997 Thomas Tanghus (tanghus@earthling.net)
-  
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-   
-*/
+ * main.cpp
+ *
+ * Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+ *
+ * Requires the Qt widget libraries, available at no cost at
+ * http://www.troll.no/
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 
-#include "utils.h"
+#include <klocale.h>
+
 
 #include "kdm-appear.h"
 #include "kdm-font.h"
-#include "kdm-bgnd.h"
+#include "backgnd.h"
 #include "kdm-users.h"
 #include "kdm-sess.h"
-#include "kdm-lilo.h"
+#include "kdm-lilo.h" 
 
-#include <kwm.h>
-#include <klocale.h>
-#include <kglobal.h>
-#include <kstddirs.h>
-#include <kmessagebox.h>
+#include "main.h"
 
-class KDMConfigApplication : public KControlApplication
+
+KDModule::KDModule(QWidget *parent, const char *name)
+  : KCModule(parent, name)
 {
-public:
+  tab = new QTabWidget(this);
 
-  KDMConfigApplication(int &argc, char **arg, const char *name);
+  appearance = new KDMAppearanceWidget(this);
+  tab->addTab(appearance, i18n("&Appearance"));
+  connect(appearance, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  void apply();
+  font = new KDMFontWidget(this);
+  tab->addTab(font, i18n("&Font"));
+  connect(font, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-private:
+  background = new KBackground(this, "");
+  tab->addTab(background, i18n("&Background"));
+  connect(background, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  KDMAppearanceWidget *appearance;
-  KDMFontWidget       *font;
-  KDMBackgroundWidget *background;
-  KDMUsersWidget      *users;
-  KDMSessionsWidget   *sessions;
-  KDMLiloWidget       *lilo;
-  QStrList            *pages;
-};
+  users = new KDMUsersWidget(this);
+  tab->addTab(users, i18n("&Users"));
+  connect(users, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+
+  sessions = new KDMSessionsWidget(this,0);
+  tab->addTab(sessions, i18n("&Sessions"));
+  connect(sessions, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+
+  lilo = new KDMLiloWidget(this);
+  tab->addTab(lilo, i18n("&Lilo"));
+  connect(lilo, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+}
 
 
-KDMConfigApplication::KDMConfigApplication(int &argc, char **argv, 
-					   const char *name)
-    : KControlApplication(argc, argv, name)
+void KDModule::load()
 {
-  appearance = 0;
-  font = 0;
-  background = 0;
-  users = 0;
-  sessions = 0;
-  lilo = 0;
+  appearance->load();
+  font->load();
+  background->load();
+  users->load();
+  sessions->load();
+  lilo->load();
+}
 
-  pages = getPageList();
 
-  if (runGUI())
-  {
-      kimgioRegister();
-      KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_default("data") + "kdm/pics/users");
-      KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_default("data") + "kdm/pics");
+void KDModule::save()
+{
+  appearance->save();
+  font->save();
+  background->save();
+  users->save();
+  sessions->save();
+  lilo->save();
+}
 
-      if (!pages || pages->contains("appearance"))
-	  addPage(appearance = new KDMAppearanceWidget(dialog, "appearance", FALSE),
-		  i18n("&Appearance"), 
-		  "kdm-appear.html");
-      if (!pages || pages->contains("font"))
-        addPage(font = new KDMFontWidget(dialog, "font", FALSE),
-		i18n("&Fonts"),
-		"kdm-font.html");
-      if (!pages || pages->contains("background"))
-	  addPage(background = new KDMBackgroundWidget(dialog, "background", FALSE),
-		  i18n("&Background"), "kdm-backgnd.html");
-      if (!pages || pages->contains("users"))
-        addPage(users = new KDMUsersWidget(dialog, "users", FALSE),
-                                  i18n("&Users"), "kdm-users.html");
-      if (!pages || pages->contains("sessions"))
-        addPage(sessions = new KDMSessionsWidget(dialog, "sessions", FALSE),
-                                  i18n("&Sessions"), "kdm-sess.html");
-      if (!pages || pages->contains("lilo"))
-        addPage(lilo = new KDMLiloWidget(dialog, "lilo", FALSE),
-                                  i18n("&Lilo"), "kdm-lilo.html");
-      if (appearance || font || background || sessions || users || lilo)
-        dialog->show();
-      else
-	  {
-	      fprintf(stderr, i18n("usage: kdmconfig [-init | {appearance,font,background,sessions,users,lilo}]\n").ascii());
-	      justInit = TRUE;
-	  }
-      
+
+void KDModule::defaults()
+{
+  appearance->defaults();
+  font->defaults();
+  background->defaults();
+  users->defaults();
+  sessions->defaults();
+  lilo->defaults();
+}
+
+
+void KDModule::moduleChanged(bool state)
+{
+  emit changed(state);
+}
+
+
+void KDModule::resizeEvent(QResizeEvent *)
+{
+  tab->setGeometry(0,0,width(),height());
+}
+
+
+extern "C"
+{
+  KCModule *create_kdm(QWidget *parent, const char *name) 
+  { 
+    return new KDModule(parent, name);
   }
 }
 
-/*
-void KDMConfigApplication::init()
-{
-  KDMConfigWidget *kdmconfig = new KDMConfigWidget(0, 0, TRUE);
-  delete kdmconfig;
-}
-*/
 
-void KDMConfigApplication::apply()
-{
-  //debug("KDMConfigApplication::apply()");
-  QApplication::setOverrideCursor( waitCursor );
-
-  if (appearance)
-    appearance->applySettings();
-  if (font)
-    font->applySettings();
-  if (background)
-    background->applySettings();
-  if (users)
-    users->applySettings();
-  if (sessions)
-    sessions->applySettings();
-  if (lilo)
-    lilo->applySettings();
-
-  QApplication::restoreOverrideCursor( );
-}
-
-
-int main(int argc, char **argv)
-{
-  KDMConfigApplication app(argc, argv, "kdmconfig");
-  app.setTitle(i18n("KDM Configuration"));
-  
-  if (app.runGUI()) {
-      
-      QString file = locate("config", "kdmrc");
-      if (file == KGlobal::dirs()->saveLocation("config") + "kdmrc") {
-          QString msg = i18n("You have a local config file %1  - \n"
-                             "I will save your changes into this file.\n"
-                             "If this isn't your intention, remove it please!").arg(file);
-          KMessageBox::sorry( 0, msg);
-      }
-      QFileInfo fi(file);
-      if(fi.isReadable() && fi.isWritable())
-          return app.exec();
-      else {
-          QString msg = i18n("Sorry, but you don't have read/write\n"
-                             "permission to the KDM setup file %1.").arg(file);
-          KMessageBox::sorry( 0, msg);
-      }
-  }
-  else
-  {
-//      app.init();
-      return 0;
-    }
-}

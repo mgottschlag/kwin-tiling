@@ -21,23 +21,27 @@
 #define __KDMFONT_H__
 
 
-#include <kfontdialog.h>
 
-class KDMFontWidget : public KConfigWidget
+#include <kfontdialog.h>
+#include <kcmodule.h>
+
+
+class KDMFontWidget : public KCModule
 {
 	Q_OBJECT
 
 public:
-	KDMFontWidget(QWidget *parent, const char *name, bool init = false);
-	~KDMFontWidget();
+	KDMFontWidget(QWidget *parent=0, const char *name=0);
 
-        void loadSettings();
-        void applySettings();
-	void setupPage(QWidget*);
+        void load();
+        void save();
+	void defaults();
+
 
 private slots:
         void slotGetFont();
         void slotSetFont(int);
+
 
 private:
 
@@ -45,7 +49,7 @@ private:
         QFont        tmpfont, stdfont, greetfont, failfont;
         QLabel       *fontlabel;
 	QComboBox    *fontcombo;
-        bool         gui;
+
 };
 
 

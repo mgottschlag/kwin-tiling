@@ -24,51 +24,37 @@
 
 #include "kdm-lilo.moc"
 
-// Destructor
-KDMLiloWidget::~KDMLiloWidget()
-{
-  if (gui)
-  {
-  }
-}
 
-
-KDMLiloWidget::KDMLiloWidget(QWidget *parent, const char *name, bool init)
-  : KConfigWidget(parent, name)
-{
-  gui = !init;
-  if(gui)
-    setupPage(parent);
-  loadSettings();
-  liloClicked();
-}
-
-
-void KDMLiloWidget::setupPage(QWidget *)
+KDMLiloWidget::KDMLiloWidget(QWidget *parent, const char *name)
+  : KCModule(parent, name)
 {
   QGridLayout *grid = new QGridLayout(this,4,2,16,8);
 
   useLilo = new QCheckBox(i18n("Use Lilo for reboot options"), this);
   grid->addMultiCellWidget(useLilo, 0,0, 0,1);
-  
+  connect(useLilo, SIGNAL(clicked()), this, SLOT(changed()));
   connect(useLilo, SIGNAL(clicked()), this, SLOT(liloClicked()));
 
   liloCmd = new QLineEdit(this);
   grid->addWidget(liloCmd, 1, 1);
   QLabel *label = new QLabel(liloCmd, i18n("Lilo command"), this);
   grid->addWidget(label, 1, 0);
+  connect(liloCmd, SIGNAL(textChanged(const QString&)), this, SLOT(changed()));
 
   liloMap = new QLineEdit(this);
   grid->addWidget(liloMap, 2, 1);
   label = new QLabel(liloMap, i18n("Lilo map file"), this);
   grid->addWidget(label, 2, 0);
+  connect(liloMap, SIGNAL(textChanged(const QString&)), this, SLOT(changed()));
 
   grid->setRowStretch(3,1);
   grid->setColStretch(1,1);
+
+  load();
 }
 
 
-void KDMLiloWidget::applySettings()
+void KDMLiloWidget::save()
 {
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
@@ -82,18 +68,31 @@ void KDMLiloWidget::applySettings()
 }
 
 
-void KDMLiloWidget::loadSettings()
+void KDMLiloWidget::load()
 {
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
   c->setGroup("Lilo");
 
-  bool use = c->readBoolEntry("Lilo", TRUE);
+  bool use = c->readBoolEntry("Lilo", false);
   useLilo->setChecked(use);
 
   liloCmd->setText(c->readEntry("LiloCommand", "/sbin/lilo"));
   liloMap->setText(c->readEntry("LiloMap", "/boot/map"));
 
   delete c;
+
+  liloClicked();
+}
+
+
+void KDMLiloWidget::defaults()
+{
+  useLilo->setChecked(false);
+
+  liloCmd->setText("/sbin/lilo");
+  liloMap->setText("/boot/map");
+
+  liloClicked();
 }
 
 
@@ -101,4 +100,10 @@ void KDMLiloWidget::liloClicked()
 {
   liloCmd->setEnabled(useLilo->isChecked());
   liloMap->setEnabled(useLilo->isChecked());
+}
+
+
+void KDMLiloWidget::changed()
+{
+  emit KCModule::changed(true);
 }

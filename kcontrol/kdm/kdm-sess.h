@@ -26,6 +26,9 @@
 #include <qlistbox.h>
 #include <kdbtn.h>
 
+#include <kcmodule.h>
+
+
 class QLineEdit;
 
 class MyListBox : public QListBox
@@ -35,17 +38,16 @@ public:
 	bool isItemVisible(int id) { return itemVisible(id); }
 };
 
-class KDMSessionsWidget : public KConfigWidget
+class KDMSessionsWidget : public KCModule
 {
 	Q_OBJECT
 
 public:
-	KDMSessionsWidget(QWidget *parent, const char *name, bool init = false);
-	~KDMSessionsWidget();
+	KDMSessionsWidget(QWidget *parent=0, const char *name=0);
 
-        void loadSettings();
-        void applySettings();
-	void setupPage(QWidget*);
+        void load();
+        void save();
+	void defaults();
 
 	enum { Non, All, RootOnly, ConsoleOnly };
 	
@@ -60,16 +62,14 @@ protected slots:
         void slotCheckNewSession(const QString&);
         void slotSessionUp();
         void slotSessionDown();
+	void changed();
 
 private:
         KIconLoader  *iconloader;
 	QComboBox    *sdcombo;
         QLineEdit    *restart_lined, *shutdown_lined, *session_lined, *console_lined;
 	MyListBox     *sessionslb;
-        QString      shutdownstr, restartstr, consolestr;
-        QStrList     sessions;
 	int          sdMode;
-        bool         gui;
         KDirectionButton *btnup, *btndown;
         QButton      *btnrm, *btnadd;
 };

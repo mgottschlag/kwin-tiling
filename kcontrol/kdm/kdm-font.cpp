@@ -24,75 +24,51 @@
 #include "kdm-font.moc"
 
 
-
-// Destructor
-KDMFontWidget::~KDMFontWidget()
+KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
+  : KCModule(parent, name)
 {
-  if(gui)
-  {
-    delete fontcombo;
-    delete fontlabel;
-  }
+  QGroupBox *tGroup = new QGroupBox(i18n("Select fonts"), this);
+  QGroupBox *bGroup = new QGroupBox(i18n("Example"), this);
+
+  QPushButton *fontbtn = new QPushButton(i18n("Change font..."), tGroup);
+  connect(fontbtn, SIGNAL(clicked()), SLOT(slotGetFont()));
+  fontbtn->setFixedSize(fontbtn->sizeHint());
+
+  fontcombo = new QComboBox( FALSE, tGroup );
+  connect(fontcombo, SIGNAL(highlighted(int)), SLOT(slotSetFont(int)));
+  fontcombo->insertItem(i18n("Greeting"), 0);
+  fontcombo->insertItem(i18n("Fail"), 1);
+  fontcombo->insertItem(i18n("Standard"), 2);
+  fontcombo->setFixedSize(fontcombo->sizeHint());
+
+  fontlabel = new QLabel( bGroup );
+  fontlabel->setFrameStyle(QFrame::WinPanel|QFrame::Sunken);
+  
+  QBoxLayout *ml = new QVBoxLayout(this, 10);
+
+  QBoxLayout *tLayout = new QVBoxLayout(tGroup, 10);
+  QBoxLayout *bLayout = new QVBoxLayout(bGroup, 10);
+  tLayout->addSpacing(tGroup->fontMetrics().height());
+  bLayout->addSpacing(bGroup->fontMetrics().height());
+  
+  QBoxLayout *tLayout2 = new QHBoxLayout();
+  tLayout->addLayout(tLayout2, 1);
+  tLayout2->addWidget(fontbtn);
+  tLayout2->addWidget(fontcombo);
+  tLayout2->addStretch();
+  
+  bLayout->addWidget(fontlabel);
+  
+  ml->addWidget(tGroup);
+  ml->addWidget(bGroup, 3);
+  ml->addStretch(2);
+
+  load();  
+  slotSetFont(0);
 }
 
 
-KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name, bool init)
-  : KConfigWidget(parent, name)
-{
-      gui = !init;
-      loadSettings();
-      if(gui)
-        setupPage(parent);
-}
-
-void KDMFontWidget::setupPage(QWidget *)
-{
-      QGroupBox *tGroup = new QGroupBox( 
-            i18n("Select fonts"), this );
-      QGroupBox *bGroup = new QGroupBox( 
-            i18n("Example"), this );
-      QPushButton *fontbtn = 
-             new QPushButton(i18n("Change font..."), tGroup);
-      connect(fontbtn, SIGNAL(clicked()), SLOT(slotGetFont()));
-      fontbtn->setFixedSize(fontbtn->sizeHint());
-      fontcombo = new QComboBox( FALSE, tGroup );
-      connect(fontcombo, SIGNAL(highlighted(int)), SLOT(slotSetFont(int)));
-      fontcombo->insertItem(i18n("Greeting"), 0);
-      fontcombo->insertItem(i18n("Fail"), 1);
-      fontcombo->insertItem(i18n("Standard"), 2);
-      fontcombo->setFixedSize(fontcombo->sizeHint());
-      fontlabel = new QLabel( bGroup );
-      //fontlabel->setAutoResize(true);
-      fontlabel->setFrameStyle(QFrame::WinPanel|QFrame::Sunken);
-      //fontlabel->adjustSize();
-
-      QBoxLayout *ml = new QVBoxLayout(this, 10);
-
-      QBoxLayout *tLayout = new QVBoxLayout(tGroup, 10);
-      QBoxLayout *bLayout = new QVBoxLayout(bGroup, 10);
-      tLayout->addSpacing(tGroup->fontMetrics().height());
-      bLayout->addSpacing(bGroup->fontMetrics().height());
-
-      QBoxLayout *tLayout2 = new QHBoxLayout();
-      tLayout->addLayout(tLayout2, 1);
-      tLayout2->addWidget(fontbtn);
-      tLayout2->addWidget(fontcombo);
-      tLayout2->addStretch();
-
-      bLayout->addWidget(fontlabel);
-
-      ml->addWidget(tGroup);
-      ml->addWidget(bGroup, 3);
-      ml->addStretch(2);
-
-      tLayout->activate();
-      bLayout->activate();
-      ml->activate();
-
-      slotSetFont(0);
-}
-
-void KDMFontWidget::applySettings()
+void KDMFontWidget::save()
 {
   //debug("KDMFontWidget::applySettings()");
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
@@ -106,7 +82,8 @@ void KDMFontWidget::applySettings()
   delete c;
 }
 
-void KDMFontWidget::loadSettings()
+
+void KDMFontWidget::load()
 {
   QString str;
   
@@ -122,8 +99,21 @@ void KDMFontWidget::loadSettings()
   greetfont.setFamily("Helvetica");
   greetfont = c->readFontEntry("GreetFont", &greetfont);
 
+  slotSetFont(fontcombo->currentItem());
+
   delete c;
 }
+
+
+void KDMFontWidget::defaults()
+{
+  stdfont = QFont("Helvetica");
+  failfont = QFont("Courier");
+  greetfont = QFont("Helvetica");
+
+  slotSetFont(fontcombo->currentItem());
+}
+
 
 void KDMFontWidget::slotGetFont()
 {
@@ -147,7 +137,10 @@ void KDMFontWidget::slotGetFont()
   fontlabel->setFont(tmpfont);
   //fontlabel->setFixedSize(fontlabel->sizeHint());
   delete fontdlg;
+
+  emit KCModule::changed(true);
 }
+
 
 void KDMFontWidget::slotSetFont(int id)
 {
@@ -171,3 +164,4 @@ void KDMFontWidget::slotSetFont(int id)
   //fontlabel->adjustSize();
   QApplication::restoreOverrideCursor( );
 }
+

@@ -19,6 +19,7 @@
 
 
 #include <qdragobject.h>
+#include <qlayout.h>
 
 #include "utils.h"
 #include <kio_job.h>
@@ -31,159 +32,96 @@
 #include "kdm-appear.moc"
 
 
-// Destructor
-KDMAppearanceWidget::~KDMAppearanceWidget()
+KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
+  : KCModule(parent, name)
 {
-  if(gui)
-  {
-    delete logobutton;
-    delete logo_lined;
-    delete greetstr_lined;
-    delete guicombo;
-    delete langcombo;
-  }
-}
+  QVBoxLayout *vbox = new QVBoxLayout(this, 6,6, "vbox");
 
-/*
-void KDMConfigWidget::resizeEvent(QResizeEvent *re)
-{
-  QSize s = re->size();
+  QGroupBox *group = new QGroupBox(i18n("Appearance"), this);
+  vbox->addWidget(group);
 
-  if(w && tabbar)
-  {
-    tabbar->adjustSize();
-    w->setGeometry(0, tabbar->height(),
-            s.width(), s.height()-tabbar->height());
-  }
-  else
-    debug("Resize: NO WIDGET!!!");
-  KConfigWidget::resizeEvent(re);
-}
-*/
+  QVBoxLayout *vvbox = new QVBoxLayout(group, 6,6, "vvbox");
+  vvbox->addSpacing(group->fontMetrics().height());
 
-KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name, bool init)
-  : KConfigWidget(parent, name)
-{
-      gui = !init;
-      loadSettings();
-      if(gui)
-        setupPage(parent);
-}
+  QGridLayout *grid = new QGridLayout(vvbox, 5,3, 6, "grid");
+  grid->setColStretch(2,1);
 
-void KDMAppearanceWidget::setupPage(QWidget *pw)
-{
-      QGroupBox *group = new QGroupBox( 
-            i18n("Appearance"), this );
-      CHECK_PTR(group);
-      group->setGeometry(5, 10, pw->width()-30, pw->height()-20);
-      QLabel *label = new QLabel(i18n("Greeting string:"), group);
-      label->move( 10, 20 );
+  QLabel *label = new QLabel(i18n("Greeting string:"), group);
+  grid->addWidget(label, 1,0);
 
-      greetstr_lined = new KLineEdit(group);
-      greetstr_lined->setText(greetstr);
-      greetstr_lined->setGeometry(label->width()+10, 20,
-                       pw->width()-(label->width()+50), label->height());
+  greetstr_lined = new KLineEdit(group);
+  grid->addMultiCellWidget(greetstr_lined, 1,1, 1,2);
+  connect(greetstr_lined, SIGNAL(textChanged(const QString&)), this, SLOT(changed()));
 
-      label = new QLabel(i18n("KDM logo:"), group);
-      label->move(10, greetstr_lined->height()+30);
-      logo_lined = new KLineEdit( group);
-      logo_lined->setText(logopath);
-      logo_lined->setGeometry(greetstr_lined->x(), greetstr_lined->height()+30,
-                       greetstr_lined->width(), greetstr_lined->height());
-      connect(logo_lined, SIGNAL(returnPressed()),
-              SLOT(slotLogoPixTextChanged()));
+  label = new QLabel(i18n("KDM logo:"), group);
+  grid->addWidget(label, 2,0);
 
-      logobutton = new KIconLoaderButton(iconloader, group);
-      logobutton->setAcceptDrops(true);
-      logobutton->installEventFilter(this); // for drag and drop
-      logobutton->setMaximumSize(80, 80);
-      QPixmap p;
-      if(!p.load(logopath))
-      {
-        logobutton->setIcon("kdelogo.png");
-        //debug("Error loading %s", logopath.ascii());
-      }
-      else
-      {
-        logo_lined->setText(logopath);
-        logobutton->setPixmap(p);
-      }
-      logobutton->move(logo_lined->x(), logo_lined->y()+logo_lined->height()+10);
-      logobutton->adjustSize();
-      connect(logobutton, SIGNAL(iconChanged(const QString&)),
-              SLOT(slotLogoPixChanged(const QString&)));
+  logopath = "kdelogo.png";
+  logobutton = new KIconLoaderButton(KGlobal::iconLoader(), group);
+  logobutton->setAcceptDrops(true);
+  logobutton->installEventFilter(this); // for drag and drop
+  logobutton->setMinimumSize(24,24);
+  logobutton->setMaximumSize(80,80);
+  grid->addWidget(logobutton, 2,1, QWidget::AlignCenter);
+  grid->addRowSpacing(2, 80);
+  logobutton->setIcon("kdelogo.png");
+  connect(logobutton, SIGNAL(iconChanged(const QString&)),
+	  SLOT(slotLogoPixChanged(const QString&)));
+  connect(logobutton, SIGNAL(iconChanged(const QString&)), this, SLOT(changed()));
 
-      QToolTip::add(logobutton, i18n("Click or drop an image here"));
+  QToolTip::add(logobutton, i18n("Click or drop an image here"));
 
-      label = new QLabel(i18n("GUI Style:"), group);
-      label->move(10, logobutton->y()+100);
+  label = new QLabel(i18n("GUI Style:"), group);
+  grid->addWidget(label, 4,0);
 
-      guicombo = new QComboBox( FALSE, group );
-      connect(guicombo, SIGNAL(highlighted(int)), SLOT(slotSetGUI(int)));
-      guicombo->move(logobutton->x(), label->y());
-      guicombo->insertItem(i18n("Motif"), 0);
-      guicombo->insertItem(i18n("Windows"), 1);
-      guicombo->adjustSize();
-      if(guistr == "Windows")
-        guicombo->setCurrentItem(1);
-      else
-        guicombo->setCurrentItem(0);
+  guicombo = new QComboBox(false, group);
+  guicombo->insertItem(i18n("Motif"), 0);
+  guicombo->insertItem(i18n("Windows"), 1);
+  grid->addWidget(guicombo, 4, 1);
+  connect(guicombo, SIGNAL(activated(int)), this, SLOT(changed()));
 
-      group->adjustSize();
-      group->setMinimumSize(group->size());
+  group = new QGroupBox(i18n("Language"), this);
+  vbox->addWidget(group);
 
-      QGroupBox *group2 = new QGroupBox( 
-            i18n("Language"), this );
-      CHECK_PTR(group2);
-      group2->setGeometry(5, group->height()+5, group->width(), 50);
-      label = new QLabel(i18n("Language:"), group2);
-      label->move( 10, 20 );
-      langcombo = new KLanguageCombo(group2);
-      langcombo->adjustSize();
-      langcombo->move(logo_lined->x(), 20);
+  vvbox = new QVBoxLayout(group, 6,6);
+  vvbox->addSpacing(group->fontMetrics().height());
 
-      KConfig simple("kdmrc");
-      simple.setGroup("Locale");
-      QString lang = simple.readEntry("Language", "C");
-      int index = lang.find(':');
-      if (index>0)
-        lang.truncate(index);
-      langcombo->setLanguage(lang);
+  QHBoxLayout *hbox = new QHBoxLayout(vvbox, 6);  
 
-      group2->adjustSize();
-      group2->setMinimumSize(group2->size());
-     
-      QBoxLayout *main = new QVBoxLayout(this, 10);
-      main->addWidget(group);
-      main->addWidget(group2);
-      main->activate();
+  label = new QLabel(i18n("Language:"), group);
+  hbox->addWidget(label);
+  hbox->addSpacing(16);
+
+  langcombo = new KLanguageCombo(group);
+  hbox->addWidget(langcombo);
+  connect(langcombo, SIGNAL(activated(int)), this, SLOT(changed()));
+
+  hbox->setStretchFactor(langcombo,1);
+  hbox->addStretch(2);
+
+  vbox->addStretch(1);
+
+  load();
 }
 
 
-
-void KDMAppearanceWidget::slotLogoPixTextChanged()
+void KDMAppearanceWidget::setLogo(QString logo)
 {
-  QString msg, pix = logo_lined->text();
-  QPixmap p(pix);
-  if(!p.isNull())
-  {
-    logobutton->setPixmap(p);
-    logobutton->adjustSize();
-  }
-  else
-  {
-    msg  = i18n("There was an error loading the image:\n>");
-    msg += pix;
-    msg += i18n("<");
-    KMessageBox::sorry(this, msg);
-  }
+  logopath = logo;
+
+  QPixmap p(logo);
+  logobutton->setPixmap(p);
+  logobutton->adjustSize();
+  resize(width(), height());
 }
+
 
 void KDMAppearanceWidget::slotLogoPixChanged(const QString &iconstr)
 {
   // Because KIconLoaderButton only returns a relative filename
   // we gotta save the image in PIXDIR.
   // To make it easy we save it as an PNG
+
   QString msg;
   QString pix = /*PIXDIR + */ iconstr.left(iconstr.findRev('.')) + ".png";
   const QPixmap *p = logobutton->pixmap();
@@ -197,12 +135,12 @@ void KDMAppearanceWidget::slotLogoPixChanged(const QString &iconstr)
     KMessageBox::sorry(this, msg);
   }
   else
-    logo_lined->setText(pix);
-  logobutton->adjustSize();
+    setLogo(pix);
 }
 
+
 bool KDMAppearanceWidget::eventFilter(QObject */*o*/, QEvent *e)
-{
+{  
   if (e->type() == QEvent::DragEnter) {
     iconLoaderDragEnterEvent((QDragEnterEvent *) e);
     return true;
@@ -221,12 +159,13 @@ void KDMAppearanceWidget::iconLoaderDragEnterEvent(QDragEnterEvent *e)
   e->accept(QUriDrag::canDecode(e));
 }
 
+
 void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 {
   QStringList uris;
   if (QUriDrag::decodeToUnicodeUris( e, uris) && (uris.count() > 0)) {
     KURL url(*uris.begin());
-
+    
     QString filename = url.filename();
     QString msg;
     QStringList dirs = KGlobal::dirs()->findDirs("data", "kdm/pics/");
@@ -272,7 +211,6 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 	logobutton->setPixmap(p);
 	logobutton->adjustSize();
 	logopath = url.path();
-	logo_lined->setText(logopath);
       } else {
         msg  = i18n("There was an error loading the image:\n>");
         msg += url.path();
@@ -283,17 +221,9 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
   }
 }
 
-void KDMAppearanceWidget::slotSetGUI( int g )
-{
-  if(g == 0)
-    guistr = "Motif";
-  else
-    guistr = "Windows";
-}
 
-void KDMAppearanceWidget::applySettings()
+void KDMAppearanceWidget::save()
 {
-  //debug("KDMAppearanceWidget::applySettings()");
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDM");
@@ -302,16 +232,13 @@ void KDMAppearanceWidget::applySettings()
   c->writeEntry("GreetString", greetstr_lined->text(), true);
 
   // write logo path
-  if(!logo_lined->text().isEmpty())
-    logopath = logo_lined->text();
-  QFileInfo fi(logopath);
-  if(fi.exists())
-    c->writeEntry("LogoPixmap", logopath, true);
-  else
-    c->deleteEntry("LogoPixmap", false);
+  c->writeEntry("LogoPixmap", logopath, true);
 
   // write GUI style
-  c->writeEntry("GUIStyle", guistr, true);
+  if (guicombo->currentItem() == 0)
+    c->writeEntry("GUIStyle", "Motif", true);
+  else
+    c->writeEntry("GUIStyle", "Windows", true);
 
   // write language
   c->setGroup("Locale");
@@ -320,36 +247,57 @@ void KDMAppearanceWidget::applySettings()
   delete c;
 }
 
-void KDMAppearanceWidget::loadSettings()
+
+void KDMAppearanceWidget::load()
 {
-    iconloader = KGlobal::iconLoader();
-    QString str;
-  
-    // Get config object
-    KConfig *c = new KConfig("kdmrc");
-    c->setGroup("KDM");
+  // Get config object
+  KConfig *c = new KConfig("kdmrc");
+  c->setGroup("KDM");
 
   // Read the greeting string
-  greetstr = "KDE System at HOSTNAME";
-  greetstr = c->readEntry("GreetString", greetstr);
+  greetstr_lined->setText(c->readEntry("GreetString", "KDE System at [HOSTNAME]"));
 
   // See if we use alternate logo
-  logopath = c->readEntry("LogoPixmap");
+  QString logopath = c->readEntry("LogoPixmap");
   if(!logopath.isEmpty())
   {
     QFileInfo fi(logopath);
     if(fi.exists())
     {
-      //logofile = fi.fileName();
       QString lpath = fi.dirPath(true);
       KGlobal::dirs()->addResourceDir("icon", lpath);
     }
   }
+  setLogo(logopath);
 
   // Check the GUI type
-  guistr = c->readEntry("GUIStyle", "Motif");
-
-  delete c;
+  QString guistr = c->readEntry("GUIStyle", "Motif");
+  if(guistr == "Windows")
+    guicombo->setCurrentItem(1);
+  else
+    guicombo->setCurrentItem(0);
+  
+  // get the language
+  c->setGroup("Locale");
+  QString lang = c->readEntry("Language", "C");
+  int index = lang.find(':');
+  if (index>0)
+    lang.truncate(index);
+  langcombo->setLanguage(lang);                                           
 }
 
+
+void KDMAppearanceWidget::defaults()
+{
+  greetstr_lined->setText("KDE System at [HOSTNAME]");
+  setLogo("kdelogo.png");
+  guicombo->setCurrentItem(0);
+  langcombo->setLanguage("C"); 
+}
+
+
+void KDMAppearanceWidget::changed()
+{
+  emit KCModule::changed(true);
+}
 

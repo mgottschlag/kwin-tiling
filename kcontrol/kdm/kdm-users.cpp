@@ -27,21 +27,9 @@
 #include <kmessagebox.h>
 #include "kdm-users.moc"
 
-// Destructor
-KDMUsersWidget::~KDMUsersWidget()
-{
-}
 
-KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, bool init)
-    : KConfigWidget(parent, name)
-{
-    gui = !init;
-    loadSettings();
-    if(gui)
-        setupPage(parent);
-}
-
-void KDMUsersWidget::setupPage(QWidget *)
+KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
+    : KCModule(parent, name)
 {
     QHBoxLayout *main = new QHBoxLayout(this, 10);
     QGridLayout *rLayout = new QGridLayout(main, 4, 3, 10);
@@ -63,11 +51,13 @@ void KDMUsersWidget::setupPage(QWidget *)
     all_to_usr->setFixedSize( sz );
     rLayout->addWidget(all_to_usr, 1, 1);
     connect( all_to_usr, SIGNAL( clicked() ), SLOT( slotAllToUsr() ) );
-    
+    connect( all_to_usr, SIGNAL(clicked()), this, SLOT(slotChanged()));
+
     usr_to_all = new QPushButton( "<<", this );
     rLayout->addWidget(usr_to_all, 2, 1);
     usr_to_all->setFixedSize( sz );
     connect( usr_to_all, SIGNAL( clicked() ), SLOT( slotUsrToAll() ) );
+    connect( usr_to_all, SIGNAL(clicked()), this, SLOT(slotChanged()));
     
     rLayout->setRowStretch(3, 1);
     
@@ -75,24 +65,23 @@ void KDMUsersWidget::setupPage(QWidget *)
     rLayout->addWidget(all_to_no, 5, 1);
     all_to_no->setFixedSize( sz );
     connect( all_to_no, SIGNAL( clicked() ), SLOT( slotAllToNo() ) );
+    connect( all_to_no, SIGNAL(clicked()), this, SLOT(slotChanged()));
     
     no_to_all = new QPushButton( "<<", this );
     rLayout->addWidget(no_to_all, 6, 1);
     no_to_all->setFixedSize( sz );
     connect( no_to_all, SIGNAL( clicked() ), SLOT( slotNoToAll() ) );
+    connect( no_to_all, SIGNAL(clicked()), this, SLOT(slotChanged()));
 
     rLayout->setRowStretch(7, 1);
     
     alluserlb = new QListBox(this);
-    alluserlb->insertStrList(&allusers);
     rLayout->addMultiCellWidget(alluserlb, 1, 7, 0, 0);
     
     userlb = new QListBox(this);
-    userlb->insertStrList(&users);
     rLayout->addMultiCellWidget(userlb, 1, 3, 2, 2);
     
     nouserlb = new QListBox(this);
-    nouserlb->insertStrList(&no_users);
     rLayout->addMultiCellWidget(nouserlb, 5, 7, 2, 2);
         
     connect( userlb, SIGNAL( highlighted( int ) ),
@@ -117,6 +106,7 @@ void KDMUsersWidget::setupPage(QWidget *)
     userbutton->setFixedSize(80, 80);
     connect(userbutton, SIGNAL(iconChanged(const QString&)),
             SLOT(slotUserPixChanged(const QString&)));
+    connect(userbutton, SIGNAL(iconChanged(const QString&)), this, SLOT(slotChanged()));
     QToolTip::add(userbutton, i18n("Click or drop an image here"));
     lLayout->addWidget(userbutton);
     
@@ -125,43 +115,37 @@ void KDMUsersWidget::setupPage(QWidget *)
     QVBoxLayout *usrGLayout = new QVBoxLayout( usrGroup, 10 );
 
     rb = new QRadioButton(i18n("Show only\nselected users"), usrGroup );
-    if(!showallusers)
-      rb->setChecked(true);
     usrGroup->insert( rb );
     usrGLayout->addWidget( rb );
+    connect(rb, SIGNAL(clicked()), this, SLOT(slotChanged()));
     
     rb = new QRadioButton( i18n("Show all users\nbut no-show users"), usrGroup );
     rb->setGeometry( 10, 50, 140, 25 );
-    if(showallusers)
-        rb->setChecked(true);
     usrGroup->insert( rb );
     usrGLayout->addWidget( rb );
+    connect(rb, SIGNAL(clicked()), this, SLOT(slotChanged()));
     
     lLayout->addWidget( usrGroup );
-    connect( usrGroup, SIGNAL( clicked( int ) ), SLOT( slotUserShowMode( int ) ) );
     
     shwGroup = new QButtonGroup( this );
     QVBoxLayout *shwGLayout = new QVBoxLayout( shwGroup, 10 );
     
     cbusrshw = new QCheckBox(i18n("Show users"), shwGroup);
-    if(showusers)
-      cbusrshw->setChecked(true);
     shwGroup->insert( cbusrshw );
     shwGLayout->addWidget( cbusrshw );
-    connect( cbusrshw, SIGNAL( toggled( bool ) ), SLOT( slotUserShow( bool ) ) );
+    connect(cbusrshw, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
 
     cbusrsrt = new QCheckBox(i18n("Sort users"), shwGroup);
-    if(sortusers)
-      cbusrsrt->setChecked(true);
     shwGroup->insert( cbusrsrt );
     shwGLayout->addWidget( cbusrsrt );
-    connect( cbusrsrt, SIGNAL( toggled( bool ) ), SLOT( slotUserSort( bool ) ) );
-    
+    connect(cbusrsrt, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+
     lLayout->addWidget( shwGroup );
     lLayout->addStretch( 1 );
     
-    main->activate();
+    load();
 }
+
 
 void KDMUsersWidget::slotUserPixChanged(const QString& )
 {
@@ -187,6 +171,7 @@ void KDMUsersWidget::slotUserPixChanged(const QString& )
     userbutton->adjustSize();
 }
 
+
 bool KDMUsersWidget::eventFilter(QObject */*o*/, QEvent *e)
 {
     if (e->type() == QEvent::DragEnter) {
@@ -202,10 +187,12 @@ bool KDMUsersWidget::eventFilter(QObject */*o*/, QEvent *e)
     return false;
 }
 
+
 void KDMUsersWidget::userButtonDragEnterEvent(QDragEnterEvent *e)
 {
     e->accept(QUriDrag::canDecode(e));
 }
+
 
 void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
 {
@@ -287,15 +274,6 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
     }
 }
 
-void KDMUsersWidget::slotUserShow(bool show)
-{
-    showusers = show;
-}
-
-void KDMUsersWidget::slotUserSort(bool sort)
-{
-    sortusers = sort;
-}
 
 void KDMUsersWidget::slotAllToNo()
 {
@@ -306,6 +284,7 @@ void KDMUsersWidget::slotAllToNo()
     }
 }
 
+
 void KDMUsersWidget::slotNoToAll()
 {
     int id = nouserlb->currentItem();
@@ -314,6 +293,7 @@ void KDMUsersWidget::slotNoToAll()
         nouserlb->removeItem(id);
     }
 }
+
 
 void KDMUsersWidget::slotAllToUsr()
 {
@@ -324,6 +304,7 @@ void KDMUsersWidget::slotAllToUsr()
     }
 }
 
+
 void KDMUsersWidget::slotUsrToAll()
 {
     int id = userlb->currentItem();
@@ -333,10 +314,6 @@ void KDMUsersWidget::slotUsrToAll()
     }
 }
 
-void KDMUsersWidget::slotUserShowMode( int m )
-{
-    showallusers = m;
-}
 
 void KDMUsersWidget::slotUserSelected(int)
 {
@@ -372,16 +349,17 @@ void KDMUsersWidget::slotUserSelected(int)
         debug("Not a QListBox");
 }
 
-void KDMUsersWidget::applySettings()
+
+void KDMUsersWidget::save()
 {
     //debug("KDMUsersWidget::applySettings()");
     KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
     
     c->setGroup("KDM");
     
-    c->writeEntry( "UserView", showusers );
-    c->writeEntry( "SortUsers", sortusers );
-    
+    c->writeEntry( "UserView", cbusrshw->isChecked() );
+    c->writeEntry( "SortUsers", cbusrsrt->isChecked() );
+
     if(nouserlb->count() > 0) {
         QString nousrstr;
         for(uint i = 0; i < nouserlb->count(); i++) {
@@ -403,7 +381,8 @@ void KDMUsersWidget::applySettings()
     delete c;
 }
 
-void KDMUsersWidget::loadSettings()
+
+void KDMUsersWidget::load()
 {
     iconloader = KGlobal::iconLoader();
     QString str;
@@ -413,6 +392,7 @@ void KDMUsersWidget::loadSettings()
     c->setGroup("KDM");
     
     // Read users from kdmrc and /etc/passwd
+    QStrList users, no_users;
     str = c->readEntry( "Users");
     if(!str.isEmpty()) {
         semsplit( str, users);
@@ -423,7 +403,12 @@ void KDMUsersWidget::loadSettings()
     str = c->readEntry( "NoUsers");
     if(!str.isEmpty())
         semsplit( str, no_users);	  
+    userlb->clear();
+    userlb->insertStrList(&users);
+    nouserlb->clear();
+    nouserlb->insertStrList(&no_users);
 
+    QStrList allusers;
     struct passwd *ps;
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
     setpwent();
@@ -442,11 +427,23 @@ void KDMUsersWidget::loadSettings()
     }
     endpwent();
 #undef CHECK_STRING
+    alluserlb->clear();
+    alluserlb->insertStrList(&allusers);
 
-    sortusers = c->readNumEntry("SortUsers", true);
-    showusers = c->readNumEntry("UserView", true);
-    
+    cbusrsrt->setChecked(c->readNumEntry("SortUsers", true));
+    cbusrshw->setChecked(c->readNumEntry("UserView", true));
+    usrGroup->setButton(showallusers ? 0 : 1);
+
     delete c;
 }
 
 
+void KDMUsersWidget::defaults()
+{
+}
+
+
+void KDMUsersWidget::slotChanged()
+{
+  emit KCModule::changed(true);
+}
