@@ -1,10 +1,16 @@
 # KDE Config File
 [Color Scheme]
 Name=CDE
-Name[af/messages/kdeartwork/desktop_kdeartwork.po]=cde
-Name[xx/messages/kdeartwork/desktop_kdeartwork.po]=xx
-Name[af/messages/kdebase/desktop_kdebase.po]=cde
-Name[xx/messages/kdebase/desktop_kdebase.po]=xx
+Name[af]=cde
+Name[xx]=xx
+Name[af]=cde
+Name[xx]=xx
+Name[af]=cde
+Name[xx]=xx
+Name[af]=cde
+Name[xx]=xx
+Name[af]=cde
+Name[xx]=xx
 background=#999999
 buttonBackground=#999999
 buttonForeground=#ffffff
