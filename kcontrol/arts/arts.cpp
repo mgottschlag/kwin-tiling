@@ -688,6 +688,11 @@ QString KArtsModule::createArgs(bool netTrans,
 	I18N_NOOP("Advanced Linux Sound Architecture");
 	I18N_NOOP("Open Sound System");
 	I18N_NOOP("Threaded Open Sound System");
+	I18N_NOOP("Network Audio System");
+	I18N_NOOP("Personal Audio Device");
+	I18N_NOOP("SGI dmedia audio i/o");
+	I18N_NOOP("Sun audio input/output");
+	I18N_NOOP("Portable Audio Library");
 #endif
 
 #include "arts.moc"
