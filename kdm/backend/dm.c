@@ -240,12 +240,12 @@ main (int argc, char **argv)
 	    pt++;
 	if (!strcmp (pt, "help") || !strcmp (pt, "h")) {
 	    printf ("Usage: %s [options] [tty]\n"
-"  -daemon        - daemonize even when stared by init\n"
-"  -nodaemon      - don't daemonize even when stared from command line\n"
-"  -config <file> - use alternative master configuration file\n"
-"  -xrm <res>     - override frontend-specific resource\n"
-"  -debug <num>   - debug option bitfield\n"
-"  -error <file>  - use alternative log file\n", prog);
+"  -daemon        - Daemonize even when stared by init\n"
+"  -nodaemon      - Don't daemonize even when stared from command line\n"
+"  -config <file> - Use alternative master configuration file\n"
+"  -xrm <res>     - Override frontend-specific resource\n"
+"  -debug <num>   - Debug option bitfield\n"
+"  -error <file>  - Use alternative log file\n", prog);
 	    exit (0);
 	} else if (!strcmp (pt, "daemon"))
 	    noDaemonMode = 0;
