@@ -645,6 +645,8 @@ void TreeView::newsubmenu()
     c.writeEntry("Name", dirname);
     c.writeEntry("Icon", "package");
     c.sync();
+    setSelected ( newitem, true);
+    itemSelected( newitem);
 }
 
 void TreeView::newitem()
@@ -708,6 +710,8 @@ void TreeView::newitem()
     c.writeEntry("Icon", filename);
     c.writeEntry("Type", "Application");
     c.sync();
+    setSelected ( newitem, true);
+    itemSelected( newitem);
 }
 
 void TreeView::cut()
