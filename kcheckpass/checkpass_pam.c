@@ -113,7 +113,12 @@ int Authenticate(const char *login, const char *passwd)
   int		pam_error;
 
   const char *tty;
+#ifdef KCHECKPASS_PAM_SERVICE
   const char *kde_pam = KCHECKPASS_PAM_SERVICE;
+#else
+#warning "KCHECKPASS_PAM_SERVICE not defined."
+  const char *kde_pam = "kde";
+#endif
 
   PAM_username = login;
   PAM_password = passwd;
