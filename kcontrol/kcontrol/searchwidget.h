@@ -1,5 +1,6 @@
 /*
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
+  Copyright (c) 2004 Daniel Molkentin <molkentin@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -66,14 +67,13 @@ protected:
 protected slots:
   void slotSearchTextChanged(const QString &);
   void slotKeywordSelected(const QString &);
-  void slotModuleSelected(int idx);
+  void slotModuleSelected(QListBoxItem *item);
   void slotModuleClicked(QListBoxItem *item);
 
 private:
   KListBox  *_keyList, *_resultList;
   KLineEdit *_input; 
   QPtrList<KeywordListEntry> _keywords;
-  QPtrList<ConfigModule> _results;
 };
 
 #endif

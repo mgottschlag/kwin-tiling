@@ -1,5 +1,6 @@
 /*
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
+  Copyright (c) 2004 Daniel Molkentin <molkentin@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,29 +34,22 @@
 /**
  * Helper class for sorting icon modules by name without losing the fileName ID
  */
-class ModuleName
+class ModuleItem : public QListBoxPixmap
 {
-protected:
- QString m_name;
- ConfigModule *m_module;
-
 public:
- ModuleName(const QString &name, ConfigModule *module) :
-	 m_name(name), m_module(module)
- { }
-
- ModuleName()
- { }
-
- QString moduleName() const { return m_name; };
+ ModuleItem(ConfigModule *module, QListBox * listbox = 0) :
+	QListBoxPixmap(listbox,
+      KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall),
+      module->moduleName())
+  , m_module(module)
+ { 
+ 
+ }
 
  ConfigModule *module() const { return m_module; };
 
- bool operator== (const ModuleName &ip)
- { return m_name == ip.m_name; }
-
- bool operator< (const ModuleName &ip)
- { return m_name < ip.m_name; }
+protected:
+ ConfigModule *m_module;
 
 };
 
@@ -112,8 +106,8 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
   connect(_keyList, SIGNAL(highlighted(const QString&)),
           this, SLOT(slotKeywordSelected(const QString&)));
 
-  connect(_resultList, SIGNAL(selected(int)),
-          this, SLOT(slotModuleSelected(int)));
+  connect(_resultList, SIGNAL(selected(QListBoxItem*)),
+          this, SLOT(slotModuleSelected(QListBoxItem *)));
   connect(_resultList, SIGNAL(clicked(QListBoxItem *)),
           this, SLOT(slotModuleClicked(QListBoxItem *)));
 }
@@ -181,10 +175,8 @@ void SearchWidget::populateKeyListBox(const QString& s)
 void SearchWidget::populateResultListBox(const QString& s)
 {
   _resultList->clear();
-  _results.clear();
 
-  QSortedList <ModuleName>results;
-  results.setAutoDelete(true);
+  QPtrList<ModuleItem> results;
 
   for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
     {
@@ -193,17 +185,10 @@ void SearchWidget::populateResultListBox(const QString& s)
           QPtrList<ConfigModule> modules = k->modules();
 
           for(ConfigModule *m = modules.first(); m != 0; m = modules.next())
-              results.append(new ModuleName(m->moduleName(),m));
+              new ModuleItem(m, _resultList);
         }
     }
 
-  for(ModuleName *it = results.first(); it != 0L; it=results.next())
-  {
-    _resultList->insertItem(KGlobal::iconLoader()->loadIcon(
-	  it->module()->icon(), KIcon::Desktop, KIcon::SizeSmall), it->moduleName());
-    _results.append(it->module());
-  }
-  
   _resultList->sort();
 }
 
@@ -219,13 +204,14 @@ void SearchWidget::slotKeywordSelected(const QString & s)
   populateResultListBox(s);
 }
 
-void SearchWidget::slotModuleSelected(int i)
+void SearchWidget::slotModuleSelected(QListBoxItem *item)
 {
-  emit moduleSelected( _results.at(i) );
+  if (item)
+    emit moduleSelected( static_cast<ModuleItem*>(item)->module() );
 }
 
 void SearchWidget::slotModuleClicked(QListBoxItem *item)
 {
   if (item)
-    emit moduleSelected( _results.at(_resultList->index(item)) );
+    emit moduleSelected( static_cast<ModuleItem*>(item)->module() );
 }
