@@ -20,6 +20,7 @@
 
 #include <qheader.h>
 #include <qimage.h>
+#include <qpainter.h>
 
 #include <klocale.h>
 #include <kiconloader.h>
@@ -35,11 +36,11 @@
 static QPixmap appIcon(const QString &iconName)
 {
     QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, KIcon::Small, 0, KIcon::DefaultState, 0L, true);
-    // make sure they are not larger than 20x20
-    if (normal.width() > 20 || normal.height() > 20) 
+    // make sure they are not larger than KIcon::SizeSmall
+    if (normal.width() > KIcon::SizeSmall || normal.height() > KIcon::SizeSmall) 
     {
        QImage tmp = normal.convertToImage();
-       tmp = tmp.smoothScale(20, 20);
+       tmp = tmp.smoothScale(KIcon::SizeSmall, KIcon::SizeSmall);
        normal.convertFromImage(tmp);
     }
     return normal;
@@ -292,6 +293,7 @@ ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
   : QListViewItem(parent)
   , _module(module)
   , _tag(QString::null)
+  , _maxChildIconWidth(0)
 {
   if (_module)
         {
@@ -304,6 +306,7 @@ ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
   : QListViewItem(parent)
   , _module(module)
   , _tag(QString::null)
+  , _maxChildIconWidth(0)
 {
   if (_module)
         {
@@ -315,9 +318,53 @@ ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
 ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, const QString& text)
   : QListViewItem(parent, " " + text)
   , _module(0)
-  , _tag(QString::null) {}
+  , _tag(QString::null)
+  , _maxChildIconWidth(0)
+  {}
 
 ModuleTreeItem::ModuleTreeItem(QListView *parent, const QString& text)
   : QListViewItem(parent, " " + text)
   , _module(0)
-  , _tag(QString::null) {}
+  , _tag(QString::null)
+  , _maxChildIconWidth(0)
+  {}
+
+void ModuleTreeItem::setPixmap(int column, const QPixmap& pm)
+{
+  if (!pm.isNull())
+  {
+    ModuleTreeItem* p = dynamic_cast<ModuleTreeItem*>(parent());
+    if (p)
+      p->regChildIconWidth(pm.width());
+  }
+
+  QListViewItem::setPixmap(column, pm);
+}
+
+void ModuleTreeItem::regChildIconWidth(int width)
+{
+  if (width > _maxChildIconWidth)
+    _maxChildIconWidth = width;
+}
+
+void ModuleTreeItem::paintCell( QPainter * p, const QColorGroup & cg, int column, int width, int align )
+{
+  if (!pixmap(0))
+  {
+    int offset = 0;
+    ModuleTreeItem* parentItem = dynamic_cast<ModuleTreeItem*>(parent());
+    if (parentItem)
+    {
+      offset = parentItem->maxChildIconWidth();
+    }
+
+    if (offset > 0)
+    {
+      p->eraseRect(0, 0, offset + 1, height());
+      p->translate(offset + 1, 0);
+    }
+  }
+
+  QListViewItem::paintCell( p, cg, column, width, align );
+}
+

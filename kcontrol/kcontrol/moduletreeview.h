@@ -20,7 +20,7 @@
 #ifndef __moduletreeview_h__
 #define __moduletreeview_h__
 
-
+#include <qpalette.h>
 #include <qptrlist.h>
 #include <qlistview.h>
 #include <klistview.h>
@@ -29,16 +29,16 @@
 
 class ConfigModule;
 class ConfigModuleList;
+class QPainter;
 
 class ModuleTreeItem : public QListViewItem
 {
-  
+
 public:
   ModuleTreeItem(QListViewItem *parent, ConfigModule *module = 0);
   ModuleTreeItem(QListViewItem *parent, const QString& text);
   ModuleTreeItem(QListView *parent, ConfigModule *module = 0);
   ModuleTreeItem(QListView *parent, const QString& text);
- 
 
   void setTag(const QString& tag) { _tag = tag; }
   void setCaption(const QString& caption) { _caption = caption; }
@@ -46,11 +46,19 @@ public:
   QString tag() const { return _tag; };
   QString caption() const { return _caption; };
   ConfigModule *module() { return _module; };
+  void regChildIconWidth(int width);
+  int  maxChildIconWidth() { return _maxChildIconWidth; }
+
+  void setPixmap(int column, const QPixmap& pm);
+
+protected:
+  void paintCell( QPainter * p, const QColorGroup & cg, int column, int width, int align );
 
 private:
   ConfigModule *_module;
   QString       _tag;
   QString       _caption;
+  int _maxChildIconWidth;
 
 };
 
@@ -64,7 +72,6 @@ public:
   void makeSelected(ConfigModule* module);
   void makeVisible(ConfigModule *module);
   void fill();
-
   QSize sizeHint() const;
 
 signals:
@@ -79,7 +86,7 @@ protected:
 // void expandItem(QListViewItem *item, QPtrList<QListViewItem> *parentList);
  ModuleTreeItem *getGroupItem(ModuleTreeItem *parent, const QStringList& groups);
  void keyPressEvent(QKeyEvent *);
-  
+
 private:
   ConfigModuleList *_modules;
 
