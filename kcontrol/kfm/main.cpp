@@ -15,6 +15,7 @@
 #include "khttpoptdlg.h"
 #include "useragentdlg.h"
 #include "kcookiesdlg.h"
+#include "ksmboptdlg.h"
 
 #include "rootopts.h"
 #include <klocale.h>
@@ -38,6 +39,7 @@ private:
 
   KProxyOptions *m_pProxyOptions;
   KHTTPOptions *m_pHTTPOptions;
+  KSMBOptions *m_pSMBOptions;
   UserAgentOptions *m_pUserAgentOptions;
   KCookiesOptions *m_pCookiesOptions;
 
@@ -57,6 +59,7 @@ KfmApplication::KfmApplication(int &argc, char **argv, const char *name)
   m_pCookiesOptions = 0L;
 
   m_pRootOptions = 0L;
+  m_pSMBOptions = 0L;
 
   if ( runGUI() )
   {
@@ -71,25 +74,28 @@ KfmApplication::KfmApplication(int &argc, char **argv, const char *name)
       addPage( m_pProxyOptions = new KProxyOptions( dialog, "proxy" ), i18n("&Proxy"), "kfm-4.html" );
     if (!pages || pages->contains("http"))
       addPage( m_pHTTPOptions = new KHTTPOptions( dialog, "http"), i18n("&HTTP"), "kfm-5.html" );
+    if (!pages || pages->contains("smb"))
+      addPage( m_pSMBOptions = new KSMBOptions( dialog, "smb"), i18n("&SMB"), "kfm-6.html" );
     if (!pages || pages->contains("useragent"))
       addPage( m_pUserAgentOptions = new UserAgentOptions( dialog, "useragent"),
-               i18n("User &Agent"), "kfm-6.html" );
+               i18n("User &Agent"), "kfm-7.html" );
     if (!pages || pages->contains("cookies"))
       addPage( m_pCookiesOptions = new KCookiesOptions( dialog, "cookies"),
-               i18n("Coo&kies"), "kfm-7.html" );
+               i18n("Coo&kies"), "kfm-8.html" );
 
     if (!pages || pages->contains("icons"))
       addPage( m_pRootOptions = new KRootOptions( dialog, "icons" ),
-               i18n("&Desktop Icons"), "kfm-8.html" );
+               i18n("&Desktop Icons"), "kfm-9.html" );
+
     if ( m_pFontOptions || m_pColorOptions || m_pMiscOptions
          || m_pProxyOptions || m_pHTTPOptions || m_pUserAgentOptions
-         || m_pRootOptions || m_pCookiesOptions)
+         || m_pRootOptions || m_pCookiesOptions || m_pSMBOptions )
     {
         dialog->show();
     }
     else
     {
-      fprintf(stderr, i18n("usage: %s [-init | {font,color,misc,proxy,http,useragent,cookies,icons}]\n").ascii(), argv[0]);
+      fprintf(stderr, i18n("usage: %s [-init | {font,color,misc,proxy,http,useragent,cookies,icons,smb}]\n").ascii(), argv[0]);
       justInit = true;
     }  
   }
@@ -109,6 +115,8 @@ void KfmApplication::init()
     m_pProxyOptions->loadSettings();
   if ( m_pHTTPOptions )
     m_pHTTPOptions->loadSettings();
+  if ( m_pSMBOptions )
+    m_pSMBOptions->loadSettings();
   if ( m_pUserAgentOptions )
     m_pUserAgentOptions->loadSettings();
   if ( m_pCookiesOptions )
@@ -132,6 +140,8 @@ void KfmApplication::defaultValues()
     m_pProxyOptions->defaultSettings();
   if ( m_pHTTPOptions )
     m_pHTTPOptions->defaultSettings();
+  if ( m_pSMBOptions )
+    m_pSMBOptions->defaultSettings();
   if ( m_pUserAgentOptions )
     m_pUserAgentOptions->defaultSettings();
   if ( m_pCookiesOptions )
@@ -154,6 +164,8 @@ void KfmApplication::apply()
     m_pProxyOptions->applySettings();
   if ( m_pHTTPOptions )
     m_pHTTPOptions->applySettings();
+  if ( m_pSMBOptions )
+    m_pSMBOptions->applySettings();
   if ( m_pUserAgentOptions )
     m_pUserAgentOptions->applySettings();
   if ( m_pCookiesOptions )
