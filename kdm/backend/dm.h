@@ -376,6 +376,8 @@ extern struct display
 	*FindDisplayByServerPid (int serverPid),
 	*NewDisplay (const char *name, const char *class2);
 extern int AnyActiveDisplays (void);
+extern int AnyRunningDisplays (void);
+extern int AnyReserveDisplays (void);
 extern int AllLocalDisplaysLocked (struct display *dp);
 extern void StartReserveDisplay (int lt);
 extern void ReapReserveDisplays (void);
@@ -407,6 +409,12 @@ extern void StopDisplay (struct display *d);
 extern void WaitForChild (void);
 
 /* process.c */
+#include <stdlib.h>
+
+typedef SIGVAL (*SIGFUNC)(int);
+
+SIGVAL (*Signal(int, SIGFUNC Handler))(int);
+
 extern void RegisterCloseOnFork (int fd);
 extern void CloseNClearCloseOnFork (int fd);
 extern int Fork (void);
@@ -536,10 +544,7 @@ extern void RunChooser (struct display *d);
 
 #endif /* XDMCP */
 
-#include <stdlib.h>
-
-typedef SIGVAL (*SIGFUNC)(int);
-
-SIGVAL (*Signal(int, SIGFUNC Handler))(int);
+/* automatically fork off reserve display if all displays are locked */
+/*#define AUTO_RESERVE 1*/
 
 #endif /* _DM_H_ */
