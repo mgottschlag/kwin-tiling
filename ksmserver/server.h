@@ -12,7 +12,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qobject.h>
 #include <qstring.h>
 #include <qsocketnotifier.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qvaluelist.h>
 #include <qcstring.h>
 #include <qdict.h>
@@ -53,7 +53,7 @@ public:
     uint waitForPhase2 : 1;
     uint wasPhase2 : 1;
 
-    QList<SmProp> properties;
+    QPtrList<SmProp> properties;
     SmProp* property( const char* name ) const;
 
     QString program() const;
@@ -134,8 +134,8 @@ private:
     void executeCommand( const QStringList& command );
 
  private:
-    QList<KSMListener> listener;
-    QList<KSMClient> clients;
+    QPtrList<KSMListener> listener;
+    QPtrList<KSMClient> clients;
 
     enum State { Idle, Shutdown, Killing }; // KSMServer does not support pure checkpoints yet.
     State state;

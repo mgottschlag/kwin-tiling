@@ -115,7 +115,7 @@ KSMClient::~KSMClient()
 
 SmProp* KSMClient::property( const char* name ) const
 {
-    for ( QListIterator<SmProp> it( properties ); it.current(); ++it ) {
+    for ( QPtrListIterator<SmProp> it( properties ); it.current(); ++it ) {
 	if ( !qstrcmp( it.current()->name, name ) )
 	    return it.current();
     }
@@ -905,7 +905,7 @@ void KSMServer::processData( int /*socket*/ )
     IceProcessMessagesStatus status = IceProcessMessages( iceConn, 0, 0 );
     if ( status == IceProcessMessagesIOError ) {
 	IceSetShutdownNegotiation( iceConn, False );
-	QListIterator<KSMClient> it ( clients );
+	QPtrListIterator<KSMClient> it ( clients );
 	while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
 	    ++it;
 
@@ -985,7 +985,7 @@ void KSMServer::shutdown( bool bFast )
 	cfg->readBoolEntry( "saveSession", FALSE );
     bool confirmLogout = !bFast && cfg->readBoolEntry( "confirmLogout", TRUE );
     delete cfg;
- 
+
     if ( confirmLogout ) {
         KSMShutdownFeedback::start(); // make the screen gray
         connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ), SLOT( cancelShutdown() ) );
