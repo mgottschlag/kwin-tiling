@@ -75,8 +75,9 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
 				this );
     cbSaveContents = new QCheckBox( i18n("Save clipboard contents on exit"),
 				    this );
-    
+#ifdef __GNUC__
 #warning Qt Bug, remove these setOrientation lines when fixed
+#endif
     setOrientation( Horizontal );
 }
 
