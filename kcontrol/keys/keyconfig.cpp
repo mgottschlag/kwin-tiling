@@ -36,13 +36,13 @@
 //----------------------------------------------------------------------------
 
 KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, bool bSeriesOnly, bool bSeriesNone, const char *name )
-  : KCModule( parent, name )
+  : QWidget( parent, name )
 {
 	init( isGlobal, bSeriesOnly, bSeriesNone );
 }
 
 KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
-  : KCModule( parent, name )
+  : QWidget( parent, name )
 {
 	init( isGlobal, false, false );
 }
@@ -109,7 +109,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   sFileList = new QStringList();
   sList = new QListBox( this );
 
-  readSchemeNames();
+  //readSchemeNames();
   sList->setCurrentItem( 0 );
   connect( sList, SIGNAL( highlighted( int ) ),
            SLOT( slotPreviewScheme( int ) ) );
@@ -152,7 +152,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   KSeparator* line = new KSeparator( KSeparator::HLine, this );
 
   kc = new KeyChooserSpec( actions, this, isGlobal );
-  connect( kc, SIGNAL( keyChange() ), this, SLOT( slotChanged() ) );
+  connect( kc, SIGNAL(keyChange()), this, SLOT(slotKeyChange()) );
 
   readScheme();
 
@@ -176,12 +176,26 @@ KKeyModule::~KKeyModule (){
   //kdDebug() << "KKeyModule destructor" << endl;
 }
 
+bool KKeyModule::writeSettings( const QString& sGroup, KConfig* pConfig )
+{
+	kc->commitChanges();
+	actions.writeActions( sGroup, pConfig, true, false );
+	return true;
+}
+
+bool KKeyModule::writeSettingsGlobal( const QString& sGroup )
+{
+	kc->commitChanges();
+	actions.writeActions( sGroup, 0, true, true );
+	return true;
+}
+
 void KKeyModule::load()
 {
   kc->listSync();
 }
 
-void KKeyModule::save()
+/*void KKeyModule::save()
 {
   if( preferMetaBt )
     KKeySequence::useFourModifierKeys( preferMetaBt->isChecked() );
@@ -196,7 +210,7 @@ void KKeyModule::save()
     kapp->dcopClient()->send("kdesktop", "", "configure()", "");
     kapp->dcopClient()->send("kicker", "Panel", "configure()", "");
   }
-}
+}*/
 
 void KKeyModule::defaults()
 {
@@ -206,7 +220,7 @@ void KKeyModule::defaults()
   kc->allDefault();
 }
 
-void KKeyModule::slotRemove()
+/*void KKeyModule::slotRemove()
 {
   QString kksPath =
         KGlobal::dirs()->saveLocation("data", "kcmkeys/" + KeyType);
@@ -231,27 +245,23 @@ void KKeyModule::slotRemove()
 
   sList->removeItem( ind );
   sFileList->remove( sFileList->at(ind) );
+}*/
+
+void KKeyModule::slotKeyChange()
+{
+	emit keyChange();
+	//emit keysChanged( &dict );
 }
 
-void KKeyModule::slotChanged( )
+/*void KKeyModule::slotSave( )
 {
-  emit changed(true);
-  //emit keysChanged( &dict );
-}
-
-void KKeyModule::slotSave( )
-{
-    kdDebug(125) << "KKeyModule::slotSave( )" << endl;
     KSimpleConfig config(*sFileList->at( sList->currentItem() ) );
-    kdDebug(125) << "KKeyModule::slotSave( ) A" << endl;
     //  global=true is necessary in order to
     //  let both 'Global Shortcuts' and 'Shortcut Sequences' be
     //  written to the same scheme file.
     kc->commitChanges();
-    kdDebug(125) << "KKeyModule::slotSave( ) B" << endl;
     actions.writeActions( KeyScheme, &config, KeyType == "global", KeyType == "global" );
-    kdDebug(125) << "KKeyModule::slotSave( ) C" << endl;
-}
+}*/
 
 void KKeyModule::slotPreferMeta()
 {
@@ -266,9 +276,9 @@ void KKeyModule::readScheme( int index )
   //else if( index == 2 )
   //  kc->allDefault( true );
   else {
-    KConfigBase* config;
+    KConfigBase* config = 0;
     if( index == 0 )	config = new KConfig( "kdeglobals" );
-    else		config = new KSimpleConfig( *sFileList->at( index ), true );
+    //else		config = new KSimpleConfig( *sFileList->at( index ), true );
 
     actions.readActions( (index == 0) ? KeySet : KeyScheme, config );
     kc->listSync();
@@ -276,7 +286,7 @@ void KKeyModule::readScheme( int index )
   }
 }
 
-void KKeyModule::slotAdd()
+/*void KKeyModule::slotAdd()
 {
   QString sName;
 
@@ -394,9 +404,9 @@ void KKeyModule::slotAdd()
            SLOT( slotPreviewScheme( int ) ) );
 
   slotPreviewScheme( sList->currentItem() );
-}
+}*/
 
-void KKeyModule::slotPreviewScheme( int indx )
+/*void KKeyModule::slotPreviewScheme( int indx )
 {
   readScheme( indx );
 
@@ -409,9 +419,9 @@ void KKeyModule::slotPreviewScheme( int indx )
   } else {
     removeBt->setEnabled( TRUE );
   }
-}
+}*/
 
-void KKeyModule::readSchemeNames( )
+/*void KKeyModule::readSchemeNames( )
 {
   QStringList schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/" + KeyType + "/*.kksrc");
   //QRegExp r( "-kde[34].kksrc$" );
@@ -444,7 +454,7 @@ void KKeyModule::readSchemeNames( )
     sList->insertItem( str );
     sFileList->append( *it );
   }
-}
+}*/
 
 /*void KKeyModule::updateKeys( const KAccelActions* map_P )
     {

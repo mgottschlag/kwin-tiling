@@ -13,7 +13,7 @@
 
 #include <kaccel.h>
 #include <kkeydialog.h>
-#include <kcmodule.h>
+//#include <kcmodule.h>
 #include <qdict.h>
 #include "savescm.h"
 
@@ -21,7 +21,7 @@ class QCheckBox;
 
 class KeyChooserSpec;
 
-class KKeyModule : public KCModule
+class KKeyModule : public QWidget
 {
 	Q_OBJECT
 public:
@@ -38,21 +38,25 @@ protected:
 
 public:
         virtual void load();
-        virtual void save();
+        //virtual void save();
         virtual void defaults();
         static void init();
 
+	bool writeSettings( const QString& sGroup, KConfig* pConfig );
+	bool writeSettingsGlobal( const QString& sGroup );
+
 public slots:
-	void slotPreviewScheme( int );
-	void slotAdd();
-	void slotSave();
-	void slotRemove();
-	void slotChanged();
+	//void slotPreviewScheme( int );
+	//void slotAdd();
+	//void slotSave();
+	//void slotRemove();
+	void slotKeyChange();
 	void slotPreferMeta();
         //void updateKeys( const KAccelActions* map_P );
-	void readSchemeNames();
+	//void readSchemeNames();
 
 signals:
+	void keyChange();
         //void keysChanged( const KAccelActions* map_P );
 
 protected:
@@ -66,9 +70,9 @@ protected:
 
 	void readScheme( int index=0 );
 
-        QString KeyType;
-        QString KeyScheme;
-        QString KeySet;
+	QString KeyType;
+	QString KeyScheme;
+	QString KeySet;
 
 };
 

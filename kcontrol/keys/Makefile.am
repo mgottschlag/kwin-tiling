@@ -10,10 +10,13 @@ libkcm_keys_la_METASOURCES = AUTO
 
 messages:
 	customkeys=`grep "^.include .\.\." keyconfig.cpp | sed -e "s#.*\"\(.*\)\"#\1#"` ;\
-	$(XGETTEXT) $(libkcm_keys_la_SOURCES) $$customkeys -o $(podir)/kcmkeys.pot    
+	$(XGETTEXT) $(libkcm_keys_la_SOURCES) $$customkeys -o $(podir)/kcmkeys.pot
 
 data_DATA = keys.desktop
 datadir = $(kde_appsdir)/Settings/LookNFeel
+
+scheme_DATA = kde3.kksrc kde4.kksrc
+schemedir = $(kde_datadir)/kcmkeys
 
 app_scheme_DATA = app-kde3.kksrc app-kde4.kksrc app-mac3.kksrc app-unix3.kksrc app-win3.kksrc
 app_schemedir = $(kde_datadir)/kcmkeys/standard

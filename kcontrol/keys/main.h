@@ -25,41 +25,54 @@
 #define __keys_main_h
 
 #include <qbuttongroup.h>
+#include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
+#include <kaccelbase.h>
 #include <kcmodule.h>
 #include <kcombobox.h>
+#include <kkeydialog.h>
 
 class KKeyModule;
 
 class KeyModule : public KCModule
 {
-  Q_OBJECT
+	Q_OBJECT
+ public:
+	KeyModule( QWidget *parent, const char *name );
 
-public:
-  KeyModule(QWidget *parent, const char *name);
+	void load();
+	void save();
+	void defaults();
+	QString quickHelp() const;
 
-  void load();
-  void save();
-  void defaults();
-  QString quickHelp() const;
-
-protected:
+ protected:
+	void init();
+	void createActionsGeneral();
+	void createActionsSequence();
+	void createActionsApplication();
 	void readSchemeNames();
+	void saveScheme();
 	void resizeEvent(QResizeEvent *e);
 
-protected slots:
-  void moduleChanged(bool state);
-  void tabChanged(QWidget *);
+ protected slots:
+	void slotSchemeCur();
+	void slotKeyChange();
+	void slotSelectScheme( int iItem );
+	void slotSaveSchemeAs();
+	void slotRemoveScheme();
+	void moduleChanged(bool state);
+	void tabChanged(QWidget *);
 
-private:
-  QTabWidget* m_pTab;
-  QRadioButton *m_prbCur, *m_prbNew, *m_prbPre;
-  int m_nSysSchemes;
-  QStringList m_rgsSchemeFiles;
-  KComboBox* m_pcbSchemes;
-  KKeyModule *global, *series, *standard;
+ private:
+	QTabWidget* m_pTab;
+	QRadioButton *m_prbCur, *m_prbNew, *m_prbPre;
+	KComboBox* m_pcbSchemes;
+	QPushButton* m_pbtnSave, * m_pbtnRemove;
+	int m_nSysSchemes;
+	QStringList m_rgsSchemeFiles;
+	KAccelActions m_actionsGeneral, m_actionsSequence, m_actionsApplication;
+	KKeyChooser* m_pkcGeneral, * m_pkcSequence, * m_pkcApplication;
 };
 
 #endif
-
