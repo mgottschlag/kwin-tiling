@@ -48,7 +48,7 @@ class LookAndFeelTab : public LookAndFeelTabBase
   QStringList queryAvailableTiles();
 
  protected slots:
-  void browse_theme();
+  void browse_theme(const QString&);
   void tiles_clicked();
   void kmenu_clicked();
   void kmenu_changed(const QString&);

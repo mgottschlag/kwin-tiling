@@ -41,6 +41,8 @@
 #include <kiconeffect.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
+#include <kurlrequester.h>
+#include <klineedit.h>
 
 #include "lookandfeeltab_impl.h"
 #include "lookandfeeltab_impl.moc"
@@ -106,7 +108,6 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   QWhatsThis::add( desktop_label, i18n("This is a preview of the tile that will be used for desktop access buttons.") );
 
   connect(m_backgroundImage, SIGNAL(clicked()), SIGNAL(changed()));
-  connect(m_backgroundButton, SIGNAL(clicked()), SLOT(browse_theme()));
 
     QWhatsThis::add(m_backgroundImage, i18n("If this option is selected, you "
                                             "can choose a background image that will be displayed on the "
@@ -118,22 +119,21 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
     QString wtstr = i18n("Here you can choose a theme to be displayed by the panel. "
                          "Press the 'Browse' button to choose a theme using the file dialog.<p> "
                          "This option is only active if 'Use background theme' is selected.");
-    QWhatsThis::add(m_backgroundButton, wtstr );
     QWhatsThis::add(m_backgroundInput, wtstr );
 
-    m_backgroundInput->setReadOnly(true);
+    m_backgroundInput->fileDialog()->setFilter(KImageIO::pattern(KImageIO::Reading));
+    m_backgroundInput->fileDialog()->setCaption(i18n("Select an image file"));
+    m_backgroundInput->lineEdit()->setReadOnly(true);
 
+    connect(m_backgroundInput, SIGNAL(urlSelected(const QString&)), SLOT(browse_theme(const QString&)));
     connect(m_showToolTips, SIGNAL(clicked()), SIGNAL(changed()));
 
   fill_tile_input();
   load();
 }
 
-void LookAndFeelTab::browse_theme()
+void LookAndFeelTab::browse_theme(const QString& newtheme)
 {
-    QString newtheme = KFileDialog::getOpenFileName(QString::null
-                                                    , KImageIO::pattern(KImageIO::Reading)
-                                                    , 0, i18n("Select an image file"));
     if (theme == newtheme) return;
     if (newtheme.isEmpty()) return;
 
@@ -144,7 +144,7 @@ void LookAndFeelTab::browse_theme()
         theme_preview.convertFromImage(tmpImg);
         if( !theme_preview.isNull() ) {
             theme = newtheme;
-            m_backgroundInput->setText(theme);
+            m_backgroundInput->lineEdit()->setText(theme);
             m_backgroundLabel->setPixmap(theme_preview);
             emit changed();
             return;
@@ -280,7 +280,6 @@ void LookAndFeelTab::load()
     m_backgroundImage->setChecked(use_theme);
     m_backgroundInput->setEnabled(use_theme);
     m_backgroundLabel->setEnabled(use_theme);
-    m_backgroundButton->setEnabled(use_theme);
 
     if (theme != QString::null) {
         QString themepath;
@@ -294,14 +293,14 @@ void LookAndFeelTab::load()
                                         m_backgroundLabel->contentsRect().height());
             theme_preview.convertFromImage(tmpImg);
             if(!theme_preview.isNull()) {
-                m_backgroundInput->setText(theme);
+                m_backgroundInput->lineEdit()->setText(theme);
                 m_backgroundLabel->setPixmap(theme_preview);
             }
             else
-                m_backgroundInput->setText(i18n("Error loading theme image file."));
+                m_backgroundInput->lineEdit()->setText(i18n("Error loading theme image file."));
         }
         else
-            m_backgroundInput->setText(i18n("Error loading theme image file."));
+            m_backgroundInput->lineEdit()->setText(i18n("Error loading theme image file."));
     }
 
     m_showToolTips->setChecked( c->readBoolEntry( "ShowToolTips", true ) );
@@ -495,12 +494,11 @@ void LookAndFeelTab::defaults()
   theme = QString::null;
 
   m_backgroundImage->setChecked(false);
-  m_backgroundInput->setText(theme);
+  m_backgroundInput->lineEdit()->setText(theme);
   m_backgroundLabel->clear();
 
   m_backgroundInput->setEnabled(false);
   m_backgroundLabel->setEnabled(false);
-  m_backgroundButton->setEnabled(false);
   m_showToolTips->setChecked(true);
 
 }
