@@ -11,3 +11,9 @@ SwitchOn=-trail
 SwitchOff=
 Type=Check
 Value=false
+[Arg2]
+Label=Decay
+SwitchOn=-decay
+SwitchOff=-no-decay
+Type=Check
+Value=false

@@ -5,10 +5,3 @@ Minimum=10
 Switch=-delay %1
 Type=Range
 Value=50000
-[Arg1]
-Label=Number of Trees:
-Maximum=1000
-Minimum=5
-Switch=-count %1
-Type=Range
-Value=50
