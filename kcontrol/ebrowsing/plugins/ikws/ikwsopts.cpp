@@ -91,7 +91,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     cmb_searchFallback = new QComboBox(false, gb_keywords);
     cmb_searchFallback->adjustSize();
     cmb_searchFallback->setMinimumSize(cmb_searchFallback->size());
-    igbopts_lay->addWidget( cmb_searchFallback );
+    igbopts_lay->addWidget( cmb_searchFallback, 1 );
     lb_searchFallback->setBuddy(cmb_searchFallback);
 
     connect(cmb_searchFallback, SIGNAL(activated(const QString &)), this, SLOT(changeSearchFallback(const QString &)));
