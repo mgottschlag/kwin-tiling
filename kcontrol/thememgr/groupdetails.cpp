@@ -11,8 +11,6 @@
 GroupDetails::GroupDetails(const char* aGroupName):
   GroupDetailsInherited(NULL, 0, true)
 {
-  initMetaObject();
-
   QBoxLayout *topLayout = new QVBoxLayout(this, 5);
   QBoxLayout *buttonLayout = new QHBoxLayout();
 

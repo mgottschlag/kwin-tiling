@@ -40,6 +40,7 @@
 #include <qpainter.h>
 #include <qwindowdefs.h>
 #include <qimage.h>
+#include <qregexp.h>
 #include <dcopclient.h>
 
 #include <kapp.h>
