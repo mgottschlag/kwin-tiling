@@ -12,18 +12,29 @@
     - more & better sound-information
  
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
-*/
+    $Log: $
 
+*/
 
 #include <unistd.h>
 #include <syscall.h>
 #include <stdio.h>
-#include <fstab.h>
-#include <sys/statfs.h>
 #include <sys/stat.h>
 #include <linux/kernel.h>
-
 #include <ctype.h>
+
+#ifdef HAVE_FSTAB_H		// some Linux-versions don't have fstab.h !
+#  include <fstab.h>
+#  include <sys/statfs.h>
+#  define INFO_PARTITIONS_FULL_INFO	// show complete info !
+#elif defined HAVE_MNTENT_H	// but maybe they have mntent.h ?
+# include <mntent.h>
+# include <sys/vfs.h>
+#  define INFO_PARTITIONS_FULL_INFO	// show complete info !
+#else
+#  undef INFO_PARTITIONS_FULL_INFO	// no partitions-info !
+#endif
+
 
 #include <kapp.h>
 #include <ktablistbox.h>
@@ -57,7 +68,6 @@
 #define INFO_PARTITIONS_AVAILABLE
 #define INFO_PARTITIONS "/proc/partitions"
 #define INFO_MOUNTED_PARTITIONS "/etc/mtab"	// on Linux...
-#define INFO_PARTITIONS_FULL_INFO	// define, to show complete info !
 
 #define INFO_XSERVER_AVAILABLE
 
@@ -192,8 +202,22 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 	QStringList	Mounted_Partitions;
 	bool		found_in_List;
 	int 		n;
-	
+
+#ifdef HAVE_FSTAB_H	
 	struct fstab 	*fstab_ent;
+# define FS_NAME	fstab_ent->fs_spec	// device-name
+# define FS_FILE	fstab_ent->fs_file	// mount-point
+# define FS_TYPE	fstab_ent->fs_vfstype	// fs-type
+# define FS_MNTOPS 	fstab_ent->fs_mntops	// mount-options
+#else
+	struct mntent 	*mnt_ent;
+	FILE		*fp;
+# define FS_NAME	mnt_ent->mnt_fsname	// device-name
+# define FS_FILE	mnt_ent->mnt_dir	// mount-point
+# define FS_TYPE	mnt_ent->mnt_type	// fs-type
+# define FS_MNTOPS 	mnt_ent->mnt_opts	// mount-options
+#endif
+
  	struct statfs 	sfs;
 	unsigned long 	total,avail;
 	QFontMetrics 	fm(lbox->tableFont());
@@ -201,8 +225,13 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 	QString 	MB(i18n("MB"));	// "MB" = "Mega-Byte"
 	QString 	TAB(SEPERATOR);
 
+#ifdef HAVE_FSTAB_H	
 	if (setfsent() != 0) // Try to open fstab
 	    return FALSE;
+#else
+	if (!(fp=setmntent("/etc/fstab","r")))
+ 	    return FALSE;
+#endif
 
 	// read the list of already mounted file-systems..
 	QFile *file = new QFile(INFO_MOUNTED_PARTITIONS);
@@ -212,7 +241,6 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 		    int p = str.find(' ');	// find first space.
 		    if (p) str.remove(p,1024);	// erase all chars including space.
 		    Mounted_Partitions.append(str);
-		    fprintf(stderr,"%s len= %i\r\n",str.ascii(),str.length());
 		}
 	    }
 	    file->close();
@@ -238,29 +266,34 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 	}
 
 	// loop through all partitions...
-	while ((fstab_ent=getfsent())!=NULL) {
-		if ( (n=fm.width(fstab_ent->fs_spec)) > maxwidth[0])
+#ifdef HAVE_FSTAB_H	
+	while ((fstab_ent=getfsent())!=NULL)
+#else
+	while ((mnt_ent=getmntent(fp))!=NULL)
+#endif
+	{
+		if ( (n=fm.width(FS_NAME)) > maxwidth[0])
 			maxwidth[0]=n;
 
-		if ( (n=fm.width(fstab_ent->fs_file)) > maxwidth[1])
+		if ( (n=fm.width(FS_FILE)) > maxwidth[1])
 			maxwidth[1]=n;
 		
-		if ( (n=fm.width(fstab_ent->fs_vfstype)) > maxwidth[2])
+		if ( (n=fm.width(FS_TYPE)) > maxwidth[2])
 			maxwidth[2]=n;
 
 		if (!maxwidth[3])
 		    maxwidth[3] = maxwidth[4] = fm.width("999999 MB");
 
-		if ( (n=fm.width(fstab_ent->fs_mntops)) > maxwidth[5])
+		if ( (n=fm.width(FS_MNTOPS)) > maxwidth[5])
 			maxwidth[5]=n;
 
-		str =  QString(fstab_ent->fs_spec) + TAB
-		    +  QString(fstab_ent->fs_file) + TAB 
-		    +  QString(fstab_ent->fs_vfstype) + TAB;
+		str =  QString(FS_NAME) + TAB
+		    +  QString(FS_FILE) + TAB 
+		    +  QString(FS_TYPE) + TAB;
 
 		total = avail = 0;	// initialize size..
-		found_in_List = (Mounted_Partitions.contains(fstab_ent->fs_spec)>0);
-		if (found_in_List && statfs(fstab_ent->fs_file,&sfs)==0) {
+		found_in_List = (Mounted_Partitions.contains(FS_NAME)>0);
+		if (found_in_List && statfs(FS_FILE,&sfs)==0) {
     		    total = sfs.f_blocks * sfs.f_bsize;
 		    avail = (getuid() ? sfs.f_bavail : sfs.f_bfree) * sfs.f_bsize;
 		};
@@ -278,11 +311,16 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 		else
 		    str += " " + TAB + " " + TAB;
 
-		str +=  TAB + QString(fstab_ent->fs_mntops);
+		str +=  TAB + QString(FS_MNTOPS);
 
 		lbox->insertItem(str);
 	}
+
+#ifdef HAVE_FSTAB_H	
 	endfsent();  // close fstab..
+#else
+	endmntent(fp);  // close fstab..
+#endif
 
 	for (n=0; n<NUMCOLS; ++n)
 	    lbox->setColumnWidth(n, maxwidth[n] + PIXEL_ADD);
