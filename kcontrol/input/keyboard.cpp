@@ -95,6 +95,7 @@ KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name)
   ( void ) new QRadioButton( i18n( "Turn on" ), numlockGroup );
   ( void ) new QRadioButton( i18n( "Turn off" ), numlockGroup );
   ( void ) new QRadioButton( i18n( "Leave unchanged" ), numlockGroup );
+  connect(numlockGroup, SIGNAL(released(int)), this, SLOT(changed()));
   lay->addWidget( numlockGroup );
 #ifndef HAVE_XTEST
   numlockGroup->setDisabled( true );
