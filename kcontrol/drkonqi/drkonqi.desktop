@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-DocPath=kcontrol/kcmkio/kio-3.html
-Icon=samba
+#DocPath=kcontrol/kcmkio/kio-3.html
+Icon=drkonqi
 Exec=kcmshell Applications/DrKonqi
 
 X-KDE-ModuleType=Library
@@ -12,4 +12,4 @@ Name=Dr. Konqi
 
 Comment=You can configure the crash notification settings here
 
-Keywords=Crash, Dr Konqi, Segmentation fault, Error, Handling
+Keywords=Crash,Dr Konqi,Segmentation fault,Error,Handling
