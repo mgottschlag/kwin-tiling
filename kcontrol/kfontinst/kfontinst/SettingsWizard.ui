@@ -128,7 +128,7 @@
 &lt;li&gt;Any fonts installed will only be printable by applications that embed the fonts within their output. Basically, for applications such as StarOffice, please login as "root" to install your fonts.&lt;/li&gt;
 &lt;li&gt;If you are running a font server (xfs), then any fonts installed may not actually be usable - as normally only "root" may install fonts in this case.&lt;/li&gt;
 &lt;/ol&gt;
-To sumarise: If you have problems using, or printing, the fonts you have installed - then you should try re-installing them as "root" (This can be accomplished via the "Administrator Mode" button.)
+To summarize: If you have problems using, or printing, the fonts you have installed - then you should try re-installing them as "root" (This can be accomplished via the "Administrator Mode" button.)
 &lt;/p&gt;</string>
                 </property>
                 <property name="alignment">

@@ -65,7 +65,7 @@ CInstalledFontListWidget::CInstalledFontListWidget(QWidget *parent, const char *
                                      "fonts folder. In order to make X, Ghostscript, "
                                      "and StarOffice aware of the changes you "
                                      "must \"configure\" your system - this will "
-                                     "create the neccessary configuration files "
+                                     "create the necessary configuration files "
                                      "needed by the various programs."));
 
     itsFontsPopup=new QPopupMenu(this);
@@ -378,7 +378,7 @@ void CInstalledFontListWidget::popupMenu(QListViewItem *item, const QPoint &poin
 void CInstalledFontListWidget::fixTtfPsNames()
 {
     if(KMessageBox::questionYesNo(this, i18n("This will *permanently* alter the TrueType font file(s),"
-                                             "\nand this cannot be undone."
+                                             "\nand cannot be undone."
                                              "\n"
                                              "\nAre you sure?"), i18n("Fix TTF postscript names"))==KMessageBox::Yes)
     {

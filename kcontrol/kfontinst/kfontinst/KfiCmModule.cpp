@@ -135,10 +135,10 @@ QString CKfiCmModule::quickHelp() const
     QString help(i18n("<h1>Font Installer</h1><p> This module allows you to"
                       " install TrueType, Type1, Speedo, and Bitmap"
                       " fonts. If you have StarOffice installed on your"
-                      " system, then this can also be configured.</p>")),
+                      " system, this can also be configured.</p>")),
             rootHelp(i18n("<p><b>NOTE:</b> As you are not logged in as \"root\", any"
                           " fonts installed will only be available to you. To install"
-                          " fonts system wide, then use the \"Administrator Mode\""
+                          " fonts system wide, use the \"Administrator Mode\""
                           " button to run this module as \"root\".</p>"));
 
     return CMisc::root() ? help : help+rootHelp;

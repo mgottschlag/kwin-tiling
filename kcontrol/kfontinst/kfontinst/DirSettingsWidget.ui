@@ -361,7 +361,7 @@
                     <property name="whatsThis" stdset="0">
                         <string>This is the folder containing XFree86 encoding files. These files (which usually have the suffix .enc or .enc.gz) are used to enable X to have access to more encoding shemes (such as cp1252).
 
-This folder is normaly a sub-folder of the system X11 fonts folder - and is usually named 'Encodings' or 'encodings'. As an example, on SuSE Linux 7.1 - the folder is:
+This folder is normally a sub-folder of the system X11 fonts folder - and is usually named 'Encodings' or 'encodings'. As an example, on SuSE Linux 7.1 - the folder is:
 
     /usr/X11R6/lib/X11/fonts/encodings/</string>
                     </property>

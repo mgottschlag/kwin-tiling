@@ -99,11 +99,11 @@ void CDirSettingsWidget::gsFontmapButtonPressed()
 
         if(!(CMisc::fExists(file)))
             if(CMisc::dWritable(CMisc::getDir(file)))
-                ok=KMessageBox::questionYesNo(this, i18n("File does not exist,\n"
-                                                         "create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
+                ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
+                                                         "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
             else
-                KMessageBox::error(this, i18n("File does not exist,\n"
-                                              "and directory is not writeable"), i18n("File error"));
+                KMessageBox::error(this, i18n("File does not exist\n"
+                                              "and directory is not writeable."), i18n("File error"));
         else
             ok=true;
 
@@ -141,18 +141,18 @@ void CDirSettingsWidget::xConfigButtonPressed()
 {
     QString file=KFileDialog::getSaveFileName(CConfig::constNotFound==itsXConfigFileText->text() ? QString::null : itsXConfigFileText->text(),
                                               NULL, this, i18n("Select X config file"));
- 
+
     if(QString::null!=file && file!=itsXConfigFileText->text())
     {
         bool ok=false;
- 
+
         if(!(CMisc::fExists(file)))
             if(CMisc::dWritable(CMisc::getDir(file)))
-                ok=KMessageBox::questionYesNo(this, i18n("File does not exist,\n"
-                                                         "create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
+                ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
+                                                         "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
             else
-                KMessageBox::error(this, i18n("File does not exist,\n"
-                                              "and directory is not writeable"), i18n("File error"));
+                KMessageBox::error(this, i18n("File does not exist\n"
+                                              "and directory is not writeable."), i18n("File error"));
         else
             ok=true;
 

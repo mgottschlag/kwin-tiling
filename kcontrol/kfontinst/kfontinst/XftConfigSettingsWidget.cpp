@@ -80,14 +80,14 @@ void CXftConfigSettingsWidget::fileButtonPressed()
         {
             if(CMisc::dWritable(CMisc::getDir(file)))
             {
-                ok=KMessageBox::questionYesNo(this, i18n("File does not exist,\n"
-                                                         "create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
+                ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
+                                                         "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
                 if(ok)
                     CKfiGlobal::xft().newFile();
             }
             else
-                KMessageBox::error(this, i18n("File does not exist,\n"
-                                              "and directory is not writeable"), i18n("File error"));
+                KMessageBox::error(this, i18n("File does not exist\n"
+                                              "and directory is not writeable."), i18n("File error"));
         }
         else
         {
