@@ -29,6 +29,8 @@
 #include <qwmatrix.h>
 #include <qkeycode.h>
 
+template class QList<KDMViewItem>;
+
 int KVItemList::compareItems( Item i1, Item i2)
 {
     KDMViewItem *lbi1 = (KDMViewItem *)i1;

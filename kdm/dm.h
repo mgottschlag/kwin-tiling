@@ -54,6 +54,10 @@ from the X Consortium.
 */
 
 #include <X11/Xos.h>
+#ifdef index
+#undef index
+#undef rindex
+#endif
 #include <X11/Xfuncs.h>
 #include <X11/Xmd.h>
 #include <X11/Xauth.h>
