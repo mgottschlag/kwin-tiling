@@ -47,6 +47,7 @@ services_DATA = \
 		mamma.desktop \
 		metacrawler.desktop \
 		msdn.desktop \
+		nl-telephone.desktop \
 		nl-teletekst.desktop \
 		pgpkeys.desktop \
 		php.desktop \

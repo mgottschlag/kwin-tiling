@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Telephonebook search provider
+Name[nl]=Telefoongids zoekprovider
+Type=Service
+ServiceTypes=SearchProvider
+Keys=telnl,telefoon
+Query[nl]=http://www.detelefoongids.nl/wit/scripts/dtgi.dll/white?iname=\{1}&initials=&city=\{2}&street=&region=0
