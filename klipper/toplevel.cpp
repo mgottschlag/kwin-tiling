@@ -843,28 +843,6 @@ Klipper::Klipper( QWidget* parent )
 {
 }
 
-#if QT_VERSION < 0x030200
-void Klipper::enterEvent( QEvent* )
-{
-#ifndef Q_WS_QWS
-    // FIXME(E): Implement for Qt Embedded
-    if ( !qApp->focusWidget() ) {
-	XEvent ev;
-	memset(&ev, 0, sizeof(ev));
-	ev.xfocus.display = qt_xdisplay();
-	ev.xfocus.type = FocusIn;
-	ev.xfocus.window = winId();
-	ev.xfocus.mode = NotifyNormal;
-	ev.xfocus.detail = NotifyAncestor;
-	Time time = qt_x_time;
-	qt_x_time = 1;
-	qApp->x11ProcessEvent( &ev );
-	qt_x_time = time;
-    }
-#endif
-}
-#endif
-
 // this sucks ... KUniqueApplication registers itself as 'klipper'
 // for the unique-app detection calls (and it shouldn't use that name IMHO)
 // but in Klipper it's not KUniqueApplication class who handles
