@@ -9,13 +9,16 @@ Number of commands=1
 [Action_1]
 Action description=Web-URL
 Action regexp=^http:\\/\\/
-Command_0: commandline=netscape -no-about-splash -remote "openURL(%s, new-window)"
-Command_0: description=Open with &Netscape
+Command_0: commandline=kfmclient exec '%s'
+Command_0: description=Open with &Konqueror
 Command_0: enabled=true
-Command_1: commandline=kfmclient exec '%s'
-Command_1: description=Open with &Konqueror
+Command_1: commandline=netscape -no-about-splash -remote "openURL(%s, new-window)"
+Command_1: description=Open with &Netscape
 Command_1: enabled=true
-Number of commands=2
+Command_2: commandline=mozilla -remote "openURL(%s, new-window)"
+Command_2: description=Open with &Netscape
+Command_2: enabled=true
+Number of commands=3
 
 [Action_2]
 Action description=Mail-URL

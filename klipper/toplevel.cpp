@@ -325,6 +325,7 @@ void TopLevel::saveProperties()
 
 void TopLevel::slotConfigure()
 {
+    bool haveURLGrabber = bURLGrabber;
     if ( !myURLGrabber ) { // temporary, for the config-dialog
         setURLGrabberEnabled( true );
         readConfiguration( kapp->config() );
@@ -347,11 +348,9 @@ void TopLevel::slotConfigure()
         myURLGrabber->setActionList( dlg->actionList() );
 	myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
         writeConfiguration( kapp->config() );
-        setURLGrabberEnabled( bURLGrabber );
     }
-
-    else // eventually delete the temporary urlgrabber, when cancel was pressed
-        setURLGrabberEnabled( bURLGrabber );
+    
+    setURLGrabberEnabled( haveURLGrabber );
 
     delete dlg;
 }
