@@ -97,6 +97,10 @@ KClassicGreeter::KClassicGreeter(
 	}
 	grid->addWidget( passwdLabel, line, 0 );
 	grid->addWidget( passwdEdit, line++, 1 );
+	if (loginEdit)
+	    loginEdit->setFocus();
+	else
+	    passwdEdit->setFocus();
     }
     if (func != Authenticate) {
 	if (echoMode == -1) {
@@ -139,10 +143,8 @@ KClassicGreeter::presetEntity( const QString &entity, int field )
     loginEdit->setText( entity );
     if (field)
 	passwdEdit->setFocus();
-    else {
+    else
 	loginEdit->selectAll();
-	loginEdit->setFocus();
-    }
     curUser = entity;
     handler->gplugSetUser( entity );
 }
@@ -166,10 +168,13 @@ void // virtual
 KClassicGreeter::setEnabled( bool enable )
 {
     // assert (!passwd1Label);
-    if (loginLabel)
-	loginLabel->setEnabled( enable );
+    // assert (func == Authenticate && ctx == Shutdown);
+//    if (loginLabel)
+//	loginLabel->setEnabled( enable );
     passwdLabel->setEnabled( enable );
     setActive( enable );
+    if (enable)
+	passwdEdit->setFocus();
 }
 
 void // private
@@ -219,15 +224,6 @@ void // virtual
 KClassicGreeter::start()
 {
     if (passwdEdit && passwdEdit->isEnabled()) {
-	if (loginEdit) {
-	    if (!loginEdit->hasFocus() && !passwdEdit->hasFocus()) {
-		if (!loginEdit->text().isEmpty())
-		    passwdEdit->setFocus();
-		else
-		    loginEdit->setFocus();
-	    }
-	} else
-	    passwdEdit->setFocus();
 	authTok = false;
 	if (func == Authenticate || ctx == ChangeTok || ctx == ExChangeTok)
 	    exp = -1;
@@ -323,14 +319,16 @@ void // virtual
 KClassicGreeter::revive()
 {
     // assert( !running );
+    setActive2( true );
     if (authTok) {
 	passwd1Edit->erase();
 	passwd2Edit->erase();
+	passwd1Edit->setFocus();
     } else {
-	passwdEdit->erase();
 	setActive( true );
+	passwdEdit->erase();
+	passwdEdit->setFocus();
     }
-    setActive2( true );
 }
 
 void // virtual
