@@ -28,55 +28,41 @@
 
 KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *parent, const char *name, bool modal)
   : KDialogBase(parent, name, modal, QString::null,
-	(b & KCModule::Help ? Help : 0) |
-	(b & KCModule::Default ? Default : 0) |
-	(b & KCModule::Reset ? User1 : 0) |
-	(b & KCModule::Cancel ? Cancel : 0) |
-	(b & KCModule::Apply ? Apply : 0) |
-	(b & KCModule::Ok ? Ok : 0),
-	Ok, true, i18n("&Reset")),
+                (b & KCModule::Help ? Help : 0) |
+                (b & KCModule::Default ? User1 : 0) |
+                (b & KCModule::Apply ? Apply : 0) |
+                Cancel | Ok,
+                Ok, true, i18n("Use &Defaults")),
     _client(client)
 {
-  client->reparent(this,0,QPoint(0,0),true);
-  setMainWidget(client);
-  connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
+    client->reparent(this,0,QPoint(0,0),true);
+    setMainWidget(client);
+    connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
 
-  setHelp( docpath, QString::null );
+    setHelp( docpath, QString::null );
 
-  // disable initial buttons
-  enableButton(User1, false);
-  enableButton(Apply, false);
+    enableButton(Apply, false);
 }
-
-void KCDialog::slotDefault()
-{
-  _client->defaults();
-  clientChanged(true);
-}
-
 
 void KCDialog::slotUser1()
 {
-  _client->load();
-  clientChanged(false);
+    _client->defaults();
+    clientChanged(true);
 }
-
-void KCDialog::slotApply()
-{
-  _client->save();
-  clientChanged(false);
-}
-
 
 void KCDialog::slotOk()
 {
-  _client->save();
-  accept();
+    _client->save();
+    accept();
 }
 
 void KCDialog::clientChanged(bool state)
 {
-  // enable/disable buttons
-  enableButton(User1, state);
-  enableButton(Apply, state);
+    enableButton(Apply, state);
+}
+
+void KCDialog::slotApply()
+{
+    _client->save();
+    clientChanged(false);
 }

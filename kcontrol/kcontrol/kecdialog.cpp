@@ -35,11 +35,9 @@
 #include "modloader.h"
 
 KExtendedCDialog::KExtendedCDialog(QWidget *parent, const char *name, bool modal)
-  : KDialogBase(IconList, i18n("Settings"), Help | Default | User1 |Cancel | Apply |Ok, Ok,
-                parent, name, modal, true, i18n("&Reset"))
+  : KDialogBase(IconList, i18n("Settings"), Help | User1 |Cancel | Apply | Ok, Ok,
+                parent, name, modal, true, i18n("&Use &Defaults"))
 {
-    // disable initial buttons
-    enableButton(User1, false);
     enableButton(Apply, false);
 }
 
@@ -47,19 +45,11 @@ KExtendedCDialog::~KExtendedCDialog()
 {
 }
 
-void KExtendedCDialog::slotDefault()
+void KExtendedCDialog::slotUser1()
 {
     for (KCModule* module = modules.first(); module != 0; module = modules.next())
         module->defaults();
     clientChanged(true);
-}
-
-
-void KExtendedCDialog::slotUser1()
-{
-    for (KCModule* module = modules.first(); module != 0; module = modules.next())
-        module->load();
-    clientChanged(false);
 }
 
 void KExtendedCDialog::slotApply()
@@ -79,8 +69,6 @@ void KExtendedCDialog::slotOk()
 
 void KExtendedCDialog::clientChanged(bool state)
 {
-    // enable/disable buttons
-    enableButton(User1, state);
     enableButton(Apply, state);
 }
 

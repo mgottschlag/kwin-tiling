@@ -34,7 +34,7 @@ public:
 
 protected slots:
 
-  virtual void slotDefault();
+    //virtual void slotDefault();
   virtual void slotUser1(); // Reset
   virtual void slotApply();
   virtual void slotOk();
