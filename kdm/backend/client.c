@@ -324,8 +324,14 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
 	    goto pam_bail2;
 	if ((pretc = pam_set_item (pamh, PAM_TTY, td->name)) != PAM_SUCCESS)
 	    goto pam_bail;
-	if ((pretc = pam_set_item (pamh, PAM_RHOST, "")) != PAM_SUCCESS)
-	    goto pam_bail;
+	if ((td->displayType & d_location) == dForeign) {
+	    char *cp = strchr (td->name, ':');
+	    *cp = 0;
+	    pretc = pam_set_item (pamh, PAM_RHOST, td->name);
+	    *cp = ':';
+	    if (pretc != PAM_SUCCESS)
+		goto pam_bail;
+	}
 # ifdef PAM_FAIL_DELAY
 	pam_set_item (pamh, PAM_FAIL_DELAY, (void *)fail_delay);
 # endif
