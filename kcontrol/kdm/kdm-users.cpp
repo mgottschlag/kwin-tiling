@@ -138,6 +138,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     wstack->addWidget( optoutlv );
     connect( optoutlv, SIGNAL(clicked( QListViewItem * )),
 	     SLOT(slotUpdateOptOut( QListViewItem * )) );
+    connect( optoutlv, SIGNAL(clicked( QListViewItem * )),
+	     SLOT(slotChanged()) );
 
     faceGroup = new QButtonGroup( 5, Qt::Vertical, i18n("User Image Source"), this );
     QWhatsThis::add( faceGroup, i18n("Here you can specify where KDM will obtain the images that represent users."
