@@ -387,6 +387,10 @@ void CFontListWidget::setAdvanced(bool on)
 {
     if(on!=itsAdvancedMode)
     {
+        if(on)
+            itsLabel->hide();
+        else
+            itsLabel->show();
         itsAdvancedMode=on;
         scan();
     }

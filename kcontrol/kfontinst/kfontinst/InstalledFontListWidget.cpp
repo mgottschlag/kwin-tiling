@@ -52,7 +52,7 @@
 CInstalledFontListWidget::CInstalledFontListWidget(QWidget *parent, const char *)
                         : CFontListWidget(parent, CConfig::INSTALLED, true, true, i18n("Install To"), i18n("Rem&ove"), i18n("&Apply..."),
                           CKfiGlobal::cfg().getFontsDir(),
-                          CKfiGlobal::cfg().getFontsDir(), i18n("X11 Fonts Directory"), "fonts")
+                          CKfiGlobal::cfg().getFontsDir(), i18n("X11 Fonts Folder"), "fonts")
 {
     connect(itsButton1, SIGNAL(clicked()), SLOT(uninstall()));
     connect(itsButton2, SIGNAL(clicked()), SLOT(configure()));
@@ -100,6 +100,10 @@ void CInstalledFontListWidget::rescan(bool advancedMode, const QString &dir1)
        (!itsAdvancedMode && dir1!=itsBasicData.dir) ||
        (itsAdvancedMode && dir1!=itsAdvancedData.dir1))
     {
+        if(advancedMode)
+            itsLabel->hide();
+        else
+            itsLabel->show();
         itsAdvancedMode=advancedMode;
         itsBasicData.dir=dir1;
         itsAdvancedData.dir1=dir1;
