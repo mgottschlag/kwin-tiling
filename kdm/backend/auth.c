@@ -316,15 +316,12 @@ SaveServerAuthorizations (
     int		    count)
 {
     FILE	*auth_file;
-    int		i, ret, mask;
+    int		i, ret;
 
     if (!d->authFile && d->clientAuthFile && *d->clientAuthFile)
 	StrDup (&d->authFile, d->clientAuthFile);
     if (d->authFile) {
-	mask = umask (0077);
-	auth_file = fopen (d->authFile, "w");
-	umask (mask);
-	if (!auth_file) {
+	if (!(auth_file = fdOpenW (creat (d->authFile, 0600)))) {
 	    LogError ("Cannot open X server authorization file %s\n", d->authFile);
 	    free (d->authFile);
 	    d->authFile = NULL;
@@ -443,7 +440,7 @@ openFiles (const char *name, char *new_name, FILE **oldp, FILE **newp)
 {
 	strcat (strcpy (new_name, name), "-n");
 	if (!(*newp = 
-	      fdOpenW (open (new_name, O_WRONLY | O_CREAT | O_TRUNC, 0600)))) {
+	      fdOpenW (creat (new_name, 0600)))) {
 		Debug ("can't open new file %s\n", new_name);
 		return 0;
 	}
@@ -635,10 +632,9 @@ DefineLocal (FILE *file, Xauth *auth)
 	 * is achieved by using gethostname().  For compatability, we must
 	 * also still create the entry using uname() above.
 	 */
-	if (gethostname(displayname, sizeof(displayname)))
-	  displayname[0] = '\0';
-	else
-	  displayname[sizeof(displayname)-1] = '\0';
+	displayname[0] = 0;
+	if (!gethostname (displayname, sizeof(displayname)))
+	    displayname[sizeof(displayname) - 1] = 0;
 
 	/*
 	 * If gethostname and uname both returned the same name,
@@ -1026,9 +1022,7 @@ startUserAuth (char *buf, char *nbuf,
 
     initAddrs ();
     *new = 0;
-    if ((home = getEnv (userEnviron, "HOME"))) {
-	if (strlen (home) >= NBSIZE - 12)
-	    return;
+    if ((home = getEnv (userEnviron, "HOME")) && strlen (home) < NBSIZE - 12) {
 	sprintf (buf, "%s/.Xauthority", home);
 	Debug ("XauLockAuth %s\n", buf);
 	lockStatus = XauLockAuth (buf, 1, 2, 10);
