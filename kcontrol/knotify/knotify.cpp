@@ -211,7 +211,7 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
     hbox->addWidget( reqExternal );
 
     volumeGroupBox = new QGroupBox( frame, "volumeGroupBox" );
-    volumeGroupBox->setTitle( tr( "Volume" ) );
+    volumeGroupBox->setTitle( i18n( "Volume" ) );
     volumeGroupBox->setColumnLayout(0, Qt::Vertical );
     // Use KDialog::spacingHint() ?
     volumeGroupBox->layout()->setSpacing( 6 );
