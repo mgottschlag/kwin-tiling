@@ -1,0 +1,9 @@
+[Desktop Entry]
+X-KDE-ModuleType=Library
+X-KDE-Library=kdb
+Type=Application
+Name=KDB configuration
+Comment=Configure the plugins and connections for KDB system
+Icon=kdb
+Exec=kcmshell Databases/kcmkdb
+DocPath=kdb/kcmkbd-1.html
