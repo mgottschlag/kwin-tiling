@@ -30,7 +30,7 @@ extern Time qt_x_time;
 
 KSysTrayCmd::KSysTrayCmd()
   : QLabel( 0, "systray_cmd" ),
-    isVisible(true), lazyStart( false ), noquit( false ),
+    isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ),
     win(0), client(0), kwinmodule(0)
 {
   setAlignment( AlignCenter );
