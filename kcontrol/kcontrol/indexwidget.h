@@ -38,11 +38,12 @@ public:
 public slots:
   void makeVisible(ConfigModule *module);
   void makeSelected(ConfigModule *module);
+  void activateIconView();
+  void activateTreeView();
 
 protected slots:
   void moduleSelected(ConfigModule *);
-  void treeButtonClicked();
-  void iconButtonClicked();
+  void viewButtonClicked();
 
 signals:
   void moduleActivated(ConfigModule *module);
@@ -53,7 +54,7 @@ protected:
 private:
   ModuleTreeView   *_tree;
   ModuleIconView   *_icon;
-  QPushButton      *_treebtn, *_iconbtn;
+  QPushButton      *_viewbtn;
   ConfigModuleList *_modules;
 
 };

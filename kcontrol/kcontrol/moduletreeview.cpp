@@ -51,17 +51,6 @@ void ModuleTreeView::fill()
 {
   clear();
   
-  QString rootlabel;
-  
-  if (KCGlobal::system())
-	rootlabel = i18n("Settings for system %1").arg(KCGlobal::hostName());
-  else
-	rootlabel = i18n("Settings for user %1").arg(KCGlobal::userName());
-  
-  // add the root node
-  ModuleTreeItem* root = new ModuleTreeItem(this, rootlabel);
-  root->setPixmap(0, KGlobal::iconLoader()->loadIcon("kcontrol", KIconLoader::Small));
-  
   ConfigModule *module;
   for (module=_modules->first(); module != 0; module=_modules->next())
     {
@@ -77,13 +66,12 @@ void ModuleTreeView::fill()
 		  continue;
 	  }
       
-      ModuleTreeItem *parent;
-      parent = root;
+      ModuleTreeItem *parent = 0;
       parent = getGroupItem(parent, module->groups());
       new ModuleTreeItem(parent, module);
     }
   
-  setOpen(root, true);
+  //  setOpen(root, true);
   setMinimumWidth(columnWidth(0)+22);
 }
 
@@ -131,12 +119,10 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
   QList<QListViewItem> parents;
   expandItem(firstChild(), &parents);
 
-  setOpen(item, true);
-
   QStringList::ConstIterator it;
+  item =static_cast<ModuleTreeItem*>( firstChild());
   for (it=module->groups().begin(); it != module->groups().end(); it++)
     {
-      item = static_cast<ModuleTreeItem*>(item->firstChild());
       while (item)
 		{
 		  if (item->tag() == *it)
@@ -166,7 +152,7 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
       path += *it + "/";
 	  
       parent = item;
-      item = static_cast<ModuleTreeItem*>(item->firstChild());
+      item = static_cast<ModuleTreeItem*>(firstChild());
 
       while (item)
 		{
@@ -179,7 +165,11 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
       if (!item)
 		{
 		  // create new branch
-		  ModuleTreeItem *iitem = new ModuleTreeItem(parent);
+          ModuleTreeItem *iitem;
+          if (parent == 0)
+            iitem = new ModuleTreeItem(this);
+          else
+            iitem = new ModuleTreeItem(parent);
 		  iitem->setTag(*it);
 		  
 		  // now decorate the branch

@@ -45,26 +45,19 @@ IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char 
   connect(_icon, SIGNAL(moduleSelected(ConfigModule*)), 
 		  this, SLOT(moduleSelected(ConfigModule*)));
 
-  // treeview button
-  _treebtn = new QPushButton(i18n("&Tree view"), this);
-  _treebtn->setFixedHeight(22);
-  connect(_treebtn, SIGNAL(clicked()), this, SLOT(treeButtonClicked()));
-
-  // iconview button
-  _iconbtn = new QPushButton(i18n("&Icon view"), this);
-  _iconbtn->setFixedHeight(22);
-  connect(_iconbtn, SIGNAL(clicked()), this, SLOT(iconButtonClicked()));
+  // view button
+  _viewbtn = new QPushButton(this);
+  _viewbtn->setFixedHeight(22);
+  connect(_viewbtn, SIGNAL(clicked()), this, SLOT(viewButtonClicked()));
 
   // activate iconview
-  iconButtonClicked();
+  activateIconView();
 }
 
 void IndexWidget::resizeEvent(QResizeEvent *)
 {
-  _treebtn->move(0, height()-22);
-  _treebtn->resize(width()/2, 22);
-  _iconbtn->move(_treebtn->width(), height()-22);
-  _iconbtn->resize(width()/2, 22);
+  _viewbtn->move(0, height()-22);
+  _viewbtn->resize(width(), 22);
 
   _tree->move(0,0);
   _tree->resize(width(), height()-22);
@@ -122,20 +115,26 @@ void IndexWidget::makeVisible(ConfigModule *module)
   _tree->makeVisible(module);
 }
 
-void IndexWidget::iconButtonClicked()
+void IndexWidget::activateIconView()
 {
   _tree->hide();
   _icon->show();
   _icon->setFocus();
-  _iconbtn->setEnabled(false);
-  _treebtn->setEnabled(true);
+  _viewbtn->setText(i18n("Switch to treeview."));
 }
 
-void IndexWidget::treeButtonClicked()
+void IndexWidget::activateTreeView()
 {
   _tree->show();
   _tree->setFocus();
   _icon->hide();
-  _iconbtn->setEnabled(true);
-  _treebtn->setEnabled(false);
+  _viewbtn->setText(i18n("Switch to iconview."));
+}
+
+void IndexWidget::viewButtonClicked()
+{
+  if (_tree->isVisible())
+    activateIconView();
+  else
+    activateTreeView();
 }
