@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>475</width>
+            <width>446</width>
             <height>462</height>
         </rect>
     </property>
@@ -50,7 +50,7 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                    <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>networkTransparent</cstring>
                         </property>
@@ -61,7 +61,7 @@
                             <string>This option allows sound requests coming in from over the network to be accepted, instead of just limiting the server to the local computer.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                    <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>startServer</cstring>
                         </property>
@@ -72,7 +72,7 @@
                             <string>If this option is enabled, the arts soundserver will be started on KDE startup. Recommended if you want sound.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="4" column="0">
+                    <widget class="QCheckBox" row="5" column="0">
                         <property name="name">
                             <cstring>autoSuspend</cstring>
                         </property>
@@ -83,7 +83,7 @@
                             <string>The sound server will suspend itself if idle for this period of time.</string>
                         </property>
                     </widget>
-                    <widget class="KIntNumInput" row="4" column="1">
+                    <widget class="KIntNumInput" row="5" column="1" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>suspendTime</cstring>
                         </property>
@@ -97,7 +97,7 @@
                             <string> sec</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>startRealtime</cstring>
                         </property>
@@ -108,7 +108,7 @@
                             <string>On systems which support realtime scheduling, if you have sufficient permissions, this option will enable a very high priority for processing sound requests.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+                    <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>x11Comm</cstring>
                         </property>
@@ -119,13 +119,13 @@
                             <string>If you want network transparency or if you use the soundserver only when you use X11, enable this option.</string>
                         </property>
                     </widget>
-                    <widget class="QLineEdit" row="5" column="1">
+                    <widget class="QLineEdit" row="6" column="1" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>messageApplication</cstring>
                         </property>
                     </widget>
-                    <spacer row="7" column="1">
-                        <property name="name">
+                    <spacer row="8" column="3">
+                        <property name="name" stdset="0">
                             <cstring>Spacer2</cstring>
                         </property>
                         <property name="orientation">
@@ -136,12 +136,37 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>0</width>
-                                <height>173</height>
+                                <width>20</width>
+                                <height>20</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QComboBox" row="6" column="1">
+                    <widget class="QPushButton" row="9" column="3">
+                        <property name="name">
+                            <cstring>testSound</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Test Sound</string>
+                        </property>
+                    </widget>
+                    <spacer row="9" column="0" rowspan="1" colspan="3">
+                        <property name="name" stdset="0">
+                            <cstring>Spacer1</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QComboBox" row="7" column="1" rowspan="1" colspan="3">
                         <item>
                             <property name="text">
                                 <string>Errors</string>
@@ -166,7 +191,7 @@
                             <cstring>loggingLevel</cstring>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="5" column="0">
+                    <widget class="QCheckBox" row="6" column="0">
                         <property name="name">
                             <cstring>displayMessage</cstring>
                         </property>
@@ -177,7 +202,7 @@
                             <string>When enabled, server error, warning, and informational messages will be displayed using this external program.</string>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="6" column="0">
+                    <widget class="QLabel" row="7" column="0">
                         <property name="name">
                             <cstring>loggingLabel</cstring>
                         </property>
@@ -187,55 +212,6 @@
                         <property name="whatsThis" stdset="0">
                             <string>This controls the level of messages that are output by the sound server. Only messages at the selected level and above will be reported.</string>
                         </property>
-                    </widget>
-                    <widget class="QLayoutWidget" row="8" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>Layout1</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>0</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>Spacer1</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>191</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QPushButton">
-                                <property name="name">
-                                    <cstring>restartServer</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Restart server</string>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton">
-                                <property name="name">
-                                    <cstring>testSound</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Test Sound</string>
-                                </property>
-                            </widget>
-                        </hbox>
                     </widget>
                 </grid>
             </widget>
@@ -459,7 +435,7 @@
                         </property>
                     </widget>
                     <spacer row="8" column="1">
-                        <property name="name">
+                        <property name="name" stdset="0">
                             <cstring>Spacer3</cstring>
                         </property>
                         <property name="orientation">
@@ -470,7 +446,7 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>0</width>
+                                <width>20</width>
                                 <height>20</height>
                             </size>
                         </property>

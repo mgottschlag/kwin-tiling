@@ -62,7 +62,7 @@ public:
 private slots:
 
   void slotChanged();
-  void slotRestartServer();
+  /* void slotRestartServer(); */
   void slotTestSound();
   void slotArtsdExited(KProcess* proc);
   void slotProcessArtsdOutput(KProcess* p, char* buf, int len);

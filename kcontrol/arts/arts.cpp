@@ -177,8 +177,10 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name, const QStringList &)
 	connect(messageApplication, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
 	connect(artsConfig->loggingLevel,SIGNAL(highlighted(int)),SLOT(slotChanged()));
 
+#if 0
 	connect(artsConfig->restartServer, SIGNAL(clicked()),
 	        this, SLOT(slotRestartServer()));
+#endif
 	connect(artsConfig->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
 }
 
@@ -362,6 +364,7 @@ int KArtsModule::userSavedChanges()
 */
 }
 
+#if 0
 void KArtsModule::slotRestartServer()
 {
 	QString question;
@@ -403,6 +406,7 @@ void KArtsModule::slotRestartServer()
 	}
 	updateWidgets();
 }
+#endif
 
 void KArtsModule::slotTestSound()
 {
@@ -523,6 +527,7 @@ void KArtsModule::updateWidgets()
 	calculateLatency();
 
 	bool artsdRunning = artsdIsRunning();
+#if 0
 	if (artsdRunning) {
 		if (startServerIsChecked)
 			artsConfig->restartServer->setText(i18n("Restart Server"));
@@ -532,6 +537,7 @@ void KArtsModule::updateWidgets()
 		artsConfig->restartServer->setText(i18n("Start Server"));
 		artsConfig->restartServer->setEnabled(startServerIsChecked);
 	}
+#endif
 	artsConfig->testSound->setEnabled(artsdRunning);
 }
 
