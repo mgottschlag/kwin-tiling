@@ -44,7 +44,6 @@ install-data-local: genkdmconf
 
 messages:
 	$(XGETTEXT) $(kdm_greet_SOURCES) -o $(podir)/kdmgreet.pot
-	$(XGETTEXT) $(kgreet_classic_la_SOURCES) -o $(podir)/kgreet_classic.pot
 
 noinst_HEADERS = \
     kdm_greet.h \
