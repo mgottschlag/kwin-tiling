@@ -44,7 +44,7 @@ if test "$KFI_FOUND_FREETYPE" -eq 1; then
 
     if test -n "$PKGCONFIG"; then
         vers=`$PKGCONFIG fontconfig --modversion 2>/dev/null | sed -e 's/libfontconfig //' | awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
-        if test -n "$vers" && test "$vers" -ge 1000001 ; then
+        if test -n "$vers" && test "$vers" -ge 2000000 ; then
             LIBFONTCONFIG_LIBS="`$PKGCONFIG fontconfig --libs`"
             LIBFONTCONFIG_RPATH=
             for args in $LIBFONTCONFIG_LIBS; do
@@ -62,7 +62,7 @@ if test "$KFI_FOUND_FREETYPE" -eq 1; then
 
     if test -n "$FONTCONFIG_CONFIG"; then
         vers=`$FONTCONFIG_CONFIG --version 2>/dev/null | sed -e 's/libfontconfig //' | awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
-        if test -n "$vers" && test "$vers" -ge 1000001 ; then
+        if test -n "$vers" && test "$vers" -ge 2000000 ; then
             LIBFONTCONFIG_LIBS="`$FONTCONFIG_CONFIG --libs`"
             LIBFONTCONFIG_RPATH=
             for args in $LIBFONTCONFIG_LIBS; do
