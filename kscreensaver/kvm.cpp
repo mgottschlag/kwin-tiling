@@ -281,6 +281,7 @@ kVmSaver::kVmSaver( Drawable drawable ) : kScreenSaver( drawable )
         pool_state = init_pool( mDrawable );
         vm_default_initstate( time(0), &(pool_state->pool->vm_random_data) );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
+        timer.start( 100 - speed );
 }
 
 kVmSaver::~kVmSaver()
@@ -301,7 +302,8 @@ void kVmSaver::blank()
 void kVmSaver::setSpeed( int spd )
 {
 	speed = spd;
-	timer.changeInterval( (100 - speed)*(100 - speed)*(100 - speed)/10000 );
+//	timer.changeInterval( (100 - speed)*(100 - speed)*(100 - speed)/10000 );
+	timer.changeInterval( (100 - speed) );
 }
 void kVmSaver::setRefreshTimeout( const int refreshTimeout )
 {
@@ -350,7 +352,8 @@ void kVmSaver::slotTimeout()
   vm_exec( pool_state->pool, getRandom(pool_state->pool->area_size - 1), 0,
            vm_get_reverse( pool_state->pool ) );
  vm_iterate( pool_state->pool, pool_state->modified );
- if( refreshStep++ >= refreshTimeout*refreshTimeout*refreshTimeout ) {
+// if( refreshStep++ >= refreshTimeout*refreshTimeout*refreshTimeout ) {
+ if( refreshStep++ >= refreshTimeout ) {
   draw_pool( pool_state );
   refreshStep = 0;
  }
