@@ -28,8 +28,6 @@
 #include <qwhatsthis.h>
 
 #include <stdio.h>
-#include <iostream.h>
-#include <fstream.h>
 
 #define IMP_SCREEN_XY_OFFSET 20
 
