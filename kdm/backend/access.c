@@ -299,12 +299,7 @@ Debug ("scanHostlist: host address %02[*hhx\n", h->entry.displayAddress.hostAddr
 	case HOST_BROADCAST:
 Debug ("scanHostlist: broadcast\n");
 	    if (broadcast && function)
-	    {
-		ARRAY8	temp;
-		temp.data = (BYTE *) "BROADCAST";
-		temp.length = 9;
-		(*function) (connectionType, &temp, closure);
-	    }
+		(*function) (FamilyBroadcast, 0, closure);
 	    break;
 	default:
 Debug ("scanHostlist: whatever\n");

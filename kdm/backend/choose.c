@@ -679,7 +679,7 @@ makeSockAddr (const char *name, struct sockaddr_in *in_addr)
 /*
  * Register the address for this host.
  * Called for interactively specified hosts.
- * The special name "BROADCAST" looks up all the broadcast
+ * The special names "BROADCAST" and "*" look up all the broadcast
  *  addresses on the local host.
  */
 
@@ -707,9 +707,9 @@ AddChooserHost (
     ARRAY8Ptr	addr,
     char	*closure ATTR_UNUSED)
 {
-Debug ("internal host registration: %[*hhu\n", addr->length, addr->data);
-    if ((addr->length == 9 && !memcmp ((char *)addr->data, "BROADCAST", 9)) ||
-	(addr->length == 1 && !*(char *)addr->data == '*'))
+    Debug ("internal host registration: %[*hhu, family %hx\n",
+	   addr->length, addr->data, connectionType);
+    if (connectionType == FamilyBroadcast)
 	registerBroadcastForPing();
     else if (connectionType == FamilyInternet) {
 	struct sockaddr_in in_addr;

@@ -575,6 +575,7 @@ extern struct protoDisplay	*NewProtoDisplay (
 					ARRAY8Ptr    connectionAddress,
 					CARD32	     sessionID);
 
+#define FamilyBroadcast 0xffff
 typedef void (*ChooserFunc)(CARD16 connectionType, ARRAY8Ptr addr, char *closure);
 
 /* in access.c */
