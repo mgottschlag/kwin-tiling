@@ -84,7 +84,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   wtstr = i18n("This is the string KDM will display in the login window. "
            "You may want to put here some nice greeting or information "
            "about the operating system.<p> KDM will replace the string "
-           "[HOSTNAME] with the actual host name of the computer "
+           "'%n' with the actual host name of the computer "
            "running the X server. Especially in networks this is a good "
            "idea." );
   QWhatsThis::add( label, wtstr );
