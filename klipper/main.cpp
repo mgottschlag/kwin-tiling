@@ -28,11 +28,20 @@ int main(int argc, char *argv[])
   KAboutData aboutData("klipper", I18N_NOOP("Klipper"),
     klipper_version, description, KAboutData::License_Artistic,
 		       "(c) 1998, Andrew Stanley-Jones\n"
-		       "1998-2001, Carsten Pfeiffer\n"
+		       "1998-2002, Carsten Pfeiffer\n"
 		       "2001, Patrick Dubroy");
-  aboutData.addAuthor("Andrew Stanley-Jones", 0, "asj@cban.com");
-  aboutData.addAuthor("Carsten Pfeiffer", 0, "pfeiffer@kde.org");
-  aboutData.addAuthor("Patrick Dubroy", 0, "patrickdu@corel.com");
+  
+  aboutData.addAuthor("Carsten Pfeiffer", 
+                      I18N_NOOP("Author, Maintainer"), 
+                      "pfeiffer@kde.org");
+
+  aboutData.addAuthor("Andrew Stanley-Jones", 
+                      I18N_NOOP( "Original Author" ),
+                      "asj@cban.com");
+  
+  aboutData.addAuthor("Patrick Dubroy", 
+                      I18N_NOOP("Contributor"), 
+                      "patrickdu@corel.com");
 
   KCmdLineArgs::init( argc, argv, &aboutData );
   KUniqueApplication::addCmdLineOptions();

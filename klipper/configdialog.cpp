@@ -18,7 +18,6 @@
 #include <qwhatsthis.h>
 #include <assert.h>
 
-#include <kaboutdialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
@@ -26,13 +25,14 @@
 #include <kregexpeditorinterface.h>
 #include <kparts/componentfactory.h>
 
+#include "aboutwidget.h"
 #include "configdialog.h"
 
-ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel, 
+ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,
                             bool isApplet )
-    : KDialogBase( KDialogBase::Tabbed, i18n("Klipper Preferences"),
-                    KDialogBase::Ok | KDialogBase::Cancel | KDialogBase::Help,
-                    KDialogBase::Ok, 0L, "config dialog" )
+    : KDialogBase( Tabbed, i18n("Klipper Preferences"),
+                    Ok | Cancel | Help,
+                    Ok, 0L, "config dialog" )
 {
     if ( isApplet )
         setHelp( QString::null, "klipper" );
@@ -48,19 +48,8 @@ ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,
     w = addVBoxPage( i18n("&Shortcuts") );
     keysWidget = new KKeyChooser( accel, w );
 
-
-    /* hmmm, this sort of sucks...
     w = addVBoxPage( i18n("About") );
-    KAboutWidget *about = new KAboutWidget( w, "about widget" );
-
-    about->setAuthor("Andrew Stanley-Jones", "asj@cban.com",
-                     QString::null, QString::null);
-    about->addContributor("Carsten Pfeiffer", "pfeiffer@kde.org",
-                          QString::null, QString::null);
-    about->setMaintainer("Carsten Pfeiffer",
-                         QString::null, QString::null, QString::null);
-    about->setVersion( "0.7" );
-    */
+    (void) new AboutWidget( w, "about widget" );
 }
 
 
@@ -123,12 +112,12 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
           "work the same way as in KDE 1.x and 2.x</qt>") );
 
     cbNoNull = new QCheckBox( i18n("Pre&vent empty clipboard"), this );
-    QWhatsThis::add( cbNoNull, 
+    QWhatsThis::add( cbNoNull,
                      i18n("Selecting this option has the effect, that the "
                           "clipboard can never be emptied. E.g. when an "
                           "application exits, the clipboard would usually be "
                           "emptied.") );
-    
+
     // make a QLabel because using popupTimeout->setLabel messes up layout
     QLabel *lblTimeout = new QLabel( i18n("Tim&eout for Action popups:" ), this );
     // workaround for KIntNumInput making a huge QSpinBox
