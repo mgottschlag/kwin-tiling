@@ -15,6 +15,7 @@
 #include <qdialog.h>
 #include <qmap.h>
 #include <qstring.h>
+#include <qevent.h>
 
 class QListView;
 class QListViewItem;
@@ -141,6 +142,21 @@ private:
     
 
 /**
+ * QListBox with DND
+ */
+
+class KMultiWallpaperList: public QListBox
+{
+public:
+    KMultiWallpaperList(QWidget *parent=0L, char *name=0L);
+
+protected:
+    virtual void dragEnterEvent(QDragEnterEvent *);
+    virtual void dropEvent(QDropEvent *);
+};
+
+
+/**
  * Multiwallpaper settings.
  */
 
@@ -164,7 +180,7 @@ private:
     QStringList m_Wallpapers;
     QSpinBox *m_pIntervalEdit;
     QComboBox *m_pModeEdit;
-    QListBox *m_pListBox;
+    KMultiWallpaperList *m_pListBox;
 
     KBackgroundSettings *m_pSettings;
 };

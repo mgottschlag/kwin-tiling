@@ -22,6 +22,7 @@
 #include <qcombobox.h>
 #include <qframe.h>
 #include <qmap.h>
+#include <qdragobject.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -713,6 +714,29 @@ void KPatternEditDialog::slotOK()
 }
 
 
+/**** KMultiWallpaperList ****/
+
+KMultiWallpaperList::KMultiWallpaperList(QWidget *parent, char *name)
+	: QListBox(parent, name)
+{
+    setAcceptDrops(true);
+}
+
+
+void KMultiWallpaperList::dragEnterEvent(QDragEnterEvent *ev)
+{
+    ev->accept(QUriDrag::canDecode(ev));
+}
+
+
+void KMultiWallpaperList::dropEvent(QDropEvent *ev)
+{
+    QStringList files;
+    QUriDrag::decodeLocalFiles(ev, files);
+    insertStringList(files);
+}
+
+
 /**** KMultiWallpaperDialog ****/
 
 KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
@@ -763,7 +787,7 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
     QVBoxLayout *vbox = new QVBoxLayout(frame);
     vbox->setSpacing(10);
     vbox->setMargin(10);
-    m_pListBox = new QListBox(frame);
+    m_pListBox = new KMultiWallpaperList(frame);
     m_pListBox->setMinimumSize(QSize(300,150));
     vbox->addWidget(m_pListBox);
     m_pListBox->insertStringList(m_Wallpapers);

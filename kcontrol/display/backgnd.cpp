@@ -80,7 +80,7 @@ void KBGMonitor::dropEvent(QDropEvent *e)
 					 
 void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 {
-    e->accept(QImageDrag::canDecode(e)|| QUriDrag::canDecode(e));
+    e->accept(QImageDrag::canDecode(e) || QUriDrag::canDecode(e));
 }                                                                                                             
 
 
