@@ -293,7 +293,7 @@ void
 AddPreGetEntropy (void)
 {
     static long offset;
-    long readlen;
+    int readlen;
 
     AddTimerEntropy();
     if ((readlen = sumFile (randomFile, BSIZ, SEEK_SET, offset)) == BSIZ) {
