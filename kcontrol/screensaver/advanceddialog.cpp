@@ -122,7 +122,7 @@ AdvancedDialog::AdvancedDialog(QWidget *parent, const char *name) : AdvancedDial
 {
 	qcbTopLeft->setCurrentItem(2);
 	monitorLabel->setPixmap(QPixmap(locate("data", "kcontrol/pics/monitor.png")));
-	QToolTip::add(qcbPriority, "Specify the priority that the screensaver will run at. A higher priority may mean that the screensaver runs more slowly, though may reduce the speed that other programs run at while the screensacer is active.");
+	QToolTip::add(qcbPriority, "<qt>" + i18n("Specify the priority that the screensaver will run at. A higher priority may mean that the screensaver runs faster, though may reduce the speed that other programs run at while the screensaver is active.") + "</qt>");
 }
 
 AdvancedDialog::~AdvancedDialog()
