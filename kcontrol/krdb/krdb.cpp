@@ -230,6 +230,10 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
     // one gives it something that is other way around, it will complain and scare
     // users. So we need to know whether a path being added is from KApp, and in this case
     // end it with.. So keep a QMap to bool, specifying whether the path is KDE-specified..
+    
+  QStringList kdeAdded;
+  
+  kdeAdded  = settings.readListEntry("/qt/KDE/kdeAddedLibraryPaths");
   
   
   //Read qt library path..
@@ -243,6 +247,20 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
     pathDb[path]=false;  
   }
   
+  //Get rid of old KDE-added ones...
+  for (QStringList::ConstIterator it = kdeAdded.begin(); it != kdeAdded.end(); ++it)
+  {
+    //Normalize..
+    QString path = *it;
+    if (path.endsWith("/"))
+      path.truncate(path.length()-1);  
+
+    //Remove..
+    pathDb.remove(path);
+  }
+  
+  kdeAdded.clear();
+  
   //Merge in KDE ones..
   plugins = KGlobal::dirs()->resourceDirs( "qtplugins" );
   
@@ -253,7 +271,9 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
       path.truncate(path.length()-1);  
   
     pathDb[path]=true;  
+    
   }
+  
   
   QStringList paths;
   
@@ -271,10 +291,15 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
     {
         if (!path.endsWith("/"))
             path += "/";
+       kdeAdded.push_back(path); //Add for the new list -- do it here to have it in the right form..
     }
     
     paths.append(path);
   }
+  
+   //Write the list out..
+  settings.writeEntry("/qt/KDE/kdeAddedLibraryPaths", kdeAdded);
+
   
   settings.writeEntry("/qt/libraryPath", paths, ':');
 
