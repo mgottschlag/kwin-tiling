@@ -32,26 +32,26 @@
 #include "aboutwidget.h"
 #include "aboutwidget.moc"
 
-const QString title_text = i18n("Configure your desktop environment.");
+const char * title_text = I18N_NOOP("Configure your desktop environment.");
 
-const QString intro_text = i18n("Welcome to the \"KDE Control Center\", "
+const char * intro_text = I18N_NOOP("Welcome to the \"KDE Control Center\", "
                                 "a central place to configure your "
                                 "desktop environment. "
                                 "Select an item from the index on the left "
                                 "to load a configuration module.");
 
-QString use_text = i18n("Click on the \"<b>Help</b>\" tab on the left to view help "
+char * use_text = I18N_NOOP("Click on the \"<b>Help</b>\" tab on the left to view help "
                         "for the active "
                         "control module. Use the \"<b>Search</b>\" tab if you are unsure "
                         "where to look for "
                         "a particular configuration option.");
 
-const QString version_text = i18n("KDE version:");
-const QString user_text = i18n("User:");
-const QString host_text = i18n("Hostname:");
-const QString system_text = i18n("System:");
-const QString release_text = i18n("Release:");
-const QString machine_text = i18n("Machine:");
+const char * version_text = I18N_NOOP("KDE version:");
+const char * user_text = I18N_NOOP("User:");
+const char * host_text = I18N_NOOP("Hostname:");
+const char * system_text = I18N_NOOP("System:");
+const char * release_text = I18N_NOOP("Release:");
+const char * machine_text = I18N_NOOP("Machine:");
 
 AboutWidget::AboutWidget(QWidget *parent , const char *name)
    : QWidget(parent, name)
@@ -72,11 +72,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
         setBackgroundMode(NoBackground); // no flicker
 
     // set qwhatsthis help
-    QWhatsThis::add(this, intro_text);
-
-    // do not break message freeze
-    use_text.replace(QRegExp("<b>"), "");
-    use_text.replace(QRegExp("</b>"), "");
+    QWhatsThis::add(this, i18n(intro_text));
 }
 
 void AboutWidget::paintEvent(QPaintEvent* e)
@@ -111,11 +107,11 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
     // draw title text
     p.setPen(white);
-    p.drawText(150, 84, width() - 150, 108 - 84, AlignLeft | AlignVCenter, title_text);
+    p.drawText(150, 84, width() - 150, 108 - 84, AlignLeft | AlignVCenter, i18n(title_text));
 
     // draw intro text
     p.setPen(black);
-    p.drawText(28, 128, width() - 28, 184 - 128, AlignLeft | AlignVCenter | WordBreak, intro_text);
+    p.drawText(28, 128, width() - 28, 184 - 128, AlignLeft | AlignVCenter | WordBreak, i18n(intro_text));
 
     // fill background
     p.fillRect(0, yoffset, width(), height() - yoffset, QBrush(QColor(49,121,172)));
@@ -172,7 +168,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
     // kde version
     p.setFont(f1);
-    p.drawText(xoffset, yoffset, version_text);
+    p.drawText(xoffset, yoffset, i18n(version_text));
     p.setFont(f2);
     p.drawText(xoffset + xadd, yoffset, KCGlobal::kdeVersion());
     yoffset += fheight + 5;
@@ -180,7 +176,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
     // user name
     p.setFont(f1);
-    p.drawText(xoffset, yoffset, user_text);
+    p.drawText(xoffset, yoffset, i18n(user_text));
     p.setFont(f2);
     p.drawText(xoffset + xadd, yoffset, KCGlobal::userName());
     yoffset += fheight + 5;
@@ -188,7 +184,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
     // host name
     p.setFont(f1);
-    p.drawText(xoffset, yoffset, host_text);
+    p.drawText(xoffset, yoffset, i18n(host_text));
     p.setFont(f2);
     p.drawText(xoffset + xadd, yoffset, KCGlobal::hostName());
     yoffset += fheight + 5;
@@ -196,7 +192,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
     // system
     p.setFont(f1);
-    p.drawText(xoffset, yoffset, system_text);
+    p.drawText(xoffset, yoffset, i18n(system_text));
     p.setFont(f2);
     p.drawText(xoffset + xadd, yoffset, KCGlobal::systemName());
     yoffset += fheight + 5;
@@ -204,7 +200,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
     // release
     p.setFont(f1);
-    p.drawText(xoffset, yoffset, release_text);
+    p.drawText(xoffset, yoffset, i18n(release_text));
     p.setFont(f2);
     p.drawText(xoffset + xadd, yoffset, KCGlobal::systemRelease());
     yoffset += fheight + 5;
@@ -212,7 +208,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
     // machine
     p.setFont(f1);
-    p.drawText(xoffset, yoffset, machine_text);
+    p.drawText(xoffset, yoffset, i18n(machine_text));
     p.setFont(f2);
     p.drawText(xoffset + xadd, yoffset, KCGlobal::systemMachine());
     if(yoffset > bheight) return;
@@ -226,5 +222,11 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     bwidth = bwidth - xoffset - 10;
 
     p.setFont(f1);
-    p.drawText(xoffset, yoffset, bwidth, bheight, AlignLeft | AlignVCenter | WordBreak, use_text);
+
+    QString ut = i18n(use_text);
+    // do not break message freeze
+    ut.replace(QRegExp("<b>"), "");
+    ut.replace(QRegExp("</b>"), "");
+
+    p.drawText(xoffset, yoffset, bwidth, bheight, AlignLeft | AlignVCenter | WordBreak, ut);
 }
