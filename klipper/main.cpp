@@ -18,17 +18,15 @@
 #include <kuniqueapplication.h>
 
 #include "toplevel.h"
-
+#include "version.h"
 
 static const char *description =
 	I18N_NOOP("KDE Cut & Paste history utility");
 
-static const char *version = "v0.9.1";
-
 int main(int argc, char *argv[])
 {
   KAboutData aboutData("klipper", I18N_NOOP("Klipper"),
-    version, description, KAboutData::License_Artistic,
+    klipper_version, description, KAboutData::License_Artistic,
 		       "(c) 1998, Andrew Stanley-Jones\n"
 		       "1998-2001, Carsten Pfeiffer\n"
 		       "2001, Patrick Dubroy");

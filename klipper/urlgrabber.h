@@ -37,7 +37,7 @@ class URLGrabber : public QObject
   Q_OBJECT
 
 public:
-  URLGrabber();
+  URLGrabber( KConfig* config );
   ~URLGrabber();
 
   /**
@@ -77,6 +77,7 @@ private:
   KPopupMenu *myMenu;
   QTimer *myPopupKillTimer;
   int myPopupKillTimeout;
+  KConfig* m_config;
 
 private slots:
   void slotActionMenu() { actionMenu( true ); }

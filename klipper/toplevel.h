@@ -19,17 +19,23 @@
 #include <qintdict.h>
 #include <qtimer.h>
 #include <qpixmap.h>
+#include <dcopobject.h>
 
 class QClipboard;
 class KToggleAction;
 class URLGrabber;
 
-class TopLevel : public KMainWindow
+class TopLevel : public KMainWindow, public DCOPObject
 {
   Q_OBJECT
+  K_DCOP
+
+k_dcop:
+    void quitProcess(); // not ASYNC
+    int newInstance();
 
 public:
-    TopLevel();
+    TopLevel( bool applet = false );
     ~TopLevel();
 
     KGlobalAccel *globalKeys;
@@ -65,7 +71,7 @@ private slots:
     void slotClipboardChanged( const QString& newContents );
 
     void slotMoveSelectedToTop();
-
+    
 private:
     QClipboard *clip;
 
@@ -84,6 +90,9 @@ private:
     int m_selectedItem;
     int maxClipItems;
     int URLGrabItem;
+    bool isApplet() const { return m_config != kapp->config(); }
+    KConfig* m_config;
+    DCOPClient* m_dcop;
 
     void trimClipHistory(int);
 };

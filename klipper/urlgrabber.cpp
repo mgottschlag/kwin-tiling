@@ -33,8 +33,11 @@
 #define URL_EDIT_ITEM 10
 #define DO_NOTHING_ITEM 11
 
-URLGrabber::URLGrabber()
+URLGrabber::URLGrabber( KConfig* config )
+ : m_config( config )
 {
+    if( m_config == NULL )
+        m_config = kapp->config();
     myCurrentAction = 0L;
     myMenu = 0L;
     myPopupKillTimeout = 8;
@@ -43,7 +46,7 @@ URLGrabber::URLGrabber()
     myActions->setAutoDelete( true );
     myMatches.setAutoDelete( false );
 
-    readConfiguration( kapp->config() );
+    readConfiguration( m_config );
 
     myPopupKillTimer = new QTimer( this );
     connect( myPopupKillTimer, SIGNAL( timeout() ),
@@ -114,7 +117,7 @@ bool URLGrabber::checkNewData( const QString& clipData )
     actionMenu( true ); // also creates myMatches
 
     return ( !myMatches.isEmpty() &&
-             (!kapp->config()->readBoolEntry("Put Matching URLs in history", true)));
+             (!m_config->readBoolEntry("Put Matching URLs in history", true)));
 }
 
 
@@ -144,7 +147,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
         for ( action = it.current(); action; action = ++it ) {
             QPtrListIterator<ClipCommand> it2( action->commands() );
             if ( it2.count() > 0 )
-                myMenu->insertTitle( kapp->miniIcon(), action->description() +
+                myMenu->insertTitle( SmallIcon( "klipper" ), action->description() +
 				     i18n(" -  Actions for: ") +
 				     KStringHandler::csqueeze(myClipData, 45));
             for ( command = it2.current(); command; command = ++it2 ) {

@@ -32,23 +32,25 @@
 #include <kwin.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
+#include <dcopclient.h>
 
 #include "configdialog.h"
 #include "toplevel.h"
 #include "urlgrabber.h"
+#include "version.h"
 
 
 #define QUIT_ITEM    50
 #define CONFIG_ITEM  60
 #define EMPTY_ITEM   80
 
-#define MENU_ITEMS   (7 + (KGlobalSettings::insertTearOffHandle() ? 1 : 0 ))
+#define MENU_ITEMS   ( isApplet() ? 5 : ( 7 + ( KGlobalSettings::insertTearOffHandle() ? 1 : 0 )))
 // the <clipboard empty> item
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
 
 /* XPM */
-static const char*mouse[]={
+static const char* const mouse[]={
 "20 20 8 1",
 "d c #ffa858",
 "e c #c05800",
@@ -79,19 +81,34 @@ static const char*mouse[]={
 ".#ccccccccccccccde#.",
 "..################.."};
 
-TopLevel::TopLevel()
-  : KMainWindow(0)
+TopLevel::TopLevel( bool applet )
+  : KMainWindow(0), DCOPObject( "klipper" ), m_dcop( 0 )
 {
     clip = kapp->clipboard();
     m_selectedItem = -1;
 
+    if( applet ) {
+        m_config = new KConfig( "klipperrc" );
+        // if there's klipper process running, quit it
+        QByteArray arg1, arg2;
+        QCString str;
+        // call() - wait for finishing
+        kapp->dcopClient()->call("klipper", "klipper", "quitProcess()", arg1, str, arg2 );
+        // register ourselves, so if klipper process is started,
+        // it will quit immediately (KUniqueApplication)
+        m_dcop = new DCOPClient;
+        m_dcop->registerAs( "klipper", false );
+    }
+    else
+        m_config = kapp->config();
+    
     QSempty = i18n("<empty clipboard>");
 
     toggleURLGrabAction = new KToggleAction( this );
     toggleURLGrabAction->setEnabled( true );
 
     myURLGrabber = 0L;
-    KConfig *kc = kapp->config();
+    KConfig *kc = m_config;
     readConfiguration( kc );
     setURLGrabberEnabled( bURLGrabber );
 
@@ -103,19 +120,19 @@ TopLevel::TopLevel()
     m_clipDict = new QIntDict<QString>();
     m_clipDict->setAutoDelete(TRUE);
 
-    readProperties(kapp->config());
+    readProperties(m_config);
     connect(kapp, SIGNAL(saveYourself()), SLOT(saveProperties()));
 
     m_checkTimer = new QTimer(this, "timer");
     m_checkTimer->start(1000, FALSE);
     connect(m_checkTimer, SIGNAL(timeout()), this, SLOT(newClipData()));
-    m_pixmap = new QPixmap(mouse);
+    m_pixmap = new QPixmap( const_cast<const char**>(mouse));
     resize( m_pixmap->size() );
 
     globalKeys = new KGlobalAccel(this);
     KGlobalAccel* keys = globalKeys;
 #include "klipperbindings.cpp"
-    globalKeys->readSettings();
+    globalKeys->readSettings(m_config);
     globalKeys->updateConnections();
     toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
@@ -133,6 +150,25 @@ TopLevel::~TopLevel()
     delete m_clipDict;
     delete m_pixmap;
     delete myURLGrabber;
+    if( isApplet()) {
+        delete m_config;
+        delete m_dcop;
+    }
+}
+
+// this is used for quiting klipper process, if klipper is being started as an applet
+void TopLevel::quitProcess()
+{
+    if( !isApplet()) {
+        kapp->dcopClient()->detach();
+        kapp->quit();
+    }
+}
+
+// this is just to make klipper process think we're KUniqueApplication
+int TopLevel::newInstance()
+{
+    return 0;
 }
 
 void TopLevel::mousePressEvent(QMouseEvent *e)
@@ -334,7 +370,7 @@ void TopLevel::readProperties(KConfig *kc)
   QStringList dataList;
 
   m_popup->clear();
-  m_popup->insertTitle(kapp->miniIcon(), i18n("Klipper - Clipboard Tool"));
+  m_popup->insertTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
 
   if (bKeepContents) { // load old clipboard if configured
       KConfigGroupSaver groupSaver(kc, "General");
@@ -358,8 +394,10 @@ void TopLevel::readProperties(KConfig *kc)
 			i18n("&Clear Clipboard History"), EMPTY_ITEM );
   m_popup->insertItem(SmallIcon("configure"), i18n("&Preferences..."),
 		       CONFIG_ITEM);
-  m_popup->insertSeparator();
-  m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
+  if( !isApplet()) {
+    m_popup->insertSeparator();
+    m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
+  }
   m_popup->insertTearOffHandle();
 
   if (bClipEmpty)
@@ -390,7 +428,7 @@ void TopLevel::writeConfiguration( KConfig *kc )
     kc->writeEntry("NoEmptyClipboard", bNoNullClipboard);
     kc->writeEntry("UseGUIRegExpEditor", bUseGUIRegExpEditor);
     kc->writeEntry("MaxClipItems", maxClipItems);
-    kc->writeEntry("Version", kapp->aboutData()->version());
+    kc->writeEntry("Version", klipper_version );
 
     if ( myURLGrabber )
         myURLGrabber->writeConfiguration( kc );
@@ -405,7 +443,7 @@ void TopLevel::saveProperties()
   if (bKeepContents) { // save the clipboard eventually
       QString  *data;
       QStringList dataList;
-      KConfig  *kc = kapp->config();
+      KConfig  *kc = m_config;
       KConfigGroupSaver groupSaver(kc, "General");
       QIntDictIterator<QString> it( *m_clipDict );
       if ( !bClipEmpty )
@@ -426,7 +464,7 @@ void TopLevel::slotConfigure()
     bool haveURLGrabber = bURLGrabber;
     if ( !myURLGrabber ) { // temporary, for the config-dialog
         setURLGrabberEnabled( true );
-        readConfiguration( kapp->config() );
+        readConfiguration( m_config );
     }
 
     KAccelActions map = globalKeys->actions();
@@ -451,7 +489,7 @@ void TopLevel::slotConfigure()
         bNoNullClipboard = dlg->noNullClipboard();
         bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         globalKeys->actions().updateShortcuts( map );
-        globalKeys->writeSettings();
+        globalKeys->writeSettings(m_config);
         globalKeys->updateConnections();
         toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
@@ -464,7 +502,7 @@ void TopLevel::slotConfigure()
 	maxClipItems = dlg->maxItems();
 	trimClipHistory( maxClipItems );
 	
-        writeConfiguration( kapp->config() );
+        writeConfiguration( m_config );
     }
     setURLGrabberEnabled( haveURLGrabber );
 
@@ -475,7 +513,7 @@ void TopLevel::slotConfigure()
 void TopLevel::slotRepeatAction()
 {
     if ( !myURLGrabber ) {
-	myURLGrabber = new URLGrabber();
+	myURLGrabber = new URLGrabber( m_config );
 	connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
 		 SLOT( showPopupMenu( QPopupMenu * )) );
     }
@@ -487,7 +525,7 @@ void TopLevel::setURLGrabberEnabled( bool enable )
 {
     bURLGrabber = enable;
     toggleURLGrabAction->setChecked( enable );
-    KConfig *kc = kapp->config();
+    KConfig *kc = m_config;
     kc->setGroup("General");
     kc->writeEntry("URLGrabberEnabled", bURLGrabber);
     kc->sync();
@@ -501,7 +539,7 @@ void TopLevel::setURLGrabberEnabled( bool enable )
     else {
         toggleURLGrabAction->setText(i18n("&Actions Enabled"));
         if ( !myURLGrabber ) {
-            myURLGrabber = new URLGrabber();
+            myURLGrabber = new URLGrabber( m_config );
             connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
                      SLOT( showPopupMenu( QPopupMenu * )) );
         }
