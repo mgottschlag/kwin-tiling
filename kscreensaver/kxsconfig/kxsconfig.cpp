@@ -214,7 +214,7 @@ void usage(const char *name)
 
 int main(int argc, char *argv[])
 {
-  KApplication app(argc, argv, "KXSConfig");
+  KApplication app(argc, argv, "kxsconfig");
 
   if (argc != 2 || argv[1][0] == '-')
   {

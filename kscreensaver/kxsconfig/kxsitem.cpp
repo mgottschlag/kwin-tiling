@@ -1,12 +1,13 @@
 
 #include "kxsconfig.h"
+#include <klocale.h>
 
 //===========================================================================
 KXSConfigItem::KXSConfigItem(const QString &name, KConfig &config)
   : mName(name)
 {
   config.setGroup(name);
-  mLabel = config.readEntry("Label");
+  mLabel = i18n(config.readEntry("Label").utf8());
 }
 
 //===========================================================================
