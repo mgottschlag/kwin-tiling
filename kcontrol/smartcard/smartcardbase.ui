@@ -82,7 +82,7 @@
                                     <string>Enable &amp;polling to autodetect card events</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>In most cases you should have this enabled.  It allows KDE to automatically detect card insertion and reader hotplug events.</string>
+                                    <string>In most cases you should have this enabled. It allows KDE to automatically detect card insertion and reader hotplug events.</string>
                                 </property>
                             </widget>
                             <spacer row="0" column="0" rowspan="3" colspan="1">

@@ -189,7 +189,7 @@
                 <string>Additional library search paths</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>Here you can specify additional directories to search for the SOCKS libraries.  /usr/lib, /usr/local/lib, /usr/local/socks5/lib and /opt/socks5/lib are already searched by default.</string>
+                <string>Here you can specify additional directories to search for the SOCKS libraries. /usr/lib, /usr/local/lib, /usr/local/socks5/lib and /opt/socks5/lib are already searched by default.</string>
             </property>
             <vbox>
                 <property name="name">

@@ -103,7 +103,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     lb_searchFallback->setBuddy(cmb_searchFallback);
     connect(cmb_searchFallback, SIGNAL(activated(const QString &)), this, SLOT(moduleChanged()));
     QString wtstr = i18n("Allows you to select a search provider that will be used in case what you "
-                         "typed is not an <em>Internet Keyword</em>.  Select \"None\" if you do not "
+                         "typed is not an <em>Internet Keyword</em>. Select \"None\" if you do not "
                          "want to do a search in this case, and you will get a directory listing of "
                          "relevant keywords.");
     QWhatsThis::add(lb_searchFallback, wtstr);

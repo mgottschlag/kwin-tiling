@@ -123,7 +123,7 @@ KDModule::~KDModule()
 QString KDModule::quickHelp() const
 {
     return i18n(    "<h1>Login Manager</h1> In this module you can configure the "
-                    "various aspects of the KDE Login Manager.  This includes "
+                    "various aspects of the KDE Login Manager. This includes "
                     "the look and feel as well as the users that can be "
                     "selected for login. Note that you can only make changes "
                     "if you run the module with superuser rights. If you haven't started the KDE "

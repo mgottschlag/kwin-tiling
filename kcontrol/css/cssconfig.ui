@@ -159,7 +159,7 @@
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
-                                    <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse.  Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
+                                    <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse. Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
                                 </property>
                             </widget>
                             <widget row="0"  column="0" >
@@ -914,7 +914,7 @@
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
-                                    <string>&lt;b&gt;Use same size for all elements&lt;/b&gt;&lt;p&gt;Select this option to override custom font sizes in favor of the base font size.  All fonts will be displayed in the same size.&lt;/p&gt;</string>
+                                    <string>&lt;b&gt;Use same size for all elements&lt;/b&gt;&lt;p&gt;Select this option to override custom font sizes in favor of the base font size. All fonts will be displayed in the same size.&lt;/p&gt;</string>
                                 </property>
                             </widget>
                         </grid>

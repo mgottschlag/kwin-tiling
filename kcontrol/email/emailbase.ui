@@ -209,7 +209,7 @@ Do &lt;em&gt;not&lt;/em&gt; enter something like John Doe &amp;lt;john@doe.com&a
                     <property>
                         <name>whatsThis</name>
                         <string>Enter your full name here, e.g. "John Doe" (without the quotation
-marks).  Some people like to provide a nick name only. You can leave this field blank and still use email. However, providing your full name is &lt;em&gt;recommended&lt;/em&gt; as this makes it much easier for your recipient to browse his or her email.</string>
+marks). Some people like to provide a nick name only. You can leave this field blank and still use email. However, providing your full name is &lt;em&gt;recommended&lt;/em&gt; as this makes it much easier for your recipient to browse his or her email.</string>
                     </property>
                 </widget>
                 <widget row="0"  column="0" >

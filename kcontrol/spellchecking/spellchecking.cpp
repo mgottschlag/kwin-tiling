@@ -77,6 +77,6 @@ void KSpellCheckingConfig::defaults()
 
 QString KSpellCheckingConfig::quickHelp() const
 {
-  return i18n("<h1>Spell Checking</h1><p>This control module allows you to configure the KDE spell checking system.  You can configure:<ul><li> which spell checking program to use<li> which types of spelling errors are identified<li> which dictionary is used by default.</ul><br>The KDE spell checking system (KSpell) provides support for two common spell checking utilities: ASpell and ISpell.  This allows you to share dictionaries between KDE applications and non-KDE applications.</p>"); }
+  return i18n("<h1>Spell Checking</h1><p>This control module allows you to configure the KDE spell checking system. You can configure:<ul><li> which spell checking program to use<li> which types of spelling errors are identified<li> which dictionary is used by default.</ul><br>The KDE spell checking system (KSpell) provides support for two common spell checking utilities: ASpell and ISpell. This allows you to share dictionaries between KDE applications and non-KDE applications.</p>"); }
 
 #include "spellchecking.moc"

@@ -299,7 +299,7 @@ QString KNotifyWidget::quickHelp() const
 {
     return i18n("<h1>System Notifications</h1>"
 		"KDE allows for a great deal of control over how you "
-		"will be notified when certain events occur.  There are "
+		"will be notified when certain events occur. There are "
 		"several choices as to how you are notified:"
 		"<ul><li>As the application was originally designed."
 		"<li>With a beep or other noise."

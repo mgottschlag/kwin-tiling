@@ -258,7 +258,7 @@ if (_ok) {
 QString KSmartcardConfig::quickHelp() const
 {
   return i18n("<h1>smartcard</h1> This module allows you to configure KDE support"
-     " for smartcards.  These can be used for various tasks such as storing"
+     " for smartcards. These can be used for various tasks such as storing"
      " SSL certificates and logging in to the system.");
 }
 

@@ -61,7 +61,7 @@
                         <string>
 1) The KDE daemon, 'kded' is not running. You can restart it by running the command 'kdeinit' and then try reloading the KDE Control Center to see if this message goes away.
 
-2) You don't appear to have smartcard support in the KDE libraries.  You will need to recompile the kdelibs package with libpcsclite installed.</string>
+2) You don't appear to have smartcard support in the KDE libraries. You will need to recompile the kdelibs package with libpcsclite installed.</string>
                     </property>
                     <property name="alignment">
                         <set>WordBreak|AlignVCenter</set>
