@@ -350,20 +350,34 @@ void runRdb( uint flags )
 {
   // Obtain the application palette that is about to be set.
   QPalette newPal = KApplication::createApplicationPalette();
+  bool exportColors     = flags & KRdbExportColors;
+  bool exportQtColors   = flags & KRdbExportQtColors;
+  bool exportQtSettings = flags & KRdbExportQtSettings;
+
+  KSimpleConfig kglobals("kdeglobals", true);
+  kglobals.setGroup("KDE");
+
+  KTempFile tmpFile;
+
+  if (tmpFile.status() != 0)
+  {
+    kdDebug() << "Couldn't open temp file" << endl;
+    exit(0);
+  }
+
+  QFile &tmp = *(tmpFile.file());
 
   // Export colors to non-(KDE/Qt) apps (e.g. Motif, GTK+ apps)
-  if (flags & KRdbExportColors)
+  if (exportColors)
   {
-
     KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
     QColorGroup cg = newPal.active();
     KGlobal::locale()->insertCatalogue("krdb");
     createGtkrc( true, cg );
 
     QString preproc;
-
-    addColorDef(preproc, "FOREGROUND"         , cg.foreground());
     QColor backCol = cg.background();
+    addColorDef(preproc, "FOREGROUND"         , cg.foreground());
     addColorDef(preproc, "BACKGROUND"         , backCol);
     addColorDef(preproc, "HIGHLIGHT"          , backCol.light(100+(2*KGlobalSettings::contrast()+4)*16/1));
     addColorDef(preproc, "LOWLIGHT"           , backCol.dark(100+(2*KGlobalSettings::contrast()+4)*10));
@@ -376,6 +390,8 @@ void runRdb( uint flags )
     addColorDef(preproc, "ACTIVE_BACKGROUND"  , KGlobalSettings::activeTitleColor());
     addColorDef(preproc, "ACTIVE_FOREGROUND"  , KGlobalSettings::activeTitleColor());
     //---------------------------------------------------------------
+
+    tmp.writeBlock( preproc.latin1(), preproc.length() );
 
     QStringList list;
 
@@ -391,69 +407,52 @@ void runRdb( uint flags )
       }
     }
 
-    QString propString;
-
-    KTempFile tmpFile;
-
-    if (tmpFile.status() != 0)
-    {
-      kdDebug() << "Couldn't open temp file" << endl;
-      exit(0);
-    }
-
-    QFile &tmp = *(tmpFile.file());
-    tmp.writeBlock( preproc.latin1(), preproc.length() );
-
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
       copyFile(tmp, locate("appdefaults", *it ), true);
-
-    // Merge ~/.Xresources or fallback to ~/.Xdefaults
-    QString homeDir = QDir::homeDirPath();
-    QString xResources = homeDir + "~/.Xresources";
-
-    // very primitive support for ~/.Xresources by appending it
-    if ( QFile::exists( xResources ) )
-	copyFile(tmp, xResources, true);
-    else
-	copyFile(tmp, homeDir + "/.Xdefaults", true);
-
-    tmpFile.close();
-
-    KProcess proc;
-    proc << "xrdb" << "-merge" << tmpFile.name();
-    proc.start( KProcess::Block, KProcess::Stdin );
-
-    tmpFile.unlink();
-
-    applyGtkStyles(true);
-  } else {
-    applyGtkStyles(false);
-
-/*  Don't do this, it removes all xrdb entries during KDE startup
-    If exporting KDE colors is disabled, the property is removed in the kcontrol
-    module and it re-runs xrdb ~/.Xdefaults
-
-    // Undo the property xrdb has placed on the root window (if any).
-    Atom resource_manager;
-    resource_manager = XInternAtom( qt_xdisplay(), "RESOURCE_MANAGER", True);
-    if (resource_manager != None)
-      XDeleteProperty( qt_xdisplay(), qt_xrootwin(), resource_manager);
-*/
-    // Undo Qt's _qt_desktop_properties (do we need to do this?)
-    // (we prefer x11_apply_settings as its more featureful)
-/*    Atom qt_desktop_properties;
-    qt_desktop_properties = XInternAtom( qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", True);
-    if (qt_desktop_properties != None)
-      XDeleteProperty( qt_xdisplay(), qt_xrootwin(), resouce_manager);	*/
   }
 
+  // Merge ~/.Xresources or fallback to ~/.Xdefaults
+  QString homeDir = QDir::homeDirPath();
+  QString xResources = homeDir + "~/.Xresources";
+
+  // very primitive support for ~/.Xresources by appending it
+  if ( QFile::exists( xResources ) )
+    copyFile(tmp, xResources, true);
+  else
+    copyFile(tmp, homeDir + "/.Xdefaults", true);
+
+  // Export the Xcursor theme & size settings
+  QString theme = kglobals.readEntry("cursorTheme", QString());
+  QString size  = kglobals.readEntry("cursorSize", QString());
+  QString contents;
+
+  if (!theme.isNull())
+    contents = "Xcursor.theme: " + theme + '\n';
+
+  if (!size.isNull())
+    contents += "Xcursor.size: " + size + '\n';
+
+  if (contents.length() > 0)
+    tmp.writeBlock( contents.latin1(), contents.length() );
+
+  tmpFile.close();
+
+  KProcess proc;
+#ifndef NDEBUG
+  proc << "xrdb" << "-merge" << tmpFile.name();
+#else
+  proc << "xrdb" << "-quiet -merge" << tmpFile.name();
+#endif
+  proc.start( KProcess::Block, KProcess::Stdin );
+
+  tmpFile.unlink();
+
+  applyGtkStyles(exportColors);
+
   /* Qt exports */
-  bool exportQtColors   = flags & KRdbExportQtColors;
-  bool exportQtSettings = flags & KRdbExportQtSettings;
   if ( exportQtColors || exportQtSettings )
   {
     QSettings* settings = new QSettings;
-    KSimpleConfig kglobals("kdeglobals", true);        /* open read-only */
 
     if ( exportQtColors )
       applyQtColors( kglobals, *settings, newPal );    // For kcmcolors
