@@ -295,6 +295,7 @@ void LockProcess::configure()
     mPlugins = config.readListEntry("PluginsUnlock");
     if (mPlugins.isEmpty())
         mPlugins = QStringList("classic");
+    mPluginOptions = config.readListEntry("PluginOptions");
 }
 
 //---------------------------------------------------------------------------
@@ -634,8 +635,14 @@ void LockProcess::stopSaver()
 }
 
 // private static
-QVariant LockProcess::getConf(void *, const char *, const QVariant &dflt)
+QVariant LockProcess::getConf(void *ctx, const char *key, const QVariant &dflt)
 {
+    LockProcess *that = (LockProcess *)ctx;
+    QString fkey = QString::fromLatin1( key ) + '=';
+    for (QStringList::ConstIterator it = that->mPluginOptions.begin();
+         it != that->mPluginOptions.end(); ++it)
+        if ((*it).startsWith( fkey ))
+            return (*it).mid( fkey.length() );
     return dflt;
 }
 

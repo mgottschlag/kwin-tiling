@@ -115,7 +115,7 @@ private:
     QValueStack< QWidget* > mDialogs;
     bool        mRestoreXF86Lock;
     bool        mForbidden;
-    QStringList mPlugins;
+    QStringList mPlugins, mPluginOptions;
     QString     mMethod;
     GreeterPluginHandle greetPlugin;
 };
