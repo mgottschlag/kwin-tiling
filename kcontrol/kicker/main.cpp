@@ -44,7 +44,7 @@
 
 
 // for multihead
-static int KickerConfig::kickerconfig_screen_number = 0;
+int KickerConfig::kickerconfig_screen_number = 0;
 
 
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
