@@ -43,6 +43,8 @@ from the copyright holder.
 # include <unistd.h>
 #endif
 #include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #ifdef USG
 # define NEED_UTSNAME
