@@ -37,6 +37,12 @@
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
+            <property name="frameShape">
+                <enum>GroupBoxPanel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
             <property name="title">
                 <string>Button Mapping</string>
             </property>
@@ -411,5 +417,9 @@
     <tabstop>cbLargeCursor</tabstop>
     <tabstop>cbWhiteCursor</tabstop>
 </tabstops>
+<includes>
+    <include location="global" impldecl="in implementation">kdialog.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
+<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 </UI>
