@@ -396,8 +396,8 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg )
             "# created by KDE, %1\n"
             "#\n"
             "# If you do not want KDE to override your GTK settings, select\n"
-            "# Look and Feel/Colors in the control center and disable the checkbox\n"
-            "# \"Apply colors to non-KDE apps\"\n"
+            "# Look & Feel -> Colors in the Control Center and disable the checkbox\n"
+            "# \"Apply colors to non-KDE applications\"\n"
             "#\n"
             "#\n").arg(QDateTime::currentDateTime().toString());
 
