@@ -13,6 +13,7 @@ Name[eo]=Vindoza aranĝo (sen Vindozoklavo)
 Name[es]=Esquema de Windows (sin la tecla Win)
 Name[et]=Windowsi skeem (Win klahvita)
 Name[eu]=Windows Eskema (Meta/Win-Key gabe)
+Name[fa]=شمای ویندوز(بدون کلید ویندوز)
 Name[fi]=Windows teema (ilman Win-näppäintä)
 Name[fr]=Modèle Windows (sans touche Windows)
 Name[he]=תצורת Windows (בלי מקש Win)
@@ -41,7 +42,7 @@ Name[ven]=Tshikimu tsha dziWindo (isina Meta/Win-Key)
 Name[xh]=Ifestile Ezingagqibekanga (Ngaphandle kwe Win-key)
 Name[xx]=xx
 Name[zh_CN]=Windows 主题 (不带 Win 键)
-Name[zh_TW]=Windows 按鍵配置 (無 Meta/Win 鍵)
+Name[zh_TW]=Windows 按鍵配置 (無 Win 鍵)
 Name[zu]=Isikimu SamaWindi (Ngaphandle kwe Meta/Win-Ukhiye)
 Uses Win Modifer=false
 
