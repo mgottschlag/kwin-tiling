@@ -87,9 +87,9 @@ void KDMFontWidget::configChanged()
 
 void KDMFontWidget::set_def()
 {
-  stdFontChooser->setFont(QFont("helvetica", 10));
-  failFontChooser->setFont(QFont("helvetica", 10, QFont::Bold));
-  greetingFontChooser->setFont(QFont("charter", 20));
+  stdFontChooser->setFont(QFont("helvetica", 12));
+  failFontChooser->setFont(QFont("helvetica", 12, QFont::Bold));
+  greetingFontChooser->setFont(QFont("charter", 24));
 }
 
 void KDMFontWidget::save()
