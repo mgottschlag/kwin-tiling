@@ -45,7 +45,6 @@ public:
   void insertItem(const QString &text, const QString &tag, const QString &submenu = QString::null, int index=-1 );
   void insertSeparator(const QString &submenu = QString::null, int index=-1 );
   void insertSubmenu(const QString &text, const QString &tag, const QString &submenu = QString::null, int index=-1);
-  void changeItem( const QString &text, int index );
 
   int count() const;
   void clear();
@@ -84,7 +83,7 @@ protected:
 private:
   // work space for the new class
   QStringList *tags;  
-  QPopupMenu *popup;
+  QPopupMenu *popup, *old_popup;
   int current;
 };
 

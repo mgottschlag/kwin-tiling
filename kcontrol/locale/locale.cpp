@@ -31,9 +31,9 @@
 #include <qiconset.h>
 #include <qwhatsthis.h>
 
+#include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
-
 #include <kstddirs.h>
 #include <ksimpleconfig.h>
 #include <kcharsets.h>
@@ -113,6 +113,7 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo, const QStringList &f
     langlist << QString::null; // separator
   langlist += alllang;
 
+  int menu_index = -2;
   QString submenu; // we are working on this menu
   for ( QStringList::ConstIterator it = langlist.begin();
 	it != langlist.end(); ++it )
@@ -121,7 +122,8 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo, const QStringList &f
         {
 	  combo->insertSeparator();
 	  submenu = QString::fromLatin1("other");
-	  combo->insertSubmenu(locale->translate("Other"), submenu);
+	  combo->insertSubmenu(locale->translate("Other"), submenu, QString::null, -2);
+          menu_index = -1; // first entries should _not_ be sorted
           continue;
         }
 	KSimpleConfig entry(*it);
@@ -133,7 +135,7 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo, const QStringList &f
 	path = path.left(index);
 	index = path.findRev('/');
 	path = path.mid(index+1);
-	combo->insertLanguage(path, name, QString::null, submenu);
+	combo->insertLanguage(path, name, QString::null, submenu, menu_index);
     }
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -194,7 +196,8 @@ void KLocaleConfig::loadCountryList(KLanguageCombo *combo)
 	tag.truncate(index);
 	index = tag.findRev('/');
 	tag = tag.mid(index+1);
-	combo->insertLanguage(tag, name, sub, submenu);
+        int menu_index = combo->containsTag(tag) ? -1 : -2;
+	combo->insertLanguage(tag, name, sub, submenu, menu_index);
     }
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -221,7 +224,7 @@ void KLocaleConfig::load()
 			   QString::fromLatin1("l10n/%1/entry.desktop")
 			   .arg(country)), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
-  QStringList langs = ent.readListEntry(QString::fromLatin1("Languages"));
+  langs = ent.readListEntry(QString::fromLatin1("Languages"));
   if (langs.isEmpty()) langs = QString::fromLatin1("C");
 
   // load lists into widgets
@@ -274,8 +277,8 @@ void KLocaleConfig::defaults()
   locale->setLanguage(C);
   locale->setCountry(C);
 
-  reTranslateLists();
   loadLanguageList(comboLang, QStringList());
+  loadCountryList(comboCountry);
 
   comboCountry->setCurrentItem(C);
   comboLang->setCurrentItem(C);
@@ -306,7 +309,7 @@ void KLocaleConfig::changedCountry(int i)
 
   KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + country + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
-  QStringList langs = ent.readListEntry(QString::fromLatin1("Languages"));
+  langs = ent.readListEntry(QString::fromLatin1("Languages"));
 
   QString lang = QString::fromLatin1("C");
   // use the first INSTALLED langauge in the list, or default to C
@@ -320,8 +323,8 @@ void KLocaleConfig::changedCountry(int i)
   locale->setLanguage(lang);
   locale->setCountry(country);
 
-  reTranslateLists();
   loadLanguageList(comboLang, langs);
+  loadCountryList(comboCountry);
 
   comboLang->setCurrentItem(lang);
 
@@ -333,7 +336,8 @@ void KLocaleConfig::changedLanguage(int i)
 {
   locale->setLanguage(comboLang->tag(i));
 
-  reTranslateLists();
+  loadLanguageList(comboLang, langs);
+  loadCountryList(comboCountry);
 
   emit languageChanged();
   emit resample();
@@ -344,32 +348,6 @@ void KLocaleConfig::changedCharset(int)
   locale->setChset(comboChset->currentTag());
 
   emit chsetChanged();
-}
-
-void KLocaleConfig::reTranslateLists()
-{
-  int j;
-  QString name;
-  for (j = 0; j < comboCountry->count(); j++)
-  {
-    QString tag = comboCountry->tag(j);    
-    readLocale(tag, name, QString::fromLatin1("l10n/"));
-    if (tag.at(0) == '-')
-      comboCountry->changeItem(name, j);
-    else 
-      comboCountry->changeLanguage(name, j);
-  }
-
-  for (j = 0; j < comboLang->count(); j++)
-  {
-    if (comboLang->tag(j) == QString::fromLatin1("other"))
-      comboLang->changeItem(locale->translate("Other"), j);
-    else
-    {
-      readLocale(comboLang->tag(j), name, QString::null);
-      comboLang->changeLanguage(name, j);
-    }
-  }
 }
 
 void KLocaleConfig::reTranslate()

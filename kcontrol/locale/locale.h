@@ -50,7 +50,6 @@ public:
   QString quickHelp();
 
 public slots:
-  void reTranslateLists();
   void reTranslate();
 
 signals:
@@ -62,6 +61,7 @@ signals:
 
 private:
   KLocaleAdvanced *locale;
+  QStringList langs;
 
   KLanguageCombo *comboCountry,
     *comboLang,

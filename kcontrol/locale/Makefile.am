@@ -11,7 +11,7 @@ noinst_HEADERS = ktagcombobox.h klocaleadv.h toplevel.h locale.h klangcombo.h kl
 
 libkcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_locale_la_LIBADD = $(LIB_KDEUI)
-
+ 
 messages:
 	$(XGETTEXT) $(libkcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
 

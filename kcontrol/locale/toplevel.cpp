@@ -65,6 +65,13 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   localetime = new KLocaleConfigTime(locale, this);
   tab->addTab( localetime, QString::null);
 
+  // Examples
+  gbox = new QVGroupBox(this);
+  sample = new KLocaleSample(locale, gbox);
+
+  load();
+  update();
+
   connect(localemain, SIGNAL(resample()),                    SLOT(update()  ));
   connect(localenum,  SIGNAL(resample()),                    SLOT(update()  ));
   connect(localemon,  SIGNAL(resample()),                    SLOT(update()  ));
@@ -74,13 +81,6 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   connect(localemain, SIGNAL(languageChanged()), localetime, SLOT(reset()   ));
   connect(localemain, SIGNAL(countryChanged()),              SLOT(reset   ()));
   connect(localemain, SIGNAL(chsetChanged()),                SLOT(newChset()));
-
-  // Examples
-  gbox = new QVGroupBox(this);
-  sample = new KLocaleSample(locale, gbox);
-
-  load();
-  update();
 }
 
 KLocaleApplication::~KLocaleApplication()
