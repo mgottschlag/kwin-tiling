@@ -3,7 +3,7 @@ kde_module_LTLIBRARIES = libkcm_arts.la
 libkcm_arts_la_SOURCES = arts.cpp artsconfig.ui
 
 libkcm_arts_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_arts_la_LIBADD = -lkdeui -lartsflow -lsoundserver_idl
+libkcm_arts_la_LIBADD = -lkdeui
 
 INCLUDES = $(all_includes) -I$(kde_includes)/arts 
 

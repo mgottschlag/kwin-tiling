@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <qfileinfo.h>
 #include <qstring.h>
@@ -51,8 +52,6 @@
 #include <kstddirs.h>
 
 #include "arts.h"
-#include <audioio.h>
-#include <soundserver.h>
 
 /* check if starting realtime would be possible */
 
@@ -104,12 +103,57 @@ QString createArgs(bool netTrans, bool duplex, int fragmentCount, int fragmentSi
 void init_arts();
 }
 
+/*
+ * This function uses artsd -A to init audioIOList with the possible audioIO
+ * methods. Here is a sample output of artsd -A (note the two spaces before
+ * each "interesting" line are used in parsing:
+ *
+ * # artsd -A
+ * possible choices for the audio i/o method:
+ * 
+ *   null      No audio input/output
+ *   alsa      Advanced Linux Sound Architecture
+ *   oss       Open Sound System
+ * 
+ */
+void KArtsModule::initAudioIOList()
+{
+	audioIOList.setAutoDelete(true);
+
+	FILE *artsd = popen("artsd -A 2>&1","r");
+	if(artsd)
+	{
+		char line[1024];
+		while (fgets(line, 1024, artsd))
+		{
+			// well: don't change the output format ;-)
+			if(line[0] == ' ' && line[1] == ' ')
+			{
+				char *name = strtok(line+2," \n");
+				if(name && name[0])
+				{
+					char *fullName = strtok(0, "\n");
+					if(fullName && fullName[0])
+					{
+						while(fullName[0] == ' ') fullName++;
+
+						audioIOList.append(new AudioIOElement(
+												QString::fromLatin1(name),
+												QString::fromLatin1(fullName)));
+					}
+		  		}
+			}
+	  	}
+		fclose(artsd);
+	}
+}
+
 KArtsModule::KArtsModule(QWidget *parent, const char *name)
   : KCModule(parent, name), configChanged(false)
 {
     setButtons(Reset|Default|Cancel|Apply|Ok);
 
-	dispatcher = new Arts::Dispatcher();
+	initAudioIOList();
 
     QVBoxLayout *layout = new QVBoxLayout(this, 10);
 	artsConfig = new ArtsConfig(this);
@@ -139,14 +183,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     QWhatsThis::add(artsConfig->customOptions, optionsHint);
     QWhatsThis::add(artsConfig->addOptions, optionsHint);
 
-	// fill audioIO widget:
-	for(int ai = 0; ai < Arts::AudioIO::queryAudioIOCount(); ai++)
-	{
-		const char *fullName =
-			Arts::AudioIO::queryAudioIOParamStr(ai, Arts::AudioIO::fullName);
-
-		artsConfig->audioIO->insertItem(fullName);
-	}
+	for(AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())
+		artsConfig->audioIO->insertItem(a->fullName);
 
     config = new KConfig("kcmartsrc");
     GetSettings();
@@ -168,11 +206,6 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	connect(artsConfig->latencySlider,SIGNAL(sliderMoved(int)),SLOT(slotChanged()));
 
 	connect(artsConfig->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
-}
-
-KArtsModule::~KArtsModule()
-{
-	delete dispatcher;
 }
 
 void KArtsModule::GetSettings( void )
@@ -209,12 +242,10 @@ void KArtsModule::GetSettings( void )
 		artsConfig->soundQuality->setCurrentItem(2);
 
 	QString audioIO = config->readEntry("AudioIO","");
-	for(int ai = 0; ai < Arts::AudioIO::queryAudioIOCount(); ai++)
+	for(AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())
 	{
-		const char *name =
-			Arts::AudioIO::queryAudioIOParamStr(ai, Arts::AudioIO::name);
-		if(name == audioIO)		// first item: "autodetect"
-			artsConfig->audioIO->setCurrentItem(ai + 1);
+		if(a->name == audioIO)		// first item: "autodetect"
+			artsConfig->audioIO->setCurrentItem(audioIOList.at() + 1);
 	}
     updateWidgets();
 }
@@ -225,7 +256,7 @@ void KArtsModule::saveParams( void )
 
 	int item = artsConfig->audioIO->currentItem() - 1;	// first item: "default"
 	if(item >= 0)
-		audioIO=Arts::AudioIO::queryAudioIOParamStr(item, Arts::AudioIO::name);
+		audioIO = audioIOList.at(item)->name;
 
 	QString dev = customDevice->isChecked()?deviceName->text():QString::fromLatin1("");
 	int rate = customRate->isChecked()?samplingRate->text().toLong():0;
@@ -299,20 +330,9 @@ void KArtsModule::save()
 					 "confused or crash."),
 				i18n("Restart sound server now?")) == KMessageBox::Yes)
 	{
-		{
-			Arts::SoundServer s = Arts::Reference("global:Arts_SoundServer");
-			if(!s.isNull()) s.terminate();
-		}
-
-		/*
-		 * We have to do restart the dispatcher, as the MCOP global
-		 * communication style might have changed (X11GlobalComm vs.
-		 * TmpGlobalComm).
-		 */
-		delete dispatcher;	
+		system("artsshell terminate");
 		sleep(1);				// leave artsd some time to go away
 		init_arts();
-		dispatcher = new Arts::Dispatcher();
 	}
 }
 
@@ -323,10 +343,10 @@ void KArtsModule::slotTestSound()
 		save();
 		sleep(1);
 	}
-
-	Arts::SoundServer s = Arts::Reference("global:Arts_SoundServer");
-	if(!s.isNull())
-		s.play(locate( "sound", "KDE_Startup.wav" ).ascii());
+	
+	QCString playCmd = "artsplay ";
+	playCmd += locate( "sound", "KDE_Startup.wav" ).ascii();
+	system(playCmd);
 }
 
 void KArtsModule::defaults()

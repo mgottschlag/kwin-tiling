@@ -38,8 +38,6 @@
 #include <qradiobutton.h>
 #include <artsconfig.h>
 
-#include <dispatcher.h>
-
 class KArtsModule : public KCModule
 {
   Q_OBJECT
@@ -47,7 +45,6 @@ class KArtsModule : public KCModule
 public:
 
   KArtsModule(QWidget *parent=0, const char *name=0);
-  ~KArtsModule();
 
   void saveParams( void );
 
@@ -79,7 +76,15 @@ private:
   int fragmentSize;
   bool configChanged;
 
-  Arts::Dispatcher *dispatcher;
+  void initAudioIOList();
+  class AudioIOElement {
+  public:
+    AudioIOElement(QString name, QString fullName)
+			: name(name), fullName(fullName) { }
+    QString name;
+	QString fullName;
+  };
+  QList<AudioIOElement> audioIOList;
 };
 
 
