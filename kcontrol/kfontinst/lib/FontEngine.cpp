@@ -59,6 +59,7 @@
 #include "KfiConfig.h"
 #include "Misc.h"
 #include "CompressedFile.h"
+#include <kurl.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
@@ -74,6 +75,7 @@
 #include FT_TRUETYPE_IDS_H
 #include FT_TRUETYPE_TABLES_H
 #include FT_TYPE1_TABLES_H
+
 #ifdef HAVE_FONT_ENC
 extern "C"
 {
@@ -129,6 +131,10 @@ extern "C"
 
 bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force, int face)
 {
+    bool ok=false;
+
+    KFI_DBUG << "openFont(" << file << ')' << endl;
+
     closeFont();
 
     itsType=getType(QFile::encodeName(file));
@@ -147,24 +153,28 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
         case TRUE_TYPE:
         case TT_COLLECTION:
         case OPEN_TYPE:
-            return openFontTT(file, mask, face);
+            ok=openFontTT(file, mask, face);
+            break;
         case TYPE_1:
-            return openFontT1(file, mask);
+            ok=openFontT1(file, mask);
+            break;
         case SPEEDO:
-            return openFontSpd(file, mask);
+            ok=openFontSpd(file, mask);
+            break;
         case BDF:
-            return openFontBdf(file);
+            ok=openFontBdf(file);
+            break;
         case PCF:
-            return openFontPcf(file);
+            ok=openFontPcf(file);
+            break;
         case SNF:
-            return openFontSnf(file);
+            ok=openFontSnf(file);
+            break;
         case TYPE_1_AFM:
-            return openFontAfm(file);
+            ok=openFontAfm(file);
+            break;
         default:
             if(force)
-            {
-                bool ok=false;
-
                 if((ok=openFontT1(file, mask)))
                     itsType=TYPE_1;
                 else
@@ -188,30 +198,31 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
                             itsType=SNF;
                     }
                 }
-
-                return ok;
-            }
-            else
-                return false;
     }
+
+    KFI_DBUG << "openFont, status:" << ok << endl;
+    return ok;
 }
 
-bool CFontEngine::openKioFont(const QString &file, unsigned short mask, bool force, int face)
+bool CFontEngine::openFont(const KURL &url, unsigned short mask, bool force, int face)
 {
-    if(openFont(file, mask, force, face))
-        return true;
+    KFI_DBUG << "openFont(" << url.protocol() << ":" << url.path() << ')' << endl;
+
+    if(KIO_FONTS_PROTOCOL!=url.protocol())
+        return openFont(url.path(), mask, force, face);
     else
     {
-        const QStringList          &list=CGlobal::cfg().getRealTopDirs(file);
+        const QStringList          &list=CGlobal::cfg().getRealTopDirs(url.path());
         QStringList::ConstIterator it;
+
 
         for(it=list.begin(); it!=list.end(); it++)
         {
-            QString fname(*it+CMisc::getSub(file));
+            QString fname(*it+CMisc::getSub(url.path()));
 
             if(CMisc::fExists(fname) && openFont(fname, mask, force, face))
             {
-                itsPath=*it+CMisc::getSub(file);
+                itsPath=fname;
                 return true;
             }
         }
@@ -449,13 +460,14 @@ CFontEngine::EWidth CFontEngine::strToWidth(const QString &str)
 
 QString CFontEngine::createName(const QString &file, bool force)
 {
+    KFI_DBUG << "createName(" << file << ')' << endl;
     QString name;
     int     face=0,
             numFaces=0;
 
     do
     {
-        if(openKioFont(file, NAME, force, face))
+        if(openFont(file, NAME, force, face))
         {
             numFaces=getNumFaces();
             if(face>0)
@@ -513,15 +525,20 @@ static void drawText(QPainter &painter, int x, int y, int width, const QString &
 
 void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
 {
-    FT_Face        face;
-    FT_Size        size;
-    FTC_Image_Desc font;
-    bool           thumb=width==height && height<=128,
-                   isBitmap=isABitmap(itsType);
-    int            fontSize=28,
-                   offset=4,
-                   space=8;
-
+    FT_Size          size;
+    FT_Face          face;
+#if KFI_FT_IS_GE(2, 1, 8)
+    FTC_ScalerRec    scaler;
+    FTC_ImageTypeRec font;
+#else
+    FTC_Image_Desc   font;
+#endif
+    bool             thumb=width==height && height<=128,
+                     isBitmap=isABitmap(itsType);
+    int              fontSize=28,
+                     offset=4,
+                     space=8,
+                     fontHeight;
     if(thumb)
     {
         if(height<=32)
@@ -538,12 +555,23 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
         }
     }
 
+    fontHeight=isBitmap ? itsPixelSize : thumb ? fontSize : point2Pixel(fontSize);
+
+#if KFI_FT_IS_GE(2, 1, 8)
+    font.face_id=getId(itsPath, faceNo);
+    font.width=font.height=fontHeight;
+    font.flags=FT_LOAD_DEFAULT;
+    scaler.face_id=font.face_id;
+    scaler.width=scaler.height=font.width;
+    scaler.pixel=1;
+#else
     font.font.face_id=getId(itsPath, faceNo);
-    font.font.pix_width=font.font.pix_height=isBitmap ? itsPixelSize : thumb ? fontSize : point2Pixel(fontSize);
+    font.font.pix_width=font.font.pix_height=fontHeight;
     font.image_type=ftc_image_grays;
+#endif
 
     FT_F26Dot6 startX=offset,
-               startY=offset+font.font.pix_height,
+               startY=offset+fontHeight,
                x=startX,
                y=startY;
 
@@ -585,15 +613,37 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
         y+=2;
         y+=startY;
     }
-
+#if KFI_FT_IS_GE(2, 1, 8)
+    if(!FTC_Manager_LookupFace(itsFt.cacheManager, scaler.face_id, &face) &&
+       !FTC_Manager_LookupSize(itsFt.cacheManager, &scaler, &size))
+#else
     if(!FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
+#endif
     {
         int        i;
         FT_F26Dot6 stepY=size->metrics.y_ppem+offset;
 
-        if(!thumb)
+        if(thumb)
         {
-            QString  quote(i18n("A sentence that uses all of the letters of the alphabet", "The quick brown fox jumps over the lazy dog"));
+            QString str(i18n("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789"));
+
+            if(getCharMap(face, str))
+            {
+                unsigned int ch;
+
+                for(ch=0; ch<str.length(); ++ch)
+                    if(drawGlyph(pix, font, FT_Get_Char_Index(face, str[ch].unicode()),  x, y, width, height, startX, stepY))
+                        break;
+            }
+            else
+                for(i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
+                    if(drawGlyph(pix, font, i, x, y, width, height, startX, stepY))
+                        break;
+        }
+        else
+        {
+            QString  quote(i18n("A sentence that uses all of the letters of the alphabet",
+                                "The quick brown fox jumps over the lazy dog"));
             bool     foundCmap=getCharMap(face, quote);
 
             if(foundCmap)
@@ -601,15 +651,26 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
                 unsigned int ch;
 
                 for(ch=0; ch<quote.length(); ++ch)
-                    if(drawGlyph(pix, font, FT_Get_Char_Index(face, quote[ch].unicode()),
-                       x, y, width, height, startX, stepY, space))
+                    if(drawGlyph(pix, font, FT_Get_Char_Index(face, quote[ch].unicode()), x, y, width, height, startX, stepY, space))
                         break;
             }
 
             if(!isBitmap)
+#if KFI_FT_IS_GE(2, 1, 8)
+            {
+                font.width=font.height=point2Pixel((int)(fontSize*0.75));
+                scaler.width=scaler.height=font.width;
+            }
+#else
                 font.font.pix_width=font.font.pix_height=point2Pixel((int)(fontSize*0.75));
+#endif
 
-            if(y<height && !FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
+            if(y<height &&
+#if KFI_FT_IS_GE(2, 1, 8)
+               !FTC_Manager_LookupSize(itsFt.cacheManager, &scaler, &size))
+#else
+               !FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
+#endif
             {
                 FT_F26Dot6 stepY=size->metrics.y_ppem+offset;
 
@@ -621,7 +682,11 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
                         x=startX;
                     }
 
+#if KFI_FT_IS_GE(2, 1, 8)
+                    y+=font.height;
+#else
                     y+=font.font.pix_height;
+#endif
                 }
 
                 for(i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
@@ -629,26 +694,6 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
                         break;
             }
         }
-        else
-        {
-            QString str(i18n("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789"));
-
-            if(getCharMap(face, str))
-            {
-                unsigned int ch;
-
-                for(ch=0; ch<str.length(); ++ch)
-                    if(drawGlyph(pix, font, FT_Get_Char_Index(face, str[ch].unicode()),
-                       x, y, width, height, startX, stepY))
-                        break;
-
-            }
-            else
-                for(i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
-                    if(drawGlyph(pix, font, i, x, y, width, height, startX, stepY))
-                        break;
-        }
-
     }
 }
 
@@ -1589,11 +1634,7 @@ bool CFontEngine::checkEncodingFt(const QString &enc)
            For encodings using PS names (currently Adobe Standard and
            Adobe Symbol only), we require perfect coverage. */
 
-#if ((FREETYPE_MAJOR > 2) || ((FREETYPE_MAJOR == 2) && (FREETYPE_MINOR >= 1)))
         if(FT_Has_PS_Glyph_Names(itsFt.face))
-#else
-        if(FT_HAS_GLYPH_NAMES(itsFt.face))
-#endif
             for(mapping=encoding->mappings; mapping; mapping=mapping->next)
                 if(FONT_ENCODING_POSTSCRIPT==mapping->type)
                 {
@@ -1693,11 +1734,7 @@ bool CFontEngine::checkExtraEncodingFt(const QString &enc, bool found)
             return true;
     }
     else if(enc==CEncodings::constT1Symbol)
-#if ((FREETYPE_MAJOR > 2) || ((FREETYPE_MAJOR == 2) && (FREETYPE_MINOR >= 1)))
         return !found && FT_Has_PS_Glyph_Names(itsFt.face) ? true : false;
-#else
-        return !found && FT_HAS_GLYPH_NAMES(itsFt.face) ? true : false;
-#endif
 
     return false;
 }
@@ -2441,8 +2478,13 @@ FTC_FaceID CFontEngine::getId(const QString &f, int faceNo)
     return (FTC_FaceID)p;
 }
 
+#if KFI_FT_IS_GE(2, 1, 8)
+bool CFontEngine::getGlyphBitmap(FTC_ImageTypeRec &font, FT_ULong index, Bitmap &target, int &left, int &top,
+                                 int &xAdvance, FT_Pointer *ptr)
+#else
 bool CFontEngine::getGlyphBitmap(FTC_Image_Desc &font, FT_ULong index, Bitmap &target, int &left, int &top,
                                  int &xAdvance, FT_Pointer *ptr)
+#endif
 {
     bool ok=false;
 
@@ -2450,11 +2492,19 @@ bool CFontEngine::getGlyphBitmap(FTC_Image_Desc &font, FT_ULong index, Bitmap &t
 
     //
     // Cache small glyphs, else render on demand...
+#if KFI_FT_IS_GE(2, 1, 8)
+    if(font.width<48 && font.height<48)
+#else
     if(font.font.pix_width<48 && font.font.pix_height<48)
+#endif
     {
         FTC_SBit sbit;
 
-        if(!FTC_SBit_Cache_Lookup(itsFt.sBitCache, &font, index, &sbit))
+#if KFI_FT_IS_GE(2, 1, 8)
+        if(!FTC_SBitCache_Lookup(itsFt.sBitCache, &font, index, &sbit, NULL) && sbit->buffer)
+#else
+        if(!FTC_SBit_Cache_Lookup(itsFt.sBitCache, &font, index, &sbit) && sbit->buffer)
+#endif
         {
             target.greys=sbit->max_grays+1; // ft_pixel_mode_mono==sbit->format ? 2 : 256;
             target.mono=ft_pixel_mode_mono==sbit->format ? true : false;
@@ -2465,23 +2515,28 @@ bool CFontEngine::getGlyphBitmap(FTC_Image_Desc &font, FT_ULong index, Bitmap &t
             left=sbit->left;
             top=sbit->top;
             xAdvance=sbit->xadvance;
+
             ok=true;
         }
     }
-    else
+    if(!ok)
     {
         FT_Glyph glyph;
 
+#if KFI_FT_IS_GE(2, 1, 8)
+        if(!FTC_ImageCache_Lookup(itsFt.imageCache, &font, index, &glyph, NULL))
+#else
         if(!FTC_Image_Cache_Lookup(itsFt.imageCache, &font, index, &glyph))
+#endif
         {
             ok=true;
 
             if(ft_glyph_format_outline==glyph->format)
-                if(ok=!FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, NULL, 0))
+                if(ok=!FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, NULL, 0))
                     *ptr=glyph;
 
             if(ok)
-                if(ft_glyph_format_bitmap==glyph->format)
+                if(ft_glyph_format_bitmap==glyph->format && ((FT_BitmapGlyph)glyph)->bitmap.buffer)
                 {
                     FT_BitmapGlyph bitmap=(FT_BitmapGlyph)glyph;
                     FT_Bitmap      *source=&(bitmap->bitmap);
@@ -2532,9 +2587,15 @@ void CFontEngine::align32(Bitmap &bmp)
     }
 }
 
+#if KFI_FT_IS_GE(2, 1, 8)
+bool CFontEngine::drawGlyph(QPixmap &pix, FTC_ImageTypeRec &font, int glyphNum,
+                            FT_F26Dot6 &x, FT_F26Dot6 &y, FT_F26Dot6 width, FT_F26Dot6 height,
+                            FT_F26Dot6 startX, FT_F26Dot6 stepY, int space)
+#else
 bool CFontEngine::drawGlyph(QPixmap &pix, FTC_Image_Desc &font, int glyphNum,
                             FT_F26Dot6 &x, FT_F26Dot6 &y, FT_F26Dot6 width, FT_F26Dot6 height,
                             FT_F26Dot6 startX, FT_F26Dot6 stepY, int space)
+#endif
 {
     int        left,
                top,
@@ -2590,7 +2651,6 @@ CFontEngine::TFtData::TFtData()
                     , buffer(NULL),
                       bufferSize(0)
 #endif
-
 {
     if(FT_Init_FreeType(&library))
     {
@@ -2604,12 +2664,20 @@ CFontEngine::TFtData::TFtData()
         std::cerr << "ERROR: Could not initliaze FreeType2 cache manager\n";
         exit(0);
     }
+#if KFI_FT_IS_GE(2, 1, 8)
+    if(FTC_SBitCache_New(cacheManager, &sBitCache))
+#else
     if(FTC_SBit_Cache_New(cacheManager, &sBitCache))
+#endif
     {
         std::cerr << "ERROR: Could not initliaze FreeType2 small bitmaps cache\n";
         exit(0);
     }
+#if KFI_FT_IS_GE(2, 1, 8)
+    if(FTC_ImageCache_New(cacheManager, &imageCache))
+#else
     if(FTC_Image_Cache_New(cacheManager, &imageCache))
+#endif
     {
         std::cerr << "ERROR: Could not initliaze FreeType2 glyph image cache\n";
         exit(0);

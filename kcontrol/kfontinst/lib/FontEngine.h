@@ -34,6 +34,7 @@
 #endif
 
 #include "Encodings.h"
+#include <kdeversion.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <qstring.h>
@@ -49,6 +50,12 @@
 #include <qptrlist.h>
 #include <qpaintdevice.h>
 #endif
+
+// OK - some macros to make determining the FreeType version easier...
+#define KFI_FREETYPE_VERSION      KDE_MAKE_VERSION(FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH)
+#define KFI_FT_IS_GE(a,b,c)       (KFI_FREETYPE_VERSION >= KDE_MAKE_VERSION(a,b,c))
+
+class KURL;
 
 class CFontEngine
 {
@@ -158,10 +165,18 @@ class CFontEngine
         FT_Library      library;
         FT_Face         face;
         bool            open;
+
 #ifdef HAVE_FT_CACHE
         FTC_Manager     cacheManager;
+
+#if KFI_FT_IS_GE(2, 1, 8)
+        FTC_ImageCache  imageCache;
+        FTC_SBitCache   sBitCache;
+#else
         FTC_Image_Cache imageCache;
         FTC_SBit_Cache  sBitCache;
+#endif
+
         QPtrList<TId>   ids;
         unsigned char   *buffer;
         int             bufferSize;
@@ -208,7 +223,7 @@ class CFontEngine
     // General functions - these should be used instead of specfic ones below...
     //
     bool            openFont(const QString &file, unsigned short mask=NAME, bool force=false, int face=0);
-    bool            openKioFont(const QString &file, unsigned short mask=NAME, bool force=false, int face=0);
+    bool            openFont(const KURL &url, unsigned short mask=NAME, bool force=false, int face=0);
     void            closeFont();
 
     const QString & getFullName()     { return itsFullName; }
@@ -311,11 +326,25 @@ class CFontEngine
     private:
 
     FTC_FaceID getId(const QString &f, int faceNo); 
+
+#if KFI_FT_IS_GE(2, 1, 8)
+    bool       getGlyphBitmap(FTC_ImageTypeRec &font, FT_ULong index, Bitmap &target, int &left, int &top,
+                             int &xAdvance, FT_Pointer *ptr);
+#else
     bool       getGlyphBitmap(FTC_Image_Desc &font, FT_ULong index, Bitmap &target, int &left, int &top,
                              int &xAdvance, FT_Pointer *ptr);
+#endif
+
     void       align32(Bitmap &bmp);
+
+#if KFI_FT_IS_GE(2, 1, 8)
+    bool       drawGlyph(QPixmap &pix, FTC_ImageTypeRec &font, int glyphNum, FT_F26Dot6 &x, FT_F26Dot6 &y,
+                         FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0);
+#else
     bool       drawGlyph(QPixmap &pix, FTC_Image_Desc &font, int glyphNum, FT_F26Dot6 &x, FT_F26Dot6 &y,
                          FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0);
+#endif
+
 #endif
 
     void       createAddStyle();
