@@ -303,7 +303,7 @@ QString KDEDConfig::quickHelp() const
 	return i18n("<h1>KDE Services</h1><p>This module allows you to have an overview of all plugins of the "
 			"KDE Daemon, also referred to as KDE Services. Generally, there are two types of service:</p>"
 			"<ul><li>Services invoked at startup</li><li>Services called on demand</li></ul>"
-			"<p>The latter are only listed for convenience. The startup services can be started and stopped."
+			"<p>The latter are only listed for convenience. The startup services can be started and stopped. "
 			"In Administrator mode, you can also define whether services should be loaded at startup.</p>"
 			"<p><b> Use this with care. Some services are vital for KDE. Don't deactivate services if you"
 			" don't know what you are doing!</b></p>");
