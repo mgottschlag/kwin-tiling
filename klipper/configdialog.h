@@ -40,8 +40,7 @@ public:
 
 private:
     QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH;
-    KIntNumInput *popupTimeout;
-    KEditListBox *editListBox;
+    KIntNumInput *popupTimeout, *maxItems;
 
 };
 
@@ -62,6 +61,7 @@ public:
      */
     ActionList * actionList();
 
+
 private slots:
     void slotAddAction();
     void slotDeleteAction();
@@ -70,7 +70,8 @@ private slots:
 
 private:
     KListView *listView;
-
+    KEditListBox *editListBox;
+    QCheckBox  *cbEnableActions;
 };
 
 class KeysWidget : public QVGroupBox
@@ -111,8 +112,14 @@ public:
     int popupTimeout() const {
 	return generalWidget->popupTimeout->value();
     }
+    int maxItems() const {
+	return generalWidget->maxItems->value();
+    }
     QStringList noActionsFor() const {
-	return generalWidget->editListBox->items();
+	return actionWidget->editListBox->items();
+    }
+    bool enableActions() const {
+	return actionWidget->cbEnableActions->isChecked();
     }
 
     void setKeepContents( bool enable ) {
@@ -127,8 +134,14 @@ public:
     void setPopupTimeout( int timeout ) {
 	generalWidget->popupTimeout->setValue( timeout );
     }
+    void setMaxItems( int items ) {
+	generalWidget->maxItems->setValue( items );
+    }
     void setNoActionsFor( const QStringList& items ) {
-	generalWidget->editListBox->insertStringList( items );
+	actionWidget->editListBox->insertStringList( items );
+    }
+    void setEnableActions( bool enable ) {
+	actionWidget->cbEnableActions->setChecked( enable );
     }
 
     virtual void show();

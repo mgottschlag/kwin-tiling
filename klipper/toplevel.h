@@ -59,7 +59,6 @@ private:
 
     QString QSlast;
     KPopupMenu *pQPMmenu;
-    KToggleAction *toggleURLGrabAction;
     QIntDict<QString> *pQIDclipData;
     QTimer *pQTcheck;
     QPixmap *pQPpic;
@@ -67,6 +66,9 @@ private:
     QString QSempty;
     URLGrabber *myURLGrabber;
     int pSelectedItem;
+    int maxClipItems;
+
+    void trimClipHistory(int);
 };
 
 #endif

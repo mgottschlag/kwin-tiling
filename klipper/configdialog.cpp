@@ -110,21 +110,22 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
 //    popupTimeout->setLabel( i18n("Timeout for Action popups:"),
 //                            AlignVCenter);
     QToolTip::add( popupTimeout, i18n("A value of 0 disables the timeout") );
-    QLabel *lblSeconds = new QLabel( "seconds", box );
+    QLabel *lblSeconds = new QLabel( i18n("seconds"), box );
     box->setStretchFactor( lblSeconds, 10 );
     box->setSpacing(6);
+    
 //    QWidget * dummy = new QWidget( box );
 //    box->setStretchFactor( dummy, 10 );
-    editListBox = new KEditListBox( i18n("&Disable actions for windows of type WM_CLASS:"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
-    QWhatsThis::add( editListBox,
-          i18n("<qt>This lets you specify windows in which klipper should<br>"
-	       "not invoke \"actions\". Use"
-	       "<center><b>xprop | grep WM_CLASS</b></center>"
-	       "in a terminal to find out the WM_CLASS of a window.<br>"
-	       "Next, click on the window you want to examine. The<br>"
-	       "first string it outputs after the equal sign is the one<br>"
-	       "you need to enter here.</qt>"));
 
+    QLabel *lblMaxItems = new QLabel( i18n("&Clipboard history size:"), this );
+    QHBox *maxItemsBox = new QHBox( this );
+    maxItems = new KIntNumInput( maxItemsBox );
+    lblMaxItems->setBuddy( maxItems );
+    maxItems->setRange( 2, 25, 1, false );
+//    QToolTip::add( maxItems, i18n("A value of 0 disables the timeout") );
+    QLabel *lblItems = new QLabel( i18n("items"), maxItemsBox );
+    maxItemsBox->setStretchFactor( lblItems, 10 );
+    maxItemsBox->setSpacing(6);
 
 #ifdef __GNUC__
 #warning Qt Bug, remove these setOrientation lines when fixed
@@ -148,6 +149,8 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     ASSERT( list != 0L );
 
     setTitle( i18n("Action settings") );
+
+    cbEnableActions = new QCheckBox( i18n("&Enable Actions"), this );
 
     QLabel *lblAction = new QLabel( i18n("Action &list (right click to add/remove commands):"),
 				    this );
@@ -217,6 +220,16 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     label->setAlignment( WordBreak | AlignLeft | AlignVCenter );
 
     box->setStretchFactor( label, 5 );
+
+    editListBox = new KEditListBox( i18n("D&isable actions for windows of type WM_CLASS:"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
+    QWhatsThis::add( editListBox,
+          i18n("<qt>This lets you specify windows in which klipper should<br>"
+	       "not invoke \"actions\". Use"
+	       "<center><b>xprop | grep WM_CLASS</b></center>"
+	       "in a terminal to find out the WM_CLASS of a window.<br>"
+	       "Next, click on the window you want to examine. The<br>"
+	       "first string it outputs after the equal sign is the one<br>"
+	       "you need to enter here.</qt>"));
 
     setOrientation( Horizontal );
 }

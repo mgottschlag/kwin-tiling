@@ -24,6 +24,7 @@
 #include <kwin.h>
 #include <kstringhandler.h>
 #include <kiconloader.h>
+#include <kdebug.h>
 
 #include "configdialog.h"
 #include "toplevel.h"
@@ -35,10 +36,9 @@
 #define URLGRAB_ITEM 70
 #define EMPTY_ITEM   80
 
+#define MENU_ITEMS   6
 // the <clipboard empty> item
-#define MAX_MENU_ITEMS 14
-#define MAX_CLIP_ITEMS 7
-#define EMPTY (pQPMmenu->count() - MAX_MENU_ITEMS + MAX_CLIP_ITEMS)
+#define EMPTY (pQPMmenu->count() - MENU_ITEMS)
 
 
 /* XPM */
@@ -80,9 +80,6 @@ TopLevel::TopLevel()
     pSelectedItem = -1;
     QSempty = i18n("<empty clipboard>");
 
-    toggleURLGrabAction = new KToggleAction( this );
-    toggleURLGrabAction->setEnabled( true );
-
     myURLGrabber = 0L;
     KConfig *kc = kapp->config();
     readConfiguration( kc );
@@ -116,11 +113,7 @@ TopLevel::TopLevel()
     globalKeys->connectItem("toggle-clipboard-actions", this,
                             SLOT( toggleURLGrabber()));
     globalKeys->readSettings();
-    toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
 
-
-    connect( toggleURLGrabAction, SIGNAL( toggled( bool ) ), this,
-             SLOT( setURLGrabberEnabled( bool )));
     setBackgroundMode(X11ParentRelative);
 }
 
@@ -181,11 +174,8 @@ void TopLevel::newClipData()
             }
         }
 
-        while(pQPMmenu->count() >= MAX_MENU_ITEMS){
-            int id = pQPMmenu->idAt(EMPTY);
-            pQIDclipData->remove(id);
-            pQPMmenu->removeItemAt(EMPTY);
-        }
+	trimClipHistory(maxClipItems - 1);
+
         if(clipData.length() > 50){
             clipData.truncate(47);
             clipData.append("...");
@@ -200,9 +190,14 @@ void TopLevel::newClipData()
         pSelectedItem = id;
 
 	if ( bClipEmpty )
+	{
 	    clip->clear();
+	    pQPMmenu->setItemEnabled(pSelectedItem, false);
+	}
 	else
+	{
 	    pQPMmenu->setItemChecked(pSelectedItem, true);
+	}
     }
 }
 
@@ -225,9 +220,7 @@ void TopLevel::clickedMenu(int id)
 	{
 	    pQTcheck->stop();
 
-	    while( pQPMmenu->count() > MAX_MENU_ITEMS - MAX_CLIP_ITEMS ) {
-		pQPMmenu->removeItemAt(EMPTY);
-	    }
+	    trimClipHistory(0);
 	    pQIDclipData->clear();
 	
 	    bClipEmpty = true;
@@ -312,7 +305,6 @@ void TopLevel::readProperties(KConfig *kc)
   bClipEmpty = ((QString)clip->text()).simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
 
   pQPMmenu->insertSeparator();
-  toggleURLGrabAction->plug( pQPMmenu, URLGRAB_ITEM );
   pQPMmenu->insertItem( SmallIcon("fileclose"), 
 			i18n("&Clear Clipboard History"), EMPTY_ITEM );
   pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."), 
@@ -335,8 +327,9 @@ void TopLevel::readConfiguration( KConfig *kc )
     kc->setGroup("General");
     bPopupAtMouse = kc->readBoolEntry("PopupAtMousePosition", false);
     bKeepContents = kc->readBoolEntry("KeepClipboardContents", true);
-    bURLGrabber = kc->readBoolEntry("URLGrabberEnabled", false);
+    bURLGrabber = kc->readBoolEntry("URLGrabberEnabled", true);
     bReplayActionInHistory = kc->readBoolEntry("ReplayActionInHistory", false);
+    maxClipItems = kc->readNumEntry("MaxClipItems", 7);
 }
 
 void TopLevel::writeConfiguration( KConfig *kc )
@@ -345,6 +338,7 @@ void TopLevel::writeConfiguration( KConfig *kc )
     kc->writeEntry("PopupAtMousePosition", bPopupAtMouse);
     kc->writeEntry("KeepClipboardContents", bKeepContents);
     kc->writeEntry("ReplayActionInHistory", bReplayActionInHistory);
+    kc->writeEntry("MaxClipItems", maxClipItems);
 
     if ( myURLGrabber )
         myURLGrabber->writeConfiguration( kc );
@@ -390,7 +384,9 @@ void TopLevel::slotConfigure()
     dlg->setPopupAtMousePos( bPopupAtMouse );
     dlg->setReplayActionInHistory( bReplayActionInHistory);
     dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
+    dlg->setMaxItems( maxClipItems );
     dlg->setNoActionsFor( myURLGrabber->avoidWindows() );
+    dlg->setEnableActions( haveURLGrabber );
 
     if ( dlg->exec() == QDialog::Accepted ) {
         bKeepContents = dlg->keepContents();
@@ -398,15 +394,18 @@ void TopLevel::slotConfigure()
         bReplayActionInHistory = dlg->replayActionInHistory();
         globalKeys->setKeyDict( map );
         globalKeys->writeSettings();
-        toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
+
+	haveURLGrabber = dlg->enableActions();
 
         myURLGrabber->setActionList( dlg->actionList() );
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
 	myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
+
+	maxClipItems = dlg->maxItems();
+	trimClipHistory( maxClipItems );
 	
         writeConfiguration( kapp->config() );
     }
-
     setURLGrabberEnabled( haveURLGrabber );
 
     delete dlg;
@@ -427,7 +426,6 @@ void TopLevel::slotRepeatAction()
 void TopLevel::setURLGrabberEnabled( bool enable )
 {
     bURLGrabber = enable;
-    toggleURLGrabAction->setChecked( enable );
     KConfig *kc = kapp->config();
     kc->setGroup("General");
     kc->writeEntry("URLGrabberEnabled", bURLGrabber);
@@ -436,11 +434,9 @@ void TopLevel::setURLGrabberEnabled( bool enable )
     if ( !bURLGrabber ) {
         delete myURLGrabber;
         myURLGrabber = 0L;
-        toggleURLGrabAction->setText(i18n("Enable &actions"));
     }
 
     else {
-        toggleURLGrabAction->setText(i18n("&Actions enabled"));
         if ( !myURLGrabber ) {
             myURLGrabber = new URLGrabber();
             connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
@@ -452,5 +448,15 @@ void TopLevel::setURLGrabberEnabled( bool enable )
 void TopLevel::toggleURLGrabber()
 {
     setURLGrabberEnabled( !bURLGrabber );
+}
+
+void TopLevel::trimClipHistory( int new_size )
+{
+    while(pQPMmenu->count() - MENU_ITEMS > (unsigned)new_size){
+	int id = pQPMmenu->idAt(EMPTY);
+
+	pQIDclipData->remove(id);
+	pQPMmenu->removeItemAt(EMPTY);
+    }
 }
 #include "toplevel.moc"
