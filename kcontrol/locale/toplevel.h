@@ -36,6 +36,7 @@ class KLocaleConfig;
 class KLocaleConfigMoney;
 class KLocaleConfigNumber;
 class KLocaleConfigTime;
+class KLocaleConfigOther;
 class KLocaleSample;
 
 class KLocaleApplication : public KCModule
@@ -71,6 +72,7 @@ private:
   KLocaleConfigNumber *m_localenum;
   KLocaleConfigMoney  *m_localemon;
   KLocaleConfigTime   *m_localetime;
+  KLocaleConfigOther  *m_localeother;
 
   QGroupBox           *m_gbox;
   KLocaleSample       *m_sample;

@@ -33,6 +33,7 @@
 #include <qvbox.h>
 #include <qregexp.h>
 
+#include <knuminput.h>
 #include <kglobal.h>
 #include <kdialog.h>
 #include <kconfig.h>
@@ -51,71 +52,73 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
     m_locale(locale)
 {
   // Money
-  QGridLayout *lay = new QGridLayout(this, 5, 2,
+  QGridLayout *lay = new QGridLayout(this, 6, 2,
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
 
-  labMonCurSym = new QLabel(this, I18N_NOOP("Currency symbol:"));
-  lay->addWidget(labMonCurSym, 0, 0);
-  edMonCurSym = new QLineEdit(this);
-  lay->addWidget(edMonCurSym, 0, 1);
-  connect( edMonCurSym, SIGNAL( textChanged(const QString &) ),
+  m_labMonCurSym = new QLabel(this, I18N_NOOP("Currency symbol:"));
+  lay->addWidget(m_labMonCurSym, 0, 0);
+  m_edMonCurSym = new QLineEdit(this);
+  lay->addWidget(m_edMonCurSym, 0, 1);
+  connect( m_edMonCurSym, SIGNAL( textChanged(const QString &) ),
 	   SLOT( slotMonCurSymChanged(const QString &) ) );
   
-  labMonDecSym = new QLabel(this, I18N_NOOP("Decimal symbol:"));
-  lay->addWidget(labMonDecSym, 1, 0);
-  edMonDecSym = new QLineEdit(this);
-  lay->addWidget(edMonDecSym, 1, 1);
-  connect( edMonDecSym, SIGNAL( textChanged(const QString &) ),
+  m_labMonDecSym = new QLabel(this, I18N_NOOP("Decimal symbol:"));
+  lay->addWidget(m_labMonDecSym, 1, 0);
+  m_edMonDecSym = new QLineEdit(this);
+  lay->addWidget(m_edMonDecSym, 1, 1);
+  connect( m_edMonDecSym, SIGNAL( textChanged(const QString &) ),
 	   SLOT( slotMonDecSymChanged(const QString &) ) );
 
-  labMonThoSep = new QLabel(this, I18N_NOOP("Thousands separator:"));
-  lay->addWidget(labMonThoSep, 2, 0);
-  edMonThoSep = new QLineEdit(this);
-  lay->addWidget(edMonThoSep, 2, 1);
-  connect( edMonThoSep, SIGNAL( textChanged(const QString &) ),
+  m_labMonThoSep = new QLabel(this, I18N_NOOP("Thousands separator:"));
+  lay->addWidget(m_labMonThoSep, 2, 0);
+  m_edMonThoSep = new QLineEdit(this);
+  lay->addWidget(m_edMonThoSep, 2, 1);
+  connect( m_edMonThoSep, SIGNAL( textChanged(const QString &) ),
 	   SLOT( slotMonThoSepChanged(const QString &) ) );
 
-  labMonFraDig = new QLabel(this, I18N_NOOP("Fract digits:"));
-  lay->addWidget(labMonFraDig, 3, 0);
-  edMonFraDig = new QLineEdit(this);
-  lay->addWidget(edMonFraDig, 3, 1);
-  connect( edMonFraDig, SIGNAL( textChanged(const QString &) ),
-	   SLOT( slotMonFraDigChanged(const QString &) ) );
+  m_labMonFraDig = new QLabel(this, I18N_NOOP("Fract digits:"));
+  lay->addWidget(m_labMonFraDig, 3, 0);
+  m_inMonFraDig = new KIntNumInput(this);
+  m_inMonFraDig->setRange(0, 10, 1, false);
+  lay->addWidget(m_inMonFraDig, 3, 1);
+  
+  connect( m_inMonFraDig, SIGNAL( valueChanged(int) ),
+	   SLOT( slotMonFraDigChanged(int) ) );
 
   QWidget *vbox = new QVBox(this);
   lay->addMultiCellWidget(vbox, 4, 4, 0, 1);
   QGroupBox *grp;
   grp = new QGroupBox( vbox, I18N_NOOP("Positive") );
   grp->setColumns(2);
-  labMonPosPreCurSym = new QLabel(grp, I18N_NOOP("Prefix currency symbol:"));
-  chMonPosPreCurSym = new QCheckBox(grp);
-  connect( chMonPosPreCurSym, SIGNAL( clicked() ),
+  m_labMonPosPreCurSym = new QLabel(grp, I18N_NOOP("Prefix currency symbol:"));
+  m_chMonPosPreCurSym = new QCheckBox(grp);
+  connect( m_chMonPosPreCurSym, SIGNAL( clicked() ),
 	   SLOT( slotMonPosPreCurSymChanged() ) );
 
-  labMonPosMonSignPos = new QLabel(grp, I18N_NOOP("Sign position:"));
-  cmbMonPosMonSignPos = new QComboBox(grp, "signpos");
-  connect( cmbMonPosMonSignPos, SIGNAL( activated(int) ),
+  m_labMonPosMonSignPos = new QLabel(grp, I18N_NOOP("Sign position:"));
+  m_cmbMonPosMonSignPos = new QComboBox(grp, "signpos");
+  connect( m_cmbMonPosMonSignPos, SIGNAL( activated(int) ),
 	   SLOT( slotMonPosMonSignPosChanged(int) ) );
 
   grp = new QGroupBox( vbox, I18N_NOOP("Negative") );
   grp->setColumns(2);
-  labMonNegPreCurSym = new QLabel(grp, I18N_NOOP("Prefix currency symbol:"));
-  chMonNegPreCurSym = new QCheckBox(grp);
-  connect( chMonNegPreCurSym, SIGNAL( clicked() ),
+  m_labMonNegPreCurSym = new QLabel(grp, I18N_NOOP("Prefix currency symbol:"));
+  m_chMonNegPreCurSym = new QCheckBox(grp);
+  connect( m_chMonNegPreCurSym, SIGNAL( clicked() ),
 	   SLOT( slotMonNegPreCurSymChanged() ) );
 
-  labMonNegMonSignPos = new QLabel(grp, I18N_NOOP("Sign position:"));
-  cmbMonNegMonSignPos = new QComboBox(grp, "signpos");
-  connect( cmbMonNegMonSignPos, SIGNAL( activated(int) ),
+  m_labMonNegMonSignPos = new QLabel(grp, I18N_NOOP("Sign position:"));
+  m_cmbMonNegMonSignPos = new QComboBox(grp, "signpos");
+  connect( m_cmbMonNegMonSignPos, SIGNAL( activated(int) ),
 	   SLOT( slotMonNegMonSignPosChanged(int) ) );
 
   // insert some items
   int i = 5;
   while (i--)
     {
-      cmbMonPosMonSignPos->insertItem(QString::null);
-      cmbMonNegMonSignPos->insertItem(QString::null);
+      m_cmbMonPosMonSignPos->insertItem(QString::null);
+      m_cmbMonNegMonSignPos->insertItem(QString::null);
     }
 
   lay->setColStretch(1, 1);
@@ -201,15 +204,15 @@ void KLocaleConfigMoney::save()
 
 void KLocaleConfigMoney::slotLocaleChanged()
 {
-  edMonCurSym->setText( m_locale->currencySymbol() );
-  edMonDecSym->setText( m_locale->monetaryDecimalSymbol() );
-  edMonThoSep->setText( m_locale->monetaryThousandsSeparator() );
-  edMonFraDig->setText( m_locale->formatNumber( m_locale->fracDigits(), 0) );
+  m_edMonCurSym->setText( m_locale->currencySymbol() );
+  m_edMonDecSym->setText( m_locale->monetaryDecimalSymbol() );
+  m_edMonThoSep->setText( m_locale->monetaryThousandsSeparator() );
+  m_inMonFraDig->setValue( m_locale->fracDigits() );
 
-  chMonPosPreCurSym->setChecked( m_locale->positivePrefixCurrencySymbol() );
-  chMonNegPreCurSym->setChecked( m_locale->negativePrefixCurrencySymbol() );
-  cmbMonPosMonSignPos->setCurrentItem( m_locale->positiveMonetarySignPosition() );
-  cmbMonNegMonSignPos->setCurrentItem( m_locale->negativeMonetarySignPosition() );
+  m_chMonPosPreCurSym->setChecked( m_locale->positivePrefixCurrencySymbol() );
+  m_chMonNegPreCurSym->setChecked( m_locale->negativePrefixCurrencySymbol() );
+  m_cmbMonPosMonSignPos->setCurrentItem( m_locale->positiveMonetarySignPosition() );
+  m_cmbMonNegMonSignPos->setCurrentItem( m_locale->negativeMonetarySignPosition() );
 }
 
 void KLocaleConfigMoney::slotMonCurSymChanged(const QString &t)
@@ -230,21 +233,21 @@ void KLocaleConfigMoney::slotMonThoSepChanged(const QString &t)
   emit localeChanged();
 }
 
-void KLocaleConfigMoney::slotMonFraDigChanged(const QString &t)
+void KLocaleConfigMoney::slotMonFraDigChanged(int value)
 {
-  m_locale->setFracDigits((int)m_locale->readNumber(t));
+  m_locale->setFracDigits(value);
   emit localeChanged();
 }
 
 void KLocaleConfigMoney::slotMonPosPreCurSymChanged()
 {
-  m_locale->setPositivePrefixCurrencySymbol(chMonPosPreCurSym->isChecked());
+  m_locale->setPositivePrefixCurrencySymbol(m_chMonPosPreCurSym->isChecked());
   emit localeChanged();
 }
 
 void KLocaleConfigMoney::slotMonNegPreCurSymChanged()
 {
-  m_locale->setNegativePrefixCurrencySymbol(chMonNegPreCurSym->isChecked());
+  m_locale->setNegativePrefixCurrencySymbol(m_chMonNegPreCurSym->isChecked());
   emit localeChanged();
 }
 
@@ -263,8 +266,8 @@ void KLocaleConfigMoney::slotMonNegMonSignPosChanged(int i)
 void KLocaleConfigMoney::slotTranslate()
 {
   QObjectList list;
-  list.append(cmbMonPosMonSignPos);
-  list.append(cmbMonNegMonSignPos);
+  list.append(m_cmbMonPosMonSignPos);
+  list.append(m_cmbMonNegMonSignPos);
 
   QComboBox *wc;
   for(QObjectListIt li(list) ; (wc = (QComboBox *)li.current()) != 0; ++li)
@@ -281,55 +284,55 @@ void KLocaleConfigMoney::slotTranslate()
   str = m_locale->translate( "Here you can enter your usual currency "
 			     "symbol, e.g. $ or DM."
 			     "<p>Please note that the Euro symbol may not be "
-			     "available on your system, depending on the "
+			     "avaim_lable on your system, depending on the "
 			     "distribution you use." );
-  QWhatsThis::add( labMonCurSym, str );
-  QWhatsThis::add( edMonCurSym, str );
+  QWhatsThis::add( m_labMonCurSym, str );
+  QWhatsThis::add( m_edMonCurSym, str );
   str = m_locale->translate( "Here you can define the decimal separator used "
 			   "to display monetary values."
 			   "<p>Note that the decimal separator used to "
 			   "display other numbers has to be defined "
 			   "separately (see the 'Numbers' tab)." );
-  QWhatsThis::add( labMonDecSym, str );
-  QWhatsThis::add( edMonDecSym, str );
+  QWhatsThis::add( m_labMonDecSym, str );
+  QWhatsThis::add( m_edMonDecSym, str );
 
   str = m_locale->translate( "Here you can define the thousands separator "
 			   "used to display monetary values."
 			   "<p>Note that the thousands separator used to "
 			   "display other numbers has to be defined "
 			   "separately (see the 'Numbers' tab)." );
-  QWhatsThis::add( labMonThoSep, str );
-  QWhatsThis::add( edMonThoSep, str );
+  QWhatsThis::add( m_labMonThoSep, str );
+  QWhatsThis::add( m_edMonThoSep, str );
 
   str = m_locale->translate( "This determines the number of fract digits for "
 			   "monetary values, i.e. the number of digits you "
 			   "find <em>behind</em> the decimal separator. "
 			   "Correct value is 2 for almost all people." );
-  QWhatsThis::add( labMonFraDig, str );
-  QWhatsThis::add( edMonFraDig, str );
+  QWhatsThis::add( m_labMonFraDig, str );
+  QWhatsThis::add( m_inMonFraDig, str );
 
   str = m_locale->translate( "If this option is checked, the currency sign "
 			   "will be prefixed (i.e. to the left of the "
 			   "value) for all positive monetary values. If "
 			   "not, it will be postfixed (i.e. to the right)." );
-  QWhatsThis::add( labMonPosPreCurSym, str );
-  QWhatsThis::add( chMonPosPreCurSym, str );
+  QWhatsThis::add( m_labMonPosPreCurSym, str );
+  QWhatsThis::add( m_chMonPosPreCurSym, str );
 
   str = m_locale->translate( "If this option is checked, the currency sign "
 			   "will be prefixed (i.e. to the left of the "
 			   "value) for all negative monetary values. If "
 			   "not, it will be postfixed (i.e. to the right)." );
-  QWhatsThis::add( labMonNegPreCurSym, str );
-  QWhatsThis::add( chMonNegPreCurSym, str );
+  QWhatsThis::add( m_labMonNegPreCurSym, str );
+  QWhatsThis::add( m_chMonNegPreCurSym, str );
 
   str = m_locale->translate( "Here you can select how a positive sign will be "
 			   "positioned. This only affects monetary values." );
-  QWhatsThis::add( labMonPosMonSignPos, str );
-  QWhatsThis::add( cmbMonPosMonSignPos, str );
+  QWhatsThis::add( m_labMonPosMonSignPos, str );
+  QWhatsThis::add( m_cmbMonPosMonSignPos, str );
 
   str = m_locale->translate( "Here you can select how a negative sign will "
 			   "be positioned. This only affects monetary "
 			   "values." );
-  QWhatsThis::add( labMonNegMonSignPos, str );
-  QWhatsThis::add( cmbMonNegMonSignPos, str );
+  QWhatsThis::add( m_labMonNegMonSignPos, str );
+  QWhatsThis::add( m_cmbMonNegMonSignPos, str );
 }

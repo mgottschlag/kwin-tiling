@@ -1,4 +1,3 @@
-#undef NDEBUG
 /*
   toplevel.cpp - A KControl Application
 
@@ -32,19 +31,17 @@
 
 #include <kconfig.h>
 #include <kcmodule.h>
-#include <kmessagebox.h>
+#include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <kprocess.h>
-
-#include <kdebug.h>
-
-#include <stdio.h>
 
 #include "locale.h"
 #include "localenum.h"
 #include "localemon.h"
 #include "localetime.h"
+#include "localeother.h"
 #include "klocalesample.h"
 #include "toplevel.h"
 #include "toplevel.moc"
@@ -70,6 +67,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   m_tab->addTab( m_localemon, QString::null );
   m_localetime = new KLocaleConfigTime(m_locale, this);
   m_tab->addTab( m_localetime, QString::null );
+  m_localeother = new KLocaleConfigOther(m_locale, this);
+  m_tab->addTab( m_localeother, QString::null );
 
   // Examples
   m_gbox = new QVGroupBox(this);
@@ -87,9 +86,11 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   connect(this, SIGNAL(localeChanged()),
 	  m_localenum, SLOT(slotLocaleChanged()));
   connect(this, SIGNAL(localeChanged()),
-  m_localemon, SLOT(slotLocaleChanged()));
+	  m_localemon, SLOT(slotLocaleChanged()));
   connect(this, SIGNAL(localeChanged()),
   	  m_localetime, SLOT(slotLocaleChanged()));
+  connect(this, SIGNAL(localeChanged()),
+	  m_localeother, SLOT(slotLocaleChanged()));
 
   // keep the example up to date
   // NOTE: this will make the sample be updated 6 times the first time
@@ -101,6 +102,9 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
 	  m_sample, SLOT(slotLocaleChanged()));
   connect(m_localetime, SIGNAL(localeChanged()),
 	  m_sample, SLOT(slotLocaleChanged()));
+  // No examples for this yet
+  //connect(m_localetime, SIGNAL(slotLocaleChanged()),
+  //m_sample, SLOT(slotLocaleChanged()));
   connect(this, SIGNAL(localeChanged()),
 	  m_sample, SLOT(slotLocaleChanged()));
 
@@ -115,6 +119,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
 	  m_localemon, SLOT(slotTranslate()));
   connect(this, SIGNAL(languageChanged()),
 	  m_localetime, SLOT(slotTranslate()));
+  connect(this, SIGNAL(languageChanged()),
+	  m_localeother, SLOT(slotTranslate()));
 
   // mark it as changed when we change it.
   connect(m_localemain, SIGNAL(localeChanged()),
@@ -124,6 +130,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   connect(m_localemon, SIGNAL(localeChanged()),
 	  SLOT(slotChanged()));
   connect(m_localetime, SIGNAL(localeChanged()),
+	  SLOT(slotChanged()));
+  connect(m_localeother, SIGNAL(localeChanged()),
 	  SLOT(slotChanged()));
 
   load();
@@ -172,6 +180,7 @@ void KLocaleApplication::save()
   m_localenum->save();
   m_localemon->save();
   m_localetime->save();
+  m_localeother->save();
 
   // rebuild the date base if language was changed
   if (langChanged)
@@ -219,15 +228,15 @@ void KLocaleApplication::slotTranslate()
     // retranslated. E.g. the example box should not be
     // retranslated from here.
     if (wc->name() == 0) continue;
-    if (strcmp(wc->name(), "") == 0) continue;
-    if (strcmp(wc->name(), "unnamed") == 0) continue;
+    if (::qstrcmp(wc->name(), "") == 0) continue;
+    if (::qstrcmp(wc->name(), "unnamed") == 0) continue;
 
-    if (strcmp(wc->className(), "QLabel") == 0)
+    if (::qstrcmp(wc->className(), "QLabel") == 0)
       ((QLabel *)wc)->setText( m_locale->translate( wc->name() ) );
-    else if (strcmp(wc->className(), "QGroupBox") == 0)
+    else if (::qstrcmp(wc->className(), "QGroupBox") == 0)
       ((QGroupBox *)wc)->setTitle( m_locale->translate( wc->name() ) );
-    else if (strcmp(wc->className(), "QPushButton") == 0 ||
-	     strcmp(wc->className(), "KMenuButton") == 0)
+    else if (::qstrcmp(wc->className(), "QPushButton") == 0 ||
+	     ::qstrcmp(wc->className(), "KMenuButton") == 0)
       ((QPushButton *)wc)->setText( m_locale->translate( wc->name() ) );
   }
   delete list;
@@ -238,6 +247,7 @@ void KLocaleApplication::slotTranslate()
   m_tab->changeTab(m_localenum, m_locale->translate("&Numbers"));
   m_tab->changeTab(m_localemon, m_locale->translate("&Money"));
   m_tab->changeTab(m_localetime, m_locale->translate("&Time && dates"));
+  m_tab->changeTab(m_localeother, m_locale->translate("&Other"));
 
   // FIXME: All widgets are done now. However, there are
   // still some problems. Popup menus from the QLabels are

@@ -31,6 +31,7 @@ class QCheckBox;
 class QComboBox;
 class QLineEdit;
 
+class KIntNumInput;
 class KLocale;
 class KLanguageCombo;
 
@@ -62,7 +63,7 @@ private slots:
   void slotMonCurSymChanged(const QString &t);
   void slotMonDecSymChanged(const QString &t);
   void slotMonThoSepChanged(const QString &t);
-  void slotMonFraDigChanged(const QString &t);
+  void slotMonFraDigChanged(int value);
   void slotMonPosPreCurSymChanged();
   void slotMonNegPreCurSymChanged();
   void slotMonPosMonSignPosChanged(int i);
@@ -72,23 +73,23 @@ private:
   KLocale *m_locale;
 
   // Money
-  QLabel *labMonCurSym;
-  QLineEdit *edMonCurSym;
-  QLabel *labMonDecSym;
-  QLineEdit *edMonDecSym;
-  QLabel *labMonThoSep;
-  QLineEdit *edMonThoSep;
-  QLabel *labMonFraDig;
-  QLineEdit *edMonFraDig;
+  QLabel *m_labMonCurSym;
+  QLineEdit *m_edMonCurSym;
+  QLabel *m_labMonDecSym;
+  QLineEdit *m_edMonDecSym;
+  QLabel *m_labMonThoSep;
+  QLineEdit *m_edMonThoSep;
+  QLabel *m_labMonFraDig;
+  KIntNumInput * m_inMonFraDig;
 
-  QLabel *labMonPosPreCurSym;
-  QCheckBox *chMonPosPreCurSym;
-  QLabel *labMonNegPreCurSym;
-  QCheckBox *chMonNegPreCurSym;
-  QLabel *labMonPosMonSignPos;
-  QComboBox *cmbMonPosMonSignPos;
-  QLabel *labMonNegMonSignPos;
-  QComboBox *cmbMonNegMonSignPos;
+  QLabel *m_labMonPosPreCurSym;
+  QCheckBox *m_chMonPosPreCurSym;
+  QLabel *m_labMonNegPreCurSym;
+  QCheckBox *m_chMonNegPreCurSym;
+  QLabel *m_labMonPosMonSignPos;
+  QComboBox *m_cmbMonPosMonSignPos;
+  QLabel *m_labMonNegMonSignPos;
+  QComboBox *m_cmbMonNegMonSignPos;
 };
 
 #endif
