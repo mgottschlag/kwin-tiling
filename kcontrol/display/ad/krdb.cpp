@@ -22,6 +22,9 @@
 #include <qtextstream.h>
 
 #include <kapp.h>
+#include <klocale.h>
+#include <kcmdlineargs.h>
+#include <kaboutdata.h>
 #include <kstyle.h>
 #include <kdebug.h>
 #include <kglobal.h>
@@ -182,7 +185,12 @@ void createGtkrc( const QFont& font, const QColorGroup& cg )
 
 int main( int argc, char ** argv )
 {
-  KApplication a( argc, argv, "krdb" );
+  KAboutData aboutData( "krdb", I18N_NOOP("Krdb"),
+	"$Id:  $",
+	I18N_NOOP("Krdb - applies KDE colors and styles to X and GTK settings."));
+  KCmdLineArgs::init(argc, argv, &aboutData);
+
+  KApplication a;
   KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
   QColorGroup cg = a.palette().normal();
   if ( !a.kstyle() || !a.kstyle()->inherits("KLegacyStyle") )
