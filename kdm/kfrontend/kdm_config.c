@@ -600,16 +600,17 @@ Debug ("parsing config ...\n");
 	sl = s;
 
 	if (*s == '[') {
+	    sectmoan = 0;
 	    while ((s < file.eof) && (*s != '\n'))
 		s++;
 	    e = s - 1;
 	    while ((e > sl) && isspace (*e))
 		e--;
 	    if (*e != ']') {
+		cursec = 0;
 		LogError ("Invalid section header at %s:%d\n", kdmrc, line);
 		continue;
 	    }
-	    sectmoan = 0;
 	    nstr = sl + 1;
 	    nlen = e - nstr;
 	    for (cursec = rootsec; cursec; cursec = cursec->next)
