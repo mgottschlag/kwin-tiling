@@ -79,6 +79,9 @@ private:
 
   KIntNumInput *accel;
   KIntNumInput *thresh;
+  KIntNumInput *doubleClickInterval;
+  KIntNumInput *dragStartTime;
+  KIntNumInput *dragStartDist;
 
   QButtonGroup *handedBox;
   QRadioButton *leftHanded, *rightHanded;

@@ -9,6 +9,9 @@
  * SC/DC/AutoSelect/ChangeCursor:
  * Copyright (c) 2000 David Faure <faure@kde.org>
  *
+ * Double click interval, drag time & dist
+ * Copyright (c) 2000 Bernd Gehrmann
+ *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -70,7 +73,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   accel->setLabel(i18n("Pointer Acceleration"));
   accel->setRange(1,20,2);
   accel->setSuffix("x");
-  accel->setSteps(1,20);
+  accel->setSteps(1,1);
   lay->addWidget(accel);
   connect(accel, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
@@ -90,10 +93,10 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   QWhatsThis::add( accel, wtstr );
 
   thresh = new KIntNumInput(accel, 20, this);
-  thresh->setLabel(i18n("Drag Threshold"));
+  thresh->setLabel(i18n("Pointer Threshold"));
   thresh->setRange(1,20,2);
   thresh->setSuffix(i18n("pixels"));
-  thresh->setSteps(1,20);
+  thresh->setSteps(1,1);
   lay->addWidget(thresh);
   connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
@@ -111,11 +114,56 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
      " left of the slider.");
   QWhatsThis::add( thresh, wtstr );
 
+  // It would be nice if the user had a test field.
+  // Selecting such values in milliseconds is not intuitive
+  doubleClickInterval = new KIntNumInput(thresh, 2000, this);
+  doubleClickInterval->setLabel(i18n("Double Click Interval"));
+  doubleClickInterval->setRange(0, 2000, 100);
+  doubleClickInterval->setSuffix(i18n("ms"));
+  doubleClickInterval->setSteps(100, 100);
+  lay->addWidget(doubleClickInterval);
+  connect(doubleClickInterval, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+  wtstr = i18n("The double click interval is the maximal time"
+               " (in milliseconds) between two mouseclicks which"
+               " turns them into a double click. If the second"
+               " click happens later than this time interval after"
+               " the first click, they are recognized as two"
+               " separate clicks.");
+  QWhatsThis::add( doubleClickInterval, wtstr );
+
+  dragStartTime = new KIntNumInput(doubleClickInterval, 2000, this);
+  dragStartTime->setLabel(i18n("Drag Start Time"));
+  dragStartTime->setRange(0, 2000, 100);
+  dragStartTime->setSuffix(i18n("ms"));
+  dragStartTime->setSteps(100, 100);
+  lay->addSpacing(15);
+  lay->addWidget(dragStartTime);
+  connect(dragStartTime, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+  wtstr = i18n("If you click with the mouse (e. g. in a multi line"
+               " editor) and begin to move the mouse within the"
+               " drag start time, a drag operation will be initiated.");
+  QWhatsThis::add( dragStartTime, wtstr );
+  
+  dragStartDist = new KIntNumInput(dragStartTime, 20, this);
+  dragStartDist->setLabel(i18n("Drag Start Distance"));
+  dragStartDist->setRange(1, 20, 2);
+  dragStartDist->setSuffix(i18n("pixels"));
+  dragStartDist->setSteps(1,1);
+  lay->addWidget(dragStartDist);
+  connect(dragStartDist, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+  wtstr = i18n("If you click with the mouse and begin to move the"
+               "mouse at least the drag start distance, a drag"
+               "operation will be initiated.");
+  QWhatsThis::add( dragStartDist, wtstr);
+
   handedBox = new QHButtonGroup(i18n("Button Mapping"), this, "handed");
   rightHanded = new QRadioButton(i18n("Right handed"), handedBox, "R");
   leftHanded = new QRadioButton(i18n("Left handed"), handedBox, "L");
   connect(handedBox, SIGNAL(clicked(int)), this, SLOT(changed()));
-
+  lay->addSpacing(15);
   lay->addWidget(handedBox);
 
   handedEnabled = true;
@@ -132,6 +180,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
   singleClick = new QCheckBox(i18n("Single &click activates/opens"), this);
   connect(singleClick, SIGNAL(clicked()), SLOT(changed()));
+  lay->addSpacing(15);
   lay->addWidget(singleClick);
 
   wtstr = i18n("Checking this option allows you to select and activate"
@@ -320,6 +369,14 @@ void MouseConfig::load()
 
   // SC/DC/AutoSelect/ChangeCursor
   config->setGroup(QString::fromLatin1("KDE"));
+  int v;
+  v = config->readNumEntry("DoubleClickInterval", 400);
+  doubleClickInterval->setValue(v);
+  v = config->readNumEntry("StartDragTime", 500);
+  dragStartTime->setValue(v);
+  v = config->readNumEntry("StartDragDist", 4);
+  dragStartDist->setValue(v);
+  
   bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), KDE_DEFAULT_SINGLECLICK);
   singleClick->setChecked(b);
   int  autoSelect = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
@@ -418,6 +475,9 @@ void MouseConfig::save()
       config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
 
   config->setGroup(QString::fromLatin1("KDE"));
+  config->writeEntry("DoubleClickInterval", doubleClickInterval->value(), true, true);
+  config->writeEntry("StartDragIime", dragStartTime->value(), true, true);
+  config->writeEntry("StartDragDist", dragStartDist->value(), true, true);
   config->writeEntry(QString::fromLatin1("SingleClick"), singleClick->isChecked(), true, true);
   config->writeEntry( "AutoSelectDelay", cbAutoSelect->isChecked()?slAutoSelect->value():-1, true, true );
   config->writeEntry( "ChangeCursor", cbCursor->isChecked(), true, true );
@@ -435,6 +495,9 @@ void MouseConfig::defaults()
     setThreshold(2);
     setAccel(2);
     setHandedness(RIGHT_HANDED);
+    doubleClickInterval->setValue(400);
+    dragStartTime->setValue(500);
+    dragStartDist->setValue(4);
     singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
     cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
     slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
