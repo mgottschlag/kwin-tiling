@@ -666,12 +666,23 @@ void KScreenSaver::slotScreenSaver(QListViewItem *item)
 
     int i = 0, indx = -1;
     for (SaverConfig* saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
-        if (saver->name() == item->text (0))
+        if ( item->parent() )
         {
-            indx = i;
-            break;
+            if (  item->parent()->text( 0 ) == saver->category() && saver->name() == item->text (0))
+            {
+                indx = i;
+                break;
+            }
         }
-        i++;
+        else
+        {
+            if (  saver->name() == item->text (0) )
+            {
+                indx = i;
+                break;
+            }
+        }        
+		i++;
     }
     if (indx == -1) {
         mSelected = -1;
