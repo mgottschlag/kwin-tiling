@@ -51,7 +51,7 @@ static QString pidFile;
 static KPasswordDlg *passDlg = NULL;
 static QWidget *saverWidget = NULL;
 extern char *ProgramName;
-extern Bool allowroot;
+//extern Bool allowroot;
 
 void grabInput( QWidget *w );
 void releaseInput();
@@ -386,9 +386,11 @@ int main( int argc, char *argv[] )
 			    strings[arg_nice]);
 #endif
 		    break;
+#if 0 // Not supported by kcheckpass
 		case allow_root:
 		    allowroot = 1;
 		    break;
+#endif
 		case help:
 		    usage( argv[0] );
 		    break;
