@@ -19,7 +19,7 @@ class FontUseItem : public QObject
   Q_OBJECT
 
 public:
-    FontUseItem(QWidget * parent, QLabel * prvw, QString n, QString grp, QString key, QString rc, QFont default_fnt, QString default_charset, bool fixed = false);
+    FontUseItem(QWidget * parent, QLabel * prvw, QString n, QString grp, QString key, QString rc, QFont default_fnt, bool fixed = false);
 
     QString fontString(QFont rFont);
 
@@ -50,9 +50,7 @@ private:
     QString _rcgroup;
     QString _rckey;
     QFont _font;
-    QString _charset;
     QFont _default;
-    QString _defaultCharset;
     bool fixed;
 };
 
@@ -85,7 +83,6 @@ protected slots:
 private:
     bool _changed;
     bool useAA, useAA_original;
-    bool defaultCharset;
     QCheckBox *cbAA;
     QPtrList <FontUseItem> fontUseList;
 };
