@@ -29,6 +29,7 @@
 #include <qptrlist.h>
 #include <stdio.h>
 #include <fstream>
+#include <time.h>
 
 #ifdef HAVE_FONTCONFIG
 #include <qdom.h>
@@ -200,7 +201,9 @@ class KXftConfig
     int                m_size;
     char               *m_data;
 #endif
-    bool               m_madeChanges;
+    bool               m_madeChanges,
+                       m_system;
+    time_t             m_time;
 };
 
 #endif

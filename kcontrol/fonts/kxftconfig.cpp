@@ -143,6 +143,13 @@ static QString getDir(const QString &f)
     return dirSyntax(d);
 }
 
+static time_t getTimeStamp(const QString &item)
+{
+    KDE_struct_stat info;
+
+    return !item.isNull() && 0==KDE_lstat(QFile::encodeName(item), &info) ? info.st_mtime : 0;
+}
+
 #ifdef HAVE_FONTCONFIG
 static QString getEntry(QDomElement element, const char *type, unsigned int numAttributes, ...)
 {
@@ -318,9 +325,6 @@ static KXftConfig::ListItem * getLastItem(QPtrList<KXftConfig::ListItem> &list)
 #ifdef HAVE_FONTCONFIG
 static const QString defaultPath("/etc/fonts/local.conf");
 static const QString defaultUserFile(".fonts.conf");
-#if 0
-static const char *  constSymEnc="glyphs-fontspecific";
-#endif
 #else
 static const QString defaultPath("/usr/X11R6/lib/X11/XftConfig");
 static const QString defaultUserFile(".xftconfig");
@@ -340,11 +344,12 @@ static const QString constConfigFiles[]=
 KXftConfig::KXftConfig(int required, bool system)
           : m_required(required),
 #ifdef HAVE_FONTCONFIG
-            m_doc("fontconfig")
+            m_doc("fontconfig"),
 #else
             m_size(0),
-            m_data(NULL)
+            m_data(NULL),
 #endif
+            m_system(system)
 {
     if(system) 
     {
@@ -366,7 +371,7 @@ KXftConfig::KXftConfig(int required, bool system)
         m_file= QString(QDir::homeDirPath()+"/"+defaultUserFile);
     }
 
-#if 0
+#ifndef HAVE_FONTCONFIG
     m_symbolFamilies.setAutoDelete(true);
 #endif
     m_dirs.setAutoDelete(true);
@@ -386,7 +391,7 @@ bool KXftConfig::reset()
     bool ok=false;
 
     m_madeChanges=false;
-#if 0
+#ifndef HAVE_FONTCONFIG
     m_symbolFamilies.clear();
 #endif
     m_dirs.clear();
@@ -395,10 +400,11 @@ bool KXftConfig::reset()
     m_subPixel.reset();
 
 #ifdef HAVE_FONTCONFIG
-    QFile f(QFile::encodeName(m_file));
+    QFile f(m_file);
 
     if(f.open(IO_ReadOnly))
     {
+        m_time=getTimeStamp(m_file);
         ok=true;
         m_doc.clear();
 
@@ -412,15 +418,16 @@ bool KXftConfig::reset()
     if(m_doc.documentElement().isNull())
         m_doc.appendChild(m_doc.createElement("fontconfig"));
 #else
-    QFile f( m_file );
+    QFile f(m_file);
 
     m_size=0;
     delete [] m_data;
     m_data=NULL;
 
-    if(f.open( IO_Raw| IO_ReadOnly ))
+    if(f.open(IO_Raw|IO_ReadOnly))
     {
-        m_size = f.size();
+        m_time=getTimeStamp(m_file);
+        m_size=f.size();
         ok=true;
 
         if(m_size>0)
@@ -429,7 +436,7 @@ bool KXftConfig::reset()
 
             if(m_data)
             {
-                f.readBlock( m_data, m_size );
+                f.readBlock(m_data, m_size);
                 m_data[m_size]='\0';
                 readContents();
             }
@@ -475,179 +482,210 @@ bool KXftConfig::apply()
 
     if(m_madeChanges)
     {
-        if(m_required&ExcludeRange)
+        //
+        // Check if file has been written since we last read it. If it has, then re-read and add any
+        // of our changes...
+        if(getTimeStamp(m_file)!=m_time)
         {
-            // Ensure these are always equal...
-            m_excludePixelRange.from=(int)point2Pixel(m_excludeRange.from);
-            m_excludePixelRange.to=(int)point2Pixel(m_excludeRange.to);
-        }
+            KXftConfig            newConfig(m_required, m_system);
+            QStringList           list;
+            QStringList::Iterator it;
 
-#ifdef HAVE_FONTCONFIG
-        FcAtomic *atomic=FcAtomicCreate((const unsigned char *)((const char *)(QFile::encodeName(m_file))));
-
-        ok=false;
-        if(atomic)
-        {
-            if(FcAtomicLock(atomic))
+            if(m_required&Dirs)
             {
-                FILE *f=fopen((char *)FcAtomicNewFile(atomic), "w");
-
-                if(f)
-                {
-                    if(m_required&Dirs)
-                    {
-                        applyDirs();
-                        removeItems(m_dirs);
-                    }
-#if 0
-                    if(m_required&SymbolFamilies)
-                    {
-                        applySymbolFamilies();
-                        removeItems(m_symbolFamilies);
-                    }
-#endif
-                    if(m_required&SubPixelType)
-                        applySubPixelType();
-                    if(m_required&ExcludeRange)
-                    {
-                        applyExcludeRange(false);
-                        applyExcludeRange(true);
-                    }
-
-                    //
-                    // Check document syntax...
-                    static const char * qtXmlHeader   = "<?xml version = '1.0'?>";
-                    static const char * xmlHeader     = "<?xml version=\"1.0\"?>";
-                    static const char * qtDocTypeLine = "<!DOCTYPE fontconfig>";
-                    static const char * docTypeLine   = "<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">";
-
-                    QString str(m_doc.toString());
-                    int     idx;
-
-                    if(0!=str.find("<?xml"))
-                        str.insert(0, xmlHeader);
-                    else if(0==str.find(qtXmlHeader))
-                        str.replace(0, strlen(qtXmlHeader), xmlHeader);
-
-                    if(-1!=(idx=str.find(qtDocTypeLine)))
-                        str.replace(idx, strlen(qtDocTypeLine), docTypeLine);
-
-                    //
-                    // Write to file...
-                    fputs(str.utf8(), f);
-                    fclose(f);
-
-                    if(FcAtomicReplaceOrig(atomic))
-                    {
-                        ok=true;
-                        reset(); // Re-read contents..
-                    }
-                    else
-                        FcAtomicDeleteNew(atomic);
-                }
-                FcAtomicUnlock(atomic);
+                list=getDirs();
+                for(it=list.begin(); it!=list.end(); ++it)
+                    newConfig.addDir(*it);
             }
-            FcAtomicDestroy(atomic);
-        }
-#else
-        std::ofstream f(QFile::encodeName(m_file));
 
-        if(f)
-        {
-            ListItem *ldi=m_required&Dirs ? getLastItem(m_dirs) : NULL,
-                     *lfi=m_required&SymbolFamilies ? getLastItem(m_symbolFamilies) : NULL;
-            char     *pos=m_data;
-            bool     finished=false,
-                     pixel=false;
-
-            while(!finished)
+            if(m_required&ExcludeRange)
+                newConfig.setExcludeRange(m_excludeRange.from, m_excludeRange.to);
+            if(m_required&SubPixelType)
+                newConfig.setSubPixelType(m_subPixel.type);
+#ifndef HAVE_FONTCONFIG
+            if(m_required&SymbolFamilies)
             {
-                int      type=0;
-                ListItem *fdi=NULL,
-                         *ffi=NULL;
-                Item     *first=NULL;
+                list=getSymbolFamilies();
+                for(it=list.begin(); it!=list.end(); ++it)
+                    newConfig.addSymbolFamily(*it);
+            }
+#endif
 
-                if(m_required&Dirs && NULL!=(fdi=getFirstItem(m_dirs)) && (NULL==first || fdi->start < first->start))
-                {
-                    first=fdi;
-                    type=Dirs;
-                }
-                if(m_required&SymbolFamilies && NULL!=(ffi=getFirstItem(m_symbolFamilies)) && (NULL==first || ffi->start < first->start))
-                {
-                    first=ffi;
-                    type=SymbolFamilies;
-                }
-                if(m_required&SubPixelType && NULL!=m_subPixel.start && (NULL==first || m_subPixel.start < first->start))
-                {
-                    first=&m_subPixel;
-                    type=SubPixelType;
-                }
-                if(m_required&ExcludeRange)
-                    if(NULL!=m_excludeRange.start && (NULL==first || m_excludeRange.start < first->start))
-                    {
-                        first=&m_excludeRange;
-                        type=ExcludeRange;
-                        pixel=false;
-                    }
-                    else if(NULL!=m_excludePixelRange.start && (NULL==first || m_excludePixelRange.start < first->start))
-                    {
-                        first=&m_excludePixelRange;
-                        type=ExcludeRange;
-                        pixel=true;
-                    }
-
-                if(first && first->start!=pos)
-                    f.write(pos, first->start-pos);
-
-                if(0!=type)
-                    pos=first->end+1;
-
-                switch(type)
-                {
-                    case Dirs:
-                        if(!first->toBeRemoved)
-                            outputDir(f, fdi->str);
-                        m_dirs.remove(fdi);
-                        if(fdi==ldi)
-                            outputNewDirs(f);
-                        break;
-                    case SymbolFamilies:
-                        if(!first->toBeRemoved)
-                            outputSymbolFamily(f, ffi->str);
-                        m_symbolFamilies.remove(ffi);
-                        if(ffi==lfi)
-                            outputNewSymbolFamilies(f);
-                        break;
-                    case SubPixelType:
-                        if(!first->toBeRemoved)
-                            outputSubPixelType(f, false);
-                        m_subPixel.start=NULL;
-                        break;
-                    case ExcludeRange:
-                        if(!first->toBeRemoved)
-                            outputExcludeRange(f, false, pixel);
-                        m_excludeRange.start=NULL;
-                        break;
-                    case 0: // 0 => All read in entries written...
-                        if(m_size && (pos < m_data+m_size))
-                            f.write(pos, (m_data+m_size)-pos);
-                    default:
-                        finished=true;
-                        break;
-                }
-            };
-
-            outputNewDirs(f);
-            outputNewSymbolFamilies(f);
-            outputSubPixelType(f, true);
-            outputExcludeRange(f, true, false);
-            outputExcludeRange(f, true, true);
-            f.close();
-            reset(); // Re-read contents...
+            ok=newConfig.changed() ? newConfig.apply() : true;
+            if(ok)
+                reset();
+            else
+                m_time=getTimeStamp(m_file);
         }
         else
+        {
+            if(m_required&ExcludeRange)
+            {
+                // Ensure these are always equal...
+                m_excludePixelRange.from=(int)point2Pixel(m_excludeRange.from);
+                m_excludePixelRange.to=(int)point2Pixel(m_excludeRange.to);
+            }
+    
+#ifdef HAVE_FONTCONFIG
+            FcAtomic *atomic=FcAtomicCreate((const unsigned char *)((const char *)(QFile::encodeName(m_file))));
+    
             ok=false;
+            if(atomic)
+            {
+                if(FcAtomicLock(atomic))
+                {
+                    FILE *f=fopen((char *)FcAtomicNewFile(atomic), "w");
+    
+                    if(f)
+                    {
+                        if(m_required&Dirs)
+                        {
+                            applyDirs();
+                            removeItems(m_dirs);
+                        }
+                        if(m_required&SubPixelType)
+                            applySubPixelType();
+                        if(m_required&ExcludeRange)
+                        {
+                            applyExcludeRange(false);
+                            applyExcludeRange(true);
+                        }
+    
+                        //
+                        // Check document syntax...
+                        static const char * qtXmlHeader   = "<?xml version = '1.0'?>";
+                        static const char * xmlHeader     = "<?xml version=\"1.0\"?>";
+                        static const char * qtDocTypeLine = "<!DOCTYPE fontconfig>";
+                        static const char * docTypeLine   = "<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">";
+    
+                        QString str(m_doc.toString());
+                        int     idx;
+    
+                        if(0!=str.find("<?xml"))
+                            str.insert(0, xmlHeader);
+                        else if(0==str.find(qtXmlHeader))
+                            str.replace(0, strlen(qtXmlHeader), xmlHeader);
+    
+                        if(-1!=(idx=str.find(qtDocTypeLine)))
+                            str.replace(idx, strlen(qtDocTypeLine), docTypeLine);
+    
+                        //
+                        // Write to file...
+                        fputs(str.utf8(), f);
+                        fclose(f);
+    
+                        if(FcAtomicReplaceOrig(atomic))
+                        {
+                            ok=true;
+                            reset(); // Re-read contents..
+                        }
+                        else
+                            FcAtomicDeleteNew(atomic);
+                    }
+                    FcAtomicUnlock(atomic);
+                }
+                FcAtomicDestroy(atomic);
+            }
+#else
+            std::ofstream f(QFile::encodeName(m_file));
+    
+            if(f)
+            {
+                ListItem *ldi=m_required&Dirs ? getLastItem(m_dirs) : NULL,
+                        *lfi=m_required&SymbolFamilies ? getLastItem(m_symbolFamilies) : NULL;
+                char     *pos=m_data;
+                bool     finished=false,
+                        pixel=false;
+    
+                while(!finished)
+                {
+                    int      type=0;
+                    ListItem *fdi=NULL,
+                            *ffi=NULL;
+                    Item     *first=NULL;
+    
+                    if(m_required&Dirs && NULL!=(fdi=getFirstItem(m_dirs)) && (NULL==first || fdi->start < first->start))
+                    {
+                        first=fdi;
+                        type=Dirs;
+                    }
+                    if(m_required&SymbolFamilies && NULL!=(ffi=getFirstItem(m_symbolFamilies)) && (NULL==first || ffi->start < first->start))
+                    {
+                        first=ffi;
+                        type=SymbolFamilies;
+                    }
+                    if(m_required&SubPixelType && NULL!=m_subPixel.start && (NULL==first || m_subPixel.start < first->start))
+                    {
+                        first=&m_subPixel;
+                        type=SubPixelType;
+                    }
+                    if(m_required&ExcludeRange)
+                        if(NULL!=m_excludeRange.start && (NULL==first || m_excludeRange.start < first->start))
+                        {
+                            first=&m_excludeRange;
+                            type=ExcludeRange;
+                            pixel=false;
+                        }
+                        else if(NULL!=m_excludePixelRange.start && (NULL==first || m_excludePixelRange.start < first->start))
+                        {
+                            first=&m_excludePixelRange;
+                            type=ExcludeRange;
+                            pixel=true;
+                        }
+    
+                    if(first && first->start!=pos)
+                        f.write(pos, first->start-pos);
+    
+                    if(0!=type)
+                        pos=first->end+1;
+    
+                    switch(type)
+                    {
+                        case Dirs:
+                            if(!first->toBeRemoved)
+                                outputDir(f, fdi->str);
+                            m_dirs.remove(fdi);
+                            if(fdi==ldi)
+                                outputNewDirs(f);
+                            break;
+                        case SymbolFamilies:
+                            if(!first->toBeRemoved)
+                                outputSymbolFamily(f, ffi->str);
+                            m_symbolFamilies.remove(ffi);
+                            if(ffi==lfi)
+                                outputNewSymbolFamilies(f);
+                            break;
+                        case SubPixelType:
+                            if(!first->toBeRemoved)
+                                outputSubPixelType(f, false);
+                            m_subPixel.start=NULL;
+                            break;
+                        case ExcludeRange:
+                            if(!first->toBeRemoved)
+                                outputExcludeRange(f, false, pixel);
+                            m_excludeRange.start=NULL;
+                            break;
+                        case 0: // 0 => All read in entries written...
+                            if(m_size && (pos < m_data+m_size))
+                                f.write(pos, (m_data+m_size)-pos);
+                        default:
+                            finished=true;
+                            break;
+                    }
+                };
+    
+                outputNewDirs(f);
+                outputNewSymbolFamilies(f);
+                outputSubPixelType(f, true);
+                outputExcludeRange(f, true, false);
+                outputExcludeRange(f, true, true);
+                f.close();
+                reset(); // Re-read contents...
+            }
+            else
+                ok=false;
 #endif
+        }
     }
 
     return ok;
@@ -863,37 +901,6 @@ void KXftConfig::readContents()
                             }
                         }
                         break;
-#if 0
-                    case 2:
-                        if(m_required&SymbolFamilies && "pattern"==e.attribute("target"))
-                        {
-                            bool     foundEnc=false;
-                            QDomNode en=e.firstChild();
-                            QString  family;
-
-                            while(!en.isNull())
-                            {
-                                QDomElement ene=en.toElement();
-
-                                if(!ene.isNull())
-                                    if("test"==ene.tagName())
-                                    {
-                                        if(!(str=getEntry(ene, "string", 3, "qual", "any", "name", "family", "compare", "eq")).isNull()
-                                           || !(str=getEntry(ene, "string", 2, "qual", "any", "name", "family")).isNull())
-                                            family=str;
-                                    }
-                                    else if("edit"==ene.tagName())
-                                        if(constSymEnc==getEntry(ene, "string", 2, "name", "encoding", "mode", "assign"))
-                                            foundEnc=true;
-
-                                en=en.nextSibling();
-                            }
-
-                            if(!family.isNull() && foundEnc)
-                                m_symbolFamilies.append(new ListItem(family, n));
-                        }
-                        break;
-#endif
                     case 3:
                         if(m_required&ExcludeRange && "font"==e.attribute("target"))  // CPD: Is target "font" or "pattern" ????
                         {
@@ -1093,42 +1100,6 @@ void KXftConfig::applyDirs()
                 m_doc.documentElement().appendChild(newNode);
         }
 }
-
-#if 0
-void KXftConfig::applySymbolFamilies()
-{
-    ListItem *item,
-             *last=getLastItem(m_symbolFamilies);
-
-    for(item=m_symbolFamilies.first(); item; item=m_symbolFamilies.next())
-        if(!item->toBeRemoved && item->node.isNull())
-        {
-            QDomElement matchNode  = m_doc.createElement("match"),
-                        testNode   = m_doc.createElement("test"),
-                        familyNode = m_doc.createElement("string"),
-                        editNode   = m_doc.createElement("edit"),
-                        encNode    = m_doc.createElement("string");
-            QDomText    familyText = m_doc.createTextNode(item->str),
-                        encText    = m_doc.createTextNode(constSymEnc);
-
-            matchNode.setAttribute("target", "pattern");
-            testNode.setAttribute("qual", "any");
-            testNode.setAttribute("name", "family");
-            testNode.appendChild(familyNode);
-            familyNode.appendChild(familyText);
-            editNode.setAttribute("mode", "assign");
-            editNode.setAttribute("name", "encoding");
-            editNode.appendChild(encNode);
-            encNode.appendChild(encText);
-            matchNode.appendChild(testNode);
-            matchNode.appendChild(editNode);
-            if(last)
-                m_doc.documentElement().insertAfter(matchNode, last->node);
-            else
-                m_doc.documentElement().appendChild(matchNode);
-        }
-}
-#endif
 
 void KXftConfig::applySubPixelType()
 {
