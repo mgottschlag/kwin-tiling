@@ -35,6 +35,7 @@
 
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kdebug.h>
 #include <klocale.h>
 
 #include "klocaleadv.h"
@@ -49,20 +50,35 @@ KLocaleSample::KLocaleSample(KLocaleAdvanced *_locale,
   QGridLayout *lay = new QGridLayout(this, 5, 2);
   lay->setAutoAdd(TRUE);
 
+  // Whatever the color scheme is, we want black text
+  QColorGroup a = palette().active();
+  a.setColor(QColorGroup::Foreground,Qt::black);
+  QPalette pal(a,a,a);
+
   labNumber = new QLabel(this, I18N_NOOP("Numbers:"));
+  labNumber->setPalette(pal);
   numberSample = new QLabel(this);
+  numberSample->setPalette(pal);
 
   labMoney = new QLabel(this, I18N_NOOP("Money:"));
+  labMoney->setPalette(pal);
   moneySample = new QLabel(this);
+  moneySample->setPalette(pal);
 
   labDate = new QLabel(this, I18N_NOOP("Date:"));
+  labDate->setPalette(pal);
   dateSample = new QLabel(this);
+  dateSample->setPalette(pal);
 
   labDateShort = new QLabel(this, I18N_NOOP("Short date:"));
+  labDateShort->setPalette(pal);
   dateShortSample = new QLabel(this);
+  dateShortSample->setPalette(pal);
 
   labTime = new QLabel(this, I18N_NOOP("Time:"));
+  labTime->setPalette(pal);
   timeSample = new QLabel(this);
+  timeSample->setPalette(pal);
 
   lay->setColStretch(0, 1);
   lay->setColStretch(1, 3);
@@ -147,9 +163,9 @@ void KLocaleSample::resizeEvent( QResizeEvent *e )
 {
     QWidget::resizeEvent( e );
 
-    static QPixmap pix;
     if ( !bgImage.isNull() ) {
-	pix = bgImage.smoothScale( width(), height() );
+	QPixmap pix;
+        pix = bgImage.smoothScale( width(), height() );
 	setBackground( pix );
     }
 }
