@@ -22,3 +22,4 @@ install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(kde_appsdir)/Settings/LookNFeel/Windows
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(kde_appsdir)/Settings/LookNFeel/Windows/actions.desktop
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(kde_appsdir)/Settings/LookNFeel/Windows/kwinmouse.desktop
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(kde_appsdir)/Settings/LookNFeel/Windows/mouse.desktop
