@@ -12,9 +12,6 @@
             <height>434</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>CSSConfigDialog</string>
-    </property>
     <property name="layoutMargin" stdset="0">
     </property>
     <property name="layoutSpacing" stdset="0">
