@@ -2,7 +2,7 @@
 
 INCLUDES = $(all_includes)
 kdesktop_lock_LDFLAGS  = $(all_libraries) $(KDE_RPATH)
-kdesktop_lock_LDADD    = $(LIB_KIO)
+kdesktop_lock_LDADD    = $(LIB_KIO) $(LIB_XF86MISC)
 
 ####### Files
 

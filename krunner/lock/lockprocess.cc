@@ -57,6 +57,10 @@ extern "C" {
 }
 #endif
 
+#ifdef HAVE_XF86MISC
+#include <X11/extensions/xf86misc.h>
+#endif
+
 #define LOCK_GRACE_DEFAULT          5000
 
 static Window gVRoot = 0;
@@ -75,7 +79,8 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mParent(0),
       mUseBlankOnly(useBlankOnly),
       mSuspended(false),
-      mVisibility(false)
+      mVisibility(false),
+      mRestoreXF86Lock(false)
 {
     setupSignals();
 
@@ -493,6 +498,9 @@ bool LockProcess::grabInput()
             return false;
         }
     }
+
+    lockXF86();
+
     return true;
 }
 
@@ -504,6 +512,7 @@ void LockProcess::ungrabInput()
 {
     XUngrabKeyboard(qt_xdisplay(), CurrentTime);
     XUngrabPointer(qt_xdisplay(), CurrentTime);
+    unlockXF86();
 }
 
 //---------------------------------------------------------------------------
@@ -549,7 +558,7 @@ void LockProcess::startSaver()
     move(0, 0);
     show();
     setCursor( blankCursor );
-
+    
     raise();
     XSync(qt_xdisplay(), False);
     if (!child_saver)
@@ -853,3 +862,47 @@ void LockProcess::checkDPMSActive()
 #endif
 }
 
+#ifdef HAVE_XF86MISC
+// see http://cvsweb.xfree86.org/cvsweb/xc/programs/Xserver/hw/xfree86/common/xf86Events.c#rev3.113
+// This allows enabling the "Allow{Deactivate/Closedown}Grabs" options in XF86Config,
+// and kdesktop_lock will still lock the screen.
+static enum { Unknown, Yes, No } can_do_xf86_lock = Unknown;
+void LockProcess::lockXF86()
+{
+    if( can_do_xf86_lock == Unknown )
+    {
+        int major, minor;
+        if( XF86MiscQueryVersion( qt_xdisplay(), &major, &minor )
+            && major >= 0 && minor >= 5 )
+            can_do_xf86_lock = Yes;
+        else
+            can_do_xf86_lock = No;
+    }
+    if( can_do_xf86_lock != Yes )
+        return;
+    if( mRestoreXF86Lock )
+        return;
+    if( XF86MiscSetGrabKeysState( qt_xdisplay(), False ) != MiscExtGrabStateSuccess )
+        return;
+    // success
+    mRestoreXF86Lock = true;
+}
+
+void LockProcess::unlockXF86()
+{
+    if( can_do_xf86_lock != Yes )
+        return;
+    if( !mRestoreXF86Lock )
+        return;
+    XF86MiscSetGrabKeysState( qt_xdisplay(), True );
+    mRestoreXF86Lock = false;
+}
+#else
+void LockProcess::lockXF86()
+{
+}
+
+void LockProcess::unlockXF86()
+{
+}
+#endif

@@ -77,6 +77,8 @@ private:
     void setupSignals();
     bool checkPass();
     void stayOnTop();
+    void lockXF86();
+    void unlockXF86();
 
     bool        mLock;
     int         mPriority;
@@ -98,6 +100,7 @@ private:
     bool        mVisibility;
     QTimer      mCheckDPMS;
     QValueStack< QWidget* > mDialogs;
+    bool        mRestoreXF86Lock;
 };
 
 #endif
