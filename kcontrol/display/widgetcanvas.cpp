@@ -5,12 +5,14 @@
 // Copyright (c)  Mark Donohoe 1998
 //
 
+#include <kcolordrag.h>
 #include "widgetcanvas.h"
 #include "widgetcanvas.moc"
 
 WidgetCanvas::WidgetCanvas( QWidget *parent, const char *name )
 	: QWidget( parent, name )
 {
+        setAcceptDrops( true);
 }
 
 void WidgetCanvas::paintEvent(QPaintEvent *)
@@ -26,6 +28,24 @@ void WidgetCanvas::mousePressEvent( QMouseEvent *me )
 			emit widgetSelected( hotspots[i].number );
 			return;
 		}
+}
+
+void WidgetCanvas::dropEvent( QDropEvent *e)
+{
+        QColor c;
+	if( KColorDrag::decode( e, c)) {
+	  for ( int i = 0; i < MAX_HOTSPOTS; i++ )
+	    if ( hotspots[i].rect.contains( e->pos() ) ) {
+		emit colorDropped( hotspots[i].number, c);
+		return;
+	    }
+	}
+}
+
+
+void WidgetCanvas::dragEnterEvent( QDragEnterEvent *e)
+{
+        e->accept( KColorDrag::canDecode( e));  
 }
 
 void WidgetCanvas::paletteChange(const QPalette &)

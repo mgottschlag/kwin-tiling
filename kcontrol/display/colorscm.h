@@ -46,6 +46,7 @@ protected slots:
 	void slotHelp();
 	void slotWidgetColor( int );
 	void slotSelectColor( const QColor &col );
+	void slotColorForWidget( int, const QColor &);
 	void slotSave();
 	void slotAdd();
 	void slotRemove();

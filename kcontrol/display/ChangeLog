@@ -1,3 +1,7 @@
+1999-05-06  Steffen Hansen  <hansen@kde.org>
+
+	* DND stuff for color-preview.
+
 1999-03-01 Duncan Haldane <duncan@kde.org>
 	* commented out (//) annoying debug calls in
 	* backgnd.cpp, colorscm.cpp, general.cpp, scrnsave.cpp

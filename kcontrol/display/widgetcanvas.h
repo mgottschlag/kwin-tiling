@@ -58,10 +58,13 @@ public:
 
 signals:
 	void widgetSelected( int );
+	void colorDropped( int, const QColor&);
 	
 protected:
 	virtual void paintEvent( QPaintEvent * );
 	virtual void mousePressEvent( QMouseEvent * );
+	virtual void dropEvent( QDropEvent *);
+	virtual void dragEnterEvent( QDragEnterEvent *);
 	void paletteChange( const QPalette & );
 
 	HotSpot hotspots[MAX_HOTSPOTS];

@@ -135,7 +135,8 @@ void KDisplayApplication::apply()
       KConfig *config = kapp->getConfig();
       config->reparseConfiguration();
       config->setGroup( "General" );
-      QFont font = config->readFontEntry( "font", &kapp->generalFont());
+      QFont font = kapp->generalFont();
+      font = config->readFontEntry( "font", &font);
       writeQDesktopProperties( pal, font);
   }
 }

@@ -101,7 +101,8 @@ KColorScheme::KColorScheme( QWidget *parent, int mode, int desktop )
 	cs->setFixedHeight( 150 );
 	connect( cs, SIGNAL( widgetSelected( int ) ),
 		 SLOT( slotWidgetColor( int ) ) );
-	
+	connect( cs, SIGNAL( colorDropped( int, const QColor&)),
+		 SLOT( slotColorForWidget( int, const QColor&)));
 	topLayout->addMultiCellWidget( cs, 0, 0, 0, 1 );
 
 	QGroupBox *group = new QGroupBox( i18n("Color Scheme"), this );
@@ -498,6 +499,11 @@ void KColorScheme::slotWidgetColor( int indx )
 
 	colorButton->setColor( col );
 	colorPushColor = col;	
+}
+
+void KColorScheme::slotColorForWidget( int indx, const QColor& col)
+{
+  slotWidgetColor( indx); slotSelectColor( col);
 }
 
 void KColorScheme::writeNamedColor( KConfigBase *config,
