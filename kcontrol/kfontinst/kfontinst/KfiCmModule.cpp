@@ -54,6 +54,7 @@ CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name, const QStringList&
             : KCModule(parent, name),
               itsAboutData(NULL)
 {
+    KGlobal::locale()->insertCatalogue("fontinst");
     QGridLayout *topLayout=new QGridLayout(this);
 
     topLayout->setSpacing(0);
