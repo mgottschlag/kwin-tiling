@@ -18,16 +18,6 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-
-/*
-
- This filter takes care of hostnames in the local search domain.
- If you're in domain domain.org which has a host intranet.domain.org
- and the typed URI is just intranet, check if there's a host
- intranet.domain.org and if yes, it's a network URI.
-
-*/
-
 #include "localdomainurifilter.h"
 
 #include <qregexp.h>
@@ -37,67 +27,69 @@
 #include <config.h>
 
 LocalDomainURIFilter::LocalDomainURIFilter( QObject *parent, const char *name,
-    const QStringList & /*args*/ )
+                                            const QStringList & /*args*/ )
     : KURIFilterPlugin( parent, name ? name : "localdomainurifilter", 1.0 ),
       DCOPObject( "LocalDomainURIFilterIface" ), last_time( 0 )
-    {
+{
     configure();
-    }
+}
 
 bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
-    {
+{
     KURL url = data.uri();
     QString cmd = url.url();
 
     if( cmd[ 0 ] != '#' && cmd[ 0 ] != '~' && cmd[ 0 ] != '/'
-	&& !cmd.contains( ' ' ) && !cmd.contains( '.' )
-	&& !cmd.contains( ':' ) // KShortURIFilter takes care of these
+        && !cmd.contains( ' ' ) && !cmd.contains( '.' )
+        && !cmd.contains( ':' ) // KShortURIFilter takes care of these
         && !cmd.contains( '$' ) // env. vars could resolve to anything
-	// most of these are taken from KShortURIFilter
-	&& cmd[ cmd.length() - 1 ] != '&'
-	&& !cmd.contains( QString::fromLatin1("||"))
-	&& !cmd.contains( QString::fromLatin1("&&")) // must not look like shell
-	&& !cmd.contains( QRegExp( QString::fromLatin1( "[ ;<>]" )))
-	&& KStandardDirs::findExe( cmd ).isNull()
-	&& url.isMalformed()
-	&& isLocalDomainHost( cmd ))
-        {
+        // most of these are taken from KShortURIFilter
+        && cmd[ cmd.length() - 1 ] != '&'
+        && !cmd.contains( QString::fromLatin1("||"))
+        && !cmd.contains( QString::fromLatin1("&&")) // must not look like shell
+        && !cmd.contains( QRegExp( QString::fromLatin1( "[ ;<>]" )))
+        && KStandardDirs::findExe( cmd ).isNull()
+        && url.isMalformed()
+        && isLocalDomainHost( cmd ))
+    {
         cmd.insert( 0, QString::fromLatin1( "http://" ));
         setFilteredURI( data, cmd );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
         return true;
-        }
-    return false;
     }
+
+    return false;
+}
 
 // if it's e.g. just 'www', try if it's a hostname in the local search domain
 bool LocalDomainURIFilter::isLocalDomainHost( const QString& cmd ) const
-    {
+{
     QString host( cmd.contains( '/' ) ? cmd.left( cmd.find( '/' )) : cmd );
     if( host == last_host && last_time > time( NULL ) - 5 )
-	return last_result;
+        return last_result;
 
-    QString helper = KStandardDirs::findExe(
-	QString::fromLatin1( "klocaldomainurifilterhelper" ));
+    QString helper = KStandardDirs::findExe(QString::fromLatin1( "klocaldomainurifilterhelper" ));
     if( helper.isEmpty())
-	return last_result = false;
+        return last_result = false;
+
     KProcess proc;
     proc << helper << host;
     if( !proc.start( KProcess::NotifyOnExit ))
-	return last_result = false;
+        return last_result = false;
 
     last_host = host;
     last_time = time( (time_t *)0 );
 
     if( proc.wait( 1 ) && proc.normalExit() && proc.exitStatus() == 0)
-	return last_result = true;
+        return last_result = true;
+
     return last_result = false;
 }
 
 void LocalDomainURIFilter::configure()
-    {
+{
     // nothing
-    }
+}
 
 K_EXPORT_COMPONENT_FACTORY( liblocaldomainurifilter,
 	                    KGenericFactory<LocalDomainURIFilter>( "localdomainurifilter" ) );

@@ -29,21 +29,30 @@
 
 class KInstance;
 
-class LocalDomainURIFilter
-    : public KURIFilterPlugin, public DCOPObject
-    {
-    K_DCOP
-    Q_OBJECT
-    public:
-	LocalDomainURIFilter( QObject* parent, const char* name, const QStringList& args );
-        virtual bool filterURI( KURIFilterData &data ) const;
-    k_dcop:
-        virtual void configure();
-    private:
-	bool isLocalDomainHost( const QString& cmd ) const;
-	mutable QString last_host;
-	mutable bool last_result;
-	mutable time_t last_time;
-    };
+/*
+ This filter takes care of hostnames in the local search domain.
+ If you're in domain domain.org which has a host intranet.domain.org
+ and the typed URI is just intranet, check if there's a host
+ intranet.domain.org and if yes, it's a network URI.
+*/
+
+class LocalDomainURIFilter : public KURIFilterPlugin, public DCOPObject
+{
+  K_DCOP
+  Q_OBJECT
+  
+  public:
+    LocalDomainURIFilter( QObject* parent, const char* name, const QStringList& args );
+    virtual bool filterURI( KURIFilterData &data ) const;
+
+  k_dcop:
+    virtual void configure();
+
+  private:
+    bool isLocalDomainHost( const QString& cmd ) const;
+    mutable QString last_host;
+    mutable bool last_result;
+    mutable time_t last_time;
+};
 
 #endif
