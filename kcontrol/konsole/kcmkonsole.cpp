@@ -44,7 +44,9 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name)
 
     connect(dialog->fontPB, SIGNAL(clicked()), this, SLOT(setupFont()));
     connect(dialog->fullScreenCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->showToolBarCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->showMenuBarCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->terminalSizeHintCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->warnCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->scrollBarCO,SIGNAL(activated(int)),this,SLOT(configChanged()));
     connect(dialog->showFrameCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
@@ -65,14 +67,18 @@ void KCMKonsole::load()
 
     dialog->fullScreenCB->setChecked(config->readBoolEntry("Fullscreen",false));
     dialog->showMenuBarCB->setChecked(config->readEntry("MenuBar","Enabled") == "Enabled");
+    dialog->terminalSizeHintCB->setChecked(config->readBoolEntry("TerminalSizeHint",true));
     dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
     dialog->showFrameCB->setChecked(config->readBoolEntry("has frame",true));
-    dialog->scrollBarCO->setCurrentItem(config->readNumEntry("scrollbar",1));
+    dialog->scrollBarCO->setCurrentItem(config->readNumEntry("scrollbar",2));
     dialog->fontCO->setCurrentItem(config->readNumEntry("font",3));
     currentFont = config->readFontEntry("defaultfont");
     dialog->SpinBox1->setValue(config->readNumEntry("history",1000));
 
     dialog->SchemaEditor1->setSchema(config->readEntry("schema"));
+
+    config->setGroup("konsole-mainwindow#1 Toolbar style");
+    dialog->showToolBarCB->setChecked(!config->readBoolEntry("Hidden",false));
 
     config = new KConfig("kdeglobals", false, true);
     config->setGroup("General");
@@ -117,6 +123,7 @@ void KCMKonsole::save()
     config->writeEntry("history", dialog->SpinBox1->text());
     config->writeEntry("Fullscreen", dialog->fullScreenCB->isChecked());
     config->writeEntry("MenuBar", dialog->showMenuBarCB->isChecked()? "Enabled" : "Disabled");
+    config->writeEntry("TerminalSizeHint", dialog->terminalSizeHintCB->isChecked());
     config->writeEntry("WarnQuit", dialog->warnCB->isChecked());
     config->writeEntry("has frame", dialog->showFrameCB->isChecked());
     config->writeEntry("scrollbar", dialog->scrollBarCO->currentItem());
@@ -125,6 +132,9 @@ void KCMKonsole::save()
     config->writeEntry("defaultfont", currentFont);
 
     config->writeEntry("schema", dialog->SchemaEditor1->schema());
+
+    config->setGroup("konsole-mainwindow#1 Toolbar style");
+    config->writeEntry("Hidden",!dialog->showToolBarCB->isChecked());
 
     config->sync();		//is it necessary ?
 
@@ -145,10 +155,12 @@ void KCMKonsole::defaults()
     dialog->historyCB->setChecked(true);
 
     dialog->fullScreenCB->setChecked(false);
+    dialog->showToolBarCB->setChecked(true);
     dialog->showMenuBarCB->setChecked(true);
+    dialog->terminalSizeHintCB->setChecked(true);
     dialog->warnCB->setChecked(true);
     dialog->showFrameCB->setChecked(true);
-    dialog->scrollBarCO->setCurrentItem(true);
+    dialog->scrollBarCO->setCurrentItem(2);
     dialog->terminalCB->setChecked(false);
     
     // Check if -e is needed, I do not think so
