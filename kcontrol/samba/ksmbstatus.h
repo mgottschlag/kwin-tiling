@@ -1,8 +1,6 @@
 /*
  * ksmbstatus.h
  *
- * Requires the Qt widget libraries, available at no cost at
- * http://www.troll.no/
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,7 +19,6 @@
 #ifndef ksmbstatus_h_included
 #define ksmbstatus_h_included
  
-#include <kpopupmenu.h>
 #include <qtimer.h>
 #include <qlabel.h>
 #include <kprocess.h>
@@ -48,7 +45,6 @@ private:
    QListView *list;
    QLabel *version;
    QTimer *timer;
-   KPopupMenu *menu;
    QListViewItem *killrow;
    int rownumber;
    enum {header, connexions, locked_files, finished, nfs} readingpart;
@@ -63,13 +59,6 @@ private:
 private slots:
    void killShowmount();
    void update();
-   //this killing stuff is kindof pointless
-   //it kills the smbd which serves a client, this smbd will be started
-   //again instantly so smbd mounted stuff or users from windows
-   //won't notice it at all
-   //aleXXX
-/*   void Kill();
-   void Killmenu(QListViewItem *row, const QPoint &pos, int column);*/
    void slotReceivedData(KProcess *proc, char *buffer, int buflen);
 };
 

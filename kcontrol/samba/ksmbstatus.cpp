@@ -1,8 +1,6 @@
 /*
  * ksmbstatus.cpp
  *
- *
- *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -73,9 +71,6 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
     timer = new QTimer(this);
     timer->start(15000);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    /*menu = new KPopupMenu();
-    QObject::connect(list,SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
-		    SLOT(Killmenu(QListViewItem *,const QPoint &,int)));*/
     update();
 }
 
@@ -129,7 +124,7 @@ void NetMon::processSambaLine(char *bufline, int)
              (lo)[pid]++;
          }
       }
-   };
+   }
 }
 
 // called when we get some data from smbstatus
@@ -159,15 +154,13 @@ void NetMon::slotReceivedData(KProcess *, char *buffer, int )
    {
       list->viewport()->update();
       list->update();
-   };
+   }
    // here we could save the remaining part of line, if ever buffer
    // doesn't end with a '\n' ... but will this happen ?
 }
 
 void NetMon::update()
 {
-   int pid;
-   QListViewItem *row;
    KProcess * process = new KProcess();
 
    memset(&lo, 0, sizeof(lo));
@@ -192,10 +185,10 @@ void NetMon::update()
    else
    {
       // ok -> count the number of locked files for each pid
-      for (row=list->firstChild();row!=0;row=row->itemBelow())
+      for (QListViewItem *row=list->firstChild();row!=0;row=row->itemBelow())
       {
 //         cerr<<"NetMon::update: this should be the pid: "<<row->text(5)<<endl;
-         pid=row->text(5).toInt();
+         int pid=row->text(5).toInt();
          row->setText(6,QString("%1").arg((lo)[pid]));
       }
    }
@@ -206,7 +199,6 @@ void NetMon::update()
    if (showmountProc!=0)
       delete showmountProc;
    showmountProc=new KProcess();
-   //*showmountProc<<"dn";
    showmountProc->setEnvironment("PATH", path);
    *showmountProc<<"showmount"<<"-a"<<"localhost";
    connect(showmountProc,SIGNAL(receivedStdout(KProcess *, char *, int)),SLOT(slotReceivedData(KProcess *, char *, int)));
@@ -220,8 +212,6 @@ void NetMon::update()
       delete showmountProc;
       showmountProc=0;
    }
-   //delete showmountProc;
-   //showmountProc=0;
 
    version->adjustSize();
    list->show();
@@ -230,34 +220,10 @@ void NetMon::update()
 void NetMon::killShowmount()
 {
    //kdDebug()<<"killShowmount()"<<endl;
-   //if (showmountProc==0) cerr<<"showmountProc==0 !"<<endl;
    if (showmountProc!=0)
    {
-      //this one kills showmount
-      //cerr<<"killing showmount..."<<endl;
       delete showmountProc;
       showmountProc=0;
-      //cerr<<"succeeded"<<endl;
-   };
-
-}
-
-/*void NetMon::Kill()
-{
-   QString a(killrow->text(5));
-   kill(a.toUInt(),15);
-   update();
-}
-
-void NetMon::Killmenu(QListViewItem * row, const QPoint& pos, int )
-{
-   if (row!=0)
-   {
-       killrow=row;
-       menu->clear();
-       menu->insertItem("&Kill",this,SLOT(Kill()));
-       menu->setTitle("//"+row->text(2)+"/"+row->text(1));
-       menu->popup(pos);
    }
-}*/
+}
 
