@@ -42,16 +42,29 @@ FDialog::FDialog( QWidget *parent, const char *name, bool modal )
     vbox->addWidget( winFrame );
 }
 
+struct WinList {
+    struct WinList *next;
+    QWidget *win;
+};
+
 int
 FDialog::exec()
 {
-    QWidget *foc = qApp->focusWidget();
+    static WinList *wins;
+    WinList *win;
+
+    win = new WinList;
+    win->win = this;
+    win->next = wins;
+    wins = win;
     show();
     setActiveWindow();
     inherited::exec();
     hide();
-    if (foc)
-	foc->setActiveWindow();
+    wins = win->next;
+    delete win;
+    if (wins)
+	wins->win->setActiveWindow();
     return result();
 }
 
