@@ -229,14 +229,14 @@ void AboutWidget::updatePixmap()
     //draw the caption text
     p.setFont(f3);
     p.setPen(QColor(139, 163, 198));
-    p.drawText(220, 60, caption);
+    p.drawText(xpos + 13, 60, caption);
     p.setPen(black);
-    p.drawText(217, 57, caption);
+    p.drawText(xpos + 10, 57, caption);
     p.setFont(f1);
 
     const int hAlign = QApplication::reverseLayout() ? AlignRight : AlignLeft;
-    
-    
+
+
     // draw title text
     p.setPen(black);
     p.drawText(150, 84, width() - 160, 108 - 84, hAlign | AlignVCenter, title);
@@ -393,7 +393,7 @@ void AboutWidget::updatePixmap()
         // traverse the list
         _moduleLinks.clear();
         _linkBuffer.resize(namewidth, bheight);
-	_linkArea = QRect(p.viewport().left()+nameoffset, p.viewport().top(), 
+	_linkArea = QRect(p.viewport().left()+nameoffset, p.viewport().top(),
 	                  namewidth, p.viewport().height());
         QPainter lp(&_linkBuffer);
         lp.fillRect( 0, 0, namewidth, bheight,
@@ -425,7 +425,7 @@ void AboutWidget::updatePixmap()
                 p.drawText(commentoffset, yoffset,
                            commentwidth, bheight - yoffset,
                            hAlign | AlignTop | WordBreak, szComment, -1, &bounds);
-	      
+
 	        height = QMAX(height, bounds.height());
 
                 ModuleLink *linkInfo = new ModuleLink;
