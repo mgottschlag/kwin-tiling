@@ -29,6 +29,7 @@
 #include <qcombobox.h>
 #include <qtimer.h>
 
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -158,7 +159,7 @@ void PositionTab::movePanel(int whichButton)
 
     if (pushed == locationTopLeft)
     {
-        m_panelAlign = AlignLeft;
+        m_panelAlign = kapp->reverseLayout() ? AlignRight : AlignLeft;
         m_panelPos = PosTop;
     }
     else if (pushed == locationTop)
@@ -168,27 +169,27 @@ void PositionTab::movePanel(int whichButton)
     }
     else if (pushed == locationTopRight)
     {
-        m_panelAlign = AlignRight;
+        m_panelAlign = kapp->reverseLayout() ? AlignLeft : AlignRight;
         m_panelPos = PosTop;
     }
     else if (pushed == locationLeftTop)
     {
         m_panelAlign = AlignLeft;
-        m_panelPos = PosLeft;
+        m_panelPos = kapp->reverseLayout() ? PosRight : PosLeft;
     }
     else if (pushed == locationLeft)
     {
         m_panelAlign = AlignCenter;
-        m_panelPos = PosLeft;
+        m_panelPos = kapp->reverseLayout() ? PosRight : PosLeft;
     }
     else if (pushed == locationLeftBottom)
     {
         m_panelAlign = AlignRight;
-        m_panelPos = PosLeft;
+        m_panelPos = kapp->reverseLayout() ? PosRight : PosLeft;
     }
     else if (pushed == locationBottomLeft)
     {
-        m_panelAlign = AlignLeft;
+        m_panelAlign = kapp->reverseLayout() ? AlignRight : AlignLeft;
         m_panelPos = PosBottom;
     }
     else if (pushed == locationBottom)
@@ -204,17 +205,17 @@ void PositionTab::movePanel(int whichButton)
     else if (pushed == locationRightTop)
     {
         m_panelAlign = AlignLeft;
-        m_panelPos = PosRight;
+        m_panelPos = kapp->reverseLayout() ? PosLeft : PosRight;
     }
     else if (pushed == locationRight)
     {
         m_panelAlign = AlignCenter;
-        m_panelPos = PosRight;
+        m_panelPos = kapp->reverseLayout() ? PosLeft : PosRight;
     }
     else if (pushed == locationRightBottom)
     {
         m_panelAlign = AlignRight;
-        m_panelPos = PosRight;
+        m_panelPos = kapp->reverseLayout() ? PosLeft : PosRight;
     }
 
     lengthenPanel(-1);
@@ -442,38 +443,48 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     if (m_panelPos == PosTop)
     {
         if (m_panelAlign == AlignLeft)
-            locationTopLeft->setOn(true);
+            kapp->reverseLayout() ? locationTopRight->setOn(true) : 
+                                    locationTopLeft->setOn(true);
         else if (m_panelAlign == AlignCenter)
             locationTop->setOn(true);
         else // if (m_panelAlign == AlignRight
-            locationTopRight->setOn(true);
+            kapp->reverseLayout() ? locationTopLeft->setOn(true) : 
+                                    locationTopRight->setOn(true);
     }
     else if (m_panelPos == PosRight)
     {
         if (m_panelAlign == AlignLeft)
-            locationRightTop->setOn(true);
+            kapp->reverseLayout() ? locationLeftTop->setOn(true) : 
+                                    locationRightTop->setOn(true);
         else if (m_panelAlign == AlignCenter)
-            locationRight->setOn(true);
+            kapp->reverseLayout() ? locationLeft->setOn(true) :
+                                    locationRight->setOn(true);
         else // if (m_panelAlign == AlignRight
-            locationRightBottom->setOn(true);
+            kapp->reverseLayout() ? locationLeftBottom->setOn(true) :
+                                    locationRightBottom->setOn(true);
     }
     else if (m_panelPos == PosBottom)
     {
         if (m_panelAlign == AlignLeft)
-            locationBottomLeft->setOn(true);
+            kapp->reverseLayout() ? locationBottomRight->setOn(true) :
+                                    locationBottomLeft->setOn(true);
         else if (m_panelAlign == AlignCenter)
             locationBottom->setOn(true);
         else // if (m_panelAlign == AlignRight
-            locationBottomRight->setOn(true);
+            kapp->reverseLayout() ? locationBottomLeft->setOn(true) :
+                                    locationBottomRight->setOn(true);
     }
     else // if (m_panelPos == PosLeft
     {
         if (m_panelAlign == AlignLeft)
-            locationLeftTop->setOn(true);
+            kapp->reverseLayout() ? locationRightTop->setOn(true) :
+                                    locationLeftTop->setOn(true);
         else if (m_panelAlign == AlignCenter)
-            locationLeft->setOn(true);
+            kapp->reverseLayout() ? locationRight->setOn(true) : 
+                                    locationLeft->setOn(true);
         else // if (m_panelAlign == AlignRight
-            locationLeftBottom->setOn(true);
+            kapp->reverseLayout() ? locationRightBottom->setOn(true) : 
+                                    locationLeftBottom->setOn(true);
     }
 
     m_percentSlider->setValue(m_panelInfo->_sizePercentage);
