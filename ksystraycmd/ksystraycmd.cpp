@@ -211,7 +211,7 @@ void KSysTrayCmd::checkExistingWindows()
 
 void KSysTrayCmd::windowAdded(WId w)
 {
-  if ( !window.isEmpty() && ( QRegExp( window ).match( KWin::info(w).name ) == -1 ) )
+  if ( !window.isEmpty() && ( QRegExp( window ).search( KWin::info(w).name ) == -1 ) )
     return; // no match
   setTargetWindow( w );
 }
