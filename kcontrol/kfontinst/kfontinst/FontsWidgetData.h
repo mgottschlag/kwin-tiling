@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'FontsWidget.ui'
 **
-** Created: Wed Oct 24 21:21:38 2001
+** Created: Mon Nov 5 00:26:22 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -14,9 +14,9 @@
 class QVBoxLayout; 
 class QHBoxLayout; 
 class QGridLayout; 
+class CFontPreview;
 class QFrame;
 class QGroupBox;
-class QLabel;
 class KProgress;
 class QSplitter;
 
@@ -31,7 +31,7 @@ public:
     QGroupBox* itsBox;
     QFrame* itsBackground;
     KProgress* itsProgress;
-    QLabel* itsLabel;
+    CFontPreview* itsLabel;
     QSplitter* itsSplitter;
 
 

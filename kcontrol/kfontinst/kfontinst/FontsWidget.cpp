@@ -33,10 +33,12 @@
 #include "Config.h"
 #include "SysConfigurer.h"
 #include "KfiCmModule.h"
+#include "FontPreview.h"
 #include <qbitmap.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
 #include <qsplitter.h>
+#include <qpalette.h>
 #include <kprogress.h>
 #include <kapp.h>
 #include <klocale.h>
@@ -46,6 +48,13 @@ CFontsWidget::CFontsWidget(QWidget *parent, const char *)
             : CFontsWidgetData(parent),
               itsSysConfigurer(NULL)
 {
+    QPalette    pal(itsBox->palette());
+    QColorGroup dis(pal.disabled());
+
+    dis.setColor(QColorGroup::Text , pal.active().text());
+    pal.setDisabled(dis);
+    itsBox->setPalette(pal);
+
     itsDisk=new CDiskFontListWidget(itsSplitter);
     itsInstalled=new CInstalledFontListWidget(itsSplitter);
     itsSplitter->setOrientation(CKfiGlobal::cfg().getFontListsOrientation());

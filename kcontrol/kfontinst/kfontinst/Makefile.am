@@ -55,6 +55,7 @@ libkcm_fontinst_la_SOURCES = \
 	XftConfigEditorData.cpp \
 	XftConfigIncludesWidget.cpp \
 	XftConfigIncludesWidgetData.cpp \
+	FontPreview.cpp \
 	xftgram-kfi.c \
 	xftlex-kfi.c
 
@@ -109,6 +110,7 @@ EXTRA_DIST = \
 	XftConfigEditor.h \
 	XftConfigEditorData.h \
 	XftRename.h \
+	FontPreview.h \
 	xftint.h \
 	xftgram.h \
 	xftgram.c \
