@@ -9,6 +9,6 @@ Maintained-by: <Christoph.Neerfeld@home.ivm.de> (Christoph Neerfeld)
 Primary-site: ftp://ftp.kde.org/pub/kde/
 Alternate-site:
 Original-site:
-Platform: Linux, needs Qt by Troll Tech Inc.
+Platform: Unix, Qt
 Copying-policy: GPL
 End

@@ -10,6 +10,6 @@ Primary-site:
 Alternate-site:	ftp://fiwi02.wiwi.uni-tuebingen.de/pub/kde/apps/utils
 		39kB kscreensave-0.3.3.tar.gz
 Original-site:	
-Platform:	Linux with Qt GUI library and KDE libraries
+Platform:	Unix, Qt
 Copying-policy:	GPL
 End
