@@ -8,6 +8,9 @@
 #ifndef __COLORSCM_H__
 #define __COLORSCM_H__
 
+#include <qlistbox.h>
+#include <qslider.h> 
+
 #include "kcolorbtn.h"
 #include "savescm.h"
 #include "widgetcanvas.h"
@@ -15,9 +18,6 @@
 #include "display.h"
 #include <X11/X.h>
 #include <kcontrol.h>
-
-#include <qlistbox.h>
-#include <qslider.h>
 
 class KColorScheme : public KDisplayModule
 {

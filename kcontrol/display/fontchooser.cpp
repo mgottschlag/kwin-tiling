@@ -33,6 +33,9 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlayout.h>
+
+#include "fontchooser.h" 
+
 #include <kapp.h>
 #include <kcharsets.h>
 #include <kconfigbase.h>
@@ -45,7 +48,6 @@
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 
-#include "fontchooser.h"
 #include "fontchooser.moc"
 
 KFontChooser::KFontChooser( QWidget *parent, const char *name )

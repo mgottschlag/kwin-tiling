@@ -26,6 +26,12 @@
 #include <qcombobox.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
+
+#include "fontchooser.h"
+#include "kresourceman.h"
+
+#include "general.h"    
+
 #include <kapp.h>
 #include <kcharsets.h>
 #include <kconfigbase.h>
@@ -40,10 +46,6 @@
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 
-#include "fontchooser.h"
-#include "kresourceman.h"
-
-#include "general.h"
 #include "general.moc"
 
 extern int dropError(Display *, XErrorEvent *);

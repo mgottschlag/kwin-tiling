@@ -7,12 +7,6 @@
 // Ported to Qt-2.0 by Matthias Ettrich 1999
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
 #include <qgroupbox.h>
 #include <qbuttongroup.h>
 #include <qlabel.h>
@@ -29,12 +23,20 @@
 #include <qcursor.h>
 #include <qbitmap.h>
 
+#include "colorscm.h"  
+
 #include <kapp.h>
 #include <kconfig.h>
 #include <kcharsets.h>
 #include <kmsgbox.h>
 #include <ksimpleconfig.h>
 #include <kcursor.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h> 
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -48,7 +50,6 @@
 #include "widgetcanvas.h"
 #include "kresourceman.h"
 
-#include "colorscm.h"
 #include "colorscm.moc"
 
 #define SUPPLIED_SCHEMES 5
