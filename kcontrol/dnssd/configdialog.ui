@@ -40,6 +40,9 @@
             <property name="text">
                 <string>Browse local network</string>
             </property>
+            <property name="whatsThis" stdset="0">
+                <string>Browse local network (domain .local) using multicast DNS.</string>
+            </property>
         </widget>
         <widget class="KEditListBox">
             <property name="name">
@@ -56,6 +59,10 @@
             <property name="title">
                 <string>Additional Domains</string>
             </property>
+            <property name="whatsThis" stdset="0">
+                <string>List of Internet domains  that will be browsed for services. Do not put .local here - it
+is configured with 'Browse local network' option above.</string>
+            </property>
         </widget>
         <widget class="QCheckBox">
             <property name="name">
@@ -71,6 +78,10 @@
             </property>
             <property name="text">
                 <string>Discover more domains</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>If selected every configured domain will be queried for list of domain to browse. This 
+process will be recursive.</string>
             </property>
         </widget>
         <widget class="QButtonGroup">
@@ -102,6 +113,9 @@
                     <property name="checked">
                         <bool>false</bool>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Advertise services on local network (in domain .local) using multicast DNS.</string>
+                    </property>
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
@@ -109,6 +123,9 @@
                     </property>
                     <property name="text">
                         <string>Wide area network</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Advertise services on Internet domain using public IP. To have this option working you need to configurehostname, zone and secret for this domain in /etc/mdnsd.conf</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
