@@ -482,7 +482,7 @@ KGreeter::shutdown_button_clicked()
     SetTimer();
 }
 
-#if defined( HAVE_INITGROUPS) && defined( HAVE_GETGROUPS) && defined( HAVE_SETGROUPS)
+#ifdef USE_RDWR_WM
 
 void
 KGreeter::save_wm()
@@ -534,7 +534,7 @@ KGreeter::save_wm()
 {
 }
 
-#endif /* HAVE_INITGROUPS && HAVE_SETGROUPS && HAVE_GETGROUPS */
+#endif /* USE_RDWR_WM */
 
 QString errm;
 
@@ -752,7 +752,9 @@ AutoLogon (
 	    }
 	    strncpy(name, kdmcfg->_autoUser.latin1(), F_LEN - 1);
 	    greet->password = 0;
+#ifdef USE_RDWR_WM
 	    if (!rdwr_wm (sessarg, F_LEN, name, 1))
+#endif
 		greet->string = (char *)"default";
 	} else	// no autologin
 	    return 0;

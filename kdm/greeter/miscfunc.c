@@ -1,8 +1,6 @@
 #include "miscfunc.h"
 
-#if defined( HAVE_INITGROUPS) && defined( HAVE_GETGROUPS) && defined( HAVE_SETGROUPS)
-
-#define WMRC ".wmrc"
+#ifdef USE_RDWR_WM
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,39 +23,37 @@ rdwr_wm (char *wm, int wml, const char *usr, int rd)
 
     /* Go user */
     rv = -1;
-    if(	!initgroups(pwd->pw_name, pwd->pw_gid) ) {
-	if( !setegid(pwd->pw_gid) ) {
-	    if( !seteuid(pwd->pw_uid) ) {
+    setgroups( 0, 0);	/* take away root group - forever! */
+    if( !setegid(pwd->pw_gid) ) {
+	if( !seteuid(pwd->pw_uid) ) {
 
-		/* open file as user which is loging in */
-		sprintf(fname, "%s/" WMRC, pwd->pw_dir);
-		if (rd) {
-		    if ( (file = fopen(fname, "r")) != NULL ) {
-			fgets (wm, wml, file);
-			rv = strlen (wm);
-			if (rv && wm[rv - 1] == '\n')
-			    wm[--rv] = '\0';
-			fclose (file);
-		    }
-		} else {
-		    if ( (file = fopen(fname, "w")) != NULL ) {
-			fputs (wm, file);
-			rv = 1;
-			fclose (file);
-		    }
+	    /* open file as user which is loging in */
+	    sprintf(fname, "%s/" WMRC, pwd->pw_dir);
+	    if (rd) {
+		if ( (file = fopen(fname, "r")) != NULL ) {
+		    fgets (wm, wml, file);
+		    rv = strlen (wm);
+		    if (rv && wm[rv - 1] == '\n')
+			wm[--rv] = '\0';
+		    fclose (file);
 		}
-
-		seteuid(0);
+	    } else {
+		if ( (file = fopen(fname, "w")) != NULL ) {
+		    fputs (wm, file);
+		    rv = 1;
+		    fclose (file);
+		}
 	    }
-	    setegid(0);
+
+	    seteuid(0);
 	}
-	setgroups( 0, 0);
+	setegid(0);
     }
 
     return rv;
 }
 
-#endif /* HAVE_INITGROUPS && HAVE_GETGROUPS && HAVE_SETGROUPS */
+#endif /* USE_RDWR_WM */
 
 
 int s_copy (char *dst, const char *src, int idx, int spc)

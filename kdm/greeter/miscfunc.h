@@ -1,11 +1,17 @@
+#ifndef _MISCFUNC_H
+#define _MISCFUNC_H
+
 #include "dm.h"
 #include "greet.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef _AIX
 # define __FULL_PROTO 1
-# undef HAVE_SETEUID
-# undef HAVE_INITGROUPS
 # include <sys/id.h>
+int setegid (gid_t egid);
 #endif
 
 #ifndef HAVE_SETEUID
@@ -16,16 +22,16 @@
 
 #define F_LEN 50	/* user, password, session string len */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 int s_copy (char *, const char *, int, int);
 
 #if defined( HAVE_INITGROUPS) && defined( HAVE_GETGROUPS) && defined( HAVE_SETGROUPS)
+# define USE_RDWR_WM
+# define WMRC ".wmrc"
 int rdwr_wm (char *wm, int wml, const char *usr, int rd);
 #endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* _MISCFUNC_H */
