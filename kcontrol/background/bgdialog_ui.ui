@@ -99,7 +99,7 @@ this list will be disabled.</string>
                         <cstring>textLabel3</cstring>
                     </property>
                     <property name="text">
-                        <string>Primary &amp;Color:</string>
+                        <string>Primary &amp;color:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_colorPrimary</cstring>
@@ -118,7 +118,7 @@ this list will be disabled.</string>
                         <cstring>m_lblColorSecondary</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Secondary Color:</string>
+                        <string>&amp;Secondary color:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_colorSecondary</cstring>
@@ -228,7 +228,7 @@ this list will be disabled.</string>
                         <cstring>m_buttonSetupWallpapers</cstring>
                     </property>
                     <property name="text">
-                        <string>Setup &amp;Slide Show</string>
+                        <string>Setup &amp;Slide Show...</string>
                     </property>
                 </widget>
             </grid>
@@ -361,7 +361,7 @@ this list will be disabled.</string>
                                         <cstring>textLabel6</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>&amp;Text Color:</string>
+                                        <string>&amp;Text color:</string>
                                     </property>
                                     <property name="buddy" stdset="0">
                                         <cstring>m_colorText</cstring>

@@ -4,6 +4,14 @@
     <property name="name">
         <cstring>widget2</cstring>
     </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>552</width>
+            <height>514</height>
+        </rect>
+    </property>
     <property name="caption">
         <string>unnamed</string>
     </property>
@@ -16,7 +24,7 @@
                 <cstring>buttonGroup3</cstring>
             </property>
             <property name="title">
-                <string>General options</string>
+                <string>General Options</string>
             </property>
             <vbox>
                 <property name="name">
@@ -69,7 +77,7 @@
                 <cstring>m_groupProgram</cstring>
             </property>
             <property name="title">
-                <string>Background program</string>
+                <string>Background Program</string>
             </property>
             <grid>
                 <property name="name">
