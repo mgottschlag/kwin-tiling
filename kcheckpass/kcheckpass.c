@@ -63,7 +63,9 @@
 
 static int havetty, sfd = -1;
 static const char *username;
+#ifdef HAVE_PAM
 const char *caller = KCHECKPASS_PAM_SERVICE;
+#endif
 
 static char *
 conv_legacy (ConvRequest what, const char *prompt)
@@ -340,7 +342,9 @@ main(int argc, char **argv)
       usage(0);
       break;
     case 'c':
+#ifdef HAVE_PAM
       caller = optarg;
+#endif
       break;
     case 'm':
       method = optarg;
