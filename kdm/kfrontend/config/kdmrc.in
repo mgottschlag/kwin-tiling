@@ -116,11 +116,16 @@ Xwilling=@KDE_CONFDIR@/kdm/Xwilling
 #RemoveDomainname=false
 
 [Shutdown]
-RebootCmd=/sbin/reboot
-HaltCmd=/sbin/poweroff
+# The command to run to reboot the system. The default is system-dependent.
+#RebootCmd=/sbin/reboot
+# The command to run to halt the system. The default is system-dependent.
+#HaltCmd=/sbin/poweroff
+# Only Linux: Offer LiLo boot options in shutdown dialog. Default is false
 UseLilo=false
-LiloCmd=/sbin/lilo
-LiloMap=/boot/map
+# The location of the LiLo binary. Default is /sbin/lilo
+#LiloCmd=
+# The location of the LiLo map file. Default is /boot/map
+#LiloMap=
 
 # Rough estimations about how many seconds KDM will spend at most on
 # - opening a connection to the X-server (OpenTime):
@@ -297,10 +302,11 @@ NoUsers=adm,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,i
 # "OneStar" - "*" is shown for every typed letter (Default)
 # "ThreeStars" - "***" is shown for every typed letter
 #EchoMode=NoEcho
-# Show shutdown button in greeter? Default is true
-ShutdownButton=false
-# Need to enter root password to be allowed to shut down? Default is false
-#ShutdownNeedsRoot=true
+# Who is allowed to shut down the system.
+# "None" - no "Shutdown..." button is showed at all
+# "Root" - the root password must be entered to shut down
+# "All" - everybody can shut down the machine (Default)
+AllowShutdown=Root
 # Hold the X-server grabbed the whole time the greeter is visible.
 # This may be more secure, but will disable any background. Default is false
 #GrabServer=true
@@ -324,10 +330,8 @@ AllowNullPasswd=true
 #ServerWait=
 
 [X-:*-Greeter]
-# Show shutdown button in greeter? Default is true
-ShutdownButton=true
-# Need to enter root password to be allowed to shut down? Default is false
-ShutdownNeedsRoot=false
+# See above.
+AllowShutdown=All
 # Complain, if local X-authorization cannot be created. Default is true
 # XXX this is a dummy currently
 #AuthComplain=false
