@@ -223,7 +223,7 @@ class CFontEngine
     void            closeFontTT();
     EWeight         mapWeightTT(FT_UShort os2Weight);
     EWidth          mapWidthTT(FT_UShort os2Width);
-    QString         lookupNameTT(int index);
+    QCString        lookupNameTT(int index);
         //
         //  TrueType & Type1 shared functionality (FreeType2)
         //

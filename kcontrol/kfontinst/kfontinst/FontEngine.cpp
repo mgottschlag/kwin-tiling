@@ -727,17 +727,25 @@ const CFontEngine::TGlyphInfo * CFontEngine::getGlyphInfo(unsigned long glyph)
 //    TrueType, Type1, and Speedo
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void removeString(QString &str, const QString &remove)
+static void removeString(QString &str, const QString &remove, QCString &removed, bool store=true)
 {
     static const QChar space(' ');
     int                pos;
     unsigned int       slen=remove.length();
 
     if(0<(pos=str.find(remove, 0, false)) && space==str[pos-1] && (str.length()<=pos+slen || space==str[pos+slen]))
+    {
         str.remove(pos-1, slen+1);
+
+        if(store)
+        {
+            removed+=remove.latin1();
+            removed+=" ";
+        }
+    }
 }
 
-static QString createFamilyName(const QString &familyName, const QString &fullName)
+static QString createNames(const QString &familyName, QString &fullName)
 {
     //
     // Some fonts have a FamilyName like "Wibble Wobble"
@@ -747,48 +755,59 @@ static QString createFamilyName(const QString &familyName, const QString &fullNa
     //
     // NOTE: Can't simply use FullName and remove style info - as this would convert "Times New Roman" to "Times New"!!
     //
-    QString retVal(fullName);
- 
+    QString  family(fullName);
+    QCString removed;
+    bool     removedFamily=true;
+
     //
     // Remove family name...
     if(QString::null!=familyName)
-        if(0==retVal.find(familyName))    // This removes "Times New Roman" from "Times New Roman Bold"
-            retVal.remove(0, familyName.length());
+        if(0==family.find(familyName))    // This removes "Times New Roman" from "Times New Roman Bold" -- this is the gneral case...
+            family.remove(0, familyName.length());
         else
         {
             //
             // Some fonts have the family name listed with no spaces, but have spaces in the full name, e.g.
             //
-            //     Family   : LucidyxMono
+            //     Family   : LuciduxMono
             //     FullName : Lucidux Mono Italic Oldstyle
             //
             // ...therefore, need to remove each string from FullName that occurs in FamilyName
-            QString full(fullName);
+            QString full(fullName),
+                    fam(familyName);
  
             full.replace(QRegExp(" "), "");   // Remove whitespace - so we would now have "LuciduxMonoItalicOldstyle"
+            fam.replace(QRegExp(" "), "");
  
-            if(0==full.find(familyName))  // Found "LuciduxMono" in "LuciduxMonoItalic" - so set retVal to "ItalicOldstyle"
+            if(0==full.find(fam))  // Found "LuciduxMono" in "LuciduxMonoItalic" - so set family to "ItalicOldstyle"
             {
                 //
                 // Now we need to extract the family name, and the rest...
                 // i.e. Family: "LuciduxMono"
-                //      rest  : "Italic Oldstyle"
+                //      rest  : "Italic Oldstyle" -- this is what get's assigned to the 'family' varaible...
  
-                if(full.length()==familyName.length())  // No style information...
-                    retVal="";
+                if(full.length()==fam.length())  // No style information...
+                    family="";
                 else  // Need to remove style info...
                 {
                     unsigned int i;
  
                     //
-                    // Remove familyName from retVal
-                    for(i=0; i<familyName.length(); ++i)
+                    // Remove familyName from family
+                    for(i=0; i<familyName.length() && family.length(); ++i)
                     {
-                        if(retVal[0]==QChar(' '))
-                            retVal.remove(0, 1);
-                        retVal.remove(0, 1);
+                        if(family[0]==QChar(' '))
+                            family.remove(0, 1);
+                        if(family.length())
+                            family.remove(0, 1);
                     }
                 }
+            }
+            else
+            {
+                //
+                // FamilyName and family name within FullName are different...
+                removedFamily=false;
             }
         }
  
@@ -797,27 +816,45 @@ static QString createFamilyName(const QString &familyName, const QString &fullNa
     int prop;
  
     for(prop=CFontEngine::WEIGHT_THIN; prop<=CFontEngine::WEIGHT_BLACK; prop++)
-        removeString(retVal, CFontEngine::weightStr((CFontEngine::EWeight)prop));
+        removeString(family, CFontEngine::weightStr((CFontEngine::EWeight)prop), removed);
+
+    removeString(family, "Italic", removed);
+    removeString(family, "Oblique", removed);
+
+    //
+    // Most fonts don't list the roman part, if some do then we don't really
+    // want to show this - to make everything as similar as possible...
+    removeString(family, "Roman", removed, false);
  
     for(prop=CFontEngine::WIDTH_ULTRA_CONDENSED; prop<=CFontEngine::WIDTH_ULTRA_EXPANDED; prop++)
-        removeString(retVal, CFontEngine::widthStr((CFontEngine::EWidth)prop));
+        removeString(family, CFontEngine::widthStr((CFontEngine::EWidth)prop), removed);
  
-    removeString(retVal, "Italic");
-    removeString(retVal, "Oblique");
-    removeString(retVal, "Roman");
-    removeString(retVal, "Cond");  // Some fonts just have Cond and not Condensed!
+    removeString(family, "Cond", removed);  // Some fonts just have Cond and not Condensed!
  
     //
     // Add the family name back on...
-    if(QString::null!=familyName)
-        retVal=familyName+retVal;
+    if(removedFamily && QString::null!=familyName)
+        family=familyName+family;
  
     //
     // Replace any non-alphanumeric or space characters...
-    retVal.replace(QRegExp("&"), "And");
-    retVal=CMisc::removeSymbols(retVal);
+    family.replace(QRegExp("&"), "And");
+    family=CMisc::removeSymbols(family);
  
-    return retVal.simplifyWhiteSpace();
+    family.simplifyWhiteSpace();
+
+    if(removed.length())
+    {
+        QCString fn(removedFamily ? family.latin1() : familyName.latin1());
+
+        fn+=" ";
+        fn+=removed;
+        fullName=fn;
+    }
+    else
+        fullName=removedFamily ? family : familyName;
+
+    return removedFamily ? family : familyName;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1050,7 +1087,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
                     }
 
                 if(foundName && foundFamily)
-                    itsFamily=createFamilyName(familyIsFull ? QString::null : itsFamily, itsFullName);
+                    itsFamily=createNames(familyIsFull ? QString::null : itsFamily, itsFullName);
 
                 status= ( (mask&NAME && !foundName) || (mask&PROPERTIES && (!foundPs || !foundFamily)) ||
                         (mask&XLFD && (!foundNotice || !foundName || !foundEncoding)) ) ? false : true;
@@ -1104,17 +1141,14 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
 
     if(TEST!=mask && status)
     {
-        if(NAME==mask)  // If we only want name, then ony read this...
-            itsFullName=lookupNameTT(TT_NAME_ID_FULL_NAME);
-        else
+        if(mask&NAME || mask&PROPERTIES)
         {
-            void *table=NULL;
+            itsFullName=lookupNameTT(TT_NAME_ID_FULL_NAME);
+            itsFamily=lookupNameTT(TT_NAME_ID_FONT_FAMILY);
 
-            if(mask&NAME || mask&PROPERTIES)
+            if(mask&PROPERTIES)
             {
-                itsFullName=lookupNameTT(TT_NAME_ID_FULL_NAME);
-                itsFamily=lookupNameTT(TT_NAME_ID_FONT_FAMILY);
-
+                void *table=NULL;
                 //
                 // Algorithm taken from ttf2pt1.c ...
                 //
@@ -1159,15 +1193,15 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
                          float value() { return upper+(lower/65536.0); }
                     };
 
-                    gotItalic=true;
-                    itsItalicAngle=((TFixed)((TT_Postscript*)table)->italicAngle).value();
-                    itsItalic=itsItalicAngle== 0.0f ? ITALIC_NONE : ITALIC_ITALIC;
-                }
+		    gotItalic=true;
+		    itsItalicAngle=((TFixed)((TT_Postscript*)table)->italicAngle).value();
+		    itsItalic=itsItalicAngle== 0.0f ? ITALIC_NONE : ITALIC_ITALIC;
+		}
 
-                if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
-                {
-                    itsWeight=WEIGHT_UNKNOWN;
-                    if(!gotItalic)
+		if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
+		{
+			itsWeight=WEIGHT_UNKNOWN;
+			if(!gotItalic)
                     {
                         itsItalicAngle=0;
                         itsItalic=ITALIC_NONE;
@@ -1196,6 +1230,7 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
             {
                 const TTtfFoundryMap *map;
                 char                 code[5];
+                void                 *table=NULL;
 
                 if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
                     code[0]=code[1]=code[2]=code[3]=code[4]='-';
@@ -1226,7 +1261,7 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
             }
 
             if(mask&NAME || mask&PROPERTIES)
-                itsFamily=createFamilyName(itsFamily, itsFullName);
+                itsFamily=createNames(itsFamily, itsFullName);
         }
     }
 
@@ -1314,22 +1349,20 @@ CFontEngine::EWidth CFontEngine::mapWidthTT(FT_UShort os2Width)
     }
 }
 
-QString CFontEngine::lookupNameTT(int index)  // Code copied from freetype/ftdump.c
+QCString CFontEngine::lookupNameTT(int index)  // Code copied from freetype/ftdump.c
 {
     unsigned int i;
     int          j;
-    bool         found;
-    QString      buffer;
+    bool         found=false;
+    QCString     buffer;
  
     FT_UInt     numNames=FT_Get_Sfnt_Name_Count(itsFt.face);
     FT_SfntName fName;
  
-    for(i=0; i<numNames && !FT_Get_Sfnt_Name(itsFt.face, i, &fName); ++i)
+    for(i=0; !found && i<numNames && !FT_Get_Sfnt_Name(itsFt.face, i, &fName); ++i)
         if(fName.name_id==index )
         {
             // The following code was inspired from Mark Leisher's ttf2bdf package
- 
-            found=false;
  
             // Try to find a Microsoft English name
             if (fName.platform_id==TT_PLATFORM_MICROSOFT)
@@ -1345,16 +1378,11 @@ QString CFontEngine::lookupNameTT(int index)  // Code copied from freetype/ftdum
  
             // Found a Unicode Name.
             if(found)
-            {
-                j=0;
                 for(i=1; i<fName.string_len; i+=2)
-                    buffer[j++]=((char *)(fName.string))[i];
-                buffer[j]='\0';
-                return buffer;
-            }
+                    buffer+=((char *)(fName.string))[i];
         }
 
-    return QString::null;
+    return buffer;
 }
 
 bool CFontEngine::has16BitEncodingFt(const QString &enc)
@@ -1647,7 +1675,7 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
                 sourceName[constSourceFontNameNumBytes]='\0';
                 itsFullName=sourceName;
 
-                itsFamily=createFamilyName(itsFamily, itsFullName);
+                itsFamily=createNames(itsFamily, itsFullName);
 
                 itsPsName=constNoPsName;
                 status=true;
