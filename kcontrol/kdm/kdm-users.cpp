@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+#include <qstyle.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
@@ -157,7 +158,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     userbutton = new QPushButton( hlpw );
     userbutton->setAcceptDrops( true );
     userbutton->installEventFilter( this ); // for drag and drop
-    userbutton->setFixedSize( 50, 50 );
+    uint sz = style().pixelMetric( QStyle::PM_ButtonMargin ) * 2 + 48;
+    userbutton->setFixedSize( sz, sz );
     connect( userbutton, SIGNAL(clicked()),
 	     SLOT(slotUserButtonClicked()) );
     QToolTip::add( userbutton, i18n("Click or drop an image here") );
