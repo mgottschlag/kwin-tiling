@@ -22,8 +22,10 @@
 #define _defCacheSize 2048
 
 // Per desktop defaults
-#define _defColorA  QColor("#004040")
-#define _defColorB  QColor("#008080")
+// Before you change this get in touch with me (torsten@kde.org)
+// Thanks!!
+#define _defColorA  QColor("#249FD0")
+#define _defColorB  QColor("#19A2A0")
 #define _defBackgroundMode VerticalGradient
 #define _defWallpaperMode NoWallpaper
 #define _defMultiMode NoMulti
