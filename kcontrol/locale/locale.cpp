@@ -140,6 +140,7 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
   // add all languages to the list
   QStringList alllang = KGlobal::dirs()->findAllResources("locale",
 							   sub + "*/entry.desktop");
+  alllang.sort();
   QStringList langlist = prilang;
   if (langlist.count() > 0)
     langlist << QString::null; // separator
