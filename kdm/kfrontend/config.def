@@ -71,12 +71,12 @@
  You can configure every X-display individually.
  Every display has a display name, which consists of a host name
  (which is empty for local displays specified in the Xservers file),
- a colon and a display number. Additionally, a display belongs to a
+ a colon, and a display number. Additionally, a display belongs to a
  display class (which can be ignored in most cases; the control center
  does not support this feature at all).
  Sections with display-specific settings have the formal syntax
  "[X-" host [":" number [ "_" class ]] "-" sub-section "]"
- You can use the "*" wildcard for host, number and class. You may omit
+ You can use the "*" wildcard for host, number, and class. You may omit
  trailing components; they are assumed to be "*" then.
  The host part may be a domain specification like ".inf.tu-dresden.de".
  From which section a setting is actually taken is determined by these
@@ -166,7 +166,7 @@ are ignored as well.</para>
 <para>You can configure every X-display individually.</para>
 <para>Every display has a display name, which consists of a host name
 (which is empty for local displays specified in the Xservers file), a
-colon and a display number. Additionally, a display belongs to a
+colon, and a display number. Additionally, a display belongs to a
 display class (which can be ignored in most cases).</para>
 
 <para>Sections with display-specific settings have the formal syntax
@@ -176,7 +176,7 @@ display class (which can be ignored in most cases).</para>
 make up a section class.</para>
 
 <para>You can use the <literal>*</literal> wildcard for
-<replaceable>host</replaceable>, <replaceable>number</replaceable>
+<replaceable>host</replaceable>, <replaceable>number</replaceable>, 
 and <replaceable>class</replaceable>. You may omit trailing components;
 they are assumed to be <literal>*</literal> then. The host part may be a
 domain specification like <replaceable>.inf.tu-dresden.de</replaceable>.</para>
@@ -237,7 +237,7 @@ and [X-:0] (the first local display).</para>
 <para>The format for all keys is
 <userinput><option><replaceable>key</replaceable></option>&nbsp;<literal>=</literal>&nbsp;<parameter>value</parameter></userinput>.
 Keys are only valid in the section class they are defined for.
-Some keys don't apply to particular displays, in which case they are ignored.
+Some keys do not apply to particular displays, in which case they are ignored.
 </para>
 
 <para>If a setting is not found in any matching section, the default
@@ -286,7 +286,7 @@ similar displays (such as a corral of X terminals) and would like to set
 options for groups of them.
 When using &XDMCP;, the display is required to specify the display class,
 so the manual for your particular X terminal should document the display
-class string for your device. If it doesn't, you can run &kdm; in debug
+class string for your device. If it does not, you can run &kdm; in debug
 mode and <command>grep</command> the log for <quote>class</quote>.</para>
 
 <para>The <replaceable>tty</replaceable> specifies which text console an
@@ -295,7 +295,7 @@ monitor for activity after switching to <guilabel>Console login</guilabel> to
 find out when the console session ends.
 Note that this concept (originating from Solaris) is not perfectly
 suited for Linux, as there &X-Server;s run on separate virtual terminals
-and consequently don't actually cover consoles (<command>getty</command>s).
+and consequently do not actually cover consoles (<command>getty</command>s).
 </para>
 
 <para>The <literal>reserve</literal> keyword instructs &kdm; to start the
@@ -395,7 +395,7 @@ The formal syntax is
 </screen>
 If one or more <literal>LISTEN</literal> lines are specified, &kdm; listens
 for &XDMCP; requests only on the specified interfaces.
-<replaceable>interface</replaceable> may be a hostname or IP addresss
+<replaceable>interface</replaceable> may be a hostname or IP address
 representing a network interface on this machine, or the wildcard
 <literal>*</literal> to represent all available network interfaces.
 If multicast group addresses are listed on a <literal>LISTEN</literal> line,
@@ -410,7 +410,7 @@ ff02:0:0:0:0:0:0:12b to most closely match the IPv4 subnet broadcast behavior.
 If no <literal>LISTEN</literal> lines are given, &kdm; listens on all
 interfaces and joins the default &XDMCP; IPv6 multicast group (when
 compiled with IPv6 support).
-To disable listening for &XDMCP; requests altogther, a
+To disable listening for &XDMCP; requests altogether, a
 <literal>LISTEN</literal> line with no addresses may be specified, but using
 the <literal>[Xdmcp]</literal> <option>Enable</option> option is preferred.
 </para>
@@ -430,7 +430,7 @@ The Setup, Startup and Reset programs are run as
 <systemitem class="username">root</systemitem>, so they should be careful
 about security.
 Their first argument is <literal>auto</literal> if the session results
-from an automatic login, otherwise no arguments are passed to them.
+from an automatic login; otherwise, no arguments are passed to them.
 </para>
 
 <sect2 id="kdmrc-xsetup">
@@ -505,11 +505,11 @@ the following environment variables are passed:</para>
  </varlistentry>
  <varlistentry>
   <term>LOGNAME</term>
-  <listitem><para>the user name</para></listitem>
+  <listitem><para>the username</para></listitem>
  </varlistentry>
  <varlistentry>
   <term>USER</term>
-  <listitem><para>the user name</para></listitem>
+  <listitem><para>the username</para></listitem>
  </varlistentry>
  <varlistentry>
   <term>PATH</term>
@@ -542,7 +542,7 @@ and starts another authentication cycle.</para>
 as the user's session. It is run with the permissions of the authorized user.
 One of the keywords <literal>failsafe</literal>, <literal>default</literal>
 or <literal>custom</literal>, or a string to <command>eval</command> by a
-bourne-compatible shell is passed as the first argument.</para>
+Bourne-compatible shell is passed as the first argument.</para>
 
 <para>In addition to any specified by <option>ExportList</option>,
 the following environment variables are passed:</para>
@@ -557,11 +557,11 @@ the following environment variables are passed:</para>
  </varlistentry>
  <varlistentry>
   <term>LOGNAME</term>
-  <listitem><para>the user name</para></listitem>
+  <listitem><para>the username</para></listitem>
  </varlistentry>
  <varlistentry>
   <term>USER</term>
-  <listitem><para>the user name</para></listitem>
+  <listitem><para>the username</para></listitem>
  </varlistentry>
  <varlistentry>
   <term>PATH</term>
@@ -666,7 +666,7 @@ or unmounting directories from file servers.</para>
 #     Append this instead of the real default to the two docs. The quoting
 #     rules are the same as for Default.
 #   DDefault: -
-#     If specified, the default value won't be appended to the documentation
+#     If specified, the default value will not be appended to the documentation
 #     entry. The Description should mention the default then. Use this when
 #     the default is system-dependent.
 #   PostProc: <function>
@@ -714,9 +714,9 @@ or unmounting directories from file servers.</para>
 #     A docbook description of this option is expected in the next lines.
 #     The contents are automatically enclosed in <para></para>.
 #     If "-" is given to Description, no comment is generated at all.
-#     If "!" is given, enums are not treated specially. Otherwise the macro
+#     If "!" is given, enums are not treated specially; otherwise, the macro
 #     %ENUM% is replaced with a list of the defined element/description pairs,
-#     or, if the macro is not present, the list is appended to the description.
+#     or - if the macro is not present - the list is appended to the description.
 #     Finally, a sentence with the Default (or CDefault, if given) is appended,
 #     unless "DDefault: -" was specified.
 #     Each option entry generates an anchor named option-<lowercase(Key)>;
@@ -724,7 +724,7 @@ or unmounting directories from file servers.</para>
 
 Section: General
 Description:
- This section contains global options that don't fit into any specific section.
+ This section contains global options that do not fit into any specific section.
 
 Key: ConfigVersion
 Type: string
@@ -735,7 +735,7 @@ User: dummy
 Instance:
 Comment:
  This option exists solely for the purpose of a clean automatic upgrade.
- Don't even think about changing it!
+ Do not even think about changing it!
 Description:
  This option exists solely for the purpose of clean automatic upgrades.
  <emphasis>Do not</emphasis> change it, you may interfere with future
@@ -762,15 +762,15 @@ Merge: xdm:servers
 Comment:
  If the value starts with a slash (/), it specifies the file, where X-servers
  to be used by KDM are listed; the file is in the usual XDM-Xservers format.
- Otherwise it's interpreted like one line of the Xservers file, i.e., it
+ Otherwise, it is interpreted like one line of the Xservers file, i.e. it
  specifies exactly one X-server.
 Description:
  If the value starts with a slash (/), it specifies a file to read &X-Server;
- definitions from. Otherwise it is an &X-Server; definition by itself. See
+ definitions from; otherwise, it is an &X-Server; definition by itself. See
  <xref linkend="kdmrc-xservers"/> for the details.
  </para><para>
  The default is an &X-Server; definition that is usually reasonable
- for the system &kdm; was built on.
+ for the system on which &kdm; was built.
 
 Key: ServerVTs
 If: defined(HAVE_VTS)
@@ -797,7 +797,7 @@ User: core
 Instance: "/var/run/kdm.pid"
 Merge: xdm
 Comment:
- Where KDM should store its PID (don't store if empty).
+ Where KDM should store its PID (do not store if empty).
 Description:
  The filename specified will be created to contain an ASCII representation
  of the process ID of the main &kdm; process; the PID will not be stored
@@ -811,7 +811,7 @@ Instance: #!
 Merge: xdm
 Comment:
  Whether KDM should lock the PID file to prevent having multiple KDM
- instances running at once. Don't change unless you're brave.
+ instances running at once. Do not change unless you are brave.
 Description:
  This option controls whether &kdm; uses file locking to keep multiple
  display managers from running onto each other.
@@ -830,7 +830,7 @@ Description:
  files while initializing the session. &kdm; expects the system to clean up
  this directory from stale files on reboot.
  </para><para>
- The autorization file to be used for a particular display can be
+ The authorization file to be used for a particular display can be
  specified with the <option>AuthFile</option> option in [X-*-Core].
 
 Key: AutoRescan
@@ -844,7 +844,7 @@ Comment:
  finds them having changed.
 Description:
  This boolean controls whether &kdm; automatically re-reads its
- configuration files if it finds them having changed.
+ configuration files if it finds them to have changed.
 
 Key: ExportList
 Type: list
@@ -856,7 +856,7 @@ Comment: &
 Description:
  Additional environment variables &kdm; should pass on to all programs it runs.
  <envar>LD_LIBRARY_PATH</envar> and <envar>XCURSOR_THEME</envar> are good candidates;
- otherwise it shouldn't be necessary very often.
+ otherwise, it should not be necessary very often.
 
 Key: RandomFile
 If: !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
@@ -931,11 +931,11 @@ User: core
 Instance: #"/tmp"
 Update: upd_fifodir
 Comment:
- Where the command FiFos should be created. Make it empty to disable
- the FiFos.
+ Where the command FiFos should be created; make it empty to disable
+ them.
 Description:
  The directory in which the command <acronym>FiFo</acronym>s should
- be created. Make it empty to disable the <acronym>FiFo</acronym>s.
+ be created; make it empty to disable them.
 # See <xref linkend="kdm-fifos"/> for the details.
 
 Key: FifoGroup
@@ -945,8 +945,8 @@ User: core
 Instance: #xdmctl
 Comment: &
 Description:
- To which group the global command <acronym>FiFo</acronym> should belong.
- Can be either a name or a numerical ID.
+ The group to which the global command <acronym>FiFo</acronym> should belong;
+ can be either a name or a numerical ID.
 
 Key: DataDir
 Type: path
@@ -955,10 +955,10 @@ User: greeter
 Instance: #""
 Update: upd_datadir
 Comment:
- The directory kdm should store persistent working data in.
+ The directory in which kdm should store persistent working data.
 Description:
- The directory &kdm; should store persistent working data in. Such data is
- for example the previous user that logged in on a particular display.
+ The directory in which &kdm; should store persistent working data; such data is,
+ for example, the previous user that logged in on a particular display.
 
 Key: DmrcDir
 Type: path
@@ -967,7 +967,7 @@ User: core
 Instance: #"/nfs-shared/var/dmrcs"
 Comment: &
 Description:
- The directory &kdm; should store users' <filename>.dmrc</filename> files in. This is only needed
+ The directory in which &kdm; should store users' <filename>.dmrc</filename> files. This is only needed
  if the home directories are not readable before actually logging in (like
  with AFS).
 
@@ -996,7 +996,7 @@ User: core(request_port)
 Instance: #
 Merge: xdm:requestPort(P_requestPort)
 Comment:
- The UDP port KDM should listen on for XDMCP requests. Don't change.
+ The UDP port on which KDM should listen for XDMCP requests. Do not change.
 Description:
  This indicates the UDP port number which &kdm; uses to listen for incoming
  &XDMCP; requests. Unless you need to debug the system, leave this with its
@@ -1047,7 +1047,7 @@ Description:
  Number of seconds to wait for the display to respond after the user has
  selected a host from the chooser. If the display sends an &XDMCP;
  IndirectQuery within this time, the request is forwarded to the chosen
- host. Otherwise, it is assumed to be from a new session and the chooser
+ host; otherwise, it is assumed to be from a new session and the chooser
  is offered again.
 
 Key: RemoveDomainname
@@ -1117,7 +1117,7 @@ Comment:
 Description:
  The command to run to halt/poweroff the system.
  </para><para>
- The default is something reasonable for the system &kdm; was built on, like
+ The default is something reasonable for the system on which &kdm; was built, like
  <command>/sbin/shutdown&nbsp;<option>-h</option>&nbsp;<parameter>now</parameter></command>.
 
 Key: RebootCmd
@@ -1131,7 +1131,7 @@ Comment:
 Description:
  The command to run to reboot the system.
  </para><para>
- The default is something reasonable for the system &kdm; was built on, like
+ The default is something reasonable for the system &kdm; on which was built, like
  <command>/sbin/shutdown&nbsp;<option>-r</option>&nbsp;<parameter>now</parameter></command>.
 
 Key: AllowFifo
@@ -1306,7 +1306,7 @@ Comment:
  Wait for a Pong that many minutes.
 Description:
  To discover when <emphasis>remote</emphasis> displays disappear, &kdm;
- regularily pings them.
+ regularly pings them.
  <option>PingInterval</option> specifies the time (in minutes) between the
  pings and <option>PingTimeout</option> specifies the maximum amount of
  time (in minutes) to wait for the terminal to respond to the request. If
@@ -1325,7 +1325,7 @@ Instance: #:*/!
 Merge: xdm
 Comment:
  Restart instead of resetting the local X-server after session exit.
- Use it if the server leaks memory, etc.
+ Use it if the server leaks memory etc.
 Description:
  Whether &kdm; should restart the local &X-Server; after session exit instead
  of resetting it. Use this if the &X-Server; leaks memory or crashes the system
@@ -1367,7 +1367,7 @@ Description:
  Controls whether &kdm; generates and uses authorization for
  <emphasis>local</emphasis> &X-Server; connections.
  For &XDMCP; displays the authorization requested by the display is used;
- foreign non-&XDMCP; displays don't support authorization at all.
+ foreign non-&XDMCP; displays do not support authorization at all.
 
 Key: AuthNames
 Type: list
@@ -1379,7 +1379,7 @@ Comment:
  Which X-authorization mechanisms should be used.
 Description:
  If <option>Authorize</option> is true, use the authorization mechanisms
- listed herein. The MIT-MAGIC-COOKIE-1 authorization is always avaliable;
+ listed herein. The MIT-MAGIC-COOKIE-1 authorization is always available;
  XDM-AUTHORIZATION-1, SUN-DES-1 and MIT-KERBEROS-5 might be available as well,
  depending on the build configuration.
 
@@ -1392,7 +1392,7 @@ Merge: xdm
 Comment:
  Need to reset the X-server to make it read initial Xauth file.
 Description:
- Some <emphasis>old</emphasis> &X-Server;s reread the authorization file
+ Some <emphasis>old</emphasis> &X-Server;s re-read the authorization file
  at &X-Server; reset time, instead of when checking the initial connection.
  As &kdm; generates the authorization information just before connecting to
  the display, an old &X-Server; would not get up-to-date authorization
@@ -1427,12 +1427,12 @@ Update: cp_resources
 Merge: xdm
 Comment:
  Specify a file with X-resources for the greeter, chooser and background.
- The KDE frontend doesn't care for this, so you don't need it unless you
+ The KDE frontend does not use this file, so you do not need it unless you
  use another background generator than krootimage.
 Description:
  This option specifies the name of the file to be loaded by
  <command>xrdb</command> as the resource database onto the root window
- of screen 0 of the display. KDE programs generally don't care for
+ of screen 0 of the display. KDE programs generally do not use
  X-resources, so this option is only needed if the <option>Setup</option>
  program needs some X-resources.
 
@@ -1621,7 +1621,7 @@ Merge: xdm
 Comment:
  Allow root logins?
 Description:
- If disabled, don't allow <systemitem class="username">root</systemitem>
+ If disabled, do not allow <systemitem class="username">root</systemitem>
  (and any other user with UID = 0) to log in directly.
 
 Key: AllowNullPasswd
@@ -1655,7 +1655,7 @@ Description:
 
 Key: AllowSdForceNow
 Type: enum
- None: no forced shutdown is allowd at all
+ None: no forced shutdown is allowed at all
  Root: the <systemitem class="username">root</systemitem> password must be entered to shut down forcibly
  All: everybody can shut down the machine forcibly
 Default: All
@@ -1669,7 +1669,7 @@ Description:
 Key: DefaultSdMode
 Type: enum
  Schedule: shut down after all active sessions exit (possibly at once)
- TryNow: shut down, if no active sessions are open, otherwise do nothing
+ TryNow: shut down, if no active sessions are open; otherwise, do nothing
  ForceNow: shut down unconditionally
 Default: Schedule
 User: core(defSdMode)
@@ -1708,10 +1708,10 @@ User: core
 Instance: #:*/"fred,ethel"
 Merge: xdm(P_noPassUsers)
 Comment:
- The users that don't need to provide a password to log in. NEVER list root!
+ The users that do not need to provide a password to log in. NEVER list root!
  "*" means all non-root users. @<group> means all users in that group.
 Description:
- The users that don't need to provide a password to log in.
+ The users that do not need to provide a password to log in.
  Items which are prefixed with <literal>@</literal> represent all users in the
  user group named by that item.
  <literal>*</literal> means all users but
@@ -1955,7 +1955,7 @@ Key: NumLock
 Type: enum
  Off: turn off
  On: turn on
- Keep: don't change the state
+ Keep: do not change the state
 Default: Keep
 User: greeter(numLockStatus)
 Instance: #*/Off
@@ -1980,7 +1980,7 @@ User: greeter
 Instance: #*/!
 Comment: &
 Description:
- Enable autocompletion in the user name line edit.
+ Enable autocompletion in the username line edit.
 
 Key: UserList
 Type: bool
@@ -1990,7 +1990,7 @@ Instance: #*/!
 Comment:
  Enable user list (names along with images) in the greeter.
 Description:
- Show a user list with unix login names, real names and images in the greeter.
+ Show a user list with unix login names, real names, and images in the greeter.
 
 Key: ShowUsers
 Type: enum
@@ -2117,7 +2117,7 @@ Description:
 
 Key: PreselectUser
 Type: enum
- None/PRESEL_NONE: don't preselect any user
+ None/PRESEL_NONE: do not preselect any user
  Previous/PRESEL_PREV: the user which successfully logged in last time
  Default/PRESEL_DEFAULT: the user specified in the <option>DefaultUser</option> option
 Default: None
@@ -2167,7 +2167,7 @@ Key: EchoMode
 Type: enum
  OneStar: <literal>*</literal> is shown for every typed letter
  ThreeStars: <literal>***</literal> is shown for every typed letter
- NoEcho: nothing is shown at all, the cursor doesn't move
+ NoEcho: nothing is shown at all, the cursor does not move
 # HACK! This must be in sync with KPasswordEdit::EchoModes (kpassdlg.h)
 Default: OneStar
 User: greeter
@@ -2182,11 +2182,11 @@ Default: true
 User: greeter
 Instance: #*/!
 Comment:
- If true, krootimage will be automatically started by KDM. Otherwise, the
+ If true, krootimage will be automatically started by KDM; otherwise, the
  Setup script should be used to setup the background.
 Description:
  If enabled, &kdm; will automatically start the <command>krootimage</command>
- program to set up the background. Otherwise, the <option>Setup</option>
+ program to set up the background; otherwise, the <option>Setup</option>
  program is responsible for the background.
 
 Key: BackgroundCfg
@@ -2216,7 +2216,7 @@ Description:
  To improve security, the greeter grabs the &X-Server; and then the keyboard
  when it starts up. This option specifies if the &X-Server; grab should be held
  for the duration of the name/password reading. When disabled, the &X-Server;
- is ungrabbed after the keyboard grab succeeds, otherwise the &X-Server; is
+ is ungrabbed after the keyboard grab succeeds; otherwise, the &X-Server; is
  grabbed until just before the session begins.
  </para>
  <note><para>Enabling this option disables <option>UseBackground</option> and
@@ -2358,7 +2358,7 @@ Description:
  </para><para>
  Conversation plugins are modules for the greeter which obtain authentication
  data from the user. Currently only the <literal>classic</literal> plugin is
- shipped with &kde;; it presents the well-known user name and password form.
+ shipped with &kde;; it presents the well-known username and password form.
 
 Key: PluginsShutdown
 Type: list
@@ -2376,11 +2376,11 @@ User: greeter
 Instance: #*/"SomeKey=randomvalue,Foo=bar"
 Comment:
  A list of options of the form Key=Value. The conversation plugins can query
- these settings; it's up to them what possible keys are.
+ these settings; it is up to them what possible keys are.
 Description:
  A list of options of the form
  <replaceable>Key</replaceable><literal>=</literal><replaceable>Value</replaceable>.
- The conversation plugins can query these settings; it's up to them what
+ The conversation plugins can query these settings; it is up to them what
  possible keys are.
 
 Key: AllowConsole
