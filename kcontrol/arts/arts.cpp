@@ -379,7 +379,7 @@ void KArtsModule::defaults()
 
 QString KArtsModule::quickHelp() const
 {
-        return i18n("<h1>The aRts sound server</h1> Here you can configure aRts, KDE's sound server."
+	return i18n("<h1>The aRts sound server</h1> Here you can configure aRts, KDE's sound server."
 		    " This program not only allows you to hear your system sounds while simultaneously"
 		    " listening to some MP3 file or playing a game with a background music. It also allows you"
 		    " to apply different effects to your system sounds and provides programmers with"
@@ -459,26 +459,26 @@ void init_arts()
 {
 	KConfig *config = new KConfig("kcmartsrc", true, false);
 
-        config->setGroup("Arts");
-        bool startServer = config->readBoolEntry("StartServer",true);
-        bool startRealtime = config->readBoolEntry("StartRealtime",true);
-        bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
+	config->setGroup("Arts");
+	bool startServer = config->readBoolEntry("StartServer",true);
+	bool startRealtime = config->readBoolEntry("StartRealtime",true);
+	bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
 	QString args = config->readEntry("Arguments","-F 10 -S 4096");
 
-        delete config;
+	delete config;
 
-        /* put the value of x11Comm into .mcoprc */
-        KConfig *X11CommConfig = new KSimpleConfig(QDir::homeDirPath()+"/.mcoprc");
+	/* put the value of x11Comm into .mcoprc */
+	KConfig *X11CommConfig = new KSimpleConfig(QDir::homeDirPath()+"/.mcoprc");
 
-        if(x11Comm)
-            X11CommConfig->writeEntry("GlobalComm","Arts::X11GlobalComm");
-        else
-            X11CommConfig->writeEntry("GlobalComm","Arts::TmpGlobalComm");
+	if(x11Comm)
+		X11CommConfig->writeEntry("GlobalComm","Arts::X11GlobalComm");
+	else
+		X11CommConfig->writeEntry("GlobalComm","Arts::TmpGlobalComm");
 
-        X11CommConfig->sync();
-        delete X11CommConfig;
+	X11CommConfig->sync();
+	delete X11CommConfig;
 
-        if(startServer)
+	if (startServer)
 		kapp->kdeinitExec(startRealtime?"artswrapper":"artsd",
 				  QStringList::split(" ",args));
 }
@@ -503,13 +503,13 @@ QString createArgs(bool netTrans,
 		args += QString::fromLatin1(" -a %1").arg(audioIO);
 
 	if (duplex)
-		args += " -d";
+		args += QString::fromLatin1(" -d");
 
 	if (netTrans)
-		args += " -n";
+		args += QString::fromLatin1(" -n");
 
 	if (deviceName.length() > 0)
-		args += " -D "+deviceName;
+		args += QString::fromLatin1(" -D ") + deviceName;
 
 	if (rate)
 		args += QString::fromLatin1(" -r %1").arg(rate);
@@ -521,10 +521,10 @@ QString createArgs(bool netTrans,
 		args += QString::fromLatin1(" -s %1").arg(suspendTime);
 
 	if (messageApplication.length() > 0)
-		args += " -m " + messageApplication;
+		args += QString::fromLatin1(" -m ") + messageApplication;
 
 	if (addOptions.length() > 0)
-		args += " " + addOptions;
+		args += QChar(' ') + addOptions;
 
 	return args;
 }
