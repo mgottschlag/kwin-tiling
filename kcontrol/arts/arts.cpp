@@ -91,6 +91,7 @@ void KArtsModule::initAudioIOList()
 		                           "retrieve possible sound I/O methods.\n"
 		                           "Only automatic detection will be "
 		                           "available."));
+                delete artsd;
 	}
 }
 
@@ -181,7 +182,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 			s.sprintf( "%s", deviceManager->name( i ) );
 
 		hardware->midiDevice->insertItem( s, i );
-		
+
 	};
 
 	config = new KConfig("kcmartsrc");
@@ -230,7 +231,7 @@ void KArtsModule::GetSettings( void )
 	hardware->addOptions->setText(config->readEntry("AddOptions",QString::null));
 	hardware->customOptions->setChecked(!hardware->addOptions->text().isEmpty());
 	general->latencySlider->setValue(config->readNumEntry("Latency",250));
-	
+
 	int rate = config->readNumEntry("SamplingRate",0);
 	if(rate)
 	{
@@ -280,7 +281,7 @@ void KArtsModule::GetSettings( void )
 	hardware->midiMapper->setEnabled( hardware->midiUseMapper->isChecked() );
 
 	delete midiConfig;
-	
+
 	updateWidgets();
 	emit changed( false );
 }
@@ -339,16 +340,16 @@ void KArtsModule::saveParams( void )
 
 //	config->setGroup( "Mixer" );
 //	config->writeEntry( "VolumeControlOnSystray", general->volumeSystray->isChecked() );
-	
+
 	KConfig *midiConfig = new KConfig( "kcmmidirc", false );
-	
+
 	midiConfig->setGroup( "Configuration" );
 	midiConfig->writeEntry( "midiDevice", hardware->midiDevice->currentItem() );
 	midiConfig->writeEntry( "useMidiMapper", hardware->midiUseMapper->isChecked() );
 	midiConfig->writePathEntry( "mapFilename", hardware->midiMapper->url() );
-	
+
 	delete midiConfig;
-	
+
 	config->sync();
 }
 
@@ -539,17 +540,17 @@ bool KArtsModule::realtimeIsPossible()
 
 	connect(checkProcess, SIGNAL(processExited(KProcess*)),
 	        this, SLOT(slotArtsdExited(KProcess*)));
-	checkProcess->start(KProcess::Block);
+	if ( !checkProcess->start(KProcess::Block) )
+            delete checkProcess;
 
 	if (latestProcessStatus == 0)
 		realtimePossible =  true;
 	else
 		realtimePossible =  false;
-	
-	checked = true;
-	
-	}
 
+	checked = true;
+
+	}
 	return realtimePossible;
 }
 
