@@ -143,6 +143,16 @@ static inline int my_seteuid( uid_t euid)
 #endif // HAVE_SETEUID
 }
 
+// Misc. functions
+static inline int my_setegid( gid_t egid)
+{
+#ifdef HAVE_SETEUID
+     return setegid(egid);
+#else
+     return setregid(-1, egid);
+#endif // HAVE_SETEUID    
+}
+
 static void
 set_min( QWidget* w)
 {
@@ -400,9 +410,11 @@ static inline gid_t* switch_to_user( int *gidset_size,
      gid_t *gidset = new gid_t[*gidset_size];
      if( getgroups( *gidset_size, gidset) == -1 ||
 	 initgroups(pwd->pw_name, pwd->pw_gid) != 0 ||
-	 my_seteuid(pwd->pw_uid) != 0) {
+	 my_setegid(pwd->pw_gid) != 0 ||
+         my_seteuid(pwd->pw_uid) != 0) {
 	  // Error, back out
 	  my_seteuid(0);
+          my_setegid(0);
 	  setgroups( *gidset_size, gidset);
 	  delete[] gidset;
 	  return 0;
@@ -414,6 +426,7 @@ static inline gid_t* switch_to_user( int *gidset_size,
 static inline void switch_to_root( int gidset_size, gid_t *gidset)
 {
      my_seteuid(0);
+     my_setegid(0);
      setgroups( gidset_size, gidset);
      delete[] gidset;
 }
