@@ -1,6 +1,7 @@
 Version 0.4
 ===========
 - added support for screensaver
+- fixed Kicker transparency not being saved correctly
 
 Version 0.3
 ===========

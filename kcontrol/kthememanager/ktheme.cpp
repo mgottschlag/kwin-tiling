@@ -284,7 +284,7 @@ QString KTheme::createYourself( bool pack )
     }
 
     QDomElement transElem = m_dom.createElement( "transparent" );
-    transElem.setAttribute( "value", kickerConf.readBoolEntry( "transparent" ) );
+    transElem.setAttribute( "value", kickerConf.readBoolEntry( "Transparent" ) );
     panelElem.appendChild( transElem );
     m_root.appendChild( panelElem );
 
