@@ -76,7 +76,7 @@ class LiloProcess : public KProcess
 		LiloProcess ( const QString &lilolocation,
 			      const QString &bootmaplocation );
 		bool exec();
-		QStringList stdout();
+		QStringList getStdout();
 		QString error();
 
 	private:

@@ -57,7 +57,7 @@ LiloInfo::LiloInfo ( const QString &lilolocation,
 			return;
 		}
 
-		QStringList lst = liloproc.stdout();
+		QStringList lst = liloproc.getStdout();
 		QStringList::Iterator it = lst.begin();
 
 		for (;; ++it)
@@ -143,7 +143,7 @@ bool LiloProcess::exec()
     return start ( Block, (Communication) ( Stdout | Stderr ) );
 }
 
-QStringList LiloProcess::stdout()
+QStringList LiloProcess::getStdout()
 {
     return QStringList::split( '\n', QString::fromLocal8Bit( _stdout.data(), _stdout.size() ) );
 }
