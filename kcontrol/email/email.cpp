@@ -46,7 +46,7 @@
 #include <klocale.h>
 #include <kdialog.h>
 #include <kcombobox.h>
-#include <kio/emailsettings.h>
+#include <kemailsettings.h>
 
 #include "email.h"
 
