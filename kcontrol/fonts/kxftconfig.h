@@ -146,6 +146,7 @@ class KXftConfig
     void        clearSymbolFamilies()                { clearList(m_symbolFamilies); }
     QStringList getSymbolFamilies()                  { return getList(m_symbolFamilies); }
     bool        changed()                            { return m_madeChanges; }
+    static QString description(SubPixel::Type t);
     static const char * toStr(SubPixel::Type t);
 
     private:

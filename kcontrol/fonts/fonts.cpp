@@ -301,7 +301,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    lay->addWidget( fontAdjustButton );
    connect(fontAdjustButton, SIGNAL(clicked()), this, SLOT(slotApplyFontDiff()));
 
-   QGroupBox *aaBox=new QGroupBox(i18n("Anti-Alias"), this);
+   QGroupBox *aaBox=new QGroupBox(i18n("Anti-Aliasing"), this);
 
    aaBox->setColumnLayout(1, Qt::Horizontal);
    aaBox->layout()->setSpacing(KDialog::spacingHint());
@@ -331,7 +331,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    hbox->setStretchFactor(dummy, 1);
 
    for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
-       aaSubPixelType->insertItem(KXftConfig::toStr((KXftConfig::SubPixel::Type)t));
+       aaSubPixelType->insertItem(KXftConfig::description((KXftConfig::SubPixel::Type)t));
 
    setAaWidgets();
 
@@ -555,7 +555,7 @@ int KFonts::getIndex(KXftConfig::SubPixel::Type aaSpType)
     int index;
 
     for(index=0; index<aaSubPixelType->count(); ++index)
-        if(aaSubPixelType->text(index)==KXftConfig::toStr(aaSpType))
+        if(aaSubPixelType->text(index)==KXftConfig::description(aaSpType))
         {
             pos=index;
             break;
@@ -569,7 +569,7 @@ KXftConfig::SubPixel::Type KFonts::getAaSubPixelType()
     int t;
 
     for(t=KXftConfig::SubPixel::None; t<=KXftConfig::SubPixel::Vbgr; ++t)
-        if(aaSubPixelType->currentText()==KXftConfig::toStr((KXftConfig::SubPixel::Type)t))
+        if(aaSubPixelType->currentText()==KXftConfig::description((KXftConfig::SubPixel::Type)t))
             return (KXftConfig::SubPixel::Type)t;
 
     return KXftConfig::SubPixel::None;

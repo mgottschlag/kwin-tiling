@@ -25,6 +25,9 @@
 #include <qregexp.h>
 #include <qfile.h>
 #include <qfileinfo.h>
+
+#include <klocale.h>
+
 #ifdef HAVE_FONTCONFIG
 #include <stdarg.h>
 #include <stdio.h>
@@ -604,6 +607,24 @@ void KXftConfig::removeDir(const QString &d)
     QString dir(dirSyntax(d));
 
     removeItem(m_dirs, dir);
+}
+
+QString KXftConfig::description(SubPixel::Type t)
+{
+    switch(t)
+    {
+        default:
+        case SubPixel::None:
+            return i18n("None");
+        case SubPixel::Rgb:
+            return i18n("RGB");
+        case SubPixel::Bgr:
+            return i18n("BGR");
+        case SubPixel::Vrgb:
+            return i18n("Vertical RGB");
+        case SubPixel::Vbgr:
+            return i18n("Vertical BGR");
+    }
 }
 
 const char * KXftConfig::toStr(SubPixel::Type t)
