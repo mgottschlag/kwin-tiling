@@ -836,7 +836,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
         QString passwd=getRootPasswd();
 
         // Need to check can get root passwd before start download...
-        if(QString::null!=passwd)
+        if(!passwd.isNull())
         {
             // Now download to a temporary file...
             KTempFile tmpFile;
@@ -2009,7 +2009,7 @@ bool CKioFonts::doRootCmd(const char *cmd, const QString &passwd)
 {
     KFI_DBUG << "doRootCmd " << cmd << endl;
 
-    if(QString::null!=passwd)
+    if(!passwd.isNull())
     {
         SuProcess proc(SYS_USER);
 

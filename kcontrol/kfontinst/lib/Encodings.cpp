@@ -744,7 +744,7 @@ bool CEncodings::createEncodingsDotDir(const QString &dir)
         QString destFile(dir+"encodings.dir"),
                 link(CMisc::linkedTo(destFile));
 
-        if(QString::null!=link && sysFile==link)  // Already linked!
+        if(!link.isNull() && sysFile==link)  // Already linked!
             status=true;
         else
         {
