@@ -45,9 +45,6 @@
 typedef KGenericFactory<KDEDConfig, QWidget> KDEDFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kded, KDEDFactory( "kcmkded" ) )
 
-static const QCString KALARMD("kalarmd");
-static const bool KALARMD_DEFAULT = true;
-
 
 KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	KCModule( KDEDFactory::instance(), parent, name )
@@ -175,23 +172,6 @@ void KDEDConfig::load() {
 		}
 	}
 
-	// Special case: kalarmd
-	if (KService::serviceByDesktopName("kalarmd"))
-	{
-		clitem = new CheckListItem(_lvStartup, QString::null);
-		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
-        {
-			KConfig config("kalarmdrc", true);
-			config.setGroup("General");
-			clitem->setOn(config.readBoolEntry("Autostart", KALARMD_DEFAULT));
-        }
-		item = clitem;
-		item->setText(1, i18n("Alarm Daemon"));
-		item->setText(2, i18n("Monitors KAlarm schedules"));
-		item->setText(3, NOT_RUNNING);
-		item->setText(4, QString::fromLatin1(KALARMD));
-	}
-
 	getServiceStatus();
 }
 
@@ -222,14 +202,6 @@ void KDEDConfig::save() {
 			}
 		}
 	}
-
-	// Special case: kalarmd
-	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KALARMD,4));
-	if (item) {
-		KConfig config("kalarmdrc", false, false);
-		config.setGroup("General");
-		config.writeEntry("Autostart", item->isOn());
-	}
 	kdedrc.sync();
 
 	DCOPRef( "kded", "kded" ).call( "reconfigure" );
@@ -249,13 +221,6 @@ void KDEDConfig::defaults()
 	}
 
 	getServiceStatus();
-
-        QCheckListItem* item;
-	// Special case: kalarmd
-	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KALARMD,4));
-	if (item) {
-		item->setOn(KALARMD_DEFAULT);
-	}
 }
 
 
@@ -300,15 +265,6 @@ void KDEDConfig::getServiceStatus()
 			item->setText(3, RUNNING);
 		}
 	}
-
-	// Special case: kalarmd
-	QListViewItem *item = _lvStartup->findItem(QString::fromLatin1(KALARMD), 4);
-	if ( item )
-	{
-		bool running = kapp->dcopClient()->isApplicationRegistered(KALARMD);
-		item->setText(3, (running ? RUNNING : NOT_RUNNING));
-	}
-
 }
 
 void KDEDConfig::slotReload()
@@ -352,14 +308,6 @@ void KDEDConfig::slotStartService()
 {
 	QCString service = _lvStartup->currentItem()->text(4).latin1();
 
-	// Special case: kalarmd
-	if (service == KALARMD)
-	{
-		KApplication::startServiceByDesktopName(KALARMD);
-		slotServiceRunningToggled();
-		return;
-	}
-
 	QByteArray data;
 	QDataStream arg( data, IO_WriteOnly );
 	arg << service;
@@ -377,14 +325,6 @@ void KDEDConfig::slotStopService()
 	kdDebug() << "Stopping: " << service << endl;
 	QByteArray data;
 	QDataStream arg( data, IO_WriteOnly );
-
-	// Special case: kalarmd
-	if (service == KALARMD)
-	{
-		kapp->dcopClient()->send(KALARMD, "qt/"+KALARMD, "quit()", data);
-		QTimer::singleShot(200, this, SLOT(slotServiceRunningToggled()));
-		return;
-	}
 
 	arg << service;
 	if (kapp->dcopClient()->send( "kded", "kded", "unloadModule(QCString)", data ) ) {
