@@ -34,7 +34,7 @@
 #include "hidingtab_impl.h"
 #include "menutab_impl.h"
 #include "lookandfeeltab_impl.h"
-#include "applettab.h"
+#include "applettab_impl.h"
 #include "extensionstab_impl.h"
 
 #include <X11/Xlib.h>

@@ -18,10 +18,11 @@
  */
 
 
-#ifndef __applettab_h__
-#define __applettab_h__
+#ifndef __applettab_impl_h__
+#define __applettab_impl_h__
 
 #include <qwidget.h>
+#include "applettab.h"
 
 class QGroupBox;
 class QButtonGroup;
@@ -30,10 +31,10 @@ class QPushButton;
 class KListView;
 class QListViewItem;
 
-class AppletTab : public QWidget
+class AppletTab : public AppletTabBase
 {
   Q_OBJECT
-  
+
  public:
   AppletTab( QWidget *parent=0, const char* name=0 );
 
@@ -57,15 +58,8 @@ class AppletTab : public QWidget
   void updateTrusted();
   void updateAvailable();
   void updateAddRemoveButton();
+  
  private:
-  // security level group
-  QButtonGroup  *level_group;
-  QRadioButton  *trusted_rb, *new_rb, *all_rb;
-
-  // trusted list group
-  QGroupBox     *list_group;
-  QPushButton   *pb_add, *pb_remove;
-  KListView     *lb_trusted, *lb_available;
   QStringList   available, l_available, l_trusted;
 };
 
