@@ -19,6 +19,7 @@
 #include <kaboutdata.h>
 #include <kaction.h>
 #include <kapplication.h>
+#include <kclipboard.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -110,7 +111,7 @@ TopLevel::TopLevel( QWidget *parent, bool applet )
     globalKeys->updateConnections();
     toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
-    connect( toggleURLGrabAction, SIGNAL( toggled( bool )), 
+    connect( toggleURLGrabAction, SIGNAL( toggled( bool )),
              this, SLOT( setURLGrabberEnabled( bool )));
 
     QToolTip::add( this, i18n("Klipper - Clipboard Tool") );
@@ -203,7 +204,7 @@ void TopLevel::clickedMenu(int id)
 	config->sync();
         kapp->quit();
         break;
-        }
+    }
 //    case URLGRAB_ITEM: // handled with an extra slot
 //	break;
     case EMPTY_ITEM:
@@ -307,9 +308,17 @@ void TopLevel::readProperties(KConfig *kc)
           QString data( *it );
           data.replace( QRegExp( "&" ), "&&" );
 
-          long id = m_popup->insertItem( KStringHandler::csqueeze(data, 45), 
+          long id = m_popup->insertItem( KStringHandler::csqueeze(data, 45),
                   -2, -1);
           m_clipDict.insert( id, *it );
+      }
+      
+      if ( !dataList.isEmpty() )
+      {    
+          m_lastSelection = dataList.first();
+          m_lastClipboard = dataList.first();
+          m_lastString    = dataList.first();
+          setClipboard( m_lastString, Clipboard | Selection );
       }
   }
 
@@ -325,7 +334,7 @@ void TopLevel::readProperties(KConfig *kc)
   m_popup->insertItem( SmallIcon("configure"), i18n("&Preferences..."),
                        CONFIG_ITEM);
 
-  KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(), 
+  KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(),
             false );
   m_popup->insertItem( i18n( "&Help" ), help->menu() );
 
@@ -438,9 +447,9 @@ void TopLevel::slotConfigure()
 	
         // KClipboard configuration
         m_config->setGroup("General");
-        m_config->writeEntry("SynchronizeClipboardAndSelection", 
+        m_config->writeEntry("SynchronizeClipboardAndSelection",
                              dlg->synchronize(), true, true );
-        m_config->writeEntry("ImplicitlySetSelection", 
+        m_config->writeEntry("ImplicitlySetSelection",
                              dlg->implicitSelection(), true, true );
         // ### notify running apps!
         // ------------------------
@@ -532,16 +541,23 @@ void TopLevel::slotClearClipboard()
 QString TopLevel::clipboardContents( bool *isSelection )
 {
     clip->setSelectionMode( true );
-    QString clipContents = clip->text().stripWhiteSpace();
-    if ( clipContents.isEmpty() ) {
-        clip->setSelectionMode( false );
-        clipContents = clip->text().stripWhiteSpace();
-    }
 
+    QString contents = clip->text().stripWhiteSpace();
+
+    if ( contents == m_lastSelection )
+    {
+        clip->setSelectionMode( false );
+        QString clipContents = clip->text().stripWhiteSpace();
+        if ( clipContents != m_lastClipboard )
+            contents = clipContents;
+        else
+            clip->setSelectionMode( true );
+    }
+            
     if ( isSelection )
         *isSelection = clip->selectionModeEnabled();
 
-    return clipContents;
+    return contents;
 }
 
 void TopLevel::applyClipChanges( const QString& clipData )
@@ -596,13 +612,17 @@ void TopLevel::newClipData()
 {
     bool selectionMode;
     QString clipContents = clipboardContents( &selectionMode );
+//     qDebug("**** newClipData polled: %s", clipContents.latin1());
     checkClipData( clipContents, selectionMode );
 }
 
 void TopLevel::clipboardSignalArrived( bool selectionMode )
 {
+//     qDebug("*** clipboardSignalArrived: %i", selectionMode);
+
     clip->setSelectionMode( selectionMode );
     QString text = clip->text();
+//     qDebug("-> text is: %s", text.latin1());
 
     checkClipData( text, selectionMode );
     m_checkTimer->start(1000);
@@ -613,12 +633,22 @@ void TopLevel::checkClipData( const QString& text, bool selectionMode )
     clip->setSelectionMode( selectionMode );
 
     bool clipEmpty = (clip->data()->format() == 0L);
-    QString& lastClipRef = selectionMode ? m_lastSelection : m_lastClipboard;
+//     qDebug("checkClipData(%i): %s, empty: %i (lastClip: %s, lastSel: %s)", selectionMode, text.latin1(), clipEmpty, m_lastClipboard.latin1(), m_lastSelection.latin1() );
+
+//     const char *format;
+//     int i = 0;
+//     while ( (format = clip->data()->format( i++ )) )
+//     {
+//         qDebug( "    format: %s", format);
+//     }
+
+    QString lastClipRef = selectionMode ? m_lastSelection : m_lastClipboard;
 
     if ( text != lastClipRef ) {
         // keep old clipboard after someone set it to null
         if ( clipEmpty && bNoNullClipboard )
-            setClipboard( lastClipRef, selectionMode );
+            setClipboard( lastClipRef, 
+                          selectionMode ? Selection : Clipboard );
         else
             lastClipRef = text;
     }
@@ -638,6 +668,12 @@ void TopLevel::checkClipData( const QString& text, bool selectionMode )
         return;
     }
 
+    // store old contents:
+    if ( selectionMode )
+        m_lastSelection = lastClipRef;
+    else
+        m_lastClipboard = lastClipRef;
+
     if (lastClipRef != m_lastString) {
         applyClipChanges( lastClipRef );
     }
@@ -647,6 +683,12 @@ void TopLevel::setClipboard( const QString& text, int mode )
 {
     bool blocked = clip->signalsBlocked();
     clip->blockSignals( true ); // ### this might break other kicker applets
+    
+    KClipboard *klip = KClipboard::self();
+    bool implicit = klip->implicitSelection();
+    bool synchronize = klip->isSynchronizing();
+    klip->setImplicitSelection( false );
+    klip->setSynchronizing( false );
 
     if ( mode & Selection ) {
         clip->setSelectionMode( true );
@@ -657,6 +699,9 @@ void TopLevel::setClipboard( const QString& text, int mode )
         clip->setText( text );
     }
 
+    klip->setImplicitSelection( implicit );
+    klip->setSynchronizing( synchronize );
+    
     clip->blockSignals( blocked );
 }
 
