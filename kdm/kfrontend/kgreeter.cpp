@@ -653,7 +653,7 @@ KGreeter::accept()
 {
     if (loginEdit->hasFocus()) {
 	load_wm();
-	if (!verifyUser(false))
+//	if (!verifyUser(false))
 	    passwdEdit->setFocus();
     } else
 	verifyUser(true);
