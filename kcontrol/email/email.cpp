@@ -441,9 +441,13 @@ void topKCMEmail::slotOGMSettings()
 {
 	if (!m_email->radOGMLocal->isChecked()) {
 		UserNameDlg *ud = new UserNameDlg(this, i18n("Outgoing Mail Retrieval Settings"));
+		QString long_num;
 		ud->txtUsername->setText(m_sOGMUsername);
 		ud->txtPass->setText(m_sOGMPassword);
 		ud->txtHost->setText(m_sOGMHost);
+		long_num.setNum(m_uOGMPort);
+		ud->txtPort->setText(long_num);
+		ud->chkTLS->setChecked(m_bOGMSecure);
 		if (ud->exec() == QDialog::Accepted) {
 			m_bOGMSecure = ud->chkTLS->isChecked();
 			m_sOGMUsername = ud->txtUsername->text();
