@@ -101,6 +101,7 @@ public:
 	int				numSizes() const;
 	const QSize&	pixelSize(int index) const;
 	const QSize&	mmSize(int index) const;
+	int				pixelCount(int index) const;
 
 	/**
 	 * Retrieve the index of a screen size with a specified pixel size.

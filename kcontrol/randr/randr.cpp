@@ -101,7 +101,7 @@ void RandRScreen::setOriginal()
 
 bool RandRScreen::applyProposed()
 {
-	kdDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) << endl;
+	//kdDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) << endl;
 
 	Status status;
 
@@ -158,8 +158,8 @@ bool RandRScreen::confirm()
 											KTimerDialog::Ok|KTimerDialog::Cancel,
 											KTimerDialog::Cancel);
 
-	acceptDialog->setButtonOKText(i18n("&Accept Configuration"));
-	acceptDialog->setButtonCancelText(i18n("&Return to Previous Configuration"));
+	acceptDialog->setButtonOK(KGuiItem(i18n("&Accept Configuration"), "button_ok"));
+	acceptDialog->setButtonCancel(KGuiItem(i18n("&Return to Previous Configuration"), "button_cancel"));
 
 	KActiveLabel *label = new KActiveLabel(i18n("Your screen orientation, size and refresh rate have been changed to the requested settings. Please indicate whether you wish to keep this configuration. In 15 seconds the display will revert to your previous settings."), acceptDialog, "userSpecifiedLabel");
 
@@ -687,6 +687,12 @@ void RandRDisplay::applyProposed(bool confirm)
 					screen(screenIndex)->applyProposed();
 		}
 	}
+}
+
+int RandRScreen::pixelCount( int index ) const
+{
+	QSize sz = pixelSize(index);
+	return sz.width() * sz.height();
 }
 
 #include "randr.moc"

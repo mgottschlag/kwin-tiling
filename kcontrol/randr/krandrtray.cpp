@@ -125,13 +125,31 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 
 	menu->insertTitle(SmallIcon("window_fullscreen"), i18n("Screen Size"));
 
-	for (int i = 0; i < (int)currentScreen()->numSizes(); i++) {
-		lastIndex = menu->insertItem(i18n("%1 x %2").arg(currentScreen()->pixelSize(i).width()).arg(currentScreen()->pixelSize(i).height()));
+	int numSizes = currentScreen()->numSizes();
+	int sizeSort[numSizes];
 
-		if (currentScreen()->proposedSize() == i)
+	for (int i = 0; i < numSizes; i++) {
+		sizeSort[i] = currentScreen()->pixelCount(i);
+	}
+
+	for (int j = 0; j < numSizes; j++) {
+		int highest = -1, highestIndex = -1;
+
+		for (int i = 0; i < numSizes; i++) {
+			if (sizeSort[i] && sizeSort[i] > highest) {
+				highest = sizeSort[i];
+				highestIndex = i;
+			}
+		}
+		sizeSort[highestIndex] = -1;
+		Q_ASSERT(highestIndex != -1);
+
+		lastIndex = menu->insertItem(i18n("%1 x %2").arg(currentScreen()->pixelSize(highestIndex).width()).arg(currentScreen()->pixelSize(highestIndex).height()));
+
+		if (currentScreen()->proposedSize() == highestIndex)
 			menu->setItemChecked(lastIndex, true);
 
-		menu->setItemParameter(lastIndex, i);
+		menu->setItemParameter(lastIndex, highestIndex);
 		menu->connectItem(lastIndex, this, SLOT(slotResolutionChanged(int)));
 	}
 
