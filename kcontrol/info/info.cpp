@@ -65,7 +65,7 @@ QString	GetInfo_ErrorString;
 #define SEPERATOR 	"\t"
 #define SEPERATOR_CHAR	'\t'
 
-#define PIXEL_ADD	10	// add x Pixels to multicolumns
+#define PIXEL_ADD	10	// add x Pixel to multicolumns
 
 static QString Value( int val, int numbers=1 )
 {	return QString("%1").arg(val,numbers);
@@ -89,7 +89,7 @@ static void XServer_fill_screen_info( KTabListBox *lBox, Display *dpy, int scr,
     lBox->insertItem( i18n("Screen # %1").arg((int)scr,-1) );
 
     I18N_MAX(txt,i18n("Dimensions"),fm,*maxwidth);
-    txt2 = i18n("%1 x %2 Pixels (%3 x %4 mm)")
+    txt2 = i18n("%1 x %2 Pixel (%3 x %4 mm)")
 		.arg( (int)DisplayWidth(dpy,scr) )
 		.arg( (int)DisplayHeight(dpy,scr) )
 		.arg( (int)DisplayWidthMM(dpy,scr) )
