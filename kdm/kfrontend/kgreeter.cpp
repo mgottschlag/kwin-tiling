@@ -344,7 +344,7 @@ KGreeter::insertUser( UserListView *listview, const QImage &default_pix,
 	p = p.smoothScale( 48, 48, QImage::ScaleMin );
     QString realname = QFile::decodeName( ps->pw_gecos );
     realname.truncate( realname.find( ',' ) );
-    if (realname.isEmpty())
+    if (realname.isEmpty() || realname == username)
 	new UserListViewItem( listview, username, QPixmap( p ), username );
     else {
 	realname.append( "\n" ).append( username );
