@@ -93,6 +93,15 @@ void KNotifyWidget::save()
 
 QString KNotifyWidget::quickHelp()
 {
-	return i18n("Configure system notifications.  Set what happens when a certain event is triggered.");
+	return i18n("<h1>System Notifications</h1>"
+		    "KDE allows you a great deal of control over how you "
+		    "will be notified when certain events occur.  There are "
+		    "several choices as to how you are notified:"
+		    "<ul><li>As the application was originally designed."
+		    "<li>With a beep or other noise."
+		    "<li>Via a popup dialog box with additional information."
+		    "<li>By recording the the event in a logfile without "
+		    "any additional visual or auditory alert."
+		    "</ul>");
 }
 
