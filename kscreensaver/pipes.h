@@ -24,8 +24,8 @@
 
 // non-parameters
 
-#define MAXPIPES  6 // maximum pipes (> 0)
-#define DEFPIPES  3 // default nr of pipes ( > 0 <= MAXPIPES)
+#define MAXPIPES  6 // maximum pipes (> 1)
+#define DEFPIPES  3 // default nr of pipes ( > 1 <= MAXPIPES)
 #define DETAIL   11 // resolution (increase for more curved surfaces)
 
 // derived parameters

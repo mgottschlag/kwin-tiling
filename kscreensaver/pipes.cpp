@@ -327,7 +327,7 @@ static GLfloat base[2][4] =
   {0.1, 0.1, 0.8, 0.0 }  // brown
 };
 
-static GLfloat color[6][4] = 
+static GLfloat color[MAXPIPES][4] = 
 { 
   {0.8, 0.8, 0.0, 0.0 }, // red
   {0.3, 0.3, 0.1, 0.0 }, // blue
@@ -360,10 +360,10 @@ void setColors(int n)
   }
   for (i = 0; i < n; i++)
   {
-    color[i][0] = i*(base[1][0]-base[0][0])/n + base[0][0];
-    color[i][1] = i*(base[1][1]-base[0][1])/n + base[0][1];
-    color[i][2] = i*(base[1][2]-base[0][2])/n + base[0][2];
-    color[i][3] = i*(base[1][3]-base[0][3])/n + base[0][3];
+    color[i][0] = i*(base[1][0]-base[0][0])/(n-1) + base[0][0];
+    color[i][1] = i*(base[1][1]-base[0][1])/(n-1) + base[0][1];
+    color[i][2] = i*(base[1][2]-base[0][2])/(n-1) + base[0][2];
+    color[i][3] = i*(base[1][3]-base[0][3])/(n-1) + base[0][3];
   }
 }
 
@@ -700,7 +700,7 @@ kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
 //glClearColor( 0.0, 0.0, 0.0, 0.0 ); // Let OpenGL clear to black
 
   srandom(time(NULL));
-  int i; for (i = 0; i<MAXPIPES; i++) pipe[i] = new Pipe(this, i%6); 
+  int i; for (i = 0; i<MAXPIPES; i++) pipe[i] = new Pipe(this, i%MAXPIPES); 
 
   readSettings();
   reinit();
@@ -739,6 +739,8 @@ void kPipesSaver::readSettings()
     pipes = atoi( str );
   else
     pipes = DEFPIPES;
+  if (pipes < 2) pipes = 2;
+  if (pipes > MAXPIPES) pipes = MAXPIPES;
 }
 
 // Setup //////////////////////////////////////////////////////////////////////
@@ -757,7 +759,7 @@ kPipesSetup::kPipesSetup( QWidget *parent, const char *name )
   label = new QLabel( i18n("Number of Pipes"), this );
   label->setGeometry( 15, 15, 100, 20 );
 
-  slider = new QSlider(1, MAXPIPES, 1, pipes, QSlider::Horizontal, this );
+  slider = new QSlider(2, MAXPIPES, 1, pipes, QSlider::Horizontal, this );
   slider->setGeometry( 15, 35, 100, 20 );
   slider->setTickmarks(QSlider::Below);
   slider->setTickInterval(1);
