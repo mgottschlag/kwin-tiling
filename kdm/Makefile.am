@@ -17,7 +17,7 @@ LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
 #
 LDADD  = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSLIB) \
 	$(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
-	$(LIBCRYPT) $(LIBUCB) -ldl $(LIBUTIL) 
+	$(LIBCRYPT) $(LIBUCB) $(LIBDL) $(LIBUTIL) 
 
 # Sources for kdm:
 kdm_SOURCES = access.c \
