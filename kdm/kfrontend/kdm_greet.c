@@ -38,6 +38,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #ifdef _POSIX_PRIORITY_SCHEDULING
 # include <sched.h>
@@ -693,6 +694,10 @@ main (int argc ATTR_UNUSED, char **argv)
     }
     if (sscanf (ci, "%d %d %d %d", &srfd, &swfd, &mrfd, &mwfd) != 4)
 	return 1;
+    fcntl (srfd, F_SETFD, FD_CLOEXEC);
+    fcntl (swfd, F_SETFD, FD_CLOEXEC);
+    fcntl (mrfd, F_SETFD, FD_CLOEXEC);
+    fcntl (mwfd, F_SETFD, FD_CLOEXEC);
     GSet (0);
 
     InitLog();
