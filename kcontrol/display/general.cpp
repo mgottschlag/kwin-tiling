@@ -33,6 +33,7 @@
 #include "general.h"    
 
 #include <kapp.h>
+#include <kthemebase.h>
 #include <kcharsets.h>
 #include <kconfigbase.h>
 #include <ksimpleconfig.h>
@@ -47,6 +48,7 @@
 #include <X11/Xos.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kthemebase.h>
 
 #include "general.moc"
 
@@ -379,162 +381,12 @@ void KThemeListBox::apply()
     writeSettings();
 }
 
-// Read in a themerc file to .kderc... Now here is a *big* config file ;-)
-// (mosfet)
 void KThemeListBox::writeSettings()
 {
-#define WIDGETS 19
-    
-    static char *widgetEntries[] = {"HorizScrollGroove", "VertScrollGroove",
-    "Slider", "SliderGroove", "IndicatorOn", "IndicatorOff", "Background",
-    "PushButton", "ExIndicatorOn", "ExIndicatorOff", "ComboBox", "ScrollBarSlider",
-    "Bevel", "ToolButton", "ScrollBarButton", "BarHandle", "ToolBar",
-    "ScrollBarDeco", "ComboDeco"};
-
     if(text(currentItem(), 0) == curName)
         return;
     
-    int i;
-    KSimpleConfig inConfig(fileList.at(currentItem()));
-    KConfig outConfig;
-
-    outConfig.setGroup("Scale");
-    inConfig.setGroup("Scale");
-    for(i=0; i < WIDGETS; ++i){
-        outConfig.writeEntry(widgetEntries[i],
-                              inConfig.readEntry(widgetEntries[i], " "),
-                              true, true);
-    }
-    outConfig.setGroup("Extended Background");
-    inConfig.setGroup("Extended Background");
-    for(i=0; i < WIDGETS; ++i){
-        outConfig.writeEntry(widgetEntries[i],
-                              inConfig.readEntry(widgetEntries[i], " "),
-                              true, true);
-    }
-    outConfig.setGroup("Extended Foreground");
-    inConfig.setGroup("Extended Foreground");
-    for(i=0; i < WIDGETS; ++i){
-        outConfig.writeEntry(widgetEntries[i],
-                              inConfig.readEntry(widgetEntries[i], " "),
-                              true, true);
-    }
-    outConfig.setGroup("Borders");
-    inConfig.setGroup("Borders");
-    for(i=0; i < WIDGETS; ++i){
-        outConfig.writeEntry(widgetEntries[i],
-                              inConfig.readNumEntry(widgetEntries[i], 1),
-                              true, true);
-    }
-    outConfig.setGroup("Highlights");
-    inConfig.setGroup("Highlights");
-    for(i=0; i < WIDGETS; ++i){
-        outConfig.writeEntry(widgetEntries[i],
-                              inConfig.readNumEntry(widgetEntries[i], 1),
-                             true, true);
-    }
-    outConfig.setGroup("Pixmaps");
-    inConfig.setGroup("Pixmaps");
-    for(i=0; i < WIDGETS; ++i){
-        outConfig.writeEntry(widgetEntries[i],
-                              inConfig.readEntry(widgetEntries[i], " "),
-                              true, true);
-    }
-    outConfig.setGroup("Gradient Lowcolor");
-    inConfig.setGroup("Gradient Lowcolor");
-    for(i=0; i < WIDGETS; ++i){
-        outConfig.writeEntry(widgetEntries[i],
-                              inConfig.readEntry(widgetEntries[i], " "),
-                              true, true);
-    }
-    outConfig.setGroup("Gradient Highcolor");
-    inConfig.setGroup("Gradient Highcolor");
-    for(i=0; i < WIDGETS; ++i){
-        outConfig.writeEntry(widgetEntries[i],
-                              inConfig.readEntry(widgetEntries[i], " "),
-                              true, true);
-    }
-    outConfig.setGroup("Gradients");
-    inConfig.setGroup("Gradients");
-    for(i=0; i < WIDGETS; ++i){
-        outConfig.writeEntry(widgetEntries[i],
-                              inConfig.readEntry(widgetEntries[i], " "),
-                              true, true);
-    }
-    // Read in standard color scheme. This is kind of messed up because it
-    // conflicts with colorscm... But themes do need to be able to specify
-    // colors. (mosfet)
-    outConfig.setGroup("General");
-    inConfig.setGroup("General");
-    if(inConfig.hasKey("foreground"))
-        outConfig.writeEntry("foreground",
-                             inConfig.readEntry("foreground", " "),
-                             true, true);
-
-    if(inConfig.hasKey("background"))
-        outConfig.writeEntry("background",
-                             inConfig.readEntry("background", " "),
-                             true, true);
-    if(inConfig.hasKey("selectForeground"))
-        outConfig.writeEntry("selectForeground",
-                             inConfig.readEntry("selectForeground", " "),
-                             true, true);
-    if(inConfig.hasKey("selectBackground"))
-        outConfig.writeEntry("selectBackground",
-                             inConfig.readEntry("selectBackground", " "),
-                             true, true);
-    if(inConfig.hasKey("windowForeground"))
-        outConfig.writeEntry("windowForeground",
-                             inConfig.readEntry("windowForeground", " "),
-                             true, true);
-    if(inConfig.hasKey("windowBackground"))
-        outConfig.writeEntry("windowBackground",
-                             inConfig.readEntry("windowBackground", " "),
-                             true, true);
-    outConfig.setGroup("KDE");
-    inConfig.setGroup("KDE");
-    outConfig.writeEntry("Contrast",
-                          inConfig.readEntry("Contrast", " "), true, true);
-    outConfig.writeEntry("widgetStyle",
-                         inConfig.readEntry("widgetStyle", " "), true,
-                         true);
-    // Read in misc settings
-    outConfig.setGroup("Misc");
-    inConfig.setGroup("Misc");
-    outConfig.writeEntry("SButtonType",
-                          inConfig.readEntry("SButtonType", " "), true, true);
-    outConfig.writeEntry("ArrowType", inConfig.readEntry("ArrowType", " "),
-                          true,true);
-    outConfig.writeEntry("ComboDeco", inConfig.readEntry("ComboDeco", " "),
-                          true, true);
-    outConfig.writeEntry("ShadeStyle", inConfig.readEntry("ShadeStyle", " "),
-                          true, true);
-    outConfig.writeEntry("RoundButton",
-                          inConfig.readBoolEntry("RoundButton", false), true,
-                          true);
-    outConfig.writeEntry("RoundCombo",
-                          inConfig.readBoolEntry("RoundCombo", false), true,
-                          true);
-    outConfig.writeEntry("RoundSlider",
-                          inConfig.readBoolEntry("RoundSlider", false), true,
-                          true);
-    outConfig.writeEntry("FrameWidth",
-                          inConfig.readNumEntry("FrameWidth", 2), true, true);
-    outConfig.writeEntry("ButtonXShift",
-                          inConfig.readNumEntry("ButtonXShift", 0), true, true);
-    outConfig.writeEntry("ButtonYShift",
-                          inConfig.readNumEntry("ButtonYShift", 0), true, true);
-    outConfig.writeEntry("SliderLength",
-                          inConfig.readNumEntry("SliderLength", 10), true,
-                          true);
-    outConfig.writeEntry("Name",
-                          inConfig.readEntry("Name", " "), true, true);
-    outConfig.writeEntry("Description",
-                          inConfig.readEntry("Description", " "), true,
-                          true);
-    
-    curName = text(currentItem(), 0);
-    outConfig.sync();
+    KThemeBase::applyConfigFile(fileList.at(currentItem()));
 }
 
 //------------------------------------------------------------------

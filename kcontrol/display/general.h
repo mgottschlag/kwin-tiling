@@ -8,6 +8,7 @@
 #ifndef __GENERAL_H__
 #define __GENERAL_H__
 
+#include <kthemebase.h>
 #include <qwidget.h>
 #include <qpushbutton.h>
 #include <qlistbox.h>
