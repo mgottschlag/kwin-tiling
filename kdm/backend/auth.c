@@ -100,6 +100,8 @@ from The Open Group.
 # endif
 #endif
 
+#include <netinet/in.h>
+
 #ifdef __EMX__
 # define link rename
 int chown(int a,int b,int c) {}
@@ -675,7 +677,7 @@ static int ConvertAuthAddr
 {
     int ret;
     ret = ConvertAddr(saddr, len, addr);
-    if (ret == FamilyInternet && *(in_addr_t *)*addr == htonl(0x7F000001L))
+    if (ret == FamilyInternet && ((struct in_addr *)*addr)->s_addr == htonl(0x7F000001L))
 	ret = FamilyLocal;
     return ret;
 }
