@@ -1,5 +1,14 @@
 [Standard Key Scheme ]
 Name=KDE Default for 4 Modifiers (Alt/Ctrl/Shift)
+Name[de]=KDE-Voreinstellung für vier Modifikationstasten (Alt/Strg/Umschalt)
+Name[es]=Valor predeterminado de KDE para 4 modificadores (Alt/Ctrl/Shift)
+Name[fr]=KDE par défaut pour 4 modificateurs (Alt/Ctrl/Maj)
+Name[he]=(Alt/Ctrl/Shift) בצמ ינשמ םישקמ העברא תרוצת
+Name[hu]=KDE alapértelmezés 4 módosítóbillentyű esetén (Alt/Ctrl/Shift)
+Name[ja]=KDEの標準4モディファイア (Alt/Ctrl/Shift)
+Name[pt_BR]=KDE por Omissão para 4 Modificadores (Alt/Ctrl/Shift)
+Name[pt]=KDE por Omissão para 4 Modificadores (Alt/Ctrl/Shift)
+Name[sv]=KDE-förinställt för 4 väljare (Alt/Ctrl/Skift)
 AddBookmark=Ctrl+B
 Back=Alt+Left
 Close=Ctrl+Escape

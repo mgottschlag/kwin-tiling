@@ -1,5 +1,14 @@
 [Global Key Scheme ]
 Name=KDE Default for 3 Modifiers (Alt/Ctrl/Shift)
+Name[de]=KDE-Voreinstellung für drei Modifikationstasten (Alt/Strg/Umschalt)
+Name[es]=Valor predeterminado de KDE para 3 modificadores (Alt/Ctrl/Shift)
+Name[fr]=KDE par défaut pour 3 modificateurs (Alt/Ctrl/Maj)
+Name[he]=(Alt/Ctrl/Shift) בצמ ינשמ םישקמ השולש תרוצת
+Name[hu]=KDE alapértelmezés 3 módosítóbillentyű esetén (Alt/Ctrl/Shift)
+Name[ja]=KDEの標準3モディファイア (Alt/Ctrl/Shift)
+Name[pt_BR]=KDE por Omissão para 3 Modificadores (Alt/Ctrl/Shift)
+Name[pt]=KDE por Omissão para 3 Modificadores (Alt/Ctrl/Shift)
+Name[sv]=KDE-förinställt för 3 väljare (Alt/Ctrl/Skift)
 Execute command=Alt+F2
 Kill Window=Alt+Ctrl+Escape
 Lock screen=Alt+Ctrl+L

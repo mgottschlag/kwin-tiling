@@ -1,5 +1,14 @@
 [Standard Key Scheme ]
 Name=Windows Default
+Name[de]=Windows-Standard
+Name[es]=Predeterminado Windows
+Name[fr]=Windows par défaut
+Name[he]=Windows לש לדחמ תרירב
+Name[hu]=Windows alapértelmezés
+Name[ja]=Windows標準
+Name[pt_BR]=Windows por Omissão
+Name[pt]=Windows por Omissão
+Name[sv]=Windows-förinställt
 AddBookmark=Ctrl+D
 Back=Alt+Left
 Close=Ctrl+F4

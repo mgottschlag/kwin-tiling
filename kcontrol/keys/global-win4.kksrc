@@ -1,5 +1,14 @@
 [Global Key Scheme ]
 Name=Windows Default (With Meta/Win-Key)
+Name[de]=Windows-Voreinstellung (mit Meta-/Windows-Taste)
+Name[es]=Predeterminado Windows (con la tecla Meta/Win)
+Name[fr]=Windows par défaut (avec touche Méta/Windows)
+Name[he]=(Meta/Win שקמ םע) Windows לש לדחמ תרירב
+Name[hu]=Windows alapértelmezés (a Windows billentyűvel)
+Name[ja]=Windows標準 (Meta有り/Windowsキー)
+Name[pt_BR]=Windows por Omissão (Com a tecla Meta/Windows)
+Name[pt]=Windows por Omissão (Com a tecla Meta/Windows)
+Name[sv]=Windows-förinställt (med Meta/Windows-tangent)
 Execute command=Meta+R
 Kill Window=none
 Lock screen=none

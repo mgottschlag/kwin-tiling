@@ -1,5 +1,14 @@
 [Standard Key Scheme ]
 Name=Unix Default
+Name[de]=Unix-Standard
+Name[es]=Predeterminado Unix
+Name[fr]=Unix par défaut
+Name[he]=סקינוי לש לדחמ תרירב
+Name[hu]=Unix alapértelmezés
+Name[ja]=Unix標準
+Name[pt_BR]=Unix por Omissão
+Name[pt]=Unix por Omissão
+Name[sv]=Unix-förinställt
 AddBookmark=Ctrl+B
 Back=Alt+Left
 Close=Ctrl+W
