@@ -119,12 +119,22 @@ static ExistsType checkIfExists(const QStringList &list, const QString &item)
     return EXISTS_NO;
 }
 
-static bool isSpecialDir(const QString &sub, bool sys)
+static bool isSpecialDir(const QString &dir, const QString &sub, bool sys)
 {
-    if(sys || CMisc::root())
-        return "CID"==sub || "encodings"==sub || "util"==sub;
-    else
-        return "kde-override"==sub;
+    KFI_DBUG << "isSpecialDir(" << dir << ", " << sub << ", " << sys << ')' << endl;
+    QString ds(CMisc::dirSyntax(dir));
+
+    if( (sys && -1!=CGlobal::cfg().getSysFontsDirs().findIndex(ds)) ||
+        (!sys && -1!=CGlobal::cfg().getUserFontsDirs().findIndex(ds)) )
+    {
+        KFI_DBUG << "...need to check" << endl;
+        if(sys || CMisc::root())
+            return "CID"==sub || "encodings"==sub || "util"==sub;
+        else
+            return "kde-override"==sub;
+    }
+    KFI_DBUG << "...false" << endl;
+    return false;
 }
 
 static void addAtom(KIO::UDSEntry &entry, unsigned int ID, long l, const QString &s=QString::null)
@@ -462,7 +472,7 @@ int CKioFonts::getSize(const QStringList &top, const QString &sub, bool sys)
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName() &&
                    (fInfo->isDir() || CFontEngine::isAFontOrAfm(QFile::encodeName(fInfo->fileName()))) &&
-                   !isSpecialDir(fInfo->fileName(), sys) && !entries.contains(fInfo->fileName()))
+                   !isSpecialDir(fInfo->dirPath(), fInfo->fileName(), sys) && !entries.contains(fInfo->fileName()))
                     entries.append(fInfo->fileName());
         }
     }
@@ -491,7 +501,7 @@ void CKioFonts::listDir(const QStringList &top, const QString &sub, const KURL &
 
         //
         // Ensure this dir is in fontpath - if it exists, and it contains fonts!
-        if(!sys && (sub.isEmpty() || (!name.isEmpty() && !sys && QChar('.')!=name[0] && !isSpecialDir(name, sys))))
+        if(!sys && (sub.isEmpty() || (!name.isEmpty() && !sys && QChar('.')!=name[0] && !isSpecialDir(CMisc::getDir(dPath), name, sys))))
         {
             addDir(dPath);
             cfgDir(dPath, sub);
@@ -506,7 +516,7 @@ void CKioFonts::listDir(const QStringList &top, const QString &sub, const KURL &
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                     if(fInfo->isDir())
                     {
-                        if(!entries.contains(fInfo->fileName()) && !isSpecialDir(fInfo->fileName(), sys))
+                        if(!entries.contains(fInfo->fileName()) && !isSpecialDir(fInfo->dirPath(), fInfo->fileName(), sys))
                         {
                             QString ds(CMisc::dirSyntax(fInfo->filePath()));
 
@@ -595,7 +605,7 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, bool sys)
 
         if(d.exists())
         {
-            if(!isSpecialDir(name, sys))
+            if(!isSpecialDir(CMisc::getDir(ds), name, sys))
             {
                 CXConfig xcfg=sys ? CGlobal::sysXcfg() : CGlobal::userXcfg();
 
@@ -1232,7 +1242,7 @@ void CKioFonts::mkdir(const KURL &url, int)
     bool            otherExists,
                     otherHidden;
 
-    if(isSpecialDir(CMisc::getName(url.path()), sys))
+    if(isSpecialDir(CMisc::getDir(url.path()), CMisc::getName(url.path()), sys))
         error(KIO::ERR_SLAVE_DEFINED,
                   sys ? i18n("You cannot create a folder named \"CID\", \"encodings\", or \"util\" - as these are special "
                              "system folders (\"CID\" is for \"CID\" fonts - these are <b>not</b> handled - and "
@@ -1478,21 +1488,24 @@ void CKioFonts::cfgDir(const QString &ds, const QString &sub)
 
             KFI_DBUG << "configure out of date x dir " << dTs << " " << CMisc::getTimeStamp(ds+"fonts.dir") << endl;
 
-#ifndef HAVE_FONTCONFIG
+#ifdef HAVE_FONTCONFIG
+            if(CXConfig::configureDir(ds))
+                CGlobal::userXcfg().refreshPaths();
+#else
             QStringList symFamilies;
 
-            CXConfig::configureDir(ds, symFamilies);
-            if(symFamilies.count())
+            if(CXConfig::configureDir(ds, symFamilies))
             {
-                QStringList::Iterator it;
+                if(symFamilies.count())
+                {
+                    QStringList::Iterator it;
 
-                for(it=symFamilies.begin(); it!=symFamilies.end(); ++it)
-                    CGlobal::userXft().addSymbolFamily(*it);
+                    for(it=symFamilies.begin(); it!=symFamilies.end(); ++it)
+                        CGlobal::userXft().addSymbolFamily(*it);
+                }
+                CGlobal::userXcfg().refreshPaths();
             }
-#else
-            CXConfig::configureDir(ds);
 #endif
-            CGlobal::userXcfg().refreshPaths();
             if(CGlobal::userXft().changed())
                 CGlobal::userXft().apply();
 #ifdef HAVE_FONTCONFIG
@@ -1512,8 +1525,8 @@ void CKioFonts::cfgDir(const QString &ds, const QString &sub)
 
             KFI_DBUG << "configure out of date fontmap " << dTs << " " << CMisc::getTimeStamp(ds+"Fontmap") << endl;
 
-            CFontmap::createLocal(ds);
-            CFontmap::createTopLevel();
+            if(CFontmap::createLocal(ds))
+                CFontmap::createTopLevel();
             doTs=true;
         }
 
