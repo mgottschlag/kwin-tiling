@@ -524,7 +524,7 @@ void CFontListWidget::scan()
     {
         QListViewItem *item=NULL;
 
-        itsList->setColumnText(0, "Folder/File");
+        itsList->setColumnText(0, i18n("Folder/File"));
         itsBox->setTitle(itsBoxTitle);
         if(itsAdvancedData.button2)
             itsButton2->show();
@@ -544,7 +544,7 @@ void CFontListWidget::scan()
     else
     {
         itsButton2->show();
-        itsList->setColumnText(0, "File");
+        itsList->setColumnText(0, i18n("File"));
         itsLabel->setText(itsBasicData.dir);
         scanDir(itsBasicData.dir);
 
