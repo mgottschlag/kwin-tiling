@@ -88,8 +88,6 @@ static int kfi_mkdir(const char *dir, bool make=true)
 
     if(0==rv)
     {
-        QStringList symFamilies;
-
         KInstance kinst("kfontinst");
 
         CGlobal::create(false, true);
@@ -97,7 +95,14 @@ static int kfi_mkdir(const char *dir, bool make=true)
         chmod(dir, CMisc::DIR_PERMS);
         CGlobal::xcfg().addPath(CGlobal::cfg().getUserFontsDir());
         CGlobal::xcfg().addPath(ds);
+
+#ifdef HAVE_FONTCONFIG
+        CXConfig::configureDir(ds);
+#else
+        QStringList symFamilies;
         CXConfig::configureDir(ds, symFamilies);  // symFamilies will be empty -> new dir!
+#endif
+
         CFontmap::createLocal(ds);
         CGlobal::xft().addDir(CGlobal::cfg().getUserFontsDir());
         CGlobal::xft().addDir(ds);
@@ -124,15 +129,20 @@ static int kfi_cfgdir(const char *dir)
     KInstance kinst("kfontinst");
 
     CGlobal::create(true, false);
-
-    QStringList x11SymFamilies;     
+    
     QString     ds(CMisc::dirSyntax(dir));
+#ifdef HAVE_FONTCONFIG
+    int         rv=CXConfig::configureDir(ds) ? 0 : -2;
+#else
+    QStringList x11SymFamilies; 
     int         rv=CXConfig::configureDir(ds, x11SymFamilies) ? 0 : -2;
+#endif
 
     CFontmap::createLocal(ds);
 
     if(0==rv)
     {
+#ifndef HAVE_FONTCONFIG
         QStringList           xftSymFamilies=CGlobal::xft().getSymbolFamilies();
         QStringList::Iterator it;
         bool                  saveXft=false;  
@@ -145,6 +155,7 @@ static int kfi_cfgdir(const char *dir)
             }
         if(saveXft)
             CGlobal::xft().apply();
+#endif
 
 #ifdef HAVE_FONTCONFIG
         CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
@@ -199,10 +210,14 @@ static int kfi_rename(const char *from, const char *to)
 
         if(!CMisc::hidden(to, true))
         {
-            QStringList symFamilies;
-
             CGlobal::xcfg().addPath(toDs);
+
+#ifdef HAVE_FONTCONFIG
+            CXConfig::configureDir(toDs);
+#else
+            QStringList symFamilies;
             CXConfig::configureDir(toDs, symFamilies);  // symFamilies will be empty -> new dir!
+#endif
             CGlobal::xft().addDir(toDs);
         }
         if(!CMisc::hidden(from, true))

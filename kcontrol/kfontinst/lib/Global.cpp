@@ -125,13 +125,21 @@ KXftConfig & CGlobal::userXft()
         if(CMisc::root())
             theirUserXft=&sysXft();
         else
+#ifdef HAVE_FONTCONFIG
+            theirUserXft=new KXftConfig(KXftConfig::Dirs, false);
+#else
             theirUserXft=new KXftConfig(KXftConfig::Dirs|KXftConfig::SymbolFamilies, false);
+#endif
     return *theirUserXft;
 }
 
 KXftConfig & CGlobal::sysXft()
 {
     if(NULL==theirSysXft)
+#ifdef HAVE_FONTCONFIG
+        theirSysXft=new KXftConfig(KXftConfig::Dirs, true);
+#else
         theirSysXft=new KXftConfig(KXftConfig::Dirs|KXftConfig::SymbolFamilies, true);
+#endif
     return *theirSysXft;
 }

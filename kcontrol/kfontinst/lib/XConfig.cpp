@@ -52,9 +52,17 @@ CXConfig::CXConfig(EType type, const QString &file)
     readConfig();
 }
 
+#ifdef HAVE_FONTCONFIG
+bool CXConfig::configureDir(const QString &dir)
+#else
 bool CXConfig::configureDir(const QString &dir, QStringList &symbolFamilies)
+#endif
 {
+#ifdef HAVE_FONTCONFIG
+    bool status=createFontsDotDir(dir);
+#else
     bool status=createFontsDotDir(dir, symbolFamilies);
+#endif
 
     if(status)
         CGlobal::enc().createEncodingsDotDir(dir);
@@ -576,20 +584,6 @@ bool CXConfig::processXf86(bool read)
 
                             }
 
-                        // Check if "freetype" is loaded for usage of TTF's
-                        char *modStart=NULL,
-                             *modEnd=NULL;
-                        bool foundFt=false;
-
-                        if(NULL!=(modStart=locateSection(buffer, "\"Module\"")) && NULL!=(modEnd=locateEndSection(modStart)))
-                        { 
-                            pos=modStart;
-
-                            while(NULL!=(item=getItem(&pos, &modEnd, "Load", size, false, buffer)) && !foundFt)
-                                if(0==strcmp(item, "freetype"))
-                                    foundFt=true;
-                        }
-
                         if(read)
                             ok=true;
                         else
@@ -600,14 +594,27 @@ bool CXConfig::processXf86(bool read)
 
                             if(of)
                             {
-                                char  *from=buffer;
+                                char  *from=buffer,
+                                      *modStart=NULL,
+                                      *modEnd=NULL;
+                                bool  foundFt=false;
                                 TPath *path;
+
+                                // Check if "freetype" OR "xtt" is loaded for usage of TTF's
+                                if(NULL!=(modStart=locateSection(buffer, "\"Module\"")) && NULL!=(modEnd=locateEndSection(modStart)))
+                                { 
+                                    pos=modStart;
+
+                                    while(NULL!=(item=getItem(&pos, &modEnd, "Load", size, false, buffer)) && !foundFt)
+                                        if(0==strcmp(item, "freetype") || 0==strcmp(item, "xtt"))
+                                            foundFt=true;
+                                }
 
                                 if(!foundFt && modStart && modEnd && modStart<filesStart) // Then write mod section first...
                                 {
                                     of.write(from, modEnd-from);
                                     if(!foundFt)
-                                        of << "    Load \"freetype\"\n";
+                                        of << "    Load \"freetype\"\n";    // CPD TODO: Which is better xtt of freetype? Perhaps check locale?
                                     of.write(modEnd, endSectionMarkerLen);
                                     from=modEnd+endSectionMarkerLen;
                                 }
@@ -868,18 +875,11 @@ bool CXConfig::processXfs(bool read)
     return ok;
 }
 
-static bool find(const QStringList &list, const QString &val)
-{
-    QStringList::Iterator it;
-
-    for(it=((QStringList &)list).begin(); it!=((QStringList &)list).end(); ++it)
-        if(0==strcmp((*it).latin1(), val.latin1()))
-            return true;
-
-    return false;
-}
-
+#ifdef HAVE_FONTCONFIG
+bool CXConfig::createFontsDotDir(const QString &dir)
+#else
 bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies)
+#endif
 {
     bool status=false;
     QDir d(dir);
@@ -967,11 +967,12 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                                                  fscale.append(entry);
                                              if(-1==fdir.findIndex(entry))
                                                  fdir.append(entry);
-
+#ifndef HAVE_FONTCONFIG
                                              if(CFontEngine::isATtf(QFile::encodeName(fInfo->fileName())) &&
                                                 CEncodings::constTTSymbol==*it &&
                                                 !find(symbolFamilies, family))
                                                  symbolFamilies.append(family);
+#endif
                                          }
                                      }
                                      CGlobal::fe().closeFont();

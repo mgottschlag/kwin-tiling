@@ -1266,6 +1266,7 @@ void CKioFonts::cfgDir(const QString &ds)
 
             KDE_DBUG << "configure out of date x dir" << dTs << " " << CMisc::getTimeStamp(ds+"fonts.dir") << endl;
 
+#ifndef HAVE_FONTCONFIG
             QStringList symFamilies;
 
             CXConfig::configureDir(ds, symFamilies);
@@ -1276,6 +1277,7 @@ void CKioFonts::cfgDir(const QString &ds)
                 for(it=symFamilies.begin(); it!=symFamilies.end(); ++it)
                     CGlobal::userXft().addSymbolFamily(*it);
             }
+#endif
             CGlobal::userXcfg().refreshPaths();
             if(CGlobal::userXft().changed())
                 CGlobal::userXft().apply();
@@ -1316,8 +1318,7 @@ void CKioFonts::syncDirs()
     QStringList           xftDirs(CGlobal::userXft().getDirs()),
                           x11Dirs,
                           inXftNotX11,
-                          inX11NotXft,
-                          symFamilies;
+                          inX11NotXft;
     QStringList::Iterator it;
 
     CGlobal::userXcfg().getDirs(x11Dirs);
@@ -1333,10 +1334,6 @@ void CKioFonts::syncDirs()
     if(inXftNotX11.count())
         for(it=inXftNotX11.begin(); it!=inXftNotX11.end(); ++it)
             cfgDir(*it);
-
-    if(symFamilies.count())
-        for(it=symFamilies.begin(); it!=symFamilies.end(); ++it)
-            CGlobal::userXft().addSymbolFamily(*it);
 
     if(inX11NotXft.count())
     {
@@ -1387,6 +1384,8 @@ void CKioFonts::deletedDir(const QString &d, bool sys)
             doRootCmd("kfontinst refresh", false);
         else
         {
+            if(!CMisc::root())  // Ensure user paths are at the front of the list!
+                CGlobal::userXcfg().refreshPaths();
             CGlobal::sysXcfg().refreshPaths();
             doRootCmd("kfontinst createfontmap", false);
         }
@@ -1421,18 +1420,28 @@ void CKioFonts::addedDir(const QString &d, bool sys)
             doRootCmd("kfontinst refresh", false);
         else
         {
+            if(!CMisc::root())  // Ensure user paths are at the front of the list!
+                CGlobal::userXcfg().refreshPaths();
             CGlobal::sysXcfg().refreshPaths();
             doRootCmd("kfontinst createfontmap", false);
         }
     }
     else
     {
-        QStringList symFamilies;
-
         CGlobal::userXcfg().addPath(ds);
+
+#ifdef HAVE_FONTCONFIG
+        CXConfig::configureDir(ds);
+#else
+        QStringList symFamilies;
         CXConfig::configureDir(ds, symFamilies);
+#endif
         CFontmap::createLocal(ds);
         CGlobal::userXft().addDir(ds);
+
+#ifdef HAVE_FONTCONFIG
+        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+#else
         if(symFamilies.count())
         {
             QStringList::Iterator it;
@@ -1440,9 +1449,6 @@ void CKioFonts::addedDir(const QString &d, bool sys)
             for(it=symFamilies.begin(); it!=symFamilies.end(); ++it)
                 CGlobal::userXft().addSymbolFamily(*it);
         }
-#ifdef HAVE_FONTCONFIG
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
-#else
         CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(ds));
 #endif
         CGlobal::userXcfg().refreshPaths();
@@ -1528,6 +1534,8 @@ void CKioFonts::doModifiedDirs()
             doRootCmd("kfontinst refresh", false);
         else
         {
+            if(!CMisc::root())  // Ensure user paths are at the front of the list!
+                CGlobal::userXcfg().refreshPaths();
             CGlobal::sysXcfg().refreshPaths();
             doRootCmd("kfontinst createfontmap", false);
         }
@@ -1539,14 +1547,19 @@ void CKioFonts::doModifiedDirs()
     {
         for(it=itsModifiedDirs.begin(); it!=itsModifiedDirs.end(); ++it)
         {
-            QStringList::Iterator xit;
+            QString ds(CMisc::dirSyntax(*it));
+
+#ifdef HAVE_FONTCONFIG
+            CXConfig::configureDir(ds);
+#else
             QStringList           x11SymFamilies;
-            QString               ds(CMisc::dirSyntax(*it));
+            QStringList::Iterator xit;
 
             CXConfig::configureDir(ds, x11SymFamilies);
-            CFontmap::createLocal(ds);
             for(xit=x11SymFamilies.begin(); xit!=x11SymFamilies.end(); ++xit)
                 CGlobal::userXft().addSymbolFamily(*xit);
+#endif
+            CFontmap::createLocal(ds);
         }
 
         if(CGlobal::userXft().changed())

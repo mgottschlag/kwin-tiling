@@ -29,6 +29,9 @@
 // (C) Craig Drummond, 2001, 2002, 2003
 ///////////////////////////////////////////////////////////////////////////////
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "Misc.h"
 #include <qptrlist.h>
 #include <qstring.h>
@@ -91,7 +94,11 @@ class CXConfig
 
     CXConfig(EType type, const QString &file);
 
+#ifdef HAVE_FONTCONFIG
+    static bool configureDir(const QString &dir);
+#else
     static bool configureDir(const QString &dir, QStringList &symbolFamilies);
+#endif
 
     bool ok()                           { return itsOk; }
     bool writable()                     { return itsWritable; }
@@ -119,7 +126,11 @@ class CXConfig
 
     TPath * findPath(const QString &dir);
 
+#ifdef HAVE_FONTCONFIG
+    static bool createFontsDotDir(const QString &dir);
+#else
     static bool createFontsDotDir(const QString &dir, QStringList &symbolFamilies);
+#endif
 
     private:
 
