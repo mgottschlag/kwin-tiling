@@ -20,7 +20,7 @@
 
 
 
-#include <stream.h>
+#include <iostream.h>
 #include <unistd.h>
 #include <sys/types.h>                                                   
 #include <stdlib.h>

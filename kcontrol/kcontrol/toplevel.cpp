@@ -18,11 +18,6 @@
  
 */                                                                            
 
-
-
-#include <stream.h>
-
-
 #include <qstringlist.h>
 #include <qpushbutton.h>
 #include <kapp.h>

@@ -20,7 +20,7 @@
 
 
 
-#include <stream.h>
+#include <iostream.h>
 
 
 #include <kapp.h>

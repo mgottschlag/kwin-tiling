@@ -35,6 +35,7 @@
 #include "proxywidget.h"
 #include "modloader.h"
 
+template class QList<ConfigModule>;
 
 ConfigModule::ConfigModule(QString desktopFile)
   : ModuleInfo(desktopFile), _changed(false), _module(0), _process(0)

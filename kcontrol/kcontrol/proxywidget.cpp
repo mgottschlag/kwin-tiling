@@ -36,7 +36,7 @@
 #include "proxywidget.moc"
 
 
-void setVisible(QPushButton *btn, bool vis)
+static void setVisible(QPushButton *btn, bool vis)
 {
   if (vis)
     btn->show();
