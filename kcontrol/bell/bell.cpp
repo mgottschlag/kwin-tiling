@@ -67,16 +67,16 @@ extern "C"
 KBellConfig::KBellConfig(QWidget *parent, const char *name):
     KCModule(parent, name)
 {
-  QBoxLayout *layout = new QVBoxLayout(this, KDialog::marginHint());
+  QBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
   int row = 0;
   QGroupBox *box = new QGroupBox( i18n("Bell Settings"), this );
+  box->setColumnLayout( 0, Qt::Horizontal );
   layout->addWidget(box);
   layout->addStretch();
-  QGridLayout *grid = new QGridLayout(box, 8, 2);
+  QGridLayout *grid = new QGridLayout(box->layout(), 8, 2);
   grid->setSpacing(KDialog::spacingHint());
   grid->setMargin(KDialog::marginHint());
-  grid->addRowSpacing(row, fontMetrics().height() + 5); // QGroupBox sucks
   grid->setColStretch(0, 0);
   grid->setColStretch(1, 1);
   grid->addColSpacing(0, 30);
