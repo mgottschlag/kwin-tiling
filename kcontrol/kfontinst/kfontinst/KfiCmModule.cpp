@@ -31,6 +31,7 @@
 #include "Kfi.h"
 #include "KfiGlobal.h"
 #include "Config.h"
+#include "UiConfig.h"
 #include "Misc.h"
 #include <klocale.h>
 #include <qtimer.h>
@@ -71,6 +72,9 @@ CKfiCmModule::CKfiCmModule(QWidget *parent, const char *, const QStringList&)
 
 CKfiCmModule::~CKfiCmModule()
 {
+    if(topLevelWidget())
+        CKfiGlobal::uicfg().setMainSize(topLevelWidget()->size());
+
     itsMainWidget->storeSettings();
     theirInstance=NULL;
     CKfi::destroy();
@@ -118,6 +122,14 @@ void CKfiCmModule::show()
 
     if(firstTime)
     {
+        if(topLevelWidget())
+        {
+            QSize size=CKfiGlobal::uicfg().getMainSize();
+
+            if(!size.isNull())
+                topLevelWidget()->resize(size);
+        }
+
         firstTime=false;
         QTimer::singleShot(0, this, SLOT(scanFonts()));
     }

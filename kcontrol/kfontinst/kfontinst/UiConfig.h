@@ -31,6 +31,7 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
+#include <qsize.h>
 #include <kconfig.h>
 
 //
@@ -56,6 +57,7 @@ class CUiConfig : public KConfig
     const QStringList & getOpenFsDirs()   { return itsOpenFsDirs; }
     const QString &     getInstTopItem()  { return itsInstTopItem; }
     const QString &     getFsTopItem()    { return itsFsTopItem; }
+    const QSize &       getMainSize()     { return itsMainSize; }
 
     bool isAdvancedMode()                 { return BASIC!=itsMode; }
 
@@ -66,9 +68,11 @@ class CUiConfig : public KConfig
     void removeOpenFsDir(const QString &d);
     void setInstTopItem(const QString &s);
     void setFsTopItem(const QString &s);
+    void setMainSize(const QSize &s);
 
     private:
 
+    void write(const QString &key, const QSize &value);
     void write(const QString &key, const QStringList &value);
     void write(const QString &key, const QString &value);
     void write(const QString &key, int value);
@@ -81,7 +85,9 @@ class CUiConfig : public KConfig
                 itsOpenFsDirs;
     QString     itsInstTopItem,
                 itsFsTopItem;
-    bool        itsAutoSync;
+    bool        itsAutoSync,
+                itsKCmShell;
+    QSize       itsMainSize;
 };
 
 #endif

@@ -64,7 +64,9 @@ CUiConfig::CUiConfig()
     // need to save Config changes as they are changed - as when the module is unloaded it is
     // simply killed, and the destructors don't get a chance to run.
     const char *appName=KCmdLineArgs::appName();
+
     itsAutoSync=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName));
+    itsKCmShell=NULL!=appName && 0==strcmp("kcmshell", appName);
 
     setGroup("KcmFontinst");
     itsOpenInstDirs=readListEntry("OpenInstDirs");
@@ -73,6 +75,9 @@ CUiConfig::CUiConfig()
     itsFsTopItem=readEntry("FsTopItem");
     intVal=readNumEntry("Mode", BASIC);
     itsMode=intVal>=BASIC && intVal <=ADVANCED_PLUS_FS ? (EMode)intVal : BASIC;
+
+    if(itsKCmShell)
+        itsMainSize=readSizeEntry("MainSize");
     checkDirs(itsOpenInstDirs);
     checkDirs(itsOpenFsDirs);
 
@@ -95,6 +100,8 @@ CUiConfig::~CUiConfig()
     writeEntry("OpenFsDirs", itsOpenFsDirs);
     writeEntry("FsTopItem", itsFsTopItem);
     writeEntry("Mode", (int)itsMode);
+    if(itsKCmShell)
+        writeEntry("MainSize", itsMainSize);
 
     // Restore KConfig group...
     setGroup(origGroup);
@@ -126,8 +133,11 @@ void CUiConfig::removeOpenInstDir(const QString &d)
 
 void CUiConfig::setInstTopItem(const QString &s)
 {
-    itsInstTopItem=s;
-    write("InstTopItem", s);
+    if(itsInstTopItem!=s)
+    {
+        itsInstTopItem=s;
+        write("InstTopItem", s);
+    }
 }
 
 void CUiConfig::addOpenFsDir(const QString &d)
@@ -147,8 +157,31 @@ void CUiConfig::removeOpenFsDir(const QString &d)
 
 void CUiConfig::setFsTopItem(const QString &s)
 {
-    itsFsTopItem=s;
-    write("FsTopItem", s);
+    if(itsFsTopItem!=s)
+    {
+        itsFsTopItem=s;
+        write("FsTopItem", s);
+    }
+}
+
+void CUiConfig::setMainSize(const QSize &s)
+{
+    if(itsKCmShell && itsMainSize!=s)
+    {
+        itsMainSize=s;
+        write("MainSize", s);
+    }
+}
+
+void CUiConfig::write(const QString &key, const QSize &value)
+{
+    if(itsAutoSync)
+    {
+        KConfigGroupSaver cfgSaver(this, "KcmFontinst");
+
+        writeEntry(key, value);
+        sync();
+    }
 }
 
 void CUiConfig::write(const QString &key, const QStringList &value)
@@ -186,9 +219,9 @@ void CUiConfig::write(const QString &key, int value)
 
 void CUiConfig::storeInList(QStringList &list, const QString &s)
 {
-    unsigned int idx=list.findIndex(s);
+    int idx=list.findIndex(s);
 
-    if(!list.count() || list.count()-1!=idx)
+    if(!list.count() || (((int)list.count())-1)!=idx)
     {
         if(-1!=idx)
             list.remove(s);

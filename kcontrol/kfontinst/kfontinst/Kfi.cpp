@@ -57,7 +57,7 @@ CKfiMainWidget * CKfi::create(QWidget *parent)
         {
             if(CKfiGlobal::xcfg().ok() && CKfiGlobal::cfg().getModifiedDirs().count())
             {
-                int i;
+                unsigned int i;
 
                 for(i=0; i<CKfiGlobal::cfg().getModifiedDirs().count(); ++i)
                 {

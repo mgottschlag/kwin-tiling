@@ -10,6 +10,7 @@
 8.  Remove settings wizard.
 9.  Drop use of internal version numbering - not tagging CVS anyway, so whats the point?
 10. DCOP interface.
+11. Remember size of main window when run via kcmshell.
 
 0.10->0.11 (KDE3.0)
 ===================
@@ -22,10 +23,10 @@
     so then fs/config is used as the config file, and "/etc/rc.d/init.d/xfs restart" is selected as
     as the X refresh command.
 7.  Only install fonts that are useable.
-8.  Add checkbox to enable overwriting of existing AFMs
-9.  Remember open directories in advanced mode
-10. Add support for .Z compressed Bitmap fonts
-11. Read Type1 encodings from .afm files if listed as "array" in pfa/pfb
+8.  Add checkbox to enable overwriting of existing AFMs.
+9.  Remember open directories in advanced mode.
+10. Add support for .Z compressed Bitmap fonts.
+11. Read Type1 encodings from .afm files if listed as "array" in pfa/pfb.
 
 0.10b11->0.10
 =============

@@ -29,7 +29,6 @@
 #include "KfiMainWidget.h"
 #include "KfiGlobal.h"
 #include "Config.h"
-#include "FontsWidget.h"
 #include "SettingsWidget.h"
 #include <qtabwidget.h>
 #include "XConfig.h"
@@ -41,16 +40,6 @@ CKfiMainWidget::CKfiMainWidget(QWidget *parent, const char *)
     connect(itsFonts, SIGNAL(progressActive(bool)), itsSettings, SLOT(setDisabled(bool)));
     connect(itsFonts, SIGNAL(madeChanges()), this, SLOT(wMadeChanges()));
     connect(itsSettings, SIGNAL(madeChanges()), this, SLOT(wMadeChanges()));
-}
-
-void CKfiMainWidget::scanFonts()
-{
-    itsFonts->scanDirs();
-}
-
-void CKfiMainWidget::storeSettings()
-{
-    itsFonts->storeSettings();
 }
 
 void CKfiMainWidget::configureSystem()

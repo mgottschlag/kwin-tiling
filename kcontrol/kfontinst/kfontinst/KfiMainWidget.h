@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "KfiMainWidgetData.h"
+#include "FontsWidget.h"
 
 class CKfiMainWidget : public CKfiMainWidgetData
 {
@@ -40,10 +41,10 @@ class CKfiMainWidget : public CKfiMainWidgetData
     CKfiMainWidget(QWidget *parent, const char *name=NULL);
     virtual ~CKfiMainWidget() {}
 
-    void scanFonts();
+    void scanFonts()        { itsFonts->scanDirs(); }
     void configureSystem();
     void reset();
-    void storeSettings();
+    void storeSettings()    { itsFonts->storeSettings(); }
 
     public slots:
 
