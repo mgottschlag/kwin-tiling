@@ -43,17 +43,12 @@ kcminit_LDADD   = $(LIB_KDEUI)
 rcdir = $(kde_datadir)/kcontrol
 rc_DATA = kcontrolui.rc
 
-KDE_ICON = kcontrol
-
-rc.cpp:
-	$(EXTRACTRC) kcontrolui.rc >> rc.cpp
-
 data_DATA = SysInfo.desktop  System.desktop  User.desktop
 datadir = $(kde_appsdir)/Control
 
 EXTRA_DIST = $(data_DATA)
 
-messages: rc.cpp
-	$(XGETTEXT) rc.cpp $(kcontrol_SOURCES) -o $(podir)/kcontrol.pot
+messages:
+	$(XGETTEXT) $(kcontrol_SOURCES) -o $(podir)/kcontrol.pot
 	$(XGETTEXT) $(kcmshell_SOURCES) -o $(podir)/kcmshell.pot
 	$(XGETTEXT) $(kcminit_SOURCES) -o $(podir)/kcminit.pot
