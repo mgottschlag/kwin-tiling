@@ -9,7 +9,8 @@ INCLUDES= $(all_includes)
 libkcm_keys_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) $(libkcm_keys_la_SOURCES) -o $(podir)/kcmkeys.pot
+	customkeys=`grep "^.include .\.\." keyconfig.cpp | sed -e "s#.*\"\(.*\)\"#\1#"` ;\
+	$(XGETTEXT) $(libkcm_keys_la_SOURCES) $$customkeys -o $(podir)/kcmkeys.pot    
 
 data_DATA = keys.desktop
 datadir = $(kde_appsdir)/Settings/LookNFeel
