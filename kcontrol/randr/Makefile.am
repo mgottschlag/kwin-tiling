@@ -2,7 +2,6 @@ AM_CPPFLAGS  = $(all_includes)
 
 lib_LTLIBRARIES = 
 kde_module_LTLIBRARIES = kcm_randr.la
-kdeinit_LTLIBRARIES = krandrinithack.la
 
 noinst_LTLIBRARIES = librandrinternal.la
 
@@ -12,10 +11,6 @@ METASOURCES = AUTO
 kcm_randr_la_SOURCES = krandrmodule.cpp
 kcm_randr_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 kcm_randr_la_LIBADD = librandrinternal.la $(LIB_KDEUI) $(LIB_XRANDR)
-
-krandrinithack_la_SOURCES = krandrinithack.cpp krandrmodule.cpp
-krandrinithack_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-krandrinithack_la_LIBADD = librandrinternal.la $(LIB_KDEUI) $(LIB_XRANDR)
 
 noinst_HEADERS = randr.h krandrmodule.h krandrtray.h krandrapp.h ktimerdialog.h \
     krandrpassivepopup.h

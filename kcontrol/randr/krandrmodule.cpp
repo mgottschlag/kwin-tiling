@@ -49,9 +49,7 @@ extern "C"
 {
 	KDE_EXPORT void init_randr()
 	{
-#ifndef XRANDR_STARTUP_HACK
 		KRandRModule::performApplyOnStartup();
-#endif
 	}
 
 	KDE_EXPORT bool test_randr()

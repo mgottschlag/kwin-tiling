@@ -25,15 +25,6 @@ class QButtonGroup;
 class KComboBox;
 class QCheckBox;
 
-// Currently Qt-3.2 doesn't handle the DPI value change on resolution changes,
-// which means font sizes in pixels don't update.
-// As long as this is not changed, the initialization should be done very
-// early in the KDE startup sequence, even before kded is started.
-// When this is no longer needed, also remove the launching of krandrinithack
-// from kdelibs/kinit.
-#define XRANDR_STARTUP_HACK
-
-
 class KRandRModule : public KCModule, public RandRDisplay
 {
 	Q_OBJECT
