@@ -28,6 +28,7 @@
 #include <qxembed.h>
 
 
+#include <dcopobject.h>
 #include <kcmodule.h>
 class KProcess;
 
@@ -66,6 +67,25 @@ private:
 };
 
 
+class ChangeNotifier : public QObject, virtual public DCOPObject
+{
+  Q_OBJECT
+
+public:
+
+  ChangeNotifier(QCString objid) : QObject(), DCOPObject(objid) {};
+
+  bool process(const QCString &fun, const QByteArray &data,
+	       QCString& replyType, QByteArray &replyData);
+
+
+signals:
+
+  void changed(bool state);
+
+};
+
+
 class DCOPProxy : public KCModule
 {
   Q_OBJECT
@@ -92,7 +112,8 @@ protected:
 private slots:
 
   void processTerminated(KProcess *proc);
-
+  void remoteChanged(bool state);
+ 
 
 private:
 
@@ -100,6 +121,8 @@ private:
   KProcess           *_process;
   QXEmbed            *_embed;
   bool               _running;
+
+  ChangeNotifier     *_notify;
 
 };
 

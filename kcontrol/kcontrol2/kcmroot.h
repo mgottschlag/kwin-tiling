@@ -25,6 +25,7 @@
 
 
 #include <qobject.h>
+#include <qstring.h>
 
 
 #include <kcmodule.h>
@@ -39,7 +40,7 @@ class RemoteProxy : public QObject, virtual public KCModuleIface
 
 public:
 
-  RemoteProxy(KCModule *module);
+  RemoteProxy(KCModule *module, QCString modId);
 
   int winId() { return _module->winId(); };
 
@@ -51,9 +52,16 @@ public:
  
   int buttons() { return _module->buttons(); };
 
+
+private slots:
+
+  void changed(bool state);
+
+
 private:
 
   KCModule *_module;
+  QCString _modId;
 
 };
 

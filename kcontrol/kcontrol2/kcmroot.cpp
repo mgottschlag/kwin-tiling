@@ -27,6 +27,7 @@
 
 
 #include <qmessagebox.h>
+#include <qdatastream.h>
 
 
 #include <kapp.h>
@@ -42,9 +43,22 @@
 #include "modloader.h"
 
 
-RemoteProxy::RemoteProxy(KCModule *module)
-  : DCOPObject("KCModuleIface"), _module(module)
+RemoteProxy::RemoteProxy(KCModule *module, QCString modId)
+  : DCOPObject("KCModuleIface"), _module(module), _modId(modId)
 {
+  connect(module, SIGNAL(changed(bool)), this, SLOT(changed(bool)));
+}
+
+
+void RemoteProxy::changed(bool state)
+{
+  int val = state ? 1 : 0;
+
+  QByteArray params;
+  QDataStream stream(params, IO_WriteOnly);
+  stream << val;
+
+  kapp->dcopClient()->send("kcontrol", _modId+"-server", "changed(int)", params);
 }
 
 
@@ -73,7 +87,7 @@ int main(int argc, char *argv[])
 
   if (module)
     {
-      RemoteProxy proxy(module);
+      RemoteProxy proxy(module, info.moduleId());
 
       if (!app.dcopClient()->attach())
 	return -1;

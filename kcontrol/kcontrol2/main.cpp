@@ -21,6 +21,7 @@
 
 
 #include <kapp.h>
+#include <dcopclient.h>
 
 
 #include "main.h"
@@ -63,6 +64,10 @@ int main(int argc, char *argv[])
   for (int i=0; i<argc; i++)
     params.append(argv[i]);
   app.newInstance(params);
+
+  // register as kcontrol
+  app.dcopClient()->attach();
+  app.dcopClient()->registerAs("kcontrol");
 
   // show the whole stuff
   app.mainWidget()->show();

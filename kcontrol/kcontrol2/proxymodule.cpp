@@ -91,8 +91,29 @@ void ProcessProxy::processTerminated(KProcess *proc)
 }
 
 
+bool ChangeNotifier::process(const QCString &fun, const QByteArray &data,
+			     QCString& replyType, QByteArray &replyData)
+{
+  if (fun == "changed(int)")
+    {
+      int state;
+
+      replyType = "void";
+      QDataStream in(data, IO_ReadOnly);
+      in >> state;
+
+      emit changed(state != 0);
+
+      return true;
+    }
+
+  return false;
+}
+
+
 DCOPProxy::DCOPProxy(QWidget *parent, const ModuleInfo &mod)
-  : KCModule(parent), _proxy(0), _process(0), _embed(0), _running(false)
+  : KCModule(parent), _proxy(0), _process(0), _embed(0), _running(false),
+    _notify(0)
 {
   // find out the DCOP server to use
   QString server;
@@ -128,7 +149,7 @@ DCOPProxy::DCOPProxy(QWidget *parent, const ModuleInfo &mod)
     }
    
   // wait for the remote process to register
-  // after 30 seconde, assume it failed
+  // after 30 seconds, assume it failed
   int cnt=0;
   while (!kapp->dcopClient()->isApplicationRegistered(mod.moduleId()))
     {
@@ -141,6 +162,10 @@ DCOPProxy::DCOPProxy(QWidget *parent, const ModuleInfo &mod)
 	  return;
 	}
     }
+
+  // create the callback object
+  _notify = new ChangeNotifier(mod.moduleId()+"-server");
+  connect(_notify, SIGNAL(changed(bool)), this, SLOT(remoteChanged(bool)));
 
   // setup the proxy object
   _proxy = new KCModuleIface_stub(mod.moduleId(), "KCModuleIface");
@@ -159,6 +184,7 @@ DCOPProxy::~DCOPProxy()
 {
   delete _proxy;
   delete _process;
+  delete _notify;
 }
 
 
@@ -175,4 +201,10 @@ void DCOPProxy::processTerminated(KProcess *proc)
     {
       _process = 0;
     }
+}
+
+
+void DCOPProxy::remoteChanged(bool state)
+{
+  emit changed(state);
 }
