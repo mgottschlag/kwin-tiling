@@ -40,6 +40,8 @@ SessionEditor::SessionEditor(QWidget * parent, const char *name)
   sesMod=false;
   oldSession=-1;
 
+  KGlobal::locale()->insertCatalogue("konsole"); // For schema and keytab translations
+
   loadAllKeytab();
   loadAllSchema();
   loadAllSession();
@@ -114,13 +116,18 @@ QString SessionEditor::readKeymapTitle(const QString & file)
     return 0;
 
   char line[100];
+  int len;
   while (fscanf(sysin, "%80[^\n]\n", line) > 0)
-    if (strlen(line) > 8)
+    if ((len = strlen(line)) > 8)
       if (!strncmp(line, "keyboard", 8)) {
 	fclose(sysin);
-        QString temp=line+9;
-        if(temp.at(0)=='\"') temp.remove(0,1);
-        if(temp.at(temp.length()-1)=='\"') temp.remove(temp.length()-1,1);
+        if(line[len-1] == '"')
+          line[len-1] = '\000';
+        QString temp;
+        if(line[9] == '"')
+          temp=i18n(line+10);
+        else
+          temp=i18n(line+9);
 	return temp;
       }
 
@@ -176,7 +183,7 @@ QString SessionEditor::readSchemaTitle(const QString & file)
     if (strlen(line) > 5)
       if (!strncmp(line, "title", 5)) {
 	fclose(sysin);
-	return line + 6;
+	return i18n(line + 6);
       }
 
   return 0;
@@ -240,7 +247,7 @@ void SessionEditor::readSession(int num)
         str = co->readEntry("Icon","openterm");
         previewIcon->setIcon(str);
 
-        i = co->readUnsignedNumEntry("Font",-1);
+        i = co->readUnsignedNumEntry("Font",(unsigned int)-1);
         fontCombo->setCurrentItem(i+1);
 
         str = co->readEntry("Term","xterm");

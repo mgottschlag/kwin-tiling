@@ -78,6 +78,8 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     transparencyCheck->setChecked(false);
 
 
+    KGlobal::locale()->insertCatalogue("konsole"); // For schema translations
+
     loadAllSchema();
 
     connect(imageBrowse, SIGNAL(clicked()), this, SLOT(imageSelect()));
@@ -410,7 +412,7 @@ void SchemaEditor::schemaModified(const QString&)
 QString SchemaEditor::readSchemaTitle(const QString & file)
 {
     /*
-       Code taken from konsole/src/schema.C
+       Code taken from konsole/konsole/schema.cpp
 
      */
 
@@ -433,7 +435,7 @@ QString SchemaEditor::readSchemaTitle(const QString & file)
 	if (strlen(line) > 5)
 	    if (!strncmp(line, "title", 5)) {
 		fclose(sysin);
-		return line + 6;
+		return i18n(line + 6);
 	    }
 
     return 0;
@@ -456,7 +458,7 @@ void SchemaEditor::querySave()
 void SchemaEditor::readSchema(int num)
 {
     /*
-       Code taken from konsole/src/schema.C
+       Code taken from konsole/konsole/schema.cpp
 
      */
 
@@ -513,7 +515,7 @@ void SchemaEditor::readSchema(int num)
 	if (strlen(line) > 5) {
 
 	    if (!strncmp(line, "title", 5)) {
-		titleLine->setText(line + 6);
+		titleLine->setText(i18n(line + 6));
 	    }
 
 
@@ -547,7 +549,7 @@ void SchemaEditor::readSchema(int num)
 		    continue;
 
 		transparencyCheck->setChecked(true);
-		shadeSlide->setValue(100 - rx * 100);
+		shadeSlide->setValue((int)(100 - rx * 100));
 		shadeColor->setColor(QColor(rr, rg, rb));
 
 	    }
