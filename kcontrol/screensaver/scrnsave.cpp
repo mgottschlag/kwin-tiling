@@ -815,7 +815,7 @@ void KScreenSaver::slotTest()
         }
 
 	mTesting = true;
-        mTestProc->start(KProcess::DontCare);
+        mTestProc->start(KProcess::NotifyOnExit);
     }
 }
 
