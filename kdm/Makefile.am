@@ -1,6 +1,6 @@
 # $Id$
 
-SUBDIRS	= chooser greeter config pics $(xdmconfigsubdir)
+SUBDIRS	= $(KDM_CHOOSER_DIR) greeter config pics $(xdmconfigsubdir)
 
 # Extra lib. Might be -lpam -dl or -lshadow or nothing
 PASSLIB= $(PASSWDLIB) $(PAMLIBS)
