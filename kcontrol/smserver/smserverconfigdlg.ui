@@ -50,9 +50,6 @@
                     <property name="text">
                         <string>Conf&amp;irm logout</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Check this option if you want the session manager to display a logout confirmation dialog box.</string>
                     </property>
@@ -63,9 +60,6 @@
                     </property>
                     <property name="text">
                         <string>O&amp;ffer shutdown options</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+F</string>
                     </property>
                 </widget>
             </vbox>
@@ -95,9 +89,6 @@
                     <property name="text">
                         <string>Restore &amp;previous session</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
-                    </property>
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
@@ -106,9 +97,6 @@
                     <property name="text">
                         <string>Restore &amp;manually saved session</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+M</string>
-                    </property>
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
@@ -116,9 +104,6 @@
                     </property>
                     <property name="text">
                         <string>Start with an empty &amp;session</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
                     </property>
                 </widget>
             </vbox>
@@ -144,9 +129,6 @@
                     <property name="text">
                         <string>&amp;End current session</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
-                    </property>
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
@@ -154,9 +136,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Turn off computer</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+T</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">

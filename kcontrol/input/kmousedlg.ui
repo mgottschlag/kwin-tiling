@@ -134,9 +134,6 @@
             <property name="text">
                 <string>Re&amp;verse scroll direction</string>
             </property>
-            <property name="accel">
-                <string>Alt+V</string>
-            </property>
             <property name="whatsThis" stdset="0">
                 <string>Change the direction of scrolling for the mouse wheel or the 4th and 5th mouse buttons.</string>
             </property>
