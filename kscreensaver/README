@@ -121,7 +121,7 @@ CREDITS:
 
 Ported from xlockmore:     (but blame me if they don't work)
   rock    -  Copyright (c) 1992 by Jamie Zawinski
-  flame   -  Copyright (c) 1991 by Patrick J. Naughton.
+  flame   -  Copyright (c) 1991 by Scott Draves <spot@draves.org>
   pyro    -  Copyright (c) 1991 by Patrick J. Naughton.
   laser   -  Copyright (c) 1995 Pascal Pensa <pensa@aurora.unice.fr>
 

@@ -2,7 +2,7 @@
 /*-
  * flame.c - recursive fractal cosmic flames.
  *
- * Copyright (c) 1991 by Patrick J. Naughton.
+ * Copyright (c) 1991 by Scott Draves <spot@draves.org>
  *
  * See xlock.c for copying information.
  *
@@ -550,7 +550,7 @@ void kFlameSetup::slotOkPressed()
 void kFlameSetup::slotAbout()
 {
   QMessageBox::message(glocale->translate("About Flame"),
-		       glocale->translate("Flame Version 3.3\n\nCopyright (c) 1991 by Patrick J. Naughton\n\nPorted to kscreensave by Martin Jones."), 
+		       glocale->translate("Flame Version 3.3\n\nCopyright (c) 1991 by Scott Draves <spot@draves.org>\n\nPorted to kscreensave by Martin Jones."), 
 		       glocale->translate("OK"));
 }
 
