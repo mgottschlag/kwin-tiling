@@ -46,7 +46,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   QLabel *label = new QLabel(i18n("&General:"), this);
   stdFontChooser = new KFontRequester(this);
   label->setBuddy(stdFontChooser);
-  QWhatsThis::add( stdFontChooser, i18n("This changes the font which is used for all the text in the login manager execpt for the greeting and failure messages.") );
+  QWhatsThis::add( stdFontChooser, i18n("This changes the font which is used for all the text in the login manager except for the greeting and failure messages.") );
   connect(stdFontChooser, SIGNAL(fontSelected(const QFont&)),this,SLOT(configChanged()));
   ml->addWidget(label, 1, 0);
   ml->addWidget(stdFontChooser, 1, 1);
