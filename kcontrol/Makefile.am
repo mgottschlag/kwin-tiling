@@ -1,4 +1,4 @@
 SUBDIRS = filetypes samba bell display input kwm info kdm kpanel $(ODBC_DIR) \
-	locale syssound keys sample kio konq konqhtml ikw email ebrowsing \
+	locale syssound keys sample kio konq konqhtml email ebrowsing \
 	kcontrol
 
