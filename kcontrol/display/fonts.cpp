@@ -103,9 +103,10 @@ KFonts::KFonts(QWidget *parent, const char *name)
     int i;
     _changed = false;
 
-    KConfig *cfg = KGlobal::config();
+    KConfig *cfg = new KConfig("kcmdisplayrc");
     cfg->setGroup("X11");
     useRM = cfg->readBoolEntry("useResourceManager", true);
+    delete cfg;
     
     QBoxLayout *topLayout = new QVBoxLayout(this, 10, 10);
     QBoxLayout *pushLayout = new QHBoxLayout( 5 );
