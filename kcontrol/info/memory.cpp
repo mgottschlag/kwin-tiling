@@ -383,7 +383,7 @@ void KMemoryWidget::update_Values()
 		ram_colors[1] = QColor(24,131,5); /* buffer */
 		ram_text[2] = i18n("Disk Cache");
 		ram_colors[2] = QColor(33,180,7); /* cached */
-		ram_text[3] = i18n("Free RAM");
+		ram_text[3] = i18n("Free Physical Memory");
 		ram_colors[3] = COLOR_FREE_MEMORY; /* free */
     }
     ok1 = Display_Graph(MEM_RAM, 4, Memory_Info[TOTAL_MEM],
