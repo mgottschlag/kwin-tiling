@@ -21,6 +21,7 @@
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <stdlib.h>
 
 #include "lockprocess.h"
 
