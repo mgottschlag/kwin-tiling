@@ -1,0 +1,7 @@
+[Desktop Entry]
+Keys=ctan_cat
+Name=CTAN Catalogue
+Name[de]=CTAN Katalog
+Query=http://www.ctan.org/tools/cataloguesearch?action=/search/&catstring=\\{@}
+ServiceTypes=SearchProvider
+Type=Service

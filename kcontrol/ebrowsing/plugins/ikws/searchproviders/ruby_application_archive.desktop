@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Service
+Name=Ruby Application Archive
+Name[de]=Ruby Anwendungsarchiv
+ServiceTypes=SearchProvider
+Keys=raa
+Query=http://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}

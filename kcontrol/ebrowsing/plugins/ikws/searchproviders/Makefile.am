@@ -1,10 +1,14 @@
 
-services_DATA = acronym.desktop altavista.desktop austronaut.desktop \
-                bugft.desktop bugno.desktop dmoz.desktop excite.desktop \
-                foldoc.desktop freshmeat.desktop seek.desktop google.desktop \
-                hotbot.desktop jeeves.desktop leo.desktop lycos.desktop \
-                mamma.desktop metacrawler.desktop realnames.desktop \
-                rpmfind.desktop thesaurus.desktop voila.desktop \
-                vivisimo.desktop webster.desktop deja.desktop whatis.desktop \
-                google_images.desktop google_lucky.desktop
+services_DATA =	acronym.desktop alltheweb.desktop altavista.desktop \
+		austronaut.desktop bugft.desktop bugno.desktop \
+		cpan.desktop ctan.desktop ctan_cat.desktop deja.desktop \
+		dmoz.desktop excite.desktop foldoc.desktop freshmeat.desktop \
+		google.desktop google_advanced.desktop google_images.desktop \
+		google_lucky.desktop hotbot.desktop jeeves.desktop \
+		leo.desktop lycos.desktop mamma.desktop metacrawler.desktop \
+		php.desktop realnames.desktop rpmfind.desktop \
+		ruby_application_archive.desktop seek.desktop \
+		sourceforge.desktop tel.desktop thesaurus.desktop \
+		vivisimo.desktop voila.desktop webster.desktop whatis.desktop
+
 servicesdir = $(kde_servicesdir)/searchproviders

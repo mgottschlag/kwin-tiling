@@ -1,0 +1,7 @@
+[Desktop Entry]
+Keys=ggx
+Name=Google Advanced Search
+Name[de]=Erweiterte Google Suche
+Query=http://www.google.com/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact}&as_oq=\\{any}&as_eq=\\{without}&lr=\\{lang}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}
+ServiceTypes=SearchProvider
+Type=Service

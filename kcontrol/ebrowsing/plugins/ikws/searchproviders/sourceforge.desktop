@@ -1,0 +1,6 @@
+[Desktop Entry]
+Keys=sf,sourceforge
+Name=SourceForge
+Query=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\{exact,"0"}&words=\\{@}
+ServiceTypes=SearchProvider
+Type=Service

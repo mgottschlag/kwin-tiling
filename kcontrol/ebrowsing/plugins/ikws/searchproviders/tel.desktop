@@ -1,0 +1,7 @@
+[Desktop Entry]
+Keys=tel,tel_at
+Name=Austrian Online Telephone Book
+Name[de]=Österreichisches Online Telefonbuch
+Query=http://www.otb.at/telefonbuch/search_result_start.asp?Name=\\{name,1}&Vorname=\\{vorname,firstname}&Strasse=\\{strasse,street}&Hnr=\\{hnr}&Ort=\\{ort,city,plz,zip,2}&Zusatz=\\{zusatz,addon}&Telefon=\\{tel}&StartNr=0
+ServiceTypes=SearchProvider
+Type=Service

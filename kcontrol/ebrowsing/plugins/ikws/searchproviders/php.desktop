@@ -1,0 +1,7 @@
+[Desktop Entry]
+Keys=php
+Name=PHP Search
+Name[de]=PHP Suche
+Query=http://www.php.net/search.php?show=\\{mode,"manual"}&pattern=\\{@}
+ServiceTypes=SearchProvider
+Type=Service

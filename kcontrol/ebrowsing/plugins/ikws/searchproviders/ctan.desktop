@@ -1,0 +1,6 @@
+[Desktop Entry]
+Keys=ctan
+Name=CTAN - Comprehensive TeX Archive Network
+Query=http://www.ctan.org/tools/filesearch?action=/search/&filename=\\{@}
+ServiceTypes=SearchProvider
+Type=Service
