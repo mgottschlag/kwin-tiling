@@ -28,7 +28,4 @@ messages:
 desktop_DATA =  background.desktop
 desktopdir = $(kde_appsdir)/Settings/LookNFeel
 
-update_DATA = background.upd
-updatedir = $(kde_datadir)/kconf_update
-
 EXTRA_DIST = $(desktop_DATA)
