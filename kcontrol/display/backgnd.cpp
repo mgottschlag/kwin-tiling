@@ -52,7 +52,6 @@
 #include <bgdialogs.h>
 #include <backgnd.h>
 
-
 /**** DLL Interface ****/
 
 extern "C" {

@@ -38,6 +38,9 @@
 
 static kPolygonSaver *saver = NULL;
 
+template class QList<Polygon>;
+template class QArray<XPoint>;
+
 //-----------------------------------------------------------------------------
 // standard screen saver interface functions
 //

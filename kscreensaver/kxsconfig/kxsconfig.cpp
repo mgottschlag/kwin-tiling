@@ -32,6 +32,8 @@
 #include "kxsconfig.h"
 #include "kxscontrol.h"
 
+template class QList<KXSConfigItem>;
+
 //===========================================================================
 KXSConfigDialog::KXSConfigDialog(const QString &filename)
   : KDialogBase(Plain, filename, Ok| Cancel, Ok, 0, 0, false),

@@ -52,6 +52,8 @@
 
 #define SOUND_DEBUG 1
 
+template class QList<QString>;
+
 const char *eventNames[2][29] = {
 
   {

@@ -30,7 +30,7 @@ libkcm_odbc_la_SOURCES = 	KODBCConfig.cpp \
 				classSystemDSN.cpp \
 				classUserDSN.cpp
 
-libkcm_odbc_la_LDFLAGS = 	-module -avoid-version $(all_libraries) 
+libkcm_odbc_la_LDFLAGS = 	-module -avoid-version $(all_libraries) -no-undefined
 
 
 libkcm_odbc_la_LIBADD = 	$(LIB_KDEUI) $(LIB_KIMGIO) $(LIB_KFILE) $(DPMSLIB) \

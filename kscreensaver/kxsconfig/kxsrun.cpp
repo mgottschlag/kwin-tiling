@@ -31,6 +31,8 @@
 
 #define MAX_ARGS  20
 
+template class QList<KXSConfigItem>;
+
 //===========================================================================
 
 void usage(const char *name)

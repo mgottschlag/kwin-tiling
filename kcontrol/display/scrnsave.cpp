@@ -48,6 +48,7 @@
 
 #include "scrnsave.h"
 
+template class QList<SaverConfig>;
 
 //===========================================================================
 // DLL Interface for kcontrol
