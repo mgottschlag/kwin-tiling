@@ -34,8 +34,13 @@ if test "$FREETYPE_INC" != NO; then
 fi
 
 if test "$FREETYPE_INC" = "NO" || test "$FREETYPE_LIB" = "NO"; then
-    DO_NOT_COMPILE="$DO_NOT_COMPILE kfontinst"
+    AC_MSG_WARN([Missing FreeType2 - disabling kfontinst!])
+    FONTINST_SUBDIR=""
+else
+    FONTINST_SUBDIR="kfontinst" 
 fi
+
+AC_SUBST(FONTINST_SUBDIR)
 
 dnl -- Xft/XRender --------------------------------------------------------------
 AC_MSG_CHECKING([for Xft/XRender X11/Xft/Xft.h])
