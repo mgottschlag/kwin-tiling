@@ -710,12 +710,12 @@ KGVerify::gplugSetUser( const QString &user )
 }
 
 void
-KGVerify::gplugStart( const char *method )
+KGVerify::gplugStart()
 {
     // XXX handle func != Authenticate
-    Debug( "gplugStart(%s)\n", method );
+    Debug( "gplugStart()\n" );
     GSendInt( G_Verify );
-    GSendStr( method );
+    GSendStr( greetPlugins[pluginList[curPlugin]].info->method );
     handleVerify();
 }
 

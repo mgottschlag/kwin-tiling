@@ -54,11 +54,9 @@ public:
      */
     virtual void gplugSetUser( const QString &user ) = 0;
     /**
-     * Start processing. The handler has to know the mode itself.
-     * @param method the authentication method to use - the meaning is
-     *  up to the backend, but will usually be related to the PAM service.
+     * Start processing.
      */
-    virtual void gplugStart( const char *method ) = 0;
+    virtual void gplugStart() = 0;
     /**
      * Plugins that expect user input from a different device than the mouse or
      * keyboard must call this when user activity is detected to prevent the
@@ -73,8 +71,7 @@ public:
  * KDM, kdesktop_lock, etc.
  * The authentication method used by a particular instance of a plugin
  * may be configurable, but the instance must handle exactly one method,
- * i.e., the parameter it passes to gplugStart() must be determined already
- * at init() time.
+ * i.e., info->method must be determined at the latest at init() time.
  */
 class KGreeterPlugin {
 public:
@@ -106,7 +103,7 @@ public:
 		   ExUnlock, ExChangeTok };
 
     /**
-     * Preload the widget with an (opaque to the greeter) entity.
+     * Preload the talker with an (opaque to the greeter) entity.
      * Will be called only when not running.
      * @param entity the entity to preload the talker with. That
      *  will usually be something like "user" or "user@domain".
@@ -268,7 +265,13 @@ struct kgreeterplugin_info {
      */
     const char *name;
 
-    /*
+    /**
+     * The authentication method to use - the meaning is up to the backend,
+     * but will usually be related to the PAM service.
+     */
+    const char *method;
+
+    /**
      * Capabilities.
      */
     enum {
@@ -289,7 +292,8 @@ struct kgreeterplugin_info {
      * Call after loading the plugin.
      *
      * @param method if non-empty and the plugin is unable to handle that
-     *  method, return false.
+     *  method, return false. If the plugin has a constant method defined
+     *  above, it can ignore this parameter.
      * @param getConf can be used to obtain configuration items from the
      *  greeter; you have to pass it the @p ctx pointer.
      *   The only predefined key (in KDM) is "EchoMode", which is an int

@@ -680,12 +680,17 @@ bool LockProcess::startLock()
             continue;
         }
         plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
+        if (plugin.info->method && !mMethod.isEmpty() && mMethod != plugin.info->method) {
+            kdDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") serves " << plugin.info->method << ", not " << mMethod << endl;
+            plugin.library->unload();
+            continue;
+        }
         if (!plugin.info->init( mMethod, getConf, this )) {
             kdDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve " << mMethod << endl;
             plugin.library->unload();
             continue;
         }
-        kdDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->name << ") loaded" << endl;
+        kdDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded" << endl;
         greetPlugin = plugin;
 	KGlobal::locale()->insertCatalogue( "kdmgreet" );
 	mLocked = true;

@@ -156,7 +156,7 @@ public: // from KGreetPluginHandler
     virtual void gplugReturnText( const char *text, int tag );
     virtual void gplugReturnBinary( const char *data );
     virtual void gplugSetUser( const QString &user );
-    virtual void gplugStart( const char *method );
+    virtual void gplugStart();
     virtual void gplugActivity();
 
 private:

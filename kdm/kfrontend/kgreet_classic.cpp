@@ -279,7 +279,7 @@ KClassicGreeter::next()
 	has = 1;
     if (exp < 0) {
 	exp = authTok ? 2 : (ctx == Login || ctx == Shutdown) ? 0 : 1;
-	handler->gplugStart( "classic" );
+	handler->gplugStart();
     } else if (has >= exp)
 	returnData();
 }
@@ -388,12 +388,10 @@ KClassicGreeter::slotLoginLostFocus()
 // factory
 
 static bool init(
-	const QString &method,
+	const QString &,
 	QVariant (*getConf)( void *, const char *, const QVariant & ),
 	void *ctx )
 {
-    if (!method.isEmpty() && method != "classic")
-	return false;
     echoMode = getConf( ctx, "EchoMode", QVariant() ).toInt();
     return true;
 }
@@ -409,7 +407,7 @@ create(
 }
 
 kgreeterplugin_info kgreeterplugin_info = {
-    I18N_NOOP("Username + password (classic)"), kgreeterplugin_info::Local, init, 0, create
+    I18N_NOOP("Username + password (classic)"), "classic", kgreeterplugin_info::Local, init, 0, create
 };
 
 #include "kgreet_classic.moc"

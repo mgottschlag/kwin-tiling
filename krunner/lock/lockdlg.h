@@ -39,7 +39,7 @@ public:
     virtual void gplugReturnText( const char *text, int );
     virtual void gplugReturnBinary( const char *data );
     virtual void gplugSetUser( const QString & );
-    virtual void gplugStart( const char *method );
+    virtual void gplugStart();
     virtual void gplugActivity();
 
 signals:
@@ -70,6 +70,7 @@ private:
     void handleVerify();
     void reapVerify();
     void cantCheck();
+    GreeterPluginHandle *mPlugin;
     KGreeterPlugin *greet;
     QFrame      *frame;
     QGridLayout *frameLayout;

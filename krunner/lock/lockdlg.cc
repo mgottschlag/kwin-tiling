@@ -55,6 +55,7 @@
 //
 PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool nsess)
     : QDialog(parent, "password dialog", true, WX11BypassWM), 
+      mPlugin( plugin ),
       mCapsLocked(-1),
       mUnlockingFailed(false)
 {
@@ -415,7 +416,7 @@ void PasswordDlg::cantCheck()
 //
 // Starts the kcheckpass process to check the user's password.
 //
-void PasswordDlg::gplugStart( const char *method )
+void PasswordDlg::gplugStart()
 {
     int sfd[2];
     char fdbuf[16];
@@ -433,12 +434,12 @@ void PasswordDlg::gplugStart( const char *method )
     if (!sPid) {
         ::close(sfd[0]);
         sprintf(fdbuf, "%d", sfd[1]);
-        execlp("kcheckpass", "kcheckpass", 
+        execlp("kcheckpass", "kcheckpass",
 #ifdef HAVE_PAM
-               "-c", KSCREENSAVER_PAM_SERVICE, 
+               "-c", KSCREENSAVER_PAM_SERVICE,
 #endif
-               "-m", method, 
-               "-S", fdbuf, 
+               "-m", mPlugin->info->method,
+               "-S", fdbuf,
                (char *)0);
         exit(20);
     }
