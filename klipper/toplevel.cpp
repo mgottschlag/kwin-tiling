@@ -120,6 +120,7 @@ TopLevel::TopLevel()
 
     connect( toggleURLGrabAction, SIGNAL( toggled( bool ) ), this,
              SLOT( setURLGrabberEnabled( bool )));
+    setBackgroundMode(X11ParentRelative);
 }
 
 TopLevel::~TopLevel()
