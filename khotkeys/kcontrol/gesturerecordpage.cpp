@@ -74,6 +74,8 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
         slotRecorded(gesture);
         slotRecorded(gesture);
         }
+    else
+        emit gestureRecorded(false);
     }
 
 GestureRecordPage::~GestureRecordPage()
@@ -113,7 +115,7 @@ void GestureRecordPage::slotRecorded(const QString &data)
                 {
                 _tryThree->setData(data);
                 _tryCount++;
-                emit readyForNext(true);
+                emit gestureRecorded(true);
                 }
             else
                 {
@@ -137,7 +139,7 @@ void GestureRecordPage::slotResetClicked()
 
     _tryCount = 1;
 
-    emit readyForNext(false);
+    emit gestureRecorded(false);
     }
 
 } // namespace KHotKeys

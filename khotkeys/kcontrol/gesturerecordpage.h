@@ -42,7 +42,7 @@ class GestureRecordPage : public QVBox
          void slotResetClicked();
 
     signals:
-        void readyForNext(bool);
+        void gestureRecorded(bool);
 
     private:
         GestureRecorder *_recorder;
