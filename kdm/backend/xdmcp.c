@@ -217,8 +217,8 @@ all_query_respond (
 
     family = ConvertAddr((XdmcpNetaddr) from, &length, (char **)&(addr.data));
     addr.length = length;	/* convert int to short */
-    Debug ("all_query_respond: conntype=%d, addr=%lx, len=%d\n",
-	   family, (unsigned long) *(addr.data), addr.length);
+    Debug ("all_query_respond: conntype=%d, addr=%02[*:hhx\n",
+	   family, addr.length, addr.data);
     if (family < 0)
 	return;
     connectionType = family;
