@@ -53,7 +53,7 @@
 
 static QString findThemePath(QString name)
 {
-    if (name.isEmpty()) 
+    if (name.isEmpty())
        return QString::null;
 
     name = Theme::removeExtension(name);
@@ -83,7 +83,7 @@ void ThemeListBox::dropEvent(QDropEvent* event)
    {
       emit filesDropped(urls);
    }
-} 
+}
 
 void ThemeListBox::slotMouseButtonPressed(int button, QListBoxItem *item, const QPoint &p)
 {
@@ -120,7 +120,7 @@ void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
 
 //-----------------------------------------------------------------------------
 Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
-  : InstallerInherited(aParent, aName)
+  : KCModule(aParent, aName)
 {
   KButtonBox* bbox;
 
@@ -187,13 +187,15 @@ int Installer::addTheme(const QString &path)
     int i = tmp.findRev('/');
     if (i >= 0)
        tmp = tmp.right(tmp.length() - tmp.findRev('/') - 1);
-    tmp = Theme::removeExtension(tmp);
+    QString p = Theme::removeExtension(tmp).utf8();
+    tmp = i18n( p.utf8() );
     i = mThemesList->count();
     while((i > 0) && (mThemesList->text(i-1) > tmp))
-	i--;   
+	i--;
     if ((i > 0) && (mThemesList->text(i-1) == tmp))
        return i-1;
     mThemesList->insertItem(tmp, i);
+    mThemesList->text2path.insert( tmp, p );
     return i;
 }
 
@@ -206,12 +208,12 @@ void Installer::addNewTheme(const KURL &srcURL)
   int i = filename.findRev('.');
   // Convert extension to lower case.
   if (i >= 0)
-     filename = filename.left(i)+filename.mid(i).lower(); 
+     filename = filename.left(i)+filename.mid(i).lower();
   url.setPath(dir+filename);
   bool rc = KIO::NetAccess::copy(srcURL, url);
   if (!rc)
   {
-    kdWarning() << "Failed to copy theme " << srcURL.fileName() 
+    kdWarning() << "Failed to copy theme " << srcURL.fileName()
         << " into themes directory " << dir << endl;
     return;
   }
@@ -225,7 +227,7 @@ void Installer::readThemesList(void)
   mThemesList->clear();
 
   // Read local themes
-  QStringList entryList = KGlobal::dirs()->findAllResources("themes");
+  QStringList entryList = KGlobal::dirs()->findAllResources("themes", QString::null, false, true);
   QStringList::ConstIterator name;
   for(name = entryList.begin(); name != entryList.end(); name++) {
     QString tmp = *name;
@@ -270,7 +272,7 @@ void Installer::slotCreate()
   theme->setName(dlg.themeName().latin1());
   theme->setAuthor(dlg.author());
   theme->setEmail(dlg.email());
-  theme->setHomepage(dlg.homepage());  
+  theme->setHomepage(dlg.homepage());
   theme->setVersion("0.1");
   theme->savePreview(dlg.preview());
   theme->extract();
@@ -320,7 +322,10 @@ void Installer::slotSetTheme(int id)
   else
   {
     QString error = i18n("(Could not load theme)");
-    name = findThemePath(mThemesList->text(id));
+    QString path = mThemesList->text(id);
+    if ( mThemesList->text2path.contains( path ) )
+        path = mThemesList->text2path[path];
+    name = findThemePath(path);
     enabled = false;
     if (!name.isEmpty())
     {
@@ -380,7 +385,7 @@ void Installer::slotSaveAs()
   if (themeFile.isEmpty()) return;
 
   fpath = findThemePath(themeFile);
-  
+
   KURL url;
   url.setPath(fpath);
   themeFile = url.fileName();
@@ -404,7 +409,7 @@ void Installer::slotSaveAs()
 //-----------------------------------------------------------------------------
 void Installer::slotThemeChanged()
 {
-  mText->setText(theme->description()); 
+  mText->setText(theme->description());
 
   mBtnSaveAs->setEnabled(true);
 

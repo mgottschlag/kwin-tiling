@@ -14,7 +14,7 @@ noinst_HEADERS = theme.h installer.h \
 	themecreator.h newthemedlg.h
 
 libkcm_themes_la_LIBADD = $(LIB_KFILE) 
-libkcm_themes_la_LDFLAGS = $(all_libraries) $(LDFLAGS) -module -avoid-version -no-undefined
+libkcm_themes_la_LDFLAGS = $(all_libraries) $(LDFLAGS) $(KDE_PLUGIN)
 
 apps_DATA = kthememgr.desktop
 appsdir = $(kde_appsdir)/Settings/LookNFeel
@@ -40,5 +40,7 @@ install-data-local:
 	rm -rf BuildThemes;
 
 messages:
-	$(XGETTEXT) $(libkcm_themes_la_SOURCES) -o $(podir)/kcmthemes.pot
+	(cd Themes && ls -1 | grep -v CVS | sed -e "s/\(.*\)/i18n(\"\1\");/") >>> rc.cpp
+	$(XGETTEXT) $(libkcm_themes_la_SOURCES) rc.cpp -o $(podir)/kcmthemes.pot
+	-rm -f rc.cpp
 

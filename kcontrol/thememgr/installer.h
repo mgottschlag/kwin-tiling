@@ -27,6 +27,7 @@
 #include <kcmodule.h>
 #include <klistbox.h>
 #include <kurl.h>
+#include <qmap.h>
 
 class QGridLayout;
 class QPushButton;
@@ -34,7 +35,6 @@ class QLabel;
 class QMultiLineEdit;
 class ThemeListBox;
 
-#define InstallerInherited KCModule
 class Installer : public KCModule
 {
   Q_OBJECT
@@ -79,6 +79,8 @@ class ThemeListBox: public KListBox
   Q_OBJECT
 public:
   ThemeListBox(QWidget *parent);
+    QMap<QString, QString> text2path;
+
 signals:
   void filesDropped(const KURL::List &urls);
 
@@ -86,11 +88,14 @@ protected:
   void dragEnterEvent(QDragEnterEvent* event);
   void dropEvent(QDropEvent* event);
   void mouseMoveEvent(QMouseEvent *e);
+
 protected slots:
   void slotMouseButtonPressed(int button, QListBoxItem *item, const QPoint &p);
+
 private:
   QString mDragFile;
   QPoint mOldPos;
+
 };
 
 
