@@ -68,9 +68,10 @@ class KBackground: public QWidget
 public:
     KBackground(QWidget *parent=0, const char *name=0);
 
-    virtual void load();
-    virtual void save();
-    virtual void defaults();
+    void load();
+    void save();
+    void defaults();
+    void makeReadOnly();
 
 signals:
     void changed(bool);
@@ -87,11 +88,13 @@ private slots:
     void slotSetupMulti();
     void slotPreviewDone(int);
     void slotMultiMode(bool);
+    void slotEnableChanged();
 
 private:
     void init();
     void apply();
 
+    QCheckBox *m_pCBEnable;
     QCheckBox *m_pCBMulti;
     QComboBox *m_pBackgroundBox, *m_pWallpaperBox;
     QComboBox *m_pArrangementBox;
@@ -104,6 +107,7 @@ private:
     KBackgroundRenderer *m_Renderer;
     KColorButton *m_pColor1But, *m_pColor2But;
     KBGMonitor *m_pMonitor;
+    QLabel *m_pMLabel;
 
     KStandardDirs *m_pDirs;
 };

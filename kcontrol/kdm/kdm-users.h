@@ -20,22 +20,21 @@
 #ifndef __KDMUSERS_H__
 #define __KDMUSERS_H__
 
+#include <qwidget.h>
 #include <qptrlist.h>
-#include <qlineedit.h>
 #include <qstring.h>
 #include <qimage.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
+#include <qwidgetstack.h>
 
-#include <klistbox.h>
-#include <kicondialog.h>
-#include <kcolorbutton.h>
+#include <klineedit.h>
+#include <klistview.h>
+#include <kcombobox.h>
 #include <kurl.h>
 
 #include <pwd.h>
-
-#include <qwidget.h>
 
 
 class KDMUsersWidget : public QWidget
@@ -43,48 +42,64 @@ class KDMUsersWidget : public QWidget
 	Q_OBJECT
 
 public:
-	KDMUsersWidget(QWidget *parent=0, const char *name=0, QStringList *show_users=0);
+	KDMUsersWidget( QWidget *parent = 0, const char *name = 0 );
 
-	void load(QStringList *show_users=0);
+	void load();
 	void save();
 	void defaults();
+	void makeReadOnly();
 
-	bool eventFilter(QObject *o, QEvent *e);
+	bool eventFilter( QObject *o, QEvent *e );
+
+public slots:
+	void slotClearUsers();
+	void slotAddUsers( const QMap<QString,int> & );
+	void slotDelUsers( const QMap<QString,int> & );
 
 signals:
 	void changed( bool state );
-
-protected:
-	void userButtonDragEnterEvent(QDragEnterEvent *e);
-	void userButtonDropEvent(QDropEvent *e);
+	void setMinMaxUID( int, int );
 
 private slots:
-	void slotUserSelected(const QString &user);
-	void slotAllToNo();
-	void slotAllToUsr();
-	void slotUsrToAll();
-	void slotNoToAll();
-	void slotUserPixChanged(QString);
-	void slotShowUsers(int);
+	void slotMinMaxChanged();
+	void slotShowOpts();
+	void slotUpdateOptIn( QListViewItem *item );
+	void slotUpdateOptOut( QListViewItem *item );
+	void slotUserSelected();
+	void slotUnsetUserPix();
+	void slotFaceOpts();
+	void slotUserButtonClicked();
 	void slotChanged();
 
-signals:
-	void show_user_add(const QString &user);
-	void show_user_remove(const QString &user);
-
 private:
+	void updateOptList( QListViewItem *item, QStringList &list );
+	void userButtonDropEvent( QDropEvent *e );
+	void changeUserPix( const QString & );
 
-	KIconLoader	*iconloader;
-	QButtonGroup	*usrGroup, *shwGroup;
-	QGroupBox	*minGroup;
+	QGroupBox	*minGroup;	// top left
 	QLineEdit	*leminuid, *lemaxuid;
+
+	QButtonGroup	*usrGroup; // right below
 	QRadioButton	*rbnoneusr, *rbselusr, *rballusr;
 	QCheckBox	*cbusrsrt;
-	KIconButton	*userbutton;
-	QLabel		*userlabel;
-	KListBox	*remuserlb, *nouserlb, *userlb;
+
+	QLabel		*s_label; // middle
+	QWidgetStack	*wstack;
+	KListView	*optoutlv, *optinlv;
+
+	QButtonGroup	*faceGroup; // right
+	QRadioButton	*rbadmonly, *rbprefadm, *rbprefusr, *rbusronly;
+
+	KComboBox	*usercombo; // right below
+	QPushButton	*userbutton;
+	QPushButton	*rstuserbutton;
+
 	QString		m_userPixDir;
 	QString		m_defaultText;
+	QStringList	hiddenUsers, selectedUsers;
+	QString		defminuid, defmaxuid;
+
+	bool		m_notFirst;
 };
 
 #endif

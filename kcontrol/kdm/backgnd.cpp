@@ -20,6 +20,8 @@
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
+#include <config.h>
+
 #include <unistd.h>
 #include <sys/types.h>
 
@@ -82,21 +84,30 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pDirs = KGlobal::dirs();
 
     // Top layout
-    QGridLayout *top = new QGridLayout(this, 2, 1, 10, 10);
-    top->setColStretch(0, 1);
-    // top->setColStretch(1, 2);
+    QGridLayout *top = new QGridLayout(this, 2, 2, 10, 10);
+    top->setColStretch( 1, 1 );
 
     // A nice button size. Translators can adapt this
     QPushButton *pbut = new QPushButton(i18n("abcdefgh"), this);
     QSize bsize = pbut->sizeHint();
     delete pbut;
 
+    m_pCBEnable = new QCheckBox( i18n("Enable background"), this );
+    m_pCBEnable->setFixedSize(m_pCBEnable->sizeHint());
+    QWhatsThis::add( m_pCBEnable,
+             i18n("If this is checked, KDM will use the settings below for the background."
+		" If it is disabled, you have to care for the background yourself;"
+		" this is done by running some program (possibly xsetroot) in the script"
+		" specified in the Setup= option in kdmrc (usually Xsetup).") );
+    top->addWidget( m_pCBEnable, 0, 0 );
+    connect( m_pCBEnable, SIGNAL(toggled( bool )), SLOT(slotEnableChanged()) );
+
     // Preview monitor at (0,0)
-    QLabel *lbl = new QLabel(this);
-    lbl->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
-    lbl->setFixedSize(lbl->sizeHint());
-    top->addMultiCellWidget(lbl, 0,0, 0,2, AlignCenter);
-    m_pMonitor = new KBGMonitor(lbl);
+    m_pMLabel = new QLabel(this);
+    m_pMLabel->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
+    m_pMLabel->setFixedSize(m_pMLabel->sizeHint());
+    top->addWidget(m_pMLabel, 0, 1, AlignCenter);
+    m_pMonitor = new KBGMonitor(m_pMLabel);
     m_pMonitor->setGeometry(23, 14, 151, 115);
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
 
@@ -107,20 +118,18 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     // Tabwidget at (1,0)
     m_pTabWidget = new QTabWidget(this);
-    top->addWidget(m_pTabWidget, 1, 0);
+    m_pTabWidget->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    top->addMultiCellWidget(m_pTabWidget, 1,1, 0,1);
 
     // Background settings on Tab 1
     m_pTab1 = new QWidget(0, "Background Tab");
     m_pTabWidget->addTab(m_pTab1, i18n("Back&ground"));
 
-    // QGroupBox *group = new QGroupBox(i18n("Background"), this);
-    // top->addWidget(group, 1, 0);
-
     QGridLayout *grid = new QGridLayout(m_pTab1, 4, 3, 10, 10);
     grid->setColStretch(1, 1);
     grid->setColStretch(2, 1);
 
-    lbl = new QLabel(i18n("&Mode:"), m_pTab1);
+    QLabel *lbl = new QLabel(i18n("&Mode:"), m_pTab1);
     lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
     m_pBackgroundBox = new QComboBox(m_pTab1);
@@ -178,9 +187,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     // Wallpaper at Tab2
     m_pTab2 = new QWidget(0, "Wallpaper Tab");
     m_pTabWidget->addTab(m_pTab2, i18n("Wa&llpaper"));
-
-    // group = new QGroupBox(i18n("Wallpaper"), this);
-    // top->addWidget(group, 1, 1);
 
     grid = new QGridLayout(m_pTab2, 4, 3, 10, 10);
     grid->setColStretch(1, 1);
@@ -242,27 +248,38 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pCBMulti->hide();
     m_pMSetupBut->hide();
 
-    m_Renderer = new KBackgroundRenderer(0, config);
+    config->setGroup( "X-*-Greeter" );
+    m_Renderer = new KBackgroundRenderer( 0,
+	new KSimpleConfig(
+	    config->readEntry( "BackgroundCfg",
+			       KDE_CONFDIR "/kdm/backgroundrc" ) ) );
     connect(m_Renderer, SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
 
     init();
     apply();
 
-    // read only mode
-    if (getuid() != 0)
-    {
-        m_pCBMulti->setEnabled(false);
-        m_pBackgroundBox->setEnabled(false);
-        m_pWallpaperBox->setEnabled(false);
-        m_pArrangementBox->setEnabled(false);
-        m_pBGSetupBut->setEnabled(false);
-        m_pMSetupBut->setEnabled(false);
-        m_pBrowseBut->setEnabled(false);
-        m_pColor1But->setEnabled(false);
-        m_pColor2But->setEnabled(false);
-    }
 }
 
+void KBackground::makeReadOnly()
+{
+    m_pCBMulti->setEnabled(false);
+    m_pBackgroundBox->setEnabled(false);
+    m_pWallpaperBox->setEnabled(false);
+    m_pArrangementBox->setEnabled(false);
+    m_pBGSetupBut->setEnabled(false);
+    m_pMSetupBut->setEnabled(false);
+    m_pBrowseBut->setEnabled(false);
+    m_pColor1But->setEnabled(false);
+    m_pColor2But->setEnabled(false);
+}
+
+void KBackground::slotEnableChanged()
+{
+    bool en = m_pCBEnable->isChecked();
+    m_pMLabel->setEnabled( en );
+//    m_pMonitor->setEnabled( en ); no change!?
+    m_pTabWidget->setEnabled( en );
+}
 
 /*
  * Fill all check/listboxen
@@ -384,6 +401,8 @@ void KBackground::apply()
 
 void KBackground::load()
 {
+    m_pCBEnable->setChecked( config->readBoolEntry( "UseBackground", true ) );
+    slotEnableChanged();
     m_Renderer->load(0);
 
     apply();
@@ -394,6 +413,7 @@ void KBackground::load()
 void KBackground::save()
 {
     kdDebug() << "Saving stuff..." << endl;
+    config->writeEntry( "UseBackground", m_pCBEnable->isChecked() );
     m_Renderer->writeSettings();
 
     emit changed(false);
@@ -402,10 +422,13 @@ void KBackground::save()
 
 void KBackground::defaults()
 {
+    m_pCBEnable->setChecked( true );
+    slotEnableChanged();
+
     KBackgroundRenderer *r = m_Renderer;
 
     if (r->isActive())
-    r->stop();
+	r->stop();
     r->setBackgroundMode(KBackgroundSettings::Flat);
     r->setColorA(_defColorA);
     r->setColorB(_defColorB);

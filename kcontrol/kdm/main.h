@@ -25,6 +25,7 @@
 #define __kdm_main_h
 
 #include <qtabwidget.h>
+#include <qmap.h>
 
 #include <kcmodule.h>
 
@@ -51,6 +52,16 @@ public:
   QString quickHelp() const;
   const KAboutData* aboutData() const;
 
+public slots:
+
+  void slotMinMaxUID(int min, int max);
+
+signals:
+
+  void clearUsers();
+  void addUsers(const QMap<QString,int> &);
+  void delUsers(const QMap<QString,int> &);
+
 protected:
 
   void resizeEvent(QResizeEvent *e);
@@ -59,7 +70,6 @@ protected:
 protected slots:
 
   void moduleChanged(bool state);
-
 
 private:
 
@@ -71,6 +81,12 @@ private:
   KDMSessionsWidget	*sessions;
   KDMUsersWidget	*users;
   KDMConvenienceWidget	*convenience;
+
+  QMap<QString,int>	usermap;
+  int			minshowuid, maxshowuid;
+  bool			updateOK;
+
+  void propagateUsers();
 
 };
 

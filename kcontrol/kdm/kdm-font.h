@@ -36,6 +36,7 @@ public:
         void load();
         void save();
 	void defaults();
+	void makeReadOnly();
 	void set_def();
 
 signals:
@@ -54,6 +55,7 @@ private:
         QLabel		*fontlabel;
 	QComboBox	*fontcombo;
 	QCheckBox	*aacb;
+	QPushButton	*fontbtn;
 };
 
 

@@ -26,13 +26,13 @@
 #include <qstring.h>
 #include <qimage.h>
 #include <qgroupbox.h>
-//#include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
 
 #include <klistbox.h>
 #include <kcombobox.h>
 #include <kcolorbutton.h>
+#include <klistview.h>
 #include <kurl.h>
 
 #include <pwd.h>
@@ -43,36 +43,42 @@ class KDMConvenienceWidget : public QWidget
 	Q_OBJECT
 
 public:
-	KDMConvenienceWidget(QWidget *parent=0, const char *name=0, QStringList *show_users=0);
+	KDMConvenienceWidget(QWidget *parent=0, const char *name=0);
 
-        void load(QStringList *show_users=0);
+        void load();
         void save();
 	void defaults();
+	void makeReadOnly();
+
+public slots:
+	void slotClearUsers();
+	void slotAddUsers(const QMap<QString,int> &);
+	void slotDelUsers(const QMap<QString,int> &);
+
 
 signals:
 	void changed( bool state );
 
 private slots:
-        void addShowUser(const QString &user);
-        void removeShowUser(const QString &user);
-	void slotWpToNp();
-	void slotNpToWp();
-        void slotEnALChanged();
-        void slotPresChanged();
-        void slotEnPLChanged();
+	void slotPresChanged();
+	void slotALChanged();
+	void slotNPChanged();
 	void slotChanged();
+	void slotSetAutoUser( const QString &user );
+	void slotSetPreselUser( const QString &user );
+	void slotUpdateNoPassUser( QListViewItem *item );
 
 private:
-	void removeText(QListBox *lb, const QString &user);
-	void updateButton();
-
 	QGroupBox	*alGroup, *puGroup, *npGroup, *btGroup;
-	QCheckBox	*cbalen, *cbal1st, *cbplen, *cbarlen, *cbjumppw;
+	QCheckBox	*cbalen, *cbplen, *cbarlen, *cbjumppw;
 	QRadioButton	*npRadio, *ppRadio, *spRadio;
 	KComboBox	*userlb, *puserlb;
-	KListBox	*wpuserlb, *npuserlb;
-	QPushButton	*np_to_wp, *wp_to_np;
-	QLabel		*u_label, *pu_label, *w_label, *n_label;
+	KListView	*npuserlv;
+	QLabel		*u_label, *pu_label, *w_label, *n_label, *pl_label;
+	QString		autoUser, preselUser;
+	QStringList	noPassUsers;
+
+	void updateEnables();
 };
 
 #endif

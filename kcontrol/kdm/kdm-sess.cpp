@@ -224,32 +224,30 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       main->activate();
 
-      load();
+}
 
-    // read only mode
-    if (getuid() != 0)
-    {
-      sdlcombo->setEnabled(false);
-      sdrcombo->setEnabled(false);
+void KDMSessionsWidget::makeReadOnly()
+{
+    sdlcombo->setEnabled(false);
+    sdrcombo->setEnabled(false);
 
-      restart_lined->lineEdit()->setReadOnly(true);
-      restart_lined->button()->setEnabled(false);
-      shutdown_lined->lineEdit()->setReadOnly(true);
-      shutdown_lined->button()->setEnabled(false);
+    restart_lined->lineEdit()->setReadOnly(true);
+    restart_lined->button()->setEnabled(false);
+    shutdown_lined->lineEdit()->setReadOnly(true);
+    shutdown_lined->button()->setEnabled(false);
 #if defined(__linux__) && defined(__i386__)
-      lilo_check->setEnabled(false);
-      lilocmd_lined->lineEdit()->setReadOnly(true);
-      lilocmd_lined->button()->setEnabled(false);
-      lilomap_lined->lineEdit()->setReadOnly(true);
-      lilomap_lined->button()->setEnabled(false);
+    lilo_check->setEnabled(false);
+    lilocmd_lined->lineEdit()->setReadOnly(true);
+    lilocmd_lined->button()->setEnabled(false);
+    lilomap_lined->lineEdit()->setReadOnly(true);
+    lilomap_lined->button()->setEnabled(false);
 #endif
-      session_lined->setReadOnly(true);
-      sessionslb->setEnabled(false);
-      btnup->setEnabled(false);
-      btndown->setEnabled(false);
-      btnrm->setEnabled(false);
-      btnadd->setEnabled(false);
-    }
+    session_lined->setReadOnly(true);
+    sessionslb->setEnabled(false);
+    btnup->setEnabled(false);
+    btndown->setEnabled(false);
+    btnrm->setEnabled(false);
+    btnadd->setEnabled(false);
 }
 
 void KDMSessionsWidget::slotLiloCheckToggled(bool on)

@@ -24,11 +24,14 @@
 #include <config.h>
 
 #include <qlayout.h>
+#include <qdragobject.h>
 
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kimageio.h>
 #include <kmessagebox.h>
+#include <kaboutdata.h>
+#include <kgenericfactory.h>
 
 #include "kdm-appear.h"
 #include "kdm-font.h"
@@ -41,8 +44,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <kaboutdata.h>
-#include <kgenericfactory.h>
+#include <unistd.h>
 
 typedef KGenericFactory<KDModule, QWidget> KDMFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kdm, KDMFactory("kdmconfig") );
@@ -77,8 +79,14 @@ KSimpleConfig *config;
 
 KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   : KCModule(KDMFactory::instance(), parent, name)
+  , minshowuid(0)
+  , maxshowuid(0)
+  , updateOK(false)
 {
-  QStringList show_users;
+  struct passwd *ps;
+  for (setpwent(); (ps = getpwent()); )
+    usermap.insert( QString::fromLocal8Bit( ps->pw_name ), ps->pw_uid );
+  endpwent();
 
   config = new KSimpleConfig( QString::fromLatin1( KDE_CONFDIR "/kdm/kdmrc" ));
 
@@ -101,16 +109,31 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   tab->addTab(sessions, i18n("&Sessions"));
   connect(sessions, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
 
-  users = new KDMUsersWidget(this, 0, &show_users);
+  users = new KDMUsersWidget(this, 0);
   tab->addTab(users, i18n("&Users"));
   connect(users, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
+  connect(users, SIGNAL(setMinMaxUID(int,int)), SLOT(slotMinMaxUID(int,int)));
+  connect(this, SIGNAL(addUsers(const QMap<QString,int> &)), users, SLOT(slotAddUsers(const QMap<QString,int> &)));
+  connect(this, SIGNAL(delUsers(const QMap<QString,int> &)), users, SLOT(slotDelUsers(const QMap<QString,int> &)));
+  connect(this, SIGNAL(clearUsers()), users, SLOT(slotClearUsers()));
 
-  // FAT NOTE: this must be behind the "users" tab!!!
-  convenience = new KDMConvenienceWidget(this, 0, &show_users);
+  convenience = new KDMConvenienceWidget(this, 0);
   tab->addTab(convenience, i18n("Con&venience"));
   connect(convenience, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
-  connect(users, SIGNAL(show_user_add(const QString &)), convenience, SLOT(addShowUser(const QString &)));
-  connect(users, SIGNAL(show_user_remove(const QString &)), convenience, SLOT(removeShowUser(const QString &)));
+  connect(this, SIGNAL(addUsers(const QMap<QString,int> &)), convenience, SLOT(slotAddUsers(const QMap<QString,int> &)));
+  connect(this, SIGNAL(delUsers(const QMap<QString,int> &)), convenience, SLOT(slotDelUsers(const QMap<QString,int> &)));
+  connect(this, SIGNAL(clearUsers()), convenience, SLOT(slotClearUsers()));
+
+  load();
+
+  if (getuid() != 0) {
+    appearance->makeReadOnly();
+    font->makeReadOnly();
+    background->makeReadOnly();
+    users->makeReadOnly();
+    sessions->makeReadOnly();
+    convenience->makeReadOnly();
+  }
 
   top->addWidget(tab);
 }
@@ -154,7 +177,7 @@ const KAboutData* KDModule::aboutData() const
    KAboutData *about =
    new KAboutData(I18N_NOOP("kcmkdm"), I18N_NOOP("KDE Login Manager Config Module"),
                   0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1996 - 2001 The KDM Authors"));
+                  I18N_NOOP("(c) 1996 - 2002 The KDM Authors"));
 
    about->addAuthor("Thomas Tanghus", I18N_NOOP("Original author"), "tanghus@earthling.net");
 	about->addAuthor("Steffen Hansen", 0, "hansen@kde.org");
@@ -165,14 +188,13 @@ const KAboutData* KDModule::aboutData() const
 
 void KDModule::load()
 {
-  QStringList show_users;
-
   appearance->load();
   font->load();
   background->load();
-  users->load(&show_users);
+  users->load();
   sessions->load();
-  convenience->load(&show_users);
+  convenience->load();
+  propagateUsers();
 }
 
 
@@ -185,7 +207,6 @@ void KDModule::save()
   sessions->save();
   convenience->save();
   config->sync();
-  chmod( KDE_CONFDIR "/kdm/kdmrc", 0644 );
 }
 
 
@@ -197,6 +218,7 @@ void KDModule::defaults()
   users->defaults();
   sessions->defaults();
   convenience->defaults();
+  propagateUsers();
 }
 
 
@@ -209,6 +231,43 @@ void KDModule::moduleChanged(bool state)
 void KDModule::resizeEvent(QResizeEvent *)
 {
   tab->setGeometry(0,0,width(),height());
+}
+
+void KDModule::propagateUsers()
+{
+  emit clearUsers();
+  QMap<QString,int> lusers;
+  QMapConstIterator<QString,int> it;
+  for (it = usermap.begin(); it != usermap.end(); ++it) {
+    int uid = it.data();
+    if (!uid || (uid >= minshowuid && uid <= maxshowuid))
+      lusers[it.key()] = uid;
+  }
+  emit addUsers(lusers);
+  updateOK = true;
+}
+
+void KDModule::slotMinMaxUID(int min, int max)
+{
+  if (updateOK) {
+    QMap<QString,int> alusers, dlusers;
+    QMapConstIterator<QString,int> it;
+    for (it = usermap.begin(); it != usermap.end(); ++it) {
+      int uid = it.data();
+      if (!uid) continue;
+      if ((uid >= minshowuid && uid <= maxshowuid) &&
+	  !(uid >= min && uid <= max))
+          dlusers[it.key()] = uid;
+      else
+      if ((uid >= min && uid <= max) &&
+	  !(uid >= minshowuid && uid <= maxshowuid))
+          alusers[it.key()] = uid;
+    }
+    emit delUsers(dlusers);
+    emit addUsers(alusers);
+  }
+  minshowuid = min;
+  maxshowuid = max;
 }
 
 #include "main.moc"

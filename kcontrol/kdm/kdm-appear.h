@@ -52,6 +52,7 @@ public:
 	void load();
 	void save();
 	void defaults();
+	void makeReadOnly();
 	QString quickHelp() const;
 
 	void loadLanguageList(KLanguageButton *combo);

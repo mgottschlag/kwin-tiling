@@ -1,7 +1,6 @@
 KDM - The KDE Display Manager - written by Steffen Hansen <hansen@kde.org>
 
-kdmconfig - The KDE Display Manager Configuration module - is 
+The KDE Display Manager Configuration module -
 written by Thomas Tanghus <tanghus@earthling.net>
 
-Extensions/bug fixes by Oswald Buddenhagen <ossi@kde.org>
-Bug reports should go to him.
+Currently maintend by Oswald Buddenhagen <ossi@kde.org>

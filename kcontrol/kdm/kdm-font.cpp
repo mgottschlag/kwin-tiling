@@ -57,7 +57,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
     " string (see \"Appearance\" tab)</li><li><em>Fail:</em> used to display a message"
     " when a person fails to login</li><li><em>Standard:</em> used for the rest of the text</li></ul>") );
 
-  QPushButton *fontbtn = new QPushButton(i18n("C&hange Font..."), tGroup);
+  fontbtn = new QPushButton(i18n("C&hange Font..."), tGroup);
   fontbtn->setFixedSize(fontbtn->sizeHint());
   connect(fontbtn, SIGNAL(clicked()), SLOT(slotGetFont()));
 
@@ -84,15 +84,12 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   ml->addWidget(mGroup);
   ml->addStretch(1);
 
-  load();
-  slotSetFont(0);
+}
 
-  if (getuid() != 0)
-    {
-      fontbtn->setEnabled(false);
-      fontcombo->setEnabled(false);
-      aacb->setEnabled(false);
-    }
+void KDMFontWidget::makeReadOnly()
+{
+    fontbtn->setEnabled(false);
+    aacb->setEnabled(false);
 }
 
 void KDMFontWidget::configChanged()
@@ -148,8 +145,6 @@ void KDMFontWidget::defaults()
 
 void KDMFontWidget::slotGetFont()
 {
-  QApplication::setOverrideCursor( waitCursor );
-
   QFont* tmpfont;
   switch (fontcombo->currentItem())
   {
@@ -159,13 +154,10 @@ void KDMFontWidget::slotGetFont()
     case 1:
       tmpfont = &failfont;
       break;
-    case 2:
     default:
       tmpfont = &stdfont;
       break;
   }
-
-  QApplication::restoreOverrideCursor( );
 
   KFontDialog::getFont(*tmpfont);
   fontlabel->setFont(*tmpfont);

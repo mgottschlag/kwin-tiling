@@ -239,24 +239,23 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   vbox->addStretch(1);
 
   loadLanguageList(langcombo);
-  load();
 
-  // implement read-only mode
-  if (getuid() != 0)
-    {
-      logobutton->setEnabled(false);
-      greetstr_lined->setReadOnly(true);
-      noneRadio->setEnabled(false);
-      clockRadio->setEnabled(false);
-      logoRadio->setEnabled(false);
-      posCenterRadio->setEnabled(false);
-      posSpecifyRadio->setEnabled(false);
-      xLineEdit->setEnabled(false);
-      yLineEdit->setEnabled(false);
-      guicombo->setEnabled(false);
-      echocombo->setEnabled(false);
-      langcombo->setEnabled(false);
-    }
+}
+
+void KDMAppearanceWidget::makeReadOnly()
+{
+    logobutton->setEnabled(false);
+    greetstr_lined->setReadOnly(true);
+    noneRadio->setEnabled(false);
+    clockRadio->setEnabled(false);
+    logoRadio->setEnabled(false);
+    posCenterRadio->setEnabled(false);
+    posSpecifyRadio->setEnabled(false);
+    xLineEdit->setEnabled(false);
+    yLineEdit->setEnabled(false);
+    guicombo->setEnabled(false);
+    echocombo->setEnabled(false);
+    langcombo->setEnabled(false);
 }
 
 void KDMAppearanceWidget::loadLanguageList(KLanguageButton *combo)
