@@ -314,7 +314,7 @@ KGreeter::insertUser( UserListView *listview, const QImage &default_pix,
     }
 }
 
-class QCStringList : public QValueList<QCString> {
+class KCStringList : public QValueList<QCString> {
 public:
     bool contains( const char *str ) const
     {
@@ -332,7 +332,7 @@ public:
     bool hasGroup( gid_t gid ) const
 	{ return groups.find( gid ) != groups.end(); }
     bool hasGroups() const { return !groups.isEmpty(); }
-    QCStringList users;
+    KCStringList users;
 private:
     QValueList<gid_t> groups;
 };
@@ -402,7 +402,7 @@ KGreeter::insertUsers( UserListView *listview )
 		}
 	    }
 	} else {
-	    QCStringList::ConstIterator it = users.users.begin();
+	    KCStringList::ConstIterator it = users.users.begin();
 	    for (; it != users.users.end(); ++it)
 		if ((ps = getpwnam( (*it).data() )))
 		    insertUser( listview, default_pix,
