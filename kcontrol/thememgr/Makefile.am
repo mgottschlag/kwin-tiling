@@ -32,7 +32,7 @@ install-data-local:
 	cd $(srcdir)/Themes; \
 	for f in *; do \
 	  if [ -d $$f -a $$f != "CVS" ]; then \
-	    tar --exclude CVS -c -f - $$f | gzip -c > $(DESTDIR)$(themesdir)/$$f.ktheme; \
+	    tar --exclude CVS -b 16 -c -f - $$f | gzip -c > $(DESTDIR)$(themesdir)/$$f.ktheme; \
 	  fi; \
 	done
 
