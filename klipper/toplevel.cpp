@@ -653,6 +653,8 @@ void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
 //         qDebug( "    format: %s", format);
 //     }
 
+    bool changed = !selectionMode || text != m_lastSelection;
+    
     QString lastClipRef = selectionMode ? m_lastSelection : m_lastClipboard;
 
     if ( text != lastClipRef ) {
@@ -690,7 +692,7 @@ void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
     else
         m_lastClipboard = lastClipRef;
 
-    if (lastClipRef != m_lastString) {
+    if (lastClipRef != m_lastString && changed) {
         applyClipChanges( lastClipRef );
     }
 }
