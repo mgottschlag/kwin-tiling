@@ -72,7 +72,7 @@
                 <bool>true</bool>
             </property>
             <property name="text">
-                <string>Limit Pixmap Cache</string>
+                <string>Limit pixmap cache</string>
             </property>
             <property name="checked">
                 <bool>false</bool>

@@ -30,7 +30,7 @@
                 <cstring>TextLabel2_3</cstring>
             </property>
             <property name="text">
-                <string>Setting for Desktop:</string>
+                <string>Setting for desktop:</string>
             </property>
         </widget>
         <widget class="KComboBox" row="0" column="1">
@@ -175,7 +175,7 @@ this list will be disabled.</string>
                                 </sizepolicy>
                             </property>
                             <property name="text">
-                                <string>Setup background program...</string>
+                                <string>Setup Background Program...</string>
                             </property>
                             <property name="autoDefault">
                                 <bool>false</bool>
@@ -750,7 +750,7 @@ Blending" this button is disabled.</string>
                                 <widget class="QComboBox">
                                     <item>
                                         <property name="text">
-                                            <string>No blending</string>
+                                            <string>No Blending</string>
                                         </property>
                                     </item>
                                     <item>
@@ -959,7 +959,7 @@ effects in the preview image above.</string>
                                         <cstring>m_pWPImageOrderLbl</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Image Order:</string>
+                                        <string>Image order:</string>
                                     </property>
                                 </widget>
                                 <widget class="KComboBox">
