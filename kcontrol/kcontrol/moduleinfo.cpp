@@ -72,7 +72,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 
 QPixmap ModuleInfo::smallIcon()
 {
-  return DesktopIcon(_icon, KIcon::SizeSmall);
+  return SmallIcon(_icon);
 }
 
 QPixmap ModuleInfo::mediumIcon()
