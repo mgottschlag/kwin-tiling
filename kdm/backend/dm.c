@@ -574,11 +574,6 @@ StartRemoteLogin (struct display *d)
     switch (pid = Fork ()) {
     case 0:
 	argv = d->serverArgv;
-	if (d->authFile) {
-	    if (!(argv = addStrArr (argv, "-auth", 5)) ||
-		!(argv = addStrArr (argv, d->authFile, -1)))
-		exit (1);
-	}
 	if (!(argv = addStrArr (argv, "-once", 5)) ||
 	    !(argv = addStrArr (argv, "-query", 6)) ||
 	    !(argv = addStrArr (argv, d->remoteHost, -1)))
