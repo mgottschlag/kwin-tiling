@@ -45,7 +45,9 @@ RANDOM_DEFINES = -DDEV_RANDOM
 CRYPT_DEFINES = -DHAS_CRYPT
 #endif
 
-XDM_CFLAGS = $(BASIC_FLAGS) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(RANDOM_DEFINES) $(CRYPT_DEFINES)
+VERSION_DEFINES = -DOSMAJORVERSION=OSMajorVersion -DOSMINORVERSION=OSMinorVersion
+
+XDM_CFLAGS = $(BASIC_FLAGS) $(VERSION_DEFINES) $(SIGNAL_DEFINES) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(RANDOM_DEFINES) $(CRYPT_DEFINES)
 
 acimake:
 	@echo XDM_CFLAGS=\"$(XDM_CFLAGS)\"
@@ -188,32 +190,60 @@ AC_SUBST(LIBUTIL)
 AC_CHECK_LIB(s, main, [LIB_LIBS="-ls"]) dnl for AIX
 AC_SUBST(LIB_LIBS)
 
-AC_CHECK_HEADER(krb5/krb5.h, [ XDM_CFLAGS="$XDM_CFLAGS -DK5AUTH" ])
-AC_CHECK_HEADER(rpc/rpc.h, [ XDM_CFLAGS="$XDM_CFLAGS -DSECURE_RPC" ])
+AC_MSG_CHECKING([whether to use Kerberos5 for Xauth cookies in kdm])
+AC_ARG_WITH(krb5auth,
+  [  --with-krb5auth         Use Kerberos5 for Xauth cookies in kdm.], , 
+  [ with_krb5auth=no ])
+if test "x$with_krb5auth" = xno; then
+  AC_MSG_RESULT(no)
+else
+  AC_MSG_RESULT(yes)
+  AC_CHECK_HEADER(krb5/krb5.h, 
+    [ XDM_CFLAGS="$XDM_CFLAGS -DK5AUTH" ],
+    [ AC_MSG_ERROR([--with-krb5auth requires Kerberos5 header files.])])
+fi
 
-dnl should be:
-dnl AC_CHECK_MEMBER(struct passwd.pw_expire, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE" ], , [#include <pwd.h>])
-dnl but somehow it doesn't work. so we make it by hand ...
-AC_MSG_CHECKING([for pw_expire in struct passwd])
-AC_CACHE_VAL(ac_cv_have_pw_expire,
-    [ AC_TRY_COMPILE(
+AC_MSG_CHECKING([whether to use Sun's secure RPC for Xauth cookies in kdm])
+AC_ARG_WITH(rpcauth,
+  [  --with-rpcauth          Use Sun's secure RPC for Xauth cookies in kdm.], , 
+  [ with_rpcauth=no ])
+if test "x$with_rpcauth" = xno; then
+  AC_MSG_RESULT(no)
+else
+  AC_MSG_RESULT(yes)
+  AC_CHECK_HEADER(rpc/rpc.h, 
+    [ XDM_CFLAGS="$XDM_CFLAGS -DSECURE_RPC" ],
+    [ AC_MSG_ERROR([--with-rpcauth requires Sun RPC header files.])])
+fi
+
+if test "x$use_pam" = xno; then
+
+  dnl should be:
+  dnl AC_CHECK_MEMBER(struct passwd.pw_expire, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE" ], , [#include <pwd.h>])
+  dnl but somehow it doesn't work. so we make it by hand ...
+  AC_MSG_CHECKING([for pw_expire in struct passwd])
+  AC_CACHE_VAL(ac_cv_have_pw_expire,
+      [ AC_TRY_COMPILE(
 	  [#include <pwd.h>],
 	  [struct passwd pwd; pwd.pw_expire = 0;],
 	  [ac_cv_have_pw_expire="yes"],
 	  [ac_cv_have_pw_expire="no"])
-    ])
-AC_MSG_RESULT($ac_cv_have_pw_expire)
-if test "$ac_cv_have_pw_expire" = "yes"; then
-    XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE"
+      ])
+  AC_MSG_RESULT($ac_cv_have_pw_expire)
+  if test "$ac_cv_have_pw_expire" = "yes"; then
+      XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE"
+  fi
+
+  ac_save_libs=$LIBS
+  LIBS="$LIBS $LIBUTIL"
+  AC_CHECK_FUNC(setusercontext, [ XDM_CFLAGS="$XDM_CFLAGS -DHAS_SETUSERCONTEXT" ])
+  AC_CHECK_FUNC(getusershell, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_GETUSERSHELL" ])
+  AC_CHECK_FUNC(login_getclass, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_LOGIN_GETCLASS" ])
+  AC_CHECK_FUNC(auth_timeok, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_AUTH_TIMEOK" ])
+  LIBS=$ac_save_libs
+
 fi
 
-ac_save_libs=$LIBS
-LIBS="$LIBS $LIBUTIL"
-AC_CHECK_FUNC(setusercontext, [ XDM_CFLAGS="$XDM_CFLAGS -DHAS_SETUSERCONTEXT" ])
-AC_CHECK_FUNC(getusershell, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_GETUSERSHELL" ])
-AC_CHECK_FUNC(login_getclass, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_LOGIN_GETCLASS" ])
-AC_CHECK_FUNC(auth_timeok, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_AUTH_TIMEOK" ])
-LIBS=$ac_save_libs
 AC_CHECK_FUNC(vsyslog, [ XDM_CFLAGS="$XDM_CFLAGS -DUSE_SYSLOG" ])
 if test "x$use_pam" = xyes; then
     XDM_CFLAGS="$XDM_CFLAGS -DUSE_PAM"
