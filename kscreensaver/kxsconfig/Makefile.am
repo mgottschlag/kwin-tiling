@@ -5,7 +5,7 @@ kxsconfig_LDFLAGS  = $(KDE_RPATH) $(all_libraries)
 kxsconfig_LDADD    = $(LIB_KDEUI) $(LIB_KIMGIO)
 
 kxsrun_LDFLAGS  = $(KDE_RPATH) $(all_libraries) 
-kxsrun_LDADD    = $(LIB_KDECORE)
+kxsrun_LDADD    = $(LIB_KDEUI) $(LIB_KDECORE)
 
 SUBDIRS = config
 
