@@ -37,7 +37,7 @@ install-data-local:
 KDE_ICON = klipper
 
 messages:
-	$(XGETTEXT) $(klipper_la_SOURCES) klipperbindings.cpp -o $(podir)/klipper.pot
+	$(XGETTEXT) *.cpp -o $(podir)/klipper.pot
 
 dummy.cpp:
 	echo > dummy.cpp
@@ -45,3 +45,4 @@ dummy.cpp:
 # update script:
 updatedir = $(kde_datadir)/kconf_update
 update_DATA = klipperrc.upd klipper-1-2.pl
+
