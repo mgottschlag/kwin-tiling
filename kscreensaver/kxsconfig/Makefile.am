@@ -16,8 +16,6 @@ bin_PROGRAMS = kxsconfig kxsrun
 kxsconfig_SOURCES = kxsconfig.cpp kxscontrol.cpp kxsitem.cpp
 kxsrun_SOURCES = kxsrun.cpp kxsitem.cpp
 
-include_HEADERS = 
-
 noinst_HEADERS = kxsconfig.h kxscontrol.h kxsitem.h
 
 METASOURCES = AUTO
@@ -25,6 +23,6 @@ METASOURCES = AUTO
 ####### Build rules
 
 messages:
-	$(XGETTEXT) -C -ktranslate -kaliasLocale -ki18n -x $(includedir)/kde.pot *.cc *.h && mv messages.po ../po/kxsconfig.pot
+	$(XGETTEXT) -C -ktranslate -kaliasLocale -ki18n -kI18N_NOOP -x $(includedir)/kde.pot *.cpp *.h -o $(podir)/kxsconfig.pot
 
 
