@@ -47,7 +47,7 @@ public:
      virtual const QPixmap *pixmap() const { return &pm; }
      enum State { Normal, Selected, Hilighted};
 protected:
-     virtual void paint( QPainter * , KDMView* , enum State = Normal);
+     virtual void paint( QPainter * , KDMView* , enum State s = Normal);
      virtual int height( const KDMView * ) const;
      virtual int width( const KDMView * ) const;
      virtual void setText( const QString& text) { txt = text;}
