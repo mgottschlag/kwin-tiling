@@ -101,8 +101,8 @@ Enable=false
 #Xaccess=
 # The program which is invoked to dynamically generate replies to XDMCP
 # BroadcastQuery requests.
-# By default no program is invoked and the system load is sent.
-#Xwilling=@KDE_CONFDIR@/kdm/Xwilling
+# By default no program is invoked and "Willing to manage" is sent.
+Xwilling=@KDE_CONFDIR@/kdm/Xwilling
 # Number of seconds to wait for display to respond after the user has
 # selected a host from the chooser. Default is 15.
 #ChoiceTimeout=10
