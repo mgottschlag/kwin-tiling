@@ -50,7 +50,7 @@ HelpWidget::HelpWidget(QWidget *parent , const char *name)
 void HelpWidget::setText( const QString& docPath, const QString& text)
 {
   docpath = docPath;
-  if (text.isEmpty())
+  if (text.isEmpty() && docPath.isEmpty())
     setBaseText();
   else
     _browser->setText(text + i18n("<br><br>To read the full manual click <a href=\"%1\">here</a>.")
@@ -75,8 +75,5 @@ void HelpWidget::urlClicked(const QString & url)
 
 void HelpWidget::mailClicked(const QString &,const QString & addr)
 {
-  KProcess process;
-  process << "kmail"
-          << addr;
-  process.start(KProcess::DontCare);
+	kapp->invokeMailer(addr, QString::null);
 }
