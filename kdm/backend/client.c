@@ -290,9 +290,9 @@ Verify (const char *name, const char *pass)
 
     if ((td->displayType & d_location) == dForeign) {
 	char *tmpch;
-	strncpy(hostname, td->name, sizeof(hostname) - 1);
+	strncpy (hostname, td->name, sizeof(hostname) - 1);
 	hostname[sizeof(hostname)-1] = '\0';
-	if ((tmpch = strchr(hostname, ':')))
+	if ((tmpch = strchr (hostname, ':')))
 	    *tmpch = '\0';
     } else
 	hostname[0] = '\0';
@@ -307,7 +307,7 @@ Verify (const char *name, const char *pass)
     }
     tty[i] = '\0';
 # else
-    memcpy(tty, "/dev/xdm/", 9);
+    memcpy (tty, "/dev/xdm/", 9);
     for (i = 0; i < 6 && td->name[i]; i++) {
 	if (td->name[i] == ':' || td->name[i] == '.')
 	    tty[9 + i] = '_';
@@ -354,27 +354,27 @@ Verify (const char *name, const char *pass)
 	int ret;
 	char realm[REALM_SZ];
 
-	if (krb_get_lrealm(realm, 1)) {
-	    LogError("Can't get KerberosIV realm.\n");
+	if (krb_get_lrealm (realm, 1)) {
+	    LogError ("Can't get KerberosIV realm.\n");
 	    return V_ERROR;
 	}
 
-	sprintf(krbtkfile, "%s.%.*s", TKT_ROOT, MAXPATHLEN - strlen(TKT_ROOT) - 2, d->name);
-	krb_set_tkt_string(krbtkfile);
-	unlink(krbtkfile);
+	sprintf (krbtkfile, "%s.%.*s", TKT_ROOT, MAXPATHLEN - strlen(TKT_ROOT) - 2, td->name);
+	krb_set_tkt_string (krbtkfile);
+	unlink (krbtkfile);
 
-	ret = krb_verify_user(curuser, "", realm, curpass, 1, "rcmd");
+	ret = krb_verify_user (curuser, "", realm, curpass, 1, "rcmd");
 	if (ret == KSUCCESS) {
-	    chown(krbtkfile, p->pw_uid, p->pw_gid);
-	    Debug("KerberosIV verify succeeded\n");
+	    chown (krbtkfile, p->pw_uid, p->pw_gid);
+	    Debug ("KerberosIV verify succeeded\n");
 	    goto done;
 	} else if (ret != KDC_PR_UNKNOWN && ret != SKDC_CANT) {
-	    LogError("KerberosIV verification failure %\"s for %s\n",
-		     krb_get_err_text(ret), curuser);
+	    LogError ("KerberosIV verification failure %\"s for %s\n",
+		      krb_get_err_text (ret), curuser);
 	    krbtkfile[0] = '\0';
 	    return V_ERROR;
 	}
-	Debug("KerberosIV verify failed: %s\n", krb_get_err_text(ret));
+	Debug ("KerberosIV verify failed: %s\n", krb_get_err_text (ret));
     }
     krbtkfile[0] = '\0';
 # endif  /* KERBEROS */
@@ -454,7 +454,7 @@ Restrict ()
 # endif /* AIXV3 */
 #endif
 
-    Debug("Restrict %s ...\n", curuser);
+    Debug ("restrict %s ...\n", curuser);
 
 #if defined(USE_PAM) || defined(AIXV3)
     if (!(p = getpwnam (curuser))) {
@@ -490,12 +490,12 @@ Restrict ()
 #elif defined(AIXV3)	/* USE_PAM */
 
     msg = NULL;
-    if (loginrestrictions(curuser,
+    if (loginrestrictions (curuser,
 	((td->displayType & d_location) == dForeign) ? S_RLOGIN : S_LOGIN,
 	tty, &msg) == -1)
     {
-	Debug("loginrestrictions() - %s\n", msg ? msg : "Error\n");
-	loginfailed(curuser, hostname, tty);
+	Debug ("loginrestrictions() - %s\n", msg ? msg : "error");
+	loginfailed (curuser, hostname, tty);
 	if (msg) {
 	    GSendInt (V_MSGERR);
 	    GSendStr (msg);
@@ -504,20 +504,20 @@ Restrict ()
     } else
 	    GSendInt (V_OK);
     if (msg)
-	free((void *)msg);
+	free ((void *)msg);
 
 #else	/* USE_PAM || AIXV3 */
 
 # ifdef HAVE_GETUSERSHELL
     for (;;) {
-	if (!(s = getusershell())) {
-	    Debug("shell not in /etc/shells\n");
-	    endusershell();
+	if (!(s = getusershell ())) {
+	    Debug ("shell not in /etc/shells\n");
+	    endusershell ();
 	    GSendInt (V_BADSHELL);
 	    return;
 	}
-	if (!strcmp(s, p->pw_shell)) {
-	    endusershell();
+	if (!strcmp (s, p->pw_shell)) {
+	    endusershell ();
 	    break;
 	}
     }
@@ -525,9 +525,9 @@ Restrict ()
 
 # ifdef USE_LOGIN_CAP
 #  ifdef HAVE_LOGIN_GETCLASS
-    lc = login_getclass(p->pw_class);
+    lc = login_getclass (p->pw_class);
 #  else
-    lc = login_getpwclass(p);
+    lc = login_getpwclass (p);
 #  endif
     if (!lc) {
 	GSendInt (V_ERROR);
@@ -544,10 +544,10 @@ Restrict ()
     if ((
 # ifdef USE_LOGIN_CAP
     /* Do we ignore a nologin file? */
-	!login_getcapbool(lc, "ignorenologin", 0)) &&
-	(!stat((nolg = login_getcapstr(lc, "nologin", "", NULL)), &st) ||
+	!login_getcapbool (lc, "ignorenologin", 0)) &&
+	(!stat ((nolg = login_getcapstr (lc, "nologin", "", NULL)), &st) ||
 # endif
-	 !stat((nolg = _PATH_NOLOGIN), &st))) {
+	 !stat ((nolg = _PATH_NOLOGIN), &st)))
 	GSendInt (V_NOLOGIN);
 	GSendStr (nolg);
 # ifdef USE_LOGIN_CAP
@@ -559,7 +559,7 @@ Restrict ()
 
 /* restrict_nohome */
 # ifdef USE_LOGIN_CAP
-    if (login_getcapbool(lc, "requirehome", 0)) {
+    if (login_getcapbool (lc, "requirehome", 0)) {
 	struct stat st;
 	if (!*p->pw_dir || stat (p->pw_dir, &st) || st.st_uid != p->pw_uid) {
 	    GSendInt (V_NOHOME);
@@ -573,7 +573,7 @@ Restrict ()
 /* restrict_time */
 # ifdef USE_LOGIN_CAP
 #  ifdef HAVE_AUTH_TIMEOK
-    if (!auth_timeok(lc, time(NULL))) {
+    if (!auth_timeok (lc, time (NULL))) {
 	GSendInt (V_BADTIME);
 	login_close(lc);
 	return;
@@ -592,13 +592,13 @@ Restrict ()
 
 #  define DEFAULT_WARN  (2L * 7L)  /* Two weeks */
 
-	tim = time(NULL) / 86400L;
+	tim = time (NULL) / 86400L;
 
 #  ifdef USE_LOGIN_CAP
-	quietlog = login_getcapbool(lc, "hushlogin", 0);
-	warntime = login_getcaptime(lc, "warnexpire",
-				    DEFAULT_WARN * 86400L, 
-				    DEFAULT_WARN * 86400L) / 86400L;
+	quietlog = login_getcapbool (lc, "hushlogin", 0);
+	warntime = login_getcaptime (lc, "warnexpire",
+				     DEFAULT_WARN * 86400L, 
+				     DEFAULT_WARN * 86400L) / 86400L;
 #  else
 	quietlog = 0;
 #   ifdef USESHADOW
@@ -665,7 +665,7 @@ Restrict ()
 
     GSendInt (V_OK);
 # ifdef USE_LOGIN_CAP
-    login_close(lc);
+    login_close (lc);
 # endif
 
 
@@ -844,19 +844,19 @@ StartClient ()
 #ifndef USE_PAM
 # ifdef AIXV3
     msg = NULL;
-    loginsuccess(curuser, hostname, tty, &msg);
+    loginsuccess (curuser, hostname, tty, &msg);
     if (msg) {
-	Debug("loginsuccess() - %s\n", msg);
-	free((void *)msg);
+	Debug ("loginsuccess() - %s\n", msg);
+	free ((void *)msg);
     }
 # else /* AIXV3 */
 #  if defined(KERBEROS) && !defined(NO_AFS)
     if (krbtkfile[0] != '\0') {
-	if (k_hasafs()) {
-	    if (k_setpag() == -1)
+	if (k_hasafs ()) {
+	    if (k_setpag () == -1)
 		LogError ("setpag() for %s failed\n", curuser);
-	    if ((ret = k_afsklog(NULL, NULL)) != KSUCCESS)
-		LogError("AFS Warning: %s\n", krb_get_err_text(ret));
+	    if ((ret = k_afsklog (NULL, NULL)) != KSUCCESS)
+		LogError ("AFS Warning: %s\n", krb_get_err_text (ret));
 	}
     }
 #  endif /* KERBEROS && AFS */
@@ -889,7 +889,7 @@ StartClient ()
 	    char		netname[MAXNETNAMELEN+1];
 	    char		domainname[MAXNETNAMELEN+1];
     
-	    getdomainname(domainname, sizeof domainname);
+	    getdomainname (domainname, sizeof domainname);
 	    user2netname (netname, curuid, domainname);
 	    addr.family = FamilyNetname;
 	    addr.length = strlen (netname);
@@ -906,7 +906,7 @@ StartClient ()
 	     * automatically when it reads the cache we are about
 	     * to point it at.
 	     */
-	    extern Xauth *Krb5GetAuthFor();
+	    extern Xauth *Krb5GetAuthFor ();
 
 	    XauDisposeAuth (td->authorizations[i]);
 	    td->authorizations[i] =
@@ -939,7 +939,7 @@ StartClient ()
     endpwent ();
 #if !defined(USE_PAM) && !defined(AIXV3)
 # ifndef QNX4  /* QNX4 doesn't need endspent() to end shadow passwd ops */
-    endspent();
+    endspent ();
 # endif
 #endif
     switch (pid = Fork ()) {
@@ -1105,7 +1105,7 @@ StartClient ()
 		for (i = 0; i < td->authNum; i++)
 		{
 		    if (td->authorizations[i]->name_length == 9 &&
-			memcmp(td->authorizations[i]->name, "SUN-DES-1", 9) == 0)
+			memcmp (td->authorizations[i]->name, "SUN-DES-1", 9) == 0)
 		    {
 			for (j = i+1; j < td->authNum; j++)
 			    td->authorizations[j-1] = td->authorizations[j];
@@ -1114,18 +1114,18 @@ StartClient ()
 		    }
 		}
 	    }
-	    bzero(secretkey, strlen(secretkey));
+	    bzero (secretkey, strlen (secretkey));
 	}
 #endif
 #ifdef K5AUTH
 	/* do like "kinit" program */
 	if (!curpass[0])
-	    LogInfo("No password for Kerberos5 provided.\n");
+	    LogInfo ("No password for Kerberos5 provided.\n");
 	else
 	{
 	    int i, j;
 	    int result;
-	    extern char *Krb5CCacheName();
+	    extern char *Krb5CCacheName ();
 
 	    result = Krb5Init (curuser, curpass, td);
 	    if (result == 0) {
@@ -1157,7 +1157,7 @@ StartClient ()
 		LogError ("Cannot chdir to %s's home %s: %s, using /\n",
 			  curuser, home, SysErrorMsg());
 		home = 0;
-		userEnviron = setEnv(userEnviron, "HOME", "/");
+		userEnviron = setEnv (userEnviron, "HOME", "/");
 		chdir ("/");
 	    }
 	} else
@@ -1271,29 +1271,29 @@ SessionExit (int status)
 
 	    code = Krb5DisplayCCache (td->name, &ccache);
 	    if (code)
-		LogError("%s while getting Krb5 ccache to destroy\n",
-			 error_message(code));
+		LogError ("%s while getting Krb5 ccache to destroy\n",
+			 error_message (code));
 	    else {
-		code = krb5_cc_destroy(ccache);
+		code = krb5_cc_destroy (ccache);
 		if (code) {
 		    if (code == KRB5_FCC_NOFILE)
 			Debug ("no Kerberos ccache file found to destroy\n");
 		    else
-			LogError("%s while destroying Krb5 credentials cache\n",
-				 error_message(code));
+			LogError ("%s while destroying Krb5 credentials cache\n",
+				  error_message (code));
 		} else
 		    Debug ("kerberos ccache destroyed\n");
-		krb5_cc_close(ccache);
+		krb5_cc_close (ccache);
 	    }
 	}
 #endif /* K5AUTH */
 #if !defined(USE_PAM) && !defined(AIXV3)
 # ifdef KERBEROS
 	if (krbtkfile[0]) {
-	    (void) dest_tkt();
+	    (void) dest_tkt ();
 #  ifndef NO_AFS
-	    if (k_hasafs())
-		(void) k_unlog();
+	    if (k_hasafs ())
+		(void) k_unlog ();
 #  endif
 	}
 # endif
@@ -1301,7 +1301,7 @@ SessionExit (int status)
 #ifdef USE_PAM
     } else {
 	if (pamh) {
-	    pam_end(pamh, PAM_SUCCESS);
+	    pam_end (pamh, PAM_SUCCESS);
 	    pamh = NULL;
 	    ReInitErrorLog ();
 	}
