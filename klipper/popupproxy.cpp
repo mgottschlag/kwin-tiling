@@ -114,3 +114,4 @@ int PopupProxy::insertFromSpill( int index ) {
     return count;
 
 }
+#include "popupproxy.moc"
