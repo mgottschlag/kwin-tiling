@@ -7,13 +7,13 @@ SUBDIRS = pics
 bin_PROGRAMS = kdmconfig
 
 kdmconfig_SOURCES = main.cpp utils.cpp kdm-appear.cpp kdm-font.cpp kdm-bgnd.cpp \
-	kdm-users.cpp kdm-sess.cpp klangcombo.cpp kdropsite.cpp
+	kdm-users.cpp kdm-sess.cpp klangcombo.cpp kdropsite.cpp kdm-lilo.cpp
 kdmconfig_LDADD = $(LDADD)
 #kdmconfig_LDFLAGS = -g
 METASOURCES =  kdm-appear.moc kdm-font.moc kdm-bgnd.moc kdm-users.moc kdm-sess.moc \
-	klangcombo.moc kdropsite.moc
+	klangcombo.moc kdropsite.moc kdm-lilo.moc
 noinst_HEADERS = kdm-appear.h kdm-font.h kdm-bgnd.h kdm-users.h kdm-sess.h klangcombo.h \
-	utils.h kdropsite.h
+	utils.h kdropsite.h kdm-lilo.h
 
 messages:
 	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kdmconfig_SOURCES) && mv messages.po ../../po/kdmconfig.pot

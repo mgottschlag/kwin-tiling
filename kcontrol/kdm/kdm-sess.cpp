@@ -76,6 +76,13 @@ void KDMSessionsWidget::setupPage(QWidget *)
       restart_lined->setFixedHeight(shutdown_lined->height());
       restart_lined->setText(restartstr);
 
+      QLabel *console_label = new QLabel(i18n("Console mode"), group1);
+      console_label->setFixedSize(console_label->sizeHint());
+
+      console_lined = new KLineEdit(group1);
+      console_lined->setFixedHeight(console_lined->height());
+      console_lined->setText(consolestr);
+
       QGroupBox *group2 = new QGroupBox( i18n("Session types"), this );
       
       QLabel *type_label = new QLabel(i18n("New type"), group2);
@@ -120,7 +127,7 @@ void KDMSessionsWidget::setupPage(QWidget *)
       QBoxLayout *lgroup1 = new QVBoxLayout( group1, 10 );
       QBoxLayout *lgroup1a = new QHBoxLayout();
       QBoxLayout *lgroup1b = new QHBoxLayout();
-
+      QBoxLayout *lgroup1c = new QHBoxLayout();
       QBoxLayout *lgroup2 = new QVBoxLayout( group2, 10 );
       QBoxLayout *lgroup2sub = new QHBoxLayout();
       QBoxLayout *lgroup2a = new QVBoxLayout();
@@ -137,11 +144,13 @@ void KDMSessionsWidget::setupPage(QWidget *)
       lgroup1->addSpacing(group1->fontMetrics().height()/2);
       lgroup1->addLayout(lgroup1a);
       lgroup1->addLayout(lgroup1b);
+      lgroup1->addLayout(lgroup1c);
       lgroup1a->addWidget(shutdown_label);
       lgroup1a->addWidget(shutdown_lined);
-
       lgroup1b->addWidget(restart_label);
       lgroup1b->addWidget(restart_lined);
+      lgroup1c->addWidget(console_label);
+      lgroup1c->addWidget(console_lined);
       lgroup1->activate();
 
       lgroup2->addSpacing(group2->fontMetrics().height()/2);
@@ -232,6 +241,8 @@ void KDMSessionsWidget::applySettings()
     c->writeEntry("ShutDown", shutdown_lined->text(), true);
   if(strlen(restart_lined->text()) > 0)
     c->writeEntry("Restart", restart_lined->text(), true);
+  if(strlen(console_lined->text()) > 0)
+    c->writeEntry("ConsoleMode", console_lined->text(), true);
 
   // write shutdown auth
   switch ( sdMode )
@@ -277,6 +288,7 @@ void KDMSessionsWidget::loadSettings()
   // read restart and shutdown cmds
   restartstr = c->readEntry("Restart", "/sbin/reboot");
   shutdownstr = c->readEntry("Shutdown", "/sbin/halt");
+  consolestr = c->readEntry("ConsoleMode", "/sbin/init 3");
 
   str = c->readEntry("ShutDownButton", "All");
   if(str == "All")

@@ -64,9 +64,9 @@ protected slots:
 private:
         KIconLoader  *iconloader;
 	QComboBox    *sdcombo;
-        QLineEdit    *restart_lined, *shutdown_lined, *session_lined;
+        QLineEdit    *restart_lined, *shutdown_lined, *session_lined, *console_lined;
 	MyListBox     *sessionslb;
-        QString      shutdownstr, restartstr;
+        QString      shutdownstr, restartstr, consolestr;
         QStrList     sessions;
 	int          sdMode;
         bool         gui;

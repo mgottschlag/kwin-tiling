@@ -28,6 +28,7 @@
 #include "kdm-bgnd.h"
 #include "kdm-users.h"
 #include "kdm-sess.h"
+#include "kdm-lilo.h"
 #include <kwm.h>
 #include <klocale.h>
 #include <kglobal.h>
@@ -48,6 +49,7 @@ private:
   KDMBackgroundWidget *background;
   KDMUsersWidget      *users;
   KDMSessionsWidget   *sessions;
+  KDMLiloWidget       *lilo;
   QStrList            *pages;
 };
 
@@ -60,6 +62,7 @@ KDMConfigApplication::KDMConfigApplication(int &argc, char **argv, const char *n
   background = 0;
   users = 0;
   sessions = 0;
+  lilo = 0;
 
   pages = getPageList();
 
@@ -97,11 +100,14 @@ KDMConfigApplication::KDMConfigApplication(int &argc, char **argv, const char *n
       if (!pages || pages->contains("sessions"))
         addPage(sessions = new KDMSessionsWidget(dialog, "sessions", FALSE),
                                   i18n("&Sessions"), "kdm-sess.html");
-      if (appearance || font || background || sessions || users)
+      if (!pages || pages->contains("lilo"))
+        addPage(lilo = new KDMLiloWidget(dialog, "lilo", FALSE),
+                                  i18n("&Lilo"), "kdm-lilo.html");
+      if (appearance || font || background || sessions || users || lilo)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kdmconfig [-init | {appearance,font,background,sessions,users}]\n"));
+          fprintf(stderr, i18n("usage: kdmconfig [-init | {appearance,font,background,sessions,users,lilo}]\n"));
           justInit = TRUE;
         }
 
@@ -132,6 +138,8 @@ void KDMConfigApplication::apply()
     users->applySettings();
   if (sessions)
     sessions->applySettings();
+  if (lilo)
+    lilo->applySettings();
 
   QApplication::restoreOverrideCursor( );
 }
