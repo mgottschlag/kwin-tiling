@@ -53,6 +53,8 @@ public:
 	QColor selectTxt;
 	QColor window;
 	QColor windowTxt;
+	QColor button;
+	QColor buttonTxt;
 	
 	int contrast;
 

@@ -178,6 +178,8 @@ KColorScheme::KColorScheme(QWidget *parent, Mode m)
 	wcCombo->insertItem(  i18n("Select text") );
 	wcCombo->insertItem(  i18n("Window background") );
 	wcCombo->insertItem(  i18n("Window text") );
+	wcCombo->insertItem(  i18n("Button background") );
+	wcCombo->insertItem(  i18n("Button text") );
 	wcCombo->adjustSize();
 	connect( wcCombo, SIGNAL( activated(int) ),
 			SLOT( slotWidgetColor(int)  )  );
@@ -270,6 +272,8 @@ void KColorScheme::slotSave( )
 	config->writeEntry( "windowBackground", cs->window );
 	config->writeEntry( "selectForeground", cs->selectTxt );
 	config->writeEntry( "contrast", cs->contrast );
+	config->writeEntry( "buttonForeground", cs->buttonTxt );
+	config->writeEntry( "buttonBackground", cs->button );
 	
 	config->sync();
 	
@@ -434,6 +438,10 @@ void KColorScheme::slotSelectColor( const QColor &col )
 					break;
 		case 12:	cs->windowTxt = colorPushColor;
 					break;
+		case 13:	cs->button = colorPushColor;
+					break;
+		case 14:	cs->buttonTxt = colorPushColor;
+					break;
 	}
 	
 	cs->drawSampleWidgets();
@@ -481,6 +489,10 @@ void KColorScheme::slotWidgetColor( int indx )
 					break;
 		case 12:	col = cs->windowTxt;
 					break;
+		case 13:	col = cs->button;
+					break;
+		case 14:	col = cs->buttonTxt;
+					break;
 	}
 
 	colorButton->setColor( col );
@@ -523,6 +535,8 @@ void KColorScheme::readScheme( int index )
     cs->aTitle = darkBlue;
     cs->aTxt = white;
     cs->aBlend = black;
+    cs->button = cs->back;
+    cs->buttonTxt = cs->txt;
     cs->contrast = 7;
 
     return;
@@ -555,6 +569,12 @@ void KColorScheme::readScheme( int index )
 
   cs->windowTxt =
     config->readColorEntry( "windowForeground", &black );
+
+  cs->button =
+    config->readColorEntry( "buttonBackground", &lightGray );
+
+  cs->buttonTxt =
+    config->readColorEntry( "buttonForeground", &black );
 
   if ( index == 0 ) config->setGroup( "WM" );
 
@@ -655,6 +675,8 @@ void KColorScheme::writeSettings()
   sys->writeEntry("windowForeground", cs->windowTxt, true, true);
   sys->writeEntry("windowBackground", cs->window, true, true);
   sys->writeEntry("selectForeground", cs->selectTxt, true, true);
+  sys->writeEntry("buttonBackground", cs->button, true, true);
+  sys->writeEntry("buttonForeground", cs->buttonTxt, true, true);
 
   sys->setGroup( "WM" );
   sys->writeEntry("activeForeground", cs->aTxt, true, true);
@@ -745,8 +767,11 @@ QPalette KColorScheme::createPalette()
   KConfigBase* config;
   config  = kapp->config();
   config->setGroup( "General" );
+  QColor button =
+    config->readColorEntry( "buttonBackground", &lightGray );
+
   QColor buttonText =
-    config->readColorEntry( "foreground", &black );
+    config->readColorEntry( "buttonForeground", &black );
 
   QColor background =
     config->readColorEntry( "background", &lightGray );
@@ -787,6 +812,7 @@ QPalette KColorScheme::createPalette()
 
   colgrp.setColor( QColorGroup::Highlight, highlight);
   colgrp.setColor( QColorGroup::HighlightedText, highlightedText);
+  colgrp.setColor( QColorGroup::Button, button);
   colgrp.setColor( QColorGroup::ButtonText, buttonText);
   return QPalette( colgrp, disabledgrp, colgrp);
 }
