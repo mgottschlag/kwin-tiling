@@ -217,7 +217,7 @@ void Installer::slotSetTheme(int id)
     name = mThemesList->text(id);
     if (name.isEmpty()) return;
 
-    name = locate("theme", name);
+    name = locate("themes", name);
     enabled = theme->load(name);
     if (!enabled)
     {
@@ -279,7 +279,7 @@ void Installer::slotExport()
   themeFile = mThemesList->text(cur);
   if (themeFile.isEmpty()) return;
 
-  fpath = locate("theme", themeFile);
+  fpath = locate("themes", themeFile);
   
   finfo.setFile(fpath);
   if (finfo.isDir())
