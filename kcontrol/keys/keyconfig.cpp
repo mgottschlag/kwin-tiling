@@ -50,6 +50,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   keys = new KAccel( this );
 
   if ( KeyType == "global" ) {
+#include "../../klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
 #include "../../kicker/core/kickerbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
@@ -171,7 +172,7 @@ void KKeyModule::defaults()
 
 void KKeyModule::slotRemove()
 {
-  QString kksPath = 
+  QString kksPath =
         KGlobal::dirs()->saveLocation("data", "kcmkeys/" + KeyType);
 
   QDir d( kksPath );
@@ -258,7 +259,7 @@ void KKeyModule::slotAdd()
 {
   QString sName;
 
-  if ( sList->currentItem() >= nSysSchemes ) 
+  if ( sList->currentItem() >= nSysSchemes )
      sName = sList->currentText();
   SaveScm ss( 0,  "save scheme", sName );
 
