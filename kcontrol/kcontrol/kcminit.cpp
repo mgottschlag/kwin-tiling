@@ -27,9 +27,6 @@
 #include <kdebug.h>
 #include <dcopclient.h>
 
-
-#include "global.h"
-
 static KCmdLineOptions options[] =
 {
     { "list", I18N_NOOP("List modules that are run at startup."), 0 },

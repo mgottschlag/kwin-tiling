@@ -27,7 +27,7 @@ lib_LTLIBRARIES =
 kdeinit_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
 
 noinst_LTLIBRARIES = libkcontrolcommon.la libkcontrolglobal.la
-# global.cpp is used by three targets (needed by kcminit.la too)
+# global.cpp is used by two targets
 libkcontrolglobal_la_SOURCES = global.cpp 
 # those are the sources needed by kcontrol.la and kcmshell.la
 libkcontrolcommon_la_SOURCES = modules.cpp proxywidget.cpp kcrootonly.cpp
@@ -48,7 +48,7 @@ kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 
 kcminit_la_SOURCES = kcminit.cpp
-kcminit_la_LIBADD   = libkcontrolglobal.la $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
+kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 rccontroldir = $(kde_datadir)/kcontrol
