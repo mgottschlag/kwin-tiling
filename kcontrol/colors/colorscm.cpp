@@ -240,7 +240,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 
     cbShadeList = new QCheckBox(i18n("Shade sorted column in lists"), this);
     stackLayout->addWidget(cbShadeList);
-    connect(cbShadeList, SIGNAL(toggled(bool)), this, SLOT(changed()));
+    connect(cbShadeList, SIGNAL(toggled(bool)), this, SLOT(slotShadeSortColumnChanged(bool)));
 
     QWhatsThis::add(cbShadeList,
        i18n("Check this box to show the sorted column in a list with a shaded background"));
@@ -333,7 +333,7 @@ void KColorScheme::save()
     cfg->writeEntry("visitedLinkColor", cs->visitedLink, true, true);
     cfg->writeEntry("alternateBackground", cs->alternateBackground, true, true);
 
-    cfg->writeEntry("shadeSortColumn", cbShadeList->isChecked(), true, true);
+    cfg->writeEntry("shadeSortColumn", cs->shadeSortColumn, true, true);
 
     cfg->setGroup( "WM" );
     cfg->writeEntry("activeForeground", cs->aTxt, true, true);
@@ -470,6 +470,7 @@ void KColorScheme::slotSave( )
     config->writeEntry("linkColor", cs->link);
     config->writeEntry("visitedLinkColor", cs->visitedLink);
     config->writeEntry("alternateBackground", cs->alternateBackground);
+    config->writeEntry("shadeSortColumn", cs->shadeSortColumn);
 
     delete config;
 }
@@ -715,6 +716,13 @@ void KColorScheme::slotColorForWidget(int indx, const QColor& col)
     slotSelectColor(col);
 }
 
+void KColorScheme::slotShadeSortColumnChanged(bool b)
+{
+    cs->shadeSortColumn = b;
+    sCurrentScheme = QString::null;
+
+    emit changed(true);
+}
 
 /*
  * Read a color scheme into "cs".
