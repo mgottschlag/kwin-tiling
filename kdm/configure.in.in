@@ -67,7 +67,8 @@ EOF
     else
         AC_MSG_RESULT([failed])
 	AC_MSG_ERROR([$XMKMF (imake) failed.
-Make sure you have all necessary X development packages installed.])
+Make sure you have all necessary X development packages installed.
+On some systems a missing /lib/cpp symlink is at fault.])
     fi
     cd ..
     rm -fr conftestdir
@@ -107,7 +108,6 @@ AC_ARG_WITH(xdmcp,
 	  fi
 	], [XDMCP=1])
 if test -n "$XDMCP"; then
-  kdmchooserdir=chooser
   AC_CHECK_LIB(Xdmcp, main, [LIBXDMCP="-lXdmcp"], , $X_LDFLAGS -lX11 $LIBSOCKET)
   if test -n "$LIBXDMCP"; then
     ac_cpp_safe=$ac_cpp
@@ -122,7 +122,6 @@ are installed or use --without-xdmcp to disable XDMCP support!])
   fi
 fi
 AC_SUBST(LIBXDMCP)
-AM_CONDITIONAL(include_kdm_chooser, test -n "$kdmchooserdir") dnl XXX phase out
 
 AC_MSG_CHECKING(whether to use Kerberos v4)
 AC_ARG_WITH(krb4,
