@@ -116,7 +116,7 @@ This function and the implementation of the module is then compiled
 to build a shared library. If the name of your modules is 'xyz', the
 name of the library should be
 
-libkcm_xyz(.la|.so)
+kcm_xyz(.la|.so)
 
 and should be installed into $KDEDIR/lib. (Ok, beat me for the KDEDIR, 
 but you all know what I mean, don't you? :)
@@ -144,7 +144,7 @@ X-KDE-ModuleType
 
 X-KDE-Library
 
-	This is the name of the library, without the libkcm_ prefix.
+	This is the name of the library, without the kcm_ prefix.
 	So in the example, the library name would be "xyz".
 
 X-KDE-FactoryName
