@@ -306,6 +306,7 @@ private:
     QStringList m_Names;
 
     KConfig *m_pConfig;
+    bool m_bDeleteConfig;
 };
 
 

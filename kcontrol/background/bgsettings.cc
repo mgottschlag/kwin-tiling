@@ -477,7 +477,23 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     #undef ADD_STRING
 
     m_pDirs = KGlobal::dirs();
-    m_pConfig = config;
+
+    if (!config) {
+        int screen_number = 0;
+        if (qt_xdisplay())
+            screen_number = DefaultScreen(qt_xdisplay());
+        QCString configname;
+        if (screen_number == 0)
+            configname = "kdesktoprc";
+        else
+            configname.sprintf("kdesktop-screen-%drc", screen_number);
+
+        m_pConfig = new KConfig(configname, false, false);
+        m_bDeleteConfig = true;
+    } else {
+        m_pConfig = config;
+        m_bDeleteConfig = false;
+    }
 
     srand((unsigned int) time(0L));
 
@@ -490,6 +506,8 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
 
 KBackgroundSettings::~KBackgroundSettings()
 {
+    if (m_bDeleteConfig)
+        delete m_pConfig;
 }
 
 
