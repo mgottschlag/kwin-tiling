@@ -568,7 +568,7 @@ void KAdvancedConfig::load( void )
     setXinerama(config->readBoolEntry(KWIN_XINERAMA, false));
     xineramaMovementEnable->setChecked( config->readBoolEntry(KWIN_XINERAMA_MOVEMENT, false));
     xineramaPlacementEnable->setChecked(config->readBoolEntry(KWIN_XINERAMA_PLACEMENT, false));
-    xineramaMaximizeEnable->setChecked(config->readEntry(KWIN_XINERAMA_MAXIMIZE, false));
+    xineramaMaximizeEnable->setChecked(config->readBoolEntry(KWIN_XINERAMA_MAXIMIZE, false));
 #endif
 
     setElectricBorders(config->readBoolEntry(KWM_ELECTRIC_BORDER, false));
