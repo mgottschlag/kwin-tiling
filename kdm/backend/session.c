@@ -334,14 +334,14 @@ CtrlGreeterWait (int wreply)
 	    Debug ("G_Verify\n");
 	    if (curuser) { free (curuser); curuser = 0; }
 	    if (curpass) { free (curpass); curpass = 0; }
-	    name = GRecvStr ();
-	    Debug (" type %\"s\n", name);
-	    if (Verify (name, conv_interact)) {
+	    if (curtype) { free (curtype); curtype = 0; }
+	    curtype = GRecvStr ();
+	    Debug (" type %\"s\n", curtype);
+	    if (Verify (conv_interact)) {
 		Debug (" -> return success\n");
 		GSendInt (V_OK);
 	    } else
 		Debug (" -> failure returned\n");
-	    free (name);
 	    break;
 	case G_Shutdown:
 	    i = GRecvInt ();
@@ -503,7 +503,7 @@ ManageSession (struct display *d)
 #endif
 
     if (AutoLogon ()) {
-	if (!Verify ("classic", conv_auto))
+	if (!StrDup (&curtype, "classic") || !Verify (conv_auto))
 	    goto gcont;
     } else {
 	OpenGreeter ();

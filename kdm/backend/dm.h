@@ -471,12 +471,12 @@ extern char **GRecvArgv (void);
 #define GCONV_PASS_ND	4
 #define GCONV_BINARY	5
 typedef char * (*GConvFunc) (int what, const char *prompt);
-extern int Verify (const char *type, GConvFunc gconv);
+extern int Verify (GConvFunc gconv);
 extern int StartClient (void);
 extern void SessionExit (int status) ATTR_NORETURN;
 extern int ReadDmrc (void);
 extern char **userEnviron, **systemEnviron;
-extern char *curuser, *curpass, *dmrcuser, *curdmrc, *newdmrc;
+extern char *curuser, *curpass, *curtype, *dmrcuser, *curdmrc, *newdmrc;
 
 /* server.c */
 extern int StartServer (struct display *d);

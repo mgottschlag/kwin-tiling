@@ -100,6 +100,7 @@ extern char *crypt(const char *, const char *);
  */
 char *curuser;
 char *curpass;
+char *curtype;
 char **userEnviron;
 char **systemEnviron;
 static int curuid;
@@ -386,13 +387,13 @@ AccNoPass (const char *un)
 #endif
 
 int
-Verify (const char *type, GConvFunc gconv)
+Verify (GConvFunc gconv)
 {
 #ifdef USE_PAM
     const char		*psrv;
     struct pam_data	pdata;
-    int			pretc;
-    char		psrvb[32];
+    int			pretc, pnopass;
+    char		psrvb[64];
 #elif defined(AIXV3)
     char		*msg, *curret;
     int			i, reenter;
@@ -418,13 +419,15 @@ Verify (const char *type, GConvFunc gconv)
 
 #ifdef USE_PAM
 
-    if (!strcmp (type, "classic")) {
+    pnopass = FALSE;
+    if (!strcmp (curtype, "classic")) {
 	if (!gconv (GCONV_USER, 0))
 	    return 0;
 	if (AccNoPass (curuser)) {
 	    gconv (GCONV_PASS_ND, 0);
 	    if (!*curpass) {
-		sprintf (psrvb, "%.28s-np", PAMService);
+	        pnopass = TRUE;
+		sprintf (psrvb, "%.31s-np", PAMService);
 		psrv = psrvb;
 	    } else
 		psrv = PAMService;
@@ -432,7 +435,8 @@ Verify (const char *type, GConvFunc gconv)
 	    psrv = PAMService;
 	pdata.usecur = TRUE;
     } else {
-	psrv = type;
+	sprintf (psrvb, "%.31s-%.31s", PAMService, curtype);
+	psrv = psrvb;
 	pdata.usecur = FALSE;
     }
     pdata.gconv = gconv;
@@ -470,7 +474,7 @@ Verify (const char *type, GConvFunc gconv)
     tty[9 + i] = '\0';
 # endif
 
-    if (!strcmp (type, "classic")) {
+    if (!strcmp (curtype, "classic")) {
 	if (!gconv (GCONV_USER, 0))
 	    return 0;
 	if (AccNoPass (curuser)) {
@@ -496,7 +500,7 @@ Verify (const char *type, GConvFunc gconv)
 	    free (msg);
 	    V_RET (V_ERROR);
 	}
-    } else if (!strcmp (type, "generic")) {
+    } else if (!strcmp (curtype, "generic")) {
 	if (!gconv (GCONV_USER, 0))
 	    return 0;
 	for (curret = 0;;) {
@@ -517,7 +521,7 @@ Verify (const char *type, GConvFunc gconv)
 	    free (msg);
 	}
     } else {
-	LogError ("Unsupported authentication type %\"s requested\n", type);
+	LogError ("Unsupported authentication type %\"s requested\n", curtype);
 	V_RET (V_ERROR);
     }
     if (msg) {
@@ -531,8 +535,8 @@ Verify (const char *type, GConvFunc gconv)
 
 #else
 
-    if (strcmp (type, "classic")) {
-	LogError ("Unsupported authentication type %\"s requested\n", type);
+    if (strcmp (curtype, "classic")) {
+	LogError ("Unsupported authentication type %\"s requested\n", curtype);
 	V_RET (V_ERROR);
     }
 
@@ -645,7 +649,7 @@ Verify (const char *type, GConvFunc gconv)
 	pdata.usecur = FALSE;
 	pdata.gconv = conv_interact;
 	/* pam will have output a message already, so no PrepErrorGreet () */
-	if (gconv != conv_interact || psrv == psrvb) {
+	if (gconv != conv_interact || pnopass) {
 	    GSendInt (V_CHTOK_AUTH);
 	    /* this cannot auth the wrong user, as only classic auths get here */
 	    while (!doPAMAuth (psrv, &pdata))
@@ -877,46 +881,6 @@ static const char *envvars[] = {
     NULL
 };
 
-static char **
-userEnv (int isRoot, const char *user, const char *home, const char *shell)
-{
-    char	**env, *xma;
-
-    env = defaultEnv (user);
-    xma = 0;
-    if (td->fifoPath && StrDup (&xma, td->fifoPath))
-	if ((td->allowShutdown == SHUT_ALL ||
-	     (td->allowShutdown == SHUT_ROOT && isRoot)) &&
-	    StrApp (&xma, ",maysd", (char *)0))
-	{
-	    if (td->allowNuke == SHUT_ALL ||
-		(td->allowNuke == SHUT_ROOT && isRoot))
-		StrApp (&xma, ",mayfn", (char *)0);
-	    StrApp (&xma, td->defSdMode == SHUT_FORCENOW ? ",fn" :
-			  td->defSdMode == SHUT_TRYNOW ? ",tn" : ",sched", 
-		    (char *)0);
-	}
-	if ((td->displayType & d_location) == dLocal && AnyReserveDisplays ())
-	    StrApp (&xma, ",rsvd", (char *)0);
-    if (xma)
-    {
-	env = setEnv (env, "XDM_MANAGED", xma);
-	free (xma);
-    }
-    else
-	env = setEnv (env, "XDM_MANAGED", "true");
-    env = setEnv (env, "DISPLAY", td->name);
-    env = setEnv (env, "HOME", home);
-    env = setEnv (env, "PATH", isRoot ? td->systemPath : td->userPath);
-    env = setEnv (env, "SHELL", shell);
-#if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
-    if (krbtkfile[0] != '\0')
-	env = setEnv (env, "KRBTKFILE", krbtkfile);
-#endif
-    env = inheritEnv (env, envvars);
-    return env;
-}
-
 
 static int
 SetGid (const char *name, int gid)
@@ -999,7 +963,8 @@ static int sourceReset;
 int
 StartClient ()
 {
-    const char	*shell, *home, *sessargs, *desksess;
+    const char	*home, *sessargs, *desksess;
+    char	**env, *xma;
     char	**argv, *fname, *str;
 #ifdef USE_PAM
     char	**pam_env;
@@ -1054,10 +1019,41 @@ StartClient ()
 
     curuid = p->pw_uid;
     curgid = p->pw_gid;
-    home = p->pw_dir;
-    shell = p->pw_shell;
-    userEnviron = userEnv (!curuid, curuser, home, shell);
-    systemEnviron = systemEnv (curuser, home);
+
+    env = defaultEnv (curuser);
+    xma = 0;
+    if (td->fifoPath && StrDup (&xma, td->fifoPath)) {
+	if ((td->allowShutdown == SHUT_ALL ||
+	     (td->allowShutdown == SHUT_ROOT && !curuser)) &&
+	    StrApp (&xma, ",maysd", (char *)0))
+	{
+	    if (td->allowNuke == SHUT_ALL ||
+		(td->allowNuke == SHUT_ROOT && !curuser))
+		StrApp (&xma, ",mayfn", (char *)0);
+	    StrApp (&xma, td->defSdMode == SHUT_FORCENOW ? ",fn" :
+			  td->defSdMode == SHUT_TRYNOW ? ",tn" : ",sched", 
+		    (char *)0);
+	}
+	if ((td->displayType & d_location) == dLocal && AnyReserveDisplays ())
+	    StrApp (&xma, ",rsvd", (char *)0);
+    } else
+        StrDup (&xma, "true");
+    StrApp (&xma, ",method=", curtype, (char *)0);
+    if (xma)
+    {
+	env = setEnv (env, "XDM_MANAGED", xma);
+	free (xma);
+    }
+    env = setEnv (env, "DISPLAY", td->name);
+    env = setEnv (env, "HOME", p->pw_dir);
+    env = setEnv (env, "PATH", curuid ? td->userPath : td->systemPath);
+    env = setEnv (env, "SHELL", p->pw_shell);
+#if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
+    if (krbtkfile[0] != '\0')
+	env = setEnv (env, "KRBTKFILE", krbtkfile);
+#endif
+    userEnviron = inheritEnv (env, envvars);
+    systemEnviron = systemEnv (curuser, p->pw_dir);
     Debug ("user environment:\n%[|''>'\n's"
 	   "system environment:\n%[|''>'\n's"
 	   "end of environments\n", 
