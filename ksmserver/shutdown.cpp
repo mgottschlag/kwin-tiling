@@ -144,7 +144,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         buttonlay->addWidget( sep );
 
         // Back to Desktop
-        QPushButton* btnBack = new QPushButton( i18n("&Cancel"), frame );
+        QPushButton* btnBack = new QPushButton( SmallIcon("cancel"), i18n("&Cancel"), frame );
         buttonlay->addWidget( btnBack );
 
         QObject::connect(btnLogout, SIGNAL(clicked()),

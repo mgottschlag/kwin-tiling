@@ -328,7 +328,8 @@ void SessionEditor::removeCurrent()
   if (locateLocal("data", "konsole/" + base.section('/', -1)) != base) {
     int code = KMessageBox::warningContinueCancel(this,
       i18n("You are trying to remove a system session. Are you sure?"),
-      i18n("Removing System Session"));
+      i18n("Removing System Session"),
+      KGuiItem(i18n("&Delete"),"editdelete"));
     if (code != KMessageBox::Continue)
       return;
   }

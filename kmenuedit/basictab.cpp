@@ -73,7 +73,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _execEdit = new KURLRequester(general_group);
 	_execEdit->lineEdit()->setAcceptDrops(false);
     _launchCB = new QCheckBox(i18n("Enable &launch feedback"), general_group);
-    _systrayCB = new QCheckBox(i18n("&Place in System Tray"), general_group);
+    _systrayCB = new QCheckBox(i18n("&Place in system tray"), general_group);
 
     // setup labels
     _nameLabel = new QLabel(_nameEdit, i18n("&Name:"), general_group);
@@ -317,7 +317,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
       _execEdit->lineEdit()->setText(temp);
       _systrayCB->setChecked(false);
     }
-    
+
     _pathEdit->lineEdit()->setText(df->readPath());
     _termOptEdit->setText(df->readEntry("TerminalOptions"));
     _uidEdit->setText(df->readEntry("X-KDE-Username"));
@@ -351,9 +351,9 @@ void BasicTab::apply()
         df->writeEntry("Comment", _commentEdit->text());
         if (_systrayCB->isChecked())
           df->writePathEntry("Exec", _execEdit->lineEdit()->text().prepend("ksystraycmd "));
-        else  
+        else
           df->writePathEntry("Exec", _execEdit->lineEdit()->text());
-        
+
         df->writePathEntry("Path", _pathEdit->lineEdit()->text());
 
         if (_terminalCB->isChecked())
