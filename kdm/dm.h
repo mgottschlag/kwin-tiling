@@ -140,6 +140,10 @@ typedef union wait	waitType;
 
 typedef enum displayStatus { running, notRunning, zombie, phoenix } DisplayStatus;
 
+#ifdef HAVE_SYS_SELECT_H
+#include <sys/select.h>		// Defines fd_set on some systems
+#endif
+
 #ifndef FD_ZERO
 typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
 # define FD_ZERO(fdp)	bzero ((fdp), sizeof (*(fdp)))
