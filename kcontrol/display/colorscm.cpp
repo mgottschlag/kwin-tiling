@@ -229,9 +229,15 @@ void KColorScheme::save()
     cfg->writeEntry("inactiveTitleBtnFg", cs->iTitleBtn, true, true);
     cfg->writeEntry("activeTitleBtnBg", cs->aTitleBtnBack, true, true);
     cfg->writeEntry("inactiveTitleBtnBg", cs->iTitleBtnBack, true, true);
-    cfg->writeEntry("activeTitleBtnBlend", cs->aTitleBtnBlend, true, true);
-    cfg->writeEntry("inactiveTitleBtnBlend", cs->iTitleBtnBlend, true, true);
-
+    if(cs->aTitleBtnBlend != cs->aTitleBtnBack)
+        cfg->writeEntry("activeTitleBtnBlend", cs->aTitleBtnBlend, true, true);
+    else
+        cfg->writeEntry("activeTitleBtnBlend", "", true, true);
+    if(cs->iTitleBtnBlend != cs->iTitleBtnBack)
+        cfg->writeEntry("inactiveTitleBtnBlend", cs->iTitleBtnBlend, true, true);
+    else
+        cfg->writeEntry("inactiveTitleBtnBlend", "", true, true);
+    
     cfg->setGroup( "KDE" );
     cfg->writeEntry("contrast", cs->contrast, true, true);
     cfg->sync();
@@ -316,8 +322,15 @@ void KColorScheme::slotSave( )
     config->writeEntry("inactiveTitleBtnFg", cs->iTitleBtn);
     config->writeEntry("activeTitleBtnBg", cs->aTitleBtnBack);
     config->writeEntry("inactiveTitleBtnBg", cs->iTitleBtnBack);
-    config->writeEntry("activeTitleBtnBlend", cs->aTitleBtnBlend);
-    config->writeEntry("inactiveTitleBtnBlend", cs->iTitleBtnBlend);
+    if(cs->aTitleBtnBlend != cs->aTitleBtnBack)
+        config->writeEntry("activeTitleBtnBlend", cs->aTitleBtnBlend);
+    else
+        config->writeEntry("activeTitleBtnBlend", "");
+    if(cs->iTitleBtnBlend != cs->iTitleBtnBack)
+        config->writeEntry("inactiveTitleBtnBlend", cs->iTitleBtnBlend);
+    else
+        config->writeEntry("inactiveTitleBtnBlend", "");
+        
     
     config->sync();
     saveBt->setEnabled( FALSE );
