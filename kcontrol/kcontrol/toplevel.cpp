@@ -104,7 +104,7 @@ void TopLevel::initToolBars()
 void TopLevel::initStatusBar()
 {
   KStatusBar* status_bar = statusBar();
-  status_bar->setInsertOrder(KStatusBar::RightToLeft);
+  //status_bar->setInsertOrder(KStatusBar::RightToLeft);
   status_bar->insertItem(i18n("Welcome to the KDE Control Center"), 4);
 }
 
