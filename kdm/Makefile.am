@@ -12,6 +12,8 @@ bin_PROGRAMS = kdm
 noinst_PROGRAMS = greetest
 greetest_SOURCES = greetest.c
 
+AM_CFLAGS = $(CONN_FLAGS)
+
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
 #
@@ -29,6 +31,7 @@ kdm_SOURCES = access.c \
 	error.c \
 	file.c \
 	genauth.c \
+	krb5auth.c \
 	mitauth.c \
 	netaddr.c \
 	policy.c \

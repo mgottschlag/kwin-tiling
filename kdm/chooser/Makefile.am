@@ -1,6 +1,6 @@
 # $Id$
 
-AM_CPPFLAGS = -DQT_NO_CAST_ASCII
+AM_CPPFLAGS = $(CONN_FLAGS) -DQT_NO_CAST_ASCII
 
 INCLUDES = -I$(srcdir)/.. $(all_includes)
 

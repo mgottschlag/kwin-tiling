@@ -5,10 +5,10 @@ dnl checks for X server
 
 AC_PATH_PROG(X_SERVER, X)
 if test ! -z "$X_SERVER"; then
-X_SERVER=`echo $X_SERVER | sed -e 's+/X$++'`
-AC_DEFINE_UNQUOTED(XBINDIR,$X_SERVER, [Define where to find the X server])
-XBINDIR=$X_SERVER
-AC_SUBST(XBINDIR)
+    X_SERVER=`echo $X_SERVER | sed -e 's+/X$++'`
+    AC_DEFINE_UNQUOTED(XBINDIR,$X_SERVER, [Define where to find the X server])
+    XBINDIR=$X_SERVER
+    AC_SUBST(XBINDIR)
 fi
 
 dnl This one tries to find XDMDIR for config files
@@ -17,20 +17,58 @@ AC_ARG_WITH(xdmdir,
 	[ ac_xdmdir=$withval],
 	[ ac_xdmdir="no"])
 
+AC_MSG_CHECKING([various X settings])
+rm -fr conftestdir
+if mkdir conftestdir; then
+    cd conftestdir
+    cat > Imakefile <<'EOF'
+acimake:
+	@echo XDMDIR="$(XDMDIR)"\;
+	@echo CONN_FLAGS=^ConnectionFlags^\;
+#if HasXdmAuth
+	@echo HASXDMAUTH=1\;
+#endif
+#if defined(i386Architecture) || defined(AmigaArchitecture)
+	@echo FRAGILE_DEV_MEM=1\;
+#endif
+#if !SharedLibXdmGreet
+	@echo GREET_USER_STATIC=1\;
+#endif
+#if NeedVarargsPrototypes
+	@echo NEED_VARARGS_PROTOTYPES=1\;
+#endif
+EOF
+    if (xmkmf) > /dev/null 2> /dev/null && test -f Makefile; then
+	rt=`${MAKE-make} acimake 2>/dev/null 2>/dev/null | grep -v make`
+	eval `echo "$rt" | tr ^ \"`
+	echo eval `echo "$rt" | tr ^ \"`
+    else
+	AC_MSG_ERROR(imake failed)
+    fi
+    cd ..
+    rm -fr conftestdir
+    AC_MSG_RESULT(done)
+else
+    AC_MSG_ERROR(cannot create temporary directory)
+fi
+AC_SUBST(CONN_FLAGS)
+if test -n "$GREET_USER_STATIC"; then
+    AC_DEFINE(GREET_USER_STATIC, 1, [Compile the greeter statically])
+fi
+if test -n "$HASXDMAUTH"; then
+    AC_DEFINE(HASXDMAUTH, 1, [Use the different XDM authorization schemes])
+fi
+if test -n "$FRAGILE_DEV_MEM"; then
+    AC_DEFINE(FRAGILE_DEV_MEM, 1, [Protect S3 cards from crashing])
+fi
+if test -n "$NEED_VARARGS_PROTOTYPES"; then
+    AC_DEFINE(NeedVarargsPrototypes, 1, [Need function prototypes with VarArgs])
+fi
+
 AC_MSG_CHECKING([for xdm configuration dir])
 if test "$ac_xdmdir" = "no"; then
-    rm -fr conftestdir
-    if mkdir conftestdir; then
-	cd conftestdir
-    cat > Imakefile <<'EOF'
-acfindxdm:
-	@echo 'ac_xdmdir="$(XDMDIR)";'
-EOF
-	if (xmkmf) > /dev/null 2> /dev/null && test -f Makefile; then
-	    eval `${MAKE-make} acfindxdm 2>/dev/null 2>/dev/null | grep -v make`
-	fi
-	cd ..
-	rm -fr conftestdir
+    if test -n "$XDMDIR"; then
+	ac_xdmdir=$XDMDIR
 	dnl Check if Imake was right
 	if test -f $ac_xdmdir/xdm-config; then
 	    AC_MSG_RESULT($ac_xdmdir)
@@ -183,8 +221,8 @@ AC_CHECK_HEADERS(sys/sockio.h sys/stropts.h sys/socket.h sys/stream.h libutil.h 
 if test -n "$LIBXDMCP"; then
   ac_cpp_safe=$ac_cpp
   ac_cpp='$CXXCPP $CPPFLAGS $X_INCLUDES'
-  KDM_CHOOSER_DIR=chooser
-  AC_CHECK_HEADERS(X11/Xdmcp.h, , KDM_CHOOSER_DIR=)
+
+  AC_CHECK_HEADERS(X11/Xdmcp.h, [KDM_CHOOSER_DIR=chooser], AC_MSG_ERROR([KDM currently does not build without XDMCP. Please install Xdmcp.h]))
   AC_SUBST(KDM_CHOOSER_DIR)
   ac_cpp=$ac_cpp_safe
 fi

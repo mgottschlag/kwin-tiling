@@ -33,7 +33,6 @@
 
 #include <sys/types.h>
 #include <sys/param.h>
-#include <sys/stat.h>	/* remove when qt closes qt_thread_pipe itself */
 
 #include <pwd.h>
 #include <stdio.h>
@@ -87,13 +86,13 @@
 
 int	(*__xdm_PingServer)(struct display *d, Display *alternateDpy) = NULL;
 void	(*__xdm_SessionPingFailed)(struct display *d) = NULL;
-void	(*__xdm_Debug)(char * fmt, ...) = NULL;
+void	(*__xdm_Debug)(char *fmt, ...) = NULL;
 void	(*__xdm_RegisterCloseOnFork)(int fd) = NULL;
 void	(*__xdm_SecureDisplay)(struct display *d, Display *dpy) = NULL;
 void	(*__xdm_UnsecureDisplay)(struct display *d, Display *dpy) = NULL;
 void	(*__xdm_ClearCloseOnFork)(int fd) = NULL;
 void	(*__xdm_SetupDisplay)(struct display *d) = NULL;
-void	(*__xdm_LogError)(char * fmt, ...) = NULL;
+void	(*__xdm_LogError)(char *fmt, ...) = NULL;
 void	(*__xdm_SessionExit)(struct display *d, int status, int removeAuth) = NULL;
 void	(*__xdm_DeleteXloginResources)(struct display *d, Display *dpy) = NULL;
 int	(*__xdm_source)(char **environ, char *file) = NULL;
@@ -103,7 +102,7 @@ char	**(*__xdm_putEnv)(const char *string, char **env) = NULL;
 char	**(*__xdm_parseArgs)(char **argv, char *string) = NULL;
 void	(*__xdm_printEnv)(char **e) = NULL;
 char	**(*__xdm_systemEnv)(struct display *d, char *user, char *home) = NULL;
-void	(*__xdm_LogOutOfMem)(char * fmt, ...) = NULL;
+void	(*__xdm_LogOutOfMem)(char *fmt, ...) = NULL;
 SETGRENT_TYPE	(*__xdm_setgrent)(void) = NULL;
 struct group	*(*__xdm_getgrent)(void) = NULL;
 void	(*__xdm_endgrent)(void) = NULL;
@@ -957,7 +956,8 @@ AutoLogon (
 		strncpy(password, d->autoPass, F_LEN - 1);
 		Debug("Password set in auto-login\n");
 	    }
-	    greet->string = strlen (d->autoString) ? d->autoString : (char*)"default";
+	    greet->string = strlen (d->autoString) ? 
+			    d->autoString : (char *)"default";
 	} else if (!strcmp(d->name, ":0") && !kdmcfg->_autoUser.isEmpty()) {
 	    // kcontol specified autologin
 	    if (d->hstent->lastExit > time(0) - d->openDelay) {
@@ -1110,14 +1110,6 @@ GreetUser(
     qApp->restoreOverrideCursor();
     delete kdmcfg;
     delete myapp;
-
-    // arrrgghh!!! this is evil. it's only here, because qt does not
-    // close it's qt_thread_pipe. already reported as a bug to the trolls.
-    for (int i = 3; i < 20; i++) {
-	struct stat st;
-	if (!fstat(i, &st) && S_ISFIFO(st.st_mode))
-	    close(i);
-    }
 
     /*
      * for user-based authorization schemes,

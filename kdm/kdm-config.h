@@ -35,9 +35,10 @@
 #endif
 
 /* xdm stuff */
-#define UNIXCONN
+/*#define UNIXCONN
 #define TCPCONN
 #undef GREET_USER_STATIC
+*/
 
 #if defined(GREETER) && !defined(GREET_USER_STATIC)
 # define GREET_LIB
@@ -53,7 +54,8 @@
 /* If this isn't defined, we crash boxes with S3 cards.  
  * See genauth.c  
  */ 
-#define FRAGILE_DEV_MEM
+/*#define FRAGILE_DEV_MEM
+*/
 
 /* Authorization stuff */
 /*
@@ -98,10 +100,11 @@
 #ifdef sun
 #define SVR4
 #endif
-
+/*
 #ifdef SVR4
 #define NeedVarargsPrototypes
 #endif
+*/
 
 /*
  * These values define what is called by KDM on Shutdown or Reboot

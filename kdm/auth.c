@@ -120,30 +120,38 @@ struct AuthProtocol {
     char	    *name;
     void	    (*InitAuth)(unsigned short len, char *name);
     Xauth	    *(*GetAuth)(unsigned short len, char *name);
+#ifdef XDMCP
     void	    (*GetXdmcpAuth)(
     			struct protoDisplay	*pdpy,
     			unsigned short	authorizationNameLen,
     			char		*authorizationName);
+#endif
     int		    inited;
 };
 
+#ifdef XDMCP
+# define xdmcpauth(arg) arg,
+#else
+# define xdmcpauth(arg)
+#endif
+
 static struct AuthProtocol AuthProtocols[] = {
 { (unsigned short) 18,	"MIT-MAGIC-COOKIE-1",
-    MitInitAuth, MitGetAuth, NULL
+    MitInitAuth, MitGetAuth, xdmcpauth(NULL)
 },
 #ifdef HASXDMAUTH
 { (unsigned short) 19,	"XDM-AUTHORIZATION-1",
-    XdmInitAuth, XdmGetAuth, XdmGetXdmcpAuth,
+    XdmInitAuth, XdmGetAuth, xdmcpauth(XdmGetXdmcpAuth)
 },
 #endif
 #ifdef SECURE_RPC
 { (unsigned short) 9, "SUN-DES-1",
-    SecureRPCInitAuth, SecureRPCGetAuth, NULL,
+    SecureRPCInitAuth, SecureRPCGetAuth, xdmcpauth(NULL)
 },
 #endif
 #ifdef K5AUTH
 { (unsigned short) 14, "MIT-KERBEROS-5",
-    Krb5InitAuth, Krb5GetAuth, NULL,
+    Krb5InitAuth, Krb5GetAuth, xdmcpauth(NULL)
 },
 #endif
 };

@@ -34,6 +34,8 @@ from The Open Group.
  * generate SecureRPC authorization records
  */
 
+#ifdef SECURE_RPC
+
 # include   "dm.h"
 # include   "dm_auth.h"
 # include   "dm_error.h"
@@ -90,3 +92,5 @@ SecureRPCGetAuth (
     memmove( new->data, key, new->data_length);
     return new;
 }
+
+#endif	/* SECURE_RPC */
