@@ -2,5 +2,5 @@
 Type=Service
 Name=GO.com
 ServiceTypes=SearchProvider
-Keys=go
+Keys=seek
 Query=http://www.go.com/Titles?col=WW&qt=\\1&svx=home_searchbox&sv=IS&lk=noframeso
