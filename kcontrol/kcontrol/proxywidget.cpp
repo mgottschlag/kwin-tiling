@@ -116,8 +116,7 @@ ProxyWidget::~ProxyWidget()
 
 void ProxyWidget::helpClicked()
 {
-  // TODO: really show some help
-  emit helpRequest("index.html");
+  emit helpRequest();
 }
 
 

@@ -57,7 +57,10 @@ ModuleInfo::ModuleInfo(QString desktopFile)
   // set the modules' simple attributes
   setName(desktop.readName());
   setIcon(desktop.readIcon());
-  
+
+  // get the documentation path
+  setDocPath(desktop.readEntry("DocPath"));
+
   // try to find out the modules' groups
   QString group = desktop.readEntry("X-KDE-Group");
   if (group.isEmpty())

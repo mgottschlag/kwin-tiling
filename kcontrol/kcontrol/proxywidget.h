@@ -59,7 +59,7 @@ private slots:
 signals:
 
   void closed();
-  void helpRequest(const char *request);
+  void helpRequest();
   void changed(bool state);
   
 

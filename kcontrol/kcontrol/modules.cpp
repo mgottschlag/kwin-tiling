@@ -23,6 +23,7 @@
 #include <qwidget.h>
 
 
+#include <kapp.h>
 #include <kstddirs.h>
 #include <kglobal.h>
 #include <kcmodule.h>
@@ -65,6 +66,7 @@ QWidget *ConfigModule::module(KDockContainer *container)
       _module = new ProxyWidget(modWidget, name(), icon(), container);
       connect(_module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
       connect(_module, SIGNAL(closed()), this, SLOT(clientClosed()));
+      connect(_module, SIGNAL(helpRequest()), this, SLOT(helpRequest()));
       return _module;
     }
 
@@ -112,6 +114,12 @@ void ConfigModule::clientChanged(bool state)
 }
 
 
+void ConfigModule::helpRequest()
+{
+  kapp->invokeHTMLHelp(docPath(), "");
+}
+
+
 ConfigModuleList::ConfigModuleList()
 {
   setAutoDelete(true);
@@ -131,4 +139,5 @@ void ConfigModuleList::readDesktopEntries()
       append(module);
     }
 }
+
 
