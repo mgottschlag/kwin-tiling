@@ -46,6 +46,7 @@ protected:
 
 protected slots:
 
+	void slotReload();
 	void slotStartService();
 	void slotStopService();
 	void configureService();

@@ -25,6 +25,7 @@
 #include <qpushbutton.h>
 #include <qhbox.h>
 #include <qheader.h>
+#include <qtimer.h>
 
 #include <kbuttonbox.h>
 #include <kapplication.h>
@@ -162,6 +163,18 @@ void KDEDConfig::load() {
 	item->setText(2, QString::null);
 	item->setText(3, i18n("Not running"));
 	item->setText(4, "kalarmd");
+
+	// Special case: kwrited
+	if (getuid()==0) // only allow check if user has permissions
+		item = new QCheckListItem(_lvStartup, QString::null , QCheckListItem::CheckBox );
+	else {
+		item = new QListViewItem(_lvStartup, QString::null);
+		_lvStartup->header()->setLabel(0, QString::null, 0);
+	}
+	item->setText(1, i18n("KWrite Daemon"));
+	item->setText(2, QString::null);
+	item->setText(3, i18n("Not running"));
+	item->setText(4, "kwrited");
 	
 	getServiceStatus();
 }
@@ -210,6 +223,14 @@ void KDEDConfig::save() {
 		item = static_cast<QCheckListItem *>(_lvStartup->findItem("kalarmd",4));
 		if (item) {
 			KConfig config("kalarmdrc", false, false);
+			config.setGroup("General");
+			config.writeEntry("Autostart", item->isOn()); 
+		}	
+
+		// Special case: kwrited
+		item = static_cast<QCheckListItem *>(_lvStartup->findItem("kwrited",4));
+		if (item) {
+			KConfig config("kwritedrc", false, false);
 			config.setGroup("General");
 			config.writeEntry("Autostart", item->isOn()); 
 		}	
@@ -310,6 +331,26 @@ void KDEDConfig::getServiceStatus()
 			}
 		}
 	}
+
+	// Special case: kwrited
+	if (kapp->dcopClient()->isApplicationRegistered("kwrited"))
+	{
+		QListViewItem *item = _lvStartup->findItem("kwrited", 4);
+		if ( item )
+		{
+			item->setText(3, i18n("Running"));
+			if (item->rtti()==1) {
+				item->setText(5, "true");
+				QCheckListItem *ci = static_cast<QCheckListItem *>(item);
+				ci->setOn(true);
+			}
+		}
+	}
+}
+
+void KDEDConfig::slotReload()
+{
+	load();
 }
 
 void KDEDConfig::slotEvalItem(QListViewItem * item)
@@ -354,6 +395,14 @@ void KDEDConfig::slotStartService()
 		load();
 		return;
 	}
+
+	// Special case: kwrited
+	if (service == "kwrited")
+	{
+		kapp->startServiceByDesktopName("kwrited");
+		load();
+		return;
+	}
 	
 	QByteArray data;
 	QDataStream arg( data, IO_WriteOnly );
@@ -377,7 +426,7 @@ void KDEDConfig::slotStopService()
 	if (service == "kxmlrpcd")
 	{
 		kapp->dcopClient()->send("kxmlrpcd", "qt/kxmlrpcd", "quit()", data);
-		load();
+		QTimer::singleShot(200, this, SLOT(slotReload()));
 		return;
 	}
 
@@ -385,7 +434,15 @@ void KDEDConfig::slotStopService()
 	if (service == "kalarmd")
 	{
 		kapp->dcopClient()->send("kalarmd", "qt/kalarmd", "quit()", data);
-		load();
+		QTimer::singleShot(200, this, SLOT(slotReload()));
+		return;
+	}
+
+	// Special case: kwrited
+	if (service == "kwrited")
+	{
+		kapp->dcopClient()->send("kwrited", "qt/kwrited", "quit()", data);
+		QTimer::singleShot(200, this, SLOT(slotReload()));
 		return;
 	}
 
