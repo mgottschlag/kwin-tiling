@@ -169,7 +169,8 @@ typedef struct CfgDep {
 } CfgDep;
 
 typedef struct CfgArr {
-	char		*data;		/* config array */
+	char		*data;		/* config value array; allocated */
+	int		*idx;		/* config index array; alias */
 	CfgDep		dep;		/* filestamp */
     	int		numCfgEnt;	/* number of config entries */
 } CfgArr;

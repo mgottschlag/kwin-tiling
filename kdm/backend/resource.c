@@ -235,40 +235,48 @@ Debug ("requesting config %d\n", what);
 static void
 LoadResources (CfgArr *conf)
 {
-    int i, id, nu, j;
-    char *cptr, **dptr;
+    char **vptr, **pptr, *cptr;
+    int *iptr, i, id, nu, j, nptr, nint, nchr;
 
 Debug ("LoadResources\n");
     if (conf->data)
 	free (conf->data);
     conf->numCfgEnt = GRecvInt ();
-    if (!(conf->data = malloc (GRecvInt ()))) {
+    nptr = GRecvInt ();
+    nint = GRecvInt ();
+    nchr = GRecvInt ();
+    if (!(conf->data = malloc (conf->numCfgEnt * (sizeof(int) + sizeof(char *))
+			       + nptr * sizeof(char *)
+			       + nint * sizeof(int)
+			       + nchr))) {
 	LogOutOfMem ("LoadResources");
 	CloseGetter ();
 	return;
     }
-    cptr = conf->data + conf->numCfgEnt * (sizeof(int) + sizeof(char *));
+    vptr = (char **)conf->data;
+    pptr = vptr + conf->numCfgEnt;
+    conf->idx = (int *)(pptr + nptr);
+    iptr = conf->idx + conf->numCfgEnt;
+    cptr = (char *)(iptr + nint);
     for (i = 0; i < conf->numCfgEnt; i++) {
 	id = GRecvInt ();
-	((int *)(conf->data + conf->numCfgEnt * sizeof(char *)))[i] = id;
+	conf->idx[i] = id;
 	switch (id & C_TYPE_MASK) {
 	case C_TYPE_INT:
-	    ((char **)conf->data)[i] = (char *)GRecvInt ();
+	    vptr[i] = (char *)GRecvInt ();
 	    break;
 	case C_TYPE_STR:
-	    ((char **)conf->data)[i] = cptr;
+	    vptr[i] = cptr;
 	    cptr += GRecvStrBuf (cptr);
 	    break;
 	case C_TYPE_ARGV:
-	    ((char **)conf->data)[i] = cptr;
 	    nu = GRecvInt ();
-	    dptr = (char **)cptr;
-	    cptr += (nu + 1) * sizeof (char *);
+	    vptr[i] = (char *)pptr;
 	    for (j = 0; j < nu; j++) {
-		*dptr++ = cptr;
+		*pptr++ = cptr;
 		cptr += GRecvStrBuf (cptr);
 	    }
-	    *dptr = (char *)0;
+	    *pptr++ = (char *)0;
 	    break;
 	default:
 	    LogError ("Config reader supplied unknown data type in id 0x%x\n", 
@@ -336,14 +344,14 @@ FindCfgEnt (struct display *d, int id)
 	    return globEnt[i].off;
  */
     for (i = 0; i < cfg.numCfgEnt; i++)
-	if (((int *)(((char **)cfg.data) + cfg.numCfgEnt))[i] == id)
+	if (cfg.idx[i] == id)
 	    return ((char **)cfg.data) + i;
     if (d) {
 	for (i = 0; i < as(dpyEnt); i++)
 	    if (dpyEnt[i].id == id)
 		return (char **)(((char *)d) + dpyEnt[i].off);
 	for (i = 0; i < d->cfg.numCfgEnt; i++)
-	    if (((int *)(((char **)d->cfg.data) + d->cfg.numCfgEnt))[i] == id)
+	    if (d->cfg.idx[i] == id)
 		return ((char **)d->cfg.data) + i;
     }
     Debug ("Unknown config entry 0x%x requested\n", id);
