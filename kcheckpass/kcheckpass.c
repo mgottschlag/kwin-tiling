@@ -57,14 +57,26 @@
 #include <errno.h>
 #include <time.h>
 
+/* Define this if you want the pam service from 
+    the environment variable */
+#define ACCEPT_ENV
 /* Define this if you want kcheckpass to accept options
  * (They don't do anything useful right now) */
 #undef ACCEPT_OPTIONS
+
+/* This will disable environment vars when options are enabled.
+   (there would be a preference clash otherwise) */
+#ifdef ACCEPT_OPTIONS
+#ifdef ACCEPT_ENV
+#undef ACCEPT_ENV
+#endif
+#endif
 
 /*****************************************************************
  * Set to 1 if stdin is a tty
  *****************************************************************/
 static int	havetty = 0;
+char caller[20] = "";
 #ifdef ACCEPT_OPTIONS
 static int	debug = 0;
 #endif
@@ -114,7 +126,7 @@ usage(int exitval)
           "        2 cannot read password database\n"
 	  "    Anything else tells you something's badly hosed.\n",
 #ifdef ACCEPT_OPTIONS
-	" [-dh]"
+	" [-dh] [-c caller]"
 #else
 	""
 #endif
@@ -128,7 +140,7 @@ usage(int exitval)
 int
 main(int argc, char **argv)
 {
-  char		*login, passbuffer[1024], *passwd;
+  char		*login, passbuffer[1024], *passwd,*ca;
   struct passwd	*pw;
   int		status, c;
   uid_t		uid;
@@ -162,10 +174,14 @@ main(int argc, char **argv)
   if (argc != 1)
     usage(10);
 #else
-  while ((c = getopt(argc, argv, "d")) != -1) {
+  while ((c = getopt(argc, argv, "dc:")) != -1) {
     switch (c) {
     case 'd':
       debug = 1;
+      break;
+case 'c':
+      strncpy(caller,optarg,19);  
+      caller[19] = '\000';  /* Make sure caller can never be longer than 19 characters */
       break;
     case 'h':
       usage(0);
@@ -175,6 +191,13 @@ main(int argc, char **argv)
     }
   }
 #endif
+
+#ifdef ACCEPT_ENV
+  ca = getenv("KDE_PAM_ACTION");
+  if (ca) strncpy(caller,ca,19);
+  caller[19] = '\000';  /* Make sure caller can never be longer than 19 characters */
+  unsetenv("KDE_PAM_ACTION");
+#endif  
 
   uid = getuid();
   if (!(pw = getpwuid(uid))) {

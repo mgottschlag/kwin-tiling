@@ -18,6 +18,8 @@
 #include "kcheckpass.h"
 #ifdef HAVE_PAM
 
+extern  char caller[20];
+
 /*****************************************************************
  * This is the authentication code if you use PAM
  * Ugly, but proven to work.
@@ -103,14 +105,30 @@ int authenticate(const char *login, const char *passwd)
   pam_handle_t	*pamh;
   int		pam_error;
 
+  const char *tty = ":0.0";
+  char kde_pam[20] = KDE_PAM;
   PAM_username = login;
   PAM_password = passwd;
 
-  pam_error = pam_start(KDE_PAM, login, &PAM_conversation, &pamh);
+  /* If the caller is kscreensaver then use the corresponding pam module */
+  if ( ! strncmp(caller,"kscreensaver",19)  ) {
+      strncpy(kde_pam,"kscreensaver",19);
+  }
+
+  pam_error = pam_start(kde_pam, login, &PAM_conversation, &pamh);
+
+  pam_error = pam_set_item (pamh, PAM_TTY, strdup(tty));
+  pam_error = pam_authenticate(pamh, 0);
   if (pam_error != PAM_SUCCESS
       || (pam_error = pam_authenticate(pamh, 0)) != PAM_SUCCESS) {
     pam_end(pamh, pam_error);
     return 0;
+  }
+  /* Set credentials (You need this e.g. for AFS */
+  pam_error = pam_setcred(pamh, PAM_REFRESH_CRED);
+  if (pam_error != PAM_SUCCESS)  {
+      pam_end(pamh, pam_error);
+      return 0;
   }
 
   pam_end(pamh, PAM_SUCCESS);
