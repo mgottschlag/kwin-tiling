@@ -146,7 +146,7 @@ void FontUseItem::applyFontDiff( const QFont &fnt, int fontDiffFlags )
 
 void FontUseItem::updateLabel()
 {
-  QString fontDesc = _font.family() + ' ' + QString::number(_font.pointSize());
+  QString fontDesc = _font.family() + " " + QString::number(_font.pointSize());
   preview->setText(fontDesc);
   preview->setFont(_font);
 }
