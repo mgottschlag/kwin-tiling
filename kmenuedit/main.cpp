@@ -90,7 +90,7 @@ int main( int argc, char **argv )
       if( error )
 	{
 	  KMsgBox::message( NULL, klocale->translate("KMenuedit"), 
-			    klocale->translate("Unable to create directory for personal menu.\n Select Ok to exit KMenuedit."));
+			    klocale->translate("Unable to create directory for personal menu.\n Select OK to exit KMenuedit."));
 	  exit(1);
 	}
     }
