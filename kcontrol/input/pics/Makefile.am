@@ -3,8 +3,6 @@
 
 SUBDIRS = mini
 
-icons_DATA = keyboard.xpm mouse.xpm
+kde_icons_DATA = keyboard.xpm mouse.xpm
 
-iconsdir = $(kde_icondir)
-
-EXTRA_DIST = $(icons_DATA)
+EXTRA_DIST = $(kde_icons_DATA)

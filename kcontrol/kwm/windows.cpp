@@ -502,9 +502,8 @@ void KWindowConfig::SaveSettings( void )
   else if (v == MANUAL_PLACEMENT)
     config->writeEntry(KWM_PLACEMENT, "manual");
   else if (v == INTERACTIVE_PLACEMENT) {
-    char tmpstr[20];
-    sprintf(tmpstr,"interactive,%d",interactiveTrigger->getValue());
-    config->writeEntry(KWM_PLACEMENT, tmpstr);
+      QString tmpstr = QString("interactive,%1").arg(interactiveTrigger->getValue());
+      config->writeEntry(KWM_PLACEMENT, tmpstr);
   }
   else
     config->writeEntry(KWM_PLACEMENT, "smart");

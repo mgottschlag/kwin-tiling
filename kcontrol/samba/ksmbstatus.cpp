@@ -16,6 +16,7 @@
 
 #include "ktablistbox.h"
 #include <klocale.h>
+#include <stdio.h>
 
 void NetMon::help()
 {

@@ -43,6 +43,7 @@
 #include "pmenu.h"
 #include "MenuNameDialog.h"
 #include <klocale.h>
+#include <kglobal.h>
 
 extern KIconLoader *global_pix_loader;
 KStatusBar *global_status_bar;
@@ -271,28 +272,34 @@ void KMenuEdit::loadMenus()
       kconfig.setDesktopGroup();
       pers_menu_name = kconfig.readEntry("Name");
     }
+
   // default menu
-  temp = KApplication::kde_appsdir();
-  dir_name = config->readEntry("Path", temp);
-  dir_name = dir_name.stripWhiteSpace();
-  dir = dir_name;
-  if( glob_menu_data )
-    delete glob_menu_data;
+  QStringList list = KGlobal::dirs()->getResourceDirs("apps");
+  dir_name = config->readEntry("Path");
+  if (!dir_name.isNull()) {
+      dir_name = dir_name.stripWhiteSpace();
+      list.append(dir_name);
+  }
+  
+  delete glob_menu_data;
   glob_menu_data = new PMenu;
-  glob_menu_data->parse(dir);
-  //if( !glob_menu_data->count() )
-  //  glob_menu_data->add(new PMenuItem(unix_com, "EMPTY"));
-  fi.setFile(dir_name + "/.directory");
-  if( fi.isReadable() )
-    {
-      KConfig kconfig(fi.absFilePath() );
-      kconfig.setDesktopGroup();
-      glob_menu_name = kconfig.readEntry("Name");
-    }
-  if( fi.isWritable() )
-    glob_menu_writable = TRUE;
-  else
-    glob_menu_writable = FALSE;
+
+  for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++) {
+      dir = *it;
+      glob_menu_data->parse(dir);
+
+      fi.setFile(dir_name + "/.directory");
+      if( fi.isReadable() )
+      {
+	  KConfig kconfig(fi.absFilePath() );
+	  kconfig.setDesktopGroup();
+	  glob_menu_name = kconfig.readEntry("Name");
+      }
+      if( fi.isWritable() )
+	  glob_menu_writable = TRUE;
+      else
+	  glob_menu_writable = FALSE;
+  }
   QApplication::restoreOverrideCursor();
 }
 
