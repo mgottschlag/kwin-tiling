@@ -74,6 +74,40 @@ public:
 };
 
 //===========================================================================
+class KScreenSaverAdvancedDialog : public KDialogBase
+{
+    Q_OBJECT
+public:
+    KScreenSaverAdvancedDialog(QWidget *parent, const char* name = 0);
+      
+public slots:
+    void slotOk();
+         
+protected slots:
+    void slotPriorityChanged( int val );
+    void slotChangeBottomRightCorner( bool );
+    void slotChangeBottomLeftCorner( bool );
+    void slotChangeTopRightCorner( bool );
+    void slotChangeTopLeftCorner( bool );
+                        
+private:
+    void readSettings();
+                     
+    QCheckBox *m_topLeftCorner;
+    QCheckBox *m_bottomLeftCorner;
+    QCheckBox *m_topRightCorner;
+    QCheckBox *m_bottomRightCorner;
+    QSlider   *mPrioritySlider;
+                                          
+    bool mTopLeftCorner;
+    bool mTopRightCorner;
+    bool mBottomLeftCorner;
+    bool mBottomRightCorner;
+    bool mChanged;
+    int  mPriority;
+};
+
+//===========================================================================
 class KScreenSaver : public KCModule
 {
     Q_OBJECT
@@ -93,14 +127,15 @@ public:
 
 protected slots:
     void slotEnable( bool );
-    void slotScreenSaver( QListViewItem * );
+    void slotScreenSaver( QListViewItem* );
     void slotSetup();
+    void slotAdvanced();
     void slotTest();
     void slotStopTest();
-    void slotTimeoutChanged(int);
+    void slotTimeoutChanged( int );
+    void slotLockTimeoutChanged( int );
     void slotDPMS( bool );
     void slotLock( bool );
-    void slotPriorityChanged( int val );
     void slotSetupDone(KProcess*);
     // when selecting a new screensaver, the old preview will
     // be killed. -- This callback is responsible for restarting the
@@ -127,13 +162,14 @@ protected:
     QPushButton *mTestBt;
     QListView   *mSaverListView;
     QSpinBox	*mWaitEdit;
-    QSlider     *mPrioritySlider;
+    QSpinBox    *mWaitLockEdit;
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;
     QCheckBox   *mEnabledCheckBox;
     QCheckBox	*mDPMSDependentCheckBox;
     QLabel      *mMonitorLabel;
     QLabel      *mActivateLbl;
+    QLabel      *mLockLbl;
     QStringList mSaverFileList;
     SaverList   mSaverList;
     QTimer      *mLoadTimer;
@@ -148,7 +184,7 @@ protected:
 
     // Settings
     int         mTimeout;
-    int         mPriority;
+    int         mLockTimeout;
     bool	mDPMS;
     bool        mLock;
     bool        mEnabled;
@@ -157,4 +193,3 @@ protected:
 };
 
 #endif
-

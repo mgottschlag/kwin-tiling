@@ -31,6 +31,7 @@
 
 #include <kapplication.h>
 #include <kdebug.h>
+#include <kdialogbase.h>
 #include <kprocess.h>
 #include <knuminput.h>
 #include <kstandarddirs.h>
@@ -128,6 +129,188 @@ TestWin::TestWin()
 
 //===========================================================================
 //
+KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent, const char* name)
+ : KDialogBase( parent, name, true, i18n( "Advanced Options" ),
+                Ok | Cancel, Ok, true )
+{
+    readSettings();
+
+    QWidget* w = new QWidget( this );
+    w->setMinimumWidth( 250 );
+    QBoxLayout* mainLayout = new QVBoxLayout( w, 0, KDialog::spacingHint() );
+    setMainWidget( w );
+
+    // Autolock
+    QGroupBox* autoLockGroup = new QGroupBox( i18n("Auto Lock"), w );
+    autoLockGroup->setColumnLayout( 0, Qt::Vertical );
+    mainLayout->addWidget( autoLockGroup );
+    QBoxLayout* autoLockLayout = new QVBoxLayout( autoLockGroup->layout(),
+        KDialog::spacingHint() );
+
+    m_topLeftCorner = new QCheckBox( i18n("Top-Left corner"), autoLockGroup);
+    autoLockLayout->addWidget( m_topLeftCorner );
+    m_topLeftCorner->setChecked(mTopLeftCorner);
+    connect( m_topLeftCorner, SIGNAL( toggled( bool ) ),
+            this, SLOT( slotChangeTopLeftCorner( bool ) ) );
+
+    m_topRightCorner = new QCheckBox( i18n("Top-Right corner"),
+        autoLockGroup );
+    autoLockLayout->addWidget( m_topRightCorner );
+    m_topRightCorner->setChecked(mTopRightCorner);
+    connect( m_topRightCorner, SIGNAL( toggled( bool ) ),
+         this, SLOT( slotChangeTopRightCorner( bool ) ) );
+
+    m_bottomLeftCorner = new QCheckBox( i18n("Bottom-Left corner"),
+        autoLockGroup );
+    autoLockLayout->addWidget( m_bottomLeftCorner );
+    m_bottomLeftCorner->setChecked(mBottomLeftCorner);
+    connect( m_bottomLeftCorner, SIGNAL( toggled( bool ) ),
+         this, SLOT( slotChangeBottomLeftCorner( bool ) ) );
+
+    m_bottomRightCorner = new QCheckBox( i18n("Bottom-Right corner"),
+        autoLockGroup );
+    autoLockLayout->addWidget( m_bottomRightCorner );
+    m_bottomRightCorner->setChecked(mBottomRightCorner);
+    connect( m_bottomRightCorner, SIGNAL( toggled( bool ) ),
+         this, SLOT( slotChangeBottomRightCorner( bool ) ) );
+
+    // Priority
+    QGroupBox* priorityGroup = new QGroupBox( i18n("&Priority"), w );
+    priorityGroup->setColumnLayout( 0, Qt::Horizontal );
+    mainLayout->addWidget( priorityGroup );
+
+    QGridLayout *gl = new QGridLayout(priorityGroup->layout(), 2, 3);
+    gl->setColStretch( 1, 10 );
+
+    mPrioritySlider = new QSlider(QSlider::Horizontal, priorityGroup);
+    mPrioritySlider->setRange(0, 19);
+    mPrioritySlider->setSteps(1, 5);
+    mPrioritySlider->setTickmarks(QSlider::Below);
+    mPrioritySlider->setValue(19 - mPriority);
+    connect(mPrioritySlider, SIGNAL( valueChanged(int)),
+        SLOT(slotPriorityChanged(int)));
+    gl->addMultiCellWidget(mPrioritySlider, 0, 0, 0, 2);
+    QWhatsThis::add( mPrioritySlider, i18n("Use this slider to change the"
+      " processing priority for the screen saver over other jobs that are"
+      " being executed in the background. For a processor-intensive screen"
+      " saver, setting a higher priority may make the display smoother at"
+      " the expense of other jobs.") );
+
+#ifndef HAVE_SETPRIORITY
+    lbl->setEnabled(false);
+    mPrioritySlider->setEnabled(false);
+#endif
+
+    QLabel* lbl = new QLabel(i18n("Low Priority", "Low"), priorityGroup);
+    gl->addWidget(lbl, 1, 0);
+
+#ifndef HAVE_SETPRIORITY
+    lbl->setEnabled(false);
+#endif
+
+    lbl = new QLabel(i18n("High Priority", "High"), priorityGroup);
+    gl->addWidget(lbl, 1, 2);
+
+#ifndef HAVE_SETPRIORITY
+    lbl->setEnabled(false);
+#endif
+
+    mainLayout->addStretch(10);
+}
+
+
+//===========================================================================
+//
+void KScreenSaverAdvancedDialog::readSettings()
+{
+    KConfig *config = new KConfig( "kdesktoprc");
+    config->setGroup( "ScreenSaver" );
+
+    mPriority = config->readNumEntry("Priority", 19);
+    if (mPriority < 0) mPriority = 0;
+    if (mPriority > 19) mPriority = 19;
+
+    mTopLeftCorner = config->readBoolEntry("LockCornerTopLeft", false);
+    mTopRightCorner = config->readBoolEntry("LockCornerTopRight", false) ;
+    mBottomLeftCorner = config->readBoolEntry("LockCornerBottomLeft",
+false);
+    mBottomRightCorner = config->readBoolEntry("LockCornerBottomRight",
+false);
+
+    mChanged = false;
+    delete config;
+}
+
+
+//===========================================================================
+//
+void KScreenSaverAdvancedDialog::slotOk()
+{
+    if ( mChanged ) {
+        KConfig *config = new KConfig( "kdesktoprc");
+        config->setGroup( "ScreenSaver" );
+
+        config->writeEntry("Priority", mPriority);
+        config->writeEntry(
+            "LockCornerTopLeft", m_topLeftCorner->isChecked());
+        config->writeEntry(
+            "LockCornerBottomLeft", m_bottomLeftCorner->isChecked());
+        config->writeEntry(
+            "LockCornerTopRight", m_topRightCorner->isChecked());
+        config->writeEntry(
+            "LockCornerBottomRight", m_bottomRightCorner->isChecked());
+        config->sync();
+        delete config;
+    }
+    accept();
+}
+
+
+//---------------------------------------------------------------------------
+//
+void KScreenSaverAdvancedDialog::slotPriorityChanged( int val )
+{
+    if (val == mPriority)
+    return;
+
+    mPriority = 19 - val;
+    if (mPriority > 19)
+    mPriority = 19;
+    else if (mPriority < 0)
+    mPriority = 0;
+
+    mChanged = true;
+}
+
+
+//===========================================================================
+//
+void KScreenSaverAdvancedDialog::slotChangeBottomRightCorner( bool b)
+{
+    mBottomRightCorner = b;
+    mChanged = true;
+}
+
+void KScreenSaverAdvancedDialog::slotChangeBottomLeftCorner( bool b)
+{
+    mBottomLeftCorner = b;
+    mChanged = true;
+}
+
+void KScreenSaverAdvancedDialog::slotChangeTopRightCorner( bool b)
+{
+    mTopRightCorner = b;
+    mChanged = true;
+}
+
+void KScreenSaverAdvancedDialog::slotChangeTopLeftCorner( bool b)
+{
+    mTopLeftCorner = b;
+    mChanged = true;
+}
+
+//===========================================================================
+//
 
 KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&)
     : KCModule(KSSFactory::instance(), parent, name)
@@ -168,17 +351,23 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     connect(mPreviewProc, SIGNAL(processExited(KProcess *)),
             this, SLOT(slotPreviewExited(KProcess *)));
 
-    QGridLayout *topLayout = new QGridLayout(this, 2, 2, 0, KDialog::spacingHint());
+    QBoxLayout *topLayout = new QHBoxLayout(this, 0, KDialog::spacingHint());
 
     // left column
+    QVBoxLayout *leftColumnLayout =
+        new QVBoxLayout(topLayout, KDialog::spacingHint());
+    QBoxLayout *vLayout =
+        new QVBoxLayout(leftColumnLayout, KDialog::spacingHint());
 
     mSaverGroup = new QGroupBox(i18n("Screen Saver"), this );
     mSaverGroup->setColumnLayout( 0, Qt::Horizontal );
+    vLayout->addWidget(mSaverGroup);
+    vLayout->setStretchFactor( mSaverGroup, 10 );
     QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup->layout(),
         KDialog::spacingHint() );
-    topLayout->addMultiCellWidget(mSaverGroup,0,1,0,0);
 
     mSaverListView = new QListView( mSaverGroup );
+    mSaverListView->setMinimumHeight( 120 );
     mSaverListView->addColumn("");
     mSaverListView->header()->hide();
     mSelected = -1;
@@ -203,28 +392,22 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
       " this button. (Also, the preview image shows you what the screen saver"
       " will look like.)") );
 
-    // right column
-
-    mMonitorLabel = new QLabel( this );
-    mMonitorLabel->setAlignment( AlignCenter );
-    mMonitorLabel->setPixmap( QPixmap(locate("data",
-                         "kcontrol/pics/monitor.png")));
-    topLayout->addWidget(mMonitorLabel, 0, 1);
-    QWhatsThis::add( mMonitorLabel, i18n("Here you can see a preview of the selected screen saver.") );
-
     mSettingsGroup = new QGroupBox( i18n("Settings"), this );
     mSettingsGroup->setColumnLayout( 0, Qt::Vertical );
-    topLayout->addWidget( mSettingsGroup, 1, 1 );
+    leftColumnLayout->addWidget( mSettingsGroup );
     groupLayout = new QVBoxLayout( mSettingsGroup->layout(),
         KDialog::spacingHint() );
 
-
-    mEnabledCheckBox = new QCheckBox(i18n("Start screen saver a&utomatically"), mSettingsGroup);
+    mEnabledCheckBox = new QCheckBox(i18n(
+        "Start a&utomatically"), mSettingsGroup);
     mEnabledCheckBox->setChecked(mEnabled);
-    QWhatsThis::add( mEnabledCheckBox, i18n("When you check this option, the selected screen saver will be started"
-                                            " automatically after a certain number of minutes of inactivity."
-                                            " This timeout period can be set using the spinbox below.") );
-    connect(mEnabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnable(bool)));
+    QWhatsThis::add( mEnabledCheckBox, i18n(
+        "When you check this option, the selected screen saver "
+        "will be started automatically after a certain number "
+        "of minutes of inactivity. "
+        "This timeout period can be set using the spinbox below.") );
+    connect(mEnabledCheckBox, SIGNAL(toggled(bool)),
+            this, SLOT(slotEnable(bool)));
     groupLayout->addWidget(mEnabledCheckBox);
 
     QBoxLayout *hbox = new QHBoxLayout();
@@ -240,110 +423,108 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mWaitEdit->setSpecialValueText(i18n("1 minute"));
     mWaitEdit->setValue(mTimeout/60);
     mWaitEdit->setEnabled(mEnabled);
-    connect(mWaitEdit, SIGNAL(valueChanged(int)), SLOT(slotTimeoutChanged(int)));
+    connect(mWaitEdit, SIGNAL(valueChanged(int)),
+            this, SLOT(slotTimeoutChanged(int)));
     mActivateLbl->setBuddy(mWaitEdit);
     hbox->addWidget(mWaitEdit);
     hbox->addStretch(1);
-    QString wtstr = i18n("Choose the period of inactivity"
-      " after which the screen saver should start."
-      " To prevent the screen saver from automatically starting, uncheck the above option.");
+    QString wtstr = i18n(
+        "Choose the period of inactivity "
+        "after which the screen saver should start. "
+        "To prevent the screen saver from automatically starting, "
+        "uncheck the above option.");
     QWhatsThis::add( mActivateLbl, wtstr );
     QWhatsThis::add( mWaitEdit, wtstr );
 
-    mDPMSDependentCheckBox = new QCheckBox(i18n("Make the screen saver aware of power management"), mSettingsGroup);
-    mDPMSDependentCheckBox->setChecked( mDPMS );
-    connect( mDPMSDependentCheckBox, SIGNAL( toggled( bool ) ),
-	this, SLOT( slotDPMS( bool ) ) );
-    groupLayout->addWidget(mDPMSDependentCheckBox);
-    QWhatsThis::add( mDPMSDependentCheckBox, i18n("Enable this option if you want to disable the screen saver while watching TV or movies.") );
-
-    mLockCheckBox = new QCheckBox( i18n("&Require password to stop screen saver"), mSettingsGroup );
+    mLockCheckBox = new QCheckBox( i18n(
+        "&Require password to stop"), mSettingsGroup );
+    mLockCheckBox->setEnabled( mEnabled );
     mLockCheckBox->setChecked( mLock );
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ),
-         this, SLOT( slotLock( bool ) ) );
+             this, SLOT( slotLock( bool ) ) );
     groupLayout->addWidget(mLockCheckBox);
-    QWhatsThis::add( mLockCheckBox, i18n("If you check this option, the display"
-      " will be locked when the screen saver starts. To restore the display,"
-      " enter your account password at the prompt.") );
+    QWhatsThis::add( mLockCheckBox, i18n(
+        "If you check this option, the display will be locked after "
+        "the screen saver has been started. To restore the "
+        "display, enter your account password at the prompt. "
+        "You can specify in the spinbox below a delay "
+        "after which the display will be actually locked."  ) );
+    hbox = new QHBoxLayout();
+    groupLayout->addLayout(hbox);
+    hbox->addSpacing(30);
+    mLockLbl = new QLabel(i18n("After:"), mSettingsGroup);
+    mLockLbl->setEnabled(mEnabled && mLock);
+    QWhatsThis::add( mLockLbl, i18n(
+        "Should the period after which the display will be locked."
+        "To prevent the display from being locked, disable the "
+        "above option." ) );
+    hbox->addWidget(mLockLbl);
+    mWaitLockEdit = new QSpinBox(mSettingsGroup);
+    mWaitLockEdit->setSteps(1, 10);
+    mWaitLockEdit->setRange(1, 1800);
+    mWaitLockEdit->setSuffix(i18n(" seconds"));
+    mWaitLockEdit->setSpecialValueText(i18n("1 second"));
+    mWaitLockEdit->setValue(mLockTimeout/1000);
+    mWaitLockEdit->setEnabled(mEnabled && mLock);
+    if ( mWaitLockEdit->sizeHint().width() <
+         mWaitEdit->sizeHint().width() ) {
+        mWaitLockEdit->setFixedWidth( mWaitEdit->sizeHint().width() );
+        mWaitEdit->setFixedWidth( mWaitEdit->sizeHint().width() );
+    }
+    else {
+        mWaitEdit->setFixedWidth( mWaitLockEdit->sizeHint().width() );
+        mWaitLockEdit->setFixedWidth( mWaitLockEdit->sizeHint().width() );
+    }
+    connect(mWaitLockEdit, SIGNAL(valueChanged(int)),
+            this, SLOT(slotLockTimeoutChanged(int)));
+    mLockLbl->setBuddy(mWaitLockEdit);
+    hbox->addWidget(mWaitLockEdit);
+    hbox->addStretch(1);
+    QString wltstr = i18n(
+        "Choose the period "
+        "after which the display will be locked. ");
+    QWhatsThis::add( mLockLbl, wltstr );
+    QWhatsThis::add( mWaitLockEdit, wltstr );
 
-    QGridLayout *gl = new QGridLayout(groupLayout, 2, 4);
-    gl->setColStretch( 2, 10 );
+    mDPMSDependentCheckBox = new QCheckBox(i18n(
+        "Make aware of power &management"), mSettingsGroup);
+    mDPMSDependentCheckBox->setChecked( mDPMS );
+    connect( mDPMSDependentCheckBox, SIGNAL( toggled( bool ) ),
+             this, SLOT( slotDPMS( bool ) ) );
+    groupLayout->addWidget(mDPMSDependentCheckBox);
+    QWhatsThis::add( mDPMSDependentCheckBox, i18n(
+        "Enable this option if you want to disable the screen saver while "
+        "watching TV or movies.") );
 
-    QLabel* lbl = new QLabel(i18n("&Priority:"), mSettingsGroup);
-    gl->addWidget(lbl, 0, 0);
+    QWidget* vspacer = new QWidget( this );
+    vspacer->setMinimumSize( 10, 1 );
+    vspacer->setSizePolicy( QSizePolicy::Preferred,
+        QSizePolicy::MinimumExpanding );
+    leftColumnLayout->addWidget( vspacer );
 
-    mPrioritySlider = new QSlider(QSlider::Horizontal, mSettingsGroup);
-    mPrioritySlider->setRange(0, 19);
-    mPrioritySlider->setSteps(1, 5);
-    mPrioritySlider->setTickmarks(QSlider::Below);
-    mPrioritySlider->setValue(19 - mPriority);
-    connect(mPrioritySlider, SIGNAL( valueChanged(int)),
-        SLOT(slotPriorityChanged(int)));
-    lbl->setBuddy(mPrioritySlider);
-    gl->addMultiCellWidget(mPrioritySlider, 0, 0, 1, 3);
-    QWhatsThis::add( mPrioritySlider, i18n("Use this slider to change the"
-      " processing priority for the screen saver over other jobs that are"
-      " being executed in the background. For a processor-intensive screen"
-      " saver, setting a higher priority may make the display smoother at"
-      " the expense of other jobs.") );
+    // right column
+    QBoxLayout* rightColumnLayout =
+        new QVBoxLayout(topLayout, KDialog::spacingHint());
 
-#ifndef HAVE_SETPRIORITY
-    lbl->setEnabled(false);
-    mPrioritySlider->setEnabled(false);
-#endif
+    mMonitorLabel = new QLabel( this );
+    mMonitorLabel->setAlignment( AlignCenter );
+    mMonitorLabel->setPixmap( QPixmap(locate("data",
+                         "kcontrol/pics/monitor.png")));
+    rightColumnLayout->addWidget(mMonitorLabel, 0);
+    QWhatsThis::add( mMonitorLabel, i18n("Here you can see a preview of the selected screen saver.") );
 
-    lbl = new QLabel(i18n("Low Priority", "Low"), mSettingsGroup);
-    gl->addWidget(lbl, 1, 1);
+    QBoxLayout* advancedLayout = new QHBoxLayout( rightColumnLayout, 3 );
+    advancedLayout->addWidget( new QWidget( this ) );
+    QPushButton* advancedBt = new QPushButton(
+        i18n( "Advanced &Options..." ), this, "advancedBtn" );
+    advancedBt->setSizePolicy( QSizePolicy(
+        QSizePolicy::Fixed, QSizePolicy::Fixed) );
+    connect( advancedBt, SIGNAL( clicked() ),
+             this, SLOT( slotAdvanced() ) );
+    advancedLayout->addWidget( advancedBt );
+    advancedLayout->addWidget( new QWidget( this ) );
 
-#ifndef HAVE_SETPRIORITY
-    lbl->setEnabled(false);
-#endif
-
-    lbl = new QLabel(i18n("High Priority", "High"), mSettingsGroup);
-    gl->addWidget(lbl, 1, 3);
-
-#ifndef HAVE_SETPRIORITY
-    lbl->setEnabled(false);
-#endif
-
-#if 0
-    QGroupBox *mAutoLockGroup = new QGroupBox( i18n("Autolock"), this );
-    mAutoLockGroup->setColumnLayout( 0, Qt::Vertical );
-    vLayout->addWidget( mAutoLockGroup );
-    groupLayout = new QVBoxLayout( mAutoLockGroup->layout(), 10 );
-
-    m_topLeftCorner = new QCheckBox( i18n("Top-Left corner"), mAutoLockGroup );
-    groupLayout->addWidget( m_topLeftCorner);
-    m_topLeftCorner->setChecked(mTopLeftCorner);
-    connect( m_topLeftCorner, SIGNAL( toggled( bool ) ),
-         this, SLOT( slotChangeTopLeftCorner( bool ) ) );
-
-
-
-    m_topRightCorner = new QCheckBox( i18n("Top-Right corner"), mAutoLockGroup );
-    groupLayout->addWidget( m_topRightCorner);
-    m_topRightCorner->setChecked(mTopRightCorner);
-    connect( m_topRightCorner, SIGNAL( toggled( bool ) ),
-         this, SLOT( slotChangeTopRightCorner( bool ) ) );
-
-
-    m_bottomLeftCorner = new QCheckBox( i18n("Bottom-Left corner"), mAutoLockGroup );
-    groupLayout->addWidget( m_bottomLeftCorner);
-    m_bottomLeftCorner->setChecked(mBottomLeftCorner);
-    connect( m_bottomLeftCorner, SIGNAL( toggled( bool ) ),
-         this, SLOT( slotChangeBottomLeftCorner( bool ) ) );
-
-
-    m_bottomRightCorner = new QCheckBox( i18n("Bottom-Right corner"), mAutoLockGroup );
-    groupLayout->addWidget( m_bottomRightCorner);
-    m_bottomRightCorner->setChecked(mBottomRightCorner);
-    connect( m_bottomRightCorner, SIGNAL( toggled( bool ) ),
-         this, SLOT( slotChangeBottomRightCorner( bool ) ) );
-
-#endif
-
-
-    topLayout->setRowStretch(2,1);
+    rightColumnLayout->addStretch();
 
     if (mImmutable)
     {
@@ -463,22 +644,14 @@ void KScreenSaver::readSettings()
 
     mEnabled = config->readBoolEntry("Enabled", false);
     mTimeout = config->readNumEntry("Timeout", 300);
+    mLockTimeout = config->readNumEntry("LockGrace", 60000);
     mDPMS = config->readBoolEntry("DPMS-dependent", false);
     mLock = config->readBoolEntry("Lock", false);
-    mPriority = config->readNumEntry("Priority", 19);
     mSaver = config->readEntry("Saver");
 
-    if (mPriority < 0) mPriority = 0;
-    if (mPriority > 19) mPriority = 19;
     if (mTimeout < 60) mTimeout = 60;
-
-#if 0
-    mTopLeftCorner = config->readBoolEntry("LockCornerTopLeft", false);
-    mTopRightCorner = config->readBoolEntry("LockCornerTopRight", false) ;
-    mBottomLeftCorner = config->readBoolEntry("LockCornerBottomLeft", false);
-    mBottomRightCorner = config->readBoolEntry("LockCornerBottomRight", false);
-#endif
-
+    if (mLockTimeout < 0) mLockTimeout = 0;
+    if (mLockTimeout > 1800000) mLockTimeout = 1800000;
 
     mChanged = false;
     delete config;
@@ -499,15 +672,6 @@ void KScreenSaver::updateValues()
 
     mLockCheckBox->setChecked(mLock);
     mDPMSDependentCheckBox->setChecked(mDPMS);
-    mPrioritySlider->setValue(19-mPriority);
-
-#if 0
-    m_topLeftCorner->setChecked(mTopLeftCorner);
-    m_topRightCorner->setChecked(mTopRightCorner);
-    m_bottomLeftCorner->setChecked(mBottomLeftCorner);
-    m_bottomRightCorner->setChecked(mBottomRightCorner);
-#endif
-
 }
 
 //---------------------------------------------------------------------------
@@ -525,15 +689,8 @@ void KScreenSaver::defaults()
         mSaverListView->ensureItemVisible( item );
     }
     slotTimeoutChanged( 5 );
-    slotPriorityChanged( 0 );
     slotDPMS( false );
     slotLock( false );
-#if 0
-    slotChangeBottomRightCorner( false );
-    slotChangeBottomLeftCorner( false );
-    slotChangeTopRightCorner( false );
-    slotChangeTopLeftCorner( false );
-#endif
 
     updateValues();
 
@@ -552,16 +709,9 @@ void KScreenSaver::save()
 
     config->writeEntry("Enabled", mEnabled);
     config->writeEntry("Timeout", mTimeout);
+    config->writeEntry("LockGrace", mLockTimeout);
     config->writeEntry("DPMS-dependent", mDPMS);
     config->writeEntry("Lock", mLock);
-    config->writeEntry("Priority", mPriority);
-#if 0
-    config->writeEntry("LockCornerTopLeft", m_topLeftCorner->isChecked());
-    config->writeEntry("LockCornerBottomLeft", m_bottomLeftCorner->isChecked());
-    config->writeEntry("LockCornerTopRight", m_topRightCorner->isChecked());
-    config->writeEntry("LockCornerBottomRight", m_bottomRightCorner->isChecked());
-#endif
-
 
     if ( !mSaver.isEmpty() )
         config->writeEntry("Saver", mSaver);
@@ -740,6 +890,9 @@ void KScreenSaver::slotEnable(bool e)
     mEnabled = e;
     mActivateLbl->setEnabled( e );
     mWaitEdit->setEnabled( e );
+    mLockCheckBox->setEnabled( e );
+    mLockLbl->setEnabled( e && mLock );
+    mWaitLockEdit->setEnabled( e && mLock );
     mChanged = true;
     emit changed(true);
 }
@@ -841,6 +994,17 @@ void KScreenSaver::slotSetup()
 
 //---------------------------------------------------------------------------
 //
+void KScreenSaver::slotAdvanced()
+{
+   KScreenSaverAdvancedDialog dlg( topLevelWidget() );
+   if ( dlg.exec() ) {
+       mChanged = true;
+       emit changed(true);
+  }
+}
+
+//---------------------------------------------------------------------------
+//
 void KScreenSaver::slotTest()
 {
     if ( mSelected == -1 )
@@ -922,6 +1086,15 @@ void KScreenSaver::slotTimeoutChanged(int to )
     emit changed(true);
 }
 
+//-----------------------------------------------------------------------
+//
+void KScreenSaver::slotLockTimeoutChanged(int to )
+{
+    mLockTimeout = to * 1000;
+    mChanged = true;
+    emit changed(true);
+}
+
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::slotDPMS( bool d )
@@ -936,23 +1109,8 @@ void KScreenSaver::slotDPMS( bool d )
 void KScreenSaver::slotLock( bool l )
 {
     mLock = l;
-    mChanged = true;
-    emit changed(true);
-}
-
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::slotPriorityChanged( int val )
-{
-    if (val == mPriority)
-    return;
-
-    mPriority = 19 - val;
-    if (mPriority > 19)
-    mPriority = 19;
-    else if (mPriority < 0)
-    mPriority = 0;
-
+    mLockLbl->setEnabled( l );
+    mWaitLockEdit->setEnabled( l );
     mChanged = true;
     emit changed(true);
 }
@@ -966,37 +1124,6 @@ void KScreenSaver::slotSetupDone(KProcess *)
     mSetupBt->setEnabled( true );
     emit changed(true);
 }
-
-#if 0
-void KScreenSaver::slotChangeBottomRightCorner( bool b)
-{
-    mBottomRightCorner = b;
-    mChanged = true;
-    emit changed(true);
-}
-
-void KScreenSaver::slotChangeBottomLeftCorner( bool b)
-{
-    mBottomLeftCorner = b;
-    mChanged = true;
-    emit changed(true);
-}
-
-void KScreenSaver::slotChangeTopRightCorner( bool b)
-{
-    mTopRightCorner = b;
-    mChanged = true;
-    emit changed(true);
-}
-
-void KScreenSaver::slotChangeTopLeftCorner( bool b)
-{
-    mTopLeftCorner = b;
-    mChanged = true;
-    emit changed(true);
-}
-#endif
-
 
 //---------------------------------------------------------------------------
 //
