@@ -204,6 +204,14 @@ X-KDE-Group
 	to rearrange the entries. At the moment, you should not use
 	it.
 
+Don't forget the usual entries :
+
+Type=Application
+Icon=...
+Exec=kcontrol2 dir/file
+
+(or should that be kcmshell ?)
+
 
 What else do I need?
 --------------------
