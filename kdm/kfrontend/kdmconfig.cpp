@@ -176,8 +176,6 @@ KDMConfig::KDMConfig()
     _failFont = Str2Font (GetCfgQStr (C_FailFont));
     _greetFont = Str2Font (GetCfgQStr (C_GreetFont));
 
-    QSettings().writeEntry("/qt/useXft", (bool) GetCfgInt (C_AntiAliasing));
-
     // Greet String
     char hostname[256], *ptr;
     gethostname (hostname, 255);
