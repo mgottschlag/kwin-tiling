@@ -784,24 +784,27 @@ void KSMServer::removeConnection( KSMConnection* conn )
 /*!
   Called from our IceIoErrorHandler
  */
-void KSMServer::ioError( IceConn iceConn )
+void KSMServer::ioError( IceConn /*iceConn*/ )
 {
-    QListIterator<KSMClient> it ( clients );
-    while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
-	++it;
-
-    if ( it.current() ) {
-	SmsConn smsConn = it.current()->connection();
-	deleteClient( it.current() );
-	SmsCleanUp( smsConn );
-    }
-    IceSetShutdownNegotiation (iceConn, False);
-    IceCloseConnection( iceConn );
 }
 
 void KSMServer::processData( int /*socket*/ )
 {
-    (void) IceProcessMessages( ((KSMConnection*)sender())->iceConn, 0, 0 );
+    IceConn iceConn = ((KSMConnection*)sender())->iceConn;
+    IceProcessMessagesStatus status = IceProcessMessages( iceConn, 0, 0 );
+    if ( status == IceProcessMessagesIOError ) {
+	(void) IceCloseConnection( iceConn );
+	QListIterator<KSMClient> it ( clients );
+	while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
+	    ++it;
+	
+	if ( it.current() ) {
+	    SmsConn smsConn = it.current()->connection();
+	    deleteClient( it.current() );
+	    SmsCleanUp( smsConn );
+	}
+	IceCloseConnection( iceConn );
+    }
 }
 
 
@@ -1126,7 +1129,7 @@ void KSMServer::restoreSession()
 
     // windowmanager *MUST* have kmapnotify disabled!
     if ( !wmCommand.isEmpty() ) {
-	{ 
+	{
 	    QByteArray params;
 	    QDataStream stream(params, IO_WriteOnly);
 	    QCString replyType;
@@ -1146,7 +1149,7 @@ void KSMServer::restoreSession()
 	arg << informKSplashCounter;
 	kapp->dcopClient()->send("ksplash", "", "setMaxProgress(int)", data );
     }
-    
+
     // re-enable kmapnotify for other apps
     if ( !wmCommand.isEmpty() ) {
 	QByteArray params;
