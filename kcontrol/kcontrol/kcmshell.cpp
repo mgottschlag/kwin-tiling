@@ -159,6 +159,8 @@ int main(int _argc, char *_argv[])
 
             if (KDesktopFile::isDesktopFile(*it)) {
                 KDesktopFile file(*it, true);
+                if (file.readEntry("Hidden") == "true")
+                    continue;
                 QString module = *it;
                 if (module.startsWith(KCGlobal::baseGroup()))
                     module = module.mid(KCGlobal::baseGroup().length());
