@@ -142,6 +142,8 @@ protected:
     QStringList mSaverFileList;
     SaverList   mSaverList;
     QTimer      *mLoadTimer;
+    QGroupBox   *mSaverGroup;
+    QGroupBox   *mSettingsGroup;
 
     int         mSelected;
     int         mPrevSelected;

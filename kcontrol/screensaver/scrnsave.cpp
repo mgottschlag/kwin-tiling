@@ -195,12 +195,12 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     // left column
     QBoxLayout *vLayout = new QVBoxLayout(helperLayout, 10);
 
-    QGroupBox *group = new QGroupBox(i18n("Screen Saver"), this );
-    vLayout->addWidget(group);
-    QBoxLayout *groupLayout = new QVBoxLayout( group, 10 );
+    mSaverGroup = new QGroupBox(i18n("Screen Saver"), this );
+    vLayout->addWidget(mSaverGroup);
+    QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup, 10 );
     groupLayout->addSpacing(10);
 
-    mSaverListBox = new QListBox( group );
+    mSaverListBox = new QListBox( mSaverGroup );
     mSelected = -1;
     mSaverListBox->setEnabled(false);
     groupLayout->addWidget( mSaverListBox, 10 );
@@ -208,14 +208,14 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
       " screen savers. Select the one you want to use.") );
 
     QBoxLayout* hlay = new QHBoxLayout(groupLayout, 10);
-    mSetupBt = new QPushButton(  i18n("&Setup ..."), group );
+    mSetupBt = new QPushButton(  i18n("&Setup ..."), mSaverGroup );
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
     mSetupBt->setEnabled(false);
     hlay->addWidget( mSetupBt );
     QWhatsThis::add( mSetupBt, i18n("If the screen saver you selected has"
       " customizable features, you can set them up by clicking this button.") );
 
-    mTestBt = new QPushButton(  i18n("&Test"), group );
+    mTestBt = new QPushButton(  i18n("&Test"), mSaverGroup );
     connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
     mTestBt->setEnabled(false);
     hlay->addWidget( mTestBt );
@@ -233,16 +233,16 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     vLayout->addWidget(mMonitorLabel, 0);
     QWhatsThis::add( mMonitorLabel, i18n("Here you can see a preview of the selected screen saver.") );
 
-    group = new QGroupBox( i18n("Settings"), this );
-    vLayout->addWidget( group );
-    groupLayout = new QVBoxLayout( group, 10, 10 );
+    mSettingsGroup = new QGroupBox( i18n("Settings"), this );
+    vLayout->addWidget( mSettingsGroup );
+    groupLayout = new QVBoxLayout( mSettingsGroup, 10, 10 );
     groupLayout->addSpacing(10);
 
     QBoxLayout *hbox = new QHBoxLayout();
     groupLayout->addLayout(hbox);
-    QLabel *lbl = new QLabel(i18n("&Wait for"), group);
+    QLabel *lbl = new QLabel(i18n("&Wait for"), mSettingsGroup);
     hbox->addWidget(lbl);
-    mWaitEdit = new QSpinBox(group);
+    mWaitEdit = new QSpinBox(mSettingsGroup);
     mWaitEdit->setSteps(1, 10);
     mWaitEdit->setRange(1, 120);
     mWaitEdit->setSuffix(i18n(" min."));
@@ -258,7 +258,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
 
     groupLayout->addStretch(1);
 
-    mLockCheckBox = new QCheckBox( i18n("&Require password"), group );
+    mLockCheckBox = new QCheckBox( i18n("&Require password"), mSettingsGroup );
     mLockCheckBox->setChecked( mLock );
     mLockCheckBox->setEnabled( mEnabled );
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ),
@@ -273,10 +273,10 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     QGridLayout *gl = new QGridLayout(groupLayout, 2, 4);
     gl->setColStretch( 2, 10 );
 
-    lbl = new QLabel(i18n("&Priority"), group);
+    lbl = new QLabel(i18n("&Priority"), mSettingsGroup);
     gl->addWidget(lbl, 0, 0);
 
-    mPrioritySlider = new QSlider(QSlider::Horizontal, group);
+    mPrioritySlider = new QSlider(QSlider::Horizontal, mSettingsGroup);
     mPrioritySlider->setRange(0, 19);
     mPrioritySlider->setSteps(1, 5);
     mPrioritySlider->setValue(19 - mPriority);
@@ -295,10 +295,10 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     lbl->setEnabled(false);
     mPrioritySlider->setEnabled(false);
 #endif
-    lbl = new QLabel(i18n("Low Priority", "Low"), group);
+    lbl = new QLabel(i18n("Low Priority", "Low"), mSettingsGroup);
     gl->addWidget(lbl, 1, 1);
 
-    lbl = new QLabel(i18n("High Priority", "High"), group);
+    lbl = new QLabel(i18n("High Priority", "High"), mSettingsGroup);
     gl->addWidget(lbl, 1, 3);
 
 #ifndef HAVE_SETPRIORITY
@@ -608,6 +608,8 @@ void KScreenSaver::slotEnable(bool e)
       mEnabled = true;
     }
 
+    mSaverGroup->setEnabled( e );
+    mSettingsGroup->setEnabled( e );
     mSaverListBox->setEnabled( e );
     mTestBt->setEnabled( e && (mSelected>=0) );
     mWaitEdit->setEnabled( e );
@@ -615,6 +617,7 @@ void KScreenSaver::slotEnable(bool e)
 #ifdef HAVE_SETPRIORITY
     mPrioritySlider->setEnabled( e );
 #endif
+
 
     mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
     setMonitor();
