@@ -224,7 +224,7 @@ void SchemaEditor::imageSelect()
     }
 
     KURL url = KFileDialog::getImageOpenURL(start, 0, i18n("Select a Background Image"));
-// KURL url=KFileDialog::getOpenURL(start,"",0,i18n("Select a background image"));
+// KURL url=KFileDialog::getOpenURL(start,"",0,i18n("Select a Background Image"));
     if(!url.path().isEmpty())
     {
         backgndLine->setText(url.path());
@@ -270,7 +270,7 @@ void SchemaEditor::removeCurrent()
     if (!QFile::remove(base))
 	KMessageBox::error(this,
 			   i18n("Cannot remove the schema.\nMaybe it is a system schema\n"),
-			   i18n("Error removing schema"));
+			   i18n("Error Removing Schema"));
 
     loadAllSchema();
 
@@ -380,7 +380,7 @@ void SchemaEditor::saveCurrent()
 	f.close();
     } else
 	KMessageBox::error(this, i18n("Cannot save the schema.\nMaybe permission denied\n"),
-			   i18n("Error saving schema"));
+			   i18n("Error Saving Schema"));
 
 
     loadAllSchema();
@@ -447,7 +447,7 @@ void SchemaEditor::readSchema(int num)
 	    schemaList->setCurrentItem(oldSchema);
 	    if(KMessageBox::questionYesNo(this, i18n("The schema has been modified.\n"
 				"Do you want to save the changes ?"),
-		   i18n("Schema modified"))==KMessageBox::Yes)
+		   i18n("Schema Modified"))==KMessageBox::Yes)
 
 		    saveCurrent();
 
@@ -468,7 +468,7 @@ void SchemaEditor::readSchema(int num)
 
     if (fPath.isNull()) {
 	KMessageBox::error(this, i18n("Cannot find the schema."),
-			   i18n("Error loading schema"));
+			   i18n("Error Loading Schema"));
 
 
 	return;
@@ -478,7 +478,7 @@ void SchemaEditor::readSchema(int num)
     FILE *sysin = fopen(QFile::encodeName(fPath), "r");
     if (!sysin) {
 	KMessageBox::error(this, i18n("Cannot load the schema."),
-			   i18n("Error loading schema"));
+			   i18n("Error Loading Schema"));
 	loadAllSchema();
 	return;
     }

@@ -217,7 +217,7 @@ void SessionEditor::readSession(int num)
         sessionList->setCurrentItem(oldSession);
         if(KMessageBox::questionYesNo(this, i18n("The session has been modified.\n"
                                                  "Do you want to save the changes ?"),
-                                      i18n("Session modified"))==KMessageBox::Yes)
+                                      i18n("Session Modified"))==KMessageBox::Yes)
             saveCurrent();
 
         sessionList->setCurrentItem(num);
@@ -324,7 +324,7 @@ void SessionEditor::removeCurrent()
   if (!QFile::remove(base)) {
     KMessageBox::error(this,
       i18n("Cannot remove the session.\nMaybe it is a system session\n"),
-      i18n("Error removing session"));
+      i18n("Error Removing Session"));
     return;
   }
   loadAllSession();
