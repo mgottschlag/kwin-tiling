@@ -45,17 +45,19 @@
 
 /**** DLL Interface for kcontrol ****/
 
+extern void runRdb();
+
 extern "C" {
     KCModule *create_style(QWidget *parent, const char *name) {
-    KGlobal::locale()->insertCatalogue(QString::fromLatin1("kcmstyle"));
-    return new KGeneral(parent, name);
+      KGlobal::locale()->insertCatalogue(QString::fromLatin1("kcmstyle"));
+      return new KGeneral(parent, name);
     }
 
     void init_style() {
         KConfig config("kcmdisplayrc", true, false);
         config.setGroup("X11");
         if (config.readBoolEntry( "useResourceManager", true ))
-            kapp->startServiceByDesktopName("krdb");
+	  runRdb();
         // Write some Qt root property.
        QByteArray properties;
        QDataStream d(properties, IO_WriteOnly);
@@ -63,7 +65,8 @@ extern "C" {
        Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
        XChangeProperty(qt_xdisplay(),  qt_xrootwin(), a, a, 8, PropModeReplace,
                (unsigned char*) properties.data(), properties.size());
-       }
+
+    }
 }
 
 
@@ -454,11 +457,9 @@ void KGeneral::save()
     config->sync();
 
     if (useRM) {
-    QApplication::setOverrideCursor( waitCursor );
-    KProcess proc;
-    proc.setExecutable("krdb");
-    proc.start( KProcess::Block );
-    QApplication::restoreOverrideCursor();
+      QApplication::setOverrideCursor( waitCursor );
+      runRdb();
+      QApplication::restoreOverrideCursor();
     }
 
     KIPC::sendMessageAll(KIPC::StyleChanged);

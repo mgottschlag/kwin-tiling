@@ -6,7 +6,7 @@ SUBDIRS = . kcs ad pics
 
 lib_LTLIBRARIES = libkcm_style.la
 
-libkcm_style_la_SOURCES = general.cpp
+libkcm_style_la_SOURCES = general.cpp krdb.cpp
 libkcm_style_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_style_la_LIBADD = $(LIB_KFILE)
 libkcm_style_la_METASOURCES = general.moc

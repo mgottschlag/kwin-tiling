@@ -36,7 +36,7 @@ enum FontStyle { Normal, Bold, Italic, Fixed };
 
 // -----------------------------------------------------------------------------
 
-QString fontString( QFont rFont, FontStyle style )
+static QString fontString( QFont rFont, FontStyle style )
 {
 
   switch(style) {
@@ -59,7 +59,7 @@ QString fontString( QFont rFont, FontStyle style )
 
 // -----------------------------------------------------------------------------
 
-void addColorDef(QString& s, const char* n, const QColor& col)
+static void addColorDef(QString& s, const char* n, const QColor& col)
 {
   QString tmp;
 
@@ -72,7 +72,7 @@ void addColorDef(QString& s, const char* n, const QColor& col)
 
 // -----------------------------------------------------------------------------
 
-void addFontDef(QString& s, const char* n, const QFont& f, FontStyle fs)
+static void addFontDef(QString& s, const char* n, const QFont& f, FontStyle fs)
 {
   QString tmp;
 
@@ -84,7 +84,7 @@ void addFontDef(QString& s, const char* n, const QFont& f, FontStyle fs)
 
 // -----------------------------------------------------------------------------
 
-void copyFile(QFile& tmp, QString const& filename)
+static void copyFile(QFile& tmp, QString const& filename)
 {
   QFile f( filename );
   QString s;
@@ -104,16 +104,16 @@ void copyFile(QFile& tmp, QString const& filename)
 
 // -----------------------------------------------------------------------------
 
-QString item( int i ) {
+static QString item( int i ) {
     return QString::number( i / 255.0, 'f', 3 );
 }
 
-QString color( const QColor& col )
+static QString color( const QColor& col )
 {
     return QString( "{ %1, %2, %3 }" ).arg( item( col.red() ) ).arg( item( col.green() ) ).arg( item( col.blue() ) );
 }
 
-void createGtkrc( const QFont& font, const QColorGroup& cg )
+static void createGtkrc( const QFont& font, const QColorGroup& cg )
 {
     QCString filename = ::getenv("HOME");
     filename += "/.gtkrc";
@@ -183,18 +183,12 @@ void createGtkrc( const QFont& font, const QColorGroup& cg )
 
 // -----------------------------------------------------------------------------
 
-int main( int argc, char ** argv )
-{
-  KAboutData aboutData( "krdb", I18N_NOOP("Krdb"),
-        "$Id$",
-        I18N_NOOP("Krdb - applies KDE colors and styles to X and GTK settings."));
-  KCmdLineArgs::init(argc, argv, &aboutData);
+void runRdb() {
 
-  KApplication a;
   KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
-  QColorGroup cg = a.palette().normal();
-  if ( !a.kstyle() || !a.kstyle()->inherits("KLegacyStyle") )
-      createGtkrc( a.font(), cg );
+  QColorGroup cg = kapp->palette().normal();
+  if ( !kapp->kstyle() || !kapp->kstyle()->inherits("KLegacyStyle") )
+      createGtkrc( kapp->font(), cg );
 
   QString preproc;
 
@@ -271,3 +265,4 @@ int main( int argc, char ** argv )
   QDir d("/tmp");
   d.remove( tmpFile );
 }
+
