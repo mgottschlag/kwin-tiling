@@ -1,6 +1,9 @@
 [Desktop Entry]
 Type=Service
 Name=AltaVista
+Name[eo]=Altavisto
+Name[et]=Altavista
+Name[ko]=알타비스타
 ServiceTypes=SearchProvider
 Keys=av,altavista
 Query=http://www.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\1
