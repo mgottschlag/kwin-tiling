@@ -23,33 +23,10 @@
     <property name="caption">
         <string>Form1</string>
     </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>11</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
-        </property>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>Layout9</cstring>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
+    <grid>
                 <widget class="QGroupBox" row="1" column="1">
                     <property name="name">
-                        <cstring>configContainer</cstring>
+                        <cstring>GroupBox1</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -62,6 +39,13 @@
                     <property name="title">
                         <string>Default Component</string>
                     </property>
+                    <vbox>
+                        <widget class="QWidgetStack">
+                            <property name="name">
+                                <cstring>configContainer</cstring>
+                            </property>
+                        </widget>
+                    </vbox>
                 </widget>
                 <widget class="QGroupBox" row="0" column="1">
                     <property name="name">
@@ -79,15 +63,6 @@
                         <string>Component Description</string>
                     </property>
                     <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>11</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
                         <widget class="QLabel">
                             <property name="name">
                                 <cstring>ComponentDescription</cstring>
@@ -96,7 +71,7 @@
                                 <string></string>
                             </property>
                             <property name="alignment">
-                                <set>WordBreak|AlignVCenter</set>
+                                <set>WordBreak|AlignTop</set>
                             </property>
                         </widget>
                     </vbox>
@@ -117,9 +92,7 @@
                         <number>-1</number>
                     </property>
                 </widget>
-            </grid>
-        </widget>
-    </vbox>
+    </grid>
 </widget>
 <includes>
     <include location="global" impldecl="in declaration">klistbox.h</include>

@@ -42,6 +42,7 @@
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
+#include <qwidgetstack.h>
 
 class MyListBoxItem: public QListBoxText
 {
@@ -147,6 +148,7 @@ void CfgEmailClient::load(KConfig *)
 	kmailCB->setChecked(useKMail);
 	otherCB->setChecked(!useKMail);
 	txtEMailClient->setText(emailClient);
+	txtEMailClient->setFixedHeight(txtEMailClient->sizeHint().height());
 	chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
 
 	emit changed(false);
@@ -283,12 +285,10 @@ void CfgTerminalEmulator::selectTerminalApp()
 ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 	ComponentChooser_UI(parent,name), configWidget(0) {
 
+	ComponentChooser_UILayout->setRowStretch(1, 1);
 	somethingChanged=false;
 	latestEditedService="";
 
-        configContainer->setColumnLayout(0, Qt::Vertical );
-   	myLayout = new QVBoxLayout( configContainer->layout() );
-        myLayout->setAlignment( Qt::AlignTop );
 	QStringList dummy;
 	QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",false,true,dummy);
 	for (QStringList::Iterator it=services.begin();it!=services.end();++it)
@@ -298,8 +298,9 @@ ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 		delete cfg;
 
 	}
+	ServiceChooser->setFixedWidth(ServiceChooser->sizeHint().width());
 	ServiceChooser->sort();
-	connect(ServiceChooser,SIGNAL(executed(QListBoxItem*)),this,SLOT(slotServiceSelected(QListBoxItem*)));
+	connect(ServiceChooser,SIGNAL(clicked(QListBoxItem*)),this,SLOT(slotServiceSelected(QListBoxItem*)));
 	ServiceChooser->setSelected(0,true);
 	slotServiceSelected(ServiceChooser->item(0));
 
@@ -307,36 +308,32 @@ ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 
 void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	if (!it) return;
+
 	if (somethingChanged) {
 		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?<BR><BR>Selecting <B>No</B> will discard your changes</qt>"))==KMessageBox::Yes) save();
 	}
 	KSimpleConfig *cfg=new KSimpleConfig(static_cast<MyListBoxItem*>(it)->File);
 
 	ComponentDescription->setText(cfg->readEntry("Comment",i18n("No description available")));
+	ComponentDescription->setMinimumSize(ComponentDescription->sizeHint());
+
 
 	QString cfgType=cfg->readEntry("configurationType");
+	QWidget *newConfigWidget = 0;
 	if (cfgType.isEmpty() || (cfgType=="component"))
 	{
 		if (!(configWidget && configWidget->qt_cast("CfgComponent")))
 		{
-			delete configWidget;
 			CfgComponent* cfgcomp = new CfgComponent(configContainer);
-			configWidget=cfgcomp;
                         cfgcomp->ChooserDocu->setText(i18n("Choose from the list below which component should be used by default for the %1 service.").arg(it->text()));
-			configWidget->show();
-			myLayout->addWidget(configWidget);
-			connect(configWidget,SIGNAL(changed(bool)),this,SLOT(emitChanged(bool)));
+			newConfigWidget = cfgcomp;
 		}
 	}
 	else if (cfgType=="internal_email")
 	{
 		if (!(configWidget && configWidget->qt_cast("CfgEmailClient")))
 		{
-			delete configWidget;
-			configWidget=new CfgEmailClient(configContainer);
-			configWidget->show();
-			myLayout->addWidget(configWidget);
-			connect(configWidget,SIGNAL(changed(bool)),this,SLOT(emitChanged(bool)));
+			newConfigWidget = new CfgEmailClient(configContainer);
 		}
 
 	}
@@ -344,16 +341,25 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	{
 		if (!(configWidget && configWidget->qt_cast("CfgTerminalEmulator")))
 		{
-			delete configWidget;
-			configWidget=new CfgTerminalEmulator(configContainer);
-			configWidget->show();
-			myLayout->addWidget(configWidget);
-			connect(configWidget,SIGNAL(changed(bool)),this,SLOT(emitChanged(bool)));
+			newConfigWidget = new CfgTerminalEmulator(configContainer);
 		}
 
 	}
 
-	if (configWidget) static_cast<CfgPlugin*>(configWidget->qt_cast("CfgPlugin"))->load(cfg);
+	if (newConfigWidget)
+	{
+		configContainer->addWidget(newConfigWidget);
+		configContainer->raiseWidget(newConfigWidget);
+		configContainer->removeWidget(newConfigWidget);
+		delete configWidget;
+		configWidget=newConfigWidget;
+		connect(configWidget,SIGNAL(changed(bool)),this,SLOT(emitChanged(bool)));
+	        configContainer->setMinimumSize(configWidget->sizeHint());
+	}
+	
+	if (configWidget)
+		static_cast<CfgPlugin*>(configWidget->qt_cast("CfgPlugin"))->load(cfg);
+	
 	emitChanged(false);
 	delete cfg;
 	latestEditedService=static_cast<MyListBoxItem*>(it)->File;
