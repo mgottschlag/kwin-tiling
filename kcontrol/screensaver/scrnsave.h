@@ -9,21 +9,18 @@
 #define __SCRNSAVE_H__
 
 #include <qwidget.h>
-#include <qpushbutton.h>
-#include <qlistbox.h>
-#include <qlineedit.h>
-#include <qtimer.h>
-#include <qlabel.h>
-#include <qpopupmenu.h>
-#include <qcheckbox.h>
-#include <qslider.h>
-#include <qspinbox.h>
 #include <qxembed.h>
-
 #include <kcmodule.h>
-#include <kprocess.h>
 
+class QTimer;
+class QSpinBox;
+class QSlider;
+class QCheckBox;
+class QLabel;
+class QListBox;
+class QPushButton;
 class KIntNumInput;
+class KProcess;
 
 //===========================================================================
 class KSSMonitor : public QXEmbed

@@ -28,6 +28,10 @@
 #include <qlayout.h>
 #include <qtextstream.h>
 #include <qwhatsthis.h>
+#include <qtimer.h>
+#include <qlabel.h>
+#include <qlistbox.h>
+#include <qspinbox.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -568,8 +572,7 @@ void KScreenSaver::slotPreviewExited(KProcess *)
     // Some xscreensaver hacks do something nasty to the window that
     // requires a new one to be created (or proper investigation of the
     // problem).
-    if (mMonitor)
-        delete mMonitor;
+    delete mMonitor;
 
     mMonitor = new KSSMonitor(mMonitorLabel);
     mMonitor->setBackgroundColor(black);
