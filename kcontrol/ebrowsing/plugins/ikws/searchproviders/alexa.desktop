@@ -2,8 +2,12 @@
 Encoding=UTF-8
 Type=Service
 Name=Alexa
+Name[fa]=آلکسا
+Name[hi]=अलेक्सा
 Name[hr]=Alksa
-Name[ta]=«¦Äì¡
+Name[lo]=ສຸວັນທອງ 
+Name[ta]=அலெக்?஡ URL
+Name[xx]=xxAlexaxx
 ServiceTypes=SearchProvider
 Keys=al,alexa
 Query=http://info.alexa.com/search?q=\\{@}

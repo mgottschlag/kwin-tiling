@@ -2,7 +2,10 @@
 Encoding=UTF-8
 Type=Service
 Name=Vivisimo
+Name[hi]=विविसिमो
 Name[nl]=Vivisimo  (zoekmachine op basis van metazoekopdrachten en documentclustering)
+Name[ta]=Voila
+Name[xx]=xxVivisimoxx
 ServiceTypes=SearchProvider
 Keys=vi
 Query=http://vivisimo.com/search?query=\\{@}&se=Yahoo%2CAltaVista%2CMSN%2CFast%2COD%2CExcite%2CDirectHit%2CLooksmart%2CEuroseek&x=49&y=16
