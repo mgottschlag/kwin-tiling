@@ -347,7 +347,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     kLay->addWidget(cdeMode, 1, 2);
 
     wtstr = i18n("Keep the Alt key pressed and hit repeatedly the Tab key to walk"
-                 " throught the windows on the current desktop. The two different modes mean:<ul>"
+                 " through the windows on the current desktop. The two different modes mean:<ul>"
                  "<li><b>KDE</b>: a nice widget is shown, displaying the icons of all windows to"
                  " walk through and the title of the currently selected one;"
                  "<li><b>CDE</b>: the focus is passed to a new window at each time Tab is hit."
