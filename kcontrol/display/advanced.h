@@ -21,6 +21,7 @@ class KGlobalBackgroundSettings;
 
 /**
  * The Desktop/Advanced tab in kcontrol.
+ * TODO: Merge with background settings.
  */
 class KAdvanced: public KCModule
 {
@@ -42,13 +43,11 @@ private slots:
     void slotLimitCache(bool);
     void slotCacheSize(int);
     void slotExportBackground(bool);
-    void slotDockPanel(bool);
 
 private:
     void apply();
 
     QCheckBox *m_pCBLimit, *m_pCBExport;
-    QCheckBox *m_pCBDock;
     QSpinBox *m_pCacheBox;
 
     KGlobalBackgroundSettings *m_pSettings;

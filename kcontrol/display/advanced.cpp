@@ -80,10 +80,6 @@ KAdvanced::KAdvanced(QWidget *parent, const char *name)
     vbox->addWidget(m_pCBExport);
     connect(m_pCBExport, SIGNAL(toggled(bool)), SLOT(slotExportBackground(bool)));
 
-    m_pCBDock = new QCheckBox(i18n("Doc&k to panel"), group);
-    vbox->addWidget(m_pCBDock);
-    connect(m_pCBDock, SIGNAL(toggled(bool)), SLOT(slotDockPanel(bool)));
-
     top->addStretch();
 
     m_pSettings = new KGlobalBackgroundSettings();
@@ -114,7 +110,6 @@ void KAdvanced::defaults()
 {
     m_pSettings->setLimitCache(_defLimitCache);
     m_pSettings->setExportBackground(_defExport);
-    m_pSettings->setDockPanel(_defDock);
     m_pSettings->setCacheSize(_defCacheSize);
     apply();
     emit changed(true);
@@ -140,7 +135,6 @@ void KAdvanced::apply()
 
     m_pCacheBox->setValue(m_pSettings->cacheSize());
     m_pCBExport->setChecked(m_pSettings->exportBackground());
-    m_pCBDock->setChecked(m_pSettings->dockPanel());
 }
 
 
@@ -166,15 +160,6 @@ void KAdvanced::slotExportBackground(bool exp)
     apply();
     emit changed(true);
 }
-
-
-void KAdvanced::slotDockPanel(bool dock)
-{
-    m_pSettings->setDockPanel(dock);
-    apply();
-    emit changed(true);
-}
-
 
 
 #include "advanced.moc"
