@@ -50,7 +50,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
 				     KDialog::spacingHint());
   lay->setAutoAdd(TRUE);
 
-  labDecSym = new QLabel(this, I18N_NOOP("Decimal symbol"));
+  labDecSym = new QLabel(this, I18N_NOOP("Decimal symbol:"));
   edDecSym = new QLineEdit(this);
   connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
   labDecSym->setBuddy(edDecSym);
