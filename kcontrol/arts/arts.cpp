@@ -650,7 +650,6 @@ QString KArtsModule::createArgs(bool netTrans,
 		args += QChar(' ') + addOptions;
 
 	args += QString::fromLatin1(" -m artsmessage");
-	args += QString::fromLatin1(" -c drkonqi");
 	args += QString::fromLatin1(" -l 3");
 	args += QString::fromLatin1(" -f");
 
