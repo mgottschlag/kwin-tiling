@@ -43,8 +43,8 @@ KGDialog::KGDialog() : inherited( (QWidget *)0, (const char*)0, true )
 {
 #ifdef WITH_KDM_XCONSOLE
     layout = new QGridLayout (winFrame, 1, 1, 10, 10 );
-    if (kdmcfg->_showLog) {
-	consoleView = new KConsole( winFrame, kdmcfg->_logSource );
+    if (_showLog) {
+	consoleView = new KConsole( winFrame );
 	layout->addWidget( consoleView, 1, 0 );
     } else
 	consoleView = 0;
@@ -60,21 +60,21 @@ KGDialog::completeMenu( int _switchIf, int _switchCode, const QString &_switchMs
 KGDialog::completeMenu()
 #endif
 {
-    if (kdmcfg->_allowClose)
-	inserten( kdmcfg->_isLocal ? i18n("R&estart X Server") : i18n("Clos&e Connection"),
+    if (_allowClose)
+	inserten( _isLocal ? i18n("R&estart X Server") : i18n("Clos&e Connection"),
 	      ALT+Key_E, SLOT(slotExit()) );
 
 #ifdef XDMCP
-    if (kdmcfg->_isLocal && kdmcfg->_loginMode != _switchIf) {
+    if (_isLocal && _loginMode != _switchIf) {
 	switchCode = _switchCode;
 	inserten( _switchMsg, _switchAccel, SLOT(slotSwitch()) );
     }
 #endif
 
-    if (kdmcfg->_hasConsole)
+    if (_hasConsole)
 	inserten( i18n("Co&nsole Login"), ALT+Key_N, SLOT(slotConsole()) );
 
-    if (kdmcfg->_allowShutdown != SHUT_NONE) {
+    if (_allowShutdown != SHUT_NONE) {
 	inserten( i18n("&Shutdown..."), ALT+Key_S, SLOT(slotShutdown()) );
 	QAccel *accel = new QAccel( winFrame );
 	accel->insertItem( ALT+CTRL+Key_Delete );
@@ -175,18 +175,18 @@ KGDialog::adjustGeometry()
 {
     QDesktopWidget *dsk = qApp->desktop();
 
-    QRect scr = dsk->screenGeometry( kdmcfg->_greeterScreen );
+    QRect scr = dsk->screenGeometry( _greeterScreen );
     setMaximumSize( scr.size() * .9 );
     adjustSize();
     QRect grt( rect() );
-    if (kdmcfg->_greeterPosX >= 0) {
-	grt.moveCenter( QPoint( kdmcfg->_greeterPosX, kdmcfg->_greeterPosY ) );
+    if (_greeterPosFixed) {
+	grt.moveCenter( QPoint( _greeterPosX, _greeterPosY ) );
 	moveInto( grt, scr );
     } else
 	grt.moveCenter( scr.center() );
     setGeometry( grt );
 
-    if (dsk->screenNumber( QCursor::pos() ) != kdmcfg->_greeterScreen)
+    if (dsk->screenNumber( QCursor::pos() ) != _greeterScreen)
 	QCursor::setPos( grt.center() );
 }
 

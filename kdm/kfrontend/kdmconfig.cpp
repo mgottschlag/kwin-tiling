@@ -24,21 +24,93 @@
 
 #include "kdmconfig.h"
 #include "kdm_greet.h"
-#include "kdm_config.h"
 
 #include <kapplication.h>
 #include <klocale.h>
-#include <kstandarddirs.h>
-#include <ksimpleconfig.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/utsname.h>
 
-KDMConfig *kdmcfg = 0;
+QString	_GUIStyle;
+QString	_colorScheme;
 
-QString GetCfgQStr (int id)
+QFont	_normalFont;
+QFont	_failFont;
+QFont	_greetFont;
+
+int	_logoArea;
+QString	_logo;
+QString	_greetString;
+bool	_greeterPosFixed;
+int	_greeterPosX, _greeterPosY;
+int	_greeterScreen;
+
+bool	_userCompletion;
+bool	_userList;
+int	_showUsers;
+int	_preselUser;
+QString	_defaultUser;
+bool	_focusPasswd;
+bool	_sortUsers;
+char	**_users;
+char	**_noUsers;
+int	_lowUserId, _highUserId;
+int	_showRoot;
+int	_faceSource;
+QString	_faceDir;
+int	_echoMode;
+
+char	**_sessionsDirs;
+
+int	_allowShutdown, _allowNuke, _defSdMode;
+bool	_interactiveSd;
+
+int	_numLockStatus;
+
+#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
+bool	_useLilo;
+QString	_liloCmd;
+QString	_liloMap;
+#endif
+
+#ifdef XDMCP
+int	_loginMode;
+#endif
+
+int	_forgingSeed;
+
+#ifdef WITH_KDM_XCONSOLE
+bool	_showLog;
+char	*_logSource;
+#endif
+
+bool	_allowClose;
+
+QStringList	_pluginsLogin;
+QStringList	_pluginsShutdown;
+QStringList	_pluginOptions;
+
+bool	_useBackground;
+char	*_backgroundCfg;
+
+int	_pingInterval;
+int	_pingTimeout;
+
+int	_grabServer;
+int	_grabTimeout;
+
+int	_antiAliasing;
+
+char 	*_language;
+
+bool	_hasConsole;
+
+QString	_stsFile;
+bool	_isLocal;
+
+static QString GetCfgQStr (int id)
 {
     char *tmp = GetCfgStr (id);
     QString qs = QString::fromUtf8 (tmp);
@@ -46,7 +118,7 @@ QString GetCfgQStr (int id)
     return qs;
 }
 
-QStringList GetCfgQStrList (int id)
+static QStringList GetCfgQStrList (int id)
 {
     int i, len;
     char **tmp = GetCfgStrArr (id, &len);
@@ -60,7 +132,7 @@ QStringList GetCfgQStrList (int id)
 }
 
 // Based on kconfigbase.cpp
-QFont KDMConfig::Str2Font (const QString &aValue)
+static QFont Str2Font (const QString &aValue)
 {
     uint nFontBits;
     QFont aRetFont;
@@ -92,30 +164,21 @@ QFont KDMConfig::Str2Font (const QString &aValue)
     return aRetFont;
 }
 
-// XXX gallium, fix this :)
-QPalette KDMConfig::Str2Palette (const QString &aValue)
+extern "C"
+void init_config( void )
 {
-    QString scheme = locate("data", "kdisplay/color-schemes/" + aValue + ".kcsrc");
-    if (scheme.isEmpty()) return kapp->palette();
+    _isLocal = (GetCfgInt (C_displayType) & d_location) == dLocal;
+    _hasConsole = GetCfgInt (C_AllowConsole) && !GetCfgQStr (C_console).isEmpty();
 
-    KSimpleConfig config(scheme, true);
-    config.setGroup("Color Scheme");
-    return kapp->createApplicationPalette(&config, 7);
-}
-
-
-KDMConfig::KDMConfig()
-{
     _allowShutdown = GetCfgInt (C_allowShutdown);
     _allowNuke = GetCfgInt (C_allowNuke);
     _defSdMode = GetCfgInt (C_defSdMode);
     _interactiveSd = GetCfgInt (C_interactiveSd);
 
-    if (GetCfgInt (C_GreeterPosFixed)) {
-	_greeterPosX = GetCfgInt (C_GreeterPosX);
-	_greeterPosY = GetCfgInt (C_GreeterPosY);
-    } else
-	_greeterPosX = -1;
+    _greeterPosFixed = GetCfgInt (C_GreeterPosFixed);
+    _greeterPosX = GetCfgInt (C_GreeterPosX);
+    _greeterPosY = GetCfgInt (C_GreeterPosY);
+
     _greeterScreen = GetCfgInt (C_GreeterScreen);
     if (_greeterScreen < 0) {
 	QDesktopWidget *dsk = kapp->desktop();
@@ -124,18 +187,12 @@ KDMConfig::KDMConfig()
 		dsk->screenNumber( QPoint( 0, 0 ) );
     }
 
-    QString tmp = GetCfgQStr (C_GUIStyle);
-    if (!tmp.isEmpty())
-	kapp->setStyle (tmp);
-    tmp = GetCfgQStr (C_ColorScheme);
-    if (!tmp.isEmpty())
-	kapp->setPalette (Str2Palette (tmp));
+    _GUIStyle = GetCfgQStr (C_GUIStyle);
+    _colorScheme = GetCfgQStr (C_ColorScheme);
 
     _logoArea = GetCfgInt (C_LogoArea);
 
     _logo = GetCfgQStr (C_LogoPixmap);
-    if( _logo.isEmpty())
-	_logo = locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") );
 
     _userCompletion = GetCfgInt (C_UserCompletion);
     _userList = GetCfgInt (C_UserList);
@@ -149,7 +206,7 @@ KDMConfig::KDMConfig()
     _faceSource = GetCfgInt (C_FaceSource);
     _faceDir = GetCfgQStr (C_FaceDir);
 
-    _sessionsDirs = GetCfgQStrList (C_sessionsDirs);
+    _sessionsDirs = GetCfgStrArr (C_sessionsDirs, 0);
     _stsFile = GetCfgQStr (C_dataDir) += "/kdmsts";
 
     _echoMode = GetCfgInt (C_EchoMode);
@@ -211,20 +268,25 @@ KDMConfig::KDMConfig()
 
 #ifdef WITH_KDM_XCONSOLE
     _showLog = GetCfgInt (C_ShowLog);
-    _logSource = GetCfgQStr (C_LogSource);
+    _logSource = GetCfgStr (C_LogSource);
 #endif
 
     _pluginsLogin = GetCfgQStrList(C_PluginsLogin);
     _pluginsShutdown = GetCfgQStrList(C_PluginsShutdown);
     _pluginOptions = GetCfgQStrList(C_PluginOptions);
 
-    _isLocal = (GetCfgInt (C_displayType) & d_location) == dLocal;
-    _hasConsole = GetCfgInt (C_AllowConsole) && !GetCfgQStr (C_console).isEmpty();
     _allowClose = GetCfgInt (C_AllowClose);
-}
 
-KDMConfig::~KDMConfig()
-{
-    freeStrArr (_users);
-    freeStrArr (_noUsers);
+    _useBackground = GetCfgInt (C_UseBackground);
+    _backgroundCfg = GetCfgStr (C_BackgroundCfg);
+
+    _pingInterval = GetCfgInt (C_pingInterval);
+    _pingTimeout = GetCfgInt (C_pingTimeout);
+
+    _grabServer = GetCfgInt (C_grabServer);
+    _grabTimeout = GetCfgInt (C_grabTimeout);
+
+    _antiAliasing = GetCfgInt (C_AntiAliasing);
+
+    _language = GetCfgStr (C_Language);
 }

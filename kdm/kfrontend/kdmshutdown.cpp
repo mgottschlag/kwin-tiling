@@ -73,7 +73,7 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
     connect( restart_rb, SIGNAL(doubleClicked()), SLOT(accept()) );
 
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-    if (kdmcfg->_useLilo) {
+    if (_useLilo) {
 	QWidget *hlp = new QWidget( howGroup );
 	QHBoxLayout *hb = new QHBoxLayout( hlp );
 	int spc = kapp->style().pixelMetric(QStyle::PM_ExclusiveIndicatorWidth)
@@ -85,7 +85,7 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 	hb->addWidget( targets );
 
 	// fill combo box with contents of lilo config
-	liloInfo = new LiloInfo( kdmcfg->_liloCmd, kdmcfg->_liloMap );
+	liloInfo = new LiloInfo( _liloCmd, _liloMap );
 
 	QStringList list;
 	if (!liloInfo->getBootOptions( list, defaultLiloTarget )) {
@@ -110,24 +110,24 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 
     howGroup->setSizePolicy( fp );
 
-    if (!kdmcfg->_interactiveSd) {
+    if (!_interactiveSd) {
 	whenGroup = new QVButtonGroup( i18n("Shutdown Mode"), winFrame );
 	hlay->addWidget( whenGroup, 0, AlignTop );
 
 	rb = new QRadioButton( i18n("verb!", "&Schedule"), whenGroup );
-	if (kdmcfg->_defSdMode == SHUT_SCHEDULE)
+	if (_defSdMode == SHUT_SCHEDULE)
 	    rb->setChecked( true );
 
 	force_rb = new QRadioButton( i18n("&Force now"), whenGroup );
 	// Default action
-	if (kdmcfg->_defSdMode == SHUT_FORCENOW)
+	if (_defSdMode == SHUT_FORCENOW)
 	    force_rb->setChecked( true );
 
 	try_rb = new QRadioButton( i18n("Try &now"), whenGroup );
-	if (kdmcfg->_defSdMode == SHUT_TRYNOW)
+	if (_defSdMode == SHUT_TRYNOW)
 	    try_rb->setChecked( true );
 
-	if (kdmcfg->_allowNuke == SHUT_NONE)
+	if (_allowNuke == SHUT_NONE)
 	    force_rb->setEnabled( false );
 
 	connect( whenGroup, SIGNAL(clicked(int)), SLOT(slotWhenChanged()) );
@@ -135,12 +135,12 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 	whenGroup->setSizePolicy( fp );
     }
 
-    if (kdmcfg->_allowShutdown == SHUT_ROOT ||
-	(!kdmcfg->_interactiveSd && kdmcfg->_allowNuke == SHUT_ROOT))
+    if (_allowShutdown == SHUT_ROOT ||
+	(!_interactiveSd && _allowNuke == SHUT_ROOT))
     {
 	if (curPlugin < 0) {
 	    curPlugin = 0;
-	    pluginList = KGVerify::init( kdmcfg->_pluginsShutdown );
+	    pluginList = KGVerify::init( _pluginsShutdown );
 	}
 	verify = new KGVerify( this, winFrame,
 			       whenGroup ? whenGroup : howGroup, "root",
@@ -213,8 +213,8 @@ KDMShutdown::slotTargetChanged()
 void
 KDMShutdown::slotWhenChanged()
 {
-    int nNeedRoot = kdmcfg->_allowShutdown == SHUT_ROOT ||
-		    (kdmcfg->_allowNuke == SHUT_ROOT && force_rb->isChecked());
+    int nNeedRoot = _allowShutdown == SHUT_ROOT ||
+		    (_allowNuke == SHUT_ROOT && force_rb->isChecked());
     if (verify && nNeedRoot != needRoot) {
 	if (needRoot == 1)
 	    verify->abort();
@@ -229,7 +229,7 @@ void
 KDMShutdown::bye_bye()
 {
 #if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
-    if (kdmcfg->_useLilo && restart_rb->isChecked()) {
+    if (_useLilo && restart_rb->isChecked()) {
 	if (targets->currentItem() != oldLiloTarget) {
 	    if (targets->currentItem() == defaultLiloTarget)
 		liloInfo->setNextBootOption( "" );
@@ -240,7 +240,7 @@ KDMShutdown::bye_bye()
 #endif
     GSendInt( G_Shutdown );
     GSendInt( restart_rb->isChecked() ? SHUT_REBOOT : SHUT_HALT );
-    GSendInt( kdmcfg->_interactiveSd ? SHUT_INTERACT :
+    GSendInt( _interactiveSd ? SHUT_INTERACT :
 	      force_rb->isChecked() ? SHUT_FORCENOW :
 	      try_rb->isChecked() ? SHUT_TRYNOW : SHUT_SCHEDULE );
     inherited::accept();

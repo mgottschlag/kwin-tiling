@@ -26,7 +26,7 @@
 #include <config.h>
 
 #include "kdm_greet.h"
-#include "kdm_config.h"
+#include "kdmconfig.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -370,9 +370,6 @@ syncTimeout (int n ATTR_UNUSED)
     longjmp (syncJump, 1);
 }
 
-static int dgrabTimeout;
-int dgrabServer;
-
 void
 SecureDisplay (Display *dpy)
 {
@@ -382,7 +379,7 @@ SecureDisplay (Display *dpy)
 	LogError ("Display %s could not be secured\n", dname);
 	exit (EX_RESERVER_DPY);
     }
-    (void) alarm ((unsigned) dgrabTimeout);
+    (void) alarm ((unsigned) _grabTimeout);
     Debug ("Before XGrabServer %s\n", dname);
     XGrabServer (dpy);
     Debug ("XGrabServer succeeded %s\n", dname);
@@ -398,7 +395,7 @@ SecureDisplay (Display *dpy)
     (void) alarm (0);
     (void) signal (SIGALRM, SIG_DFL);
     pseudoReset (dpy);
-    if (!dgrabServer)
+    if (!_grabServer)
     {
 	XUngrabServer (dpy);
 	XSync (dpy, 0);
@@ -423,7 +420,7 @@ void
 UnsecureDisplay (Display *dpy)
 {
     Debug ("Unsecure display %s\n", dname);
-    if (dgrabServer)
+    if (_grabServer)
     {
 	XUngrabServer (dpy);
 	XSync (dpy, 0);
@@ -444,8 +441,6 @@ PingLostSig (int n ATTR_UNUSED)
     longjmp (pingTime, 1);
 }
 
-static int dpingTimeout;
-
 int
 PingServer (Display *dpy)
 {
@@ -456,7 +451,7 @@ PingServer (Display *dpy)
     oldError = XSetIOErrorHandler (PingLostIOErr);
     oldAlarm = alarm (0);
     oldSig = signal (SIGALRM, PingLostSig);
-    (void) alarm (dpingTimeout * 60);
+    (void) alarm (_pingTimeout * 60);
     if (!setjmp (pingTime))
     {
 	Debug ("Ping server\n");
@@ -695,6 +690,8 @@ main (int argc ATTR_UNUSED, char **argv)
 
     signal( SIGTERM, sigterm );
 
+    init_config();
+
     /* for QSettings */
     srand( time( 0 ) );
     for (i = 0; i < 10000; i++) {
@@ -715,17 +712,12 @@ main (int argc ATTR_UNUSED, char **argv)
     if (!(f = fopen( qtrc, "w" )))
 	LogPanic( "Cannot create qt config\n" );
     fprintf( f, "[General]\nuseXft=%s\n",
-		GetCfgInt (C_AntiAliasing) ? "true" : "false" );
+		_antiAliasing ? "true" : "false" );
     fclose( f );
 
-    dname = GetCfgStr (C_name);
-    dgrabServer = GetCfgInt (C_grabServer);
-    dgrabTimeout = GetCfgInt (C_grabTimeout);
-    dpingTimeout = GetCfgInt (C_pingTimeout);
+    dname = getenv( "DISPLAY" );
 
-    ci = GetCfgStr( C_Language );
-    setenv( "LC_ALL", ci, 1 );
-    free( ci );
+    setenv( "LC_ALL", _language, 1 );
 
     kg_main (argv[0]);
 

@@ -28,82 +28,93 @@
 
 #include <config.h>
 
-#include <qnamespace.h>
+#include "kdm_config.h"
+
+#ifdef __cplusplus
+
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qfont.h>
-#include <qpalette.h>
 
-QString GetCfgQStr (int id);
-QStringList GetCfgQStrList (int id);
+extern QString	_stsFile;
+extern bool	_isLocal;
 
-class KDMConfig {
+extern QString	_GUIStyle;
+extern QString	_colorScheme;
 
-private:
-    QFont Str2Font (const QString &aValue);
-    QPalette Str2Palette (const QString &aValue);
+extern QFont	_normalFont;
+extern QFont	_failFont;
+extern QFont	_greetFont;
 
-public:
-    KDMConfig();
-    ~KDMConfig();
+extern int	_logoArea;
+extern QString	_logo;
+extern QString	_greetString;
+extern bool	_greeterPosFixed;
+extern int	_greeterPosX, _greeterPosY;
+extern int	_greeterScreen;
 
-    QFont	_normalFont;
-    QFont	_failFont;
-    QFont	_greetFont;
+extern bool	_userCompletion;
+extern bool	_userList;
+extern int	_showUsers;
+extern int	_preselUser;
+extern QString	_defaultUser;
+extern bool	_focusPasswd;
+extern bool	_sortUsers;
+extern char	**_users;
+extern char	**_noUsers;
+extern int	_lowUserId, _highUserId;
+extern int	_showRoot;
+extern int	_faceSource;
+extern QString	_faceDir;
+extern int	_echoMode;
 
-    int		_logoArea;
-    QString	_logo;
-    QString	_greetString;
-    int		_greeterPosX, _greeterPosY;
-    int		_greeterScreen;
+extern char	**_sessionsDirs;
 
-    bool	_userCompletion;
-    bool	_userList;
-    int		_showUsers;
-    int		_preselUser;
-    QString	_defaultUser;
-    bool	_focusPasswd;
-    bool	_sortUsers;
-    char	**_users;
-    char	**_noUsers;
-    int		_lowUserId, _highUserId;
-    int		_showRoot;
-    int		_faceSource;
-    QString	_faceDir;
-    int		_echoMode;
+extern int	_allowShutdown, _allowNuke, _defSdMode;
+extern bool	_interactiveSd;
 
-    QStringList	_sessionsDirs;
-    QString	_stsFile;
-
-    int		_allowShutdown, _allowNuke, _defSdMode;
-    bool	_interactiveSd;
-
-    int		_numLockStatus;
+extern int	_numLockStatus;
 
 #if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
-    bool	_useLilo;
-    QString	_liloCmd;
-    QString	_liloMap;
+extern bool	_useLilo;
+extern QString	_liloCmd;
+extern QString	_liloMap;
 #endif
 
 #ifdef XDMCP
-    int		_loginMode;
+extern int	_loginMode;
 #endif
 
-    int		_forgingSeed;
+extern int	_forgingSeed;
 
 #ifdef WITH_KDM_XCONSOLE
-    bool	_showLog;
-    QString	_logSource;
+extern bool	_showLog;
+extern char	*_logSource;
 #endif
 
-    QStringList	_pluginsLogin;
-    QStringList	_pluginsShutdown;
-    QStringList	_pluginOptions;
+extern bool	_allowClose;
 
-    bool	_isLocal, _hasConsole, _allowClose;
-};
+extern QStringList	_pluginsLogin;
+extern QStringList	_pluginsShutdown;
+extern QStringList	_pluginOptions;
 
-extern KDMConfig *kdmcfg;
+extern bool	_useBackground;
+extern char	*_backgroundCfg;
+
+extern bool	_hasConsole;
+
+extern "C"
+#endif
+void init_config( void );
+
+extern int	_pingInterval;
+extern int	_pingTimeout;
+
+extern int	_grabServer;
+extern int	_grabTimeout;
+
+extern int	_antiAliasing;
+
+extern char 	*_language;
 
 #endif /* KDMCONFIG_H */

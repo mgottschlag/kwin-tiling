@@ -53,6 +53,7 @@ extern "C" {
 
 
 #include "kconsole.h"
+#include "kdmconfig.h"
 #include "kdm_greet.h"
 
 #include <klocale.h>
@@ -60,11 +61,10 @@ extern "C" {
 
 #include <qsocketnotifier.h>
 
-KConsole::KConsole( QWidget *_parent, const QString &src )
+KConsole::KConsole( QWidget *_parent )
     : inherited( _parent )
     , pty( 0 )
     , notifier( 0 )
-    , source( src )
     , fd( -1 )
 {
     setReadOnly( true );
@@ -87,11 +87,11 @@ KConsole::OpenConsole()
     static const char on = 1;
 #endif
 
-    if (!source.isEmpty()) {
-	if ((fd = open( source.latin1(), O_RDONLY | O_NONBLOCK )) >= 0)
+    if (*_logSource) {
+	if ((fd = open( _logSource, O_RDONLY | O_NONBLOCK )) >= 0)
 	    goto gotcon;
 	LogError( "Cannot open log source %s, "
-		  "falling back to /dev/console.\n", source.latin1() );
+		  "falling back to /dev/console.\n", _logSource );
     }
 
     pty = new KPty;

@@ -75,7 +75,7 @@ KGVerify::KGVerify( KGVerifyHandler *_handler, QWidget *_parent,
     grid = new QGridLayout;
 
     failedLabel = new QLabel( parent );
-    failedLabel->setFont( kdmcfg->_failFont );
+    failedLabel->setFont( _failFont );
     grid->addWidget( failedLabel, 1, 0, AlignCenter );
 
     connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
@@ -404,8 +404,8 @@ KGVerify::handleFailVerify( QWidget *parent )
 	case V_CHTOK_AUTH:
 	    Debug( " V_CHTOK_AUTH\n" );
 	    {
-		QStringList pgs( kdmcfg->_pluginsLogin );
-		pgs += kdmcfg->_pluginsShutdown;
+		QStringList pgs( _pluginsLogin );
+		pgs += _pluginsShutdown;
 		QStringList::ConstIterator it;
 		for (it = pgs.begin(); it != pgs.end(); ++it)
 		    if (*it == "classic" || *it == "modern") {
@@ -751,11 +751,11 @@ QVariant // public static
 KGVerify::getConf( void *, const char *key, const QVariant &dflt )
 {
     if (!qstrcmp( key, "EchoMode" ))
-	return QVariant( kdmcfg->_echoMode );
+	return QVariant( _echoMode );
     else {
 	QString fkey = QString::fromLatin1( key ) + '=';
-	for (QStringList::ConstIterator it = kdmcfg->_pluginOptions.begin();
-	     it != kdmcfg->_pluginOptions.end(); ++it)
+	for (QStringList::ConstIterator it = _pluginOptions.begin();
+	     it != _pluginOptions.end(); ++it)
 	    if ((*it).startsWith( fkey ))
 		return (*it).mid( fkey.length() );
 	return dflt;

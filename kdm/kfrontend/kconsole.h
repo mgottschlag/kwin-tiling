@@ -34,7 +34,7 @@ class KConsole : public QTextEdit {
     typedef QTextEdit inherited;
 
 public:
-    KConsole( QWidget *_parent = 0, const QString &src = QString::null );
+    KConsole( QWidget *_parent = 0 );
     ~KConsole();
 
 private slots:
@@ -46,7 +46,7 @@ private:
 
     KPty *pty;
     QSocketNotifier *notifier;
-    QString source, leftover;
+    QString leftover;
     int fd;
 };
 

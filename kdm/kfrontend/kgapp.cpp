@@ -23,7 +23,6 @@
     */
 
 #include "kdm_greet.h"
-#include "kdm_config.h"
 #include "kdmconfig.h"
 #include "kgapp.h"
 #include "kgreeter.h"
@@ -34,9 +33,12 @@
 #include <kprocess.h>
 #include <kcmdlineargs.h>
 #include <kcrash.h>
+#include <kstandarddirs.h>
+#include <ksimpleconfig.h>
 
 #include <qtimer.h>
 #include <qcursor.h>
+#include <qpalette.h>
 
 #include <stdlib.h> // free(), exit()
 #include <unistd.h> // alarm()
@@ -57,7 +59,7 @@ sigAlarm( int )
 GreeterApp::GreeterApp()
 {
     pingInterval = ((GetCfgInt( C_displayType ) & d_location) == dLocal) ?
-		      0 : GetCfgInt( C_pingInterval );
+		      0 : _pingInterval;
     if (pingInterval) {
 	struct sigaction sa;
 	sigemptyset( &sa.sa_mask );
@@ -127,19 +129,25 @@ kg_main( const char *argv0 )
 
     Display *dpy = qt_xdisplay();
 
-    kdmcfg = new KDMConfig();
+    if (!_GUIStyle.isEmpty())
+	app.setStyle( _GUIStyle );
 
-    app.setFont( kdmcfg->_normalFont );
+    _colorScheme = locate("data", "kdisplay/color-schemes/" + _colorScheme + ".kcsrc");
+    if (!_colorScheme.isEmpty()) {
+        KSimpleConfig config( _colorScheme, true );
+        config.setGroup( "Color Scheme" );
+        app.setPalette( app.createApplicationPalette( &config, 7 ) );
+    }
 
-    setup_modifiers( dpy, kdmcfg->_numLockStatus );
+    app.setFont( _normalFont );
+
+    setup_modifiers( dpy, _numLockStatus );
     SecureDisplay( dpy );
-    if (!dgrabServer) {
-	if (GetCfgInt( C_UseBackground )) {
+    if (!_grabServer) {
+	if (_useBackground) {
 	    proc = new KProcess;
 	    *proc << QCString( argv0, strrchr( argv0, '/' ) - argv0 + 2 ) + "krootimage";
-	    char *conf = GetCfgStr( C_BackgroundCfg );
-	    *proc << conf;
-	    free( conf );
+	    *proc << _backgroundCfg;
 	    proc->start();
 	}
 	GSendInt( G_SetupDpy );
@@ -154,7 +162,7 @@ kg_main( const char *argv0 )
 	int rslt, cmd = GRecvInt();
     
 	if (cmd == G_ErrorGreet) {
-	    if (KGVerify::handleFailVerify( qApp->desktop()->screen( kdmcfg->_greeterScreen ) ))
+	    if (KGVerify::handleFailVerify( qApp->desktop()->screen( _greeterScreen ) ))
 		break;
 	    cmd = G_Greet;
 	}
@@ -194,8 +202,6 @@ kg_main( const char *argv0 )
     delete proc;
     UnsecureDisplay( dpy );
     restore_modifiers();
-
-    delete kdmcfg;
 
     XSetInputFocus( qt_xdisplay(), PointerRoot, PointerRoot, CurrentTime );
 }

@@ -27,7 +27,6 @@
 #include "kdmconfig.h"
 #include "kdmclock.h"
 #include "kdm_greet.h"
-#include "kdm_config.h"
 
 #include <kapplication.h>
 #include <klocale.h>
@@ -109,7 +108,7 @@ KGreeter::KGreeter()
   , prevValid( true )
   , needLoad( false )
 {
-    stsFile = new KSimpleConfig( kdmcfg->_stsFile );
+    stsFile = new KSimpleConfig( _stsFile );
     stsFile->setGroup( "PrevUser" );
 
 #ifdef WITH_KDM_XCONSOLE
@@ -122,13 +121,13 @@ KGreeter::KGreeter()
     grid = new QGridLayout( 1, 1, 5 );
     main_grid->addLayout( grid, 2, 1 );
 
-    if (!kdmcfg->_greetString.isEmpty()) {
-	QLabel* welcomeLabel = new QLabel( kdmcfg->_greetString, winFrame );
+    if (!_greetString.isEmpty()) {
+	QLabel* welcomeLabel = new QLabel( _greetString, winFrame );
 	welcomeLabel->setAlignment( AlignCenter );
-	welcomeLabel->setFont( kdmcfg->_greetFont );
+	welcomeLabel->setFont( _greetFont );
 	main_grid->addWidget( welcomeLabel, 0, 1 );
     }
-    if (kdmcfg->_userList) {
+    if (_userList) {
 	userView = new UserListView( winFrame );
 	main_grid->addMultiCellWidget(userView, 0, 3, 0, 0);
 	connect( userView, SIGNAL(clicked( QListViewItem * )),
@@ -136,19 +135,19 @@ KGreeter::KGreeter()
 	connect( userView, SIGNAL(doubleClicked( QListViewItem * )),
 		 SLOT(accept()) );
     }
-    if (kdmcfg->_userCompletion)
+    if (_userCompletion)
 	userList = new QStringList;
     if (userView || userList)
 	insertUsers();
 
-    switch (kdmcfg->_logoArea) {
+    switch (_logoArea) {
 	case LOGO_CLOCK:
 	    clock = new KdmClock( winFrame, "clock" );
 	    break;
 	case LOGO_LOGO:
 	    {
 		QPixmap pixmap;
-		if (pixmap.load( kdmcfg->_logo )) {
+		if (pixmap.load( _logo )) {
 		    pixLabel = new QLabel( winFrame );
 		    pixLabel->setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ) );
 		    pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
@@ -184,7 +183,7 @@ KGreeter::KGreeter()
     grid->addMultiCellWidget( sep, 4,4, 0,3 );
 #else
     grid->addMultiCellWidget( sep, 4,4, 0,
-	(userView || kdmcfg->_logoArea == LOGO_NONE) ? 3 : 4 );
+	(userView || _logoArea == LOGO_NONE) ? 3 : 4 );
 #endif
     grid->setColStretch( 3, 1 );
 
@@ -215,7 +214,7 @@ KGreeter::KGreeter()
 	prec = menuButton;
     if (curPlugin < 0) {
 	curPlugin = 0;
-	pluginList = KGVerify::init( kdmcfg->_pluginsLogin );
+	pluginList = KGVerify::init( _pluginsLogin );
     }
     verify = new KGVerify( this, winFrame, prec, QString::null,
 			   pluginList, KGreeterPlugin::Authenticate,
@@ -289,11 +288,11 @@ KGreeter::insertUser( const QImage &default_pix,
 	return;
 
     int dp = 0, nd = 0;
-    if (kdmcfg->_faceSource == FACE_USER_ONLY ||
-	kdmcfg->_faceSource == FACE_PREFER_USER)
+    if (_faceSource == FACE_USER_ONLY ||
+	_faceSource == FACE_PREFER_USER)
 	dp = 1;
-    if (kdmcfg->_faceSource != FACE_USER_ONLY &&
-	kdmcfg->_faceSource != FACE_ADMIN_ONLY)
+    if (_faceSource != FACE_USER_ONLY &&
+	_faceSource != FACE_ADMIN_ONLY)
 	nd = 1;
     QImage p;
     // XXX remove seteuid-voodoo when we run as nobody
@@ -301,7 +300,7 @@ KGreeter::insertUser( const QImage &default_pix,
     do {
 	QString fn = dp ?
 		     QFile::decodeName( ps->pw_dir ) + "/.face" :
-		     kdmcfg->_faceDir + '/' + username + ".face";
+		     _faceDir + '/' + username + ".face";
 	if (p.load( fn + ".icon" ) || p.load( fn )) {
 	    QSize ns( 48, 48 );
 	    if (p.size() != ns)
@@ -366,8 +365,8 @@ KGreeter::insertUsers()
 {
     QImage default_pix;
     if (userView) {
-	if (!default_pix.load( kdmcfg->_faceDir + "/.default.face.icon" ))
-	    if (!default_pix.load( kdmcfg->_faceDir + "/.default.face" ))
+	if (!default_pix.load( _faceDir + "/.default.face.icon" ))
+	    if (!default_pix.load( _faceDir + "/.default.face" ))
 		LogError("Can't open default user face\n");
 	QSize ns( 48, 48 );
 	if (default_pix.size() != ns)
@@ -375,14 +374,14 @@ KGreeter::insertUsers()
 	      default_pix.convertDepth( 32 ).smoothScale( ns, QImage::ScaleMin );
     }
     struct passwd *ps;
-    if (kdmcfg->_showUsers == SHOW_ALL) {
-	UserList noUsers( kdmcfg->_noUsers );
+    if (_showUsers == SHOW_ALL) {
+	UserList noUsers( _noUsers );
 	QDict<int> dupes( 1000 );
 	for (setpwent(); (ps = getpwent()) != 0;) {
 	    if (*ps->pw_dir && *ps->pw_shell &&
-		(ps->pw_uid >= (unsigned)kdmcfg->_lowUserId ||
-		 !ps->pw_uid && kdmcfg->_showRoot) &&
-		ps->pw_uid <= (unsigned)kdmcfg->_highUserId &&
+		(ps->pw_uid >= (unsigned)_lowUserId ||
+		 !ps->pw_uid && _showRoot) &&
+		ps->pw_uid <= (unsigned)_highUserId &&
 		!noUsers.hasUser( ps->pw_name ) &&
 		!noUsers.hasGroup( ps->pw_gid )
 	    ) {
@@ -394,14 +393,14 @@ KGreeter::insertUsers()
 	    }
 	}
     } else {
-	UserList users( kdmcfg->_users );
+	UserList users( _users );
 	if (users.hasGroups()) {
 	    QDict<int> dupes( 1000 );
 	    for (setpwent(); (ps = getpwent()) != 0;) {
 		if (*ps->pw_dir && *ps->pw_shell &&
-		    (ps->pw_uid >= (unsigned)kdmcfg->_lowUserId ||
-		     !ps->pw_uid && kdmcfg->_showRoot) &&
-		    ps->pw_uid <= (unsigned)kdmcfg->_highUserId &&
+		    (ps->pw_uid >= (unsigned)_lowUserId ||
+		     !ps->pw_uid && _showRoot) &&
+		    ps->pw_uid <= (unsigned)_highUserId &&
 		    (users.hasUser( ps->pw_name ) ||
 		     users.hasGroup( ps->pw_gid ))
 		) {
@@ -420,7 +419,7 @@ KGreeter::insertUsers()
 	}
     }
     endpwent();
-    if (kdmcfg->_sortUsers) {
+    if (_sortUsers) {
 	if (userView)
 	    userView->sort();
 	if (userList)
@@ -445,9 +444,7 @@ KGreeter::putSession(const QString &type, const QString &name, bool hid, const c
 void
 KGreeter::insertSessions()
 {
-    for (QStringList::ConstIterator dit = kdmcfg->_sessionsDirs.begin();
-	 dit != kdmcfg->_sessionsDirs.end(); ++dit)
-    {
+    for (char **dit = _sessionsDirs; *dit; ++dit) {
 	QStringList ents = QDir( *dit ).entryList();
 	for (QStringList::ConstIterator it = ents.begin(); it != ents.end(); ++it)
 	    if ((*it).endsWith( ".desktop" )) {
@@ -589,7 +586,7 @@ KGreeter::slotLoadPrevWM()
 	if (!sess) {		/* no such user */
 	    if (!userView && !userList) { // don't fake if user list shown
 		/* simple crc32 */
-		for (crc = kdmcfg->_forgingSeed, i = 0; i < len; i++) {
+		for (crc = _forgingSeed, i = 0; i < len; i++) {
 		    by = (crc & 255) ^ name[i];
 		    for (b = 0; b < 8; b++)
 			by = (by >> 1) ^ (-(by & 1) & 0xedb88320);
@@ -632,19 +629,19 @@ KGreeter::pluginSetup()
     QString ent;
 
     if (verify->isPluginLocal()) {
-        if (kdmcfg->_preselUser != PRESEL_PREV)
+        if (_preselUser != PRESEL_PREV)
 	    stsFile->deleteEntry( dName, false );
-	if (kdmcfg->_preselUser != PRESEL_NONE) {
-	    ent = kdmcfg->_preselUser == PRESEL_PREV ?
-		    stsFile->readEntry( dName ) : kdmcfg->_defaultUser;
-	    field = kdmcfg->_focusPasswd;
+	if (_preselUser != PRESEL_NONE) {
+	    ent = _preselUser == PRESEL_PREV ?
+		    stsFile->readEntry( dName ) : _defaultUser;
+	    field = _focusPasswd;
 	}
     } else {
 	QString pn( verify->pluginName() ), dn( dName + '_' + pn );
-        if (kdmcfg->_preselUser != PRESEL_PREV)
+        if (_preselUser != PRESEL_PREV)
 	    stsFile->deleteEntry( dn, false );
-	if (kdmcfg->_preselUser != PRESEL_NONE) {
-	    ent = kdmcfg->_preselUser == PRESEL_PREV ?
+	if (_preselUser != PRESEL_NONE) {
+	    ent = _preselUser == PRESEL_PREV ?
 		    stsFile->readEntry( dn ) :
 		    verify->getConf( 0, (pn + ".DefaultEntity").latin1(), QVariant( "" ) ).toString();
 	    field = verify->getConf( 0, (pn + ".FocusField").latin1(), QVariant( 0 ) ).toInt();
@@ -673,7 +670,7 @@ KGreeter::verifyPluginChanged( int id )
 void
 KGreeter::verifyOk()
 {
-    if (kdmcfg->_preselUser == PRESEL_PREV)
+    if (_preselUser == PRESEL_PREV)
 	stsFile->writeEntry(
 		verify->isPluginLocal() ?
 			dName :
