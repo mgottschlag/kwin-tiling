@@ -11,8 +11,8 @@ noinst_HEADERS = kcmtaskbar.h
 
 KDE_ICON = go
 
-messages:
-	$(XGETTEXT) $(libkcm_taskbar_la_SOURCES) -o $(podir)/kcmtaskbar.pot
+messages: rc.cpp
+	$(XGETTEXT) *.cpp -o $(podir)/kcmtaskbar.pot
 
 data_DATA = kcmtaskbar.desktop
 datadir = $(kde_appsdir)/Settings/LookNFeel/
