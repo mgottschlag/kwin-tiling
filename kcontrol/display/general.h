@@ -8,12 +8,14 @@
 #ifndef __GENERAL_H__
 #define __GENERAL_H__
 
-#include <kthemebase.h>
+#include <qdict.h>
 #include <qwidget.h>
 #include <qstrlist.h>
-#include <kcontrol.h>
 #include <qbuttongroup.h>
-#include <ktablistbox.h>
+#include <qlistview.h>
+
+#include <kthemebase.h>
+#include <kcontrol.h>
 #include <kfontdialog.h>
 
 #include "display.h"
@@ -27,6 +29,7 @@ class QBoxLayout;
 // This class is a part of the "style" tab.
 // It's separated from the KGeneral class, in case it has to be moved
 // somewhere else later.
+
 class KIconStyle // : public KDisplayModule
 {
     //Q_OBJECT
@@ -50,7 +53,7 @@ protected:
 };
 
 // mosfet 4/26/99
-class KThemeListBox : public KTabListBox
+class KThemeListBox : public QListView
 {
     Q_OBJECT
 public:
@@ -63,7 +66,6 @@ public:
     void apply();
 protected:
     void readThemeDir(const QString &directory);
-    QStrList fileList;
     QString curName;
 };
 
@@ -88,10 +90,10 @@ public:
 	Atom 	KDEChangeGeneral;
 
 protected slots:
-        void slotChangeStylePlugin(int, int);
-        void slotChangeTbStyle();//CT 05Apr1999
+    void slotChangeStylePlugin(QListViewItem*);
+    void slotChangeTbStyle();
 	void slotUseResourceManager();
-	void slotMacStyle();//CT
+	void slotMacStyle();
 	void slotApply();
 	void slotHelp();
 
@@ -100,27 +102,24 @@ protected:
 	void setDefaults();
 	
 protected:
-	//CT 04Apr1999
 	QGroupBox *styles, *tbStyle;
-	//QRadioButton *MStyle, *WStyle, *PStyle;
 	QRadioButton *tbIcon, *tbText, *tbAside, *tbUnder;
 	QCheckBox *tbHilite, *tbTransp;
-      	QCheckBox *cbRes;
-	//CT
+    QCheckBox *cbRes;
 
-	QCheckBox *cbMac;//CT
+	QCheckBox *cbMac;
 	bool changed;
 	
 	bool useRM;
-	bool macStyle;//CT
+	bool macStyle;
 	Window root;
 	int screen;
 
-	int tbUseText;//CT 05Apr1999
-	bool tbUseHilite, tbMoveTransparent;//CT 04Apr1999
+	int tbUseText;
+	bool tbUseHilite, tbMoveTransparent;
        
-        KIconStyle * iconStyle;
-        KThemeListBox *themeList;
+    KIconStyle * iconStyle;
+    KThemeListBox *themeList;
 };
 
 #endif

@@ -97,14 +97,12 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 
 	cbEnable= new QCheckBox( i18n( "&Enable Display Energy Saving" ),
 				 this );
-	cbEnable->setMinimumSize(cbEnable->sizeHint());
 	cbEnable->setChecked(enabled);
 	cbEnable->setEnabled(hasDPMS);
 	connect(cbEnable, SIGNAL(clicked()), SLOT(slotChangeEnable()));
 
 	QLabel *pixlabel= new QLabel(this);
 	pixlabel->setPixmap(Icon(locate("data", "kcontrol/pics/energybig.xpm")));
-	pixlabel->setMinimumSize(pixlabel->sizeHint());	
 	
 	topLayout->addLayout(h1Layout);
 	h1Layout->addWidget( cbEnable);
@@ -114,7 +112,6 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 	if (!hasDPMS) {
 	  QLabel *msg = new QLabel(
 	    i18n("Your display has NO power saving features!"), this );
-	  msg->setMinimumSize(msg->sizeHint());
 	  topLayout->addWidget(msg);
 	}
 
@@ -122,7 +119,6 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 	standbySlider->setRange( 0, 120 );
 	standbySlider->setSteps( 10, 30 );
 	standbySlider->setTickmarks( QSlider::Below );
-	standbySlider->setFixedHeight( standbySlider->sizeHint().height() );
 	standbySlider->setValue( standby );
 	standbySlider->setEnabled(hasDPMS);
 	connect(standbySlider, SIGNAL(valueChanged(int)),
@@ -132,7 +128,6 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 	suspendSlider->setRange( 0, 120 );
 	suspendSlider->setSteps( 10, 30 );
 	suspendSlider->setTickmarks( QSlider::Below );
-	suspendSlider->setFixedHeight( suspendSlider->sizeHint().height() );
 	suspendSlider->setValue( suspend );
 	suspendSlider->setEnabled(hasDPMS);
 	connect(suspendSlider, SIGNAL(valueChanged(int)),
@@ -142,7 +137,6 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 	offSlider->setRange( 0, 120 );
 	offSlider->setSteps( 10, 30 );
 	offSlider->setTickmarks( QSlider::Below );
-	offSlider->setFixedHeight( offSlider->sizeHint().height() );
 	offSlider->setValue( off );
 	offSlider->setEnabled(hasDPMS);
 	connect(offSlider, SIGNAL(valueChanged(int)),
@@ -150,15 +144,12 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 		
 	QLabel *label0 = new QLabel( standbySlider,
 	  i18n("&Standby after ... minutes, choose `0' to disable: "), this );
-	label0->setMinimumSize(label0->sizeHint());
 
 	QLabel *label1 = new QLabel( suspendSlider,
 	  i18n("&Suspend after ... minutes, choose `0' to disable: "), this );
-	label1->setMinimumSize(label1->sizeHint());
 
 	QLabel *label2= new QLabel( offSlider,
 	  i18n("&Power Off after ... minutes, choose `0' to disable: "), this );
-	label2->setMinimumSize(label2->sizeHint());
 
 	label0->setEnabled(hasDPMS);
 	label1->setEnabled(hasDPMS);
@@ -167,21 +158,18 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 	standbyLCD = new QLCDNumber(3, this);
 	standbyLCD->setFrameStyle( QFrame::NoFrame );
 	standbyLCD->setFixedHeight(40);
-	standbyLCD->setMinimumSize(standbyLCD->sizeHint());
 	standbyLCD->setEnabled(hasDPMS);
 	standbyLCD->display( standby );
 
 	suspendLCD = new QLCDNumber(3, this);
 	suspendLCD->setFrameStyle( QFrame::NoFrame );
 	suspendLCD->setFixedHeight(40);
-	suspendLCD->setMinimumSize(suspendLCD->sizeHint());
 	suspendLCD->setEnabled(hasDPMS);
 	suspendLCD->display( suspend );
 
 	offLCD = new QLCDNumber(3, this);
 	offLCD->setFrameStyle( QFrame::NoFrame );
 	offLCD->setFixedHeight(40);
-	offLCD->setMinimumSize(offLCD->sizeHint());
 	offLCD->setEnabled(hasDPMS);
 	offLCD->display( off );
 
@@ -384,7 +372,7 @@ void KEnergy::apply( bool force )
 
 void KEnergy::slotHelp()
 {
-	kapp->invokeHTMLHelp( "kcmdisplay/kdisplay-8.html", "" );
+	kapp->invokeHTMLHelp( "kcmdisplay/index-8.html", "" );
 }
 
 

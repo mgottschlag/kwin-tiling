@@ -49,64 +49,63 @@
 
 void KBGMonitor::dropEvent( QDropEvent *e)
 {
-  /* We only accept Url objects and not Image object,
-   * because we need a filename to be able to load
-   * the picture later.
-   * (maybe we should accept image drags, and then ask for a filename?)
-   */
-  if (QUrlDrag::canDecode(e)) {
-    emit imageDropped(e);
-  }
+    /* We only accept Url objects and not Image object,
+     * because we need a filename to be able to load
+     * the picture later.
+     * (maybe we should accept image drags, and then ask for a filename?)
+     */
+    if (QUrlDrag::canDecode(e)) {
+        emit imageDropped(e);
+    }
 }
 
 void KBGMonitor::dragEnterEvent( QDragEnterEvent *e)
 {
-  e->accept( QImageDrag::canDecode( e)|| QUriDrag::canDecode( e));  
+    e->accept( QImageDrag::canDecode( e)|| QUriDrag::canDecode( e));  
 }
 
 KRenameDeskDlg::KRenameDeskDlg( const QString& t, QWidget *parent )
-  : QDialog( parent, 0, true )
+    : QDialog( parent, 0, true )
 {
-  
-  QVBoxLayout *vlayout = new QVBoxLayout( this, 5, 10 );
-  
-  vlayout->addSpacing(10);
     
-  QLabel *label = new QLabel( this );
-  label->setText( i18n( "Enter new desktop name" ) );
-  vlayout->addWidget( label );
+    QVBoxLayout *vlayout = new QVBoxLayout( this, 5, 10 );
     
-  edit = new QLineEdit( this );
-  edit->setText( t );
-  edit->setFixedHeight( edit->sizeHint().height() );
-  edit->setFocus();
-  vlayout->addWidget( edit );
+    vlayout->addSpacing(10);
+    
+    QLabel *label = new QLabel( this );
+    label->setText( i18n( "Enter new desktop name" ) );
+    vlayout->addWidget( label );
+    
+    edit = new QLineEdit( this );
+    edit->setText( t );
+    edit->setFocus();
+    vlayout->addWidget( edit );
 	
-  vlayout->addStretch(10);
-  vlayout->addSpacing(10);
+    vlayout->addStretch(10);
+    vlayout->addSpacing(10);
     
-  QFrame* tmpQFrame;
-  tmpQFrame = new QFrame( this );
-  tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
-  tmpQFrame->setMinimumHeight( tmpQFrame->sizeHint().height() );
+    QFrame* tmpQFrame;
+    tmpQFrame = new QFrame( this );
+    tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
+    tmpQFrame->setMinimumHeight( tmpQFrame->sizeHint().height() );
     
-  vlayout->addWidget( tmpQFrame );
+    vlayout->addWidget( tmpQFrame );
     
-  KButtonBox *bbox = new KButtonBox( this );
-  bbox->addStretch( 10 );
+    KButtonBox *bbox = new KButtonBox( this );
+    bbox->addStretch( 10 );
     
-  QPushButton *ok = bbox->addButton( i18n( "OK" ) );
-  connect( ok, SIGNAL( clicked() ), SLOT( accept() ) );
+    QPushButton *ok = bbox->addButton( i18n( "OK" ) );
+    connect( ok, SIGNAL( clicked() ), SLOT( accept() ) );
     
-  QPushButton *cancel = bbox->addButton( i18n( "Cancel" ) );
-  connect( cancel, SIGNAL( clicked() ), SLOT( reject() ) );
+    QPushButton *cancel = bbox->addButton( i18n( "Cancel" ) );
+    connect( cancel, SIGNAL( clicked() ), SLOT( reject() ) );
     
-  bbox->layout();
-  vlayout->addWidget( bbox );
+    bbox->layout();
+    vlayout->addWidget( bbox );
     
-  vlayout->activate();
+    vlayout->activate();
     
-  resize(150,0);
+    resize(150,0);
 }
 
 //----------------------------------------------------------------------------
@@ -114,428 +113,340 @@ KRenameDeskDlg::KRenameDeskDlg( const QString& t, QWidget *parent )
 KBackground::KBackground( QWidget *parent, int mode, int desktop )
   : KDisplayModule( parent, mode, desktop )
 {
-  //debug("KBackground::KBackground");
-
-  interactive = true;
-  changed = false;
-  maxDesks = 8;
-  deskNum = 0;
-  random = 0;
-  currentItem.bUseWallpaper = false;
-  rnddlg = 0L;
-
-  kimgioRegister();
-
-  setName( i18n("Desktop").ascii() );
-      
-  // if we are just initialising we don't need to create setup widget
-  if ( mode == Init )
-    {
-      // readSettings( 0 );
-      return;
+    interactive = true;
+    changed = false;
+    maxDesks = 8;
+    deskNum = 0;
+    random = 0;
+    currentItem.bUseWallpaper = false;
+    rnddlg = 0L;
+    
+    kimgioRegister();
+    
+    setName( i18n("Desktop").ascii() );
+    
+    // if we are just initialising we don't need to create setup widget
+    if ( mode == Init )
+        return;
+    
+    if ( KWM::isKWMInitialized() ) {
+        maxDesks = KWM::numberOfDesktops();
+        deskNum = KWM::currentDesktop() - 1;
     }
+    else
+        maxDesks = 1;
+    
+    KConfig *config = KGlobal::config();
+    config->setGroup( "Desktop Common" );
+    oneDesktopMode = config->readBoolEntry( "OneDesktopMode",
+                                            DEFAULT_ENABLE_COMMON_BGND );
+    docking = config->readBoolEntry( "Docking", DEFAULT_ENABLE_DOCKING );
+    
+    if ( oneDesktopMode )
+        deskNum = config->readNumEntry( "DeskNum", DEFAULT_DESKTOP );
+    
+    QGroupBox *group;
+    QRadioButton *rb;
+	
+    QGridLayout *topLayout = new QGridLayout( this, 8, 6, 5 );
+    
+    topLayout->addRowSpacing(4,1);
+    topLayout->addRowSpacing(6,1);
+    
+    topLayout->setRowStretch(0,0);
+    topLayout->setRowStretch(1,1);
+    topLayout->setRowStretch(2,1);
+    topLayout->setRowStretch(3,0);
+    topLayout->setRowStretch(4,0);
+    topLayout->setRowStretch(5,0);
+    topLayout->setRowStretch(6,0);
+    topLayout->setRowStretch(7,0);
+    
+    topLayout->setColStretch(0,0);
+    topLayout->setColStretch(1,1);
+    topLayout->setColStretch(2,0);
+    topLayout->setColStretch(3,4);
+    topLayout->setColStretch(4,0);
+    topLayout->setColStretch(5,0);
+    
+    group = new QGroupBox( i18n("Desktop"), this );
+    
+    topLayout->addWidget( group, 1,1 );
+	
+    QBoxLayout *groupLayout = new QVBoxLayout( group, 5, 5 );
+    
+    deskListBox = new QListBox( group );
+    
+    getDeskNameList();
+    deskListBox->setCurrentItem( deskNum );
+    connect( deskListBox, SIGNAL( highlighted(int) ),
+             SLOT( slotSwitchDesk(int) ) );
+    
+    readSettings( deskNum );
+    
+    deskListBox->adjustSize();
+    deskListBox->setMinimumSize(deskListBox->size());
+    deskListBox->setEnabled( !oneDesktopMode );
+    
+    groupLayout->addSpacing( 15 );
+    groupLayout->addWidget( deskListBox, 5 );
+	
+    renameButton = new QPushButton( i18n( "&Rename ..." ), group );
+    renameButton->adjustSize();
+    renameButton->setFixedHeight( renameButton->height() );
+    renameButton->setMinimumWidth( renameButton->width() );
+    renameButton->setEnabled( !oneDesktopMode );
+    if ( !KWM::isKWMInitialized() )
+        renameButton->setEnabled( false );
+    connect( renameButton, SIGNAL( clicked() ), SLOT( slotRenameDesk() ) );
+	
+    groupLayout->addWidget( renameButton, 5 );
+    
+    oneDesktopButton = new QCheckBox( i18n("&Common Background"), group );
+    oneDesktopButton->adjustSize();
+    oneDesktopButton->setFixedHeight( oneDesktopButton->height() );
+    oneDesktopButton->setMinimumWidth( oneDesktopButton->width() );
+    oneDesktopButton->setChecked( oneDesktopMode );
+    connect( oneDesktopButton, SIGNAL( clicked() ), SLOT( slotToggleOneDesktop() ) );
+    
+    groupLayout->addWidget( oneDesktopButton, 5 );
+    groupLayout->activate();
+    
+    monitorLabel = new QLabel( this );
+    monitorLabel->setAlignment( AlignCenter );
+    monitorLabel->setPixmap( Icon(locate("data", "kcontrol/pics/monitor.xpm")));
+    monitorLabel->adjustSize();
+    monitorLabel->setMinimumSize(monitorLabel->size());
+	
+    topLayout->addMultiCellWidget( monitorLabel, 1, 1, 2, 4 );
+    
+    monitor = new KBGMonitor( monitorLabel );
+    monitor->resize( 157, 111 );
+    monitor->setBackgroundColor( currentItem.color1 );
+    connect( monitor, SIGNAL( imageDropped( QDropEvent*)), 
+             SLOT(slotDropped( QDropEvent*)));
+	
+    group = new QGroupBox( i18n( "Colors" ), this );
+    topLayout->addWidget( group, 2, 1 );
+    
+    QGridLayout *grid = new QGridLayout( group, 9, 4, 5, 5 );
+    
+    grid->setRowStretch(0,5);
+    grid->setRowStretch(1,0);
+    grid->setRowStretch(2,0);
+    grid->setRowStretch(3,5);
+    grid->setRowStretch(4,0);
+    grid->setRowStretch(5,0);
+    grid->setRowStretch(6,5);
+    grid->setRowStretch(7,0);
+    grid->setRowStretch(8,5);
+    
+    grid->setColStretch(0,0);
+    grid->setColStretch(1,1);
+    grid->setColStretch(2,9);
+    grid->setColStretch(3,0);
+    
+    grid->addRowSpacing(0,5);
+    grid->addRowSpacing(5,1);
+    
+    ncGroup = new QButtonGroup( this );
+    ncGroup->hide();
+    ncGroup->setExclusive( true );
+    
+    rb = new QRadioButton( i18n("&One Color"), group );
+    rb->adjustSize();
+    rb->setFixedHeight( rb->height() );
+    rb->setMinimumWidth( rb->width() );
+    ncGroup->insert( rb, OneColor );
+	
+    grid->addMultiCellWidget( rb, 1, 1, 1, 2 );
+    
+    colButton1 = new KColorButton( group );
+    colButton1->adjustSize();
+    colButton1->setFixedHeight(colButton1->height());
+    colButton1->setMinimumWidth(colButton1->width());
+    connect( colButton1, SIGNAL( changed( const QColor & ) ),
+             SLOT( slotSelectColor1( const QColor & ) ) );
+    
+    grid->addMultiCellWidget( colButton1, 2, 2, 2, 2 );
+    
+    rb = new QRadioButton( i18n("&Two Color"), group );
+    rb->adjustSize();
+    rb->setFixedHeight( rb->height() );
+    rb->setMinimumWidth( rb->width() );
+    ncGroup->insert( rb, TwoColor );
+    
+    grid->addMultiCellWidget( rb, 4, 4, 1, 2 );
+    
+    connect( ncGroup, SIGNAL( clicked( int ) ), SLOT( slotColorMode( int ) ) );
+    
+    colButton2 = new KColorButton( group );
+    colButton2->adjustSize();
+    colButton2->setFixedHeight(colButton2->height());
+    colButton2->setMinimumWidth(colButton2->width());
+    connect( colButton2, SIGNAL( changed( const QColor & ) ),
+             SLOT( slotSelectColor2( const QColor & ) ) );
+    
+    grid->addWidget( colButton2, 5, 2);
+    
+    changeButton = new QPushButton( i18n("Set&up ..."), group );
+    changeButton->adjustSize();
+    changeButton->setFixedHeight( changeButton->height() );
+    changeButton->setMinimumWidth(changeButton->width());
+    connect(changeButton, SIGNAL(clicked()) , SLOT(slotSetup2Color()) );
+    
+    grid->addWidget( changeButton, 7, 2 );
+    grid->activate();
+    
+    group = new QGroupBox( i18n("Wallpaper"), this );
+    topLayout->addMultiCellWidget( group, 2, 2, 2, 4 );
+    
+    grid = new QGridLayout( group, 8, 3, 5, 5 );
+    
+    grid->addRowSpacing(0,10);
+    grid->addRowSpacing(3,5);
+    grid->addRowSpacing(5,10);
+    grid->addRowSpacing(7,10);
+    
+    grid->setRowStretch(0,0);
+    grid->setRowStretch(1,0);
+    grid->setRowStretch(2,0);
+    grid->setRowStretch(3,1);
+    grid->setRowStretch(4,0);
+    grid->setRowStretch(5,2);
+    grid->setRowStretch(6,0);
+    grid->setRowStretch(7,0);
+    
+    grid->setColStretch(0,0);
+    grid->setColStretch(1,1);
+    grid->setColStretch(2,2);
 
-  if ( KWM::isKWMInitialized() )
-    {
-      maxDesks = KWM::numberOfDesktops();
-      deskNum = KWM::currentDesktop() - 1;
+    QStringList list = KGlobal::dirs()->findAllResources("wallpaper");
+    
+    wpCombo = new QComboBox( false, group );
+    wpCombo->insertItem( i18n("No wallpaper"), 0 );
+    wpCombo->setCurrentItem( 0 );
+    
+    grid->addMultiCellWidget( wpCombo, 1,1,0,2 );
+    
+    QStringList::Iterator it = list.begin();
+    for ( int i = 1; !(*it).isNull(); ++it, i++ ) {
+        wpCombo->insertItem( *it );
+        if ( currentItem.wallpaper == *it )
+            wpCombo->setCurrentItem( i );
     }
-  else
-    maxDesks = 1;
-
-
-  KConfig *config = KGlobal::config();
-  config->setGroup( "Desktop Common" );
-  oneDesktopMode = config->readBoolEntry( "OneDesktopMode",
-                                         DEFAULT_ENABLE_COMMON_BGND );
-  docking = config->readBoolEntry( "Docking", DEFAULT_ENABLE_DOCKING );
-
-  if ( oneDesktopMode )
-    deskNum = config->readNumEntry( "DeskNum", DEFAULT_DESKTOP );
-
-  QGroupBox *group;
-  QRadioButton *rb;
-	
-  QGridLayout *topLayout = new QGridLayout( this, 8, 6, 5 );
-
-  //  topLayout->addRowSpacing(3,5);
-
-  topLayout->addRowSpacing(4,1);
-  topLayout->addRowSpacing(6,1);
-
-  topLayout->setRowStretch(0,0);
-  topLayout->setRowStretch(1,1);
-  topLayout->setRowStretch(2,1);
-  topLayout->setRowStretch(3,0);
-  topLayout->setRowStretch(4,0);
-  topLayout->setRowStretch(5,0);
-  topLayout->setRowStretch(6,0);
-  topLayout->setRowStretch(7,0);
     
-  topLayout->setColStretch(0,0);
-  topLayout->setColStretch(1,1);
-  topLayout->setColStretch(2,0);
-  topLayout->setColStretch(3,4);
-  topLayout->setColStretch(4,0);
-  topLayout->setColStretch(5,0);
-    
-  group = new QGroupBox( i18n("Desktop"), this );
-
-  topLayout->addWidget( group, 1,1 );
-	
-  QBoxLayout *groupLayout = new QVBoxLayout( group, 5, 5 );
-
-  deskListBox = new QListBox( group );
-
-  getDeskNameList();
-  deskListBox->setCurrentItem( deskNum );
-  connect( deskListBox, SIGNAL( highlighted(int) ),
-	   SLOT( slotSwitchDesk(int) ) );
-  
-  readSettings( deskNum );
-
-  deskListBox->adjustSize();
-  deskListBox->setMinimumSize(deskListBox->size());
-  deskListBox->setEnabled( !oneDesktopMode );
-
-  groupLayout->addSpacing( 15 );
-  groupLayout->addWidget( deskListBox, 5 );
-	
-  renameButton = new QPushButton( i18n( "&Rename ..." ), group );
-  renameButton->adjustSize();
-  renameButton->setFixedHeight( renameButton->height() );
-  renameButton->setMinimumWidth( renameButton->width() );
-  renameButton->setEnabled( !oneDesktopMode );
-  if ( !KWM::isKWMInitialized() )
-    renameButton->setEnabled( false );
-  connect( renameButton, SIGNAL( clicked() ), SLOT( slotRenameDesk() ) );
-	
-  groupLayout->addWidget( renameButton, 5 );
-
-  oneDesktopButton = new QCheckBox( i18n("&Common Background"), group );
-  oneDesktopButton->adjustSize();
-  oneDesktopButton->setFixedHeight( oneDesktopButton->height() );
-  oneDesktopButton->setMinimumWidth( oneDesktopButton->width() );
-  oneDesktopButton->setChecked( oneDesktopMode );
-  connect( oneDesktopButton, SIGNAL( clicked() ), SLOT( slotToggleOneDesktop() ) );
-
-  groupLayout->addWidget( oneDesktopButton, 5 );
-  groupLayout->activate();
-
-  monitorLabel = new QLabel( this );
-  monitorLabel->setAlignment( AlignCenter );
-  monitorLabel->setPixmap( Icon(locate("data", "kcontrol/pics/monitor.xpm")));
-  monitorLabel->adjustSize();
-  monitorLabel->setMinimumSize(monitorLabel->size());
-	
-  topLayout->addMultiCellWidget( monitorLabel, 1, 1, 2, 4 );
-
-  monitor = new KBGMonitor( monitorLabel );
-  monitor->resize( 157, 111 );
-  monitor->setBackgroundColor( currentItem.color1 );
-  connect( monitor, SIGNAL( imageDropped( QDropEvent*)), 
-	   SLOT(slotDropped( QDropEvent*)));
-	
-  group = new QGroupBox( i18n( "Colors" ), this );
-  topLayout->addWidget( group, 2, 1 );
-
-  QGridLayout *grid = new QGridLayout( group, 9, 4, 5, 5 );
-    
-  grid->setRowStretch(0,5);
-  grid->setRowStretch(1,0);
-  grid->setRowStretch(2,0);
-  grid->setRowStretch(3,5);
-  grid->setRowStretch(4,0);
-  grid->setRowStretch(5,0);
-  grid->setRowStretch(6,5);
-  grid->setRowStretch(7,0);
-  grid->setRowStretch(8,5);
-    
-  grid->setColStretch(0,0);
-  grid->setColStretch(1,1);
-  grid->setColStretch(2,9);
-  grid->setColStretch(3,0);
-    
-  grid->addRowSpacing(0,5);
-  grid->addRowSpacing(5,1);
-    
-  ncGroup = new QButtonGroup( this );
-  ncGroup->hide();
-  ncGroup->setExclusive( true );
-
-  rb = new QRadioButton( i18n("&One Color"), group );
-  rb->adjustSize();
-  rb->setFixedHeight( rb->height() );
-  rb->setMinimumWidth( rb->width() );
-  ncGroup->insert( rb, OneColor );
-	
-  grid->addMultiCellWidget( rb, 1, 1, 1, 2 );
-
-  colButton1 = new KColorButton( group );
-  colButton1->adjustSize();
-  colButton1->setFixedHeight(colButton1->height());
-  colButton1->setMinimumWidth(colButton1->width());
-  connect( colButton1, SIGNAL( changed( const QColor & ) ),
-	   SLOT( slotSelectColor1( const QColor & ) ) );
-		
-  grid->addMultiCellWidget( colButton1, 2, 2, 2, 2 );
-
-  rb = new QRadioButton( i18n("&Two Color"), group );
-  rb->adjustSize();
-  rb->setFixedHeight( rb->height() );
-  rb->setMinimumWidth( rb->width() );
-  ncGroup->insert( rb, TwoColor );
-    
-  grid->addMultiCellWidget( rb, 4, 4, 1, 2 );
-    
-  connect( ncGroup, SIGNAL( clicked( int ) ), SLOT( slotColorMode( int ) ) );
-    
-  colButton2 = new KColorButton( group );
-  colButton2->adjustSize();
-  colButton2->setFixedHeight(colButton2->height());
-  colButton2->setMinimumWidth(colButton2->width());
-  connect( colButton2, SIGNAL( changed( const QColor & ) ),
-	   SLOT( slotSelectColor2( const QColor & ) ) );
-			
-  grid->addWidget( colButton2, 5, 2);
-
-  changeButton = new QPushButton( i18n("Set&up ..."), group );
-  changeButton->adjustSize();
-  changeButton->setFixedHeight( changeButton->height() );
-  changeButton->setMinimumWidth(changeButton->width());
-  connect(changeButton, SIGNAL(clicked()) , SLOT(slotSetup2Color()) );
-    
-  grid->addWidget( changeButton, 7, 2 );
-  grid->activate();
-    
-  group = new QGroupBox( i18n("Wallpaper"), this );
-  topLayout->addMultiCellWidget( group, 2, 2, 2, 4 );
-
-  //CT - 30Nov1998 - replaced with grip layout, "fixed" a little the logic of
-  //   widgets placing    
-  grid = new QGridLayout( group, 8, 3, 5, 5 );
-
-  grid->addRowSpacing(0,10);
-  grid->addRowSpacing(3,5);
-  grid->addRowSpacing(5,10);
-  grid->addRowSpacing(7,10);
-
-  grid->setRowStretch(0,0);
-  grid->setRowStretch(1,0);
-  grid->setRowStretch(2,0);
-  grid->setRowStretch(3,1);
-  grid->setRowStretch(4,0);
-  grid->setRowStretch(5,2);
-  grid->setRowStretch(6,0);
-  grid->setRowStretch(7,0);
-
-  grid->setColStretch(0,0);
-  grid->setColStretch(1,1);
-  grid->setColStretch(2,2);
-  //CT
-
-  QStringList list = KGlobal::dirs()->findAllResources("wallpaper");
-
-  wpCombo = new QComboBox( false, group );
-  wpCombo->insertItem( i18n("No wallpaper"), 0 );
-  wpCombo->setCurrentItem( 0 );
-
-  //CT 30Nov1998
-  grid->addMultiCellWidget( wpCombo, 1,1,0,2 );
-  //  groupLayout->addStretch( 3 );
-    
-  QStringList::Iterator it = list.begin();
-  for ( int i = 1; !(*it).isNull(); ++it, i++ )
-    {
-      wpCombo->insertItem( *it );
-      if ( currentItem.wallpaper == *it )
-	wpCombo->setCurrentItem( i );
+    if ( currentItem.bUseWallpaper && wpCombo->currentItem() == 0 ) {
+        wpCombo->insertItem( currentItem.wallpaper );
+        wpCombo->setCurrentItem( wpCombo->count()-1 );
     }
-
-  if ( currentItem.bUseWallpaper && wpCombo->currentItem() == 0 )
-    {
-      wpCombo->insertItem( currentItem.wallpaper );
-      wpCombo->setCurrentItem( wpCombo->count()-1 );
-    }
-
-  wpCombo->adjustSize();
-  wpCombo->setFixedHeight(wpCombo->height());
-  //CT  wpCombo->setMinimumWidth(wpCombo->width());
-
-  connect( wpCombo, SIGNAL( activated( const QString & ) ),
-	   SLOT( slotWallpaper( const QString & )  )  );
-		
-  /*CT 30Nov1998
-  QBoxLayout *pushLayout = new QHBoxLayout( 5 ); 
-  groupLayout->addLayout( pushLayout );
-  */
-
-  browseButton = new QPushButton( i18n("&Browse..."), group );
-  browseButton->adjustSize();
-  browseButton->setFixedHeight( browseButton->height() );
-  browseButton->setMinimumWidth( browseButton->width() );
-  connect( browseButton, SIGNAL( clicked() ), SLOT( slotBrowse() ) );
-  grid->addWidget( browseButton,2,1 );//CT 30Nov1998
-
-  //CT 30Nov1998
-  QLabel *aLabel = new QLabel(i18n("Arrangement:"), group );
-  aLabel->adjustSize();
-  aLabel->setMinimumSize(aLabel->size());
-  grid->addWidget(aLabel, 4, 0 );
-  //CT
-
-  wpModeCombo = new QComboBox( false, group );
-  wpModeCombo->insertItem( i18n("Tiled"), 0 );
-  wpModeCombo->insertItem( i18n("Mirrored"), 1 );
-  wpModeCombo->insertItem( i18n("Center Tiled"), 2 );
-  wpModeCombo->insertItem( i18n("Centred"), 3 );
-  wpModeCombo->insertItem( i18n("Centred Brick"), 4 );
-  wpModeCombo->insertItem( i18n("Centred Warp"), 5 );
-  wpModeCombo->insertItem( i18n("Centred Maxpect"), 6 );
-  wpModeCombo->insertItem( i18n("Symmetrical Tiled"), 7 );
-  wpModeCombo->insertItem( i18n("Symmetrical Mirrored"), 8 );
-  wpModeCombo->insertItem( i18n("Scaled"), 9 );
-  wpModeCombo->setCurrentItem( 0 );
-  wpModeCombo->setMinimumHeight( wpModeCombo->sizeHint().height() );//CT 30Nov1998
-  wpModeCombo->setMinimumWidth( wpModeCombo->sizeHint().width() );
-  connect( wpModeCombo, SIGNAL( activated( int ) ),
-	   SLOT( slotWallpaperMode( int )  )  );
-
-  grid->addMultiCellWidget( wpModeCombo, 4,4,1,2 ); //CT 30Nov1998
-  /*CT 30Nov1998
-  groupLayout->addStretch( 3 );
-  
-  pushLayout = new QHBoxLayout( 5 ); 
-  groupLayout->addLayout( pushLayout );
-  */
-
-  randomButton = new QCheckBox( i18n("Ra&ndom"), group );
-  randomButton->adjustSize();
-  randomButton->setFixedHeight( randomButton->height() );
-  randomButton->setMinimumWidth( randomButton->width() );
-  connect( randomButton, SIGNAL( clicked() ), SLOT( slotToggleRandom() ) );
-
-  grid->addWidget( randomButton, 6, 0 );//CT 30Nov1998
-  //CT  pushLayout->addStretch( 5 );
-
-  randomSetupButton = new QPushButton( i18n("Setu&p..."), group );
-  randomSetupButton->adjustSize();
-  randomSetupButton->setFixedHeight( randomSetupButton->height() );
-  randomSetupButton->setMinimumWidth( randomSetupButton->width() );
-  connect( randomSetupButton, SIGNAL( clicked() ), SLOT( slotSetupRandom() ) );
-
-  grid->addWidget( randomSetupButton, 6, 1 );//CT 30Nov1998
-
-  grid->activate();
-
-  dockButton = new QCheckBox( i18n("&Dock into the panel"), this );
-  dockButton->setChecked( docking );
-  dockButton->adjustSize();
-  dockButton->setMinimumSize( dockButton->size() );
-  connect( dockButton, SIGNAL( clicked() ), SLOT( slotToggleDock() ) );
-
-  topLayout->addWidget( dockButton, 5, 1 );//CT 30Nov1998
-  /*CT 30Nov1998
-  groupLayout->addStretch( 3 );
-  groupLayout->activate();
-  */
-
-  /*CT 30 Nov 1998
-  group = new QGroupBox( i18n("Cache size"), this );
-  topLayout->addMultiCellWidget( group, 3, 3, 1, 2 );
-
-  grid = new QGridLayout(group,2,3,10,5);
-  grid->addRowSpacing(0,10);
-  grid->setColStretch(0,0);
-  grid->setColStretch(1,0);
-  grid->setColStretch(2,1);
-  */
-
-  int cacheSize = config->readNumEntry("CacheSize", DEFAULT_CACHE_SIZE);
-  //CT 30Nov1998
-  aLabel = new QLabel(i18n("Cache size (kB):"), this);
-  aLabel->adjustSize();
-  aLabel->setMinimumSize(aLabel->size());
-  topLayout->addWidget( aLabel, 5, 2 );
-  //CT
-
-
-  /*CT 04Dec1998 - Mark Donohoe suggestion
-    aLabel = new QLabel( i18n("kb"), group );
-    aLabel->adjustSize();
-    aLabel->setMinimumSize(aLabel->size());
-    grid->addWidget( aLabel, 9, 2 );
-  */
-
-  cacheSlider = new QSlider( 128, 5120, 0, cacheSize, KSlider::Horizontal, this );
-  cacheSlider->setSteps(512, 1024);
-  cacheSlider->adjustSize();
-  cacheSlider->setMinimumSize(cacheSlider->size());
-  topLayout->addWidget( cacheSlider, 5, 3 );
-
-  cacheLCD = new QLCDNumber(4, this);
-  cacheLCD->setFrameStyle( QFrame::NoFrame );
-  cacheLCD->adjustSize();
-  //CT 30Nov1998
-  cacheLCD->setMinimumHeight(2/3*cacheLCD->height());
-  cacheLCD->setMinimumWidth(cacheLCD->width()-20);
-  //CT
-  cacheLCD->display( cacheSize );
-  topLayout->addMultiCellWidget( cacheLCD, 4, 6, 4, 4 );
-
-  connect( cacheSlider, SIGNAL(valueChanged(int)), cacheLCD, SLOT(display(int)) );
-
-
-  //CT  pushLayout->addWidget( cacheSlider, 5 );
-
-  topLayout->activate();
     
-  showSettings();
+    connect( wpCombo, SIGNAL( activated( const QString & ) ),
+             SLOT( slotWallpaper( const QString & )  )  );
+    
+    browseButton = new QPushButton( i18n("&Browse..."), group );
+    connect( browseButton, SIGNAL( clicked() ), SLOT( slotBrowse() ) );
+    grid->addWidget( browseButton,2,1 );
+    
+    QLabel *aLabel = new QLabel(i18n("Arrangement:"), group );
+    grid->addWidget(aLabel, 4, 0 );
+    
+    wpModeCombo = new QComboBox( false, group );
+    wpModeCombo->insertItem( i18n("Tiled"), 0 );
+    wpModeCombo->insertItem( i18n("Mirrored"), 1 );
+    wpModeCombo->insertItem( i18n("Center Tiled"), 2 );
+    wpModeCombo->insertItem( i18n("Centred"), 3 );
+    wpModeCombo->insertItem( i18n("Centred Brick"), 4 );
+    wpModeCombo->insertItem( i18n("Centred Warp"), 5 );
+    wpModeCombo->insertItem( i18n("Centred Maxpect"), 6 );
+    wpModeCombo->insertItem( i18n("Symmetrical Tiled"), 7 );
+    wpModeCombo->insertItem( i18n("Symmetrical Mirrored"), 8 );
+    wpModeCombo->insertItem( i18n("Scaled"), 9 );
+    wpModeCombo->setCurrentItem( 0 );
+    wpModeCombo->setMinimumHeight( wpModeCombo->sizeHint().height() );
+    wpModeCombo->setMinimumWidth( wpModeCombo->sizeHint().width() );
+    connect( wpModeCombo, SIGNAL( activated( int ) ),
+             SLOT( slotWallpaperMode( int )  )  );
+    
+    grid->addMultiCellWidget( wpModeCombo, 4,4,1,2 );
+
+    randomButton = new QCheckBox( i18n("Ra&ndom"), group );
+    connect( randomButton, SIGNAL( clicked() ), SLOT( slotToggleRandom() ) );
+    
+    grid->addWidget( randomButton, 6, 0 );
+
+    randomSetupButton = new QPushButton( i18n("Setu&p..."), group );
+    connect( randomSetupButton, SIGNAL( clicked() ), SLOT( slotSetupRandom() ) );
+    
+    grid->addWidget( randomSetupButton, 6, 1 );
+
+    dockButton = new QCheckBox( i18n("&Dock into the panel"), this );
+    dockButton->setChecked( docking );
+    connect( dockButton, SIGNAL( clicked() ), SLOT( slotToggleDock() ) );
+    
+    topLayout->addWidget( dockButton, 5, 1 );//CT 30Nov1998
+
+    int cacheSize = config->readNumEntry("CacheSize", DEFAULT_CACHE_SIZE);
+    aLabel = new QLabel(i18n("Cache size (kB):"), this);
+    topLayout->addWidget( aLabel, 5, 2 );
+
+    cacheSlider = new QSlider( 128, 5120, 0, cacheSize, KSlider::Horizontal, this );
+    cacheSlider->setSteps(512, 1024);
+    topLayout->addWidget( cacheSlider, 5, 3 );
+
+    cacheLCD = new QLCDNumber(4, this);
+    cacheLCD->setFrameStyle( QFrame::NoFrame );
+    cacheLCD->display( cacheSize );
+    topLayout->addMultiCellWidget( cacheLCD, 4, 6, 4, 4 );
+
+    connect( cacheSlider, SIGNAL(valueChanged(int)), cacheLCD, SLOT(display(int)) );
+
+    showSettings();
 }
 
 
 void KBackground::resizeEvent( QResizeEvent * )
 {
-  monitor->setGeometry( (monitorLabel->width()-200)/2+20,
-			(monitorLabel->height()-160)/2+10, 157, 111 );
+    monitor->setGeometry( (monitorLabel->width()-200)/2+20,
+                          (monitorLabel->height()-160)/2+10, 157, 111 );
 }
 
 
 void KBackground::readSettings( int num )
 {
-  QString group = QString("desktop%1rc").arg(num);
+    QString group = QString("desktop%1rc").arg(num);
 
   bool first_time = false;
 
   if ( locate("config", group).isNull() ){
-    first_time = true;
-    group = "kcmdisplayrc";
+      first_time = true;
+      group = "kcmdisplayrc";
   }
-
+  
   KConfig config(group, true, false);
-
+  
   if ( !first_time ) {
-    config.setGroup( "Common" );
-    randomMode = config.readBoolEntry( "RandomMode", DEFAULT_ENABLE_RANDOM_MODE);
-
-    if ( randomMode || !interactive )
-      group = QString( "Desktop%1").arg( random );
-    else
-      group = QString( "Desktop%1").arg(DEFAULT_DESKTOP);
+      config.setGroup( "Common" );
+      randomMode = config.readBoolEntry( "RandomMode", DEFAULT_ENABLE_RANDOM_MODE);
+      
+      if ( randomMode || !interactive )
+          group = QString( "Desktop%1").arg( random );
+      else
+          group = QString( "Desktop%1").arg(DEFAULT_DESKTOP);
   }
   else
-    group = QString( "Desktop%1").arg(num + 1);
-
+      group = QString( "Desktop%1").arg(num + 1);
+  
   config.setGroup( group );
   
   QString str;
- 
+  
   str = config.readEntry( "Color1", DEFAULT_COLOR_1 );
   currentItem.color1.setNamedColor( str );
-       
+  
   str = config.readEntry( "Color2", DEFAULT_COLOR_2);
   currentItem.color2.setNamedColor( str );
-	     
+  
   currentItem.ncMode = DEFAULT_NUMBER_OF_COLORS;  // 1
   currentItem.stMode = DEFAULT_COLOR_MODE; // Flat
   str = config.readEntry( "ColorMode", "unset" );
@@ -796,10 +707,8 @@ void KBackground::showSettings()
 
   randomButton->setChecked( randomMode );
 
-  //CT 30Nov1998 - make sure all comes up rightly
   wpCombo->setEnabled(!randomMode);
   browseButton->setEnabled(!randomMode);
-  //CT
   
   // wpModeCombo should be disabled when in randomMode, but only when there
   // is not random setup dialog opened
@@ -1354,7 +1263,7 @@ void KBackground::slotRenameDesk()
 
 void KBackground::slotHelp()
 {
-  kapp->invokeHTMLHelp( "kcmdisplay/kdisplay-3.html", "" );
+  kapp->invokeHTMLHelp( "kcmdisplay/index-3.html", "" );
 }
 
 void KBackground::loadSettings()
@@ -1719,15 +1628,11 @@ KRandomDlg::KRandomDlg(int _desktop, KBackground *_kb, char *name)
   toplevelHL->addLayout( pushLayout );
 
   dirLined = new QLineEdit( this );
-  dirLined->setMinimumSize( dirLined->sizeHint() );
   dirLined->setText( picDir );
   dirLined->setEnabled( useDir );
   pushLayout->addWidget( dirLined, 5 );
 
   dirPushButton = new QPushButton( i18n( "&Browse ..." ), this );
-  dirPushButton->adjustSize();
-  dirPushButton->setFixedHeight( dirPushButton->height() );
-  dirPushButton->setMinimumWidth( dirPushButton->width() );
   dirPushButton->setEnabled( useDir );
   connect( dirPushButton, SIGNAL( clicked() ), SLOT( slotBrowse() ) );
   pushLayout->addWidget( dirPushButton, 0 );
@@ -1735,7 +1640,6 @@ KRandomDlg::KRandomDlg(int _desktop, KBackground *_kb, char *name)
   QFrame* tmpQFrame;
   tmpQFrame = new QFrame( this );
   tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
-  tmpQFrame->setMinimumHeight( tmpQFrame->sizeHint().height() );
 
   toplevelHL->addSpacing( 5 );
   toplevelHL->addWidget( tmpQFrame );
@@ -1746,28 +1650,23 @@ KRandomDlg::KRandomDlg(int _desktop, KBackground *_kb, char *name)
 
   timerLabel = new QLabel( this );
   timerLabel->setText( i18n( "Timer Delay in seconds :" ) );
-  timerLabel->setMinimumSize( timerLabel->sizeHint() );
 	
   pushLayout->addWidget( timerLabel );
 
   timerLined = new KIntLineEdit( this );
   timerLined->setValue( delay );
-  timerLined->setMinimumSize( timerLined->sizeHint() );
 
   pushLayout->addWidget( timerLined, 5 );
   pushLayout->addStretch( 5 );
 
   orderButton = new QCheckBox( i18n("In &order"), this );
   orderButton->setChecked( inorder );
-  orderButton->setFixedHeight( orderButton->sizeHint().height() );
-  orderButton->setFixedWidth( orderButton->sizeHint().width() );
 
   pushLayout->addWidget( orderButton, 5 );
   pushLayout->addStretch( 5 );
 
   tmpQFrame = new QFrame( this );
   tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
-  tmpQFrame->setMinimumHeight( tmpQFrame->sizeHint().height() );
 	
   toplevelHL->addSpacing( 5 );
   toplevelHL->addWidget( tmpQFrame );
@@ -1775,7 +1674,6 @@ KRandomDlg::KRandomDlg(int _desktop, KBackground *_kb, char *name)
 
   desktopLabel = new QLabel( this );
   desktopLabel->setText( i18n( "Desktops :" ) );
-  desktopLabel->setMinimumSize( desktopLabel->sizeHint() );
 	
   toplevelHL->addWidget( desktopLabel );
 	
@@ -1788,9 +1686,6 @@ KRandomDlg::KRandomDlg(int _desktop, KBackground *_kb, char *name)
     listBox->setCurrentItem( item );
   }
 
-  // we do this here to let all items fit in
-  listBox->adjustSize();
-  listBox->setMinimumSize(listBox->size());
   listBox->setEnabled( !useDir );
   connect(listBox, SIGNAL(highlighted(int)), 
 	  SLOT(selected(int)));

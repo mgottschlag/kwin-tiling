@@ -301,7 +301,7 @@ void KFonts::slotPreviewFont( int index )
 
 void KFonts::slotHelp()
 {
-	kapp->invokeHTMLHelp( "kcmdisplay/kdisplay-6.html", "" );
+	kapp->invokeHTMLHelp( "kcmdisplay/index-6.html", "" );
 }
 
 void KFonts::applySettings()
