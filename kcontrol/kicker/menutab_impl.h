@@ -65,7 +65,6 @@ public slots:
 protected:
     kSubMenuItem *m_bookmarkMenu;
     kSubMenuItem *m_quickBrowserMenu;
-    kSubMenuItem *m_recentDocumentsMenu;
 };
 
 #endif

@@ -70,8 +70,7 @@ void kSubMenuItem::stateChange(bool state)
 MenuTab::MenuTab( QWidget *parent, const char* name )
   : MenuTabBase (parent, name),
     m_bookmarkMenu(0),
-    m_quickBrowserMenu(0),
-    m_recentDocumentsMenu(0)
+    m_quickBrowserMenu(0)
 {
     // connections
     connect(m_formatSimple, SIGNAL(clicked()), SIGNAL(changed()));
@@ -140,14 +139,6 @@ void MenuTab::load()
                                           c.readBoolEntry("UseBrowser", true));
     connect(m_quickBrowserMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
     
-    // show the recent documents menu?
-    m_recentDocumentsMenu = new kSubMenuItem(m_subMenus, 
-                                             i18n("Recent Documents"),
-                                              QString::null,
-                                              SmallIcon("document"),
-                                              c.readBoolEntry("UseRecent", true));
-    connect(m_recentDocumentsMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
-
     QStringList ext = c.readListEntry("Extensions");
     QStringList dirs = KGlobal::dirs()->findDirs("data", "kicker/menuext");
     kSubMenuItem* menuItem(0);
@@ -212,10 +203,6 @@ void MenuTab::save()
         {
             c.writeEntry("UseBrowser", isOn);
         }
-        else if (item == m_recentDocumentsMenu)
-        {
-            c.writeEntry("UseRecent", isOn);
-        }
         else if (isOn)
         {
             ext << static_cast<kSubMenuItem*>(item)->desktopFile();
@@ -235,7 +222,6 @@ void MenuTab::defaults()
   m_hiddenFiles->setChecked(false);
   m_bookmarkMenu->setOn(true);
   m_quickBrowserMenu->setOn(true);
-  m_recentDocumentsMenu->setOn(true);
 
   m_showFrequent->setChecked(true);
   m_maxQuickStartItems->setValue(5);
