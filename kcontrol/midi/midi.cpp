@@ -39,7 +39,7 @@ KMidConfig::KMidConfig(QWidget *parent, const char *name, const QStringList &)
 {
   QVBoxLayout *topLayout = new QVBoxLayout(this,5);
 
-  label=new QLabel(i18n("Select the midi device you want to use :"),this);
+  label=new QLabel(i18n("Select the MIDI device you want to use:"),this);
 //  label->adjustSize();
   mididevices=new QListBox(this,"midideviceslist");
   connect(mididevices,SIGNAL(highlighted(int)),SLOT(deviceSelected(int)));
@@ -58,7 +58,7 @@ KMidConfig::KMidConfig(QWidget *parent, const char *name, const QStringList &)
     mididevices->insertItem(s,i);
   };
 
-  usemap=new QCheckBox(i18n("Use Midi Mapper"),this,"usemidimapper");
+  usemap=new QCheckBox(i18n("Use MIDI mapper"),this,"usemidimapper");
 
   connect(usemap,SIGNAL(toggled(bool)),SLOT(useMap(bool)));
 
