@@ -308,14 +308,26 @@ void KDEDConfig::slotStartService()
 {
 	QCString service = _lvStartup->currentItem()->text(4).latin1();
 
-	QByteArray data;
+	QByteArray data, replyData;
+	QCString replyType;
 	QDataStream arg( data, IO_WriteOnly );
 	arg << service;
-	if (kapp->dcopClient()->send( "kded", "kded", "loadModule(QCString)", data ) ) {
-		slotServiceRunningToggled();
+	if (kapp->dcopClient()->call( "kded", "kded", "loadModule(QCString)", data, replyType, replyData ) ) {
+		QDataStream reply(replyData, IO_ReadOnly);
+		if ( replyType == "bool" )
+		{
+			bool result;
+			reply >> result;
+			if ( result )
+				slotServiceRunningToggled();
+			else
+				KMessageBox::error(this, i18n("Unable to start service."));
+		} else {
+			kdDebug() << "loadModule() on kded returned an unexpected type of reply: " << replyType << endl;
+		}
 	}
 	else {
-		KMessageBox::error(this, i18n("Unable to start service."));
+		KMessageBox::error(this, i18n("Unable to contact KDED."));
 	}
 }
 
