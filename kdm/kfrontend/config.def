@@ -36,16 +36,9 @@
 
 #ifdef __linux__
 # define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X -nolisten tcp"
-/* ###
 # define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
 			 ":1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1\n" \
 			 ":2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2\n" \
-			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3\n" \
-			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4\n"
-*/
-# define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
-			 "#:1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1\n" \
-			 "#:2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2\n" \
 			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3\n" \
 			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4\n"
 # define HAVE_VTS

@@ -523,12 +523,8 @@ static const char def_xaccess[] =
 "#*		CHOOSER %hostlist	#\n";
 #endif
 
-/* XXX
 #define XSERVERS_MAJOR 2
 #define XSERVERS_MINOR 0
-*/
-#define XSERVERS_MAJOR 1
-#define XSERVERS_MINOR 99
 
 #define VERSION_WARNING "### Don't change these two lines; they are hints for genkdmconf. ###\n"
 #define XSERVERS_VERSION VERSION_WARNING "### Version " stringify(XSERVERS_MAJOR) "." stringify(XSERVERS_MINOR) " ###\n"
@@ -1243,7 +1239,6 @@ edit_xservers(File *file, char **nbuf, int *nlen)
 
 #ifdef RDPYS
     /* add reserve dpys */
-/* ###
     if (nldpys < 3 && nldpys && !nrdpys) {
 	for (; nldpys < 3; nldpys++) {
 	    for (dn = 0; dpymask & (1 << dn); dn++);
@@ -1268,7 +1263,6 @@ edit_xservers(File *file, char **nbuf, int *nlen)
 	    StrCat (&buf, " :%d\n", dn);
 	}
     }
-*/
 #endif
 
     StrCat (&buf, "\n" XSERVERS_VERSION, 0);
