@@ -53,6 +53,7 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
     connect(ui->showListBtnCheck, SIGNAL(clicked()), SLOT(configChanged()));
     connect(ui->groupCheck, SIGNAL(clicked()), SLOT(configChanged()));
     connect(ui->sortCheck, SIGNAL(clicked()), SLOT(configChanged()));
+    connect(ui->iconCheck, SIGNAL(clicked()), SLOT(configChanged()));
 
     load();
 }
@@ -76,6 +77,7 @@ void TaskbarConfig::load()
         ui->showListBtnCheck->setChecked(c->readBoolEntry("ShowWindowListBtn", true));
         ui->groupCheck->setChecked(c->readBoolEntry("GroupTasks", true));
 	ui->sortCheck->setChecked(c->readBoolEntry("SortByDesktop", true));
+	ui->iconCheck->setChecked(c->readBoolEntry("ShowIcon", true));
     }
 
     delete c;
@@ -92,6 +94,7 @@ void TaskbarConfig::save()
         c->writeEntry("ShowWindowListBtn", ui->showListBtnCheck->isChecked());
         c->writeEntry("GroupTasks", ui->groupCheck->isChecked());
 	c->writeEntry("SortByDesktop", ui->sortCheck->isChecked());
+	c->writeEntry("ShowIcon", ui->iconCheck->isChecked());
         c->sync();
     }
 

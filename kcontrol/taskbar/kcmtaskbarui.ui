@@ -132,6 +132,25 @@
                         <string>Check this option if you want the taskbar to sort task buttons by deskop.</string>
                     </property>
                 </widget>
+                <widget>
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>iconCheck</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Show application &amp;icons</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>Check this option if you want to display the applications icon in the taskbar</string>
+                    </property>
+                </widget>
             </vbox>
         </widget>
         <spacer>
