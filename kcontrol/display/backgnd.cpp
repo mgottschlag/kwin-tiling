@@ -319,6 +319,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
       " reverse the background and wallpaper layers by checking this option.") );
 
     NETRootInfo rin(qt_xdisplay(), NET::CurrentDesktop | NET::NumberOfDesktops);
+    rin.activate();
     m_Desk = rin.currentDesktop() - 1;
     m_Max = rin.numberOfDesktops();
     m_pGlobals = new KGlobalBackgroundSettings();
