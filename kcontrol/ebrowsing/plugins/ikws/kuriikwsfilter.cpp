@@ -96,7 +96,7 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 	
 	    QString userquery = url.mid(pos+1).replace(QRegExp(" "), "+").utf8();
 	    if (kurl.isMalformed()) {
-	        KURL::encode(userquery);
+	        userquery = KURL::encode_string(userquery); 
 	    }
 	    if ((pct = newurl.find("\\1")) >= 0) {
 		newurl = newurl.replace(pct, 2, userquery);

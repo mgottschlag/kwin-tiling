@@ -93,7 +93,7 @@ QString KURISearchFilterEngine::navQuery() const {
 	if (search != QString::null) {
 	    int pct = m_currInternetKeywordsNavEngine.m_strQueryWithSearch.find("\\|");
 	    if (pct >= 0) {
-		KURL::encode(search);
+		search = KURL::encode_string(search); 
 		QString res = m_currInternetKeywordsNavEngine.m_strQueryWithSearch;
 		return res.replace(pct, 2, search);
 	    }
