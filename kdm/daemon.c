@@ -30,16 +30,11 @@ from The Open Group.
  * Author:  Keith Packard, MIT X Consortium
  */
 
-#include "dm.h"
+#include <X11/Xos.h>
 
-#ifdef HAVE_TERMIOS_H
+#if defined(SVR4) || defined(USG)
 # include <termios.h>
 #else
-# ifdef HAVE_SYS_TERMIOS_H
-#  include <sys/termios.h>
-# endif
-#endif
-#ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
 #if defined(__osf__) || defined(linux) || defined(MINIX)
