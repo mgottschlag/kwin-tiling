@@ -41,8 +41,8 @@
 
 #include "kgreeter.h"
 #include "kdmconfig.h"
-#include "kdmclock.h" 
-#include "kfdialog.h" 
+#include "kdmclock.h"
+#include "kfdialog.h"
 #include "miscfunc.h"
 
 #include <X11/Xlib.h>
@@ -93,16 +93,16 @@ MyApp::MyApp(Display *display, int& argc, char** argv, const QCString& rAppName)
 {
 }
 
-bool 
+bool
 MyApp::x11EventFilter( XEvent * ev)
 {
-    // Hack to tell dialogs to take focus 
+    // Hack to tell dialogs to take focus
     if( ev->type == ConfigureNotify) {
 	QWidget* target = QWidget::find( (( XConfigureEvent *) ev)->window);
 	if (target) {
 	    target = target->topLevelWidget();
 	    if( target->isVisible() && !target->isPopup())
-		XSetInputFocus( qt_xdisplay(), target->winId(), 
+		XSetInputFocus( qt_xdisplay(), target->winId(),
 				RevertToParent, CurrentTime);
 	}
     }
@@ -141,7 +141,7 @@ KGreeter::insertUsers( QIconView *iconview)
 	    QString username = QFile::decodeName ( ps->pw_name );
 	    if( CHECK_STRING(ps->pw_dir) &&
 		CHECK_STRING(ps->pw_shell) &&
-		(ps->pw_uid >= (unsigned)kdmcfg->_lowUserId || 
+		(ps->pw_uid >= (unsigned)kdmcfg->_lowUserId ||
 		ps->pw_uid == 0) &&
                 ( kdmcfg->_noUsers.contains( username ) == 0)
 	    ) {
@@ -150,7 +150,7 @@ KGreeter::insertUsers( QIconView *iconview)
 				  username + QString::fromLatin1(".png")));
 		if( p.isNull())
 		    p = default_pix;
-		    QIconViewItem *item = new QIconViewItem( iconview, 
+		    QIconViewItem *item = new QIconViewItem( iconview,
 							     username, p);
 		    item->setDragEnabled(false);
 	    }
@@ -174,7 +174,7 @@ KGreeter::insertUsers( QIconView *iconview)
 #undef CHECK_STRING
 
 static void
-inserten (QPopupMenu *mnu, const QString& txt, 
+inserten (QPopupMenu *mnu, const QString& txt,
 	  const QObject *receiver, const char *member)
 {
     mnu->insertItem(txt, receiver, member, QAccel::shortcutKey(txt));
@@ -182,12 +182,12 @@ inserten (QPopupMenu *mnu, const QString& txt,
 
 QString enam;
 
-KGreeter::KGreeter(QWidget *parent, const char *t) 
+KGreeter::KGreeter(QWidget *parent, const char *t)
   : QFrame( parent, t, WStyle_Customize | WStyle_NoBorder | WStyle_Tool)
 {
     setFrameStyle (QFrame::WinPanel | QFrame::Raised);
-    QBoxLayout* vbox = new QBoxLayout(  this, 
-					QBoxLayout::TopToBottom, 
+    QBoxLayout* vbox = new QBoxLayout(  this,
+					QBoxLayout::TopToBottom,
 					10, 10);
     QBoxLayout* hbox1 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
     QBoxLayout* hbox2 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
@@ -238,6 +238,7 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     loginLabel = new QLabel( loginEdit, i18n("&Login:"), this);
 
     passwdEdit = new KPasswordEdit( this, "edit", kdmcfg->_echoMode);
+    connect(passwdEdit,SIGNAL(returnPressed()),this,SLOT(ReturnPressed()));
     passwdLabel = new QLabel( passwdEdit, i18n("&Password:"), this);
 
     sessargBox = new QComboBox( false, this);
@@ -291,15 +292,15 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     optMenu = new QPopupMenu(this);
     optMenu->setCheckable(false);
 
-    inserten (optMenu, i18n("Co&nsole Login"), 
+    inserten (optMenu, i18n("Co&nsole Login"),
 	      this, SLOT(console_button_clicked()));
 
-    inserten (optMenu, i18n("&Remote Login"), 
+    inserten (optMenu, i18n("&Remote Login"),
 	      this, SLOT(chooser_button_clicked()));
 
-    inserten (optMenu, dpy_is_local ? 
-		       i18n("R&estart X Server") : 
-		       i18n("Clos&e Connection"), 
+    inserten (optMenu, dpy_is_local ?
+		       i18n("R&estart X Server") :
+		       i18n("Clos&e Connection"),
 	      this, SLOT(quit_button_clicked()));
 
     menuButton = new QPushButton( i18n("&Menu"), this);
@@ -309,13 +310,13 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     hbox2->addStretch( 1);
 
     int sbw = 0;
-    if (kdmcfg->_shutdownButton != KDMConfig::SdNone && 
+    if (kdmcfg->_shutdownButton != KDMConfig::SdNone &&
 	(kdmcfg->_shutdownButton != KDMConfig::SdConsoleOnly || dpy_is_local))
     {
-	  
+
 	shutdownButton = new QPushButton(i18n("&Shutdown..."), this);
 
-	connect( shutdownButton, SIGNAL(clicked()), 
+	connect( shutdownButton, SIGNAL(clicked()),
 		 SLOT(shutdown_button_clicked()));
 	hbox2->addWidget( shutdownButton);
 	sbw = shutdownButton->width();
@@ -333,9 +334,9 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     connect( sessargBox, SIGNAL(activated(int)),
 	     this, SLOT(slot_session_selected()));
     if( user_view) {
-	connect( user_view, SIGNAL(returnPressed(QIconViewItem*)), 
+	connect( user_view, SIGNAL(returnPressed(QIconViewItem*)),
 		 this, SLOT(slot_user_name( QIconViewItem*)));
-	connect( user_view, SIGNAL(clicked(QIconViewItem*)), 
+	connect( user_view, SIGNAL(clicked(QIconViewItem*)),
 		 this, SLOT(slot_user_name( QIconViewItem*)));
     }
 
@@ -349,7 +350,7 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	kdmcfg->deleteEntry (enam, false);
 }
 
-void 
+void
 KGreeter::slot_user_name( QIconViewItem *item)
 {
     if( item != 0) {
@@ -360,7 +361,7 @@ KGreeter::slot_user_name( QIconViewItem *item)
     }
 }
 
-void 
+void
 KGreeter::slot_session_selected()
 {
     wmstat = WmSel;
@@ -368,14 +369,14 @@ KGreeter::slot_session_selected()
     sasPrev->hide();
 }
 
-void 
+void
 KGreeter::SetTimer()
 {
     if (failedLabel->text().isNull())
 	timer->start( 40000, TRUE );
 }
 
-void 
+void
 KGreeter::timerDone()
 {
     if (failedLabel->isVisible()) {
@@ -388,7 +389,7 @@ KGreeter::timerDone()
     }
 }
 
-void 
+void
 KGreeter::clear_button_clicked()
 {
     loginEdit->clear();
@@ -424,7 +425,7 @@ do_shutdown(size_t arg)
 {
     KDMShutdown k( kdmcfg->_shutdownButton,
 		   (KGreeter *)arg, "Shutdown",
-		   kdmcfg->_shutdown, 
+		   kdmcfg->_shutdown,
 		   kdmcfg->_restart,
 		   kdmcfg->_useLilo,
 		   kdmcfg->_liloCmd,
@@ -458,7 +459,7 @@ void
 KGreeter::save_wm()
 {
 #ifdef USE_RDWR_WM
-    rdwr_wm ((char *)sessargBox->currentText().local8Bit().data(), 0, 
+    rdwr_wm ((char *)sessargBox->currentText().local8Bit().data(), 0,
 	     loginEdit->text().local8Bit().data(), 0);
 #endif /* USE_RDWR_WM */
 }
@@ -566,12 +567,12 @@ KGreeter::verifyUser(bool haveto)
 			"at the moment.");
 	    TempUngrab_Run(msgbox, sorrybox);
 	    break;
-	case V_NOLOGIN: 
+	case V_NOLOGIN:
 	    {
 		QFile f;
 		f.setName(QString::fromLocal8Bit(nologin));
 		f.open(IO_ReadOnly);
-	        QTextStream t( &f ); 
+	        QTextStream t( &f );
 		errm = "";
 		while ( !t.eof() )
 		    errm += t.readLine() + '\n';
@@ -581,7 +582,7 @@ KGreeter::verifyUser(bool haveto)
 		    errm = i18n("Logins are not allowed at the moment.\n"
 				"Try again later.");
 		TempUngrab_Run(msgbox, sorrybox);
-	    } 
+	    }
 	    break;
 	case V_AWEXPIRE:
 	    if (expire == 1)
@@ -620,7 +621,7 @@ KGreeter::verifyUser(bool haveto)
     return true;
 }
 
-void 
+void
 KGreeter::go_button_clicked()
 {
     verifyUser(true);
@@ -645,10 +646,10 @@ KGreeter::ReturnPressed()
 static int
 creat_greet(size_t /* arg */)
 {
-    kgreeter = new KGreeter;		   
+    kgreeter = new KGreeter;
     kgreeter->updateGeometry();
     kapp->processEvents(0);
-    kgreeter->resize(kgreeter->sizeHint());     
+    kgreeter->resize(kgreeter->sizeHint());
     int dw = QApplication::desktop()->width();
     int dh = QApplication::desktop()->height();
     int gw = kgreeter->width();
@@ -667,7 +668,7 @@ creat_greet(size_t /* arg */)
 	x = dw - gw;
     if (y + gh > dh)
 	y = dh - gh;
-    kgreeter->move( x < 0 ? 0 : x, y < 0 ? 0 : y );  
+    kgreeter->move( x < 0 ? 0 : x, y < 0 ? 0 : y );
     kgreeter->show();
     kgreeter->setActiveWindow();
     QApplication::restoreOverrideCursor();
@@ -690,14 +691,14 @@ kg_main(const char *dname)
     kde_have_kipc = false;
     MyApp myapp(*dpy, argc, (char **)argv, "kdmgreet");
 
-    QString cfgname (KGlobal::dirs()->resourceDirs("config").last() + 
+    QString cfgname (KGlobal::dirs()->resourceDirs("config").last() +
 		     QString::fromLatin1("kdmrc"));
     kdmcfg = new KDMConfig(cfgname);
     struct stat st;
     stat (QFile::encodeName(cfgname).data(), &st);
 
-    KGlobal::dirs()->addResourceType("user_pic", 
-				     KStandardDirs::kde_default("data") + 
+    KGlobal::dirs()->addResourceType("user_pic",
+				     KStandardDirs::kde_default("data") +
 				     QString::fromLatin1("kdm/pics/users/"));
 
     QApplication::setOverrideCursor( Qt::waitCursor );
@@ -707,7 +708,7 @@ kg_main(const char *dname)
     // this is necessary, since Qt just overwrites the
     // IOErrorHandler that was set by xdm!!!
     XSetIOErrorHandler(IOErrorHandler);
-     
+
     sigaction(SIGCHLD, &sig, NULL);
 
     enam = QString::fromLocal8Bit("LastUser_") + QString::fromLocal8Bit(dname);
