@@ -68,7 +68,7 @@
 #define KDMDATA KDE_DATADIR "/kdm"
 
 #define RCVERMAJOR 2
-#define RCVERMINOR 1
+#define RCVERMINOR 2
 #define RCVERSTR stringify(RCVERMAJOR) "." stringify(RCVERMINOR)
 
 static int old_scripts, no_old_scripts, old_confs, no_old,
@@ -738,52 +738,59 @@ static const char def_session[] =
 "#! /bin/sh\n"
 "# Xsession - run as user\n"
 "\n"
-"# redirect errors to a file in user's home directory if we can\n"
-"for errfile in \"$HOME/.xsession-errors\" \"${TMPDIR-/tmp}/xses-$USER\" \"/tmp/xses-$USER\"\n"
-"do\n"
-"	if ( cp /dev/null \"$errfile\" 2> /dev/null )\n"
-"	then\n"
-"		chmod 600 \"$errfile\"\n"
-"		exec > \"$errfile\" 2>&1\n"
-"		break\n"
-"	fi\n"
-"done\n"
+"# Note that the respective logout scripts are not sourced.\n"
+"case $SHELL in\n"
+"  */bash)\n"
+"    [ -z \"$BASH\" ] && exec $SHELL $0 \"$@\"\n"
+"    [ -f /etc/profile ] && . /etc/profile\n"
+"    if [ -f $HOME/.bash_profile ]; then\n"
+"      . $HOME/.bash_profile\n"
+"    elif [ -f $HOME/.bash_login ]; then\n"
+"      . $HOME/.bash_login\n"
+"    elif [ -f $HOME/.profile ]; then\n"
+"      . $HOME/.profile\n"
+"    fi\n"
+"    ;;\n"
+"  */zsh)\n"
+"    [ -z \"$ZSH_NAME\" ] && exec $SHELL $0 \"$@\"\n"
+"    [ -d /etc/zsh ] && zdir=/etc/zsh || zdir=/etc\n"
+"    zhome=${ZDOTDIR:-$HOME}\n"
+"    # zshenv is always sourced automatically.\n"
+"    [ -f $zdir/zprofile ] && . $zdir/zprofile\n"
+"    [ -f $zhome/.zprofile ] && . $zhome/.zprofile\n"
+"    [ -f $zdir/zlogin ] && . $zdir/zlogin\n"
+"    [ -f $zhome/.zlogin ] && . $zhome/.zlogin\n"
+"    ;;\n"
+"  */csh|*/tcsh)\n"
+"    # [t]cshrc is always sourced automatically.\n"
+"    # Note that sourcing csh.login after .cshrc is non-standard.\n"
+"    eval `$SHELL -c 'if (-f /etc/csh.login) source /etc/csh.login; if (-f ~/.login) source ~/.login; sh -c set'`\n"
+"    ;;\n"
+"  *) # Plain sh, ksh, and anything we don't know.\n"
+"    [ -f /etc/profile ] && . /etc/profile\n"
+"    [ -f $HOME/.profile ] && . $HOME/.profile\n"
+"    ;;\n"
+"esac\n"
 "\n"
-"DM_PATH=$PATH\n"
-"PATH=\n"
-"test -f /etc/profile && . /etc/profile\n"
-"test -f $HOME/.profile && . $HOME/.profile\n"
-"IFS_SAVE=$IFS\n"
-"IFS=:\n"
-"for i in $DM_PATH; do\n"
-"    case :$PATH: in\n"
-"      *:$i:*) ;;\n"
-"      ::) PATH=$i;;\n"
-"      *) PATH=$PATH:$i;;\n"
-"    esac\n"
-"done\n"
-"IFS=$IFS_SAVE\n"
-"export PATH\n"
-"\n"
-"test -f /etc/xprofile && . /etc/xprofile\n"
-"test -f $HOME/.xprofile && . $HOME/.xprofile\n"
+"[ -f /etc/xprofile ] && . /etc/xprofile\n"
+"[ -f $HOME/.xprofile ] && . $HOME/.xprofile\n"
 "\n"
 "case $1 in\n"
-"    \"\")\n"
-"	exec xmessage -center -buttons OK:0 -default OK \"Sorry, $DESKTOP_SESSION is no valid session.\"\n"
-"	;;\n"
-"    failsafe)\n"
-"	exec xterm -geometry 80x24-0-0\n"
-"	;;\n"
-"    custom)\n"
-"	exec $HOME/.xsession\n"
-"	;;\n"
-"    default)\n"
-"	exec startkde\n"
-"	;;\n"
-"    *)\n"
-"	eval exec \"$1\"\n"
-"	;;\n"
+"  \"\")\n"
+"    exec xmessage -center -buttons OK:0 -default OK \"Sorry, $DESKTOP_SESSION is no valid session.\"\n"
+"    ;;\n"
+"  failsafe)\n"
+"    exec xterm -geometry 80x24-0-0\n"
+"    ;;\n"
+"  custom)\n"
+"    exec $HOME/.xsession\n"
+"    ;;\n"
+"  default)\n"
+"    exec startkde\n"
+"    ;;\n"
+"  *)\n"
+"    eval exec \"$1\"\n"
+"    ;;\n"
 "esac\n"
 "exec xmessage -center -buttons OK:0 -default OK \"Sorry, cannot execute $1. Check $DESKTOP_SESSION.desktop.\"\n";
 
@@ -1615,41 +1622,13 @@ static void
 mk_session(Entry *ce, Section *cs ATTR_UNUSED)
 {
     if ((old_scripts || (ce->active && inNewDir (ce->value))) &&
-	oldver >= 0x201)
+	oldver >= 0x202)
 	linkfile (ce);
     else {
 	ce->value = KDMCONF "/Xsession";
 	ce->active = ce->written = 1;
 	writefile (ce->value, 0755, def_session);
     }
-}
-
-static void
-addKdePath (Entry *ce, const char *defpath)
-{
-    char *p;
-    const char *path;
-
-    path = ce->active ? ce->value : defpath;
-    if (!(p = strstr (path, KDE_BINDIR)) ||
-	(p != path && *(p-1) != ':') ||
-	(p[sizeof(KDE_BINDIR)-1] && p[sizeof(KDE_BINDIR)-1] != ':'))
-    {
-	ASPrintf ((char **)&ce->value, KDE_BINDIR ":%s", path);
-	ce->written = ce->active = 1;
-    }
-}
-
-static void
-ck_userpath(Entry *ce, Section *cs ATTR_UNUSED)
-{
-    addKdePath(ce, DEF_USER_PATH);
-}
-
-static void
-ck_systempath(Entry *ce, Section *cs ATTR_UNUSED)
-{
-    addKdePath(ce, DEF_SYSTEM_PATH);
 }
 
 static void
@@ -2017,10 +1996,10 @@ static Ent entsCore[] = {
 { "FailsafeClient",	0, 0, 
 "# The program to run if Session fails.\n"
 "# Default is " XBINDIR "/xterm\n" },
-{ "UserPath",		0, ck_userpath, 
+{ "UserPath",		0, 0, 
 "# The PATH for the Session program. Default is\n"
 "# " DEF_USER_PATH "\n" },
-{ "SystemPath",		0, ck_systempath, 
+{ "SystemPath",		0, 0, 
 "# The PATH for Setup, Startup and Reset, etc. Default is\n"
 "# " DEF_SYSTEM_PATH "\n" },
 { "SystemShell",	0, 0, 
@@ -2081,6 +2060,10 @@ static Ent entsCore[] = {
 { "SessionsDirs",	0, 0, 
 "# The directories containing session type definitions in .desktop format.\n"
 "# Default is " KDMDATA "/sessions\n" },
+{ "ClientLogFile",	0, 0,
+"# The file (relative to $HOME) to redirect the session output to. This is\n"
+"# a printf format string; one %s will be replaced with the display name.\n"
+"# Default is \".xsession-errors\"\n" },
 };
 
 static Ent entsGreeter[] = {
@@ -2361,6 +2344,7 @@ static DEnt dEntsAnyCore[] = {
 { "DefaultSdMode",	"ForceNow", 0}, 
 { "InteractiveSd",	"false", 0}, 
 { "SessionsDirs",	"/etc/X11/sessions,/usr/share/xsessions", 0 },
+{ "ClientLogFile",	".xsession-errors-%s", 1 },
 };
 
 static DEnt dEntsAnyGreeter[] = {
@@ -2423,6 +2407,7 @@ static DEnt dEnts0Core[] = {
 { "AutoLoginEnable",	"true", 0 },
 { "AutoLoginUser",	"fred", 0 },
 { "AutoLoginPass",	"secret!", 0 },
+{ "ClientLogFile",	".xsession-errors", 1 },
 };
 
 static DEnt dEnts0Greeter[] = {

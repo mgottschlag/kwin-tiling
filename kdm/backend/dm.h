@@ -270,6 +270,7 @@ struct display {
 	char		**noPassUsers;	/* users allowed in without a password */
 	char		**sessionsDirs;	/* where session .desktop files are located */
 	char		**chooserHosts;	/* hosts to auto-add in "remote login" */
+	char		*clientLogFile;	/* xsession-errors template */
 	int		loginMode;	/* whether to start chooser or login */
 	int		autoReLogin;	/* auto-re-login after crash */
 	int		allowNullPasswd;/* allow null password on login */

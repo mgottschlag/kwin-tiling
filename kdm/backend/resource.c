@@ -486,6 +486,7 @@ struct dpyVals {
 { C_sessionsDirs,	boffset(sessionsDirs) },
 { C_chooserHosts,	boffset(chooserHosts) },
 { C_loginMode,		boffset(loginMode) },
+{ C_clientLogFile,	boffset(clientLogFile) },
 };
 
 int

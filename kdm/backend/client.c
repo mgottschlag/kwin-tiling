@@ -1033,8 +1033,8 @@ StartClient ()
 #ifdef HAS_SETUSERCONTEXT
     extern char	**environ;
 #endif
-    char	*failsafeArgv[2];
-    int		i, pid;
+    char	*failsafeArgv[2], *lname;
+    int		i, pid, lfd;
 
     if (StrCmp (dmrcuser, curuser)) {
 	if (curdmrc) { free (curdmrc); curdmrc = 0; }
@@ -1353,10 +1353,31 @@ StartClient ()
 			  curuser, home);
 		home = 0;
 		userEnviron = setEnv (userEnviron, "HOME", "/");
-		chdir ("/");
+		goto cdroot;
 	    }
-	} else
+	    ASPrintf (&lname, td->clientLogFile, td->name);
+	    if ((lfd = creat (lname, 0600)) < 0) {
+		LogInfo ("Cannot create session log file %s: %m\n", lname);
+		free (lname);
+		goto tmperr;
+	    }
+	} else {
+	  cdroot:
 	    chdir ("/");
+	  tmperr:
+	    ASPrintf (&lname, "/tmp/xerr-%s-%s", curuser, td->name);
+	    unlink (lname);
+	    if ((lfd = open (lname, O_WRONLY|O_CREAT|O_EXCL, 0600)) < 0) {
+		LogError ("Cannot create fallback session log file %s: %m\n",
+			  lname);
+		goto logerr;
+	    }
+	}
+	dup2 (lfd, 1);
+	dup2 (lfd, 2);
+	close (lfd);
+      logerr:
+	free (lname);
 	if (!*dmrcDir)
 	    mergeSessionArgs (home != 0);
 	if (!(desksess = iniEntry (curdmrc, "Desktop", "Session", 0)))

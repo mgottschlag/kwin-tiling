@@ -522,6 +522,7 @@ Ent entsCore[] = {
 { "DefaultSdMode",	C_defSdMode | C_ENUM, sd_mode,	"Schedule" },
 { "InteractiveSd",	C_interactiveSd | C_BOOL, 0,	"true" },
 { "SessionsDirs",	C_sessionsDirs,		0,	KDMDATA "/sessions" },
+{ "ClientLogFile",	C_clientLogFile,	0,	".xsession-errors" },
 };
 
 Ent entsGreeter[] = {

@@ -283,6 +283,7 @@ from The Open Group.
 # define LOGIN_DEFAULT_REMOTE	2
 # define LOGIN_REMOTE_ONLY	3
 #define C_sessionsDirs		(C_TYPE_ARGV | 0x132)
+#define C_clientLogFile		(C_TYPE_STR | 0x133)
 
 /* display variables */
 #define C_name			(C_TYPE_STR | 0x200)
