@@ -180,7 +180,9 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     popup->plugAction( toggleURLGrabAction );
     popup->plugAction( clearHistoryAction );
     popup->plugAction( configureAction );
-    popup->plugAction( quitAction );
+    if ( !isApplet() ) {
+        popup->plugAction( quitAction );
+    }
 
     QToolTip::add( this, i18n("Klipper - clipboard tool") );
 }
