@@ -18,9 +18,10 @@
 
 */
 
-#include <qcheckbox.h>
+#include <qbuttongroup.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <qradiobutton.h>
 #include <qslider.h>
 #include <qvbox.h>
 
@@ -37,6 +38,7 @@
 
 
 #include "knotify.h"
+#include "playersettings.h"
 
 static const int COL_FILENAME = 1;
 
@@ -201,58 +203,40 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
     QVBoxLayout *topLayout = new QVBoxLayout( frame, 0, 
         KDialog::spacingHint() );
 
-    QHBoxLayout *hbox = new QHBoxLayout( topLayout, KDialog::spacingHint() );
-    cbExternal = new QCheckBox( i18n("Use e&xternal player: "), frame );
-    reqExternal = new KURLRequester( frame );
-    reqExternal->completionObject()->setMode( KURLCompletion::ExeCompletion );
-    connect( cbExternal, SIGNAL( toggled( bool )),
-             SLOT( externalToggled( bool )));
-    hbox->addWidget( cbExternal );
-    hbox->addWidget( reqExternal );
+    m_ui = new PlayerSettingsUI(frame);
+    topLayout->addWidget(m_ui);
 
-    volumeGroupBox = new QGroupBox( frame, "volumeGroupBox" );
-    volumeGroupBox->setTitle( i18n( "Volume" ) );
-    volumeGroupBox->setColumnLayout(0, Qt::Vertical );
-    // Use KDialog::spacingHint() ?
-    volumeGroupBox->layout()->setSpacing( 6 );
-    volumeGroupBox->layout()->setMargin( 11 );
-    QGridLayout *volumeGroupBoxLayout = new QGridLayout( volumeGroupBox->layout() );
-    volumeGroupBoxLayout->setAlignment( Qt::AlignTop );
-
-    volumeSlider = new QSlider( volumeGroupBox, "volumeSlider" );
-    volumeSlider->setOrientation( QSlider::Horizontal );
-    volumeSlider->setRange( 0, 100 );
-    volumeGroupBoxLayout->addMultiCellWidget( volumeSlider, 0, 0, 0, 2 );
-
-    QLabel *minLabel = new QLabel( volumeGroupBox, "minLabel" );
-    minLabel->setText(("0"));
-    volumeGroupBoxLayout->addWidget( minLabel, 1, 0 );
-
-    QLabel *maxLabel = new QLabel( volumeGroupBox, "maxLabel" );
-    maxLabel->setText(("100"));
-    volumeGroupBoxLayout->addWidget( maxLabel, 1, 2 );
-    
-    QSpacerItem *spacer1 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    volumeGroupBoxLayout->addItem( spacer1, 1, 1 );
-
-    topLayout->addWidget(volumeGroupBox);
     load();
     dataChanged = false;
     enableButton(Apply, false);
-    connect( cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
-    connect( volumeSlider, SIGNAL( valueChanged ( int ) ), this, SLOT( slotChanged() ) );
-    connect( reqExternal, SIGNAL( textChanged( const QString& ) ), this, SLOT( slotChanged() ) );
+
+    connect( m_ui->cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( externalToggled() ) );
+    connect( m_ui->grpPlayers, SIGNAL( clicked( int ) ), this, SLOT( slotChanged() ) );
+    connect( m_ui->volumeSlider, SIGNAL( valueChanged ( int ) ), this, SLOT( slotChanged() ) );
+    connect( m_ui->reqExternal, SIGNAL( textChanged( const QString& ) ), this, SLOT( slotChanged() ) );
 }
 
 void PlayerSettingsDialog::load()
 {
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
-    cbExternal->setChecked( config.readBoolEntry( "Use external player",
-                                                  false ));
-    reqExternal->setURL( config.readPathEntry( "External player" ));
-    volumeSlider->setValue( config.readNumEntry( "Volume", 100 ) );
-    externalToggled( cbExternal->isChecked() );
+    bool useExternal = config.readBoolEntry( "Use external player", false );
+    m_ui->cbExternal->setChecked( useExternal );
+    m_ui->reqExternal->setURL( config.readPathEntry( "External player" ) );
+    m_ui->volumeSlider->setValue( config.readNumEntry( "Volume", 100 ) );
+
+    if ( !m_ui->cbExternal->isChecked() )
+    {
+        config.setGroup( "StartProgress" );
+        if ( config.readBoolEntry( "Use Arts", true ) )
+        {
+            m_ui->cbArts->setChecked( true );
+        }
+        else
+        {
+            m_ui->cbNone->setChecked( true );
+        }
+    }
 }
 
 void PlayerSettingsDialog::save()
@@ -260,9 +244,29 @@ void PlayerSettingsDialog::save()
     // see kdelibs/arts/knotify/knotify.cpp
     KConfig config( "knotifyrc", false, false );
     config.setGroup( "Misc" );
-    config.writePathEntry( "External player", reqExternal->url() );
-    config.writeEntry( "Use external player", cbExternal->isChecked() );
-    config.writeEntry( "Volume", volumeSlider->value() );
+
+    config.writePathEntry( "External player", m_ui->reqExternal->url() );
+    config.writeEntry( "Use external player", m_ui->cbExternal->isChecked() );
+    config.writeEntry( "Volume", m_ui->volumeSlider->value() );
+
+    config.setGroup( "StartProgress" );
+
+    if ( m_ui->cbNone->isChecked() )
+    {
+        // user explicitly says "no sound!"
+        config.writeEntry( "Use Arts", false );
+    }
+    else if ( m_ui->cbArts->isChecked() )
+    {
+        // use explicitly said to use aRts so we turn it back on
+        // we don't want to always set this to the value of
+        // m_ui->cbArts->isChecked() since we don't want to
+        // turn off aRts support just because they also chose
+        // an external player
+        config.writeEntry( "Use Arts", true );
+        config.writeEntry( "Arts Init", true ); // reset it for the next time
+    }
+
     config.sync();
 }
 
@@ -284,6 +288,7 @@ void PlayerSettingsDialog::slotOk()
         slotApply();
     KDialogBase::slotOk();
 }
+
 void PlayerSettingsDialog::slotChanged()
 {
     dataChanged = true;
@@ -292,13 +297,10 @@ void PlayerSettingsDialog::slotChanged()
 
 void PlayerSettingsDialog::externalToggled( bool on )
 {
-    reqExternal->setEnabled( on );
-    volumeGroupBox->setEnabled( !on );
-
     if ( on )
-        reqExternal->setFocus();
+        m_ui->reqExternal->setFocus();
     else
-        reqExternal->clearFocus();
+        m_ui->reqExternal->clearFocus();
 }
 
 #include "knotify.moc"

@@ -36,6 +36,7 @@ class KAboutData;
 class KComboBox;
 class KURLRequester;
 class PlayerSettingsDialog;
+class PlayerSettingsUI;
 
 namespace KNotify
 {
@@ -86,12 +87,8 @@ protected slots:
     void slotChanged();
 
 private:
-    QCheckBox *cbExternal;
-    KURLRequester *reqExternal;
-    QGroupBox *volumeGroupBox;
-    QSlider *volumeSlider;
+    PlayerSettingsUI* m_ui;
     bool dataChanged;
-
 };
 
 
