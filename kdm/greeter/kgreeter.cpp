@@ -868,6 +868,7 @@ GreetUser(
     KCmdLineArgs::init(argc, (char **) argv, "kdm", description, version);
 
     kde_have_kipc = false;
+    KLocale::setMainCatalogue("kdmgreet");
     MyApp myapp;
     KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + QString::fromLatin1("kdm/pics/users/"));
     QApplication::setOverrideCursor( Qt::waitCursor );
