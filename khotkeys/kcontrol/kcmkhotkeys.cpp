@@ -254,7 +254,7 @@ void Module::global_settings()
 void Module::import()
     {
     QString file = KFileDialog::getOpenFileName( QString::null, "*.khotkeys", topLevelWidget(),
-        i18n( "Select File with Actions to be Imported" ));
+        i18n( "Select File with Actions to Be Imported" ));
     if( file.isEmpty())
         return;
     KSimpleConfig cfg( file, true );

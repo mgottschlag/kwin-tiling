@@ -29,7 +29,7 @@
 
 #include "kmenuedit.h"
 
-static const char description[] = I18N_NOOP("KDE Control Center Editor");
+static const char description[] = I18N_NOOP("KDE control center editor");
 static const char version[] = "1.0";
 
 extern "C" int kdemain( int argc, char **argv )

@@ -65,7 +65,7 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
 
   new QLabel(i18n("Position:"), vboxLeft);
   xyPos = new PosWidget(vboxLeft);
-  trace = new QCheckBox(i18n("Show Trace"), mainVbox);
+  trace = new QCheckBox(i18n("Show trace"), mainVbox);
   connect(trace, SIGNAL(toggled(bool)), this, SLOT(traceChanged(bool)));
 
   QVBox *vboxMid = new QVBox(hbox);

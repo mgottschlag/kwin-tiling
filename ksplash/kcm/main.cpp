@@ -97,7 +97,7 @@ void KSplashThemeMgr::defaults()
 const KAboutData* KSplashThemeMgr::aboutData() const
 {
   KAboutData *about = new KAboutData( "kcmksplash"
-                                      ,I18N_NOOP("KDE Splash Screen Theme Manager")
+                                      ,I18N_NOOP("KDE splash screen theme manager")
                                       ,"0.1"
                                       ,0
                                       ,KAboutData::License_GPL

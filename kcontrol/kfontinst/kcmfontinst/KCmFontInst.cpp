@@ -594,7 +594,7 @@ void CKCmFontInst::addFonts()
 void CKCmFontInst::removeFonts()
 {
     if(itsDirOp->selectedItems()->isEmpty())
-        KMessageBox::information(this, i18n("You did not select anything to delete."), i18n("Nothing to delete"));
+        KMessageBox::information(this, i18n("You did not select anything to delete."), i18n("Nothing to Delete"));
     else
     {
         KURL::List            urls;
@@ -765,7 +765,7 @@ void CKCmFontInst::enableItems(bool enable)
         KMessageBox::information(this,
                                 enable ? i18n("You did not select anything to enable.")
                                        : i18n("You did not select anything to disable."),
-                                enable ? i18n("Nothing to enable") : i18n("Nothing to disable"));
+                                enable ? i18n("Nothing to Enable") : i18n("Nothing to Disable"));
     else
     {
         KFileItemListIterator it(*items);

@@ -2006,9 +2006,9 @@ bool CKioFonts::confirmUrl(KURL &url)
                                                            i18n("Do you wish to install the font into \"%1\" (in which "
                                                                 "case the font will only be usable by you), or \"%2\" ("
                                                                 "the font will be usable by all users - but you will "
-                                                                "need to know the Administrator's password) ?")
+                                                                "need to know the administrator's password)?")
                                                                .arg(KIO_FONTS_USER).arg(KIO_FONTS_SYS),
-                                                           i18n("Where to install..."), i18n(KIO_FONTS_USER),
+                                                           i18n("Where to Install"), i18n(KIO_FONTS_USER),
                                                            i18n(KIO_FONTS_SYS));
 
             if(changeToSystem)

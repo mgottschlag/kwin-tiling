@@ -42,7 +42,7 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 	setPixmap(KSystemTray::loadIcon("randr"));
 	setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
-	QToolTip::add(this, i18n("Screen Resize & Rotate"));
+	QToolTip::add(this, i18n("Screen resize & rotate"));
 }
 
 void KRandRSystemTray::mousePressEvent(QMouseEvent* e)

@@ -356,7 +356,7 @@ void SchemaEditor::saveCurrent()
 
     bool ok;
     fullpath = KInputDialog::getText( i18n( "Save Schema" ),
-        i18n( "Filename:" ), fullpath, &ok, this );
+        i18n( "File name:" ), fullpath, &ok, this );
 	if (!ok) return;
     }
 

@@ -369,7 +369,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 					int result = KMessageBox::warningContinueCancel( 0,
 					i18n("A key scheme with the name '%1' already exists;\n"
 						"do you want to overwrite it?\n").arg(sName),
-					i18n("Save key scheme"),
+					i18n("Save Key Scheme"),
 					i18n("Overwrite"));
 					bNameValid = (result == KMessageBox::Continue);
 				}

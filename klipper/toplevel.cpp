@@ -882,7 +882,7 @@ void KlipperWidget::updateTimestamp()
 }
 
 static const char * const description =
-	I18N_NOOP("KDE Cut & Paste history utility");
+	I18N_NOOP("KDE cut & paste history utility");
 
 void KlipperWidget::createAboutData()
 {
