@@ -67,7 +67,7 @@
 
 template class QList<QString>;
 
-const char *eventNames[] = 
+const char *eventNames[] =
 {
     "GeneralBeep",
     "Desktop1",
@@ -105,13 +105,13 @@ const char *eventNames[] =
 KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
     KCModule(parent, name), selected_event(0)
 {
-    
+
     QTabWidget *tabs;
     QFrame *mainFrame, *bellFrame;
 
     QBoxLayout *layout, *status_layout;
     QGridLayout *grid_layout;
-    
+
     QString path;
     QDir dir;
     QStringList list;
@@ -141,7 +141,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
     eventlist->insertItem(i18n("Change to Desktop 6"));
     eventlist->insertItem(i18n("Change to Desktop 7"));
     eventlist->insertItem(i18n("Change to Desktop 8"));
-    
+
     eventlist->insertItem(i18n("Activate Window"));
     eventlist->insertItem(i18n("Open new window"));
     eventlist->insertItem(i18n("Close Window"));
@@ -168,26 +168,26 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
     //
     // CC: Now set up the list of known WAV Files
     //
-    
+
     soundlist = new QListBox(mainFrame);
     soundlist->setAcceptDrops(true);
     setAcceptDrops(true);
     soundlist->installEventFilter(mainFrame);
 
     soundlist->insertItem(i18n("(none)"));
-    
+
     list = KGlobal::dirs()->findAllResources("sound");
-    
+
     soundlist->insertStringList(list);
     soundlist->setMinimumSize(soundlist->sizeHint());
 
     sounds_enabled = new QCheckBox(mainFrame);
     sounds_enabled->setText(i18n("E&nable system sounds"));
     connect(sounds_enabled, SIGNAL(clicked()), this, SLOT(changed()));
-    
+
     btn_test = new QPushButton(mainFrame);
     btn_test->setText(i18n("&Test"));
-    
+
     eventlabel = new QLabel(eventlist, i18n("&Events:"), mainFrame);
     soundlabel = new QLabel(soundlist, i18n("Available &Sounds:"), mainFrame);
     statustext = new QLabel(i18n(
@@ -196,7 +196,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
     eventlabel->setAlignment(QLabel::AlignLeft);
     soundlabel->setAlignment(QLabel::AlignLeft);
     statustext->setAlignment(QLabel::AlignLeft);
-    
+
     grid_layout = new QGridLayout(2, 2);
     grid_layout->addWidget(eventlabel, 0, 0);
     grid_layout->addWidget(eventlist, 1, 0);
@@ -205,19 +205,19 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
     grid_layout->setRowStretch(1, 1);
     grid_layout->setColStretch(0, 30);
     grid_layout->setColStretch(1, 70);
-    
+
     layout = new QVBoxLayout(mainFrame, KDialog::marginHint(),
 				 KDialog::spacingHint());
     layout->addWidget(sounds_enabled,0,AlignLeft);
     layout->addLayout(grid_layout, 1);
-    
+
     status_layout = new QHBoxLayout();
     status_layout->addWidget(statustext, 1);
     status_layout->addWidget(btn_test);
     layout->addLayout(status_layout);
 
     QLabel *label = new QLabel(bellFrame);
-    QString setting = sounds_enabled->isChecked() ? 
+    QString setting = sounds_enabled->isChecked() ?
 	i18n("enabled") : i18n("disabled");
     label->setText(i18n("The following settings are only relevant to the X bell or beep.\nIf you are using system sounds, the \"General Beep\" sound will override\nthese settings, but they will still apply to non-KDE programs.  Otherwise,\nthe values you specify here will be used.\n\nSystem sounds are currently %1.").arg(setting));
     // set up bell tab
@@ -246,33 +246,33 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
     duration->setSuffix(i18n("ms"));
     duration->setSteps(20,100);
     layout->addWidget(duration);
-    
+
     QFrame *hLine = new QFrame(bellFrame);
     hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
-    
+
     layout->addWidget(hLine);
-    
+
     test = new QPushButton(i18n("&Test"), bellFrame, "test");
     layout->addWidget(test, 0, AlignRight);
     connect( test, SIGNAL(clicked()), SLOT(ringBell()));
-  
+
     layout->addStretch(1);
 
     setUpdatesEnabled(TRUE);
-    
+
     load();
-    
+
     connect(eventlist, SIGNAL(highlighted(int)), this, SLOT(eventSelected(int)));
     connect(soundlist, SIGNAL(highlighted(const QString &)),
 	    this, SLOT(soundSelected(const QString &)));
     connect(btn_test, SIGNAL(clicked()), this, SLOT(playCurrentSound()));
 
     // watch for changes
-    connect(volume, SIGNAL(valueChanged(int)), 
+    connect(volume, SIGNAL(valueChanged(int)),
 	    this, SLOT(changed()));
-    connect(pitch, SIGNAL(valueChanged(int)), 
+    connect(pitch, SIGNAL(valueChanged(int)),
 	    this, SLOT(changed()));
-    connect(duration, SIGNAL(valueChanged(int)), 
+    connect(duration, SIGNAL(valueChanged(int)),
 	    this, SLOT(changed()));
 
 };
@@ -324,7 +324,7 @@ void KSoundWidget::load()
   // bell
   XKeyboardState kbd;
   XGetKeyboardControl(kapp->getDisplay(), &kbd);
-  
+
   config.setGroup("Bell");
   bellVolume = config.readNumEntry("Volume", kbd.bell_percent);
   bellPitch = config.readNumEntry("Pitch", kbd.bell_pitch);
@@ -352,7 +352,7 @@ void KSoundWidget::eventSelected(int index){
   else {
     // CC: at first, get the name of the sound file we want to select
     sname = soundnames[index-1];
-    kDebugInfo(0, "event %d wants sound %s", index, debugString(sname));
+    kdDebug() << "event " << index << " wants sound " << sname << endl;
 
     i = 1;
     listlen = soundlist->count();
@@ -459,11 +459,11 @@ void KSoundWidget::save(){
 
   // bell
   XKeyboardControl kbd;
-  
+
   bellVolume = getBellVolume();
   bellPitch = getBellPitch();
   bellDuration = getBellDuration();
-  
+
   kbd.bell_percent = bellVolume;
   kbd.bell_pitch = bellPitch;
   kbd.bell_duration = bellDuration;
