@@ -1653,7 +1653,7 @@ case \"$sess\" in
     failsafe)
 	exec xterm -geometry 80x24-0-0 $*
 	;;
-    ""|default)
+    \"\"|default)
 	exec $HOME/.xsession $*
 	;;
 esac
