@@ -40,5 +40,5 @@ METASOURCES =			AUTO
 
 messages:
 	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot \
-	$(libkcm_odbc_la_SOURCES) && mv messages.po $(podir)/kcmodbc.pot
+	$(libkcm_odbc_la_SOURCES) -o $(podir)/kcmodbc.pot
 
