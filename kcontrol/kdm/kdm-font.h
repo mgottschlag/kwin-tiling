@@ -36,6 +36,7 @@ public:
         void load();
         void save();
 	void defaults();
+	void set_def();
 
 
 private slots:
@@ -44,7 +45,6 @@ private slots:
 
 
 private:
-
         KIconLoader *iconloader;
         QFont        tmpfont, stdfont, greetfont, failfont;
         QLabel       *fontlabel;

@@ -101,24 +101,29 @@ void KDMFontWidget::save()
   c->setGroup("KDM");
 
   // write font
-  c->writeEntry("StdFont", stdfont, true);
-  c->writeEntry("GreetFont", greetfont, true);
-  c->writeEntry("FailFont", failfont, true);
+  c->writeEntry("StdFont", stdfont);
+  c->writeEntry("GreetFont", greetfont);
+  c->writeEntry("FailFont", failfont);
+}
+
+
+void KDMFontWidget::set_def()
+{
+  stdfont = QFont("helvetica", 12);
+  failfont = QFont("helvetica", 12, QFont::Bold);
+  greetfont = QFont("charter", 24);
 }
 
 
 void KDMFontWidget::load()
 {
-  QString str;
+  set_def();
 
   c->setGroup("KDM");
 
   // Read the fonts
-  stdfont.setFamily("Helvetica");
   stdfont = c->readFontEntry("StdFont", &stdfont);
-  failfont.setFamily("Courier");
   failfont = c->readFontEntry("FailFont", &failfont);
-  greetfont.setFamily("Helvetica");
   greetfont = c->readFontEntry("GreetFont", &greetfont);
 
   slotSetFont(fontcombo->currentItem());
@@ -127,10 +132,7 @@ void KDMFontWidget::load()
 
 void KDMFontWidget::defaults()
 {
-  stdfont = QFont("Helvetica");
-  failfont = QFont("Courier");
-  greetfont = QFont("Helvetica");
-
+  set_def();
   slotSetFont(fontcombo->currentItem());
 }
 
