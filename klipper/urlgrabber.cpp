@@ -142,7 +142,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
                  SLOT( slotItemSelected( int )));
 
         for ( action = it.current(); action; action = ++it ) {
-            QListIterator<ClipCommand> it2( action->commands() );
+            QPtrListIterator<ClipCommand> it2( action->commands() );
             if ( it2.count() > 0 )
                 myMenu->insertTitle( kapp->miniIcon(), action->description() +
 				     i18n(" -  Actions for: ") +
@@ -164,7 +164,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
         // add an edit-possibility
         myMenu->insertSeparator();
         myMenu->insertSeparator();
-        myMenu->insertItem( SmallIcon("edit"), i18n("&Edit contents..."), 
+        myMenu->insertItem( SmallIcon("edit"), i18n("&Edit contents..."),
                             URL_EDIT_ITEM );
         myMenu->insertItem( i18n("&Cancel"), DO_NOTHING_ITEM );
 
@@ -389,7 +389,7 @@ ClipAction::ClipAction( const ClipAction& action )
     myDescription = action.myDescription;
 
     ClipCommand *command = 0L;
-    QListIterator<ClipCommand> it( myCommands );
+    QPtrListIterator<ClipCommand> it( myCommands );
     for ( ; it.current(); ++it ) {
         command = it.current();
         addCommand(command->command, command->description, command->isEnabled);
@@ -443,7 +443,7 @@ void ClipAction::save( KConfig *kc ) const
 
     QString actionGroup = kc->group();
     struct ClipCommand *cmd;
-    QListIterator<struct ClipCommand> it( myCommands );
+    QPtrListIterator<struct ClipCommand> it( myCommands );
 
     // now iterate over all commands of this action
     int i = 0;

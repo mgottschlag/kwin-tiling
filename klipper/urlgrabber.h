@@ -13,7 +13,7 @@
 #ifndef URLGRABBER_H
 #define URLGRABBER_H
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qintdict.h>
 #include <qregexp.h>
 #include <qstring.h>
@@ -29,8 +29,8 @@ class KPopupMenu;
 
 class ClipAction;
 struct ClipCommand;
-typedef QList<ClipAction> ActionList;
-typedef QListIterator<ClipAction> ActionListIterator;
+typedef QPtrList<ClipAction> ActionList;
+typedef QPtrListIterator<ClipAction> ActionListIterator;
 
 class URLGrabber : public QObject
 {
@@ -128,7 +128,7 @@ public:
   void clearCommands() { myCommands.clear(); }
 
   void  addCommand( const QString& command, const QString& description, bool );
-  const QList<ClipCommand>& commands() 	const { return myCommands; }
+  const QPtrList<ClipCommand>& commands() 	const { return myCommands; }
 
   /**
    * Saves this action to a a given KConfig object
@@ -141,7 +141,7 @@ private:
 
   QRegExp 		myRegExp;
   QString 		myDescription;
-  QList<ClipCommand> 	myCommands;
+  QPtrList<ClipCommand> 	myCommands;
 
 };
 
