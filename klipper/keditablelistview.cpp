@@ -57,6 +57,11 @@ void KEditableListView::setEditable( QListViewItem *item, int col, bool enable)
 void KEditableListView::slotItemClicked( int button, QListViewItem *item,
 					 const QPoint&, int col )
 {
+    if ( !item ) {
+	slotDestroyEdit();
+	return;
+    }
+    
     QRect r = itemRect( item );
     if ( !r.isValid() ) {
 	slotDestroyEdit();
