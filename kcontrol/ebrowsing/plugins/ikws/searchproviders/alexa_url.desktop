@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Alexa URL
+Name[xx]=xx
+ServiceTypes=SearchProvider
+Keys=alu,url
+Query=http://info.alexa.com/data/details?url=\\{@}
