@@ -72,7 +72,7 @@ bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
   return true;
 }
 
-bool KShortURIFilter::expandEnivVar( QString& cmd ) const
+bool KShortURIFilter::expandEnvVar( QString& cmd ) const
 {
   // ENVIRONMENT variable expansion
   int env_len = 0;
@@ -102,7 +102,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   * or not it is valid.  If it fails this test, it checks to see if there
   * is any specific
   */
-  if ( expandEnivVar( cmd ) )
+  if ( expandEnvVar( cmd ) )
     url = cmd;  // Update the url
 
   // Handle SMB Protocol shortcuts ...

@@ -118,7 +118,7 @@ protected:
      * @param string the url that contains variable to be expanded
      * @return true if an environment variable was sucessfully expanded
      */
-    bool expandEnivVar( QString& ) const;
+    bool expandEnvVar( QString& ) const;
 
 private:
     URLHintsMap m_urlHints;
