@@ -53,7 +53,7 @@ static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 
 
-#if defined(linux)
+#if defined(__linux)
 # define DEFAULT_ERRORSTRING QString("") /* i18n("Maybe the proc-filesystem is not enabled in Linux-Kernel.") */
 #elif defined(hpux) 
 # define DEFAULT_ERRORSTRING QString("") 
@@ -417,7 +417,7 @@ void KInfoListWidget::resizeEvent( QResizeEvent *re )
 ***************************************************************************
 */
 
-#ifdef linux
+#ifdef __linux
 #include "info_linux.cpp"
 #elif sgi || sun
 #include "info_sgi.cpp"
