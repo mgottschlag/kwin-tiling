@@ -114,12 +114,12 @@ void KLocaleAdvanced::setFracDigits(int digits)
 
 void KLocaleAdvanced::setMonetaryThousandsSeparator(const QString &sep)
 {
-  _thousandsSeparator = sep;
+  _monetaryThousandsSeparator = sep;
 }
 
 void KLocaleAdvanced::setMonetaryDecimalSymbol(const QString &symbol)
 {
-  _decimalSymbol = symbol;
+  _monetaryDecimalSymbol = symbol;
 }
 
 void KLocaleAdvanced::setCurrencySymbol(const QString &symbol)
