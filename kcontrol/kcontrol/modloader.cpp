@@ -20,6 +20,7 @@
 
 #include <qstringlist.h>
 
+#include <kapp.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klibloader.h>
@@ -29,10 +30,6 @@
 
 KCModule *ModuleLoader::loadModule(const ModuleInfo &mod)
 {
-  // check, if we require root privileges we don't have
-  //if ( mod.onlyRoot() && (!KCGlobal::root()))
-  //	return 0;
-
   /*
    * Simple libraries as modules are the easiest case: 
    *  We just have to load the library and get the module
@@ -45,19 +42,28 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod)
   // try to load the library
   QString libname("libkcm_%1");
   KLibrary *lib = loader->library(libname.arg(mod.library()));
-  if (!lib)
-	return 0;
-  
-  // get the create_ function
-  QString factory("create_%1");
-  void *create = lib->symbol(factory.arg(mod.handle()));
-  if (!create)
-	return 0;
-  
-  // create the module
-  KCModule* (*func)(QWidget *, const char *);
-  func = (KCModule* (*)(QWidget *, const char *)) create;
-  return  func(0,"");
+  if (lib)
+    {
+      // get the create_ function
+      QString factory("create_%1");
+      void *create = lib->symbol(factory.arg(mod.handle()));
+
+      if (create)
+	{  
+	  // create the module
+	  KCModule* (*func)(QWidget *, const char *);
+	  func = (KCModule* (*)(QWidget *, const char *)) create;
+	  return  func(0,"");
+	}
+    }
+
+  /*
+   * Ok, we could not load the library.
+   * Try to run it as an executable.
+   *
+   */
+  kapp->startServiceByDesktopPath(mod.fileName(), QString::null);
+  return 0;
 }
 
 void ModuleLoader::unloadModule(const ModuleInfo &mod)

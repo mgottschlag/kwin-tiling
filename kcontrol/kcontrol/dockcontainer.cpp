@@ -111,12 +111,7 @@ void DockContainer::dockModule(ConfigModule *module)
       QApplication::restoreOverrideCursor();
     }
   else
-    {
-      QApplication::restoreOverrideCursor();
-      KMessageBox::sorry(0, i18n("Sorry, the control module \"%1\" could not be loaded.\n"
-                                 "Perhaps it is not installed.").arg(module->name())
-                         , i18n("Could not load control module."));
-    }
+    QApplication::restoreOverrideCursor();
 
   if (widget) widget->show();
   _busy->hide();
