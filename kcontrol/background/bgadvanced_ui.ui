@@ -263,7 +263,7 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                         <cstring>m_colorText</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Click here to change the color of the desktop font.</string>
+                        <string>Choose here the maximum number of text lines below an icon on the desktop. Longer text will be truncated at the end of the last line.</string>
                     </property>
                 </widget>
                 <widget class="QSpinBox" row="3" column="1">
@@ -275,6 +275,9 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                     </property>
                     <property name="value">
                         <number>0</number>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose here the maximum number of text lines below an icon on the desktop. Longer text will be truncated at the end of the last line.</string>
                     </property>
                 </widget>
                 <widget class="KColorButton" row="1" column="1">
