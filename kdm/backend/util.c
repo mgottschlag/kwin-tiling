@@ -37,16 +37,13 @@ from the copyright holder.
 #include "dm.h"
 #include "dm_error.h"
 
-#include <X11/Xosdefs.h>
-#ifndef X_NOT_STDC_ENV
-# include <string.h>
-# include <unistd.h>
-#endif
+#include <string.h>
+#include <unistd.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef USG
+#if 0 /*def USG; this was hpux once upon a time */
 # define NEED_UTSNAME
 #endif
 
@@ -209,7 +206,7 @@ StrApp( char **dst, ... )
 char **
 initStrArr( char **arr )
 {
-	if (!arr && (arr = Malloc( sizeof(char *))))
+	if (!arr && (arr = Malloc( sizeof(char *) )))
 		arr[0] = 0;
 	return arr;
 }
@@ -230,7 +227,7 @@ extStrArr( char **arr, char ***strp )
 	int nu;
 
 	nu = arrLen( arr );
-	if ((rarr = Realloc( arr, sizeof(char *)* (nu + 2) ))) {
+	if ((rarr = Realloc( arr, sizeof(char *) * (nu + 2) ))) {
 		rarr[nu + 1] = 0;
 		*strp = rarr + nu;
 		return rarr;
@@ -260,7 +257,7 @@ xCopyStrArr( int rn, char **arr )
 
 	nu = arrLen( arr );
 	if ((rarr = Calloc( sizeof(char *), nu + rn + 1 )))
-		memcpy( rarr + rn, arr, sizeof(char *)* nu );
+		memcpy( rarr + rn, arr, sizeof(char *) * nu );
 	return rarr;
 }
 
@@ -363,7 +360,7 @@ setEnv( char **e, const char *name, const char *value )
 	int envsize;
 	int l;
 
-#ifdef AIXV3
+#ifdef _AIX
 	/* setpenv() depends on "SYSENVIRON:", not "SYSENVIRON:=" */
 	if (!value) {
 		if (!StrDup( &newe, name ))
@@ -433,7 +430,7 @@ GetHostname( char *buf, int maxlen )
 	(void)gethostname( buf, maxlen );
 	buf[maxlen - 1] = '\0';
 	len = strlen( buf );
-#endif /* hpux */
+#endif /* NEED_UTSNAME */
 	return len;
 }
 

@@ -35,11 +35,12 @@ from the copyright holder.
  * a client remains connected with no windows.
  */
 
-#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_error.h"
 
 #include <X11/Xlib.h>
+
+#include <signal.h>
 
 /*ARGSUSED*/
 static int
@@ -75,7 +76,7 @@ killWindows( Window window )
 static Jmp_buf resetJmp;
 
 /* ARGSUSED */
-static SIGVAL
+static void
 abortReset( int n ATTR_UNUSED )
 {
 		Longjmp( resetJmp, 1 );

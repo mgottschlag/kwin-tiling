@@ -37,12 +37,8 @@ from the copyright holder.
 #include "dm.h"
 #include "dm_error.h"
 
-#include <X11/Xosdefs.h>
-#ifndef X_NOT_STDC_ENV
-# include <string.h>
-# include <unistd.h>
-#endif
-
+#include <string.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <ctype.h>
 

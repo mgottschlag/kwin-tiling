@@ -35,16 +35,14 @@ from the copyright holder.
  * xdmcp.c - Support for XDMCP
  */
 
-#include "dm.h"
-#include "dm_error.h"
+#include <config.h>
 
 #ifdef XDMCP
 
+#include "dm.h"
+#include "dm_error.h"
 #include "dm_auth.h"
 #include "dm_socket.h"
-
-#include <X11/X.h>
-#include <X11/Xfuncs.h>
 
 #include <sys/types.h>
 #include <ctype.h>
@@ -537,7 +535,7 @@ forward_respond ( struct sockaddr *from, int fromlen ATTR_UNUSED,
 					memmove( un_addr.sun_path, clientAddress.data, clientAddress.length );
 					un_addr.sun_path[clientAddress.length] = '\0';
 					client = (struct sockaddr *)&un_addr;
-#if defined(BSD44SOCKETS) && !defined(Lynx) && defined(UNIXCONN)
+#if defined(BSD44SOCKETS) && !defined(__Lynx__) && defined(UNIXCONN)
 					un_addr.sun_len = strlen( un_addr.sun_path );
 					clientlen = SUN_LEN( &un_addr );
 #else

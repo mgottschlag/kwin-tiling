@@ -34,13 +34,13 @@ from the copyright holder.
  * policy.c.  Implement site-dependent policy for XDMCP connections
  */
 
+#include <config.h>
+
 #ifdef XDMCP
 
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_socket.h"
-
-#include <X11/X.h>
 
 static ARRAY8 noAuthentication = { (CARD16)0, (CARD8Ptr) 0 };
 
@@ -122,7 +122,7 @@ SelectAuthorizationTypeIndex( ARRAY8Ptr authenticationName,
 static void
 Willing_msg( char *mbuf )
 {
-#ifdef linux
+#ifdef __linux__
 	int fd;
 	int numcpu;
 	const char *fail_msg = "Willing to manage";
@@ -171,7 +171,7 @@ Willing_msg( char *mbuf )
 
 		mbuf[255] = 0;
 	}
-#elif HAVE_GETLOADAVG	/* !linux */
+#elif HAVE_GETLOADAVG	/* !__linux__ */
 #ifdef __GNUC__
 # warning This code is untested...
 #endif
@@ -179,7 +179,7 @@ Willing_msg( char *mbuf )
 	getloadavg( load, 3 );
 	sprintf( mbuf, "Available (load: %0.2f, %0.2f, %0.2f)", load[0],
 	         load[1], load[2] );
-#else	/* !linux && !GETLOADAVG */
+#else	/* !__linux__ && !GETLOADAVG */
 	strcpy( mbuf, "Willing to manage" );
 #endif
 }

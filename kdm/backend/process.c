@@ -34,26 +34,24 @@ from the copyright holder.
  * subdaemon and external process management and communication
  */
 
-#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_error.h"
 
 #include <ctype.h>
 #include <stdio.h>
 #include <stdarg.h>
-#ifndef X_NOT_POSIX
-# include <unistd.h>
-# ifdef _POSIX_PRIORITY_SCHEDULING
-#  include <sched.h>
-# endif
+#include <signal.h>
+#include <unistd.h>
+#ifdef _POSIX_PRIORITY_SCHEDULING
+# include <sched.h>
 #endif
 
 extern char **environ;
 
 
-SIGVAL( *Signal( int sig, SIGFUNC handler ) )(int)
+SIGFUNC Signal( int sig, SIGFUNC handler )
 {
-#if !defined(X_NOT_POSIX) && !defined(__EMX__)
+#ifndef __EMX__
 	struct sigaction sigact, osigact;
 	sigact.sa_handler = handler;
 	sigemptyset( &sigact.sa_mask );
@@ -121,13 +119,9 @@ Fork()
 {
 	int pid;
 
-#ifndef X_NOT_POSIX
 	sigset_t ss, oss;
 	sigfillset( &ss );
 	sigprocmask( SIG_SETMASK, &ss, &oss );
-#else
-	int omask = sigsetmask( -1 );
-#endif
 
 	if (!(pid = fork())) {
 #ifdef SIGCHLD
@@ -138,21 +132,13 @@ Fork()
 		(void)Signal( SIGPIPE, SIG_DFL );
 		(void)Signal( SIGALRM, SIG_DFL );
 		(void)Signal( SIGHUP, SIG_DFL );
-#ifndef X_NOT_POSIX
 		sigemptyset( &ss );
 		sigprocmask( SIG_SETMASK, &ss, NULL );
-#else
-		sigsetmask( 0 );
-#endif
 		CloseOnFork();
 		return 0;
 	}
 
-#ifndef X_NOT_POSIX
 	sigprocmask( SIG_SETMASK, &oss, 0 );
-#else
-	sigsetmask( omask );
-#endif
 
 	return pid;
 }
@@ -162,11 +148,7 @@ Wait4( int pid )
 {
 	waitType result;
 
-#ifndef X_NOT_POSIX
 	while (waitpid( pid, &result, 0 ) < 0)
-#else
-	while (wait4( pid, &result, 0, (struct rusage *)0 ) < 0)
-#endif
 		if (errno != EINTR) {
 			Debug( "Wait4(%d) failed: %m\n", pid );
 			return 0;

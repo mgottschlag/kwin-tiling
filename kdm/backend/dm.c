@@ -34,7 +34,6 @@ from the copyright holder.
  * display manager
  */
 
-#define NEED_SIGNAL
 #define NEED_UTMP
 #include "dm.h"
 #include "dm_auth.h"
@@ -42,44 +41,17 @@ from the copyright holder.
 
 #include <stdio.h>
 #include <string.h>
-
-#ifndef sigmask
-# define sigmask(m) (1 << ((m - 1)))
-#endif
-
-#include <sys/stat.h>
-#include <X11/Xfuncproto.h>
+#include <unistd.h>
 #include <stdarg.h>
-
-#ifndef X_NOT_POSIX
-# include <unistd.h>
-#endif
-
-#ifndef PATH_MAX
-# ifdef WIN32
-#  define PATH_MAX 512
-# else
-#  include <sys/param.h>
-# endif
-# ifndef PATH_MAX
-#  ifdef MAXPATHLEN
-#   define PATH_MAX MAXPATHLEN
-#  else
-#   define PATH_MAX 1024
-#  endif
-# endif
-#endif
+#include <signal.h>
+#include <sys/stat.h>
 
 #ifdef HAVE_VTS
 # include <sys/ioctl.h>
 # include <sys/vt.h>
 #endif
 
-#if defined(SVR4) && !defined(SCO) && !defined(sun)
-extern FILE *fdopen();
-#endif
-
-static SIGVAL SigHandler( int n );
+static void SigHandler( int n );
 static int ScanConfigs( int force );
 static void StartDisplays( void );
 #define XS_KEEP 0
@@ -91,7 +63,7 @@ static void MainLoop( void );
 
 static int signalFds[2];
 
-#if !defined(HAS_SETPROCTITLE) && !defined(NOXDMTITLE)
+#if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
 static char *Title;
 static int TitleLen;
 #endif
@@ -129,7 +101,7 @@ main( int argc, char **argv )
 		if (!StrDup( &progpath, argv[0] ))
 			Panic( "Out of memory" );
 	} else
-#ifdef linux
+#ifdef __linux__
 	{
 		/* note that this will resolve symlinks ... */
 		int len;
@@ -145,13 +117,8 @@ main( int argc, char **argv )
 # else
 	{
 		char directory[PATH_MAX+1];
-#  if !defined(X_NOT_POSIX) || defined(SYSV) || defined(WIN32)
 		if (!getcwd( directory, sizeof(directory) ))
 			Panic( "Can't find myself (getcwd failed)" );
-#  else
-		if (!getwd( directory ))
-			Panic( "Can't find myself (getwd failed)" );
-#  endif
 		if (strchr( argv[0], '/' ))
 			StrApp( &progpath, directory, "/", argv[0], (char *)0 );
 		else {
@@ -190,7 +157,7 @@ main( int argc, char **argv )
 #endif
 	prog = strrchr( progpath, '/' ) + 1;
 
-#if !defined(HAS_SETPROCTITLE) && !defined(NOXDMTITLE)
+#if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
 	Title = argv[0];
 	TitleLen = (argv[argc - 1] + strlen( argv[argc - 1] )) - Title;
 #endif
@@ -266,7 +233,7 @@ main( int argc, char **argv )
 		exit( 1 );
 	}
 
-#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+#ifdef NEED_ENTROPY
 	AddOtherEntropy();
 #endif
 
@@ -308,15 +275,11 @@ main( int argc, char **argv )
 			LogError( "Failed to execute shutdown command %\"s\n", cmd );
 			exit( 1 );
 		} else {
-#ifndef X_NOT_POSIX
 			sigset_t mask;
 			sigemptyset( &mask );
 			sigaddset( &mask, SIGCHLD );
 			sigaddset( &mask, SIGHUP );
 			sigsuspend( &mask );
-#else
-			sigpause( sigmask( SIGCHLD ) | sigmask( SIGHUP ) );
-#endif
 		}
 	}
 	Debug( "nothing left to do, exiting\n" );
@@ -392,7 +355,7 @@ CheckUtmp( void )
 	int fd;
 	struct utmp ut[1];
 #else
-	struct UTMP *ut;
+	STRUCTUTMP *ut;
 #endif
 
 	if (!utmpList)
@@ -835,11 +798,7 @@ ReapChildren( void )
 	struct display *d;
 	waitType status;
 
-#ifndef X_NOT_POSIX
 	while ((pid = waitpid( -1, &status, WNOHANG )) > 0)
-#else
-	while ((pid = wait3( &status, WNOHANG, (struct rusage *)0 )) > 0)
-#endif
 	{
 		Debug( "manager wait returns  pid %d  sig %d  core %d  code %d\n",
 		       pid, waitSig( status ), waitCore( status ), waitCode( status ) );
@@ -1000,7 +959,7 @@ ReapChildren( void )
 		} else
 			Debug( "unknown child termination\n" );
 	}
-#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+#ifdef NEED_ENTROPY
 	AddOtherEntropy();
 #endif
 }
@@ -1051,14 +1010,14 @@ UnregisterInput( int fd )
 	}
 }
 
-static SIGVAL
+static void
 SigHandler( int n )
 {
 	int olderrno = errno;
 	char buf = (char)n;
 	Debug( "caught signal %d\n", n );
 	write( signalFds[1], &buf, 1 );
-#ifdef SIGNALS_RESET_WHEN_CAUGHT
+#ifdef __EMX__
 	(void)Signal( n, SigHandler );
 #endif
 	errno = olderrno;
@@ -1122,7 +1081,7 @@ MainLoop( void )
 		nready = select( WellKnownSocketsMax + 1, &reads, 0, 0, tvp );
 		Debug( "select returns %d\n", nready );
 		time( &now );
-#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+#ifdef NEED_ENTROPY
 		AddTimerEntropy();
 #endif
 		if (now >= serverTimeout) {
@@ -1621,14 +1580,14 @@ UnlockPidFile( void )
 void
 SetTitle( const char *name )
 {
-#if !defined(HAS_SETPROCTITLE) && !defined(NOXDMTITLE)
+#if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
 	char *p;
 	int left;
 #endif
 
 	ASPrintf( &prog, "%s: %s", prog, name );
 	ReInitErrorLog();
-#ifdef HAS_SETPROCTITLE
+#ifdef HAVE_SETPROCTITLE
 	setproctitle( "%s", name );
 #elif !defined(NOXDMTITLE)
 	p = Title;

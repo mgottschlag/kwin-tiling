@@ -34,15 +34,14 @@ from the copyright holder.
  * server.c - manage the X server
  */
 
-#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_error.h"
 #include "dm_socket.h"
 
 #include <X11/Xlib.h>
-#include <X11/Xos.h>
 
 #include <stdio.h>
+#include <signal.h>
 
 
 struct display *startingServer;
@@ -202,7 +201,7 @@ Display *dpy;
 static Jmp_buf openAbort;
 
 /* ARGSUSED */
-static SIGVAL
+static void
 abortOpen( int n ATTR_UNUSED )
 {
 	Longjmp( openAbort, 1 );
@@ -325,7 +324,7 @@ PingLostIOErr( Display *dspl ATTR_UNUSED )
 }
 
 /* ARGSUSED */
-static SIGVAL
+static void
 PingLostSig( int n ATTR_UNUSED )
 {
 	PingLost();
@@ -335,7 +334,7 @@ int
 PingServer( struct display *d )
 {
 	int (*oldError)( Display * );
-	SIGVAL (*oldSig)( int );
+	void (*oldSig)( int );
 	int oldAlarm;
 
 	oldError = XSetIOErrorHandler( PingLostIOErr );

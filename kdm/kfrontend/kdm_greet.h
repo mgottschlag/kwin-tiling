@@ -27,10 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _KDM_GREET_H_
 
 #include <greet.h> /* for the ATTR_ defines */
-#ifndef RCVERMAJOR
-# include <config.h>
-# include <config.ci> /* for the HAVE_VTS define */
-#endif
+#include <config.ci> /* for the HAVE_VTS define */
 
 #ifdef __cplusplus
 extern "C" {

@@ -32,17 +32,12 @@ from the copyright holder.
  * Author: Keith Packard, MIT X Consortium
  */
 
-#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
-# define NEED_SIGNAL
-#endif
 #include "dm.h"
-#include "dm_auth.h"
 #include "dm_error.h"
 
-#include <X11/Xauth.h>
-#include <X11/Xos.h>
+#ifdef NEED_ENTROPY
 
-#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+# include <signal.h>
 
 /* ####################################################################### */
 
@@ -379,18 +374,12 @@ sumFile( const char *name, int len, int whence, long offset )
 	return readlen;
 }
 
-#ifndef X_GETTIMEOFDAY
-/* WABA: According to the man page gettimeofday takes a second argument */
-/* if this breaks on your system, we need to have a configure test. */
-# define X_GETTIMEOFDAY(t) gettimeofday(t, NULL)
-#endif
-
 void
 AddTimerEntropy( void )
 {
 	struct timeval now;
-	X_GETTIMEOFDAY( &now );
-	add_entropy( (unsigned *)&now, sizeof(now)/sizeof(unsigned));
+	gettimeofday( &now, 0 );
+	add_entropy( (unsigned *)&now, sizeof(now)/sizeof(unsigned) );
 }
 
 #define BSIZ 0x10000
@@ -419,7 +408,7 @@ AddPreGetEntropy( void )
 	AddTimerEntropy();
 	if ((readlen = sumFile( randomFile, BSIZ, SEEK_SET, offset )) == BSIZ) {
 		offset += readlen;
-#ifdef FRAGILE_DEV_MEM
+#if defined(__i386__) || defined(amiga)
 		if (!strcmp( randomFile, "/dev/mem" )) {
 			if (offset == 0xa0000) /* skip 640kB-1MB ROM mappings */
 				offset = 0x100000;
@@ -442,7 +431,7 @@ AddPreGetEntropy( void )
 int
 GenerateAuthData( char *auth, int len )
 {
-#ifdef ARC4_RANDOM
+#ifdef HAVE_ARC4RANDOM
 	int i;
 	unsigned *rnd = (unsigned *)auth;
 	if (sizeof(unsigned)== 4)

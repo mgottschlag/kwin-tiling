@@ -34,12 +34,12 @@ from the copyright holder.
  * display manager
  */
 
-#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_socket.h"
 #include "dm_error.h"
 
 #include <string.h>
+#include <signal.h>
 
 static void
 acceptSock( CtrlRec *cr )

@@ -34,6 +34,8 @@ from the copyright holder.
  * generate authorization data for XDM-AUTHORIZATION-1 as per XDMCP spec
  */
 
+#include <config.h>
+
 #ifdef HASXDMAUTH
 
 #include "dm.h"

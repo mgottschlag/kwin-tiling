@@ -34,9 +34,10 @@ from the copyright holder.
  * streams.c - Support for STREAMS
  */
 
+#include "dm.h"
+
 #if defined(XDMCP) && defined(STREAMSCONN)
 
-#include "dm.h"
 #include "dm_error.h"
 
 #include <fcntl.h>

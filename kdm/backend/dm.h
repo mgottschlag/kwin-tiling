@@ -40,25 +40,22 @@ from the copyright holder.
 #include "greet.h"
 #include <config.ci>
 
+#include <X11/X.h> /* FamilyInternet6 */
 #include <X11/Xos.h>
 #include <X11/Xfuncs.h>
 #include <X11/Xmd.h>
 #include <X11/Xauth.h>
 #include <X11/Intrinsic.h>
 
-#if defined(X_POSIX_C_SOURCE)
-# define _POSIX_C_SOURCE X_POSIX_C_SOURCE
-# include <setjmp.h>
-# include <limits.h>
-# undef _POSIX_C_SOURCE
-#else
-# include <setjmp.h>
+#include <sys/param.h>
+#ifdef HAVE_LIMITS_H
 # include <limits.h>
 #endif
 
 #include <time.h>
 #define Time_t time_t
 
+#include <stdlib.h>
 #include <errno.h>
 
 #ifdef XDMCP
@@ -69,47 +66,23 @@ from the copyright holder.
 # include <X11/Xdmcp.h>
 #endif
 
-#ifdef CSRG_BASED
-# include <sys/param.h>
-#endif
-#ifdef pegasus
-# undef dirty /* Some bozo put a macro called dirty in sys/param.h */
+#ifndef PATH_MAX
+# ifdef MAXPATHLEN
+#  define PATH_MAX MAXPATHLEN
+# else
+#  define PATH_MAX 1024
+# endif
 #endif
 
-#ifndef X_NOT_POSIX
-# ifdef _POSIX_SOURCE
-#  include <sys/wait.h>
-# else
-#  define _POSIX_SOURCE
-#  ifdef SCO325
-#   include <sys/procset.h>
-#   include <sys/siginfo.h>
-#  endif
-#  include <sys/wait.h>
-#  undef _POSIX_SOURCE
-# endif
-# define waitCode(w) (WIFEXITED(w) ? WEXITSTATUS(w) : 0)
-# define waitSig(w) (WIFSIGNALED(w) ? WTERMSIG(w) : 0)
-# ifdef WCOREDUMP
-#  define waitCore(w) (WCOREDUMP(w))
-# else
-#  define waitCore(w) 0 /* not in POSIX.  so what? */
-# endif
+#include <sys/wait.h>
+#define waitCode(w) (WIFEXITED(w) ? WEXITSTATUS(w) : 0)
+#define waitSig(w) (WIFSIGNALED(w) ? WTERMSIG(w) : 0)
+#ifdef WCOREDUMP
+# define waitCore(w) (WCOREDUMP(w))
+#else
+# define waitCore(w) 0 /* not in POSIX.  so what? */
+#endif
 typedef int waitType;
-#else /* X_NOT_POSIX */
-# ifdef SYSV
-#  define waitCode(w) (((w) >> 8) & 0x7f)
-#  define waitSig(w) ((w) & 0xff)
-#  define waitCore(w) (((w) >> 15) & 0x01)
-typedef int waitType;
-# else /* SYSV */
-#  include <sys/wait.h>
-#  define waitCode(w) ((w).w_T.w_Retcode)
-#  define waitSig(w) ((w).w_T.w_Termsig)
-#  define waitCore(w) ((w).w_T.w_Coredump)
-typedef union wait	waitType;
-# endif
-#endif /* X_NOT_POSIX */
 
 #define waitCompose(sig,core,code) ((sig) * 256 + (core) * 128 + (code))
 #define waitVal(w) waitCompose(waitSig(w), waitCore(w), waitCode(w))
@@ -120,7 +93,8 @@ typedef union wait	waitType;
 #include <sys/time.h>
 #define FD_TYPE fd_set
 
-#if defined(X_NOT_POSIX) || defined(__EMX__) || (defined(__NetBSD__) && defined(__sparc__))
+#include <setjmp.h>
+#if defined(__EMX__) || (defined(__NetBSD__) && defined(__sparc__)) /* XXX netbsd? */
 # define Setjmp(e) setjmp(e)
 # define Longjmp(e,v) longjmp(e,v)
 # define Jmp_buf jmp_buf
@@ -130,46 +104,11 @@ typedef union wait	waitType;
 # define Jmp_buf sigjmp_buf
 #endif
 
-#ifdef NEED_SIGNAL
-# if defined(X_NOT_POSIX) && defined(SIGNALRETURNSINT)
-#  define SIGVAL int
-# else
-#  define SIGVAL void
-# endif
-# if (defined(X_NOT_POSIX) && defined(SYSV)) || defined(__EMX__) || defined(ISC)
-#  define SIGNALS_RESET_WHEN_CAUGHT
-# endif
-# ifdef X_POSIX_C_SOURCE
-#  define _POSIX_C_SOURCE X_POSIX_C_SOURCE
-#  include <signal.h>
-#  undef _POSIX_C_SOURCE
-# else
-#  if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
-#   include <signal.h>
-#  else
-#   define _POSIX_SOURCE
-#   include <signal.h>
-#   undef _POSIX_SOURCE
-#  endif
-# endif
-#endif
-
 #ifdef NEED_UTMP
 # include <utmp.h>
-# if defined(CSRG_BASED) || defined(__DARWIN__)
-#  if __NetBSD_Version__ >= 106030000 /* 1.6C */
-#   define HAVE_UTMPX 1
-#  else
-#   define BSD_UTMP
-#  endif
-# else
-#  if defined(sun)
-#   define HAVE_UTMPX 1
-#  endif
-# endif
 # ifdef HAVE_UTMPX
 #  include <utmpx.h>
-#  define UTMP utmpx
+#  define STRUCTUTMP struct utmpx
 #  define UTMPNAME utmpxname
 #  define SETUTENT setutxent
 #  define GETUTENT getutxent
@@ -179,7 +118,7 @@ typedef union wait	waitType;
 #  define ut_time ut_tv.tv_sec
 #  define ll_time ll_tv.tv_sec
 # else
-#  define UTMP utmp
+#  define STRUCTUTMP struct utmp
 #  define UTMPNAME utmpname
 #  define SETUTENT setutent
 #  define GETUTENT getutent
@@ -206,6 +145,23 @@ typedef union wait	waitType;
 #  endif
 # endif
 #endif /* NEED_UTMP */
+
+#ifdef HAVE_NETCONFIG_H
+# define STREAMSCONN
+#else
+# define UNIXCONN
+# define TCPCONN
+# ifdef FamilyInternet6
+#  define IPv6
+# endif
+# ifdef HAVE_NETDNET_DN_H
+#  define DNETCONN
+# endif
+#endif
+
+#if !defined(HAVE_ARC4RANDOM) && !defined(DEV_RANDOM)
+# define NEED_ENTROPY
+#endif
 
 typedef struct GPipe {
 	int wfd, rfd;
@@ -467,13 +423,8 @@ void PrepErrorGreet( void );
 char *conv_interact( int what, const char *prompt );
 
 /* process.c */
-#include <stdlib.h>
-
-#ifdef NEED_SIGNAL
-typedef SIGVAL (*SIGFUNC)( int );
-
-SIGVAL (*Signal( int, SIGFUNC Handler ))( int );
-#endif
+typedef void (*SIGFUNC)( int );
+SIGFUNC Signal( int, SIGFUNC Handler );
 
 void RegisterInput( int fd );
 void UnregisterInput( int fd );

@@ -36,15 +36,13 @@ from the copyright holder.
  * and (potentially) a list of hosts to send ForwardQuery packets to
  */
 
+#include <config.h>
+
 #ifdef XDMCP
 
 #include "dm.h"
 #include "dm_error.h"
 #include "dm_socket.h"
-
-#include <X11/Xos.h>
-#include <X11/Xdmcp.h>
-#include <X11/X.h>
 
 #include <stdio.h>
 #include <ctype.h>

@@ -90,7 +90,7 @@ void SetUserAuthorization( struct display *d );
 
 /* genauth.c */
 int GenerateAuthData( char *auth, int len );
-#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+#ifdef NEED_ENTROPY
 void AddPreGetEntropy( void );
 void AddOtherEntropy( void );
 void AddTimerEntropy( void );

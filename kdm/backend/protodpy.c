@@ -35,6 +35,8 @@ from the copyright holder.
  * started.
  */
 
+#include <config.h>
+
 #ifdef XDMCP
 
 #include "dm.h"

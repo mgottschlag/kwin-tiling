@@ -34,32 +34,18 @@ from the copyright holder.
  * chooser backend
  */
 
+#include <config.h>
+
 #ifdef XDMCP
 
 #include "dm.h"
 #include "dm_error.h"
 #include "dm_socket.h"
 
-#include <X11/X.h>
-
 #include <ctype.h>
 
-#if defined(STREAMSCONN)
-# include <tiuser.h>
-#endif
-
-#if defined(SVR4) && !defined(SCO325)
+#ifdef __svr4__
 # include <sys/sockio.h>
-#endif
-#if defined(SVR4) && defined(PowerMAX_OS)
-# include <sys/stropts.h>
-#endif
-#if defined(SYSV) && defined(i386)
-# include <sys/stream.h>
-# ifdef ISC
-#  include <sys/sioctl.h>
-#  include <sys/stropts.h>
-# endif
 #endif
 #include <arpa/inet.h>
 
@@ -74,20 +60,9 @@ from the copyright holder.
 # include <netdir.h>
 #endif
 
-#ifdef hpux
-# include <sys/utsname.h>
-# ifdef HAS_IFREQ
-#  include <net/if.h>
-# endif
-#else
-#ifdef __convex__
-# include <sync/queue.h>
-# include <sync/sema.h>
-#endif
-#ifndef __GNU__
+#if !defined(__GNU__) && !defined(__hpux) /* XXX __hpux might be wrong */
 # include <net/if.h>
-#endif /* __GNU__ */
-#endif /* hpux */
+#endif
 
 #include <netdb.h>
 
@@ -555,11 +530,7 @@ emptyPingHosts( void )
 # define ifr_size(p) (sizeof (struct ifreq))
 #endif
 
-#ifdef ISC
-# define IFC_REQ(ifc) (struct ifreq *) ifc.ifc_buf
-#else
-# define IFC_REQ(ifc) ifc.ifc_req
-#endif
+#define IFC_REQ(ifc) ifc.ifc_req
 
 #ifndef SYSV_SIOCGIFCONF
 # define ifioctl ioctl

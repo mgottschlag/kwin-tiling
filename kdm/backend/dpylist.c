@@ -34,7 +34,6 @@ from the copyright holder.
  * a simple linked list of known displays
  */
 
-#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_error.h"
 

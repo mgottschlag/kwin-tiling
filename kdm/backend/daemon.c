@@ -35,29 +35,6 @@ from the copyright holder.
 #include "dm.h"
 #include "dm_error.h"
 
-#include <X11/Xos.h>
-
-#if defined(X_NOT_POSIX) && !defined(CSRG_BASED) && !defined(SVR4) && !defined(__GLIBC__)
-# ifdef USG
-#  include <termios.h>
-# else
-#  include <sys/ioctl.h>
-# endif
-# ifdef hpux
-#  include <sys/ptyio.h>
-#  ifndef TIOCNOTTY
-#   define TIOCNOTTY _IO('t', 113) /* void tty association */
-#  endif
-#endif
-#endif
-
-#include <sys/types.h>
-#ifdef X_NOT_POSIX
-# define Pid_t int
-#else
-# define Pid_t pid_t
-#endif
-
 void
 BecomeDaemon( void )
 {
@@ -92,42 +69,7 @@ BecomeDaemon( void )
 
 	/* don't use daemon() - it doesn't buy us anything but an additional fork */
 
-#if !defined(X_NOT_POSIX) || defined(SVR4)
 	setsid();
-#elif defined(SYSV) || defined(__QNXNTO__)
-	setpgrp();
-#else
-# if defined(__osf__) || defined(linux) || defined(__GNU__) || defined(__CYGWIN__)
-	setpgid( 0, 0 );
-# else /* BSD */
-	setpgrp( 0, 0 );
-# endif
-
-	/*
-	 * Get rid of controlling tty
-	 */
-# if !defined(__UNIXOS2__) && !defined(__CYGWIN__)
-#  if !((defined(SYSV) || defined(SVR4)) && defined(i386))
-	{
-		int i;
-		if ((i = open( "/dev/tty", O_RDWR )) >= 0) { /* did open succeed? */
-#   if defined(USG) && defined(TCCLRCTTY)
-			int zero = 0;
-			(void)ioctl( i, TCCLRCTTY, &zero );
-#   else
-#    if (defined(SYSV) || defined(SVR4)) && defined(TIOCTTY)
-			int zero = 0;
-			(void)ioctl( i, TIOCTTY, &zero );
-#    else
-			(void)ioctl( i, TIOCNOTTY, (char *)0 ); /* detach, BSD style */
-#    endif
-#   endif
-			(void)close( i );
-		}
-	}
-#  endif /* !((SYSV || SVR4) && i386) */
-# endif /* !__UNIXOS2__ && !__CYGWIN__ */
-#endif /* !X_NOT_POSIX || SVR4 || SYSV || __QNXNTO_ */
 
 	close( pfd[0] );
 	close( pfd[1] ); /* tell parent that we're done with detaching */

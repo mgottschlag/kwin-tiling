@@ -34,7 +34,6 @@ from the copyright holder.
  * subdaemon event loop, etc.
  */
 
-#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_error.h"
 
@@ -44,6 +43,7 @@ from the copyright holder.
 
 #include <stdio.h>
 #include <ctype.h>
+#include <signal.h>
 
 struct display *td;
 const char *td_setup = "auto";
@@ -56,7 +56,7 @@ static void SetupDisplay( const char *arg );
 static Jmp_buf pingTime;
 
 /* ARGSUSED */
-static SIGVAL
+static void
 catchAlrm( int n ATTR_UNUSED )
 {
 	Longjmp( pingTime, 1 );
@@ -65,15 +65,11 @@ catchAlrm( int n ATTR_UNUSED )
 static Jmp_buf tenaciousClient;
 
 /* ARGSUSED */
-static SIGVAL
+static void
 waitAbort( int n ATTR_UNUSED )
 {
 	Longjmp( tenaciousClient, 1 );
 }
-
-#if defined(_POSIX_SOURCE) || defined(SYSV) || defined(SVR4)
-# define killpg(pgrp, sig) kill(-(pgrp), sig)
-#endif
 
 static void
 AbortClient( int pid )
@@ -83,7 +79,7 @@ AbortClient( int pid )
 	int retId;
 
 	for (i = 0; i < 4; i++) {
-		if (killpg( pid, sig ) == -1) {
+		if (kill( -pid, sig ) == -1) {
 			switch (errno) {
 			case EPERM:
 				LogError( "Can't kill client\n" );
@@ -459,7 +455,7 @@ PrepErrorGreet()
 static Jmp_buf idleTOJmp;
 
 /* ARGSUSED */
-static SIGVAL
+static void
 IdleTOJmp( int n ATTR_UNUSED )
 {
 	Longjmp( idleTOJmp, 1 );
@@ -469,7 +465,7 @@ IdleTOJmp( int n ATTR_UNUSED )
 static Jmp_buf abortSession;
 
 /* ARGSUSED */
-static SIGVAL
+static void
 catchTerm( int n ATTR_UNUSED )
 {
 	Longjmp( abortSession, EX_AL_RESERVER_DPY );
@@ -724,20 +720,20 @@ baseEnv( const char *user )
 
 	env = 0;
 
-#ifdef AIXV3
+#ifdef _AIX
 	/* we need the tags SYSENVIRON: and USRENVIRON: in the call to setpenv() */
 	env = setEnv( env, "SYSENVIRON:", 0 );
 #endif
 
 	if (user) {
 		env = setEnv( env, "USER", user );
-#ifdef AIXV3
+#ifdef _AIX
 		env = setEnv( env, "LOGIN", user );
 #endif
 		env = setEnv( env, "LOGNAME", user );
 	}
 
-#ifdef AIXV3
+#ifdef _AIX
 	env = setEnv( env, "USRENVIRON:", 0 );
 #endif
 

@@ -38,58 +38,38 @@ from the copyright holder.
 #include "dm_auth.h"
 #include "dm_error.h"
 
-#include <X11/X.h>
-
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
 
 #include <sys/ioctl.h>
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
-# include "dm_socket.h"
-#endif
+#include "dm_socket.h"
 #ifdef DNETCONN
-# include <netdnet/dn.h>
 # include <netdnet/dnetdb.h>
 #endif
 
-#if (defined(_POSIX_SOURCE) && !defined(AIXV3) && !defined(__QNX__)) || defined(hpux) || defined(USG) || defined(SVR4) || (defined(SYSV) && defined(i386))
+#if (defined(_POSIX_SOURCE) && !defined(_AIX) && !defined(__QNX__)) || defined(__hpux) || defined(__svr4__) /* XXX */
 # define NEED_UTSNAME
 # include <sys/utsname.h>
 #endif
 
-#if defined(SYSV) && defined(i386)
-# include <sys/stream.h>
-# ifdef ISC
-#  include <stropts.h>
-#  include <sys/sioctl.h>
-# endif /* ISC */
-#endif /* i386 */
-
-#ifdef SVR4
-# include <netdb.h>
-# ifndef SCO325
-#  include <sys/sockio.h>
-# endif
-# include <sys/stropts.h>
-#endif
-#ifdef __convex__
-# include <sync/queue.h>
-# include <sync/sema.h>
-#endif
 #ifdef __GNU__
 # include <netdb.h>
 # undef SIOCGIFCONF
 #else /* __GNU__ */
 # include <net/if.h>
+# ifdef __svr4__
+#  include <netdb.h>
+#  include <sys/sockio.h>
+#  include <sys/stropts.h>
+# endif
+# ifdef __EMX__
+#  define link rename
+#  define chown(a,b,c)
+#  include <io.h>
+# endif
 #endif /* __GNU__ */
-
-#ifdef __EMX__
-# define link rename
-int chown( int a,int b,int c ) {}
-# include <io.h>
-#endif
 
 struct AuthProtocol {
 	unsigned short name_length;
@@ -248,17 +228,13 @@ fdOpenW( int fd )
 }
 
 
-#if defined(SYSV) && !defined(SVR4)
-# define NAMELEN 14
-#else
-# define NAMELEN 255
-#endif
+#define NAMELEN 255
 
 static FILE *
 MakeServerAuthFile( struct display *d )
 {
 	FILE *f;
-#ifndef HAS_MKSTEMP
+#ifndef HAVE_MKSTEMP
 	int r;
 #endif
 	char cleanname[NAMELEN], nambuf[NAMELEN+128];
@@ -272,7 +248,7 @@ MakeServerAuthFile( struct display *d )
 	if (mkdir( authDir, 0755 ) < 0  &&  errno != EEXIST)
 		return 0;
 	CleanUpFileName( d->name, cleanname, NAMELEN - 8 );
-#ifdef HAS_MKSTEMP
+#ifdef HAVE_MKSTEMP
 	sprintf( nambuf, "%s/A%s-XXXXXX", authDir, cleanname );
 	if ((f = fdOpenW( mkstemp( nambuf ) ))) {
 		StrDup( &d->authFile, nambuf );
@@ -552,10 +528,12 @@ writeAddr( int family, int addr_length, char *addr, FILE *file, Xauth *auth )
 static void
 DefineLocal( FILE *file, Xauth *auth )
 {
+#if !defined(NEED_UTSNAME) || defined(__hpux)
 	char displayname[100];
-	char tmp_displayname[100];
-
-	tmp_displayname[0] = 0;
+#endif
+#ifdef NEED_UTSNAME
+	struct utsname name;
+#endif
 
 	/* stolen from xinit.c */
 
@@ -573,22 +551,15 @@ DefineLocal( FILE *file, Xauth *auth )
 	 * Why not use gethostname()?  Well, at least on my system, I've had to
 	 * make an ugly kernel patch to get a name longer than 8 characters, and
 	 * uname() lets me access to the whole string (it smashes release, you
-	                                               * see), whereas gethostname() kindly truncates it for me.
+	 * see), whereas gethostname() kindly truncates it for me.
 	 */
-	{
-		struct utsname name;
-
-		uname( &name );
-		sprintf( displayname, "%.*s", sizeof(displayname) - 1, name.nodename );
-	}
-	writeAddr( FamilyLocal, strlen( displayname ), displayname, file, auth );
-
-	strcpy( tmp_displayname, displayname );
+	uname( &name );
+	writeAddr( FamilyLocal, strlen( name.nodename ), name.nodename, file, auth );
 #endif
 
-#if (!defined(NEED_UTSNAME) || defined (hpux))
-	/* AIXV3:
-	 * In AIXV3, _POSIX_SOURCE is defined, but uname gives only first
+#if !defined(NEED_UTSNAME) || defined(__hpux)
+	/* _AIX:
+	 * In _AIX, _POSIX_SOURCE is defined, but uname gives only first
 	 * field of hostname. Thus, we use gethostname instead.
 	 */
 
@@ -601,11 +572,13 @@ DefineLocal( FILE *file, Xauth *auth )
 	if (!gethostname( displayname, sizeof(displayname) ))
 		displayname[sizeof(displayname) - 1] = 0;
 
+# ifdef NEED_UTSNAME
 	/*
 	 * If gethostname and uname both returned the same name,
 	 * do not write a duplicate entry.
 	 */
-	if (strcmp( displayname, tmp_displayname ))
+	if (strcmp( displayname, name.nodename ))
+# endif
 		writeAddr( FamilyLocal, strlen( displayname ), displayname,
 		           file, auth );
 #endif
@@ -646,40 +619,19 @@ ifioctl (int fd, int cmd, char *arg)
 	if (cmd == SIOCGIFCONF) {
 		ioc.ic_len = ((struct ifconf *)arg)->ifc_len;
 		ioc.ic_dp = ((struct ifconf *)arg)->ifc_buf;
-#ifdef ISC
-		/* SIOCGIFCONF is somewhat brain damaged on ISC. The argument
-		 * buffer must contain the ifconf structure as header. Ifc_req
-		 * is also not a pointer but a one element array of ifreq
-		 * structures. On return this array is extended by enough
-		 * ifreq fields to hold all interfaces. The return buffer length
-		 * is placed in the buffer header.
-		 */
-		((struct ifconf *)ioc.ic_dp)->ifc_len =
-			ioc.ic_len - sizeof(struct ifconf);
-#endif
 	} else {
 		ioc.ic_len = sizeof(struct ifreq);
 		ioc.ic_dp = arg;
 	}
 	ret = ioctl( fd, I_STR, (char *)&ioc );
 	if (ret >= 0 && cmd == SIOCGIFCONF)
-#ifdef SVR4
 		((struct ifconf *)arg)->ifc_len = ioc.ic_len;
-#endif
-#ifdef ISC
-	{
-		((struct ifconf *)arg)->ifc_len =
-			((struct ifconf *)ioc.ic_dp)->ifc_len;
-		((struct ifconf *)arg)->ifc_buf =
-			(caddr_t)((struct ifconf *)ioc.ic_dp)->ifc_req;
-	}
-#endif
 	return (ret);
 }
 
 #endif /* SYSV_SIOCGIFCONF */
 
-#ifdef HAS_GETIFADDRS
+#ifdef HAVE_GETIFADDRS
 # include <ifaddrs.h>
 
 static void
@@ -869,11 +821,7 @@ DefineSelf( int fd, FILE *file, Xauth *auth )
 # define IFR_NAME(ifr) ifr->lifr_name
 #else
 # define IFC_IOCTL_REQ SIOCGIFCONF
-# ifdef ISC
-#  define IFC_REQ(ifc) ((ifr_type *)ifc.ifc_buf)
-# else
-#  define IFC_REQ(ifc) ifc.ifc_req
-# endif
+# define IFC_REQ(ifc) ifc.ifc_req
 # define IFC_LEN(ifc) ifc.ifc_len
 # define IFR_ADDR(ifr) ifr->ifr_addr
 # define IFR_NAME(ifr) ifr->ifr_name
@@ -1036,7 +984,7 @@ DefineSelf( int fd, int file, int auth )
 #endif /* SIOCGIFCONF else */
 #endif /* WINTCP else */
 #endif /* STREAMSCONN && !SYSV_SIOCGIFCONF else */
-#endif /* HAS_GETIFADDRS */
+#endif /* HAVE_GETIFADDRS */
 
 #endif /* XDMCP */
 
@@ -1210,7 +1158,7 @@ SetUserAuthorization( struct display *d )
 			 * temporary - we can assume, that we are the only ones
 			 * knowing about this file anyway.
 			 */
-#ifdef HAS_MKSTEMP
+#ifdef HAVE_MKSTEMP
 			sprintf( name_buf, "%s/.XauthXXXXXX", d->userAuthDir );
 			new = fdOpenW( mkstemp( name_buf ) );
 #else

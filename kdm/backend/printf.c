@@ -548,10 +548,7 @@ DoPr( OutCh dopr_outch, void *bp, const char *format, va_list args )
 #ifndef NO_LOGGER
 
 #include <stdio.h>
-#include <time.h> /* XXX this will break on stone-age systems */
-#ifndef Time_t
-# define Time_t time_t
-#endif
+#include <time.h>
 
 #ifdef USE_SYSLOG
 # include <syslog.h>
@@ -570,7 +567,7 @@ static const char *lognams[] = { "debug", "info", "error", "panic" };
 static void
 logTime( char *dbuf )
 {
-	Time_t tim;
+	time_t tim;
 	(void)time( &tim );
 	strftime( dbuf, 20, "%b %e %H:%M:%S", localtime( &tim ) );
 }
@@ -584,7 +581,7 @@ STATIC int debugLevel;
 STATIC void
 LogOutOfMem( void )
 {
-	static Time_t last;
+	static time_t last;
 	time_t tnow;
 
 	time( &tnow );

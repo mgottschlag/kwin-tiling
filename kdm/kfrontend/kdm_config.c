@@ -38,8 +38,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # include <sched.h>
 #endif
 
+#include <X11/X.h>
+#ifdef FamilyInternet6
+# define IPv6
+#endif
+
 #include <greet.h>
-#include "config.ci"
+#include <config.ci>
 
 /*
  * Section/Entry definition structs

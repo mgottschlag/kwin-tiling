@@ -35,9 +35,10 @@ from the copyright holder.
  * socket.c - Support for BSD sockets
  */
 
+#include "dm.h"
+
 #if defined(XDMCP) && !defined(STREAMSCONN)
 
-#include "dm.h"
 #include "dm_error.h"
 #include "dm_socket.h"
 

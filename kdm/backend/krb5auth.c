@@ -34,6 +34,8 @@ from the copyright holder.
  * generate Kerberos Version 5 authorization records
  */
 
+#include <config.h>
+
 #ifdef K5AUTH
 
 #include "dm.h"

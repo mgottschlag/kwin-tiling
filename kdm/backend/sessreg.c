@@ -40,16 +40,12 @@ from The Open Group.
 #include "dm.h"
 #include "dm_error.h"
 
-#if defined(SYSV) || defined(SVR4) || defined(Lynx) || defined(__QNX__) || defined(__DARWIN__) || defined(_SEQUENT_) /*|| defined(USE_PAM)*/
+#if defined(__svr4__) || defined(__Lynx__) || defined(__QNX__) || defined(__APPLE__) || defined(_SEQUENT_) /*|| defined(USE_PAM)*/
 # define NO_LASTLOG
 #endif
 
 #ifndef NO_LASTLOG
-# ifdef CSRG_BASED
-#  if (BSD < 199103)
-#   include <lastlog.h>
-#  endif
-# else
+# ifdef HAVE_LASTLOG_H
 #  include <lastlog.h>
 # endif
 # ifndef LLOG_FILE
@@ -63,11 +59,11 @@ from The Open Group.
 # endif
 #endif
 
-#if !defined(SYSV) && !defined(SVR4) && !defined(__QNX__)
+#if !defined(__svr4__) && !defined(__QNX__)
 # define SESSREG_HOST
 #endif
 
-#ifdef CSRG_BASED
+#ifdef BSD
 # if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)
 /* *BSD doesn't like a ':0' type entry in utmp */
 #  define NO_UTMP
@@ -112,7 +108,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 #ifdef BSD_UTMP
 	FILE *ttys;
 	int utmp, slot, freeslot;
-	struct UTMP entry;
+	STRUCTUTMP entry;
 #else
 	unsigned crc, i;
 #endif
@@ -121,7 +117,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 	int llog;
 	struct LASTLOG ll;
 #endif
-	struct UTMP ut_ent;
+	STRUCTUTMP ut_ent;
 
 	if (!d->useSessReg)
 		return;

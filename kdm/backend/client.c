@@ -49,25 +49,23 @@ extern int key_setnet( struct key_netstarg *arg );
 #ifdef K5AUTH
 # include <krb5/krb5.h>
 #endif
-#ifdef CSRG_BASED
-# ifdef HAS_SETUSERCONTEXT
-#  include <login_cap.h>
-#  define USE_LOGIN_CAP 1
-# endif
+#ifdef HAVE_SETUSERCONTEXT
+# include <login_cap.h>
+# define USE_LOGIN_CAP 1
 #endif
 #ifdef USE_PAM
-# ifdef __DARWIN__
+# ifdef HAVE_PAM_PAM_APPL_H
 #  include <pam/pam_appl.h>
 # else
 #  include <security/pam_appl.h>
 # endif
-#elif defined(AIXV3) /* USE_PAM */
+#elif defined(_AIX) /* USE_PAM */
 # include <login.h>
 # include <usersec.h>
 extern int loginrestrictions( const char *Name, const int Mode, const char *Tty, char **Msg );
 extern int loginfailed( const char *User, const char *Host, const char *Tty );
 extern int loginsuccess( const char *User, const char *Host, const char *Tty, char **Msg );
-#else /* USE_PAM || AIXV3 */
+#else /* USE_PAM || _AIX */
 # ifdef USESHADOW
 #  include <shadow.h>
 # endif
@@ -83,15 +81,7 @@ extern int loginsuccess( const char *User, const char *Host, const char *Tty, ch
 # include <unistd.h>
 /* for expiration */
 # include <time.h>
-#endif /* USE_PAM || AIXV3 */
-
-#if defined(__osf__) || defined(linux) || defined(__QNXNTO__) || defined(__GNU__)
-# define setpgrp setpgid
-#endif
-
-#ifdef QNX4
-extern char *crypt( const char *, const char * );
-#endif
+#endif /* USE_PAM || _AIX */
 
 /*
  * Session data, mostly what struct verify_info was for
@@ -112,7 +102,7 @@ char *newdmrc;
 static struct passwd *p;
 #ifdef USE_PAM
 static pam_handle_t *pamh;
-#elif defined(AIXV3)
+#elif defined(_AIX)
 static char tty[16], hostname[100];
 #else
 # ifdef USESHADOW
@@ -141,7 +131,7 @@ static char krbtkfile[MAXPATHLEN];
 
 #ifdef USE_PAM
 
-# if defined(sun) || defined(AIXV3)
+# ifdef PAM_MESSAGE_NONCONST
 typedef struct pam_message pam_message_type;
 typedef void *pam_gi_type;
 # else
@@ -378,7 +368,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 #endif /* USE_PAM */
 
 static int
-#if defined(USE_PAM) || defined(AIXV3)
+#if defined(USE_PAM) || defined(_AIX)
 AccNoPass( const char *un )
 {
 	struct passwd *pw = 0;
@@ -402,7 +392,7 @@ AccNoPass( const char *un, struct passwd *pw )
 		else if (!strcmp( un, *fp ))
 			return 1;
 		else if (!strcmp( "*", *fp )) {
-#if defined(USE_PAM) || defined(AIXV3)
+#if defined(USE_PAM) || defined(_AIX)
 			if (!(pw = getpwnam( un )))
 				return 0;
 #endif
@@ -410,7 +400,7 @@ AccNoPass( const char *un, struct passwd *pw )
 				return 1;
 		}
 
-#if defined(USE_PAM) || defined(AIXV3)
+#if defined(USE_PAM) || defined(_AIX)
 	if (hg && (pw || (pw = getpwnam( un )))) {
 #else
 	if (hg) {
@@ -434,7 +424,7 @@ AccNoPass( const char *un, struct passwd *pw )
 	return 0;
 }
 
-#if !defined(USE_PAM) && !defined(AIXV3) && defined(USE_LOGIN_CAP)
+#if !defined(USE_PAM) && !defined(_AIX) && defined(USE_LOGIN_CAP)
 # define LC_RET0 do { login_close(lc); return 0; } while(0)
 #else
 # define LC_RET0 return 0
@@ -448,7 +438,7 @@ Verify( GConvFunc gconv, int rootok )
 	struct pam_data pdata;
 	int pretc, pnopass;
 	char psrvb[64];
-#elif defined(AIXV3)
+#elif defined(_AIX)
 	char *msg, *curret;
 	int i, reenter;
 #else
@@ -499,7 +489,7 @@ Verify( GConvFunc gconv, int rootok )
 	if (!doPAMAuth( psrv, &pdata ))
 		return 0;
 
-#elif defined(AIXV3)
+#elif defined(_AIX)
 
 	if ((td->displayType & d_location) == dForeign) {
 		char *tmpch;
@@ -609,7 +599,7 @@ Verify( GConvFunc gconv, int rootok )
 		Debug( "getpwnam() failed.\n" );
 		V_RET_AUTH;
 	}
-# ifdef linux /* only Linux? */
+# ifdef __linux__ /* only Linux? */
 	if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
 		Debug( "account is locked\n" );
 		V_RET_AUTH;
@@ -674,8 +664,10 @@ Verify( GConvFunc gconv, int rootok )
 
 # if defined(ultrix) || defined(__ultrix__)
 	if (authenticate_user( p, curpass, NULL ) < 0)
-# else
+# elif defined(HAVE_CRYPT)
 	if (strcmp( crypt( curpass, p->pw_passwd ), p->pw_passwd ))
+# else
+	if (strcmp( curpass, p->pw_passwd ))
 # endif
 	{
 		Debug( "password verify failed\n" );
@@ -684,11 +676,11 @@ Verify( GConvFunc gconv, int rootok )
 
   done:
 
-#endif /* !defined(USE_PAM) && !defined(AIXV3) */
+#endif /* !defined(USE_PAM) && !defined(_AIX) */
 
 	Debug( "restrict %s ...\n", curuser );
 
-#if defined(USE_PAM) || defined(AIXV3)
+#if defined(USE_PAM) || defined(_AIX)
 	if (!(p = getpwnam( curuser ))) {
 		LogError( "getpwnam(%s) failed.\n", curuser );
 		V_RET_FAIL( 0 );
@@ -738,7 +730,7 @@ Verify( GConvFunc gconv, int rootok )
 	} else if (pretc != PAM_SUCCESS)
 		V_RET_AUTH;
 
-#elif defined(AIXV3) /* USE_PAM */
+#elif defined(_AIX) /* USE_PAM */
 
 	msg = NULL;
 	if (loginrestrictions( curuser,
@@ -758,7 +750,7 @@ Verify( GConvFunc gconv, int rootok )
 	if (msg)
 		free( (void *)msg );
 
-#else /* USE_PAM || AIXV3 */
+#else /* USE_PAM || _AIX */
 
 # ifdef HAVE_GETUSERSHELL
 	for (;;) {
@@ -954,7 +946,7 @@ Verify( GConvFunc gconv, int rootok )
 	login_close( lc );
 # endif
 
-#endif /* USE_PAM || AIXV3 */
+#endif /* USE_PAM || _AIX */
 
 	return 1;
 
@@ -963,22 +955,8 @@ Verify( GConvFunc gconv, int rootok )
 
 static const char *envvars[] = {
 	"TZ", /* SYSV and SVR4, but never hurts */
-#ifdef AIXV3
+#ifdef _AIX
 	"AUTHSTATE", /* for kerberos */
-#endif
-#if defined(sony) && !defined(SYSTYPE_SYSV) && !defined(_SYSTYPE_SYSV)
-	"bootdev",
-	"boothowto",
-	"cputype",
-	"ioptype",
-	"machine",
-	"model",
-	"CONSDEVTYPE",
-	"SYS_LANGUAGE",
-	"SYS_CODE",
-#endif
-#if (defined(SVR4) || defined(SYSV)) && defined(i386) && !defined(sun)
-	"XLOCAL",
 #endif
 	NULL
 };
@@ -991,7 +969,7 @@ SetGid( const char *name, int gid )
 		LogError( "setgid(%d) (user %s) failed: %m\n", gid, name );
 		return 0;
 	}
-#ifndef QNX4
+#ifdef HAVE_INITGROUPS
 	if (initgroups( name, gid ) < 0) {
 		LogError( "initgroups for %s failed: %m\n", name );
 		return 0;
@@ -1084,13 +1062,13 @@ StartClient()
 	struct pam_conv pconv;
 	int pretc;
 #else
-# ifdef AIXV3
+# ifdef _AIX
 	char *msg;
 	char **theenv;
 	extern char **newenv; /* from libs.a, this is set up by setpenv */
 # endif
 #endif
-#ifdef HAS_SETUSERCONTEXT
+#ifdef HAVE_SETUSERCONTEXT
 	extern char **environ;
 #endif
 	char *failsafeArgv[2], *lname;
@@ -1101,7 +1079,7 @@ StartClient()
 		if (dmrcuser) { free( dmrcuser ); dmrcuser = 0; }
 	}
 
-#if defined(USE_PAM) || defined(AIXV3)
+#if defined(USE_PAM) || defined(_AIX)
 	if (!(p = getpwnam( curuser ))) {
 		LogError( "getpwnam(%s) failed.\n", curuser );
 		return 0;
@@ -1109,14 +1087,14 @@ StartClient()
 #endif
 
 #ifndef USE_PAM
-# ifdef AIXV3
+# ifdef _AIX
 	msg = NULL;
 	loginsuccess( curuser, hostname, tty, &msg );
 	if (msg) {
 		Debug( "loginsuccess() - %s\n", msg );
 		free( (void *)msg );
 	}
-# else /* AIXV3 */
+# else /* _AIX */
 #  if defined(KERBEROS) && !defined(NO_AFS)
 	if (krbtkfile[0] != '\0') {
 		if (k_hasafs()) {
@@ -1127,7 +1105,7 @@ StartClient()
 		}
 	}
 #  endif /* KERBEROS && AFS */
-# endif /* AIXV3 */
+# endif /* _AIX */
 #endif	/* !PAM */
 
 	curuid = p->pw_uid;
@@ -1161,7 +1139,7 @@ StartClient()
 	env = setEnv( env, "PATH", curuid ? td->userPath : td->systemPath );
 	env = setEnv( env, "SHELL", p->pw_shell );
 	env = setEnv( env, "HOME", p->pw_dir );
-#if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
+#if !defined(USE_PAM) && !defined(_AIX) && defined(KERBEROS)
 	if (krbtkfile[0] != '\0')
 		env = setEnv( env, "KRBTKFILE", krbtkfile );
 #endif
@@ -1226,10 +1204,8 @@ StartClient()
 	removeAuth = 1;
 	chownCtrl( &td->ctrl, curuid );
 	endpwent();
-#if !defined(USE_PAM) && !defined(AIXV3)
-# ifndef QNX4  /* QNX4 doesn't need endspent() to end shadow passwd ops */
+#if !defined(USE_PAM) && !defined(_AIX)
 	endspent();
-# endif
 #endif
 	ClearCloseOnFork( mstrtalk.pipe->wfd );
 	switch (pid = Fork()) {
@@ -1246,28 +1222,18 @@ StartClient()
 		GSet( &mstrtalk );
 
 		/* Do system-dependent login setup here */
-#ifdef CSRG_BASED
 		setsid();
-#else
-# if defined(SYSV) || defined(SVR4) || defined(__CYGWIN__)
-#  if !(defined(SVR4) && defined(i386)) || defined(SCO325) || defined(__GNU__)
-		setpgrp();
-#  endif
-# else
-		setpgrp( 0, getpid() );
-# endif
-#endif
 
 	/* Memory leaks are ok here as we exec() soon. */
 
-#if defined(USE_PAM) || !defined(AIXV3)
+#if defined(USE_PAM) || !defined(_AIX)
 
-# ifndef HAS_SETUSERCONTEXT
+# ifndef HAVE_SETUSERCONTEXT
 		if (!SetGid( curuser, curgid ))
 			exit( 1 );
 # endif
 # ifdef USE_PAM
-#  ifdef AIXV3
+#  ifdef _AIX
 		if (!(environ = initStrArr( 0 )))
 			exit( 1 );
 #  endif
@@ -1278,7 +1244,7 @@ StartClient()
 			exit( 1 );
 		}
 		/* pass in environment variables set by libpam and modules it called */
-#  ifdef AIXV3
+#  ifdef _AIX
 		pam_env = environ;
 #  else
 		pam_env = pam_getenvlist( pamh );
@@ -1288,8 +1254,8 @@ StartClient()
 			for (; *pam_env; pam_env++)
 				userEnviron = putEnv( *pam_env, userEnviron );
 # endif
-# ifndef HAS_SETUSERCONTEXT
-#  if defined(BSD) && (BSD >= 199103)
+# ifndef HAVE_SETUSERCONTEXT
+#  ifdef HAVE_SETLOGIN
 		if (setlogin( curuser ) < 0) {
 			LogError( "setlogin for %s failed: %m\n", curuser );
 			exit( 1 );
@@ -1297,7 +1263,7 @@ StartClient()
 #  endif
 		if (!SetUid( curuser, curuid ))
 			exit( 1 );
-# else /* HAS_SETUSERCONTEXT */
+# else /* HAVE_SETUSERCONTEXT */
 
 		/*
 		 * Destroy environment unless user has requested its preservation.
@@ -1319,8 +1285,8 @@ StartClient()
 		for (i = 0; environ[i]; i++)
 			userEnviron = putEnv( environ[i], userEnviron );
 
-# endif /* HAS_SETUSERCONTEXT */
-#else /* AIXV3 */
+# endif /* HAVE_SETUSERCONTEXT */
+#else /* _AIX */
 		/*
 		 * Set the user's credentials: uid, gid, groups,
 		 * audit classes, user limits, and umask.
@@ -1343,7 +1309,7 @@ StartClient()
 		}
 		userEnviron = newenv;
 
-#endif /* AIXV3 */
+#endif /* _AIX */
 
 		/*
 		 * for user-based authorization schemes,
@@ -1534,7 +1500,7 @@ SessionExit( int status )
 #ifdef K5AUTH
 		Krb5Destroy( td->name );
 #endif /* K5AUTH */
-#if !defined(USE_PAM) && !defined(AIXV3)
+#if !defined(USE_PAM) && !defined(_AIX)
 # ifdef KERBEROS
 		if (krbtkfile[0]) {
 			(void)dest_tkt();
@@ -1544,7 +1510,7 @@ SessionExit( int status )
 #  endif
 		}
 # endif
-#endif /* !USE_PAM && !AIXV3*/
+#endif /* !USE_PAM && !_AIX*/
 #ifdef USE_PAM
 	} else {
 		if (pamh) {
@@ -1629,11 +1595,3 @@ ReadDmrc()
 	(void)Wait4( pid );
 	return err;
 }
-
-
-#if (defined(Lynx) && !defined(HAS_CRYPT)) || (defined(SCO) && !defined(SCO_USA) && !defined(_SCO_DS))
-char *crypt( const char *s1, const char *s2 )
-{
-	return (s2);
-}
-#endif

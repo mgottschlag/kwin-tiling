@@ -33,13 +33,13 @@ from the copyright holder.
  * generate SecureRPC authorization records
  */
 
+#include <config.h>
+
 #ifdef SECURE_RPC
 
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
-
-#include <X11/Xos.h>
 
 #include <rpc/rpc.h>
 #include <rpc/key_prot.h>

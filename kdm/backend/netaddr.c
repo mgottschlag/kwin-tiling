@@ -34,17 +34,13 @@ from the copyright holder.
  * netaddr.c - Interpretation of XdmcpNetaddr object.
  */
 
+#include <config.h>
+
 #ifdef XDMCP
 
 #include "dm.h"
 #include "dm_socket.h"
 #include "dm_error.h"
-
-#include <X11/X.h> /* FamilyInternet, etc. */
-
-#ifdef DNETCONN
-# include <netdnet/dn.h> /* struct sockaddr_dn */
-#endif
 
 /* given an XdmcpNetaddr, returns the socket protocol family used,
    e.g., AF_INET */
@@ -160,7 +156,7 @@ int ConvertAddr( XdmcpNetaddr saddr, int *len, char **addr )
 		break;
 #endif
 #ifdef AF_UNIX
-#ifndef hpux
+#ifndef __hpux
 	  case AF_UNIX:
 		retval = FamilyLocal;
 		break;
