@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name[nl]=NOS Teletekst
+ServiceTypes=SearchProvider
+Keys=tt,teletekst
+Query[nl]=http://teletekst.nos.nl/cgi-bin/tt/nos/page/t/o/m/x/n/\\1
