@@ -15,4 +15,4 @@ messages:
 	$(XGETTEXT) $(kcm_kded_la_SOURCES) -o $(podir)/kcmkded.pot
 
 data_DATA = kcmkded.desktop
-datadir = $(kde_appsdir)/Settings/System
+datadir = $(kde_appsdir)/Settings/Components

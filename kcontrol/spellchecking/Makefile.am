@@ -15,4 +15,4 @@ messages:
 	$(XGETTEXT) $(kcm_spellchecking_la_SOURCES) -o $(podir)/kcmspellchecking.pot
 
 data_DATA = spellchecking.desktop
-datadir = $(kde_appsdir)/Settings/Personalization
+datadir = $(kde_appsdir)/Settings/Components
