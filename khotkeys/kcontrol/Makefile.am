@@ -28,9 +28,6 @@ INCLUDES= -I$(top_srcdir)/khotkeys/shared -I$(srcdir)/ui -I./ui $(all_includes)
 
 METASOURCES = AUTO
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/khotkeys.pot
-
 xdg_apps_DATA = khotkeys.desktop
 
 KDE_ICON = khotkeys
