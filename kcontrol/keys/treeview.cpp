@@ -21,28 +21,13 @@
 #include <unistd.h>
 
 #include <qdir.h>
-#include <qheader.h>
+#include <qimage.h>
 #include <qstringlist.h>
-#include <qdragobject.h>
-#include <qdatastream.h>
-#include <qcstring.h>
-#include <qpopupmenu.h>
-#include <qfileinfo.h>
 #include <qcursor.h>
 
-#include <kglobal.h>
 #include <kstandarddirs.h>
-#include <kinputdialog.h>
 #include <klocale.h>
-#include <kservicegroup.h>
-#include <ksimpleconfig.h>
-#include <kdebug.h>
 #include <kiconloader.h>
-#include <kdesktopfile.h>
-#include <kaction.h>
-#include <kmessagebox.h>
-#include <kapplication.h>
-#include <kservice.h>
 #include <kservicegroup.h>
 
 #include "treeview.h"
