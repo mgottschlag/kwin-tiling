@@ -141,7 +141,7 @@ void CDiskFontListWidget::changeDirectory()
     KFileDialog dlg(itsBasicData.dir, "*.ttf *.TTF *.pfa *.pfb *.PFA *.PFB", this, "filedialog", true);
 
     dlg.setMode(static_cast<KFile::Mode>(KFile::Directory|KFile::ExistingOnly|KFile::File|KFile::LocalOnly));
-    dlg.setCaption(i18n("Select Folder To Install From"));
+    dlg.setCaption(i18n("Select Folder to Install From"));
     dlg.exec();
 
     QString dir=dlg.selectedURL().path();

@@ -122,7 +122,7 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
     QWhatsThis::add(m_backgroundInput, wtstr );
 
     m_backgroundInput->fileDialog()->setFilter(KImageIO::pattern(KImageIO::Reading));
-    m_backgroundInput->fileDialog()->setCaption(i18n("Select an image file"));
+    m_backgroundInput->fileDialog()->setCaption(i18n("Select an Image File"));
     m_backgroundInput->lineEdit()->setReadOnly(true);
 
     connect(m_backgroundInput, SIGNAL(urlSelected(const QString&)), SLOT(browse_theme(const QString&)));
