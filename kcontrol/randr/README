@@ -1,6 +1,8 @@
 Ok, as more people are beginning to discover the joys of RANDR I'd better explain what's
 happening. The patches directory contains the patches you need to make this work
-nicely with qt and kde.
+nicely with qt and kde.  All of the kde patches have been merged in, exept the
+connect() calls are surrounded by #ifdef XRANDR_SUPPORT - remove by hand, and you
+need the kwin_iii branch for the kwin patch.
 
 Please note that the qt patch is going to be a part of 3.2 (not 3.1.x) so
 if you distribute it as 3.1 make sure it is acknowledged that the resized()
