@@ -103,12 +103,8 @@ TopLevel::TopLevel()
     resize( pQPpic->size() );
 
     globalKeys = new KGlobalAccel();
-    globalKeys->insertItem(i18n("Show klipper popupmenu"),
-                                "show-klipper-popupmenu", "CTRL+ALT+V");
-    globalKeys->insertItem(i18n("Manually invoke action on current clipboard"),
-                                "repeat-last-klipper-action", "CTRL+ALT+R");
-    globalKeys->insertItem(i18n("Enable/disable clipboard actions"),
-                           "toggle-clipboard-actions", "CTRL+ALT+X" );
+    KGlobalAccel* keys = globalKeys;
+#include "klipperbindings.cpp"
     globalKeys->connectItem("show-klipper-popupmenu", this,
                             SLOT(slotPopupMenu()));
     globalKeys->connectItem("repeat-last-klipper-action", this,
