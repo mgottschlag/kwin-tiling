@@ -2,6 +2,14 @@
 Encoding=UTF-8
 Type=Service
 Name=FSF/UNESCO Free Software Directory
+Name[da]=FSF/UNESCO Free Software katalog
+Name[fr]=Catalogue de logiciels libres FSF/UNESCO
+Name[hu]=FSF/UNESCO szabadszoftver-gyűjtemény
+Name[pt]=Directoria de Software Livre FSF/UNESCO
+Name[pt_BR]=Diretório de Software Livre - FSF/UNESCO 
+Name[sv]=FSF/UNESCO katalog över fri programvara
+Name[ta]=FSF/UNESCO இலவச மென்பொருள் அடைவு
+Name[uk]=Словник з вільного програмного забезпечення FSF/UNESCO
 ServiceTypes=SearchProvider
 Keys=fsd
 Query=http://directory.fsf.org/search/fsd-search.py?q=\\{@}

@@ -3,6 +3,15 @@ Charset=
 Hidden=false
 Keys=uspto
 Name=U.S. Patent Database
+Name[da]=U.S. Patent-database
+Name[fr]=Base de données des brevets aux U.S.A
+Name[hu]=Amerikai szabadalmi adatbázis
+Name[nl]=U.S. Patent-database
+Name[pt]=Base de Dados de Patentes dos EUA
+Name[pt_BR]=Base de dados de patentes dos EUA
+Name[sv]=Förenta staternas patentdatabas
+Name[ta]=U.S.காப்புரிமை தரவுதளம்
+Name[uk]=База даних патентів в США
 Query=http://patft.uspto.gov/netacgi/nph-Parser?TERM1=\\{@}&Sect1=PTO1&Sect2=HITOFF&d=PALL&p=1&u=/netahtml/srchnum.htm&r=0&f=S&l=50
 ServiceTypes=SearchProvider
 Type=Service

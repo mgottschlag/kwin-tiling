@@ -1,5 +1,6 @@
 [KCM Locale]
 Name=US English
+Name[az]=ABŞ İngiliscəsi
 Name[be]=Ангельская (ЗША)
 Name[bg]=Американски английски
 Name[br]=Saozneg SUA
@@ -13,15 +14,20 @@ Name[el]=Αγγλική ΗΠΑ
 Name[eo]=Angla usona
 Name[es]=Inglés de EEUU
 Name[et]=Inglise (US)
+Name[eu]=EEBBetako ingelesa
 Name[fi]=US-englanti
 Name[fr]=Anglais US
+Name[gl]=Inglés de EEUU
 Name[he]=אנגלית ארה"ב
 Name[hr]=Engleski, SAD
 Name[hu]=Amerikai angol
 Name[is]=Enska (BNA)
 Name[it]=Inglese US
+Name[ja]=英語（アメリカ）
+Name[mk]=Англиски (САД)
 Name[mt]=Ingliż Amerikan
 Name[nb]=Amerikansk-Engelsk
+Name[nds]=Engelsch (US)
 Name[nl]=VS Engels
 Name[nn]=Engelsk (USA)
 Name[pa]=US ਅੰਗਰੇਜ਼ੀ

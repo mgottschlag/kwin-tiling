@@ -2,7 +2,15 @@
 Encoding=UTF-8
 Type=Service
 Name=LEO - Translate Between French and German
-Name[xx]=xxLEO - Translate Between French and Germanxx
+Name[da]=LEO - Oversæt mellem fransk og tysk
+Name[fr]=LEO - Traduction Français - Allemand
+Name[hu]=LEO - Fordítás franciáról németre (mindkét irányban)
+Name[nl]=LEO - vertaling tussen Frans en Duits
+Name[pt]=LEO - Traduzir Entre Francês e Alemão
+Name[pt_BR]=LEO - Tradução entre Francês e Alemão
+Name[sv]=LEO - översätt från franska till tyska
+Name[ta]=LEO - ப்ரென்ச் மற்றும் ஜெர்மன் இடையே மொழிப்பெயர்க்கவும்
+Name[uk]=LEO - переклад між французькою та німецькою
 ServiceTypes=SearchProvider
 Keys=fr2de
 Query=http://dict.leo.org/?lp=frde&search=\\{@}
