@@ -376,7 +376,7 @@ void KFonts::save()
   KIPC::sendMessageAll(KIPC::FontChanged);
 
   if(useAA != useAA_original) {
-    KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change will only affect newly started applications."), i18n("Anti-aliasing settings changed"), "AAsettingsChanged", false);
+    KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change will only affect newly started applications."), i18n("Anti-Aliasing Settings Changed"), "AAsettingsChanged", false);
     useAA_original = useAA;
   }
   _changed = false;
