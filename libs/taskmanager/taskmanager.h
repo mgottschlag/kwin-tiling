@@ -122,7 +122,8 @@ public:
     TaskManager( QObject *parent = 0, const char *name = 0 );
     virtual ~TaskManager();
 
-    QList<Task> taskList() { return _tasks; }
+    QList<Task> tasks() { return _tasks; }
+    QList<Startup> startups() { return _startups; }
 
 signals:
     void changed();
