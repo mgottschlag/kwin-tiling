@@ -165,6 +165,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 
     btGroup->insert( restart_rb);
 
+#ifndef BSD
     if (!kdmcfg->_consoleMode.isEmpty()) {
 	rb = new QRadioButton(winFrame);
 	rb->setText(i18n("Console &Mode"));
@@ -175,6 +176,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 	box->addWidget(rb);
 	btGroup->insert(rb);
     }
+#endif
 
     // Passwd line edit
     if( mode == KDMConfig::SdRootOnly) {
