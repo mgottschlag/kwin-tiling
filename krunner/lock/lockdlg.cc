@@ -12,6 +12,7 @@
 #include "lockdlg.h"
 #include <kcheckpass.h>
 
+#include <kapplication.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kseparator.h>
@@ -121,7 +122,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool 
     connect(ok, SIGNAL(clicked()), SLOT(slotOK()));
     connect(mNewSessButton, SIGNAL(clicked()), SLOT(slotStartNewSession()));
 
-    if (!nsess)
+    if (!nsess || !kapp->authorize("start_new_session"))
         mNewSessButton->hide();
 
     installEventFilter(this);
