@@ -50,7 +50,7 @@
 #include "XftConfig.h"
 
 CInstalledFontListWidget::CInstalledFontListWidget(QWidget *parent, const char *)
-                        : CFontListWidget(parent, CConfig::INSTALLED, true, true, i18n("Install To:"), i18n("Rem&ove"), i18n("&Apply..."),
+                        : CFontListWidget(parent, CConfig::INSTALLED, true, true, i18n("Install To"), i18n("Rem&ove"), i18n("&Apply..."),
                           CKfiGlobal::cfg().getFontsDir(),
                           CKfiGlobal::cfg().getFontsDir(), i18n("X11 Fonts Directory"), "fonts")
 {
