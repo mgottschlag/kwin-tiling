@@ -229,6 +229,9 @@ public:
 
     int hash();
 
+    void setEnabled( const bool enable );
+    bool enabled() const { return m_bEnabled; }
+
 private:
     void updateHash();
     QString fingerprint();
@@ -257,6 +260,7 @@ private:
     KConfig *m_pConfig;
     KStandardDirs *m_pDirs;
     bool m_bDeleteConfig;
+    bool m_bEnabled;
 
 public:
     QMap<QString,int> m_BMMap;

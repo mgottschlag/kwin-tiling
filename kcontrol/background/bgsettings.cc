@@ -408,6 +408,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
 {
     dirty = false; hashdirty = true;
     m_Desk = desk;
+    m_bEnabled = true;
 
     // Default values.
     defColorA = _defColorA;
@@ -873,7 +874,7 @@ bool KBackgroundSettings::needWallpaperChange()
 
 QString KBackgroundSettings::fingerprint()
 {
-    QString s = QString("bm:%1;").arg(m_BackgroundMode);
+    QString s = QString("bm:%1;en:%2").arg(m_BackgroundMode).arg(m_bEnabled);
     switch (m_BackgroundMode) {
     case Flat:
         s += QString("ca:%1;").arg(m_ColorA.rgb());
@@ -914,6 +915,14 @@ int KBackgroundSettings::hash()
     return m_Hash;
 }
 
+void KBackgroundSettings::setEnabled(const bool enable)
+{
+  if (m_bEnabled == enable)
+    return;
+
+  m_bEnabled= enable;
+  hashdirty = true;
+}
 
 /**** KGlobalBackgroundSettings ****/
 

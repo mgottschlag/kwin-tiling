@@ -137,6 +137,9 @@ int KBackgroundRenderer::doBackground(bool quit)
 
     int bgmode = backgroundMode();
 
+    if (!enabled())
+      bgmode= Flat;
+
     if (quit) {
 	if (bgmode == Program && m_pProc)
 	    m_pProc->kill();
@@ -258,7 +261,7 @@ int KBackgroundRenderer::doWallpaper(bool quit)
         // currently no asynch. wallpapers
         return Done;
 
-    int wpmode = wallpaperMode();
+    int wpmode= enabled()?wallpaperMode():NoWallpaper;
 
     QImage wp;
     if (wpmode != NoWallpaper) {
@@ -375,7 +378,7 @@ extern bool qt_use_xrender; // in Qt ( qapplication_x11.cpp )
 
 void KBackgroundRenderer::wallpaperBlend( const QRect& d, QImage& wp, int ww, int wh )
 {
-    if( blendMode() == NoBlending && ( qt_use_xrender || !wp.hasAlphaBuffer())) {
+    if( !enabled() || (blendMode() == NoBlending && ( qt_use_xrender || !wp.hasAlphaBuffer()))) {
         fastWallpaperBlend( d, wp, ww, wh );
     }
     else {
@@ -389,7 +392,7 @@ void KBackgroundRenderer::fastWallpaperBlend( const QRect& d, QImage& wp, int ww
 {
     *m_pImage = QImage();
     // copy background to m_pPixmap
-    if( wallpaperMode() == NoWallpaper && optimize()) {
+    if( !enabled() || (wallpaperMode() == NoWallpaper && optimize())) {
         // if there's no wallpaper, no need to tile the pixmap to the size of desktop, as X does
         // that automatically and using a smaller pixmap should save some memory
         m_pPixmap->convertFromImage( *m_pBackground );
