@@ -15,17 +15,6 @@
 
 #include <netwm.h>
 
-#include <X11/Xlib.h>
-const int XFocusOut = FocusOut;
-const int XFocusIn = FocusIn;
-#undef FocusOut
-#undef FocusIn
-#undef KeyPress
-#undef KeyRelease
-
-extern Time qt_x_time;
-
-
 #include "ksystraycmd.h"
 #include "ksystraycmd.moc"
 
@@ -258,25 +247,3 @@ void KSysTrayCmd::mousePressEvent( QMouseEvent *e )
   else
     toggleWindow();
 }
-
-#if QT_VERSION < 0x030200
-void KSysTrayCmd::enterEvent( QEvent * )
-{
-  // Fake a focus event when the mouse points at our tray icon. This is
-  // needed for our tooltips to work.
-  if ( !qApp->focusWidget() ) {
-    XEvent ev;
-    memset(&ev, 0, sizeof(ev));
-    ev.xfocus.display = qt_xdisplay();
-    ev.xfocus.type = XFocusIn;
-    ev.xfocus.window = winId();
-    ev.xfocus.mode = NotifyNormal;
-    ev.xfocus.detail = NotifyAncestor;
-    Time time = qt_x_time;
-    qt_x_time = 1;
-    qApp->x11ProcessEvent( &ev );
-	qt_x_time = time;
-  }
-}
-#endif
-
