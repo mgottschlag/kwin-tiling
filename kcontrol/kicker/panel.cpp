@@ -2,6 +2,7 @@
  *  panel.cpp
  *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+ *  Copyright (c) 2000 Preston Brown <pbrown@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
+#include <qwhatsthis.h>
 #include <qslider.h>
 #include <qlabel.h>
 #include <qhbox.h>
@@ -28,9 +30,9 @@
 #include <qpushbutton.h>
 #include <qpixmap.h>
 #include <qimage.h>
-#include <qwhatsthis.h>
 
 #include <kconfig.h>
+#include <kdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <klineedit.h>
@@ -52,8 +54,10 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
 {
   int i;
 
-  layout = new QGridLayout(this, 2, 2, 10);
-
+  layout = new QGridLayout(this, 2, 2, 
+			   KDialog::marginHint(),
+			   KDialog::spacingHint());
+  
   // position button group
   pos_group = new QButtonGroup(i18n("Location"), this);
 
@@ -62,8 +66,9 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
     " position by left-clicking on some free space on the panel and"
     " dragging it to a screen border.") );
 
-  QVBoxLayout *vbox = new QVBoxLayout(pos_group,10);
-  vbox->addSpacing(pos_group->fontMetrics().height());
+  QVBoxLayout *vbox = new QVBoxLayout(pos_group, KDialog::marginHint(),
+				      KDialog::spacingHint());
+  vbox->addSpacing(fontMetrics().lineSpacing());
 
   pos_buttons[0] = new QRadioButton( i18n("&Left"), pos_group );
   pos_buttons[1] = new QRadioButton( i18n("&Right"), pos_group );
@@ -83,8 +88,9 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
     " You can also access this option via the panel context menu, i.e."
     " by right-clicking on some free space on the panel.") );
 
-  vbox = new QVBoxLayout(size_group,10);
-  vbox->addSpacing(size_group->fontMetrics().height());
+  vbox = new QVBoxLayout(size_group, KDialog::marginHint(),
+			 KDialog::spacingHint());
+  vbox->addSpacing(fontMetrics().lineSpacing());
 
   size_buttons[0] = new QRadioButton( i18n("T&iny"), size_group );
   size_buttons[1] = new QRadioButton( i18n("&Normal"), size_group );
@@ -95,12 +101,13 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   for (i = 0; i < 3; i++)
 	vbox->addWidget(size_buttons[i]);
   layout->addWidget(size_group, 1, 0);
-
+  
   // hidebutton group
   hb_group = new QGroupBox(i18n("Hide Buttons"), this);
 
-  vbox = new QVBoxLayout(hb_group,10);
-  vbox->addSpacing(hb_group->fontMetrics().height());
+  vbox = new QVBoxLayout(hb_group,KDialog::marginHint(),
+			 KDialog::spacingHint());
+  vbox->addSpacing(fontMetrics().lineSpacing());
 
   show_hbs = new QCheckBox(i18n("Show hide buttons."), hb_group);
   connect(show_hbs, SIGNAL(clicked()), SLOT(show_hbs_clicked()));
@@ -122,7 +129,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   connect(hb_size, SIGNAL(valueChanged(int)), SLOT(hbs_size_changed(int)));
   hb_size->setTickmarks(QSlider::Below);
   hb_size->setTracking(true);
-  hbox->setSpacing(10);
+  hbox->setSpacing(KDialog::spacingHint());
   hbox->setStretchFactor(hb_size, 2);
   QString wtstr = i18n("Here you can change the size of the hide buttons.");
   QWhatsThis::add( hb_size_label, wtstr );
@@ -136,8 +143,9 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   // theme background group
   theme_group = new QGroupBox(i18n("Background Theme"), this);
 
-  vbox = new QVBoxLayout(theme_group,10);
-  vbox->addSpacing(theme_group->fontMetrics().height());
+  vbox = new QVBoxLayout(theme_group,KDialog::marginHint(),
+			 KDialog::spacingHint());
+  vbox->addSpacing(fontMetrics().lineSpacing());
 
   QHBox *hbox1 = new QHBox(theme_group);
   use_theme_cb = new QCheckBox(i18n("Use background theme."), hbox1);
@@ -146,7 +154,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   theme_label->setFixedSize(50,50);
   theme_label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
   theme_label->setAlignment(AlignCenter);
-  hbox1->setSpacing(10);
+  hbox1->setSpacing(KDialog::spacingHint());
   hbox1->setStretchFactor(use_theme_cb, 2);
   QWhatsThis::add( use_theme_cb, i18n("If this option is selected, you"
     " can choose an individual 'theme' that will be used to display the"
@@ -166,12 +174,24 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   QWhatsThis::add( theme_input, wtstr );
   QWhatsThis::add( browse_button, wtstr );
 
-  hbox2->setSpacing(10);
+  hbox2->setSpacing(KDialog::spacingHint());
   hbox2->setStretchFactor(theme_input, 2);
 
   vbox->addWidget(hbox1);
   vbox->addWidget(hbox2);
   layout->addWidget(theme_group, 1, 1);
+
+  mergeCB = new QCheckBox(i18n("Merge different menu locations"),
+			  this);
+  QWhatsThis::add(mergeCB, i18n("KDE can support several different locations "
+				"on the system for storing program "
+				"information, including (but not limited to) "
+				"a system-wide and a personal directory. "
+				"Enabling this option makes the KDE panel "
+				"merge these different locations into a "
+				"single logical tree of programs."));
+
+  layout->addMultiCellWidget(mergeCB, 2, 2, 0, 1);
 
   load();
 }
@@ -296,7 +316,10 @@ void PanelTab::load()
     else
       theme_input->setText(i18n("Error loading theme image file."));
   }
-  
+
+  c->setGroup("menus");
+  mergeCB->setChecked(c->readBoolEntry("MergeKDEDirs", true));
+
   delete c;
 }
 
@@ -313,6 +336,9 @@ void PanelTab::save()
   c->writeEntry("HideButtonSize", HBwidth);
   c->writeEntry("UseBackgroundTheme", use_theme);
   c->writeEntry("BackgroundTheme", theme);
+
+  c->setGroup("menus");
+  c->writeEntry("MergeKDEDirs", mergeCB->isChecked());
 
   c->sync();
 
@@ -345,6 +371,9 @@ void PanelTab::defaults()
   theme_label->setEnabled(use_theme);
   theme_input->setEnabled(use_theme);
   browse_button->setEnabled(use_theme);
+
+  mergeCB->setChecked(true);
+
 }
 
 QString PanelTab::quickHelp()
@@ -357,6 +386,5 @@ QString PanelTab::quickHelp()
     " context menu on right button click. This context menu also offers you"
     " manipulation of the panel's buttons and applets.");
 }
-
 
 #include "panel.moc"

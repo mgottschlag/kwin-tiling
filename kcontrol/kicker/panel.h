@@ -2,6 +2,7 @@
  *  panel.h
  *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+ *  Copyright (c) 2000 Preston Brown <pbrown@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -70,6 +71,7 @@ class PanelTab : public QWidget
   
   // size group
   QButtonGroup *size_group;
+  QCheckBox *mergeCB;
   QRadioButton *size_buttons[3];
   enum Size {Tiny=0, Normal, Large} size;
 
