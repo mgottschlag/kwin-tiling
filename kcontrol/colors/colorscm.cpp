@@ -732,7 +732,7 @@ void KColorScheme::readScheme( int index )
 
     QColor button;
     if (QPixmap::defaultDepth() > 8)
-      button.setRgb(238, 234, 222);
+      button.setRgb(221, 223, 228 );
     else
       button.setRgb(220, 220, 220);
 
