@@ -258,7 +258,7 @@ void KSMServer::startApplication( QStringList command, const QString& clientMach
     }
     if ( !clientMachine.isEmpty() && clientMachine != "localhost" ) {
         command.prepend( clientMachine );
-	command.prepend( "xon" );
+	command.prepend( xonCommand ); // "xon" by default
     }
     int n = command.count();
     QCString app = command[0].latin1();
@@ -732,6 +732,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     KConfig* config = KGlobal::config();
     config->setGroup("General" );
     clientInteracting = 0;
+    xonCommand = config->readEntry( "xonCommand", "xon" );
 
     only_local = _only_local;
 #ifdef HAVE__ICETRANSNOLISTEN

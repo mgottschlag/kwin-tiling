@@ -192,6 +192,7 @@ private:
     QCString launcher;
     QTimer protectionTimer;
     QTimer restoreTimer;
+    QString xonCommand;
 
     // ksplash interface
     void upAndRunning( const QString& msg );
