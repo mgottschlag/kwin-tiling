@@ -505,7 +505,7 @@ KGreeter::save_wm()
 }
 #endif /* HAVE_INITGROUPS && HAVE_SETGROUPS && HAVE_GETGROUPS */
 
-/* This stuff should doesn't really belong to the kgreeter, but verify.c is
+/* This stuff doesn't really belong to the kgreeter, but verify.c is
  * just C, not C++.
  *
  * A restrict_host() should be added.
