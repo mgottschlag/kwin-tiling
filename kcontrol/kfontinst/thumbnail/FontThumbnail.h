@@ -35,7 +35,7 @@ class CFontThumbnail : public ThumbCreator
 {
     public:
 
-    CFontThumbnail() {}
+    CFontThumbnail();
     ~CFontThumbnail();
 
     bool  create(const QString &path, int width, int height, QImage &img);

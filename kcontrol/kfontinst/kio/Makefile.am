@@ -18,6 +18,3 @@ vfsdatadir = $(kde_datadir)/konqsidebartng/virtual_folders/services
 
 mimetype_DATA = folder.desktop system-folder.desktop
 mimetypedir = $(kde_mimedir)/fonts
-
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kio_fonts.pot

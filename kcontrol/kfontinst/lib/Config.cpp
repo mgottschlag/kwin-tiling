@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Config.h"
+#include "Global.h"
 #include "Misc.h"
 #include <qdir.h>
 #include <qfile.h>
@@ -522,7 +523,7 @@ void CConfig::checkAndModifyXConfigFile()
 
 const QString & CConfig::getRealTopDir(const QString &f)
 {
-    return CMisc::root() || CMisc::getSect(f)==i18n("System")
+    return CMisc::root() || CMisc::getSect(f)==i18n(KIO_FONTS_SYS)
                ? itsSysFontsDir
                : itsUserFontsDir;
 }

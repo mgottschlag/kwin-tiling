@@ -31,6 +31,7 @@
 
 #include <kio/slavebase.h>
 #include <kurl.h>
+#include <klocale.h>
 #include <qstring.h>
 #include <qcstring.h>
 #include <qfile.h>
@@ -38,8 +39,6 @@
 #include "Misc.h"
 #include "Config.h"
 #include "Global.h"
-
-#define KIO_FONTS_PROTOCOL "fonts"
 
 class CKioFonts : public KIO::SlaveBase
 {

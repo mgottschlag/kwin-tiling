@@ -496,7 +496,7 @@ void CFontEngine::createPreview(const QString &path, int width, int height, QPix
 
     if(sizes[s].titleFont)
     {
-        QString name(CGlobal::fe().getFullName()),
+        QString name(itsFullName),
                 info;
         bool    bmp=CFontEngine::isABitmap(QFile::encodeName(path));
         QFont   title(KGlobalSettings::generalFont());
@@ -723,39 +723,37 @@ const CFontEngine::TGlyphInfo * CFontEngine::getGlyphInfo(unsigned long glyph)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static bool lookupName(FT_Face face, int nid, int pid, int eid, FT_SfntName *nameReturn)
 {
-    FT_SfntName name;
-    int n, i;
+    int n = FT_Get_Sfnt_Name_Count(face);
 
-    n = FT_Get_Sfnt_Name_Count(face);
-    if(n <= 0)
-        return 0;
+    if(n>0)
+    {
+        int         i;
+        FT_SfntName name;
 
-    for(i = 0; i < n; i++) {
-        if(0==FT_Get_Sfnt_Name(face, i, &name) && name.name_id == nid && name.platform_id == pid &&
-           (eid < 0 || name.encoding_id == eid))
-        {
-            switch(name.platform_id)
+        for(i=0; i<n; i++)
+            if(0==FT_Get_Sfnt_Name(face, i, &name) && name.name_id == nid && name.platform_id == pid && (eid < 0 || name.encoding_id == eid))
             {
-                case TT_PLATFORM_APPLE_UNICODE:
-                case TT_PLATFORM_MACINTOSH:
-                    if(name.language_id != TT_MAC_LANGID_ENGLISH)
+                switch(name.platform_id)
+                {
+                    case TT_PLATFORM_APPLE_UNICODE:
+                    case TT_PLATFORM_MACINTOSH:
+                        if(name.language_id != TT_MAC_LANGID_ENGLISH)
+                            continue;
+                        break;
+                    case TT_PLATFORM_MICROSOFT:
+                        if(name.language_id != TT_MS_LANGID_ENGLISH_UNITED_STATES && name.language_id != TT_MS_LANGID_ENGLISH_UNITED_KINGDOM)
+                            continue;
+                        break;
+                    default:
                         continue;
-                    break;
-                case TT_PLATFORM_MICROSOFT:
-                    if(name.language_id != TT_MS_LANGID_ENGLISH_UNITED_STATES &&
-                       name.language_id != TT_MS_LANGID_ENGLISH_UNITED_KINGDOM)
-                        continue;
-                    break;
-                default:
-                    continue;
-            }
+                }
 
-            if(name.string_len > 0)
-            {
-                *nameReturn = name;
-                return true;
+                if(name.string_len > 0)
+                {
+                    *nameReturn = name;
+                    return true;
+                }
             }
-        }
     }
 
     return false;
@@ -766,8 +764,7 @@ static QCString getName(FT_Face face, int nid)
     FT_SfntName name;
     QCString    str;
 
-    if(lookupName(face, nid, TT_PLATFORM_MICROSOFT, TT_MS_ID_UNICODE_CS, &name) ||
-       lookupName(face, nid, TT_PLATFORM_APPLE_UNICODE, -1, &name))
+    if(lookupName(face, nid, TT_PLATFORM_MICROSOFT, TT_MS_ID_UNICODE_CS, &name) || lookupName(face, nid, TT_PLATFORM_APPLE_UNICODE, -1, &name))
         for(unsigned int i=0; i < name.string_len / 2; i++)
             str+=0 == name.string[2*i] ? name.string[(2*i)+1] : '_';
     else if(lookupName(face, nid, TT_PLATFORM_MACINTOSH, TT_MAC_ID_ROMAN, &name)) // Pretend that Apple Roman is ISO 8859-1.

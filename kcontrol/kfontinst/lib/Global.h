@@ -37,6 +37,10 @@ class CEncodings;
 class CXConfig;
 class KXftConfig;
 
+#define KIO_FONTS_PROTOCOL "fonts"
+#define KIO_FONTS_USER     I18N_NOOP("Personal")
+#define KIO_FONTS_SYS      I18N_NOOP("System")
+
 class CGlobal
 {
     public:

@@ -2,7 +2,7 @@ kde_module_LTLIBRARIES = kcm_fontinst.la
 kcm_fontinst_la_LIBADD  = $(LIB_KIO) $(LIBFREETYPE_LIBS) $(LIBFONTCONFIG_LIBS) ../lib/libkfontinst.la
 kcm_fontinst_la_METASOURCES = AUTO
 kcm_fontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH) -module -avoid-version -no-undefined
-INCLUDES = $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS) -I$(srcdir)/../lib -I$(srcdir)/../kio -I$(srcdir)/../../fonts -I$(srcdir)/../viewpart -I$(top_builddir)/kcontrol/kfontinst/viewpart $(all_includes)
+INCLUDES = $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS) -I$(srcdir)/../lib -I$(srcdir)/../../fonts -I$(srcdir)/../viewpart -I$(top_builddir)/kcontrol/kfontinst/viewpart $(all_includes)
  
 xdg_apps_DATA = kcmfontinst.desktop
  
@@ -22,6 +22,3 @@ EXTRA_DIST = \
 noinst_HEADERS = $(EXTRA_DIST)
 
 KDE_ICON = kcmfontinst
-
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmfontinst.pot

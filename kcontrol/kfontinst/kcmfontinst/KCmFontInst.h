@@ -114,7 +114,7 @@ class CKCmFontInst : public KCModule
     KIntNumInput *itsFaceSelector;
 #endif
     KConfig      itsConfig;
-    bool         itsAutoSync;
+    bool         itsEmbeddedAdmin;
     QLabel       *itsStatusLabel;
 };
 

@@ -8,8 +8,5 @@ noinst_HEADERS  = FontViewPart.h FontViewPartFactory.h FontPreview.h
 
 kde_services_DATA = kfontviewpart.desktop
 
-INCLUDES = -I$(srcdir)/../lib -I$(srcdir)/../kio -I$(srcdir)/../../fonts $(all_includes) $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS)
+INCLUDES = -I$(srcdir)/../lib -I$(srcdir)/../../fonts $(all_includes) $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS)
 METASOURCES = AUTO
-
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/kfontviewpart.pot

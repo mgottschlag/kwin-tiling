@@ -32,7 +32,6 @@
 #include "CompressedFile.h"
 #include "Global.h"
 #include "Config.h"
-#include "KioFonts.h"
 #include <kgenericfactory.h>
 #include <kdeversion.h>
 #include <qfile.h>
@@ -44,6 +43,8 @@ K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfile_font"))
 KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStringList& args)
                : KFilePlugin(parent, name, args)
 {
+    KGlobal::locale()->insertCatalogue("kfontinst");
+
     addMimeType("application/x-font-ttf"),
     addMimeType("application/x-font-type1");
     addMimeType("application/x-font-speedo", false);

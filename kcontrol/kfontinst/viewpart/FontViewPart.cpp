@@ -42,10 +42,10 @@
 #include <kinstance.h>
 #include <kmessagebox.h>
 #include <knuminput.h>
-#include "KioFonts.h"
 
 CFontViewPart::CFontViewPart(QWidget *parent, const char *)
 {
+    KGlobal::locale()->insertCatalogue("kfontinst");
     CGlobal::create(true, false);
 
     itsFrame=new QFrame(parent, "frame");
@@ -113,9 +113,11 @@ void CFontViewPart::install()
 {
     int resp=CMisc::root() ? KMessageBox::Yes
                            : KMessageBox::questionYesNoCancel(itsFrame, i18n("Where do you wish to install %1:%2?\n"
-                                                           "Personal - only accessible to you, or\n"
-                                                           "System - accessible to all (requires administrator password)").arg(m_url.protocol()).arg(m_url.path()),
-                                            i18n("Install"), i18n("Personal"), i18n("System"));
+                                                                             "\"%3\" - only accessible to you, or\n"
+                                                                             "\"%4\" - accessible to all (requires administrator password)")
+                                                                             .arg(m_url.protocol()).arg(m_url.path())
+                                                                             .arg(KIO_FONTS_USER).arg(KIO_FONTS_SYS),
+                                            i18n("Install"), i18n(KIO_FONTS_USER), i18n(KIO_FONTS_SYS));
 
     if(KMessageBox::Cancel!=resp)
     {
@@ -136,7 +138,7 @@ void CFontViewPart::install()
                     break;
             }
 
-        QString       destDir(CMisc::root() ? sub : QString((KMessageBox::Yes==resp ? i18n("Personal") : i18n("System")))+QChar('/')+sub);
+        QString       destDir(CMisc::root() ? sub : QString((KMessageBox::Yes==resp ? i18n(KIO_FONTS_USER) : i18n(KIO_FONTS_SYS)))+QChar('/')+sub);
         KURL          destUrl(QString("fonts:/")+destDir+CMisc::getFile(m_url.path()));
         KIO::UDSEntry uds;
 

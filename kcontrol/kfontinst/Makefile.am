@@ -6,3 +6,6 @@ endif
 SUBDIRS = lib $(FONTINST_TN_SUBDIR) $(FONTINST_VP_SUBDIR) kcmfontinst kfile-plugin kfontinst kio
 
 EXTRA_DIST = TODO
+
+messages: rc.cpp
+	$(XGETTEXT) rc.cpp */*.cpp */*.h -o $(podir)/kfontinst.pot

@@ -47,6 +47,11 @@ extern "C"
     }
 }
 
+CFontThumbnail::CFontThumbnail()
+{
+    KGlobal::locale()->insertCatalogue("kfontinst");
+}
+
 CFontThumbnail::~CFontThumbnail()
 {
     CGlobal::destroy();

@@ -33,7 +33,6 @@
 #include <kdiroperator.h>
 #include "Misc.h"
 #include "FontEngine.h"
-#include "KioFonts.h"
 #include "KFileFontIconView.h"
 #include "KFileFontView.h"
 #include "RenameJob.h"
@@ -66,13 +65,15 @@ K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory)
 CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
             : KCModule(parent, "fontinst"),
               itsAboutData(NULL),
-              itsTop(CMisc::root() ? "fonts:/" : QString("fonts:/")+i18n("Personal")),
+              itsTop(CMisc::root() ? "fonts:/" : QString("fonts:/")+i18n(KIO_FONTS_USER)),
               itsConfig("kcmfontinstuirc")
 {
+    KGlobal::locale()->insertCatalogue("kfontinst");
+
     KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
     const char *appName=KCmdLineArgs::appName();
 
-    itsAutoSync=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName));
+    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName));
 
     itsStatusLabel = new QLabel(this);
     itsStatusLabel->setFrameShape(QFrame::Panel);
@@ -410,7 +411,7 @@ void CKCmFontInst::listView()
     itsListAct->setChecked(true);
     KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
     itsConfig.writeEntry(CFG_LISTVIEW, true);
-    if(itsAutoSync)
+    if(itsEmbeddedAdmin)
         itsConfig.sync();
     itsDirOp->setAcceptDrops(true);
 }
@@ -423,7 +424,7 @@ void CKCmFontInst::iconView()
     itsIconAct->setChecked(true);
     KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
     itsConfig.writeEntry(CFG_LISTVIEW, false);
-    if(itsAutoSync)
+    if(itsEmbeddedAdmin)
         itsConfig.sync();
     itsDirOp->setAcceptDrops(true);
 }
@@ -467,7 +468,7 @@ void CKCmFontInst::urlEntered(const KURL &url)
     itsDisableAct->setEnabled(false);
     itsLabel->setText(createLocationLabel(url));
     itsLabel->setURL(url.url());
-    if(itsAutoSync)
+    if(itsEmbeddedAdmin)
         itsConfig.sync();
 
     updateInformation(0, 0);
@@ -655,8 +656,17 @@ void CKCmFontInst::dropped(const KFileItem *i, QDropEvent *, const KURL::List &u
 
 void CKCmFontInst::openUrlInBrowser(const QString &url)
 {
-  if (kapp)
-      kapp->invokeBrowser(url);
+    if (kapp)
+    {
+        QString u(url);
+
+        if (itsEmbeddedAdmin)  // Need to open fonts:/System...
+        {
+            u.insert(strlen(KIO_FONTS_PROTOCOL)+1, i18n(KIO_FONTS_SYS));
+            u.insert(strlen(KIO_FONTS_PROTOCOL)+1, '/');
+        }
+        kapp->invokeBrowser(u);
+    }
 }
 
 #ifdef HAVE_FT_CACHE
@@ -703,8 +713,8 @@ void CKCmFontInst::updateInformation(int dirs, int fonts)
 
 void CKCmFontInst::setUpAct()
 {
-    if(!CMisc::root() && (itsDirOp->url().path()==(QString("/")+i18n("Personal")) ||
-                          itsDirOp->url().path()==(QString("/")+i18n("Personal")+QString("/")) ) )
+    if(!CMisc::root() && (itsDirOp->url().path()==(QString("/")+i18n(KIO_FONTS_USER)) ||
+                          itsDirOp->url().path()==(QString("/")+i18n(KIO_FONTS_USER)+QString("/")) ) )
         itsUpAct->setEnabled(false);
 }
 
