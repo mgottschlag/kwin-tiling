@@ -19,6 +19,9 @@ messages:
 theme_DATA = style.desktop
 themedir = $(kde_appsdir)/Settings/LookNFeel
 
+update_DATA = kcmdisplayrc.upd
+updatedir = $(kde_datadir)/kconf_update
+
 install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(kde_appsdir)/Settings/LookNFeel/Themes
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(kde_appsdir)/Settings/LookNFeel/Themes/style.desktop
