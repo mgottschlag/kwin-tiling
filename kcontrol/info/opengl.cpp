@@ -215,7 +215,7 @@ print_extension_list(const char *ext, QListViewItem *l1)
    }
 }
 
-#ifdef GLX_ARB_get_proc_address
+#if defined(GLX_ARB_get_proc_address) && defined(__GLXextFuncPtr)
 extern "C" {
 	extern __GLXextFuncPtr glXGetProcAddressARB (const GLubyte *);
 }
@@ -245,7 +245,9 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
    };
 
    QListViewItem *l2 = NULL, *l3 = NULL;
+#if defined(PFNGLGETPROGRAMIVARBPROC)
    PFNGLGETPROGRAMIVARBPROC kcm_glGetProgramivARB = NULL;
+#endif
 
    #define KCMGL_FLOAT 128
    #define KCMGL_PROG 256
@@ -266,7 +268,9 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
 #ifdef GL_MAX_VERTEX_UNITS_ARB
       { 1, GL_MAX_VERTEX_UNITS_ARB, 	i18n("Max. vertex blend matrices") },
 #endif
+#ifdef GL_MAX_PALETTE_MATRICES_ARB
       { 1, GL_MAX_PALETTE_MATRICES_ARB, i18n("Max. vertex blend matrix palette size") },
+#endif
       {0,0,0}
      };
 
@@ -275,7 +279,9 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
       { 1, GL_MAX_TEXTURE_UNITS_ARB, 	i18n("Num. of texture units") },
       { 1, GL_MAX_3D_TEXTURE_SIZE, 		i18n("Max. 3D texture size") },
       { 1, GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, 	i18n("Max. cube map texture size") },
+#ifdef GL_MAX_RECTANGLE_TEXTURE_SIZE_NV
       { 1, GL_MAX_RECTANGLE_TEXTURE_SIZE_NV, 	i18n("Max. rectangular texture size") },
+#endif
       { 1 | KCMGL_FLOAT, GL_MAX_TEXTURE_LOD_BIAS_EXT, i18n("Max. texture LOD bias") },
       { 1, GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, 	i18n("Max. anisotropy filtering level") },
       { 1, GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB, i18n("Num. of compressed texture formats") },
@@ -300,7 +306,9 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
       { 1, GL_MAX_ATTRIB_STACK_DEPTH, 		"MAX_ATTRIB_STACK_DEPTH" },
       { 1, GL_MAX_CLIENT_ATTRIB_STACK_DEPTH, 	"MAX_CLIENT_ATTRIB_STACK_DEPTH" },
       { 1, GL_MAX_COLOR_MATRIX_STACK_DEPTH, 	"MAX_COLOR_MATRIX_STACK_DEPTH" },
+#ifdef GL_MAX_MATRIX_PALETTE_STACK_DEPTH_ARB
       { 1, GL_MAX_MATRIX_PALETTE_STACK_DEPTH_ARB,"MAX_MATRIX_PALETTE_STACK_DEPTH"},
+#endif
       {0,0,0}
    };
 
@@ -401,7 +409,7 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
 #endif
    };
 
-#ifdef GLX_ARB_get_proc_address
+#if defined(GLX_ARB_get_proc_address) && defined(PFNGLGETPROGRAMIVARBPROC)
    if (GetProcAddress && strstr(glExtensions, "GL_ARB_vertex_program"))
    kcm_glGetProgramivARB = (PFNGLGETPROGRAMIVARBPROC) glXGetProcAddressARB((const GLubyte *)"glGetProgramivARB");
 #endif
@@ -421,7 +429,7 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
 		GLint max[2]={0,0};
    		GLfloat fmax[2]={0.0,0.0};
 
-#ifdef GL_ARB_vertex_program
+#if defined(PFNGLGETPROGRAMIVARBPROC) && defined(GL_ARB_vertex_program)
 		if (tprog && kcm_glGetProgramivARB)
 			kcm_glGetProgramivARB(groups[i].type, cur_token->token, max);
 		else
