@@ -29,6 +29,7 @@
 #include <kapp.h>
 #include <kglobal.h>
 #include <kdebug.h>
+#include <kimageio.h>
 #include <klocale.h>
 #include <kstddirs.h>
 #include <kbuttonbox.h>
@@ -581,7 +582,7 @@ KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
 
 void KPatternEditDialog::slotBrowse()
 {
-    KURL url = KFileDialog::getOpenURL();
+    KURL url = KFileDialog::getImageOpenURL();
     if (url.isEmpty())
 	return;
 
@@ -708,8 +709,8 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
 void KMultiWallpaperDialog::slotAdd()
 {
     KFileDialog fileDialog(KGlobal::dirs()->findDirs("wallpaper", "").first(), 
-			   QString::null, this, 
-			   "", true);
+			   KImageIO::pattern(), this, 
+			   0L, true);
 
     fileDialog.setCaption(i18n("Select"));
     KFile::Mode mode = static_cast<KFile::Mode> (KFile::Files |

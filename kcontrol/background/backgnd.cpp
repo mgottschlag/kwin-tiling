@@ -912,8 +912,9 @@ void KBackground::slotBrowseWallpaper()
         desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
-    KURL url = KFileDialog::getImageOpenURL(locate("wallpaper", ""), 
-					    0, i18n("Select Wallpaper"));
+    KURL url = KFileDialog::getImageOpenURL(
+                          KGlobal::dirs()->findDirs("wallpaper", "").first(), 
+                          0, i18n("Select Wallpaper"));
 
     if (url.isEmpty())
         return;
