@@ -126,7 +126,9 @@ void message(const char *, ...) ATTR_PRINTFLIKE(1, 2);
 void dispose(char *);
 
 /* for PAM variant */
+#ifdef HAVE_PAM
 extern const char *caller;
+#endif
 
 #ifdef __cplusplus
 }
