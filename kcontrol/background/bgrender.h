@@ -48,7 +48,6 @@ public:
     void load(int desk, bool reparseConfig=true);
 
     void setPreview(QSize size);
-    void setTile(bool tile);
 
     QPixmap *pixmap();
     QImage *image();
@@ -85,7 +84,7 @@ private:
     int doBackground(bool quit=false);
     int doWallpaper(bool quit=false);
 
-    bool m_bPreview, m_bTile;
+    bool m_bPreview;
     int m_State;
     pid_t m_Pid;
 
