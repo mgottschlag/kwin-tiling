@@ -511,8 +511,8 @@ extern "C"
 
     if (run)
       {
-	// TODO: This is more than dirty
-	system("kaccess");
+        // TODO: This is more than dirty
+        system("kaccess &");
       }
   }
 }
