@@ -14,6 +14,8 @@ kdm_config_LDADD = $(LIBRESOLV) $(LIBSOCKET)
 AM_CPPFLAGS = $(XCONSOLE_CPPFLAGS)
 EXTRA_DIST = kconsole.cpp
 
+KDE_OPTIONS = nofinal
+
 kdm_greet_SOURCES = \
     kdm_greet.c \
     liloinfo.cpp \
