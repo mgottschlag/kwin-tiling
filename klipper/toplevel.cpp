@@ -630,6 +630,7 @@ void KlipperWidget::clipboardSignalArrived( bool selectionMode )
 {
 //     qDebug("*** clipboardSignalArrived: %i", selectionMode);
 
+    updateTimestamp();
     QString text = clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
     checkClipData( text, selectionMode );
 }
