@@ -33,6 +33,7 @@
 
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
+#include <../fixx11h.h>
 
 #define PASSDLG_HIDE_TIMEOUT 10000
 
@@ -143,9 +144,6 @@ void PasswordDlg::timerEvent(QTimerEvent *ev)
             mButton->setEnabled(true);
     }
 }
-
-#undef KeyPress	/* i hate X #defines */
-#undef KeyRelease /* Some muppet just wasted lots of my time trying to find a dumb compile error */
 
 bool PasswordDlg::eventFilter(QObject *, QEvent *ev)
 {
