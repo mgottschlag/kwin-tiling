@@ -272,7 +272,7 @@ void topKCMEmail::defaults()
 
 QString topKCMEmail::quickHelp() const
 {
-	return i18n("<h1>email</h1> This module allows you to enter basic email"
+	return i18n("<h1>Email</h1> This module allows you to enter basic email"
 	            " information for the current user. The information here is used,"
 	            " among other things, for sending bug reports to the KDE developers"
 	            " when you use the bug report dialog.<p>"
