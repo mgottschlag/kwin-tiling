@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=XSession
-Exec=startkde
-TryExec=startkde
+Exec=@KDE_BINDIR@/startkde
+TryExec=@KDE_BINDIR@/startkde
 Name=KDE
 Name[hi]=केडीई
 Name[mn]=КДЭ

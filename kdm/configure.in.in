@@ -7,6 +7,7 @@ KDE_EXPAND_MAKEVAR(KDE_DATADIR, kde_datadir)
 AC_DEFINE_UNQUOTED(KDE_DATADIR, "$KDE_DATADIR", [KDE's static data directory])
 KDE_EXPAND_MAKEVAR(KDE_BINDIR, kde_bindir)
 AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
+AC_SUBST(KDE_BINDIR)
 
 KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please make sure it's in PATH!])])
 
@@ -264,3 +265,5 @@ AC_ARG_WITH(kdm-xconsole,
 if test "x$with_kdm_xconsole" = xyes; then
     AC_DEFINE(WITH_KDM_XCONSOLE, 1, [Build kdm with built-in xconsole])
 fi
+
+dnl AC_OUTPUT(kdm/kfrontend/sessions/kde.desktop)
