@@ -357,8 +357,8 @@ void KLocaleConfig::slotTranslate()
 	( "This will remove the highlighted language from the list." ) );
 
   QToolTip::add(m_languages, m_locale->translate
-        ( "KDE program will be displayed in the first available language in "
-	  "this list. If none of the languages are available, US English "
+        ( "KDE programs will be displayed in the first available language in "
+	  "this list.\nIf none of the languages are available, US English "
 	  "will be used.") );
 
   QString str;
