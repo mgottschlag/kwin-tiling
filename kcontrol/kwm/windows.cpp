@@ -99,6 +99,7 @@ KFocusConfig::~KFocusConfig ()
 {
 }
 
+// removed the LCD display over the slider - this is not good GUI design :) RNolden 051701
 KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name)
     : KCModule (parent, name), config(_config)
 {
@@ -175,18 +176,10 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
     alabel->setAlignment(AlignVCenter|AlignHCenter);
     fLay->addWidget(alabel,3,0,AlignLeft);
 
-    s = new QLCDNumber (4, fcsBox);
-    s->setFrameStyle( QFrame::NoFrame );
-    s->setFixedHeight(30);
-    s->adjustSize();
-    s->setMinimumSize(s->size());
-    fLay->addWidget(s,2,2);
-
     autoRaise = new KIntNumInput(500, fcsBox);
     autoRaise->setRange(0, 3000, 100, true);
     autoRaise->setSteps(100,100);
     fLay->addMultiCellWidget(autoRaise,3,3,1,2);
-    connect( autoRaise, SIGNAL(valueChanged(int)), s, SLOT(display(int)) );
 
     fLay->addColSpacing(0,QMAX(autoRaiseOn->sizeHint().width(),
                                clickRaiseOn->sizeHint().width()) + 15);
@@ -196,7 +189,7 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
     wtstr = i18n("This is the delay after which the window the mouse pointer is over will automatically"
                  " come to front.");
     QWhatsThis::add( autoRaise, wtstr );
-    QWhatsThis::add( s, wtstr );
+//    QWhatsThis::add( s, wtstr );
     QWhatsThis::add( alabel, wtstr );
 
     QWhatsThis::add( clickRaiseOn, i18n("Disable this option if you don't want windows to be brought to"
@@ -271,12 +264,11 @@ void KFocusConfig::setFocus(int foc)
 void KFocusConfig::setAutoRaiseInterval(int tb)
 {
     autoRaise->setValue(tb);
-    s->display(tb);
 }
 
 int KFocusConfig::getAutoRaiseInterval()
 {
-    return s->intValue();
+    return autoRaise->value();
 }
 
 void KFocusConfig::setAutoRaise(bool on)
@@ -326,7 +318,6 @@ void KFocusConfig::setAutoRaiseEnabled()
 //CT 23Oct1998 make AutoRaise toggling much clear
 void KFocusConfig::autoRaiseOnTog(bool a) {
     autoRaise->setEnabled(a);
-    s->setEnabled(a);
     alabel->setEnabled(a);
     clickRaiseOn->setEnabled( !a );
     if ( a )
@@ -577,18 +568,10 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     shlabel->setAlignment(AlignVCenter | AlignHCenter);
     shLay->addWidget(shlabel, 3, 0, AlignLeft);
 
-    shadeHoverNum = new QLCDNumber (4, shBox);
-    shadeHoverNum->setFrameStyle( QFrame::NoFrame );
-    shadeHoverNum->setFixedHeight(30);
-    shadeHoverNum->adjustSize();
-    shadeHoverNum->setMinimumSize(shadeHoverNum->size());
-    shLay->addWidget(shadeHoverNum, 2, 2);
-
     shadeHover = new KIntNumInput(500, shBox);
     shadeHover->setRange(0, 3000, 100, true);
     shadeHover->setSteps(100, 100);
     shLay->addMultiCellWidget(shadeHover, 3, 3, 1, 2);
-    connect(shadeHover, SIGNAL(valueChanged(int)), shadeHoverNum, SLOT(display(int)));
 
     QWhatsThis::add(shadeHoverOn, i18n("If Shade Hover is enabled, a shaded window will un-shade automatically "
                                        "when the mouse pointer has been over the title bar for some time."));
@@ -596,7 +579,6 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     wtstr = i18n("Sets the time in milliseconds before the window unshades "
                 "when the mouse pointer goes over the shaded window.");
     QWhatsThis::add(shadeHover, wtstr);
-    QWhatsThis::add(shadeHoverNum, wtstr);
     QWhatsThis::add(shlabel, wtstr);
 
     lay->addWidget(shBox);
@@ -767,23 +749,21 @@ void KAdvancedConfig::setResizeOpaque(int opaque)
 
 void KAdvancedConfig::setShadeHover(bool on) {
     shadeHoverOn->setChecked(on);
-    shadeHoverNum->setEnabled(on);
     shadeHover->setEnabled(on);
     shlabel->setEnabled(on);
 }
 
 void KAdvancedConfig::setShadeHoverInterval(int k) {
     shadeHover->setValue(k);
-    shadeHoverNum->display(k);
 }
 
 int KAdvancedConfig::getShadeHoverInterval() {
-    return shadeHoverNum->intValue();
+
+    return shadeHover->value();
 }
 
 void KAdvancedConfig::shadeHoverChanged(bool a) {
     shadeHover->setEnabled(a);
-    shadeHoverNum->setEnabled(a);
     shlabel->setEnabled(a);
 }
 

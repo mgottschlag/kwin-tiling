@@ -30,7 +30,6 @@ class QRadioButton;
 class QCheckBox;
 class QPushButton;
 class QComboBox;
-class QLCDNumber;
 class QLabel;
 class QSlider;
 class QButtonGroup;
@@ -99,7 +98,6 @@ private:
   QCheckBox *clickRaiseOn;
   KIntNumInput *autoRaise;
   QLabel *alabel;
-  QLCDNumber *s;
   //CT  QLabel *sec;
 
   QButtonGroup *kbdBox;
@@ -166,7 +164,6 @@ private:
   QButtonGroup *shBox;
   QCheckBox *shadeHoverOn;
   KIntNumInput *shadeHover;
-  QLCDNumber *shadeHoverNum;
   QLabel *shlabel;
 
   KConfig *config;
