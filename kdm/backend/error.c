@@ -72,7 +72,7 @@ void
 Panic (const char *mesg)
 {
 #ifdef USE_SYSLOG
-    syslog(LOG_ALERT, mesg);
+    syslog(LOG_ALERT, "%s", mesg);
 #else
     int i = creat ("/dev/console", 0666);
     write (i, prog, strlen(prog));
