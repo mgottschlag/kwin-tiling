@@ -1,0 +1,15 @@
+[Desktop Entry]
+Exec=kcmshell spellchecking
+Icon=spellchecking
+Type=Application
+DocPath=
+
+X-KDE-ModuleType=Library
+X-KDE-Library=spellchecking
+X-KDE-Init=spellchecking
+
+Name=Spell Checking
+
+Comment=Spell Checking Configuration
+
+Keywords=Spell
