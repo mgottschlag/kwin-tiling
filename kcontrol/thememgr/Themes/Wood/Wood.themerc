@@ -1,6 +1,7 @@
 [General]
 Name=Wood
 Name[az]=Odun
+Name[bg]=Гора
 Name[cs]=Dřevo
 Name[de]=Holz
 Name[el]=Ξύλο
@@ -40,6 +41,7 @@ Comment[da]=Et træagtigt udseende for dit skrivebord!\nAf Georg Russell <russel
 Comment[de]=Eine Holz-Optik für Ihre Arbeitsumgebung\nvon Georg Russell <russell@kde.org>.
 Comment[eo]=Ligneca etoso por via tabulo!\nde Georg Russell <russell@kde.org>
 Comment[es]=¡Un aspecto de madera para su escritorio!a\nPor Georg Russell <russell@kde.org>
+Comment[et]=Puidu välimus töölauale!\nGeorg Russell <russell@kde.org>
 Comment[fi]=Puinen ulkonäkö työpöydällesi!\nGeorg Russell <russell@kde.org>
 Comment[fr]=Un joli bureau en bois !\nPar Georg Russell <russell@kde.org>
 Comment[he]=!ךלש הדובעה ןחלושל ץע לש הארמ\n<russell@kde.org> לסאר גרואג תאמ
