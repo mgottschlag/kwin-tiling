@@ -30,8 +30,7 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
-
-#include <X11/Xlib.h>
+#include <qapplication.h>
 
 FDialog::FDialog( QWidget *parent, const char *name, bool modal )
    : inherited( parent, name, modal, WStyle_NoBorder )
@@ -46,11 +45,13 @@ FDialog::FDialog( QWidget *parent, const char *name, bool modal )
 int
 FDialog::exec()
 {
-    inherited::show();
-    XSetInputFocus( qt_xdisplay(), winId(), RevertToParent, CurrentTime );
+    QWidget *foc = qApp->focusWidget();
+    show();
+    setActiveWindow();
     inherited::exec();
-    if (parentWidget())
-	parentWidget()->setActiveWindow();
+    hide();
+    if (foc)
+	foc->setActiveWindow();
     return result();
 }
 
