@@ -176,7 +176,7 @@ void KLocaleConfig::slotLanguageDown()
   int pos = m_languages->currentItem();
 
   QStringList::Iterator it1 = languageList.at( pos );
-  QStringList::Iterator it2 = languageList.at( pos - 1 );
+  QStringList::Iterator it2 = languageList.at( pos + 1 );
 
   if ( it1 != languageList.end() && it2 != languageList.end()  )
     {
