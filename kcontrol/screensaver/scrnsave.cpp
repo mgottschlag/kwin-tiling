@@ -1129,9 +1129,9 @@ QString KScreenSaver::quickHelp() const
        " Besides providing an endless variety of entertainment and"
        " preventing monitor burn-in, a screen saver also gives you a simple"
        " way to lock your display if you are going to leave it unattended"
-       " for a while. If you want the screen saver to lock the screen, make sure you enable"
+       " for a while. If you want the screen saver to lock the session, make sure you enable"
        " the \"Require password\" feature of the screen saver. If you don't, you can still"
-       " explicitly lock the screen using the desktop's \"Lock Screen\" action.");
+       " explicitly lock the session using the desktop's \"Lock Session\" action.");
 }
 
 #include "scrnsave.moc"

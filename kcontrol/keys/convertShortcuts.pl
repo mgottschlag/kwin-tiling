@@ -6,7 +6,8 @@ foreach (<>) {
         ($oldkey) = ($_ =~ /([^=]*)=.*/);
         s/^Execute Command/Run Command/;
         s/^Execute command/Run Command/;
-        s/^Lock screen/Lock Screen/;
+        s/^Lock screen/Lock Session/;
+        s/^Lock Screen/Lock Session/;
         s/^Mouse emulation/Mouse Emulation/;
         s/^Next keyboard layout/Switch to Next Keyboard Layout/;
         s/Switch To Next Keyboard Layout/Switch to Next Keyboard Layout/;

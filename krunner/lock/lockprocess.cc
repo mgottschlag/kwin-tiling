@@ -7,7 +7,7 @@
 //
 
 //kdesktop keeps running and checks user inactivity
-//when it should show screensaver (and maybe lock the screen),
+//when it should show screensaver (and maybe lock the session),
 //it starts kdesktop_lock, who does all the locking and who
 //actually starts the screensaver
 
@@ -147,7 +147,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
             mMethod = (*it).mid(7);
 
     configure();
-    
+
 #ifdef HAVE_DPMS
     if (mDPMSDepend) {
         BOOL on;
@@ -315,7 +315,7 @@ void LockProcess::readSaver()
     if (!mSaver.isEmpty())
     {
         QString file = locate("scrsav", mSaver);
-	
+
 	bool opengl = kapp->authorize("opengl_screensavers");
 	bool manipulatescreen = kapp->authorize("manipulatescreen_screensavers");
         KDesktopFile config(file, true);
@@ -337,7 +337,7 @@ void LockProcess::readSaver()
 			}
 		}
 	}
-	
+
 	kdDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false") << endl;
 
         if (config.hasActionGroup("Root"))
@@ -656,7 +656,7 @@ QVariant LockProcess::getConf(void *ctx, const char *key, const QVariant &dflt)
 
 void LockProcess::cantLock( const QString &txt)
 {
-    msgBox( QMessageBox::Critical, i18n("Will not lock the screen, as unlocking would be impossible:\n") + txt );
+    msgBox( QMessageBox::Critical, i18n("Will not lock the session, as unlocking would be impossible:\n") + txt );
 }
 
 #if 0 // placeholders for later
@@ -891,7 +891,7 @@ bool LockProcess::x11Event(XEvent *event)
                 else
                 {
                     mSuspendTimer.stop();
-                    resume();          
+                    resume();
                 }
                 if (event->xvisibility.state != VisibilityUnobscured)
                     stayOnTop();
@@ -974,7 +974,7 @@ void LockProcess::checkDPMSActive()
 #if defined(HAVE_XF86MISC) && defined(HAVE_XF86MISCSETGRABKEYSSTATE)
 // see http://cvsweb.xfree86.org/cvsweb/xc/programs/Xserver/hw/xfree86/common/xf86Events.c#rev3.113
 // This allows enabling the "Allow{Deactivate/Closedown}Grabs" options in XF86Config,
-// and kdesktop_lock will still lock the screen.
+// and kdesktop_lock will still lock the session.
 static enum { Unknown, Yes, No } can_do_xf86_lock = Unknown;
 void LockProcess::lockXF86()
 {
@@ -1036,7 +1036,7 @@ void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
     grid->addMultiCellWidget( button, 1,1, 0,1, Qt::AlignCenter );
-    
+
     execDialog( &box );
 }
 
