@@ -1,14 +1,14 @@
 kcmSUBDIRS = docs
 
-kde_module_LTLIBRARIES = libkcm_fontinst.la
-libkcm_fontinst_la_LIBADD  = $(FREETYPE_LIB) $(LIB_KFILE)
-libkcm_fontinst_la_METASOURCES = AUTO
-libkcm_fontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH) -module -avoid-version -no-undefined
+kde_module_LTLIBRARIES = kcm_fontinst.la
+kcm_fontinst_la_LIBADD  = $(FREETYPE_LIB) $(LIB_KFILE)
+kcm_fontinst_la_METASOURCES = AUTO
+kcm_fontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH) -module -avoid-version -no-undefined
  
 desktop_DATA = kcmfontinst.desktop
 desktopdir = $(kde_appsdir)/Settings/System/
  
-libkcm_fontinst_la_SOURCES = \
+kcm_fontinst_la_SOURCES = \
 	KfiCmModule.cpp \
 	Config.cpp \
 	DiskFontListWidget.cpp \
