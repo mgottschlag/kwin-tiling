@@ -424,7 +424,8 @@ ManageSession (struct display *d)
 	 * when terminating the session, nuke
 	 * the child and then run the reset script
 	 */
-	AbortClient (clientPid);
+	if (clientPid)
+	    AbortClient (clientPid);
 	exitCode = EX_AL_RESERVER_DPY;
     }
     SessionExit (d, exitCode);
