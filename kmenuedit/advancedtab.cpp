@@ -41,7 +41,7 @@ AdvancedTab::AdvancedTab( QWidget *parent, const char *name )
 					  KDialog::spacingHint());
     QGroupBox *general_group = new QGroupBox(this);
     layout->addWidget( general_group, 0, 0 );
-     // dummy widget in order to make it look a bit better
+    // dummy widget in order to make it look a bit better
     layout->addWidget( new QWidget(this), 1, 0 );
     layout->setRowStretch( 1, 4 );
     QGridLayout *grid = new QGridLayout(general_group, 3, 1,
@@ -53,7 +53,7 @@ AdvancedTab::AdvancedTab( QWidget *parent, const char *name )
     _keyEdit->setReadOnly( true );
     _keyEdit->setText( "" );
     QPushButton* _keyButton = new QPushButton( i18n( "Change" ),
-        general_group );
+                                               general_group );
     connect( _keyButton, SIGNAL( clicked()), this, SLOT( keyButtonPressed()));
     grid->addWidget(_keyEdit, 0, 1);
     grid->addWidget(_keyButton, 0, 2 );
@@ -69,14 +69,14 @@ void AdvancedTab::setDesktopFile(const QString& desktopFile)
 
     // is desktopFile a .desktop file?
     if( desktopFile.find(".desktop") > 0 )
-        {
+    {
         if( KHotKeys::present())
-            {
+        {
             setEnabled( true );
             _keyEdit->setText( KHotKeys::getMenuEntryShortcut(
                 _desktopFile ));
-            }
         }
+    }
     else
         setEnabled( false ); // not a menu entry - no shortcut
 

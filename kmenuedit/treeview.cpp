@@ -17,9 +17,6 @@
  *
  */
 
-#include <stdlib.h>
-#include <iostream.h>
-
 #include <qdir.h>
 #include <qheader.h>
 #include <qstringlist.h>
