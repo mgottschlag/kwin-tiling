@@ -133,8 +133,8 @@ void KCMNic::update()
 
 NICList* findNICs()
 {
-   QString upMessage(   i18n("State of network card is connected",    "Enabled") );
-   QString downMessage( i18n("State of network card is disconnected", "Disabled") );
+   QString upMessage(   i18n("State of network card is connected",    "Up") );
+   QString downMessage( i18n("State of network card is disconnected", "Down") );
 
    NICList* nl=new NICList;
    nl->setAutoDelete(true);
