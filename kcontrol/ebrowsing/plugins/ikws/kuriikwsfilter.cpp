@@ -21,6 +21,7 @@
 #include <qregexp.h>
 
 #include <kdebug.h>
+#include <klocale.h>
 #include <kurl.h>
 #include <kprotocolmanager.h>
 #include <kinstance.h>
@@ -28,6 +29,7 @@
 
 #include <iostream.h>
 
+#include "ikwsopts.h"
 #include "kuriikwsfiltereng.h"
 #include "kuriikwsfilter.h"
 
@@ -43,12 +45,12 @@ void KURISearchFilter::configure() {
     KURISearchFilterEngine::self()->loadConfig();
 }
 
-bool KURISearchFilter::filterURI(QString &url) const {
+bool KURISearchFilter::filterURI(KURL &kurl) const {
+    QString url = kurl.isMalformed() ? kurl.malformedUrl() : kurl.url();
+
     if (KURISearchFilterEngine::self()->verbose()) {
 	kDebugInfo("filtering %s", url.ascii());
     }
-
-    KURL kurl(url);
 
     // Is this URL a candidate for filtering?
 
@@ -98,13 +100,21 @@ bool KURISearchFilter::filterURI(QString &url) const {
 		kDebugInfo("filtered %s to %s\n", url.ascii(), newurl.ascii());
 	    }
 	    
-	    url = newurl;
+	    kurl = newurl;
 	    
 	    return true;
 	}
     }
     
     return false;
+}
+
+KCModule *KURISearchFilter::configModule() const {
+    return new InternetKeywordsOptions;
+}
+
+QString KURISearchFilter::configName() const {
+    return i18n("Internet &Keywords");
 }
 
 KURISearchFilterFactory::KURISearchFilterFactory(QObject *parent, const char *name) : KLibFactory(parent, name) {

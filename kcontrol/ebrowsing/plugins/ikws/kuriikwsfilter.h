@@ -34,7 +34,10 @@ public:
     KURISearchFilter( QObject *parent );
     ~KURISearchFilter();
 
-    virtual bool filterURI(QString &uri) const;
+    virtual bool filterURI(KURL &uri) const;
+
+    virtual KCModule *configModule() const;
+    virtual QString configName() const;
 
 public:
 k_dcop:
