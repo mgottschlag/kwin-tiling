@@ -1,17 +1,14 @@
+# Extra lib. Might be -lpam -dl or -lshadow or nothing
 PASSLIB= $(PASSWDLIB) $(PAMLIBS)
 
 INCLUDES = -I$(srcdir)/.. $(all_includes) $(KERBEROS_INCS)
 
 #DBGFLAGS = -g
-
 AM_CFLAGS = $(CONN_FLAGS) $(DBGFLAGS) -DGREETER
-
-#AM_CFLAGS   = $(AM_CFLAGS) -Wall -Wno-implicit -Wno-return-type
-
 AM_CPPFLAGS = $(AM_CFLAGS) -DQT_NO_CAST_ASCII
 
 # static
-noinst_LIBRARIES = @KDM_GREETER_A@
+noinst_LIBRARIES = @kdmgreetera@
 
 EXTRA_LIBRARIES = libKdmGreet.a
 
@@ -24,7 +21,7 @@ libKdmGreet_a_SOURCES = kdmconfig.cpp \
     verify.c
 
 # dynamic
-lib_LTLIBRARIES = @KDM_GREETER_LA@
+lib_LTLIBRARIES = @kdmgreeterla@
 
 EXTRA_LTLIBRARIES = libKdmGreet.la
 
@@ -42,3 +39,5 @@ messages:
 
 noinst_HEADERS = kdmshutdown.h kdmclock.h kgreeter.h liloinfo.h kfdialog.h kdmconfig.h
 
+kde_conf_DATA = @kdmrc@
+EXTRA_DIST = kdmrc

@@ -50,9 +50,9 @@ public:
     KDMConfig();
     ~KDMConfig();
 
-    QFont*	_normalFont;
-    QFont*	_failFont;
-    QFont*	_greetFont;
+    QFont	*_normalFont;
+    QFont	*_failFont;
+    QFont	*_greetFont;
 
     // GUIStyle	_style;
     bool	_useLogo;
@@ -83,10 +83,11 @@ public:
     QString	_consoleMode;
 #endif
 
+    bool	_useChooser;
+
     bool	_useLilo;
     QString	_liloCmd;
     QString	_liloMap;
-
 };
 
 #endif /* KDMCONFIG_H */

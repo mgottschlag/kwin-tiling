@@ -60,8 +60,12 @@ KDMConfig::KDMConfig() :
     _shutdown = readEntry( "Shutdown", QString::fromLatin1(SHUTDOWN_CMD) );
     _restart = readEntry( "Restart", QString::fromLatin1(REBOOT_CMD) );
 #ifndef BSD
-    _consoleMode = readEntry( "ConsoleMode", QString::fromLatin1("/sbin/init 3") );
+    if (readBoolEntry("AllowConsoleMode", true))
+	_consoleMode = readEntry( "ConsoleMode", 
+				  QString::fromLatin1("/sbin/init 3") );
 #endif
+
+    _useChooser = readBoolEntry("UseChooser", false);
 
     /* TODO: to be ported to QStyle
     if( readEntry( "GUIStyle") == "Windows")
@@ -112,11 +116,9 @@ KDMConfig::KDMConfig() :
 	_echoMode = defEchoMode;
 
     QString normal_font = readEntry( "StdFont" );
-    if( !normal_font.isEmpty()) { // Rettet til isEmpty. Strengen kan godt være 0-længde
-				  // selvom isNull() giver false.
-	if(normal_font.contains(',')) {                           //Th.
-	    _normalFont = new QFont( readFontEntry( "StdFont")); //Th.
-	}
+    if( !normal_font.isEmpty()) {
+	if(normal_font.contains(','))
+	    _normalFont = new QFont( readFontEntry( "StdFont"));
 	else {
 	    _normalFont = new QFont( normal_font);
             _normalFont->setRawMode( true);
@@ -126,10 +128,9 @@ KDMConfig::KDMConfig() :
 
     QString fail_font = readEntry( "FailFont" );
     if( !fail_font.isEmpty()) {
-	if(fail_font.contains(',')) {                             //Th.
-	    _failFont = new QFont( readFontEntry( "FailFont"));  //Th.
-        }
-        else {
+	if(fail_font.contains(','))
+	    _failFont = new QFont( readFontEntry( "FailFont"));
+	else {
 	    _failFont = new QFont( fail_font);
 	    _failFont->setRawMode( true);
 	}
@@ -140,10 +141,9 @@ KDMConfig::KDMConfig() :
 
     QString greet_font = readEntry( "GreetFont" );
     if( !greet_font.isEmpty()) {
-	if(greet_font.contains(',')) {                             //Th.
-	    _greetFont = new QFont( readFontEntry( "GreetFont")); //Th.
-        }
-        else {
+	if(greet_font.contains(','))
+	    _greetFont = new QFont( readFontEntry( "GreetFont"));
+	else {
 	    _greetFont = new QFont( greet_font);
 	    _greetFont->setRawMode( true);
 	}

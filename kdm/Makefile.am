@@ -1,6 +1,6 @@
 # $Id$
 
-SUBDIRS = $(KDM_CHOOSER_DIR) greeter config pics $(xdmconfigsubdir)
+SUBDIRS = greeter pics @xdmconfigsubdir@ @kdmchooserdir@
 
 # Extra lib. Might be -lpam -dl or -lshadow or nothing
 PASSLIB = $(PASSWDLIB) $(PAMLIBS)
@@ -13,7 +13,6 @@ EXTRA_PROGRAMS = greetest
 greetest_SOURCES = greetest.c
 
 DBGFLAGS = -g
-
 AM_CFLAGS = $(CONN_FLAGS) $(DBGFLAGS)
 
 # this is for static linking - inserted into KDM_GREET_LIBS by configure
@@ -22,13 +21,10 @@ KDM_KDE_LIBS  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) \
     $(LIBCRYPT) $(LIBUCB) $(LIBUTIL) $(LIBRESOLV)
 
 # Libraries:
-# We link against LIB_KDECORE because on some platforms we need snprintf
-# from that lib. Eventually we need to load this lib anyway so we can
-# just as well link against it directly.
 LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
 LDADD = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSLIB) \
     $(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
-    $(LIBCRYPT) $(LIBUCB) $(LIBDL) $(LIBUTIL) $(LIBRESOLV) $(LIB_KDECORE)
+    $(LIBCRYPT) $(LIBUCB) $(LIBDL) $(LIBUTIL) $(LIBRESOLV)
 kdm_LDADD = $(LDADD) $(KDM_GREET_LIBS)
 
 # Sources for kdm:
@@ -59,4 +55,4 @@ kdm_SOURCES = access.c \
 
 noinst_HEADERS = kdm-config.h dm.h dm_socket.h dm_error.h dm_auth.h greet.h
 
-EXTRA_DIST = misc xdmconfig
+EXTRA_DIST = chooser misc xdmconfig

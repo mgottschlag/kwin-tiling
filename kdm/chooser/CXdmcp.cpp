@@ -47,7 +47,7 @@
 
 #ifndef MINIX
 extern "C" {
-#include    <arpa/inet.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 }
 #else /* MINIX */
@@ -108,7 +108,7 @@ extern "C" {
 #endif /* hpux */
 
 #ifndef MINIX
-#include    <netdb.h>
+# include    <netdb.h>
 #endif
 
 #include "CXdmcp.h"
@@ -153,7 +153,7 @@ static int
 FromHex (const char *s, char *d, int len)
 {
   int	t;
-  int ret = len&1;		/* odd-length hex strings are illegal */
+  int ret = len & 1;		/* odd-length hex strings are illegal */
   while (len >= 2)
     {
 #define HexChar(c)  ('0' <= (c) && (c) <= '9' ? (c) - '0' : (c) - 'a' + 10)
@@ -505,7 +505,6 @@ CXdmcp::slotReceivePacket (int socketFD)
 	  {
 	    if (addHostname (&hostname, &status, &addr, header.opcode == (int) WILLING))
 	      saveHostname = 1;
-
 	  }
       }
     break;
@@ -675,9 +674,9 @@ CXdmcp::registerHostname (const char *name)
   else {
     /* address as hex string, e.g., "12180022" (depreciated) */
     if (strlen(name) == 8 &&
-			FromHex(name, (char *)&in_addr.sin_addr, strlen(name)) == 0)
+	FromHex(name, (char *)&in_addr.sin_addr, strlen(name)) == 0)
     {
-			in_addr.sin_family = AF_INET;
+	in_addr.sin_family = AF_INET;
     }
     /* Per RFC 1123, check first for IP address in dotted-decimal form */
     else if ((in_addr.sin_addr.s_addr = inet_addr(name)) != -1)

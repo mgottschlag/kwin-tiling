@@ -256,7 +256,7 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify)
 			bzero(greet->password, strlen(greet->password));
 		return 0;
 	} else {
-#ifdef linux
+#ifdef __linux__
 	    if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
 		Debug ("The account is locked, no login allowed.\n");
 		if (greet->password)

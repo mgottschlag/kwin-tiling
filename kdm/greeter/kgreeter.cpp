@@ -28,7 +28,7 @@
 #include "kdmclock.h" 
 
 #ifdef USESHADOW
-#include <shadow.h>
+# include <shadow.h>
 #endif
 
 #include <sys/types.h>
@@ -41,7 +41,7 @@
 #include <signal.h>
 
 #if defined( HAVE_INITGROUPS) && defined( HAVE_GETGROUPS) && defined( HAVE_SETGROUPS)
-#  include <grp.h>
+# include <grp.h>
 #endif
 
 #include <qfile.h>
@@ -68,10 +68,10 @@
 #include "greet.h"
 
 #ifdef _AIX
-#define __FULL_PROTO 1
-#undef HAVE_SETEUID
-#undef HAVE_INITGROUPS
-#include <sys/id.h>
+# define __FULL_PROTO 1
+# undef HAVE_SETEUID
+# undef HAVE_INITGROUPS
+# include <sys/id.h>
 #endif
 
 #if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
@@ -80,10 +80,10 @@
 #endif
 
 #ifdef GREET_LIB
+extern "C" {
 /*
  * Function pointers filled in by the initial call into the library
  */
-
 int	(*__xdm_PingServer)(struct display *d, Display *alternateDpy) = NULL;
 void	(*__xdm_SessionPingFailed)(struct display *d) = NULL;
 void	(*__xdm_Debug)(char *fmt, ...) = NULL;
@@ -111,29 +111,32 @@ struct spwd	*(*__xdm_getspnam)(GETSPNAM_ARGS) = NULL;
 void	(*__xdm_endspent)(void) = NULL;
 #endif
 struct passwd	*(*__xdm_getpwnam)(GETPWNAM_ARGS) = NULL;
-#ifdef linux
+#ifdef __linux__
 void	(*__xdm_endpwent)(void) = NULL;
 #endif
 char	*(*__xdm_crypt)(CRYPT_ARGS) = NULL;
 #ifdef USE_PAM
 pam_handle_t	**(*__xdm_thepamh)(void) = NULL;
 #endif
-
+}
 #endif
 
 #ifdef SECURE_RPC
-#include <rpc/rpc.h>
-#include <rpc/key_prot.h>
+# include <rpc/rpc.h>
+# include <rpc/key_prot.h>
 #endif
 
 #ifdef K5AUTH
-#include <krb5/krb5.h>
+# include <krb5/krb5.h>
 #endif
+
+#define ex_login 0
+#define ex_choose 1
 
 static const char *description = 
 	I18N_NOOP("KDE Display Manager");
 
-static const char *version = "v0.3";
+static const char *version = "v0.90";
 
 
 // Global vars
@@ -167,10 +170,10 @@ public:
 };
 
 bool 
-MyApp::x11EventFilter( XEvent * ev){
-    if( ev->type == KeyPress && kgreeter){
+MyApp::x11EventFilter( XEvent * ev) {
+    if( ev->type == KeyPress && kgreeter) {
 	// This should go away
-	KeySym ks = XLookupKeysym(&(ev->xkey),0);
+	KeySym ks = XLookupKeysym(&(ev->xkey), 0);
 	if (ks == XK_Return || ks == XK_KP_Enter)
 	    kgreeter->ReturnPressed();
     }
@@ -327,7 +330,8 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
     vbox->addLayout( hbox1);
     vbox->addLayout( hbox2);
-    hbox1->addWidget( pixLabel ? (QWidget*)pixLabel : (QWidget*)clock, 0, AlignTop);
+    hbox1->addWidget( pixLabel ? (QWidget*)pixLabel : (QWidget*)clock, 0, 
+		      AlignTop);
     hbox1->addLayout( grid, 3);
 
     QFrame* sepFrame = new QFrame( this);
@@ -340,7 +344,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
     grid->addWidget( loginLabel , 0, 0);
     grid->addWidget( loginEdit  , 0, 1);
     grid->addWidget( sessionargLabel , 1, 0);
-    grid->addWidget( sessionargBox  , 1, 1);
+    grid->addWidget( sessionargBox   , 1, 1);
     grid->addWidget( passwdLabel, 2, 0);
     grid->addWidget( passwdEdit , 2, 1);
     grid->addMultiCellWidget( failedLabel, 3, 3, 0, 1, AlignCenter);
@@ -352,17 +356,17 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
     hbox2->addWidget( goButton, AlignBottom);
 
-#if 0
-    chooserButton = new QPushButton( i18n("C&hooser"), this);
-    connect( chooserButton, SIGNAL(clicked()), SLOT(cancel_button_clicked()));
-    //set_fixed( chooserButton);
-    hbox2->addWidget( chooserButton, AlignBottom);
-#endif
-     
     cancelButton = new QPushButton( i18n("&Clear"), this);
     connect( cancelButton, SIGNAL(clicked()), SLOT(cancel_button_clicked()));
     //set_fixed( cancelButton);
     hbox2->addWidget( cancelButton, AlignBottom);
+
+    if (kdmcfg->_useChooser) {
+	chooserButton = new QPushButton( i18n("C&hooser"), this);
+	connect( chooserButton, SIGNAL(clicked()), SLOT(chooser_button_clicked()));
+	//set_fixed( chooserButton);
+	hbox2->addWidget( chooserButton, AlignBottom);
+    }
 
     quitButton = new QPushButton( ::d->displayType.location == Local ? i18n("R&estart X Server") : i18n("Clos&e Connection"), this);
     connect( quitButton, SIGNAL(clicked()), SLOT(quit_button_clicked()));
@@ -372,7 +376,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
     int sbw;
     if( kdmcfg->_shutdownButton != KDMConfig::SdNone 
 	&& ( kdmcfg->_shutdownButton != KDMConfig::SdConsoleOnly 
-	|| ::d->displayType.location == Local)
+	     || ::d->displayType.location == Local)
     ) {
 	  
 	shutdownButton = new QPushButton(i18n("&Shutdown..."), this);
@@ -454,17 +458,11 @@ KGreeter::quit_button_clicked()
     SessionExit(::d, RESERVER_DISPLAY, TRUE);	// true right?
 }
 
-#if 0
 void
 KGreeter::chooser_button_clicked()
 {
-    if(!fork())
-	RunChooser(QApplication::display());		
-    hide();
-    QApplication::flushX();
-    SessionExit(::d, UNMANAGE_DISPLAY, FALSE);
+    qApp->exit( ex_choose );
 }
-#endif
 
 static void
 do_shutdown(void *ptr)
@@ -819,8 +817,8 @@ KGreeter::go_button_clicked()
     //qApp->desktop()->setCursor( waitCursor);
     qApp->setOverrideCursor( waitCursor);
     hide();
+    qApp->exit( ex_login);
     DeleteXloginResources( ::d, *dpy);
-    qApp->exit();
 }
 
 void
@@ -841,7 +839,7 @@ KGreeter::ReturnPressed()
 }
 
 static void
-DoIt1(void * /* ptr */)
+creat_greet(void * /* ptr */)
 {
     kgreeter = new KGreeter;		   
     // More hack. QIconView won't calculate
@@ -856,21 +854,6 @@ DoIt1(void * /* ptr */)
 		QApplication::desktop()->height()/2 - kgreeter->height()/2 );  
     QApplication::restoreOverrideCursor();
     kgreeter->setActiveWindow();
-}
-
-static int
-DoIt()
-{
-    // First initialize display:
-    SetupDisplay( d);
-    // Hack! Kdm looses keyboard focus unless
-    // the keyboard is ungrabbed during setup
-    TempUngrab_Run(DoIt1, 0);
-    int status = qApp->exec();
-    // Give focus to root window:
-    QApplication::desktop()->setActiveWindow();
-    delete kgreeter;
-    return status;
 }
 
 static int
@@ -1020,7 +1003,7 @@ GreetUser(
     __xdm_endspent = dlfuncs->_endspent;
 #endif
     __xdm_getpwnam = dlfuncs->_getpwnam;
-#ifdef linux
+#ifdef __linux__
     __xdm_endpwent = dlfuncs->_endpwent;
 #endif
     __xdm_crypt = dlfuncs->_crypt;
@@ -1028,6 +1011,8 @@ GreetUser(
     __xdm_thepamh = dlfuncs->_thepamh;
 #endif
 #endif
+
+    int retval;
 
     d = d2;
     dpy = dpy2;
@@ -1045,13 +1030,13 @@ GreetUser(
     argv[2] = ::d->name;
     KCmdLineArgs::init(argc, (char **) argv, "kdm", description, version);
 
-    MyApp *myapp = new MyApp();
+    MyApp myapp;
     KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + QString::fromLatin1("kdm/pics/users/"));
     QApplication::setOverrideCursor( Qt::waitCursor );
 
-    kdmcfg = new KDMConfig( );
+    kdmcfg = new KDMConfig();
      
-    myapp->setFont( *kdmcfg->_normalFont);
+    myapp.setFont( *kdmcfg->_normalFont);
     // TODO: myapp.setStyle( kdmcfg->_style);
 
     *dpy = qt_xdisplay();
@@ -1064,24 +1049,33 @@ GreetUser(
     sigaction(SIGCHLD, &sig, NULL);
 
 
-    if (!AutoLogon (d, greet, verify)) {
+    if (AutoLogon (d, greet, verify))
+	retval = ex_login;
+    else {
 
 	SecureDisplay (d, *dpy);
 
-	int errcode = DoIt();
-     
+	// First initialize display:
+	SetupDisplay( d);
+	// Hack! Kdm looses keyboard focus unless
+	// the keyboard is ungrabbed during setup
+	TempUngrab_Run(creat_greet, 0);
+	retval = qApp->exec();
+	// Give focus to root window:
+	QApplication::desktop()->setActiveWindow();
+	delete kgreeter;
+
 	UnsecureDisplay (d, *dpy);
-     
-	if (errcode != 0) {
-	    // Don't login. Shutdown, restart or something instead	  
-	    SessionExit (::d, errcode, TRUE);
-	}
+
+	if (retval != ex_login)
+	    goto exgrt;
     }	/* AutoLogon */
 
     if (kdmcfg->_showPrevious)
 	kdmcfg->writeEntry (QString::fromLatin1("LastUser_") + 
 				QString::fromLatin1(d->name), 
 			    QString::fromLatin1(greet->name));
+
     /*
      * Run system-wide initialization file
      */
@@ -1105,11 +1099,6 @@ GreetUser(
 	} else
 	    write (::d->pipefd[1], "\n", 1);
     }
-
-     // Clean up and log user in:
-    qApp->restoreOverrideCursor();
-    delete kdmcfg;
-    delete myapp;
 
     /*
      * for user-based authorization schemes,
@@ -1152,7 +1141,12 @@ GreetUser(
 #endif
     }
 
-    return Greet_Success;
+exgrt:
+     // Clean up
+    qApp->restoreOverrideCursor();
+    delete kdmcfg;
+
+    return retval == ex_choose ? Greet_RunChooser : Greet_Success;
 }
 
 #include "kgreeter.moc"

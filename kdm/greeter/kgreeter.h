@@ -77,6 +77,7 @@ public:
 public slots:
     void go_button_clicked();
     void cancel_button_clicked();
+    void chooser_button_clicked();
     void quit_button_clicked();
     void shutdown_button_clicked();
     void timerDone();

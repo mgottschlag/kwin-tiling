@@ -456,6 +456,11 @@ ManageSession (struct display *d)
 */
 #endif
 
+#ifdef XDMCP
+    if (greet_stat == Greet_RunChooser)
+	RunChooser (d);
+#endif
+
     if (greet_stat == Greet_Success)
     {
 	clientPid = 0;

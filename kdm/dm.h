@@ -311,7 +311,7 @@ struct greet_info {
 };
 
 /* setgroups is not covered by POSIX, arg type varies */
-#if defined(SYSV) || defined(SVR4) || defined(__osf__) || defined(linux)
+#if defined(SYSV) || defined(SVR4) || defined(__osf__) || defined(__linux__)
 #define GID_T gid_t
 #else
 #define GID_T int

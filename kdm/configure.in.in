@@ -1,5 +1,8 @@
 dnl this is for kdm:
 
+AC_REQUIRE([AC_PATH_KDE])
+kdecfg=`eval echo -n $kde_confdir`
+
 AC_CHECK_FUNCS(getsecretkey getloadavg)
 
 dnl checks for X server
@@ -39,13 +42,13 @@ EOF
     if (xmkmf) > /dev/null 2> /dev/null && test -f Makefile; then
 	eval `${MAKE-make} acimake 2> /dev/null | grep -v make | tr ^ \"`
     else
-	AC_MSG_ERROR(imake failed)
+	AC_MSG_ERROR([xmkmf (imake) failed])
     fi
     cd ..
     rm -fr conftestdir
-    AC_MSG_RESULT(done)
+    AC_MSG_RESULT([done])
 else
-    AC_MSG_ERROR(cannot create temporary directory)
+    AC_MSG_ERROR([cannot create temporary directory])
 fi
 
 AC_MSG_CHECKING([which xdm connection flags to use])
@@ -64,15 +67,15 @@ AC_ARG_ENABLE(greet-lib,
 if test -n "$GREET_USER_STATIC"; then
     AC_MSG_RESULT([no])
     AC_DEFINE(GREET_USER_STATIC, 1, [Link the greeter statically])
-    KDM_GREETER_A=libKdmGreet.a
-    KDM_GREET_LIBS="greeter/$KDM_GREETER_A \$(KDM_KDE_LIBS)"
+    kdmgreetera=libKdmGreet.a
+    KDM_GREET_LIBS="greeter/$kdmgreetera \$(KDM_KDE_LIBS)"
 else
-    KDM_GREETER_LA=libKdmGreet.la
+    kdmgreeterla=libKdmGreet.la
     AC_MSG_RESULT([yes])
 fi
 AC_SUBST(KDM_GREET_LIBS)
-AC_SUBST(KDM_GREETER_A)
-AC_SUBST(KDM_GREETER_LA)
+AC_SUBST(kdmgreetera)
+AC_SUBST(kdmgreeterla)
 
 AC_MSG_CHECKING([whether to use xdm authorization])
 if test -n "$HASXDMAUTH"; then
@@ -103,44 +106,54 @@ AC_ARG_WITH(xdmdir,
 	[  --with-xdmdir[=PATH]    If the xdm config dir cannot be found automatically],
 	[ ac_xdmdir=$withval],
 	[ ac_xdmdir="no"])
-AC_MSG_CHECKING([for xdm configuration dir])
+AC_MSG_CHECKING([for xdm config])
 if test "$ac_xdmdir" = "no"; then
     if test -n "$XDMDIR"; then
 	ac_xdmdir=$XDMDIR
 	dnl Check if Imake was right
 	if test -f $ac_xdmdir/xdm-config; then
-	    AC_MSG_RESULT($ac_xdmdir)
+	    have_xdmdir=1
 	else
 	    dnl Here we must do something else
 	    dnl Maybe look for xdm-config in standard places, and
 	    dnl if that fails use a fresh copy in $KDEDIR/config/kdm/
 	    AC_FIND_FILE(xdm-config,/etc/X11/xdm /var/X11/xdm /usr/openwin/xdm /usr/X11R6/lib/X11/xdm,ac_xdmdir)
 	    if test -f $ac_xdmdir/xdm-config; then
-                AC_MSG_RESULT($ac_xdmdir)
-            else                                 
-		if test "${prefix}" = NONE; then
-			ac_xdmdir=$ac_default_prefix/config/kdm
+		have_xdmdir=1
+	    else
+		if test -f /etc/X11/kdm/kdm-config; then
+		    ac_xdmdir=/etc/X11/kdm
+		    have_xdmdir=1
 		else
-			ac_xdmdir=$prefix/config/kdm
+		    ac_xdmdir=$kdecfg/kdm
 		fi
-		AC_MSG_RESULT([xdm config dir not found, installing defaults in $ac_xdmdir])
-		xdmconfigsubdir=xdmconfig
-		AC_SUBST(xdmconfigsubdir)
 	    fi
 	fi
     fi
 else
-    if test -f $ac_xdmdir/xdm-config; then
-	AC_MSG_RESULT($ac_xdmdir)
-    else
-
-	AC_MSG_RESULT([xdm config dir not found, installing defaults in $ac_xdmdir])
-	xdmconfigsubdir=xdmconfig
-	AC_SUBST(xdmconfigsubdir)
+    if test -f $ac_xdmdir/xdm-config -o -f $ac_xdmdir/kdm-config; then
+	have_xdmdir=1
     fi
 fi
-AC_DEFINE_UNQUOTED(XDMDIR,"$ac_xdmdir", [Define where to find the XDM configurations])
-AC_SUBST(ac_xdmdir)
+if test -n "$have_xdmdir"; then
+    AC_MSG_RESULT([found in $ac_xdmdir])
+else
+    AC_MSG_RESULT([installing defaults in $ac_xdmdir])
+    xdmconfigsubdir=xdmconfig
+fi
+XDMDIR=$ac_xdmdir
+AC_SUBST(XDMDIR)
+AC_DEFINE_UNQUOTED(XDMDIR, "$ac_xdmdir", [Define where to find the XDM configurations])
+AC_SUBST(xdmconfigsubdir)
+
+AC_MSG_CHECKING([for kdmrc])
+if test -f $kdecfg/kdmrc; then
+    AC_MSG_RESULT([found])
+else
+    AC_MSG_RESULT([installing defaults in $kdecfg])
+    kdmrc=kdmrc
+fi
+AC_SUBST(kdmrc)
 
 AC_PATH_PAM
 if test "x$no_pam" = "xyes"; then 
@@ -150,6 +163,7 @@ else
         shadow_support="no" # if pam is installed, use it. We can't savely 
 	                    # test, if it works *sigh*
 fi
+
 
 if test "$pam_support" != "yes"; then
 	AC_ARG_WITH(shadow,
@@ -255,18 +269,6 @@ AC_SUBST(LIB_LIBS)
 
 AC_CHECK_HEADERS(sys/sockio.h sys/stropts.h sys/socket.h sys/stream.h libutil.h util.h)
 
-AC_CHECK_LIB(Xdmcp, main, [LIBXDMCP="-lXdmcp"], , $X_LDFLAGS -lX11 $LIBSOCKET)
-AC_SUBST(LIBXDMCP)
-if test -n "$LIBXDMCP"; then
-  ac_cpp_safe=$ac_cpp
-  ac_cpp='$CXXCPP $CPPFLAGS $X_INCLUDES'
-  AC_CHECK_HEADERS(X11/Xdmcp.h, [HAVE_X11_XDMCP_H=1])
-  ac_cpp=$ac_cpp_safe
-fi
-if test -z "$HAVE_X11_XDMCP_H"; then
-  AC_MSG_ERROR([Cannot build KDM! Make sure that libXdmcp.a and Xdmcp.h are installed!])
-fi
-
 AC_MSG_CHECKING([whether to build KDM with XDMCP support])
 AC_ARG_WITH(xdmcp,
 	[  --without-xdmcp         build kdm without xdmcp support [default=with xdmcp]],
@@ -276,15 +278,27 @@ AC_ARG_WITH(xdmcp,
 	    XDMCP=
 	  fi
 	], [XDMCP=1])
+
 if test -n "$XDMCP"; then
-  KDM_CHOOSER_DIR=chooser
+  kdmchooserdir=chooser
   AC_MSG_RESULT([yes])
+  AC_CHECK_LIB(Xdmcp, main, [LIBXDMCP="-lXdmcp"], , $X_LDFLAGS -lX11 $LIBSOCKET)
+  if test -n "$LIBXDMCP"; then
+    ac_cpp_safe=$ac_cpp
+    ac_cpp='$CXXCPP $CPPFLAGS $X_INCLUDES'
+    AC_CHECK_HEADERS(X11/Xdmcp.h, [HAVE_X11_XDMCP_H=1])
+    ac_cpp=$ac_cpp_safe
+  fi
+  if test -z "$HAVE_X11_XDMCP_H"; then
+    AC_MSG_ERROR([Cannot build KDM! Make sure that libXdmcp.a and Xdmcp.h 
+are installed or use --without-xdmcp to disable XDMCP support!])
+  fi
+  AC_DEFINE(XDMCP, 1, [ build KDM with XDMCP support ])
 else
   AC_MSG_RESULT([no])
-     AC_MSG_ERROR([KDM cannot be built without XDMCP support currently! :'-(])
 fi
-AC_DEFINE(XDMCP, 1, [ build KDM with XDMCP support ])
-AC_SUBST(KDM_CHOOSER_DIR)
+AC_SUBST(LIBXDMCP)
+AC_SUBST(kdmchooserdir)
 
 dnl AC_OUTPUT(kdm/config/kdmrc)
 

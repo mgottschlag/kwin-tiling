@@ -78,7 +78,7 @@ extern int errno;
 #ifdef SVR4
 # include <netdb.h>
 # ifndef SCO325
-# include <sys/sockio.h>
+#  include <sys/sockio.h>
 # endif
 # include <sys/stropts.h>
 #endif
@@ -87,32 +87,32 @@ extern int errno;
 # include <sync/sema.h>
 #endif
 #ifdef __GNU__
-#include <netdb.h>
-#undef SIOCGIFCONF
+# include <netdb.h>
+# undef SIOCGIFCONF
 #else /* __GNU__ */
-#ifndef MINIX
-#include <net/if.h>
-#else
-#include <net/netlib.h>
-#include <net/gen/netdb.h>
-#endif /* !MINIX */
+# ifndef MINIX
+#  include <net/if.h>
+# else
+#  include <net/netlib.h>
+#  include <net/gen/netdb.h>
+# endif /* !MINIX */
 #endif /* __GNU__ */
 
 #if ((defined(SVR4) && !defined(sun)) || defined(ISC)) && defined(SIOCGIFCONF)
-#define SYSV_SIOCGIFCONF
+# define SYSV_SIOCGIFCONF
 #endif
 
 #ifdef CSRG_BASED
-#include <sys/param.h>
-#if (BSD >= 199103)
-#define VARIABLE_IFREQ
-#endif
+# include <sys/param.h>
+# if (BSD >= 199103)
+#  define VARIABLE_IFREQ
+# endif
 #endif
 
 #ifdef __EMX__
-#define link rename
+# define link rename
 int chown(int a,int b,int c) {}
-#include <io.h>
+# include <io.h>
 #endif
 
 struct AuthProtocol {
@@ -295,9 +295,9 @@ MakeServerAuthFile (struct display *d)
 {
     int len;
 #ifdef SYSV
-#define NAMELEN	14
+# define NAMELEN	14
 #else
-#define NAMELEN	255
+# define NAMELEN	255
 #endif
     char    cleanname[NAMELEN];
     int r;
@@ -727,6 +727,9 @@ DefineLocal (FILE *file, Xauth *auth)
 #endif
 }
 
+/* Argh! this is evil. But ConvertAddr works only with Xdmcp.h */
+#ifdef XDMCP
+
 #ifdef SYSV_SIOCGIFCONF
 
 /* Deal with different SIOCGIFCONF ioctl semantics on SYSV, SVR4 */
@@ -777,7 +780,7 @@ ifioctl (int fd, int cmd, char *arg)
     return(ret);
 }
 #else /* SYSV_SIOCGIFCONF */
-#define ifioctl ioctl
+# define ifioctl ioctl
 #endif /* SYSV_SIOCGIFCONF */
 
 #if defined(STREAMSCONN) && !defined(SYSV_SIOCGIFCONF) && !defined(NCR)
@@ -882,11 +885,11 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 
 /* Handle variable length ifreq in BNR2 and later */
 #ifdef VARIABLE_IFREQ
-#define ifr_size(p) (sizeof (struct ifreq) + \
-		     (p->ifr_addr.sa_len > sizeof (p->ifr_addr) ? \
-		      p->ifr_addr.sa_len - sizeof (p->ifr_addr) : 0))
+# define ifr_size(p) (sizeof (struct ifreq) + \
+		      (p->ifr_addr.sa_len > sizeof (p->ifr_addr) ? \
+		       p->ifr_addr.sa_len - sizeof (p->ifr_addr) : 0))
 #else
-#define ifr_size(p) (sizeof (struct ifreq))
+# define ifr_size(p) (sizeof (struct ifreq))
 #endif
 
 /* Define this host for access control.  Find all the hosts the OS knows about 
@@ -908,9 +911,9 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
         LogError ("Trouble getting network interface configuration");
 
 #ifdef ISC
-#define IFC_IFC_REQ (struct ifreq *) ifc.ifc_buf
+# define IFC_IFC_REQ (struct ifreq *) ifc.ifc_buf
 #else
-#define IFC_IFC_REQ ifc.ifc_req
+# define IFC_IFC_REQ ifc.ifc_req
 #endif
 
     cplim = (char *) IFC_IFC_REQ + ifc.ifc_len;
@@ -1004,6 +1007,7 @@ DefineSelf (int fd, int file, int auth)
 #endif /* WINTCP else */
 #endif /* STREAMSCONN && !SYSV_SIOCGIFCONF else */
 
+#endif /* XDMCP */
 
 static void
 setAuthNumber (Xauth *auth, char *name)
@@ -1043,6 +1047,7 @@ writeLocalAuth (FILE *file, Xauth *auth, char *name)
 
     Debug ("writeLocalAuth: %s %.*s\n", name, auth->name_length, auth->name);
     setAuthNumber (auth, name);
+#ifdef XDMCP
 #ifdef STREAMSCONN
     fd = t_open ("/dev/tcp", O_RDWR, 0);
     t_bind(fd, NULL, NULL);
@@ -1067,6 +1072,7 @@ writeLocalAuth (FILE *file, Xauth *auth, char *name)
     DefineSelf (fd, file, auth);
     close (fd);
 #endif
+#endif /* XDMCP */
     DefineLocal (file, auth);
 }
 

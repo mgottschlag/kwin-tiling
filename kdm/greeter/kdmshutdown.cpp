@@ -85,106 +85,105 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 			  bool _lilo,
 			  const QString &_lilocmd, const QString &_lilomap)
 
-     : FDialog( _parent, _name, true)
+    : FDialog( _parent, _name, true)
 {
-     shutdown = _shutdown;
-     restart  = _restart;
+    shutdown = _shutdown;
+    restart  = _restart;
 #ifndef BSD
-     console = _console;
+    console = _console;
 #endif
-     int h = 10, w = 0;
-     lilo = _lilo;
-     liloCmd = _lilocmd;
-     liloMap = _lilomap;
-     QFrame* winFrame = new QFrame( this);
-     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised);
-     QBoxLayout* box = new QBoxLayout( winFrame, QBoxLayout::TopToBottom, 
-				       10, 10);
-     QString shutdownmsg =  i18n( "Shutdown or reboot?");
-     if( mode == KDMConfig::SdRootOnly) {
-	  shutdownmsg += '\n';
-	  shutdownmsg += i18n( "(Enter Root Password)");
-     }
+    int h = 10, w = 0;
+    lilo = _lilo;
+    liloCmd = _lilocmd;
+    liloMap = _lilomap;
+    QFrame* winFrame = new QFrame( this);
+    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised);
+    QBoxLayout* box = new QBoxLayout( winFrame, QBoxLayout::TopToBottom, 
+				      10, 10);
+    QString shutdownmsg =  i18n( "Shutdown or reboot?");
+    if( mode == KDMConfig::SdRootOnly) {
+	shutdownmsg += '\n';
+	shutdownmsg += i18n( "(Enter Root Password)");
+    }
      
-     label = new QLabel( shutdownmsg, winFrame);
-     set_fixed( label);
-     h += label->height() + 10;
-     w = label->width();
+    label = new QLabel( shutdownmsg, winFrame);
+    set_fixed( label);
+    h += label->height() + 10;
+    w = label->width();
 
-     box->addWidget( label, 0, AlignCenter);
+    box->addWidget( label, 0, AlignCenter);
 
-     QFrame* sepFrame = new QFrame( winFrame);
-     sepFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken);
-     h += sepFrame->height(); 
-     box->addWidget( sepFrame);
+    QFrame* sepFrame = new QFrame( winFrame);
+    sepFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken);
+    h += sepFrame->height(); 
+    box->addWidget( sepFrame);
 
-     btGroup = new QButtonGroup( /* this */);
+    btGroup = new QButtonGroup( /* this */);
      
-     QRadioButton *rb;
-     rb = new QRadioButton( winFrame /*btGroup*/);
-     rb->setText( i18n("&Shutdown"));
-     set_min( rb);
-     rb->setFocusPolicy( StrongFocus);
-     // Default action
-     rb->setChecked( true);
-     rb->setFocus();
-     cur_action = shutdown;
-     
-     h += rb->height() + 10;
-     w = QMAX( rb->width(), w);
+    QRadioButton *rb;
+    rb = new QRadioButton( winFrame /*btGroup*/);
+    rb->setText( i18n("&Shutdown"));
+    set_min( rb);
+    rb->setFocusPolicy( StrongFocus);
+    // Default action
+    rb->setChecked( true);
+    rb->setFocus();
+    cur_action = shutdown;
 
-     box->addWidget( rb);
-     btGroup->insert( rb);
+    h += rb->height() + 10;
+    w = QMAX( rb->width(), w);
 
-     QHBoxLayout *hbox = new QHBoxLayout(box);
+    box->addWidget( rb);
+    btGroup->insert( rb);
 
-     restart_rb = new QRadioButton( winFrame /*btGroup*/);
-     restart_rb->setText( i18n("&Reboot"));
-     set_min( restart_rb);
-     restart_rb->setFocusPolicy( StrongFocus);
-     h += restart_rb->height() + 10;
-     w = QMAX( restart_rb->width(), w);
+    QHBoxLayout *hbox = new QHBoxLayout(box);
 
-     hbox->addWidget(restart_rb);
+    restart_rb = new QRadioButton( winFrame /*btGroup*/);
+    restart_rb->setText( i18n("&Reboot"));
+    set_min( restart_rb);
+    restart_rb->setFocusPolicy( StrongFocus);
+    h += restart_rb->height() + 10;
+    w = QMAX( restart_rb->width(), w);
 
-     if ( _lilo ) 
-     {
-       QComboBox *targets = new QComboBox(winFrame);
-       hbox->addWidget(targets);
+    hbox->addWidget(restart_rb);
 
-       // fill combo box with contents of lilo config
-       LiloInfo info(_lilocmd, _lilomap);
+    if ( _lilo ) {
+	QComboBox *targets = new QComboBox(winFrame);
+	hbox->addWidget(targets);
 
-       QStringList list;
-       if (info.getBootOptions(&list) == 0)
-       {
-	 targets->insertStringList(list);
-         liloTarget = info.getDefaultBootOptionIndex();
-	 targets->setCurrentItem(liloTarget);
-	 connect(targets,SIGNAL(activated(int)),this,SLOT(target_changed(int)));
-       }
-     }
+	// fill combo box with contents of lilo config
+	LiloInfo info(_lilocmd, _lilomap);
 
-     btGroup->insert( restart_rb);
+	QStringList list;
+	if (info.getBootOptions(&list) == 0) {
+	    targets->insertStringList(list);
+            liloTarget = info.getDefaultBootOptionIndex();
+	    targets->setCurrentItem(liloTarget);
+	    connect(targets,SIGNAL(activated(int)),this,SLOT(target_changed(int)));
+	}
+    }
 
-     rb = new QRadioButton(winFrame);
-     rb->setText(i18n("Console &Mode"));
-     set_min(rb);
-     rb->setFocusPolicy(StrongFocus);
-     h += rb->height() + 10;
-     w = QMAX(rb->width(),w);
-     box->addWidget(rb);
-     btGroup->insert(rb);
+    btGroup->insert( restart_rb);
 
-     // Passwd line edit
-     if( mode == KDMConfig::SdRootOnly) {
-//	  pswdEdit = new KPasswordEdit( this, "edit", kdmcfg->_echoMode);
-#if 1
+    if (!kdmcfg->_consoleMode.isEmpty()) {
+	rb = new QRadioButton(winFrame);
+	rb->setText(i18n("Console &Mode"));
+	set_min(rb);
+	rb->setFocusPolicy(StrongFocus);
+	h += rb->height() + 10;
+	w = QMAX(rb->width(),w);
+	box->addWidget(rb);
+	btGroup->insert(rb);
+    }
+
+    // Passwd line edit
+    if( mode == KDMConfig::SdRootOnly) {
+	pswdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode);
+	/*
 	  pswdEdit = new QLineEdit( winFrame);
 	  //set_min( pswdEdit);
 	  pswdEdit->setMinimumHeight( pswdEdit->sizeHint().height());
 	  pswdEdit->setEchoMode( QLineEdit::NoEcho);
-	  /*
 	  QColorGroup passwdColGroup(
 	       QApplication::palette()->normal().foreground(),
 	       QApplication::palette()->normal().background(),
@@ -196,71 +195,72 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 	  QPalette passwdPalette( passwdColGroup, passwdColGroup, 
 				  passwdColGroup);
 	  pswdEdit->setPalette( passwdPalette);
-	  */
-#endif
-	  pswdEdit->setFocusPolicy( StrongFocus);
-	  pswdEdit->setFocus();
-	  h+= pswdEdit->height() + 10;
-	  box->addWidget( pswdEdit);
-     } else
-        pswdEdit = 0;
+	*/
+	pswdEdit->setFocusPolicy( StrongFocus);
+	pswdEdit->setFocus();
+	h+= pswdEdit->height() + 10;
+	box->addWidget( pswdEdit);
+    } else
+	pswdEdit = 0;
 
-     QBoxLayout* box3 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
-     box->addLayout( box3);
+    QBoxLayout* box3 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
+    box->addLayout( box3);
 
-     okButton = new QPushButton( i18n("&OK"), winFrame);
-     set_min( okButton);
-     okButton->setDefault( true);
-     okButton->setFocusPolicy( StrongFocus);
-     cancelButton = new QPushButton( i18n("&Cancel"), winFrame);
-     set_min( cancelButton);
-     cancelButton->setFocusPolicy( StrongFocus);
-     h += cancelButton->height() + 10;
-     w = QMAX( (okButton->width() + 10 + cancelButton->width()), w);
+    okButton = new QPushButton( i18n("&OK"), winFrame);
+    set_min( okButton);
+    okButton->setDefault( true);
+    okButton->setFocusPolicy( StrongFocus);
+    cancelButton = new QPushButton( i18n("&Cancel"), winFrame);
+    set_min( cancelButton);
+    cancelButton->setFocusPolicy( StrongFocus);
+    h += cancelButton->height() + 10;
+    w = QMAX( (okButton->width() + 10 + cancelButton->width()), w);
 
-     box3->addWidget( okButton);
-     box3->addWidget( cancelButton);
-     // Connections
-     connect( okButton, SIGNAL(clicked()), SLOT(bye_bye()));
-     connect( cancelButton, SIGNAL(clicked()), SLOT(reject()));
-     connect( btGroup, SIGNAL(clicked(int)), SLOT(rb_clicked(int)));
+    box3->addWidget( okButton);
+    box3->addWidget( cancelButton);
+    // Connections
+    connect( okButton, SIGNAL(clicked()), SLOT(bye_bye()));
+    connect( cancelButton, SIGNAL(clicked()), SLOT(reject()));
+    connect( btGroup, SIGNAL(clicked(int)), SLOT(rb_clicked(int)));
 
-     resize( 20 + w, h);
-     winFrame->setGeometry( 0, 0, width(), height());
+    resize( 20 + w, h);
+    winFrame->setGeometry( 0, 0, width(), height());
 }
 
 void
 KDMShutdown::rb_clicked( int id)
 {
-     switch( id) {
-     case 0:
-	  cur_action = shutdown;
-	  break;
-     case 1:
-	  cur_action = restart;
-	  break;
+    switch( id) {
+    case 0:
+	cur_action = shutdown;
+	break;
+    case 1:
+	cur_action = restart;
+	break;
 #ifndef BSD
-     case 2:
-	  cur_action = console;
-	  break;
+    case 2:
+	cur_action = console;
+	break;
 #endif
-     }
+    }
 }
 
 void
 KDMShutdown::target_changed(int id)
 {
-     cur_action = restart;
-     restart_rb->setChecked(TRUE);
-     liloTarget = id;
+    cur_action = restart;
+    restart_rb->setChecked(TRUE);
+    liloTarget = id;
 }
 
 void
 KDMShutdown::bye_bye()
 {
      // usernames and passwords are stored in the same format as files
-    if( !pswdEdit || VerifyRoot( QFile::encodeName( pswdEdit->text() ).data() ) ) {
-        QApplication::flushX();
+    if( !pswdEdit || 
+	VerifyRoot( QFile::encodeName( pswdEdit->text() ).data() ) 
+    ) {
+	QApplication::flushX();
 	if( fork() == 0) {
 
 	    // if lilo, set the reboot option
@@ -292,11 +292,11 @@ KDMShutdown::bye_bye()
 
 int main(int argc, char **argv)
 {
-     QApplication app( argc, argv);
-     app.setFont( QFont( "helvetica", 18));
-     KDMShutdown sd( 0, 0, "Hej", "echo shutdown", "echo restart", "echo lilo", "");
-     app.setMainWidget( &sd);
-     return sd.exec();
+    QApplication app( argc, argv);
+    app.setFont( QFont( "helvetica", 18));
+    KDMShutdown sd( 0, 0, "Hej", "echo shutdown", "echo restart", "echo lilo", "");
+    app.setMainWidget( &sd);
+    return sd.exec();
 }
 
 #endif /* TEST_KDM */

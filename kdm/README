@@ -1,13 +1,13 @@
 $Id$
 
-This is the KDE Display Manager (kdm) for KDE-2.1, the KDE replacement for
-the X Display Manager (xdm).
+This is the KDE Display Manager (kdm) v0.90 for KDE-2.1, 
+the KDE replacement for the X Display Manager (xdm).
 
 kdm is intended as a "drop-in" replacement of xdm. It reads the xdm
 specific files (usually in /usr/X11R6/lib/X11/xdm), so it should not be
 necessary to change them. You can change the configuration from
-KDE Control Center. You will find the Login Manager module in "System"
--> "Login Manager".
+KDE Control Center. You will find the Login Manager module in 
+"System" -> "Login Manager".
 
 In fact it's just a new greeter for the xdm, which was programmed in a way
 that a replacement of the greeter module is possible.
@@ -33,7 +33,7 @@ Version 0.1 of kdm is copyright
 	Matthias Ettrich <ettrich@informatik.uni-tuebingen.de>
 All later versions copyright:
 	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
-Since the version for KDE 2.1 copyright:
+Since version 0.90 (KDE 2.1) copyright:
 	(C) 2000 Oswald Buddenhagen <ossi@kde.org>
 
 Thanks to (in no particular order):
@@ -43,13 +43,10 @@ Stephan Kulow for helping me with the autoconf stuff.
 Martin Baehr for intensive testing and writing the sample Xsession scripts.
 Harald Hoyer <Harald.Hoyer@redhat.de> for the chooser
 
-kdm is free software. I'm not sure exactly how it's license is, because it
-has a lot of code from xdm in it. Anyway, i have to state:
-
-Anyone is allowed to change kdm and redistribute the result as long as my
-name is mentioned.  kdm is provided as is with no warranty of any kind,
-including the warranty of design, merchantability and fitness for a
-particular purpose.
+The files in this directory (but NOT the subdirectories) are licensed
+under the X licence (see www.xfree86.org for more info). The files
+in the chooser, greeter and pics directories are licensed under the GNU GPL.
+The files in the config directories are more or less public domain, i think.
 
 Have fun with it (and feel free to comment),
 

@@ -32,9 +32,8 @@ FDialog::exec()
 {
     setResult(0);
 
+    show();
     if (isModal()) {
-
-	show();
 #if 0	/* Enable this for qt 3.0 */
 	qApp->processEvents();
 
@@ -49,9 +48,7 @@ FDialog::exec()
 	// Give focus back to parent:
 	if( parentWidget() != 0)
 	    parentWidget()->setActiveWindow();
-
-    } else
-	show();
+    }
 
     return result();
 }

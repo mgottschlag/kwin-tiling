@@ -137,13 +137,11 @@ static void Willing_msg (char *mbuf)
 	sprintf (mbuf, fail_msg);
 	return;
     }
-
-    sscanf (buf, "%f %f %f", &load[0], &load[1], &load[2]);
-    snprintf (mbuf, 256, "Available (load: %0.2f, %0.2f, %0.2f)",
-	      load[0], load[1], load[2]);
     close (fd);
 
-    mbuf[255] = 0;
+    sscanf (buf, "%f %f %f", &load[0], &load[1], &load[2]);
+    sprintf (mbuf, "Available (load: %0.2f, %0.2f, %0.2f)",
+	     load[0], load[1], load[2]);
 
     numcpu = 0;
 

@@ -44,19 +44,19 @@ extern "C" {
  * Do this rather than break a build over a const-mismatch
  */
 #if defined(__linux__) || defined(CSRG_BASED) || defined(__FreeBSD__) || defined(sun)
-#define CRYPT_ARGS    const char *s1, const char *s2
-#define GETSPNAM_ARGS const char *name
-#define GETPWNAM_ARGS const char *name
+# define CRYPT_ARGS    const char *s1, const char *s2
+# define GETSPNAM_ARGS const char *name
+# define GETPWNAM_ARGS const char *name
 #else
-#define CRYPT_ARGS    /*unknown*/
-#define GETSPNAM_ARGS /*unknown*/
-#define GETPWNAM_ARGS /*unknown*/
+# define CRYPT_ARGS    /*unknown*/
+# define GETSPNAM_ARGS /*unknown*/
+# define GETPWNAM_ARGS /*unknown*/
 #endif
 
 #if defined(__FreeBSD__) || defined(__bsdi__) || defined(__osf__)
-#define SETGRENT_TYPE int
+# define SETGRENT_TYPE int
 #else
-#define SETGRENT_TYPE void
+# define SETGRENT_TYPE void
 #endif
 
 struct dlfuncs {
@@ -87,7 +87,7 @@ struct dlfuncs {
     void (*_endspent)(void);
 #endif
     struct passwd *(*_getpwnam)(GETPWNAM_ARGS);
-#ifdef linux
+#ifdef __linux__
     void (*_endpwent)(void);
 #endif
     char *(*_crypt)(CRYPT_ARGS);
@@ -105,7 +105,8 @@ struct dlfuncs {
 typedef enum {
     Greet_Session_Over = 0,	/* session managed and over */
     Greet_Success = 1,		/* greet succeeded, session not managed */
-    Greet_Failure = -1		/* greet failed */
+    Greet_Failure = -1,		/* greet failed */
+    Greet_RunChooser = -2	/* greet exited, run chooser instead */
 } greet_user_rtn;
 
 /*
@@ -183,12 +184,12 @@ extern	struct spwd   *(*__xdm_getspnam)(GETSPNAM_ARGS);
 extern	void    (*__xdm_endspent)(void);
 #endif
 extern	struct passwd   *(*__xdm_getpwnam)(GETPWNAM_ARGS);
-#ifdef linux
-extern  void    (*__xdm_endpwent)(void);
+#ifdef __linux__
+extern	void    (*__xdm_endpwent)(void);
 #endif
 extern	char    *(*__xdm_crypt)(CRYPT_ARGS);
 #ifdef USE_PAM
-extern  pam_handle_t    **(*__xdm_thepamh)(void);
+extern	pam_handle_t    **(*__xdm_thepamh)(void);
 #endif
 
 /*
@@ -222,7 +223,7 @@ extern  pam_handle_t    **(*__xdm_thepamh)(void);
 #define	getspnam	(*__xdm_getspnam)
 #define	endspent	(*__xdm_endspent)
 #endif
-#ifdef linux
+#ifdef __linux__
 #define endpwent	(*__xdm_endpwent)
 #endif
 #define	getpwnam	(*__xdm_getpwnam)

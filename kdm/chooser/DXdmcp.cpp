@@ -34,7 +34,7 @@ HostView::HostView( CXdmcp *cxdmcp, QWidget *parent, const char *name, WFlags)
 	statcol = addColumn(i18n("Status"));	
 
 	connect( comXdmcp, SIGNAL( addHost(CXdmcp::HostName *)), this, SLOT( slotAddHost(CXdmcp::HostName *)));
-	connect( comXdmcp, SIGNAL( changeHost(const QString &, CXdmcp::HostName *)),	this, SLOT(slotChangeHost(const QString &, CXdmcp::HostName *)));
+	connect( comXdmcp, SIGNAL( changeHost(const QString &, CXdmcp::HostName *)), this, SLOT(slotChangeHost(const QString &, CXdmcp::HostName *)));
 	connect( comXdmcp, SIGNAL( deleteHost(const QString &)), this, SLOT( slotDeleteHost(const QString &)));
 	connect( comXdmcp, SIGNAL( deleteAllHosts()), this, SLOT( slotDeleteAllHosts()));
 	connect( this, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(accept()));

@@ -71,7 +71,7 @@
 # include	<pwd.h>
 #endif
 
-#if defined(SVR4) || defined(linux)
+#if defined(SVR4) || defined(__linux__)
 #define SYSV
 #endif
 
@@ -280,7 +280,7 @@ main (int argc, char **argv)
 	if (!Lflag)
 		llog_file = LLOG_FILE;
 #endif
-#if !defined(SYSV) && !defined(linux) && !defined(__QNX__)
+#if !defined(SYSV) && !defined(__linux__) && !defined(__QNX__)
 	if (!tflag)
 		ttys_file = TTYS_FILE;
 	if (!sflag && !utmp_none) {
@@ -395,7 +395,7 @@ set_utmp (struct utmp *u, char *line, char *user, char *host, Time_t date, int a
 		u->ut_type = DEAD_PROCESS;
 	}
 #endif
-#if (!defined(SYSV) && !defined(__QNX__)) || defined(linux)
+#if (!defined(SYSV) && !defined(__QNX__)) || defined(__linux__)
 	if (addp && host)
 		(void) strncpy (u->ut_host, host, sizeof (u->ut_host));
 	else

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          CXdmcp_c.cpp  -  description
+                          CXdmcp_c.h  -  description
                              -------------------
     begin                : Fri Dec 8 2000
     copyright            : (C) 2000 by Oswald Buddenhagen

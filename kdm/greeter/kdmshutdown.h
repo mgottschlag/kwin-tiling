@@ -30,7 +30,7 @@
 #include "kdm-config.h"
 
 #ifndef QT_CLEAN_NAMESPACE
-#define QT_CLEAN_NAMESPACE
+# define QT_CLEAN_NAMESPACE
 #endif
 #include <qglobal.h>
 
@@ -42,40 +42,43 @@
 #include <qradiobutton.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
+#include <kpassdlg.h>
 #include "kfdialog.h"
 
 class KDMShutdown : public FDialog {
-     Q_OBJECT
+    Q_OBJECT
+
 public:
-     KDMShutdown( int mode, QWidget* _parent=0, const char* _name=0,
-		  const QString &_shutdown = QString::fromLatin1(SHUTDOWN_CMD),
-		  const QString &_restart  = QString::fromLatin1(REBOOT_CMD),
+    KDMShutdown( int mode, QWidget* _parent=0, const char* _name=0,
+		 const QString &_shutdown = QString::fromLatin1(SHUTDOWN_CMD),
+		 const QString &_restart  = QString::fromLatin1(REBOOT_CMD),
 #ifndef BSD
-		  const QString &_console = QString::fromLatin1("/sbin/init 3"),
+		 const QString &_console = QString::fromLatin1("/sbin/init 3"),
 #endif
-		  bool _lilo = FALSE,
-		  const QString &_lilocmd = QString::null,
-                  const QString &_lilomap = QString::null);
+		 bool _lilo = FALSE,
+		 const QString &_lilocmd = QString::null,
+                 const QString &_lilomap = QString::null);
+
 private slots:
-     void rb_clicked(int);
-     void bye_bye();
-     void target_changed(int);
+    void rb_clicked(int);
+    void bye_bye();
+    void target_changed(int);
+
 private:
-     QLabel*       label;
-     QButtonGroup* btGroup;
-     QPushButton*  okButton;
-     QPushButton*  cancelButton;
-     QLineEdit*    pswdEdit;
-     QString       cur_action;
-     QString       shutdown;
-     QString       restart;
+    QLabel		*label;
+    QButtonGroup	*btGroup;
+    QPushButton		*okButton;
+    QPushButton		*cancelButton;
+    KPasswordEdit	*pswdEdit;
+    QString		cur_action;
+    QString		shutdown, restart;
 #ifndef BSD
-     QString       console;
+    QString		console;
 #endif
-     QRadioButton  *restart_rb;
-     bool          lilo;
-     int           liloTarget;
-     QString       liloCmd, liloMap;
+    QRadioButton	*restart_rb;
+    bool		lilo;
+    int			liloTarget;
+    QString		liloCmd, liloMap;
 };
 
 #endif /* KDMSHUTDOWN_H */
