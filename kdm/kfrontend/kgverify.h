@@ -3,7 +3,7 @@
     Shell for kdm conversation plugins
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2004 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -67,6 +67,7 @@ public:
     virtual void verifyFailed() = 0;
     virtual void verifyRetry() = 0;
     virtual void verifySetUser( const QString &user ) = 0;
+    virtual void updateStatus( bool fail, bool caps ); // for themed only
 };
 
 class QWidget;
@@ -88,18 +89,17 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
     typedef QObject inherited;
 
 public:
-    KGVerify( KGVerifyHandler *handler, QWidget *parent,
-	      QWidget *predecessor, const QString &fixedEntity,
-	      const PluginList &pluginList,
+    KGVerify( KGVerifyHandler *handler, KdmThemer *themer,
+	      QWidget *parent, QWidget *predecessor,
+	      const QString &fixedEntity, const PluginList &pluginList,
 	      KGreeterPlugin::Function func, KGreeterPlugin::Context ctx );
     virtual ~KGVerify();
-    QLayout *getLayout() const { return grid; }
     QPopupMenu *getPlugMenu();
     void loadUsers( const QStringList &users );
     void presetEntity( const QString &entity, int field );
     QString getEntity() const;
     void setUser( const QString &user );
-    void selectPlugin( int id );
+    /* virtual */ void selectPlugin( int id );
     bool entitiesLocal() const;
     bool entitiesFielded() const;
     QString pluginName() const;
@@ -121,25 +121,21 @@ public slots:
 
 protected:
     bool eventFilter( QObject *, QEvent * );
-
-private:
     void MsgBox( QMessageBox::Icon typ, const QString &msg );
     void setTimer();
     void updateLockStatus();
-    void updateStatus();
+    virtual void updateStatus() = 0;
     void handleVerify();
 
     QXTimer		timer;
     QString		fixedEntity, curUser;
     PluginList		pluginList;
     KGVerifyHandler	*handler;
+    KdmThemer		*themer;
     QWidget		*parent, *predecessor;
-    QGridLayout		*grid;
     KGreeterPlugin	*greet;
-    QLabel		*failedLabel;
     QPopupMenu		*plugMenu;
     int			curPlugin;
-    int			failedLabelState;
     KGreeterPlugin::Function func;
     KGreeterPlugin::Context ctx;
     bool		capsLocked;
@@ -153,7 +149,7 @@ private:
     static QValueVector<GreeterPluginHandle> greetPlugins;
 
 private slots:
-    void slotPluginSelected( int id );
+    // virtual void slotPluginSelected( int id ) = 0;
     void slotTimeout();
 
 public: // from KGreetPluginHandler
@@ -165,6 +161,52 @@ public: // from KGreetPluginHandler
     virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text );
 
     static QVariant getConf( void *ctx, const char *key, const QVariant &dflt );
+};
+
+class KGStdVerify : public KGVerify {
+    Q_OBJECT
+    typedef KGVerify inherited;
+
+public:
+    KGStdVerify( KGVerifyHandler *handler, QWidget *parent,
+	         QWidget *predecessor, const QString &fixedEntity,
+	         const PluginList &pluginList,
+	         KGreeterPlugin::Function func, KGreeterPlugin::Context ctx );
+    virtual ~KGStdVerify();
+    QLayout *getLayout() const { return grid; }
+    void selectPlugin( int id );
+
+protected:
+    void updateStatus();
+
+private:
+    QGridLayout		*grid;
+    QLabel		*failedLabel;
+    int			failedLabelState;
+
+private slots:
+    void slotPluginSelected( int id );
+};
+
+class KGThemedVerify : public KGVerify {
+    Q_OBJECT
+    typedef KGVerify inherited;
+
+public:
+    KGThemedVerify( KGVerifyHandler *handler, KdmThemer *themer,
+		    QWidget *parent, QWidget *predecessor,
+		    const QString &fixedEntity,
+	            const PluginList &pluginList,
+	            KGreeterPlugin::Function func,
+		    KGreeterPlugin::Context ctx );
+    virtual ~KGThemedVerify();
+    void selectPlugin( int id );
+
+protected:
+    void updateStatus();
+
+private slots:
+    void slotPluginSelected( int id );
 };
 
 class KGChTok : public FDialog, public KGVerifyHandler {
@@ -182,7 +224,7 @@ public slots:
 
 private:
     KPushButton		*okButton, *cancelButton;
-    KGVerify		*verify;
+    KGStdVerify		*verify;
 
 public: // from KGVerifyHandler
     virtual void verifyPluginChanged( int id );

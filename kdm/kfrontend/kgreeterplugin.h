@@ -27,6 +27,8 @@
 #include <qvariant.h>
 #include <qmessagebox.h>
 
+class KdmThemer;
+
 class QWidget;
 class QLayoutItem;
 
@@ -372,6 +374,7 @@ struct kgreeterplugin_info {
      * initialized with.
      */
     KGreeterPlugin *(*create)( KGreeterPluginHandler *handler,
+			       KdmThemer *themer,
 			       QWidget *parent, QWidget *predecessor,
 			       const QString &fixedEntity,
 			       KGreeterPlugin::Function func,

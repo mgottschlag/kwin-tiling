@@ -3,7 +3,7 @@
     Base class for various kdm greeter dialogs
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2004 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -37,15 +37,10 @@
 
 #include <stdlib.h>
 
-KGDialog::KGDialog() : inherited( (QWidget *)0, (const char*)0, true )
+KGDialog::KGDialog( bool themed ) : inherited( 0, !themed )
 {
 #ifdef WITH_KDM_XCONSOLE
-    layout = new QGridLayout (this, 1, 1, 10, 10 );
-    if (_showLog) {
-	consoleView = new KConsole( this );
-	layout->addWidget( consoleView, 1, 0 );
-    } else
-	consoleView = 0;
+    consoleView = _showLog ? new KConsole( this ) : 0;
 #endif
 
     optMenu = 0;

@@ -69,7 +69,7 @@ private slots:
 private:
     KPushButton		*okButton, *cancelButton;
     QLabel		*rootlab;
-    KGVerify		*verify;
+    KGStdVerify		*verify;
     int 		needRoot, uid;
 
     static int		curPlugin;

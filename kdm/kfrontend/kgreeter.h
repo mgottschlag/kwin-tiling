@@ -3,7 +3,7 @@
     Greeter widget for kdm
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2004 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,8 @@
 
 class KdmClock;
 class UserListView;
+class KdmThemer;
+class KdmItem;
 
 class KListView;
 class KSimpleConfig;
@@ -60,9 +62,9 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
     typedef KGDialog inherited;
 
 public:
-    KGreeter();
+    KGreeter( bool themed = false );
     ~KGreeter();
- 
+
 public slots:
     void accept();
     void reject();
@@ -73,22 +75,20 @@ public slots:
     void slotShutdown();
     void slotConsole();
 
-private:
+protected:
+    void installUserList();
     void insertUser( const QImage &, const QString &, struct passwd * );
     void insertUsers();
     void putSession( const QString &, const QString &, bool, const char * );
     void insertSessions();
-    void pluginSetup();
+    virtual void pluginSetup();
     void setPrevWM( int );
 
     QString		curUser, dName;
     KSimpleConfig	*stsFile;
     UserListView	*userView;
     QStringList		*userList;
-    KdmClock		*clock;
-    QLabel		*pixLabel;
     KGVerify    	*verify;
-    QPushButton		*goButton;
     QPopupMenu		*sessMenu;
     QValueVector<SessType> sessionTypes;
     int			nNormals, nSpecials;
@@ -106,9 +106,59 @@ public: // from KGVerifyHandler
     virtual void verifyPluginChanged( int id );
     virtual void verifyOk();
     virtual void verifyFailed();
-    virtual void verifyRetry();
+//    virtual void verifyRetry();
     virtual void verifySetUser( const QString &user );
 };
 
+class KStdGreeter : public KGreeter {
+    Q_OBJECT
+    typedef KGreeter inherited;
+
+public:
+    KStdGreeter();
+ 
+protected:
+    virtual void pluginSetup();
+
+private:
+    KdmClock		*clock;
+    QLabel		*pixLabel;
+    QPushButton		*goButton;
+
+public: // from KGVerifyHandler
+    virtual void verifyFailed();
+    virtual void verifyRetry();
+};
+
+class KThemedGreeter : public KGreeter {
+    Q_OBJECT
+    typedef KGreeter inherited;
+
+public:
+    KThemedGreeter();
+    bool isOK() { return themer != 0; }
+
+public slots:
+    void slotThemeActivated( const QString &id );
+    void slotSessMenu();
+    void slotActionMenu();
+
+protected:
+    virtual void updateStatus( bool fail, bool caps );
+    virtual void pluginSetup();
+    virtual void keyPressEvent( QKeyEvent * );
+    virtual bool event( QEvent *e );
+
+private:
+//    KdmClock		*clock;
+    KdmThemer		*themer;
+    KdmItem		*caps_warning, *xauth_warning, *pam_error,
+			*console_rect, *userlist_rect,
+			*session_button, *system_button;
+
+public: // from KGVerifyHandler
+    virtual void verifyFailed();
+    virtual void verifyRetry();
+};
 
 #endif /* KGREETER_H */

@@ -3,7 +3,7 @@
     Greeter widget for kdm
 
     Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2004 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,9 @@
 #include "kdmconfig.h"
 #include "kdmclock.h"
 #include "kdm_greet.h"
+#include "themer/kdmthemer.h"
+#include "themer/kdmitem.h"
+#include "themer/kdmlabel.h"
 
 #include <kapplication.h>
 #include <klocale.h>
@@ -48,6 +51,7 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qtooltip.h>
+#include <qaccel.h>
 
 #include <pwd.h>
 #include <grp.h>
@@ -95,13 +99,12 @@ protected:
 int KGreeter::curPlugin = -1;
 PluginList KGreeter::pluginList;
 
-KGreeter::KGreeter()
-  : inherited()
+KGreeter::KGreeter( bool framed )
+  : inherited( framed )
   , dName( dname )
   , userView( 0 )
   , userList( 0 )
-  , clock( 0 )
-  , pixLabel( 0 )
+  , verify( 0 )
   , nNormals( 0 )
   , nSpecials( 0 )
   , curPrev( -1 )
@@ -112,141 +115,27 @@ KGreeter::KGreeter()
     stsFile = new KSimpleConfig( _stsFile );
     stsFile->setGroup( "PrevUser" );
 
-#ifdef WITH_KDM_XCONSOLE
-    QBoxLayout *main_box = new QHBoxLayout( 10 );
-    layout->addLayout( main_box, 0, 0 );
-#else
-    QBoxLayout *main_box = new QHBoxLayout( this, 10, 10 );
-#endif
-
     if (_userList) {
 	userView = new UserListView( this );
-	main_box->addWidget(userView);
 	connect( userView, SIGNAL(clicked( QListViewItem * )),
 		 SLOT(slotUserClicked( QListViewItem * )) );
 	connect( userView, SIGNAL(doubleClicked( QListViewItem * )),
 		 SLOT(accept()) );
-    }
-
-    QBoxLayout *inner_box = new QVBoxLayout( main_box, 10 );
-
-    if (!_authorized && _authComplain) {
-	QLabel* complainLabel = new QLabel(
-	    i18n("Warning: this is an unsecured session"), this );
-	QToolTip::add( complainLabel,
-	    i18n("This display requires no X authorization.\n"
-		 "This means that anybody can connect to it,\n"
-		  "open windows on it or intercept your input.") );
-	complainLabel->setAlignment( AlignCenter );
-	complainLabel->setFont( _failFont );
-	complainLabel->setPaletteForegroundColor( Qt::red );
-	inner_box->addWidget( complainLabel );
-    }
-    if (!_greetString.isEmpty()) {
-	QLabel* welcomeLabel = new QLabel( _greetString, this );
-	welcomeLabel->setAlignment( AlignCenter );
-	welcomeLabel->setFont( _greetFont );
-	inner_box->addWidget( welcomeLabel );
     }
     if (_userCompletion)
 	userList = new QStringList;
     if (userView || userList)
 	insertUsers();
 
-    switch (_logoArea) {
-	case LOGO_CLOCK:
-	    clock = new KdmClock( this, "clock" );
-	    break;
-	case LOGO_LOGO:
-	    {
-		QPixmap pixmap;
-		if (pixmap.load( _logo )) {
-		    pixLabel = new QLabel( this );
-		    pixLabel->setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ) );
-		    pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-		    pixLabel->setAutoResize( true );
-		    pixLabel->setIndent( 0 );
-		    pixLabel->setPixmap( pixmap );
-		}
-	    }
-	    break;
-    }
-
-    if (userView) {
-	if (clock)
-	    inner_box->addWidget( clock, 0, AlignCenter );
-	else if (pixLabel)
-	    inner_box->addWidget( pixLabel, 0, AlignCenter );
-    } else {
-	if (clock)
-	    main_box->addWidget( clock, 0, AlignCenter );
-	else if (pixLabel)
-	    main_box->addWidget( pixLabel, 0, AlignCenter );
-    }
-
-    goButton = new QPushButton( i18n("L&ogin"), this );
-    goButton->setDefault( true );
-    connect( goButton, SIGNAL( clicked()), SLOT(accept()) );
-    QPushButton *menuButton = new QPushButton( i18n("&Menu"), this );
-    //helpButton
-
-    QWidget *prec;
-    if (userView)
-	prec = userView;
-#ifdef WITH_KDM_XCONSOLE
-    else if (consoleView)
-	prec = consoleView;
-#endif
-    else
-	prec = menuButton;
-    if (curPlugin < 0) {
-	curPlugin = 0;
-	pluginList = KGVerify::init( _pluginsLogin );
-    }
-    verify = new KGVerify( this, this, prec, QString::null,
-			   pluginList, KGreeterPlugin::Authenticate,
-			   KGreeterPlugin::Login );
-    inner_box->addLayout( verify->getLayout() );
-    verify->selectPlugin( curPlugin );
-
-    inner_box->addWidget( new KSeparator( KSeparator::HLine, this ) );
-
-    QBoxLayout* hbox2 = new QHBoxLayout( inner_box, 10 );
-    hbox2->addWidget( goButton );
-    hbox2->addStretch( 1 );
-    hbox2->addWidget( menuButton );
-    hbox2->addStretch( 1 );
-
     sessMenu = new QPopupMenu( this );
     connect( sessMenu, SIGNAL(activated(int)),
 	     SLOT(slotSessionSelected(int)) );
     insertSessions();
 
-    if (sessMenu->count() > 1) {
-	inserten( i18n("Session &Type"), ALT+Key_T, sessMenu );
-	needSep = true;
+    if (curPlugin < 0) {
+	curPlugin = 0;
+	pluginList = KGVerify::init( _pluginsLogin );
     }
-
-    QPopupMenu *plugMenu = verify->getPlugMenu();
-    if (plugMenu) {
-	inserten( i18n("&Authentication Method"), ALT+Key_A, plugMenu );
-	needSep = true;
-    }
-
-#ifdef XDMCP
-    completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18n("&Remote Login"), ALT+Key_R );
-#else
-    completeMenu();
-#endif
-
-    if (optMenu)
-	menuButton->setPopup( optMenu );
-    else
-	menuButton->hide();
-
-    pluginSetup();
-
-    verify->start();
 }
 
 KGreeter::~KGreeter()
@@ -618,7 +507,7 @@ KGreeter::slotLoadPrevWM()
     setPrevWM( -1 );
 }
 
-void // private
+void // protected
 KGreeter::pluginSetup()
 {
     int field = 0;
@@ -640,15 +529,8 @@ KGreeter::pluginSetup()
     }
     if (!ent.isEmpty())
 	verify->presetEntity( ent, field );
-    if (userView) {
-	if (verify->entitiesLocal())
-	    userView->show();
-	else
-	    userView->hide();
-    }
     if (userList)
 	verify->loadUsers( *userList );
-    adjustGeometry();
 }
 
 void
@@ -667,7 +549,6 @@ KGreeter::verifyOk()
 			dName :
 			dName + '_' + verify->pluginName(),
 		verify->getEntity() );
-    hide();
     if (curSel != -1) {
 	GSendInt( G_PutDmrc );
 	GSendStr( "Session" );
@@ -684,15 +565,8 @@ KGreeter::verifyOk()
 void
 KGreeter::verifyFailed()
 {
-    goButton->setEnabled( false );
     if (needLoad)
 	slotLoadPrevWM();
-}
-
-void
-KGreeter::verifyRetry()
-{
-    goButton->setEnabled( true );
 }
 
 void
@@ -700,6 +574,362 @@ KGreeter::verifySetUser( const QString &user )
 {
     curUser = user;
     slotUserEntered();
+}
+
+
+KStdGreeter::KStdGreeter()
+  : KGreeter()
+  , clock( 0 )
+  , pixLabel( 0 )
+{
+    QBoxLayout *main_box;
+#ifdef WITH_KDM_XCONSOLE
+    if (consoleView) {
+	QBoxLayout *ex_box = new QVBoxLayout( this, 10, 10 );
+	main_box = new QHBoxLayout( main_box, 10 );
+	ex_box->addWidget( consoleView );
+    } else
+#endif
+	main_box = new QHBoxLayout( this, 10, 10 );
+
+    if (userView)
+	main_box->addWidget( userView );
+
+    QBoxLayout *inner_box = new QVBoxLayout( main_box, 10 );
+
+    if (!_authorized && _authComplain) {
+	QLabel* complainLabel = new QLabel(
+	    i18n("Warning: this is an unsecured session"), this );
+	QToolTip::add( complainLabel,
+	    i18n("This display requires no X authorization.\n"
+		 "This means that anybody can connect to it,\n"
+		  "open windows on it or intercept your input.") );
+	complainLabel->setAlignment( AlignCenter );
+	complainLabel->setFont( _failFont );
+	complainLabel->setPaletteForegroundColor( Qt::red );
+	inner_box->addWidget( complainLabel );
+    }
+    if (!_greetString.isEmpty()) {
+	QLabel* welcomeLabel = new QLabel( _greetString, this );
+	welcomeLabel->setAlignment( AlignCenter );
+	welcomeLabel->setFont( _greetFont );
+	inner_box->addWidget( welcomeLabel );
+    }
+
+    switch (_logoArea) {
+	case LOGO_CLOCK:
+	    clock = new KdmClock( this, "clock" );
+	    break;
+	case LOGO_LOGO:
+	    {
+		QPixmap pixmap;
+		if (pixmap.load( _logo )) {
+		    pixLabel = new QLabel( this );
+		    pixLabel->setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ) );
+		    pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+		    pixLabel->setAutoResize( true );
+		    pixLabel->setIndent( 0 );
+		    pixLabel->setPixmap( pixmap );
+		}
+	    }
+	    break;
+    }
+
+    if (userView) {
+	if (clock)
+	    inner_box->addWidget( clock, 0, AlignCenter );
+	else if (pixLabel)
+	    inner_box->addWidget( pixLabel, 0, AlignCenter );
+    } else {
+	if (clock)
+	    main_box->addWidget( clock, 0, AlignCenter );
+	else if (pixLabel)
+	    main_box->addWidget( pixLabel, 0, AlignCenter );
+    }
+
+    goButton = new QPushButton( i18n("L&ogin"), this );
+    goButton->setDefault( true );
+    connect( goButton, SIGNAL( clicked()), SLOT(accept()) );
+    QPushButton *menuButton = new QPushButton( i18n("&Menu"), this );
+    //helpButton
+
+    QWidget *prec;
+    if (userView)
+	prec = userView;
+#ifdef WITH_KDM_XCONSOLE
+    else if (consoleView)
+	prec = consoleView;
+#endif
+    else
+	prec = menuButton;
+    KGStdVerify *sverify =
+	new KGStdVerify( this, this, prec, QString::null,
+			 pluginList, KGreeterPlugin::Authenticate,
+			 KGreeterPlugin::Login );
+    inner_box->addLayout( sverify->getLayout() );
+    sverify->selectPlugin( curPlugin );
+    verify = sverify;
+
+    inner_box->addWidget( new KSeparator( KSeparator::HLine, this ) );
+
+    QBoxLayout* hbox2 = new QHBoxLayout( inner_box, 10 );
+    hbox2->addWidget( goButton );
+    hbox2->addStretch( 1 );
+    hbox2->addWidget( menuButton );
+    hbox2->addStretch( 1 );
+
+    if (sessMenu->count() > 1) {
+	inserten( i18n("Session &Type"), ALT+Key_T, sessMenu );
+	needSep = true;
+    }
+
+    QPopupMenu *plugMenu = verify->getPlugMenu();
+    if (plugMenu) {
+	inserten( i18n("&Authentication Method"), ALT+Key_A, plugMenu );
+	needSep = true;
+    }
+
+#ifdef XDMCP
+    completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18n("&Remote Login"), ALT+Key_R );
+#else
+    completeMenu();
+#endif
+
+    if (optMenu)
+	menuButton->setPopup( optMenu );
+    else
+	menuButton->hide();
+
+    pluginSetup();
+
+    verify->start();
+}
+
+void
+KStdGreeter::pluginSetup()
+{
+    inherited::pluginSetup();
+    if (userView) {
+	if (verify->entitiesLocal())
+	    userView->show();
+	else
+	    userView->hide();
+    }
+    adjustGeometry();
+    update();
+}
+
+void
+KStdGreeter::verifyFailed()
+{
+    goButton->setEnabled( false );
+    inherited::verifyFailed();
+}
+
+void
+KStdGreeter::verifyRetry()
+{
+    goButton->setEnabled( true );
+}
+
+
+KThemedGreeter::KThemedGreeter()
+  : KGreeter( true )
+  , themer( 0 )
+//  , clock( 0 )
+{
+    // We do all painting ourselves
+    setBackgroundMode( NoBackground );
+    // Allow tracking the mouse position
+    setMouseTracking( true );
+
+    adjustGeometry();
+
+    themer = new KdmThemer( _theme, "console", this );
+    if (!themer->isOK()) {
+	themer = 0;
+	return;
+    }
+	
+    connect( themer, SIGNAL(activated( const QString & )),
+	     SLOT(slotThemeActivated( const QString & )) );
+
+    console_rect = themer->findNode( "xconsole" ); // kdm ext
+    userlist_rect = themer->findNode( "userlist" );
+    caps_warning = themer->findNode( "caps-lock-warning" );
+    xauth_warning = themer->findNode( "xauth-warning" ); // kdm ext
+    pam_error = themer->findNode( "pam-error" );
+    if (pam_error->isA("KdmLabel"))
+	static_cast<KdmLabel*>(pam_error)->setText( i18n("Login Failed!") );
+
+    KdmItem *itm;
+    if ((itm = themer->findNode( "pam-message" ))) // done via msgboxes
+	itm->hide( true );
+//    if ((itm = themer->findNode( "timed-label" ))) // unsupported ... actually, this will be shown in the timed mode only anyway
+//	itm->hide( true );
+    if ((itm = themer->findNode( "language_button" ))) // not implemented yet
+	itm->hide( true );
+
+#ifdef WITH_KDM_XCONSOLE
+    if (console_rect) {
+	if (consoleView)
+	    console_rect->setWidget( consoleView );
+	else
+	    console_rect->hide( true );
+    }
+#endif
+
+    if (xauth_warning && (_authorized || !_authComplain))
+	xauth_warning->hide( true );
+
+//    if (!_greetString.isEmpty()) {
+//    }
+//	    clock = new KdmClock( this, "clock" );
+
+    QWidget *prec;
+    if (userView)
+	prec = userView;
+#ifdef WITH_KDM_XCONSOLE
+    else if (consoleView)
+	prec = consoleView;
+#endif
+    else
+	prec = 0;
+    KGThemedVerify *tverify =
+	new KGThemedVerify( this, themer, this, prec, QString::null,
+			    pluginList, KGreeterPlugin::Authenticate,
+			    KGreeterPlugin::Login );
+    tverify->selectPlugin( curPlugin );
+    verify = tverify;
+
+    session_button = 0;
+    if ((itm = themer->findNode( "session_button" ))) {
+	if (sessMenu->count() <= 1)
+	    itm->hide( true );
+	else {
+	    session_button = itm;
+	    QAccel *accel = new QAccel( this );
+	    accel->insertItem( ALT+Key_T, 0 );
+	    connect( accel, SIGNAL(activated(int)), SLOT(slotSessMenu()) );
+	}
+    } else {
+	if (sessMenu->count() > 1) {
+	    inserten( i18n("Session &Type"), ALT+Key_T, sessMenu );
+	    needSep = true;
+	}
+    }
+
+    QPopupMenu *plugMenu = verify->getPlugMenu();
+    if (plugMenu) {
+	inserten( i18n("&Authentication Method"), ALT+Key_A, plugMenu );
+	needSep = true;
+    }
+
+#ifdef XDMCP
+    completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18n("&Remote Login"), ALT+Key_R );
+#else
+    completeMenu();
+#endif
+
+    system_button = themer->findNode( "system_button" );
+    QAccel *accel = new QAccel( this );
+    accel->insertItem( ALT+Key_M, 0 );
+    connect( accel, SIGNAL(activated(int)), SLOT(slotActionMenu()) );
+
+    pluginSetup();
+
+    verify->start();
+}
+
+bool
+KThemedGreeter::event( QEvent *e )
+{
+    if (themer)
+	themer->widgetEvent( e );
+    return inherited::event( e );
+}
+
+void
+KThemedGreeter::pluginSetup()
+{
+    inherited::pluginSetup();
+
+    if (userView && verify->entitiesLocal() && userlist_rect) {
+	userlist_rect->setWidget( userView );
+	userView->show();
+    } else {
+	if (userView)
+	    userView->hide();
+	if (userlist_rect)
+	    userlist_rect->hide( true );
+    }
+
+    update();
+}
+
+void
+KThemedGreeter::verifyFailed()
+{
+//    goButton->setEnabled( false );
+    inherited::verifyFailed();
+}
+
+void
+KThemedGreeter::verifyRetry()
+{
+//    goButton->setEnabled( true );
+}
+
+void
+KThemedGreeter::updateStatus( bool fail, bool caps )
+{
+    if (pam_error) {
+	if (fail)
+	    pam_error->show( true );
+	else
+	    pam_error->hide( true );
+    }
+    if (caps_warning) {
+	if (caps)
+	    caps_warning->show( true );
+	else
+	    caps_warning->hide( true );
+    }
+}
+
+void
+KThemedGreeter::slotThemeActivated( const QString &id )
+{
+    if (id == "login_button")
+	accept();
+    else if (id == "session_button")
+	slotSessMenu();
+    else if (id == "system_button")
+	slotActionMenu();
+}
+
+void
+KThemedGreeter::slotSessMenu()
+{
+    sessMenu->popup( session_button->rect().center() );
+}
+
+void
+KThemedGreeter::slotActionMenu()
+{
+    if (system_button)
+	optMenu->popup( system_button->rect().center() );
+    else
+	optMenu->popup( rect().center() );
+}
+
+void
+KThemedGreeter::keyPressEvent( QKeyEvent *e )
+{
+    inherited::keyPressEvent( e );
+    if (!(e->state() & KeyButtonMask) &&
+	(e->key() == Key_Return || e->key() == Key_Enter))
+	accept();
 }
 
 #include "kgreeter.moc"

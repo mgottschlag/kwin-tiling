@@ -3,7 +3,7 @@
     Base class for various kdm greeter dialogs
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2004 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@ class KGDialog : public FDialog {
     typedef FDialog inherited;
 
   public:
-    KGDialog();
+    KGDialog( bool themed = false );
 
   public slots:
     void slotActivateMenu( int id );
@@ -67,7 +67,6 @@ class KGDialog : public FDialog {
     QPopupMenu *optMenu;
 #ifdef WITH_KDM_XCONSOLE
     KConsole *consoleView;
-    QGridLayout *layout;
 #endif
 
   private slots:

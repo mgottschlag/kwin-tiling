@@ -23,6 +23,8 @@
     */
 
 #include "kgreet_classic.h"
+#include "themer/kdmthemer.h"
+#include "themer/kdmitem.h"
 
 #include <klocale.h>
 #include <klineedit.h>
@@ -44,7 +46,8 @@ protected:
 static int echoMode;
 
 KClassicGreeter::KClassicGreeter(
-	KGreeterPluginHandler *_handler, QWidget *parent, QWidget *pred,
+	KGreeterPluginHandler *_handler, KdmThemer *themer,
+	QWidget *parent, QWidget *pred,
 	const QString &_fixedEntity, Function _func, Context _ctx ) :
     QObject(),
     KGreeterPlugin( _handler ),
@@ -55,9 +58,19 @@ KClassicGreeter::KClassicGreeter(
     pExp( -1 ),
     running( false )
 {
-    QGridLayout *grid = new QGridLayout( 0, 0, 10 );
-    layoutItem = grid;
+    KdmItem *user_entry, *pw_entry;
+    QGridLayout *grid = 0;
     int line = 0;
+
+    layoutItem = 0;
+
+    if (themer &&
+	(!(user_entry = themer->findNode( "user-entry" )) ||
+	 !(pw_entry = themer->findNode( "pw-entry" ))))
+	themer = 0;
+
+    if (!themer)
+	layoutItem = grid = new QGridLayout( 0, 0, 10 );
 
     loginLabel = passwdLabel = passwd1Label = passwd2Label = 0;
     loginEdit = 0;
@@ -68,14 +81,19 @@ KClassicGreeter::KClassicGreeter(
 	if (fixedUser.isEmpty()) {
 	    loginEdit = new KLineEdit( parent );
 	    loginEdit->setContextMenuEnabled( false );
-	    loginLabel = new QLabel( loginEdit, i18n("&Username:"), parent );
 	    connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotLoginLostFocus()) );
 	    if (pred) {
 		parent->setTabOrder( pred, loginEdit );
 		pred = loginEdit;
 	    }
-	    grid->addWidget( loginLabel, line, 0 );
-	    grid->addWidget( loginEdit, line++, 1 );
+	    if (!grid) {
+		loginEdit->adjustSize();
+		user_entry->setWidget( loginEdit );
+	    } else {
+		loginLabel = new QLabel( loginEdit, i18n("&Username:"), parent );
+		grid->addWidget( loginLabel, line, 0 );
+		grid->addWidget( loginEdit, line++, 1 );
+	    }
 	} else if (ctx != Login && ctx != Shutdown) {
 	    loginLabel = new QLabel( i18n("Username:"), parent );
 	    grid->addWidget( loginLabel, line, 0 );
@@ -85,14 +103,19 @@ KClassicGreeter::KClassicGreeter(
 	    passwdEdit = new KDMPasswordEdit( parent );
 	else
 	    passwdEdit = new KDMPasswordEdit( (KPasswordEdit::EchoModes)echoMode, parent );
-	passwdLabel = new QLabel( passwdEdit,
-	    func == Authenticate ? i18n("&Password:") : i18n("Current &password:"), parent );
 	if (pred) {
 	    parent->setTabOrder( pred, passwdEdit );
 	    pred = passwdEdit;
 	}
-	grid->addWidget( passwdLabel, line, 0 );
-	grid->addWidget( passwdEdit, line++, 1 );
+	if (!grid) {
+	    passwdEdit->adjustSize();
+	    pw_entry->setWidget( passwdEdit );
+	} else {
+	    passwdLabel = new QLabel( passwdEdit,
+		func == Authenticate ? i18n("&Password:") : i18n("Current &password:"), parent );
+	    grid->addWidget( passwdLabel, line, 0 );
+	    grid->addWidget( passwdEdit, line++, 1 );
+	}
 	if (loginEdit)
 	    loginEdit->setFocus();
 	else
@@ -125,6 +148,11 @@ KClassicGreeter::KClassicGreeter(
 KClassicGreeter::~KClassicGreeter()
 {
     abort();
+    if (!layoutItem) {
+	delete loginEdit;
+	delete passwdEdit;
+	return;
+    }
     QLayoutIterator it = static_cast<QLayout *>(layoutItem)->iterator();
     for (QLayoutItem *itm = it.current(); itm; itm = ++it)
 	 delete itm->widget();
@@ -427,12 +455,13 @@ static void done( void )
 
 static KGreeterPlugin *
 create(
-    KGreeterPluginHandler *handler, QWidget *parent, QWidget *predecessor,
+    KGreeterPluginHandler *handler, KdmThemer *themer,
+    QWidget *parent, QWidget *predecessor,
     const QString &fixedEntity,
     KGreeterPlugin::Function func,
     KGreeterPlugin::Context ctx )
 {
-    return new KClassicGreeter( handler, parent, predecessor, fixedEntity, func, ctx );
+    return new KClassicGreeter( handler, themer, parent, predecessor, fixedEntity, func, ctx );
 }
 
 kgreeterplugin_info kgreeterplugin_info = {

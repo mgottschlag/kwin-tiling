@@ -1,3 +1,14 @@
+theming ToDo:
+- minor: show QWidgets only when the layout is ready and the theme was painted.
+  but one can't hide the widgets in a QLayout, as they have no size then.
+- add attribute inheritance. apply attributes extracted from particular
+  elements of the (hidden) talker.
+- make plugin return a QDom instead of embedding a QLayoutItem (QLabels look
+  just awful in the themed greeter). big problem: there is no KdmGrid ... try
+  to (ab)use QLayout.
+- extract background from theme. use explicit node-id "background", i think.
+- automatic talker node detection/creation. same for background, possibly.
+
 - message after switching to text mode
 - implement a "console mode" that is more adequate for linux
 - starting kdm while a kdm is running in the background in "console mode"

@@ -3,7 +3,7 @@
     Shell for kdm conversation plugins
 
     Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2004 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,9 @@
 #include "kdmconfig.h"
 #include "kdm_greet.h"
 
+#include "themer/kdmthemer.h"
+#include "themer/kdmitem.h"
+
 #include <kapplication.h>
 #include <klocale.h>
 #include <klibloader.h>
@@ -50,8 +53,13 @@
 #include <fixx11h.h> // ... and make eventFilter() work again
 
 
-KGVerify::KGVerify( KGVerifyHandler *_handler, QWidget *_parent,
-		    QWidget *_predecessor, const QString &_fixedUser,
+void KGVerifyHandler::updateStatus( bool, bool )
+{
+}
+
+KGVerify::KGVerify( KGVerifyHandler *_handler, KdmThemer *_themer,
+		    QWidget *_parent, QWidget *_predecessor,
+		    const QString &_fixedUser,
 		    const PluginList &_pluginList,
 		    KGreeterPlugin::Function _func,
 		    KGreeterPlugin::Context _ctx )
@@ -60,11 +68,11 @@ KGVerify::KGVerify( KGVerifyHandler *_handler, QWidget *_parent,
   , fixedEntity( _fixedUser )
   , pluginList( _pluginList )
   , handler( _handler )
+  , themer( _themer )
   , parent( _parent )
   , predecessor( _predecessor )
   , plugMenu( 0 )
   , curPlugin( -1 )
-  , failedLabelState( -1 )
   , func( _func )
   , ctx( _ctx )
   , enabled( true )
@@ -72,22 +80,13 @@ KGVerify::KGVerify( KGVerifyHandler *_handler, QWidget *_parent,
   , suspended( false )
   , failed( false )
 {
-    grid = new QGridLayout;
-    grid->setAlignment( AlignCenter );
-
-    failedLabel = new QLabel( parent );
-    failedLabel->setFont( _failFont );
-    grid->addWidget( failedLabel, 1, 0, AlignCenter );
-
     connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
 
     _parent->installEventFilter( this );
-    updateLockStatus();
 }
 
 KGVerify::~KGVerify()
 {
-    grid->removeItem( greet->getLayoutItem() );
     Debug( "delete greet\n" );
     delete greet;
 }
@@ -155,30 +154,9 @@ KGVerify::selectPlugin( int id )
 	::exit( EX_UNMANAGE_DPY );
     }
     curPlugin = id;
-    greet = greetPlugins[pluginList[id]].info->create( this, parent, predecessor, fixedEntity, func, ctx );
-    showWidgets( greet->getLayoutItem() );
-    grid->addItem( greet->getLayoutItem(), 0, 0 );
     if (plugMenu)
 	plugMenu->setItemChecked( id, true );
-}
-
-void // private slot
-KGVerify::slotPluginSelected( int id )
-{
-    if (failed)
-	return;
-    if (id != curPlugin) {
-	plugMenu->setItemChecked( curPlugin, false );
-	parent->setUpdatesEnabled( false );
-	grid->removeItem( greet->getLayoutItem() );
-	Debug( "delete greet\n" );
-	delete greet;
-	selectPlugin( id );
-	handler->verifyPluginChanged( id );
-	if (running)
-	    start();
-	parent->setUpdatesEnabled( true );
-    }
+    greet = greetPlugins[pluginList[id]].info->create( this, themer, parent, predecessor, fixedEntity, func, ctx );
 }
 
 void // public
@@ -728,40 +706,6 @@ KGVerify::updateLockStatus()
 }
 
 void
-KGVerify::updateStatus()
-{
-    int nfls;
-
-    if (!enabled)
-	nfls = 0;
-    else if (failed)
-	nfls = 2;
-    else if (!suspended && capsLocked)
-	nfls = 1;
-    else
-	nfls = 0;
-
-    if (failedLabelState != nfls ) {
-	failedLabelState = nfls;
-	switch (nfls) {
-	default:
-	    failedLabel->clear();
-	    break;
-	case 1:
-	    failedLabel->setPaletteForegroundColor( Qt::red );
-	    failedLabel->setText( i18n("Warning: Caps Lock on") );
-	    break;
-	case 2:
-	    failedLabel->setPaletteForegroundColor( Qt::black );
-	    failedLabel->setText( authTok ? i18n("Change failed") :
-		    fixedEntity.isEmpty() ?
-		      i18n("Login failed") : i18n("Authentication failed") );
-	    break;
-	}
-    }
-}
-
-void
 KGVerify::MsgBox( QMessageBox::Icon typ, const QString &msg )
 {
     timer.suspend();
@@ -840,6 +784,152 @@ KGVerify::done()
 }
 
 
+KGStdVerify::KGStdVerify( KGVerifyHandler *_handler, QWidget *_parent,
+			  QWidget *_predecessor, const QString &_fixedUser,
+			  const PluginList &_pluginList,
+			  KGreeterPlugin::Function _func,
+			  KGreeterPlugin::Context _ctx )
+  : inherited( _handler, 0, _parent, _predecessor, _fixedUser,
+	       _pluginList, _func, _ctx )
+  , failedLabelState( -1 )
+{
+    grid = new QGridLayout;
+    grid->setAlignment( AlignCenter );
+
+    failedLabel = new QLabel( parent );
+    failedLabel->setFont( _failFont );
+    grid->addWidget( failedLabel, 1, 0, AlignCenter );
+
+    updateLockStatus();
+}
+
+KGStdVerify::~KGStdVerify()
+{
+    grid->removeItem( greet->getLayoutItem() );
+}
+
+void // public
+KGStdVerify::selectPlugin( int id )
+{
+    inherited::selectPlugin( id );
+    grid->addItem( greet->getLayoutItem(), 0, 0 );
+    showWidgets( greet->getLayoutItem() );
+}
+
+void // private slot
+KGStdVerify::slotPluginSelected( int id )
+{
+    if (failed)
+	return;
+    if (id != curPlugin) {
+	plugMenu->setItemChecked( curPlugin, false );
+	parent->setUpdatesEnabled( false );
+	grid->removeItem( greet->getLayoutItem() );
+	Debug( "delete greet\n" );
+	delete greet;
+	selectPlugin( id );
+	handler->verifyPluginChanged( id );
+	if (running)
+	    start();
+	parent->setUpdatesEnabled( true );
+    }
+}
+
+void
+KGStdVerify::updateStatus()
+{
+    int nfls;
+
+    if (!enabled)
+	nfls = 0;
+    else if (failed)
+	nfls = 2;
+    else if (!suspended && capsLocked)
+	nfls = 1;
+    else
+	nfls = 0;
+
+    if (failedLabelState != nfls ) {
+	failedLabelState = nfls;
+	switch (nfls) {
+	default:
+	    failedLabel->clear();
+	    break;
+	case 1:
+	    failedLabel->setPaletteForegroundColor( Qt::red );
+	    failedLabel->setText( i18n("Warning: Caps Lock on") );
+	    break;
+	case 2:
+	    failedLabel->setPaletteForegroundColor( Qt::black );
+	    failedLabel->setText( authTok ? i18n("Change failed") :
+		    fixedEntity.isEmpty() ?
+		      i18n("Login failed") : i18n("Authentication failed") );
+	    break;
+	}
+    }
+}
+
+KGThemedVerify::KGThemedVerify( KGVerifyHandler *_handler,
+			        KdmThemer *_themer,
+				QWidget *_parent, QWidget *_predecessor,
+				const QString &_fixedUser,
+				const PluginList &_pluginList,
+				KGreeterPlugin::Function _func,
+				KGreeterPlugin::Context _ctx )
+  : inherited( _handler, _themer, _parent, _predecessor, _fixedUser,
+	       _pluginList, _func, _ctx )
+{
+    updateLockStatus();
+}
+
+KGThemedVerify::~KGThemedVerify()
+{
+}
+
+void // public
+KGThemedVerify::selectPlugin( int id )
+{
+    inherited::selectPlugin( id );
+    QLayoutItem *l;
+    KdmItem *n;
+    if (themer && (l = greet->getLayoutItem())) {
+	if (!(n = themer->findNode( "talker" )))
+	    MsgBox( errorbox,
+		    i18n("Theme not usable with authentication method '%1'.")
+		    .arg( i18n( greetPlugins[pluginList[id]].info->name ) ) );
+	else {
+	    n->setLayoutItem( l );
+	    showWidgets( l );
+	}
+    }
+    if (themer)
+	themer->updateGeometry( true );
+}
+
+void // private slot
+KGThemedVerify::slotPluginSelected( int id )
+{
+    if (failed)
+	return;
+    if (id != curPlugin) {
+	plugMenu->setItemChecked( curPlugin, false );
+	Debug( "delete greet\n" );
+	delete greet;
+	selectPlugin( id );
+	handler->verifyPluginChanged( id );
+	if (running)
+	    start();
+    }
+}
+
+void
+KGThemedVerify::updateStatus()
+{
+    handler->updateStatus( enabled && failed,
+			   enabled && !suspended && capsLocked );
+}
+
+
 KGChTok::KGChTok( QWidget *_parent, const QString &user,
 		  const PluginList &pluginList, int curPlugin,
 		  KGreeterPlugin::Function func,
@@ -854,7 +944,7 @@ KGChTok::KGChTok( QWidget *_parent, const QString &user,
     cancelButton = new KPushButton( KStdGuiItem::cancel(), this );
     cancelButton->setSizePolicy( fp );
 
-    verify = new KGVerify( this, this, cancelButton, user, pluginList, func, ctx );
+    verify = new KGStdVerify( this, this, cancelButton, user, pluginList, func, ctx );
     verify->selectPlugin( curPlugin );
 
     QVBoxLayout *box = new QVBoxLayout( this, 10 );

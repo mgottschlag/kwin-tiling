@@ -35,7 +35,7 @@ class FDialog : public QDialog {
     typedef QDialog inherited;
 
 public:
-    FDialog( QWidget *parent = 0, const char* name = 0, bool modal = true );
+    FDialog( QWidget *parent = 0, bool framed = true );
     virtual int exec();
 
     static void box( QWidget *parent, QMessageBox::Icon type, 

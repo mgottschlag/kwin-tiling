@@ -34,19 +34,25 @@
 #include <qapplication.h>
 #include <qcursor.h>
 
-FDialog::FDialog( QWidget *parent, const char *name, bool modal )
-   : inherited( parent, name, modal, WStyle_NoBorder )
+FDialog::FDialog( QWidget *parent, bool framed )
+   : inherited( parent, 0, true/*, framed ? 0 : WStyle_NoBorder*/ )
 {
-    winFrame = new QFrame( this, 0, WNoAutoErase );
-    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
-    winFrame->setLineWidth( 2 );
+    if (framed) {
+	winFrame = new QFrame( this, 0, WNoAutoErase );
+	winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
+	winFrame->setLineWidth( 2 );
+    } else
+	winFrame = 0;
 }
 
 void
 FDialog::resizeEvent( QResizeEvent *e )
 {
     inherited::resizeEvent( e );
-    winFrame->resize( size() );
+    if (winFrame) {
+	winFrame->resize( size() );
+	winFrame->erase();
+    }
 }
 
 void
@@ -60,27 +66,33 @@ FDialog::adjustGeometry()
 		dsk->screenNumber( QPoint( 0, 0 ) );
 
     QRect scr = dsk->screenGeometry( _greeterScreen );
-    setMaximumSize( scr.size() * .9 );
-    adjustSize();
+    if (!winFrame)
+	setFixedSize( scr.size() );
+    else {
+	setMaximumSize( scr.size() * .9 );
+	adjustSize();
+    }
 
     if (parentWidget())
 	return;
 
     QRect grt( rect() );
-    unsigned x = 50, y = 50;
-    sscanf(_greeterPos, "%u,%u", &x, &y);
-    grt.moveCenter( QPoint( scr.x() + scr.width() * x / 100,
-			    scr.y() + scr.height() * y / 100 ) );
-    int di;
-    if ((di = scr.right() - grt.right()) < 0)
-	grt.moveBy( di, 0 );
-    if ((di = scr.left() - grt.left()) > 0)
-	grt.moveBy( di, 0 );
-    if ((di = scr.bottom() - grt.bottom()) < 0)
-	grt.moveBy( 0, di );
-    if ((di = scr.top() - grt.top()) > 0)
-	grt.moveBy( 0, di );
-    setGeometry( grt );
+    if (winFrame) {
+	unsigned x = 50, y = 50;
+	sscanf(_greeterPos, "%u,%u", &x, &y);
+	grt.moveCenter( QPoint( scr.x() + scr.width() * x / 100,
+				scr.y() + scr.height() * y / 100 ) );
+	int di;
+	if ((di = scr.right() - grt.right()) < 0)
+	    grt.moveBy( di, 0 );
+	if ((di = scr.left() - grt.left()) > 0)
+	    grt.moveBy( di, 0 );
+	if ((di = scr.bottom() - grt.bottom()) < 0)
+	    grt.moveBy( 0, di );
+	if ((di = scr.top() - grt.top()) > 0)
+	    grt.moveBy( 0, di );
+	setGeometry( grt );
+    }
 
     if (dsk->screenNumber( QCursor::pos() ) != _greeterScreen)
 	QCursor::setPos( grt.center() );

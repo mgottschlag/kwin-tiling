@@ -2421,3 +2421,21 @@ Description:
  as much as possible of the session that is going to be started (most
  probably).
 
+Key: UseTheme
+Type: bool
+Default: false
+User: greeter
+Instance: #*/true
+Comment: &
+Description:
+ Whether the greeter should be themed.
+
+Key: Theme
+Type: string
+Default: ""
+User: greeter
+Instance: */KDMDATA "/themes/circles"
+Comment: &
+Description:
+ The theme to use for the greeter. Can point to either a directory or an XML
+ file.

@@ -53,12 +53,7 @@ ChooserDlg::ChooserDlg()
 {
     completeMenu( LOGIN_REMOTE_ONLY, ex_greet, i18n("&Local Login"), ALT+Key_L );
 
-#ifdef WITH_KDM_XCONSOLE
-    QBoxLayout *vbox = new QVBoxLayout(10);
-    layout->addLayout( vbox, 0, 0 );
-#else
     QBoxLayout *vbox = new QVBoxLayout(this, 10, 10);
-#endif
 
     QLabel *title = new QLabel(i18n("XDMCP Host Menu"), this);
     title->setAlignment(AlignCenter);
@@ -101,6 +96,11 @@ ChooserDlg::ChooserDlg()
 
 //    QPushButton *helpButton = new QPushButton(i18n("&Help"), this);
 //    hbox->addWidget(helpButton);
+
+#ifdef WITH_KDM_XCONSOLE
+    if (consoleView)
+	vbox->addWidget( consoleView );
+#endif
 
     sn = new QSocketNotifier (rfd, QSocketNotifier::Read, this);
     connect (sn, SIGNAL(activated(int)), SLOT(slotReadPipe()));

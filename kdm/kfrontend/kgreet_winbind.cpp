@@ -501,7 +501,8 @@ static void done( void )
 
 static KGreeterPlugin *
 create(
-    KGreeterPluginHandler *handler, QWidget *parent, QWidget *predecessor,
+    KGreeterPluginHandler *handler, KdmThemer * /*themer*/,
+    QWidget *parent, QWidget *predecessor,
     const QString &fixedEntity,
     KGreeterPlugin::Function func,
     KGreeterPlugin::Context ctx )

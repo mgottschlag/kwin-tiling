@@ -1,7 +1,7 @@
 # use 'make GENKDMCONF_FLAGS=... install' to override
 GENKDMCONF_FLAGS =
 
-SUBDIRS = pics sessions
+SUBDIRS = themer themes pics sessions
 
 AM_CPPFLAGS = -I$(srcdir)/../backend -I$(top_srcdir)/kcontrol/background \
     $(all_includes) $(XDM_DEFINES)
@@ -25,7 +25,7 @@ kdm_greet_SOURCES = \
     kgreeter.cpp \
     kgapp.cpp
 kdm_greet_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-kdm_greet_LDADD = $(LIB_KDEUI) $(XTESTLIB) $(LIBPOSIX4)
+kdm_greet_LDADD = themer/libkdmthemer.a $(LIB_KDEUI) $(XTESTLIB) $(LIBPOSIX4)
 
 krootimage_SOURCES = krootimage.cpp
 krootimage_LDFLAGS = $(all_libraries) $(KDE_RPATH)

@@ -92,10 +92,10 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 	    curPlugin = 0;
 	    pluginList = KGVerify::init( _pluginsShutdown );
 	}
-	verify = new KGVerify( this, this,
-			       prevWidget, "root",
-			       pluginList, KGreeterPlugin::Authenticate,
-			       KGreeterPlugin::Shutdown );
+	verify = new KGStdVerify( this, this,
+				  prevWidget, "root",
+				  pluginList, KGreeterPlugin::Authenticate,
+				  KGreeterPlugin::Shutdown );
 	verify->selectPlugin( curPlugin );
 	box->addLayout( verify->getLayout() );
 	QAccel *accel = new QAccel( this );
@@ -139,6 +139,8 @@ KDMShutdownBase::slotActivatePlugMenu()
 {
     if (needRoot) {
 	QPopupMenu *cmnu = verify->getPlugMenu();
+	if (!cmnu)
+	    return;
 	QSize sh( cmnu->sizeHint() / 2 );
 	cmnu->exec( geometry().center() - QPoint( sh.width(), sh.height() ) );
     }

@@ -184,7 +184,15 @@ kg_main( const char *argv0 )
 	} else
 #endif
 	{
-	    dialog = new KGreeter;
+	    if (_useTheme && !_theme.isEmpty()) {
+		KThemedGreeter *tgrt;
+		dialog = tgrt = new KThemedGreeter;
+		if (!tgrt->isOK()) {
+		    delete tgrt;
+		    dialog = new KStdGreeter;
+		}
+	    } else
+		dialog = new KStdGreeter;
 	    if (*_preloader) {
 		proc2 = new KProcess;
 		*proc2 << _preloader;
