@@ -66,11 +66,6 @@ from The Open Group.
 #include <netdb.h>
 
 /*
- * misc externs
- */
-extern int sourceAddress;
-
-/*
  * Forward reference
  */
 static void broadcast_respond (struct sockaddr *from, int fromlen, int length);

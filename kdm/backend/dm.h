@@ -343,6 +343,7 @@ struct protoDisplay {
 #define D_XConnOk	6
 
 extern int	request_port;
+extern int	sourceAddress;
 extern int	debugLevel;
 extern char	*pidFile;
 extern int	lockPidFile;
