@@ -2,6 +2,8 @@ SUBDIRS = . backend kfrontend
 
 PAM = @KDM_PAM_SERVICE@
 
+noinst_DATA=config.ci
+
 kdmdocdir = $(datadir)/doc/kdm
 kdmdoc_DATA = README
 
