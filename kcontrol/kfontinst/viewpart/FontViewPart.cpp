@@ -39,6 +39,7 @@
 #include <qfile.h>
 #include <qlabel.h>
 #include <kio/netaccess.h>
+#include <kinstance.h>
 #include <kmessagebox.h>
 #include <knuminput.h>
 #include "KioFonts.h"

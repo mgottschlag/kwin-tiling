@@ -54,6 +54,7 @@
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <qdir.h>
+#include <kinstance.h>
 #include <klargefile.h>
 #include <ktempfile.h>
 #include <kdebug.h>
