@@ -4,6 +4,7 @@
     This file is part of the KDE project
     Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
     Copyright (C) 2000 Dawit Alemayehu <adawit@earthlink.net>
+    Copyright (C) 2000 Malte Alemayehu <adawit@earthlink.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,57 +27,56 @@
 #include <qmap.h>
 
 #include <dcopobject.h>
+#include <klocale.h>
 #include <klibloader.h>
 #include <kurifilter.h>
+
 
 class KInstance;
 
 class KShortURIFilter : public KURIFilterPlugin , public DCOPObject
 {
     K_DCOP
-
 public:
-    enum CmdType { URL, Executable, Shell, Help, Error, Unknown };
-
     KShortURIFilter( QObject *parent = 0, const char *name = 0 );
-    virtual ~KShortURIFilter();
-
-    virtual bool filterURI( KURL &uri );
-    CmdType type() const { return m_pCmdType; }
-    QString errorMessage() const { return m_strError; }
-
-    virtual KCModule *configModule( QWidget *parent = 0, const char *name = 0 ) const;
-    virtual QString configName() const;
+    virtual ~KShortURIFilter() {};
+    virtual bool filterURI( KURIFilterData &data ) const;
+    virtual QString configName() const { return i18n("Short URI"); }
 
 public:
 k_dcop:
     virtual void configure() { return; }
 
 protected:
-    /**
-     *  Function determines whether what the user entered in the
-     *  KShortURIFilter box is executable or not.
-     */
-    bool isExecutable ( const QString& ) const;
 
+    /**
+     * Determines the validity of the URI from
+     *
+     * Parses any given invalid URI to determine whether it
+     * is a known short URI and converts it to its fully
+     * qualified version.
+     *
+     * @param
+     * @param
+     * @return
+     */
     bool isValidShortURL ( const QString& ) const;
 
     /**
-     * Parses cmd to determine its type
-     * Possible return values are:
-     * URL - cmd is a URL
-     * Executable - cmd is a local executable with no parameters (for now)
-     * Shell - anything else should be run through a shell
-     * Help - should be passed to kdehelp
-     * Error - cmd is invald (for now only if it's ~username and no home dir could be found)
-     * in case of an error, cmd is set to the appropriate message, otherwise it's qualified
+     * Converts short URIs into fully qualified valid URI.
+     *
+     * Parses any given invalid URI to determine whether it
+     * is a known short URI and converts it to its fully
+     * qualified version.
+     *
+     * @param
+     * @param
+     * @return
      */
-    KShortURIFilter::CmdType parseCmd( QString& );
+    void parseURI( KURIFilterData& ) const;
 
 private:
-    KShortURIFilter::CmdType m_pCmdType;
     QMap<QString, QString> m_urlHints;
-    QString m_strError;
 };
 
 
