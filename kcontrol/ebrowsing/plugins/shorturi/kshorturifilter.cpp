@@ -216,6 +216,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   QString path;
   QString ref;
   QString query;
+  QString nameFilter;
 
   if (KURL::isRelativeURL(cmd) && QDir::isRelativePath(cmd)) {
      path = cmd;
@@ -338,6 +339,23 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   if( isLocalFullPath && !exists )
   {
     exists = ( stat( QFile::encodeName(path).data() , &buff ) == 0 );
+
+    if ( !exists ) {
+      // Support for name filter (/foo/*.txt), see also KonqMainWindow::detectNameFilter
+      // If the app using this filter doesn't support it, well, it'll simply error out itself
+      int lastSlash = path.findRev( '/' );
+      if ( lastSlash > -1 )
+      {
+        QString fileName = path.mid( lastSlash + 1 );
+        QString testPath = path.left( lastSlash + 1 );
+        if ( fileName.find( '*' ) != -1 && stat( QFile::encodeName(testPath).data(), &buff ) == 0 )
+        {
+          nameFilter = fileName;
+          path = testPath;
+          exists = true;
+        }
+      }
+    }
   }
 
   //kdDebug() << "path =" << path << " isLocalFullPath=" << isLocalFullPath << " exists=" << exists << endl;
@@ -370,7 +388,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     // Open "uri" as file:/xxx if it is a non-executable local resource.
     if( isDir || S_ISREG( buff.st_mode ) )
     {
-      //kdDebug() << "Abs path as local file" << endl;
+      //kdDebug() << "Abs path as local file or directory" << endl;
+      if ( !nameFilter.isEmpty() )
+        u.setFileName( nameFilter );
       setFilteredURI( data, u );
       setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
       return true;
