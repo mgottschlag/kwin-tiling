@@ -47,7 +47,6 @@ protected slots:
 	void slotStartService();
 	void slotStopService();
 	void slotServiceRunningToggled();
-	void configureService();
 	void slotEvalItem(QListViewItem *item);
 	void slotItemChecked(QCheckListItem *item);
 	void getServiceStatus();
@@ -58,7 +57,6 @@ private:
 	KListView *_lvStartup;
 	QPushButton *_pbStart;
 	QPushButton *_pbStop;
-	QPushButton *_pbOptions;
 };
 
 class CheckListItem : public QObject, public QCheckListItem

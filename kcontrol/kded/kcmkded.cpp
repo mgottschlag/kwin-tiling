@@ -24,30 +24,28 @@
 #include <qheader.h>
 #include <qtimer.h>
 
-#include <kbuttonbox.h>
-#include <kapplication.h>
 #include <kaboutdata.h>
-#include <klistview.h>
-#include <kgenericfactory.h>
-#include <kstandarddirs.h>
+#include <kapplication.h>
+#include <kbuttonbox.h>
 #include <kdesktopfile.h>
+#include <kdialog.h>
+#include <kgenericfactory.h>
+#include <klistview.h>
 #include <kmessagebox.h>
 #include <kservice.h>
+#include <kstandarddirs.h>
 
 #include <dcopclient.h>
 
 
 #include <kdebug.h>
 
-#include "kxmlrpcdlg.h"
 #include "kcmkded.h"
 #include "kcmkded.moc"
 
 typedef KGenericFactory<KDEDConfig, QWidget> KDEDFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kded, KDEDFactory( "kcmkded" ) )
 
-static const QCString KXMLRPCD("kxmlrpcd");
-static const bool KXMLRPCD_DEFAULT = false;
 static const QCString KALARMD("kalarmd");
 static const bool KALARMD_DEFAULT = true;
 static const QCString KWRITED("kwrited");
@@ -89,15 +87,12 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	KButtonBox *buttonBox = new KButtonBox( gb, Horizontal);
 	_pbStart = buttonBox->addButton( i18n("Start"));
 	_pbStop = buttonBox->addButton( i18n("Stop"));
-	_pbOptions = buttonBox->addButton( i18n("Options..."));
 
 	_pbStart->setEnabled( false );
 	_pbStop->setEnabled( false );
-	_pbOptions->setEnabled( false );
 
 	connect(_pbStart, SIGNAL(clicked()), SLOT(slotStartService()));
 	connect(_pbStop,  SIGNAL(clicked()), SLOT(slotStopService()));
-	connect(_pbOptions, SIGNAL(clicked()), SLOT(configureService()));
 	connect(_lvStartup, SIGNAL(selectionChanged(QListViewItem*)), SLOT(slotEvalItem(QListViewItem*)) );
 
 	load();
@@ -137,23 +132,6 @@ void KDEDConfig::load() {
 				item->setText(4, file.readEntry("X-KDE-Library"));
 			}
 		}
-	}
-
-	// Special case: kxmlrpcd
-	if (KService::serviceByDesktopName("kxmlrpcd"))
-	{
-		clitem = new CheckListItem(_lvStartup, QString::null);
-		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
-		{
-			KConfig config("kxmlrpcdrc", true);
-			config.setGroup("General");
-			clitem->setOn(config.readBoolEntry("StartServer", KXMLRPCD_DEFAULT));
-		}
-		item = clitem;
-		item->setText(1, i18n("XML-RPC Daemon"));
-		item->setText(2, QString::null);
-		item->setText(3, i18n("Not running"));
-		item->setText(4, QString::fromLatin1(KXMLRPCD));
 	}
 
 	// Special case: kalarmd
@@ -224,14 +202,6 @@ void KDEDConfig::save() {
 		}
 	}
 
-	// Special case: kxmlrpcd
-	item = static_cast<QCheckListItem *>(_lvStartup->findItem(QString::fromLatin1(KXMLRPCD),4));
-	if (item) {
-		KConfig config("kxmlrpcdrc", false, false);
-		config.setGroup("General");
-		config.writeEntry("StartServer", item->isOn());
-	}
-
 	// Special case: kwrited
 	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KWRITED,4));
 	if (item) {
@@ -264,12 +234,6 @@ void KDEDConfig::defaults()
 	getServiceStatus();
 
         QCheckListItem* item;
-	// Special case: kxmlrpcd
-	item = static_cast<QCheckListItem *>(_lvStartup->findItem(QString::fromLatin1(KXMLRPCD),4));
-	if (item) {
-		item->setOn(KXMLRPCD_DEFAULT);
-	}
-
 	// Special case: kwrited
 	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KWRITED,4));
 	if (item) {
@@ -326,16 +290,6 @@ void KDEDConfig::getServiceStatus()
 		}
 	}
 
-	// Special case: kxmlrpcd
-	if (kapp->dcopClient()->isApplicationRegistered(KXMLRPCD))
-	{
-		QListViewItem *item = _lvStartup->findItem(QString::fromLatin1(KXMLRPCD), 4);
-		if ( item )
-		{
-			item->setText(3, i18n("Running"));
-		}
-	}
-
 	// Special case: kalarmd
 	QListViewItem *item = _lvStartup->findItem(QString::fromLatin1(KALARMD), 4);
 	if ( item )
@@ -369,12 +323,6 @@ void KDEDConfig::slotEvalItem(QListViewItem * item)
 	if (!item)
 		return;
 
-	// Special case: kxmlrpcd
-	bool options = false;
-	if ( item->text(4) == QString::fromLatin1(KXMLRPCD) )
-		options = true;
-	_pbOptions->setEnabled(options);
-
 	if ( item->text(3) == i18n("Running") ) {
 		_pbStart->setEnabled( false );
 		_pbStop->setEnabled( true );
@@ -401,14 +349,6 @@ void KDEDConfig::slotServiceRunningToggled()
 void KDEDConfig::slotStartService()
 {
 	QCString service = _lvStartup->currentItem()->text(4).latin1();
-
-	// Special case: kxmlrpcd
-	if (service == KXMLRPCD)
-	{
-		KApplication::startServiceByDesktopName(KXMLRPCD);
-		slotServiceRunningToggled();
-		return;
-	}
 
 	// Special case: kalarmd
 	if (service == KALARMD)
@@ -444,14 +384,6 @@ void KDEDConfig::slotStopService()
 	QByteArray data;
 	QDataStream arg( data, IO_WriteOnly );
 
-	// Special case: kxmlrpcd
-	if (service == KXMLRPCD)
-	{
-		kapp->dcopClient()->send(KXMLRPCD, "qt/"+KXMLRPCD, "quit()", data);
-		QTimer::singleShot(200, this, SLOT(slotServiceRunningToggled()));
-		return;
-	}
-
 	// Special case: kalarmd
 	if (service == KALARMD)
 	{
@@ -476,19 +408,6 @@ void KDEDConfig::slotStopService()
 		KMessageBox::error(this, i18n("Unable to stop service!"));
 	}
 
-}
-
-void KDEDConfig::configureService()
-{
-	QCString service = _lvStartup->currentItem()->text(4).latin1();
-
-	// Special case: kxmlrpcd
-	if (service == KXMLRPCD)
-	{
-		KXmlRpcDialog dlg(this);
-		dlg.exec();
-		return;
-	}
 }
 
 void KDEDConfig::slotItemChecked(QCheckListItem*)
