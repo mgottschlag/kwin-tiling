@@ -162,8 +162,8 @@ void KCMKonsole::defaults()
 QString KCMKonsole::quickHelp() const
 {
     return i18n("<h1>konsole</h1> With this module you can configure konsole, the KDE terminal"
-		" application. In this module you can configure the generic konsole options, "
-		"that you can configure using the RMB too, and you can edit the konsole schema.");
+		" application. You can configure the generic konsole options (which can also be"
+		"configured using the RMB) and you can edit the konsole schema.");
 }
 
 
