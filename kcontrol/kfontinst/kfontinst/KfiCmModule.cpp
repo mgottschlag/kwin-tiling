@@ -31,6 +31,7 @@
 #include "Kfi.h"
 #include "KfiGlobal.h"
 #include "Config.h"
+#include "Misc.h"
 #include <klocale.h>
 #include <qtimer.h>
 #include <qlayout.h>
@@ -52,6 +53,7 @@ CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name)
     itsMainWidget=CKfi::create(this);
     topLayout->addWidget(itsMainWidget, 0, 0);
     setButtons(0);
+    setUseRootOnlyMsg(false);
     firstTime=true;
     theirInstance=this;
 }
@@ -127,10 +129,16 @@ void CKfiCmModule::save()
 
 QString CKfiCmModule::quickHelp() const
 {
-    return i18n("<h1>Font Installer</h1> This module allows you to"
-                " install TrueType, Type1, Speedo, and Bitmap"
-                " fonts. If you have StarOffice installed on your"
-                " system, then this can also be configured.");
+    QString help(i18n("<h1>Font Installer</h1><p> This module allows you to"
+                      " install TrueType, Type1, Speedo, and Bitmap"
+                      " fonts. If you have StarOffice installed on your"
+                      " system, then this can also be configured.</p>")),
+            rootHelp(i18n("<p><b>NOTE:</b> As you are not logged in as \"root\", any"
+                          " fonts installed will only be available to you. To install"
+                          " fonts system wide, then use the \"Aministrator Mode\""
+                          " button to run this module as \"root\".</p>"));
+
+    return CMisc::root() ? help : help+rootHelp;
 }
 
 extern "C"
