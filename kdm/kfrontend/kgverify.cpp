@@ -790,8 +790,8 @@ KGVerify::getConf( void *, const char *key, const QVariant &dflt )
 	return QVariant( kdmcfg->_echoMode );
     else {
 	QString fkey = QString::fromLatin1( key ) + '=';
-	for (QStringList::ConstIterator it = kdmcfg->_pluginConfig.begin();
-	     it != kdmcfg->_pluginConfig.end(); ++it)
+	for (QStringList::ConstIterator it = kdmcfg->_pluginOptions.begin();
+	     it != kdmcfg->_pluginOptions.end(); ++it)
 	    if ((*it).startsWith( fkey ))
 		return (*it).mid( fkey.length() );
 	return dflt;

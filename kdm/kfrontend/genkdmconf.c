@@ -2213,7 +2213,7 @@ static Ent entsGreeter[] = {
 "# or a full pathname. Default is classic\n" },
 { "PluginsShutdown",	0, 0,
 "# Same as PluginsLogin, but for the shutdown dialog.\n" },
-{ "PluginConfig",	0, 0,
+{ "PluginOptions",	0, 0,
 "# A list of options of the form Key=Value. The conversation plugins can query\n"
 "# these settings; it's up to them what possible keys are.\n" },
 { "AllowConsole",	0, 0,
@@ -2387,7 +2387,7 @@ static DEnt dEntsAnyGreeter[] = {
 { "ForgingSeed",	"", 0 },
 { "PluginsLogin",	"sign", 0 },
 { "PluginsShutdown",	"modern", 0 },
-{ "PluginConfig",	"SomeKey=randomvalue,Foo=bar", 0 },
+{ "PluginOptions",	"SomeKey=randomvalue,Foo=bar", 0 },
 { "AllowConsole",	"false", 0 },
 { "AllowClose",	        "true", 0 },
 };

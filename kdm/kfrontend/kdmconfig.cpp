@@ -217,7 +217,7 @@ KDMConfig::KDMConfig()
 
     _pluginsLogin = GetCfgQStrList(C_PluginsLogin);
     _pluginsShutdown = GetCfgQStrList(C_PluginsShutdown);
-    _pluginConfig = GetCfgQStrList(C_PluginConfig);
+    _pluginOptions = GetCfgQStrList(C_PluginOptions);
 
     _isLocal = (GetCfgInt (C_displayType) & d_location) == dLocal;
     _hasConsole = GetCfgInt (C_AllowConsole) && !GetCfgQStr (C_console).isEmpty();

@@ -94,7 +94,7 @@ public:
 
     QStringList	_pluginsLogin;
     QStringList	_pluginsShutdown;
-    QStringList	_pluginConfig;
+    QStringList	_pluginOptions;
 
     bool	_isLocal, _hasConsole, _allowClose;
 };
