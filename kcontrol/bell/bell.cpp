@@ -74,9 +74,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   box->setColumnLayout( 0, Qt::Horizontal );
   layout->addWidget(box);
   layout->addStretch();
-  QGridLayout *grid = new QGridLayout(box->layout(), 8, 2);
-  grid->setSpacing(KDialog::spacingHint());
-  grid->setMargin(KDialog::marginHint());
+  QGridLayout *grid = new QGridLayout(box->layout(), KDialog::spacingHint());
   grid->setColStretch(0, 0);
   grid->setColStretch(1, 1);
   grid->addColSpacing(0, 30);
