@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>541</width>
-            <height>413</height>
+            <width>534</width>
+            <height>360</height>
         </rect>
     </property>
     <property name="caption">
@@ -143,10 +143,10 @@
                 </widget>
                 <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>cboxDisableTooltips</cstring>
+                        <cstring>cboxEnableTooltips</cstring>
                     </property>
                     <property name="text">
-                        <string>Di&amp;sable Tooltips</string>
+                        <string>E&amp;nable Tooltips</string>
                     </property>
                 </widget>
             </grid>
@@ -353,7 +353,7 @@
     <slot>defaults()</slot>
     <slot>load()</slot>
     <slot>save()</slot>
-    <slot returnType="const KAboutData*">aboutData() const</slot>
+    <slot returnType="const KAboutData *">aboutData() const</slot>
     <slot returnType="QString">quickHelp() const</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>

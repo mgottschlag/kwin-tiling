@@ -24,7 +24,7 @@ void  KWidgetSettingsModule::init()
 	connect(cboxHoverButtons, SIGNAL(toggled(bool)), SLOT(setDirty()));
 	connect(cboxToolbarsHighlight, SIGNAL(toggled(bool)), SLOT(setDirty()));
 	connect(cboxEnableGUIEffects, SIGNAL(toggled(bool)), SLOT(setDirty()));
-	connect(cboxDisableTooltips, SIGNAL(toggled(bool)), SLOT(setDirty()));
+	connect(cboxEnableTooltips, SIGNAL(toggled(bool)), SLOT(setDirty()));
 	connect(cbMenuEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cbComboEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cbTooltipEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
@@ -42,11 +42,11 @@ void  KWidgetSettingsModule::defaults()
 	cboxHoverButtons->setChecked(false);
 	cboxToolbarsHighlight->setChecked(false);
 	cboxEnableGUIEffects->setChecked(false);
-	cboxDisableTooltips->setChecked(false);
+	cboxEnableTooltips->setChecked(true);
 	cbMenuEffect->setCurrentItem(0);
 	cbComboEffect->setCurrentItem(0);
 	cbTooltipEffect->setCurrentItem(0);
-	cboxIconSupport->setChecked(true );
+	cboxIconSupport->setChecked(false);
 }
 
 void  KWidgetSettingsModule::load()
@@ -94,14 +94,13 @@ void  KWidgetSettingsModule::load()
 
 	config.setGroup("KDE");
 	cboxIconSupport->setChecked(config.readBoolEntry("ShowIconsOnPushButtons", true));
-	cboxDisableTooltips->setChecked(config.readBoolEntry("EffectNoTooltip", false));
+	cboxEnableTooltips->setChecked(!config.readBoolEntry("EffectNoTooltip", false));
 
 
 }
 
 void  KWidgetSettingsModule::save()
 {
-
 
 	KMessageBox::information (this, i18n("Pure Qt applications need to be restarted in order "
 			"to let the changes take effect there."), QString::null, "QtAppApplyMsg");
@@ -162,7 +161,7 @@ void  KWidgetSettingsModule::save()
 
 	config->setGroup("KDE");
 	config->writeEntry("ShowIconsOnPushButtons", cboxIconSupport->isChecked(), true, true);
-	config->writeEntry("EffectNoTooltip", cboxDisableTooltips->isChecked(), true, true);
+	config->writeEntry("EffectNoTooltip", !cboxEnableTooltips->isChecked(), true, true);
 
 
 	config->sync();
