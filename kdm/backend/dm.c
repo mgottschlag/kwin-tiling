@@ -256,7 +256,7 @@ main (int argc, char **argv)
     if (!InitResources (argv) || !LoadDMResources (TRUE))
 	LogPanic ("Config reader failed. Aborting ...\n");
 
-    if (daemonMode)
+    if (daemonMode && getppid() != 1)
 	BecomeDaemon ();
 
     /* SUPPRESS 560 */
