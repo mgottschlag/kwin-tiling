@@ -38,7 +38,7 @@ GeneralTab::GeneralTab( QWidget *parent, const char* name )
     connect(m_autoHide, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_delaySlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_delaySpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_terminalInput, SIGNAL(textChanged(const QString&)), SIGNAL(chnaged()));
+    connect(m_terminalInput, SIGNAL(textChanged(const QString&)), SIGNAL(changed()));
 
     // whats this help
     QWhatsThis::add(m_locationGroup, i18n("This sets the position of the panel"
