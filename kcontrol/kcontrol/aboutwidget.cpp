@@ -345,8 +345,8 @@ void AboutWidget::updatePixmap()
 
         // draw use text
         xoffset = 10;
-        bheight = bheight - yoffset - 10;
-        bwidth = bwidth - xoffset - 10;
+        bheight = bheight - yoffset;
+        bwidth = bwidth - xoffset;
 
         p.setFont(f1);
 
@@ -354,6 +354,10 @@ void AboutWidget::updatePixmap()
         // do not break message freeze
         ut.replace(QRegExp("<b>"), "");
         ut.replace(QRegExp("</b>"), "");
+
+        QRect r = p.boundingRect(0, 0, bwidth, bheight, hAlign | AlignVCenter | WordBreak, ut);
+        if (bheight - r.height() < 10)
+           return;
 
         p.drawText(xoffset, yoffset, bwidth, bheight, hAlign | AlignVCenter | WordBreak, ut);
     }
