@@ -249,7 +249,5 @@ void KBellConfig::useBell( bool on )
   m_pitch->setEnabled( on );
   m_duration->setEnabled( on );
   m_testButton->setEnabled( on );
-  KConfig *kc = KGlobal::config();
-  KConfigGroupSaver cgs( kc, "General" );
-  kc->writeEntry( "UseSystemBell", on );
+  changed();
 }
