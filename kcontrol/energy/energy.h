@@ -4,7 +4,7 @@
  *
  * This file is part of the KDE project, module kcontrol.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- * 
+ *
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  *
@@ -29,7 +29,7 @@ extern "C" void init_energy();
 class KEnergy: public KCModule
 {
     Q_OBJECT
-	
+
 public:
     KEnergy(QWidget *parent, const char *name);
     ~KEnergy();
@@ -41,9 +41,6 @@ public:
     virtual void defaults();
 
     QString quickHelp() const;
-
-signals:
-    void changed(bool);
 
 private slots:
     void slotChangeEnable(bool);
@@ -58,7 +55,7 @@ private:
 
     static void applySettings(bool, int, int, int);
     friend void init_energy();
-	
+
     bool m_bChanged, m_bEnabled, m_bDPMS, m_bMaintainSanity;
     int m_Standby, m_Suspend, m_Off;
     int m_StandbyDesired, m_SuspendDesired, m_OffDesired;
