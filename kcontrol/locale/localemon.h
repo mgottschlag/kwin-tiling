@@ -82,9 +82,7 @@ private:
   QLabel *m_labMonFraDig;
   KIntNumInput * m_inMonFraDig;
 
-  QLabel *m_labMonPosPreCurSym;
   QCheckBox *m_chMonPosPreCurSym;
-  QLabel *m_labMonNegPreCurSym;
   QCheckBox *m_chMonNegPreCurSym;
   QLabel *m_labMonPosMonSignPos;
   QComboBox *m_cmbMonPosMonSignPos;

@@ -88,28 +88,27 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
 
   QWidget *vbox = new QVBox(this);
   lay->addMultiCellWidget(vbox, 4, 4, 0, 1);
-  QGroupBox *grp;
-  grp = new QGroupBox( vbox, I18N_NOOP("Positive") );
-  grp->setColumns(2);
-  m_labMonPosPreCurSym = new QLabel(grp, I18N_NOOP("Prefix currency symbol:"));
-  m_chMonPosPreCurSym = new QCheckBox(grp);
+  QVGroupBox *vgrp;
+  vgrp = new QVGroupBox( I18N_NOOP("Positive"), vbox );
+  m_chMonPosPreCurSym = new QCheckBox(I18N_NOOP("Prefix currency symbol"), vgrp);
   connect( m_chMonPosPreCurSym, SIGNAL( clicked() ),
-	   SLOT( slotMonPosPreCurSymChanged() ) );
+       SLOT( slotMonPosPreCurSymChanged() ) );
 
-  m_labMonPosMonSignPos = new QLabel(grp, I18N_NOOP("Sign position:"));
-  m_cmbMonPosMonSignPos = new QComboBox(grp, "signpos");
+  QHBox *hbox;
+  hbox = new QHBox( vgrp );
+  m_labMonPosMonSignPos = new QLabel(hbox, I18N_NOOP("Sign position:"));
+  m_cmbMonPosMonSignPos = new QComboBox(hbox, "signpos");
   connect( m_cmbMonPosMonSignPos, SIGNAL( activated(int) ),
-	   SLOT( slotMonPosMonSignPosChanged(int) ) );
+       SLOT( slotMonPosMonSignPosChanged(int) ) );
 
-  grp = new QGroupBox( vbox, I18N_NOOP("Negative") );
-  grp->setColumns(2);
-  m_labMonNegPreCurSym = new QLabel(grp, I18N_NOOP("Prefix currency symbol:"));
-  m_chMonNegPreCurSym = new QCheckBox(grp);
+  vgrp = new QVGroupBox( I18N_NOOP("Negative"), vbox );
+  m_chMonNegPreCurSym = new QCheckBox(I18N_NOOP("Prefix currency symbol") ,vgrp);
   connect( m_chMonNegPreCurSym, SIGNAL( clicked() ),
 	   SLOT( slotMonNegPreCurSymChanged() ) );
 
-  m_labMonNegMonSignPos = new QLabel(grp, I18N_NOOP("Sign position:"));
-  m_cmbMonNegMonSignPos = new QComboBox(grp, "signpos");
+  hbox = new QHBox( vgrp );
+  m_labMonNegMonSignPos = new QLabel(hbox, I18N_NOOP("Sign position:"));
+  m_cmbMonNegMonSignPos = new QComboBox(hbox, "signpos");
   connect( m_cmbMonNegMonSignPos, SIGNAL( activated(int) ),
 	   SLOT( slotMonNegMonSignPosChanged(int) ) );
 
@@ -315,14 +314,12 @@ void KLocaleConfigMoney::slotTranslate()
 			   "will be prefixed (i.e. to the left of the "
 			   "value) for all positive monetary values. If "
 			   "not, it will be postfixed (i.e. to the right)." );
-  QWhatsThis::add( m_labMonPosPreCurSym, str );
   QWhatsThis::add( m_chMonPosPreCurSym, str );
 
   str = m_locale->translate( "If this option is checked, the currency sign "
 			   "will be prefixed (i.e. to the left of the "
 			   "value) for all negative monetary values. If "
 			   "not, it will be postfixed (i.e. to the right)." );
-  QWhatsThis::add( m_labMonNegPreCurSym, str );
   QWhatsThis::add( m_chMonNegPreCurSym, str );
 
   str = m_locale->translate( "Here you can select how a positive sign will be "
