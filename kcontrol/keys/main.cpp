@@ -99,6 +99,9 @@ extern "C"
   KCModule *create_keys(QWidget *parent, const char *name)
   {
     KGlobal::locale()->insertCatalogue("kcmkeys");
+    KGlobal::locale()->insertCatalogue("kwin");
+    KGlobal::locale()->insertCatalogue("kdesktop");
+    KGlobal::locale()->insertCatalogue("kicker");
     return new KeyModule(parent, name);
   }
 }
