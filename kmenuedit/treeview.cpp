@@ -74,6 +74,9 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     connect(this, SIGNAL(clicked( QListViewItem* )),
 	    SLOT(itemSelected( QListViewItem* )));
 
+    connect(this,SIGNAL(selectionChanged ( QListViewItem * )),
+            SLOT(itemSelected( QListViewItem* )));
+
     connect(this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
 	    SLOT(slotRMBPressed(QListViewItem*, const QPoint&)));
 
