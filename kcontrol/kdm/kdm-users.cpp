@@ -69,7 +69,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     m_notFirst = false;
     QDir testDir( m_userPixDir );
     if ( !testDir.exists() && !testDir.mkdir( testDir.absPath() ))
-        KMessageBox::sorry( this, i18n("Couldn't create folder %1").arg( testDir.absPath() ) );
+        KMessageBox::sorry( this, i18n("Unable to create folder %1").arg( testDir.absPath() ) );
 
     m_defaultText = i18n("<default>");
 
