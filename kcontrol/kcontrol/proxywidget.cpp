@@ -22,7 +22,7 @@
 #include <qpushbutton.h>
 #include <qlayout.h>
 #include <qframe.h>
-
+#include <qscrollview.h>
 #include <klocale.h>
 #include <kapp.h>
 #include <kcmodule.h>
@@ -31,7 +31,7 @@
 
 #include "proxywidget.h"
 #include "proxywidget.moc"
-
+#include <kdebug.h>
 
 class WhatsThis : public QWhatsThis
 {
@@ -60,6 +60,78 @@ static void setVisible(QPushButton *btn, bool vis)
     btn->hide();
 }
 
+class ProxyView : public QScrollView
+{
+public:
+    ProxyView(KCModule *client, const QString& title, QWidget *parent, const char *name);
+
+private:
+    virtual void resizeEvent(QResizeEvent *);
+
+    KCModule    *client;
+    bool scroll;
+};
+
+
+ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, const char *name)
+    : QScrollView(parent, name), client(_client)
+{
+  setResizePolicy(QScrollView::Manual);
+  setVScrollBarMode(AlwaysOff);
+  setHScrollBarMode(AlwaysOff);
+  client->reparent(viewport(),0,QPoint(0,0),true);
+  addChild(client);
+  client->adjustSize();
+  scroll = (kapp->desktop()->width() < 800 || kapp->desktop()->height() < 640 || client->minimumSizeHint().width() > 700 || client->minimumSizeHint().height() > 510);
+  if (!scroll) {
+    QSize min = client->minimumSizeHint();
+    if (!min.isValid())
+      min = QSize(700, 510);
+    setMinimumSize(min);
+  }
+}
+
+void ProxyView::resizeEvent(QResizeEvent *e)
+{
+    int x = width();
+    int y = height();
+    int hs = horizontalScrollBar()->sizeHint().height();
+    int vs = verticalScrollBar()->sizeHint().width();
+
+    int mx = client->minimumSizeHint().width();
+    int my = client->minimumSizeHint().height();
+
+    int dx = x;
+    int dy = y;
+    bool showh = false;
+    bool showv = false;
+
+    if (scroll) {
+      if (mx > x) {
+        dx = mx;
+        if (my + vs < y)
+	  dy -= vs;
+        else {
+	  showv = true;
+        }
+        showh = true;
+      } else if (my > y) {
+        dy = my;
+        if (mx + hs < x)
+	  dx -= hs;
+        else
+	  showh = true;
+        showv = true;
+      }
+    }
+    client->resize(dx, dy);
+    resizeContents(dx, dy);
+    setVScrollBarMode(showv ? AlwaysOn : AlwaysOff);
+    setHScrollBarMode(showh ? AlwaysOn : AlwaysOff);
+
+    QScrollView::resizeEvent(e);
+}
+
 ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
              bool run_as_root)
   : QWidget(0, name)
@@ -67,10 +139,9 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 {
   setCaption(title);
 
+  view = new ProxyView(client, title, this, "proxyview");
   (void) new WhatsThis( this );
 
-  _client->resize(_client->minimumSize());
-  _client->reparent(this,0,QPoint(0,0),true);
   connect(_client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
 
   _sep = new QFrame(this);
@@ -102,7 +173,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   connect(_root, SIGNAL(clicked()), this, SLOT(rootClicked()));
 
   QVBoxLayout *top = new QVBoxLayout(this, 2, 4);
-  top->addWidget(_client);
+  top->addWidget(view);
   top->addWidget(_sep);
 
   QHBoxLayout *buttons = new QHBoxLayout(top, 4);
