@@ -31,6 +31,7 @@
 #include <kaboutdata.h>
 #include <kgenericfactory.h>
 #include <kdiroperator.h>
+#include "Global.h"
 #include "Misc.h"
 #include "FontEngine.h"
 #include "KFileFontIconView.h"
@@ -73,7 +74,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
     const char *appName=KCmdLineArgs::appName();
 
-    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName));
+    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName) && KCmdLineArgs::parsedArgs()->isSet("embed"));
 
     itsStatusLabel = new QLabel(this);
     itsStatusLabel->setFrameShape(QFrame::Panel);
@@ -179,7 +180,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 #else
     layout->addWidget(fontsFrame);
 #endif
-   layout->addWidget(itsStatusLabel);
+    layout->addWidget(itsStatusLabel);
 
     setButtons(0);
     setUseRootOnlyMsg(false);
