@@ -56,7 +56,6 @@ services_DATA = \
 		ruby_application_archive.desktop \
 		seek.desktop \
 		sourceforge.desktop \
-		tel_at.desktop \
 		thesaurus.desktop \
 		vivisimo.desktop \
 		voila.desktop \
