@@ -226,7 +226,7 @@ marks). Some people like to provide a nickname only. You can leave this field bl
                         <cstring>chkRunTerminal</cstring>
                     </property>
                     <property name="text">
-                        <string>Run In Terminal</string>
+                        <string>&amp;Run in terminal</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Activate this option if you want the selected email client to be executed in a terminal (e.g. &lt;em&gt;Konsole&lt;/em&gt;).</string>
