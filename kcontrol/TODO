@@ -67,13 +67,6 @@ Sound -> Sound Server
 As soon as more stuff is being added, a tab "Quality" might be a good idea.
 
 
-Web Browsing -> Proxies & Cache Settings
-----------------------------------------
-"Settings" is redundant in the name as this is what kcontrol is about.
-The radio buttons for the cache-settings should appear vertically alined under "Use Cache".
-This would look better and wouldn't make kcontrol too wide in languages which use longer words.
-
-
 Web Browsing -> Style-Sheet
 ---------------------------
 Too many groupboxes (Especially if you think of the case that visulally impaired people might want large fonts which wouldn't be displayed properly with the current layout).
