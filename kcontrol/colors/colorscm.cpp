@@ -80,7 +80,7 @@ public:
 /**** KColorScheme ****/
 
 KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList &)
-    : KCModule(parent, name)
+    : KCModule(KolorFactory::instance(), parent, name)
 {
     m_bChanged = false;
     nSysSchemes = 2;
