@@ -29,11 +29,18 @@ KNewThemeDlg::KNewThemeDlg( QWidget * parent, const char * name )
 {
     m_base = new NewThemeWidget( this, "new_theme_base" );
     setMainWidget( m_base );
+    connect( m_base->leName, SIGNAL( textChanged ( const QString & ) ), this, SLOT( slotThemeNameChanged( const QString & ) ) );
+    slotThemeNameChanged( m_base->leName->text() );
 }
 
 KNewThemeDlg::~KNewThemeDlg()
 {
     delete m_base;
+}
+
+void KNewThemeDlg::slotThemeNameChanged( const QString &_text )
+{
+     enableButtonOK( !_text.isEmpty() );
 }
 
 QString KNewThemeDlg::getName() const

@@ -50,6 +50,9 @@ public:
     void setVersion( const QString & version );
 private:
     NewThemeWidget * m_base;
+
+private slots:
+    void slotThemeNameChanged( const QString &_text );
 };
 
 #endif
