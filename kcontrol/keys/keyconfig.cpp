@@ -15,6 +15,7 @@
 #include <qlabel.h>
 #include <qdir.h> 
 #include <qlayout.h>
+#include <qtabwidget.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -29,20 +30,6 @@
 #include "keyconfig.h"
 #include "keyconfig.moc"
 
-// export two factories
-extern "C" {
-  KCModule *create_global(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmkeys");
-    return new KKeyModule(parent, true, name);
-  }
-  
-  KCModule *create_standard(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmkeys");
-    return new KKeyModule(parent, false, name);
-  }
-}
 
 //----------------------------------------------------------------------------
 
