@@ -398,7 +398,7 @@ void KDMUsersWidget::save()
         QString nousrstr;
         for(uint i = 0; i < nouserlb->count(); i++) {
             nousrstr.append(nouserlb->text(i));
-            nousrstr.append(";");
+            nousrstr.append(",");
         }
         c->writeEntry( "NoUsers", nousrstr );
     }
@@ -407,7 +407,7 @@ void KDMUsersWidget::save()
         QString usrstr;
         for(uint i = 0; i < userlb->count(); i++) {
             usrstr.append(userlb->text(i));
-            usrstr.append(";");
+            usrstr.append(",");
         }
         c->writeEntry( "Users", usrstr );
     }
@@ -427,9 +427,9 @@ void KDMUsersWidget::load()
 
     // Read users from kdmrc and /etc/passwd
     QStringList users, no_users;
-    users = c->readListEntry( "Users", ';');
+    users = c->readListEntry( "Users");
     showallusers = users.isEmpty();
-    no_users = c->readListEntry( "NoUsers", ';');
+    no_users = c->readListEntry( "NoUsers");
 
     userlb->clear();
     userlb->insertStringList(users);

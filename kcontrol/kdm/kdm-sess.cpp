@@ -251,7 +251,7 @@ void KDMSessionsWidget::save()
     for(uint i = 0; i < sessionslb->count(); i++)
     {
       sesstr.append(sessionslb->text(i));
-      sesstr.append(";");
+      sesstr.append(",");
     }
     c->writeEntry( "SessionTypes", sesstr );
   }
@@ -284,7 +284,7 @@ void KDMSessionsWidget::load()
     sdMode = ConsoleOnly;
   sdcombo->setCurrentItem(sdMode);
 
-  QStringList sessions = c->readListEntry( "SessionTypes", ';');
+  QStringList sessions = c->readListEntry( "SessionTypes");
   sessionslb->clear();
   sessionslb->insertStringList(sessions);
 
@@ -304,7 +304,7 @@ void KDMSessionsWidget::defaults()
 
   sessionslb->clear();
   sessionslb->insertItem("kde");
-  sessionslb->insertItem("failsave");
+  sessionslb->insertItem("failsafe");
 }
 
 
