@@ -107,8 +107,8 @@ bool ThemeCreator::extract(void)
   kdDebug() << "Theme::extract() done" << endl;
 
   saveSettings();
-  save(KGlobal::dirs()->saveLocation("themes") + fileName());
   mValid = true;
+  save(KGlobal::dirs()->saveLocation("themes") + fileName());
 
   return true;
 }

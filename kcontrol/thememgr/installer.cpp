@@ -314,7 +314,7 @@ void Installer::slotSetTheme(int id)
   }
   else
   {
-    QString error;
+    QString error = i18n("(Could not load theme)");
     name = findThemePath(mThemesList->text(id));
     enabled = false;
     if (!name.isEmpty())
