@@ -14,7 +14,7 @@ kcmshell_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp \
 kcmshell_LDADD   = -lkdeui -lkdecore -lqt -lXext -lX11
 
 kcmroot_SOURCES = kcmroot.cpp KCModuleIface.skel moduleinfo.cpp modloader.cpp \
-			kcmodule.cpp utils.cpp KCModuleIface.stub \
+			utils.cpp KCModuleIface.stub \
 			proxymodule.cpp
 
 kcmroot_LDADD   = -lkdeui -lkdecore -lqt -lXext -lX11
