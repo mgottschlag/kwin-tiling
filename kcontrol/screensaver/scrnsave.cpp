@@ -321,8 +321,8 @@ void KScreenSaver::resizeEvent( QResizeEvent * )
 
   if (mMonitor)
     {
-      mMonitor->setGeometry( (mMonitorLabel->width()-200)/2+20,
-                 (mMonitorLabel->height()-160)/2+10, 157, 111 );
+      mMonitor->setGeometry( (mMonitorLabel->width()-200)/2+23,
+                 (mMonitorLabel->height()-186)/2+14, 151, 115 );
     }
 }
 
@@ -549,8 +549,8 @@ void KScreenSaver::slotPreviewExited(KProcess *)
 
     mMonitor = new KSSMonitor(mMonitorLabel);
     mMonitor->setBackgroundColor(black);
-    mMonitor->setGeometry((mMonitorLabel->width()-200)/2+20,
-                          (mMonitorLabel->height()-160)/2+10, 157, 111);
+    mMonitor->setGeometry((mMonitorLabel->width()-200)/2+23,
+                          (mMonitorLabel->height()-186)/2+14, 151, 115);
     mMonitor->show();
 
     if (mEnabled && mSelected >= 0) {

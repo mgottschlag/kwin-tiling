@@ -161,7 +161,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     lbl->setFixedSize(lbl->sizeHint());
     hbox->addWidget(lbl);
     m_pMonitor = new KBGMonitor(lbl, "preview monitor");
-    m_pMonitor->setGeometry(20, 10, 157, 111);
+    m_pMonitor->setGeometry(23, 14, 151, 115);
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
     QWhatsThis::add( m_pMonitor, i18n("In this monitor, you can preview how your settings will look like on a \"real\" desktop.") );
 
