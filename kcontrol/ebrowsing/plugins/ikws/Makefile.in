@@ -205,20 +205,19 @@ kde_toolbardir = @kde_toolbardir@
 kde_wallpaperdir = @kde_wallpaperdir@
 micodir = @micodir@
 nogroup = @nogroup@
-path_su = @path_su@
 qt_includes = @qt_includes@
 qt_libraries = @qt_libraries@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
 xdmconfigsubdir = @xdmconfigsubdir@
 
-INCLUDES = -I$(srcdir)/../../kurifilter $(all_includes)
+INCLUDES = $(all_includes)
 LDFLAGS = $(all_libraries)
 
 lib_LTLIBRARIES = libkuriikwsfilter.la
 
 libkuriikwsfilter_la_LDFLAGS = -version-info 1:0:0 -module -no-undefined 
-libkuriikwsfilter_la_LIBADD = ../../kurifilter/libkurifilter.la $(LIB_KDEUI)
+libkuriikwsfilter_la_LIBADD = $(LIB_KSYCOCA) $(LIB_KDEUI)
 
 libkuriikwsfilter_la_SOURCES = kuriikwsfiltereng.cpp kuriikwsfilter.skel kuriikwsfilter.cpp ikwsopts.cpp
 
@@ -238,7 +237,7 @@ LTLIBRARIES =  $(lib_LTLIBRARIES)
 DEFS = @DEFS@ -I. -I$(srcdir) -I../../../..
 CPPFLAGS = @CPPFLAGS@
 LIBS = @LIBS@
-libkuriikwsfilter_la_DEPENDENCIES =  ../../kurifilter/libkurifilter.la
+libkuriikwsfilter_la_DEPENDENCIES = 
 #>- libkuriikwsfilter_la_OBJECTS =  kuriikwsfiltereng.lo kuriikwsfilter.lo \
 #>- ikwsopts.lo
 #>+ 5
@@ -279,7 +278,9 @@ GZIP_ENV = --best
 SOURCES = $(libkuriikwsfilter_la_SOURCES)
 OBJECTS = $(libkuriikwsfilter_la_OBJECTS)
 
-all: all-redirect
+#>- all: all-redirect
+#>+ 1
+all: docs-am  all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .cpp .lo .o .obj .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
@@ -629,9 +630,6 @@ libkuriikwsfilter.la.closure: $(libkuriikwsfilter_la_OBJECTS) $(libkuriikwsfilte
 clean-idl:
 	-rm -f \
 	kuriikwsfilter_skel.cpp kuriikwsfilter_skel.h kuriikwsfilter.kidl 
-
-#>+ 2
-docs: docs-am
 
 #>+ 2
 docs-am:

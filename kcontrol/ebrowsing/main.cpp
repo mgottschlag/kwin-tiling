@@ -50,8 +50,10 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
     layout->addWidget(tab);
 
     opts = new FilterOptions(this);
+#if 0
     tab->addTab(opts, i18n("&Filters"));
     connect(opts, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+#endif
 
     modules.setAutoDelete(true);
 
