@@ -82,8 +82,8 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
   connect(autohide_cb, SIGNAL(clicked()), SLOT(autohide_clicked()));
   vbox->addWidget(autohide_cb);
 
-  autohide_input = new KIntNumInput(50, autohide_group);
-  autohide_input->setRange(1, 200, 1, true);
+  autohide_input = new KIntNumInput(5, autohide_group);
+  autohide_input->setRange(1, 50, 1, true);
   autohide_input->setLabel(i18n("Speed:"), AlignLeft | AlignVCenter);
   connect(autohide_input, SIGNAL(valueChanged(int)), SLOT(autohide_changed(int)));
   vbox->addWidget(autohide_input);
@@ -292,7 +292,7 @@ void LnFTab::defaults()
   autohide_input->setEnabled(true);
 
   hide_input->setValue(50);
-  autohide_input->setValue(50);
+  autohide_input->setValue(5);
 
   fade_out_cb->setChecked(false);
 }

@@ -120,7 +120,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   vbox->addWidget(ah_cb);
 
   ah_input = new KIntNumInput(3, ah_group);
-  ah_input->setRange(0, 100, 1, true);
+  ah_input->setRange(1, 100, 1, true);
   ah_input->setLabel(i18n("&Delay in seconds:"), AlignLeft | AlignVCenter);
   connect(ah_input, SIGNAL(valueChanged(int)), SLOT(ah_input_changed(int)));
   vbox->addWidget(ah_input);
