@@ -68,7 +68,7 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
 
 
   // initialize
-    if (gesture != QString::null)
+    if (!gesture.isNull())
         {
         slotRecorded(gesture);
         slotRecorded(gesture);
