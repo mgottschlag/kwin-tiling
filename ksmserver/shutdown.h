@@ -19,51 +19,39 @@ class QVButtonGroup;
 class KSMShutdownFeedback : public QWidget
 {
     Q_OBJECT
-protected:
-    KSMShutdownFeedback();
+    
 public:
-    static KSMShutdownFeedback * self() {
-        if ( !s_pSelf )
-            s_pSelf = new KSMShutdownFeedback;
-        return s_pSelf;
-    }
-    ~KSMShutdownFeedback() {}
-
-    static void start();
+    static void start() { if ( !s_pSelf ) s_pSelf = new KSMShutdownFeedback; }
     static void stop() { delete s_pSelf; s_pSelf = 0L; }
-
+    static KSMShutdownFeedback * self() { return s_pSelf; }
     // TODO more feedback (which apps have saved themselves, etc.)
 
-signals:
-    void aborted();
+protected:
+    ~KSMShutdownFeedback() {}
 
 private:
-    //virtual void paintEvent( QPaintEvent *event );
-    virtual void keyPressEvent( QKeyEvent * event );
     static KSMShutdownFeedback * s_pSelf;
+    KSMShutdownFeedback();
 };
 
 // The confirmation dialog
 class KSMShutdownDlg : public QDialog
 {
     Q_OBJECT
+
 public:
-    KSMShutdownDlg( QWidget* parent, bool saveSession, bool maysd, bool maynuke, KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode );
-    ~KSMShutdownDlg() {}
-
     static bool confirmShutdown( bool& saveSession, bool maysd, bool maynuke, KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode );
-
-    const QPixmap & pixmap() { return pm; }
 
 public slots:
     void slotSdMode(int);
 
-private slots:
-    void requestFocus();
+protected:
+    ~KSMShutdownDlg() {};
+    virtual void showEvent( QShowEvent * );
+    virtual void hideEvent( QHideEvent * );
 
 private:
-    virtual void mousePressEvent( QMouseEvent * ){}
-    virtual void showEvent( QShowEvent * e );
+    KSMShutdownDlg( QWidget* parent, bool saveSession, bool maysd, bool maynuke, KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode );
     QCheckBox* checkbox;
     QRadioButton *rLogout, *rHalt, *rReboot, *rSched, *rTry, *rForce;
     QVButtonGroup *mgrp;

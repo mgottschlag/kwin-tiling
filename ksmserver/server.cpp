@@ -1050,8 +1050,6 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 
     if ( !logoutConfirmed ) {
 	KSMShutdownFeedback::start(); // make the screen gray
-	connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ),
-		 SLOT( cancelShutdown() ) );
 	logoutConfirmed =
 	    KSMShutdownDlg::confirmShutdown( saveSession,
 					     maysd, maynuke, sdtype, sdmode );
@@ -1181,7 +1179,6 @@ void KSMServer::cancelShutdown()
     for ( KSMClient* c = clients.first(); c; c = clients.next() )
  	SmsShutdownCancelled( c->connection() );
     state = Idle;
-    KSMShutdownFeedback::stop(); // so that the screen becomes normal again
 }
 
 /*

@@ -13,7 +13,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qvbuttongroup.h>
-#include <qpushbutton.h>
 #include <qlabel.h>
 #include <qvbox.h>
 #include <qpainter.h>
@@ -24,6 +23,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <klocale.h>
 #include <kapplication.h>
 #include <kdebug.h>
+#include <kpushbutton.h>
+#include <kstdguiitem.h>
 #include <kwin.h>
 
 #include <X11/Xlib.h>
@@ -48,22 +49,6 @@ KSMShutdownFeedback::KSMShutdownFeedback()
     p.end();
 }
 
-void KSMShutdownFeedback::start() //static
-{
-    (void) self();
-}
-
-void KSMShutdownFeedback::keyPressEvent( QKeyEvent * event )
-{
-    if ( event->key() == Key_Escape )
-    {
-        kdDebug() << "Esc pressed -> aborting shutdown" << endl;
-        emit aborted();
-    }
-    else
-        QWidget::keyPressEvent( event );
-}
-
 //////
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
@@ -83,10 +68,12 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     vbox->addWidget( frame );
     vbox = new QVBoxLayout( frame, 15, 5 );
 
-    QLabel* label = new QLabel(i18n(
-         "<center><b><big><big>End KDE Session?</big></big></b></center>"),
-	 frame );
-    vbox->addWidget( label );
+    QLabel* label = new QLabel( i18n("End KDE Session?"), frame );
+    QFont fnt = label->font();
+    fnt.setBold( true );
+    fnt.setPixelSize( fnt.pixelSize() * 3 / 2 );
+    label->setFont( fnt );
+    vbox->addWidget( label, 0, AlignHCenter );
 
     if (maysd)
     {
@@ -104,26 +91,33 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         rTry = new QRadioButton( i18n("&Try Now"), mgrp );
         hbox->addWidget( mgrp, AlignTop );
     }
-    else
-        vbox->addStretch();
 
     checkbox = new QCheckBox( i18n("&Save session for future logins"), frame );
-    vbox->addWidget( checkbox, 0, AlignLeft  );
+    vbox->addWidget( checkbox, 0, AlignCenter  );
     vbox->addStretch();
+
+#if 0
+    QFrame *line = new QFrame( frame );
+    line->setFrameShape( QFrame::HLine );
+    line->setFrameShadow( QFrame::Sunken );
+    vbox->addWidget( line );
+#endif
 
     QHBoxLayout* hbox = new QHBoxLayout( vbox );
     hbox->addStretch();
-    QPushButton* yes = new QPushButton(maysd ? i18n("&OK") : i18n("&Logout"), frame );
+    KPushButton* yes = new KPushButton( maysd ? 
+                                         KStdGuiItem::ok() : 
+                                         KGuiItem( i18n( "&Logout" ) ),
+                                        frame );
     connect( yes, SIGNAL( clicked() ), SLOT( accept() ) );
     yes->setDefault( TRUE );
     hbox->addWidget( yes );
     hbox->addStretch();
-    QPushButton* cancel = new QPushButton(i18n("&Cancel"), frame );
+    KPushButton* cancel = new KPushButton( KStdGuiItem::cancel(), frame );
     connect( cancel, SIGNAL( clicked() ), SLOT( reject() ) );
     hbox->addWidget( cancel );
     hbox->addStretch();
 
-    QTimer::singleShot( 0, this, SLOT( requestFocus() ) );
     checkbox->setFocus();
 
     checkbox->setChecked( saveSession );
@@ -151,11 +145,6 @@ void KSMShutdownDlg::slotSdMode(int)
     mgrp->setEnabled( !rLogout->isChecked() );
 }
 
-void KSMShutdownDlg::requestFocus()
-{
-    XSetInputFocus( qt_xdisplay(), winId(), RevertToParent, CurrentTime );
-}
-
 bool KSMShutdownDlg::confirmShutdown( bool& saveSession, 
   bool maysd, bool maynuke,
   KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode )
@@ -175,11 +164,10 @@ bool KSMShutdownDlg::confirmShutdown( bool& saveSession,
     QRect rect = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
     l->move(rect.x() + (rect.width() - sh.width())/2,
     	    rect.y() + (rect.height() - sh.height())/2);
+    l->show();
+    XSetInputFocus( qt_xdisplay(), l->winId(), RevertToParent, CurrentTime );
     bool result = l->exec();
     l->hide();
-
-    // Restore background
-    bitBlt( KSMShutdownFeedback::self(), l->x(), l->y(), &l->pixmap() );
 
     if (maysd)
     {
@@ -207,3 +195,8 @@ void KSMShutdownDlg::showEvent( QShowEvent * )
                               x(), y(), width(), height() );
 }
 
+void KSMShutdownDlg::hideEvent( QHideEvent * )
+{
+    // Restore background
+    bitBlt( KSMShutdownFeedback::self(), x(), y(), &pm );
+}

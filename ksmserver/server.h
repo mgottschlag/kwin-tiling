@@ -115,7 +115,6 @@ private slots:
     void restoreSessionDone();
 
     void protectionTimeout();
-    void cancelShutdown();
 
     void autoStart();
 
@@ -123,6 +122,7 @@ private:
     void handlePendingInteractions();
     void completeShutdown();
     void completeKilling();
+    void cancelShutdown();
 
     void discardSession();
     void storeSession();
