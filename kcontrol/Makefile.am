@@ -28,7 +28,7 @@ JOYSTICK_SUBDIR=joystick
 endif
 
 # 'colors' and 'fonts' should come after 'krdb'
-SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
+SUBDIRS = bell background dnssd filetypes samba krdb input info ioslaveinfo kdm\
 	kicker locale launch keys kio konq style kded \
 	konqhtml ebrowsing arts kcontrol knotify\
 	clock pics $(ACCESS_SUBDIR) colors energy fonts css \
