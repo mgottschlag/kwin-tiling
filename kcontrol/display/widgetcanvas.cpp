@@ -41,29 +41,28 @@ WidgetCanvas::WidgetCanvas( QWidget *parent, const char *name )
 
 void WidgetCanvas::paintEvent(QPaintEvent *)
 {
-	bitBlt( this, 0, 0, &smplw );
+    bitBlt( this, 0, 0, &smplw );
 }
 
 void WidgetCanvas::mousePressEvent( QMouseEvent *me )
 {
-	for ( int i = 0; i < MAX_HOTSPOTS; i++ )
-		if ( hotspots[i].rect.contains( me->pos() ) )
-		{
-			emit widgetSelected( hotspots[i].number );
-			return;
-		}
+    for ( int i = 0; i < MAX_HOTSPOTS; i++ )
+	if ( hotspots[i].rect.contains( me->pos() ) ) {
+	    emit widgetSelected( hotspots[i].number );
+	    return;
+	}
 }
 
 void WidgetCanvas::dropEvent( QDropEvent *e)
 {
-        QColor c;
-	if( KColorDrag::decode( e, c)) {
-	  for ( int i = 0; i < MAX_HOTSPOTS; i++ )
+    QColor c;
+    if (KColorDrag::decode( e, c)) {
+	for ( int i = 0; i < MAX_HOTSPOTS; i++ )
 	    if ( hotspots[i].rect.contains( e->pos() ) ) {
 		emit colorDropped( hotspots[i].number, c);
 		return;
 	    }
-	}
+    }
 }
 
 
@@ -75,6 +74,20 @@ void WidgetCanvas::dragEnterEvent( QDragEnterEvent *e)
 void WidgetCanvas::paletteChange(const QPalette &)
 {
 	drawSampleWidgets();
+}
+
+void WidgetCanvas::resizeEvent(QResizeEvent *)
+{
+    drawSampleWidgets();
+}
+
+/*
+ * This is necessary because otherwise the scrollbar in drawSampleWidgets()
+ * doesn't show the first time.
+ */
+void WidgetCanvas::showEvent(QShowEvent *)
+{
+    drawSampleWidgets();
 }
 
 void WidgetCanvas::resetTitlebarPixmaps(const QColor &actMed,
@@ -396,39 +409,41 @@ void WidgetCanvas::drawSampleWidgets()
     fnt.setPointSize(12);
     paint.setFont( fnt );
     paint.setPen( windowTxt );
-    paint.drawText( 200, 127-20, i18n( "Window text") );
+    paint.drawText( 140, 127-20, i18n( "Window text") );
     textLen = paint.fontMetrics().width( i18n("Window text") );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 200, 113-20, textLen, 14 ), 11 ); // window text
+        HotSpot( QRect( 140, 113-20, textLen, 14 ), 11 ); // window text
 
 
+    textLen = paint.fontMetrics().width( i18n("Selected text") );
     paint.setBrush( select );paint.setPen( select );
-    paint.drawRect ( 120, 115, width()-175, 32);
+    paint.drawRect ( 120, 115, textLen+40, 32);
 
     fnt.setPointSize(12);
     paint.setFont( fnt );
     paint.setPen( selectTxt );
-    paint.drawText( 200, 135, i18n( "Selected text") );
-    textLen = paint.fontMetrics().width( i18n("Selected text") );
+    paint.drawText( 140, 135, i18n( "Selected text") );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 200, 121, textLen, 14 ), 9 ); // select text
+        HotSpot( QRect( 140, 121, textLen, 14 ), 9 ); // select text
     hotspots[ spot++ ] =
-        HotSpot( QRect( 120, 115, width()-175, 32), 8 ); // select bg
+        HotSpot( QRect( 120, 115, textLen+40, 32), 8 ); // select bg
 
 
     // Button
+    int xpos = 120 + textLen + 40 + 16;
+    int ypos = 115 + 2;
     textLen = paint.fontMetrics().width(i18n("Push Button"));
     hotspots[ spot++ ] =
-        HotSpot( QRect(120+16, 156+((28-paint.fontMetrics().height())/2),
-                       textLen, 28-paint.fontMetrics().height()), 13 );
+        HotSpot( QRect(xpos+16, ypos+((28-paint.fontMetrics().height())/2),
+                       textLen, paint.fontMetrics().height()), 13 );
     hotspots[ spot++ ] =
-        HotSpot( QRect(120, 156, textLen+32, 28), 12 );
+        HotSpot( QRect(xpos, ypos, textLen+32, 28), 12 );
     brush.setColor( button );
-    qDrawWinButton(&paint, 120, 156, textLen+32, 28, cg, false, &brush);
+    qDrawWinButton(&paint, xpos, ypos, textLen+32, 28, cg, false, &brush);
     paint.setPen(buttonTxt);
-    paint.drawText(120, 156, textLen+32, 28, AlignCenter,
+    paint.drawText(xpos, ypos, textLen+32, 28, AlignCenter,
                    i18n("Push Button"));
 
     // Scrollbar

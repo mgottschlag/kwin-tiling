@@ -9,12 +9,11 @@ SUBDIRS = . kcs ad pics maps
 
 bin_PROGRAMS = kcmdisplay
 
-kcmdisplay_SOURCES = colorscm.cpp display.cpp savescm.cpp \
-	general.cpp main.cpp widgetcanvas.cpp
+kcmdisplay_SOURCES = display.cpp general.cpp main.cpp
 
 METASOURCES = AUTO
 
-noinst_HEADERS = backgnd.h display.h colorscm.h savescm.h scrnsave.h \
+noinst_HEADERS = backgnd.h display.h colorscm.h scrnsave.h \
 		general.h widgetcanvas.h fonts.h energy.h bgdialogs.h \
 		advanced.h stdclient_bitmaps.h
 
@@ -22,7 +21,7 @@ EXTRA_DIST = README
 
 lib_LTLIBRARIES = libkcm_display.la
 libkcm_display_la_SOURCES = advanced.cpp fonts.cpp scrnsave.cpp backgnd.cpp \
-	bgdialogs.cpp energy.cpp
+	bgdialogs.cpp energy.cpp colorscm.cpp widgetcanvas.cpp
 libkcm_display_la_LDFLAGS = -module -avoid-version $(all_libraries) $(KDE_RPATH)
 libkcm_display_la_LIBADD = $(LIB_KDEUI) $(LIB_KIMGIO) $(LIB_KFILE) $(DPMSLIB) \
 	$(top_builddir)/kdesktop/libbgnd.la

@@ -22,10 +22,10 @@
 
 #include <stdio.h>
 
+#include <klocale.h>
 #include <kcontrol.h>
 #include <kimgio.h>
 #include "display.h"
-#include "colorscm.h"
 #include "general.h"
 #include <qfont.h>
 #include <kconfig.h>
@@ -50,7 +50,6 @@ public:
 
 private:
 
-  KColorScheme *colors;
   KGeneral *general;
 };
 
@@ -58,22 +57,19 @@ private:
 KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *name)
   : KControlApplication(argc, argv, name)
 {
-  colors = 0; general = 0; 
+  general = 0; 
 
   if (runGUI())
     {
-      if (!pages || pages->contains("colors"))
-	addPage(colors = new KColorScheme(dialog, KDisplayModule::Setup),
-		i18n("&Colors"), "kdisplay-5.html");
       if (!pages || pages->contains("style"))
 	addPage(general = new KGeneral(dialog, KDisplayModule::Setup),
 		i18n("&Style"), "kdisplay-7.html");
 
-      if (colors || general)
+      if (general)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmdisplay [-init | {colors,style]\n").ascii());
+          fprintf(stderr, i18n("usage: kcmdisplay [-init | {style]\n").ascii());
           justInit = TRUE;
         }
 
@@ -83,11 +79,6 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
 
 void KDisplayApplication::init()
 {
-  KColorScheme *colors = new KColorScheme(0, KDisplayModule::Init);
-  delete colors;
-  
-  writeQDesktopProperties( colors->createPalette(), KGlobal::generalFont() );
-  
   KGeneral *general = new KGeneral(0, KDisplayModule::Init);
   delete general;
 
@@ -104,24 +95,10 @@ void KDisplayApplication::init()
 
 void KDisplayApplication::apply()
 {
-  if (colors)
-    colors->applySettings();
   if (general)
     general->applySettings();
 
   kapp->config()->sync();
-  
-  if (colors) {
-      QPalette pal = colors?colors->createPalette():qApp->palette();
-
-      KConfig *config = KGlobal::config();
-      config->reparseConfiguration();
-      config->setGroup( "General" );
-      QFont font = KGlobal::generalFont();
-      font = config->readFontEntry( "font", &font);
-      writeQDesktopProperties( pal, font);
-  }
-
   
   
   if ( runResourceManager ) {
@@ -136,8 +113,6 @@ void KDisplayApplication::apply()
 
 void KDisplayApplication::defaultValues()
 {
-  if (colors)
-    colors->defaultSettings();
   if (general)
     general->defaultSettings();
 }

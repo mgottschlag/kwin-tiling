@@ -13,6 +13,7 @@
 #include <qcolor.h>
 #include <qpainter.h>
 #include <qscrollbar.h>
+#include <qevent.h>
 
 #include <kapp.h>
 #include <klocale.h>
@@ -25,60 +26,62 @@
 class HotSpot
 {
 public:
-	HotSpot() {}
-	HotSpot( const QRect &r, int num )
-		{	rect = r; number = num; }
+    HotSpot() {}
+    HotSpot( const QRect &r, int num )
+	    {	rect = r; number = num; }
 
-	QRect rect;
-	int number;
+    QRect rect;
+    int number;
 };
 
 class WidgetCanvas : public QWidget
 {
-	Q_OBJECT
-public:
-	WidgetCanvas( QWidget *parent=0, const char *name=0 );
-        void drawSampleWidgets();
-        void resetTitlebarPixmaps(const QColor &active,
-                                  const QColor &inactive);
-	QPixmap smplw;
-	
-	QColor iaTitle;
-	QColor iaTxt;
-	QColor iaBlend;
-	QColor aTitle;
-	QColor aTxt;
-	QColor aBlend;
-	QColor back;
-	QColor txt;
-	QColor select;
-	QColor selectTxt;
-	QColor window;
-	QColor windowTxt;
-	QColor button;
-        QColor buttonTxt;
-        QColor aTitleBtn;
-        QColor iTitleBtn;
-        QColor aTitleBtnBack;
-        QColor iTitleBtnBack;
-        QColor aTitleBtnBlend;
-        QColor iTitleBtnBlend;
+    Q_OBJECT
 
-	
-	int contrast;
+public:
+    WidgetCanvas( QWidget *parent=0, const char *name=0 );
+    void drawSampleWidgets();
+    void resetTitlebarPixmaps(const QColor &active,
+			      const QColor &inactive);
+    QPixmap smplw;
+    
+    QColor iaTitle;
+    QColor iaTxt;
+    QColor iaBlend;
+    QColor aTitle;
+    QColor aTxt;
+    QColor aBlend;
+    QColor back;
+    QColor txt;
+    QColor select;
+    QColor selectTxt;
+    QColor window;
+    QColor windowTxt;
+    QColor button;
+    QColor buttonTxt;
+    QColor aTitleBtn;
+    QColor iTitleBtn;
+    QColor aTitleBtnBack;
+    QColor iTitleBtnBack;
+    QColor aTitleBtnBlend;
+    QColor iTitleBtnBlend;
+
+    int contrast;
 
 signals:
-	void widgetSelected( int );
-	void colorDropped( int, const QColor&);
+    void widgetSelected( int );
+    void colorDropped( int, const QColor&);
 	
 protected:
-	virtual void paintEvent( QPaintEvent * );
-	virtual void mousePressEvent( QMouseEvent * );
-	virtual void dropEvent( QDropEvent *);
-	virtual void dragEnterEvent( QDragEnterEvent *);
-	void paletteChange( const QPalette & );
+    virtual void paintEvent( QPaintEvent * );
+    virtual void mousePressEvent( QMouseEvent * );
+    virtual void resizeEvent( QResizeEvent * );
+    virtual void showEvent( QShowEvent * );
+    virtual void dropEvent( QDropEvent *);
+    virtual void dragEnterEvent( QDragEnterEvent *);
+    void paletteChange( const QPalette & );
 
-	HotSpot hotspots[MAX_HOTSPOTS];
+    HotSpot hotspots[MAX_HOTSPOTS];
 };
 
 #endif
