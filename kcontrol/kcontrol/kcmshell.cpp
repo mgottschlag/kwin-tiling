@@ -128,12 +128,13 @@ kcmApplication::slotAppExit(const QCString &appId)
 int main(int _argc, char *_argv[])
 {
     KAboutData aboutData( "kcmshell", I18N_NOOP("KDE Control Module"),
-                          "2.0",
+                          "2.9",
                           I18N_NOOP("A tool to start single KDE control modules"),
                           KAboutData::License_GPL,
                           "(c) 1999-2000, The KDE Developers");
     aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
     aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
+    aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");      
 
     KCmdLineArgs::init(_argc, _argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
