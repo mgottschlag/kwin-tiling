@@ -37,6 +37,7 @@ class advancedDialog : public KDialogBase
         void save();
         void changed();
 
+	protected:
         advancedKickerOptions* m_advancedWidget;
 };
 
