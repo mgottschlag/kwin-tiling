@@ -9,8 +9,8 @@ SUBDIRS = kcs ad pics
 
 bin_PROGRAMS = kcmdisplay
 
-kcmdisplay_SOURCES = backgnd.cpp display.cpp \
-		colorscm.cpp savescm.cpp scrnsave.cpp \
+kcmdisplay_SOURCES = colorscm.cpp backgnd.cpp \
+		display.cpp savescm.cpp scrnsave.cpp \
 		general.cpp main.cpp widgetcanvas.cpp \
 		fonts.cpp energy.cpp
 
