@@ -142,7 +142,7 @@ const QString Theme::workDir(void)
 {
   static QString str;
   if (str.isEmpty())
-    str = kapp->localkdedir() + "/share/apps/" + kapp->name() + "/Work/";
+    str = locateLocal("appdata", "Work/");
   return str;
 }
 
@@ -152,15 +152,13 @@ void Theme::loadMappings()
 {
   QFile file;
 
-  file.setName(kapp->localkdedir() + "/share/apps/" + kapp->name() + 
-	       "/theme.mappings");
+  file.setName(locateLocal("appdata", "theme.mappings"));
   if (!file.exists())
   {
     file.setName("theme.mappings");
     if (!file.exists())
     {
-      file.setName(kapp->kde_datadir() + "/" + kapp->name() +
-		   "/theme.mappings");
+      file.setName(locate("appdata", "theme.mappings"));
       if (!file.exists())
 	fatal(i18n("Mappings file theme.mappings not found.").ascii());
     }
@@ -333,9 +331,7 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
   if (aSrc.isEmpty()) return true;
 
   if (aDest[0] == '/') dest = aDest;
-  else if (aDest[aDest.length()-1]=='/')
-    dest = kapp->localkdedir() + aDest;
-  else dest = QString(kapp->localkdedir()) + '/' + aDest;
+  dest = locateLocal("appdata", aDest);
 
   src = mThemePath + aSrc;
 
