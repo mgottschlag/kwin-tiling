@@ -174,6 +174,8 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 
 KKeyModule::~KKeyModule (){
   //kdDebug() << "KKeyModule destructor" << endl;
+    delete kc;
+    delete sFileList;
 }
 
 bool KKeyModule::writeSettings( const QString& sGroup, KConfig* pConfig )
