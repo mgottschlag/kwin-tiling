@@ -96,7 +96,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
       }
 
       dlg->m_spinCache->setSteps(512, 1024);
-      dlg->m_spinCache->setRange(0, 10240);
+      dlg->m_spinCache->setRange(0, 40960);
       dlg->m_spinCache->setSpecialValueText(i18n("Unlimited"));
       dlg->m_spinCache->setSuffix(i18n(" KB"));
 
