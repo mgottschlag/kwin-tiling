@@ -100,32 +100,32 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	containerLayout = new QGridLayout( containerFrame, 1, 1,	// rows, columns
 		KDialog::marginHint(), KDialog::spacingHint() );
 
-	cbComboEffect = new QComboBox( FALSE, containerFrame );
-	cbComboEffect->insertItem( i18n("Disable") );
-	cbComboEffect->insertItem( i18n("Animate") );
-	lbComboEffect = new QLabel( i18n("ComboBo&x Effect:"), containerFrame );
-	lbComboEffect->setBuddy( cbComboEffect );
-	containerLayout->addWidget( lbComboEffect, 0, 0 );
-	containerLayout->addWidget( cbComboEffect, 0, 1 );
+	comboComboEffect = new QComboBox( FALSE, containerFrame );
+	comboComboEffect->insertItem( i18n("Disable") );
+	comboComboEffect->insertItem( i18n("Animate") );
+	lblComboEffect = new QLabel( i18n("ComboBo&x Effect:"), containerFrame );
+	lblComboEffect->setBuddy( comboComboEffect );
+	containerLayout->addWidget( lblComboEffect, 0, 0 );
+	containerLayout->addWidget( comboComboEffect, 0, 1 );
 
-	cbToolTipEffect = new QComboBox( FALSE, containerFrame );
-	cbToolTipEffect->insertItem( i18n("Disable") );
-	cbToolTipEffect->insertItem( i18n("Animate") );
-	cbToolTipEffect->insertItem( i18n("Fade") );
-	lbToolTipEffect = new QLabel( i18n("&ToolTip Effect:"), containerFrame );
-	lbToolTipEffect->setBuddy( cbToolTipEffect );
-	containerLayout->addWidget( lbToolTipEffect, 1, 0 );
-	containerLayout->addWidget( cbToolTipEffect, 1, 1 );
+	comboToolTipEffect = new QComboBox( FALSE, containerFrame );
+	comboToolTipEffect->insertItem( i18n("Disable") );
+	comboToolTipEffect->insertItem( i18n("Animate") );
+	comboToolTipEffect->insertItem( i18n("Fade") );
+	lblToolTipEffect = new QLabel( i18n("&ToolTip Effect:"), containerFrame );
+	lblToolTipEffect->setBuddy( comboToolTipEffect );
+	containerLayout->addWidget( lblToolTipEffect, 1, 0 );
+	containerLayout->addWidget( comboToolTipEffect, 1, 1 );
 
-	cbMenuEffect = new QComboBox( FALSE, containerFrame );
-	cbMenuEffect->insertItem( i18n("Disable") );
-	cbMenuEffect->insertItem( i18n("Animate") );
-	cbMenuEffect->insertItem( i18n("Fade") );
-	cbMenuEffect->insertItem( i18n("Make Translucent") );
-	lbMenuEffect = new QLabel( i18n("&Menu Effect:"), containerFrame );
-	lbMenuEffect->setBuddy( cbMenuEffect );
-	containerLayout->addWidget( lbMenuEffect, 2, 0 );
-	containerLayout->addWidget( cbMenuEffect, 2, 1 );
+	comboMenuEffect = new QComboBox( FALSE, containerFrame );
+	comboMenuEffect->insertItem( i18n("Disable") );
+	comboMenuEffect->insertItem( i18n("Animate") );
+	comboMenuEffect->insertItem( i18n("Fade") );
+	comboMenuEffect->insertItem( i18n("Make Translucent") );
+	lblMenuEffect = new QLabel( i18n("&Menu Effect:"), containerFrame );
+	lblMenuEffect->setBuddy( comboMenuEffect );
+	containerLayout->addWidget( lblMenuEffect, 2, 0 );
+	containerLayout->addWidget( comboMenuEffect, 2, 1 );
 	
 	// Push the [label combo] to the left.
 	comboSpacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );

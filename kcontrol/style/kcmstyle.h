@@ -97,7 +97,8 @@ protected slots:
 private:
 	QVBoxLayout* mainLayout;
 	QTabWidget* tabWidget;
-	QWidget *page1, *page2, *page3;
+	QVBox *page1;
+	QWidget *page2, *page3;
 	QVBoxLayout* page1Layout;
 	QVBoxLayout* page2Layout;
 	QVBoxLayout* page3Layout;
@@ -117,10 +118,10 @@ private:
 
 	QFrame* containerFrame;
 	QGridLayout* containerLayout;
-	QComboBox* comboTooltipEffect;
+	QComboBox* comboToolTipEffect;
 	QComboBox* comboComboEffect;
 	QComboBox* comboMenuEffect;
-	QLabel* lblTooltipEffect;
+	QLabel* lblToolTipEffect;
 	QLabel* lblComboEffect;
 	QLabel* lblMenuEffect;
 	QSpacerItem* comboSpacer;
