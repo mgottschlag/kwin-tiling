@@ -39,7 +39,7 @@ SearchProviderDialog::SearchProviderDialog(SearchProvider *provider, QWidget *pa
     // GUI init
     QGridLayout *layout = new QGridLayout(this, 9, 2, KDialog::marginHint(), KDialog::spacingHint());
 
-    QLabel *label = new QLabel(i18n("Search &Provider Name:"), this);
+    QLabel *label = new QLabel(i18n("Search &provider name:"), this);
     layout->addMultiCellWidget(label, 0, 0, 0, 1);
     label->setBuddy(m_name = new KLineEdit(this));
     layout->addMultiCellWidget(m_name, 1, 1, 0, 1);
@@ -62,7 +62,7 @@ SearchProviderDialog::SearchProviderDialog(SearchProvider *provider, QWidget *pa
     QWhatsThis::add(label, whatsThis);
     QWhatsThis::add(m_query, whatsThis);
 
-    label = new QLabel(i18n("UR&I Shortcuts:"), this);
+    label = new QLabel(i18n("UR&I shortcuts:"), this);
     layout->addMultiCellWidget(label, 4, 4, 0, 1);
     label->setBuddy(m_keys = new KLineEdit(this));
     layout->addMultiCellWidget(m_keys, 5, 5, 0, 1);
@@ -117,6 +117,7 @@ SearchProviderDialog::SearchProviderDialog(SearchProvider *provider, QWidget *pa
     {
         setPlainCaption(i18n("New Search Provider"));
         m_name->setFocus();
+        m_ok->setEnabled(false);
     }
 }
 
