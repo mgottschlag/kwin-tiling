@@ -124,6 +124,7 @@ private:
 
     enum State { Idle, Shutdown, Killing }; // KSMServer does not support pure checkpoints yet.
     State state;
+    bool dialogActive;
     bool saveSession;
 
     bool clean;

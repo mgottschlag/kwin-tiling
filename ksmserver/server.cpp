@@ -748,6 +748,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     progress = 0;
 
     state = Idle;
+    dialogActive = false;
     KConfig* config = KGlobal::config();
     config->setGroup("General" );
     saveSession = config->readBoolEntry( "saveSession", FALSE );
@@ -948,6 +949,9 @@ void KSMServer::shutdown()
 {
     if ( state != Idle )
 	return;
+    if ( dialogActive )
+        return;
+    dialogActive = true;
     if ( KSMShutdown::shutdown( saveSession ) ) {
 	KNotifyClient::event( "exitkde" ); // KDE says good bye
 	KConfig* config = KGlobal::config();
@@ -965,6 +969,7 @@ void KSMServer::shutdown()
 	if ( clients.isEmpty() )
 	    completeShutdown();
     }
+    dialogActive = false;
 }
 
 
