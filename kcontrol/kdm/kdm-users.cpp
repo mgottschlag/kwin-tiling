@@ -20,6 +20,7 @@
 #include "utils.h"
 #include <kio_job.h>
 #include <klocale.h>
+#include <kglobal.h>
 #include "kdm-users.moc"
 
 
@@ -411,7 +412,7 @@ void KDMUsersWidget::applySettings()
 
 void KDMUsersWidget::loadSettings()
 {
-  iconloader = kapp->getIconLoader();
+    iconloader = KGlobal::iconLoader();
   QString fn(CONFIGFILE), str;
   
   // Get config object

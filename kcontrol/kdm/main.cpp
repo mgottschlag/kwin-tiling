@@ -27,6 +27,7 @@
 #include "kdm-sess.h"
 #include <kwm.h>
 #include <klocale.h>
+#include <kglobal.h>
 
 
 class KDMConfigApplication : public KControlApplication
@@ -67,17 +68,13 @@ KDMConfigApplication::KDMConfigApplication(int &argc, char **argv, const char *n
     {
       kimgioRegister();
 
-      KIconLoader *iconloader = kapp->getIconLoader();
+      KIconLoader *iconloader = KGlobal::iconLoader();
       if(iconloader)
       {
         QString idir(kapp->kde_datadir() + "/kdm/pics/users");
         iconloader->insertDirectory(0, idir.data());
         idir = kapp->kde_datadir() + "/kdm/pics";
         iconloader->insertDirectory(0, idir.data());
-        idir = kapp->kde_wallpaperdir();
-        iconloader->insertDirectory(0, idir.data());
-        //idir = kapp->kde_icondir();
-        //iconloader->insertDirectory(0, idir.data());
       }
 
       if (!pages || pages->contains("appearance"))

@@ -41,6 +41,7 @@
 #include "configlist.moc"
 #include "configlist.h"
 #include <klocale.h>
+#include <kglobal.h>
 
 static QListView* listview = 0;
 
@@ -137,10 +138,10 @@ QPixmap KModuleListEntry::getIcon()
   QPixmap result;
 
   if (!miniIcon.isEmpty())
-    result = kapp->getIconLoader()->loadApplicationMiniIcon(miniIcon,16,16);
+    result = KGlobal::iconLoader()->loadApplicationMiniIcon(miniIcon,16,16);
 
   if (result.isNull() && !icon.isEmpty())
-    result = kapp->getIconLoader()->loadApplicationMiniIcon(icon,16,16);
+    result = KGlobal::iconLoader()->loadApplicationMiniIcon(icon,16,16);
 
   if (result.isNull())
     result = kapp->getMiniIcon();

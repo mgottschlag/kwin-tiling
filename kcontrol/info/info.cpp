@@ -269,7 +269,7 @@ void KInfoListWidget::defaultSettings()
 }
 
 
-KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name=0, 
+KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name, 
 		QString _title, bool _getlistbox(KTabListBox *lbox))
   : KConfigWidget(parent, name)
 {   

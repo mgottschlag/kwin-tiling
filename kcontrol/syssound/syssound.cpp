@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.12  1999/05/16 08:58:33  bieker
+    sprintf -> arg
+
     Revision 1.11  1999/04/19 15:53:34  kulow
     CVS_SILENT header fixes
 
@@ -68,6 +71,7 @@
 
 #include "syssound.h"
 #include <kconfig.h>
+#include <kglobal.h>
 #include "syssound.moc"
 
 #ifdef HAVE_CONFIG_H
@@ -201,12 +205,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
 
   soundlist->insertItem(i18n("(none)"));
 
-  path = KApplication::kde_sounddir().copy();
-  dir.setPath(path);
-  dir.setNameFilter("*.wav");
-  dir.setSorting(QDir::Name);
-  dir.setFilter(QDir::Readable | QDir::Files);
-  list = dir.entryList();
+  list = KGlobal::dirs()->findAllResources("sound");
 
   soundlist->insertStringList(list);
   
@@ -438,15 +437,8 @@ void KSoundWidget::playCurrentSound()
   audio.stop();
   soundno = soundlist->currentItem();
   if (soundno > 0) {
-    sname = soundlist->text(soundno);
-    if (sname[0] != '/') {
-      hlp = KApplication::kde_sounddir().copy(); 
-      hlp += "/";  // Don't forget this -- Bernd
-      hlp += sname;
-      audio.play((char*)hlp.data());
-    } else {
+      sname = locate("sound", soundlist->text(soundno));
       audio.play((char*)sname.data());
-    }
   }
 }
 

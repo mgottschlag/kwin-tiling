@@ -41,8 +41,4 @@ protected:
     QComboBox *wCombo;
 };
     
-
-    
-    
-
 #endif

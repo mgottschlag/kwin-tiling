@@ -44,6 +44,8 @@
 #include "../../kwmmodules/kbgndwm/config-kbgndwm.h"
 #include <klocale.h>
 #include <kconfig.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 
 void KBGMonitor::dropEvent( QDropEvent *e)
 {
@@ -341,9 +343,7 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
   grid->setColStretch(2,2);
   //CT
 
-  QString path = kapp->kde_wallpaperdir().copy();
-  QDir d( path, "*", QDir::Name, QDir::Readable | QDir::Files );
-  QStringList list = d.entryList();
+  QStringList list = KGlobal::dirs()->findAllResources("wallpaper");
 
   wpCombo = new QComboBox( false, group );
   wpCombo->insertItem( i18n("No wallpaper"), 0 );
@@ -943,15 +943,8 @@ bool KBackground::loadWallpaper( const QString& name, bool useContext )
       context = QColor::enterAllocContext();
     }
 
-  if ( name[0] != '/' )
-    {
-      filename = kapp->kde_wallpaperdir().copy();
-      filename += "/";
-      filename += name;
-    }
-  else
-    filename = name;
-	
+  filename = locate("wallpaper", name);
+  
   if ( tmp.load( filename, 0, KPixmap::LowColor ) )
     {
       int w = QApplication::desktop()->width();
@@ -1996,7 +1989,6 @@ void KRandomDlg::readSettings()
   delay = picturesConfig.readNumEntry( "Timer", DEFAULT_RANDOM_TIMER );
   inorder = picturesConfig.readBoolEntry( "InOrder", DEFAULT_RANDOM_IN_ORDER );
   useDir = picturesConfig.readBoolEntry( "UseDir", DEFAULT_RANDOM_USE_DIR );
-  picDir = picturesConfig.readEntry( "Directory", KApplication::kde_wallpaperdir() );
   
   KItem *newitem = new KItem( kb->currentItem );
   ItemList.append( newitem );

@@ -390,7 +390,7 @@ void KWindowConfig::autoRaiseOnTog(bool a) {
 }
 //CT
 
-void KWindowConfig::clickRaiseOnTog(bool a) {
+void KWindowConfig::clickRaiseOnTog(bool ) {
 }
 
 void KWindowConfig::GetSettings( void )

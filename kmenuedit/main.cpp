@@ -35,6 +35,7 @@
 #include "DesktopPathDialog.h"
 #include "kmenuedit.h"
 #include <klocale.h>
+#include <kglobal.h>
 
 KIconLoader *global_pix_loader;
 KIconLoaderDialog *global_pix_sel;

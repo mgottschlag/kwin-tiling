@@ -26,6 +26,8 @@
 #include "kdm-bgnd.moc"
 #include <kfiledialog.h>
 #include <klocale.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 
 void KBGMonitor::setAllowDrop(bool a)
 {
@@ -130,9 +132,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 
       rGroup = new QGroupBox( i18n("Wallpaper"), this );
 
-      QString path = kapp->kde_wallpaperdir().copy();
-      QDir d( path, "*", QDir::Name, QDir::Readable | QDir::Files );
-      QStringList list = d.entryList();
+      QStringList list = KGlobal::dirs()->findAllResources("wallpaper");
       if(!wallpaper.isEmpty())
         list.append( wallpaper.data() );
 
@@ -307,20 +307,12 @@ void KDMBackgroundWidget::slotSelectColor2(const QColor &col)
 
 void KDMBackgroundWidget::slotBrowse()
 {
-	QString path;
-
-	path = kapp->kde_wallpaperdir().copy();
-
-	QDir dir( path );
-	if ( !dir.exists() )
-		path = QString::null;
-
-	QString filename = KFileDialog::getOpenFileName( path );
-	slotWallpaper( filename );
-	if ( !filename.isEmpty() && !strcmp( filename, wallpaper) )
+    QString filename = KFileDialog::getOpenFileName( 0 );
+    slotWallpaper( filename );
+    if ( !filename.isEmpty() && filename != wallpaper) )
 	{
-		wpCombo->insertItem( wallpaper );
-		wpCombo->setCurrentItem( wpCombo->count() - 1 );
+	    wpCombo->insertItem( wallpaper );
+	    wpCombo->setCurrentItem( wpCombo->count() - 1 );
 	}
 }
 
@@ -402,14 +394,7 @@ int KDMBackgroundWidget::loadWallpaper( const char *name, bool useContext )
 		context = QColor::enterAllocContext();
   }
 
-  if ( name[0] != '/' )
-  {
-    filename = kapp->kde_wallpaperdir().copy();
-    filename += "/";
-    filename += name;
-  }
-  else
-    filename = name;
+  filename = locate("wallpaper", name);
 
   if ( wpMode == NoPic || tmp.load( filename.data() ) == TRUE )
   {

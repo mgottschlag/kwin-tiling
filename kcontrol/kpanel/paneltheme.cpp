@@ -11,6 +11,7 @@
 #include <klocale.h>
 #include <kconfigbase.h>
 #include <kwm.h>
+#include <kglobal.h>
 
 extern KConfigBase *config;
 
@@ -213,8 +214,8 @@ KPanelTheme::KPanelTheme(QWidget *parent, const char *name)
     
     QGroupBox *canvasBox = new QGroupBox(i18n("KPanel Preview"), this);
     canvas = new WidgetCanvas(canvasBox);
-    canvas->goPix = kapp->getIconLoader()->loadIcon("go.xpm");
-    canvas->appPix = kapp->getIconLoader()->loadIcon("mini-go.xpm");
+    canvas->goPix = Icon("go.xpm");
+    canvas->appPix = Icon("mini-go.xpm");
     loadSettings();
     canvas->drawSampleWidgets();
     canvas->setMinimumSize(canvas->sizeHint());
