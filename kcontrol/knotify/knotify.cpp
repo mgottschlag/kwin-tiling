@@ -75,24 +75,8 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
     QLabel *l = new QLabel( i18n("&Filename: "), hbox );
     requester = new KURLRequester( hbox );
     l->setBuddy( requester );
-
-    // find the first "sound"-resource that contains files
-    QStringList soundDirs = KGlobal::dirs()->resourceDirs( "sound" );
-    if ( !soundDirs.isEmpty() ) {
-	KURL soundURL;
-	QDir dir;
-	dir.setFilter( QDir::Files | QDir::Readable );
-	QStringList::Iterator it = soundDirs.begin();
-	while ( it != soundDirs.end() ) {
-	    dir = *it;
-	    if ( dir.isReadable() && dir.count() > 2 ) {
-		soundURL.setPath( *it );
-		requester->fileDialog()->setURL( soundURL );
-		break;
-	    }
-	    ++it;
-	}
-    }
+    connect( requester, SIGNAL( openFileDialog( KURLRequester * )),
+	     SLOT( slotRequesterClicked( KURLRequester * )));
 
     playButton = new QPushButton(  hbox );
     playButton->setFixedSize( requester->button()->size() );
@@ -332,6 +316,31 @@ const KAboutData *KNotifyWidget::aboutData() const
     }
 
     return ab;
+}
+
+void KNotifyWidget::slotRequesterClicked( KURLRequester *requester )
+{
+    static bool init = true;
+    if ( !init )
+	return;
+    
+    // find the first "sound"-resource that contains files
+    QStringList soundDirs = KGlobal::dirs()->resourceDirs( "sound" );
+    if ( !soundDirs.isEmpty() ) {
+	KURL soundURL;
+	QDir dir;
+	dir.setFilter( QDir::Files | QDir::Readable );
+	QStringList::Iterator it = soundDirs.begin();
+	while ( it != soundDirs.end() ) {
+	    dir = *it;
+	    if ( dir.isReadable() && dir.count() > 2 ) {
+		soundURL.setPath( *it );
+		requester->fileDialog()->setURL( soundURL );
+		break;
+	    }
+	    ++it;
+	}
+    }
 }
 
 

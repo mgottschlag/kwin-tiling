@@ -54,8 +54,9 @@ public:
 
 public slots:
     virtual void load();
-    
+
 private slots:
+    void slotRequesterClicked( KURLRequester * );
     void externalClicked( bool on );
     void changed();
 
