@@ -12,7 +12,6 @@ Netscape*urlText*foreground: WINDOW_FOREGROUND
 Netscape*urlText*background: WINDOW_BACKGROUND
 Netscape*XmLGrid.foreground: WINDOW_FOREGROUND
 Netscape*XmLGrid.background: BACKGROUND
-Netscape*XmLGrid*fontList: FONTLIST
 Netscape*urlLabel*foreground: WINDOW_FOREGROUND
 Netscape*urlLabel*background: WINDOW_BACKGROUND
 Netscape*thermo.slider.foreground: SELECT_BACKGROUND
@@ -24,4 +23,4 @@ Netscape*selectColor: BACKGROUND
 Netscape*highlightColor: BACKGROUND
 Netscape*selectForeground: SELECT_FOREGROUND
 Netscape*selectBackground: SELECT_BACKGROUND
-Netscape*banner*folderDropdown*fontList: FONTLIST
+Netscape*fontList: FONTLIST_8BIT

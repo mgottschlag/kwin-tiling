@@ -428,11 +428,8 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     QWhatsThis::add( effAnimateCombo, i18n( "If this option is selected, combo boxes are animated to grow to their full size.") );
 
     connect( effPlainMenu, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) ) ;
-    connect( effPlainMenu, SIGNAL( toggled(bool) ), SLOT( toggleButtonState(bool) ) );
     connect( effFadeMenu, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) ) ;
-    connect(effFadeMenu , SIGNAL( toggled(bool) ), SLOT( toggleButtonState(bool) ) );
     connect( effAnimateMenu, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
-    connect(effAnimateMenu , SIGNAL( toggled(bool) ), SLOT( toggleButtonState(bool) ) );
 
 
 

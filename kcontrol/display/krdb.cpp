@@ -36,7 +36,7 @@ enum FontStyle { Normal, Bold, Italic, Fixed };
 
 // -----------------------------------------------------------------------------
 
-static QString fontString( QFont rFont, FontStyle style )
+static QString fontString( QFont rFont, FontStyle style, bool force8Bit = false )
 {
 
   switch(style) {
@@ -52,10 +52,12 @@ static QString fontString( QFont rFont, FontStyle style )
   case Normal:
     break;
   }
+  
+  if (force8Bit && (rFont.charSet() == QFont::Unicode))
+    rFont.setCharSet(QFont::Latin1);
 
   return rFont.rawName();
 }
-
 
 // -----------------------------------------------------------------------------
 
@@ -72,15 +74,14 @@ static void addColorDef(QString& s, const char* n, const QColor& col)
 
 // -----------------------------------------------------------------------------
 
-static void addFontDef(QString& s, const char* n, const QFont& f, FontStyle fs)
+static void addFontDef(QString& s, const char* n, const QFont& f, FontStyle fs, bool force8Bit = false)
 {
   QString tmp;
 
-  tmp.sprintf("#define %s %s\n", n, fontString(f, fs).latin1());
+  tmp.sprintf("#define %s %s\n", n, fontString(f, fs, force8Bit).latin1());
 
   s += tmp;
 }
-
 
 // -----------------------------------------------------------------------------
 
@@ -190,10 +191,15 @@ void runRdb() {
   addFontDef(preproc, "BOLD_FONT"           , KGlobalSettings::generalFont(), Bold);
   addFontDef(preproc, "ITALIC_FONT"         , KGlobalSettings::generalFont(), Italic);
   addFontDef(preproc, "FIXED_FONT"          , KGlobalSettings::fixedFont(), Fixed);
-  // TITLE_FONT...
-
   // Fontlist
   preproc += "#define FONTLIST FONT,BOLD_FONT=BOLD,ITALIC_FONT=ITALIC\n";
+
+  addFontDef(preproc, "FONT_8BIT"           , KGlobalSettings::generalFont(), Normal, true);
+  addFontDef(preproc, "BOLD_FONT_8BIT"      , KGlobalSettings::generalFont(), Bold, true);
+  addFontDef(preproc, "ITALIC_FONT_8BIT"    , KGlobalSettings::generalFont(), Italic, true);
+  addFontDef(preproc, "FIXED_FONT_8BIT"     , KGlobalSettings::fixedFont(), Fixed, true);
+  // Fontlist
+  preproc += "#define FONTLIST_8BIT FONT_8BIT,BOLD_FONT_8BIT=BOLD,ITALIC_FONT_8BIT=ITALIC\n";
 
   //---------------------------------------------------------------
 
