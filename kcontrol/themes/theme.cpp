@@ -637,7 +637,7 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
   else if (cmd == "enableSounds")
   {
     aCfg->setGroup("GlobalConfiguration");
-    aCfg->writeEntry("EnableSounds", aInstalled>0 ? "Yes" : "No");
+    aCfg->writeEntry("EnableSounds", (bool) (aInstalled>0));
   }
   else if (cmd == "setWallpaperMode")
   {
