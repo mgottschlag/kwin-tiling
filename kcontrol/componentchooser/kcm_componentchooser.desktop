@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kcmshell componentchooser
+Icon=misc
+Type=Application
+
+X-KDE-ModuleType=Library
+X-KDE-Library=componentchooser
+X-KDE-HasReadOnlyMode=false
+
+Name=Component Chooser
+Comment=Choose the default components for various services
+
+Keywords=components,component chooser,resources

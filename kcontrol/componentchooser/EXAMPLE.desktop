@@ -1,0 +1,8 @@
+Name=A nice name you have choosen for your interface
+Comment=A helpfull Description of the interface for the top right info box
+ServiceTypeToConfigure=The service type, which should be  configured. If this line is empty you have to provide a plugin (not supported yet)
+MimeTypeOfInterest=A mimetype which should be used in conjunction with ServiceTypeToConfigure
+defaultImplementation=The name of the default implementation as it would be returned by KService::desktopEntryName()
+storeInFile=default_components //the file where the setting should be saved (default_components sounds reasonable for a central storage)
+valueSection=The desktop section, where the setting should be stored
+valueName=the name of the  value entry
