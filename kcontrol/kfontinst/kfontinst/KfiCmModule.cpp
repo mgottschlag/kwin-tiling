@@ -77,9 +77,8 @@ const KAboutData * CKfiCmModule::aboutData() const
         CKfiCmModule *that = const_cast<CKfiCmModule *>(this);
 
         that->itsAboutData=new KAboutData("kcmfontinst",
-                                          I18N_NOOP("KFontinst"),
-                                          CKfi::constVersion,
-                                          I18N_NOOP("Font installer and previewer"),
+                                          I18N_NOOP("KDE Font Installer"),
+                                          CKfi::constVersion, 0,
                                           KAboutData::License_GPL,
                                           I18N_NOOP("(C) Craig Drummond, 2000, 2001"),
                                           I18N_NOOP("(TQMM, PS - MBFM y CGD)"));
