@@ -37,10 +37,19 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod)
    *  from the factory.
    */
   
-  if (!mod.library().isEmpty())
+	/* Corel's distro builds some .desktop files at boot time. In the previous version
+	 * of KDE, each module was a separate executable which could be passed parameters. Sinnce
+	 * KDE 2 now uses libraries for the modules, this is needed to pass some info to Corel's
+	 * hardware control panel. Essentially it sets an environment variable to be the name of 
+	 * the .desktop file name of the module selected from the list view.
+	 */
+  setenv("KDE_CONTROL_CENTER_ENV1", mod.fileName().latin1(), 1);
+  
+	if (!mod.library().isEmpty())
     {
       // get the library loader instance
-      KLibLoader *loader = KLibLoader::self();
+      
+		KLibLoader *loader = KLibLoader::self();
       
       // try to load the library
       QString libname("libkcm_%1");
@@ -72,7 +81,9 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod)
 
 void ModuleLoader::unloadModule(const ModuleInfo &mod)
 {
-  // get the library loader instance
+  unsetenv("KDE_CONTROL_CENTER_ENV1");
+  
+	// get the library loader instance
   KLibLoader *loader = KLibLoader::self();
 
   // try to unload the library
