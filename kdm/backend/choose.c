@@ -752,22 +752,21 @@ initXDMCP()
 #endif
 #endif
 
-    memset(&header, 0, sizeof(header));
     header.version = XDM_PROTOCOL_VERSION;
-    header.opcode = (CARD16) BROADCAST_QUERY;
     header.length = 1;
+#if 0
     for (i = 0; i < (int) AuthenticationNames.length; i++)
 	header.length += 2 + AuthenticationNames.data[i].length;
+#endif
+
+    header.opcode = (CARD16) BROADCAST_QUERY;
     XdmcpWriteHeader(&broadcastBuffer, &header);
     XdmcpWriteARRAYofARRAY8(&broadcastBuffer, &AuthenticationNames);
 
-    header.version = XDM_PROTOCOL_VERSION;
     header.opcode = (CARD16) QUERY;
-    header.length = 1;
-    for (i = 0; i < (int) AuthenticationNames.length; i++)
-	header.length += 2 + AuthenticationNames.data[i].length;
     XdmcpWriteHeader(&directBuffer, &header);
     XdmcpWriteARRAYofARRAY8(&directBuffer, &AuthenticationNames);
+
 #if defined(STREAMSCONN)
     if ((socketFD = t_open("/dev/udp", O_RDWR, 0)) < 0)
 	return 0;
