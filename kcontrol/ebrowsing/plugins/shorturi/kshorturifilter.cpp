@@ -42,7 +42,7 @@
 #define ENV_VAR_PATTERN "\\$[a-zA-Z_][a-zA-Z0-9_]*"
 
 #define QFL1(x) QString::fromLatin1(x)
- 
+
  /**
   * IMPORTANT:
   *  If you change anything here, please run the regression test
@@ -51,7 +51,7 @@
   *  If you add anything here, make sure to add a corresponding
   *  test code to kdelibs/kio/tests/kurifiltertest.
   */
-  
+
 typedef QMap<QString,QString> EntryMap;
 
 static bool isValidShortURL( const QString& cmd, bool verbose = false )
@@ -61,41 +61,41 @@ static bool isValidShortURL( const QString& cmd, bool verbose = false )
   // "192.168.1.0", "127.0.0.1:3128"
   // "[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]"
   QRegExp exp;
-  
+
   // Match FQDN_PATTERN
   exp.setPattern( QFL1(FQDN_PATTERN) );
   if ( cmd.contains( exp ) )
   {
     if (verbose)
-      kdDebug() << "KShortURIFilter::isValidShortURL: " << cmd 
+      kdDebug() << "KShortURIFilter::isValidShortURL: " << cmd
                 << " matches FQDN_PATTERN" << endl;
-    return true;  
+    return true;
   }
-  
+
   // Match IPv4 addresses
   exp.setPattern( QFL1(IPv4_PATTERN) );
   if ( cmd.contains( exp ) )
   {
     if (verbose)
-      kdDebug() << "KShortURIFilter::isValidShortURL: " << cmd 
-                << " matches IPv4_PATTERN" << endl;  
+      kdDebug() << "KShortURIFilter::isValidShortURL: " << cmd
+                << " matches IPv4_PATTERN" << endl;
     return true;
   }
-    
+
   // Match IPv6 addresses
   exp.setPattern( QFL1(IPv6_PATTERN) );
   if ( cmd.contains( exp ) )
   {
     if (verbose)
-      kdDebug() << "KShortURIFilter::isValidShortURL: " << cmd 
+      kdDebug() << "KShortURIFilter::isValidShortURL: " << cmd
                 << " matches IPv6_PATTERN" << endl;
     return true;
   }
-  
+
   if (verbose)
-    kdDebug() << "KShortURIFilter::isValidShortURL: '" << cmd 
+    kdDebug() << "KShortURIFilter::isValidShortURL: '" << cmd
               << "' is not a short URL." << endl;
-  
+
   return false;
 }
 
@@ -119,7 +119,7 @@ static QString removeArgs( const QString& _cmd )
       //kdDebug() << k_funcinfo << "spacePos=" << spacePos << " returning " << cmd << endl;
     }
   }
-  
+
   return cmd;
 }
 
@@ -152,7 +152,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   //kdDebug() << "url=" << url.url() << " cmd=" << cmd << " isMalformed=" << isMalformed << endl;
 
   if (!isMalformed &&
-      (url.protocol().length() == 4) && 
+      (url.protocol().length() == 4) &&
       (url.protocol() != QString::fromLatin1("http")) &&
       (url.protocol()[0]=='h') &&
       (url.protocol()[1]==url.protocol()[2]) &&
@@ -169,7 +169,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // is no need to make comparisons if the supplied data is a local
   // executable and only the argument part, if any, changed! (Dawit)
   // You mean caching the last filtering, to try and reuse it, to save stat()s? (David)
-  
+
   const QString starthere_proto = QFL1("start-here:");
   if (cmd.find(starthere_proto, 0, true) == 0 )
   {
@@ -177,10 +177,10 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     setURIType( data, KURIFilterData::LOCAL_DIR );
     return true;
   }
-  
-  // Handle MAN & INFO pages shortcuts...  
+
+  // Handle MAN & INFO pages shortcuts...
   const QString man_proto = QFL1("man:");
-  const QString info_proto = QFL1("info:");  
+  const QString info_proto = QFL1("info:");
   if( cmd[0] == '#' ||
       cmd.find( man_proto, 0, true ) == 0 ||
       cmd.find( info_proto, 0, true ) == 0 )
@@ -210,14 +210,15 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   }
 
   bool expanded = false;
-  
+
   // Expanding shortcut to HOME URL...
   QString path;
   QString ref;
   QString query;
-  
-  if (KURL::isRelativeURL(cmd))
+
+  if (KURL::isRelativeURL(cmd) && QDir::isRelativePath(cmd)) {
      path = cmd;
+  }
   else
   {
     if (url.isLocalFile())
@@ -345,7 +346,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
     if (kapp && !kapp->authorizeURLAction( QString::fromLatin1("open"), KURL(), u))
     {
-      // No authorisation, we pretend it's a file will get 
+      // No authorisation, we pretend it's a file will get
       // an access denied error later on.
       setFilteredURI( data, u );
       setURIType( data, KURIFilterData::LOCAL_FILE );
@@ -361,7 +362,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       setURIType( data, KURIFilterData::EXECUTABLE );
       return true;
     }
-    
+
     // Open "uri" as file:/xxx if it is a non-executable local resource.
     if( isDir || S_ISREG( buff.st_mode ) )
     {
@@ -370,7 +371,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
       return true;
     }
-    
+
     // Should we return LOCAL_FILE for non-regular files too?
     kdDebug() << "File found, but not a regular file nor dir... socket?" << endl;
   }
@@ -436,9 +437,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     if ( isMalformed && isValidShortURL(cmd, m_bVerbose) )
     {
       if (m_bVerbose)
-        kdDebug() << "Valid short url, from malformed url -> using default proto=" 
+        kdDebug() << "Valid short url, from malformed url -> using default proto="
                   << m_strDefaultProtocol << endl;
-      
+
       cmd.insert( 0, m_strDefaultProtocol );
       setFilteredURI( data, KURL( cmd ));
       setURIType( data, KURIFilterData::NET_PROTOCOL );
@@ -456,7 +457,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
     if (kapp && !kapp->authorizeURLAction( QString::fromLatin1("open"), KURL(), u))
     {
-      // No authorisation, we pretend it exists and will get 
+      // No authorisation, we pretend it exists and will get
       // an access denied error later on.
       setFilteredURI( data, u );
       setURIType( data, KURIFilterData::LOCAL_FILE );
@@ -489,7 +490,7 @@ void KShortURIFilter::configure()
   m_strDefaultProtocol = config.readEntry( "DefaultProtocol", QFL1("http://") );
   m_bVerbose = config.readBoolEntry( "Verbose", false );
   EntryMap patterns = config.entryMap( QFL1("Pattern") );
-  const EntryMap protocols = config.entryMap( QFL1("Protocol") );  
+  const EntryMap protocols = config.entryMap( QFL1("Protocol") );
   config.setGroup("Type");
 
   for( EntryMap::Iterator it = patterns.begin(); it != patterns.end(); ++it )
