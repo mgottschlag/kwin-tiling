@@ -98,25 +98,12 @@ QFont KDMConfig::Str2Font (const QString &aValue)
 // XXX gallium, fix this :)
 QPalette KDMConfig::Str2Palette (const QString &aValue)
 {
-    QStringList list = KGlobal::dirs()->findAllResources("data",
-            "kdisplay/color-schemes/*.kcsrc", false, true);
-    QStringList::ConstIterator it;
-    KSimpleConfig *config;
-    QString str;
-    for (it = list.begin(); it != list.end(); it++) {
-       config = new KSimpleConfig(*it, true);
-       config->setGroup("Color Scheme");
-       if ((!(str = config->readEntry("Name")).isEmpty() ||
-            !(str = config->readEntry("name")).isEmpty()) &&
-           str == aValue)
-       {
-          QPalette pal = kapp->createApplicationPalette(config, 7);
-          delete config;
-          return pal;
-       }
-       delete config;
-    }
-    return kapp->palette();
+    QString scheme = locate("data", "kdisplay/color-schemes/" + aValue + ".kcsrc");
+    if (scheme.isEmpty()) return kapp->palette();
+
+    KSimpleConfig config(scheme, true);
+    config.setGroup("Color Scheme");
+    return kapp->createApplicationPalette(&config, 7);
 }
 
 
