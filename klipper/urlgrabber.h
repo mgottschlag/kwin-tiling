@@ -47,7 +47,7 @@ public:
    * otherwise true.
    */
   bool checkNewData( const QString& clipData );
-  void repeatLastAction() { slotActionMenu(); }
+  void repeatLastAction() { actionMenu( false ); }
 
   const ActionList * actionList() const { return myActions; }
   void setActionList( ActionList * );
@@ -59,13 +59,14 @@ public:
 
   const QStringList& avoidWindows() const { return myAvoidWindows; }
   void setAvoidWindows( const QStringList& list ) { myAvoidWindows = list; }
-    
+
 private:	
   const ActionList& matchingActions( const QString& );
   void execute( const struct ClipCommand *command ) const;
   void startProcess( const QString& cmdLine ) const;
   void editData();
   bool isAvoidedWindow() const;
+  void actionMenu( bool wm_class_check );
 
   ActionList *myActions;
   ActionList myMatches;
@@ -78,7 +79,7 @@ private:
   int myPopupKillTimeout;
 
 private slots:
-  void slotActionMenu();
+  void slotActionMenu() { actionMenu( true ); }
   void slotItemSelected( int );
   void slotKillPopupMenu();
 

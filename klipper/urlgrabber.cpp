@@ -101,14 +101,14 @@ bool URLGrabber::checkNewData( const QString& clipData )
     if ( myActions->isEmpty() )
         return false;
 
-    slotActionMenu(); // also creates myMatches
+    actionMenu( true ); // also creates myMatches
 
     return ( !myMatches.isEmpty() &&
              (!kapp->config()->readBoolEntry("Put Matching URLs in history", true)));
 }
 
 
-void URLGrabber::slotActionMenu()
+void URLGrabber::actionMenu( bool wm_class_check )
 {
     if ( myClipData.isEmpty() )
         return;
@@ -118,7 +118,8 @@ void URLGrabber::slotActionMenu()
     ClipCommand *command = 0L;
 
     if ( it.count() > 0 ) {
-        if ( isAvoidedWindow() ) // don't react on konqi's/netscape's urls
+	// don't react on konqi's/netscape's urls...
+        if ( wm_class_check && isAvoidedWindow() )
             return;
 
         QString item;
@@ -134,7 +135,7 @@ void URLGrabber::slotActionMenu()
             QListIterator<ClipCommand> it2( action->commands() );
             if ( it2.count() > 0 )
                 myMenu->insertTitle( kapp->miniIcon(), action->description() +
-				     i18n(" -  Actions for: ") + 
+				     i18n(" -  Actions for: ") +
 				     KStringHandler::csqueeze(myClipData, 45));
             for ( command = it2.current(); command; command = ++it2 ) {
                 item = command->description;

@@ -150,8 +150,13 @@ void TopLevel::newClipData()
 {
     QString clipData = clip->text().stripWhiteSpace();
     // If the string is null bug out
-    if(clipData.isEmpty())
+    if(clipData.isEmpty()) {
+	if (pSelectedItem != -1) {
+            pQPMmenu->setItemChecked(pSelectedItem, false);
+	    pSelectedItem = -1;
+	}
         return;
+    }
 
     if(clipData != QSlast) {
         QSlast = clipData.copy();
