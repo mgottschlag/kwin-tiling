@@ -69,6 +69,7 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   connect(m_backgroundImage, SIGNAL(clicked()), SIGNAL(changed()));
   connect(m_transparent, SIGNAL(clicked()), SIGNAL(changed()));
   connect(m_colorizeImage, SIGNAL(toggled(bool)), SIGNAL(changed()));
+  connect(m_colorizeImage, SIGNAL(toggled(bool)), SLOT(browseTheme()));
 
   connect(m_backgroundInput->lineEdit(), SIGNAL(lostFocus()), SLOT(browseTheme()));
   m_backgroundInput->fileDialog()->setFilter(KImageIO::pattern(KImageIO::Reading));
@@ -123,6 +124,8 @@ void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)
     {
         tmpImg = tmpImg.smoothScale(m_backgroundLabel->contentsRect().width(),
                                     m_backgroundLabel->contentsRect().height());
+        if (m_colorizeImage->isChecked())
+            colorize(tmpImg);
         theme_preview.convertFromImage(tmpImg);
         if(!theme_preview.isNull()) {
             m_backgroundInput->lineEdit()->setText(theme);
@@ -138,6 +141,44 @@ void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)
                             .arg(theme, themepath));
     m_backgroundInput->clear();
     m_backgroundLabel->setPixmap(QPixmap());
+}
+
+void LookAndFeelTab::colorize(QImage& image)
+{
+    // mercilessly ripped from the k menu side image colorizing
+    KConfig *config = KGlobal::config();
+    config->setGroup("WM");
+    QColor color = palette().active().highlight();
+    QColor activeTitle = config->readColorEntry("activeBackground", &color);
+    QColor inactiveTitle = config->readColorEntry("inactiveBackground", &color);
+
+    // figure out which color is most suitable for recoloring to
+    int h1, s1, v1, h2, s2, v2, h3, s3, v3;
+    activeTitle.hsv(&h1, &s1, &v1);
+    inactiveTitle.hsv(&h2, &s2, &v2);
+    palette().active().background().hsv(&h3, &s3, &v3);
+
+    if ( (abs(h1-h3)+abs(s1-s3)+abs(v1-v3) < abs(h2-h3)+abs(s2-s3)+abs(v2-v3)) &&
+        ((abs(h1-h3)+abs(s1-s3)+abs(v1-v3) < 32) || (s1 < 32)) && (s2 > s1))
+        color = inactiveTitle;
+    else
+        color = activeTitle;
+
+    // limit max/min brightness
+    int r, g, b;
+    color.rgb(&r, &g, &b);
+    int gray = qGray(r, g, b);
+    if (gray > 180) {
+        r = (r - (gray - 180) < 0 ? 0 : r - (gray - 180));
+        g = (g - (gray - 180) < 0 ? 0 : g - (gray - 180));
+        b = (b - (gray - 180) < 0 ? 0 : b - (gray - 180));
+    } else if (gray < 76) {
+        r = (r + (76 - gray) > 255 ? 255 : r + (76 - gray));
+        g = (g + (76 - gray) > 255 ? 255 : g + (76 - gray));
+        b = (b + (76 - gray) > 255 ? 255 : b + (76 - gray));
+    }
+    color.setRgb(r, g, b);
+    KIconEffect::colorize(image, color, 1.0);
 }
 
 void LookAndFeelTab::load()

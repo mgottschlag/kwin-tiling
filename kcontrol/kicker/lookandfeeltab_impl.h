@@ -46,6 +46,7 @@ class LookAndFeelTab : public LookAndFeelTabBase
  protected:
   void fillTileCombos();
   void previewBackground(const QString& themepath, bool isNew);
+  void colorize(QImage& image);
 
  protected slots:
   void browseTheme();
