@@ -135,24 +135,20 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mSelected = -1;
     groupLayout->addWidget( mSaverListView, 10 );
     connect( mSaverListView, SIGNAL(doubleClicked ( QListViewItem *)), this, SLOT( slotSetup()));
-    QWhatsThis::add( mSaverListView, i18n("This is a list of the available"
-      " screen savers. Select the one you want to use.") );
+    QWhatsThis::add( mSaverListView, i18n("Select the screen saver to use.") );
 
     QBoxLayout* hlay = new QHBoxLayout(groupLayout, KDialog::spacingHint());
     mSetupBt = new QPushButton( i18n("&Setup..."), mSaverGroup );
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
     mSetupBt->setEnabled(false);
     hlay->addWidget( mSetupBt );
-    QWhatsThis::add( mSetupBt, i18n("If the screen saver you selected has"
-      " customizable features, you can set them up by clicking this button.") );
+    QWhatsThis::add( mSetupBt, i18n("Configure the screen saver's options, if any.") );
 
     mTestBt = new QPushButton( i18n("&Test"), mSaverGroup );
     connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
     mTestBt->setEnabled(false);
     hlay->addWidget( mTestBt );
-    QWhatsThis::add( mTestBt, i18n("You can try out the screen saver by clicking"
-      " this button. (Also, the preview image shows you what the screen saver"
-      " will look like.)") );
+    QWhatsThis::add( mTestBt, i18n("Show a full screen preview of the screen saver.") );
 
     mSettingsGroup = new QGroupBox( i18n("Settings"), this );
     mSettingsGroup->setColumnLayout( 0, Qt::Vertical );
@@ -164,10 +160,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
         "Start a&utomatically"), mSettingsGroup);
     mEnabledCheckBox->setChecked(mEnabled);
     QWhatsThis::add( mEnabledCheckBox, i18n(
-        "When you check this option, the selected screen saver "
-        "will be started automatically after a certain number "
-        "of minutes of inactivity. "
-        "This timeout period can be set using the spinbox below.") );
+        "Automatically start the screen saver after a period of inactivity.") );
     connect(mEnabledCheckBox, SIGNAL(toggled(bool)),
             this, SLOT(slotEnable(bool)));
     groupLayout->addWidget(mEnabledCheckBox);
@@ -191,10 +184,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     hbox->addWidget(mWaitEdit);
     hbox->addStretch(1);
     QString wtstr = i18n(
-        "Choose the period of inactivity "
-        "after which the screen saver should start. "
-        "To prevent the screen saver from automatically starting, "
-        "uncheck the above option.");
+        "The period of inactivity "
+        "after which the screen saver should start.");
     QWhatsThis::add( mActivateLbl, wtstr );
     QWhatsThis::add( mWaitEdit, wtstr );
 
@@ -206,20 +197,15 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
              this, SLOT( slotLock( bool ) ) );
     groupLayout->addWidget(mLockCheckBox);
     QWhatsThis::add( mLockCheckBox, i18n(
-        "If you check this option, the display will be locked after "
-        "the screen saver has been started. To restore the "
-        "display, enter your account password at the prompt. "
-        "You can specify in the spinbox below a delay "
-        "after which the display will actually be locked."  ) );
+        "Prevent potential unauthorized use by requiring a password"
+        " to stop the screen saver.") );
     hbox = new QHBoxLayout();
     groupLayout->addLayout(hbox);
     hbox->addSpacing(30);
     mLockLbl = new QLabel(i18n("After:"), mSettingsGroup);
     mLockLbl->setEnabled(mEnabled && mLock);
     QWhatsThis::add( mLockLbl, i18n(
-        "The period after which the display will be locked."
-        "To prevent the display from being locked, disable the "
-        "option above." ) );
+        "The amount of time, after the screen saver has started, to ask for the unlock password.") );
     hbox->addWidget(mLockLbl);
     mWaitLockEdit = new QSpinBox(mSettingsGroup);
     mWaitLockEdit->setSteps(1, 10);
@@ -267,7 +253,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mMonitorLabel->setPixmap( QPixmap(locate("data",
                          "kcontrol/pics/monitor.png")));
     rightColumnLayout->addWidget(mMonitorLabel, 0);
-    QWhatsThis::add( mMonitorLabel, i18n("Here you can see a preview of the selected screen saver.") );
+    QWhatsThis::add( mMonitorLabel, i18n("A preview of the selected screen saver.") );
 
     QBoxLayout* advancedLayout = new QHBoxLayout( rightColumnLayout, 3 );
     advancedLayout->addWidget( new QWidget( this ) );

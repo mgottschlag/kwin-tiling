@@ -23,6 +23,12 @@
             <property name="name">
                 <cstring>qgbPriority</cstring>
             </property>
+            <property name="frameShape">
+                <enum>GroupBoxPanel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
             <property name="title">
                 <string>Screensaver Priority</string>
             </property>
@@ -109,7 +115,7 @@
                                 </property>
                                 <widget class="QLabel">
                                     <property name="name">
-                                        <cstring>textLabel1</cstring>
+                                        <cstring>qlTopLeft</cstring>
                                     </property>
                                     <property name="text">
                                         <string>Top Left:</string>
@@ -164,7 +170,7 @@
                                 </property>
                                 <widget class="QLabel">
                                     <property name="name">
-                                        <cstring>textLabel2</cstring>
+                                        <cstring>qlTopRight</cstring>
                                     </property>
                                     <property name="text">
                                         <string>Top Right:</string>
@@ -212,7 +218,7 @@
                                 </property>
                                 <widget class="QLabel">
                                     <property name="name">
-                                        <cstring>textLabel2_2</cstring>
+                                        <cstring>qlBottomLeft</cstring>
                                     </property>
                                     <property name="text">
                                         <string>Bottom Left:</string>
@@ -267,7 +273,7 @@
                                 </property>
                                 <widget class="QLabel">
                                     <property name="name">
-                                        <cstring>textLabel2_3</cstring>
+                                        <cstring>qlBottomRight</cstring>
                                     </property>
                                     <property name="text">
                                         <string>Bottom Right:</string>

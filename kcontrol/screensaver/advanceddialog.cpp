@@ -3,7 +3,7 @@
 #include <qcombobox.h>
 #include <kdebug.h>
 
-#include <qtooltip.h>
+#include <qwhatsthis.h>
 #include <qstring.h>
 
 #include "advanceddialog.h"
@@ -120,9 +120,20 @@ void KScreenSaverAdvancedDialog::slotChangeTopLeftCorner(int)
 
 AdvancedDialog::AdvancedDialog(QWidget *parent, const char *name) : AdvancedDialogImpl(parent, name)
 {
-	qcbTopLeft->setCurrentItem(2);
 	monitorLabel->setPixmap(QPixmap(locate("data", "kcontrol/pics/monitor.png")));
-	QToolTip::add(qcbPriority, "<qt>" + i18n("Specify the priority that the screensaver will run at. A higher priority may mean that the screensaver runs faster, though may reduce the speed that other programs run at while the screensaver is active.") + "</qt>");
+	QWhatsThis::add(qcbPriority, "<qt>" + i18n("Specify the priority that the screensaver will run at. A higher priority may mean that the screensaver runs faster, though may reduce the speed that other programs run at while the screensaver is active.") + "</qt>");
+	QString qsTopLeft("<qt>" +  i18n("The action to take when the mouse cursor is located in the top left corner of the screen for 15 seconds.") + "</qt>");
+        QString qsTopRight("<qt>" +  i18n("The action to take when the mouse cursor is located in the top right corner of the screen for 15 seconds.") + "</qt>");
+        QString qsBottomLeft("<qt>" +  i18n("The action to take when the mouse cursor is located in the bottom left corner of the screen for 15 seconds.") + "</qt>");
+        QString qsBottomRight("<qt>" +  i18n("The action to take when the mouse cursor is located in the bottom right corner of the screen for 15 seconds.") + "</qt>");
+	QWhatsThis::add(qlTopLeft, qsTopLeft);
+	QWhatsThis::add(qcbTopLeft, qsTopLeft);
+	QWhatsThis::add(qlTopRight, qsTopRight);
+	QWhatsThis::add(qcbTopRight, qsTopRight);
+	QWhatsThis::add(qlBottomLeft, qsBottomLeft);
+	QWhatsThis::add(qcbBottomLeft, qsBottomLeft);
+	QWhatsThis::add(qlBottomRight, qsBottomRight);
+	QWhatsThis::add(qcbBottomRight, qsBottomRight);
 }
 
 AdvancedDialog::~AdvancedDialog()
