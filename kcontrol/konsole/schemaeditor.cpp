@@ -101,7 +101,7 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     connect(transparencyCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
     connect(backgndLine, SIGNAL(returnPressed()), this, SLOT(schemaModified()));
     connect(transparentCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
-    connect(boldCheck, SIGNAL(returnPressed()), this, SLOT(schemaModified()));
+    connect(boldCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
     connect(colorButton, SIGNAL(changed(const QColor&)), this, SLOT(schemaModified()));
 
 }

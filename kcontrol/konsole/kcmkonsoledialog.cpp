@@ -1,8 +1,8 @@
 #include <klocale.h>
 /****************************************************************************
-** Form implementation generated from reading ui file './kcmkonsoledialog.ui'
+** Form implementation generated from reading ui file 'kcmkonsoledialog.ui'
 **
-** Created: Fri Apr 20 16:08:30 2001
+** Created: Sat Apr 28 22:22:32 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -32,7 +32,7 @@ KCMKonsoleDialog::KCMKonsoleDialog( QWidget* parent,  const char* name, WFlags f
 {
     if ( !name )
 	setName( "KCMKonsoleDialog" );
-    resize( 413, 440 ); 
+    resize( 409, 440 ); 
     setCaption( i18n( "Form1" ) );
     KCMKonsoleDialogLayout = new QGridLayout( this ); 
     KCMKonsoleDialogLayout->setSpacing( 11 );
@@ -215,6 +215,20 @@ KCMKonsoleDialog::KCMKonsoleDialog( QWidget* parent,  const char* name, WFlags f
     // signals and slots connections
     connect( terminalCB, SIGNAL( toggled(bool) ), terminalLE, SLOT( setEnabled(bool) ) );
     connect( terminalCB, SIGNAL( toggled(bool) ), TextLabel1_2, SLOT( setEnabled(bool) ) );
+
+    // tab order
+    setTabOrder( TabWidget2, terminalCB );
+    setTabOrder( terminalCB, terminalLE );
+    setTabOrder( terminalLE, codecCO );
+    setTabOrder( codecCO, warnCB );
+    setTabOrder( warnCB, historyCB );
+    setTabOrder( historyCB, fontCO );
+    setTabOrder( fontCO, fontPB );
+    setTabOrder( fontPB, fullScreenCB );
+    setTabOrder( fullScreenCB, showMenuBarCB );
+    setTabOrder( showMenuBarCB, showToolBarCB );
+    setTabOrder( showToolBarCB, showFrameCB );
+    setTabOrder( showFrameCB, scrollBarCO );
 }
 
 /*  

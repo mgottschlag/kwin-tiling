@@ -1,8 +1,8 @@
 #include <klocale.h>
 /****************************************************************************
-** Form implementation generated from reading ui file './schemadialog.ui'
+** Form implementation generated from reading ui file 'schemadialog.ui'
 **
-** Created: Fri Apr 20 16:08:22 2001
+** Created: Sat Apr 28 22:22:25 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -33,7 +33,7 @@ SchemaDialog::SchemaDialog( QWidget* parent,  const char* name, WFlags fl )
 {
     if ( !name )
 	setName( "SchemaDialog" );
-    resize( 521, 413 ); 
+    resize( 525, 413 ); 
     setCaption( i18n( "Konsole schema editor" ) );
     SchemaDialogLayout = new QGridLayout( this ); 
     SchemaDialogLayout->setSpacing( 6 );
@@ -189,7 +189,7 @@ SchemaDialog::SchemaDialog( QWidget* parent,  const char* name, WFlags fl )
     GroupBox13Layout->addWidget( TextLabel6, 5, 1 );
 
     shadeSlide = new QSlider( GroupBox13, "shadeSlide" );
-    shadeSlide->setValue( 20 );
+    shadeSlide->setValue( 50 );
     shadeSlide->setOrientation( QSlider::Horizontal );
 
     GroupBox13Layout->addMultiCellWidget( shadeSlide, 5, 5, 2, 3 );
@@ -236,6 +236,22 @@ SchemaDialog::SchemaDialog( QWidget* parent,  const char* name, WFlags fl )
     connect( defaultSchemaCB, SIGNAL( toggled(bool) ), defaultSchemaCB, SLOT( setDisabled(bool) ) );
     connect( transparencyCheck, SIGNAL( toggled(bool) ), backgndLine, SLOT( setDisabled(bool) ) );
     connect( transparencyCheck, SIGNAL( toggled(bool) ), imageBrowse, SLOT( setDisabled(bool) ) );
+
+    // tab order
+    setTabOrder( titleLine, colorCombo );
+    setTabOrder( colorCombo, typeCombo );
+    setTabOrder( typeCombo, boldCheck );
+    setTabOrder( boldCheck, transparentCheck );
+    setTabOrder( transparentCheck, colorButton );
+    setTabOrder( colorButton, schemaList );
+    setTabOrder( schemaList, defaultSchemaCB );
+    setTabOrder( defaultSchemaCB, saveButton );
+    setTabOrder( saveButton, removeButton );
+    setTabOrder( removeButton, modeCombo );
+    setTabOrder( modeCombo, backgndLine );
+    setTabOrder( backgndLine, transparencyCheck );
+    setTabOrder( transparencyCheck, shadeColor );
+    setTabOrder( shadeColor, shadeSlide );
 }
 
 /*  
