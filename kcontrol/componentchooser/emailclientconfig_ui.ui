@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>421</width>
-            <height>142</height>
+            <width>417</width>
+            <height>293</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -96,6 +96,9 @@
                             <property name="text">
                                 <string>...</string>
                             </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Click here to browse for the mail program file.</string>
+                            </property>
                         </widget>
                     </hbox>
                 </widget>
@@ -137,6 +140,9 @@
                     <property name="text">
                         <string>&amp;Use KMail as preferred email client</string>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Kmail is the standard Mail program for the KDE desktop.</string>
+                    </property>
                 </widget>
                 <widget class="QRadioButton" row="1" column="0" rowspan="1" colspan="2">
                     <property name="name">
@@ -144,6 +150,9 @@
                     </property>
                     <property name="text">
                         <string>Use a different &amp;email client:</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option if you want to use any other mail program.</string>
                     </property>
                 </widget>
                 <spacer row="2" column="0">
