@@ -38,7 +38,7 @@ genkdmconf_LDFLAGS = $(X_LDFLAGS) $(X_RPATH)
 genkdmconf_LDADD = $(LIB_X11)
 
 install-data-local: genkdmconf
-	@./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm --face-src $(SRCDIR)/pics $(GENKDMCONF_FLAGS)
+	./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm --face-src $(srcdir)/pics $(GENKDMCONF_FLAGS)
 
 messages:
 	$(XGETTEXT) $(kdm_greet_SOURCES) -o $(podir)/kdmgreet.pot
