@@ -596,7 +596,8 @@ void SchemaEditor::readSchema(int num)
 		else
 		    continue;
 
-		backgndLine->setText(locate("wallpaper", path));
+		QString qline(line);
+		backgndLine->setText(locate("wallpaper", qline.mid( qline.find(" ",7)+1 ) ));
 		modeCombo->setCurrentItem(attr - 2);
 
 	    }
