@@ -691,40 +691,6 @@ static Status KSMNewClientProc ( SmsConn conn, SmPointer manager_data,
 }
 
 
-static char *
-kdmExec( const char *cmd )
-{
-    char *ctl, *dpy, *ptr;
-    int fd, len;
-    struct sockaddr_un sa;
-    char buf[1024];
-
-    if ((dpy = getenv( "DISPLAY" )) &&
-        (ctl = getenv( "DM_CONTROL" )) &&
-        (fd = socket( PF_UNIX, SOCK_STREAM, 0 )) >= 0)
-    {
-        sa.sun_family = AF_UNIX;
-        if ((ptr = strchr( dpy, ':' )))
-            ptr = strchr( ptr, '.' );
-        snprintf( sa.sun_path, sizeof(sa.sun_path),
-                  "%s/dmctl-%.*s/socket", ctl, ptr ? ptr - dpy : 512, dpy );
-        if (!connect( fd, (struct sockaddr *)&sa, sizeof(sa) ) &&
-            write( fd, cmd, (len = strlen( cmd )) ) == len)
-        {
-            len = read( fd, buf, sizeof(buf) );
-            close( fd );
-            if (len > 0) {
-                ptr = (char *)malloc( len + 1 );
-                memcpy( ptr, buf, len );
-                ptr[len] = 0;
-                return ptr;
-            }
-        }
-        close( fd );
-    }
-    return 0;
-}
-
 #ifdef HAVE__ICETRANSNOLISTEN
 extern "C" int _IceTransNoListen(const char * protocol);
 #endif
@@ -867,7 +833,7 @@ void KSMServer::cleanUp()
                     "forcenow\n" :
                     shutdownMode == KApplication::ShutdownModeTryNow ?
                     "trynow\n" : "schedule\n" );
-        free( kdmExec( cmd.data() ) );
+        KApplication::kdmExec( cmd.data() );
     }
 }
 
@@ -971,12 +937,10 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
        (confirm == KApplication::ShutdownConfirmNo) ? true :
                   !config->readBoolEntry( "confirmLogout", true );
     bool maysd = false;
-    char *re;
-    if (config->readBoolEntry( "offerShutdown", true ) && (re = kdmExec( "caps\n" ))) {
-	if (strstr( re, "\tshutdown" ))
-	    maysd = true;
-	free( re );
-    }
+    QCString re;
+    if (config->readBoolEntry( "offerShutdown", true ) &&
+        KApplication::kdmExec( "caps\n", &re ) && re.find( "\tshutdown" ) >= 0)
+        maysd = true;
     if (!maysd)
         sdtype = KApplication::ShutdownTypeNone;
     else if (sdtype == KApplication::ShutdownTypeDefault)
