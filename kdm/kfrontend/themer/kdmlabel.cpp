@@ -176,7 +176,7 @@ static const struct {
 	{ "reboot",             I18N_NOOP("Reboot") },
 	{ "chooser",            I18N_NOOP("XDMCP Chooser") },
 	{ "config",             I18N_NOOP("Configure") },
-	{ "caps-lock-warning",  I18N_NOOP("You've got capslock on!") },
+	{ "caps-lock-warning",  I18N_NOOP("You have got caps lock on.") },
 	{ "timed-label",        I18N_NOOP("User %s will login in %d seconds") },
 	{ "welcome-label",      I18N_NOOP("Welcome to %h") },	// _greetString
 	{ "username-label",     I18N_NOOP("Username:") },
