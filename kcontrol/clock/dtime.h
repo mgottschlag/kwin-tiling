@@ -22,7 +22,6 @@
 #ifndef dtime_included
 #define dtime_included
 
-#include <qtableview.h>
 #include <qdatetime.h> 
 #include <qlineedit.h> 
 #include <qspinbox.h> 
