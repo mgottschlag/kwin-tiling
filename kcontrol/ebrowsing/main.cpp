@@ -86,8 +86,7 @@ void KURIFilterModule::load()
     QPtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
     {
-	  KCModule *module = it.current();
-	  if (module) { module->load(); }
+	  it.current()->load();
     }
 }
 
@@ -96,8 +95,7 @@ void KURIFilterModule::save()
     QPtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
     {
-	  KCModule *module = it.current();
-	  if (module) { module->save(); }
+	  it.current()->save();
     }
 }
 
@@ -106,8 +104,7 @@ void KURIFilterModule::defaults()
     QPtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
     {
-	  KCModule *module = it.current();
-	  if (module) { module->defaults(); }
+	  it.current()->defaults();
     }
 }
 
