@@ -31,7 +31,7 @@
 #include <qpalette.h>
 #include <kapplication.h>
 
-CFontPreview::CFontPreview(QWidget *parent, const char *name=NULL)
+CFontPreview::CFontPreview(QWidget *parent, const char *name)
             : QWidget(parent, name)
 {
 }
