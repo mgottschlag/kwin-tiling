@@ -60,8 +60,6 @@ class CKCmFontInst : public KCModule
     CKCmFontInst(QWidget *parent=NULL, const char *name=NULL, const QStringList &list=QStringList());
     virtual ~CKCmFontInst();
 
-    const KAboutData * aboutData() const;
-
     QSize sizeHint() const;
 
     public slots:
@@ -96,7 +94,6 @@ class CKCmFontInst : public KCModule
 
     private:
 
-    KAboutData           *itsAboutData;
     KDirOperator         *itsDirOp;
     KURL                 itsTop;
     KAction              *itsUpAct,

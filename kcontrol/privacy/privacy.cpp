@@ -42,6 +42,15 @@
 Privacy::Privacy(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
+
+  KAboutData *about =
+    new KAboutData(I18N_NOOP("kcm_privacy"), I18N_NOOP("KDE Privacy Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 2003 Ralf Hoelzer"));
+
+  about->addAuthor("Ralf Hoelzer", 0, "ralf@well.com");
+  setAboutData( about );
+
   m_privacymanager = new KPrivacyManager();
 
   QBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
@@ -298,19 +307,6 @@ QString Privacy::quickHelp() const
 {
   return i18n("The privacy module allows a user to erase traces which KDE leaves on "
               "the system, such as command histories or browser caches.");
-}
-
-const KAboutData* Privacy::aboutData() const
-{
-
-  KAboutData *about =
-    new KAboutData(I18N_NOOP("kcm_privacy"), I18N_NOOP("KDE Privacy Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 2003 Ralf Hoelzer"));
-
-  about->addAuthor("Ralf Hoelzer", 0, "ralf@well.com");
-
-  return about;
 }
 
 

@@ -67,6 +67,15 @@ USBViewer::USBViewer(QWidget *parent, const char *name, const QStringList &)
   connect(_devices, SIGNAL(selectionChanged(QListViewItem*)),
 	  this, SLOT(selectionChanged(QListViewItem*)));
 
+  KAboutData *about =
+  new KAboutData(I18N_NOOP("kcmusb"), I18N_NOOP("KDE USB Viewer"),
+                0, 0, KAboutData::License_GPL,
+                I18N_NOOP("(c) 2001 Matthias Hoelzer-Kluepfel"));
+
+  about->addAuthor("Matthias Hoelzer-Kluepfel", 0, "mhk@kde.org");
+  about->addCredit("Leo Savernik", "Live Monitoring of USB Bus", "l.savernik@aon.at");
+  setAboutData( about );
+
   load();
 }
 
@@ -187,15 +196,3 @@ QString USBViewer::quickHelp() const
      " the devices attached to your USB bus(es).");
 }
 
-const KAboutData* USBViewer::aboutData() const
-{
-    KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmusb"), I18N_NOOP("KDE USB Viewer"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 2001 Matthias Hoelzer-Kluepfel"));
-
-    about->addAuthor("Matthias Hoelzer-Kluepfel", 0, "mhk@kde.org");
-    about->addCredit("Leo Savernik", "Live Monitoring of USB Bus", "l.savernik@aon.at");
-
-    return about;
-}

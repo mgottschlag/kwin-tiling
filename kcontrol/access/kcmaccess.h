@@ -34,8 +34,6 @@ public:
   void load();
   void save();
   void defaults();
-  const KAboutData* aboutData() const;
-  
 
 protected slots:
 

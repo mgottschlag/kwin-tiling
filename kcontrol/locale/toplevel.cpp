@@ -44,11 +44,20 @@
 #include <kaboutdata.h>
 #include "toplevel.moc"
 
-KLocaleApplication::KLocaleApplication(QWidget *parent, const char */*name*/, 
+KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/, 
                                        const QStringList &args)
-  : KCModule( KLocaleFactory::instance(), parent, args),
-    m_aboutData(0)
+  : KCModule( KLocaleFactory::instance(), parent, args)
 {
+  KAboutData* aboutData = new KAboutData("kcmlocale",
+        I18N_NOOP("KCMLocale"),
+        "3.0",
+        I18N_NOOP("Regional settings"),
+        KAboutData::License_GPL,
+        "(C) 1998 Matthias Hoelzer, "
+        "(C) 1999-2003 Hans Petter Bieker",
+        0, 0, "bieker@kde.org");
+  setAboutData( aboutData );
+
   m_nullConfig = new KConfig(QString::null, false, false);
   m_globalConfig = new KConfig(QString::null, false, true);
 
@@ -141,7 +150,6 @@ KLocaleApplication::~KLocaleApplication()
   delete m_locale;
   delete m_globalConfig;
   delete m_nullConfig;
-  delete m_aboutData;
 }
 
 void KLocaleApplication::load()
@@ -266,23 +274,3 @@ void KLocaleApplication::slotChanged()
   emit changed(true);
 }
 
-const KAboutData * KLocaleApplication::aboutData() const
-{
-  if ( ! m_aboutData )
-  {
-    KLocaleApplication * that = const_cast<KLocaleApplication *>(this);
-
-    that->m_aboutData = new KAboutData("kcmlocale",
-                                       I18N_NOOP("KCMLocale"),
-                                       "3.0",
-                                       I18N_NOOP("Regional settings"),
-                                       KAboutData::License_GPL,
-                                       "(C) 1998 Matthias Hoelzer, "
-                                       "(C) 1999-2003 Hans Petter Bieker",
-                                       0,
-                                       0,
-                                       "bieker@kde.org");
-  }
-
-  return m_aboutData;
-}

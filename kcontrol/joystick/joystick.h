@@ -31,16 +31,13 @@ class joystick: public KCModule
 
   public:
     joystick(QWidget *parent = 0, const char *name = 0, const QStringList &list = QStringList());
-    ~joystick();
 
     virtual void load();
     virtual void save();
     virtual void defaults();
     virtual QString quickHelp() const;
-    virtual const KAboutData *aboutData() const { return myAboutData; };
 
   private:
-    KAboutData *myAboutData;
     JoyWidget *joyWidget;
 };
 

@@ -53,7 +53,6 @@ public:
 
     virtual void defaults();
     virtual void save();
-    virtual const KAboutData *aboutData() const;
     virtual QString quickHelp() const;
 
 public slots:

@@ -141,6 +141,17 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	KGlobal::dirs()->addResourceType("themes",
 		KStandardDirs::kde_default("data") + "kstyle/themes");
 
+	KAboutData *about =
+		new KAboutData( I18N_NOOP("kcmstyle"),
+						I18N_NOOP("KDE Style Module"),
+						0, 0, KAboutData::License_GPL,
+						I18N_NOOP("(c) 2002 Karol Szwed, Daniel Molkentin"));
+
+	about->addAuthor("Karol Szwed", 0, "gallium@kde.org");
+	about->addAuthor("Daniel Molkentin", 0, "molkentin@kde.org");
+	about->addAuthor("Ralf Nolden", 0, "nolden@kde.org");
+	setAboutData( about );
+
 	// Setup pages and mainLayout
 	mainLayout = new QVBoxLayout( this );
 	tabWidget  = new QTabWidget( this );
@@ -692,21 +703,6 @@ void KCMStyle::defaults()
 	comboToolbarIcons->setCurrentItem(0);
 	cbIconsOnButtons->setChecked(false);
 	cbTearOffHandles->setChecked(false);
-}
-
-
-const KAboutData* KCMStyle::aboutData() const
-{
-	KAboutData *about =
-		new KAboutData( I18N_NOOP("kcmstyle"),
-						I18N_NOOP("KDE Style Module"),
-						0, 0, KAboutData::License_GPL,
-						I18N_NOOP("(c) 2002 Karol Szwed, Daniel Molkentin"));
-
-	about->addAuthor("Karol Szwed", 0, "gallium@kde.org");
-	about->addAuthor("Daniel Molkentin", 0, "molkentin@kde.org");
-	about->addAuthor("Ralf Nolden", 0, "nolden@kde.org");
-	return about;
 }
 
 

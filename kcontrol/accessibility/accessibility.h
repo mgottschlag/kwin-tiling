@@ -71,11 +71,6 @@ class AccessibilityConfig : public AccessibilityConfigWidget {
        */
       QString quickHelp() const;            
       
-      /**
-       * Returns the about data of the Accessibility module
-       */
-      const KAboutData* aboutData() const;
-
    private slots:
       /**
        * This slot is used to emit the signal changed when any widget changes the configuration 

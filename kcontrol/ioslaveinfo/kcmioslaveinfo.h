@@ -50,7 +50,6 @@ public:
     void defaults();
     int buttons();
     QString quickHelp() const;
-    const KAboutData* aboutData() const;
 
 protected:
     KListBox *m_ioslavesLb;

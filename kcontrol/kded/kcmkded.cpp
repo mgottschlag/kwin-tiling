@@ -53,6 +53,14 @@ static const bool KALARMD_DEFAULT = true;
 KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	KCModule( KDEDFactory::instance(), parent, name )
 {
+	KAboutData *about =
+		new KAboutData( I18N_NOOP( "kcmkded" ), I18N_NOOP( "KDE Service Manager" ),
+				0, 0, KAboutData::License_GPL,
+				I18N_NOOP( "(c) 2002 Daniel Molkentin" ) );
+	about->addAuthor("Daniel Molkentin",0,"molkentin@kde.org");
+	setAboutData( about );
+
+
 	RUNNING = i18n("Running")+" ";
 	NOT_RUNNING = i18n("Not running")+" ";
 
@@ -385,17 +393,6 @@ void KDEDConfig::slotStopService()
 void KDEDConfig::slotItemChecked(QCheckListItem*)
 {
 	emit changed(true);
-}
-
-const KAboutData* KDEDConfig::aboutData() const
-{
-	KAboutData *about =
-		new KAboutData( I18N_NOOP( "kcmkded" ), I18N_NOOP( "KDE Service Manager" ),
-				0, 0, KAboutData::License_GPL,
-				I18N_NOOP( "(c) 2002 Daniel Molkentin" ) );
-	about->addAuthor("Daniel Molkentin",0,"molkentin@kde.org");
-	return about;
-
 }
 
 QString KDEDConfig::quickHelp() const

@@ -24,9 +24,15 @@
 
 #include <kdialog.h>
 #include <kgenericfactory.h>
+#include <kaboutdata.h>
 
 
 #include <qtimer.h>
+#include <qtabwidget.h>
+#include <kglobal.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qlistview.h>
 
 #ifdef HAVE_SYS_SOCKIO_H
 #include <sys/sockio.h>
@@ -80,21 +86,6 @@ typedef QPtrList<MyNIC> NICList;
 
 NICList* findNICs();
 
-
-const KAboutData* KCMNic::aboutData() const
-{
-    KAboutData *about =
-    new KAboutData(I18N_NOOP("kcminfo"),
-		I18N_NOOP("KDE Panel System Information Control Module"),
-		0, 0, KAboutData::License_GPL,
-		I18N_NOOP("(c) 2001 - 2002 Alexander Neundorf"));
-
-    about->addAuthor("Alexander Neundorf", 0, "neundorf@kde.org");
-
-    return about;
-}
-
-
 KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
    :KCModule(KCMNicFactory::instance(), parent,name)
 {
@@ -116,6 +107,15 @@ KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
    connect(m_updateButton,SIGNAL(clicked()),this,SLOT(update()));
    connect(timer,SIGNAL(timeout()),this,SLOT(update()));
    update();
+   KAboutData *about =
+   new KAboutData(I18N_NOOP("kcminfo"),
+	I18N_NOOP("KDE Panel System Information Control Module"),
+	0, 0, KAboutData::License_GPL,
+	I18N_NOOP("(c) 2001 - 2002 Alexander Neundorf"));
+
+   about->addAuthor("Alexander Neundorf", 0, "neundorf@kde.org");
+   setAboutData( about );
+
 }
 
 void KCMNic::update()

@@ -79,6 +79,15 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     kapp->dcopClient()->setNotifications(true);
     connectDCOPSignal("kicker", "kicker", "configSwitchToPanel(QString)", "jumpToPanel(QString)", false);
     kapp->dcopClient()->send("kicker", "kicker", "configLaunched()", QByteArray());
+    KAboutData *about = new KAboutData(I18N_NOOP("kcmkicker"), I18N_NOOP("KDE Panel Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1999 - 2001 Matthias Elter\n(c) 2002 - 2003 Aaron J. Seigo"));
+
+    about->addAuthor("Aaron J. Seigo", 0, "aseigo@kde.org");
+    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
+
+    setAboutData( about );
+
 }
 
 KickerConfig::~KickerConfig()
@@ -201,20 +210,6 @@ QString KickerConfig::quickHelp() const
                 " on the panel, e.g. dragging it with the left mouse button or using the"
                 " context menu on right mouse button click. This context menu also offers you"
                 " manipulation of the panel's buttons and applets.");
-}
-
-const KAboutData* KickerConfig::aboutData() const
-{
-
-    KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmkicker"), I18N_NOOP("KDE Panel Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1999 - 2001 Matthias Elter\n(c) 2002 - 2003 Aaron J. Seigo"));
-
-    about->addAuthor("Aaron J. Seigo", 0, "aseigo@kde.org");
-    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
-
-    return about;
 }
 
 void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists, bool reloadIfExists)

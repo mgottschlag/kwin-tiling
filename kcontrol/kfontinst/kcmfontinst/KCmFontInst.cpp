@@ -74,12 +74,21 @@ K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory("kcmfontinst"))
 
 CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
             : KCModule(parent, "kfontinst"),
-              itsAboutData(NULL),
               itsTop(CMisc::root() ? QString("fonts:/") : QString("fonts:/")+i18n(KIO_FONTS_USER)),
               itsPreview(NULL),
               itsConfig(CGlobal::uiCfgFile())
 {
     KGlobal::locale()->insertCatalogue("kfontinst");
+
+    KAboutData* about = new KAboutData("kcmfontinst",
+         I18N_NOOP("KDE Font Installer"),
+         0, 0,
+         KAboutData::License_GPL,
+         I18N_NOOP("GUI front end to the fonts:/ ioslave.\n"
+         "(c) Craig Drummond, 2000 - 2004"));
+    about->addAuthor("Craig Drummond", I18N_NOOP("Developer and maintainer"), "craig@kde.org");
+    setAboutData( about );
+
 
     const char *appName=KCmdLineArgs::appName();
 
@@ -369,29 +378,9 @@ CKCmFontInst::~CKCmFontInst()
         if(itsKCmshell)
             itsConfig.writeEntry(CFG_SIZE, size());
     }
-    if(itsAboutData)
-        delete itsAboutData;
     delete itsDirOp;
 
     CGlobal::destroy();
-}
-
-const KAboutData * CKCmFontInst::aboutData() const
-{
-    if(!itsAboutData)
-    {
-        CKCmFontInst *that = const_cast<CKCmFontInst *>(this);
-
-        that->itsAboutData=new KAboutData("kcmfontinst",
-                                          I18N_NOOP("KDE Font Installer"),
-                                          0, 0,
-                                          KAboutData::License_GPL,
-                                          I18N_NOOP("GUI front end to the fonts:/ ioslave.\n"
-                                                    "(c) Craig Drummond, 2000 - 2004"));
-        that->itsAboutData->addAuthor("Craig Drummond", I18N_NOOP("Developer and maintainer"), "craig@kde.org");
-    }
-
-    return itsAboutData;
 }
 
 QSize CKCmFontInst::sizeHint() const

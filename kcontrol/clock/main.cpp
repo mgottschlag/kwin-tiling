@@ -40,6 +40,15 @@ K_EXPORT_COMPONENT_FACTORY( kcm_clock, KlockModuleFactory("kcmkclock"))
 KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList &)
   : KCModule(KlockModuleFactory::instance(), parent, name)
 {
+  KAboutData *about =
+  new KAboutData(I18N_NOOP("kcmclock"), I18N_NOOP("KDE Clock Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  "(c) 1996 - 2001 Luca Montecchiani");
+
+  about->addAuthor("Luca Montecchiani", I18N_NOOP("Original author"), "m.luca@usa.net");
+  about->addAuthor("Paul Campbell", I18N_NOOP("Current Maintainer"), "paul@taniwha.com");
+  setAboutData( about );
+
   KGlobal::locale()->insertCatalogue("timezones"); // For time zone translations
 
   QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
@@ -91,19 +100,6 @@ QString KclockModule::quickHelp() const
     " can only change these settings when you start the Control Center as root. If you do not have"
     " the root password, but feel the system time should be corrected, please contact your system"
     " administrator.");
-}
-
-const KAboutData* KclockModule::aboutData() const
-{
-   KAboutData *about =
-   new KAboutData(I18N_NOOP("kcmclock"), I18N_NOOP("KDE Clock Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  "(c) 1996 - 2001 Luca Montecchiani");
-
-   about->addAuthor("Luca Montecchiani", I18N_NOOP("Original author"), "m.luca@usa.net");
-   about->addAuthor("Paul Campbell", I18N_NOOP("Current Maintainer"), "paul@taniwha.com");
-
-   return about;
 }
 
 void KclockModule::moduleChanged(bool state)

@@ -44,6 +44,15 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
   : KCModule(parent, name) {
 	_indicators.setAutoDelete(true);
 
+	KAboutData *about =
+	new KAboutData(I18N_NOOP("kcmxinerama"),
+			I18N_NOOP("KDE Multiple Monitor Configurator"),
+			0, 0, KAboutData::License_GPL,
+			I18N_NOOP("(c) 2002-2003 George Staikos"));
+ 
+	about->addAuthor("George Staikos", 0, "staikos@kde.org");
+	setAboutData( about );
+
 	config = new KConfig("kdeglobals", false, false);
 	ksplashrc = new KConfig("ksplashrc", false, false);
 
@@ -240,19 +249,6 @@ void KCMXinerama::clearIndicator() {
 QString KCMXinerama::quickHelp() const {
 	return i18n("<h1>Multiple Monitors</h1> This module allows you to configure KDE support"
      " for multiple monitors.");
-}
-
-const KAboutData* KCMXinerama::aboutData() const {
- 
-	KAboutData *about =
-	new KAboutData(I18N_NOOP("kcmxinerama"),
-			I18N_NOOP("KDE Multiple Monitor Configurator"),
-			0, 0, KAboutData::License_GPL,
-			I18N_NOOP("(c) 2002-2003 George Staikos"));
- 
-	about->addAuthor("George Staikos", 0, "staikos@kde.org");
- 
-	return about;
 }
 
 extern "C" {

@@ -46,6 +46,13 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     topLayout->add(dialog);
     load();
 
+    KAboutData *ab=new KAboutData( "kcmkonsole", I18N_NOOP("KCM Konsole"),
+       "0.2",I18N_NOOP("KControl module for Konsole configuration"), KAboutData::License_GPL,
+       "(c) 2001, Andrea Rizzi", 0, 0, "rizzi@kde.org");
+
+    ab->addAuthor("Andrea Rizzi",0, "rizzi@kde.org");
+    setAboutData( ab );
+
     connect(dialog->terminalSizeHintCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->warnCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->ctrldragCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
@@ -190,16 +197,5 @@ QString KCMKonsole::quickHelp() const
 }
 
 
-const KAboutData * KCMKonsole::aboutData() const
-{
-
- KAboutData *ab=new KAboutData( "kcmkonsole", I18N_NOOP("KCM Konsole"),
-    "0.2",I18N_NOOP("KControl module for Konsole configuration"), KAboutData::License_GPL,
-    "(c) 2001, Andrea Rizzi", 0, 0, "rizzi@kde.org");
-
-  ab->addAuthor("Andrea Rizzi",0, "rizzi@kde.org");
- return ab;
-
-}
 
 #include "kcmkonsole.moc"

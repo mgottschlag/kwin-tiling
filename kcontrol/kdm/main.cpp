@@ -84,6 +84,17 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   , maxshowuid(0)
   , updateOK(false)
 {
+  KAboutData *about =
+  new KAboutData(I18N_NOOP("kcmkdm"), I18N_NOOP("KDE Login Manager Config Module"),
+                0, 0, KAboutData::License_GPL,
+                I18N_NOOP("(c) 1996 - 2002 The KDM Authors"));
+
+  about->addAuthor("Thomas Tanghus", I18N_NOOP("Original author"), "tanghus@earthling.net");
+	about->addAuthor("Steffen Hansen", 0, "hansen@kde.org");
+	about->addAuthor("Oswald Buddenhagen", I18N_NOOP("Current maintainer"), "ossi@kde.org");
+
+  setAboutData( about );
+
   setlocale( LC_COLLATE, "C" );
 
   KGlobal::locale()->insertCatalogue("kcmbackground");
@@ -209,20 +220,6 @@ QString KDModule::quickHelp() const
                     "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
 		    "users not needing to provide a password to log in, and other convenience features.<br>"
 		    "Note, that these settings are security holes by their nature, so use them very carefully.");
-}
-
-const KAboutData* KDModule::aboutData() const
-{
-   KAboutData *about =
-   new KAboutData(I18N_NOOP("kcmkdm"), I18N_NOOP("KDE Login Manager Config Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1996 - 2002 The KDM Authors"));
-
-   about->addAuthor("Thomas Tanghus", I18N_NOOP("Original author"), "tanghus@earthling.net");
-	about->addAuthor("Steffen Hansen", 0, "hansen@kde.org");
-	about->addAuthor("Oswald Buddenhagen", I18N_NOOP("Current maintainer"), "ossi@kde.org");
-
-   return about;
 }
 
 void KDModule::load()

@@ -88,11 +88,6 @@ public:
      */
     virtual QString quickHelp() const;
 
-    /**
-     * @return information about the config module
-     */
-    virtual const KAboutData *aboutData() const;
-
 protected:
     void dragEnterEvent ( QDragEnterEvent * ev );
     void dropEvent ( QDropEvent * ev );

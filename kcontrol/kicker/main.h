@@ -46,7 +46,6 @@ public:
     void save();
     void defaults();
     QString quickHelp() const;
-    const KAboutData* aboutData() const;
 
     void populateExtensionInfoList(QComboBox* list);
     void reloadExtensionInfo();

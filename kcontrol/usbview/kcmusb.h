@@ -39,9 +39,6 @@ public:
 
   int buttons();
   QString quickHelp() const;
-  const KAboutData* aboutData() const;
-
-
 
 protected slots:
 

@@ -66,7 +66,23 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     setAcceptDrops(true);
 
     connect(m_base, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
+
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmbackground"), I18N_NOOP("KDE Background Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1997-2002 Martin R. Jones"));
+
+    about->addAuthor("Waldo Bastian", 0, "bastian@kde.org");
+    about->addAuthor("George Staikos", 0, "staikos@kde.org");
+    about->addAuthor("Martin R. Jones", 0, "jones@kde.org");
+    about->addAuthor("Matthias Hoelzer-Kluepfel", 0, "mhk@kde.org");
+    about->addAuthor("Stephan Kulow", 0, "coolo@kde.org");
+    about->addAuthor("Mark Donohoe", 0, 0);
+    about->addAuthor("Matej Koss", 0 , 0);
+
+    setAboutData( about );
 }
+
 
 void KBackground::load()
 {
@@ -104,26 +120,6 @@ QString KBackground::quickHelp() const
 {
     return m_base->quickHelp();
 }
-
-const KAboutData* KBackground::aboutData() const
-{
-
-    KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmbackground"), I18N_NOOP("KDE Background Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1997-2002 Martin R. Jones"));
-
-    about->addAuthor("Waldo Bastian", 0, "bastian@kde.org");
-    about->addAuthor("George Staikos", 0, "staikos@kde.org");
-    about->addAuthor("Martin R. Jones", 0, "jones@kde.org");
-    about->addAuthor("Matthias Hoelzer-Kluepfel", 0, "mhk@kde.org");
-    about->addAuthor("Stephan Kulow", 0, "coolo@kde.org");
-    about->addAuthor("Mark Donohoe", 0, 0);
-    about->addAuthor("Matej Koss", 0 , 0);
-
-    return about;
-}
-
 
 
 #include "main.moc"

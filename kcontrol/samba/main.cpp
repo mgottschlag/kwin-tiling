@@ -37,7 +37,6 @@ class SambaContainer:public KCModule
       virtual void saveSettings();
       virtual void defaults() {};
       QString quickHelp() const;
-      const KAboutData* aboutData() const;
 
    private:
       KConfig config;
@@ -69,15 +68,7 @@ SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringL
    connect(&logView,SIGNAL(contentsChanged(QListView* , int, int)),&statisticsView,SLOT(setListInfo(QListView *, int, int)));
    setButtons(Help);
    loadSettings();
-}
 
-SambaContainer::~SambaContainer()
-{
-   saveSettings();
-}
-
-const KAboutData* SambaContainer::aboutData() const
-{
     KAboutData *about =
     new KAboutData(I18N_NOOP("kcmsamba"),
 		I18N_NOOP("KDE Panel System Information Control Module"),
@@ -89,7 +80,12 @@ const KAboutData* SambaContainer::aboutData() const
     about->addAuthor("Harald Koschinski", 0, "Harald.Koschinski@arcormail.de");
     about->addAuthor("Wilco Greven", 0, "greven@kde.org");
     about->addAuthor("Alexander Neundorf", 0, "neundorf@kde.org");
-    return about;
+    setAboutData( about );
+}
+
+SambaContainer::~SambaContainer()
+{
+   saveSettings();
 }
 
 void SambaContainer::loadSettings()

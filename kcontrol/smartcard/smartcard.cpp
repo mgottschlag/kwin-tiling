@@ -56,6 +56,14 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
   _ok = false;
   dc->remoteInterfaces("kded", "kardsvc", &_ok);
 
+  KAboutData *about =
+  new KAboutData(I18N_NOOP("kcmsmartcard"), I18N_NOOP("KDE Smartcard Control Module"),
+                0, 0, KAboutData::License_GPL,
+                I18N_NOOP("(c) 2001 George Staikos"));
+
+  about->addAuthor("George Staikos", 0, "staikos@kde.org");
+  setAboutData( about );
+
   if (_ok) {
 
 
@@ -381,19 +389,6 @@ QString KSmartcardConfig::quickHelp() const
   return i18n("<h1>smartcard</h1> This module allows you to configure KDE support"
      " for smartcards. These can be used for various tasks such as storing"
      " SSL certificates and logging in to the system.");
-}
-
-const KAboutData* KSmartcardConfig::aboutData() const
-{
-
-    KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmsmartcard"), I18N_NOOP("KDE Smartcard Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 2001 George Staikos"));
-
-    about->addAuthor("George Staikos", 0, "staikos@kde.org");
-
-    return about;
 }
 
 extern "C"

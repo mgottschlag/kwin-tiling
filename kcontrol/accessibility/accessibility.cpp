@@ -75,6 +75,16 @@ K_EXPORT_COMPONENT_FACTORY( kcm_accessibility, AccessibilityFactory("kcmaccessib
 
 AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)
   : AccessibilityConfigWidget( parent, name){
+
+   KAboutData *about =
+   new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
+
+   about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
+   about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
+   setAboutData( about );
+
    kdDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)" << endl;
    // TODO: set the KURL Dialog to open just audio files
    connect( mainTab, SIGNAL(currentChanged(QWidget*)), this, SIGNAL(quickHelpChanged()) );
@@ -259,15 +269,3 @@ QString AccessibilityConfig::quickHelp() const{
    }
 }
 
-const KAboutData* AccessibilityConfig::aboutData() const{
-   kdDebug() << "Running: AccessibilityConfig::aboutData() const"<< endl;
-   KAboutData *about =
-   new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
-
-   about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
-   about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
-
-   return about;
-}

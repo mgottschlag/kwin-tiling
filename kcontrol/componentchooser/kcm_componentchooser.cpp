@@ -27,6 +27,15 @@ KCMComponentChooser::KCMComponentChooser( QWidget *parent, const char *name ):
 	m_chooser=new ComponentChooser(this,"ComponentChooser");
 	connect(m_chooser,SIGNAL(changed(bool)),this,SIGNAL(changed(bool)));
 	setButtons( Help | Apply );
+
+	KAboutData *about =
+	new KAboutData(I18N_NOOP("kcmcomponentchooser"), I18N_NOOP("Component Chooser"),
+			0, 0, KAboutData::License_GPL,
+			I18N_NOOP("(c), 2002 Joseph Wenninger"));
+
+	about->addAuthor("Joseph Wenninger", 0 , "jowenn@kde.org");
+	setAboutData( about );
+
 }
 
 void KCMComponentChooser::load(){
@@ -42,18 +51,6 @@ void KCMComponentChooser::save(){
 void KCMComponentChooser::defaults(){
 	m_chooser->restoreDefault();
 	emit changed(true);
-}
-
-const KAboutData* KCMComponentChooser::aboutData() const
-{
-   KAboutData *about =
-   new KAboutData(I18N_NOOP("kcmcomponentchooser"), I18N_NOOP("Component Chooser"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c), 2002 Joseph Wenninger"));
-
-   about->addAuthor("Joseph Wenninger", 0 , "jowenn@kde.org");
-
-   return about;
 }
 
 

@@ -41,8 +41,6 @@ public:
     virtual void defaults();
     virtual int buttons();
     virtual QString quickHelp() const;
-    const KAboutData* aboutData() const;
-
 
 public slots:
     void configChanged();

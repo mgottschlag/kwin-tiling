@@ -31,7 +31,6 @@ public:
     virtual void defaults();
 
     QString quickHelp() const;
-    const KAboutData* aboutData() const;
 
 private:
     BGDialog      *m_base;

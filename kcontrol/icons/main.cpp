@@ -50,6 +50,15 @@ IconModule::IconModule(QWidget *parent, const char *name, const QStringList &)
   tab2 = new KIconConfig(this, "effects");
   tab->addTab(tab2, i18n("&Advanced"));
   connect(tab2, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+
+  KAboutData* about = new KAboutData("kcmicons", I18N_NOOP("Icons"), "3.0",
+	      I18N_NOOP("Icons Control Panel Module"),
+	      KAboutData::License_GPL,
+ 	      I18N_NOOP("(c) 2000-2003 Geert Jansen"), 0, 0);
+  about->addAuthor("Geert Jansen", 0, "jansen@kde.org");
+  about->addAuthor("Antonio Larrosa Jimenez", 0, "larrosa@kde.org");
+  about->addCredit("Torsten Rahn", 0, "torsten@kde.org");
+  setAboutData( about );
 }
 
 
@@ -91,24 +100,6 @@ QString IconModule::quickHelp() const
     "<p>You can also specify effects that should be applied to the icons.</p>");
 }
 
-
-const KAboutData *IconModule::aboutData() const
-{
-    static KAboutData* ab = 0;
-
-    if (!ab)
-    {
-        ab = new KAboutData("kcmicons", I18N_NOOP("Icons"), "3.0",
-                            I18N_NOOP("Icons Control Panel Module"),
-                            KAboutData::License_GPL,
-                            I18N_NOOP("(c) 2000-2003 Geert Jansen"), 0, 0);
-        ab->addAuthor("Geert Jansen", 0, "jansen@kde.org");
-        ab->addAuthor("Antonio Larrosa Jimenez", 0, "larrosa@kde.org");
-        ab->addCredit("Torsten Rahn", 0, "torsten@kde.org");
-    }
-
-    return ab;
-}
 
 
 #include "main.moc"

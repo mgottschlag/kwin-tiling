@@ -44,6 +44,14 @@
 kthememanager::kthememanager( QWidget *parent, const char *name )
     : KCModule( parent, name ), m_theme( 0 ), m_origTheme( 0 )
 {
+
+    KAboutData *about = new KAboutData("kthemenanager", I18N_NOOP("KDE Theme Manager"),
+                                       "0.4", I18N_NOOP("This control module handles installing, removing and "
+                                                        "creating visual KDE themes."),
+                                       KAboutData::License_GPL, "(c) 2003, 2004 Lukáš Tinkl", 0,
+                                       "http://developer.kde.org/~lukas/kthememanager");
+    setAboutData( about );
+
     setAcceptDrops( true );
     init();
 
@@ -395,17 +403,6 @@ extern "C"
         KGlobal::locale()->insertCatalogue( "kthememanager" );
         return new kthememanager( parent, "kthememanager" );
     }
-}
-
-const KAboutData* kthememanager::aboutData() const
-{
-
-    KAboutData *about = new KAboutData("kthemenanager", I18N_NOOP("KDE Theme Manager"),
-                                       "0.4", I18N_NOOP("This control module handles installing, removing and "
-                                                        "creating visual KDE themes."),
-                                       KAboutData::License_GPL, "(c) 2003, 2004 Lukáš Tinkl", 0,
-                                       "http://developer.kde.org/~lukas/kthememanager");
-    return about;
 }
 
 #include "kthememanager.moc"

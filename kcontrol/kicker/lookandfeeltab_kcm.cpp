@@ -31,6 +31,16 @@
 LookAndFeelConfig::LookAndFeelConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
+
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmkicker"), I18N_NOOP("KDE Panel Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1999 - 2001 Matthias Elter\n(c) 2002 Aaron J. Seigo"));
+
+    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
+    about->addAuthor("Aaron J. Seigo", 0, "aseigo@olympusproject.org");
+    setAboutData( about );
+
     KickerConfig::initScreenNumber();
     QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
@@ -82,16 +92,3 @@ QString LookAndFeelConfig::quickHelp() const
                 " manipulation of the panel's buttons and applets.");
 }
 
-const KAboutData* LookAndFeelConfig::aboutData() const
-{
-
-    KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmkicker"), I18N_NOOP("KDE Panel Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1999 - 2001 Matthias Elter\n(c) 2002 Aaron J. Seigo"));
-
-    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
-    about->addAuthor("Aaron J. Seigo", 0, "aseigo@olympusproject.org");
-
-    return about;
-}

@@ -54,8 +54,6 @@ public:
 
   int buttons();
   QString quickHelp() const;
-  const KAboutData* aboutData() const;
-
 
  k_dcop:
 

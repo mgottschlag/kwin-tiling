@@ -52,7 +52,6 @@ public:
   virtual void save();
   virtual void defaults();
   virtual QString quickHelp() const;
-  virtual const KAboutData * aboutData() const;
 
 signals:
   void languageChanged();
@@ -80,7 +79,6 @@ private:
 
   KConfig * m_globalConfig;
   KConfig * m_nullConfig;
-  KAboutData * m_aboutData;
 };
 
 typedef KGenericFactory<KLocaleApplication, QWidget > KLocaleFactory;

@@ -52,7 +52,7 @@ class View1394: public KCModule
 
       int buttons();
       QString quickHelp() const;
-      const KAboutData* aboutData() const {return myAboutData; };
+
    public slots: // Public slots
       void rescanBus();
       void generateBusReset();

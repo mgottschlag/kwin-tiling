@@ -71,6 +71,15 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
     connect( m_notifyWidget->m_playerButton, SIGNAL( clicked() ),
              SLOT( slotPlayerSettings()));
 
+    KAboutData* ab = new KAboutData(
+        "kcmnotify", I18N_NOOP("KNotify"), "3.0",
+        I18N_NOOP("System Notification Control Panel Module"),
+        KAboutData::License_GPL, "(c) 2002 Carsten Pfeiffer", 0, 0 );
+    ab->addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org" );
+    ab->addCredit( "Charles Samuels", I18N_NOOP("Original implementation"),
+	       "charles@altair.dhs.org" );
+    setAboutData( ab );
+
     load();
 }
 
@@ -181,24 +190,6 @@ QString KCMKNotify::quickHelp() const
                 "<li>By recording the event in a logfile without "
                 "any additional visual or audible alert."
                 "</ul>");
-}
-
-const KAboutData *KCMKNotify::aboutData() const
-{
-    static KAboutData* ab = 0;
-
-    if(!ab)
-    {
-        ab = new KAboutData(
-            "kcmnotify", I18N_NOOP("KNotify"), "3.0",
-            I18N_NOOP("System Notification Control Panel Module"),
-            KAboutData::License_GPL, "(c) 2002 Carsten Pfeiffer", 0, 0 );
-        ab->addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org" );
-        ab->addCredit( "Charles Samuels", I18N_NOOP("Original implementation"),
-                       "charles@altair.dhs.org" );
-    }
-
-    return ab;
 }
 
 ///////////////////////////////////////////////////////////////////

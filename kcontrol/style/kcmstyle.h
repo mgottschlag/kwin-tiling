@@ -69,7 +69,6 @@ public:
 	virtual void load();
 	virtual void save();
 	virtual void defaults();
-	virtual const KAboutData* aboutData() const;
 	virtual QString quickHelp() const;
 
 protected:

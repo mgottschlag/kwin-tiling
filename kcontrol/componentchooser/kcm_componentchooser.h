@@ -30,8 +30,6 @@ public:
     void load();
     void save();
     void defaults();
-    const KAboutData* aboutData() const;
-
 
 private:
     ComponentChooser  *m_chooser;

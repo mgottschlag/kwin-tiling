@@ -37,7 +37,6 @@ public:
 
   virtual void load();
   virtual QString quickHelp() const;
-  virtual const KAboutData* aboutData() const;
   
 private:
   QListView 	*lBox;

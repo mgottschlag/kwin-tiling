@@ -32,7 +32,6 @@ class KMemoryWidget:public KCModule {
     ~KMemoryWidget();
 
     QString quickHelp() const;
-    const KAboutData* aboutData() const;
 
   private:
     QString Not_Available_Text;
