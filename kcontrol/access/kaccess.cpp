@@ -147,7 +147,6 @@ void KAccessApp::readSettings()
   XkbSetAutoResetControls(qt_xdisplay(), ctrls, &ctrls, &values);
 
 
-  delete config; //don't forget to delete it
 }
 
 
