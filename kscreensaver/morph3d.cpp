@@ -39,6 +39,7 @@
 #define QT_CLEAN_NAMESPACE
 
 #include <qslider.h>
+#include <kglobal.h>
 #include <kconfig.h>
 #include "xlock.h"
 #include "../config.h"

@@ -23,6 +23,7 @@ static char sccsid[] = "@(#)pyro.c	3.4 95/11/04 xlockmore";
 
 
 #include <qslider.h>
+#include <kglobal.h>
 #include <kconfig.h>
 
 #include "xlock.h"

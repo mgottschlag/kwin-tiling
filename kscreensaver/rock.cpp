@@ -27,6 +27,7 @@ static char sccsid[] = "@(#)rock.c	3.3 95/09/24 xlockmore";
 
 #include <qslider.h>
 #include <math.h>
+#include <kglobal.h>
 #include <kconfig.h>
 #include "xlock.h"
 

@@ -23,6 +23,7 @@
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
 #include <qslider.h>
+#include <kglobal.h>
 #include <kconfig.h>
 
 #include "xlock.h"		/* in xlockmore distribution */

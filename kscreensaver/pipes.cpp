@@ -120,6 +120,7 @@ FIXME: this could be clearer done by a calculation on the position.
 
 #define QT_CLEAN_NAMESPACE
 #include <qslider.h>
+#include <kglobal.h>
 #include <kconfig.h>
 
 #include "xlock.h"

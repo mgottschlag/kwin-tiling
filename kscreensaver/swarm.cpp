@@ -22,6 +22,7 @@
 #define DEFBATCH 20
 
 #include <qslider.h>
+#include <kglobal.h>
 #include <kconfig.h>
 #include "xlock.h"
 
