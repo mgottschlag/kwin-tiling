@@ -475,7 +475,7 @@ WaitForChild (void)
 		Debug ("Display exited with unknown status %d\n", waitVal(status));
 		LogError ("Unknown session exit code %d from process %d\n",
 			  waitVal (status), pid);
-		ExitDisplay (d, FALSE, FALSE, FALSE);
+		ExitDisplay (d, FALSE, FALSE, TRUE);
 		break;
 	    case OPENFAILED_DISPLAY:
 		Debug ("Display exited with OPENFAILED_DISPLAY, try %d of %d\n",
@@ -493,7 +493,7 @@ WaitForChild (void)
 		break;
 	    case RESERVER_DISPLAY:
 		Debug ("Display exited with RESERVER_DISPLAY\n");
-		ExitDisplay (d, TRUE, TRUE, FALSE);
+		ExitDisplay (d, TRUE, TRUE, TRUE);
 		break;
 	    case waitCompose (SIGTERM,0,0):
 		Debug ("Display exited on SIGTERM\n");
@@ -505,7 +505,7 @@ WaitForChild (void)
  		 * XDMCP will restart the session if the display
 		 * requests it
 		 */
-		ExitDisplay (d, TRUE, FALSE, FALSE);
+		ExitDisplay (d, TRUE, FALSE, TRUE);
 		break;
 	    }
 	}

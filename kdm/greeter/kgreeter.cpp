@@ -316,14 +316,8 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
     loginEdit = new KLoginLineEdit( this);
     QString enam = QString::fromLatin1("LastUser_") + 
 		   QString::fromLatin1(::d->name);
-    if (kdmcfg->_showPrevious) {
-	loginEdit->setText (kdmcfg->readEntry (enam));
-	loginEdit->setSelection (0, loginEdit->maxLength());
-    } else
-	kdmcfg->deleteEntry (enam, false);
     loginEdit->setFocus();
 
-    QLabel* 
     sessionargLabel = new QLabel(i18n("Session Type:"), this);
     sessionargBox = new QComboBox( false, this);
     sessionargBox->insertStringList( kdmcfg->_sessionTypes );
@@ -392,6 +386,13 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 	sbw = 0;
     }
 
+    if (kdmcfg->_showPrevious) {
+	loginEdit->setText (kdmcfg->readEntry (enam));
+	loginEdit->setSelection (0, loginEdit->maxLength());
+	load_wm();
+    } else
+	kdmcfg->deleteEntry (enam, false);
+
     //vbox->activate();
     timer = new QTimer( this );
     //// Signals/Slots
@@ -412,57 +413,56 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 void 
 KGreeter::slot_user_name( QIconViewItem *item)
 {
-     if( item != 0) {
-	  loginEdit->setText( item->text());
-	  passwdEdit->setFocus();
-	  load_wm();
-     }
+    if( item != 0) {
+	loginEdit->setText( item->text());
+	passwdEdit->setFocus();
+	load_wm();
+    }
 }
 
 void 
 KGreeter::SetTimer()
 {
-     if (failedLabel->text().isNull())
-	  timer->start( 40000, TRUE );
+    if (failedLabel->text().isNull())
+	timer->start( 40000, TRUE );
 }
 
 void 
 KGreeter::timerDone()
 {
-     if (failedLabel->isVisible()){
-	  failedLabel->setText(QString::null);
-	  goButton->setEnabled( true);
-	  loginEdit->setEnabled( true);
-          passwdEdit->setEnabled( true);
-          loginEdit->setFocus();
-     }
+    if (failedLabel->isVisible()){
+	failedLabel->setText(QString::null);
+	goButton->setEnabled( true);
+	loginEdit->setEnabled( true);
+        passwdEdit->setEnabled( true);
+        loginEdit->setFocus();
+    }
 }
 
 void 
 KGreeter::cancel_button_clicked()
 {
-     loginEdit->clear();
-     passwdEdit->erase();
-     loginEdit->setFocus();
+    loginEdit->clear();
+    passwdEdit->erase();
+    loginEdit->setFocus();
 }
 
 void
 KGreeter::quit_button_clicked()
 {
-   QApplication::flushX();
-   SessionExit(::d, RESERVER_DISPLAY, TRUE);	// true right?
+    QApplication::flushX();
+    SessionExit(::d, RESERVER_DISPLAY, TRUE);	// true right?
 }
 
 #if 0
 void
 KGreeter::chooser_button_clicked()
 {
-	if(!fork()) {
-		RunChooser(QApplication::display());		
-	}
-	hide();
-  QApplication::flushX();
-  SessionExit(::d, UNMANAGE_DISPLAY, FALSE);
+    if(!fork())
+	RunChooser(QApplication::display());		
+    hide();
+    QApplication::flushX();
+    SessionExit(::d, UNMANAGE_DISPLAY, FALSE);
 }
 #endif
 
@@ -470,15 +470,15 @@ static void
 do_shutdown(void *ptr)
 {
     KDMShutdown k( kdmcfg->_shutdownButton,
-		(KGreeter *)ptr, "Shutdown",
-		kdmcfg->_shutdown, 
-		kdmcfg->_restart,
+		   (KGreeter *)ptr, "Shutdown",
+		   kdmcfg->_shutdown, 
+		   kdmcfg->_restart,
 #ifndef BSD
-		kdmcfg->_consoleMode,
+		   kdmcfg->_consoleMode,
 #endif
-		kdmcfg->_useLilo,
-		kdmcfg->_liloCmd,
-		kdmcfg->_liloMap);
+		   kdmcfg->_useLilo,
+		   kdmcfg->_liloCmd,
+		   kdmcfg->_liloMap);
     k.exec();
 }
 

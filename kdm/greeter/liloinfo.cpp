@@ -6,10 +6,9 @@
  * The constructor. Initialize the internal variables and copy the parameter strings.
  */
 LiloInfo::LiloInfo ( QString lilolocation,
-		             QString bootmaplocation,
-		             bool enableHack,
-		             bool enableDebug
-		           )
+		     QString bootmaplocation,
+		     bool enableHack,
+		     bool enableDebug )
 {
 	debug = enableDebug;
 	useHack = enableHack;

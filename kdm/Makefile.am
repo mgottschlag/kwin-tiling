@@ -1,51 +1,58 @@
 # $Id$
 
-SUBDIRS	= $(KDM_CHOOSER_DIR) greeter config pics $(xdmconfigsubdir)
+SUBDIRS = $(KDM_CHOOSER_DIR) greeter config pics $(xdmconfigsubdir)
 
 # Extra lib. Might be -lpam -dl or -lshadow or nothing
-PASSLIB= $(PASSWDLIB) $(PAMLIBS)
+PASSLIB = $(PASSWDLIB) $(PAMLIBS)
 
 INCLUDES = $(all_includes) $(KERBEROS_INCS)
 
 bin_PROGRAMS = kdm
 
-noinst_PROGRAMS = greetest
+EXTRA_PROGRAMS = greetest
 greetest_SOURCES = greetest.c
 
-AM_CFLAGS = $(CONN_FLAGS)
+DBGFLAGS = -g
+
+AM_CFLAGS = $(CONN_FLAGS) $(DBGFLAGS)
+
+# this is for static linking - inserted into KDM_GREET_LIBS by configure
+KDM_KDE_LIBS  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) \
+    $(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
+    $(LIBCRYPT) $(LIBUCB) $(LIBUTIL)
 
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
-#
-LDADD  = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSLIB) \
-	$(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
-	$(LIBCRYPT) $(LIBUCB) $(LIBDL) $(LIBUTIL) 
+LDADD = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSLIB) \
+    $(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
+    $(LIBCRYPT) $(LIBUCB) $(LIBDL) $(LIBUTIL)
+kdm_LDADD = $(LDADD) $(KDM_GREET_LIBS)
 
 # Sources for kdm:
 kdm_SOURCES = access.c \
-	auth.c \
-	choose.c \
-	daemon.c \
-	dm.c \
-	dpylist.c \
-	error.c \
-	file.c \
-	genauth.c \
-	krb5auth.c \
-	mitauth.c \
-	netaddr.c \
-	policy.c \
-	protodpy.c \
-	reset.c \
-	resource.c \
-	rpcauth.c \
-	server.c \
-	session.c \
-	socket.c \
-	streams.c \
-	util.c \
-	xdmauth.c \
-	xdmcp.c
+    auth.c \
+    choose.c \
+    daemon.c \
+    dm.c \
+    dpylist.c \
+    error.c \
+    file.c \
+    genauth.c \
+    krb5auth.c \
+    mitauth.c \
+    netaddr.c \
+    policy.c \
+    protodpy.c \
+    reset.c \
+    resource.c \
+    rpcauth.c \
+    server.c \
+    session.c \
+    socket.c \
+    streams.c \
+    util.c \
+    xdmauth.c \
+    xdmcp.c
 
 noinst_HEADERS = kdm-config.h dm.h dm_socket.h dm_error.h dm_auth.h greet.h
 
