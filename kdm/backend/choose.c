@@ -815,7 +815,7 @@ initXDMCP()
 }
 
 static void ATTR_NORETURN
-chooseHost(struct display *d, int hid)
+chooseHost(int hid)
 {
     HostName *h;
     char addr[32];
@@ -824,18 +824,18 @@ chooseHost(struct display *d, int hid)
 	if ((int)h == hid) {
 	    /* XXX error handling */
 	    GSet (&mstrtalk);
-	    if ((d->displayType & d_location) == dLocal) {
+	    if ((td->displayType & d_location) == dLocal) {
 		sprintf (addr, "%d.%d.%d.%d",
 			 h->hostaddr.data[0], h->hostaddr.data[1],
 			 h->hostaddr.data[2], h->hostaddr.data[3]);
 		GSendInt (D_RemoteHost);
 		GSendStr (addr);
 		/* CloseGreeter (FALSE); not really necessary, init will reap it */
-		SessionExit (d, EX_REMOTE);
+		SessionExit (EX_REMOTE);
 	    } else {
 		GSendInt (D_ChooseHost);
-		GSendArr (d->clientAddr.length, (char *)d->clientAddr.data);
-		GSendInt (d->connectionType);	/* maybe h->connectionType? */
+		GSendArr (td->clientAddr.length, (char *)td->clientAddr.data);
+		GSendInt (td->connectionType);	/* maybe h->connectionType? */
 		GSendArr (h->hostaddr.length, (char *)h->hostaddr.data);
 		/* CloseGreeter (FALSE); not really necessary, init will reap it */
 		goto bout;
@@ -844,11 +844,11 @@ chooseHost(struct display *d, int hid)
 	}
 /*    LogError ("Internal error: chose unexisting host\n"); */
   bout:
-    SessionExit (d, EX_NORMAL);
+    SessionExit (EX_NORMAL);
 }
 
 static void
-directChooseHost(struct display *d, const char *name)
+directChooseHost(const char *name)
 {
     struct sockaddr_in in_addr;
 
@@ -857,25 +857,25 @@ directChooseHost(struct display *d, const char *name)
     GSendInt (G_Ch_Exit);
     /* XXX error handling */
     GSet (&mstrtalk);
-    if ((d->displayType & d_location) == dLocal) {
+    if ((td->displayType & d_location) == dLocal) {
 	GSendInt (D_RemoteHost);
 	GSendStr (name);
 	/* CloseGreeter (FALSE); not really necessary, init will reap it */
-	SessionExit (d, EX_REMOTE);
+	SessionExit (EX_REMOTE);
     } else {
 	GSendInt (D_ChooseHost);
-	GSendArr (d->clientAddr.length, (char *)d->clientAddr.data);
-	GSendInt (d->connectionType);	/* maybe h->connectionType? */
+	GSendArr (td->clientAddr.length, (char *)td->clientAddr.data);
+	GSendInt (td->connectionType);	/* maybe h->connectionType? */
 	GSendArr (4, (char *)&in_addr.sin_addr);	/* XXX AF_INET-specific */
 	/* CloseGreeter (FALSE); not really necessary, init will reap it */
-	SessionExit (d, EX_NORMAL);
+	SessionExit (EX_NORMAL);
     }
 }
 
 #define PING_TRIES	3
 
 int
-DoChoose (struct display *d)
+DoChoose ()
 {
     HostName **hp, *h;
     char *host, **hostp;
@@ -884,9 +884,9 @@ DoChoose (struct display *d)
     FD_TYPE rfds;
     static int xdmcpInited;
 
-    OpenGreeter (d);
+    OpenGreeter ();
     GSendInt (G_Choose);
-    switch (cmd = CtrlGreeterWait (d, 1)) {
+    switch (cmd = CtrlGreeterWait (TRUE)) {
     case G_Ready:
 	break;
     default:	/* error */
@@ -895,16 +895,16 @@ DoChoose (struct display *d)
 
     if (!xdmcpInited) {
 	if (!initXDMCP ())
-	    SessionExit (d, EX_RESERVER_DPY);	/* UNMANAGE? */
+	    SessionExit (EX_RESERVER_DPY);	/* UNMANAGE? */
 	xdmcpInited = 1;
     }
-    if ((d->displayType & d_location) == dLocal) {
+    if ((td->displayType & d_location) == dLocal) {
 	/* XXX the config reader should do the lookup already */
-	for (hostp = d->chooserHosts; *hostp; hostp++)
+	for (hostp = td->chooserHosts; *hostp; hostp++)
 	    if (!registerForPing (*hostp))
-		LogError ("Unkown host %\"s specified for local chooser preload of display %s\n", *hostp, d->name);
+		LogError ("Unkown host %\"s specified for local chooser preload of display %s\n", *hostp, td->name);
     } else
-	ForEachChooserHost (&d->clientAddr, d->connectionType,
+	ForEachChooserHost (&td->clientAddr, td->connectionType,
 			    AddChooserHost, 0);
 
     GSendInt (0);	/* entering async mode signal */
@@ -959,7 +959,7 @@ DoChoose (struct display *d)
 	    &rfds, 0, 0, to);
 	if (n > 0) {
 	    if (FD_ISSET (grtproc.pipe.rfd, &rfds))
-		switch (cmd = CtrlGreeterWait (d, 0)) {
+		switch (cmd = CtrlGreeterWait (FALSE)) {
 		case -1:
 		    break;
 		case G_Ch_Refresh:
@@ -974,13 +974,13 @@ DoChoose (struct display *d)
 		    goto reping;
 		case G_Ch_DirectChoice:
 		    host = GRecvStr ();
-		    directChooseHost (d, host);
+		    directChooseHost (host);
 		    GSendInt (G_Ch_BadHost);
 		    GSendStr (host);
 		    free (host);
 		    break;
 		case G_Ready:
-		    chooseHost (d, GRecvInt ());
+		    chooseHost (GRecvInt ());
 		    /* NOTREACHED */
 		default:
 		    emptyHostnames ();

@@ -46,6 +46,8 @@ from The Open Group.
 #include <stdio.h>
 #include <ctype.h>
 
+struct display *td;
+
 static Jmp_buf	pingTime;
 
 /* ARGSUSED */
@@ -120,34 +122,34 @@ ResetUser(void)
 static int clientPid;
 
 static int
-AutoLogon (struct display *d)
+AutoLogon ()
 {
     const char	*name, *pass;
     Time_t	tdiff;
 
     ResetUser();
-    tdiff = time (0) - d->hstent->lastExit - d->openDelay;
+    tdiff = time (0) - td->hstent->lastExit - td->openDelay;
 Debug ("autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, user = %s\n", 
-	tdiff, d->hstent->rLogin, d->hstent->goodExit, d->hstent->nuser);
-    if (d->hstent->rLogin >= 1) {
-	if (d->hstent->rLogin == 1 &&
-	    (d->hstent->goodExit || d->hstent->lock || 
-	     !d->hstent->nuser[0] || tdiff > 0))
+	tdiff, td->hstent->rLogin, td->hstent->goodExit, td->hstent->nuser);
+    if (td->hstent->rLogin >= 1) {
+	if (td->hstent->rLogin == 1 &&
+	    (td->hstent->goodExit || td->hstent->lock || 
+	     !td->hstent->nuser[0] || tdiff > 0))
 	    return 0;
-	name = d->hstent->nuser;
-	pass = d->hstent->npass;
-	StrDup (&newdmrc, d->hstent->nargs);
-    } else if (d->autoUser[0] != '\0') {
-	if (tdiff <= 0 && d->hstent->goodExit)
+	name = td->hstent->nuser;
+	pass = td->hstent->npass;
+	StrDup (&newdmrc, td->hstent->nargs);
+    } else if (td->autoUser[0] != '\0') {
+	if (tdiff <= 0 && td->hstent->goodExit)
 	    return 0;
-	name = d->autoUser;
-	pass = d->autoPass;
+	name = td->autoUser;
+	pass = td->autoPass;
     } else
 	return 0;
 
-    if (Verify (d, name, pass) != V_OK)
+    if (Verify (name, pass) != V_OK)
 	return 0;
-    clientPid = StartClient (d);
+    clientPid = StartClient ();
     if (!clientPid)
 	LogError ("Session start failed\n");
     return clientPid;
@@ -159,7 +161,7 @@ GTalk grttalk;
 GTalk mstrtalk;	/* make static; see dm.c */
 
 int
-CtrlGreeterWait (struct display *d, int wreply)
+CtrlGreeterWait (int wreply)
 {
     int		i, j, cmd, type, exitCode;
     char	*name, *pass, **avptr;
@@ -169,7 +171,7 @@ CtrlGreeterWait (struct display *d, int wreply)
 
     if (Setjmp (mstrtalk.errjmp) || Setjmp (grttalk.errjmp)) {
 	CloseGreeter (TRUE);
-	SessionExit (d, EX_RESERVER_DPY);
+	SessionExit (EX_RESERVER_DPY);
     }
     while (GRecvCmd (&cmd)) {
 	switch (cmd)
@@ -184,7 +186,7 @@ CtrlGreeterWait (struct display *d, int wreply)
 	    Debug ("G_GetCfg\n");
 	    type = GRecvInt ();
 	    Debug (" index %#x\n", type);
-	    if (!(avptr = FindCfgEnt (d, type))) {
+	    if (!(avptr = FindCfgEnt (td, type))) {
 		Debug (" -> not found\n");
 		GSendInt (GE_NoEnt);
 		break;
@@ -272,7 +274,7 @@ CtrlGreeterWait (struct display *d, int wreply)
 	    exitCode = GRecvInt ();
 	    Debug (" code %d\n", exitCode);
 	    /* CloseGreeter (FALSE); not really necessary, init will reap it */
-	    SessionExit (d, exitCode);
+	    SessionExit (exitCode);
 	    break;
 	case G_Verify:
 	    Debug ("G_Verify\n");
@@ -280,14 +282,14 @@ CtrlGreeterWait (struct display *d, int wreply)
 	    Debug (" user %\"s\n", name);
 	    pass = GRecvStr ();
 	    Debug (pass[0] ? " password\n" : " no password\n");
-	    GSendInt (i = Verify (d, name, pass));
+	    GSendInt (i = Verify (name, pass));
 	    Debug (" -> return %d\n", i);
 	    WipeStr (pass);
 	    free (name);
 	    break;
 	case G_Restrict:
 	    Debug ("G_Restrict(...)\n");
-	    Restrict (d);
+	    Restrict ();
 	    break;
 	case G_Shutdown:
 	    i = GRecvInt ();
@@ -304,7 +306,7 @@ CtrlGreeterWait (struct display *d, int wreply)
 	    break;
 	case G_SetupDpy:
 	    Debug ("G_SetupDpy\n");
-	    SetupDisplay (d);
+	    SetupDisplay ();
 	    GSendInt (0);
 	    break;
 	default:
@@ -314,12 +316,12 @@ CtrlGreeterWait (struct display *d, int wreply)
 	    return -1;
     }
     LogError ("Greeter exited unexpectedly\n");
-    CloseGreeter (FALSE);
-    SessionExit (d, EX_RESERVER_DPY);
+    /* CloseGreeter (FALSE); not really necessary, init will reap it */
+    SessionExit (EX_RESERVER_DPY);
 }
 
 void
-OpenGreeter (struct display *d)
+OpenGreeter ()
 {
     char	*name, **env;
     Cursor	xcursor;
@@ -328,6 +330,7 @@ OpenGreeter (struct display *d)
     if (greeter)
 	return;
     greeter = 1;
+    Debug ("starting greeter for %s\n", td->name);
 
     /* Hourglass cursor */
     if ((xcursor = XCreateFontCursor (dpy, XC_watch)))
@@ -338,15 +341,16 @@ OpenGreeter (struct display *d)
     XFlush (dpy);
 
     /* Load system default Resources (if any) */
-    LoadXloginResources (d);
+    LoadXloginResources ();
 
     grttalk.pipe = &grtproc.pipe;
-    env = systemEnv (d, 0, 0);
-    ASPrintf (&name, "greeter for display %s", d->name);
+    env = systemEnv (0, 0);
+    ASPrintf (&name, "greeter for display %s", td->name);
     if (GOpen (&grtproc, (char **)0, "_greet", env, name))
-	SessionExit (d, EX_RESERVER_DPY);
+	SessionExit (EX_RESERVER_DPY);
     freeStrArr (env);
-    CtrlGreeterWait (d, 1);
+    CtrlGreeterWait (TRUE);
+    Debug ("greeter for %s ready\n", td->name);
 }
 
 void
@@ -357,6 +361,7 @@ CloseGreeter (int force)
     (void) GClose (&grtproc, force);
     DeleteXloginResources ();
     greeter = 0;
+    Debug ("greeter for %s stopped\n", td->name);
 }
 
 /* XXX all extremely hacky */
@@ -371,26 +376,26 @@ IdleTOJmp (int n ATTR_UNUSED)
 }
 
 static int
-DoGreet (struct display *d)
+DoGreet ()
 {
     int		cmd;
 
     if (Setjmp (idleTOJmp)) {
 	CloseGreeter (TRUE);
-	SessionExit (d, EX_RESERVE);
+	SessionExit (EX_RESERVE);
     }
     Signal (SIGALRM, IdleTOJmp);
-    alarm (d->idleTimeout);
+    alarm (td->idleTimeout);
 
-    OpenGreeter (d);
+    OpenGreeter ();
     GSendInt (G_Greet);
-    cmd = CtrlGreeterWait (d, 1);
+    cmd = CtrlGreeterWait (TRUE);
 
     alarm (0);
 
     if (cmd == G_Ready) {
 	CloseGreeter (FALSE);
-	clientPid = StartClient (d);
+	clientPid = StartClient ();
 	if (!clientPid)
 	    LogError ("Session start failed\n");
     }
@@ -441,12 +446,13 @@ ManageSession (struct display *d)
 {
     int ex, cmd;
 
+    td = d;
     Debug ("ManageSession %s\n", d->name);
     if ((ex = Setjmp (abortSession))) {
 	CloseGreeter (TRUE);
 	if (clientPid)
 	    AbortClient (clientPid);
-	SessionExit (d, ex);
+	SessionExit (ex);
 	/* NOTREACHED */
     }
     (void)XSetIOErrorHandler (IOErrorHandler);
@@ -459,20 +465,20 @@ ManageSession (struct display *d)
 
 #ifdef XDMCP
     if (d->useChooser)
-	DoChoose (d);
+	DoChoose ();
 	/* NOTREACHED */
 #endif
 
-    if (!AutoLogon(d)) {
+    if (!AutoLogon ()) {
 	if (((d->displayType & d_location) == dLocal) &&
 	    d->loginMode >= LOGIN_DEFAULT_REMOTE)
 	    goto choose;
 	for (;;) {
-	    cmd = DoGreet(d);
+	    cmd = DoGreet ();
 	  recmd:
 	    if (cmd == G_DChoose) {
 	      choose:
-		cmd = DoChoose (d);
+		cmd = DoChoose ();
 		goto recmd;
 	    }
 	    if (cmd == G_DGreet)
@@ -481,7 +487,7 @@ ManageSession (struct display *d)
 		break;
 	    LogError ("Received unknown command %d from greeter\n", cmd);
 	    CloseGreeter (TRUE);
-	    SessionExit (d, EX_RESERVER_DPY);	/* XXX hmpf ... EX_DELAYED_RETRY_ONCE */
+	    SessionExit (EX_RESERVER_DPY);	/* XXX hmpf ... EX_DELAYED_RETRY_ONCE */
 	}
 
     }
@@ -515,22 +521,22 @@ ManageSession (struct display *d)
 	Debug("X server dead upon session exit.\n");
 	if ((d->displayType & d_location) == dLocal)
 	    sleep (10);
-	SessionExit (d, EX_AL_RESERVER_DPY);
+	SessionExit (EX_AL_RESERVER_DPY);
     }
-    SessionExit (d, EX_NORMAL); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
+    SessionExit (EX_NORMAL); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
 }
 
 void
-LoadXloginResources (struct display *d)
+LoadXloginResources ()
 {
     char	**args;
     char	**env = 0;
 
-    if (d->resources[0] && access (d->resources, 4) == 0) {
-	env = systemEnv (d, (char *) 0, (char *) 0);
-	args = parseArgs ((char **) 0, d->xrdb);
-	args = parseArgs (args, d->resources);
-	Debug ("loading resource file: %s\n", d->resources);
+    if (td->resources[0] && access (td->resources, 4) == 0) {
+	env = systemEnv ((char *) 0, (char *) 0);
+	args = parseArgs ((char **) 0, td->xrdb);
+	args = parseArgs (args, td->resources);
+	Debug ("loading resource file: %s\n", td->resources);
 	(void) runAndWait (args, env);
 	freeStrArr (args);
 	freeStrArr (env);
@@ -538,14 +544,14 @@ LoadXloginResources (struct display *d)
 }
 
 void
-SetupDisplay (struct display *d)
+SetupDisplay ()
 {
     char	**env = 0;
 
-    if (d->setup && d->setup[0])
+    if (td->setup && td->setup[0])
     {
-	env = systemEnv (d, (char *) 0, (char *) 0);
-	(void) source (env, d->setup);
+	env = systemEnv ((char *) 0, (char *) 0);
+	(void) source (env, td->setup);
 	freeStrArr (env);
     }
 }
@@ -630,17 +636,17 @@ defaultEnv (const char *user)
 }
 
 char **
-systemEnv (struct display *d, const char *user, const char *home)
+systemEnv (const char *user, const char *home)
 {
     char	**env;
 
     env = defaultEnv (user);
     if (home)
 	env = setEnv (env, "HOME", home);
-    env = setEnv (env, "DISPLAY", d->name);
-    env = setEnv (env, "PATH", d->systemPath);
-    env = setEnv (env, "SHELL", d->systemShell);
-    if (d->authFile)
-	env = setEnv (env, "XAUTHORITY", d->authFile);
+    env = setEnv (env, "DISPLAY", td->name);
+    env = setEnv (env, "PATH", td->systemPath);
+    env = setEnv (env, "SHELL", td->systemShell);
+    if (td->authFile)
+	env = setEnv (env, "XAUTHORITY", td->authFile);
     return env;
 }

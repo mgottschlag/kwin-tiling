@@ -407,20 +407,21 @@ extern void delStr (RcStr *str);
 extern GTalk cnftalk;
 
 /* in session.c */
+extern struct display *td;
 extern char **defaultEnv (const char *user);
 extern char **inheritEnv (char **env, const char **what);
-extern char **systemEnv (struct display *d, const char *user, const char *home);
+extern char **systemEnv (const char *user, const char *home);
 extern int source (char **env, char *file);
 extern void DeleteXloginResources (void);
-extern void LoadXloginResources (struct display *d);
+extern void LoadXloginResources (void);
 extern void ManageSession (struct display *d);
-extern void SetupDisplay (struct display *d);
+extern void SetupDisplay (void);
 
 extern GTalk mstrtalk, grttalk;
 extern GProc grtproc;
-extern void OpenGreeter (struct display *d);
+extern void OpenGreeter (void);
 extern void CloseGreeter (int force);
-extern int CtrlGreeterWait (struct display *d, int wreply);
+extern int CtrlGreeterWait (int wreply);
 
 
 /* process.c */
@@ -462,10 +463,10 @@ extern char **GRecvStrArr (int *len);
 extern char **GRecvArgv (void);
 
 /* client.c */
-extern int Verify (struct display *d, const char *name, const char *pass);
-extern void Restrict (struct display *d);
-extern int StartClient (struct display *d);
-extern void SessionExit (struct display *d, int status) ATTR_NORETURN;
+extern int Verify (const char *name, const char *pass);
+extern void Restrict (void);
+extern int StartClient (void);
+extern void SessionExit (int status) ATTR_NORETURN;
 extern int ReadDmrc (void);
 extern char **userEnviron, **systemEnviron;
 extern char *curuser, *curpass, *curdmrc, *newdmrc;
@@ -569,7 +570,7 @@ extern int IsIndirectClient (ARRAY8Ptr clientAddress, CARD16 connectionType);
 extern int RememberIndirectClient (ARRAY8Ptr clientAddress, CARD16 connectionType);
 extern void ForgetIndirectClient ( ARRAY8Ptr clientAddress, CARD16 connectionType);
 extern int RegisterIndirectChoice (ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice);
-extern int DoChoose (struct display *d);
+extern int DoChoose (void);
 
 /* in xdmcp.c */
 extern void ProcessRequestSocket (void);

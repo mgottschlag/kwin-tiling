@@ -209,14 +209,14 @@ fail_delay(int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED,
 #endif /* USE_PAM */
 
 static int
-AccNoPass (struct display *d, const char *un)
+AccNoPass (const char *un)
 {
     char **fp;
 
-    if (!strcmp (un, d->autoUser))
+    if (!strcmp (un, td->autoUser))
 	return 1;
 
-    for (fp = d->noPassUsers; *fp; fp++)
+    for (fp = td->noPassUsers; *fp; fp++)
 	if (!strcmp (un, *fp))
 	    return 1;
 
@@ -224,7 +224,7 @@ AccNoPass (struct display *d, const char *un)
 }
 
 int
-Verify (struct display *d, const char *name, const char *pass)
+Verify (const char *name, const char *pass)
 {
 #if !defined(USE_PAM) && defined(AIXV3)
     int		i, reenter;
@@ -253,7 +253,7 @@ Verify (struct display *d, const char *name, const char *pass)
 	    ReInitErrorLog ();
 	    return V_ERROR;
 	}
-	if ((pretc = pam_set_item(pamh, PAM_TTY, d->name)) != PAM_SUCCESS) {
+	if ((pretc = pam_set_item(pamh, PAM_TTY, td->name)) != PAM_SUCCESS) {
 	    pam_end(pamh, pretc);
 	    pamh = NULL;
 	    ReInitErrorLog ();
@@ -288,9 +288,9 @@ Verify (struct display *d, const char *name, const char *pass)
 
 #elif defined(AIXV3)
 
-    if ((d->displayType & d_location) == dForeign) {
+    if ((td->displayType & d_location) == dForeign) {
 	char *tmpch;
-	strncpy(hostname, d->name, sizeof(hostname) - 1);
+	strncpy(hostname, td->name, sizeof(hostname) - 1);
 	hostname[sizeof(hostname)-1] = '\0';
 	if ((tmpch = strchr(hostname, ':')))
 	    *tmpch = '\0';
@@ -299,20 +299,20 @@ Verify (struct display *d, const char *name, const char *pass)
 
     /* tty names should only be 15 characters long */
 # if 0
-    for (i = 0; i < 15 && d->name[i]; i++) {
-	if (d->name[i] == ':' || d->name[i] == '.')
+    for (i = 0; i < 15 && td->name[i]; i++) {
+	if (td->name[i] == ':' || td->name[i] == '.')
 	    tty[i] = '_';
 	else
-	    tty[i] = d->name[i];
+	    tty[i] = td->name[i];
     }
     tty[i] = '\0';
 # else
     memcpy(tty, "/dev/xdm/", 9);
-    for (i = 0; i < 6 && d->name[i]; i++) {
-	if (d->name[i] == ':' || d->name[i] == '.')
+    for (i = 0; i < 6 && td->name[i]; i++) {
+	if (td->name[i] == ':' || td->name[i] == '.')
 	    tty[9 + i] = '_';
 	else
-	    tty[9 + i] = d->name[i];
+	    tty[9 + i] = td->name[i];
     }
     tty[9 + i] = '\0';
 # endif
@@ -341,7 +341,7 @@ Verify (struct display *d, const char *name, const char *pass)
 
 #endif /* !defined(USE_PAM) && !defined(AIXV3) */
 
-    if (!curpass[0] && AccNoPass (d, curuser)) {
+    if (!curpass[0] && AccNoPass (curuser)) {
 	Debug ("accepting despite empty password\n");
 	return V_OK;
     }
@@ -397,7 +397,7 @@ Verify (struct display *d, const char *name, const char *pass)
 
 #ifdef USE_PAM
 
-    if (pam_authenticate(pamh, d->allowNullPasswd ?
+    if (pam_authenticate(pamh, td->allowNullPasswd ?
 				0 : PAM_DISALLOW_NULL_AUTHTOK) != PAM_SUCCESS) {
 	ReInitErrorLog ();
 	return V_AUTH;
@@ -426,7 +426,7 @@ Verify (struct display *d, const char *name, const char *pass)
 }
 
 void
-Restrict (struct display *d)
+Restrict ()
 {
 #ifdef USE_PAM
     int			pretc;
@@ -464,7 +464,7 @@ Restrict (struct display *d)
     }
 #endif
     if (!p->pw_uid) {
-	if (!d->allowRootLogin)
+	if (!td->allowRootLogin)
 	    GSendInt (V_NOROOT);
 	else
 	    GSendInt (V_OK);	/* don't deny root to log in */
@@ -491,7 +491,7 @@ Restrict (struct display *d)
 
     msg = NULL;
     if (loginrestrictions(curuser,
-	((d->displayType & d_location) == dForeign) ? S_RLOGIN : S_LOGIN,
+	((td->displayType & d_location) == dForeign) ? S_RLOGIN : S_LOGIN,
 	tty, &msg) == -1)
     {
 	Debug("loginrestrictions() - %s\n", msg ? msg : "Error\n");
@@ -696,26 +696,25 @@ static const char *envvars[] = {
 };
 
 static char **
-userEnv (struct display *d, int isRoot, 
-	 const char *user, const char *home, const char *shell)
+userEnv (int isRoot, const char *user, const char *home, const char *shell)
 {
     char	**env, *xma;
 
     env = defaultEnv (user);
     xma = 0;
-    if (d->fifoPath && StrDup (&xma, d->fifoPath))
-	if ((d->allowShutdown == SHUT_ALL ||
-	     (d->allowShutdown == SHUT_ROOT && isRoot)) &&
+    if (td->fifoPath && StrDup (&xma, td->fifoPath))
+	if ((td->allowShutdown == SHUT_ALL ||
+	     (td->allowShutdown == SHUT_ROOT && isRoot)) &&
 	    StrApp (&xma, ",maysd", (char *)0))
 	{
-	    if (d->allowNuke == SHUT_ALL ||
-		(d->allowNuke == SHUT_ROOT && isRoot))
+	    if (td->allowNuke == SHUT_ALL ||
+		(td->allowNuke == SHUT_ROOT && isRoot))
 		StrApp (&xma, ",mayfn", (char *)0);
-	    StrApp (&xma, d->defSdMode == SHUT_FORCENOW ? ",fn" :
-			  d->defSdMode == SHUT_TRYNOW ? ",tn" : ",sched", 
+	    StrApp (&xma, td->defSdMode == SHUT_FORCENOW ? ",fn" :
+			  td->defSdMode == SHUT_TRYNOW ? ",tn" : ",sched", 
 		    (char *)0);
 	}
-	if ((d->displayType & d_location) == dLocal && AnyReserveDisplays ())
+	if ((td->displayType & d_location) == dLocal && AnyReserveDisplays ())
 	    StrApp (&xma, ",rsvd", (char *)0);
     if (xma)
     {
@@ -724,9 +723,9 @@ userEnv (struct display *d, int isRoot,
     }
     else
 	env = setEnv (env, "XDM_MANAGED", "true");
-    env = setEnv (env, "DISPLAY", d->name);
+    env = setEnv (env, "DISPLAY", td->name);
     env = setEnv (env, "HOME", home);
-    env = setEnv (env, "PATH", isRoot ? d->systemPath : d->userPath);
+    env = setEnv (env, "PATH", isRoot ? td->systemPath : td->userPath);
     env = setEnv (env, "SHELL", shell);
 #if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
     if (krbtkfile[0] != '\0')
@@ -816,7 +815,7 @@ static int removeAuth;
 static int sourceReset;
 
 int
-StartClient (struct display *d)
+StartClient ()
 {
     const char	*shell, *home, *sessargs, *desksess;
     char	**argv, *fname, *str;
@@ -868,8 +867,8 @@ StartClient (struct display *d)
     curgid = p->pw_gid;
     home = p->pw_dir;
     shell = p->pw_shell;
-    userEnviron = userEnv (d, !curuid, curuser, home, shell);
-    systemEnviron = systemEnv (d, curuser, home);
+    userEnviron = userEnv (!curuid, curuser, home, shell);
+    systemEnviron = systemEnv (curuser, home);
     Debug ("user environment:\n%[|''>'\n's"
 	   "system environment:\n%[|''>'\n's"
 	   "end of environments\n", 
@@ -880,11 +879,11 @@ StartClient (struct display *d)
      * for user-based authorization schemes,
      * add the user to the server's allowed "hosts" list.
      */
-    for (i = 0; i < d->authNum; i++)
+    for (i = 0; i < td->authNum; i++)
     {
 #ifdef SECURE_RPC
-	if (d->authorizations[i]->name_length == 9 &&
-	    memcmp(d->authorizations[i]->name, "SUN-DES-1", 9) == 0)
+	if (td->authorizations[i]->name_length == 9 &&
+	    !memcmp (td->authorizations[i]->name, "SUN-DES-1", 9))
 	{
 	    XHostAddress	addr;
 	    char		netname[MAXNETNAMELEN+1];
@@ -899,8 +898,8 @@ StartClient (struct display *d)
 	}
 #endif
 #ifdef K5AUTH
-	if (d->authorizations[i]->name_length == 14 &&
-	    memcmp(d->authorizations[i]->name, "MIT-KERBEROS-5", 14) == 0)
+	if (td->authorizations[i]->name_length == 14 &&
+	    !memcmp (td->authorizations[i]->name, "MIT-KERBEROS-5", 14))
 	{
 	    /* Update server's auth file with user-specific info.
 	     * Don't need to AddHost because X server will do that
@@ -909,10 +908,10 @@ StartClient (struct display *d)
 	     */
 	    extern Xauth *Krb5GetAuthFor();
 
-	    XauDisposeAuth (d->authorizations[i]);
-	    d->authorizations[i] =
-		Krb5GetAuthFor(14, "MIT-KERBEROS-5", d->name);
-	    SaveServerAuthorizations (d, d->authorizations, d->authNum);
+	    XauDisposeAuth (td->authorizations[i]);
+	    td->authorizations[i] =
+		Krb5GetAuthFor (14, "MIT-KERBEROS-5", td->name);
+	    SaveServerAuthorizations (td, td->authorizations, td->authNum);
 	}
 #endif
     }
@@ -921,9 +920,9 @@ StartClient (struct display *d)
      * Run system-wide initialization file
      */
     sourceReset = 1;
-    if (source (systemEnviron, d->startup) != 0) {
-	LogError("Cannot execute startup script %\"s\n", d->startup);
-	SessionExit (d, EX_NORMAL);
+    if (source (systemEnviron, td->startup) != 0) {
+	LogError ("Cannot execute startup script %\"s\n", td->startup);
+	SessionExit (EX_NORMAL);
     }
 
     if (*dmrcDir)
@@ -935,9 +934,9 @@ StartClient (struct display *d)
     ReInitErrorLog ();
 #endif    
     removeAuth = 1;
-    if (d->fifoPath)
-	chown (d->fifoPath, curuid, -1);
-    endpwent();
+    if (td->fifoPath)
+	chown (td->fifoPath, curuid, -1);
+    endpwent ();
 #if !defined(USE_PAM) && !defined(AIXV3)
 # ifndef QNX4  /* QNX4 doesn't need endspent() to end shadow passwd ops */
     endspent();
@@ -1103,14 +1102,14 @@ StartClient (struct display *d)
 	    {
 		/* remove SUN-DES-1 from authorizations list */
 		int i, j;
-		for (i = 0; i < d->authNum; i++)
+		for (i = 0; i < td->authNum; i++)
 		{
-		    if (d->authorizations[i]->name_length == 9 &&
-			memcmp(d->authorizations[i]->name, "SUN-DES-1", 9) == 0)
+		    if (td->authorizations[i]->name_length == 9 &&
+			memcmp(td->authorizations[i]->name, "SUN-DES-1", 9) == 0)
 		    {
-			for (j = i+1; j < d->authNum; j++)
-			    d->authorizations[j-1] = d->authorizations[j];
-			d->authNum--;
+			for (j = i+1; j < td->authNum; j++)
+			    td->authorizations[j-1] = td->authorizations[j];
+			td->authNum--;
 			break;
 		    }
 		}
@@ -1128,21 +1127,21 @@ StartClient (struct display *d)
 	    int result;
 	    extern char *Krb5CCacheName();
 
-	    result = Krb5Init(curuser, curpass, d);
+	    result = Krb5Init (curuser, curpass, td);
 	    if (result == 0) {
 		/* point session clients at the Kerberos credentials cache */
-		userEnviron = setEnv(userEnviron,
-				     "KRB5CCNAME", Krb5CCacheName(d->name));
+		userEnviron = setEnv (userEnviron,
+				      "KRB5CCNAME", Krb5CCacheName(td->name));
 	    } else {
-		for (i = 0; i < d->authNum; i++)
+		for (i = 0; i < td->authNum; i++)
 		{
-		    if (d->authorizations[i]->name_length == 14 &&
-			memcmp(d->authorizations[i]->name, "MIT-KERBEROS-5", 14) == 0)
+		    if (td->authorizations[i]->name_length == 14 &&
+			!memcmp (td->authorizations[i]->name, "MIT-KERBEROS-5", 14))
 		    {
 			/* remove Kerberos from authorizations list */
-			for (j = i+1; j < d->authNum; j++)
-			    d->authorizations[j-1] = d->authorizations[j];
-			d->authNum--;
+			for (j = i+1; j < td->authNum; j++)
+			    td->authorizations[j-1] = td->authorizations[j];
+			td->authNum--;
 			break;
 		    }
 		}
@@ -1150,8 +1149,8 @@ StartClient (struct display *d)
 	}
 #endif /* K5AUTH */
 	if (curpass)
-	    bzero(curpass, strlen(curpass));
-	SetUserAuthorization (d);
+	    bzero (curpass, strlen (curpass));
+	SetUserAuthorization (td);
 	home = getEnv (userEnviron, "HOME");
 	if (home) {
 	    if (chdir (home) < 0) {
@@ -1168,9 +1167,9 @@ StartClient (struct display *d)
 	if (!(desksess = iniEntry (curdmrc, "Desktop", "Session", 0)))
 	    desksess = "failsafe"; /* only due to OOM */
 	userEnviron = setEnv (userEnviron, "DESKTOP_SESSION", desksess);
-	for (i = 0; d->sessionsDirs[i]; i++) {
+	for (i = 0; td->sessionsDirs[i]; i++) {
 	    fname = 0;
-	    if (StrApp (&fname, d->sessionsDirs[i], "/", desksess, ".desktop", 0)) {
+	    if (StrApp (&fname, td->sessionsDirs[i], "/", desksess, ".desktop", 0)) {
 		if ((str = iniLoad (fname))) {
 		    if (!StrCmp (iniEntry (str, "Desktop Entry", "Hidden", 0), "true") ||
 			!(sessargs = iniEntry (str, "Desktop Entry", "Exec", 0)))
@@ -1189,7 +1188,7 @@ StartClient (struct display *d)
 	else
 	    sessargs = "";
       gotit:
-	argv = parseArgs ((char **)0, d->session);
+	argv = parseArgs ((char **)0, td->session);
 	if (argv && argv[0] && *argv[0]) {
 		argv = addStrArr (argv, sessargs, -1);
 		Debug ("executing session %\"[s\n", argv);
@@ -1199,7 +1198,7 @@ StartClient (struct display *d)
 	} else {
 		LogError ("Session has no command/arguments\n");
 	}
-	failsafeArgv[0] = d->failsafeClient;
+	failsafeArgv[0] = td->failsafeClient;
 	failsafeArgv[1] = 0;
 	execute (failsafeArgv, userEnviron);
 	LogError ("Failsafe client %\"s execution failed: %s\n",
@@ -1207,11 +1206,11 @@ StartClient (struct display *d)
 	exit (1);
     case -1:
 	LogError ("Forking session on %s failed: %s\n",
-		  d->name, SysErrorMsg());
+		  td->name, SysErrorMsg());
 	return 0;
     default:
 	Debug ("StartSession, fork succeeded %d\n", pid);
-/* ### right after forking dpy	mstrtalk.pipe = &d->pipe; */
+/* ### right after forking dpy	mstrtalk.pipe = &td->pipe; */
 #ifdef nofork_session
 	if (!nofork_session)
 #endif
@@ -1219,7 +1218,7 @@ StartClient (struct display *d)
 	    GSet (&mstrtalk);
 	    GSendInt (D_User);
 	    GSendInt (curuid);
-	    if (d->autoReLogin) {
+	    if (td->autoReLogin) {
 		GSendInt (D_ReLogin);
 		GSendStr (curuser);
 		GSendStr (curpass);
@@ -1231,25 +1230,25 @@ StartClient (struct display *d)
 }
 
 void
-SessionExit (struct display *d, int status)
+SessionExit (int status)
 {
     /* make sure the server gets reset after the session is over */
-    if (d->serverPid >= 2) {
-	if (!d->terminateServer && d->resetSignal)
-	    TerminateProcess (d->serverPid, d->resetSignal);
+    if (td->serverPid >= 2) {
+	if (!td->terminateServer && td->resetSignal)
+	    TerminateProcess (td->serverPid, td->resetSignal);
     } else
-	ResetServer (d);
+	ResetServer (td);
     if (sourceReset) {
 	/*
 	 * run system-wide reset file
 	 */
-	Debug ("source reset program %s\n", d->reset);
-	source (systemEnviron, d->reset);
+	Debug ("source reset program %s\n", td->reset);
+	source (systemEnviron, td->reset);
     }
     if (removeAuth)
     {
-	if (d->fifoPath)
-	    chown (d->fifoPath, 0, -1);
+	if (td->fifoPath)
+	    chown (td->fifoPath, 0, -1);
 #ifdef USE_PAM
 	if (pamh) {
 	    /* shutdown PAM session */
@@ -1263,14 +1262,14 @@ SessionExit (struct display *d, int status)
 	}
 #endif
 	SetUser (curuser, curuid, curgid);
-	RemoveUserAuthorization (d);
+	RemoveUserAuthorization (td);
 #ifdef K5AUTH
 	/* do like "kdestroy" program */
 	{
 	    krb5_error_code code;
 	    krb5_ccache ccache;
 
-	    code = Krb5DisplayCCache(d->name, &ccache);
+	    code = Krb5DisplayCCache (td->name, &ccache);
 	    if (code)
 		LogError("%s while getting Krb5 ccache to destroy\n",
 			 error_message(code));
@@ -1308,7 +1307,7 @@ SessionExit (struct display *d, int status)
 	}
 #endif
     }
-    Debug ("display %s exiting with status %d\n", d->name, status);
+    Debug ("display %s exiting with status %d\n", td->name, status);
     exit (status);
 }
 
