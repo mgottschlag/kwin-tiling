@@ -19,6 +19,8 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlayout.h>
+#include <qtimer.h>
+#include <qvaluelist.h>
 
 #include <dcopclient.h>
 
@@ -28,6 +30,9 @@
 #include <kdialog.h>
 #include <kgenericfactory.h>
 #include <kwin.h>
+
+#include "kcmtaskbarui.h"
+#include "taskbarsettings.h"
 
 #include "kcmtaskbar.h"
 #include "kcmtaskbar.moc"
@@ -56,27 +61,6 @@ QStringList TaskbarConfig::i18nActionList()
    return i18nList;
 }
 
-// Translate from config entry name to enumeration
-enum TaskbarConfig::Action TaskbarConfig::buttonAction( ButtonState button, const QString& actionName )
-{
-   int index = actionList().findIndex( actionName );
-   if( index != -1 ) return static_cast<Action>(index);
-
-   // Otherwise return the default.
-   switch( button ) {
-   case MidButton: return ActivateRaiseOrIconify;
-   case RightButton: return ShowOperationsMenu;
-   case LeftButton: // fall through
-   default: return ShowTaskList;
-   }
-}
-
-// Translate from enum (or integer) to config entry name.
-QString TaskbarConfig::buttonAction( int action )
-{
-   return actionList()[action];
-}
-
 // These are the strings that are actually stored in the config file.
 const QStringList& TaskbarConfig::groupModeList()
 {
@@ -96,155 +80,96 @@ QStringList TaskbarConfig::i18nGroupModeList()
    return i18nList;
 }
 
-// Translate from config entry name to enumeration
-enum TaskbarConfig::GroupMode TaskbarConfig::groupMode(const QString& groupModeName )
+TaskbarConfig::TaskbarConfig(QWidget *parent, const char* name, const QStringList&)
+  : KCModule(TaskBarFactory::instance(), parent, name)
 {
-   int index = groupModeList().findIndex( groupModeName );
-   if( index != -1 ) return static_cast<GroupMode>(index);
+    QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
+    m_widget = new TaskbarConfigUI(this);
+    layout->addWidget(m_widget);
+    
+    addConfig(TaskBarSettings::self(), m_widget);
 
-   // Translate old entries
-   if( groupModeName == "true" ) return GroupAlways;
-   if( groupModeName == "false" ) return GroupNever;
-
-   // Otherwise return the default.
-   return GroupWhenFull;
-}
-
-// Translate from enum (or integer) to config entry name.
-QString TaskbarConfig::groupMode( int groupModeNum )
-{
-   return groupModeList()[groupModeNum];
-}
-
-TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringList & )
-  : KCModule (TaskBarFactory::instance(), parent, name)
-{
-    ui = new TaskbarConfigUI(this);
-
-    setQuickHelp( i18n("<h1>Taskbar</h1> You can configure the taskbar here."
+    setQuickHelp(i18n("<h1>Taskbar</h1> You can configure the taskbar here."
                 " This includes options such as whether or not the taskbar should show all"
                 " windows at once or only those on the current desktop."
                 " You can also configure whether or not the Window List button will be displayed."));
 
-    QVBoxLayout *vbox = new QVBoxLayout(this, 0, KDialog::spacingHint());
-    vbox->addWidget(ui);
-    connect(ui->showAllCheck, SIGNAL(clicked()), SLOT( changed()));
-    connect(ui->showAllScreensCheck, SIGNAL(clicked()), SLOT( changed()));
-    connect(ui->showListBtnCheck, SIGNAL(clicked()), SLOT( changed()));
-    connect(ui->sortCheck, SIGNAL(clicked()), SLOT( changed()));
-    connect(ui->iconCheck, SIGNAL(clicked()), SLOT( changed()));
-    connect(ui->iconifiedCheck, SIGNAL(clicked()), SLOT( changed()));
-
     QStringList list = i18nActionList();
-    ui->leftButtonComboBox->insertStringList( list );
-    ui->middleButtonComboBox->insertStringList( list );
-    ui->rightButtonComboBox->insertStringList( list );
-    ui->groupComboBox->insertStringList( i18nGroupModeList() );
+    m_widget->kcfg_LeftButtonAction->insertStringList(list);
+    m_widget->kcfg_MiddleButtonAction->insertStringList(list);
+    m_widget->kcfg_RightButtonAction->insertStringList(list);
+    m_widget->kcfg_GroupTasks->insertStringList(i18nGroupModeList());
 
-    connect(ui->leftButtonComboBox, SIGNAL(activated(int)), SLOT( changed()));
-    connect(ui->middleButtonComboBox, SIGNAL(activated(int)), SLOT( changed()));
-    connect(ui->rightButtonComboBox, SIGNAL(activated(int)), SLOT( changed()));
-    connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT( changed()));
-    connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT(slotUpdateComboBox()));
+    connect(m_widget->kcfg_GroupTasks, SIGNAL(activated(int)),
+            this, SLOT(slotUpdateComboBox()));
 
     if (KWin::numberOfDesktops() < 2)
     {
-        ui->showAllCheck->hide();
-        ui->sortCheck->hide();
+        m_widget->kcfg_ShowAllWindows->hide();
+        m_widget->kcfg_SortByDesktop->hide();
     }
 
     if (!QApplication::desktop()->isVirtualDesktop() ||
-        QApplication::desktop()->numScreens()==1 ) // No Ximerama
+        QApplication::desktop()->numScreens() == 1) // No Ximerama
     {
-           ui->showAllScreensCheck->hide();
+        m_widget->kcfg_ShowCurrentScreenOnly->hide();
     }
 
-    KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmtaskbar"), I18N_NOOP("KDE Taskbar Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 2000 - 2001 Matthias Elter"));
+    KAboutData *about = new KAboutData(I18N_NOOP("kcmtaskbar"),
+                                       I18N_NOOP("KDE Taskbar Control Module"),
+                                       0, 0, KAboutData::License_GPL,
+                                       I18N_NOOP("(c) 2000 - 2001 Matthias Elter"));
 
     about->addAuthor("Matthias Elter", 0, "elter@kde.org");
+    about->addCredit("Stefan Nikolaus", I18N_NOOP("KConfigXT conversion"),
+                     "stefan.nikolaus@kdemail.net");
     setAboutData(about);
 
     load();
+    QTimer::singleShot(0, this, SLOT(notChanged()));
 }
 
 void TaskbarConfig::slotUpdateComboBox()
 {
+    int pos = TaskBarSettings::ActivateRaiseOrMinimize;
     // If grouping is enabled, call "Activate, Raise or Iconify something else,
     // though the config key used is the same.
-    if( ui->groupComboBox->currentItem() != GroupNever ) {
-        ui->leftButtonComboBox->changeItem(i18n("Cycle Through Windows"),ActivateRaiseOrIconify);
-        ui->middleButtonComboBox->changeItem(i18n("Cycle Through Windows"),ActivateRaiseOrIconify);
-        ui->rightButtonComboBox->changeItem(i18n("Cycle Through Windows"),ActivateRaiseOrIconify);
-    } else {
-        QString action = i18nActionList()[ActivateRaiseOrIconify];
-        ui->leftButtonComboBox->changeItem(action,ActivateRaiseOrIconify);
-        ui->middleButtonComboBox->changeItem(action,ActivateRaiseOrIconify);
-        ui->rightButtonComboBox->changeItem(action,ActivateRaiseOrIconify);
+    if(m_widget->kcfg_GroupTasks->currentItem() != TaskBarSettings::GroupNever)
+    {
+        m_widget->kcfg_LeftButtonAction->changeItem(i18n("Cycle Through Windows"), pos);
+        m_widget->kcfg_MiddleButtonAction->changeItem(i18n("Cycle Through Windows"), pos);
+        m_widget->kcfg_RightButtonAction->changeItem(i18n("Cycle Through Windows"), pos);
+    }
+    else
+    {
+        QString action = i18nActionList()[pos];
+        m_widget->kcfg_LeftButtonAction->changeItem(action,pos);
+        m_widget->kcfg_MiddleButtonAction->changeItem(action,pos);
+        m_widget->kcfg_RightButtonAction->changeItem(action,pos);
     }
 }
 
 void TaskbarConfig::load()
 {
-    KConfig *c = new KConfig("ktaskbarrc", true, false);
-    { // group for the benefit of the group saver
-        KConfigGroupSaver saver(c, "General");
-
-        ui->showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", true));
-        ui->showAllScreensCheck->setChecked(!c->readBoolEntry("ShowCurrentScreenOnly", false));
-        ui->showListBtnCheck->setChecked(c->readBoolEntry("ShowWindowListBtn", false));
-        ui->sortCheck->setChecked(c->readBoolEntry("SortByDesktop", true));
-        ui->iconCheck->setChecked(c->readBoolEntry("ShowIcon", true));
-        ui->iconifiedCheck->setChecked(c->readBoolEntry("ShowOnlyIconified", false));
-        ui->leftButtonComboBox->setCurrentItem(buttonAction(LeftButton, c->readEntry("LeftButtonAction")));
-        ui->middleButtonComboBox->setCurrentItem(buttonAction(MidButton, c->readEntry("MiddleButtonAction")));
-        ui->rightButtonComboBox->setCurrentItem(buttonAction(RightButton, c->readEntry("RightButtonAction")));
-        ui->groupComboBox->setCurrentItem(groupMode(c->readEntry("GroupTasks")));
-    }
-
-    delete c;
+    KCModule::load();
     slotUpdateComboBox();
 }
 
 void TaskbarConfig::save()
 {
-    KConfig *c = new KConfig("ktaskbarrc", false, false);
-    { // group for the benefit of the group saver
-        KConfigGroupSaver saver(c, "General");
-
-        c->writeEntry("ShowAllWindows", ui->showAllCheck->isChecked());
-        c->writeEntry("ShowCurrentScreenOnly", !ui->showAllScreensCheck->isChecked());
-        c->writeEntry("ShowWindowListBtn", ui->showListBtnCheck->isChecked());
-        c->writeEntry("SortByDesktop", ui->sortCheck->isChecked());
-        c->writeEntry("ShowIcon", ui->iconCheck->isChecked());
-        c->writeEntry("ShowOnlyIconified", ui->iconifiedCheck->isChecked());
-        c->writeEntry("LeftButtonAction", buttonAction(ui->leftButtonComboBox->currentItem()));
-        c->writeEntry("MiddleButtonAction", buttonAction(ui->middleButtonComboBox->currentItem()));
-        c->writeEntry("RightButtonAction", buttonAction(ui->rightButtonComboBox->currentItem()));
-        c->writeEntry("GroupTasks", groupMode(ui->groupComboBox->currentItem()));
-        c->sync();
-    }
-
-    delete c;
-
+    KCModule::save();
+    
     QByteArray data;
     kapp->dcopClient()->emitDCOPSignal("kdeTaskBarConfigChanged()", data);
 }
 
 void TaskbarConfig::defaults()
 {
-    ui->showAllCheck->setChecked(true);
-    ui->showAllScreensCheck->setChecked(true);
-    ui->showListBtnCheck->setChecked(false);
-    ui->sortCheck->setChecked(true);
-    ui->iconCheck->setChecked(true);
-    ui->iconifiedCheck->setChecked(false);
-    ui->leftButtonComboBox->setCurrentItem( buttonAction( LeftButton ) );
-    ui->middleButtonComboBox->setCurrentItem( buttonAction( MidButton ) );
-    ui->rightButtonComboBox->setCurrentItem( buttonAction( RightButton ) );
-    ui->groupComboBox->setCurrentItem( groupMode() );
+    KCModule::defaults();
     slotUpdateComboBox();
 }
 
+void TaskbarConfig::notChanged() 
+{
+    emit changed(false);
+}

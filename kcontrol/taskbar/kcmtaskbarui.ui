@@ -41,10 +41,13 @@
                 </property>
                 <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>showAllScreensCheck</cstring>
+                        <cstring>kcfg_ShowCurrentScreenOnly</cstring>
                     </property>
                     <property name="text">
                         <string>Show windows from all sc&amp;reens</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -57,10 +60,13 @@ By default, this option is selected and all windows are shown.</string>
                 </widget>
                 <widget class="QCheckBox" row="1" column="1" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>sortCheck</cstring>
+                        <cstring>kcfg_SortByDesktop</cstring>
                     </property>
                     <property name="text">
                         <string>Sort windows by desk&amp;top</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+T</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -90,10 +96,13 @@ By default this option is selected.</string>
                 </spacer>
                 <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>showAllCheck</cstring>
+                        <cstring>kcfg_ShowAllWindows</cstring>
                     </property>
                     <property name="text">
                         <string>&amp;Show windows from all desktops</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+S</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -120,12 +129,12 @@ By default, this option is selected and all windows are shown.</string>
                                 <string>&amp;Group similar tasks:</string>
                             </property>
                             <property name="buddy" stdset="0">
-                                <cstring>groupComboBox</cstring>
+                                <cstring>kcfg_GroupTasks</cstring>
                             </property>
                         </widget>
                         <widget class="QComboBox">
                             <property name="name">
-                                <cstring>groupComboBox</cstring>
+                                <cstring>kcfg_GroupTasks</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
@@ -147,10 +156,13 @@ By default the taskbar groups windows when it is full.</string>
                 </widget>
                 <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>iconCheck</cstring>
+                        <cstring>kcfg_ShowIcon</cstring>
                     </property>
                     <property name="text">
                         <string>Sho&amp;w application icons</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+W</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -163,10 +175,13 @@ By default this option is selected.</string>
                 </widget>
                 <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>showListBtnCheck</cstring>
+                        <cstring>kcfg_ShowWindowListBtn</cstring>
                     </property>
                     <property name="text">
                         <string>Show window list &amp;button</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+B</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -177,10 +192,13 @@ By default this option is selected.</string>
                 </widget>
                 <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>iconifiedCheck</cstring>
+                        <cstring>kcfg_ShowOnlyIconified</cstring>
                     </property>
                     <property name="text">
                         <string>Show o&amp;nly minimized windows</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+N</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Select this option if you want the taskbar to display &lt;b&gt;only&lt;/b&gt; minimized windows. 
@@ -209,7 +227,7 @@ By default, this option is not selected and the taskbar will show all windows.</
                         <string>&amp;Left button:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>leftButtonComboBox</cstring>
+                        <cstring>kcfg_LeftButtonAction</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -220,7 +238,7 @@ By default, this option is not selected and the taskbar will show all windows.</
                         <string>&amp;Middle button:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>middleButtonComboBox</cstring>
+                        <cstring>kcfg_MiddleButtonAction</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="2" column="0">
@@ -231,12 +249,12 @@ By default, this option is not selected and the taskbar will show all windows.</
                         <string>Right b&amp;utton:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>rightButtonComboBox</cstring>
+                        <cstring>kcfg_RightButtonAction</cstring>
                     </property>
                 </widget>
                 <widget class="QComboBox" row="0" column="1">
                     <property name="name">
-                        <cstring>leftButtonComboBox</cstring>
+                        <cstring>kcfg_LeftButtonAction</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -249,7 +267,7 @@ By default, this option is not selected and the taskbar will show all windows.</
                 </widget>
                 <widget class="QComboBox" row="1" column="1">
                     <property name="name">
-                        <cstring>middleButtonComboBox</cstring>
+                        <cstring>kcfg_MiddleButtonAction</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -262,7 +280,7 @@ By default, this option is not selected and the taskbar will show all windows.</
                 </widget>
                 <widget class="QComboBox" row="2" column="1">
                     <property name="name">
-                        <cstring>rightButtonComboBox</cstring>
+                        <cstring>kcfg_RightButtonAction</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -296,23 +314,23 @@ By default, this option is not selected and the taskbar will show all windows.</
 </widget>
 <connections>
     <connection>
-        <sender>showAllCheck</sender>
+        <sender>kcfg_ShowAllWindows</sender>
         <signal>toggled(bool)</signal>
-        <receiver>sortCheck</receiver>
+        <receiver>kcfg_SortByDesktop</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
-    <tabstop>showAllCheck</tabstop>
-    <tabstop>sortCheck</tabstop>
-    <tabstop>showAllScreensCheck</tabstop>
-    <tabstop>iconifiedCheck</tabstop>
-    <tabstop>iconCheck</tabstop>
-    <tabstop>showListBtnCheck</tabstop>
-    <tabstop>groupComboBox</tabstop>
-    <tabstop>leftButtonComboBox</tabstop>
-    <tabstop>middleButtonComboBox</tabstop>
-    <tabstop>rightButtonComboBox</tabstop>
+    <tabstop>kcfg_ShowAllWindows</tabstop>
+    <tabstop>kcfg_SortByDesktop</tabstop>
+    <tabstop>kcfg_ShowCurrentScreenOnly</tabstop>
+    <tabstop>kcfg_ShowOnlyIconified</tabstop>
+    <tabstop>kcfg_ShowIcon</tabstop>
+    <tabstop>kcfg_ShowWindowListBtn</tabstop>
+    <tabstop>kcfg_GroupTasks</tabstop>
+    <tabstop>kcfg_LeftButtonAction</tabstop>
+    <tabstop>kcfg_MiddleButtonAction</tabstop>
+    <tabstop>kcfg_RightButtonAction</tabstop>
 </tabstops>
 <includes>
     <include location="local" impldecl="in implementation">kdialog.h</include>

@@ -20,48 +20,32 @@
 #define __kcmtaskbar_h__
 
 #include <kcmodule.h>
-#include "kcmtaskbarui.h"
 
-class QCheckBox;
-class QButtonGroup;
+class TaskbarConfigUI;
 
 class TaskbarConfig : public KCModule
 {
     Q_OBJECT
 
 public:
-    TaskbarConfig( QWidget *parent=0, const char* name=0 , const QStringList &list = QStringList() );
+    TaskbarConfig(QWidget *parent = 0, const char* name = 0,
+                  const QStringList &list = QStringList());
 
+public slots:
     void load();
     void save();
     void defaults();
 
 protected slots:
     void slotUpdateComboBox();
+    void notChanged();
 
 private:
-    enum Action {
-        ShowTaskList = 0,
-        ShowOperationsMenu,
-        ActivateRaiseOrIconify,
-        Activate,
-        Raise,
-        Lower,
-        Iconify };
-    enum GroupMode {
-        GroupNever = 0,
-        GroupWhenFull,
-        GroupAlways };
-
-    static Action buttonAction( ButtonState button, const QString& actionName = QString::null );
-    static QString buttonAction( int action );
     static const QStringList& actionList();
     static QStringList i18nActionList();
-    static GroupMode groupMode( const QString& groupModeName = QString::null );
-    static QString groupMode( int groupModeNum );
     static const QStringList& groupModeList();
     static QStringList i18nGroupModeList();
-    TaskbarConfigUI *ui;
+    TaskbarConfigUI *m_widget;
 };
 
 #endif
