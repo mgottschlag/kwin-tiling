@@ -1080,7 +1080,7 @@ static void
 MainLoop (void)
 {
     struct display *d;
-    struct timeval tv;
+    struct timeval *tvp, tv;
     time_t to;
     int nready;
     char buf;
@@ -1120,13 +1120,18 @@ MainLoop (void)
 	    to = serverTimeout;
 	if (utmpTimeout < to)
 	    to = utmpTimeout;
-	to -= now;
-	if (to < 0)
-	    to = 0;
-	tv.tv_sec = to;
-	tv.tv_usec = 0;
+	if (to == TO_INF)
+	    tvp = 0;
+	else {
+	    to -= now;
+	    if (to < 0)
+		to = 0;
+	    tv.tv_sec = to;
+	    tv.tv_usec = 0;
+	    tvp = &tv;
+	}
 	reads = WellKnownSocketsMask;
-	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, &tv);
+	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, tvp);
 	Debug ("select returns %d\n", nready);
 	time (&now);
 #if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
