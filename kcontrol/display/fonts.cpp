@@ -68,15 +68,19 @@ void FontUseItem::readFont()
 {
     KConfigBase *config;
     
+    bool deleteme = false;
     if (_rcfile.isEmpty())
-	config = new KConfig(QString::fromLatin1("kcontrolrc"));
+	config = KGlobal::config();
     else
+    {
 	 config = new KSimpleConfig(locate("config", _rcfile), true);
+	 deleteme = true;
+    }
 
     config->setGroup(_rcgroup);
     QFont tmpFnt(_font);
     _font = config->readFontEntry(_rckey, &tmpFnt);
-    delete config;
+    if (deleteme) delete config;
 }
 
 void FontUseItem::writeFont()
@@ -128,7 +132,12 @@ KFonts::KFonts(QWidget *parent, const char *name)
 			    QFont( "helvetica", 10 ) );
     item->setRC( "General", "toolBarFont" );
     fontUseList.append( item );
-   
+
+    item = new FontUseItem( i18n("Menu font"),
+			    QFont( "helvetica", 12 ) );
+    item->setRC( "General", "menuFont" );
+    fontUseList.append( item );
+  
     item = new FontUseItem( i18n("Window title font"),
 			    QFont( "helvetica", 12, QFont::Bold ) );
     item->setRC( "WM", "titleFont" );
