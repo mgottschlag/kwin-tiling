@@ -240,7 +240,9 @@ DEALINGS IN THE SOFTWARE.
 #endif
 
 #ifdef HAVE_XKB
+#define explicit myexplicit
 #include <X11/XKBlib.h>
+#undef explicit
 #endif
 
 #include <X11/keysym.h>
