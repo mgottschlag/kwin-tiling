@@ -22,7 +22,7 @@
 
     */
 
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
 
 #include <klocale.h>
 

@@ -74,7 +74,7 @@ public:
 
     int		_allowShutdown;
 
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386)
     bool	_useLilo;
     QString	_liloCmd;
     QString	_liloMap;

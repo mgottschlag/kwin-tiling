@@ -103,7 +103,7 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
 
     hbox->addWidget(restart_rb);
 
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
     if ( kdmcfg->_useLilo ) {
 	targets = new QComboBox(winFrame);
 	hbox->addWidget(targets);
@@ -173,7 +173,7 @@ KDMShutdown::timerDone()
 void
 KDMShutdown::target_changed(int id)
 {
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
     restart_rb->setChecked(true);
     liloTarget = id;
 #endif
@@ -194,7 +194,7 @@ KDMShutdown::bye_bye()
 	    return;
 	}
     }
-#ifdef __linux__
+#if defined(__linux__) && defined(__i386__)
     if (kdmcfg->_useLilo && restart_rb->isChecked()) {
 	LiloInfo info(kdmcfg->_liloCmd, kdmcfg->_liloMap);
 	info.setNextBootOption(liloTarget);

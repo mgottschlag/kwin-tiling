@@ -60,7 +60,7 @@ private:
     KPasswordEdit	*pswdEdit;
     QRadioButton	*restart_rb;
     QTimer		*timer;
-#ifdef __linux__
+#if defined(__linux__) && (__i386__)
     int			liloTarget;
 #endif
 };
