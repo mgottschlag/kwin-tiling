@@ -35,7 +35,6 @@
 #include <qpushbutton.h>
 #include <qpopupmenu.h>
 #include <qapplication.h>
-#include <qcursor.h>
 
 #include <stdlib.h>
 
@@ -153,46 +152,6 @@ KGDialog::slotShutdown()
 {
     KDMShutdown k( winFrame );
     k.exec();
-}
-
-static void
-moveInto( QRect &what, const QRect &where )
-{
-    int di;
-
-    if ((di = where.right() - what.right()) < 0)
-	what.moveBy( di, 0 );
-    if ((di = where.left() - what.left()) > 0)
-	what.moveBy( di, 0 );
-    if ((di = where.bottom() - what.bottom()) < 0)
-	what.moveBy( 0, di );
-    if ((di = where.top() - what.top()) > 0)
-	what.moveBy( 0, di );
-}
-
-void
-KGDialog::adjustGeometry()
-{
-    QDesktopWidget *dsk = qApp->desktop();
-
-    if (_greeterScreen < 0)
-	_greeterScreen = _greeterScreen == -2 ?
-		dsk->screenNumber( QPoint( dsk->width() - 1, 0 ) ) :
-		dsk->screenNumber( QPoint( 0, 0 ) );
-
-    QRect scr = dsk->screenGeometry( _greeterScreen );
-    setMaximumSize( scr.size() * .9 );
-    adjustSize();
-    QRect grt( rect() );
-    unsigned x = 50, y = 50;
-    sscanf(_greeterPos, "%u,%u", &x, &y);
-    grt.moveCenter( QPoint( scr.x() + scr.width() * x / 100,
-			    scr.y() + scr.height() * y / 100 ) );
-    moveInto( grt, scr );
-    setGeometry( grt );
-
-    if (dsk->screenNumber( QCursor::pos() ) != _greeterScreen)
-	QCursor::setPos( grt.center() );
 }
 
 #include "kgdialog.moc"

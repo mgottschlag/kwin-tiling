@@ -23,6 +23,7 @@
     */
 
 #include "kfdialog.h"
+#include "kdmconfig.h"
 
 #include <klocale.h>
 #include <kpushbutton.h>
@@ -31,6 +32,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qapplication.h>
+#include <qcursor.h>
 
 FDialog::FDialog( QWidget *parent, const char *name, bool modal )
    : inherited( parent, name, modal, WStyle_NoBorder )
@@ -40,6 +42,43 @@ FDialog::FDialog( QWidget *parent, const char *name, bool modal )
     winFrame->setLineWidth( 2 );
     QVBoxLayout *vbox = new QVBoxLayout( this );
     vbox->addWidget( winFrame );
+}
+
+void
+FDialog::adjustGeometry()
+{
+    QDesktopWidget *dsk = qApp->desktop();
+
+    if (_greeterScreen < 0)
+	_greeterScreen = _greeterScreen == -2 ?
+		dsk->screenNumber( QPoint( dsk->width() - 1, 0 ) ) :
+		dsk->screenNumber( QPoint( 0, 0 ) );
+
+    QRect scr = dsk->screenGeometry( _greeterScreen );
+    setMaximumSize( scr.size() * .9 );
+    adjustSize();
+
+    if (parentWidget())
+	return;
+
+    QRect grt( rect() );
+    unsigned x = 50, y = 50;
+    sscanf(_greeterPos, "%u,%u", &x, &y);
+    grt.moveCenter( QPoint( scr.x() + scr.width() * x / 100,
+			    scr.y() + scr.height() * y / 100 ) );
+    int di;
+    if ((di = scr.right() - grt.right()) < 0)
+	grt.moveBy( di, 0 );
+    if ((di = scr.left() - grt.left()) > 0)
+	grt.moveBy( di, 0 );
+    if ((di = scr.bottom() - grt.bottom()) < 0)
+	grt.moveBy( 0, di );
+    if ((di = scr.top() - grt.top()) > 0)
+	grt.moveBy( 0, di );
+    setGeometry( grt );
+
+    if (dsk->screenNumber( QCursor::pos() ) != _greeterScreen)
+	QCursor::setPos( grt.center() );
 }
 
 struct WinList {

@@ -59,7 +59,6 @@ class KGDialog : public FDialog {
 #else
     void completeMenu();
 #endif
-    void adjustGeometry();
     void inserten( const QString& txt, int accel, const char *member );
     void inserten( const QString& txt, int accel, QPopupMenu *cmnu );
 

@@ -46,6 +46,8 @@ public:
     void MsgBox( QMessageBox::Icon typ, const QString &msg ) { box( this, typ, msg ); }
 
 protected:
+    void adjustGeometry();
+
     QFrame *winFrame;
 };
 
