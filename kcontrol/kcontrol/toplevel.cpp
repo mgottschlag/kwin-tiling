@@ -325,34 +325,37 @@ void TopLevel::activateModule(const QString& name)
   report_bug->setText(i18n("Report Bug on Module %1...").arg(name));
 }
 
-void TopLevel::deleteDummyAbout() {
+void TopLevel::deleteDummyAbout()
+{
   delete dummyAbout;
   dummyAbout = 0;
 }
+
 void TopLevel::reportBug()
 {
   // this assumes the user only opens one bug report at a time
   static char buffer[30];
-
-    dummyAbout = 0;
-    bool deleteit = false;
-
-    if (!_active) // report against kcontrol
-        dummyAbout = const_cast<KAboutData*>(KGlobal::instance()->aboutData());
-    else {
-	if (_active->aboutData())
-	    dummyAbout = const_cast<KAboutData*>(_active->aboutData());
-	else {
-	  sprintf(buffer, "kcm%s", _active->library().latin1());
-	  dummyAbout = new KAboutData(buffer,
-				      _active->name(), "2.0");
-	  deleteit = true;
-	}
+  
+  dummyAbout = 0;
+  bool deleteit = false;
+  
+  if (!_active) // report against kcontrol
+	dummyAbout = const_cast<KAboutData*>(KGlobal::instance()->aboutData());
+  else
+	{
+	  if (_active->aboutData())
+		dummyAbout = const_cast<KAboutData*>(_active->aboutData());
+	  else
+		{
+		  sprintf(buffer, "kcm%s", _active->library().latin1());
+		  dummyAbout = new KAboutData(buffer, _active->name(), "2.0");
+		  deleteit = true;
+		}
     }
-    KBugReport *br = new KBugReport(this, false, dummyAbout);
-    if (deleteit) {
+  KBugReport *br = new KBugReport(this, false, dummyAbout);
+  if (deleteit)
 	connect(br, SIGNAL(finished()), SLOT(deleteDummyAbout()));
-    } else
-      dummyAbout = 0;
-    br->show();
+  else
+	dummyAbout = 0;
+  br->show();
 }

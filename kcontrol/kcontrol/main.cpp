@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
   aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
 
   KCmdLineArgs::init( argc, argv, &aboutData );
-  KApplication::addCmdLineOptions();
+  KUniqueApplication::addCmdLineOptions();
 
   KCGlobal::init();
 
