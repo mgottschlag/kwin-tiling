@@ -51,6 +51,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 
   if ( KeyType == "global" ) {
 #include "../../kwin/kwinbindings.cpp"
+#include "../../kicker/kickerbindings.cpp"
     KeyScheme = "Global Key Scheme " ;
     KeySet    = "Global Keys" ;
     check_against_std_keys  = true ;
