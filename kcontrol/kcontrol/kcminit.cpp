@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     {
       KDesktopFile desktop(*it);
 
-      libname = desktop.readEntry("X-KDE-LibraryName");
+      libname = desktop.readEntry("X-KDE-Library");
       funcname = desktop.readEntry("X-KDE-Init");
       call = funcname+"@"+libname;
       if (!funcname.isEmpty() && !libname.isEmpty() && !libs.contains(call)) 

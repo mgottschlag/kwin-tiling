@@ -77,6 +77,7 @@ public:
   ConfigModuleList();
 
   void readDesktopEntries();
+  void readDesktopEntriesRecursive(const QString &path);
 
 };
 

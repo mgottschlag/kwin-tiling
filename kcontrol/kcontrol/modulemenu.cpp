@@ -27,7 +27,7 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
-#include <kdesktopfile.h>
+#include <kservicegroup.h>
 #include <kdebug.h>
 
 #include "modulemenu.h"
@@ -97,13 +97,10 @@ KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
   // create new menu
   KPopupMenu *menu = new KPopupMenu(parent);
   connect(menu, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
-  KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
-  QString defName = path.left(path.length()-1);
-  int pos = defName.findRev('/');
-  if (pos >= 0)
-    defName = defName.mid(pos+1);
-  parent->insertItem(KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), KIcon::Desktop, KIcon::SizeSmall)
-					 , directory.readEntry("Name", defName), menu);
+
+  KServiceGroup::Ptr group = KServiceGroup::group("Settings/"+path);
+  parent->insertItem(KGlobal::iconLoader()->loadIcon(group->icon(), KIcon::Desktop, KIcon::SizeSmall)
+					 , group->caption(), menu);
 
   _menuDict.insert(path, menu);
 

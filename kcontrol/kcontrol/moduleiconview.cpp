@@ -27,7 +27,7 @@
 #include <kstddirs.h>
 #include <kdebug.h>
 
-#include <kdesktopfile.h>
+#include <kservicegroup.h>
 #include <kiconloader.h>
 
 #include "moduleiconview.h"
@@ -146,30 +146,28 @@ void ModuleIconView::fill()
   {
     QString subdir = (*it);
 
-    KDesktopFile directory(locate("apps", "Settings/"
-          + subdir
-          + "/.directory"));
+    KServiceGroup::Ptr group = KServiceGroup::group("Settings/"+subdir+"/");
 
     if (KCGlobal::iconSize() == Small)
     {
-      icon = LoadSmall(directory.readEntry("Icon"));
+      icon = LoadSmall(group->icon());
       if(icon.isNull())
         icon = LoadSmall("folder");
     }
     else if (KCGlobal::iconSize() == Large)
     {
-      icon = LoadLarge(directory.readEntry("Icon"));
+      icon = LoadLarge(group->icon());
       if(icon.isNull())
         icon = LoadLarge("folder");
     }
     else
     {
-      icon = LoadMedium(directory.readEntry("Icon"));
+      icon = LoadMedium(group->icon());
       if(icon.isNull())
         icon = LoadMedium("folder");
     }
 
-    ModuleIconItem *i = new ModuleIconItem(this, directory.readEntry("Name", subdir), icon);
+    ModuleIconItem *i = new ModuleIconItem(this, group->caption(), icon);
     i->setTag(subdir);
   }
 

@@ -34,26 +34,27 @@ class ModuleInfo : public QObject
 public:
 
   ModuleInfo(QString desktopFile);
+  ~ModuleInfo();
 
-  const QString fileName() const { return _fileName; };
-  const QStringList &groups() const { return _groups; };
-  const QStringList &keywords() const { return _keywords; };
-  QString name() const { return _name; };
-  QString comment() const { return _comment; };
-  QString icon() const { return _icon; };
-  QString docPath() const { return _doc; };
-  QString library() const { return _lib; };
-  QString handle() const { return _handle; };
-  bool isDirectory() const { return _directory; };
-  bool needsRootPrivileges() const { return _needsRootPrivileges; };
-  bool hasReadOnlyMode() const { return _hasReadOnlyMode; };
+  const QString fileName() const;
+  const QStringList &groups() const;
+  const QStringList &keywords() const;
+  QString name() const;
+  QString comment() const;
+  QString icon() const;
+  QString docPath() const;
+  QString library() const;
+  QString handle() const;
+  bool isDirectory() const;
+  bool needsRootPrivileges() const;
+  bool hasReadOnlyMode() const;
 
   QCString moduleId() const;
-
+ 
 protected:
 
-  void setGroups(QStringList &groups) { _groups = groups; };
-  void setKeywords(QStringList &k) { _keywords = k; };
+  void setGroups(const QStringList &groups) { _groups = groups; };
+  void setKeywords(const QStringList &k) { _keywords = k; };
   void setName(QString name) { _name = name; };
   void setComment(QString comment) { _comment = comment; };
   void setIcon(QString icon) { _icon = icon; };
@@ -63,12 +64,14 @@ protected:
   void setHasReadOnlyMode(bool hasReadOnlyMode) { _hasReadOnlyMode = hasReadOnlyMode; };
   void setNeedsRootPrivileges(bool needsRootPrivileges) { _needsRootPrivileges = needsRootPrivileges; };
   void setDocPath(QString p) { _doc = p; };
+  void loadAll() const;
 
 private:
   
   QStringList _groups, _keywords;
   QString     _name, _icon, _lib, _handle, _fileName, _doc, _comment;
   bool        _directory, _hasReadOnlyMode, _needsRootPrivileges;
+  bool        _allLoaded;
 };
 
 #endif

@@ -29,9 +29,8 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
-#include <kdesktopfile.h>
+#include <kservicegroup.h>
 #include <kdebug.h>
-
 
 #include "moduletreeview.h"
 #include "moduletreeview.moc"
@@ -165,13 +164,14 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
     menu = new ModuleTreeItem(mparent);
   else
     menu = new ModuleTreeItem(this);
-  KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
+
+  KServiceGroup::Ptr group = KServiceGroup::group("Settings/"+path);
   QString defName = path.left(path.length()-1);
   int pos = defName.findRev('/');
   if (pos >= 0)
     defName = defName.mid(pos+1);
-  menu->setPixmap(0, SmallIcon(directory.readEntry("Icon")));
-  menu->setText(0, directory.readEntry("Name", defName));
+  menu->setPixmap(0, SmallIcon(group->icon()));
+  menu->setText(0, group->caption());
   menu->setTag(defName);
 
   _menuDict.insert(path, menu);

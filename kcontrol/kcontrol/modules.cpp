@@ -20,8 +20,8 @@
 #include <qwidget.h>
 
 #include <kapp.h>
-#include <kstddirs.h>
 #include <kglobal.h>
+#include <kservicegroup.h>
 #include <kcmodule.h>
 
 #include "modules.h"
@@ -96,19 +96,34 @@ ConfigModuleList::ConfigModuleList()
 
 const KAboutData *ConfigModule::aboutData() const
 {
-	return _module->aboutData();
+  return _module->aboutData();
 }
 
 void ConfigModuleList::readDesktopEntries()
 {
-  QStringList files;
- 
-  files = KGlobal::dirs()->findAllResources("apps", "Settings/*.desktop", TRUE);
+  readDesktopEntriesRecursive("Settings/");
+}
 
-  QStringList::Iterator it;
-  for (it = files.begin(); it != files.end(); ++it)
-    {
-      ConfigModule *module = new ConfigModule(*it);
-      append(module);
-    }
+void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
+{
+  KServiceGroup::Ptr group = KServiceGroup::group(path);
+  
+  if (!group->isValid()) return;
+ 
+  KServiceGroup::List list = group->entries();
+
+  for( KServiceGroup::List::ConstIterator it = list.begin();
+       it != list.end(); it++)
+  {
+     KSycocaEntry *p = (*it);
+     if (p->isType(KST_KService)) 
+     {
+        ConfigModule *module = new ConfigModule(p->entryPath());
+        append(module);
+     }
+     else if (p->isType(KST_KServiceGroup))
+     {
+        readDesktopEntriesRecursive(p->entryPath());
+     }
+  }
 }

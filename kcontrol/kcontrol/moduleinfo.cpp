@@ -22,58 +22,75 @@
 
 #include <kiconloader.h>
 #include <kdesktopfile.h>
+#include <kservice.h>
 
 #include "moduleinfo.h"
 #include "moduleinfo.moc"
 #include "utils.h"
 
-
 ModuleInfo::ModuleInfo(QString desktopFile)
   : _fileName(desktopFile)
 {
-  KDesktopFile desktop(desktopFile);
+  _allLoaded = false;
+
+  KService::Ptr service = KService::serviceByDesktopPath(desktopFile);
 
   // set the modules simple attributes
-  setName(desktop.readName());
-  setComment(desktop.readComment());
-  setIcon(desktop.readIcon());
+  setName(service->name());
+  setComment(service->comment());
+  setIcon(service->icon());
 
   // library and factory
-  setLibrary(desktop.readEntry("X-KDE-LibraryName"));
-  setHandle(desktop.readEntry("X-KDE-FactoryName", library()));
-
-  // does the module need super user privileges?
-  setNeedsRootPrivileges(desktop.readBoolEntry("X-KDE-NeedsRootPrivileges", false));
-
-  // does the module implement a read-only mode?
-  setHasReadOnlyMode(desktop.readBoolEntry("X-KDE-HasReadOnlyMode", false));
-
-  // get the documentation path
-  setDocPath(desktop.readEntry("DocPath"));
+  setLibrary(service->library());
 
   // get the keyword list
-  QStringList kw = desktop.readListEntry("Keywords");
-  setKeywords(kw);
+  setKeywords(service->keywords());
  
   // try to find out the modules groups
-  QString group = desktop.readEntry("X-KDE-Group");
-  if (group.isEmpty())
-    {	  
-      group = desktopFile; 
-      int pos = group.find("Settings/");
-      if (pos >= 0)
-	group = group.mid(pos+9);
-      pos = group.findRev('/');
-      if (pos >= 0)
-	group = group.left(pos);
-    }
+  QString group = desktopFile; 
+  int pos = group.find("Settings/");
+  if (pos >= 0)
+     group = group.mid(pos+9);
+  pos = group.findRev('/');
+  if (pos >= 0)
+     group = group.left(pos);
+
   QStringList groups;
   splitString(group, '/', groups);
   setGroups(groups);
 }
 
+ModuleInfo::~ModuleInfo()
+{
+  _name = QString::null;
+  _comment = QString::null;
+}
+
+void
+ModuleInfo::loadAll() const
+{
+  ModuleInfo *non_const_this = const_cast<ModuleInfo *>(this);
+  non_const_this->_allLoaded = true;
+
+  KDesktopFile desktop(_fileName);
+
+  // library and factory
+  non_const_this->setHandle(desktop.readEntry("X-KDE-FactoryName"));
+
+  // does the module need super user privileges?
+  non_const_this->setNeedsRootPrivileges(desktop.readBoolEntry("X-KDE-NeedsRootPrivileges", false));
+
+  // does the module implement a read-only mode?
+  non_const_this->setHasReadOnlyMode(desktop.readBoolEntry("X-KDE-HasReadOnlyMode", false));
+
+  // get the documentation path
+  non_const_this->setDocPath(desktop.readEntry("DocPath"));
+}
+
 QCString ModuleInfo::moduleId() const
 {
+  if (!_allLoaded) loadAll();
+
   QString res;
   
   QStringList::ConstIterator it;
@@ -83,3 +100,87 @@ QCString ModuleInfo::moduleId() const
 
   return res.ascii();
 }
+
+const QString 
+ModuleInfo::fileName() const 
+{ 
+   return _fileName; 
+};
+
+const QStringList &
+ModuleInfo::groups() const 
+{ 
+   return _groups; 
+};
+
+const QStringList &
+ModuleInfo::keywords() const 
+{ 
+   return _keywords; 
+};
+
+QString 
+ModuleInfo::name() const 
+{ 
+   return _name; 
+};
+
+QString 
+ModuleInfo::comment() const 
+{ 
+   return _comment; 
+};
+
+QString 
+ModuleInfo::icon() const 
+{ 
+   return _icon; 
+};
+
+QString 
+ModuleInfo::docPath() const 
+{ 
+  if (!_allLoaded) loadAll();
+
+  return _doc; 
+};
+
+QString 
+ModuleInfo::library() const 
+{ 
+  return _lib; 
+};
+
+QString 
+ModuleInfo::handle() const 
+{ 
+  if (!_allLoaded) loadAll();
+
+  if (_handle.isEmpty())
+     return _lib;
+
+  return _handle; 
+};
+
+bool 
+ModuleInfo::isDirectory() const 
+{ 
+   return _directory; 
+};
+
+bool 
+ModuleInfo::needsRootPrivileges() const 
+{ 
+  if (!_allLoaded) loadAll();
+
+  return _needsRootPrivileges; 
+};
+
+bool 
+ModuleInfo::hasReadOnlyMode() const 
+{ 
+  if (!_allLoaded) loadAll();
+
+  return _hasReadOnlyMode; 
+};
+
