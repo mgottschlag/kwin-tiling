@@ -261,7 +261,7 @@ public slots:
     void iconify();
 
     /**
-     * Activate the task's window.
+     * Close the task's window.
      */
     void close();
 
