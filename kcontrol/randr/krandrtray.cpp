@@ -108,15 +108,15 @@ void KRandRSystemTray::configChanged()
 {
 	refresh();
 
-  static bool first = true;
+	static bool first = true;
 
-  if (!first)
-	KRandrPassivePopup::message(
-	    i18n("Screen configuration has changed"),
-	    currentScreen()->changedMessage(), SmallIcon("window_fullscreen"),
-	    this, "ScreenChangeNotification");
+	if (!first)
+		KRandrPassivePopup::message(
+		i18n("Screen configuration has changed"),
+		currentScreen()->changedMessage(), SmallIcon("window_fullscreen"),
+		this, "ScreenChangeNotification");
 
-  first = false;
+	first = false;
 }
 
 void KRandRSystemTray::populateMenu(KPopupMenu* menu)

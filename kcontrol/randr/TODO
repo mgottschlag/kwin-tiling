@@ -1,7 +1,7 @@
 Remaining known issues
 
 General
-	Not tested with Xinerama / multiple screens (but should support them)
+	Not tested with multiple screens (but should support them)
 
 Qt
 	Font sizes on newly started apps after a resolution change are incorrect
@@ -12,4 +12,3 @@ Kwin
 
 RandR programs
 	Support configuring different sized virtual desktops
-	Verify orientation stuff works

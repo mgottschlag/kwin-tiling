@@ -68,6 +68,9 @@ RandRScreen::~RandRScreen()
 
 void RandRScreen::loadSettings()
 {
+	if (d->config)
+		XRRFreeScreenConfigInfo(d->config);
+
 	d->config = XRRGetScreenInfo(qt_xdisplay(), RootWindow(qt_xdisplay(), m_screen));
 	Q_ASSERT(d->config);
 
