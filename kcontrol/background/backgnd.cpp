@@ -110,6 +110,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_Max( KWin::numberOfDesktops() ),
     m_Renderer( m_Max )
 {
+    m_Renderer.setAutoDelete(true);
     KImageIO::registerFormats();
 
     int screen_number = 0;
@@ -358,7 +359,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_Desk = KWin::currentDesktop() - 1;
     m_pGlobals = new KGlobalBackgroundSettings();
     for (int i=0; i<m_Max; i++) {
-	m_Renderer[i] = new KBackgroundRenderer(i);
+	m_Renderer.insert(i, new KBackgroundRenderer(i));
 	connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
     }
 

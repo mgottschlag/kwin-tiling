@@ -77,7 +77,7 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 
 KBackgroundRenderer::~KBackgroundRenderer()
 {
-    delete m_pImage;
+    cleanup();
     delete m_Tempfile;
 }
 
