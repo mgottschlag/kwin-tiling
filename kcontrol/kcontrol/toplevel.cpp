@@ -29,6 +29,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kmenubar.h>
+#include <kstdaccel.h>
 
 #include "toplevel.moc"
 
@@ -83,11 +84,14 @@ TopLevel::TopLevel (ConfigList *cl)
 
 void TopLevel::setupMenuBar()
 {
+    KStdAccel stdAccel;
+
     file = new QPopupMenu();
     options = new QPopupMenu();
 
-    file->insertItem(i18n("E&xit"),
-                     KApplication::kApplication(), SLOT(quit()));
+    file->insertItem(i18n("&Quit"),
+                     KApplication::kApplication(), SLOT(quit()),
+                     stdAccel.quit());
 
     options->setCheckable(TRUE);
     swallowID = options->insertItem(i18n("&Swallow modules"),
