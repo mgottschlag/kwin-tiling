@@ -304,12 +304,13 @@
     <include location="local" impldecl="in implementation">widgetsettings.ui.h</include>
 </includes>
 <slots>
-    <slot>init()</slot>
-    <slot specifier="non virtual">setDirty()</slot>
     <slot>defaults()</slot>
+    <slot>init()</slot>
     <slot>load()</slot>
+    <slot returnType="QString">quickHelp() const</slot>
     <slot>save()</slot>
-    <slot returnType="QString">quickHelp()</slot>
+    <slot specifier="non virtual">setDirty()</slot>
+    <slot returnType="const KAboutData*" specifies="non virtual">aboutData() const</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

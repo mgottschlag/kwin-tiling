@@ -13,6 +13,8 @@
 #include <klocale.h>
 #include <kipc.h>
 #include <kmessagebox.h>
+#include <kaboutdata.h>
+
 #include <dcopclient.h>
 
 void  KWidgetSettingsModule::init()
@@ -159,10 +161,23 @@ void  KWidgetSettingsModule::save()
 
 }
 
-QString  KWidgetSettingsModule::quickHelp()
+const KAboutData* KWidgetSettingsModule::aboutData() const
+{
+	KAboutData *about =
+	new KAboutData(I18N_NOOP("kcmwidgetsetting"), I18N_NOOP("KDE Widgetsettings Module"),  0, 0, KAboutData::License_GPL,
+						I18N_NOOP("(c) 2001 Daniel Molkentin"));
+
+	about->addAuthor("Daniel Molkentin", 0, "molkentin@kde.org");
+
+	return about;
+}
+
+QString  KWidgetSettingsModule::quickHelp() const
 { 
 	return i18n("<h1>Widget Settings</h1>This module allows you to define "
 					"the behaviour for some widgets inside of KDE applications. "
-					"This includes the toolbar general animation effects.");
+					"This includes the toolbar general animation effects.<br>"
+					"Note that some settings like the GUI Effects will also "
+					"apply to Qt only apps.");
 }
 
