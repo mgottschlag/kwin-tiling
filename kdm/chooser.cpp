@@ -14,12 +14,14 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
 #include "DXdmcp.h"
 #include <kapp.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
+#include <stdlib.h>
 
 static const char *description = 
 	I18N_NOOP("Login chooser for Xdmcp");

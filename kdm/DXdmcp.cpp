@@ -23,6 +23,7 @@
 #include <klocale.h>
 #include <qfont.h>
 #include <qmessagebox.h>
+#include <stdlib.h>
 
 HostView::HostView( CXdmcp *cxdmcp, QWidget *parent, const char *name, WFlags)
 		: QListView( parent, name)
