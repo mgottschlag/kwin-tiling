@@ -22,17 +22,18 @@
 
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kaction.h>
 
 #include "treeview.h"
 #include "desktopfileeditor.h"
 #include "menueditview.h"
 #include "menueditview.moc"
 
-MenuEditView::MenuEditView( QWidget *parent, const char *name )
-  : QVBox(parent, name)
+MenuEditView::MenuEditView( KActionCollection* ac, QWidget *parent, const char *name )
+  : QVBox(parent, name), _ac(ac)
 {
     _splitter = new QSplitter(Horizontal, this);
-    _tree = new TreeView(_splitter);
+    _tree = new TreeView(_ac, _splitter);
     _editor = new DesktopFileEditor(_splitter);
 
     connect(_tree, SIGNAL(entrySelected(const QString&)),
@@ -58,34 +59,4 @@ MenuEditView::~MenuEditView()
     config->setGroup("General");
     config->writeEntry("SplitterSizes", _splitter->sizes());
     config->sync();
-}
-
-void MenuEditView::file_newsubmenu()
-{
-    _tree->newsubmenu();
-}
-
-void MenuEditView::file_newitem()
-{
-    _tree->newitem();
-}
-
-void MenuEditView::edit_cut()
-{
-    _tree->cut();
-}
-
-void MenuEditView::edit_copy()
-{
-    _tree->copy();
-}
-
-void MenuEditView::edit_paste()
-{
-    _tree->paste();
-}
-
-void MenuEditView::edit_delete()
-{
-    _tree->del();
 }

@@ -23,6 +23,9 @@
 #include <qstring.h>
 #include <klistview.h>
 
+class QPopupMenu;
+class KActionCollection;
+
 class TreeItem : public QListViewItem
 {
 
@@ -44,18 +47,10 @@ class TreeView : public KListView
     Q_OBJECT;
 
 public:
-    TreeView(QWidget *parent=0, const char *name=0);
+    TreeView(KActionCollection *ac,QWidget *parent=0, const char *name=0);
 
 public slots:
     void currentChanged();
-
-    void newsubmenu();
-    void newitem();
-
-    void cut();
-    void copy();
-    void paste();
-    void del();
 
 signals:
     void entrySelected(const QString&);
@@ -65,6 +60,14 @@ protected slots:
     void slotDropped(QDropEvent *, QListViewItem *);
     void slotRMBPressed(QListViewItem*, const QPoint&);
     
+    void newsubmenu();
+    void newitem();
+
+    void cut();
+    void copy();
+    void paste();
+    void del();
+
 protected:
     void fill();
     void fillBranch(const QString& relPath, TreeItem* parent);
@@ -84,7 +87,9 @@ protected:
     QDragObject *dragObject() const;
 
 private:
-    QString _clipboard;
+    KActionCollection *_ac;
+    QPopupMenu        *_rmb;
+    QString            _clipboard;
 };
 
 #endif

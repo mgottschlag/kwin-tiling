@@ -37,6 +37,7 @@
 #include <kiconloader.h>
 #include <kdesktopfile.h>
 #include <kdebug.h>
+#include <kaction.h>
 
 #include "treeview.h"
 #include "treeview.moc"
@@ -67,8 +68,8 @@ TreeItem::TreeItem(QListView *parent, QListViewItem *after, const QString& file)
     _file = file;
 }
 
-TreeView::TreeView( QWidget *parent, const char *name )
-  : KListView(parent, name)
+TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
+    : KListView(parent, name), _ac(ac)
 {
     setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
     setAllColumnsShowFocus(true);
@@ -77,18 +78,48 @@ TreeView::TreeView( QWidget *parent, const char *name )
     setAcceptDrops(true);
     setDropVisualizer(true);
     setDragEnabled(true);
-    
+
     addColumn("");
     header()->hide();
 
     connect(this, SIGNAL(dropped(QDropEvent*, QListViewItem*)),
 	    SLOT(slotDropped(QDropEvent*, QListViewItem*)));
-    
+
     connect(this, SIGNAL(clicked( QListViewItem* )),
 	    SLOT(itemSelected( QListViewItem* )));
-    
+
     connect(this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
 	    SLOT(slotRMBPressed(QListViewItem*, const QPoint&)));
+    
+    // connect actions
+    connect(_ac->action("newitem"), SIGNAL(activated()), SLOT(newitem())); 
+    connect(_ac->action("newsubmenu"), SIGNAL(activated()), SLOT(newsubmenu()));
+    connect(_ac->action("edit_cut"), SIGNAL(activated()), SLOT(cut()));
+    connect(_ac->action("edit_copy"), SIGNAL(activated()), SLOT(copy()));
+    connect(_ac->action("edit_paste"), SIGNAL(activated()), SLOT(paste()));
+    connect(_ac->action("delete"), SIGNAL(activated()), SLOT(del()));
+    
+    // setup rmb menu
+    _rmb = new QPopupMenu(this);
+    
+    if(_ac->action("edit_cut"))
+	_ac->action("edit_cut")->plug(_rmb);
+    if(_ac->action("edit_copy"))
+	_ac->action("edit_copy")->plug(_rmb);
+    if(_ac->action("edit_paste"))
+	_ac->action("edit_paste")->plug(_rmb);
+    
+    _rmb->insertSeparator();
+    
+    if(_ac->action("delete"))
+	_ac->action("delete")->plug(_rmb);
+    
+    _rmb->insertSeparator();
+
+    if(_ac->action("newitem"))
+	_ac->action("newitem")->plug(_rmb);
+    if(_ac->action("newsubmenu"))
+	_ac->action("newsubmenu")->plug(_rmb);
     
     fill();
 }
@@ -178,7 +209,7 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 void TreeView::itemSelected(QListViewItem *item)
 {
     if(!item) return;
-    
+
     cout << " SELECTED: " << ((TreeItem*)item)->file().local8Bit() << endl;
     emit entrySelected(((TreeItem*)item)->file());
 }
@@ -553,53 +584,19 @@ void TreeView::slotRMBPressed(QListViewItem*, const QPoint& p)
 {
     TreeItem *item = (TreeItem*)selectedItem();
     if(item == 0) return;
-    
-    QPopupMenu mnu(this);
-    
-    // 42 is the answer to everything
-    mnu.insertItem(i18n("C&ut") , 420);
-    mnu.insertItem(i18n("&Copy"), 421);
-    mnu.insertItem(i18n("&Paste"),422);
-    mnu.insertSeparator();
-    mnu.insertItem(i18n("&Delete"), 423);
-    mnu.insertSeparator();
-    mnu.insertItem(i18n("New &Item"), 424);
-    mnu.insertItem(i18n("New &Submenu"), 425);
-    
-    int result = mnu.exec(p);
-    
-    switch (result)
-	{
-	case 420:
-	    cut();
-	    break;
-	case 421:
-	    copy();
-	    break;
-	case 422:
-	    paste();
-	    break;
-	case 423:
-	    del();
-	    break;
-	case 424:
-	    newitem();
-	    break;
-	case 425:
-	    newsubmenu();
-	    break;
-	}
+
+    if(_rmb) _rmb->exec(p);
 }
 
 void TreeView::newsubmenu()
 {
     TreeItem *item = (TreeItem*)selectedItem();
-    
+
     QListViewItem* parent = 0;
     QListViewItem* after = 0;
-    
+
     QString sfile;
-    
+
     if(item){
 	if(item->childCount() > 0) {
 	    parent = item;
@@ -612,16 +609,16 @@ void TreeView::newsubmenu()
 	
 	sfile = item->file();
     }
-    
+
     QString dir = sfile;
-    
+
     if(sfile.find(".directory") > 0)
 	{
 	    // truncate "blah/.directory"
-	    
+	
 	    int pos = dir.findRev('/');
 	    int pos2 = dir.findRev('/', pos-1);
-	    
+	
 	    if (pos2 >= 0)
 		pos = pos2;
 	
@@ -632,22 +629,22 @@ void TreeView::newsubmenu()
 	{
 	    // truncate "blah.desktop"
 	    int pos = dir.findRev('/');
-	    
+	
 	    if (pos > 0)
 		dir.truncate(pos);
 	}
     dir += "/NewSubmenu/.directory";
-	    
+	
     TreeItem* newitem;
 	
-    if (!parent) 
+    if (!parent)
 	newitem = new TreeItem(this, after, dir);
     else
 	newitem = new TreeItem(parent, after, dir);
-    
+
     newitem->setText(0, "New Submenu");
     newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("package", KIcon::Desktop, KIcon::SizeSmall));
-    
+
     KSimpleConfig c(locateLocal("apps", dir));
     c.setDesktopGroup();
     c.writeEntry("Name", "New Submenu");
@@ -658,12 +655,12 @@ void TreeView::newsubmenu()
 void TreeView::newitem()
 {
     TreeItem *item = (TreeItem*)selectedItem();
-    
+
     QListViewItem* parent = 0;
     QListViewItem* after = 0;
-    
+
     QString sfile;
-    
+
     if(item){
 	if(item->childCount() > 0) {
 	    parent = item;
@@ -676,28 +673,28 @@ void TreeView::newitem()
 	
 	sfile = item->file();
     }
-    
+
     QString dir = sfile;
-    
+
     // truncate ".directory" or "blah.desktop"
-    
+
     int pos = dir.findRev('/');
-    
+
     if (pos > 0)
 	dir.truncate(pos);
 
     dir += "/NewFile.desktop";
-	    
+	
     TreeItem* newitem;
 	
-    if (!parent) 
+    if (!parent)
 	newitem = new TreeItem(this, after, dir);
     else
 	newitem = new TreeItem(parent, after, dir);
-    
+
     newitem->setText(0, "New File");
     newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("unkown", KIcon::Desktop, KIcon::SizeSmall));
-    
+
     KSimpleConfig c(locateLocal("apps", dir));
     c.setDesktopGroup();
     c.writeEntry("Name", "New File");

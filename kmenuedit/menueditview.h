@@ -25,29 +25,21 @@
 class TreeView;
 class DesktopFileEditor;
 class QSplitter;
+class KActionCollection;
 
 class MenuEditView : public QVBox
 {
     Q_OBJECT;
 
 public:
-    MenuEditView( QWidget *parent=0, const char *name=0 );
+    MenuEditView( KActionCollection*, QWidget *parent=0, const char *name=0 );
     ~MenuEditView();
-
-public slots:
-    void file_newsubmenu();
-    void file_newitem();
-
-    void edit_cut();
-    void edit_copy();
-    void edit_paste();
-
-    void edit_delete();
 
 signals:
     void pathChanged(const QString&);
 
 protected:
+    KActionCollection  *_ac;
     TreeView           *_tree;
     DesktopFileEditor  *_editor;
     QSplitter          *_splitter;
