@@ -46,7 +46,6 @@ kdmlib_source = access.c \
 
 kdm_SOURCES = kdmconfig.cpp \
 	kdmshutdown.cpp \
-	kdmview.cpp \
 	kfdialog.cpp \
 	kdmclock.cpp \
 	kgreeter.cpp \
@@ -57,20 +56,18 @@ chooser_SOURCES = \
         chooser.cpp \
 	CXdmcp.cpp \
 	DXdmcp.cpp \
-	kdmview.cpp \
 	kfdialog.cpp
 
 chooser_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 chooser_LDADD  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) $(LIB_LIBS) \
 	$(LIBSOCKET) $(LIBCRYPT) $(LIBUCB) $(LIBUTIL)  -lXt
 
-noinst_HEADERS = kdmconfig.h kdmview.h kdm-config.h kdmshutdown.h kfdialog.h dm.h kdmclock.h kgreeter.h greet.h liloinfo.h
+noinst_HEADERS = kdmconfig.h kdm-config.h kdmshutdown.h kfdialog.h dm.h kdmclock.h kgreeter.h greet.h liloinfo.h
 
-METASOURCES = kfdialog.moc kdmview.moc kdmshutdown.moc kdmclock.moc kgreeter.moc liloinfo.moc CXdmcp.moc DXdmcp.moc
+METASOURCES = kfdialog.moc kdmshutdown.moc kdmclock.moc kgreeter.moc liloinfo.moc CXdmcp.moc DXdmcp.moc
 
 messages:
 	$(XGETTEXT) $(kdm_SOURCES) $(kdmdesktop_SOURCES) -o $(podir)/kdm.pot
 
 EXTRA_DIST = Chooser.ad  chooser.cpp kdm-0.5.lsm kdm_on_RH5.0.html kdmusers.h \
 	krb5auth.c sessreg.c sessreg.man xdm.man xdmconfig xdmshell.c
-

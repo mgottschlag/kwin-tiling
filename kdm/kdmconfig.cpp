@@ -25,7 +25,6 @@
  
 
 #include "kdmconfig.h"
-#include "kdmview.h"
 #include <qpixmap.h>
 #include <kapp.h>
 #include <pwd.h>
@@ -39,15 +38,20 @@ KDMConfig::KDMConfig( )
      getConfig();
 }
 
-KVItemList*
-KDMConfig::getUsers( QStringList s, bool sorted)
+void
+KDMConfig::insertUsers( QIconView *iconview, QStringList s, bool sorted)
 {
-     KVItemList* result = new KVItemList;
-     QPixmap default_pix( locate("user_pic", QString::fromLatin1("default.png")));
+     QPixmap default_pix( locate("user_pic", 
+				 QString::fromLatin1("default.png")));
      if( default_pix.isNull())
-       printf("Cant get default pixmap from \"default.png\"\n");
-     if( s.isEmpty()) {  // isEmpty()?  Th.
-          QStringList no_users = kc->readListEntry( QString::fromLatin1("NoUsers"), ';');
+	  printf("Cant get default pixmap from \"default.png\"\n");
+     if( s.isEmpty()) {
+          QStringList no_users = kc->readListEntry( QString::fromLatin1("NoUsers"));
+	  for ( QStringList::Iterator it = no_users.begin(); 
+		it != no_users.end();
+		++it ) {
+	    printf("No_users: %s \n", (*it).latin1());
+	  }
           struct passwd *ps;
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
           setpwent();
@@ -56,21 +60,19 @@ KDMConfig::getUsers( QStringList s, bool sorted)
 	       QString username = QFile::decodeName ( ps->pw_name );
                if( CHECK_STRING(ps->pw_dir) &&
                    CHECK_STRING(ps->pw_shell) &&
-                   //CHECK_STRING(ps->pw_gecos) && // many users didn't want this check (tanghus)
-                   ( no_users.contains( username ) == 0)){
-                    // we might have a real user, insert him/her
-                    QPixmap p( locate("user_pic",
+                   ( no_users.find( username ) == no_users.end())){
+		    // we might have a real user, insert him/her
+		    QPixmap p( locate("user_pic",
 				      username + QString::fromLatin1(".png")));
-                    if( p.isNull())
-                         p = default_pix;
-                    if( sorted)
-                         result->inSort( new KDMViewItem( username, p));
-                    else
-                         result->append( new KDMViewItem( username, p));
-               }
-               ps = getpwent();
-          }
-          endpwent();
+		    if( p.isNull())
+			 p = default_pix;
+		    QIconViewItem *item = new QIconViewItem( iconview, 
+							     username, p);
+		    item->setDragEnabled(false);
+	       }
+	       ps = getpwent();
+	  }
+	  endpwent();
 #undef CHECK_STRING
      } else {
           QStringList::ConstIterator it = s.begin();
@@ -79,13 +81,12 @@ KDMConfig::getUsers( QStringList s, bool sorted)
 				 *it + QString::fromLatin1(".png")));
                if( p.isNull())
                     p = default_pix;
-               if( sorted)
-                    result->inSort( new KDMViewItem( *it,p));
-               else
-                    result->append( new KDMViewItem( *it,p));
+	       QIconViewItem *item = new QIconViewItem( iconview, 
+							*it, p);
+	       item->setDragEnabled(false);
           }
      }
-     return result;
+     if( sorted) iconview->sort();
 }
 
 void KDMConfig::getConfig()
@@ -99,7 +100,7 @@ void KDMConfig::getConfig()
     QString greet_font  = kc->readEntry( QString::fromLatin1("GreetFont") );
     
     QString greet_string = kc->readEntry( QString::fromLatin1("GreetString"));
-    _sessionTypes = kc->readListEntry( QString::fromLatin1("SessionTypes"), ';');
+    _sessionTypes = kc->readListEntry( QString::fromLatin1("SessionTypes"));
     QString logo_string = kc->readEntry( QString::fromLatin1("LogoPixmap") );
     if( kc->hasKey( QString::fromLatin1("ShutdownButton") ) ) {
 	QString tmp = kc->readEntry( QString::fromLatin1("ShutdownButton") );
@@ -144,20 +145,17 @@ void KDMConfig::getConfig()
           _logo = logo_string;
 
      // Table of users
-     bool sorted = kc->readNumEntry( QString::fromLatin1("SortUsers"), 1);
+     _sorted = kc->readNumEntry( QString::fromLatin1("SortUsers"), 1);
      if( kc->hasKey( QString::fromLatin1("UserView") ) && 
 	 kc->readNumEntry( QString::fromLatin1("UserView"))) {
           if( kc->hasKey( QString::fromLatin1("Users") ) ) {
-               QStringList users = 
-		 kc->readListEntry( QString::fromLatin1("Users"), ';');
-               /* make list of users from kdmrc */
-               _users = getUsers( users, sorted);
-          } else  {
-               _users = getUsers( QStringList(), sorted);
+               _users = 
+		    kc->readListEntry( QString::fromLatin1("Users"));
           }
+	  _show_users = true;
      } else {
           /* no user view */
-          _users = NULL;
+          _show_users = false;
      }
 
      // Defaults for session types

@@ -3,8 +3,8 @@
     Configuration for kdm. Class KDMConfig
     $Id$
 
-    Copyright (C) 1997, 1998 Steffen Hansen
-                             stefh@mip.ou.dk
+    Copyright (C) 1997, 1998, 2000 Steffen Hansen
+                                   hansen@kde.org
 
 
     This program is free software; you can redistribute it and/or modify
@@ -40,9 +40,10 @@
 #include <qfont.h>
 #include <qcolor.h>
 #include <qfile.h>
+#include <qiconview.h>
+
 #include <kconfig.h>
 
-#include "kdmview.h"
 #include <qnamespace.h>
 
 class KDMConfig {
@@ -59,7 +60,11 @@ public:
      QString         shutdown()        { return _shutdown;}
      QString         restart()         { return _restart;}
      QString         logo()            { return _logo;}
-     KVItemList*     users()           { return _users;}
+     bool            users()           { return _show_users;}
+     void           insertUsers( QIconView*, QStringList, bool);
+     void           insertUsers( QIconView *i) {
+	               insertUsers(i, _users, _sorted);
+                    }
      // GUIStyle        style()           { return _style;}
 	// None is defined as a macro somewhere in an X header. GRRRR.
      enum { KNone, All, RootOnly, ConsoleOnly };
@@ -73,7 +78,6 @@ public:
 
 private:
      void           getConfig();
-     KVItemList*    getUsers( QStringList s = QStringList(), bool = false);
      KConfig*       kc;
 
      QFont*         _normalFont;
@@ -85,7 +89,9 @@ private:
      QString        _shutdown;
      QString        _restart;
      QString        _logo;
-     KVItemList*    _users;
+     QStringList    _users;
+     bool           _show_users;
+     bool           _sorted;
      // GUIStyle       _style;
      
      QString        _liloCmd;

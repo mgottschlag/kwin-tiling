@@ -65,7 +65,7 @@ protected:
      void focusOutEvent( QFocusEvent *e);
 };
 
-class KGreeter : public QWidget {
+class KGreeter : public QFrame {
      Q_OBJECT
 public:
      KGreeter(QWidget *parent, const char *t);
@@ -77,7 +77,7 @@ public slots:
 		 void quit_button_clicked();
      void shutdown_button_clicked();
      void timerDone();
-     void slot_user_name( int i);
+     void slot_user_name( QIconViewItem*);
      bool restrict();
      bool restrict_nologin();
      bool restrict_expired();
@@ -89,7 +89,7 @@ protected:
      void timerEvent( QTimerEvent * ) {};
 private:
      QTimer*        timer;
-     KDMView*       user_view;
+     QIconView*     user_view;
      KdmClock*      clock;
      QLabel*        pixLabel;
      QLabel*        loginLabel;

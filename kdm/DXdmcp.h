@@ -22,7 +22,6 @@
 #include <qlineedit.h>
 
 #include "kfdialog.h"
-#include "kdmview.h"
 #include "CXdmcp.h"
 
 class HostView : public QListView {

@@ -7,8 +7,8 @@ BackGroundColor2=0,255,255
 BackGroundColorMode=Vertical
 [KDM]
 SortUsers=true
-#Users=root;johndoe
-NoUsers=bin;bind;daemon;falken;games;halt;httpd;ingres;kmem;mail;man;mta;news;nobody;operator;pop;reboot;shutdown;sync;tty;uucp;xten
+#Users=root,johndoe
+NoUsers=bin,bind,daemon,falken,games,halt,httpd,ingres,kmem,mail,man,mta,news,nobody,operator,pop,reboot,shutdown,sync,tty,uucp,xten
 GreetString=K Desktop Environment [HOSTNAME]
 UserView=true
 #ShutdownButton=RootOnly
@@ -16,6 +16,6 @@ ShutdownButton=ConsoleOnly
 FailFont=helvetica,12,5,iso-8859-1,75,0
 GreetFont=charter,24,5,iso-8859-1,50,0
 StdFont=Helvetica,12,5,iso-8859-1,50,0
-SessionTypes=kde;fvwm;failsafe;
+SessionTypes=kde,fvwm,failsafe
 #GUIStyle=Windows
 

@@ -153,26 +153,11 @@ static inline int my_setegid( gid_t egid)
 #endif // HAVE_SETEUID    
 }
 
-static void
-set_min( QWidget* w)
-{
-     w->adjustSize();
-     w->setMinimumSize( w->size());
-}
-
-static void
-set_fixed( QWidget* w)
-{
-     w->adjustSize();
-     w->setFixedSize( w->size());
-}
-
 KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0) 
-  : QWidget( parent, t, WStyle_Customize | WStyle_NoBorder | WStyle_Tool)
+  : QFrame( parent, t, WStyle_Customize | WStyle_NoBorder | WStyle_Tool)
 {
-     QFrame* winFrame = new QFrame( this);
-     winFrame->setFrameStyle(QFrame::WinPanel| QFrame::Raised);
-     QBoxLayout* vbox = new QBoxLayout(  winFrame, 
+     setFrameStyle(QFrame::WinPanel| QFrame::Raised);
+     QBoxLayout* vbox = new QBoxLayout(  this, 
 					 QBoxLayout::TopToBottom, 
 					 10, 10);
      QBoxLayout* hbox1 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
@@ -180,15 +165,19 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
      QGridLayout* grid = new QGridLayout( 4, 2, 5);
 
-     QLabel* welcomeLabel = new QLabel( kdmcfg->greetString(), winFrame);
+     QLabel* welcomeLabel = new QLabel( kdmcfg->greetString(), this);
      welcomeLabel->setAlignment(AlignCenter);
      welcomeLabel->setFont( *kdmcfg->greetFont());
-     set_min( welcomeLabel);
      vbox->addWidget( welcomeLabel);
      if( kdmcfg->users()) {
-	  user_view = new KDMView( winFrame);
-	  user_view->insertItemList( kdmcfg->users());
-	  vbox->addWidget( user_view, 3);
+	  user_view = new QIconView( this);
+	  user_view->setSelectionMode( QIconView::Single );
+	  user_view->setArrangement( QIconView::LeftToRight);
+	  user_view->setAutoArrange(true);
+	  user_view->setItemsMovable(false);
+	  user_view->setResizeMode(QIconView::Adjust);
+	  kdmcfg->insertUsers( user_view);	  
+	  vbox->addWidget( user_view);
      } else {
 	  user_view = NULL;
      }
@@ -198,45 +187,35 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
      if( 1 )
      {
-         clock = new KdmClock( winFrame, "clock" );
+         clock = new KdmClock( this, "clock" );
      }
      else
      {
-         pixLabel = new QLabel( winFrame);
-	 pixLabel->setFrameStyle( QFrame::Panel| QFrame::Sunken);
-	 pixLabel->setAutoResize( true);
-	 pixLabel->setIndent(0);
-
-	 QPixmap pixmap;
-	 if( QFile::exists( kdmcfg->logo() ) )
-	     pixmap.load( kdmcfg->logo() );
-	 else
-	     pixmap.resize( 100,100);
-         pixLabel->setPixmap( pixmap);
-         pixLabel->setFixedSize( pixLabel->width(), pixLabel->height());
+     pixLabel = new QLabel( this);
+     pixLabel->setFrameStyle( QFrame::Panel| QFrame::Sunken);
+     pixLabel->setAutoResize( true);
+     pixLabel->setIndent(0);
+     QPixmap pixmap;
+     if( QFile::exists( kdmcfg->logo() ) )
+	  pixmap.load( kdmcfg->logo() );
+     else
+	  pixmap.resize( 100,100);
+     pixLabel->setPixmap( pixmap);
      }
-
-     loginLabel = new QLabel( i18n("Login:"), winFrame);
-     set_min( loginLabel);
-     loginEdit = new KLoginLineEdit( winFrame);
+     loginLabel = new QLabel( i18n("Login:"), this);
+     loginEdit = new KLoginLineEdit( this);
 
      // The line-edit look _very_ bad if you don't give them 
      // a resonal height that observes a proportional aspect.
      // -- Bernd
-     int leheight;
-     //leheight = QMAX( 30,loginEdit->sizeHint().height());
-     leheight = loginEdit->sizeHint().height();
-     loginEdit->setFixedHeight( leheight);
+     
+     // I still think a line-edit show decide it's own height
+     // -- Steffen
+
      loginEdit->setFocus();
 
-     passwdLabel = new QLabel( i18n("Password:"), winFrame);
-     set_min( passwdLabel);
-     passwdEdit = new QLineEdit( winFrame);
-
-     int pweheight;
-     //pweheight = QMAX( 30,passwdEdit->sizeHint().height());
-     pweheight = passwdEdit->sizeHint().height();
-     passwdEdit->setFixedHeight( pweheight);
+     passwdLabel = new QLabel( i18n("Password:"), this);
+     passwdEdit = new QLineEdit( this);
 
      passwdEdit->setEchoMode( QLineEdit::NoEcho);
      vbox->addLayout( hbox1);
@@ -244,68 +223,66 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      hbox1->addWidget( pixLabel ? pixLabel : clock, 0, AlignTop);
      hbox1->addLayout( grid, 3);
      
-     QFrame* sepFrame = new QFrame( winFrame);
+     QFrame* sepFrame = new QFrame( this);
      sepFrame->setFrameStyle( QFrame::HLine| QFrame::Sunken);
      sepFrame->setFixedHeight( sepFrame->sizeHint().height());
+
+     failedLabel = new QLabel( this);
+     failedLabel->setFont( *kdmcfg->failFont());
 
      grid->addWidget( loginLabel , 0, 0);
      grid->addWidget( loginEdit  , 0, 1);
      grid->addWidget( passwdLabel, 1, 0);
      grid->addWidget( passwdEdit , 1, 1);
+     grid->addMultiCellWidget( failedLabel, 2, 2, 0, 1, AlignCenter);
      grid->addMultiCellWidget( sepFrame, 3, 3, 0, 1);
      grid->setColStretch( 1, 4);
 
-     failedLabel = new QLabel( i18n("Login failed!"), winFrame);
-     failedLabel->setFont( *kdmcfg->failFont());
-     set_min( failedLabel);
-     hbox2->addWidget( failedLabel);
-
      QLabel* sessionargLabel = new QLabel(i18n("Session Type:"),
-					  winFrame);
-     set_min( sessionargLabel);
+					  this);
      sessionargLabel->setAlignment( AlignRight|AlignVCenter);
      hbox2->addWidget( sessionargLabel);
-     sessionargBox = new QComboBox( false, winFrame);
+     sessionargBox = new QComboBox( false, this);
 
      sessionargBox->insertStringList( kdmcfg->sessionTypes() );
-     set_fixed( sessionargBox);
+     //set_fixed( sessionargBox);
      hbox2->addWidget( sessionargBox);
      
-     goButton = new QPushButton( i18n("Go!"), winFrame);
+     goButton = new QPushButton( i18n("Go!"), this);
      connect( goButton, SIGNAL( clicked()), SLOT(go_button_clicked()));
 
-     set_fixed( goButton);
+     //set_fixed( goButton);
      hbox2->addWidget( goButton, AlignBottom);
 
 #if 0
-     chooserButton = new QPushButton( i18n("Chooser"), winFrame);
+     chooserButton = new QPushButton( i18n("Chooser"), this);
      connect( chooserButton, SIGNAL(clicked()), SLOT(cancel_button_clicked()));
-     set_fixed( chooserButton);
+     //set_fixed( chooserButton);
      hbox2->addWidget( chooserButton, AlignBottom);
 #endif
      
-     cancelButton = new QPushButton( i18n("Cancel"), winFrame);
+     cancelButton = new QPushButton( i18n("Cancel"), this);
      connect( cancelButton, SIGNAL(clicked()), SLOT(cancel_button_clicked()));
-     set_fixed( cancelButton);
+     //set_fixed( cancelButton);
      hbox2->addWidget( cancelButton, AlignBottom);
 
      int sbw;
 #ifndef TEST_KDM
      if( kdmcfg->shutdownButton() != KDMConfig::KNone 
 	 && ( kdmcfg->shutdownButton() != KDMConfig::ConsoleOnly 
-	 || d->displayType.location == Local)) {
+	 || ::d->displayType.location == Local)) {
 	  
-	  shutdownButton = new QPushButton(i18n("Shutdown..."), winFrame);
+	  shutdownButton = new QPushButton(i18n("Shutdown..."), this);
 
 	  connect( shutdownButton, SIGNAL(clicked()), 
 		   SLOT(shutdown_button_clicked()));
-	  set_fixed( shutdownButton);
+	  //set_fixed( shutdownButton);
 	  hbox2->addWidget( shutdownButton, AlignBottom);
 	  sbw = shutdownButton->width();
      } else {
-	quitButton = new QPushButton( i18n("Quit"), winFrame);
+	quitButton = new QPushButton( i18n("Quit"), this);
 	connect( quitButton, SIGNAL(clicked()), SLOT(quit_button_clicked()));
-	set_fixed( quitButton);
+	//set_fixed( quitButton);
 	hbox2->addWidget( quitButton, AlignBottom);
 	sbw = 0;
      }
@@ -313,7 +290,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      sbw = 0;
 #endif
 
-     vbox->activate();
+     //vbox->activate();
      timer = new QTimer( this );
      //// Signals/Slots
      // Timer for failed login
@@ -322,29 +299,28 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      // Signal to update session type
      connect( loginEdit, SIGNAL(lost_focus()),
 	      this, SLOT( load_wm()));
-     if( user_view)
-	  connect( user_view, SIGNAL(selected(int)), 
-		   this, SLOT(slot_user_name( int)));
-     winFrame->adjustSize();
-     adjustSize();
-     // Center on screen:
-     move( QApplication::desktop()->width()/2  - width()/2,
-	   QApplication::desktop()->height()/2 - height()/2 );  
-     failedLabel->hide();
+     if( user_view) {
+	  connect( user_view, SIGNAL(returnPressed(QIconViewItem*)), 
+		   this, SLOT(slot_user_name( QIconViewItem*)));
+	  connect( user_view, SIGNAL(clicked(QIconViewItem*)), 
+		   this, SLOT(slot_user_name( QIconViewItem*)));
+     }
 }
 
 void 
-KGreeter::slot_user_name( int i)
+KGreeter::slot_user_name( QIconViewItem *item)
 {
-     loginEdit->setText( kdmcfg->users()->at( i)->text());
-     passwdEdit->setFocus();
-     load_wm();
+     if( item != 0) {
+	  loginEdit->setText( item->text());
+	  passwdEdit->setFocus();
+	  load_wm();
+     }
 }
 
 void 
 KGreeter::SetTimer()
 {
-     if (!failedLabel->isVisible())
+     if (failedLabel->text().isNull())
 	  timer->start( 40000, TRUE );
 }
 
@@ -352,7 +328,7 @@ void
 KGreeter::timerDone()
 {
      if (failedLabel->isVisible()){
-	  failedLabel->hide();
+	  failedLabel->setText(QString::null);
 	  goButton->setEnabled( true);
 	  loginEdit->setEnabled( true);
           passwdEdit->setEnabled( true);
@@ -372,7 +348,7 @@ void
 KGreeter::quit_button_clicked()
 {
    QApplication::flushX();
-   exit(UNMANAGE_DISPLAY);
+   SessionExit(::d, UNMANAGE_DISPLAY, FALSE);
 }
 
 #if 0
@@ -386,7 +362,7 @@ KGreeter::chooser_button_clicked()
 	}
 	hide();
   QApplication::flushX();
-  exit(UNMANAGE_DISPLAY);
+  SessionExit(::d, UNMANAGE_DISPLAY, FALSE);
 }
 #endif
 void
@@ -738,8 +714,8 @@ KGreeter::go_button_clicked()
      greet->name = qstrdup( QFile::encodeName(loginEdit->text()).data() );
      greet->password = qstrdup( QFile::encodeName(passwdEdit->text()).data() );
      
-     if (!Verify (d, greet, verify)){
-	  failedLabel->show();
+     if (!Verify (::d, greet, verify)){
+	  failedLabel->setText(i18n("Login failed!"));
 	  goButton->setEnabled( false);
 	  loginEdit->setEnabled( false);
           passwdEdit->setEnabled( false);
@@ -763,7 +739,7 @@ KGreeter::go_button_clicked()
      //qApp->desktop()->setCursor( waitCursor);
      qApp->setOverrideCursor( waitCursor);
      hide();
-     DeleteXloginResources( d, *dpy);
+     DeleteXloginResources( ::d, *dpy);
      qApp->exit();
 }
 
@@ -788,18 +764,29 @@ DoIt()
 {
      // First initialize display:
      SetupDisplay( d);
-
-     kgreeter = new KGreeter;		   
-     kgreeter->show();
-     QApplication::restoreOverrideCursor();
+     // Hack! Kdm looses keyboard focus unless
+     // the keyboard is ungrabbed during setup
      XUngrabKeyboard(qt_xdisplay(), CurrentTime);
+     kgreeter = new KGreeter;		   
+     // More hack. QIconView wont calculate
+     // a correct sizeHint before show()
+     kgreeter->move(-1000,-1000);
+     kgreeter->show();
+     kgreeter->updateGeometry();
+     qApp->processEvents(0);
+     kgreeter->resize(kgreeter->sizeHint());     
+     // Center on screen:
+     kgreeter->move( QApplication::desktop()->width()/2  - kgreeter->width()/2,
+		     QApplication::desktop()->height()/2 - kgreeter->height()/2 );  
+     QApplication::restoreOverrideCursor();
      kgreeter->setActiveWindow();
+     // Secure the keyboard again
      if (XGrabKeyboard (qt_xdisplay(), DefaultRootWindow (qt_xdisplay()), 
 			True, GrabModeAsync, GrabModeAsync, CurrentTime) 
 	 != GrabSuccess) {
 	  LogError ("WARNING: keyboard on display %s could not be secured\n",
-		    d->name);
-	  SessionExit (d, RESERVER_DISPLAY, FALSE);	 
+		    ::d->name);
+	  SessionExit (::d, RESERVER_DISPLAY, FALSE);	 
      }
      qApp->exec();
      // Give focus to root window:
@@ -870,7 +857,7 @@ GreetUser(
      /* KApplication trashes xdm's signal handlers :-( */
      sigaction(SIGCHLD, NULL, &sig);
  
-     argv[2] = d->name;
+     argv[2] = ::d->name;
      KCmdLineArgs::init(argc, (char **) argv, "kdm", description, version);
 
      MyApp myapp;
@@ -898,15 +885,15 @@ GreetUser(
      /*
       * Run system-wide initialization file
       */
-     if (source (verify->systemEnviron, d->startup) != 0)
+     if (source (verify->systemEnviron, ::d->startup) != 0)
      {
           QString buf = i18n("Startup program %1 exited with non-zero status."
 			     "\nPlease contact your system administrator.\n"
 			     "Please press OK to retry.")
-	       .arg(QFile::decodeName(d->startup));
+	       .arg(QFile::decodeName(::d->startup));
 	  qApp->restoreOverrideCursor();
 	  KMessageBox::error(0, buf, i18n("Login aborted"));
-	  SessionExit (d, OBEYSESS_DISPLAY, FALSE);
+	  SessionExit (::d, OBEYSESS_DISPLAY, FALSE);
      }
 
      // Clean up and log user in:
