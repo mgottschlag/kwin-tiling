@@ -104,7 +104,7 @@ KBackground::KBackground(QWidget *parent, Mode m)
     vbox->setSpacing(10);
     vbox->addSpacing(10);
     m_pDeskList = new QListBox(group);
-    connect(m_pDeskList, SIGNAL(clicked(int)), SLOT(slotSelectDesk(int)));
+    connect(m_pDeskList, SIGNAL(highlighted(int)), SLOT(slotSelectDesk(int)));
     vbox->addWidget(m_pDeskList);
     m_pCBCommon = new QCheckBox(i18n("&Common Background"), group);
     vbox->addWidget(m_pCBCommon);
@@ -432,7 +432,7 @@ void KBackground::slotBGSetup()
 	KPatternSelectDialog dlg;
 	QString cur = r->KBackgroundPattern::name();
 	dlg.setCurrent(cur);
-	if ((dlg.exec() == QDialog::Accepted) && (dlg.pattern() != cur)) {
+	if (dlg.exec() == QDialog::Accepted) {
 	    r->stop();
 	    r->setPattern(dlg.pattern());
 	    r->start();
@@ -444,7 +444,7 @@ void KBackground::slotBGSetup()
 	KProgramSelectDialog dlg;
 	QString cur = r->KBackgroundProgram::name();
 	dlg.setCurrent(cur);
-	if ((dlg.exec() == QDialog::Accepted) && (dlg.program() != cur)) {
+	if (dlg.exec() == QDialog::Accepted) {
 	    r->stop();
 	    r->setProgram(dlg.program());
 	    r->start();
