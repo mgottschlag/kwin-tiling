@@ -463,6 +463,6 @@ void TopLevel::reportBug()
 void TopLevel::aboutModule()
 {
     KAboutApplication dlg(_active->aboutData());
-    dlg.show();
+    dlg.exec();
 }
 
