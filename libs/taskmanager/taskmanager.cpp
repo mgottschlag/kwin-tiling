@@ -475,37 +475,37 @@ void Task::setActive(bool a)
 
 bool Task::isMaximized() const
 {
-    return(_info.state() & NET::Max);
+    return _info.valid() && (_info.state() & NET::Max);
 }
 
 bool Task::isMinimized() const
 {
-    return _info.isMinimized();
+    return _info.valid() && _info.isMinimized();
 }
 
 bool Task::isIconified() const
 {
-    return _info.isMinimized();
+    return _info.valid() && _info.isMinimized();
 }
 
 bool Task::isAlwaysOnTop() const
 {
-    return (_info.state() & NET::StaysOnTop);
+    return _info.valid() && (_info.state() & NET::StaysOnTop);
 }
 
 bool Task::isShaded() const
 {
-    return (_info.state() & NET::Shaded);
+    return _info.valid() && (_info.state() & NET::Shaded);
 }
 
 bool Task::isOnCurrentDesktop() const
 {
-    return (_info.isOnCurrentDesktop());
+    return _info.valid() && (_info.isOnCurrentDesktop());
 }
 
 bool Task::isOnAllDesktops() const
 {
-    return _info.onAllDesktops();
+    return _info.valid() && _info.onAllDesktops();
 }
 
 bool Task::isActive() const
@@ -520,7 +520,9 @@ bool Task::isOnTop() const
 
 bool Task::isModified() const
 {
-  static QString modStr = QString::fromUtf8("[") + i18n("modified") + QString::fromUtf8("]");
+  static QString modStr = QString::fromUtf8("[") +
+                          i18n("modified") +
+                          QString::fromUtf8("]");
   int modStrPos = _info.visibleName().find(modStr);
 
   return ( modStrPos != -1 );
@@ -528,8 +530,8 @@ bool Task::isModified() const
 
 bool Task::demandsAttention() const
 {
-    return (_info.state() & NET::DemandsAttention)
-        || _transients_demanding_attention.count() > 0;
+    return (_info.valid() && (_info.state() & NET::DemandsAttention)) ||
+           _transients_demanding_attention.count() > 0;
 }
 
 bool Task::isOnScreen( int screen ) const
@@ -553,12 +555,12 @@ void Task::updateDemandsAttentionState( WId w )
 
 void Task::addTransient( WId w, const NETWinInfo& info )
 {
-    _transients.append( w );
-    if( info.state() & NET::DemandsAttention )
-        {
-        _transients_demanding_attention.append( w );
+    _transients.append(w);
+    if (_info.valid() && info.state() & NET::DemandsAttention)
+    {
+        _transients_demanding_attention.append(w);
         emit changed();
-        }
+    }
 }
 
 void Task::removeTransient( WId w )
@@ -839,13 +841,18 @@ void Task::activateRaiseOrIconify()
 void Task::toDesktop(int desk)
 {
     NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMDesktop);
-    if (desk == 0) {
-        if (_info.onAllDesktops()) {
+    if (desk == 0)
+    {
+        if (_info.valid() && _info.onAllDesktops())
+        {
             ni.setDesktop(TaskManager::the()->winModule()->currentDesktop());
             KWin::forceActiveWindow(_win);
         }
         else
+        {
             ni.setDesktop(NETWinInfo::OnAllDesktops);
+        }
+
         return;
     }
     ni.setDesktop(desk);
@@ -899,26 +906,29 @@ void Task::publishIconGeometry(QRect rect)
 
 void Task::updateThumbnail()
 {
-  if ( !isOnCurrentDesktop() )
-    return;
-  if ( !isActive() )
-    return;
-  if ( !_grab.isNull() ) // We're already processing one...
-    return;
+    if ( !_info.valid() ||
+            !isOnCurrentDesktop() ||
+            !isActive() ||
+            !_grab.isNull() ) // We're already processing one...
+    {
+        return;
+    }
 
-   //
-   // We do this as a two stage process to remove the delay caused
-   // by the thumbnail generation. This makes things much smoother
-   // on slower machines.
-   //
-   QWidget *rootWin = qApp->desktop();
-   QRect geom = _info.geometry();
-   _grab = QPixmap::grabWindow( rootWin->winId(),
+    //
+    // We do this as a two stage process to remove the delay caused
+    // by the thumbnail generation. This makes things much smoother
+    // on slower machines.
+    //
+    QWidget *rootWin = qApp->desktop();
+    QRect geom = _info.geometry();
+    _grab = QPixmap::grabWindow(rootWin->winId(),
                                 geom.x(), geom.y(),
-                                geom.width(), geom.height() );
+                                geom.width(), geom.height());
 
-   if ( !_grab.isNull() )
-     QTimer::singleShot( 200, this, SLOT( generateThumbnail() ) );
+    if (!_grab.isNull())
+    {
+       QTimer::singleShot(200, this, SLOT(generateThumbnail()));
+    }
 }
 
 void Task::generateThumbnail()
