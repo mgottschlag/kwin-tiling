@@ -33,8 +33,7 @@
 #include <qlistbox.h>
 #include <qinputdialog.h>
 
-#include <errno.h>
-
+//#include <errno.h>
 
 #include <qtextstream.h>
 #include <qslider.h>
@@ -53,7 +52,7 @@
 SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
 :SchemaDialog(parent, name)
 {
-
+    schMod= false;
     loaded = false;
     oldSlot = 0;
     oldSchema = -1;
@@ -62,6 +61,11 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     bold.resize(20);
     transparent.resize(20);
     defaultSchema = "";
+    spix = new KSharedPixmap;
+
+    filename.setAutoDelete(true);
+
+    connect(spix, SIGNAL(done(bool)), SLOT(previewLoaded(bool)));
 
     DCOPClient *client = kapp->dcopClient();
     if (!client->isAttached())
@@ -72,12 +76,12 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     args << 1;
     client->send("kdesktop", "KBackgroundIface", "setExport(int)", data);
 
-    spix = new KSharedPixmap;
-    connect(spix, SIGNAL(done(bool)), SLOT(previewLoaded(bool)));
-    spix->loadFromShared(QString("DESKTOP1"));
+
+
 
     transparencyCheck->setChecked(true);
     transparencyCheck->setChecked(false);
+
 
     loadAllSchema();
 
@@ -87,10 +91,18 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     connect(colorCombo, SIGNAL(activated(int)), this, SLOT(slotColorChanged(int)));
     connect(typeCombo, SIGNAL(activated(int)), this, SLOT(slotTypeChanged(int)));
     connect(schemaList, SIGNAL(highlighted(int)), this, SLOT(readSchema(int)));
-    connect(shadeColor, SIGNAL(changed(QColor)), this, SLOT(updatePreview()));
+    connect(shadeColor, SIGNAL(changed(const QColor&)), this, SLOT(updatePreview()));
     connect(shadeSlide, SIGNAL(valueChanged(int)), this, SLOT(updatePreview()));
     connect(transparencyCheck, SIGNAL(toggled(bool)), this, SLOT(updatePreview()));
     connect(backgndLine, SIGNAL(returnPressed()), this, SLOT(updatePreview()));
+
+    connect(shadeColor, SIGNAL(changed(const QColor&)), this, SLOT(schemaModified()));
+    connect(shadeSlide, SIGNAL(valueChanged(int)), this, SLOT(schemaModified()));
+    connect(transparencyCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
+    connect(backgndLine, SIGNAL(returnPressed()), this, SLOT(schemaModified()));
+    connect(transparentCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
+    connect(boldCheck, SIGNAL(returnPressed()), this, SLOT(schemaModified()));
+    connect(colorButton, SIGNAL(changed(const QColor&)), this, SLOT(schemaModified()));
 
 }
 
@@ -132,6 +144,7 @@ SchemaEditor::~SchemaEditor()
 
 void SchemaEditor::updatePreview()
 {
+
     if (transparencyCheck->isChecked()) {
 	if (loaded) {
 	    float rx = (100.0 - shadeSlide->value()) / 100;
@@ -142,7 +155,13 @@ void SchemaEditor::updatePreview()
 	    previewPixmap->setPixmap(pm);
 	    previewPixmap->setScaledContents(true);
 	}
-    } else {
+	 else  //try to reload
+	{
+           if(!spix->loadFromShared(QString("DESKTOP1"))) 
+              kdDebug(0) << "cannot load" << endl;
+	
+	}
+      } else {
 	QPixmap pm;
 	pm.load(backgndLine->text());
 	previewPixmap->setPixmap(pm);
@@ -177,18 +196,24 @@ void SchemaEditor::loadAllSchema()
     QStringList list = KGlobal::dirs()->findAllResources("data", "konsole/*.schema");
     QStringList::ConstIterator it;
     schemaList->clear();
+    schemaList->setCurrentItem(0);
     filename.clear();
-    filename.setAutoDelete(true);
     int i = 0;
     for (it = list.begin(); it != list.end(); ++it) {
 
 	QString name = (*it);
+	
 	filename.append(new QString(name));
+
 	QString title = readSchemaTitle(name);
+
+
 	if (title.isNull() || title.isEmpty())
 	    schemaList->insertItem(i18n("untitled"));
 	else
 	    schemaList->insertItem(title);
+	
+	
 	i++;
     }
 
@@ -211,6 +236,8 @@ void SchemaEditor::imageSelect()
 
 void SchemaEditor::slotTypeChanged(int slot)
 {
+    schemaModified();
+
     bool active = false;
     if (slot == 0)
 	active = true;
@@ -242,8 +269,9 @@ void SchemaEditor::removeCurrent()
 	KMessageBox::error(this,
 			   i18n("Cannot remove the schema.\nMay be it is a system schema\n"),
 			   i18n("Error removing schema"));
-    setSchema(defaultSchema);
+
     loadAllSchema();
+    setSchema(defaultSchema);
 
 }
 
@@ -347,6 +375,11 @@ void SchemaEditor::saveCurrent()
 
 }
 
+void SchemaEditor::schemaModified()
+{
+    schMod=true;
+}
+
 QString SchemaEditor::readSchemaTitle(const QString & file)
 {
     /*
@@ -367,6 +400,7 @@ QString SchemaEditor::readSchemaTitle(const QString & file)
     if (!sysin) 
 	return 0;
     
+    
     char line[100];
     while (fscanf(sysin, "%80[^\n]\n", line) > 0)
 	if (strlen(line) > 5)
@@ -384,13 +418,35 @@ void SchemaEditor::readSchema(int num)
        Code taken from konsole/src/schema.C
 
      */
-    if (oldSchema != -1)
+     
+    if (oldSchema != -1) {
+    
+    
 	if (defaultSchemaCB->isChecked()) {
 
 	    defaultSchema = *filename.at(oldSchema);
 
 	}
+    
+    if(schMod) {
+	    disconnect(schemaList, SIGNAL(highlighted(int)), this, SLOT(readSchema(int)));
+	    
+	    schemaList->setCurrentItem(oldSchema);
+	    if(KMessageBox::questionYesNo(this, i18n("The schema has been modified.\n"
+				"Do you want to save the changes ?"),
+		   i18n("Schema modified"))==KMessageBox::Yes)
+	
+		    saveCurrent();   
+		   
+	    schemaList->setCurrentItem(num);
+	    connect(schemaList, SIGNAL(highlighted(int)), this, SLOT(readSchema(int)));
+	    schMod=false;
+    
+    }
+     
 
+    
+    }
 
     QString fPath = locate("data", "konsole/" + *filename.at(num));
 
@@ -525,7 +581,12 @@ void SchemaEditor::readSchema(int num)
     typeCombo->setCurrentItem(type[ii]);
     colorButton->setColor(color[ii]);
 
+    boldCheck->setDisabled(type[ii]);
+    transparentCheck->setDisabled(type[ii]);
+    colorButton->setDisabled(type[ii]);
+
     oldSchema = num;
     updatePreview();
+    schMod=false;
     return;
 }

@@ -45,17 +45,18 @@ class SchemaEditor : public SchemaDialog
 
   public slots:
   	void slotColorChanged(int);
-  	void imageSelect();
-  	
+  	void imageSelect();  	
 	void slotTypeChanged(int);
 	void readSchema(int);
 	void saveCurrent();
 	void removeCurrent();
 	void previewLoaded(bool l);		
   private slots:
+        void schemaModified();
   	void loadAllSchema();
 	void updatePreview();
   private:
+	bool schMod;
   	QArray<QColor> color;
 	QArray<int> type; // 0= custom, 1= sysfg, 2=sysbg
 	QArray<bool> transparent;
