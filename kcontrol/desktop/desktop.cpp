@@ -127,7 +127,7 @@ void KDesktopConfig::load()
   _numSlider->setValue(n);
 
   for(int i = 1; i <= 16; i++)
-    _nameInput[i-1]->setText(info.desktopName(i));
+    _nameInput[i-1]->setText(QString::fromUtf8(info.desktopName(i)));
 
   for(int i = 1; i <= 16; i++)
     _nameInput[i-1]->setEnabled(i <= n);
