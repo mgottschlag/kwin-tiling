@@ -114,8 +114,9 @@ KColorScheme::KColorScheme( QWidget *parent, int mode, int desktop )
 	
 	topLayout->addWidget( group, 1, 0 );
 	
-	QBoxLayout *groupLayout = new QVBoxLayout( group, 10, 5 );
-	
+	QBoxLayout *groupLayout = new QVBoxLayout( group, 10 );
+	groupLayout->addSpacing(10);
+
 	sFileList = new QStrList();
 	sList = new QListBox( group );
 	
@@ -126,44 +127,35 @@ KColorScheme::KColorScheme( QWidget *parent, int mode, int desktop )
 	sList->insertItem( i18n("KDE default"), 1 );
 	sFileList->append( "Not a kcsrc file" );
 	readSchemeNames();
+	sList->setMinimumHeight(sList->sizeHint().height()/2);
 	sList->setCurrentItem( 0 );
 	connect( sList, SIGNAL( highlighted( int ) ),
 			SLOT( slotPreviewScheme( int ) ) );
 					
-	groupLayout->addSpacing( 20 );
 	groupLayout->addWidget( sList, 10 );
 	
-	QBoxLayout *pushLayout = new QHBoxLayout( 5 );
+	QBoxLayout *pushLayout = new QHBoxLayout;
 	groupLayout->addLayout( pushLayout );
 	
 	addBt = new QPushButton(  i18n("&Add ..."), group );
-	addBt->adjustSize();
-	addBt->setFixedHeight( addBt->height() );
-	addBt->setMinimumWidth( addBt->width() );
 	connect( addBt, SIGNAL( clicked() ), SLOT( slotAdd() ) );
 	
 	pushLayout->addWidget( addBt, 10 );
 	
 	removeBt = new QPushButton(  i18n("&Remove"), group );
-	removeBt->adjustSize();
-	removeBt->setFixedHeight( removeBt->height() );
-	removeBt->setMinimumWidth( removeBt->width() );
 	removeBt->setEnabled(FALSE);
 	connect( removeBt, SIGNAL( clicked() ), SLOT( slotRemove() ) );
 	
 	pushLayout->addWidget( removeBt, 10 );
 	
 	saveBt = new QPushButton(  i18n("&Save changes"), group );
-	saveBt->adjustSize();
-	saveBt->setFixedHeight( saveBt->height() );
-	saveBt->setMinimumWidth( saveBt->width());
 	saveBt->setEnabled(FALSE);
 	connect( saveBt, SIGNAL( clicked() ), SLOT( slotSave() ) );
 	
 	groupLayout->addWidget( saveBt, 10 );
 	groupLayout->activate();
 	
-	QBoxLayout *stackLayout = new QVBoxLayout( 5  );
+	QBoxLayout *stackLayout = new QVBoxLayout;
 	
 	topLayout->addLayout( stackLayout, 1, 1 );
 
@@ -171,7 +163,8 @@ KColorScheme::KColorScheme( QWidget *parent, int mode, int desktop )
 	
 	stackLayout->addWidget( group, 15 );
 
-	groupLayout = new QVBoxLayout( group, 10, 5 );
+	groupLayout = new QVBoxLayout( group, 10 );
+	groupLayout->addSpacing(10);
 
 	wcCombo = new QComboBox( false, group );
 	wcCombo->insertItem(  i18n("Inactive title bar") );
@@ -187,64 +180,51 @@ KColorScheme::KColorScheme( QWidget *parent, int mode, int desktop )
 	wcCombo->insertItem(  i18n("Window background") );
 	wcCombo->insertItem(  i18n("Window text") );
 	wcCombo->adjustSize();
-	wcCombo->setMinimumWidth( wcCombo->width() );
-	wcCombo->setFixedHeight( wcCombo->height() );
 	connect( wcCombo, SIGNAL( activated(int) ),
 			SLOT( slotWidgetColor(int)  )  );
 	
 
-	groupLayout->addSpacing( 20 );	
-	groupLayout->addStretch( 10 );	
 	groupLayout->addWidget( wcCombo );
 	
 	colorButton = new KColorButton( group );
-	colorButton->adjustSize();
-	colorButton->setFixedHeight( wcCombo->height() );
-	colorButton->setMinimumWidth( colorButton->width());
 
 	colorButton->setColor( cs->iaTitle );
 	colorPushColor = cs->iaTitle;
 	connect( colorButton, SIGNAL( changed(const QColor &) ),
 		SLOT( slotSelectColor(const QColor &) ) );
 		
-	group->setMinimumHeight( 3*wcCombo->height()+20 );
-		
 	groupLayout->addWidget( colorButton );
-	groupLayout->addStretch( 10 );	
+	groupLayout->addStretch(10);
 	groupLayout->activate();
 
 	group = new QGroupBox(  i18n("Contrast"), this );
 	
 	stackLayout->addWidget( group, 10 );
 
-	groupLayout = new QHBoxLayout( group, 10 );
+	QVBoxLayout *groupLayout2 = new QVBoxLayout(group, 10);
+	groupLayout2->addSpacing(10);
 	
+	groupLayout = new QHBoxLayout;
+	groupLayout2->addLayout(groupLayout);
+
 	sb = new QSlider( QSlider::Horizontal,group,"Slider" );
 	sb->setRange( 0, 10 );
 	sb->setValue(cs->contrast);
 	sb->setFocusPolicy( QWidget::StrongFocus );
-	sb->adjustSize();
-	sb->setFixedHeight( sb->height() );
-	sb->setMinimumWidth(sb->width());
 	connect( sb, SIGNAL( valueChanged( int ) ),
 				SLOT( sliderValueChanged( int ) ) );
 	
 	QLabel *label = new QLabel( sb, i18n("&Low"), group );
-	label->setFixedHeight( sb->sizeHint().height() );
-	label->setFixedWidth( label->sizeHint().width() );
 	
 	groupLayout->addWidget( label );
 	groupLayout->addWidget( sb, 10 );
 	
 	label = new QLabel( group );
 	label->setText(  i18n("High"));
-	label->setFixedHeight( sb->sizeHint().height() );
-	label->setFixedWidth( label->sizeHint().width() );
 	
 	groupLayout->addWidget( label );
-	groupLayout->activate();
+	groupLayout2->activate();
 	
-	group->setMinimumHeight( 2*sb->height()+20 );
 	slotPreviewScheme( 0 );
 	
 	topLayout->activate();

@@ -173,7 +173,8 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     
     topLayout->addWidget( group, 1,1 );
 	
-    QBoxLayout *groupLayout = new QVBoxLayout( group, 5, 5 );
+    QBoxLayout *groupLayout = new QVBoxLayout( group, 10);
+    groupLayout->addSpacing( 10 );
     
     deskListBox = new QListBox( group );
     
@@ -184,32 +185,23 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     
     readSettings( deskNum );
     
-    deskListBox->adjustSize();
-    deskListBox->setMinimumSize(deskListBox->size());
     deskListBox->setEnabled( !oneDesktopMode );
     
-    groupLayout->addSpacing( 15 );
-    groupLayout->addWidget( deskListBox, 5 );
+    groupLayout->addWidget( deskListBox );
 	
     renameButton = new QPushButton( i18n( "&Rename ..." ), group );
-    renameButton->adjustSize();
-    renameButton->setFixedHeight( renameButton->height() );
-    renameButton->setMinimumWidth( renameButton->width() );
     renameButton->setEnabled( !oneDesktopMode );
     if ( !KWM::isKWMInitialized() )
         renameButton->setEnabled( false );
     connect( renameButton, SIGNAL( clicked() ), SLOT( slotRenameDesk() ) );
 	
-    groupLayout->addWidget( renameButton, 5 );
+    groupLayout->addWidget( renameButton, 0, AlignRight );
     
     oneDesktopButton = new QCheckBox( i18n("&Common Background"), group );
-    oneDesktopButton->adjustSize();
-    oneDesktopButton->setFixedHeight( oneDesktopButton->height() );
-    oneDesktopButton->setMinimumWidth( oneDesktopButton->width() );
     oneDesktopButton->setChecked( oneDesktopMode );
     connect( oneDesktopButton, SIGNAL( clicked() ), SLOT( slotToggleOneDesktop() ) );
     
-    groupLayout->addWidget( oneDesktopButton, 5 );
+    groupLayout->addWidget( oneDesktopButton );
     groupLayout->activate();
     
     monitorLabel = new QLabel( this );
@@ -229,7 +221,7 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     group = new QGroupBox( i18n( "Colors" ), this );
     topLayout->addWidget( group, 2, 1 );
     
-    QGridLayout *grid = new QGridLayout( group, 9, 4, 5, 5 );
+    QGridLayout *grid = new QGridLayout( group, 9, 4, 10 );
     
     grid->setRowStretch(0,5);
     grid->setRowStretch(1,0);
@@ -254,26 +246,17 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     ncGroup->setExclusive( true );
     
     rb = new QRadioButton( i18n("&One Color"), group );
-    rb->adjustSize();
-    rb->setFixedHeight( rb->height() );
-    rb->setMinimumWidth( rb->width() );
     ncGroup->insert( rb, OneColor );
 	
     grid->addMultiCellWidget( rb, 1, 1, 1, 2 );
     
     colButton1 = new KColorButton( group );
-    colButton1->adjustSize();
-    colButton1->setFixedHeight(colButton1->height());
-    colButton1->setMinimumWidth(colButton1->width());
     connect( colButton1, SIGNAL( changed( const QColor & ) ),
              SLOT( slotSelectColor1( const QColor & ) ) );
     
     grid->addMultiCellWidget( colButton1, 2, 2, 2, 2 );
     
     rb = new QRadioButton( i18n("&Two Color"), group );
-    rb->adjustSize();
-    rb->setFixedHeight( rb->height() );
-    rb->setMinimumWidth( rb->width() );
     ncGroup->insert( rb, TwoColor );
     
     grid->addMultiCellWidget( rb, 4, 4, 1, 2 );
@@ -281,18 +264,12 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     connect( ncGroup, SIGNAL( clicked( int ) ), SLOT( slotColorMode( int ) ) );
     
     colButton2 = new KColorButton( group );
-    colButton2->adjustSize();
-    colButton2->setFixedHeight(colButton2->height());
-    colButton2->setMinimumWidth(colButton2->width());
     connect( colButton2, SIGNAL( changed( const QColor & ) ),
              SLOT( slotSelectColor2( const QColor & ) ) );
     
     grid->addWidget( colButton2, 5, 2);
     
     changeButton = new QPushButton( i18n("Set&up ..."), group );
-    changeButton->adjustSize();
-    changeButton->setFixedHeight( changeButton->height() );
-    changeButton->setMinimumWidth(changeButton->width());
     connect(changeButton, SIGNAL(clicked()) , SLOT(slotSetup2Color()) );
     
     grid->addWidget( changeButton, 7, 2 );
@@ -301,7 +278,7 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     group = new QGroupBox( i18n("Wallpaper"), this );
     topLayout->addMultiCellWidget( group, 2, 2, 2, 4 );
     
-    grid = new QGridLayout( group, 8, 3, 5, 5 );
+    grid = new QGridLayout( group, 8, 3, 10 );
     
     grid->addRowSpacing(0,10);
     grid->addRowSpacing(3,5);
@@ -363,8 +340,6 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     wpModeCombo->insertItem( i18n("Symmetrical Mirrored"), 8 );
     wpModeCombo->insertItem( i18n("Scaled"), 9 );
     wpModeCombo->setCurrentItem( 0 );
-    wpModeCombo->setMinimumHeight( wpModeCombo->sizeHint().height() );
-    wpModeCombo->setMinimumWidth( wpModeCombo->sizeHint().width() );
     connect( wpModeCombo, SIGNAL( activated( int ) ),
              SLOT( slotWallpaperMode( int )  )  );
     

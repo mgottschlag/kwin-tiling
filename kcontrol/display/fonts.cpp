@@ -159,25 +159,14 @@ KFonts::KFonts( QWidget *parent, int mode, int desktop )
 	connect( lbFonts, SIGNAL( highlighted( int ) ),
 		 SLOT( slotPreviewFont( int ) ) );
 			
-	pushLayout->addWidget( lbFonts );
+	pushLayout->addWidget(lbFonts, 2);
 	
 	fntChooser = new KFontChooser( this );
 	
 	connect( fntChooser, SIGNAL( fontSelected(const QFont &) ), this,
 		SLOT( slotSetFont(const QFont &) ) );
 	
-	pushLayout->addWidget( fntChooser );
-	
-	QBoxLayout *stackLayout = new QVBoxLayout( 4 );
-	
-	topLayout->addLayout( stackLayout );
-
-	QLabel *label = new QLabel( i18n("Sample text"), this );
-	label->adjustSize();
-	label->setFixedHeight( label->height() );
-	label->setMinimumWidth(label->width());
-
-	stackLayout->addWidget( label );
+	pushLayout->addWidget(fntChooser, 5);
 	
 	lbFonts->setCurrentItem( 0 );
 

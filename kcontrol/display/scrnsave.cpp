@@ -221,17 +221,16 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 	connect( corner, SIGNAL( cornerAction( int, char ) ),
              SLOT( slotCornerAction( int, char ) ) );
     
-	QGroupBox *group = new QGroupBox(  i18n("Screen Saver"), this );
+	QGroupBox *group = new QGroupBox(i18n("Screen Saver"), this );
 	
 	topLayout->addWidget( group, 2, 1 );
 	
-	QBoxLayout *groupLayout = new QVBoxLayout( group, 10, 5 );
+	QBoxLayout *groupLayout = new QVBoxLayout( group, 10 );
+	groupLayout->addSpacing(10);		
     
 	mSaverListBox = new QListBox( group );
 	mSaverListBox->insertItem( i18n("No screensaver"), 0 );
 	mSaverListBox->setCurrentItem( 0 );
-	mSaverListBox->adjustSize();
-	mSaverListBox->setMinimumSize(mSaverListBox->size());
 
     SaverConfig *saver;
     mSelected = 0;
@@ -250,24 +249,17 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 	connect( mSaverListBox, SIGNAL( highlighted( int ) ),
              SLOT( slotScreenSaver( int ) ) );
 	
-	groupLayout->addSpacing(  20 );		
-	groupLayout->addWidget( mSaverListBox, 20 );
+	groupLayout->addWidget( mSaverListBox, 10 );
     
 	mSetupBt = new QPushButton(  i18n("&Setup ..."), group );
-	mSetupBt->adjustSize();
-	mSetupBt->setFixedHeight( mSetupBt->height() );
-	mSetupBt->setMinimumWidth(mSetupBt->width());
 	connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
 	
-	groupLayout->addWidget( mSetupBt );
+	groupLayout->addWidget( mSetupBt, 0, AlignRight );
     
 	mTestBt = new QPushButton(  i18n("&Test"), group );
-	mTestBt->adjustSize();
-	mTestBt->setFixedHeight( mTestBt->height() );
-	mTestBt->setMinimumWidth(mTestBt->width());
 	connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
 	
-	groupLayout->addWidget( mTestBt );
+	groupLayout->addWidget( mTestBt, 0, AlignRight );
 	groupLayout->activate();
     
 	QBoxLayout *stackLayout = new QVBoxLayout( 5 );
@@ -317,9 +309,13 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 	group = new QGroupBox(  i18n("Priority"), this );
 	
 	stackLayout->addWidget( group, 10 );
-	
-	groupLayout = new QHBoxLayout( group, 10 );
-    
+
+	QVBoxLayout *groupLayout2 = new QVBoxLayout(group, 10);
+	groupLayout2->addSpacing(10);
+
+	groupLayout = new QHBoxLayout;
+	groupLayout2->addLayout(groupLayout);
+
 	mPrioritySlider = new QSlider( QSlider::Horizontal, group );
 	mPrioritySlider->setRange( 0, 20 );
 	mPrioritySlider->setSteps( 5, 10 );
@@ -329,16 +325,10 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
     
 	label = new QLabel( mPrioritySlider, i18n("&High"), group );
 	
-	mPrioritySlider->setFixedHeight( mPrioritySlider->sizeHint().height() );
-	label->setFixedHeight( mPrioritySlider->sizeHint().height() );
-	label->setMinimumWidth( label->sizeHint().width() );
-	
 	groupLayout->addWidget( label );
 	groupLayout->addWidget( mPrioritySlider, 10 );
     
 	label = new QLabel(  i18n("Low"), group );
-	label->setFixedHeight( mPrioritySlider->sizeHint().height() );
-	label->setMinimumWidth( label->sizeHint().width() );
 	
 	groupLayout->addWidget( label );
 
