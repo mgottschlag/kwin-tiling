@@ -18,7 +18,8 @@
  
 */                                                                            
 
-
+#ifndef __modloader_h
+#define __modloader_h
 
 #include <qwidget.h>
 
@@ -36,3 +37,6 @@ public:
   static KCModule *module(const ModuleInfo &mod);
 
 };
+
+#endif
+

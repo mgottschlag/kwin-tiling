@@ -34,13 +34,16 @@
 #include "kcdialog.h"
 #include "kcmodule.h"
 
-void setVisible(QPushButton *btn, bool vis)
+// proxywidget.cpp has it too, let's share if using final
+#ifndef KDE_USE_FINAL
+static void setVisible(QPushButton *btn, bool vis)
 {
   if (vis)
     btn->show();
   else
     btn->hide();
 }
+#endif
 
 KCDialog::KCDialog(KCModule *client, const QString &docpath, QWidget *parent, const char *name, bool modal, WFlags f)
   : QDialog(parent, name, modal, f), _client(client), _docpath(docpath)
