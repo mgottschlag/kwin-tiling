@@ -710,7 +710,7 @@ kg_main(int argc, char **argv)
 #endif
     MyApp myapp(argc, argv);
 
-    kapp->setOverrideCursor( Qt::waitCursor );
+    Display *dpy = qt_xdisplay();
 
     kdmcfg = new KDMConfig();
 
@@ -728,12 +728,12 @@ kg_main(int argc, char **argv)
     //
     int opcode, evbase, errbase, majret, minret;
     unsigned int value = XkbPCF_GrabsUseXKBStateMask;
-    if (XkbQueryExtension (qt_xdisplay(), &opcode, &evbase,
+    if (XkbQueryExtension (dpy, &opcode, &evbase,
                            &errbase, &majret, &minret))
-        XkbSetPerClientControls (qt_xdisplay(), value, &value);
+        XkbSetPerClientControls (dpy, value, &value);
 #endif
-    setup_modifiers (qt_xdisplay(), kdmcfg->_numLockStatus);
-    SecureDisplay (qt_xdisplay());
+    setup_modifiers (dpy, kdmcfg->_numLockStatus);
+    SecureDisplay (dpy);
     if (!dgrabServer)
 	GSendInt (G_SetupDpy);
     QRect scr = kapp->desktop()->screenGeometry(kdmcfg->_greeterScreen);
@@ -748,14 +748,13 @@ kg_main(int argc, char **argv)
     } else
 	grt.moveCenter( scr.center());
     kgreeter->setGeometry (grt);
-    XSetInputFocus( qt_xdisplay(), kgreeter->winId(),
-		    RevertToParent, CurrentTime);
-    kapp->restoreOverrideCursor();
+    XSetInputFocus( dpy, kgreeter->winId(), RevertToParent, CurrentTime);
+    XUndefineCursor (dpy, RootWindow (dpy, DefaultScreen (dpy)));
     Debug ("entering event loop\n");
     kapp->exec();
     delete kgreeter;
     delete kdmcfg;
-    UnsecureDisplay (qt_xdisplay());
+    UnsecureDisplay (dpy);
     restore_modifiers();
 }
 
