@@ -46,7 +46,6 @@ extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
        exit(0);
   }
   KUniqueApplication app;
-  app.disableSessionManagement();
 
   Klipper *toplevel = new Klipper();
 
