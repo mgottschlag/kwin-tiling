@@ -17,6 +17,10 @@ messages:
 	$(XGETTEXT) -kni18n $(libkcm_style_la_SOURCES) -o $(podir)/kcmstyle.pot
 
 theme_DATA = style.desktop
-themedir = $(kde_appsdir)/Settings/LookNFeel/Themes
+themedir = $(kde_appsdir)/Settings/LookNFeel
+
+install-data-local: uninstall.desktop
+	$(mkinstalldirs) $(kde_appsdir)/Settings/LookNFeel/Themes
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(kde_appsdir)/Settings/LookNFeel/Themes/style.desktop
 
 EXTRA_DIST = $(theme_DATA)
