@@ -3,6 +3,7 @@
 [General]
 Name=Nostalgy
 Name[cs]=Nostalgie
+Name[da]=Nostalgi
 Name[eo]=Nostalgio
 Name[es]=Nostalgia
 Name[et]=Nostalgia
@@ -26,6 +27,7 @@ author=Robert Flemming & Daniel M. Duley
 email=mosfet@kde.org
 Comment=A simple original theme that tries to combine the best aspects of familiar interfaces.
 Comment[cs]=Jednoduchý původní motiv, který se snaží zkombinovat nejlepší aspekty známých prostředí.
+Comment[da]=Et simpelt originalt tema der forsøger at kombinere de bedste aspekter af kendte brugerflader.
 Comment[de]=Einfaches Original-Design, das die besten Elemente bekannter Oberflächen zu kombinieren versucht
 Comment[eo]=Simpla origina etoso provanta kombini la plej bonajn aspektojn de konataj interfacoj.
 Comment[es]=Un original tema simple que trata de combinar los mejores aspectos de interfaces familiares.
