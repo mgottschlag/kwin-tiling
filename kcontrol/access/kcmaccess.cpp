@@ -72,7 +72,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   systemBell = new QCheckBox(i18n("Use &system bell"), grp);
   vvbox->addWidget(systemBell);
-  customBell = new QCheckBox(i18n("Use &customized bell"), grp);
+  customBell = new QCheckBox(i18n("Us&e customized bell"), grp);
   vvbox->addWidget(customBell);
   QWhatsThis::add( systemBell, i18n("If this option is checked, the default system bell will be used. See the"
     " \"System Bell\" control module for how to customize the system bell."
@@ -214,7 +214,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   bounceKeysDelay = new KIntNumInput(grp);
   bounceKeysDelay->setSuffix(i18n(" msec"));
   bounceKeysDelay->setRange(100, 2000, 100);
-  bounceKeysDelay->setLabel(i18n("Delay:"));
+  bounceKeysDelay->setLabel(i18n("D&elay:"));
   hbox->addWidget(bounceKeysDelay);
 
 
