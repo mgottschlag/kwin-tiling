@@ -43,6 +43,7 @@ sessions_DATA = \
     waimea.desktop \
     wm2.desktop \
     wmaker.desktop \
-    xfce.desktop
+    xfce.desktop \
+    xfce4.desktop
 
 EXTRA_DIST = $(sessions_DATA)
