@@ -199,8 +199,8 @@ void TopLevel::newClipData()
 	}
         pSelectedItem = id;
 
-	if ( bClipEmpty ) 
-	    pQPMmenu->setItemEnabled(id, false);
+	if ( bClipEmpty )
+	    clip->clear();
 	else
 	    pQPMmenu->setItemChecked(pSelectedItem, true);
     }
@@ -237,20 +237,23 @@ void TopLevel::clickedMenu(int id)
 	}
 	break;
     default:
-        pQTcheck->stop();
-        //CT mark up the currently put into clipboard - so that user can see later
-        pQPMmenu->setItemChecked(pSelectedItem, false);
-        pSelectedItem = id;
-        pQPMmenu->setItemChecked(pSelectedItem, true);
-        QString *data = pQIDclipData->find(id);
-        if(data != 0x0 && *data != QSempty){
-            clip->setText(*data);
-            if (bURLGrabber && bReplayActionInHistory)
-                myURLGrabber->checkNewData(*data);
-            QSlast = data->copy();
-        }
+	if ( !bClipEmpty )
+	{
+	    pQTcheck->stop();
+	    //CT mark up the currently put into clipboard - so that user can see later
+	    pQPMmenu->setItemChecked(pSelectedItem, false);
+	    pSelectedItem = id;
+	    pQPMmenu->setItemChecked(pSelectedItem, true);
+	    QString *data = pQIDclipData->find(id);
+	    if(data != 0x0 && *data != QSempty){
+		clip->setText(*data);
+		if (bURLGrabber && bReplayActionInHistory)
+		    myURLGrabber->checkNewData(*data);
+		QSlast = data->copy();
+	    }
 
-        pQTcheck->start(1000);
+	    pQTcheck->start(1000);
+	}
     }
 }
 
