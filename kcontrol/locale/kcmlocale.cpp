@@ -86,9 +86,17 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   connect(m_addLanguage, SIGNAL(activated(const QString &)),
 	  SLOT(slotAddLanguage(const QString &)));
   m_removeLanguage = new QPushButton(vb, I18N_NOOP("Remove Language"));
+  m_upButton = new QPushButton(vb, I18N_NOOP("Up"));
+  m_downButton = new QPushButton(vb, I18N_NOOP("Down"));
   boxlay->add(m_removeLanguage);
+  boxlay->add(m_upButton);
+  boxlay->add(m_downButton);
   connect(m_removeLanguage, SIGNAL(clicked()),
 	  SLOT(slotRemoveLanguage()));
+  connect(m_upButton, SIGNAL(clicked()),
+	  SLOT(slotLanguageUp()));
+  connect(m_downButton, SIGNAL(clicked()),
+	  SLOT(slotLanguageDown()));
   boxlay->insertStretch(-1);
 
   // #### HPB: This should be implemented for KDE 3
@@ -150,6 +158,49 @@ void KLocaleConfig::slotRemoveLanguage()
     }
 }
 
+void KLocaleConfig::slotLanguageUp()
+{
+  QStringList languageList = m_locale->languageList();
+  int pos = m_languages->currentItem();
+
+  QStringList::Iterator it1 = languageList.at( pos - 1 );
+  QStringList::Iterator it2 = languageList.at( pos );
+
+  if ( it1 != languageList.end() && it2 != languageList.end()  )
+    {
+      QString str = *it1;
+      *it1 = *it2;
+      *it2 = str;
+
+      m_locale->setLanguage( languageList );
+
+      emit localeChanged();
+      if ( pos == 1 ) // at the lang before the top
+	emit languageChanged();
+    }
+}
+
+void KLocaleConfig::slotLanguageDown()
+{
+  QStringList languageList = m_locale->languageList();
+  int pos = m_languages->currentItem();
+
+  QStringList::Iterator it1 = languageList.at( pos );
+  QStringList::Iterator it2 = languageList.at( pos - 1 );
+
+  if ( it1 != languageList.end() && it2 != languageList.end()  )
+    {
+      QString str = *it1;
+      *it1 = *it2;
+      *it2 = str;
+
+      m_locale->setLanguage( languageList );
+
+      emit localeChanged();
+      if ( pos == 0 ) // at the top
+	emit languageChanged();
+    }
+}
 
 void KLocaleConfig::loadLanguageList()
 {
@@ -324,6 +375,9 @@ void KLocaleConfig::save()
 void KLocaleConfig::slotCheckButtons()
 {
   m_removeLanguage->setEnabled( m_languages->currentItem() != -1 );
+  m_upButton->setEnabled( m_languages->currentItem() > 0 );
+  m_downButton->setEnabled( m_languages->currentItem() != -1 &&
+			    m_languages->currentItem() < m_languages->count() - 1 );
 }
 
 void KLocaleConfig::slotLocaleChanged()

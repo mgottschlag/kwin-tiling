@@ -74,6 +74,8 @@ private slots:
 
   void slotAddLanguage(const QString & id);
   void slotRemoveLanguage();
+  void slotLanguageUp();
+  void slotLanguageDown();
   void slotCheckButtons();
 
 private:
@@ -89,6 +91,8 @@ private:
   QListBox * m_languages;
   KLanguageButton * m_addLanguage;
   QPushButton * m_removeLanguage;
+  QPushButton * m_upButton;
+  QPushButton * m_downButton;
 };
 
 #endif
