@@ -307,6 +307,7 @@ bool Theme::load(const QString &aPath, QString &error)
        findThemerc(mThemePath, list);
     }
   }
+  mFileList = list;
 
   if (mThemercFile.isEmpty())
   {
@@ -410,8 +411,30 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
   finfo.setFile(src);
   if (!finfo.exists())
   {
-    kdDebug() << "File " << src << " is not in theme package." << endl;
-    return false;
+    kdDebug() << "File " << src << " not found." << endl;
+    src = aSrc;
+    int i = src.findRev('/');
+    if (i == -1)
+    {
+       kdDebug() << "File " << aSrc << " is not in theme package." << endl;
+       return false;
+    }
+    src = src.mid(i+1).lower();
+    for(QStringList::ConstIterator it = mFileList.begin();
+        it != mFileList.end(); ++it)
+    {
+       if (src == (*it).lower())
+       {
+          src = mThemePath + *it;
+          finfo.setFile(src);
+          break;
+       }
+    }
+    if (!finfo.exists())
+    {
+       kdDebug() << "File " << aSrc << " is not in theme package." << endl;
+       return false;
+    }
   }
 
   if (finfo.isDir())

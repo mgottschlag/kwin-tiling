@@ -221,6 +221,8 @@ protected:
   QString mHomePage;
   QString mVersion;
   
+  QStringList mFileList;
+  
   KSimpleConfig* mMappings;
   KSimpleConfig* mConfig;
   QStringList mCmdList;
