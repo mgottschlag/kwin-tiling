@@ -1,5 +1,4 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  
   This program is free software; you can redistribute it and/or modify
@@ -18,11 +17,8 @@
  
 */                                                                            
 
-
-
-#ifndef _MODULES_H_
-#define _MODULES_H_
-
+#ifndef __modules_h__
+#define __modules_h__
 
 #include <ltdl.h>
 
@@ -31,12 +27,11 @@
 #include <qlist.h>
 #include <qpixmap.h>
 
+#include "moduleinfo.h"
 
 class QWidget;
 class KCModule;
 class ProxyWidget;
-
-#include "moduleinfo.h"
 
 class ConfigModule : public ModuleInfo
 {
@@ -73,7 +68,6 @@ private:
   ProxyWidget      *_module;
 };
 
-
 class ConfigModuleList : public QList<ConfigModule>
 {
 public:
@@ -83,7 +77,5 @@ public:
   void readDesktopEntries();
 
 };
-
-
 
 #endif

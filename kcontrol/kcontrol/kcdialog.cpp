@@ -1,7 +1,4 @@
 /*
-
-   This file is part of the KDE libraries
-
    Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
    Copyright (c) 2000 Matthias Elter <elter@kde.org>
 
@@ -32,6 +29,7 @@
 
 
 #include "kcdialog.h"
+#include "kcdialog.moc"
 #include "kcmodule.h"
 
 // proxywidget.cpp has it too, let's share if using final
@@ -146,5 +144,3 @@ void KCDialog::clientChanged(bool state)
   _apply->setEnabled(state);
   _ok->setEnabled(state);
 }
-
-#include "kcdialog.moc"

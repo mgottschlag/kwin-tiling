@@ -210,5 +210,3 @@ void SearchWidget::slotModuleClicked(QListBoxItem *item)
   if (item)
     emit moduleSelected(item->text());
 }
-
-

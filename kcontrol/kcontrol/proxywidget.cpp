@@ -1,5 +1,4 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
 
   This program is free software; you can redistribute it and/or modify
@@ -18,23 +17,18 @@
 
 */
 
-
-
 #include <qwidget.h>
 #include <qstring.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
 #include <qframe.h>
 
-
 #include <klocale.h>
 #include <kapp.h>
 #include <kcmodule.h>
 
-
 #include "proxywidget.h"
 #include "proxywidget.moc"
-
 
 static void setVisible(QPushButton *btn, bool vis)
 {
@@ -43,7 +37,6 @@ static void setVisible(QPushButton *btn, bool vis)
   else
     btn->hide();
 }
-
 
 ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name)
   : QWidget(0, name)
@@ -104,7 +97,6 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name)
   setMinimumSize(sizeHint());
 }
 
-
 ProxyWidget::~ProxyWidget()
 {
   delete _client;
@@ -123,13 +115,11 @@ void ProxyWidget::helpClicked()
   emit helpRequest();
 }
 
-
 void ProxyWidget::defaultClicked()
 {
   _client->defaults();
   clientChanged(true);
 }
-
 
 void ProxyWidget::resetClicked()
 {
@@ -148,13 +138,11 @@ void ProxyWidget::applyClicked()
   clientChanged(false);
 }
 
-
 void ProxyWidget::okClicked()
 {
   _client->save();
   emit closed();
 }
-
 
 void ProxyWidget::clientChanged(bool state)
 {

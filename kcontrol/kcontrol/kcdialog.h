@@ -1,6 +1,4 @@
 /*
-   This file is part of the KDE libraries
-
    Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
    Copyright (c) 2000 Matthias Elter <elter@kde.org>
 
@@ -20,8 +18,9 @@
    Boston, MA 02111-1307, USA.
 
 */
-#ifndef __KCDIALOG_H__
-#define __KCDIALOG_H__
+
+#ifndef __kcdialog_h__
+#define __kcdialog_h__
 
 #include <qdialog.h>
 
@@ -61,6 +60,5 @@ private:
   QFrame      *_sep;
   QString     _docpath;
 };
-
 
 #endif

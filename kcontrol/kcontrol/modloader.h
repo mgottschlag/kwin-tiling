@@ -17,8 +17,8 @@
  
 */                                                                            
 
-#ifndef __modloader_h
-#define __modloader_h
+#ifndef __modloader_h__
+#define __modloader_h__
 
 #include <qwidget.h>
 

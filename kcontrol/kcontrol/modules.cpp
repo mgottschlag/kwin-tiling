@@ -1,5 +1,4 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  
   This program is free software; you can redistribute it and/or modify
@@ -18,10 +17,7 @@
  
 */                                                                            
 
-
-
 #include <qwidget.h>
-
 
 #include <kapp.h>
 #include <kstddirs.h>
@@ -43,12 +39,10 @@ ConfigModule::ConfigModule(QString desktopFile)
 {
 }
 
-
 ConfigModule::~ConfigModule()
 {
   delete _module;
 }
-
 
 ProxyWidget *ConfigModule::module()
 {

@@ -183,4 +183,3 @@ void TopLevel::activateModule(const QString& name)
 		}
 	}
 }
-

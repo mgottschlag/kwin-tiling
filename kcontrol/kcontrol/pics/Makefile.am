@@ -1,5 +1,4 @@
 # $Id$
-# kdebase/kcontrol/kcontrol/pics
 
 logo_DATA = wizard.png
 logodir = $(kde_datadir)/kcontrol/pics

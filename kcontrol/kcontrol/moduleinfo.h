@@ -1,5 +1,4 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  
   This program is free software; you can redistribute it and/or modify
@@ -18,11 +17,8 @@
  
 */                                                                            
 
-
-
-#ifndef _MODULEINFO_H_
-#define _MODULEINFO_H_
-
+#ifndef __moduleinfo_h__
+#define __moduleinfo_h__
 
 #include <qobject.h>
 #include <qstring.h>
@@ -71,6 +67,5 @@ private:
   QString     _name, _icon, _lib, _handle, _fileName, _doc, _comment;
   bool        _directory, _root;
 };
-
 
 #endif

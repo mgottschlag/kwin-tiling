@@ -1,5 +1,4 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  
   This program is free software; you can redistribute it and/or modify
@@ -18,8 +17,8 @@
  
 */                                                                            
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __main_h__
+#define __main_h__
 
 #include <kuniqueapp.h>
 
@@ -39,6 +38,5 @@ private:
   TopLevel *toplevel;
 
 };
-
 
 #endif
