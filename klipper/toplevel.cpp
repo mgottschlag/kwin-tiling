@@ -15,6 +15,7 @@
 #include <qintdict.h>
 #include <qpainter.h>
 
+#include <kaboutdata.h>
 #include <kaction.h>
 #include <kapp.h>
 #include <kconfig.h>
@@ -220,7 +221,7 @@ void TopLevel::clickedMenu(int id)
     case QUIT_ITEM: {
         saveProperties();
         int autoStart = KMessageBox::questionYesNo( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically start Klipper?") );
-        
+
         QString file = locateLocal( "data", "../autostart/klipper.desktop" );
         if ( autoStart == KMessageBox::Yes )
             QFile::remove( file );
@@ -363,6 +364,7 @@ void TopLevel::writeConfiguration( KConfig *kc )
     kc->writeEntry("KeepClipboardContents", bKeepContents);
     kc->writeEntry("ReplayActionInHistory", bReplayActionInHistory);
     kc->writeEntry("MaxClipItems", maxClipItems);
+    kc->writeEntry("Version", kapp->aboutData()->version());
 
     if ( myURLGrabber )
         myURLGrabber->writeConfiguration( kc );
