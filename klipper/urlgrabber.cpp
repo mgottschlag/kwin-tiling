@@ -16,6 +16,7 @@
 #include <keditcl.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
+#include <kdebug.h>
 
 #include "urlgrabber.h"
 
@@ -85,7 +86,7 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData )
 
 bool URLGrabber::checkNewData( const QString& clipData )
 {
-    // debug("** checking new data: %s", clipData.latin1());
+    // kdDebug() << "** checking new data: " << clipData << endl;
     myClipData = clipData;
     if ( myActions->isEmpty() )
 	return false;
@@ -188,7 +189,7 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
 
 void URLGrabber::startProcess( const QString& cmdLine ) const
 {
-    debug("Klipper: now starting %s", cmdLine.latin1() );
+    kdDebug() << "Klipper: now starting " << cmdLine << endl;
     if ( cmdLine.isEmpty() )
 	return;
 
