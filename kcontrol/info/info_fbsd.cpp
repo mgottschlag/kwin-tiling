@@ -208,7 +208,7 @@ bool GetInfo_Partitions (QListView *lbox)
 	struct fstab *fstab_ent;
 
 	if (setfsent() != 1) /* Try to open fstab */ {
-		kdebug(KDEBUG_ERROR, 0, "Ahh couldn't open fstab!");
+		kdError() << "Ahh couldn't open fstab!" << endl;
 		return false;
 	}
 
