@@ -1068,13 +1068,11 @@ void KTitlebarAppearance::SaveSettings( void )
     if (!pixmapActiveOld.isNull()) {
       QFile( sPixmapActive ).remove();
       pixmapActiveOld.save(kwmpicsdir+'/'+sPixmapActive,"XPM");
-      iconLoader->flush( sPixmapActive );
     }
 
     if (!pixmapInactiveOld.isNull()) {
       QFile( sPixmapInactive ).remove();
       pixmapInactiveOld.save(kwmpicsdir+'/'+sPixmapInactive,"XPM");
-      iconLoader->flush( sPixmapInactive );
     }
 
     //then, the save
@@ -1085,13 +1083,11 @@ void KTitlebarAppearance::SaveSettings( void )
     if (!pixmapActive.isNull()) {
       QFile( sPixmapActive ).remove();
       a_saved = pixmapActive.save(kwmpicsdir+'/'+sPixmapActive,"XPM");
-      iconLoader->flush( sPixmapActive );
     }
 
     if (!pixmapInactive.isNull()) {
       QFile( sPixmapInactive ).remove();
       i_saved = pixmapInactive.save(kwmpicsdir+'/'+sPixmapInactive,"XPM");
-      iconLoader->flush( sPixmapInactive );
     }
 
     //and a little check
