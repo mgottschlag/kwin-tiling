@@ -52,12 +52,14 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     connect(dialog->terminalSizeHintCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->warnCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->ctrldragCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->cutToBeginningOfLineCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->blinkingCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->frameCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
     connect(dialog->terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->startKwritedCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->line_spacingSB,SIGNAL(valueChanged(int)),this,SLOT(configChanged()));
+    connect(dialog->silence_secondsSB,SIGNAL(valueChanged(int)),this,SLOT(configChanged()));
     connect(dialog->word_connectorLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
     connect(dialog->SchemaEditor1, SIGNAL(changed()), this, SLOT(configChanged()));
 }
@@ -71,9 +73,11 @@ void KCMKonsole::load()
     dialog->terminalSizeHintCB->setChecked(config->readBoolEntry("TerminalSizeHint",true));
     dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
     dialog->ctrldragCB->setChecked(config->readBoolEntry("CtrlDrag",false));
+    dialog->cutToBeginningOfLineCB->setChecked(config->readBoolEntry("CutToBeginningOfLine",false));
     dialog->blinkingCB->setChecked(config->readBoolEntry("BlinkingCursor",false));
     dialog->frameCB->setChecked(config->readBoolEntry("has frame",true));
     dialog->line_spacingSB->setValue(config->readUnsignedNumEntry( "LineSpacing", 0 ));
+    dialog->silence_secondsSB->setValue(config->readUnsignedNumEntry( "SilenceSeconds", 10 ));
     dialog->word_connectorLE->setText(config->readEntry("wordseps",":@-./_~"));
 
     dialog->SchemaEditor1->setSchema(config->readEntry("schema"));
@@ -127,9 +131,11 @@ void KCMKonsole::save()
     config->writeEntry("TerminalSizeHint", dialog->terminalSizeHintCB->isChecked());
     config->writeEntry("WarnQuit", dialog->warnCB->isChecked());
     config->writeEntry("CtrlDrag", dialog->ctrldragCB->isChecked());
+    config->writeEntry("CutToBeginningOfLine", dialog->cutToBeginningOfLineCB->isChecked());
     config->writeEntry("BlinkingCursor", dialog->blinkingCB->isChecked());
     config->writeEntry("has frame", dialog->frameCB->isChecked());
     config->writeEntry("LineSpacing" , dialog->line_spacingSB->value());
+    config->writeEntry("SilenceSeconds" , dialog->silence_secondsSB->value());
     config->writeEntry("wordseps", dialog->word_connectorLE->text());
 
     config->writeEntry("schema", dialog->SchemaEditor1->schema());
@@ -158,10 +164,12 @@ void KCMKonsole::defaults()
     dialog->terminalSizeHintCB->setChecked(true);
     dialog->warnCB->setChecked(true);
     dialog->ctrldragCB->setChecked(false);
+    dialog->cutToBeginningOfLineCB->setChecked(false);
     dialog->blinkingCB->setChecked(false);
     dialog->frameCB->setChecked(true);
     dialog->terminalCB->setChecked(true);
     dialog->line_spacingSB->setValue(0);
+    dialog->silence_secondsSB->setValue(10);
 
     dialog->word_connectorLE->setText(":@-./_~");
 

@@ -228,7 +228,15 @@
                                     <string>&amp;Require Ctrl key for drag and drop</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="5" column="0" rowspan="1" colspan="1">
+                            <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>cutToBeginningOfLineCB</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Triple click selects &amp;only from the current word forward</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="6" column="0" rowspan="1" colspan="1">
                                 <property name="name">
                                     <cstring>TextLabel1_4</cstring>
                                 </property>
@@ -241,13 +249,13 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>Line spacing:</string>
+                                    <string>&amp;Line spacing:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>line_spacingSB</cstring>
                                 </property>
                             </widget>
-                            <widget class="KIntNumInput" row="5" column="1" rowspan="1" colspan="1">
+                            <widget class="KIntNumInput" row="6" column="1" rowspan="1" colspan="1">
                                 <property name="name">
                                     <cstring>line_spacingSB</cstring>
                                 </property>
@@ -266,9 +274,55 @@
                                     </sizepolicy>
                                 </property>
                             </widget>
-                            <spacer row="5" column="3">
+                            <spacer row="6" column="3">
                                 <property name="name" stdset="0">
                                     <cstring>Spacer2</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                            </spacer>
+                            <widget class="QLabel" row="7" column="0" rowspan="1" colspan="1">
+                                <property name="name">
+                                    <cstring>SilenceLabel</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>1</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>Seconds to detect s&amp;ilence:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>silence_secondsSB</cstring>
+                                </property>
+                            </widget>
+                            <widget class="KIntNumInput" row="7" column="1" rowspan="1" colspan="1">
+                                <property name="name">
+                                    <cstring>silence_secondsSB</cstring>
+                                </property>
+                                <property name="minValue">
+                                    <number>1</number>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>4</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <spacer row="7" column="3">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer3</cstring>
                                 </property>
                                 <property name="orientation">
                                     <enum>Horizontal</enum>
@@ -334,7 +388,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Write Daemon</string>
+                    <string>&amp;Write Daemon</string>
                 </attribute>
                 <vbox>
                     <property name="name">
