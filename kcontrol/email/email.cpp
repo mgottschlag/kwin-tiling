@@ -1,5 +1,5 @@
 /**
- * email.cpp
+ * email.cpp - $Id$
  *
  * Copyright (c) 1999, 2000 Preston Brown <pbrown@kde.org>
  * Copyright (c) 2000 Frerich Raabe <raabe@kde.org>
@@ -45,63 +45,74 @@
 #include <kstddirs.h>
 #include <klocale.h>
 #include <kdialog.h>
+#include <kcombobox.h>
 
 #include "email.h"
+#include "emailsettings.h"
 
 KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-  QString wtstr;
-  QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
-                       KDialog::spacingHint());
-  QGroupBox *uBox = new QGroupBox(2, Qt::Horizontal, i18n("User information"),
-                  this);
-  topLayout->addWidget(uBox);
+	QString wtstr;
+	QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+	QLabel *label;
 
-  QLabel *label = new QLabel(i18n("&Full Name:"), uBox);
+	QHBoxLayout *l = new QHBoxLayout(topLayout);
+	topLayout->addLayout(l);
+	cProfiles = new KComboBox(true, this);
+	label = new QLabel("Current Profile:", this);
+	label->setBuddy(cProfiles);
+	l->addWidget(label, 0);
+	l->addWidget(cProfiles, 1);
+	connect (cProfiles, SIGNAL(activated(const QString&)), this, SLOT(profileChanged(const QString&)));
 
-  fullName = new KLineEdit(uBox);
-  connect(fullName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-  label->setBuddy(fullName);
+	QGroupBox *uBox = new QGroupBox(2, Qt::Horizontal, i18n("User information"), this);
+	topLayout->addWidget(uBox);
 
-  wtstr = i18n("Enter your full name here, e.g. \"John Doe\" (without the quotation"
-     " marks).  Some people like to provide a nick name only. You can leave this field"
-     " blank and still use email. However, providing your full name is <em>recommended</em> as"
-     " this makes it much easier for your recipient to browse his or her email.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( fullName, wtstr );
+	label = new QLabel(i18n("&Full Name:"), uBox);
 
-  label = new QLabel(i18n("Or&ganization:"), uBox);
+	fullName = new KLineEdit(uBox);
+	connect(fullName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
+	label->setBuddy(fullName);
 
-  organization = new KLineEdit(uBox);
-  connect(organization, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-  label->setBuddy(organization);
+	wtstr = i18n(	"Enter your full name here, e.g. \"John Doe\" (without the quotation"
+			" marks).  Some people like to provide a nick name only. You can leave this field"
+			" blank and still use email. However, providing your full name is <em>recommended</em> as"
+			" this makes it much easier for your recipient to browse his or her email.");
+	QWhatsThis::add( label, wtstr );
+	QWhatsThis::add( fullName, wtstr );
 
-  wtstr = i18n("Here you can enter the name of your organization, company"
-     " or university. This field is <em>optional</em>. However, if"
-     " you are using a business account and communicate with persons working for other"
-     " companies, providing the name of your organization is recommended.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( organization, wtstr );
+	label = new QLabel(i18n("Or&ganization:"), uBox);
 
-  label = new QLabel(i18n("Email &Address:"), uBox);
+	organization = new KLineEdit(uBox);
+	connect(organization, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
+	label->setBuddy(organization);
 
-  emailAddr = new KLineEdit(uBox);
-  connect(emailAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-  label->setBuddy(emailAddr);
+	wtstr = i18n(	"Here you can enter the name of your organization, company"
+			" or university. This field is <em>optional</em>. However, if"
+			" you are using a business account and communicate with persons working for other"
+			" companies, providing the name of your organization is recommended.");
+	QWhatsThis::add( label, wtstr );
+	QWhatsThis::add( organization, wtstr );
 
-  wtstr = i18n("Enter your email address here, e.g. \"john@doe.com\" (without "
-     "the quotation marks). This information is mandatory if you want to use email.<p>"
-     "Do <em>not</em> enter something like \"John Doe &lt;john@doe.com&gt;\", just a plain email address. "
-     "Your email address may not contain any blank spaces.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( emailAddr, wtstr );
+	label = new QLabel(i18n("Email &Address:"), uBox);
 
-  label = new QLabel(i18n("&Reply Address:"), uBox);
+	emailAddr = new KLineEdit(uBox);
+	connect(emailAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
+	label->setBuddy(emailAddr);
 
-  replyAddr = new KLineEdit(uBox);
-  connect(replyAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-  label->setBuddy(replyAddr);
+	wtstr = i18n(	"Enter your email address here, e.g. \"john@doe.com\" (without "
+			"the quotation marks). This information is mandatory if you want to use email.<p>"
+			"Do <em>not</em> enter something like \"John Doe &lt;john@doe.com&gt;\", just a plain email address. "
+			"Your email address may not contain any blank spaces.");
+	QWhatsThis::add( label, wtstr );
+	QWhatsThis::add( emailAddr, wtstr );
+
+	label = new QLabel(i18n("&Reply Address:"), uBox);
+
+	replyAddr = new KLineEdit(uBox);
+	connect(replyAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
+	label->setBuddy(replyAddr);
 
   wtstr = i18n("You can set a reply address if you want replies to your e-mail messages"
      " to go to a different address than the e-mail address above. Most likely, you should"
@@ -204,12 +215,14 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   QWhatsThis::add(bEmailClient, i18n("Press this button to select your favorite email client. Please"
         " note that the file you select has to have the executable attribute set in order to be"
         " accepted."));
-  QWhatsThis::add(cTerminalClient, i18n("Activate this option if you want the selected email client"
-        " to be executed in a terminal (e.g. <em>Konsole</em>)."));
+	QWhatsThis::add(cTerminalClient, i18n(	"Activate this option if you want the selected email client"
+						" to be executed in a terminal (e.g. <em>Konsole</em>)."));
 
-  topLayout->addSpacing(KDialog::spacingHint());
+	topLayout->addSpacing(KDialog::spacingHint());
 
-  load();
+	pSettings = new KEMailSettings();
+
+	load();
 }
 
 KEmailConfig::~KEmailConfig()
@@ -222,76 +235,64 @@ void KEmailConfig::configChanged()
 }
 
 
-void KEmailConfig::load()
+void KEmailConfig::load(const QString &s)
 {
-  KConfig *config = new KConfig("emaildefaults");
-  char hostname[80];
-  struct passwd *p;
+	if (s == QString::null) {
+		cProfiles->insertStringList(pSettings->profiles());
+		if (pSettings->defaultProfileName() != QString::null)
+			load(pSettings->defaultProfileName());
+	} else {
+		pSettings->setProfile(s);
+		emailAddr->setText(pSettings->getSetting(KEMailSettings::EmailAddress));
+		replyAddr->setText(pSettings->getSetting(KEMailSettings::ReplyToAddress));
+		organization->setText(pSettings->getSetting(KEMailSettings::Organization));
+		userName->setText(pSettings->getSetting(KEMailSettings::InServerLogin));
+		password->setText(pSettings->getSetting(KEMailSettings::InServerPass));
+		inServer->setText(pSettings->getSetting(KEMailSettings::InServer));
+		outServer->setText(pSettings->getSetting(KEMailSettings::OutServer));
+		fullName->setText(pSettings->getSetting(KEMailSettings::RealName));
 
-  p = getpwuid(getuid());
-  gethostname(hostname, 80);
+		QString intype = pSettings->getSetting(KEMailSettings::InServerType);
+		if (intype == "imap4")
+			bGrp->setButton(0);
+		else if (intype == "pop3")
+			bGrp->setButton(1);
+		else if (intype == "localbox")
+			bGrp->setButton(2);
 
-  config->setGroup("UserInfo");
-  fullName->setText(config->readEntry("FullName", p->pw_gecos));
-  QString tmp = p->pw_name;
-  tmp += "@"; tmp += hostname;
-  emailAddr->setText(config->readEntry("EmailAddress", tmp));
-  organization->setText(config->readEntry("Organization", "None"));
-  replyAddr->setText(config->readEntry("ReplyAddr"));
-
-  config->setGroup("ServerInfo");
-  userName->setText(config->readEntry("UserName", p->pw_name));
-  password->setText(config->readEntry("Password"));
-  inServer->setText(config->readEntry("Incoming"));
-  outServer->setText(config->readEntry("Outgoing", hostname));
-
-  bGrp->setButton(config->readNumEntry("ServerType", 0));
-
-  config->setGroup("ClientInfo");
-  emailClient->setText(config->readEntry("EmailClient", "kmail"));
-  cTerminalClient->setChecked(config->readBoolEntry("TerminalClient", false));
-
-  emit changed(false);
-  delete config;
+		emailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
+		cTerminalClient->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
+		emit changed(false);
+	}
 }
 
 void KEmailConfig::save()
 {
-  KConfig *config = new KConfig("emaildefaults");
+	pSettings->setSetting(KEMailSettings::RealName, fullName->text());
+	pSettings->setSetting(KEMailSettings::EmailAddress, emailAddr->text());
+	pSettings->setSetting(KEMailSettings::Organization, organization->text());
+	pSettings->setSetting(KEMailSettings::ReplyToAddress, replyAddr->text());
+	pSettings->setSetting(KEMailSettings::OutServer, outServer->text());
+	pSettings->setSetting(KEMailSettings::InServerLogin, userName->text());
+	pSettings->setSetting(KEMailSettings::InServerPass, password->text());
+	pSettings->setSetting(KEMailSettings::InServer, inServer->text());
 
-  config->setGroup("UserInfo");
-  config->writeEntry("FullName", fullName->text());
-  config->writeEntry("EmailAddress", emailAddr->text());
-  config->writeEntry("Organization", organization->text());
-  config->writeEntry("ReplyAddr", replyAddr->text());
+	if (imapButton->isChecked())
+		pSettings->setSetting(KEMailSettings::InServerType, "imap4");
+	else if (pop3Button->isChecked())
+		pSettings->setSetting(KEMailSettings::InServerType, "pop3");
+	else if (localButton->isChecked())
+		pSettings->setSetting(KEMailSettings::InServerType, "localbox");
 
-  config->setGroup("ServerInfo");
-  config->writeEntry("UserName", userName->text());
-  config->writeEntry("Password", password->text());
-  config->writeEntry("Incoming", inServer->text());
-  config->writeEntry("Outgoing", outServer->text());
-  int sType;
-  if (imapButton->isChecked())
-    sType = 0;
-  else if (pop3Button->isChecked())
-    sType = 1;
-  else
-    sType = 2;
-  config->writeEntry("ServerType", sType);
+	pSettings->setSetting(KEMailSettings::ClientProgram, emailClient->text());
+	pSettings->setSetting(KEMailSettings::ClientTerminal, (cTerminalClient->isChecked()) ? "true" : "false");
 
-  config->setGroup("ClientInfo");
-  config->writeEntry("EmailClient", emailClient->text());
-  config->writeEntry("TerminalClient", cTerminalClient->isChecked());
+	// insure proper permissions -- contains sensitive data
+	QString cfgName(KGlobal::dirs()->findResource("config", "emaildefaults"));
+	if (!cfgName.isEmpty())
+		::chmod(cfgName.utf8(), 0600);
 
-  config->sync();
-
-  // insure proper permissions -- contains sensitive data
-  QString cfgName(KGlobal::dirs()->findResource("config", "kcmemailrc"));
-  if (!cfgName.isEmpty())
-    ::chmod(cfgName.utf8(), 0600);
-
-  emit changed(false);
-  delete config;
+	emit changed(false);
 }
 
 void KEmailConfig::defaults()
@@ -340,6 +341,11 @@ void KEmailConfig::selectEmailClient()
     emailClient->setText(client);
 }
 
+void KEmailConfig::profileChanged(const QString &s)
+{
+	load(s);
+}
+
 extern "C"
 {
   KCModule *create_email(QWidget *parent, const char *name)
@@ -348,4 +354,5 @@ extern "C"
     return new KEmailConfig(parent, name);
   };
 }
+
 #include "email.moc"

@@ -1,5 +1,5 @@
 /**
- * email.h
+ * email.h - $Id$
  *
  * Copyright (c) 1999 Preston Brown <pbrown@redhat.com>
  * Copyright (c) 2000 Frerich Raabe <raabe@kde.org>
@@ -24,40 +24,47 @@
 
 #include <kcmodule.h>
 
+#include <qstringlist.h>
+
 class QLineEdit;
 class QRadioButton;
 class QButtonGroup;
 class QPushButton;
 class QCheckBox;
+class KComboBox;
+class KEMailSettings;
 
 class KEmailConfig : public KCModule
 {
-  Q_OBJECT
+	Q_OBJECT
 public:
-  KEmailConfig(QWidget *parent = 0L, const char *name = 0L);
-  virtual ~KEmailConfig();
+	KEmailConfig(QWidget *parent = 0L, const char *name = 0L);
+	virtual ~KEmailConfig();
 
-  void load();
-  void save();
-  void defaults();
-  
-  int buttons();
-  QString quickHelp() const;
-  
+	void load(const QString & = QString::null);
+	void save();
+	void defaults();
+
+	int buttons();
+	QString quickHelp() const;
+
 public slots:
-  void configChanged();
-  void selectEmailClient();
-      
-private:
- QLineEdit *fullName, *organization;
- QLineEdit *emailAddr, *replyAddr;
+	void configChanged();
+	void selectEmailClient();
+	void profileChanged(const QString &);
 
- QLineEdit *userName, *password, *inServer, *outServer, *emailClient;
- QButtonGroup *bGrp;
- QRadioButton *pop3Button, *imapButton, *localButton;
- QPushButton *bEmailClient;
- QCheckBox *cTerminalClient;
+protected:
+	QLineEdit *fullName, *organization;
+	QLineEdit *emailAddr, *replyAddr;
 
+	QLineEdit *userName, *password, *inServer, *outServer, *emailClient;
+	QButtonGroup *bGrp;
+	QRadioButton *pop3Button, *imapButton, *localButton;
+	QPushButton *bEmailClient;
+	QCheckBox *cTerminalClient;
+
+	KComboBox *cProfiles;
+	KEMailSettings *pSettings;
 };
 
 #endif
