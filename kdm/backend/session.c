@@ -505,6 +505,8 @@ ManageSession (struct display *d)
     if (AutoLogon ()) {
 	if (!StrDup (&curtype, "classic") || !Verify (conv_auto))
 	    goto gcont;
+	if (greeter)
+	    GSendInt (V_OK);
     } else {
 	OpenGreeter ();
 	if (Setjmp (idleTOJmp)) {
