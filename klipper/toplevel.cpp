@@ -487,8 +487,13 @@ void KlipperWidget::slotHistoryChanged() {
 
 void KlipperWidget::slotClearClipboard()
 {
+    bool blocked = clip->signalsBlocked();
+    clip->blockSignals( true ); // ### this might break other kicker applets
+
     clip->clear(QClipboard::Selection);
     clip->clear(QClipboard::Clipboard);
+
+    clip->blockSignals( blocked );
 
 }
 
