@@ -55,7 +55,7 @@ KMenuEdit::KMenuEdit (bool controlCenter, QWidget *, const char *name)
     // setup GUI
     setupActions();
     slotChangeView();
-
+    setAutoSaveSettings();
 }
 
 KMenuEdit::~KMenuEdit()
