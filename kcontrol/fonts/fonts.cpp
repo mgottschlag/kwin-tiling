@@ -333,7 +333,6 @@ void KFonts::load()
   for ( int i = 0; i < (int) fontUseList.count(); i++ )
     fontUseList.at( i )->readFont();
 
-  KConfig aacfg("kdeglobals", true, true);
   useAA = QSettings().readBoolEntry("/qt/useXft");
   useAA_original = useAA;
   kdDebug() << "AA:" << useAA << endl;

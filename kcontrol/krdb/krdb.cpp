@@ -19,6 +19,7 @@
 
 #undef Unsorted
 #include <qdir.h>
+#include <qpixmap.h>
 #include <qsettings.h>
 
 #include <dcopclient.h>
@@ -33,6 +34,7 @@
 #include <kglobalsettings.h>
 
 #include "krdb.h"
+
 
 // -----------------------------------------------------------------------------
 static void applyGtkStyles(bool active)
@@ -58,187 +60,125 @@ static void applyGtkStyles(bool active)
    kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
 }
 
-static void applyQtStyles(bool active)
+static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
 {
-   bool found;
-   QStringList actcg, inactcg, discg;
-   QString font,style;
+  bool found;
+  QStringList actcg, inactcg, discg;
 
+  /* export kde color settings */
+  int i;
+  for (i = 0; i < QColorGroup::NColorRoles; i++)
+     actcg   << kapp->palette().color(QPalette::Active,
+                (QColorGroup::ColorRole) i).name();
+  for (i = 0; i < QColorGroup::NColorRoles; i++)
+     inactcg << kapp->palette().color(QPalette::Inactive,
+                (QColorGroup::ColorRole) i).name();
+  for (i = 0; i < QColorGroup::NColorRoles; i++)
+     discg   << kapp->palette().color(QPalette::Disabled,
+                (QColorGroup::ColorRole) i).name();
 
-   { //To ensure they get written in time.. (thanks, puetzk)
-        QSettings settings;
+  settings.writeEntry("/qt/Palette/active", actcg);
+  settings.writeEntry("/qt/Palette/inactive", inactcg);
+  settings.writeEntry("/qt/Palette/disabled", discg);
 
-        //###### Write out library path regardless of mode -- workaround for Qt 3.0.2 (3.0.1?) bug; perhaps remove for newer Qt..
-        //On the other hand, whether Qt gets KDE widget settings or not really shouldn't be determined by
-        //"Apply KDE Colors to non-KDE Apps", so possibly the widgetStyle setting needs to be done unconditionally as well.
+  /* export kwin's colors to qtrc for kstyle to use */
+  kglobals.setGroup("WM");
 
-        //Read qt library path..
-        QStringList pathorig = settings.readListEntry("/qt/libraryPath", ':');
-        //and merge in KDE one..
-        QStringList plugins = KGlobal::dirs()->resourceDirs( "qtplugins" );
-        QStringList::Iterator it = plugins.begin();
-        while (it != plugins.end()) {
-                //Check whether *it is already there... Sigh, this is quadratic..
-                //But the paths are short enough to make a faster datastructure
-                //a waste..
-                if (pathorig.contains( *it ) == 0)
-                    pathorig.append( *it );
-                ++it;
-        }
+  // active colors
+  QPalette pal = QApplication::palette();
+  QColor clr = pal.active().background();
+  clr = kglobals.readColorEntry("activeBackground", &clr);
+  settings.writeEntry("/qt/KWinPalette/activeBackground", clr.name());
+  if (QPixmap::defaultDepth() > 8)
+    clr = clr.dark(110);
+  clr = kglobals.readColorEntry("activeBlend", &clr);
+  settings.writeEntry("/qt/KWinPalette/activeBlend", clr.name());
+  clr = pal.active().highlightedText();
+  clr = kglobals.readColorEntry("activeForeground", &clr);
+  settings.writeEntry("/qt/KWinPalette/activeForeground", clr.name());
+  clr = pal.active().background();
+  clr = kglobals.readColorEntry("frame", &clr);
+  settings.writeEntry("/qt/KWinPalette/frame", clr.name());
+  clr = kglobals.readColorEntry("activeTitleBtnBg", &clr);
+  settings.writeEntry("/qt/KWinPalette/activeTitleBtnBg", clr.name());
+  
+  // inactive colors
+  clr = pal.inactive().background();
+  clr = kglobals.readColorEntry("inactiveBackground", &clr);
+  settings.writeEntry("/qt/KWinPalette/inactiveBackground", clr.name());
+  if (QPixmap::defaultDepth() > 8)
+    clr = clr.dark(110);
+  clr = kglobals.readColorEntry("inactiveBlend", &clr);
+  settings.writeEntry("/qt/KWinPalette/inactiveBlend", clr.name());
+  clr = pal.inactive().background().dark();
+  clr = kglobals.readColorEntry("inactiveForeground", &clr);
+  settings.writeEntry("/qt/KWinPalette/inactiveForeground", clr.name());
+  clr = pal.inactive().background();
+  clr = kglobals.readColorEntry("inactiveFrame", &clr);
+  settings.writeEntry("/qt/KWinPalette/inactiveFrame", clr.name());
+  clr = kglobals.readColorEntry("inactiveTitleBtnBg", &clr);
+  settings.writeEntry("/qt/KWinPalette/inactiveTitleBtnBg", clr.name());
 
-        settings.writeEntry("/qt/libraryPath", pathorig, ':');
-   }
+  kglobals.setGroup("KDE");
+  int contrast = kglobals.readNumEntry("contrast", 7);
+  settings.writeEntry("/qt/KDE/contrast", contrast);
+}
 
+static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
+{
+  /* export kde's plugin library path to qtrc */
+  //Read qt library path..
+  QStringList pathorig = QApplication::libraryPaths();
+  //and merge in KDE one..
+  QStringList plugins = KGlobal::dirs()->resourceDirs( "qtplugins" );
+  QStringList::Iterator it = plugins.begin();
+  while (it != plugins.end()) {
+    //Check whether *it is already there... Sigh, this is quadratic..
+    //But the paths are short enough to make a faster datastructure
+    //a waste..
+    if (pathorig.contains( *it ) == 0)
+        pathorig.append( *it );
+    ++it;
+  }
+  settings.writeEntry("/qt/libraryPath", pathorig, ':');
 
-   if(active)
-   {
-      QSettings settings;
-      /* find out whether we already have backups... silly QSettings doesn't seem to have an exists() */
-      settings.readListEntry("/qt/QTorig/active", &found);
-      if(!found)
-      {
-         QStringList actcgorig, inactcgorig, discgorig;
-         QString fontorig,styleorig;
-         /* activating kde settings for the first time, save qt settings to restore */
+  /* export widget style */
+  kglobals.setGroup("General");
+  QString style = kglobals.readEntry("widgetStyle", 
+                  (QPixmap::defaultDepth()) > 8 ? "HighColor" : "Default");
+  if (!style.isEmpty())
+    settings.writeEntry("/qt/style", style);
 
-         actcgorig = settings.readListEntry("/qt/Palette/active", &found);
-         if(found)
-            settings.writeEntry("/qt/QTorig/active", actcgorig);
+  /* export font settings */
+  settings.writeEntry("/qt/font", KGlobalSettings::generalFont().toString());
+  
+  /* ##### looks like kcmfonts skips this, so we don't do this here */
+/*bool usexft = kglobals.readBoolEntry("AntiAliasing", false);
+  kconfig.setGroup("General");
+  settings.writeEntry("/qt/enableXft", usexft);
+  settings.writeEntry("/qt/useXft", usexft); */
 
-         inactcgorig = settings.readListEntry("/qt/Palette/inactive", &found);
-         if(found)
-            settings.writeEntry("/qt/QTorig/inactive", inactcgorig);
+  /* export effects settings */
+  kglobals.setGroup("KDE");
+  bool effectsEnabled = kglobals.readBoolEntry("EffectsEnabled", false);
+  bool fadeMenus = kglobals.readBoolEntry("EffectFadeMenu", false);
+  bool fadeTooltips = kglobals.readBoolEntry("EffectFadeTooltip", false);
+  bool animateCombobox = kglobals.readBoolEntry("EffectAnimateCombo", false);
 
-         discgorig = settings.readListEntry("/qt/Palette/disabled", &found);
-         if(found)
-            settings.writeEntry("/qt/QTorig/disabled", discgorig);
+  QStringList guieffects;
+  if (effectsEnabled) {
+    guieffects << QString("general");
+    if (fadeMenus)
+      guieffects << QString("fademenu");
+    if (animateCombobox)
+      guieffects << QString("animatecombo");
+    if (fadeTooltips)
+      guieffects << QString("fadetooltip");
+  }
+  else
+    guieffects << QString("none");
 
-         fontorig = settings.readEntry("/qt/font", QString::null, &found);
-         if(found)
-            settings.writeEntry("/qt/QTorig/font", fontorig);
-
-         styleorig = settings.readEntry("/qt/style", QString::null, &found);
-         if(found)
-            settings.writeEntry("/qt/QTorig/style", styleorig);
-
-         QStringList guieffects = settings.readListEntry("/qt/GUIEffects", &found);
-         if(found)
-            settings.writeEntry("/qt/QTorig/GUIEffects", guieffects);
-
-         bool xft = settings.readBoolEntry("/qt/enableXft", &found);
-         if(found)
-            settings.writeEntry("/qt/QTorig/enableXft", xft);
-
-         xft = settings.readBoolEntry("/qt/useXft", &found);
-         if(found)
-            settings.writeEntry("/qt/QTorig/useXft", xft);
-
-
-
-      }
-
-      KSimpleConfig kconfig("kstylerc",true); /* open the style data read-only */
-      kconfig.setGroup("KDE");
-      style = kconfig.readEntry("WidgetStyle");
-      if (!style.isEmpty())
-        settings.writeEntry("/qt/style", style);
-
-
-      /* and activate the kde color settings */
-      int i;
-      for (i = 0; i < QColorGroup::NColorRoles; i++)
-         actcg   << kapp->palette().color(QPalette::Active,
-                    (QColorGroup::ColorRole) i).name();
-      for (i = 0; i < QColorGroup::NColorRoles; i++)
-         inactcg << kapp->palette().color(QPalette::Inactive,
-                    (QColorGroup::ColorRole) i).name();
-      for (i = 0; i < QColorGroup::NColorRoles; i++)
-         discg   << kapp->palette().color(QPalette::Disabled,
-                    (QColorGroup::ColorRole) i).name();
-
-      settings.writeEntry("/qt/Palette/active", actcg);
-      settings.writeEntry("/qt/Palette/inactive", inactcg);
-      settings.writeEntry("/qt/Palette/disabled", discg);
-
-      settings.writeEntry("/qt/font", KGlobalSettings::generalFont().toString());
-
-      KSimpleConfig kglobals("kdeglobals", true);
-      kglobals.setGroup("KDE");
-      bool fadeMenus = kglobals.readBoolEntry("EffectFadeMenu", false);
-      bool fadeTooltips = kglobals.readBoolEntry("EffectFadeTooltip", false);
-      bool animateCombobox = kglobals.readBoolEntry("EffectAnimateCombo", false);
-
-      QStringList guieffects;
-      if (fadeMenus || fadeTooltips || animateCombobox) {
-          guieffects << QString("general");
-          if (fadeMenus)
-              guieffects << QString("fademenu");
-          if (animateCombobox)
-              guieffects << QString("animatecombo");
-          if (fadeTooltips)
-              guieffects << QString("fadetooltip");
-      }
-      else
-          guieffects << QString("none");
-
-      settings.writeEntry("/qt/GUIEffects", guieffects);
-
-      bool usexft = kglobals.readBoolEntry("AntiAliasing", false);
-
-      settings.writeEntry("/qt/enableXft", usexft);
-      settings.writeEntry("/qt/useXft", usexft);
-
-   }
-   else
-   {
-      QSettings settings;
-
-      /* restore qt color settings, if we have any saved */
-      actcg = settings.readListEntry("/qt/QTorig/active", &found);
-      if(found)
-         settings.writeEntry("/qt/Palette/active", actcg);
-
-      inactcg = settings.readListEntry("/qt/QTorig/inactive", &found);
-      if(found)
-         settings.writeEntry("/qt/Palette/inactive", inactcg);
-
-      discg = settings.readListEntry("/qt/QTorig/disabled", &found);
-      if(found)
-         settings.writeEntry("/qt/Palette/disabled", discg);
-
-      font = settings.readEntry("/qt/QTorig/font", QString::null, &found);
-      if(found)
-         settings.writeEntry("/qt/font", font);
-
-      style = settings.readEntry("/qt/QTorig/style", QString::null, &found);
-      if(found)
-         settings.writeEntry("/qt/style", style);
-
-      QStringList guieffects = settings.readListEntry("/qt/QTorig/GUIEffects", &found);
-      if(found)
-        settings.writeEntry("/qt/GUIEffects", guieffects);
-
-      bool xft = settings.readBoolEntry("/qt/QTorig/enableXft", &found);
-      if(found)
-        settings.writeEntry("/qt/enableXft", xft);
-
-      xft = settings.readBoolEntry("/qt/QTorig/useXft", &found);
-      if(found)
-        settings.writeEntry("/qt/useXft", xft);
-
-      /* and remove our clutter from the file */
-      settings.removeEntry("/qt/QTorig/active");
-      settings.removeEntry("/qt/QTorig/inactive");
-      settings.removeEntry("/qt/QTorig/disabled");
-      settings.removeEntry("/qt/QTorig/font");
-      settings.removeEntry("/qt/QTorig/style");
-      settings.removeEntry("/qt/QTorig/enableXft");
-      settings.removeEntry("/qt/QTorig/useXft");
-
-   }
-   QApplication::setDesktopSettingsAware( true );
-   QApplication::x11_apply_settings();
-   QApplication::setDesktopSettingsAware( false );
+  settings.writeEntry("/qt/GUIEffects", guieffects);
 }
 
 // -----------------------------------------------------------------------------
@@ -294,7 +234,7 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg )
         t << "# created by KDE, " << QDateTime::currentDateTime().toString() << endl;
         t << "#" << endl;
         t << "# If you do not want KDE to override your GTK settings, select" << endl;
-        t << "# Themes/Styles in the control center and disable the checkbox " << endl;
+        t << "# Look and Feel/Styles in the control center and disable the checkbox " << endl;
         t << "# \"Apply fonts and colors to non-KDE apps\"" << endl;
         t << "#" << endl;
         t << endl;
@@ -335,22 +275,18 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg )
 
 // -----------------------------------------------------------------------------
 
-void runRdb(bool exportColors) {
-  if (!exportColors)
+void runRdb( uint flags )
+{
+  // Export colors to non-(KDE/Qt) apps (e.g. Motif, GTK+ apps)
+  if (flags & KRdbExportColors) 
   {
-     applyGtkStyles(false);
-     applyQtStyles(false);
-     return;
-  }
 
-  KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
-  QColorGroup cg = kapp->palette().active();
-  createGtkrc( exportColors, cg );
+    KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
+    QColorGroup cg = kapp->palette().active();
+    createGtkrc( true, cg );
 
-  QString preproc;
+    QString preproc;
 
-  if (exportColors)
-  {
     addColorDef(preproc, "FOREGROUND"         , cg.foreground());
     QColor backCol = cg.background();
     addColorDef(preproc, "BACKGROUND"         , backCol);
@@ -364,51 +300,71 @@ void runRdb(bool exportColors) {
     addColorDef(preproc, "INACTIVE_FOREGROUND", KGlobalSettings::inactiveTitleColor());
     addColorDef(preproc, "ACTIVE_BACKGROUND"  , KGlobalSettings::activeTitleColor());
     addColorDef(preproc, "ACTIVE_FOREGROUND"  , KGlobalSettings::activeTitleColor());
-  }
-  //---------------------------------------------------------------
+    //---------------------------------------------------------------
 
-  QStringList list;
+    QStringList list;
 
-  QStringList adPaths = KGlobal::dirs()->findDirs("appdefaults", "");
-  for (QStringList::ConstIterator it = adPaths.begin(); it != adPaths.end(); it++) {
-    QDir dSys( *it );
+    QStringList adPaths = KGlobal::dirs()->findDirs("appdefaults", "");
+    for (QStringList::ConstIterator it = adPaths.begin(); it != adPaths.end(); it++) {
+      QDir dSys( *it );
 
-    if ( dSys.exists() ) {
-      dSys.setFilter( QDir::Files );
-      dSys.setSorting( QDir::Name );
-      dSys.setNameFilter("*.ad");
-      list += dSys.entryList();
+      if ( dSys.exists() ) {
+        dSys.setFilter( QDir::Files );
+        dSys.setSorting( QDir::Name );
+        dSys.setNameFilter("*.ad");
+        list += dSys.entryList();
+      }
     }
-  }
 
-  QString propString;
+    QString propString;
 
-  KTempFile tmpFile;
+    KTempFile tmpFile;
 
-  if (tmpFile.status() != 0)
+    if (tmpFile.status() != 0)
+    {
+      kdDebug() << "Couldn't open temp file" << endl;
+      exit(0);
+    }
+
+    QFile &tmp = *(tmpFile.file());
+    tmp.writeBlock( preproc.latin1(), preproc.length() );
+
+    for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
+      copyFile(tmp, locate("appdefaults", *it ), true);
+
+    // very primitive support for  ~/.Xdefaults by appending it
+    copyFile(tmp, QDir::homeDirPath() + "/.Xdefaults", true);
+
+    tmpFile.close();
+
+    KProcess proc;
+    proc << "xrdb" << tmpFile.name();
+    proc.start( KProcess::Block, KProcess::Stdin );
+
+    tmpFile.unlink();
+
+    applyGtkStyles(true);
+
+  } else
+    applyGtkStyles(false);
+
+  if (flags > KRdbExportColors)
   {
-    kdDebug() << "Couldn't open temp file" << endl;
-    exit(0);
+    { /* extra braces for a qsettings.sync() in its destructor */
+      QSettings settings;
+      KSimpleConfig kglobals("kdeglobals", true); /* open read-only */
+
+      if ( flags & KRdbExportQtColors )
+        applyQtColors( kglobals, settings );    // For kcmcolors
+
+      if ( flags & KRdbExportQtSettings )
+        applyQtSettings( kglobals, settings );  // For kcmstyle
+    }
+
+    /* apply the settings to qt-only apps */
+    QApplication::setDesktopSettingsAware( true );
+    QApplication::x11_apply_settings();
+    QApplication::setDesktopSettingsAware( false );
   }
-
-  QFile &tmp = *(tmpFile.file());
-  tmp.writeBlock( preproc.latin1(), preproc.length() );
-
-  for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
-    copyFile(tmp, locate("appdefaults", *it ), exportColors);
-
-  // very primitive support for  ~/.Xdefaults by appending it
-  copyFile(tmp, QDir::homeDirPath() + "/.Xdefaults", true);
-
-  tmpFile.close();
-
-  KProcess proc;
-  proc << "xrdb" << tmpFile.name();
-
-  proc.start( KProcess::Block, KProcess::Stdin );
-
-  tmpFile.unlink();
-  applyGtkStyles(true);
-  applyQtStyles(true);
 }
 

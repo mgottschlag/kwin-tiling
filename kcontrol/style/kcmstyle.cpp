@@ -73,6 +73,7 @@
 #undef KeyPress
 #undef KeyRelease
 
+
 /**** DLL Interface for kcontrol ****/
 
 void applyMultiHead(bool active)
@@ -98,10 +99,13 @@ extern "C"
 
     void init_style() 
 	{
+		uint flags = KRdbExportQtSettings | KRdbExportQtColors;
 		KConfig config("kcmdisplayrc", true, true);
 		config.setGroup("X11");
 		bool exportKDEColors = config.readBoolEntry("exportKDEColors", true);
-		runRdb(exportKDEColors);
+		if (exportKDEColors)
+			flags |= KRdbExportColors;
+		runRdb( flags );
 
 		bool isActive = !config.readBoolEntry( "disableMultihead", false ) && 
 						(ScreenCount(qt_xdisplay()) > 1);
@@ -165,9 +169,6 @@ class KStyleListView: public KListView
 KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	: KCModule( parent, name ), appliedStyle(NULL)
 {
-	// required so we can change settings in qt-only applications.
-	QApplication::setDesktopSettingsAware(true);	
-
 	KGlobal::dirs()->addResourceType("themes", 
 		KStandardDirs::kde_default("data") + "kstyle/themes");
 	
@@ -365,7 +366,6 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 
 KCMStyle::~KCMStyle()
 {
-	QApplication::setDesktopSettingsAware(false);
 	delete appliedStyle;
 }
 
@@ -469,10 +469,9 @@ void KCMStyle::save()
 	config.writeEntry( "IconText", tbIcon, true, true );
 	config.sync();
 
-	// ###### TODO - export changes to qtrc via krdb first
-
-	// Propagate changes to all Qt-only applications.
-	QApplication::x11_apply_settings();
+	// Export the changes we made to qtrc, and update
+	// all qt-only applications on the fly.
+	runRdb( KRdbExportQtSettings );
 
 	// Now allow KDE apps to reconfigure themselves.
 	if ( m_bStyleDirty )

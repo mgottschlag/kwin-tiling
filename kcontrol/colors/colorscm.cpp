@@ -331,9 +331,12 @@ void KColorScheme::save()
     KConfig cfg2("kcmdisplayrc", false, false);
     cfg2.setGroup("X11");
     bool exportColors = cbExportColors->isChecked();
+    uint flags = KRdbExportQtColors;
+    if ( exportColors )
+        flags |= KRdbExportColors;
     cfg2.writeEntry("exportKDEColors", exportColors);
     cfg2.sync();
-    runRdb(exportColors);
+    runRdb( flags );
 
     QApplication::setOverrideCursor( waitCursor );
     QStringList args;
