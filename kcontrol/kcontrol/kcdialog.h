@@ -38,8 +38,7 @@ k_dcop:
   virtual void activate();
 
 protected slots:
-    //virtual void slotDefault();
-  virtual void slotUser1(); // Reset
+  virtual void slotDefault();
   virtual void slotApply();
   virtual void slotOk();
   void clientChanged(bool state);

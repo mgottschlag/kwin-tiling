@@ -37,8 +37,8 @@
 #include "modloader.h"
 
 KExtendedCDialog::KExtendedCDialog(QWidget *parent, const char *name, bool modal)
-  : KDialogBase(IconList, i18n("Settings"), Help | User1 |Cancel | Apply | Ok, Ok,
-                parent, name, modal, true, i18n("&Defaults"))
+  : KDialogBase(IconList, i18n("Settings"), Help | Default |Cancel | Apply | Ok, Ok,
+                parent, name, modal, true)
 {
     enableButton(Apply, false);
     connect(this, SIGNAL(aboutToShowPage(QWidget *)), this, SLOT(aboutToShow(QWidget *)));
@@ -50,7 +50,7 @@ KExtendedCDialog::~KExtendedCDialog()
     moduleDict.setAutoDelete(true);
 }
 
-void KExtendedCDialog::slotUser1()
+void KExtendedCDialog::slotDefault()
 {
     int curPageIndex = activePageIndex();
     for (KCModule* module = modules.first(); module != 0; module = modules.next())

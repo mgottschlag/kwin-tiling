@@ -38,7 +38,7 @@ public:
     void addModule(const QString& module, bool withfallback=true);
 
 protected slots:
-    virtual void slotUser1(); // Reset
+    virtual void slotDefault();
     virtual void slotApply();
     virtual void slotOk();
     void clientChanged(bool state);

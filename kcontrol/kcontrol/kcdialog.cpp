@@ -31,10 +31,10 @@
 KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *parent, const char *name, bool modal)
   : KDialogBase(parent, name, modal, QString::null,
                 (b & KCModule::Help ? Help : 0) |
-                (b & KCModule::Default ? User1 : 0) |
+                (b & KCModule::Default ? Default : 0) |
                 (b & KCModule::Apply ? (Ok | Apply | Cancel) : Close),
                 (b & KCModule::Apply ? Ok : Close),
-                true, i18n("&Defaults")),
+                true),
     DCOPObject("dialog"),
     _client(client)
 {
@@ -49,7 +49,7 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
     KCGlobal::repairAccels( topLevelWidget() );
 }
 
-void KCDialog::slotUser1()
+void KCDialog::slotDefault()
 {
     _client->defaults();
     clientChanged(true);
