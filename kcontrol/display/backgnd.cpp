@@ -246,8 +246,8 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     grid->setColStretch(2,9);
     grid->setColStretch(3,0);
     
-    grid->addRowSpacing(0,5);
-    grid->addRowSpacing(5,1);
+    grid->addRowSpacing(0,10);
+    //    grid->addRowSpacing(5,1);
     
     ncGroup = new QButtonGroup( this );
     ncGroup->hide();
@@ -766,12 +766,12 @@ void KBackground::setMonitor()
     } else if ( currentItem.stMode == Gradient ) {
 		
       if( currentItem.orMode == Portrait ) 
-	KPixmapEffect::gradient(preview, currentItem.color2, 
-				currentItem.color1, 
+	KPixmapEffect::gradient(preview, currentItem.color1, 
+				currentItem.color2, 
 				KPixmapEffect::VerticalGradient);
       else
-	KPixmapEffect::gradient(preview, currentItem.color2, 
-				currentItem.color1, 
+	KPixmapEffect::gradient(preview, currentItem.color1, 
+				currentItem.color2, 
 				KPixmapEffect::HorizontalGradient);
 			
     } else
