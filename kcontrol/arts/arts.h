@@ -33,6 +33,9 @@
 
 #include <kcmodule.h>
 
+#include <qbuttongroup.h>
+#include <qradiobutton.h>
+
 
 class KArtsModule : public KCModule
 {
@@ -60,6 +63,9 @@ private:
   void GetSettings( void );
 
   QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm;
+  QButtonGroup *responseGroup;
+  QRadioButton *responseButton[3];
+
   KConfig *config;
 };
 

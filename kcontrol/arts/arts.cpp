@@ -90,13 +90,26 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
   x11CommHint->setText(i18n("    If you want network transparency or if you use the soundserver\n    only when you use X11, enable this."));
   layout->addWidget(x11CommHint);
 
-  QFrame *hLine = new QFrame(this);
-  hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
- 
+  responseGroup = new QButtonGroup(i18n("response time"), this);
+
+  QVBoxLayout *vbox = new QVBoxLayout(responseGroup,10);
+  vbox->addSpacing(responseGroup->fontMetrics().height());
+
+  responseButton[0] = new QRadioButton( i18n("&Fast (10ms)"), responseGroup );
+  responseButton[1] = new QRadioButton( i18n("&Standard (50ms)"), responseGroup );
+  responseButton[2] = new QRadioButton( i18n("&Confortable (250ms)"), responseGroup);
+    //connect(style_group, SIGNAL(clicked(int)), SLOT(style_clicked(int)));
+
+  for (int i = 0; i < 3; i++)
+    vbox->addWidget(responseButton[i]);
+  layout->addWidget(responseGroup);
 
   // options end
 
+  QFrame *hLine = new QFrame(this);
+  hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
   layout->addWidget(hLine);
+
   QLabel *restartHint = new QLabel(this);
   restartHint->setText(i18n("As the aRts soundserver will be started when KDE is started,\nthe changes you make in this dialog will only take effect then.\nSo logout and login again after having changed something in this dialog."));
   restartHint->setTextFormat(RichText);
@@ -117,6 +130,11 @@ void KArtsModule::GetSettings( void )
 	startRealtime->setChecked(config->readBoolEntry("StartRealtime",false));
 	networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
 	x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
+	for(int i=0;i<3;i++)
+	{
+		if(config->readNumEntry("ResponseTime",1) == i)
+			responseButton[i]->setChecked(true);
+	}
 	updateWidgets();
 }
 
@@ -127,6 +145,11 @@ void KArtsModule::saveParams( void )
 	config->writeEntry("StartRealtime",startRealtime->isChecked());
 	config->writeEntry("NetworkTransparent",networkTransparent->isChecked());
 	config->writeEntry("X11GlobalComm",x11Comm->isChecked());
+	for(int i=0;i<3;i++)
+	{
+		if(responseButton[i]->isChecked())
+			config->writeEntry("ResponseTime",i);
+	}
 	config->sync();
 }
 
@@ -159,6 +182,7 @@ void KArtsModule::defaults()
 	startRealtime->setChecked(false);
 	networkTransparent->setChecked(false);
 	x11Comm->setChecked(false);
+	responseButton[1]->setChecked(true);
 }
 
 void KArtsModule::updateWidgets()
@@ -166,6 +190,7 @@ void KArtsModule::updateWidgets()
 	startRealtime->setEnabled(startServer->isChecked());
 	networkTransparent->setEnabled(startServer->isChecked());
 	x11Comm->setEnabled(startServer->isChecked());
+	responseGroup->setEnabled(startServer->isChecked());
 }
 
 void KArtsModule::slotChanged()
@@ -193,6 +218,7 @@ extern "C"
 		bool startRealtime = config->readBoolEntry("StartRealtime",false);
 		bool networkTransparent = config->readBoolEntry("NetworkTransparent",false);
 		bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
+		int responseTime = config->readNumEntry("ResponseTime",1);
 
 		/* put the value of x11Comm into .mcoprc */
 		KConfig *X11CommConfig = new KConfig(QDir::homeDirPath()+"/.mcoprc");
@@ -216,6 +242,18 @@ extern "C"
 			if(networkTransparent)
 				cmdline += " -n";
 
+			switch(responseTime)
+			{
+				/* 8.7 ms */
+				case 0: cmdline += " -F 3 -S 512";
+					break;
+				/* 40 ms */
+				case 1: cmdline += " -F 7 -S 1024";
+					break;
+				/* 255 ms */
+				case 2: cmdline += " -F 11 -S 4096";
+					break;
+			}
 			system(cmdline);
 		}
 	}
