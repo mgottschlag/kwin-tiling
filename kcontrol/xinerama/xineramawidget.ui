@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>658</width>
-            <height>342</height>
+            <height>395</height>
         </rect>
     </property>
     <property name="caption">
@@ -101,7 +101,7 @@
                         <cstring>_enableXinerama</cstring>
                     </property>
                     <property name="text">
-                        <string>Enable Multiple Monitor Virtual Desktop Support</string>
+                        <string>Enable multiple monitor virtual desktop support</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -112,7 +112,7 @@
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Enable Multiple Monitor Window Resistance Support</string>
+                        <string>Enable multiple monitor window resistance support</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -123,7 +123,7 @@
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Enable Multiple Monitor Window Placement Support</string>
+                        <string>Enable multiple monitor window placement support</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -134,7 +134,7 @@
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Enable Multiple Monitor Window Maximize Support</string>
+                        <string>Enable multiple monitor window maximize support</string>
                     </property>
                 </widget>
             </vbox>
@@ -180,7 +180,7 @@
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Show Unmanaged Windows On:</string>
+                        <string>Show unmanaged windows on:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>_unmanagedDisplay</cstring>
@@ -202,7 +202,7 @@
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Show KDE Splash Screen On:</string>
+                        <string>Show KDE splash screen on:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>_unmanagedDisplay</cstring>
@@ -310,4 +310,7 @@
     <slot access="private">emitConfigChanged()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>qwidget.h</includehint>
+</includehints>
 </UI>
