@@ -1,6 +1,5 @@
 LIBUSBCONFIG=""
 AC_PATH_PROG(LIBUSBCONFIG,libusb-config,no)
-have_libusb=0
 if test $LIBUSBCONFIG = "no"  ; then
     AC_MSG_WARN(Can't find libusb-config)
     AC_MSG_WARN(Check your libusb installation)
@@ -11,10 +10,8 @@ AC_CHECK_LIB(usb,main,
     USB_LIBS="$($LIBUSBCONFIG --libs)"
     USB_CFLAGS="$($LIBUSBCONFIG --cflags)"
     AC_DEFINE(HAVE_LIBUSB, 1, [Defined if you have libusb])
-    have_libusb=1
 )
 fi
-AM_CONDITIONAL(include_LIBUSB, [test "$have_libusb" = 1])
 AC_SUBST(USB_LIBS)
 AC_SUBST(USB_CFLAGS)
 
