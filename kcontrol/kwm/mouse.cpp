@@ -56,11 +56,11 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
 
   label = new QLabel(i18n("Titlebar doubleclick:"), this);
   layout->addMultiCellWidget(label, 0,0,0,1);
+  QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when double clicking on the"
+    " titlebar of a window.") );
   label = new QLabel(this);
   label->setFrameStyle(QFrame::HLine|QFrame::Sunken);
   layout->addMultiCellWidget(label, 1, 1, 0, 3);
-  QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when double clicking on the"
-    " titlebar of a window.") );
 
   QComboBox* combo = new QComboBox(this);
   combo->insertItem(i18n("Maximize"));
@@ -421,7 +421,7 @@ void KActionsConfig::load()
 {
   config->setGroup("Windows");
   setComboText(coTiDbl, config->readEntry("TitlebarDoubleClickCommand","Shade").ascii());
-  
+
   config->setGroup( "MouseBindings");
   setComboText(coTiAct1,config->readEntry("CommandActiveTitlebar1","Raise").ascii());
   setComboText(coTiAct2,config->readEntry("CommandActiveTitlebar2","Lower").ascii());
@@ -447,7 +447,7 @@ void KActionsConfig::save()
 {
   config->setGroup("Windows");
   config->writeEntry("TitlebarDoubleClickCommand", functionTiDbl( coTiDbl->currentItem() ) );
-  
+
   config->setGroup("MouseBindings");
   config->writeEntry("CommandActiveTitlebar1", functionTiAc(coTiAct1->currentItem()));
   config->writeEntry("CommandActiveTitlebar2", functionTiAc(coTiAct2->currentItem()));
