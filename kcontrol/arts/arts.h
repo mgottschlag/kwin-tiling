@@ -63,9 +63,9 @@ private slots:
 
 private:
 
-  void updateWidgets(void);
+  void updateWidgets ();
   void calculateLatency();
-  void GetSettings( void );
+  void GetSettings ();
 
   QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
   			*fullDuplex, *customDevice, *customRate, *autoSuspend, *displayMessage;
@@ -79,14 +79,15 @@ private:
   int fragmentSize;
   bool configChanged;
 
-  void initAudioIOList();
   class AudioIOElement {
   public:
-    AudioIOElement(QString name, QString fullName)
-			: name(name), fullName(fullName) { }
-    QString name;
-	QString fullName;
+	  AudioIOElement(const QString &name, const QString &fullName)
+		  : name(name), fullName(fullName) {;}
+	  QString name;
+	  QString fullName;
   };
+
+  void initAudioIOList();
   QList<AudioIOElement> audioIOList;
 };
 
