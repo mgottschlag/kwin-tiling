@@ -30,6 +30,7 @@
 #include <kiconloader.h>
 #include <kiconloaderdialog.h>
 #include <kmsgbox.h>
+#include <kstddirs.h>
 
 #include "IconPathDialog.h"
 #include "DesktopPathDialog.h"
@@ -101,11 +102,9 @@ int main( int argc, char **argv )
   global_pix_sel2 = new KIconLoaderDialog;
   QStringList icon_sel_list;
   QStringList icon_sel_list2;
-  icon_sel_list.append(KApplication::kde_icondir());
-  //icon_sel_list.append(QDir::homeDirPath()+"/.kde/share/icons");
+  icon_sel_list.append(locate("icon", QString()));
   icon_sel_list.append(KApplication::localkdedir()+"/share/icons");
-  icon_sel_list2.append(KApplication::kde_icondir() + "/mini");
-  //icon_sel_list2.append(QDir::homeDirPath()+"/.kde/share/icons/mini");
+  icon_sel_list2.append(locate("mini", QString()));
   icon_sel_list2.append(KApplication::localkdedir()+"/share/icons/mini");
   global_pix_sel->setDir(icon_sel_list);
   global_pix_sel2->setDir(icon_sel_list2);
