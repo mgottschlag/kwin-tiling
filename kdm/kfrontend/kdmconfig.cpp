@@ -211,6 +211,8 @@ KDMConfig::KDMConfig()
     _defaultUser = GetCfgQStr (C_DefaultUser);
     _focusPasswd = GetCfgInt (C_FocusPasswd);
 
+    _numLockStatus = GetCfgInt (C_NumLock);
+
 #if defined(__linux__) && defined(__i386__)
     if ((_useLilo = GetCfgInt (C_useLilo))) {
 	_liloCmd = GetCfgQStr (C_liloCmd);

@@ -438,7 +438,8 @@ static const char
     *preseluser[] = { "None", "Previous", "Default", 0 },
     *echomode[] = { "OneStar", "ThreeStars", "NoEcho", 0 },
     *sd_who[] = { "None", "Root", "All", 0 },
-    *sd_mode[] = { "Schedule", "TryNow", "ForceNow", 0 };
+    *sd_mode[] = { "Schedule", "TryNow", "ForceNow", 0 },
+    *numlock[] = { "Off", "On", "Keep", 0 };
 
 Ent entsGeneral[] = {
 { "DaemonMode",		C_daemonMode | C_BOOL,	(void *)PdaemonMode,	"true" },
@@ -538,6 +539,7 @@ Ent entsGreeter[] = {
 { "GreetString",	C_GreetString,		0,	"Welcome to %s at %n" },
 { "GreetFont",		C_GreetFont,		0,	"charter,24,5,0,50,0" },
 { "AntiAliasing",	C_AntiAliasing | C_BOOL,0,	"false" },
+{ "NumLock",		C_NumLock | C_ENUM, numlock,	"Keep" },
 { "Language",		C_Language,		0,	"en_US" },
 { "ShowUsers",		C_ShowUsers | C_ENUM, showusers, "NotHidden" },
 { "SelectedUsers",	C_SelectedUsers,	0,	"" },

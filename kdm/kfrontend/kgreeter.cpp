@@ -83,13 +83,24 @@ public:
 bool
 MyApp::x11EventFilter( XEvent * ev)
 {
-    if (ev->type == FocusIn || ev->type == FocusOut) {
+    switch (ev->type) {
+    case FocusIn:
+    case FocusOut:
 	// Hack to tell dialogs to take focus when the keyboard is grabbed
-	ev->xfocus.mode = NotifyNormal;
-    } else if (ev->type == ButtonPress || ev->type == ButtonRelease) {
+//	if (ev->xfocus.mode == NotifyWhileGrabbed)
+	    ev->xfocus.mode = NotifyNormal;
+	break;
+    case ButtonPress:
+    case ButtonRelease:
 	// Hack to let the RMB work (nearly) as LMB
 	if (ev->xbutton.button == 3)
 	    ev->xbutton.button = 1;
+	break;
+    case KeyPress:
+    case KeyRelease:
+	if (kgreeter)
+	    kgreeter->UpdateLock();
+	break;
     }
     return false;
 }
@@ -143,8 +154,7 @@ KGreeter::insertUsers( QIconView *iconview)
 				  username + QString::fromLatin1(".png")));
 		if( p.isNull())
 		    p = default_pix;
-		QIconViewItem *item = new QIconViewItem( iconview,
-							     username, p);
+		QIconViewItem *item = new QIconViewItem( iconview, username, p);
 		item->setDragEnabled(false);
 	    }
 	}
@@ -326,6 +336,8 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 
     clear_button_clicked();
 
+    UpdateLock ();
+
     stsfile = new KSimpleConfig (QString::fromLatin1 (KDE_CONFDIR "/kdm/kdmsts"));
     stsfile->setGroup ("PrevUser");
     enam = QString::fromLocal8Bit(dname);
@@ -370,17 +382,48 @@ KGreeter::slot_session_selected()
 }
 
 void
+KGreeter::UpdateLock()
+{
+    unsigned int lmask;
+    Window dummy1, dummy2;
+    int dummy3, dummy4, dummy5, dummy6;
+    XQueryPointer( qt_xdisplay(), DefaultRootWindow( qt_xdisplay() ),
+		   &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6,
+		   &lmask );
+    int nlock = lmask & LockMask;
+    if (nlock != capslocked) {
+	capslocked = nlock;
+	if (!loginfailed)
+	    updateStatus();
+    }
+}
+
+void
+KGreeter::updateStatus()
+{
+    if (loginfailed) {
+	failedLabel->setPaletteForegroundColor( QColor( 0, 0, 0 ) );
+	failedLabel->setText(i18n("Login failed"));
+    } else if (capslocked) {
+	failedLabel->setPaletteForegroundColor( QColor( 255, 0, 0 ) );
+	failedLabel->setText(i18n("Warning: Caps locked"));
+    } else
+	failedLabel->clear();
+}
+
+void
 KGreeter::SetTimer()
 {
-    if (failedLabel->text().isNull())
+    if (!loginfailed)
 	timer->start( 40000, TRUE );
 }
 
 void
 KGreeter::timerDone()
 {
-    if (!failedLabel->text().isNull()) {
-	failedLabel->setText(QString::null);
+    if (loginfailed) {
+	loginfailed = false;
+	updateStatus();
 	goButton->setEnabled( true);
 	loginEdit->setEnabled( true);
 	passwdEdit->setEnabled( true);
@@ -563,7 +606,8 @@ KGreeter::verifyUser(bool haveto)
 	case V_AUTH:
 	    if (!haveto)
 		return false;
-	    failedLabel->setText(i18n("Login failed"));
+	    loginfailed = true;
+	    updateStatus();
 	    goButton->setEnabled( false);
 	    loginEdit->setEnabled( false);
 	    passwdEdit->setEnabled( false);
@@ -602,7 +646,6 @@ KGreeter::verifyUser(bool haveto)
 	    case V_OK:
 		break;
 	    }
-	    kapp->desktop()->setCursor( waitCursor);
 	    hide();
 	    GSendInt (G_Login);
 	    GSendStr (loginEdit->text().local8Bit());
@@ -689,6 +732,7 @@ kg_main(int argc, char **argv)
                            &errbase, &majret, &minret))
         XkbSetPerClientControls (qt_xdisplay(), value, &value);
 #endif
+    setup_modifiers (qt_xdisplay(), kdmcfg->_numLockStatus);
     SecureDisplay (qt_xdisplay());
     if (!dgrabServer)
 	GSendInt (G_SetupDpy);
@@ -712,6 +756,7 @@ kg_main(int argc, char **argv)
     delete kgreeter;
     delete kdmcfg;
     UnsecureDisplay (qt_xdisplay());
+    restore_modifiers();
 }
 
 #include "kgreeter.moc"

@@ -73,7 +73,8 @@ public:
     KGreeter(QWidget *parent = 0, const char *ti = 0);
     ~KGreeter();
     void ReturnPressed();
-
+    void UpdateLock();
+ 
 public slots:
     void go_button_clicked();
     void clear_button_clicked();
@@ -97,6 +98,7 @@ private:
     void MsgBox(QMessageBox::Icon typ, QString msg);
     void Inserten (QPopupMenu *mnu, const QString& txt, const char *member);
     bool verifyUser( bool);
+    void updateStatus();
 
     enum WmStat { WmNone, WmPrev, WmSel };
     WmStat		wmstat;
@@ -119,6 +121,8 @@ private:
     QPopupMenu		*optMenu;
     QPushButton		*quitButton;
     QPushButton		*shutdownButton;
+    int			capslocked;
+    bool		loginfailed;
 };
 
 

@@ -74,6 +74,8 @@ public:
 
     int		_allowShutdown, _allowNuke, _defSdMode;
 
+    int		_numLockStatus;
+
 #if defined(__linux__) && defined(__i386)
     bool	_useLilo;
     QString	_liloCmd;

@@ -57,6 +57,9 @@ void LogOutOfMem (const char *fkt);
 void SecureDisplay (Display *dpy);
 void UnsecureDisplay (Display *dpy);
 
+void setup_modifiers (Display *mdpy, int numlock);
+void restore_modifiers (void);
+
 extern char *dname;		/* d->name */
 extern int disLocal;		/* d->displayType.location == Local */
 extern int dhasConsole;		/* !isEmpty(d->console) */

@@ -72,6 +72,7 @@
 # define ECHO_NONE	2
 #define C_GreeterScreen		(C_TYPE_INT | 0x1026)
 #define C_AntiAliasing		(C_TYPE_INT | 0x1027)
+#define C_NumLock		(C_TYPE_INT | 0x1028)
 
 #define C_BackgroundMode	(C_TYPE_STR | 0x1100)
 #define C_BlendBalance		(C_TYPE_INT | 0x1101)

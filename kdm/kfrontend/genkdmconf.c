@@ -5,7 +5,7 @@
 
     $Id$
 
-    Copyright (C) 2001 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -800,6 +800,11 @@ static Ent entsGreeter[] = {
 "# The font used for the \"Login Failed\" message. Default is helvetica,12,bold\n" },
 { "AntiAliasing",	0, 0,
 "# Whether the fonts shown in the greeter should be antialiased. Default is false\n" },
+{ "NumLock",		0, 0,
+"# What to do with the Num Lock modifier for the time the greeter is running:\n"
+"# \"On\" -> - turn on\n"
+"# \"Off\" -> - turn off\n"
+"# \"Keep\" -> - don't change the state (Default)\n" },
 { "Language",		F_UPDATE, (const char *)upd_language, 
 "# Language to use in the greeter. Default is en_US\n" },
 { "ShowUsers",		F_UPDATE, (const char *)upd_showusers, 
@@ -981,6 +986,7 @@ static DEnt dEntsAnyGreeter[] = {
 { "StdFont",		"helvetica,12,5,0,50,0", 0 },
 { "FailFont",		"helvetica,12,5,0,75,0", 0 },
 { "AntiAliasing",	"true", 0 },
+{ "NumLock",		"Off", 0 },
 { "Language",		"de_DE", 0 },
 { "ShowUsers",		"None", 0 },
 { "SelectedUsers",	"root,johndoe", 0 },

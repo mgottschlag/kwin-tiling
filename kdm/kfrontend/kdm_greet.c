@@ -38,6 +38,21 @@
 #include <ctype.h>
 #include <errno.h>
 
+#if defined(HAVE_XTEST) || defined(HAVE_XKB)
+# include <X11/Xlib.h>
+# include <X11/keysym.h>
+#endif
+
+#ifdef HAVE_XTEST
+# include <X11/extensions/XTest.h>
+#endif
+
+#ifdef HAVE_XKB
+# define explicit myexplicit
+# include <X11/XKBlib.h>
+# undef explicit
+#endif
+
 #ifdef HAVE_VSYSLOG
 # define USE_SYSLOG
 #endif
@@ -369,6 +384,166 @@ PingServer (Display *dpy)
     return 1;
 }
 */
+
+/*
+ * Modifier changing code based on kdebase/kxkb/kcmmisc.cpp
+ *
+ * XTest part: Copyright (C) 2000-2001 Lubos Lunak        <l.lunak@kde.org>
+ * XKB part:   Copyright (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
+ *
+ */
+
+#ifdef HAVE_XKB
+static int
+xkb_init( Display *dpy )
+{
+    int xkb_opcode, xkb_event, xkb_error;
+    int xkb_lmaj = XkbMajorVersion;
+    int xkb_lmin = XkbMinorVersion;
+    return XkbLibraryVersion( &xkb_lmaj, &xkb_lmin ) &&
+	   XkbQueryExtension( dpy, &xkb_opcode, &xkb_event,
+			      &xkb_error, &xkb_lmaj, &xkb_lmin );
+}
+
+static unsigned int
+xkb_modifier_mask_work( XkbDescPtr xkb, const char *name )
+{
+    int i;
+
+    if (!xkb->names)
+	return 0;
+    for (i = 0; i < XkbNumVirtualMods; i++) {
+	char *modStr = XGetAtomName( xkb->dpy, xkb->names->vmods[i] );
+	if (modStr != NULL && strcmp( name, modStr ) == 0) {
+	    unsigned int mask;
+	    XkbVirtualModsToReal( xkb, 1 << i, &mask );
+	    return mask;
+	}
+    }
+    return 0;
+}
+
+static unsigned int
+xkb_modifier_mask( Display *dpy, const char *name )
+{
+    XkbDescPtr xkb;
+
+    if ((xkb = XkbGetKeyboard( dpy, XkbAllComponentsMask, XkbUseCoreKbd))) {
+	unsigned int mask = xkb_modifier_mask_work( xkb, name );
+	XkbFreeKeyboard( xkb, 0, True );
+	return mask;
+    }
+    return 0;
+}
+
+static int
+xkb_get_modifier_state( Display *dpy, const char *name )
+{
+    unsigned int mask;
+    XkbStateRec state;
+
+    if (!(mask = xkb_modifier_mask( dpy, name )))
+	return 0;
+    XkbGetState( dpy, XkbUseCoreKbd, &state);
+    return (mask & state.locked_mods) != 0;
+}
+
+static int
+xkb_set_modifier( Display *dpy, const char *name, int sts )
+{
+    unsigned int mask;
+
+    if (!(mask = xkb_modifier_mask( dpy, name )))
+	return 0;
+    XkbLockModifiers( dpy, XkbUseCoreKbd, mask, sts ? mask : 0 );
+    return 1;
+}
+#endif /* HAVE_XKB */
+
+#ifdef HAVE_XTEST
+static int
+xtest_get_modifier_state( Display *dpy, int key )
+{
+    XModifierKeymap *map;
+    KeyCode modifier_keycode;
+    unsigned int i, mask;
+    Window dummy1, dummy2;
+    int dummy3, dummy4, dummy5, dummy6;
+
+    if ((modifier_keycode = XKeysymToKeycode( dpy, key )) == NoSymbol)
+	return 0;
+    map = XGetModifierMapping( dpy );
+    for (i = 0; i < 8; ++i)
+	if (map->modifiermap[map->max_keypermod * i] == modifier_keycode) {
+	    XFreeModifiermap( map );
+	    XQueryPointer( dpy, DefaultRootWindow( dpy ),
+			   &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6,
+			   &mask );
+	    return (mask & (1 << i)) != 0;
+	}
+    XFreeModifiermap( map );
+    return 0;
+}
+
+static void
+xtest_fake_keypress( Display *dpy, int key )
+{
+    XTestFakeKeyEvent( dpy, XKeysymToKeycode( dpy, key ), True, CurrentTime );
+    XTestFakeKeyEvent( dpy, XKeysymToKeycode( dpy, key ), False, CurrentTime );
+}
+#endif /* HAVE_XTEST */
+
+#ifdef HAVE_XKB
+static int havexkb;
+#endif
+static int nummodified, oldnumstate, newnumstate;
+static Display *dpy;
+
+void
+setup_modifiers( Display *mdpy, int numlock )
+{
+    if (numlock == 2)
+	return;
+    newnumstate = numlock;
+    nummodified = 1;
+    dpy = mdpy;
+#ifdef HAVE_XKB
+    if (xkb_init( mdpy )) {
+	havexkb = 1;
+	oldnumstate = xkb_get_modifier_state( mdpy, "NumLock" );
+	xkb_set_modifier( mdpy, "NumLock", numlock );
+	return;
+    }
+#endif
+#ifdef HAVE_XTEST
+    oldnumstate = xtest_get_modifier_state( mdpy, XK_Num_Lock );
+    if (oldnumstate != numlock)
+	xtest_fake_keypress( mdpy, XK_Num_Lock );
+#endif
+}
+
+void
+restore_modifiers( void )
+{
+#ifdef HAVE_XTEST
+    int numstat;
+#endif
+
+    if (!nummodified)
+	return;
+#ifdef HAVE_XKB
+    if (havexkb) {
+	if (xkb_get_modifier_state( dpy, "NumLock") == newnumstate)
+	    xkb_set_modifier( dpy, "NumLock", oldnumstate );
+	return;
+    }
+#endif
+#ifdef HAVE_XTEST
+    numstat = xtest_get_modifier_state( dpy, XK_Num_Lock );
+    if (numstat == newnumstate && newnumstate != oldnumstate)
+	xtest_fake_keypress( dpy, XK_Num_Lock );
+#endif
+}
 
 extern void kg_main(int, char **);
 
