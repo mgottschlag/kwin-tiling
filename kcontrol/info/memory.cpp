@@ -1,4 +1,8 @@
-/* $Id$ */
+/* $Id$ 
+ *
+ * $Log: $ 
+ *
+ */
 
 #include <qtabbar.h>
 #include <kglobal.h>
@@ -12,27 +16,26 @@
 
 typedef unsigned long t_memsize;
 
-enum { // entries for Memory_Info[]...
-    TOTAL_MEM = 0,	// total physical memory (without swaps)
-    FREE_MEM,		// total free physical memory (without swaps)
+enum { 			/* entries for Memory_Info[] */
+    TOTAL_MEM = 0,	/* total physical memory (without swaps) */
+    FREE_MEM,		/* total free physical memory (without swaps) */
     SHARED_MEM,
     BUFFER_MEM,
-    SWAP_MEM,		// total size of all swap-partitions
-    FREESWAP_MEM,	// free memory in swap-partitions
+    SWAP_MEM,		/* total size of all swap-partitions */
+    FREESWAP_MEM,	/* free memory in swap-partitions */
     MEM_LAST_ENTRY };
+/*
+   all update()-functions should write their results OR NO_MEMORY_INFO 
+   into Memory_Info[] !
+*/
+static t_memsize Memory_Info[MEM_LAST_ENTRY];
 
-#define MEMORY(x)	((t_memsize) x)	  // it's easier...
+#define MEMORY(x)	((t_memsize) (x))	  // it's easier...
 #define NO_MEMORY_INFO	MEMORY(-1)
 
-///////////////////////////////////////////////////////////////////////////////
-//       all update()-functions should write their results   OR 
-//                NO_MEMORY_INFO into this array !
-///////////////////////////////////////////////////////////////////////////////
-static t_memsize Memory_Info[MEM_LAST_ENTRY];
-///////////////////////////////////////////////////////////////////////////////
 
 
-// Implementation...
+/* Implementation */
 
 static QLabel   *MemSizeLabel[MEM_LAST_ENTRY][2];
 
@@ -52,14 +55,15 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
   : KConfigWidget(parent, name)
 {
     QFont	courierFont("Courier");
-    QString	title;
+    QString	title,initial_str;
     QLabel	*titleWidget;
     int 	i,xs;  
     
     // Create the international Text for...
 
     // Create all Labels...
-    Width_Info = 0;
+    Width_Info  = 0;
+    initial_str = format(0);
     
     for (i=TOTAL_MEM; i<MEM_LAST_ENTRY; ++i) {
 	switch (i) {
@@ -72,25 +76,25 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 	    default:		title = "";				break;
 	};
 	
-	titleWidget = new QLabel(title, this);	// first create the Information-Widget
-        titleWidget->move(-1000,-1000);	// invisible !
+	titleWidget = new QLabel(title, this);	/* first create the Information-Widget */
+        titleWidget->move(-1000,-1000);	// initially invisible !
 	titleWidget->setAutoResize(TRUE);
 	MemSizeLabel[i][0] = titleWidget;
 	xs = titleWidget->sizeHint().width();
 	if (xs > Width_Info)  // get maximum size...
 		Width_Info = xs;
 	
-	titleWidget = new QLabel("0k", this);	// then the Label for the size
-        titleWidget->move(-1000,-1000);	// invisible !
+	titleWidget = new QLabel(initial_str, this); /* then the Label for the size */
+        titleWidget->move(-1000,-1000);	// initially invisible !
         titleWidget->setFont(courierFont);
-        titleWidget->setAutoResize(TRUE);
+//        titleWidget->setAutoResize(TRUE); // BUG in QT2.0 ?-> needs adjustSize()!
+        titleWidget->adjustSize();
 	MemSizeLabel[i][1] = titleWidget;
   }
   
-  titleWidget->setText(format(0));	// get width for the memory-size-text
   Width_Value = titleWidget->sizeHint().width();
-
   Not_Available_Text = i18n("No information available.");
+  /* fill string "Not_Available_Text" with spaces to len of format(0) */
   do {
        Not_Available_Text = " "+Not_Available_Text+" "; // add spaces..
        titleWidget->setText(Not_Available_Text); // get width for the NO-INFO-text
@@ -106,11 +110,10 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 
 KMemoryWidget::~KMemoryWidget()
 {
-    // stop the timer !
+    /* stop the timer */
     timer->stop();
     
-    // Remove all Labels...
-    
+    /* Remove all Labels */
     for (int i=TOTAL_MEM; i<MEM_LAST_ENTRY; ++i) {
 	delete MemSizeLabel[i][0];
 	delete MemSizeLabel[i][1];
@@ -119,7 +122,7 @@ KMemoryWidget::~KMemoryWidget()
 
 
 
-// Center all Labels in the widget..
+/* Center all Labels in the widget */
 void KMemoryWidget::resizeEvent( QResizeEvent *re )
 {   
     QSize size = re->size();
@@ -128,20 +131,20 @@ void KMemoryWidget::resizeEvent( QResizeEvent *re )
     int left = (size.width()-maxx) / 2;
     for (int i=TOTAL_MEM; i<MEM_LAST_ENTRY; ++i) {
 	addy = (i>=SWAP_MEM) ? DY : 0;
-	MemSizeLabel[i][0]->move(left,addy + STARTY + i*DY);
-	MemSizeLabel[i][1]->move(left+Width_Info+OFFSET_DX,addy + STARTY + i*DY);
+	MemSizeLabel[i][0]->move(left,
+				    addy + STARTY + i*DY);
+	MemSizeLabel[i][1]->move(left+Width_Info+OFFSET_DX,
+				    addy + STARTY + i*DY + 2);
     }
 }
 
 
 
-// update_Values() is the main-loop for updating the Memory-Information
+/* update_Values() is the main-loop for updating the Memory-Information */
 void KMemoryWidget::update_Values()
 {
   int i;
-
-  update();	// get the Information from memory_linux, memory_fbsd....
-
+  update();	/* get the Information from memory_linux, memory_fbsd */
   for (i=TOTAL_MEM; i<MEM_LAST_ENTRY; ++i) {
     MemSizeLabel[i][1]->setText(  (Memory_Info[i]!=NO_MEMORY_INFO) ?
 	    format(Memory_Info[i]) : Not_Available_Text );
@@ -149,7 +152,7 @@ void KMemoryWidget::update_Values()
 }
 
 
-// Include system-specific code
+/* Include system-specific code */
 
 #ifdef linux
 #include "memory_linux.cpp"
@@ -161,8 +164,7 @@ void KMemoryWidget::update_Values()
 #include "memory_hpux.cpp"
 #else
 
-// Default for unsupported systems
-
+/* Default for unsupported systems */
 void KMemoryWidget::update()
 {
     Memory_Info[TOTAL_MEM]    = NO_MEMORY_INFO; // total physical memory (without swaps)
