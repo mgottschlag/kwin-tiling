@@ -1,16 +1,5 @@
-/* vi: ts=8 sts=4 sw=4
- *
- * $Id$
- *
- * This file is part of the KDE project, module kcmdisplay.
- * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- * 
- * You can Freely distribute this program under the GNU General Public
- * License. See the file "COPYING" for the exact licensing terms.
- */
-
-#ifndef __Bgnd_h_Included__
-#define __Bgnd_h_Included__
+#ifndef BACKGND_H
+#define BACKGND_H
 
 #include <qobject.h>
 #include <qstring.h>
@@ -20,31 +9,13 @@
 #include <qwidget.h>
 #include <qptrvector.h>
 
-#include <kcmodule.h>
-#include <bgdefaults.h>
+#include "backgndbase.h"
 
-class QCheckBox;
-class QListBox;
-class QComboBox;
-class QStringList;
-class QHButtonGroup;
-class QPalette;
-class QLabel;
-class QSlider;
-class QTabWidget;
-class QSpinBox;
-
-class KColorButton;
 class KBackgroundRenderer;
-class KGlobalBackgroundSettings;
 class KConfig;
 class KStandardDirs;
-class KAboutData;
 
 
-/**
- * This class handles drops on the preview monitor.
- */
 class KBGMonitor : public QWidget
 {
     Q_OBJECT
@@ -61,80 +32,60 @@ protected:
 };
 
 
-/**
- * The Desktop/Background tab in kcontrol.
- */
-class KBackground: public KCModule
-{
+class Backgnd : public BackgndBase
+{ 
     Q_OBJECT
 
 public:
-    KBackground(QWidget *parent, const char *name, const QStringList &);
-    ~KBackground();
-    
-    virtual void load();
-    virtual void save();
-    virtual void defaults();
+    Backgnd( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
+    ~Backgnd();
 
-    QString quickHelp() const;
-    const KAboutData* aboutData() const;
+    void setWidgets();
+    void load();
+    void save();
+    void defaults();
+
+protected slots:
+    void slotColorBlendMode(int);
+    void slotBGMode(int);
+
+    void slotColor1(const QColor &);
+    void slotColor2(const QColor &);
+    void slotPreviewDone(int);
+    void slotWPBlendBalance(int value);
+    void slotWPBlendMode(int mode);
+    void slotWPMode(int);
+    void slotWPChangeInterval(int);
+    void slotWPAdd();
+    void slotImageDropped(QString);
+    void slotWPDelete();
+    void slotWPSet(int);
+    void slotImageOrder(int);
+    void slotProgramSetup();
+    void slotPatternEdit();
+    void slotDesktop(int);
+    void slotAdvanced();
 
 signals:
     void changed(bool);
-
-private slots:
-    void slotSelectDesk(int desk);
-    void slotCommonDesk(bool common);
-    void slotBGMode(int mode);
-    void slotBGSetup();
-    void slotColor1(const QColor &);
-    void slotColor2(const QColor &);
-    void slotImageDropped(QString);
-    void slotWallpaperType(int);
-    void slotWPMode(int);
-    void slotWallpaper(const QString &);
-    void slotBrowseWallpaper();
-    void slotSetupMulti();
-    void slotPreviewDone(int);
-    void slotBlendMode(int mode);
-    void slotBlendBalance(int value);
-    void slotReverseBlending(bool value);
-    void slotLimitCache(bool);
-    void slotCacheSize(int);
-
+    
 private:
     void init();
-    void apply();
-    void enableBlend(int);
-
+    void adjustMultiWP();
+    
     int m_Desk, m_Max;
     int m_oldMode;
 
-    QLabel *m_plblMode, *m_plblWallpaper;
-    QListBox *m_pDeskList;
-    QCheckBox *m_pCBCommon;
-    QCheckBox *m_pReverseBlending, *m_pCBLimit;
-    QComboBox *m_pBackgroundBox, *m_pWallpaperBox;
-    QComboBox *m_pArrangementBox, *m_pBlendBox;
-    QHButtonGroup *m_WallpaperType;
-    QLabel *m_plblBalance;
-    QSlider *m_pBlendSlider;
-    QPushButton *m_pBGSetupBut, *m_pMSetupBut;
-    QPushButton *m_pBrowseBut;
-    QTabWidget *m_pTabWidget;
-    QWidget *m_pTab1, *m_pTab2, *m_pTab3, *m_pTab4;
-    QLabel *m_plblCache;
-    QSpinBox *m_pCacheBox;
-    QMap<QString,int> m_Wallpaper;
-
-    QPtrVector<KBackgroundRenderer> m_Renderer;
     KGlobalBackgroundSettings *m_pGlobals;
-    KColorButton *m_pColor1But, *m_pColor2But;
+    
+    QPtrVector<KBackgroundRenderer> m_Renderer;
     KBGMonitor *m_pMonitor;
-
+    
     KConfig *m_pConfig;
     KStandardDirs *m_pDirs;
+
+
+
 };
 
-
-#endif // __Bgnd_h_Included__
+#endif // BACKGND_H

@@ -858,6 +858,34 @@ void KBackgroundSettings::changeWallpaper(bool init)
     hashdirty = true;
 }
 
+bool KBackgroundSettings::setCurrentWallpaper(int newSetting)
+{
+    if (newSetting >= (int) m_WallpaperFiles.count())
+	return false;
+
+    m_CurrentWallpaper = newSetting;
+    m_LastChange = (int) time(0L);
+
+    // sync random config to file without syncing the rest
+    int screen_number = 0;
+    if (qt_xdisplay())
+	screen_number = DefaultScreen(qt_xdisplay());
+    QCString configname;
+    if (screen_number == 0)
+	configname = "kdesktoprc";
+    else
+	configname.sprintf("kdesktop-screen-%drc", screen_number);
+
+    KConfig cfg(configname, false, false);
+    cfg.setGroup(QString("Desktop%1").arg(m_Desk));
+    cfg.writeEntry("CurrentWallpaper", m_CurrentWallpaper);
+    cfg.writeEntry("LastChange", m_LastChange);
+    cfg.sync();
+
+    hashdirty = true;
+
+    return true;
+}
 
 QString KBackgroundSettings::currentWallpaper()
 {

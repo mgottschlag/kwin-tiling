@@ -161,20 +161,31 @@ public:
     void setPatternName(QString pattern);
 
     enum BackgroundMode {
-	Flat, Pattern, Program,
-	HorizontalGradient, VerticalGradient, PyramidGradient,
-	PipeCrossGradient, EllipticGradient, lastBackgroundMode
+	Flat, HorizontalGradient, VerticalGradient, PyramidGradient,
+	PipeCrossGradient, EllipticGradient,
+	Pattern, Program, lastBackgroundMode
     };
     void setBackgroundMode(int mode);
     int backgroundMode() const { return m_BackgroundMode; }
 
     enum BlendMode {
         NoBlending, 
-	HorizontalBlending, VerticalBlending, PyramidBlending,
-	PipeCrossBlending, EllipticBlending, 
-	IntensityBlending, SaturateBlending, ContrastBlending,
-	HueShiftBlending, lastBlendMode
+	HorizontalBlending, 
+	VerticalBlending, 
+	PyramidBlending,
+	PipeCrossBlending, 
+	EllipticBlending, 
+	IntensityBlending, 
+	IntensityReversed, 
+	SaturateBlending, 
+	SaturateReversed, 
+	ContrastBlending,
+	ContrastReversed,
+	HueShiftBlending, 
+	HueShiftReversed, 
+	lastBlendMode
     };
+
     void setBlendMode(int mode);
     int blendMode() const { return m_BlendMode; }
 
@@ -188,8 +199,8 @@ public:
     QString wallpaper() const { return m_Wallpaper; }
 
     enum WallpaperMode {
-	NoWallpaper, Centred, Tiled, CenterTiled, CentredMaxpect, TiledMaxpect,
-	Scaled, CentredAutoFit, lastWallpaperMode
+	Centred, Tiled, CenterTiled, CentredMaxpect, TiledMaxpect,
+	Scaled, CentredAutoFit, NoWallpaper, lastWallpaperMode
     };
     void setWallpaperMode(int mode);
     int wallpaperMode() const { return m_WallpaperMode; }
@@ -220,6 +231,7 @@ public:
     void updateWallpaperFiles();
 
     QString currentWallpaper();
+    bool setCurrentWallpaper(int);
     int lastWallpaperChange() const { return m_LastChange; }
     bool needWallpaperChange();
 

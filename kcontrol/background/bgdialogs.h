@@ -153,35 +153,6 @@ protected:
 };
 
 
-/**
- * Multiwallpaper settings.
- */
-
-class KMultiWallpaperDialog: public KDialogBase
-{
-    Q_OBJECT
-
-public:
-    KMultiWallpaperDialog(KBackgroundSettings *settings, 
-	    QWidget *parent=0L, char *name=0L);
-
-public slots:
-    void slotAdd();
-    void slotRemove();
-    void slotOk();
-
-private:
-    int m_Interval, m_Mode;
-
-    QStringList m_Wallpapers;
-    QSpinBox *m_pIntervalEdit;
-    QComboBox *m_pModeEdit;
-    KMultiWallpaperList *m_pListBox;
-
-    KBackgroundSettings *m_pSettings;
-    QPushButton *pbutRemove;
-};
-
 
 #endif // __BGDialogs_h_Included__
 

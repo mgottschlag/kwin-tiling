@@ -1,0 +1,1123 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>BackgndBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>BackgndBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>534</width>
+            <height>427</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>BackgndBase</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel2_3</cstring>
+            </property>
+            <property name="text">
+                <string>Setting for Desktop:</string>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="0" column="1">
+            <item>
+                <property name="text">
+                    <string>All Desktops</string>
+                </property>
+            </item>
+            <property name="name">
+                <cstring>m_pDesktopBox</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Choose the desktop whose background
+you want to modify. If you want the same background settings to be
+applied to all desktops, check the \"Common Background\" option, and
+this list will be disabled.</string>
+            </property>
+        </widget>
+        <widget class="QButtonGroup" row="1" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>m_pBackgroundGrp</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="title">
+                <string>Coloring for %1</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QRadioButton" row="3" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_pProgramRadio</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Program</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_pColorRadio</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Colors</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="4">
+                    <property name="name">
+                        <cstring>TextLabel8</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>4</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Blend color:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>4</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Primary color:</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget" row="4" column="0" rowspan="1" colspan="6">
+                    <property name="name">
+                        <cstring>Layout6</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>Spacer28_2_2_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>30</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>m_pProgramSetupBut</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>5</hsizetype>
+                                    <vsizetype>5</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="text">
+                                <string>Setup background program...</string>
+                            </property>
+                            <property name="autoDefault">
+                                <bool>false</bool>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>Spacer14</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
+                </widget>
+                <spacer row="1" column="3">
+                    <property name="name">
+                        <cstring>Spacer19</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Preferred</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLayoutWidget" row="2" column="3" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>Layout20</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout15</cstring>
+                            </property>
+                            <vbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QComboBox">
+                                    <item>
+                                        <property name="text">
+                                            <string>No Blending</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Horizontal</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Vertical</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Pyramid</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Pipecross</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Elliptical</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Pattern</string>
+                                        </property>
+                                    </item>
+                                    <property name="name">
+                                        <cstring>m_pColorBlendBox</cstring>
+                                    </property>
+                                </widget>
+                                <widget class="QPushButton">
+                                    <property name="name">
+                                        <cstring>m_pPatternEditBut</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Choose Pattern...</string>
+                                    </property>
+                                </widget>
+                            </vbox>
+                        </widget>
+                        <widget class="KColorButton">
+                            <property name="name">
+                                <cstring>m_pColor2But</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>50</width>
+                                    <height>50</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Click to choose a second color. If the blending mode is "No
+Blending" this button is disabled.</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <spacer row="2" column="2">
+                    <property name="name">
+                        <cstring>Spacer15_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>40</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>Layout27</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>Spacer12_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>MinimumExpanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="KColorButton">
+                            <property name="name">
+                                <cstring>m_pColor1But</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>5</hsizetype>
+                                    <vsizetype>5</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Click to choose a color.</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <spacer row="1" column="0">
+                    <property name="name">
+                        <cstring>Spacer23</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>16</width>
+                            <height>21</height>
+                        </size>
+                    </property>
+                </spacer>
+                <spacer row="0" column="2" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>Spacer17</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <spacer row="1" column="5">
+                    <property name="name">
+                        <cstring>Spacer20</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Preferred</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <spacer row="3" column="2" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>Spacer15</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </grid>
+        </widget>
+        <spacer row="0" column="2">
+            <property name="name">
+                <cstring>Spacer17_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>30</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLayoutWidget" row="0" column="3" rowspan="2" colspan="1">
+            <property name="name">
+                <cstring>Layout11</cstring>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>m_monitorImage</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="pixmap">
+                        <pixmap>image0</pixmap>
+                    </property>
+                    <property name="scaledContents">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>m_pAdvancedBut</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Advanced Options...</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>m_pWallpaperGrp</cstring>
+            </property>
+            <property name="title">
+                <string>Images for %1</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLayoutWidget" row="0" column="0">
+                    <property name="name">
+                        <cstring>Layout11</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QPushButton" row="1" column="1">
+                            <property name="name">
+                                <cstring>PushButton17</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="text">
+                                <string>Add Image...</string>
+                            </property>
+                        </widget>
+                        <widget class="QListBox" row="0" column="0" rowspan="1" colspan="5">
+                            <property name="name">
+                                <cstring>m_pWallpaperBox</cstring>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>170</width>
+                                    <height>0</height>
+                                </size>
+                            </property>
+                            <property name="variableWidth">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <spacer row="1" column="4">
+                            <property name="name">
+                                <cstring>Spacer11</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <spacer row="1" column="2">
+                            <property name="name">
+                                <cstring>Spacer12</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QPushButton" row="1" column="3">
+                            <property name="name">
+                                <cstring>m_pRemoveBut</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Remove Image</string>
+                            </property>
+                        </widget>
+                        <spacer row="1" column="0">
+                            <property name="name">
+                                <cstring>Spacer10</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </grid>
+                </widget>
+                <widget class="QLayoutWidget" row="0" column="1">
+                    <property name="name">
+                        <cstring>Layout14</cstring>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout13</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>m_pWPModeLbl</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Positioning:</string>
+                                    </property>
+                                </widget>
+                                <widget class="QComboBox">
+                                    <item>
+                                        <property name="text">
+                                            <string>Centered</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Tiled</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Center Tiled</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Centered Maxpect</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Tiled Maxpect</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Scaled</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Center Auto Fit</string>
+                                        </property>
+                                    </item>
+                                    <property name="name">
+                                        <cstring>m_pWPModeBox</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                </widget>
+                            </hbox>
+                        </widget>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout12</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>m_pWPBlendLbl</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Blending:</string>
+                                    </property>
+                                </widget>
+                                <widget class="QComboBox">
+                                    <item>
+                                        <property name="text">
+                                            <string>No blending</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Horizontal</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Vertical</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Pyramidal</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Pipecross</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Eliptic</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Intensity</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Intensity (Reverse)</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Saturation</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Saturation (Reverse)</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Contrast</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Contrast (Reverse)</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Hue Shift</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Hue Shift (Reverse)</string>
+                                        </property>
+                                    </item>
+                                    <property name="name">
+                                        <cstring>m_pWPBlendBox</cstring>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>If you have selected to use wallpaper, you can choose various 
+methods of blending the background colors and patterns
+with the wallpaper. The default option, \"No Blending\", means that the
+wallpaper simply obscures the background below.</string>
+                                    </property>
+                                </widget>
+                            </hbox>
+                        </widget>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout9</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <spacer>
+                                    <property name="name">
+                                        <cstring>Spacer28_2</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Fixed</enum>
+                                    </property>
+                                    <property name="sizeHint">
+                                        <size>
+                                            <width>30</width>
+                                            <height>20</height>
+                                        </size>
+                                    </property>
+                                </spacer>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>m_pBalanceLbl</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Balance:</string>
+                                    </property>
+                                </widget>
+                                <widget class="QSlider">
+                                    <property name="name">
+                                        <cstring>m_pBalanceSlider</cstring>
+                                    </property>
+                                    <property name="minValue">
+                                        <number>0</number>
+                                    </property>
+                                    <property name="maxValue">
+                                        <number>100</number>
+                                    </property>
+                                    <property name="pageStep">
+                                        <number>10</number>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="tickmarks">
+                                        <enum>Right</enum>
+                                    </property>
+                                    <property name="tickInterval">
+                                        <number>10</number>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>You can use this slider to control	the degree of blending. 
+You can experiment by moving the slider and looking at the 
+effects in the preview image above.</string>
+                                    </property>
+                                </widget>
+                            </hbox>
+                        </widget>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout11</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>m_pWPChangeIntervalLbl</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Switch image every:</string>
+                                    </property>
+                                </widget>
+                                <widget class="QSpinBox">
+                                    <property name="name">
+                                        <cstring>m_pChangeInterval</cstring>
+                                    </property>
+                                    <property name="suffix">
+                                        <string> minutes</string>
+                                    </property>
+                                    <property name="maxValue">
+                                        <number>1440</number>
+                                    </property>
+                                    <property name="minValue">
+                                        <number>1</number>
+                                    </property>
+                                    <property name="value">
+                                        <number>60</number>
+                                    </property>
+                                </widget>
+                            </hbox>
+                        </widget>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout10</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>m_pWPImageOrderLbl</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Image Order:</string>
+                                    </property>
+                                </widget>
+                                <widget class="KComboBox">
+                                    <item>
+                                        <property name="text">
+                                            <string>In Order</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Random</string>
+                                        </property>
+                                    </item>
+                                    <property name="name">
+                                        <cstring>m_pImageOrderBox</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                </widget>
+                            </hbox>
+                        </widget>
+                    </vbox>
+                </widget>
+            </grid>
+        </widget>
+    </grid>
+</widget>
+<images>
+    <image name="image0">
+        <data format="XPM.GZ" length="87122">789ced7d5953233bd3e6fdfb2b4e7cbafb62a2c636c6d8313117ac0683cd6216c3c45c482ad5c6be2f13f3df275399291786862e9a3ea7bf79ab15d9f25352a924a51ea552b5f0dffff3afc9cef0affffcefffbabdd377b9fdcb66fae6afff8cefcfcf9fffd7fffe9fffe75fffd16a34fe6a763b7f2db43b7fb5fee3bffdeb3f22fd97fd6b7479e13c5025b07b574e310054c3ff439c9d326e33de0db8ebf199c75d0c880b2bb849f9cf195bcebf2398d2d533e26603834fdf66dc6dfafce991c7dd669bb05a632ce91dc12d7f7ebacbd872fa9e604acf63c2ad46abe7d3c7885b8d907f5f3097b7431883c7c78cdb8c2701fbf2b2c2e39ee074817197f188b1e5fc99e0b9a6ef3f4e9fe3fa655a30a5672a602aaf8178ae29e96937604a1f32ee128e4f195bc2d985c7bd39dbf6e747cb84db0dc64b016b8f9f19b7393d0e98d2af0477085f0b5e98f3f80571bb19ca7f0c98f29f3296f2b380293d113c4fc3fa5c305fef4c305fef967197ce2f8c603eff4e30e58fb9bc8579ee3f3f1edbbac5d74f4f18737999114ce5652963cb38223cd798f7f99d230cf5276c1977a9bdf15ac03e3dce195bc623c2f3dc5ff1ae60ba5e3c643ccfed1d08e6f6ae064ce73f11b62de25f3c0e98f8eaaf3fdf92f6a43dc2d29ef89eb0d4c729c1943f7f64ccd7cf2e03a6f36f19f7b8be9b82f9fc6ec03e3d7f10dca1fa48fe98cb9b23dc63fd458b1eeb303e2e0593be8b2dc272bd622360aacf50305dcf4d18f3f58a75c1941e6f13ee3459bf2782293d3967cced772dc1945ef403a6f65c30e6fe49ce04f3f5f609eb268f9f0163d67fecc76307862fe58f9e02a6feb810cc7cc9197739fd5e30a73f30b684dd31e1d03e2e2fb4af2198fbaf1930a5cf31e6f6581330f5ef9a60be9e66ccfdede603a6f1712f98f2eb67c20b4de63763e99fc8cfd79de9f87082b9bd2963e98f1bc19cbec2d82e186f9f32c2d2be684d30e7b701fbfcaecd98dbafa280497f0f8cb9bde631609faeb70553f9c94870afedf93120bcc0fa318b01d3f9b9603a3f8d05d3f9aec398dba352c19c7f8aa93d0b82e9fc623560ebf30be6f6253b82998ff701fbf2e20dc2718bec6decfb7b614ec683be62cced4fd7084b7bd3f580a9fe0173fe3e6369df9960eecfab807d7d0acd58f4f32898f53b1fb0cf9f448cb97eb10998d21f0477e97a7b84bb5cbf643f609f3fda144cf9e31661a3a97f126f6f174c87cb8b77082ff0f92e61ccedc9078cb9fe763160aadf2663a97f1430a58f05d3f5d27bc252ff380bd8e74f0bc1dc5ecb98eb13af0ae6f29a8ca53e46309fff12309deff377e7a4bde996604a4f1f18cf73fe0663196f85602a3fb701d3f98f8cb9fdf652308f774538b43f0998f4b72b98cab7a960e6db3963e98f13c1dcde3460aa8f5c8feb6f970473f959c094ff99b18cb7cb80693c2c10ee497f2d0a36349f1c32667ec79e3fdda0ff641830d52712ccf311f58791f6eaf580fdfc906c31e6f2f562c03eddb618cb78c805737b55c0947e2798cb97eb737d4d3b609f3f3b104cd7cfb9fe3de1db62c0943f16cced9b134cfd95f418b3be9225c19c7f5e30f7afa473fdb3ae60aecf5dc0be3df9ad603a3fe3f6f5629e6fbd3debb5833dd8202cf361722a98d32d63ae9feb064cfd5730e6fa24db01fb74b3c298af97dc10ee727f9967c1acdffb80a9fc5bc6dc5f6a4f30e5575b01fbfcea88b1d4e73e609f1e2f3366fda61782b9bd59c034be9a8235b59fcb177d9b2bc174be3d64ccf535ab82293d0be9dc3fbb8cb9bee965c0d47eae6f4ffaaf1930a573f99aaf9fcc05ecd3b33e63be5ee1c767cf8afef20663b9be0998d24f18f3f55d2f60bafeae60ea1f4dfab5417f078229bd58612cfa5b0e98ea7b2598f2e79b8cb97e512f609fdf49793dcebfc598eb1bed044cfabc154cf9d39c708feb6b0bc1ac6faebfe8cf71ff88be543f606a2fd747f4a58601537fae13167dd9dd80a93d1b82e9faa6c358c6cb89604acfc601d3f9db8c35a7af064cd7578c1da7737d4d8bd253ef0fe829ff9460ca9f68c67cfd2466ccfd9f1c064ce5497ee9ef56c054fe80b0f47ff22898f5b9c158e69b67c15cde69c094cef5ef717db25ec034bef604d3fc182f3166fdb87bc17cbe0d98cedf17ccf3f91a61d1a75b0f98c6d3b160aeef99603adf72ff887eed95601e7fbb0193feb97fb5e6fc2f8279bc6c054cf9a57eacef5c074ced191206fd53fa75c0345eae04b33de1f6990e9fbf2098fbd3db231df89b38c6ac8f782b60d257c698fb3b390a98c6cf8b60b6871161181f94de16ccd75f602ce3612298d2dd3563a9cf55c0d49f5630eb778331d7cfee054cfd630473fdb8fda26f97074cf53d174cf90d9727fa4d0f04f3f517038e7d7923c6acef682b60b26ff38c59dfe63a604a27fd5bd1b74903a6f6ac08e6f179c198f56d4782793c70fd8c663c602ce3ab2398ebefd7dba61dd643c78ca5bd2701fbfce90a6359ff8c04b37e1b82b93f17180b3fe703f6e525eb84451fa62998f5b71cb0cf5f38c176ded7ff9031d73793746e7f7c16309d7fcdd871f95701fb74db212cfd9daf32eeb07e4cc0bebe7a4e305fef20602a6f9b318f073d144cf9f58031d727bf0cd89f9fb505c77eff3f5f16ec3abe7cc656c6c766c0747e4b30f557bec8b843387b61ac39fd82b1239cf8f5a589c37858602c7cec044ce329622cfaa5fac7617eed054ce97dc65cbeb909d8a7e701537dcc1263d6a739154ce9f68431f7a75b0e98c6efb5601e3f0561c3fde50682293de5eb8b3ee3ae603e9feb23fa35723eebd77603a6ebdf0aa6f3b59ccff5d59701fbfc9af38b7ef559c094fe2498db3fc798c7a34e02a6f69d0a667dbb80a93ccb98eb9bef09e6fc3b8c1de5cf69bcc7315f3f3b0998c6bfb7cf76be17f3786a1116fdbbbe604a8f1563d67fbc2798fb9bcb137daa0dc19c3e262cfa54bb82399dcb137d9a9e604edf0c98da77cc98fbc3268239ff30602a2f67ccf53313c1dc3f6b0153ba262cfab4478239ff72c0d41eaeafe8537504b3feb97cd15fd416ccfcd90c98faff8cb18cb7be60ce3f0e98e6cf903fa6f13b4f38e8ff89b1f4df9960ca9f8f186b9ecf4e19cbfc36273849bcfe3dff6ce0bfdb222cfacc9b01d3785967ccfd513c074ce91dc6d21f0701537dfb8ca5fdcb0193beb605537bcc1d61d14fb62598d2ed2a63993f360573f959c0947e2998ce576dc6ac4fe504f3f9dd80e9fa1b82e9fc6c2960dfbfea9431b74f8d02a6f1702398cf9f0fd89fafb97da26fb51f30d5ef5030d77f8531b74fed08e6f463c6d2ff1dc1a4ffec9131d727ef0926fb971d09a6fc398dbfd8b5083b7fbd38f0d34e18737bada473f9f69ab0e8d35c08e6f49c31b7c7340453babb0bd8f7977b662cf6693e603aff48308f2715b03fdf3e32e6fac54701933e76098b3ef471c0c4672798f5392798fa4f1bc632ff678239ffa660caafba8cb9fe51c094bfb80d98c61bf75fd0df24609f5ebc08a6f2cdba60d25fc1fded5a943fbb174cf98b07c19c9fafe73a3c7e581f4e3b3a9feb97b4083bbffe8b9dacdfdcad60ba9ed961ccf6dd5d0ae6f54a5f30e58f8f19b33d374f8239bd4d58ec79be2698f9f12298af6f19cbfc702898c7e379c0345e1618cbf81a0ae6f97a1230f5475330f7e772c054de166399efd702a6febb10cceb51be9e8c37fd1230e55f14ccf9ef180b9f24bfb4ef2160aacfb3603a3f5f0a98d2ef194bfb0bc13cdfac064cfa7082b9bc71c0d4ff529eccff925fe6ff3860eacf86603a3fdf159cf8f2a30dc24efa672160ca9f0b663e248cb9fd452498f9c8e3cb89feb280a93cd647c27c88fd78721d198fee5130eb6385b08c3fdd13cce903c6a20f2798d36f1873ffea03c15cbfa780a9ff278cb93f5d16309dbf2998fb6314305dbf4d388cb7e580e9fc6bc1acdf67c1a40fcbf591f1a50bc15cdfbb80a93fe57ad29f3163696f2498eb3b1f30b5f785b1b46f5f30d7ef3060ba5e48a7fa169701937d5b231cc6532b607a5e6c4f3097ff1230957f2e98cad70dc6dc1f4a09667bfb1c30d5ff84b1ccf7b782d9beec054cfc3816ccd7db60ccfda1ee04f3f86e044ce33f154ce7ab39c209b74fcd074cedcb0473fff1f84c787d613ddf9d0be3b7cf58ecef8660d6e77ec0941e33e6faea9580297d9d70b0b7a701537b9604737d1a8cb93e3a0d98fa7bc458ea731c30f139164cedcd2601fbf2559331d7375a0898faff44309d6f68bc85f9c99e0ae6fe1e074ce72f0ae6fe9e627f7d7dc458f8762898dbdb0998fa47aed7a1f2f2f980a93c6e8f8c3f2df591f1f710308d876dc1dc3fd701fbf2a203c6d23ffb01d3f9527fee9fbc0898cee774198fd161c0d47f0782f9fa0f01937eee198bbecf05737f260153fe47c6dcbea82998cbbf0998d6c73c9e9284e72fdffe24ccaff62c601a4f4f8465fc9ab980c93e6e08663ec78cb9fee65630f37581b1e847054cf9cf0573fe9cb1cc073701d3782b0473ff3c064ce36395b08c577d17309d3f10ccf5df61ccf58f4682b93e13c65c3fd30a98f4a11973fdcc8360ae5f1130e53784c37899044cf5b382f97a51c0d43e6e6fc2fc898e03a6fa9f08e6f1da0a98aecff50be3a72198f2bb34601adf727ec2e52501933df2f6254944dfc579c074bd16635e9fa96dc1bc3edb14ccfdbd14b03fdf9c31e6f54224e78b3d380898faa74b38d8c7b660ce7f1d30f90f578c857f5a30afdf3a01537b12c652dff380295dca93f55f3f60e25f8fb0e8371a074cfdb9ca58ea732198f30f02a6eb5d32667daa5830e71f064cfa9c63ccfa8cd603f6e9bb7791aae5cf11af230dbf66c5d4e16f0da5be7f8f27918de2c84549944659948314202e3a8dce401cfc3ee76314d3f10b3807f125c81508e233108a1167d1b52f873096538e6f7c7c0bf96e03be2bc58e8fdf73fe078eefc379946f1a97f33f42fe47c68fefe47ff4f15929be7f53feadcf7f1fea23f5977652bb9f7c3f3c037e86e3cf805fe0ff9768315a82f418fae719e265387e1bad44abd1da542f3fe649d48fd6ebf0b7848d68106d96d9f2439e6cf119a89be127b25e8aeb502d0ca251b41dedbc9ec37ec0935d7fc65e348ef6213e60c1df87204720139663961390064b93e316c85c2916592fc5ffeea10d5a997f6b5766790247512743d06207e2f18c0c5886a578963775f8b9308e16a26ed47b63eddff2c4a808cf500afa1c78a17414b8a10c888d881765699462e0858aa3f77951f3e355504e252a9dd5c97b3c5159f4639e94b9f21e4f6aaefc7c18ab5c15157932146e88fd408ebccb9313e6c6471ca9c39ba04e8127675578a2cea36afca839522d204f2eaaf004d65d83c08f12573c2f8e4b31d8107519bd5e5bfd881bb5d65e05e0c955259e0c5ff144f83106ed5efb34917511efcffc48c6efc49fd9aa59f9cc57fa27e5bdfa529b863ff4c1c7ea06fc93aaf6e4b8c491638ae178f05bd4ed3b7247e27d9a433ef788f3dff3b143b64b87d16bce95fd9c92781b357b5c7c1f91595f68fd9ddfeb3ff83d9bff3d2cd27a47e64a757de0f891e3a7e887f3c3cff384f53e7a77fc0223d4f36fdb87fbff2ea867f5f20396204f16d5925a7e73d63b3c611daeccd811e68a5a556b556bf6ef1cd407bb877eddb53e7bc6873c1946b3b6044b1ad43aa912d4c6073c19a84db5f5e69c0f7912ec4179cdb557eba44a501f78096af4cb3c19d43ca91e3ee249b4a0b62bf164e71d9e1cd73ca91a3ee489fb299ee0d101f364bac6ae79f2e5a0763fb1277b6fce99e1893f36b5279319aed4f6a472f8067b82478527b53df986f0e1ba6bfc33f6c41f9bda93f23dc5da9e7c29a80ff6f8bec093b23d11a97952317cc893e28bf6a4bc378cf74954ad932ae1139e9cffc47e171e9db527af7932ae7552257cb4ee02ff64a9124ff6a377efc3d73ca9163ee649d4ffc575576d4fbe103eb1270795793289eafdae5f0c1ffb27c0936af644b8518e6b9e540c9ff827d57832bbd755f3e44be19b7952fbf1df10bedd9ed4fbc2bf1c3ebccff8759ed47efc2f844fee9f54e3c94ef4da87afedc99782923746be7fdd55db932f864feec71fa8a337e77cbcdf55df8fffe5f0cd3ca9fdf86f089fd893a5ca3c29ed77d5ebaeaf850f79e2d47995fd2e35a9edc977840fedc98ddaacc493e3e8ddfb27354faa854f78f233ef9fe051e149d93fa979f2c5f0ebcf77f963a4c3c3f79f17ae79522d7cbceeaa763fbee6c9f7844f9f17aeb8ee2abff35bfb275f0bdfcc93d9e7566a9e7c217cc893938af66485dfb72a7f3ba2b62795c3a7ebae6a3c79ef7dc39a2715c3873cc97fe6fd137f6cca9306afbd64dfabb62795c3473c89da354ffe89f0214f9aaa55f5796135f7d69ed4cf77550b1fda9376e5fd2ee146f97df69a2715c3273ca9fcbcb09a2f71e4a85e777d257cc8938e9a7c8127b3df7ca87952317cc093be5a50ddcfdf8ff7c7a6f6a4f64f7e39bccb13fe4e85eafd124f24ae7952317cc4131d69f515ffc47344f688eb7557e5f0437b32873cd1fa1779d2e7d542ad930ae1139e98aaf6443852de1bae79522d7cb4eec2bfaefb459e94a5b6271503f0e4473b2bc893b8aa3d89e45dad3257ea7557a580cfd5fbef8f95d75c73c41dd58b46bfc013f95df3a462f8d89ea8952af644bb68fafd6de1ca61cd93aac1f3e47286232de2894eaaf927fc9dbbda8fffc5a036f8feeceb30647b92565a77ed1347bc2f2f716d4f2a8757f64478c2dfb8d449357b52e2496d4f7e21bcc393e1942715ed4936e5c8abbfeb50f3a452f03c7998e1c9c994273a9f3de3a77952fb275f0c333c297f8fb8af0b7d5ac93f99b1279e2bb53da91c823d29d992c093b36a3c01ffa46c4ba6f66458eba44af8811f3fc02f35eba29a3df1cf0bdfcd70a5b6279503f2449fbfe6088abe8886fa12d65dd59eab9fe5c9b8e649f530c393923d419e803df955ffa4e649e5e0bf2371325d6f950478a206fa6af68cda3ff9dde1439e5cab7d7df3e69c8ffd93dbda9efc6a08f644fe1ec509af5f1bc0935b7d57d18f7fefef98d43ca9184a3c29ff9d9431f1449feafb37e77c78ff443fd4f6e45783e7c9e3d48ef8bf4966d89e3ca91bfde62f97d43cf9dd81fdf8b2ff2e6bd88e7e5123bdf8e69c0fef9fa03d2973c5df47a9795229783f5ede9996f7dd8e98274bc0936afb5d354fbe21947852fe1e47dfdb9365bd528527e89f788e94d75e87f5732b5583f74f8e4a3c39e439c7f344af56e789fc6db99a275f0d259e94f70dfbde9eace9be7eb316fed89ee88d197b52f3a472f0f6642e9a7ea7799eff369f8d067aa0c63ff1f77ef1e8942743e64afd1ce497c30c4f024798279b9578b235b527812b354f2a07cf935b5e7b4df744f06f290ff4508ff4f6ec193fe689de419e0847c2df2aaded49c5c03c19bce689ef4be049d4aec4935d903d581b8cbd6e87c095a1b729b57f5229049ee03739f8b906c04398739027fb354ffefec03c19bfeac7a1f0441f54b627877036da9331f0648f7852db936ac1ef7795f70d8123fa08f4443c892afb27c3b27f52f3e42be10d4fa84fafe1f7b59e803da9b2df750c82be267305e6c2a1ffdbd6354f2a05cf93a3e99a0bedb26e809ef6a3b1e749057bf2da8fafedc95703f004ff86fcb8c491124faad913bfdfd5f41c21aedc114fea7557b5e079d2623f6fccfdd9001d1d004fe6bec893575ca9795235304ffaaf7832409ee8b6b72755d65df36c4f9a5eaf43dda979f29580ef33ea055ac3a21df1b2001c39acce13dd29f163187c95faf9ae8ae10d4f0651077802a35b77c19ef42af3e48839c271cd93eac1db9305f64b84230b515f374c043cb9aef4bcf0f8d53ae13cf0a4b6279582da807e1b93dfce1cb9060c9e852a8c32ba124f701e6c04ff04e381f7456b9e540acc139a6f5a539e2815f58dd1cb354ffefe00f6a4ef7932648e4c797261ac7aa9f27c57e009db13d06b6d4fbe10902726863e5c081c191ba7ae4c023c49f54b957557cd93ef098127538e5cc3ccb50dbf974c66f22ff344b8725bf3a46a28f1843812033f0aada11fcf3d4f6a7bf2b707730a3ce997d65b7d7306da00dee8cc5c54b6274373491c415be2e39a279583b9827e649e788e802d89bad1482f686daef55a059e0cd574adc03cf1cf5ad43ca918cc4dd451576c47c6e60c38b3ad263a83dfb7e64e5f56e2c9fc6b1f5ed65df5fd936a0178b26eee3d474060bde5cc0368640478843c318fb3677cc213f43b911f354fbe1ccc8d3a5709aeb5802363b5893317f0046631b562eecc9379f3aec3c73c8135f46baedcd53ca91a802760cda381d812f3223cd13b9e276feefd7ec613b129cc979a279583598af0cbced7de8e5ce94c4dcc2d587813f5756a96f5a5597973cec7ebaec4eff7537c04daa8d75d95835985f1bd43be3b6a0439e27952a8b159fbaa3d61aed43cf952409e4423750d6baf0be4086905b8d257fb66d9f42bd913e649b0290db050b7b53da91a802703edd07767eb8e3c39d63bf07b5cd53f8916648f46b882f7906b9e540dc413b3ae12738e1a01ae6ce81dbda5cef50af0645085276693f7321bcc15b627354faa05cf934c6c098803d9d577f07b6cb6ccb0caba2bf064f8caa60cebf74faa05f4e361e555304770cd95c12a18ff0ae0c86c9b9d2a3c89dade9e8cfdbdb196e74acd932f04b30b7db8cb1c398655f13e70640b56502bd182d9d3932aebaea93d119b52afbbbe12cc92baf6169d38720c720ab3d618f0be39007b52c13f417be2fd92167385d75db57f522d803de9ab535e6f19bda3f68123a7c813d53487e6a83a4f4acf5a0c6a9e7c25004f0e8017b8e672c811d0ca488df54a348ada66624c159ea03de17bc8741fb955fbf15f09c093b1eec3caf7d8af80e177b4a0fbe658ad40679f98c6977832ac79f22bc134d5126822332d334733177064216aab813e009ea495ecc9383c67119eb7a879523d9876d4076e8c60bdd5d1f3c2131da97d336f3a26abc893ebe9ba8ba5e649e56016bc3d99d377c411f8dd05ad1c00ee989e496df4e69c8ff6bb023fc4aed43ca91e2c3eefb809d6bd2f1c81d1ded12375aa0bab4dc3be39e3239e949edbabedc99783b56a0934714c1c51a368c1c6a0918e1a5b6713e0c99b6f7b7cf09ed6e8154fc6354fbe166ca6cecd6689233d73ac137dad9c2e4cc7e6d578326b4fbcaf32046bf57687a60e3f0cb65087f6d49e2147c096ecc32ad8e9913d070d25a6672fece59b736678c25a417bb2005ece6b9ea0bcfdca771d3e0efbb0ee7a229e8097881c293c4f3a3ab257f63a9a9fd5c91b9e28d1093e7f44cf24bde20abee73d9891e127f25da14a99efe52de3d9f4cfdaf05e9b668fc97bf0e56f3ed2fbbe23b423e897788edc78ad44d69965736d6f7f9e27fef9a3989e4b628e0ca3b64d74a69ae0f13495a318d6dab8cf3980951e885f87c3aa0f7c56e39f0418a9637c5e03efb345fda80bf503312fe0d76628a6157545e898fc0e79e13cb5eaa563ef54a28d4af07c3ce69f05990a3f4385bff11a5adbfba8c3e7fa6378ae9485bfed83d6109fcb3d72a86f47ad603e7f3cf16d80e36a45d2fdcec800b17dc49e26abedfd8d9e7dd2897dd667fa450feca31e9a2363cc11c40dfb821c4141eb0e1a39d305c6f6ca2cdbcfef9f947882cfea9579827fafc32e99077dabd7f440afd9651468d719e87c05af649fd40bfc5e05861ec07858c3795347c8564cf7b8af47583bbd694f613578076b90d5690c6b1188f516e0757beaad228e2d68b5d9c75100e76fe0f95096835e40f6976238be0fd7658cf9f9fc5389f5481f401d7b580e8e28736c077e550a631731a6835828e305aeb189bd4b6d0559d643bb0532845e1e426f0fed85c1df477a0ec5e6e093dfd99139b2dba661aecd0570600724b7bb76cfc6c81158738da17ce80f2c1ffc9383ea3ce1675c832dd1ceeefb6f49ef97e490be996be5efa3e0f70ecbdfd29d91f237dbf5c56b291f2be77b75fe84e3c34fe2e3f7cb08e93f2a77523a566ee76406bf23f2ed4cfc3e97ff460d7e33e20146daa1ba618e8c6044204faeed11c8959d54b4271b6f78f2608f2b59803a60e8db1335424eda867004672f7b0e7efc9a6d565977114fca6b2e7d695ba6f016aa2c383bed731c21f34170e6f2b396c9619e3da3994bf2db35d5345dbdcf7922598b603e7d592a1bca41c6c3fabe893b1222784cb529365d98a5dabe6cb936c9b4dcc8ced936ccf12843bde4a53d15b82eceff039cfbedbcedc0cc93c28cb36d17ec92b78fd883cb30d3ddc08cf460bb3863e14c657b6aa427660dce1b98bb388a955df376a4116b73a18730e3e1ac7609339a5205b47714da453cf1f6247eb37afed09eb857ef16014f40d7504be8b517f30473edd24c2cc7cfa6716ced93d16867c0ee403a8c9165b03b0f76c53ef995e1015a3edb007b80766204be6d03d96dcfc15a26710cf608cac174b2927a13ad2aac2ac40b3bf03b1529ac618ebd7dd8a0581f801fd081f9dbd10a14d3bd1d19f8f2c15ec48ec6aab78705d68762330ff3fc31ccfb3a4ee23446cb8ebddbd3d7711e17f6c28f9a4dbb11f5e2d3f84cafa0258736eec6e7f105d89b01ac6eb7ccb67d011ffd3abe247b125fc5d7533b821a81fe29d03fa9c613b127259b02f624bef1fa9a94e4e427a5f15ac2df985a9ff97bb8b2b29c9ba6ffd6303715ac8708f4403bbe8def7c1eb473fbf17dfc6068ee6e45ebf1639cfb99dc1f3145fc143fc72ff44d15fffec12ddb9749348a17d143a4190b35025ac53961d9ee56e509f827659e8c61fd398897a2cfd7eb5543159fe35742f95bd8c3e87ddfaa14e2e578255e9d1e8fd762dc4d141f64077813cab16bf1463cf05f8c78f5fd21dc23042eed29476b39d408c4a89565f5027efccb57fc93573cb9b54bea02d70f3833e02c412b4ed5c61d039ee74f4b324281b4f09b76185ec9fe4c0c3393190bd61d7f0cce8f37a11c9f0f8ee1bd08c7f7b67107bc3f3dfe5ab81ccc7f8ce560bd676c21ace4c11d897066a43a9267a72ee2ad7818275117f3c0383f8b47f1b63950ce6ec10ca6e39d78d71ec22c39875fda8cf7e271bc1f1fc0ac7d6deefc4a383517b0326ee861bc6797d896084706e0372e8127b11bef555b77e113fa659ec0ba6b04a57760ad3e819a4c6c07e3f8d076e243b07ae7780c6a70e4e7df577159d00a4a8c961563e85f94819f8fe1583c898fe137586388871c9345462b3d400c7609ec93df37b2e0b94ec01ea0f5c67296ec963f1fcae132518666e0af31646b4fc77d3dd8cf903a81c4c76a129f004f1ad0eb43b0690726039e34ed2ef47a0a7953f31caf99a6d9a7769ad5b81543fbe3b6bd8ee7e30ecc4a3dbbab76ed31d895ab18ef9790a7f8225a81ba2fc7ddaff024ee95d75d6a047afdfe19fd0f0d66393a75d1143b9c80c2fce68cb33ad83b173be712fceea34ba19fee59eefc3734174cdbf391b4b1e43258a73550936a68932fec771d3047704fb8af0abb1bbdddeffaaf22efedd57d24431fcae70ecb7b59fe3de8f2dfe4a36f07873d74ff1efc01788d072ec7bd07cf11d00c70fc1a673cf3e46035fc053fbe5fdaf35a8755e99271b4eee77939f2b1d5853ba5391ae2c8af363be8a3a82609f922ee4c8fdc19ad6ac9fed08e89ec9f059be4c80fc17ce07fdcbc167d07796fe0bc3bc46063421a1e87b28a69f9b4d3e2cbeff9710a7594bd275f2fef47e12ad9fbd709b7e30c63b45fded65cfb3d2c1ce7de873147f6c21c89ff61525cf1823f0269b49b82bb2ab8bb0876650de2d445ee5c78e22e7066a572bec2136dfc77a6c665ffc4b46144e07ed339b500f7b350037edfc8afffbd351b05cc7e07fa0b76cdef8345e23f787fe380f78136c4ffc01d3db0da07ac917d49274b6f638a35af2208e33e191fc77dad7defc734d17ff1fb4c3e1f5cb34fd7c518af47f7fcf81992155c29f0fe576fda3ef2a778ad34c0b10dfe4d07fc9127b0d05d3d7197a425daf33247eecac7e0759a0668ee026dae1aba6b6f4f2ebd5f023616ed2eeea155e7891ae07e6ee97efcd0dd903d79777f69f2368e64fd3ebbb7f4b33e4d15dfe757ce1f46affe26dc7bfb6ab3f57f774facbcf7e5dffd847e039fc62acfbd4dd0ca9af12b0bcf13d056d57517ee77e1bbaabacd3665108df04b7a3fe54ffcae7b28ef955dbe7f319b67d607f9c8d6cc8aa4bdfe5b49afff1eccf4fbf3f28eced49f3b300ff85d153b8eaf6006bdf67b1bc4115cb7aeb9db2ff0641179126d1057d027353a7e849907e65377873bd5f6c2cefb7b04c45c5c894e8c8175e9365dd5ef72cf851def8917bf42f6c7d768f5ec8faf85f84722f9e7f0ba708d0b9c1dfc0e39ce125dc4b85b8e7e01c7471c637a563a8eb1df4d8fb670beb73bb1b613f62968973db5d7103728afdf714fa0f712d399894f207e61b9023fe4b82ce6c6dddb9ee9b807bb883609d65b4b31cd7434db0dbf604f8e41130571859f5959778f701c9fb09ca0ddb00d987fa7f6a4237605e6ec4db207b8df84dea5b71b789f645ddfe11b31f135db8f037a7200f363ba7b5263f70ce761be2db0e27314db75e5df18a0f701213e57037a9f03b031ade97b82f29e07bd7d43ef46c1f139bc2be57162cefc771d066a4925ee454dd405bd93ebbdcf53aa8fb7371dac1fef9f6d3206bb43760e8fc731d819b0fe6ed1db894bbdc97666cd5dda2db7641fdd95466d2fb33d2a8f48185d6ed95eb94f9f839cf24429d3c2f910bf1f0142f74586bc1774ccb824b226f77852c2c753510f7cfc612a6e95445d46afffd627e79fbd0f522eaf6cafde3d3e9bc6f50ac74af756c2fd9143bf67e5ff0683ff9b16b7f49d3f2fd41ffe5d03b746316874ecb5caf749b5c1774ce4be2bed4de07d48f64f96d9b35da37597eb57e0c9509faabeda75ebe88b42bce106209ba60318fd53f4538fd157c598b05b67df55bb2db71eaf5b6d80b922e0dbeab883bff1389d878c77437302bfaf20fd8a660437a2186704b78d696e685f50ccc4be40be177300788762b3ec46661963c6221ebb6d380fcfbf3213b7cbe55e61995cff2baa37b633d47fd7ed891fae8618bb027a0f6519644cb1da80b425d577fb20cbeec02c99dd203766d51da2c48b105fe16ff0f9af4cd31d41dc76b9699b269659c99ef455e426f1b63b6639711314f835f1b8312b908ad27427d6b816c70d280565ceb5dd9c798423f36ede3c9a4511d70159d0b93a53a9ebaab3f8317e74bd248a36e328014ac6599c251ac4243689e355bb149f240e2449d224b34b490ee2ec9255491e6fc16f7fdc9d273904e7ceed12fc8e130b675828278a9338d23749141bbc8e3a8be6d57a52984575e63ac929d4e8317e308f585712ac3bb521395319b4ab0132e7db0abf93f3a908c6f0697c01ff1f439997f15ef2f9dfc5669ea861720d7d184dc5ac94e4d93c26371cdf42ef3e9b457daf73f3acf3e40ee41e5adb5369d48335c14e10638be4c116d0db8f71923c414f3f434f3d417f3f252f3876ec1e8cab3c5e4c1693a5f2b87345b26c3bc9b2da4d96e1f78a5b4e567d0cc7dd986394651fafb902ce59467106637b6256ed893d4cfa304ee11ac93a5ecbb6920db836d6e119ea3380fa0c92cd50df9e6fc399da43318bc916b5137f63bbf137cbe30f65e5bde3302a57dc7c32748d68e7e779a2ac9b984718bd5132328f6a1d7afe34c48b019f414d1143ecbaa089abf831d94e76a2798c61c4474994ec267bc938d94f0e60c49f40ab61cc5a1cf587c94b7269dac99169c78b104f92a5e418e4c4ec260de84d182e662169ba08c5ee262dd0ca3e68a29fccd95eb202b29ab4a1b77bc972320f9a88f018623a37e99464c1ac265dd0480f64122fe2f5d208ae99a42a85850ab0cb0227b3643f36c85160d3630a3cb28b1463fb52eb3a14fbf62f96fae3b18cd318fb8de32b481fb9791f9faa485fa928758073379fc63863b856d2f8d9fb276a37de4e93300e16e937f200f5ac521c2b6a2f85187e6f41adb7929d34036b05fa006e98348f335ba4058cbfd5f414e68f7b985df66c969e2597e9797ae1a07fe2b3f432bd4a9ae9b5dd4d6fbc3dda88bb20eb6843c8c6c0dc7f9cdeda2b3fc70f98075e3c7f56b11ce4158af11c83797a8fe66b11bbe739a150d23b98e1ae607edb80396f0f74b101f20432209ea4797a9fe6c9264834e54b349fdc431b3d5f40337bd2fe575c29cb23f4d7fb3c599972254d401ef03a3fc713fd8cf328cca70d983ba7d2a4d910ed045906b012f33c077beba0515feb6e41e15d38cf95f4319a4f9fd02ac4abc961bc0a23f4390586a48b30761be9925900cd2c5b18df60316f60dd8fd6ff06717a89e94923e9812c9b05cf9f552fc0a7740579351df31852989fd367e8616f77304e8cb73f717cc2f12a72d5aca4ab38fa9302ed17da93742deda7eba905e9c308dcf0ed81900ea0ef61de2e0bf4c41cf5c34c380e725c8a3ffa7d9c6ee2993fc793742b3a4d87e928dd4e7720ec82eccdc4638edf93bdf07b9f657afc3d795bfe7ea9bc7da7d3031cf3c40797279722e9391d2bc7a609f101ae77d243e0d15259d203d0e433b4ed48ada57b20e5faedbf233f3abe0ff57c1dbf9fbef3269f1cdf4927e9717a027dfc46273f5877fd51c1cda5cf499c3661e41b1cfbc9257120b94c4cda02eb7409da89d03a1167903d69043207d2a618ec552f9d07cecd27367af9a75bf471f8c1baeb6f0c69275d48bb6923ed81409c45202a03e73bd369176293aee3dc9fc1da00ed12c4609b608eda43aea4cfc097046d95dd232e2147d0b6a407592ce20eb3d83493a5cc65497a1a65304617b234cbe04a995c17e22e862ccf8a7f582b6f79a27fcf95b2d3ec2c3b4f8fa1972fa2e7ecd29d6457662bbbf6bef40f7616b31b965b90bb6898dd670fd9a369654fd973f6e216b3c56c0964395b0159cdd6b25533c9faf19e7dc9d6acb6091c5bced64d662fb28d6c902d616c37e3d86e669bfa2cdbb4cbe6285bcfb6b2a13d326bb87f656e92956c1467e02db5e2dde8347ac17926dbce76b2ddecec6fd1887ecb93ef9ebd14f47fb6978db3fdecc02d67874665471fecf5f21e6d36c98eb393ac91356397b5b2b9ac9dcd671de8d985f8d2cb4ab6863e7a367643b70debb3ddb89bccc1daac694fb26e7c46b6c3db951c3984eb2e587d3fc5ab592f495c9e47b03e03bf07771373e58618bbed6c39d7a0d5f5f8d28ee2cb1cb49a2ce72636e09b3ce6167ce51dd0d3791eff4e9da00edef2e47bb50233c745eea2212c2f5f6901b197145013e28cfe6e6a9ebb34bbcf8bfc34bbcecff2f3fc02b5e216f3cb6c3ebf829eba3613dc8f75dbf98d39c9618d162bf45fd4d0fb25f3bc3e3b065fe4d81d2513f6f535aefc60fc2f831f62e30c7cf94df8b549fe4812a526c13d0383f9fc9aed285ecc6ff33bf48de23d5c0f665d28732939c8eff387ecfc376ae47d9e7c2357f2c70fee837c768f64ecd2fc0934f39cbfe48bf952be0c5c597477397ef76acbdf5dcdf02e2c3dd312e3b3ed0bf96abee677e4d7f23eee9be5ebe0c3b7f38d388a7af9401da9b37c13257e44514769dffb1d47b0863f4ad7931bf0fe6ebcefd5cfb74057b4cf7089b60aec512f73e813d9c5e8ed3b88dfa511f5439e7c1b5f4cabaa36903739da923b13e5a37c3bdfc977f3bd7c0cf17e7e901f9a717eaef6f3a37cc2ef57ca33efb247fdfa39f7a16ee91dbb9d23678ee204b9919f80efc4bebaf8ecf9601ae70dda83d037c8195cebd1da2e39e2355ecb35bf9b29affbfd073cf916c99bafeefd55e08869e5ad7c0e66b0763e9f774ce4efe7cdbe1b5625f4413b5b6668af3297e4ee3a8e4afb7053c1ddcf1df1e16146cbc1d37c4281f5de7ebe90ed279739acc1dd7dde9de9d56fedb70f79f24b12edfafb125fe20868a497b78a88df6bf9aebbc7f8377b4ef0a941b041870938f279439dc1fc7546dc40ae141af7b9f03872c5db9b0cf7a4c13fcad01f02794e55a20a5849fe689cffaafc2e9e7cbdd7c2bdf0df1b06fad43fcdb397446863680f9b7902bfc19e78eea479b4690be20bfa46e4272597d14e7651d8b7b6e0cfe589bec66702ab04cf1196bf310ced2aac784d1ca9b32206be0ca67bc24981bb76743f07778d13bf879c36794fc19a45f0b47e6813fe349e14ce6cfcad3dfb6ba10f6ef2a1cb934d7fbfe408ed0aaec95c87446c8bdfe766fb829258707db2f7d64d7f1e4f5cd3edfe7c8f889ff24f067cc6406fe5e07fb89eeb0053fadebe3cba8eeb2266aea02723f75bfcbdcb38027ff8fcfbb9f2fd3ce1bf27f45f2ff4d5c4a4998b4f60bdf548fe0ccc60f7c2137f5f659fb8027a798e5793a7683ebac976bf7bfdf5fd3cf9b59e41ce142869342cb26850e445a1b37c5b67c56971c6efa3e37b8ef8840f3ec5baab77f0a9a1a8abaef05d7af926b23ee46711f1e90279e6e5b3f7be2651df766dcfb4e32c5df5f714f9de62fca873b42f168e94ef41c6913b99f9fecc1fc893c814bfca137af670585c98a8b8c41d16b56846f9213e2dae5edc223e47151feb4dfffea1a3e78be36bff15657c7eebcaff9d11f98e12fa353fbb8ef3ef581557c614d7a69de6784f51eec1d36fb5975c79def4921db43dc97d349fdbd73af9237962beee4d788edc1047b2fba2c8274551dc82d778466f94aa4e71a79ffcb3b723ff041cbe9f754adaf03c718127fe6f7f297c564cded76ffe044f307d03fc9761bc875c993e6f90141ae63388b7555adcab3435fe9997b364dbcdcf7ea7e94fe4c9af72049fbb2d1e80238f386b45a3fc9966ace229bceb54280733177d636264e6fc338f89390ffc18068e88ffffb3e3c47305cabb2c9e4d3bdaf1cf202cf2fd77109de3f307c97db2837c49403be6f9cdb7b3fe309ef83a7d5923624b708f186cc9b07889c6c52df4d18a7f37f124e2f72675dfbf9f88dc4802374efcb71b68afabfc8c635c4123120ea371bc6961060bcfe6acf3332bf81c98f75b402b857f2eedec8fe789e8a4fc5cfaebf798e439f410cbdfa8c7f79a8ac5a89f1d65d7c512d890b1992f96cd3ccc56cba68f4f73da81bbf4cfe5e2f3b7117d3785de5cd5a7c5157eb9c6ff5d910bff7ed4f4bd99e9df045bff40e4ef21a1e0f780c76ec92cc5e0e3a34d49d7c9a6f87de4b458f1cf7da5bca7fc5f81279d2c4e0ea3cdd8a469b16a16f576b1664dd147712d3729d6d3cd62a318e4dd62905d16f0dba962237fccbb28c566fe080231a640bc81ffbb49ba09676e489cfab4694837f15c286d034bc498cac3184bf2bf37a57cbed6e3f438e5e3780bce18fa673e1bfc8c4ad3359373fc1f428b9f53f131e41e95f7bdfe589efcbb873f9127ffe6e18fe3c9dffedccb9f16bea30f7f837ff2ef1dbea10f7fc3bef03fdd2bff64f8963efc2df74ffee99ef9a7c237f5df6fbacff84ff7ce3f11beadff7edffdf87f23cd7c73bffdc7fffd1ffffa7fbdadc5da</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>m_pColorRadio</sender>
+        <signal>stateChanged(int)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotBGMode(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_pColor1But</sender>
+        <signal>changed(const QColor&amp;)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotColor1(const QColor&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>m_pColor2But</sender>
+        <signal>changed(const QColor&amp;)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotColor2(const QColor&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>m_pColorBlendBox</sender>
+        <signal>activated(int)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotColorBlendMode(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_pWPModeBox</sender>
+        <signal>activated(int)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotWPMode(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_pBalanceSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotWPBlendBalance(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_pChangeInterval</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotWPChangeInterval(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_pWPBlendBox</sender>
+        <signal>activated(int)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotWPBlendMode(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_pImageOrderBox</sender>
+        <signal>activated(int)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotImageOrder(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_pDesktopBox</sender>
+        <signal>activated(int)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotDesktop(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_pProgramSetupBut</sender>
+        <signal>clicked()</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotProgramSetup()</slot>
+    </connection>
+    <connection>
+        <sender>m_pPatternEditBut</sender>
+        <signal>clicked()</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotPatternEdit()</slot>
+    </connection>
+    <connection>
+        <sender>PushButton17</sender>
+        <signal>clicked()</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotWPAdd()</slot>
+    </connection>
+    <connection>
+        <sender>m_pRemoveBut</sender>
+        <signal>clicked()</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotWPDelete()</slot>
+    </connection>
+    <connection>
+        <sender>m_pWallpaperBox</sender>
+        <signal>highlighted(int)</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotWPSet(int)</slot>
+    </connection>
+    <connection>
+        <sender>m_pAdvancedBut</sender>
+        <signal>clicked()</signal>
+        <receiver>BackgndBase</receiver>
+        <slot>slotAdvanced()</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="local" impldecl="in implementation">backgndbase.ui.h</include>
+</includes>
+<slots>
+    <slot access="protected">slotWPDelete()</slot>
+    <slot access="protected">slotBGMode( int )</slot>
+    <slot access="protected">slotColor1( const QColor &amp; )</slot>
+    <slot access="protected">slotColor2( const QColor &amp; )</slot>
+    <slot access="protected">slotColorBlendMode( int )</slot>
+    <slot access="protected">slotPatternEdit()</slot>
+    <slot access="protected">slotPreviewDone( int )</slot>
+    <slot access="protected">slotProgramSetup()</slot>
+    <slot access="protected">slotWPAdd()</slot>
+    <slot access="protected">slotWPBlendBalance( int value )</slot>
+    <slot access="protected">slotWPChangeInterval( int )</slot>
+    <slot access="protected">slotWPMode( int )</slot>
+    <slot access="protected">slotWPBlendMode( int )</slot>
+    <slot access="protected">slotImageOrder( int )</slot>
+    <slot access="protected">slotDesktop( int )</slot>
+    <slot access="protected">slotImageDropped( QString )</slot>
+    <slot>slotWPSet( int )</slot>
+    <slot access="protected">slotAdvanced()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
