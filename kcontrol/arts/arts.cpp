@@ -39,6 +39,7 @@
 #include <qtabwidget.h>
 #include <qtabbar.h>
 #include <qdir.h>
+#include <qwhatsthis.h>
 
 #include <kconfig.h>
 #include <klocale.h>
@@ -69,31 +70,34 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     connect(startServer,SIGNAL(clicked()),this,SLOT(slotChanged()));
     
     // dependant options: only useful when soundserver will be started
-    QFrame *hLine1 = new QFrame(this);
-    hLine1->setFrameStyle(QFrame::Sunken|QFrame::HLine);
-    layout->addWidget(hLine1);
-    
-    startRealtime = new QCheckBox(this);
-    startRealtime->setText(i18n("Run soundserver with &realtime priority"));
-    layout->addWidget(startRealtime);
-    connect(startRealtime,SIGNAL(clicked()),this,SLOT(slotChanged()));
+    QFrame *hLine = new QFrame(this);
+    hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
+    layout->addWidget(hLine);
     
     networkTransparent = new QCheckBox(this);
     networkTransparent->setText(i18n("Enable &network transparency"));
     layout->addWidget(networkTransparent);
     connect(networkTransparent,SIGNAL(clicked()),this,SLOT(slotChanged()));
-    
+
+    QWhatsThis::add(networkTransparent, i18n("This option allows sound requests coming in from over the network to be accepted, instead of just limiting the server to the local computer."));
+
     x11Comm = new QCheckBox(this);
     x11Comm->setText(i18n("Exchange security and reference info over the &X11 server"));
     layout->addWidget(x11Comm);
     connect(x11Comm,SIGNAL(clicked()),this,SLOT(slotChanged()));
+
+    QWhatsThis::add(x11Comm, i18n("If you want network transparency or if you use the soundserver only when you use X11, enable this option."));
+
+    startRealtime = new QCheckBox(this);
+    startRealtime->setText(i18n("Run soundserver with &realtime priority"));
+    layout->addWidget(startRealtime);
+    connect(startRealtime,SIGNAL(clicked()),this,SLOT(slotChanged()));
     
-    QLabel *x11CommHint = new QLabel(this);
-    x11CommHint->setText(i18n("    If you want network transparency or if you use the soundserver\n    only when you use X11, enable this."));
-    layout->addWidget(x11CommHint);
+    QWhatsThis::add(startRealtime, i18n("On systems which support realtime scheduling, if you have sufficient permissions, this option will enable a very high priority for processing sound requests."));
     
     responseGroup = new QButtonGroup(i18n("Response time"), this);
-    
+    QWhatsThis::add(responseGroup, i18n("If you increase the response time, the aRts soundserver will be able to keep up with playing incoming requests more easily, but CPU load will increase."));
+
     QVBoxLayout *vbox = new QVBoxLayout(responseGroup,10);
     vbox->addSpacing(responseGroup->fontMetrics().height());
     
@@ -108,16 +112,14 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     
     // options end
     
-    QFrame *hLine = new QFrame(this);
-    hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
-    layout->addWidget(hLine);
-    
     QLabel *restartHint = new QLabel(this);
-    restartHint->setText(i18n("As the aRts soundserver will be started when KDE is started,\nthe changes you make in this dialog will only take effect then.\nSo logout and login again after having changed something in this dialog."));
-    restartHint->setTextFormat(RichText);
+    restartHint->setText(i18n("<qt>The aRts soundserver cannot be "
+			      "initialized except at login time. "
+			      "If you modify any settings, you will "
+			      "have to restart your session in order for "
+			      "those changes to take effect.</qt>"));
     layout->addWidget(restartHint);
-    layout->addStretch(5);
-    layout->activate();
+    layout->addStretch();
     
     config = new KConfig("kcmartsrc");
     
