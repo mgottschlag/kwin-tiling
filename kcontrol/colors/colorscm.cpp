@@ -620,7 +620,7 @@ void KColorScheme::readScheme( int index )
 
     QColor link(0, 0, 192);
     QColor visitedLink(128, 0,128);
-    QColor alternate(240, 240, 240);
+    QColor alternate(238, 246, 255);
 
     // note: keep default color scheme in sync with default Current Scheme
     if (index == 1) {
