@@ -1,13 +1,18 @@
 /* $Id$ 
  *
- * $Log: $ 
+ * $Log$
+ * Revision 1.13  1999/07/26 11:12:59  deller
+ *
+ * memory-info is now displayed again; it seemed to be a bug in qt20, where
+ * QLabel->setAutoResize() didn't worked and needed adjustSize() ?
+ * 
  *
  */
 
 #include <qtabbar.h>
-#include <kglobal.h>
 #include "memory.h"
 #include <klocale.h>
+#include <kglobal.h>
 #include "memory.moc"
 
 #define OFFSET_DX 20
@@ -54,12 +59,22 @@ static QString format( t_memsize value)
 KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
   : KConfigWidget(parent, name)
 {
-    QFont	courierFont("Courier");
+    QFont	fixedfont    = KGlobal::fixedFont();	
+    QFont	generalfont  = KGlobal::generalFont();
+    QFontInfo	*fontinfo;
     QString	title,initial_str;
     QLabel	*titleWidget;
     int 	i,xs;  
-    
-    // Create the international Text for...
+
+    fontinfo = new QFontInfo(fixedfont);	// make same font-sizes..
+    i  = fontinfo->pointSize();
+    delete fontinfo;
+    fontinfo = new QFontInfo(generalfont);
+    xs = fontinfo->pointSize();
+    delete fontinfo;
+    if ( xs > i) i = xs;
+    generalfont.setPointSize(i);
+    fixedfont.setPointSize(i);
 
     // Create all Labels...
     Width_Info  = 0;
@@ -78,6 +93,7 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 	
 	titleWidget = new QLabel(title, this);	/* first create the Information-Widget */
         titleWidget->move(-1000,-1000);	// initially invisible !
+        titleWidget->setFont(generalfont);
 	titleWidget->setAutoResize(TRUE);
 	MemSizeLabel[i][0] = titleWidget;
 	xs = titleWidget->sizeHint().width();
@@ -86,7 +102,7 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 	
 	titleWidget = new QLabel(initial_str, this); /* then the Label for the size */
         titleWidget->move(-1000,-1000);	// initially invisible !
-        titleWidget->setFont(courierFont);
+        titleWidget->setFont(fixedfont);
 //        titleWidget->setAutoResize(TRUE); // BUG in QT2.0 ?-> needs adjustSize()!
         titleWidget->adjustSize();
 	MemSizeLabel[i][1] = titleWidget;
@@ -134,7 +150,7 @@ void KMemoryWidget::resizeEvent( QResizeEvent *re )
 	MemSizeLabel[i][0]->move(left,
 				    addy + STARTY + i*DY);
 	MemSizeLabel[i][1]->move(left+Width_Info+OFFSET_DX,
-				    addy + STARTY + i*DY + 2);
+				    addy + STARTY + i*DY + 1);
     }
 }
 

@@ -39,6 +39,7 @@
 #include <qtabbar.h>
 
 #include <kapp.h>
+#include <kglobal.h>
 #include <kcharsets.h>
 #include <klocale.h>
 #include "info.h"		/* include the forward declares... */
@@ -202,7 +203,7 @@ void KInfoListWidget::defaultSettings()
 	lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
                      width() -2*SCREEN_XY_OFFSET,
 		     height()-2*SCREEN_XY_OFFSET);
-	lBox->setTableFont(QFont("Courier"));
+	lBox->setTableFont(KGlobal::fixedFont());
 	lBox->enableKey();
 	lBox->setAutoUpdate(TRUE);
 

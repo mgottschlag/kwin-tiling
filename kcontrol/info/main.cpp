@@ -49,7 +49,7 @@ private:
   KMemoryWidget *memory;
   KInfoListWidget *processor, *interrupts, *dma, *ioports, *pci, *sound,
   	*devices, *scsi, *partitions, *xserver; 
-	
+
 public slots:
   virtual void defaultValues();
 };
