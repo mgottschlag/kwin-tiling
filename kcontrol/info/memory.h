@@ -10,9 +10,11 @@
 #include <qtimer.h>
 
 #include <kcmodule.h>
+#include <config.h>
 
-#ifdef __i386__
-/* use long-long, because some 32bit-machines have more memory than 4GB (with Swap) */
+#ifdef HAVE_LONG_LONG
+/* better to use long-long, because some 32bit-machines have more total 
+   memory (with swap) than just the 4GB which fits into a 32bit-long */
 typedef unsigned long long t_memsize;
 #else
 typedef unsigned long t_memsize;
