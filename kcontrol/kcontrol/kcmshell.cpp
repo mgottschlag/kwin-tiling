@@ -53,6 +53,7 @@ static KCmdLineOptions options[] =
     { "list", I18N_NOOP("List all possible modules"), 0},
     { "+module", I18N_NOOP("Configuration module to open."), 0 },
     { "embed <id>", I18N_NOOP("Window ID to embed into."), 0 },
+    { "silent", I18N_NOOP("Do not display main window."), 0 },
     KCmdLineLastOption
 };
 
@@ -86,7 +87,7 @@ static QString locateModule(const QCString module)
     return path;
 }
 
-void 
+void
 kcmApplication::setDCOPName(const QCString &dcopName)
 {
     m_dcopName = "kcmshell_"+dcopName;
@@ -137,7 +138,7 @@ int main(int _argc, char *_argv[])
                           "(c) 1999-2001, The KDE Developers");
     aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
     aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
-    aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");      
+    aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
 
     KCmdLineArgs::init(_argc, _argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
@@ -216,33 +217,37 @@ int main(int _argc, char *_argv[])
             QCString embedStr = args->getOption("embed");
             bool embed = false;
             int id = -1;
-            if (!embedStr.isEmpty()) 
+            if (!embedStr.isEmpty())
                id = embedStr.toInt(&embed);
-            
-            if (!embed)
-            {
-               KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true );
-               dlg->setCaption(info.name());
+            if (!args->isSet("silent")) {
+             if (!embed)
+             {
+                KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true );
+                dlg->setCaption(info.name());
 
-               // Needed for modules that use d'n'd (not really the right
-               // solution for this though, I guess)
-               dlg->setAcceptDrops(true);
-	   
-               // run the dialog
-               dlg->exec();
-               delete dlg;
-            }
-            // if we are going to be embedded, embed
-            else
-            {
-               QWidget *dlg = new ProxyWidget(module, info.name(), "kcmshell", false);
-               // Needed for modules that use d'n'd (not really the right
-               // solution for this though, I guess)
-               dlg->setAcceptDrops(true);
+                // Needed for modules that use d'n'd (not really the right
+                // solution for this though, I guess)
+                dlg->setAcceptDrops(true);
 
-               QXEmbed::embedClientIntoWindow(dlg, id);
-               kapp->exec();
-               delete dlg;
+                // run the dialog
+                dlg->exec();
+                delete dlg;
+             }
+             // if we are going to be embedded, embed
+             else
+             {
+                QWidget *dlg = new ProxyWidget(module, info.name(), "kcmshell", false);
+                // Needed for modules that use d'n'd (not really the right
+                // solution for this though, I guess)
+                dlg->setAcceptDrops(true);
+
+                QXEmbed::embedClientIntoWindow(dlg, id);
+                kapp->exec();
+                delete dlg;
+             }
+            } else {
+             //Silent
+             kapp->exec();
             }
             ModuleLoader::unloadModule(info);
             return 0;
