@@ -90,9 +90,11 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     connect(transparencyCheck, SIGNAL(toggled(bool)), this, SLOT(updatePreview()));
     connect(backgndLine, SIGNAL(returnPressed()), this, SLOT(updatePreview()));
 
+    connect(titleLine, SIGNAL(textChanged(const QString&)), this, SLOT(schemaModified(const QString&)));
     connect(shadeColor, SIGNAL(changed(const QColor&)), this, SLOT(schemaModified()));
     connect(shadeSlide, SIGNAL(valueChanged(int)), this, SLOT(schemaModified()));
     connect(transparencyCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
+    connect(modeCombo, SIGNAL(activated(int)), this, SLOT(schemaModified(int)));
     connect(backgndLine, SIGNAL(returnPressed()), this, SLOT(schemaModified()));
     connect(transparentCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
     connect(boldCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
@@ -398,6 +400,18 @@ void SchemaEditor::schemaModified()
     emit changed();
 }
 
+void SchemaEditor::schemaModified(int)
+{
+    schMod=true;
+    emit changed();
+}
+
+void SchemaEditor::schemaModified(const QString&)
+{
+    schMod=true;
+    emit changed();
+}
+
 QString SchemaEditor::readSchemaTitle(const QString & file)
 {
     /*
@@ -432,7 +446,7 @@ QString SchemaEditor::readSchemaTitle(const QString & file)
 
 void SchemaEditor::querySave()
 {
-    int result = KMessageBox::questionYesNo(this, 
+    int result = KMessageBox::questionYesNo(this,
                          i18n("The schema has been modified.\n"
 			"Do you want to save the changes?"),
 			i18n("Schema Modified"),

@@ -29,6 +29,7 @@
 #include <kfontdialog.h>
 #include <kgenericfactory.h>
 #include "schemaeditor.h"
+#include "sessioneditor.h"
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
@@ -63,6 +64,7 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     connect(dialog->silence_secondsSB,SIGNAL(valueChanged(int)),this,SLOT(configChanged()));
     connect(dialog->word_connectorLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
     connect(dialog->SchemaEditor1, SIGNAL(changed()), this, SLOT(configChanged()));
+    connect(dialog->SessionEditor1, SIGNAL(changed()), this, SLOT(configChanged()));
 }
 
 void KCMKonsole::load()
@@ -125,6 +127,12 @@ void KCMKonsole::save()
     {
        dialog->TabWidget2->showPage(dialog->tab_2);
        dialog->SchemaEditor1->querySave();
+    }
+
+    if (dialog->SessionEditor1->isModified())
+    {
+       dialog->TabWidget2->showPage(dialog->tab_3);
+       dialog->SessionEditor1->querySave();
     }
 
     KConfig *config = new KConfig("konsolerc");

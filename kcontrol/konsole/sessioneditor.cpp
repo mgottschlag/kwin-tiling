@@ -216,13 +216,7 @@ void SessionEditor::readSession(int num)
         disconnect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
 
         sessionList->setCurrentItem(oldSession);
-        if(KMessageBox::questionYesNo(this, i18n("The session has been modified.\n"
-                                                 "Do you want to save the changes?"),
-                                      i18n("Session Modified"),
-                                      KStdGuiItem::save(),
-                                      KStdGuiItem::discard())==KMessageBox::Yes)
-            saveCurrent();
-
+        querySave();
         sessionList->setCurrentItem(num);
         connect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
         sesMod=false;
@@ -273,6 +267,20 @@ void SessionEditor::readSession(int num)
     }
     sesMod=false;
     oldSession=num;
+}
+
+void SessionEditor::querySave()
+{
+    int result = KMessageBox::questionYesNo(this,
+                         i18n("The session has been modified.\n"
+			"Do you want to save the changes?"),
+			i18n("Session Modified"),
+			KStdGuiItem::save(),
+			KStdGuiItem::discard());
+    if (result == KMessageBox::Yes)
+    {
+        saveCurrent();
+    }
 }
 
 void SessionEditor::saveCurrent()
@@ -339,19 +347,23 @@ void SessionEditor::removeCurrent()
 void SessionEditor::sessionModified()
 {
   sesMod=true;
+  emit changed();
 }
 
 void SessionEditor::sessionModified(int)
 {
   sesMod=true;
+  emit changed();
 }
 
 void SessionEditor::sessionModified(const QString&)
 {
   sesMod=true;
+  emit changed();
 }
 
 void SessionEditor::iconModified(QString)
 {
   sesMod=true;
+  emit changed();
 }

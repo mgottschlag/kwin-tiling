@@ -35,6 +35,12 @@ class SessionEditor : public SessionDialog
     SessionEditor(QWidget* parent=0, const char *name=0);
     ~SessionEditor();
  
+    bool isModified() const { return sesMod; }
+    void querySave();
+
+  signals:
+    void changed();
+
   private slots:
     void readSession(int);
     void saveCurrent();

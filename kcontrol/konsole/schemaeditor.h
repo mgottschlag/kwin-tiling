@@ -58,7 +58,9 @@ class SchemaEditor : public SchemaDialog
 	void previewLoaded(bool l);		
   private slots:
         void schemaModified();
-  	void loadAllSchema();
+	void schemaModified(int);
+	void schemaModified(const QString&);
+	void loadAllSchema();
 	void updatePreview();
   private:
 	bool schMod;
