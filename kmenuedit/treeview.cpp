@@ -320,7 +320,7 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuF
    return item;
 }
 
-TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuEntryInfo *entryInfo)
+TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuEntryInfo *entryInfo, bool _init)
 {
    QString serviceCaption = entryInfo->caption;
 
@@ -332,9 +332,9 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuE
 
    TreeItem* item;
    if (parent == 0)
-      item = new TreeItem(this, after, entryInfo->menuId());
+     item = new TreeItem(this, after, entryInfo->menuId(), _init);
    else
-      item = new TreeItem(parent, after, entryInfo->menuId());
+     item = new TreeItem(parent, after, entryInfo->menuId(),_init);
 
    item->setMenuEntryInfo(entryInfo);
    item->setName(serviceCaption);
@@ -629,11 +629,11 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
       // update fileInfo data
       parentFolderInfo->add(entryInfo);
 
+
+      TreeItem *newItem = createTreeItem(parentItem, after, entryInfo, true);
       // create the TreeItem
       if(parentItem)
          parentItem->setOpen(true);
-
-      TreeItem *newItem = createTreeItem(parentItem, after, entryInfo);
 
       setSelected ( newItem, true);
       itemSelected( newItem);
@@ -811,11 +811,12 @@ void TreeView::newitem()
    // update fileInfo data
    parentFolderInfo->add(entryInfo);
 
+
+   TreeItem *newItem = createTreeItem(parentItem, item, entryInfo, true);
+
    // create the TreeItem
    if(parentItem)
       parentItem->setOpen(true);
-
-   TreeItem *newItem = createTreeItem(parentItem, item, entryInfo);
 
    setSelected ( newItem, true);
    itemSelected( newItem);
@@ -993,11 +994,10 @@ void TreeView::paste()
       // update fileInfo data
       parentFolderInfo->add(entryInfo);
 
+      TreeItem *newItem = createTreeItem(parentItem, item, entryInfo, true); 
       // create the TreeItem
       if(parentItem)
          parentItem->setOpen(true);
-
-      TreeItem *newItem = createTreeItem(parentItem, item, entryInfo); 
 
       setSelected ( newItem, true);
       itemSelected( newItem);

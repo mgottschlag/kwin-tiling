@@ -111,7 +111,7 @@ protected slots:
 
 protected:
     TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuFolderInfo *folderInfo, bool _init = false);
-    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuEntryInfo *entryInfo);
+    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuEntryInfo *entryInfo, bool _init = false);
 
     void del(TreeItem *, bool deleteInfo);
     void fill();
