@@ -181,7 +181,11 @@ void CSettingsWizard::checkAndModifyXConfigFile()
  
                         for(i=0; QString::null!=CConfig::constXfsConfigFiles[i]; ++i)
                             if(CMisc::fExists(CConfig::constXfsConfigFiles[i]))
+                            {
+                                CKfiGlobal::cfg().setXRefreshCmd(CConfig::XREFRESH_XFS_RESTART);
                                 itsDirsAndFilesWidget->setXConfigFile(CConfig::constXfsConfigFiles[i]);
+                                break;
+                            }
                     }
                 }
             }
