@@ -172,10 +172,14 @@ Wait4 (int pid)
     waitType	result;
 
 #ifndef X_NOT_POSIX
-    waitpid (pid, &result, 0);
+    if (waitpid (pid, &result, 0) < 0)
 #else
-    wait4 (pid, &result, 0, (struct rusage *)0);
+    if (wait4 (pid, &result, 0, (struct rusage *)0) < 0)
 #endif
+    {
+	Debug ("Wait4(%d) failed\n", pid);
+	return 0;
+    }
     return result;
 }
 

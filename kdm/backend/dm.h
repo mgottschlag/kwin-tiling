@@ -98,7 +98,11 @@ extern Time_t time ();
 # endif
 # define waitCode(w)	(WIFEXITED(w) ? WEXITSTATUS(w) : 0)
 # define waitSig(w)	(WIFSIGNALED(w) ? WTERMSIG(w) : 0)
+#ifdef WCOREDUMP
+# define waitCore(w)    (WCOREDUMP(w))
+#else
 # define waitCore(w)    0	/* not in POSIX.  so what? */
+#endif
 typedef int		waitType;
 #else /* X_NOT_POSIX */
 # ifdef SYSV
@@ -115,9 +119,9 @@ typedef union wait	waitType;
 # endif
 #endif /* X_NOT_POSIX */
 
-
 #define waitCompose(sig,core,code) ((sig) * 256 + (core) * 128 + (code))
 #define waitVal(w) waitCompose(waitSig(w), waitCore(w), waitCode(w))
+
 
 #ifndef FD_ZERO
 typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
@@ -149,6 +153,7 @@ typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
 # define Longjmp(e,v)	siglongjmp(e,v)
 # define Jmp_buf	sigjmp_buf
 #endif
+
 
 typedef enum displayStatus { running, notRunning, zombie, phoenix, suspended } DisplayStatus;
 
