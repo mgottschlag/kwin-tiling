@@ -6,7 +6,7 @@ AC_CHECK_HEADER(security/pam_appl.h,
 if test -z "$pam_header"; then
         AC_MSG_RESULT(not installed)
         AC_ERROR([
-        pam header pam_appl.h not found, please install the pam-devel package).
+        pam header pam_appl.h not found, please install the pam-devel package.
         ])
 fi
 
