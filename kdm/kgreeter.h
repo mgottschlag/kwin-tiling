@@ -53,6 +53,7 @@
 #include "kfdialog.h"
 #include "kdmshutdown.h"
 #include "kdmconfig.h"
+class KdmClock;
 
 class KLoginLineEdit : public QLineEdit {
      Q_OBJECT
@@ -89,6 +90,7 @@ protected:
 private:
      QTimer*        timer;
      KDMView*       user_view;
+     KdmClock*      clock;
      QLabel*        pixLabel;
      QLabel*        loginLabel;
      QLabel*        passwdLabel;
@@ -113,6 +115,9 @@ private:
      struct spwd *swd;
 #endif
 };
+
+
+
 #endif /* KGREETER_H */
 
 /*

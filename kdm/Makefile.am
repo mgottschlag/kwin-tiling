@@ -48,6 +48,7 @@ kdm_SOURCES = kdmconfig.cpp \
 	kdmshutdown.cpp \
 	kdmview.cpp \
 	kfdialog.cpp \
+	kdmclock.cpp \
 	kgreeter.cpp \
 	liloinfo.cpp \
 	$(kdmlib_source)
@@ -63,9 +64,9 @@ chooser_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 chooser_LDADD  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) $(LIB_LIBS) \
 	$(LIBSOCKET) $(LIBCRYPT) $(LIBUCB) $(LIBUTIL)  -lXt
 
-noinst_HEADERS = kdmconfig.h kdmview.h kdm-config.h kdmshutdown.h kfdialog.h dm.h kgreeter.h greet.h liloinfo.h
+noinst_HEADERS = kdmconfig.h kdmview.h kdm-config.h kdmshutdown.h kfdialog.h dm.h kdmclock.h kgreeter.h greet.h liloinfo.h
 
-METASOURCES = kfdialog.moc kdmview.moc kdmshutdown.moc kgreeter.moc liloinfo.moc CXdmcp.moc DXdmcp.moc
+METASOURCES = kfdialog.moc kdmview.moc kdmshutdown.moc kdmclock.moc kgreeter.moc liloinfo.moc CXdmcp.moc DXdmcp.moc
 
 messages:
 	$(XGETTEXT) $(kdm_SOURCES) $(kdmdesktop_SOURCES) -o $(podir)/kdm.pot

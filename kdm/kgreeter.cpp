@@ -22,7 +22,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
     */
- 
+
 #include "kgreeter.h"
 
 #include <stdio.h>
@@ -39,6 +39,8 @@
 #include <qbitmap.h>
 #include <qtextstream.h>
 #include <qpopupmenu.h>
+
+#include "kdmclock.h" 
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -191,16 +193,28 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 	  user_view = NULL;
      }
 
-     pixLabel = new QLabel( winFrame);
-     pixLabel->setFrameStyle( QFrame::Panel| QFrame::Sunken);
-     pixLabel->setAutoResize( true);
-     pixLabel->setIndent(0);
-     QPixmap pixmap;
-     if( QFile::exists( kdmcfg->logo() ) )
-	  pixmap.load( kdmcfg->logo() );
+     pixLabel = 0;
+     clock    = 0;
+
+     if( 1 )
+     {
+         clock = new KdmClock( winFrame, "clock" );
+     }
      else
-	  pixmap.resize( 100,100);
-     pixLabel->setPixmap( pixmap);
+     {
+         pixLabel = new QLabel( winFrame);
+	 pixLabel->setFrameStyle( QFrame::Panel| QFrame::Sunken);
+	 pixLabel->setAutoResize( true);
+	 pixLabel->setIndent(0);
+
+	 QPixmap pixmap;
+	 if( QFile::exists( kdmcfg->logo() ) )
+	     pixmap.load( kdmcfg->logo() );
+	 else
+	     pixmap.resize( 100,100);
+         pixLabel->setPixmap( pixmap);
+         pixLabel->setFixedSize( pixLabel->width(), pixLabel->height());
+     }
 
      loginLabel = new QLabel( i18n("Login:"), winFrame);
      set_min( loginLabel);
@@ -227,7 +241,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      passwdEdit->setEchoMode( QLineEdit::NoEcho);
      vbox->addLayout( hbox1);
      vbox->addLayout( hbox2);
-     hbox1->addWidget( pixLabel, 0, AlignTop);
+     hbox1->addWidget( pixLabel ? pixLabel : clock, 0, AlignTop);
      hbox1->addLayout( grid, 3);
      
      QFrame* sepFrame = new QFrame( winFrame);
@@ -794,6 +808,9 @@ DoIt()
 }
 
 #include "kgreeter.moc"
+#include <qstring.h>
+#include <stdlib.h>
+
 
 #ifdef TEST_KDM
 
@@ -801,8 +818,15 @@ int main(int argc, char **argv)
 {
      KCmdLineArgs::init(argc, argv, "kdm", description, version);
 
+     QString path = KStandardDirs::kde_default("data");
+     //??????
+     QString s;
+     s.sprintf("%s", "kdm/pics/users/" );
+     path += s;
+   
+
      MyApp app;
-     KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + "kdm/pics/users/");
+     KGlobal::dirs()->addResourceType("user_pic", path );
 
      kdmcfg = new KDMConfig();
 
@@ -899,3 +923,4 @@ GreetUser(
  * c-file-style: "k&r"
  * End:
  */
+
