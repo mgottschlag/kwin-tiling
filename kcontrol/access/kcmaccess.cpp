@@ -9,6 +9,8 @@
 #include <stdlib.h>
 
 
+#include <dcopref.h>
+
 #include <qtabwidget.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
@@ -36,6 +38,19 @@
 
 #include "kcmaccess.moc"
 
+static bool needToRunKAccessDaemon( KConfig *config )
+{
+    KConfigGroup group( config, "Bell" );
+    
+    if (!group.readBoolEntry("SystemBell", true))
+        return true;
+    if (group.readBoolEntry("ArtsBell", false))
+        return true;
+    if (group.readBoolEntry("VisibleBell", false))
+        return true;
+    
+    return false; // don't need it
+}
 
 KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   : KCModule(parent, "kcmaccess")
@@ -319,7 +334,6 @@ void KAccessConfig::save()
 
 
   config->sync();
-  delete config;
 
   if (systemBell->isChecked() ||
       customBell->isChecked() ||
@@ -331,9 +345,18 @@ void KAccessConfig::save()
     cfg.sync();
   }
 
-  // restart kaccess
-  kapp->startServiceByDesktopName("kaccess");
+  // make kaccess reread the configuration
+  if ( needToRunKAccessDaemon( config ) )
+      kapp->startServiceByDesktopName("kaccess");
 
+  else // don't need it -> kill it
+  {
+      DCOPRef kaccess( "kaccess", "qt/kaccess" );
+      kaccess.send( "quit" );
+  }
+
+  delete config;
+  
   emit changed(false);
 }
 
@@ -414,7 +437,6 @@ const KAboutData* KAccessConfig::aboutData() const
 }
 
 
-
 extern "C"
 {
   KCModule *create_access(QWidget *parent, const char *name)
@@ -427,18 +449,8 @@ extern "C"
    */
   void init_access()
   {
-    bool run=false;
-
     KConfig *config = new KConfig("kaccessrc", true, false);
-
-    config->setGroup("Bell");
-
-    if (!config->readBoolEntry("SystemBell", true))
-      run = true;
-    if (config->readBoolEntry("ArtsBell", false))
-      run = true;
-    if (config->readBoolEntry("VisibleBell", false))
-      run = true;
+    bool run = needToRunKAccessDaemon( config );
 
     delete config;
     if (run)
