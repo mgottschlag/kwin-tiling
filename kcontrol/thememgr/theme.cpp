@@ -926,7 +926,7 @@ void Theme::uninstallFiles(const char* aGroupName)
 //-----------------------------------------------------------------------------
 void Theme::install(void)
 {
-  if (!mValid) return false;
+  if (!mValid) return;
 
   loadMappings();
   mCmdList.clear();
