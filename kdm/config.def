@@ -1809,10 +1809,10 @@ Instance: #*/"Windows"
 Update: upd_guistyle
 Comment:
  Widget style of the greeter. "" means the built-in default which currently
- is "Keramik".
+ is "Plastik".
 Description:
  Specify the widget style for the greeter. Empty means to use the
- built-in default which currently is <literal>Keramik</literal>.
+ built-in default which currently is <literal>Plastik</literal>.
 
 Key: ColorScheme
 Type: string
@@ -1846,7 +1846,7 @@ Key: LogoPixmap
 Type: string
 Default: ""
 User: greeter(logo)
-Instance: */KDMDATA "pics/kdelogo.png"
+Instance: */KDMDATA "/pics/kdelogo.png"
 Comment:
  The image to show when LogoArea=Logo.
 Description:
