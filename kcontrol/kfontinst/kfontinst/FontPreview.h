@@ -48,8 +48,8 @@ class CFontPreview : public QWidget
     QPixmap * pixmap()     { return itsText.isEmpty() ? &itsPixmap : NULL; }
 
     void  paintEvent(QPaintEvent *);
-    QSize CFontPreview::sizeHint() const;
-    QSize CFontPreview::minimumSizeHint() const;
+    QSize sizeHint() const;
+    QSize minimumSizeHint() const;
 
     private:
 
