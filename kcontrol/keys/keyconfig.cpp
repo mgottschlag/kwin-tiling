@@ -4,6 +4,7 @@
 // Copyright (c)  Mark Donohoe 1998
 // Copyright (c)  Matthias Ettrich 1998
 // Converted to generic key configuration module, Duncan Haldane 1998.
+// Layout fixes copyright (c) 2000 Preston Brown <pbrown@kde.org>
 
 #include <config.h>
 #include <stdlib.h>
@@ -25,6 +26,7 @@
 #include <kmessagebox.h>
 #include <kaccel.h>
 #include <kwm.h>
+#include <kdialog.h>
 
 #include "keyconfig.h"
 #include "keyconfig.moc"
@@ -104,7 +106,9 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   
   readScheme();
 
-  QGridLayout *topLayout = new QGridLayout( this, 5, 3, 5);
+  QGridLayout *topLayout = new QGridLayout( this, 5, 3, 
+					    KDialog::marginHint(),
+					    KDialog::spacingHint());
   topLayout->addWidget(label, 0, 0);
   topLayout->addMultiCellWidget(sList, 1, 2, 0, 0);
   topLayout->addWidget(addBt, 1, 1);
@@ -112,7 +116,8 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   topLayout->addMultiCellWidget(saveBt, 2, 2, 1, 2);
   topLayout->addMultiCellWidget(tmpQFrame, 3, 3, 0, 2);
   topLayout->addMultiCellWidget(kc, 4, 4, 0, 2);
-  topLayout->activate();
+
+  setMinimumSize(topLayout->sizeHint());
 }
 
 KKeyModule::~KKeyModule (){

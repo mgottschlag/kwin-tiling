@@ -24,7 +24,7 @@
 
 #include <klocale.h>
 #include <kglobal.h>
-
+#include <kdialog.h>
 
 #include "keyconfig.h"
 
@@ -44,6 +44,9 @@ KeyModule::KeyModule(QWidget *parent, const char *name)
   standard = new KKeyModule(this, false);
   tab->addTab(standard, i18n("&Application shortcuts"));
   connect(standard, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+
+  setMinimumSize(global->sizeHint().width(),
+		 global->sizeHint().height()+30);
 }
 
 
