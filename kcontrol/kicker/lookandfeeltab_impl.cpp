@@ -269,6 +269,7 @@ void LookAndFeelTab::load()
       m_wlColor->setEnabled(tile == "Colorize");
     }
   }
+  enableTransparency( transparent );
 }
 
 void LookAndFeelTab::save()
