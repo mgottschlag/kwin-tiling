@@ -1213,21 +1213,21 @@ void KBackground::slotBrowse()
 
     QDir dir( path );
     if ( !dir.exists() )
-      path = 0;
+      path = QString::null;
 	    
     firsttime = false;
   }
 
   QString filename = KFileDialog::getOpenFileName( path );
-  warning("filename:%s", (const char *)filename);
+  debug("filename:%s", (const char *)filename);
   if(!filename.isNull())
-      warning("Passed Null");
+      debug("Passed Null");
   else
-      warning("Failed Null");
+      debug("Failed Null");
   if(!strcmp( filename, currentItem.wallpaper))
-      warning("Passed strncmp");
+      debug("Passed strncmp");
   else
-      warning("Failed strncmp");
+      debug("Failed strncmp");
   slotWallpaper( filename );
   
   if ( !filename.isNull() && !strcmp( filename, currentItem.wallpaper) )
