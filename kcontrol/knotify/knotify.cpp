@@ -213,15 +213,32 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
     hbox->addWidget( cbExternal );
     hbox->addWidget( reqExternal );
 
-    hbox = new QHBoxLayout( topLayout, KDialog::spacingHint() );
-    volumeLabel = new QLabel( i18n( "&Volume: " ), frame );
-    volumeSlider = new QSlider( frame );
-    volumeSlider->setOrientation( Horizontal );
-    volumeSlider->setRange( 0, 100 );
-    volumeLabel->setBuddy( volumeSlider );
-    hbox->addWidget( volumeLabel );
-    hbox->addWidget( volumeSlider );
+    volumeGroupBox = new QGroupBox( frame, "volumeGroupBox" );
+    volumeGroupBox->setTitle( tr( "Volume" ) );
+    volumeGroupBox->setColumnLayout(0, Qt::Vertical );
+    // Use KDialog::spacingHint() ?
+    volumeGroupBox->layout()->setSpacing( 6 );
+    volumeGroupBox->layout()->setMargin( 11 );
+    QGridLayout *volumeGroupBoxLayout = new QGridLayout( volumeGroupBox->layout() );
+    volumeGroupBoxLayout->setAlignment( Qt::AlignTop );
 
+    volumeSlider = new QSlider( volumeGroupBox, "volumeSlider" );
+    volumeSlider->setOrientation( QSlider::Horizontal );
+    volumeSlider->setRange( 0, 100 );
+    volumeGroupBoxLayout->addMultiCellWidget( volumeSlider, 0, 0, 0, 2 );
+
+    QLabel *minLabel = new QLabel( volumeGroupBox, "minLabel" );
+    minLabel->setText(("0"));
+    volumeGroupBoxLayout->addWidget( minLabel, 1, 0 );
+
+    QLabel *maxLabel = new QLabel( volumeGroupBox, "maxLabel" );
+    maxLabel->setText(("100"));
+    volumeGroupBoxLayout->addWidget( maxLabel, 1, 2 );
+    
+    QSpacerItem *spacer1 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    volumeGroupBoxLayout->addItem( spacer1, 1, 1 );
+
+    topLayout->addWidget(volumeGroupBox);
     load();
     dataChanged = false;
     enableButton(Apply, false);
@@ -279,8 +296,7 @@ void PlayerSettingsDialog::slotChanged()
 void PlayerSettingsDialog::externalToggled( bool on )
 {
     reqExternal->setEnabled( on );
-    volumeSlider->setEnabled( !on );
-    volumeLabel->setEnabled( !on );
+    volumeGroupBox->setEnabled( !on );
 
     if ( on )
         reqExternal->setFocus();

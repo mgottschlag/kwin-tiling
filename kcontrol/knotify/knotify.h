@@ -89,8 +89,8 @@ protected slots:
 private:
     QCheckBox *cbExternal;
     KURLRequester *reqExternal;
+    QGroupBox *volumeGroupBox;
     QSlider *volumeSlider;
-    QLabel *volumeLabel;
     bool dataChanged;
 
 };
