@@ -161,7 +161,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        " the current color settings as a color scheme. You will be"
        " prompted for a name.") );
 
-    removeBt = new QPushButton(i18n("&Remove Scheme"), group);
+    removeBt = new QPushButton(i18n("R&emove Scheme"), group);
     removeBt->setEnabled(FALSE);
     connect(removeBt, SIGNAL(clicked()), SLOT(slotRemove()));
 
