@@ -149,7 +149,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name, const QStringList &)
 	QWhatsThis::add(artsConfig->addOptions, optionsHint);
 
 	for (AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())
-		artsConfig->audioIO->insertItem(a->fullName);
+		artsConfig->audioIO->insertItem(i18n(a->fullName.utf8()));
 
 
 	config = new KConfig("kcmartsrc");
@@ -593,7 +593,7 @@ QString KArtsModule::createArgs(bool netTrans,
 
 #ifdef I18N_ONLY
 	//lukas: these are hacks to allow translation of the following
-	I18N_NOOP("No Audio Input/Output");
+	I18N_NOOP("No audio input/output");
 	I18N_NOOP("Advanced Linux Sound Architecture");
 	I18N_NOOP("Open Sound System");
 	I18N_NOOP("Threaded Open Sound System");
