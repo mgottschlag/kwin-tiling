@@ -19,10 +19,12 @@
 */                                                                            
 
 
+#include <unistd.h>
+#include <sys/utsname.h>
+#include <stdlib.h>
 
 #include <qheader.h>
 #include <qcolor.h>
-
 
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -66,11 +68,23 @@ void IndexPane::resizeEvent(QResizeEvent *)
 }
 
 
+/* ICON FILENAMES */
+#define ICON_LOCALUSER    "kcontrol_user"
+#define ICON_LOCALMACHINE "kcontrol_system"
+
 void IndexPane::fillIndex(ConfigModuleList &list)
 {
+  QString username;
+  char *user = getlogin();
+  if (!user) user = getenv("LOGNAME");
+  if (!user) username = ""; else username = QString("(%1)").arg(user);
   // add the top level nodes
-  localUser = new QListViewItem(_tree, i18n("Local User"));
+  localUser = new QListViewItem(_tree, i18n("Local User %1").arg(username));
+  localUser->setPixmap(0, KGlobal::iconLoader()->loadApplicationIcon(
+        	ICON_LOCALUSER, KIconLoader::Small));
   localMachine = new QListViewItem(_tree, i18n("Local Computer"));
+  localMachine->setPixmap(0, KGlobal::iconLoader()->loadApplicationIcon(
+        	ICON_LOCALMACHINE, KIconLoader::Small));
 
   ConfigModule *module;
   for (module=list.first(); module != 0; module=list.next())
@@ -84,6 +98,7 @@ void IndexPane::fillIndex(ConfigModuleList &list)
       new IndexListItem(parent, module);
     }
 
+  // _tree->setOpen(localMachine, true);
   _tree->setOpen(localUser, true);
 }
 
