@@ -146,6 +146,22 @@ int TopLevel::newInstance()
     return 0;
 }
 
+QString TopLevel::getClipboardContents()
+{
+	return clipboardContents();
+}
+
+void TopLevel::setClipboardContents(QString s)
+{
+	setClipboard( s, Clipboard | Selection);
+	newClipData();
+}
+
+void TopLevel::clearClipboardContents()
+{
+	slotClearClipboard();	
+}
+    
 void TopLevel::mousePressEvent(QMouseEvent *e)
 {
     if ( e->button() == LeftButton || e->button() == RightButton )

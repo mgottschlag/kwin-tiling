@@ -32,6 +32,9 @@ class TopLevel : public QWidget, public DCOPObject
 k_dcop:
     void quitProcess(); // not ASYNC
     int newInstance();
+    QString getClipboardContents();
+    void setClipboardContents(QString s);
+    void clearClipboardContents();
 
 public:
     TopLevel( QWidget *parent = 0L, bool applet = false );
