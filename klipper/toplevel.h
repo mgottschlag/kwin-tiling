@@ -46,6 +46,9 @@ protected:
      */
     QString clipboardContents();
 
+    void removeFromHistory( const QString& text );
+    void setEmptyClipboard();
+
 protected slots:
     void slotPopupMenu() { showPopupMenu( m_popup ); }
     void showPopupMenu( QPopupMenu * );
