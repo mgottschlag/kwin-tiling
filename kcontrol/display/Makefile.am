@@ -6,11 +6,11 @@ INCLUDES = $(all_includes)
 SUBDIRS = . kcs ad pics
 
 noinst_HEADERS = backgnd.h  colorscm.h scrnsave.h general.h widgetcanvas.h \
-	fonts.h energy.h bgdialogs.h advanced.h stdclient_bitmaps.h \
+	fonts.h energy.h bgdialogs.h stdclient_bitmaps.h \
 	bgsettings.h bgrender.h bgdefaults.h icnmain.h icngeneral.h icnlabel.h
 
 lib_LTLIBRARIES = libkcm_display.la
-libkcm_display_la_SOURCES = energy.cpp advanced.cpp fonts.cpp scrnsave.cpp \
+libkcm_display_la_SOURCES = energy.cpp fonts.cpp scrnsave.cpp \
 	backgnd.cpp bgdialogs.cpp colorscm.cpp widgetcanvas.cpp general.cpp \
 	icnmain.cpp icngeneral.cpp icnlabel.cpp
 
@@ -44,7 +44,7 @@ lnfdir = $(kde_appsdir)/Settings/LookNFeel
 theme_DATA = style.desktop
 themedir = $(kde_appsdir)/Settings/LookNFeel/Themes
 
-desktop_DATA = desktop.desktop advanced.desktop background.desktop borders.desktop icons.desktop
+desktop_DATA = desktop.desktop background.desktop borders.desktop icons.desktop
 desktopdir = $(kde_appsdir)/Settings/LookNFeel/Desktop
 
 power_DATA = energy.desktop
