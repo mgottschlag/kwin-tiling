@@ -22,7 +22,7 @@
 #include "toplevel.h"
 #include "version.h"
 
-extern "C" int kdemain(int argc, char *argv[])
+extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
 {
   Klipper::createAboutData();
   KCmdLineArgs::init( argc, argv, Klipper::aboutData());
