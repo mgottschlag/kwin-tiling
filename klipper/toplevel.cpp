@@ -317,7 +317,7 @@ void KlipperWidget::readProperties(KConfig *kc)
 
   KHelpMenu *help = new KHelpMenu( this, aboutData(),
                 false );
-  m_popup->insertItem( KStdGuiItem::help().text(), help->menu(), HELPMENU_ITEM );
+  m_popup->insertItem( SmallIconSet("help"), KStdGuiItem::help().text(), help->menu(), HELPMENU_ITEM );
 
   if( !isApplet()) {
     m_popup->insertSeparator();
