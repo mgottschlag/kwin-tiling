@@ -24,14 +24,15 @@
 #include <qlist.h>
 #include <qstring.h>
 #include <qlistbox.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
 #include <kdbtn.h>
 
 #include <kcmodule.h>
 
 
 class QLineEdit;
+class KURLRequester;
+class QComboBox;
+class QCheckBox;
 
 class MyListBox : public QListBox
 {
@@ -74,14 +75,15 @@ private:
 	KIconLoader	*iconloader;
 	QComboBox	*sdlcombo, *sdrcombo;
 	QLabel		*sdllabel, *sdrlabel;
-	QLineEdit	*restart_lined, *shutdown_lined, *session_lined;
+	KURLRequester   *restart_lined, *shutdown_lined;
+	QLineEdit	*session_lined;
 	MyListBox	*sessionslb;
 	KDirectionButton	*btnup, *btndown;
 	QButton		*btnrm, *btnadd;
 #ifdef __linux__
 	QCheckBox	*lilo_check;
 	QLabel		*lilocmd_label, *lilomap_label;
-	QLineEdit	*lilocmd_lined, *lilomap_lined;
+	KURLRequester	*lilocmd_lined, *lilomap_lined;
 #endif
 };
 
