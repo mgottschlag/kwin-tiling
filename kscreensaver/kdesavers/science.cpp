@@ -646,7 +646,7 @@ void KScienceSaver::slotTimeout()
 		vx = -vx; 
 		x = 0.0; 
 	}
-	if( (unsigned int) x + diam >= width()) { 
+	if( int(x) + diam >= width()) { 
 		vx = -vx; 
 		myAssert( width()-diam > 0, "assertion violated: width-diam > 0" );
 		x = (double) (width() - diam - 1); 
@@ -655,7 +655,7 @@ void KScienceSaver::slotTimeout()
 		vy = -vy; 
 		y = 0.0; 
 	}
-	if( (unsigned int) y + diam >= height() ) { 
+	if( int(y) + diam >= height() ) { 
 		vy = -vy; 
 		myAssert( height() - diam > 0, "assertion violated: height-diam > 0" );
 		y = (double) (height() - diam - 1); 
