@@ -10,6 +10,7 @@ Qt
 Kwin
 	Move windows if they were partly off before and they are more off now
 	Resize maximised windows on other virtual desktops
+	Support different sized virtual desktops
 
 Kicker
 	Perhaps make it more friendly, responding to the screenchangedevent itself rather than requiring a restart via dcop?
@@ -20,3 +21,6 @@ KDesktop
 RandR programs
 	Write a kded module (?) to retain a user-wide setting over logins
 	Make KTimerDialog a respectable candidate for kdeui inclusion
+	Support configuring different sized virtual desktops
+	Stop playing word salad with rotation names (translators won't be happy)
+	Verify orientation stuff works

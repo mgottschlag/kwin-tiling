@@ -39,7 +39,7 @@ protected slots:
 	void slotScreenChanged(int screen);
 	void slotRotationChanged();
 	void slotSizeChanged();
-	void slotRefreshChanged(const QString& rate);
+	void slotRefreshChanged(int index);
 
 protected:
 	void apply();

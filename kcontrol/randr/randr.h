@@ -58,10 +58,13 @@ public:
 	static QPixmap	rotationIcon(int rotation);
 	QString		currentRotationDescription();
 	
-	int			proposedRefreshRateIndex;
 	QStringList refreshRates(SizeID size);
+	QString		refreshRateDirectDescription(int rate);
+	QString		refreshRateDescription(int index);
 	QString		currentRefreshRateDescription();
-	void		proposeRefreshRate(QString rateString);
+	void		proposeRefreshRate(int index);
+	int			refreshRateToIndex(int rate);
+	int			indexToRefreshRate(int index);
 	
 	XRRScreenConfiguration	*config;
 	

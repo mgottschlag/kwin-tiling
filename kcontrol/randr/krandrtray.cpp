@@ -147,12 +147,12 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 	for (QStringList::Iterator it = rr.begin(); it != rr.end(); it++, i++) {
 		lastIndex = menu->insertItem(*it);
 		
-		if (m_currentScreen->proposedRefreshRateIndex == i) {
+		if (m_currentScreen->proposedRefreshRate == m_currentScreen->indexToRefreshRate(i)) {
 			menu->setItemChecked(lastIndex, true);
 			menu->setItemEnabled(lastIndex, false);
 		}
 		
-		menu->setItemParameter(lastIndex, i);
+		menu->setItemParameter(lastIndex, m_currentScreen->indexToRefreshRate(i));
 		menu->connectItem(lastIndex, this, SLOT(slotRefreshRateChanged(int)));
 	}
 
@@ -179,6 +179,8 @@ void KRandRSystemTray::slotResolutionChanged(int parameter)
 {
 	m_currentScreen->proposedSize = parameter;
 	
+	m_currentScreen->proposedRefreshRate = m_currentScreen->indexToRefreshRate(0);
+	
 	m_currentScreen->applyProposedAndConfirm();
 }
 
@@ -196,7 +198,7 @@ void KRandRSystemTray::slotRefreshRateChanged(int parameter)
 	m_currentScreen->applyProposedAndConfirm();
 }
 
-bool KRandRSystemTray::eventFilter(QObject* watched, QEvent* e)
+bool KRandRSystemTray::eventFilter(QObject* /*watched*/, QEvent* e)
 {
 	if (e->type() == 14 && m_resizeCount > 0) {
 		m_resizeCount--;

@@ -79,6 +79,14 @@ Status RandRScreen::applyProposed()
 	
 	Status status = XRRSetScreenConfigAndRate(qt_xdisplay(), config, DefaultRootWindow (qt_xdisplay()), proposedSize, proposedRotation, proposedRefreshRate, CurrentTime);
 	
+	//kdDebug() << "New size: " << WidthOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << ", " << HeightOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << endl;
+	
+	// Tell the desktop it has resized
+	QSize newSize(sizes[proposedSize].width, sizes[proposedSize].height);
+	QSize oldSize(sizes[currentSize].width, sizes[currentSize].height);
+	QResizeEvent resize(newSize, oldSize);
+	KApplication::sendEvent(KApplication::kApplication()->desktop(), &resize);
+	
 	// Restart kicker if its size should have changed
 	if (proposedSize != currentSize || (proposedRotation & 15) != (currentRotation & 15)) {
 		DCOPClient* dcop = KApplication::kApplication()->dcopClient();
@@ -269,24 +277,47 @@ QStringList RandRScreen::refreshRates(SizeID size)
 	
 	QStringList ret;
 	for (int i = 0; i < nrates; i++) {
-		ret << QString("%1 Hz").arg(rates[i]);
-		if (rates[i] == proposedRefreshRate)
-			proposedRefreshRateIndex = i;
+		ret << refreshRateDirectDescription(rates[i]);
 	}
 	
 	return ret;
 }
 
-QString RandRScreen::currentRefreshRateDescription()
+QString RandRScreen::refreshRateDirectDescription(int rate)
 {
-	QStringList rr = refreshRates(currentSize);
-	return rr[proposedRefreshRateIndex];
+	return QString("%1 Hz").arg(rate);
 }
 
-void RandRScreen::proposeRefreshRate(QString rateString)
+QString RandRScreen::refreshRateDescription(int index)
 {
-	QStringList temp = QStringList::split(' ', rateString);
-	proposedRefreshRate = temp.first().toShort();
+	return refreshRates(proposedSize)[index];
+}
+
+void RandRScreen::proposeRefreshRate(int index)
+{
+	proposedRefreshRate = indexToRefreshRate(index);
+}
+
+QString RandRScreen::currentRefreshRateDescription()
+{
+	return refreshRateDirectDescription(currentRefreshRate);
+}
+
+int RandRScreen::refreshRateToIndex(int rate)
+{
+	QStringList rr = refreshRates(proposedSize);
+	for (uint i = 0; i < rr.count(); i++) {
+		QStringList temp = QStringList::split(' ', rr[i]);
+		if (rate == temp.first().toShort())
+			return i;
+	}
+	return 0;
+}
+
+int RandRScreen::indexToRefreshRate(int index)
+{
+	QStringList temp = QStringList::split(' ', refreshRateDescription(index));
+	return temp.first().toShort();
 }
 
 RandRDisplay::RandRDisplay(bool requestScreenChangeEvents)

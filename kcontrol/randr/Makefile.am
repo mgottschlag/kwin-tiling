@@ -7,7 +7,6 @@ noinst_LTLIBRARIES = librandrinternal.la
 librandrinternal_la_SOURCES = ktimerdialog.cpp randr.cpp
 librandrinternal_la_METASOURCES = AUTO
 
-libkcm_randr_la_METASOURCES = AUTO
 libkcm_randr_la_SOURCES = krandrmodule.cpp
 libkcm_randr_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_randr_la_LIBADD = librandrinternal.la $(LIB_KFILE) $(LIB_XRANDR)
@@ -24,7 +23,6 @@ moduledir = $(kde_appsdir)/Settings/Desktop
 
 bin_PROGRAMS = krandrtray
 
-krandrtray_METASOURCES = AUTO
 krandrtray_SOURCES = main.cpp krandrtray.cpp krandrapp.cpp
 krandrtray_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 krandrtray_LDADD = librandrinternal.la $(LIB_KFILE) $(LIB_XRANDR)
