@@ -53,8 +53,8 @@ CKfiMainWidget * CKfi::create(QWidget *parent)
         if(CMisc::root())
             KMessageBox::information(parent, i18n("As this is the first time this module has been run as \"root\", "
                                                   "it has tried to guess appropriate settings for your system. "
-                                                  "When the module appears, please have a look at the \"Settings\" page and check that these are OK. "
-                                                  "If not, make the appropriate changes and press the \"Apply\" button"));
+                                                  "When the module appears, please have a look at the \"Settings\" page and check that these are ok. "
+                                                  "If not, make the appropriate changes and click the \"Apply\" button."));
         else
         {
             if(CKfiGlobal::xcfg().ok() && CKfiGlobal::cfg().getModifiedDirs().count())
