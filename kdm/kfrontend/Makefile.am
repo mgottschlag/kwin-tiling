@@ -51,7 +51,6 @@ messages:
 	$(XGETTEXT) $(kgreet_classic_la_SOURCES) -o $(podir)/kgreet_classic.pot
 
 noinst_HEADERS = \
-    kdm_config.h \
     kdm_greet.h \
     liloinfo.h \
     kdmconfig.h \
@@ -70,3 +69,10 @@ noinst_HEADERS = \
     krootimage.h 
 
 include_HEADERS = kgreeterplugin.h
+
+kdm_greet_COMPILE_FIRST = config.ci
+kdm_config_COMPILE_FIRST = config.ci
+genkdmconf_COMPILE_FIRST = config.ci
+
+config.ci: $(srcdir)/config.def $(srcdir)/confproc.pl
+	$(PERL) -w $(srcdir)/confproc.pl $< $@

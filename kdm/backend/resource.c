@@ -361,83 +361,13 @@ FindCfgEnt (struct display *d, int id)
 }	    
 
 
-#ifdef XDMCP
-int	request_port;
-#endif
-char	*pidFile;
-int	lockPidFile;
-#ifdef XDMCP
-int	sourceAddress;
-#endif
-char	*authDir;
-int	autoRescan;
-#ifdef XDMCP
-int	removeDomainname;
-char	*keyFile;
-#endif
-char	**exportList;
-#ifndef ARC4_RANDOM
-# ifndef DEV_RANDOM
-char	*randomFile;
-char	*prngdSocket;
-int	prngdPort;
-# endif
-char	*randomDevice;
-#endif
-#ifdef XDMCP
-char	*willing;
-int	choiceTimeout;
-#endif
-char	*cmdHalt;
-char	*cmdReboot;
-#ifdef USE_PAM
-char	*PAMService;
-#endif
-char	*fifoDir;
-int	fifoGroup;
-int	fifoAllowShutdown;
-int	fifoAllowNuke;
-char	*dmrcDir;
+CONF_CORE_GLOBAL_DEFS
 
 struct globVals {
 	int	id;
 	char	**off;
 } globVal[] = {
-#ifdef XDMCP
-{ C_requestPort,	(char **) &request_port },
-#endif
-{ C_pidFile,		&pidFile },
-{ C_lockPidFile,	(char **) &lockPidFile },
-{ C_authDir,		&authDir },
-{ C_autoRescan,		(char **) &autoRescan },
-#ifdef XDMCP
-{ C_removeDomainname,	(char **) &removeDomainname },
-{ C_keyFile,		&keyFile },
-#endif
-{ C_exportList,		(char **) &exportList },
-#ifndef ARC4_RANDOM
-# ifndef DEV_RANDOM
-{ C_randomFile,		&randomFile },
-{ C_prngdSocket,	&prngdSocket },
-{ C_prngdPort,		(char **) &prngdPort },
-# endif
-{ C_randomDevice,	&randomDevice },
-#endif
-#ifdef XDMCP
-{ C_choiceTimeout,	(char **) &choiceTimeout },
-{ C_sourceAddress,	(char **) &sourceAddress },
-{ C_willing,		&willing },
-#endif
-{ C_cmdHalt,		&cmdHalt },
-{ C_cmdReboot,		&cmdReboot },
-#ifdef USE_PAM
-{ C_PAMService,		&PAMService },
-#endif
-{ C_fifoDir,		&fifoDir },
-{ C_fifoGroup,		(char **) &fifoGroup },
-{ C_fifoAllowShutdown,	(char **) &fifoAllowShutdown },
-{ C_fifoAllowNuke,	(char **) &fifoAllowNuke },
-{ C_dmrcDir,		&dmrcDir },
+CONF_CORE_GLOBALS
 };
 
 int
@@ -470,49 +400,7 @@ struct dpyVals {
 	int	id;
 	int	off;
 } dpyVal[] = {
-/* server resources */
-{ C_serverAttempts,	boffset(serverAttempts) },
-{ C_serverTimeout,	boffset(serverTimeout) },
-{ C_openDelay,		boffset(openDelay) },
-{ C_openRepeat,		boffset(openRepeat) },
-{ C_openTimeout,	boffset(openTimeout) },
-{ C_startAttempts,	boffset(startAttempts) },
-{ C_pingInterval,	boffset(pingInterval) },
-{ C_pingTimeout,	boffset(pingTimeout) },
-{ C_terminateServer,	boffset(terminateServer) },
-{ C_resetSignal,	boffset(resetSignal) },
-{ C_termSignal,		boffset(termSignal) },
-{ C_resetForAuth,	boffset(resetForAuth) },
-{ C_authorize,		boffset(authorize) },
-{ C_authNames,		boffset(authNames) },
-{ C_clientAuthFile,	boffset(clientAuthFile) },
-/* session resources */
-{ C_resources,		boffset(resources) },
-{ C_xrdb,		boffset(xrdb) },
-{ C_setup,		boffset(setup) },
-{ C_startup,		boffset(startup) },
-{ C_reset,		boffset(reset) },
-{ C_session,		boffset(session) },
-{ C_userPath,		boffset(userPath) },
-{ C_systemPath,		boffset(systemPath) },
-{ C_systemShell,	boffset(systemShell) },
-{ C_failsafeClient,	boffset(failsafeClient) },
-{ C_userAuthDir,	boffset(userAuthDir) },
-{ C_noPassUsers,	boffset(noPassUsers) },
-{ C_autoUser,		boffset(autoUser) },
-{ C_autoPass,		boffset(autoPass) },
-{ C_autoReLogin,	boffset(autoReLogin) },
-{ C_allowNullPasswd,	boffset(allowNullPasswd) },
-{ C_allowRootLogin,	boffset(allowRootLogin) },
-{ C_allowShutdown,	boffset(allowShutdown) },
-{ C_allowNuke,		boffset(allowNuke) },
-{ C_defSdMode,		boffset(defSdMode) },
-{ C_sessionsDirs,	boffset(sessionsDirs) },
-#ifdef XDMCP
-{ C_chooserHosts,	boffset(chooserHosts) },
-{ C_loginMode,		boffset(loginMode) },
-#endif
-{ C_clientLogFile,	boffset(clientLogFile) },
+CONF_CORE_LOCALS
 };
 
 int

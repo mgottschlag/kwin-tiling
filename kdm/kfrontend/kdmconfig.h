@@ -28,7 +28,7 @@
 
 #include <config.h>
 
-#include "kdm_config.h"
+#include "config.ci"
 
 #ifdef __cplusplus
 
@@ -39,82 +39,12 @@
 extern QString	_stsFile;
 extern bool	_isLocal;
 
-extern QString	_GUIStyle;
-extern QString	_colorScheme;
-
-extern QFont	_normalFont;
-extern QFont	_failFont;
-extern QFont	_greetFont;
-
-extern int	_logoArea;
-extern QString	_logo;
-extern QString	_greetString;
-extern bool	_greeterPosFixed;
-extern int	_greeterPosX, _greeterPosY;
-extern int	_greeterScreen;
-
-extern bool	_userCompletion;
-extern bool	_userList;
-extern int	_showUsers;
-extern int	_preselUser;
-extern QString	_defaultUser;
-extern bool	_focusPasswd;
-extern bool	_sortUsers;
-extern char	**_users;
-extern char	**_noUsers;
-extern int	_lowUserId, _highUserId;
-extern int	_showRoot;
-extern int	_faceSource;
-extern QString	_faceDir;
-extern int	_echoMode;
-
-extern char	**_sessionsDirs;
-
-extern int	_allowShutdown, _allowNuke, _defSdMode;
-extern bool	_interactiveSd;
-
-extern int	_numLockStatus;
-
-#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
-extern bool	_useLilo;
-extern QString	_liloCmd;
-extern QString	_liloMap;
-#endif
-
-#ifdef XDMCP
-extern int	_loginMode;
-#endif
-
-extern int	_forgingSeed;
-
-#ifdef WITH_KDM_XCONSOLE
-extern bool	_showLog;
-extern char	*_logSource;
-#endif
-
-extern bool	_allowClose;
-
-extern QStringList	_pluginsLogin;
-extern QStringList	_pluginsShutdown;
-extern QStringList	_pluginOptions;
-
-extern bool	_useBackground;
-extern char	*_backgroundCfg;
-
-extern bool	_hasConsole;
+CONF_GREET_CPP_DECLS
 
 extern "C"
 #endif
 void init_config( void );
 
-extern int	_pingInterval;
-extern int	_pingTimeout;
-
-extern int	_grabServer;
-extern int	_grabTimeout;
-
-extern int	_antiAliasing;
-
-extern char 	*_language;
+CONF_GREET_C_DECLS
 
 #endif /* KDMCONFIG_H */

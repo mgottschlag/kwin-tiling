@@ -33,79 +33,7 @@
 #include <unistd.h>
 #include <sys/utsname.h>
 
-QString	_GUIStyle;
-QString	_colorScheme;
-
-QFont	_normalFont;
-QFont	_failFont;
-QFont	_greetFont;
-
-int	_logoArea;
-QString	_logo;
-QString	_greetString;
-bool	_greeterPosFixed;
-int	_greeterPosX, _greeterPosY;
-int	_greeterScreen;
-
-bool	_userCompletion;
-bool	_userList;
-int	_showUsers;
-int	_preselUser;
-QString	_defaultUser;
-bool	_focusPasswd;
-bool	_sortUsers;
-char	**_users;
-char	**_noUsers;
-int	_lowUserId, _highUserId;
-int	_showRoot;
-int	_faceSource;
-QString	_faceDir;
-int	_echoMode;
-
-char	**_sessionsDirs;
-
-int	_allowShutdown, _allowNuke, _defSdMode;
-bool	_interactiveSd;
-
-int	_numLockStatus;
-
-#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
-bool	_useLilo;
-QString	_liloCmd;
-QString	_liloMap;
-#endif
-
-#ifdef XDMCP
-int	_loginMode;
-#endif
-
-int	_forgingSeed;
-
-#ifdef WITH_KDM_XCONSOLE
-bool	_showLog;
-char	*_logSource;
-#endif
-
-bool	_allowClose;
-
-QStringList	_pluginsLogin;
-QStringList	_pluginsShutdown;
-QStringList	_pluginOptions;
-
-bool	_useBackground;
-char	*_backgroundCfg;
-
-int	_pingInterval;
-int	_pingTimeout;
-
-int	_grabServer;
-int	_grabTimeout;
-
-int	_antiAliasing;
-
-char 	*_language;
-
-bool	_hasConsole;
+CONF_GREET_DEFS
 
 QString	_stsFile;
 bool	_isLocal;
@@ -167,19 +95,11 @@ static QFont Str2Font (const QString &aValue)
 extern "C"
 void init_config( void )
 {
+    CONF_GREET_INIT
+
     _isLocal = (GetCfgInt (C_displayType) & d_location) == dLocal;
-    _hasConsole = GetCfgInt (C_AllowConsole) && !GetCfgQStr (C_console).isEmpty();
+    _hasConsole = _hasConsole && !GetCfgQStr (C_console).isEmpty();
 
-    _allowShutdown = GetCfgInt (C_allowShutdown);
-    _allowNuke = GetCfgInt (C_allowNuke);
-    _defSdMode = GetCfgInt (C_defSdMode);
-    _interactiveSd = GetCfgInt (C_interactiveSd);
-
-    _greeterPosFixed = GetCfgInt (C_GreeterPosFixed);
-    _greeterPosX = GetCfgInt (C_GreeterPosX);
-    _greeterPosY = GetCfgInt (C_GreeterPosY);
-
-    _greeterScreen = GetCfgInt (C_GreeterScreen);
     if (_greeterScreen < 0) {
 	QDesktopWidget *dsk = kapp->desktop();
 	_greeterScreen = _greeterScreen == -2 ?
@@ -187,33 +107,7 @@ void init_config( void )
 		dsk->screenNumber( QPoint( 0, 0 ) );
     }
 
-    _GUIStyle = GetCfgQStr (C_GUIStyle);
-    _colorScheme = GetCfgQStr (C_ColorScheme);
-
-    _logoArea = GetCfgInt (C_LogoArea);
-
-    _logo = GetCfgQStr (C_LogoPixmap);
-
-    _userCompletion = GetCfgInt (C_UserCompletion);
-    _userList = GetCfgInt (C_UserList);
-    _showUsers = GetCfgInt (C_ShowUsers);
-    _users = GetCfgStrArr (C_SelectedUsers, 0);
-    _noUsers = GetCfgStrArr (C_HiddenUsers, 0);
-    _lowUserId = GetCfgInt (C_MinShowUID);
-    _highUserId = GetCfgInt (C_MaxShowUID);
-    _sortUsers = GetCfgInt (C_SortUsers);
-    _showRoot = GetCfgInt (C_allowRootLogin);
-    _faceSource = GetCfgInt (C_FaceSource);
-    _faceDir = GetCfgQStr (C_FaceDir);
-
-    _sessionsDirs = GetCfgStrArr (C_sessionsDirs, 0);
-    _stsFile = GetCfgQStr (C_dataDir) += "/kdmsts";
-
-    _echoMode = GetCfgInt (C_EchoMode);
-
-    _normalFont = Str2Font (GetCfgQStr (C_StdFont));
-    _failFont = Str2Font (GetCfgQStr (C_FailFont));
-    _greetFont = Str2Font (GetCfgQStr (C_GreetFont));
+    _stsFile = _dataDir + "/kdmsts";
 
     // Greet String
     char hostname[256], *ptr;
@@ -222,7 +116,8 @@ void init_config( void )
 	hostname[sizeof(hostname)-1] = '\0';
     struct utsname tuname;
     uname (&tuname);
-    QString gst = GetCfgQStr (C_GreetString);
+    QString gst = _greetString;
+    _greetString = QString::null;
     int i, j, l = gst.length ();
     for (i = 0; i < l; i++) {
 	if (gst[i] == '%') {
@@ -246,47 +141,4 @@ void init_config( void )
 	} else
 	    _greetString += gst[i];
     }
-
-    _preselUser = GetCfgInt (C_PreselectUser);
-    _defaultUser = GetCfgQStr (C_DefaultUser);
-    _focusPasswd = GetCfgInt (C_FocusPasswd);
-
-    _numLockStatus = GetCfgInt (C_NumLock);
-
-#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
-    if ((_useLilo = GetCfgInt (C_useLilo))) {
-	_liloCmd = GetCfgQStr (C_liloCmd);
-	_liloMap = GetCfgQStr (C_liloMap);
-    }
-#endif
-
-#ifdef XDMCP
-    _loginMode = GetCfgInt (C_loginMode);
-#endif
-
-    _forgingSeed = GetCfgInt (C_ForgingSeed);
-
-#ifdef WITH_KDM_XCONSOLE
-    _showLog = GetCfgInt (C_ShowLog);
-    _logSource = GetCfgStr (C_LogSource);
-#endif
-
-    _pluginsLogin = GetCfgQStrList(C_PluginsLogin);
-    _pluginsShutdown = GetCfgQStrList(C_PluginsShutdown);
-    _pluginOptions = GetCfgQStrList(C_PluginOptions);
-
-    _allowClose = GetCfgInt (C_AllowClose);
-
-    _useBackground = GetCfgInt (C_UseBackground);
-    _backgroundCfg = GetCfgStr (C_BackgroundCfg);
-
-    _pingInterval = GetCfgInt (C_pingInterval);
-    _pingTimeout = GetCfgInt (C_pingTimeout);
-
-    _grabServer = GetCfgInt (C_grabServer);
-    _grabTimeout = GetCfgInt (C_grabTimeout);
-
-    _antiAliasing = GetCfgInt (C_AntiAliasing);
-
-    _language = GetCfgStr (C_Language);
 }

@@ -1,7 +1,7 @@
 # forcibly remove thread-related defines & flags
 AUTOMAKE_OPTIONS = foreign
 CPPFLAGS = $(USER_INCLUDES) $(X_INCLUDES) $(KRB4_INCS) $(KRB5_INCS) \
-    $(XDM_DEFINES)
+    $(XDM_DEFINES) -I$(srcdir)/../kfrontend
 CFLAGS = $(XDM_CFLAGS)
 LDFLAGS = $(USER_LDFLAGS) $(X_LDFLAGS) $(X_RPATH) $(KRB4_RPATH) $(KRB5_RPATH)
 LDADD = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSWDLIBS) \
@@ -40,3 +40,6 @@ kdm_SOURCES = \
 EXTRA_DIST = printf.c
 
 noinst_HEADERS = dm.h dm_socket.h dm_error.h dm_auth.h greet.h
+
+# for unsermake (automake is handled by SUBDIRS in ../)
+kdm_COMPILE_FIRST = ../kfrontend/config.ci

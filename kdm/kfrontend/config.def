@@ -1,0 +1,1302 @@
+<code>
+#define RCVERMAJOR 2
+#define RCVERMINOR 2
+
+#define KDMCONF KDE_CONFDIR "/kdm"
+#define KDMDATA KDE_DATADIR "/kdm"
+
+#ifdef _AIX
+# define HALT_CMD	"/usr/sbin/shutdown -h now"
+# define REBOOT_CMD	"/usr/sbin/shutdown -r now"
+#elif defined(BSD)
+# define HALT_CMD	"/sbin/shutdown -h now"
+# define REBOOT_CMD	"/sbin/shutdown -r now"
+#elif defined(__SVR4)
+# define HALT_CMD	"/usr/sbin/halt"
+# define REBOOT_CMD	"/usr/sbin/reboot"
+#else
+# define HALT_CMD	"/sbin/halt"
+# define REBOOT_CMD	"/sbin/reboot"
+#endif
+
+#if defined(BSD) || defined(__linux__)
+# define DEF_USER_PATH "/usr/local/bin:/usr/bin:/bin:" XBINDIR ":/usr/games"
+# define DEF_SYSTEM_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:" XBINDIR
+#else
+# define DEF_USER_PATH "/usr/local/bin:/usr/bin:/bin:" XBINDIR ":/usr/games:/usr/ucb"
+# define DEF_SYSTEM_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:" XBINDIR ":/etc:/usr/ucb"
+#endif
+
+#if 0 /*def HASXDMAUTH*/
+# define DEF_AUTH_NAME	"XDM-AUTHORIZATION-1,MIT-MAGIC-COOKIE-1"
+#else
+# define DEF_AUTH_NAME	"MIT-MAGIC-COOKIE-1"
+#endif
+
+#ifdef __linux__
+# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X -nolisten tcp vt7"
+/* ###
+# define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
+			 ":1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1 vt8\n" \
+			 ":2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2 vt9\n" \
+			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3 vt10\n" \
+			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4 vt11\n"
+*/
+# define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
+			 "#:1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1 vt8\n" \
+			 "#:2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2 vt9\n" \
+			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3 vt10\n" \
+			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4 vt11\n"
+#elif defined(__sun__)
+# define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X -nolisten tcp"
+#elif defined(_AIX)
+# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X -T -force -nolisten tcp"
+#else
+# define DEF_SERVER_LINE ":0 local " XBINDIR "/X -nolisten tcp"
+#endif
+#ifndef DEF_SERVER_LINES
+# define DEF_SERVER_LINES DEF_SERVER_LINE "\n"
+#endif
+</code>
+
+<kdmrc>
+ KDM master configuration file
+ _
+ Definition: the greeter is the login dialog, i.e., the part of KDM
+ which the user sees.
+ _
+ You can configure every X-display individually.
+ Every display has a display name, which consists of a host name
+ (which is empty for local displays specified in the Xservers file),
+ a colon and a display number. Additionally, a display belongs to a
+ display class (which can be ignored in most cases; the control center
+ does not support this feature at all).
+ Sections with display-specific settings have the formal syntax
+ "[X-" host [":" number [ "_" class ]] "-" sub-section "]"
+ You can use the "*" wildcard for host, number and class. You may omit
+ trailing components; they are assumed to be "*" then.
+ The host part may be a domain specification like ".inf.tu-dresden.de".
+ From which section a setting is actually taken is determined by these
+ rules:
+ - an exact match takes precedence over a partial match (for the host part),
+   which in turn takes precedence over a wildcard
+ - precedence decreases from left to right for equally exact matches
+ Example: display name "myhost:0", class "dpy".
+ [X-myhost:0_dpy] precedes
+ [X-myhost:0_*] (same as [X-myhost:0]) precedes
+ [X-myhost:*_dpy] precedes
+ [X-myhost:*_*] (same as [X-myhost]) precedes
+ [X-*:0_dpy] precedes
+ [X-*:0_*] (same as [X-*:0]) precedes
+ [X-*:*_*] (same as [X-*])
+ These sections do NOT match this display:
+ [X-hishost], [X-myhost:0_dec], [X-*:1], [X-:*]
+ If a setting is not found in any matching section, the default is used.
+ _
+ Every comment applies to the following section or key. Note, that all
+ comments will be lost if you change this file with the kcontrol frontend.
+ The defaults refer to KDM's built-in values, not anything set in this file.
+
+[General]
+
+[Xdmcp]
+
+[Shutdown]
+
+ Rough estimations about how many seconds KDM will spend at most on
+ - opening a connection to the X-server (OpenTime):
+   OpenRepeat * (OpenTimeout + OpenDelay)
+ - starting a local X-server (ServerTime):
+   ServerAttempts * (ServerTimeout + OpenDelay)
+ - starting a display:
+   - local display: ServerTime + OpenTime
+   - foreign display: StartAttempts * OpenTime
+   - xdmcp display: OpenTime (repeated indefinitely by client)
+
+ Core config for all displays
+[X-*-Core]
+
+ Greeter config for all displays
+[X-*-Greeter]
+
+ Core config for local displays
+[X-:*-Core]
+
+ Greeter config for local displays
+[X-:*-Greeter]
+
+ Core config for 1st local display
+[X-:0-Core]
+
+ Greeter config for 1st local display
+[X-:0-Greeter]
+</kdmrc>
+
+
+Section: General
+
+Key: ConfigVersion
+Type: string
+Default: ""
+CDefault: -
+User: dummy
+# will be overwritten
+Instance:
+Comment:
+ This option exists solely for the purpose of a clean automatic upgrade.
+ Don't even think about changing it!
+
+Key: PAMService
+If: defined(USE_PAM)
+Type: string
+Default: KDM_PAM_SERVICE
+User: core
+Instance: -
+Comment: -
+
+Key: Xservers
+Type: string
+Default: DEF_SERVER_LINE
+User: config(Xservers)
+# will be overwritten
+Instance: #""
+Update: mk_xservers
+Merge: xdm:servers
+Comment:
+ If the value starts with a slash (/), it specifies the file, where X-servers
+ to be used by KDM are listed; the file is in the usual XDM-Xservers format.
+ Otherwise it's interpreted like one line of the Xservers file, i.e., it
+ specifies exactly one X-server.
+
+Key: PidFile
+Type: string
+Default: ""
+User: core
+Instance: "/var/run/kdm.pid"
+Merge: xdm
+Comment:
+ Where KDM should store its PID (don't store if empty).
+
+Key: LockPidFile
+Type: bool
+Default: true
+User: core
+Instance: #!
+Merge: xdm
+Comment:
+ Whether KDM should lock the PID file to prevent having multiple KDM
+ instances running at once. Don't change unless you're brave.
+
+Key: AuthDir
+Type: path
+# differs from XDM
+Default: "/var/run/xauth"
+User: core
+Instance: #"/tmp"
+Merge: xdm(P_authDir)
+Comment:
+ Where to store authorization files.
+
+Key: AutoRescan
+Type: bool
+Default: true
+User: core
+Instance: #!
+Merge: xdm
+Comment:
+ Whether KDM should automatically re-read configuration files, if it
+ finds them having changed.
+
+Key: ExportList
+Type: list
+Default: ""
+User: core
+Instance: #"LD_LIBRARY_PATH,ANOTHER_IMPORTANT_VAR"
+Merge: xdm(P_List)
+Comment:
+ Additional environment variables KDM should pass on to kdm_config, kdm_greet,
+ Xsetup, Xstartup, Xsession, and Xreset. LD_LIBRARY_PATH and XCURSOR_THEME are
+ good candidates; otherwise it shouldn't be necessary very often.
+
+Key: RandomFile
+If: !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+Type: string
+Default: "/dev/mem"
+User: core
+Instance: #""
+Merge: xdm
+Comment:
+ Where KDM should fetch entropy from.
+
+Key: PrngdSocket
+If: !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+Type: string
+# differs from xdm!
+Default: ""
+User: core
+Instance: #"/tmp/entropy"
+Merge: xdm
+Comment:
+
+Key: PrngdPort
+If: !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+Type: int
+Default: 0
+User: core
+Instance: #4840
+Merge: xdm
+Comment:
+
+Key: RandomDevice
+If: !defined(ARC4_RANDOM)
+Type: string
+Default: ""
+User: core
+Instance: #"/dev/altrandom"
+Merge: xdm
+Comment:
+ Empty means use the system's preferred entropy device.
+
+Key: FifoDir
+Type: path
+Default: *"/var/run/xdmctl"
+User: core
+Instance: #"/tmp"
+Update: upd_fifodir
+Comment:
+ Where the command FiFos should be created. Make it empty to disable
+ the FiFos.
+
+Key: FifoGroup
+Type: group
+Default: 0
+User: core
+Instance: #xdmctl
+Comment:
+ To which group the command FiFos should belong.
+
+Key: DataDir
+Type: path
+Default: *"/var/lib/kdm"
+User: greeter
+Instance: #""
+Update: upd_datadir
+Comment:
+ The directory kdm should store persistent working data in.
+
+Key: DmrcDir
+Type: path
+Default: ""
+User: core
+Instance: #"/nfs-shared/var/dmrcs"
+Comment:
+ The directory kdm should store users' .dmrc files in. This is only needed
+ if the home directories are not readable before actually logging in (like
+ with AFS).
+
+
+Section: Xdmcp
+If: defined(XDMCP)
+
+Key: Enable
+Type: bool
+Default: true
+User: dep(xdmcpEnable)
+Instance: false
+Comment:
+ Whether KDM should listen to XDMCP requests.
+
+Key: Port
+Type: int
+Default: 177
+PostProc: PrequestPort
+User: core(request_port)
+Instance: #
+Merge: xdm:requestPort(P_requestPort)
+Comment:
+ The UDP port KDM should listen on for XDMCP requests. Don't change.
+
+Key: KeyFile
+Type: string
+Default: ""
+User: core
+Instance: #KDMCONF "/kdmkeys"
+Update: cp_keyfile
+Merge: xdm
+Comment:
+ File with the private keys of X-terminals. Required for XDM authentication.
+
+Key: Xaccess
+Type: string
+# differs from xdm
+Default: *KDMCONF "/Xaccess"
+User: config(Xaccess)
+Instance: #""
+Update: mk_xaccess
+Merge: xdm:accessFile
+Comment:
+ XDMCP access control file in the usual XDM-Xaccess format.
+
+Key: ChoiceTimeout
+Type: int
+Default: 15
+User: core
+Instance: #10
+Merge: xdm
+Comment:
+ Number of seconds to wait for display to respond after the user has
+ selected a host from the chooser.
+
+Key: RemoveDomainname
+Type: bool
+Default: true
+User: core
+Instance: #!
+Merge: xdm
+Comment:
+ Strip domain name from remote display names if it is equal to the local
+ domain.
+
+Key: SourceAddress
+Type: bool
+Default: false
+User: core
+Instance: #!
+Merge: xdm
+Comment:
+ Use the numeric IP address of the incoming connection instead of the
+ host name. Use this on multihomed hosts.
+
+Key: Willing
+Type: string
+Default: ""
+User: core
+# will be overwritten
+Instance: #
+Update: mk_willing
+Merge: xdm
+Merge: kdm:Xwilling
+Comment:
+ The program which is invoked to dynamically generate replies to XDMCP
+ BroadcastQuery requests.
+ If empty, no program is invoked and "Willing to manage" is sent.
+
+
+Section: Shutdown
+
+Key: HaltCmd
+Type: string
+Default: HALT_CMD
+User: core(cmdHalt)
+Instance: #""
+Comment:
+ The command to run to halt the system.
+
+Key: RebootCmd
+Type: string
+Default: REBOOT_CMD
+User: core(cmdReboot)
+Instance: #""
+Comment:
+ The command to run to reboot the system.
+
+Key: AllowFifo
+Type: bool
+Default: false
+User: core(fifoAllowShutdown)
+Instance: #!
+Comment:
+ Whether one can shut down the system via the global command FiFo.
+
+Key: AllowFifoNow
+Type: bool
+Default: true
+User: core(fifoAllowNuke)
+Instance: #!
+Comment:
+ Whether one can abort still running sessions when shutting down the system
+ via the global command FiFo.
+
+Key: UseLilo
+If: defined(__linux__) && (defined(__i386__) || defined(__amd64__))
+Type: bool
+Default: false
+User: greeter
+Instance: #!
+Comment:
+ Offer LiLo boot options in shutdown dialog.
+
+Key: LiloCmd
+If: defined(__linux__) && (defined(__i386__) || defined(__amd64__))
+Type: string
+Default: "/sbin/lilo"
+User: greeter
+Instance: #""
+Comment:
+ The location of the LiLo binary.
+
+Key: LiloMap
+If: defined(__linux__) && (defined(__i386__) || defined(__amd64__))
+Type: string
+Default: "/boot/map"
+User: greeter
+Instance: #""
+Comment:
+ The location of the LiLo map file.
+
+
+Section: -Core
+
+Key: OpenDelay
+Type: int
+Default: 15
+User: core
+Instance: #*/
+Merge: xdm(P_openDelay)
+Comment:
+ How long to wait before retrying to start the display after various
+ errors.
+
+Key: OpenTimeout
+Type: int
+Default: 120
+User: core
+Instance: #*/
+Merge: xdm
+Comment:
+ How long to wait before timing out XOpenDisplay.
+
+Key: OpenRepeat
+Type: int
+Default: 5
+User: core
+Instance: #*/
+Merge: xdm
+Comment:
+ How often to try the XOpenDisplay.
+
+Key: StartAttempts
+Type: int
+Default: 4
+User: core
+Instance: #*/
+Merge: xdm
+Comment:
+ Try at most that many times to start a display. If this fails, the display
+ is disabled.
+
+Key: ServerAttempts
+Type: int
+Default: 1
+User: core
+Instance: #:*/
+Merge: xdm
+Comment:
+ How often to try to run the X-server. Running includes executing it and
+ waiting for it to come up.
+
+Key: ServerTimeout
+Type: int
+Default: 15
+User: core
+Instance: #:*/
+Comment:
+ How long to wait for a local X-server to come up.
+
+Key: PingInterval
+Type: int
+Default: 5
+User: core
+User: greeter
+Instance: #*/
+Merge: xdm
+Comment:
+ Ping remote display every that many minutes.
+
+Key: PingTimeout
+Type: int
+Default: 5
+User: core
+User: greeter
+Instance: #*/
+Merge: xdm
+Comment:
+ Wait for a Pong that many minutes.
+
+Key: TerminateServer
+Type: bool
+Default: false
+User: core
+Instance: #:*/!
+Merge: xdm
+Comment:
+ Restart instead of resetting the local X-server after session exit.
+ Use it if the server leaks memory, etc.
+
+Key: ResetSignal
+Type: int
+Default: 1
+CDefault: 1 (SIGHUP)
+User: core
+Instance: #:*/
+Merge: xdm
+Comment:
+ The signal needed to reset the local X-server.
+
+Key: TermSignal
+Type: int
+Default: 15
+CDefault: 15 (SIGTERM)
+User: core
+Instance: #:*/
+Merge: xdm
+Comment:
+ The signal needed to terminate the local X-server.
+
+Key: Authorize
+Type: bool
+Default: true
+User: core
+Instance: #:*/!
+Merge: xdm
+Comment:
+ Create X-authorizations for local displays.
+
+Key: AuthNames
+Type: list
+Default: DEF_AUTH_NAME
+User: core
+Instance: #:*/""
+Merge: xdm:authName
+Comment:
+ Which X-authorization mechanisms should be used.
+
+Key: ResetForAuth
+Type: bool
+Default: false
+User: core
+Instance: #:*/!
+Merge: xdm
+Comment:
+ Need to reset the X-server to make it read initial Xauth file.
+
+Key: AuthFile
+Type: string
+Default: ""
+User: core(clientAuthFile)
+Instance: #*/""
+Merge: xdm
+Comment:
+ The name of this X-server's Xauth file.
+ If empty, a random name in the AuthDir directory will be used.
+
+Key: Resources
+# XXX strictly speaking this is supposed to be a string list, i think.
+Type: string
+Default: ""
+User: core
+Instance: #*/""
+Update: cp_resources
+Merge: xdm
+Comment:
+ Specify a file with X-resources for the greeter, chooser and background.
+ The KDE frontend doesn't care for this, so you don't need it unless you
+ use another background generator than krootimage.
+
+Key: Xrdb
+Type: string
+Default: XBINDIR "/xrdb"
+User: core
+Instance: #*/""
+Merge: xdm
+Comment:
+ The xrdb program to use to read the above specified recources.
+
+Key: Setup
+Type: string
+Default: ""
+User: core
+# will be overwritten
+Instance: #*/""
+Update: mk_setup
+Merge: xdm
+Comment:
+ A program to run before the greeter is shown. You should start kdmdesktop
+ there. Also, xconsole can be started by this script.
+
+Key: Startup
+Type: string
+Default: ""
+User: core
+# will be overwritten
+Instance: #*/""
+Update: mk_startup
+Merge: xdm
+Comment:
+ A program to run before a user session starts. You should invoke sessreg
+ there and optionally change the ownership of the console, etc.
+
+Key: Reset
+Type: string
+Default: ""
+User: core
+# will be overwritten
+Instance: #*/""
+Update: mk_reset
+Merge: xdm
+Comment:
+ A program to run after a user session exits. You should invoke sessreg
+ there and optionally change the ownership of the console, etc.
+
+Key: Session
+Type: string
+Default: XBINDIR "/xterm -ls -T"
+#Merge: xdm - incompatible!
+User: core
+# will be overwritten
+Instance: #*/""
+Update: mk_session
+Comment:
+ The program which is run as the user which logs in. It is supposed to
+ interpret the session argument (see SessionsDirs) and start an appropriate
+ session according to it.
+
+Key: FailsafeClient
+Type: string
+Default: XBINDIR "/xterm"
+User: core
+Instance: #*/""
+Merge: xdm
+Comment:
+ The program to run if Session fails.
+
+Key: UserPath
+Type: string
+Default: DEF_USER_PATH
+User: core
+Instance: #*/""
+Merge: xdm
+Comment:
+ The PATH for the Session program.
+
+Key: SystemPath
+Type: string
+Default: DEF_SYSTEM_PATH
+User: core
+Instance: #*/""
+Merge: xdm
+Comment:
+ The PATH for Setup, Startup and Reset, etc.
+
+Key: SystemShell
+Type: string
+Default: "/bin/sh"
+User: core
+Instance: #*/"/bin/bash"
+Merge: xdm
+Comment:
+ The default system shell.
+
+Key: UserAuthDir
+Type: path
+Default: "/tmp"
+User: core
+Instance: #*/""
+Merge: xdm
+Comment:
+ Where to put the user's X-server authorization file if ~/.Xauthority
+ cannot be created.
+
+Key: AutoReLogin
+Type: bool
+Default: false
+User: core
+Instance: #*/!
+Merge: xdm
+Comment:
+ If "true", KDM will automatically restart a session after an X-server
+ crash (or if it is killed by Alt-Ctrl-BackSpace). Note, that enabling
+ this opens a security hole: a secured display lock can be circumvented
+ (unless you use KDE's built-in screen lock).
+
+Key: AllowRootLogin
+Type: bool
+Default: true
+User: core
+User: greeter(showRoot)
+# sensible?
+Instance: */false
+Instance: :*/true
+Merge: xdm
+Comment:
+ Allow root logins?
+
+Key: AllowNullPasswd
+Type: bool
+Default: true
+User: core
+# sensible?
+Instance: */false
+Instance: :*/true
+Merge: xdm
+Comment:
+ Allow to log in, when user has set an empty password?
+
+Key: AllowShutdown
+Type: enum
+ None/SHUT_NONE: no "Shutdown..." button is shown at all
+ Root/SHUT_ROOT: the root password must be entered to shut down
+ All/SHUT_ALL: everybody can shut down the machine
+Default: All
+User: core
+User: greeter
+Instance: */Root
+Instance: :*/All
+Merge: kdm:-Greeter/
+Comment:
+ Who is allowed to shut down the system. This applies both to the
+ greeter and to the command FiFo.
+
+Key: AllowSdForceNow
+Type: enum
+ None: no forced shutdown is allowd at all
+ Root: the root password must be entered to shut down forcibly
+ All: everybody can shut down the machine forcibly
+Default: All
+User: core(allowNuke)
+User: greeter(allowNuke)
+Instance: #*/Root
+Comment:
+ Who is allowed to abort all still running sessions when shutting down.
+
+Key: DefaultSdMode
+Type: enum
+ Schedule: shutdown after all sessions exit (possibly at once)
+ TryNow: shutdown, if no sessions are open, otherwise do nothing
+ ForceNow: shutdown unconditionally
+Default: Schedule
+User: core(defSdMode)
+User: greeter(defSdMode)
+Instance: #*/ForceNow
+Comment:
+ The default choice for the shutdown condition/timing.
+
+Key: InteractiveSd
+Type: bool
+Default: true
+User: greeter
+Instance: #*/!
+Comment:
+ If this is false the user must select the shutdown condition/timing already
+ in the shutdown dialog. If this is true he won't be bothered with the options,
+ but will be asked what to do if sessions are actually open.
+ BUG: the interaction is currently not implemented. If this is set to true,
+ a normal forced shutdown will happen (without caring for the AllowSdForceNow
+ option!), i.e., KDM will behave exactly as before KDE 3.0.
+
+Key: NoPassEnable
+Type: bool
+Default: false
+User: dep
+Instance: #:*/true
+Comment:
+ Enable password-less logins on this display. USE WITH EXTREME CARE!
+
+Key: NoPassUsers
+Type: list
+Default: ""
+PostProc: PnoPassUsers
+User: core
+Instance: #:*/"fred,ethel"
+Merge: xdm(P_noPassUsers)
+Comment:
+ The users that don't need to provide a password to log in. NEVER list root!
+ "*" means all users. BUG: this includes root!
+
+Key: AutoLoginEnable
+Type: bool
+Default: false
+User: dep
+Instance: #:0/true
+Comment:
+ Enable automatic login on this display. USE WITH EXTREME CARE!
+
+Key: AutoLoginUser
+Type: string
+Default: ""
+PostProc: PautoLoginX
+User: core(autoUser)
+Instance: #:0/"fred"
+Merge: xdm:autoUser(P_autoUser)
+Comment:
+ The user to log in automatically. NEVER specify root!
+
+Key: AutoLoginPass
+Type: string
+Default: ""
+PostProc: PautoLoginX
+User: core(autoPass)
+Instance: #:0/"secret!"
+Merge: xdm:autoPass(P_autoPass)
+Comment:
+ The password for the user to log in automatically. This is NOT required
+ unless the user is to be logged into a NIS or Kerberos domain. If you use
+ it, you should "chmod 600 kdmrc" for obvious reasons.
+
+Key: SessionsDirs
+Type: list
+Default: KDMDATA "/sessions"
+User: core
+User: greeter-c
+Instance: #*/"/etc/X11/sessions,/usr/share/xsessions"
+Comment:
+ The directories containing session type definitions in .desktop format.
+
+Key: ClientLogFile
+Type: string
+Default: ".xsession-errors"
+User: core
+Instance: */".xsession-errors-%s"
+Instance: :0/".xsession-errors"
+Comment:
+ The file (relative to $HOME) to redirect the session output to. This is
+ a printf format string; one %s will be replaced with the display name.
+
+
+Section: -Greeter
+
+Key: GUIStyle
+Type: string
+Default: ""
+User: greeter
+Instance: #*/"Windows"
+Update: upd_guistyle
+Comment:
+ Widget style of the greeter. "" means the built-in default which currently
+ is "Keramik".
+
+Key: ColorScheme
+Type: string
+Default: ""
+User: greeter
+Instance: #*/"Pumpkin"
+Comment:
+ Widget color scheme of the greeter. "" means the built-in default which
+ currently is quite greyish.
+
+Key: LogoArea
+Type: enum
+ None/LOGO_NONE: nothing
+ Logo/LOGO_LOGO: the image specified by LogoPixmap
+ Clock/LOGO_CLOCK: a neat analog clock
+Default: Clock
+User: greeter
+Instance: */Logo
+Comment:
+ What should be shown righthand of the input lines:
+
+Key: LogoPixmap
+Type: string
+Default: ""
+User: greeter(logo)
+Instance: */KDMDATA "pics/kdelogo.png"
+Comment:
+ The image to show when LogoArea=Logo.
+
+Key: GreeterPosFixed
+Type: bool
+Default: false
+User: greeter
+Instance: #*/true
+Comment:
+ Normally, the greeter is centered on the screen. Use this, if you want
+ it to appear elsewhere on the screen.
+
+Key: GreeterPosX
+Type: int
+Default: 0
+User: greeter
+Instance: #*/200
+Comment:
+
+Key: GreeterPosY
+Type: int
+Default: 0
+User: greeter
+Instance: #*/100
+Comment:
+
+Key: GreeterScreen
+Type: int
+Default: 0
+User: greeter
+Instance: #*/-1
+Comment:
+ The screen the greeter should be displayed on in multi-headed setups.
+ The numbering starts with 0 and corresponds to the listing order in the
+ active ServerLayout section of XF86Config. -1 means to use the upper-left
+ screen, -2 means to use the upper-right screen.
+
+Key: GreetString
+Type: string
+Default: "Welcome to %s at %n"
+User: greeter
+Instance: #*/"K Desktop Environment (%n)"
+Comment:
+ The headline in the greeter. The following character pairs are replaced:
+ - %d -> current display
+ - %h -> host name, possibly with domain name
+ - %n -> node name, most probably the host name without domain name
+ - %s -> the operating system
+ - %r -> the operating system's version
+ - %m -> the machine (hardware) type
+ - %% -> a single %
+
+Key: GreetFont
+Type: string
+Default: "charter,24,5,0,50,0"
+CDefault: "charter,24,bold"
+User: greeter:font
+Instance: #*/"charter,20,5,0,50,0"
+Comment:
+ The font for the headline.
+
+Key: StdFont
+Type: string
+Default: "helvetica,12,5,0,50,0"
+CDefault: "helvetica,12"
+User: greeter(normalFont):font
+Instance: #*/"helvetica,10,5,0,50,0"
+Comment:
+ The normal font used in the greeter.
+
+Key: FailFont
+Type: string
+Default: "helvetica,12,5,0,75,0"
+CDefault: "helvetica,12,bold"
+User: greeter:font
+Instance: #*/"helvetica,10,5,0,75,0"
+Comment:
+ The font used for the "Login Failed" message.
+
+Key: AntiAliasing
+Type: bool
+Default: false
+User: greeter-c
+Instance: #*/!
+Comment:
+ Whether the fonts shown in the greeter should be antialiased.
+
+Key: NumLock
+Type: enum
+ Off: turn off
+ On: turn on
+ Keep: don't change the state
+Default: Keep
+User: greeter(numLockStatus)
+Instance: #*/Off
+Comment:
+ What to do with the Num Lock modifier for the time the greeter is running:
+
+Key: Language
+Type: string
+Default: "en_US"
+User: greeter-c
+Instance: #*/"de_DE"
+Update: upd_language
+Comment:
+ Language to use in the greeter.
+
+Key: UserCompletion
+Type: bool
+Default: false
+User: greeter
+Instance: #*/!
+Comment:
+ Enable autocompletion in the user name line edit.
+
+Key: UserList
+Type: bool
+Default: true
+User: greeter
+Instance: #*/!
+Comment:
+ Enable user list (names along with images) in the greeter.
+
+Key: ShowUsers
+Type: enum
+ NotHidden/SHOW_ALL: all users except those listed in HiddenUsers
+ Selected/SHOW_SEL: only the users listed in SelectedUsers
+Default: NotHidden
+User: greeter
+Instance: #*/Selected
+Update: upd_showusers
+Comment:
+ User selection for UserCompletion and UserList:
+
+Key: SelectedUsers
+Type: list
+Default: ""
+User: greeter-c(users)
+Instance: #*/"root,johndoe"
+Merge: kdm:Users
+Comment:
+ For ShowUsers=Selected.
+
+Key: HiddenUsers
+Type: list
+Default: ""
+User: greeter-c(noUsers)
+Instance: #*/"root"
+# depends on {Min,Max}ShowUID
+Update: upd_hiddenusers/1
+Merge: kdm:NoUsers
+Comment:
+ For ShowUsers=NotHidden.
+
+Key: MinShowUID
+Type: int
+Default: 0
+User: greeter(lowUserId)
+# will be overwritten
+Instance: #*/
+Update: upd_minshowuid
+Comment:
+ Special case of HiddenUsers: users with a UID less than this number
+ (except root) will not be shown as well.
+
+Key: MaxShowUID
+Type: int
+Default: 65535
+User: greeter(highUserId)
+# will be overwritten
+Instance: #*/
+Update: upd_maxshowuid
+Comment:
+ Complement to MinShowUID: users with a UID greater than this number will
+ not be shown as well.
+
+Key: SortUsers
+Type: bool
+Default: true
+User: greeter
+Instance: #*/!
+Comment:
+ If false, the users are listed in the order they appear in /etc/passwd.
+ If true, they are sorted alphabetically.
+
+Key: FaceSource
+Type: enum
+ AdminOnly/FACE_ADMIN_ONLY: from <FaceDir>/$USER.face[.icon]
+ PreferAdmin/FACE_PREFER_ADMIN: prefer <FaceDir>, fallback on $HOME
+ PreferUser/FACE_PREFER_USER: ... and the other way round
+ UserOnly/FACE_USER_ONLY: from the user's $HOME/.face[.icon]
+Default: AdminOnly
+User: greeter
+Instance: #*/PreferUser
+Comment:
+ Specify, where the users' pictures should be taken from.
+
+Key: FaceDir
+Type: string
+Default: *KDMDATA "/faces"
+User: greeter
+Instance: #*/"/usr/share/faces"
+Update: upd_facedir
+Comment:
+ The directory containing the user images if FaceSource is not UserOnly.
+
+Key: PreselectUser
+Type: enum
+ None/PRESEL_NONE: don't preselect any user
+ Previous/PRESEL_PREV: the user which successfully logged in last time
+ Default/PRESEL_DEFAULT: the user specified in the DefaultUser field
+Default: None
+User: greeter(preselUser)
+Instance: #*/Previous
+Instance: #:0/Default
+Comment:
+ Specify, if/which user should be preselected for log in.
+ Note, that enabling this feature can be considered a security hole,
+ as it presents a valid login name to a potential attacker, so he "only"
+ needs to guess the password.
+
+Key: DefaultUser
+Type: string
+Default: ""
+User: greeter
+Instance: #:0/"johndoe"
+Comment:
+ The user to preselect if PreselectUser=Default.
+
+Key: FocusPasswd
+Type: bool
+Default: false
+User: greeter
+Instance: #*/!
+Comment:
+ If this is true, the password input line is focused automatically if
+ a user is preselected.
+
+Key: EchoMode
+Type: enum
+ OneStar: "*" is shown for every typed letter
+ ThreeStars: "***" is shown for every typed letter
+ NoEcho: nothing is shown at all, the cursor doesn't move
+# HACK! This must be in sync with KPasswordEdit::EchoModes (kpassdlg.h)
+Default: OneStar
+User: greeter
+Instance: #*/NoEcho
+Comment:
+ The password input fields cloak the typed in text. Specify, how to do it:
+
+Key: UseBackground
+Type: bool
+Default: true
+User: greeter
+Instance: #*/!
+Comment:
+ If true, krootimage will be automatically started by KDM. Otherwise, the
+ Setup script should be used to setup the background.
+
+Key: BackgroundCfg
+Type: string
+Default: *KDMCONF "/backgroundrc"
+User: greeter-c
+Instance: #*/""
+Update: handBgCfg
+Comment:
+ The configuration file to be used by krootimage.
+
+Key: GrabServer
+Type: bool
+Default: false
+User: greeter-c
+Instance: #*/!
+Comment:
+ Hold the X-server grabbed the whole time the greeter is visible. This
+ may be more secure, but it will disable any background and other
+ X-clients started from the Setup script.
+
+Key: GrabTimeout
+Type: int
+Default: 3
+User: greeter
+Instance: #*/
+Comment:
+ How many seconds to wait for grab to succeed.
+
+Key: AuthComplain
+Type: bool
+Default: true
+User: greeter
+Instance: #:*/!
+Merge: xdm
+Comment:
+ Warn, if local X-authorization cannot be created.
+ BUG: this is a dummy currently.
+
+Key: LoginMode
+If: defined(XDMCP)
+Type: enum
+ LocalOnly/LOGIN_LOCAL_ONLY: only local login possible
+ DefaultLocal/LOGIN_DEFAULT_LOCAL: start up in local mode, but allow switch to remote mode
+ DefaultRemote/LOGIN_DEFAULT_REMOTE: ... and the other way round
+ RemoteOnly/LOGIN_REMOTE_ONLY: only choice of remote host possible
+Default: LocalOnly
+User: core
+User: greeter
+Instance: :*/DefaultLocal
+# from make_it_cool branch and SuSE 8.1
+Merge: kdm:EnableChooser(P_EnableChooser)
+Comment:
+ Specify whether the greeter of local displays should start up in host chooser
+ (remote) or login (local) mode and whether it is allowed to switch to the
+ other mode.
+
+Key: ChooserHosts
+If: defined(XDMCP)
+Type: list
+Default: "*"
+User: core
+Instance: #:*/"*,ugly,sky,dino,kiste.local,login.crap.com"
+Comment:
+ A list of hosts to be automatically added to the remote login menu. The
+ special name "*" means broadcast.
+
+Key: ForgingSeed
+Type: int
+Default: 0
+User: greeter
+Instance: #*/
+Update: upd_forgingseed
+Comment:
+ Use this number as a random seed when forging saved session types, etc. of
+ unknown users. This is used to avoid telling an attacker about existing users
+ by reverse conclusion. This value should be random but constant across the
+ login domain.
+
+Key: ShowLog
+If: defined(WITH_KDM_XCONSOLE)
+Type: bool
+Default: false
+User: greeter
+Instance: :0/true
+Comment:
+ Enable KDM's built-in xconsole. Note, that this can be enabled for only
+ one display at a time.
+
+Key: LogSource
+If: defined(WITH_KDM_XCONSOLE)
+Type: string
+Default: ""
+User: greeter-c
+Instance: :0/"/dev/xconsole"
+Comment:
+ The data source for KDM's built-in xconsole.
+ If empty, a console log redirection is requested from /dev/console.
+
+Key: PluginsLogin
+Type: list
+Default: "classic"
+User: greeter
+Instance: #*/"sign"
+Comment:
+ Specify greeter plugins that can be used to obtain authentication data.
+ This can be a plugin's base name (expands to $kde_modulesdir/kgreet_$base)
+ or a full pathname.
+
+Key: PluginsShutdown
+Type: list
+Default: "classic"
+User: greeter
+Instance: #*/"modern"
+Comment:
+ Same as PluginsLogin, but for the shutdown dialog.
+
+Key: PluginOptions
+Type: list
+Default: ""
+User: greeter
+Instance: #*/"SomeKey=randomvalue,Foo=bar"
+Comment:
+ A list of options of the form Key=Value. The conversation plugins can query
+ these settings; it's up to them what possible keys are.
+
+Key: AllowConsole
+Type: bool
+Default: true
+User: greeter(hasConsole)
+Instance: #*/!
+Comment:
+ Show the "Console Login" action in the greeter (when the respective @tty
+ entry exists in Xservers).
+
+Key: AllowClose
+Type: bool
+Default: true
+User: greeter
+Instance: :*/false
+Comment:
+ Show the "Restart X Server"/"Close Connection" action in the greeter.
+

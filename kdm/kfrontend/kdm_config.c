@@ -21,8 +21,6 @@
 
     */
 
-#include "kdm_config.h"
-
 #include <config.h>
 
 #include <stdio.h>
@@ -40,9 +38,8 @@
 # include <sched.h>
 #endif
 
-#define KDMCONF KDE_CONFDIR "/kdm"
-#define KDMDATA KDE_DATADIR "/kdm"
-
+#include <greet.h>
+#include "config.ci"
 
 /*
  * Section/Entry definition structs
@@ -342,15 +339,7 @@ freeBuf (File *file)
 }
 #endif
 
-static Value
-    VnoPassEnable,
-    VautoLoginEnable,
-#ifdef XDMCP
-    VxdmcpEnable,
-    VXaccess,
-#endif
-    VXservers,
-    Vdummy;
+CONF_READ_VARS
 
 #define C_MTYPE_MASK	0x30000000
 # define C_PATH		0x10000000	/* C_TYPE_STR is a path spec */
@@ -359,12 +348,6 @@ static Value
 # define C_GRP		0x30000000	/* C_TYPE_INT is a group spec */
 #define C_INTERNAL	0x40000000	/* don't expose to core */
 #define C_CONFIG	0x80000000	/* process only for finding deps */
-
-#define C_noPassEnable		( C_TYPE_INT | C_INTERNAL | 0x2000 )
-#define C_autoLoginEnable	( C_TYPE_INT | C_INTERNAL | 0x2001 )
-#define C_xdmcpEnable		( C_TYPE_INT | C_INTERNAL | 0x2002 )
-#define C_accessFile		( C_TYPE_STR | C_INTERNAL | C_CONFIG | 0x2003 )
-#define C_servers		( C_TYPE_STR | C_INTERNAL | C_CONFIG | 0x2004 )
 
 #ifdef XDMCP
 static int
@@ -403,219 +386,7 @@ PautoLoginX (Value *retval)
     return 0;
 }
 
-#ifndef HALT_CMD
-# ifdef BSD
-#  define HALT_CMD	"/sbin/shutdown -h now"
-#  define REBOOT_CMD	"/sbin/shutdown -r now"
-# elif defined(__SVR4)
-#  define HALT_CMD	"/usr/sbin/halt"
-#  define REBOOT_CMD	"/usr/sbin/reboot"
-# else
-#  define HALT_CMD	"/sbin/halt"
-#  define REBOOT_CMD	"/sbin/reboot"
-# endif
-#endif
-
-#ifndef DEF_USER_PATH
-#  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
-#    define DEF_USER_PATH "/usr/local/bin:/usr/bin:/bin:" XBINDIR ":/usr/games"
-#  else
-#    define DEF_USER_PATH "/usr/local/bin:/usr/bin:/bin:" XBINDIR ":/usr/games:/usr/ucb"
-#  endif
-#endif
-#ifndef DEF_SYSTEM_PATH
-#  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
-#    define DEF_SYSTEM_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:" XBINDIR
-#  else
-#    define DEF_SYSTEM_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:" XBINDIR ":/etc:/usr/ucb"
-#  endif
-#endif
-
-#ifndef DEF_AUTH_NAME
-# if 0 /*def HASXDMAUTH*/
-#  define DEF_AUTH_NAME	"XDM-AUTHORIZATION-1,MIT-MAGIC-COOKIE-1"
-# else
-#  define DEF_AUTH_NAME	"MIT-MAGIC-COOKIE-1"
-# endif
-#endif
-
-#ifdef __linux__
-# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X vt7"
-#elif defined(__sun) || defined(__sun__)
-# define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X"
-#elif defined(_AIX)
-# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X"
-#else
-# define DEF_SERVER_LINE ":0 local " XBINDIR "/X"
-#endif
-
-static const char
-#ifdef XDMCP
-    *loginmode[] = { "LocalOnly", "DefaultLocal", "DefaultRemote", "RemoteOnly", 0 },
-#endif
-    *logoarea[] = { "None", "Logo", "Clock", 0 },
-    *showusers[] = { "NotHidden", "Selected", 0 },
-    *facesource[] = { "AdminOnly", "PreferAdmin", "PreferUser", "UserOnly", 0 },
-    *preseluser[] = { "None", "Previous", "Default", 0 },
-    *echomode[] = { "OneStar", "ThreeStars", "NoEcho", 0 },
-    *sd_who[] = { "None", "Root", "All", 0 },
-    *sd_mode[] = { "Schedule", "TryNow", "ForceNow", 0 },
-    *numlock[] = { "Off", "On", "Keep", 0 };
-
-Ent entsGeneral[] = {
-{ "ConfigVersion",	C_INTERNAL | C_TYPE_STR,&Vdummy,	"" },
-{ "Xservers",		C_servers,		&VXservers,	DEF_SERVER_LINE },
-{ "PidFile",		C_pidFile,		0,	"" },
-{ "LockPidFile",	C_lockPidFile | C_BOOL,	0,	"true" },
-{ "AuthDir",		C_authDir | C_PATH,	0,	"/var/run/xauth" },
-{ "AutoRescan",		C_autoRescan | C_BOOL,	0,	"true" },
-{ "ExportList",		C_exportList,		0,	"" },
-{ "RandomFile",		C_randomFile,		0,	"/dev/mem" },
-{ "RandomDevice",	C_randomDevice,		0,	"" },
-{ "PrngdSocket",	C_prngdSocket,		0,	"" },
-{ "PrngdPort",		C_prngdPort,		0,	"0" },
-{ "FifoDir",		C_fifoDir | C_PATH,	0,	"/var/run/xdmctl" },
-{ "FifoGroup",		C_fifoGroup | C_GRP,	0,	"0" },
-{ "DataDir",		C_dataDir | C_PATH,	0,	"/var/lib/kdm" },
-{ "DmrcDir",		C_dmrcDir | C_PATH,	0,	"" },
-};
-
-#ifdef XDMCP
-Ent entsXdmcp[] = {
-{ "Enable",		C_xdmcpEnable | C_BOOL,	&VxdmcpEnable,	"true" },
-{ "Port",		C_requestPort,		(void *)PrequestPort,	"177" },
-{ "KeyFile",		C_keyFile,		0,	"" },
-{ "Xaccess",		C_accessFile,		&VXaccess,	KDMCONF "/Xaccess" },
-{ "ChoiceTimeout",	C_choiceTimeout,	0,	"15" },
-{ "RemoveDomainname",	C_removeDomainname | C_BOOL, 0,	"true" },
-{ "SourceAddress",	C_sourceAddress | C_BOOL, 0,	"false" },
-{ "Willing",		C_willing,		0,	"" },
-};
-#endif
-
-Ent entsShutdown[] = {
-{ "HaltCmd",		C_cmdHalt,		0,	HALT_CMD },
-{ "RebootCmd",		C_cmdReboot,		0,	REBOOT_CMD },
-{ "AllowFifo",		C_fifoAllowShutdown | C_BOOL,	0,	"false" },
-{ "AllowFifoNow",	C_fifoAllowNuke | C_BOOL,	0,	"true" },
-#ifdef __linux__
-{ "UseLilo",		C_useLilo | C_BOOL,	0,	"false" },
-{ "LiloCmd",		C_liloCmd,		0,	"/sbin/lilo" },
-{ "LiloMap",		C_liloMap,		0,	"/boot/map" },
-#endif
-};
-
-Ent entsCore[] = {
-{ "ServerAttempts",	C_serverAttempts,	0,	"1" },
-{ "ServerTimeout",	C_serverTimeout,	0,	"15" },
-{ "OpenDelay",		C_openDelay,		0,	"15" },
-{ "OpenRepeat",		C_openRepeat,		0,	"5" },
-{ "OpenTimeout",	C_openTimeout,		0,	"120" },
-{ "StartAttempts",	C_startAttempts,	0,	"4" },
-{ "PingInterval",	C_pingInterval,		0,	"5" },
-{ "PingTimeout",	C_pingTimeout,		0,	"5" },
-{ "TerminateServer",	C_terminateServer | C_BOOL, 0,	"false" },
-{ "ResetSignal",	C_resetSignal,		0,	"1" },	/* SIGHUP */
-{ "TermSignal",		C_termSignal,		0,	"15" },	/* SIGTERM */
-{ "ResetForAuth",	C_resetForAuth | C_BOOL, 0,	"false" },
-{ "Authorize",		C_authorize | C_BOOL,	0,	"true" },
-{ "AuthNames",		C_authNames,		0,	DEF_AUTH_NAME },
-{ "AuthFile",		C_clientAuthFile,	0,	"" },
-{ "Resources",		C_resources,		0,	"" },
-{ "Xrdb",		C_xrdb,			0,	XBINDIR "/xrdb" },
-{ "Setup",		C_setup,		0,	"" },
-{ "Startup",		C_startup,		0,	"" },
-{ "Reset",		C_reset,		0,	"" },
-{ "Session",		C_session,		0,	XBINDIR "/xterm -ls -T" },
-{ "UserPath",		C_userPath,		0,	DEF_USER_PATH },
-{ "SystemPath",		C_systemPath,		0,	DEF_SYSTEM_PATH },
-{ "SystemShell",	C_systemShell,		0,	"/bin/sh" },
-{ "FailsafeClient",	C_failsafeClient,	0,	XBINDIR "/xterm" },
-{ "UserAuthDir",	C_userAuthDir | C_PATH,	0,	"/tmp" },
-{ "NoPassEnable",	C_noPassEnable | C_BOOL, &VnoPassEnable, "false" },
-{ "NoPassUsers",	C_noPassUsers,	(void *)PnoPassUsers,	"" },
-{ "AutoLoginEnable",	C_autoLoginEnable | C_BOOL, &VautoLoginEnable, "false" },
-{ "AutoLoginUser",	C_autoUser,	(void *)PautoLoginX,	"" },
-{ "AutoLoginPass",	C_autoPass,	(void *)PautoLoginX,	"" },
-{ "AutoReLogin",	C_autoReLogin | C_BOOL,	0,	"false" },
-{ "AllowNullPasswd",	C_allowNullPasswd | C_BOOL, 0,	"true" },
-{ "AllowRootLogin",	C_allowRootLogin | C_BOOL, 0,	"true" },
-{ "AllowShutdown",	C_allowShutdown | C_ENUM, sd_who, "All" },
-{ "AllowSdForceNow",	C_allowNuke | C_ENUM, sd_who,	"All" },
-{ "DefaultSdMode",	C_defSdMode | C_ENUM, sd_mode,	"Schedule" },
-{ "InteractiveSd",	C_interactiveSd | C_BOOL, 0,	"true" },
-{ "SessionsDirs",	C_sessionsDirs,		0,	KDMDATA "/sessions" },
-{ "ClientLogFile",	C_clientLogFile,	0,	".xsession-errors" },
-};
-
-Ent entsGreeter[] = {
-{ "GUIStyle",		C_GUIStyle, 		0,	"" },
-{ "ColorScheme",	C_ColorScheme,		0,	"" },
-{ "LogoArea",		C_LogoArea | C_ENUM, logoarea,	"Logo" },
-{ "LogoPixmap",		C_LogoPixmap,		0,	"" },
-{ "GreeterPosFixed",	C_GreeterPosFixed | C_BOOL, 0,	"false" },
-{ "GreeterPosX",	C_GreeterPosX,		0,	"0" },
-{ "GreeterPosY",	C_GreeterPosY,		0,	"0" },
-{ "GreeterScreen",	C_GreeterScreen,	0,	"0" },
-{ "StdFont",		C_StdFont,		0,	"helvetica,12,5,0,50,0" },
-{ "FailFont",		C_FailFont,		0,	"helvetica,12,5,0,75,0" },
-{ "GreetString",	C_GreetString,		0,	"Welcome to %s at %n" },
-{ "GreetFont",		C_GreetFont,		0,	"charter,24,5,0,50,0" },
-{ "AntiAliasing",	C_AntiAliasing | C_BOOL,0,	"false" },
-{ "NumLock",		C_NumLock | C_ENUM, numlock,	"Keep" },
-{ "Language",		C_Language,		0,	"en_US" },
-{ "UserCompletion",	C_UserCompletion | C_BOOL,0,	"false" },
-{ "UserList",		C_UserList | C_BOOL,0,		"true" },
-{ "ShowUsers",		C_ShowUsers | C_ENUM, showusers, "NotHidden" },
-{ "SelectedUsers",	C_SelectedUsers,	0,	"" },
-{ "HiddenUsers",	C_HiddenUsers,		0,	"" },
-{ "MinShowUID",		C_MinShowUID,		0,	"0" },
-{ "MaxShowUID",		C_MaxShowUID,		0,	"65535" },
-{ "SortUsers",		C_SortUsers | C_BOOL,	0,	"true" },
-{ "FaceSource",		C_FaceSource | C_ENUM, facesource, "AdminOnly" },
-{ "FaceDir",		C_FaceDir,		0,	KDMDATA "/faces" },
-{ "PreselectUser",	C_PreselectUser | C_ENUM, preseluser, "None" },
-{ "DefaultUser",	C_DefaultUser,		0,	"" },
-{ "FocusPasswd",	C_FocusPasswd | C_BOOL, 0,	"false" },
-{ "EchoMode",		C_EchoMode | C_ENUM, echomode,	"OneStar" },
-{ "GrabServer",		C_grabServer | C_BOOL,	0,	"false" },
-{ "GrabTimeout",	C_grabTimeout,		0,	"3" },
-{ "AuthComplain",	C_authComplain | C_BOOL, 0,	"true" },
-{ "UseBackground",	C_UseBackground | C_BOOL, 0,	"true" },
-{ "BackgroundCfg",	C_BackgroundCfg,	0,	KDMCONF "/backgroundrc" },
-#ifdef XDMCP
-{ "LoginMode",		C_loginMode | C_ENUM,	loginmode,	"LocalOnly" },
-{ "ChooserHosts",	C_chooserHosts,		0,	"*" },
-#endif
-{ "ForgingSeed",	C_ForgingSeed,		0,	"0" },
-#ifdef WITH_KDM_XCONSOLE
-{ "ShowLog",		C_ShowLog | C_BOOL,	0,	"false" },
-{ "LogSource",		C_LogSource,		0,	"" },
-#endif
-{ "PluginsLogin",	C_PluginsLogin,		0,	"classic" },
-{ "PluginsShutdown",	C_PluginsShutdown,	0,	"classic" },
-{ "PluginOptions",	C_PluginOptions,	0,	"" },
-{ "AllowConsole",	C_AllowConsole | C_BOOL,0,	"true" },
-{ "AllowClose", 	C_AllowClose | C_BOOL,	0,	"true" },
-};
-
-Sect
- secGeneral	= { "General",	entsGeneral, as(entsGeneral) },
-#ifdef XDMCP
- secXdmcp	= { "Xdmcp",	entsXdmcp, as(entsXdmcp) },
-#endif
- secShutdown	= { "Shutdown",	entsShutdown, as(entsShutdown) },
- sec_Core	= { "-Core",	entsCore, as(entsCore) },
- sec_Greeter	= { "-Greeter",	entsGreeter, as(entsGreeter) },
- *allSects[] = {
-    &secGeneral,
-#ifdef XDMCP
-    &secXdmcp,
-#endif
-    &secShutdown,
-    &sec_Core,
-    &sec_Greeter
- };
+CONF_READ_ENTRIES
 
 static const char *kdmrc = KDMCONF "/kdmrc";
 
@@ -1634,10 +1405,6 @@ Debug ("read server arg %s\n", word);
 }
 
 
-#ifdef USE_PAM
-Value pamservice = { KDM_PAM_SERVICE, sizeof(KDM_PAM_SERVICE) };
-#endif
-
 int main(int argc ATTR_UNUSED, char **argv)
 {
     DSpec dspec;
@@ -1727,9 +1494,6 @@ int main(int argc ATTR_UNUSED, char **argv)
 		CopyValues (&va, &secXdmcp, 0, 0);
 #endif
 		CopyValues (&va, &secShutdown, 0, 0);
-#ifdef USE_PAM
-		AddValue (&va, C_PAMService, &pamservice);
-#endif
 		SendValues (&va);
 		break;
 	    case GC_gDisplay:

@@ -38,6 +38,7 @@ from the copyright holder.
 #define _DM_H_ 1
 
 #include "greet.h"
+#include <config.ci>
 
 #include <X11/Xos.h>
 #include <X11/Xfuncs.h>
@@ -235,58 +236,13 @@ struct display {
 	int		xdmcpFd;
 #endif
 
-	/* server management resources */
-	int		serverAttempts;	/* number of attempts at running X */
-	int		serverTimeout;	/* how long to wait for X */
-	int		openDelay;	/* after failed server start or XOpenDisplay */
-	int		openRepeat;	/* connection open attempts to make */
-	int		openTimeout;	/* XOpenDisplay timeout */
-	int		startAttempts;	/* number of attempts at starting foreign from file */
-	int		pingInterval;	/* interval between XSync */
-	int		pingTimeout;	/* timeout for XSync */
-	int		terminateServer;/* restart for each session */
-	int		resetSignal;	/* signal to reset server */
-	int		termSignal;	/* signal to terminate server */
-	int		resetForAuth;	/* server reads auth file at reset */
+	CONF_CORE_LOCAL_DEFS
+	
 	int		idleTimeout;	/* abort login after that time */
 	char		**serverArgv;	/* server program and arguments */
 	char		*console;	/* the tty line hidden by the server */
 
-	/* session resources */
-	char		*resources;	/* resource file */
-	char		*xrdb;		/* xrdb program */
-	char		*setup;		/* Xsetup program */
-	char		*startup;	/* Xstartup program */
-	char		*reset;		/* Xreset program */
-	char		*session;	/* Xsession program */
-	char		*userPath;	/* path set for session */
-	char		*systemPath;	/* path set for startup/reset */
-	char		*systemShell;	/* interpreter for startup/reset */
-	char		*failsafeClient;/* a client to start when the session fails */
-	char		*autoUser;	/* user to log in automatically. */
-	char		*autoPass;	/* his password. only for krb5 & sec_rpc */
-	char		**noPassUsers;	/* users allowed in without a password */
-	char		**sessionsDirs;	/* where session .desktop files are located */
-#ifdef XDMCP
-	char		**chooserHosts;	/* hosts to auto-add in "remote login" */
-#endif
-	char		*clientLogFile;	/* xsession-errors template */
-#ifdef XDMCP
-	int		loginMode;	/* whether to start chooser or login */
-#endif
-	int		autoReLogin;	/* auto-re-login after crash */
-	int		allowNullPasswd;/* allow null password on login */
-	int		allowRootLogin;	/* allow direct root login */
-	int		allowShutdown;	/* who is allowed to shutdown */
-	int		allowNuke;	/* who is allowed to s/d even when other sessions are running */
-	int		defSdMode;	/* s/d condition/timing used by default */
-
-	/* authorization resources */
-	int		authorize;	/* enable authorization */
-	char		**authNames;	/* authorization protocol names */
 	unsigned short	*authNameLens;	/* authorization protocol name lens */
-	char		*clientAuthFile;/* client specified auth file */
-	char		*userAuthDir;	/* backup directory for tickets */
 
 	/* information potentially derived from resources */
 	int		authNameNum;	/* number of protocol names */
@@ -344,30 +300,9 @@ struct protoDisplay {
 #define D_RemoteHost	5
 #define D_XConnOk	6
 
-extern int	request_port;
-extern int	sourceAddress;
 extern int	debugLevel;
-extern char	*pidFile;
-extern int	lockPidFile;
-extern char	*authDir;
-extern int	autoRescan;
-extern int	removeDomainname;
-extern char	*keyFile;
-extern char	**exportList;
-extern char	*randomFile;
-extern char	*randomDevice;
-extern char	*prngdSocket;
-extern int	prngdPort;
-extern char	*willing;
-extern int	choiceTimeout;	/* chooser choice timeout */
-extern char	*cmdHalt;
-extern char	*cmdReboot;
-extern char	*PAMService;
-extern char	*fifoDir;
-extern int	fifoGroup;
-extern int	fifoAllowShutdown;
-extern int	fifoAllowNuke;
-extern char	*dmrcDir;
+
+CONF_CORE_GLOBAL_DECLS
 
 /* in daemon.c */
 extern void BecomeDaemon (void);

@@ -1,5 +1,5 @@
-# backend needs to be conditional (in case the xdm core is adopted by x)
-SUBDIRS = backend kfrontend
+# frontend must come first, as it generates config.ci
+SUBDIRS = kfrontend backend
 
 EXTRA_DIST = misc
 
