@@ -167,8 +167,6 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     connect( _keyButton, SIGNAL( clicked()), this, SLOT( keyButtonPressed()));
     grid_keybind->addWidget(_keyEdit, 0, 1);
     grid_keybind->addWidget(_keyButton, 0, 2 );
-    if( !KHotKeys::present())
-        setEnabled( false ); // disable the whole tab if no KHotKeys found
     _khotkeysNeedsSave = false;
 
 
