@@ -68,7 +68,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
                 {
                 if( import_P == ImportSilent
                     || KMessageBox::warningContinueCancel( NULL,
-                        i18n( "The file for this action has already been imported before. "
+                        i18n( "This \"actions\" file has already been imported before. "
                               "Are you sure you want to import it again?" )) != KMessageBox::Continue )
                     return true; // import "successful"
                 }
@@ -79,7 +79,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
             {
             if( import_P != ImportSilent
                 && KMessageBox::warningContinueCancel( NULL,
-                    i18n( "The file for this action has no ImportId field and therefore it cannot be determined "
+                    i18n( "This \"actions\" file has no ImportId field and therefore it cannot be determined "
                           "whether or not it has been imported already. Are you sure you want to import it?" ))
                     == KMessageBox::Cancel )
                 return true;
