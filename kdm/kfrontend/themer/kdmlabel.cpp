@@ -53,7 +53,7 @@ KdmLabel::KdmLabel( KdmItem *parent, const QDomNode &node, const char *name )
 	// ID types: clock, pam-error, pam-message, pam-prompt,
 	//  pam-warning, timed-label
 	label.id = elLab.attribute( "id", "" );
-	label.hasId = label.id != "";
+	label.hasId = !(label.id).isEmpty();
 
 	// Read LABEL TAGS
 	QDomNodeList childList = node.childNodes();
