@@ -81,9 +81,9 @@ KThemesApplication::KThemesApplication(int &argc, char **argv, const char *name)
   {
     tweakUi();
 
-    addPage(mInstaller = new Installer(dialog), i18n("Installer"), "kthememgr-1.html" );
-    addPage(mOptions = new Options(dialog), i18n("Contents"), "kthememgr-2.html" );
-    addPage(mAbout = new About(dialog), i18n("About"), "kthememgr-3.html" );
+    addPage(mInstaller = new Installer(dialog), i18n("Installer"), "index-1.html" );
+    addPage(mOptions = new Options(dialog), i18n("Contents"), "index-2.html" );
+    addPage(mAbout = new About(dialog), i18n("About"), "index-3.html" );
 
     dialog->show();
   }
