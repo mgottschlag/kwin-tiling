@@ -41,11 +41,10 @@ IndexPane::IndexPane(QWidget *parent, const char *name)
 {
   _tree = new QListView(this);   
   _tree->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);   
-  _tree->addColumn("");   
-  _tree->addColumn("");
+  _tree->addColumn("",0);   
+  _tree->addColumn("",22);
   _tree->setColumnAlignment(1, AlignRight);
   _tree->setAllColumnsShowFocus(true);
-  _tree->setColumnWidth(1, 22);
   _tree->header()->hide();
 
   connect(_tree, SIGNAL(doubleClicked(QListViewItem*)), 
@@ -58,9 +57,9 @@ void IndexPane::resizeEvent(QResizeEvent *)
   if (_tree)
     {
       _tree->setGeometry(0,0,width(),height());
-      if (_tree->columnWidth(0) != width() - _tree->columnWidth(1))
+      if (_tree->columnWidth(0) != _tree->visibleWidth() - _tree->columnWidth(1))
 	{
-	  _tree->setColumnWidth(0, width() - _tree->columnWidth(1));
+	  _tree->setColumnWidth(0, _tree->visibleWidth() - _tree->columnWidth(1));
 	  _tree->triggerUpdate();
 	}
     }
