@@ -15,3 +15,7 @@ messages:
 
 data_DATA = kcmnotify.desktop
 datadir = $(kde_appsdir)/Settings/LookNFeel
+
+# the following should be gone at release time.
+install-data:
+	rm -f $(kde_appsdir)/Settings/LookNFeel/knotify.desktop
