@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -40,65 +40,88 @@ class RandRScreen : public QObject
 	Q_OBJECT
 
 public:
-	RandRScreen(int screenIndex, bool requestScreenChangeEvents = false);
+	RandRScreen(int screenIndex);
 	~RandRScreen();
-	
+
 	void		loadSettings();
 	void		setOriginal();
-	
+
 	Status		applyProposed();
-	
+
 	// A return value of -1 means the user did not confirm in time, or cancelled.
 	Status		applyProposedAndConfirm();
-	
+
 public slots:
 	bool		confirm();
 
 public:
-	QString		changedMessage();
+	QString		changedMessage() const;
 
-	bool		changedFromOriginal();
+	bool		changedFromOriginal() const;
 	void		proposeOriginal();
-	
-	bool		proposedChanged();
-	
-	static QString	rotationName(int rotation, bool pastTense = false, bool capitalised = true);
-	QPixmap	        rotationIcon(int rotation);
-	QString			currentRotationDescription();
-	
-	QStringList refreshRates(SizeID size);
-	QString		refreshRateDirectDescription(int rate);
-	QString		refreshRateDescription(int index);
-	QString		currentRefreshRateDescription();
-	void		proposeRefreshRate(int index);
-	int			refreshRateToIndex(int rate);
-	int			indexToRefreshRate(int index);
-	
-	XRRScreenConfiguration	*config;
-	
-	int			screen;
-	Window		root;
-	
-	QMemArray<XRRScreenSize>	sizes;
-	Rotation					rotations;
-	
-	int			currentWidth();
-	int			currentHeight();
-	
-	Rotation	originalRotation;
-	SizeID		originalSize;
-	short		originalRefreshRate;
-	
-	Rotation	currentRotation;
-	SizeID		currentSize;
-	short		currentRefreshRate;
 
-	Rotation	proposedRotation;
-	SizeID		proposedSize;
-	short		proposedRefreshRate;
-	
-private:  // much more stuff in this class should be private IMHO
-	KTimerDialog*	shownDialog;
+	bool		proposedChanged() const;
+
+	static QString	rotationName(int rotation, bool pastTense = false, bool capitalised = true);
+	QPixmap	        rotationIcon(int rotation) const;
+	QString			currentRotationDescription() const;
+
+	QStringList refreshRates(SizeID size) const;
+
+	QString		refreshRateDirectDescription(int rate) const;
+	QString		refreshRateDescription(int index) const;
+
+	int			currentRefreshRate() const;
+	QString		currentRefreshRateDescription() const;
+
+	int			proposedRefreshRate() const;
+	// NOTE this is an index, not a refresh rate in hz!
+	void		proposeRefreshRate(int index);
+
+	// Refresh rate hz <==> index conversion
+	int			refreshRateHzToIndex(SizeID size, int hz) const;
+	int			refreshRateIndexToHz(SizeID size, int index) const;
+
+	int						numSizes() const;
+	const XRRScreenSize&	size(int index) const;
+	const Rotation			rotations() const;
+
+	int			currentWidth() const;
+	int			currentHeight() const;
+
+	Rotation	currentRotation() const;
+	SizeID		currentSize() const;
+
+	Rotation	proposedRotation() const;
+	void		proposeRotation(Rotation newRotation);
+
+	SizeID		proposedSize() const;
+	void		proposeSize(SizeID newSize);
+
+
+private:
+	XRRScreenConfiguration	*m_config;
+
+	int			m_screen;
+	Window		m_root;
+
+	QMemArray<XRRScreenSize>	m_sizes;
+	Rotation					m_rotations;
+
+	Rotation	m_originalRotation;
+	SizeID		m_originalSize;
+	int			m_originalRefreshRate;
+
+	Rotation	m_currentRotation;
+	SizeID		m_currentSize;
+	int			m_currentRefreshRate;
+
+	Rotation	m_proposedRotation;
+	SizeID		m_proposedSize;
+	int			m_proposedRefreshRate;
+
+	KTimerDialog*	m_shownDialog;
+
 private slots:
 	void		desktopResized();
 	void		shownDialogDestroyed();
@@ -109,29 +132,32 @@ typedef QPtrList<RandRScreen> ScreenList;
 class RandRDisplay
 {
 public:
-	RandRDisplay(bool requestScreenChangeEvents = false);
+	RandRDisplay();
 	
-	bool	isValid() const { return m_valid; };
-	QString	errorCode() { return m_errorCode; };
+	bool			isValid() const;
+	const QString&	errorCode() const;
+	const QString&	version() const;
 
-	QString	version() { return m_version; };
-	
-	inline int	eventBase() const { return m_eventBase; };
-	inline int	errorBase() const { return m_errorBase; };
-	
-	void	setScreen(int index);
-	int		widgetScreen(QWidget* widget);
-	int		currentScreenIndex() { return m_currentScreenIndex; };
-	
+	int		eventBase() const;
+	int		errorBase() const;
+
+	int		screenIndexOfWidget(QWidget* widget);
+
+	int				numScreens() const;
+	RandRScreen*	screen(int index);
+
+	void			setCurrentScreen(int index);
+	int				currentScreenIndex() const;
+	RandRScreen*	currentScreen();
+
 	void	refresh();
 
-protected:
+private:
 	int				m_numScreens;
 	int				m_currentScreenIndex;
 	RandRScreen*	m_currentScreen;
 	ScreenList		m_screens;
 
-private:
 	bool			m_valid;
 	QString			m_errorCode;
 	QString			m_version;

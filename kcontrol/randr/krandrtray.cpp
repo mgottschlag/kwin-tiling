@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -31,12 +31,12 @@
 
 KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 	: KSystemTray(parent, name)
-	, RandRDisplay(true)
 	, m_popupUp(false)
 {
 	setPixmap(SmallIcon("kscreensaver"));
 	connect(contextMenu(), SIGNAL(activated(int)), SLOT(slotSwitchScreen()));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
+	connect(KApplication::desktop(), SIGNAL(resized()), SLOT(slotConfigChanged()));
 }
 
 void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
@@ -64,9 +64,9 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 		menu->setItemEnabled(lastIndex, false);
 	
 	} else {
-		for (int s = 0; s < m_numScreens; s++) {
-			setScreen(s);
-			if (s == widgetScreen(this)) {
+		for (int s = 0; s < numScreens(); s++) {
+			setCurrentScreen(s);
+			if (s == screenIndexOfWidget(this)) {
 				lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);
 			} else {
@@ -77,22 +77,22 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 			}
 		}
 
-		setScreen(widgetScreen(this));
+		setCurrentScreen(screenIndexOfWidget(this));
 		populateMenu(menu);
 	}
-	
+
 	menu->insertSeparator();
 	KAction *action = actionCollection()->action(KStdAction::name(KStdAction::Quit));
 	action->plug(menu);
 }
 
-void KRandRSystemTray::configChanged()
+void KRandRSystemTray::slotConfigChanged()
 {
 	refresh();
 	
 	KRandrPassivePopup::message(
 	    i18n("Screen configuration has changed"),
-	    m_currentScreen->changedMessage(), SmallIcon("window_fullscreen"),
+	    currentScreen()->changedMessage(), SmallIcon("window_fullscreen"),
 	    this, "ScreenChangeNotification");
 }
 
@@ -103,31 +103,31 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 
 	menu->insertTitle(SmallIcon("window_fullscreen"), i18n("Screen Size"));
 	
-	for (int i = 0; i < (int)m_currentScreen->sizes.count(); i++) {
-		lastIndex = menu->insertItem(i18n("%1 x %2").arg(m_currentScreen->sizes[i].width).arg(m_currentScreen->sizes[i].height));
-		
-		if (m_currentScreen->proposedSize == i) {
+	for (int i = 0; i < (int)currentScreen()->numSizes(); i++) {
+		lastIndex = menu->insertItem(i18n("%1 x %2").arg(currentScreen()->size(i).width).arg(currentScreen()->size(i).height));
+
+		if (currentScreen()->proposedSize() == i) {
 			menu->setItemChecked(lastIndex, true);
 			menu->setItemEnabled(lastIndex, false);
 		}
-		
+
 		menu->setItemParameter(lastIndex, i);
 		menu->connectItem(lastIndex, this, SLOT(slotResolutionChanged(int)));
-		
-		if (m_currentScreen->sizes.count() == 1) menu->setItemEnabled(lastIndex, false);
+
+		if (currentScreen()->numSizes() == 1) menu->setItemEnabled(lastIndex, false);
 	}
-	
+
 	// Don't display the rotation options if there is no point (ie. none are supported)
 	// XFree86 4.3 does not include rotation support.
-	if (m_currentScreen->rotations != RR_Rotate_0) {
+	if (currentScreen()->rotations() != RR_Rotate_0) {
 		menu->insertSeparator();
 		menu->insertTitle(SmallIcon("reload"), i18n("Orientation"));
 
 		for (int i = 0; i < 6; i++) {
-			if ((1 << i) & m_currentScreen->rotations) {
-				lastIndex = menu->insertItem(m_currentScreen->rotationIcon(1 << i), RandRScreen::rotationName(1 << i));
+			if ((1 << i) & currentScreen()->rotations()) {
+				lastIndex = menu->insertItem(currentScreen()->rotationIcon(1 << i), RandRScreen::rotationName(1 << i));
 
-				if (m_currentScreen->proposedRotation & (1 << i)) {
+				if (currentScreen()->proposedRotation() & (1 << i)) {
 					menu->setItemChecked(lastIndex, true);
 					if (i < 4)
 						menu->setItemEnabled(lastIndex, false);
@@ -138,22 +138,22 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 			}
 		}
 	}
-	
+
 	menu->insertSeparator();
 	menu->insertTitle(SmallIcon("clock"), i18n("Refresh Rate"));
-	
-	QStringList rr = m_currentScreen->refreshRates(m_currentScreen->proposedSize);
-	
+
+	QStringList rr = currentScreen()->refreshRates(currentScreen()->proposedSize());
+
 	int i = 0;
 	for (QStringList::Iterator it = rr.begin(); it != rr.end(); it++, i++) {
 		lastIndex = menu->insertItem(*it);
-		
-		if (m_currentScreen->proposedRefreshRate == m_currentScreen->indexToRefreshRate(i)) {
+
+		if (currentScreen()->proposedRefreshRate() == i) {
 			menu->setItemChecked(lastIndex, true);
 			menu->setItemEnabled(lastIndex, false);
 		}
-		
-		menu->setItemParameter(lastIndex, m_currentScreen->indexToRefreshRate(i));
+
+		menu->setItemParameter(lastIndex, i);
 		menu->connectItem(lastIndex, this, SLOT(slotRefreshRateChanged(int)));
 	}
 
@@ -164,37 +164,37 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 void KRandRSystemTray::slotSwitchScreen()
 {
 	if (sender() == contextMenu()) return;
-	
+
 	for (int i = 0; i < (int)contextMenu()->count(); i++) {
 		kdDebug() << contextMenu()->find(contextMenu()->idAt(i)) << endl;
 		if (sender() == contextMenu()->find(contextMenu()->idAt(i))) {
-			setScreen(i);
+			setCurrentScreen(i);
 			return;
 		}
 	}
-	
+
 	Q_ASSERT(false);
 }
 
 void KRandRSystemTray::slotResolutionChanged(int parameter)
 {
-	m_currentScreen->proposedSize = parameter;
-	
-	m_currentScreen->proposedRefreshRate = m_currentScreen->indexToRefreshRate(0);
-	
-	m_currentScreen->applyProposedAndConfirm();
+	currentScreen()->proposeSize(parameter);
+
+	currentScreen()->proposeRefreshRate(0);
+
+	currentScreen()->applyProposedAndConfirm();
 }
 
 void KRandRSystemTray::slotOrientationChanged(int parameter)
 {
-	m_currentScreen->proposedRotation ^= parameter;
-	
-	m_currentScreen->applyProposedAndConfirm();
+	currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ parameter);
+
+	currentScreen()->applyProposedAndConfirm();
 }
 
 void KRandRSystemTray::slotRefreshRateChanged(int parameter)
 {
-	m_currentScreen->proposedRefreshRate = parameter;
-	
-	m_currentScreen->applyProposedAndConfirm();
+	currentScreen()->proposeRefreshRate(parameter);
+
+	currentScreen()->applyProposedAndConfirm();
 }

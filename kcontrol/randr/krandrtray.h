@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -32,10 +32,9 @@ public:
 
 	virtual void mousePressEvent(QMouseEvent* e);
 	virtual void contextMenuAboutToShow(KPopupMenu* menu);
-	
-	void configChanged();
 
 protected slots:
+	void slotConfigChanged();
 	void slotSwitchScreen();
 	void slotResolutionChanged(int parameter);
 	void slotOrientationChanged(int parameter);

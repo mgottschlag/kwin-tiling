@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -57,15 +57,15 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	new QLabel(i18n("Settings for screen:"), screenBox);
 	m_screenSelector = new KComboBox(screenBox);
 
-	for (int s = 0; s < m_numScreens; s++) {
+	for (int s = 0; s < numScreens(); s++) {
 		m_screenSelector->insertItem(i18n("Screen %1").arg(s+1));
 	}
 
-	m_screenSelector->setCurrentItem(m_currentScreenIndex);
+	m_screenSelector->setCurrentItem(currentScreenIndex());
 
 	connect(m_screenSelector, SIGNAL(activated(int)), SLOT(slotScreenChanged(int)));
-	
-	if (m_screens.count() <= 1)
+
+	if (numScreens() <= 1)
 		m_screenSelector->setEnabled(false);
 	
 	QHBox* sizeBox = new QHBox(this);
@@ -93,11 +93,11 @@ void KRandRModule::addRotationButton(int thisRotation, bool checkbox)
 	Q_ASSERT(m_rotationGroup);
 	if (!checkbox) {
 		QRadioButton* thisButton = new QRadioButton(RandRScreen::rotationName(thisRotation), m_rotationGroup);
-		thisButton->setEnabled(thisRotation & m_currentScreen->rotations);
+		thisButton->setEnabled(thisRotation & currentScreen()->rotations());
 		connect(thisButton, SIGNAL(clicked()), SLOT(slotRotationChanged()));
 	} else {
 		QCheckBox* thisButton = new QCheckBox(RandRScreen::rotationName(thisRotation), m_rotationGroup);
-		thisButton->setEnabled(thisRotation & m_currentScreen->rotations);
+		thisButton->setEnabled(thisRotation & currentScreen()->rotations());
 		connect(thisButton, SIGNAL(clicked()), SLOT(slotRotationChanged()));
 	}
 }
@@ -109,14 +109,18 @@ void KRandRModule::load()
 
 void KRandRModule::slotScreenChanged(int screen)
 {
-	setScreen(screen);
+	setCurrentScreen(screen);
 
 	// Clear resolutions
 	m_sizeCombo->clear();
 	
 	// Add new resolutions
-	for (int i = 0; i < (int)m_currentScreen->sizes.count(); i++) {
-		m_sizeCombo->insertItem(i18n("%1 x %2 (%3mm x %4mm)").arg(m_currentScreen->sizes[i].width).arg(m_currentScreen->sizes[i].height).arg(m_currentScreen->sizes[i].mwidth).arg(m_currentScreen->sizes[i].mheight));
+	for (int i = 0; i < currentScreen()->numSizes(); i++) {
+		m_sizeCombo->insertItem(i18n("%1 x %2 (%3mm x %4mm)").arg(currentScreen()->size(i).width).arg(currentScreen()->size(i).height).arg(currentScreen()->size(i).mwidth).arg(currentScreen()->size(i).mheight));
+
+		// Aspect ratio
+		/* , aspect ratio %5)*/
+		/*.arg((double)currentScreen()->size(i).mwidth / (double)currentScreen()->size(i).mheight))*/
 	}
 
 	// Clear rotations
@@ -138,45 +142,45 @@ void KRandRModule::slotScreenChanged(int screen)
 void KRandRModule::slotRotationChanged()
 {
 	if (m_rotationGroup->find(0)->isOn())
-		m_currentScreen->proposedRotation = RR_Rotate_0;
+		currentScreen()->proposeRotation(RR_Rotate_0);
 	else if (m_rotationGroup->find(1)->isOn())
-		m_currentScreen->proposedRotation = RR_Rotate_90;
+		currentScreen()->proposeRotation(RR_Rotate_90);
 	else if (m_rotationGroup->find(2)->isOn())
-		m_currentScreen->proposedRotation = RR_Rotate_180;
+		currentScreen()->proposeRotation(RR_Rotate_180);
 	else {
 		Q_ASSERT(m_rotationGroup->find(3)->isOn());
-		m_currentScreen->proposedRotation = RR_Rotate_270;
+		currentScreen()->proposeRotation(RR_Rotate_270);
 	}
-	
+
 	if (m_rotationGroup->find(4)->isOn())
-		m_currentScreen->proposedRotation |= RR_Reflect_X;
-	
+		currentScreen()->proposeRotation(RR_Reflect_X);
+
 	if (m_rotationGroup->find(5)->isOn())
-		m_currentScreen->proposedRotation |= RR_Reflect_Y;
-	
+		currentScreen()->proposeRotation(RR_Reflect_Y);
+
 	setChanged();
 }
 
 void KRandRModule::slotSizeChanged(int index)
 {
-	int oldProposed = m_currentScreen->proposedSize;
-	
-	m_currentScreen->proposedSize = static_cast<SizeID>(index);
-	
-	if (m_currentScreen->proposedSize != oldProposed) {
-		m_currentScreen->proposedRefreshRate = m_currentScreen->indexToRefreshRate(0);
-	
+	int oldProposed = currentScreen()->proposedSize();
+
+	currentScreen()->proposeSize(static_cast<SizeID>(index));
+
+	if (currentScreen()->proposedSize() != oldProposed) {
+		currentScreen()->proposeRefreshRate(0);
+
 		populateRefreshRates();
-		
+
 		// Item with index zero is already selected
 	}
-	
+
 	setChanged();
 }
 
 void KRandRModule::slotRefreshChanged(int index)
 {
-	m_currentScreen->proposeRefreshRate(index);
+	currentScreen()->proposeRefreshRate(index);
 
 	setChanged();
 }
@@ -185,7 +189,7 @@ void KRandRModule::populateRefreshRates()
 {
 	m_refreshRates->clear();
 	
-	QStringList rr = m_currentScreen->refreshRates(m_currentScreen->proposedSize);
+	QStringList rr = currentScreen()->refreshRates(currentScreen()->proposedSize());
 	
 	for (QStringList::Iterator it = rr.begin(); it != rr.end(); it++) {
 		m_refreshRates->insertItem(*it);
@@ -200,11 +204,11 @@ void KRandRModule::populateRefreshRates()
 
 void KRandRModule::defaults()
 {
-	if (m_currentScreen->changedFromOriginal()) {
-		m_currentScreen->proposeOriginal();
-		m_currentScreen->applyProposed();
+	if (currentScreen()->changedFromOriginal()) {
+		currentScreen()->proposeOriginal();
+		currentScreen()->applyProposed();
 	} else {
-		m_currentScreen->proposeOriginal();
+		currentScreen()->proposeOriginal();
 	}
 	
 	update();
@@ -220,8 +224,8 @@ void KRandRModule::setChanged()
 {
 	bool isChanged = false;
 	
-	for (RandRScreen* screen = m_screens.first(); screen; screen = m_screens.next()) {
-		if (screen->proposedChanged()) {
+	for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
+		if (screen(screenIndex)->proposedChanged()) {
 			isChanged = true;
 			break;
 		}
@@ -236,12 +240,12 @@ void KRandRModule::setChanged()
 void KRandRModule::apply()
 {
 	if (m_changed) {
-		for (RandRScreen* screen = m_screens.first(); screen; screen = m_screens.next()) {
-			if (screen->proposedChanged()) {
-				screen->applyProposedAndConfirm();
+		for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
+			if (screen(screenIndex)->proposedChanged()) {
+				screen(screenIndex)->applyProposedAndConfirm();
 			}
 		}
-		
+
 		update();
 	}
 }
@@ -250,11 +254,11 @@ void KRandRModule::apply()
 void KRandRModule::update()
 {
 	m_sizeCombo->blockSignals(true);
-	m_sizeCombo->setCurrentItem(m_currentScreen->proposedSize);
+	m_sizeCombo->setCurrentItem(currentScreen()->proposedSize());
 	m_sizeCombo->blockSignals(false);
 
 	m_rotationGroup->blockSignals(true);
-	switch (m_currentScreen->proposedRotation & 15) {
+	switch (currentScreen()->proposedRotation() & 15) {
 		case RR_Rotate_0:
 			m_rotationGroup->setButton(0);
 			break;
@@ -269,14 +273,14 @@ void KRandRModule::update()
 			break;
 		default:
 			// Shouldn't hit this one
-			Q_ASSERT(m_currentScreen->proposedRotation & 15);
+			Q_ASSERT(currentScreen()->proposedRotation() & 15);
 			break;
 	}
-	m_rotationGroup->find(4)->setDown(m_currentScreen->proposedRotation & RR_Reflect_X);
-	m_rotationGroup->find(5)->setDown(m_currentScreen->proposedRotation & RR_Reflect_Y);
+	m_rotationGroup->find(4)->setDown(currentScreen()->proposedRotation() & RR_Reflect_X);
+	m_rotationGroup->find(5)->setDown(currentScreen()->proposedRotation() & RR_Reflect_Y);
 	m_rotationGroup->blockSignals(false);
-	
+
 	m_refreshRates->blockSignals(true);
-	m_refreshRates->setCurrentItem(m_currentScreen->refreshRateToIndex(m_currentScreen->proposedRefreshRate));
+	m_refreshRates->setCurrentItem(currentScreen()->proposedRefreshRate());
 	m_refreshRates->blockSignals(false);
 }

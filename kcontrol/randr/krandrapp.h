@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,6 @@ class KRandRApp : public KApplication
 
 public:
 	KRandRApp();
-	
-	virtual bool x11EventFilter(XEvent * e);
 
 private:
 	KRandRSystemTray*	m_tray;
