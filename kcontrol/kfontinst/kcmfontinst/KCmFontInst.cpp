@@ -46,21 +46,17 @@
 #include <kcmdlineargs.h>
 #include <kurllabel.h>
 #include <kapplication.h>
+#include <klibloader.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
 #include <kdirlister.h>
-#ifdef HAVE_FT_CACHE
 #include <qsplitter.h>
-#include <knuminput.h>
-#include "FontPreview.cpp"
-#endif
 
-#define CFG_GROUP       "Main Settings"
-#define CFG_LISTVIEW    "ListView"
-#define CFG_PATH        "Path"
-#define CFG_DIRSIZE     "DirSize"
-#define CFG_PREVIEWSIZE "PreviewSize"
-#define CFG_SIZE        "Size"
+#define CFG_GROUP          "Main Settings"
+#define CFG_LISTVIEW       "ListView"
+#define CFG_PATH           "Path"
+#define CFG_SPLITTER_SIZES "SplitterSizes"
+#define CFG_SIZE           "Size"
 
 //
 // Remove any fonts:/ status information added to name
@@ -72,46 +68,65 @@ static QString formatName(const QString &name)
 }
 
 typedef KGenericFactory<CKCmFontInst, QWidget> FontInstallFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory)
+K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory("kcmfontinst"))
 
 CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
             : KCModule(parent, "kfontinst"),
               itsAboutData(NULL),
               itsTop(CMisc::root() ? "fonts:/" : QString("fonts:/")+i18n(KIO_FONTS_USER)),
-              itsConfig("kcmfontinstuirc")
+              itsPreview(NULL),
+              itsConfig(CGlobal::uiCfgFile())
 {
     KGlobal::locale()->insertCatalogue("kfontinst");
 
-    KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
-    const char        *appName=KCmdLineArgs::appName();
+    const char *appName=KCmdLineArgs::appName();
 
-    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName) && KCmdLineArgs::parsedArgs()->isSet("embed"));
-    itsKCmshell=!itsEmbeddedAdmin && NULL!=appName && 0==strcmp("kcmshell", appName) && !KCmdLineArgs::parsedArgs()->isSet("embed");
+    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName) && 
+                     KCmdLineArgs::parsedArgs()->isSet("embed"));
+    itsKCmshell=!itsEmbeddedAdmin && NULL!=appName && 0==strcmp("kcmshell", appName) &&
+                !KCmdLineArgs::parsedArgs()->isSet("embed");
 
     itsStatusLabel = new QLabel(this);
     itsStatusLabel->setFrameShape(QFrame::Panel);
     itsStatusLabel->setFrameShadow(QFrame::Sunken);
     itsStatusLabel->setLineWidth(1);
 
-#ifdef HAVE_FT_CACHE
-    itsSplitter=new QSplitter(this);
+    itsConfig.setGroup(CFG_GROUP);
 
-    QFrame            *fontsFrame=new QFrame(itsSplitter),
-                      *previewFrame=new QFrame(itsSplitter);
-    QGridLayout       *previewLayout=new QGridLayout(previewFrame, 2, 2, 1, 1);
-#else
-    QFrame            *fontsFrame=new QFrame(this);
-#endif
-    QFrame            *urlFrame=new QFrame(this);
-    QGridLayout       *fontsLayout=new QGridLayout(fontsFrame, 1, 1, 0, 1);
-    QHBoxLayout       *urlLayout=new QHBoxLayout(urlFrame, 1);
-    QVBoxLayout       *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
-    KToolBar          *toolbar=new KToolBar(this);
+    KLibFactory *factory=KLibLoader::self()->factory("libkfontviewpart");
+    QFrame      *fontsFrame,
+                *urlFrame=new QFrame(this);
+
+    if(factory)
+    {
+        itsSplitter=new QSplitter(this);
+        fontsFrame=new QFrame(itsSplitter),
+        itsPreview=(KParts::ReadOnlyPart *)factory->create(itsSplitter, "kcmfontinst", "KParts::ReadOnlyPart");
+        itsSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+        QValueList<int> sizes(itsConfig.readIntListEntry(CFG_SPLITTER_SIZES));
+
+        if(2!=sizes.count())
+        {
+            sizes.clear();
+            sizes+=250;
+            sizes+=150;
+        }
+        itsSplitter->setSizes(sizes);
+    }
+    else
+    {
+        fontsFrame=new QFrame(this);
+        fontsFrame->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+        urlFrame->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed));
+    }
+
+    QGridLayout *fontsLayout=new QGridLayout(fontsFrame, 1, 1, 0, 1);
+    QHBoxLayout *urlLayout=new QHBoxLayout(urlFrame, 1);
+    QVBoxLayout *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
+    KToolBar    *toolbar=new KToolBar(this);
 
     fontsFrame->setLineWidth(0);
-#ifdef HAVE_FT_CACHE
-    previewFrame->setFrameStyle(QFrame::StyledPanel|QFrame::Sunken);
-#endif
     urlFrame->setFrameShadow(QFrame::Sunken);
     urlFrame->setFrameShape(QFrame::StyledPanel);
     urlFrame->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
@@ -124,15 +139,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     urlLayout->addItem(new QSpacerItem(4, 4));
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     toolbar->setMovingEnabled(false);
-#ifdef HAVE_FT_CACHE
-    itsSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-
-    QValueList<int> sizes;
-
-    sizes.append(itsConfig.readNumEntry(CFG_DIRSIZE, 3));
-    sizes.append(itsConfig.readNumEntry(CFG_PREVIEWSIZE, 2));
-    itsSplitter->setSizes(sizes);
-#endif
 
     QString previousPath=itsConfig.readEntry(CFG_PATH);
     KURL    url(itsTop);
@@ -167,31 +173,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     itsDirOp->dirLister()->setMainWindow(this);
     fontsLayout->addWidget(itsDirOp, 0, 0);
 
-#ifdef HAVE_FT_CACHE
-    itsPreview = new CFontPreview(previewFrame);
-    itsPreview->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0,
-                              itsPreview->sizePolicy().hasHeightForWidth()));
-    itsPreview->setMinimumSize(QSize(96, 64));
-    itsFaceLabel=new QLabel(i18n(" Face:"), previewFrame);
-    itsFaceSelector=new KIntNumInput(1, previewFrame);
-    itsFaceLabel->hide();
-    itsFaceSelector->hide();
-    previewLayout->addMultiCellWidget(itsPreview, 0, 0, 0, 1);
-    previewLayout->addWidget(itsFaceLabel, 1, 0);
-    previewLayout->addWidget(itsFaceSelector, 1, 1);
-#else
-    fontsFrame->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0,
-                              fontsFrame->sizePolicy().hasHeightForWidth()));
-    urlFrame->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed));
-#endif
-
     layout->addWidget(toolbar);
     layout->addWidget(urlFrame);
-#ifdef HAVE_FT_CACHE
-    layout->addWidget(itsSplitter);
-#else
-    layout->addWidget(fontsFrame);
-#endif
+    layout->addWidget(itsPreview ? itsSplitter : fontsFrame);
     layout->addWidget(itsStatusLabel);
 
     setButtons(0);
@@ -294,7 +278,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     itsEnableAct->setEnabled(false);
     itsEnableAct->plug(toolbar);
     topMnu->insert(itsEnableAct);
-    itsDisableAct=new KAction(i18n("Disable"), "button_cancel", 0, this, SLOT(disable()), itsDirOp->actionCollection(), "disable");
+    itsDisableAct=new KAction(i18n("Disable"), "button_cancel", 0, this, SLOT(disable()), itsDirOp->actionCollection(),
+                              "disable");
     itsDisableAct->setEnabled(false);
     itsDisableAct->plug(toolbar);
     topMnu->insert(itsDisableAct);
@@ -309,6 +294,27 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         //disconnect(itsViewMenuAct->popupMenu(), SIGNAL(aboutToShow()), itsDirOp, SLOT(insertViewDependentActions()));
         connect(itsViewMenuAct->popupMenu(), SIGNAL(aboutToShow()), SLOT(setupViewMenu()));
         setupViewMenu();
+    }
+
+    if(itsPreview)
+    {
+        KActionCollection *previewCol=itsPreview->actionCollection();
+
+        if(previewCol && previewCol->count()>0)
+        {
+            toolbar->insertLineSeparator();
+
+            if((act=previewCol->action("zoomIn")))
+                act->plug(toolbar);
+            if((act=previewCol->action("zoomOut")))
+                act->plug(toolbar);
+            if((act=previewCol->action("changeText")))
+                act->plug(toolbar);
+
+            // For some reason the following always put zoomOut, zoomIn, changeText hmmm :-(
+            //for(unsigned int i=0; i<previewCol->count(); ++i)
+            //    previewCol->action(i)->plug(toolbar);
+        }
     }
 
     setUpAct();
@@ -332,9 +338,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     connect(itsDirOp, SIGNAL(dropped(const KFileItem *, QDropEvent *, const KURL::List &)),
                       SLOT(dropped(const KFileItem *, QDropEvent *, const KURL::List &)));
     connect(itsLabel, SIGNAL(leftClickedURL(const QString &)), SLOT(openUrlInBrowser(const QString &)));
-#ifdef HAVE_FT_CACHE
-    connect(itsFaceSelector, SIGNAL(valueChanged(int)), SLOT(showFace(int)));
-#endif
     connect(itsDirOp->dirLister(), SIGNAL(infoMessage(const QString &)), SLOT(infoMessage(const QString &)));
     connect(itsDirOp, SIGNAL(updateInformation(int, int)), SLOT(updateInformation(int, int)));
 
@@ -348,18 +351,13 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
 CKCmFontInst::~CKCmFontInst()
 {
-#ifdef HAVE_FT_CACHE
-    KConfigGroupSaver         cfgSaver(&itsConfig, CFG_GROUP);
-    QValueList<int>           list=itsSplitter->sizes();
-    QValueList<int>::Iterator it;
-    int                       num;
-
-    for(it=list.begin(), num=0; it!=list.end() && num<2; ++it, num++)
-        itsConfig.writeEntry(0==num ? CFG_DIRSIZE : CFG_PREVIEWSIZE, *it);
-
-    if(itsKCmshell)
-        itsConfig.writeEntry(CFG_SIZE, size());
-#endif
+    if(itsPreview)
+    {
+        itsConfig.setGroup(CFG_GROUP);
+        itsConfig.writeEntry(CFG_SPLITTER_SIZES, itsSplitter->sizes());
+        if(itsKCmshell)
+            itsConfig.writeEntry(CFG_SIZE, size());
+    }
     if(itsAboutData)
         delete itsAboutData;
     delete itsDirOp;
@@ -436,7 +434,7 @@ void CKCmFontInst::listView()
 
     itsDirOp->setView(newView);
     itsListAct->setChecked(true);
-    KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
+    itsConfig.setGroup(CFG_GROUP);
     itsConfig.writeEntry(CFG_LISTVIEW, true);
     if(itsEmbeddedAdmin)
         itsConfig.sync();
@@ -449,7 +447,7 @@ void CKCmFontInst::iconView()
 
     itsDirOp->setView(newView);
     itsIconAct->setChecked(true);
-    KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
+    itsConfig.setGroup(CFG_GROUP);
     itsConfig.writeEntry(CFG_LISTVIEW, false);
     if(itsEmbeddedAdmin)
         itsConfig.sync();
@@ -487,8 +485,7 @@ static QString createLocationLabel(const KURL &url)
 
 void CKCmFontInst::urlEntered(const KURL &url)
 {
-    KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
-
+    itsConfig.setGroup(CFG_GROUP);
     itsConfig.writeEntry(CFG_PATH, url.path());
 
     itsEnableAct->setEnabled(false);
@@ -540,40 +537,19 @@ void CKCmFontInst::fileHighlighted(const KFileItem *item)
         itsDisableAct->setEnabled(false);
     }
 
-#ifdef HAVE_FT_CACHE
-    //
-    // Generate preview...
-    const KFileItem *previewItem=item 
-                                   ? item 
-                                   : list && 1==list->count() 
-                                         ? list->getFirst() 
-                                         : NULL;
-
-    if(previewItem && list && list->contains(previewItem))  // OK, check its been selected - not deselected!!!
+    if(itsPreview)
     {
-        CFontEngine::EType type=CFontEngine::getType(QFile::encodeName(previewItem->url().path()));
+        //
+        // Generate preview...
+        const KFileItem *previewItem=item 
+                                       ? item 
+                                       : list && 1==list->count() 
+                                             ? list->getFirst() 
+                                             : NULL;
 
-        if(CFontEngine::isAFont(type))
-        {
-            bool showFs=false;
-
-            if(CFontEngine::TT_COLLECTION==type && CGlobal::fe().openFont(previewItem->url(), CFontEngine::TEST, true))
-            {
-                if(CGlobal::fe().getNumFaces()>1)
-                {
-                    itsFaceSelector->setRange(1, CGlobal::fe().getNumFaces(), 1, false);
-                    showFs=true;
-                }
-
-                CGlobal::fe().closeFont();
-            }
-
-            itsFaceLabel->setShown(showFs);
-            itsFaceSelector->setShown(showFs);
-            itsPreview->showFont(previewItem->url());
-        }
+        if(previewItem && list && list->contains(previewItem))  // OK, check its been selected - not deselected!!!
+            itsPreview->openURL(previewItem->url());
     }
-#endif
 }
 
 void CKCmFontInst::loadingFinished()
@@ -594,8 +570,9 @@ void CKCmFontInst::loadingFinished()
 
 void CKCmFontInst::addFonts()
 {
-    KURL::List list=KFileDialog::getOpenURLs(QString::null, "application/x-font-ttf application/x-font-otf application/x-font-ttc "
-                                                            "application/x-font-type1 application/x-font-bdf application/x-font-pcf "
+    KURL::List list=KFileDialog::getOpenURLs(QString::null, "application/x-font-ttf application/x-font-otf "
+                                                            "application/x-font-ttc application/x-font-type1 "
+                                                            "application/x-font-bdf application/x-font-pcf "
                                                             "application/x-font-snf application/x-font-speedo",
                                              this, i18n("Add Fonts"));
 
@@ -634,7 +611,8 @@ void CKCmFontInst::removeFonts()
             break;
             default:
                 doIt = KMessageBox::Continue==KMessageBox::warningContinueCancelList(this,
-                           i18n("translators: not called for n == 1", "Do you really want to delete these %n items?", files.count()),
+                           i18n("translators: not called for n == 1", "Do you really want to delete these %n items?",
+                                files.count()),
                            files,
                            i18n("Delete Items"),
                            i18n("Delete"),
@@ -711,17 +689,6 @@ void CKCmFontInst::openUrlInBrowser(const QString &url)
     }
 }
 
-#ifdef HAVE_FT_CACHE
-void CKCmFontInst::showFace(int face)
-{
-    itsPreview->showFace(face);
-}
-#else
-void CKCmFontInst::showFace(int)
-{
-}
-#endif
-
 void CKCmFontInst::infoMessage(const QString &msg)
 {
     itsStatusLabel->setText(msg);
@@ -761,7 +728,8 @@ void CKCmFontInst::jobResult(KIO::Job *job)
     if(job && 0==job->error())
     {
         itsDirOp->dirLister()->updateDirectory(itsDirOp->url());
-        KMessageBox::information(this, i18n("Please note that any open applications will need to be restarted in order for any changes to be noticed."),
+        KMessageBox::information(this, i18n("Please note that any open applications will need to be restarted in order "
+                                            "for any changes to be noticed."),
                                  i18n("Success"), "KFontinst_WarnAboutFontChangesAndOpenApps");
     }
 }
@@ -781,7 +749,8 @@ void CKCmFontInst::enableItems(bool enable)
 
     if (items->isEmpty())
         KMessageBox::information(this,
-                                enable ? i18n("You didn't select anything to enable.") : i18n("You didn't select anything to disable."),
+                                enable ? i18n("You didn't select anything to enable.") 
+                                       : i18n("You didn't select anything to disable."),
                                 enable ? i18n("Nothing to enable") : i18n("Nothing to disable"));
     else
     {
@@ -816,8 +785,10 @@ void CKCmFontInst::enableItems(bool enable)
             break;
         default:
             doIt = KMessageBox::Continue==KMessageBox::warningContinueCancelList(this,
-                       enable ? i18n("translators: not called for n == 1", "Do you really want to enable these %n items?", files.count())
-                              : i18n("translators: not called for n == 1", "Do you really want to disable these %n items?", files.count()),
+                       enable ? i18n("translators: not called for n == 1", "Do you really want to enable these %n items?",
+                                     files.count())
+                              : i18n("translators: not called for n == 1", "Do you really want to disable these %n items?",
+                                     files.count()),
                        files,
                        enable ? i18n("Enable Items") : i18n("Disable Items"),
                        enable ? i18n("Enable") : i18n("Disable"),
@@ -878,7 +849,8 @@ void CKCmFontInst::addFonts(const KURL::List &src, const KURL &dest)
                 KIO::UDSEntry uds;
 
                 afmUrl.setPath(afm);
-                if(KIO::NetAccess::stat(afmUrl, uds, this) && !KIO::NetAccess::stat(destUrl, uds, this) && -1==copy.findIndex(afmUrl))
+                if(KIO::NetAccess::stat(afmUrl, uds, this) && !KIO::NetAccess::stat(destUrl, uds, this) &&
+                   -1==copy.findIndex(afmUrl))
                     copy+=afmUrl;
             }
 

@@ -38,6 +38,7 @@
 #include <kurl.h>
 #include <kconfig.h>
 #include <kio/job.h>
+#include <kparts/part.h>
 
 class KDirOperator;
 class KAction;
@@ -45,11 +46,7 @@ class KRadioAction;
 class KActionMenu;
 class KFileItem;
 class QLabel;
-#ifdef HAVE_FT_CACHE
-class KIntNumInput;
-class CFontPreview;
 class QSplitter;
-#endif
 class KURLLabel;
 class QDropEvent;
 class KFileItem;
@@ -87,7 +84,6 @@ class CKCmFontInst : public KCModule
     void    disable();
     void    dropped(const KFileItem *i, QDropEvent *e, const KURL::List &urls);
     void    openUrlInBrowser(const QString &url);
-    void    showFace(int face);
     void    infoMessage(const QString &msg);
     void    updateInformation(int dirs, int fonts);
     void    jobResult(KIO::Job *job);
@@ -100,31 +96,26 @@ class CKCmFontInst : public KCModule
 
     private:
 
-    KAboutData   *itsAboutData;
-    KDirOperator *itsDirOp;
-    KURL         itsTop;
-    KAction      *itsUpAct,
-                 *itsSepDirsAct,
-                 *itsShowHiddenAct,
-                 *itsDeleteAct,
-                 *itsEnableAct,
-                 *itsDisableAct;
-    KRadioAction *itsListAct,
-                 *itsIconAct;
-    KActionMenu  *itsViewMenuAct;
-    KURLLabel    *itsLabel;
-#ifdef HAVE_FT_CACHE
-    CFontPreview *itsPreview;
-    QSplitter    *itsSplitter;
-    QLabel       *itsFaceLabel;
-    KIntNumInput *itsFaceSelector;
-#endif
-    KConfig      itsConfig;
-    bool         itsEmbeddedAdmin,
-                 itsKCmshell;
-    QLabel       *itsStatusLabel;
-    QSize        itsSizeHint;
-
+    KAboutData           *itsAboutData;
+    KDirOperator         *itsDirOp;
+    KURL                 itsTop;
+    KAction              *itsUpAct,
+                         *itsSepDirsAct,
+                         *itsShowHiddenAct,
+                         *itsDeleteAct,
+                         *itsEnableAct,
+                         *itsDisableAct;
+    KRadioAction         *itsListAct,
+                         *itsIconAct;
+    KActionMenu          *itsViewMenuAct;
+    KURLLabel            *itsLabel;
+    KParts::ReadOnlyPart *itsPreview;
+    QSplitter            *itsSplitter;
+    KConfig              itsConfig;
+    bool                 itsEmbeddedAdmin,
+                         itsKCmshell;
+    QLabel               *itsStatusLabel;
+    QSize                itsSizeHint;
 };
 
 #endif
