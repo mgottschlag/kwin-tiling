@@ -32,7 +32,6 @@
 #include <qwhatsthis.h>
 
 #include <kapp.h>
-#include <dcopclient.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -271,21 +270,6 @@ void KLocaleConfig::save()
   config->writeEntry(QString::fromLatin1("Charset"), comboChset->currentTag(), true, true);
 
   config->sync();
-
-  // Tell kdesktop about the new language
-  QCString replyType; QByteArray replyData;
-  QByteArray data;
-  QDataStream stream( data, IO_WriteOnly );
-  stream << comboLang->currentTag();
-  if ( !kapp->dcopClient()->isAttached() )
-    kapp->dcopClient()->attach();
-  kdDebug() << "KLocaleConfig::save : sending signal to kdesktop" << endl;
-  // call, not send, so that we know it's done before coming back
-  // (we both access kdeglobals...)
-  kapp->dcopClient()->call( "kdesktop", "KDesktopIface", "languageChanged(QString)", data, replyType, replyData );
-  // kdesktop has changed the path to the trash, so we need to reparse
-  // to avoid overriding the changes
-  config->reparseConfiguration();
 }
 
 void KLocaleConfig::defaults()
