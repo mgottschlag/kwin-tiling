@@ -22,92 +22,61 @@
 
 //-----------------------------------------------------------------------------
 
-// Define some constants to make additions easier (David)
-#define ROW_HGRID 1
-#define ROW_VGRID 3
-#define ROW_TRANSPARENT 4
-#define ROW_ICON_FG 5
-#define ROW_ICON_BG 7
-#define ROW_SHOWHIDDEN 8
-
 KRootOptions::KRootOptions( QWidget *parent, const char *name )
     : KConfigWidget( parent, name )
 {
-        QGridLayout *lay = new QGridLayout(this,10 /*rows*/,5 /*cols*/,
-                                           10 /*border*/,5 /*autoborder*/);
-        lay->addRowSpacing(0,15);
-        lay->addRowSpacing(1,30); // HGRID
-        lay->addRowSpacing(2, 5);
-        lay->addRowSpacing(3,30); // VGRID
-        lay->addRowSpacing(4,30); // TRANSPARENT
-        lay->addRowSpacing(5,30); // ICON_FG
-        lay->addRowSpacing(6, 5);
-        lay->addRowSpacing(7,30); // ICON_BG
-        lay->addRowSpacing(8,30); // SHOWHIDDEN
-        lay->addRowSpacing(9,10);
+  QGridLayout *lay = new QGridLayout(this, 9, 2, 10);
+  
+  QLabel *label;
+  label = new QLabel( i18n("Horizontal Root Grid Spacing:"), this );
+  lay->addWidget(label, 0, 0, AlignLeft);
+  
+  hspin  = new QSpinBox(0, DEFAULT_GRID_MAX - DEFAULT_GRID_MIN, 1, this);
+  lay->addWidget(hspin, 0, 1, AlignLeft);
+ 
+  label = new QLabel( i18n("Vertical Root Grid Spacing:"), this );
+  lay->addWidget(label, 1, 0);
+  
+  vspin  = new QSpinBox(0, DEFAULT_GRID_MAX - DEFAULT_GRID_MIN, 1, this);
+  lay->addWidget(vspin, 1, 1, AlignLeft);
 
-        lay->addColSpacing(0,10);
-        lay->addColSpacing(2,10);
-        lay->addColSpacing(3,80);
-        lay->addColSpacing(4,35); //sven: colorbuttons are big
- 
-        lay->setRowStretch(0,0);
-        lay->setRowStretch(1,0); // HGRID
-        lay->setRowStretch(2,1);
-        lay->setRowStretch(3,0); // VGRID
-        lay->setRowStretch(4,1); // TRANSPARENT
-        lay->setRowStretch(5,0); // ICON_FG
-        lay->setRowStretch(6,1);
-        lay->setRowStretch(7,0); // ICON_BG
-        lay->setRowStretch(8,1); // SHOWHIDDEN
-        lay->setRowStretch(9,0);
+  QFrame *hLine = new QFrame(this);
+  hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
+  lay->addMultiCellWidget(hLine, 2, 2, 0, 1);
+  
+  iconstylebox = new QCheckBox(i18n("&Transparent Text for Desktop Icons."),
+			       this);
+  lay->addMultiCellWidget(iconstylebox,3, 3, 0, 1);
+  
+  connect(iconstylebox,SIGNAL(toggled(bool)),this,SLOT(makeBgActive(bool)));
+  
+  label = new QLabel(i18n("Icon foreground color:"),this);
+  lay->addWidget(label, 4, 0, AlignLeft);
+  
+  fgColorBtn = new KColorButton(icon_fg,this);
+  lay->addWidget(fgColorBtn, 4, 1, AlignLeft);
+  connect( fgColorBtn, SIGNAL( changed( const QColor & ) ),
+	   SLOT( slotIconFgColorChanged( const QColor & ) ) );
+  
+  bgLabel = new QLabel(i18n("Icon background color:"),this);
+  lay->addWidget(bgLabel, 5, 0, AlignLeft);
+  
+  bgColorBtn = new KColorButton(icon_bg,this);
+  lay->addWidget(bgColorBtn, 5, 1, AlignLeft);
+  connect( bgColorBtn, SIGNAL( changed( const QColor & ) ),
+	   SLOT( slotIconBgColorChanged( const QColor & ) ) );
+  
+  hLine = new QFrame(this);
+  hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
+  lay->addMultiCellWidget(hLine, 6, 6, 0, 1);
 
-        lay->setColStretch(0,0);
-        lay->setColStretch(1,0);
-        lay->setColStretch(2,1);
-        lay->setColStretch(3,0);
-        lay->setColStretch(4,1);
- 
-        QLabel *label;
-        label = new QLabel( i18n("Horizontal Root Grid Spacing:"), this );
-        lay->addWidget(label,ROW_HGRID,1);
- 
-        hspin  = new QSpinBox(0, DEFAULT_GRID_MAX - DEFAULT_GRID_MIN, 1, this);
-        lay->addWidget(hspin,ROW_HGRID,3);
- 
-        label = new QLabel( i18n("Vertical Root Grid Spacing:"), this );
-        lay->addWidget(label,ROW_VGRID,1);
- 
-        vspin  = new QSpinBox(0, DEFAULT_GRID_MAX - DEFAULT_GRID_MIN, 1, this);
-        lay->addWidget(vspin,ROW_VGRID,3);
- 
-        iconstylebox = new QCheckBox(i18n("&Transparent Text for Desktop Icons."),
-                                  this);
-        lay->addMultiCellWidget(iconstylebox,ROW_TRANSPARENT,ROW_TRANSPARENT,1,3);
- 
-        connect(iconstylebox,SIGNAL(toggled(bool)),this,SLOT(makeBgActive(bool)));
- 
-        label = new QLabel(i18n("Icon foreground color:"),this);
-        lay->addWidget(label,ROW_ICON_FG,1);
- 
-        fgColorBtn = new KColorButton(icon_fg,this);
-        lay->addWidget(fgColorBtn,ROW_ICON_FG,3);
-        connect( fgColorBtn, SIGNAL( changed( const QColor & ) ),
-                SLOT( slotIconFgColorChanged( const QColor & ) ) );
- 
-        bgLabel = new QLabel(i18n("Icon background color:"),this);
-        lay->addWidget(bgLabel,ROW_ICON_BG,1);
- 
-        bgColorBtn = new KColorButton(icon_bg,this);
-        lay->addWidget(bgColorBtn,ROW_ICON_BG,3);
-        connect( bgColorBtn, SIGNAL( changed( const QColor & ) ),
-                SLOT( slotIconBgColorChanged( const QColor & ) ) );
- 
-        showHiddenBox = new QCheckBox(i18n("Show &Hidden Files on Desktop"), this);
-        lay->addMultiCellWidget(showHiddenBox,ROW_SHOWHIDDEN,ROW_SHOWHIDDEN,1,3);
-        lay->activate();
- 
-        loadSettings();
+  showHiddenBox = new QCheckBox(i18n("Show &Hidden Files on Desktop"), this);
+  lay->addMultiCellWidget(showHiddenBox, 7, 7, 0, 1);
+
+  lay->setRowStretch(8, 2);
+  lay->activate();
+  
+  loadSettings();
 }
 
 void KRootOptions::loadSettings()
