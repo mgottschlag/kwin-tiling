@@ -494,8 +494,8 @@ int Theme::installGroup(const char* aGroupName)
     value = mMappings->readEntry("ConfigActivateCmd");
     if (!value.isEmpty() && (mCmdList.findIndex(value) < 0))
       mCmdList.append(value);
-    instCmd = mMappings->readEntry("ConfigInstallCmd").stripWhiteSpace();
-    preInstCmd = mMappings->readEntry("ConfigPreInstallCmd").stripWhiteSpace();
+    instCmd = mMappings->readEntry("ConfigInstallCmd", instCmd).stripWhiteSpace();
+    preInstCmd = mMappings->readEntry("ConfigPreInstallCmd", preInstCmd).stripWhiteSpace();
 
     // Some checks
     if (cfgFile.isEmpty()) missing = "ConfigFile";
@@ -670,7 +670,7 @@ void Theme::preInstallCmd(KSimpleConfig* aCfg, const QString& aCmd)
 
 //-----------------------------------------------------------------------------
 void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
-		       int aInstalled)
+		       int &aInstalled)
 {
   QString grp = aCfg->group();
   QString cmd = aCmd.stripWhiteSpace();
@@ -688,12 +688,13 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
   }
   else if (cmd == "setSound")
   {
-    bool flag = (aInstalled==1);
+    bool flag = (aInstalled > 0);
+    aInstalled = 0;
+    int presentation = aCfg->readNumEntry("presentation",0);
     if (flag)
-    {
-       int presentation = aCfg->readNumEntry("presentation",0);
        aCfg->writeEntry("presentation", presentation | 1);
-    }
+    else
+       aCfg->writeEntry("presentation", presentation & ~1);
   }
   else
   {
@@ -761,6 +762,14 @@ void Theme::doCmdList(void)
     else if (cmd == "applyIcons")
     {
        applyIcons();
+    }
+    else if (cmd == "applySound")
+    {
+       // reconfigure knotify
+       DCOPClient *client = kapp->dcopClient();
+       if (!client->isAttached())
+          client->attach();
+       client->send("knotify", "", "reconfigure()", "");
     }
     else if (cmd.startsWith("restart"))
     {

@@ -148,7 +148,7 @@ protected:
   /** Called from installGroup() with the value of the ConfigInstallCmd
       value. */
   virtual void installCmd(KSimpleConfig* cfg, const QString& cmd,
-			  int installedFiles);
+			  int &installedFiles);
 
   /** Called from installGroup() with the value of the ConfigPreInstallCmd
       value. */

@@ -137,7 +137,6 @@ ReverseBlending0=ReverseBlending!
 [Display-1]
 ConfigNextGroup=Display-2
 ConfigGroup=Desktop1
-ConfigInstallCmd=setWallpaperMode
 ConfigAppDir=wallpapers
 ConfigAbsolutePaths=true
 Wallpaper1=Wallpaper
@@ -154,7 +153,6 @@ ReverseBlending1=ReverseBlending!
 [Display-2]
 ConfigNextGroup=Display-3
 ConfigGroup=Desktop2
-ConfigInstallCmd=setWallpaperMode
 ConfigAppDir=wallpapers
 ConfigAbsolutePaths=true
 Wallpaper2=Wallpaper
@@ -171,7 +169,6 @@ ReverseBlending2=ReverseBlending!
 [Display-3]
 ConfigNextGroup=Display-4
 ConfigGroup=Desktop3
-ConfigInstallCmd=setWallpaperMode
 ConfigAppDir=wallpapers
 ConfigAbsolutePaths=true
 Wallpaper3=Wallpaper
@@ -188,7 +185,6 @@ ReverseBlending3=ReverseBlending!
 [Display-4]
 ConfigNextGroup=Display-5
 ConfigGroup=Desktop4
-ConfigInstallCmd=setWallpaperMode
 ConfigAppDir=wallpapers
 ConfigAbsolutePaths=true
 Wallpaper4=Wallpaper
@@ -206,7 +202,6 @@ ReverseBlending4=ReverseBlending!
 ConfigNextGroup=Display-6
 ConfigGroup=Desktop5
 ConfigAppDir=wallpapers
-ConfigInstallCmd=setWallpaperMode
 ConfigAbsolutePaths=true
 Wallpaper5=Wallpaper
 WallpaperMode5=WallpaperMode!
@@ -222,7 +217,6 @@ ReverseBlending5=ReverseBlending!
 [Display-6]
 ConfigNextGroup=Display-7
 ConfigGroup=Desktop6
-ConfigInstallCmd=setWallpaperMode
 ConfigAppDir=wallpapers
 ConfigAbsolutePaths=true
 Wallpaper6=Wallpaper
@@ -239,7 +233,6 @@ ReverseBlending6=ReverseBlending!
 [Display-7]
 ConfigGroup=Desktop7
 ConfigAppDir=wallpapers
-ConfigInstallCmd=setWallpaperMode
 ConfigAbsolutePaths=true
 ConfigNextGroup=Display-dtm
 Wallpaper7=Wallpaper
@@ -260,6 +253,7 @@ ConfigNextGroup=Display-textcolor
 ConfigInstallCmd=oneDesktopMode
 #
 [Display-textcolor]
+ConfigInstallCmd=
 ConfigGroup=FMSettings
 NormalTextColor=NormalTextColor!
 ItemTextBackground=ItemTextBackground!
@@ -276,8 +270,9 @@ Icons=Theme*
 ConfigAppDir=sounds
 ConfigFile=knotify.eventsrc
 ConfigGroup=startkde
-ConfigNextGroup=Sound-1
 ConfigInstallCmd=setSound
+ConfigActivateCmd=applySound
+ConfigNextGroup=Sound-1
 Startup=soundfile
 #
 [Sound-1]
