@@ -19,26 +19,28 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <iostream.h>
+
+#include <qstring.h>
+#include <qregexp.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
 #include <qpoint.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <kapp.h>
 #include <qfont.h>
-#include <time.h>
+
 #include <kprocess.h>
+#include <kapp.h>
+#include <klocale.h>
 
 #include "ksmbstatus.h"
 #include "ksmbstatus.moc"
 
-#include <klocale.h>
-#include <stdio.h>
-
-#include <iostream.h>
-#include <qstring.h>
-#include <qregexp.h>
 
 #define Before(ttf,in) in.left(in.find(ttf))
 #define After(ttf,in)  (in.contains(ttf)?QString(in.mid(in.find(ttf)+QString(ttf).length())):QString(""))
@@ -177,7 +179,7 @@ void NetMon::processSambaLine(char *bufline, int)
        {
           // "No locked files"
           readingpart=finished;
-          //debug("finished");
+          //kdDebug() << "finished" << endl;
        }
        else
           if ((strncmp(bufline,"Pi", 2) !=0) // "Pid DenyMode ..."
@@ -203,7 +205,7 @@ void NetMon::slotReceivedData(KProcess *, char *buffer, int )
       len = end-start;
       strncpy(s,start,len);
       s[len] = '\0';
-      //debug(s); debug("**");
+      //kdDebug() << s << endl;
       if (readingpart==nfs)
          processNFSLine(s,len);
       else
@@ -231,7 +233,7 @@ void NetMon::update()
            SIGNAL(receivedStdout(KProcess *, char *, int)),
            SLOT(slotReceivedData(KProcess *, char *, int)));
    *process << "smbstatus"; // the command line
-   //debug("update");
+   //kdDebug() << "update" << endl;
    if (!process->start(KProcess::Block,KProcess::Stdout)) // run smbstatus
       version->setText(i18n("Error: Unable to run smbstatus"));
    else if (rownumber==0) // empty result

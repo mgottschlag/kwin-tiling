@@ -29,6 +29,7 @@
 #include <qpixmap.h> 
 #include <qlayout.h>
 
+#include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -99,7 +100,7 @@ void Tzone::save()
   
   sprintf(tz, "/usr/share/zoneinfo/Etc/%s", (tzonelist->currentText()).data());
    
-  debug("Set time zone %s", tz);
+  kdDebug() << "Set time zone " << tz << endl;
   
   // This is extremely ugly. Who knows the better way?
   unlink( "/etc/localtime" );

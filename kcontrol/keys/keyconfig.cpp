@@ -19,6 +19,7 @@
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
 
+#include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -114,7 +115,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 
   dict = keys->keyDict();
 
-  //debug("got key dict");
+  //kdDebug() << "got key dict" << endl;
 
   kc =  new KKeyChooser( &dict, this, check_against_std_keys );
   connect( kc, SIGNAL( keyChange() ), this, SLOT( slotChanged() ) );
@@ -136,7 +137,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 }
 
 KKeyModule::~KKeyModule (){
-  //debug("KKeyModule destructor");
+  //kdDebug() << "KKeyModule destructor" << endl;
   delete keys;
 }
 
@@ -247,7 +248,7 @@ void KKeyModule::readScheme( int index )
     keyCode = new int;
     *keyCode = KAccel::stringToKey( *gIt );
     globalDict->insert( gIt.key(), keyCode);
-    //debug( " %s, %d", gIt->currentKey(), *keyCode );
+    //kdDebug() << gIt->currentKey() << ", " << *keyCode << endl;
   }
 
   kc->aIt->toFirst();
@@ -255,7 +256,7 @@ void KKeyModule::readScheme( int index )
     if ( globalDict->find( kc->aIt->currentKey() ) ) {
       kc->aIt->current()->aConfigKeyCode = *globalDict->find( kc->aIt->currentKey() );
       kc->aIt->current()->aCurrentKeyCode = kc->aIt->current()->aConfigKeyCode;
-      // debug("Change: %s", kc->aIt->currentKey().ascii() );
+      // kdDebug() << "Change: " << kc->aIt->currentKey() << endl;
     }
     ++ ( *kc->aIt );
   }

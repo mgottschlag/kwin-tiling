@@ -31,6 +31,7 @@
 #include <qlabel.h> 
 #include <qwhatsthis.h>
 
+#include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -251,7 +252,7 @@ void Dtime::save()
                atoi(hour->text()), atoi(minute->text()),
                date.year(), atoi(second->text()));
   
-  debug("Set date %s", BufS.data());
+  kdDebug() << "Set date " << BufS << endl;
   
   c_proc.setExecutable( "date" );
   c_proc << BufS;
