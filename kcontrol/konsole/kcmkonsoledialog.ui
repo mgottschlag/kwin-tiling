@@ -111,7 +111,7 @@
                                     <cstring>ctrldragCB</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Require CTRL key for drag and drop</string>
+                                    <string>&amp;Require Ctrl key for drag and drop</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
@@ -135,7 +135,7 @@
                                     <cstring>xonXoffCB</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Use CTRL-S/CTRL-Q flow control</string>
+                                    <string>Use Ctrl-S/Ctrl-Q flow control</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="8" column="0">
