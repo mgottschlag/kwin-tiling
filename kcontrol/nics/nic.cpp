@@ -54,7 +54,7 @@
 
 #include <sys/ioctl.h>
 
-#ifndef	HAVE_SOCKADDR_SA_LEN
+#ifndef	HAVE_STRUCT_SOCKADDR_SA_LEN
 	#undef HAVE_GETNAMEINFO
 	#undef HAVE_GETIFADDRS
 #endif
@@ -150,7 +150,7 @@ NICList* findNICs()
    {
       struct ifreq *ifr =(struct ifreq *) ptr;
       int len = sizeof(struct sockaddr);
-#ifdef	HAVE_SOCKADDR_SA_LEN
+#ifdef	HAVE_STRUCT_SOCKADDR_SA_LEN
       if (ifr->ifr_addr.sa_len > len)
          len = ifr->ifr_addr.sa_len;		/* length > 16 */
 #endif
