@@ -212,7 +212,6 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     setColorName(i18n("Alternate background in lists"), CSM_Alternate_background);
 
     wcCombo->adjustSize();
-    wcCombo->
     connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
     groupLayout->addWidget(wcCombo);
 
