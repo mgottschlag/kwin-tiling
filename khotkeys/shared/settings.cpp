@@ -79,7 +79,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, bool impo
     cfg_P.setGroup( "Gestures" );
     gestures_disabled_globally = cfg_P.readBoolEntry( "Disabled", false );
     gesture_mouse_button = cfg_P.readNumEntry( "MouseButton", 2 );
-    gesture_timeout = cfg_P.readNumEntry( "Timeout", 1000 );
+    gesture_timeout = cfg_P.readNumEntry( "Timeout", 300 );
     return true;
     }
 
