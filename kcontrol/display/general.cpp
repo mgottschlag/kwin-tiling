@@ -85,8 +85,8 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     defName = QString::fromLatin1("KDE default");
     curTheme = kconfig.readEntry("currentTheme");
 
-    addColumn(i18n("Name:"));
-    addColumn(i18n("Description:"));
+    addColumn(i18n("Name"));
+    addColumn(i18n("Description"));
     setAllColumnsShowFocus(true);
     KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + "kstyle/themes");
 
@@ -234,7 +234,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     topLayout->addLayout(lay);
 
     QGroupBox *themeBox = new QGroupBox(1, Vertical,
-                    i18n("Widget style and theme:"),
+                    i18n("Widget style and theme"),
                     this);
     lay->addWidget(themeBox);
 
@@ -247,7 +247,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
       " like a marble texture or a gradient).") );
 
     // Drawing settings
-    styles = new QGroupBox ( i18n( "Other settings for drawing:" ), this );
+    styles = new QGroupBox ( i18n( "Other settings for drawing" ), this );
     topLayout->addWidget(styles, 10);
     QBoxLayout *vlay = new QVBoxLayout (styles, KDialog::marginHint(),
                     KDialog::spacingHint());
@@ -273,7 +273,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
       " applications. While this works fine with most applications, it <em>may</em>"
       " give strange results sometimes.") );
 
-    tbStyle = new QButtonGroup( i18n( "Style options for toolbars:" ), this);
+    tbStyle = new QButtonGroup( i18n( "Style options for toolbars" ), this);
     topLayout->addWidget(tbStyle, 10);
 
     vlay = new QVBoxLayout( tbStyle, 10 );
