@@ -75,7 +75,7 @@ protected:
      */
     void embed( QWidget *widget );
 
-    bool event( QEvent * );
+    bool eventFilter( QObject *o, QEvent * );
 
 private:
     KScreenSaverPrivate *d;

@@ -24,6 +24,9 @@
 #include "kscreensaver.h"
 #include <X11/Xlib.h>
 
+#undef KeyPress
+#undef KeyRelease
+
 //-----------------------------------------------------------------------------
 
 class KScreenSaverPrivate
@@ -42,6 +45,8 @@ KScreenSaver::KScreenSaver( WId id ) : QWidget()
 
     d = new KScreenSaverPrivate;
     d->owner = find( id );
+    if ( d->owner )
+	installEventFilter( this );
 
     if ( id )
     {
@@ -68,13 +73,30 @@ void KScreenSaver::embed( QWidget *w )
     w->resize( width(), height() );
 }
 
-bool KScreenSaver::event( QEvent *e )
+bool KScreenSaver::eventFilter( QObject *o, QEvent *e )
 {
     // make sure events get to the original window owner
-    if ( d->owner )
-        return QApplication::sendEvent( d->owner, e );
+    if ( d->owner && o == this ) {
+	switch ( e->type() ) {
+	    case QEvent::MouseButtonPress:
+	    case QEvent::MouseButtonRelease:
+	    case QEvent::MouseButtonDblClick:
+	    case QEvent::MouseMove:
+	    case QEvent::KeyPress:
+	    case QEvent::KeyRelease:
+	    case QEvent::Close:
+	    case QEvent::Resize:
+	    case QEvent::Move:
+		QApplication::sendEvent( d->owner, e );
+		return true;
+		break;
 
-    return QWidget::event( e );
+	    default:
+		break;
+	}
+    }
+
+    return QWidget::eventFilter( o, e );
 }
 
 //============================================================================
