@@ -364,6 +364,9 @@ void KFonts::save()
 
   QSettings().writeEntry("/qt/useXft", useAA);
 
+  if (useAA)
+    QSettings().writeEntry("/qt/enableXft", useAA);
+
   KIPC::sendMessageAll(KIPC::FontChanged);
 
   if(useAA != useAA_original) {
