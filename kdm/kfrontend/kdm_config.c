@@ -547,8 +547,8 @@ Ent entsGreeter[] = {
 { "PluginsLogin",	C_PluginsLogin,		0,	"classic" },
 { "PluginsShutdown",	C_PluginsShutdown,	0,	"classic" },
 { "PluginOptions",	C_PluginOptions,	0,	"" },
-{ "AllowConsole",	C_AllowConsole,		0,	"true" },
-{ "AllowClose", 	C_AllowClose,		0,	"false" },
+{ "AllowConsole",	C_AllowConsole | C_BOOL,0,	"true" },
+{ "AllowClose", 	C_AllowClose | C_BOOL,	0,	"false" },
 };
 
 Sect
