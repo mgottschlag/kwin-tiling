@@ -484,6 +484,30 @@
                     </widget>
                 </vbox>
             </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>S&amp;ession</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>1</number>
+                    </property>
+                    <property name="spacing">
+                        <number>1</number>
+                    </property>
+                    <widget class="SessionEditor">
+                        <property name="name">
+                            <cstring>SessionEditor1</cstring>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
         </widget>
     </grid>
 </widget>
@@ -491,6 +515,21 @@
     <customwidget>
         <class>SchemaEditor</class>
         <header location="local">schemaeditor.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>7</hordata>
+            <verdata>7</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </customwidget>
+    <customwidget>
+        <class>SessionEditor</class>
+        <header location="local">sessioneditor.h</header>
         <sizehint>
             <width>-1</width>
             <height>-1</height>

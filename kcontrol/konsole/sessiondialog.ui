@@ -1,0 +1,461 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>SessionDialog</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>SessionDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>465</width>
+            <height>453</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Konsole Session Editor</string>
+    </property>
+    <property name="layoutMargin" stdset="0">
+    </property>
+    <property name="layoutSpacing" stdset="0">
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>generalGroup</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="title">
+                <string>General</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>nameLine</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>commentLine</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>executeLine</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Name:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>titleLine</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Comment:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>titleLine</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Execute:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>titleLine</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QGroupBox" row="1" column="0">
+            <property name="name">
+                <cstring>sessionGroup</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>Box</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="title">
+                <string>Session</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QListBox">
+                    <property name="name">
+                        <cstring>sessionList</cstring>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout3</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QPushButton" row="0" column="0">
+                            <property name="name">
+                                <cstring>saveButton</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Save Session...</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton" row="1" column="0">
+                            <property name="name">
+                                <cstring>removeButton</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Remove Session</string>
+                            </property>
+                        </widget>
+                        <spacer row="0" column="1">
+                            <property name="name" stdset="0">
+                                <cstring>Spacer7</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </grid>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QGroupBox" row="1" column="1">
+            <property name="name">
+                <cstring>propertiesGroup</cstring>
+            </property>
+            <property name="title">
+                <string>Properties</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>Layout29</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QComboBox" row="0" column="1">
+                            <item>
+                                <property name="text">
+                                    <string>&lt;undefined&gt;</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>Normal</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>Tiny</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>Small</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>Medium</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>Large</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>Huge</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>Linux</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>Unicode</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>Custom</string>
+                                </property>
+                            </item>
+                            <property name="name">
+                                <cstring>fontCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit" row="1" column="1">
+                            <property name="name">
+                                <cstring>termLine</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>7</hsizetype>
+                                    <vsizetype>5</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox" row="3" column="0" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>keytabCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>TextLabel5</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Font:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>modeCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox" row="5" column="0" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>schemaCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>TextLabel7</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Sc&amp;hema:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>modeCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0">
+                            <property name="name">
+                                <cstring>TextLabel8</cstring>
+                            </property>
+                            <property name="text">
+                                <string>$&amp;TERM:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>modeCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>TextLabel6</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Keytab:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>modeCombo</cstring>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="KIconButton" row="0" column="1">
+                    <property name="name">
+                        <cstring>previewIcon</cstring>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>100</width>
+                            <height>100</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>100</width>
+                            <height>100</height>
+                        </size>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel4</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>90</width>
+                            <height>100</height>
+                        </size>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Icon:</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignTop|AlignLeft</set>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>modeCombo</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+    </grid>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>KIconButton</class>
+        <header location="global">kicondialog.h</header>
+        <sizehint>
+            <width>100</width>
+            <height>100</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>0</hordata>
+            <verdata>0</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+    </customwidget>
+</customwidgets>
+<images>
+    <image name="image0">
+        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
+    </image>
+</images>
+<tabstops>
+    <tabstop>nameLine</tabstop>
+    <tabstop>commentLine</tabstop>
+    <tabstop>executeLine</tabstop>
+    <tabstop>sessionList</tabstop>
+    <tabstop>saveButton</tabstop>
+    <tabstop>removeButton</tabstop>
+    <tabstop>fontCombo</tabstop>
+    <tabstop>termLine</tabstop>
+    <tabstop>keytabCombo</tabstop>
+    <tabstop>schemaCombo</tabstop>
+</tabstops>
+<includes>
+    <include location="global" impldecl="in declaration">kcolorbutton.h</include>
+</includes>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
