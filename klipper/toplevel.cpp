@@ -86,10 +86,6 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     m_lastString = "";
     m_popup = new KPopupMenu(0L, "main_menu");
     connect(m_popup, SIGNAL(activated(int)), SLOT(clickedMenu(int)));
-    if (isApplet())
-    {
-        connect(m_popup, SIGNAL(aboutToHide()), SLOT(cleanAppletMenu()));
-    }
 
     readProperties(m_config);
     connect(kapp, SIGNAL(saveYourself()), SLOT(saveSession()));
@@ -166,25 +162,7 @@ void KlipperWidget::mousePressEvent(QMouseEvent *e)
     if ( e->button() != LeftButton && e->button() != RightButton )
         return;
 
-    if (isApplet())
-    {
-        m_popup->insertTitle( SmallIcon( "klipper" ),
-                                i18n("Klipper - Clipboard Tool"), TITLE_ITEM, 0);
-        m_popup->insertItem( SmallIcon("configure"), i18n("&Configure Klipper..."),
-                            CONFIG_ITEM);
-
-        KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(),
-                    false );
-        m_popup->insertItem( KStdGuiItem::help().text(), help->menu(), HELPMENU_ITEM );
-    }
     showPopupMenu( m_popup );
-}
-
-void KlipperWidget::cleanAppletMenu()
-{
-    m_popup->removeItem(TITLE_ITEM);
-    m_popup->removeItem(HELPMENU_ITEM);
-    m_popup->removeItem(CONFIG_ITEM);
 }
 
 void KlipperWidget::paintEvent(QPaintEvent *)
@@ -311,11 +289,8 @@ void KlipperWidget::readProperties(KConfig *kc)
 
   m_popup->clear();
 
-  if (!isApplet())
-  {
-      m_popup->insertTitle( SmallIcon( "klipper" ),
-                            i18n("Klipper - Clipboard Tool"));
-  }
+  m_popup->insertTitle( SmallIcon( "klipper" ),
+                        i18n("Klipper - Clipboard Tool"));
 
   if (bKeepContents) { // load old clipboard if configured
       KConfigGroupSaver groupSaver(kc, "General");
@@ -351,14 +326,14 @@ void KlipperWidget::readProperties(KConfig *kc)
   m_popup->insertItem( SmallIcon("history_clear"),
 			i18n("C&lear Clipboard History"), EMPTY_ITEM );
 
-  if( !isApplet()) {
-    m_popup->insertItem( SmallIcon("configure"), i18n("&Configure Klipper..."),
+  m_popup->insertItem( SmallIcon("configure"), i18n("&Configure Klipper..."),
                         CONFIG_ITEM);
 
-    KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(),
+  KHelpMenu *help = new KHelpMenu( this, aboutData(),
                 false );
-    m_popup->insertItem( KStdGuiItem::help().text(), help->menu(), HELPMENU_ITEM );
+  m_popup->insertItem( KStdGuiItem::help().text(), help->menu(), HELPMENU_ITEM );
 
+  if( !isApplet()) {
     m_popup->insertSeparator();
     m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
   }
@@ -834,6 +809,47 @@ bool KlipperWidget::ignoreClipboardChanges() const
 void KlipperWidget::updateTimestamp()
 {
     kapp->updateUserTimestamp( 0 );
+}
+
+static const char * const description =
+	I18N_NOOP("KDE Cut & Paste history utility");
+
+void KlipperWidget::createAboutData()
+{
+  about_data = new KAboutData("klipper", I18N_NOOP("Klipper"),
+    klipper_version, description, KAboutData::License_Artistic,
+		       "(c) 1998, Andrew Stanley-Jones\n"
+		       "1998-2002, Carsten Pfeiffer\n"
+		       "2001, Patrick Dubroy");
+
+  about_data->addAuthor("Carsten Pfeiffer",
+                      I18N_NOOP("Author, Maintainer"),
+                      "pfeiffer@kde.org");
+
+  about_data->addAuthor("Andrew Stanley-Jones",
+                      I18N_NOOP( "Original Author" ),
+                      "asj@cban.com");
+
+  about_data->addAuthor("Patrick Dubroy",
+                      I18N_NOOP("Contributor"),
+                      "patrickdu@corel.com");
+
+  about_data->addAuthor( "Luboš Luňák",
+                      I18N_NOOP("Bugfixes and optimizations"),
+                      "l.lunak@kde.org");
+}
+
+void KlipperWidget::destroyAboutData()
+{
+  delete about_data;
+  about_data = NULL;
+}
+
+KAboutData* KlipperWidget::about_data;
+
+KAboutData* KlipperWidget::aboutData()
+{
+  return about_data;
 }
 
 Klipper::Klipper( QWidget* parent )

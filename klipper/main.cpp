@@ -22,38 +22,14 @@
 #include "toplevel.h"
 #include "version.h"
 
-static const char *description =
-	I18N_NOOP("KDE Cut & Paste history utility");
-
 extern "C" int kdemain(int argc, char *argv[])
 {
-  KAboutData aboutData("klipper", I18N_NOOP("Klipper"),
-    klipper_version, description, KAboutData::License_Artistic,
-		       "(c) 1998, Andrew Stanley-Jones\n"
-		       "1998-2002, Carsten Pfeiffer\n"
-		       "2001, Patrick Dubroy");
-
-  aboutData.addAuthor("Carsten Pfeiffer",
-                      I18N_NOOP("Author, Maintainer"),
-                      "pfeiffer@kde.org");
-
-  aboutData.addAuthor("Andrew Stanley-Jones",
-                      I18N_NOOP( "Original Author" ),
-                      "asj@cban.com");
-
-  aboutData.addAuthor("Patrick Dubroy",
-                      I18N_NOOP("Contributor"),
-                      "patrickdu@corel.com");
-
-  aboutData.addAuthor( "Luboš Luňák",
-                      I18N_NOOP("Bugfixes and optimizations"),
-                      "l.lunak@kde.org");
-
-  KCmdLineArgs::init( argc, argv, &aboutData );
+  Klipper::createAboutData();
+  KCmdLineArgs::init( argc, argv, Klipper::aboutData());
   KUniqueApplication::addCmdLineOptions();
 
   if (!KUniqueApplication::start()) {
-       fprintf(stderr, "%s is already running!\n", aboutData.appName());
+       fprintf(stderr, "Klipper is already running!\n");
        exit(0);
   }
   KUniqueApplication app;
@@ -67,5 +43,6 @@ extern "C" int kdemain(int argc, char *argv[])
 
   int ret = app.exec();
   delete toplevel;
+  Klipper::destroyAboutData();
   return ret;
 }

@@ -35,6 +35,7 @@ KlipperApplet::KlipperApplet(const QString& configFile, Type t, int actions,
                          QWidget *parent, const char *name)
     : KPanelApplet(configFile, t, actions, parent, name)
 {
+    KlipperWidget::createAboutData();
     move( 0, 0 );
     setBackgroundMode(QWidget::X11ParentRelative);
     widget = new KlipperAppletWidget( this );
@@ -47,6 +48,7 @@ KlipperApplet::~KlipperApplet()
 {
     widget->saveSession();
     delete widget;
+    KlipperWidget::destroyAboutData();
 }
 
 int KlipperApplet::widthForHeight(int) const

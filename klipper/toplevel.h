@@ -23,6 +23,7 @@
 
 class QClipboard;
 class KToggleAction;
+class KAboutData;
 class URLGrabber;
 class ClipboardPoll;
 
@@ -48,6 +49,9 @@ public:
     KGlobalAccel *globalKeys;
 
     static void updateTimestamp();
+    static void createAboutData();
+    static void destroyAboutData();
+    static KAboutData* aboutData();
 
 public slots:
     void saveSession();
@@ -87,7 +91,6 @@ protected slots:
     void setURLGrabberEnabled( bool );
     void toggleURLGrabber();
     void disableURLGrabber();
-    void cleanAppletMenu();
 
 private slots:
     void newClipData();
@@ -131,6 +134,7 @@ private:
     int URLGrabItem;
     KConfig* m_config;
     ClipboardPoll* poll;
+    static KAboutData* about_data;
 
     void trimClipHistory(int);
 };
