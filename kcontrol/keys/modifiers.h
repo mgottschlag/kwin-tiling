@@ -12,8 +12,7 @@ class ModifiersModule : public QWidget
 	ModifiersModule( QWidget *parent = 0, const char *name = 0 );
 
  protected:
-	KComboBox *m_pcbShift, *m_pcbCtrl,
-	          *m_pcbAltX, *m_pcbAlt,
+	KComboBox *m_pcbShift, *m_pcbCtrl, *m_pcbAlt,
 	          *m_pcbWinX, *m_pcbWin;
 
 	void initGUI();
