@@ -56,14 +56,14 @@ extern "C" {
 int __kde_do_not_unload = 1;
 }
 
-#if defined(XIMStringConversionRetrival) || defined (__sun)
+#if defined(XIMStringConversionRetrival) || defined (__sun) || defined(__hpux)
 extern "C" {
 #endif
     Bool DPMSQueryExtension(Display *, int *, int *);
     Status DPMSEnable(Display *);
     Status DPMSDisable(Display *);
     Bool DPMSSetTimeouts(Display *, CARD16, CARD16, CARD16);
-#if defined(XIMStringConversionRetrival) || defined (__sun)
+#if defined(XIMStringConversionRetrival) || defined (__sun) || defined(__hpux)
 }
 #endif
 #endif
