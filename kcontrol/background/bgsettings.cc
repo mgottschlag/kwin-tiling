@@ -351,7 +351,7 @@ bool KBackgroundProgram::remove()
 
 bool KBackgroundProgram::needUpdate()
 {
-    return (m_LastChange + 60*m_Refresh < time(0L));
+    return (m_LastChange + 60*m_Refresh <= time(0L));
 }
 
 
