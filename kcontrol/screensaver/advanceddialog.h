@@ -12,6 +12,27 @@
 #include <qcheckbox.h>
 #include <qslider.h>
 
+#include "advanceddialogimpl.h"
+
+class AdvancedDialog : public AdvancedDialogImpl
+{
+public:
+	AdvancedDialog(QWidget *parent = 0, const char *name = 0);
+	~AdvancedDialog();
+/*	void setMode(QComboBox *box, int i);
+	int mode(QComboBox *box);*/
+	void setTopLeftMode(int);
+	void setTopRightMode(int);
+	void setBottomLeftMode(int);
+	void setBottomRightMode(int);
+	int topLeftMode();
+	int topRightMode();
+	int bottomLeftMode();
+	int bottomRightMode();
+};
+
+/* =================================================================================================== */
+
 class KScreenSaverAdvancedDialog : public KDialogBase
 {
     Q_OBJECT
@@ -22,11 +43,11 @@ public slots:
     void slotOk();
          
 protected slots:
-    void slotPriorityChanged( int val );
-    void slotChangeBottomRightCorner( bool );
-    void slotChangeBottomLeftCorner( bool );
-    void slotChangeTopRightCorner( bool );
-    void slotChangeTopLeftCorner( bool );
+    void slotPriorityChanged(int val);
+    void slotChangeBottomRightCorner(int);
+    void slotChangeBottomLeftCorner(int);
+    void slotChangeTopRightCorner(int);
+    void slotChangeTopLeftCorner(int);
                         
 private:
     void readSettings();
@@ -37,12 +58,12 @@ private:
     QCheckBox *m_bottomRightCorner;
     QSlider   *mPrioritySlider;
                                           
-    bool mTopLeftCorner;
-    bool mTopRightCorner;
-    bool mBottomLeftCorner;
-    bool mBottomRightCorner;
     bool mChanged;
     int  mPriority;
+    AdvancedDialog *dialog;
+
 };
 
+
 #endif
+

@@ -1,93 +1,39 @@
 #include <klocale.h>
+#include <kstandarddirs.h>
+#include <qcombobox.h>
+#include <kdebug.h>
+
+#include <qtooltip.h>
+#include <qstring.h>
 
 #include "advanceddialog.h"
+#include "advanceddialogimpl.h"
+#include "stdlib.h"
 
 KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent, const char* name)
  : KDialogBase( parent, name, true, i18n( "Advanced Options" ),
                 Ok | Cancel, Ok, true )
 {
-    readSettings();
+	readSettings();
 
-    QWidget* w = new QWidget( this );
-    w->setMinimumWidth( 250 );
-    QBoxLayout* mainLayout = new QVBoxLayout( w, 0, KDialog::spacingHint() );
-    setMainWidget( w );
+	dialog = new AdvancedDialog(this);
+	setMainWidget(dialog);
 
-    // Autolock
-    QGroupBox* autoLockGroup = new QGroupBox( i18n("Auto Lock"), w );
-    autoLockGroup->setColumnLayout( 0, Qt::Vertical );
-    mainLayout->addWidget( autoLockGroup );
-    QBoxLayout* autoLockLayout = new QVBoxLayout( autoLockGroup->layout(),
-        KDialog::spacingHint() );
+	connect(dialog->qcbPriority, SIGNAL(activated(int)),
+		this, SLOT(slotPriorityChanged(int)));
 
-    m_topLeftCorner = new QCheckBox( i18n("Top-left corner"), autoLockGroup);
-    autoLockLayout->addWidget( m_topLeftCorner );
-    m_topLeftCorner->setChecked(mTopLeftCorner);
-    connect( m_topLeftCorner, SIGNAL( toggled( bool ) ),
-            this, SLOT( slotChangeTopLeftCorner( bool ) ) );
-
-    m_topRightCorner = new QCheckBox( i18n("Top-right corner"),
-        autoLockGroup );
-    autoLockLayout->addWidget( m_topRightCorner );
-    m_topRightCorner->setChecked(mTopRightCorner);
-    connect( m_topRightCorner, SIGNAL( toggled( bool ) ),
-         this, SLOT( slotChangeTopRightCorner( bool ) ) );
-
-    m_bottomLeftCorner = new QCheckBox( i18n("Bottom-left corner"),
-        autoLockGroup );
-    autoLockLayout->addWidget( m_bottomLeftCorner );
-    m_bottomLeftCorner->setChecked(mBottomLeftCorner);
-    connect( m_bottomLeftCorner, SIGNAL( toggled( bool ) ),
-         this, SLOT( slotChangeBottomLeftCorner( bool ) ) );
-
-    m_bottomRightCorner = new QCheckBox( i18n("Bottom-right corner"),
-        autoLockGroup );
-    autoLockLayout->addWidget( m_bottomRightCorner );
-    m_bottomRightCorner->setChecked(mBottomRightCorner);
-    connect( m_bottomRightCorner, SIGNAL( toggled( bool ) ),
-         this, SLOT( slotChangeBottomRightCorner( bool ) ) );
-
-    // Priority
-    QGroupBox* priorityGroup = new QGroupBox( i18n("&Priority"), w );
-    priorityGroup->setColumnLayout( 0, Qt::Horizontal );
-    mainLayout->addWidget( priorityGroup );
-
-    QGridLayout *gl = new QGridLayout(priorityGroup->layout(), 2, 3);
-    gl->setColStretch( 1, 10 );
-
-    mPrioritySlider = new QSlider(QSlider::Horizontal, priorityGroup);
-    mPrioritySlider->setRange(0, 19);
-    mPrioritySlider->setSteps(1, 5);
-    mPrioritySlider->setTickmarks(QSlider::Below);
-    mPrioritySlider->setValue(19 - mPriority);
-    connect(mPrioritySlider, SIGNAL( valueChanged(int)),
-        SLOT(slotPriorityChanged(int)));
-    gl->addMultiCellWidget(mPrioritySlider, 0, 0, 0, 2);
-    QWhatsThis::add( mPrioritySlider, i18n("Use this slider to change the"
-      " processing priority for the screen saver over other jobs that are"
-      " being executed in the background. For a processor-intensive screen"
-      " saver, setting a higher priority may make the display smoother at"
-      " the expense of other jobs.") );
+	connect(dialog->qcbTopLeft, SIGNAL(activated(int)),
+		this, SLOT(slotChangeTopLeftCorner(int)));
+	connect(dialog->qcbTopRight, SIGNAL(activated(int)),
+		this, SLOT(slotChangeTopLeftCorner(int)));
+	connect(dialog->qcbBottomLeft, SIGNAL(activated(int)),
+		this, SLOT(slotChangeTopLeftCorner(int)));
+	connect(dialog->qcbBottomRight, SIGNAL(activated(int)),
+		this, SLOT(slotChangeTopLeftCorner(int)));
 
 #ifndef HAVE_SETPRIORITY
-    mPrioritySlider->setEnabled(false);
+    dialog->qcbPriority->setEnabled(false);
 #endif
-
-    QLabel* lbl = new QLabel(i18n("Low Priority", "Low"), priorityGroup);
-    gl->addWidget(lbl, 1, 0);
-
-#ifndef HAVE_SETPRIORITY
-    lbl->setEnabled(false);
-#endif
-
-    lbl = new QLabel(i18n("High Priority", "High"), priorityGroup);
-    gl->addWidget(lbl, 1, 2);
-
-#ifndef HAVE_SETPRIORITY
-    lbl->setEnabled(false);
-#endif
-
-    mainLayout->addStretch(10);
 }
 
 
@@ -100,69 +46,144 @@ void KScreenSaverAdvancedDialog::readSettings()
     if (mPriority < 0) mPriority = 0;
     if (mPriority > 19) mPriority = 19;
 
-    mTopLeftCorner = config->readBoolEntry("LockCornerTopLeft", false);
-    mTopRightCorner = config->readBoolEntry("LockCornerTopRight", false) ;
-    mBottomLeftCorner = config->readBoolEntry("LockCornerBottomLeft", false);
-    mBottomRightCorner = config->readBoolEntry("LockCornerBottomRight", false);
+    
+       dialog->setTopLeftMode(2);
+//    dialog->setMode(dialog->qcbPriority, 0);
+    //int foo = config->readNumEntry("ActionTopLeft", 0);
+    // kdDebug() << "setting active " << dialog->qcbTopLeft->currentItem() << endl;
+//     dialog->qcbTopLeft->setCurrentItem(foo);
+//     dialog->qcbTopRight->setCurrentItem(config->readNumEntry("ActionTopRight", 0));
+//     dialog->qcbBottomLeft->setCurrentItem(config->readNumEntry("ActionBottomLeft", 0));
+//     dialog->qcbBottomRight->setCurrentItem(config->readNumEntry("ActionBottomRight", 0));*/
     mChanged = false;
     delete config;
 }
 
-void KScreenSaverAdvancedDialog::slotPriorityChanged( int val )
+void KScreenSaverAdvancedDialog::slotPriorityChanged(int val)
 {
-    if (val == mPriority)
-    return;
-
-    mPriority = 19 - val;
-    if (mPriority > 19)
-    mPriority = 19;
-    else if (mPriority < 0)
-    mPriority = 0;
-
-    mChanged = true;
+	switch (val)
+	{
+		case 1: // Low
+			mPriority = 19;
+			kdDebug() << "low priority" << endl;
+			break;
+		case 2: // Medium
+			mPriority = 10;
+			kdDebug() << "medium priority" << endl;
+			break;
+		case 3: // High
+			mPriority = 0;
+			kdDebug() << "high priority" << endl;
+			break;
+	}
+	mChanged = true;
 }
 
 void KScreenSaverAdvancedDialog::slotOk()
 {
-    if ( mChanged ) {
-        KConfig *config = new KConfig( "kdesktoprc");
+    if (mChanged) {
+        KConfig *config = new KConfig("kdesktoprc");
         config->setGroup( "ScreenSaver" );
 
         config->writeEntry("Priority", mPriority);
+        /*config->writeEntry(
+            "ActionTopLeft", dialog->qcbTopLeft->currentItem());
         config->writeEntry(
-            "LockCornerTopLeft", m_topLeftCorner->isChecked());
+            "ActionBottomLeft", dialog->qcbTopRight->currentItem());
         config->writeEntry(
-            "LockCornerBottomLeft", m_bottomLeftCorner->isChecked());
+            "ActionTopRight", dialog->qcbBottomLeft->currentItem());
         config->writeEntry(
-            "LockCornerTopRight", m_topRightCorner->isChecked());
-        config->writeEntry(
-            "LockCornerBottomRight", m_bottomRightCorner->isChecked());
-        config->sync();
+            "ActionBottomRight", dialog->qcbBottomRight->currentItem());
+        config->sync();*/
         delete config;
     }
     accept();
 }
 
-void KScreenSaverAdvancedDialog::slotChangeBottomRightCorner( bool b)
+void KScreenSaverAdvancedDialog::slotChangeBottomRightCorner(int)
 {
-    mBottomRightCorner = b;
     mChanged = true;
 }
 
-void KScreenSaverAdvancedDialog::slotChangeBottomLeftCorner( bool b)
+void KScreenSaverAdvancedDialog::slotChangeBottomLeftCorner(int)
 {
-    mBottomLeftCorner = b;
     mChanged = true;
 }
 
-void KScreenSaverAdvancedDialog::slotChangeTopRightCorner( bool b)
+void KScreenSaverAdvancedDialog::slotChangeTopRightCorner(int)
 {
-    mTopRightCorner = b;
     mChanged = true;
 }
 
-void KScreenSaverAdvancedDialog::slotChangeTopLeftCorner( bool b)
+void KScreenSaverAdvancedDialog::slotChangeTopLeftCorner(int)
 {
-    mTopLeftCorner = b;
     mChanged = true;
+}
+
+/* =================================================================================================== */
+
+AdvancedDialog::AdvancedDialog(QWidget *parent, const char *name) : AdvancedDialogImpl(parent, name)
+{
+	qcbTopLeft->setCurrentItem(2);
+	monitorLabel->setPixmap(QPixmap(locate("data", "kcontrol/pics/monitor.png")));
+	QToolTip::add(qcbPriority, "Specify the priority that the screensaver will run at. A higher priority may mean that the screensaver runs more slowly, though may reduce the speed that other programs run at while the screensacer is active.");
+}
+
+AdvancedDialog::~AdvancedDialog()
+{
+ 
+}
+
+/*FIXME -- this should work but crashes so needs valgrinding on an x86 box
+void AdvancedDialog::setMode(QComboBox *box, int i)
+{
+	box->setCurrentItem(i);
+}
+
+int AdvancedDialog::mode(QComboBox *box)
+{
+	return box->currentItem();
+}*/
+
+
+void AdvancedDialog::setTopLeftMode(int i)
+{
+	kdDebug() << "setting mode to " << i << endl;
+	abort();
+	qcbTopLeft->setCurrentItem(i);
+}
+
+void AdvancedDialog::setTopRightMode(int i)
+{
+	qcbTopRight->setCurrentItem(i);
+}
+
+void AdvancedDialog::setBottomLeftMode(int i)
+{
+	qcbBottomLeft->setCurrentItem(i);
+}
+
+void AdvancedDialog::setBottomRightMode(int i)
+{
+	qcbBottomRight->setCurrentItem(i);
+}
+
+int AdvancedDialog::topLeftMode()
+{
+	return qcbTopLeft->currentItem();
+}
+
+int AdvancedDialog::topRightMode()
+{
+	return qcbTopLeft->currentItem();
+}
+
+int AdvancedDialog::bottomLeftMode()
+{
+	return qcbTopLeft->currentItem();
+}
+
+int AdvancedDialog::bottomRightMode()
+{
+	return qcbTopLeft->currentItem();
 }
