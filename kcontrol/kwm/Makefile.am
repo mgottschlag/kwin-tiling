@@ -13,7 +13,7 @@ libkcm_kwinoptions_la_LIBADD = $(LIB_KDEUI)
 noinst_HEADERS = windows.h geom.h mouse.h main.h
 
 messages:
-	$(XGETTEXT) $(libkcm_kwinoptions_la_SOURCES) -o $(podir)/kcmkwm.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmkwm.pot
 
 data_DATA = kwinoptions.desktop  
 datadir = $(kde_appsdir)/Settings/LookNFeel
