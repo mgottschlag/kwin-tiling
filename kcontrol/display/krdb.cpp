@@ -63,10 +63,36 @@ static void applyQtStyles(bool active)
    bool found;
    QStringList actcg, inactcg, discg;
    QString font,style;
+
+
+   { //To ensure they get written in time.. (thanks, puetzk)
+        QSettings settings;
+
+        //###### Write out library path regardless of mode -- workaround for Qt 3.0.2 (3.0.1?) bug; perhaps remove for newer Qt..
+        //On the other hand, whether Qt gets KDE widget settings or not really shouldn't be determined by
+        //"Apply KDE Colors to non-KDE Apps", so possibly the widgetStyle setting needs to be done unconditionally as well.
+
+        //Read qt library path..
+        QStringList pathorig = settings.readListEntry("/qt/libraryPath", ':');
+        //and merge in KDE one..
+        QStringList plugins = KGlobal::dirs()->resourceDirs( "qtplugins" );
+        QStringList::Iterator it = plugins.begin();
+        while (it != plugins.end()) {
+                //Check whether *it is already there... Sigh, this is quadratic..
+                //But the paths are short enough to make a faster datastructure
+                //a waste..
+                if (pathorig.contains( *it ) == 0)
+                    pathorig.append( *it );
+                ++it;
+        }
+
+        settings.writeEntry("/qt/libraryPath", pathorig, ':');
+   }
+
+
    if(active)
    {
       QSettings settings;
-      
       /* find out whether we already have backups... silly QSettings doesn't seem to have an exists() */
       settings.readListEntry("/qt/QTorig/active", &found);
       if(!found)
