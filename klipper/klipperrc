@@ -1,7 +1,7 @@
 [Action_0]
 Action description=Jpeg-Image
 Action regexp=^\\/.+\\.jpg$
-Command_0: commandline=kview "%s"
+Command_0: commandline=kview %s
 Command_0: description=Launch K&View
 Command_0: enabled=true
 Number of commands=1
@@ -12,7 +12,7 @@ Action regexp=^http:\\/\\/
 Command_0: commandline=netscape -no-about-splash -remote "openURL(%s,new-window)"
 Command_0: description=Open with &Netscape
 Command_0: enabled=true
-Command_1: commandline=kfmclient exec "%s"
+Command_1: commandline=kfmclient exec %s
 Command_1: description=Open with &Konqueror
 Command_1: enabled=true
 Number of commands=2
@@ -20,10 +20,10 @@ Number of commands=2
 [Action_2]
 Action description=Mail-URL
 Action regexp=^mailto:
-Command_0: commandline=kmail --composer "%s"
+Command_0: commandline=kmail --composer %s
 Command_0: description=Launch &Kmail
 Command_0: enabled=true
-Command_1: commandline=konsole -e mutt `echo "%s" | sed 's/mailto://g'`
+Command_1: commandline=konsole -e mutt `echo %s | sed 's/mailto://g'`
 Command_1: description=Launch &mutt
 Command_1: enabled=true
 Number of commands=2
@@ -31,10 +31,10 @@ Number of commands=2
 [Action_3]
 Action description=Text File
 Action regexp=^\\/.+\\.txt$
-Command_0: commandline=kedit "%s"
+Command_0: commandline=kedit %s
 Command_0: description=Launch K&Edit
 Command_0: enabled=true
-Command_1: commandline=kwrite "%s"
+Command_1: commandline=kwrite %s
 Command_1: description=Launch K&Write
 Command_1: enabled=true
 Number of commands=2

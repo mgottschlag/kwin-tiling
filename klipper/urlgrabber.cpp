@@ -182,7 +182,15 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
             }
 
             if ( doReplace )
-                cmdLine.replace( pos, 2, myClipData );
+            {
+                QString local_clip(myClipData);
+                // take from KRun::shellQuote so we don't have to link
+                // to kio just for these few lines of code
+                QString res = "'";
+                res += local_clip.replace(QRegExp("'"), "'\"'\"'");
+                res += "'";
+                cmdLine.replace( pos, 2, res );
+            }
         }
 
         startProcess( cmdLine );
