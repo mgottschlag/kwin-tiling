@@ -30,6 +30,8 @@ class ClipboardPoll;
 class QTime;
 class History;
 class KAction;
+class QMimeSource;
+class HistoryItem;
 
 class KlipperWidget : public QWidget, public DCOPObject
 {
@@ -72,6 +74,17 @@ protected:
     void mousePressEvent(QMouseEvent *);
     void readProperties(KConfig *);
     void readConfiguration(KConfig *);
+
+    /**
+     * Loads history from disk.
+     */
+    bool loadHistory();
+
+    /**
+     * Save history to disk
+     */
+    void saveHistory();
+
     void writeConfiguration(KConfig *);
     /**
      * @returns the contents of the selection or, if empty, the contents of
@@ -83,11 +96,19 @@ protected:
     void setEmptyClipboard();
 
     void clipboardSignalArrived( bool selectionMode );
-    void checkClipData( const QString& text, bool selectionMode );
-    void applyClipChanges( const QString& text );
 
-    void setClipboard( const QString& text, int mode );
-    void setClipboard( const QString& text, bool selectionMode );
+    /**
+     * Check data in clipboard, and if it passes these checks,
+     * store the data in the clipboard history.
+     */
+    void checkClipData( bool selectionMode );
+
+    /**
+     * Enter clipboard data in the history.
+     */
+    void applyClipChanges( const QMimeSource& data );
+
+    void setClipboard( const HistoryItem& item, int mode );
     bool ignoreClipboardChanges() const;
 
     KConfig* config() const { return m_config; }
@@ -102,7 +123,7 @@ protected slots:
     void disableURLGrabber();
 
 private slots:
-    void newClipData();
+    void newClipData( bool selectionMode );
     void slotClearClipboard();
 
     void slotSelectionChanged() {
@@ -125,8 +146,9 @@ private:
 
     QTime *menuTimer;
 
-    QString m_lastString;
-    QString m_lastClipboard, m_lastSelection;
+    QMimeSource* m_lastClipdata;
+    int m_lastClipboard;
+    int m_lastSelection;
     History* m_history;
     int m_overflowCounter;
     KToggleAction *toggleURLGrabAction;
@@ -142,6 +164,16 @@ private:
     bool bNoNullClipboard       :1;
     bool bTearOffHandle         :1;
     bool bIgnoreSelection       :1;
+    bool bSynchronize           :1;
+
+    /**
+     * Avoid reacting to our own changes, using this
+     * lock.
+     * Don't manupulate this object directly... use the Ignore struct
+     * instead
+     */
+    int locklevel;
+
     URLGrabber *myURLGrabber;
     KConfig* m_config;
     QTimer m_overflowClearTimer;

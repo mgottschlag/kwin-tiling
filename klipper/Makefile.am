@@ -10,7 +10,8 @@ CLEANFILES = dummy.cpp
 
 libklipper_common_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) 
 libklipper_common_la_SOURCES = main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp \
-    toplevel.skel clipboardpoll.cpp history.cpp historyitem.cpp historystringitem.cpp klipperpopup.cpp popupproxy.cpp
+    toplevel.skel clipboardpoll.cpp history.cpp historyitem.cpp historystringitem.cpp klipperpopup.cpp popupproxy.cpp \
+    historyimageitem.cpp
 
 libklipper_common_la_METASOURCES = AUTO
 libklipper_common_la_LDFLAGS = $(all_libraries)

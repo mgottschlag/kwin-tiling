@@ -36,11 +36,23 @@ History::iterator History::youngest() {
 }
 
 void History::insert( const HistoryItem* item ) {
+    if ( !item )
+        return;
+
+    // Optimisation: Compare with top item.
+    if ( !itemList.isEmpty() && *itemList.first() == *item ) {
+        delete item;
+        return;
+    }
+
     remove( item );
     forceInsert( item );
+
 }
 
 void History::forceInsert( const HistoryItem* item ) {
+    if ( !item )
+        return;
     itemList.prepend( item );
     emit changed();
     trim();
@@ -58,12 +70,11 @@ void History::trim() {
 }
 
 void History::remove( const HistoryItem* newItem ) {
-    if ( newItem ) {
-        QPtrListIterator<HistoryItem> it( itemList );
-    }
-    QString newText( newItem->text() );
-    for ( const HistoryItem* item = itemList.current(); item; item=next() ) {
-        if ( item->text() == newText ) {
+    if ( !newItem )
+        return;
+
+    for ( const HistoryItem* item = itemList.first(); item; item=next() ) {
+        if ( *item == *newItem ) {
             itemList.remove();
             emit changed();
             return;
@@ -90,7 +101,6 @@ void History::slotMoveToTop(int pos ) {
     HistoryItem* item = itemList.take();
     itemList.prepend( item );
     emit changed();
-
 }
 
 void History::max_size( unsigned max_size ) {

@@ -168,15 +168,12 @@ public:
       return actionWidget->cbUseGUIRegExpEditor->isChecked();
     }
 
-
-    // KClipboard configuration
     bool synchronize() const {
         return generalWidget->cbSynchronize->isChecked();
     }
     bool implicitSelection() const {
         return generalWidget->cbImplicitSelection->isChecked();
     }
-    // ------------------------
 
     void setKeepContents( bool enable ) {
 	generalWidget->cbSaveContents->setChecked( enable );
@@ -201,6 +198,9 @@ public:
     }
     void setIgnoreSelection( bool ignore ) {
         generalWidget->cbIgnoreSelection->setChecked( ignore );
+    }
+    void setSynchronize( bool synchronize ) {
+        generalWidget->cbSynchronize->setChecked( synchronize );
     }
     void setNoActionsFor( const QStringList& items ) {
 	actionWidget->setWMClasses( items );

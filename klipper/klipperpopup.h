@@ -56,7 +56,6 @@ public slots:
 private:
     void rebuild( const QString& filter = QString::null );
     void buildFromScratch();
-    int calcItemsPerMenu();
 
     void insertSearchFilter();
     void removeSearchFilter();
@@ -109,7 +108,7 @@ private:
     int m_filterWidgetId;
 
     /**
-     * Number of history items currently in menu
+     * The current number of history items in the clipboard
      */
     int n_history_items;
 

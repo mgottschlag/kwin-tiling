@@ -41,21 +41,18 @@ public:
     KlipperPopup* popup();
 
     /**
-     * Inserts item into clipboard history
-     * if duplicate entry exist, the older dublicate is deleted.
-     * @param pos the position of the new item, 0 is top
-     */
-    void insert( const HistoryItem* item, unsigned pos );
-
-    /**
      * Inserts item into clipboard history top
      * if duplicate entry exist, the older duplicate is deleted.
+     * The duplicate concept is "deep", so that two text string
+     * are considerd duplicate if identical.
      */
     void insert( const HistoryItem* item );
 
     /**
      * Inserts item into clipboard without any checks
-     * Used when restoring a saved history.
+     * Used when restoring a saved history and internally.
+     * Don't use this unless you're reasonable certain
+     * that no duplicates are introduced
      */
     void forceInsert( const HistoryItem* item );
 

@@ -17,3 +17,7 @@ HistoryStringItem::HistoryStringItem( const QString& data )
 
 }
 
+/* virtual */
+void HistoryStringItem::write( QDataStream& stream ) const {
+    stream << QString( "string" ) << m_data;
+}

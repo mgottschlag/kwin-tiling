@@ -18,7 +18,6 @@
 #include <qvbuttongroup.h>
 #include <assert.h>
 
-#include <kclipboard.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
@@ -142,7 +141,6 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
              "something and the clipboard when choosing e.g. \"Copy\" "
              "in a menubar.") );
 
-    cbSynchronize->setChecked( KClipboardSynchronizer::isSynchronizing() );
     cbSeparate->setChecked( !cbSynchronize->isChecked() );
 
     popupTimeout = new KIntNumInput( this );

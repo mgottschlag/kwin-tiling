@@ -11,8 +11,6 @@
    Licensed under the GNU GPL Version 2
 
  ------------------------------------------------------------- */
-#include <qstyle.h>
-
 #include <kmessagebox.h>
 #include <khelpmenu.h>
 #include <kiconloader.h>
@@ -99,34 +97,19 @@ KlipperPopup::KlipperPopup( History* history, QWidget* parent, const char* name 
       m_filterWidgetId( 10 ),
       n_history_items( 0 )
 {
-    m_popupProxy = new PopupProxy( this, "popup_proxy", calcItemsPerMenu() );
+    KWin::WindowInfo i = KWin::windowInfo( winId(), NET::WMGeometry );
+    QRect g = i.geometry();
+    QRect screen = KGlobalSettings::desktopGeometry(g.center());
+    int menu_height = ( screen.height() ) * 3/4;
+    int menu_width = ( screen.width() )  * 1/3;
+
+    m_popupProxy = new PopupProxy( this, "popup_proxy", menu_height, menu_width );
 
     connect( this, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
 }
 
 KlipperPopup::~KlipperPopup() {
 
-}
-
-int KlipperPopup::calcItemsPerMenu() {
-    KWin::WindowInfo i = KWin::windowInfo( winId(), NET::WMGeometry );
-    QRect g = i.geometry();
-    QRect screen = KGlobalSettings::desktopGeometry(g.center());
-
-    // Determine height of a menu item. This requires us to insert a menuitem
-    // in a popupmenu; we'll just this menu and remove the item again quickly.
-    int fontheight = QFontMetrics( fontMetrics()  ).height();
-    int id = insertItem( "XMg" );
-    QMenuItem* mi = findItem( id );
-    int lineheight = style().sizeFromContents(QStyle::CT_PopupMenuItem,
-                                              this,
-                                              QSize( 0, fontheight ),
-                                              QStyleOption(mi,10,0) ).height();
-    removeItem( id );
-   // Use about 75% of the screen height for items
-    int itemsPerMenu = ( screen.height() / lineheight ) * 3/4;
-
-    return itemsPerMenu;
 }
 
 void KlipperPopup::slotAboutToShow() {
@@ -193,7 +176,6 @@ void KlipperPopup::rebuild( const QString& filter ) {
         }
     }
 
-//    m_filterWidget->setText( filter );
     QRegExp filterexp( filter );
     if ( filterexp.isValid() ) {
         m_filterWidget->setPaletteForegroundColor( paletteForegroundColor() );

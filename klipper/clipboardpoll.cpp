@@ -83,13 +83,19 @@ bool ClipboardPoll::x11Event( XEvent* e )
 // note that this is also installed as app-wide filter
     if( e->type == SelectionNotify && e->xselection.requestor == winId())
     {
-        if( changedTimestamp( selection, *e )
-            || changedTimestamp( clipboard, *e ))
+        if( changedTimestamp( selection, *e ) ) {
+#ifdef NOISY_KLIPPER_
+            kdDebug() << "SELECTION CHANGED (GOT TIMESTAMP)" << endl;
+#endif
+            emit clipboardChanged( true );
+        }
+
+        if ( changedTimestamp( clipboard, *e ) )
         {
 #ifdef NOISY_KLIPPER_
             kdDebug() << "CLIPBOARD CHANGED (GOT TIMESTAMP)" << endl;
 #endif
-            emit clipboardChanged();
+            emit clipboardChanged( false );
         }
         return true; // filter out
     }
@@ -128,18 +134,19 @@ void ClipboardPoll::updateQtOwnership( SelectionData& data )
 void ClipboardPoll::timeout()
 {
     KlipperWidget::updateTimestamp();
-    bool signal = false;
-    if( !kapp->clipboard()->ownsSelection())
-        signal = signal || checkTimestamp( selection );
-    if( !kapp->clipboard()->ownsClipboard())
-        signal = signal || checkTimestamp( clipboard );
-    if( signal )
-    {
+    if( !kapp->clipboard()->ownsSelection() && checkTimestamp( selection ) ) {
+#ifdef NOISY_KLIPPER_
+        kdDebug() << "SELECTION CHANGED" << endl;
+#endif
+        emit clipboardChanged( true );
+    }
+    if( !kapp->clipboard()->ownsClipboard() && checkTimestamp( clipboard ) ) {
 #ifdef NOISY_KLIPPER_
         kdDebug() << "CLIPBOARD CHANGED" << endl;
 #endif
-        emit clipboardChanged();
+        emit clipboardChanged( false );
     }
+
 }
 
 bool ClipboardPoll::checkTimestamp( SelectionData& data )

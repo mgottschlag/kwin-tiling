@@ -23,7 +23,7 @@ class ClipboardPoll
     public:
         ClipboardPoll( QWidget* parent );
     signals:
-        void clipboardChanged();
+        void clipboardChanged( bool selectionMode );
     protected:
         virtual bool x11Event( XEvent* );
     private slots:

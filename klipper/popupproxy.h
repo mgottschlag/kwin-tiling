@@ -38,7 +38,7 @@ public:
      * Inserts up to itemsPerMenu into parent from parent->youngest(),
      * and spills any remaining items into a more menu.
      */
-    PopupProxy( KlipperPopup* parent, const char* name, int itemsPerMenu );
+    PopupProxy( KlipperPopup* parent, const char* name, int menu_height, int menu_width );
 
     KlipperPopup* parent();
 
@@ -64,6 +64,12 @@ private:
     int insertFromSpill( int index = 0 );
 
     /**
+     * Insert item into proxy_for_menu at index,
+     * subtracting the items height from remainingHeight
+     */
+    void tryInsertItem( HistoryItem const * const item, int& remainingHeight, const int index );
+
+    /**
      * Delete all "More..." menus current created.
      */
     void deleteMoreMenus();
@@ -72,7 +78,8 @@ private:
     KPopupMenu* proxy_for_menu;
     History::iterator spillPointer;
     QRegExp m_filter;
-    int m_itemsPerMenu;
+    int m_menu_height;
+    int m_menu_width;
     int nextItemNumber;
 
 };

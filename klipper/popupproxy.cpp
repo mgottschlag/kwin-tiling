@@ -1,3 +1,4 @@
+// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* -------------------------------------------------------------
 
 popupproxy.cpp (part of Klipper - Cut & paste history for KDE)
@@ -10,6 +11,9 @@ Licensed under the GNU GPL Version 2
 
 ------------------------------------------------------------- */
 #include <qregexp.h>
+#include <qstyle.h>
+#include <qpixmap.h>
+#include <qimage.h>
 
 #include <kstringhandler.h>
 #include <klocale.h>
@@ -21,11 +25,12 @@ Licensed under the GNU GPL Version 2
 #include "klipperpopup.h"
 
 
-PopupProxy::PopupProxy( KlipperPopup* parent, const char* name, int itemsPerMenu )
+PopupProxy::PopupProxy( KlipperPopup* parent, const char* name, int menu_height, int menu_width )
     : QObject( parent, name ),
       proxy_for_menu( parent ),
       spillPointer( parent->history()->youngest() ),
-      m_itemsPerMenu( itemsPerMenu ),
+      m_menu_height( menu_height ),
+      m_menu_width( menu_width ),
       nextItemNumber( 0 )
 {
     connect( parent->history(), SIGNAL( changed() ), SLOT( slotHistoryChanged() ) );
@@ -70,6 +75,47 @@ void PopupProxy::slotAboutToShow() {
     insertFromSpill();
 }
 
+void PopupProxy::tryInsertItem( HistoryItem const * const item,
+                                int& remainingHeight,
+                                const int index )
+{
+
+    // Insert item
+    int id = -1;
+    QPixmap image( item->image() );
+    if ( image.isNull() ) {
+        // Squeeze text strings so that do not take up the entire screen (or more)
+        QString text( KStringHandler::cPixelSqueeze(item->text().simplifyWhiteSpace(),
+                                                    proxy_for_menu->fontMetrics(),
+                                                    m_menu_width).replace( "&", "&&" ) );
+        id = proxy_for_menu->insertItem( text, -1, index );
+    } else {
+        const QSize max_size( m_menu_width,m_menu_height/4 );
+        if ( image.height() > max_size.height() || image.width() > max_size.width() ) {
+            image.convertFromImage( image.convertToImage().smoothScale( max_size, QImage::ScaleMin ) );
+        }
+        id = proxy_for_menu->insertItem( image,  -1,  index );
+    }
+
+
+    // Determine height of a menu item.
+    Q_ASSERT( id != -1 ); // Be sure that the item was inserted.
+    QMenuItem* mi = proxy_for_menu->findItem( id );
+    int fontheight = QFontMetrics( proxy_for_menu->fontMetrics()  ).height();
+    int itemheight = proxy_for_menu->style().sizeFromContents(QStyle::CT_PopupMenuItem,
+                                                              proxy_for_menu,
+                                                              QSize( 0, fontheight ),
+                                                              QStyleOption(mi,10,0) ).height();
+    // Test if there was enough space
+    remainingHeight -= itemheight;
+    History* history = parent()->history();
+    proxy_for_menu->connectItem(  id,
+                                  history,
+                                  SLOT( slotMoveToTop( int ) ) );
+    proxy_for_menu->setItemParameter(  id,  nextItemNumber );
+
+}
+
 int PopupProxy::insertFromSpill( int index ) {
 
     // This menu is going to be filled, so we don't need the aboutToShow()
@@ -80,25 +126,18 @@ int PopupProxy::insertFromSpill( int index ) {
     // discarding any that doesn't match the current filter.
     // stop when the total number of items equal m_itemsPerMenu;
     int count = 0;
-    const HistoryItem* item = spillPointer.current();
-    int maxItems = m_itemsPerMenu - proxy_for_menu->count();
-    for ( History* history = parent()->history();
-          count < maxItems && item;
+    int remainingHeight = m_menu_height - proxy_for_menu->sizeHint().height();
+    // Force at least one item to be inserted.
+    remainingHeight = QMAX( remainingHeight, 0 );
+    for ( const HistoryItem* item = spillPointer.current();
+          item && remainingHeight >= 0;
           nextItemNumber++, item = ++spillPointer )
     {
         if ( m_filter.search( item->text() ) == -1) {
             continue;
         }
+        tryInsertItem( item, remainingHeight, index++ );
         count++;
-        int id = proxy_for_menu->insertItem( KStringHandler::cEmSqueeze(item->text().simplifyWhiteSpace(),
-                                                                        proxy_for_menu->fontMetrics(),
-                                                                        25).replace( "&", "&&" ),
-                                             -1,
-                                             index++);
-        proxy_for_menu->connectItem(  id,
-                                      history,
-                                      SLOT( slotMoveToTop( int ) ) );
-        proxy_for_menu->setItemParameter(  id,  nextItemNumber );
     }
 
     // If there is more items in the history, insert a new "More..." menu and
