@@ -19,7 +19,6 @@
 
 #include <qobject.h>
 #include <qlayout.h>
-#include <qlabel.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qlabel.h>

@@ -26,7 +26,6 @@
 #include <qstringlist.h>
 #include <qpushbutton.h>
 #include <kapp.h>
-#include <kiconloader.h>
 #include <ktoolbar.h>
 #include <kglobal.h>
 #include <kstddirs.h>

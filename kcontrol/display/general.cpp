@@ -31,7 +31,6 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kthemebase.h>
-#include <kthemebase.h>
 #include <kstddirs.h>
 #include <kcharsets.h>
 #include <kconfigbase.h>
@@ -45,7 +44,6 @@
 
 #include "general.h"
 
-#include <X11/Xlib.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
