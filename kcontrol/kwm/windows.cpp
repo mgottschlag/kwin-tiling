@@ -51,7 +51,7 @@
 
 // kwin config keywords
 #define KWIN_FOCUS     "FocusPolicy"
-#define KWIN_PLACEMENT "WindowsPlacement"
+#define KWIN_PLACEMENT "Placement"
 #define KWIN_MOVE      "MoveMode"
 #define KWIN_MAXIMIZE  "MaximizeOnlyVertically"
 #define KWIN_RESIZE_ANIM    "ResizeAnimation"
