@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.3  2000/03/24 06:01:25  charles
+    More mindless boring stuff.
+
     Revision 1.2  2000/03/23 02:51:51  charles
     Progressivly getting to the level of "usable" :)
 
@@ -39,7 +42,7 @@
 
 #include <qlistbox.h>
 #include <qcheckbox.h>
-#include <klined.h>
+#include <klineedit.h>
 #include <kconfig.h>
 #include <qpushbutton.h>
 
@@ -56,6 +59,9 @@ public slots:
 	void load(KConfig *config, const QString &section);
 	void save();
 	void unload();
+
+protected slots:
+	void setPixmap(int item, bool on);
 
 signals:
 	void changed();

@@ -24,10 +24,13 @@
 #include "eventview.h"
 #include "eventview.moc"
 
+#include <knotifyclient.h>
 #include <qlayout.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kinstance.h>
+
+#include <iostream.h>
 
 static QString presentation[5] = {
 	i18n("Sound"),
@@ -44,11 +47,11 @@ EventView::EventView(QWidget *parent, const char *name):
 	QGridLayout *layout=new QGridLayout(this,2,3);
 	
 	eventslist=new QListBox(this);
-	{	eventslist->insertItem(KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small), presentation[0]);
-		eventslist->insertItem(KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small),presentation[1]);
-		eventslist->insertItem(KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small),presentation[2]);
-		eventslist->insertItem(KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small),presentation[3]);
-		eventslist->insertItem(KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small),presentation[4]);
+	{	eventslist->insertItem(presentation[0]);
+		eventslist->insertItem(presentation[1]);
+		eventslist->insertItem(presentation[2]);
+		eventslist->insertItem(presentation[3]);
+		eventslist->insertItem(presentation[4]);
 	}
 	
 	layout->addMultiCellWidget(eventslist, 0,2, 0,0);
@@ -66,13 +69,61 @@ void EventView::defaults()
 
 }
 
+
 void EventView::load(KConfig *config, const QString &section)
 {
+	config->setGroup(section);
 	unload();
 	conf=config;
 	this->section=section;
 	setEnabled(true);
+	typedef KNotifyClient::Presentation Presentation;
+	Presentation present;
 	
+	{ // Load the presentation
+		present=(Presentation)conf->readNumEntry("presentation", -1);
+		if (present==KNotifyClient::Default)
+			present=(Presentation)conf->readNumEntry("default_presentation", 0);
+	}
+	// Stick the flags on the list for that which is present
+	if (present & KNotifyClient::Sound)
+		setPixmap(0, true);
+	if (present & KNotifyClient::Messagebox)
+		setPixmap(1, true);
+	if (present & KNotifyClient::Logwindow)
+		setPixmap(2, true);
+	if (present & KNotifyClient::Logfile)
+		setPixmap(3, true);
+	if (present & KNotifyClient::Stderr)
+		setPixmap(4, true);
+}
+
+/*
+Can't use this yet.
+	if (present & KNotifyClient::Sound)
+	{ // Load 'Sound'
+		sound=conf->readEntry("sound", 0);
+		if (sound.isNull())
+			sound=conf->readEntry("default_sound", "");
+	}
+	
+	if (present & KNotifyClient::Logfile)
+	{ // Load 'Logfile'
+		sound=conf->readEntry("logfile", 0);
+		if (sound.isNull())
+			sound=conf->readEntry("default_logfile", "");
+	}
+
+*/
+
+void EventView::setPixmap(int item, bool on)
+{
+// KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small)
+	if (on)
+		eventslist->changeItem(
+			KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small),
+			eventslist->text(item),
+			item);
 }
 
 void EventView::save()
