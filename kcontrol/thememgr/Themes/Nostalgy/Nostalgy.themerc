@@ -1,10 +1,10 @@
 # KDE Config File
 #-----------------------------------------------------------------------------
 [General]
-name=Nostalgy
+Name=Nostalgy
 author=Robert Flemming & Daniel M. Duley
 email=mosfet@kde.org
-description=A simple original theme that tries to combine the best aspects of familiar interfaces.
+Comment=A simple original theme that tries to combine the best aspects of familiar interfaces.
 version=0.1
 #-----------------------------------------------------------------------------
 [Display]

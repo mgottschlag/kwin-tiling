@@ -5,7 +5,7 @@
 # Some entries of this group are not displayed yet but will be used
 # in later versions of the theme manager.
 # Name of the theme
-name=MGBreizh
+Name=MGBreizh
 # Name of the author
 author=Mikael GEORGES
 # Email address of the author
@@ -13,7 +13,7 @@ email=admin@mgbreizh.com
 # Name of additional information file
 info=http://www.mgbreizh.com/
 # Short description
-description=Mikael GEORGES <admin@mgbreizh.com>
+Comment=Mikael GEORGES <admin@mgbreizh.com>
 # Version of the theme
 version=1.0
 #

@@ -1,9 +1,9 @@
 [General]
-name=Wood
+Name=Wood
 author=Georg Russell
 email=russell@kde.org
 info=
-description=A wooden look for your desktop!\nBy Georg Russell <russell@kde.org>
+Comment=A wooden look for your desktop!\nBy Georg Russell <russell@kde.org>
 [Panel]
 background=panel.png
 [Filemanager]

@@ -971,8 +971,12 @@ void Theme::loadGroupGeneral(void)
   col.setRgb(192,192,192);
 
   mConfig->setGroup("General");
-  mName = mConfig->readEntry("name", "<unknown>");
-  mDescription = mConfig->readEntry("description", mName + " Theme");
+  mName = mConfig->readEntry("Name");
+  if (mName.isEmpty())
+	  mName = mConfig->readEntry("name", "<unknown>");
+  mDescription = mConfig->readEntry("Comment");
+  if (mDescription.isEmpty())
+	  mDescription = mConfig->readEntry("description", i18n("%1 Theme").arg(mName));
   mAuthor = mConfig->readEntry("author");
   mEmail = mConfig->readEntry("email");
   mHomePage = mConfig->readEntry("homepage");
