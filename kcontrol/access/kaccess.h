@@ -75,7 +75,6 @@ private:
 
   KDialogBase *dialog;
   QLabel *featuresLabel;
-  QLabel *questionLabel;
   KComboBox *showModeCombobox;
 };
 
