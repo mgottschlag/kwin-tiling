@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Misc.h"
+#include <kdebug.h>
 
 class CFontEngine;
 class CKfiConfig;
@@ -41,6 +42,8 @@ class KXftConfig;
 #define KIO_FONTS_USER     I18N_NOOP("Personal")
 #define KIO_FONTS_SYS      I18N_NOOP("System")
 #define KIO_FONTS_DISABLED I18N_NOOP(" (Disabled)")
+
+#define KFI_DBUG kdDebug()
 
 class CGlobal
 {

@@ -74,7 +74,9 @@ class CFontEngine
 
         // These do not...
         SPEEDO,
-        BITMAP,
+        BDF,
+        PCF,
+        SNF,
 
         ANY,
         NONE
@@ -191,8 +193,11 @@ class CFontEngine
     static bool    isASnf(const char *fname)    { return isA(fname, "snf", true); }
     static bool    isAPcf(const char *fname)    { return isA(fname, "pcf", true); }
     static bool    isABitmap(const char *fname) { return isAPcf(fname) || isABdf(fname) || isASnf(fname); }
-    static bool    isAFont(const char *fname)   { return isATtf(fname) || isATtc(fname) || isAOtf(fname) || isAType1(fname) || isASpeedo(fname) || isABitmap(fname); }
+    static bool    isABitmap(EType type)        { return PCF==type || BDF==type || SNF==type; }
+    static bool    isAFont(const char *fname);
+    static bool    isAFont(EType type)          { return type<=SNF && TYPE_1_AFM!=type; }
     static bool    isAAfm(const char *fname)    { return isA(fname, "afm"); }
+    static bool    isAFontOrAfm(const char *fn) { return getType(fn)<=SNF; }
     static EType   getType(const char *fname);
     static QString weightStr(EWeight w);
     static QString widthStr(EWidth w);
@@ -224,7 +229,7 @@ class CFontEngine
     bool            hasPsInfo()       { return itsType<=TYPE_1_AFM; }
     static bool     hasPsInfo(const char *fname) { return getType(fname)<=TYPE_1_AFM; }
 
-    bool            hasAfmInfo()       { return itsType<TYPE_1_AFM; }
+    bool            hasAfmInfo()      { return itsType<TYPE_1_AFM; }
     static bool     hasAfmInfo(const char *fname) { return getType(fname)<TYPE_1_AFM; }
 
     QStringList     getEncodings();
@@ -289,7 +294,6 @@ class CFontEngine
     //
     // Bitmap functions...
     //
-    bool            openFontBmp(const QString &file, bool force=false);
     void            createNameBmp(int pointSize, int res, const QString &enc);
     void            parseXlfdBmp();
     QString &       getXlfdBmp()                          { return itsXlfd; }

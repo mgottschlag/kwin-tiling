@@ -152,16 +152,20 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
             return openFontT1(file, mask);
         case SPEEDO:
             return openFontSpd(file, mask);
-        case BITMAP:
-            return openFontBmp(file);
+        case BDF:
+            return openFontBdf(file);
+        case PCF:
+            return openFontPcf(file);
+        case SNF:
+            return openFontSnf(file);
         case TYPE_1_AFM:
             return openFontAfm(file);
         default:
             if(force)
             {
-                bool ok=openFontT1(file, mask);
+                bool ok=false;
 
-                if(ok)
+                if((ok=openFontT1(file, mask)))
                     itsType=TYPE_1;
                 else
                 {
@@ -172,21 +176,16 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
                     else
                     {
                         closeFont();
-                        ok=openFontSpd(file, mask);
-                        if(ok)
+                        if((ok=openFontAfm(file)))
+                            itsType=TYPE_1_AFM;
+                        else if((ok=openFontPcf(file)))
+                            itsType=PCF;
+                        else if((ok=openFontSpd(file)))
                             itsType=SPEEDO;
-                        else
-                        {
-                            ok=openFontBmp(file, force);
-                            if(ok)
-                                itsType=BITMAP;
-                            else
-                            {
-                                ok=openFontAfm(file);
-                                if(ok)
-                                    itsType=TYPE_1_AFM;
-                            }
-                        }
+                        else if((ok=openFontBdf(file)))
+                            itsType=BDF;
+                        else if((ok=openFontSnf(file)))
+                            itsType=SNF;
                     }
                 }
 
@@ -253,6 +252,13 @@ bool CFontEngine::isA(const char *fname, const char *ext, bool z)
     return fnt;
 }
 
+bool CFontEngine::isAFont(const char *fname)
+{
+    EType type=getType(fname);
+
+    return isAFont(type);
+}
+
 CFontEngine::EType CFontEngine::getType(const char *fname)
 {
     if(isATtf(fname))
@@ -265,10 +271,14 @@ CFontEngine::EType CFontEngine::getType(const char *fname)
         return TYPE_1;
     if(isAAfm(fname))
         return TYPE_1_AFM;
+    if(isAPcf(fname))
+        return PCF;
     if(isASpeedo(fname))
         return SPEEDO;
-    if(isABitmap(fname))
-        return BITMAP;
+    if(isABdf(fname))
+        return BDF;
+    if(isASnf(fname))
+        return SNF;
     else
         return NONE;
 }
@@ -365,7 +375,9 @@ QStringList CFontEngine::getEncodings()
             return getEncodingsFt();
         case SPEEDO:
             return getEncodingsSpd();
-        case BITMAP:
+        case PCF:
+        case BDF:
+        case SNF:
         default:
         {
             QStringList empty;
@@ -504,7 +516,8 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
     FT_Face        face;
     FT_Size        size;
     FTC_Image_Desc font;
-    bool           thumb=width==height && height<=128;
+    bool           thumb=width==height && height<=128,
+                   isBitmap=isABitmap(itsType);
     int            fontSize=28,
                    offset=4,
                    space=8;
@@ -526,7 +539,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
     }
 
     font.font.face_id=getId(itsPath, faceNo);
-    font.font.pix_width=font.font.pix_height=BITMAP==itsType ? itsPixelSize : thumb ? fontSize : point2Pixel(fontSize);
+    font.font.pix_width=font.font.pix_height=isBitmap ? itsPixelSize : thumb ? fontSize : point2Pixel(fontSize);
     font.image_type=ftc_image_grays;
 
     FT_F26Dot6 startX=offset,
@@ -547,7 +560,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
                 info;
         QFont   title(KGlobalSettings::generalFont());
 
-        if(BITMAP==itsType)
+        if(isBitmap)
         {
             int pos=name.findRev('(');
 
@@ -561,7 +574,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
         y=painter.fontMetrics().height();
         drawText(painter, x, y, width, name);
 
-        if(BITMAP==itsType)
+        if(isBitmap)
         {
             y+=2+painter.fontMetrics().height();
             drawText(painter, x, y, width, info);
@@ -593,7 +606,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
                         break;
             }
 
-            if(BITMAP!=itsType)
+            if(isBitmap)
                 font.font.pix_width=font.font.pix_height=point2Pixel((int)(fontSize*0.75));
 
             if(y<height && !FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
@@ -1928,24 +1941,6 @@ QStringList CFontEngine::getEncodingsSpd()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static const unsigned int constBitmapMaxProps=1024;
-
-bool CFontEngine::openFontBmp(const QString &file, bool force)
-{
-    itsFoundry=constDefaultFoundry;
-
-    QCString cFile(QFile::encodeName(file));
-
-    if(isAPcf(cFile))
-        return openFontPcf(file);
-    if(isABdf(cFile))
-        return openFontBdf(file);
-    if(isASnf(cFile))
-        return openFontSnf(file);
-
-    return force 
-               ? openFontPcf(file) || openFontBdf(file) || openFontSnf(file)
-               : false;
-}
 
 void CFontEngine::createNameBmp(int pointSize, int res, const QString &enc)
 {

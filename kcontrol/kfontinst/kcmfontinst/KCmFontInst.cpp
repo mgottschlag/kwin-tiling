@@ -551,13 +551,13 @@ void CKCmFontInst::fileHighlighted(const KFileItem *item)
 
     if(previewItem && list && list->contains(previewItem))  // OK, check its been selected - not deselected!!!
     {
-        QCString fName(QFile::encodeName(previewItem->url().path()));
+        CFontEngine::EType type=CFontEngine::getType(QFile::encodeName(previewItem->url().path()));
 
-        if(CFontEngine::isAFont(fName))
+        if(CFontEngine::isAFont(type))
         {
             bool showFs=false;
 
-            if(CFontEngine::isATtc(fName) && CGlobal::fe().openKioFont(fName, CFontEngine::TEST, true))
+            if(CFontEngine::TT_COLLECTION==type && CGlobal::fe().openKioFont(previewItem->url().path(), CFontEngine::TEST, true))
             {
                 if(CGlobal::fe().getNumFaces()>1)
                 {

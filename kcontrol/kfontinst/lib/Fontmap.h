@@ -54,6 +54,7 @@ class CFontmap
         CFile(const QString &dir);
 
         const QStringList * getEntries(const QString &fname);
+        unsigned int        getLineCount() { return itsLineCount; }
 
         private:
 
@@ -63,6 +64,7 @@ class CFontmap
         private:
 
         QPtrList<TEntry> itsEntries;
+        unsigned int     itsLineCount;
     };
 
     public:

@@ -72,12 +72,8 @@ bool CKFileFontIconView::acceptDrag(QDropEvent *e) const
 
         ok=true;
         for(it=urls.begin(); ok && it!=urls.end(); ++it)
-        {
-            QCString path(QFile::encodeName((*it).path()));
-
-            if(!CFontEngine::isAFont(path) && !CFontEngine::isAAfm(path))
+            if(!CFontEngine::isAFontOrAfm(QFile::encodeName((*it).path())))
                 ok=false;
-        }
     }
 
     return ok;

@@ -237,6 +237,8 @@ bool CXConfig::xfsInPath()
 
 void CXConfig::refreshPaths()
 {
+    KFI_DBUG << "CXConfig::refreshPaths()" << endl;
+
     if(itsOk && XFS!=itsType)
     {
         TPath *path=NULL;
@@ -248,7 +250,10 @@ void CXConfig::refreshPaths()
                         : CMisc::xDirSyntax(path->dir));
 
             if(path->orig)
+            {
+                KFI_DBUG << "xset fp- " << dir << endl;
                 CMisc::doCmd("xset", "fp-", dir); // Remove path...
+            }
             if(!path->toBeRemoved && CMisc::dExists(path->dir) && CMisc::fExists(path->dir+"fonts.dir"))
             {
                 ifstream in(QFile::encodeName(path->dir+"fonts.dir"));
@@ -260,7 +265,10 @@ void CXConfig::refreshPaths()
                     in >> num;
 
                     if(in.good() && num)
+                    {
+                        KFI_DBUG << "xset fp+ " << dir << endl;
                         CMisc::doCmd("xset", "fp+", dir);   // Add path...
+                    }
                 }
             }
         }
@@ -274,11 +282,15 @@ void CXConfig::refreshPaths()
         {
             QString pid;
 
+            KFI_DBUG << "kill -SIGUSR1 " << pid << endl;
             CMisc::doCmd("kill", "-SIGUSR1", pid.setNum(xfsPid));
         }
     }
     else
+    {
+        KFI_DBUG << "xset fp rehash" << endl;
         CMisc::doCmd("xset", "fp", "rehash");
+    }
 }
 
 CXConfig::TPath * CXConfig::findPath(const QString &dir)
@@ -904,6 +916,8 @@ bool CXConfig::createFontsDotDir(const QString &dir)
 bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies)
 #endif
 {
+    KFI_DBUG << "CXConfig::createFontsDotDir(" << dir << ')' << endl;
+
     bool status=false;
     QDir d(dir);
  
@@ -916,6 +930,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                             fscale;
         const QStringList   *origfd=NULL,
                             *origfs=NULL;
+        bool                added=false;
  
         if(files)
         {
@@ -934,17 +949,30 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                     origfs=fs.getXlfds(fInfo->fileName());
 
                     if(origfd)
+                    {
+                        KFI_DBUG << "Use origfd entry for fdir for " << fInfo->fileName() << endl;
                         fdir+=*origfd;
+                    }
                     else if(origfs)
+                    {
+                        KFI_DBUG << "Use origfs entry for fdir for " << fInfo->fileName() << endl;
                         fdir+=*origfs;
+                    }
 
                     if(origfs)
+                    {
+                        KFI_DBUG << "Use origfs entry for fscale for " << fInfo->fileName() << endl;
                         fscale+=*origfs;
+                    }
                     else if(origfd && !bitmap)
+                    {
+                        KFI_DBUG << "Use origfd entry for fscale for " << fInfo->fileName() << endl;
                         fscale+=*origfd;
+                    }
 
                     if(!origfd && !origfs)
                     {
+                        KFI_DBUG << "Need to create entries for " << fInfo->fileName() << endl;
                         if(!bitmap)
                         {
                             int face=0,
@@ -1007,6 +1035,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                                                  fscale.append(entry);
                                              if(-1==fdir.findIndex(entry))
                                                  fdir.append(entry);
+                                             added=true;
 #ifndef HAVE_FONTCONFIG
                                              if(CFontEngine::isATtf(QFile::encodeName(fInfo->fileName())) &&
                                                 CEncodings::constTTSymbol==*it &&
@@ -1029,42 +1058,53 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                                  entry+=CGlobal::fe().getXlfdBmp().latin1();
                                  fdir.append(entry);
                                  CGlobal::fe().closeFont();
+                                 added=true;
                              }
                       }
                 }
             }
         }
 
-        ofstream fontsDotDir(QFile::encodeName(QString(dir+"fonts.dir")));
-
-        if(fontsDotDir)
+        //
+        // Only output if we have added something, or th enumber of Xlfds is different (would mean a font was
+        // removed)
+        if(added || fdir.count()!=fd.xlfdCount())
         {
-            ofstream              fontsDotScale;
-            QStringList::Iterator sIt;
+            KFI_DBUG << "Ouput fonts.dir, " << added << ' ' << fdir.count() << ' ' << fd.xlfdCount() << endl;
 
-            fontsDotDir << fdir.count() << endl;
+            ofstream fontsDotDir(QFile::encodeName(QString(dir+"fonts.dir")));
 
-            if(fscale.count())
+            if(fontsDotDir)
             {
-                fontsDotScale.open(QFile::encodeName(QString(dir+"fonts.scale")));
+                QStringList::Iterator sIt;
 
-                if(fontsDotScale)
-                {
-                    fontsDotScale << fscale.count() << endl;
+                fontsDotDir << fdir.count() << endl;
+                for(sIt=fdir.begin(); sIt!=fdir.end(); ++sIt)
+                    fontsDotDir << (*sIt).local8Bit() << endl;
 
-                    for(sIt=fscale.begin(); sIt!=fscale.end(); ++sIt)
-                        fontsDotScale << (*sIt).local8Bit() << endl;
-
-                    fontsDotScale.close();
-                }
+                fontsDotDir.close();
             }
-
-            for(sIt=fdir.begin(); sIt!=fdir.end(); ++sIt)
-                fontsDotDir << (*sIt).local8Bit() << endl;
-
-            status=true;
-            fontsDotDir.close();
         }
+
+        if(added || fscale.count()!=fs.xlfdCount())
+        {
+            KFI_DBUG << "Ouput fonts.scale, " << added << ' ' << fscale.count() << ' ' << fs.xlfdCount() << endl;
+
+            ofstream fontsDotScale(QFile::encodeName(QString(dir+"fonts.scale")));
+
+            if(fontsDotScale)
+            {
+                QStringList::Iterator sIt;
+
+                fontsDotScale << fscale.count() << endl;
+                for(sIt=fscale.begin(); sIt!=fscale.end(); ++sIt)
+                    fontsDotScale << (*sIt).local8Bit() << endl;
+
+                fontsDotScale.close();
+            }
+        }
+
+        status=true;
     }
 
     return status;
@@ -1080,6 +1120,7 @@ CXConfig::TPath::EType CXConfig::TPath::getType(const QString &d)
 }
 
 CXConfig::CFontsFile::CFontsFile(const char *file)
+                    : itsXlfdCount(0)
 {
     ifstream f(file);
 
@@ -1106,6 +1147,8 @@ CXConfig::CFontsFile::CFontsFile(const char *file)
 
                 if(dash)
                 {
+                    itsXlfdCount++;
+
                     QString xlfd(dash);
 
                     *dash='\0';

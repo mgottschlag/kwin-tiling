@@ -80,6 +80,7 @@ class CXConfig
         CFontsFile(const char *fname);
 
         const QStringList * getXlfds(const QString &fname);
+        unsigned int        xlfdCount() { return itsXlfdCount; }
 
         private:
 
@@ -89,6 +90,7 @@ class CXConfig
         private:
 
         QPtrList<TEntry> itsEntries;
+        unsigned int     itsXlfdCount;
     };
 
     public:

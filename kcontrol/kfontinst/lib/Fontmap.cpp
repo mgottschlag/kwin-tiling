@@ -199,9 +199,12 @@ static void addAliasEntry(QStringList &list, const QString &x11Name, const QStri
 // Create local may in fact be creating top level Fontmap - if dir==fontmap dir!
 void CFontmap::createLocal(const QString &dir)
 {
+    KFI_DBUG << "CFontmap::createLocal(" << dir << ')' << endl;
+
     CFile       old(dir);
     QDir        d(dir);
     QStringList entries;
+    bool        added=false;
 
     if(d.isReadable())
     {
@@ -218,9 +221,13 @@ void CFontmap::createLocal(const QString &dir)
                     const QStringList *existing=old.getEntries(fInfo->fileName());
 
                     if(existing && existing->count())
+                    {
+                        KFI_DBUG << "Use existing entries for " << fInfo->fileName() << endl;
                         entries+=(*existing);
+                    }
                     else
                     {
+                        KFI_DBUG << "Need to create entries for " << fInfo->fileName() << endl;
                         int face=0,
                             numFaces=0;
 
@@ -233,6 +240,7 @@ void CFontmap::createLocal(const QString &dir)
                                 //
                                 // Add real
                                 addEntry(entries, CGlobal::fe().getPsName(), fInfo->fileName());
+                                added=true;
 
                                 //
                                 // Add fake entries for X11 generated names
@@ -271,21 +279,24 @@ void CFontmap::createLocal(const QString &dir)
         }
     }
 
-    unlink(QFile::encodeName(dir+"Fontmap"));
-
-    ofstream out(QFile::encodeName(dir+"Fontmap"));
-
-    if(out)
+    if(added || entries.count()!=old.getLineCount())
     {
-        QStringList::Iterator it;
+        KFI_DBUG << "Output local Fontmap, " << added << ' ' << entries.count() << ' ' << old.getLineCount() << endl;
+        ofstream out(QFile::encodeName(dir+"Fontmap"));
 
-        for(it=entries.begin(); it!=entries.end(); ++it)
-            out << (*it).latin1() << endl;
+        if(out)
+        {
+            QStringList::Iterator it;
+
+            for(it=entries.begin(); it!=entries.end(); ++it)
+                out << (*it).latin1() << endl;
+        }
     }
 }
 
 void CFontmap::createTopLevel()
 {
+    KFI_DBUG << "CFontmap::createTopLevel" << endl;
     //
     // Cat each sub-folders top-level fontmap file to top-level one...
 
@@ -299,7 +310,10 @@ void CFontmap::createTopLevel()
     if(!CMisc::root() && 1==xDirs.count() && xDirs.first()==CGlobal::cfg().getFontmapDir())
     {
         if(!CMisc::fExists(CGlobal::cfg().getFontmapDir()+"Fontmap"))
+        {
+            KFI_DBUG << "Not root, and the 1 and only fonts dir is the GS dir" << endl;
             createLocal(CGlobal::cfg().getFontmapDir());
+        }
     }
     else
     {
@@ -353,6 +367,8 @@ void CFontmap::createTopLevel()
                 f.close();
             }
         }
+
+        KFI_DBUG << "Save top-level Fontmap" << endl;
 
         ofstream of(QFile::encodeName(CGlobal::cfg().getFontmapDir()+"Fontmap"));
 
@@ -449,6 +465,8 @@ void CFontmap::createTopLevel()
 
                         if(added) // Don't re-write GS's Fontmap unless we've actually added something...
                         {
+                            KFI_DBUG << "Modify GS's Fontmap" << endl;
+
                             ofstream out(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()));
 
                             if(out)
@@ -463,6 +481,7 @@ void CFontmap::createTopLevel()
 }
 
 CFontmap::CFile::CFile(const QString &dir)
+               : itsLineCount(0)
 {
     ifstream f(QFile::encodeName(dir+"Fontmap"));
 
@@ -487,6 +506,8 @@ CFontmap::CFile::CFile(const QString &dir)
 
                 if(parseLine(line, ps, fname, isAlias))
                 {
+                    itsLineCount++;
+
                     QString d(CMisc::getDir(fname));
 
                     if(d==dir)
@@ -494,7 +515,7 @@ CFontmap::CFile::CFile(const QString &dir)
 
                     TEntry *entry=getEntry(&current, fname, isAlias);
 
-                    if(!isAlias && entry->psName.isEmpty())
+                    if(!isAlias && entry && entry->psName.isEmpty())
                         entry->psName=ps;
 
                     if(entry)

@@ -74,7 +74,7 @@ class CKioFonts : public KIO::SlaveBase
     bool    putReal(const QString &destOrig, const QCString &destOrigC, bool origExists,
                     int mode, bool resume);
     bool    addDir(const QString &ds);
-    void    cfgDir(const QString &ds);
+    void    cfgDir(const QString &ds, const QString &sub);
     void    syncDirs();
     void    deletedDir(const QString &d, bool sys=false);
     void    addedDir(const QString &d, bool sys=false);
