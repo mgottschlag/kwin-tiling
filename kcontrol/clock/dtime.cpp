@@ -19,6 +19,8 @@
  *
  */
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 #include <qmsgbox.h>
 #include <qcombo.h>
@@ -175,6 +177,17 @@ Dtime::Dtime(QWidget * parent, const char *name)
   connect( &internalTimer, SIGNAL(timeout()), SLOT(timeout()) );
 
   load();
+
+  if (getuid() != 0)
+    {
+      cal->setEnabled(false);
+      month->setEnabled(false);
+      year->setEnabled(false);
+      hour->setEnabled(false);
+      minute->setEnabled(false);
+      second->setEnabled(false);
+      kclock->setEnabled(false);      
+    }
 }
 
 void Dtime::set_year(int y)

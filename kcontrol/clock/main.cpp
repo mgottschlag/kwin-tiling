@@ -51,14 +51,7 @@ KclockModule::KclockModule(QWidget *parent, const char *name)
   //  tab->addTab(tzone, i18n("Time Zone"));
   //  connect(tzone, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  if(getuid() != 0) {
-    layout->addSpacing(5);
-    layout->addWidget(new QLabel(i18n("You do not have authority to change system time."), this));
-    layout->addWidget(new QLabel(i18n("To change the time run the Control Center as root"), this));
-    setButtons(Help|Cancel);
-  }
-  else
-    setButtons(Help|Reset|Cancel|Apply|Ok);
+  setButtons(Help|Reset|Cancel|Apply|Ok);
 }
 
 void KclockModule::save()
