@@ -23,7 +23,6 @@
 
 class QCheckBox;
 class QButtonGroup;
-class QRadioButton;
 
 class TaskbarConfig : public KCModule
 {
@@ -41,16 +40,10 @@ public:
 
 protected slots:
     void configChanged();
-    void windowListClicked();
 
 private:
     QCheckBox    *showAllCheck;
     QCheckBox    *m_pShowListBtn;
-    QRadioButton *m_pAllWindows;
-    QRadioButton *m_pCurrent;
-    QRadioButton *m_pName;
-    QRadioButton *m_pLastUse;
-    QRadioButton *m_pDesktop;
 };
 
 #endif

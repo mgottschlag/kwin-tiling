@@ -20,7 +20,6 @@
 #include <qcheckbox.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
-#include <qradiobutton.h>
 #include <qwhatsthis.h>
 
 #include <dcopclient.h>
@@ -61,57 +60,15 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
     m_pShowListBtn = new QCheckBox(i18n("Show windows list &button"), taskbar_group);
     connect(m_pShowListBtn, SIGNAL(clicked()), SLOT(configChanged()));
     QWhatsThis::add(m_pShowListBtn, i18n("Check this option if you want"
-                                       " the taskbar to display a small popup which gives you easy access"
-                                       " to all applications on other desktops and some further options."));
+                                         " the taskbar to display a small popup which gives you easy access"
+                                         " to all applications on other desktops and some further options."));
 
     vbox->addWidget(showAllCheck);
     vbox->addWidget(m_pShowListBtn);
 
-    // create windows list controls
-    QButtonGroup *winlist_group = new QButtonGroup(i18n("Windows list"), this);
-    winlist_group->setRadioButtonExclusive(true);
-    connect(winlist_group, SIGNAL(clicked(int)), SLOT(windowListClicked()));
-
-    vbox = new QVBoxLayout(winlist_group, KDialog::marginHint(),
-                           KDialog::spacingHint());
-    vbox->addSpacing(fontMetrics().lineSpacing());
-
-    m_pAllWindows = new QRadioButton( i18n("Display &full windows list"), winlist_group);
-    QWhatsThis::add(m_pAllWindows, i18n("Check this option if you want"
-                                        " the Windows list to include all of the existing windows at once."));
-    m_pCurrent = new QRadioButton( i18n("Display c&urrent desktop list"), winlist_group);
-    QWhatsThis::add(m_pCurrent, i18n("Check this option if you want"
-                                     " the Windows list to display windows from current desktop only."));
-    vbox->addWidget(m_pAllWindows);
-    vbox->addWidget(m_pCurrent);
-
-    // create list order controls
-    QButtonGroup *listorder_group = new QButtonGroup(i18n("List order"), this);
-    listorder_group->setRadioButtonExclusive(true);
-    connect(listorder_group, SIGNAL(clicked(int)), SLOT(configChanged()));
-
-    vbox = new QVBoxLayout(listorder_group, KDialog::marginHint(),
-                           KDialog::spacingHint());
-    vbox->addSpacing(fontMetrics().lineSpacing());
-
-    m_pName = new QRadioButton( i18n("Sort by &name"), listorder_group);
-    QWhatsThis::add(m_pName, i18n("Check this option if you want"
-                                  " the Windows list to be sorted by name."));
-    m_pLastUse = new QRadioButton( i18n("Sort by &last use"), listorder_group);
-    QWhatsThis::add(m_pLastUse, i18n("Check this option if you want"
-                                     " the Windows list to be sorted by last use."));
-    m_pDesktop = new QRadioButton( i18n("Sort by deskto&p"), listorder_group);
-    QWhatsThis::add(m_pDesktop, i18n("Check this option if you want"
-                                     " the Windows list to be sorted by desktop."));
-    vbox->addWidget(m_pName);
-    vbox->addWidget(m_pLastUse);
-    vbox->addWidget(m_pDesktop);
-
     QVBoxLayout *top_layout = new QVBoxLayout(this, KDialog::marginHint(),
                                               KDialog::spacingHint());
     top_layout->addWidget(taskbar_group);
-    top_layout->addWidget(winlist_group);
-    top_layout->addWidget(listorder_group);
     top_layout->addStretch(1);
 
     load();
@@ -119,18 +76,6 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
 
 TaskbarConfig::~TaskbarConfig()
 {
-}
-
-void TaskbarConfig::windowListClicked()
-{
-    if (m_pAllWindows->isChecked())
-        m_pDesktop->setEnabled(true);
-    else {
-        if (m_pDesktop->isChecked())
-            m_pName->setChecked(true);
-        m_pDesktop->setEnabled(false);
-    }
-    emit changed(true);
 }
 
 void TaskbarConfig::configChanged()
@@ -145,25 +90,7 @@ void TaskbarConfig::load()
         KConfigGroupSaver saver(c, "General");
 
         showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", false));
-
 	m_pShowListBtn->setChecked(c->readBoolEntry("ShowWindowListBtn", true));
-	bool bFullVsCurrent = c->readBoolEntry("FullVsCurrent", true);
-	if (bFullVsCurrent)
-            m_pAllWindows->setChecked(true);
-	else
-            m_pCurrent->setChecked(true);
-
-	QString strOrder(c->readEntry("ListOrder", "desktop"));
-
-	if (strOrder == "desktop" && bFullVsCurrent)
-            m_pDesktop->setChecked(true);
-	else if (strOrder == "lastuse")
-            m_pLastUse->setChecked(true);
-	else
-            m_pName->setChecked(true);
-
-	if (!bFullVsCurrent)
-            m_pDesktop->setEnabled(false);
     }
 
     delete c;
@@ -177,17 +104,7 @@ void TaskbarConfig::save()
         KConfigGroupSaver saver(c, "General");
 
         c->writeEntry("ShowAllWindows", showAllCheck->isChecked());
-
 	c->writeEntry("ShowWindowListBtn", m_pShowListBtn->isChecked());
-	c->writeEntry("FullVsCurrent", m_pAllWindows->isChecked());
-	QString strOrder;
-	if (m_pName->isChecked())
-            strOrder = "name";
-	else if (m_pLastUse->isChecked())
-            strOrder = "lastuse";
-	else
-            strOrder = "desktop";
-	c->writeEntry("ListOrder", strOrder);
 	c->sync();
     }
 
@@ -206,8 +123,6 @@ void TaskbarConfig::defaults()
 {
     showAllCheck->setChecked(false);
     m_pShowListBtn->setChecked(true);
-    m_pAllWindows->setChecked(true);
-    m_pDesktop->setChecked(true);
     emit changed(true);
 }
 
@@ -216,6 +131,5 @@ QString TaskbarConfig::quickHelp() const
     return i18n("<h1>Taskbar</h1> You can configure the taskbar here."
                 " This includes options such as whether or not the taskbar should show all"
 		" windows at once or only those on the current desktop."
-                " You can also configure whether or not Windows list button will be displayed"
-                " and how Windows list will appear.");
+                " You can also configure whether or not Windows list button will be displayed.");
 }
