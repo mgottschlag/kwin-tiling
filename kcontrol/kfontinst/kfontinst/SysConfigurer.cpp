@@ -106,6 +106,8 @@ void CSysConfigurer::go()
 
     if(CKfiGlobal::cfg().getModifiedDirs().count())
     {
+        bool xConfig=CKfiGlobal::xcfg().ok();
+
         // Count number of fonts...
         for(d=0; d<CKfiGlobal::cfg().getModifiedDirs().count(); d++)
         {
@@ -114,6 +116,7 @@ void CSysConfigurer::go()
             if(dir.isReadable())
             {
                 const QFileInfoList *files=dir.entryInfoList();
+                bool                hasFonts=false;
  
                 if(files)
                 {
@@ -125,12 +128,20 @@ void CSysConfigurer::go()
                         {
                             if(CFontEngine::isATtf(fInfo->fileName().local8Bit()))
                                 totalTtFonts++;
+
                             if(CFontEngine::isAType1(fInfo->fileName().local8Bit()))
                                 totalT1Fonts++;
+
                             if(CFontEngine::isAFont(fInfo->fileName().local8Bit()))
+                            {
                                 totalfonts++;
+                                hasFonts=true;
+                            }
                         }
                 }
+
+                if(xConfig && hasFonts)  // Ensure XConfig file has dir listed...
+                    CKfiGlobal::xcfg().addPath(CKfiGlobal::cfg().getModifiedDirs()[d]);
             }
         }
 
