@@ -250,6 +250,11 @@ void topKCMEmail::load(const QString &s)
 		txtEMailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
 		chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
 
+		m_sICMPassword = pSettings->getSetting(KEMailSettings::InServerPass);
+		m_sICMUsername = pSettings->getSetting(KEMailSettings::InServerLogin);
+		m_sOGMPassword = pSettings->getSetting(KEMailSettings::OutServerPass);
+		m_sOGMUsername = pSettings->getSetting(KEMailSettings::OutServerLogin);
+
 		configChanged(false);
 	}
 }
@@ -264,9 +269,20 @@ void topKCMEmail::clearData()
 	txtReplyTo->setText(QString::null);
 	txtOrganization->setText(QString::null);
 	txtFullName->setText(QString::null);
-	grpICM->setButton(0);
+
+	radIMAP->setChecked(false);
+	radPOP->setChecked(false);
+	radICMLocal->setChecked(false);
+	radSMTP->setChecked(false);
+	radOGMLocal->setChecked(false);
+
 	txtEMailClient->setText(QString::null);
 	chkRunTerminal->setChecked(false);
+
+	m_sICMPassword = QString::null;
+	m_sICMUsername = QString::null;
+	m_sOGMPassword = QString::null;
+	m_sOGMUsername = QString::null;
 
 	configChanged(false);
 }
@@ -336,17 +352,28 @@ void topKCMEmail::save()
 	pSettings->setSetting(KEMailSettings::Organization, txtOrganization->text());
 	pSettings->setSetting(KEMailSettings::ReplyToAddress, txtReplyTo->text());
 
-	if (radIMAP->isChecked())
+	if (radIMAP->isChecked()) {
 		pSettings->setSetting(KEMailSettings::InServerType, "imap4");
-	else if (radPOP->isChecked())
+		pSettings->setSetting(KEMailSettings::InServerLogin, m_sICMUsername);
+		pSettings->setSetting(KEMailSettings::InServerPass, m_sICMPassword);
+	} else if (radPOP->isChecked()) {
 		pSettings->setSetting(KEMailSettings::InServerType, "pop3");
-	else if (radICMLocal->isChecked())
+		pSettings->setSetting(KEMailSettings::InServerLogin, m_sICMUsername);
+		pSettings->setSetting(KEMailSettings::InServerPass, m_sICMPassword);
+	} else if (radICMLocal->isChecked()) {
 		pSettings->setSetting(KEMailSettings::InServerType, "localbox");
+		pSettings->setSetting(KEMailSettings::InServerLogin, QString::null);
+		pSettings->setSetting(KEMailSettings::InServerPass, QString::null);
+	}
 
 	if (radSMTP->isChecked()) {
 		pSettings->setSetting(KEMailSettings::OutServerType, "smtp");
+		pSettings->setSetting(KEMailSettings::OutServerLogin, m_sOGMUsername);
+		pSettings->setSetting(KEMailSettings::OutServerPass, m_sOGMPassword);
 	} else if (radOGMLocal->isChecked()) {
 		pSettings->setSetting(KEMailSettings::OutServerType, "local");
+		pSettings->setSetting(KEMailSettings::OutServerLogin, QString::null);
+		pSettings->setSetting(KEMailSettings::OutServerPass, QString::null);
 	}
 
 	pSettings->setSetting(KEMailSettings::ClientProgram, txtEMailClient->text());
@@ -419,13 +446,14 @@ void topKCMEmail::slotComboChanged(const QString &name)
 			if (KMessageBox::warningYesNo(this, i18n("Do you wish to save changes to the current profile?")) == KMessageBox::Yes) {
 				save();
 			} else {
-				int keep;
+				int keep=-1;
 				for (int i=0; i < cmbCurProfile->count(); i++) {
 					if (cmbCurProfile->text(i) == pSettings->currentProfileName()) {
 						keep=i; break;
 					}
 				}
-				cmbCurProfile->setCurrentItem(keep);
+				if (keep != -1)
+					cmbCurProfile->setCurrentItem(keep);
 				return;
 			}
 		}
@@ -435,13 +463,29 @@ void topKCMEmail::slotComboChanged(const QString &name)
 
 void topKCMEmail::slotICMSettings()
 {
+	if (!radICMLocal->isChecked()) {
+		UserNameDlg *ud = new UserNameDlg(this, i18n("Incomingg Mail Retrieval Settings"));
+		if (ud->exec() == QDialog::Accepted) {
+			m_sOGMUsername = ud->txtUsername->text();
+			m_sOGMPassword = ud->txtPass->text();
+			configChanged();
+		}
+		delete ud;
+		return;
+	}
 }
 
 void topKCMEmail::slotOGMSettings()
 {
 	if (!radOGMLocal->isChecked()) {
 		UserNameDlg *ud = new UserNameDlg(this, i18n("Outgoing Mail Retrieval Settings"));
-		ud->exec();
+		if (ud->exec() == QDialog::Accepted) {
+			m_sICMUsername = ud->txtUsername->text();
+			m_sICMPassword = ud->txtPass->text();
+			configChanged();
+		}
+		delete ud;
+		return;
 	}
 }
 
