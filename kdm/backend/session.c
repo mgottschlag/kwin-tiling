@@ -291,7 +291,7 @@ void
 OpenGreeter (struct display *d)
 {
     char	*name, **env;
-    Font	xfont;
+    Cursor	xcursor;
 
     GSet (&grttalk);
     if (greeter)
@@ -299,22 +299,12 @@ OpenGreeter (struct display *d)
     greeter = 1;
 
     /* Hourglass cursor */
-    if ((xfont = XLoadFont (d->dpy, "cursor")))
+    if ((xcursor = XCreateFontCursor (d->dpy, XC_watch)))
     {
-	XColor fg, bg;
-	Cursor xcursor;
-	bg.red = bg.green = bg.blue = 0xff00;
-        fg.red = fg.green = fg.blue = 0;
-	if ((xcursor = XCreateGlyphCursor (d->dpy, xfont, xfont,
-					   XC_watch, XC_watch+1, &fg, &bg)))
-	{
-	    XDefineCursor (d->dpy, RootWindow (d->dpy, DefaultScreen (d->dpy)), 
-			   xcursor);
-	    XFlush (d->dpy);
-	    XFreeCursor (d->dpy, xcursor);
-	}
-	XUnloadFont (d->dpy, xfont);
+	XDefineCursor (d->dpy, DefaultRootWindow (d->dpy), xcursor);
+	XFreeCursor (d->dpy, xcursor);
     }
+    XFlush (d->dpy);
 
     /* Load system default Resources (if any) */
     LoadXloginResources (d);
