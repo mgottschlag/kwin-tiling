@@ -38,25 +38,10 @@
 int
 FDialog::exec()
 {
-    setResult(0);
-
-    show();
-    if (isModal()) {
-#if 0	/* Enable this for qt 3.0 */
-	qApp->processEvents();
-
-	if (XGrabKeyboard ( qt_xdisplay(), winId(), True, GrabModeAsync,
-			    GrabModeAsync, CurrentTime ) == GrabSuccess) {
-	    QDialog::exec();
-	    XUngrabKeyboard (qt_xdisplay(), CurrentTime);
-	} else
-	    hide();
-#endif
-
-	// Give focus back to parent:
-	if( parentWidget() != 0)
-	    parentWidget()->setActiveWindow();
-    }
+    QDialog::exec();
+    // Give focus back to parent:
+    if( parentWidget() != 0)
+	parentWidget()->setActiveWindow();
 
     return result();
 }
