@@ -456,7 +456,7 @@ void KMemoryWidget::update_Values()
 
 #ifdef __linux__
 #include "memory_linux.cpp"
-#elif sgi
+#elif defined(sgi) && sgi
 #include "memory_sgi.cpp"
 #elif defined(__svr4__) && defined(sun)
 #include "memory_solaris.cpp"

@@ -473,7 +473,7 @@ static int GetInfo_ReadfromPipe( QListView *lBox, const char *FileName, bool Wit
 
 #ifdef __linux__
 #include "info_linux.cpp"
-#elif sgi
+#elif defined(sgi) && sgi
 #include "info_sgi.cpp"
 #elif __FreeBSD__
 #include "info_fbsd.cpp"
