@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>304</width>
-            <height>294</height>
+            <height>147</height>
         </rect>
     </property>
     <property name="caption">
@@ -167,23 +167,6 @@
                 </widget>
             </hbox>
         </widget>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer4</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>60</height>
-                </size>
-            </property>
-        </spacer>
     </vbox>
 </widget>
 <includes>

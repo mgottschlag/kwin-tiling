@@ -49,6 +49,8 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
     QVBoxLayout* layout = new QVBoxLayout(page);
     m_advancedWidget = new advancedKickerOptions(page);
     layout->addWidget(m_advancedWidget);
+    layout->addSpacing( 20 );
+    layout->addStretch();
 
     connect(m_advancedWidget->fadeOutHandles, SIGNAL(toggled(bool)),
             this, SLOT(changed()));
