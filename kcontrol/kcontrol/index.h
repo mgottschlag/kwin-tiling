@@ -57,12 +57,12 @@ protected:
 
 protected slots:
     
-  void doubleClicked(QListViewItem *item);
+  void currentChanged(QListViewItem *item);
  
 
 signals:
 
-  void moduleDoubleClicked(ConfigModule *module);
+  void moduleActivated(ConfigModule *module);
  
 
 private:

@@ -60,7 +60,7 @@ protected:
 
 protected slots:
 
-  void moduleDoubleClicked(ConfigModule *module);
+  void moduleActivated(ConfigModule *module);
   void newModule(const QString &name);
  
 

@@ -62,8 +62,8 @@ TopLevel::TopLevel(const char* name)
   _index->setMinimumWidth(200);
   splitter->setResizeMode(_index,QSplitter::KeepSize);
   _index->fillIndex(_modules);
-  connect(_index, SIGNAL(moduleDoubleClicked(ConfigModule*)),
-	  this, SLOT(moduleDoubleClicked(ConfigModule*)));
+  connect(_index, SIGNAL(moduleActivated(ConfigModule*)),
+	  this, SLOT(moduleActivated(ConfigModule*)));
 
   // set up the right hand side (the docking area)
   _container = new KDockContainer(splitter);
@@ -129,7 +129,7 @@ void TopLevel::initStatusBar()
 }
 
 
-void TopLevel::moduleDoubleClicked(ConfigModule *module)
+void TopLevel::moduleActivated(ConfigModule *module)
 {
   QWidget *widget = module->module(_container);
   if (widget)

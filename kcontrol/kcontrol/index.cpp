@@ -49,8 +49,8 @@ IndexPane::IndexPane(QWidget *parent, const char *name)
   _tree->setAllColumnsShowFocus(true);
   _tree->header()->hide();
 
-  connect(_tree, SIGNAL(doubleClicked(QListViewItem*)), 
-	  this, SLOT(doubleClicked(QListViewItem*)));
+  connect(_tree, SIGNAL(currentChanged(QListViewItem*)), 
+	  this, SLOT(currentChanged(QListViewItem*)));
 }
 
 void IndexPane::resizeEvent(QResizeEvent *)
@@ -143,14 +143,17 @@ QListViewItem *IndexPane::getGroupItem(QListViewItem *parent, const QStringList&
 }
 
 
-void IndexPane::doubleClicked(QListViewItem *item)
+void IndexPane::currentChanged(QListViewItem *item)
 {
+  if (item == 0)
+    return;
+
   if (item->childCount() != 0)
     return;
   IndexListItem *iitem = (IndexListItem*)(item);
   if (iitem && iitem->_module)
     {
-      emit moduleDoubleClicked(iitem->_module);
+      emit moduleActivated(iitem->_module);
       moduleChanged(iitem->_module);
     }
 }
