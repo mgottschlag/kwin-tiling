@@ -1,7 +1,6 @@
 [Color Scheme]
 Name=Windows2000
 Name[af]=windows2000
-Name[ara]=ويندوز 2000
 Name[cs]=Windows 2000
 Name[da]=Windows 2000
 Name[de]=Windows 2000
@@ -10,14 +9,14 @@ Name[es]=Windows 2000
 Name[fr]=Windows 2000
 Name[hu]=Windows 2000
 Name[ko]=윈도우즈 2000
+Name[nb]=Windows 2000
 Name[nl]=Windows 2000
-Name[no]=Windows 2000
-Name[no_NY]=Windows 2000
+Name[nn]=Windows 2000
 Name[ro]=Windows 2000
 Name[sl]=Windows 2000
 Name[sv]=Windows 2000
 Name[xh]=iiWindow2000
-Name[xxx]=xx
+Name[xx]=xx
 Name[zh_CN.GB2312]=Windows 2000
 Name[zh_TW.Big5]=Windows 2000
 activeBackground=0,0,131
