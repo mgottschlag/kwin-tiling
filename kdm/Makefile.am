@@ -19,13 +19,13 @@ AM_CFLAGS = $(CONN_FLAGS) $(DBGFLAGS)
 # this is for static linking - inserted into KDM_GREET_LIBS by configure
 KDM_KDE_LIBS  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) \
     $(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
-    $(LIBCRYPT) $(LIBUCB) $(LIBUTIL)
+    $(LIBCRYPT) $(LIBUCB) $(LIBUTIL) $(LIBRESOLV)
 
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
 LDADD = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSLIB) \
     $(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
-    $(LIBCRYPT) $(LIBUCB) $(LIBDL) $(LIBUTIL)
+    $(LIBCRYPT) $(LIBUCB) $(LIBDL) $(LIBUTIL) $(LIBRESOLV)
 kdm_LDADD = $(LDADD) $(KDM_GREET_LIBS)
 
 # Sources for kdm:
