@@ -225,9 +225,8 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      loginEdit->setFocus();
 
      passwdLabel = new QLabel( i18n("Password:"), this);
-     passwdEdit = new QLineEdit( this);
+     passwdEdit = new KPasswordEdit( this, "edit", kdmcfg->echoMode());
 
-     passwdEdit->setEchoMode( QLineEdit::NoEcho);
      vbox->addLayout( hbox1);
      vbox->addLayout( hbox2);
      hbox1->addWidget( pixLabel ? (QWidget*)pixLabel : (QWidget*)clock, 0, AlignTop);
@@ -350,7 +349,7 @@ void
 KGreeter::cancel_button_clicked()
 {
      loginEdit->clear();
-     passwdEdit->clear();
+     passwdEdit->erase();
      loginEdit->setFocus();
 }
 
@@ -717,7 +716,7 @@ void
 KGreeter::go_button_clicked()
 {
      greet->name = qstrdup( QFile::encodeName(loginEdit->text()).data() );
-     greet->password = qstrdup( QFile::encodeName(passwdEdit->text()).data() );
+     greet->password = qstrdup( passwdEdit->password() );
      
      if (!Verify (::d, greet, verify)){
 	  failedLabel->setText(i18n("Login failed!"));

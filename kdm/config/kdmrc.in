@@ -18,4 +18,4 @@ GreetFont=charter,24,5,iso-8859-1,50,0
 StdFont=Helvetica,12,5,iso-8859-1,50,0
 SessionTypes=kde,fvwm,failsafe
 #GUIStyle=Windows
-
+EchoMode=OneStar

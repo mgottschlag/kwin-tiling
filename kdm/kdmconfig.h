@@ -65,6 +65,7 @@ public:
 	               insertUsers(i, _users, _sorted);
                     }
      // GUIStyle        style()           { return _style;}
+     int             echoMode()        { return _echoMode; }
 	// None is defined as a macro somewhere in an X header. GRRRR.
      enum { KNone, All, RootOnly, ConsoleOnly };
 
@@ -94,6 +95,7 @@ private:
      bool           _show_users;
      bool           _sorted;
      // GUIStyle       _style;
+     int            _echoMode;
      
      QString        _liloCmd;
      QString        _liloMap;

@@ -44,6 +44,7 @@ class QLabel;
 class QPushButton;
 class QComboBox;
 
+#include <kpassdlg.h>
 
 #include "kfdialog.h"
 #include "kdmshutdown.h"
@@ -91,7 +92,7 @@ private:
      QLabel*        passwdLabel;
      QLabel*        failedLabel;
      KLoginLineEdit*     loginEdit;
-     QLineEdit*     passwdEdit; 
+     KPasswordEdit*     passwdEdit; 
      QFrame*        separator;
      QPushButton*   goButton;
      QPushButton*   chooserButton;

@@ -32,6 +32,9 @@
 #include <iostream.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kpassdlg.h>
+
+#define defEchoMode	KPasswordEdit::OneStar
 
 KDMConfig::KDMConfig( )
 {
@@ -171,6 +174,17 @@ void KDMConfig::getConfig()
           _sessionTypes.append( QString::fromLatin1("failsafe") );
      }
 
+     QString val = kc->readEntry(QString::fromLatin1("EchoMode")).lower();
+     if (val == QString::fromLatin1("onestar"))
+        _echoMode = KPasswordEdit::OneStar;
+     else if (val == QString::fromLatin1("threestars"))
+        _echoMode = KPasswordEdit::ThreeStars;
+     else if ((val == QString::fromLatin1("nostars")) || 
+              (val == QString::fromLatin1("noecho")))
+        _echoMode = KPasswordEdit::NoEcho;
+     else
+        _echoMode = defEchoMode;
+        
      // Greet String and fonts:
      char buf[256];
      gethostname( buf, 255);
