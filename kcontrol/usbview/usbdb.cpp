@@ -56,33 +56,33 @@ USBDB::USBDB()
 	  if (line.left(2) == "AT")
 	    continue;
 
-	  if (cls.match(line, 0, &len) == 0 && len == 4)
+	  if (cls.search(line) == 0 && cls.matchedLength() == 4)
 	    {
 	      id = line.mid(2,2).toInt(0, 16);
 	      name = line.mid(4).stripWhiteSpace();
 	      _classes.insert(QString("%1").arg(id), new QString(name));
 	    }
-	  else if (prot.match(line, 0, &len) == 0 && len > 5)
+	  else if (prot.search(line) == 0 && prot.matchedLength() > 5)
 	    {
 	      line = line.stripWhiteSpace();
 	      protid = line.left(2).toInt(0, 16);
 	      name = line.mid(4).stripWhiteSpace();
 	      _classes.insert(QString("%1-%2-%3").arg(id).arg(subid).arg(protid), new QString(name));
 	    }
-	  else if (subclass.match(line, 0, &len) == 0 && len > 4)
+	  else if (subclass.search(line) == 0 && subclass.matchedLength() > 4)
 	    {
 	      line = line.stripWhiteSpace();
 	      subid = line.left(2).toInt(0, 16);
 	      name = line.mid(4).stripWhiteSpace();
 	      _classes.insert(QString("%1-%2").arg(id).arg(subid), new QString(name));
 	    }
-	  else if (vendor.match(line, 0, &len) == 0 && len == 5)
+	  else if (vendor.search(line) == 0 && vendor.matchedLength() == 5)
 	    {
 	      id = line.left(4).toInt(0,16);
 	      name = line.mid(6);
 	      _ids.insert(QString("%1").arg(id), new QString(name));
 	    }
-	  else if (product.match(line, 0, &len) == 0 && len > 5 )
+	  else if (product.search(line) == 0 && product.matchedLength() > 5 )
 	    {
 	      line = line.stripWhiteSpace();
 	      subid = line.left(4).toInt(0,16);
