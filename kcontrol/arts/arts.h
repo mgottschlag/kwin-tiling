@@ -59,7 +59,7 @@ private:
   void updateWidgets(void);
   void GetSettings( void );
 
-  QCheckBox *startServer, *startRealtime;
+  QCheckBox *startServer, *startRealtime, *networkTransparent;
   KConfig *config;
 };
 

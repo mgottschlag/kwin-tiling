@@ -75,6 +75,11 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
   layout->addWidget(startRealtime);
   connect(startRealtime,SIGNAL(clicked()),this,SLOT(slotChanged()));
 
+  networkTransparent = new QCheckBox(this);
+  networkTransparent->setText(i18n("Enable &network transparency"));
+  layout->addWidget(networkTransparent);
+  connect(networkTransparent,SIGNAL(clicked()),this,SLOT(slotChanged()));
+
   QFrame *hLine = new QFrame(this);
   hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
  
@@ -100,6 +105,7 @@ void KArtsModule::GetSettings( void )
     config->setGroup("Arts");
 	startServer->setChecked(config->readBoolEntry("StartServer",true));
 	startRealtime->setChecked(config->readBoolEntry("StartRealtime",false));
+	networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
 	updateWidgets();
 }
 
@@ -108,6 +114,7 @@ void KArtsModule::saveParams( void )
     config->setGroup("Arts");
 	config->writeEntry("StartServer",startServer->isChecked());
 	config->writeEntry("StartRealtime",startRealtime->isChecked());
+	config->writeEntry("NetworkTransparent",networkTransparent->isChecked());
 	config->sync();
 }
 
@@ -138,11 +145,13 @@ void KArtsModule::defaults()
 {
 	startServer->setChecked(true);
     startRealtime->setChecked(false);
+    networkTransparent->setChecked(false);
 }
 
 void KArtsModule::updateWidgets()
 {
 	startRealtime->setEnabled(startServer->isChecked());
+	networkTransparent->setEnabled(startServer->isChecked());
 }
 
 void KArtsModule::slotChanged()
@@ -168,6 +177,7 @@ extern "C"
     config->setGroup("Arts");
 	bool startServer = config->readBoolEntry("StartServer",true);
 	bool startRealtime = config->readBoolEntry("StartRealtime",false);
+	bool networkTransparent = config->readBoolEntry("NetworkTransparent",false);
 
 	if(startServer)
 	{
@@ -176,6 +186,9 @@ extern "C"
 			cmdline += "artswrapper";
 		else
 			cmdline += "artsd";
+
+		if(networkTransparent)
+			cmdline += " -n";
 
 		system(cmdline);
 	}
