@@ -42,7 +42,7 @@ bool KHKGlobalAccel::x11EventFilter( const XEvent *event_ ) {
         if ( aKeyMap.isEmpty() ) return false;
         if ( event_->type != KeyPress ) return false;
 	
-        uint mod=event_->xkey.state & (ControlMask | ShiftMask | Mod1Mask);
+        uint mod=event_->xkey.state & (ControlMask | ShiftMask | Mod1Mask | Mod4Mask);
         uint keysym= XKeycodeToKeysym(qt_xdisplay(), event_->xkey.keycode, 0);
 	
         KKeyEntry entry;

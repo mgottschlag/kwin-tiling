@@ -385,7 +385,7 @@ void KKeyModule::updateKeys( const KKeyEntryMap* map_P )
     }
 
 KeyChooserSpec::KeyChooserSpec( KKeyEntryMap *aKeyDict, QWidget* parent, bool global_P )
-    : KKeyChooser( aKeyDict, parent, global_P ), global( global_P )
+    : KKeyChooser( aKeyDict, parent, global_P, global_P ), global( global_P )
     {
     if( global )
         globalDict()->clear(); // don't check against global keys twice
