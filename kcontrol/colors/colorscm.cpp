@@ -154,8 +154,8 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     setColorName(i18n("Active title blend"), CSM_Active_title_blend);
     setColorName(i18n("Window background"), CSM_Background);
     setColorName(i18n("Window text"), CSM_Text);
-    setColorName(i18n("Select background"), CSM_Select_background);
-    setColorName(i18n("Select text"), CSM_Select_text);
+    setColorName(i18n("Selected background"), CSM_Select_background);
+    setColorName(i18n("Selected text"), CSM_Select_text);
     setColorName(i18n("Standard Background"), CSM_Standard_background);
     setColorName(i18n("Standard Text"), CSM_Standard_text);
     setColorName(i18n("Button background"), CSM_Button_background);
