@@ -77,7 +77,7 @@
                                     <cstring>warnCB</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Confirm quit when closing more then one session</string>
+                                    <string>&amp;Confirm quit when closing more than one session</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
