@@ -34,6 +34,7 @@
 #include "KfiGlobal.h"
 #include "Config.h"
 #include "Misc.h"
+#include "CompressedFile.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
@@ -388,11 +389,18 @@ bool CFontEngine::isA(const char *fname, const char *ext, bool z)
     int  len=strlen(fname);
     bool fnt=false;
  
-    if(z && len>7)
-        fnt=( fname[len-7]=='.' && tolower(fname[len-6])==ext[0] && tolower(fname[len-5])==ext[1] && tolower(fname[len-4])==ext[2] &&
-             fname[len-3]=='.' && tolower(fname[len-2])=='g' && tolower(fname[len-1])=='z');
+    if(z)
+    {
+        if(len>7)                 // Check for .ext.gz
+            fnt=(fname[len-7]=='.' && tolower(fname[len-6])==ext[0] && tolower(fname[len-5])==ext[1] && tolower(fname[len-4])==ext[2] &&
+                 fname[len-3]=='.' && tolower(fname[len-2])=='g' && tolower(fname[len-1])=='z');
+
+        if(!fnt && len>6)         // Check for .ext.Z
+            fnt=(fname[len-6]=='.' && tolower(fname[len-5])==ext[0] && tolower(fname[len-4])==ext[1] && tolower(fname[len-3])==ext[2] &&
+                 fname[len-2]=='.' && toupper(fname[len-1])=='Z');
+    }
  
-    if(len>4 && (len<7 || !fnt))
+    if(!fnt && len>4)  // Check for .ext
         fnt=(fname[len-4]=='.' && tolower(fname[len-3])==ext[0] && tolower(fname[len-2])==ext[1] && tolower(fname[len-1])==ext[2]);
  
     return fnt;
@@ -865,15 +873,15 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
         status=true; // If we've reached this point, then the FT_New_Face worked!
     else
     {
-        gzFile f=gzopen(file.local8Bit(), "r");
+        CCompressedFile f(file.local8Bit());
  
         if(f)
         {
             char          data[constHeaderMaxLen];
             unsigned char *hdr=(unsigned char *)data;
 
-            int bytesRead=gzread(f, data, constHeaderMaxLen);
-            gzclose(f);
+            int bytesRead=f.read(data, constHeaderMaxLen);
+            f.close();
  
             data[bytesRead-1]='\0';
 
@@ -1714,6 +1722,9 @@ QStringList CFontEngine::getEncodingsSpd()
 //    BITMAP
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static const unsigned int constBitmapMaxProps=1024;
+
 bool CFontEngine::openFontBmp(const QString &file, unsigned short mask)
 {
     itsFoundry=constDefaultFoundry;
@@ -1894,8 +1905,8 @@ static const char * getTokenBdf(const char *str, const char *key, bool noquotes=
 
 bool CFontEngine::openFontBdf(const QString &file, unsigned short mask)
 {
-    bool   status=false;
-    gzFile bdf=gzopen(file.local8Bit(), "r");
+    bool            status=false;
+    CCompressedFile bdf(file.local8Bit());
 
     if(bdf)
     {
@@ -1916,7 +1927,7 @@ bool CFontEngine::openFontBdf(const QString &file, unsigned short mask)
         int     res=0,
                 pointSize=0;
 
-        while(NULL!=gzgets(bdf, buffer, constMaxLineLen) && !status)
+        while(NULL!=bdf.getString(buffer, constMaxLineLen) && !status)
         {
             const char *str;
 
@@ -1997,13 +2008,12 @@ bool CFontEngine::openFontBdf(const QString &file, unsigned short mask)
             createNameFromXlfdBmp();
             status=true;
         }
-        gzclose(bdf);
     }
 
     return status;
 }
 
-static const char * readStrSnf(gzFile f)
+static const char * readStrSnf(CCompressedFile &f)
 {
     static const int constMaxChars=512;
  
@@ -2013,7 +2023,7 @@ static const char * readStrSnf(gzFile f)
  
     buffer[0]='\0';
  
-    while(-1!=(ch=gzgetc(f)))
+    while(-1!=(ch=f.getChar()))
     {
         buffer[pos++]=ch;
         if('\0'==ch)
@@ -2078,14 +2088,15 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
                      indirect;  // true if value is a string
     };
 
-    gzFile snf=gzopen(file.local8Bit(), "r");
+    CCompressedFile snf(file.local8Bit());
  
-    if(NULL!=snf)
+    if(snf)
     {
         TGenInfo genInfo;
         bool     foundXlfd=false;
  
-        if((gzread(snf, &genInfo, sizeof(TGenInfo))==sizeof(TGenInfo)) && (ntohl(genInfo.version1)==ntohl(genInfo.version2)))
+        if((snf.read(&genInfo, sizeof(TGenInfo))==sizeof(TGenInfo)) && (ntohl(genInfo.version1)==ntohl(genInfo.version2))
+           && ntohl(genInfo.numProps)<constBitmapMaxProps)
         {
             TProp        *props=new TProp[ntohl(genInfo.numProps)];
             unsigned int numChars=((ntohl(genInfo.lastCol) - ntohl(genInfo.firstCol)) + 1) * ((ntohl(genInfo.lastRow) - ntohl(genInfo.firstRow)) + 1),
@@ -2093,7 +2104,7 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
 
             if(props)
             {
-                if(-1!=gzseek(snf, numChars*sizeof(TCharInfo)+glyphInfoSize, SEEK_CUR))  // Skip past character info & glyphs...
+                if(-1!=snf.seek(numChars*sizeof(TCharInfo)+glyphInfoSize, SEEK_CUR))  // Skip past character info & glyphs...
                 {
                     bool         foundFamily=false,
                                  foundWeight=false,
@@ -2112,7 +2123,7 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
  
                     // Now read properties data...
                     for(p=0; p<ntohl(genInfo.numProps); ++p)
-                        if(gzread(snf, &props[p], sizeof(TProp))!=sizeof(TProp))
+                        if(snf.read(&props[p], sizeof(TProp))!=sizeof(TProp))
                         {
                             error=true;
                             break;
@@ -2130,7 +2141,7 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
                             if(ntohl(props[p].indirect))
                             {
                                 if((ntohl(props[p].value)-ntohl(props[p].name))<=constMaxLen &&
-                                   -1!=gzread(snf, buffer, ntohl(props[p].value)-ntohl(props[p].name)))
+                                   -1!=snf.read(buffer, ntohl(props[p].value)-ntohl(props[p].name)))
                                 {
                                     name=buffer;
                                     value=readStrSnf(snf);
@@ -2221,7 +2232,6 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
                 delete props;
             }
         }
-        gzclose(snf);
 
         if(!status && foundXlfd)
         {
@@ -2233,30 +2243,24 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
     return status;;
 }
 
-static unsigned int readLsb32(gzFile &f)
+static unsigned int readLsb32(CCompressedFile &f)
 {
-    unsigned int  lsbNum=0;
     unsigned char num[4];
 
-    if(4==gzread(f, num, 4))
-    {
-        lsbNum=num[0];
-        lsbNum+=num[1]<<8;
-        lsbNum+=num[2]<<16;
-        lsbNum+=num[3]<<24;
-    }
-
-    return lsbNum;
+    if(4==f.read(num, 4))
+        return (num[0])+(num[1]<<8)+(num[2]<<16)+(num[3]<<24);
+    else
+        return 0;
 }
 
-static unsigned int read32(gzFile &f, bool msb)
+static unsigned int read32(CCompressedFile &f, bool msb)
 {
     if(msb)
     {
-        unsigned int num;
+        unsigned char num[4];
 
-        if(4==gzread(f, &num, 4))
-            return num;
+        if(4==f.read(num, 4))
+            return (num[0]<<24)+(num[1]<<16)+(num[2]<<8)+(num[3]);
         else
             return 0;
     }
@@ -2268,215 +2272,211 @@ bool CFontEngine::openFontPcf(const QString &file, unsigned short mask)
 {
     bool status=false;
 
-    gzFile pcf=gzopen(file.local8Bit(), "r");
+    CCompressedFile pcf(file.local8Bit());
 
     if(pcf)
     {
-        char hdr[5];
+        const unsigned int contPcfVersion=(('p'<<24)|('c'<<16)|('f'<<8)|1);
+
         bool foundXlfd=false;
 
-        if(4==gzread(pcf, hdr, 4))
+        if(contPcfVersion==readLsb32(pcf))
         {
-            hdr[4]='\0';
-            if(strcmp(&hdr[1], "fcp")==0)
+            const unsigned int constPropertiesType=1;
+
+            unsigned int numTables=readLsb32(pcf),
+                         table,
+                         type,
+                         format,
+                         size,
+                         offset;
+
+            for(table=0; table<numTables && !pcf.eof() && !status; ++table)
             {
-                const unsigned int constPropertiesType=1;
-
-                unsigned int numTables=readLsb32(pcf),
-                             table,
-                             type,
-                             format,
-                             size,
-                             offset;
-
-                for(table=0; table<numTables && !gzeof(pcf) && !status; ++table)
+                type=readLsb32(pcf);
+                format=readLsb32(pcf);
+                size=readLsb32(pcf);
+                offset=readLsb32(pcf);
+                if(constPropertiesType==type)
                 {
-                    type=readLsb32(pcf);
-                    format=readLsb32(pcf);
-                    size=readLsb32(pcf);
-                    offset=readLsb32(pcf);
-                    if(constPropertiesType==type)
+                    if(pcf.seek(offset, SEEK_SET)!=-1)
                     {
-                        if(gzseek(pcf, offset, SEEK_SET)!=-1)
+                        const unsigned int constFormatMask=0xffffff00;
+
+                        format=readLsb32(pcf);
+                        if(0==(format&constFormatMask))
                         {
-                            const unsigned int constFormatMask=0xffffff00;
+                            const unsigned int constByteMask=0x4;
 
-                            format=readLsb32(pcf);
-                            if(0==(format&constFormatMask))
+                            bool         msb=format&constByteMask;
+                            unsigned int numProps=read32(pcf, msb);
+
+                            if(numProps>0 && numProps<constBitmapMaxProps)
                             {
-                                const unsigned int constByteMask=0x4;
+                                unsigned int strSize,
+                                             skip;
 
-                                bool         msb=format&constByteMask;
-                                unsigned int numProps=read32(pcf, msb);
-
-                                if(numProps>0)
+                                struct TProp
                                 {
-                                    unsigned int strSize,
-                                                 skip;
+                                    unsigned int name,
+                                                 value;
+                                    bool         isString;
+                                } *props=new struct TProp [numProps];
 
-                                    struct TProp
+                                if(props)
+                                {
+                                    char           tmp;
+                                    unsigned short prop;
+
+                                    for(prop=0; prop<numProps; ++prop)
                                     {
-                                        unsigned int name,
-                                                     value;
-                                        bool         isString;
-                                    } *props=new struct TProp [numProps];
+                                        props[prop].name=read32(pcf, msb);
+                                        pcf.read(&tmp, 1);
+                                        props[prop].isString=tmp ? true : false;
+                                        props[prop].value=read32(pcf, msb);
+                                    }
 
-                                    if(props)
+                                    skip=4-((numProps*9)%4);
+                                    if(skip!=4)
+                                        pcf.seek(skip, SEEK_CUR);
+
+                                    strSize=read32(pcf, msb);
+
+                                    if(strSize>0)
                                     {
-                                        char           tmp;
-                                        unsigned short prop;
-
-                                        for(prop=0; prop<numProps; ++prop)
+                                        char *str=new char [strSize];
+                                        if(pcf.read(str, strSize)==(int)strSize)
                                         {
-                                            props[prop].name=read32(pcf, msb);
-                                            gzread(pcf, &tmp, 1);
-                                            props[prop].isString=tmp ? true : false;
-                                            props[prop].value=read32(pcf, msb);
-                                        }
+                                            // Finally we have the data............
+                                            const int constMaxStrLen=1024;
 
-                                        skip=4-((numProps*9)%4);
-                                        if(skip!=4)
-                                            gzseek(pcf, skip, SEEK_CUR);
+                                            char    tmp[constMaxStrLen];
+                                            bool    foundFamily=false,
+                                                    foundSlant=false,
+                                                    foundWeight=false,
+                                                    foundRes=false,
+                                                    foundPt=false,
+                                                    foundEncoding=false,
+                                                    foundCsReg=false,
+                                                    foundCsEnc=false;
+                                            QString csReg,
+                                                    csEnc;
+                                            int     res=0,
+                                                    pointSize=0;
 
-                                        strSize=read32(pcf, msb);
-
-                                        if(strSize>0)
-                                        {
-                                            char *str=new char [strSize];
-                                            if(gzread(pcf, str, strSize)==(int)strSize)
+                                            for(prop=0; prop<numProps && !status; ++prop)
                                             {
-                                                // Finally we have the data............
-                                                const int constMaxStrLen=1024;
-
-                                                char    tmp[constMaxStrLen];
-                                                bool    foundFamily=false,
-                                                        foundSlant=false,
-                                                        foundWeight=false,
-                                                        foundRes=false,
-                                                        foundPt=false,
-                                                        foundEncoding=false,
-                                                        foundCsReg=false,
-                                                        foundCsEnc=false;
-                                                QString csReg,
-                                                        csEnc;
-                                                int     res=0,
-                                                        pointSize=0;
-
-                                                for(prop=0; prop<numProps && !status; ++prop)
+                                                if(mask!=XLFD)
                                                 {
-                                                    if(mask!=XLFD)
+                                                    if(!foundFamily && (CMisc::stricmp(&str[props[prop].name], "FAMILY_NAME")==0 ||
+                                                                        CMisc::stricmp(&str[props[prop].name], "FAMILY")==0) )
                                                     {
-                                                        if(!foundFamily && (CMisc::stricmp(&str[props[prop].name], "FAMILY_NAME")==0 ||
-                                                                            CMisc::stricmp(&str[props[prop].name], "FAMILY")==0) )
+                                                        if(props[prop].isString)
                                                         {
-                                                            if(props[prop].isString)
-                                                            {
-                                                                foundFamily=true;
-                                                                strncpy(tmp, &str[props[prop].value], constMaxStrLen);
-                                                                tmp[constMaxStrLen-1]='\0';
-                                                                itsFamily=tmp;
-                                                            }
-                                                        }
-                                                        else if(!foundWeight && CMisc::stricmp(&str[props[prop].name], "WEIGHT_NAME")==0)
-                                                        {
-                                                            if(props[prop].isString)
-                                                            {
-                                                                foundWeight=true;
-                                                                strncpy(tmp, &str[props[prop].value], constMaxStrLen);
-                                                                tmp[constMaxStrLen-1]='\0';
-                                                                itsWeight=strToWeight(tmp);
-                                                            }
-                                                        }
-                                                        else if(!foundSlant && CMisc::stricmp(&str[props[prop].name], "SLANT")==0)
-                                                        {
-                                                            if(props[prop].isString)
-                                                            {
-                                                                foundSlant=true;
-                                                                itsItalic=charToItalic(str[props[prop].value]);
-                                                            }
-                                                        }
-                                                        else if(!foundRes && CMisc::stricmp(&str[props[prop].name], "RESOLUTION_X")==0)
-                                                        {
-                                                            if(!props[prop].isString)
-                                                            {
-                                                                foundRes=true;
-                                                                res=props[prop].value;
-                                                            }
-                                                        }
-                                                        else if(!foundPt && CMisc::stricmp(&str[props[prop].name], "POINT_SIZE")==0)
-                                                        {
-                                                            if(!props[prop].isString)
-                                                            {
-                                                                foundPt=true;
-                                                                pointSize=props[prop].value;
-                                                            }
-                                                        }
-                                                        else if(!foundCsReg && CMisc::stricmp(&str[props[prop].name], "CHARSET_REGISTRY")==0)
-                                                        {
-                                                            if(props[prop].isString && strlen(&str[props[prop].value]))
-                                                            {
-                                                                foundCsReg=true;
-                                                                strncpy(tmp, &str[props[prop].value], constMaxStrLen);
-                                                                tmp[constMaxStrLen-1]='\0';
-                                                                csReg=tmp;
-                                                            }
-                                                        }
-                                                        else if(!foundCsEnc && CMisc::stricmp(&str[props[prop].name], "CHARSET_ENCODING")==0)
-                                                        {
-                                                            if(props[prop].isString && strlen(&str[props[prop].value]))
-                                                            {
-                                                                foundCsEnc=true;
-                                                                strncpy(tmp, &str[props[prop].value], constMaxStrLen);
-                                                                tmp[constMaxStrLen-1]='\0';
-                                                                csEnc=tmp;
-                                                            }
+                                                            foundFamily=true;
+                                                            strncpy(tmp, &str[props[prop].value], constMaxStrLen);
+                                                            tmp[constMaxStrLen-1]='\0';
+                                                            itsFamily=tmp;
                                                         }
                                                     }
-
-                                                    if(!foundXlfd && CMisc::stricmp(&str[props[prop].name], "FONT")==0)
+                                                    else if(!foundWeight && CMisc::stricmp(&str[props[prop].name], "WEIGHT_NAME")==0)
+                                                    {
+                                                        if(props[prop].isString)
+                                                        {
+                                                            foundWeight=true;
+                                                            strncpy(tmp, &str[props[prop].value], constMaxStrLen);
+                                                            tmp[constMaxStrLen-1]='\0';
+                                                            itsWeight=strToWeight(tmp);
+                                                        }
+                                                    }
+                                                    else if(!foundSlant && CMisc::stricmp(&str[props[prop].name], "SLANT")==0)
+                                                    {
+                                                        if(props[prop].isString)
+                                                        {
+                                                            foundSlant=true;
+                                                            itsItalic=charToItalic(str[props[prop].value]);
+                                                        }
+                                                    }
+                                                    else if(!foundRes && CMisc::stricmp(&str[props[prop].name], "RESOLUTION_X")==0)
+                                                    {
+                                                        if(!props[prop].isString)
+                                                        {
+                                                            foundRes=true;
+                                                            res=props[prop].value;
+                                                        }
+                                                    }
+                                                    else if(!foundPt && CMisc::stricmp(&str[props[prop].name], "POINT_SIZE")==0)
+                                                    {
+                                                        if(!props[prop].isString)
+                                                        {
+                                                            foundPt=true;
+                                                            pointSize=props[prop].value;
+                                                        }
+                                                    }
+                                                    else if(!foundCsReg && CMisc::stricmp(&str[props[prop].name], "CHARSET_REGISTRY")==0)
                                                     {
                                                         if(props[prop].isString && strlen(&str[props[prop].value]))
                                                         {
-                                                            foundXlfd=true;
+                                                            foundCsReg=true;
                                                             strncpy(tmp, &str[props[prop].value], constMaxStrLen);
                                                             tmp[constMaxStrLen-1]='\0';
-                                                            itsXlfd=tmp;
+                                                            csReg=tmp;
                                                         }
                                                     }
-                                                    else if(!foundCsEnc && !foundCsReg && CMisc::stricmp(&str[props[prop].name], "FONT")==0)
-                                                            foundCsEnc=foundCsReg=foundEncoding=getFileEncodingBmp(&str[props[prop].value]);
-
-                                                    if(!foundEncoding && foundCsReg && foundCsEnc)
+                                                    else if(!foundCsEnc && CMisc::stricmp(&str[props[prop].name], "CHARSET_ENCODING")==0)
                                                     {
-                                                        itsEncoding=csReg+"-"+csEnc;
-                                                        foundEncoding=true;
-                                                    }
-
-                                                    if(mask==XLFD && foundXlfd)
-                                                        status=true;
-                                                    else
-                                                        if(mask!=XLFD &&
-                                                             (foundFamily && foundWeight && foundRes && foundSlant && foundPt && foundEncoding &&
-                                                               (!(mask&XLFD) || (mask&XLFD && foundXlfd))))
+                                                        if(props[prop].isString && strlen(&str[props[prop].value]))
                                                         {
-                                                            createNameBmp(pointSize, res, itsEncoding);
-                                                            status=true;
+                                                            foundCsEnc=true;
+                                                            strncpy(tmp, &str[props[prop].value], constMaxStrLen);
+                                                            tmp[constMaxStrLen-1]='\0';
+                                                            csEnc=tmp;
                                                         }
+                                                    }
                                                 }
+
+                                                if(!foundXlfd && CMisc::stricmp(&str[props[prop].name], "FONT")==0)
+                                                {
+                                                    if(props[prop].isString && strlen(&str[props[prop].value]))
+                                                    {
+                                                        foundXlfd=true;
+                                                        strncpy(tmp, &str[props[prop].value], constMaxStrLen);
+                                                        tmp[constMaxStrLen-1]='\0';
+                                                        itsXlfd=tmp;
+                                                    }
+                                                }
+                                                else if(!foundCsEnc && !foundCsReg && CMisc::stricmp(&str[props[prop].name], "FONT")==0)
+                                                        foundCsEnc=foundCsReg=foundEncoding=getFileEncodingBmp(&str[props[prop].value]);
+
+                                                if(!foundEncoding && foundCsReg && foundCsEnc)
+                                                {
+                                                    itsEncoding=csReg+"-"+csEnc;
+                                                    foundEncoding=true;
+                                                }
+
+                                                if(mask==XLFD && foundXlfd)
+                                                    status=true;
+                                                else
+                                                    if(mask!=XLFD &&
+                                                         (foundFamily && foundWeight && foundRes && foundSlant && foundPt && foundEncoding &&
+                                                           (!(mask&XLFD) || (mask&XLFD && foundXlfd))))
+                                                    {
+                                                        createNameBmp(pointSize, res, itsEncoding);
+                                                        status=true;
+                                                    }
                                             }
-                                            delete str;
                                         }
-                                        delete props;
+                                        delete str;
                                     }
+                                    delete props;
                                 }
                             }
                         }
-                        break;   // Forget the other tables...
                     }
+                    break;   // Forget the other tables...
                 }
             }
         }
-        gzclose(pcf);
 
         if(!status && foundXlfd)
         {
@@ -2484,7 +2484,6 @@ bool CFontEngine::openFontPcf(const QString &file, unsigned short mask)
             status=true;
         }
     }
-
     return status;
 }
 

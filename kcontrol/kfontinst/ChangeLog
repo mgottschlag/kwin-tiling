@@ -1,16 +1,17 @@
 0.10->0.11
 ==========
-1. Port to KDE3/Qt3.
-2. Add support for CUPS's Fontmap.
-3. Create backups of system files.
-4. When install symbol encoding fonts, set encodig to "glyphs-fontspecific" in XftConfig.
-5. When install monospaced fonts, set spacing to mono in XftConfig.
-6. When first run (as root) - checks XFree86 config file to see if a font server is being used, if 
-   so then fs/config is used as the config file, and "/etc/rc.d/init.d/xfs restart" is selected as
-   as the X refresh command.
-7. Only install fonts that are useable.
-8. Add checkbox to enable overwriting of existing AFMs
-9. Remember open directories in advanced mode
+1.  Port to KDE3/Qt3.
+2.  Add support for CUPS's Fontmap.
+3.  Create backups of system files.
+4.  When install symbol encoding fonts, set encodig to "glyphs-fontspecific" in XftConfig.
+5.  When install monospaced fonts, set spacing to mono in XftConfig.
+6.  When first run (as root) - checks XFree86 config file to see if a font server is being used, if 
+    so then fs/config is used as the config file, and "/etc/rc.d/init.d/xfs restart" is selected as
+    as the X refresh command.
+7.  Only install fonts that are useable.
+8.  Add checkbox to enable overwriting of existing AFMs
+9.  Remember open directories in advanced mode
+10. Add support for .Z compressed Bitmap fonts
 
 0.10b11->0.10
 =============

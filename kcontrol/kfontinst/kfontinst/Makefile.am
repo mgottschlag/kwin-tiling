@@ -111,6 +111,7 @@ EXTRA_DIST = \
 	XftConfigEditorData.h \
 	XftRename.h \
 	FontPreview.h \
+	CompressedFile.h \
 	xftint.h \
 	xftgram.h \
 	xftgram.c \
