@@ -73,6 +73,7 @@ public:
 	virtual QString quickHelp() const;
 
 protected:
+	bool findStyle( const QString& str, int& combobox_item );
 	void switchStyle(const QString& styleName);
 	void setStyleRecursive(QWidget* w, QStyle* s);
 

@@ -550,25 +550,42 @@ void KCMStyle::save()
 }
 
 
+bool KCMStyle::findStyle( const QString& str, int& combobox_item )
+{
+	combobox_item = 0;
+
+	for( int i = 0; i < cbStyle->count(); i++ )
+	{
+		if ( cbStyle->text(i).lower() == str )
+		{
+			combobox_item = i;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+
 void KCMStyle::defaults()
 {
 	// Select default style
-	QListBoxItem *item;
-	QListBox *cbListBox = cbStyle->listBox();
-	if ( (item = cbListBox->findItem( KStyle::defaultStyle(), Qt::ExactMatch)) )
-		cbStyle->setCurrentText( item->text() );
-	else if ( (item = cbListBox->findItem( "HighColor", Qt::ExactMatch) ) )
-		cbStyle->setCurrentText( item->text() );
-	else if ( (item = cbListBox->findItem( "Default", Qt::ExactMatch) ) )
-		cbStyle->setCurrentText( item->text()) ;
-	else if ( (item = cbListBox->findItem( "Windows", Qt::ExactMatch) ) )
-		cbStyle->setCurrentText( item->text() );
-	else if ( (item = cbListBox->findItem( "Platinum", Qt::ExactMatch) ) )
-		cbStyle->setCurrentText( item->text() );
-	else if ( (item = cbListBox->findItem( "Motif", Qt::ExactMatch) ) )
-		cbStyle->setCurrentText( item->text() );
-	else
-		cbStyle->setCurrentText( cbListBox->firstItem()->text() );	// Use any available style
+	int item = 0;
+	bool found;
+
+	found = findStyle( KStyle::defaultStyle(), item );
+	if (!found)
+		found = findStyle( "highcolor", item );
+	if (!found)
+		found = findStyle( "default", item );
+	if (!found)
+		found = findStyle( "windows", item );
+	if (!found)
+		found = findStyle( "platinum", item );
+	if (!found)
+		found = findStyle( "motif", item );
+
+	cbStyle->setCurrentItem( item );
 
 	m_bStyleDirty = true;
 	currentStyle = cbStyle->currentText();
@@ -710,16 +727,31 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 	QString defaultStyle = KStyle::defaultStyle();
 	QString cfgStyle = config.readEntry( "widgetStyle", defaultStyle );
 
-	// Find the current style in the list
-	QListBoxItem* current = cbStyle->listBox()->findItem( cfgStyle, Qt::ExactMatch );
-	if (!current)
-		current = cbStyle->listBox()->findItem( cfgStyle, Qt::Contains );
-	if (!current)
-		current = cbStyle->listBox()->findItem( QApplication::style().className(), Qt::Contains );
-	if (!current)
-		current = cbStyle->listBox()->firstItem();	// Last fallback
-
+	// Select the current style
+	// Do not use cbStyle->listBox() as this may be NULL for some styles when
+	// they use QPopupMenus for the drop-down list!
+	
+	// ##### Since Trolltech likes to seemingly copy & paste code, 
+	// QStringList::findItem() doesn't have a Qt::StringComparisonMode field.
+	// We roll our own (yuck)
+	cfgStyle = cfgStyle.lower();
+	int item = 0;
+	QString txt;
+	for( int i = 0; i < cbStyle->count(); i++ )
+	{
+		txt = cbStyle->text(i).lower();
+		item = i;
+		if ( txt == cfgStyle )	// ExactMatch
+			break;
+		else if ( txt.contains( cfgStyle ) )
+			break; 
+		else if ( txt.contains( QApplication::style().className() ) )
+			break;
+		item = 0;
+	}
+	cbStyle->setCurrentItem( item );
 	currentStyle = cbStyle->currentText();
+
 	m_bStyleDirty = false;
 
 	switchStyle( currentStyle );	// make resets visible
