@@ -82,6 +82,30 @@ void advancedDialog::save()
                  m_advancedWidget->fadeOutHandles->isChecked());
     c.writeEntry("HideButtonSize",
                  m_advancedWidget->hideButtonSize->value());
+    
+    QStringList elist = c.readListEntry("Extensions2");
+    for (QStringList::Iterator it = elist.begin(); it != elist.end(); ++it)
+    {
+        // extension id
+        QString group(*it);
+
+        // is there a config group for this extension?
+        if(!c.hasGroup(group) ||
+           group.contains("Extension") < 1)
+        {
+            continue;
+        }
+        
+        // set config group
+        c.setGroup(group);
+        KConfig extConfig(c.readEntry("ConfigFile"));
+        extConfig.setGroup("General");
+        extConfig.writeEntry("FadeOutAppletHandles",
+                             m_advancedWidget->fadeOutHandles->isChecked());
+        extConfig.writeEntry("HideButtonSize",
+                             m_advancedWidget->hideButtonSize->value());
+        extConfig.sync();
+    }
     c.sync();
 
     KickerConfig::notifyKicker();

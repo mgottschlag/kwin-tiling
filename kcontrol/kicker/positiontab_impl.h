@@ -60,13 +60,13 @@ protected slots:
 private:
     enum positions { PosLeft = 0, PosRight, PosTop, PosBottom };
     enum allignments { AlignLeft = 0, AlignCenter, AlignRight };
-    
+
     QFrame* m_pretendPanel;
     QWidget* m_pretendDesktop;
     KBackgroundRenderer* m_desktopPreview;
     KickerConfig* m_kcm;
     extensionInfo* m_panelInfo;
-    
+
     unsigned int m_panelPos;
     unsigned int m_panelAlign;
 };
