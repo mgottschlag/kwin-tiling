@@ -97,19 +97,20 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     connect(lemaxuid, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
     connect(lemaxuid, SIGNAL(textChanged( const QString & )), SLOT(slotMinMaxChanged()) );
 
-    usrGroup = new QButtonGroup( 5, Qt::Vertical, i18n("Show Users"), this );
+    usrGroup = new QButtonGroup( 5, Qt::Vertical, i18n("Users"), this );
     connect( usrGroup, SIGNAL(clicked( int )), SLOT(slotShowOpts()) );
     connect( usrGroup, SIGNAL(clicked( int )), SLOT(slotChanged()) );
-    rbnoneusr = new QRadioButton( i18n("&None"), usrGroup );
-    QWhatsThis::add( rbnoneusr, i18n("If this option is selected, KDM will not show any users."
-      " If one of the alternative radio buttons is selected, KDM will show a list of users,"
+    cbshowlist = new QCheckBox( i18n("Show list"), usrGroup );
+    QWhatsThis::add( cbshowlist, i18n("If this option is checked, KDM will show a list of users,"
       " so users can click on their name or image rather than typing in their login.") );
-    rbselusr = new QRadioButton( i18n("selected users", "Selected onl&y"), usrGroup );
-    QWhatsThis::add( rbselusr, i18n("If this option is selected, KDM will only show the users"
-      " checked in the \"Select users\" list.") );
-    rballusr = new QRadioButton( i18n("not hidden users", "Not hidden"), usrGroup );
-    QWhatsThis::add( rballusr, i18n("If this option is selected, KDM will show all non-system users, except those"
-      " checked in the \"Select users\" list."));
+    cbcomplete = new QCheckBox( i18n("Autocompletion"), usrGroup );
+    QWhatsThis::add( cbcomplete, i18n("If this option is checked, KDM will automatically complete"
+      " user names while they are typed in the line edit.") );
+    cbinverted = new QCheckBox( i18n("Inverse selection"), usrGroup );
+    QWhatsThis::add( cbinverted, i18n("This option specifies how the users for \"Show list\" and \"Autocompletion\""
+      " are selected in the \"Select users and groups\" list: "
+      "If not checked, select only the checked users. "
+      "If checked, select all non-system users, except the checked ones."));
     cbusrsrt = new QCheckBox( i18n("Sor&t users"), usrGroup );
     connect( cbusrsrt, SIGNAL(toggled( bool )), SLOT(slotChanged()) );
     QWhatsThis::add( cbusrsrt, i18n("If this is checked, KDM will alphabetically sort the user list."
@@ -200,9 +201,9 @@ void KDMUsersWidget::makeReadOnly()
 {
     leminuid->setReadOnly(true);
     lemaxuid->setReadOnly(true);
-    rbnoneusr->setEnabled(false);
-    rbselusr->setEnabled(false);
-    rballusr->setEnabled(false);
+    cbshowlist->setEnabled(false);
+    cbcomplete->setEnabled(false);
+    cbinverted->setEnabled(false);
     cbusrsrt->setEnabled(false);
     rbadmonly->setEnabled(false);
     rbprefadm->setEnabled(false);
@@ -216,10 +217,12 @@ void KDMUsersWidget::makeReadOnly()
 
 void KDMUsersWidget::slotShowOpts()
 {
-    bool en = !rbnoneusr->isChecked();
+    bool en = cbshowlist->isChecked() || cbcomplete->isChecked();
+    cbinverted->setEnabled( en );
     cbusrsrt->setEnabled( en );
     wstack->setEnabled( en );
-    wstack->raiseWidget( rbselusr->isChecked() ? optinlv : optoutlv );
+    wstack->raiseWidget( cbinverted->isChecked() ? optoutlv : optinlv );
+    en = cbshowlist->isChecked();
     faceGroup->setEnabled( en );
     if (!en) {
 	usercombo->setEnabled( false );
@@ -346,10 +349,10 @@ void KDMUsersWidget::save()
     config->writeEntry( "MinShowUID", leminuid->text() );
     config->writeEntry( "MaxShowUID", lemaxuid->text() );
 
+    config->writeEntry( "UserList", cbshowlist->isChecked() );
+    config->writeEntry( "UserCompletion", cbcomplete->isChecked() );
     config->writeEntry( "ShowUsers",
-	rballusr->isChecked() ? "NotHidden" :
-	rbselusr->isChecked() ? "Selected" : "None" );
-
+	cbinverted->isChecked() ? "NotHidden" : "Selected" );
     config->writeEntry( "SortUsers", cbusrsrt->isChecked() );
 
     config->writeEntry( "HiddenUsers", hiddenUsers );
@@ -433,18 +436,13 @@ void KDMUsersWidget::load()
     selectedUsers = config->readListEntry( "SelectedUsers");
     hiddenUsers = config->readListEntry( "HiddenUsers");
 
-    cbusrsrt->setChecked(config->readBoolEntry("SortUsers", true));
-
     leminuid->setText(config->readEntry("MinShowUID", defminuid));
     lemaxuid->setText(config->readEntry("MaxShowUID", defmaxuid));
 
-    QString su = config->readEntry( "ShowUsers" );
-    if (su == QString::fromLatin1("None"))
-	rbnoneusr->setChecked(true);
-    else if (su == QString::fromLatin1("Selected"))
-	rbselusr->setChecked(true);
-    else
-	rballusr->setChecked(true);
+    cbshowlist->setChecked( config->readBoolEntry( "UserList", true ) );
+    cbcomplete->setChecked( config->readBoolEntry( "UserCompletion", false ) );
+    cbinverted->setChecked( config->readEntry( "ShowUsers" ) != "Selected" );
+    cbusrsrt->setChecked(config->readBoolEntry("SortUsers", true));
 
     QString ps = config->readEntry( "FaceSource" );
     if (ps == QString::fromLatin1("UserOnly"))
@@ -464,11 +462,13 @@ void KDMUsersWidget::load()
 
 void KDMUsersWidget::defaults()
 {
-    leminuid->setText(defminuid);
-    lemaxuid->setText(defmaxuid);
-    rballusr->setChecked(true);
-    cbusrsrt->setChecked(true);
-    rbadmonly->setChecked(true);
+    leminuid->setText( defminuid );
+    lemaxuid->setText( defmaxuid );
+    cbshowlist->setChecked( true );
+    cbcomplete->setChecked( false );
+    cbinverted->setChecked( true );
+    cbusrsrt->setChecked( true );
+    rbadmonly->setChecked( true );
     hiddenUsers.clear();
     selectedUsers.clear();
     slotShowOpts();

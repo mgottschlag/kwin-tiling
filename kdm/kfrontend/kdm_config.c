@@ -435,7 +435,7 @@ PautoLoginX (Value *retval)
 static const char
     *loginmode[] = { "LocalOnly", "DefaultLocal", "DefaultRemote", "RemoteOnly", 0 },
     *logoarea[] = { "None", "Logo", "Clock", 0 },
-    *showusers[] = { "NotHidden", "Selected", "None", 0 },
+    *showusers[] = { "NotHidden", "Selected", 0 },
     *facesource[] = { "AdminOnly", "PreferAdmin", "PreferUser", "UserOnly", 0 },
     *preseluser[] = { "None", "Previous", "Default", 0 },
     *echomode[] = { "OneStar", "ThreeStars", "NoEcho", 0 },
@@ -541,6 +541,8 @@ Ent entsGreeter[] = {
 { "AntiAliasing",	C_AntiAliasing | C_BOOL,0,	"false" },
 { "NumLock",		C_NumLock | C_ENUM, numlock,	"Keep" },
 { "Language",		C_Language,		0,	"en_US" },
+{ "UserCompletion",	C_UserCompletion | C_BOOL,0,	"false" },
+{ "UserList",		C_UserList | C_BOOL,0,		"true" },
 { "ShowUsers",		C_ShowUsers | C_ENUM, showusers, "NotHidden" },
 { "SelectedUsers",	C_SelectedUsers,	0,	"" },
 { "HiddenUsers",	C_HiddenUsers,		0,	"" },

@@ -95,6 +95,7 @@ public:
     virtual ~KGVerify();
     QLayout *getLayout() const { return grid; }
     QPopupMenu *getPlugMenu();
+    void loadUsers( const QStringList &users );
     void presetEntity( const QString &entity, int field );
     QString getEntity() const;
     void setUser( const QString &user );

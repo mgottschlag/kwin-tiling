@@ -140,7 +140,6 @@ and the session. .dmrc later affects only the session, not the greeter.
 - alternative to userview: make the "login" field a combobox
 - user list loading in the background (after first few to get a reasonable
   width estimate)
-- user name completion ("short automatic" mode) (#58092)
 
 - faking session parameters (type, language, etc.) of nonexistent users based
   on statistical analysis of actual users ... severe overkill!?

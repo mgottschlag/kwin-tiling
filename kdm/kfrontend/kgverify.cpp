@@ -158,6 +158,13 @@ KGVerify::slotPluginSelected( int id )
 }
 
 void // public
+KGVerify::loadUsers( const QStringList &users )
+{
+    Debug( "greet->loadUsers(...)\n" );
+    greet->loadUsers( users );
+}
+
+void // public
 KGVerify::presetEntity( const QString &entity, int field )
 {
     Debug( "greet->presetEntity(%\"s, %d)\n", entity.latin1(), field );

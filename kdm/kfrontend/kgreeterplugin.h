@@ -103,6 +103,14 @@ public:
 		   ExUnlock, ExChangeTok };
 
     /**
+     * Provide the talker with a list of selectable users. This can be used
+     * for autocompletion, etc.
+     * Will be called only when not running.
+     * @param users the users to load.
+     */
+    virtual void loadUsers( const QStringList &users ) = 0;
+
+    /**
      * Preload the talker with an (opaque to the greeter) entity.
      * Will be called only when not running.
      * @param entity the entity to preload the talker with. That

@@ -80,8 +80,7 @@ private:
 	QLineEdit	*leminuid, *lemaxuid;
 
 	QButtonGroup	*usrGroup; // right below
-	QRadioButton	*rbnoneusr, *rbselusr, *rballusr;
-	QCheckBox	*cbusrsrt;
+	QCheckBox	*cbshowlist, *cbcomplete, *cbinverted, *cbusrsrt;
 
 	QLabel		*s_label; // middle
 	QWidgetStack	*wstack;

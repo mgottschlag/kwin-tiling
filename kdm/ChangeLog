@@ -1,3 +1,9 @@
+2004-03-07  Oswald Buddenhagen <ossi@kde.org>
+	* Add user name autocompletion to greeter; option UserCompletion.
+	  As a side effect, "None" is gone from ShowUsers and UserList
+	  appeared; ShowUsers & SortUsers affect both the user list and
+	  the completion list.
+
 2004-02-28  Oswald Buddenhagen <ossi@kde.org>
 	* The default Xsession no longer tries to merge kdm's PATH into the
 	  one set up by the shell startup scripts. Instead, kde.desktop

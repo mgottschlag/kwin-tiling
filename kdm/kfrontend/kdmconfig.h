@@ -57,6 +57,8 @@ public:
     int		_greeterPosX, _greeterPosY;
     int		_greeterScreen;
 
+    bool	_userCompletion;
+    bool	_userList;
     int		_showUsers;
     int		_preselUser;
     QString	_defaultUser;

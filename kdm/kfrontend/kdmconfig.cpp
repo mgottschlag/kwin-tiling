@@ -137,6 +137,8 @@ KDMConfig::KDMConfig()
     if( _logo.isEmpty())
 	_logo = locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") );
 
+    _userCompletion = GetCfgInt (C_UserCompletion);
+    _userList = GetCfgInt (C_UserList);
     _showUsers = GetCfgInt (C_ShowUsers);
     _users = GetCfgStrArr (C_SelectedUsers, 0);
     _noUsers = GetCfgStrArr (C_HiddenUsers, 0);

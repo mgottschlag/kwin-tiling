@@ -99,6 +99,7 @@ KGreeter::KGreeter()
   : inherited()
   , dName( dname )
   , userView( 0 )
+  , userList( 0 )
   , clock( 0 )
   , pixLabel( 0 )
   , nNormals( 0 )
@@ -127,15 +128,18 @@ KGreeter::KGreeter()
 	welcomeLabel->setFont( kdmcfg->_greetFont );
 	main_grid->addWidget( welcomeLabel, 0, 1 );
     }
-    if (kdmcfg->_showUsers != SHOW_NONE) {
+    if (kdmcfg->_userList) {
 	userView = new UserListView( winFrame );
-	insertUsers( userView );
 	main_grid->addMultiCellWidget(userView, 0, 3, 0, 0);
 	connect( userView, SIGNAL(clicked( QListViewItem * )),
 		 SLOT(slotUserClicked( QListViewItem * )) );
 	connect( userView, SIGNAL(doubleClicked( QListViewItem * )),
 		 SLOT(accept()) );
     }
+    if (kdmcfg->_userCompletion)
+	userList = new QStringList;
+    if (userView || userList)
+	insertUsers();
 
     switch (kdmcfg->_logoArea) {
 	case LOGO_CLOCK:
@@ -156,7 +160,7 @@ KGreeter::KGreeter()
 	    break;
     }
 
-    if (kdmcfg->_showUsers != SHOW_NONE) {
+    if (userView) {
 	if (clock)
 	    main_grid->addWidget( clock, 1, 1, AlignCenter );
 	else if (pixLabel)
@@ -180,8 +184,7 @@ KGreeter::KGreeter()
     grid->addMultiCellWidget( sep, 4,4, 0,3 );
 #else
     grid->addMultiCellWidget( sep, 4,4, 0,
-	(kdmcfg->_showUsers != SHOW_NONE || 
-	 kdmcfg->_logoArea == LOGO_NONE) ? 3 : 4 );
+	(userView || kdmcfg->_logoArea == LOGO_NONE) ? 3 : 4 );
 #endif
     grid->setColStretch( 3, 1 );
 
@@ -255,6 +258,7 @@ KGreeter::KGreeter()
 KGreeter::~KGreeter()
 {
     hide();
+    delete userList;
     delete verify;
     delete stsFile;
 }
@@ -276,9 +280,14 @@ public:
 };
 
 void
-KGreeter::insertUser( UserListView *listview, const QImage &default_pix,
+KGreeter::insertUser( const QImage &default_pix,
 		      const QString &username, struct passwd *ps )
 {
+    if (userList)
+	userList->append( username );
+    if (!userView)
+	return;
+
     int dp = 0, nd = 0;
     if (kdmcfg->_faceSource == FACE_USER_ONLY ||
 	kdmcfg->_faceSource == FACE_PREFER_USER)
@@ -307,10 +316,10 @@ KGreeter::insertUser( UserListView *listview, const QImage &default_pix,
     QString realname = KStringHandler::from8Bit( ps->pw_gecos );
     realname.truncate( realname.find( ',' ) );
     if (realname.isEmpty() || realname == username)
-	new UserListViewItem( listview, username, QPixmap( p ), username );
+	new UserListViewItem( userView, username, QPixmap( p ), username );
     else {
 	realname.append( "\n" ).append( username );
-	new UserListViewItem( listview, realname, QPixmap( p ), username );
+	new UserListViewItem( userView, realname, QPixmap( p ), username );
     }
 }
 
@@ -353,16 +362,18 @@ UserList::UserList( char **in )
 }
 
 void
-KGreeter::insertUsers( UserListView *listview )
+KGreeter::insertUsers()
 {
     QImage default_pix;
-    if (!default_pix.load( kdmcfg->_faceDir + "/.default.face.icon" ))
-	if (!default_pix.load( kdmcfg->_faceDir + "/.default.face" ))
-	    LogError("Can't open default user face\n");
-    QSize ns( 48, 48 );
-    if (default_pix.size() != ns)
-	default_pix =
-	  default_pix.convertDepth( 32 ).smoothScale( ns, QImage::ScaleMin );
+    if (userView) {
+	if (!default_pix.load( kdmcfg->_faceDir + "/.default.face.icon" ))
+	    if (!default_pix.load( kdmcfg->_faceDir + "/.default.face" ))
+		LogError("Can't open default user face\n");
+	QSize ns( 48, 48 );
+	if (default_pix.size() != ns)
+	    default_pix =
+	      default_pix.convertDepth( 32 ).smoothScale( ns, QImage::ScaleMin );
+    }
     struct passwd *ps;
     if (kdmcfg->_showUsers == SHOW_ALL) {
 	UserList noUsers( kdmcfg->_noUsers );
@@ -378,7 +389,7 @@ KGreeter::insertUsers( UserListView *listview )
 		QString username( QFile::decodeName( ps->pw_name ) );
 		if (!dupes.find( username )) {
 		    dupes.insert( username, (int *)-1 );
-		    insertUser( listview, default_pix, username, ps );
+		    insertUser( default_pix, username, ps );
 		}
 	    }
 	}
@@ -397,7 +408,7 @@ KGreeter::insertUsers( UserListView *listview )
 		    QString username( QFile::decodeName( ps->pw_name ) );
 		    if (!dupes.find( username )) {
 			dupes.insert( username, (int *)-1 );
-			insertUser( listview, default_pix, username, ps );
+			insertUser( default_pix, username, ps );
 		    }
 		}
 	    }
@@ -405,13 +416,16 @@ KGreeter::insertUsers( UserListView *listview )
 	    KCStringList::ConstIterator it = users.users.begin();
 	    for (; it != users.users.end(); ++it)
 		if ((ps = getpwnam( (*it).data() )))
-		    insertUser( listview, default_pix,
-			        QFile::decodeName( *it ), ps );
+		    insertUser( default_pix, QFile::decodeName( *it ), ps );
 	}
     }
     endpwent();
-    if (kdmcfg->_sortUsers)
-	listview->sort();
+    if (kdmcfg->_sortUsers) {
+	if (userView)
+	    userView->sort();
+	if (userList)
+	    userList->sort();
+    }
 }
 
 void
@@ -573,7 +587,7 @@ KGreeter::slotLoadPrevWM()
 	GSendStr( "Session" );
 	sess = GRecvStr();
 	if (!sess) {		/* no such user */
-	    if (kdmcfg->_showUsers == SHOW_NONE) { // don't fake if user list shown
+	    if (!userView && !userList) { // don't fake if user list shown
 		/* simple crc32 */
 		for (crc = kdmcfg->_forgingSeed, i = 0; i < len; i++) {
 		    by = (crc & 255) ^ name[i];
@@ -644,6 +658,8 @@ KGreeter::pluginSetup()
 	else
 	    userView->hide();
     }
+    if (userList)
+	verify->loadUsers( *userList );
     adjustGeometry();
 }
 

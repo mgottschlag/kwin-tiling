@@ -25,6 +25,7 @@
 #include "kgreet_classic.h"
 
 #include <klocale.h>
+#include <klineedit.h>
 #include <kpassdlg.h>
 #include <kuser.h>
 
@@ -35,13 +36,6 @@ class KDMPasswordEdit : public KPasswordEdit {
 public:
     KDMPasswordEdit( QWidget *parent ) : KPasswordEdit( parent, 0 ) {}
     KDMPasswordEdit( KPasswordEdit::EchoModes echoMode, QWidget *parent ) : KPasswordEdit( echoMode, parent, 0 ) {}
-protected:
-    virtual void contextMenuEvent( QContextMenuEvent * ) {}
-};
-
-class KDMLineEdit : public QLineEdit {
-public:
-    KDMLineEdit( QWidget *parent ) : QLineEdit( parent ) {}
 protected:
     virtual void contextMenuEvent( QContextMenuEvent * ) {}
 };
@@ -71,7 +65,8 @@ KClassicGreeter::KClassicGreeter(
 	fixedUser = KUser().loginName();
     if (func != ChAuthTok) {
 	if (fixedUser.isEmpty()) {
-	    loginEdit = new KDMLineEdit( parent );
+	    loginEdit = new KLineEdit( parent );
+	    loginEdit->setContextMenuEnabled( false );
 	    loginLabel = new QLabel( loginEdit, i18n("&Username:"), parent );
 	    connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotLoginLostFocus()) );
 	    if (pred) {
@@ -135,6 +130,16 @@ KClassicGreeter::~KClassicGreeter()
     for (QLayoutItem *itm = it.current(); itm; itm = ++it)
 	 delete itm->widget();
     delete layoutItem;
+}
+
+void // virtual 
+KClassicGreeter::loadUsers( const QStringList &users )
+{
+    KCompletion *userNamesCompletion = new KCompletion;
+    userNamesCompletion->setItems( users );
+    loginEdit->setCompletionObject( userNamesCompletion );
+    loginEdit->setAutoDeleteCompletionObject( true );
+    loginEdit->setCompletionMode( KGlobalSettings::CompletionAuto );
 }
 
 void // virtual 

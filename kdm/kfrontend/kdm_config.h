@@ -53,7 +53,6 @@
 #define C_ShowUsers		(C_TYPE_INT | 0x101c)
 # define SHOW_ALL	0
 # define SHOW_SEL	1
-# define SHOW_NONE	2
 #define C_SelectedUsers		(C_TYPE_ARGV | 0x101d)
 #define C_HiddenUsers		(C_TYPE_ARGV | 0x101e)
 #define C_MinShowUID		(C_TYPE_INT | 0x101f)
@@ -82,11 +81,13 @@
 #define C_FaceDir		(C_TYPE_STR | 0x102c)
 #define C_ColorScheme		(C_TYPE_STR | 0x102d)
 #define C_ForgingSeed		(C_TYPE_INT | 0x102e)
-#define C_PluginsLogin		(C_TYPE_ARGV| 0x102f)
-#define C_PluginsShutdown	(C_TYPE_ARGV| 0x1030)
-#define C_PluginOptions		(C_TYPE_ARGV| 0x1031)
-#define C_AllowConsole		(C_TYPE_INT| 0x1032)
-#define C_AllowClose		(C_TYPE_INT| 0x1033)
+#define C_PluginsLogin		(C_TYPE_ARGV | 0x102f)
+#define C_PluginsShutdown	(C_TYPE_ARGV | 0x1030)
+#define C_PluginOptions		(C_TYPE_ARGV | 0x1031)
+#define C_AllowConsole		(C_TYPE_INT | 0x1032)
+#define C_AllowClose		(C_TYPE_INT | 0x1033)
+#define C_UserCompletion	(C_TYPE_INT | 0x1034)
+#define C_UserList		(C_TYPE_INT | 0x1035)
 
 #ifdef WITH_KDM_XCONSOLE
 # define C_ShowLog		(C_TYPE_INT | 0x2000)

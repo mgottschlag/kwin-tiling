@@ -1665,10 +1665,17 @@ upd_guistyle(Entry *ce, Section *cs ATTR_UNUSED)
 }
 
 static void
-upd_showusers(Entry *ce, Section *cs ATTR_UNUSED)
+upd_showusers(Entry *ce, Section *cs)
 {
     if (!strcmp (ce->value, "All"))
 	ce->value = (char *)"NotHidden";
+    else if (!strcmp (ce->value, "None")) {
+	if (ce->active)
+	    putfqval (cs->name, "UserList", "false");
+	ce->value = (char *)"Selected";
+	ce->active = 0;
+	ce->written = 1;
+   }
 }
 
 static void
@@ -2116,12 +2123,14 @@ static Ent entsGreeter[] = {
 "# \"Keep\" -> - don't change the state (Default)\n" },
 { "Language",		0, upd_language, 
 "# Language to use in the greeter. Default is en_US\n" },
+{ "UserCompletion",	0, 0, 
+"# Enable autocompletion in the user name line edit. Default is false\n" },
+{ "UserList",	0, 0, 
+"# Enable user list (names along with images) in the greeter. Default is true\n" },
 { "ShowUsers",		0, upd_showusers, 
-"# Specify, which user names (along with pictures) should be shown in the\n"
-"# greeter.\n"
+"# User selection for UserCompletion and UserList:\n"
 "# \"NotHidden\" - all users except those listed in HiddenUsers (Default)\n"
-"# \"Selected\" - only the users listed in SelectedUsers\n"
-"# \"None\" - no user list will be shown at all\n" },
+"# \"Selected\" - only the users listed in SelectedUsers\n" },
 { "SelectedUsers",	0, 0, 
 "# For ShowUsers=Selected. Default is \"\"\n" },
 { "HiddenUsers",	1, upd_hiddenusers,
@@ -2362,7 +2371,9 @@ static DEnt dEntsAnyGreeter[] = {
 { "AntiAliasing",	"true", 0 },
 { "NumLock",		"Off", 0 },
 { "Language",		"de_DE", 0 },
-{ "ShowUsers",		"None", 0 },
+{ "UserCompletion",	"true", 0 },
+{ "UserList",		"false", 0 },
+{ "ShowUsers",		"Selected", 0 },
 { "SelectedUsers",	"root,johndoe", 0 },
 { "HiddenUsers",	"root", 0 },
 { "MinShowUID",		"", 0 },

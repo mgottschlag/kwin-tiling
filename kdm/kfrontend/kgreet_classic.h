@@ -30,10 +30,10 @@
 
 #include <qobject.h>
 
+class KLineEdit;
 class KPasswordEdit;
 class KSimpleConfig;
 class QGridLayout;
-class QLineEdit;
 class QLabel;
 
 class KClassicGreeter : public QObject, public KGreeterPlugin {
@@ -45,6 +45,7 @@ public:
 		     const QString &fixedEntitiy,
 		     Function func, Context ctx );
     ~KClassicGreeter();
+    virtual void loadUsers( const QStringList &users );
     virtual void presetEntity( const QString &entity, int field );
     virtual QString getEntity() const;
     virtual void setUser( const QString &user );
@@ -71,7 +72,7 @@ private:
     void returnData();
 
     QLabel		*loginLabel, *passwdLabel, *passwd1Label, *passwd2Label;
-    QLineEdit		*loginEdit;
+    KLineEdit		*loginEdit;
     KPasswordEdit	*passwdEdit, *passwd1Edit, *passwd2Edit;
     KSimpleConfig	*stsFile;
     QString		fixedUser, curUser;

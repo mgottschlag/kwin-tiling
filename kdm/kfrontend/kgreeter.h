@@ -75,8 +75,8 @@ public slots:
     void slotConsole();
 
 private:
-    void insertUser( UserListView *, const QImage &, const QString &, struct passwd * );
-    void insertUsers( UserListView * );
+    void insertUser( const QImage &, const QString &, struct passwd * );
+    void insertUsers();
     void putSession( const QString &, const QString &, bool, const char * );
     void insertSessions();
     void pluginSetup();
@@ -85,6 +85,7 @@ private:
     QString		curUser, dName;
     KSimpleConfig	*stsFile;
     UserListView	*userView;
+    QStringList		*userList;
     KdmClock		*clock;
     QLabel		*pixLabel;
     QGridLayout		*grid;
