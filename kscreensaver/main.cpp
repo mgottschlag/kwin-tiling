@@ -309,13 +309,6 @@ bool canReadPasswdDatabase()
 
 int main( int argc, char *argv[] )
 {
-	// drop root privileges temporarily
-#ifdef HAVE_SETEUID
-	seteuid(getuid());
-#else
-        setreuid(-1, getuid());
-#endif // HAVE_SETEUID
-
 	Window saveWin = 0;
 	int timeout = 600;
 	ProgramName = argv[0];
@@ -405,16 +398,6 @@ int main( int argc, char *argv[] )
 		}
 	    i++;
 	}
-
-	// regain root privileges
-#ifdef HAVE_SETEUID
-	seteuid(0);
-#else
-        setreuid(-1, 0);
-#endif // HAVE_SETEUID
-//	initPasswd();
-	// ... and drop them again before doing anything important
-	setuid(getuid());
 
 	// now check, if I can verify passwords (might be a problem
 	// only with shadow passwords, due to missing SUID on
