@@ -57,69 +57,71 @@ bool artswrapper_check()
 
 KArtsModule::KArtsModule(QWidget *parent, const char *name)
   : KCModule(parent, name)
-{
-  QVBoxLayout *layout = new QVBoxLayout(this, 10);
+{ 
+    setButtons(Cancel|Apply|Ok);
 
-  // options
-  startServer = new QCheckBox(this);
-  startServer->setText(i18n("&Start aRts soundserver on KDE startup"));
-  layout->addWidget(startServer);
-  connect(startServer,SIGNAL(clicked()),this,SLOT(slotChanged()));
-
-  // dependant options: only useful when soundserver will be started
-  QFrame *hLine1 = new QFrame(this);
-  hLine1->setFrameStyle(QFrame::Sunken|QFrame::HLine);
-  layout->addWidget(hLine1);
-
-  startRealtime = new QCheckBox(this);
-  startRealtime->setText(i18n("Run soundserver with &realtime priority"));
-  layout->addWidget(startRealtime);
-  connect(startRealtime,SIGNAL(clicked()),this,SLOT(slotChanged()));
-
-  networkTransparent = new QCheckBox(this);
-  networkTransparent->setText(i18n("Enable &network transparency"));
-  layout->addWidget(networkTransparent);
-  connect(networkTransparent,SIGNAL(clicked()),this,SLOT(slotChanged()));
-
-  x11Comm = new QCheckBox(this);
-  x11Comm->setText(i18n("Exchange security and reference info over the &X11 server"));
-  layout->addWidget(x11Comm);
-  connect(x11Comm,SIGNAL(clicked()),this,SLOT(slotChanged()));
-
-  QLabel *x11CommHint = new QLabel(this);
-  x11CommHint->setText(i18n("    If you want network transparency or if you use the soundserver\n    only when you use X11, enable this."));
-  layout->addWidget(x11CommHint);
-
-  responseGroup = new QButtonGroup(i18n("response time"), this);
-
-  QVBoxLayout *vbox = new QVBoxLayout(responseGroup,10);
-  vbox->addSpacing(responseGroup->fontMetrics().height());
-
-  responseButton[0] = new QRadioButton( i18n("&Fast (10ms)"), responseGroup );
-  responseButton[1] = new QRadioButton( i18n("&Standard (50ms)"), responseGroup );
-  responseButton[2] = new QRadioButton( i18n("&Confortable (250ms)"), responseGroup);
+    QVBoxLayout *layout = new QVBoxLayout(this, 10);
+    
+    // options
+    startServer = new QCheckBox(this);
+    startServer->setText(i18n("&Start aRts soundserver on KDE startup"));
+    layout->addWidget(startServer);
+    connect(startServer,SIGNAL(clicked()),this,SLOT(slotChanged()));
+    
+    // dependant options: only useful when soundserver will be started
+    QFrame *hLine1 = new QFrame(this);
+    hLine1->setFrameStyle(QFrame::Sunken|QFrame::HLine);
+    layout->addWidget(hLine1);
+    
+    startRealtime = new QCheckBox(this);
+    startRealtime->setText(i18n("Run soundserver with &realtime priority"));
+    layout->addWidget(startRealtime);
+    connect(startRealtime,SIGNAL(clicked()),this,SLOT(slotChanged()));
+    
+    networkTransparent = new QCheckBox(this);
+    networkTransparent->setText(i18n("Enable &network transparency"));
+    layout->addWidget(networkTransparent);
+    connect(networkTransparent,SIGNAL(clicked()),this,SLOT(slotChanged()));
+    
+    x11Comm = new QCheckBox(this);
+    x11Comm->setText(i18n("Exchange security and reference info over the &X11 server"));
+    layout->addWidget(x11Comm);
+    connect(x11Comm,SIGNAL(clicked()),this,SLOT(slotChanged()));
+    
+    QLabel *x11CommHint = new QLabel(this);
+    x11CommHint->setText(i18n("    If you want network transparency or if you use the soundserver\n    only when you use X11, enable this."));
+    layout->addWidget(x11CommHint);
+    
+    responseGroup = new QButtonGroup(i18n("Response time"), this);
+    
+    QVBoxLayout *vbox = new QVBoxLayout(responseGroup,10);
+    vbox->addSpacing(responseGroup->fontMetrics().height());
+    
+    responseButton[0] = new QRadioButton( i18n("&Fast (10ms)"), responseGroup );
+    responseButton[1] = new QRadioButton( i18n("&Standard (50ms)"), responseGroup );
+    responseButton[2] = new QRadioButton( i18n("&Confortable (250ms)"), responseGroup);
     //connect(style_group, SIGNAL(clicked(int)), SLOT(style_clicked(int)));
-
-  for (int i = 0; i < 3; i++)
-    vbox->addWidget(responseButton[i]);
-  layout->addWidget(responseGroup);
-
-  // options end
-
-  QFrame *hLine = new QFrame(this);
-  hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
-  layout->addWidget(hLine);
-
-  QLabel *restartHint = new QLabel(this);
-  restartHint->setText(i18n("As the aRts soundserver will be started when KDE is started,\nthe changes you make in this dialog will only take effect then.\nSo logout and login again after having changed something in this dialog."));
-  restartHint->setTextFormat(RichText);
-  layout->addWidget(restartHint);
-  layout->addStretch(5);
-  layout->activate();
-
-  config = new KConfig("kcmartsrc");
-
-  GetSettings();
+    
+    for (int i = 0; i < 3; i++)
+	vbox->addWidget(responseButton[i]);
+    layout->addWidget(responseGroup);
+    
+    // options end
+    
+    QFrame *hLine = new QFrame(this);
+    hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
+    layout->addWidget(hLine);
+    
+    QLabel *restartHint = new QLabel(this);
+    restartHint->setText(i18n("As the aRts soundserver will be started when KDE is started,\nthe changes you make in this dialog will only take effect then.\nSo logout and login again after having changed something in this dialog."));
+    restartHint->setTextFormat(RichText);
+    layout->addWidget(restartHint);
+    layout->addStretch(5);
+    layout->activate();
+    
+    config = new KConfig("kcmartsrc");
+    
+    GetSettings();
 }
 
 
