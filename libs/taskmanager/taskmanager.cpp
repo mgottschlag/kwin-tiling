@@ -398,7 +398,6 @@ Task::~Task()
 
 void Task::refresh(bool icon)
 {
-    _info = KWin::windowInfo(_win);
     if (icon) {
 
         // try to load icon via net_wm
@@ -416,8 +415,12 @@ void Task::refresh(bool icon)
         _lastIcon.resize(0,0);
         emit iconChanged();
     }
-
-    emit changed(); // always changed ?  ... :(
+    else
+    {
+        _info = KWin::windowInfo(_win);
+        // TODO: this only really needs to get emitted when the name changes it seems
+        emit changed(); // always changed ?  ... :(
+    }
 }
 
 void Task::setActive(bool a)
