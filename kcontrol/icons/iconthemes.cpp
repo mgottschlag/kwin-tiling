@@ -123,7 +123,6 @@ QListViewItem *IconThemesConfig::iconThemeItem(QString name)
     if (m_themeNames[item->text(0)]==name) return item;
 
   return 0L;
-
 }
 
 void IconThemesConfig::loadThemes()
@@ -153,7 +152,6 @@ void IconThemesConfig::loadThemes()
     m_themeNames.insert(name,*it);
 
   }
-
 }
 
 void IconThemesConfig::installNewTheme()
@@ -336,6 +334,9 @@ void IconThemesConfig::updateRemoveButton()
     KIconTheme icontheme(m_themeNames[selected->text(0)]);
     QFileInfo fi(icontheme.dir());
     enabled = fi.isWritable();
+    // Don't let users remove the current theme.
+    if(m_themeNames[selected->text(0)] == KIconTheme::current())
+      enabled = false;
   }
   m_removeButton->setEnabled(enabled);
 }
@@ -403,14 +404,9 @@ void IconThemesConfig::save()
   if (!selected)
      return;
 
-  KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
-
-  config->setGroup("Icons");
-
+  KConfig *config = KGlobal::config();
+  KConfigGroupSaver saver(config, "Icons");
   config->writeEntry("Theme", m_themeNames[selected->text(0)]);
-
-  delete config;
-
   emit changed(false);
 
   for (int i=0; i<KIcon::LastGroup; i++)
@@ -424,6 +420,7 @@ void IconThemesConfig::save()
   dcc->send("kded", "kbuildsycoca", "recreate()", QByteArray());
 
   m_bChanged = false;
+  m_removeButton->setEnabled(false);
 }
 
 void IconThemesConfig::defaults()
