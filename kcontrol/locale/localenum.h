@@ -51,6 +51,8 @@ public slots:
 
 private slots:
   // Numbers
+  void slotMonPosSignChanged(const QString &t);
+  void slotMonNegSignChanged(const QString &t);
   void slotDecSymChanged(const QString &t);
   void slotThoSepChanged(const QString &t);
 
@@ -60,6 +62,8 @@ private:
   // Numbers
   QLineEdit *edDecSym;
   QLineEdit *edThoSep;
+  QLineEdit *edMonPosSign;
+  QLineEdit *edMonNegSign;
 };
 
 #endif

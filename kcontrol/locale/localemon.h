@@ -54,8 +54,6 @@ private slots:
   void slotMonCurSymChanged(const QString &t);
   void slotMonDecSymChanged(const QString &t);
   void slotMonThoSepChanged(const QString &t);
-  void slotMonPosSignChanged(const QString &t);
-  void slotMonNegSignChanged(const QString &t);
   void slotMonFraDigChanged(const QString &t);
   void slotMonPosPreCurSymChanged();
   void slotMonNegPreCurSymChanged();
@@ -69,8 +67,6 @@ private:
   QLineEdit *edMonCurSym;
   QLineEdit *edMonDecSym;
   QLineEdit *edMonThoSep;
-  QLineEdit *edMonPosSign;
-  QLineEdit *edMonNegSign;
   QLineEdit *edMonFraDig;
 
   QCheckBox *chMonPosPreCurSym;

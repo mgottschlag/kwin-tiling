@@ -75,6 +75,18 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   tl1->addWidget(label, 2, 1);
   tl1->addWidget(edThoSep, 2, 2);
 
+  label = new QLabel("1", gbox, i18n("Positive sign"));
+  edMonPosSign = new QLineEdit(gbox);
+  connect( edMonPosSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonPosSignChanged(const QString &) ) );
+  tl1->addWidget(label, 3, 1);
+  tl1->addWidget(edMonPosSign, 3, 2);
+
+  label = new QLabel("1", gbox, i18n("Negative sign"));
+  edMonNegSign = new QLineEdit(gbox);
+  connect( edMonNegSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonNegSignChanged(const QString &) ) );
+  tl1->addWidget(label, 4, 1);
+  tl1->addWidget(edMonNegSign, 4, 2);
+
   tl1->activate();
 
   // Examples
@@ -98,6 +110,8 @@ void KLocaleConfigNumber::loadSettings()
 
   edDecSym->setText(locale->_decimalSymbol);
   edThoSep->setText(locale->_thousandsSeparator);
+  edMonPosSign->setText(locale->_positiveSign);
+  edMonNegSign->setText(locale->_negativeSign);
 }
 
 void KLocaleConfigNumber::applySettings()
@@ -132,8 +146,6 @@ void KLocaleConfigNumber::updateSample()
     sample->update();
 }
 
-
-
 void KLocaleConfigNumber::slotDecSymChanged(const QString &t)
 {
   KGlobal::locale()->_decimalSymbol = t;
@@ -146,18 +158,33 @@ void KLocaleConfigNumber::slotThoSepChanged(const QString &t)
   sample->update();
 }
 
+void KLocaleConfigNumber::slotMonPosSignChanged(const QString &t)
+{
+  KGlobal::locale()->_positiveSign = t;
+  ((KLocaleApplication*)kapp)->updateSample();
+}
+
+void KLocaleConfigNumber::slotMonNegSignChanged(const QString &t)
+{
+  KGlobal::locale()->_negativeSign = t;
+  ((KLocaleApplication*)kapp)->updateSample();
+}
+
+
+
 void KLocaleConfigNumber::reset()
 {
+  KLocale *locale = KGlobal::locale();
+
   KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->number + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   QString str;
 
-  str = ent.readEntry("DecimalSymbol", ".");
-  edDecSym->setText(str);
-
-  str = ent.readEntry("ThousandsSeparator", ",");
-  edThoSep->setText(str);
+  locale->_decimalSymbol = ent.readEntry("DecimalSymbol", ".");
+  locale->_thousandsSeparator = ent.readEntry("ThousandsSeparator", ",");
+  locale->_positiveSign = ent.readEntry("PositiveSign");
+  locale->_negativeSign = ent.readEntry("NegativeSign", "-");
 
   loadSettings();
 }

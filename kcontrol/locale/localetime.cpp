@@ -152,13 +152,8 @@ void KLocaleConfigTime::reset()
   KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->time + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
-  QString str;
-
-  str = ent.readEntry("TimeFormat", "%I:%M:%S %p");
-  edTimeFmt->setText(str);
-
-  str = ent.readEntry("DateFormat", "%m/%d/%y");
-  edDateFmt->setText(str);
+  locale->_timefmt = ent.readEntry("TimeFormat", "%I:%M:%S %p");
+  locale->_datefmt = ent.readEntry("DateFormat", "%m/%d/%y");
 
   loadSettings();
 }
