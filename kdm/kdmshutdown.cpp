@@ -173,10 +173,10 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised);
      QBoxLayout* box = new QBoxLayout( winFrame, QBoxLayout::TopToBottom, 
 				       10, 10);
-     QString shutdownmsg =  klocale->translate( "Shutdown or restart?");
+     QString shutdownmsg =  i18n( "Shutdown or restart?");
      if( mode == KDMConfig::RootOnly) {
 	  shutdownmsg += '\n';
-	  shutdownmsg += klocale->translate( "(Enter Root Password)");
+	  shutdownmsg += i18n( "(Enter Root Password)");
      }
      label = new QLabel( shutdownmsg, winFrame);
      set_fixed( label);
@@ -194,7 +194,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      
      QRadioButton *rb;
      rb = new QRadioButton( winFrame /*btGroup*/);
-     rb->setText( klocale->translate("Shutdown"));
+     rb->setText( i18n("Shutdown"));
      set_min( rb);
      rb->setFocusPolicy( StrongFocus);
      // Default action
@@ -208,7 +208,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      box->addWidget( rb);
      btGroup->insert( rb);
      rb = new QRadioButton( winFrame /*btGroup*/);
-     rb->setText( klocale->translate("Shutdown and restart"));
+     rb->setText( i18n("Shutdown and restart"));
      set_min( rb);
      rb->setFocusPolicy( StrongFocus);
      h += rb->height() + 10;
@@ -217,7 +217,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      box->addWidget( rb);
      btGroup->insert( rb);
      rb = new QRadioButton( winFrame /*btGroup*/);
-     rb->setText( klocale->translate("Restart X Server"));//better description
+     rb->setText( i18n("Restart X Server"));//better description
      set_min( rb);
      rb->setFocusPolicy( StrongFocus);
      h += rb->height() + 10;
@@ -253,10 +253,10 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      QBoxLayout* box3 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
      box->addLayout( box3);
 
-     okButton = new QPushButton( klocale->translate("OK"), winFrame);
+     okButton = new QPushButton( i18n("OK"), winFrame);
      set_min( okButton);
      okButton->setFocusPolicy( StrongFocus);
-     cancelButton = new QPushButton( klocale->translate("Cancel"), winFrame);
+     cancelButton = new QPushButton( i18n("Cancel"), winFrame);
      set_min( cancelButton);
      //cancelButton->setDefault( true);
      cancelButton->setFocusPolicy( StrongFocus);

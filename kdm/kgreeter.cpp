@@ -219,7 +219,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      pixLabel->setPixmap( pixmap);
      pixLabel->setFixedSize( pixLabel->width(), pixLabel->height());
 
-     loginLabel = new QLabel( klocale->translate("Login:"), this);
+     loginLabel = new QLabel( i18n("Login:"), this);
      set_min( loginLabel);
      loginEdit = new QLineEdit( this);
 
@@ -231,7 +231,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      loginEdit->setFixedHeight( leheight);
      loginEdit->setFocus();
 
-     passwdLabel = new QLabel( klocale->translate("Password:"), this);
+     passwdLabel = new QLabel( i18n("Password:"), this);
      set_min( passwdLabel);
      passwdEdit = new QLineEdit( this);
 
@@ -256,13 +256,13 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      grid->addMultiCellWidget( sepFrame, 3, 3, 0, 1);
      grid->setColStretch( 1, 4);
 
-     failedLabel = new QLabel( klocale->translate("Login failed!"), this);
+     failedLabel = new QLabel( i18n("Login failed!"), this);
      failedLabel->setFont( *kdmcfg->failFont());
      set_min( failedLabel);
      failedLabel->hide();
      hbox2->addWidget( failedLabel);
 
-     QLabel* sessionargLabel = new QLabel(klocale->translate("Session Type:"),
+     QLabel* sessionargLabel = new QLabel(i18n("Session Type:"),
 					  this);
      set_min( sessionargLabel);
      sessionargLabel->setAlignment( AlignRight|AlignVCenter);
@@ -309,13 +309,13 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      set_fixed( sessionargBox);
      hbox2->addWidget( sessionargBox);
      
-     goButton = new QPushButton( klocale->translate("Go!"), this);
+     goButton = new QPushButton( i18n("Go!"), this);
      connect( goButton, SIGNAL( clicked()), SLOT(go_button_clicked()));
 
      set_fixed( goButton);
      hbox2->addWidget( goButton, AlignBottom);
 
-     cancelButton = new QPushButton( klocale->translate("Cancel"), this);
+     cancelButton = new QPushButton( i18n("Cancel"), this);
      connect( cancelButton, SIGNAL(clicked()), SLOT(cancel_button_clicked()));
      set_fixed( cancelButton);
      hbox2->addWidget( cancelButton, AlignBottom);
@@ -325,7 +325,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      if( kdmcfg->shutdownButton() != KDMConfig::KNone 
 	 && ( kdmcfg->shutdownButton() != KDMConfig::ConsoleOnly 
 	 || d->displayType.location == Local)) {
-	  shutdownButton = new QPushButton( klocale->translate("Shutdown..."),
+	  shutdownButton = new QPushButton( i18n("Shutdown..."),
 					    this);
 	  connect( shutdownButton, SIGNAL(clicked()), 
 		   SLOT(shutdown_button_clicked()));
