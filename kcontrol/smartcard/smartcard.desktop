@@ -167,4 +167,4 @@ Keywords[zh_CN]=Smartcard,PKCS,SSL,reader,smart,card,智能卡,智能,卡,读卡
 Keywords[zh_TW]=Smartcard,PKCS,SSL,reader,smart,card,智慧卡,閱讀器,智慧,卡
 Keywords[zu]=Ikhadi elikhaliphile,PKCS,SSLumfundi,okukhaliphile,ikhadi
 
-Categories=Qt;KDE;X-KDE-settings-peripherals
+Categories=Qt;KDE;X-KDE-settings-peripherals;

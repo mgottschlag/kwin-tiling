@@ -91,6 +91,7 @@ Keywords[it]=tasti,associazioni globali di tasti,schema di tasti,associazioni di
 Keywords[nb]=Taster,Globale hurtigtaster,Hurtigtaster,Fakter,Fakter med musa
 Keywords[nl]=keys,toetsen,toetsenbindingen,key bindings,sneltoetsen,globale toetsenbindingen,mouse gestures,muisgebaren,gestures,gebaren
 Keywords[nn]=tastar,globale snøggtastar,tasteoppsett,snøggtastar,snarvegar,programsnarvegar,rørsler,muserørsler
+Keywords[pa]=Keys,Global key bindings,Key bindings,Gestures,ਮਾਊਸ gestures
 Keywords[pl]=klawisze,globalne skróty klawiszowe,schematy skrótów,gesty,mysz
 Keywords[pt]=teclas,teclas globais,esquema de teclas,atribuições de teclas,gestos,gestos com rato
 Keywords[pt_BR]=Teclas,Teclas de atalho globais,esquema de teclado,gestos, gestos do mouse
@@ -106,4 +107,4 @@ Keywords[uz]=Gestures,Mouse gestures,Тугмалар,Умумий тугмал�
 Keywords[xx]=xxKeys,Global key bindings,Key bindings,Gestures,Mouse gesturesxx
 Keywords[zh_CN]=Keys,Global key bindings,Key bindings,Gestures,Mouse gestures,键,全局键绑定,手势,鼠标手势
 
-Categories=Qt;KDE;X-KDE-settings-accessibility
+Categories=Qt;KDE;X-KDE-settings-accessibility;

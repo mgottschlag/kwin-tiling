@@ -84,7 +84,7 @@ Comment[az]=Şəbəkə ara üzü mə'lumatı
 Comment[be]=Інфармацыя аб сеткавых інтэрфэйсах
 Comment[bg]=Информация за мрежовите интерфейси
 Comment[bn]=নেটওয়ার্ক ইন্টারফেস সংক্রান্ত তথ্য
-Comment[br]=Titouroù war ar etrefasoù rouedad
+Comment[br]=Titouroù war an etrefasoù rouedad
 Comment[bs]=Informacije o mrežnom interfejsu
 Comment[ca]=Informació de la interfície de xarxa
 Comment[cs]=Informace o síťových rozhraních
@@ -143,4 +143,4 @@ Comment[zh_CN]=网络接口信息
 Comment[zh_TW]=網路界面資訊
 Comment[zu]=Ulwazi lomxhumanisi woxhumano olusakazekile
 
-Categories=Qt;KDE;X-KDE-information
+Categories=Qt;KDE;X-KDE-information;

@@ -95,7 +95,7 @@ Comment[fi]=Vaihda paneelin asettelua
 Comment[fr]=Configuration de la disposition du tableau de bord
 Comment[gl]=Configura-la disposición do panel
 Comment[he]=הגדר את סידור הלוח
-Comment[hi]=पेनल की व्यवस्था कॉन्फ़िगर करें
+Comment[hi]=फलक की व्यवस्था कॉन्फ़िगर करें
 Comment[hr]=Podesite izgled ploče
 Comment[hu]=A panel elrendezésének beállításai
 Comment[is]=Stilla viðmót spjaldsins
@@ -167,4 +167,4 @@ Keywords[uz]=панел,вазифалар панели,бекитиш,авто-
 Keywords[xx]=xxkicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming iconsxx
 Keywords[zh_CN]=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming icons面板,任务栏,启动栏,位置,大小,自动隐藏,隐藏,按钮,动画,背景,主题,菜单缓存,缓存,书签,最近文档,快速浏览器,浏览器菜单,菜单,图标,平铺,启动,突出,句柄,缩放图标
 
-Categories=Qt;KDE;X-KDE-settings-desktop
+Categories=Qt;KDE;X-KDE-settings-desktop;

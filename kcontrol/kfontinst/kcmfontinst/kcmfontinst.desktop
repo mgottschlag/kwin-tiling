@@ -81,7 +81,7 @@ Name[zu]=Umfakeli Wohlobo lwamagama
 
 Comment=Install & preview fonts
 Comment[af]=Installeer & voorskou skriftipes
-Comment[ar]=تثبيت و رؤية الخطوط
+Comment[ar]=تثبيت ورؤية الخطوط
 Comment[az]=Yazı növü qur & nümayiş et
 Comment[be]=Усталяваць і праглядзець шрыфты
 Comment[bg]=Инсталиране и преглед на шрифтове
@@ -102,7 +102,7 @@ Comment[fi]=Asenna ja esikatsele kirjasimia
 Comment[fr]=Pour installer et afficher des polices de caractères
 Comment[gl]=Instalar e previsualizar fontes
 Comment[he]=התקנה ותצוגה מקדימה של גופנים
-Comment[hi]=फ़ॉन्ट्स संस्थापित & पूर्वावलोकन करें
+Comment[hi]=फ़ॉन्ट्स संस्थापित व पूर्वावलोकन करें
 Comment[hr]=Instalacije i pregled fontova
 Comment[hu]=Betűtípusok telepítése, áttekintése
 Comment[is]=Setja inn & forskoða letur
@@ -182,4 +182,4 @@ Keywords[uz]=шрифт,шрифтлар,ўрнатувчи,битмап,truetyp
 Keywords[xx]=xxfont,fonts,installer,truetype,type1,speedo,bitmapxx
 Keywords[zh_CN]=font,fonts,installer,truetype,type1,speedo,bitmap,字体,安装程序,位图字体
 
-Categories=Qt;KDE;X-KDE-settings-system
+Categories=Qt;KDE;X-KDE-settings-system;

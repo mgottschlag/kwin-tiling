@@ -156,7 +156,7 @@ Keywords[fi]=aRts,äänipalvelin,artsd,ääni,käynnistys,verkkoläpinäkyvyys, 
 Keywords[fr]=aRts,son,serveur de son,serveur sonore,bruit,artsd,audio,démarrage,transparence réseau,transparence,priorité,duplex,full duplex,temps de réponse,mixeur,volume,KMix,Mix,login,MIDI,synthétiseur,musique
 Keywords[gl]=aRts,Servidor de Son,artsd,Audio,Son,comezo,transparencia de rede,transparencia,prioridade,duplex,full duplex,tempo de resposta,Mesturador,Volume,KMix,login,MIDI,sintetizador,música
 Keywords[he]=aRts,שרת צליל,artsd,שמע,צליל,אתחול,שקיפות רשת,שקיפות,עדיפות,דו-כיווניות,דו-כיווניות מלאה,זמן תגובה,מערבל,עצמה,KMix,כניסה למערכת,MIDI,מידי,סינתסייזר,מוזיקה
-Keywords[hi]=ए-आरटीएस,ध्वनि सर्वर,एआरटीएसडी,ऑडियो,ध्वनि,स्टार्टअप,नेटवर्क ट्रांसपेरेंसी, ट्रांसपेरेंसी,प्राथमिकता,डुप्लेक्स,फुल डुप्लेक्स,प्रतिक्रिया समय,मिक्सर,आवाज निर्धारक,केमिक्स,मिक्स,लॉगइन,मिडी,सिंथेसाइजर,संगीत
+Keywords[hi]=ए-आरटीएस,ध्वनि सर्वर,एआरटीएसडी,ऑडियो,ध्वनि,स्टार्टअप,नेटवर्क ट्रांसपेरेंसी, ट्रांसपेरेंसी,प्राथमिकता,डुप्ले,फुल डुप्ले,प्रतिक्रिया समय,मिक्सर,आवाज़ निर्धारक,केमिक्स,मिक्स,लॉगइन,मिडी,सिंथेसाइजर,संगीत
 Keywords[hu]=aRts,hangszolgáltatás,artsd,audió,hang,indulás,hálózati láthatóság,láthatóság,prioritás,duplex,full duplex,válaszidő,hangkeverő,hangerő,KMix,Mix,bejelentkezés,MIDI,szintetizátor,zene
 Keywords[is]=aRts,hljóðþjónn,hljóðmiðlari,artsd,hljóð,hljóð stillingar,ræsing,net,forgangur,tvíátta,svartími,mixer,MIDI,músík
 Keywords[it]=aRts,server sonoro,artsd,audio,suono,avvio,trasparenza di rete,trasparenza,priorità,duplex,full duplex,tempo di risposta,Mixer,Volume, KMix,login,MIDI,sintetizzatore,musica
@@ -189,4 +189,4 @@ Keywords[zh_CN]=aRts,Sound Server,artsd,Audio,Sound,startup,network transparency
 Keywords[zh_TW]=aRts,Sound Server,artsd,Audio,Sound,startup,network transparency,transparency,priority,duplex,full duplex,response time,Mixer,Volume,KMix,Mix,login,MIDI,synthesizer,musica,聲音伺服器,聲音,啟動,網路透明,優先級,全雙工,響應時間,混音器,音量,登入
 Keywords[zu]=aRts,Umlekeleli Womsindo,artsd,Okuzwakalayo,Umsindo,Isiqaliso, ukubonakala koxhumano olusakazekile,Ukubonakala ngale,ukubaluleka,okunezingxemye ezimbili,okunezingxenye ezimbili eziphendulanayo,isikhathi sokuphendula, Umxubi,Izinga lomsindo,KMix,Xuba,ngena ngaphakathi,MIDI,umlungisi womsindo, umculo
 
-Categories=Qt;KDE;X-KDE-settings-sound
+Categories=Qt;KDE;X-KDE-settings-sound;

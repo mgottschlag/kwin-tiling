@@ -186,6 +186,7 @@ Keywords[nl]=partities,harddrive,HD,systeeminformatie,harde schijf
 Keywords[nn]=partisjonar,harddisk,HD,systeminformasjon
 Keywords[nso]=Dikaroganyo,Kotlelo ye Bothata,HD,Tshedimoso ya System
 Keywords[oc]=Particions,disc dur,HD,Informacion dèu sistemo
+Keywords[pa]=Partitions,Harddrive,HD,ਸਿਸਟਮ ਜਾਣਕਾਰੀ
 Keywords[pl]=partycje,twardy dysk,HD,informacja o systemie
 Keywords[pt]=partições,disco rígido,HD,informações do sistema
 Keywords[pt_BR]=Partições,Disco Rígido,Informações de sistema
@@ -209,4 +210,4 @@ Keywords[zh_CN]=Partitions,Harddrive,HD,System Information,分区,硬盘,系统�
 Keywords[zh_TW]=Partitions,Harddrive,HD,System Information,磁碟分割區,硬式磁碟機,硬碟,系統資訊
 Keywords[zu]=Izahluko,Harddrive,HD,Ulwazi Lwesistimu
 
-Categories=Qt;KDE;X-KDE-information
+Categories=Qt;KDE;X-KDE-information;

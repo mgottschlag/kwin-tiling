@@ -103,4 +103,4 @@ X-KDE-FactoryName=joystick
 X-KDE-Library=joystick
 X-KDE-Test-Module=true
 Icon=joystick
-Categories=Qt;KDE;X-KDE-settings-peripherals
+Categories=Qt;KDE;X-KDE-settings-peripherals;

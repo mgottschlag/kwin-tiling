@@ -153,7 +153,7 @@ Keywords[fi]=komponentit, komponenttivalitsin,resurssit,sähköpostiohjelma,pä�
 Keywords[fr]=composant,sélecteur de composants,ressources,client de courrier,email,émulateur de terminal
 Keywords[gl]=compoñentes,seleccionador de compoñentes,servicios, cliente de correo, emulador de terminal
 Keywords[he]=רכיבים,בוחר הרכיבים,משאבים,תוכנית דוא"ל,הדמיית מסוף
-Keywords[hi]=अवयव,अवयव चयनक,रिसोर्सेस,ईमेल क्लाएंट,टर्मिनल एमुलेटर
+Keywords[hi]=अवयव,अवयव चयनक,संसाधन,ईमेल क्लाएंट,टर्मिनल एमुलेटर
 Keywords[hu]=komponensek,komponensválasztó,erőforrások,levelezőprogram,terminálemuláció
 Keywords[is]=eining,einingar,einingaval,auðlindir,póstforrit,skjáhermir
 Keywords[it]=componenti,scleta componenti,risorse,email,client di posta,posta elettronica,terminale,emulatore di terminale
@@ -190,4 +190,4 @@ Keywords[zh_CN]=components,component chooser,resources, email client, terminal e
 Keywords[zh_TW]=components,component chooser,resources, email client, terminal emulator,元件,元件選擇程式,資源,電子郵件客戶端程式,終端機模擬程式
 Keywords[zu]=amalunga,umkhethi welunga,amathuluzi okusebenza,umxhasi weposi lekhomputha,umlingisi wethuluzi langaphandle
 
-Categories=Qt;KDE;X-KDE-settings-components
+Categories=Qt;KDE;X-KDE-settings-components;

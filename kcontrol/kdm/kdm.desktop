@@ -160,7 +160,7 @@ Keywords[fi]=kdm,näytönhallinta ,xdm,käyttäjät,sisäänkirjautuminen,terveh
 Keywords[fr]=kdm,gestionnaire d'affichage,xdm,utilisateurs,login,connexion,bienvenue,message de bienvenue,Logo,styles,langue,pays,style,police,fond d'écran,papier peint,session,arrêt,logout,redémarrage,reboot
 Keywords[gl]=kdm,xestor de entrada,xdm,usuarios,identificación,Logo,estilos,lingua,país,fontes,fondo,papeis tapiz,sesións,apagado,reinicio
 Keywords[he]=משתמשים,כניסה למערכת,כניסה,לוגו,סגנונות,שפה,מדינה,גופנים,רקע,טפטים,הפעלות,כיבוי,הפעלה מחדש,kdm,מנהל תצוגה,xdm
-Keywords[hi]=केडीएम,प्रकटन प्रबंधक,एक्स-डीएम,उपयोगकर्ता,लॉगइन,शुभकामनाएँ,लोगो,पृष्ठभूमि,वालपेपर्स,सत्र,बन्द, पुनः चालू
+Keywords[hi]=केडीएम,प्रकटन प्रबंधक,एक्स-डीएम,उपयोक्ता,लॉगइन,शुभकामनाएँ,लोगो,पृष्ठभूमि,वालपेपर्स,सत्र,बन्द, फिर से  चालू
 Keywords[hu]=kdm,képernyőkezelő,xdm,felhasználók,bejelentkezés,üdvözlés,embléma,stílusok,nyelv,ország,betűtípusok,háttér,tapéták,munkafolyamatok,leállítás,újraindítás
 Keywords[is]=kdm,skjár,gluggastjóri,innskráning,innstimplun,snið,tungumál,land,letur,bakgrunnur,bakgrunnar,veggfóður,lotur,slökkva,endurræsa
 Keywords[it]=kdm,display manager,gestione degli utenti,xdm,utenti,login,accesso,benvenuto,logo,stile,lingua,stato,paese,tipi di carattere,sfondo,immagine di sfondo,sessioni,riavvio,spegnimento,gestione degli accessi
@@ -197,4 +197,4 @@ Keywords[zh_CN]=kdm,display manager,xdm,users,login,greeting,Logo,styles,languag
 Keywords[zh_TW]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart,顯示管理程式,使用者,登入,歡迎,風格,語言,國家,字型,背景,底圖,工作階段,關機,重新啟動
 Keywords[zu]=kdm,Imenenja yokuveza,xdm,abasebenzisi,ukungena ngaphakathi,isibingelelo,Isiqubulo,izitayela,ulimi,izwe,izinhlobo zamagama, inkundla yangemuva,emaphepha ezindonga,iziqendu,vala,phinda uqale
 
-Categories=Qt;KDE;X-KDE-settings-system
+Categories=Qt;KDE;X-KDE-settings-system;

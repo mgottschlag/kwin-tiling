@@ -13,7 +13,7 @@ Name[az]=İdarə Mərkəzi
 Name[be]=Цэнтар кіраваньня
 Name[bg]=Контролен център
 Name[bn]=নিয়ন্ত্রণ কেন্দ্র
-Name[br]=Kreizenn Ren
+Name[br]=Kreizenn ren
 Name[bs]=Kontrolni centar
 Name[ca]=Centre de control
 Name[cs]=Ovládací centrum
@@ -79,4 +79,4 @@ Name[zh_TW]=控制中心
 Name[zu]=Indawo Yokulawula
 
 X-DCOP-ServiceType=Unique
-Categories=Qt;KDE;Core
+Categories=Qt;KDE;Core;
