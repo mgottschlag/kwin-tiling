@@ -66,5 +66,6 @@ Comment[cs]=Obnovit na výchozí vzhled KDE bez motivu
 Comment[es]=Restablece el escritorio KDE al predeterminado sin tema.
 Comment[he]=חזרה לשולחן עבודה נטול ערכת נושא
 Comment[nl]=Ga terug naar de standaard themaloze KDE-desktop
+Comment[pt_BR]=Volta ao ambiente KDE padrão sem temas
 Comment[sv]=Återställ till KDE:s förinställda temalösa skrivbord
 version=0.2
