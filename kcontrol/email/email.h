@@ -49,6 +49,7 @@ public:
 	QString quickHelp() const;
 
 public slots:
+	void newProfile();
 	void configChanged();
 	void selectEmailClient();
 	void profileChanged(const QString &);
@@ -65,6 +66,7 @@ protected:
 
 	KComboBox *cProfiles;
 	KEMailSettings *pSettings;
+	bool blah;
 };
 
 #endif

@@ -114,6 +114,14 @@ void KEMailSettings::setSetting(KEMailSettings::Setting s, const QString  &v)
 			break;
 		}
 	};
+	p->m_pConfig->sync();
+}
+
+void KEMailSettings::setDefault(const QString &s)
+{
+	p->m_pConfig->setGroup("Defaults");
+	p->m_pConfig->writeEntry("Profile", s);
+	p->m_pConfig->sync();
 }
 
 void KEMailSettings::setProfile (const QString &s)

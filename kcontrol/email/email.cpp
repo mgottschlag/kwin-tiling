@@ -53,6 +53,7 @@
 KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
+	blah=false;
 	QString wtstr;
 	QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
 	QLabel *label;
@@ -60,6 +61,8 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
 	QHBoxLayout *l = new QHBoxLayout(topLayout);
 	topLayout->addLayout(l);
 	cProfiles = new KComboBox(true, this);
+	cProfiles->setTrapReturnKey(true);
+	connect(cProfiles, SIGNAL(returnPressed()), this, SLOT(newProfile()));
 	label = new QLabel("Current Profile:", this);
 	label->setBuddy(cProfiles);
 	l->addWidget(label, 0);
@@ -231,7 +234,8 @@ KEmailConfig::~KEmailConfig()
 
 void KEmailConfig::configChanged()
 {
-    emit changed(true);
+	emit changed(true);
+	blah=true;
 }
 
 
@@ -241,6 +245,17 @@ void KEmailConfig::load(const QString &s)
 		cProfiles->insertStringList(pSettings->profiles());
 		if (pSettings->defaultProfileName() != QString::null)
 			load(pSettings->defaultProfileName());
+		else {
+			if (cProfiles->count()) {
+				pSettings->setProfile(cProfiles->text(0));
+				load(cProfiles->text(0));
+				pSettings->setDefault(cProfiles->text(0));
+			} else {
+				cProfiles->insertItem(i18n("Default"));
+				pSettings->setProfile(i18n("Default"));
+				pSettings->setDefault(i18n("Default"));
+			}
+		}
 	} else {
 		pSettings->setProfile(s);
 		emailAddr->setText(pSettings->getSetting(KEMailSettings::EmailAddress));
@@ -263,6 +278,7 @@ void KEmailConfig::load(const QString &s)
 		emailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
 		cTerminalClient->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
 		emit changed(false);
+		blah=false;
 	}
 }
 
@@ -293,6 +309,7 @@ void KEmailConfig::save()
 		::chmod(cfgName.utf8(), 0600);
 
 	emit changed(false);
+	blah=false;
 }
 
 void KEmailConfig::defaults()
@@ -320,6 +337,7 @@ void KEmailConfig::defaults()
   cTerminalClient->setChecked(false);
 
   emit changed(true);
+	blah=true;
 }
 
 QString KEmailConfig::quickHelp() const
@@ -343,7 +361,13 @@ void KEmailConfig::selectEmailClient()
 
 void KEmailConfig::profileChanged(const QString &s)
 {
+	save(); // Save our changes...
 	load(s);
+}
+
+void KEmailConfig::newProfile()
+{
+	return; //...
 }
 
 extern "C"
