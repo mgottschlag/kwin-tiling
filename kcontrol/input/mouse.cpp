@@ -114,9 +114,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " check this option.");
     QWhatsThis::add( tab1->doubleClick, wtstr );
 
-    wtstr = i18n("Activates and opens a file or folder with a single click."
-          "When this option is checked, the shape of the mouse pointer"
-         " changes whenever it is over an icon.");
+    wtstr = i18n("Activates and opens a file or folder with a single click.");
     QWhatsThis::add( tab1->singleClick, wtstr );
 
 
