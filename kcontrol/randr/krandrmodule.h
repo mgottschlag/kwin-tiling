@@ -65,7 +65,9 @@ protected:
 	QButtonGroup*	m_rotationGroup;
 	KComboBox*		m_refreshRates;
 	QCheckBox*		m_applyOnStartup;
+	QCheckBox*		m_syncTrayApp;
 	bool			m_oldApply;
+	bool			m_oldSyncTrayApp;
 
 	bool			m_changed;
 };

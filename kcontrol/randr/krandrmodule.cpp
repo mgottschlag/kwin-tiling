@@ -53,12 +53,12 @@ extern "C"
 
 void KRandRModule::performApplyOnStartup()
 {
-	KConfig randrConfig("kcmrandrrc", true);
-	if( RandRDisplay::isApplyOnStartup(randrConfig))
+	KConfig config("kcmrandrrc", true);
+	if (RandRDisplay::applyOnStartup(config))
 	{
 		// Load settings and apply appropriate config
 		RandRDisplay display;
-		if (display.loadDisplay(randrConfig))
+		if (display.loadDisplay(config))
 			display.applyProposed(false);
 	}
 }
@@ -74,7 +74,6 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	}
 
 	QVBoxLayout* topLayout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
-	//topLayout->setAutoAdd(true);
 
 	QHBox* screenBox = new QHBox(this);
 	topLayout->addWidget(screenBox);
@@ -112,10 +111,17 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	topLayout->addWidget(m_applyOnStartup);
 	connect(m_applyOnStartup, SIGNAL(clicked()), SLOT(setChanged()));
 
+	QHBox* syncBox = new QHBox(this);
+	syncBox->layout()->addItem(new QSpacerItem(20, 1, QSizePolicy::Maximum));
+	m_syncTrayApp = new QCheckBox(i18n("Allow tray application to change startup settings"), syncBox);
+	topLayout->addWidget(syncBox);
+	connect(m_syncTrayApp, SIGNAL(clicked()), SLOT(setChanged()));
+
 	topLayout->addStretch(1);
 
 	// just set the "apply settings on startup" box
 	load();
+	m_syncTrayApp->setEnabled(m_applyOnStartup->isChecked());
 
 	slotScreenChanged(QApplication::desktop()->primaryScreen());
 
@@ -238,14 +244,16 @@ void KRandRModule::defaults()
 
 void KRandRModule::load()
 {
-	KConfig config("kcmrandrrc");
-
 	// Don't load screen configurations:
 	// It will be correct already if they wanted to retain their settings over KDE restarts,
 	// and if it isn't correct they have changed a) their X configuration, b) the screen
 	// with another program, or c) their hardware.
+	KConfig config("kcmrandrrc", true);
 	m_oldApply = loadDisplay(config, false);
+	m_oldSyncTrayApp = syncTrayApp(config);
+
 	m_applyOnStartup->setChecked(m_oldApply);
+	m_syncTrayApp->setChecked(m_oldSyncTrayApp);
 
 	setChanged();
 }
@@ -253,15 +261,19 @@ void KRandRModule::load()
 void KRandRModule::save()
 {
 	apply();
-	KConfig config("kcmrandrrc");
+
 	m_oldApply = m_applyOnStartup->isChecked();
-	saveDisplay(config, m_oldApply);
+	m_oldSyncTrayApp = m_syncTrayApp->isChecked();
+	KConfig config("kcmrandrrc");
+	saveDisplay(config, m_oldApply, m_oldSyncTrayApp);
+
 	setChanged();
 }
 
 void KRandRModule::setChanged()
 {
-	bool isChanged = (m_oldApply != m_applyOnStartup->isChecked());
+	bool isChanged = (m_oldApply != m_applyOnStartup->isChecked()) || (m_oldSyncTrayApp != m_syncTrayApp->isChecked());
+	m_syncTrayApp->setEnabled(m_applyOnStartup->isChecked());
 
 	if (!isChanged)
 		for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
@@ -294,7 +306,6 @@ void KRandRModule::update()
 	m_sizeCombo->blockSignals(false);
 
 	m_rotationGroup->blockSignals(true);
-	kdDebug() << k_funcinfo << currentScreen()->proposedRotation() << " " << (currentScreen()->proposedRotation() & RandRScreen::RotateMask) << " " << RandRScreen::Rotate0 << endl;
 	switch (currentScreen()->proposedRotation() & RandRScreen::RotateMask) {
 		case RandRScreen::Rotate0:
 			m_rotationGroup->setButton(0);
@@ -310,7 +321,7 @@ void KRandRModule::update()
 			break;
 		default:
 			// Shouldn't hit this one
-			Q_ASSERT(currentScreen()->proposedRotation() & 15);
+			Q_ASSERT(currentScreen()->proposedRotation() & RandRScreen::RotateMask);
 			break;
 	}
 	m_rotationGroup->find(4)->setDown(currentScreen()->proposedRotation() & RandRScreen::ReflectX);

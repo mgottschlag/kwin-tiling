@@ -76,6 +76,9 @@ public:
 	QPixmap	        rotationIcon(int rotation) const;
 	QString			currentRotationDescription() const;
 
+	int				rotationIndexToDegree(int rotation) const;
+	int				rotationDegreeToIndex(int degree) const;
+
 	/**
 	 * Refresh rate functions.
 	 */
@@ -179,7 +182,7 @@ class RandRDisplay
 {
 public:
 	RandRDisplay();
-	
+
 	bool			isValid() const;
 	const QString&	errorCode() const;
 	const QString&	version() const;
@@ -200,15 +203,17 @@ public:
 	void	refresh();
 
 	/**
-	 * Loads settings. Loads the settings for individual screens if
-	 * loadScreens is true.
+	 * Loads saved settings.
 	 *
-	 * Returns whether the settings should be applied on startup.
+	 * @param config the KConfig object to load from
+	 * @param loadScreens whether to call RandRScreen::load() for each screen
+	 * @retuns true if the settings should be applied on KDE startup.
 	 */
 	bool	loadDisplay(KConfig& config, bool loadScreens = true);
-	void	saveDisplay(KConfig& config, bool applyOnStartup);
-	
-	static bool isApplyOnStartup(KConfig& config);
+	void	saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp);
+
+	static bool		applyOnStartup(KConfig& config);
+	static bool		syncTrayApp(KConfig& config);
 
 	void	applyProposed(bool confirm = true);
 

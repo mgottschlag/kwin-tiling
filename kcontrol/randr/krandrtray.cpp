@@ -181,19 +181,31 @@ void KRandRSystemTray::slotResolutionChanged(int parameter)
 
 	currentScreen()->proposeRefreshRate(0);
 
-	currentScreen()->applyProposedAndConfirm();
+	if (currentScreen()->applyProposedAndConfirm()) {
+		KConfig config("kcmrandrrc");
+		if (syncTrayApp(config))
+			currentScreen()->save(config);
+	}
 }
 
 void KRandRSystemTray::slotOrientationChanged(int parameter)
 {
 	currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ parameter);
 
-	currentScreen()->applyProposedAndConfirm();
+	if (currentScreen()->applyProposedAndConfirm()) {
+		KConfig config("kcmrandrrc");
+		if (syncTrayApp(config))
+			currentScreen()->save(config);
+	}
 }
 
 void KRandRSystemTray::slotRefreshRateChanged(int parameter)
 {
 	currentScreen()->proposeRefreshRate(parameter);
 
-	currentScreen()->applyProposedAndConfirm();
+	if (currentScreen()->applyProposedAndConfirm()) {
+		KConfig config("kcmrandrrc");
+		if (syncTrayApp(config))
+			currentScreen()->save(config);
+	}
 }

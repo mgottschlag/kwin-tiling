@@ -293,15 +293,49 @@ QPixmap RandRScreen::rotationIcon(int rotation) const
 
 QString RandRScreen::currentRotationDescription() const
 {
-	QString ret = rotationName(m_currentRotation & 15);
+	QString ret = rotationName(m_currentRotation & RotateMask);
 
-	if (m_currentRotation != m_currentRotation & 15)
+	if (m_currentRotation != m_currentRotation & RotateMask)
 		if (m_currentRotation & RR_Rotate_0)
 			ret = rotationName(m_currentRotation & (RR_Reflect_X + RR_Reflect_X), true, true);
 		else
 			ret += ", " + rotationName(m_currentRotation & (RR_Reflect_X + RR_Reflect_X), true, false);
 
 	return ret;
+}
+
+int RandRScreen::rotationIndexToDegree(int rotation) const
+{
+	switch (rotation & RotateMask) {
+		case RR_Rotate_90:
+			return 90;
+
+		case RR_Rotate_180:
+			return 180;
+
+		case RR_Rotate_270:
+			return 270;
+
+		default:
+			return 0;
+	}
+}
+
+int RandRScreen::rotationDegreeToIndex(int degree) const
+{
+	switch (degree) {
+		case 90:
+			return RR_Rotate_90;
+
+		case 180:
+			return RR_Rotate_180;
+
+		case 270:
+			return RR_Rotate_270;
+
+		default:
+			return RR_Rotate_0;
+	}
 }
 
 int RandRScreen::currentPixelWidth() const
@@ -472,7 +506,7 @@ void RandRScreen::load(KConfig& config)
 	if (proposeSize(sizeIndex(QSize(config.readNumEntry("width", currentPixelWidth()), config.readNumEntry("height", currentPixelHeight())))))
 		proposeRefreshRate(refreshRateHzToIndex(proposedSize(), config.readNumEntry("refresh", currentRefreshRate())));
 
-	proposeRotation((config.readNumEntry("rotation", currentRotation()) / 90) + 1 + (config.readBoolEntry("reflectX") ? ReflectX : 0) + (config.readBoolEntry("reflectY") ? ReflectY : 0));
+	proposeRotation(rotationDegreeToIndex(config.readNumEntry("rotation", 0)) + (config.readBoolEntry("reflectX") ? ReflectX : 0) + (config.readBoolEntry("reflectY") ? ReflectY : 0));
 }
 
 void RandRScreen::save(KConfig& config) const
@@ -481,7 +515,7 @@ void RandRScreen::save(KConfig& config) const
 	config.writeEntry("width", currentPixelWidth());
 	config.writeEntry("height", currentPixelHeight());
 	config.writeEntry("refresh", refreshRateIndexToHz(currentSize(), currentRefreshRate()));
-	config.writeEntry("rotation", ((currentRotation() & RotateMask) - 1) * 90);
+	config.writeEntry("rotation", rotationIndexToDegree(currentRotation()));
 	config.writeEntry("reflectX", (bool)(currentRotation() & ReflectMask == ReflectX));
 	config.writeEntry("reflectY", (bool)(currentRotation() & ReflectMask == ReflectY));
 }
@@ -587,19 +621,29 @@ bool RandRDisplay::loadDisplay(KConfig& config, bool loadScreens)
 	if (loadScreens)
 		for (RandRScreen* s = m_screens.first(); s; s = m_screens.next())
 			s->load(config);
-	return isApplyOnStartup(config);
+
+	return applyOnStartup(config);
 }
 
-bool RandRDisplay::isApplyOnStartup(KConfig& config)
+bool RandRDisplay::applyOnStartup(KConfig& config)
 {
 	config.setGroup("Display");
-	return config.readBoolEntry("ApplyOnStartup");
+	return config.readBoolEntry("ApplyOnStartup", false);
 }
 
-void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup)
+bool RandRDisplay::syncTrayApp(KConfig& config)
 {
+	config.setGroup("Display");
+	return config.readBoolEntry("SyncTrayApp", false);
+}
+
+void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp)
+{
+	Q_ASSERT(!config.isReadOnly());
+
 	config.setGroup("Display");
 	config.writeEntry("ApplyOnStartup", applyOnStartup);
+	config.writeEntry("SyncTrayApp", syncTrayApp);
 
 	for (RandRScreen* s = m_screens.first(); s; s = m_screens.next())
 		s->save(config);
