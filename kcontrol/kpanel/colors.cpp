@@ -26,6 +26,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <ksimpleconfig.h>
+#include <klocale.h>
 
 extern KConfigBase *config;
 

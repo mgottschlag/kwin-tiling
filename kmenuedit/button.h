@@ -26,6 +26,7 @@
 
 #include <qbutton.h>
 #include <qpixmap.h>
+#include <drag.h>
 
 class EditButton : public QButton
 {

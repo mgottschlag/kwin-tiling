@@ -40,6 +40,7 @@
 #include "kdelnk.h"
 #include "configlist.moc"
 #include "configlist.h"
+#include <klocale.h>
 
 static QListView* listview = 0;
 

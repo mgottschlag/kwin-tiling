@@ -39,6 +39,7 @@
 #include "button.h"
 #include "button.moc"
 #include "pmenu.h"
+#include <drag.h>
 
 Window debugWin = 0;
 

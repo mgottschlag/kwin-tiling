@@ -18,6 +18,7 @@
 */  
 
 #include "utils.h"
+#include <klocale.h>
 #include "kdm-font.moc"
 
 

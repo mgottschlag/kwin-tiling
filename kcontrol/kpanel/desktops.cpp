@@ -24,6 +24,7 @@
 #include "desktops.h"
 #include "desktops.moc"
 #include <ksimpleconfig.h>
+#include <klocale.h>
 
 extern KConfigBase *config;
 

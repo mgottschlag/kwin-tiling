@@ -2,6 +2,7 @@
 #include <kapp.h>
 #include <kcharsets.h>
 #include "memory.h"
+#include <klocale.h>
 #include "memory.moc"
 
 #define STARTX  20

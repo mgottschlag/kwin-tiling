@@ -65,7 +65,11 @@ void SessionExit(void*,void*,void*);
 #endif
 
 #ifdef HAVE_LOGIN_CAP_H
-#include <login_cap.h>		/* BSDI-like login classes */
+#include <login_cap.h>
+#include <klocale.h>
+#include <klocale.h>
+#include <klocale.h>
+#include <klocale.h>		/* BSDI-like login classes */
 #endif
 
 #ifdef TEST_KDM

@@ -48,6 +48,7 @@
 #include "confmenu.moc"
 #include "entrydialog.h"
 #include "kmenuedit.h"
+#include <klocale.h>
 
 extern KIconLoader *global_pix_loader;
 const short glob_but_height = 24;

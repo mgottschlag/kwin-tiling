@@ -21,6 +21,7 @@
 
 
 #include <kcontrol.h>
+#include <klocale.h>
 
 
 int main(int argc, char **argv)

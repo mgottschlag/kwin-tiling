@@ -22,6 +22,7 @@
 
 #include <kcontrol.h>
 #include "locale.h"
+#include <klocale.h>
 
 
 class KLocaleApplication : public KControlApplication

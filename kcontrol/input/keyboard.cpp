@@ -37,6 +37,7 @@
 #include <X11/Xlib.h>
 
 #include "geom.h"
+#include <klocale.h>
 
 static bool GUI;
 

@@ -29,6 +29,7 @@
 #include "colors.h"
 #include "pixmaps.h"
 #include <ksimpleconfig.h>
+#include <klocale.h>
 
 KConfigBase *config;
 

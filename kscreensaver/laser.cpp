@@ -299,6 +299,7 @@ void laser_cleanup()
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <klocale.h>
 
 
 // this refers to klock.po. If you want an extra dictionary, 

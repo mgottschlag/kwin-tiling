@@ -40,6 +40,7 @@
 #include <X11/Xutil.h>
 
 #include "geom.h"
+#include <klocale.h>
 
 static bool GUI;
 

@@ -14,6 +14,7 @@
 #include "MenuNameDialog.moc"
 #include "MenuNameDialogData.moc"
 #include <kapp.h>
+#include <klocale.h>
 
 MenuNameDialog::MenuNameDialog(	QWidget* parent, const char* name )
   : Inherited( parent, name )

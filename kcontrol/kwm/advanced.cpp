@@ -19,6 +19,7 @@
 #include <ksimpleconfig.h>
 
 #include "advanced.h"
+#include <klocale.h>
 
 
 

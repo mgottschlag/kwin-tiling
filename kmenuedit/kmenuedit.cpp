@@ -41,6 +41,7 @@
 #include "kmenuedit.moc"
 #include "pmenu.h"
 #include "MenuNameDialog.h"
+#include <klocale.h>
 
 extern KIconLoader *global_pix_loader;
 KStatusBar *global_status_bar;

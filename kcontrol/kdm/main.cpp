@@ -26,6 +26,7 @@
 #include "kdm-users.h"
 #include "kdm-sess.h"
 #include <kwm.h>
+#include <klocale.h>
 
 
 class KDMConfigApplication : public KControlApplication

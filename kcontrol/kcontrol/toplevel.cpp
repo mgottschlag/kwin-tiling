@@ -27,6 +27,7 @@
 #include <kmsgbox.h>
 #include "toplevel.moc"
 #include <qheader.h>
+#include <klocale.h>
 
 
 void MySplitter::resizeEvent(QResizeEvent *event)

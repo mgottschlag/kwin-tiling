@@ -9,6 +9,7 @@
 
 #include "mainwidget.moc"
 #include "mainwidget.h"
+#include <klocale.h>
 
 
 mainWidget::mainWidget(QWidget *parent , const char *name)

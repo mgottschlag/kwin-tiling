@@ -275,6 +275,7 @@ drawflame(Window win)
 #include "kslider.h"
 
 #include "flame.h"
+#include <klocale.h>
 
 #include "flame.moc"
 

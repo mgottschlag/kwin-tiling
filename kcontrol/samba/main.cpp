@@ -22,6 +22,7 @@
 
 #include <kcontrol.h>
 #include "ksmbstatus.h"
+#include <klocale.h>
 
 
 class KSambaApplication : public KControlApplication

@@ -41,6 +41,7 @@
 #include "backgnd.h"
 #include "backgnd.moc"
 #include "../../kwmmodules/kbgndwm/config-kbgndwm.h"
+#include <klocale.h>
 
 KRenameDeskDlg::KRenameDeskDlg( const char *t, QWidget *parent )
   : QDialog( parent, 0, true )

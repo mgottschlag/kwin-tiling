@@ -325,6 +325,10 @@ KDMShutdown::bye_bye()
 #ifdef TEST_KDM_SHUTDOWN
 
 #include <qapplication.h>
+#include <klocale.h>
+#include <klocale.h>
+#include <klocale.h>
+#include <klocale.h>
 
 int main(int argc, char **argv)
 {

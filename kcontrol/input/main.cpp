@@ -23,6 +23,7 @@
 #include <kcontrol.h>
 #include "mouse.h"
 #include "keyboard.h"
+#include <klocale.h>
 
 
 class KInputApplication : public KControlApplication

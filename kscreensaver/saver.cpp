@@ -13,6 +13,7 @@
 #include <qkeycode.h>
 #include "config.h"
 #include "saver.h"
+#include <klocale.h>
 
 #include "saver.moc"
 

@@ -38,6 +38,7 @@
 #include "titlebar.h"
 
 #include "geom.h"
+#include <klocale.h>
 
 extern KConfig *config;
 

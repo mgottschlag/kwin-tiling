@@ -16,6 +16,7 @@
 #include "kcookiesdlg.h"
 
 #include "rootopts.h"
+#include <klocale.h>
 
 KConfigBase *g_pConfig = 0L;
 

@@ -16,6 +16,7 @@
 #define Inherited QDialog
 
 #include <qlabel.h>
+#include <klocale.h>
 
 DesktopPathDialogData::DesktopPathDialogData
 (

@@ -33,6 +33,7 @@
 #include "mouse.h"
 #include "geom.h"
 #include <qlayout.h>
+#include <klocale.h>
 
 
 KMouseConfig::~KMouseConfig ()

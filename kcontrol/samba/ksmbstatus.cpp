@@ -15,6 +15,7 @@
 #include "ksmbstatus.moc"
 
 #include "ktablistbox.h"
+#include <klocale.h>
 
 void NetMon::help()
 {

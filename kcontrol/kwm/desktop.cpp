@@ -34,6 +34,7 @@
 
 #include "desktop.h"
 #include "geom.h"
+#include <klocale.h>
 
 // kwm config keywords
 #define KWM_ELECTRIC_BORDER                  "ElectricBorder"

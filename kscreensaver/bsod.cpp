@@ -42,6 +42,7 @@
 #include <X11/Xos.h>
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
+#include <klocale.h>
 
 #ifdef HAVE_XPM
 # include <X11/xpm.h>

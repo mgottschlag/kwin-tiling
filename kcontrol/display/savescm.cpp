@@ -10,6 +10,7 @@
 #include <qlayout.h>
 #include <qframe.h>
 #include <qlabel.h>
+#include <klocale.h>
 
 SaveScm::SaveScm( QWidget *parent, const char *name )
 	: QDialog( parent, name, TRUE )

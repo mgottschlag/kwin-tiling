@@ -32,6 +32,7 @@
 //#include "global.h"
 #include "keyconfig.h"
 #include <kwm.h>
+#include <klocale.h>
 
 bool global_switch = false ;
 

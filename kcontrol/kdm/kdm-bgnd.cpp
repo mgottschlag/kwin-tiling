@@ -25,6 +25,7 @@
 #include "kdropsite.h"
 #include "kdm-bgnd.moc"
 #include <kfiledialog.h>
+#include <klocale.h>
 
 void KBGMonitor::setAllowDrop(bool a)
 {

@@ -19,6 +19,7 @@
 
 #include "utils.h"
 #include <kio_job.h>
+#include <klocale.h>
 #include "kdm-users.moc"
 
 

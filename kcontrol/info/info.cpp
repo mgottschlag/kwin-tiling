@@ -33,6 +33,7 @@
 
 
 #include <X11/Xlib.h>
+#include <klocale.h>
 
 void XServer_fill_screen_info( KTabListBox *lBox, Display *dpy, int scr )
 {

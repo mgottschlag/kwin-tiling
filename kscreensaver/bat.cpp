@@ -427,6 +427,7 @@ XEraseImage(Display * display, Window win, GC gc, int x, int y, int xlast, int y
 #include "helpers.h"
 
 #include "bat.h"
+#include <klocale.h>
 
 #include "bat.moc"
 

@@ -22,6 +22,7 @@
 
 #include "kcontrol.h"
 #include "bell.h"
+#include <klocale.h>
 
 
 class KBellApplication : public KControlApplication

@@ -38,6 +38,7 @@
 #include "helpers.h"
 #include <kbuttonbox.h>
 #include <qlayout.h>
+#include <klocale.h>
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.

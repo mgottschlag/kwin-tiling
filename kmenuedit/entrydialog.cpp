@@ -35,6 +35,7 @@
 
 //#include "pmenu.h"
 #include "entrydialog.h"
+#include <klocale.h>
 #include "entrydialog.moc"
 
 extern KIconLoader *global_pix_loader;

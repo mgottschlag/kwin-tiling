@@ -28,6 +28,7 @@
 #include "titlebar.h"
 #include "mouse.h"
 #include "advanced.h"
+#include <klocale.h>
 
 KConfig *config;
 

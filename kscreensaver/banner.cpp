@@ -24,6 +24,7 @@
 #include "kslider.h"
 #include "kcolordlg.h"
 #include "banner.h"
+#include <klocale.h>
 
 #include "banner.moc"
 

@@ -16,6 +16,7 @@
 
 #include <qlabel.h>
 #include <kapp.h>
+#include <klocale.h>
 
 IconPathDialogData::IconPathDialogData
 (

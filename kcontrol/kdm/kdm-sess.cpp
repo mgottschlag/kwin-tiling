@@ -20,6 +20,7 @@
 #include <qdir.h>
 #include <kdbtn.h>
 #include "utils.h"
+#include <klocale.h>
 #include "kdm-sess.moc"
 
 

@@ -41,6 +41,7 @@
 
 extern "C" {
 #include <stdlib.h>
+#include <klocale.h>
 }
 
 extern KIconLoader *global_pix_loader;

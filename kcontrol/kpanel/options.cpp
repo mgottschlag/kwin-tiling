@@ -27,6 +27,7 @@
 #include <qlayout.h>
 #include <kconfigbase.h>
 #include <kslider.h>
+#include <klocale.h>
 
 extern KConfigBase *config;
 

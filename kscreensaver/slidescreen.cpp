@@ -43,6 +43,7 @@ extern "C" {
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <klocale.h>
 
 
 //================================================================

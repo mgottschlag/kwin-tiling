@@ -17,7 +17,8 @@
 
 #include "rootopts.h"
 
-#include "../../kfm/config-kfm.h" // include default values directly from kfm
+#include "../../kfm/config-kfm.h"
+#include <klocale.h> // include default values directly from kfm
 
 //-----------------------------------------------------------------------------
 

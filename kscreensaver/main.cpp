@@ -32,6 +32,7 @@
 #include "main.h"
 #include "main.moc"
 #include <kmsgbox.h>
+#include <klocale.h>
 
 KLocale *glocale;
 
