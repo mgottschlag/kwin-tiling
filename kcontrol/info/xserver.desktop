@@ -180,4 +180,4 @@ Keywords[zh_CN]=X,X-Server,XServer,XFree86,Display,System Information,X 服务�
 Keywords[zh_TW]=X,X-Server,XServer,XFree86,Display,System Information,X 伺服器,X伺服器,顯示器,系統資訊
 Keywords[zu]=X,Umlekeleli we-X,XServer,Xfree86,Veza,Ulwazi Lwesistimu
 
-Categories=Qt;KDE;Information;X-KDE-information
+Categories=Qt;KDE;X-KDE-information

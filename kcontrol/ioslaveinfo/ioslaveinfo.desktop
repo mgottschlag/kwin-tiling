@@ -170,4 +170,4 @@ X-KDE-Library=ioslaveinfo
 X-KDE-ModuleType=Library
 X-KDE-ParentApp=kinfocenter
 
-Categories=Qt;KDE;Information;X-KDE-information
+Categories=Qt;KDE;X-KDE-information

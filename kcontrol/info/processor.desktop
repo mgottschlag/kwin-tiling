@@ -185,4 +185,4 @@ Keywords[zh_CN]=Processor,CPU,FPU,MHz,System Information,处理器,系统信息
 Keywords[zh_TW]=Processor,CPU,FPU,MHz,System Information,處理器,中央處理器,浮點運算器,系統資訊
 Keywords[zu]=Umqhubekisi,CPU,FPU,MHz,Ulwazi Lwesistimu
 
-Categories=Qt;KDE;Information;X-KDE-information
+Categories=Qt;KDE;X-KDE-information

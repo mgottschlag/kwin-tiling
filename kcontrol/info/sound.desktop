@@ -188,4 +188,4 @@ Keywords[zh_CN]=Sound,Audio,Soundcard,Midi,OSS,System Information,音频,音响,
 Keywords[zh_TW]=Sound,Audio,Soundcard,Midi,OSS,System Information,音效,音效卡,系統資訊
 Keywords[zu]=Umsindo,Okuzwakalayo,ikhadi lomsindo,Midi,OSS,Ulwazi Lwesistimu
 
-Categories=Qt;KDE;Information;X-KDE-information
+Categories=Qt;KDE;X-KDE-information

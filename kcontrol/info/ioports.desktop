@@ -180,4 +180,4 @@ Keywords[zh_CN]=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System Inform
 Keywords[zh_TW]=IO,I/O,IO-Ports,Ports,IO-Range,I/O-Range,System Information,IO 範圍,I/O 範圍,系統資訊
 Keywords[zu]=IO,I/O,Izikhumulo-IO,Izikhumulo-I/O,Izikhumulo,IO-Umbandela,I/O-Umbandela, Ulwazi Lwesistimu 
 
-Categories=Qt;KDE;Information;X-KDE-information
+Categories=Qt;KDE;X-KDE-information
