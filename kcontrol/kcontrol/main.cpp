@@ -47,7 +47,6 @@
 
 static KCmdLineOptions options[] =
 {
-   { "+module", I18N_NOOP("Configuration module to open."), 0 },
    { "t", 0, 0 },
    { "type <t>", I18N_NOOP("Sow control modules of type \"t\"."), "User" },
    { 0,0,0 }
