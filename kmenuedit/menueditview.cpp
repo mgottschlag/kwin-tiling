@@ -59,7 +59,7 @@ MenuEditView::~MenuEditView()
     config->sync();
 }
 
-void MenuEditView::setViewMode(bool showRemoved, bool showHidden)
+void MenuEditView::setViewMode(bool showHidden)
 {
-    _tree->setViewMode(showRemoved, showHidden);
+    _tree->setViewMode(showHidden);
 }

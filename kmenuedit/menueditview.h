@@ -35,7 +35,7 @@ public:
     MenuEditView( KActionCollection*, QWidget *parent=0, const char *name=0 );
     ~MenuEditView();
 
-    void setViewMode(bool showRemoved, bool showHidden);
+    void setViewMode(bool showHidden);
 
 protected:
     KActionCollection  *_ac;

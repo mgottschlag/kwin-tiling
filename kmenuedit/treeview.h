@@ -46,9 +46,6 @@ public:
     bool isDirectory() const { return _directory; }
     void setDirectory(bool b);
     
-    bool isDeleted() const { return _deleted; }
-    void setDeleted(bool b);
-    
     bool isHidden() const { return _hidden; }
     void setHidden(bool b);
 
@@ -60,7 +57,6 @@ private:
     QString _file;
     QString _name;
     bool _hidden : 1;
-    bool _deleted : 1;
     bool _init : 1;
     bool _directory : 1;
 };
@@ -73,7 +69,7 @@ public:
     TreeView(KActionCollection *ac, QWidget *parent=0, const char *name=0);
     ~TreeView();
 
-    void setViewMode(bool showRemoved, bool showHidden);
+    void setViewMode(bool showHidden);
 
 public slots:
     void currentChanged();
@@ -94,8 +90,6 @@ protected slots:
     void paste();
     void del();
     void undel();
-    void hide();
-    void unhide();
 
 protected:
     void fill();
@@ -110,11 +104,7 @@ protected:
 
     bool deleteFile(const QString& deskfile, const bool move = false);
     bool deleteDir(const QString& dir, const bool move = false);
-    void hideFile(const QString& deskfile, bool hide);
     void hideDir(const QString& d, const QString name, bool hide, QString icon);
-    
-    void dohide(bool _hide);
-
 
     void cleanupClipboard();
     void cleanupClipboard(const QString path);
@@ -129,16 +119,8 @@ private:
     KActionCollection *_ac;
     QPopupMenu        *_rmb;
     QString            _clipboard;
-    bool               _showRemoved;
     bool               _showHidden;
 };
 
-inline void TreeView::hide() {
-	dohide(true);
-}
-
-inline void TreeView::unhide() {
-	dohide(false);
-}
 
 #endif

@@ -226,7 +226,8 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
     _iconButton->setIcon(df.readIcon());
 
     // is desktopFile a .desktop file?
-    bool isDF = desktopFile.find(".desktop") > 0;
+    // (It's a .desktopfile if it's no .directory file)
+    bool isDF = desktopFile.find(".directory") == -1;
 
     // set only basic attributes if it is not a .desktop file
     _nameEdit->setEnabled(!isDeleted);
@@ -245,7 +246,7 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
     _keyEdit->setEnabled(!isDeleted);
 
     // key binding part
-    if( desktopFile.find(".desktop") > 0 )
+    if( isDF )
     {
         if( KHotKeys::present())
         {

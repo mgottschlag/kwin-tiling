@@ -46,12 +46,8 @@ protected:
     MenuEditView *m_view;
     KAction *m_actionDelete;
     KAction *m_actionUndelete;
-    KAction *m_actionHide;
-    KAction *m_actionUnhide;
     KToggleAction *m_actionShowHidden;
-    KToggleAction *m_actionShowRemoved;
     bool m_showHidden;
-    bool m_showRemoved;
 };
 
 #endif
