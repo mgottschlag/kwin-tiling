@@ -14,7 +14,8 @@ kcm_kurifilt_la_LIBADD = $(LIB_KSYCOCA)
 # results in crashes when closing kcmshell.
 # plugins/ikws/libkuriikwsfilter.la plugins/shorturi/libkshorturifilter.la
 
-messages:
-	$(XGETTEXT) $(kcm_kurifilt_la_SOURCES) plugins/ikws/*.cpp plugins/shorturi/*.cpp -o $(podir)/kcmkurifilt.pot
+messages: rc.cpp
+	$(EXTRACTRC) plugins/*/*.ui >> rc.cpp
+	$(XGETTEXT) *.cpp plugins/ikws/*.cpp plugins/shorturi/*.cpp -o $(podir)/kcmkurifilt.pot
 
 xdg_apps_DATA = ebrowsing.desktop
