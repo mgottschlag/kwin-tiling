@@ -59,7 +59,7 @@ bool ThemeCreator::create(const QString aThemeName)
 {
   if (aThemeName.isEmpty()) return false;
 
-  debug("Theme::create() started");
+  kdDebug() << "Theme::create() started" << endl;
 
   clear();
   cleanupWorkDir();
@@ -89,7 +89,7 @@ bool ThemeCreator::create(const QString aThemeName)
 //-----------------------------------------------------------------------------
 bool ThemeCreator::extract(void)
 {
-  debug("Theme::extract() started");
+  kdDebug() << "Theme::extract() started" << endl;
 
   loadMappings();
 
@@ -103,7 +103,7 @@ bool ThemeCreator::extract(void)
   if (instColors) extractGroup("Colors");
   if (instIcons) extractIcons();
 
-  debug("Theme::extract() done");
+  kdDebug() << "Theme::extract() done" << endl;
 
   saveSettings();
   save(KGlobal::dirs()->getSaveLocation("theme") + name());
@@ -122,14 +122,14 @@ int ThemeCreator::extractGroup(const char* aGroupName)
   int len, i, extracted = 0;
   const char* missing = 0;
 
-  debug("*** beginning with %s", aGroupName);
+  kdDebug() << "*** beginning with " << aGroupName << endl;
   group = aGroupName;
   setGroup(group);
 
   while (!group.isEmpty())
   {
     mMappings->setGroup(group);
-    debug("Mappings group [%s]", group.ascii());
+    kdDebug() << "Mappings group: " << group << endl;
 
     // Read config settings
     value = mMappings->readEntry("ConfigFile");
@@ -177,18 +177,18 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     {
       if (cfg)
       {
-	debug("closing config file");
+	kdDebug() << "closing config file" << endl;
 	cfg->sync();
 	delete cfg;
       }
-      debug("opening config file %s", cfgFile.ascii());
+      kdDebug("opening config file " << cfgFile << endl;
       cfg = new KSimpleConfig(cfgFile);
       oldCfgFile = cfgFile;
     }
 
     // Set group in config file
     cfg->setGroup(cfgGroup);
-    debug("%s: [%s]", cfgFile.ascii(), cfgGroup.ascii());
+    kdDebug() << cfgFile << ": " << cfgGroup << endl;
     // Process all mapping entries for the group
 
     QMap<QString, QString> aMap = mMappings->entryMap(group);
@@ -237,7 +237,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
 
       // Set config entry
       if (value == emptyValue) value = "";
-      debug("%s=%s", key.ascii(), value.ascii());
+      kdDebug() << key << "=" << value << endl;
       if (value.isEmpty()) deleteEntry(key, false);
       else writeEntry(key, value);
     }
@@ -248,12 +248,12 @@ int ThemeCreator::extractGroup(const char* aGroupName)
 
   if (cfg)
   {
-    debug("closing config file");
+    kdDebug() << "closing config file" << endl;
     cfg->sync();
     delete cfg;
   }
 
-  debug("*** done with %s", aGroupName);
+  kdDebug() << "*** done with " << aGroupName;
   return extracted;
 }
 
@@ -287,7 +287,7 @@ void ThemeCreator::extractCmd(KSimpleConfig* aCfg, const QString& aCmd,
     if (stricmp(value.ascii(),"right")==0 || stricmp(value.ascii(),"left")==0)
     {
       value = readEntry("background");
-      debug("rotating %s", value.ascii());
+      kdDebug("rotating " << value << endl;
       rotateImage(mThemePath + value, 90);
     }
   }
@@ -307,7 +307,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
 
   if (!finfo.exists() || !finfo.isFile())
   {
-    debug("File %s does not exist or is no file.", aFileName.ascii());
+    kdDebug("File " << aFilename << " does not exist or is no file." << endl;
     return 0;
   }
 
@@ -332,8 +332,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
     fname = str;
   }
 
-  debug("Extracting %s to %s", aFileName.ascii(),
-	(mThemePath + fname).ascii());
+  kdDebug("Extracting " << aFileName << " to " << mThemePath + fname << endl;
 
   srcFile.setName(aFileName);
   if (!srcFile.open(IO_ReadOnly))

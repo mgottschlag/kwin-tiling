@@ -138,14 +138,14 @@ void Installer::readThemesList(void)
 //-----------------------------------------------------------------------------
 void Installer::loadSettings()
 {
-  debug("Installer::loadSettings() called");
+  kdDebug() << "Installer::loadSettings() called" << endl;
 }
 
 
 //-----------------------------------------------------------------------------
 void Installer::applySettings()
 {
-  debug("Installer::applySettings() called");
+  kdDebug() << "Installer::applySettings() called" << endl;
 }
 
 

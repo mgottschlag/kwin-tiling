@@ -99,14 +99,14 @@ Colors::~Colors()
 //-----------------------------------------------------------------------------
 void Colors::loadSettings()
 {
-  debug("Colors::loadSettings() called");
+  kdDebug() << "Colors::loadSettings() called" << endl;
 }
 
 
 //-----------------------------------------------------------------------------
 void Colors::applySettings()
 {
-  debug("Colors::applySettings() called");
+  kdDebug() << "Colors::applySettings() called" << endl;
 
 #ifdef BROKEN
   theme->inactiveTitleColor = mCanvas->inactiveTitleColor;
@@ -134,7 +134,7 @@ void Colors::slotThemeApply()
 //-----------------------------------------------------------------------------
 void Colors::slotThemeChanged()
 {
-  debug("Colors::slotThemeChanged() called");
+  kdDebug() << "Colors::slotThemeChanged() called" << endl;
 
   mCanvas->inactiveTitleColor = theme->inactiveBackgroundColor;
   mCanvas->inactiveTextColor = theme->inactiveForegroundColor;
@@ -188,7 +188,7 @@ void Colors::slotWidgetColor(int idx)
 {
   QColor col;
 
-  debug("slotWidgetColor(%d)", idx);
+  kdDebug() << "slotWidgetColor(" << idx << ")" << endl;
 
   if (mCbxColorNames->currentItem() != idx)
     mCbxColorNames->setCurrentItem(idx);

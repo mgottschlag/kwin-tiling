@@ -10,15 +10,13 @@
 #include <qcombo.h>
 #include <kapp.h>
 #include <kconfig.h>
+#include <kdebug.h>
+#include <klocale.h>
 
 #include "options.h"
 #include "themecreator.h"
 #include "global.h"
 #include "groupdetails.h"
-
-#include <assert.h>
-#include <klocale.h>
-
 
 //-----------------------------------------------------------------------------
 Options::Options (QWidget * aParent, const char *aName, bool aInit)
@@ -134,7 +132,7 @@ QCheckBox* Options::newLine(const char* aGroupName, const QString& aText,
 //-----------------------------------------------------------------------------
 void Options::loadSettings()
 {
-  debug("Options::loadSettings() called");
+  kdDebug() << "Options::loadSettings() called" << endl;
 }
 
 
@@ -223,7 +221,7 @@ void Options::slotThemeApply()
 //-----------------------------------------------------------------------------
 void Options::slotThemeChanged()
 {
-  debug("Options::slotThemeChanged() called");
+  kdDebug() << "Options::slotThemeChanged() called" << endl;
   updateStatus();
 }
 

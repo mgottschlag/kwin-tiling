@@ -21,6 +21,14 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <string.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <assert.h>
+
 #include <qdir.h>
 #include <qfile.h>
 #include <qfileinfo.h>
@@ -32,12 +40,6 @@
 #include <qpainter.h>
 #include <qwindowdefs.h>
 
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-
 #include <kconfigbackend.h>
 #include <kmessagebox.h>
 #include <kwm.h>
@@ -47,10 +49,7 @@
 #include <kstddirs.h>
 #include <kdesktopfile.h>
 #include <kipc.h>
-
-#include <sys/stat.h>
-#include <assert.h>
-
+#include <kdebug.h>
 #include "theme.h"
 
 #include <X11/Xlib.h>
@@ -194,7 +193,7 @@ bool Theme::load(const QString aPath)
   int rc, num, i;
 
   assert(!aPath.isEmpty());
-  debug("Theme::load()");
+  kdDebug() << "Theme::load()" << endl;
 
   clear();
   cleanupWorkDir();
@@ -210,12 +209,11 @@ bool Theme::load(const QString aPath)
 
     cmd.sprintf("cp -r \"%s\" \"%s\"", aPath.ascii(),
 		str.ascii());
-    debug(cmd.ascii());
+    kdDebug() << cmd << endl;
     rc = system(cmd.ascii());
     if (rc)
     {
-      warning(i18n("Failed to copy theme contents\nfrom %s\ninto %s").ascii(),
-	      aPath.ascii(), str.ascii());
+      kdDebug << "Failed to copy theme contents from " << aPath << " into " << str << endl;
       return false;
     }
   }
@@ -224,7 +222,7 @@ bool Theme::load(const QString aPath)
     // The theme given is a tar package. Unpack theme package.
     cmd.sprintf("cd \"%s\"; gzip -c -d \"%s\" | tar xf -", 
 		workDir().ascii(), aPath.ascii());
-    debug(cmd.ascii());
+    kdDebug() << cmd << endl;
     rc = system(cmd.ascii());
     if (rc)
     {
@@ -299,10 +297,9 @@ bool Theme::save(const QString aPath)
 		aPath.ascii());
   }
 
-  debug(cmd.ascii());
+  kdDebug() << cmd << endl;
   rc = system(cmd.ascii());
-  if (rc) debug(i18n("Failed to save theme to\n%s\nwith command\n%s").ascii(),
-		aPath.ascii(), cmd.ascii());
+  if (rc) kdDebug() << "Failed to save theme to " << aPath << " with command " << cmd << endl;
 
   return (rc==0);
 }
@@ -341,7 +338,7 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
   finfo.setFile(src);
   if (!finfo.exists())
   {
-    debug("File %s is not in theme package.", aSrc.ascii());
+    kdDebug("File " << aStc << " is not in theme package." << endl;
     return false;
   }
 
@@ -392,8 +389,7 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
   destFile.close();
 
   addInstFile(dest.ascii());
-  debug("Installed %s to %s %s", src.ascii(), dest.ascii(),
-	backupMade ? "(backup of existing file)" : "");
+  kdDebug() << "Installed " << src << " to " << dest << ". Backup: backupMade" << endl;
 
   return true;
 }
@@ -410,7 +406,7 @@ int Theme::installGroup(const char* aGroupName)
   int len, i, installed = 0;
   const char* missing = 0;
 
-  debug("*** beginning with %s", aGroupName);
+  kdDebug() << "*** beginning with " << aGroupName << endl;
   group = aGroupName;
   setGroup(group);
   
@@ -420,7 +416,7 @@ int Theme::installGroup(const char* aGroupName)
   while (!group.isEmpty())
   {
     mMappings->setGroup(group);
-    debug("Mappings group [%s]", group.ascii());
+    kdDebug() << "Mappings group: " << group << endl;
 
     // Read config settings
     value = mMappings->readEntry("ConfigFile");
@@ -471,18 +467,18 @@ int Theme::installGroup(const char* aGroupName)
     {
       if (cfg)
       {
-	debug("closing config file");
+	kdDebug() << "closing config file" << endl;
 	cfg->sync();
 	delete cfg;
       }
-      debug("opening config file %s", cfgFile.ascii());
+      kdDebug() << "opening config file " << cfgFile << endl;
       cfg = new KSimpleConfig(cfgFile);
       oldCfgFile = cfgFile;
     }
 
     // Set group in config file
     cfg->setGroup(cfgGroup);
-    debug("%s: [%s]", cfgFile.ascii(), cfgGroup.ascii());
+    kdDebug() << cfgFile << ": " << cfgGroup << endl;
 
     // Execute pre-install command (if given)
     if (!preInstCmd.isEmpty()) preInstallCmd(cfg, preInstCmd);
@@ -544,7 +540,7 @@ int Theme::installGroup(const char* aGroupName)
       else if (doInstall && absPath) cfgValue = appDir + cfgValue;
  
       // Set config entry
-      debug("%s=%s", cfgKey.ascii(), cfgValue.ascii());
+      kdDebug() << cfgKey << "=" << cfgValue << endl;
       if (cfgKey == "-") cfg->deleteEntry(key, false);
       else cfg->writeEntry(cfgKey, cfgValue);
     }
@@ -555,13 +551,13 @@ int Theme::installGroup(const char* aGroupName)
 
   if (cfg)
   {
-    debug("closing config file");
+    kdDebug() << "closing config file" << endl;
     cfg->sync();
     delete cfg;
   }
 
   writeInstFileList(aGroupName);
-  debug("*** done with %s", aGroupName);
+  kdDebug() << "*** done with " << aGroupName << endl;
   return installed;
 }
 
@@ -672,7 +668,7 @@ void Theme::doCmdList(void)
 
   for (cmd=mCmdList.first(); !cmd.isNull(); cmd=mCmdList.next())
   {
-    debug("do command: %s", cmd.ascii());
+    kdDebug() << "do command: " << cmd << endl;
     if (cmd.left(6) == "kwmcom")
     {
       cmd = cmd.mid(6,256).stripWhiteSpace();
@@ -737,7 +733,7 @@ int Theme::installIcons(void)
   const char* groupNameExtra = "Extra Icons";
   bool wantRestart = false;
 
-  debug("*** beginning with %s", groupName);
+  kdDebug() << "*** beginning with " << groupName << endl;
 
   if (!instOverwrite)
   {
@@ -805,10 +801,10 @@ int Theme::installIcons(void)
       i = destName.find(':');
       if (i >= 0)
       {
-	debug("mapping %s to...", destName.ascii());
+	kdDebug() << "mapping " << destName << " to..." << endl;
 	destNameMini = destName.mid(i+1, 1024);
 	destName.truncate(i);
-	debug("   %s  %s", destName.ascii(), destNameMini.ascii());
+	kdDebug() << destName << " " << destNameMini << endl;
       }
     }
 
@@ -883,7 +879,7 @@ int Theme::installIcons(void)
   }
 
   writeInstFileList(groupName);
-  debug("*** done with %s (%d icons installed)", groupName, installed);
+  kdDebug() << "*** done with " << groupName << " (" << installed << " icons installed)" << endl;
 
   mInstIcons += installed;
   return installed;
@@ -930,7 +926,7 @@ void Theme::uninstallFiles(const char* aGroupName)
   int processed = 0;
   QStrList fileList;
 
-  debug("*** beginning uninstall of %s", aGroupName);
+  kdDebug() << "*** beginning uninstall of " << aGroupName << endl;
 
   readInstFileList(aGroupName);
   for (fname=mInstFiles.first(); !fname.isEmpty(); fname=mInstFiles.next())
@@ -949,21 +945,21 @@ void Theme::uninstallFiles(const char* aGroupName)
 
     if (reverted) 
     {
-      debug("uninstalled %s", fname.ascii());
+      kdDebug() "uninstalled " << fname << endl;
       processed++;
     }
   }
   mInstFiles.clear();
   writeInstFileList(aGroupName);
 
-  debug("*** done uninstall of %s", aGroupName);
+  kdDebug() << "*** done uninstall of " << aGroupName << endl;
 }
 
 
 //-----------------------------------------------------------------------------
 void Theme::install(void)
 {
-  debug("Theme::install() started");
+  kdDebug() << "Theme::install() started" << endl;
 
   loadMappings();
   mCmdList.clear();
@@ -979,11 +975,11 @@ void Theme::install(void)
   if (instColors) installGroup("Colors");
   if (instIcons) installIcons();
 
-  debug("*** executing command list");
+  kdDebug() << "*** executing command list" << endl;
 
   doCmdList();
 
-  debug("Theme::install() done");
+  kdDebug() << "Theme::install() done" << endl;
   saveSettings();
 }
 
@@ -1043,7 +1039,7 @@ void Theme::readConfig(void)
 //-----------------------------------------------------------------------------
 void Theme::writeConfig(void)
 {
-  debug("Theme::writeConfig() is broken");
+  kdDebug() << "Theme::writeConfig() is broken" << endl;
   return;
 
   setGroup("General");
@@ -1145,8 +1141,7 @@ bool Theme::mkdirhier(const char* aDir, const char* aBaseDir)
 //-----------------------------------------------------------------------------
 bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 {
-debug(QString("==> hasGroup: name = %1  aNotEmpty = %2").arg(aName).
-  arg(aNotEmpty ? "true" : "false"));
+  kdDebug() << "hasGroup: name = " << aName << " aNotEmpty = " << aNotEmpty << endl;
 // Endless recursion??
 //  bool found(hasGroup(aName));
   bool found = false;
@@ -1221,8 +1216,8 @@ void Theme::stretchPixmap(const QString aFname, bool aStretchVert)
   dest = src;
   dest.resize(w2, h2);
 
-  debug("stretching %s from %dx%d to %dx%d", aFname.ascii(),
-	w, h, w2, h2);
+  kdDebug() << "stretching " << aFname << " from " << w << "x" << h <<
+    " to " << w2 << "x" << h2 << endl;
 
   p.begin(&dest);
   p.drawTiledPixmap(0, 0, w2, h2, src);

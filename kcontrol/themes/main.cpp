@@ -108,7 +108,7 @@ void KThemesApplication::tweakUi()
 //-----------------------------------------------------------------------------
 void KThemesApplication::init()
 {
-  //debug(i18n("No init necessary"));
+  //kdDebug() << "No init necessary" << endl;
     KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + kapp->name() + "/Themes/");
 }
 
