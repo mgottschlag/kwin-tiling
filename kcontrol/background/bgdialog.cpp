@@ -399,7 +399,7 @@ void BGDialog::updateUI()
          m_buttonSetupWallpapers->setEnabled(false);
          m_comboWallpaperPos->setEnabled(true);
          m_lblWallpaperPos->setEnabled(true);
-         // setWallpaper(r->wallpaper());
+         setWallpaper(r->wallpaper());
          m_buttonGroupBackground->setButton(2);
       }
    }
