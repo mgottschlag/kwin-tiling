@@ -45,15 +45,6 @@
 
 #include <icons.h>
 
-/**** DLL Interface ****/
-
-extern "C" {
-    KCModule *create_icons(QWidget *parent, const char *name) {
-        KGlobal::locale()->insertCatalogue("kcmicons");
-        return new KIconConfig(parent, name);
-    }
-}
-
 /**** KIconConfig ****/
 
 KIconConfig::KIconConfig(QWidget *parent, const char *name)
