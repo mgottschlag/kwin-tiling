@@ -20,7 +20,7 @@
 #ifndef __searchwidget_h__
 #define __searchwidget_h__
 
-#include <qwidget.h>
+#include <qdialog.h>
 #include <qlist.h>
 #include <qstring.h>
 #include <qstringlist.h>
@@ -47,7 +47,7 @@ class KeywordListEntry
   
 };
 
-class SearchWidget : public QWidget
+class SearchWidget : public QDialog
 {  
   Q_OBJECT    
   

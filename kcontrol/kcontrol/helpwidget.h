@@ -20,11 +20,11 @@
 #ifndef __helpwidget_h__
 #define __helpwidget_h__
 
-#include <qwidget.h>
+#include <qdialog.h>
 
 class QuickHelp;
 
-class HelpWidget : public QWidget
+class HelpWidget : public QDialog
 {
   Q_OBJECT
 

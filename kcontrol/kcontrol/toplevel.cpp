@@ -25,10 +25,13 @@
 #include <kdebug.h>
 #include <kbugreport.h>
 #include <kaboutdata.h>
+#include <kmessagebox.h>
 
 #include <qhbox.h>
+#include <qvbox.h>
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
+#include <qmessagebox.h>
 
 #include <kaction.h>
 #include <kstdaction.h>
@@ -88,31 +91,38 @@ TopLevel::TopLevel(const char* name)
   QHBox *hbox = new QHBox(this);
   hbox->setSpacing(2);
 
-  // create the left hand side (the tab view)
-  _tab = new QTabWidget(hbox);
-
-  QWhatsThis::add( _tab, i18n("Choose between Index, Search and Quick Help") );
-
+  
+  // create the frame work for the left side
+  QVBox *vbox = new QVBox(hbox);
+  vbox->setSpacing(2);
+  
   // index tab
-  _indextab = new IndexWidget(_modules, _tab);
+  _indextab = new IndexWidget(_modules, vbox);
+
   connect(_indextab, SIGNAL(moduleActivated(ConfigModule*)),
                   this, SLOT(moduleActivated(ConfigModule*)));
-  _tab->addTab(_indextab, i18n("In&dex"));
-
-  // search tab
-  _searchtab = new SearchWidget(_tab);
+	
+  connect(_indextab, SIGNAL(categorySelected(QListViewItem*)),
+                  this, SLOT(categorySelected(QListViewItem*)));
+	
+  KSeparator *vsep = new KSeparator( vbox );
+  vsep->setFocusPolicy(QWidget::NoFocus);
+  vsep->setOrientation( QFrame::HLine );
+	
+  QPushButton *button = new QPushButton("Search...", vbox);
+  connect( button, SIGNAL(clicked()), SLOT(slotSearchRequest()) );
+  
+  _searchtab = new SearchWidget(this);
   _searchtab->populateKeywordList(_modules);
   connect(_searchtab, SIGNAL(moduleSelected(const QString&)),
-                  this, SLOT(activateModule(const QString&)));
+          this, SLOT(activateModule(const QString&)));
+	
 
-  _tab->addTab(_searchtab, i18n("S&earch"));
+  // help
+  _helptab = new HelpWidget(this);
 
-  // help tab
-  _helptab = new HelpWidget(_tab);
-  _tab->addTab(_helptab, i18n("Hel&p"));
-
-  _tab->setMinimumWidth(_tab->sizeHint().width());
-  _tab->setMaximumWidth(_tab->sizeHint().width());
+  _indextab->setMinimumWidth(_indextab->sizeHint().width());
+  _indextab->setMaximumWidth(_indextab->sizeHint().width());
 
   // add a seperator
   KSeparator *sep = new KSeparator( hbox );
@@ -131,7 +141,7 @@ TopLevel::TopLevel(const char* name)
   _dock->setBaseWidget(aw);
 
   // set a reasonable resize mode
-  hbox->setStretchFactor(_tab, 0);
+  hbox->setStretchFactor(vbox, 0);
   hbox->setStretchFactor(sep, 0);
   hbox->setStretchFactor(_dock, 1);
 
@@ -223,12 +233,12 @@ void TopLevel::setupActions()
   report_bug->setText(i18n("&Report Bug..."));
   report_bug->disconnect();
   connect(report_bug, SIGNAL(activated()), SLOT(reportBug()));
-
+  
   // add menu with the modules
-  ModuleMenu *menu = new ModuleMenu(_modules, this);
-  menuBar()->insertItem(i18n("&Modules"), menu, -1, 2);
-  connect(menu, SIGNAL(moduleActivated(ConfigModule*)),
-          this, SLOT(moduleActivated(ConfigModule*)));
+//  ModuleMenu *menu = new ModuleMenu(_modules, this);
+//  menuBar()->insertItem(i18n("&Modules"), menu, -1, 2);
+//  connect(menu, SIGNAL(moduleActivated(ConfigModule*)),
+//          this, SLOT(moduleActivated(ConfigModule*)));
 }
 
 void TopLevel::activateIconView()
@@ -284,7 +294,7 @@ void TopLevel::activateLargeIcons()
 
 void TopLevel::newModule(const QString &name, const QString& docPath, const QString &quickhelp)
 {
-    setCaption(name, false);
+  setCaption(name, false);
 
   _helptab->setText( docPath, quickhelp );
 
@@ -310,6 +320,37 @@ void TopLevel::moduleActivated(ConfigModule *module)
     activateModule(module->fileName());
 }
 
+void TopLevel::categorySelected(QListViewItem *category)
+{
+  if (_active)
+  {
+    if (_active->isChanged())
+      {
+        int res = KMessageBox::warningYesNo(this, _active ?
+                            i18n("There are unsaved changes in the "
+                                 "active module.\n"
+                                 "Do you want to apply the changes "
+                                 "before running\n"
+                                 "the new module or forget the changes?") :
+                            i18n("There are unsaved changes in the "
+                                 "active module.\n"
+                                 "Do you want to apply the changes "
+                                 "before exiting\n"
+                                 "the Control Center or forget the changes?"),
+                            i18n("Unsaved changes"),
+                            i18n("&Apply"),
+                            i18n("&Forget"));
+        if (res == KMessageBox::Yes)
+          _active->module()->applyClicked();
+      }
+  }
+  _dock->removeModule();
+  
+  // insert the about widget
+  AboutWidget *aw = new AboutWidget(this, 0L, category);
+  _dock->setBaseWidget(aw);
+}
+
 void TopLevel::showModule(QString desktopFile)
 {
   // strip trailing ".desktop"
@@ -326,15 +367,15 @@ void TopLevel::showModule(QString desktopFile)
   for (it = files.begin(); it != files.end(); ++it)
     {
       for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
-                if (mod->fileName() == *it && mod != _active)
-                  {
-                        // tell the index to display the module
-                        _indextab->makeVisible(mod);
+        if (mod->fileName() == *it && mod != _active)
+          {
+            // tell the index to display the module
+            _indextab->makeVisible(mod);
 
-                        // tell the index to mark this module as loaded
-                        _indextab->makeSelected(mod);
+            // tell the index to mark this module as loaded
+            _indextab->makeSelected(mod);
 
-                        // dock it
+            // dock it
             _dock->dockModule(mod);
             mod->module()->show();
             break;
@@ -371,7 +412,12 @@ void TopLevel::deleteDummyAbout()
 
 void TopLevel::slotHelpRequest()
 {
-    _tab->showPage( _helptab );
+	_helptab->show();
+}
+
+void TopLevel::slotSearchRequest()
+{
+  _searchtab->show();
 }
 
 void TopLevel::reportBug()

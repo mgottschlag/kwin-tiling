@@ -22,8 +22,7 @@
 #define __TOPLEVEL_H__
 
 #include <kmainwindow.h>
-
-class QTabWidget;
+#include <qlistview.h>
 
 class KToggleAction;
 class KAction;
@@ -51,6 +50,7 @@ protected:
 protected slots:
   void activateModule(const QString& name);
   void moduleActivated(ConfigModule *module);
+  void categorySelected(QListViewItem *category);
   void newModule(const QString &name, const QString& docPath, const QString &quickhelp);
   void activateIconView();
   void activateTreeView();
@@ -64,13 +64,13 @@ protected slots:
   void deleteDummyAbout();
 
   void slotHelpRequest();
+  void slotSearchRequest();
 
   void changedModule(ConfigModule *changed);
   
   bool queryClose();
 
 private:
-  QTabWidget     *_tab;
   DockContainer  *_dock;
 
   KToggleAction *tree_view, *icon_view;

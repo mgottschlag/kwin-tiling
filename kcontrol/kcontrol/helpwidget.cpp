@@ -32,7 +32,7 @@
 #include "helpwidget.moc"
 
 HelpWidget::HelpWidget(QWidget *parent , const char *name)
-  : QWidget(parent, name)
+  : QDialog(parent, name)
 {
   QVBoxLayout *l = new QVBoxLayout(this);
 

@@ -201,6 +201,7 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
      menu->setPixmap(0, SmallIcon(group->icon()));
      menu->setText(0, " " + group->caption());
      menu->setTag(defName);
+     menu->setCaption(group->caption());
   }
   else
   {
@@ -225,7 +226,11 @@ void ModuleTreeView::slotItemSelected(QListViewItem* item)
       emit moduleSelected(static_cast<ModuleTreeItem*>(item)->module());
       return;
     }
-
+  else
+    {
+      emit categorySelected(item);
+    }
+  
   setOpen(item, !item->isOpen());
 
   /*
