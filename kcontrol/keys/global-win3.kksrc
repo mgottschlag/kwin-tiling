@@ -1,12 +1,14 @@
 [Global Key Scheme ]
 Name=Windows Default (Without Meta/Win-Key)
+Name[da]=Windows standard (Uden Meta/Win-Key)
 Name[de]=Windows-Voreinstellung (ohne Meta-/Windows-Taste)
+Name[eo]=Vindoz-apriora (sen Meta-/Vindoz-klavo)
 Name[es]=Predeterminado Windows (sin la tecla Meta/Win)
 Name[et]=Windows vaikeskeem (ilma Meta/Win klahvita)
 Name[fi]=Windows oletus (ilman Meta/Win-näppäintä)
 Name[fr]=Windows par défaut (sans touche Méta/Windows)
 Name[he]=(Meta/Win שקמ אלל) Windows לש לדחמ תרירב
-Name[hu]=Windows alapértelmezés (a Windows billentyű nélkül)
+Name[hu]=Windows alapértelmezés (a Meta /Windows/ billentyű nélkül)
 Name[ja]=Windows標準 (Metaなし/Windowsキー)
 Name[lt]=Windows nutylima (be Meta/Win-klavišo)
 Name[lv]=Windows Noklusētais (Bez Meta/Win-Taustiņa)

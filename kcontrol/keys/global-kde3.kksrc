@@ -1,6 +1,8 @@
 [Global Key Scheme ]
 Name=KDE Default for 3 Modifiers (Alt/Ctrl/Shift)
+Name[da]=KDE standard for 3 modifikatorer (Alt/Ctrl/Shift)
 Name[de]=KDE-Voreinstellung für drei Modifikationstasten (Alt/Strg/Umschalt)
+Name[eo]=KDE-apriora por 3 ŝaltklavoj (Alt/Ktrl/Majuskl)
 Name[es]=Valor predeterminado de KDE para 3 modificadores (Alt/Ctrl/Shift)
 Name[et]=KDE vaikeskeem 3 muuteklahviga (Alt/Ctrl/Shift)
 Name[fi]=KDE:n oletus kolmelle erikoisnäppäimelle (Alt/Ctrl/Shift)

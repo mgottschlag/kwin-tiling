@@ -1,12 +1,14 @@
 [Standard Key Scheme ]
 Name=KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)
+Name[da]=KDE standard for 4 modifikatorer (Meta/Alt/Ctrl/Shift)
 Name[de]=KDE-Voreinstellung für vier Modifikationstasten (Meta/Alt/Strg/Umschalt)
+Name[eo]=KDE-apriora por 4 ŝaltklavoj (Meta/Alt/Ktrl/Majuskl)
 Name[es]=Valor predeterminado de KDE para 4 modificadores (Meta/Alt/Ctrl/Shift)
 Name[et]=KDE vaikeskeem 4 muuteklahviga (Meta/Alt/Ctrl/Shift)
 Name[fi]=KDE:n oletus neljälle erikoisnäppäimelle (Meta/Alt/Ctrl/Shift)
 Name[fr]=KDE par défaut pour 4 modificateurs (Alt/Ctrl/Maj)
 Name[he]=(Meta/Alt/Ctrl/Shift) בצמ ינשמ םישקמ העברא תרוצת
-Name[hu]=KDE alapértelmezés 4 módosítóbillentyű esetén (Alt/Ctrl/Shift/Alt Gr)
+Name[hu]=KDE alapértelmezés 4 módosítóbillentyű esetén (Alt/Ctrl/Shift/Meta)
 Name[ja]=KDEの標準4モディファイア (Meta/Alt/Ctrl/Shift)
 Name[lt]=KDE nutylimos reikšmės 4 klavišams-modifikatoriams Meta/Alt/Vald(Ctrl)/Shift
 Name[lv]=KDE Noklusētais priekš 4 Modifikatoriem (Meta/Alt/Ctrl/Shift)
