@@ -133,7 +133,7 @@ CfgEmailClient::~CfgEmailClient() {
 void CfgEmailClient::load(KConfig *)
 {
 	QString emailClient = pSettings->getSetting(KEMailSettings::ClientProgram);
-	bool useKMail = (emailClient == QString::null);
+	bool useKMail = (emailClient.isEmpty());
     
 	kmailCB->setChecked(useKMail);
 	otherCB->setChecked(!useKMail);
