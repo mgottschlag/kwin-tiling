@@ -3,7 +3,7 @@
  * Copyright (c) 2000 by Artur Rataj
  * This file is distributed under the terms of the GNU General Public License
  *
- * This code is partially based on kmatrix screen saver -- original copyright follows:
+ * This file is partially based on kmatrix screen saver -- original copyright follows:
  * kmatrix.c - The Matrix screensaver for KDE
  * by Eric Plante Copyright (c) 1999
  * Distributed under the Gnu Public License
@@ -301,13 +301,11 @@ void kVmSaver::blank()
 void kVmSaver::setSpeed( int spd )
 {
 	speed = spd;
- fprintf( stderr, "setSpeed: speed = %i\n", speed );
 	timer.changeInterval( (100 - speed)*(100 - speed)*(100 - speed)/10000 );
 }
 void kVmSaver::setRefreshTimeout( const int refreshTimeout )
 {
  this->refreshTimeout = refreshTimeout;
- fprintf( stderr, "setRefreshTimeout: timeout = %i\n", this->refreshTimeout );
 }
 
 void kVmSaver::readSettings()
@@ -352,7 +350,6 @@ void kVmSaver::slotTimeout()
   vm_exec( pool_state->pool, getRandom(pool_state->pool->area_size - 1), 0,
            vm_get_reverse( pool_state->pool ) );
  vm_iterate( pool_state->pool, pool_state->modified );
-//fprintf( stderr, "refreshStep = %i\n", refreshStep );
  if( refreshStep++ >= refreshTimeout*refreshTimeout*refreshTimeout ) {
   draw_pool( pool_state );
   refreshStep = 0;
@@ -386,7 +383,6 @@ kVmSetup::kVmSetup( QWidget *parent, const char *name )
 	slider->setMinimumSize( 90, 20 );
 	slider->setRange( 0, 100 );
 	slider->setSteps( 10, 20 );
-fprintf( stderr, "kVmSetup: read speed = %i\n", speed );
 	slider->setValue( speed );
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotSpeed( int ) ) );
@@ -401,7 +397,6 @@ fprintf( stderr, "kVmSetup: read speed = %i\n", speed );
 	slider->setMinimumSize( 90, 20 );
 	slider->setRange( 0, MAX_REFRESH_TIMEOUT );
 	slider->setSteps( MAX_REFRESH_TIMEOUT/10, MAX_REFRESH_TIMEOUT/5 );
-fprintf( stderr, "kVmSetup: read timeout = %i\n", refreshTimeout );
 	slider->setValue( MAX_REFRESH_TIMEOUT - refreshTimeout );
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotRefreshTimeout( int ) ) );
@@ -466,7 +461,6 @@ void kVmSetup::slotSpeed( int num )
 void kVmSetup::slotRefreshTimeout( int num )
 {
 	refreshTimeout = MAX_REFRESH_TIMEOUT - num;
-fprintf( stderr, "slotRefreshTimeout: timeout = %i\n", refreshTimeout );
 	if ( saver )
 		saver->setRefreshTimeout( refreshTimeout );
 }
@@ -481,8 +475,6 @@ void kVmSetup::slotOkPressed()
 	config->writeEntry( "Speed", sspeed );
 	sspeed.setNum( refreshTimeout );
 	config->writeEntry( "DisplayRefreshTimeout", sspeed );
-fprintf( stderr, "setup: write speed = %i\n", speed );
-fprintf( stderr, "setup: write timeout = %i\n", refreshTimeout );
 
 	config->sync();
 	delete config;
