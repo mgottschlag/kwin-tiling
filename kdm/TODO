@@ -18,6 +18,9 @@ Must:
 
 - bidirectional command sockets for better integration with kde session
 
+- add bgset to XDM_MANAGED
+  add FiFo command "background\t{inprogress,aborted,done}"
+
 Should:
 
 - check if pam works before trying to authenticate
@@ -26,7 +29,7 @@ Should:
 
 - kill warning on AIX - see bug #13628 (really present?)
 
-- dpi/bpp/resolution selection. will require x-server restart
+- dpi/bpp/resolution selection. will require x-server restart - or use RandR.
 
 - make config position independent
 
