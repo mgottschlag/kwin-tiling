@@ -623,7 +623,7 @@ QStringList TreeView::fileList(const QString& rPath)
             // does not work?!
             //if (filelist.contains(*it)) continue;
 
-            if (relativePath == "") {
+            if (relativePath.isEmpty()) {
                 filelist.remove(*it); // hack
                 filelist.append(*it);
             }
@@ -661,7 +661,7 @@ QStringList TreeView::dirList(const QString& rPath)
             // does not work?!
             // if (dirlist.contains(*it)) continue;
 
-            if (relativePath == "") {
+            if (relativePath.isEmpty()) {
                 dirlist.remove(*it); //hack
                 dirlist.append(*it);
             }
