@@ -60,9 +60,13 @@ int main(int argc, char *argv[])
 
   KCmdLineArgs::addCmdLineOptions(options);
 
-  KApplication app;
+  KApplication app( false, false );
 
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+  if ( !args->count() ) {
+    exit( 1 );
+  }
 
   QString filename = args->arg(0);
   QString configFile(filename);
