@@ -38,13 +38,11 @@
 #include <kio/netaccess.h>
 
 typedef KGenericFactory<KFileFontPlugin> KFileFontPluginFactory;
-K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfile_font"))
+K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfontinst"))
 
 KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStringList& args)
                : KFilePlugin(parent, name, args)
 {
-    KGlobal::locale()->insertCatalogue("kfontinst");
-
     addMimeType("application/x-font-ttf"),
     addMimeType("application/x-font-type1");
     addMimeType("application/x-font-speedo", false);
@@ -148,7 +146,7 @@ QString toStr(enum CFontEngine::EWeight v)
 }
 
 QString toStr(CFontEngine::EWidth v)
-{   
+{
     switch(v)
     {
         case CFontEngine::WIDTH_ULTRA_CONDENSED:
@@ -233,7 +231,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 if(KFileMetaInfo::Fastest!=what)
                 {
                     addEntry(face, family, CGlobal::fe().getFamilyName());
-                    if(CGlobal::fe().hasPsInfo())  
+                    if(CGlobal::fe().hasPsInfo())
                         addEntry(face, ps, CGlobal::fe().getPsName());
                     if(0==face)
                         foundry=CGlobal::fe().getFoundry();

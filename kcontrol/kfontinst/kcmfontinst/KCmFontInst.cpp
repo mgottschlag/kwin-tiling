@@ -64,17 +64,16 @@ typedef KGenericFactory<CKCmFontInst, QWidget> FontInstallFactory;
 K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory)
 
 CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
-            : KCModule(parent, "fontinst"),
+            : KCModule(parent, "kfontinst"),
               itsAboutData(NULL),
               itsTop(CMisc::root() ? "fonts:/" : QString("fonts:/")+i18n(KIO_FONTS_USER)),
               itsConfig("kcmfontinstuirc")
 {
-    KGlobal::locale()->insertCatalogue("kfontinst");
-
     KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
     const char *appName=KCmdLineArgs::appName();
 
-    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName) && KCmdLineArgs::parsedArgs()->isSet("embed"));
+    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName)
+                                       && KCmdLineArgs::parsedArgs()->isSet("embed"));
 
     itsStatusLabel = new QLabel(this);
     itsStatusLabel->setFrameShape(QFrame::Panel);

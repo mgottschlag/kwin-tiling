@@ -45,7 +45,6 @@
 
 CFontViewPart::CFontViewPart(QWidget *parent, const char *)
 {
-    KGlobal::locale()->insertCatalogue("kfontinst");
     CGlobal::create(true, false);
 
     itsFrame=new QFrame(parent, "frame");
@@ -121,7 +120,7 @@ void CFontViewPart::install()
                                                                              "\"%3\" - only accessible to you, or\n"
                                                                              "\"%4\" - accessible to all (requires administrator password)")
                                                                              .arg(m_url.protocol()).arg(m_url.path())
-                                                                             .arg(KIO_FONTS_USER).arg(KIO_FONTS_SYS),
+                                                                             .arg(i18n(KIO_FONTS_USER)).arg(i18n(KIO_FONTS_SYS)),
                                             i18n("Install"), i18n(KIO_FONTS_USER), i18n(KIO_FONTS_SYS));
 
     if(KMessageBox::Cancel!=resp)

@@ -164,7 +164,7 @@ static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QStr
         addAtom(entry, KIO::UDS_GUESSED_MIME_TYPE, 0, "application/octet-stream");
         return true;
     }
- 
+
     return false;
 }
 
@@ -219,10 +219,10 @@ static bool createFileEntry(KIO::UDSEntry &entry, const QString &fName, const QS
     return !err;
 }
 
-static bool checkUrl(const KURL &u) 
-{ 
-    if(CMisc::root()) 
-        return true; 
+static bool checkUrl(const KURL &u)
+{
+    if(CMisc::root())
+        return true;
     else
     {
         QString sect(CMisc::getSect(u.path()));
@@ -239,14 +239,16 @@ static bool nonRootSys(const KURL &u)
 #define CHECK_URL(U) \
 if(!checkUrl(U))\
 { \
-    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".").arg(KIO_FONTS_USER).arg(KIO_FONTS_SYS)); \
+    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".") \
+    .arg(i18n(KIO_FONTS_USER)).arg(i18n(KIO_FONTS_SYS))); \
     return; \
 }
 
 #define CHECK_URL_ROOT_OK(U) \
 if("/"!=url.path() && !checkUrl(U)) \
 { \
-    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".").arg(KIO_FONTS_USER).arg(KIO_FONTS_SYS)); \
+    error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".") \
+    .arg(i18n(KIO_FONTS_USER)).arg(i18n(KIO_FONTS_SYS))); \
     return; \
 }
 
@@ -254,7 +256,8 @@ if("/"!=url.path() && !checkUrl(U)) \
 if (u.path()==QString(QChar('/')+i18n(KIO_FONTS_USER)) || \
     u.path()==QString(QChar('/')+i18n(KIO_FONTS_SYS)) ) \
 { \
-    error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, you cannot rename, move, or delete either \"%1\" or \"%2\".").arg(KIO_FONTS_USER).arg(KIO_FONTS_SYS)); \
+    error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, you cannot rename, move, or delete either \"%1\" or \"%2\".") \
+    .arg(i18n(KIO_FONTS_USER)).arg(i18n(KIO_FONTS_SYS))); \
     return; \
 }
 
@@ -297,7 +300,7 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
     CGlobal::create(true, true); // Load X config files...
     syncDirs();
 
-    // Set core dump size to 0 because we will have 
+    // Set core dump size to 0 because we will have
     // root's password in memory.
     struct rlimit rlim;
     rlim.rlim_cur=rlim.rlim_max=0;
@@ -677,7 +680,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QCString &destOrigC, bool
                         int mode, bool resume)
 {
     bool    markPartial=config()->readBoolEntry("MarkPartial", true);
-    QString dest; 
+    QString dest;
 
     if (markPartial)
     {
@@ -802,7 +805,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
 
     KDE_DBUG << "REAL:" << realSrc << " TO REAL:" << realDest << endl;
     if(S_ISDIR(buffSrc.st_mode))
-    {   
+    {
         error(KIO::ERR_IS_DIRECTORY, src.path());
         return;
     }
@@ -820,14 +823,14 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
     realDest=QFile::encodeName(convertUrl(dest));
 
     if(-1!=KDE_stat(realDest.data(), &buffDest))
-    {   
+    {
         if(S_ISDIR(buffDest.st_mode))
-        {   
+        {
            error(KIO::ERR_DIR_ALREADY_EXIST, dest.path());
            return;
-        }   
+        }
         if (!overwrite)
-        {   
+        {
            error(KIO::ERR_FILE_ALREADY_EXIST, dest.path());
            return;
         }
@@ -870,25 +873,25 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
         int destFd=KDE_open(realDest.data(), O_CREAT | O_TRUNC | O_WRONLY, -1==mode ? 0666 : mode | S_IWUSR);
 
         if (destFd<0)
-        { 
+        {
             error(EACCES==errno ? KIO::ERR_WRITE_ACCESS_DENIED : KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.path() );
             close(srcFd);
             return;
         }
-    
-        totalSize(buffSrc.st_size); 
+
+        totalSize(buffSrc.st_size);
 
         KIO::filesize_t processed = 0;
         char            buffer[MAX_IPC_SIZE];
         QByteArray      array;
-    
+
         while(1)
-        {  
-        
+        {
+
             int n=::read(srcFd, buffer, MAX_IPC_SIZE);
 
             if(-1==n && EINTR!=errno)
-            {  
+            {
                 error( KIO::ERR_COULD_NOT_READ, src.path());
                 close(srcFd);
                 close(destFd);
@@ -896,9 +899,9 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
             }
             if(0==n)
                 break; // Finished
-       
+
             if(!writeAll(destFd, buffer, n))
-            {  
+            {
                 close(srcFd);
                 close(destFd);
                 if (ENOSPC==errno) // disk full
@@ -984,16 +987,16 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
     if(nonRootSys(dest))
     {
         QCString cmd(S_ISDIR(buffSrc.st_mode) ? "kfontinst rename " : "mv -f ");
-        
+
         cmd+=srcPath;
         cmd+=" ";
         cmd+=destPath;
         nrs=true;
-            
+
         if(!doRootCmd(cmd))
         {
             error(KIO::ERR_CANNOT_RENAME, src.path());
-            return;     
+            return;
         }
     }
     else
@@ -1072,7 +1075,7 @@ void CKioFonts::mkdir(const KURL &url, int)
         }
         else
             if(sys)
-            { 
+            {
                 QCString cmd(exists ? "kfontinst adddir " : "kfontinst mkdir ");
                 cmd+=realPath;
 
@@ -1152,7 +1155,7 @@ void CKioFonts::del(const KURL &url, bool isFile)
             else
                 error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
         }
-        else 
+        else
             if (0!=unlink(realPathC.data()))
             {
                 if(EACCES==errno || EPERM==errno)
@@ -1179,7 +1182,7 @@ void CKioFonts::del(const KURL &url, bool isFile)
         {
             QCString cmd("kfontinst rmdir ");
             cmd+=realPathC;
-       
+
             if(doRootCmd(cmd))
             {
                 CGlobal::cfg().storeSysXConfigFileTs();
@@ -1278,7 +1281,7 @@ void CKioFonts::cfgDir(const QString &ds)
             if(symFamilies.count())
             {
                 QStringList::Iterator it;
-    
+
                 for(it=symFamilies.begin(); it!=symFamilies.end(); ++it)
                     CGlobal::userXft().addSymbolFamily(*it);
             }

@@ -37,7 +37,8 @@ extern "C"
 {
     void* init_libkfontviewpart()
     {
-	return new CFontViewPartFactory;
+        KGlobal::locale()->insertCatalogue("kfontinst");
+        return new CFontViewPartFactory;
     }
 }
 
@@ -58,7 +59,7 @@ CFontViewPartFactory::~CFontViewPartFactory()
 
 QObject * CFontViewPartFactory::createObject(QObject *parent, const char *name, const char *, const QStringList &)
 {
-    if(parent && !parent->inherits("QWidget"))
+    if(parent && !parent->isWidgetType())
     {
         kdDebug() << "CFontViewPartFactory: parent does not inherit QWidget" << endl;
         return 0L;
