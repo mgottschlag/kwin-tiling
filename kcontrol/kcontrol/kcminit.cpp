@@ -39,6 +39,26 @@ static KCmdLineOptions options[] =
     KCmdLineLastOption
 };
 
+static bool runModule(const QString &libName, KLibLoader *loader, KService::Ptr service)
+{
+    KLibrary *lib = loader->library(QFile::encodeName(libName));
+    if (lib) {
+	// get the init_ function
+	QString factory = QString("init_%1").arg(service->init());
+	void *init = lib->symbol(factory.utf8());
+	if (init) {
+	    // initialize the module
+	    kdDebug(1208) << "Initializing " << libName << ": " << factory << endl;
+	    
+	    void (*func)() = (void(*)())init;
+	    func();
+	    return true;
+	}
+	loader->unloadLibrary(QFile::encodeName(libName));
+    }
+    return false;
+}
+
 int main(int argc, char *argv[])
 {
   KLocale::setMainCatalogue("kcontrol");
@@ -95,34 +115,25 @@ int main(int argc, char *argv[])
   // look for X-KDE-Init=... entries
   for(KService::List::Iterator it = list.begin();
       it != list.end();
-      ++it)
-    {
+      ++it) {
       KService::Ptr service = (*it);
       if (service->library().isEmpty() || service->init().isEmpty())
 	continue; // Skip
-      // try to load the library
-      QString libName = QString("libkcm_%1").arg(service->library());
-      if ( ! alreadyInitialized.contains( libName.ascii() ) )
-         {
-            KLibrary *lib = loader->library(QFile::encodeName(libName));
-            if (lib)
-	    {
-	      // get the init_ function
-	      QString factory = QString("init_%1").arg(service->init());
-	      void *init = lib->symbol(factory.utf8());
-	      if (init)
-	       {
-	         // initialize the module
-                 alreadyInitialized.append( libName.ascii() );
-	         kdDebug(1208) << "Initializing " << libName << ": " << factory << endl;
 
-	         void (*func)() = (void(*)())init;
-	         func();
-	       }
-	      loader->unloadLibrary(QFile::encodeName(libName));
-	    }
-         }
-    }
+      QString libName = QString("kcm_%1").arg(service->library());
+
+      // try to load the library
+      if (! alreadyInitialized.contains( libName.ascii() )) {
+	  if (!runModule(libName, loader, service)) {
+	      libName = QString("libkcm_%1").arg(service->library());
+	      if (! alreadyInitialized.contains( libName.ascii() )) {
+		  runModule(libName, loader, service);
+		  alreadyInitialized.append( libName.ascii() );
+	      }
+	  } else 
+	      alreadyInitialized.append( libName.ascii() );
+      }
+  }
 
   if ( !kapp->dcopClient()->isAttached() )
     kapp->dcopClient()->attach();

@@ -34,6 +34,35 @@
 #include "global.h"
 #include "modloader.h"
 
+static KCModule *load(const ModuleInfo &mod, const QString &libname, KLibLoader *loader)
+{
+    // attempt to load KDE3 modules (new loader)
+    
+    KCModule *module = KParts::ComponentFactory::createInstanceFromLibrary<KCModule>(QFile::encodeName(libname.arg(mod.library())));
+    if (module)
+	return module;
+    
+    // else do a fallback
+    kdDebug() << "Unable to load module using ComponentFactory! Falling back to old loader." << endl;
+    
+    KLibrary *lib = loader->library(QFile::encodeName(libname.arg(mod.library())));
+    if (lib) {
+	// get the create_ function
+	QString factory("create_%1");
+	void *create = lib->symbol(QFile::encodeName(factory.arg(mod.handle())));
+	
+	if (create)
+	    {
+		// create the module
+		KCModule* (*func)(QWidget *, const char *);
+		func = (KCModule* (*)(QWidget *, const char *)) create;
+		return  func(0, 0);
+	    }
+    }
+    return 0;
+}
+
+
 KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
 {
   /*
@@ -56,34 +85,11 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
 
       KLibLoader *loader = KLibLoader::self();
 
-      // try to load the library
-      QString libname("libkcm_%1");
-
-     // attempt to load KDE3 modules (new loader)
-
-      KCModule *module = KParts::ComponentFactory::createInstanceFromLibrary<KCModule>(QFile::encodeName(libname.arg(mod.library())));
-      if (module)
-          return module;
-
-     // else do a fallback
-     kdDebug() << "Unable to load module using ComponentFactory! Falling back to old loader." << endl;
-
-      KLibrary *lib = loader->library(QFile::encodeName(libname.arg(mod.library())));
-      if (lib)
-	{
-
-	  // get the create_ function
-	  QString factory("create_%1");
-	  void *create = lib->symbol(QFile::encodeName(factory.arg(mod.handle())));
-
-	  if (create)
-	    {
-	      // create the module
-	      KCModule* (*func)(QWidget *, const char *);
-	      func = (KCModule* (*)(QWidget *, const char *)) create;
-	      return  func(0, 0);
-	    }
-	}
+       KCModule *module = load(mod, "kcm_%1", loader);
+       if (!module)
+	   module = load(mod, "libkcm_%1", loader);
+       if (module)
+	   return module;
     }
     else
       kdWarning() << "Module " << mod.fileName() << " doesn't specify a library!" << endl;
@@ -111,5 +117,8 @@ void ModuleLoader::unloadModule(const ModuleInfo &mod)
 
   // try to unload the library
   QString libname("libkcm_%1");
+  loader->unloadLibrary(QFile::encodeName(libname.arg(mod.library())));
+
+  libname = "kcm_%1";
   loader->unloadLibrary(QFile::encodeName(libname.arg(mod.library())));
 }
