@@ -150,7 +150,7 @@
 Some of this can be also controlled from the &kcontrol; module, but
 not all.</para>
 
-<sect1>
+<sect1 id="kdmrc">
 <title>&kdmrc; - The &kdm; master configuration file</title>
 
 <para>The basic format of the file is <quote>INI-like</quote>.
@@ -428,7 +428,7 @@ the <literal>[Xdmcp]</literal> <option>Enable</option> option is preferred.
 
 </sect1>
 
-<sect1>
+<sect1 id="kdm-scripts">
 <title>Supplementary programs</title>
 
 <para>
