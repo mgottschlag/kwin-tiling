@@ -186,7 +186,7 @@ void CKFileFontView::slotActivate(QListViewItem *item)
 
 void CKFileFontView::selected(QListViewItem *item)
 {
-    if (item && !(KApplication::keyboardModifiers() & (KApplication::ShiftModifier|KApplication::ControlModifier)) &&
+    if (item && !(KApplication::keyboardMouseState() & (ShiftButton|ControlButton)) &&
          KGlobalSettings::singleClick())
     {
         const KFileItem *fi = ((CFontListViewItem*)item)->fileInfo();

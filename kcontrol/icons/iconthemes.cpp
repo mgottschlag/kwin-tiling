@@ -163,7 +163,7 @@ void IconThemesConfig::installNewTheme()
   QString themeTmpFile;
   // themeTmpFile contains the name of the downloaded file
 
-  if (!KIO::NetAccess::download(themeURL, themeTmpFile)) {
+  if (!KIO::NetAccess::download(themeURL, themeTmpFile, this)) {
     QString sorryText;
     if (themeURL.isLocalFile())
        sorryText = i18n("Unable to find the icon theme archive %1.");
