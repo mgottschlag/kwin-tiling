@@ -85,7 +85,7 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
              SLOT( slotPlayerSettings()));
 
     KAboutData* ab = new KAboutData(
-        "kcmnotify", I18N_NOOP("KNotify"), "3.0",
+        "kcmknotify", I18N_NOOP("KNotify"), "3.0",
         I18N_NOOP("System Notification Control Panel Module"),
         KAboutData::License_GPL, "(c) 2002 Carsten Pfeiffer", 0, 0 );
     ab->addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org" );
