@@ -36,6 +36,15 @@
 #include "proxywidget.moc"
 
 
+void setVisible(QPushButton *btn, bool vis)
+{
+  if (vis)
+    btn->show();
+  else
+    btn->hide();
+}
+
+
 ProxyWidget::ProxyWidget(KCModule *client, QString title, QPixmap icon,
 			 KDockContainer *parent, const char *name)
   : KDockWidget(title,icon,parent,name), _client(client)
@@ -56,12 +65,16 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, QPixmap icon,
   
   // only enable the requested buttons
   int b = _client->buttons();
-  _help->setEnabled(b & KCModule::Help);
-  _default->setEnabled(b & KCModule::Default);
-  _reset->setEnabled(b & KCModule::Reset);
-  _cancel->setEnabled(b & KCModule::Cancel);
-  _apply->setEnabled(b & KCModule::Apply);
-  _ok->setEnabled(b & KCModule::Ok);
+  setVisible(_help, b & KCModule::Help);
+  setVisible(_default, b & KCModule::Default);
+  setVisible(_reset, b & KCModule::Reset);
+  setVisible(_cancel, b & KCModule::Cancel);
+  setVisible(_apply, b & KCModule::Apply);
+  setVisible(_ok, b & KCModule::Ok);
+  
+  // disable initial buttons
+  _reset->setEnabled(false);
+  _apply->setEnabled(false);
   
   connect(_help, SIGNAL(clicked()), this, SLOT(helpClicked()));
   connect(_default, SIGNAL(clicked()), this, SLOT(defaultClicked()));
@@ -69,13 +82,6 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, QPixmap icon,
   connect(_cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(applyClicked()));
   connect(_ok, SIGNAL(clicked()), this, SLOT(okClicked()));
-  
-  _help->show();
-  _default->show();
-  _reset->show();
-  _cancel->show();
-  _apply->show();
-  _ok->show();
   
   QGridLayout *top = new QGridLayout(this, 4, 6, 5);
   top->addRowSpacing(0, DOCKBAR_HEIGHT);
@@ -118,14 +124,14 @@ void ProxyWidget::helpClicked()
 void ProxyWidget::defaultClicked()
 {
   _client->defaults();
-  emit changed(true);
+  clientChanged(true);
 }
 
 
 void ProxyWidget::resetClicked()
 {
   _client->load();
-  emit changed(false);
+  clientChanged(false);
 }
 
 
@@ -138,7 +144,7 @@ void ProxyWidget::cancelClicked()
 void ProxyWidget::applyClicked()
 {
   _client->save();
-  emit changed(false);
+  clientChanged(false);
 }
 
 
@@ -146,4 +152,17 @@ void ProxyWidget::okClicked()
 {
   _client->save();
   emit closed();
+}
+
+
+void ProxyWidget::clientChanged(bool state)
+{
+  // enable/disable buttons
+  int b = _client->buttons();
+  _reset->setEnabled(state);
+  _apply->setEnabled(state);
+  _ok->setEnabled(state);
+
+  // forward the signal
+  emit changed(state);
 }

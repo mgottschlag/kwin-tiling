@@ -53,7 +53,7 @@ private slots:
   void cancelClicked();
   void okClicked();
 
-  void clientChanged(bool state) { emit changed(state); };
+  void clientChanged(bool state);
 
   
 signals:

@@ -71,7 +71,7 @@ TopLevel::TopLevel(const char* name)
   // insert the about widget
   QPixmap about = kapp->miniIcon();
   _container->addWidget(new AboutWidget(this), about);
-
+  
   // set the main view
   setView(splitter);
 
