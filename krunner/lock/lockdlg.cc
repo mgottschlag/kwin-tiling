@@ -78,7 +78,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     KUser user;
     QLabel *greetLabel = new QLabel( user.fullName().isEmpty() ?
             i18n("<nobr><b>The session is locked</b><br>") :
-            i18n("<nobr><b>The session is locked by %1</b><br>").arg( user.fullName() ), frame );
+            i18n("<nobr><b>The session was locked by %1</b><br>").arg( user.fullName() ), frame );
 
     mStatusLabel = new QLabel( "<b> </b>", frame );
     mStatusLabel->setAlignment( QLabel::AlignCenter );
