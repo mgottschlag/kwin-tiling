@@ -12,6 +12,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kconfig.h>
 #include <dcopclient.h>
 #include "server.h"
+#include <stdlib.h>
 #include <fcntl.h>
 
 static const char *version = "0.4";
@@ -43,6 +44,7 @@ int main( int argc, char* argv[] )
     KCmdLineArgs::init(argc, argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options );
 
+    putenv("SESSION_MANAGER=");
     KApplication a;
     fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
 
