@@ -162,9 +162,16 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     // read only mode
     if (getuid() != 0)
       {
-	alGroup->setEnabled(false);
-	npGroup->setEnabled(false);
-	btGroup->setEnabled(false);
+	cbalen->setEnabled(false);
+	cbal1st->setEnabled(false);
+	userlb->setEnabled(false);
+	cbplen->setEnabled(false);
+	wpuserlb->setEnabled(false);
+	npuserlb->setEnabled(false);
+	wp_to_np->setEnabled(false);
+	np_to_wp->setEnabled(false);
+	cbarlen->setEnabled(false);
+	cbshwen->setEnabled(false);
       }
 }
 

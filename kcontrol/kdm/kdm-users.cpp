@@ -28,6 +28,7 @@
 #include <qvalidator.h>
 #include <qwhatsthis.h>
 #include <qvgroupbox.h>
+#include <qstringlist.h>
 
 #include <kapp.h>
 #include <ksimpleconfig.h>
@@ -46,9 +47,7 @@ extern KSimpleConfig *c;
 KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *show_users)
     : KCModule(parent, name)
 {
-    // WABA: This is ugly!
-    QString default_pix(locate("data", "kdm/pics/users/default.png"));
-    m_userPixDir = default_pix.left(default_pix.findRev('/')+1);
+    m_userPixDir = KGlobal::dirs()->resourceDirs("data").last() + "kdm/pics/users/";
     m_defaultText = i18n("<default>");
 
     QString wtstr;
@@ -156,7 +155,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     QWhatsThis::add( userlabel, wtstr );
     QWhatsThis::add( userbutton, wtstr );
 
-    usrGroup = new QButtonGroup(3, Qt::Vertical, i18n("Show users"),  this );
+    usrGroup = new QButtonGroup(5, Qt::Vertical, i18n("Show users"),  this );
     connect(usrGroup, SIGNAL(clicked(int)), this, SLOT(slotShowUsers(int)));
     connect(usrGroup, SIGNAL(clicked(int)), this, SLOT(slotChanged()));
     rbnoneusr = new QRadioButton(i18n("&None"), usrGroup );
@@ -171,6 +170,10 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     QWhatsThis::add( rballusr, i18n("If this option is selected, KDM will show all users but those"
       " who are listed in the \"no-show users\" listbox or have user ID less then the one specified"
       " in the \"Hide UIDs below\" field (except root)."));
+    cbusrsrt = new QCheckBox(i18n("Sor&t users"), usrGroup);
+    connect(cbusrsrt, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    QWhatsThis::add(cbusrsrt, i18n("This option tells KDM to alphabetically sort the users"
+      " shown in its login dialog.") );
     lLayout->addWidget( usrGroup );
 
     minGroup = new QVGroupBox( i18n("Hide U&IDs below"), this );
@@ -184,12 +187,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     leminuid->setValidator(valid);
     lLayout->addWidget( minGroup );
 
-    shwGroup = new QButtonGroup( 1, Qt::Vertical, this );
-    cbusrsrt = new QCheckBox(i18n("Sor&t users"), shwGroup);
-    connect(cbusrsrt, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
-    QWhatsThis::add(cbusrsrt, i18n("This option tells KDM to alphabetically sort the users"
-      " shown in its login dialog.") );
-    lLayout->addWidget( shwGroup );
+//    shwGroup = new QButtonGroup( 1, Qt::Vertical, this );
+//    lLayout->addWidget( shwGroup );
 
     lLayout->addStretch( 1 );
 
@@ -199,7 +198,6 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     if (getuid() != 0)
       {
 	usrGroup->setEnabled(false);
-	shwGroup->setEnabled(false);
 	minGroup->setEnabled(false);
 	userbutton->setEnabled(false);
 	remuserlb->setEnabled(false);
@@ -214,8 +212,10 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
 
 void KDMUsersWidget::slotShowUsers(int bt)
 {
-    shwGroup->setEnabled(bt != 0);
-    minGroup->setEnabled(bt == 2);
+    if (bt != 3) {
+	cbusrsrt->setEnabled(bt != 0);
+	minGroup->setEnabled(bt == 2);
+    }
 }
 
 void KDMUsersWidget::slotUserPixChanged(QString)
@@ -264,53 +264,27 @@ void KDMUsersWidget::userButtonDragEnterEvent(QDragEnterEvent *e)
 }
 
 
+KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg);
+
 void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
 {
-    QStringList uris;
-
-    if (QUriDrag::decodeToUnicodeUris(e, uris) && (uris.count() > 0)) {
-        KURL url(*uris.begin());
-
-        QString pixpath;
-        QString user(userlabel->text());
-        bool istmp = false;
-
-        QString mimetype = KImageIO::mimeType(url.url());
-
-        if( !KImageIO::isSupported(mimetype, KImageIO::Reading) )
-        {
-            QString msg =  i18n("Sorry, but\n"
-                "%1\n"
-                "does not seem to be an image file\n"
-                "The following image types are understood:\n"
-                "%2")
-            .arg(url.url())
-            .arg(KImageIO::types(KImageIO::Reading).join(", "));
-            KMessageBox::sorry( this, msg);
-        } else {
-            // we gotta check if it is a non-local file and make a tmp copy at the hd.
-            if( url.isLocalFile() )
-            {
-                pixpath = url.path();
-            } else {
-        KIO::NetAccess::download(url, pixpath);
-                istmp = true;
-            }
-            // Finally we've got an image file to add to the user
-            QPixmap p(pixpath);
-            if (istmp)
-                KIO::NetAccess::removeTempFile(pixpath);
-            if(!p.isNull()) { // Save image as <userpixdir>/<user>.<ext>
-                userbutton->setPixmap(p);
-                slotUserPixChanged(user);
-            } else {
-                QString msg = i18n("There was an error loading the image:\n"
-                   "%1\n"
-                   "It will not be saved...")
-            .arg(url.prettyURL());
-                KMessageBox::sorry(this, msg);
-            }
-        }
+    KURL *url = decodeImgDrop(e, this);
+    if (url) {
+	QString pixpath;
+	KIO::NetAccess::download(*url, pixpath);
+	QPixmap p(pixpath);
+	KIO::NetAccess::removeTempFile(pixpath);
+	if(!p.isNull()) { // Save image as <userpixdir>/<user>.<ext>
+	    userbutton->setPixmap(p);
+	    slotUserPixChanged(userlabel->text());
+	} else {
+	    QString msg = i18n("There was an error loading the image:\n"
+				"%1\n"
+				"It will not be saved...")
+				.arg(url->prettyURL());
+	    KMessageBox::sorry(this, msg);
+	}
+	delete url;
     }
 }
 

@@ -240,23 +240,23 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       // read only mode
       if (getuid() != 0)
     {
-/*      sdcombo->setEnabled(false);
+      sdcombo->setEnabled(false);
+
       restart_lined->setReadOnly(true);
       shutdown_lined->setReadOnly(true);
-      session_lined->setReadOnly(true);
+      console_check->setEnabled(false);
       console_lined->setReadOnly(true);
+#ifdef __linux__
+      lilo_check->setEnabled(false);
+      lilocmd_lined->setReadOnly(true);
+      lilomap_lined->setReadOnly(true);
+#endif
+      session_lined->setReadOnly(true);
       sessionslb->setEnabled(false);
       btnup->setEnabled(false);
       btndown->setEnabled(false);
       btnrm->setEnabled(false);
       btnadd->setEnabled(false);
-*/
-      group0->setEnabled(false);
-      group1->setEnabled(false);
-#ifdef __linux__
-      group4->setEnabled(false);
-#endif
-      group2->setEnabled(false);
     }
 }
 

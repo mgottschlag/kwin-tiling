@@ -22,11 +22,14 @@
  */
 
 #include <qlayout.h>
+#include <qstringlist.h>
 
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kimageio.h>
 #include <ksimpleconfig.h>
+#include <kmessagebox.h>
 
 #include "kdm-appear.h"
 #include "kdm-font.h"
@@ -36,7 +39,32 @@
 #include "kdm-conv.h"
 
 #include "main.h"
-#include "config.h"
+
+KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
+{
+    QStringList uris;
+
+    if (QUriDrag::decodeToUnicodeUris(e, uris) && (uris.count() > 0)) {
+	KURL *url = new KURL(*uris.begin());
+
+	KImageIO::registerFormats();
+	if( KImageIO::canRead(KImageIO::type(url->fileName())) )
+	    return url;
+
+	QStringList qs = QStringList::split('\n', KImageIO::pattern());
+	qs.remove(qs.begin());
+
+	QString msg = i18n( "Sorry, but %1\n"
+			    "does not seem to be an image file\n"
+			    "Please use files with these extensions:\n"
+			    "%2")
+			    .arg(url->fileName())
+			    .arg(qs.join("\n"));
+	KMessageBox::sorry( wdg, msg);
+	delete url;
+    }
+    return 0;
+}
 
 KSimpleConfig *c;
 
@@ -45,7 +73,8 @@ KDModule::KDModule(QWidget *parent, const char *name)
 {
   QStringList show_users;
 
-  c = new KSimpleConfig( QString::fromLatin1(KDE_CONFDIR "/kdmrc") );
+  c = new KSimpleConfig( KGlobal::dirs()->resourceDirs("config").last() + 
+			 "kdmrc" );
 
   QVBoxLayout *top = new QVBoxLayout(this);
   tab = new QTabWidget(this);

@@ -25,11 +25,13 @@
 #include <qdir.h>
 #include <qimage.h>
 #include <qfileinfo.h>
+#include <qpushbutton.h>
 
 #include <kcolorbtn.h>
 #include <kurl.h>
-#include <kiconloader.h>
-#include <kicondialog.h>
+//#include <kiconloader.h>
+//#include <kicondialog.h>
+#include <kfiledialog.h>
 #include <kcmodule.h>
 
 
@@ -58,19 +60,19 @@ public:
 protected:
 	void iconLoaderDragEnterEvent(QDragEnterEvent *event);
 	void iconLoaderDropEvent(QDropEvent *event);
-	void setLogo(QString logo);
+	bool setLogo(QString logo);
 
 private slots:
 	void slotAreaRadioClicked(int id);
 	void slotPosRadioClicked(int id);
-        void slotLogoPixChanged(QString);
+        void slotLogoButtonClicked();
         void changed();
         void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
  
 private:
 	enum { KdmNone, KdmClock, KdmLogo };
 	QLabel      *logoLabel;
-        KIconButton *logobutton;
+        QPushButton *logobutton;
         KLineEdit    *greetstr_lined;
 	QString      logopath;
 	QRadioButton *noneRadio;

@@ -38,12 +38,13 @@
 
 #include <kdialog.h>
 #include <kglobal.h>
-#include <kio/job.h>
 #include <klocale.h>
 #include <klineedit.h>
+#include <kimageio.h>
 #include <kmessagebox.h>
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
+#include <kio/netaccess.h>
 
 #include "kdm-appear.moc"
 
@@ -64,7 +65,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QGroupBox *group = new QGroupBox(i18n("Appearance"), this);
   vbox->addWidget(group, 1);
 
-  QGridLayout *grid = new QGridLayout( group, 4, 2, KDialog::spacingHint(),
+  QGridLayout *grid = new QGridLayout( group, 5, 2, KDialog::spacingHint(),
                        KDialog::spacingHint(), "grid");
   grid->addRowSpacing(0, group->fontMetrics().height());
   grid->setColStretch(0, 1);
@@ -91,7 +92,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
 
   hlp = new QWidget( group );
-  grid->addWidget(hlp, 2, 0);
+  grid->addMultiCellWidget(hlp, 2,4, 0,0);
   QGridLayout *hglay = new QGridLayout( hlp, 3, 4, KDialog::spacingHint() );
 
   label = new QLabel(i18n("Logo a&rea:"), hlp);
@@ -122,28 +123,26 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( clockRadio, wtstr );
 
   logoLabel = new QLabel(i18n("&Logo:"), hlp);
-  logobutton = new KIconButton(hlp);
+  logobutton = new QPushButton(hlp);
   logoLabel->setBuddy( logobutton );
   logobutton->setAutoDefault(false);
   logobutton->setAcceptDrops(true);
   logobutton->installEventFilter(this); // for drag and drop
   logobutton->setMinimumSize(24, 24);
-  logobutton->setMaximumSize(80, 80);
-  connect(logobutton, SIGNAL(iconChanged(QString)),
-      this, SLOT(slotLogoPixChanged(QString)));
-  connect(logobutton, SIGNAL(iconChanged(QString)),
-      this, SLOT(changed()));
+  logobutton->setMaximumSize(108, 108);
+  connect(logobutton, SIGNAL(clicked()),
+	  this, SLOT(slotLogoButtonClicked()));
   hglay->addWidget(logoLabel, 1, 0);
-  hglay->addWidget(logobutton, 1, 1, AlignHCenter | AlignTop);
-//  hglay->addRowSpacing(3, 80);	// for logo - doesn't work either
-//  glay->addMultiCellWidget(logobutton, 0,1, 1,1, AlignVCenter|AlignLeft);
+  hglay->addWidget(logobutton, 1, 1, AlignCenter);
+  hglay->addRowSpacing(1, 110);
   wtstr = i18n("Click here to choose an image that KDM will display. "
-           "You can also drag and drop an image onto this button "
-           "(e.g. from Konqueror).");
+	       "You can also drag and drop an image onto this button "
+	       "(e.g. from Konqueror).");
   QWhatsThis::add( logoLabel, wtstr );
   QWhatsThis::add( logobutton, wtstr );
   hglay->addRowSpacing( 2, KDialog::spacingHint());
   hglay->setColStretch( 3, 1);
+
 
   hlp = new QWidget( group );
   grid->addWidget(hlp, 2, 1);
@@ -194,11 +193,13 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( yLineLabel, wtstr );
   QWhatsThis::add( yLineEdit, wtstr );
   hglay->setColStretch( 2, 1);
+  hglay->setRowStretch( 2, 1);
 
 
   hlp = new QWidget( group );
-  grid->addWidget(hlp, 3, 0);
-  QHBoxLayout *hhlay = new QHBoxLayout( hlp, KDialog::spacingHint() );
+  grid->addWidget(hlp, 3, 1);
+  hglay = new QGridLayout( hlp, 2, 3, KDialog::spacingHint() );
+  hglay->setColStretch(2, 1);
 
   label = new QLabel(i18n("GUI S&tyle:"), hlp);
   guicombo = new QComboBox(false, hlp);
@@ -206,18 +207,12 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   for (unsigned i = 0; i < sizeof(styles) / sizeof(styles[0]); i++)
     guicombo->insertItem(QString::fromLatin1(styles[i]), i);
   connect(guicombo, SIGNAL(activated(int)), this, SLOT(changed()));
-  hhlay->addWidget(label);
-  hhlay->addWidget(guicombo);
-  hhlay->addStretch(1);
+  hglay->addWidget(label, 0, 0);
+  hglay->addWidget(guicombo, 0, 1);
   wtstr = i18n("You can choose a basic GUI style here that will be "
         "used by KDM only.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( guicombo, wtstr );
-
-
-  hlp = new QWidget( group );
-  grid->addWidget(hlp, 3, 1);
-  hhlay = new QHBoxLayout( hlp, KDialog::spacingHint() );
 
   label = new QLabel(i18n("&Echo mode:"), hlp);
   echocombo = new QComboBox(false, hlp);
@@ -226,9 +221,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   echocombo->insertItem(i18n("One Star"));
   echocombo->insertItem(i18n("Three Stars"));
   connect(echocombo, SIGNAL(activated(int)), this, SLOT(changed()));
-  hhlay->addWidget(label);
-  hhlay->addWidget(echocombo);
-  hhlay->addStretch(1);
+  hglay->addWidget(label, 1, 0);
+  hglay->addWidget(echocombo, 1, 1);
   wtstr = i18n("You can choose whether and how KDM shows your password when you type it.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( echocombo, wtstr );
@@ -239,11 +233,6 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   vbox->addWidget(group, 1);
 
   QGridLayout *hbox = new QGridLayout( group->layout(), 2, 2, KDialog::spacingHint() );
-//  hbox->addRowSpacing(0, 15);
-//  hbox->addRowSpacing(5, 10);
-//  hbox->addColSpacing(0, 10);
-//  hbox->addColSpacing(3, 10);
-//  hbox->setColStretch(2, 1);
 
   label = new QLabel(i18n("La&nguage:"), group);
   hbox->addWidget(label, 0, 0);
@@ -347,14 +336,31 @@ void KDMAppearanceWidget::loadLocaleList(KLanguageCombo *combo, const QString &s
     }
 }
 
-void KDMAppearanceWidget::setLogo(QString logo)
+bool KDMAppearanceWidget::setLogo(QString logo)
 {
-    logopath = logo;
-    logobutton->setIcon(logo.isEmpty() ? 
+    QString flogo = logo.isEmpty() ? 
 	locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") ) :
-	logo);
+	logo;
+    QPixmap p(flogo);
+    if (p.isNull())
+	return false;
+    logobutton->setPixmap(p);
     logobutton->adjustSize();
-    resize(width(), height());
+//    resize(width(), height());
+    logopath = logo;
+    return true;
+}
+
+
+void KDMAppearanceWidget::slotLogoButtonClicked()
+{
+    KImageIO::registerFormats();
+    QString fileName = KFileDialog::getOpenFileName( 
+	locate("data", QString::fromLatin1("kdm/pics/") ),
+	KImageIO::pattern());
+    if (!fileName.isEmpty())
+	if (setLogo(fileName))
+	    changed();
 }
 
 
@@ -371,12 +377,6 @@ void KDMAppearanceWidget::slotPosRadioClicked(int id)
     xLineLabel->setEnabled( id != 0 );
     yLineEdit->setEnabled( id != 0 );
     yLineLabel->setEnabled( id != 0 );
-}
-
-
-void KDMAppearanceWidget::slotLogoPixChanged(QString iconstr)
-{
-  logopath = iconstr;
 }
 
 
@@ -401,65 +401,40 @@ void KDMAppearanceWidget::iconLoaderDragEnterEvent(QDragEnterEvent *e)
 }
 
 
+KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg);
+
 void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 {
-  QStringList uris;
-  if (QUriDrag::decodeToUnicodeUris( e, uris) && (uris.count() > 0)) {
-    KURL url(*uris.begin());
+    KURL pixurl;
+    bool istmp;
 
-    QString fileName = url.fileName();
-    QString msg;
-    QStringList dirs = KGlobal::dirs()->findDirs("data", "kdm/pics/");
-    QString local = KGlobal::dirs()->saveLocation("data", "kdm/pics/", false);
-    QStringList::ConstIterator it = dirs.begin();
-    if ((*it).left(local.length()) == local)
-      it++;
-    QString pixurl("file:"+ *it);
-    int last_dot_idx = fileName.findRev('.');
-    bool istmp = false;
+    KURL *url = decodeImgDrop(e, this);
+    if (url) {
 
-    // CC: Now check for the extension
-    QString ext(".png .xpm .xbm"
-    //#ifdef HAVE_LIBGIF
-		" .gif"
-    //#endif
-#ifdef HAVE_LIBJPEG
-		" .jpg"
-#endif
-		);
+	// we gotta check if it is a non-local file and make a tmp copy at the hd.
+	if(!url->isLocalFile()) {
+	    pixurl = "file:" + 
+		     KGlobal::dirs()->resourceDirs("data").last() + 
+		     "kdm/pics/" + url->fileName();
+	    KIO::NetAccess::copy(*url, pixurl);
+	    istmp = true;
+	} else {
+	    pixurl = *url;
+	    istmp = false;
+	}
 
-    if( !ext.contains(fileName.right(fileName.length()-
-                     last_dot_idx), false) ) {
-      msg =  i18n("Sorry, but %1\n"
-          "does not seem to be an image file\n"
-          "Please use files with these extensions:\n"
-          "%2")
-    .arg(fileName)
-    .arg(ext);
-      KMessageBox::sorry( this, msg);
-    } else {
-      // we gotta check if it is a non-local file and make a tmp copy at the hd.
-      if(url.protocol() != "file") {
-    pixurl += url.fileName();
-    KIO::file_copy(url, pixurl);
-    url = pixurl;
-    istmp = true;
-      }
-      // By now url should be "file:/..."
-      QPixmap p(url.path());
-      if(!p.isNull()) {
-    logobutton->setPixmap(p);
-    logobutton->adjustSize();
-    logopath = url.path();
-      } else {
-        msg = i18n("There was an error loading the image:\n"
-           "%1\n"
-           "It will not be saved...")
-        .arg(url.path());
-        KMessageBox::sorry(this, msg);
-      }
+	// By now url should be "file:/..."
+	if (!setLogo(pixurl.path())) {
+	    KIO::NetAccess::del(pixurl);
+	    QString msg = i18n("There was an error loading the image:\n"
+			       "%1\n"
+			       "It will not be saved...")
+			       .arg(pixurl.path());
+	    KMessageBox::sorry(this, msg);
+	}
+
+	delete url;
     }
-  }
 }
 
 

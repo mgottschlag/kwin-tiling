@@ -29,6 +29,7 @@
 #include <qcheckbox.h>
 
 #include <klistbox.h>
+#include <kicondialog.h>
 #include <kcolorbtn.h>
 #include <kurl.h>
 
