@@ -64,8 +64,11 @@ TaskManager::TaskManager()
 
     // register existing windows
     const QValueList<WId> windows = m_winModule->windows();
-    for (QValueList<WId>::ConstIterator it = windows.begin(); it != windows.end(); ++it )
-    windowAdded(*it);
+    QValueList<WId>::ConstIterator end(windows.end());
+    for (QValueList<WId>::ConstIterator it = windows.begin(); it != end; ++it)
+    {
+        windowAdded(*it);
+    }
 
     // set active window
     WId win = m_winModule->activeWindow();
@@ -335,18 +338,28 @@ bool TaskManager::isOnTop(const Task* task)
 {
     if(!task) return false;
 
-    for (QValueList<WId>::ConstIterator it = m_winModule->stackingOrder().fromLast();
-         it != m_winModule->stackingOrder().end(); --it) {
-        for (Task* t = _tasks.first(); t != 0; t = _tasks.next() ) {
-            if ( (*it) == t->window() ) {
-                if ( t == task )
+    QValueList<WId>::ConstIterator begin(m_winModule->stackingOrder().constBegin());
+    QValueList<WId>::ConstIterator it = m_winModule->stackingOrder().fromLast();
+    do
+    {
+        for (Task* t = _tasks.first(); t != 0; t = _tasks.next())
+        {
+            if ((*it) == t->window())
+            {
+                if (t == task)
+                {
                     return true;
-                if ( !t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop()) )
+                }
+                if (!t->isIconified() &&
+                    (t->isAlwaysOnTop() == task->isAlwaysOnTop()))
+                {
                     return false;
+                }
                 break;
             }
         }
-    }
+    } while (it-- != begin);
+
     return false;
 }
 
