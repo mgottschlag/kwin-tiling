@@ -87,8 +87,6 @@ sounds_data_DATA = \
 	KDE_Startup_1.ogg \
 	KDE_Startup_2.ogg \
 	KDE_Startup_3.ogg \
-	KDE_TypeWriterScroll.ogg \
-	KDE_TypeWriterTW_Reload.ogg \
 	KDE_TypeWriter_Bell.ogg \
 	KDE_TypeWriter_EndOfLine.ogg \
 	KDE_TypeWriter_End_Of_Line.ogg \
@@ -101,10 +99,8 @@ sounds_data_DATA = \
 	KDE_Warp.ogg \
 	KDE_Water_Drop.ogg \
 	KDE_Window_Close.ogg \
-	KDE_Window_DeIcon.ogg \
 	KDE_Window_DeIconify.ogg \
 	KDE_Window_Hide.ogg \
-	KDE_Window_Icon.ogg \
 	KDE_Window_Iconify.ogg \
 	KDE_Window_Open.ogg \
 	KDE_Window_Shade_Down.ogg \
