@@ -56,8 +56,8 @@ extern "C"
     kbdc.bell_pitch = config.readNumEntry("Pitch", kbd.bell_pitch);
     kbdc.bell_duration = config.readNumEntry("Duration", kbd.bell_duration);
     XChangeKeyboardControl(kapp->getDisplay(),
-			   KBBellPercent | KBBellPitch | KBBellDuration,
-			   &kbdc);
+                           KBBellPercent | KBBellPitch | KBBellDuration,
+                           &kbdc);
   }
 }
 
@@ -65,8 +65,8 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
     KCModule(parent, name)
 {
   QBoxLayout *layout = new QVBoxLayout(this,
-				       KDialog::marginHint(),
-				       KDialog::spacingHint());
+                                       KDialog::marginHint(),
+                                       KDialog::spacingHint());
 
   m_volume = new KIntNumInput(50, this);
   m_volume->setLabel(i18n("Volume:"));
@@ -108,9 +108,9 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   layout->addStretch(1);
 
   // watch for changes
-  connect(m_volume, SIGNAL(valueChanged(int)), this, SIGNAL(changed(bool)));
-  connect(m_pitch, SIGNAL(valueChanged(int)), this, SIGNAL(changed(bool)));
-  connect(m_duration, SIGNAL(valueChanged(int)), SIGNAL(changed(bool)));
+  connect(m_volume, SIGNAL(valueChanged(int)), SLOT(configChanged()));
+  connect(m_pitch, SIGNAL(valueChanged(int)), SLOT(configChanged()));
+  connect(m_duration, SIGNAL(valueChanged(int)), SLOT(configChanged()));
 
   load();
 }
@@ -137,8 +137,8 @@ void KBellConfig::save()
   kbd.bell_pitch = bellPitch;
   kbd.bell_duration = bellDuration;
   XChangeKeyboardControl(kapp->getDisplay(),
-			 KBBellPercent | KBBellPitch | KBBellDuration,
-			 &kbd);
+                         KBBellPercent | KBBellPitch | KBBellDuration,
+                         &kbd);
 
   KConfig config("kcmbellrc");
   config.setGroup("General");
@@ -161,8 +161,8 @@ void KBellConfig::ringBell()
   kbd.bell_pitch = m_pitch->value();
   kbd.bell_duration = m_duration->value();
   XChangeKeyboardControl(kapp->getDisplay(),
-			 KBBellPercent | KBBellPitch | KBBellDuration,
-			 &kbd);
+                         KBBellPercent | KBBellPitch | KBBellDuration,
+                         &kbd);
   // ring bell
   XBell(kapp->getDisplay(),100);
 
@@ -171,8 +171,8 @@ void KBellConfig::ringBell()
   kbd.bell_pitch = old_state.bell_pitch;
   kbd.bell_duration = old_state.bell_duration;
   XChangeKeyboardControl(kapp->getDisplay(),
-			 KBBellPercent | KBBellPitch | KBBellDuration,
-			 &kbd);
+                         KBBellPercent | KBBellPitch | KBBellDuration,
+                         &kbd);
 }
 
 void KBellConfig::defaults()
