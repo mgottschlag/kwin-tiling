@@ -43,10 +43,10 @@
 // kwin config keywords
 #define KWM_FOCUS     "focusPolicy"
 #define KWM_PLACEMENT "WindowsPlacement"
-#define KWM_MOVE      "WindowMoveType"
+#define KWM_MOVE      "MoveMode"
 #define KWM_MAXIMIZE  "MaximizeOnlyVertically"
 #define KWM_RESIZE_ANIM    "ResizeAnimation"
-#define KWM_RESIZE_OPAQUE    "WindowResizeType"
+#define KWM_RESIZE_OPAQUE    "ResizeMode"
 #define KWM_AUTORAISE_INTERVAL "AutoRaiseInterval"
 #define KWM_AUTORAISE "AutoRaise"
 #define KWM_CLICKRAISE "ClickRaise"
@@ -190,7 +190,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
   alabel = new QLabel(i18n("Delay (ms)"), fcsBox);
   alabel->setAlignment(AlignVCenter|AlignHCenter);
-  fLay->addWidget(alabel,2,1);
+  fLay->addWidget(alabel,2,1,AlignLeft);
 
   s = new QLCDNumber (4, fcsBox);
   s->setFrameStyle( QFrame::NoFrame );
@@ -204,6 +204,9 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   autoRaise->setSteps(100,100);
   fLay->addMultiCellWidget(autoRaise,3,3,1,2);
   connect( autoRaise, SIGNAL(valueChanged(int)), s, SLOT(display(int)) );
+  
+  fLay->addColSpacing(0,QMAX(autoRaiseOn->sizeHint().width(), 
+                             clickRaiseOn->sizeHint().width()) + 15);
 
   // CT: disabling is needed as long as functionality misses in kwin  
   autoRaiseOn->setEnabled(false);
@@ -214,7 +217,24 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   
   lay->addWidget(fcsBox);
 
+  // Any changes goes to slotChanged() 
+  connect(vertOnly, SIGNAL(clicked()), this, SLOT(slotChanged()));
+  connect(opaque, SIGNAL(clicked()), this, SLOT(slotChanged()));
+  connect(resizeOpaqueOn, SIGNAL(clicked()), this, SLOT(slotChanged()));
+  connect(resizeAnimSlider, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+  connect(placementCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
+  connect(focusCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
+  connect(fcsBox, SIGNAL(clicked(int)), this, SLOT(slotChanged()));
+  connect(autoRaise, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+  
   load();
+
+}
+
+// many widgets connect to this slot
+void KWindowConfig::slotChanged()
+{
+  emit changed(true);
 }
 
 int KWindowConfig::getMove()
@@ -252,6 +272,9 @@ int KWindowConfig::getFocus()
 void KWindowConfig::setFocus(int foc)
 {
   focusCombo->setCurrentItem(foc);
+  
+  // this will disable/hide the auto raise delay widget if focus==click
+  setAutoRaiseEnabled(); 
 }
 
 int KWindowConfig::getResizeAnim()
@@ -319,6 +342,9 @@ void KWindowConfig::setClickRaise(bool on)
 
 void KWindowConfig::setAutoRaiseEnabled()
 {
+  // KWin doesn't read these settings => don't enable anything 
+  return;
+
   // the auto raise related widgets are: autoRaise, alabel, s, sec
   if ( focusCombo->currentItem() != CLICK_TO_FOCUS )
     {
@@ -448,6 +474,8 @@ void KWindowConfig::load( void )
   key = config->readEntry(KWM_CLICKRAISE);
   setClickRaise(key != "off");
   setAutoRaiseEnabled();      // this will disable/hide the auto raise delay widget if focus==click
+
+  delete config;
 }
 
 void KWindowConfig::save( void )
@@ -487,9 +515,9 @@ void KWindowConfig::save( void )
   else if (v == CLASSIC_SLOPPY_FOCUS)
     config->writeEntry(KWM_FOCUS,"ClassicSloppyFocus");
   else if (v == CLASSIC_FOCUS_FOLLOWS_MOUSE)
-    config->writeEntry(KWM_FOCUS,"ClassicFocusFollowMouse");
+    config->writeEntry(KWM_FOCUS,"ClassicFocusFollowsMouse");
   else
-    config->writeEntry(KWM_FOCUS,"FocusFollowMouse");
+    config->writeEntry(KWM_FOCUS,"FocusFollowsMouse");
 
   //CT - 17Jun1998
   //  config->writeEntry(KWM_RESIZE_ANIM, getResizeAnim());
@@ -524,6 +552,7 @@ void KWindowConfig::save( void )
 
   config->sync();
 
+  delete config;
 }
 
 void KWindowConfig::defaults()

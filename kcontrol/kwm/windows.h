@@ -91,6 +91,7 @@ private slots:
   void ifPlacementIsInteractive();
   void autoRaiseOnTog(bool);//CT 23Oct1998
   void clickRaiseOnTog(bool);
+  void slotChanged();
 
 private:
 
