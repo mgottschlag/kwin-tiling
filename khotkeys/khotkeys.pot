@@ -1,0 +1,35 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2000-07-18 19:49+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+
+#: kcontrol/kcmkhotkeys.cpp:162
+msgid "Select shortcut"
+msgstr ""
+
+#: kcontrol/kcmkhotkeys.cpp:174
+msgid "Desktop file to run"
+msgstr ""
+
+#: kcontrol/kcmkhotkeys.cpp:208
+msgid ""
+"The %1 key combination has already been allocated\n"
+"to the %2 action.\n"
+"\n"
+"Please choose a unique key combination."
+msgstr ""
+
+#: kcontrol/kcmkhotkeys.cpp:214
+msgid "Key conflict"
+msgstr ""
