@@ -79,8 +79,6 @@ signals:
     void changed(bool);
 
 private slots:
-    void slotSelectDesk(int desk);
-    void slotCommonDesk(bool common);
     void slotBGMode(int mode);
     void slotBGSetup();
     void slotColor1(const QColor &);
@@ -97,8 +95,6 @@ private:
     void init();
     void apply();
 
-    int m_Desk, m_Max;
-
     QCheckBox *m_pCBMulti;
     QComboBox *m_pBackgroundBox, *m_pWallpaperBox;
     QComboBox *m_pArrangementBox;
@@ -108,7 +104,7 @@ private:
     QWidget *m_pTab1, *m_pTab2;
     QMap<QString,int> m_Wallpaper;
 
-    KBackgroundRenderer *m_Renderer[_maxDesktops];
+    KBackgroundRenderer *m_Renderer;
     KColorButton *m_pColor1But, *m_pColor2But;
     KBGMonitor *m_pMonitor;
 

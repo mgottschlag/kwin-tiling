@@ -112,22 +112,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QSize bsize = pbut->sizeHint();
     delete pbut;
 
-    /*
-      // Desktop chooser at (0, 0)
-      QGroupBox *group = new QGroupBox(i18n("Desktop"), this);
-      top->addWidget(group, 0, 0);
-      QVBoxLayout *vbox = new QVBoxLayout(group);
-      vbox->setMargin(10);
-      vbox->setSpacing(10);
-      vbox->addSpacing(10);
-      m_pDeskList = new QListBox(group);
-      connect(m_pDeskList, SIGNAL(highlighted(int)), SLOT(slotSelectDesk(int)));
-      vbox->addWidget(m_pDeskList);
-      m_pCBCommon = new QCheckBox(i18n("&Common Background"), group);
-      vbox->addWidget(m_pCBCommon);
-      connect(m_pCBCommon, SIGNAL(toggled(bool)), SLOT(slotCommonDesk(bool)));
-    */
-
     // Preview monitor at (0,0)
     QLabel *lbl = new QLabel(this);
     lbl->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
@@ -279,13 +263,9 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pCBMulti->hide();
     m_pMSetupBut->hide();
 
-    m_Desk = 0;
-    m_Max = 1;
-    for (int i=0; i<m_Max; i++) {
-        KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmdesktoprc"));
-    m_Renderer[i] = new KBackgroundRenderer(i, c);
-    connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
-    }
+    KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmdesktoprc"));
+    m_Renderer = new KBackgroundRenderer(0, c);
+    connect(m_Renderer, SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
 
     init();
     apply();
@@ -350,9 +330,7 @@ void KBackground::init()
 
 void KBackground::apply()
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     /*
     // Desktop names
@@ -427,9 +405,7 @@ void KBackground::apply()
 
 void KBackground::load()
 {
-    int desk = m_Desk;
-    desk = 0;
-    m_Renderer[desk]->load(desk);
+    m_Renderer->load(0);
 
     apply();
     emit changed(false);
@@ -439,8 +415,7 @@ void KBackground::load()
 void KBackground::save()
 {
     kdDebug() << "Saving stuff..." << endl;
-    for (int i=0; i<m_Max; i++)
-    m_Renderer[i]->writeSettings();
+    m_Renderer->writeSettings();
 
     emit changed(false);
 }
@@ -448,9 +423,7 @@ void KBackground::save()
 
 void KBackground::defaults()
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     if (r->isActive())
     r->stop();
@@ -464,33 +437,13 @@ void KBackground::defaults()
 }
 
 
-void KBackground::slotSelectDesk(int desk)
-{
-    if (desk == m_Desk)
-    return;
-
-    if (m_Renderer[m_Desk]->isActive())
-    m_Renderer[m_Desk]->stop();
-    m_Desk = desk;
-    apply();
-}
-
-
-void KBackground::slotCommonDesk(bool /*common*/)
-{
-    apply();
-    emit changed(true);
-}
-
 
 /*
  * Called from the "Background Mode" combobox.
  */
 void KBackground::slotBGMode(int mode)
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     if (mode == r->backgroundMode())
     return;
@@ -507,9 +460,7 @@ void KBackground::slotBGMode(int mode)
  */
 void KBackground::slotBGSetup()
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     switch (r->backgroundMode()) {
     case KBackgroundSettings::Pattern:
@@ -546,9 +497,7 @@ void KBackground::slotBGSetup()
 
 void KBackground::slotColor1(const QColor &color)
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     if (color == r->colorA())
     return;
@@ -562,9 +511,7 @@ void KBackground::slotColor1(const QColor &color)
 
 void KBackground::slotColor2(const QColor &color)
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     if (color == r->colorB())
     return;
@@ -578,9 +525,7 @@ void KBackground::slotColor2(const QColor &color)
 
 void KBackground::slotImageDropped(QString uri)
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
     if (uri == r->wallpaper())
     return;
 
@@ -600,9 +545,7 @@ void KBackground::slotImageDropped(QString uri)
 
 void KBackground::slotMultiMode(bool multi)
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
     if (multi == (r->multiWallpaperMode() != KBackgroundSettings::NoMulti))
     return;
 
@@ -625,9 +568,7 @@ void KBackground::slotMultiMode(bool multi)
 
 void KBackground::slotWallpaper(const QString &wallpaper)
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     if (wallpaper == r->wallpaper())
     return;
@@ -641,9 +582,7 @@ void KBackground::slotWallpaper(const QString &wallpaper)
 
 void KBackground::slotBrowseWallpaper()
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     KURL url = KFileDialog::getOpenURL();
     if (url.isEmpty())
@@ -675,9 +614,7 @@ void KBackground::slotBrowseWallpaper()
  */
 void KBackground::slotWPMode(int mode)
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     if (mode == r->wallpaperMode())
     return;
@@ -691,9 +628,7 @@ void KBackground::slotWPMode(int mode)
 
 void KBackground::slotSetupMulti()
 {
-    int desk = m_Desk;
-    desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     KMultiWallpaperDialog dlg(r);
     if (dlg.exec() == QDialog::Accepted) {
@@ -708,11 +643,7 @@ void KBackground::slotPreviewDone(int desk_done)
 {
     kdDebug() << "Preview for desktop " << desk_done << " done" << endl;
 
-    int desk = m_Desk;
-    desk = 0;
-    if (desk != desk_done)
-    return;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer;
 
     KPixmap pm;
     if (QPixmap::defaultDepth() < 15)
