@@ -3,7 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell smbstatus
 Icon=samba
 Type=Application
-DocPath=kinfocenter/smb/index.html
+DocPath=kinfocenter/samba/index.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=samba
