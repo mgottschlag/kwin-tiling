@@ -48,6 +48,7 @@
 #include <kapplication.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
+#include <kdirlister.h>
 #ifdef HAVE_FT_CACHE
 #include <qsplitter.h>
 #include <knuminput.h>
@@ -152,6 +153,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
               << "fonts/system-folder";
 
     itsDirOp->setMimeFilter(mimeTypes);
+    itsDirOp->dirLister()->setMainWindow(this);
     fontsLayout->addWidget(itsDirOp, 0, 0);
 
 #ifdef HAVE_FT_CACHE
@@ -259,6 +261,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     {
         act->plug(toolbar);
         topMnu->insert(act);
+        disconnect(act, SIGNAL(activated()), itsDirOp, SLOT(mkdir()));
+        connect(act, SIGNAL(activated()), this, SLOT(createFolder()));
     }
 
     act=new KAction(i18n("Add Fonts..."), "filenew2", 0, this, SLOT(addFonts()), itsDirOp->actionCollection(), "addfonts");
@@ -565,6 +569,18 @@ void CKCmFontInst::fileSelected(const KFileItem *)
 
 void CKCmFontInst::loadingFinished()
 {
+    QListView *lView=dynamic_cast<QListView *>(itsDirOp->view());
+
+    if(lView)
+        lView->sort();
+    else
+    {
+        QIconView *iView=dynamic_cast<QIconView *>(itsDirOp->view());
+
+        if(iView)
+            iView->sort();
+    }
+    fileHighlighted(NULL);
 }
 
 void CKCmFontInst::addFonts()
@@ -633,9 +649,24 @@ void CKCmFontInst::removeFonts()
                 }
 
             KIO::DeleteJob *job = KIO::del(copy, false, true);
+            connect(job, SIGNAL(result(KIO::Job *)), this, SLOT(jobResult(KIO::Job *)));
+            job->setWindow(this);
             job->setAutoErrorHandlingEnabled(true, this);
         }
     }
+}
+
+void CKCmFontInst::createFolder()
+{
+    //
+    // Hack as when create folder, and go back - created folder does not appear!
+    KURL prevUrl=itsDirOp->url();
+
+    itsDirOp->mkdir();
+
+    if(prevUrl!=itsDirOp->url())
+        itsDirOp->dirLister()->updateDirectory(prevUrl);
+    fileHighlighted(NULL);
 }
 
 void CKCmFontInst::enable()
@@ -709,6 +740,15 @@ void CKCmFontInst::updateInformation(int dirs, int fonts)
     text+=" - ";
     text+=i18n("One Folder", "%n Folders", dirs);
     itsStatusLabel->setText(text);
+}
+
+void CKCmFontInst::jobResult(KIO::Job *job)
+{
+    //
+    // Force an update of the view. For some reason the view is not automatically updated when
+    // run in embedded mode - e.g. from the "Admin" mode button on KControl.
+    if(job && 0==job->error())
+        itsDirOp->dirLister()->updateDirectory(itsDirOp->url());
 }
 
 void CKCmFontInst::setUpAct()
@@ -797,6 +837,8 @@ void CKCmFontInst::enableItems(bool enable)
         }
 
         CRenameJob *job = new CRenameJob(renameList, true);
+        connect(job, SIGNAL(result(KIO::Job *)), this, SLOT(jobResult(KIO::Job *)));
+        job->setWindow(this);
         job->setAutoErrorHandlingEnabled(true, this);
     }
 }
@@ -824,6 +866,8 @@ void CKCmFontInst::addFonts(const KURL::List &src, const KURL &dest)
             }
 
         KIO::CopyJob *job=KIO::copy(copy, dest, true);
+        connect(job, SIGNAL(result(KIO::Job *)), this, SLOT(jobResult(KIO::Job *)));
+        job->setWindow(this);
         job->setAutoErrorHandlingEnabled(true, this);
     }
 }

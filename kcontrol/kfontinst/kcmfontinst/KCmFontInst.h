@@ -36,6 +36,7 @@
 #include <qstringlist.h>
 #include <kurl.h>
 #include <kconfig.h>
+#include <kio/job.h>
 
 class KDirOperator;
 class KAction;
@@ -50,6 +51,7 @@ class QSplitter;
 #endif
 class KURLLabel;
 class QDropEvent;
+class KFileItem;
 
 class CKCmFontInst : public KCModule
 {
@@ -78,6 +80,7 @@ class CKCmFontInst : public KCModule
     void    loadingFinished();
     void    addFonts();
     void    removeFonts();
+    void    createFolder();
     void    enable();
     void    disable();
     void    dropped(const KFileItem *i, QDropEvent *e, const KURL::List &urls);
@@ -85,6 +88,7 @@ class CKCmFontInst : public KCModule
     void    showFace(int face);
     void    infoMessage(const QString &msg);
     void    updateInformation(int dirs, int fonts);
+    void    jobResult(KIO::Job *job);
 
     private:
 
