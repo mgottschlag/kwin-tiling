@@ -58,6 +58,13 @@
 #include "dm.h"
 #include "greet.h"
 
+#ifdef _AIX
+#define __FULL_PROTO 1
+#undef HAVE_SETEUID
+#undef HAVE_INITGROUPS
+#include <sys/id.h>
+#endif
+
 // Make the C++ compiler shut the f... up:
 extern "C" {
 	int Verify( struct display*, struct greet_info*, struct verify_info*);

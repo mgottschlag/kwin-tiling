@@ -94,7 +94,9 @@ extern int XdmcpReadHeader(XdmcpBuffer *, XdmcpHeader *);
 extern int XdmcpWriteARRAY8(XdmcpBuffer *, ARRAY8 *);
 extern int XdmcpWriteARRAYofARRAY8(XdmcpBuffer *, ARRAYofARRAY8 *);
 #ifdef XIMStringConversionRetrival
+#ifndef _AIX
 extern int XdmcpWriteCARD16(XdmcpBuffer *, CARD16);
+#endif
 #endif
 extern int XdmcpWriteHeader(XdmcpBuffer *, XdmcpHeader *);
 }
