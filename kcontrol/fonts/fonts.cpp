@@ -18,9 +18,6 @@
 #include <qgroupbox.h>
 #include <knuminput.h>
 
-// X11 headers
-#undef Bool
-#undef Unsorted
 
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -37,6 +34,13 @@
 
 #include <kdebug.h>
 #include <qpushbutton.h>
+
+#include <X11/Xlib.h>
+
+// X11 headers
+#undef Bool
+#undef Unsorted
+#undef None
 
 /**** DLL Interface ****/
 typedef KGenericFactory<KFonts, QWidget> FontFactory;
@@ -157,6 +161,20 @@ void FontUseItem::updateLabel()
 
 /**** KFonts ****/
 
+static QCString desktopConfigName()
+{
+  int desktop=0;
+  if (qt_xdisplay())
+    desktop = DefaultScreen(qt_xdisplay());
+  QCString name;
+  if (desktop == 0)
+    name = "kdesktoprc";
+  else
+    name.sprintf("kdesktop-screen-%drc", desktop);
+
+  return name;
+}
+
 KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     :   KCModule(FontFactory::instance(), parent, name),
         _changed(false)
@@ -169,7 +187,8 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     << i18n("Toolbar")        << "General"    << "toolBarFont"  << ""
     << i18n("Menu")           << "General"    << "menuFont"     << ""
     << i18n("Window title")   << "WM"         << "activeFont"   << ""
-    << i18n("Taskbar")        << "General"    << "taskbarFont"  << "";
+    << i18n("Taskbar")        << "General"    << "taskbarFont"  << ""
+    << i18n("Desktop")        << "FMSettings" << "StandardFont" << desktopConfigName();
 
   QValueList<QFont> defaultFontList;
 
@@ -187,13 +206,14 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
   f3.setPointSize(12);
   f4.setPointSize(11);
 
-  defaultFontList << f0 << f1 << f2 << f0 << f3 << f4;
+  defaultFontList << f0 << f1 << f2 << f0 << f3 << f4 << f0;
 
   QValueList<bool> fixedList;
 
   fixedList
     <<  false
     <<  true
+    <<  false
     <<  false
     <<  false
     <<  false
@@ -207,7 +227,8 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     << i18n("Used to display text beside toolbar icons.")
     << i18n("Used by menu bars and popup menus.")
     << i18n("Used by the window titlebar.")
-    << i18n("Used by the taskbar.");
+    << i18n("Used by the taskbar.")
+    << i18n("Used for desktop icons.");
 
   QVBoxLayout * layout =
     new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
