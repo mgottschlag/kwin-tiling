@@ -135,7 +135,7 @@ void KDMUsersWidget::setupPage(QWidget *)
     userbutton = new KIconLoaderButton(iconloader, this);
     userbutton->setAcceptDrops(true);
     userbutton->installEventFilter(this); // for drag and drop
-    userbutton->setIcon("default.xpm");
+    userbutton->setIcon("default.png");
     userbutton->setFixedSize(80, 80);
     connect(userbutton, SIGNAL(iconChanged(const QString&)),
             SLOT(slotUserPixChanged(const QString&)));
@@ -188,11 +188,11 @@ void KDMUsersWidget::slotUserPixChanged(const QString& )
         else
             return;
     }
-    QString userpix = locate("icon", user + ".xpm");
+    QString userpix = locate("icon", user + ".png");
     const QPixmap *p = userbutton->pixmap();
     if(!p)
         return;
-    if(!p->save(userpix, "XPM")) {
+    if(!p->save(userpix, "PNG")) {
         msg  = i18n("There was an error saving the image:\n>");
         msg += userpix;
         msg += i18n("<");
@@ -242,7 +242,7 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
         bool istmp = false;
         
         // CC: Now check for the extension
-        QString ext(".xpm .xbm");
+        QString ext(".png .xpm .xbm");
         //#ifdef HAVE_LIBGIF
         ext += " .gif";
         //#endif
@@ -354,7 +354,7 @@ void KDMUsersWidget::slotUserShowMode( int m )
 
 void KDMUsersWidget::slotUserSelected(int)
 {
-    QString default_pix(locate("data", "kdm/pics/users/default.xpm")); 
+    QString default_pix(locate("data", "kdm/pics/users/default.png")); 
     QString user_pix_dir = default_pix.left(default_pix.findRev('/')-1);
     
     QString name;
@@ -374,7 +374,7 @@ void KDMUsersWidget::slotUserSelected(int)
         // index an emmidiatly after a signal with index 0.
         // Therefore I have to use currentItem instead of the index emitted.
         lb = (QListBox*)w;
-        name = user_pix_dir + lb->text(lb->currentItem()) + ".xpm";
+        name = user_pix_dir + lb->text(lb->currentItem()) + ".png";
         QPixmap p( name );
         if(p.isNull())
             p = QPixmap(default_pix);

@@ -100,7 +100,7 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
       QPixmap p;
       if(!p.load(logopath))
       {
-        logobutton->setIcon("kdelogo.xpm");
+        logobutton->setIcon("kdelogo.png");
         //debug("Error loading %s", logopath.ascii());
       }
       else
@@ -183,13 +183,13 @@ void KDMAppearanceWidget::slotLogoPixChanged(const QString &iconstr)
 {
   // Because KIconLoaderButton only returns a relative filename
   // we gotta save the image in PIXDIR.
-  // To make it easy we save it as an XPM
+  // To make it easy we save it as an PNG
   QString msg;
-  QString pix = /*PIXDIR + */ iconstr.left(iconstr.findRev('.')) + ".xpm";
+  QString pix = /*PIXDIR + */ iconstr.left(iconstr.findRev('.')) + ".png";
   const QPixmap *p = logobutton->pixmap();
   if(!p)
     return;
-  if(!p->save(pix, "XPM"))
+  if(!p->save(pix, "PNG"))
   {
     msg  = i18n("There was an error saving the image:\n>");
     msg += pix;
@@ -239,7 +239,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
     bool istmp = false;
     
     // CC: Now check for the extension
-    QString ext(".xpm .xbm");
+    QString ext(".png .xpm .xbm");
     //#ifdef HAVE_LIBGIF
     ext += " .gif";
     //#endif
