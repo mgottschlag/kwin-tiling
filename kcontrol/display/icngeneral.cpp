@@ -181,6 +181,8 @@ void KIconConfigGeneral::read()
 	mpConfig->setGroup(*it + "Icons");
 	mSizes[i] = mpConfig->readNumEntry("Size", mpTheme->defaultSize(i));
 	mbDP[i] = mpConfig->readBoolEntry("DoublePixels");
+
+	// defaults
 	mEffects[i][0] = KIconEffect::NoEffect;
 	mEffects[i][1] = KIconEffect::NoEffect;
 	mEffects[i][2] = KIconEffect::NoEffect;
@@ -191,8 +193,8 @@ void KIconConfigGeneral::read()
 	mEffectValues[i][1] = 1.0;
 	mEffectValues[i][2] = 1.0;
 	mEffectColors[i][0] = QColor(144,128,248);
-        mEffectColors[i][1] = QColor(169,156,255);                              
-        mEffectColors[i][2] = QColor(34,202,0);
+	mEffectColors[i][1] = QColor(169,156,255);                              
+	mEffectColors[i][2] = QColor(34,202,0);
                               
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
 	{
@@ -201,22 +203,19 @@ void KIconConfigGeneral::read()
 		effect = KIconEffect::ToGray;
 	    else if (tmp == "colorize")
 		effect = KIconEffect::Colorize;
-	    else if (tmp == "colorize")
-		effect = KIconEffect::ToGamma;
 	    else if (tmp == "togamma")
+		effect = KIconEffect::ToGamma;
+	    else if (tmp == "desaturate")
 		effect = KIconEffect::DeSaturate;
 	    else if (tmp == "none")
 		effect = KIconEffect::NoEffect;
-	    else
-		continue;
+	    else continue;
 	    mEffects[i][j] = effect;
 	    mEffectValues[i][j] = mpConfig->readDoubleNumEntry(*it2 + "Value");
-            mEffectColors[i][j] = mpConfig->readColorEntry(*it2 + "Color");
+	    mEffectColors[i][j] = mpConfig->readColorEntry(*it2 + "Color");
 	    mEffectTrans[i][j] = mpConfig->readBoolEntry(*it2 + "SemiTransparent");
 	}
     }
-
-    mpConfig->setGroup("Icon Labels");
 }
 
 void KIconConfigGeneral::apply()
@@ -232,9 +231,10 @@ void KIconConfigGeneral::apply()
     case KIconEffect::ToGamma:
     case KIconEffect::ToGray:
 	mpESetupBut -> setEnabled(true);
-    break;
+	break;
     default:
         mpESetupBut -> setEnabled(false);
+	break;
     }
 
 
@@ -330,9 +330,7 @@ void KIconConfigGeneral::save()
 
     emit changed(false);
 
-    // Send two KIPC messages. This way repainting is easier to implement in
-    // clients. On the first message, all icons are updated, while on the
-    // second one, the view is repainted.
+    // Emit KIPC change message.
     for (int i=0; i<KIcon::LastGroup; i++)
     {
 	if (mbChanged[i])
@@ -341,7 +339,6 @@ void KIconConfigGeneral::save()
 	    mbChanged[i] = false;   
 	}
     }
-    KIPC::sendMessageAll(KIPC::IconChanged, KIcon::LastGroup);
 }
 
 void KIconConfigGeneral::defaults()
@@ -363,7 +360,6 @@ void KIconConfigGeneral::defaults()
 	mEffectColors[i][0] = QColor(144,128,248);
         mEffectColors[i][1] = QColor(169,156,255);                              
         mEffectColors[i][2] = QColor(34,202,0);
-
     }
     apply();
     preview();
@@ -397,7 +393,7 @@ void KIconConfigGeneral::slotEffectSetup()
     int t;
     t = mEffects[mUsage][mState];
     
-    KIconEffectSetupDialog dlg(r,s,t);                                                                 
+    KIconEffectSetupDialog dlg(r,s,t);
     connect(&dlg, SIGNAL(changeView(float &)), SLOT(slotPreview(float &)));
 
     if (dlg.exec() == QDialog::Accepted) 
@@ -405,7 +401,7 @@ void KIconConfigGeneral::slotEffectSetup()
         mEffectColors[mUsage][mState] = dlg.fxcolor();
         mEffectValues[mUsage][mState] = dlg.fxvalue();
         emit changed(true);
-        mbChanged[mUsage] = true;                                                   
+        mbChanged[mUsage] = true;
     }                                                                           
     preview();
 }
@@ -420,9 +416,10 @@ void KIconConfigGeneral::slotState(int index)
     case KIconEffect::ToGamma:
     case KIconEffect::ToGray:
 	mpESetupBut -> setEnabled(true);
-    break;
+	break;
     default:
         mpESetupBut -> setEnabled(false);
+	break;
     }
     mpEffectBox->setCurrentItem(mEffects[mUsage][mState]);
     mpSTCheck->setChecked(mEffectTrans[mUsage][mState]);
@@ -439,11 +436,11 @@ void KIconConfigGeneral::slotEffect(int index)
     case KIconEffect::DeSaturate:
     case KIconEffect::ToGamma:
     case KIconEffect::ToGray:
-
 	mpESetupBut -> setEnabled(true);
-    break;
+	break;
     default:
         mpESetupBut -> setEnabled(false);
+	break;
     }
 
     preview();
@@ -476,8 +473,9 @@ void KIconConfigGeneral::slotDPCheck(bool check)
     mbChanged[mUsage] = true;
 }
 
-KIconEffectSetupDialog::KIconEffectSetupDialog(QColor ecolor, float m_pEfValue, int m_pEfTyp,
-	QWidget *parent, char *name): QDialog(parent, name, true)  
+KIconEffectSetupDialog::KIconEffectSetupDialog(QColor ecolor, float m_pEfValue, 
+	int m_pEfTyp, QWidget *parent, char *name)
+    : QDialog(parent, name, true)  
 {
     QPushButton *pbut;
     QLabel *lbl;
@@ -487,24 +485,25 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(QColor ecolor, float m_pEfValue, 
 
     QVBoxLayout*top = new QVBoxLayout(this);
     top->setSpacing(10);
-    top->setMargin(10);                                                         
+    top->setMargin(10);
 
     QFrame *frame = new QFrame(this);
     frame->setFrameStyle(QFrame::WinPanel|QFrame::Raised);
-    top->addWidget(frame);                                                      
+    top->addWidget(frame);
 
     QGridLayout *grid = new QGridLayout(frame, 2, 1, 10, 10);
     grid->setSpacing(10);
-    grid->setMargin(10);                                                        
+    grid->setMargin(10);
 
     if (m_pEfTyp == KIconEffect::Colorize)
     {
-    lbl = new QLabel(i18n("Color"), frame);                                                                                           
-    grid->addWidget(lbl, 0, 0);                                                                                                      
-    mpEColButton = new KColorButton(frame);
-    connect(mpEColButton, SIGNAL(changed(const QColor &)), SLOT(slotEffectColor(const QColor &)));
-    grid->addWidget(mpEColButton, 0, 1);                                                                                           
-    mpEColButton->setColor(m_pEfColor);                                               
+	lbl = new QLabel(i18n("Color"), frame);
+	grid->addWidget(lbl, 0, 0);
+	mpEColButton = new KColorButton(frame);
+	connect(mpEColButton, SIGNAL(changed(const QColor &)), 
+		SLOT(slotEffectColor(const QColor &)));
+	grid->addWidget(mpEColButton, 0, 1);
+	mpEColButton->setColor(m_pEfColor);                                               
     }
 
     lbl = new QLabel(i18n("Amount"), frame);                            
