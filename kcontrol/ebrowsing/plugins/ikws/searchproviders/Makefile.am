@@ -1,7 +1,7 @@
 
 services_DATA =	acronym.desktop alltheweb.desktop altavista.desktop \
 		austronaut.desktop bugft.desktop bugno.desktop call.desktop \
-		cpan.desktop ctan.desktop ctan_cat.desktop deja.desktop \
+		cpan.desktop ctan.desktop ctan_cat.desktop google_groups.desktop \
 		dmoz.desktop excite.desktop foldoc.desktop freshmeat.desktop \
 		google.desktop google_advanced.desktop google_images.desktop \
 		google_lucky.desktop hotbot.desktop jeeves.desktop \
