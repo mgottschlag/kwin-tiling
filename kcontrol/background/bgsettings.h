@@ -90,23 +90,23 @@ public:
     KBackgroundProgram(QString name=QString::null);
     ~KBackgroundProgram();
 
-    QString name() { return m_Name; }
-    void load(QString name);
+    QString name()const { return m_Name; }
+    void load(const QString & name);
 
-    void setComment(QString comment);
-    QString comment() { return m_Comment; }
+    void setComment(const QString &comment);
+    QString comment()const { return m_Comment; }
 
-    void setCommand(QString command);
-    QString command() { return m_Command; }
+    void setCommand(const QString &command);
+    QString command()const { return m_Command; }
 
-    void setPreviewCommand(QString command);
-    QString previewCommand() { return m_PreviewCommand; }
+    void setPreviewCommand(const QString &command);
+    QString previewCommand()const { return m_PreviewCommand; }
 
     void setRefresh(int refresh);
-    int refresh() { return m_Refresh; }
+    int refresh()const { return m_Refresh; }
 
-    void setExecutable(QString executable);
-    QString executable() { return m_Executable; }
+    void setExecutable(const QString &executable);
+    QString executable()const { return m_Executable; }
 
     void readSettings();
     void writeSettings();
@@ -117,7 +117,7 @@ public:
     int hash();
 
     bool isAvailable();
-    bool isGlobal() { return m_bReadOnly; }
+    bool isGlobal()const { return m_bReadOnly; }
     bool remove();
 
     static QStringList list();
@@ -169,9 +169,9 @@ public:
     int backgroundMode() const { return m_BackgroundMode; }
 
     enum BlendMode {
-        NoBlending, 
+        NoBlending,
 	HorizontalBlending, VerticalBlending, PyramidBlending,
-	PipeCrossBlending, EllipticBlending, 
+	PipeCrossBlending, EllipticBlending,
 	IntensityBlending, SaturateBlending, ContrastBlending,
 	HueShiftBlending, lastBlendMode
     };
@@ -205,14 +205,14 @@ public:
     };
     void setMultiWallpaperMode(int mode);
     int multiWallpaperMode() const { return m_MultiMode; }
-    
+
     enum MinOptDepth {
         AlwaysOpt, Opt16bpp, Opt15bpp, NeverOpt };
-        
+
     void setMinOptimizationDepth( int mode );
     int minOptimizationDepth() const { return m_MinOptimizationDepth; }
     bool optimize() const;
-    
+
     void setUseShm( bool use );
     bool useShm() const { return m_bShm; }
 

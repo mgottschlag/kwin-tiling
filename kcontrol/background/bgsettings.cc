@@ -142,7 +142,7 @@ void KBackgroundPattern::writeSettings()
 
     if ( !m_pConfig )
         return; // better safe than sorry
-    
+
     m_pConfig->writeEntry("File", m_Pattern);
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->sync();
@@ -254,7 +254,7 @@ void KBackgroundProgram::init(bool force_rw)
 }
 
 
-void KBackgroundProgram::load(QString name)
+void KBackgroundProgram::load(const QString &name)
 {
     m_Name = name;
     init();
@@ -262,7 +262,7 @@ void KBackgroundProgram::load(QString name)
 }
 
 
-void KBackgroundProgram::setComment(QString comment)
+void KBackgroundProgram::setComment(const QString &comment)
 {
     if (m_Comment == comment)
         return;
@@ -271,7 +271,7 @@ void KBackgroundProgram::setComment(QString comment)
 }
 
 
-void KBackgroundProgram::setExecutable(QString executable)
+void KBackgroundProgram::setExecutable(const QString &executable)
 {
     if (m_Executable == executable)
         return;
@@ -280,7 +280,7 @@ void KBackgroundProgram::setExecutable(QString executable)
 }
 
 
-void KBackgroundProgram::setCommand(QString command)
+void KBackgroundProgram::setCommand(const QString &command)
 {
     if (m_Command == command)
         return;
@@ -289,7 +289,7 @@ void KBackgroundProgram::setCommand(QString command)
 }
 
 
-void KBackgroundProgram::setPreviewCommand(QString command)
+void KBackgroundProgram::setPreviewCommand(const QString &command)
 {
     if (m_PreviewCommand == command)
         return;
@@ -329,7 +329,7 @@ void KBackgroundProgram::writeSettings()
 
     if ( !m_pConfig )
         return; // better safe than sorry
-    
+
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->writeEntry("Executable", m_Executable);
     m_pConfig->writeEntry("Command", m_Command);

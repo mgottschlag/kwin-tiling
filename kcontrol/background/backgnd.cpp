@@ -387,16 +387,40 @@ void Backgnd::init()
     // Desktop names
     for (i=0; i<m_Max; i++)
         m_pDeskList->insertItem(m_pGlobals->deskName(i));
-
+    i = 0;
     // Background modes: make sure these match with kdesktop/bgrender.cc !!
     m_pBackgroundBox->insertItem(i18n("Simple Color", "Flat"));
+    m_backGroundType[0]=i;
+    i++;
     m_pBackgroundBox->insertItem(i18n("Pattern"));
-    m_pBackgroundBox->insertItem(i18n("Background Program"));
+    m_backGroundType[1]=i;
+    i++;
+    if( m_multidesktop )
+    {
+        m_pBackgroundBox->insertItem(i18n("Background Program"));
+        m_backGroundType[2]=i;
+        i++;
+    }
+    else
+    {
+        m_backGroundType[2]=0;
+    }
     m_pBackgroundBox->insertItem(i18n("Horizontal Gradient"));
+    m_backGroundType[3]=i;
+    i++;
     m_pBackgroundBox->insertItem(i18n("Vertical Gradient"));
+    m_backGroundType[4]=i;
+    i++;
     m_pBackgroundBox->insertItem(i18n("Pyramid Gradient"));
+    m_backGroundType[5]=i;
+    i++;
+
     m_pBackgroundBox->insertItem(i18n("Pipecross Gradient"));
+    m_backGroundType[6]=i;
+    i++;
+
     m_pBackgroundBox->insertItem(i18n("Elliptic Gradient"));
+    m_backGroundType[7]=i;
 
     // Blend modes: make sure these match with kdesktop/bgrender.cc !!
     m_pBlendBox->insertItem(i18n("No Blending"));
@@ -445,7 +469,7 @@ void Backgnd::apply()
     }
 
     // Background mode
-    m_pBackgroundBox->setCurrentItem(r->backgroundMode());
+    m_pBackgroundBox->setCurrentItem(m_backGroundType[r->backgroundMode()]);
     m_pColor1But->setColor(r->colorA());
     m_pColor2But->setColor(r->colorB());
     switch (r->backgroundMode()) {
@@ -631,13 +655,23 @@ void Backgnd::slotCommonDesk(bool common)
  */
 void Backgnd::slotBGMode(int mode)
 {
+    int realMode=0;
     KBackgroundRenderer *r = m_Renderer[m_eDesk];
+    QMap<int,int>::Iterator it;
+    for ( it = m_backGroundType.begin(); it != m_backGroundType.end(); ++it )
+    {
+        if( it.data()==mode)
+        {
+            realMode = it.key();
+            break;
+        }
+    }
 
-    if (mode == r->backgroundMode())
+    if (realMode == r->backgroundMode())
         return;
 
     r->stop();
-    r->setBackgroundMode(mode);
+    r->setBackgroundMode(realMode);
     apply();
     emit changed(true);
 }

@@ -121,7 +121,8 @@ private:
     QWidget *m_pTab1, *m_pTab2, *m_pTab3, *m_pTab4;
     QSpinBox *m_pCacheBox;
     QMap<QString,int> m_Wallpaper;
-
+    //QMap< index of enum, index of combobox>
+    QMap<int,int> m_backGroundType;
     QPtrVector<KBackgroundRenderer> m_Renderer;
     KGlobalBackgroundSettings *m_pGlobals;
     KColorButton *m_pColor1But, *m_pColor2But;
