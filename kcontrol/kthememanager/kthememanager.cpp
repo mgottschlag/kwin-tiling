@@ -22,6 +22,7 @@
 #include <qtooltip.h>
 #include <qtoolbutton.h>
 
+#include <kapplication.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kdialog.h>
@@ -90,6 +91,19 @@ void kthememanager::init()
 void kthememanager::load()
 {
     listThemes();
+
+    // Load the current theme name
+    KConfig conf("kcmthememanagerrc", false, false);
+    conf.setGroup( "General" );
+    QString themeName = conf.readEntry( "CurrentTheme" );
+    QListViewItem * cur =  dlg->lvThemes->findItem( themeName, 0 );
+    if ( cur )
+    {
+        //dlg->lvThemes->setCurrentItem( cur );
+        dlg->lvThemes->setSelected( cur, true );
+        dlg->lvThemes->ensureItemVisible( cur );
+        slotThemeChanged( cur );
+    }
 }
 
 void kthememanager::defaults()
@@ -110,6 +124,12 @@ void kthememanager::save()
         m_theme = new KTheme( KGlobal::dirs()->saveLocation( "themes", themeName + "/" )
                               + themeName + ".xml" );
         m_theme->apply();
+
+        // Save the current theme name
+        KConfig conf("kcmthememanagerrc", false, false);
+        conf.setGroup( "General" );
+        conf.writeEntry( "CurrentTheme", themeName );
+        conf.sync();
 
         delete m_theme;
         m_theme = 0;

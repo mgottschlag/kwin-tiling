@@ -5,6 +5,7 @@ Version 0.3
 - support for widget styles (or the name thereof)
 - added new details buttons to launch idividual kcm style-related
   modules
+- write/read the current theme and preselect it at startup
 
 Version 0.2
 ===========

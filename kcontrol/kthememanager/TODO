@@ -1,4 +1,3 @@
-- write/read the current theme and preselect it at startup
 - custom pixmap kwin themes (requires kwmtheme to be ported first)
 - write user and theme developer documentation
 
