@@ -221,11 +221,14 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     Task* t = findTask( w );
     if (!t) return;
 
-    t->refresh();
+    //kdDebug() << "TaskManager::windowChanged " << w << " " << dirty << endl;
+
 
     // refresh icon pixmap if necessary
     if (dirty & NET::WMIcon)
         t->refresh(true);
+    else
+        t->refresh();
 
     if(dirty & (NET::WMDesktop|NET::WMState))
         emit windowDesktopChanged(w); // moved to different desktop or is on all
@@ -369,7 +372,7 @@ void Task::refresh(bool icon)
 void Task::setActive(bool a)
 {
     _active = a;
-    refresh();
+    emit changed();
 }
 
 bool Task::maximized() const
