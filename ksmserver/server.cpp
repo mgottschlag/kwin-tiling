@@ -774,7 +774,7 @@ KSMClient* KSMServer::newClient( SmsConn conn )
 
 void KSMServer::deleteClient( KSMClient* client )
 {
-    if ( !clients.findRef( client ) )
+    if ( clients.findRef( client ) == -1 )
 	return;
     clients.removeRef( client );
     if ( client == clientInteracting ) {
@@ -951,6 +951,7 @@ void KSMServer::discardSession()
 
 void KSMServer::storeSesssion()
 {
+    qDebug("KSMServer::storeSesssion");
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
     int count =  0;
