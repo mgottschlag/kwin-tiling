@@ -14,6 +14,10 @@
 #include <qtooltip.h>
 #include <qcheckbox.h>
 #include <qsettings.h>
+#include <qlineedit.h>
+#include <qcombobox.h>
+#include <qgroupbox.h>
+#include <qvalidator.h>
 
 // X11 headers
 #undef Bool
@@ -155,7 +159,8 @@ void FontUseItem::updateLabel()
 
 KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     :   KCModule(FontFactory::instance(), parent, name),
-        _changed(false)
+        _changed(false),
+        xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType)
 {
   QStringList nameGroupKeyRc;
 
@@ -275,14 +280,62 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    lay->addWidget( fontAdjustButton );
    connect(fontAdjustButton, SIGNAL(clicked()), this, SLOT(slotApplyFontDiff()));
 
-   cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ),this);
+   QGroupBox   *aaBox=new QGroupBox(i18n("Anti-Alias"), this);
+   QGridLayout *aaLayout=new QGridLayout(aaBox, 3, 6, 11, 6);
+
+   cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ), aaBox);
 
    QWhatsThis::add(cbAA,
      i18n(
        "If this option is selected, KDE will smooth the edges of curves in "
 			 "fonts and some images."));
 
-   layout->addWidget(cbAA);
+
+   aaExcludeRange=new QCheckBox(i18n("Exclude range:"), aaBox),
+   aaUseSubPixel=new QCheckBox(i18n("Use sub-pixel hinting:"), aaBox);
+   aaExcludeFrom=new QLineEdit(aaBox),
+   aaExcludeTo=new QLineEdit(aaBox);
+   aaSubPixelType=new QComboBox(false, aaBox);
+
+   aaExcludeFrom->setValidator(new QDoubleValidator(aaExcludeFrom));
+   aaExcludeTo->setValidator(new QDoubleValidator(aaExcludeTo));
+
+   for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
+     aaSubPixelType->insertItem(KXftConfig::toStr((KXftConfig::SubPixel::Type)t));
+
+   aaLayout->addMultiCellWidget(cbAA, 0, 0, 0, 4);
+   aaLayout->addItem(new QSpacerItem(16, 16, QSizePolicy::Minimum,
+                                               QSizePolicy::Fixed), 
+                       1, 0);
+   aaLayout->addWidget(aaExcludeRange, 1, 1);
+   aaLayout->addWidget(aaExcludeFrom, 1, 2);
+   aaLayout->addWidget(new QLabel(i18n("pt, to"), aaBox), 1, 3);
+   aaLayout->addWidget(aaExcludeTo, 1, 4);
+   aaLayout->addWidget(new QLabel(i18n("pt"), aaBox), 1, 5);
+   aaLayout->addItem(new QSpacerItem(16, 16, QSizePolicy::Minimum,
+                                               QSizePolicy::Fixed),
+                       2, 0);
+   aaLayout->addWidget(aaUseSubPixel, 2, 1);
+   aaLayout->addMultiCellWidget(aaSubPixelType, 2, 2, 2, 5);
+
+   setAaWidgets();
+ 
+   connect(aaExcludeRange, SIGNAL(toggled(bool)),
+           aaExcludeFrom, SLOT(setEnabled(bool)));
+   connect(aaExcludeRange, SIGNAL(toggled(bool)),
+           aaExcludeTo, SLOT(setEnabled(bool)));
+   connect(aaUseSubPixel, SIGNAL(toggled(bool)),
+           aaSubPixelType, SLOT(setEnabled(bool)));
+   connect(aaExcludeRange, SIGNAL(toggled(bool)),
+           this, SLOT(slotAaToggle(bool)));
+   connect(aaUseSubPixel, SIGNAL(toggled(bool)),
+           this, SLOT(slotAaToggle(bool)));
+   connect(aaExcludeFrom, SIGNAL(textChanged(const QString &)),
+           this, SLOT(slotAaStrChange(const QString &)));
+   connect(aaSubPixelType, SIGNAL(activated(const QString &)),
+           this, SLOT(slotAaStrChange(const QString &)));
+
+   layout->addWidget(aaBox);
 
    layout->addStretch(1);
 
@@ -314,6 +367,11 @@ void KFonts::defaults()
   useAA = false;
   cbAA->setChecked(useAA);
 
+  aaExcludeRange->setChecked(true);
+  aaExcludeFrom->setText("8.0");
+  aaExcludeTo->setText("15.0");
+  aaUseSubPixel->setChecked(false);
+
   _changed = true;
   emit changed(true);
 }
@@ -341,6 +399,8 @@ void KFonts::load()
   useAA_original = useAA;
   kdDebug() << "AA:" << useAA << endl;
   cbAA->setChecked(useAA);
+
+  setAaWidgets();
 
   _changed = true;
   emit changed(false);
@@ -371,10 +431,22 @@ void KFonts::save()
 
   KIPC::sendMessageAll(KIPC::FontChanged);
 
-  if(useAA != useAA_original) {
+  if(aaExcludeRange->isChecked())
+      xft.setExcludeRange(aaExcludeFrom->text().toDouble(),
+                          aaExcludeTo->text().toDouble());
+  else
+      xft.setExcludeRange(0, 0);
+
+  if(aaUseSubPixel->isChecked())
+      xft.setSubPixelType(getAaSubPixelType());
+  else
+      xft.setSubPixelType(KXftConfig::SubPixel::None);
+  if((useAA != useAA_original) || xft.changed()) {
     KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change will only affect newly started applications."), i18n("Anti-Aliasing Settings Changed"), "AAsettingsChanged", false);
     useAA_original = useAA;
   }
+
+  xft.apply();
   _changed = false;
   emit changed(false);
 }
@@ -404,6 +476,84 @@ void KFonts::slotUseAntiAliasing()
     useAA = cbAA->isChecked();
     _changed = true;
     emit changed(true);
+}
+
+void KFonts::slotAaToggle(bool)
+{
+    _changed = true;
+    emit changed(true);
+}
+
+void KFonts::slotAaStrChange(const QString &)
+{
+    _changed = true;
+    emit changed(true);
+}
+
+void KFonts::setAaWidgets()
+{
+   double aaFrom, aaTo;
+
+   if(xft.getExcludeRange(aaFrom, aaTo))
+       aaExcludeRange->setChecked(true);
+   else
+   {
+       aaExcludeRange->setChecked(false);
+       aaFrom=8.0;
+       aaTo=15.0;
+   }
+
+   aaExcludeFrom->setEnabled(aaExcludeRange->isChecked());
+   aaExcludeTo->setEnabled(aaExcludeRange->isChecked());
+
+   QString aaStr;
+
+   aaExcludeFrom->setText(aaStr.setNum(aaFrom));
+   aaExcludeTo->setText(aaStr.setNum(aaTo));
+
+   KXftConfig::SubPixel::Type aaSpType;
+
+   if(!xft.getSubPixelType(aaSpType) || KXftConfig::SubPixel::None==aaSpType)
+       aaUseSubPixel->setChecked(false);
+   else
+   {
+       int idx=getIndex(aaSpType);
+
+       if(idx>-1)
+       {
+           aaUseSubPixel->setChecked(true);
+           aaSubPixelType->setCurrentItem(idx);
+       }
+       else
+           aaUseSubPixel->setChecked(false);
+   }
+   aaSubPixelType->setEnabled(aaUseSubPixel->isChecked());
+}
+
+int KFonts::getIndex(KXftConfig::SubPixel::Type aaSpType)
+{
+    int pos=-1;
+    int index;
+
+    for(index=0; index<aaSubPixelType->count(); ++index)
+        if(aaSubPixelType->text(index)==KXftConfig::toStr(aaSpType))
+        {
+            pos=index;
+            break;
+        }
+
+    return pos;
+}
+
+KXftConfig::SubPixel::Type KFonts::getAaSubPixelType()
+{
+    int t;
+
+    for(t=KXftConfig::SubPixel::None; t<=KXftConfig::SubPixel::Vbgr; ++t)
+        if(aaSubPixelType->currentText()==KXftConfig::toStr((KXftConfig::SubPixel::Type)t))
+            return (KXftConfig::SubPixel::Type)t;
+
+    return KXftConfig::SubPixel::None;
 }
 
 // vim:ts=2:sw=2:tw=78

@@ -11,8 +11,11 @@
 #include <qobject.h>
 #include <kfontdialog.h>
 #include <kcmodule.h>
+#include "kxftconfig.h"
 
 class QCheckBox;
+class QComboBox;
+class QLineEdit;
 
 class FontUseItem : public QObject
 {
@@ -81,12 +84,25 @@ protected slots:
     void fontChanged();
     void slotApplyFontDiff(); 
     void slotUseAntiAliasing();
+    void slotAaToggle(bool);
+    void slotAaStrChange(const QString &);
+
+private:
+    void setAaWidgets();
+    int getIndex(KXftConfig::SubPixel::Type aaSpType);
+    KXftConfig::SubPixel::Type getAaSubPixelType();
 
 private:
     bool _changed;
     bool useAA, useAA_original;
     QCheckBox *cbAA;
     QPtrList <FontUseItem> fontUseList;
+    KXftConfig xft;
+    QCheckBox *aaExcludeRange;
+    QCheckBox *aaUseSubPixel;
+    QLineEdit *aaExcludeFrom;
+    QLineEdit *aaExcludeTo;
+    QComboBox *aaSubPixelType;
 };
 
 #endif
