@@ -313,7 +313,7 @@ CONF_CORE_GLOBAL_DECLS
 void BecomeDaemon (void);
 
 /* in dm.c */
-char *prog, *progpath;
+extern char *prog, *progpath;
 void StartDisplay (struct display *d);
 void StartDisplayP2 (struct display *d);
 void StopDisplay (struct display *d);
