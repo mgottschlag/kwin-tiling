@@ -255,16 +255,20 @@ void ConfigModuleList::readDesktopEntries()
   readDesktopEntriesRecursive( KCGlobal::baseGroup() );
 }
 
-void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
+bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
 {
-  Menu *menu = new Menu;
-  subMenus.insert(path, menu);
 
   KServiceGroup::Ptr group = KServiceGroup::group(path);
 
-  if (!group || !group->isValid()) return;
+  if (!group || !group->isValid()) return false;
 
   KServiceGroup::List list = group->entries(true, true);
+
+  if( list.isEmpty() )
+	  return false;
+
+  Menu *menu = new Menu;
+  subMenus.insert(path, menu);
 
   for( KServiceGroup::List::ConstIterator it = list.begin();
        it != list.end(); it++)
@@ -286,12 +290,12 @@ void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
         append(module);
         menu->modules.append(module);
      }
-     else if (p->isType(KST_KServiceGroup))
-     {
-        readDesktopEntriesRecursive(p->entryPath());
-        menu->submenus.append(p->entryPath());
-     }
+     else if (p->isType(KST_KServiceGroup) && 
+		     readDesktopEntriesRecursive(p->entryPath()) )
+        	menu->submenus.append(p->entryPath());
+
   }
+  return true;
 }
 
 QPtrList<ConfigModule> ConfigModuleList::modules(const QString &path)

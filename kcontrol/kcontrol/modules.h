@@ -89,7 +89,7 @@ public:
   ConfigModuleList();
 
   void readDesktopEntries();
-  void readDesktopEntriesRecursive(const QString &path);
+  bool readDesktopEntriesRecursive(const QString &path);
 
   /**
    * Returns all submenus of the submenu identified by path
