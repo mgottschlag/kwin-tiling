@@ -17,6 +17,7 @@
    Boston, MA 02111-1307, USA.
 */
 
+#include "kxftconfig.h"
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
@@ -26,8 +27,9 @@
 #include <qfileinfo.h>
 #ifdef HAVE_FONTCONFIG
 #include <stdarg.h>
+#include <stdio.h>
+#include <fontconfig/fontconfig.h>
 #endif
-#include "kxftconfig.h"
 
 using namespace std;
 
@@ -386,48 +388,73 @@ bool KXftConfig::apply()
 
     if(m_madeChanges)
     {
+#ifdef HAVE_FONTCONFIG
+        FcAtomic *atomic=FcAtomicCreate((const unsigned char *)((const char *)(QFile::encodeName(m_file))));
+
+        ok=false;
+        if(atomic)
+        {
+            if(FcAtomicLock(atomic))
+            {
+                FILE *f=fopen((char *)FcAtomicNewFile(atomic), "w");
+
+                if(f)
+                {
+                    if(m_required&Dirs)
+                    {
+                        applyDirs();
+                        removeItems(m_dirs);
+                    }
+                    if(m_required&SymbolFamilies)
+                    {
+                        applySymbolFamilies();
+                        removeItems(m_symbolFamilies);
+                    }
+                    if(m_required&SubPixelType)
+                        applySubPixelType();
+                    if(m_required&ExcludeRange)
+                        applyExcludeRange();
+
+                    //
+                    // Check document syntax...
+                    static const char * qtXmlHeader   = "<?xml version = '1.0'?>";
+                    static const char * xmlHeader     = "<?xml version=\"1.0\"?>";
+                    static const char * qtDocTypeLine = "<!DOCTYPE fontconfig>";
+                    static const char * docTypeLine   = "<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">";
+
+                    QString str(m_doc.toString());
+                    int     idx;
+
+                    if(0!=str.find("<?xml"))
+                        str.insert(0, xmlHeader);
+                    else if(0==str.find(qtXmlHeader))
+                        str.replace(0, strlen(qtXmlHeader), xmlHeader);
+
+                    if(-1!=(idx=str.find(qtDocTypeLine)))
+                        str.replace(idx, strlen(qtDocTypeLine), docTypeLine);
+
+                    //
+                    // Write to file...
+                    fprintf(f, str.utf8());
+                    fclose(f);
+
+                    if(FcAtomicReplaceOrig(atomic))
+                    {
+                        ok=true;
+                        reset(); // Re-read contents..
+                    }
+                    else
+                        FcAtomicDeleteNew(atomic);
+                }
+                FcAtomicUnlock(atomic);
+            }
+            FcAtomicDestroy(atomic);
+        }
+#else
         ofstream f(QFile::encodeName(m_file));
 
         if(f)
         {
-#ifdef HAVE_FONTCONFIG
-            if(m_required&Dirs)
-            {
-                applyDirs();
-                removeItems(m_dirs);
-            }
-            if(m_required&SymbolFamilies)
-            {
-                applySymbolFamilies();
-                removeItems(m_symbolFamilies);
-            }
-            if(m_required&SubPixelType)
-                applySubPixelType();
-            if(m_required&ExcludeRange)
-                applyExcludeRange();
-
-            //
-            // Check document syntax...
-            static const char * qtXmlHeader   = "<?xml version = '1.0'?>";
-            static const char * xmlHeader     = "<?xml version=\"1.0\"?>";
-            static const char * qtDocTypeLine = "<!DOCTYPE fontconfig>";
-            static const char * docTypeLine   = "<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">";
-
-            QString str(m_doc.toString());
-            int     idx;
-
-            if(0!=str.find("<?xml"))
-                str.insert(0, xmlHeader);
-            else if(0==str.find(qtXmlHeader))
-                str.replace(0, strlen(qtXmlHeader), xmlHeader);
-
-            if(-1!=(idx=str.find(qtDocTypeLine)))
-                str.replace(idx, strlen(qtDocTypeLine), docTypeLine);
-
-            //
-            // Write to file...
-            f << str.utf8();
-#else
             ListItem *ldi=m_required&Dirs ? getLastItem(m_dirs) : NULL,
                      *lfi=m_required&SymbolFamilies ? getLastItem(m_symbolFamilies) : NULL;
             char     *pos=m_data;
@@ -506,12 +533,12 @@ bool KXftConfig::apply()
             outputNewSymbolFamilies(f);
             outputSubPixelType(f, true);
             outputExcludeRange(f, true);
-#endif
             f.close();
             reset(); // Re-read contents...
         }
         else
             ok=false;
+#endif
     }
 
     return ok;
