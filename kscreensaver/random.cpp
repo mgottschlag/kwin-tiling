@@ -101,39 +101,44 @@ int main(int argc, char *argv[])
 
 	QStringList saverFileList;
 
+	KConfig type("krandom.kssrc");
+	type.setGroup("Settings");
+	bool opengl = type.readBoolEntry("OpenGL");
+	bool manipulatescreen = type.readBoolEntry("ManipulateScreen"); 
+
 	for (uint i = 0; i < tempSaverFileList.count(); i++)
 	{
+		kdDebug() << "Looking at " << tempSaverFileList[i] << endl;
 		KDesktopFile saver(tempSaverFileList[i], true);
 		if (saver.readEntry("X-KDE-Type").utf8())
 		{
-			QString type = saver.readEntry("X-KDE-Type").utf8();
-			if (type.isEmpty()) // no X-KDE-Type defined so must be OK
+			kdDebug() << "read X-KDE-Type" << endl;
+			QString saverType = saver.readEntry("X-KDE-Type").utf8();
+			if (saverType.isEmpty()) // no X-KDE-Type defined so must be OK
 			{
-				kdDebug() << "No X-KDE-Type" << endl;
 				saverFileList.append(tempSaverFileList[i]);
 			}
 			else
 			{
-				KConfig config("krandom.kssrc");
-				config.setGroup("Settings");
-				QStringList types = QStringList::split(";", type);
-				bool added = false;
-				for (uint i = 0; i < types.count(); i++)
+				QStringList saverTypes = QStringList::split(";", saverType);
+				for (uint i = 0; i < saverTypes.count(); i++)
 				{
-					kdDebug() << "checking for " << types << endl;
-					if (config.readBoolEntry("OpenGL") && types[i] == "OpenGL")
+					kdDebug() << "saverTypes is "<< saverTypes[i] << endl;
+					if (saverTypes[i] == "ManipulateScreen")
 					{
-						kdDebug() << "appending OpenGL" << endl;
-						saverFileList.append(tempSaverFileList[i]);
-						added = true;
-
+						if (manipulatescreen)
+						{
+							saverFileList.append(tempSaverFileList[i]);
+						}
 					}
-					if (config.readBoolEntry("ManipulateScreen") && types[i] == "ManipulateScreen" && added == false)
+					else
+					if (saverTypes[i] == "OpenGL")
 					{
-						kdDebug() << "appending manipulate" << endl;
-						saverFileList.append(tempSaverFileList[i]);
+						if (opengl)
+						{
+							saverFileList.append(tempSaverFileList[i]);
+						}
 					}
-					added = false;
 				}
 			}
 
