@@ -73,10 +73,7 @@ extern Time_t time ();
 #define Time_t time_t
 #endif
 
-/* If XDMCP symbol defined, compile to run XDMCP protocol */
-
-#if defined(HAVE_X11_XDMCP_H)
-#define XDMCP
+#ifdef XDMCP
 #include <X11/Xdmcp.h>
 #endif
 
@@ -128,7 +125,7 @@ typedef union wait	waitType;
 # define waitCompose(sig,core,code) ((sig) * 256 + (core) * 128 + (code))
 # define waitVal(w)	waitCompose(waitSig(w), waitCore(w), waitCode(w))
 
-typedef enum displayStatus { running, notRunning, zombie, phoenix, removed } DisplayStatus;
+typedef enum displayStatus { running, notRunning, zombie, phoenix } DisplayStatus;
 
 #ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>                /* Defines fd_set on some systems */

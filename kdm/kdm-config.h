@@ -128,4 +128,8 @@
 #define HAS_SETUSERCONTEXT
 #endif
 
+#if defined(HAVE_X11_XDMCP_H)
+# define XDMCP
+#endif
+
 #endif /* KDM_CONFIG_H */

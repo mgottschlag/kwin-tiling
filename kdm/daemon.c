@@ -154,10 +154,10 @@ BecomeDaemon (void)
 	int zero = 0;
 	(void) ioctl (i, TIOCTTY, &zero);
 #else
-#ifndef TIOCNOTTY
+# ifndef TIOCNOTTY
 /* HP/UX fix: */
-# define TIOCNOTTY  _IO('t', 113)           /* void tty association */
-#endif
+#  define TIOCNOTTY  _IO('t', 113)           /* void tty association */
+# endif
 	(void) ioctl (i, TIOCNOTTY, (char *) 0);    /* detach, BSD style */
 #endif
 #endif

@@ -448,7 +448,7 @@ ManageSession (struct display *d)
      * These version numbers are registered with The Open Group. */
     verify.version = 1;
     greet.version = 1;
-    greet_stat =(*greet_user_proc)(d, &dpy, &verify, &greet, &dlfuncs);
+    greet_stat = (*greet_user_proc)(d, &dpy, &verify, &greet, &dlfuncs);
 
 #ifndef GREET_USER_STATIC
 /*    Debug("ManageSession: unloading greeter library ...\n");
@@ -844,17 +844,17 @@ StartClient (
 		return (0);
 	    }
 	    endpwent();
+	    login_close(lc);
 	}
 	else
 	{
 	    LogError("getpwnam for \"%s\" failed, errno=%d\n", name, errno);
 	    return (0);
 	}
-	login_close(lc);
 
 	e = environ;
-	while(*e)
-	  verify->userEnviron = putEnv(*e++, verify->userEnviron);
+	while (*e)
+	    verify->userEnviron = putEnv(*e++, verify->userEnviron);
 
 #endif /* HAS_SETUSERCONTEXT */
 #else /* AIXV3 */

@@ -281,8 +281,6 @@ struct displayResource serverResources[] = {
 				"120" },
 { "startAttempts","StartAttempts",DM_INT,	boffset(startAttempts),
 				"4" },
-{ "startInterval","StartInterval",DM_INT,	boffset(startInterval),
-				"30" },
 { "pingInterval","PingInterval",DM_INT,		boffset(pingInterval),
 				"5" },
 { "pingTimeout","PingTimeout",	DM_INT,		boffset(pingTimeout),
@@ -313,6 +311,8 @@ struct displayResource serverResources[] = {
 				"0" },
 { "fifoMode",	"FifoMode",	DM_INT,		boffset(fifoMode),
 				"0" },
+{ "startInterval","StartInterval",DM_INT,	boffset(startInterval),
+				"30" },
 };
 
 # define NUM_SERVER_RESOURCES	(sizeof serverResources/\

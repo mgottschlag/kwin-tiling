@@ -193,8 +193,8 @@ static	struct dlfuncs	dlfuncs = {
 static struct greet_info	greet;
 static struct verify_info	verify;
 
-int main(int argc, char **argv) {
-
+int main(int argc, char **argv)
+{
     struct display *d;
     Display	*dpy;
     static GreetUserProc greet_user_proc = NULL;

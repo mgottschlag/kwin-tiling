@@ -63,7 +63,8 @@ ignoreErrors (Display *dpy, XErrorEvent *event)
  *
  * Sat Oct 18 07:44:56 1997 -- Steffen Hansen
  */
-static int _getprop(Display* dpy, Window w, Atom a, Atom type, long len, unsigned char **p){
+static int _getprop(Display* dpy, Window w, Atom a, Atom type, long len, unsigned char **p)
+{
   Atom real_type;
   int format;
   unsigned long n, extra;
