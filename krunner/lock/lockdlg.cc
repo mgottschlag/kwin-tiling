@@ -627,7 +627,7 @@ public:
 
 void PasswordDlg::slotSwitchUser()
 {
-    int p;
+    int p = 0;
     DM dm;
 
     QDialog dialog( this, "sessbox", true, WX11BypassWM );
@@ -655,7 +655,7 @@ void PasswordDlg::slotSwitchUser()
         lv->addColumn( i18n("Location") );
         lv->setColumnWidthMode( 0, QListView::Maximum );
         lv->setColumnWidthMode( 1, QListView::Maximum );
-        QListViewItem *itm;
+        QListViewItem *itm = 0;
         int ns = 0;
         for (SessList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
             itm = new LockListViewItem( lv,
