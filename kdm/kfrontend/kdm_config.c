@@ -1026,7 +1026,9 @@ static struct {
 static int cfgMapT[] = { GC_gGlobal, GC_gDisplay };
 static int cfgMap[] = { 0, 0 };
 
+#ifdef HAVE_PAM
 Value pamservice = { KDM_PAM_SERVICE, sizeof(KDM_PAM_SERVICE) };
+#endif
 
 int main(int argc, char **argv)
 {
@@ -1110,7 +1112,9 @@ int main(int argc, char **argv)
 		CopyValues (&va, allSects + 0, 0);
 		CopyValues (&va, allSects + 1, 0);
 		CopyValues (&va, allSects + 2, 0);
+#ifdef HAVE_PAM
 		AddValue (&va, C_PAMService, &pamservice);
+#endif
 		SendValues (&va);
 		break;
 	    case GC_gDisplay:
