@@ -154,6 +154,8 @@ KDM accepts two command line options related to logging:
     512 (0x200) - don't fork session sub-daemon, but manage one session
 	in the master daemon. not for real-world use.
 
+    Logs from "-debug 7" are usually a good start.
+
   -logfile <file>
     <file> is the file to log various messages to.
     For internal reasons there is no option in kdmrc to permanently specify
