@@ -205,7 +205,8 @@ class ListView : public KListView
 {
 public:
     ListView( ConfigDialog* configWidget, QWidget *parent, const char *name )
-	: KListView( parent, name ), _configWidget( configWidget ) {}
+	: KListView( parent, name ), _configWidget( configWidget ), 
+          _regExpEditor(0L) {}
     // QListView has a weird idea of a sizeHint...
     virtual QSize sizeHint () const {
 	int w = minimumSizeHint().width();
