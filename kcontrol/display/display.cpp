@@ -23,6 +23,7 @@
 #include <kdialog.h>
 #include <kgenericfactory.h>
 
+#include <qapplication.h>
 #include <qlayout.h>
 #include <qtabwidget.h>
 
@@ -30,13 +31,15 @@ typedef KGenericFactory<KCMDisplay, QWidget> DisplayFactory;
 K_EXPORT_COMPONENT_FACTORY ( kcm_display, DisplayFactory( "display" ) )
 
 KCMDisplay::KCMDisplay( QWidget *parent, const char *name, const QStringList& )
-    : KCModule( parent, name )
+    : KCModule( parent, name ),
+      m_randr( 0 ), m_gamma( 0 ), m_xiner( 0 )
 {
   m_tabs = new QTabWidget( this );
 
   m_randr = addTab( "randr", i18n( "Size && Orientation" ) );
   m_gamma = addTab( "kgamma", i18n( "Monitor Gamma" ) );
-  m_xiner = addTab( "xinerama", i18n( "Multiple Monitors" ) );
+  if ( QApplication::desktop()->isVirtualDesktop() )
+    m_xiner = addTab( "xinerama", i18n( "Multiple Monitors" ) );
 
   QVBoxLayout *top = new QVBoxLayout( this, 0, KDialog::spacingHint() );
   top->addWidget( m_tabs );
