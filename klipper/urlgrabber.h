@@ -58,9 +58,11 @@ private:
   void execute( const struct ClipCommand *command ) const;
   void startProcess( const QString& cmdLine ) const;
   void editData();
+  bool isAvoidedWindow() const;
 
   ActionList *myActions;
   ActionList myMatches;
+  QStringList myAvoidWindows;
   QString myClipData;
   ClipAction *myCurrentAction;
   QIntDict<ClipCommand> myCommandMapper;

@@ -30,3 +30,4 @@ KeepClipboardContents=true
 Number of Actions=3
 PopupAtMousePosition=false
 URLGrabberEnabled=true
+No Actions for WM_CLASS=Navigator,konqueror
