@@ -39,6 +39,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
   : MenuTabBase (parent, name)
 {
     // connections
+    connect(m_showPixmap, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_clearCache, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_clearSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_clearSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
@@ -112,6 +113,10 @@ void MenuTab::load()
         configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
     KConfig *c = new KConfig(configname, false, false);
 
+    c->setGroup("KMenu");
+
+    m_showPixmap->setChecked(c->readBoolEntry("UseSidePixmap", true));
+
     c->setGroup("menus");
 
     bool cc = c->readBoolEntry("ClearMenuCache", true);
@@ -150,6 +155,11 @@ void MenuTab::save()
         configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
     KConfig *c = new KConfig(configname, false, false);
 
+
+    c->setGroup("KMenu");
+
+    c->writeEntry("UseSidePixmap", m_showPixmap->isChecked());
+
     c->setGroup("menus");
 
     c->writeEntry("ClearMenuCache", m_clearCache->isChecked());
@@ -172,6 +182,7 @@ void MenuTab::save()
 
 void MenuTab::defaults()
 {
+  m_showPixmap->setChecked(true);
   m_clearCache->setChecked(true);
   m_clearSlider->setValue(60);
   m_clearSlider->setEnabled(true);

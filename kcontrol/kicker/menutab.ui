@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>592</width>
+            <width>588</width>
             <height>434</height>
         </rect>
     </property>
@@ -80,15 +80,15 @@
                                         <cstring>TextLabel2</cstring>
                                     </property>
                                     <property stdset="1">
-                                        <name>text</name>
-                                        <string>Max number of "Quick Start" entries:</string>
-                                    </property>
-                                    <property stdset="1">
                                         <name>sizePolicy</name>
                                         <sizepolicy>
                                             <hsizetype>5</hsizetype>
                                             <vsizetype>1</vsizetype>
                                         </sizepolicy>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>text</name>
+                                        <string>Max number of "Quick Start" entries:</string>
                                     </property>
                                 </widget>
                                 <widget>
@@ -104,13 +104,13 @@
                                             <vsizetype>0</vsizetype>
                                         </sizepolicy>
                                     </property>
-				    <property stdset="1">
-                                        <name>minValue</name>
-                                        <number>0</number>
-                                    </property>
                                     <property stdset="1">
                                         <name>maxValue</name>
                                         <number>20</number>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>minValue</name>
+                                        <number>0</number>
                                     </property>
                                     <property stdset="1">
                                         <name>value</name>
@@ -192,15 +192,15 @@
                         <cstring>m_browserGroup</cstring>
                     </property>
                     <property stdset="1">
-                        <name>title</name>
-                        <string>Bro&amp;wser menus</string>
-                    </property>
-                    <property stdset="1">
                         <name>sizePolicy</name>
                         <sizepolicy>
                             <hsizetype>1</hsizetype>
                             <vsizetype>4</vsizetype>
                         </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>title</name>
+                        <string>Bro&amp;wser menus</string>
                     </property>
                     <vbox>
                         <property stdset="1">
@@ -274,16 +274,8 @@
                                                 <cstring>m_maxSlider</cstring>
                                             </property>
                                             <property stdset="1">
-                                                <name>orientation</name>
-                                                <enum>Horizontal</enum>
-                                            </property>
-                                            <property stdset="1">
                                                 <name>enabled</name>
                                                 <bool>true</bool>
-                                            </property>
-                                            <property stdset="1">
-                                                <name>tickmarks</name>
-                                                <enum>Right</enum>
                                             </property>
                                             <property stdset="1">
                                                 <name>minValue</name>
@@ -294,12 +286,20 @@
                                                 <number>100</number>
                                             </property>
                                             <property stdset="1">
+                                                <name>pageStep</name>
+                                                <number>10</number>
+                                            </property>
+                                            <property stdset="1">
                                                 <name>value</name>
                                                 <number>30</number>
                                             </property>
                                             <property stdset="1">
-                                                <name>pageStep</name>
-                                                <number>10</number>
+                                                <name>orientation</name>
+                                                <enum>Horizontal</enum>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>tickmarks</name>
+                                                <enum>Right</enum>
                                             </property>
                                         </widget>
                                         <widget>
@@ -313,12 +313,12 @@
                                                 <bool>true</bool>
                                             </property>
                                             <property stdset="1">
-                                                <name>minValue</name>
-                                                <number>10</number>
-                                            </property>
-                                            <property stdset="1">
                                                 <name>maxValue</name>
                                                 <number>100</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>minValue</name>
+                                                <number>10</number>
                                             </property>
                                             <property stdset="1">
                                                 <name>value</name>
@@ -338,15 +338,15 @@
                         <cstring>m_kmenuGroup</cstring>
                     </property>
                     <property stdset="1">
-                        <name>title</name>
-                        <string>&amp;K Menu Layout</string>
-                    </property>
-                    <property stdset="1">
                         <name>sizePolicy</name>
                         <sizepolicy>
                             <hsizetype>1</hsizetype>
                             <vsizetype>4</vsizetype>
                         </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>title</name>
+                        <string>&amp;K Menu Layout</string>
                     </property>
                     <vbox>
                         <property stdset="1">
@@ -357,6 +357,25 @@
                             <name>spacing</name>
                             <number>6</number>
                         </property>
+                        <widget>
+                            <class>QCheckBox</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>m_showPixmap</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Show side image</string>
+                            </property>
+                            <property stdset="1">
+                                <name>checked</name>
+                                <bool>true</bool>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>Choose whether to show the vertical image down the side of the K menu</string>
+                            </property>
+                        </widget>
                         <widget>
                             <class>QCheckBox</class>
                             <property stdset="1">
@@ -426,15 +445,15 @@
                         <cstring>m_cacheGroup</cstring>
                     </property>
                     <property stdset="1">
-                        <name>title</name>
-                        <string>Menu &amp;Cache</string>
-                    </property>
-                    <property stdset="1">
                         <name>sizePolicy</name>
                         <sizepolicy>
                             <hsizetype>1</hsizetype>
                             <vsizetype>4</vsizetype>
                         </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>title</name>
+                        <string>Menu &amp;Cache</string>
                     </property>
                     <vbox>
                         <property stdset="1">
@@ -508,16 +527,8 @@
                                                 <cstring>m_clearSlider</cstring>
                                             </property>
                                             <property stdset="1">
-                                                <name>orientation</name>
-                                                <enum>Horizontal</enum>
-                                            </property>
-                                            <property stdset="1">
                                                 <name>enabled</name>
                                                 <bool>true</bool>
-                                            </property>
-                                            <property stdset="1">
-                                                <name>tickmarks</name>
-                                                <enum>Right</enum>
                                             </property>
                                             <property stdset="1">
                                                 <name>minValue</name>
@@ -528,12 +539,20 @@
                                                 <number>600</number>
                                             </property>
                                             <property stdset="1">
+                                                <name>pageStep</name>
+                                                <number>50</number>
+                                            </property>
+                                            <property stdset="1">
                                                 <name>value</name>
                                                 <number>60</number>
                                             </property>
                                             <property stdset="1">
-                                                <name>pageStep</name>
-                                                <number>50</number>
+                                                <name>orientation</name>
+                                                <enum>Horizontal</enum>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>tickmarks</name>
+                                                <enum>Right</enum>
                                             </property>
                                         </widget>
                                         <widget>
@@ -547,12 +566,12 @@
                                                 <bool>true</bool>
                                             </property>
                                             <property stdset="1">
-                                                <name>minValue</name>
-                                                <number>1</number>
-                                            </property>
-                                            <property stdset="1">
                                                 <name>maxValue</name>
                                                 <number>600</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>minValue</name>
+                                                <number>1</number>
                                             </property>
                                             <property stdset="1">
                                                 <name>value</name>
@@ -629,6 +648,7 @@
     </connection>
 </connections>
 <tabstops>
+    <tabstop>m_showPixmap</tabstop>
     <tabstop>m_showBookmarks</tabstop>
     <tabstop>m_showRecent</tabstop>
     <tabstop>m_showQuickBrowser</tabstop>
