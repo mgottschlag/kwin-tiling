@@ -25,7 +25,7 @@ A KDE theme consists of:
 
 Sample XML theme config file:
 =============================
-<kdetheme version="1">
+<ktheme version="1">
 <general>
     <author value="Me" />
     <email value="me@home.com" />
@@ -54,7 +54,7 @@ Sample XML theme config file:
 <cursors name="theme_name" />
 <wm type="builtin|custom" name="kwin_lib_name">
     <buttons left="M" right="HIAX" />
-    <border size="x" />
+    <border size="number" />
 </wm>
 <konqueror>
     <wallpaper url="" />
@@ -65,7 +65,7 @@ Sample XML theme config file:
     <!-- or -->
     <transparent value="true|false" />
 </panel>
-<widgets name="qstyle_lib_name" />
+<widgets name="Style Name" />
 <screensaver name="saver.desktop" />
 </kdetheme>
 
@@ -93,7 +93,13 @@ The notion of "url" here:
   (must be a sole filename, e.g. "background.png"); this differs
   according to the theme part (ie. can be different for sounds
   and/or wallpapers)
-- theme: relative to the root of the theme tarball
+- theme: relative to the root of the theme tarball or directory
   (e.g. theme:/wallpapers/desktop/image.png)
 - other URLs are not allowed, the file must be contained
   either in the theme or in the target system
+
+
+TODO:
+=====
+- support bundling the cursor theme
+- background: support for slideshow and "active" background program
