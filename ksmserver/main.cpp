@@ -26,9 +26,7 @@ static const KCmdLineOptions options[] =
    { "restore", I18N_NOOP("Restores the previous session if available"), 0},
    { "w", 0, 0 },
    { "windowmanager <wm>", I18N_NOOP("Starts 'wm' in case no other window manager is \nparticipating in the session. Default is 'kwin'"), 0},
-#ifndef HAVE__ICETRANSNOLISTEN
    { "nolocal", I18N_NOOP("Allow also remote connections."), 0},
-#endif
    { 0, 0, 0 }
 };
 
@@ -60,6 +58,17 @@ int main( int argc, char* argv[] )
 	wm = "kwin";
 
     bool only_local = args->isSet("local");
+#ifndef HAVE__ICETRANSNOLISTEN
+    /* this seems strange, but the default is only_local, so if !only_local
+     * the option --nolocal was given, and we warn (the option --nolocal
+     * does nothing on this platform, as here the default is reversed)
+     */
+    if (!only_local) {
+        qWarning("--[no]local is not supported on your platform. Sorry.");
+    }
+    only_local = false;
+#endif
+    
     KSMServer *server = new KSMServer( QString::fromLatin1(wm), only_local);
     IceSetIOErrorHandler (IoErrorHandler );
 
