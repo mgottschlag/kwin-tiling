@@ -202,7 +202,7 @@ host part), which in turn takes precedence over a wildcard
 <listitem>
 
 <para>
-Example: display name <quote>myhost:0</quote>, class <quote>dpy</quote>
+Example: display name <quote>myhost.foo:0</quote>, class <quote>dpy</quote>
 </para>
 <itemizedlist>
 <listitem>
