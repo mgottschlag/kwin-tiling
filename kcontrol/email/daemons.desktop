@@ -1,9 +1,0 @@
-[Desktop Entry]
-X-KDE-ModuleType=Library
-X-KDE-LibraryName=daemons
-Name=Daemons
-Keywords=daeomn,background process
-Comment=Configure the system deamons.
-Icon=daemon
-Type=Application
-Exec=kcmshell System/daemons
