@@ -72,7 +72,7 @@ void KDrKonqiMain::defaults()
     //    customize->defaults();
 }
 
-void KDrKonqiMain::moduleChanged(bool state)
+void KDrKonqiMain::moduleChanged(bool)
 {
   emit changed(true);
 }
