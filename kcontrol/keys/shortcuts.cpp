@@ -185,7 +185,7 @@ void ShortcutsModule::initGUI()
 
 	m_pListApplication = new KStdAccel::ShortcutList;
 	m_pkcApplication = new KKeyChooser( m_pListApplication, this, KKeyChooser::Standard, false );
-	m_pTab->addTab( m_pkcApplication, i18n("&Application Shortcuts") );
+	m_pTab->addTab( m_pkcApplication, i18n("App&lication Shortcuts") );
 	connect( m_pkcApplication, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
 	kdDebug(125) << "G-----------" << endl;
