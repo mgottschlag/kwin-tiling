@@ -165,7 +165,7 @@ bool KBackgroundPattern::remove()
 {
     if (m_bReadOnly)
         return false;
-    return !unlink(m_File.latin1());
+    return !unlink(QFile::encodeName(m_File));
 }
 
 
@@ -351,7 +351,7 @@ bool KBackgroundProgram::remove()
 {
     if (m_bReadOnly)
         return false;
-    return !unlink(m_File.latin1());
+    return !unlink(QFile::encodeName(m_File));
 }
 
 

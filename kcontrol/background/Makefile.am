@@ -18,7 +18,7 @@ noinst_HEADERS = backgnd.h bgdialogs.h bgsettings.h bgrender.h advancedDialog.h
 noinst_LTLIBRARIES = libbgnd.la
 libbgnd_la_SOURCES = bgrender.cc bgsettings.cc
 
-messages:
+messages: rc.cpp
 	$(XGETTEXT) -kni18n *.cc *.cpp -o $(podir)/kcmbackground.pot
 
 desktop_DATA =  background.desktop

@@ -68,9 +68,9 @@
 
 #include "advancedDialog.h"
 
-/* 
- *  Constructs a Backgnd which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
+/*
+ *  Constructs a Backgnd which is a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'
  */
 Backgnd::Backgnd( QWidget* parent,  const char* name, WFlags fl )
     : BackgndBase( parent, name, fl ),
@@ -78,11 +78,11 @@ Backgnd::Backgnd( QWidget* parent,  const char* name, WFlags fl )
     m_Renderer( m_Max )
 {
     m_pGlobals = new KGlobalBackgroundSettings();
-    
+
     m_Desk = KWin::currentDesktop() - 1;
     if(m_pGlobals->commonBackground())
 	m_Desk = 0;
-    
+
     int i;
     for (i=0; i<m_Max; i++) {
 	m_Renderer.insert(i, new KBackgroundRenderer(i));
@@ -97,13 +97,13 @@ Backgnd::Backgnd( QWidget* parent,  const char* name, WFlags fl )
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
     QWhatsThis::add( m_pMonitor, i18n("In this monitor, you can preview how your settings will look like on a \"real\" desktop.") );
 
-    // Desktop names 
+    // Desktop names
     for (i=0; i<m_Max; i++)
         m_pDesktopBox->insertItem(m_pGlobals->deskName(i));
-	
+
 }
 
-/*  
+/*
  *  Destroys the object and frees any allocated resources
  */
 Backgnd::~Backgnd()
@@ -161,9 +161,9 @@ void Backgnd::defaults()
     QStringList lst;
     r->setWallpaperList(lst);
     m_pWallpaperBox->clear();
-   
+
 //    setAcceptDrops(true);
-    
+
     setWidgets();
 
     emit changed(true);
@@ -183,13 +183,13 @@ void Backgnd::setWidgets()
 
     // Set all the widgets in the color group box
     //
-    m_pColorRadio->setChecked(r->backgroundMode() != KBackgroundSettings::Program); 
-    m_pProgramRadio->setChecked(r->backgroundMode() == KBackgroundSettings::Program); 
+    m_pColorRadio->setChecked(r->backgroundMode() != KBackgroundSettings::Program);
+    m_pProgramRadio->setChecked(r->backgroundMode() == KBackgroundSettings::Program);
 
     m_pColor1But->setColor(r->colorA());
     m_pColor2But->setColor(r->colorB());
 
-    if(r->backgroundMode() != KBackgroundSettings::Program)	
+    if(r->backgroundMode() != KBackgroundSettings::Program)
        m_pColorBlendBox->setCurrentItem(r->backgroundMode());
     else
        m_pColorBlendBox->setCurrentItem(0);
@@ -207,23 +207,23 @@ void Backgnd::setWidgets()
         m_pColor2Label->setEnabled(false);
     }
 
-    // set all the widgets in the wall paper groups box 
-    
+    // set all the widgets in the wall paper groups box
+
     if (r->wallpaperMode() < KBackgroundSettings::NoWallpaper)
       m_pWPModeBox->setCurrentItem(r->wallpaperMode());
     else
       m_pWPModeBox->setCurrentItem(0);
 
-    
+
     m_pWPBlendBox->setCurrentItem(r->blendMode());
     m_pBalanceSlider->setValue(r->blendBalance());
     m_pChangeInterval->setValue(r->wallpaperChangeInterval());
 
-    
+
     if ((r->multiWallpaperMode() == KBackgroundSettings::NoMulti) ||
         (r->multiWallpaperMode() == KBackgroundSettings::InOrder))
        m_pImageOrderBox->setCurrentItem(0);
-    else 
+    else
        m_pImageOrderBox->setCurrentItem(1);
 
     m_pWallpaperBox->clear();
@@ -232,24 +232,22 @@ void Backgnd::setWidgets()
     adjustMultiWP();
 
     // Set the names in the group boxes
-    
+
     if (m_Desk==0)
     {
-       m_pBackgroundGrp->setTitle("Coloring");
-       m_pWallpaperGrp->setTitle("Images");
+       m_pBackgroundGrp->setTitle(i18n("Coloring"));
+       m_pWallpaperGrp->setTitle(i18n("Images"));
     }
     else
     {
-       QString bgStr("Coloring For ");
-       bgStr += m_pGlobals->deskName(m_Desk-1);
+       QString bgStr(i18n("Coloring For %1").arg(m_pGlobals->deskName(m_Desk-1)));
        m_pBackgroundGrp->setTitle(bgStr);
 
-       QString wpStr("Images For ");
-       wpStr += m_pGlobals->deskName(m_Desk-1);
+       QString wpStr(i18n("Images For %1").arg(m_pGlobals->deskName(m_Desk-1)));
        m_pWallpaperGrp->setTitle(wpStr);
     }
 
-    
+
     // Start preview render
     r->setPreview(m_pMonitor->size());
     r->start();
@@ -329,14 +327,14 @@ void Backgnd::slotWPBlendMode(int ipMode)
     if (newMode == r->blendMode())
         return;
 
-    if ((ipMode == KBackgroundSettings::IntensityReversed) || 
-        (ipMode == KBackgroundSettings::SaturateReversed) || 
-        (ipMode == KBackgroundSettings::ContrastReversed) || 
+    if ((ipMode == KBackgroundSettings::IntensityReversed) ||
+        (ipMode == KBackgroundSettings::SaturateReversed) ||
+        (ipMode == KBackgroundSettings::ContrastReversed) ||
         (ipMode == KBackgroundSettings::HueShiftReversed))
     {
        newMode--;
        reverseBlend = true;
-    }	
+    }
 
     m_pBalanceSlider->setEnabled(ipMode!=KBackgroundSettings::NoBlending);
     m_pBalanceLbl->setEnabled(ipMode!=KBackgroundSettings::NoBlending);
@@ -369,13 +367,13 @@ void Backgnd::slotWPBlendBalance(int value)
 void Backgnd::slotWPSet(int ipSelected)
 {
     KBackgroundRenderer *r = m_Renderer[m_Desk];
- 
+
     r->stop();
     r->setCurrentWallpaper(ipSelected);
     r->start();
 
     emit changed(true);
-    
+
 }
 
 void Backgnd::slotImageDropped(QString uri)
@@ -418,7 +416,7 @@ void Backgnd::slotWPAdd()
     // There is at least one wallpaper at this point
 
     KBackgroundRenderer *r = m_Renderer[m_Desk];
-    
+
     m_pWallpaperBox->insertStringList(files);
 
     r->stop();
@@ -438,7 +436,7 @@ void Backgnd::slotWPDelete()
     KBackgroundRenderer *r = m_Renderer[m_Desk];
 
     m_pWallpaperBox->removeItem(SelectedItem);
-    
+
     r->stop();
     adjustMultiWP();
     r->start();
@@ -449,14 +447,14 @@ void Backgnd::slotWPDelete()
 void Backgnd::adjustMultiWP()
 {
     int count = m_pWallpaperBox->count();
-    
+
     KBackgroundRenderer *r = m_Renderer[m_Desk];
 
     // Adjust the rendering settings
     QStringList lst;
     for (unsigned i=0; i<m_pWallpaperBox->count(); i++)
 	lst.append(m_pWallpaperBox->text(i));
-    
+
     r->setWallpaperList(lst);
 
     if (count == 0)
@@ -467,7 +465,7 @@ void Backgnd::adjustMultiWP()
     else if (count == 1)
     {   // single Wall Paper
         r->setWallpaperMode(m_pWPModeBox->currentItem());
-	// This should be no multi but the render doesn't seem to 
+	// This should be no multi but the render doesn't seem to
 	// work unless this is set to in Order. This should be
 	// fine since one wall paper in order looks like
 	// is the same as no multi.
@@ -599,7 +597,7 @@ void Backgnd::slotColorBlendMode(int ipMode)
 
     m_pColor2But->setEnabled(ipMode != KBackgroundSettings::Flat);
     m_pColor2Label->setEnabled(ipMode != KBackgroundSettings::Flat);
-    
+
     r->stop();
     r->setBackgroundMode(ipMode);
     r->setPreview(m_pMonitor->size());
@@ -611,11 +609,11 @@ void Backgnd::slotColorBlendMode(int ipMode)
 void Backgnd::slotProgramSetup()
 {
     KBackgroundRenderer *r = m_Renderer[m_Desk];
-    
+
     KProgramSelectDialog dlg;
     QString cur = r->KBackgroundProgram::name();
     dlg.setCurrent(cur);
-    if ((dlg.exec() == QDialog::Accepted) && !dlg.program().isEmpty()) 
+    if ((dlg.exec() == QDialog::Accepted) && !dlg.program().isEmpty())
     {
         r->stop();
         r->setProgram(dlg.program());
@@ -628,11 +626,11 @@ void Backgnd::slotProgramSetup()
 void Backgnd::slotPatternEdit()
 {
     KBackgroundRenderer *r = m_Renderer[m_Desk];
- 
+
     KPatternSelectDialog dlg;
     QString cur = r->KBackgroundPattern::name();
     dlg.setCurrent(cur);
-    if ((dlg.exec() == QDialog::Accepted) && !dlg.pattern().isEmpty()) 
+    if ((dlg.exec() == QDialog::Accepted) && !dlg.pattern().isEmpty())
     {
         r->stop();
         r->setPatternName(dlg.pattern());
