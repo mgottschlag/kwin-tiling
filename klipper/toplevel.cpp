@@ -277,6 +277,17 @@ void KlipperWidget::showPopupMenu( QPopupMenu *menu )
 {
     Q_ASSERT( menu != 0L );
 
+    // OK, so apparently Qt has a hard time figuring out how to size menus
+    // unless they are actually shown first! blarg!
+    // that's what this code does. and now there's a comment here saying
+    // as much, so you don't have to figure it out on your own, as much
+    // fun as that can be. AJS
+    menu->blockSignals(true);
+    menu->move(-1000, -1000);
+    menu->show();
+    menu->hide();
+    menu->blockSignals(false);
+
     if (bPopupAtMouse) {
         QPoint g = QCursor::pos();
         if ( menu->height() < g.y() )
