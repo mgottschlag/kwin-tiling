@@ -118,7 +118,7 @@
                                         <cstring>qlTopLeft</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Top Left:</string>
+                                        <string>Top left:</string>
                                     </property>
                                 </widget>
                                 <widget class="QComboBox">
@@ -173,7 +173,7 @@
                                         <cstring>qlTopRight</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Top Right:</string>
+                                        <string>Top right:</string>
                                     </property>
                                 </widget>
                                 <widget class="QComboBox">
@@ -221,7 +221,7 @@
                                         <cstring>qlBottomLeft</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Bottom Left:</string>
+                                        <string>Bottom left:</string>
                                     </property>
                                 </widget>
                                 <widget class="QComboBox">
@@ -276,7 +276,7 @@
                                         <cstring>qlBottomRight</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Bottom Right:</string>
+                                        <string>Bottom right:</string>
                                     </property>
                                 </widget>
                                 <widget class="QComboBox">
