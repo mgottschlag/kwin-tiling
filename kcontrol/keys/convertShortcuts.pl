@@ -1,9 +1,10 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 $keys=0;
 foreach (<>) {
     if(/^\[.*\]/) { $keys=0; }
     if($keys==1) {
-        s/^Execute command/Execute Command/;
+        s/^Execute Command/Run Command/;
+        s/^Execute command/Run Command/;
         s/^Lock screen/Lock Screen/;
         s/^Mouse emulation/Mouse Emulation/;
         s/^Next keyboard layout/Switch To Next Keyboard Layout/;

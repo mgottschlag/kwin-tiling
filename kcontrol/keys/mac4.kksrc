@@ -46,7 +46,7 @@ Uses Win Modifer=true
 [Global Shortcuts]
 Desktop Screenshot=Ctrl+Shift+3
 Enable/Disable Clipboard Actions=Alt+Ctrl+X
-Execute Command=Alt+F2
+Run Command=Alt+F2
 Halt Computer=none
 Halt without Confirmation=none
 Kill Window=Alt+Ctrl+Escape

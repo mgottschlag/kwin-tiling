@@ -47,7 +47,7 @@ Uses Win Modifer=true
 [Global Shortcuts]
 Desktop Screenshot=Print
 Enable/Disable Clipboard Actions=none
-Execute Command=Win+R
+Run Command=Win+R
 Halt Computer=none
 Halt without Confirmation=none
 Kill Window=none

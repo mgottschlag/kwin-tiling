@@ -47,7 +47,7 @@ Uses Win Modifer=true
 [Global Shortcuts]
 Desktop Screenshot=Win+Print
 Enable/Disable Clipboard Actions=Win+Ctrl+X
-Execute Command=Win+Return
+Run Command=Win+Return
 Halt Computer=none
 Halt without Confirmation=none
 Kill Window=Win+Ctrl+Delete

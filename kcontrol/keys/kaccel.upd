@@ -1,4 +1,4 @@
-Id=kde3.0/r1
+Id=kde3.1/r1
 File=kdeglobals
 Options=overwrite
 Script=convertShortcuts.pl,perl
