@@ -127,6 +127,7 @@ private slots:
      * @see signal filesDropped
      */
     void slotFilesDropped( const KURL::List & urls );
+    void updateButton();
 
 private:
     /**

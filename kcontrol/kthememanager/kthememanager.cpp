@@ -21,6 +21,7 @@
 #include <qlabel.h>
 #include <qtooltip.h>
 #include <qtoolbutton.h>
+#include <qpushbutton.h>
 
 #include <kapplication.h>
 #include <klocale.h>
@@ -75,7 +76,10 @@ kthememanager::kthememanager( QWidget *parent, const char *name )
              this, SLOT( slotThemeChanged( QListViewItem * ) ) );
 
     connect( this, SIGNAL( filesDropped( const KURL::List& ) ),
-             this, SLOT( slotFilesDropped( const KURL::List& ) ) );
+             this, SLOT( updateButton() ) );
+
+    connect( ( QObject * )dlg->lvThemes, SIGNAL( clicked( QListViewItem * ) ),
+             this, SLOT( updateButton() ) );
 
     m_origTheme = new KTheme( true ); // stores the defaults to get back to
     m_origTheme->setName( ORIGINAL_THEME );
@@ -83,6 +87,7 @@ kthememanager::kthememanager( QWidget *parent, const char *name )
 
     load();
     queryLNFModules();
+    updateButton();
 }
 
 kthememanager::~kthememanager()
@@ -95,6 +100,12 @@ void kthememanager::init()
 {
     KGlobal::dirs()->addResourceType( "themes", KStandardDirs::kde_default("data") +
                                       "kthememanager/themes/" );
+}
+
+void kthememanager::updateButton()
+{
+    QListViewItem * cur = dlg->lvThemes->currentItem();
+    dlg->btnRemove->setEnabled( cur != 0 );
 }
 
 void kthememanager::load()
@@ -227,6 +238,7 @@ void kthememanager::addNewTheme( const KURL & url )
 
         delete m_theme;
         m_theme = 0;
+        updateButton();
     }
 }
 
@@ -245,6 +257,7 @@ void kthememanager::slotRemoveTheme()
             KTheme::remove( themeName );
             listThemes();
         }
+        updateButton();
     }
 }
 
