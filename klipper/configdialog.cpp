@@ -119,7 +119,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
                           "emptied.") );
 
     // make a QLabel because using popupTimeout->setLabel messes up layout
-    QLabel *lblTimeout = new QLabel( i18n("Tim&eout for Action popups:" ), this );
+    QLabel *lblTimeout = new QLabel( i18n("Tim&eout for action popups:" ), this );
     // workaround for KIntNumInput making a huge QSpinBox
     QHBox *box = new QHBox( this );
     popupTimeout = new KIntNumInput( box );
