@@ -6,9 +6,9 @@ METASOURCES = AUTO
 
 lib_LTLIBRARIES = libkcm_themes.la
 
-libkcm_themes_la_SOURCES = main.cpp theme.cpp installer.cpp \
+libkcm_themes_la_SOURCES = main.cpp installer.cpp \
 	options.cpp about.cpp groupdetails.cpp \
-	themecreator.cpp newthemedlg.cpp
+	themecreator.cpp newthemedlg.cpp theme.cpp
 noinst_HEADERS = theme.h installer.h \
 	options.h about.h version.h groupdetails.h \
 	themecreator.h newthemedlg.h
