@@ -200,6 +200,14 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   view = new ProxyView(client, title, this, run_as_root, "proxyview");
   (void) new WhatsThis( this );
 
+  if( client->changed() )
+  {
+    kdWarning( 1208 ) << "The KCModule \"" << client->className() <<
+      "\" called setChanged( true ) in the constructor."
+      " Please fix the module." << endl;
+    client->setChanged( false );
+  }
+
   connect(_client, SIGNAL(changed(bool)), SLOT(clientChanged(bool)));
   connect(_client, SIGNAL(quickHelpChanged()), SIGNAL(quickHelpChanged()));
 
@@ -221,19 +229,9 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   setVisible(_reset, mayModify && (b & KCModule::Apply));
   setVisible(_root, run_as_root);
 
-  if( client->changed() )
-  {
-    kdWarning( 1208 ) << "The KCModule \"" << client->className() <<
-      "\" called setChanged( true ) in the constructor."
-      " Please fix the module." << endl;
-    QTimer::singleShot( 0, this, SLOT( clientChanged() ) );
-  }
-  else
-  {
-    // disable initial buttons
-    _apply->setEnabled( false );
-    _reset->setEnabled( false );
-  }
+  // disable initial buttons
+  _apply->setEnabled( false );
+  _reset->setEnabled( false );
 
   connect(_help, SIGNAL(clicked()), SLOT(helpClicked()));
   connect(_default, SIGNAL(clicked()), SLOT(defaultClicked()));
@@ -294,14 +292,30 @@ void ProxyWidget::defaultClicked()
 void ProxyWidget::applyClicked()
 {
   _client->save();
-  clientChanged(false);
+  if( _client->changed() )
+  {
+    kdWarning( 1208 ) << "The KCModule \"" << _client->className() <<
+      "\" doesn't call setChanged( false ) in save."
+      " Please fix the module." << endl;
+    _client->setChanged( false );
+  }
+  else
+    clientChanged(false);
   _apply->setEnabled(false);
 }
 
 void ProxyWidget::resetClicked()
 {
   _client->load();
-  clientChanged(false);
+  if( _client->changed() )
+  {
+    kdWarning( 1208 ) << "The KCModule \"" << _client->className() <<
+      "\" doesn't call setChanged( false ) in load."
+      " Please fix the module." << endl;
+    _client->setChanged( false );
+  }
+  else
+    clientChanged(false);
   _apply->setEnabled(false);
 }
 
@@ -332,3 +346,5 @@ const KAboutData *ProxyWidget::aboutData() const
 {
   return _client->aboutData();
 }
+
+// vim: sw=2 sts=2 et
