@@ -256,7 +256,7 @@ bool KMemoryWidget::Display_Graph(
 		    AlignCenter,
 		    QString("%1%").arg(100-percent) );
     GraphLabel[widgetindex]->setText( 
-	QString("%1 used").arg(format_MB(total-avail)) );
+	i18n("%1 used").arg(format_MB(total-avail)) );
     return true;
 }
 
