@@ -24,7 +24,7 @@
                 <cstring>TextLabel1</cstring>
             </property>
             <property name="text">
-                <string>&lt;b&gt;Unable to contact the KDE smartcard service!&lt;/b&gt;</string>
+                <string>&lt;b&gt;Unable to contact the KDE smartcard service.&lt;/b&gt;</string>
             </property>
             <property name="alignment">
                 <set>WordBreak|AlignVCenter</set>

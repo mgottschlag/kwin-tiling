@@ -81,7 +81,7 @@
                 <string>&lt;ul&gt;
 &lt;li&gt;&lt;b&gt;Restore previous session:&lt;/b&gt; Will save all applications running on exit and restore them when they next start up&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;Restore manually saved session: &lt;/b&gt; Allows the session to be saved at any time via "Save Session" in the K-Menu. This means the currently started applications will reappear when they next start up.&lt;/li&gt;
-&lt;li&gt;&lt;b&gt;Start with an empty session:&lt;/b&gt; Don't save anything. Will come up with an empty desktop on next start.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Start with an empty session:&lt;/b&gt; Do not save anything. Will come up with an empty desktop on next start.&lt;/li&gt;
 &lt;/ul&gt;</string>
             </property>
             <vbox>
@@ -196,7 +196,7 @@
                         <cstring>excludeLineedit</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Here you can enter a colon-separated list of applications that should not be saved in sessions, and therefore won't be started when restoring a session. For example 'xterm:xconsole'.
+                        <string>Here you can enter a colon-separated list of applications that should not be saved in sessions, and therefore will not be started when restoring a session. For example 'xterm:xconsole'.
 </string>
                     </property>
                 </widget>

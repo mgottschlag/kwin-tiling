@@ -186,9 +186,9 @@ void KLocaleConfigNumber::slotTranslate()
   QWhatsThis::add( m_edMonPosSign,  str );
 
   str = m_locale->translate( "Here you can specify text used to prefix "
-			     "negative numbers. This shouldn't be empty, so "
+			     "negative numbers. This should not be empty, so "
 			     "you can distinguish positive and negative "
-			     "numbers. It's normally set to minus (-)." );
+			     "numbers. It is normally set to minus (-)." );
   QWhatsThis::add( m_labMonNegSign, str );
   QWhatsThis::add( m_edMonNegSign,  str );
 }
