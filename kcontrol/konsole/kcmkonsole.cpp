@@ -36,7 +36,9 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name)
 {
     QVBoxLayout *topLayout = new QVBoxLayout(this);
     dialog = new KCMKonsoleDialog(this);
-    dialog->SpinBox1->setRange(1,999999);
+    dialog->SpinBox1->setMinValue(0);
+    dialog->SpinBox1->setLineStep(100);
+    dialog->SpinBox1->setSpecialValueText(i18n("Unlimited (number of lines)", "Unlimited"));
     dialog->show();
     topLayout->add(dialog);
     load();
