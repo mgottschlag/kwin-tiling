@@ -31,7 +31,6 @@ I would propose to rename it to "Widgets" and to  create two Tabs within Widgets
 "Theme" and "Advanced".
 The following items aren't really widget-Properties to the user, so:
 
-- Move Antialiasing to "Fonts"
 - Move "Menubar on top of the screen" to "Desktop" (Makes sense as there are many people who search for Mac-menubar/Desktop-menubar find one of them and think the other solution (which they might have been searching for) isn't implemented.
 
 Except for the Widget-themes everything else should be moved to the Advanced-tab.
