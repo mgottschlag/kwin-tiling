@@ -65,7 +65,15 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QListView" row="0" column="0" rowspan="1" colspan="3">
+                <widget class="KLineEdit" row="0" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>itsLabel</cstring>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="KListView" row="1" column="0" rowspan="1" colspan="3">
                     <column>
                         <property name="text">
                             <string>Directory/File</string>
@@ -97,9 +105,6 @@
                             <height>24</height>
                         </size>
                     </property>
-                    <property name="selectionMode">
-                        <enum>Extended</enum>
-                    </property>
                     <property name="allColumnsShowFocus">
                         <bool>true</bool>
                     </property>
@@ -107,35 +112,7 @@
                         <bool>true</bool>
                     </property>
                 </widget>
-                <widget class="QPushButton" row="1" column="2">
-                    <property name="name">
-                        <cstring>itsButton2</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>0</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>32767</height>
-                        </size>
-                    </property>
-                    <property name="text">
-                        <string>Action</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="1" column="0">
+                <widget class="QPushButton" row="2" column="0">
                     <property name="name">
                         <cstring>itsButton1</cstring>
                     </property>
@@ -147,23 +124,11 @@
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>0</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>32767</height>
-                        </size>
-                    </property>
                     <property name="text">
                         <string>Action</string>
                     </property>
                 </widget>
-                <spacer row="1" column="1">
+                <spacer row="2" column="1">
                     <property name="name" stdset="0">
                         <cstring>Spacer1</cstring>
                     </property>
@@ -180,6 +145,22 @@
                         </size>
                     </property>
                 </spacer>
+                <widget class="QPushButton" row="2" column="2">
+                    <property name="name">
+                        <cstring>itsButton2</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Action</string>
+                    </property>
+                </widget>
             </grid>
         </widget>
     </grid>

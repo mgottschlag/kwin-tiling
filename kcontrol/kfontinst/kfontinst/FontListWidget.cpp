@@ -33,12 +33,14 @@
 #include "KfiGlobal.h"
 #include "KfiCmModule.h"
 #include "Misc.h"
-#include <qgroupbox.h>
-#include <qpushbutton.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kiconloader.h>
-#include <qlistview.h>
+#include <klineedit.h>
+#include <klistview.h>
+
+#include <qgroupbox.h>
+#include <qpushbutton.h>
 #include <qdir.h>
 #include <qfileinfo.h>
 #include <qbitmap.h>
@@ -366,6 +368,8 @@ CFontListWidget::CFontListWidget(QWidget *parent, CConfig::EListWidget t, bool u
     itsButton1->setEnabled(false);
     itsButton2->setText(button2Label);
     itsList->setTreeStepSize(12);
+    itsList->setFullWidth(true);
+    itsList->setSelectionMode( QListView::Extended );
 }
 
 CFontListWidget::~CFontListWidget()
@@ -541,7 +545,7 @@ void CFontListWidget::scan()
     {
         itsButton2->show();
         itsList->setColumnText(0, "File");
-        itsBox->setTitle(itsBoxTitle + " " + itsBasicData.dir);
+        itsLabel->setText(itsBasicData.dir);
         scanDir(itsBasicData.dir);
 
         if(itsList->childCount())
