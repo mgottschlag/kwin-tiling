@@ -1,4 +1,3 @@
-
 // KDE Display color scheme setup module
 //
 // Copyright (c)  Mark Donohoe 1997
@@ -78,6 +77,20 @@ public:
            return i1->name.localeAwareCompare(i2->name);
         }
 };
+
+#define SIZE 8
+
+// make a 24 * 8 pixmap with the main colors in a scheme
+QPixmap mkColorPreview(const WidgetCanvas *cs) 
+{
+   QPixmap group(SIZE*3,SIZE);
+   QPixmap block(SIZE,SIZE);
+   group.fill(QColor(0,0,0));
+   block.fill(cs->back);   bitBlt(&group,0*SIZE,0,&block,0,0,SIZE,SIZE);
+   block.fill(cs->window); bitBlt(&group,1*SIZE,0,&block,0,0,SIZE,SIZE);
+   block.fill(cs->aTitle); bitBlt(&group,2*SIZE,0,&block,0,0,SIZE,SIZE);
+   return group;
+}
 
 /**** KColorScheme ****/
 
@@ -519,14 +532,19 @@ void KColorScheme::slotAdd()
        config->writeEntry("Name", sName);
        delete config;
        
-       readSchemeNames();
-       
-       sList->setCurrentItem(findSchemeByName(sFile));
+       KColorSchemeEntry *newEntry = new KColorSchemeEntry(sFile, sName, true);
+       mSchemeList->inSort(newEntry);
+       int newIndex = mSchemeList->findRef(newEntry)+nSysSchemes;
+       sList->insertItem(sName, newIndex);
+       sList->setCurrentItem(newIndex);
     }
     slotSave();
 
+    QPixmap preview = mkColorPreview(cs);
+    int current = sList->currentItem();
+    sList->changeItem(preview, sList->text(current), current);
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
-    slotPreviewScheme(sList->currentItem());
+    slotPreviewScheme(current);
 }
 
 QColor &KColorScheme::color(int index)
@@ -731,19 +749,6 @@ void KColorScheme::readScheme( int index )
       delete config;
 }
 
-#define SIZE 8
-
-// make a 24 * 8 pixmap with the main colors in a scheme
-QPixmap mkColorPreview(const WidgetCanvas *cs) 
-{
-   QPixmap group(SIZE*3,SIZE);
-   QPixmap block(SIZE,SIZE);
-   group.fill(QColor(0,0,0));
-   block.fill(cs->back);   bitBlt(&group,0*SIZE,0,&block,0,0,SIZE,SIZE);
-   block.fill(cs->window); bitBlt(&group,1*SIZE,0,&block,0,0,SIZE,SIZE);
-   block.fill(cs->aTitle); bitBlt(&group,2*SIZE,0,&block,0,0,SIZE,SIZE);
-   return group;
-}
 
 /*
  * Get all installed color schemes.
