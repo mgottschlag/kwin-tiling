@@ -31,14 +31,18 @@ class ModuleIconItem : public QIconViewItem
 public:
   ModuleIconItem(QIconView *parent, const QString& text, const QPixmap& pm, ConfigModule *m = 0)
 	: QIconViewItem(parent, text, pm)
+	, _tag(QString::null)
 	, _module(m)
 	{}
 
   void setConfigModule(ConfigModule* m) { _module = m; }
+  void setTag(const QString& t) { _tag = t; }
   ConfigModule* module() { return _module; }
+  QString tag() { return _tag; }
 
 private:
-  ConfigModule* _module;
+  QString       _tag;
+  ConfigModule *_module;
 };
 
 class ModuleIconView : public QIconView
@@ -57,8 +61,12 @@ signals:
 
 protected slots:
   void slotItemSelected(QIconViewItem*);
+
+protected:
+ void startDrag () { return; }
   
 private:
+  QString           _path; 
   ConfigModuleList *_modules;
 };
 

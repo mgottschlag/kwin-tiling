@@ -33,13 +33,13 @@ IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char 
   : QWidget(parent, name)
   , _modules(modules)
 {
-  // module tree view
+  // treeview
   _tree = new ModuleTreeView(_modules, this);
   _tree->fill();
   connect(_tree, SIGNAL(moduleSelected(ConfigModule*)), 
 		  this, SLOT(moduleSelected(ConfigModule*)));
 
-  // module icon view
+  // iconview
   _icon = new ModuleIconView(_modules, this);
   _icon->fill();
   connect(_icon, SIGNAL(moduleSelected(ConfigModule*)), 
@@ -83,21 +83,21 @@ void IndexWidget::moduleSelected(ConfigModule *m)
 
   if (sender()->inherits("ModuleIconView"))
 	{
+	  _tree->makeVisible(m);
+
 	  _tree->disconnect(SIGNAL(moduleSelected(ConfigModule*)));
 	  _tree->makeSelected(m);
 	  connect(_tree, SIGNAL(moduleSelected(ConfigModule*)), 
 			  this, SLOT(moduleSelected(ConfigModule*)));
-
-	  _tree->makeVisible(m);
 	}
   else if (sender()->inherits("ModuleTreeView"))
 	{
+	  _icon->makeVisible(m);
+
 	  _icon->disconnect(SIGNAL(moduleSelected(ConfigModule*)));
 	  _icon->makeSelected(m);
 	  connect(_icon, SIGNAL(moduleSelected(ConfigModule*)), 
 			 this, SLOT(moduleSelected(ConfigModule*)));
-
-	  _icon->makeVisible(m);
 	}
 }
 
