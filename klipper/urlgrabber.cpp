@@ -175,7 +175,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
         if ( wm_class_check )
         {
             myMenu->insertSeparator();
-            myMenu->insertItem( i18n( "Disable this popup" ), DISABLE_POPUP );
+            myMenu->insertItem( i18n( "Disable This Popup" ), DISABLE_POPUP );
         }
         myMenu->insertSeparator();
         // add an edit-possibility
