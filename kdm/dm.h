@@ -339,6 +339,7 @@ struct verify_info {
 # define UNMANAGE_DISPLAY	2	/* force deletion */
 # define RESERVER_DISPLAY	3	/* force server termination */
 # define OPENFAILED_DISPLAY	4	/* XOpenDisplay failed, retry */
+# define RESERVER_AL_DISPLAY	5	/* reserver; maybe, auto-(re-)login */
 
 #ifndef TRUE
 # define TRUE	1

@@ -495,6 +495,10 @@ WaitForChild (void)
 		Debug ("Display exited with RESERVER_DISPLAY\n");
 		ExitDisplay (d, TRUE, TRUE, TRUE);
 		break;
+	    case RESERVER_AL_DISPLAY:
+		Debug ("Display exited with RESERVER_AL_DISPLAY\n");
+		ExitDisplay (d, TRUE, TRUE, FALSE);
+		break;
 	    case waitCompose (SIGTERM,0,0):
 		Debug ("Display exited on SIGTERM\n");
 		ExitDisplay (d, TRUE, TRUE, FALSE);

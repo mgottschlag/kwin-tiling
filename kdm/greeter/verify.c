@@ -68,13 +68,14 @@ extern int errno;
 # include <login_cap.h>
 #endif
 
+/*
 #ifdef _AIX
 # include <login.h>
 # include <usersec.h>
 extern int loginrestrictions (char *Name, int Mode, char *Tty, char **Msg);
 extern int loginfailed (char *User, char *Host, char *Tty);
 extern int loginsuccess (char *User, char *Host, char *Tty, char **Msg);
-#endif /* _AIX */
+#endif / * _AIX */
 
 /* for nologin */
 #include <sys/types.h>
@@ -248,11 +249,16 @@ static struct pam_conv PAM_conversation = {
 	&PAM_conv,
 	NULL
 };
+
+# ifdef HAVE_PAM_FAIL_DELAY
+void fail_delay(int retval, unsigned usec_delay, void *appdata_ptr) {}
+# endif
+
 #endif /* USE_PAM */
 
 #define UFAILV do { bzero(greet->password, strlen(greet->password)); return V_FAIL; } while(0)
-#define FAILV do { if (greet->password) bzero(greet->password, strlen(greet->password)); return V_FAIL; } while(0)
 #define FAILVV(rv) do { if (greet->password) bzero(greet->password, strlen(greet->password)); return rv; } while(0)
+#define FAILV FAILVV(V_FAIL)
 
 VerifyRet
 Verify (struct display *d, struct greet_info *greet, struct verify_info *verify, 
@@ -275,10 +281,10 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
     time_t		tim, exp, warntime;
     int			quietlog;
 #endif
-#ifdef HAVE_LOGIN_CAP_H
+#ifdef USE_LOGIN_CAP
 # ifdef __bsdi__
-    /* On BSD/OS the login_cap_t typedef has the 'struct' builtin */
-    login_cap_t	*lc;
+    /* This only works / is needed on BSDi */
+    login_cap_t		*lc;
 # else
     struct login_cap	*lc;
 # endif
@@ -296,7 +302,7 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
 
 #ifdef USE_PAM
 
-#define PAM_BAIL	\
+# define PAM_BAIL	\
     if (pam_error != PAM_SUCCESS) { \
 	pam_end(*pamh, 0); \
 	FAILV; \
@@ -307,39 +313,70 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
     pam_error = pam_set_item(*pamh, PAM_TTY, d->name);
     PAM_BAIL;
     if (greet->password) {
-	pam_error = pam_authenticate(*pamh, 0);
+# ifdef HAVE_PAM_FAIL_DELAY
+	pam_error = pam_set_item(*pamh, PAM_FAIL_DELAY, fail_delay);
+	PAM_BAIL;
+# endif
+	pam_error = pam_authenticate(*pamh, d->allowNullPasswd ? 
+				     0 : PAM_DISALLOW_NULL_AUTHTOK);
 	PAM_BAIL;
     }
     pam_error = pam_acct_mgmt(*pamh, 0);
     /* really should do password changing, but it doesn't fit well */
     PAM_BAIL;
-    pam_error = pam_setcred(*pamh, 0);
-    PAM_BAIL;
-#undef PAM_BAIL
+# undef PAM_BAIL
 
 /*
 #elif defined(_AIX) / * USE_PAM * /
 
-	int		loginType;
-	struct stat	statBuf;
-	char		v_work[512], tty[512];
-	char		*msg1;
-	char		hostname[512];
-	char		*tmpch;
+    int		i, loginType;
+    char	tty[16], hostname[100], *msg;
 
-	if (d->displayType.location == Foreign) {
-	    strncpy(hostname, d->name, 511);
-	    hostname[511] = '\0';
-	    if ((tmpch = strchr(hostname, ':')))
-	        *tmpch = '\0';
-	} else {
-	    hostname[0] = '\0';
+    if (d->displayType.location == Foreign) {
+	char *tmpch;
+	strncpy(hostname, d->name, sizeof(hostname)-1);
+	hostname[sizeof(hostname)-1] = '\0';
+	if ((tmpch = strchr(hostname, ':')))
+	    *tmpch = '\0';
+    } else
+	hostname[0] = '\0';
+
+    / * tty names should only be 15 characters long * /
+    memcpy(tty, "/dev/xdm/", 10);
+    for (i = 0; i < 6 && d->name[i]; i++)
+	if (d->name[i] == ':' || d->name[i] == '.')
+	    tty[9 + i] = '_';
+	else
+	    tty[9 + i] = d->name[i];
+    }
+    tty[9 + i] = '\0';
+
+    loginType = d->displayType.location == Foreign ? S_RLOGIN : S_LOGIN;
+
+    if (greet->password) {
+	enduserdb();
+	msg = NULL;
+	rc = authenticate(greet->name, greet->password, &reenter, &msg);
+	if (rc || reenter) {
+	    Debug("authenticate() - %s\n", msg ? msg : "Error\n");
+	    if (msg)
+		free((void *)msg);
+	    loginfailed(greet->name, hostname, tty);
+	    UFAILV;
 	}
-	CleanUpName(d->name,v_work,512);
-        sprintf(tty,"/dev/xdm/%s",v_work);
-	tty[15] = '\0';      / ** tty names should only be 15 characters long ** /
-
-	loginType = d->displayType.location == Foreign ? S_RLOGIN : S_LOGIN;
+	if (msg)
+	    free((void *)msg);
+    }
+    msg = NULL;
+    if (!loginrestrictions(greet->name, loginType, tty, &msg)) {
+	Debug("loginrestrictions() - %s\n", msg ? msg : "Error\n");
+	if (msg)
+	    free((void *)msg);
+	/ * loginfailed(greet->name, hostname, tty);  here too? * /
+	FAILV;	/ * XXX: V_AUTHMSG * /
+    }
+    if (msg)
+	free((void *)msg);
 */
 #endif	/* USE_PAM && _AIX */
 
@@ -363,18 +400,18 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
 # endif  /* QNX4 doesn't need endspent() to end shadow passwd ops */
 #endif /* USESHADOW */
 
-#if !defined(USE_PAM) /*&& !defined(_AIX)*/
+#if !defined(USE_PAM) /* && !defined(_AIX) */
 
-#ifdef __linux__	/* only Linux? */
+# ifdef __linux__	/* only Linux? */
     if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
 	Debug ("The account is locked, no login allowed.\n");
 	FAILV;
     }
-#endif
+# endif
 
     if (greet->password) {
 
-#ifdef KRB4
+# ifdef KRB4
 	if (strcmp(greet->name, "root") != 0) {
 	    char name[ANAME_SZ];
 	    char realm[REALM_SZ];
@@ -395,7 +432,7 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
 		if (ret == KSUCCESS) {
 		    chown(krbtkfile, p->pw_uid, p->pw_gid);
 		    Debug("kerberos verify succeeded\n");
-# ifdef AFS
+#  ifdef AFS
 		    if (k_hasafs()) {
 			if (k_setpag() == -1)
 			    LogError ("setpag() failed for %s\n", greet->name);
@@ -403,7 +440,7 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
 			if ((ret = k_afsklog(NULL, NULL)) != KSUCCESS)
 			    LogError("Warning %s\n", krb_get_err_text(ret));
 		    }
-# endif
+#  endif
 		    goto done;
 		} else if(ret != KDC_PR_UNKNOWN && ret != SKDC_CANT) {
 		    /* failure */
@@ -414,13 +451,13 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
 		}
 	    }
 	}
-#endif  /* KRB4 */
+# endif  /* KRB4 */
 
-#if defined(ultrix) || defined(__ultrix__)
+# if defined(ultrix) || defined(__ultrix__)
 	if (authenticate_user(p, greet->password, NULL) < 0)
-#else
+# else
 	if (strcmp (crypt (greet->password, user_pass), user_pass))
-#endif
+# endif
 	{
 	    if(!d->allowNullPasswd || p->pw_passwd[0]) {
 		Debug ("password verify failed\n");
@@ -471,11 +508,11 @@ done:
 /* restrict_nologin */
 #ifndef USE_PAM
 
-#ifndef _PATH_NOLOGIN
-# define _PATH_NOLOGIN "/etc/nologin"
-#endif
+# ifndef _PATH_NOLOGIN
+#  define _PATH_NOLOGIN "/etc/nologin"
+# endif
 
-#ifdef USE_LOGIN_CAP
+# ifdef USE_LOGIN_CAP
     /* Do we ignore a nologin file? */
     if (login_getcapbool(lc, "ignorenologin", 0))
 	goto nolog_succ;
@@ -483,7 +520,7 @@ done:
     nolg = login_getcapstr(lc, "nologin", "", NULL);
     if (!stat(nolg, &st))
 	goto nolog;
-#endif
+# endif
 
     nolg = _PATH_NOLOGIN;
     if (!stat(nolg, &st)) {
@@ -496,15 +533,14 @@ done:
 	    FAILVV(V_NOLOGIN);
 	}
     }
-#ifdef USE_LOGIN_CAP
+# ifdef USE_LOGIN_CAP
 nolog_succ:
-#endif
+# endif
 #endif /* !USE_PAM */
-/* restrict_nologin */
 
 
 /* restrict_nohome */
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+#ifdef USE_LOGIN_CAP
 
     if (login_getcapbool(lc, "requirehome", 0)) {
 	seteuid(p->pw_uid);
@@ -516,36 +552,35 @@ nolog_succ:
     }
 
 #endif
-/* restrict_nohome */
 
 
 /* restrict_expired */
 #if defined(HAVE_PW_EXPIRE) || defined(USESHADOW) /* && !defined(USE_PAM) ? */
 
-#define DEFAULT_WARN  (2L * 7L * 86400L)  /* Two weeks */
+# define DEFAULT_WARN  (2L * 7L * 86400L)  /* Two weeks */
 
     tim = time(NULL);
 
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+# ifdef USE_LOGIN_CAP
     quietlog = login_getcapbool(lc, "hushlogin", 0);
     warntime = login_getcaptime(lc, "warnexpire",
 				DEFAULT_WARN, DEFAULT_WARN);
-#else
-    quietlog = 0;
-# ifdef USESHADOW
-    warntime = sp->sp_warn*86400;
 # else
+    quietlog = 0;
+#  ifdef USESHADOW
+    warntime = sp->sp_warn*86400;
+#  else
     warntime = DEFAULT_WARN;
+#  endif
 # endif
-#endif
 
-#ifdef HAVE_PW_EXPIRE
+# ifdef HAVE_PW_EXPIRE
     exp = p->pw_expire;
     if (exp) {
-#else
+# else
     if (sp->sp_expire != -1) {
 	exp = sp->sp_expire*86400;
-#endif
+# endif
 	if (exp <= tim) {
 # ifdef USE_LOGIN_CAP
 	    login_close(lc);
@@ -558,13 +593,13 @@ nolog_succ:
 	}
     }
 
-#ifdef HAVE_PW_EXPIRE
+# ifdef HAVE_PW_EXPIRE
     exp = p->pw_change;
     if (exp) {
-#else
+# else
     if (sp->sp_max != -1) {
 	exp = (sp->sp_lstchg+sp->sp_max)*86400;
-#endif
+# endif
 	if (exp <= tim) {
 # ifdef USE_LOGIN_CAP
 	    login_close(lc);
@@ -578,7 +613,6 @@ nolog_succ:
     }
 
 #endif /* HAVE_PW_EXPIRE || USESHADOW */
-/* restrict_expired */
 
 
 /* restrict_time */
@@ -587,7 +621,6 @@ nolog_succ:
 	login_close(lc);
 	FAILVV(V_BADTIME);
     }
-/* restrict_time */
 
 
     login_close(lc);
@@ -595,6 +628,16 @@ nolog_succ:
 
 norestr:
     Debug ("verify succeeded\n");
+/*
+#ifdef _AIX
+    msg = NULL;
+    loginsuccess(greet->name, hostname, tty, &msg);
+    if (msg) {
+	Debug("loginsuccess() - %s\n", msg);
+	free((void *)msg);
+    }
+#endif
+*/
     /* The password is passed to StartClient() for use by user-based
        authorization schemes.  It is zeroed there. */
     verify->uid = p->pw_uid;

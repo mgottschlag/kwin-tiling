@@ -371,6 +371,7 @@ AbortClient (int pid)
     }
 }
 
+/* XXX dissolve this function */
 void
 SessionPingFailed (struct display *d)
 {
@@ -379,7 +380,7 @@ SessionPingFailed (struct display *d)
     	AbortClient (clientPid);
 	source (verify.systemEnviron, d->reset);
     }
-    SessionExit (d, RESERVER_DISPLAY, TRUE);
+    SessionExit (d, RESERVER_AL_DISPLAY, TRUE);
 }
 
 /*
@@ -395,7 +396,7 @@ static int
 IOErrorHandler (Display *dpy)
 {
     LogError("fatal IO error %d (%s)\n", errno, _SysErrorMsg(errno));
-    exit(RESERVER_DISPLAY);
+    exit(RESERVER_AL_DISPLAY);
     /*NOTREACHED*/
 }
 
@@ -411,6 +412,7 @@ ErrorHandler(Display *dpy, XErrorEvent *event)
 void
 ManageSession (struct display *d)
 {
+    static int		exitCode = OBEYSESS_DISPLAY;
     static int		pid = 0;
     Display		*dpy;
     greet_user_rtn	greet_stat;
@@ -420,6 +422,7 @@ ManageSession (struct display *d)
 #endif
 
     Debug ("ManageSession %s\n", d->name);
+    (void) Signal (SIGINT, SIG_IGN);	/* for nodaemon */
     (void)XSetIOErrorHandler(IOErrorHandler);
     (void)XSetErrorHandler(ErrorHandler);
     SetTitle(d->name, (char *) 0);
@@ -456,8 +459,10 @@ ManageSession (struct display *d)
 #endif
 
 #ifdef XDMCP
+/*
     if (greet_stat == Greet_RunChooser)
 	RunChooser (d);
+*/
 #endif
 
     if (greet_stat == Greet_Success)
@@ -465,7 +470,6 @@ ManageSession (struct display *d)
 	clientPid = 0;
 	if (!Setjmp (abortSession)) {
 	    (void) Signal (SIGTERM, catchTerm);
-	    (void) Signal (SIGINT, catchTerm);	/* for nodaemon */
 	    /*
 	     * Start the clients, changing uid/groups
 	     *	   setting up environment and running the session
@@ -499,6 +503,18 @@ ManageSession (struct display *d)
 		    if (pid == clientPid)
 			break;
 		}
+		/* 
+    		 * Sometimes the Xsession somehow manages to exit before a 
+		 * server crash is noticed - so we sleep a bit and wait for
+		 * being killed.
+		 */
+		dpy = XOpenDisplay (d->name);
+		if (dpy)
+		    XCloseDisplay (dpy);
+		else {
+		    LogError("It happened! Please report to ossi@kde.org if today is before 2001 Feb 20. No further information required. Note, that this message has nothing to do with the crash you possibly just experienced.\n");
+		    sleep (10);
+		}
 	    } else {
 		LogError ("session start failed\n");
 	    }
@@ -508,6 +524,7 @@ ManageSession (struct display *d)
 	     * the child and then run the reset script
 	     */
 	    AbortClient (clientPid);
+	    exitCode = RESERVER_AL_DISPLAY;
 	}
     }
     /*
@@ -516,17 +533,7 @@ ManageSession (struct display *d)
     Debug ("Source reset program %s\n", d->reset);
     source (verify.systemEnviron, d->reset);
 
-    /* 
-     * Sometimes the Xsession somehow manages to exit before a server crash
-     * is noticed - so we sleep a bit and wait for being killed.
-     */
-    dpy = XOpenDisplay (d->name);
-    if (dpy)
-	XCloseDisplay (dpy);
-    else
-	sleep (10);
-
-    SessionExit (d, OBEYSESS_DISPLAY, TRUE);
+    SessionExit (d, exitCode, TRUE);
 }
 
 void
@@ -639,6 +646,12 @@ SessionExit (struct display *d, int status, int removeAuth)
     {
 #ifdef USE_PAM
 	pam_handle_t **pamh = thepamh();
+	if (pamh && *pamh) {
+	    /* shutdown PAM session */
+	    pam_close_session(*pamh, 0);
+	    pam_end(*pamh, PAM_SUCCESS);
+	    *pamh = NULL;
+	}
 #endif
 #ifdef NGROUPS_MAX
 	setgid (verify.groups[0]);
@@ -671,14 +684,6 @@ SessionExit (struct display *d, int status, int removeAuth)
 	    }
 	}
 #endif /* K5AUTH */
-#ifdef USE_PAM
-	if (pamh && *pamh) {
-	    /* shutdown PAM session */
-	    pam_close_session(*pamh, 0);
-	    pam_end(*pamh, PAM_SUCCESS);
-	    *pamh = NULL;
-	}
-#endif
 #ifdef KRB4
         {
 	    (void) dest_tkt();
@@ -740,8 +745,10 @@ StartClient (
 	    free (buf);
     }
 #ifdef USE_PAM
-    if (pamh && *pamh)
+    if (pamh && *pamh) {
 	pam_open_session(*pamh, 0);
+	pam_setcred(*pamh, 0);
+    }
 #endif    
     switch (pid = fork ()) {
     case 0:

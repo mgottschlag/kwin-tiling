@@ -642,10 +642,11 @@ KGreeter::ReturnPressed()
 }
 
 
+// we have to return RESERVER_DISPLAY to restart the server
 static int
 IOErrorHandler (Display*)
 {
-    exit (RESERVER_DISPLAY);
+    exit (RESERVER_AL_DISPLAY);
     /* Not reached */
     return 0;
 }
@@ -855,7 +856,6 @@ GreetUser(
      
     // this is necessary, since Qt just overwrites the
     // IOErrorHandler that was set by xdm!!!
-    // we have to return RESERVER_DISPLAY to restart the server
     XSetIOErrorHandler(IOErrorHandler);
      
     sigaction(SIGCHLD, &sig, NULL);
