@@ -423,7 +423,6 @@ CloseGreeter (int force)
 	return 0;
     greeter = 0;
     ret = GClose (&grtproc, force);
-    DeleteXloginResources ();
     Debug ("greeter for %s stopped\n", td->name);
     return ret;
 }
@@ -564,6 +563,8 @@ ManageSession (struct display *d)
     if (CloseGreeter (FALSE))
 	goto regreet;
 
+    DeleteXloginResources ();
+
     if (!(clientPid = StartClient ())) {
 	LogError ("Client start failed\n");
 	SessionExit (EX_NORMAL); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
@@ -603,13 +604,15 @@ ManageSession (struct display *d)
     SessionExit (EX_NORMAL); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
 }
 
+static int xResLoaded;
+
 void
 LoadXloginResources ()
 {
     char	**args;
     char	**env = 0;
 
-    if (td->resources[0] && access (td->resources, 4) == 0) {
+    if (!xResLoaded && td->resources[0] && access (td->resources, 4) == 0) {
 	env = systemEnv ((char *) 0, (char *) 0);
 	args = parseArgs ((char **) 0, td->xrdb);
 	args = parseArgs (args, td->resources);
@@ -617,6 +620,7 @@ LoadXloginResources ()
 	(void) runAndWait (args, env);
 	freeStrArr (args);
 	freeStrArr (env);
+	xResLoaded = TRUE;
     }
 }
 
@@ -637,8 +641,12 @@ void
 DeleteXloginResources ()
 {
     int i;
-    Atom prop = XInternAtom(dpy, "SCREEN_RESOURCES", True);
+    Atom prop;
 
+    if (!xResLoaded)
+	return;
+    xResLoaded = FALSE;
+    prop = XInternAtom(dpy, "SCREEN_RESOURCES", True);
     XDeleteProperty(dpy, RootWindow (dpy, 0), XA_RESOURCE_MANAGER);
     if (prop) {
 	for (i = ScreenCount(dpy); --i >= 0; )
