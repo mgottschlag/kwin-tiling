@@ -80,6 +80,7 @@ public:
     QString iconName() const;
     QString visibleIconName() const;
     QString className();
+    QString classClass();
 
     /**
      * A list of the window ids of all transient windows (dialogs) associated
@@ -514,7 +515,7 @@ protected slots:
     void gotStartupChange( const KStartupInfoId&, const KStartupInfoData& );
     //* @internal
     void gotRemoveStartup( const KStartupInfoId& );
-    
+
 protected:
     /**
      * Returns the task for a given WId, or 0 if there is no such task.

@@ -35,12 +35,16 @@ TaskLMBMenu::TaskLMBMenu( TaskList* tasks, QWidget *parent, const char *name )
 void TaskLMBMenu::fillMenu( TaskList* tasks )
 {
 	setCheckable( true );
-	
+
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		Task* t = (*it);
-		int id = insertItem( QIconSet( t->pixmap() ), 
-                      t->visibleNameWithState().replace(QRegExp("&"), "&&"),
-		                t, SLOT( activateRaiseOrIconify() ) );
+
+		// make sure it starts with an upper case char (looks nicer)
+		QString text = t->visibleNameWithState().replace(QRegExp("&"), "&&");
+		text = text.left( 1 ).upper() + text.mid( 1, text.length() - 1 );
+
+		int id = insertItem( QIconSet( t->pixmap() ), text,
+				     t, SLOT( activateRaiseOrIconify() ) );
 		setItemChecked( id, t->isActive() );
 	}
 }

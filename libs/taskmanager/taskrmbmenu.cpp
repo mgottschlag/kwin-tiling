@@ -52,27 +52,27 @@ void TaskRMBMenu::fillMenu( Task* t, TaskManager* manager )
 {
 	int id;
 	setCheckable( true );
-	
+
 	id = insertItem( i18n( "Mi&nimize" ), t, SLOT( iconify() ) );
 	setItemEnabled( id, !t->isIconified() );
 	id = insertItem( i18n( "Ma&ximize" ), t, SLOT( maximize() ) );
 	setItemEnabled( id, !t->isMaximized() );
 	id = insertItem( i18n( "&Restore" ), t, SLOT( restore() ) );
 	setItemEnabled( id, t->isIconified() || t->isMaximized() );
-	
+
 	insertSeparator();
-	
+
 	id = insertItem( i18n( "&Shade" ), t, SLOT( toggleShaded() ) );
 	setItemChecked( id, t->isShaded() );
 	id = insertItem( i18n( "&Always on Top" ), t, SLOT( toggleAlwaysOnTop() ) );
 	setItemChecked( id, t->isAlwaysOnTop() );
-	
+
 	insertSeparator();
-	
+
 	id = insertItem( SmallIcon( "remove" ), i18n( "&Close" ), t, SLOT( close() ) );
-	
+
 	insertSeparator();
-	
+
 	id = insertItem( i18n("To &Desktop"), makeDesktopsMenu( t, manager ) );
 	id = insertItem( i18n( "&To Current Desktop" ), t, SLOT( toCurrentDesktop() ) );
 	setItemEnabled( id, !t->isOnCurrentDesktop() );
@@ -82,19 +82,23 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 {
 	int id;
 	setCheckable( true );
-	
+
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		Task* t = (*it);
-		id = insertItem( QIconSet( t->pixmap() ), t->visibleNameWithState(),
+
+		// make sure it starts with an upper case char (looks nicer)
+		QString text = t->visibleNameWithState();
+		text = text.left( 1 ).upper() + text.mid( 1, text.length() - 1 );
+		id = insertItem( QIconSet( t->pixmap() ), text,
 		                 new TaskRMBMenu( t, manager, this ) );
 		setItemChecked( id, t->isActive() );
 		connectItem( id, t, SLOT( activateRaiseOrIconify() ) );
 	}
-	
+
 	insertSeparator();
-	
+
 	bool enable = false;
-	
+
 	id = insertItem( i18n( "Mi&nimize All" ), this, SLOT( slotMinimizeAll() ) );
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		if( !(*it)->isIconified() ) {
@@ -103,9 +107,9 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 		}
 	}
 	setItemEnabled( id, enable );
-	
+
 	enable = false;
-	
+
 	id = insertItem( i18n( "Ma&ximize All" ), this, SLOT( slotMaximizeAll() ) );
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		if( !(*it)->isMaximized() ) {
@@ -114,9 +118,9 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 		}
 	}
 	setItemEnabled( id, enable );
-	
+
 	enable = false;
-	
+
 	id = insertItem( i18n( "&Restore All" ), this, SLOT( slotRestoreAll() ) );
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		if( (*it)->isIconified() || (*it)->isMaximized() ) {
@@ -125,11 +129,11 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 		}
 	}
 	setItemEnabled( id, enable );
-	
+
 	insertSeparator();
-	
+
 	enable = false;
-	
+
 	/*
 	id = insertItem( i18n( "&Shade All" ), this, SLOT( slotShadeAll() ), 0, OpMenu::ShadeOp );
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
@@ -140,11 +144,11 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 	}
 	setItemEnabled( id, enable );
 	*/
-	
+
 	insertItem( SmallIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
-	
+
 	insertSeparator();
-	
+
 	id = insertItem( i18n("All to &Desktop"), makeDesktopsMenu( tasks, manager ) );
 
 	enable = false;
@@ -163,20 +167,20 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu( Task* t, TaskManager* manager )
 {
 	QPopupMenu* m = new QPopupMenu( this );
 	m->setCheckable( true );
-	
+
 	int id = m->insertItem( i18n("&All Desktops"), t, SLOT( toDesktop(int) ) );
 	m->setItemParameter( id, 0 ); // 0 means all desktops
 	m->setItemChecked( id, t->isOnAllDesktops() );
-	
+
 	m->insertSeparator();
-	
+
 	for( int i = 1; i <= manager->numberOfDesktops(); i++ ) {
 		QString name = QString( "&%1 %2" ).arg( i ).arg( manager->desktopName( i ) );
 		id = m->insertItem( name, t, SLOT( toDesktop(int) ) );
 		m->setItemParameter( id, i );
 		m->setItemChecked( id, !t->isOnAllDesktops() && t->desktop() == i );
 	}
-	
+
 	return m;
 }
 
@@ -184,18 +188,18 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu( TaskList*, TaskManager* manager )
 {
 	QPopupMenu* m = new QPopupMenu( this );
 	m->setCheckable( true );
-	
+
 	int id = m->insertItem( i18n("&All Desktops"), this, SLOT( slotAllToDesktop(int) ) );
 	m->setItemParameter( id, 0 ); // 0 means all desktops
-	
+
 	m->insertSeparator();
-	
+
 	for( int i = 1; i <= manager->numberOfDesktops(); i++ ) {
 		QString name = QString( "&%1 %2" ).arg( i ).arg( manager->desktopName( i ) );
 		id = m->insertItem( name, this, SLOT( slotAllToDesktop(int) ) );
 		m->setItemParameter( id, i );
 	}
-	
+
 	return m;
 }
 

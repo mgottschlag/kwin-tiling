@@ -420,6 +420,14 @@ QString Task::className()
     return QString::null;
 }
 
+QString Task::classClass()
+{
+    XClassHint hint;
+    if(XGetClassHint(qt_xdisplay(), _win, &hint))
+        return QString(hint.res_class);
+    return QString::null;
+}
+
 QPixmap Task::icon( int width, int height, bool allowResize )
 {
   if ( (width == _lastWidth)
