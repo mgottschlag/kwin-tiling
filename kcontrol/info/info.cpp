@@ -276,6 +276,16 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 	if (i==0) item->setOpen(true);
     }
 
+    last = new QListViewItem( next, last, i18n("Supported Extensions") );
+    item = last;
+
+    int extCount;
+    char **extensions = XListExtensions( dpy, &extCount );
+    for ( i = 0; i < extCount; i++ ) {
+       item = new QListViewItem( last, item, QString( extensions[i] ) );
+    }
+    XFreeExtensionList( extensions );
+
     pmf = XListPixmapFormats(dpy, &n);
     last = item = new QListViewItem(next, last, i18n("Supported Pixmap Formats"));
     if (pmf) {
@@ -307,7 +317,6 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 
     last = new QListViewItem(next, last, i18n("Image Byte Order"),
 		Order(ImageByteOrder(dpy)));
-
 
     XCloseDisplay (dpy);
     return true;
