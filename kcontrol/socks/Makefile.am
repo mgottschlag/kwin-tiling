@@ -16,4 +16,4 @@ messages:
 	$(XGETTEXT) $(libkcm_socks_la_SOURCES) -o $(podir)/kcmsocks.pot
 
 data_DATA = socks.desktop
-datadir = $(kde_appsdir)/Settings/WebBrowsing
+datadir = $(kde_appsdir)/Settings/Network
