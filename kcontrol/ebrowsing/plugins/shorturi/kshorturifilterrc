@@ -1,5 +1,9 @@
-[Pattern Matching]
-^www=http://
-^ftp=ftp://
-^localhost=http://
-^LOCALHOST=http://
+[Pattern]
+http=^www ^localhost ^(\w+)@localhost
+ftp=^ftp
+mailto=(\w+)@(\w+)\.(\w+)
+
+[Protocol]
+http=http://
+ftp=ftp://
+mailto=mailto:

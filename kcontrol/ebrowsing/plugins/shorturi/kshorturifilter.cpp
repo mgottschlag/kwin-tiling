@@ -36,8 +36,8 @@
 #include "kshorturifilter.h"
 
 
-#define FQDN_PATTERN    "[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]"
-#define IPv4_PATTERN    "[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?:?[[0-9][0-9]?[0-9]?]?/?"
+#define FQDN_PATTERN    "[a-zA-Z][a-zA-Z0-9-+]*\\.[a-zA-Z]"
+#define IPv4_PATTERN    "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{0,3}\\.[0-9]{0,3}:?[[0-9]{1,3}]?/?"
 #define ENV_VAR_PATTERN "\\$[a-zA-Z_][a-zA-Z0-9_]*"
 
 #define QFL1(x) QString::fromLatin1(x)
@@ -58,9 +58,9 @@ bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
   // Loose many of the QRegExp matches as they tend
   // to slow things down.  They are also unnecessary!! (DA)
     if ( cmd[cmd.length()-1] == '&' ||     // must not end with '&'
-       (!cmd.contains('.') && !cmd.contains(':') && !cmd.contains('@')) ||             // must contain either '.' or ':' or '@'
-       cmd.contains(QFL1("||")) || cmd.contains(QFL1("&&")) ||   // must not look like shell
-       cmd.contains(QRegExp(QFL1("[ ;<>]"))) )  // must not contain space, ;, < or >
+         (!cmd.contains('.') && !cmd.contains(':') ||  // must contain either '.' or ':'
+          cmd.contains(QFL1("||")) || cmd.contains(QFL1("&&")) ||   // must not look like shell
+          cmd.contains(QRegExp(QFL1("[ ;<>]")))) ) // must not contain space, ;, < or >
        return false;
 
   return true;
@@ -139,19 +139,13 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   }
 
   bool expanded = false;
+  
   // Expanding shortcut to HOME URL...
   QString path;
   QString ref;
+  
   if (KURL::isRelativeURL(cmd))
-  {
-     if (cmd.contains('@'))
-     {
-        setFilteredURI( data, QString::fromLatin1("mailto:") + cmd );
-        setURIType( data, KURIFilterData::NET_PROTOCOL );
-        return true;
-     }
      path = cmd;
-  }
   else
   {
     if (url.isLocalFile())
@@ -387,12 +381,25 @@ QString KShortURIFilter::configName() const
 void KShortURIFilter::configure()
 {
   KConfig config( name() + QFL1("rc"), false, false );
-  EntryMap map = config.entryMap( QFL1("Pattern Matching") );
-  if( !map.isEmpty() )
-  {
-      EntryMap::Iterator it = map.begin();
-      for( ; it != map.end(); ++it )
-          m_urlHints.append( URLHint(it.key(), it.data()) );
+  QChar sep = config.readNumEntry( "PatternSeparator", ' ' );
+  EntryMap patterns = config.entryMap( QFL1("Pattern") );
+  const EntryMap protocols = config.entryMap( QFL1("Protocol") );
+  
+  if (!patterns.isEmpty())
+  {      
+    for( EntryMap::Iterator it = patterns.begin(); it != patterns.end(); ++it )
+    {
+      QStringList regexps = QStringList::split (sep, it.data());
+      for (QStringList::Iterator exp = regexps.begin(); exp != regexps.end(); ++exp)
+      {
+        QString protocol = protocols[it.key()];
+        if (!protocol.isEmpty())
+        {
+          // kdDebug() << "Protocol: " << protocol << endl << "Expression: " << *exp << endl;
+          m_urlHints.append( URLHint(*exp, protocol) );
+        }
+      }
+    }
   }
 
   // Include some basic defaults.  Note these will always be
