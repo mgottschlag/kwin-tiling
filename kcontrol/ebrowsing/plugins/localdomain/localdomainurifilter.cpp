@@ -29,7 +29,7 @@
 #include <qregexp.h>
 #include <qfile.h>
 
-#define HOSTPORT_PATTERN "[a-zA-Z0-9][a-zA-Z0-9+-]*(?:\\:[0-9]{1,5})?(?:/\\w*)*"
+#define HOSTPORT_PATTERN "[a-zA-Z0-9][a-zA-Z0-9+-]*(?:\\:[0-9]{1,5})?(?:/[\\w:@&=+$,-.!~*'()]*)*"
 
 /**
  * IMPORTANT: If you change anything here, please run the regression test
