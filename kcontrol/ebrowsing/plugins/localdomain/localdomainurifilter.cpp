@@ -30,6 +30,8 @@
 
 #include "localdomainurifilter.h"
 
+#include <time.h>
+
 #include <qregexp.h>
 
 #include <kprocess.h>
