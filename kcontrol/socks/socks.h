@@ -2,6 +2,7 @@
  * socks.h
  *
  * Copyright (c) 2001 George Staikos <staikos@kde.org>
+ * Copyright (c) 2001 Daniel Molkentin <molkentin@kde.org> (designer port)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,6 +28,9 @@
 
 #include <kcmodule.h>
 
+#include "socksbase.h"
+
+
 class QVButtonGroup;
 
 class KSocksConfig : public KCModule
@@ -35,6 +39,8 @@ class KSocksConfig : public KCModule
 public:
   KSocksConfig(QWidget *parent = 0L, const char *name = 0L);
   virtual ~KSocksConfig();
+
+  SocksBase *base;
 
   void load();
   void save();
@@ -50,7 +56,7 @@ private slots:
   void enableChanged();
   void methodChanged(int id);
   void testClicked();
-  void chooseCustomLib();
+  void chooseCustomLib(KURLRequester *url);
   void customPathChanged(const QString&);
   void addLibrary();
   void libTextChanged(const QString& lib);
@@ -62,17 +68,6 @@ private:
 
   bool _socksEnabled;
   int _useWhat;
-
-  QCheckBox *_c_enableSocks;
-  QRadioButton *_c_detect, *_c_NEC, *_c_Dante, *_c_custom;
-  QPushButton *_c_test;
-  QLabel *_c_customLabel;
-  KLineEdit *_c_customPath;
-  QPushButton *_c_customChoose;
-  QVButtonGroup *bg;
-  QPushButton *_c_add, *_c_remove;
-  KListView *_c_libs;
-  KLineEdit *_c_newPath;
 
   KConfig *config;
 };

@@ -1,7 +1,7 @@
 INCLUDES = $(all_includes)
 kde_module_LTLIBRARIES = libkcm_socks.la
 
-libkcm_socks_la_SOURCES = socks.cpp 
+libkcm_socks_la_SOURCES = socks.cpp socksbase.ui 
 
 libkcm_socks_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_socks_la_LIBADD = -lkdeui -lkfile
