@@ -455,7 +455,7 @@ void KGeneral::save()
         true, true);
 
     config->setGroup("X11");
-    config->writeEntry("useResourceManager", useRM, true, true);
+    config->writeEntry("useResourceManager", useRM);
     config->sync();
 
     if (useRM) {
