@@ -47,9 +47,6 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 {
     // connections
     connect(m_showPixmap, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_clearCache, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_clearSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_clearSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_hiddenFiles, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_maxSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_maxSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
@@ -69,17 +66,6 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     connect(m_selectedMenus,SIGNAL(selectionChanged ()),SLOT(slotSelectionChanged()));
 
     // whats this help
-    QWhatsThis::add(m_clearCache, i18n("The panel can cache information about menu entries instead "
-                                       "of reading it from disk every time you browse the menus. "
-                                       "This makes the panel menus react faster. "
-                                       "However, you might want to turn this off if you're short on memory."));
-
-    QString clearstr = i18n("If menu caching is turned on, you can set a delay after which "
-                            "the cache will be cleared.");
-
-    QWhatsThis::add(m_clearSlider, clearstr);
-    QWhatsThis::add(m_clearSpinBox, clearstr);
-
     QWhatsThis::add(m_hiddenFiles, i18n("If this option is enabled, hidden files (i.e. files beginning "
                                         "with a dot) will be shown in the QuickBrowser menus."));
 
@@ -142,13 +128,6 @@ void MenuTab::load()
 
     c->setGroup("menus");
 
-    bool cc = c->readBoolEntry("ClearMenuCache", true);
-    m_clearCache->setChecked(cc);
-    m_clearSlider->setValue(c->readNumEntry("MenuCacheTime", 60000) / 1000);
-    m_clearSlider->setEnabled(cc);
-    m_clearSpinBox->setValue(c->readNumEntry("MenuCacheTime", 60000) / 1000);
-    m_clearSpinBox->setEnabled(cc);
-
     m_maxSlider->setValue(c->readNumEntry("MaxEntries2", 30));
     m_maxSpinBox->setValue(c->readNumEntry("MaxEntries2", 30));
 
@@ -208,8 +187,6 @@ void MenuTab::save()
 
     c->setGroup("menus");
 
-    c->writeEntry("ClearMenuCache", m_clearCache->isChecked());
-    c->writeEntry("MenuCacheTime", m_clearSlider->value() * 1000);
     c->writeEntry("MaxEntries2", m_maxSlider->value());
     c->writeEntry("MergeKDEDirs", m_mergeLocations->isChecked());
     c->writeEntry("UseBookmarks", m_showBookmarks->isChecked());
@@ -238,11 +215,6 @@ void MenuTab::save()
 void MenuTab::defaults()
 {
   m_showPixmap->setChecked(true);
-  m_clearCache->setChecked(true);
-  m_clearSlider->setValue(60);
-  m_clearSlider->setEnabled(true);
-  m_clearSpinBox->setValue(60);
-  m_clearSpinBox->setEnabled(true);
   m_maxSlider->setValue(30);
   m_maxSpinBox->setValue(30);
   m_mergeLocations->setChecked(true);
