@@ -1,7 +1,6 @@
 /*
- *  kcmtaskbar.h
- *
  *  Copyright (c) 2000 Kurt Granroth <granroth@kde.org>
+ *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,6 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  */
+
 #ifndef __kcmtaskbar_h__
 #define __kcmtaskbar_h__
 
@@ -27,36 +27,30 @@ class QRadioButton;
 
 class TaskbarConfig : public KCModule
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  TaskbarConfig( QWidget *parent=0, const char* name=0 );
-  virtual ~TaskbarConfig();
+    TaskbarConfig( QWidget *parent=0, const char* name=0 );
+    virtual ~TaskbarConfig();
 
-  void load();
-  void save();
-  void defaults();
+    void load();
+    void save();
+    void defaults();
 
-  QString quickHelp() const;
+    QString quickHelp() const;
 
 protected slots:
-  void configChanged();
-  void windowListClicked();
-
-private slots:
-  //void slotExternal();
-  //void slotPosChanged(int);
+    void configChanged();
+    void windowListClicked();
 
 private:
-	QCheckBox    *showAllCheck;
-	QCheckBox    *m_pShowListBtn;
-	QRadioButton *m_pAllWindows;
-	QRadioButton *m_pCurrent;
-	QRadioButton *m_pName;
-	QRadioButton *m_pLastUse;
-	QRadioButton *m_pDesktop;
-	//QCheckBox    *externalCheck;
-  //QButtonGroup *positionGroup;
+    QCheckBox    *showAllCheck;
+    QCheckBox    *m_pShowListBtn;
+    QRadioButton *m_pAllWindows;
+    QRadioButton *m_pCurrent;
+    QRadioButton *m_pName;
+    QRadioButton *m_pLastUse;
+    QRadioButton *m_pDesktop;
 };
 
 #endif
