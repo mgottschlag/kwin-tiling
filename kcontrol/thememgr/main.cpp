@@ -50,6 +50,7 @@ public:
 
   KThemeMgr(QWidget *parent, const char *name, const QStringList &);
   ~KThemeMgr();
+  QString quickHelp() const;
 
   virtual void init();
   virtual void save();
@@ -125,6 +126,12 @@ void KThemeMgr::load()
 }
 
 //-----------------------------------------------------------------------------
+
+QString KThemeMgr::quickHelp() const
+{
+    return i18n("<h1>Theme Manager</h1> With this module you can install, view, and even create, KDE themes.");
+}
+
 const KAboutData* KThemeMgr::aboutData() const
 {
 
@@ -135,9 +142,10 @@ const KAboutData* KThemeMgr::aboutData() const
 
     about->addAuthor("Stefan Taferner", 0, "taferner@kde.org");
     about->addAuthor("Waldo Bastian", 0, "bastian@kde.org");
-    about->addCredit("Divide by Zero", 
-                     I18N_NOOP("Support for MS Windows' Themes"), 
+    about->addCredit("Divide by Zero",
+                     I18N_NOOP("Support for MS Windows' Themes"),
 						   "divide@priv.onet.pl" );
 
     return about;
 }
+
