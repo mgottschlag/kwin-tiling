@@ -35,9 +35,9 @@ class KItem : public QObject
   
 public:
 
-  KItem() {}
+  KItem() : QObject() {}
 
-  KItem ( const KItem &itm )	// deep copy
+  KItem ( const KItem &itm ): QObject() // deep copy
     {
       color1 = itm.color1;
       color2 = itm.color2;
