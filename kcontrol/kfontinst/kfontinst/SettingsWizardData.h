@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'SettingsWizard.ui'
 **
-** Created: Mon Sep 10 00:21:48 2001
+** Created: Sun Sep 30 12:59:39 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -41,15 +41,16 @@ public:
     QWidget* itsStarOfficePage;
     CStarOfficeSettingsWidget* itsSOWidget;
     QLabel* TextLabel1_2_2;
-    QWidget* page;
+    QWidget* itsCompletePage;
     QLabel* TextLabel1_3;
+
 
 protected:
     QGridLayout* itsIntroPageLayout;
     QGridLayout* itsDirsAndFilesPageLayout;
     QGridLayout* itsAAPageLayout;
     QGridLayout* itsStarOfficePageLayout;
-    QGridLayout* pageLayout;
+    QGridLayout* itsCompletePageLayout;
 };
 
 #endif // CSETTINGSWIZARDDATA_H

@@ -63,7 +63,7 @@ CSettingsWizard::CSettingsWizard(QWidget *parent, const char *name)
         removePage(itsDirsAndFilesPage);
 */
 
-    this->setFinishEnabled(itsStarOfficePage, true);
+    this->setFinishEnabled(itsCompletePage, true);
 }
 
 void CSettingsWizard::checkAndModifyFontmapFile()
