@@ -183,6 +183,7 @@ void TaskManager::windowRemoved(WId w )
 
     if (t->window() == w) {
         _tasks.removeRef(t);
+        if(t == _active) _active = 0;
         delete t;
         kdDebug() << "TM: Task for WId " << w << " removed." << endl;
     }
