@@ -196,7 +196,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
 
 QString InternetKeywordsOptions::quickHelp() const
 {
-    return i18n("In this module, you can choose whether to use Internet Keywords or not."
+    return i18n("In this module, you can choose whether to use Internet Keywords or not. "
 		"You can also configure various Internet search engines "
                 "that KDE can use for keyword search. This allows you, for example, "
                 "to enter a pseudo-URI like gg:smetana to search the Google search "
