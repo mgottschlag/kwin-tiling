@@ -48,7 +48,6 @@ public:
     uint saveYourselfDone : 1;
     uint pendingInteraction : 1;
     uint waitForPhase2 : 1;
-    uint phase2Workaround : 1;
 
     QList<SmProp> properties;
     SmProp* property( const char* name ) const;
@@ -130,14 +129,14 @@ private:
     QString wm;
     QCString launcher;
     QTimer protection;
-    
+
     // ksplash interface
     void upAndRunning( const QString& msg );
     void publishProgress( int progress, bool max  = false  );
-    
+
     // kmapnotif interface
     void enableMapNotify( bool enable );
-    
+
     int progress;
 };
 

@@ -119,7 +119,6 @@ void KSMClient::resetState()
     saveYourselfDone = FALSE;
     pendingInteraction = FALSE;
     waitForPhase2 = FALSE;
-    phase2Workaround = FALSE;
 }
 
 void KSMClient::registerClient( const char* previousId )
@@ -785,7 +784,7 @@ void KSMServer::removeConnection( KSMConnection* conn )
 /*!
   Called from our IceIoErrorHandler
  */
-void KSMServer::ioError( IceConn iceConn )
+void KSMServer::ioError( IceConn /* iceConn */ )
 {
 }
 
@@ -887,17 +886,6 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 	return;
     if ( success ) {
 	client->saveYourselfDone = TRUE;
-
-	// workaround for broken qt-2.1beta3: make the window manager
-	// pseudo phase2. #### remove this with qt-2.1 final
-	if ( !client->waitForPhase2 && !client->phase2Workaround &&
-	     !wm.isEmpty() && client->program() == wm ) {
-	    client->waitForPhase2 = TRUE;
-	    client->phase2Workaround = TRUE;
-	    client->saveYourselfDone = FALSE;
-	    SmsShutdownCancelled( client->connection() );
-	}
-
 	completeShutdown();
     } else {
 	cancelShutdown();
@@ -958,15 +946,8 @@ void KSMServer::handlePendingInteractions()
 void KSMServer::cancelShutdown()
 {
     clientInteracting = 0;
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-	// workaround for broken qt-2.1beta3: make the window
-	// manager pseudo phase2. #### remove this with qt-2.1
-	// final
-	if ( c->phase2Workaround && c->waitForPhase2)
-	    continue;
-
+    for ( KSMClient* c = clients.first(); c; c = clients.next() )
  	SmsShutdownCancelled( c->connection() );
-    }
     state = Idle;
 }
 
@@ -1014,15 +995,7 @@ void KSMServer::completeShutdown()
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	if ( !c->saveYourselfDone && c->waitForPhase2 ) {
 	    c->waitForPhase2 = FALSE;
-	    if ( c->phase2Workaround ) {
-		// workaround for broken qt-2.1beta3: make the window
-		// manager pseudo phase2. #### remove this with qt-2.1
-		// final
-		SmsSaveYourself( c->connection(), saveSession?SmSaveBoth: SmSaveGlobal,
-				 TRUE, SmInteractStyleAny, FALSE );
-	    } else {
-		SmsSaveYourselfPhase2( c->connection() );
-	    }
+	    SmsSaveYourselfPhase2( c->connection() );
 	    waitForPhase2 = TRUE;
 	}
     }
