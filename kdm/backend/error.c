@@ -59,8 +59,14 @@ GLogger (const char *who, int type, const char *msg)
     openlog(prog, LOG_PID, LOG_DAEMON);
     syslog (lognums[type], "%s: %s", who, msg);
 #else
-    fprintf (stderr, "%s[%d] %s: %s: %s\n", 
-	     prog, (int)getpid(), lognams[type], who, msg);
+    Time_t tim;
+    char dbuf[20];
+
+    (void) time (&tim);
+    strftime (dbuf, sizeof(dbuf), "%b %e %H:%M:%S", localtime (&tim));
+    fprintf (stderr, "%s %s[%d] %s: %s: %s\n", 
+	     dbuf, prog, (int)getpid(), lognams[type], who, msg);
+    fflush (stderr);
 #endif
 }
 
@@ -77,8 +83,13 @@ GLogger (const char *who, int type, const char *msg)
 # define OCLBufMisc
 # define OCLBufInit
 # define OCLBufPrint \
-	fprintf (stderr, "%s[%d] %s: %.*s\n", prog, (int)getpid(), \
-		 lognams[oclbp->type], oclbp->clen, oclbp->buf);
+	Time_t tim; \
+	char dbuf[20]; \
+	(void) time (&tim); \
+	strftime (dbuf, sizeof(dbuf), "%b %e %H:%M:%S", localtime (&tim)); \
+	fprintf (stderr, "%s %s[%d] %s: %.*s\n", dbuf, prog, (int)getpid(), \
+		 lognams[oclbp->type], oclbp->clen, oclbp->buf); \
+	fflush (stderr);
 #endif
 #define PRINT_QUOTES
 #define PRINT_ARRAYS
@@ -150,6 +161,7 @@ LogOutOfMem (const char *fkt)
 #else
     fprintf (stderr, "%s[%d] %s: Out of memory in %s()\n", 
 	     prog, (int)getpid(), lognams[DM_ERR], fkt);
+    fflush (stderr);
 #endif
 }
 
