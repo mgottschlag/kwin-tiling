@@ -20,6 +20,7 @@
 #define __kcmtaskbar_h__
 
 #include <kcmodule.h>
+#include <kcmtaskbarui.h>
 
 class QCheckBox;
 class QButtonGroup;
@@ -42,9 +43,7 @@ protected slots:
     void configChanged();
 
 private:
-    QCheckBox    *showAllCheck;
-    QCheckBox    *m_pShowListBtn;
-    QCheckBox 	 *groupCheck;
+        TaskbarConfigUI *ui;
 };
 
 #endif

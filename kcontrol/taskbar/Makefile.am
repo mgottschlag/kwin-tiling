@@ -1,6 +1,6 @@
 kde_module_LTLIBRARIES = libkcm_taskbar.la
 
-libkcm_taskbar_la_SOURCES = kcmtaskbar.cpp
+libkcm_taskbar_la_SOURCES = kcmtaskbarui.ui kcmtaskbar.cpp
 libkcm_taskbar_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_taskbar_la_LIBADD = -lkdeui
 INCLUDES= $(all_includes) 

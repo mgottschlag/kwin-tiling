@@ -44,36 +44,12 @@ extern "C"
 TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
   : KCModule (parent, name)
 {
-    QGroupBox *taskbar_group = new QGroupBox(i18n("Taskbar"), this);
+    ui = new TaskbarConfigUI(this);
 
-    QVBoxLayout *vbox = new QVBoxLayout(taskbar_group, KDialog::marginHint(),
+    QVBoxLayout *vbox = new QVBoxLayout(this, KDialog::marginHint(),
                                         KDialog::spacingHint());
-    vbox->addSpacing(fontMetrics().lineSpacing());
-
-    showAllCheck = new QCheckBox(i18n("&Show all windows"), taskbar_group);
-    connect(showAllCheck, SIGNAL(clicked()), SLOT(configChanged()));
-    QWhatsThis::add(showAllCheck, i18n("Check this option if you want"
-                                       " the taskbar to display all of the existing windows at once.  By"
-                                       " default, the taskbar will only show those windows that are on"
-                                       " the current desktop."));
-
-    m_pShowListBtn = new QCheckBox(i18n("Show windows list &button"), taskbar_group);
-    connect(m_pShowListBtn, SIGNAL(clicked()), SLOT(configChanged()));
-    QWhatsThis::add(m_pShowListBtn, i18n("Check this option if you want"
-                                         " the taskbar to display a small popup which gives you easy access"
-                                         " to all applications on other desktops and some further options."));
-
-    groupCheck = new QCheckBox(i18n("Group similar tasks"), taskbar_group);
-    connect(groupCheck, SIGNAL(clicked()), SLOT(configChanged()));
-
-    vbox->addWidget(showAllCheck);
-    vbox->addWidget(m_pShowListBtn);
-    vbox->addWidget(groupCheck);
-
-    QVBoxLayout *top_layout = new QVBoxLayout(this, KDialog::marginHint(),
-                                              KDialog::spacingHint());
-    top_layout->addWidget(taskbar_group);
-    top_layout->addStretch(1);
+    vbox->addWidget(ui);
+    connect(ui->groupCheck, SIGNAL(clicked()), SLOT(configChanged()));
 
     load();
 }
@@ -93,9 +69,9 @@ void TaskbarConfig::load()
     { // group for the benefit of the group saver
         KConfigGroupSaver saver(c, "General");
 
-        showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", true));
-	m_pShowListBtn->setChecked(c->readBoolEntry("ShowWindowListBtn", true));
-	groupCheck->setChecked(c->readBoolEntry("GroupTasks", true));
+        ui->showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", true));
+        ui->showListBtnCheck->setChecked(c->readBoolEntry("ShowWindowListBtn", true));
+        ui->groupCheck->setChecked(c->readBoolEntry("GroupTasks", true));
     }
 
     delete c;
@@ -108,10 +84,10 @@ void TaskbarConfig::save()
     { // group for the benefit of the group saver
         KConfigGroupSaver saver(c, "General");
 
-        c->writeEntry("ShowAllWindows", showAllCheck->isChecked());
-	c->writeEntry("ShowWindowListBtn", m_pShowListBtn->isChecked());
-	c->writeEntry("GroupTasks", groupCheck->isChecked());
-	c->sync();
+        c->writeEntry("ShowAllWindows", ui->showAllCheck->isChecked());
+        c->writeEntry("ShowWindowListBtn", ui->showListBtnCheck->isChecked());
+        c->writeEntry("GroupTasks", ui->groupCheck->isChecked());
+        c->sync();
     }
 
     delete c;
@@ -127,9 +103,9 @@ void TaskbarConfig::save()
 
 void TaskbarConfig::defaults()
 {
-    showAllCheck->setChecked(true);
-    m_pShowListBtn->setChecked(true);
-    groupCheck->setChecked(true);
+    ui->showAllCheck->setChecked(true);
+    ui->showListBtnCheck->setChecked(true);
+    ui->groupCheck->setChecked(true);
     emit changed(true);
 }
 
