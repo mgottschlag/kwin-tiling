@@ -145,9 +145,6 @@ extern "C"
 		ModifiersModule::setupMacModifierKeys();
   }
 
-  // write all the global keys to kdeglobals
-  // this is needed to be able to check for conflicts with global keys in app's keyconfig
-  // dialogs, kdeglobals is empty as long as you don't apply any change in controlcenter/keys
   void init_keys()
   {
 	kdDebug(125) << "KeyModule::init()\n";
@@ -175,19 +172,27 @@ extern "C"
 #include "../../kdesktop/kdesktopbindings.cpp"
 #include "../../kxkb/kxkbbindings.cpp"
 
-	kdDebug(125) << "KeyModule::init() - Read Config Bindings\n";
-	// Check for old group,
-	if( KGlobal::config()->hasGroup( "Global Keys" ) ) {
+  // Write all the global keys to kdeglobals.
+  // This is needed to be able to check for conflicts with global keys in app's keyconfig
+  // dialogs, kdeglobals is empty as long as you don't apply any change in controlcenter/keys.
+  // However, avoid writing at every KDE startup, just update them after every rebuild of this file.
+        KConfigGroup group( KGlobal::config(), "Global Shortcuts" );
+        if( group.readEntry( "Defaults timestamp" ) != __DATE__ __TIME__ ) {
+	    kdDebug(125) << "KeyModule::init() - Read Config Bindings\n";
+	    // Check for old group,
+	    if( KGlobal::config()->hasGroup( "Global Keys" ) ) {
 		keys->readActions( "Global Keys" );
 		KGlobal::config()->deleteGroup( "Global Keys", true, true );
-	}
-	keys->readActions( "Global Shortcuts" );
-        KGlobal::config()->deleteGroup( "Global Shortcuts", true, true );
+	    }
+	    keys->readActions( "Global Shortcuts" );
+            KGlobal::config()->deleteGroup( "Global Shortcuts", true, true );
 
-	kdDebug(125) << "KeyModule::init() - Write Config Bindings\n";
-	keys->writeActions( "Global Shortcuts", 0, true, true );
-
+	    kdDebug(125) << "KeyModule::init() - Write Config Bindings\n";
+	    keys->writeActions( "Global Shortcuts", 0, true, true );
+            group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, true, true );
+        }
 	delete keys;
+
 	initModifiers();
   }
 }
