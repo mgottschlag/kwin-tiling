@@ -43,6 +43,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <locale.h>
 #include <pwd.h>
 #include <grp.h>
 
@@ -83,6 +84,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   , maxshowuid(0)
   , updateOK(false)
 {
+  setlocale( LC_COLLATE, "C" );
 
   KGlobal::locale()->insertCatalogue("kcmbackground");
 
