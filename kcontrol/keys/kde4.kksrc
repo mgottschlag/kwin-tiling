@@ -10,6 +10,7 @@ Name[fi]=KDE:n oletus neljälle erikoisnäppäimelle
 Name[fr]=KDE par défaut pour 4 modificateurs
 Name[he]=תצורת ברירת המחדל של KDE לארבעה מקשים משני מצב
 Name[hu]=KDE alapértelmezés 4 módosítóbillentyű esetén
+Name[lt]=KDE nutylimos reikšmės 4 klavišams-modifikatoriams Meta/Alt/Vald(Ctrl)/Shift
 Name[lv]=KDE Noklusētais priekš 4 Modifikatoru Taustiņiem
 Name[nl]=KDE-standaard voor 4 wijzigerstoetsen
 Name[nn]=KDE-standard for fire modifikatortastar
@@ -20,6 +21,7 @@ Name[sl]=Privzeto za KDE za 4 modifikatorje
 Name[sv]=KDE-förinställt för 4 väljartangenter
 Name[ta]=4 Á¡üÈ¢¸ÙìÌÃ¢Â KDE ¦¸¡¼¡¿¢¨Ä
 Name[xx]=xx
+Name[zh_TW]=有 4 個裝飾符的 KDE 預設(Meta/Alt/Ctrl/Shift)
 Uses Win Modifer=true
 
 [Global Shortcuts]

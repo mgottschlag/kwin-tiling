@@ -10,6 +10,7 @@ Name[fi]=KDE:n oletus kolmelle erikoisnäppäimelle
 Name[fr]=KDE par défaut pour 3 modificateurs
 Name[he]=תצורת ברירת המחדל של KDE לשלושה מקשים משני מצב
 Name[hu]=KDE alapértelmezés 3 módosítóbillentyű esetén
+Name[lt]=KDE nutylimos reikšmės 3 klavišams-modifikatoriams Alt/Vald(Ctrl)/Shift
 Name[lv]=KDE Noklusētais priekš 3 Modifikatoru Taustiņiem
 Name[nl]=KDE-standaard voor 3 wijzigerstoetsen
 Name[nn]=KDE-standard for tre modifikatortastar
@@ -20,6 +21,7 @@ Name[sl]=Privzeto za KDE za 3 modifikatorje
 Name[sv]=KDE-förinställt för 3 väljartangenter
 Name[ta]=3 Á¡üÈ¢¸ÙìÌÃ¢Â KDE ¦¸¡¼¡¿¢¨Ä
 Name[xx]=xx
+Name[zh_TW]=有 3 個裝飾符的 KDE 預設(Alt/Ctrl/Shift)
 Uses Win Modifer=false
 
 [Global Shortcuts]
