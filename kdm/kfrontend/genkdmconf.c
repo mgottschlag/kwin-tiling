@@ -296,8 +296,8 @@ Ent entsGeneral[] = {
 { "# Whether KDM should lock the pid file to prevent having multiple KDM\n"
 "# instances running at once. Leave it \"true\", unless you're brave.\n", 
 "LockPidFile",	"false", 0 },
-{ "# Where to store authorization files. Default is /var/lib/kdm\n", 
-"AuthDir",	"/var/lib/xdm", 0 },
+{ "# Where to store authorization files. Default is /var/run/xauth\n", 
+"AuthDir",	"/tmp", 0 },
 { "# Whether KDM should automatically re-read configuration files, if it\n"
 "# finds them having changed. Just keep it \"true\".\n", 
 "AutoRescan",	"false", 0 },
@@ -1269,9 +1269,29 @@ static void
 P_authDir (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value)
 {
     struct stat st;
+    int l;
 
-    if (!stat (*value, &st) && (st.st_uid != 0 || (st.st_mode & 2)))
-	ASPrintf (value, "%s/authdir", *value);
+    l = strlen (*value);
+    if (l < 4) {
+	*value = 0;
+	return;
+    }
+    if ((*value)[l-1] == '/')
+	(*value)[--l] = 0;
+    if (!strncmp (*value, "/tmp/", 5) ||
+	!strncmp (*value, "/var/tmp/", 9))
+    {
+	printf ("Warning: Resetting inappropriate value %s for AuthDir to default\n",
+	        *value);
+	*value = 0;
+	return;
+    }
+    if ((l >= 4 && !strcmp (*value + l - 4, "/tmp")) ||
+	(l >= 6 && !strcmp (*value + l - 6, "/xauth")) ||
+	(l >= 8 && !strcmp (*value + l - 8, "/authdir")) ||
+	(l >= 10 && !strcmp (*value + l - 10, "/authfiles")))
+	return;
+    ASPrintf (value, "%s/authdir", *value);
 }
 
 static void 
