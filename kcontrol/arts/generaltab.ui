@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>generalTab</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>704</width>
-            <height>475</height>
+            <width>637</width>
+            <height>613</height>
         </rect>
     </property>
     <property name="minimumSize">
@@ -17,6 +17,9 @@
             <width>0</width>
             <height>450</height>
         </size>
+    </property>
+    <property name="caption">
+        <string>generalTab</string>
     </property>
     <vbox>
         <property name="name">
@@ -67,7 +70,7 @@ Recommended if you want sound.</string>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel">
+                <widget class="KRichTextLabel">
                     <property name="name">
                         <cstring>textLabel1_2</cstring>
                     </property>
@@ -99,7 +102,7 @@ Recommended if you want sound.</string>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                <widget class="KRichTextLabel" row="0" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>textLabel1</cstring>
                     </property>
@@ -138,7 +141,7 @@ Recommended if you want sound.</string>
                         <enum>Horizontal</enum>
                     </property>
                     <property name="tickmarks">
-                        <enum>Right</enum>
+                        <enum>NoMarks</enum>
                     </property>
                     <property name="tickInterval">
                         <number>50</number>
@@ -176,7 +179,7 @@ Recommended if you want sound.</string>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel">
+                <widget class="KRichTextLabel">
                     <property name="name">
                         <cstring>textLabel5_2</cstring>
                     </property>
@@ -240,19 +243,36 @@ Recommended if you want sound.</string>
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout25</cstring>
+                <cstring>layout3</cstring>
             </property>
             <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer3_2_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>40</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
                 <widget class="QPushButton">
                     <property name="name">
                         <cstring>testSound</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>1</hsizetype>
+                            <hsizetype>5</hsizetype>
                             <vsizetype>1</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
@@ -261,14 +281,34 @@ Recommended if you want sound.</string>
                     <property name="text">
                         <string>Test &amp;Sound</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+S</string>
+                    </property>
                 </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>40</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
                 <widget class="QPushButton">
                     <property name="name">
                         <cstring>testMIDI</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>1</hsizetype>
+                            <hsizetype>5</hsizetype>
                             <vsizetype>1</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
@@ -277,7 +317,27 @@ Recommended if you want sound.</string>
                     <property name="text">
                         <string>Test &amp;MIDI</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+M</string>
+                    </property>
                 </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer3_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>40</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
             </hbox>
         </widget>
         <spacer>
@@ -288,19 +348,25 @@ Recommended if you want sound.</string>
                 <enum>Vertical</enum>
             </property>
             <property name="sizeType">
-                <enum>MinimumExpanding</enum>
+                <enum>Expanding</enum>
             </property>
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>27</height>
+                    <height>0</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
+<includes>
+    <include location="local" impldecl="in implementation">krichtextlabel.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
 </includehints>
 </UI>

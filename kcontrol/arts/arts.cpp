@@ -44,6 +44,7 @@
 #include <klineedit.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
+#include <krichtextlabel.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <kurlrequester.h>
@@ -161,6 +162,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
 	general->layout()->setMargin( KDialog::marginHint() );
 	hardware->layout()->setMargin( KDialog::marginHint() );
+	general->latencyLabel->setFixedHeight(general->latencyLabel->fontMetrics().lineSpacing());
 
 	tab->addTab(general, i18n("&General"));
 	tab->addTab(hardware, i18n("&Hardware"));

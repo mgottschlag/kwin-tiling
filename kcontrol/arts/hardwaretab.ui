@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>hardwareTab</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>890</width>
-            <height>583</height>
+            <width>372</width>
+            <height>357</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>hardwareTab</string>
     </property>
     <vbox>
         <property name="name">
@@ -97,42 +100,52 @@
                                 <string>This enables the soundserver to record and play sound at the same time. If you use applications like Internet telephony, voice recognition or similar, you probably want this.</string>
                             </property>
                         </widget>
-                        <widget class="QCheckBox">
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox" row="5" column="0">
+                    <property name="name">
+                        <cstring>customOptions</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use other custom &amp;options:</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+O</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="4" column="0">
+                    <property name="name">
+                        <cstring>customDevice</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Override &amp;device location:</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget" row="3" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>layout4</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
                             <property name="name">
-                                <cstring>customRate</cstring>
+                                <cstring>spacer2</cstring>
                             </property>
-                            <property name="text">
-                                <string>Use &amp;custom sampling rate:</string>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
                             </property>
-                        </widget>
-                        <widget class="QSpinBox">
-                            <property name="name">
-                                <cstring>samplingRate</cstring>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
                             </property>
-                            <property name="enabled">
-                                <bool>true</bool>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
                             </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="suffix">
-                                <string> Hz </string>
-                            </property>
-                            <property name="maxValue">
-                                <number>99999</number>
-                            </property>
-                            <property name="lineStep">
-                                <number>10</number>
-                            </property>
-                            <property name="value">
-                                <number>44100</number>
-                            </property>
-                        </widget>
+                        </spacer>
                         <widget class="QLabel">
                             <property name="name">
                                 <cstring>textLabel2</cstring>
@@ -165,16 +178,99 @@
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
-                                    <hsizetype>3</hsizetype>
+                                    <hsizetype>5</hsizetype>
                                     <vsizetype>0</vsizetype>
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
                         </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer3</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>0</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
                     </hbox>
                 </widget>
-                <widget class="QLineEdit" row="3" column="1">
+                <widget class="QCheckBox" row="2" column="0">
+                    <property name="name">
+                        <cstring>customRate</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use &amp;custom sampling rate:</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+C</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget" row="2" column="1">
+                    <property name="name">
+                        <cstring>layout6</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QSpinBox">
+                            <property name="name">
+                                <cstring>samplingRate</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>true</bool>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>5</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="suffix">
+                                <string> Hz </string>
+                            </property>
+                            <property name="maxValue">
+                                <number>99999</number>
+                            </property>
+                            <property name="lineStep">
+                                <number>10</number>
+                            </property>
+                            <property name="value">
+                                <number>44100</number>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer4</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>0</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
+                </widget>
+                <widget class="QLineEdit" row="5" column="1">
                     <property name="name">
                         <cstring>addOptions</cstring>
                     </property>
@@ -182,23 +278,7 @@
                         <bool>false</bool>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="3" column="0">
-                    <property name="name">
-                        <cstring>customOptions</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Use other custom &amp;options:</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="2" column="0">
-                    <property name="name">
-                        <cstring>customDevice</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Override &amp;device location:</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="2" column="1">
+                <widget class="QLineEdit" row="4" column="1">
                     <property name="name">
                         <cstring>deviceName</cstring>
                     </property>
@@ -277,16 +357,11 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>238</height>
+                    <height>60</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kurlrequester.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
 </UI>
