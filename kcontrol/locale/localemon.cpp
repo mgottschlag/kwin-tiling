@@ -153,13 +153,13 @@ void KLocaleConfigMoney::load()
   locale->setCurrencySymbol(str);
 
   // Decimal symbol
-  str = ent.readEntry(QString::fromLatin1("MonetaryDecimalSymbol"));
+  str = config->readEntry(QString::fromLatin1("MonetaryDecimalSymbol"));
   if (str.isNull())
     str = ent.readEntry(QString::fromLatin1("MonetaryDecimalSymbol"), QString::fromLatin1("."));
   locale->setMonetaryDecimalSymbol(str);
 
   // Thousends separator
-  str = config->readEntry(QString::fromLatin1("MonetaryThousendSeparator"));
+  str = config->readEntry(QString::fromLatin1("MonetaryThousandsSeparator"));
   if (str.isNull())
     str = ent.readEntry(QString::fromLatin1("MonetaryThousandsSeparator"), QString::fromLatin1(","));
   str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
