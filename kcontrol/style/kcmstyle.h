@@ -135,6 +135,7 @@ private:
 	QComboBox* comboMenuEffectType;
 	QLabel* lblMenuEffectType;
 	QLabel* lblMenuOpacity;
+	QCheckBox* cbMenuShadow;
 
 	// Page3 widgets
 	QGroupBox* gbToolbarSettings;

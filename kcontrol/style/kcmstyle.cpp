@@ -249,6 +249,9 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	lblMenuHandle->setBuddy( comboMenuHandle );
 	containerLayout->addWidget( lblMenuHandle, 3, 0 );
 	containerLayout->addWidget( comboMenuHandle, 3, 1 );
+	
+	cbMenuShadow = new QCheckBox( i18n("Menu &drop shadow"), containerFrame );
+	containerLayout->addWidget( cbMenuShadow, 4, 0 );
 
 	// Push the [label combo] to the left.
 	comboSpacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
@@ -295,6 +298,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	lblMenuEffectType->setAlignment( AlignBottom | AlignLeft );
 	lblMenuOpacity    = new QLabel( slOpacity, i18n("Menu &opacity:"), menuContainer );
 	lblMenuOpacity->setAlignment( AlignBottom | AlignLeft );
+
 	menuContainerLayout->addWidget( lblMenuEffectType, 0, 0 );
 	menuContainerLayout->addWidget( comboMenuEffectType, 1, 0 );
 	menuContainerLayout->addWidget( lblMenuOpacity, 2, 0 );
@@ -353,12 +357,14 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	connect(lvStyle, SIGNAL(selectionChanged()), this, SLOT(setStyleDirty()));
 	// Page2
 	connect( cbEnableEffects,     SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
+	connect( cbEnableEffects,     SIGNAL(toggled(bool)),    this, SLOT(setStyleDirty()));
 	connect( comboTooltipEffect,  SIGNAL(highlighted(int)), this, SLOT(setEffectsDirty()));
 	connect( comboComboEffect,    SIGNAL(highlighted(int)), this, SLOT(setEffectsDirty()));
 	connect( comboMenuEffect,     SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
 	connect( comboMenuHandle,     SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
 	connect( comboMenuEffectType, SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
-	connect( slOpacity,           SIGNAL(valueChanged(int)),this, SLOT(setEffectsDirty()));
+	connect( slOpacity,           SIGNAL(valueChanged(int)),this, SLOT(setStyleDirty()));
+	connect( cbMenuShadow,        SIGNAL(toggled(bool)),    this, SLOT(setStyleDirty()));
 	// Page3
 	connect( cbHoverButtons,        SIGNAL(toggled(bool)),    this, SLOT(setToolbarsDirty()));
 	connect( cbTransparentToolbars, SIGNAL(toggled(bool)),    this, SLOT(setToolbarsDirty()));
@@ -413,11 +419,13 @@ void KCMStyle::save()
 		return;
 
 	bool allowMenuTransparency = false;
+	bool allowMenuDropShadow   = false;
 
 	// Read the KStyle flags to see if the style writer
 	// has enabled menu translucency in the style.
 	if (appliedStyle && appliedStyle->inherits("KStyle"))
 	{
+		allowMenuDropShadow = true;
 		KStyle* style = dynamic_cast<KStyle*>(appliedStyle);
 		if (style) {
 			KStyle::KStyleFlags flags = style->styleFlags();
@@ -426,18 +434,34 @@ void KCMStyle::save()
 		}
 	}
 
+	QString warn_string( i18n("<qt>Selected style: <b>%1</b><br><br>"
+		"Some effects(s) that you have chosen could not be applied because the selected style "
+		"does not support these effects. They have therefore been disabled.<br>"
+		"<br>" ).arg( lvStyle->currentItem()->text(2)) );
+	bool show_warning = false;
+
 	// Warn the user if they're applying a style that doesn't support
 	// menu translucency and they enabled it.
     if ( (!allowMenuTransparency) &&
 		(cbEnableEffects->isChecked()) &&
 		(comboMenuEffect->currentItem() == 3) )	// Make Translucent
     {
-		KMessageBox::information( this,
-			i18n("This module has detected that the currently selected style (%1) "
-			"does not support Menu Translucency, therefore "
-			"this Menu Effect has been disabled.").arg( lvStyle->currentItem()->text( 2 ) ) );
-			comboMenuEffect->setCurrentItem(0);    // Disable menu effect.
+		warn_string += "Menu translucency is not available.<br>";
+		comboMenuEffect->setCurrentItem(0);    // Disable menu effect.
+		show_warning = true;
 	}
+
+	if (!allowMenuDropShadow && cbMenuShadow->isChecked())
+	{
+		warn_string += "Menu drop-shadows are not available.";
+		cbMenuShadow->setChecked(false);
+		show_warning = true;
+	}
+
+	// Tell the user what features we could not apply on their behalf.
+	if (show_warning)
+		KMessageBox::information(this, warn_string);
+
 
 	// Save effects.
 	KConfig config( "kdeglobals" );
@@ -470,6 +494,8 @@ void KCMStyle::save()
 		QSettings settings;	// Only for KStyle stuff
 		settings.writeEntry("/KStyle/Settings/MenuTransparencyEngine", engine);
 		settings.writeEntry("/KStyle/Settings/MenuOpacity", slOpacity->value()/100.0);
+ 		settings.writeEntry("/KStyle/Settings/MenuDropShadow",
+					   		cbEnableEffects->isChecked() && cbMenuShadow->isChecked() );
 	}
 
 	// Misc page
@@ -556,9 +582,10 @@ void KCMStyle::defaults()
 	comboTooltipEffect->setCurrentItem(0);
 	comboComboEffect->setCurrentItem(0);
 	comboMenuEffect->setCurrentItem(0);
-  comboMenuHandle->setCurrentItem(0);
+	comboMenuHandle->setCurrentItem(0);
 	comboMenuEffectType->setCurrentItem(0);
 	slOpacity->setValue(90);
+	cbMenuShadow->setChecked(false);
 
 	// Miscellanous
 	cbHoverButtons->setChecked(true);
@@ -703,6 +730,8 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 
 	currentStyle = lvStyle->currentItem()->text(2);
 	m_bStyleDirty = false;
+
+	switchStyle( currentStyle );	// make resets visible
 }
 
 
@@ -801,7 +830,7 @@ void KCMStyle::loadEffects( KSimpleConfig& config )
 
   comboMenuHandle->setCurrentItem(config.readNumEntry("InsertTearOffHandle", 0));
 
-	// KStyle Menu transparency options...
+	// KStyle Menu transparency and drop-shadow options...
 	QSettings settings;
 	QString effectEngine = settings.readEntry("/KStyle/Settings/MenuTransparencyEngine", "Disabled");
 
@@ -831,6 +860,9 @@ void KCMStyle::loadEffects( KSimpleConfig& config )
 		menuPreview->setPreviewMode( MenuPreview::Blend );
 
 	slOpacity->setValue( (int)(100 * settings.readDoubleEntry("/KStyle/Settings/MenuOpacity", 0.90)) );
+
+	// Menu Drop-shadows...
+	cbMenuShadow->setChecked( settings.readBoolEntry("/KStyle/Settings/MenuDropShadow", false) );
 
 	if (cbEnableEffects->isChecked()) {
 		containerFrame->setEnabled( true );
@@ -934,6 +966,9 @@ void KCMStyle::addWhatsThis()
 							"<p><b>Animate: </b>Do some animation.</p>\n"
 							"<p><b>Fade: </b>Fade in menus using alpha-blending.</p>\n"
 							"<b>Make Translucent: </b>Alpha-blend menus for a see-through effect. (KDE styles only)") );
+	QWhatsThis::add( cbMenuShadow, i18n( "When enabled, all popup menus will have a drop-shadow, otherwise "
+							"drop-shadows will not be displayed. At present, only KDE styles can have this "
+							"effect enabled.") );
 	QWhatsThis::add( comboMenuEffectType, i18n( "<p><b>Software Tint: </b>Alpha-blend using a flat color.</p>\n"
 							"<p><b>Software Blend: </b>Alpha-blend using an image.</p>\n"
 							"<b>XRender Blend: </b>Use the XFree RENDER extension for image blending (if available). "
