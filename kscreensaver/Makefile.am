@@ -15,7 +15,8 @@ SUBDIRS = libkscreensaver kdesavers xsavers kxsconfig kpartsaver
 krandom_kss_SOURCES = random.cpp
 
 messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/klock.pot
+	$(EXTRACTRC) */*.ui > rc.cpp
+	$(XGETTEXT) rc.cpp random.cpp */*.cpp */*.h -o $(podir)/klock.pot
 
 ########## Meta objects ##########
 
