@@ -197,7 +197,7 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	    title = "";
 	    break;
 	};
-	Widget = new QLabel(title, this);
+	Widget = new QLabel("<b>" + title + "</b>", this);
 	Widget->setAlignment(AlignCenter);
 	vbox->addWidget(Widget);
 	vbox->addSpacing(SPACING / 2);
