@@ -14,7 +14,7 @@ noinst_HEADERS = theme.h installer.h \
 	themecreator.h newthemedlg.h
 
 libkcm_themes_la_LIBADD = $(LIB_KFILE) 
-libkcm_themes_la_LDFLAGS = $(all_libraries) $(LDFLAGS) $(KDE_PLUGIN)
+libkcm_themes_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN)
 
 apps_DATA = kthememgr.desktop
 appsdir = $(kde_appsdir)/Settings/LookNFeel
