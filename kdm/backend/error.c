@@ -139,10 +139,8 @@ InitErrorLog (const char *errorLogFile)
 	    if (!lseek (fd, 0, SEEK_END))
 		write (fd, WARNMSG, sizeof(WARNMSG) - 1);
 #endif
-	    if (fd != 1) {
-		dup2 (fd, 1);
-		close (fd);
-	    }
+	    dup2 (fd, 1);
+	    close (fd);
 	    dup2 (1, 2);
 	}
     }

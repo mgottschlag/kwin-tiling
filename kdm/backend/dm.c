@@ -149,6 +149,10 @@ main (int argc, char **argv)
 	dup2 (fd, 0);
 	close (fd);
     }
+    if (fcntl (1, F_GETFD) < 0)
+	dup2 (0, 1);
+    if (fcntl (2, F_GETFD) < 0)
+	dup2 (0, 2);
 
     if (argv[0][0] == '/') {
 	if (!StrDup (&progpath, argv[0]))
