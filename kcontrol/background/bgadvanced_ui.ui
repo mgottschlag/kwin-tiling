@@ -301,6 +301,9 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                     <property name="suffix">
                         <string></string>
                     </property>
+                    <property name="specialValueText">
+                        <string>Auto</string>
+                    </property>
                     <property name="maxValue">
                         <number>99999</number>
                     </property>
@@ -308,7 +311,7 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                         <number>0</number>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Choose here the maximum width of text lines below an icon on the desktop.</string>
+                        <string>Choose here the maximum width of text lines (in pixel) below an icon on the desktop. If set to 'Auto' a default width based on the current font is used.</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="4" column="0">
@@ -322,7 +325,7 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                         <cstring>m_colorText</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Choose here the maximum width of text lines below an icon on the desktop.</string>
+                        <string>Choose here the maximum width of text lines (in pixel) below an icon on the desktop. If set to 'Auto' a default width based on the current font is used.</string>
                     </property>
                 </widget>
             </grid>
