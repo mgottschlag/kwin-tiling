@@ -47,9 +47,16 @@ KExtendedCDialog::~KExtendedCDialog()
 
 void KExtendedCDialog::slotUser1()
 {
+    int curPageIndex = activePageIndex();
     for (KCModule* module = modules.first(); module != 0; module = modules.next())
-        module->defaults();
-    clientChanged(true);
+    {
+       if (pageIndex((QWidget *)module->parent()) == curPageIndex)
+       {
+          module->defaults();
+          clientChanged(true);
+          return;
+       }
+    }
 }
 
 void KExtendedCDialog::slotApply()
