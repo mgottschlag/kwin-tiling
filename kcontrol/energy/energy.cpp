@@ -83,17 +83,17 @@ extern "C" {
     }
 
     void init_energy() {
-    KConfig *cfg = new KConfig("kcmdisplayrc");
-    cfg->setGroup("DisplayEnergy");
+        KConfig *cfg = new KConfig("kcmdisplayrc", true /*readonly*/, false /*no globals*/);
+        cfg->setGroup("DisplayEnergy");
 
-    bool enabled = cfg->readBoolEntry("displayEnergySaving", false);
-    int standby = cfg->readNumEntry("displayStandby", DFLT_STANDBY);
-    int suspend = cfg->readNumEntry("displaySuspend", DFLT_SUSPEND);
-    int off = cfg->readNumEntry("displayPowerOff", DFLT_OFF);
+        bool enabled = cfg->readBoolEntry("displayEnergySaving", false);
+        int standby = cfg->readNumEntry("displayStandby", DFLT_STANDBY);
+        int suspend = cfg->readNumEntry("displaySuspend", DFLT_SUSPEND);
+        int off = cfg->readNumEntry("displayPowerOff", DFLT_OFF);
 
-    delete cfg;
+        delete cfg;
 
-    KEnergy::applySettings(enabled, standby, suspend, off);
+        KEnergy::applySettings(enabled, standby, suspend, off);
     }
 }
 
@@ -192,7 +192,7 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
 
     top->addStretch();
 
-    m_pConfig = new KConfig("kcmdisplayrc");
+    m_pConfig = new KConfig("kcmdisplayrc", false /*readwrite*/, false /*no globals*/);
     m_pConfig->setGroup("DisplayEnergy");
 
     load();
