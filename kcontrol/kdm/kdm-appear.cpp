@@ -114,12 +114,18 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   connect(greetstr_lined, SIGNAL(textChanged(const QString&)),
       SLOT(changed()));
   hlay->addWidget(greetstr_lined);
-  wtstr = i18n("This is the string KDM will display in the login window. "
-           "You may want to put here some nice greeting or information "
-           "about the operating system.<p> KDM will replace the string "
-           "'%n' with the actual host name of the computer "
-           "running the X server. Especially in networks this is a good "
-           "idea." );
+  wtstr = i18n("This is the \"headline\" for KDM's login window. You may want to "
+           "put some nice greeting or information about the operating system here.<p>"
+           "KDM will substitute the following character pairs with the "
+           "respective contents:<br><ul>"
+           "<li>%d -> current display</li>"
+           "<li>%h -> host name, possibly with domain name</li>"
+           "<li>%n -> node name, most probably the host name without domain name</li>"
+           "<li>%s -> the operating system</li>"
+           "<li>%r -> the operating system's version</li>"
+           "<li>%m -> the machine (hardware) type</li>"
+           "<li>%% -> a single %</li>"
+           "</ul>" );
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( greetstr_lined, wtstr );
 
