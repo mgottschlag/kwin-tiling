@@ -873,6 +873,8 @@ QStringList KBackgroundSettings::wallpaperList() const
 {
     if ( m_WallpaperMode == NoWallpaper )
         return QStringList();
+    if ( m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom )
+        return QStringList(m_Wallpaper);
     return m_WallpaperList;
 }
 
@@ -880,6 +882,8 @@ QStringList KBackgroundSettings::wallpaperFiles() const
 {
     if ( m_WallpaperMode == NoWallpaper )
         return QStringList();
+    if ( m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom )
+        return QStringList(m_Wallpaper);
     return m_WallpaperFiles;
 }
 
