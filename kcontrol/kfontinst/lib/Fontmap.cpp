@@ -289,98 +289,119 @@ void CFontmap::createTopLevel()
     //              
     // Cat each sub-folders top-level fontmap file to top-level one...
 
-    QStringList           xDirs,
-                          entries;
-    QStringList::Iterator it;
+    QStringList xDirs;
 
     CGlobal::userXcfg().getDirs(xDirs);
 
-    for(it=xDirs.begin(); it!=xDirs.end(); ++it)
+    //
+    // If we're not root, and the 1 and only fonts dir is the GS dir - then just create fontmap if it
+    // does not exist.
+    if(!CMisc::root() && 1==xDirs.count() && xDirs.first()==CGlobal::cfg().getFontmapDir())
     {
-        if(!CMisc::fExists((*it)+"Fontmap"))
-            createLocal(*it);
-
-        ifstream f(QFile::encodeName((*it)+"Fontmap"));
-
-        if(f)
-        {
-            static const int constMaxLine=512;
-
-            char    line[constMaxLine+1];
-            QString lastPsName;
-
-
-            while(!f.eof())
-            {
-                QString ps,
-                        fname;
-                bool    isAlias;
-
-                f.getline(line, constMaxLine);
-
-                if(!f.eof() && parseLine(line, ps, fname, isAlias) && !fname.contains('/'))
-                    if(isAlias)
-                    {
-                        if(!lastPsName.isNull() && fname==lastPsName)
-                            addAliasEntry(entries, ps, fname);  // fname => real Ps name
-                    }
-                    else
-                    {
-                        addEntry(entries, ps, (*it)+fname);
-                        lastPsName=ps;
-                    }
-            }
-            f.close();
-        }
+        if(!CMisc::fExists(CGlobal::cfg().getFontmapDir()+"Fontmap"))
+            createLocal(CGlobal::cfg().getFontmapDir());
     }
-
-    ofstream of(QFile::encodeName(CGlobal::cfg().getFontmapDir()+"Fontmap"));
-
-    if(of)
-        for(it=entries.begin(); it!=entries.end(); ++it)
-           of << (*it).latin1() << endl;
-    of.close();
-
-    CMisc::setTimeStamps(CGlobal::cfg().getFontmapDir());
-
-    if(CMisc::root() && !CGlobal::cfg().getGhostscriptFile().isNull())  // Now ensure GS's Fontmap file .runlibfile's our Fontmap file!
+    else
     {
-        ifstream in(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()));
+        //
+        // Need to combine local fontmaps into 1 top-level one
+        QStringList           entries;
+        QStringList::Iterator it;
 
-        if(in)
+        for(it=xDirs.begin(); it!=xDirs.end(); ++it)
         {
-            const int constMaxLineLen=1024;
+            if(!CMisc::fExists((*it)+"Fontmap"))
+                createLocal(*it);
 
-            char     line[constMaxLineLen];
-            QCString fmap(QFile::encodeName(CGlobal::cfg().getFontmapDir()+"Fontmap"));
-            bool     found=false;
+            ifstream f(QFile::encodeName((*it)+"Fontmap"));
 
-            do
+            if(f)
             {
-                in.getline(line, constMaxLineLen);
+                static const int constMaxLine=512;
 
-                if(in.good())
+                char    line[constMaxLine+1];
+                QString lastPsName;
+
+
+                while(!f.eof())
                 {
-                    line[constMaxLineLen-1]='\0';
+                    QString ps,
+                            fname;
+                    bool    isAlias;
 
-                    if(strstr(line, fmap.data())!=NULL && strstr(line, ".runlibfile")!=NULL)
-                        found=true;
+                    f.getline(line, constMaxLine);
+
+                    if(!f.eof() && parseLine(line, ps, fname, isAlias) && !fname.contains('/'))
+                        if(isAlias)
+                        {
+                            if(!lastPsName.isNull() && fname==lastPsName)
+                                addAliasEntry(entries, ps, fname);  // fname => real Ps name
+                        }
+                        else
+                        {
+                            //
+                            // Check if file path contains top-level fontmap dir - if so remove
+                            QString ffile((*it)+fname);
+
+                            if(0==ffile.find(CGlobal::cfg().getFontmapDir()))
+                                addEntry(entries, ps, ffile.mid(CGlobal::cfg().getFontmapDir().length()));
+                            else
+                                addEntry(entries, ps, ffile);
+                            lastPsName=ps;
+                        }
                 }
+                f.close();
             }
-            while(!in.eof() && !found);
+        }
 
-            in.close();
+        ofstream of(QFile::encodeName(CGlobal::cfg().getFontmapDir()+"Fontmap"));
 
-            //
-            // If the file doesn't already say to use our Fontmap file, then tell it to!
-            if(!found)
+        if(of)
+            for(it=entries.begin(); it!=entries.end(); ++it)
+                of << (*it).latin1() << endl;
+        of.close();
+
+        CMisc::setTimeStamps(CGlobal::cfg().getFontmapDir());
+
+        if(CMisc::root() && !CGlobal::cfg().getGhostscriptFile().isNull())  // Now ensure GS's Fontmap file .runlibfile's our Fontmap file!
+        {
+            ifstream in(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()));
+
+            if(in)
             {
-                fstream out(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()), ios::out|ios::app);
+                const int constMaxLineLen=1024;
 
-                if(out)
+                char     line[constMaxLineLen];
+                QCString fmap(QFile::encodeName(CGlobal::cfg().getFontmapDir()+"Fontmap"));
+                bool     found=false;
+
+                do
                 {
-                    out << '(' << fmap << ") .runlibfile" << endl;
-                    out.close();
+                    in.getline(line, constMaxLineLen);
+
+                    if(in.good())
+                    {
+                        line[constMaxLineLen-1]='\0';
+
+                        if(strstr(line, fmap.data())!=NULL && strstr(line, ".runlibfile")!=NULL)
+                            found=true;
+                    }
+                }
+                while(!in.eof() && !found);
+
+                in.close();
+
+                //
+                // If the file doesn't already say to use our Fontmap file, then tell it to!
+                if(!found)
+                {
+                    fstream out(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()), ios::out|ios::app);
+
+                    if(out)
+                    {
+                        out << '(' << fmap << ") .runlibfile" << endl;
+                        out.close();
+                    }
                 }
             }
         }
