@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Icon=ksplash
-Exec=kcmshell ksplashthemes
+Exec=kcmshell ksplashthememgr
 DocPath=kcontrol/ksplashthemes/index.html
 
 X-KDE-ModuleType=Library
@@ -10,5 +10,30 @@ X-KDE-FactoryName=ksplashthemes
 X-KDE-ParentApp=kcontrol
 
 Name=Splash Screen
+Name[bg]=Сензационен Екран
+Name[cs]=Úvodní obrazovka
+Name[da]=Splashskærm
+Name[eo]=Salutŝildo
+Name[eu]=Splash Pantaila
+Name[fa]=پرده‌ی آغاز
+Name[fi]=Alkuruutu
+Name[fr]=Écran de démarrage
+Name[hr]=Pozdravni ekran
+Name[it]=Schermata d'avvio
+Name[lo]=จอเริ่มการทำงาน
+Name[lt]=Pasveikinimo ekranas
+Name[lv]=Šļaksta Ekrāns
+Name[pt_BR]=Tela de Apresentação
+Name[ro]=Imagine de pornire
+Name[ru]=Пустой экран
+Name[sv]=Startskärm
+Name[th]=จอเริ่มการทำงาน
+Name[tr]=Açılış ekranı
+Name[ven]=U kwasha tshikirini
+Name[zu]=Isikrini Sokuphahlaza
 Type=Application
 Comment=Manager for Splash Screen Themes
+Comment[da]=Håndtering for splashskærme-temaer
+Comment[fa]=مدیر طرح‌های پرده‌ی آغاز
+Comment[pt_BR]=Gerenciador de Temas para a Tela de Apresentação
+Comment[sv]=Hanterare för startskärmsteman
