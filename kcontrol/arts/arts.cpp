@@ -227,10 +227,15 @@ void KArtsModule::GetSettings( void )
 	}
 
 	QString audioIO = config->readEntry("AudioIO", QString::null);
+	artsConfig->audioIO->setCurrentItem(0);
 	for(AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())
 	{
 		if(a->name == audioIO)		// first item: "autodetect"
+		  {
 			artsConfig->audioIO->setCurrentItem(audioIOList.at() + 1);
+			break;
+		  }
+		
 	}
 
 	updateWidgets();
