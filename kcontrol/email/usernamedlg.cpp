@@ -11,7 +11,7 @@
 #include "usernamedlg.h"
 
 UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
-	: KDialogBase (parent, caption.latin1(), true, caption, KDialogBase::Ok|KDialogBase::Cancel)
+	: KDialogBase (parent, "usernamedlg", true, caption, KDialogBase::Ok|KDialogBase::Cancel)
 {
 	QString wtstr;
 	QWidget *top = new QWidget(this, "TOPWIDGET");
@@ -23,7 +23,7 @@ UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 	QHBoxLayout *layHost = new QHBoxLayout(topLayout);
 	layHost->setMargin(0);
 	lblHost = new QLabel(top, "lblHost");
-	lblHost->setText(i18n("&Hostname")+QString::fromLatin1(":"));
+	lblHost->setText(i18n("&Hostname:"));
 	lblHost->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed) );
 	txtHost = new KLineEdit(top, "txtHost");
 	txtHost->setSizePolicy( QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed) );
@@ -32,7 +32,7 @@ UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 	layHost->addWidget(txtHost, 5);
 
 	lblPort = new QLabel(top, "lblPort");
-	lblPort->setText(i18n("&Port")+QString::fromLatin1(":"));
+	lblPort->setText(i18n("&Port:"));
 	lblPort->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed) );
 	txtPort = new KLineEdit(top, "txtPort");
 	txtPort->setSizePolicy( QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed) );
