@@ -30,7 +30,7 @@ Name[mk]=Wikipedia - Слободната енциклопедија
 Name[mn]=Wikipedia - Чөлөөт толь бичиг
 Name[mt]=Wikipedia - L-Enċiklopedija Ħielsa
 Name[nb]=Wikipedia - det frie leksikonet
-Name[nds]=Wikipedia - dat frie Nakieksel
+Name[nds]=Wikipedia - dat fre'e Nakieksel
 Name[nl]=Wikipedia - de vrije encyclopedie
 Name[nn]=Wikipedia – det frie leksikonet
 Name[pa]=Wikipedia - ਮੁਫਤ ਵਿਸ਼ਵਕੋਸ਼
@@ -57,5 +57,4 @@ Name[zh_TW]=Wikipedia - 免費的 Encyclopedia
 ServiceTypes=SearchProvider
 Keys=wp
 Query=http://en.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go 
-Query[sv]=http://sv.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go 
 Charset=utf8
