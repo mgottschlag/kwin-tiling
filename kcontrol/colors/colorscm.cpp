@@ -309,9 +309,8 @@ void KColorScheme::save()
     cfg2.setGroup("X11");
     bool exportColors = cbExportColors->isChecked();
     cfg2.writeEntry("exportKDEColors", exportColors);
-    bool exportFonts = cfg2.readBoolEntry("exportKDEFonts", true);
     cfg2.sync();
-    runRdb(exportFonts, exportColors);
+    runRdb(exportColors);
 
     QApplication::setOverrideCursor( waitCursor );
     QStringList args;

@@ -1,4 +1,3 @@
-*rvplayer*font:                  FONT
 *rvplayer*background:            BACKGROUND
 *rvplayer*Label.BorderColor:     WINDOW_FOREGROUND
 *rvplayer*Command.BorderColor:   WINDOW_FOREGROUND
@@ -39,9 +38,3 @@
 *rvplayer*volumeslider.topShadowPixel:     LOWLIGHT
 *rvplayer*volumeslider.bottomShadowPixel:  HIGHLIGHT
 *rvplayer*Vslider.thumbPixel:              HIGHLIGHT
-*messagebox*Font:			FONT
-*FileListDlg*Font:   FONT
-*AboutDlg*Font:             FONT
-*StatsDlg.font:         FONT
-*StatsDlg*Font:         FONT
-*PrefDlg*Font:         FONT

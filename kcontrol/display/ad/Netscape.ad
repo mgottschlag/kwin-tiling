@@ -23,4 +23,3 @@ Netscape*selectColor: BACKGROUND
 Netscape*highlightColor: BACKGROUND
 Netscape*selectForeground: SELECT_FOREGROUND
 Netscape*selectBackground: SELECT_BACKGROUND
-Netscape*fontList: FONTLIST_8BIT

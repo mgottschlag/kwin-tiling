@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 **
-** KRDB - puts current KDE color and font scheme into preprocessor statements
+** KRDB - puts current KDE color scheme into preprocessor statements
 ** cats specially written application default files and uses xrdb -merge to
 ** write to RESOURCE_MANAGER. Thus it gives a  simple way to make non-KDE
 ** applications fit in with the desktop
@@ -39,8 +39,6 @@
 
 #include "krdb.h"
 
-enum FontStyle { Normal, Bold, Italic, Fixed };
-
 // -----------------------------------------------------------------------------
 static void applyGtkStyles(bool active)
 {
@@ -65,31 +63,6 @@ static void applyGtkStyles(bool active)
    kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
 }
 
-static QString fontString( QFont rFont, FontStyle style, bool force8Bit = false )
-{
-
-  switch(style) {
-  case Bold:
-    rFont.setBold(true);
-    break;
-  case Italic:
-    rFont.setItalic(true);
-    break;
-  case Fixed:
-    rFont.setFixedPitch(true);
-    break;
-  case Normal:
-    break;
-  }
-
-#if QT_VERSION < 300
-  if (force8Bit && (rFont.charSet() == QFont::Unicode))
-    rFont.setCharSet(QFont::Latin1);
-#endif
-
-  return rFont.rawName();
-}
-
 // -----------------------------------------------------------------------------
 
 static void addColorDef(QString& s, const char* n, const QColor& col)
@@ -105,18 +78,7 @@ static void addColorDef(QString& s, const char* n, const QColor& col)
 
 // -----------------------------------------------------------------------------
 
-static void addFontDef(QString& s, const char* n, const QFont& f, FontStyle fs, bool force8Bit = false)
-{
-  QString tmp;
-
-  tmp.sprintf("#define %s %s\n", n, fontString(f, fs, force8Bit).latin1());
-
-  s += tmp;
-}
-
-// -----------------------------------------------------------------------------
-
-static void copyFile(QFile& tmp, QString const& filename, bool copyFonts, bool copyColors)
+static void copyFile(QFile& tmp, QString const& filename, bool copyColors)
 {
   QFile f( filename );
   if ( f.open(IO_ReadOnly) ) {
@@ -124,13 +86,7 @@ static void copyFile(QFile& tmp, QString const& filename, bool copyFonts, bool c
       while ( !f.atEnd() ) {
           int read = f.readLine( buf.data(), buf.size() );
           if ( read > 0 )
-          {
-              if (!copyFonts && strstr(buf.data(), "FONT"))
-                 continue;
-              if (!copyColors && (strstr(buf.data(), "GROUND") || strstr(buf.data(), "LIGHT")))
-                 continue; 
               tmp.writeBlock( buf.data(), read );
-          }
       }
   }
 }
@@ -147,7 +103,7 @@ static QString color( const QColor& col )
     return QString( "{ %1, %2, %3 }" ).arg( item( col.red() ) ).arg( item( col.green() ) ).arg( item( col.blue() ) );
 }
 
-static void createGtkrc( bool exportFonts, const QFont& font, bool exportColors, const QColorGroup& cg )
+static void createGtkrc( bool exportColors, const QColorGroup& cg )
 {
     QCString filename = ::getenv("HOME");
     filename += "/.gtkrc-kde";
@@ -166,12 +122,6 @@ static void createGtkrc( bool exportFonts, const QFont& font, bool exportColors,
         t << endl;
         t << "style \"default\"" << endl;
         t << "{" << endl;
-        if (exportFonts)
-        {
-//         t << "  " << "fontset = \"" << font.rawName()
-//           << ", -*-" << font.family() << "-*-*-*-*-*-*-*-*-*-*-*-*\"" << endl;
-//         t << endl;
-        }
         if (exportColors)
         {
           t << "  bg[NORMAL] = " << color( cg.background() ) << endl;
@@ -207,8 +157,8 @@ static void createGtkrc( bool exportFonts, const QFont& font, bool exportColors,
 
 // -----------------------------------------------------------------------------
 
-void runRdb(bool exportFonts, bool exportColors) {
-  if (!exportFonts && !exportColors)
+void runRdb(bool exportColors) {
+  if (!exportColors)
   {
      applyGtkStyles(false);
      return;
@@ -217,7 +167,7 @@ void runRdb(bool exportFonts, bool exportColors) {
   KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
   QColorGroup cg = kapp->palette().active();
   if ( !kapp->kstyle() || !kapp->kstyle()->inherits("KLegacyStyle") )
-      createGtkrc( exportFonts, kapp->font(), exportColors, cg );
+      createGtkrc( exportColors, cg );
 
   QString preproc;
 
@@ -236,23 +186,6 @@ void runRdb(bool exportFonts, bool exportColors) {
     addColorDef(preproc, "INACTIVE_FOREGROUND", KGlobalSettings::inactiveTitleColor());
     addColorDef(preproc, "ACTIVE_BACKGROUND"  , KGlobalSettings::activeTitleColor());
     addColorDef(preproc, "ACTIVE_FOREGROUND"  , KGlobalSettings::activeTitleColor());
-  }
-
-  if (exportFonts)
-  {
-    addFontDef(preproc, "FONT"                , KGlobalSettings::generalFont(), Normal);
-    addFontDef(preproc, "BOLD_FONT"           , KGlobalSettings::generalFont(), Bold);
-    addFontDef(preproc, "ITALIC_FONT"         , KGlobalSettings::generalFont(), Italic);
-    addFontDef(preproc, "FIXED_FONT"          , KGlobalSettings::fixedFont(), Fixed);
-    // Fontlist
-    preproc += "#define FONTLIST FONT,BOLD_FONT=BOLD,ITALIC_FONT=ITALIC\n";
-
-    addFontDef(preproc, "FONT_8BIT"           , KGlobalSettings::generalFont(), Normal, true);
-    addFontDef(preproc, "BOLD_FONT_8BIT"      , KGlobalSettings::generalFont(), Bold, true);
-    addFontDef(preproc, "ITALIC_FONT_8BIT"    , KGlobalSettings::generalFont(), Italic, true);
-    addFontDef(preproc, "FIXED_FONT_8BIT"     , KGlobalSettings::fixedFont(), Fixed, true);
-    // Fontlist
-    preproc += "#define FONTLIST_8BIT FONT_8BIT,BOLD_FONT_8BIT=BOLD,ITALIC_FONT_8BIT=ITALIC\n";
   }
   //---------------------------------------------------------------
 
@@ -284,10 +217,10 @@ void runRdb(bool exportFonts, bool exportColors) {
   tmp.writeBlock( preproc.latin1(), preproc.length() );
 
   for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
-    copyFile(tmp, locate("appdefaults", *it ), exportFonts, exportColors);
+    copyFile(tmp, locate("appdefaults", *it ), exportColors);
 
   // very primitive support for  ~/.Xdefaults by appending it
-  copyFile(tmp, QDir::homeDirPath() + "/.Xdefaults", true, true);
+  copyFile(tmp, QDir::homeDirPath() + "/.Xdefaults", true);
 
   tmpFile.close();
 

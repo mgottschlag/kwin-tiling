@@ -41,8 +41,6 @@
 #include "fonts.h"
 #include "fonts.moc"
 
-#include "../display/krdb.h"
-
 #include <kdebug.h>
 
 /**** DLL Interface ****/
@@ -296,14 +294,6 @@ KFonts::KFonts(QWidget *parent, const char *name)
 
    layout->addWidget(cbAA);
 
-   cbExportFonts = new QCheckBox( i18n( "Apply Fonts to non-KDE applications." ),this);
-
-   QWhatsThis::add(cbExportFonts,
-     i18n(
-       "If this option is selected, the KDE font options will be exported to GNOME"
-       " and other non-KDE applications as well."));
-
-   layout->addWidget(cbExportFonts);
    layout->addStretch(1);
 
    connect(cbAA, SIGNAL(clicked()), SLOT(slotUseAntiAliasing()));
@@ -312,12 +302,6 @@ KFonts::KFonts(QWidget *parent, const char *name)
    useAA_original = useAA;
 
    cbAA->setChecked(useAA);
-
-   KConfig displaycfg("kcmdisplayrc", true, false);
-   displaycfg.setGroup("X11");
-   bool exportFonts = displaycfg.readBoolEntry("exportKDEFonts", true);
-   cbExportFonts->setChecked(exportFonts);
-   connect(cbExportFonts, SIGNAL(toggled(bool)), this, SLOT(fontChanged()));
 }
 
 KFonts::~KFonts()
@@ -337,7 +321,6 @@ void KFonts::defaults()
 
   useAA = false;
   cbAA->setChecked(useAA);
-  cbExportFonts->setChecked(true);
 
   _changed = true;
   emit changed(true);
@@ -368,11 +351,6 @@ void KFonts::load()
   kdDebug() << "AA:" << useAA << endl;
   cbAA->setChecked(useAA);
 
-  KConfig displaycfg("kcmdisplayrc", true, false);
-  displaycfg.setGroup("X11");
-  bool exportFonts = displaycfg.readBoolEntry("exportKDEFonts", true);
-  cbExportFonts->setChecked(exportFonts);
-
   _changed = true;
   emit changed(false);
 
@@ -397,16 +375,6 @@ void KFonts::save()
   delete config;
 
   QSettings().writeEntry("/qt/useXft", useAA);
-
-  KConfig displaycfg("kcmdisplayrc", true, false);
-  displaycfg.setGroup("X11");
-  bool exportFonts = cbExportFonts->isChecked();
-  displaycfg.writeEntry("exportKDEFonts", exportFonts);
-  bool exportColors = displaycfg.readBoolEntry("exportKDEColors", true);
-  displaycfg.sync();
-  QApplication::setOverrideCursor( waitCursor );
-  runRdb(exportFonts, exportColors);
-  QApplication::restoreOverrideCursor();
 
   KIPC::sendMessageAll(KIPC::FontChanged);
 

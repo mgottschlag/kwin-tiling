@@ -85,7 +85,7 @@ private:
 
     bool m_bChanged, m_bStyleDirty, m_bToolbarsDirty;
     bool m_bEffectsDirty, m_bMacStyleDirty;
-    bool m_bExportFonts, m_bExportColors;
+    bool m_bExportColors;
     bool macStyle;
     bool tbUseHilite, tbMoveTransparent;
     bool effectFadeMenu, effectAnimateMenu, effectAnimateCombo, effectFadeTooltip, effectAnimateTooltip, effectNoTooltip;

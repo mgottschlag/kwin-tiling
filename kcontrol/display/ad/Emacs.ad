@@ -15,10 +15,3 @@ Emacs*topToolBarShadowColor:	BACKGROUND
 Emacs*bottomToolBarShadowColor:	BACKGROUND
 Emacs*backgroundToolBarColor:	BACKGROUND
 Emacs*toolBarShadowThickness:	0
- 
-!Emacs*font:			FIXED_FONT
-!Emacs*menubar*Font:		FONT
-!Emacs*popup*Font:		FONT
-!Emacs*Dialog*Font:		FONT
-!Emacs.default.attributeFont:	FIXED_FONT
-

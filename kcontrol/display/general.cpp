@@ -75,9 +75,8 @@ extern "C" {
     void init_style() {
         KConfig config("kcmdisplayrc", true, true);
         config.setGroup("X11");
-        bool exportKDEFonts = config.readBoolEntry("exportKDEFonts", true);
         bool exportKDEColors = config.readBoolEntry("exportKDEColors", true);
-        runRdb(exportKDEFonts, exportKDEColors);
+        runRdb(exportKDEColors);
 
         if (!config.readBoolEntry( "disableMultihead", false ) &&
            (ScreenCount(qt_xdisplay()) > 1))
@@ -262,7 +261,6 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     m_bToolbarsDirty = false;
     m_bEffectsDirty = false;
     m_bMacStyleDirty = false;
-    m_bExportFonts = true;
     m_bExportColors = true;
     macStyle = false;
 
@@ -320,12 +318,12 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     connect( cbMac, SIGNAL( clicked() ), SLOT( slotMacStyle()  )  );
     vlay->addWidget( cbMac, 10 );
 
-    cbRes = new QCheckBox( i18n( "&Apply fonts and colors to non-KDE apps" ), styles);
+    cbRes = new QCheckBox( i18n( "&Apply colors to non-KDE apps" ), styles);
     connect( cbRes, SIGNAL( clicked() ), SLOT( slotUseResourceManager()  )  );
     vlay->addWidget( cbRes, 10 );
 
     QWhatsThis::add( cbRes, i18n("If this option is selected, KDE will try"
-      " to force your preferences regarding colors and fonts even on non-KDE"
+      " to force your preferences regarding colors even to non-KDE"
       " applications. While this works fine with most applications, it <em>may</em>"
       " give strange results sometimes.") );
 
@@ -515,11 +513,9 @@ void KGeneral::slotUseResourceManager()
 {
     switch(cbRes->state()) {
     case QButton::On:
-        m_bExportFonts = true;
         m_bExportColors = true;
         break;
     case QButton::Off:
-        m_bExportFonts = false;
         m_bExportColors = false;
         break;
     default:
@@ -564,7 +560,6 @@ void KGeneral::readSettings()
     tbMoveTransparent = config->readBoolEntry( "TransparentMoving", true);
 
     config->setGroup("X11");
-    m_bExportFonts = config->readBoolEntry( "exportKDEFonts", true );
     m_bExportColors = config->readBoolEntry( "exportKDEColors", true );
 }
 
@@ -578,10 +573,7 @@ void KGeneral::slotRunImporter()
 
 void KGeneral::showSettings()
 {
-    if (m_bExportFonts != m_bExportColors)
-       cbRes->setNoChange();
-    else
-       cbRes->setChecked(m_bExportFonts);
+    cbRes->setChecked(m_bExportColors);
 
     cbMac->setChecked(macStyle);
 
@@ -617,7 +609,6 @@ void KGeneral::showSettings()
 
 void KGeneral::defaults()
 {
-    m_bExportFonts = true;
     m_bExportColors = true;
     macStyle = false;
     tbUseText = "IconOnly";
@@ -686,12 +677,11 @@ void KGeneral::save()
         true, true);
 
     config->setGroup("X11");
-    config->writeEntry("exportKDEFonts", m_bExportFonts);
     config->writeEntry("exportKDEColors", m_bExportColors);
     config->sync();
 
     QApplication::setOverrideCursor( waitCursor );
-    runRdb(m_bExportFonts, m_bExportColors);
+    runRdb(m_bExportColors);
     QApplication::restoreOverrideCursor();
 
     if ( m_bStyleDirty )
