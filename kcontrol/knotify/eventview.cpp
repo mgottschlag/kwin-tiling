@@ -60,7 +60,7 @@ EventView::EventView(QWidget *parent, const char *name):
 	layout->addWidget(todefault=new QPushButton(i18n("&Default"), this), 2,1);
 	
 	file->hide();
-	connect(eventslist, SIGNAL(selected(int)), SLOT(itemSelected(int)));
+	connect(eventslist, SIGNAL(highlighted(int)), SLOT(itemSelected(int)));
 };
 
 EventView::~EventView()
@@ -76,17 +76,39 @@ void EventView::defaults()
 void EventView::itemSelected(int item)
 {
 	enabled->setChecked(false);
-
+	file->setEnabled(false);
+	
 	switch (item)
 	{
 	case (0):
 		file->show();
 		file->setText(soundfile);
 		if (present & KNotifyClient::Sound)
+		{
 			enabled->setChecked(true);
-		else
-			file->setEnabled(false);
-	
+			file->setEnabled(true);
+		}
+		break;
+	case (1):
+		if (present & KNotifyClient::Messagebox)
+			enabled->setChecked(true);
+		break;
+	case (2):
+		if (present & KNotifyClient::Logwindow)
+			enabled->setChecked(true);
+		break;
+	case (3):
+		file->show();
+		file->setText(logfile);
+		if (present & KNotifyClient::Logfile)
+		{
+			enabled->setChecked(true);
+			file->setEnabled(true);
+		}
+		break;
+	case (4):
+		if (present & KNotifyClient::Stderr)
+			enabled->setChecked(true);
 	}
 }
 
