@@ -256,7 +256,7 @@ main (int argc, char **argv)
 	else if (argv[1] && (!strcmp (pt, "error") || !strcmp (pt, "logfile")))
 	    errorLogFile = *++argv;
 	else {
-	    fprintf (stderr, "Unknown option or missing parameter: %\"s\n", *argv);
+	    fprintf (stderr, "\"%s\" is an unknown option or is missing a parameter\n", *argv);
 	    exit (1);
 	}
     }
