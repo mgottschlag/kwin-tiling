@@ -36,6 +36,8 @@ class QLineEdit;
 class KLocale;
 class KLanguageCombo;
 
+class StringPair;
+
 class KLocaleConfigTime : public QWidget
 {
   Q_OBJECT
@@ -67,13 +69,15 @@ private slots:
   void slotWeekStartsMondayChanged();
 
 private:
-  QMap<QChar, QString> timeMap() const;
-  QMap<QChar, QString> dateMap() const;
+  QValueList<StringPair> timeMap() const;
+  QValueList<StringPair> dateMap() const;
 
-  QString storeToUser(const QMap<QChar, QString> & map,
+  QString storeToUser(const QValueList<StringPair> & map,
 		      const QString & storeFormat) const;
-  QString userToStore(const QMap<QChar, QString> & map,
+  QString userToStore(const QValueList<StringPair> & map,
 		      const QString & userFormat) const;
+  StringPair buildStringPair(const QChar &storeName, const QString &userName) const;
+		      
 
   KLocale *m_locale;
 

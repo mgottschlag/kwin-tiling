@@ -27,6 +27,7 @@
 #include <qlayout.h>
 #include <qwhatsthis.h>
 #include <qcombobox.h>
+#include <qtl.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -40,40 +41,93 @@
 #include "localetime.h"
 #include "localetime.moc"
 
-QMap<QChar, QString> KLocaleConfigTime::timeMap() const
+class StringPair
 {
-  QMap<QChar, QString> map;
+public:
+  QChar storeName;
+  QString userName;
 
-  map['H'] = m_locale->translate("HH");
-  map['k'] = m_locale->translate("hH");
-  map['I'] = m_locale->translate("PH");
-  map['l'] = m_locale->translate("pH");
-  map['M'] = m_locale->translate("MM");
-  map['S'] = m_locale->translate("SS");
-  map['p'] = m_locale->translate("AMPM");
+  static StringPair find( const QValueList <StringPair> &list, const QChar &c)
+  {
+    for ( QValueList<StringPair>::ConstIterator it = list.begin();
+	it != list.end();
+	++it )
+      if ((*it).storeName==c) return (*it);
 
-  return map;
+    StringPair r;
+    return r;
+  }
+
+};
+
+/*  Sort the string pairs with qHeapSort in the order we want
+    ( relative to the userName value and with "MESCORTO" before "MES" )
+    */
+bool operator< (const StringPair &p1, const StringPair &p2)
+{
+  return ! (p1.userName<p2.userName);
 }
 
-QMap<QChar, QString> KLocaleConfigTime::dateMap() const
+bool operator<= (const StringPair &p1, const StringPair &p2)
 {
-  QMap <QChar, QString> map;
-
-  map['Y'] = m_locale->translate("YYYY");
-  map['y'] = m_locale->translate("YY");
-  map['n'] = m_locale->translate("mM");
-  map['m'] = m_locale->translate("MM");
-  map['b'] = m_locale->translate("SHORTMONTH");
-  map['B'] = m_locale->translate("MONTH");
-  map['e'] = m_locale->translate("dD");
-  map['d'] = m_locale->translate("DD");
-  map['a'] = m_locale->translate("SHORTWEEKDAY");
-  map['A'] = m_locale->translate("WEEKDAY");
-
-  return map;
+  return ! (p1.userName<=p2.userName);
 }
 
-QString KLocaleConfigTime::userToStore(const QMap<QChar, QString> & map,
+bool operator> (const StringPair &p1, const StringPair &p2)
+{
+  return ! (p1.userName>p2.userName);
+}
+
+bool operator>= (const StringPair &p1, const StringPair &p2)
+{
+  return ! (p1.userName>=p2.userName);
+}
+
+
+StringPair KLocaleConfigTime::buildStringPair(const QChar &c, const QString &s) const
+{
+  StringPair pair;
+  pair.storeName=c;
+  pair.userName=s;
+  return pair;
+}
+
+QValueList<StringPair> KLocaleConfigTime::timeMap() const
+{
+  QValueList < StringPair > list;
+  list+=buildStringPair('H',m_locale->translate("HH"));
+  list+=buildStringPair('k',m_locale->translate("hH"));
+  list+=buildStringPair('I',m_locale->translate("PH"));
+  list+=buildStringPair('l',m_locale->translate("pH"));
+  list+=buildStringPair('M',m_locale->translate("MM"));
+  list+=buildStringPair('S',m_locale->translate("SS"));
+  list+=buildStringPair('p',m_locale->translate("AMPM"));
+
+  qHeapSort( list );
+
+  return list;
+}
+
+QValueList <StringPair> KLocaleConfigTime::dateMap() const
+{
+  QValueList < StringPair > list;
+  list+=buildStringPair('Y',m_locale->translate("YYYY"));
+  list+=buildStringPair('y',m_locale->translate("YY"));
+  list+=buildStringPair('n',m_locale->translate("mM"));
+  list+=buildStringPair('m',m_locale->translate("MM"));
+  list+=buildStringPair('b',m_locale->translate("SHORTMONTH"));
+  list+=buildStringPair('B',m_locale->translate("MONTH"));
+  list+=buildStringPair('e',m_locale->translate("dD"));
+  list+=buildStringPair('d',m_locale->translate("DD"));
+  list+=buildStringPair('a',m_locale->translate("SHORTWEEKDAY"));
+  list+=buildStringPair('A',m_locale->translate("WEEKDAY"));
+
+  qHeapSort( list );
+
+  return list;
+}
+
+QString KLocaleConfigTime::userToStore(const QValueList<StringPair> & list,
 		    const QString & userFormat) const
 {
   QString result;
@@ -81,16 +135,16 @@ QString KLocaleConfigTime::userToStore(const QMap<QChar, QString> & map,
   for ( uint pos = 0; pos < userFormat.length(); ++pos )
     {
       bool bFound = false;
-      for ( QMap<QChar, QString>::ConstIterator it = map.begin();
-	    it != map.end() && !bFound;
+      for ( QValueList<StringPair>::ConstIterator it = list.begin();
+	    it != list.end() && !bFound;
 	    ++it )
 	{
-	  QString s = it.data();
+	  QString s = (*it).userName;
 
 	  if ( userFormat.mid( pos, s.length() ) == s )
 	    {
 	      result += '%';
-	      result += it.key();
+	      result += (*it).storeName;
 
 	      pos += s.length() - 1;
 
@@ -111,7 +165,7 @@ QString KLocaleConfigTime::userToStore(const QMap<QChar, QString> & map,
   return result;
 }
 
-QString KLocaleConfigTime::storeToUser(const QMap<QChar, QString> & map,
+QString KLocaleConfigTime::storeToUser(const QValueList<StringPair> & list,
 				       const QString & storeFormat) const
 {
   QString result;
@@ -122,9 +176,9 @@ QString KLocaleConfigTime::storeToUser(const QMap<QChar, QString> & map,
       QChar c = storeFormat.at(pos);
       if ( escaped )
 	{
-	  QMap<QChar, QString>::ConstIterator it = map.find( c );
-	  if ( it != map.end() )
-	    result += it.data();
+	  StringPair it = StringPair::find( list, c );
+	  if ( !it.userName.isEmpty() )
+	    result += it.userName;
 	  else
 	    result += c;
 
