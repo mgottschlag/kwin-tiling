@@ -86,7 +86,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(KInstance *instance, QWidget *p
     // Deals with Internet keywords feature...
     gb_keywords = new QGroupBox( this );
     QVBoxLayout *i_vbox = new QVBoxLayout( gb_keywords, KDialog::marginHint(), KDialog::spacingHint() );
-    cb_enableInternetKeywords = new QCheckBox(i18n("Enable Int&ernet Keywords"), gb_keywords);
+    cb_enableInternetKeywords = new QCheckBox(i18n("Enable int&ernet keywords"), gb_keywords);
     connect(cb_enableInternetKeywords, SIGNAL(clicked()), this, SLOT(changeInternetKeywordsEnabled()));
     QWhatsThis::add(cb_enableInternetKeywords, i18n("If this box is checked, KDE will let you use <em>Internet Keywords</em> "
                                                     "in its browser's address bar. This means you can simply type normal "
@@ -96,7 +96,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(KInstance *instance, QWidget *p
                                                     "in the browser location bar."));
     i_vbox->addWidget(cb_enableInternetKeywords);
     QHBoxLayout *igbopts_lay = new QHBoxLayout( i_vbox, KDialog::spacingHint() );
-    lb_searchFallback = new QLabel(i18n("&Fallback Search Engine:"), gb_keywords);
+    lb_searchFallback = new QLabel(i18n("&Fallback search engine:"), gb_keywords);
     igbopts_lay->addWidget( lb_searchFallback );
     cmb_searchFallback = new QComboBox(false, gb_keywords);
     igbopts_lay->addWidget( cmb_searchFallback, 1 );
@@ -118,7 +118,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(KInstance *instance, QWidget *p
     w_grid->setColStretch(0, 2);
     w_grid->setRowStretch(2, 2);
 
-    cb_enableSearchKeywords = new QCheckBox(i18n("Enable &Web Shortcuts"), gb_search);
+    cb_enableSearchKeywords = new QCheckBox(i18n("Enable &web shortcuts"), gb_search);
     connect(cb_enableSearchKeywords, SIGNAL(clicked()), this, SLOT(changeSearchKeywordsEnabled()));
     QWhatsThis::add(cb_enableSearchKeywords, i18n("If this box is checked, KDE will let you use the shortcuts "
                                                   "defined below to quickly search the Internet. For example, "
