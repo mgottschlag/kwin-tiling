@@ -78,7 +78,7 @@ static QLabel	*GraphLabel[MEM_LAST];
 
 static QString format_MB( t_memsize value)
 {
-#ifdef __linux
+#ifdef __linux__
   double   mb = value / 1024000.0; /* with Linux divide by (1024*1000) */
 #elif hpux	
   double   mb = value / 1048576.0; /* with hpux divide by (1024*1024) */
@@ -303,7 +303,7 @@ void KMemoryWidget::update_Values()
 
 /* Include system-specific code */
 
-#ifdef __linux
+#ifdef __linux__
 #include "memory_linux.cpp"
 #elif sgi
 #include "memory_sgi.cpp"

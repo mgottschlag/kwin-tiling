@@ -30,8 +30,6 @@ bool GetInfo_XServer_and_Video( QListView *lBox );
 
 class KInfoListWidget : public KCModule
 {
-  Q_OBJECT
-
 public:
   KInfoListWidget(const QString &_title, QWidget *parent, const char *name=0, bool _getlistbox (QListView *)=0);
 
