@@ -18,86 +18,152 @@
         #define INFO_PARTITIONS_AVAILABLE
 	#define INFO_XSERVER_AVAILABLE
 	
-	right now, there is the problem, that also the .kdelnk-files should depend
-	on the systemname, so that only available .kdelnk-files will be copied to
-	kde/applnk/Settings/Information !!
-*/
+	right now, there is the problem, that also the .kdelnk-files should 
+	depend on the systemname, so that only available .kdelnk-files will 
+	be copied to kde/applnk/Settings/Information !!
 
+
+	Last modified:	by:
+	24.04.1999	Helge Deller (deller@gmx.de)
+			changed i18n()'s in Get_X_Server, because there was 
+			some really ugly layout-problems in some languages !
+			These problems could bee seen in german-language !
+			-> Sorry i18n-Team ! I had to change & SIMPLIFY the 
+			i18n()-strings for you !
+	01.11.1998	first version [Helge Deller]
+	
+*/
 
 #include <qtabbar.h>
 
 #include <kapp.h>
 #include <kcharsets.h>
+#include <klocale.h>
 #include "info.h"
 #include "info.moc"
 
-
 #include <X11/Xlib.h>
-#include <klocale.h>
 
-void XServer_fill_screen_info( KTabListBox *lBox, Display *dpy, int scr )
+
+/* easier to read with such a define ! */
+#define I18N_MAX(txt,in,fm,maxw) \
+    { int n = fm.width(txt=in); if (n>maxw) maxw=n; }
+    
+#define SEPERATOR 	"\t"
+#define SEPERATOR_CHAR	'\t'
+
+static QString Value( int val, int numbers=1 )
+{	char txt[20];
+	char fmt[10];
+	sprintf(fmt,"%%%ii",numbers);
+	sprintf(txt,fmt,val);
+	return QString(txt);
+}
+
+
+static void XServer_fill_screen_info( KTabListBox *lBox, Display *dpy, int scr,
+	    QFontMetrics fm, int *maxwidth )
 {
     int i;
     double xres, yres;
     int ndepths = 0, *depths = NULL;
-    QString str,str2;
+    QString str,str2, txt;
+    const char *txt2;
+    char ctxt[300];
+    QString TAB(SEPERATOR);
     
-    xres = ((((double) DisplayWidth(dpy,scr)) * 25.4) / 
-	    ((double) DisplayWidthMM(dpy,scr)));
-    yres = ((((double) DisplayHeight(dpy,scr)) * 25.4) / 
-	    ((double) DisplayHeightMM(dpy,scr)));
+    xres = ((double)(DisplayWidth(dpy,scr)  * 25.4) / DisplayWidthMM(dpy,scr) );
+    yres = ((double)(DisplayHeight(dpy,scr) * 25.4) / DisplayHeightMM(dpy,scr));
 
     lBox->insertItem("");
-    str.sprintf(i18n("screen #%d"),(int)scr);
+
+    str = i18n("Screen #");
+    str += Value((int)scr);
     lBox->insertItem(str);
-    str.sprintf(i18n("  dimensions          : %dx%d pixels (%dx%d mm)\n"),
-	    DisplayWidth (dpy, scr), DisplayHeight (dpy, scr),
-	    DisplayWidthMM(dpy, scr), DisplayHeightMM (dpy, scr));
+
+    ctxt[0] = 0;
+    
+    I18N_MAX(txt,i18n("Dimensions"),fm,*maxwidth);
+    txt2 = i18n("%dx%d Pixels (%dx%d mm)");
+    sprintf(ctxt,txt2,	(int)DisplayWidth(dpy, scr), (int)DisplayHeight(dpy, scr),
+			(int)DisplayWidthMM(dpy, scr), (int)DisplayHeightMM (dpy, scr) );
+    str = QString(" ") + txt + TAB + QString(ctxt);
     lBox->insertItem(str);
-    str.sprintf(i18n("  resolution          : %dx%d dots per inch\n"), 
-		    (int) (xres + 0.5), (int) (yres + 0.5));
+
+    I18N_MAX(txt,i18n("Resolution"),fm,*maxwidth);
+    txt2 = i18n("%dx%d Dots per Inch (dpi)");
+    sprintf(ctxt,txt2,	(int)(xres+0.5), (int)(yres+0.5));
+    str = QString(" ") + txt + TAB + QString(ctxt);
     lBox->insertItem(str);
+
     depths = XListDepths (dpy, scr, &ndepths);
     if (!depths) ndepths = 0;
-    str.sprintf(i18n("  depths (%d)          : "), ndepths);
+    I18N_MAX(txt,i18n("Depths"),fm,*maxwidth);
+    str =  QString(" ") + txt + QString(" (") + Value(ndepths) + QString(")") + TAB;
+    
     for (i = 0; i < ndepths; i++) 
-    {	str2.sprintf("%d", depths[i]);
-	str = str+str2;
+    {	
+	str = str + Value(depths[i]);
 	if (i < ndepths - 1)
-	    str = str + ", ";
+	    str = str + QString(", ");
     }
     lBox->insertItem(str);
     if (depths) XFree((char *) depths);
 }
 
 
-
 bool GetInfo_XServer_Generic( KTabListBox *lBox )
 {
     /* Parts of this source is taken from the X11-program "xdpyinfo" */
-    
+
     Display *dpy;
     int i;
-    QString str;
+    QString str,txt;
+    QFontMetrics fm(lBox->tableFont());
+    int	maxwidth;
+    QString TAB(SEPERATOR);
 
     dpy = XOpenDisplay(NULL);
     if (!dpy)  return FALSE;
 
-    str.sprintf(i18n("name of display       : %s"),DisplayString(dpy));
-    lBox->insertItem(str);
-    str.sprintf(i18n("version number        : %i.%i"),(int)ProtocolVersion(dpy),(int)ProtocolRevision(dpy));
-    lBox->insertItem(str);
-    str.sprintf(i18n("vendor string         : %s"), ServerVendor(dpy));
-    lBox->insertItem(str);
-    str.sprintf(i18n("vendor release number : %i"),(int)VendorRelease(dpy));
-    lBox->insertItem(str);
-    str.sprintf(i18n("default screen number : %i"),(int)DefaultScreen(dpy));
-    lBox->insertItem(str);
-    str.sprintf(i18n("number of screens     : %i"),(int)ScreenCount(dpy));
+    lBox->setNumCols(2);		// Table-Headers....
+    maxwidth = 0;
+    I18N_MAX(txt,i18n("Information"),fm,maxwidth);
+    lBox->setColumn(0,txt,maxwidth );
+    lBox->setColumn(1,i18n("Value") );
+    lBox->setSeparator(SEPERATOR_CHAR);
 
-    for (i = 0; i < ScreenCount (dpy); i++)
-	XServer_fill_screen_info (lBox,dpy, i);
+			
+    I18N_MAX(txt,i18n("Name of the Display"),fm,maxwidth);
+    str = txt + TAB + DisplayString(dpy);
+    lBox->insertItem(str);
 
+    I18N_MAX(txt,i18n("Version Number"),fm,maxwidth);
+    str = txt 	+ TAB + Value((int)ProtocolVersion(dpy)) 
+		+ QString(".") + Value((int)ProtocolRevision(dpy));
+    lBox->insertItem(str);
+
+    I18N_MAX(txt,i18n("Vendor String"),fm,maxwidth);
+    str = txt + TAB + QString(ServerVendor(dpy));
+    lBox->insertItem(str);
+
+    I18N_MAX(txt,i18n("Vendor Release Number"),fm,maxwidth);
+    str = txt + TAB + Value((int)VendorRelease(dpy));
+    lBox->insertItem(str);
+
+    I18N_MAX(txt,i18n("Default Screen Number"),fm,maxwidth);
+    str = txt + TAB + Value((int)DefaultScreen(dpy));
+    lBox->insertItem(str);
+
+    I18N_MAX(txt,i18n("Number of Screens"),fm,maxwidth);
+    str = txt + TAB + Value((int)ScreenCount(dpy));
+    lBox->insertItem(str);
+
+    for (i = 0; i < ScreenCount (dpy); ++i)
+	XServer_fill_screen_info (lBox,dpy, i, fm, &maxwidth);
+
+    lBox->setColumnWidth(0,maxwidth+20);
+    
     XCloseDisplay (dpy);
     return TRUE;
 }
@@ -130,9 +196,27 @@ bool GetInfo_XServer_Generic( KTabListBox *lBox )
 ***************************************************************************
 */
 
+#include <qobjcoll.h>
+#include <qwidget.h>
+#include <qwidcoll.h>
 
+void set_Status_for_all_Children( QWidget *start, bool wait )
+{	const QObjectList *list = start->children();
+	QObjectListIt it(*list);
+	QObject *obj;
+	while ( (obj=it.current()) != 0 )
+	{	++it;
+		if (obj->inherits("QWidget"))
+		{   // set_Status_for_all_Children( (QWidget*)obj, wait ); /*doesn't work ! why ?? */
+		    ((QWidget*)obj)->setCursor(wait ? WaitCursor:ArrowCursor);
+		}
+	}
+}
 
-
+void set_Status_for_all_Widgets( QWidget *start, bool wait )
+{   
+    set_Status_for_all_Children( start->topLevelWidget(), wait );
+}
 
 
 #define SCREEN_XY_OFFSET 20
@@ -155,7 +239,10 @@ void KInfoListWidget::defaultSettings()
 	lBox->setAutoUpdate(TRUE);
 
         if (getlistbox)
-	    ok = (*getlistbox)(lBox);
+	{   set_Status_for_all_Widgets( lBox, TRUE );
+	    ok = (*getlistbox)(lBox);	// retrieve the information !
+	    set_Status_for_all_Widgets( lBox, FALSE );
+	}
 
 	if (lBox->numCols()<=1)  // if ONLY ONE COLUMN (!), then set title and calculate necessary column-width
 	{   QFontMetrics fm(lBox->tableFont());
@@ -179,7 +266,7 @@ void KInfoListWidget::defaultSettings()
     if (!ok)
     {	if (lBox) { delete lBox; lBox = 0; }	    
 	if (!NoInfoText)
-	    NoInfoText = new QLabel(i18n("No Information available\n or\nthis system is not yet supported :-("),this);
+	    NoInfoText = new QLabel(i18n("No Information available\n or\nthis System is not yet supported :-("),this);
 	NoInfoText->setAutoResize(TRUE);
 	NoInfoText->setAlignment(AlignCenter | WordBreak);
 	NoInfoText->move( width()/2-120,height()/2-30 );
@@ -211,5 +298,3 @@ void KInfoListWidget::resizeEvent( QResizeEvent *re )
     if (NoInfoText)
 	NoInfoText->move( size.width()/2-120,size.height()/2-30 );
 }
-
-
