@@ -17,6 +17,10 @@
     Boston, MA 02111-1307, USA.
 */  
 
+#include <unistd.h>
+#include <sys/types.h>
+
+
 #include <qcombobox.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
@@ -79,6 +83,12 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
 
   load();
   slotSetFont(0);
+
+  if (getuid() != 0)
+    {
+      fontbtn->setEnabled(false);
+      fontcombo->setEnabled(false);
+    }
 }
 
 

@@ -17,6 +17,10 @@
     Boston, MA 02111-1307, USA.
 */  
 
+#include <unistd.h>
+#include <sys/types.h>
+
+
 #include <qdir.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
@@ -155,6 +159,21 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       main->activate();
 
       load();
+
+      // read only mode
+      if (getuid() != 0)
+	{
+	  sdcombo->setEnabled(false);
+	  restart_lined->setReadOnly(true);
+	  shutdown_lined->setReadOnly(true);
+	  session_lined->setReadOnly(true);
+	  console_lined->setReadOnly(true);
+	  sessionslb->setEnabled(false);
+	  btnup->setEnabled(false);
+	  btndown->setEnabled(false);
+	  btnrm->setEnabled(false);
+	  btnadd->setEnabled(false);
+	}
 }
 
 void KDMSessionsWidget::slotSessionHighlighted(int s)

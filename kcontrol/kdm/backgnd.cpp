@@ -17,6 +17,10 @@
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
+#include <unistd.h>
+#include <sys/types.h>
+
+
 #include <qobject.h>
 #include <qlayout.h>
 #include <qstring.h>
@@ -268,6 +272,20 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     init();
     apply();
+
+    // read only mode
+    if (getuid() != 0)
+      {
+	m_pCBMulti->setEnabled(false);
+	m_pBackgroundBox->setEnabled(false);
+	m_pWallpaperBox->setEnabled(false);
+	m_pArrangementBox->setEnabled(false);
+	m_pBGSetupBut->setEnabled(false);
+	m_pMSetupBut->setEnabled(false);
+	m_pBrowseBut->setEnabled(false);
+	m_pColor1But->setEnabled(false);
+	m_pColor2But->setEnabled(false);
+      }
 }
 
 

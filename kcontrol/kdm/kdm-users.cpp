@@ -17,6 +17,10 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include <unistd.h>
+#include <sys/types.h>
+
+
 #include <qdragobject.h>
 #include <qlayout.h>
 #include <qlabel.h>
@@ -189,6 +193,23 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     lLayout->addStretch( 1 );
 
     load();
+
+    // read only mode
+    if (getuid() != 0)
+      {
+	usrGroup->setEnabled(false);
+	shwGroup->setEnabled(false);
+	cbusrshw->setEnabled(false);
+	cbusrsrt->setEnabled(false);
+	userbutton->setEnabled(false);
+	alluserlb->setEnabled(false);
+	nouserlb->setEnabled(false);
+	userlb->setEnabled(false);
+	all_to_usr->setEnabled(false);
+	usr_to_all->setEnabled(false);
+	no_to_all->setEnabled(false);
+	all_to_no->setEnabled(false);
+      }
 }
 
 

@@ -18,6 +18,10 @@
 */
 
 
+#include <unistd.h>
+#include <sys/types.h> 
+
+
 #include <qbuttongroup.h>
 #include <qcombobox.h>
 #include <qdragobject.h>
@@ -173,6 +177,18 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   loadLocaleList(langcombo, QString::null, QStringList());
   loadLocaleList(countrycombo, QString::fromLatin1("l10n/"), QStringList());
   load();
+
+  // implement read-only mode
+  if (getuid() != 0)
+    {
+      logobutton->setEnabled(false);
+      greetstr_lined->setReadOnly(true);
+      logoRadio->setEnabled(false);
+      clockRadio->setEnabled(false);
+      guicombo->setEnabled(false);
+      langcombo->setEnabled(false);
+      countrycombo->setEnabled(false);
+    }
 }
 
 void KDMAppearanceWidget::loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first)

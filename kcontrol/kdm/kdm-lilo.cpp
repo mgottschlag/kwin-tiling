@@ -17,6 +17,10 @@
     Boston, MA 02111-1307, USA.
 */  
 
+#include <unistd.h>
+#include <sys/types.h>
+
+
 #include <klocale.h>
 #include <qlayout.h>
 #include <qlabel.h>
@@ -53,6 +57,14 @@ KDMLiloWidget::KDMLiloWidget(QWidget *parent, const char *name)
   grid->setColStretch(1,1);
 
   load();
+
+  // read only mode
+  if (getuid() != 0)
+    {
+      useLilo->setEnabled(false);
+      liloCmd->setReadOnly(true);
+      liloMap->setReadOnly(true);
+    }
 }
 
 
