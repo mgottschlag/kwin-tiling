@@ -230,8 +230,8 @@ void SchemaEditor::imageSelect()
             start= list.last();
     }
 
-    KURL url = KFileDialog::getImageOpenURL(start, 0, i18n("Select a Background Image"));
-// KURL url=KFileDialog::getOpenURL(start,"",0,i18n("Select a Background Image"));
+    KURL url = KFileDialog::getImageOpenURL(start, 0, i18n("Select Background Image"));
+// KURL url=KFileDialog::getOpenURL(start,"",0,i18n("Select Background Image"));
     if(!url.path().isEmpty())
     {
         backgndLine->setText(url.path());
