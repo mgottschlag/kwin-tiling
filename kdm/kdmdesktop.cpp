@@ -273,12 +273,12 @@ do_fancy_background()
 		    if (tmp>=128)
 			 tmp = 255-tmp;
 		    p.setPen(image.color(tmp));
-		    p.drawText(x + 2, y + 2, title.data());
+		    p.drawText(x + 2, y + 2, title);
 		    tmp +=10;
 		    if (tmp>=128)
 			 tmp = 255-tmp;
 		    p.setPen(image.color(tmp));
-		    p.drawText(x, y, title.data());
+		    p.drawText(x, y, title);
 		    x += br.width();
 		    if (x > 2 * appWidth){
 			 x -= 3 * appWidth + br.width();

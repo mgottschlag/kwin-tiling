@@ -205,7 +205,7 @@ KDMConfig::getConfig()
             _normalFont = new QFont(kc->readFontEntry( "StdFont")); //Th.
           }
           else {
-            _normalFont = new QFont( normal_font.data());
+            _normalFont = new QFont( normal_font);
             _normalFont->setRawMode( true);
           }
      } else
@@ -216,7 +216,7 @@ KDMConfig::getConfig()
             _failFont = new QFont(kc->readFontEntry( "FailFont"));  //Th.
           }
           else {
-            _failFont = new QFont( fail_font.data());
+            _failFont = new QFont( fail_font);
             _failFont->setRawMode( true);
           }
      } else {
@@ -229,7 +229,7 @@ KDMConfig::getConfig()
             _greetFont = new QFont(kc->readFontEntry( "GreetFont")); //Th.
           }
           else {
-            _greetFont = new QFont( greet_font.data());
+            _greetFont = new QFont( greet_font);
             _greetFont->setRawMode( true);
           }
      } else
@@ -239,7 +239,7 @@ KDMConfig::getConfig()
           _greetString = new QString( hostname);
      else {
           QRegExp rx( "HOSTNAME");
-          greet_string.replace( rx, hostname.data());
+          greet_string.replace( rx, hostname);
           _greetString = new QString( greet_string);
      }
 }
