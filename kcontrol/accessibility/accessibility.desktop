@@ -1,15 +1,13 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=access
-DocPath=kcontrol/accessiblity/index.html
 Exec=kcmshell accessibility
+Icon=access
 Type=Application
-Terminal=false
-X-KDE-FactoryName=accessibility
-X-KDE-Library=accessibility
-X-KDE-ModuleType=Library
-X-KDE-SubstituteUID=false
 
+X-KDE-ModuleType=Library
+X-KDE-Library=accessibility
+X-KDE-Factoryname=accessibility
+X-KDE-ParentApp=kcontrol
 
 Name=Accessibility
 Name[af]=Toeganklikheid
