@@ -43,5 +43,4 @@ if test $FOUND_FREETYPE -eq 1; then
     -lm -L/usr/X11R6/lib $X_LIBS $X_PRE_LIBS -lXext -lX11 $X_EXTRA_LIBS)
 fi
 
-AC_SUBST(FONTINST_TN)
-
+AM_CONDITIONAL(include_fontinst_tn, test -n "$FONTINST_TN")
