@@ -31,14 +31,15 @@ public:
 
     void dontLock();
 
-    void quitSaver();
-
     void setChildren(QValueList<int> children) { child_sockets = children; }
     void setParent(int fd) { parent = fd; }
 
 protected:
     virtual bool x11Event(XEvent *);
     virtual void timerEvent(QTimerEvent *);
+
+public slots:
+    void quitSaver();
 
 protected slots:
     void passwordChecked(KProcess *);
