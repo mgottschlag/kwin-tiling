@@ -215,8 +215,9 @@ KScienceSaver::KScienceSaver( Drawable drawable, bool s, bool gP ) : kScreenSave
 	moveOn = true;
 	grabPixmap = gP;
 	setup = s;
-	showDialog = !setup && 	(RootWindow( qt_xdisplay(), qt_xscreen() ) != drawable) &&
-                     mWidth >= 320 && mHeight >= 200;
+//	showDialog = !setup && 	(RootWindow( qt_xdisplay(), qt_xscreen() ) != drawable) &&
+//                     mWidth >= 320 && mHeight >= 200;
+	showDialog = false;  // dialog is grabbed also
 
 	if( showDialog )
 	{
