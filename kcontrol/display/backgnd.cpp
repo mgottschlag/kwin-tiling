@@ -351,8 +351,8 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
   wpCombo->setFixedHeight(wpCombo->height());
   //CT  wpCombo->setMinimumWidth(wpCombo->width());
 
-  connect( wpCombo, SIGNAL( activated( const char * ) ),
-	   SLOT( slotWallpaper( const char * )  )  );
+  connect( wpCombo, SIGNAL( activated( const QString & ) ),
+	   SLOT( slotWallpaper( const QString & )  )  );
 		
   /*CT 30Nov1998
   QBoxLayout *pushLayout = new QHBoxLayout( 5 ); 
@@ -1199,7 +1199,17 @@ void KBackground::slotBrowse()
   }
 
   QString filename = KFileDialog::getOpenFileName( path );
+  warning("filename:%s", (const char *)filename);
+  if(!filename.isNull())
+      warning("Passed Null");
+  else
+      warning("Failed Null");
+  if(!strcmp( filename, currentItem.wallpaper))
+      warning("Passed strncmp");
+  else
+      warning("Failed strncmp");
   slotWallpaper( filename );
+  
   if ( !filename.isNull() && !strcmp( filename, currentItem.wallpaper) )
     {
       wpCombo->insertItem( currentItem.wallpaper );
@@ -1207,11 +1217,11 @@ void KBackground::slotBrowse()
     }
 }
 
-void KBackground::slotWallpaper( const char *filename )
+void KBackground::slotWallpaper( const QString &filename )
 {
-  if ( filename )
+  if ( !filename.isNull() )
     {
-      if ( !strcmp(filename, i18n("No wallpaper") ) )
+      if ( !strcmp((const char*)filename, i18n("No wallpaper") ) )
 	{
 	  wpPixmap.resize(0, 0); // make NULL pixmap
 	  currentItem.wallpaper = filename;

@@ -246,8 +246,8 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 	waitEdit->setText( str );
 	waitEdit->setMaxLength(4);
 	waitEdit->adjustSize();
-       	connect( waitEdit, SIGNAL( textChanged( const char * ) ),
-		 SLOT( slotTimeoutChanged( const char * ) ) );
+       	connect( waitEdit, SIGNAL( textChanged( const QString & ) ),
+		 SLOT( slotTimeoutChanged( const QString & ) ) );
 			
 	QLabel *label = new QLabel( waitEdit, i18n("&Wait for"), group );
 	label->adjustSize();
@@ -687,9 +687,9 @@ void KScreenSaver::slotTest()
 	testBt->setEnabled(TRUE);
 }
 
-void KScreenSaver::slotTimeoutChanged( const char *to )
+void KScreenSaver::slotTimeoutChanged( const QString &to )
 {
-	xtimeout = atoi( to ) * 60;
+	xtimeout = atoi( (const char *)to ) * 60;
 
 	if ( xtimeout <= 0 )
 		xtimeout = 60;
