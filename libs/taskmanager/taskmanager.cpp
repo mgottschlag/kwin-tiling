@@ -315,8 +315,10 @@ bool TaskManager::isOnTop(Task* task)
          it != kwin_module->stackingOrder().end(); --it ) {
 
         t = findTask(*it);
-        if ( t && t != task && (t->staysOnTop() == task->staysOnTop()) )
+        if ( t == task )
             return true;
+        if ( t && (t->staysOnTop() == task->staysOnTop()) )
+            return false;
     }
     return false;
 }
