@@ -9,7 +9,7 @@ X-KDE-Init=energy
 X-KDE-ParentApp=kcontrol
 Categories=Qt;KDE;X-KDE-settings-power
 
-Name=Display Power Control
+Name=Power Control
 Name[af]=Vertoon Elektrisiteit Kontrole
 Name[ar]=عرض خيارات الطاقة
 Name[az]=Displey Güc İdarəsi
