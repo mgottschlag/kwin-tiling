@@ -63,10 +63,14 @@ static int
 AutoLogon (struct display *d, char **namer, char **passr, char ***sessargs)
 {
     char *str;
+    Time_t tdiff;
 
     if (!autoLogin)
 	return 0;
-    if (d->hstent->nLogPipe) {
+    tdiff = time (0) - d->hstent->lastExit - d->openDelay;
+Debug ("autoLogon, tdiff = %d, nlogpipe%s empty, goodexit = %d\n", 
+	tdiff, d->hstent->nLogPipe ? " not":"", d->hstent->goodExit);
+    if (d->hstent->nLogPipe && tdiff <= 0) {
 	char *cp;
 	if (d->hstent->nLogPipe[0] == '\n')
 	    return 0;
@@ -75,7 +79,7 @@ AutoLogon (struct display *d, char **namer, char **passr, char ***sessargs)
 	(void) s_copy(passr, cp, 1);
 	*sessargs = addStrArr (0, str, -1);
     } else if (d->autoUser[0] != '\0') {
-	if (d->hstent->lastExit > time(0) - d->openDelay) {
+	if (tdiff <= 0) {
 	    if (d->hstent->goodExit)
 		return 0;
 	} else {
