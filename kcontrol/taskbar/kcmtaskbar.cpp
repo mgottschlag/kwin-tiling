@@ -71,7 +71,9 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
   QVBoxLayout *top_layout = new QVBoxLayout(this, KDialog::marginHint(),
                                                   KDialog::spacingHint());
   top_layout->addWidget(showAllCheck);
-  top_layout->addWidget(externalCheck);
+  top_layout->addWidget(externalCheck); // NOT IMPLEMENTED IN KDE 2.0
+  externalCheck->hide();
+  
   top_layout->addWidget(positionGroup);
   top_layout->addStretch(1);
 
