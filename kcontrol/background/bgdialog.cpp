@@ -544,13 +544,14 @@ void BGDialog::updateUI()
    m_colorPrimary->setColor(r->colorA());
    m_colorSecondary->setColor(r->colorB());
 
-   if (r->backgroundMode() == KBackgroundSettings::Program)
+   int wallpaperMode = r->wallpaperMode();
+   int multiMode = r->multiWallpaperMode();
+
+   if (r->backgroundMode() == KBackgroundSettings::Program &&
+       wallpaperMode == KBackgroundSettings::NoWallpaper)
       groupBox3->setEnabled( false );
    else
       groupBox3->setEnabled( true );
-
-   int wallpaperMode = r->wallpaperMode();
-   int multiMode = r->multiWallpaperMode();
 
    if ((multiMode == KBackgroundSettings::NoMultiRandom) ||
        (multiMode == KBackgroundSettings::NoMulti))
@@ -564,7 +565,7 @@ void BGDialog::updateUI()
          m_comboWallpaperPos->setEnabled(false);
          m_lblWallpaperPos->setEnabled(false);
          m_buttonGroupBackground->setButton(
-            m_buttonGroupBackground->id(m_radioNoPicture) );
+         m_buttonGroupBackground->id(m_radioNoPicture) );
       }
 
       // 1 Picture
@@ -577,7 +578,7 @@ void BGDialog::updateUI()
          m_lblWallpaperPos->setEnabled(true);
          setWallpaper(r->wallpaper());
          m_buttonGroupBackground->setButton(
-            m_buttonGroupBackground->id(m_radioPicture) );
+         m_buttonGroupBackground->id(m_radioPicture) );
       }
    }
 
@@ -590,7 +591,7 @@ void BGDialog::updateUI()
       m_comboWallpaperPos->setEnabled(true);
       m_lblWallpaperPos->setEnabled(true);
       m_buttonGroupBackground->setButton(
-         m_buttonGroupBackground->id(m_radioSlideShow) );
+      m_buttonGroupBackground->id(m_radioSlideShow) );
    }
 
    m_comboWallpaperPos->setCurrentItem(r->wallpaperMode()-1);
@@ -687,7 +688,6 @@ void BGDialog::slotWallpaperTypeChanged(int i)
    // No picture
    if (i == m_buttonGroupBackground->id(m_radioNoPicture))  //None
    {
-      groupBox3->setEnabled(false);
       m_urlWallpaperBox->setEnabled(false);
       m_urlWallpaperButton->setEnabled(false);
       m_buttonSetupWallpapers->setEnabled(false);
@@ -706,7 +706,6 @@ void BGDialog::slotWallpaperTypeChanged(int i)
    // Slide show
    else if (i == m_buttonGroupBackground->id(m_radioSlideShow))
    {
-      groupBox3->setEnabled(true);
       m_urlWallpaperBox->setEnabled(false);
       m_urlWallpaperButton->setEnabled(false);
       m_buttonSetupWallpapers->setEnabled(true);
@@ -731,7 +730,6 @@ void BGDialog::slotWallpaperTypeChanged(int i)
    // 1 Picture
    else if (i == m_buttonGroupBackground->id(m_radioPicture))
    {
-      groupBox3->setEnabled(true);
       m_urlWallpaperBox->setEnabled(true);
       m_urlWallpaperButton->setEnabled(true);
       m_buttonSetupWallpapers->setEnabled(false);
