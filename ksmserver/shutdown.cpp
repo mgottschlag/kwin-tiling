@@ -46,7 +46,7 @@ KSMShutdown::KSMShutdown()
 
     QHBoxLayout* hbox = new QHBoxLayout( vbox );
     hbox->addStretch();
-    QPushButton* yes = new QPushButton(i18n("&Yes"), frame );
+    QPushButton* yes = new QPushButton(i18n("&Shutdown"), frame );
     connect( yes, SIGNAL( clicked() ), this, SLOT( accept() ) );
     yes->setDefault( TRUE );
     hbox->addWidget( yes );
