@@ -31,15 +31,19 @@
 #include <kcmdlineargs.h>
 #include <kservice.h>
 #include <kdesktopfile.h>
+#include <qxembed.h>
+
 
 #include "kcdialog.h"
 #include "moduleinfo.h"
 #include "modloader.h"
 
+
 static KCmdLineOptions options[] =
 {
     { "list", I18N_NOOP("List all possible modules"), 0},
     { "+module", I18N_NOOP("Configuration module to open."), 0 },
+    { "embed <id>", I18N_NOOP("Window ID to embed into."), 0 },
     KCmdLineLastOption
 };
 
@@ -135,8 +139,6 @@ int main(int _argc, char *_argv[])
         }
     }
 
-    args->clear();
-
     // load the module
     ModuleInfo info(path);
 
@@ -151,7 +153,17 @@ int main(int _argc, char *_argv[])
 	// solution for this though, I guess)
 	dlg->setAcceptDrops(true);
 
-	// run the dialog
+	// if we are going to be embedded, embed
+	QCString embed = args->getOption("embed");
+	if (!embed.isEmpty())
+	  {
+	    bool ok;
+	    int id = embed.toInt(&ok);
+	    if (ok)
+	      QXEmbed::embedClientIntoWindow(dlg, id);
+	  }
+
+	// run the dialog	
 	int ret = dlg->exec();
         delete dlg;
 	ModuleLoader::unloadModule(info);

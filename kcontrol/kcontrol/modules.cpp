@@ -22,12 +22,20 @@
 
 
 #include <qwidget.h>
+#include <qlabel.h>
+#include <qlayout.h>
+
 
 #include <kapp.h>
 #include <kglobal.h>
 #include <kservicegroup.h>
 #include <kcmodule.h>
 #include <krun.h>
+#include <kprocess.h>
+#include <qxembed.h>
+#include <klocale.h>
+#include <kstddirs.h>
+
 
 #include "modules.h"
 #include "modules.moc"
@@ -35,18 +43,22 @@
 #include "proxywidget.h"
 #include "modloader.h"
 
+
+#include <X11/Xlib.h>
+
+
 template class QList<ConfigModule>;
 
+
 ConfigModule::ConfigModule(QString desktopFile)
-  : ModuleInfo(desktopFile)
-  ,_changed(false)
-  ,_module(0)
+  : ModuleInfo(desktopFile), _changed(false), _module(0), _embedWidget(0),
+    _rootProcess(0), _embedLayout(0)
 {
 }
 
 ConfigModule::~ConfigModule()
 {
-  delete _module;
+  deleteClient();
 }
 
 ProxyWidget *ConfigModule::module()
@@ -74,8 +86,17 @@ ProxyWidget *ConfigModule::module()
 
 void ConfigModule::deleteClient()
 {
+  if (_embedWidget)
+    XDestroyWindow(qt_xdisplay(), _embedWidget->embeddedWinId());
+
+  delete _embedWidget;
+  _embedWidget = 0;
   delete _module;
   _module = 0;
+  delete _rootProcess;
+  _rootProcess = 0;
+  delete _embedLayout;
+  _embedLayout = 0;
 
   ModuleLoader::unloadModule(*this);
   _changed = false;
@@ -98,8 +119,66 @@ void ConfigModule::clientChanged(bool state)
 
 void ConfigModule::runAsRoot()
 {
-  QStringList urls;
-  KRun::run(*service(), urls);
+  if (!_module)
+    return;
+
+  delete _rootProcess;
+  delete _embedWidget;
+
+  // create an embed widget that will embed the 
+  // kcmshell running as root  
+  _embedLayout = new QVBoxLayout(_module->parentWidget());
+  _embedWidget = new QXEmbed(_module->parentWidget());
+  _embedLayout->addWidget(_embedWidget,1);
+  _module->hide();
+  _embedWidget->show();
+  _embedWidget->setAutoDelete(true);
+
+  // prepare the process to run the kcmshell
+  QString cmd = service()->exec().stripWhiteSpace();
+  bool kdeshell = false;
+  if (cmd.left(5) == "kdesu")
+    cmd = cmd.remove(0,5).stripWhiteSpace();
+  if (cmd.left(8) == "kcmshell")
+    {
+      cmd = cmd.remove(0,8).stripWhiteSpace();
+      kdeshell = true;
+    }
+
+  // run the process
+  QString kdesu = KStandardDirs::findExe("kdesu");
+  if (!kdesu.isEmpty())
+    {
+      _rootProcess = new KProcess;
+      *_rootProcess << kdesu;
+      if (kdeshell)
+	*_rootProcess << "kcmshell";
+      *_rootProcess << QString("%1 --embed %2").arg(cmd).arg(_embedWidget->winId());
+      
+      connect(_rootProcess, SIGNAL(processExited(KProcess*)), this, SLOT(rootExited(KProcess*)));
+
+      _rootProcess->start(KProcess::NotifyOnExit);
+      
+      return;
+    }
+
+  // clean up in case of failure
+  delete _embedWidget;
+  _embedWidget = 0;
+  delete _embedLayout;
+  _embedLayout = 0;
+}
+
+
+void ConfigModule::rootExited(KProcess *)
+{
+  XDestroyWindow(qt_xdisplay(), _embedWidget->embeddedWinId());
+  delete _embedWidget;
+  _embedWidget = 0;
+  _rootProcess = 0;
+  delete _embedLayout;
+  _embedLayout = 0;
+  _module->show();
 }
 
 

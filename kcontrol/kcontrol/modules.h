@@ -29,16 +29,22 @@
 
 #include "moduleinfo.h"
 
+
 class QWidget;
 class KAboutData;
 class KCModule;
 class ProxyWidget;
+class KProcess;
+class QXEmbed;
+class QVBoxLayout;
+
 
 class ConfigModule : public ModuleInfo
 {
   Q_OBJECT
 
 public:
+
   ConfigModule(QString desktopFile);
   ~ConfigModule();
 
@@ -49,13 +55,18 @@ public:
   ProxyWidget *module();
   const KAboutData *aboutData() const;
 
+
 public slots:
+
   void deleteClient();
 
+
 private slots:
+
   void clientClosed();
   void clientChanged(bool state);
   void runAsRoot();
+  void rootExited(KProcess *proc);
 
 
 signals:
@@ -68,7 +79,11 @@ signals:
 private:
 
   bool         _changed;
-  ProxyWidget      *_module;
+  ProxyWidget *_module;
+  QXEmbed     *_embedWidget;
+  KProcess    *_rootProcess;
+  QVBoxLayout *_embedLayout;
+
 };
 
 class ConfigModuleList : public QList<ConfigModule>
