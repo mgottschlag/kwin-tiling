@@ -348,7 +348,21 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    spacer = new QSpacerItem( 20, 0, QSizePolicy::Fixed, QSizePolicy::Minimum );
    hbox->layout()->addItem(spacer);
    aaUseSubPixel=new QCheckBox(i18n("&Use sub-pixel hinting:"), hbox);
+
+   QWhatsThis::add(aaUseSubPixel, i18n("If you have a TFT or LCD screen you"
+	" can further improve the quality of displayed fonts by selecting"
+	" this option.<br>Sub-pixel hinting is also known as ClearType(tm).<br>"
+	"<br><b>This will not work with CRT monitors.</b>"));
+
    aaSubPixelType=new QComboBox(false, hbox);
+
+   QWhatsThis::add(aaSubPixelType, i18n("In order for sub-pixel hinting to"
+	" work correctly you need to know how the sub-pixels of your display"
+	" are aligned.<br>"
+	" On TFT or LCD displays a single pixel is actually composed of"
+	" three sub-pixels, red, green and blue. Most displays" 
+	" have a linear ordering of RGB sub-pixel, some have BGR."));
+
    dummy = new QWidget(hbox);
    hbox->setStretchFactor(dummy, 1);
 
