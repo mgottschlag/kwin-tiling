@@ -167,11 +167,11 @@ void IconThemesConfig::installNewTheme()
   QString tgtDir(locateLocal("icon", "./"));
   QString cmd;
 
-  cmd.sprintf("cd \"%s\"; gzip -c -d \"%s\" | tar xf -",
+  cmd.sprintf("cd \"%s\"; gzip -c -d \"%s\" | tar xf -",	//lukas: FIXME
 	QFile::encodeName(tgtDir).data(), 
 	QFile::encodeName(m_themeRequester->url()).data());
   kdDebug() << cmd << endl;
-  int rc = system(cmd.ascii());
+  int rc = system(cmd.ascii());	//lukas: FIXME
   if (rc)
   {
     kdWarning() << "Failed\n";
