@@ -18,10 +18,14 @@ Name[et]=WordReference.com tõlkimine: hispaania->inglise
 Name[eu]=WordReference.com Itzulpena: gazteleratik ingelesera
 Name[fi]=WordReference.com-käännös: espanjasta englanniksi
 Name[fr]=Traduction sur WordReference.com : Espagnol en Anglais
+Name[fy]=WordReference.com-oersetting: Spaansk nei Ingelsk
 Name[gl]=Tradución WordReference.com: Español a Inglés
+Name[he]=תרגום WordReference.com: ספרדי־אנגלי
 Name[hu]=WordReference.com fordítás: spanyolról angolra
+Name[is]=WordReference.com þýðing: Spönsk/ensk
 Name[it]=Traduzione WordReferececom: Dallo spagnolo all'inglese
 Name[ja]=WordReference.com スペイン語-英語翻訳
+Name[lt]=WordReference.com vertimas: iš ispanų į anglų
 Name[mk]=WordReference.com превод: од шпански на англиски
 Name[mt]=Traduzzjoni WordReference.com: Spanjol għall-Ingliż
 Name[nb]=WordReference.com - oversettelse: spansk til engelsk
@@ -46,5 +50,6 @@ Name[uz]=WordReference.com таржима: Испанчадан Инглизча
 Name[xx]=xxWordReference.com Translation: Spanish to Englishxx
 Name[zh_CN]=WordReference.com 翻译：西班牙语译英语
 Query=http://www.wordreference.com/es/en/translation.asp?spen=\\{@}
+Query[xx]=xxhttp://www.wordreference.com/es/en/translation.asp?spen=\\{@}xx
 ServiceTypes=SearchProvider
 Type=Service

@@ -21,6 +21,7 @@ Name[eu]=Gazteleraren Akademiaren hiztegia (RAE)
 Name[fa]=فهرست آکادمی اسپانیایی - RAE
 Name[fi]=Espanjalaisen akatemian sanakirja (RAE)
 Name[fr]=Dictionaire de la Spanish Academy (RAE)
+Name[fy]=Wurdboek fan de Spaanske akademy (RAE)
 Name[gl]=Diccionario da Academia Española (RAE)
 Name[he]=מילון של האקדמיה הספרדית (RAE)
 Name[hi]=स्पेनी अकादमी का शब्दकोश(RAE)
@@ -28,6 +29,7 @@ Name[hu]=A Spanyol Akadémia címjegyzéke (RAE)
 Name[is]=Orðabók spönsku akademíunnar (RAE)
 Name[it]=Dizionario della Accademia Spagnola (RAE)
 Name[ja]=スペイン大学辞書
+Name[lt]=Ispanijos akademijos (RAE) žodynas
 Name[mk]=Речник на Шпанската академија (RAE)
 Name[mn]=Испани акдемийн толь бичиг (RAE)
 Name[mt]=Dizzjunarju tal-Akkademja Spanjola (RAE)
@@ -57,5 +59,6 @@ Name[xx]=xxDictionary of the Spanish Academy (RAE)xx
 Name[zh_CN]=西班牙学院的字典(RAE)
 Name[zh_TW]=西班牙金像獎字典 (RAE)
 Query=http://buscon.rae.es/draeI/SrvltGUIBusUsual?TIPO_HTML=2&LEMA=\\{@}&FORMATO=ampliado
+Query[xx]=xxhttp://buscon.rae.es/draeI/SrvltGUIBusUsual?TIPO_HTML=2&LEMA=\\{@}&FORMATO=ampliadoxx
 ServiceTypes=SearchProvider
 Type=Service

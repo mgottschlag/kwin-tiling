@@ -25,6 +25,7 @@ Name[hi]=CiteSeer: वैज्ञानिक साहित्य डिज�
 Name[hu]=CiteSeer: tudományos szakirodalom digitális könyvtára
 Name[it]=CiteSeer: Biblioteca digitale di letteratura scientifica
 Name[ja]=CiteSeer: 学術電子論文ブラウザ
+Name[lt]=CiteSeer: Mokslinės literatūros skaitmeninė biblioteka
 Name[mk]=CiteSeer: дигитална библиотека со научна литература
 Name[mn]=CiteSeer: Шинжлэх ухаан уран зохиолын дижитал сан
 Name[nb]=CiteSeer: Digitalt bibliotek for vitenskapelig litteratur
@@ -50,5 +51,6 @@ Name[vi]=CiteSeer:Thư viện khoa học & Văn học số hoá
 Name[xx]=xxCiteSeer: Scientific Literature Digital Libraryxx
 Name[zh_TW]=CiteSeer: 科學文獻數位圖書館
 Query=http://citeseer.ist.psu.edu/cs?q=\\{@}&submit=Search+Documents&cs=1
+Query[xx]=xxhttp://citeseer.ist.psu.edu/cs?q=\\{@}&submit=Search+Documents&cs=1xx
 ServiceTypes=SearchProvider
 Type=Service

@@ -15,10 +15,14 @@ Name[et]=Hollandi telefoniraamatu otsingumootor
 Name[eu]=Telephonebook bilaketa hornitzailea
 Name[fi]=Puhelinluettelohaun tarjoaja
 Name[fr]=Moteur de recherche Telephonebook
+Name[fy]=Tillefoanboek-sykmasine
 Name[gl]=Fornecedor de Procuras na Guía Telefónica
+Name[he]=חיפוש ספר של ספר טלפונים
 Name[hu]=Telefonkönyv (NL)
+Name[is]=Leitarvél fyrir símaskrár
 Name[it]=Motore di ricerca Elencotelefonico
 Name[ja]=Telephonebook 検索プロバイダ
+Name[lt]=Telefono knygų paieškos teikėjas
 Name[mk]=Telephonebook сервис за пребарување
 Name[mt]=Telephonebook search provider
 Name[nb]=Søkemotor for søk i telefonkatalog
@@ -45,3 +49,4 @@ Type=Service
 ServiceTypes=SearchProvider
 Keys=telnl,telefoon
 Query=http://www.detelefoongids.nl/tginl.dll?action=white&type=search&name=\{1}&city=\{2}
+Query[xx]=xxhttp://www.detelefoongids.nl/tginl.dll?action=white&type=search&name=\{1}&city=\{2}xx

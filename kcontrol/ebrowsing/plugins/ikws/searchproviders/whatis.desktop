@@ -18,9 +18,12 @@ Name[fi]=Whatis-haku
 Name[fr]=Requête whatis
 Name[ga]=Iarratas Whatis
 Name[gl]=Petición Whatis
+Name[he]=שאילתת Whatis
 Name[hu]=Whatis-lekérdezés
+Name[is]=Whatis fyrirspurn
 Name[it]=Richiesta whatis
 Name[ja]=何をさがす？
+Name[lt]=Whatis užklausa
 Name[mk]=Whatis прашалник
 Name[mt]=Tfittxija Whatis
 Name[nb]=Forespørsel i databasen «Whatis»
@@ -45,3 +48,4 @@ Name[zh_CN]=Whatis 查询
 ServiceTypes=SearchProvider
 Keys=wi,whatis
 Query= http://whatis.techtarget.com/definitionsSearchResults/1,289878,sid9,00.html?query=\\{@}
+Query[xx]=xx http://whatis.techtarget.com/definitionsSearchResults/1,289878,sid9,00.html?query=\\{@}xx

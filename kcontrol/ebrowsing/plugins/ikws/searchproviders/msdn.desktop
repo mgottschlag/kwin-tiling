@@ -17,7 +17,8 @@ Name[es]=Red de búsqueda del desarrollador de Microsoft
 Name[et]=Microsoft Developer Network otsing
 Name[eu]=Microsoft-en garatzaileen sare bilaketa
 Name[fa]=جستجوی شبکه‌ی برنامه‌نویسان مایکروسافت
-Name[fi]=Microsoft Developer Network haku
+Name[fi]=Microsoft Developer Network -haku
+Name[fy]=Microsoft Developer Network Search 
 Name[gl]=Procura na Rede de Desenvolvemento de Microsoft
 Name[hi]=माइक्रोसॉफ्ट डेवलपर नेटवर्क खोज
 Name[hr]=Microsoft Developer Network pretraga
@@ -39,7 +40,6 @@ Name[pt]=Pesquisa na Microsoft Developer Network
 Name[pt_BR]=Busca no MDN (Microsoft Developer Network)
 Name[ro]=Căutare în Microsoft Developer Network
 Name[ru]=Поиск в Microsoft Developer Network
-Name[se]=Oza Microsoft Developer Network báikkis
 Name[sk]=Hľadanie Microsoft Developer Network
 Name[sl]=Iskalnik po razvijalnem omrežju Microsofta
 Name[sr]=Microsoft Developer Network претраживање
@@ -60,3 +60,4 @@ Name[zu]=Usesho Loxhumano olusakazekile Lomthuthukisi we-Microsoft
 ServiceTypes=SearchProvider
 Keys=msdn
 Query=http://msdn.microsoft.com/library/shared/searchtab/searchHandoff.asp?handoffurl=%2Fisapi%2Fgosearch.asp%3FTARGET%3D%2Fus%2Fdev%2Fdefault.asp&stcfg=d%3A%2Fhttp%2Fcnfg.xml&qu=\\{@}&btnSearch=GO
+Query[xx]=xxhttp://msdn.microsoft.com/library/shared/searchtab/searchHandoff.asp?handoffurl=%2Fisapi%2Fgosearch.asp%3FTARGET%3D%2Fus%2Fdev%2Fdefault.asp&stcfg=d%3A%2Fhttp%2Fcnfg.xml&qu=\\{@}&btnSearch=GOxx

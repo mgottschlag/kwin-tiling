@@ -16,9 +16,12 @@ Name[eu]=Debianen pakete bilaketa
 Name[fi]=Debianin pakettihaku
 Name[fr]=Recherche dans le système de paquets Debian
 Name[gl]=Procura de Paquetes Debian
+Name[he]=חיפוש חבילות דביאן
 Name[hu]=Debian csomagkereső
+Name[is]=Debian pakkaleit
 Name[it]=Ricerca pacchetti debian
 Name[ja]=Debianパッケージ検索
+Name[lt]=Debian paketų paieška
 Name[mk]=Пребарување на Debian-пакети
 Name[mt]=Tfittxija tal-pakkett Debian
 Name[nb]=Søk etter Debian-pakker
@@ -28,6 +31,7 @@ Name[pa]=ਡੈਬੀਅਨ ਪੈਕੇਜ ਖੋਜ
 Name[pl]=Wyszukiwanie pakietów Debiana
 Name[pt]=Procura de Pacotes da Debian
 Name[pt_BR]=Busca de Pacotes Debian
+Name[ro]=Căutare în sistemul Debian de pachete
 Name[ru]=Поиск пакетов Debian
 Name[sk]=Hľadanie balíkov Debian
 Name[sl]=Iskanje po paketih Debian
@@ -40,5 +44,6 @@ Name[uk]=Пошук пакунків для Debian
 Name[xx]=xxDebian Package Searchxx
 Name[zh_CN]=Debian 软件包搜索
 Query=http://packages.debian.org/cgi-bin/search_packages.pl?keywords=\\{@}&searchon=names&subword=1&version=all&release=all
+Query[xx]=xxhttp://packages.debian.org/cgi-bin/search_packages.pl?keywords=\\{@}&searchon=names&subword=1&version=all&release=allxx
 ServiceTypes=SearchProvider
 Type=Service

@@ -21,7 +21,9 @@ Name[fa]=جستجوی تمام متنی بانک اطلاعاتی اشکالات
 Name[fi]=KDE-vikailmoitustietokannan tekstihaku
 Name[fo]=Leita í villudátugrunnur KDE's
 Name[fr]=Recherche de bogue de KDE par texte
+Name[fy]=KDE Bug Databank -  folsleine-tekst-sykaksje
 Name[gl]=Procura de Texto Completo na Base de Datos de Bugs de KDE
+Name[he]=חיפוש של טקסט מלא ברשימת באגים של KDE
 Name[hi]=केडीई बग डाटाबेस संपूर्ण-पाठ खोज
 Name[hr]=Pretraga KDE baze podataka za bugove preko kompletnog teksta.
 Name[hu]=A KDE hibaadatbázis teljes szöveges keresési eszköze
@@ -45,7 +47,6 @@ Name[pt]=Pesquisa por Nome Completo na Base Dados de Erros do KDE
 Name[pt_BR]=Procura por texto no banco de erros do KDE
 Name[ro]=Baza de date de erori KDE - căutare integrală de text
 Name[ru]=Полнотекстовый поиск ошибок в базе KDE
-Name[se]=KDE dihkkediehtovuođđu ollesteaksta ohcan
 Name[sk]=Hľadanie fulltext v KDE databáze chýb
 Name[sl]=Iskanje besedila po zbirki hroščev v KDE
 Name[sr]=KDE база грешака са подршком за пуну претрагу текста
@@ -65,5 +66,6 @@ Name[zh_CN]=KDE 错误数据库全文检索
 Name[zh_TW]=KDE 臭蟲資料庫全文檢索
 Name[zu]=Usesho lwe-KDE lombhalo ogcwele lwesiqu sedata sedata
 Query=http://bugs.kde.org/simple_search.cgi?id=\\{1}+\\{2}+\\{3}+\\{4}+\\{5}+\\{6}+\\{7}+\\{8}+\\{9}
+Query[xx]=xxhttp://bugs.kde.org/simple_search.cgi?id=\\{1}+\\{2}+\\{3}+\\{4}+\\{5}+\\{6}+\\{7}+\\{8}+\\{9}xx
 ServiceTypes=SearchProvider
 Type=Service

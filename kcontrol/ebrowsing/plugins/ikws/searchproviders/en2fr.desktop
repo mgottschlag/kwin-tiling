@@ -18,11 +18,15 @@ Name[et]=WordReference.com tõlkimine: inglise->prantsuse
 Name[eu]=WordReference.com Itzulpena: ingelesetik frantsesera
 Name[fi]=WordReference.com-käännös: englannista ranskaksi
 Name[fr]=Traduction sur WordReference.com : Anglais en Français
+Name[fy]=WordReference.com-oersetting: Ingelsk nei Frânsk
 Name[ga]=Aistriúchán WordReference.com: Béarla go Fraincis
 Name[gl]=Tradución WordReference.com: Inglés a Francés
+Name[he]=תרגום WordReference.com: אנגלי־צרפתי
 Name[hu]=WordReference.com fordítás: angolról franciára
+Name[is]=WordReference.com þýðing: Ensk/frönsk
 Name[it]=Traduzione WordReferece.com: Dall'inglese al francese
 Name[ja]=WordReference.com 英語-フランス語翻訳
+Name[lt]=WordReference.com vertimas: iš anglų į prancūzų
 Name[mk]=WordReference.com превод: од англиски на француски
 Name[mt]=Traduzzjoni WordReference.com: Ingliż għall-Franċiż
 Name[nb]=WordReference.com - oversettelse: engelsk til fransk
@@ -47,5 +51,6 @@ Name[uz]=WordReference.com таржима: Инглизчадан Француз
 Name[xx]=xxWordReference.com Translation: English to Frenchxx
 Name[zh_CN]=WordReference.com 翻译：英语译法语
 Query=http://www.wordreference.com/fr/Translation.asp?enfr=\\{@}
+Query[xx]=xxhttp://www.wordreference.com/fr/Translation.asp?enfr=\\{@}xx
 ServiceTypes=SearchProvider
 Type=Service

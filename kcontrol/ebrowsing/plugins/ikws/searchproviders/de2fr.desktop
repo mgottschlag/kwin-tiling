@@ -2,16 +2,28 @@
 Encoding=UTF-8
 Type=Service
 Name=LEO - Translate Between German and French
+Name[bn]=লিও - জার্মান থেকে ফরাসী বা ফরাসী থেকে জার্মান-এ অনুবাদ করুন
+Name[ca]=LEO - Tradueix entre alemany i francès
 Name[da]=LEO - Oversæt mellem tysk og fransk
+Name[es]=LEO - Traducción entre alemán y francés
+Name[et]=LEO - tõlkimine: saksa-prantsuse
 Name[fr]=LEO - Traduction Allemand - Français
+Name[fy]=LEO -oersetting tusken Dûtsk en Frânsk
 Name[ga]=LEO - Aistrigh idir Gearmáinis agus Fraincis
+Name[he]=LEO - תרגום בין גרמנית לצרפתית
 Name[hu]=LEO - Fordítás németről franciára (mindkét irányban)
+Name[is]=LEO - Þýða á milli þýsku og frönsku
 Name[nl]=LEO - vertaling tussen Duits en Frans
+Name[nn]=LEO - Omsetjing frå tysk til fransk
 Name[pt]=LEO - Traduzir Entre Alemão e Francês
 Name[pt_BR]=LEO - Tradução entre Alemão e Francês
+Name[ru]=LEO - немецко-французский перевод
 Name[sv]=LEO - översätt från tyska till franska
 Name[ta]=LEO - ஜெர்மன் மற்றும் ப்ரென்ச் இடையே மொழிப்பெயர்க்கவும்
+Name[tr]=LEO - Almancadan Fransızcaya Çeviri
 Name[uk]=LEO - переклад між німецькою та французькою
+Name[xx]=xxLEO - Translate Between German and Frenchxx
 ServiceTypes=SearchProvider
 Keys=de2fr
 Query=http://dict.leo.org/?lp=frde&search=\\{@}
+Query[xx]=xxhttp://dict.leo.org/?lp=frde&search=\\{@}xx

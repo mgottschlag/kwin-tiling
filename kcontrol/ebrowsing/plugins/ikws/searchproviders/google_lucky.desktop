@@ -45,7 +45,6 @@ Name[pt]=Google (Sinto-me Com Sorte)
 Name[pt_BR]=Google (Estou com sorte)
 Name[ro]=Google (Mă simt norocos)
 Name[ru]=Google (Мне повезет!)
-Name[se]=Google (Geahččalan lihkku)
 Name[sk]=Google (Cítim sa štastne)
 Name[sl]=Google (Počutim se srečnega)
 Name[sr]=Google (Осећам да имам среће)
@@ -71,5 +70,5 @@ Query[fy]=http://www.google.nl/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&
 Query[he]=http://www.google.co.il/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
 Query[nl]=http://www.google.nl/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
 Query[pt]=http://www.google.pt/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
-Query[ru]=http://www.google.ru/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
+Query[xx]=xxhttp://www.google.com/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8xx
 Charset=utf8

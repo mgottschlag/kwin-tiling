@@ -18,10 +18,14 @@ Name[et]=WordReference.com tõlkimine: itaalia->inglise
 Name[eu]=WordReference.com Itzulpena: italieratik ingelesera
 Name[fi]=WordReference.com-käännös: italiasta englanniksi
 Name[fr]=Traduction sur WordReference.com : Italien en Anglais
+Name[fy]=WordReference.com-oersetting: Italiaansk nei Ingelsk
 Name[gl]=Tradución WordReference.com: Italiano a Inglés
+Name[he]=תרגום WordReference.com: איטלקי־אנגלי
 Name[hu]=WordReference.com fordítás: olaszról angolra
+Name[is]=WordReference.com þýðing: Ítölsk/ensk
 Name[it]=Traduzione WordReferececom: Dall'italiano all'inglese
 Name[ja]=WordReference.com イタリア語-英語翻訳
+Name[lt]=WordReference.com vertimas: iš italų į anglų
 Name[mk]=WordReference.com превод: од италијански на англиски
 Name[mt]=Traduzzjoni WordReference.com: Taljan għall-Ingliż
 Name[nb]=WordReference.com - oversettelse: italiensk til engelsk
@@ -46,5 +50,6 @@ Name[uz]=WordReference.com таржима: Италянчадан Инглизч
 Name[xx]=xxWordReference.com Translation: Italian to Englishxx
 Name[zh_CN]=WordReference.com 翻译：意大利语译英语
 Query=http://www.wordreference.com/it/en/translation.asp?iten=\\{@}
+Query[xx]=xxhttp://www.wordreference.com/it/en/translation.asp?iten=\\{@}xx
 ServiceTypes=SearchProvider
 Type=Service

@@ -43,5 +43,6 @@ Name[tr]=Sayısal Nesne Kimlikleyici
 Name[uk]=Цифровий ідентифікатор об'єкта
 Name[xx]=xxDigital Object Identifierxx
 Query=http://dx.doi.org/\\{@}
+Query[xx]=xxhttp://dx.doi.org/\\{@}xx
 ServiceTypes=SearchProvider
 Type=Service

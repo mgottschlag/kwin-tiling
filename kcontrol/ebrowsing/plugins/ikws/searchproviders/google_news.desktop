@@ -27,6 +27,7 @@ Name[hu]=Google hírek
 Name[is]=Google fréttir
 Name[it]=Google notizie
 Name[ja]=Googleニュース
+Name[lt]=Google naujienos
 Name[mk]=Google Вести
 Name[mn]=Гооглэ мэдээ
 Name[mt]=Aħbarijiet Google
@@ -40,7 +41,6 @@ Name[pt]=Notícias Google
 Name[pt_BR]=Notícias do Google
 Name[ro]=Ştiri Google
 Name[ru]=Новости Google
-Name[se]=Google ođđasat
 Name[sk]=Google správy
 Name[sr]=Google новости
 Name[sr@Latn]=Google novosti
@@ -64,5 +64,5 @@ Query[fy]=http://news.google.nl/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[he]=http://news.google.co.il/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[nl]=http://news.google.nl/news?q=\\{@}&ie=UTF-8&oe=UTF-8
 Query[pt]=http://news.google.pt/news?q=\\{@}&ie=UTF-8&oe=UTF-8
-Query[ru]=http://news.google.ru/news?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[xx]=xxhttp://news.google.com/news?q=\\{@}&ie=UTF-8&oe=UTF-8xx
 Charset=utf8

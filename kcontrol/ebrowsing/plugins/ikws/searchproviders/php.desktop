@@ -44,7 +44,6 @@ Name[pt]=Pesquisa de PHP
 Name[pt_BR]=Busca PHP
 Name[ro]=Căutare PHP
 Name[ru]=Поиск PHP
-Name[se]=PHP-ohcan
 Name[sk]=Hľadanie PHP
 Name[sl]=Iskanje po PHP
 Name[sr]=PHP претраживање
@@ -63,6 +62,6 @@ Name[zh_CN]=PHP 搜索
 Name[zh_TW]=PHP 搜尋
 Name[zu]=Usesho lwe-PHP
 Query=http://www.php.net/search.php?show=\\{mode,"manual"}&pattern=\\{@}
-Query[ru]=http://ru.php.net/search.php?show=\\{mode,"manual"}&pattern=\\{@}
+Query[xx]=xxhttp://www.php.net/search.php?show=\\{mode,"manual"}&pattern=\\{@}xx
 ServiceTypes=SearchProvider
 Type=Service
