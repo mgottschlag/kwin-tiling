@@ -235,7 +235,8 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 
     SaverConfig *saver;
     mSelected = 0;
-    for (saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
+    for (saver = mSaverList.first(); saver != 0; saver = mSaverList.next())
+    {
         mSaverListBox->insertItem(saver->name());
         if (saver->file() == mSaver && mEnabled) 
             mSelected = mSaverListBox->count()-1;
@@ -356,8 +357,10 @@ void KScreenSaver::resizeEvent( QResizeEvent * )
 
 KScreenSaver::~KScreenSaver()
 {
-    if (mPreviewProc) {
-        if (mPreviewProc->isRunning()) {
+    if (mPreviewProc)
+    {
+        if (mPreviewProc->isRunning())
+        {
             int pid = mPreviewProc->getPid();  
             mPreviewProc->kill( );
             waitpid(pid, (int *) 0,0);
@@ -455,7 +458,8 @@ void KScreenSaver::writeSettings()
 //
 void KScreenSaver::findSavers()
 {
-	QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav");
+	QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav",
+                                                                "*.desktop");
     
 	QStringList::Iterator it = saverFileList.begin();
 	for ( ; it != saverFileList.end(); ++it ) {
@@ -502,7 +506,11 @@ void KScreenSaver::setMonitor()
 //
 void KScreenSaver::slotPreviewExited(KProcess *)
 {
-    if (mEnabled) {
+    mMonitor->setBackgroundColor(black);
+    mMonitor->erase();
+
+    if (mEnabled)
+    {
         mPreviewProc->clearArguments();
         
         QString saver = mSaverList.at(mSelected-1)->saver();
@@ -511,22 +519,23 @@ void KScreenSaver::slotPreviewExited(KProcess *)
         QString word;
         ts >> word;
         QString path = locate("exe", word);
-        (*mPreviewProc) << path;
-        
-        while (!ts.atEnd()) {
-            ts >> word;
-            if (word == "%w") 
-                word = word.setNum(mMonitor->winId());
-            (*mPreviewProc) << word;
+
+        if (!path.isEmpty())
+        {
+            (*mPreviewProc) << path;
+
+            while (!ts.atEnd())
+            {
+                ts >> word;
+                if (word == "%w")
+                {
+                    word = word.setNum(mMonitor->winId());
+                }
+                (*mPreviewProc) << word;
+            }
+
+            mPreviewProc->start();
         }
-        
-        mMonitor->setBackgroundColor(black);
-        mMonitor->erase();
-        mPreviewProc->start();
-    }
-    else {
-        mMonitor->setBackgroundColor(black);
-        mMonitor->erase();
     }
 }
 
@@ -564,9 +573,6 @@ void KScreenSaver::slotSetup()
 	if (mSetupProc->isRunning())
 	    return;
 	
-	mSetupBt->setEnabled( false );
-	kapp->flushX();
-
     mSetupProc->clearArguments();
 
     QString saver = mSaverList.at(mSelected-1)->setup();
@@ -575,14 +581,22 @@ void KScreenSaver::slotSetup()
     QString word;
     ts >> word;
     QString path = locate("exe", word);
-    (*mSetupProc) << path;
 
-    while (!ts.atEnd()) {
-        ts >> word;
-        (*mSetupProc) << word;
+    if (!path.isEmpty())
+    {
+        (*mSetupProc) << path;
+
+        while (!ts.atEnd())
+        {
+            ts >> word;
+            (*mSetupProc) << word;
+        }
+
+        mSetupBt->setEnabled( FALSE );
+        kapp->flushX();
+
+        mSetupProc->start();
     }
-
-	mSetupProc->start();
 }
 
 //---------------------------------------------------------------------------
@@ -592,21 +606,6 @@ void KScreenSaver::slotTest()
     if (!mTestProc) {
 	    mTestProc = new KProcess;
     }
-    
-    if (!mTestWin) {
-        mTestWin = new TestWin();
-        mTestWin->setBackgroundMode(QWidget::NoBackground);
-        mTestWin->setGeometry(0, 0, kapp->desktop()->width(),
-                              kapp->desktop()->height());
-        connect(mTestWin, SIGNAL(stopTest()), SLOT(slotStopTest()));
-    }
-    
-    mTestWin->show();
-    mTestWin->raise();
-    mTestWin->setFocus();
-    mTestWin->grabKeyboard();
-
-	mTestBt->setEnabled( false );
 
 	mTestProc->clearArguments();
     QString saver = mSaverList.at(mSelected-1)->saver();
@@ -615,17 +614,39 @@ void KScreenSaver::slotTest()
     QString word;
     ts >> word;
     QString path = locate("exe", word);
-    (*mTestProc) << path;
 
-    while (!ts.atEnd()) {
-        ts >> word;
-        if (word == "%w") {
-            word = word.setNum(mTestWin->winId());
+    if (!path.isEmpty())
+    {
+        (*mTestProc) << path;
+
+        if (!mTestWin)
+        {
+            mTestWin = new TestWin();
+            mTestWin->setBackgroundMode(QWidget::NoBackground);
+            mTestWin->setGeometry(0, 0, kapp->desktop()->width(),
+                                    kapp->desktop()->height());
+            connect(mTestWin, SIGNAL(stopTest()), SLOT(slotStopTest()));
         }
-        (*mTestProc) << word;
+
+        mTestWin->show();
+        mTestWin->raise();
+        mTestWin->setFocus();
+        mTestWin->grabKeyboard();
+
+        mTestBt->setEnabled( FALSE );
+
+        while (!ts.atEnd())
+        {
+            ts >> word;
+            if (word == "%w")
+            {
+                word = word.setNum(mTestWin->winId());
+            }
+            (*mTestProc) << word;
+        }
+
+        mTestProc->start(KProcess::DontCare);
     }
-    
-	mTestProc->start(KProcess::DontCare);
 }
 
 //---------------------------------------------------------------------------
