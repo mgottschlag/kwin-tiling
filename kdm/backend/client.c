@@ -669,14 +669,12 @@ Restrict (struct display *d)
     nolg = _PATH_NOLOGIN;
     if (!stat(nolg, &st)) {
       nolog:
-	if (nologin) {
-	    GSendInt (V_NOLOGIN);
-	    GSendStr (nolg);
+	GSendInt (V_NOLOGIN);
+	GSendStr (nolg);
 # ifdef USE_LOGIN_CAP
-	    login_close(lc);
+	login_close(lc);
 # endif
-	    return;
-	}
+	return;
     }
 # ifdef USE_LOGIN_CAP
 nolog_succ:
