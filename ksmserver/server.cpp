@@ -936,7 +936,6 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 {
     if ( state != Idle || dialogActive )
         return;
-    dialogActive = true;
 
     KConfig *config = KGlobal::config();
     config->reparseConfiguration(); // config may have changed in the KControl module
@@ -950,14 +949,19 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     bool maysd = false;
     if (config->readBoolEntry( "offerShutdown", true ) && DM().canShutdown())
         maysd = true;
-    if (!maysd)
+    if (!maysd) {
+        if (sdtype != KApplication::ShutdownTypeNone &&
+            sdtype != KApplication::ShutdownTypeDefault &&
+            logoutConfirmed)
+            return; /* unsupported fast shutdown */
         sdtype = KApplication::ShutdownTypeNone;
-    else if (sdtype == KApplication::ShutdownTypeDefault)
+    } else if (sdtype == KApplication::ShutdownTypeDefault)
         sdtype = (KApplication::ShutdownType)
                  config->readNumEntry( "shutdownType", (int)KApplication::ShutdownTypeNone );
     if (sdmode == KApplication::ShutdownModeDefault)
         sdmode = KApplication::ShutdownModeInteractive;
 
+    dialogActive = true;
     if ( !logoutConfirmed ) {
         KSMShutdownFeedback::start(); // make the screen gray
         logoutConfirmed =
