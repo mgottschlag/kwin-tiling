@@ -215,12 +215,12 @@ void ModifiersModule::initGUI()
 	}
 	m_pcbWinX->setCurrentItem( i );*/
 
-	m_pchkMacKeyboard = new QCheckBox( "Macintosh keyboard", this );
+	m_pchkMacKeyboard = new QCheckBox( i18n("Macintosh keyboard"), this );
 	m_pchkMacKeyboard->setChecked( m_bMacKeyboardOrig );
 	connect( m_pchkMacKeyboard, SIGNAL(clicked()), SLOT(slotMacKeyboardClicked()) );
 	pLayoutTop->addWidget( m_pchkMacKeyboard, 1, 0 );
 
-	m_pchkMacSwap = new QCheckBox( "MacOS-style modifier usage", this );
+	m_pchkMacSwap = new QCheckBox( i18n("MacOS-style modifier usage"), this );
 	m_pchkMacSwap->setChecked( m_bMacSwapOrig );
 	QWhatsThis::add( m_pchkMacSwap,
 		i18n("Checking this box will change your X Modifier Mapping to "
