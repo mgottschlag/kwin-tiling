@@ -48,7 +48,7 @@ IconModule::IconModule(QWidget *parent, const char *name, const QStringList &)
   connect(tab1, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
   tab2 = new KIconConfig(this, "effects");
-  tab->addTab(tab2, i18n("&Advanced"));
+  tab->addTab(tab2, i18n("Ad&vanced"));
   connect(tab2, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
   KAboutData* about = new KAboutData("kcmicons", I18N_NOOP("Icons"), "3.0",
