@@ -37,6 +37,7 @@ class SearchWidget;
 class HelpWidget;
 class ConfigModule;
 class ConfigModuleList;
+class ModuleTitle;
 
 class TopLevel : public KMainWindow
 {
@@ -46,14 +47,11 @@ public:
   TopLevel( const char* name=0 );
   ~TopLevel();
 
-  void showModule(QString desktopFile);
-
 protected:
   void setupActions();
 
 protected slots:
   void activateModule(ConfigModule *);
-  void moduleActivated(ConfigModule *module);
   void categorySelected(QListViewItem *category);
   void newModule(const QString &name, const QString& docPath, const QString &quickhelp);
   void activateIconView();
@@ -82,6 +80,7 @@ private:
   QSplitter      *_splitter;
   QTabWidget     *_tab;
   DockContainer  *_dock;
+  ModuleTitle    *_title;
 
   KToggleAction *tree_view, *icon_view;
   KToggleAction *icon_small, *icon_medium, *icon_large;

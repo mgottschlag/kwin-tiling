@@ -25,12 +25,18 @@
 #include <kaboutapplication.h>
 #include <kmessagebox.h>
 #include <kinstance.h>
+#include <kiconloader.h>
 
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
+#include <qpixmap.h>
+#include <qlabel.h>
+#include <qvbox.h>
+#include <qfont.h>
 
 #include <kaction.h>
 #include <kkeydialog.h>
+#include <kglobalsettings.h>
 
 #include "indexwidget.h"
 #include "searchwidget.h"
@@ -43,7 +49,55 @@
 #include "toplevel.h"
 #include "toplevel.moc"
 
+class ModuleTitle : public QHBox
+{
+  public:
+    ModuleTitle( QWidget *parent, const char *name=0 );
+    ~ModuleTitle() {}
 
+    void showTitleFor( ConfigModule *module );
+    void clear();
+
+  protected:
+    QLabel *m_icon;
+    QLabel *m_name;
+};
+
+ModuleTitle::ModuleTitle( QWidget *parent, const char *name )
+    : QHBox( parent, name )
+{
+  QWidget *spacer = new QWidget( this );
+  spacer->setFixedWidth( KDialog::marginHint()-KDialog::spacingHint() );
+  m_icon = new QLabel( this );
+  m_name = new QLabel( this );
+
+  QFont font = KGlobalSettings::generalFont();
+  font.setPointSize( font.pointSize()+2 );
+  font.setBold( true );
+  m_name->setFont( font );
+
+  setSpacing( KDialog::spacingHint() );
+  setStretchFactor( m_name, 10 );
+}
+
+void ModuleTitle::showTitleFor( ConfigModule *config )
+{
+  if ( !config )
+    return;
+
+  QWhatsThis::add( this, QString::null );
+  QWhatsThis::add( this, config->comment() );
+  m_icon->setPixmap( BarIcon( config->icon() ) );
+  m_name->setText( config->moduleName() );
+
+  show();
+}
+
+void ModuleTitle::clear()
+{
+  m_icon->setPixmap( QPixmap() );
+  m_name->setText( QString::null );
+}
 
 TopLevel::TopLevel(const char* name)
   : KMainWindow( 0, name, WStyle_ContextHelp  )
@@ -89,7 +143,7 @@ TopLevel::TopLevel(const char* name)
   // index tab
   _indextab = new IndexWidget(_modules, _tab);
   connect(_indextab, SIGNAL(moduleActivated(ConfigModule*)),
-                  this, SLOT(moduleActivated(ConfigModule*)));
+                  this, SLOT(activateModule(ConfigModule*)));
   _tab->addTab(_indextab, i18n("&Index"));
 
   connect(_indextab, SIGNAL(categorySelected(QListViewItem*)),
@@ -119,7 +173,11 @@ TopLevel::TopLevel(const char* name)
   _splitter->setResizeMode( _tab, QSplitter::KeepSize );
 
   // set up the right hand side (the docking area)
-  _dock = new DockContainer( _splitter );
+  QVBox *base = new QVBox( _splitter );
+  _title = new ModuleTitle( base );
+  _title->hide();
+  _dock = new DockContainer( base );
+  base->setStretchFactor( _dock, 10 );
   _dock->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 
   connect(_dock, SIGNAL(newModule(const QString&, const QString&, const QString&)),
@@ -323,12 +381,6 @@ void TopLevel::changedModule(ConfigModule *changed)
     setCaption(changed->moduleName(), changed->isChanged() );
 }
 
-void TopLevel::moduleActivated(ConfigModule *module)
-{
-    if (!module) return;
-    activateModule(module);
-}
-
 void TopLevel::categorySelected(QListViewItem *category)
 {
   if (_active)
@@ -373,47 +425,6 @@ void TopLevel::categorySelected(QListViewItem *category)
 }
 
 
-void TopLevel::showModule(QString desktopFile)
-{
-  // strip trailing ".desktop"
-  int pos = desktopFile.find(".desktop");
-  if (pos > 0)
-    desktopFile = desktopFile.left(pos);
-
-  // locate the desktop file
-  QStringList files;
-  files = KGlobal::dirs()->findAllResources("apps", KCGlobal::baseGroup()+desktopFile+".desktop", TRUE);
-
-  // show all matches
-  QStringList::Iterator it;
-  for (it = files.begin(); it != files.end(); ++it)
-  {
-     for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
-     {
-        if (mod->fileName() == *it && mod != _active)
-        {
-           // tell the index to display the module
-           _indextab->makeVisible(mod);
-
-           // tell the index to mark this module as loaded
-           _indextab->makeSelected(mod);
-
-           // dock it
-           if (_dock->dockModule(mod))
-           {
-              mod->module()->show();
-           }
-           else
-           {
-              _indextab->makeVisible(_active);
-              _indextab->makeSelected(_active);
-           }
-           break;
-        }
-     }
-  }
-}
-
 void TopLevel::activateModule(ConfigModule *mod)
 {
   // tell the index to display the module
@@ -422,9 +433,12 @@ void TopLevel::activateModule(ConfigModule *mod)
   // tell the index to mark this module as loaded
   _indextab->makeSelected(mod);
 
+  _title->showTitleFor( mod );
+
   // dock it
   if (!_dock->dockModule(mod))
   {
+     _title->hide();
      _indextab->makeVisible(_active);
      _indextab->makeSelected(_active);
      return;

@@ -161,15 +161,15 @@ void ConfigModule::runAsRoot()
   bool kdeshell = false;
   if (cmd.left(5) == "kdesu")
     {
-    cmd = cmd.remove(0,5).stripWhiteSpace();
-    // remove all kdesu switches
-    while( cmd.length() > 1 && cmd[ 0 ] == '-' )
-	{
-	int pos = cmd.find( ' ' );
-	cmd = cmd.remove( 0, pos ).stripWhiteSpace();
-	}
+      cmd = cmd.remove(0,5).stripWhiteSpace();
+      // remove all kdesu switches
+      while( cmd.length() > 1 && cmd[ 0 ] == '-' )
+        {
+          int pos = cmd.find( ' ' );
+          cmd = cmd.remove( 0, pos ).stripWhiteSpace();
+        }
     }
-    
+
   if (cmd.left(8) == "kcmshell")
     {
       cmd = cmd.remove(0,8).stripWhiteSpace();
@@ -274,7 +274,7 @@ void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
            delete module;
            continue;
         }
-              
+
         append(module);
         menu->modules.append(module);
      }
