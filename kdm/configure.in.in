@@ -256,6 +256,7 @@ fi
 if test "x$XDMCP" != x; then
     XDM_CFLAGS="$XDM_CFLAGS -DXDMCP"
 fi
+XDM_CFLAGS="$XDM_CFLAGS -DHAS_SELECT_ON_FIFO"
 if test "x$with_krb4" != xno; then
     XDM_CFLAGS="$XDM_CFLAGS -DKERBEROS"
     if test "x$with_afs" = xno; then
