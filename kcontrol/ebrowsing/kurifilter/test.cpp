@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     KCmdLineArgs::init(argc, argv, &aboutData);
     KApplication app;
 
-    QString a("Yves");
+    QString a("linuxtoday.com");
 
     cout << "Filtering: " << a << endl;
     if (KURIFilter::filter()->filterURI(a)) {
