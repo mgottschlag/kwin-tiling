@@ -839,7 +839,7 @@ StartClient (struct display *d)
 #if defined(USE_PAM) || defined(AIXV3)
     if (!(p = getpwnam (curuser))) {
 	LogError ("getpwnam(%s) failed.\n", curuser);
-	return V_ERROR;
+	return 0;
     }
 #endif
 
