@@ -38,9 +38,14 @@ KInstance *KURISearchFilterFactory::s_instance = 0L;
 KURISearchFilter::KURISearchFilter(QObject *parent, const char *name)
                  :KURIFilterPlugin(parent, name ? name : "ikws", 1.0),
                   DCOPObject("KURISearchFilterIface")
-{}
+{
+  KURISearchFilterEngine::incRef(); 
+}
 
-KURISearchFilter::~KURISearchFilter() {}
+KURISearchFilter::~KURISearchFilter() 
+{
+  KURISearchFilterEngine::decRef(); 
+}
 
 void KURISearchFilter::configure() {
     KURISearchFilterEngine::self()->loadConfig();
@@ -118,7 +123,7 @@ QString KURISearchFilter::configName() const {
     return i18n("Internet &Keywords");
 }
 
- 
+
 static const char *mocs[] = {
 #include "libkuriikwsfilter_la_moc_classes.h"
    0

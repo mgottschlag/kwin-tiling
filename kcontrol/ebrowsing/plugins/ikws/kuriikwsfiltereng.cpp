@@ -6,23 +6,24 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
- 
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
- 
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
-*/ 
+
+*/
 
 #include "kuriikwsfiltereng.h"
 
 #include <kconfig.h>
 #include <kurl.h>
 
+unsigned long KURISearchFilterEngine::s_refCnt = 0;
 KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0L;
 
 #define SEARCH_SUFFIX	" " "Search"
@@ -38,7 +39,7 @@ KURISearchFilterEngine::KURISearchFilterEngine() {
 void KURISearchFilterEngine::insertSearchEngine(SearchEntry e) {
     QValueList<SearchEntry>::Iterator it = m_lstSearchEngines.begin();
     QValueList<SearchEntry>::Iterator end = m_lstSearchEngines.end();
-    
+
     for (; it != end; ++it) {
 	if ((*it).m_strName == e.m_strName) {
 	    m_lstSearchEngines.remove(it);
@@ -59,7 +60,7 @@ void KURISearchFilterEngine::removeSearchEngine(const QString &name) {
 	  break;
       }
   }
-}  
+}
 
 QString KURISearchFilterEngine::searchQuery(const QString &key) const {
   QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngines.begin();
@@ -77,7 +78,7 @@ QString KURISearchFilterEngine::searchQuery(const QString &key) const {
 KURISearchFilterEngine::SearchEntry KURISearchFilterEngine::searchEntryByName(const QString &name) const {
     QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngines.begin();
     QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngines.end();
-    
+
     for (; it != end; ++it) {
 	if ((*it).m_strName == name) {
 	    return *it;
@@ -93,7 +94,7 @@ QString KURISearchFilterEngine::navQuery() const {
 	if (search != QString::null) {
 	    int pct = m_currInternetKeywordsNavEngine.m_strQueryWithSearch.find("\\|");
 	    if (pct >= 0) {
-		search = KURL::encode_string(search); 
+		search = KURL::encode_string(search);
 		QString res = m_currInternetKeywordsNavEngine.m_strQueryWithSearch;
 		return res.replace(pct, 2, search);
 	    }
@@ -138,8 +139,25 @@ QCString KURISearchFilterEngine::name() const {
     return "kuriikwsfilter";
 }
 
+void KURISearchFilterEngine::incRef()
+{
+  s_refCnt++; 
+}
+
+void KURISearchFilterEngine::decRef()
+{
+  s_refCnt--;
+  if ( s_refCnt == 0 && s_pSelf )
+  {
+    delete s_pSelf;
+    s_pSelf = 0;
+  }
+} 
+
 KURISearchFilterEngine* KURISearchFilterEngine::self() {
     if (!s_pSelf) {
+        if ( s_refCnt == 0 )
+  	  s_refCnt++; //someone forgot to call incRef
 	s_pSelf = new KURISearchFilterEngine;
     }
 
@@ -162,7 +180,7 @@ void KURISearchFilterEngine::loadConfig() {
 
     QString selNavEngine = config.readEntry("NavSelectedEngine", IKW_REALNAMES);
     QString selNavSearch = config.readEntry("NavSearchFallback");
-    
+
     QStringList engines = config.readListEntry("NavEngines");
 
     QStringList::ConstIterator gIt = engines.begin();
@@ -171,12 +189,12 @@ void KURISearchFilterEngine::loadConfig() {
 	QString grpName = *gIt + IKW_SUFFIX;
 	if (config.hasGroup(grpName)) {
 	    config.setGroup(grpName);
-    
+
 	    NavEntry e;
 	    e.m_strName = *gIt;
 	    e.m_strQuery = config.readEntry("Query");
 	    e.m_strQueryWithSearch = config.readEntry("QueryWithSearch");
-    
+
 	    m_lstInternetKeywordsEngines.append(e);
 
 	    if (e.m_strName == selNavEngine) {
@@ -202,7 +220,7 @@ void KURISearchFilterEngine::loadConfig() {
     m_bVerbose = config.readBoolEntry("Verbose");
 
     engines = config.readListEntry("SearchEngines");
-  
+
     gIt = engines.begin();
     gEnd = engines.end();
     for (; gIt != gEnd; ++gIt) {
@@ -212,12 +230,12 @@ void KURISearchFilterEngine::loadConfig() {
 	} else {
 	    config.setGroup(*gIt);
 	}
-    
+
 	SearchEntry e;
 	e.m_strName = *gIt;
 	e.m_lstKeys = config.readListEntry("Keys");
 	e.m_strQuery = config.readEntry("Query");
-    
+
 	m_lstSearchEngines.append(e);
 
 	if (e.m_strName == selNavSearch) {
@@ -240,7 +258,7 @@ void KURISearchFilterEngine::saveConfig() const {
 	config.writeEntry("Keys", (*it).m_lstKeys);
 	config.writeEntry("Query", (*it).m_strQuery);
     }
-  
+
     config.setGroup("General");
 
     config.writeEntry("SearchEngines", engines);
@@ -261,7 +279,7 @@ void KURISearchFilterEngine::saveConfig() const {
 	    config.writeEntry("QueryWithSearch", (*nit).m_strQueryWithSearch);
 	}
     }
-  
+
     config.setGroup(IKW_KEY);
 
     config.writeEntry("NavEngines", engines);
