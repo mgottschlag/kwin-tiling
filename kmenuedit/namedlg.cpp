@@ -27,7 +27,7 @@
 #include "namedlg.h"
 
 NameDialog::NameDialog( QWidget *parent, const char *name )
-    : KDialogBase( parent, name, true, i18n("NewItem"), Ok|Cancel, Ok, true )
+    : KDialogBase( parent, name, true, "text", Ok|Cancel, Ok, true )
 {
     QHBox *page = makeHBoxMainWidget();
     (void)  new QLabel( i18n("Name:"), page);

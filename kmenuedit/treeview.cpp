@@ -571,6 +571,7 @@ void TreeView::slotRMBPressed(QListViewItem*, const QPoint& p)
 void TreeView::newsubmenu()
 {
     _ndlg->setText(i18n("NewSubmenu"));
+    _ndlg->setCaption(i18n("NewSubmenu"));
     if (!_ndlg->exec()) return;
 
     QString dirname = _ndlg->text();
@@ -649,6 +650,7 @@ void TreeView::newsubmenu()
 void TreeView::newitem()
 {
     _ndlg->setText(i18n("NewItem"));
+    _ndlg->setCaption(i18n("NewItem"));
     if (!_ndlg->exec()) return;
 
     QString filename = _ndlg->text();
