@@ -71,11 +71,14 @@ void TaskRMBMenu::fillMenu( Task* t, TaskManager* manager )
 
 	id = insertItem( SmallIcon( "fileclose" ), i18n( "&Close" ), t, SLOT( close() ) );
 
-	insertSeparator();
+	if ( manager->numberOfDesktops() > 1 )
+	{
+		insertSeparator();
 
-	id = insertItem( i18n("To &Desktop"), makeDesktopsMenu( t, manager ) );
-	id = insertItem( i18n( "&To Current Desktop" ), t, SLOT( toCurrentDesktop() ) );
-	setItemEnabled( id, !t->isOnCurrentDesktop() );
+		id = insertItem( i18n("To &Desktop"), makeDesktopsMenu( t, manager ) );
+		id = insertItem( i18n( "&To Current Desktop" ), t, SLOT( toCurrentDesktop() ) );
+		setItemEnabled( id, !t->isOnCurrentDesktop() );
+	}
 }
 
 void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
@@ -145,20 +148,23 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 
 	insertItem( SmallIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
 
-	insertSeparator();
+	if ( manager->numberOfDesktops() > 1 )
+	{
+		insertSeparator();
 
-	id = insertItem( i18n("All to &Desktop"), makeDesktopsMenu( tasks, manager ) );
+		id = insertItem( i18n("All to &Desktop"), makeDesktopsMenu( tasks, manager ) );
 
-	enable = false;
+		enable = false;
 
-	id = insertItem( i18n( "All &to Current Desktop" ), this, SLOT( slotAllToCurrentDesktop() ) );
-	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
-		if( !(*it)->isOnCurrentDesktop() ) {
-			enable = true;
-			break;
+		id = insertItem( i18n( "All &to Current Desktop" ), this, SLOT( slotAllToCurrentDesktop() ) );
+		for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
+			if( !(*it)->isOnCurrentDesktop() ) {
+				enable = true;
+				break;
+			}
 		}
+		setItemEnabled( id, enable );
 	}
-	setItemEnabled( id, enable );
 }
 
 QPopupMenu* TaskRMBMenu::makeDesktopsMenu( Task* t, TaskManager* manager )
