@@ -94,6 +94,11 @@ ConfigModuleList::ConfigModuleList()
   setAutoDelete(true);
 }
 
+const KAboutData *ConfigModule::aboutData() const
+{
+	return _module->aboutData();
+}
+
 void ConfigModuleList::readDesktopEntries()
 {
   QStringList files;

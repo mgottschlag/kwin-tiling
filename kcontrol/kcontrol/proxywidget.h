@@ -29,6 +29,7 @@ class QPushButton;
 class QFrame;
 
 class KCModule;
+class KAboutData;
 
 #include "dockcontainer.h"
 
@@ -42,6 +43,7 @@ public:
   ~ProxyWidget();
 
   QString quickHelp();
+  const KAboutData *aboutData() const;
 
 
 public slots:

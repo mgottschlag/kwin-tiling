@@ -20,6 +20,12 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.8  2000/04/15 19:46:06  charles
+    Here's a commit. Happy David? :)
+
+    Oh. yeah. it does something.  It's done.  Well, unless you don't speak english.
+    I'm working on that now :)
+
     Revision 1.7  2000/04/11 05:33:13  charles
     Milestone 5.  Can't even remember how it's better, but it is (trust me).
 
@@ -80,9 +86,12 @@
 #include <qlistview.h>
 #include <qcheckbox.h>
 
+#include <kaboutdata.h>
+
 #include "eventview.h"
 
 class Programs;
+
 
 
 class KNotifyWidget : public KCModule
@@ -96,7 +105,8 @@ public:
 	void defaults();
 	virtual void save();
 	virtual QString quickHelp();
-
+	virtual const KAboutData *aboutData() const;
+		
 private slots:
 	void changed();
 	/**

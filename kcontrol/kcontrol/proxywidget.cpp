@@ -155,3 +155,8 @@ void ProxyWidget::clientChanged(bool state)
   // forward the signal
   emit changed(state);
 }
+
+const KAboutData *ProxyWidget::aboutData() const
+{
+  return _client->aboutData();
+}

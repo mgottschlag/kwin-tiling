@@ -12,5 +12,8 @@
             <Action name="activate_largeicons"/>
         </Menu>
     </Menu>
+    <Menu name="help"><text>&amp;Help</text>
+        <Action name="report_bug"/>
+    </Menu>
 </MenuBar>
 </kpartgui>

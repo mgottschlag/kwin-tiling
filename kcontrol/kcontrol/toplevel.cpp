@@ -23,6 +23,7 @@
 #include <kstddirs.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kbugreport.h>
 
 #include <qsplitter.h>
 #include <qtabwidget.h>
@@ -186,6 +187,11 @@ void TopLevel::setupActions()
      actionCollection(), "activate_largeicons");
   icon_large->setExclusiveGroup( "iconsize" );
 
+  // I need to add this so that each module can get a bug reported,
+  // and not just KControl
+
+  report_bug=new KAction(i18n("&Report Bug on Module"),0, this, SLOT(reportBug()), actionCollection(), "report_bug");
+
   createGUI("kcontrolui.rc");
 
   // add menu with the modules
@@ -260,6 +266,7 @@ void TopLevel::newModule(const QString &name, const QString &quickhelp)
 
 void TopLevel::moduleActivated(ConfigModule *module)
 {
+  _active=module;
   activateModule(module->name());
 }
 
@@ -312,4 +319,10 @@ void TopLevel::activateModule(const QString& name)
 		  break;
 		}
 	}
+}
+
+void TopLevel::reportBug()
+{
+  KBugReport *br=new KBugReport(this, false, _active->aboutData());
+  br->show();
 }

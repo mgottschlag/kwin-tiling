@@ -104,4 +104,13 @@ QString KNotifyWidget::quickHelp()
 		    "</ul>");
 }
 
+const KAboutData *KNotifyWidget::aboutData() const
+{
+	KAboutData ab(
+		"kcmnotify", I18N_NOOP("KNotify"), "2.0pre",
+		I18N_NOOP("System Notification Control Panel Module"),
+		KAboutData::License_GPL, I18N_NOOP("(c) 2000 Charles Samuels"),
+		0, 0, "charles@kde.org");
+	return &ab;
 
+}

@@ -30,6 +30,7 @@
 #include "moduleinfo.h"
 
 class QWidget;
+class KAboutData;
 class KCModule;
 class ProxyWidget;
 
@@ -46,6 +47,7 @@ public:
 
   bool isActive() { return _module != 0; };
   ProxyWidget *module();
+  const KAboutData *aboutData() const;
 
 public slots:
   void deleteClient();
