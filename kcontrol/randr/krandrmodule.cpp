@@ -89,7 +89,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 
 	QHBox* screenBox = new QHBox(this);
 	topLayout->addWidget(screenBox);
-	new QLabel(i18n("Settings for screen:"), screenBox);
+	QLabel *screenLabel = new QLabel(i18n("Settings for screen:"), screenBox);
 	m_screenSelector = new KComboBox(screenBox);
 
 	for (int s = 0; s < numScreens(); s++) {
@@ -97,6 +97,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	}
 
 	m_screenSelector->setCurrentItem(currentScreenIndex());
+        screenLabel->setBuddy( m_screenSelector );
 	QWhatsThis::add(m_screenSelector, i18n("The screen whose settings you would like to change can be selected using this drop-down list."));
 
 	connect(m_screenSelector, SIGNAL(activated(int)), SLOT(slotScreenChanged(int)));
@@ -106,17 +107,19 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 
 	QHBox* sizeBox = new QHBox(this);
 	topLayout->addWidget(sizeBox);
-	new QLabel(i18n("Screen size:"), sizeBox);
+	QLabel *sizeLabel = new QLabel(i18n("Screen size:"), sizeBox);
 	m_sizeCombo = new KComboBox(sizeBox);
 	QWhatsThis::add(m_sizeCombo, i18n("The size, otherwise known as the resolution, of your screen can be selected from this drop-down list."));
 	connect(m_sizeCombo, SIGNAL(activated(int)), SLOT(slotSizeChanged(int)));
+        sizeLabel->setBuddy( m_sizeCombo );
 
 	QHBox* refreshBox = new QHBox(this);
 	topLayout->addWidget(refreshBox);
-	new QLabel(i18n("Refresh rate:"), refreshBox);
+	QLabel *rateLabel = new QLabel(i18n("Refresh rate:"), refreshBox);
 	m_refreshRates = new KComboBox(refreshBox);
 	QWhatsThis::add(m_refreshRates, i18n("The refresh rate of your screen can be selected from this drop-down list."));
 	connect(m_refreshRates, SIGNAL(activated(int)), SLOT(slotRefreshChanged(int)));
+        rateLabel->setBuddy( m_refreshRates );
 
 	m_rotationGroup = new QButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees counterclockwise)"), this);
 	topLayout->addWidget(m_rotationGroup);
