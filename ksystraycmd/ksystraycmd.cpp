@@ -40,7 +40,10 @@ KSysTrayCmd::KSysTrayCmd()
 
 KSysTrayCmd::~KSysTrayCmd()
 {
-  delete client;
+    if ( !isVisible ) {
+	showWindow();
+    }
+    delete client;
 }
 
 //
@@ -54,13 +57,18 @@ bool KSysTrayCmd::start()
 
   // If we have no command we must catching an existing window
   if ( !command ) {
-    checkExistingWindows();
-    if ( win )
-      return true;
+      if ( win ) {
+	  setTargetWindow( win );
+	  return true;
+      }
 
-    errStr = i18n( "No window matching pattern '%1' and no command specified.\n" )
-      .arg( window );
-    return false;
+      checkExistingWindows();
+      if ( win )
+	  return true;
+
+      errStr = i18n( "No window matching pattern '%1' and no command specified.\n" )
+	  .arg( window );
+      return false;
   }
 
   // Run the command and watch for its window

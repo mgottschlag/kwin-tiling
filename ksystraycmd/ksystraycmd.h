@@ -22,6 +22,7 @@ public:
   KSysTrayCmd();
   ~KSysTrayCmd();
 
+  void setWindow( WId w ) { win = w; }
   void setCommand( const QString &cmd ) { command = cmd; }
   void setPattern( const QString &regexp ) { window = regexp; }
   void setStartOnShow( bool enable ) { lazyStart = enable; }

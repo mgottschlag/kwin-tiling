@@ -3,6 +3,7 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
+#include <kdebug.h>
 #include <klocale.h>
 
 #include "ksystraycmd.h"
@@ -25,6 +26,9 @@ static KCmdLineOptions options[] =
   { "window <regexp>", I18N_NOOP("A regular expression matching the window title.\n"
                   "If you do not specify one, then the very first window\n"
 				 "to appear will be taken. Not recommended!"), 0 },
+  { "wid <int>", I18N_NOOP("The window id of the target window.\n"
+                  "Specifies the id of the window to use. If the id starts with 0x\n"
+			   "it is assumed to be in hex."), 0 },
   { "hidden", I18N_NOOP( "Hide the window to the tray on startup" ), 0 },
   { "startonshow", I18N_NOOP( "Wait until we're told to show the window before\n"
 			      "executing the command" ), 0 },
@@ -58,11 +62,34 @@ int main( int argc, char *argv[] )
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   KSysTrayCmd cmd;
 
+  // Read the window id
+  QString wid = args->getOption( "wid" );
+  if ( !wid.isEmpty() ) {
+      int base = 10;
+      if ( wid.startsWith( "0x" ) ) {
+	  base = 16;
+	  wid = wid.right( wid.length() - 2 );
+      }
+
+      kdDebug() << "Got win id '" << wid << "', base is " << base << endl;
+
+      bool ok=true;
+      int w = wid.toInt( &ok, base );
+      if ( ok ) {
+	  kdDebug() << "Got win id '" << wid << "', base is " << base << endl;
+	  cmd.setTargetWindow( w );
+      }
+      else {
+	  kdDebug() << "Got bad win id" << endl;
+      }
+  }
+
   // Read window title regexp
   QString title = args->getOption( "window" );
-  if ( !title && (args->count() == 0) )
-    KCmdLineArgs::usage(i18n("No command or window title specified"));
   cmd.setPattern( title );
+
+  if ( !title && !wid && (args->count() == 0) )
+    KCmdLineArgs::usage(i18n("No command or window specified"));
 
   // Read the command
   QString command;
