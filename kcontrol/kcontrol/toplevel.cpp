@@ -163,27 +163,27 @@ void TopLevel::setupActions()
 {
   KStdAction::quit(kapp, SLOT(quit()), actionCollection());
 
-  icon_view = new KToggleAction
+  icon_view = new KRadioAction
     (i18n("&Icon View"), 0, this, SLOT(activateIconView()),
      actionCollection(), "activate_iconview");
   icon_view->setExclusiveGroup( "viewmode" );
 
-  tree_view = new KToggleAction
+  tree_view = new KRadioAction
     (i18n("&Tree View"), 0, this, SLOT(activateTreeView()),
      actionCollection(), "activate_treeview");
   tree_view->setExclusiveGroup( "viewmode" );
 
-  icon_small = new KToggleAction
+  icon_small = new KRadioAction
     (i18n("&Small"), 0, this, SLOT(activateSmallIcons()),
      actionCollection(), "activate_smallicons");
   icon_small->setExclusiveGroup( "iconsize" );
 
-  icon_medium = new KToggleAction
+  icon_medium = new KRadioAction
     (i18n("&Medium"), 0, this, SLOT(activateMediumIcons()),
      actionCollection(), "activate_mediumicons");
   icon_medium->setExclusiveGroup( "iconsize" );
 
-  icon_large = new KToggleAction
+  icon_large = new KRadioAction
     (i18n("&Large"), 0, this, SLOT(activateLargeIcons()),
      actionCollection(), "activate_largeicons");
   icon_large->setExclusiveGroup( "iconsize" );
