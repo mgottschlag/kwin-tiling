@@ -61,9 +61,8 @@
 /* Define this if you want the pam service from 
     the environment variable */
 #define ACCEPT_ENV
-/* Define this if you want kcheckpass to accept options
- * (They don't do anything useful right now) */
-#define ACCEPT_OPTIONS
+/* Define this if you want kcheckpass to accept options */
+/*#define ACCEPT_OPTIONS*/
 
 /* This will disable environment vars when options are enabled.
    (there would be a preference clash otherwise) */
