@@ -70,8 +70,7 @@ static int keypress_workaround = KeyPress;
 
 ssApp::ssApp( int &argc, char **argv ) : KApplication( argc, argv )
 {
-	KConfig *kssConfig = new KConfig( kapp->kde_configdir() + "/kssrc", 
-	                                  kapp->localconfigdir() + "/kssrc" );
+        KConfig *kssConfig = new KConfig( "kssrc");
 	kssConfig->setGroup( "kss" );
 	stars = kssConfig->readBoolEntry( "PasswordAsStars", true );
 	delete kssConfig;

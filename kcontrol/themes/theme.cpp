@@ -53,6 +53,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 extern int dropError(Display *, XErrorEvent *);
 
@@ -61,13 +62,11 @@ Theme::Theme(): ThemeInherited(QString::null), mInstFiles(true)
 {
   int len;
 
-  initMetaObject();
-
   setLocale();
 
   instOverwrite = false;
 
-  mConfigDir = kapp->localconfigdir();
+  mConfigDir = KGlobal::dirs()->getSaveLocation("config");
   len = mConfigDir.length();
   if (len > 0 && mConfigDir[len-1] != '/') mConfigDir += '/';
 
@@ -262,7 +261,7 @@ bool Theme::load(const QString aPath)
 
   // read theme config file
   setReadOnly(TRUE);
-  backEnd->changeFileNames(mThemePath + mThemercFile, QString::null, false);
+  backEnd->changeFileName(mThemercFile, false);
   reparseConfiguration();
 
   readConfig();
@@ -281,7 +280,7 @@ bool Theme::save(const QString aPath)
   emit apply();
   writeConfig();
 
-  backEnd->changeFileNames(mThemePath + mThemercFile, QString::null, false);
+  backEnd->changeFileName(mThemercFile, false);
   backEnd->sync(true); // true so that disk entries are merged.  Is this right?
 
   if (stricmp(aPath.right(4), ".tgz") == 0 ||
@@ -1015,43 +1014,7 @@ void Theme::readCurrent(void)
 //-----------------------------------------------------------------------------
 KConfig* Theme::openConfig(const QString aAppName) const
 {
-  KConfig* pConfig;
-  QString aConfigName = kapp->localconfigdir();
-  aConfigName += "/";
-  aConfigName += aAppName;
-  aConfigName += "rc";
-  bool bSuccess;
-  QString aGlobalAppConfigName = kapp->kde_configdir() + "/" + aAppName + "rc";
-
-  debug(aConfigName);
-  debug(aGlobalAppConfigName);
-  QFile aConfigFile(aConfigName);
-
-  // Open the application-specific config file. It will be created if
-  // it does not exist yet.
-  bSuccess = aConfigFile.open( IO_ReadWrite ); 
-  if(!bSuccess)
-  {
-    // try to open at least read-only
-    bSuccess = aConfigFile.open( IO_ReadOnly );
-    if(!bSuccess)
-    {
-      // we didn't succeed to open an app-config file
-      pConfig = new KConfig( aGlobalAppConfigName );
-    }
-    else
-    {
-      // we succeeded to open an app-config file read-only
-      pConfig = new KConfig( aGlobalAppConfigName, aConfigName );
-    }
-  }
-  else
-  {
-    // we succeeded to open an app-config file read-write
-    pConfig = new KConfig( aGlobalAppConfigName, aConfigName );
-  }
-
-  return pConfig;
+  return new KConfig(aAppName + "rc");
 }
 
 

@@ -512,19 +512,16 @@ void KBackground::resizeEvent( QResizeEvent * )
 
 void KBackground::readSettings( int num )
 {
-  QString group = QString("/desktop%1rc").arg(num);
+  QString group = QString("desktop%1rc").arg(num);
 
   bool first_time = false;
 
-  QFileInfo fi( KApplication::localconfigdir() + group );
-  if ( ! fi.exists() ){
+  if ( locate("config", group).isNull() ){
     first_time = true;
-    group = "/kcmdisplayrc";
+    group = "kcmdisplayrc";
   }
 
-  KConfig config(KApplication::kde_configdir() + group,
-		 KApplication::localconfigdir() + group,
-		 true, false);
+  KConfig config(group, true, false);
 
   if ( !first_time ) {
     config.setGroup( "Common" );
@@ -634,10 +631,8 @@ void KBackground::writeSettings( int num )
     return;
   }
 
-  QString group = QString("/desktop%1rc").arg(num);
-  KConfig config(KApplication::kde_configdir() + group, 
-		 KApplication::localconfigdir() + group,
-		 false, false);
+  QString group = QString("desktop%1rc").arg(num);
+  KConfig config(group, false, false);
 
   if ( randomMode || !interactive )
     group = QString( "Desktop%1").arg( random );
@@ -1968,12 +1963,9 @@ void KRandomDlg::copyCurrent()
 
 void KRandomDlg::readSettings()
 {
-  QString tmpf = QString("/desktop%1rc").arg(desktop);
+  QString tmpf = QString("desktop%1rc").arg(desktop);
 
-  KConfig picturesConfig(KApplication::kde_configdir() + tmpf,
-			 KApplication::localconfigdir() + tmpf, 
-			 true, false);
-
+  KConfig picturesConfig(tmpf, true, false);
   picturesConfig.setGroup( "Common" );
   count = picturesConfig.readNumEntry( "Count", DEFAULT_RANDOM_COUNT );
   delay = picturesConfig.readNumEntry( "Timer", DEFAULT_RANDOM_TIMER );
@@ -2028,11 +2020,9 @@ void KRandomDlg::done( int r )
   kb->currentItem = *ItemList.first();
   kb->interactive = true;
 
-  QString tmpf = QString("/desktop%1rc").arg(desktop);
+  QString tmpf = QString("desktop%1rc").arg(desktop);
 
-  KConfig picturesConfig(KApplication::kde_configdir() + tmpf,
-			 KApplication::localconfigdir() + tmpf,
-			 false, false);
+  KConfig picturesConfig(tmpf, false, false);
 
   picturesConfig.setGroup( "Common" );
   picturesConfig.writeEntry( "Count", listBox->count() );

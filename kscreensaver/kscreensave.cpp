@@ -47,8 +47,7 @@ void kForceLocker()
 {
 	if( sendSignal() != 0 )
 	{
-		KConfig *kdisplayConfig = new KConfig( kapp->kde_configdir() + "/kdisplayrc",
-		                                       kapp->localconfigdir() + "/kdisplayrc" );
+		KConfig *kdisplayConfig = new KConfig( "kdisplayrc");
 		kdisplayConfig->setGroup("ScreenSaver");
 		bool allowRoot = kdisplayConfig->readBoolEntry( "allowRoot", false );
 		delete kdisplayConfig;

@@ -165,8 +165,7 @@ void KIconStyle::writeSettings()
                             true, true /* global setting (share/config/kdeglobals) */ );
         if (!strcmp(appName[i], "kpanel"))
         {
-          KConfig * config = new KConfig(KApplication::kde_configdir() + "/kpanelrc",
-                                         KApplication::localconfigdir() + "/kpanelrc");
+          KConfig * config = new KConfig("kpanelrc");
           config->setGroup("kpanel");
           // Special case for kpanel, as asked by Torsten :
           // Sync kpanel's size with icon size
@@ -215,8 +214,10 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     setColumn(0, i18n("Name:"), 100);
     setColumn(1, i18n("Description:"), 250);
     setSeparator('\t');
-    readThemeDir(kapp->localkdedir()+"/share/apps/kstyle/themes");
-    readThemeDir(kapp->kde_datadir()+"/kstyle/themes");
+    KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_data_relative() + "/kstyle/themes");
+    QStringList list = KGlobal::dirs()->getResourceDirs("themes");
+    for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
+        readThemeDir(*it);
 }
 
 void KThemeListBox::readThemeDir(const QString &directory)
@@ -235,7 +236,7 @@ void KThemeListBox::readThemeDir(const QString &directory)
         QFileInfoListIterator it(*list);
         QFileInfo *fi;
         while((fi = it.current())){
-            KSimpleConfig config(fi->absFilePath());
+            KSimpleConfig config(fi->absFilePath(), true);
             config.setGroup("Misc");
             name = config.readEntry("Name", fi->baseName());
             desc = config.readEntry("Comment",

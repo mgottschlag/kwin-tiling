@@ -21,6 +21,16 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.15  1999/06/15 10:07:48  kulow
+    fixes for --enable-final (had to change some defines in konqy to avoid clashes with
+    enums)
+    fixes for -Wwrite-strings (bsod.cpp turned out to be a beast in writing to results
+    of readEntry...)
+    fixes some other warnings
+
+    -enable-final goes through kdebase now - just my virtual memory isn't enough
+    for konqueror ;(
+
     Revision 1.14  1999/05/23 21:26:08  kulow
     more changes
 
@@ -304,7 +314,7 @@ void KSoundWidget::readConfig(){
   // CC: we need to read/write the config file of "kwmsound" and not 
   // our own (that would be called syssoundrc)
 
-  config = new KConfig(kapp->localconfigdir()+"/kwmsoundrc");
+  config = new KConfig("kwmsoundrc");
 
   config->setGroup("SoundConfiguration");  
 
@@ -401,7 +411,7 @@ void KSoundWidget::saveConfiguration(){
   KWM kwm;
   
   // config = kapp->getConfig();
-  config = new KConfig(kapp->localconfigdir()+"/kwmsoundrc");
+  config = new KConfig("kwmsoundrc");
 
   config->setGroup("SoundConfiguration");  
 

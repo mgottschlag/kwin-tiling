@@ -39,6 +39,7 @@
 #include <assert.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kconfig.h>
 
 
 //-----------------------------------------------------------------------------
@@ -75,7 +76,7 @@ bool ThemeCreator::create(const QString aThemeName)
   mPreviewFile = QString::null;
   mPreview.resize(0,0);
 
-  backEnd->changeFileNames(mThemePath + mThemercFile, QString::null, false);
+  backEnd->changeFileName(mThemercFile, false);
   reparseConfiguration();
 
   setGroupGeneral();

@@ -173,8 +173,7 @@ void KfmApplication::apply()
 
 int main(int argc, char **argv)
 {
-  g_pConfig = new KConfig( KApplication::kde_configdir() + "/kfmrc", 
-			   KApplication::localconfigdir() + "/kfmrc" );
+  g_pConfig = new KConfig( "kfmrc");
   KfmApplication app( argc, argv, "kcmkfm" );
     
   app.setTitle(i18n( "KFM Configuration"));

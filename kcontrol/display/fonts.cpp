@@ -57,12 +57,9 @@ void FontUseItem::readFont()
 	KConfigBase *config=NULL;
 
 	if ( _rcfile.isEmpty() ) {
-		config  = kapp->getConfig();
+	  config  = kapp->getConfig();
 	} else {
-		QString s( KApplication::localconfigdir() );
-		s += "/";
-		s += _rcfile;
-		config = new KSimpleConfig( s, true );
+	  config = new KSimpleConfig( locate("config", _rcfile), true );
 	}
 
 	config->setGroup( _rcgroup );
@@ -75,12 +72,9 @@ void FontUseItem::writeFont()
 {
 	KConfigBase *config;
 	if ( _rcfile.isEmpty() ) {
-		config  = kapp->getConfig();
+	  config  = kapp->getConfig();
 	} else {
-		QString s( KApplication::localconfigdir() );
-		s += "/";
-		s += _rcfile;
-		config = new KSimpleConfig( s );
+	  config = new KSimpleConfig( locate("config", _rcfile) );
 	}
 	
 	config->setGroup( _rcgroup );

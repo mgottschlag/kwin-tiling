@@ -102,9 +102,7 @@ int discardError(Display *, XErrorEvent *)
 KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 	: KDisplayModule( parent, mode, desktop )
 {
-	KIconLoader iconLoader;
-	kssConfig = new KConfig( kapp->kde_configdir() + "/kssrc", 
-		                 kapp->localconfigdir() + "/kssrc" );
+	kssConfig = new KConfig( "kssrc");
 	kssConfig->setGroup( "kss" );
 
 	readSettings();
@@ -134,7 +132,7 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 
 	findSavers();
 
-	QPixmap p = iconLoader.loadIcon("monitor.xpm");
+	QPixmap p = ICON("monitor.xpm");
 	
 	QGridLayout *topLayout = new QGridLayout( this, 4, 4, 10 );
 	
@@ -365,15 +363,14 @@ void KScreenSaver::readSettings( int )
 	
 	if ( ! config->hasKey("UseSaver") ) {
 		first_time = true;
-		config= new KConfig(KApplication::kde_configdir() + "/kdisplayrc",
-                    KApplication::localconfigdir() + "/kdisplayrc");   
+		config= new KConfig("kdisplayrc");
 		config->setGroup( "ScreenSaver" );
 	};
 
 //Antonio
 
 
-	saverLocation = config->readEntry( "Location", kapp->kde_bindir().copy() );
+	saverLocation = config->readEntry( "Location", kapp->kde_bindir() );
 
 	bUseSaver = config->readBoolEntry( "UseSaver", false );
 	if( bUseSaver ) {

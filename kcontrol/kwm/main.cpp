@@ -120,8 +120,7 @@ void KKWMApplication::apply()
 
 int main(int argc, char **argv)
 {
-    config = new KConfig(KApplication::kde_configdir() + "/kwmrc", 
-                         KApplication::localconfigdir() + "/kwmrc");
+    config = new KConfig("kwmrc");
     KKWMApplication app(argc, argv, "kcmkwm");
     app.setTitle(i18n("Window manager style"));
     int result = 0;

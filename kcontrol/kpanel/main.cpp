@@ -118,8 +118,7 @@ void KKPanelApplication::apply()
 
 int main(int argc, char **argv)
 {
-    config = new KConfig(KApplication::kde_configdir() + "/kpanelrc",
-                         KApplication::localconfigdir() + "/kpanelrc");
+    config = new KConfig("kpanelrc");
     KKPanelApplication app(argc, argv, "kcmkpanel");
 
     app.setTitle(i18n("KPanel Configuration"));
