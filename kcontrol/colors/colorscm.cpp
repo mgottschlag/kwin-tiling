@@ -169,7 +169,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        " color scheme. Note that this button is disabled if you do not have"
        " permission to delete the color scheme.") );
 
-	importBt = new QPushButton(i18n("&Import Scheme..."), group);
+	importBt = new QPushButton(i18n("I&mport Scheme..."), group);
 	connect(importBt, SIGNAL(clicked()),SLOT(slotImport()));
 
 	QWhatsThis::add( importBt, i18n("Press this button to import a new color"
@@ -180,7 +180,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     QBoxLayout *stackLayout = new QVBoxLayout;
     topLayout->addLayout(stackLayout, 1, 1);
 
-    group = new QGroupBox(i18n("Widget Color"), this);
+    group = new QGroupBox(i18n("&Widget Color"), this);
     stackLayout->addWidget(group);
     QBoxLayout *groupLayout = new QVBoxLayout(group, 10);
     groupLayout->addSpacing(10);
@@ -230,7 +230,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        " box where you can choose a color for the \"widget\" selected"
        " in the above list.") );
 
-    group = new QGroupBox(  i18n("Contrast"), this );
+    group = new QGroupBox(  i18n("Con&trast"), this );
     stackLayout->addWidget(group);
 
     QVBoxLayout *groupLayout2 = new QVBoxLayout(group, 10);
