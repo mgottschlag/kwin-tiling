@@ -10,6 +10,8 @@
 #include <kpopupmenu.h>
 #include <kprocess.h>
 #include <kwinmodule.h>
+#include <kconfig.h>
+#include <ksystemtray.h>
 
 #include <netwm.h>
 
