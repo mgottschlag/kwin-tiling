@@ -202,7 +202,8 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 	  pswdEdit->setFocus();
 	  h+= pswdEdit->height() + 10;
 	  box->addWidget( pswdEdit);
-     }
+     } else
+        pswdEdit = 0;
 
      QBoxLayout* box3 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
      box->addLayout( box3);
