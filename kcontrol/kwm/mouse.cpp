@@ -48,8 +48,6 @@ KMouseConfig::~KMouseConfig ()
 
 }
 
-extern KConfig *config;
-
 KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   : KCModule (parent, name)
 {
@@ -296,6 +294,8 @@ const char*  KMouseConfig::functionAll(int i)
 
 void KMouseConfig::load()
 {
+  KConfig *config = new KConfig("kwinrc", false, false);
+
   config->setGroup( "MouseBindings");
   setComboText(coTiAct1,config->readEntry("CommandActiveTitlebar1","Raise").ascii());
   setComboText(coTiAct2,config->readEntry("CommandActiveTitlebar2","Lower").ascii());
@@ -313,6 +313,8 @@ void KMouseConfig::load()
 
 void KMouseConfig::save()
 {
+  KConfig *config = new KConfig("kwinrc", false, false);
+
   config->setGroup("MouseBindings");
   config->writeEntry("CommandActiveTitlebar1", functionTiAc(coTiAct1->currentItem()));
   config->writeEntry("CommandActiveTitlebar2", functionTiAc(coTiAct2->currentItem()));
