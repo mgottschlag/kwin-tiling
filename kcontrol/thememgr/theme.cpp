@@ -39,7 +39,7 @@
 #include <qbitmap.h>
 #include <qpainter.h>
 #include <qwindowdefs.h>
-
+#include <qimage.h>
 #include <dcopclient.h>
 
 #include <kapp.h>
