@@ -220,7 +220,7 @@ QString CStarOfficeConfig::getAfmName(const QString &file)
 {
     QCString afm(CMisc::shortName(file).local8Bit());
 
-    afm.replace("/", QString::null);
+    afm.replace("/", "");
 
     if(!CMisc::root())
     {
