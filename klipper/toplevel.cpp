@@ -101,7 +101,7 @@ TopLevel::TopLevel( bool applet )
     }
     else
         m_config = kapp->config();
-    
+
     QSempty = i18n("<empty clipboard>");
 
     toggleURLGrabAction = new KToggleAction( this );
@@ -179,13 +179,13 @@ void TopLevel::mousePressEvent(QMouseEvent *e)
 
 void TopLevel::paintEvent(QPaintEvent *)
 {
-  QPainter p(this);
-  int x = (width() - m_pixmap->width()) / 2;
-  int y = (height() - m_pixmap->height()) / 2;
-  if ( x < 0 ) x = 0;
-  if ( y < 0 ) y = 0;
-  p.drawPixmap(x , y, *m_pixmap);
-  p.end();
+    QPainter p(this);
+    int x = (width() - m_pixmap->width()) / 2;
+    int y = (height() - m_pixmap->height()) / 2;
+    if ( x < 0 ) x = 0;
+    if ( y < 0 ) y = 0;
+    p.drawPixmap(x , y, *m_pixmap);
+    p.end();
 }
 
 void TopLevel::newClipData()
@@ -193,18 +193,20 @@ void TopLevel::newClipData()
     QString clipData;
 
     clip->setSelectionMode( false );
+    
+    bool clipEmpty = (clip->data()->format() == 0L);
     QString clipContents = clip->text().stripWhiteSpace();
     clip->setSelectionMode( true );
     QString selectContents = clip->text().stripWhiteSpace();
 
     if ( clipContents != m_lastClipboard ) {
         // keep old clipboard after someone set it to null
-        if ( clipContents.isNull() && bNoNullClipboard ) {
+        if ( clipEmpty && bNoNullClipboard ) {
             clipContents = m_lastClipboard;
             clip->setSelectionMode( false );
             clip->setText( clipContents );
         }
-        
+
         clipData        = clipContents;
         m_lastClipboard = clipContents;
         // sync clipboard and selection?
@@ -213,17 +215,17 @@ void TopLevel::newClipData()
             clip->setSelectionMode( true );
             clip->setText(clipContents);
         }
-
     }
+    
     else {
         if ( selectContents != m_lastSelection ) {
             // keep old selection after someone set it to null
-            if ( selectContents.isNull() && bNoNullClipboard ) {
+            if ( selectContents.isEmpty() && bNoNullClipboard ) {
                 selectContents = m_lastSelection;
                 clip->setSelectionMode( true );
                 clip->setText( selectContents );
             }
-            
+
             clipData        = selectContents;
             m_lastSelection = selectContents;
             // sync clipboard and selection?
