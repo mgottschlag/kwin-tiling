@@ -432,7 +432,7 @@ void KBackground::slotBGSetup()
 	KPatternSelectDialog dlg;
 	QString cur = r->KBackgroundPattern::name();
 	dlg.setCurrent(cur);
-	if (dlg.exec() == QDialog::Accepted) {
+	if ((dlg.exec() == QDialog::Accepted) && !dlg.pattern().isEmpty()) {
 	    r->stop();
 	    r->setPattern(dlg.pattern());
 	    r->start();
@@ -444,7 +444,7 @@ void KBackground::slotBGSetup()
 	KProgramSelectDialog dlg;
 	QString cur = r->KBackgroundProgram::name();
 	dlg.setCurrent(cur);
-	if (dlg.exec() == QDialog::Accepted) {
+	if ((dlg.exec() == QDialog::Accepted) && !dlg.program().isEmpty()) {
 	    r->stop();
 	    r->setProgram(dlg.program());
 	    r->start();
