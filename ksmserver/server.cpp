@@ -1402,6 +1402,12 @@ bool KSMServer::process(const QCString &fun, const QByteArray &data,
        replyType = "void";
        return true;
     }
+    if (fun == "restoreSessionDone()")
+    {
+       restoreSessionDone();
+       replyType = "void";
+       return true;
+    }
     else if (fun == "logout(int,int,int)")
     {
 	int confirm, sdtype, sdmode;
