@@ -464,7 +464,7 @@ void KCMStyle::styleSpecificConfig()
 
 void KCMStyle::load()
 {
-	KSimpleConfig config( "kdeglobals", true );
+	KConfig config( "kdeglobals", true, false );
 	// Page1 - Build up the Style ListBox
 	loadStyle( config );
 
@@ -740,7 +740,7 @@ void KCMStyle::setStyleDirty()
 // All the Style Switching / Preview stuff
 // ----------------------------------------------------------------
 
-void KCMStyle::loadStyle( KSimpleConfig& config )
+void KCMStyle::loadStyle( KConfig& config )
 {
 	cbStyle->clear();
 
@@ -913,7 +913,7 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 // All the Effects stuff
 // ----------------------------------------------------------------
 
-void KCMStyle::loadEffects( KSimpleConfig& config )
+void KCMStyle::loadEffects( KConfig& config )
 {
 	// Load effects.
 	config.setGroup("KDE");
@@ -1026,7 +1026,7 @@ void KCMStyle::menuEffectChanged( bool enabled )
 // All the Miscellaneous stuff
 // ----------------------------------------------------------------
 
-void KCMStyle::loadMisc( KSimpleConfig& config )
+void KCMStyle::loadMisc( KConfig& config )
 {
 	// KDE's Part via KConfig
 	config.setGroup("Toolbar style");

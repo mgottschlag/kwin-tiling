@@ -77,9 +77,9 @@ protected:
 	void switchStyle(const QString& styleName);
 	void setStyleRecursive(QWidget* w, QStyle* s);
 
-	void loadStyle( KSimpleConfig& config );
-	void loadEffects( KSimpleConfig& config );
-	void loadMisc( KSimpleConfig& config );
+	void loadStyle( KConfig& config );
+	void loadEffects( KConfig& config );
+	void loadMisc( KConfig& config );
 	void addWhatsThis();
 
 protected slots:
