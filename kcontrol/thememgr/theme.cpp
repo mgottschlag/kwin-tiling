@@ -257,7 +257,7 @@ bool Theme::load(const QString &aPath, QString &error)
     rc = system(QFile::encodeName(cmd).data());
     if (rc)
     {
-      error = i18n("Theme contents could not be extracted from\n%1\ninto\n%1")
+      error = i18n("Theme contents could not be extracted from\n%1\ninto\n%2")
                 .arg(aPath).arg(workDir());
       return false;
     }
