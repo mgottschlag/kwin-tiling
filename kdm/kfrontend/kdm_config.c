@@ -4,7 +4,7 @@
 
     $Id$
 
-    Copyright (C) 2001 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -523,6 +523,7 @@ Ent entsCore[] = {
 { "AllowShutdown",	C_allowShutdown | C_ENUM, sd_who, "All" },
 { "AllowSdForceNow",	C_allowNuke | C_ENUM, sd_who,	"All" },
 { "DefaultSdMode",	C_defSdMode | C_ENUM, sd_mode,	"Schedule" },
+{ "InteractiveSd",	C_interactiveSd | C_BOOL, 0,	"true" },
 };
 
 Ent entsGreeter[] = {

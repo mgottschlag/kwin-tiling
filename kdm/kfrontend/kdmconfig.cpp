@@ -4,7 +4,7 @@
     $Id$
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000, 2001 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -144,6 +144,7 @@ KDMConfig::KDMConfig()
     _allowShutdown = GetCfgInt (C_allowShutdown);
     _allowNuke = GetCfgInt (C_allowNuke);
     _defSdMode = GetCfgInt (C_defSdMode);
+    _interactiveSd = GetCfgInt (C_interactiveSd);
 
     if (GetCfgInt (C_GreeterPosFixed)) {
 	_greeterPosX = GetCfgInt (C_GreeterPosX);

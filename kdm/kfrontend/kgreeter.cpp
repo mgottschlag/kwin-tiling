@@ -4,7 +4,7 @@
     $Id$
 
     Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000, 2001 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -696,24 +696,24 @@ moveInto (QRect &what, const QRect &where)
 extern bool kde_have_kipc;
 
 extern "C" void
-kg_main(int argc, char **argv)
+kg_main( int argc, char **argv )
 {
     kde_have_kipc = false;
 #if QT_VERSION >= 300
     KApplication::disableAutoDcopRegistration();
 #endif
-    MyApp myapp(argc, argv);
+    MyApp myapp( argc, argv );
 
     Display *dpy = qt_xdisplay();
 
     kdmcfg = new KDMConfig();
 
-    KGlobal::dirs()->addResourceType("user_pic",
-				     KStandardDirs::kde_default("data") +
-				     QString::fromLatin1("kdm/pics/users/"));
+    KGlobal::dirs()->addResourceType( "user_pic",
+				      KStandardDirs::kde_default("data") +
+				      QString::fromLatin1("kdm/pics/users/") );
 
 
-    myapp.setFont( kdmcfg->_normalFont);
+    myapp.setFont( kdmcfg->_normalFont );
 
 #ifdef HAVE_XKBSETPERCLIENTCONTROLS
     //
@@ -722,26 +722,23 @@ kg_main(int argc, char **argv)
     //
     int opcode, evbase, errbase, majret, minret;
     unsigned int value = XkbPCF_GrabsUseXKBStateMask;
-    if (XkbQueryExtension (dpy, &opcode, &evbase,
-                           &errbase, &majret, &minret))
-        XkbSetPerClientControls (dpy, value, &value);
+    if (XkbQueryExtension( dpy, &opcode, &evbase,
+                           &errbase, &majret, &minret ))
+        XkbSetPerClientControls( dpy, value, &value );
 #endif
-    setup_modifiers (dpy, kdmcfg->_numLockStatus);
-    SecureDisplay (dpy);
+    setup_modifiers( dpy, kdmcfg->_numLockStatus );
+    SecureDisplay( dpy );
     if (!dgrabServer)
-	GSendInt (G_SetupDpy);
-    // GS, 2002 - Default is -1 which means use the u-l screen
-    // also do not forget, the screen numbers start at 0
-    QRect scr;
-    int nscrs = kapp->desktop()->numScreens();
-    if (kdmcfg->_greeterScreen < 0 || kdmcfg->_greeterScreen >= nscrs)
-        scr = kapp->desktop()->screenGeometry(kapp->desktop()->screenNumber(QPoint(0,0)));
-    else scr = kapp->desktop()->screenGeometry(kdmcfg->_greeterScreen);
+	GSendInt( G_SetupDpy );
+    QDesktopWidget *dsk = kapp->desktop();
+    QRect scr = dsk->screenGeometry(
+	unsigned(kdmcfg->_greeterScreen) < unsigned(dsk->numScreens()) ?
+	    kdmcfg->_greeterScreen : dsk->screenNumber( QPoint( 0, 0 ) ) );
     kgreeter = new KGreeter;
-    kgreeter->setMaximumSize(scr.size());
-    kgreeter->move(-10000, -10000);
+    kgreeter->setMaximumSize( scr.size() );
+    kgreeter->move( -10000, -10000 );
     kgreeter->show();
-    QRect grt(QPoint (0, 0), kgreeter->sizeHint());
+    QRect grt( QPoint( 0, 0 ), kgreeter->sizeHint() );
     if (kdmcfg->_greeterPosX >= 0) {
 	grt.moveCenter( QPoint( kdmcfg->_greeterPosX, kdmcfg->_greeterPosY ) );
 	moveInto( grt, scr );
@@ -749,16 +746,16 @@ kg_main(int argc, char **argv)
 	grt.moveCenter( scr.center() );
     }
     kgreeter->setGeometry( grt );
-    if (QApplication::desktop()->screenNumber(QCursor::pos()) !=
-        QApplication::desktop()->screenNumber(grt.center()))
-        QCursor::setPos(grt.center());
+    if (dsk->screenNumber( QCursor::pos() ) !=
+	dsk->screenNumber( grt.center() ))
+	QCursor::setPos( grt.center() );
     XSetInputFocus( dpy, kgreeter->winId(), RevertToParent, CurrentTime );
     XUndefineCursor( dpy, RootWindow( dpy, DefaultScreen( dpy ) ) );
     Debug ("entering event loop\n");
     kapp->exec();
     delete kgreeter;
     delete kdmcfg;
-    UnsecureDisplay (dpy);
+    UnsecureDisplay( dpy );
     restore_modifiers();
 }
 

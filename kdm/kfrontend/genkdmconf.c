@@ -726,6 +726,13 @@ static Ent entsCore[] = {
 "# \"Schedule\" - shutdown after all sessions exit (possibly at once) (Default)\n"
 "# \"TryNow\" - shutdown, if no sessions are open, otherwise do nothing\n"
 "# \"ForceNow\" - shutdown unconditionally\n" }, 
+{ "InteractiveSd",	0, 0, 
+"# If this is false the user must select the shutdown condition/timing already\n"
+"# in the shutdown dialog. If this is true he won't be bothered with the options,\n"
+"# but will be asked what to do if sessions are actually open. Default is true\n"
+"# NOTE: the interaction is currently not implemented. If this is set to true,\n"
+"# a normal forced shutdown will happen (without caring for the AllowSdForceNow\n"
+"# option!), i.e., KDM will behave exactly as before KDE 3.0.\n" }, 
 { "SessSaveFile",	0, 0, 
 "# Where (relatively to the user's home directory) to store the last\n"
 "# selected session. Default is .wmrc\n" },
@@ -780,8 +787,9 @@ static Ent entsGreeter[] = {
 { "GreeterPosY",	0, 0, 0 },
 { "GreeterScreen",	0, 0,
 "# The screen the greeter should be displayed on in multi-headed setups.\n"
-"# Default is -1 which means to use the upper-left screen.\n"
-"# The parameter ranges from -1, 0..(number of screens - 1)\n"  },
+"# The numbering starts with 0 and corresponds to the listing order in the\n"
+"# active ServerLayout section of XF86Config. -1 means to use the upper-left\n"
+"# screen. Default is 0\n" },
 { "GreetString",	F_UPDATE, (const char *)upd_greetstring, 
 "# The headline in the greeter.\n"
 "# The following character pairs are replaced:\n"
@@ -971,6 +979,7 @@ static DEnt dEntsAnyCore[] = {
 { "AllowShutdown",	"Root", 1 },
 { "AllowSdForceNow",	"Root", 0 },
 { "DefaultSdMode",	"ForceNow", 0}, 
+{ "InteractiveSd",	"false", 0}, 
 { "SessSaveFile",	"", 0 },
 };
 

@@ -4,7 +4,7 @@
     $Id$
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000, 2001 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,6 @@ private slots:
 
 private:
     QLabel		*label;
-    QLabel 		*plb;
     QButtonGroup	*howGroup, *whenGroup;
     QPushButton		*okButton;
     QPushButton		*cancelButton;

@@ -4,7 +4,7 @@
 
     $Id$
 
-    Copyright (C) 2001 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify

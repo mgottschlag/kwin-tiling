@@ -3,7 +3,7 @@
     KDE Greeter module for xdm
     $Id$
 
-    Copyright (C) 2001 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
 
     This file contains code from the old xdm core,
     Copyright 1988, 1998  Keith Packard, MIT X Consortium/The Open Group
