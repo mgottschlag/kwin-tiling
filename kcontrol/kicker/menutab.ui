@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>MenuTabBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>410</width>
-            <height>417</height>
+            <height>437</height>
         </rect>
     </property>
     <vbox>
@@ -23,45 +23,162 @@
             <property name="title">
                 <string>K Menu</string>
             </property>
-            <grid>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <spacer row="4" column="0">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>Spacer6</cstring>
+                        <cstring>layout7</cstring>
                     </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>0</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <spacer row="0" column="1">
-                    <property name="name">
-                        <cstring>Spacer4</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>16</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="KListView" row="0" column="2" rowspan="4" colspan="1">
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>layout5</cstring>
+                            </property>
+                            <grid>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+                                    <property name="name">
+                                        <cstring>m_showPixmap</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Show side ima&amp;ge</string>
+                                    </property>
+                                    <property name="checked">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>&lt;qt&gt;When this option is selected an image will appear down the left-hand side of the K Menu. The image will be tinted according to your color settings.
+
+&lt;p&gt;&lt;b&gt;Tip&lt;/b&gt;: You can customize the image that appears in the K Menu by putting an image file called kside.png and a tileable image file called kside_tile.png in $KDEHOME/share/apps/kicker/pics.&lt;/qt&gt;</string>
+                                    </property>
+                                </widget>
+                                <spacer row="2" column="0">
+                                    <property name="name">
+                                        <cstring>Spacer3</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Fixed</enum>
+                                    </property>
+                                    <property name="sizeHint">
+                                        <size>
+                                            <width>16</width>
+                                            <height>20</height>
+                                        </size>
+                                    </property>
+                                </spacer>
+                                <widget class="QRadioButton" row="2" column="1">
+                                    <property name="name">
+                                        <cstring>m_formatNameDesc</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Name (&amp;Description)</string>
+                                    </property>
+                                    <property name="checked">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>When this option is selected, items in the K Menu will appear with the application's name and a brief description in brackets next to the icon.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                                    <property name="name">
+                                        <cstring>TextLabel1_2</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>5</hsizetype>
+                                            <vsizetype>5</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="minimumSize">
+                                        <size>
+                                            <width>0</width>
+                                            <height>0</height>
+                                        </size>
+                                    </property>
+                                    <property name="frameShape">
+                                        <enum>MShape</enum>
+                                    </property>
+                                    <property name="frameShadow">
+                                        <enum>MShadow</enum>
+                                    </property>
+                                    <property name="text">
+                                        <string>Menu item format:</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>Here you can choose how menu entries are shown.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton" row="1" column="1">
+                                    <property name="name">
+                                        <cstring>m_formatSimple</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Name only</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>When this option is selected, items in the K Menu will appear with the application's name next to the icon.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton" row="3" column="1">
+                                    <property name="name">
+                                        <cstring>m_formDescName</cstring>
+                                    </property>
+                                    <property name="focusPolicy">
+                                        <enum>NoFocus</enum>
+                                    </property>
+                                    <property name="text">
+                                        <string>Des&amp;cription (Name)</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>When this option is selected, items in the K Menu will appear with a brief description and the application's name in brackets next to the icon.</string>
+                                    </property>
+                                </widget>
+                            </grid>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer8</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Vertical</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>MinimumExpanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>0</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>PushButton1</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Edit &amp;K Menu</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Start the editor for the K menu. Here you can add, edit, remove and hide applications.</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+                <widget class="KListView">
                     <column>
                         <property name="text">
                             <string>Optional Menus</string>
@@ -84,6 +201,12 @@
                             <verstretch>1</verstretch>
                         </sizepolicy>
                     </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>0</height>
+                        </size>
+                    </property>
                     <property name="fullWidth">
                         <bool>true</bool>
                     </property>
@@ -91,148 +214,7 @@
                         <string>This is a list of the dynamic menus that can be displayed in the KDE menu in addition to the normal applications. Use the checkboxes to add or remove menus.</string>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget" row="0" column="0">
-                    <property name="name">
-                        <cstring>Layout4</cstring>
-                    </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
-                            <property name="name">
-                                <cstring>TextLabel1_2</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>5</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>0</width>
-                                    <height>0</height>
-                                </size>
-                            </property>
-                            <property name="frameShape">
-                                <enum>MShape</enum>
-                            </property>
-                            <property name="frameShadow">
-                                <enum>MShadow</enum>
-                            </property>
-                            <property name="text">
-                                <string>Menu item format:</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Here you can choose how menu entries are shown.</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="1" column="1">
-                            <property name="name">
-                                <cstring>m_formatSimple</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Name only</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>When this option is selected, items in the K Menu will appear with the application's name next to the icon.</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="2" column="1">
-                            <property name="name">
-                                <cstring>m_formatNameDesc</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Na&amp;me (Description)</string>
-                            </property>
-                            <property name="checked">
-                                <bool>true</bool>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>When this option is selected, items in the K Menu will appear with the application's name and a brief description in brackets next to the icon.</string>
-                            </property>
-                        </widget>
-                        <spacer row="2" column="0">
-                            <property name="name">
-                                <cstring>Spacer3</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>16</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QRadioButton" row="3" column="1">
-                            <property name="name">
-                                <cstring>m_formDescName</cstring>
-                            </property>
-                            <property name="focusPolicy">
-                                <enum>TabFocus</enum>
-                            </property>
-                            <property name="text">
-                                <string>Des&amp;cription (Name)</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>When this option is selected, items in the K Menu will appear with a brief description and the application's name in brackets next to the icon.</string>
-                            </property>
-                        </widget>
-                    </grid>
-                </widget>
-                <widget class="QPushButton" row="3" column="0">
-                    <property name="name">
-                        <cstring>PushButton1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Edit &amp;K Menu</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Start the editor for the K menu. Here you can add, edit, remove and hide applications.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="0">
-                    <property name="name">
-                        <cstring>m_showPixmap</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Show &amp;side image</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>&lt;qt&gt;When this option is selected an image will appear down the left-hand side of the K Menu. The image will be tinted according to your color settings.
-
-&lt;p&gt;&lt;b&gt;Tip&lt;/b&gt;: You can customize the image that appears in the K Menu by putting an image file called kside.png and a tileable image file called kside_tile.png in $KDEHOME/share/apps/kicker/pics.&lt;/qt&gt;</string>
-                    </property>
-                </widget>
-                <spacer row="2" column="0">
-                    <property name="name">
-                        <cstring>Spacer9</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>0</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </grid>
+            </hbox>
         </widget>
         <widget class="QGroupBox">
             <property name="name">
@@ -376,7 +358,7 @@
                         <cstring>m_showRecent</cstring>
                     </property>
                     <property name="text">
-                        <string>Sho&amp;w the applications most recently used</string>
+                        <string>Show the &amp;applications most recently used</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -390,7 +372,7 @@
                         <cstring>m_showFrequent</cstring>
                     </property>
                     <property name="text">
-                        <string>Show &amp;the applications most frequently used</string>
+                        <string>Show the applications most fre&amp;quently used</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>When this option is selected the QuickStart menu area will be filled with the applications you use most frequently.</string>
@@ -415,23 +397,6 @@
                 </spacer>
             </grid>
         </widget>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer5</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>0</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
     </vbox>
 </widget>
 <customwidgets>
@@ -468,6 +433,9 @@
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
+    <includehint>klistview.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
 </includehints>
