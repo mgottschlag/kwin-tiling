@@ -113,7 +113,7 @@ Installer::~Installer()
 //-----------------------------------------------------------------------------
 void Installer::readThemesList(void)
 {
-  QDir d(Theme::themesDir(), 0, QDir::Name, QDir::Files|QDir::Dirs);
+  QDir d(Theme::themesDir(), QString::null, QDir::Name, QDir::Files|QDir::Dirs);
   QStrList* entryList;
   QString name;
 
