@@ -528,10 +528,13 @@ void WidgetCanvas::drawSampleWidgets()
                        textLen, paint.fontMetrics().height()), CSM_Button_text );
     hotspots[ spot++ ] =
         HotSpot( QRect(xpos, ypos, textLen+32, 28), CSM_Button_background );
-    brush.setColor( button );
+    //brush.setColor( button );
+    QColorGroup cg2(cg);
+    cg2.setColor(QColorGroup::Button, button);
+    cg2.setColor(QColorGroup::Background, window);
     //qDrawWinButton(&paint, xpos, ypos, textLen+32, 28, cg, false, &brush);
 	kapp->style().drawPrimitive(QStyle::PE_ButtonCommand, &paint,
-			QRect(xpos, ypos, textLen+32, 28), cg);
+			QRect(xpos, ypos, textLen+32, 28), cg2, QStyle::Style_Enabled);
     paint.setPen(buttonTxt);
     paint.drawText(xpos, ypos, textLen+32, 28, AlignCenter,
                    i18n("Push Button"));
