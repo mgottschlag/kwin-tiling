@@ -53,6 +53,7 @@ CKfiMainWidget * CKfi::create(QWidget *parent)
         CKfiGlobal::cfg().addModifiedDir(CKfiGlobal::cfg().getFontsDir()+CKfiGlobal::cfg().getTTSubDir());
         CKfiGlobal::cfg().addModifiedDir(CKfiGlobal::cfg().getFontsDir()+CKfiGlobal::cfg().getT1SubDir());
     }
+
     return new CKfiMainWidget(parent);
 }
 

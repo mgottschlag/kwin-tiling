@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'KfiMainWidget.ui'
 **
-** Created: Tue Jul 31 20:58:48 2001
+** Created: Mon Sep 17 00:38:07 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -29,7 +29,7 @@ CKfiMainWidgetData::CKfiMainWidgetData( QWidget* parent,  const char* name, WFla
 {
     if ( !name )
 	setName( "CKfiMainWidgetData" );
-    resize( 544, 480 ); 
+    resize( 540, 480 ); 
     setCaption( i18n( "Form1" ) );
     CKfiMainWidgetDataLayout = new QGridLayout( this ); 
     CKfiMainWidgetDataLayout->setSpacing( 5 );
@@ -57,7 +57,7 @@ CKfiMainWidgetData::CKfiMainWidgetData( QWidget* parent,  const char* name, WFla
     itsAA = new CXftConfigSettingsWidget( itsAATab, "itsAA" );
 
     itsAATabLayout->addWidget( itsAA, 0, 0 );
-    itsTab->insertTab( itsAATab, i18n( "A&nti Alias" ) );
+    itsTab->insertTab( itsAATab, i18n( "A&nti-Alias" ) );
 
     itsSettingsTab = new QWidget( itsTab, "itsSettingsTab" );
     itsSettingsTabLayout = new QGridLayout( itsSettingsTab ); 

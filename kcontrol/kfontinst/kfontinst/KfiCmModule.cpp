@@ -38,7 +38,7 @@
 
 static bool firstTime=true;
 
-static CKfiCmModule *cm=NULL;  // very hacky...
+CKfiCmModule * CKfiCmModule::theirInstance=NULL;
 
 CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name)
             : KCModule(parent, name)
@@ -51,19 +51,19 @@ CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name)
     topLayout->addWidget(itsMainWidget, 0, 0);
     setButtons(0);
     firstTime=true;
-    cm=this;
+    theirInstance=this;
 }
 
 CKfiCmModule::~CKfiCmModule()
 {
-    cm=NULL;
+    theirInstance=NULL;
     CKfi::destroy();
 }
 
 void CKfiCmModule::madeChanges(bool m)
 {
-    if(NULL!=cm)
-        cm->emitChanged(m);
+    if(NULL!=theirInstance)
+        theirInstance->emitChanged(m);
 }
 
 void CKfiCmModule::emitChanged(bool m)
@@ -108,9 +108,7 @@ extern "C"
 {
     KCModule *create_kfontinst(QWidget *parent, const char *name)
     {
-        CKfiCmModule *mod=new CKfiCmModule(parent, name);
-
-        return mod;
+        return new CKfiCmModule(parent, name);
     };
 }
 #include "KfiCmModule.moc"

@@ -65,9 +65,6 @@ class CFontsWidget : public CFontsWidgetData
     void configureSystem();
     void systemConfigured();
     void preview(const QString &dir, const QString &file);
-
-    public slots:
-
     void enableCfgButton() { itsInstalled->enableCfgButton(); }
     void setCfgButton()    { itsInstalled->setCfgButton(); }
 

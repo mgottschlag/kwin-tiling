@@ -43,6 +43,7 @@ class CKfiCmModule : public KCModule
     virtual ~CKfiCmModule();
 
     static void madeChanges(bool m);
+    static CKfiCmModule * instance() { return theirInstance; }
 
     private:
 
@@ -58,6 +59,8 @@ class CKfiCmModule : public KCModule
     private:
 
     CKfiMainWidget *itsMainWidget;
+
+    static CKfiCmModule *theirInstance;
 };
 
 #endif

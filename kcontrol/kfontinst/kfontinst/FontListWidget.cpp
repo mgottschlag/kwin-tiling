@@ -31,6 +31,7 @@
 #include "Config.h"
 #include "XConfig.h"
 #include "KfiGlobal.h"
+#include "KfiCmModule.h"
 #include "Misc.h"
 #include <qgroupbox.h>
 #include <qpushbutton.h>
@@ -281,7 +282,6 @@ void CDirectoryItem::setOpen(bool open)
             QListViewItem *next=item->nextSibling();
             delete item;
             item=next;
-            
         }
     }
 

@@ -683,7 +683,7 @@ bool CXConfig::createFontsDotDir(const QString &dir)
                     {
                        bool bitmap=CFontEngine::isABitmap(fInfo->fileName());
 
-                       emit step(i18n("Adding ") +fInfo->filePath()+ i18n(" to X"));
+                       emit step(i18n("Adding %1 to X").arg(fInfo->filePath()));
 
                        if(!bitmap)
                        {

@@ -32,6 +32,7 @@
 #include "FontEngine.h"
 #include "Config.h"
 #include "SysConfigurer.h"
+#include "KfiCmModule.h"
 #include <qbitmap.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
@@ -118,8 +119,8 @@ void CFontsWidget::setPreviewMode(bool on)
 void CFontsWidget::initProgress(const QString &title, int numSteps)
 {
     emit progressActive(true);
-    itsDisk->setEnabled(false);
-    itsInstalled->setEnabled(false);
+    if(kapp->activeWindow())
+        kapp->activeWindow()->setEnabled(false);
     itsProgress->setRange(0, numSteps);
     setPreviewMode(false);
     itsBox->setTitle(i18n(title));
@@ -137,6 +138,13 @@ void CFontsWidget::progress(const QString &str)
         itsProgress->advance(1);
 
     kapp->processEvents();
+
+    //
+    // If KControl has been closed by the user, then exit the application now.
+    // This is needed because we're in the middle of updating the font list, and can't continue
+    // as they've been deleted...
+    if(!CKfiCmModule::instance())
+        ::exit(0);
 }
 
 void CFontsWidget::stopProgress()
@@ -149,8 +157,9 @@ void CFontsWidget::stopProgress()
 
     setPreviewMode(true);
     kapp->processEvents();
-    itsDisk->setEnabled(true);
-    itsInstalled->setEnabled(true);
+
+    if(kapp->activeWindow())
+        kapp->activeWindow()->setEnabled(true);
     emit progressActive(false);
 }
 

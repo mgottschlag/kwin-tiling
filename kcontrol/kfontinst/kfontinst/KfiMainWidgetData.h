@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'KfiMainWidget.ui'
 **
-** Created: Sun Jul 1 16:18:01 2001
+** Created: Mon Sep 17 00:38:07 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

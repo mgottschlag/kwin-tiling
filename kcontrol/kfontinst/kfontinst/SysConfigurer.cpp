@@ -162,10 +162,10 @@ void CSysConfigurer::go()
 
     for(d=0; d<CKfiGlobal::cfg().getModifiedDirs().count(); d++)
     {
-        status(i18n("Configuring X (")+CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])+")...");
+        status(i18n("Configuring X (%1)...").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])));
         if(!CKfiGlobal::xcfg().go(CKfiGlobal::cfg().getModifiedDirs()[d]))
         {
-            status(i18n("Could not configure X (")+CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])+")", QString::null, true);
+            status(i18n("Could not configure X (%1)").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])), QString::null, true);
             return;
         }
     }
@@ -201,10 +201,10 @@ void CSysConfigurer::go()
     if(CKfiGlobal::cfg().getDoGhostscript())
         for(d=0; d<CKfiGlobal::cfg().getModifiedDirs().count(); d++)
         {
-            status(i18n("Creating Fontmap (")+CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])+")...");
+            status(i18n("Creating Fontmap (%1)...").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])));
             if(!itsFm.go(CKfiGlobal::cfg().getModifiedDirs()[d]))
             {
-                status(i18n("Could not configure Fontmap (")+CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])+")", "File permissions?", true);
+                status(i18n("Could not configure Fontmap (%1)").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])), "File permissions?", true);
                 return;
             }
         }
@@ -214,10 +214,10 @@ void CSysConfigurer::go()
         {
             CAfmCreator::EStatus st;
 
-            status(i18n("Creating AFMs (")+CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])+")...");
+            status(i18n("Creating AFMs (%1)...").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])));
             if((st=itsAfm.go(CKfiGlobal::cfg().getModifiedDirs()[d]))!=CAfmCreator::SUCCESS)
             {
-                status(i18n("Could not create AFM files (")+CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])+")", CAfmCreator::statusToStr(st), true);
+                status(i18n("Could not create AFM files (%1)").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])), CAfmCreator::statusToStr(st), true);
                 return;
             }
         }
@@ -227,10 +227,10 @@ void CSysConfigurer::go()
         {
             CStarOfficeConfig::EStatus st;
 
-            status(i18n("Configuring StarOffice (")+CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])+")...");
+            status(i18n("Configuring StarOffice (%1)...").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])));
             if((st=itsSo.go(CKfiGlobal::cfg().getModifiedDirs()[d]))!=CStarOfficeConfig::SUCCESS)
             {
-                status(i18n("Could not configure StarOffice (")+CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])+")", CStarOfficeConfig::statusToStr(st), true);
+                status(i18n("Could not configure StarOffice (%1)").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])), CStarOfficeConfig::statusToStr(st), true);
                 return;
             }
         }

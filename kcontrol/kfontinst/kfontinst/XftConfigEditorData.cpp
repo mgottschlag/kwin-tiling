@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'XftConfigEditor.ui'
 **
-** Created: Tue Jul 3 01:37:18 2001
+** Created: Mon Sep 17 00:15:51 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -32,7 +32,7 @@ CXftConfigEditorData::CXftConfigEditorData( QWidget* parent,  const char* name, 
 {
     if ( !name )
 	setName( "CXftConfigEditorData" );
-    resize( 557, 286 ); 
+    resize( 553, 286 ); 
     setCaption( i18n( "XftConfig Rule Editor" ) );
     CXftConfigEditorDataLayout = new QGridLayout( this ); 
     CXftConfigEditorDataLayout->setSpacing( 6 );
@@ -82,33 +82,16 @@ CXftConfigEditorData::CXftConfigEditorData( QWidget* parent,  const char* name, 
     Frame5Layout->setMargin( 0 );
 
     itsMatchQualCombo = new QComboBox( FALSE, Frame5, "itsMatchQualCombo" );
-    itsMatchQualCombo->insertItem( i18n( "all" ) );
-    itsMatchQualCombo->insertItem( i18n( "any" ) );
     itsMatchQualCombo->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, itsMatchQualCombo->sizePolicy().hasHeightForWidth() ) );
 
     Frame5Layout->addWidget( itsMatchQualCombo, 0, 0 );
 
     itsMatchFieldNameCombo = new QComboBox( FALSE, Frame5, "itsMatchFieldNameCombo" );
-    itsMatchFieldNameCombo->insertItem( i18n( "foundry" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "encoding" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "spacing" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "bold" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "italic" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "antialias" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "family" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "size" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "style" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "slant" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "weight" ) );
-    itsMatchFieldNameCombo->insertItem( i18n( "outline" ) );
     itsMatchFieldNameCombo->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, itsMatchFieldNameCombo->sizePolicy().hasHeightForWidth() ) );
 
     Frame5Layout->addWidget( itsMatchFieldNameCombo, 0, 1 );
 
     itsMatchCompareCombo = new QComboBox( FALSE, Frame5, "itsMatchCompareCombo" );
-    itsMatchCompareCombo->insertItem( i18n( "==" ) );
-    itsMatchCompareCombo->insertItem( i18n( ">" ) );
-    itsMatchCompareCombo->insertItem( i18n( "<" ) );
     itsMatchCompareCombo->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, itsMatchCompareCombo->sizePolicy().hasHeightForWidth() ) );
 
     Frame5Layout->addWidget( itsMatchCompareCombo, 0, 2 );
@@ -171,40 +154,11 @@ CXftConfigEditorData::CXftConfigEditorData( QWidget* parent,  const char* name, 
     Frame5_2Layout->setMargin( 0 );
 
     itsEditFieldNameCombo = new QComboBox( FALSE, Frame5_2, "itsEditFieldNameCombo" );
-    itsEditFieldNameCombo->insertItem( i18n( "foundry" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "encoding" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "spacing" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "bold" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "italic" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "antialias" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "family" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "size" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "style" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "slant" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "weight" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "outline" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "pixelsize" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "charspace" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "minspace" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "rgba" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "xlfd" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "file" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "core" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "render" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "index" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "scalable" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "scale" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "charwidth" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "charheight" ) );
-    itsEditFieldNameCombo->insertItem( i18n( "matrix" ) );
     itsEditFieldNameCombo->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, itsEditFieldNameCombo->sizePolicy().hasHeightForWidth() ) );
 
     Frame5_2Layout->addWidget( itsEditFieldNameCombo, 0, 1 );
 
     itsEditAssignCombo = new QComboBox( FALSE, Frame5_2, "itsEditAssignCombo" );
-    itsEditAssignCombo->insertItem( i18n( "=" ) );
-    itsEditAssignCombo->insertItem( i18n( "+=" ) );
-    itsEditAssignCombo->insertItem( i18n( "=+" ) );
     itsEditAssignCombo->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, itsEditAssignCombo->sizePolicy().hasHeightForWidth() ) );
 
     Frame5_2Layout->addWidget( itsEditAssignCombo, 0, 2 );

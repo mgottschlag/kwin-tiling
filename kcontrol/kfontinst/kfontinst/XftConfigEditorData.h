@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'XftConfigEditor.ui'
 **
-** Created: Tue Jul 3 01:37:18 2001
+** Created: Mon Sep 17 00:15:51 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
