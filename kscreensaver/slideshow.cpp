@@ -5,6 +5,7 @@
  */
 
 
+// Need to redefine the QWidget::create(Window) call to use it
 #define protected public
 #include <qwidget.h>
 #undef protected
@@ -45,6 +46,48 @@ static kSlideShowSaver *sSaver = NULL;
 
 
 //=============================================================================
+//  Class SaverWidget
+//=============================================================================
+SaverWidget::SaverWidget(): Inherited()
+{
+}
+
+SaverWidget::~SaverWidget()
+{
+}
+
+void SaverWidget::mousePressEvent(QMouseEvent*)
+{
+  stopScreenSaver();
+  exit (0);
+}
+
+void SaverWidget::keyPressEvent(QKeyEvent*)
+{
+  stopScreenSaver();
+  exit (0);
+}
+
+void SaverWidget::create(Drawable drawable)
+{
+  unsigned int w=0, h=0, udummy;
+  Window rootWin;
+  int dummy;
+
+  if (drawable)
+  {
+    XGetGeometry(qt_xdisplay(), drawable, &rootWin, &dummy, &dummy,
+		 &w, &h, &udummy, &udummy);
+  }
+  if (w == 0) w = 600;
+  if (h == 0) h = 420;
+
+  Inherited::create((WId)drawable);
+  resize(w, h);
+}
+
+
+//=============================================================================
 //  Class kSlideShowSaver
 //=============================================================================
 kSlideShowSaver::kSlideShowSaver(Drawable drawable): kScreenSaver(drawable)
@@ -56,10 +99,8 @@ kSlideShowSaver::kSlideShowSaver(Drawable drawable): kScreenSaver(drawable)
 
   kimgioRegister();
 
-  mWidget.resize(1,1);
-  mWidget.create((WId)drawable);
+  mWidget.create(drawable);
   mWidget.setBackgroundColor(black);
-  mWidget.resize(800,600);
   blank();
 
   mEffect = NULL;
@@ -674,9 +715,7 @@ kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
 {
   setCaption(glocale->translate("Setup Slide Show"));
 
-  QLabel *label;
   QPushButton *button;
-
   mSaver = NULL;
 
   QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
@@ -711,9 +750,10 @@ kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   tl11->addWidget(mCbxShowName);
   tl11->addSpacing(5);
 
-  label = new QLabel(glocale->translate("Delay:"), this);
-  minSize(label);
-  tl11->addWidget(label);
+  mLblDelay = new QLabel(glocale->translate("Delay:"), this);
+  minSize(mLblDelay);
+  mLblDelay->setMaximumWidth(32767);
+  tl11->addWidget(mLblDelay);
 
   mDelay = new QSlider(1, 60, 10, 1, QSlider::Horizontal, this);
   mDelay->setMinimumSize(90, 20);
@@ -763,7 +803,14 @@ void kSlideShowSetup::readSettings()
   mCbxRandom->setChecked(config->readBoolEntry("ShowRandom", true));
   mCbxZoom->setChecked(config->readBoolEntry("ZoomImages", false));
   mCbxShowName->setChecked(config->readBoolEntry("PrintName", true));
-  mDelay->setValue(config->readNumEntry("Delay", 5));
+  num = config->readNumEntry("Delay", 20);
+  mDelay->setValue(num);
+
+  QString str;
+  str.sprintf("%s %d %s", (const char*)glocale->translate("Delay:"),
+	      num, (const char*)glocale->translate("Seconds"));
+  mLblDelay->setText(str);
+
   curDir = config->readEntry("Directory");
 
   config->setGroup("Slide Show");
@@ -826,9 +873,15 @@ void kSlideShowSetup::writeSettings()
 
 
 //-----------------------------------------------------------------------------
-void kSlideShowSetup::slotDelay(int)
+void kSlideShowSetup::slotDelay(int x)
 {
+  QString str;
+
   writeSettings();
+
+  str.sprintf("%s %d %s", (const char*)glocale->translate("Delay:"),
+	      x, (const char*)glocale->translate("Seconds"));
+  mLblDelay->setText(str);
 }
 
 

@@ -21,9 +21,24 @@ class kSlideShowSaver;
 class QCheckBox;
 class QSlider;
 class QComboBox;
+class QLabel;
 
 //-----------------------------------------------------------------------------
-class kSlideShowSaver : public kScreenSaver
+class SaverWidget: public QWidget
+{
+  Q_OBJECT
+  typedef QWidget Inherited;
+public:
+  SaverWidget();
+  virtual ~SaverWidget();
+  void create(Drawable);
+protected:
+  virtual void keyPressEvent(QKeyEvent*);
+  virtual void mousePressEvent(QMouseEvent*);
+};
+
+//-----------------------------------------------------------------------------
+class kSlideShowSaver: public kScreenSaver
 {
   Q_OBJECT
 public:
@@ -92,7 +107,7 @@ protected:
   int mFileIdx;
   QImage mImage;
   QPixmap mNextScreen;
-  QWidget mWidget;
+  SaverWidget mWidget;
   EffectMethod* mEffectList;
   EffectMethod mEffect;
   int mNumEffects;
@@ -137,6 +152,7 @@ private:
   QCheckBox *mCbxRandom, *mCbxZoom, *mCbxShowName;
   QComboBox *mCboDir;
   QSlider *mDelay;
+  QLabel *mLblDelay;
 };
 
 #endif /*SLIDESHOW_H*/
