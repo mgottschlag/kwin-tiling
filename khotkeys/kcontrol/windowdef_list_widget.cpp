@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _WINDOWDEF_LIST_WIDGET_CPP_
@@ -44,14 +44,17 @@ Windowdef_list_widget::Windowdef_list_widget( QWidget* parent_P, const char* nam
     QPopupMenu* popup = new QPopupMenu; // CHECKME looks like setting parent doesn't work
     popup->insertItem( i18n( "Simple Window..." ), TYPE_WINDOWDEF_SIMPLE );
     connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
+
+    connect( windows_listview, SIGNAL( doubleClicked ( QListViewItem *, const QPoint &, int ) ),
+             this, SLOT( modify_pressed() ) );
     new_button->setPopup( popup );
     windows_listview->header()->hide();
     windows_listview->addColumn( "" );
     windows_listview->setSorting( -1 );
     windows_listview->setForceSelect( true );
-    copy_button->setEnabled( false );    
-    modify_button->setEnabled( false );    
-    delete_button->setEnabled( false );    
+    copy_button->setEnabled( false );
+    modify_button->setEnabled( false );
+    delete_button->setEnabled( false );
     clear_data();
     // KHotKeys::Module::changed()
     connect( new_button, SIGNAL( clicked()),
@@ -65,7 +68,7 @@ Windowdef_list_widget::Windowdef_list_widget( QWidget* parent_P, const char* nam
     connect( comment_lineedit, SIGNAL( textChanged( const QString& )),
         module, SLOT( changed()));
     }
-    
+
 Windowdef_list_widget::~Windowdef_list_widget()
     {
     delete new_button->popup();
@@ -76,7 +79,7 @@ void Windowdef_list_widget::clear_data()
     comment_lineedit->setText( "" );
     windows_listview->clear();
     }
-    
+
 void Windowdef_list_widget::set_data( const Windowdef_list* data_P )
     {
     comment_lineedit->setText( data_P->comment());
@@ -87,7 +90,7 @@ void Windowdef_list_widget::set_data( const Windowdef_list* data_P )
          ++it )
         after = create_listview_item( *it, windows_listview, NULL, after, true );
     }
-    
+
 Windowdef_list* Windowdef_list_widget::get_data() const
     {
 // CHECKME TODO hmm, tady to bude chtit asi i children :(
@@ -122,24 +125,24 @@ void Windowdef_list_widget::new_selected( int type_P )
         delete dlg;
         }
     }
-    
+
 void Windowdef_list_widget::copy_pressed()
     {
     windows_listview->setSelected( create_listview_item( selected_item->window(),
         selected_item->parent() ? NULL : windows_listview, selected_item->parent(),
         selected_item, true ), true );
     }
-    
+
 void Windowdef_list_widget::delete_pressed()
     {
     delete selected_item; // CHECKME snad vyvola signaly pro enable()
     }
-    
+
 void Windowdef_list_widget::modify_pressed()
     {
     edit_listview_item( selected_item );
     }
-    
+
 void Windowdef_list_widget::current_changed( QListViewItem* item_P )
     {
 //    if( item_P == selected_item )
@@ -195,7 +198,7 @@ QString Windowdef_list_item::text( int column_P ) const
     {
     return column_P == 0 ? window()->description() : QString::null;
     }
-    
+
 Windowdef_list_item::~Windowdef_list_item()
     {               // CHECKME if the listview will ever be used hiearchically,
     delete _window; // this will be wrong, the windows tree will have to be kept
@@ -212,19 +215,19 @@ Windowdef_simple_dialog::Windowdef_simple_dialog( Windowdef_simple* window_P, QO
     widget->set_data( window_P );
     setMainWidget( widget );
     }
-    
+
 Windowdef* Windowdef_simple_dialog::edit_windowdef()
     {
     exec();
     return window;
     }
-    
+
 void Windowdef_simple_dialog::accept()
     {
     KDialogBase::accept();
     window = widget->get_data(); // CHECKME NULL ?
     }
-    
+
 
 } // namespace KHotKeys
 
