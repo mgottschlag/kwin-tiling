@@ -110,7 +110,12 @@ int main(int argc, char *argv[])
      KCGlobal::setIsInfoCenter(false);
   }
 
-  aboutData->addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
+  
+  if (argv_0.right(11) == "kinfocenter")
+    aboutData->addAuthor("Helge Deller", I18N_NOOP("Current Maintainer"), "deller@kde.org");
+  else
+    aboutData->addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
+
   aboutData->addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
   aboutData->addAuthor("Matthias Elter",0, "elter@kde.org");
   aboutData->addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
