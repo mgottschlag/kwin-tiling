@@ -129,7 +129,9 @@ QString USBDevice::dump()
   if (!prname.isEmpty())
     pr += "<td>(" + prname +")</td>";
   r += i18n("<tr><td><i>Protocol</i></td>%1</tr>").arg(pr);
-  r += i18n("<tr><td><i>USB Version</i></td><td>%1.%2</td></tr>").arg(_verMajor).arg(_verMinor);
+  r += i18n("<tr><td><i>USB Version</i></td><td>%1.%2</td></tr>")
+    .arg(_verMajor,0,16)
+    .arg(QString::number(_verMinor,16).prepend('0').right(2));
   r += "<tr><td></td></tr>";
 
   QString v = QString::number(_vendorID,16);
@@ -142,7 +144,9 @@ QString USBDevice::dump()
   if (!pname.isEmpty())
     p += "<td>(" + pname +")</td>";
   r += i18n("<tr><td><i>Product ID</i></td><td>0x%1</td></tr>").arg(p);
-  r += i18n("<tr><td><i>Revision</i></td><td>%1.%2</td></tr>").arg(_revMajor).arg(_revMinor);
+  r += i18n("<tr><td><i>Revision</i></td><td>%1.%2</td></tr>")
+    .arg(_revMajor,0,16)
+    .arg(QString::number(_revMinor,16).prepend('0').right(2));
   r += "<tr><td></td></tr>";
 
   r += i18n("<tr><td><i>Speed</i></td><td>%1 Mbit/s</td></tr>").arg(_speed);
