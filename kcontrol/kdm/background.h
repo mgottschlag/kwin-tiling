@@ -1,0 +1,53 @@
+/* vi: ts=8 sts=4 sw=4
+ *
+ * $Id$
+ *
+ * This file is part of the KDE project, module kcmdisplay.
+ * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
+ *
+ * You can Freely distribute this program under the GNU General Public
+ * License. See the file "COPYING" for the exact licensing terms.
+ */
+
+#ifndef __Bgnd_h_Included__
+#define __Bgnd_h_Included__
+
+#include <qobject.h>
+#include <qwidget.h>
+
+
+class KSimpleConfig;
+class Backgnd;
+class KGlobalBackgroundSettings;
+class QCheckBox;
+class QLabel;
+
+class KBackground: public QWidget
+{
+    Q_OBJECT
+public:
+    KBackground(QWidget *parent=0, const char *name=0);
+    ~KBackground();
+
+    void load();
+    void save();
+    void defaults();
+    void makeReadOnly();
+signals:
+    void changed(bool);
+
+private slots:
+    void slotEnableChanged();
+    void moduleChanged(bool);
+private:
+    void init();
+    void apply();
+
+    QCheckBox *m_pCBEnable;
+    QLabel *m_pMLabel;
+    KSimpleConfig *m_simpleConf;
+    Backgnd *m_background;
+};
+
+
+#endif // __Bgnd_h_Included__
