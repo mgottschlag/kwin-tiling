@@ -1,0 +1,707 @@
+<!DOCTYPE UI><UI>
+<class>KCMEmailBase</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>KCMEmailBase</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>595</width>
+            <height>335</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>E-Mail</string>
+    </property>
+    <property>
+        <name>layoutMargin</name>
+    </property>
+    <property>
+        <name>layoutSpacing</name>
+    </property>
+    <vbox>
+        <property stdset="1">
+            <name>margin</name>
+            <number>0</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>0</number>
+        </property>
+        <widget>
+            <class>QLayoutWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Layout6</cstring>
+            </property>
+            <property>
+                <name>layoutMargin</name>
+            </property>
+            <hbox>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>0</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget>
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>lblCurrentProfile</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Cu&amp;rrent Profile:</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>cmbCurProfile</cstring>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QComboBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>cmbCurProfile</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>btnNewProfile</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>New Profile...</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property>
+                <name>name</name>
+                <cstring>Spacer28</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Fixed</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <widget>
+            <class>QTabWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TabWidget2</cstring>
+            </property>
+            <property>
+                <name>whatsThis</name>
+                <string>This is the protocol used for sending mails. Your e-mail provider should have supplied this information. If you use dial-up networking, you are probably using an SMTP server.</string>
+            </property>
+            <widget>
+                <class>QWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>tabGeneral</cstring>
+                </property>
+                <attribute>
+                    <name>title</name>
+                    <string>&amp;General</string>
+                </attribute>
+                <vbox>
+                    <property stdset="1">
+                        <name>margin</name>
+                        <number>11</number>
+                    </property>
+                    <property stdset="1">
+                        <name>spacing</name>
+                        <number>6</number>
+                    </property>
+                    <widget>
+                        <class>QGroupBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>grpUserInfo</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>title</name>
+                            <string>User Information</string>
+                        </property>
+                        <vbox>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>11</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget>
+                                <class>QLayoutWidget</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>Layout3</cstring>
+                                </property>
+                                <grid>
+                                    <property stdset="1">
+                                        <name>margin</name>
+                                        <number>0</number>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>spacing</name>
+                                        <number>6</number>
+                                    </property>
+                                    <widget row="3"  column="1" >
+                                        <class>QLineEdit</class>
+                                        <property stdset="1">
+                                            <name>name</name>
+                                            <cstring>txtReplyTo</cstring>
+                                        </property>
+                                        <property>
+                                            <name>whatsThis</name>
+                                            <string>You can set a reply address if you want replies to your e-mail messages to go to a different address than the e-mail address above. Most likely, you should leave the reply address blank, so replies go to the e-mail address you entered above.&lt;p&gt;&lt;em&gt; Please note:&lt;/em&gt; &lt;ul&gt;&lt;li&gt;You do not need to enter the same email address as above.&lt;/li&gt;&lt;li&gt;You should not use a reply address if you frequently use discussion mailing lists.&lt;/li&gt;&lt;/ul&gt;</string>
+                                        </property>
+                                    </widget>
+                                    <widget row="2"  column="1" >
+                                        <class>QLineEdit</class>
+                                        <property stdset="1">
+                                            <name>name</name>
+                                            <cstring>txtEMailAddr</cstring>
+                                        </property>
+                                        <property>
+                                            <name>whatsThis</name>
+                                            <string>Enter your email address here, e.g. "john@doe.com\ (without the quotation marks). This information is mandatory if you want to use email.&lt;p&gt;
+Do &lt;em&gt;not&lt;/em&gt; enter something like John Doe &amp;lt;john@doe.com&amp;gt;", just a plain email address. Your email address may not contain any blank spaces.</string>
+                                        </property>
+                                    </widget>
+                                    <widget row="1"  column="0" >
+                                        <class>QLabel</class>
+                                        <property stdset="1">
+                                            <name>name</name>
+                                            <cstring>lblOrganization</cstring>
+                                        </property>
+                                        <property stdset="1">
+                                            <name>text</name>
+                                            <string>Or&amp;ganization:</string>
+                                        </property>
+                                        <property>
+                                            <name>buddy</name>
+                                            <cstring>txtOrganization</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget row="3"  column="0" >
+                                        <class>QLabel</class>
+                                        <property stdset="1">
+                                            <name>name</name>
+                                            <cstring>lblReplyTo</cstring>
+                                        </property>
+                                        <property stdset="1">
+                                            <name>text</name>
+                                            <string>Reply-&amp;To Address:</string>
+                                        </property>
+                                        <property>
+                                            <name>buddy</name>
+                                            <cstring>txtReplyTo</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget row="1"  column="1" >
+                                        <class>QLineEdit</class>
+                                        <property stdset="1">
+                                            <name>name</name>
+                                            <cstring>txtOrganization</cstring>
+                                        </property>
+                                        <property>
+                                            <name>whatsThis</name>
+                                            <string>Here you can enter the name of your organization, company or university. This field is &lt;em&gt;optional&lt;/em&gt;. However, if you are using a business account and communicate with persons working for other companies, providing the name of your organization is recommended.</string>
+                                        </property>
+                                    </widget>
+                                    <widget row="0"  column="0" >
+                                        <class>QLabel</class>
+                                        <property stdset="1">
+                                            <name>name</name>
+                                            <cstring>lblFullName</cstring>
+                                        </property>
+                                        <property stdset="1">
+                                            <name>text</name>
+                                            <string>&amp;Full Name:</string>
+                                        </property>
+                                        <property>
+                                            <name>buddy</name>
+                                            <cstring>txtFullName</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget row="0"  column="1" >
+                                        <class>QLineEdit</class>
+                                        <property stdset="1">
+                                            <name>name</name>
+                                            <cstring>txtFullName</cstring>
+                                        </property>
+                                        <property>
+                                            <name>whatsThis</name>
+                                            <string>Enter your full name here, e.g. "John Doe" (without the quotation
+marks).  Some people like to provide a nick name only. You can leave this field blank and still use email. However, providing your full name is &lt;em&gt;recommended&lt;/em&gt; as this makes it much easier for your recipient to browse his or her email.</string>
+                                        </property>
+                                    </widget>
+                                    <widget row="2"  column="0" >
+                                        <class>QLabel</class>
+                                        <property stdset="1">
+                                            <name>name</name>
+                                            <cstring>lbl_EMailAddr</cstring>
+                                        </property>
+                                        <property stdset="1">
+                                            <name>text</name>
+                                            <string>&amp;E-Mail Address:</string>
+                                        </property>
+                                        <property>
+                                            <name>buddy</name>
+                                            <cstring>txtEMailAddr</cstring>
+                                        </property>
+                                    </widget>
+                                </grid>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <widget>
+                        <class>QGroupBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>grpPrefClient</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>title</name>
+                            <string>Preferred E-Mail Client</string>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>Enter the path to your preferred email client (KMail, Mutt, etc.) here or choose it with the &lt;em&gt;Browse...&lt;/em&gt; button. If no client is specified here, KMail will be used (if available) instead.&lt;p/&gt; You can also use several placeholders which will be replaced with the following values:&lt;p/&gt;&lt;ul&gt;&lt;li&gt;%s: Subject&lt;/li&gt;&lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt;&lt;li&gt;%b: Blind Carbon Copy&lt;/li&gt;&lt;li&gt;%B: Body template&lt;/li&gt;&lt;li&gt;%t: Recipient's address&lt;/li&gt;&lt;/ul&gt;</string>
+                        </property>
+                        <vbox>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>11</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget>
+                                <class>KURLRequester</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>txtEMailClient</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>sizePolicy</name>
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                    </sizepolicy>
+                                </property>
+                                <property stdset="1">
+                                    <name>minimumSize</name>
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>Press this button to select your favorite email client. Please note that the file you select has to have the executable attribute set in order to be accepted.</string>
+                                </property>
+                            </widget>
+                            <widget>
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>chkRunTerminal</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>&amp;Run In Terminal</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>Activate this option if you want the selected email client to be executed in a terminal (e.g. &lt;em&gt;Konsole&lt;/em&gt;).</string>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <spacer>
+                        <property>
+                            <name>name</name>
+                            <cstring>Spacer2</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>orientation</name>
+                            <enum>Vertical</enum>
+                        </property>
+                        <property stdset="1">
+                            <name>sizeType</name>
+                            <enum>Expanding</enum>
+                        </property>
+                        <property>
+                            <name>sizeHint</name>
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+            <widget>
+                <class>QWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>tabIncoming</cstring>
+                </property>
+                <attribute>
+                    <name>title</name>
+                    <string>&amp;Incoming E-Mail</string>
+                </attribute>
+                <vbox>
+                    <property stdset="1">
+                        <name>margin</name>
+                        <number>11</number>
+                    </property>
+                    <property stdset="1">
+                        <name>spacing</name>
+                        <number>6</number>
+                    </property>
+                    <widget>
+                        <class>QButtonGroup</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>grpIncoming</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>title</name>
+                            <string>Reception Method</string>
+                        </property>
+                        <property>
+                            <name>layoutMargin</name>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>This is the protocol used by your incoming e-mail server. Your e-mail provider should have supplied this information. If you use dial-up networking, you are probably using a POP3 server.</string>
+                        </property>
+                        <vbox>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>11</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget>
+                                <class>QRadioButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>radIMAP</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>I&amp;MAP</string>
+                                </property>
+                            </widget>
+                            <widget>
+                                <class>QRadioButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>radPOP</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>&amp;POP 3</string>
+                                </property>
+                            </widget>
+                            <widget>
+                                <class>QRadioButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>radICMLocal</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Local M&amp;ailbox</string>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <widget>
+                        <class>QLayoutWidget</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>Layout4</cstring>
+                        </property>
+                        <hbox>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>0</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget>
+                                <class>QPushButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>btnICMSettings</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>&amp;Incoming mailbox settings...</string>
+                                </property>
+                            </widget>
+                            <spacer>
+                                <property>
+                                    <name>name</name>
+                                    <cstring>Spacer8</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>orientation</name>
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property stdset="1">
+                                    <name>sizeType</name>
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property>
+                                    <name>sizeHint</name>
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </hbox>
+                    </widget>
+                    <spacer>
+                        <property>
+                            <name>name</name>
+                            <cstring>Spacer6</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>orientation</name>
+                            <enum>Vertical</enum>
+                        </property>
+                        <property stdset="1">
+                            <name>sizeType</name>
+                            <enum>Expanding</enum>
+                        </property>
+                        <property>
+                            <name>sizeHint</name>
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+            <widget>
+                <class>QWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>tabOutgoing</cstring>
+                </property>
+                <attribute>
+                    <name>title</name>
+                    <string>&amp;Outgoing E-Mail</string>
+                </attribute>
+                <vbox>
+                    <property stdset="1">
+                        <name>margin</name>
+                        <number>11</number>
+                    </property>
+                    <property stdset="1">
+                        <name>spacing</name>
+                        <number>6</number>
+                    </property>
+                    <widget>
+                        <class>QButtonGroup</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>grpOutgoing</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>title</name>
+                            <string>Delivery Method</string>
+                        </property>
+                        <vbox>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>11</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget>
+                                <class>QRadioButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>radSMTP</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>&amp;SMTP</string>
+                                </property>
+                            </widget>
+                            <widget>
+                                <class>QRadioButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>radOGMLocal</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>&amp;Local Delivery</string>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <widget>
+                        <class>QLayoutWidget</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>Layout4_2</cstring>
+                        </property>
+                        <hbox>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>0</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget>
+                                <class>QPushButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>btnOGMSettings</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>&amp;Outgoing mailbox settings...</string>
+                                </property>
+                            </widget>
+                            <spacer>
+                                <property>
+                                    <name>name</name>
+                                    <cstring>Spacer9</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>orientation</name>
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property stdset="1">
+                                    <name>sizeType</name>
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property>
+                                    <name>sizeHint</name>
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </hbox>
+                    </widget>
+                    <spacer>
+                        <property>
+                            <name>name</name>
+                            <cstring>Spacer7</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>orientation</name>
+                            <enum>Vertical</enum>
+                        </property>
+                        <property stdset="1">
+                            <name>sizeType</name>
+                            <enum>Expanding</enum>
+                        </property>
+                        <property>
+                            <name>sizeHint</name>
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+        </widget>
+    </vbox>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>KURLRequester</class>
+        <header location="global">kurlrequester.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+    </customwidget>
+</customwidgets>
+<images>
+    <image>
+        <name>image0</name>
+        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
+    </image>
+</images>
+<tabstops>
+    <tabstop>cmbCurProfile</tabstop>
+    <tabstop>btnNewProfile</tabstop>
+    <tabstop>TabWidget2</tabstop>
+    <tabstop>txtFullName</tabstop>
+    <tabstop>txtOrganization</tabstop>
+    <tabstop>txtEMailAddr</tabstop>
+    <tabstop>txtReplyTo</tabstop>
+    <tabstop>chkRunTerminal</tabstop>
+    <tabstop>radIMAP</tabstop>
+    <tabstop>radPOP</tabstop>
+    <tabstop>radICMLocal</tabstop>
+    <tabstop>btnICMSettings</tabstop>
+    <tabstop>radSMTP</tabstop>
+    <tabstop>radOGMLocal</tabstop>
+    <tabstop>btnOGMSettings</tabstop>
+</tabstops>
+</UI>
