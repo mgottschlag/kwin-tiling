@@ -365,12 +365,16 @@ void KScreenSaver::load()
 {
     readSettings();
 
-    SaverConfig *saver;
-    mSelected = -1;
+//with the following line, the Test and Setup buttons are not enabled correctly
+//if no saver was selected, the "Reset" and the "Enable screensaver", it is only called when starting and when pressing reset, aleXXX
+//    mSelected = -1;
     int i = 0;
-    for (saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
+    for (SaverConfig* saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
         if (saver->file() == mSaver)
+        {
             mSelected = i;
+            break;
+        };
         i++;
     }
     if ( mSelected > -1 )
@@ -596,7 +600,6 @@ void KScreenSaver::slotEnable(bool e)
 {
     if ( !e ) {
       mSetupBt->setEnabled( false );
-      mEnabled = false;
     } else {
       if (!mSetupProc->isRunning() && mSelected >= 0)
       {
@@ -606,8 +609,8 @@ void KScreenSaver::slotEnable(bool e)
          else
            kdWarning() << "Nothing in mSaverList at position " << mSelected << "... This is not supposed to happen!" << endl;
       }
-      mEnabled = true;
     }
+    mEnabled=e;
 
     mSaverGroup->setEnabled( e );
     mSettingsGroup->setEnabled( e );
@@ -636,7 +639,6 @@ void KScreenSaver::slotScreenSaver(int indx)
     mEnabled = true;
 
     mSelected = indx;
-
     setMonitor();
     if (bChanged)
     {
