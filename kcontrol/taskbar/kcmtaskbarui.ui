@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>TaskbarConfigUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>593</width>
-            <height>454</height>
+            <height>387</height>
         </rect>
     </property>
     <property name="caption">
@@ -29,84 +29,91 @@
                 <cstring>taskbarGroup</cstring>
             </property>
             <property name="title">
-                <string>&amp;Taskbar</string>
+                <string>Taskbar</string>
             </property>
             <property name="layoutMargin" stdset="0">
             </property>
             <property name="layoutSpacing" stdset="0">
             </property>
-            <vbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox">
+                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>showAllScreensCheck</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show windows from all sc&amp;reens</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Turning this option off will cause the taskbar to display &lt;b&gt;only&lt;/b&gt; windows which are on the same Xinerama screen as the taskbar.
+
+By default, this option is selected and all windows are shown.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>sortCheck</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Sort windows by desk&amp;top</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+T</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Selecting this option causes the taskbar to show windows in order of the desktop they appear on.
+
+By default this option is selected.</string>
+                    </property>
+                </widget>
+                <spacer row="1" column="0">
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>21</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
                     <property name="name">
                         <cstring>showAllCheck</cstring>
                     </property>
                     <property name="text">
                         <string>&amp;Show windows from all desktops</string>
                     </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Uncheck this option if you want the taskbar to only display the windows on the current desktop. By default, all existing windows are shown.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>showListBtnCheck</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Show window list &amp;button</string>
+                    <property name="accel">
+                        <string>Alt+S</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Check this option if you want the taskbar to display a small popup which gives you easy access to all applications on other desktops and some further options.</string>
+                        <string>Turning this option off will cause the taskbar to display &lt;b&gt;only&lt;/b&gt; the windows on the current desktop. 
+
+By default, this option is selected and all windows are shown.</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>sortCheck</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Sort tas&amp;ks by virtual desktop</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check this option if you want the taskbar to sort task buttons by desktop.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>iconCheck</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Sho&amp;w application icons</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check this option if you want to display the applications icon in the taskbar</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>iconifiedCheck</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Show o&amp;nly minimized windows</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check this option if you want the taskbar to display only windows which are minimized. By default, the taskbar will show all windows.</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget">
+                <widget class="QLayoutWidget" row="6" column="0" rowspan="1" colspan="3">
                     <property name="name">
                         <cstring>Layout2</cstring>
                     </property>
@@ -129,13 +136,77 @@
                             <property name="name">
                                 <cstring>groupComboBox</cstring>
                             </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>7</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
                             <property name="whatsThis" stdset="0">
-                                <string>Check this option if you want the taskbar to hold all running instances of one application in one taskbutton. Clicking on the button for some seconds will unfold a menu which shows all instances of the application. This is especially useful with the "&lt;strong&gt;Show all windows&lt;/strong&gt;" option.</string>
+                                <string>The taskbar can group similar windows into single buttons. When one of these window group buttons are clicked on a menu appears showing all the windows in that group. This can be especially useful with the &lt;em&gt;Show all windows&lt;/em&gt; option.
+
+You can set the taskbar to &lt;strong&gt;Never&lt;/strong&gt; group windows, to &lt;strong&gt;Always&lt;/strong&gt; group windows or to group windows only &lt;strong&gt;When the Taskbar is Full&lt;/strong&gt;.
+
+By default the taskbar groups windows when it is full.</string>
                             </property>
                         </widget>
                     </hbox>
                 </widget>
-            </vbox>
+                <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>iconCheck</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Sho&amp;w application icons</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+W</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option if you want window icons to appear along with their titles in the taskbar.
+
+By default this option is selected.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>showListBtnCheck</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show window list &amp;button</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+B</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Selecting this option causes the taskbar to display a button that, when clicked, shows a list of all windows in a popup menu.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>iconifiedCheck</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show o&amp;nly minimized windows</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+N</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option if you want the taskbar to display &lt;b&gt;only&lt;/b&gt; minimized windows. 
+
+By default, this option is not selected and the taskbar will show all windows.</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
         <widget class="QGroupBox">
             <property name="name">
@@ -152,48 +223,72 @@
                     <property name="name">
                         <cstring>leftButtonLabel</cstring>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>leftButtonComboBox</cstring>
-                    </property>
                     <property name="text">
                         <string>&amp;Left button:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>leftButtonComboBox</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
                     <property name="name">
                         <cstring>middleButtonLabel</cstring>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>middleButtonComboBox</cstring>
-                    </property>
                     <property name="text">
                         <string>&amp;Middle button:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>middleButtonComboBox</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="2" column="0">
                     <property name="name">
                         <cstring>rightButtonLabel</cstring>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>rightButtonComboBox</cstring>
-                    </property>
                     <property name="text">
                         <string>Right b&amp;utton:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>rightButtonComboBox</cstring>
                     </property>
                 </widget>
                 <widget class="QComboBox" row="0" column="1">
                     <property name="name">
                         <cstring>leftButtonComboBox</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
                 </widget>
                 <widget class="QComboBox" row="1" column="1">
                     <property name="name">
                         <cstring>middleButtonComboBox</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
                 </widget>
                 <widget class="QComboBox" row="2" column="1">
                     <property name="name">
                         <cstring>rightButtonComboBox</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
                     </property>
                 </widget>
             </grid>
@@ -208,9 +303,35 @@
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
         </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>showAllCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>sortCheck</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>showAllCheck</tabstop>
+    <tabstop>sortCheck</tabstop>
+    <tabstop>showAllScreensCheck</tabstop>
+    <tabstop>iconifiedCheck</tabstop>
+    <tabstop>iconCheck</tabstop>
+    <tabstop>showListBtnCheck</tabstop>
+    <tabstop>groupComboBox</tabstop>
+    <tabstop>leftButtonComboBox</tabstop>
+    <tabstop>middleButtonComboBox</tabstop>
+    <tabstop>rightButtonComboBox</tabstop>
+</tabstops>
 <includes>
     <include location="local" impldecl="in implementation">kdialog.h</include>
 </includes>

@@ -25,6 +25,7 @@
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
+#include <kwin.h>
 
 #include "kcmtaskbar.h"
 #include <kaboutdata.h>
@@ -122,6 +123,7 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringLi
     QVBoxLayout *vbox = new QVBoxLayout(this, 0, KDialog::spacingHint());
     vbox->addWidget(ui);
     connect(ui->showAllCheck, SIGNAL(clicked()), SLOT(configChanged()));
+    connect(ui->showAllScreensCheck, SIGNAL(clicked()), SLOT(configChanged()));
     connect(ui->showListBtnCheck, SIGNAL(clicked()), SLOT(configChanged()));
     connect(ui->sortCheck, SIGNAL(clicked()), SLOT(configChanged()));
     connect(ui->iconCheck, SIGNAL(clicked()), SLOT(configChanged()));
@@ -138,6 +140,18 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringLi
     connect(ui->rightButtonComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
     connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
     connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT(slotUpdateComboBox()));
+
+    if (KWin::numberOfDesktops() < 2)
+    {
+        ui->showAllCheck->hide();
+        ui->sortCheck->hide();
+    }
+
+    if (!QApplication::desktop()->isVirtualDesktop() ||
+        QApplication::desktop()->numScreens()==1 ) // No Ximerama
+    {
+           ui->showAllScreensCheck->hide();
+    }
 
     KAboutData *about =
     new KAboutData(I18N_NOOP("kcmtaskbar"), I18N_NOOP("KDE Taskbar Control Module"),
@@ -184,6 +198,7 @@ void TaskbarConfig::load()
         KConfigGroupSaver saver(c, "General");
 
         ui->showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", true));
+        ui->showAllScreensCheck->setChecked(!c->readBoolEntry("ShowCurrentScreenOnly", false));
         ui->showListBtnCheck->setChecked(c->readBoolEntry("ShowWindowListBtn", false));
         ui->sortCheck->setChecked(c->readBoolEntry("SortByDesktop", true));
         ui->iconCheck->setChecked(c->readBoolEntry("ShowIcon", true));
@@ -209,6 +224,7 @@ void TaskbarConfig::save()
         KConfigGroupSaver saver(c, "General");
 
         c->writeEntry("ShowAllWindows", ui->showAllCheck->isChecked());
+        c->writeEntry("ShowCurrentScreenOnly", !ui->showAllScreensCheck->isChecked());
         c->writeEntry("ShowWindowListBtn", ui->showListBtnCheck->isChecked());
         c->writeEntry("SortByDesktop", ui->sortCheck->isChecked());
         c->writeEntry("ShowIcon", ui->iconCheck->isChecked());
@@ -228,12 +244,13 @@ void TaskbarConfig::save()
     if (!kapp->dcopClient()->isAttached())
         kapp->dcopClient()->attach();
     QByteArray data;
-    kapp->dcopClient()->send( "kicker", "Panel", "restart()", data );
+    kapp->dcopClient()->send( "kicker", "kicker", "configure()", data );
 }
 
 void TaskbarConfig::defaults()
 {
     ui->showAllCheck->setChecked(true);
+    ui->showAllScreensCheck->setChecked(true);
     ui->showListBtnCheck->setChecked(false);
     ui->sortCheck->setChecked(true);
     ui->iconCheck->setChecked(true);
