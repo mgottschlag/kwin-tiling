@@ -82,7 +82,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   sList->clear();
   sFileList->clear();
   sList->insertItem( i18n("Current scheme"), 0 );
-  sFileList->append( "Not a  kcsrc file" );
+  sFileList->append( "Not a kcsrc file" );
   sList->insertItem( i18n("KDE default"), 1 );
   sFileList->append( "Not a kcsrc file" );
   readSchemeNames();
@@ -220,7 +220,7 @@ void KKeyModule::slotSave( )
     for (KKeyEntryMap::ConstIterator it = dict.begin();
          it != dict.end(); ++it) {
         config.writeEntry( it.key(),
-                           KAccel::keyToString( (*it).aConfigKeyCode ) );
+                           KAccel::keyToString( (*it).aConfigKeyCode, false ) );
     }
 
     saveBt->setEnabled( FALSE );
