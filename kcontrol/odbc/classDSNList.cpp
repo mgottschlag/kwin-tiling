@@ -118,7 +118,7 @@ void classDSNList::Add()
 		{
 			qsError.sprintf( "Could not construct a property list for (%s)... most often because the driver has not been given a valid setup lib. Each driver has a setup lib such as libodbcminiS.so.1.0.0", qsDataSourceDriver.data() );
 			QMessageBox::information( this, "ODBC Config",  qsError );
-			QMessageBox::information( this, "ODBC Config",  "Please specify a Setup lib in the Drivers section. Use libodbcdrvcfg1S.so.1.0.0 or libodbcdrvcfg2S.so.1.0.0 if you are unsure of what setup lib to use." );
+			QMessageBox::information( this, "ODBC Config",  "Please specify a Setup lib in the Drivers section. Use libodbcdrvcfg1S.so or libodbcdrvcfg2S.so if you are unsure of what setup lib to use." );
 			return;
 		}
 

@@ -188,7 +188,7 @@ void classDrivers::Add()
 	memset( hLastProperty, 0, sizeof(ODBCINSTPROPERTY) );
 	hLastProperty->nPromptType			= ODBCINST_PROMPTTYPE_FILENAME;
 	strncpy( hLastProperty->szName, "Setup", INI_MAX_PROPERTY_NAME );
-	strncpy( hLastProperty->szValue, "", INI_MAX_PROPERTY_VALUE );
+	strncpy( hLastProperty->szValue, "libodbcdrvcfg1S.so", INI_MAX_PROPERTY_VALUE );
 
 	hLastProperty->pNext 				= (HODBCINSTPROPERTY)malloc( sizeof(ODBCINSTPROPERTY) );
 	hLastProperty 						= hLastProperty->pNext;
