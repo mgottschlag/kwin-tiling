@@ -124,7 +124,7 @@ void KSocksConfig::testClicked()
 {
   save();   // we have to save before we can test!  Perhaps
             // it would be best to warn, though.
-  
+
   if (KSocks::self()->hasSocks()) {
      KMessageBox::information(NULL,
                               i18n("Success!  SOCKS was found and initialized."),
@@ -224,6 +224,7 @@ void KSocksConfig::load()
   }
   base->_c_libs->clearSelection();
   base->_c_remove->setEnabled(false);
+  base->_c_add->setEnabled(false);
  emit changed(false);
 }
 
