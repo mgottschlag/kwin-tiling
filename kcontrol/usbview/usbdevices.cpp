@@ -15,12 +15,10 @@
 #include <unistd.h>
 #include <stdio.h>
 
-
 #include <qfile.h>
-
+#include <qregexp.h>
 
 #include <klocale.h>
-
 
 #include "usbdb.h"
 #include "usbdevices.h"
@@ -190,6 +188,7 @@ void USBDevice::parse(QString fname)
   // read in the device infos
   USBDevice *device = 0;
   int start=0, end;
+  result.replace(QRegExp("^\n"),"");
   while ((end = result.find('\n', start)) > 0)
     {
       QString line = result.mid(start, end-start);
