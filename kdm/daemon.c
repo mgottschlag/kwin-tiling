@@ -30,18 +30,26 @@ from The Open Group.
  * Author:  Keith Packard, MIT X Consortium
  */
 
-#include <X11/Xos.h>
+#include "dm.h"
 
-#if defined(SVR4) || defined(USG)
-#include <termios.h>
+#ifdef HAVE_TERMIOS_H
+# include <termios.h>
 #else
-#include <sys/ioctl.h>
+# ifdef HAVE_SYS_TERMIOS_H
+#  include <sys/termios.h>
+# endif
+#endif
+#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
 #endif
 #if defined(__osf__) || defined(__linux__) || defined(MINIX)
-#define setpgrp setpgid
+# define setpgrp setpgid
 #endif
 #ifdef hpux
-#include <sys/ptyio.h>
+# include <sys/ptyio.h>
+# ifndef TIOCNOTTY
+#  define TIOCNOTTY  _IO('t', 113)           /* void tty association */
+# endif
 #endif
 #include <errno.h>
 #ifdef X_NOT_STDC_ENV
@@ -49,13 +57,13 @@ extern int errno;
 #endif
 #include <sys/types.h>
 #ifdef X_NOT_POSIX
-#define Pid_t int
+# define Pid_t int
 #else
-#define Pid_t pid_t
+# define Pid_t pid_t
 #endif
 
 #ifndef X_NOT_STDC_ENV
-#include <stdlib.h>
+# include <stdlib.h>
 #else
 extern void exit (int);
 #endif
@@ -154,10 +162,6 @@ BecomeDaemon (void)
 	int zero = 0;
 	(void) ioctl (i, TIOCTTY, &zero);
 #else
-# ifndef TIOCNOTTY
-/* HP/UX fix: */
-#  define TIOCNOTTY  _IO('t', 113)           /* void tty association */
-# endif
 	(void) ioctl (i, TIOCNOTTY, (char *) 0);    /* detach, BSD style */
 #endif
 #endif
