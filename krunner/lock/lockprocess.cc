@@ -15,11 +15,24 @@
 //crashes (e.g. because it's set to multiple wallpapers and
 //some image will be corrupted).
 
+/*Fading code stolen from xscreensaver: */
+
+/* xscreensaver, Copyright (c) 1992-1997, 2003 Jamie Zawinski <jwz@jwz.org>
+ *
+ * Permission to use, copy, modify, distribute, and sell this software and its
+ * documentation for any purpose is hereby granted without fee, provided that
+ * the above copyright notice appear in all copies and that both that
+ * copyright notice and this permission notice appear in supporting
+ * documentation.  No representations are made about the suitability of this
+ * software for any purpose.  It is provided "as is" without express or 
+ * implied warranty.
+ */
 
 #include <config.h>
 
 #include "lockprocess.h"
 #include "lockdlg.h"
+#include "fade.h"
 
 #include <kstandarddirs.h>
 #include <kapplication.h>
@@ -41,6 +54,8 @@
 #include <qsocketnotifier.h>
 #include <qvaluevector.h>
 
+#include <qdatetime.h>
+
 #include <stdlib.h>
 #include <assert.h>
 #include <signal.h>
@@ -53,6 +68,7 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
+#include <X11/Intrinsic.h>
 
 #ifdef HAVE_DPMS
 extern "C" {
@@ -604,16 +620,67 @@ bool LockProcess::startSaver()
     }
     createSaverWindow();
     move(0, 0);
+ 
     show();
     setCursor( blankCursor );
 
     raise();
     XSync(qt_xdisplay(), False);
     setVRoot( winId(), winId() );
-    if (!startHack())
-        setBackgroundColor(black); // failed to start a hack.  Just show a blank screen
-
+//     QTime t = QTime::currentTime();
+//     kdDebug() << "starting the fade " << t.second() << endl;
+//     t = QTime::currentTime();
+//     kdDebug() << "ending the fade " << t.second() << endl;    
+     if (!startHack())
+         setBackgroundColor(black); // failed to start a hack.  Just show a blank screen
     return true;
+}
+
+void LockProcess::showFade()
+{
+	#define XF86_VIDMODE_NAME "XFree86-VidModeExtension"
+
+	int seconds = 2;
+	int ticks = 20;
+
+	int op, event, error;
+
+	kdDebug() << "hello" << endl;
+	Display *dpy = qt_xdisplay();
+	kdDebug() << "hello2" << endl;
+	Colormap *current_maps;
+	int i;
+
+	current_maps = (Colormap *) calloc(sizeof(Colormap), ScreenCount(dpy));
+	for (i = 0; i < ScreenCount(dpy); i++)
+	{
+		current_maps[i] = DefaultColormap (dpy, i);
+	}
+	
+	if (!XQueryExtension (dpy, XF86_VIDMODE_NAME, &op, &event, &error))
+	{
+		fprintf(stderr, "no " XF86_VIDMODE_NAME " extension\n");
+	}
+	else
+	{	
+		# ifdef HAVE_XF86VMODE_GAMMA
+		if (!XF86VidModeQueryVersion (dpy, &major, &minor))
+		{
+			fprintf(stderr, "%s: unable to get " XF86_VIDMODE_NAME " version\n", progname);
+		}
+		else
+		{
+			fprintf(stderr,XF86_VIDMODE_NAME " version %d.%d\n", major, minor);
+		}
+		# else /* !HAVE_XF86VMODE_GAMMA */
+		fprintf(stderr, "no support for display's " XF86_VIDMODE_NAME " extension\n");
+	# endif /* !HAVE_XF86VMODE_GAMMA */
+	}
+
+	fprintf (stderr, "fading %d screen%s\n", ScreenCount(dpy), ScreenCount(dpy) == 1 ? "" : "s");
+	kdDebug() << "returning" << endl;
+	XSync(dpy, False);
+	fade_screens (dpy, current_maps, 0, 0, seconds, ticks, True, False);
 }
 
 //---------------------------------------------------------------------------
@@ -746,6 +813,7 @@ bool LockProcess::startHack()
 	{
 		if (mHackProc.start() == true)
 		{
+// 			showFade();
 #ifdef HAVE_SETPRIORITY
 			setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
 #endif
