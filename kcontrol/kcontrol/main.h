@@ -38,7 +38,7 @@ public:
   
   MyApplication(int argc, char *argv[]);
 
-  virtual int newInstance(QValueList<QCString> params);
+  virtual void newInstance(QValueList<QCString> params);
 
 private:
 

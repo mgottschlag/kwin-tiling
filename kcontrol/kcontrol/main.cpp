@@ -42,7 +42,7 @@ MyApplication::MyApplication(int argc, char *argv[])
 }
 
 
-int MyApplication::newInstance(QValueList<QCString> params)
+void MyApplication::newInstance(QValueList<QCString> params)
 {
   QValueList<QCString>::Iterator it = params.begin();
   it++; // skip program name
@@ -52,7 +52,6 @@ int MyApplication::newInstance(QValueList<QCString> params)
     }
 
   toplevel->raise();
-  return 0;
 }
 
 

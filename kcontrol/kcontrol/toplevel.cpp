@@ -93,10 +93,10 @@ void TopLevel::initMenuBar()
 {
   QPopupMenu *file_menu = new QPopupMenu();
 
-  file_menu->insertItem(BarIcon("exit"), "E&xit", kapp, SLOT(quit()));
+  file_menu->insertItem(BarIcon("exit"), i18n("E&xit"), kapp, SLOT(quit()));
 
   KMenuBar* menu_bar = new KMenuBar(this);
-  menu_bar->insertItem("&File", file_menu);
+  menu_bar->insertItem(i18n("&File"), file_menu);
 	
   setMenu(menu_bar);
 }
@@ -118,7 +118,7 @@ void TopLevel::initStatusBar()
 {
   KStatusBar* status_bar = statusBar();
   status_bar->setInsertOrder(KStatusBar::RightToLeft);
-  status_bar->insertItem("Welcome to the KDE Control Center", 4);
+  status_bar->insertItem(i18n("Welcome to the KDE Control Center"), 4);
 }
 
 
