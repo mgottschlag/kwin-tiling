@@ -129,7 +129,7 @@ void ShortcutsModule::initGUI()
 	pHLayout->addWidget( m_prbPre );
 
 	m_pcbSchemes = new KComboBox( this );
-	connect( m_pcbSchemes, SIGNAL(activated(int)), SLOT(slotSelectScheme(int)) );
+	connect( m_pcbSchemes, SIGNAL(activated(int)), SLOT(slotSelectScheme()) );
 	pHLayout->addWidget( m_pcbSchemes );
 
 	pHLayout->addSpacing( KDialog::marginHint() );
@@ -288,7 +288,7 @@ void ShortcutsModule::slotKeyChange()
 	emit changed( true );
 }
 
-void ShortcutsModule::slotSelectScheme( int )
+void ShortcutsModule::slotSelectScheme()
 {
 	kdDebug(125) << "ShortcutsModule::slotSelectScheme( " << m_pcbSchemes->currentItem() << " )" << endl;
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentItem() ];
@@ -372,7 +372,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 			return;
 	} while( !bNameValid );
 
-	disconnect( m_pcbSchemes, SIGNAL(activated(int)), this, SLOT(slotSelectScheme(int)) );
+	disconnect( m_pcbSchemes, SIGNAL(activated(int)), this, SLOT(slotSelectScheme()) );
 
 	QString kksPath = KGlobal::dirs()->saveLocation( "data", "kcmkeys/" );
 
@@ -402,8 +402,8 @@ void ShortcutsModule::slotSaveSchemeAs()
 
 	saveScheme();
 
-	connect( m_pcbSchemes, SIGNAL(activated(int)), SLOT(slotSelectScheme(int)) );
-	slotSelectScheme( m_pcbSchemes->currentItem() );
+	connect( m_pcbSchemes, SIGNAL(activated(int)), SLOT(slotSelectScheme()) );
+	slotSelectScheme();
 }
 
 void ShortcutsModule::saveScheme()
