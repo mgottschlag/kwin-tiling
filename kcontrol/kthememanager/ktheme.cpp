@@ -707,11 +707,6 @@ bool KTheme::copyFile( const QString & from, const QString & to )
 {
     // we overwrite b/c of restoring the "original" theme
     return KIO::NetAccess::file_copy( from, to, -1, true /*overwrite*/ );
-#if 0
-    KIO::copy( from, to, false /*progress*/ );
-    struct stat buf;
-    return ( ( stat( QFile::encodeName( to ), &buf ) == 0 ) && ( S_IRUSR & buf.st_mode ) );
-#endif
 }
 
 QString KTheme::findResource( const QString & section, const QString & path )
