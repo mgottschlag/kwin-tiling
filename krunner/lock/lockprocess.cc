@@ -80,7 +80,8 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mUseBlankOnly(useBlankOnly),
       mSuspended(false),
       mVisibility(false),
-      mRestoreXF86Lock(false)
+      mRestoreXF86Lock(false),
+      mForbidden(false)
 {
     setupSignals();
 
@@ -282,8 +283,30 @@ void LockProcess::readSaver()
     if (!mSaver.isEmpty())
     {
         QString file = locate("scrsav", mSaver);
-
+	
+	bool opengl = kapp->authorize("opengl_screensavers");
+	bool manipulatescreen = kapp->authorize("manipulatescreen_screensavers");
         KDesktopFile config(file, true);
+	if (config.readEntry("X-KDE-Type").utf8())
+	{
+		QString saverType = config.readEntry("X-KDE-Type").utf8();
+		QStringList saverTypes = QStringList::split(";", saverType);
+		for (uint i = 0; i < saverTypes.count(); i++)
+		{
+			if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
+			{
+				kdDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden" << endl;
+				mForbidden = true;
+			}
+			if ((saverTypes[i] == "OpenGL") && !opengl)
+			{
+				kdDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden" << endl;
+				mForbidden = true;
+			}
+		}
+	}
+	
+	kdDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false") << endl;
 
         if (config.hasActionGroup("Root"))
         {
@@ -568,12 +591,12 @@ void LockProcess::startSaver()
 
 void LockProcess::slotStart()
 {
-    setVRoot( winId(), winId() );
-    if (startHack() == false)
-    {
-        // failed to start a hack.  Just show a blank screen
-        setBackgroundColor(black);
-    }
+	setVRoot( winId(), winId() );
+	if (startHack() == false)
+	{
+		// failed to start a hack.  Just show a blank screen
+		setBackgroundColor(black);
+	}
 }
 
 //---------------------------------------------------------------------------
@@ -638,16 +661,22 @@ bool LockProcess::startHack()
             }
             mHackProc << word;
         }
-
-        if (mHackProc.start() == true)
-        {
+	
+	if (!mForbidden)
+	{
+		if (mHackProc.start() == true)
+		{
 #ifdef HAVE_SETPRIORITY
-            setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
+			setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
 #endif
-            return true;
-        }
+			return true;
+		}
+	}
+	else // we aren't allowed to start the specified screensaver according to the kiosk restrictions
+	{
+		setBackgroundColor(black);
+	}
     }
-
     return false;
 }
 

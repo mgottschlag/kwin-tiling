@@ -101,6 +101,7 @@ private:
     QTimer      mCheckDPMS;
     QValueStack< QWidget* > mDialogs;
     bool        mRestoreXF86Lock;
+    bool	mForbidden;
 };
 
 #endif
