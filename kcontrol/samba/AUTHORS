@@ -25,6 +25,8 @@ Added three tab pages
 -one for viewing mounted network resources (Samba and NFS, works on Linux, maybe Solaris)
 -one for viewing samba logfile
 -one for some filtering of samba logfile
+Added support for viewing NFS-exports mounted by remote hosts on the first
+tab
 
   Alexander Neundorf <alexander.neundorf@rz.tu-ilmenau.de>
 

@@ -36,6 +36,13 @@
 #include <klocale.h>
 #include <stdio.h>
 
+#include <iostream.h>
+#include <qstring.h>
+#include <qregexp.h>
+
+#define Before(ttf,in) in.left(in.find(ttf))
+#define After(ttf,in)  (in.contains(ttf)?in.mid(in.find(ttf)+QString(ttf).length()):QString(""))
+
 NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
    : QWidget(parent, name)
    ,configFile(config)
@@ -60,10 +67,11 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
     
     list->setAllColumnsShowFocus(true);
     list->setMinimumSize(425,200);
+    list->addColumn(i18n("Type"), 50);
     list->addColumn(i18n("Service"), 80);
+    list->addColumn(i18n("Accessed from"),100);
     list->addColumn(i18n("UID"), 70);
     list->addColumn(i18n("GID"), 70);     
-    list->addColumn(i18n("Machine"),100);
     list->addColumn(i18n("PID"), 50);
     list->addColumn(i18n("Open Files"),70);
  
@@ -71,7 +79,6 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
     timer->start(10000);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     menu = new KPopupMenu();
-    menu->insertItem("&Kill",this,SLOT(Kill()));
     QObject::connect(list,SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
 		    SLOT(Killmenu(QListViewItem *,const QPoint &,int)));
     update();
@@ -83,7 +90,14 @@ void NetMon::help()
 
 }
 
-void NetMon::processLine(char *bufline, int linelen)
+void NetMon::processNFSLine(char *bufline, int)
+{
+   QCString line(bufline);
+   if (line.contains(":/"))
+      new QListViewItem(list,"NFS",After(":",line),Before(":/",line));
+};
+
+void NetMon::processSambaLine(char *bufline, int)
 {
    QCString line(bufline);
    rownumber++;
@@ -115,7 +129,7 @@ void NetMon::processLine(char *bufline, int linelen)
        strSince=strSince.afterRXwhite();
        strSince=strSince.afterRXwhite();
        strSince=strSince.before(" ");*/
-      new QListViewItem(list,strShare,strUser,strGroup,strMachine,strPid/*,strSince*/);
+      new QListViewItem(list,"SMB",strShare,strMachine, strUser,strGroup,strPid/*,strSince*/);
    }
    else if (readingpart==connexions)
       readingpart=locked_files;
@@ -190,7 +204,10 @@ void NetMon::slotReceivedData(KProcess *, char *buffer, int )
       strncpy(s,start,len);
       s[len] = '\0';
       //debug(s); debug("**");
-      processLine(s,len); // process each line
+      if (readingpart==nfs)
+         processNFSLine(s,len);
+      else
+         processSambaLine(s,len); // process each line
       start=end+1;
    }
    // here we could save the remaining part of line, if ever buffer
@@ -224,19 +241,30 @@ void NetMon::update()
       // ok -> count the number of locked files for each pid
       for (row=list->firstChild();row!=0;row=row->itemBelow())
       {
-         pid=atoi(row->text(3));
-         row->setText(5,QString("%1").arg((lo)[pid]));
+//         cerr<<"NetMon::update: this should be the pid: "<<row->text(5)<<endl;
+         pid=atoi(row->text(5));
+         row->setText(6,QString("%1").arg((lo)[pid]));
       }
    }
-   version->adjustSize();
    delete process;
+
+   readingpart=nfs;
+   process=new KProcess();
+   *process<<"showmount"<<"-a"<<"localhost";
+   connect(process,SIGNAL(receivedStdout(KProcess *, char *, int)),SLOT(slotReceivedData(KProcess *, char *, int)));
+   if (!process->start(KProcess::Block,KProcess::Stdout)) // run smbstatus
+      version->setText(version->text()+i18n(" Error: Unable to run showmount"));
+   delete process;
+   process=0;
+
+   version->adjustSize();
    list->show();
 }
 
 void NetMon::Kill()
 {
-   QString a;
-   a = killrow->text(3);
+   QString a(killrow->text(5));
+//   cerr<<"NetMon::killing -"<<a<<"-"<<endl;
    kill(a.toUInt(),15);
    update();
 }
@@ -247,7 +275,9 @@ void NetMon::Killmenu(QListViewItem * row, const QPoint& pos, int /* column */)
    if (row!=0)
    {
        killrow=row;
-       menu->setTitle("//"+row->text(3)+"/"+row->text(0));
+       menu->clear();
+       menu->insertItem("&Kill",this,SLOT(Kill()));
+       menu->setTitle("//"+row->text(2)+"/"+row->text(1));
        menu->popup(pos);
    }
 }

@@ -45,9 +45,9 @@ ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
     
     list.setAllColumnsShowFocus(true);
     list.setMinimumSize(425,200);
-    list.addColumn(i18n("Resource"), 150);
+    list.addColumn(i18n("Type"), 50);
+    list.addColumn(i18n("Resource"), 200);
     list.addColumn(i18n("Mounted under"), 190);
-    list.addColumn(i18n("Type"), 55);
  
     timer.start(10000);
     QObject::connect(&timer, SIGNAL(timeout()), this, SLOT(updateList()));
@@ -73,13 +73,13 @@ void ImportsView::updateList()
             strSource=s.left(s.find(" on /"));
             strMount=s.mid(s.find(" on /")+4,s.length());
             if ((s.contains(" nfs ")) || (s.contains("/remote on ")))
-               strType=" nfs";
+               strType="NFS";
             else if (s.contains(" smbfs "))
-               strType=" smbfs";
+               strType="SMB";
             int pos(strMount.find(" type "));
             if (pos==-1) pos=strMount.find(" read/");
             strMount=strMount.left(pos);
-            new QListViewItem(&list,strSource,strMount,strType);
+            new QListViewItem(&list,strType,strSource,strMount);
          };
       };
    }

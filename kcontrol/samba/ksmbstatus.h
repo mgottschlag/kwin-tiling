@@ -49,10 +49,11 @@ private:
    KPopupMenu *menu;
    QListViewItem *killrow;
    int rownumber;
-   enum {header, connexions, locked_files, finished} readingpart;
+   enum {header, connexions, locked_files, finished, nfs} readingpart;
    int lo[65536];
    int nrpid;
-   void processLine(char *bufline, int linelen);
+   void processNFSLine(char *bufline, int linelen);
+   void processSambaLine(char *bufline, int linelen);
 
    QCString strShare, strUser, strGroup, strMachine, strSince, strPid;
    int iUser, iGroup, iMachine, iPid;
