@@ -370,10 +370,13 @@ CFontListWidget::CFontListWidget(QWidget *parent, CConfig::EListWidget t, bool u
 
 CFontListWidget::~CFontListWidget()
 {
-    QListViewItem         *item=itsList->itemAt(QPoint(0, 0));
+    if(itsAdvancedMode)
+    {
+        QListViewItem *item=itsList->itemAt(QPoint(0, 0));
  
-    if(item && ((CListViewItem*)item)->fullName()!=CKfiGlobal::cfg().getAdvancedTopItem(itsType))
-        CKfiGlobal::cfg().setAdvancedTopItem(itsType, ((CListViewItem*)item)->fullName());
+        if(item && ((CListViewItem*)item)->fullName()!=CKfiGlobal::cfg().getAdvancedTopItem(itsType))
+            CKfiGlobal::cfg().setAdvancedTopItem(itsType, ((CListViewItem*)item)->fullName());
+    }
 }
 
 void CFontListWidget::setAdvanced(bool on)
@@ -529,7 +532,7 @@ void CFontListWidget::scan()
             itsList->setEnabled(true);
         else
         {
-            new QListViewItem(itsList, QString::null, i18n("This folder does not contain any fonts."));
+            new QListViewItem(itsList, i18n("No Fonts!"));
             itsList->setEnabled(false);
         }
     }
