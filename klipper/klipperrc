@@ -46,5 +46,5 @@ Number of commands=2
 KeepClipboardContents=true
 Number of Actions=4
 PopupAtMousePosition=false
-URLGrabberEnabled=false
+URLGrabberEnabled=true
 No Actions for WM_CLASS=Navigator,konqueror,keditbookmarks,mozilla-bin,Opera main window
