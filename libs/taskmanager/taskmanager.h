@@ -486,7 +486,7 @@ signals:
     /**
      * Emitted when a window changes desktop.
      */
-    void windowDesktopChanged(WId);
+    void windowChanged(WId);
 
 protected slots:
     //* @internal

@@ -104,30 +104,49 @@
                         <string>Check this option if you want to display the applications icon in the taskbar</string>
                     </property>
                 </widget>
-		<hbox>
-	        <property name="margin">
-		        <number>2</number>
-	        </property>
-	        <property name="spacing">
-		        <number>2</number>
-	        </property>
-		<widget class="QLabel">
-		<property name="name">
-			<cstring>groupTasksLabel</cstring>
-		</property>
-		<property name="text">
-			<string>Group similar tasks:</string>
-		</property>
-		</widget>
-                <widget class="QComboBox">
+                <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>groupComboBox</cstring>
+                        <cstring>iconifiedCheck</cstring>
                     </property>
-		    <property name="whatsThis" stdset="0">
-		        <string>Check this option if you want the taskbar to hold all running instances of one application in one taskbutton. Clicking on the button for some seconds will unfold a menu which shows all instances of the application. This is especially useful with the "&lt;strong&gt;Show all windows&lt;/strong&gt;" option.</string>
-		    </property>
+                    <property name="text">
+                        <string>Show only Iconified Windows</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check this option if you want the taskbar to display only windows which are iconified. By default, the taskbar will show all windows.</string>
+                    </property>
                 </widget>
-		</hbox>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout2</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>groupTasksLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Group similar tasks:</string>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox">
+                            <property name="name">
+                                <cstring>groupComboBox</cstring>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Check this option if you want the taskbar to hold all running instances of one application in one taskbutton. Clicking on the button for some seconds will unfold a menu which shows all instances of the application. This is especially useful with the "&lt;strong&gt;Show all windows&lt;/strong&gt;" option.</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
             </vbox>
         </widget>
         <widget class="QGroupBox">
@@ -189,7 +208,7 @@
             </grid>
         </widget>
         <spacer>
-            <property name="name" stdset="0">
+            <property name="name">
                 <cstring>Spacer1</cstring>
             </property>
             <property name="orientation">
@@ -197,12 +216,6 @@
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
             </property>
         </spacer>
     </vbox>

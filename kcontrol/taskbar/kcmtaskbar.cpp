@@ -131,6 +131,7 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringLi
     connect(ui->showListBtnCheck, SIGNAL(clicked()), SLOT(configChanged()));
     connect(ui->sortCheck, SIGNAL(clicked()), SLOT(configChanged()));
     connect(ui->iconCheck, SIGNAL(clicked()), SLOT(configChanged()));
+    connect(ui->iconifiedCheck, SIGNAL(clicked()), SLOT(configChanged()));
 
     QStringList list = i18nActionList();
     ui->leftButtonComboBox->insertStringList( list );
@@ -161,14 +162,14 @@ void TaskbarConfig::slotUpdateComboBox()
     // If grouping is enabled, call "Activate, Raise or Iconify something else,
     // though the config key used is the same.
     if( ui->groupComboBox->currentItem() != GroupNever ) {
-	ui->leftButtonComboBox->changeItem(i18n("Cycle Through Windows"),ActivateRaiseOrIconify);
-	ui->middleButtonComboBox->changeItem(i18n("Cycle Through Windows"),ActivateRaiseOrIconify);
-	ui->rightButtonComboBox->changeItem(i18n("Cycle Through Windows"),ActivateRaiseOrIconify);
+        ui->leftButtonComboBox->changeItem(i18n("Cycle Through Windows"),ActivateRaiseOrIconify);
+        ui->middleButtonComboBox->changeItem(i18n("Cycle Through Windows"),ActivateRaiseOrIconify);
+        ui->rightButtonComboBox->changeItem(i18n("Cycle Through Windows"),ActivateRaiseOrIconify);
     } else {
-	QString action = i18nActionList()[ActivateRaiseOrIconify];
-	ui->leftButtonComboBox->changeItem(action,ActivateRaiseOrIconify);
-	ui->middleButtonComboBox->changeItem(action,ActivateRaiseOrIconify);
-	ui->rightButtonComboBox->changeItem(action,ActivateRaiseOrIconify);
+        QString action = i18nActionList()[ActivateRaiseOrIconify];
+        ui->leftButtonComboBox->changeItem(action,ActivateRaiseOrIconify);
+        ui->middleButtonComboBox->changeItem(action,ActivateRaiseOrIconify);
+        ui->rightButtonComboBox->changeItem(action,ActivateRaiseOrIconify);
     }
 }
 
@@ -180,11 +181,12 @@ void TaskbarConfig::load()
 
         ui->showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", true));
         ui->showListBtnCheck->setChecked(c->readBoolEntry("ShowWindowListBtn", true));
-	ui->sortCheck->setChecked(c->readBoolEntry("SortByDesktop", true));
-	ui->iconCheck->setChecked(c->readBoolEntry("ShowIcon", true));
-	ui->leftButtonComboBox->setCurrentItem(buttonAction(LeftButton, c->readEntry("LeftButtonAction")));
-	ui->middleButtonComboBox->setCurrentItem(buttonAction(MidButton, c->readEntry("MiddleButtonAction")));
-	ui->rightButtonComboBox->setCurrentItem(buttonAction(RightButton, c->readEntry("RightButtonAction")));
+        ui->sortCheck->setChecked(c->readBoolEntry("SortByDesktop", true));
+        ui->iconCheck->setChecked(c->readBoolEntry("ShowIcon", true));
+        ui->iconifiedCheck->setChecked(c->readBoolEntry("ShowOnlyIconified", false));
+        ui->leftButtonComboBox->setCurrentItem(buttonAction(LeftButton, c->readEntry("LeftButtonAction")));
+        ui->middleButtonComboBox->setCurrentItem(buttonAction(MidButton, c->readEntry("MiddleButtonAction")));
+        ui->rightButtonComboBox->setCurrentItem(buttonAction(RightButton, c->readEntry("RightButtonAction")));
         ui->groupComboBox->setCurrentItem(groupMode(c->readEntry("GroupTasks")));
     }
 
@@ -203,11 +205,12 @@ void TaskbarConfig::save()
         c->writeEntry("ShowWindowListBtn", ui->showListBtnCheck->isChecked());
         c->writeEntry("SortByDesktop", ui->sortCheck->isChecked());
         c->writeEntry("ShowIcon", ui->iconCheck->isChecked());
+        c->writeEntry("ShowOnlyIconified", ui->iconifiedCheck->isChecked());
         c->writeEntry("LeftButtonAction", buttonAction(ui->leftButtonComboBox->currentItem()));
         c->writeEntry("MiddleButtonAction", buttonAction(ui->middleButtonComboBox->currentItem()));
         c->writeEntry("RightButtonAction", buttonAction(ui->rightButtonComboBox->currentItem()));
         c->writeEntry("GroupTasks", groupMode(ui->groupComboBox->currentItem()));
-	c->sync();
+        c->sync();
     }
 
     delete c;
@@ -227,10 +230,11 @@ void TaskbarConfig::defaults()
     ui->showListBtnCheck->setChecked(true);
     ui->sortCheck->setChecked(true);
     ui->iconCheck->setChecked(true);
+    ui->iconifiedCheck->setChecked(false);
     ui->leftButtonComboBox->setCurrentItem( buttonAction( LeftButton ) );
     ui->middleButtonComboBox->setCurrentItem( buttonAction( MidButton ) );
     ui->rightButtonComboBox->setCurrentItem( buttonAction( RightButton ) );
-	ui->groupComboBox->setCurrentItem( groupMode() );
+    ui->groupComboBox->setCurrentItem( groupMode() );
     emit changed(true);
     slotUpdateComboBox();
 }
@@ -239,7 +243,7 @@ QString TaskbarConfig::quickHelp() const
 {
     return i18n("<h1>Taskbar</h1> You can configure the taskbar here."
                 " This includes options such as whether or not the taskbar should show all"
-		" windows at once or only those on the current desktop."
+                " windows at once or only those on the current desktop."
                 " You can also configure whether or not the Window List button will be displayed.");
 }
 

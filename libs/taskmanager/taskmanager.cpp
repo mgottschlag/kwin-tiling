@@ -193,8 +193,8 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     else
         t->refresh();
 
-    if(dirty & (NET::WMDesktop|NET::WMState))
-        emit windowDesktopChanged(w); // moved to different desktop or is on all
+    if(dirty & (NET::WMDesktop|NET::WMState|NET::XAWMState))
+        emit windowChanged(w); // moved to different desktop or is on all or change in iconification/withdrawnnes
 }
 
 void TaskManager::activeWindowChanged(WId w )
