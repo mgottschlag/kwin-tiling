@@ -623,8 +623,8 @@ KGreeter::restrict_nologin()
      }
 
      return false;
-}
 #endif /* !USE_PAM */
+}
 
 #ifdef HAVE_PW_EXPIRE
 bool
