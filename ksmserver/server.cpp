@@ -156,7 +156,8 @@ void KSMClient::registerClient( const char* previousId )
     if ( !clientId )
 	clientId = safeSmsGenerateClientID( smsConn );
     SmsRegisterClientReply( smsConn, (char*) clientId );
-    SmsSaveYourself(smsConn, SmSaveLocal, FALSE, SmInteractStyleNone, FALSE);
+    SmsSaveYourself( smsConn, SmSaveLocal, FALSE, SmInteractStyleNone, FALSE );
+    SmsSaveComplete( smsConn );
 }
 
 
