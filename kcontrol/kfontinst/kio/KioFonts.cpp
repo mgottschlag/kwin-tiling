@@ -100,7 +100,7 @@ int kdemain(int argc, char **argv)
 static bool isSpecialDir(const QString &sub, bool sys)
 {
     if(sys || CMisc::root())
-        return "CID"==sub || "encodings"==sub;
+        return "CID"==sub || "encodings"==sub || "util"==sub;
     else
         return "kde-override"==sub;
 }
@@ -127,6 +127,8 @@ static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QStr
 
         if (S_ISLNK(buff.st_mode))
         {
+            KDE_DBUG << path << " is a link" << endl;
+
             char buffer2[1000];
             int n=readlink(QFile::encodeName(path), buffer2, 1000);
             if(n!= -1)
@@ -318,7 +320,7 @@ void CKioFonts::listDir(const KURL &url)
 
     if(CMisc::root())
     {
-        size=getSize(CMisc::dirSyntax(CGlobal::cfg().getRealTopDir()+url.encodedPathAndQuery(-1)));
+        size=getSize(CMisc::dirSyntax(CGlobal::cfg().getUserFontsDir()+url.encodedPathAndQuery(-1)));
         totalSize(size);
         listDir(CGlobal::cfg().getRealTopDir(), url.encodedPathAndQuery(-1), false);
     }
@@ -326,9 +328,9 @@ void CKioFonts::listDir(const KURL &url)
     {
         size=2;
         totalSize(size);
-        createDirEntry(entry, i18n(KIO_FONTS_USER), CGlobal::cfg().getRealTopDir(url.path()), false);
+        createDirEntry(entry, i18n(KIO_FONTS_USER), CGlobal::cfg().getUserFontsDir(), false);
         listEntry(entry, false);
-        createDirEntry(entry, i18n(KIO_FONTS_SYS), CGlobal::cfg().getRealTopDir(url.path()), true);
+        createDirEntry(entry, i18n(KIO_FONTS_SYS), CGlobal::cfg().getSysFontsDir(), true);
         listEntry(entry, false);
         addDir(CGlobal::cfg().getUserFontsDir());
         cfgDir(CGlobal::cfg().getUserFontsDir());
@@ -389,7 +391,7 @@ void CKioFonts::listDir(const QString &top, const QString &sub, bool sys)
 
     //
     // Ensure this dir is in fontpath - if it exists, and it contains fonts!
-    if(sub.isNull() || (!name.isNull() && !sys && QChar('.')!=name[0] && !isSpecialDir(name, sys)))
+    if(!sys && (sub.isNull() || (!name.isNull() && !sys && QChar('.')!=name[0] && !isSpecialDir(name, sys))))
     {
         addDir(dPath);
         cfgDir(dPath);
@@ -1051,9 +1053,9 @@ void CKioFonts::mkdir(const KURL &url, int)
 
     if(isSpecialDir(CMisc::getName(url.path()), sys))
         error(KIO::ERR_SLAVE_DEFINED,
-                  sys ? i18n("Sorry, you cannot create a folder named either \"CID\" or \"encodings\", as these are special "
+                  sys ? i18n("Sorry, you cannot create a folder named \"CID\", \"encodings\", or \"util\" - as these are special "
                              "system folders. (\"CID\"is for \"CID\" fonts - these are <b>not</b> handled - and "
-                             "\"encodings\" is for X11 encoding files.)")
+                             "\"encodings\" and \"util\" are for X11 encoding files.)")
                       : i18n("Sorry, you cannot create a folder named \"kde-override\", as this is a special KDE folder."));
     else
     {
@@ -1338,13 +1340,20 @@ void CKioFonts::syncDirs()
 
     if(inXftNotX11.count())
         for(it=inXftNotX11.begin(); it!=inXftNotX11.end(); ++it)
+        {
+            KDE_DBUG << *it << " in xft but not x11" << endl;
+            CGlobal::userXcfg().addPath(*it);
             cfgDir(*it);
+        }
 
     if(inX11NotXft.count())
     {
 #ifdef HAVE_FONTCONFIG
         for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
+        {
+            KDE_DBUG << *it << " in x11 but not xft" << endl;
             CGlobal::userXft().addDir(*it);
+        }
         CGlobal::userXft().apply();
         CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
         for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
