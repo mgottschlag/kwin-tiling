@@ -48,7 +48,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
     QSizePolicy vpref( QSizePolicy::Minimum, QSizePolicy::Fixed );
 
-    alGroup = new QHGroupBox( i18n("Enable au&to-login"), this );
+    alGroup = new QHGroupBox( i18n("Enable Au&to-Login"), this );
     alGroup->setInsideSpacing( KDialog::spacingHint() );
     alGroup->setCheckable( true );
     alGroup->setSizePolicy( vpref );
@@ -101,7 +101,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 	"be changed.") );
     connect(cbjumppw, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
-    npGroup = new QVGroupBox(i18n("Enable password-&less logins"), this );
+    npGroup = new QVGroupBox(i18n("Enable Password-&Less Logins"), this );
     npGroup->setCheckable( true );
 
     QWhatsThis::add( npGroup, i18n("When this option is checked, the checked users from"
