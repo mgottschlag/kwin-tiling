@@ -495,7 +495,7 @@ Ent entsAnyGreeter[] = {
 { "# For ShowUsers=Selected. Default is \"\"\n", 
 "Users",	"root,johndoe", 0 },
 { "# For ShowUsers=All. Default is \"\"\n", 
-"NoUsers",	"adm,alias,amanda,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ident,ingres,kmem,lp,mail,mailnull,man,mta,named,news,nobody,nscd,operator,pcap,pop,postfix,postgres,qmaild,qmaill,qmailp,qmailq,qmailr,qmails,reboot,rpc,rpcuser,rpm,sendmail,shutdown,sympa,sync,tty,uucp,xfs,xten", 1 },
+"NoUsers",	"adm,alias,amanda,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ident,ingres,kmem,lp,mail,mailnull,man,mta,mysql,named,news,nobody,nscd,operator,pcap,pop,postfix,postgres,qmaild,qmaill,qmailp,qmailq,qmailr,qmails,reboot,rpc,rpcuser,rpm,sendmail,shutdown,sympa,sync,tty,uucp,xfs,xten", 1 },
 { "# Special case of NoUsers: users with a UID less than this number (except root)\n"
 "# will not be shown as well. Default is 0\n", 
 "MinShowUID",	"1000", 0 },
