@@ -44,6 +44,7 @@ from the X Consortium.
 # include "dm.h"
 # include <stdio.h>
 # include <stdarg.h>
+# include <X11/Xfuncproto.h>
 
 #if !HAVE_VSYSLOG
 #undef USE_SYSLOG

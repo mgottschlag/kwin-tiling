@@ -80,6 +80,7 @@ CatchUsr1 (n)
 }
 
 extern void CleanUpChild();
+extern void DestroyWellKnownSockets();
 
 int StartServerOnce (d)
 struct display	*d;
@@ -97,6 +98,10 @@ struct display	*d;
     switch (pid = fork ()) {
     case 0:
 	CleanUpChild ();
+#ifdef XDMCP
+	/* The chooser socket is not closed by CleanUpChild() */
+	DestroyWellKnownSockets();
+#endif
 	if (d->authFile) {
 	    sprintf (arg, "-auth %s", d->authFile);
 	    argv = parseArgs (argv, arg);
