@@ -53,7 +53,7 @@ IconModule::IconModule(QWidget *parent, const char *name)
   connect(tab1, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
   tab2 = new KIconConfig(this, "effects");
-  tab->addTab(tab2, i18n("&Effects"));
+  tab->addTab(tab2, i18n("&Advanced"));
   connect(tab2, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 }
 

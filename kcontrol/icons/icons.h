@@ -14,10 +14,12 @@
 #ifndef __icons_h__
 #define __icons_h__
 
-#include <kcmodule.h>
 #include <qvaluelist.h>
 #include <qcolor.h>
-#include <qdialog.h>
+#include <qimage.h>
+
+#include <kcmodule.h>
+#include <kdialogbase.h>
 
 class QColor;
 class QWidget;
@@ -29,12 +31,23 @@ class QSlider;
 class QLabel;
 class QIconView;
 class QTabWidget;
+class QGridLayout;
+class QPushButton;
 
 class KConfig;
 class KIconEffect;
 class KIconTheme;
 class KIconLoader;
 class KColorButton;
+
+struct Effect 
+{
+    int type;
+    float value;
+    QColor color;
+    bool transparant;
+};
+
 
 /**
  * The General Icons tab in kcontrol.
@@ -54,31 +67,33 @@ signals:
     void changed(bool);
 
 private slots:
-    void slotEffectSetup();
+    void slotEffectSetup0() { EffectSetup(0); }
+    void slotEffectSetup1() { EffectSetup(1); }
+    void slotEffectSetup2() { EffectSetup(2); }
+    
     void slotUsage(int index);
-    void slotState(int index);
-    void slotEffect(int index);
     void slotSize(int index);
-    void slotPreview(float &m_pEfValue);
-    void slotPreview(QColor &m_pEfColor);
     void slotDPCheck(bool check);
     void slotAlphaBCheck(bool check);
-    void slotSTCheck(bool check);
 
 private:
+    void preview(int i);
+    void EffectSetup(int state);
+    QPushButton *addPreviewIcon(int i, const QString &str, QWidget *parent, QGridLayout *lay);
     void init();
+    void initDefaults();
     void read();
     void apply();
+
 
     bool mbDP[6], mbAlphaB[6], mbChanged[6];
     int mSizes[6];
     QValueList<int> mAvSizes[6];
-    int mEffects[6][3];
-    float mEffectValues[6][3];
-    QColor mEffectColors[6][3];
-    bool mEffectTrans[6][3];
 
-    int mUsage, mState;
+    Effect mEffects[6][3];
+    Effect mDefaultEffect[3];
+    
+    int mUsage;
     QString mTheme, mExample;
     QStringList mGroups, mStates;
 
@@ -87,48 +102,47 @@ private:
     KIconLoader *mpLoader;
     KConfig *mpConfig;
 
-    QLabel *mpPreview;                                                            
+    typedef QLabel *QLabelPtr;
+    QLabelPtr mpPreview[3];
 
-    QListBox *mpUsageList, *mpStateList;
-    QComboBox *mpEffectBox, *mpSizeBox;
-    QCheckBox *mpDPCheck, *mpSTCheck, *wordWrapCB, *underlineCB, *mpAlphaBCheck;
-    QPushButton *mpESetupBut;                                   
+    QListBox *mpUsageList;
+    QComboBox *mpSizeBox;
+    QCheckBox *mpDPCheck, *wordWrapCB, *underlineCB, *mpAlphaBCheck;
     QTabWidget *m_pTabWidget;
-    QWidget *m_pTab1, *m_pTab2;                                    
+    QWidget *m_pTab1;                                    
 };
 
-class KIconEffectSetupDialog: public QDialog
+class KIconEffectSetupDialog: public KDialogBase
 {
     Q_OBJECT
      
-    public:
-    KIconEffectSetupDialog(QColor m_pEfColor, 
-    float m_pEfValue, int m_pEfTyp,                                          
-    QWidget *parent=0L, char *name=0L);
-    QColor fxcolor() { return m_pEfColor; }
-    float fxvalue() { return m_pEfValue; }
+public:
+    KIconEffectSetupDialog(const Effect &, const Effect &,
+                           const QString &, const QImage &,
+			   QWidget *parent=0L, char *name=0L);
+    Effect effect() { return mEffect; }
 
+protected:
+    void preview();
+    void init();
 
-signals:
-    void changed(bool);
-    void changeView(float &);
-    void changeView(QColor &);
-
-
-public slots:
-    void slotHelp();
-    void slotOK();    
-
-private:
-    QSlider *mpEffectSlider;
-    KColorButton *mpEColButton;
-    QColor m_pEfColor;
-    float m_pEfValue;
-
-private slots:
+protected slots:
     void slotEffectValue(int value);
     void slotEffectColor(const QColor &col);
+    void slotEffectType(int type);
+    void slotSTCheck(bool b);
+    void slotDefault();
 
+private:
+    KIconEffect *mpEffect;
+    QListBox *mpEffectBox;
+    QCheckBox *mpSTCheck;
+    QSlider *mpEffectSlider;
+    KColorButton *mpEColButton;
+    Effect mEffect;
+    Effect mDefaultEffect;
+    QImage mExample;
+    QLabel *mpPreview;
 };                      
                       
 #endif

@@ -41,7 +41,7 @@
 #include <kipc.h>
 #include <kcolordlg.h>
 #include <kcolorbtn.h>
-#include <kbuttonbox.h>
+#include <kseparator.h>
 
 #include <icons.h>
 
@@ -57,34 +57,37 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     top->setColStretch(0, 1);
     top->setColStretch(1, 1);
 
-    // Use of Icon at (0,0)
+    // Use of Icon at (0,0) - (1, 0)
     QGroupBox *gbox = new QGroupBox(i18n("Use of Icon"), this);
-    top->addWidget(gbox, 0, 0);
-    QBoxLayout *g_lay = new QVBoxLayout(gbox,
+    top->addMultiCellWidget(gbox, 0, 1, 0, 0);
+    QBoxLayout *g_vlay = new QVBoxLayout(gbox,
                                         KDialog::marginHint(),
                                         KDialog::spacingHint());
-    g_lay->addSpacing(fontMetrics().lineSpacing());
+    g_vlay->addSpacing(fontMetrics().lineSpacing());
     mpUsageList = new QListBox(gbox);
     connect(mpUsageList, SIGNAL(highlighted(int)), SLOT(slotUsage(int)));
-    g_lay->addWidget(mpUsageList);
+    g_vlay->addWidget(mpUsageList);
 
-    // Preview at (0,1)
-    gbox = new QGroupBox(i18n("Preview"), this);
-    top->addWidget(gbox, 0, 1);
-    g_lay = new QVBoxLayout(gbox, KDialog::marginHint(), 0);
-    g_lay->addSpacing(fontMetrics().lineSpacing());
-    mpPreview = new QLabel(gbox);
-    mpPreview->setAlignment(AlignCenter);
-    mpPreview->setMinimumSize(128, 128);
-    g_lay->addWidget(mpPreview);
+    KSeparator *sep = new KSeparator( this );
+    sep->setOrientation( QFrame::HLine );
+    top->addWidget(sep, 1, 1);
+    // Preview at (2,0) - (2, 1) 
+    QGridLayout *g_lay = new QGridLayout(4, 3, KDialog::marginHint(), 0);
+    top->addMultiCellLayout(g_lay, 2, 2, 0, 1);
+    g_lay->addRowSpacing(0, fontMetrics().lineSpacing());
 
-    // Tabwidget at (1,0) - (1,1)
-    m_pTabWidget = new QTabWidget(this);
-    top->addMultiCellWidget(m_pTabWidget, 1, 1, 0, 1);                                   
+    QPushButton *push;
 
-    // Icon settings at Tab 1
-    m_pTab1 = new QWidget(0L, "General Tab");
-    m_pTabWidget->addTab(m_pTab1, i18n("&General"));
+    push = addPreviewIcon(0, i18n("Default"), this, g_lay);
+    connect(push, SIGNAL(clicked()), SLOT(slotEffectSetup0()));
+    push = addPreviewIcon(1, i18n("Active"), this, g_lay);
+    connect(push, SIGNAL(clicked()), SLOT(slotEffectSetup1()));
+    push = addPreviewIcon(2, i18n("Disabled"), this, g_lay);
+    connect(push, SIGNAL(clicked()), SLOT(slotEffectSetup2()));
+
+    m_pTab1 = new QWidget(this, "General Tab");
+    top->addWidget(m_pTab1, 0, 1);
+
     QGridLayout *grid = new QGridLayout(m_pTab1, 4, 3, 10, 10);
     grid->setColStretch(1, 1);
     grid->setColStretch(2, 1);
@@ -107,41 +110,6 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     connect(mpAlphaBCheck, SIGNAL(toggled(bool)), SLOT(slotAlphaBCheck(bool)));
     grid->addWidget(mpAlphaBCheck, 2, 0, Qt::AlignLeft);
 
-    // Iconeffects at Tab 2
-    m_pTab2 = new QWidget(0L, "Iconeffect Tab");
-    m_pTabWidget->addTab(m_pTab2, i18n("&Effects"));
-    grid = new QGridLayout(m_pTab2, 4, 3, 10, 10);
-    grid->setColStretch(1, 1);
-    grid->setColStretch(2, 1);                                                                                                                                                                  
-
-
-    // Effects
-// I need to do a QListView here instead
-    mpStateList=new QListBox(m_pTab2);
-    // Try to set minimum size to 3 lines of text.
-    mpStateList->setMinimumSize(QSize(0, 
-	mpStateList->fontMetrics().lineSpacing()*4));
-    connect(mpStateList, SIGNAL(highlighted(int)), SLOT(slotState(int)));
-    grid->addMultiCellWidget(mpStateList, 0, 0, 0, 3);                                   
-    lbl = new QLabel(i18n("&Effect:"), m_pTab2);
-    lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
-    mpEffectBox = new QComboBox(m_pTab2);
-    connect(mpEffectBox, SIGNAL(activated(int)), SLOT(slotEffect(int)));
-    grid->addWidget(mpEffectBox, 1,1, Qt::AlignLeft);
-    lbl->setBuddy(mpEffectBox);
-
-    mpESetupBut = new QPushButton( i18n("&Setup ..."),m_pTab2);
-    connect(mpESetupBut, SIGNAL(clicked()), SLOT(slotEffectSetup()));
-    grid->addWidget(mpESetupBut, 1,2, Qt::AlignLeft);
-
-    mpSTCheck = new QCheckBox(i18n("Semi-transparent"), m_pTab2);
-    connect(mpSTCheck, SIGNAL(toggled(bool)), SLOT(slotSTCheck(bool)));
-    grid->addWidget(mpSTCheck, 2, 0, Qt::AlignLeft);
-
-
-    top->activate(); // needs improvement
-
     top->activate();
 
     init();
@@ -150,13 +118,26 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     preview();
 }
 
+QPushButton *KIconConfig::addPreviewIcon(int i, const QString &str, QWidget *parent, QGridLayout *lay)
+{
+    QLabel *lab = new QLabel(str, parent);
+    lay->addWidget(lab, 1, i, AlignCenter);
+    mpPreview[i] = new QLabel(parent);
+    mpPreview[i]->setAlignment(AlignCenter);
+    mpPreview[i]->setMinimumSize(105, 105);
+    lay->addWidget(mpPreview[i], 2, i);
+    QPushButton *push = new QPushButton(i18n("Set Effect"), parent);
+    lay->addWidget(push, 3, i, AlignCenter);
+    return push;
+}
+
 void KIconConfig::init()
 {
     mpLoader = KGlobal::iconLoader();
     mpConfig = KGlobal::config();
     mpEffect = new KIconEffect;
     mpTheme = mpLoader->theme();
-    mUsage = 0; mState = 0;
+    mUsage = 0;
     for (int i=0; i<KIcon::LastGroup; i++)
 	mbChanged[i] = false;
 
@@ -166,16 +147,6 @@ void KIconConfig::init()
     mpUsageList->insertItem(i18n("Main Toolbar"));
     mpUsageList->insertItem(i18n("Small Icons"));
     mpUsageList->insertItem(i18n("Panel"));
-
-    mpStateList->insertItem(i18n("Default - Default icon look"));
-    mpStateList->insertItem(i18n("Active - The mouse is over the icon"));
-    mpStateList->insertItem(i18n("Disabled - The icon cannot be used"));
-
-    mpEffectBox->insertItem(i18n("No Effect"));
-    mpEffectBox->insertItem(i18n("To Gray"));
-    mpEffectBox->insertItem(i18n("Colorize"));
-    mpEffectBox->insertItem(i18n("Gamma"));
-    mpEffectBox->insertItem(i18n("Desaturate"));
 
     // For reading the configuration
     mGroups += "Desktop";
@@ -189,6 +160,36 @@ void KIconConfig::init()
     mStates += "Disabled";
 }
 
+void KIconConfig::initDefaults()
+{
+    mDefaultEffect[0].type = KIconEffect::NoEffect;
+    mDefaultEffect[1].type = KIconEffect::NoEffect;
+    mDefaultEffect[2].type = KIconEffect::NoEffect;
+    mDefaultEffect[0].transparant = false;
+    mDefaultEffect[1].transparant = false;
+    mDefaultEffect[2].transparant = true;
+    mDefaultEffect[0].value = 1.0;
+    mDefaultEffect[1].value = 1.0;
+    mDefaultEffect[2].value = 1.0;
+    mDefaultEffect[0].color = QColor(144,128,248);
+    mDefaultEffect[1].color = QColor(169,156,255);
+    mDefaultEffect[2].color = QColor(34,202,0);
+
+    int i;
+    QStringList::ConstIterator it;
+    for(it=mGroups.begin(), i=0; it!=mGroups.end(); it++, i++)
+    {
+	mbDP[i] = false;
+	mbAlphaB[i] = false;
+	mbChanged[i] = true;
+	mSizes[i] = mpTheme->defaultSize(i);
+
+	mEffects[i][0] = mDefaultEffect[0];
+	mEffects[i][1] = mDefaultEffect[1];
+	mEffects[i][2] = mDefaultEffect[2];
+    }
+}
+
 void KIconConfig::read()
 {
     for (int i=0; i<KIcon::LastGroup; i++)
@@ -197,28 +198,18 @@ void KIconConfig::read()
     mTheme = mpTheme->current();
     mExample = mpTheme->example();
 
+    initDefaults();
+
     int i, j, effect;
     QStringList::ConstIterator it, it2;
     for (it=mGroups.begin(), i=0; it!=mGroups.end(); it++, i++)
     {
-	mpConfig->setGroup(*it + "Icons");
-	mSizes[i] = mpConfig->readNumEntry("Size", mpTheme->defaultSize(i));
-	mbDP[i] = mpConfig->readBoolEntry("DoublePixels");
-	mbAlphaB[i] = mpConfig->readBoolEntry("AlphaBlending");
+        mbChanged[i] = false;
 
-	// defaults
-	mEffects[i][0] = KIconEffect::NoEffect;
-	mEffects[i][1] = KIconEffect::NoEffect;
-	mEffects[i][2] = KIconEffect::NoEffect;
-	mEffectTrans[i][0] = false;
-	mEffectTrans[i][1] = false;
-	mEffectTrans[i][2] = true;
-	mEffectValues[i][0] = 1.0;
-	mEffectValues[i][1] = 1.0;
-	mEffectValues[i][2] = 1.0;
-	mEffectColors[i][0] = QColor(144,128,248);
-	mEffectColors[i][1] = QColor(169,156,255);
-	mEffectColors[i][2] = QColor(34,202,0);
+	mpConfig->setGroup(*it + "Icons");
+	mSizes[i] = mpConfig->readNumEntry("Size", mSizes[i]);
+	mbDP[i] = mpConfig->readBoolEntry("DoublePixels", mbDP[i]);
+	mbAlphaB[i] = mpConfig->readBoolEntry("AlphaBlending", mbAlphaB[i]);
 
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
 	{
@@ -234,10 +225,10 @@ void KIconConfig::read()
 	    else if (tmp == "none")
 		effect = KIconEffect::NoEffect;
 	    else continue;
-	    mEffects[i][j] = effect;
-	    mEffectValues[i][j] = mpConfig->readDoubleNumEntry(*it2 + "Value");
-	    mEffectColors[i][j] = mpConfig->readColorEntry(*it2 + "Color");
-	    mEffectTrans[i][j] = mpConfig->readBoolEntry(*it2 + "SemiTransparent");
+	    mEffects[i][j].type = effect;
+	    mEffects[i][j].value = mpConfig->readDoubleNumEntry(*it2 + "Value");
+	    mEffects[i][j].color = mpConfig->readColorEntry(*it2 + "Color");
+	    mEffects[i][j].transparant = mpConfig->readBoolEntry(*it2 + "SemiTransparent");
 	}
     }
 }
@@ -245,22 +236,6 @@ void KIconConfig::read()
 void KIconConfig::apply()
 {
     mpUsageList->setCurrentItem(mUsage);
-    mpStateList->setCurrentItem(mState);
-    mpEffectBox->setCurrentItem(mEffects[mUsage][mState]);
-
-    switch (mEffects[mUsage][mState])
-    {
-    case KIconEffect::Colorize:
-    case KIconEffect::DeSaturate:
-    case KIconEffect::ToGamma:
-    case KIconEffect::ToGray:
-	mpESetupBut -> setEnabled(true);
-	break;
-    default:
-        mpESetupBut -> setEnabled(false);
-	break;
-    }
-
 
     int delta = 1000, dw, index = -1, size, i;
     QValueList<int>::Iterator it;
@@ -282,12 +257,11 @@ void KIconConfig::apply()
 	mpSizeBox->setCurrentItem(index);
 	mSizes[mUsage] = size; // best or exact match
     }
-    mpSTCheck->setChecked(mEffectTrans[mUsage][mState]);
     mpDPCheck->setChecked(mbDP[mUsage]);
     mpAlphaBCheck->setChecked(mbAlphaB[mUsage]);
 }
 
-void KIconConfig::preview()
+void KIconConfig::preview(int i)
 {
     // Apply effects ourselves because we don't want to sync
     // the configuration every preview.
@@ -298,11 +272,20 @@ void KIconConfig::preview()
 	int w = img.width() * 2;
 	img = img.smoothScale(w, w);
     }
-    img = mpEffect->apply(img, mEffects[mUsage][mState],
-	    mEffectValues[mUsage][mState], mEffectColors[mUsage][mState],
-            mEffectTrans[mUsage][mState]);
+
+    Effect &effect = mEffects[mUsage][i]; 
+
+    img = mpEffect->apply(img, effect.type,
+	    effect.value, effect.color, effect.transparant);
     pm.convertFromImage(img);
-    mpPreview->setPixmap(pm);
+    mpPreview[i]->setPixmap(pm);
+}
+
+void KIconConfig::preview()
+{
+    preview(0);
+    preview(1);
+    preview(2);
 }
 
 void KIconConfig::load()
@@ -328,7 +311,7 @@ void KIconConfig::save()
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
 	{
 	    QString tmp;
-	    switch (mEffects[i][j])
+	    switch (mEffects[i][j].type)
 	    {
 	    case KIconEffect::ToGray:
 		tmp = "togray";
@@ -347,9 +330,9 @@ void KIconConfig::save()
 		break;
 	    }
 	    mpConfig->writeEntry(*it2 + "Effect", tmp, true, true);
-	    mpConfig->writeEntry(*it2 + "Value", mEffectValues[i][j], true, true);
-            mpConfig->writeEntry(*it2 + "Color", mEffectColors[i][j], true, true);
-            mpConfig->writeEntry(*it2 + "SemiTransparent", mEffectTrans[i][j], true, true);
+	    mpConfig->writeEntry(*it2 + "Value", mEffects[i][j].value, true, true);
+            mpConfig->writeEntry(*it2 + "Color", mEffects[i][j].color, true, true);
+            mpConfig->writeEntry(*it2 + "SemiTransparent", mEffects[i][j].transparant, true, true);
 	}
     }
     mpConfig->sync();
@@ -369,50 +352,23 @@ void KIconConfig::save()
 
 void KIconConfig::defaults()
 {
-    for (int i=0; i<KIcon::LastGroup; i++)
-    {
-	mbDP[i] = false;
-	mbAlphaB[i] = false;
-	mbChanged[i] = true;
-	mSizes[i] = mpTheme->defaultSize(i);
-	mEffects[i][0] = KIconEffect::NoEffect;
-	mEffects[i][1] = KIconEffect::NoEffect;
-	mEffects[i][2] = KIconEffect::NoEffect;
-	mEffectTrans[i][0] = false;
-	mEffectTrans[i][1] = false;
-	mEffectTrans[i][2] = true;
-	mEffectValues[i][0] = 1.0;
-	mEffectValues[i][1] = 1.0;
-	mEffectValues[i][2] = 1.0;
-	mEffectColors[i][0] = QColor(144,128,248);
-        mEffectColors[i][1] = QColor(169,156,255);
-        mEffectColors[i][2] = QColor(34,202,0);
-    }
+    initDefaults();
     apply();
     preview();
-
     emit changed(true);
 }
 
 void KIconConfig::slotUsage(int index)
 {
     mUsage = index;
-    mState = 0;
-    if (mUsage == KIcon::Small)
+    if ( mUsage == KIcon::Panel )
     {
-	m_pTabWidget->setTabEnabled(m_pTab1, false);
-	m_pTabWidget->setCurrentPage(1);
-    }
-    else if ( mUsage == KIcon::Panel )
-    {
-	m_pTabWidget->setTabEnabled(m_pTab1, true);
         mpSizeBox->setEnabled(false);
         mpDPCheck->setEnabled(false);
 	mpAlphaBCheck->setEnabled(true);
     } 
     else
     {
-	m_pTabWidget->setTabEnabled(m_pTab1, true);
         mpSizeBox->setEnabled(true);
         mpDPCheck->setEnabled(true);
 	mpAlphaBCheck->setEnabled( (mUsage==KIcon::Desktop)? true : false);
@@ -421,97 +377,34 @@ void KIconConfig::slotUsage(int index)
     preview();
 }
 
-void KIconConfig::slotPreview(float &m_pEfValue)
+void KIconConfig::EffectSetup(int state)
 {
-    float tmp;
-    tmp = mEffectValues[mUsage][mState];
-    mEffectValues[mUsage][mState] = m_pEfValue;
-    preview();
-    mEffectValues[mUsage][mState] = tmp;
-}
+    QPixmap pm = mpLoader->loadIcon(mExample, KIcon::NoGroup, mSizes[mUsage]);
+    QImage img = pm.convertToImage();
+    if (mbDP[mUsage])
+    {
+	int w = img.width() * 2;
+	img = img.smoothScale(w, w);
+    }
 
-void KIconConfig::slotPreview(QColor &m_pEfColor)
-{
-    QColor tmp;
-    tmp = mEffectColors[mUsage][mState];
-    mEffectColors[mUsage][mState] = m_pEfColor;
-    preview();
-    mEffectColors[mUsage][mState] = tmp;
-}
-
-void KIconConfig::slotEffectSetup()
-{
-    QColor r;
-    r = mEffectColors[mUsage][mState];
-    float s;
-    s = mEffectValues[mUsage][mState];
-    int t;
-    t = mEffects[mUsage][mState];
-
-    KIconEffectSetupDialog dlg(r,s,t);
-    connect(&dlg, SIGNAL(changeView(float &)), SLOT(slotPreview(float &)));
-    connect(&dlg, SIGNAL(changeView(QColor &)), SLOT(slotPreview(QColor &)));
+    QString caption;
+    switch (state)
+    {
+    case 0 : caption = i18n("Setup Default Icon Effect"); break;
+    case 1 : caption = i18n("Setup Active Icon Effect"); break;
+    case 2 : caption = i18n("Setup Disabled Icon Effect"); break;
+    }
+   
+    KIconEffectSetupDialog dlg(mEffects[mUsage][state], mDefaultEffect[state], caption, img);
 
     if (dlg.exec() == QDialog::Accepted)
     {
-        mEffectColors[mUsage][mState] = dlg.fxcolor();
-        mEffectValues[mUsage][mState] = dlg.fxvalue();
+        mEffects[mUsage][state] = dlg.effect();
         emit changed(true);
         mbChanged[mUsage] = true;
     }
-    preview();
+    preview(state);
 }
-
-void KIconConfig::slotState(int index)
-{
-    mState = index;
-    switch (mEffects[mUsage][mState])
-    {
-    case KIconEffect::Colorize:
-    case KIconEffect::DeSaturate:
-    case KIconEffect::ToGamma:
-    case KIconEffect::ToGray:
-	mpESetupBut -> setEnabled(true);
-	break;
-    default:
-        mpESetupBut -> setEnabled(false);
-	break;
-    }
-    mpEffectBox->setCurrentItem(mEffects[mUsage][mState]);
-    mpSTCheck->setChecked(mEffectTrans[mUsage][mState]);
-    preview();
-}
-
-void KIconConfig::slotEffect(int index)
-{
-    mEffects[mUsage][mState] = index;
-
-    switch (mEffects[mUsage][mState])
-    {
-    case KIconEffect::Colorize:
-    case KIconEffect::DeSaturate:
-    case KIconEffect::ToGamma:
-    case KIconEffect::ToGray:
-	mpESetupBut -> setEnabled(true);
-	break;
-    default:
-        mpESetupBut -> setEnabled(false);
-	break;
-    }
-
-    preview();
-    emit changed(true);
-    mbChanged[mUsage] = true;
-}
-
-void KIconConfig::slotSTCheck(bool tag)
-{
-    mEffectTrans[mUsage][mState] = tag;
-    preview();
-    emit changed(true);
-    mbChanged[mUsage] = true;
-}
-
 
 void KIconConfig::slotSize(int index)
 {
@@ -540,83 +433,132 @@ void KIconConfig::slotAlphaBCheck(bool check)
     mbChanged[mUsage] = true;
 }
 
-KIconEffectSetupDialog::KIconEffectSetupDialog(QColor ecolor, float m_pEfValue,
-	int m_pEfTyp, QWidget *parent, char *name)
-    : QDialog(parent, name, true)
+KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect, 
+    const Effect &defaultEffect, 
+    const QString &caption, const QImage &image, 
+    QWidget *parent, char *name)
+    : KDialogBase(parent, name, true, caption,
+	Default|Ok|Cancel, Ok, true), 
+      mEffect(effect), 
+      mDefaultEffect(defaultEffect), 
+      mExample(image)
 {
-    QPushButton *pbut;
+    mpEffect = new KIconEffect;
+
     QLabel *lbl;
+    QGroupBox *frame;
+    QGridLayout *grid;
 
-    m_pEfColor=ecolor;
-    setCaption( i18n("Settings for Iconeffects"));
+    QWidget *page = new QWidget(this);
+    setMainWidget(page);
 
-    QVBoxLayout*top = new QVBoxLayout(this);
-    top->setSpacing(10);
-    top->setMargin(10);
+    QGridLayout *top = new QGridLayout(page, 4, 3, 0, spacingHint());
+    top->setColStretch(0,1);
+    top->addColSpacing(1,10);
+    top->setColStretch(2,2);
+    top->setRowStretch(1,1);
 
-    QFrame *frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::WinPanel|QFrame::Raised);
-    top->addWidget(frame);
+    lbl = new QLabel(i18n("&Effect:"), page);
+    lbl->setFixedSize(lbl->sizeHint());
+    top->addWidget(lbl, 0, 0, Qt::AlignLeft);
+    mpEffectBox = new QListBox(page);
+    mpEffectBox->insertItem(i18n("No Effect"));
+    mpEffectBox->insertItem(i18n("To Gray"));
+    mpEffectBox->insertItem(i18n("Colorize"));
+    mpEffectBox->insertItem(i18n("Gamma"));
+    mpEffectBox->insertItem(i18n("Desaturate"));
+    connect(mpEffectBox, SIGNAL(highlighted(int)), SLOT(slotEffectType(int)));
+    top->addMultiCellWidget(mpEffectBox, 1, 2, 0, 0, Qt::AlignLeft);
+    lbl->setBuddy(mpEffectBox);
 
-    QGridLayout *grid = new QGridLayout(frame, 2, 1, 10, 10);
-    grid->setSpacing(10);
-    grid->setMargin(10);
+    mpSTCheck = new QCheckBox(i18n("Semi-transparent"), page);
+    connect(mpSTCheck, SIGNAL(toggled(bool)), SLOT(slotSTCheck(bool)));
+    top->addWidget(mpSTCheck, 3, 0, Qt::AlignLeft);
+    
+    frame = new QGroupBox(i18n("Preview"), page);
+    top->addMultiCellWidget(frame, 0, 1, 2, 2);
+    grid = new QGridLayout(frame, 2, 1, marginHint(), spacingHint());
+    grid->addRowSpacing(0, fontMetrics().lineSpacing());
+    grid->setRowStretch(1, 1);
 
-    if (m_pEfTyp == KIconEffect::Colorize)
-    {
-	lbl = new QLabel(i18n("Color"), frame);
-	grid->addWidget(lbl, 0, 0);
-	mpEColButton = new KColorButton(frame);
-	connect(mpEColButton, SIGNAL(changed(const QColor &)),
-		SLOT(slotEffectColor(const QColor &)));
-	grid->addWidget(mpEColButton, 0, 1);
-	mpEColButton->setColor(m_pEfColor);
-    }
+    mpPreview = new QLabel(frame);
+    mpPreview->setAlignment(AlignCenter);
+    mpPreview->setMinimumSize(105, 105);
+    grid->addWidget(mpPreview, 1, 0);
 
-    lbl = new QLabel(i18n("Amount"), frame);
+    frame = new QGroupBox(i18n("Effect Parameters"), page);
+    top->addMultiCellWidget(frame, 2, 3, 2, 2);
+    grid = new QGridLayout(frame, 3, 2, marginHint(), spacingHint());
+    grid->addRowSpacing(0, fontMetrics().lineSpacing());
+
+    lbl = new QLabel(i18n("Amount:"), frame);
     grid->addWidget(lbl, 1, 0);
     mpEffectSlider = new QSlider(0, 100, 5, 10, QSlider::Horizontal, frame);
     connect(mpEffectSlider, SIGNAL(valueChanged(int)), SLOT(slotEffectValue(int)));
     grid->addWidget(mpEffectSlider, 1, 1);
-    mpEffectSlider->setValue((int) (100.0 * m_pEfValue + 0.5));
 
-    KButtonBox *bbox = new KButtonBox(this);
-    pbut = bbox->addButton(i18n("&Help"));
-    connect(pbut, SIGNAL(clicked()), SLOT(slotHelp()));
-    bbox->addStretch();
-    pbut = bbox->addButton(i18n("&OK"));
-    connect(pbut, SIGNAL(clicked()), SLOT(slotOK()));
-    pbut = bbox->addButton(i18n("&Cancel"));
-    connect(pbut, SIGNAL(clicked()), SLOT(reject()));
-    top->addWidget(bbox,2,0);
-    emit changeView(m_pEfValue);
-    emit changeView(m_pEfColor);
+    lbl = new QLabel(i18n("Color:"), frame);
+    grid->addWidget(lbl, 2, 0);
+    mpEColButton = new KColorButton(frame);
+    connect(mpEColButton, SIGNAL(changed(const QColor &)),
+		SLOT(slotEffectColor(const QColor &)));
+    grid->addWidget(mpEColButton, 2, 1);
+
+    init(); 
+    preview();
+}
+
+void KIconEffectSetupDialog::init()
+{
+    mpEffectBox->setCurrentItem(mEffect.type);
+    mpEffectSlider->setEnabled(mEffect.type != KIconEffect::NoEffect);
+    mpEColButton->setEnabled(mEffect.type == KIconEffect::Colorize);
+    mpEffectSlider->setValue((int) (100.0 * mEffect.value + 0.5));
+    mpEColButton->setColor(mEffect.color);
+    mpSTCheck->setChecked(mEffect.transparant);
 }
 
 void KIconEffectSetupDialog::slotEffectValue(int value)
 {
-//    preview();
-
-     m_pEfValue = 0.01 * value;
-     emit changeView(m_pEfValue);
+     mEffect.value = 0.01 * value;
+     preview();
 }
 
 void KIconEffectSetupDialog::slotEffectColor(const QColor &col)
 {
-//    preview();
-
-     m_pEfColor = col;
-     emit changeView(m_pEfColor);
+     mEffect.color = col;
+     preview();
 }
 
-
-void KIconEffectSetupDialog::slotHelp()
+void KIconEffectSetupDialog::slotEffectType(int type)
 {
+    mEffect.type = type;
+    mpEffectSlider->setEnabled(mEffect.type != KIconEffect::NoEffect);
+    mpEColButton->setEnabled(mEffect.type == KIconEffect::Colorize);
+    preview();
 }
 
-void KIconEffectSetupDialog::slotOK()
+void KIconEffectSetupDialog::slotSTCheck(bool b)
 {
-    accept();
+     mEffect.transparant = b;
+     preview();
+}
+
+void KIconEffectSetupDialog::slotDefault()
+{
+     mEffect = mDefaultEffect;
+     init();
+     preview();
+}
+
+void KIconEffectSetupDialog::preview()
+{
+    QPixmap pm;
+    QImage img = mExample.copy();
+    img = mpEffect->apply(img, mEffect.type,
+          mEffect.value, mEffect.color, mEffect.transparant);
+    pm.convertFromImage(img);
+    mpPreview->setPixmap(pm);
 }
 
 #include "icons.moc"
