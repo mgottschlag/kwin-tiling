@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=kcmshell spellchecking
-Icon=spellchecking
+Icon=spellcheck
 Type=Application
 DocPath=
 
