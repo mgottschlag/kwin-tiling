@@ -339,10 +339,24 @@ static GLfloat color[6][4] =
 
 void setColors(int n)
 { int i;
-  for (i = 0; i < 3; i++)
+/*
+  for (i = 0; i < 2; i++)
   {
     base[0][i] = (random()%256)/255.0;
     base[1][i] = (random()%256)/255.0;
+  }
+*/
+  int hue0 = random()%360;
+  int hue1 = (hue0 + random()%260 + 50)%360;
+  QColor co[2];
+  co[0].setHsv(hue0,200,180);
+  co[1].setHsv(hue1,200,150);
+  for (i = 0; i < 2; i++)
+  {
+    base[i][0] = co[i].red  ()/255.0;
+    base[i][1] = co[i].green()/255.0;
+    base[i][2] = co[i].blue ()/255.0;
+    base[i][3] = 0;
   }
   for (i = 0; i < n; i++)
   {
