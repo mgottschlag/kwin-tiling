@@ -1,4 +1,4 @@
-/* 
+/*
 
     $Id$
 
@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.9  2000/03/27 21:44:07  granroth
+    No more mediatool or KAudio... waiting on Stefan for libkdemedia
+
     Revision 1.8  2000/03/14 05:18:18  pbrown
     merged bell settings into here. Other cleanups.
 
@@ -46,7 +49,7 @@
     Bernd: implemented support for all sound events
 
 
-*/  
+*/
 
 
 #ifndef __SYSSOUND_H__
@@ -59,7 +62,7 @@
 #include <qlistbox.h>
 #include <qcheckbox.h>
 
-#include <mediatool.h>
+//#include <mediatool.h>
 //#include <kaudio.h>
 #include <knuminput.h>
 
@@ -81,23 +84,23 @@ public:
 protected:
 	void soundlistDragEnterEvent(QDragEnterEvent *e);
 	void soundlistDropEvent(QDropEvent *e);
-        
+
 private slots:
 	void eventSelected(int index);
         void soundSelected(const QString &filename);
 	void playCurrentSound();
 	void changed();
-    
+
         void ringBell();
 
 private:
 
     bool addToSoundList(QString sound);
-    
+
     int getBellVolume();
     int getBellPitch();
     int getBellDuration();
-    
+
     void setBellVolume(int);
     void setBellPitch(int);
     void setBellDuration(int);
@@ -111,9 +114,9 @@ private:
 
 
     KIntNumInput *volume, *pitch, *duration;
-    
+
     QPushButton *test;
-    
+
     KConfig *config;
     int bellVolume, bellPitch, bellDuration;
 };
