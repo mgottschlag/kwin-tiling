@@ -32,7 +32,7 @@ QXEmbed::QXEmbed(QWidget *parent, const char *name)
 {
     window = 0;
     setFocusPolicy(StrongFocus);
-    setSizeGrip( FALSE ); //trick to create extraData();
+    //setSizeGrip( FALSE ); //trick to create extraData();
 }
 
 QXEmbed::~QXEmbed()
@@ -150,6 +150,7 @@ void QXEmbed::embed(WId w)
     XReparentWindow(qt_xdisplay(), w, winId(), 0, 0);
     QApplication::syncX();
     XResizeWindow(qt_xdisplay(), w, width(), height());
+    XMapWindow(qt_xdisplay(),w);
     extraData()->xDndProxy = w;
 
     if (this == qApp->focusWidget() )
