@@ -28,12 +28,17 @@ from The Open Group.
  * xdm - display manager daemon
  * Author:  Keith Packard, MIT X Consortium
  *
- * printf.c
+ * printf.c - working horse of error.c
  *
- * printf core implementation with some extensions.
+ */
+
+/* ########## printf core implementation with some extensions ########## */
+/*
  * How to use the extensions:
  * - put ' or " in the flags field to quote a string with this char and
  *   escape special characters (only available, if PRINT_QUOTES is defined)
+ * - put \\ in the flags field to quote special characters and leading and
+ *   trailing spaces (only available, if PRINT_QUOTES is defined)
  * - arrays (only available, if PRINT_ARRAYS is defined)
  *   - the array modifier [ comes after the maximal field width specifier
  *   - these modifiers expect an argument:
@@ -71,8 +76,9 @@ from The Open Group.
 #define DP_F_UNSIGNED	(1 << 6)
 #define DP_F_SQUOTE	(1 << 7)
 #define DP_F_DQUOTE	(1 << 8)
-#define DP_F_ARRAY	(1 << 9)
-#define DP_F_COLON	(1 << 10)
+#define DP_F_BACKSL	(1 << 9)
+#define DP_F_ARRAY	(1 << 10)
+#define DP_F_COLON	(1 << 11)
 
 /* Conversion Flags */
 #define DP_C_INT	0
@@ -170,8 +176,10 @@ static void
 fmtstr (OutCh dopr_outch, void *bp,
 	char *value, int flags, int min, int max)
 {
-    int padlen, strln;
-    int cnt = 0;
+    int padlen, strln, curcol;
+#ifdef PRINT_QUOTES
+    int lastcol;
+#endif
     char ch;
 
     if (!value) {
@@ -184,31 +192,27 @@ fmtstr (OutCh dopr_outch, void *bp,
 	    value = "(null)";
     }
 
-    for (strln = 0; (unsigned) strln < (unsigned) max && value[strln]; ++strln);
+    for (strln = 0; (unsigned) strln < (unsigned) max && value[strln]; strln++);
     padlen = min - strln;
     if (padlen < 0)
 	padlen = 0;
     if (flags & DP_F_MINUS)
 	padlen = -padlen;	/* Left Justify */
 
-    while ((padlen > 0) && ((unsigned) cnt < (unsigned) max)) {
+    for (; padlen > 0; padlen--)
 	dopr_outch (bp, ' ');
-	--padlen;
-	++cnt;
-    }
 #ifdef PRINT_QUOTES
-    if (flags & DP_F_SQUOTE) {
+    if (flags & DP_F_SQUOTE)
 	dopr_outch (bp, '\'');
-	++cnt;
-    } else if (flags & DP_F_DQUOTE) {
+    else if (flags & DP_F_DQUOTE)
 	dopr_outch (bp, '"');
-	++cnt;
-    }
+    else if (flags & DP_F_BACKSL)
+	for (lastcol = strln; lastcol && value[lastcol - 1] == ' '; lastcol--);
 #endif
-    while ((ch = *value++) && ((unsigned) cnt < (unsigned) max)) {
-	++cnt;
+    for (curcol = 0; curcol < strln; curcol++) {
+	ch = value[curcol];
 #ifdef PRINT_QUOTES
-	if (flags & (DP_F_SQUOTE | DP_F_DQUOTE)) {
+	if (flags & (DP_F_SQUOTE | DP_F_DQUOTE | DP_F_BACKSL)) {
 	    switch (ch) {
 	    case '\r': ch = 'r'; break;
 	    case '\n': ch = 'n'; break;
@@ -218,13 +222,17 @@ fmtstr (OutCh dopr_outch, void *bp,
 	    case '\v': ch = 'v'; break;
 	    case '\f': ch = 'f'; break;
 	    default:
-		if (ch < 32) {
+		if (ch < 32 || 
+		    ((unsigned char) ch >= 0x7f && (unsigned char) ch < 0xa0)) 
+		{
 		    dopr_outch (bp, '\\');
 		    fmtint (dopr_outch, bp, ch, 8, 3, 3, DP_F_ZERO);
 		    continue;
 		} else {
 		    if ((ch == '\'' && (flags & DP_F_SQUOTE)) ||
 			(ch == '"' && (flags & DP_F_DQUOTE)) ||
+			(ch == ' ' && (flags & DP_F_BACKSL) && 
+			 (!curcol || curcol >= lastcol)) ||
 			ch == '\\')
 			dopr_outch (bp, '\\');
 		    dopr_outch (bp, ch);
@@ -237,19 +245,13 @@ fmtstr (OutCh dopr_outch, void *bp,
 	dopr_outch (bp, ch);
     }
 #ifdef PRINT_QUOTES
-    if (flags & DP_F_SQUOTE) {
+    if (flags & DP_F_SQUOTE)
 	dopr_outch (bp, '\'');
-	++cnt;
-    } else if (flags & DP_F_DQUOTE) {
+    else if (flags & DP_F_DQUOTE)
 	dopr_outch (bp, '"');
-	++cnt;
-    }
 #endif
-    while ((padlen < 0) && ((unsigned) cnt < (unsigned) max)) {
+    for (; padlen < 0; padlen++)
 	dopr_outch (bp, ' ');
-	++padlen;
-	++cnt;
-    }
 }
 
 static void
@@ -293,6 +295,7 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 #ifdef PRINT_QUOTES
 	    case '"': flags |= DP_F_DQUOTE; continue;
 	    case '\'': flags |= DP_F_SQUOTE; continue;
+	    case '\\': flags |= DP_F_BACKSL; continue;
 #endif
 	    }
 	    break;
@@ -455,6 +458,8 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 	}
     }
 }
+
+/* ########## end of printf core implementation ########## */
 
 
 /*
