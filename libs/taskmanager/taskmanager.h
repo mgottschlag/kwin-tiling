@@ -24,12 +24,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __taskmanager_h__
 #define __taskmanager_h__
 
+#include <sys/types.h>
+
 #include <qpoint.h>
 #include <qobject.h>
 #include <qvaluelist.h>
 #include <qlist.h>
 #include <qpixmap.h>
 
+#include <dcopobject.h>
 #include <kwin.h>
 
 class Task: public QObject
@@ -78,9 +81,42 @@ private:
     QValueList<WId>     _transients;
 };
 
-class TaskManager : public QObject
+class Startup: public QObject
 {
     Q_OBJECT
+
+public:
+    Startup(const QString &text, const QString &icon, pid_t pid, const QString & bin,
+            bool compliant, QObject * parent, const char *name = 0);
+    virtual ~Startup();
+
+    QString text() const { return _text; }
+    QString bin() const { return _bin; }
+
+    pid_t pid() const { return _pid; }
+    bool compliant() const { return _compliant; }
+
+signals:
+    void killMe(pid_t);
+
+protected:
+    void timerEvent(QTimerEvent *);
+
+private:
+    QString     _bin;
+    QString     _text;
+    pid_t       _pid;
+    bool        _compliant;
+};
+
+class TaskManager : public QObject, virtual public DCOPObject
+{
+    Q_OBJECT
+    K_DCOP
+
+k_dcop:
+    void clientStarted(QString name, QString icon, pid_t pid, QString bin, bool compliant);
+    void clientDied(pid_t pid);
 
 public:
     TaskManager( QObject *parent = 0, const char *name = 0 );
@@ -99,13 +135,15 @@ protected slots:
 
     void activeWindowChanged(WId);
     void currentDesktopChanged(int);
+    void killStartup(pid_t pid);
 
 protected:
     Task* findTask(WId w);
 
 private:
-    Task*       _active;
-    QList<Task> _tasks;
+    Task*               _active;
+    QList<Task>         _tasks;
+    QList<Startup>      _startups;
 };
 
 #endif

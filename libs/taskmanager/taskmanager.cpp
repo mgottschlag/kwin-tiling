@@ -54,6 +54,11 @@ TaskManager::TaskManager(QObject *parent, const char *name)
     const QValueList<WId> windows = kwin_module->windows();
     for (QValueList<WId>::ConstIterator it = windows.begin(); it != windows.end(); ++it )
 	windowAdded(*it);
+
+    // application startup notification
+    connectDCOPSignal(0, 0, "clientDied(pid_t)", "clientDied(pid_t)", false);
+    connectDCOPSignal(0, 0, "clientStarted(QString,QString,pid_t,QString,bool)",
+                      "clientStarted(QString,QString,pid_t,QString,bool)", false);
 }
 
 TaskManager::~TaskManager()
@@ -97,6 +102,69 @@ void TaskManager::windowAdded(WId w )
             }
 	    return;
 	}
+    }
+
+    // Now do app-starting-notification stuff before we give the window
+    // a taskbar button.
+
+    // Strategy:
+    //
+    // Is this a NET_WM compliant app ?
+    // Yes -> kill relevant app-starting button
+    // No  -> Is the WM_CLASS.res_name for this app used by any existing
+    //        app-starting buttons ?
+    //        Yes -> kill relevant button.
+    //        No  -> kill all non-NET_WM-compliant app-starting buttons.
+
+    pid_t pid = info.pid();
+    bool hasPid = (pid != 0);
+
+    if (hasPid)
+        killStartup(pid);
+    else {
+
+        // Hard - this app is not NET_WM compliant
+
+        XClassHint hint;
+        Status ok = XGetClassHint(qt_xdisplay(), w, &hint);
+
+        bool found = false;
+
+        if (ok != 0) { // We managed to read the class hint
+
+            QString resName   (hint.res_name);
+            QString resClass  (hint.res_class);
+
+            for(Startup* s = _startups.first(); s != 0; s = _startups.next()) {
+
+                if (s->compliant()) // Ignore the compliant ones
+                    continue;
+
+                if (s->bin() == resName || (s->bin().lower() == resClass.lower())) {
+                    // Found it !
+                    found = true;
+                    _startups.removeRef(s);
+                    delete s;
+                    break;
+                }
+            }
+        }
+
+        if (!found) {
+
+            // Build a list of all non-compliant buttons.
+            QValueList<pid_t> buttonsToKill;
+
+            for(Startup* s = _startups.first(); s != 0; s = _startups.next()) {
+                if (!s->compliant())
+                    buttonsToKill << s->pid();
+            }
+
+            // Kill all non-compliant buttons.
+            QValueList<pid_t>::Iterator killit(buttonsToKill.begin());
+            for (; killit != buttonsToKill.end(); ++killit)
+                killStartup(*killit);
+        }
     }
 
     Task* t = new Task(w, this);
@@ -151,21 +219,57 @@ void TaskManager::activeWindowChanged(WId w )
     if (!t) {
         if (_active) {
             _active->setActive(false);
+            _active->refresh();
             _active = 0;
         }
     }
     else {
-        if (_active)
+        if (_active) {
             _active->setActive(false);
+            _active->refresh();
+        }
 
         _active = t;
         _active->setActive(true);
+        _active->refresh();
     }
 }
 
 void TaskManager::currentDesktopChanged(int desktop)
 {
     emit desktopChanged(desktop);
+}
+
+void TaskManager::clientStarted(QString name, QString icon, pid_t pid, QString bin, bool compliant)
+{
+    if ((long)pid == 0) return;
+    kdDebug(1210) << "clientStarted(" << name << ", " << icon << ", " << (long)pid << "d)" << endl;
+
+    Startup * s = new Startup(name, icon, pid, bin, compliant, this);
+    _startups.append(s);
+
+    connect(s, SIGNAL(killMe(pid_t)), SLOT(killStartup(pid_t)));
+    emit changed();
+}
+
+void TaskManager::clientDied(pid_t pid)
+{
+    if ((long)pid != 0)
+	killStartup(pid);
+    emit changed();
+}
+
+void TaskManager::killStartup(pid_t pid)
+{
+    Startup* s = 0;
+    for(s = _startups.first(); s != 0; s = _startups.next()) {
+        if (s->pid() == pid)
+            break;
+    }
+    if (s == 0) return;
+
+    _startups.removeRef(s);
+    delete s;
 }
 
 Task::Task(WId win, QObject * parent, const char *name)
@@ -239,4 +343,23 @@ void Task::close()
 {
     NETRootInfo ri( qt_xdisplay(),  NET::CloseWindow );
     ri.closeWindowRequest( _win );
+}
+
+Startup::Startup(const QString& text, const QString& /*icon*/, pid_t pid,
+                 const QString& bin, bool compliant, QObject * parent, const char *name)
+    : QObject(parent, name), _bin(bin), _text(text), _pid(pid),_compliant(compliant)
+{
+    // go away after 20s if we weren't removed before.
+    startTimer(20000);
+}
+
+Startup::~Startup()
+{
+
+}
+
+void Startup::timerEvent(QTimerEvent *)
+{
+    killTimers();
+    emit(killMe(_pid));
 }
