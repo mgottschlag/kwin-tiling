@@ -363,6 +363,7 @@ void
 KDMShutdown::bye_bye()
 {
      if( cur_action) {
+	  QApplication::flushX();
 	  if( fork() == 0) {
 
 	       // if lilo, set the reboot option
