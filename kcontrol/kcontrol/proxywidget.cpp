@@ -88,6 +88,7 @@ ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, const c
     if (!min.isValid())
       min = QSize(700, 510);
     setMinimumSize(min);
+    setFrameStyle(NoFrame);
   }
 }
 
