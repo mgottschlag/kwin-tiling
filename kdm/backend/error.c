@@ -123,6 +123,22 @@ InitErrorLog (const char *errorLogFile)
 	if ((fd = open (errorLogFile, O_CREAT | O_APPEND | O_WRONLY, 0666)) < 0)
 	    LogError ("Cannot open log file %s\n", errorLogFile);
 	else {
+#ifdef USE_SYSLOG
+# ifdef USE_PAM
+#  define PAMLOG " PAM logs messages related to authentication to authpriv.*."
+# else
+#  define PAMLOG
+# endif
+# define WARNMSG \
+  "********************************************************************************\n" \
+  "Note that your system uses syslog. All of kdm's internally generated messages\n" \
+  "(i.e., not from libraries and external programs/scripts it uses) go to the\n" \
+  "daemon.* syslog facility; check your syslog configuration to find out to which\n" \
+  "file(s) it is logged." PAMLOG "\n" \
+  "********************************************************************************\n\n"
+	    if (!lseek (fd, 0, SEEK_END))
+		write (fd, WARNMSG, sizeof(WARNMSG) - 1);
+#endif
 	    if (fd != 1) {
 		dup2 (fd, 1);
 		close (fd);
