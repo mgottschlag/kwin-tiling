@@ -413,7 +413,7 @@ void runRdb( uint flags )
 
   // Merge ~/.Xresources or fallback to ~/.Xdefaults
   QString homeDir = QDir::homeDirPath();
-  QString xResources = homeDir + "~/.Xresources";
+  QString xResources = homeDir + "/.Xresources";
 
   // very primitive support for ~/.Xresources by appending it
   if ( QFile::exists( xResources ) )
