@@ -371,7 +371,7 @@ init_vrf(struct display *d, const char *name, const char *password)
 	hostname[0] = '\0';
 
     /* tty names should only be 15 characters long */
-# if 1
+# if 0
     for (i = 0; i < 15 && d->name[i]; i++) {
 	if (d->name[i] == ':' || d->name[i] == '.')
 	    tty[i] = '_';
