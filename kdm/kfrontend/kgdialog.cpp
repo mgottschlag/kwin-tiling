@@ -58,11 +58,14 @@ KGDialog::completeMenu()
 #ifdef HAVE_VTS
 	if (_isLocal) {
 		dpyMenu = new QPopupMenu( this );
-		inserten( i18n("Sw&itch User"), ALT+Key_I, dpyMenu );
+		int id = inserten( i18n("Sw&itch User"), ALT+Key_I, dpyMenu );
 		connect( dpyMenu, SIGNAL(activated( int )),
 		         SLOT(slotDisplaySelected( int )) );
 		connect( dpyMenu, SIGNAL(aboutToShow()),
 		         SLOT(slotPopulateDisplays()) );
+		QAccel *accel = new QAccel( this );
+		accel->insertItem( ALT+CTRL+Key_Insert, id );
+		connect( accel, SIGNAL(activated( int )), SLOT(slotActivateMenu( int )) );
 	}
 #endif
 
@@ -81,10 +84,16 @@ KGDialog::completeMenu()
 		inserten( i18n("Co&nsole Login"), ALT+Key_N, SLOT(slotConsole()) );
 
 	if (_allowShutdown != SHUT_NONE) {
-		inserten( i18n("&Shutdown..."), ALT+Key_S, SLOT(slotShutdown()) );
+		inserten( i18n("&Shutdown..."), ALT+Key_S, SLOT(slotShutdown( int )) );
 		QAccel *accel = new QAccel( this );
 		accel->insertItem( ALT+CTRL+Key_Delete );
-		connect( accel, SIGNAL(activated( int )), SLOT(slotShutdown()) );
+		connect( accel, SIGNAL(activated( int )), SLOT(slotShutdown( int )) );
+		accel = new QAccel( this );
+		accel->insertItem( SHIFT+ALT+CTRL+Key_PageUp, SHUT_REBOOT );
+		connect( accel, SIGNAL(activated( int )), SLOT(slotShutdown( int )) );
+		accel = new QAccel( this );
+		accel->insertItem( SHIFT+ALT+CTRL+Key_PageDown, SHUT_HALT );
+		connect( accel, SIGNAL(activated( int )), SLOT(slotShutdown( int )) );
 	}
 }
 
@@ -108,7 +117,7 @@ KGDialog::inserten( const QString& txt, int accel, const char *member )
 	optMenu->insertItem( txt, this, member, accel );
 }
 
-void
+int
 KGDialog::inserten( const QString& txt, int accel, QPopupMenu *cmnu )
 {
 	ensureMenu();
@@ -116,6 +125,7 @@ KGDialog::inserten( const QString& txt, int accel, QPopupMenu *cmnu )
 	optMenu->setAccel( accel, id );
 	optMenu->connectItem( id, this, SLOT(slotActivateMenu( int )) );
 	optMenu->setItemParameter( id, id );
+	return id;
 }
 
 void
@@ -176,14 +186,17 @@ KGDialog::slotConsole()
 }
 
 void
-KGDialog::slotShutdown()
+KGDialog::slotShutdown( int id )
 {
 	if (verify)
 		verify->suspend();
-	if (_scheduledSd == SHUT_ALWAYS)
-		KDMShutdown::scheduleShutdown( this );
-	else
-		KDMSlimShutdown( this ).exec();
+	if (id < 0) {
+		if (_scheduledSd == SHUT_ALWAYS)
+			KDMShutdown::scheduleShutdown( this );
+		else
+			KDMSlimShutdown( this ).exec();
+	} else
+		KDMSlimShutdown::externShutdown( id, 0, -1 );
 	if (verify)
 		verify->resume();
 }

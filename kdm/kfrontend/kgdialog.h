@@ -53,7 +53,7 @@ class KGDialog : public FDialog {
 	void slotSwitch();
 	void slotReallySwitch();
 	void slotConsole();
-	void slotShutdown();
+	void slotShutdown( int id );
 
   protected:
 #ifdef XDMCP
@@ -62,7 +62,7 @@ class KGDialog : public FDialog {
 	void completeMenu();
 #endif
 	void inserten( const QString& txt, int accel, const char *member );
-	void inserten( const QString& txt, int accel, QPopupMenu *cmnu );
+	int inserten( const QString& txt, int accel, QPopupMenu *cmnu );
 
 	bool needSep;
 	QPopupMenu *optMenu;
