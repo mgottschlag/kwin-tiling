@@ -343,9 +343,10 @@ init_vrf(const char *name, const char *password)
     re_str (&pname, name);
 
     greet->name = (char *)name;
-    PAM_password = greet->password = (char *)password;
 
 #ifdef USE_PAM
+
+    PAM_password = greet->password = (char *)password;
 
     pamh = thepamh();
     if (!*pamh) {
@@ -497,6 +498,9 @@ Restrict(const char *name, int *expire, char **nologin)
     struct login_cap	*lc;
 #   endif
 #  endif
+#  if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
+    VerifyRet		retv = V_OK;
+#  endif
 # endif /* AIXV3 */
 #endif
 
@@ -520,6 +524,7 @@ Restrict(const char *name, int *expire, char **nologin)
     if (pam_acct_mgmt(*pamh, 0) != PAM_SUCCESS)
 	return V_FAIL;	/* XXX: V_AUTHMSG */
     /* really should do password changing, but it doesn't fit well */
+    return V_OK;
 
 #elif defined(AIXV3)	/* USE_PAM */
 
@@ -536,6 +541,7 @@ Restrict(const char *name, int *expire, char **nologin)
     }
     if (msg)
 	free((void *)msg);
+    return V_OK;
 
 #else	/* USE_PAM || AIXV3 */
 
@@ -614,7 +620,7 @@ nolog_succ:
 
 
 /* restrict_expired */
-# if defined(HAVE_PW_EXPIRE) || defined(USESHADOW) /* && !defined(USE_PAM) ? */
+# if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
 
 #  if !defined(HAVE_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW))
     if (!sp)
@@ -697,9 +703,13 @@ spbad:
     login_close(lc);
 # endif
 
-#endif /* USE_PAM || AIXV3 */
-
+# if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
+    return retv;
+# else
     return V_OK;
+# endif
+
+#endif /* USE_PAM || AIXV3 */
 }
 
 

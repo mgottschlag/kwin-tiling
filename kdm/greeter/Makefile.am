@@ -9,6 +9,7 @@ AM_CXXFLAGS = $(AM_CFLAGS)
 
 bin_PROGRAMS = kdm_getcfg
 kdm_getcfg_SOURCES = kdm_getcfg.cpp
+kdm_getcfg_LDFLAGS = $(all_libraries)
 kdm_getcfg_LDADD = $(LIB_QT) $(LIB_KDECORE)
 
 # static
